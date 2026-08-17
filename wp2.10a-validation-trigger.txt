@@ -1,1 +1,0 @@
-Trigger final R2-WP2.10A validation after bridge test alignment fix.
