@@ -17,7 +17,10 @@ import {
   WILLOW_MOONFLOWER_REQUIRED_QUANTITY,
   getWillowStoryPhase,
 } from '../story/WillowMoonflowersStory';
-import { MOONFLOWER_GLADE_MAP, setMoonflowerGladePlayerSpawn } from '../world/MoonflowerGladeMap';
+import {
+  MOONFLOWER_GLADE_MAP,
+  setMoonflowerGladePlayerSpawn,
+} from '../world/MoonflowerGladeMap';
 
 const SAVED_PLAYER_TEXTURE_KEY = 'player-unicorn-moonflower-patch';
 const COLLECTION_RADIUS = 82;
@@ -290,7 +293,9 @@ export class MoonflowerPatchScene extends Phaser.Scene {
       return;
     }
     this.leaving = true;
-    const field = MOONFLOWER_GLADE_MAP.landmarks.find((landmark) => landmark.id === 'moonflower-field');
+    const field = MOONFLOWER_GLADE_MAP.landmarks.find(
+      (landmark) => landmark.id === 'moonflower-field',
+    );
     if (field) {
       setMoonflowerGladePlayerSpawn(field.approach);
     }
