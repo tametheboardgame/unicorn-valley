@@ -1,6 +1,6 @@
 # R2-WP2.10B - Daughter Playtest and Recovery Pass
 
-Status: **Complete pending merge**
+Status: **Complete**
 
 ## Playtest result
 
