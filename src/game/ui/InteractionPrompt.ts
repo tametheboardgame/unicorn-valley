@@ -2,12 +2,14 @@ import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import type { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 import type { InteractionTarget } from '../interaction/InteractionTarget';
+import { ActivitySuggestionCard } from './ActivitySuggestionCard';
 
 export class InteractionPrompt {
   private readonly panel: Phaser.GameObjects.Rectangle;
   private readonly label: Phaser.GameObjects.Text;
   private readonly bagButton: Phaser.GameObjects.Rectangle;
   private readonly bagLabel: Phaser.GameObjects.Text;
+  private readonly suggestionCard: ActivitySuggestionCard;
 
   public constructor(scene: Phaser.Scene, pointerInput: PointerTouchInputAdapter) {
     this.panel = scene.add
@@ -46,6 +48,8 @@ export class InteractionPrompt {
       .setScrollFactor(0)
       .setDepth(121);
 
+    this.suggestionCard = new ActivitySuggestionCard(scene);
+
     this.panel.on('pointerdown', () => pointerInput.setButton('INTERACT', true));
     this.panel.on('pointerup', () => pointerInput.setButton('INTERACT', false));
     this.panel.on('pointerout', () => pointerInput.setButton('INTERACT', false));
@@ -65,6 +69,7 @@ export class InteractionPrompt {
     const visible = target !== null;
     this.panel.setVisible(visible);
     this.label.setVisible(visible);
+    this.suggestionCard.refresh();
 
     if (target) {
       this.label.setText(`${target.actionLabel}: ${target.label}   ✨`);
@@ -76,5 +81,6 @@ export class InteractionPrompt {
     this.label.destroy();
     this.bagButton.destroy();
     this.bagLabel.destroy();
+    this.suggestionCard.destroy();
   }
 }
