@@ -1,10 +1,6 @@
 import Phaser from 'phaser';
 import type { InputAdapter } from './InputAdapter';
-import {
-  BUTTON_INPUT_ACTIONS,
-  type AxisInputAction,
-  type ButtonInputAction,
-} from './InputAction';
+import { BUTTON_INPUT_ACTIONS, type AxisInputAction, type ButtonInputAction } from './InputAction';
 
 interface AxisBinding {
   negative: readonly Phaser.Input.Keyboard.Key[];
