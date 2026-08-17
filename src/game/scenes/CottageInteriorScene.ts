@@ -17,10 +17,7 @@ import {
   saveLocationCheckpoint,
 } from '../save/saveLocationCheckpoint';
 import { InteractionPrompt } from '../ui/InteractionPrompt';
-import {
-  COTTAGE_INTERIOR_LOCATION_ID,
-  COTTAGE_INTERIOR_MAP,
-} from '../world/CottageInteriorMap';
+import { COTTAGE_INTERIOR_LOCATION_ID, COTTAGE_INTERIOR_MAP } from '../world/CottageInteriorMap';
 import { MOONFLOWER_GLADE_MAP, setMoonflowerGladePlayerSpawn } from '../world/MoonflowerGladeMap';
 
 const COLLISION_TEXTURE_KEY = 'cottage-collision-pixel';
@@ -289,10 +286,7 @@ export class CottageInteriorScene extends Phaser.Scene {
   }
 
   private createTeaTable(): void {
-    this.add
-      .ellipse(900, 500, 230, 165, 0xc4936f, 1)
-      .setStrokeStyle(7, 0x8c644f, 0.9)
-      .setDepth(6);
+    this.add.ellipse(900, 500, 230, 165, 0xc4936f, 1).setStrokeStyle(7, 0x8c644f, 0.9).setDepth(6);
     this.add
       .text(900, 494, '🫖', { fontFamily: 'system-ui, sans-serif', fontSize: '40px' })
       .setOrigin(0.5)

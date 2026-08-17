@@ -26,7 +26,7 @@ describe('Cottage home view', () => {
     expect(buildCottageHomeView(save).placements).toEqual([]);
   });
 
-  it('shows Willow\'s lantern on the treasure shelf until it is placed elsewhere', () => {
+  it("shows Willow's lantern on the treasure shelf until it is placed elsewhere", () => {
     const save = createDefaultSave('2026-08-17T12:00:00.000Z');
     save.inventory.itemQuantities['item:moonflower-lantern'] = 1;
 
