@@ -6,9 +6,9 @@ The player creates her own unicorn, lives at Moonflower Cottage, explores a magi
 
 ## Project status
 
-**R0-WP0.2 - Phaser/Vite/TypeScript Scaffold implemented and validated.**
+**R0-WP0.3 - Quality Gates and Repository Hygiene implemented and validated.**
 
-The next implementation package is **R0-WP0.3 - Quality Gates and Repository Hygiene**.
+The next implementation package is **R0-WP0.4 - Core State, Save and Event Foundations**.
 
 ## Core principles
 
@@ -40,6 +40,7 @@ The next implementation package is **R0-WP0.3 - Quality Gates and Repository Hyg
 - [Art and Audio Direction](docs/05-ART-AUDIO-DIRECTION.md)
 - [Development Roadmap](docs/06-ROADMAP.md)
 - [Detailed Work Packages](docs/07-WORK-PACKAGES.md)
+- [Development and Validation](docs/08-DEVELOPMENT.md)
 
 ## Release plan
 
