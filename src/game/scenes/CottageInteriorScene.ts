@@ -576,7 +576,7 @@ export class CottageInteriorScene extends Phaser.Scene {
       .text(GAME_WIDTH / 2, 34, 'Moonflower Cottage', {
         color: '#6e5064',
         fontFamily: 'system-ui, sans-serif',
-        fontSize: '30px',
+        fontSize: '27px',
         fontStyle: 'bold',
         backgroundColor: '#fff5e7e8',
         padding: { x: 18, y: 9 },

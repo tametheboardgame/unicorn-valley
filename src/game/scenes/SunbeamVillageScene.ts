@@ -527,12 +527,12 @@ export class SunbeamVillageScene extends Phaser.Scene {
 
   private createHud(): void {
     this.add
-      .text(GAME_WIDTH / 2, 34, 'Sunbeam Village', {
+      .text(GAME_WIDTH / 2, 24, 'Sunbeam Village', {
         color: '#5f4756',
         fontFamily: 'system-ui, sans-serif',
-        fontSize: '30px',
+        fontSize: '27px',
         fontStyle: 'bold',
-        backgroundColor: '#fff7dfdd',
+        backgroundColor: '#fff7dff2',
         padding: { x: 18, y: 9 },
       })
       .setOrigin(0.5, 0)
