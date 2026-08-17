@@ -36,7 +36,7 @@ jobs:
         run: |
           export CHROME_PATH="$(which google-chrome || which chromium || which chromium-browser)"
           echo "Chrome: $CHROME_PATH"
-          node --input-type=module <<'NODE'
+          timeout 90s node --input-type=module <<'NODE'
           import puppeteer from 'puppeteer-core';
 
           const browser = await puppeteer.launch({
@@ -45,8 +45,12 @@ jobs:
             args: ['--no-sandbox', '--disable-setuid-sandbox'],
           });
 
+          const pause = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
+
           async function collectPage(label) {
             const page = await browser.newPage();
+            page.setDefaultNavigationTimeout(10000);
+            page.setDefaultTimeout(10000);
             const errors = [];
             page.on('pageerror', (error) => {
               errors.push(`pageerror: ${error.stack || error.message}`);
@@ -61,9 +65,10 @@ jobs:
             return { page, errors };
           }
 
+          console.log('START creator');
           const creator = await collectPage('creator');
-          await creator.page.goto('http://127.0.0.1:5173/?scene=creator', { waitUntil: 'networkidle0' });
-          await creator.page.waitForSelector('.unicorn-name-input', { timeout: 10000 });
+          await creator.page.goto('http://127.0.0.1:5173/?scene=creator', { waitUntil: 'domcontentloaded' });
+          await creator.page.waitForSelector('.unicorn-name-input');
           const input = await creator.page.$('.unicorn-name-input');
           await input.click({ clickCount: 3 });
           await creator.page.keyboard.press('Backspace');
@@ -71,29 +76,28 @@ jobs:
           await creator.page.keyboard.type(expectedName, { delay: 20 });
           const typedName = await creator.page.$eval('.unicorn-name-input', (element) => element.value);
           console.log('CREATOR_TYPED_NAME=' + typedName);
-          if (typedName !== expectedName) {
-            console.error(`CREATOR_TYPING_FAILED expected=${expectedName} actual=${typedName}`);
-          }
           await creator.page.close();
 
+          console.log('START cottage-direct');
           const cottage = await collectPage('cottage-direct');
-          await cottage.page.goto('http://127.0.0.1:5173/?scene=cottage', { waitUntil: 'networkidle0' });
-          await new Promise((resolve) => setTimeout(resolve, 1500));
+          await cottage.page.goto('http://127.0.0.1:5173/?scene=cottage', { waitUntil: 'domcontentloaded' });
+          await pause(1500);
           console.log('COTTAGE_DIRECT_ERRORS=' + cottage.errors.length);
           await cottage.page.screenshot({ path: '/tmp/cottage-direct.png' });
           await cottage.page.close();
 
+          console.log('START cottage-transition');
           const transition = await collectPage('cottage-transition');
-          await transition.page.goto('http://127.0.0.1:5173/?scene=glade', { waitUntil: 'networkidle0' });
-          await new Promise((resolve) => setTimeout(resolve, 500));
+          await transition.page.goto('http://127.0.0.1:5173/?scene=glade', { waitUntil: 'domcontentloaded' });
+          await pause(800);
           await transition.page.keyboard.down('KeyW');
           await transition.page.keyboard.down('KeyA');
-          await new Promise((resolve) => setTimeout(resolve, 850));
+          await pause(850);
           await transition.page.keyboard.up('KeyW');
           await transition.page.keyboard.up('KeyA');
-          await new Promise((resolve) => setTimeout(resolve, 150));
+          await pause(200);
           await transition.page.keyboard.press('KeyE');
-          await new Promise((resolve) => setTimeout(resolve, 1800));
+          await pause(1800);
           console.log('COTTAGE_TRANSITION_ERRORS=' + transition.errors.length);
           await transition.page.screenshot({ path: '/tmp/cottage-transition.png' });
 
@@ -101,7 +105,12 @@ jobs:
           await transition.page.close();
           await browser.close();
 
-          if (typedName !== expectedName || allErrors.length > 0) {
+          if (typedName !== expectedName) {
+            console.error(`CREATOR_TYPING_FAILED expected=${expectedName} actual=${typedName}`);
+            process.exitCode = 1;
+          }
+          if (allErrors.length > 0) {
+            console.error(`BROWSER_ERRORS=${allErrors.length}`);
             process.exitCode = 1;
           }
           NODE
