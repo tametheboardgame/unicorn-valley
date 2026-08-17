@@ -6,9 +6,9 @@ The player creates her own unicorn, lives at Moonflower Cottage, explores a magi
 
 ## Project status
 
-**R0-WP0.4 - Core State, Save and Event Foundations implemented.**
+**R0-WP0.5 - Input Abstraction and Responsive Canvas implemented.**
 
-The next implementation package is **R0-WP0.5 - Input Abstraction and Responsive Canvas**.
+The next implementation package is **R0-WP0.6 - Content Registry and Validation Skeleton**.
 
 ## Core principles
 
@@ -41,6 +41,7 @@ The next implementation package is **R0-WP0.5 - Input Abstraction and Responsive
 - [Development Roadmap](docs/06-ROADMAP.md)
 - [Detailed Work Packages](docs/07-WORK-PACKAGES.md)
 - [Development and Validation](docs/08-DEVELOPMENT.md)
+- [Responsive Canvas and Input Diagnostic](docs/09-RESPONSIVE-INPUT-DIAGNOSTIC.md)
 
 ## Release plan
 
