@@ -1,0 +1,64 @@
+name: Merge R1 After Validation Once
+
+on:
+  push:
+    branches:
+      - agent/r1-wp1.8-first-playable-hardening
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-gate:
+    if: ${{ !contains(github.event.head_commit.message, '[r1-release-gate]') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+
+    steps:
+      - name: Check out final R1 branch
+        uses: actions/checkout@v6
+        with:
+          ref: agent/r1-wp1.8-first-playable-hardening
+          fetch-depth: 0
+
+      - name: Confirm finalised state
+        run: |
+          grep -q "R1-WP1.8 - First Playable Hardening implemented and validated" README.md
+          grep -q "R2 must not start until the first playable has hands-on sign-off" README.md
+          grep -q "TouchMovementPad" src/game/scenes/MoonflowerGladeScene.ts
+          grep -q "resetArmed" src/game/scenes/TitleScene.ts
+          grep -q "saveLocationCheckpoint" src/game/scenes/MoonflowerGladeScene.ts
+          test ! -f .github/workflows/wire-r1-hardening-once.yml
+          test ! -f .github/workflows/cleanup-r1-hardening-once.yml
+          test ! -f .github/workflows/finalize-r1-wp1.8-once.yml
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22.23.2
+          package-manager-cache: false
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Remove this one-use gate
+        run: rm .github/workflows/merge-r1-after-validation-once.yml
+
+      - name: Validate exact merge tree
+        run: npm run validate
+
+      - name: Commit clean validated tree
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "R1 release gate passed [r1-release-gate]"
+          git push
+
+      - name: Mark PR ready and merge
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr ready 16 --repo tametheboardgame/unicorn-valley || true
+          gh pr merge 16 --repo tametheboardgame/unicorn-valley --squash
