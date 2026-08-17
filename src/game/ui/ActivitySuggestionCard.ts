@@ -4,7 +4,7 @@ import { ActivitySuggestionSession } from '../suggestions/ActivitySuggestionMode
 import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from './uiTheme';
 
 const CARD_X = 235;
-const CARD_Y = 245;
+const CARD_Y = 270;
 const CARD_WIDTH = 420;
 const CARD_HEIGHT = 190;
 const REFRESH_INTERVAL_MS = 300;
