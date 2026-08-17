@@ -6,6 +6,15 @@ import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 import { parseUnicornAppearance } from '../player/UnicornAppearance';
 import { createUnicornAppearanceTexture } from '../player/UnicornAppearanceRenderer';
 import {
+  RAINBOW_RUN_NPC_RACERS,
+  createRaceCompetitionState,
+  formatRacePlace,
+  getRaceStandings,
+  stepRaceCompetition,
+  type RaceCompetitionState,
+  type RaceStanding,
+} from '../racing/RaceCompetition';
+import {
   PRACTICE_RAINBOW_RUN_COURSE,
   type RaceBoostZoneDefinition,
   type RaceCollectableDefinition,
@@ -32,20 +41,31 @@ const COURSE_GROUND_Y = 575;
 const COURSE_WORLD_WIDTH = COURSE.length + 760;
 const FINISH_X = COURSE_START_X + COURSE.length;
 
+interface NpcRacerVisual {
+  sprite: Phaser.GameObjects.Sprite;
+  label: Phaser.GameObjects.Text;
+  laneOffset: number;
+}
+
 export class RaceScene extends Phaser.Scene {
   private inputController: InputController | null = null;
   private pointerInput: PointerTouchInputAdapter | null = null;
   private player: Phaser.GameObjects.Sprite | null = null;
   private runState: RaceRunState = createRaceRunState();
+  private competitionState: RaceCompetitionState = createRaceCompetitionState();
   private elapsedMs = 0;
   private finishTimeMs = 0;
+  private playerFinishPlace = 0;
   private progressFill: Phaser.GameObjects.Rectangle | null = null;
+  private positionText: Phaser.GameObjects.Text | null = null;
   private timeText: Phaser.GameObjects.Text | null = null;
   private collectableText: Phaser.GameObjects.Text | null = null;
   private statusText: Phaser.GameObjects.Text | null = null;
+  private finishOrderText: Phaser.GameObjects.Text | null = null;
   private statusTimer: Phaser.Time.TimerEvent | null = null;
   private finishPanel: Phaser.GameObjects.Container | null = null;
   private readonly collectableSprites = new Map<string, Phaser.GameObjects.Container>();
+  private readonly npcRacerVisuals = new Map<string, NpcRacerVisual>();
 
   public constructor() {
     super('RaceScene');
@@ -53,9 +73,12 @@ export class RaceScene extends Phaser.Scene {
 
   public create(): void {
     this.runState = createRaceRunState();
+    this.competitionState = createRaceCompetitionState();
     this.elapsedMs = 0;
     this.finishTimeMs = 0;
+    this.playerFinishPlace = 0;
     this.collectableSprites.clear();
+    this.npcRacerVisuals.clear();
 
     this.createCourse();
 
@@ -69,6 +92,7 @@ export class RaceScene extends Phaser.Scene {
       .setDisplaySize(138, 112)
       .setOrigin(0.5, 0.82)
       .setDepth(30);
+    this.createNpcRacers();
 
     this.pointerInput = new PointerTouchInputAdapter();
     this.inputController = new InputController([new KeyboardInputAdapter(this), this.pointerInput]);
@@ -90,11 +114,14 @@ export class RaceScene extends Phaser.Scene {
       this.pointerInput = null;
       this.player = null;
       this.progressFill = null;
+      this.positionText = null;
       this.timeText = null;
       this.collectableText = null;
       this.statusText = null;
+      this.finishOrderText = null;
       this.finishPanel = null;
       this.collectableSprites.clear();
+      this.npcRacerVisuals.clear();
     });
   }
 
@@ -114,6 +141,12 @@ export class RaceScene extends Phaser.Scene {
     const jumpRequested = this.inputController.justPressed('RACE_JUMP');
     const result = stepRaceRun(this.runState, COURSE, delta / 1000, jumpRequested);
     this.runState = result.state;
+    this.competitionState = stepRaceCompetition(
+      this.competitionState,
+      RAINBOW_RUN_NPC_RACERS,
+      COURSE,
+      delta / 1000,
+    );
 
     if (!wasFinished) {
       this.elapsedMs += Math.max(0, Math.min(delta, 50));
@@ -126,12 +159,16 @@ export class RaceScene extends Phaser.Scene {
     );
 
     this.updatePlayerPresentation(time);
+    this.updateNpcRacerPresentation(time);
     this.handleRaceEvents(result.events);
 
     const justFinished = !wasFinished && movement.finished;
     if (justFinished) {
       this.finishTimeMs = this.elapsedMs;
+      this.playerFinishPlace =
+        this.getCurrentStandings().find((standing) => standing.isPlayer)?.place ?? 1;
     }
+
     this.updateHud();
 
     if (justFinished) {
@@ -158,6 +195,67 @@ export class RaceScene extends Phaser.Scene {
     } else {
       this.player.setAngle(Phaser.Math.Clamp(movement.verticalVelocity * 0.018, -11, 10));
       this.player.setDisplaySize(140, 110);
+    }
+  }
+
+  private createNpcRacers(): void {
+    for (let index = 0; index < RAINBOW_RUN_NPC_RACERS.length; index += 1) {
+      const definition = RAINBOW_RUN_NPC_RACERS[index];
+      const sprite = this.add
+        .sprite(
+          COURSE_START_X - 18 - index * 15,
+          COURSE_GROUND_Y + definition.laneOffset,
+          PLAYER_TEXTURE_KEY,
+        )
+        .setDisplaySize(116, 94)
+        .setOrigin(0.5, 0.82)
+        .setTint(definition.tint)
+        .setAlpha(0.92)
+        .setDepth(26 + index);
+      const label = this.add
+        .text(sprite.x, sprite.y - 78, definition.name, {
+          color: '#5c4668',
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '14px',
+          fontStyle: 'bold',
+          backgroundColor: '#fff8e8dd',
+          padding: { x: 6, y: 3 },
+        })
+        .setOrigin(0.5, 1)
+        .setDepth(35 + index);
+
+      this.npcRacerVisuals.set(definition.id, {
+        sprite,
+        label,
+        laneOffset: definition.laneOffset,
+      });
+    }
+  }
+
+  private updateNpcRacerPresentation(time: number): void {
+    for (let index = 0; index < this.competitionState.npcRacers.length; index += 1) {
+      const racer = this.competitionState.npcRacers[index];
+      const visual = this.npcRacerVisuals.get(racer.id);
+      if (!visual) {
+        continue;
+      }
+
+      const movement = racer.run.movement;
+      const x = COURSE_START_X + movement.progress;
+      const y = COURSE_GROUND_Y + visual.laneOffset + movement.jumpOffset;
+      visual.sprite.setPosition(x, y);
+      visual.label.setPosition(x, y - 78);
+
+      if (racer.run.stumbleRemaining > 0) {
+        visual.sprite.setAngle(Math.sin(time * 0.085 + index) * 9);
+        visual.sprite.setDisplaySize(112, 90);
+      } else if (movement.grounded) {
+        visual.sprite.setAngle(Math.sin(time * 0.018 + index) * 1.8);
+        visual.sprite.setDisplaySize(116, 94 * (1 + Math.sin(time * 0.023 + index) * 0.016));
+      } else {
+        visual.sprite.setAngle(Phaser.Math.Clamp(movement.verticalVelocity * 0.016, -10, 9));
+        visual.sprite.setDisplaySize(118, 92);
+      }
     }
   }
 
@@ -398,7 +496,7 @@ export class RaceScene extends Phaser.Scene {
 
   private createHud(): void {
     this.add
-      .rectangle(GAME_WIDTH / 2, 52, 820, 90, 0xfff8e8, 0.95)
+      .rectangle(GAME_WIDTH / 2, 52, 940, 90, 0xfff8e8, 0.95)
       .setStrokeStyle(4, 0xb996c6, 0.95)
       .setScrollFactor(0)
       .setDepth(100);
@@ -414,19 +512,32 @@ export class RaceScene extends Phaser.Scene {
       .setScrollFactor(0)
       .setDepth(101);
 
+    this.positionText = this.add
+      .text(GAME_WIDTH / 2 - 350, 67, `1st / ${RAINBOW_RUN_NPC_RACERS.length + 1}`, {
+        color: '#60486d',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '18px',
+        fontStyle: 'bold',
+        backgroundColor: '#f7e8ffee',
+        padding: { x: 9, y: 4 },
+      })
+      .setOrigin(0.5)
+      .setScrollFactor(0)
+      .setDepth(102);
+
     this.add
-      .rectangle(GAME_WIDTH / 2 - 180, 67, 360, 14, 0xdccce6, 0.95)
+      .rectangle(GAME_WIDTH / 2 - 205, 67, 330, 14, 0xdccce6, 0.95)
       .setOrigin(0, 0.5)
       .setScrollFactor(0)
       .setDepth(101);
     this.progressFill = this.add
-      .rectangle(GAME_WIDTH / 2 - 180, 67, 1, 10, 0xc77cc8, 1)
+      .rectangle(GAME_WIDTH / 2 - 205, 67, 1, 10, 0xc77cc8, 1)
       .setOrigin(0, 0.5)
       .setScrollFactor(0)
       .setDepth(102);
 
     this.timeText = this.add
-      .text(GAME_WIDTH / 2 + 230, 67, '0.0s', {
+      .text(GAME_WIDTH / 2 + 190, 67, '0.0s', {
         color: '#5c4668',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '17px',
@@ -437,7 +548,7 @@ export class RaceScene extends Phaser.Scene {
       .setDepth(102);
 
     this.collectableText = this.add
-      .text(GAME_WIDTH / 2 + 335, 67, `✦ 0/${COURSE.collectables.length}`, {
+      .text(GAME_WIDTH / 2 + 315, 67, `✦ 0/${COURSE.collectables.length}`, {
         color: '#6b4f78',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '17px',
@@ -513,15 +624,45 @@ export class RaceScene extends Phaser.Scene {
     button.on('pointerdown', () => this.exitRace());
   }
 
+  private getCurrentStandings(): RaceStanding[] {
+    return getRaceStandings(
+      {
+        id: 'player',
+        name: 'You',
+        progress: this.runState.movement.progress,
+        finished: this.runState.movement.finished,
+        finishTimeSeconds: this.runState.movement.finished ? this.finishTimeMs / 1000 : null,
+        isPlayer: true,
+      },
+      this.competitionState,
+      RAINBOW_RUN_NPC_RACERS,
+    );
+  }
+
   private updateHud(): void {
     const movement = this.runState.movement;
     const ratio = Phaser.Math.Clamp(movement.progress / COURSE.length, 0, 1);
-    this.progressFill?.setDisplaySize(Math.max(1, 360 * ratio), 10);
+    this.progressFill?.setDisplaySize(Math.max(1, 330 * ratio), 10);
     const shownMs = movement.finished ? this.finishTimeMs : this.elapsedMs;
     this.timeText?.setText(`${(shownMs / 1000).toFixed(1)}s`);
     this.collectableText?.setText(
       `✦ ${this.runState.collectedIds.length}/${COURSE.collectables.length}`,
     );
+
+    const standings = this.getCurrentStandings();
+    const playerStanding = standings.find((standing) => standing.isPlayer);
+    if (playerStanding) {
+      this.positionText?.setText(`${formatRacePlace(playerStanding.place)} / ${standings.length}`);
+    }
+
+    if (this.finishOrderText) {
+      const allFinished = standings.every((standing) => standing.finished);
+      this.finishOrderText.setText(
+        allFinished
+          ? `Finish order: ${standings.map((standing) => standing.name).join(' • ')}`
+          : `Current order: ${standings.map((standing) => standing.name).join(' • ')}`,
+      );
+    }
   }
 
   private showRaceStatus(message: string): void {
@@ -538,20 +679,23 @@ export class RaceScene extends Phaser.Scene {
       return;
     }
 
-    const shade = this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, 650, 350, 0x5f4772, 0.94);
+    const standings = this.getCurrentStandings();
+    const place =
+      this.playerFinishPlace || standings.find((standing) => standing.isPlayer)?.place || 1;
+    const shade = this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, 760, 420, 0x5f4772, 0.94);
     const title = this.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 120, 'You finished! 🌈', {
+      .text(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 150, `You finished ${formatRacePlace(place)}! 🌈`, {
         color: '#fff5cf',
         fontFamily: 'system-ui, sans-serif',
-        fontSize: '42px',
+        fontSize: '40px',
         fontStyle: 'bold',
       })
       .setOrigin(0.5);
     const time = this.add
       .text(
         GAME_WIDTH / 2,
-        GAME_HEIGHT / 2 - 55,
-        `Practice time: ${(this.finishTimeMs / 1000).toFixed(1)} seconds`,
+        GAME_HEIGHT / 2 - 82,
+        `Race time: ${(this.finishTimeMs / 1000).toFixed(1)} seconds`,
         {
           color: '#fff8ff',
           fontFamily: 'system-ui, sans-serif',
@@ -562,7 +706,7 @@ export class RaceScene extends Phaser.Scene {
     const sparkles = this.add
       .text(
         GAME_WIDTH / 2,
-        GAME_HEIGHT / 2 - 12,
+        GAME_HEIGHT / 2 - 38,
         `Race sparkles: ${this.runState.collectedIds.length} / ${COURSE.collectables.length} • missing some is OK!`,
         {
           color: '#ffe9ad',
@@ -573,12 +717,23 @@ export class RaceScene extends Phaser.Scene {
       )
       .setOrigin(0.5);
 
+    this.finishOrderText = this.add
+      .text(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 10, '', {
+        color: '#f4eaff',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '17px',
+        fontStyle: 'bold',
+        align: 'center',
+        wordWrap: { width: 690 },
+      })
+      .setOrigin(0.5);
+
     const restart = this.add
-      .rectangle(GAME_WIDTH / 2 - 145, GAME_HEIGHT / 2 + 92, 230, 70, 0xffefb7, 1)
+      .rectangle(GAME_WIDTH / 2 - 145, GAME_HEIGHT / 2 + 125, 230, 70, 0xffefb7, 1)
       .setStrokeStyle(4, 0xd49acb, 1)
       .setInteractive({ useHandCursor: true });
     const restartText = this.add
-      .text(GAME_WIDTH / 2 - 145, GAME_HEIGHT / 2 + 92, 'Race again', {
+      .text(GAME_WIDTH / 2 - 145, GAME_HEIGHT / 2 + 125, 'Race again', {
         color: '#60486d',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '22px',
@@ -587,11 +742,11 @@ export class RaceScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     const exit = this.add
-      .rectangle(GAME_WIDTH / 2 + 145, GAME_HEIGHT / 2 + 92, 230, 70, 0xf7e8ff, 1)
+      .rectangle(GAME_WIDTH / 2 + 145, GAME_HEIGHT / 2 + 125, 230, 70, 0xf7e8ff, 1)
       .setStrokeStyle(4, 0xb895c8, 1)
       .setInteractive({ useHandCursor: true });
     const exitText = this.add
-      .text(GAME_WIDTH / 2 + 145, GAME_HEIGHT / 2 + 92, 'Back to Meadow', {
+      .text(GAME_WIDTH / 2 + 145, GAME_HEIGHT / 2 + 125, 'Back to Meadow', {
         color: '#60486d',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '20px',
@@ -600,10 +755,21 @@ export class RaceScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     this.finishPanel = this.add
-      .container(0, 0, [shade, title, time, sparkles, restart, restartText, exit, exitText])
+      .container(0, 0, [
+        shade,
+        title,
+        time,
+        sparkles,
+        this.finishOrderText,
+        restart,
+        restartText,
+        exit,
+        exitText,
+      ])
       .setScrollFactor(0)
       .setDepth(150);
 
+    this.updateHud();
     restart.on('pointerdown', () => this.restartRace());
     exit.on('pointerdown', () => this.exitRace());
   }
