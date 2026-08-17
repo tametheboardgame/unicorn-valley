@@ -42,7 +42,7 @@ export class PreloadScene extends Phaser.Scene {
       status.destroy();
     });
 
-    this.load.svg('valley-sparkle', '/favicon.svg');
+    this.load.svg('valley-sparkle', `${import.meta.env.BASE_URL}favicon.svg`);
   }
 
   public create(): void {
