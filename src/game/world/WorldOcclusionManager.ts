@@ -48,7 +48,9 @@ function isPlayerSprite(
   );
 }
 
-function isPositionedDepthObject(gameObject: Phaser.GameObjects.GameObject): gameObject is PositionedDepthObject {
+function isPositionedDepthObject(
+  gameObject: Phaser.GameObjects.GameObject,
+): gameObject is PositionedDepthObject {
   const candidate = gameObject as Partial<PositionedDepthObject>;
   return (
     typeof candidate.x === 'number' &&
@@ -125,14 +127,7 @@ export class WorldOcclusionManager {
 
   private applyGladeDepths(scene: Phaser.Scene): void {
     for (const [x, y] of GLade_BOUNDARY_TREES) {
-      this.setDepthInBox(
-        scene,
-        x - 105,
-        y - 105,
-        x + 125,
-        y + 135,
-        worldDepthForY(y + 115),
-      );
+      this.setDepthInBox(scene, x - 105, y - 105, x + 125, y + 135, worldDepthForY(y + 115));
     }
 
     this.setDepthInBox(
@@ -300,9 +295,7 @@ export class WorldOcclusionManager {
       pageLines.lineBetween(-45, y, 45, y);
     }
 
-    const cover = scene.add
-      .rectangle(0, -5, 120, 64, 0x7d5aa6, 1)
-      .setStrokeStyle(4, 0x513867, 1);
+    const cover = scene.add.rectangle(0, -5, 120, 64, 0x7d5aa6, 1).setStrokeStyle(4, 0x513867, 1);
     const spine = scene.add.rectangle(-53, -5, 11, 62, 0x5e407e, 1);
     const clasp = scene.add.rectangle(54, -5, 12, 22, 0xe5bd63, 1);
     const title = scene.add
