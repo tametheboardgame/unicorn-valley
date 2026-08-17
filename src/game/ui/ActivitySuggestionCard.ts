@@ -9,6 +9,9 @@ const CARD_WIDTH = 420;
 const CARD_HEIGHT = 190;
 const REFRESH_INTERVAL_MS = 300;
 
+const sharedSuggestionSession = new ActivitySuggestionSession();
+let suggestionsHiddenForSession = false;
+
 export class ActivitySuggestionCard {
   private readonly shadow: Phaser.GameObjects.Rectangle;
   private readonly panel: Phaser.GameObjects.Rectangle;
@@ -22,10 +25,8 @@ export class ActivitySuggestionCard {
   private readonly hideHintsLabel: Phaser.GameObjects.Text;
   private readonly closeButton: Phaser.GameObjects.Arc;
   private readonly closeLabel: Phaser.GameObjects.Text;
-  private readonly suggestionSession = new ActivitySuggestionSession();
   private lastRefreshAt = Number.NEGATIVE_INFINITY;
   private currentSignature = '';
-  private hiddenForSession = false;
 
   public constructor(private readonly scene: Phaser.Scene) {
     this.shadow = createUiShadow(scene, CARD_X, CARD_Y, CARD_WIDTH, CARD_HEIGHT, 115, 0.18);
@@ -132,22 +133,18 @@ export class ActivitySuggestionCard {
     applyButtonHover(this.gotItButton, UI_COLOURS.gold, 0xfff4bf);
 
     this.nextButton.on('pointerdown', () => {
-      const save = this.getSave();
-      this.suggestionSession.rotate(save);
+      sharedSuggestionSession.rotate(this.getSave());
       this.refresh(true);
     });
-    this.gotItButton.on('pointerdown', () => this.acknowledgeCurrent());
-    this.closeButton.on('pointerdown', () => this.acknowledgeCurrent());
-    this.hideHintsLabel.on('pointerdown', () => {
-      this.hiddenForSession = true;
-      this.setVisible(false);
-    });
+    this.gotItButton.on('pointerdown', () => this.acknowledgeAndHide());
+    this.closeButton.on('pointerdown', () => this.hideForSession());
+    this.hideHintsLabel.on('pointerdown', () => this.hideForSession());
 
     this.refresh(true);
   }
 
   public refresh(force = false): void {
-    if (this.hiddenForSession) {
+    if (suggestionsHiddenForSession) {
       this.setVisible(false);
       return;
     }
@@ -157,7 +154,7 @@ export class ActivitySuggestionCard {
     }
     this.lastRefreshAt = this.scene.time.now;
 
-    const suggestion = this.suggestionSession.getVisible(this.getSave())[0];
+    const suggestion = sharedSuggestionSession.getVisible(this.getSave())[0];
     if (!suggestion) {
       this.setVisible(false);
       this.currentSignature = '';
@@ -190,10 +187,14 @@ export class ActivitySuggestionCard {
     this.closeLabel.destroy();
   }
 
-  private acknowledgeCurrent(): void {
-    const save = this.getSave();
-    this.suggestionSession.dismissCurrent(save);
-    this.refresh(true);
+  private acknowledgeAndHide(): void {
+    sharedSuggestionSession.dismissCurrent(this.getSave());
+    this.hideForSession();
+  }
+
+  private hideForSession(): void {
+    suggestionsHiddenForSession = true;
+    this.setVisible(false);
   }
 
   private getSave() {
