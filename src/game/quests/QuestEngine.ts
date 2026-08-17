@@ -1,5 +1,17 @@
-import { characterRegistry, discoveryRegistry, itemRegistry, questRegistry } from '../../content/registries';
-import type { CharacterId, DiscoveryId, ItemId, QuestDefinition, QuestId, QuestStep } from '../../content/contentTypes';
+import {
+  characterRegistry,
+  discoveryRegistry,
+  itemRegistry,
+  questRegistry,
+} from '../../content/registries';
+import type {
+  CharacterId,
+  DiscoveryId,
+  ItemId,
+  QuestDefinition,
+  QuestId,
+  QuestStep,
+} from '../../content/contentTypes';
 import { type GameEventMap, type TypedEventBus, gameEventBus } from '../events/GameEventBus';
 import { InventoryService } from '../inventory/InventoryService';
 import type { SaveService } from '../save/SaveService';
