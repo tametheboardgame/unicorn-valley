@@ -41,8 +41,6 @@ export class PreloadScene extends Phaser.Scene {
       fill.destroy();
       status.destroy();
     });
-
-    this.load.svg('valley-sparkle', `${import.meta.env.BASE_URL}favicon.svg`);
   }
 
   public create(): void {
