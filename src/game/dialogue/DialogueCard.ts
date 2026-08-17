@@ -24,7 +24,15 @@ export class DialogueCard {
       .setScrollFactor(0)
       .setDepth(125);
 
-    this.panelShadow = createUiShadow(scene, GAME_WIDTH / 2, GAME_HEIGHT - 164, 1120, 286, 125, 0.28);
+    this.panelShadow = createUiShadow(
+      scene,
+      GAME_WIDTH / 2,
+      GAME_HEIGHT - 164,
+      1120,
+      286,
+      125,
+      0.28,
+    );
     this.panel = scene.add
       .rectangle(GAME_WIDTH / 2, GAME_HEIGHT - 164, 1120, 286, UI_COLOURS.cream, 0.99)
       .setStrokeStyle(7, UI_COLOURS.lavenderStrong, 1)
