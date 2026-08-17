@@ -98,8 +98,6 @@ export const MOONFLOWER_GLADE_MAP = {
     { id: 'collision:stream-south', x: 1400, y: 1397.5, width: 220, height: 805 },
     { id: 'collision:hollow-tree', x: 2200, y: 520, width: 170, height: 220 },
     { id: 'collision:display-stump', x: 850, y: 1120, width: 84, height: 72 },
-    { id: 'collision:home-boulder', x: 1000, y: 360, width: 140, height: 110 },
-    { id: 'collision:east-boulder', x: 1870, y: 760, width: 150, height: 100 },
   ] satisfies readonly CollisionRectangle[],
 } as const;
 
