@@ -57,52 +57,78 @@ export class TitleScene extends Phaser.Scene {
     this.continueScene = resolveContinueScene(save?.profile.currentLocationId);
     this.cameras.main.setBackgroundColor('#6f4ba8');
 
-    this.add.circle(170, 130, 115, 0xffd7f4, 0.18);
-    this.add.circle(1080, 170, 165, 0xcff7ff, 0.14);
-    this.add.circle(1020, 610, 230, 0xffefb6, 0.1);
+    this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x6f4ba8, 1);
+    this.add.circle(150, 130, 115, 0xffd7f4, 0.16);
+    this.add.circle(1110, 155, 165, 0xcff7ff, 0.12);
+    this.add.circle(1070, 640, 235, 0xffefb6, 0.09);
+    this.add.circle(260, 650, 180, 0xc8f1dc, 0.06);
 
-    const titleShadow = this.add
-      .rectangle(GAME_WIDTH / 2 + 9, 360, 870, 500, UI_COLOURS.shadow, 0.17)
-      .setDepth(0);
-    const titlePanel = this.add
-      .rectangle(GAME_WIDTH / 2, 351, 870, 500, 0x7253a0, 0.38)
-      .setStrokeStyle(3, 0xd7b7ed, 0.34)
-      .setDepth(1);
-    titleShadow.setAlpha(0.2);
-    titlePanel.setAlpha(0.7);
-
-    const sparkle = this.add
-      .image(GAME_WIDTH / 2, 145, 'valley-sparkle')
-      .setDisplaySize(92, 92)
+    const glow = this.add.circle(GAME_WIDTH / 2, 120, 56, 0xffefaa, 0.14).setDepth(1);
+    const halo = this.add
+      .circle(GAME_WIDTH / 2, 120, 34, 0xfff8d6, 0.1)
+      .setStrokeStyle(3, 0xfff0a9, 0.45)
       .setDepth(2);
-    sparkle.setAlpha(0.95);
+    const sparkle = this.add
+      .text(GAME_WIDTH / 2, 118, '✦', {
+        color: '#fff2a6',
+        fontFamily: UI_FONT,
+        fontSize: '68px',
+        fontStyle: 'bold',
+        stroke: '#d79bdc',
+        strokeThickness: 4,
+      })
+      .setOrigin(0.5)
+      .setDepth(3);
+    const smallSparkles = [
+      this.add.text(GAME_WIDTH / 2 - 72, 102, '✧', {
+        color: '#ffd9f5',
+        fontFamily: UI_FONT,
+        fontSize: '27px',
+      }),
+      this.add.text(GAME_WIDTH / 2 + 70, 137, '✦', {
+        color: '#d7f5ff',
+        fontFamily: UI_FONT,
+        fontSize: '22px',
+      }),
+      this.add.text(GAME_WIDTH / 2 - 48, 157, '·', {
+        color: '#fff7cb',
+        fontFamily: UI_FONT,
+        fontSize: '34px',
+      }),
+    ].map((item) => item.setOrigin(0.5).setDepth(2));
+
+    createUiShadow(this, GAME_WIDTH / 2, 367, 760, 380, 0, 0.17);
+    this.add
+      .rectangle(GAME_WIDTH / 2, 359, 760, 380, 0x7456a0, 0.34)
+      .setStrokeStyle(3, 0xe0c9ed, 0.23)
+      .setDepth(1);
 
     this.add
-      .text(GAME_WIDTH / 2, 250, 'Unicorn Valley', {
+      .text(GAME_WIDTH / 2, 232, 'Unicorn Valley', {
         color: '#fff8ff',
         fontFamily: UI_FONT,
-        fontSize: '76px',
+        fontSize: '74px',
         fontStyle: 'bold',
         stroke: '#4c3578',
-        strokeThickness: 10,
+        strokeThickness: 9,
         align: 'center',
       })
       .setOrigin(0.5)
       .setDepth(2);
 
     this.add
-      .text(GAME_WIDTH / 2, 338, 'A magical place to explore, discover and make your own', {
+      .text(GAME_WIDTH / 2, 315, 'Explore • make friends • discover magic • make it yours', {
         color: '#f5eefe',
         fontFamily: UI_FONT,
-        fontSize: '25px',
+        fontSize: '23px',
         align: 'center',
       })
       .setOrigin(0.5)
       .setDepth(2);
 
-    createUiShadow(this, GAME_WIDTH / 2, 475, 390, 82, 2, 0.22);
+    createUiShadow(this, GAME_WIDTH / 2, 447, 390, 78, 2, 0.22);
     const button = this.add
-      .rectangle(GAME_WIDTH / 2, 475, 390, 82, UI_COLOURS.cream, 0.99)
+      .rectangle(GAME_WIDTH / 2, 447, 390, 78, UI_COLOURS.cream, 0.99)
       .setStrokeStyle(5, UI_COLOURS.lavenderStrong, 1)
       .setInteractive({ useHandCursor: true })
       .setDepth(3);
@@ -110,7 +136,7 @@ export class TitleScene extends Phaser.Scene {
     applyButtonHover(button, UI_COLOURS.cream, UI_COLOURS.gold);
 
     this.add
-      .text(GAME_WIDTH / 2, 475, this.hasCreatedUnicorn ? 'Continue' : 'Create Your Unicorn', {
+      .text(GAME_WIDTH / 2, 447, this.hasCreatedUnicorn ? 'Continue' : 'Create Your Unicorn', {
         color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
         fontSize: '30px',
@@ -120,32 +146,34 @@ export class TitleScene extends Phaser.Scene {
       .setDepth(4);
 
     this.add
-      .text(GAME_WIDTH / 2, 545, 'Press Enter or tap the button', {
+      .text(GAME_WIDTH / 2, 507, 'Press Enter or tap the button', {
         color: '#eadfff',
         fontFamily: UI_FONT,
-        fontSize: '19px',
+        fontSize: '17px',
       })
       .setOrigin(0.5)
       .setDepth(2);
 
     if (this.hasCreatedUnicorn) {
       const edit = this.add
-        .text(GAME_WIDTH / 2, 580, 'Change my unicorn', {
-          color: '#f3e8ff',
+        .text(GAME_WIDTH / 2, 548, 'Change my unicorn', {
+          color: '#fff5ff',
           fontFamily: UI_FONT,
           fontSize: '19px',
           fontStyle: 'bold',
+          backgroundColor: '#5f4388aa',
+          padding: { x: 13, y: 7 },
         })
         .setOrigin(0.5)
         .setInteractive({ useHandCursor: true })
-        .setDepth(2);
+        .setDepth(3);
       edit.on('pointerdown', () => this.scene.start('UnicornCreatorScene'));
 
       const startOver = this.add
-        .text(GAME_WIDTH / 2, 615, 'Start over', {
+        .text(GAME_WIDTH / 2, 593, 'Start over', {
           color: '#decff0',
           fontFamily: UI_FONT,
-          fontSize: '17px',
+          fontSize: '16px',
         })
         .setOrigin(0.5)
         .setInteractive({ useHandCursor: true })
@@ -156,26 +184,49 @@ export class TitleScene extends Phaser.Scene {
     this.statusText = this.add
       .text(
         GAME_WIDTH / 2,
-        GAME_HEIGHT - 40,
+        GAME_HEIGHT - 38,
         this.hasCreatedUnicorn
           ? resolveContinueStatus(this.continueScene)
           : 'First, make a unicorn that feels like yours.',
         {
-          color: '#e9dcf8',
+          color: '#f0e7fb',
           fontFamily: UI_FONT,
-          fontSize: '21px',
+          fontSize: '20px',
+          backgroundColor: '#563d7ccc',
+          padding: { x: 16, y: 8 },
         },
       )
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setDepth(3);
 
     this.tweens.add({
-      targets: [sparkle, button],
-      scaleX: 1.03,
-      scaleY: 1.03,
-      duration: 1400,
+      targets: [glow, halo],
+      scale: 1.13,
+      alpha: 0.25,
+      duration: 1350,
       yoyo: true,
       repeat: -1,
       ease: 'Sine.InOut',
+    });
+    this.tweens.add({
+      targets: sparkle,
+      angle: 8,
+      scale: 1.06,
+      duration: 1250,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.InOut',
+    });
+    smallSparkles.forEach((item, index) => {
+      this.tweens.add({
+        targets: item,
+        alpha: 0.35,
+        y: item.y - 8,
+        duration: 900 + index * 180,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.InOut',
+      });
     });
 
     this.pointerInput = new PointerTouchInputAdapter();
@@ -220,7 +271,7 @@ export class TitleScene extends Phaser.Scene {
         }
         this.resetArmed = false;
         label.setText('Start over');
-        this.statusText?.setText('Your unicorn is waiting in Moonflower Glade.');
+        this.statusText?.setText(resolveContinueStatus(this.continueScene));
       });
       return;
     }
