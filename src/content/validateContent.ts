@@ -1,9 +1,4 @@
-import type {
-  ContentBundle,
-  DialogueDefinition,
-  DialogueNode,
-  QuestStep,
-} from './contentTypes';
+import type { ContentBundle, DialogueDefinition, DialogueNode, QuestStep } from './contentTypes';
 
 interface IdentifiedEntry {
   id: string;
