@@ -24,11 +24,23 @@ export interface VillageNpcMarker {
   position: MapPoint;
 }
 
+const DEFAULT_PLAYER_SPAWN = { x: 300, y: 950 } as const;
+const playerSpawn: MapPoint = { ...DEFAULT_PLAYER_SPAWN };
+
+export function setSunbeamVillagePlayerSpawn(point: MapPoint): void {
+  playerSpawn.x = point.x;
+  playerSpawn.y = point.y;
+}
+
+export function resetSunbeamVillagePlayerSpawn(): void {
+  setSunbeamVillagePlayerSpawn(DEFAULT_PLAYER_SPAWN);
+}
+
 export const SUNBEAM_VILLAGE_MAP = {
   width: 3000,
   height: 1900,
   margin: 90,
-  playerSpawn: { x: 300, y: 950 },
+  playerSpawn,
   square: {
     x: 1500,
     y: 1050,
