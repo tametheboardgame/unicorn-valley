@@ -1,6 +1,7 @@
 import type {
   CharacterDefinition,
   ContentBundle,
+  DialogueDefinition,
   DiscoveryDefinition,
   ItemDefinition,
   QuestDefinition,
@@ -34,6 +35,49 @@ export const DISCOVERIES = [
   },
 ] as const satisfies readonly DiscoveryDefinition[];
 
+export const DIALOGUES = [
+  {
+    id: 'dialogue:interaction-sample',
+    name: 'Interaction Sample',
+    startNodeId: 'dialogue-node:sample-hello',
+    nodes: [
+      {
+        id: 'dialogue-node:sample-hello',
+        type: 'line',
+        speakerId: 'character:pip',
+        text: 'Hello! This is a little test note from Pip. The real welcome comes later.',
+        nextNodeId: 'dialogue-node:sample-choice',
+      },
+      {
+        id: 'dialogue-node:sample-choice',
+        type: 'choice',
+        speakerId: 'character:pip',
+        prompt: 'What sounds nicest in a magical valley?',
+        choices: [
+          {
+            id: 'explore',
+            label: 'Finding secrets!',
+            nextNodeId: 'dialogue-node:sample-goodbye',
+            effects: [{ type: 'set-flag', flagId: 'flag:dialogue-test-explorer', value: true }],
+          },
+          {
+            id: 'home',
+            label: 'Making a cosy home!',
+            nextNodeId: 'dialogue-node:sample-goodbye',
+            effects: [{ type: 'set-flag', flagId: 'flag:dialogue-test-homebody', value: true }],
+          },
+        ],
+      },
+      {
+        id: 'dialogue-node:sample-goodbye',
+        type: 'line',
+        speakerId: 'character:pip',
+        text: 'Good choice! The valley can remember choices like that. See you properly soon!',
+      },
+    ],
+  },
+] as const satisfies readonly DialogueDefinition[];
+
 export const QUESTS = [
   {
     id: 'quest:first-sparkle',
@@ -51,4 +95,5 @@ export const PLACEHOLDER_CONTENT: ContentBundle = {
   characters: CHARACTERS,
   quests: QUESTS,
   discoveries: DISCOVERIES,
+  dialogues: DIALOGUES,
 };
