@@ -94,8 +94,8 @@ export const MOONFLOWER_GLADE_MAP = {
   ] satisfies readonly GladeEntrance[],
   colliders: [
     { id: 'collision:cottage', x: 560, y: 470, width: 460, height: 360 },
-    { id: 'collision:stream-north', x: 1400, y: 399, width: 220, height: 798 },
-    { id: 'collision:stream-south', x: 1400, y: 1401, width: 220, height: 798 },
+    { id: 'collision:stream-north', x: 1400, y: 402.5, width: 220, height: 805 },
+    { id: 'collision:stream-south', x: 1400, y: 1387.5, width: 220, height: 825 },
     { id: 'collision:hollow-tree', x: 2200, y: 520, width: 170, height: 220 },
     { id: 'collision:display-stump', x: 850, y: 1120, width: 84, height: 72 },
     { id: 'collision:home-boulder', x: 1000, y: 360, width: 140, height: 110 },
