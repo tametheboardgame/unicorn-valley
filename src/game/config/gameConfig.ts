@@ -8,6 +8,7 @@ import { MoonflowerGladeScene } from '../scenes/MoonflowerGladeScene';
 import { MoonflowerPatchScene } from '../scenes/MoonflowerPatchScene';
 import { MovementTestScene } from '../scenes/MovementTestScene';
 import { PreloadScene } from '../scenes/PreloadScene';
+import { RaceScene } from '../scenes/RaceScene';
 import { RainbowMeadowScene } from '../scenes/RainbowMeadowScene';
 import { ResizeTestScene } from '../scenes/ResizeTestScene';
 import { SunbeamVillageScene } from '../scenes/SunbeamVillageScene';
@@ -49,6 +50,7 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
     MoonflowerPatchScene,
     SunbeamVillageScene,
     RainbowMeadowScene,
+    RaceScene,
     WillowStoryScene,
     DoorwayStubScene,
     DialogueTestScene,
