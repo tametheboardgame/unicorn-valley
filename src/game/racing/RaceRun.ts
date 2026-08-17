@@ -77,6 +77,7 @@ export function stepRaceRun(
   course: RaceCourseDefinition,
   deltaSeconds: number,
   jumpRequested: boolean,
+  baseForwardSpeedMultiplier = 1,
 ): RaceRunStepResult {
   if (state.movement.finished) {
     return { state, events: [] };
@@ -86,11 +87,15 @@ export function stepRaceRun(
   let slowdownRemaining = countdown(state.slowdownRemaining, frameSeconds);
   let stumbleRemaining = countdown(state.stumbleRemaining, frameSeconds);
   const boostAtStart = getBoostZoneAtProgress(course, state.movement.progress);
-  const forwardSpeedMultiplier = boostAtStart
+  const baseSpeedMultiplier = Number.isFinite(baseForwardSpeedMultiplier)
+    ? Math.max(0, baseForwardSpeedMultiplier)
+    : 1;
+  const effectSpeedMultiplier = boostAtStart
     ? boostAtStart.speedMultiplier
     : slowdownRemaining > 0
       ? RACE_SLOWDOWN_MULTIPLIER
       : 1;
+  const forwardSpeedMultiplier = baseSpeedMultiplier * effectSpeedMultiplier;
 
   const previousMovement = state.movement;
   const movement = stepRaceMovement(
