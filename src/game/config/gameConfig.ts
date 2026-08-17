@@ -7,6 +7,7 @@ import { MovementTestScene } from '../scenes/MovementTestScene';
 import { PreloadScene } from '../scenes/PreloadScene';
 import { ResizeTestScene } from '../scenes/ResizeTestScene';
 import { TitleScene } from '../scenes/TitleScene';
+import { UnicornCreatorScene } from '../scenes/UnicornCreatorScene';
 import { GAME_HEIGHT, GAME_WIDTH } from './gameConstants';
 
 export const gameConfig: Phaser.Types.Core.GameConfig = {
@@ -39,5 +40,6 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
     MoonflowerGladeScene,
     DoorwayStubScene,
     DialogueTestScene,
+    UnicornCreatorScene,
   ],
 };

@@ -3,6 +3,7 @@ import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { InputController } from '../input/InputController';
 import { KeyboardInputAdapter } from '../input/KeyboardInputAdapter';
 import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
+import { getBrowserSaveService } from '../save/browserSaveService';
 
 export class TitleScene extends Phaser.Scene {
   private inputController: InputController | null = null;
@@ -10,6 +11,7 @@ export class TitleScene extends Phaser.Scene {
   private statusText: Phaser.GameObjects.Text | null = null;
   private enterButton: Phaser.GameObjects.Rectangle | null = null;
   private starting = false;
+  private hasCreatedUnicorn = false;
 
   public constructor() {
     super('TitleScene');
@@ -17,6 +19,7 @@ export class TitleScene extends Phaser.Scene {
 
   public create(): void {
     this.starting = false;
+    this.hasCreatedUnicorn = Boolean(getBrowserSaveService().load()?.profile.name);
     this.cameras.main.setBackgroundColor('#6f4ba8');
 
     this.add.circle(170, 130, 115, 0xffd7f4, 0.18);
@@ -48,16 +51,16 @@ export class TitleScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     const button = this.add
-      .rectangle(GAME_WIDTH / 2, 475, 340, 82, 0xfff5ff, 0.96)
+      .rectangle(GAME_WIDTH / 2, 475, 390, 82, 0xfff5ff, 0.96)
       .setStrokeStyle(5, 0xe8bdf5, 1)
       .setInteractive({ useHandCursor: true });
     this.enterButton = button;
 
     this.add
-      .text(GAME_WIDTH / 2, 475, 'Enter the Valley', {
+      .text(GAME_WIDTH / 2, 475, this.hasCreatedUnicorn ? 'Continue' : 'Create Your Unicorn', {
         color: '#51366f',
         fontFamily: 'system-ui, sans-serif',
-        fontSize: '32px',
+        fontSize: '30px',
         fontStyle: 'bold',
       })
       .setOrigin(0.5);
@@ -70,12 +73,31 @@ export class TitleScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
 
+    if (this.hasCreatedUnicorn) {
+      const edit = this.add
+        .text(GAME_WIDTH / 2, 590, 'Change my unicorn', {
+          color: '#f3e8ff',
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '19px',
+        })
+        .setOrigin(0.5)
+        .setInteractive({ useHandCursor: true });
+      edit.on('pointerdown', () => this.scene.start('UnicornCreatorScene'));
+    }
+
     this.statusText = this.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT - 82, 'Moonflower Glade is ready to explore.', {
-        color: '#e9dcf8',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '21px',
-      })
+      .text(
+        GAME_WIDTH / 2,
+        GAME_HEIGHT - 70,
+        this.hasCreatedUnicorn
+          ? 'Your unicorn is waiting in Moonflower Glade.'
+          : 'First, make a unicorn that feels like yours.',
+        {
+          color: '#e9dcf8',
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '21px',
+        },
+      )
       .setOrigin(0.5);
 
     this.tweens.add({
@@ -118,11 +140,13 @@ export class TitleScene extends Phaser.Scene {
     }
 
     this.starting = true;
-    this.statusText?.setText('Off we go…');
+    this.statusText?.setText(
+      this.hasCreatedUnicorn ? 'Welcome back…' : 'Time to make your unicorn…',
+    );
     this.enterButton?.setStrokeStyle(7, 0xffe6a8, 1);
 
     this.time.delayedCall(140, () => {
-      this.scene.start('MoonflowerGladeScene');
+      this.scene.start(this.hasCreatedUnicorn ? 'MoonflowerGladeScene' : 'UnicornCreatorScene');
     });
   }
 }

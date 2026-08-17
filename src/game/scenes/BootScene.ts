@@ -4,6 +4,7 @@ const DIAGNOSTIC_SCENES: Record<string, string> = {
   'resize-test': 'ResizeTestScene',
   'movement-test': 'MovementTestScene',
   'dialogue-test': 'DialogueTestScene',
+  creator: 'UnicornCreatorScene',
   glade: 'MoonflowerGladeScene',
 };
 
