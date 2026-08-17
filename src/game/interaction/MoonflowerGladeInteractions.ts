@@ -2,6 +2,7 @@ import { MOONFLOWER_GLADE_MAP } from '../world/MoonflowerGladeMap';
 import type { InteractionTarget } from './InteractionTarget';
 
 type GladeLandmarkId = (typeof MOONFLOWER_GLADE_MAP.landmarks)[number]['id'];
+type GladeEntranceId = (typeof MOONFLOWER_GLADE_MAP.entrances)[number]['id'];
 
 function landmarkApproach(id: GladeLandmarkId): { x: number; y: number } {
   const landmark = MOONFLOWER_GLADE_MAP.landmarks.find((candidate) => candidate.id === id);
@@ -10,6 +11,15 @@ function landmarkApproach(id: GladeLandmarkId): { x: number; y: number } {
   }
 
   return landmark.approach;
+}
+
+function entranceApproach(id: GladeEntranceId): { x: number; y: number } {
+  const entrance = MOONFLOWER_GLADE_MAP.entrances.find((candidate) => candidate.id === id);
+  if (!entrance) {
+    throw new Error(`Moonflower Glade interaction references missing entrance: ${id}`);
+  }
+
+  return entrance.approach;
 }
 
 export const MOONFLOWER_GLADE_INTERACTIONS = [
@@ -55,6 +65,18 @@ export const MOONFLOWER_GLADE_INTERACTIONS = [
       payload: {
         returnScene: 'MoonflowerGladeScene',
       },
+    },
+  },
+  {
+    id: 'interaction:sunbeam-village-gate',
+    label: 'Sunbeam Village',
+    actionLabel: 'Visit village',
+    position: entranceApproach('sunbeam-village'),
+    interactionRadius: 180,
+    priority: 20,
+    result: {
+      type: 'scene-transition',
+      sceneKey: 'SunbeamVillageScene',
     },
   },
 ] satisfies readonly InteractionTarget[];

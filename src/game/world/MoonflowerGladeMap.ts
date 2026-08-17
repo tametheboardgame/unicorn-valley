@@ -15,11 +15,23 @@ export interface GladeEntrance {
   direction: 'east' | 'south';
 }
 
+const DEFAULT_PLAYER_SPAWN = { x: 690, y: 900 } as const;
+const playerSpawn: MapPoint = { ...DEFAULT_PLAYER_SPAWN };
+
+export function setMoonflowerGladePlayerSpawn(point: MapPoint): void {
+  playerSpawn.x = point.x;
+  playerSpawn.y = point.y;
+}
+
+export function resetMoonflowerGladePlayerSpawn(): void {
+  setMoonflowerGladePlayerSpawn(DEFAULT_PLAYER_SPAWN);
+}
+
 export const MOONFLOWER_GLADE_MAP = {
   width: 2800,
   height: 1800,
   margin: 90,
-  playerSpawn: { x: 690, y: 900 },
+  playerSpawn,
   bridge: {
     x: 1400,
     y: 900,
