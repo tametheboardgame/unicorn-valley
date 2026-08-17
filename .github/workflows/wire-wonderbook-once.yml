@@ -1,0 +1,120 @@
+name: Wire Wonderbook Once
+
+on:
+  push:
+    branches:
+      - agent/r1-wp1.7-wonderbook-shell
+
+permissions:
+  contents: write
+
+jobs:
+  wire:
+    if: ${{ !contains(github.event.head_commit.message, '[wired-wonderbook]') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@v6
+        with:
+          ref: agent/r1-wp1.7-wonderbook-shell
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22.23.2
+          package-manager-cache: false
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Wire Wonderbook into Moonflower Glade
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('src/game/scenes/MoonflowerGladeScene.ts')
+          text = path.read_text()
+
+          old = "import { GAME_WIDTH } from '../config/gameConstants';"
+          new = "import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';"
+          assert old in text
+          text = text.replace(old, new, 1)
+
+          old = """    if (this.dialogueSession) {
+              this.updateDialogue(time);
+              return;
+            }
+
+            if (this.inputController.justPressed('BACK')) {"""
+          new = """    if (this.dialogueSession) {
+              this.updateDialogue(time);
+              return;
+            }
+
+            if (this.inputController.justPressed('OPEN_WONDERBOOK')) {
+              this.openWonderbook();
+              return;
+            }
+
+            if (this.inputController.justPressed('BACK')) {"""
+          assert old in text
+          text = text.replace(old, new, 1)
+
+          old = "  private createEnvironment(): void {"
+          new = """  private openWonderbook(): void {
+            this.interactionPrompt?.setTarget(null);
+            this.scene.launch('WonderbookScene', { returnScene: 'MoonflowerGladeScene' });
+            this.scene.pause();
+          }
+
+          private createEnvironment(): void {"""
+          assert old in text
+          text = text.replace(old, new, 1)
+
+          old = "    this.feedbackText = this.add"
+          new = """    const wonderbookButton = this.add
+              .rectangle(GAME_WIDTH - 116, GAME_HEIGHT - 60, 190, 62, 0xf6ddf0, 0.96)
+              .setStrokeStyle(5, 0xb981c5, 1)
+              .setScrollFactor(0)
+              .setDepth(118)
+              .setInteractive({ useHandCursor: true });
+            this.add
+              .text(GAME_WIDTH - 116, GAME_HEIGHT - 60, 'Wonderbook  B', {
+                color: '#5b3f68',
+                fontFamily: 'system-ui, sans-serif',
+                fontSize: '18px',
+                fontStyle: 'bold',
+              })
+              .setOrigin(0.5)
+              .setScrollFactor(0)
+              .setDepth(119);
+
+            wonderbookButton.on('pointerdown', () =>
+              this.pointerInput?.setButton('OPEN_WONDERBOOK', true),
+            );
+            wonderbookButton.on('pointerup', () =>
+              this.pointerInput?.setButton('OPEN_WONDERBOOK', false),
+            );
+            wonderbookButton.on('pointerout', () =>
+              this.pointerInput?.setButton('OPEN_WONDERBOOK', false),
+            );
+
+            this.feedbackText = this.add"""
+          assert old in text
+          text = text.replace(old, new, 1)
+
+          path.write_text(text)
+          PY
+
+      - name: Format patched source
+        run: npx biome format --write src/game/scenes/MoonflowerGladeScene.ts src/game/scenes/WonderbookScene.ts src/game/wonderbook/WonderbookModel.ts src/game/wonderbook/WonderbookModel.test.ts
+
+      - name: Commit integration
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Wire Wonderbook into Glade [wired-wonderbook]"
+          git push
