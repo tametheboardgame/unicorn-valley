@@ -39,6 +39,36 @@ describe('SaveService', () => {
     expect(reloadedSave).toEqual(storedSave);
   });
 
+  it('persists creator profile identity and appearance across a fresh service instance', () => {
+    const repository = new MemorySaveRepository();
+    const service = new SaveService(repository);
+    const newSave = service.createNewGame();
+    const appearance = {
+      bodyColour: 'mint',
+      eyeColour: 'amber',
+      maneStyle: 'fluffy',
+      maneColour: 'rose',
+      tailStyle: 'curl',
+      tailColour: 'aqua',
+      hornStyle: 'star',
+      marking: 'heart',
+      accessory: 'bell',
+    };
+
+    service.save({
+      ...newSave,
+      profile: {
+        ...newSave.profile,
+        name: 'Moonbeam',
+        appearance,
+      },
+    });
+
+    const reloadedSave = new SaveService(repository).load();
+    expect(reloadedSave?.profile.name).toBe('Moonbeam');
+    expect(reloadedSave?.profile.appearance).toEqual(appearance);
+  });
+
   it('returns null when no save exists', () => {
     const service = new SaveService(new MemorySaveRepository());
     expect(service.load()).toBeNull();
