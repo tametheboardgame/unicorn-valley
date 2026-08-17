@@ -1,3 +1,4 @@
+import type { DialogueId } from '../../content/contentTypes';
 import type { MapPoint } from '../world/MapTraversal';
 
 export type InteractionResult =
@@ -10,6 +11,10 @@ export type InteractionResult =
       type: 'scene-transition';
       sceneKey: string;
       payload?: Record<string, unknown>;
+    }
+  | {
+      type: 'dialogue';
+      dialogueId: DialogueId;
     };
 
 export interface InteractionTarget {

@@ -6,11 +6,11 @@ The player creates her own unicorn, lives at Moonflower Cottage, explores a magi
 
 ## Project status
 
-**R1-WP1.5 - Unicorn Creator V1 implemented and validated.**
+**R1-WP1.6 - Pip Intro and First Discovery implemented and validated.**
 
 R0 is complete and deployed to `https://unicorn-valley.pages.dev/`.
 
-The next implementation package is **R1-WP1.6 - Pip Intro and First Discovery**.
+The next implementation package is **R1-WP1.7 - Wonderbook Shell**.
 
 ## Core principles
 
@@ -49,6 +49,7 @@ The next implementation package is **R1-WP1.6 - Pip Intro and First Discovery**.
 - [Interaction Framework](docs/12-INTERACTION-FRAMEWORK.md)
 - [Dialogue Framework](docs/13-DIALOGUE-FRAMEWORK.md)
 - [Unicorn Creator V1](docs/14-UNICORN-CREATOR-V1.md)
+- [Pip Intro and First Discovery](docs/15-PIP-FIRST-DISCOVERY.md)
 
 ## Release plan
 

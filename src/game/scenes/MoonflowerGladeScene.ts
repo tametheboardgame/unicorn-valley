@@ -1,5 +1,18 @@
 import Phaser from 'phaser';
+import type { DialogueChoice, DialogueEffect, DialogueId } from '../../content/contentTypes';
+import { characterRegistry, dialogueRegistry } from '../../content/registries';
 import { GAME_WIDTH } from '../config/gameConstants';
+import { DialogueCard } from '../dialogue/DialogueCard';
+import { DialogueSession } from '../dialogue/DialogueSession';
+import { DiscoveryService } from '../discovery/DiscoveryService';
+import {
+  createPipInteraction,
+  FIRST_DISCOVERY_FLAG,
+  FIRST_DISCOVERY_ID,
+  FIRST_SPARKLE_COLLECTION_RADIUS,
+  FIRST_SPARKLE_POSITION,
+  PIP_POSITION,
+} from '../intro/PipIntro';
 import type { InteractionTarget } from '../interaction/InteractionTarget';
 import { selectInteractionTarget } from '../interaction/InteractionTargeting';
 import { MOONFLOWER_GLADE_INTERACTIONS } from '../interaction/MoonflowerGladeInteractions';
@@ -7,15 +20,15 @@ import { InputController } from '../input/InputController';
 import { KeyboardInputAdapter } from '../input/KeyboardInputAdapter';
 import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 import { PlayerEntity } from '../player/PlayerEntity';
+import { parseUnicornAppearance } from '../player/UnicornAppearance';
+import { createUnicornAppearanceTexture } from '../player/UnicornAppearanceRenderer';
 import { DEFAULT_PLAYER_SPEED, resolvePlayerMovement } from '../player/PlayerMovement';
-import {
-  ensurePlayerPlaceholderTexture,
-  PLAYER_PLACEHOLDER_TEXTURE_KEY,
-} from '../player/PlayerPlaceholderTexture';
+import { getBrowserSaveService } from '../save/browserSaveService';
 import { InteractionPrompt } from '../ui/InteractionPrompt';
 import { MOONFLOWER_GLADE_MAP } from '../world/MoonflowerGladeMap';
 
 const COLLISION_TEXTURE_KEY = 'glade-collision-pixel';
+const SAVED_PLAYER_TEXTURE_KEY = 'player-unicorn-saved';
 
 export class MoonflowerGladeScene extends Phaser.Scene {
   private inputController: InputController | null = null;
@@ -26,6 +39,12 @@ export class MoonflowerGladeScene extends Phaser.Scene {
   private activeInteraction: InteractionTarget | null = null;
   private feedbackText: Phaser.GameObjects.Text | null = null;
   private feedbackTimer: Phaser.Time.TimerEvent | null = null;
+  private guideText: Phaser.GameObjects.Text | null = null;
+  private discoveryService: DiscoveryService | null = null;
+  private hasFirstDiscovery = false;
+  private sparkleContainer: Phaser.GameObjects.Container | null = null;
+  private dialogueCard: DialogueCard | null = null;
+  private dialogueSession: DialogueSession | null = null;
 
   public constructor() {
     super('MoonflowerGladeScene');
@@ -33,8 +52,15 @@ export class MoonflowerGladeScene extends Phaser.Scene {
 
   public create(): void {
     this.createEnvironment();
-    ensurePlayerPlaceholderTexture(this);
     this.ensureCollisionTexture();
+
+    const saveService = getBrowserSaveService();
+    const save = saveService.load() ?? saveService.createNewGame();
+    this.discoveryService = new DiscoveryService(saveService);
+    this.hasFirstDiscovery = this.discoveryService.hasDiscovery(FIRST_DISCOVERY_ID);
+
+    const appearance = parseUnicornAppearance(save.profile.appearance);
+    createUnicornAppearanceTexture(this, SAVED_PLAYER_TEXTURE_KEY, appearance);
 
     const map = MOONFLOWER_GLADE_MAP;
     this.physics.world.setBounds(
@@ -49,13 +75,20 @@ export class MoonflowerGladeScene extends Phaser.Scene {
       this,
       map.playerSpawn.x,
       map.playerSpawn.y,
-      PLAYER_PLACEHOLDER_TEXTURE_KEY,
+      SAVED_PLAYER_TEXTURE_KEY,
     );
+    this.player.sprite.setDisplaySize(112, 92);
     this.physics.add.collider(this.player.sprite, this.collisionGroup);
 
     this.pointerInput = new PointerTouchInputAdapter();
     this.inputController = new InputController([new KeyboardInputAdapter(this), this.pointerInput]);
     this.interactionPrompt = new InteractionPrompt(this, this.pointerInput);
+    this.dialogueCard = new DialogueCard(this, this.pointerInput);
+
+    this.createPip();
+    if (!this.hasFirstDiscovery) {
+      this.createFirstSparkle();
+    }
 
     const camera = this.cameras.main;
     camera.setBackgroundColor('#a8ddba');
@@ -73,12 +106,19 @@ export class MoonflowerGladeScene extends Phaser.Scene {
       this.pointerInput = null;
       this.interactionPrompt?.destroy();
       this.interactionPrompt = null;
+      this.dialogueCard?.destroy();
+      this.dialogueCard = null;
+      this.dialogueSession = null;
+      this.sparkleContainer?.destroy(true);
+      this.sparkleContainer = null;
+      this.discoveryService = null;
       this.player?.destroy();
       this.player = null;
       this.collisionGroup?.clear(true, true);
       this.collisionGroup = null;
       this.activeInteraction = null;
       this.feedbackText = null;
+      this.guideText = null;
     });
   }
 
@@ -88,6 +128,11 @@ export class MoonflowerGladeScene extends Phaser.Scene {
     }
 
     this.inputController.update();
+
+    if (this.dialogueSession) {
+      this.updateDialogue(time);
+      return;
+    }
 
     if (this.inputController.justPressed('BACK')) {
       this.scene.start('TitleScene');
@@ -103,15 +148,56 @@ export class MoonflowerGladeScene extends Phaser.Scene {
 
     this.player.applyMovement(movement);
     this.player.updatePresentation(time);
+    this.tryCollectFirstSparkle();
 
+    const targets = [
+      ...MOONFLOWER_GLADE_INTERACTIONS,
+      createPipInteraction(this.hasFirstDiscovery),
+    ];
     this.activeInteraction = selectInteractionTarget(
       { x: this.player.sprite.x, y: this.player.sprite.y },
-      MOONFLOWER_GLADE_INTERACTIONS,
+      targets,
     );
     this.interactionPrompt?.setTarget(this.activeInteraction);
 
     if (this.inputController.justPressed('INTERACT') && this.activeInteraction) {
       this.activateInteraction(this.activeInteraction);
+    }
+  }
+
+  private updateDialogue(time: number): void {
+    if (!this.inputController || !this.player || !this.dialogueSession) {
+      return;
+    }
+
+    this.interactionPrompt?.setTarget(null);
+    this.player.applyMovement({
+      velocityX: 0,
+      velocityY: 0,
+      facing: this.player.getFacing(),
+      motionState: 'idle',
+    });
+    this.player.updatePresentation(time);
+
+    if (this.inputController.justPressed('BACK')) {
+      this.closeDialogue();
+      return;
+    }
+
+    if (!this.inputController.justPressed('INTERACT')) {
+      return;
+    }
+
+    const node = this.dialogueSession.getCurrentNode();
+    if (node?.type === 'line') {
+      this.dialogueSession.advanceLine();
+      this.refreshDialogue();
+      return;
+    }
+
+    const defaultChoice = this.dialogueSession.getDefaultChoice();
+    if (defaultChoice) {
+      this.selectDialogueChoice(defaultChoice);
     }
   }
 
@@ -121,8 +207,146 @@ export class MoonflowerGladeScene extends Phaser.Scene {
       return;
     }
 
+    if (target.result.type === 'dialogue') {
+      this.startDialogue(target.result.dialogueId);
+      return;
+    }
+
+    this.showFeedback(`${target.result.title}\n${target.result.message}`);
+  }
+
+  private startDialogue(dialogueId: DialogueId): void {
+    this.dialogueSession = new DialogueSession(dialogueRegistry.get(dialogueId));
+    this.refreshDialogue();
+  }
+
+  private refreshDialogue(): void {
+    if (!this.dialogueSession || this.dialogueSession.isComplete()) {
+      this.closeDialogue();
+      return;
+    }
+
+    const node = this.dialogueSession.getCurrentNode();
+    if (!node) {
+      this.closeDialogue();
+      return;
+    }
+
+    const speaker = characterRegistry.get(node.speakerId);
+    this.dialogueCard?.show(node, speaker.name, (choice) => this.selectDialogueChoice(choice));
+  }
+
+  private selectDialogueChoice(choice: DialogueChoice): void {
+    if (!this.dialogueSession) {
+      return;
+    }
+
+    const effects = this.dialogueSession.choose(choice.id);
+    this.applyDialogueEffects(effects);
+    this.refreshDialogue();
+  }
+
+  private applyDialogueEffects(effects: readonly DialogueEffect[]): void {
+    for (const effect of effects) {
+      if (effect.type === 'set-flag') {
+        this.registry.set(effect.flagId, effect.value);
+      }
+    }
+  }
+
+  private closeDialogue(): void {
+    this.dialogueSession?.close();
+    this.dialogueSession = null;
+    this.dialogueCard?.hide();
+  }
+
+  private tryCollectFirstSparkle(): void {
+    if (this.hasFirstDiscovery || !this.player || !this.sparkleContainer) {
+      return;
+    }
+
+    const distance = Phaser.Math.Distance.Between(
+      this.player.sprite.x,
+      this.player.sprite.y,
+      FIRST_SPARKLE_POSITION.x,
+      FIRST_SPARKLE_POSITION.y,
+    );
+    if (distance > FIRST_SPARKLE_COLLECTION_RADIUS) {
+      return;
+    }
+
+    this.discoveryService?.unlockDiscovery(FIRST_DISCOVERY_ID, FIRST_DISCOVERY_FLAG);
+    this.hasFirstDiscovery = true;
+    this.sparkleContainer.destroy(true);
+    this.sparkleContainer = null;
+    this.cameras.main.flash(180, 255, 239, 177, false);
+    this.showFeedback('New discovery!\nMoonflower Sparkle ✨');
+    this.guideText?.setText('Pip noticed! Go and tell your new friend what you found.');
+  }
+
+  private createPip(): void {
+    const body = this.add.circle(PIP_POSITION.x, PIP_POSITION.y, 38, 0xf3a4c8, 1).setDepth(17);
+    const belly = this.add.ellipse(PIP_POSITION.x, PIP_POSITION.y + 12, 48, 38, 0xffd7e8, 0.95);
+    belly.setDepth(18);
+    this.add
+      .triangle(PIP_POSITION.x - 19, PIP_POSITION.y - 42, 0, 30, 15, 0, 28, 32, 0xe683b2, 1)
+      .setDepth(16);
+    this.add
+      .triangle(PIP_POSITION.x + 18, PIP_POSITION.y - 42, 0, 32, 14, 0, 29, 30, 0xe683b2, 1)
+      .setDepth(16);
+    this.add.circle(PIP_POSITION.x - 13, PIP_POSITION.y - 7, 4, 0x563b66, 1).setDepth(19);
+    this.add.circle(PIP_POSITION.x + 13, PIP_POSITION.y - 7, 4, 0x563b66, 1).setDepth(19);
+    this.add
+      .text(PIP_POSITION.x, PIP_POSITION.y + 64, 'Pip', {
+        color: '#543965',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '18px',
+        fontStyle: 'bold',
+        backgroundColor: '#fff9eddd',
+        padding: { x: 8, y: 4 },
+      })
+      .setOrigin(0.5)
+      .setDepth(19);
+
+    this.tweens.add({
+      targets: [body, belly],
+      y: '-=5',
+      duration: 900,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.InOut',
+    });
+  }
+
+  private createFirstSparkle(): void {
+    const glow = this.add.circle(0, 0, 34, 0xfff4a8, 0.2);
+    const ring = this.add.circle(0, 0, 18, 0xfff8c7, 0.42).setStrokeStyle(3, 0xffffff, 0.85);
+    const star = this.add
+      .text(0, 0, '✦', {
+        color: '#fff9cf',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '34px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5);
+
+    this.sparkleContainer = this.add
+      .container(FIRST_SPARKLE_POSITION.x, FIRST_SPARKLE_POSITION.y, [glow, ring, star])
+      .setDepth(18);
+    this.tweens.add({
+      targets: this.sparkleContainer,
+      scale: 1.2,
+      angle: 8,
+      duration: 720,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.InOut',
+    });
+  }
+
+  private showFeedback(message: string): void {
     this.feedbackTimer?.destroy();
-    this.feedbackText?.setText(`${target.result.title}\n${target.result.message}`).setVisible(true);
+    this.feedbackText?.setText(message).setVisible(true);
     this.feedbackTimer = this.time.delayedCall(3600, () => {
       this.feedbackText?.setVisible(false);
       this.feedbackTimer = null;
@@ -465,6 +689,24 @@ export class MoonflowerGladeScene extends Phaser.Scene {
           fontSize: '17px',
           backgroundColor: '#fff9e8c8',
           padding: { x: 11, y: 7 },
+        },
+      )
+      .setScrollFactor(0)
+      .setDepth(100);
+
+    this.guideText = this.add
+      .text(
+        28,
+        128,
+        this.hasFirstDiscovery
+          ? 'Your Moonflower Sparkle is safely remembered. Pip would love to see you.'
+          : 'Pip is nearby. Explore whenever you are ready.',
+        {
+          color: '#5b4568',
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '16px',
+          backgroundColor: '#fff9e8b8',
+          padding: { x: 10, y: 6 },
         },
       )
       .setScrollFactor(0)
