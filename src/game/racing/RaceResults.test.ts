@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'vitest';
+import { HomeDecorationService } from '../home/HomeDecorationService';
+import type { SaveRepository } from '../save/SaveRepository';
+import { SaveService } from '../save/SaveService';
 import { createDefaultSave } from '../save/createDefaultSave';
 import {
   RAINBOW_RUN_FINISHER_RIBBON_ID,
@@ -11,6 +14,22 @@ import {
 } from './RaceResults';
 
 const RACE_ID = 'race-course:rainbow-run-practice';
+
+class MemorySaveRepository implements SaveRepository {
+  public value: string | null = null;
+
+  public read(): string | null {
+    return this.value;
+  }
+
+  public write(serialisedSave: string): void {
+    this.value = serialisedSave;
+  }
+
+  public remove(): void {
+    this.value = null;
+  }
+}
 
 function apply(place: number, finishTimeMs: number, save = createDefaultSave()) {
   return applyRaceResultToSave(save, {
@@ -83,6 +102,25 @@ describe('Rainbow Run race results', () => {
     expect(faster.summary.previousBestTimeMs).toBe(12_000);
     expect(faster.summary.bestTimeMs).toBe(11_250);
     expect(faster.save.activities.racesById[RACE_ID].bestTimeMs).toBe(11_250);
+  });
+
+  it('survives reload and exposes its ribbon through the existing cottage decoration system', () => {
+    const repository = new MemorySaveRepository();
+    const saveService = new SaveService(repository);
+    const result = apply(4, 12_400, saveService.createNewGame());
+    saveService.save(result.save);
+
+    const reloadedService = new SaveService(repository);
+    const reloaded = reloadedService.load();
+    const decorations = new HomeDecorationService(reloadedService).listOwnedDecorations();
+
+    expect(reloaded?.activities.racesById[RACE_ID]).toEqual({
+      bestTimeMs: 12_400,
+      ribbonIds: [RAINBOW_RUN_FINISHER_RIBBON_ID],
+    });
+    expect(decorations.map(({ definition }) => definition.id)).toContain(
+      RAINBOW_RUN_FINISHER_RIBBON_ITEM_ID,
+    );
   });
 
   it('rejects impossible result data instead of corrupting the save', () => {
