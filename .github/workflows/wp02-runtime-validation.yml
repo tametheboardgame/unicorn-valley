@@ -70,7 +70,7 @@ jobs:
           });
 
           const response = await page.goto('http://127.0.0.1:5173/', {
-            waitUntil: 'networkidle0',
+            waitUntil: 'domcontentloaded',
             timeout: 30000,
           });
 
