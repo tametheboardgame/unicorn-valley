@@ -99,15 +99,13 @@ const MEADOW_INTERACTIONS = [
   {
     id: 'interaction:meadow-race-entrance',
     label: 'Rainbow Run',
-    actionLabel: 'Check the course',
+    actionLabel: 'Start practice run',
     position: hubApproach('rainbow-run-entrance'),
     interactionRadius: 175,
     priority: 25,
     result: {
-      type: 'message',
-      title: 'Rainbow Run',
-      message:
-        'The starting arch is ready, but the course beyond it is still being marked out. Nova says the first proper run will begin soon.',
+      type: 'scene-transition',
+      sceneKey: 'RaceScene',
     },
   },
 ] satisfies readonly InteractionTarget[];
