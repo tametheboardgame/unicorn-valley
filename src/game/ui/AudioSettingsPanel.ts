@@ -105,12 +105,17 @@ export class AudioSettingsPanel {
     });
 
     const hint = scene.add
-      .text(PANEL_X, PANEL_Y + PANEL_HEIGHT / 2 - 18, 'Everything important is also shown on screen.', {
-        color: UI_COLOURS.softInk,
-        fontFamily: UI_FONT,
-        fontSize: '12px',
-        align: 'center',
-      })
+      .text(
+        PANEL_X,
+        PANEL_Y + PANEL_HEIGHT / 2 - 18,
+        'Everything important is also shown on screen.',
+        {
+          color: UI_COLOURS.softInk,
+          fontFamily: UI_FONT,
+          fontSize: '12px',
+          align: 'center',
+        },
+      )
       .setOrigin(0.5)
       .setScrollFactor(0)
       .setDepth(134);
