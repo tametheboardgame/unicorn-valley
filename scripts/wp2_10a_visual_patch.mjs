@@ -33,3 +33,4 @@ await replaceInFile('src/game/scenes/CottageInteriorScene.ts', [
 ]);
 
 console.log('Applied R2-WP2.10A visual patch.');
+// Triggered after workflow creation.
