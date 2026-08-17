@@ -1,7 +1,4 @@
-import {
-  WILLOW_GARDEN_PLANTED_FLAG,
-  WILLOW_MOONFLOWERS_QUEST_ID,
-} from '../../content/r2Quests';
+import { WILLOW_GARDEN_PLANTED_FLAG, WILLOW_MOONFLOWERS_QUEST_ID } from '../../content/r2Quests';
 import { getQuestStepId } from '../quests/QuestEngine';
 import type { QuestProgress, SaveGame } from '../save/saveSchema';
 

@@ -17,10 +17,7 @@ import {
   WILLOW_MOONFLOWER_REQUIRED_QUANTITY,
   getWillowStoryPhase,
 } from '../story/WillowMoonflowersStory';
-import {
-  MOONFLOWER_GLADE_MAP,
-  setMoonflowerGladePlayerSpawn,
-} from '../world/MoonflowerGladeMap';
+import { MOONFLOWER_GLADE_MAP, setMoonflowerGladePlayerSpawn } from '../world/MoonflowerGladeMap';
 
 const SAVED_PLAYER_TEXTURE_KEY = 'player-unicorn-moonflower-patch';
 const COLLECTION_RADIUS = 82;
@@ -189,7 +186,9 @@ export class MoonflowerPatchScene extends Phaser.Scene {
           fontSize: '50px',
         })
         .setOrigin(0.5);
-      const container = this.add.container(position.x, position.y, [glow, stem, bloom]).setDepth(12);
+      const container = this.add
+        .container(position.x, position.y, [glow, stem, bloom])
+        .setDepth(12);
       this.tweens.add({
         targets: container,
         y: position.y - 7,

@@ -32,13 +32,7 @@ export const MOONFLOWER_GLADE_INTERACTIONS = [
     priority: 10,
     result: {
       type: 'scene-transition',
-      sceneKey: 'DoorwayStubScene',
-      payload: {
-        title: 'Moonflower Cottage',
-        message:
-          'Your cottage interior will become a real place later. For now, the doorway works!',
-        returnScene: 'MoonflowerGladeScene',
-      },
+      sceneKey: 'CottageInteriorScene',
     },
   },
   {
