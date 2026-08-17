@@ -96,7 +96,9 @@ function validId<T extends readonly { id: string }[]>(
   return choices.some((choice) => choice.id === value) ? (value as T[number]['id']) : fallback;
 }
 
-export function parseUnicornAppearance(values: Readonly<Record<string, string>>): UnicornAppearance {
+export function parseUnicornAppearance(
+  values: Readonly<Record<string, string>>,
+): UnicornAppearance {
   return {
     bodyColour: validId(BODY_COLOURS, values.bodyColour, DEFAULT_UNICORN_APPEARANCE.bodyColour),
     eyeColour: validId(EYE_COLOURS, values.eyeColour, DEFAULT_UNICORN_APPEARANCE.eyeColour),
@@ -138,9 +140,6 @@ export function randomiseUnicornAppearance(random: () => number = Math.random): 
   };
 }
 
-export function colourValue(
-  choices: readonly { id: string; value: number }[],
-  id: string,
-): number {
+export function colourValue(choices: readonly { id: string; value: number }[], id: string): number {
   return choices.find((choice) => choice.id === id)?.value ?? choices[0].value;
 }
