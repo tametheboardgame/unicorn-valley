@@ -6,11 +6,11 @@ The player creates her own unicorn, lives at Moonflower Cottage, explores a magi
 
 ## Project status
 
-**R3-WP3.3 - Race Obstacles, Boosts and Collectables complete.**
+**R3-WP3.4 - NPC Racers and Position Tracking complete.**
 
-R0, R1 and R2 are complete. R3 is now underway: Rainbow Run has a dedicated practice race with automatic movement and jumping, plus data-driven obstacles, forgiving slowdown/stumble responses, readable boost strips and optional race sparkles that can be collected without ever blocking the finish.
+R0, R1 and R2 are complete. R3 is now underway: Rainbow Run has a dedicated four-racer practice race with automatic movement and jumping, data-driven obstacles, forgiving slowdown/stumble responses, readable boost strips, optional race sparkles, deterministic NPC competition, live position tracking and finish order.
 
-The next package is **R3-WP3.4 - NPC Racers and Position Tracking**.
+The next package is **R3-WP3.5 - Race Results and Rewards**.
 
 The production branch is deployed to `https://unicorn-valley.pages.dev/`.
 
@@ -69,13 +69,14 @@ The production branch is deployed to `https://unicorn-valley.pages.dev/`.
 - [R3 Rainbow Meadow and Race Hub](docs/30-R3-RAINBOW-MEADOW-RACE-HUB.md)
 - [R3 Race Movement Prototype](docs/31-R3-RACE-MOVEMENT-PROTOTYPE.md)
 - [R3 Race Obstacles, Boosts and Collectables](docs/32-R3-RACE-OBSTACLES-BOOSTS-COLLECTABLES.md)
+- [R3 NPC Racers and Position Tracking](docs/33-R3-NPC-RACERS-POSITION-TRACKING.md)
 
 ## Release plan
 
 - **R0 - Foundation and Pre-production**: complete.
 - **R1 - My Unicorn: First Playable**: complete.
 - **R2 - Living Valley Vertical Slice**: complete, including Sunbeam Village, quests, friendship, inventory, cottage decorating, visible persistent world change, pre-playtest polish, daughter playtesting and the resulting UX/visual recovery passes.
-- **R3 - Rainbow Run Racing**: in progress; the Meadow hub, core race movement and the first data-driven obstacle/boost/collectable course are complete, with NPC racers and position tracking next.
+- **R3 - Rainbow Run Racing**: in progress; the Meadow hub, core race movement, obstacle/boost/collectable course, NPC competition, live position tracking and finish order are complete, with persistent race results and rewards next.
 - **R4 - Friendship, Secrets and Home Depth**: multi-session stories, shops, deeper decorating and stronger world memory.
 - **R5 - The Valley Gets Bigger**: Crystal Brook, Whispering Woods, more discoveries and a second major activity type.
 - **R6 - Production Presentation and Accessibility**: final-quality art/audio direction, touch refinement, performance and save hardening.
