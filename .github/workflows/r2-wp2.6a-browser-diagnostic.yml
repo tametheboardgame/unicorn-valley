@@ -163,7 +163,7 @@ jobs:
             return game?.scene.getScene('MoonflowerGladeScene')?.activeInteraction?.id ?? null;
           });
           console.log('GLADE_TARGET=' + gladeTarget);
-          if (gladeTarget !== 'interaction:cottage') {
+          if (gladeTarget !== 'interaction:moonflower-cottage-door') {
             throw new Error(`Expected cottage interaction target, got ${gladeTarget}.`);
           }
 
