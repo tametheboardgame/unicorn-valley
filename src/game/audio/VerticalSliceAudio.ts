@@ -66,7 +66,9 @@ export class VerticalSliceAudio {
   private currentSceneKey: string | null = null;
   private currentProfile: AudioSceneProfile | null = null;
 
-  public constructor(private readonly settingsStore: AudioSettingsStore = getBrowserAudioSettingsStore()) {
+  public constructor(
+    private readonly settingsStore: AudioSettingsStore = getBrowserAudioSettingsStore(),
+  ) {
     this.settings = settingsStore.load();
   }
 
@@ -175,12 +177,22 @@ export class VerticalSliceAudio {
   }
 
   private applyGainSettings(): void {
-    if (!this.context || !this.masterGain || !this.musicGain || !this.ambienceGain || !this.sfxGain) {
+    if (
+      !this.context ||
+      !this.masterGain ||
+      !this.musicGain ||
+      !this.ambienceGain ||
+      !this.sfxGain
+    ) {
       return;
     }
 
     const now = this.context.currentTime;
-    this.masterGain.gain.setTargetAtTime(this.settings.muted ? 0 : this.settings.masterVolume, now, 0.03);
+    this.masterGain.gain.setTargetAtTime(
+      this.settings.muted ? 0 : this.settings.masterVolume,
+      now,
+      0.03,
+    );
     this.musicGain.gain.setTargetAtTime(this.settings.musicEnabled ? 0.16 : 0, now, 0.04);
     this.ambienceGain.gain.setTargetAtTime(this.settings.ambienceEnabled ? 0.09 : 0, now, 0.04);
     this.sfxGain.gain.setTargetAtTime(this.settings.sfxEnabled ? 0.7 : 0, now, 0.02);
@@ -271,7 +283,12 @@ export class VerticalSliceAudio {
   }
 
   private playAmbienceDetail(definition: SceneAudioDefinition): void {
-    if (!this.ambienceGain || !this.context || !this.settings.ambienceEnabled || this.settings.muted) {
+    if (
+      !this.ambienceGain ||
+      !this.context ||
+      !this.settings.ambienceEnabled ||
+      this.settings.muted
+    ) {
       return;
     }
 
