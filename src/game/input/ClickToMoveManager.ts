@@ -82,7 +82,7 @@ export class ClickToMoveManager {
 
       const body = player.body as Phaser.Physics.Arcade.Body;
       if (Math.hypot(body.velocity.x, body.velocity.y) > 1) {
-        this.cancel(state, false);
+        this.cancel(state);
         continue;
       }
 
