@@ -28,6 +28,10 @@ interface TextChoice {
 }
 
 const RANDOM_NAMES = ['Starlight', 'Moonbeam', 'Twinkle', 'Blossom', 'Sparkle', 'Nova'];
+const NAME_INPUT_X = 982;
+const NAME_INPUT_Y = 196;
+const NAME_INPUT_WIDTH = 390;
+const NAME_INPUT_HEIGHT = 48;
 
 export class UnicornCreatorScene extends Phaser.Scene {
   private save: SaveGame | null = null;
@@ -55,7 +59,7 @@ export class UnicornCreatorScene extends Phaser.Scene {
     this.add.circle(1030, 120, 120, 0xcfefff, 0.06);
 
     this.add
-      .text(52, 38, 'Make Your Unicorn', {
+      .text(52, 34, 'Make Your Unicorn', {
         color: '#fff8ff',
         fontFamily: UI_FONT,
         fontSize: '43px',
@@ -64,24 +68,24 @@ export class UnicornCreatorScene extends Phaser.Scene {
       .setDepth(20);
 
     this.add
-      .text(52, 94, 'Everything here is just for fun. You can change it again later.', {
+      .text(52, 88, 'Pick anything you like. You can change it again later.', {
         color: '#efe6fa',
         fontFamily: UI_FONT,
         fontSize: '19px',
       })
       .setDepth(20);
 
-    createUiShadow(this, 325, 390, 500, 500, 1, 0.22);
+    createUiShadow(this, 325, 390, 500, 520, 1, 0.22);
     this.add
-      .rectangle(325, 390, 500, 500, UI_COLOURS.cream, 0.96)
+      .rectangle(325, 390, 500, 520, UI_COLOURS.cream, 0.98)
       .setStrokeStyle(6, UI_COLOURS.lavenderStrong, 1)
       .setDepth(2);
     this.add
-      .rectangle(325, 182, 260, 50, UI_COLOURS.lavender, 0.96)
+      .rectangle(325, 158, 260, 50, UI_COLOURS.lavender, 1)
       .setStrokeStyle(3, UI_COLOURS.lavenderStrong, 0.9)
       .setDepth(4);
     this.add
-      .text(325, 182, 'This is you ✨', {
+      .text(325, 158, 'This is you ✨', {
         color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
         fontSize: '26px',
@@ -90,32 +94,46 @@ export class UnicornCreatorScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setDepth(5);
 
-    createUiShadow(this, 940, 392, 600, 558, 1, 0.16);
+    createUiShadow(this, 940, 390, 610, 530, 1, 0.22);
     this.add
-      .rectangle(940, 392, 600, 558, 0x6e5198, 0.32)
-      .setStrokeStyle(3, 0xd8b9e8, 0.28)
-      .setDepth(1);
+      .rectangle(940, 390, 610, 530, UI_COLOURS.cream, 0.99)
+      .setStrokeStyle(6, UI_COLOURS.lavenderStrong, 1)
+      .setDepth(2);
+    this.add
+      .text(670, 146, 'Choose your look ✨', {
+        color: UI_COLOURS.ink,
+        fontFamily: UI_FONT,
+        fontSize: '23px',
+        fontStyle: 'bold',
+      })
+      .setDepth(5);
 
     this.preview = this.add.graphics().setDepth(6);
     this.createNameInput(this.save.profile.name ?? DEFAULT_UNICORN_NAME);
 
-    this.createColourRow('Body', 'bodyColour', BODY_COLOURS, 650, 175);
-    this.createColourRow('Eyes', 'eyeColour', EYE_COLOURS, 650, 235);
-    this.createChoiceRow('Mane style', 'maneStyle', MANE_STYLES, 650, 300);
-    this.createColourRow('Mane colour', 'maneColour', HAIR_COLOURS, 650, 355);
-    this.createChoiceRow('Tail style', 'tailStyle', TAIL_STYLES, 650, 420);
-    this.createColourRow('Tail colour', 'tailColour', HAIR_COLOURS, 650, 475);
-    this.createCompactChoiceRow('Horn', 'hornStyle', HORN_STYLES, 650, 540);
-    this.createCompactChoiceRow('Marking', 'marking', MARKINGS, 930, 540);
-    this.createCompactChoiceRow('Accessory', 'accessory', ACCESSORIES, 930, 600);
+    this.createColourRow('Body', 'bodyColour', BODY_COLOURS, 670, 250);
+    this.createColourRow('Eyes', 'eyeColour', EYE_COLOURS, 670, 300);
+    this.createChoiceRow('Mane style', 'maneStyle', MANE_STYLES, 670, 350);
+    this.createColourRow('Mane colour', 'maneColour', HAIR_COLOURS, 670, 400);
+    this.createChoiceRow('Tail style', 'tailStyle', TAIL_STYLES, 670, 450);
+    this.createColourRow('Tail colour', 'tailColour', HAIR_COLOURS, 670, 500);
+    this.createCompactChoiceRow('Horn', 'hornStyle', HORN_STYLES, 670, 555, 250);
+    this.createCompactChoiceRow('Marking', 'marking', MARKINGS, 935, 555, 260);
+    this.createCompactChoiceRow('Accessory', 'accessory', ACCESSORIES, 670, 605, 520);
 
-    this.createActionButton(305, 615, 210, 'Surprise Me!', () => this.randomise());
-    this.createActionButton(535, 615, 190, 'Nice Default', () => this.useDefault());
-    this.createActionButton(1080, 660, 275, 'Looks Good! ✨', () => this.saveAndEnter(), true);
+    this.createActionButton(305, 625, 210, 'Surprise Me!', () => this.randomise());
+    this.createActionButton(535, 625, 190, 'Nice Default', () => this.useDefault());
+    this.createActionButton(1080, 675, 275, 'Looks Good! ✨', () => this.saveAndEnter(), true);
 
     this.redraw();
 
+    this.scale.on('resize', this.positionNameInput, this);
+    globalThis.addEventListener?.('resize', this.positionNameInput);
+    globalThis.requestAnimationFrame?.(() => this.positionNameInput());
+
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.scale.off('resize', this.positionNameInput, this);
+      globalThis.removeEventListener?.('resize', this.positionNameInput);
       this.nameInput?.remove();
       this.nameInput = null;
       this.input.keyboard?.enableGlobalCapture();
@@ -143,15 +161,43 @@ export class UnicornCreatorScene extends Phaser.Scene {
     this.nameInput = input;
 
     this.add
-      .text(650, 124, 'Name', {
-        color: '#f8efff',
+      .text(670, NAME_INPUT_Y, 'Name', {
+        color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
         fontSize: '18px',
         fontStyle: 'bold',
       })
       .setOrigin(0, 0.5)
       .setDepth(20);
+
+    this.positionNameInput();
   }
+
+  private positionNameInput = (): void => {
+    if (!this.nameInput) {
+      return;
+    }
+
+    const container = document.getElementById('game-container');
+    const canvas = this.game.canvas;
+    if (!container || !canvas) {
+      return;
+    }
+
+    const containerRect = container.getBoundingClientRect();
+    const canvasRect = canvas.getBoundingClientRect();
+    const scaleX = canvasRect.width / GAME_WIDTH;
+    const scaleY = canvasRect.height / GAME_HEIGHT;
+    const left = canvasRect.left - containerRect.left + NAME_INPUT_X * scaleX;
+    const top = canvasRect.top - containerRect.top + NAME_INPUT_Y * scaleY;
+
+    this.nameInput.style.left = `${left}px`;
+    this.nameInput.style.top = `${top}px`;
+    this.nameInput.style.width = `${NAME_INPUT_WIDTH * scaleX}px`;
+    this.nameInput.style.height = `${NAME_INPUT_HEIGHT * scaleY}px`;
+    this.nameInput.style.fontSize = `${Math.max(14, 20 * Math.min(scaleX, scaleY))}px`;
+    this.nameInput.style.borderWidth = `${Math.max(2, 4 * Math.min(scaleX, scaleY))}px`;
+  };
 
   private createColourRow(
     label: string,
@@ -162,21 +208,23 @@ export class UnicornCreatorScene extends Phaser.Scene {
   ): void {
     this.add
       .text(x, y, label, {
-        color: '#fff8ff',
+        color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
         fontSize: '17px',
         fontStyle: 'bold',
       })
-      .setOrigin(0, 0.5);
+      .setOrigin(0, 0.5)
+      .setDepth(5);
 
     const outlines: Phaser.GameObjects.Arc[] = [];
     choices.forEach((choice, index) => {
       const swatchX = x + 160 + index * 52;
       const outline = this.add
-        .circle(swatchX, y, 21, 0xffffff, 0.14)
-        .setStrokeStyle(4, 0xffffff, 0.25)
-        .setInteractive({ useHandCursor: true });
-      this.add.circle(swatchX, y, 15, choice.value, 1);
+        .circle(swatchX, y, 21, UI_COLOURS.lavender, 0.8)
+        .setStrokeStyle(4, UI_COLOURS.lavenderStrong, 0.72)
+        .setInteractive({ useHandCursor: true })
+        .setDepth(5);
+      this.add.circle(swatchX, y, 15, choice.value, 1).setDepth(6);
       outline.on('pointerdown', () => {
         this.appearance = { ...this.appearance, [key]: choice.id } as UnicornAppearance;
         this.redraw();
@@ -193,7 +241,7 @@ export class UnicornCreatorScene extends Phaser.Scene {
     x: number,
     y: number,
   ): void {
-    this.addChoiceControls(label, key, choices, x, y, 385);
+    this.addChoiceControls(label, key, choices, x, y, 520);
   }
 
   private createCompactChoiceRow(
@@ -202,8 +250,9 @@ export class UnicornCreatorScene extends Phaser.Scene {
     choices: readonly TextChoice[],
     x: number,
     y: number,
+    rightOffset: number,
   ): void {
-    this.addChoiceControls(label, key, choices, x, y, 255, true);
+    this.addChoiceControls(label, key, choices, x, y, rightOffset, true);
   }
 
   private addChoiceControls(
@@ -217,12 +266,13 @@ export class UnicornCreatorScene extends Phaser.Scene {
   ): void {
     this.add
       .text(x, y, label, {
-        color: '#fff8ff',
+        color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
         fontSize: compact ? '16px' : '17px',
         fontStyle: 'bold',
       })
-      .setOrigin(0, 0.5);
+      .setOrigin(0, 0.5)
+      .setDepth(5);
 
     const leftX = x + (compact ? 112 : 115);
     const valueX = x + (compact ? 142 : 145);
@@ -235,26 +285,31 @@ export class UnicornCreatorScene extends Phaser.Scene {
         fontFamily: UI_FONT,
         fontSize: compact ? '15px' : '17px',
         fontStyle: 'bold',
-        backgroundColor: '#fffaf0ee',
+        backgroundColor: '#f1e2f6',
         padding: { x: compact ? 9 : 12, y: compact ? 6 : 7 },
       })
-      .setOrigin(0, 0.5);
+      .setOrigin(0, 0.5)
+      .setDepth(5);
     this.valueLabels.set(key, valueText);
 
     const left = this.add
       .circle(leftX, y, arrowRadius, UI_COLOURS.lavender, 1)
-      .setStrokeStyle(2, UI_COLOURS.lavenderStrong, 0.8)
-      .setInteractive({ useHandCursor: true });
+      .setStrokeStyle(2, UI_COLOURS.lavenderStrong, 1)
+      .setInteractive({ useHandCursor: true })
+      .setDepth(5);
     const right = this.add
       .circle(rightX, y, arrowRadius, UI_COLOURS.lavender, 1)
-      .setStrokeStyle(2, UI_COLOURS.lavenderStrong, 0.8)
-      .setInteractive({ useHandCursor: true });
+      .setStrokeStyle(2, UI_COLOURS.lavenderStrong, 1)
+      .setInteractive({ useHandCursor: true })
+      .setDepth(5);
     this.add
       .text(leftX, y - 1, '‹', { color: UI_COLOURS.ink, fontFamily: UI_FONT, fontSize: '27px' })
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setDepth(6);
     this.add
       .text(rightX, y - 1, '›', { color: UI_COLOURS.ink, fontFamily: UI_FONT, fontSize: '27px' })
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setDepth(6);
 
     left.on('pointerdown', () => this.cycleChoice(key, choices, -1));
     right.on('pointerdown', () => this.cycleChoice(key, choices, 1));
@@ -323,7 +378,7 @@ export class UnicornCreatorScene extends Phaser.Scene {
     }
 
     this.preview.clear();
-    drawUnicornAppearance(this.preview, 315, 397, this.appearance, 2.18);
+    drawUnicornAppearance(this.preview, 315, 405, this.appearance, 2.18);
 
     for (const [key, outlines] of this.swatchOutlines) {
       const currentValue = this.appearance[key as keyof UnicornAppearance];
@@ -332,8 +387,8 @@ export class UnicornCreatorScene extends Phaser.Scene {
       outlines.forEach((outline, index) => {
         outline.setStrokeStyle(
           5,
-          source[index]?.id === currentValue ? 0xffe98c : 0xffffff,
-          source[index]?.id === currentValue ? 1 : 0.25,
+          source[index]?.id === currentValue ? 0xd6b35f : UI_COLOURS.lavenderStrong,
+          source[index]?.id === currentValue ? 1 : 0.72,
         );
       });
     }
