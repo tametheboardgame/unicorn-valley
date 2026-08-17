@@ -7,6 +7,7 @@ export type DialogueNodeId = `dialogue-node:${string}`;
 export type DialogueFlagId = `flag:${string}`;
 
 export type ItemCategory = 'collectable' | 'quest' | 'reward' | 'decoration' | 'accessory' | 'food';
+export type FriendshipTier = 'just-met' | 'friend' | 'good-friend' | 'best-friend';
 
 export interface ItemDefinition {
   id: ItemId;
@@ -34,6 +35,12 @@ export type DialogueEffect = {
   type: 'set-flag';
   flagId: DialogueFlagId;
   value: boolean;
+};
+
+export type DialogueCondition = {
+  type: 'minimum-friendship-tier';
+  characterId: CharacterId;
+  tier: FriendshipTier;
 };
 
 export interface DialogueChoice {
@@ -64,6 +71,11 @@ export interface DialogueDefinition {
   name: string;
   startNodeId: DialogueNodeId;
   nodes: readonly DialogueNode[];
+}
+
+export interface DialogueVariant {
+  dialogueId: DialogueId;
+  conditions?: readonly DialogueCondition[];
 }
 
 export type QuestStep =
