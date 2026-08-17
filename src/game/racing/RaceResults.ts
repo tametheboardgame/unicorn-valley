@@ -70,7 +70,8 @@ export function applyRaceResultToSave(save: SaveGame, input: RaceResultInput): A
   };
   const previousBestTimeMs = previousRecord.bestTimeMs;
   const isPersonalBest = previousBestTimeMs === null || input.finishTimeMs < previousBestTimeMs;
-  const bestTimeMs = isPersonalBest ? input.finishTimeMs : previousBestTimeMs;
+  const bestTimeMs =
+    previousBestTimeMs === null ? input.finishTimeMs : Math.min(previousBestTimeMs, input.finishTimeMs);
   const isPodium = input.place <= Math.min(3, input.participantCount);
 
   const newRibbonIds: string[] = [];
