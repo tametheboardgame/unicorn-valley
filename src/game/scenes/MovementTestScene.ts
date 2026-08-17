@@ -3,11 +3,14 @@ import { InputController } from '../input/InputController';
 import { KeyboardInputAdapter } from '../input/KeyboardInputAdapter';
 import { PlayerEntity } from '../player/PlayerEntity';
 import { DEFAULT_PLAYER_SPEED, resolvePlayerMovement } from '../player/PlayerMovement';
+import {
+  ensurePlayerPlaceholderTexture,
+  PLAYER_PLACEHOLDER_TEXTURE_KEY,
+} from '../player/PlayerPlaceholderTexture';
 
 const WORLD_WIDTH = 2400;
 const WORLD_HEIGHT = 1400;
 const WORLD_MARGIN = 96;
-const PLAYER_TEXTURE_KEY = 'player-unicorn-placeholder';
 
 export class MovementTestScene extends Phaser.Scene {
   private inputController: InputController | null = null;
@@ -20,7 +23,7 @@ export class MovementTestScene extends Phaser.Scene {
 
   public create(): void {
     this.createPrototypeWorld();
-    this.ensurePlayerTexture();
+    ensurePlayerPlaceholderTexture(this);
 
     this.physics.world.setBounds(
       WORLD_MARGIN,
@@ -29,7 +32,12 @@ export class MovementTestScene extends Phaser.Scene {
       WORLD_HEIGHT - WORLD_MARGIN * 2,
     );
 
-    this.player = new PlayerEntity(this, WORLD_WIDTH / 2, WORLD_HEIGHT / 2, PLAYER_TEXTURE_KEY);
+    this.player = new PlayerEntity(
+      this,
+      WORLD_WIDTH / 2,
+      WORLD_HEIGHT / 2,
+      PLAYER_PLACEHOLDER_TEXTURE_KEY,
+    );
     this.inputController = new InputController([new KeyboardInputAdapter(this)]);
 
     const camera = this.cameras.main;
@@ -168,33 +176,5 @@ export class MovementTestScene extends Phaser.Scene {
         padding: { x: 10, y: 7 },
       })
       .setOrigin(0.5);
-  }
-
-  private ensurePlayerTexture(): void {
-    if (this.textures.exists(PLAYER_TEXTURE_KEY)) {
-      return;
-    }
-
-    const graphics = this.add.graphics();
-
-    graphics.fillStyle(0xfff5ff, 1);
-    graphics.fillEllipse(48, 48, 72, 42);
-    graphics.fillCircle(82, 33, 18);
-
-    graphics.fillStyle(0xd69af0, 1);
-    graphics.fillTriangle(95, 23, 106, 3, 101, 29);
-    graphics.fillTriangle(19, 42, 2, 28, 23, 53);
-    graphics.fillRect(31, 62, 8, 18);
-    graphics.fillRect(55, 62, 8, 18);
-
-    graphics.fillStyle(0xf1b4ef, 1);
-    graphics.fillTriangle(69, 20, 78, 5, 82, 26);
-    graphics.fillTriangle(58, 24, 67, 8, 71, 29);
-
-    graphics.fillStyle(0x4b3066, 1);
-    graphics.fillCircle(88, 30, 3);
-
-    graphics.generateTexture(PLAYER_TEXTURE_KEY, 112, 84);
-    graphics.destroy();
   }
 }
