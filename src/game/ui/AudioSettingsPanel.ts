@@ -9,6 +9,8 @@ interface SettingRow {
   kind: 'muted' | 'music' | 'ambience' | 'sfx';
 }
 
+type VisiblePanelObject = Phaser.GameObjects.Rectangle | Phaser.GameObjects.Text;
+
 const PANEL_X = GAME_WIDTH - 190;
 const PANEL_Y = 225;
 const PANEL_WIDTH = 330;
@@ -17,7 +19,7 @@ const PANEL_HEIGHT = 270;
 export class AudioSettingsPanel {
   private readonly audio = getVerticalSliceAudio();
   private readonly objects: Phaser.GameObjects.GameObject[] = [];
-  private readonly panelObjects: Phaser.GameObjects.GameObject[] = [];
+  private readonly panelObjects: VisiblePanelObject[] = [];
   private readonly rows: SettingRow[] = [];
   private readonly button: Phaser.GameObjects.Rectangle;
   private readonly buttonLabel: Phaser.GameObjects.Text;
