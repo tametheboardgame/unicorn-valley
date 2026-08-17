@@ -42,11 +42,7 @@ function validateQuestStep(
     errors.push(`Quest ${questId} references missing character ${step.characterId}.`);
   }
 
-  if (
-    step.type === 'collect-item' ||
-    step.type === 'award-item' ||
-    step.type === 'consume-item'
-  ) {
+  if (step.type === 'collect-item' || step.type === 'award-item' || step.type === 'consume-item') {
     if (!itemIds.has(step.itemId)) {
       errors.push(`Quest ${questId} references missing item ${step.itemId}.`);
     }
@@ -56,10 +52,7 @@ function validateQuestStep(
     }
   }
 
-  if (
-    step.type === 'award-friendship' &&
-    (!Number.isInteger(step.amount) || step.amount <= 0)
-  ) {
+  if (step.type === 'award-friendship' && (!Number.isInteger(step.amount) || step.amount <= 0)) {
     errors.push(`Quest ${questId} has invalid friendship amount ${step.amount}.`);
   }
 
