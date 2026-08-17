@@ -16,10 +16,7 @@ import {
   saveLocationCheckpoint,
 } from '../save/saveLocationCheckpoint';
 import { InteractionPrompt } from '../ui/InteractionPrompt';
-import {
-  MOONFLOWER_GLADE_MAP,
-  setMoonflowerGladePlayerSpawn,
-} from '../world/MoonflowerGladeMap';
+import { MOONFLOWER_GLADE_MAP, setMoonflowerGladePlayerSpawn } from '../world/MoonflowerGladeMap';
 import { SUNBEAM_VILLAGE_LOCATION_ID, SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
 
 const COLLISION_TEXTURE_KEY = 'village-collision-pixel';
@@ -114,7 +111,8 @@ const VILLAGE_INTERACTIONS = [
     result: {
       type: 'message',
       title: 'Rainbow Meadow',
-      message: 'The bright meadow is just beyond the bridge. That path will open in a later adventure.',
+      message:
+        'The bright meadow is just beyond the bridge. That path will open in a later adventure.',
     },
   },
 ] satisfies readonly InteractionTarget[];
@@ -351,7 +349,8 @@ export class SunbeamVillageScene extends Phaser.Scene {
 
   private createNpcMarkers(): void {
     for (const marker of SUNBEAM_VILLAGE_MAP.npcMarkers) {
-      this.add.circle(marker.position.x, marker.position.y, 42, 0xfff3c6, 0.9)
+      this.add
+        .circle(marker.position.x, marker.position.y, 42, 0xfff3c6, 0.9)
         .setStrokeStyle(4, marker.id === 'willow' ? 0x6ba271 : 0xb28ab9, 0.95)
         .setDepth(8);
       this.add
