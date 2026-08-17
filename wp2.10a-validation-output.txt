@@ -6,7 +6,7 @@
 > unicorn-valley@0.1.0 format:check
 > biome format .
 
-Checked 110 files in 81ms. No fixes applied.
+Checked 110 files in 76ms. No fixes applied.
 
 > unicorn-valley@0.1.0 lint
 > biome lint .
@@ -275,7 +275,7 @@ src/game/ui/uiTheme.ts:1:8 lint/style/useImportType  FIXABLE  ━━━━━━
     1 │ import·type·Phaser·from·'phaser';
       │        +++++                     
 
-Checked 112 files in 195ms. No fixes applied.
+Checked 112 files in 193ms. No fixes applied.
 Found 15 warnings.
 
 > unicorn-valley@0.1.0 typecheck
@@ -288,58 +288,60 @@ Found 15 warnings.
 
 [1m[30m[46m RUN [49m[39m[22m [36mv4.1.10 [39m[90m/home/runner/work/unicorn-valley/unicorn-valley[39m
 
- [32m✓[39m src/game/quests/QuestEngine.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 10[2mms[22m[39m
- [32m✓[39m src/game/relationships/RelationshipService.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 10[2mms[22m[39m
- [32m✓[39m src/game/home/HomeDecorationService.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 17[2mms[22m[39m
- [32m✓[39m src/game/inventory/InventoryService.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 15[2mms[22m[39m
- [32m✓[39m src/game/suggestions/ActivitySuggestionModel.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 7[2mms[22m[39m
- [32m✓[39m src/game/save/SaveService.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 8[2mms[22m[39m
- [32m✓[39m src/game/save/FirstPlayablePersistence.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 6[2mms[22m[39m
- [32m✓[39m src/content/contentValidation.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 7[2mms[22m[39m
- [32m✓[39m src/game/home/CottageHomeView.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 6[2mms[22m[39m
- [32m✓[39m src/game/audio/AudioSettings.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 6[2mms[22m[39m
- [32m✓[39m src/game/dialogue/DialogueSession.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m src/game/quests/QuestEngine.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [32m✓[39m src/game/relationships/RelationshipService.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32m✓[39m src/game/home/HomeDecorationService.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+ [32m✓[39m src/game/inventory/InventoryService.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+ [32m✓[39m src/game/suggestions/ActivitySuggestionModel.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+ [32m✓[39m src/game/save/SaveService.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32m✓[39m src/game/save/FirstPlayablePersistence.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m src/content/contentValidation.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+ [32m✓[39m src/game/home/CottageHomeView.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m src/game/audio/AudioSettings.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m src/game/dialogue/DialogueSession.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 4[2mms[22m[39m
  [32m✓[39m src/game/world/SunbeamVillageMap.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 14[2mms[22m[39m
- [31m❯[39m src/game/world/MoonflowerGladeMap.test.ts [2m([22m[2m4 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 15[2mms[22m[39m
-     [32m✓[39m keeps every landmark and reserved entrance reachable from the player spawn[32m 9[2mms[22m[39m
-     [32m✓[39m keeps navigation targets inside the world and outside collision geometry[32m 1[2mms[22m[39m
-     [32m✓[39m uses unique stable IDs for landmarks, entrances and collision regions[32m 0[2mms[22m[39m
-[31m     [31m×[31m leaves a player-sized crossing gap where the little bridge sits[39m[32m 3[2mms[22m[39m
- [32m✓[39m src/game/discovery/DiscoveryService.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 6[2mms[22m[39m
- [32m✓[39m src/game/interaction/InteractionTargeting.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m src/game/world/MoonflowerGladeMap.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+ [32m✓[39m src/game/discovery/DiscoveryService.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m src/game/interaction/InteractionTargeting.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 11[2mms[22m[39m
  [32m✓[39m src/game/world/CottageInteriorMap.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 7[2mms[22m[39m
  [32m✓[39m src/game/player/UnicornAppearance.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 5[2mms[22m[39m
  [32m✓[39m src/game/player/PlayerMovement.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 5[2mms[22m[39m
- [32m✓[39m src/game/world/FirstPlayablePlacement.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 4[2mms[22m[39m
- [32m✓[39m src/game/input/InputController.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m src/game/world/FirstPlayablePlacement.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+ [32m✓[39m src/game/input/InputController.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 3[2mms[22m[39m
  [32m✓[39m src/game/save/saveMigrations.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 4[2mms[22m[39m
- [32m✓[39m src/game/wonderbook/WonderbookModel.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m src/game/wonderbook/WonderbookModel.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 3[2mms[22m[39m
  [32m✓[39m src/game/ui/safeUiBounds.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 4[2mms[22m[39m
- [32m✓[39m src/game/events/GameEventBus.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 5[2mms[22m[39m
- [32m✓[39m src/game/input/TouchMovementPad.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m src/game/events/GameEventBus.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m src/game/input/TouchMovementPad.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 3[2mms[22m[39m
  [32m✓[39m src/game/config/gameConstants.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 3[2mms[22m[39m
 
-[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
-
-[41m[1m FAIL [22m[49m src/game/world/MoonflowerGladeMap.test.ts[2m > [22mMoonflower Glade prototype map[2m > [22mleaves a player-sized crossing gap where the little bridge sits
-[31m[1mAssertionError[22m: expected 170 to be greater than or equal to 190[39m
-[36m [2m❯[22m src/game/world/MoonflowerGladeMap.test.ts:[2m56:35[22m[39m
-    [90m 54|[39m     [35mconst[39m northEdge [33m=[39m (north[33m?.[39my [33m??[39m [34m0[39m) [33m+[39m (north[33m?.[39mheight [33m??[39m [34m0[39m) [33m/[39m [34m2[39m[33m;[39m
-    [90m 55|[39m     [35mconst[39m southEdge [33m=[39m (south[33m?.[39my [33m??[39m [34m0[39m) [33m-[39m (south[33m?.[39mheight [33m??[39m [34m0[39m) [33m/[39m [34m2[39m[33m;[39m
-    [90m 56|[39m     expect(southEdge - northEdge).toBeGreaterThanOrEqual(MOONFLOWER_GL…
-    [90m   |[39m                                   [31m^[39m
-    [90m 57|[39m   })[33m;[39m
-    [90m 58|[39m })[33m;[39m
-
-[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+[2m Test Files [22m [1m[32m26 passed[39m[22m[90m (26)[39m
+[2m      Tests [22m [1m[32m94 passed[39m[22m[90m (94)[39m
+[2m   Start at [22m 16:15:41
+[2m   Duration [22m 3.67s[2m (transform 343ms, setup 0ms, import 689ms, tests 167ms, environment 2ms)[22m
 
 
-[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m25 passed[39m[22m[90m (26)[39m
-[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m93 passed[39m[22m[90m (94)[39m
-[2m   Start at [22m 16:13:35
-[2m   Duration [22m 4.12s[2m (transform 360ms, setup 0ms, import 759ms, tests 190ms, environment 3ms)[22m
+> unicorn-valley@0.1.0 build
+> tsc --noEmit && vite build
 
+[36mvite v8.2.0 [32mbuilding client environment for production...[36m[39m
+[2Ktransforming...✓ 78 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                     0.76 kB │ gzip:   0.43 kB
+dist/assets/index-BlyfwlNG.css      1.09 kB │ gzip:   0.61 kB
+dist/assets/index-BIOEE35t.js   1,513.65 kB │ gzip: 394.30 kB
 
-::error file=/home/runner/work/unicorn-valley/unicorn-valley/src/game/world/MoonflowerGladeMap.test.ts,title=src/game/world/MoonflowerGladeMap.test.ts > Moonflower Glade prototype map > leaves a player-sized crossing gap where the little bridge sits,line=56,column=35::AssertionError: expected 170 to be greater than or equal to 190%0A ❯ src/game/world/MoonflowerGladeMap.test.ts:56:35%0A%0A
+[32m✓ built in 675ms[39m
+[33m[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
 
-__VALIDATION_FAILED__:1
+> unicorn-valley@0.1.0 smoke:static
+> node scripts/staticSmoke.mjs
+
+Static build smoke passed for 3 referenced assets.
+
+__VALIDATION_PASSED__
