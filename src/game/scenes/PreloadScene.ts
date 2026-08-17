@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConfig';
+import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 
 export class PreloadScene extends Phaser.Scene {
   public constructor() {
