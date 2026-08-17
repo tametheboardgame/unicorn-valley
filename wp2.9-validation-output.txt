@@ -6,26 +6,6 @@
 > unicorn-valley@0.1.0 format:check
 > biome format .
 
-src/game/dialogue/DialogueCard.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-  × Formatter would have printed the following content:
-  
-     25  25 │         .setDepth(125);
-     26  26 │   
-     27     │ - ····this.panelShadow·=·createUiShadow(scene,·GAME_WIDTH·/·2,·GAME_HEIGHT·-·164,·1120,·286,·125,·0.28);
-         27 │ + ····this.panelShadow·=·createUiShadow(
-         28 │ + ······scene,
-         29 │ + ······GAME_WIDTH·/·2,
-         30 │ + ······GAME_HEIGHT·-·164,
-         31 │ + ······1120,
-         32 │ + ······286,
-         33 │ + ······125,
-         34 │ + ······0.28,
-         35 │ + ····);
-     28  36 │       this.panel = scene.add
-     29  37 │         .rectangle(GAME_WIDTH / 2, GAME_HEIGHT - 164, 1120, 286, UI_COLOURS.cream, 0.99)
-  
-
 src/game/ui/AudioSettingsPanel.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   × Formatter would have printed the following content:
@@ -53,8 +33,8 @@ src/game/ui/AudioSettingsPanel.ts format ━━━━━━━━━━━━━
     115 120 │         .setScrollFactor(0)
   
 
-Checked 110 files in 80ms. No fixes applied.
-Found 2 errors.
+Checked 110 files in 78ms. No fixes applied.
+Found 1 error.
 format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   × Some errors were emitted while running checks.
