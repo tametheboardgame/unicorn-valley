@@ -135,7 +135,10 @@ export class DialogueCard {
   ): void {
     const scene = this.panel.scene;
     const totalWidth = 760;
-    const buttonWidth = Math.min(330, (totalWidth - Math.max(0, choices.length - 1) * 22) / choices.length);
+    const buttonWidth = Math.min(
+      330,
+      (totalWidth - Math.max(0, choices.length - 1) * 22) / choices.length,
+    );
     const startX = 265 + buttonWidth / 2;
 
     choices.forEach((choice, index) => {
