@@ -1,6 +1,6 @@
 # R2-WP2.10C - Layering and World-Prop Fix Pass
 
-Status: **Complete pending merge**
+Status: **Complete**
 
 ## Why this pass exists
 
