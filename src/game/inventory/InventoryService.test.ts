@@ -60,9 +60,9 @@ describe('InventoryService', () => {
     expect(() => inventory.removeItem('item:willow-moonflower')).toThrow(
       'Quest-critical item cannot be removed directly',
     );
-    expect(
-      inventory.removeItem('item:willow-moonflower', 1, { allowQuestCritical: true }),
-    ).toBe(true);
+    expect(inventory.removeItem('item:willow-moonflower', 1, { allowQuestCritical: true })).toBe(
+      true,
+    );
   });
 
   it('rejects invalid item IDs and invalid quantities', () => {
@@ -78,11 +78,12 @@ describe('InventoryService', () => {
     inventory.addItem('item:sparkle-berry', 2);
     inventory.addItem('item:berry-bun');
 
-    expect(inventory.listOwnedItems().map(({ definition, quantity }) => [definition.id, quantity]))
-      .toEqual([
-        ['item:berry-bun', 1],
-        ['item:sparkle-berry', 2],
-      ]);
+    expect(
+      inventory.listOwnedItems().map(({ definition, quantity }) => [definition.id, quantity]),
+    ).toEqual([
+      ['item:berry-bun', 1],
+      ['item:sparkle-berry', 2],
+    ]);
     expect(
       getItemPresentation({
         id: 'item:legacy-test',
