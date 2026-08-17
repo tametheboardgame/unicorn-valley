@@ -2,7 +2,7 @@ import { characterRegistry } from '../../content/registries';
 import type { CharacterId, FriendshipTier } from '../../content/contentTypes';
 import { type GameEventMap, type TypedEventBus, gameEventBus } from '../events/GameEventBus';
 import type { SaveService } from '../save/SaveService';
-import type { RelationshipProgress } from '../save/saveSchema';
+import type { RelationshipProgress, SaveGame } from '../save/saveSchema';
 
 export const MAX_FRIENDSHIP_POINTS = 100;
 
@@ -51,16 +51,28 @@ export class RelationshipService {
     private readonly events: TypedEventBus<GameEventMap> = gameEventBus,
   ) {}
 
+  public hasMet(characterId: CharacterId): boolean {
+    characterRegistry.get(characterId);
+    return Boolean(this.saveService.load()?.relationships.byCharacterId[characterId]);
+  }
+
+  public markMet(characterId: CharacterId): RelationshipProgress {
+    characterRegistry.get(characterId);
+    const save = this.saveService.load() ?? this.saveService.createNewGame();
+    const current = save.relationships.byCharacterId[characterId];
+    if (current) {
+      return this.copyProgress(current);
+    }
+
+    const next = this.copyProgress(DEFAULT_RELATIONSHIP);
+    this.saveRelationship(save, characterId, next);
+    return next;
+  }
+
   public getRelationship(characterId: CharacterId): RelationshipProgress {
     characterRegistry.get(characterId);
-    const save = this.saveService.load();
-    const stored = save?.relationships.byCharacterId[characterId];
-    return stored
-      ? {
-          friendshipPoints: stored.friendshipPoints,
-          flags: [...stored.flags],
-        }
-      : { ...DEFAULT_RELATIONSHIP, flags: [] };
+    const stored = this.saveService.load()?.relationships.byCharacterId[characterId];
+    return this.copyProgress(stored ?? DEFAULT_RELATIONSHIP);
   }
 
   public getTier(characterId: CharacterId): FriendshipTier {
@@ -89,16 +101,7 @@ export class RelationshipService {
       return next;
     }
 
-    this.saveService.save({
-      ...save,
-      relationships: {
-        ...save.relationships,
-        byCharacterId: {
-          ...save.relationships.byCharacterId,
-          [characterId]: next,
-        },
-      },
-    });
+    this.saveRelationship(save, characterId, next);
     this.events.emit('RELATIONSHIP_CHANGED', {
       characterId,
       friendshipPoints,
@@ -118,27 +121,38 @@ export class RelationshipService {
     const save = this.saveService.load() ?? this.saveService.createNewGame();
     const current = save.relationships.byCharacterId[characterId] ?? DEFAULT_RELATIONSHIP;
     if (current.flags.includes(trimmed)) {
-      return {
-        friendshipPoints: current.friendshipPoints,
-        flags: [...current.flags],
-      };
+      return this.copyProgress(current);
     }
 
     const next: RelationshipProgress = {
       friendshipPoints: current.friendshipPoints,
       flags: [...current.flags, trimmed],
     };
+    this.saveRelationship(save, characterId, next);
+    return next;
+  }
+
+  private saveRelationship(
+    save: SaveGame,
+    characterId: CharacterId,
+    progress: RelationshipProgress,
+  ): void {
     this.saveService.save({
       ...save,
       relationships: {
         ...save.relationships,
         byCharacterId: {
           ...save.relationships.byCharacterId,
-          [characterId]: next,
+          [characterId]: progress,
         },
       },
     });
+  }
 
-    return next;
+  private copyProgress(progress: RelationshipProgress): RelationshipProgress {
+    return {
+      friendshipPoints: progress.friendshipPoints,
+      flags: [...progress.flags],
+    };
   }
 }
