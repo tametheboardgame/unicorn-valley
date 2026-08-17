@@ -58,9 +58,7 @@ describe('HomeDecorationService', () => {
     inventory.addItem('item:moonflower-lantern');
 
     decorating.placeDecoration('cottage-slot:window-nook', 'item:moonflower-lantern');
-    expect(decorating.getPlacement('cottage-slot:window-nook')?.id).toBe(
-      'item:moonflower-lantern',
-    );
+    expect(decorating.getPlacement('cottage-slot:window-nook')?.id).toBe('item:moonflower-lantern');
 
     const reloaded = new HomeDecorationService(saveService);
     expect(reloaded.getPlacement('cottage-slot:window-nook')?.name).toBe('Moonflower Lantern');
@@ -110,9 +108,9 @@ describe('HomeDecorationService', () => {
     expect(() =>
       decorating.placeDecoration('cottage-slot:not-real', 'item:moonflower-lantern'),
     ).toThrow('Unknown cottage decoration slot');
-    expect(() =>
-      decorating.placeDecoration('cottage-slot:window-nook', 'item:berry-bun'),
-    ).toThrow('cannot be placed as a cottage decoration');
+    expect(() => decorating.placeDecoration('cottage-slot:window-nook', 'item:berry-bun')).toThrow(
+      'cannot be placed as a cottage decoration',
+    );
     expect(() =>
       decorating.placeDecoration('cottage-slot:window-nook', 'item:moonflower-lantern'),
     ).toThrow('Decoration is not owned');

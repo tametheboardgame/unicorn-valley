@@ -164,7 +164,8 @@ export class HomeDecorationService {
     const currentIndex = current
       ? ownedDecorations.findIndex(({ definition }) => definition.id === current.id)
       : -1;
-    const next = currentIndex + 1 < ownedDecorations.length ? ownedDecorations[currentIndex + 1] : null;
+    const next =
+      currentIndex + 1 < ownedDecorations.length ? ownedDecorations[currentIndex + 1] : null;
 
     if (!next) {
       return { type: 'removed', slot, item: this.removeDecoration(slotId) };
