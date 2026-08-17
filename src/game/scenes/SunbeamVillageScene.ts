@@ -552,7 +552,7 @@ export class SunbeamVillageScene extends Phaser.Scene {
       })
       .setOrigin(0.5, 0)
       .setScrollFactor(0)
-      .setDepth(116)
+      .setDepth(122)
       .setVisible(false);
   }
 }

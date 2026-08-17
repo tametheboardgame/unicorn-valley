@@ -709,7 +709,7 @@ export class MoonflowerGladeScene extends Phaser.Scene {
       .setDepth(100);
 
     this.feedbackText = this.add
-      .text(GAME_WIDTH - 32, 30, '', {
+      .text(GAME_WIDTH - 32, 108, '', {
         color: '#4b365c',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '20px',
@@ -721,7 +721,7 @@ export class MoonflowerGladeScene extends Phaser.Scene {
       })
       .setOrigin(1, 0)
       .setScrollFactor(0)
-      .setDepth(119)
+      .setDepth(122)
       .setVisible(false);
   }
 }
