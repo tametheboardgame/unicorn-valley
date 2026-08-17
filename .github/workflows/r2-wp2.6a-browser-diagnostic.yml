@@ -84,6 +84,19 @@ jobs:
             );
           }
 
+          async function holdInteractionUntilScene(page, sceneKey) {
+            await page.keyboard.down('KeyE');
+            await waitForScene(page, sceneKey);
+            await pause(500);
+            const scenesWhileHeld = await activeScenes(page);
+            console.log(`HELD_E_${sceneKey}=` + scenesWhileHeld.join(','));
+            if (!scenesWhileHeld.includes(sceneKey)) {
+              throw new Error(`Held interaction did not settle in ${sceneKey}.`);
+            }
+            await page.keyboard.up('KeyE');
+            await pause(150);
+          }
+
           console.log('START creator');
           const creator = await collectPage('creator');
           await creator.page.goto('http://127.0.0.1:5173/?scene=creator', {
@@ -96,7 +109,7 @@ jobs:
           await creator.page.keyboard.press('KeyA');
           await creator.page.keyboard.up('Control');
           await creator.page.keyboard.press('Backspace');
-          const expectedName = 'WASDEBI Starlight';
+          const expectedName = 'WASDEBI Star';
           await creator.page.keyboard.type(expectedName, { delay: 20 });
           const typedName = await creator.page.$eval('.unicorn-name-input', (element) => element.value);
           console.log('CREATOR_TYPED_NAME=' + typedName);
@@ -144,15 +157,23 @@ jobs:
             player.sprite.setPosition(560, 720);
             player.sprite.body?.reset?.(560, 720);
           });
-          await pause(150);
-          await transition.page.keyboard.press('KeyE');
-          await waitForScene(transition.page, 'CottageInteriorScene');
-          await pause(700);
+          await pause(250);
+          const gladeTarget = await transition.page.evaluate(() => {
+            const game = globalThis.__unicornValleyGame;
+            return game?.scene.getScene('MoonflowerGladeScene')?.activeInteraction?.id ?? null;
+          });
+          console.log('GLADE_TARGET=' + gladeTarget);
+          if (gladeTarget !== 'interaction:cottage') {
+            throw new Error(`Expected cottage interaction target, got ${gladeTarget}.`);
+          }
+
+          await holdInteractionUntilScene(transition.page, 'CottageInteriorScene');
           const enteredScenes = await activeScenes(transition.page);
           console.log('AFTER_ENTER_SCENES=' + enteredScenes.join(','));
 
-          await transition.page.keyboard.press('KeyE');
+          await transition.page.keyboard.down('KeyE');
           await pause(500);
+          await transition.page.keyboard.up('KeyE');
           const postEntryScenes = await activeScenes(transition.page);
           console.log('AFTER_ENTRY_E_SCENES=' + postEntryScenes.join(','));
           if (!postEntryScenes.includes('CottageInteriorScene')) {
@@ -169,10 +190,17 @@ jobs:
             player.sprite.setPosition(900, 1010);
             player.sprite.body?.reset?.(900, 1010);
           });
-          await pause(150);
-          await transition.page.keyboard.press('KeyE');
-          await waitForScene(transition.page, 'MoonflowerGladeScene');
-          await pause(700);
+          await pause(250);
+          const cottageTarget = await transition.page.evaluate(() => {
+            const game = globalThis.__unicornValleyGame;
+            return game?.scene.getScene('CottageInteriorScene')?.activeInteraction?.id ?? null;
+          });
+          console.log('COTTAGE_TARGET=' + cottageTarget);
+          if (cottageTarget !== 'interaction:cottage-exit') {
+            throw new Error(`Expected cottage exit target, got ${cottageTarget}.`);
+          }
+
+          await holdInteractionUntilScene(transition.page, 'MoonflowerGladeScene');
           const exitedScenes = await activeScenes(transition.page);
           console.log('AFTER_EXIT_SCENES=' + exitedScenes.join(','));
           if (!exitedScenes.includes('MoonflowerGladeScene')) {
