@@ -7,6 +7,7 @@ const DIAGNOSTIC_SCENES: Record<string, string> = {
   'dialogue-test': 'DialogueTestScene',
   creator: 'UnicornCreatorScene',
   glade: 'MoonflowerGladeScene',
+  cottage: 'CottageInteriorScene',
 };
 
 export class BootScene extends Phaser.Scene {
