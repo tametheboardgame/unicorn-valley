@@ -18,6 +18,11 @@ import {
 import { isWillowGardenPlanted } from '../story/WillowMoonflowersStory';
 import { InteractionPrompt } from '../ui/InteractionPrompt';
 import { MOONFLOWER_GLADE_MAP, setMoonflowerGladePlayerSpawn } from '../world/MoonflowerGladeMap';
+import {
+  RAINBOW_MEADOW_LOCATION_ID,
+  RAINBOW_MEADOW_MAP,
+  setRainbowMeadowPlayerSpawn,
+} from '../world/RainbowMeadowMap';
 import { SUNBEAM_VILLAGE_LOCATION_ID, SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
 
 const COLLISION_TEXTURE_KEY = 'village-collision-pixel';
@@ -129,15 +134,13 @@ const VILLAGE_INTERACTIONS = [
   {
     id: 'interaction:village-meadow-gate',
     label: 'Rainbow Meadow',
-    actionLabel: 'Look beyond',
+    actionLabel: 'Visit meadow',
     position: entranceApproach('rainbow-meadow'),
     interactionRadius: 175,
     priority: 20,
     result: {
-      type: 'message',
-      title: 'Rainbow Meadow',
-      message:
-        'The bright meadow is just beyond the bridge. That path will open in a later adventure.',
+      type: 'scene-transition',
+      sceneKey: 'RainbowMeadowScene',
     },
   },
 ] satisfies readonly InteractionTarget[];
@@ -264,6 +267,14 @@ export class SunbeamVillageScene extends Phaser.Scene {
           setMoonflowerGladePlayerSpawn(villageEntrance.approach);
         }
         saveLocationCheckpoint(getBrowserSaveService(), MOONFLOWER_GLADE_LOCATION_ID);
+      } else if (target.result.sceneKey === 'RainbowMeadowScene') {
+        const villageEntrance = RAINBOW_MEADOW_MAP.entrances.find(
+          (entrance) => entrance.id === 'sunbeam-village',
+        );
+        if (villageEntrance) {
+          setRainbowMeadowPlayerSpawn(villageEntrance.approach);
+        }
+        saveLocationCheckpoint(getBrowserSaveService(), RAINBOW_MEADOW_LOCATION_ID);
       }
       this.scene.start(target.result.sceneKey, target.result.payload);
       return;
