@@ -208,8 +208,13 @@ export function getRaceStandings(
     return left.sourceIndex - right.sourceIndex;
   });
 
-  return participants.map(({ sourceIndex: _sourceIndex, ...participant }, index) => ({
-    ...participant,
+  return participants.map((participant, index) => ({
+    id: participant.id,
+    name: participant.name,
+    progress: participant.progress,
+    finished: participant.finished,
+    finishTimeSeconds: participant.finishTimeSeconds,
+    isPlayer: participant.isPlayer,
     place: index + 1,
   }));
 }
