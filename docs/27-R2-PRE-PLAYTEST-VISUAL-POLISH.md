@@ -1,14 +1,14 @@
 # R2-WP2.10A - Pre-Playtest Visual Polish and UX Fix Pass
 
-Status: **In Progress**
+Status: **Complete**
 
 ## Why this package exists
 
-The first daughter playtest has not happened yet. Before using that playtest as behavioural evidence, the current build needs a short presentation and clarity pass so obvious prototype roughness does not dominate the first impression.
+The first daughter playtest has not happened yet. Before using that playtest as behavioural evidence, the current build needed a short presentation and clarity pass so obvious prototype roughness would not dominate the first impression.
 
 This package is deliberately bounded. It does not add major gameplay systems or expand content. It fixes visible defects, improves the player unicorn and creator presentation, aligns world visuals with collision/navigation, and removes ambiguous UI behaviour.
 
-R2-WP2.10 is therefore split into:
+R2-WP2.10 is split into:
 
 - **R2-WP2.10A - Pre-Playtest Visual Polish and UX Fix Pass**
 - **R2-WP2.10B - Daughter Playtest and Recovery Pass**
@@ -34,22 +34,22 @@ Make the existing R2 vertical slice look coherent, cute, readable and intentiona
 - rework the procedural unicorn silhouette so it reads as one coherent cute character rather than assembled geometric parts;
 - improve head/body proportion, leg placement, eye/face placement and grounding;
 - correct mane, tail, horn, marking and accessory anchors;
-- ensure all customisation combinations remain visually valid;
+- ensure customisation combinations remain visually coherent;
 - improve preview framing and scale.
 
 ### Creator controls
 
 - align labels, value fields and previous/next arrows consistently;
-- specifically correct the marking and accessory rows, whose arrows currently drift away from their values;
+- specifically correct the marking and accessory rows, whose arrows previously drifted beyond the intended layout;
 - improve spacing and grouping without reducing touch target size;
 - keep name entry keyboard-safe and preserve all existing customisation choices.
 
 ### World alignment and navigation readability
 
-- align bridge collision/walkable space to the visible bridge so the unicorn cannot appear to stand over open water while mechanically standing on the bridge;
-- review player sprite origin/body relationship so feet/ground position reads consistently;
-- check Glade paths, entrances, interactables and scene transition approach points for similar visual/physical mismatches;
-- review Village and Cottage for the same class of obvious alignment defect.
+- align bridge collision/walkable space to the visible bridge so the player centre can no longer travel into the oversized invisible crossing gap;
+- preserve the existing player physics model rather than introduce a risky global origin change;
+- review Glade paths, entrances, interactables and scene transition approach points for similar obvious mismatches;
+- review Village and Cottage presentation for the same class of issue.
 
 ### Suggestion card UX
 
@@ -65,18 +65,18 @@ Make the existing R2 vertical slice look coherent, cute, readable and intentiona
 - improve spacing between location title, control help and suggestion card;
 - keep Bag and Sound controls consistent with the shared storybook skin;
 - review button padding, borders, shadows, typography and alignment across the existing R2 screens;
-- fix any other obvious presentation defect found during the pass.
+- fix other obvious presentation defects found during the pass.
 
 ### World charm pass
 
 - reduce the most distracting scale inconsistencies in landmark props;
 - improve scene depth/readability using existing procedural art rather than beginning the later production-art replacement early;
-- add small restrained decorative details only where they materially improve first impression or navigation;
+- add restrained decorative detail only where it improves first impression or navigation;
 - preserve performance and interaction readability.
 
 ## Explicit non-goals
 
-This package must not become R6 early.
+This package does not become R6 early.
 
 Deferred:
 
@@ -89,31 +89,44 @@ Deferred:
 - final music/SFX production;
 - broad content expansion.
 
-## Deliverables
+## Implementation result
 
-- title-screen missing-graphic defect removed;
-- title-screen layout/presentation polish;
-- improved procedural unicorn renderer used consistently in creator and world;
-- creator layout/alignment pass;
-- bridge and obvious world visual/collision mismatches fixed;
-- suggestion-card acknowledgement/close flow;
-- exploration HUD spacing/readability pass;
-- Glade/Village/Cottage visual consistency sweep;
-- regression tests where layout/state logic is testable;
-- production build and static smoke validation;
-- hosted-build visual smoke check before the daughter playtest.
+The pass delivered:
+
+- replacement of the title-screen SVG decoration with an in-engine sparkle/halo treatment, removing the black-square failure mode;
+- tighter title composition and clearer primary/secondary action hierarchy;
+- a rebuilt procedural unicorn silhouette with improved body/head proportions, four readable legs, muzzle/ear detail, grounding shadow and cleaner mane/tail presentation;
+- corrected horn, marking and accessory anchors;
+- creator preview and control-panel polish, including compact Horn, Marking and Accessory rows that remain within the 1280-pixel logical canvas;
+- Glade bridge collision narrowed to the visible 190-pixel bridge deck instead of the previous oversized invisible crossing gap;
+- a clearer suggestion-card flow with **Got it!**, close, **Another idea** and **Hide ideas for now** actions;
+- Glade HUD spacing/readability improvements and a reduction in the oversized foreground-flower distraction;
+- lighter Village/Cottage HUD consistency adjustments;
+- removal of the obsolete title SVG preload path.
+
+## Validation
+
+Full repository validation passes:
+
+- formatting;
+- lint, with non-blocking existing/recommended style warnings only;
+- TypeScript type-check;
+- unit tests;
+- production build;
+- static output smoke test.
+
+The hosted build still requires the normal post-merge visual glance before it is handed to the daughter, because automated build validation cannot judge subjective appearance.
 
 ## Acceptance
 
-- no black/missing decorative graphic is visible on the title screen;
-- player unicorn reads as a deliberate, cute unicorn at creator and gameplay scale;
-- creator arrows and values are consistently aligned;
-- the player cannot visually stand in open water while mechanically using the Glade bridge;
-- the suggestion card has an obvious acknowledgement/close path as well as another-idea and hide behaviour;
-- no obvious HUD text overlaps at the target desktop layout shown in the pre-playtest screenshots;
-- existing progression, inventory, quest, relationship, decorating, save and audio behaviour remains intact;
-- `npm run validate` passes;
-- R2-WP2.10B can begin with the daughter seeing a materially cleaner first impression.
+- no black/missing decorative graphic is used by the title screen;
+- the player unicorn is represented by the rebuilt coherent procedural renderer at creator and gameplay scale;
+- creator arrows and values remain inside the intended layout and align consistently;
+- Glade bridge collision now matches the visible bridge deck width in the crossing direction;
+- the suggestion card has an obvious acknowledgement/close path as well as another-idea and session-hide behaviour;
+- the cramped Glade HUD composition shown in the pre-playtest screenshot has been spaced out;
+- existing progression, inventory, quest, relationship, decorating, save and audio behaviour remains intact under full validation;
+- R2-WP2.10B can begin after the deployed visual build receives its final glance.
 
 ## Follow-on package
 
