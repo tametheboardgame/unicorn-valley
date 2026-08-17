@@ -600,7 +600,7 @@ export class MoonflowerGladeScene extends Phaser.Scene {
   }
 
   private createForegroundLayeringTest(): void {
-    this.add.rectangle(1110, 1110, 13, 120, 0x5d9b68, 1).setDepth(8);
+    this.add.rectangle(1110, 1092, 9, 86, 0x5d9b68, 1).setDepth(8);
 
     const petalOffsets = [
       [0, -34],
@@ -611,10 +611,12 @@ export class MoonflowerGladeScene extends Phaser.Scene {
     ] as const;
 
     for (const [offsetX, offsetY] of petalOffsets) {
-      this.add.ellipse(1110 + offsetX, 1040 + offsetY, 58, 78, 0xdca7ff, 0.96).setDepth(32);
+      this.add
+        .ellipse(1110 + offsetX * 0.72, 1045 + offsetY * 0.72, 42, 56, 0xdca7ff, 0.96)
+        .setDepth(32);
     }
 
-    this.add.circle(1110, 1040, 25, 0xffe5a2, 1).setDepth(33);
+    this.add.circle(1110, 1045, 18, 0xffe5a2, 1).setDepth(33);
   }
 
   private addMoonflower(x: number, y: number, scale: number): void {
@@ -666,45 +668,40 @@ export class MoonflowerGladeScene extends Phaser.Scene {
 
   private createHud(): void {
     this.add
-      .text(28, 28, 'Moonflower Glade', {
+      .text(28, 22, 'Moonflower Glade', {
         color: '#49355e',
         fontFamily: 'system-ui, sans-serif',
-        fontSize: '26px',
+        fontSize: '24px',
         fontStyle: 'bold',
-        backgroundColor: '#fff9e8dd',
-        padding: { x: 14, y: 9 },
+        backgroundColor: '#fff9e8f2',
+        padding: { x: 14, y: 8 },
       })
       .setScrollFactor(0)
       .setDepth(100);
 
     this.add
-      .text(
-        28,
-        82,
-        'WASD / arrows to explore  •  E / Enter / Space to interact  •  Escape to title',
-        {
-          color: '#5a4869',
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '17px',
-          backgroundColor: '#fff9e8c8',
-          padding: { x: 11, y: 7 },
-        },
-      )
+      .text(28, 72, 'Move: WASD / arrows  •  Interact: E / Enter / Space  •  Esc: title', {
+        color: '#5a4869',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '15px',
+        backgroundColor: '#fff9e8ee',
+        padding: { x: 10, y: 6 },
+      })
       .setScrollFactor(0)
       .setDepth(100);
 
     this.guideText = this.add
       .text(
         28,
-        128,
+        112,
         this.hasFirstDiscovery
           ? 'Your Moonflower Sparkle is safely remembered. Pip would love to see you.'
           : 'Pip is nearby. Explore whenever you are ready.',
         {
           color: '#5b4568',
           fontFamily: 'system-ui, sans-serif',
-          fontSize: '16px',
-          backgroundColor: '#fff9e8b8',
+          fontSize: '14px',
+          backgroundColor: '#fff9e8e8',
           padding: { x: 10, y: 6 },
         },
       )
