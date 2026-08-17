@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { GAME_WIDTH } from '../config/gameConstants';
 import type { InteractionTarget } from '../interaction/InteractionTarget';
 import { selectInteractionTarget } from '../interaction/InteractionTargeting';
 import { MOONFLOWER_GLADE_INTERACTIONS } from '../interaction/MoonflowerGladeInteractions';
