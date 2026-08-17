@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { TypedEventBus, type GameEventMap } from '../events/GameEventBus';
-import { type SaveRepository } from './SaveRepository';
+import type { SaveRepository } from './SaveRepository';
 import { SaveService } from './SaveService';
 import { CURRENT_SAVE_SCHEMA_VERSION } from './saveSchema';
 
