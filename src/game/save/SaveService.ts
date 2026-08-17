@@ -1,6 +1,6 @@
-import { type GameEventMap, TypedEventBus, gameEventBus } from '../events/GameEventBus';
+import { type GameEventMap, type TypedEventBus, gameEventBus } from '../events/GameEventBus';
 import { createDefaultSave } from './createDefaultSave';
-import { type SaveRepository } from './SaveRepository';
+import type { SaveRepository } from './SaveRepository';
 import { migrateSaveRecord } from './saveMigrations';
 import { CURRENT_SAVE_SCHEMA_VERSION, type SaveGame } from './saveSchema';
 import { isSaveGame } from './saveValidation';
