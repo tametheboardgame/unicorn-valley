@@ -33,7 +33,9 @@ describe('DiscoveryService', () => {
     expect(reloadedSave?.world.uniqueDiscoveryIds).toContain('discovery:moonflower-sparkle');
     expect(reloadedSave?.world.flags['flag:first-sparkle-found']).toBe(true);
     expect(
-      new DiscoveryService(new SaveService(repository)).hasDiscovery('discovery:moonflower-sparkle'),
+      new DiscoveryService(new SaveService(repository)).hasDiscovery(
+        'discovery:moonflower-sparkle',
+      ),
     ).toBe(true);
   });
 
