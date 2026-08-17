@@ -1,12 +1,12 @@
-import Phaser from 'phaser';
+import type Phaser from 'phaser';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { ActivitySuggestionSession } from '../suggestions/ActivitySuggestionModel';
 import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from './uiTheme';
 
-const CARD_X = 220;
-const CARD_Y = 222;
-const CARD_WIDTH = 390;
-const CARD_HEIGHT = 170;
+const CARD_X = 235;
+const CARD_Y = 245;
+const CARD_WIDTH = 420;
+const CARD_HEIGHT = 190;
 const REFRESH_INTERVAL_MS = 300;
 
 export class ActivitySuggestionCard {
@@ -17,16 +17,20 @@ export class ActivitySuggestionCard {
   private readonly message: Phaser.GameObjects.Text;
   private readonly nextButton: Phaser.GameObjects.Rectangle;
   private readonly nextLabel: Phaser.GameObjects.Text;
-  private readonly dismissButton: Phaser.GameObjects.Rectangle;
-  private readonly dismissLabel: Phaser.GameObjects.Text;
+  private readonly gotItButton: Phaser.GameObjects.Rectangle;
+  private readonly gotItLabel: Phaser.GameObjects.Text;
+  private readonly hideHintsLabel: Phaser.GameObjects.Text;
+  private readonly closeButton: Phaser.GameObjects.Arc;
+  private readonly closeLabel: Phaser.GameObjects.Text;
   private readonly suggestionSession = new ActivitySuggestionSession();
   private lastRefreshAt = Number.NEGATIVE_INFINITY;
   private currentSignature = '';
+  private hiddenForSession = false;
 
   public constructor(private readonly scene: Phaser.Scene) {
     this.shadow = createUiShadow(scene, CARD_X, CARD_Y, CARD_WIDTH, CARD_HEIGHT, 115, 0.18);
     this.panel = scene.add
-      .rectangle(CARD_X, CARD_Y, CARD_WIDTH, CARD_HEIGHT, UI_COLOURS.cream, 0.98)
+      .rectangle(CARD_X, CARD_Y, CARD_WIDTH, CARD_HEIGHT, UI_COLOURS.cream, 0.99)
       .setStrokeStyle(4, UI_COLOURS.lavenderStrong, 0.98)
       .setScrollFactor(0)
       .setDepth(116);
@@ -35,14 +39,14 @@ export class ActivitySuggestionCard {
       .text(CARD_X - CARD_WIDTH / 2 + 18, CARD_Y - CARD_HEIGHT / 2 + 13, 'Maybe try… ✨', {
         color: UI_COLOURS.mutedInk,
         fontFamily: UI_FONT,
-        fontSize: '15px',
+        fontSize: '14px',
         fontStyle: 'bold',
       })
       .setScrollFactor(0)
       .setDepth(117);
 
     this.title = scene.add
-      .text(CARD_X - CARD_WIDTH / 2 + 18, CARD_Y - CARD_HEIGHT / 2 + 39, '', {
+      .text(CARD_X - CARD_WIDTH / 2 + 18, CARD_Y - CARD_HEIGHT / 2 + 40, '', {
         color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
         fontSize: '20px',
@@ -52,24 +56,41 @@ export class ActivitySuggestionCard {
       .setDepth(117);
 
     this.message = scene.add
-      .text(CARD_X - CARD_WIDTH / 2 + 18, CARD_Y - CARD_HEIGHT / 2 + 68, '', {
+      .text(CARD_X - CARD_WIDTH / 2 + 18, CARD_Y - CARD_HEIGHT / 2 + 70, '', {
         color: UI_COLOURS.softInk,
         fontFamily: UI_FONT,
         fontSize: '15px',
         lineSpacing: 3,
-        wordWrap: { width: CARD_WIDTH - 36 },
+        wordWrap: { width: CARD_WIDTH - 48 },
       })
       .setScrollFactor(0)
       .setDepth(117);
 
+    this.closeButton = scene.add
+      .circle(CARD_X + CARD_WIDTH / 2 - 22, CARD_Y - CARD_HEIGHT / 2 + 22, 14, 0xf2e3f5, 1)
+      .setStrokeStyle(2, UI_COLOURS.lavenderStrong, 0.75)
+      .setScrollFactor(0)
+      .setDepth(118)
+      .setInteractive({ useHandCursor: true });
+    this.closeLabel = scene.add
+      .text(this.closeButton.x, this.closeButton.y - 1, '×', {
+        color: UI_COLOURS.ink,
+        fontFamily: UI_FONT,
+        fontSize: '20px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5)
+      .setScrollFactor(0)
+      .setDepth(119);
+
     this.nextButton = scene.add
-      .rectangle(CARD_X - 75, CARD_Y + CARD_HEIGHT / 2 - 24, 150, 38, UI_COLOURS.lavender, 1)
+      .rectangle(CARD_X - 82, CARD_Y + CARD_HEIGHT / 2 - 36, 160, 40, UI_COLOURS.lavender, 1)
       .setStrokeStyle(2, UI_COLOURS.lavenderStrong, 0.95)
       .setScrollFactor(0)
       .setDepth(118)
       .setInteractive({ useHandCursor: true });
     this.nextLabel = scene.add
-      .text(CARD_X - 75, CARD_Y + CARD_HEIGHT / 2 - 24, 'Another idea', {
+      .text(CARD_X - 82, CARD_Y + CARD_HEIGHT / 2 - 36, 'Another idea', {
         color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
         fontSize: '14px',
@@ -79,14 +100,14 @@ export class ActivitySuggestionCard {
       .setScrollFactor(0)
       .setDepth(119);
 
-    this.dismissButton = scene.add
-      .rectangle(CARD_X + 105, CARD_Y + CARD_HEIGHT / 2 - 24, 130, 38, UI_COLOURS.gold, 1)
+    this.gotItButton = scene.add
+      .rectangle(CARD_X + 98, CARD_Y + CARD_HEIGHT / 2 - 36, 150, 40, UI_COLOURS.gold, 1)
       .setStrokeStyle(2, UI_COLOURS.goldStrong, 0.95)
       .setScrollFactor(0)
       .setDepth(118)
       .setInteractive({ useHandCursor: true });
-    this.dismissLabel = scene.add
-      .text(CARD_X + 105, CARD_Y + CARD_HEIGHT / 2 - 24, 'Not now', {
+    this.gotItLabel = scene.add
+      .text(CARD_X + 98, CARD_Y + CARD_HEIGHT / 2 - 36, 'Got it! ✨', {
         color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
         fontSize: '14px',
@@ -96,24 +117,41 @@ export class ActivitySuggestionCard {
       .setScrollFactor(0)
       .setDepth(119);
 
+    this.hideHintsLabel = scene.add
+      .text(CARD_X, CARD_Y + CARD_HEIGHT / 2 - 10, 'Hide ideas for now', {
+        color: UI_COLOURS.mutedInk,
+        fontFamily: UI_FONT,
+        fontSize: '12px',
+      })
+      .setOrigin(0.5)
+      .setScrollFactor(0)
+      .setDepth(119)
+      .setInteractive({ useHandCursor: true });
+
     applyButtonHover(this.nextButton, UI_COLOURS.lavender, UI_COLOURS.blush);
-    applyButtonHover(this.dismissButton, UI_COLOURS.gold, UI_COLOURS.cream);
+    applyButtonHover(this.gotItButton, UI_COLOURS.gold, 0xfff4bf);
 
     this.nextButton.on('pointerdown', () => {
       const save = this.getSave();
       this.suggestionSession.rotate(save);
       this.refresh(true);
     });
-    this.dismissButton.on('pointerdown', () => {
-      const save = this.getSave();
-      this.suggestionSession.dismissCurrent(save);
-      this.refresh(true);
+    this.gotItButton.on('pointerdown', () => this.acknowledgeCurrent());
+    this.closeButton.on('pointerdown', () => this.acknowledgeCurrent());
+    this.hideHintsLabel.on('pointerdown', () => {
+      this.hiddenForSession = true;
+      this.setVisible(false);
     });
 
     this.refresh(true);
   }
 
   public refresh(force = false): void {
+    if (this.hiddenForSession) {
+      this.setVisible(false);
+      return;
+    }
+
     if (!force && this.scene.time.now - this.lastRefreshAt < REFRESH_INTERVAL_MS) {
       return;
     }
@@ -145,8 +183,17 @@ export class ActivitySuggestionCard {
     this.message.destroy();
     this.nextButton.destroy();
     this.nextLabel.destroy();
-    this.dismissButton.destroy();
-    this.dismissLabel.destroy();
+    this.gotItButton.destroy();
+    this.gotItLabel.destroy();
+    this.hideHintsLabel.destroy();
+    this.closeButton.destroy();
+    this.closeLabel.destroy();
+  }
+
+  private acknowledgeCurrent(): void {
+    const save = this.getSave();
+    this.suggestionSession.dismissCurrent(save);
+    this.refresh(true);
   }
 
   private getSave() {
@@ -162,7 +209,10 @@ export class ActivitySuggestionCard {
     this.message.setVisible(visible);
     this.nextButton.setVisible(visible);
     this.nextLabel.setVisible(visible);
-    this.dismissButton.setVisible(visible);
-    this.dismissLabel.setVisible(visible);
+    this.gotItButton.setVisible(visible);
+    this.gotItLabel.setVisible(visible);
+    this.hideHintsLabel.setVisible(visible);
+    this.closeButton.setVisible(visible);
+    this.closeLabel.setVisible(visible);
   }
 }
