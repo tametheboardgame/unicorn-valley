@@ -54,33 +54,29 @@ canvas {
 .unicorn-name-input {
   position: absolute;
   z-index: 20;
-  top: 14.5%;
-  left: 72%;
-  width: min(320px, 42vw);
-  height: 48px;
-  padding: 8px 14px;
-  transform: translateX(-50%);
-  border: 4px solid #d7afe8;
-  border-radius: 16px;
+  min-width: 120px;
+  min-height: 34px;
+  padding: 7px 14px;
+  transform: translate(-50%, -50%);
+  border: 4px solid #c192d5;
+  border-radius: 15px;
   outline: none;
   background: #fffaf2;
-  color: #543966;
+  color: #4f3a5d;
   font:
-    700 20px system-ui,
+    700 20px "Trebuchet MS",
+    "Segoe UI",
+    system-ui,
     sans-serif;
   text-align: center;
-  box-shadow: 0 7px 24px rgb(54 36 71 / 24%);
+  box-shadow: 0 6px 18px rgb(54 36 71 / 20%);
+}
+
+.unicorn-name-input:hover {
+  border-color: #b17bc9;
 }
 
 .unicorn-name-input:focus {
-  border-color: #ffe27d;
-}
-
-@media (max-aspect-ratio: 4 / 5) {
-  .unicorn-name-input {
-    top: 17%;
-    left: 71%;
-    width: 38vw;
-    font-size: 16px;
-  }
+  border-color: #d6b35f;
+  box-shadow: 0 0 0 3px rgb(255 230 166 / 36%);
 }
