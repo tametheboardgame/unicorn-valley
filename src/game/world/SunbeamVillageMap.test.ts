@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { findUnreachableTargets, isPointBlocked, isPointInsideWalkableBounds } from './MapTraversal';
+import {
+  findUnreachableTargets,
+  isPointBlocked,
+  isPointInsideWalkableBounds,
+} from './MapTraversal';
 import { SUNBEAM_VILLAGE_MAP } from './SunbeamVillageMap';
 
 const PLAYER_CLEARANCE = 42;
