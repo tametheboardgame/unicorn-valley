@@ -455,13 +455,18 @@ export class MoonflowerGladeScene extends Phaser.Scene {
       .setDepth(100);
 
     this.add
-      .text(28, 82, 'WASD / arrows to explore  •  E / Enter / Space to interact  •  Escape to title', {
-        color: '#5a4869',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '17px',
-        backgroundColor: '#fff9e8c8',
-        padding: { x: 11, y: 7 },
-      })
+      .text(
+        28,
+        82,
+        'WASD / arrows to explore  •  E / Enter / Space to interact  •  Escape to title',
+        {
+          color: '#5a4869',
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '17px',
+          backgroundColor: '#fff9e8c8',
+          padding: { x: 11, y: 7 },
+        },
+      )
       .setScrollFactor(0)
       .setDepth(100);
 
