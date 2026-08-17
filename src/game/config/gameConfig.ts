@@ -8,6 +8,7 @@ import { PreloadScene } from '../scenes/PreloadScene';
 import { ResizeTestScene } from '../scenes/ResizeTestScene';
 import { TitleScene } from '../scenes/TitleScene';
 import { UnicornCreatorScene } from '../scenes/UnicornCreatorScene';
+import { WonderbookScene } from '../scenes/WonderbookScene';
 import { GAME_HEIGHT, GAME_WIDTH } from './gameConstants';
 
 export const gameConfig: Phaser.Types.Core.GameConfig = {
@@ -41,5 +42,6 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
     DoorwayStubScene,
     DialogueTestScene,
     UnicornCreatorScene,
+    WonderbookScene,
   ],
 };
