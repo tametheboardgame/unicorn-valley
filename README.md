@@ -6,11 +6,11 @@ The player creates her own unicorn, lives at Moonflower Cottage, explores a magi
 
 ## Project status
 
-**R2-WP2.3 - Quest Engine V1 implemented and pending final validation.**
+**R2-WP2.4 - Relationship System V1 implemented and pending final validation.**
 
-R0, R1, R2-WP2.1 and R2-WP2.2 are complete. The production branch is deployed to `https://unicorn-valley.pages.dev/`.
+R0, R1 and R2-WP2.1 through R2-WP2.3 are complete. The production branch is deployed to `https://unicorn-valley.pages.dev/`.
 
-The next implementation package is **R2-WP2.4 - Relationship System V1**.
+The next implementation package is **R2-WP2.5 - Willow's Moonflowers**.
 
 ## Core principles
 
@@ -55,6 +55,7 @@ The next implementation package is **R2-WP2.4 - Relationship System V1**.
 - [Sunbeam Village Prototype](docs/18-SUNBEAM-VILLAGE-PROTOTYPE.md)
 - [Item and Inventory System](docs/19-ITEM-INVENTORY-SYSTEM.md)
 - [Quest Engine V1](docs/20-QUEST-ENGINE-V1.md)
+- [Relationship System V1](docs/21-RELATIONSHIP-SYSTEM-V1.md)
 
 ## Release plan
 
