@@ -96,10 +96,10 @@ describe('stepRaceRun', () => {
   });
 
   it('moves faster while the unicorn is inside a boost zone', () => {
-    const boosted = stepRaceRun(stateAt(25), TEST_COURSE, 0.05, false);
+    const boosted = stepRaceRun(stateAt(25), TEST_COURSE, 0.01, false);
     const boostedDistance = boosted.state.movement.progress - 25;
 
-    expect(boostedDistance).toBeCloseTo(RACE_FORWARD_SPEED * 1.4 * 0.05, 5);
+    expect(boostedDistance).toBeCloseTo(RACE_FORWARD_SPEED * 1.4 * 0.01, 5);
     expect(boosted.events.some((event) => event.type === 'boost-entered')).toBe(true);
   });
 
