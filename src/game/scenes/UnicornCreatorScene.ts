@@ -273,9 +273,14 @@ export class UnicornCreatorScene extends Phaser.Scene {
 
     for (const [key, outlines] of this.swatchOutlines) {
       const currentValue = this.appearance[key as keyof UnicornAppearance];
-      const source = key === 'bodyColour' ? BODY_COLOURS : key === 'eyeColour' ? EYE_COLOURS : HAIR_COLOURS;
+      const source =
+        key === 'bodyColour' ? BODY_COLOURS : key === 'eyeColour' ? EYE_COLOURS : HAIR_COLOURS;
       outlines.forEach((outline, index) => {
-        outline.setStrokeStyle(5, source[index]?.id === currentValue ? 0xffe98c : 0xffffff, source[index]?.id === currentValue ? 1 : 0.25);
+        outline.setStrokeStyle(
+          5,
+          source[index]?.id === currentValue ? 0xffe98c : 0xffffff,
+          source[index]?.id === currentValue ? 1 : 0.25,
+        );
       });
     }
 
@@ -288,7 +293,9 @@ export class UnicornCreatorScene extends Phaser.Scene {
     };
     for (const [key, label] of this.valueLabels) {
       const value = this.appearance[key as keyof UnicornAppearance];
-      label.setText(labelSources[key]?.find((choice) => choice.id === value)?.label ?? String(value));
+      label.setText(
+        labelSources[key]?.find((choice) => choice.id === value)?.label ?? String(value),
+      );
     }
   }
 
