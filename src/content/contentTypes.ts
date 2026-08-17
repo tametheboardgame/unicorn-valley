@@ -17,9 +17,9 @@ export type ItemCategory =
 export interface ItemDefinition {
   id: ItemId;
   name: string;
-  description: string;
-  category: ItemCategory;
-  icon: string;
+  description?: string;
+  category?: ItemCategory;
+  icon?: string;
   discoveryId?: DiscoveryId;
   questCritical?: boolean;
 }
