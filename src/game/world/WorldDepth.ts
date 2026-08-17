@@ -6,3 +6,7 @@ export const WORLD_UI_DEPTH_FLOOR = 100;
 export function worldDepthForY(y: number, offset = 0): number {
   return WORLD_DEPTH_BASE + Math.max(0, y) * WORLD_DEPTH_Y_SCALE + offset;
 }
+
+export function isWorldDepthSortable(currentDepth: number): boolean {
+  return currentDepth < WORLD_UI_DEPTH_FLOOR;
+}
