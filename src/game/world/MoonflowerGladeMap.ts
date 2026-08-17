@@ -1,0 +1,94 @@
+import type { CollisionRectangle, MapPoint } from './MapTraversal';
+
+export interface GladeLandmark {
+  id: string;
+  label: string;
+  position: MapPoint;
+  approach: MapPoint;
+}
+
+export interface GladeEntrance {
+  id: string;
+  label: string;
+  position: MapPoint;
+  approach: MapPoint;
+  direction: 'east' | 'south';
+}
+
+export const MOONFLOWER_GLADE_MAP = {
+  width: 2800,
+  height: 1800,
+  margin: 90,
+  playerSpawn: { x: 690, y: 900 },
+  bridge: {
+    x: 1400,
+    y: 900,
+    width: 380,
+    height: 190,
+  },
+  landmarks: [
+    {
+      id: 'moonflower-cottage',
+      label: 'Moonflower Cottage',
+      position: { x: 560, y: 470 },
+      approach: { x: 560, y: 720 },
+    },
+    {
+      id: 'garden-plot',
+      label: 'Garden Plot',
+      position: { x: 890, y: 620 },
+      approach: { x: 890, y: 790 },
+    },
+    {
+      id: 'little-bridge',
+      label: 'Little Bridge',
+      position: { x: 1400, y: 900 },
+      approach: { x: 1400, y: 900 },
+    },
+    {
+      id: 'display-stump',
+      label: 'Discovery Display',
+      position: { x: 850, y: 1120 },
+      approach: { x: 940, y: 1120 },
+    },
+    {
+      id: 'hollow-tree',
+      label: 'Hollow Tree',
+      position: { x: 2200, y: 490 },
+      approach: { x: 2140, y: 710 },
+    },
+    {
+      id: 'moonflower-field',
+      label: 'Moonflower Field',
+      position: { x: 2080, y: 1230 },
+      approach: { x: 1900, y: 1230 },
+    },
+  ] satisfies readonly GladeLandmark[],
+  entrances: [
+    {
+      id: 'sunbeam-village',
+      label: 'Sunbeam Village',
+      position: { x: 2680, y: 900 },
+      approach: { x: 2470, y: 900 },
+      direction: 'east',
+    },
+    {
+      id: 'rainbow-meadow',
+      label: 'Rainbow Meadow',
+      position: { x: 1980, y: 1700 },
+      approach: { x: 1980, y: 1490 },
+      direction: 'south',
+    },
+  ] satisfies readonly GladeEntrance[],
+  colliders: [
+    { id: 'collision:cottage', x: 560, y: 470, width: 460, height: 360 },
+    { id: 'collision:stream-north', x: 1400, y: 380, width: 190, height: 760 },
+    { id: 'collision:stream-south', x: 1400, y: 1420, width: 190, height: 760 },
+    { id: 'collision:hollow-tree', x: 2200, y: 520, width: 170, height: 220 },
+    { id: 'collision:display-stump', x: 850, y: 1120, width: 84, height: 72 },
+    { id: 'collision:home-boulder', x: 1000, y: 360, width: 140, height: 110 },
+    { id: 'collision:east-boulder', x: 1870, y: 760, width: 150, height: 100 },
+  ] satisfies readonly CollisionRectangle[],
+} as const;
+
+export type MoonflowerGladeMap = typeof MOONFLOWER_GLADE_MAP;

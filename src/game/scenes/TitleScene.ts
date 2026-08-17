@@ -71,7 +71,7 @@ export class TitleScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     this.statusText = this.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT - 82, 'A little patch of the valley is ready to explore.', {
+      .text(GAME_WIDTH / 2, GAME_HEIGHT - 82, 'Moonflower Glade is ready to explore.', {
         color: '#e9dcf8',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '21px',
@@ -122,7 +122,7 @@ export class TitleScene extends Phaser.Scene {
     this.enterButton?.setStrokeStyle(7, 0xffe6a8, 1);
 
     this.time.delayedCall(140, () => {
-      this.scene.start('MovementTestScene');
+      this.scene.start('MoonflowerGladeScene');
     });
   }
 }

@@ -1,8 +1,9 @@
 import Phaser from 'phaser';
 
-const DIAGNOSTIC_SCENES: Readonly<Record<string, string>> = {
+const DIAGNOSTIC_SCENES: Record<string, string> = {
   'resize-test': 'ResizeTestScene',
   'movement-test': 'MovementTestScene',
+  glade: 'MoonflowerGladeScene',
 };
 
 export class BootScene extends Phaser.Scene {
@@ -14,7 +15,7 @@ export class BootScene extends Phaser.Scene {
     const requestedScene = new URLSearchParams(globalThis.location.search).get('scene');
     this.registry.set(
       'postPreloadScene',
-      requestedScene ? (DIAGNOSTIC_SCENES[requestedScene] ?? 'TitleScene') : 'TitleScene',
+      (requestedScene && DIAGNOSTIC_SCENES[requestedScene]) || 'TitleScene',
     );
     this.scene.start('PreloadScene');
   }
