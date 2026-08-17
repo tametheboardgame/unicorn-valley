@@ -1,0 +1,127 @@
+
+> unicorn-valley@0.1.0 validate
+> npm run format:check && npm run lint && npm run typecheck && npm run test && npm run build && npm run smoke:static
+
+
+> unicorn-valley@0.1.0 format:check
+> biome format .
+
+src/game/audio/AudioSettings.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Formatter would have printed the following content:
+  
+     66  66 │   
+     67  67 │   export class AudioSettingsStore {
+     68     │ - ··public·constructor(private·readonly·storage:·AudioSettingsStorage·|·null·=·resolveBrowserStorage())·{}
+         68 │ + ··public·constructor(
+         69 │ + ····private·readonly·storage:·AudioSettingsStorage·|·null·=·resolveBrowserStorage(),
+         70 │ + ··)·{}
+     69  71 │   
+     70  72 │     public load(): AudioSettings {
+  
+
+src/game/audio/VerticalSliceAudio.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Formatter would have printed the following content:
+  
+     67  67 │     private currentProfile: AudioSceneProfile | null = null;
+     68  68 │   
+     69     │ - ··public·constructor(private·readonly·settingsStore:·AudioSettingsStore·=·getBrowserAudioSettingsStore())·{
+         69 │ + ··public·constructor(
+         70 │ + ····private·readonly·settingsStore:·AudioSettingsStore·=·getBrowserAudioSettingsStore(),
+         71 │ + ··)·{
+     70  72 │       this.settings = settingsStore.load();
+     71  73 │     }
+    ······· │ 
+    176 178 │   
+    177 179 │     private applyGainSettings(): void {
+    178     │ - ····if·(!this.context·||·!this.masterGain·||·!this.musicGain·||·!this.ambienceGain·||·!this.sfxGain)·{
+        180 │ + ····if·(
+        181 │ + ······!this.context·||
+        182 │ + ······!this.masterGain·||
+        183 │ + ······!this.musicGain·||
+        184 │ + ······!this.ambienceGain·||
+        185 │ + ······!this.sfxGain
+        186 │ + ····)·{
+    179 187 │         return;
+    180 188 │       }
+    181 189 │   
+    182 190 │       const now = this.context.currentTime;
+    183     │ - ····this.masterGain.gain.setTargetAtTime(this.settings.muted·?·0·:·this.settings.masterVolume,·now,·0.03);
+        191 │ + ····this.masterGain.gain.setTargetAtTime(
+        192 │ + ······this.settings.muted·?·0·:·this.settings.masterVolume,
+        193 │ + ······now,
+        194 │ + ······0.03,
+        195 │ + ····);
+    184 196 │       this.musicGain.gain.setTargetAtTime(this.settings.musicEnabled ? 0.16 : 0, now, 0.04);
+    185 197 │       this.ambienceGain.gain.setTargetAtTime(this.settings.ambienceEnabled ? 0.09 : 0, now, 0.04);
+    ······· │ 
+    272 284 │   
+    273 285 │     private playAmbienceDetail(definition: SceneAudioDefinition): void {
+    274     │ - ····if·(!this.ambienceGain·||·!this.context·||·!this.settings.ambienceEnabled·||·this.settings.muted)·{
+        286 │ + ····if·(
+        287 │ + ······!this.ambienceGain·||
+        288 │ + ······!this.context·||
+        289 │ + ······!this.settings.ambienceEnabled·||
+        290 │ + ······this.settings.muted
+        291 │ + ····)·{
+    275 292 │         return;
+    276 293 │       }
+  
+
+src/game/dialogue/DialogueCard.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Formatter would have printed the following content:
+  
+     25  25 │         .setDepth(125);
+     26  26 │   
+     27     │ - ····this.panelShadow·=·createUiShadow(scene,·GAME_WIDTH·/·2,·GAME_HEIGHT·-·164,·1120,·286,·125,·0.28);
+         27 │ + ····this.panelShadow·=·createUiShadow(
+         28 │ + ······scene,
+         29 │ + ······GAME_WIDTH·/·2,
+         30 │ + ······GAME_HEIGHT·-·164,
+         31 │ + ······1120,
+         32 │ + ······286,
+         33 │ + ······125,
+         34 │ + ······0.28,
+         35 │ + ····);
+     28  36 │       this.panel = scene.add
+     29  37 │         .rectangle(GAME_WIDTH / 2, GAME_HEIGHT - 164, 1120, 286, UI_COLOURS.cream, 0.99)
+  
+
+src/game/ui/AudioSettingsPanel.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Formatter would have printed the following content:
+  
+    106 106 │   
+    107 107 │       const hint = scene.add
+    108     │ - ······.text(PANEL_X,·PANEL_Y·+·PANEL_HEIGHT·/·2·-·18,·'Everything·important·is·also·shown·on·screen.',·{
+    109     │ - ········color:·UI_COLOURS.softInk,
+    110     │ - ········fontFamily:·UI_FONT,
+    111     │ - ········fontSize:·'12px',
+    112     │ - ········align:·'center',
+    113     │ - ······})
+        108 │ + ······.text(
+        109 │ + ········PANEL_X,
+        110 │ + ········PANEL_Y·+·PANEL_HEIGHT·/·2·-·18,
+        111 │ + ········'Everything·important·is·also·shown·on·screen.',
+        112 │ + ········{
+        113 │ + ··········color:·UI_COLOURS.softInk,
+        114 │ + ··········fontFamily:·UI_FONT,
+        115 │ + ··········fontSize:·'12px',
+        116 │ + ··········align:·'center',
+        117 │ + ········},
+        118 │ + ······)
+    114 119 │         .setOrigin(0.5)
+    115 120 │         .setScrollFactor(0)
+  
+
+Checked 110 files in 120ms. No fixes applied.
+Found 4 errors.
+format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Some errors were emitted while running checks.
+  
+
+
+__VALIDATION_FAILED__:1
