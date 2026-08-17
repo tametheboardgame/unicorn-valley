@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { WORLD_UI_DEPTH_FLOOR, worldDepthForY } from './WorldDepth';
+import { isWorldDepthSortable, WORLD_UI_DEPTH_FLOOR, worldDepthForY } from './WorldDepth';
 
 describe('worldDepthForY', () => {
   it('places lower world positions in front of higher world positions', () => {
@@ -16,5 +16,16 @@ describe('worldDepthForY', () => {
 
   it('clamps negative y values to the world base depth', () => {
     expect(worldDepthForY(-100)).toBe(worldDepthForY(0));
+  });
+});
+
+describe('isWorldDepthSortable', () => {
+  it('allows normal world objects to participate in occlusion sorting', () => {
+    expect(isWorldDepthSortable(45)).toBe(true);
+  });
+
+  it('protects HUD and modal controls from world occlusion sorting', () => {
+    expect(isWorldDepthSortable(WORLD_UI_DEPTH_FLOOR)).toBe(false);
+    expect(isWorldDepthSortable(120)).toBe(false);
   });
 });
