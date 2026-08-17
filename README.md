@@ -6,11 +6,11 @@ The player creates her own unicorn, lives at Moonflower Cottage, explores a magi
 
 ## Project status
 
-**R1-WP1.6 - Pip Intro and First Discovery implemented and validated.**
+**R1 - My Unicorn: First Playable implemented and validated in repository recovery.**
 
 R0 is complete and deployed to `https://unicorn-valley.pages.dev/`.
 
-The next implementation package is **R1-WP1.7 - Wonderbook Shell**.
+The next implementation package is **R2-WP2.1 - Sunbeam Village Prototype**.
 
 ## Core principles
 
@@ -50,11 +50,13 @@ The next implementation package is **R1-WP1.7 - Wonderbook Shell**.
 - [Dialogue Framework](docs/13-DIALOGUE-FRAMEWORK.md)
 - [Unicorn Creator V1](docs/14-UNICORN-CREATOR-V1.md)
 - [Pip Intro and First Discovery](docs/15-PIP-FIRST-DISCOVERY.md)
+- [Wonderbook Shell](docs/16-WONDERBOOK-SHELL.md)
+- [R1 First Playable Hardening](docs/17-FIRST-PLAYABLE-HARDENING.md)
 
 ## Release plan
 
 - **R0 - Foundation and Pre-production**: complete.
-- **R1 - My Unicorn: First Playable**: create a unicorn, explore Moonflower Glade, meet Pip and save progress.
+- **R1 - My Unicorn: First Playable**: complete.
 - **R2 - Living Valley Vertical Slice**: Sunbeam Village, quests, friendship, inventory, cottage decorating and visible persistent world change.
 - **R3 - Rainbow Run Racing**: proper racing activity integrated into the life-sim world.
 - **R4 - Friendship, Secrets and Home Depth**: multi-session stories, shops, deeper decorating and stronger world memory.
