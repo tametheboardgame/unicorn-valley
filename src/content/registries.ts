@@ -11,7 +11,7 @@ import { R2_CHARACTERS } from './r2Characters';
 import { R2_DIALOGUES } from './r2Dialogues';
 import { R2_ITEMS } from './r2Items';
 import { R2_QUESTS } from './r2Quests';
-import { R3_CHARACTERS, R3_DISCOVERIES } from './r3Content';
+import { R3_CHARACTERS, R3_DISCOVERIES, R3_ITEMS } from './r3Content';
 import type {
   CharacterDefinition,
   CharacterId,
@@ -26,7 +26,7 @@ import type {
 } from './contentTypes';
 import { assertValidContent } from './validateContent';
 
-const ALL_ITEMS = [...ITEMS, ...R2_ITEMS] satisfies readonly ItemDefinition[];
+const ALL_ITEMS = [...ITEMS, ...R2_ITEMS, ...R3_ITEMS] satisfies readonly ItemDefinition[];
 const ALL_CHARACTERS = [
   ...CHARACTERS,
   ...R2_CHARACTERS,

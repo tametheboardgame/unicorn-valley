@@ -21,6 +21,12 @@ import {
   type RaceObstacleDefinition,
 } from '../racing/RaceCourse';
 import {
+  RAINBOW_RUN_FINISHER_RIBBON_ID,
+  RAINBOW_RUN_PODIUM_ROSETTE_ID,
+  applyRaceResultToSave,
+  type RaceRewardSummary,
+} from '../racing/RaceResults';
+import {
   createRaceRunState,
   stepRaceRun,
   type RaceRunEvent,
@@ -56,6 +62,7 @@ export class RaceScene extends Phaser.Scene {
   private elapsedMs = 0;
   private finishTimeMs = 0;
   private playerFinishPlace = 0;
+  private raceRewardSummary: RaceRewardSummary | null = null;
   private progressFill: Phaser.GameObjects.Rectangle | null = null;
   private positionText: Phaser.GameObjects.Text | null = null;
   private timeText: Phaser.GameObjects.Text | null = null;
@@ -77,6 +84,7 @@ export class RaceScene extends Phaser.Scene {
     this.elapsedMs = 0;
     this.finishTimeMs = 0;
     this.playerFinishPlace = 0;
+    this.raceRewardSummary = null;
     this.collectableSprites.clear();
     this.npcRacerVisuals.clear();
 
@@ -113,6 +121,7 @@ export class RaceScene extends Phaser.Scene {
       this.inputController = null;
       this.pointerInput = null;
       this.player = null;
+      this.raceRewardSummary = null;
       this.progressFill = null;
       this.positionText = null;
       this.timeText = null;
@@ -167,6 +176,7 @@ export class RaceScene extends Phaser.Scene {
       this.finishTimeMs = this.elapsedMs;
       this.playerFinishPlace =
         this.getCurrentStandings().find((standing) => standing.isPlayer)?.place ?? 1;
+      this.raceRewardSummary = this.saveRaceResult();
     }
 
     this.updateHud();
@@ -639,6 +649,19 @@ export class RaceScene extends Phaser.Scene {
     );
   }
 
+  private saveRaceResult(): RaceRewardSummary {
+    const saveService = getBrowserSaveService();
+    const save = saveService.load() ?? saveService.createNewGame();
+    const result = applyRaceResultToSave(save, {
+      raceId: COURSE.id,
+      finishTimeMs: this.finishTimeMs,
+      place: this.playerFinishPlace,
+      participantCount: RAINBOW_RUN_NPC_RACERS.length + 1,
+    });
+    saveService.save(result.save);
+    return result.summary;
+  }
+
   private updateHud(): void {
     const movement = this.runState.movement;
     const ratio = Phaser.Math.Clamp(movement.progress / COURSE.length, 0, 1);
@@ -682,58 +705,100 @@ export class RaceScene extends Phaser.Scene {
     const standings = this.getCurrentStandings();
     const place =
       this.playerFinishPlace || standings.find((standing) => standing.isPlayer)?.place || 1;
-    const shade = this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, 760, 420, 0x5f4772, 0.94);
+    const reward = this.raceRewardSummary;
+    const bestText = reward
+      ? reward.isPersonalBest
+        ? reward.previousBestTimeMs === null
+          ? `Personal best: ${(reward.bestTimeMs / 1000).toFixed(1)}s ✨`
+          : `New personal best: ${(reward.bestTimeMs / 1000).toFixed(1)}s • was ${(reward.previousBestTimeMs / 1000).toFixed(1)}s ✨`
+        : `Personal best: ${(reward.bestTimeMs / 1000).toFixed(1)}s`
+      : '';
+    const rewardLines = reward
+      ? [
+          `✨ +${reward.participationSparkles} Rainbow Sparkles for finishing`,
+          ...(reward.podiumBonusSparkles > 0
+            ? [`🏆 +${reward.podiumBonusSparkles} Rainbow Sparkles for a podium finish`]
+            : []),
+          ...(reward.newRibbonIds.includes(RAINBOW_RUN_FINISHER_RIBBON_ID)
+            ? ['🎀 New Finisher Ribbon • available to decorate your cottage']
+            : []),
+          ...(reward.newRibbonIds.includes(RAINBOW_RUN_PODIUM_ROSETTE_ID)
+            ? ['🏅 New Podium Rosette • available to decorate your cottage']
+            : []),
+        ]
+      : ['Your race record has been saved.'];
+
+    const shade = this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, 820, 540, 0x5f4772, 0.96);
     const title = this.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 150, `You finished ${formatRacePlace(place)}! 🌈`, {
+      .text(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 216, `You finished ${formatRacePlace(place)}! 🌈`, {
         color: '#fff5cf',
         fontFamily: 'system-ui, sans-serif',
-        fontSize: '40px',
+        fontSize: '38px',
         fontStyle: 'bold',
       })
       .setOrigin(0.5);
     const time = this.add
       .text(
         GAME_WIDTH / 2,
-        GAME_HEIGHT / 2 - 82,
+        GAME_HEIGHT / 2 - 164,
         `Race time: ${(this.finishTimeMs / 1000).toFixed(1)} seconds`,
         {
           color: '#fff8ff',
           fontFamily: 'system-ui, sans-serif',
-          fontSize: '22px',
+          fontSize: '21px',
         },
       )
+      .setOrigin(0.5);
+    const best = this.add
+      .text(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 126, bestText, {
+        color: '#ffe9ad',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '18px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5);
+    const rewards = this.add
+      .text(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 65, rewardLines.join('\n'), {
+        color: '#fff5cf',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '17px',
+        fontStyle: 'bold',
+        align: 'center',
+        lineSpacing: 5,
+        wordWrap: { width: 740 },
+      })
       .setOrigin(0.5);
     const sparkles = this.add
       .text(
         GAME_WIDTH / 2,
-        GAME_HEIGHT / 2 - 38,
-        `Race sparkles: ${this.runState.collectedIds.length} / ${COURSE.collectables.length} • missing some is OK!`,
+        GAME_HEIGHT / 2 + 40,
+        `Course sparkles: ${this.runState.collectedIds.length} / ${COURSE.collectables.length} • missing some is OK!`,
         {
-          color: '#ffe9ad',
+          color: '#f4eaff',
           fontFamily: 'system-ui, sans-serif',
-          fontSize: '18px',
+          fontSize: '17px',
           fontStyle: 'bold',
         },
       )
       .setOrigin(0.5);
 
     this.finishOrderText = this.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 10, '', {
+      .text(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 82, '', {
         color: '#f4eaff',
         fontFamily: 'system-ui, sans-serif',
-        fontSize: '17px',
+        fontSize: '16px',
         fontStyle: 'bold',
         align: 'center',
-        wordWrap: { width: 690 },
+        wordWrap: { width: 740 },
       })
       .setOrigin(0.5);
 
     const restart = this.add
-      .rectangle(GAME_WIDTH / 2 - 145, GAME_HEIGHT / 2 + 125, 230, 70, 0xffefb7, 1)
+      .rectangle(GAME_WIDTH / 2 - 145, GAME_HEIGHT / 2 + 198, 230, 70, 0xffefb7, 1)
       .setStrokeStyle(4, 0xd49acb, 1)
       .setInteractive({ useHandCursor: true });
     const restartText = this.add
-      .text(GAME_WIDTH / 2 - 145, GAME_HEIGHT / 2 + 125, 'Race again', {
+      .text(GAME_WIDTH / 2 - 145, GAME_HEIGHT / 2 + 198, 'Race again', {
         color: '#60486d',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '22px',
@@ -742,11 +807,11 @@ export class RaceScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     const exit = this.add
-      .rectangle(GAME_WIDTH / 2 + 145, GAME_HEIGHT / 2 + 125, 230, 70, 0xf7e8ff, 1)
+      .rectangle(GAME_WIDTH / 2 + 145, GAME_HEIGHT / 2 + 198, 230, 70, 0xf7e8ff, 1)
       .setStrokeStyle(4, 0xb895c8, 1)
       .setInteractive({ useHandCursor: true });
     const exitText = this.add
-      .text(GAME_WIDTH / 2 + 145, GAME_HEIGHT / 2 + 125, 'Back to Meadow', {
+      .text(GAME_WIDTH / 2 + 145, GAME_HEIGHT / 2 + 198, 'Back to Meadow', {
         color: '#60486d',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '20px',
@@ -759,6 +824,8 @@ export class RaceScene extends Phaser.Scene {
         shade,
         title,
         time,
+        best,
+        rewards,
         sparkles,
         this.finishOrderText,
         restart,
