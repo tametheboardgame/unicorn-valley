@@ -1,6 +1,6 @@
 # R3-WP3.1 - Rainbow Meadow and Race Hub
 
-Status: **Complete pending CI**
+Status: **Complete**
 
 ## Goal
 
