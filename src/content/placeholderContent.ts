@@ -33,6 +33,11 @@ export const DISCOVERIES = [
     name: 'Moonflower Glade',
     description: 'The gentle glade around Moonflower Cottage.',
   },
+  {
+    id: 'discovery:moonflower-sparkle',
+    name: 'Moonflower Sparkle',
+    description: 'A tiny warm sparkle found beside the moonflowers near home.',
+  },
 ] as const satisfies readonly DiscoveryDefinition[];
 
 export const DIALOGUES = [
@@ -73,6 +78,46 @@ export const DIALOGUES = [
         type: 'line',
         speakerId: 'character:pip',
         text: 'Good choice! The valley can remember choices like that. See you properly soon!',
+      },
+    ],
+  },
+  {
+    id: 'dialogue:pip-welcome',
+    name: 'Pip Welcome',
+    startNodeId: 'dialogue-node:pip-welcome-hello',
+    nodes: [
+      {
+        id: 'dialogue-node:pip-welcome-hello',
+        type: 'line',
+        speakerId: 'character:pip',
+        text: "Hi! I'm Pip. I was hoping you'd arrive!",
+        nextNodeId: 'dialogue-node:pip-welcome-explore',
+      },
+      {
+        id: 'dialogue-node:pip-welcome-explore',
+        type: 'line',
+        speakerId: 'character:pip',
+        text: 'Try a little exploring. I saw something sparkling beside the path. No rush!',
+      },
+    ],
+  },
+  {
+    id: 'dialogue:pip-first-discovery',
+    name: 'Pip First Discovery',
+    startNodeId: 'dialogue-node:pip-found-sparkle',
+    nodes: [
+      {
+        id: 'dialogue-node:pip-found-sparkle',
+        type: 'line',
+        speakerId: 'character:pip',
+        text: 'You found the Moonflower Sparkle! I knew it would like you.',
+        nextNodeId: 'dialogue-node:pip-wonderbook-hint',
+      },
+      {
+        id: 'dialogue-node:pip-wonderbook-hint',
+        type: 'line',
+        speakerId: 'character:pip',
+        text: 'Discoveries like that belong in your Wonderbook. We should look at it soon!',
       },
     ],
   },
