@@ -6,20 +6,6 @@
 > unicorn-valley@0.1.0 format:check
 > biome format .
 
-src/game/audio/AudioSettings.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-  × Formatter would have printed the following content:
-  
-     66  66 │   
-     67  67 │   export class AudioSettingsStore {
-     68     │ - ··public·constructor(private·readonly·storage:·AudioSettingsStorage·|·null·=·resolveBrowserStorage())·{}
-         68 │ + ··public·constructor(
-         69 │ + ····private·readonly·storage:·AudioSettingsStorage·|·null·=·resolveBrowserStorage(),
-         70 │ + ··)·{}
-     69  71 │   
-     70  72 │     public load(): AudioSettings {
-  
-
 src/game/audio/VerticalSliceAudio.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   × Formatter would have printed the following content:
@@ -116,8 +102,8 @@ src/game/ui/AudioSettingsPanel.ts format ━━━━━━━━━━━━━
     115 120 │         .setScrollFactor(0)
   
 
-Checked 110 files in 120ms. No fixes applied.
-Found 4 errors.
+Checked 110 files in 152ms. No fixes applied.
+Found 3 errors.
 format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   × Some errors were emitted while running checks.
