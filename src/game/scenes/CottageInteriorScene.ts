@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { GAME_WIDTH } from '../config/gameConstants';
 import { buildCottageHomeView, type CottageHomeView } from '../home/CottageHomeView';
+import { HomeDecorationService } from '../home/HomeDecorationService';
 import { InputController } from '../input/InputController';
 import { KeyboardInputAdapter } from '../input/KeyboardInputAdapter';
 import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
@@ -22,6 +23,7 @@ import { MOONFLOWER_GLADE_MAP, setMoonflowerGladePlayerSpawn } from '../world/Mo
 
 const COLLISION_TEXTURE_KEY = 'cottage-collision-pixel';
 const SAVED_PLAYER_TEXTURE_KEY = 'player-unicorn-cottage';
+const DECORATION_INTERACTION_PREFIX = 'interaction:cottage-decoration:';
 
 export class CottageInteriorScene extends Phaser.Scene {
   private inputController: InputController | null = null;
@@ -33,7 +35,9 @@ export class CottageInteriorScene extends Phaser.Scene {
   private activeInteraction: InteractionTarget | null = null;
   private feedbackText: Phaser.GameObjects.Text | null = null;
   private feedbackTimer: Phaser.Time.TimerEvent | null = null;
+  private decorationService: HomeDecorationService | null = null;
   private homeView: CottageHomeView | null = null;
+  private homeStateObjects: Phaser.GameObjects.GameObject[] = [];
   private interactions: readonly InteractionTarget[] = [];
 
   public constructor() {
@@ -46,6 +50,7 @@ export class CottageInteriorScene extends Phaser.Scene {
 
     const saveService = getBrowserSaveService();
     const save = saveLocationCheckpoint(saveService, COTTAGE_INTERIOR_LOCATION_ID);
+    this.decorationService = new HomeDecorationService(saveService);
     this.homeView = buildCottageHomeView(save);
     this.renderHomeState(this.homeView);
     this.interactions = this.createInteractions(this.homeView);
@@ -106,7 +111,9 @@ export class CottageInteriorScene extends Phaser.Scene {
       this.collisionGroup = null;
       this.activeInteraction = null;
       this.feedbackText = null;
+      this.decorationService = null;
       this.homeView = null;
+      this.homeStateObjects = [];
       this.interactions = [];
     });
   }
@@ -150,6 +157,25 @@ export class CottageInteriorScene extends Phaser.Scene {
       treasureNames.length > 0
         ? `${treasureNames.join(' and ')} ${treasureVerb} glowing here. Your adventure is home too.`
         : 'A tiny shelf waits for special treasures from your adventures.';
+    const placementBySlotId = new Map(
+      homeView.placements.map((placement) => [placement.slotId, placement] as const),
+    );
+    const decorationInteractions = COTTAGE_INTERIOR_MAP.decorationSlots.map((slot) => {
+      const placement = placementBySlotId.get(slot.id);
+      return {
+        id: `${DECORATION_INTERACTION_PREFIX}${slot.id}`,
+        label: placement ? `${slot.label} · ${placement.name}` : `${slot.label} ✦`,
+        actionLabel: placement ? 'Change decoration' : 'Decorate',
+        position: slot.position,
+        interactionRadius: 130,
+        priority: 25,
+        result: {
+          type: 'message' as const,
+          title: 'Decorating',
+          message: 'Choose a decoration for this spot.',
+        },
+      } satisfies InteractionTarget;
+    });
 
     return [
       {
@@ -164,6 +190,7 @@ export class CottageInteriorScene extends Phaser.Scene {
           sceneKey: 'MoonflowerGladeScene',
         },
       },
+      ...decorationInteractions,
       {
         id: 'interaction:cottage-treasure-display',
         label: 'Treasure Shelf',
@@ -181,6 +208,11 @@ export class CottageInteriorScene extends Phaser.Scene {
   }
 
   private activateInteraction(target: InteractionTarget): void {
+    if (target.id.startsWith(DECORATION_INTERACTION_PREFIX)) {
+      this.cycleDecoration(target.id.slice(DECORATION_INTERACTION_PREFIX.length));
+      return;
+    }
+
     if (target.result.type === 'scene-transition') {
       if (target.result.sceneKey === 'MoonflowerGladeScene') {
         const cottage = MOONFLOWER_GLADE_MAP.landmarks.find(
@@ -199,6 +231,48 @@ export class CottageInteriorScene extends Phaser.Scene {
     if (target.result.type === 'message') {
       this.showFeedback(`${target.result.title}\n${target.result.message}`);
     }
+  }
+
+  private cycleDecoration(slotId: string): void {
+    if (!this.decorationService) {
+      return;
+    }
+
+    const result = this.decorationService.cycleDecoration(slotId);
+    this.refreshHomeState();
+
+    if (result.type === 'no-options') {
+      this.showFeedback(
+        `Decorating · ${result.slot.label}\nYou don't have a decoration for this spot yet. Adventures can bring home new treasures!`,
+      );
+      return;
+    }
+
+    if (result.type === 'removed') {
+      this.showFeedback(
+        result.item
+          ? `Decorating · ${result.slot.label}\n${result.item.name} is safely back in your collection. ✨`
+          : `Decorating · ${result.slot.label}\nThis spot is empty and ready for something special. ✨`,
+      );
+      return;
+    }
+
+    const moveMessage = result.movedFromSlot
+      ? ` It moved here from ${result.movedFromSlot.label}.`
+      : '';
+    this.showFeedback(
+      `Decorating · ${result.slot.label}\n${result.item.icon ?? '✦'} ${result.item.name} looks lovely here!${moveMessage}`,
+    );
+  }
+
+  private refreshHomeState(): void {
+    const saveService = getBrowserSaveService();
+    const save = saveService.load() ?? saveService.createNewGame();
+    this.homeView = buildCottageHomeView(save);
+    this.renderHomeState(this.homeView);
+    this.interactions = this.createInteractions(this.homeView);
+    this.activeInteraction = null;
+    this.interactionPrompt?.setTarget(null);
   }
 
   private showFeedback(message: string): void {
@@ -364,6 +438,7 @@ export class CottageInteriorScene extends Phaser.Scene {
   }
 
   private renderHomeState(homeView: CottageHomeView): void {
+    this.clearHomeStatePresentation();
     const occupiedSlots = new Set(homeView.placements.map((placement) => placement.slotId));
 
     for (const slot of COTTAGE_INTERIOR_MAP.decorationSlots) {
@@ -371,54 +446,66 @@ export class CottageInteriorScene extends Phaser.Scene {
         continue;
       }
 
-      this.add
-        .circle(slot.position.x, slot.position.y, 44, 0xd9b8e5, 0.1)
-        .setStrokeStyle(3, 0xb98ac9, 0.18)
-        .setDepth(4);
-      this.add
-        .text(slot.position.x, slot.position.y, '✦', {
-          color: '#b78bc2',
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '20px',
-        })
-        .setOrigin(0.5)
-        .setAlpha(0.5)
-        .setDepth(5);
+      this.trackHomeStateObject(
+        this.add
+          .circle(slot.position.x, slot.position.y, 44, 0xd9b8e5, 0.1)
+          .setStrokeStyle(3, 0xb98ac9, 0.18)
+          .setDepth(4),
+      );
+      this.trackHomeStateObject(
+        this.add
+          .text(slot.position.x, slot.position.y, '✦', {
+            color: '#b78bc2',
+            fontFamily: 'system-ui, sans-serif',
+            fontSize: '20px',
+          })
+          .setOrigin(0.5)
+          .setAlpha(0.5)
+          .setDepth(5),
+      );
     }
 
     for (const placement of homeView.placements) {
-      this.add.circle(placement.position.x, placement.position.y, 52, 0xfff0b8, 0.22).setDepth(8);
-      this.add
-        .text(placement.position.x, placement.position.y - 4, placement.icon, {
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '48px',
-        })
-        .setOrigin(0.5)
-        .setDepth(9);
-      this.add
-        .text(placement.position.x, placement.position.y + 60, placement.name, {
-          color: '#6c5268',
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '15px',
-          fontStyle: 'bold',
-          backgroundColor: '#fff8e8cc',
-          padding: { x: 7, y: 4 },
-        })
-        .setOrigin(0.5)
-        .setDepth(10);
+      this.trackHomeStateObject(
+        this.add.circle(placement.position.x, placement.position.y, 52, 0xfff0b8, 0.22).setDepth(8),
+      );
+      this.trackHomeStateObject(
+        this.add
+          .text(placement.position.x, placement.position.y - 4, placement.icon, {
+            fontFamily: 'system-ui, sans-serif',
+            fontSize: '48px',
+          })
+          .setOrigin(0.5)
+          .setDepth(9),
+      );
+      this.trackHomeStateObject(
+        this.add
+          .text(placement.position.x, placement.position.y + 60, placement.name, {
+            color: '#6c5268',
+            fontFamily: 'system-ui, sans-serif',
+            fontSize: '15px',
+            fontStyle: 'bold',
+            backgroundColor: '#fff8e8cc',
+            padding: { x: 7, y: 4 },
+          })
+          .setOrigin(0.5)
+          .setDepth(10),
+      );
     }
 
     const shelf = COTTAGE_INTERIOR_MAP.treasureDisplay.position;
     homeView.treasureRewards.forEach((reward, index) => {
       const x = shelf.x + (index - (homeView.treasureRewards.length - 1) / 2) * 70;
-      this.add.circle(x, shelf.y - 18, 36, 0xffe9a0, 0.2).setDepth(8);
-      const icon = this.add
-        .text(x, shelf.y - 24, reward.icon, {
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '44px',
-        })
-        .setOrigin(0.5)
-        .setDepth(9);
+      this.trackHomeStateObject(this.add.circle(x, shelf.y - 18, 36, 0xffe9a0, 0.2).setDepth(8));
+      const icon = this.trackHomeStateObject(
+        this.add
+          .text(x, shelf.y - 24, reward.icon, {
+            fontFamily: 'system-ui, sans-serif',
+            fontSize: '44px',
+          })
+          .setOrigin(0.5)
+          .setDepth(9),
+      );
       this.tweens.add({
         targets: icon,
         y: '-=5',
@@ -430,16 +517,31 @@ export class CottageInteriorScene extends Phaser.Scene {
     });
 
     if (homeView.treasureRewards.length === 0) {
-      this.add
-        .text(shelf.x, shelf.y - 20, '✦', {
-          color: '#f5d98c',
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '32px',
-        })
-        .setOrigin(0.5)
-        .setAlpha(0.55)
-        .setDepth(8);
+      this.trackHomeStateObject(
+        this.add
+          .text(shelf.x, shelf.y - 20, '✦', {
+            color: '#f5d98c',
+            fontFamily: 'system-ui, sans-serif',
+            fontSize: '32px',
+          })
+          .setOrigin(0.5)
+          .setAlpha(0.55)
+          .setDepth(8),
+      );
     }
+  }
+
+  private trackHomeStateObject<T extends Phaser.GameObjects.GameObject>(object: T): T {
+    this.homeStateObjects.push(object);
+    return object;
+  }
+
+  private clearHomeStatePresentation(): void {
+    for (const object of this.homeStateObjects) {
+      this.tweens.killTweensOf(object);
+      object.destroy();
+    }
+    this.homeStateObjects = [];
   }
 
   private createCollisionMap(): Phaser.Physics.Arcade.StaticGroup {
@@ -480,6 +582,18 @@ export class CottageInteriorScene extends Phaser.Scene {
         padding: { x: 18, y: 9 },
       })
       .setOrigin(0.5, 0)
+      .setScrollFactor(0)
+      .setDepth(115);
+
+    this.add
+      .text(24, 34, 'Decorate the ✦ spots', {
+        color: '#6e5064',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '17px',
+        fontStyle: 'bold',
+        backgroundColor: '#fff5e7d9',
+        padding: { x: 10, y: 7 },
+      })
       .setScrollFactor(0)
       .setDepth(115);
 
