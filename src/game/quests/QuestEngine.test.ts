@@ -1,8 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  WILLOW_GARDEN_PLANTED_FLAG,
-  WILLOW_MOONFLOWERS_QUEST_ID,
-} from '../../content/r2Quests';
+import { WILLOW_GARDEN_PLANTED_FLAG, WILLOW_MOONFLOWERS_QUEST_ID } from '../../content/r2Quests';
 import { TypedEventBus, type GameEventMap } from '../events/GameEventBus';
 import { InventoryService } from '../inventory/InventoryService';
 import { RelationshipService } from '../relationships/RelationshipService';
@@ -102,7 +99,7 @@ describe('QuestEngine', () => {
     engine.destroy();
   });
 
-  it('completes Willow\'s Moonflowers through data-driven consumption, reward and friendship', () => {
+  it("completes Willow's Moonflowers through data-driven consumption, reward and friendship", () => {
     const repository = new MemorySaveRepository();
     const bus = new TypedEventBus<GameEventMap>();
     const saveService = new SaveService(repository, bus, () => '2026-08-17T11:30:00.000Z');
