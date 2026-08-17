@@ -1,5 +1,9 @@
 import { dialogueRegistry } from '../../content/registries';
-import type { DialogueCondition, DialogueDefinition, DialogueVariant } from '../../content/contentTypes';
+import type {
+  DialogueCondition,
+  DialogueDefinition,
+  DialogueVariant,
+} from '../../content/contentTypes';
 import type { RelationshipService } from '../relationships/RelationshipService';
 
 export function isDialogueConditionMet(
@@ -18,7 +22,11 @@ export function selectDialogueVariant(
   relationships: RelationshipService,
 ): DialogueDefinition | null {
   for (const variant of variants) {
-    if ((variant.conditions ?? []).every((condition) => isDialogueConditionMet(condition, relationships))) {
+    if (
+      (variant.conditions ?? []).every((condition) =>
+        isDialogueConditionMet(condition, relationships),
+      )
+    ) {
       return dialogueRegistry.get(variant.dialogueId);
     }
   }
