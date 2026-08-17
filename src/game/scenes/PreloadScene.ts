@@ -46,6 +46,7 @@ export class PreloadScene extends Phaser.Scene {
   }
 
   public create(): void {
-    this.scene.start('TitleScene');
+    const nextScene = this.registry.get('postPreloadScene');
+    this.scene.start(typeof nextScene === 'string' ? nextScene : 'TitleScene');
   }
 }

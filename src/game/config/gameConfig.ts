@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { BootScene } from '../scenes/BootScene';
 import { PreloadScene } from '../scenes/PreloadScene';
+import { ResizeTestScene } from '../scenes/ResizeTestScene';
 import { TitleScene } from '../scenes/TitleScene';
 import { GAME_HEIGHT, GAME_WIDTH } from './gameConstants';
 
@@ -19,5 +20,5 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
     width: GAME_WIDTH,
     height: GAME_HEIGHT,
   },
-  scene: [BootScene, PreloadScene, TitleScene],
+  scene: [BootScene, PreloadScene, TitleScene, ResizeTestScene],
 };

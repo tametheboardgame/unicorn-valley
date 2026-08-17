@@ -1,7 +1,15 @@
 import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
+import { InputController } from '../input/InputController';
+import { KeyboardInputAdapter } from '../input/KeyboardInputAdapter';
+import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 
 export class TitleScene extends Phaser.Scene {
+  private inputController: InputController | null = null;
+  private pointerInput: PointerTouchInputAdapter | null = null;
+  private statusText: Phaser.GameObjects.Text | null = null;
+  private comingSoonButton: Phaser.GameObjects.Rectangle | null = null;
+
   public constructor() {
     super('TitleScene');
   }
@@ -39,7 +47,9 @@ export class TitleScene extends Phaser.Scene {
 
     const button = this.add
       .rectangle(GAME_WIDTH / 2, 475, 340, 82, 0xfff5ff, 0.96)
-      .setStrokeStyle(5, 0xe8bdf5, 1);
+      .setStrokeStyle(5, 0xe8bdf5, 1)
+      .setInteractive({ useHandCursor: true });
+    this.comingSoonButton = button;
 
     this.add
       .text(GAME_WIDTH / 2, 475, 'Coming Soon', {
@@ -51,6 +61,14 @@ export class TitleScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     this.add
+      .text(GAME_WIDTH / 2, 545, 'Press Enter, Space, E or tap the button', {
+        color: '#eadfff',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '19px',
+      })
+      .setOrigin(0.5);
+
+    this.statusText = this.add
       .text(GAME_WIDTH / 2, GAME_HEIGHT - 82, 'The valley is waking up…', {
         color: '#e9dcf8',
         fontFamily: 'system-ui, sans-serif',
@@ -66,6 +84,36 @@ export class TitleScene extends Phaser.Scene {
       yoyo: true,
       repeat: -1,
       ease: 'Sine.InOut',
+    });
+
+    this.pointerInput = new PointerTouchInputAdapter();
+    this.inputController = new InputController([new KeyboardInputAdapter(this), this.pointerInput]);
+
+    button.on('pointerdown', () => this.pointerInput?.setButton('INTERACT', true));
+    button.on('pointerup', () => this.pointerInput?.setButton('INTERACT', false));
+    button.on('pointerout', () => this.pointerInput?.setButton('INTERACT', false));
+
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.inputController?.destroy();
+      this.inputController = null;
+      this.pointerInput = null;
+    });
+  }
+
+  public update(): void {
+    this.inputController?.update();
+
+    if (this.inputController?.justPressed('INTERACT')) {
+      this.acknowledgeInteraction();
+    }
+  }
+
+  private acknowledgeInteraction(): void {
+    this.statusText?.setText('The valley heard you ✨');
+    this.comingSoonButton?.setStrokeStyle(7, 0xffe6a8, 1);
+
+    this.time.delayedCall(240, () => {
+      this.comingSoonButton?.setStrokeStyle(5, 0xe8bdf5, 1);
     });
   }
 }
