@@ -6,9 +6,9 @@ The player creates her own unicorn, lives at Moonflower Cottage, explores a magi
 
 ## Project status
 
-**R2-WP2.10B - Daughter Playtest and Recovery Pass complete.**
+**R2-WP2.10C - Layering and World-Prop Fix Pass complete.**
 
-R0, R1 and R2 are complete. The first daughter playtest was overwhelmingly positive and validated the core unicorn life-adventure direction. Its recovery pass added click/tap movement, fixed suggestion dismissal across location changes, rebuilt the unicorn creator presentation, made the Wonderbook visually read as a book and removed invisible Glade collision blockers.
+R0, R1 and R2 are complete. The first daughter playtest was overwhelmingly positive and validated the core unicorn life-adventure direction. Its follow-up recovery work added click/tap movement, persistent suggestion dismissal, creator layout improvements, collision fixes, world depth/occlusion for tall scenery and a clearly recognisable closed Wonderbook on its in-world discovery display.
 
 The next package is **R3-WP3.1 - Rainbow Meadow and Race Hub**.
 
@@ -65,12 +65,13 @@ The production branch is deployed to `https://unicorn-valley.pages.dev/`.
 - [Vertical Slice Audio/UI Pass](docs/26-VERTICAL-SLICE-AUDIO-UI-PASS.md)
 - [R2 Pre-Playtest Visual Polish](docs/27-R2-PRE-PLAYTEST-VISUAL-POLISH.md)
 - [R2 Daughter Playtest and Recovery](docs/28-R2-DAUGHTER-PLAYTEST-RECOVERY.md)
+- [R2 Layering and World Props](docs/29-R2-LAYERING-WORLD-PROPS.md)
 
 ## Release plan
 
 - **R0 - Foundation and Pre-production**: complete.
 - **R1 - My Unicorn: First Playable**: complete.
-- **R2 - Living Valley Vertical Slice**: complete, including Sunbeam Village, quests, friendship, inventory, cottage decorating, visible persistent world change, pre-playtest polish and daughter playtesting.
+- **R2 - Living Valley Vertical Slice**: complete, including Sunbeam Village, quests, friendship, inventory, cottage decorating, visible persistent world change, pre-playtest polish, daughter playtesting and the resulting UX/visual recovery passes.
 - **R3 - Rainbow Run Racing**: proper racing activity integrated into the life-sim world.
 - **R4 - Friendship, Secrets and Home Depth**: multi-session stories, shops, deeper decorating and stronger world memory.
 - **R5 - The Valley Gets Bigger**: Crystal Brook, Whispering Woods, more discoveries and a second major activity type.
