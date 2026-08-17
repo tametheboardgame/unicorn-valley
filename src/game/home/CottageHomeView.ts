@@ -42,11 +42,19 @@ function resolveDecoration(itemId: string | undefined): ItemDefinition | null {
 function placementForSlot(
   save: SaveGame,
   slot: CottageDecorationSlot,
+  remainingByItemId: Map<ItemId, number>,
 ): CottageDecorationView | null {
   const item = resolveDecoration(save.home.furnitureBySlot[slot.id]);
   if (!item) {
     return null;
   }
+
+  const remaining =
+    remainingByItemId.get(item.id) ?? Math.max(0, save.inventory.itemQuantities[item.id] ?? 0);
+  if (remaining <= 0) {
+    return null;
+  }
+  remainingByItemId.set(item.id, remaining - 1);
 
   return {
     slotId: slot.id,
@@ -59,13 +67,22 @@ function placementForSlot(
 }
 
 export function buildCottageHomeView(save: SaveGame): CottageHomeView {
+  const remainingByItemId = new Map<ItemId, number>();
   const placements = COTTAGE_INTERIOR_MAP.decorationSlots
-    .map((slot) => placementForSlot(save, slot))
+    .map((slot) => placementForSlot(save, slot, remainingByItemId))
     .filter((placement): placement is CottageDecorationView => placement !== null);
-  const placedItemIds = new Set(placements.map((placement) => placement.itemId));
+  const placedQuantityByItemId = new Map<ItemId, number>();
+  for (const placement of placements) {
+    placedQuantityByItemId.set(
+      placement.itemId,
+      (placedQuantityByItemId.get(placement.itemId) ?? 0) + 1,
+    );
+  }
 
   const treasureRewards = TREASURE_REWARD_IDS.flatMap((itemId) => {
-    if ((save.inventory.itemQuantities[itemId] ?? 0) <= 0 || placedItemIds.has(itemId)) {
+    const ownedQuantity = save.inventory.itemQuantities[itemId] ?? 0;
+    const placedQuantity = placedQuantityByItemId.get(itemId) ?? 0;
+    if (ownedQuantity <= placedQuantity) {
       return [];
     }
 
