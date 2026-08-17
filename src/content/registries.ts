@@ -1,0 +1,26 @@
+import { ContentRegistry } from './ContentRegistry';
+import { CHARACTERS, DISCOVERIES, ITEMS, PLACEHOLDER_CONTENT, QUESTS } from './placeholderContent';
+import type {
+  CharacterDefinition,
+  CharacterId,
+  DiscoveryDefinition,
+  DiscoveryId,
+  ItemDefinition,
+  ItemId,
+  QuestDefinition,
+  QuestId,
+} from './contentTypes';
+import { assertValidContent } from './validateContent';
+
+assertValidContent(PLACEHOLDER_CONTENT);
+
+export const itemRegistry = new ContentRegistry<ItemId, ItemDefinition>('item', ITEMS);
+export const characterRegistry = new ContentRegistry<CharacterId, CharacterDefinition>(
+  'character',
+  CHARACTERS,
+);
+export const questRegistry = new ContentRegistry<QuestId, QuestDefinition>('quest', QUESTS);
+export const discoveryRegistry = new ContentRegistry<DiscoveryId, DiscoveryDefinition>(
+  'discovery',
+  DISCOVERIES,
+);
