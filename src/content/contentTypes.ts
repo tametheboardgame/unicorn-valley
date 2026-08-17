@@ -6,13 +6,7 @@ export type DialogueId = `dialogue:${string}`;
 export type DialogueNodeId = `dialogue-node:${string}`;
 export type DialogueFlagId = `flag:${string}`;
 
-export type ItemCategory =
-  | 'collectable'
-  | 'quest'
-  | 'reward'
-  | 'decoration'
-  | 'accessory'
-  | 'food';
+export type ItemCategory = 'collectable' | 'quest' | 'reward' | 'decoration' | 'accessory' | 'food';
 
 export interface ItemDefinition {
   id: ItemId;
