@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { BootScene } from '../scenes/BootScene';
+import { CottageInteriorScene } from '../scenes/CottageInteriorScene';
 import { DialogueTestScene } from '../scenes/DialogueTestScene';
 import { DoorwayStubScene } from '../scenes/DoorwayStubScene';
 import { InventoryScene } from '../scenes/InventoryScene';
@@ -43,6 +44,7 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
     ResizeTestScene,
     MovementTestScene,
     MoonflowerGladeScene,
+    CottageInteriorScene,
     MoonflowerPatchScene,
     SunbeamVillageScene,
     WillowStoryScene,

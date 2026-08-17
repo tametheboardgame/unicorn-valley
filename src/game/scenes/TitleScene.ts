@@ -4,13 +4,32 @@ import { InputController } from '../input/InputController';
 import { KeyboardInputAdapter } from '../input/KeyboardInputAdapter';
 import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 import { getBrowserSaveService } from '../save/browserSaveService';
+import { COTTAGE_INTERIOR_LOCATION_ID } from '../world/CottageInteriorMap';
 import { resetMoonflowerGladePlayerSpawn } from '../world/MoonflowerGladeMap';
 import { SUNBEAM_VILLAGE_LOCATION_ID } from '../world/SunbeamVillageMap';
 
 function resolveContinueScene(currentLocationId: string | undefined): string {
-  return currentLocationId === SUNBEAM_VILLAGE_LOCATION_ID
-    ? 'SunbeamVillageScene'
-    : 'MoonflowerGladeScene';
+  if (currentLocationId === COTTAGE_INTERIOR_LOCATION_ID) {
+    return 'CottageInteriorScene';
+  }
+
+  if (currentLocationId === SUNBEAM_VILLAGE_LOCATION_ID) {
+    return 'SunbeamVillageScene';
+  }
+
+  return 'MoonflowerGladeScene';
+}
+
+function resolveContinueStatus(sceneKey: string): string {
+  if (sceneKey === 'CottageInteriorScene') {
+    return 'Your unicorn is cosy inside Moonflower Cottage.';
+  }
+
+  if (sceneKey === 'SunbeamVillageScene') {
+    return 'Your unicorn is waiting in Sunbeam Village.';
+  }
+
+  return 'Your unicorn is waiting in Moonflower Glade.';
 }
 
 export class TitleScene extends Phaser.Scene {
@@ -113,9 +132,7 @@ export class TitleScene extends Phaser.Scene {
         GAME_WIDTH / 2,
         GAME_HEIGHT - 40,
         this.hasCreatedUnicorn
-          ? this.continueScene === 'SunbeamVillageScene'
-            ? 'Your unicorn is waiting in Sunbeam Village.'
-            : 'Your unicorn is waiting in Moonflower Glade.'
+          ? resolveContinueStatus(this.continueScene)
           : 'First, make a unicorn that feels like yours.',
         {
           color: '#e9dcf8',
