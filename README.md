@@ -6,9 +6,9 @@ The player creates her own unicorn, lives at Moonflower Cottage, explores a magi
 
 ## Project status
 
-**R0-WP0.6 - Content Registry and Validation Skeleton implemented.**
+**R0-WP0.7 - Cloudflare Deployment Smoke Build is repository-ready; live Cloudflare production smoke verification is pending.**
 
-The next implementation package is **R0-WP0.7 - Cloudflare Deployment Smoke Build**.
+R0 is complete except for verification against the real Cloudflare Pages production deployment.
 
 ## Core principles
 
@@ -42,6 +42,7 @@ The next implementation package is **R0-WP0.7 - Cloudflare Deployment Smoke Buil
 - [Detailed Work Packages](docs/07-WORK-PACKAGES.md)
 - [Development and Validation](docs/08-DEVELOPMENT.md)
 - [Responsive Canvas and Input Diagnostic](docs/09-RESPONSIVE-INPUT-DIAGNOSTIC.md)
+- [Cloudflare Pages Deployment](docs/10-CLOUDFLARE-PAGES-DEPLOYMENT.md)
 
 ## Release plan
 
