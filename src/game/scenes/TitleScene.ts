@@ -90,7 +90,9 @@ export class TitleScene extends Phaser.Scene {
       .text(
         GAME_WIDTH / 2,
         GAME_HEIGHT - 70,
-        this.hasCreatedUnicorn ? 'Your unicorn is waiting in Moonflower Glade.' : 'First, make a unicorn that feels like yours.',
+        this.hasCreatedUnicorn
+          ? 'Your unicorn is waiting in Moonflower Glade.'
+          : 'First, make a unicorn that feels like yours.',
         {
           color: '#e9dcf8',
           fontFamily: 'system-ui, sans-serif',
@@ -139,7 +141,9 @@ export class TitleScene extends Phaser.Scene {
     }
 
     this.starting = true;
-    this.statusText?.setText(this.hasCreatedUnicorn ? 'Welcome back…' : 'Time to make your unicorn…');
+    this.statusText?.setText(
+      this.hasCreatedUnicorn ? 'Welcome back…' : 'Time to make your unicorn…',
+    );
     this.enterButton?.setStrokeStyle(7, 0xffe6a8, 1);
 
     this.time.delayedCall(140, () => {
