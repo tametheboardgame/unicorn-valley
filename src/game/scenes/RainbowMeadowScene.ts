@@ -15,10 +15,7 @@ import { DEFAULT_PLAYER_SPEED, resolvePlayerMovement } from '../player/PlayerMov
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { saveLocationCheckpoint } from '../save/saveLocationCheckpoint';
 import { InteractionPrompt } from '../ui/InteractionPrompt';
-import {
-  RAINBOW_MEADOW_LOCATION_ID,
-  RAINBOW_MEADOW_MAP,
-} from '../world/RainbowMeadowMap';
+import { RAINBOW_MEADOW_LOCATION_ID, RAINBOW_MEADOW_MAP } from '../world/RainbowMeadowMap';
 import {
   setSunbeamVillagePlayerSpawn,
   SUNBEAM_VILLAGE_LOCATION_ID,
@@ -82,7 +79,7 @@ const MEADOW_INTERACTIONS = [
       type: 'message',
       title: 'Nova',
       message:
-        "Nova gives you a bright grin. ‘You found Rainbow Run! I’m getting the course ready. Come back when the flags are flying.’",
+        'Nova gives you a bright grin. ‘You found Rainbow Run! I’m getting the course ready. Come back when the flags are flying.’',
     },
   },
   {
@@ -532,7 +529,9 @@ export class RainbowMeadowScene extends Phaser.Scene {
     }
 
     const { x, y } = feature.position;
-    const board = this.add.rectangle(x, y - 70, 300, 170, 0x8e674d, 1).setStrokeStyle(8, 0x6f4d3d, 1);
+    const board = this.add
+      .rectangle(x, y - 70, 300, 170, 0x8e674d, 1)
+      .setStrokeStyle(8, 0x6f4d3d, 1);
     board.setDepth(worldDepthForY(y, 0.15));
     this.add.rectangle(x - 108, y + 30, 18, 130, 0x72513f, 1).setDepth(worldDepthForY(y, 0.1));
     this.add.rectangle(x + 108, y + 30, 18, 130, 0x72513f, 1).setDepth(worldDepthForY(y, 0.1));
