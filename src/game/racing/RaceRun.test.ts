@@ -74,10 +74,7 @@ describe('stepRaceRun', () => {
     const slowed = stepRaceRun(hit.state, TEST_COURSE, 0.05, false);
     const slowedDistance = slowed.state.movement.progress - beforeSlowStep;
 
-    expect(slowedDistance).toBeCloseTo(
-      RACE_FORWARD_SPEED * RACE_SLOWDOWN_MULTIPLIER * 0.05,
-      5,
-    );
+    expect(slowedDistance).toBeCloseTo(RACE_FORWARD_SPEED * RACE_SLOWDOWN_MULTIPLIER * 0.05, 5);
   });
 
   it('lets a sufficiently high jump clear an obstacle cleanly', () => {

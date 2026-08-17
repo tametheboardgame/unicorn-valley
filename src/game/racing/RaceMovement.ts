@@ -37,9 +37,8 @@ export function stepRaceMovement(
   const speedMultiplier = Number.isFinite(forwardSpeedMultiplier)
     ? Math.max(0, forwardSpeedMultiplier)
     : 1;
-  const finishProgress = Number.isFinite(courseLength) && courseLength > 0
-    ? courseLength
-    : RACE_COURSE_LENGTH;
+  const finishProgress =
+    Number.isFinite(courseLength) && courseLength > 0 ? courseLength : RACE_COURSE_LENGTH;
   let jumpOffset = state.jumpOffset;
   let verticalVelocity = state.verticalVelocity;
   let grounded = state.grounded;

@@ -337,8 +337,12 @@ export class RaceScene extends Phaser.Scene {
         .rectangle(x, COURSE_GROUND_Y - 20, obstacle.width, 42, 0x8b6047, 1)
         .setStrokeStyle(4, 0x684534, 1)
         .setDepth(16);
-      this.add.circle(x - obstacle.width / 2 + 7, COURSE_GROUND_Y - 20, 18, 0xa97855, 1).setDepth(17);
-      this.add.circle(x + obstacle.width / 2 - 7, COURSE_GROUND_Y - 20, 18, 0xa97855, 1).setDepth(17);
+      this.add
+        .circle(x - obstacle.width / 2 + 7, COURSE_GROUND_Y - 20, 18, 0xa97855, 1)
+        .setDepth(17);
+      this.add
+        .circle(x + obstacle.width / 2 - 7, COURSE_GROUND_Y - 20, 18, 0xa97855, 1)
+        .setDepth(17);
     } else {
       const postColour = 0x6c945e;
       this.add.rectangle(x - 44, COURSE_GROUND_Y - 38, 12, 78, postColour, 1).setDepth(16);
