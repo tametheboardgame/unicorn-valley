@@ -1,1 +1,1 @@
-Trigger final R2-WP2.10A validation after formatter fixes.
+Trigger final R2-WP2.10A validation after renderer compatibility fix.
