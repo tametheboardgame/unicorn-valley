@@ -1,20 +1,30 @@
 import Phaser from 'phaser';
+import type { InteractionTarget } from '../interaction/InteractionTarget';
+import { selectInteractionTarget } from '../interaction/InteractionTargeting';
+import { MOONFLOWER_GLADE_INTERACTIONS } from '../interaction/MoonflowerGladeInteractions';
 import { InputController } from '../input/InputController';
 import { KeyboardInputAdapter } from '../input/KeyboardInputAdapter';
+import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 import { PlayerEntity } from '../player/PlayerEntity';
 import { DEFAULT_PLAYER_SPEED, resolvePlayerMovement } from '../player/PlayerMovement';
 import {
   ensurePlayerPlaceholderTexture,
   PLAYER_PLACEHOLDER_TEXTURE_KEY,
 } from '../player/PlayerPlaceholderTexture';
+import { InteractionPrompt } from '../ui/InteractionPrompt';
 import { MOONFLOWER_GLADE_MAP } from '../world/MoonflowerGladeMap';
 
 const COLLISION_TEXTURE_KEY = 'glade-collision-pixel';
 
 export class MoonflowerGladeScene extends Phaser.Scene {
   private inputController: InputController | null = null;
+  private pointerInput: PointerTouchInputAdapter | null = null;
   private player: PlayerEntity | null = null;
   private collisionGroup: Phaser.Physics.Arcade.StaticGroup | null = null;
+  private interactionPrompt: InteractionPrompt | null = null;
+  private activeInteraction: InteractionTarget | null = null;
+  private feedbackText: Phaser.GameObjects.Text | null = null;
+  private feedbackTimer: Phaser.Time.TimerEvent | null = null;
 
   public constructor() {
     super('MoonflowerGladeScene');
@@ -41,7 +51,10 @@ export class MoonflowerGladeScene extends Phaser.Scene {
       PLAYER_PLACEHOLDER_TEXTURE_KEY,
     );
     this.physics.add.collider(this.player.sprite, this.collisionGroup);
-    this.inputController = new InputController([new KeyboardInputAdapter(this)]);
+
+    this.pointerInput = new PointerTouchInputAdapter();
+    this.inputController = new InputController([new KeyboardInputAdapter(this), this.pointerInput]);
+    this.interactionPrompt = new InteractionPrompt(this, this.pointerInput);
 
     const camera = this.cameras.main;
     camera.setBackgroundColor('#a8ddba');
@@ -52,12 +65,19 @@ export class MoonflowerGladeScene extends Phaser.Scene {
     this.createHud();
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.feedbackTimer?.destroy();
+      this.feedbackTimer = null;
       this.inputController?.destroy();
       this.inputController = null;
+      this.pointerInput = null;
+      this.interactionPrompt?.destroy();
+      this.interactionPrompt = null;
       this.player?.destroy();
       this.player = null;
       this.collisionGroup?.clear(true, true);
       this.collisionGroup = null;
+      this.activeInteraction = null;
+      this.feedbackText = null;
     });
   }
 
@@ -82,6 +102,30 @@ export class MoonflowerGladeScene extends Phaser.Scene {
 
     this.player.applyMovement(movement);
     this.player.updatePresentation(time);
+
+    this.activeInteraction = selectInteractionTarget(
+      { x: this.player.sprite.x, y: this.player.sprite.y },
+      MOONFLOWER_GLADE_INTERACTIONS,
+    );
+    this.interactionPrompt?.setTarget(this.activeInteraction);
+
+    if (this.inputController.justPressed('INTERACT') && this.activeInteraction) {
+      this.activateInteraction(this.activeInteraction);
+    }
+  }
+
+  private activateInteraction(target: InteractionTarget): void {
+    if (target.result.type === 'scene-transition') {
+      this.scene.start(target.result.sceneKey, target.result.payload);
+      return;
+    }
+
+    this.feedbackTimer?.destroy();
+    this.feedbackText?.setText(`${target.result.title}\n${target.result.message}`).setVisible(true);
+    this.feedbackTimer = this.time.delayedCall(3600, () => {
+      this.feedbackText?.setVisible(false);
+      this.feedbackTimer = null;
+    });
   }
 
   private createEnvironment(): void {
@@ -410,7 +454,7 @@ export class MoonflowerGladeScene extends Phaser.Scene {
       .setDepth(100);
 
     this.add
-      .text(28, 82, 'WASD / arrows to explore  •  Escape to title', {
+      .text(28, 82, 'WASD / arrows to explore  •  E / Enter / Space to interact  •  Escape to title', {
         color: '#5a4869',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '17px',
@@ -419,5 +463,21 @@ export class MoonflowerGladeScene extends Phaser.Scene {
       })
       .setScrollFactor(0)
       .setDepth(100);
+
+    this.feedbackText = this.add
+      .text(GAME_WIDTH - 32, 30, '', {
+        color: '#4b365c',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '20px',
+        backgroundColor: '#fff9edee',
+        padding: { x: 15, y: 12 },
+        align: 'left',
+        wordWrap: { width: 420 },
+        lineSpacing: 5,
+      })
+      .setOrigin(1, 0)
+      .setScrollFactor(0)
+      .setDepth(119)
+      .setVisible(false);
   }
 }
