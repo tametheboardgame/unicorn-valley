@@ -6,11 +6,11 @@ The player creates her own unicorn, lives at Moonflower Cottage, explores a magi
 
 ## Project status
 
-**R3-WP3.1 - Rainbow Meadow and Race Hub complete.**
+**R3-WP3.2 - Race Movement Prototype complete.**
 
-R0, R1 and R2 are complete. R3 is now underway: Rainbow Meadow is connected naturally to Sunbeam Village and contains the first Rainbow Run hub, Nova, a physical race entrance, ribbon-board placeholder and persistent meadow discoveries. The race itself remains deliberately deferred to the next package.
+R0, R1 and R2 are complete. R3 is now underway: Rainbow Meadow is connected naturally to Sunbeam Village and contains the Rainbow Run hub, while the race gate now opens a dedicated practice run with automatic forward movement, responsive jumping, gravity and landing, touch and keyboard input, a visible finish and simple replay/exit flow.
 
-The next package is **R3-WP3.2 - Race Scene and Core Movement**.
+The next package is **R3-WP3.3 - Race Obstacles, Boosts and Collectables**.
 
 The production branch is deployed to `https://unicorn-valley.pages.dev/`.
 
@@ -67,13 +67,14 @@ The production branch is deployed to `https://unicorn-valley.pages.dev/`.
 - [R2 Daughter Playtest and Recovery](docs/28-R2-DAUGHTER-PLAYTEST-RECOVERY.md)
 - [R2 Layering and World Props](docs/29-R2-LAYERING-WORLD-PROPS.md)
 - [R3 Rainbow Meadow and Race Hub](docs/30-R3-RAINBOW-MEADOW-RACE-HUB.md)
+- [R3 Race Movement Prototype](docs/31-R3-RACE-MOVEMENT-PROTOTYPE.md)
 
 ## Release plan
 
 - **R0 - Foundation and Pre-production**: complete.
 - **R1 - My Unicorn: First Playable**: complete.
 - **R2 - Living Valley Vertical Slice**: complete, including Sunbeam Village, quests, friendship, inventory, cottage decorating, visible persistent world change, pre-playtest polish, daughter playtesting and the resulting UX/visual recovery passes.
-- **R3 - Rainbow Run Racing**: in progress; Rainbow Meadow and the physical Rainbow Run hub are complete, with race mechanics next.
+- **R3 - Rainbow Run Racing**: in progress; Rainbow Meadow, the physical Rainbow Run hub and the core practice-race movement prototype are complete, with obstacles, boosts and race collectables next.
 - **R4 - Friendship, Secrets and Home Depth**: multi-session stories, shops, deeper decorating and stronger world memory.
 - **R5 - The Valley Gets Bigger**: Crystal Brook, Whispering Woods, more discoveries and a second major activity type.
 - **R6 - Production Presentation and Accessibility**: final-quality art/audio direction, touch refinement, performance and save hardening.
