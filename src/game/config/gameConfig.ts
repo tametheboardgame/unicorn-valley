@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { BootScene } from '../scenes/BootScene';
 import { DialogueTestScene } from '../scenes/DialogueTestScene';
 import { DoorwayStubScene } from '../scenes/DoorwayStubScene';
+import { InventoryScene } from '../scenes/InventoryScene';
 import { MoonflowerGladeScene } from '../scenes/MoonflowerGladeScene';
 import { MovementTestScene } from '../scenes/MovementTestScene';
 import { PreloadScene } from '../scenes/PreloadScene';
@@ -45,5 +46,6 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
     DialogueTestScene,
     UnicornCreatorScene,
     WonderbookScene,
+    InventoryScene,
   ],
 };

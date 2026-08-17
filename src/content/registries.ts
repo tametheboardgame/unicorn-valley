@@ -7,6 +7,7 @@ import {
   PLACEHOLDER_CONTENT,
   QUESTS,
 } from './placeholderContent';
+import { R2_ITEMS } from './r2Items';
 import type {
   CharacterDefinition,
   CharacterId,
@@ -21,9 +22,14 @@ import type {
 } from './contentTypes';
 import { assertValidContent } from './validateContent';
 
-assertValidContent(PLACEHOLDER_CONTENT);
+const ALL_ITEMS = [...ITEMS, ...R2_ITEMS] satisfies readonly ItemDefinition[];
 
-export const itemRegistry = new ContentRegistry<ItemId, ItemDefinition>('item', ITEMS);
+assertValidContent({
+  ...PLACEHOLDER_CONTENT,
+  items: ALL_ITEMS,
+});
+
+export const itemRegistry = new ContentRegistry<ItemId, ItemDefinition>('item', ALL_ITEMS);
 export const characterRegistry = new ContentRegistry<CharacterId, CharacterDefinition>(
   'character',
   CHARACTERS,
