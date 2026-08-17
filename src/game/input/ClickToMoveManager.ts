@@ -4,6 +4,7 @@ import { DEFAULT_PLAYER_SPEED } from '../player/PlayerMovement';
 import type { MapPoint, TraversalMapDefinition } from '../world/MapTraversal';
 import { COTTAGE_INTERIOR_MAP } from '../world/CottageInteriorMap';
 import { MOONFLOWER_GLADE_MAP } from '../world/MoonflowerGladeMap';
+import { RAINBOW_MEADOW_MAP } from '../world/RainbowMeadowMap';
 import { SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
 import { findClickNavigationPath } from './ClickNavigationPath';
 
@@ -22,6 +23,7 @@ interface NavigationState {
 const SUPPORTED_SCENES = new Set([
   'MoonflowerGladeScene',
   'SunbeamVillageScene',
+  'RainbowMeadowScene',
   'CottageInteriorScene',
   'MoonflowerPatchScene',
 ]);
@@ -37,6 +39,7 @@ const PATCH_NAVIGATION_MAP: TraversalMapDefinition = {
 const NAVIGATION_MAPS: Readonly<Record<string, TraversalMapDefinition>> = {
   MoonflowerGladeScene: MOONFLOWER_GLADE_MAP,
   SunbeamVillageScene: SUNBEAM_VILLAGE_MAP,
+  RainbowMeadowScene: RAINBOW_MEADOW_MAP,
   CottageInteriorScene: COTTAGE_INTERIOR_MAP,
   MoonflowerPatchScene: PATCH_NAVIGATION_MAP,
 };

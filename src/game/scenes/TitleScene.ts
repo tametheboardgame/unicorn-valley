@@ -8,6 +8,7 @@ import { AudioSettingsPanel } from '../ui/AudioSettingsPanel';
 import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from '../ui/uiTheme';
 import { COTTAGE_INTERIOR_LOCATION_ID } from '../world/CottageInteriorMap';
 import { resetMoonflowerGladePlayerSpawn } from '../world/MoonflowerGladeMap';
+import { RAINBOW_MEADOW_LOCATION_ID } from '../world/RainbowMeadowMap';
 import { SUNBEAM_VILLAGE_LOCATION_ID } from '../world/SunbeamVillageMap';
 
 function resolveContinueScene(currentLocationId: string | undefined): string {
@@ -17,6 +18,10 @@ function resolveContinueScene(currentLocationId: string | undefined): string {
 
   if (currentLocationId === SUNBEAM_VILLAGE_LOCATION_ID) {
     return 'SunbeamVillageScene';
+  }
+
+  if (currentLocationId === RAINBOW_MEADOW_LOCATION_ID) {
+    return 'RainbowMeadowScene';
   }
 
   return 'MoonflowerGladeScene';
@@ -29,6 +34,10 @@ function resolveContinueStatus(sceneKey: string): string {
 
   if (sceneKey === 'SunbeamVillageScene') {
     return 'Your unicorn is waiting in Sunbeam Village.';
+  }
+
+  if (sceneKey === 'RainbowMeadowScene') {
+    return 'Your unicorn is waiting in Rainbow Meadow.';
   }
 
   return 'Your unicorn is waiting in Moonflower Glade.';
