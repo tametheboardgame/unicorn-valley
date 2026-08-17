@@ -35,7 +35,9 @@ function drawStar(
   for (let index = 0; index < 10; index += 1) {
     const angle = -Math.PI / 2 + (Math.PI * index) / 5;
     const pointRadius = index % 2 === 0 ? radius : radius * 0.45;
-    points.push(new Phaser.Geom.Point(x + Math.cos(angle) * pointRadius, y + Math.sin(angle) * pointRadius));
+    points.push(
+      new Phaser.Geom.Point(x + Math.cos(angle) * pointRadius, y + Math.sin(angle) * pointRadius),
+    );
   }
   graphics.fillPoints(points, true);
 }

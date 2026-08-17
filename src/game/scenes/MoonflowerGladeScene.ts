@@ -611,7 +611,9 @@ export class MoonflowerGladeScene extends Phaser.Scene {
     ] as const;
 
     for (const [offsetX, offsetY] of petalOffsets) {
-      this.add.ellipse(1110 + offsetX * 0.72, 1045 + offsetY * 0.72, 42, 56, 0xdca7ff, 0.96).setDepth(32);
+      this.add
+        .ellipse(1110 + offsetX * 0.72, 1045 + offsetY * 0.72, 42, 56, 0xdca7ff, 0.96)
+        .setDepth(32);
     }
 
     this.add.circle(1110, 1045, 18, 0xffe5a2, 1).setDepth(33);
@@ -678,18 +680,13 @@ export class MoonflowerGladeScene extends Phaser.Scene {
       .setDepth(100);
 
     this.add
-      .text(
-        28,
-        72,
-        'Move: WASD / arrows  •  Interact: E / Enter / Space  •  Esc: title',
-        {
-          color: '#5a4869',
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '15px',
-          backgroundColor: '#fff9e8ee',
-          padding: { x: 10, y: 6 },
-        },
-      )
+      .text(28, 72, 'Move: WASD / arrows  •  Interact: E / Enter / Space  •  Esc: title', {
+        color: '#5a4869',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '15px',
+        backgroundColor: '#fff9e8ee',
+        padding: { x: 10, y: 6 },
+      })
       .setScrollFactor(0)
       .setDepth(100);
 
