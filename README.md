@@ -6,11 +6,11 @@ The player creates her own unicorn, lives at Moonflower Cottage, explores a magi
 
 ## Project status
 
-**R1 - My Unicorn: First Playable implemented and validated in repository recovery.**
+**R2-WP2.1 - Sunbeam Village Prototype implemented and pending final validation.**
 
-R0 is complete and deployed to `https://unicorn-valley.pages.dev/`.
+R0 and R1 are complete. The production branch is deployed to `https://unicorn-valley.pages.dev/`.
 
-The next implementation package is **R2-WP2.1 - Sunbeam Village Prototype**.
+The next implementation package is **R2-WP2.2 - Item and Inventory System**.
 
 ## Core principles
 
@@ -52,6 +52,7 @@ The next implementation package is **R2-WP2.1 - Sunbeam Village Prototype**.
 - [Pip Intro and First Discovery](docs/15-PIP-FIRST-DISCOVERY.md)
 - [Wonderbook Shell](docs/16-WONDERBOOK-SHELL.md)
 - [R1 First Playable Hardening](docs/17-FIRST-PLAYABLE-HARDENING.md)
+- [Sunbeam Village Prototype](docs/18-SUNBEAM-VILLAGE-PROTOTYPE.md)
 
 ## Release plan
 
