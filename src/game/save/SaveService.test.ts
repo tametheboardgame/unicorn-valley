@@ -24,9 +24,10 @@ describe('SaveService', () => {
   it('creates, stores and reloads a new save', () => {
     const repository = new MemorySaveRepository();
     const events = new TypedEventBus<GameEventMap>();
-    const clock = vi.fn().mockReturnValueOnce('2026-08-17T08:00:00.000Z').mockReturnValue(
-      '2026-08-17T08:05:00.000Z',
-    );
+    const clock = vi
+      .fn()
+      .mockReturnValueOnce('2026-08-17T08:00:00.000Z')
+      .mockReturnValue('2026-08-17T08:05:00.000Z');
     const service = new SaveService(repository, events, clock);
 
     const newSave = service.createNewGame();
