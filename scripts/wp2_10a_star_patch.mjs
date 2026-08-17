@@ -10,3 +10,4 @@ if (!content.includes(before)) {
 content = content.replace(before, after);
 await writeFile(path, content);
 console.log('Replaced unsupported Phaser.Geom.Point star renderer.');
+// Trigger workflow after creation.
