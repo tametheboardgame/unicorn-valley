@@ -52,10 +52,7 @@ export function stepRaceMovement(
     }
   }
 
-  const progress = Math.min(
-    RACE_COURSE_LENGTH,
-    state.progress + RACE_FORWARD_SPEED * frameSeconds,
-  );
+  const progress = Math.min(RACE_COURSE_LENGTH, state.progress + RACE_FORWARD_SPEED * frameSeconds);
 
   return {
     progress,

@@ -127,7 +127,13 @@ export class RaceScene extends Phaser.Scene {
   }
 
   private createCourse(): void {
-    this.add.rectangle(COURSE_WORLD_WIDTH / 2, GAME_HEIGHT / 2, COURSE_WORLD_WIDTH, GAME_HEIGHT, 0x9bdff2);
+    this.add.rectangle(
+      COURSE_WORLD_WIDTH / 2,
+      GAME_HEIGHT / 2,
+      COURSE_WORLD_WIDTH,
+      GAME_HEIGHT,
+      0x9bdff2,
+    );
 
     for (let x = 120; x < COURSE_WORLD_WIDTH; x += 430) {
       const hillHeight = 130 + ((x / 430) % 3) * 24;
@@ -135,30 +141,15 @@ export class RaceScene extends Phaser.Scene {
       this.add.ellipse(x + 130, 570, 520, hillHeight * 1.5, 0xa8df93, 0.96).setDepth(2);
     }
 
-    this.add.rectangle(
-      COURSE_WORLD_WIDTH / 2,
-      COURSE_GROUND_Y + 68,
-      COURSE_WORLD_WIDTH,
-      190,
-      0x73bd70,
-      1,
-    ).setDepth(3);
-    this.add.rectangle(
-      COURSE_WORLD_WIDTH / 2,
-      COURSE_GROUND_Y + 18,
-      COURSE_WORLD_WIDTH,
-      74,
-      0xe6cc91,
-      1,
-    ).setDepth(4);
-    this.add.rectangle(
-      COURSE_WORLD_WIDTH / 2,
-      COURSE_GROUND_Y + 3,
-      COURSE_WORLD_WIDTH,
-      9,
-      0xffefb5,
-      0.92,
-    ).setDepth(5);
+    this.add
+      .rectangle(COURSE_WORLD_WIDTH / 2, COURSE_GROUND_Y + 68, COURSE_WORLD_WIDTH, 190, 0x73bd70, 1)
+      .setDepth(3);
+    this.add
+      .rectangle(COURSE_WORLD_WIDTH / 2, COURSE_GROUND_Y + 18, COURSE_WORLD_WIDTH, 74, 0xe6cc91, 1)
+      .setDepth(4);
+    this.add
+      .rectangle(COURSE_WORLD_WIDTH / 2, COURSE_GROUND_Y + 3, COURSE_WORLD_WIDTH, 9, 0xffefb5, 0.92)
+      .setDepth(5);
 
     this.createStartArch();
     this.createFinishArch();
@@ -186,7 +177,10 @@ export class RaceScene extends Phaser.Scene {
     const postColour = 0x735164;
     this.add.rectangle(FINISH_X - 64, 460, 24, 205, postColour, 1).setDepth(10);
     this.add.rectangle(FINISH_X + 64, 460, 24, 205, postColour, 1).setDepth(10);
-    this.add.rectangle(FINISH_X, 362, 154, 34, 0xfff1bd, 1).setStrokeStyle(5, 0xb689b8, 1).setDepth(10);
+    this.add
+      .rectangle(FINISH_X, 362, 154, 34, 0xfff1bd, 1)
+      .setStrokeStyle(5, 0xb689b8, 1)
+      .setDepth(10);
     this.add
       .text(FINISH_X, 362, 'FINISH!', {
         color: '#654d70',
@@ -210,7 +204,9 @@ export class RaceScene extends Phaser.Scene {
     for (let x = 520, index = 0; x < FINISH_X - 180; x += 360, index += 1) {
       const flowerY = COURSE_GROUND_Y + 72 + (index % 2) * 22;
       this.add.circle(x, flowerY, 11, colours[index % colours.length], 0.95).setDepth(8);
-      this.add.circle(x + 12, flowerY + 4, 8, colours[(index + 1) % colours.length], 0.9).setDepth(8);
+      this.add
+        .circle(x + 12, flowerY + 4, 8, colours[(index + 1) % colours.length], 0.9)
+        .setDepth(8);
 
       if (index % 3 === 1) {
         this.add
@@ -344,11 +340,16 @@ export class RaceScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
     const time = this.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 35, `Practice time: ${(this.finishTimeMs / 1000).toFixed(1)} seconds`, {
-        color: '#fff8ff',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '22px',
-      })
+      .text(
+        GAME_WIDTH / 2,
+        GAME_HEIGHT / 2 - 35,
+        `Practice time: ${(this.finishTimeMs / 1000).toFixed(1)} seconds`,
+        {
+          color: '#fff8ff',
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '22px',
+        },
+      )
       .setOrigin(0.5);
 
     const restart = this.add
