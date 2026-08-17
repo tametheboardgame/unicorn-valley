@@ -1,6 +1,8 @@
 import Phaser from 'phaser';
 import { InputController } from '../input/InputController';
 import { KeyboardInputAdapter } from '../input/KeyboardInputAdapter';
+import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
+import { shouldShowTouchMovementPad, TouchMovementPad } from '../input/TouchMovementPad';
 import { PlayerEntity } from '../player/PlayerEntity';
 import { DEFAULT_PLAYER_SPEED, resolvePlayerMovement } from '../player/PlayerMovement';
 import {
@@ -14,6 +16,8 @@ const WORLD_MARGIN = 96;
 
 export class MovementTestScene extends Phaser.Scene {
   private inputController: InputController | null = null;
+  private pointerInput: PointerTouchInputAdapter | null = null;
+  private touchMovementPad: TouchMovementPad | null = null;
   private player: PlayerEntity | null = null;
   private statusText: Phaser.GameObjects.Text | null = null;
 
@@ -38,7 +42,17 @@ export class MovementTestScene extends Phaser.Scene {
       WORLD_HEIGHT / 2,
       PLAYER_PLACEHOLDER_TEXTURE_KEY,
     );
-    this.inputController = new InputController([new KeyboardInputAdapter(this)]);
+    this.pointerInput = new PointerTouchInputAdapter();
+    this.inputController = new InputController([new KeyboardInputAdapter(this), this.pointerInput]);
+
+    if (
+      shouldShowTouchMovementPad(
+        globalThis.navigator?.maxTouchPoints ?? 0,
+        'ontouchstart' in globalThis,
+      )
+    ) {
+      this.touchMovementPad = new TouchMovementPad(this, this.pointerInput);
+    }
 
     const camera = this.cameras.main;
     camera.setBackgroundColor('#9bd9c2');
@@ -47,7 +61,7 @@ export class MovementTestScene extends Phaser.Scene {
     camera.setDeadzone(260, 150);
 
     this.add
-      .text(28, 28, 'Move with WASD or the arrow keys', {
+      .text(28, 28, 'Move with WASD, arrow keys or the touch pad', {
         color: '#39294f',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '24px',
@@ -81,8 +95,11 @@ export class MovementTestScene extends Phaser.Scene {
       .setDepth(100);
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.touchMovementPad?.destroy();
+      this.touchMovementPad = null;
       this.inputController?.destroy();
       this.inputController = null;
+      this.pointerInput = null;
       this.player?.destroy();
       this.player = null;
       this.statusText = null;

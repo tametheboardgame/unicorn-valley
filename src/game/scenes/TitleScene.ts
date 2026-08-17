@@ -12,6 +12,7 @@ export class TitleScene extends Phaser.Scene {
   private enterButton: Phaser.GameObjects.Rectangle | null = null;
   private starting = false;
   private hasCreatedUnicorn = false;
+  private resetArmed = false;
 
   public constructor() {
     super('TitleScene');
@@ -19,6 +20,7 @@ export class TitleScene extends Phaser.Scene {
 
   public create(): void {
     this.starting = false;
+    this.resetArmed = false;
     this.hasCreatedUnicorn = Boolean(getBrowserSaveService().load()?.profile.name);
     this.cameras.main.setBackgroundColor('#6f4ba8');
 
@@ -66,7 +68,7 @@ export class TitleScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     this.add
-      .text(GAME_WIDTH / 2, 545, 'Press Enter, Space, E or tap the button', {
+      .text(GAME_WIDTH / 2, 545, 'Press Enter or tap the button', {
         color: '#eadfff',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '19px',
@@ -75,7 +77,7 @@ export class TitleScene extends Phaser.Scene {
 
     if (this.hasCreatedUnicorn) {
       const edit = this.add
-        .text(GAME_WIDTH / 2, 590, 'Change my unicorn', {
+        .text(GAME_WIDTH / 2, 580, 'Change my unicorn', {
           color: '#f3e8ff',
           fontFamily: 'system-ui, sans-serif',
           fontSize: '19px',
@@ -83,12 +85,22 @@ export class TitleScene extends Phaser.Scene {
         .setOrigin(0.5)
         .setInteractive({ useHandCursor: true });
       edit.on('pointerdown', () => this.scene.start('UnicornCreatorScene'));
+
+      const startOver = this.add
+        .text(GAME_WIDTH / 2, 615, 'Start over', {
+          color: '#decff0',
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '17px',
+        })
+        .setOrigin(0.5)
+        .setInteractive({ useHandCursor: true });
+      startOver.on('pointerdown', () => this.requestStartOver(startOver));
     }
 
     this.statusText = this.add
       .text(
         GAME_WIDTH / 2,
-        GAME_HEIGHT - 70,
+        GAME_HEIGHT - 40,
         this.hasCreatedUnicorn
           ? 'Your unicorn is waiting in Moonflower Glade.'
           : 'First, make a unicorn that feels like yours.',
@@ -132,6 +144,32 @@ export class TitleScene extends Phaser.Scene {
     if (this.inputController?.justPressed('INTERACT')) {
       this.enterValley();
     }
+  }
+
+  private requestStartOver(label: Phaser.GameObjects.Text): void {
+    if (this.starting) {
+      return;
+    }
+
+    if (!this.resetArmed) {
+      this.resetArmed = true;
+      label.setText('Tap again to start over');
+      this.statusText?.setText('This will make a brand-new unicorn. Tap again to be sure.');
+      this.time.delayedCall(3500, () => {
+        if (!this.resetArmed || this.starting) {
+          return;
+        }
+        this.resetArmed = false;
+        label.setText('Start over');
+        this.statusText?.setText('Your unicorn is waiting in Moonflower Glade.');
+      });
+      return;
+    }
+
+    this.starting = true;
+    const service = getBrowserSaveService();
+    service.save(service.createNewGame());
+    this.scene.start('UnicornCreatorScene');
   }
 
   private enterValley(): void {

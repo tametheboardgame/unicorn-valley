@@ -6,12 +6,15 @@ export const MOONFLOWER_GLADE_LOCATION_ID = 'location:moonflower-glade';
 export function saveLocationCheckpoint(saveService: SaveService, locationId: string): SaveGame {
   const current = saveService.load() ?? saveService.createNewGame();
 
-  if (current.locationId === locationId) {
+  if (current.profile.currentLocationId === locationId) {
     return current;
   }
 
   return saveService.save({
     ...current,
-    locationId,
+    profile: {
+      ...current.profile,
+      currentLocationId: locationId,
+    },
   });
 }

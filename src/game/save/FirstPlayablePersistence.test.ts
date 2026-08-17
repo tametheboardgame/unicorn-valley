@@ -6,10 +6,7 @@ import {
 } from '../player/UnicornAppearance';
 import type { SaveRepository } from './SaveRepository';
 import { SaveService } from './SaveService';
-import {
-  MOONFLOWER_GLADE_LOCATION_ID,
-  saveLocationCheckpoint,
-} from './saveLocationCheckpoint';
+import { MOONFLOWER_GLADE_LOCATION_ID, saveLocationCheckpoint } from './saveLocationCheckpoint';
 
 class MemorySaveRepository implements SaveRepository {
   private value: string | null = null;
@@ -57,7 +54,7 @@ describe('R1 first playable persistence chain', () => {
 
     expect(reloaded?.profile.name).toBe('Moonbeam');
     expect(reloaded?.profile.appearance).toEqual(serialiseUnicornAppearance(appearance));
-    expect(reloaded?.locationId).toBe(MOONFLOWER_GLADE_LOCATION_ID);
+    expect(reloaded?.profile.currentLocationId).toBe(MOONFLOWER_GLADE_LOCATION_ID);
     expect(reloaded?.collections.discoveryIds).toContain('discovery:moonflower-sparkle');
     expect(reloaded?.world.flags['flag:first-sparkle-found']).toBe(true);
   });
