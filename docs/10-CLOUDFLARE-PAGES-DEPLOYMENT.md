@@ -4,7 +4,20 @@
 
 R0-WP0.7 proves that Unicorn Valley is a conventional static Vite build that can be hosted by Cloudflare Pages without server-side runtime dependencies.
 
-The repository-side smoke test is automated in CI. The final acceptance step is a browser smoke test against the real Cloudflare Pages production deployment.
+The repository-side smoke test is automated in CI and the production project is connected through the Cloudflare Pages GitHub integration.
+
+## Production verification record
+
+R0 deployment verification completed on 17 August 2026.
+
+- Production URL: `https://unicorn-valley.pages.dev/`
+- Production branch: `main`
+- Verified deployed commit: `780726dd93b1ec03b2bd706f67b8b53e684b6f5b`
+- GitHub Actions `Validate` check: passed
+- Cloudflare Pages check: passed, reported `Deployed successfully`
+- Repository static-host smoke test: passed for the same build path and asset conventions
+
+This establishes the R0 deployment gate. The browser checks below remain the regression checklist for later releases.
 
 ## Cloudflare Pages project settings
 
@@ -49,12 +62,12 @@ npm run smoke:static
 
 CI performs the same verification on pushes and pull requests.
 
-## Production deployment smoke checklist
+## Production deployment regression checklist
 
 After Cloudflare reports a successful production deployment from `main`:
 
 1. Open the production `*.pages.dev` URL in a normal browser.
-2. Confirm the page title is `Unicorn Valley` and the Phaser title scene renders.
+2. Confirm the page title is `Unicorn Valley` and the Phaser scene renders.
 3. Open browser developer tools and confirm there are no failed JavaScript, CSS or favicon requests.
 4. Confirm the generated JavaScript and CSS requests load from the same Pages hostname under `/assets/`.
 5. Hard-refresh the production root URL and confirm the game renders again.
