@@ -32,7 +32,7 @@ jobs:
           done
           cat /tmp/unicorn-vite.log
           exit 1
-      - name: Exercise creator typing and cottage transition
+      - name: Exercise creator typing and cottage transitions
         run: |
           export CHROME_PATH="$(which google-chrome || which chromium || which chromium-browser)"
           echo "Chrome: $CHROME_PATH"
@@ -65,12 +65,36 @@ jobs:
             return { page, errors };
           }
 
+          async function activeScenes(page) {
+            return page.evaluate(() =>
+              globalThis.__unicornValleyGame?.scene
+                .getScenes(true)
+                .map((scene) => scene.scene.key) ?? [],
+            );
+          }
+
+          async function waitForScene(page, sceneKey) {
+            await page.waitForFunction(
+              (expectedScene) =>
+                globalThis.__unicornValleyGame?.scene
+                  .getScenes(true)
+                  .some((scene) => scene.scene.key === expectedScene) === true,
+              { timeout: 10000 },
+              sceneKey,
+            );
+          }
+
           console.log('START creator');
           const creator = await collectPage('creator');
-          await creator.page.goto('http://127.0.0.1:5173/?scene=creator', { waitUntil: 'domcontentloaded' });
+          await creator.page.goto('http://127.0.0.1:5173/?scene=creator', {
+            waitUntil: 'domcontentloaded',
+          });
           await creator.page.waitForSelector('.unicorn-name-input');
           const input = await creator.page.$('.unicorn-name-input');
-          await input.click({ clickCount: 3 });
+          await input.click();
+          await creator.page.keyboard.down('Control');
+          await creator.page.keyboard.press('KeyA');
+          await creator.page.keyboard.up('Control');
           await creator.page.keyboard.press('Backspace');
           const expectedName = 'WASDEBI Starlight';
           await creator.page.keyboard.type(expectedName, { delay: 20 });
@@ -80,24 +104,81 @@ jobs:
 
           console.log('START cottage-direct');
           const cottage = await collectPage('cottage-direct');
-          await cottage.page.goto('http://127.0.0.1:5173/?scene=cottage', { waitUntil: 'domcontentloaded' });
-          await pause(1500);
+          await cottage.page.goto('http://127.0.0.1:5173/?scene=cottage', {
+            waitUntil: 'domcontentloaded',
+          });
+          await waitForScene(cottage.page, 'CottageInteriorScene');
+          await pause(700);
+          console.log('COTTAGE_DIRECT_SCENES=' + (await activeScenes(cottage.page)).join(','));
           console.log('COTTAGE_DIRECT_ERRORS=' + cottage.errors.length);
+
+          await cottage.page.evaluate(() => {
+            const raw = globalThis.localStorage.getItem('unicorn-valley.save');
+            if (!raw) {
+              throw new Error('Expected cottage entry to create a browser save.');
+            }
+            const save = JSON.parse(raw);
+            save.inventory.itemQuantities['item:moonflower-lantern'] = 1;
+            globalThis.localStorage.setItem('unicorn-valley.save', JSON.stringify(save));
+          });
+          await cottage.page.reload({ waitUntil: 'domcontentloaded' });
+          await waitForScene(cottage.page, 'CottageInteriorScene');
+          await pause(700);
+          console.log('COTTAGE_REWARD_ERRORS=' + cottage.errors.length);
           await cottage.page.screenshot({ path: '/tmp/cottage-direct.png' });
           await cottage.page.close();
 
           console.log('START cottage-transition');
           const transition = await collectPage('cottage-transition');
-          await transition.page.goto('http://127.0.0.1:5173/?scene=glade', { waitUntil: 'domcontentloaded' });
-          await pause(800);
-          await transition.page.keyboard.down('KeyW');
-          await transition.page.keyboard.down('KeyA');
-          await pause(850);
-          await transition.page.keyboard.up('KeyW');
-          await transition.page.keyboard.up('KeyA');
-          await pause(200);
+          await transition.page.goto('http://127.0.0.1:5173/?scene=glade', {
+            waitUntil: 'domcontentloaded',
+          });
+          await waitForScene(transition.page, 'MoonflowerGladeScene');
+          await transition.page.evaluate(() => {
+            const game = globalThis.__unicornValleyGame;
+            const scene = game?.scene.getScene('MoonflowerGladeScene');
+            const player = scene?.player;
+            if (!player?.sprite) {
+              throw new Error('Glade diagnostic could not find the player sprite.');
+            }
+            player.sprite.setPosition(560, 720);
+            player.sprite.body?.reset?.(560, 720);
+          });
+          await pause(150);
           await transition.page.keyboard.press('KeyE');
-          await pause(1800);
+          await waitForScene(transition.page, 'CottageInteriorScene');
+          await pause(700);
+          const enteredScenes = await activeScenes(transition.page);
+          console.log('AFTER_ENTER_SCENES=' + enteredScenes.join(','));
+
+          await transition.page.keyboard.press('KeyE');
+          await pause(500);
+          const postEntryScenes = await activeScenes(transition.page);
+          console.log('AFTER_ENTRY_E_SCENES=' + postEntryScenes.join(','));
+          if (!postEntryScenes.includes('CottageInteriorScene')) {
+            throw new Error('Cottage immediately exited after entry input.');
+          }
+
+          await transition.page.evaluate(() => {
+            const game = globalThis.__unicornValleyGame;
+            const scene = game?.scene.getScene('CottageInteriorScene');
+            const player = scene?.player;
+            if (!player?.sprite) {
+              throw new Error('Cottage diagnostic could not find the player sprite.');
+            }
+            player.sprite.setPosition(900, 1010);
+            player.sprite.body?.reset?.(900, 1010);
+          });
+          await pause(150);
+          await transition.page.keyboard.press('KeyE');
+          await waitForScene(transition.page, 'MoonflowerGladeScene');
+          await pause(700);
+          const exitedScenes = await activeScenes(transition.page);
+          console.log('AFTER_EXIT_SCENES=' + exitedScenes.join(','));
+          if (!exitedScenes.includes('MoonflowerGladeScene')) {
+            throw new Error('Cottage exit did not settle in Moonflower Glade.');
+          }
+
           console.log('COTTAGE_TRANSITION_ERRORS=' + transition.errors.length);
           await transition.page.screenshot({ path: '/tmp/cottage-transition.png' });
 
