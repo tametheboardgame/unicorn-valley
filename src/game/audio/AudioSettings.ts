@@ -65,7 +65,9 @@ function resolveBrowserStorage(): AudioSettingsStorage | null {
 }
 
 export class AudioSettingsStore {
-  public constructor(private readonly storage: AudioSettingsStorage | null = resolveBrowserStorage()) {}
+  public constructor(
+    private readonly storage: AudioSettingsStorage | null = resolveBrowserStorage(),
+  ) {}
 
   public load(): AudioSettings {
     if (!this.storage) {
