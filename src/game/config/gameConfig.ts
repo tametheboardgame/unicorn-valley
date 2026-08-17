@@ -6,6 +6,7 @@ import { MoonflowerGladeScene } from '../scenes/MoonflowerGladeScene';
 import { MovementTestScene } from '../scenes/MovementTestScene';
 import { PreloadScene } from '../scenes/PreloadScene';
 import { ResizeTestScene } from '../scenes/ResizeTestScene';
+import { SunbeamVillageScene } from '../scenes/SunbeamVillageScene';
 import { TitleScene } from '../scenes/TitleScene';
 import { UnicornCreatorScene } from '../scenes/UnicornCreatorScene';
 import { WonderbookScene } from '../scenes/WonderbookScene';
@@ -39,6 +40,7 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
     ResizeTestScene,
     MovementTestScene,
     MoonflowerGladeScene,
+    SunbeamVillageScene,
     DoorwayStubScene,
     DialogueTestScene,
     UnicornCreatorScene,
