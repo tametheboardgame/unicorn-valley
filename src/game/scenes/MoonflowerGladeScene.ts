@@ -362,14 +362,7 @@ export class MoonflowerGladeScene extends Phaser.Scene {
 
     for (const [offsetX, offsetY] of petalOffsets) {
       this.add
-        .ellipse(
-          x + offsetX * scale,
-          y + offsetY * scale,
-          28 * scale,
-          38 * scale,
-          0xe0b3ff,
-          0.94,
-        )
+        .ellipse(x + offsetX * scale, y + offsetY * scale, 28 * scale, 38 * scale, 0xe0b3ff, 0.94)
         .setDepth(7);
     }
 

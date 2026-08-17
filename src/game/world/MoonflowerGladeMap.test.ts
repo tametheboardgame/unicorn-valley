@@ -42,10 +42,10 @@ describe('Moonflower Glade prototype map', () => {
 
   it('leaves a player-sized crossing gap where the little bridge sits', () => {
     const north = MOONFLOWER_GLADE_MAP.colliders.find(
-      (collider) => collider.id === 'stream-north',
+      (collider) => collider.id === 'collision:stream-north',
     );
     const south = MOONFLOWER_GLADE_MAP.colliders.find(
-      (collider) => collider.id === 'stream-south',
+      (collider) => collider.id === 'collision:stream-south',
     );
 
     expect(north).toBeDefined();

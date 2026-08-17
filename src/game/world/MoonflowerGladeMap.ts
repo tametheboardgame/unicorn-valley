@@ -81,13 +81,13 @@ export const MOONFLOWER_GLADE_MAP = {
     },
   ] satisfies readonly GladeEntrance[],
   colliders: [
-    { id: 'cottage', x: 560, y: 470, width: 460, height: 360 },
-    { id: 'stream-north', x: 1400, y: 380, width: 190, height: 760 },
-    { id: 'stream-south', x: 1400, y: 1420, width: 190, height: 760 },
-    { id: 'hollow-tree-trunk', x: 2200, y: 520, width: 170, height: 220 },
-    { id: 'display-stump', x: 850, y: 1120, width: 84, height: 72 },
-    { id: 'home-boulder', x: 1000, y: 360, width: 140, height: 110 },
-    { id: 'east-boulder', x: 1870, y: 760, width: 150, height: 100 },
+    { id: 'collision:cottage', x: 560, y: 470, width: 460, height: 360 },
+    { id: 'collision:stream-north', x: 1400, y: 380, width: 190, height: 760 },
+    { id: 'collision:stream-south', x: 1400, y: 1420, width: 190, height: 760 },
+    { id: 'collision:hollow-tree', x: 2200, y: 520, width: 170, height: 220 },
+    { id: 'collision:display-stump', x: 850, y: 1120, width: 84, height: 72 },
+    { id: 'collision:home-boulder', x: 1000, y: 360, width: 140, height: 110 },
+    { id: 'collision:east-boulder', x: 1870, y: 760, width: 150, height: 100 },
   ] satisfies readonly CollisionRectangle[],
 } as const;
 

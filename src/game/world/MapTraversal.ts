@@ -144,10 +144,10 @@ export function findUnreachableTargets(
         }
 
         const candidatePoint = toPoint(candidate.column, candidate.row);
-        return Math.hypot(
-          candidatePoint.x - target.position.x,
-          candidatePoint.y - target.position.y,
-        ) <= targetTolerance;
+        return (
+          Math.hypot(candidatePoint.x - target.position.x, candidatePoint.y - target.position.y) <=
+          targetTolerance
+        );
       });
     })
     .map((target) => target.id);
