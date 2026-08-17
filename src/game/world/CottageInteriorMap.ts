@@ -19,7 +19,7 @@ export const COTTAGE_INTERIOR_MAP = {
   width: 1800,
   height: 1200,
   margin: 70,
-  playerSpawn: { x: 900, y: 1005 },
+  playerSpawn: { x: 900, y: 820 },
   colliders: [
     { id: 'fireplace', x: 285, y: 305, width: 250, height: 150 },
     { id: 'bed', x: 390, y: 670, width: 300, height: 230 },

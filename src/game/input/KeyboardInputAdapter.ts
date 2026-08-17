@@ -18,16 +18,17 @@ export class KeyboardInputAdapter implements InputAdapter {
       throw new Error('Keyboard input is unavailable for this scene.');
     }
 
-    const key = (keyCode: number): Phaser.Input.Keyboard.Key => keyboard.addKey(keyCode);
-    const left = key(Phaser.Input.Keyboard.KeyCodes.LEFT);
-    const right = key(Phaser.Input.Keyboard.KeyCodes.RIGHT);
-    const up = key(Phaser.Input.Keyboard.KeyCodes.UP);
-    const down = key(Phaser.Input.Keyboard.KeyCodes.DOWN);
+    const key = (keyCode: number, enableCapture = false): Phaser.Input.Keyboard.Key =>
+      keyboard.addKey(keyCode, enableCapture);
+    const left = key(Phaser.Input.Keyboard.KeyCodes.LEFT, true);
+    const right = key(Phaser.Input.Keyboard.KeyCodes.RIGHT, true);
+    const up = key(Phaser.Input.Keyboard.KeyCodes.UP, true);
+    const down = key(Phaser.Input.Keyboard.KeyCodes.DOWN, true);
     const a = key(Phaser.Input.Keyboard.KeyCodes.A);
     const d = key(Phaser.Input.Keyboard.KeyCodes.D);
     const w = key(Phaser.Input.Keyboard.KeyCodes.W);
     const s = key(Phaser.Input.Keyboard.KeyCodes.S);
-    const space = key(Phaser.Input.Keyboard.KeyCodes.SPACE);
+    const space = key(Phaser.Input.Keyboard.KeyCodes.SPACE, true);
     const enter = key(Phaser.Input.Keyboard.KeyCodes.ENTER);
     const e = key(Phaser.Input.Keyboard.KeyCodes.E);
     const escapeKey = key(Phaser.Input.Keyboard.KeyCodes.ESC);

@@ -7,6 +7,7 @@ import {
 import { COTTAGE_INTERIOR_MAP } from './CottageInteriorMap';
 
 const PLAYER_CLEARANCE = 42;
+const EXIT_INTERACTION_RADIUS = 155;
 
 describe('Moonflower Cottage interior map', () => {
   it('keeps the spawn, exit, treasure shelf and decoration slots reachable', () => {
@@ -35,6 +36,15 @@ describe('Moonflower Cottage interior map', () => {
     ];
 
     expect(findUnreachableTargets(COTTAGE_INTERIOR_MAP, targets)).toEqual([]);
+  });
+
+  it('spawns the player outside the cottage exit interaction radius', () => {
+    const distanceFromExit = Math.hypot(
+      COTTAGE_INTERIOR_MAP.playerSpawn.x - COTTAGE_INTERIOR_MAP.exit.approach.x,
+      COTTAGE_INTERIOR_MAP.playerSpawn.y - COTTAGE_INTERIOR_MAP.exit.approach.y,
+    );
+
+    expect(distanceFromExit).toBeGreaterThan(EXIT_INTERACTION_RADIUS);
   });
 
   it('uses unique stable decoration slot IDs', () => {

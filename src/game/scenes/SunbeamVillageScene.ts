@@ -216,7 +216,6 @@ export class SunbeamVillageScene extends Phaser.Scene {
       this.interactionPrompt = null;
       this.player?.destroy();
       this.player = null;
-      this.collisionGroup?.clear(true, true);
       this.collisionGroup = null;
       this.activeInteraction = null;
       this.feedbackText = null;
