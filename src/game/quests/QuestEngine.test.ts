@@ -25,7 +25,11 @@ describe('QuestEngine', () => {
   it('progresses a data quest through events, reloads, rewards and world effects', () => {
     const repository = new MemorySaveRepository();
     const firstBus = new TypedEventBus<GameEventMap>();
-    const firstSaveService = new SaveService(repository, firstBus, () => '2026-08-17T10:00:00.000Z');
+    const firstSaveService = new SaveService(
+      repository,
+      firstBus,
+      () => '2026-08-17T10:00:00.000Z',
+    );
     const firstEngine = new QuestEngine(
       firstSaveService,
       firstBus,
@@ -57,7 +61,9 @@ describe('QuestEngine', () => {
     const completed: string[] = [];
     secondBus.on('QUEST_COMPLETED', ({ questId }) => completed.push(questId));
 
-    expect(reloadedEngine.getCurrentObjective('quest:engine-demo')?.label).toBe('Find 2 Berry Buns');
+    expect(reloadedEngine.getCurrentObjective('quest:engine-demo')?.label).toBe(
+      'Find 2 Berry Buns',
+    );
     inventory.addItem('item:berry-bun');
     expect(reloadedEngine.getProgress('quest:engine-demo').status).toBe('active');
     inventory.addItem('item:berry-bun');
