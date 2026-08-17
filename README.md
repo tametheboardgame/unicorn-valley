@@ -6,9 +6,11 @@ The player creates her own unicorn, lives at Moonflower Cottage, explores a magi
 
 ## Project status
 
-**R0-WP0.7 - Cloudflare Deployment Smoke Build is repository-ready; live Cloudflare production smoke verification is pending.**
+**R0 - Foundation and Pre-production is complete.**
 
-R0 is complete except for verification against the real Cloudflare Pages production deployment.
+The production build is connected to Cloudflare Pages at `https://unicorn-valley.pages.dev/`, and both GitHub validation and the Cloudflare Pages deployment check pass for `main`.
+
+The next implementation package is **R1-WP1.1 - Player Entity and Basic Movement**.
 
 ## Core principles
 
@@ -46,7 +48,7 @@ R0 is complete except for verification against the real Cloudflare Pages product
 
 ## Release plan
 
-- **R0 - Foundation and Pre-production**: deployable technical skeleton and durable architecture.
+- **R0 - Foundation and Pre-production**: complete.
 - **R1 - My Unicorn: First Playable**: create a unicorn, explore Moonflower Glade, meet Pip and save progress.
 - **R2 - Living Valley Vertical Slice**: Sunbeam Village, quests, friendship, inventory, cottage decorating and visible persistent world change.
 - **R3 - Rainbow Run Racing**: proper racing activity integrated into the life-sim world.
