@@ -45,14 +45,16 @@ export const MOONFLOWER_GLADE_INTERACTIONS = [
   },
   {
     id: 'interaction:display-stump',
-    label: 'Discovery Display',
-    actionLabel: 'Look',
+    label: 'Wonderbook',
+    actionLabel: 'Open book',
     position: landmarkApproach('display-stump'),
     interactionRadius: 145,
     result: {
-      type: 'message',
-      title: 'Discovery Display',
-      message: 'A perfect little place to show treasures found around the valley.',
+      type: 'scene-transition',
+      sceneKey: 'WonderbookScene',
+      payload: {
+        returnScene: 'MoonflowerGladeScene',
+      },
     },
   },
 ] satisfies readonly InteractionTarget[];
