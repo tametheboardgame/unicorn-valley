@@ -65,7 +65,9 @@ canvas {
   outline: none;
   background: #fffaf2;
   color: #543966;
-  font: 700 20px system-ui, sans-serif;
+  font:
+    700 20px system-ui,
+    sans-serif;
   text-align: center;
   box-shadow: 0 7px 24px rgb(54 36 71 / 24%);
 }
