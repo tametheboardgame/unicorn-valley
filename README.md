@@ -6,11 +6,11 @@ The player creates her own unicorn, lives at Moonflower Cottage, explores a magi
 
 ## Project status
 
-**R0 - Foundation and Pre-production is complete.**
+**R1-WP1.1 - Player Entity and Basic Movement implemented.**
 
-The production build is connected to Cloudflare Pages at `https://unicorn-valley.pages.dev/`, and both GitHub validation and the Cloudflare Pages deployment check pass for `main`.
+R0 is complete and deployed to `https://unicorn-valley.pages.dev/`.
 
-The next implementation package is **R1-WP1.1 - Player Entity and Basic Movement**.
+The next implementation package is **R1-WP1.2 - Moonflower Glade Prototype Map**.
 
 ## Core principles
 

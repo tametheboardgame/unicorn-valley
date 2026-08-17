@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { BootScene } from '../scenes/BootScene';
+import { MovementTestScene } from '../scenes/MovementTestScene';
 import { PreloadScene } from '../scenes/PreloadScene';
 import { ResizeTestScene } from '../scenes/ResizeTestScene';
 import { TitleScene } from '../scenes/TitleScene';
@@ -14,11 +15,17 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
   render: {
     antialias: true,
   },
+  physics: {
+    default: 'arcade',
+    arcade: {
+      debug: false,
+    },
+  },
   scale: {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
     width: GAME_WIDTH,
     height: GAME_HEIGHT,
   },
-  scene: [BootScene, PreloadScene, TitleScene, ResizeTestScene],
+  scene: [BootScene, PreloadScene, TitleScene, ResizeTestScene, MovementTestScene],
 };
