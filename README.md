@@ -6,11 +6,11 @@ The player creates her own unicorn, lives at Moonflower Cottage, explores a magi
 
 ## Project status
 
-**R2-WP2.6 - Cottage Interior complete.**
+**R2-WP2.7 - Decorating V1 complete.**
 
-R0, R1 and R2-WP2.1 through R2-WP2.6 are complete. The production branch is deployed to `https://unicorn-valley.pages.dev/`.
+R0, R1 and R2-WP2.1 through R2-WP2.7 are complete. The production branch is deployed to `https://unicorn-valley.pages.dev/`.
 
-The next implementation package is **R2-WP2.7 - Decorating V1**.
+The next implementation package is **R2-WP2.8 - Optional Activity Suggestions**.
 
 ## Core principles
 
@@ -58,6 +58,7 @@ The next implementation package is **R2-WP2.7 - Decorating V1**.
 - [Relationship System V1](docs/21-RELATIONSHIP-SYSTEM-V1.md)
 - [Willow's Moonflowers](docs/22-WILLOWS-MOONFLOWERS.md)
 - [Moonflower Cottage Interior](docs/23-COTTAGE-INTERIOR.md)
+- [Decorating V1](docs/24-DECORATING-V1.md)
 
 ## Release plan
 
