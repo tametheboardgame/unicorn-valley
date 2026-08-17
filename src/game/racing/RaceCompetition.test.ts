@@ -42,12 +42,7 @@ function runFullRace(cleanPlayerRun: boolean): {
   for (let step = 0; step < 600; step += 1) {
     const wasFinished = run.movement.finished;
     const jumpRequested = cleanPlayerRun ? shouldCleanPlayerJump(run) : false;
-    run = stepRaceRun(
-      run,
-      PRACTICE_RAINBOW_RUN_COURSE,
-      STEP_SECONDS,
-      jumpRequested,
-    ).state;
+    run = stepRaceRun(run, PRACTICE_RAINBOW_RUN_COURSE, STEP_SECONDS, jumpRequested).state;
     competition = stepRaceCompetition(
       competition,
       RAINBOW_RUN_NPC_RACERS,
@@ -150,11 +145,7 @@ describe('Rainbow Run NPC racers', () => {
 
   it('orders completed racers by their recorded finish times', () => {
     const result = runFullRace(true);
-    const standings = getRaceStandings(
-      result.player,
-      result.competition,
-      RAINBOW_RUN_NPC_RACERS,
-    );
+    const standings = getRaceStandings(result.player, result.competition, RAINBOW_RUN_NPC_RACERS);
     const finishTimes = standings.map((standing) => standing.finishTimeSeconds ?? Infinity);
 
     expect(standings.every((standing) => standing.finished)).toBe(true);
