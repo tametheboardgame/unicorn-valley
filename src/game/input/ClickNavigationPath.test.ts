@@ -23,9 +23,9 @@ describe('findClickNavigationPath', () => {
     );
 
     expect(path.length).toBeGreaterThan(2);
-    expect(path.some((point) => point.x > 260 && point.x < 340 && point.y > 185 && point.y < 280)).toBe(
-      true,
-    );
+    expect(
+      path.some((point) => point.x > 260 && point.x < 340 && point.y > 185 && point.y < 280),
+    ).toBe(true);
     expect(path.at(-1)).toEqual({ x: 510, y: 210 });
   });
 

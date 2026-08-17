@@ -92,7 +92,9 @@ export function findClickNavigationPath(
 
       const walkable = candidates
         .filter(isWalkable)
-        .sort((left, right) => distanceBetweenCells(left, origin) - distanceBetweenCells(right, origin));
+        .sort(
+          (left, right) => distanceBetweenCells(left, origin) - distanceBetweenCells(right, origin),
+        );
       if (walkable[0]) {
         return walkable[0];
       }

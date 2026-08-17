@@ -201,14 +201,8 @@ export class WonderbookScene extends Phaser.Scene {
       book.lineBetween(668, y, 1128, y);
     }
 
-    this.add
-      .triangle(1116, 76, 0, 0, 42, 0, 42, 42, 0xeadcc7, 1)
-      .setAngle(90)
-      .setDepth(4);
-    this.add
-      .triangle(626, 598, 0, 0, 30, 0, 15, 48, 0xc95f82, 1)
-      .setOrigin(0.5, 0)
-      .setDepth(5);
+    this.add.triangle(1116, 76, 0, 0, 42, 0, 42, 42, 0xeadcc7, 1).setAngle(90).setDepth(4);
+    this.add.triangle(626, 598, 0, 0, 30, 0, 15, 48, 0xc95f82, 1).setOrigin(0.5, 0).setDepth(5);
 
     this.add
       .text(350, 112, 'My Wonderbook', {

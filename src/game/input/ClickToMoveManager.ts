@@ -206,9 +206,7 @@ export class ClickToMoveManager {
   private showTargetMarker(scene: Phaser.Scene, state: NavigationState, target: MapPoint): void {
     state.marker?.destroy(true);
 
-    const ring = scene.add
-      .circle(0, 0, 19, 0xfff3a6, 0.24)
-      .setStrokeStyle(3, 0xffe27d, 0.92);
+    const ring = scene.add.circle(0, 0, 19, 0xfff3a6, 0.24).setStrokeStyle(3, 0xffe27d, 0.92);
     const sparkle = scene.add
       .text(0, -1, '✦', {
         color: '#fff8cf',
