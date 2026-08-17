@@ -1,0 +1,69 @@
+
+> unicorn-valley@0.1.0 validate
+> npm run format:check && npm run lint && npm run typecheck && npm run test && npm run build && npm run smoke:static
+
+
+> unicorn-valley@0.1.0 format:check
+> biome format .
+
+src/game/player/UnicornAppearanceRenderer.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Formatter would have printed the following content:
+  
+     36  36 │       const angle = -Math.PI / 2 + (Math.PI * index) / 5;
+     37  37 │       const pointRadius = index % 2 === 0 ? radius : radius * 0.45;
+     38     │ - ····points.push(new·Phaser.Geom.Point(x·+·Math.cos(angle)·*·pointRadius,·y·+·Math.sin(angle)·*·pointRadius));
+         38 │ + ····points.push(
+         39 │ + ······new·Phaser.Geom.Point(x·+·Math.cos(angle)·*·pointRadius,·y·+·Math.sin(angle)·*·pointRadius),
+         40 │ + ····);
+     39  41 │     }
+     40  42 │     graphics.fillPoints(points, true);
+  
+
+src/game/scenes/MoonflowerGladeScene.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Formatter would have printed the following content:
+  
+    612 612 │   
+    613 613 │       for (const [offsetX, offsetY] of petalOffsets) {
+    614     │ - ······this.add.ellipse(1110·+·offsetX·*·0.72,·1045·+·offsetY·*·0.72,·42,·56,·0xdca7ff,·0.96).setDepth(32);
+        614 │ + ······this.add
+        615 │ + ········.ellipse(1110·+·offsetX·*·0.72,·1045·+·offsetY·*·0.72,·42,·56,·0xdca7ff,·0.96)
+        616 │ + ········.setDepth(32);
+    615 617 │       }
+    616 618 │   
+    ······· │ 
+    679 681 │   
+    680 682 │       this.add
+    681     │ - ······.text(
+    682     │ - ········28,
+    683     │ - ········72,
+    684     │ - ········'Move:·WASD·/·arrows··•··Interact:·E·/·Enter·/·Space··•··Esc:·title',
+    685     │ - ········{
+    686     │ - ··········color:·'#5a4869',
+    687     │ - ··········fontFamily:·'system-ui,·sans-serif',
+    688     │ - ··········fontSize:·'15px',
+    689     │ - ··········backgroundColor:·'#fff9e8ee',
+    690     │ - ··········padding:·{·x:·10,·y:·6·},
+    691     │ - ········},
+    692     │ - ······)
+        683 │ + ······.text(28,·72,·'Move:·WASD·/·arrows··•··Interact:·E·/·Enter·/·Space··•··Esc:·title',·{
+        684 │ + ········color:·'#5a4869',
+        685 │ + ········fontFamily:·'system-ui,·sans-serif',
+        686 │ + ········fontSize:·'15px',
+        687 │ + ········backgroundColor:·'#fff9e8ee',
+        688 │ + ········padding:·{·x:·10,·y:·6·},
+        689 │ + ······})
+    693 690 │         .setScrollFactor(0)
+    694 691 │         .setDepth(100);
+  
+
+Checked 110 files in 84ms. No fixes applied.
+Found 2 errors.
+format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Some errors were emitted while running checks.
+  
+
+
+__VALIDATION_FAILED__:1
