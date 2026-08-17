@@ -23,4 +23,11 @@ export const R2_ITEMS = [
     category: 'decoration',
     icon: '☀️',
   },
+  {
+    id: 'item:moonflower-lantern',
+    name: 'Moonflower Lantern',
+    description: 'A tiny glowing lantern Willow made to thank you for helping her garden.',
+    category: 'decoration',
+    icon: '🏮',
+  },
 ] as const satisfies readonly ItemDefinition[];
