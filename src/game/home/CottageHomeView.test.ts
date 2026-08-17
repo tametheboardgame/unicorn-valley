@@ -3,8 +3,9 @@ import { createDefaultSave } from '../save/createDefaultSave';
 import { buildCottageHomeView } from './CottageHomeView';
 
 describe('Cottage home view', () => {
-  it('rebuilds persisted decoration placements from stable slot IDs', () => {
+  it('rebuilds persisted owned decoration placements from stable slot IDs', () => {
     const save = createDefaultSave('2026-08-17T12:00:00.000Z');
+    save.inventory.itemQuantities['item:sunbeam-cushion'] = 1;
     save.home.furnitureBySlot['cottage-slot:centre-rug'] = 'item:sunbeam-cushion';
 
     const view = buildCottageHomeView(save);
@@ -18,15 +19,25 @@ describe('Cottage home view', () => {
     ]);
   });
 
-  it('ignores invalid and non-decoration home assignments safely', () => {
+  it('ignores invalid, non-decoration and unowned home assignments safely', () => {
     const save = createDefaultSave('2026-08-17T12:00:00.000Z');
     save.home.furnitureBySlot['cottage-slot:window-nook'] = 'item:berry-bun';
     save.home.furnitureBySlot['cottage-slot:bedside'] = 'item:not-real';
+    save.home.furnitureBySlot['cottage-slot:centre-rug'] = 'item:sunbeam-cushion';
 
     expect(buildCottageHomeView(save).placements).toEqual([]);
   });
 
-  it("shows Willow's lantern on the treasure shelf until it is placed elsewhere", () => {
+  it('never renders more copies of a decoration than the player owns', () => {
+    const save = createDefaultSave('2026-08-17T12:00:00.000Z');
+    save.inventory.itemQuantities['item:sunbeam-cushion'] = 1;
+    save.home.furnitureBySlot['cottage-slot:window-nook'] = 'item:sunbeam-cushion';
+    save.home.furnitureBySlot['cottage-slot:bedside'] = 'item:sunbeam-cushion';
+
+    expect(buildCottageHomeView(save).placements).toHaveLength(1);
+  });
+
+  it("shows Willow's lantern on the treasure shelf until every owned copy is placed elsewhere", () => {
     const save = createDefaultSave('2026-08-17T12:00:00.000Z');
     save.inventory.itemQuantities['item:moonflower-lantern'] = 1;
 
