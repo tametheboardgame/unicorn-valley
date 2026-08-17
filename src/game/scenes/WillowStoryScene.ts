@@ -12,10 +12,7 @@ import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { RelationshipService } from '../relationships/RelationshipService';
 import { getBrowserSaveService } from '../save/browserSaveService';
-import {
-  WILLOW_CHARACTER_ID,
-  getWillowStoryPhase,
-} from '../story/WillowMoonflowersStory';
+import { WILLOW_CHARACTER_ID, getWillowStoryPhase } from '../story/WillowMoonflowersStory';
 
 interface WillowStorySceneData {
   returnScene?: string;
