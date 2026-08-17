@@ -592,13 +592,42 @@ Acceptance:
 - audio settings persist;
 - major actions feel visibly/audibly responsive.
 
-## R2-WP2.10 - R2 Daughter Playtest and Recovery Pass
+## R2-WP2.10A - Pre-Playtest Visual Polish and UX Fix Pass
 
 Dependencies: R2-WP2.9
 
 Goal:
 
-- treat observed child behaviour as design evidence.
+- remove obvious presentation and clarity defects before the first daughter playtest so first-impression feedback is about the game rather than prototype roughness.
+
+Deliverables:
+
+- title-screen missing-graphic fix and composition pass;
+- improved procedural unicorn silhouette and customisation anchors;
+- creator-screen alignment and control-spacing pass;
+- bridge/path/collision visual-alignment sweep;
+- suggestion-card positive acknowledgement, alternate-idea and session-hide behaviour;
+- exploration HUD spacing/readability pass;
+- Glade, Village and Cottage presentation consistency sweep;
+- visual regression/hosted smoke check where practical.
+
+Acceptance:
+
+- no black/missing title graphic;
+- unicorn reads coherently at creator and gameplay scale;
+- creator arrows/values align consistently;
+- visible bridge and walkable bridge agree;
+- suggestions have an obvious positive close/acknowledge path;
+- obvious HUD overlaps from the pre-playtest screenshots are removed;
+- existing progression remains intact.
+
+## R2-WP2.10B - R2 Daughter Playtest and Recovery Pass
+
+Dependencies: R2-WP2.10A
+
+Goal:
+
+- treat observed child behaviour as design evidence after obvious presentation defects have been removed.
 
 Deliverables:
 
@@ -620,7 +649,7 @@ Acceptance:
 
 ## R3-WP3.1 - Rainbow Meadow and Race Hub
 
-Dependencies: R2-WP2.10
+Dependencies: R2-WP2.10B
 
 Goal:
 

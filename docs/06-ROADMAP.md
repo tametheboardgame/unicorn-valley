@@ -78,13 +78,17 @@ Key systems/content:
 - decorating v1;
 - first cosmetic/decoration rewards;
 - first-pass sound and UI identity;
-- optional activity suggestions.
+- optional activity suggestions;
+- pre-playtest visual polish and UX correction pass;
+- daughter playtest and recovery pass.
 
 Playable result:
 
-- a coherent vertical slice long enough for meaningful child playtesting.
+- a coherent vertical slice polished enough that the first child playtest measures enjoyment and comprehension rather than obvious prototype defects.
 
-**Major decision gate:** after R2, observe what the player naturally spends time doing before over-investing in later systems.
+**Pre-playtest gate:** R2-WP2.10A removes obvious visual defects, improves the procedural unicorn and creator presentation, aligns world visuals with navigation/collision, and clarifies suggestion/HUD behaviour before the first daughter playtest.
+
+**Major decision gate:** R2-WP2.10B then observes what the player naturally spends time doing before over-investing in later systems.
 
 ### R3 - Rainbow Run Racing
 
