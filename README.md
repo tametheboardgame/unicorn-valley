@@ -6,9 +6,9 @@ The player creates her own unicorn, lives at Moonflower Cottage, explores a magi
 
 ## Project status
 
-**R2-WP2.6 - Cottage Interior implemented and pending final validation.**
+**R2-WP2.6 - Cottage Interior complete.**
 
-R0, R1 and R2-WP2.1 through R2-WP2.5 are complete. The production branch is deployed to `https://unicorn-valley.pages.dev/`.
+R0, R1 and R2-WP2.1 through R2-WP2.6 are complete. The production branch is deployed to `https://unicorn-valley.pages.dev/`.
 
 The next implementation package is **R2-WP2.7 - Decorating V1**.
 
