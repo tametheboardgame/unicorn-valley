@@ -4,12 +4,14 @@ import { DialogueTestScene } from '../scenes/DialogueTestScene';
 import { DoorwayStubScene } from '../scenes/DoorwayStubScene';
 import { InventoryScene } from '../scenes/InventoryScene';
 import { MoonflowerGladeScene } from '../scenes/MoonflowerGladeScene';
+import { MoonflowerPatchScene } from '../scenes/MoonflowerPatchScene';
 import { MovementTestScene } from '../scenes/MovementTestScene';
 import { PreloadScene } from '../scenes/PreloadScene';
 import { ResizeTestScene } from '../scenes/ResizeTestScene';
 import { SunbeamVillageScene } from '../scenes/SunbeamVillageScene';
 import { TitleScene } from '../scenes/TitleScene';
 import { UnicornCreatorScene } from '../scenes/UnicornCreatorScene';
+import { WillowStoryScene } from '../scenes/WillowStoryScene';
 import { WonderbookScene } from '../scenes/WonderbookScene';
 import { GAME_HEIGHT, GAME_WIDTH } from './gameConstants';
 
@@ -41,7 +43,9 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
     ResizeTestScene,
     MovementTestScene,
     MoonflowerGladeScene,
+    MoonflowerPatchScene,
     SunbeamVillageScene,
+    WillowStoryScene,
     DoorwayStubScene,
     DialogueTestScene,
     UnicornCreatorScene,

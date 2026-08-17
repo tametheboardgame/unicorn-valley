@@ -98,6 +98,16 @@ export type QuestStep =
       quantity: number;
     }
   | {
+      type: 'consume-item';
+      itemId: ItemId;
+      quantity: number;
+    }
+  | {
+      type: 'award-friendship';
+      characterId: CharacterId;
+      amount: number;
+    }
+  | {
       type: 'set-world-flag';
       flagId: DialogueFlagId;
       value: boolean;

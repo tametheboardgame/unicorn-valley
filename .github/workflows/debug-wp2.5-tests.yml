@@ -1,0 +1,22 @@
+name: WP2.5 test diagnostics
+
+on:
+  push:
+    branches:
+      - agent/r2-wp2.5-willow-moonflowers
+
+jobs:
+  test-diagnostics:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Run tests with GitHub annotations
+        run: npm test -- --reporter=github-actions
