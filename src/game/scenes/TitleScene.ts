@@ -87,10 +87,7 @@ export class TitleScene extends Phaser.Scene {
     });
 
     this.pointerInput = new PointerTouchInputAdapter();
-    this.inputController = new InputController([
-      new KeyboardInputAdapter(this),
-      this.pointerInput,
-    ]);
+    this.inputController = new InputController([new KeyboardInputAdapter(this), this.pointerInput]);
 
     button.on('pointerdown', () => this.pointerInput?.setButton('INTERACT', true));
     button.on('pointerup', () => this.pointerInput?.setButton('INTERACT', false));
