@@ -35,11 +35,18 @@ function validateQuestStep(
   discoveryIds: ReadonlySet<string>,
   errors: string[],
 ): void {
-  if (step.type === 'talk-to-character' && !characterIds.has(step.characterId)) {
+  if (
+    (step.type === 'talk-to-character' || step.type === 'award-friendship') &&
+    !characterIds.has(step.characterId)
+  ) {
     errors.push(`Quest ${questId} references missing character ${step.characterId}.`);
   }
 
-  if (step.type === 'collect-item' || step.type === 'award-item') {
+  if (
+    step.type === 'collect-item' ||
+    step.type === 'award-item' ||
+    step.type === 'consume-item'
+  ) {
     if (!itemIds.has(step.itemId)) {
       errors.push(`Quest ${questId} references missing item ${step.itemId}.`);
     }
@@ -47,6 +54,13 @@ function validateQuestStep(
     if (!Number.isInteger(step.quantity) || step.quantity <= 0) {
       errors.push(`Quest ${questId} has invalid quantity ${step.quantity} for ${step.itemId}.`);
     }
+  }
+
+  if (
+    step.type === 'award-friendship' &&
+    (!Number.isInteger(step.amount) || step.amount <= 0)
+  ) {
+    errors.push(`Quest ${questId} has invalid friendship amount ${step.amount}.`);
   }
 
   if (step.type === 'unlock-discovery' && !discoveryIds.has(step.discoveryId)) {
