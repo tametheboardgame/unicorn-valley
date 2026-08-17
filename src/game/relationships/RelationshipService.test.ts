@@ -121,9 +121,7 @@ describe('RelationshipService', () => {
 
     expect(selectDialogueVariant(variants, relationships)?.id).toBe('dialogue:pip-welcome');
     relationships.addFriendship('character:pip', 15);
-    expect(selectDialogueVariant(variants, relationships)?.id).toBe(
-      'dialogue:pip-first-discovery',
-    );
+    expect(selectDialogueVariant(variants, relationships)?.id).toBe('dialogue:pip-first-discovery');
   });
 
   it('builds Wonderbook character entries without exposing friendship points', () => {
