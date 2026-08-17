@@ -6,9 +6,9 @@ The player creates her own unicorn, lives at Moonflower Cottage, explores a magi
 
 ## Project status
 
-**R0-WP0.3 - Quality Gates and Repository Hygiene implemented and validated.**
+**R0-WP0.4 - Core State, Save and Event Foundations implemented.**
 
-The next implementation package is **R0-WP0.4 - Core State, Save and Event Foundations**.
+The next implementation package is **R0-WP0.5 - Input Abstraction and Responsive Canvas**.
 
 ## Core principles
 
