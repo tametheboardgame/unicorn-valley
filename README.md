@@ -6,11 +6,11 @@ The player creates her own unicorn, lives at Moonflower Cottage, explores a magi
 
 ## Project status
 
-**R1-WP1.3 - Interaction Framework implemented and validated.**
+**R1-WP1.4 - Dialogue Framework implemented and validated.**
 
 R0 is complete and deployed to `https://unicorn-valley.pages.dev/`.
 
-The next implementation package is **R1-WP1.4 - Dialogue Framework**.
+The next implementation package is **R1-WP1.5 - Unicorn Creator V1**.
 
 ## Core principles
 
@@ -47,6 +47,7 @@ The next implementation package is **R1-WP1.4 - Dialogue Framework**.
 - [Cloudflare Pages Deployment](docs/10-CLOUDFLARE-PAGES-DEPLOYMENT.md)
 - [Moonflower Glade Prototype](docs/11-MOONFLOWER-GLADE-PROTOTYPE.md)
 - [Interaction Framework](docs/12-INTERACTION-FRAMEWORK.md)
+- [Dialogue Framework](docs/13-DIALOGUE-FRAMEWORK.md)
 
 ## Release plan
 

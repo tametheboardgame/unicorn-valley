@@ -3,6 +3,7 @@ import Phaser from 'phaser';
 const DIAGNOSTIC_SCENES: Record<string, string> = {
   'resize-test': 'ResizeTestScene',
   'movement-test': 'MovementTestScene',
+  'dialogue-test': 'DialogueTestScene',
   glade: 'MoonflowerGladeScene',
 };
 

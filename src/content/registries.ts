@@ -1,8 +1,17 @@
 import { ContentRegistry } from './ContentRegistry';
-import { CHARACTERS, DISCOVERIES, ITEMS, PLACEHOLDER_CONTENT, QUESTS } from './placeholderContent';
+import {
+  CHARACTERS,
+  DIALOGUES,
+  DISCOVERIES,
+  ITEMS,
+  PLACEHOLDER_CONTENT,
+  QUESTS,
+} from './placeholderContent';
 import type {
   CharacterDefinition,
   CharacterId,
+  DialogueDefinition,
+  DialogueId,
   DiscoveryDefinition,
   DiscoveryId,
   ItemDefinition,
@@ -23,4 +32,8 @@ export const questRegistry = new ContentRegistry<QuestId, QuestDefinition>('ques
 export const discoveryRegistry = new ContentRegistry<DiscoveryId, DiscoveryDefinition>(
   'discovery',
   DISCOVERIES,
+);
+export const dialogueRegistry = new ContentRegistry<DialogueId, DialogueDefinition>(
+  'dialogue',
+  DIALOGUES,
 );
