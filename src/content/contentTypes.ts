@@ -79,6 +79,16 @@ export type QuestStep =
   | {
       type: 'unlock-discovery';
       discoveryId: DiscoveryId;
+    }
+  | {
+      type: 'award-item';
+      itemId: ItemId;
+      quantity: number;
+    }
+  | {
+      type: 'set-world-flag';
+      flagId: DialogueFlagId;
+      value: boolean;
     };
 
 export interface QuestDefinition {
