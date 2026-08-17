@@ -294,34 +294,13 @@ export class RaceScene extends Phaser.Scene {
     }
 
     this.add
-      .rectangle(
-        COURSE_WORLD_WIDTH / 2,
-        COURSE_GROUND_Y + 68,
-        COURSE_WORLD_WIDTH,
-        190,
-        0x73bd70,
-        1,
-      )
+      .rectangle(COURSE_WORLD_WIDTH / 2, COURSE_GROUND_Y + 68, COURSE_WORLD_WIDTH, 190, 0x73bd70, 1)
       .setDepth(3);
     this.add
-      .rectangle(
-        COURSE_WORLD_WIDTH / 2,
-        COURSE_GROUND_Y + 18,
-        COURSE_WORLD_WIDTH,
-        74,
-        0xe6cc91,
-        1,
-      )
+      .rectangle(COURSE_WORLD_WIDTH / 2, COURSE_GROUND_Y + 18, COURSE_WORLD_WIDTH, 74, 0xe6cc91, 1)
       .setDepth(4);
     this.add
-      .rectangle(
-        COURSE_WORLD_WIDTH / 2,
-        COURSE_GROUND_Y + 3,
-        COURSE_WORLD_WIDTH,
-        9,
-        0xffefb5,
-        0.92,
-      )
+      .rectangle(COURSE_WORLD_WIDTH / 2, COURSE_GROUND_Y + 3, COURSE_WORLD_WIDTH, 9, 0xffefb5, 0.92)
       .setDepth(5);
 
     this.createStartArch();
@@ -701,7 +680,8 @@ export class RaceScene extends Phaser.Scene {
     }
 
     const standings = this.getCurrentStandings();
-    const place = this.playerFinishPlace || standings.find((standing) => standing.isPlayer)?.place || 1;
+    const place =
+      this.playerFinishPlace || standings.find((standing) => standing.isPlayer)?.place || 1;
     const shade = this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, 760, 420, 0x5f4772, 0.94);
     const title = this.add
       .text(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 150, `You finished ${formatRacePlace(place)}! 🌈`, {
