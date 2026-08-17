@@ -6,19 +6,21 @@ const indexUrl = new URL('index.html', distDirectory);
 const indexHtml = await readFile(indexUrl, 'utf8');
 
 if (!indexHtml.includes('<title>Unicorn Valley</title>')) {
-  throw new Error('Static build smoke failed: dist/index.html is missing the Unicorn Valley title.');
+  throw new Error(
+    'Static build smoke failed: dist/index.html is missing the Unicorn Valley title.',
+  );
 }
 
 const referencedPaths = [
   ...new Set(
-    [...indexHtml.matchAll(/(?:src|href)="(\/[^"#?]+)(?:[?#][^"]*)?"/g)].map(
-      (match) => match[1],
-    ),
+    [...indexHtml.matchAll(/(?:src|href)="(\/[^"#?]+)(?:[?#][^"]*)?"/g)].map((match) => match[1]),
   ),
 ];
 
 if (!referencedPaths.some((path) => path.startsWith('/assets/'))) {
-  throw new Error('Static build smoke failed: dist/index.html contains no built /assets/ reference.');
+  throw new Error(
+    'Static build smoke failed: dist/index.html contains no built /assets/ reference.',
+  );
 }
 
 for (const referencedPath of referencedPaths) {
