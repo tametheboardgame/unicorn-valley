@@ -45,6 +45,8 @@ export class UnicornCreatorScene extends Phaser.Scene {
     this.save = saveService.load() ?? saveService.createNewGame();
     this.appearance = parseUnicornAppearance(this.save.profile.appearance);
 
+    this.input.keyboard?.disableGlobalCapture();
+
     this.cameras.main.setBackgroundColor('#7558a0');
     this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x7558a0, 1);
     this.add.circle(240, 160, 190, 0xf2c9ed, 0.13);
@@ -103,6 +105,7 @@ export class UnicornCreatorScene extends Phaser.Scene {
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.nameInput?.remove();
       this.nameInput = null;
+      this.input.keyboard?.enableGlobalCapture();
       this.preview = null;
       this.valueLabels.clear();
       this.swatchOutlines.clear();
