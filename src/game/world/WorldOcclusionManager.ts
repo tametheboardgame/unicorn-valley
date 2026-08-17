@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { PIP_POSITION } from '../intro/PipIntro';
 import { MOONFLOWER_GLADE_MAP } from './MoonflowerGladeMap';
 import { SUNBEAM_VILLAGE_MAP } from './SunbeamVillageMap';
-import { worldDepthForY } from './WorldDepth';
+import { isWorldDepthSortable, worldDepthForY } from './WorldDepth';
 
 interface SceneState {
   overlays: Phaser.GameObjects.GameObject[];
@@ -11,6 +11,7 @@ interface SceneState {
 type PositionedDepthObject = Phaser.GameObjects.GameObject & {
   x: number;
   y: number;
+  depth: number;
   setDepth: (depth: number) => unknown;
 };
 
@@ -55,6 +56,7 @@ function isPositionedDepthObject(
   return (
     typeof candidate.x === 'number' &&
     typeof candidate.y === 'number' &&
+    typeof candidate.depth === 'number' &&
     typeof candidate.setDepth === 'function'
   );
 }
@@ -238,7 +240,7 @@ export class WorldOcclusionManager {
     depth: number,
   ): void {
     for (const object of scene.children.list) {
-      if (!isPositionedDepthObject(object)) {
+      if (!isPositionedDepthObject(object) || !isWorldDepthSortable(object.depth)) {
         continue;
       }
       if (object.x < minX || object.x > maxX || object.y < minY || object.y > maxY) {
