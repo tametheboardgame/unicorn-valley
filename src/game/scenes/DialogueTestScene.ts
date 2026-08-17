@@ -81,13 +81,18 @@ export class DialogueTestScene extends Phaser.Scene {
       .setDepth(100);
 
     this.statusText = this.add
-      .text(28, 82, 'Walk to the glowing note, then interact. Movement must stop while dialogue is open.', {
-        color: '#5a4869',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '17px',
-        backgroundColor: '#fff9e8c8',
-        padding: { x: 11, y: 7 },
-      })
+      .text(
+        28,
+        82,
+        'Walk to the glowing note, then interact. Movement must stop while dialogue is open.',
+        {
+          color: '#5a4869',
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '17px',
+          backgroundColor: '#fff9e8c8',
+          padding: { x: 11, y: 7 },
+        },
+      )
       .setDepth(100);
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
@@ -177,7 +182,9 @@ export class DialogueTestScene extends Phaser.Scene {
 
   private refreshDialogue(): void {
     if (!this.session || this.session.isComplete()) {
-      this.closeDialogue('Dialogue complete. The selected test flag is stored in the scene registry.');
+      this.closeDialogue(
+        'Dialogue complete. The selected test flag is stored in the scene registry.',
+      );
       return;
     }
 
