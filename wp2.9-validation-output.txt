@@ -6,7 +6,7 @@
 > unicorn-valley@0.1.0 format:check
 > biome format .
 
-Checked 110 files in 116ms. No fixes applied.
+Checked 110 files in 77ms. No fixes applied.
 
 > unicorn-valley@0.1.0 lint
 > biome lint .
@@ -291,7 +291,7 @@ src/game/ui/uiTheme.ts:1:8 lint/style/useImportType  FIXABLE  ━━━━━━
     1 │ import·type·Phaser·from·'phaser';
       │        +++++                     
 
-Checked 112 files in 222ms. No fixes applied.
+Checked 112 files in 142ms. No fixes applied.
 Found 16 warnings.
 
 > unicorn-valley@0.1.0 typecheck
@@ -304,7 +304,7 @@ Found 16 warnings.
 
 [1m[30m[46m RUN [49m[39m[22m [36mv4.1.10 [39m[90m/home/runner/work/unicorn-valley/unicorn-valley[39m
 
- [32m✓[39m src/game/quests/QuestEngine.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32m✓[39m src/game/quests/QuestEngine.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 7[2mms[22m[39m
  [32m✓[39m src/game/relationships/RelationshipService.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 7[2mms[22m[39m
  [32m✓[39m src/game/home/HomeDecorationService.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 12[2mms[22m[39m
  [32m✓[39m src/game/inventory/InventoryService.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 11[2mms[22m[39m
@@ -315,11 +315,11 @@ Found 16 warnings.
  [32m✓[39m src/game/home/CottageHomeView.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 4[2mms[22m[39m
  [32m✓[39m src/game/audio/AudioSettings.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 4[2mms[22m[39m
  [32m✓[39m src/game/dialogue/DialogueSession.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 3[2mms[22m[39m
- [32m✓[39m src/game/world/SunbeamVillageMap.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32m✓[39m src/game/world/SunbeamVillageMap.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 12[2mms[22m[39m
  [32m✓[39m src/game/world/MoonflowerGladeMap.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 8[2mms[22m[39m
- [32m✓[39m src/game/discovery/DiscoveryService.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m src/game/discovery/DiscoveryService.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 4[2mms[22m[39m
  [32m✓[39m src/game/interaction/InteractionTargeting.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 9[2mms[22m[39m
- [32m✓[39m src/game/world/CottageInteriorMap.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m src/game/world/CottageInteriorMap.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 6[2mms[22m[39m
  [32m✓[39m src/game/player/UnicornAppearance.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 4[2mms[22m[39m
  [32m✓[39m src/game/player/PlayerMovement.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 4[2mms[22m[39m
  [32m✓[39m src/game/world/FirstPlayablePlacement.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 3[2mms[22m[39m
@@ -333,8 +333,8 @@ Found 16 warnings.
 
 [2m Test Files [22m [1m[32m26 passed[39m[22m[90m (26)[39m
 [2m      Tests [22m [1m[32m94 passed[39m[22m[90m (94)[39m
-[2m   Start at [22m 15:15:46
-[2m   Duration [22m 3.10s[2m (transform 262ms, setup 0ms, import 543ms, tests 137ms, environment 2ms)[22m
+[2m   Start at [22m 15:16:12
+[2m   Duration [22m 3.09s[2m (transform 268ms, setup 0ms, import 550ms, tests 137ms, environment 2ms)[22m
 
 
 > unicorn-valley@0.1.0 build
@@ -348,7 +348,7 @@ dist/index.html                     0.76 kB │ gzip:   0.43 kB
 dist/assets/index-BlyfwlNG.css      1.09 kB │ gzip:   0.61 kB
 dist/assets/index-CVI05wMs.js   1,510.29 kB │ gzip: 393.31 kB
 
-[32m✓ built in 629ms[39m
+[32m✓ built in 548ms[39m
 [33m[plugin builtin:vite-reporter] 
 (!) Some chunks are larger than 500 kB after minification. Consider:
 - Using dynamic import() to code-split the application
