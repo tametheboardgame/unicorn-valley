@@ -26,7 +26,8 @@ export class WonderbookScene extends Phaser.Scene {
     this.closing = false;
     this.cameras.main.setBackgroundColor('#71528d');
 
-    this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, 1040, 650, 0xfffbef, 0.98)
+    this.add
+      .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, 1040, 650, 0xfffbef, 0.98)
       .setStrokeStyle(8, 0xe0b4db, 1);
     this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, 10, 610, 0xd7b4c9, 0.55);
 
@@ -50,7 +51,10 @@ export class WonderbookScene extends Phaser.Scene {
 
     const saveService = getBrowserSaveService();
     const save = saveService.load() ?? saveService.createNewGame();
-    const entries = buildWonderbookEntries(discoveryRegistry.values(), save.collections.discoveryIds);
+    const entries = buildWonderbookEntries(
+      discoveryRegistry.values(),
+      save.collections.discoveryIds,
+    );
 
     entries.forEach((entry, index) => {
       const leftPage = index % 2 === 0;
@@ -58,7 +62,8 @@ export class WonderbookScene extends Phaser.Scene {
       const row = Math.floor(index / 2);
       const y = 235 + row * 205;
 
-      this.add.circle(columnX - 170, y, 42, entry.discovered ? 0xffe57d : 0xe6dce8, 0.95)
+      this.add
+        .circle(columnX - 170, y, 42, entry.discovered ? 0xffe57d : 0xe6dce8, 0.95)
         .setStrokeStyle(4, entry.discovered ? 0xd7a93c : 0xb9a9bd, 1);
       this.add
         .text(columnX - 170, y, entry.discovered ? '✦' : '?', {
@@ -69,27 +74,25 @@ export class WonderbookScene extends Phaser.Scene {
         })
         .setOrigin(0.5);
 
-      this.add
-        .text(columnX - 105, y - 31, entry.discovered ? entry.name : '???', {
-          color: '#5c3e68',
+      this.add.text(columnX - 105, y - 31, entry.discovered ? entry.name : '???', {
+        color: '#5c3e68',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '23px',
+        fontStyle: 'bold',
+        wordWrap: { width: 330 },
+      });
+      this.add.text(
+        columnX - 105,
+        y + 7,
+        entry.discovered ? entry.description : 'Keep exploring to discover this page.',
+        {
+          color: entry.discovered ? '#735d78' : '#9d8da0',
           fontFamily: 'system-ui, sans-serif',
-          fontSize: '23px',
-          fontStyle: 'bold',
+          fontSize: '17px',
           wordWrap: { width: 330 },
-        });
-      this.add
-        .text(
-          columnX - 105,
-          y + 7,
-          entry.discovered ? entry.description : 'Keep exploring to discover this page.',
-          {
-            color: entry.discovered ? '#735d78' : '#9d8da0',
-            fontFamily: 'system-ui, sans-serif',
-            fontSize: '17px',
-            wordWrap: { width: 330 },
-            lineSpacing: 4,
-          },
-        );
+          lineSpacing: 4,
+        },
+      );
     });
 
     if (entries.some((entry) => entry.discovered)) {
