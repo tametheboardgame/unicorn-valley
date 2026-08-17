@@ -4,6 +4,14 @@ import { InputController } from '../input/InputController';
 import { KeyboardInputAdapter } from '../input/KeyboardInputAdapter';
 import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 import { getBrowserSaveService } from '../save/browserSaveService';
+import { resetMoonflowerGladePlayerSpawn } from '../world/MoonflowerGladeMap';
+import { SUNBEAM_VILLAGE_LOCATION_ID } from '../world/SunbeamVillageMap';
+
+function resolveContinueScene(currentLocationId: string | undefined): string {
+  return currentLocationId === SUNBEAM_VILLAGE_LOCATION_ID
+    ? 'SunbeamVillageScene'
+    : 'MoonflowerGladeScene';
+}
 
 export class TitleScene extends Phaser.Scene {
   private inputController: InputController | null = null;
@@ -13,6 +21,7 @@ export class TitleScene extends Phaser.Scene {
   private starting = false;
   private hasCreatedUnicorn = false;
   private resetArmed = false;
+  private continueScene = 'MoonflowerGladeScene';
 
   public constructor() {
     super('TitleScene');
@@ -21,7 +30,9 @@ export class TitleScene extends Phaser.Scene {
   public create(): void {
     this.starting = false;
     this.resetArmed = false;
-    this.hasCreatedUnicorn = Boolean(getBrowserSaveService().load()?.profile.name);
+    const save = getBrowserSaveService().load();
+    this.hasCreatedUnicorn = Boolean(save?.profile.name);
+    this.continueScene = resolveContinueScene(save?.profile.currentLocationId);
     this.cameras.main.setBackgroundColor('#6f4ba8');
 
     this.add.circle(170, 130, 115, 0xffd7f4, 0.18);
@@ -102,7 +113,9 @@ export class TitleScene extends Phaser.Scene {
         GAME_WIDTH / 2,
         GAME_HEIGHT - 40,
         this.hasCreatedUnicorn
-          ? 'Your unicorn is waiting in Moonflower Glade.'
+          ? this.continueScene === 'SunbeamVillageScene'
+            ? 'Your unicorn is waiting in Sunbeam Village.'
+            : 'Your unicorn is waiting in Moonflower Glade.'
           : 'First, make a unicorn that feels like yours.',
         {
           color: '#e9dcf8',
@@ -167,6 +180,7 @@ export class TitleScene extends Phaser.Scene {
     }
 
     this.starting = true;
+    resetMoonflowerGladePlayerSpawn();
     const service = getBrowserSaveService();
     service.save(service.createNewGame());
     this.scene.start('UnicornCreatorScene');
@@ -184,7 +198,7 @@ export class TitleScene extends Phaser.Scene {
     this.enterButton?.setStrokeStyle(7, 0xffe6a8, 1);
 
     this.time.delayedCall(140, () => {
-      this.scene.start(this.hasCreatedUnicorn ? 'MoonflowerGladeScene' : 'UnicornCreatorScene');
+      this.scene.start(this.hasCreatedUnicorn ? this.continueScene : 'UnicornCreatorScene');
     });
   }
 }
