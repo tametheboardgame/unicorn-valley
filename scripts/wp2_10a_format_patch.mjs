@@ -30,3 +30,4 @@ await replaceInFile('src/game/scenes/MoonflowerGladeScene.ts', [
 ]);
 
 console.log('Applied R2-WP2.10A formatter-requested fixes.');
+// Trigger workflow after creation.
