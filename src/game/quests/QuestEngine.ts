@@ -14,6 +14,7 @@ import type {
 } from '../../content/contentTypes';
 import { type GameEventMap, type TypedEventBus, gameEventBus } from '../events/GameEventBus';
 import { InventoryService } from '../inventory/InventoryService';
+import { RelationshipService } from '../relationships/RelationshipService';
 import type { SaveService } from '../save/SaveService';
 import type { QuestProgress, SaveGame } from '../save/saveSchema';
 
@@ -51,6 +52,8 @@ function objectiveLabel(step: QuestStep): string {
     case 'unlock-discovery':
       return `Discover ${discoveryRegistry.get(step.discoveryId).name}`;
     case 'award-item':
+    case 'consume-item':
+    case 'award-friendship':
     case 'set-world-flag':
       return 'A little surprise is happening…';
   }
@@ -58,6 +61,7 @@ function objectiveLabel(step: QuestStep): string {
 
 export class QuestEngine {
   private readonly inventory: InventoryService;
+  private readonly relationships: RelationshipService;
   private readonly unsubscribe: Array<() => void> = [];
 
   public constructor(
@@ -66,6 +70,7 @@ export class QuestEngine {
     private readonly now: QuestClock = systemClock,
   ) {
     this.inventory = new InventoryService(saveService, events);
+    this.relationships = new RelationshipService(saveService, events);
     this.unsubscribe.push(
       events.on('ITEM_COLLECTED', ({ itemId }) => this.handleItemCollected(itemId as ItemId)),
       events.on('CHARACTER_TALKED', ({ characterId }) =>
@@ -238,6 +243,23 @@ export class QuestEngine {
 
       if (step.type === 'award-item') {
         this.inventory.addItem(step.itemId, step.quantity);
+        this.advanceQuest(quest);
+        continue;
+      }
+
+      if (step.type === 'consume-item') {
+        const removed = this.inventory.removeItem(step.itemId, step.quantity, {
+          allowQuestCritical: true,
+        });
+        if (!removed) {
+          return;
+        }
+        this.advanceQuest(quest);
+        continue;
+      }
+
+      if (step.type === 'award-friendship') {
+        this.relationships.addFriendship(step.characterId, step.amount);
         this.advanceQuest(quest);
         continue;
       }
