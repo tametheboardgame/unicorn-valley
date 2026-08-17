@@ -6,39 +6,358 @@
 > unicorn-valley@0.1.0 format:check
 > biome format .
 
-src/game/ui/AudioSettingsPanel.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Checked 110 files in 116ms. No fixes applied.
 
-  × Formatter would have printed the following content:
+> unicorn-valley@0.1.0 lint
+> biome lint .
+
+src/game/audio/VerticalSliceAudio.ts:204:7 lint/complexity/useOptionalChain  FIXABLE  ━━━━━━━━━━━━━━
+
+  ! Change to an optional chain.
   
-    106 106 │   
-    107 107 │       const hint = scene.add
-    108     │ - ······.text(PANEL_X,·PANEL_Y·+·PANEL_HEIGHT·/·2·-·18,·'Everything·important·is·also·shown·on·screen.',·{
-    109     │ - ········color:·UI_COLOURS.softInk,
-    110     │ - ········fontFamily:·UI_FONT,
-    111     │ - ········fontSize:·'12px',
-    112     │ - ········align:·'center',
-    113     │ - ······})
-        108 │ + ······.text(
-        109 │ + ········PANEL_X,
-        110 │ + ········PANEL_Y·+·PANEL_HEIGHT·/·2·-·18,
-        111 │ + ········'Everything·important·is·also·shown·on·screen.',
-        112 │ + ········{
-        113 │ + ··········color:·UI_COLOURS.softInk,
-        114 │ + ··········fontFamily:·UI_FONT,
-        115 │ + ··········fontSize:·'12px',
-        116 │ + ··········align:·'center',
-        117 │ + ········},
-        118 │ + ······)
-    114 119 │         .setOrigin(0.5)
-    115 120 │         .setScrollFactor(0)
+    202 │     this.stopSceneLoops();
+    203 │     if (
+  > 204 │       !this.context ||
+        │       ^^^^^^^^^^^^^^^^
+  > 205 │       this.context.state !== 'running' ||
+        │       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    206 │       !this.currentProfile ||
+    207 │       this.settings.muted
   
-
-Checked 110 files in 78ms. No fixes applied.
-Found 1 error.
-format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-  × Some errors were emitted while running checks.
+  i Unsafe fix: Change to an optional chain.
+  
+    202 202 │       this.stopSceneLoops();
+    203 203 │       if (
+    204     │ - ······!this.context·||
+    205     │ - ······this.context.state·!==·'running'·||
+        204 │ + ······this.context?.state·!==·'running'·||
+    206 205 │         !this.currentProfile ||
+    207 206 │         this.settings.muted
   
 
+src/game/dialogue/DialogueCard.ts:1:8 lint/style/useImportType  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-__VALIDATION_FAILED__:1
+  ! All these imports are only used as types.
+  
+  > 1 │ import Phaser from 'phaser';
+      │        ^^^^^^^^^^^^^^^^^^^^
+    2 │ import type { DialogueChoice, DialogueNode } from '../../content/contentTypes';
+    3 │ import { getVerticalSliceAudio } from '../audio/VerticalSliceAudio';
+  
+  i Importing the types with import type ensures that they are removed by the compilers and avoids loading unnecessary modules.
+  
+  i Safe fix: Use import type.
+  
+    1 │ import·type·Phaser·from·'phaser';
+      │        +++++                     
+
+src/game/dialogue/DialogueSession.ts:37:9 lint/complexity/useOptionalChain  FIXABLE  ━━━━━━━━━━━━━━━
+
+  ! Change to an optional chain.
+  
+    35 │   public advanceLine(): void {
+    36 │     const node = this.getCurrentNode();
+  > 37 │     if (!node || node.type !== 'line') {
+       │         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    38 │       throw new Error('Dialogue can only advance while a line node is active.');
+    39 │     }
+  
+  i Unsafe fix: Change to an optional chain.
+  
+    35 35 │     public advanceLine(): void {
+    36 36 │       const node = this.getCurrentNode();
+    37    │ - ····if·(!node·||·node.type·!==·'line')·{
+       37 │ + ····if·(node?.type·!==·'line')·{
+    38 38 │         throw new Error('Dialogue can only advance while a line node is active.');
+    39 39 │       }
+  
+
+src/game/dialogue/DialogueSession.ts:45:9 lint/complexity/useOptionalChain  FIXABLE  ━━━━━━━━━━━━━━━
+
+  ! Change to an optional chain.
+  
+    43 │   public choose(choiceId: string): readonly DialogueEffect[] {
+    44 │     const node = this.getCurrentNode();
+  > 45 │     if (!node || node.type !== 'choice') {
+       │         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    46 │       throw new Error('Dialogue choice requires an active choice node.');
+    47 │     }
+  
+  i Unsafe fix: Change to an optional chain.
+  
+    43 43 │     public choose(choiceId: string): readonly DialogueEffect[] {
+    44 44 │       const node = this.getCurrentNode();
+    45    │ - ····if·(!node·||·node.type·!==·'choice')·{
+       45 │ + ····if·(node?.type·!==·'choice')·{
+    46 46 │         throw new Error('Dialogue choice requires an active choice node.');
+    47 47 │       }
+  
+
+src/game/input/TouchMovementPad.ts:1:8 lint/style/useImportType  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ! All these imports are only used as types.
+  
+  > 1 │ import Phaser from 'phaser';
+      │        ^^^^^^^^^^^^^^^^^^^^
+    2 │ import { GAME_HEIGHT } from '../config/gameConstants';
+    3 │ import type { PointerTouchInputAdapter } from './PointerTouchInputAdapter';
+  
+  i Importing the types with import type ensures that they are removed by the compilers and avoids loading unnecessary modules.
+  
+  i Safe fix: Use import type.
+  
+    1 │ import·type·Phaser·from·'phaser';
+      │        +++++                     
+
+src/game/player/PlayerEntity.ts:1:8 lint/style/useImportType  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ! All these imports are only used as types.
+  
+  > 1 │ import Phaser from 'phaser';
+      │        ^^^^^^^^^^^^^^^^^^^^
+    2 │ import type { PlayerFacing, PlayerMotionState, PlayerMovementCommand } from './PlayerMovement';
+    3 │ 
+  
+  i Importing the types with import type ensures that they are removed by the compilers and avoids loading unnecessary modules.
+  
+  i Safe fix: Use import type.
+  
+    1 │ import·type·Phaser·from·'phaser';
+      │        +++++                     
+
+src/game/player/PlayerPlaceholderTexture.ts:1:8 lint/style/useImportType  FIXABLE  ━━━━━━━━━━━━━━━━━
+
+  ! All these imports are only used as types.
+  
+  > 1 │ import Phaser from 'phaser';
+      │        ^^^^^^^^^^^^^^^^^^^^
+    2 │ 
+    3 │ export const PLAYER_PLACEHOLDER_TEXTURE_KEY = 'player-unicorn-placeholder';
+  
+  i Importing the types with import type ensures that they are removed by the compilers and avoids loading unnecessary modules.
+  
+  i Safe fix: Use import type.
+  
+    1 │ import·type·Phaser·from·'phaser';
+      │        +++++                     
+
+src/game/player/UnicornAppearanceRenderer.ts:1:8 lint/style/useImportType  FIXABLE  ━━━━━━━━━━━━━━━━
+
+  ! All these imports are only used as types.
+  
+  > 1 │ import Phaser from 'phaser';
+      │        ^^^^^^^^^^^^^^^^^^^^
+    2 │ import {
+    3 │   BODY_COLOURS,
+  
+  i Importing the types with import type ensures that they are removed by the compilers and avoids loading unnecessary modules.
+  
+  i Safe fix: Use import type.
+  
+    1 │ import·type·Phaser·from·'phaser';
+      │        +++++                     
+
+src/game/quests/QuestEngine.ts:204:9 lint/complexity/useOptionalChain  FIXABLE  ━━━━━━━━━━━━━━━━━━━━
+
+  ! Change to an optional chain.
+  
+    202 │     const save = this.saveService.load() ?? this.saveService.createNewGame();
+    203 │     const progress = save.quests.byQuestId[quest.id];
+  > 204 │     if (!progress || progress.status !== 'active') {
+        │         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    205 │       return;
+    206 │     }
+  
+  i Unsafe fix: Change to an optional chain.
+  
+    202 202 │       const save = this.saveService.load() ?? this.saveService.createNewGame();
+    203 203 │       const progress = save.quests.byQuestId[quest.id];
+    204     │ - ····if·(!progress·||·progress.status·!==·'active')·{
+        204 │ + ····if·(progress?.status·!==·'active')·{
+    205 205 │         return;
+    206 206 │       }
+  
+
+src/game/scenes/DoorwayStubScene.ts:2:10 lint/correctness/noUnusedImports  FIXABLE  ━━━━━━━━━━━━━━━━
+
+  ! Several of these imports are unused.
+  
+    1 │ import Phaser from 'phaser';
+  > 2 │ import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
+      │          ^^^^^^^^^^^
+    3 │ import { InputController } from '../input/InputController';
+    4 │ import { KeyboardInputAdapter } from '../input/KeyboardInputAdapter';
+  
+  i Unused imports might be the result of an incomplete refactoring.
+  
+  i Unsafe fix: Remove the unused imports.
+  
+    2 │ import·{·GAME_HEIGHT,·GAME_WIDTH·}·from·'../config/gameConstants';
+      │          -------------                                            
+
+src/game/ui/ActivitySuggestionCard.ts:1:8 lint/style/useImportType  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━
+
+  ! All these imports are only used as types.
+  
+  > 1 │ import Phaser from 'phaser';
+      │        ^^^^^^^^^^^^^^^^^^^^
+    2 │ import { getBrowserSaveService } from '../save/browserSaveService';
+    3 │ import { ActivitySuggestionSession } from '../suggestions/ActivitySuggestionModel';
+  
+  i Importing the types with import type ensures that they are removed by the compilers and avoids loading unnecessary modules.
+  
+  i Safe fix: Use import type.
+  
+    1 │ import·type·Phaser·from·'phaser';
+      │        +++++                     
+
+src/game/ui/AudioSettingsPanel.ts:1:8 lint/style/useImportType  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ! All these imports are only used as types.
+  
+  > 1 │ import Phaser from 'phaser';
+      │        ^^^^^^^^^^^^^^^^^^^^
+    2 │ import { getVerticalSliceAudio } from '../audio/VerticalSliceAudio';
+    3 │ import { GAME_WIDTH } from '../config/gameConstants';
+  
+  i Importing the types with import type ensures that they are removed by the compilers and avoids loading unnecessary modules.
+  
+  i Safe fix: Use import type.
+  
+    1 │ import·type·Phaser·from·'phaser';
+      │        +++++                     
+
+src/game/ui/InteractionPrompt.ts:1:8 lint/style/useImportType  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ! All these imports are only used as types.
+  
+  > 1 │ import Phaser from 'phaser';
+      │        ^^^^^^^^^^^^^^^^^^^^
+    2 │ import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
+    3 │ import type { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
+  
+  i Importing the types with import type ensures that they are removed by the compilers and avoids loading unnecessary modules.
+  
+  i Safe fix: Use import type.
+  
+    1 │ import·type·Phaser·from·'phaser';
+      │        +++++                     
+
+src/game/ui/ItemCard.ts:1:8 lint/style/useImportType  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ! All these imports are only used as types.
+  
+  > 1 │ import Phaser from 'phaser';
+      │        ^^^^^^^^^^^^^^^^^^^^
+    2 │ import type { ItemDefinition } from '../../content/contentTypes';
+    3 │ import { getItemPresentation } from '../inventory/InventoryService';
+  
+  i Importing the types with import type ensures that they are removed by the compilers and avoids loading unnecessary modules.
+  
+  i Safe fix: Use import type.
+  
+    1 │ import·type·Phaser·from·'phaser';
+      │        +++++                     
+
+src/game/ui/RewardFeedback.ts:1:8 lint/style/useImportType  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ! All these imports are only used as types.
+  
+  > 1 │ import Phaser from 'phaser';
+      │        ^^^^^^^^^^^^^^^^^^^^
+    2 │ import { getVerticalSliceAudio } from '../audio/VerticalSliceAudio';
+    3 │ import { GAME_WIDTH } from '../config/gameConstants';
+  
+  i Importing the types with import type ensures that they are removed by the compilers and avoids loading unnecessary modules.
+  
+  i Safe fix: Use import type.
+  
+    1 │ import·type·Phaser·from·'phaser';
+      │        +++++                     
+
+src/game/ui/uiTheme.ts:1:8 lint/style/useImportType  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ! All these imports are only used as types.
+  
+  > 1 │ import Phaser from 'phaser';
+      │        ^^^^^^^^^^^^^^^^^^^^
+    2 │ 
+    3 │ export const UI_FONT = 'Trebuchet MS, Segoe UI, system-ui, sans-serif';
+  
+  i Importing the types with import type ensures that they are removed by the compilers and avoids loading unnecessary modules.
+  
+  i Safe fix: Use import type.
+  
+    1 │ import·type·Phaser·from·'phaser';
+      │        +++++                     
+
+Checked 112 files in 222ms. No fixes applied.
+Found 16 warnings.
+
+> unicorn-valley@0.1.0 typecheck
+> tsc --noEmit
+
+
+> unicorn-valley@0.1.0 test
+> vitest run
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.10 [39m[90m/home/runner/work/unicorn-valley/unicorn-valley[39m
+
+ [32m✓[39m src/game/quests/QuestEngine.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32m✓[39m src/game/relationships/RelationshipService.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32m✓[39m src/game/home/HomeDecorationService.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m src/game/inventory/InventoryService.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+ [32m✓[39m src/game/suggestions/ActivitySuggestionModel.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m src/game/save/SaveService.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+ [32m✓[39m src/game/save/FirstPlayablePersistence.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m src/content/contentValidation.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m src/game/home/CottageHomeView.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m src/game/audio/AudioSettings.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m src/game/dialogue/DialogueSession.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+ [32m✓[39m src/game/world/SunbeamVillageMap.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32m✓[39m src/game/world/MoonflowerGladeMap.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32m✓[39m src/game/discovery/DiscoveryService.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m src/game/interaction/InteractionTargeting.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [32m✓[39m src/game/world/CottageInteriorMap.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m src/game/player/UnicornAppearance.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m src/game/player/PlayerMovement.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m src/game/world/FirstPlayablePlacement.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+ [32m✓[39m src/game/input/InputController.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+ [32m✓[39m src/game/save/saveMigrations.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+ [32m✓[39m src/game/wonderbook/WonderbookModel.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 3[2mms[22m[39m
+ [32m✓[39m src/game/ui/safeUiBounds.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+ [32m✓[39m src/game/events/GameEventBus.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 3[2mms[22m[39m
+ [32m✓[39m src/game/input/TouchMovementPad.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+ [32m✓[39m src/game/config/gameConstants.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 2[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m26 passed[39m[22m[90m (26)[39m
+[2m      Tests [22m [1m[32m94 passed[39m[22m[90m (94)[39m
+[2m   Start at [22m 15:15:46
+[2m   Duration [22m 3.10s[2m (transform 262ms, setup 0ms, import 543ms, tests 137ms, environment 2ms)[22m
+
+
+> unicorn-valley@0.1.0 build
+> tsc --noEmit && vite build
+
+[36mvite v8.2.0 [32mbuilding client environment for production...[36m[39m
+[2Ktransforming...✓ 78 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                     0.76 kB │ gzip:   0.43 kB
+dist/assets/index-BlyfwlNG.css      1.09 kB │ gzip:   0.61 kB
+dist/assets/index-CVI05wMs.js   1,510.29 kB │ gzip: 393.31 kB
+
+[32m✓ built in 629ms[39m
+[33m[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+
+> unicorn-valley@0.1.0 smoke:static
+> node scripts/staticSmoke.mjs
+
+Static build smoke passed for 3 referenced assets.
+
+__VALIDATION_PASSED__
