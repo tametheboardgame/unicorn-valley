@@ -6,11 +6,15 @@ The player creates her own unicorn, lives at Moonflower Cottage, explores a magi
 
 ## Project status
 
-**R2-WP2.9 - Vertical Slice Audio/UI Pass complete.**
+**R2-WP2.10A - Pre-Playtest Visual Polish and UX Fix Pass in progress.**
 
-R0, R1 and R2-WP2.1 through R2-WP2.9 are complete. The production branch is deployed to `https://unicorn-valley.pages.dev/`.
+R0, R1 and R2-WP2.1 through R2-WP2.9 are complete. R2-WP2.10 has been split so obvious visual/UX defects are corrected before the first daughter playtest.
 
-The next implementation package is **R2-WP2.10 - R2 Daughter Playtest and Recovery Pass**.
+Current implementation package: **R2-WP2.10A - Pre-Playtest Visual Polish and UX Fix Pass**.
+
+Next decision package: **R2-WP2.10B - Daughter Playtest and Recovery Pass**.
+
+The production branch is deployed to `https://unicorn-valley.pages.dev/`.
 
 ## Core principles
 
@@ -61,12 +65,13 @@ The next implementation package is **R2-WP2.10 - R2 Daughter Playtest and Recove
 - [Decorating V1](docs/24-DECORATING-V1.md)
 - [Optional Activity Suggestions](docs/25-OPTIONAL-ACTIVITY-SUGGESTIONS.md)
 - [Vertical Slice Audio/UI Pass](docs/26-VERTICAL-SLICE-AUDIO-UI-PASS.md)
+- [R2 Pre-Playtest Visual Polish](docs/27-R2-PRE-PLAYTEST-VISUAL-POLISH.md)
 
 ## Release plan
 
 - **R0 - Foundation and Pre-production**: complete.
 - **R1 - My Unicorn: First Playable**: complete.
-- **R2 - Living Valley Vertical Slice**: Sunbeam Village, quests, friendship, inventory, cottage decorating and visible persistent world change.
+- **R2 - Living Valley Vertical Slice**: Sunbeam Village, quests, friendship, inventory, cottage decorating, visible persistent world change, then pre-playtest polish and daughter playtesting.
 - **R3 - Rainbow Run Racing**: proper racing activity integrated into the life-sim world.
 - **R4 - Friendship, Secrets and Home Depth**: multi-session stories, shops, deeper decorating and stronger world memory.
 - **R5 - The Valley Gets Bigger**: Crystal Brook, Whispering Woods, more discoveries and a second major activity type.
