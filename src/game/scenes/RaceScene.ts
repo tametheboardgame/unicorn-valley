@@ -108,16 +108,19 @@ export class RaceScene extends Phaser.Scene {
 
     if (this.raceState.grounded) {
       this.player.setAngle(Math.sin(time * 0.02) * 2.2);
-      this.player.setScale(1, 1 + Math.sin(time * 0.025) * 0.018);
+      this.player.setDisplaySize(138, 112 * (1 + Math.sin(time * 0.025) * 0.018));
     } else {
       this.player.setAngle(Phaser.Math.Clamp(this.raceState.verticalVelocity * 0.018, -11, 10));
-      this.player.setScale(1.02, 0.98);
+      this.player.setDisplaySize(140, 110);
     }
 
+    const justFinished = !wasFinished && this.raceState.finished;
+    if (justFinished) {
+      this.finishTimeMs = this.elapsedMs;
+    }
     this.updateHud();
 
-    if (!wasFinished && this.raceState.finished) {
-      this.finishTimeMs = this.elapsedMs;
+    if (justFinished) {
       this.showFinishPanel();
       this.cameras.main.flash(240, 255, 245, 173, false);
     }
@@ -389,7 +392,7 @@ export class RaceScene extends Phaser.Scene {
     this.raceState = createRaceMovementState();
     this.elapsedMs = 0;
     this.finishTimeMs = 0;
-    this.player?.setPosition(COURSE_START_X, COURSE_GROUND_Y).setAngle(0).setScale(1);
+    this.player?.setPosition(COURSE_START_X, COURSE_GROUND_Y).setAngle(0).setDisplaySize(138, 112);
     this.cameras.main.scrollX = 0;
     this.pointerInput?.setButton('RACE_JUMP', false);
     this.updateHud();
