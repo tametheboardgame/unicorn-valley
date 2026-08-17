@@ -6,9 +6,9 @@ The player creates her own unicorn, lives at Moonflower Cottage, explores a magi
 
 ## Project status
 
-**Pre-production baseline complete.**
+**R0-WP0.2 - Phaser/Vite/TypeScript Scaffold implemented and validated.**
 
-The next implementation package is **R0-WP0.2 - Phaser/Vite/TypeScript Scaffold**.
+The next implementation package is **R0-WP0.3 - Quality Gates and Repository Hygiene**.
 
 ## Core principles
 
