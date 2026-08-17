@@ -32,9 +32,9 @@ describe('DiscoveryService', () => {
     expect(reloadedSave?.collections.discoveryIds).toContain('discovery:moonflower-sparkle');
     expect(reloadedSave?.world.uniqueDiscoveryIds).toContain('discovery:moonflower-sparkle');
     expect(reloadedSave?.world.flags['flag:first-sparkle-found']).toBe(true);
-    expect(new DiscoveryService(new SaveService(repository)).hasDiscovery('discovery:moonflower-sparkle')).toBe(
-      true,
-    );
+    expect(
+      new DiscoveryService(new SaveService(repository)).hasDiscovery('discovery:moonflower-sparkle'),
+    ).toBe(true);
   });
 
   it('does not duplicate a discovery when it is unlocked again', () => {
