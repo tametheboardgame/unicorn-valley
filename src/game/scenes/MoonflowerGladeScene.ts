@@ -286,42 +286,13 @@ export class MoonflowerGladeScene extends Phaser.Scene {
 
   private createPip(): void {
     const body = this.add.circle(PIP_POSITION.x, PIP_POSITION.y, 38, 0xf3a4c8, 1).setDepth(17);
-    const belly = this.add.ellipse(
-      PIP_POSITION.x,
-      PIP_POSITION.y + 12,
-      48,
-      38,
-      0xffd7e8,
-      0.95,
-    );
+    const belly = this.add.ellipse(PIP_POSITION.x, PIP_POSITION.y + 12, 48, 38, 0xffd7e8, 0.95);
     belly.setDepth(18);
     this.add
-      .triangle(
-        PIP_POSITION.x - 19,
-        PIP_POSITION.y - 42,
-        0,
-        30,
-        15,
-        0,
-        28,
-        32,
-        0xe683b2,
-        1,
-      )
+      .triangle(PIP_POSITION.x - 19, PIP_POSITION.y - 42, 0, 30, 15, 0, 28, 32, 0xe683b2, 1)
       .setDepth(16);
     this.add
-      .triangle(
-        PIP_POSITION.x + 18,
-        PIP_POSITION.y - 42,
-        0,
-        32,
-        14,
-        0,
-        29,
-        30,
-        0xe683b2,
-        1,
-      )
+      .triangle(PIP_POSITION.x + 18, PIP_POSITION.y - 42, 0, 32, 14, 0, 29, 30, 0xe683b2, 1)
       .setDepth(16);
     this.add.circle(PIP_POSITION.x - 13, PIP_POSITION.y - 7, 4, 0x563b66, 1).setDepth(19);
     this.add.circle(PIP_POSITION.x + 13, PIP_POSITION.y - 7, 4, 0x563b66, 1).setDepth(19);
