@@ -15,6 +15,7 @@ import {
   MOONFLOWER_GLADE_LOCATION_ID,
   saveLocationCheckpoint,
 } from '../save/saveLocationCheckpoint';
+import { isWillowGardenPlanted } from '../story/WillowMoonflowersStory';
 import { InteractionPrompt } from '../ui/InteractionPrompt';
 import { MOONFLOWER_GLADE_MAP, setMoonflowerGladePlayerSpawn } from '../world/MoonflowerGladeMap';
 import { SUNBEAM_VILLAGE_LOCATION_ID, SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
@@ -38,6 +39,15 @@ function entranceApproach(id: string): { x: number; y: number } {
   }
 
   return entrance.approach;
+}
+
+function npcPosition(id: string): { x: number; y: number } {
+  const marker = SUNBEAM_VILLAGE_MAP.npcMarkers.find((candidate) => candidate.id === id);
+  if (!marker) {
+    throw new Error(`Sunbeam Village interaction references missing NPC marker: ${id}`);
+  }
+
+  return marker.position;
 }
 
 const VILLAGE_INTERACTIONS = [
@@ -87,6 +97,21 @@ const VILLAGE_INTERACTIONS = [
       type: 'message',
       title: 'Sunbeam Fountain',
       message: 'The water catches a tiny rainbow when you get close. Maybe wishes linger here.',
+    },
+  },
+  {
+    id: 'interaction:village-willow',
+    label: 'Willow',
+    actionLabel: 'Talk',
+    position: npcPosition('willow'),
+    interactionRadius: 150,
+    priority: 30,
+    result: {
+      type: 'scene-transition',
+      sceneKey: 'WillowStoryScene',
+      payload: {
+        returnScene: 'SunbeamVillageScene',
+      },
     },
   },
   {
@@ -291,6 +316,7 @@ export class SunbeamVillageScene extends Phaser.Scene {
     this.createBuilding(2110, 480, 490, 330, 0x87b8d8, 0xd9f1ff, '📚', 'STORY HOUSE');
     this.createFountain();
     this.createNpcMarkers();
+    this.createWillowGarden();
     this.createEntrances();
     this.createBunting();
     this.createFlowers();
@@ -374,6 +400,47 @@ export class SunbeamVillageScene extends Phaser.Scene {
         .setOrigin(0.5)
         .setDepth(9);
     }
+  }
+
+  private createWillowGarden(): void {
+    const planted = isWillowGardenPlanted(getBrowserSaveService().load());
+    const x = 980;
+    const y = 1390;
+    this.add
+      .ellipse(x, y, 310, 145, planted ? 0x8a694d : 0x9b7758, 0.95)
+      .setStrokeStyle(5, 0x6e8e57, 0.75)
+      .setDepth(5);
+
+    if (planted) {
+      const positions = [-105, -52, 0, 52, 105];
+      for (const offset of positions) {
+        this.add.circle(x + offset, y - 18, 28, 0xffefab, 0.18).setDepth(6);
+        this.add
+          .text(x + offset, y - 20, '🌙', {
+            fontFamily: 'system-ui, sans-serif',
+            fontSize: '34px',
+          })
+          .setOrigin(0.5)
+          .setDepth(7);
+      }
+    } else {
+      for (const offset of [-75, 0, 75]) {
+        this.add.rectangle(x + offset, y - 9, 5, 30, 0x6d985f, 0.85).setDepth(6);
+        this.add.circle(x + offset, y - 27, 8, 0x94b971, 0.9).setDepth(7);
+      }
+    }
+
+    this.add
+      .text(x, y + 92, planted ? "Willow's Moonflowers" : "Willow's garden", {
+        color: '#5d4c5e',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '17px',
+        fontStyle: 'bold',
+        backgroundColor: '#fff8dfcc',
+        padding: { x: 8, y: 5 },
+      })
+      .setOrigin(0.5)
+      .setDepth(8);
   }
 
   private createEntrances(): void {
