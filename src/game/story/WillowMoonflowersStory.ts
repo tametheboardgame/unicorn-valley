@@ -2,8 +2,8 @@ import {
   WILLOW_GARDEN_PLANTED_FLAG,
   WILLOW_MOONFLOWERS_QUEST_ID,
 } from '../../content/r2Quests';
-import type { QuestProgress, SaveGame } from '../save/saveSchema';
 import { getQuestStepId } from '../quests/QuestEngine';
+import type { QuestProgress, SaveGame } from '../save/saveSchema';
 
 export const WILLOW_CHARACTER_ID = 'character:willow' as const;
 export const WILLOW_MOONFLOWER_ITEM_ID = 'item:willow-moonflower' as const;
