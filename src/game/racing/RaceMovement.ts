@@ -26,12 +26,20 @@ export function stepRaceMovement(
   state: RaceMovementState,
   deltaSeconds: number,
   jumpRequested: boolean,
+  forwardSpeedMultiplier = 1,
+  courseLength = RACE_COURSE_LENGTH,
 ): RaceMovementState {
   if (state.finished) {
     return state;
   }
 
   const frameSeconds = Math.max(0, Math.min(deltaSeconds, RACE_MAX_FRAME_SECONDS));
+  const speedMultiplier = Number.isFinite(forwardSpeedMultiplier)
+    ? Math.max(0, forwardSpeedMultiplier)
+    : 1;
+  const finishProgress = Number.isFinite(courseLength) && courseLength > 0
+    ? courseLength
+    : RACE_COURSE_LENGTH;
   let jumpOffset = state.jumpOffset;
   let verticalVelocity = state.verticalVelocity;
   let grounded = state.grounded;
@@ -52,13 +60,16 @@ export function stepRaceMovement(
     }
   }
 
-  const progress = Math.min(RACE_COURSE_LENGTH, state.progress + RACE_FORWARD_SPEED * frameSeconds);
+  const progress = Math.min(
+    finishProgress,
+    state.progress + RACE_FORWARD_SPEED * speedMultiplier * frameSeconds,
+  );
 
   return {
     progress,
     jumpOffset,
     verticalVelocity,
     grounded,
-    finished: progress >= RACE_COURSE_LENGTH,
+    finished: progress >= finishProgress,
   };
 }
