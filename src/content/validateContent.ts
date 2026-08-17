@@ -39,7 +39,7 @@ function validateQuestStep(
     errors.push(`Quest ${questId} references missing character ${step.characterId}.`);
   }
 
-  if (step.type === 'collect-item') {
+  if (step.type === 'collect-item' || step.type === 'award-item') {
     if (!itemIds.has(step.itemId)) {
       errors.push(`Quest ${questId} references missing item ${step.itemId}.`);
     }
@@ -51,6 +51,10 @@ function validateQuestStep(
 
   if (step.type === 'unlock-discovery' && !discoveryIds.has(step.discoveryId)) {
     errors.push(`Quest ${questId} references missing discovery ${step.discoveryId}.`);
+  }
+
+  if (step.type === 'set-world-flag' && !step.flagId.startsWith('flag:')) {
+    errors.push(`Quest ${questId} has invalid world flag ID ${step.flagId}.`);
   }
 }
 

@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 
 const DIAGNOSTIC_SCENES: Record<string, string> = {
   'resize-test': 'ResizeTestScene',
@@ -14,6 +15,7 @@ export class BootScene extends Phaser.Scene {
   }
 
   public create(): void {
+    getBrowserQuestEngine();
     const requestedScene = new URLSearchParams(globalThis.location.search).get('scene');
     this.registry.set(
       'postPreloadScene',

@@ -1,5 +1,7 @@
 export interface GameEventMap {
   ITEM_COLLECTED: { itemId: string; quantity: number };
+  CHARACTER_TALKED: { characterId: string };
+  QUEST_STARTED: { questId: string; stepId: string | null };
   QUEST_STEP_CHANGED: { questId: string; stepId: string };
   QUEST_COMPLETED: { questId: string };
   RELATIONSHIP_CHANGED: { characterId: string; friendshipPoints: number };
