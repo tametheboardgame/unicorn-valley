@@ -6,11 +6,11 @@ The player creates her own unicorn, lives at Moonflower Cottage, explores a magi
 
 ## Project status
 
-**R2-WP2.10C - Layering and World-Prop Fix Pass complete.**
+**R3-WP3.1 - Rainbow Meadow and Race Hub complete.**
 
-R0, R1 and R2 are complete. The first daughter playtest was overwhelmingly positive and validated the core unicorn life-adventure direction. Its follow-up recovery work added click/tap movement, persistent suggestion dismissal, creator layout improvements, collision fixes, world depth/occlusion for tall scenery and a clearly recognisable closed Wonderbook on its in-world discovery display.
+R0, R1 and R2 are complete. R3 is now underway: Rainbow Meadow is connected naturally to Sunbeam Village and contains the first Rainbow Run hub, Nova, a physical race entrance, ribbon-board placeholder and persistent meadow discoveries. The race itself remains deliberately deferred to the next package.
 
-The next package is **R3-WP3.1 - Rainbow Meadow and Race Hub**.
+The next package is **R3-WP3.2 - Race Scene and Core Movement**.
 
 The production branch is deployed to `https://unicorn-valley.pages.dev/`.
 
@@ -66,13 +66,14 @@ The production branch is deployed to `https://unicorn-valley.pages.dev/`.
 - [R2 Pre-Playtest Visual Polish](docs/27-R2-PRE-PLAYTEST-VISUAL-POLISH.md)
 - [R2 Daughter Playtest and Recovery](docs/28-R2-DAUGHTER-PLAYTEST-RECOVERY.md)
 - [R2 Layering and World Props](docs/29-R2-LAYERING-WORLD-PROPS.md)
+- [R3 Rainbow Meadow and Race Hub](docs/30-R3-RAINBOW-MEADOW-RACE-HUB.md)
 
 ## Release plan
 
 - **R0 - Foundation and Pre-production**: complete.
 - **R1 - My Unicorn: First Playable**: complete.
 - **R2 - Living Valley Vertical Slice**: complete, including Sunbeam Village, quests, friendship, inventory, cottage decorating, visible persistent world change, pre-playtest polish, daughter playtesting and the resulting UX/visual recovery passes.
-- **R3 - Rainbow Run Racing**: proper racing activity integrated into the life-sim world.
+- **R3 - Rainbow Run Racing**: in progress; Rainbow Meadow and the physical Rainbow Run hub are complete, with race mechanics next.
 - **R4 - Friendship, Secrets and Home Depth**: multi-session stories, shops, deeper decorating and stronger world memory.
 - **R5 - The Valley Gets Bigger**: Crystal Brook, Whispering Woods, more discoveries and a second major activity type.
 - **R6 - Production Presentation and Accessibility**: final-quality art/audio direction, touch refinement, performance and save hardening.
