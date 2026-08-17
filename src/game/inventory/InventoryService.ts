@@ -1,5 +1,6 @@
 import { itemRegistry } from '../../content/registries';
 import type { ItemCategory, ItemDefinition, ItemId } from '../../content/contentTypes';
+import { type GameEventMap, type TypedEventBus, gameEventBus } from '../events/GameEventBus';
 import type { SaveService } from '../save/SaveService';
 
 export interface OwnedInventoryItem {
@@ -32,7 +33,10 @@ export function getItemPresentation(item: ItemDefinition): InventoryItemPresenta
 }
 
 export class InventoryService {
-  public constructor(private readonly saveService: SaveService) {}
+  public constructor(
+    private readonly saveService: SaveService,
+    private readonly events: TypedEventBus<GameEventMap> = gameEventBus,
+  ) {}
 
   public getQuantity(itemId: ItemId): number {
     itemRegistry.get(itemId);
@@ -61,6 +65,7 @@ export class InventoryService {
         },
       },
     });
+    this.events.emit('ITEM_COLLECTED', { itemId, quantity });
 
     return nextQuantity;
   }
