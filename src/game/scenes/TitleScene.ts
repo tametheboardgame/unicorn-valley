@@ -8,13 +8,15 @@ export class TitleScene extends Phaser.Scene {
   private inputController: InputController | null = null;
   private pointerInput: PointerTouchInputAdapter | null = null;
   private statusText: Phaser.GameObjects.Text | null = null;
-  private comingSoonButton: Phaser.GameObjects.Rectangle | null = null;
+  private enterButton: Phaser.GameObjects.Rectangle | null = null;
+  private starting = false;
 
   public constructor() {
     super('TitleScene');
   }
 
   public create(): void {
+    this.starting = false;
     this.cameras.main.setBackgroundColor('#6f4ba8');
 
     this.add.circle(170, 130, 115, 0xffd7f4, 0.18);
@@ -49,10 +51,10 @@ export class TitleScene extends Phaser.Scene {
       .rectangle(GAME_WIDTH / 2, 475, 340, 82, 0xfff5ff, 0.96)
       .setStrokeStyle(5, 0xe8bdf5, 1)
       .setInteractive({ useHandCursor: true });
-    this.comingSoonButton = button;
+    this.enterButton = button;
 
     this.add
-      .text(GAME_WIDTH / 2, 475, 'Coming Soon', {
+      .text(GAME_WIDTH / 2, 475, 'Enter the Valley', {
         color: '#51366f',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '32px',
@@ -69,7 +71,7 @@ export class TitleScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     this.statusText = this.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT - 82, 'The valley is waking up…', {
+      .text(GAME_WIDTH / 2, GAME_HEIGHT - 82, 'A little patch of the valley is ready to explore.', {
         color: '#e9dcf8',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '21px',
@@ -97,6 +99,8 @@ export class TitleScene extends Phaser.Scene {
       this.inputController?.destroy();
       this.inputController = null;
       this.pointerInput = null;
+      this.enterButton = null;
+      this.statusText = null;
     });
   }
 
@@ -104,16 +108,21 @@ export class TitleScene extends Phaser.Scene {
     this.inputController?.update();
 
     if (this.inputController?.justPressed('INTERACT')) {
-      this.acknowledgeInteraction();
+      this.enterValley();
     }
   }
 
-  private acknowledgeInteraction(): void {
-    this.statusText?.setText('The valley heard you ✨');
-    this.comingSoonButton?.setStrokeStyle(7, 0xffe6a8, 1);
+  private enterValley(): void {
+    if (this.starting) {
+      return;
+    }
 
-    this.time.delayedCall(240, () => {
-      this.comingSoonButton?.setStrokeStyle(5, 0xe8bdf5, 1);
+    this.starting = true;
+    this.statusText?.setText('Off we go…');
+    this.enterButton?.setStrokeStyle(7, 0xffe6a8, 1);
+
+    this.time.delayedCall(140, () => {
+      this.scene.start('MovementTestScene');
     });
   }
 }
