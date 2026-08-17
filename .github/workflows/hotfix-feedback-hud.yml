@@ -1,0 +1,56 @@
+name: Apply R2-WP2.10E Feedback HUD Hotfix
+
+on:
+  push:
+    branches:
+      - agent/r2-wp2.10e-feedback-hud-layering
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Apply feedback layering fix
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          changes = {
+              Path('src/game/scenes/MoonflowerGladeScene.ts'): [
+                  (".text(GAME_WIDTH - 32, 30, '', {", ".text(GAME_WIDTH - 32, 108, '', {"),
+                  ("      .setDepth(119)\n      .setVisible(false);", "      .setDepth(122)\n      .setVisible(false);"),
+              ],
+              Path('src/game/scenes/SunbeamVillageScene.ts'): [
+                  ("      .setDepth(116)\n      .setVisible(false);", "      .setDepth(122)\n      .setVisible(false);"),
+              ],
+              Path('src/game/scenes/CottageInteriorScene.ts'): [
+                  ("      .setDepth(116)\n      .setVisible(false);", "      .setDepth(122)\n      .setVisible(false);"),
+              ],
+          }
+
+          for path, replacements in changes.items():
+              text = path.read_text()
+              original = text
+              for old, new in replacements:
+                  if old not in text:
+                      raise SystemExit(f'Expected snippet not found in {path}: {old!r}')
+                  text = text.replace(old, new, 1)
+              if text != original:
+                  path.write_text(text)
+          PY
+      - name: Commit hotfix
+        run: |
+          if git diff --quiet; then
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/game/scenes/MoonflowerGladeScene.ts src/game/scenes/SunbeamVillageScene.ts src/game/scenes/CottageInteriorScene.ts
+          git commit -m "R2-WP2.10E fix feedback HUD layering"
+          git push
