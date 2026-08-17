@@ -6,9 +6,9 @@ The player creates her own unicorn, lives at Moonflower Cottage, explores a magi
 
 ## Project status
 
-**R0-WP0.5 - Input Abstraction and Responsive Canvas implemented.**
+**R0-WP0.6 - Content Registry and Validation Skeleton implemented.**
 
-The next implementation package is **R0-WP0.6 - Content Registry and Validation Skeleton**.
+The next implementation package is **R0-WP0.7 - Cloudflare Deployment Smoke Build**.
 
 ## Core principles
 
