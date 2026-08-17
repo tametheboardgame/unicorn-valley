@@ -6,11 +6,11 @@ The player creates her own unicorn, lives at Moonflower Cottage, explores a magi
 
 ## Project status
 
-**R2-WP2.8 - Optional Activity Suggestions complete.**
+**R2-WP2.9 - Vertical Slice Audio/UI Pass complete.**
 
-R0, R1 and R2-WP2.1 through R2-WP2.8 are complete. The production branch is deployed to `https://unicorn-valley.pages.dev/`.
+R0, R1 and R2-WP2.1 through R2-WP2.9 are complete. The production branch is deployed to `https://unicorn-valley.pages.dev/`.
 
-The next implementation package is **R2-WP2.9 - Vertical Slice Audio/UI Pass**.
+The next implementation package is **R2-WP2.10 - R2 Daughter Playtest and Recovery Pass**.
 
 ## Core principles
 
@@ -60,6 +60,7 @@ The next implementation package is **R2-WP2.9 - Vertical Slice Audio/UI Pass**.
 - [Moonflower Cottage Interior](docs/23-COTTAGE-INTERIOR.md)
 - [Decorating V1](docs/24-DECORATING-V1.md)
 - [Optional Activity Suggestions](docs/25-OPTIONAL-ACTIVITY-SUGGESTIONS.md)
+- [Vertical Slice Audio/UI Pass](docs/26-VERTICAL-SLICE-AUDIO-UI-PASS.md)
 
 ## Release plan
 

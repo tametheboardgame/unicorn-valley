@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import type { ItemDefinition } from '../../content/contentTypes';
 import { getItemPresentation } from '../inventory/InventoryService';
+import { UI_COLOURS, UI_FONT, createUiShadow } from './uiTheme';
 
 export class ItemCard {
   private readonly objects: Phaser.GameObjects.GameObject[] = [];
@@ -14,19 +15,22 @@ export class ItemCard {
     quantity: number,
   ) {
     const presentation = getItemPresentation(item);
+    const shadow = createUiShadow(scene, x, y, width, 136, 0, 0.16);
     const panel = scene.add
-      .rectangle(x, y, width, 136, 0xfffbef, 0.98)
-      .setStrokeStyle(4, 0xd9b7dc, 0.95);
-    const iconCircle = scene.add.circle(x - width / 2 + 72, y, 43, 0xf0dbf0, 1);
+      .rectangle(x, y, width, 136, UI_COLOURS.cream, 0.99)
+      .setStrokeStyle(4, UI_COLOURS.lavenderStrong, 0.98);
+    const iconCircle = scene.add
+      .circle(x - width / 2 + 72, y, 43, UI_COLOURS.lavender, 1)
+      .setStrokeStyle(3, UI_COLOURS.white, 0.92);
     const icon = scene.add
       .text(iconCircle.x, iconCircle.y, presentation.icon, {
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: UI_FONT,
         fontSize: '38px',
       })
       .setOrigin(0.5);
     const name = scene.add.text(x - width / 2 + 132, y - 48, item.name, {
-      color: '#5a4265',
-      fontFamily: 'system-ui, sans-serif',
+      color: UI_COLOURS.ink,
+      fontFamily: UI_FONT,
       fontSize: '22px',
       fontStyle: 'bold',
     });
@@ -35,30 +39,30 @@ export class ItemCard {
       y - 15,
       presentation.category.replace('-', ' '),
       {
-        color: '#9a6d91',
-        fontFamily: 'system-ui, sans-serif',
+        color: UI_COLOURS.mutedInk,
+        fontFamily: UI_FONT,
         fontSize: '15px',
         fontStyle: 'bold',
       },
     );
     const description = scene.add.text(x - width / 2 + 132, y + 12, presentation.description, {
-      color: '#725e78',
-      fontFamily: 'system-ui, sans-serif',
+      color: UI_COLOURS.softInk,
+      fontFamily: UI_FONT,
       fontSize: '15px',
       wordWrap: { width: width - 235 },
     });
     const quantityText = scene.add
       .text(x + width / 2 - 38, y - 45, `×${quantity}`, {
-        color: '#72537d',
-        fontFamily: 'system-ui, sans-serif',
+        color: UI_COLOURS.ink,
+        fontFamily: UI_FONT,
         fontSize: '19px',
         fontStyle: 'bold',
-        backgroundColor: '#f3e2f1',
+        backgroundColor: '#f0ddf5',
         padding: { x: 8, y: 5 },
       })
       .setOrigin(1, 0);
 
-    this.objects.push(panel, iconCircle, icon, name, category, description, quantityText);
+    this.objects.push(shadow, panel, iconCircle, icon, name, category, description, quantityText);
   }
 
   public destroy(): void {
