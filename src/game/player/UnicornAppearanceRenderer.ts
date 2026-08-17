@@ -7,7 +7,12 @@ import {
   type UnicornAppearance,
 } from './UnicornAppearance';
 
-function drawHeart(graphics: Phaser.GameObjects.Graphics, x: number, y: number, scale: number): void {
+function drawHeart(
+  graphics: Phaser.GameObjects.Graphics,
+  x: number,
+  y: number,
+  scale: number,
+): void {
   graphics.fillCircle(x - 5 * scale, y, 6 * scale);
   graphics.fillCircle(x + 5 * scale, y, 6 * scale);
   graphics.fillTriangle(
