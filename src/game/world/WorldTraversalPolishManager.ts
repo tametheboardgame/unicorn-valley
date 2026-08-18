@@ -4,10 +4,7 @@ import {
   MOONFLOWER_GLADE_LOCATION_ID,
   saveLocationCheckpoint,
 } from '../save/saveLocationCheckpoint';
-import {
-  MOONFLOWER_GLADE_MAP,
-  setMoonflowerGladePlayerSpawn,
-} from './MoonflowerGladeMap';
+import { MOONFLOWER_GLADE_MAP, setMoonflowerGladePlayerSpawn } from './MoonflowerGladeMap';
 import {
   RAINBOW_MEADOW_LOCATION_ID,
   RAINBOW_MEADOW_MAP,
@@ -123,12 +120,14 @@ function hideLegacyGatewayObjects(scene: Phaser.Scene): void {
       continue;
     }
 
-    if (key === 'MoonflowerGladeScene') {
+    if (
+      key === 'MoonflowerGladeScene' &&
+      (object instanceof Phaser.GameObjects.Rectangle || object instanceof Phaser.GameObjects.Ellipse)
+    ) {
       const isOldArchPart =
         object.depth === 8 &&
         Math.abs(object.x - 2680) <= 120 &&
-        Math.abs(object.y - 900) <= 110 &&
-        (object instanceof Phaser.GameObjects.Rectangle || object instanceof Phaser.GameObjects.Ellipse);
+        Math.abs(object.y - 900) <= 110;
       if (isOldArchPart) {
         object.setVisible(false);
       }
@@ -163,7 +162,14 @@ function addGateway(scene: Phaser.Scene, gateway: GatewayDefinition): void {
     markDetail(scene.add.ellipse(x, hedgeY, 78, 94, 0x6da66f, 0.96).setDepth(7.8));
     markDetail(
       scene.add
-        .ellipse(x + sparkleDirection * 14, hedgeY + Math.sign(yOffset) * 28, 58, 66, 0x82b77a, 0.94)
+        .ellipse(
+          x + sparkleDirection * 14,
+          hedgeY + Math.sign(yOffset) * 28,
+          58,
+          66,
+          0x82b77a,
+          0.94,
+        )
         .setDepth(7.9),
     );
   }
@@ -350,12 +356,12 @@ function findPlayer(scene: Phaser.Scene): Phaser.Physics.Arcade.Sprite | null {
   }
 
   return (
-    scene.children.list.find(
+    (scene.children.list.find(
       (object) =>
         object instanceof Phaser.Physics.Arcade.Sprite &&
         object.texture.key.startsWith('player-unicorn-'),
-    ) as Phaser.Physics.Arcade.Sprite | undefined
-  ) ?? null;
+    ) as Phaser.Physics.Arcade.Sprite | undefined) ?? null
+  );
 }
 
 function isInsideGateway(player: Phaser.Physics.Arcade.Sprite, point: Point): boolean {
@@ -435,7 +441,10 @@ export class WorldTraversalPolishManager {
         (object) => object.name === WORLD_TRAVERSAL_POLISH_ANCHOR_NAME,
       );
       if (!alreadyDecorated) {
-        scene.add.zone(-64, -64, 2, 2).setName(WORLD_TRAVERSAL_POLISH_ANCHOR_NAME).setVisible(false);
+        scene.add
+          .zone(-64, -64, 2, 2)
+          .setName(WORLD_TRAVERSAL_POLISH_ANCHOR_NAME)
+          .setVisible(false);
         decorateScene(scene);
       }
 
