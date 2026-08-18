@@ -331,81 +331,76 @@ test.describe
       }
     });
 
-    test(
-      'Nova first run requires active movement, supports jumping and exits cleanly',
-      async ({ page }) => {
-        const browserErrors: string[] = [];
-        page.on('pageerror', (error) => browserErrors.push(error.message));
-        await page.goto('/?scene=nova-race&diagnostics=1');
-        await waitForScene(page, 'NovaTutorialRaceScene');
+    test('Nova first run requires active movement, supports jumping and exits cleanly', async ({
+      page,
+    }) => {
+      const browserErrors: string[] = [];
+      page.on('pageerror', (error) => browserErrors.push(error.message));
+      await page.goto('/?scene=nova-race&diagnostics=1');
+      await waitForScene(page, 'NovaTutorialRaceScene');
 
-        await page.waitForTimeout(4_000);
-        const idleStart = await playerPosition(page, 'NovaTutorialRaceScene');
-        await page.waitForTimeout(800);
-        const idleEnd = await playerPosition(page, 'NovaTutorialRaceScene');
-        expect(
-          Math.abs(idleEnd.x - idleStart.x),
-          'No input should not move the racer',
-        ).toBeLessThan(3);
+      await page.waitForTimeout(4_000);
+      const idleStart = await playerPosition(page, 'NovaTutorialRaceScene');
+      await page.waitForTimeout(800);
+      const idleEnd = await playerPosition(page, 'NovaTutorialRaceScene');
+      expect(Math.abs(idleEnd.x - idleStart.x), 'No input should not move the racer').toBeLessThan(
+        3,
+      );
 
-        await page.keyboard.down('ArrowRight');
-        await page.waitForTimeout(900);
-        const running = await playerPosition(page, 'NovaTutorialRaceScene');
-        expect(running.x - idleEnd.x, 'Holding Right should move the racer').toBeGreaterThan(35);
+      await page.keyboard.down('ArrowRight');
+      await page.waitForTimeout(900);
+      const running = await playerPosition(page, 'NovaTutorialRaceScene');
+      expect(running.x - idleEnd.x, 'Holding Right should move the racer').toBeGreaterThan(35);
 
-        await page.keyboard.up('ArrowRight');
-        await page.waitForTimeout(500);
-        const stopped = await playerPosition(page, 'NovaTutorialRaceScene');
-        expect(
-          Math.abs(stopped.x - running.x),
-          'Releasing Right should stop forward progress',
-        ).toBeLessThan(4);
+      await page.keyboard.up('ArrowRight');
+      await page.waitForTimeout(500);
+      const stopped = await playerPosition(page, 'NovaTutorialRaceScene');
+      expect(
+        Math.abs(stopped.x - running.x),
+        'Releasing Right should stop forward progress',
+      ).toBeLessThan(4);
 
-        await page.keyboard.down('ArrowRight');
-        await page.waitForTimeout(100);
-        const beforeJump = await playerPosition(page, 'NovaTutorialRaceScene');
-        await page.keyboard.press('Space');
-        await page.waitForTimeout(130);
-        const duringJump = await playerPosition(page, 'NovaTutorialRaceScene');
-        expect(duringJump.y, 'SPACE should visibly lift the racer').toBeLessThan(beforeJump.y - 3);
+      await page.keyboard.down('ArrowRight');
+      await page.waitForTimeout(100);
+      const beforeJump = await playerPosition(page, 'NovaTutorialRaceScene');
+      await page.keyboard.press('Space');
+      await page.waitForTimeout(130);
+      const duringJump = await playerPosition(page, 'NovaTutorialRaceScene');
+      expect(duringJump.y, 'SPACE should visibly lift the racer').toBeLessThan(beforeJump.y - 3);
 
-        let finished = false;
-        for (let step = 0; step < 65; step += 1) {
-          if (step % 2 === 0) {
-            await page.keyboard.press('Space');
-          }
-          await page.waitForTimeout(300);
-          const snapshot = await getSnapshot(page);
-          const race = getScene(snapshot, 'NovaTutorialRaceScene');
-          finished = race.objects.some((object) =>
-            object.text?.startsWith('First run complete'),
-          );
-          if (finished) {
-            break;
-          }
+      let finished = false;
+      for (let step = 0; step < 65; step += 1) {
+        if (step % 2 === 0) {
+          await page.keyboard.press('Space');
         }
-        await page.keyboard.up('ArrowRight');
-        expect(
-          finished,
-          'Tutorial race should be finishable by an automated child-like run',
-        ).toBe(true);
-
-        const resultFindings = await captureScenario(
-          page,
-          'nova-race-finished',
-          'NovaTutorialRaceScene',
-          { requirePlayer: true },
-        );
-        expect(resultFindings.filter((finding) => finding.severity === 'error')).toEqual([]);
-
+        await page.waitForTimeout(300);
         const snapshot = await getSnapshot(page);
-        await logicalClick(page, snapshot.width / 2, snapshot.height / 2 + 137);
-        await waitForScene(page, 'NovaStoryScene');
-        await captureScenario(page, 'nova-post-race', 'NovaStoryScene');
+        const race = getScene(snapshot, 'NovaTutorialRaceScene');
+        finished = race.objects.some((object) => object.text?.startsWith('First run complete'));
+        if (finished) {
+          break;
+        }
+      }
+      await page.keyboard.up('ArrowRight');
+      expect(finished, 'Tutorial race should be finishable by an automated child-like run').toBe(
+        true,
+      );
 
-        expect(browserErrors, 'Browser errors during the full tutorial race').toEqual([]);
-      },
-    );
+      const resultFindings = await captureScenario(
+        page,
+        'nova-race-finished',
+        'NovaTutorialRaceScene',
+        { requirePlayer: true },
+      );
+      expect(resultFindings.filter((finding) => finding.severity === 'error')).toEqual([]);
+
+      const snapshot = await getSnapshot(page);
+      await logicalClick(page, snapshot.width / 2, snapshot.height / 2 + 137);
+      await waitForScene(page, 'NovaStoryScene');
+      await captureScenario(page, 'nova-post-race', 'NovaStoryScene');
+
+      expect(browserErrors, 'Browser errors during the full tutorial race').toEqual([]);
+    });
 
     test('Sunrise Sprint also obeys manual forward control', async ({ page }) => {
       await page.goto('/?scene=race&diagnostics=1');
