@@ -61,7 +61,9 @@ export class RacePlayerControlManager {
       const state = this.ensureScene(scene);
       const runtime = asRaceScene(scene);
       const forwardAxis = clampForwardAxis(runtime.inputController?.getAxis('MOVE_X') ?? 0);
-      runtime.runState.forwardControlMultiplier = runtime.runState.movement.finished ? 0 : forwardAxis;
+      runtime.runState.forwardControlMultiplier = runtime.runState.movement.finished
+        ? 0
+        : forwardAxis;
 
       const running = runtime.runState.forwardControlMultiplier > 0;
       state.runBackground.setScale(running ? 0.96 : 1);
