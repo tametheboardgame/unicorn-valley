@@ -35,6 +35,7 @@ interface DiagnosticSceneSnapshot {
   state: {
     raceStarted: boolean | null;
     raceFinished: boolean | null;
+    forwardControlMultiplier: number | null;
   };
   objects: DiagnosticObjectSnapshot[];
 }
@@ -108,6 +109,28 @@ async function waitForRaceStarted(page: Page, sceneKey: string): Promise<void> {
     { timeout: 25_000 },
   );
   await page.waitForTimeout(250);
+}
+
+async function waitForForwardControl(
+  page: Page,
+  sceneKey: string,
+  running: boolean,
+): Promise<void> {
+  await page.waitForFunction(
+    ({ expectedScene, expectedRunning }) => {
+      const diagnosticWindow = window as typeof window & {
+        __UNICORN_VALLEY_DIAGNOSTICS__?: {
+          snapshot(): BrowserDiagnosticSnapshot;
+        };
+      };
+      const multiplier = diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__
+        ?.snapshot()
+        .scenes.find((scene) => scene.key === expectedScene)?.state.forwardControlMultiplier;
+      return expectedRunning ? (multiplier ?? 0) > 0.5 : multiplier === 0;
+    },
+    { expectedScene: sceneKey, expectedRunning: running },
+    { timeout: 10_000 },
+  );
 }
 
 function getScene(snapshot: BrowserDiagnosticSnapshot, sceneKey: string): DiagnosticSceneSnapshot {
@@ -414,6 +437,7 @@ test.describe
       await page.goto('/?scene=nova-race&diagnostics=1');
       await waitForScene(page, 'NovaTutorialRaceScene');
       await waitForRaceStarted(page, 'NovaTutorialRaceScene');
+      await waitForForwardControl(page, 'NovaTutorialRaceScene', false);
 
       const idleStart = await playerPosition(page, 'NovaTutorialRaceScene');
       await page.waitForTimeout(800);
@@ -423,20 +447,24 @@ test.describe
       );
 
       await page.keyboard.down('ArrowRight');
+      await waitForForwardControl(page, 'NovaTutorialRaceScene', true);
+      const runStart = await playerPosition(page, 'NovaTutorialRaceScene');
       await page.waitForTimeout(900);
       const running = await playerPosition(page, 'NovaTutorialRaceScene');
-      expect(running.x - idleEnd.x, 'Holding Right should move the racer').toBeGreaterThan(35);
+      expect(running.x - runStart.x, 'Holding Right should move the racer').toBeGreaterThan(35);
 
       await page.keyboard.up('ArrowRight');
-      await page.waitForTimeout(500);
-      const stopped = await playerPosition(page, 'NovaTutorialRaceScene');
+      await waitForForwardControl(page, 'NovaTutorialRaceScene', false);
+      const stoppedStart = await playerPosition(page, 'NovaTutorialRaceScene');
+      await page.waitForTimeout(700);
+      const stoppedEnd = await playerPosition(page, 'NovaTutorialRaceScene');
       expect(
-        Math.abs(stopped.x - running.x),
-        'Releasing Right should stop forward progress',
+        Math.abs(stoppedEnd.x - stoppedStart.x),
+        'Once forward control is released, progress should remain stopped',
       ).toBeLessThan(4);
 
       await page.keyboard.down('ArrowRight');
-      await page.waitForTimeout(100);
+      await waitForForwardControl(page, 'NovaTutorialRaceScene', true);
       const beforeJump = await playerPosition(page, 'NovaTutorialRaceScene');
       await page.keyboard.press('Space');
       await page.waitForTimeout(130);
@@ -482,6 +510,7 @@ test.describe
       await page.goto('/?scene=race&diagnostics=1');
       await waitForScene(page, 'RaceScene');
       await waitForRaceStarted(page, 'RaceScene');
+      await waitForForwardControl(page, 'RaceScene', false);
 
       const idleStart = await playerPosition(page, 'RaceScene');
       await page.waitForTimeout(700);
@@ -489,10 +518,18 @@ test.describe
       expect(Math.abs(idleEnd.x - idleStart.x)).toBeLessThan(3);
 
       await page.keyboard.down('d');
+      await waitForForwardControl(page, 'RaceScene', true);
+      const runStart = await playerPosition(page, 'RaceScene');
       await page.waitForTimeout(800);
       const running = await playerPosition(page, 'RaceScene');
+      expect(running.x - runStart.x).toBeGreaterThan(30);
       await page.keyboard.up('d');
-      expect(running.x - idleEnd.x).toBeGreaterThan(30);
+      await waitForForwardControl(page, 'RaceScene', false);
+
+      const stoppedStart = await playerPosition(page, 'RaceScene');
+      await page.waitForTimeout(650);
+      const stoppedEnd = await playerPosition(page, 'RaceScene');
+      expect(Math.abs(stoppedEnd.x - stoppedStart.x)).toBeLessThan(4);
 
       const findings = await captureScenario(page, 'sunrise-sprint', 'RaceScene', {
         requirePlayer: true,
