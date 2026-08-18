@@ -79,17 +79,10 @@ export const MOONFLOWER_GLADE_MAP = {
   entrances: [
     {
       id: 'sunbeam-village',
-      label: 'Sunbeam Village',
+      label: 'Sunbeam Village → Rainbow Meadow',
       position: { x: 2680, y: 900 },
       approach: { x: 2470, y: 900 },
       direction: 'east',
-    },
-    {
-      id: 'rainbow-meadow',
-      label: 'Rainbow Meadow',
-      position: { x: 1980, y: 1700 },
-      approach: { x: 1980, y: 1490 },
-      direction: 'south',
     },
   ] satisfies readonly GladeEntrance[],
   colliders: [
