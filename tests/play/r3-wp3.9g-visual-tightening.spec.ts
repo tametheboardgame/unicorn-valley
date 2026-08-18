@@ -74,10 +74,11 @@ for (const [alias, sceneKey, minimumDetails] of [
   });
 }
 
-test('player unicorn display proportions remain consistent between world and race scales', async ({
+test('player unicorn proportions stay coherent while race animation can squash and stretch', async ({
   page,
 }) => {
-  const aspectRatios: number[] = [];
+  const worldAspectRatios: number[] = [];
+  let raceAspectRatio: number | null = null;
 
   for (const [alias, sceneKey] of [
     ['glade', 'MoonflowerGladeScene'],
@@ -100,10 +101,17 @@ test('player unicorn display proportions remain consistent between world and rac
 
     const ratio = player.displayWidth / player.displayHeight;
     expect(ratio).toBeGreaterThan(1.15);
-    expect(ratio).toBeLessThan(1.35);
-    aspectRatios.push(ratio);
+    expect(ratio).toBeLessThan(1.4);
+
+    if (sceneKey === 'RaceScene') {
+      raceAspectRatio = ratio;
+    } else {
+      worldAspectRatios.push(ratio);
+    }
   }
 
-  expect(aspectRatios).toHaveLength(3);
-  expect(Math.max(...aspectRatios) - Math.min(...aspectRatios)).toBeLessThan(0.08);
+  expect(worldAspectRatios).toHaveLength(2);
+  expect(Math.max(...worldAspectRatios) - Math.min(...worldAspectRatios)).toBeLessThan(0.02);
+  expect(raceAspectRatio).not.toBeNull();
+  expect(Math.abs((raceAspectRatio ?? 0) - worldAspectRatios[0])).toBeLessThan(0.16);
 });
