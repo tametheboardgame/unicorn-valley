@@ -12,7 +12,11 @@ const DIAGNOSTIC_SCENES: Record<string, string> = {
   creator: 'UnicornCreatorScene',
   glade: 'MoonflowerGladeScene',
   cottage: 'CottageInteriorScene',
+  village: 'SunbeamVillageScene',
   meadow: 'RainbowMeadowScene',
+  'nova-story': 'NovaStoryScene',
+  'nova-race': 'NovaTutorialRaceScene',
+  race: 'RaceScene',
 };
 
 export class BootScene extends Phaser.Scene {

@@ -43,3 +43,43 @@ jobs:
 
       - name: Smoke-test static output
         run: npm run smoke:static
+
+  browser-playtest:
+    name: Browser playtest
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22.23.2
+          package-manager-cache: false
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run automated browser playtest
+        run: npm run test:play
+
+      - name: Summarise automated findings
+        if: always()
+        run: node scripts/summarisePlaytest.mjs
+
+      - name: Upload playtest report and screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: automated-playtest
+          path: |
+            playtest-artifacts
+            package-lock.json
+          if-no-files-found: warn
+          retention-days: 14
