@@ -60,6 +60,15 @@ function validateQuestStep(
     errors.push(`Quest ${questId} references missing discovery ${step.discoveryId}.`);
   }
 
+  if (step.type === 'finish-race') {
+    if (!step.raceId.startsWith('race-course:')) {
+      errors.push(`Quest ${questId} has invalid race ID ${step.raceId}.`);
+    }
+    if (!step.label.trim()) {
+      errors.push(`Quest ${questId} has an empty finish-race objective label.`);
+    }
+  }
+
   if (step.type === 'set-world-flag' && !step.flagId.startsWith('flag:')) {
     errors.push(`Quest ${questId} has invalid world flag ID ${step.flagId}.`);
   }
