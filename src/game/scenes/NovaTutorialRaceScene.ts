@@ -7,6 +7,10 @@ import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 import { parseUnicornAppearance } from '../player/UnicornAppearance';
 import { createUnicornAppearanceTexture } from '../player/UnicornAppearanceRenderer';
 import {
+  createRaceAssistanceControl,
+  type RaceAssistanceControl,
+} from '../racing/RaceAssistanceControl';
+import {
   createRaceCompetitionState,
   formatRacePlace,
   getRaceStandings,
@@ -20,6 +24,7 @@ import {
   type RaceBoostZoneDefinition,
   type RaceObstacleDefinition,
 } from '../racing/RaceCourse';
+import { EARLY_RACE_DIFFICULTY, resolveRacePlayerTuning } from '../racing/RaceDifficulty';
 import {
   RAINBOW_RUN_FINISHER_RIBBON_ID,
   applyRaceResultToSave,
@@ -66,6 +71,7 @@ const TUTORIAL_RACERS = [
 export class NovaTutorialRaceScene extends Phaser.Scene {
   private inputController: InputController | null = null;
   private pointerInput: PointerTouchInputAdapter | null = null;
+  private assistanceControl: RaceAssistanceControl | null = null;
   private player: Phaser.GameObjects.Sprite | null = null;
   private nova: Phaser.GameObjects.Sprite | null = null;
   private novaLabel: Phaser.GameObjects.Text | null = null;
@@ -141,6 +147,12 @@ export class NovaTutorialRaceScene extends Phaser.Scene {
     this.createHud();
     this.createJumpButton();
     this.createExitButton();
+    this.assistanceControl = createRaceAssistanceControl(
+      this,
+      GAME_WIDTH - 150,
+      165,
+      (_mode, description) => this.showRaceStatus(description),
+    );
     this.showRaceStatus('First run: keep moving, jump when you want, and reach the finish.');
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
@@ -149,6 +161,7 @@ export class NovaTutorialRaceScene extends Phaser.Scene {
       this.inputController?.destroy();
       this.inputController = null;
       this.pointerInput = null;
+      this.assistanceControl = null;
       this.player = null;
       this.nova = null;
       this.novaLabel = null;
@@ -173,11 +186,17 @@ export class NovaTutorialRaceScene extends Phaser.Scene {
     }
 
     const wasFinished = this.runState.movement.finished;
+    const tuning = resolveRacePlayerTuning(
+      EARLY_RACE_DIFFICULTY,
+      this.assistanceControl?.getMode() ?? 'standard',
+    );
     const result = stepRaceRun(
       this.runState,
       COURSE,
       delta / 1000,
       this.inputController.justPressed('RACE_JUMP'),
+      tuning.forwardSpeedMultiplier,
+      tuning,
     );
     this.runState = result.state;
     this.competitionState = stepRaceCompetition(
