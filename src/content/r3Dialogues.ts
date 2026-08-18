@@ -17,7 +17,7 @@ export const R3_DIALOGUES = [
         id: 'dialogue-node:nova-first-race-intro-2',
         type: 'line',
         speakerId: 'character:nova',
-        text: 'Your unicorn runs on its own. Tap JUMP or press Space when an obstacle comes up, and the bright strips give you a boost.',
+        text: 'Hold RIGHT or D, or hold the RUN button, to gallop. Tap JUMP or press Space when an obstacle comes up, and the bright strips give you a boost.',
         nextNodeId: 'dialogue-node:nova-first-race-intro-3',
       },
       {
@@ -37,7 +37,7 @@ export const R3_DIALOGUES = [
         id: 'dialogue-node:nova-first-race-reminder-1',
         type: 'line',
         speakerId: 'character:nova',
-        text: "The first-run flags are ready. Follow the course, jump what you want to jump, and keep going to the finish. I'll see you there.",
+        text: "The first-run flags are ready. Hold RUN, RIGHT or D to gallop, jump what you want to jump, and keep going to the finish. I'll see you there.",
       },
     ],
   },
@@ -70,7 +70,7 @@ export const R3_DIALOGUES = [
         id: 'dialogue-node:nova-first-race-result-finish-1',
         type: 'line',
         speakerId: 'character:nova',
-        text: "That's your first Rainbow Run in the book. Now you know where the jump, boost and finish all fit together.",
+        text: "That's your first Rainbow Run in the book. Now you know where the run, jump, boost and finish all fit together.",
         nextNodeId: 'dialogue-node:nova-first-race-result-finish-2',
       },
       {
