@@ -24,10 +24,7 @@ import {
   type RaceCollectableDefinition,
   type RaceObstacleDefinition,
 } from '../racing/RaceCourse';
-import {
-  STANDARD_RACE_DIFFICULTY,
-  resolveRacePlayerTuning,
-} from '../racing/RaceDifficulty';
+import { STANDARD_RACE_DIFFICULTY, resolveRacePlayerTuning } from '../racing/RaceDifficulty';
 import {
   RAINBOW_RUN_FINISHER_RIBBON_ID,
   RAINBOW_RUN_PODIUM_ROSETTE_ID,
