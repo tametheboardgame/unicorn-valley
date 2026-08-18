@@ -85,7 +85,9 @@ for (const [alias, sceneKey] of [
     const scene = snapshot.scenes.find((candidate) => candidate.key === sceneKey);
     expect(scene).toBeTruthy();
 
-    const player = scene?.objects.find((object) => object.textureKey?.startsWith('player-unicorn-'));
+    const player = scene?.objects.find((object) =>
+      object.textureKey?.startsWith('player-unicorn-'),
+    );
     const card = scene?.objects.find((object) => object.name === 'activity-suggestion-card');
     expect(player).toBeTruthy();
     expect(card).toBeTruthy();
@@ -118,9 +120,11 @@ test('Sunrise Sprint never exposes off-screen speed streaks as fixed UI', async 
     const diagnosticWindow = window as typeof window & {
       __UNICORN_VALLEY_DIAGNOSTICS__?: { snapshot(): BrowserDiagnosticSnapshot };
     };
-    return diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__
-      ?.snapshot()
-      .scenes.find((scene) => scene.key === 'RaceScene')?.state.raceStarted === true;
+    return (
+      diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__
+        ?.snapshot()
+        .scenes.find((scene) => scene.key === 'RaceScene')?.state.raceStarted === true
+    );
   });
 
   await page.keyboard.down('d');
