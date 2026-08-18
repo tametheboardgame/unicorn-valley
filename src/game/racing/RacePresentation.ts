@@ -1,4 +1,4 @@
-import Phaser from 'phaser';
+import type Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 
 export const RACE_COUNTDOWN_CUES = ['3', '2', '1', 'GO!'] as const;
@@ -125,7 +125,7 @@ export function updateRaceSpeedStreaks(
   active: boolean,
   intensity = 1,
 ): void {
-  const safeIntensity = Phaser.Math.Clamp(intensity, 0.5, 1.8);
+  const safeIntensity = Math.max(0.5, Math.min(intensity, 1.8));
   const deltaSeconds = Math.max(0, Math.min(deltaMs, 50)) / 1000;
 
   for (const streak of streaks) {
