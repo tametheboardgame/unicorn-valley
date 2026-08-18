@@ -479,34 +479,13 @@ export class NovaTutorialRaceScene extends Phaser.Scene {
     createLayeredRaceBackdrop(this, COURSE_WORLD_WIDTH, COURSE_GROUND_Y);
 
     this.add
-      .rectangle(
-        COURSE_WORLD_WIDTH / 2,
-        COURSE_GROUND_Y + 68,
-        COURSE_WORLD_WIDTH,
-        190,
-        0x68af68,
-        1,
-      )
+      .rectangle(COURSE_WORLD_WIDTH / 2, COURSE_GROUND_Y + 68, COURSE_WORLD_WIDTH, 190, 0x68af68, 1)
       .setDepth(3);
     this.add
-      .rectangle(
-        COURSE_WORLD_WIDTH / 2,
-        COURSE_GROUND_Y + 18,
-        COURSE_WORLD_WIDTH,
-        74,
-        0xd8bd82,
-        1,
-      )
+      .rectangle(COURSE_WORLD_WIDTH / 2, COURSE_GROUND_Y + 18, COURSE_WORLD_WIDTH, 74, 0xd8bd82, 1)
       .setDepth(4);
     this.add
-      .rectangle(
-        COURSE_WORLD_WIDTH / 2,
-        COURSE_GROUND_Y + 3,
-        COURSE_WORLD_WIDTH,
-        9,
-        0xffefb5,
-        0.94,
-      )
+      .rectangle(COURSE_WORLD_WIDTH / 2, COURSE_GROUND_Y + 3, COURSE_WORLD_WIDTH, 9, 0xffefb5, 0.94)
       .setDepth(5);
 
     for (let x = 390, index = 0; x < FINISH_X - 100; x += 220, index += 1) {
@@ -534,9 +513,7 @@ export class NovaTutorialRaceScene extends Phaser.Scene {
       const x = COURSE_START_X + collectable.progress;
       const y = COURSE_GROUND_Y - collectable.heightAboveGround;
       const glow = this.add.circle(0, 0, 30, 0xfff0a1, 0.25);
-      const ring = this.add
-        .circle(0, 0, 19, 0xfff4bd, 0.92)
-        .setStrokeStyle(3, 0xd69bd2, 0.95);
+      const ring = this.add.circle(0, 0, 19, 0xfff4bd, 0.92).setStrokeStyle(3, 0xd69bd2, 0.95);
       const star = this.add
         .text(0, 0, '✦', {
           color: '#a95baa',
@@ -567,10 +544,7 @@ export class NovaTutorialRaceScene extends Phaser.Scene {
     this.add.rectangle(x + 61, 470, 27, 184, 0x5d4055, 1).setDepth(9);
     this.add.rectangle(x - 58, 468, 17, 178, 0x68475f, 1).setDepth(10);
     this.add.rectangle(x + 58, 468, 17, 178, 0x68475f, 1).setDepth(10);
-    this.add
-      .rectangle(x, 385, 150, 34, 0xf7e4ad, 1)
-      .setStrokeStyle(5, 0xa77da9, 1)
-      .setDepth(10);
+    this.add.rectangle(x, 385, 150, 34, 0xf7e4ad, 1).setStrokeStyle(5, 0xa77da9, 1).setDepth(10);
     this.add
       .text(x, 385, 'FIRST RUN', {
         color: '#654d70',
@@ -615,9 +589,7 @@ export class NovaTutorialRaceScene extends Phaser.Scene {
     const endX = COURSE_START_X + boost.endProgress;
     const width = endX - startX;
     const centreX = startX + width / 2;
-    this.add
-      .rectangle(centreX, COURSE_GROUND_Y + 18, width + 10, 68, 0xf5b6dd, 0.32)
-      .setDepth(5);
+    this.add.rectangle(centreX, COURSE_GROUND_Y + 18, width + 10, 68, 0xf5b6dd, 0.32).setDepth(5);
     this.add
       .rectangle(centreX, COURSE_GROUND_Y + 18, width, 62, 0xffe684, 0.76)
       .setStrokeStyle(4, 0xc777b7, 0.82)
@@ -653,9 +625,7 @@ export class NovaTutorialRaceScene extends Phaser.Scene {
     this.add.rectangle(x + 45, COURSE_GROUND_Y - 38, 18, 82, 0x4c6844, 1).setDepth(15);
     this.add.rectangle(x - 44, COURSE_GROUND_Y - 38, 11, 78, 0x75a367, 1).setDepth(16);
     this.add.rectangle(x + 44, COURSE_GROUND_Y - 38, 11, 78, 0x75a367, 1).setDepth(16);
-    this.add
-      .rectangle(x, COURSE_GROUND_Y - 66, obstacle.width + 8, 26, 0x8a5580, 1)
-      .setDepth(16);
+    this.add.rectangle(x, COURSE_GROUND_Y - 66, obstacle.width + 8, 26, 0x8a5580, 1).setDepth(16);
     this.add
       .rectangle(x, COURSE_GROUND_Y - 66, obstacle.width, 18, 0xe7a5c8, 1)
       .setStrokeStyle(4, 0xb977a6, 1)
@@ -741,7 +711,10 @@ export class NovaTutorialRaceScene extends Phaser.Scene {
   private createJumpButton(): void {
     const x = GAME_WIDTH - 128;
     const y = GAME_HEIGHT - 102;
-    this.add.circle(x + 5, y + 7, 73, 0x4c3e59, 0.2).setScrollFactor(0).setDepth(109);
+    this.add
+      .circle(x + 5, y + 7, 73, 0x4c3e59, 0.2)
+      .setScrollFactor(0)
+      .setDepth(109);
     const button = this.add
       .circle(x, y, 70, 0xfff2c6, 0.97)
       .setStrokeStyle(6, 0xc887c4, 1)
@@ -895,7 +868,16 @@ export class NovaTutorialRaceScene extends Phaser.Scene {
       .setAlpha(0);
 
     this.finishPanel = this.add
-      .container(0, 0, [shadow, panel, title, result, ribbon, rewardText, continueButton, continueText])
+      .container(0, 0, [
+        shadow,
+        panel,
+        title,
+        result,
+        ribbon,
+        rewardText,
+        continueButton,
+        continueText,
+      ])
       .setScrollFactor(0)
       .setDepth(150)
       .setAlpha(0)
@@ -914,7 +896,12 @@ export class NovaTutorialRaceScene extends Phaser.Scene {
     });
     this.time.delayedCall(430, () => {
       continueButton.setInteractive({ useHandCursor: true });
-      this.tweens.add({ targets: [continueButton, continueText], alpha: 1, y: '-=5', duration: 190 });
+      this.tweens.add({
+        targets: [continueButton, continueText],
+        alpha: 1,
+        y: '-=5',
+        duration: 190,
+      });
     });
 
     continueButton.on('pointerdown', () => {

@@ -40,9 +40,7 @@ export function createLayeredRaceBackdrop(
   scene.add
     .rectangle(worldWidth / 2, GAME_HEIGHT / 2, worldWidth, GAME_HEIGHT, 0x9bdff2, 1)
     .setDepth(-20);
-  scene.add
-    .rectangle(worldWidth / 2, 235, worldWidth, 470, 0xc8f2ff, 0.24)
-    .setDepth(-19);
+  scene.add.rectangle(worldWidth / 2, 235, worldWidth, 470, 0xc8f2ff, 0.24).setDepth(-19);
 
   scene.add
     .circle(GAME_WIDTH - 175, 118, 76, 0xfff2ae, 0.42)
@@ -85,17 +83,12 @@ export function createLayeredRaceBackdrop(
     scene.add.circle(x + 2, trunkY - 101, 39, 0x78c88a, 0.92).setDepth(2);
 
     if (index % 2 === 1) {
-      scene.add
-        .triangle(x + 92, groundY - 142, 0, 0, 54, 18, 0, 36, 0xf3a4c2, 0.92)
-        .setDepth(3);
+      scene.add.triangle(x + 92, groundY - 142, 0, 0, 54, 18, 0, 36, 0xf3a4c2, 0.92).setDepth(3);
     }
   }
 }
 
-export function createRaceSpeedStreaks(
-  scene: Phaser.Scene,
-  count = 18,
-): RaceSpeedStreak[] {
+export function createRaceSpeedStreaks(scene: Phaser.Scene, count = 18): RaceSpeedStreak[] {
   const streaks: RaceSpeedStreak[] = [];
 
   for (let index = 0; index < count; index += 1) {

@@ -459,24 +459,10 @@ export class RaceScene extends Phaser.Scene {
     createLayeredRaceBackdrop(this, COURSE_WORLD_WIDTH, COURSE_GROUND_Y);
 
     this.add
-      .rectangle(
-        COURSE_WORLD_WIDTH / 2,
-        COURSE_GROUND_Y + 70,
-        COURSE_WORLD_WIDTH,
-        196,
-        0x68af68,
-        1,
-      )
+      .rectangle(COURSE_WORLD_WIDTH / 2, COURSE_GROUND_Y + 70, COURSE_WORLD_WIDTH, 196, 0x68af68, 1)
       .setDepth(3);
     this.add
-      .rectangle(
-        COURSE_WORLD_WIDTH / 2,
-        COURSE_GROUND_Y + 20,
-        COURSE_WORLD_WIDTH,
-        78,
-        0xd8bd82,
-        1,
-      )
+      .rectangle(COURSE_WORLD_WIDTH / 2, COURSE_GROUND_Y + 20, COURSE_WORLD_WIDTH, 78, 0xd8bd82, 1)
       .setDepth(4);
     this.add
       .rectangle(
@@ -526,10 +512,7 @@ export class RaceScene extends Phaser.Scene {
     this.add.rectangle(x + 61, 470, 27, 184, 0x5d4055, 1).setDepth(9);
     this.add.rectangle(x - 58, 468, 17, 178, postColour, 1).setDepth(10);
     this.add.rectangle(x + 58, 468, 17, 178, postColour, 1).setDepth(10);
-    this.add
-      .rectangle(x, 385, 150, 34, 0xf7e4ad, 1)
-      .setStrokeStyle(5, 0xa77da9, 1)
-      .setDepth(10);
+    this.add.rectangle(x, 385, 150, 34, 0xf7e4ad, 1).setStrokeStyle(5, 0xa77da9, 1).setDepth(10);
     this.add
       .text(x, 385, 'START', {
         color: '#654d70',
@@ -605,18 +588,7 @@ export class RaceScene extends Phaser.Scene {
     for (let x = 820, index = 0; x < FINISH_X - 250; x += 820, index += 1) {
       this.add.rectangle(x, 468, 8, 124, 0x6d5043, 1).setDepth(8);
       this.add
-        .triangle(
-          x + 4,
-          406,
-          0,
-          0,
-          82,
-          22,
-          0,
-          44,
-          index % 2 === 0 ? 0xf18dad : 0x7cc6d8,
-          1,
-        )
+        .triangle(x + 4, 406, 0, 0, 82, 22, 0, 44, index % 2 === 0 ? 0xf18dad : 0x7cc6d8, 1)
         .setDepth(9);
       this.add.circle(x + 4, 401, 8, 0xffefb7, 1).setDepth(10);
     }
@@ -640,9 +612,7 @@ export class RaceScene extends Phaser.Scene {
     const width = endX - startX;
     const centreX = startX + width / 2;
 
-    this.add
-      .rectangle(centreX, COURSE_GROUND_Y + 18, width + 12, 70, 0xf5b6dd, 0.34)
-      .setDepth(5);
+    this.add.rectangle(centreX, COURSE_GROUND_Y + 18, width + 12, 70, 0xf5b6dd, 0.34).setDepth(5);
     this.add
       .rectangle(centreX, COURSE_GROUND_Y + 18, width, 62, 0xffe684, 0.78)
       .setStrokeStyle(4, 0xc777b7, 0.84)
@@ -682,9 +652,7 @@ export class RaceScene extends Phaser.Scene {
     this.add.ellipse(x, COURSE_GROUND_Y + 7, obstacle.width + 44, 22, 0x554b42, 0.25).setDepth(14);
 
     if (obstacle.kind === 'log') {
-      this.add
-        .rectangle(x, COURSE_GROUND_Y - 20, obstacle.width + 8, 50, 0x5d3c2e, 1)
-        .setDepth(15);
+      this.add.rectangle(x, COURSE_GROUND_Y - 20, obstacle.width + 8, 50, 0x5d3c2e, 1).setDepth(15);
       this.add
         .rectangle(x, COURSE_GROUND_Y - 21, obstacle.width, 42, 0x8b6047, 1)
         .setStrokeStyle(5, 0x684534, 1)
@@ -705,9 +673,7 @@ export class RaceScene extends Phaser.Scene {
       this.add.rectangle(x + 45, COURSE_GROUND_Y - 38, 18, 82, 0x4c6844, 1).setDepth(15);
       this.add.rectangle(x - 44, COURSE_GROUND_Y - 38, 11, 78, 0x75a367, 1).setDepth(16);
       this.add.rectangle(x + 44, COURSE_GROUND_Y - 38, 11, 78, 0x75a367, 1).setDepth(16);
-      this.add
-        .rectangle(x, COURSE_GROUND_Y - 67, obstacle.width + 8, 26, 0x8a5580, 1)
-        .setDepth(16);
+      this.add.rectangle(x, COURSE_GROUND_Y - 67, obstacle.width + 8, 26, 0x8a5580, 1).setDepth(16);
       this.add
         .rectangle(x, COURSE_GROUND_Y - 67, obstacle.width, 18, 0xe7a5c8, 1)
         .setStrokeStyle(4, 0xb977a6, 1)
@@ -846,7 +812,10 @@ export class RaceScene extends Phaser.Scene {
   private createJumpButton(): void {
     const x = GAME_WIDTH - 128;
     const y = GAME_HEIGHT - 102;
-    this.add.circle(x + 5, y + 7, 73, 0x4c3e59, 0.2).setScrollFactor(0).setDepth(109);
+    this.add
+      .circle(x + 5, y + 7, 73, 0x4c3e59, 0.2)
+      .setScrollFactor(0)
+      .setDepth(109);
     const button = this.add
       .circle(x, y, 70, 0xfff2c6, 0.97)
       .setStrokeStyle(6, 0xc887c4, 1)

@@ -1,8 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  RACE_COUNTDOWN_INTERVAL_MS,
-  resolveRaceCountdown,
-} from './RacePresentation';
+import { RACE_COUNTDOWN_INTERVAL_MS, resolveRaceCountdown } from './RacePresentation';
 
 describe('resolveRaceCountdown', () => {
   it('moves through 3, 2, 1 and GO before the race is released', () => {
