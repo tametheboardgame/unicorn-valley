@@ -33,6 +33,7 @@ export interface DiagnosticSceneSnapshot {
   state: {
     raceStarted: boolean | null;
     raceFinished: boolean | null;
+    forwardControlMultiplier: number | null;
   };
   objects: DiagnosticObjectSnapshot[];
 }
@@ -70,6 +71,7 @@ type InspectableGameObject = Phaser.GameObjects.GameObject & InspectableProperti
 interface InspectableSceneRuntime {
   raceStarted?: unknown;
   runState?: {
+    forwardControlMultiplier?: unknown;
     movement?: {
       finished?: unknown;
     };
@@ -121,6 +123,10 @@ function snapshotScene(scene: Phaser.Scene): DiagnosticSceneSnapshot {
       raceFinished:
         typeof runtime.runState?.movement?.finished === 'boolean'
           ? runtime.runState.movement.finished
+          : null,
+      forwardControlMultiplier:
+        typeof runtime.runState?.forwardControlMultiplier === 'number'
+          ? runtime.runState.forwardControlMultiplier
           : null,
     },
     objects: scene.children.list.map(snapshotObject),
