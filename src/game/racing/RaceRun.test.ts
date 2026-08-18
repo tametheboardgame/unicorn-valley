@@ -78,6 +78,31 @@ describe('stepRaceRun', () => {
     expect(slowedDistance).toBeCloseTo(RACE_FORWARD_SPEED * RACE_SLOWDOWN_MULTIPLIER * 0.05, 5);
   });
 
+  it('stops forward progress when the player is not giving race movement input', () => {
+    const stopped: RaceRunState = {
+      ...stateAt(8),
+      forwardControlMultiplier: 0,
+    };
+
+    const result = stepRaceRun(stopped, TEST_COURSE, 0.05, false);
+
+    expect(result.state.movement.progress).toBe(8);
+    expect(result.state.forwardControlMultiplier).toBe(0);
+  });
+
+  it('still allows a stationary unicorn to jump before moving forward', () => {
+    const stopped: RaceRunState = {
+      ...stateAt(8),
+      forwardControlMultiplier: 0,
+    };
+
+    const result = stepRaceRun(stopped, TEST_COURSE, 0.05, true);
+
+    expect(result.state.movement.progress).toBe(8);
+    expect(result.state.movement.grounded).toBe(false);
+    expect(result.state.movement.jumpOffset).toBeLessThan(0);
+  });
+
   it('lets a sufficiently high jump clear an obstacle cleanly', () => {
     const airborne: RaceRunState = {
       ...stateAt(8),
