@@ -69,11 +69,17 @@ jobs:
       - name: Run automated browser playtest
         run: npm run test:play
 
+      - name: Summarise automated findings
+        if: always()
+        run: node scripts/summarisePlaytest.mjs
+
       - name: Upload playtest report and screenshots
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: automated-playtest
-          path: playtest-artifacts
+          path: |
+            playtest-artifacts
+            package-lock.json
           if-no-files-found: warn
           retention-days: 14
