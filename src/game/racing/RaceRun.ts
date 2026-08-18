@@ -27,6 +27,7 @@ export interface RaceRunState {
   activeBoostZoneId: string | null;
   slowdownRemaining: number;
   stumbleRemaining: number;
+  forwardControlMultiplier: number;
 }
 
 export type RaceRunEvent =
@@ -48,6 +49,7 @@ export function createRaceRunState(): RaceRunState {
     activeBoostZoneId: null,
     slowdownRemaining: 0,
     stumbleRemaining: 0,
+    forwardControlMultiplier: 1,
   };
 }
 
@@ -96,12 +98,16 @@ export function stepRaceRun(
   const baseSpeedMultiplier = Number.isFinite(baseForwardSpeedMultiplier)
     ? Math.max(0, baseForwardSpeedMultiplier)
     : 1;
+  const controlSpeedMultiplier = Number.isFinite(state.forwardControlMultiplier)
+    ? Math.max(0, Math.min(1, state.forwardControlMultiplier))
+    : 1;
   const effectSpeedMultiplier = boostAtStart
     ? boostAtStart.speedMultiplier
     : slowdownRemaining > 0
       ? RACE_SLOWDOWN_MULTIPLIER
       : 1;
-  const forwardSpeedMultiplier = baseSpeedMultiplier * effectSpeedMultiplier;
+  const forwardSpeedMultiplier =
+    baseSpeedMultiplier * controlSpeedMultiplier * effectSpeedMultiplier;
   const obstacleClearanceAllowance = Number.isFinite(tuning.obstacleClearanceAllowance)
     ? Math.max(0, tuning.obstacleClearanceAllowance ?? 0)
     : 0;
@@ -183,6 +189,7 @@ export function stepRaceRun(
       activeBoostZoneId: boostAtEnd?.id ?? null,
       slowdownRemaining,
       stumbleRemaining,
+      forwardControlMultiplier: controlSpeedMultiplier,
     },
     events,
   };
