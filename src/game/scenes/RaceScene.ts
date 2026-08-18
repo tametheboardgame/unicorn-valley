@@ -6,6 +6,10 @@ import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 import { parseUnicornAppearance } from '../player/UnicornAppearance';
 import { createUnicornAppearanceTexture } from '../player/UnicornAppearanceRenderer';
 import {
+  createRaceAssistanceControl,
+  type RaceAssistanceControl,
+} from '../racing/RaceAssistanceControl';
+import {
   RAINBOW_RUN_NPC_RACERS,
   createRaceCompetitionState,
   formatRacePlace,
@@ -20,6 +24,7 @@ import {
   type RaceCollectableDefinition,
   type RaceObstacleDefinition,
 } from '../racing/RaceCourse';
+import { STANDARD_RACE_DIFFICULTY, resolveRacePlayerTuning } from '../racing/RaceDifficulty';
 import {
   RAINBOW_RUN_FINISHER_RIBBON_ID,
   RAINBOW_RUN_PODIUM_ROSETTE_ID,
@@ -56,6 +61,7 @@ interface NpcRacerVisual {
 export class RaceScene extends Phaser.Scene {
   private inputController: InputController | null = null;
   private pointerInput: PointerTouchInputAdapter | null = null;
+  private assistanceControl: RaceAssistanceControl | null = null;
   private player: Phaser.GameObjects.Sprite | null = null;
   private runState: RaceRunState = createRaceRunState();
   private competitionState: RaceCompetitionState = createRaceCompetitionState();
@@ -113,6 +119,12 @@ export class RaceScene extends Phaser.Scene {
     this.createHud();
     this.createJumpButton();
     this.createExitButton();
+    this.assistanceControl = createRaceAssistanceControl(
+      this,
+      GAME_WIDTH - 150,
+      165,
+      (_mode, description) => this.showRaceStatus(description),
+    );
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.statusTimer?.destroy();
@@ -120,6 +132,7 @@ export class RaceScene extends Phaser.Scene {
       this.inputController?.destroy();
       this.inputController = null;
       this.pointerInput = null;
+      this.assistanceControl = null;
       this.player = null;
       this.raceRewardSummary = null;
       this.progressFill = null;
@@ -148,7 +161,18 @@ export class RaceScene extends Phaser.Scene {
 
     const wasFinished = this.runState.movement.finished;
     const jumpRequested = this.inputController.justPressed('RACE_JUMP');
-    const result = stepRaceRun(this.runState, COURSE, delta / 1000, jumpRequested);
+    const tuning = resolveRacePlayerTuning(
+      STANDARD_RACE_DIFFICULTY,
+      this.assistanceControl?.getMode() ?? 'standard',
+    );
+    const result = stepRaceRun(
+      this.runState,
+      COURSE,
+      delta / 1000,
+      jumpRequested,
+      tuning.forwardSpeedMultiplier,
+      tuning,
+    );
     this.runState = result.state;
     this.competitionState = stepRaceCompetition(
       this.competitionState,
