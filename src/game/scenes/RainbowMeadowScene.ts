@@ -71,15 +71,14 @@ const MEADOW_INTERACTIONS = [
   {
     id: 'interaction:meadow-nova',
     label: 'Nova',
-    actionLabel: 'Say hello',
+    actionLabel: 'Talk',
     position: npcPosition('nova'),
     interactionRadius: 155,
     priority: 30,
     result: {
-      type: 'message',
-      title: 'Nova',
-      message:
-        'Nova gives you a bright grin. ‘You found Rainbow Run! I’m getting the course ready. Come back when the flags are flying.’',
+      type: 'scene-transition',
+      sceneKey: 'NovaStoryScene',
+      payload: { returnScene: 'RainbowMeadowScene' },
     },
   },
   {
@@ -93,19 +92,19 @@ const MEADOW_INTERACTIONS = [
       type: 'message',
       title: 'Rainbow Run Ribbon Board',
       message:
-        'The polished board has rows of empty ribbon hooks waiting for race-day colours and names.',
+        'The polished board has hooks for Rainbow Run ribbons. Nova keeps the race names painted neatly beside them.',
     },
   },
   {
     id: 'interaction:meadow-race-entrance',
     label: 'Rainbow Run',
-    actionLabel: 'Start practice run',
+    actionLabel: 'Enter Rainbow Run',
     position: hubApproach('rainbow-run-entrance'),
     interactionRadius: 175,
     priority: 25,
     result: {
       type: 'scene-transition',
-      sceneKey: 'RaceScene',
+      sceneKey: 'RainbowRunEntryScene',
     },
   },
 ] satisfies readonly InteractionTarget[];
