@@ -36,9 +36,7 @@ export const RACE_ASSISTANCE_OPTIONS: readonly RaceAssistanceOption[] = [
 ];
 
 export function getRaceAssistanceOption(mode: RaceAssistanceMode): RaceAssistanceOption {
-  return (
-    RACE_ASSISTANCE_OPTIONS.find((option) => option.id === mode) ?? RACE_ASSISTANCE_OPTIONS[0]
-  );
+  return RACE_ASSISTANCE_OPTIONS.find((option) => option.id === mode) ?? RACE_ASSISTANCE_OPTIONS[0];
 }
 
 export function normaliseRaceSettings(value: unknown): RaceSettings {
