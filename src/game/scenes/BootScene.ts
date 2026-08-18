@@ -5,6 +5,7 @@ import { getRacePlayerControlManager } from '../racing/RacePlayerControlManager'
 import { getVisualTighteningManager } from '../visual/VisualTighteningManager';
 import { getWorldCharacterPresentationManager } from '../world/WorldCharacterPresentationManager';
 import { getWorldOcclusionManager } from '../world/WorldOcclusionManager';
+import { getWorldTraversalPolishManager } from '../world/WorldTraversalPolishManager';
 
 const DIAGNOSTIC_SCENES: Record<string, string> = {
   'resize-test': 'ResizeTestScene',
@@ -31,6 +32,7 @@ export class BootScene extends Phaser.Scene {
     getWorldOcclusionManager(this.sys.game);
     getWorldCharacterPresentationManager(this.sys.game);
     getVisualTighteningManager(this.sys.game);
+    getWorldTraversalPolishManager(this.sys.game);
     getRacePlayerControlManager(this.sys.game);
     const requestedScene = new URLSearchParams(globalThis.location.search).get('scene');
     this.registry.set(
