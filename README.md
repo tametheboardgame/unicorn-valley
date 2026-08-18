@@ -6,11 +6,11 @@ The player creates her own unicorn, lives at Moonflower Cottage, explores a magi
 
 ## Project status
 
-**R3-WP3.7 - Race Assistance and Difficulty complete.**
+**R3-WP3.8 - Racing Presentation Pass complete.**
 
-R0, R1 and R2 are complete. R3 is now underway: Rainbow Run has a dedicated Meadow hub, Nova's character-led first-race story, a gentler one-on-one introductory run, the unlocked four-racer **Sunrise Sprint**, persistent participation rewards and ribbons, live position tracking and personal-best records. Racing now also has explicit early/standard difficulty profiles plus a persistent optional **Extra help** setting that widens jump timing and adds gentle player-only speed support without reducing rewards.
+R0, R1 and R2 are complete. R3 is now underway: Rainbow Run has a dedicated Meadow hub, Nova's character-led first-race story, a gentler one-on-one introductory run, the unlocked four-racer **Sunrise Sprint**, persistent participation rewards and ribbons, live position tracking and personal-best records. Racing now also has explicit early/standard difficulty profiles plus a persistent optional **Extra help** setting that widens jump timing and adds gentle player-only speed support without reducing rewards. Both playable races now have a 3, 2, 1, GO countdown, layered parallax scenery, stronger placeholder racer motion, speed streaks and boost bursts, clearer obstacle silhouettes, a dedicated procedural race soundtrack and staged finish/results celebrations.
 
-The next package is **R3-WP3.8 - Racing Presentation Pass**.
+The next package is **R3-WP3.9 - Racing Playtest and Balance Pass**.
 
 The production branch is deployed to `https://unicorn-valley.pages.dev/`.
 
@@ -73,13 +73,14 @@ The production branch is deployed to `https://unicorn-valley.pages.dev/`.
 - [R3 Race Results and Rewards](docs/34-R3-RACE-RESULTS-REWARDS.md)
 - [R3 Nova's First Race Story](docs/35-R3-NOVA-FIRST-RACE-STORY.md)
 - [R3 Race Assistance and Difficulty](docs/36-R3-RACE-ASSISTANCE-DIFFICULTY.md)
+- [R3 Racing Presentation Pass](docs/37-R3-RACING-PRESENTATION-PASS.md)
 
 ## Release plan
 
 - **R0 - Foundation and Pre-production**: complete.
 - **R1 - My Unicorn: First Playable**: complete.
 - **R2 - Living Valley Vertical Slice**: complete, including Sunbeam Village, quests, friendship, inventory, cottage decorating, visible persistent world change, pre-playtest polish, daughter playtesting and the resulting UX/visual recovery passes.
-- **R3 - Rainbow Run Racing**: in progress; the Meadow hub, core race movement, obstacle/boost/collectable courses, NPC competition, live position tracking, finish order, persistent race records, participation rewards, podium bonuses, cross-system race keepsakes, Nova's character-led first-race story, persistent race assistance and explicit early/standard difficulty profiles are complete, with the racing presentation pass next.
+- **R3 - Rainbow Run Racing**: in progress; the Meadow hub, core race movement, obstacle/boost/collectable courses, NPC competition, live position tracking, finish order, persistent race records, participation rewards, podium bonuses, cross-system race keepsakes, Nova's character-led first-race story, persistent race assistance, explicit early/standard difficulty profiles and the racing presentation pass are complete, with racing playtest and balance next.
 - **R4 - Friendship, Secrets and Home Depth**: multi-session stories, shops, deeper decorating and stronger world memory.
 - **R5 - The Valley Gets Bigger**: Crystal Brook, Whispering Woods, more discoveries and a second major activity type.
 - **R6 - Production Presentation and Accessibility**: final-quality art/audio direction, touch refinement, performance and save hardening.
