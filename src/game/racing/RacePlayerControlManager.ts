@@ -56,12 +56,7 @@ export class RacePlayerControlManager {
       const dDown = state.dKey?.isDown ?? false;
       state.keyboardArmed = updateRaceKeyboardArmed(state.keyboardArmed, rightDown, dDown);
 
-      const running = resolveRaceRunning(
-        state.keyboardArmed,
-        rightDown,
-        dDown,
-        state.touchRunning,
-      );
+      const running = resolveRaceRunning(state.keyboardArmed, rightDown, dDown, state.touchRunning);
       runtime.runState.forwardControlMultiplier = runtime.runState.movement.finished
         ? 0
         : running
