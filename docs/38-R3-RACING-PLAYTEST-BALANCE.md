@@ -171,7 +171,7 @@ Acceptance:
 
 ## R3-WP3.9G - Visual Tightening Pass
 
-Status: **Next**
+Status: **Complete** - PR #50
 
 Purpose:
 
@@ -209,6 +209,24 @@ Deliverables:
 - align the visual language of Moonflower Glade, Sunbeam Village, Rainbow Meadow, Cottage Interior and Rainbow Run without flattening their individual identities;
 - preserve the existing palette and overall aesthetic unless a specific element demonstrably harms readability.
 
+Delivered:
+
+- tightened the shared procedural unicorn silhouette so creator, exploration and race textures inherit cleaner head, muzzle, ear, leg, hoof, horn, mane, tail and facial-feature relationships;
+- retained deliberate scene-specific display scaling and race squash/stretch animation rather than forcing every character into one static size;
+- added a presentation-only visual-tightening layer that decorates existing scenes without changing collision, save data, quests, rewards or controls;
+- added cottage window framing, flower boxes, chimney detail, roof texture, stream reeds and Wonderbook-stump growth rings in Moonflower Glade;
+- added readable paned windows, flower boxes, façade trim and fountain-water detail in Sunbeam Village;
+- added pond ripples/reeds, event-tent trim and physical ribbon shapes around the Rainbow Run hub in Rainbow Meadow;
+- added fireplace masonry, mantel candles, bed pillows, sofa structure, tea-table crockery and trophy-shelf pegs inside Moonflower Cottage;
+- added restrained track-edge flowers and spectator pennants to both race scenes while keeping the racing line and obstacles visually clear;
+- added browser regressions covering the presentation layer in all six target gameplay scenes plus cross-scene unicorn display proportions.
+
+Validation:
+
+- repository formatting, linting, TypeScript checks, unit tests, production build and static smoke test pass;
+- the established automated audit reports 10 scenarios, 0 errors, 0 warnings and 0 suggestions;
+- the expanded Chromium suite covers 17 browser tests, including six new scene-detail checks and a proportion-consistency check that allows deliberate race squash/stretch.
+
 Acceptance:
 
 - key characters feel intentionally proportioned and consistently scaled across scenes;
@@ -220,7 +238,7 @@ Acceptance:
 
 ## R3-WP3.9H - Final Daughter Racing Playtest and R3 Closeout
 
-Status: **Planned after R3-WP3.9G**
+Status: **Next**
 
 Purpose:
 
