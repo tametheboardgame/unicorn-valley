@@ -7,23 +7,13 @@ import {
   RAINBOW_MEADOW_MAP,
   setRainbowMeadowPlayerSpawn,
 } from '../world/RainbowMeadowMap';
+import { resolveRaceRunning, updateRaceKeyboardArmed } from './RaceManualControl';
 import type { RaceRunState } from './RaceRun';
 
 const MANUAL_CONTROL_SCENES = new Set(['NovaTutorialRaceScene', 'RaceScene']);
 
-interface RaceInputControllerLike {
-  getAxis(action: 'MOVE_X'): number;
-}
-
-interface RacePointerInputLike {
-  setAxis(action: 'MOVE_X', value: number): void;
-}
-
 interface RaceSceneRuntime extends Phaser.Scene {
   runState: RaceRunState;
-  inputController: RaceInputControllerLike | null;
-  pointerInput: RacePointerInputLike | null;
-  finishPanel: Phaser.GameObjects.Container | null;
 }
 
 interface RaceControlState {
@@ -31,18 +21,20 @@ interface RaceControlState {
   runLabel: Phaser.GameObjects.Text;
   runHint: Phaser.GameObjects.Text;
   runZone: Phaser.GameObjects.Zone;
+  rightKey: Phaser.Input.Keyboard.Key | null;
+  dKey: Phaser.Input.Keyboard.Key | null;
+  enterKey: Phaser.Input.Keyboard.Key | null;
+  spaceKey: Phaser.Input.Keyboard.Key | null;
+  eKey: Phaser.Input.Keyboard.Key | null;
+  keyboardArmed: boolean;
+  touchRunning: boolean;
+  continueWasDown: boolean;
   returnToNovaZone: Phaser.GameObjects.Zone | null;
+  pointerUpHandler: () => void;
 }
 
 function asRaceScene(scene: Phaser.Scene): RaceSceneRuntime {
   return scene as unknown as RaceSceneRuntime;
-}
-
-function clampForwardAxis(value: number): number {
-  if (!Number.isFinite(value)) {
-    return 0;
-  }
-  return Math.max(0, Math.min(1, value));
 }
 
 export class RacePlayerControlManager {
@@ -60,21 +52,51 @@ export class RacePlayerControlManager {
 
       const state = this.ensureScene(scene);
       const runtime = asRaceScene(scene);
-      const forwardAxis = clampForwardAxis(runtime.inputController?.getAxis('MOVE_X') ?? 0);
+      const rightDown = state.rightKey?.isDown ?? false;
+      const dDown = state.dKey?.isDown ?? false;
+      state.keyboardArmed = updateRaceKeyboardArmed(state.keyboardArmed, rightDown, dDown);
+
+      const running = resolveRaceRunning(
+        state.keyboardArmed,
+        rightDown,
+        dDown,
+        state.touchRunning,
+      );
       runtime.runState.forwardControlMultiplier = runtime.runState.movement.finished
         ? 0
-        : forwardAxis;
+        : running
+          ? 1
+          : 0;
 
-      const running = runtime.runState.forwardControlMultiplier > 0;
       state.runBackground.setScale(running ? 0.96 : 1);
       state.runLabel.setScale(running ? 1.04 : 1);
 
-      if (
-        scene.scene.key === 'NovaTutorialRaceScene' &&
-        runtime.finishPanel &&
-        !state.returnToNovaZone
-      ) {
-        state.returnToNovaZone = this.createReturnToNovaZone(scene);
+      if (runtime.runState.movement.finished) {
+        state.runZone.disableInteractive();
+        state.runBackground.setAlpha(0.45);
+        state.runLabel.setAlpha(0.45);
+        state.runHint.setAlpha(0.45);
+        state.touchRunning = false;
+
+        if (scene.scene.key === 'NovaTutorialRaceScene' && !state.returnToNovaZone) {
+          state.returnToNovaZone = this.createReturnToNovaZone(scene);
+        }
+      }
+
+      if (scene.scene.key === 'NovaTutorialRaceScene' && runtime.runState.movement.finished) {
+        const continueDown =
+          (state.enterKey?.isDown ?? false) ||
+          (state.spaceKey?.isDown ?? false) ||
+          (state.eKey?.isDown ?? false);
+        if (continueDown && !state.continueWasDown) {
+          this.returnToNova(scene);
+        }
+        state.continueWasDown = continueDown;
+      } else {
+        state.continueWasDown =
+          (state.enterKey?.isDown ?? false) ||
+          (state.spaceKey?.isDown ?? false) ||
+          (state.eKey?.isDown ?? false);
       }
     }
   }
@@ -84,6 +106,13 @@ export class RacePlayerControlManager {
     if (existing) {
       return existing;
     }
+
+    const keyboard = scene.input.keyboard;
+    const rightKey = keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT, true) ?? null;
+    const dKey = keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.D) ?? null;
+    const enterKey = keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER) ?? null;
+    const spaceKey = keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE, true) ?? null;
+    const eKey = keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.E) ?? null;
 
     const x = 142;
     const y = GAME_HEIGHT - 102;
@@ -117,24 +146,40 @@ export class RacePlayerControlManager {
       .setDepth(112)
       .setInteractive({ useHandCursor: true });
 
-    const setTouchRunning = (running: boolean): void => {
-      asRaceScene(scene).pointerInput?.setAxis('MOVE_X', running ? 1 : 0);
-    };
-    runZone.on('pointerdown', () => setTouchRunning(true));
-    runZone.on('pointerup', () => setTouchRunning(false));
-    runZone.on('pointerout', () => setTouchRunning(false));
-
     const state: RaceControlState = {
       runBackground,
       runLabel,
       runHint,
       runZone,
+      rightKey,
+      dKey,
+      enterKey,
+      spaceKey,
+      eKey,
+      keyboardArmed: !(rightKey?.isDown || dKey?.isDown),
+      touchRunning: false,
+      continueWasDown: false,
       returnToNovaZone: null,
+      pointerUpHandler: () => undefined,
     };
+
+    const stopTouchRunning = (): void => {
+      state.touchRunning = false;
+    };
+    state.pointerUpHandler = stopTouchRunning;
+
+    runZone.on('pointerdown', () => {
+      state.touchRunning = true;
+    });
+    runZone.on('pointerup', stopTouchRunning);
+    runZone.on('pointerout', stopTouchRunning);
+    scene.input.on('pointerup', stopTouchRunning);
+
     this.states.set(scene, state);
 
     scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-      setTouchRunning(false);
+      state.touchRunning = false;
+      scene.input.off('pointerup', state.pointerUpHandler);
       this.states.delete(scene);
     });
 
@@ -143,9 +188,9 @@ export class RacePlayerControlManager {
 
   private createReturnToNovaZone(scene: Phaser.Scene): Phaser.GameObjects.Zone {
     const zone = scene.add
-      .zone(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 137, 340, 104)
+      .zone(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 137, 380, 118)
       .setScrollFactor(0)
-      .setDepth(170)
+      .setDepth(220)
       .setInteractive({ useHandCursor: true });
 
     zone.on('pointerdown', () => {
@@ -166,7 +211,7 @@ export class RacePlayerControlManager {
     }
 
     saveLocationCheckpoint(getBrowserSaveService(), RAINBOW_MEADOW_LOCATION_ID);
-    scene.scene.start('RainbowMeadowScene');
+    scene.scene.start('NovaStoryScene', { returnScene: 'RainbowMeadowScene' });
   }
 }
 
