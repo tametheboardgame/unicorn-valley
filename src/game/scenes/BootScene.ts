@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { getClickToMoveManager } from '../input/ClickToMoveManager';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
+import { getRacePlayerControlManager } from '../racing/RacePlayerControlManager';
 import { getWorldCharacterPresentationManager } from '../world/WorldCharacterPresentationManager';
 import { getWorldOcclusionManager } from '../world/WorldOcclusionManager';
 
@@ -24,6 +25,7 @@ export class BootScene extends Phaser.Scene {
     getClickToMoveManager(this.sys.game);
     getWorldOcclusionManager(this.sys.game);
     getWorldCharacterPresentationManager(this.sys.game);
+    getRacePlayerControlManager(this.sys.game);
     const requestedScene = new URLSearchParams(globalThis.location.search).get('scene');
     this.registry.set(
       'postPreloadScene',
