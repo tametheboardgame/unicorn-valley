@@ -76,7 +76,7 @@ export const MOONFLOWER_GLADE_INTERACTIONS = [
   {
     id: 'interaction:sunbeam-village-gate',
     label: 'Sunbeam Village',
-    actionLabel: 'Visit village',
+    actionLabel: 'Go towards Rainbow Meadow',
     position: entranceApproach('sunbeam-village'),
     interactionRadius: 180,
     priority: 20,
