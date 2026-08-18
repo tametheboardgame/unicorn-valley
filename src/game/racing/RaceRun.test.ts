@@ -4,6 +4,7 @@ import {
   validateRaceCourse,
   type RaceCourseDefinition,
 } from './RaceCourse';
+import { STANDARD_RACE_DIFFICULTY, resolveRacePlayerTuning } from './RaceDifficulty';
 import { RACE_FORWARD_SPEED, createRaceMovementState } from './RaceMovement';
 import {
   RACE_SLOWDOWN_MULTIPLIER,
@@ -93,6 +94,42 @@ describe('stepRaceRun', () => {
 
     expect(result.events.some((event) => event.type === 'obstacle-hit')).toBe(false);
     expect(result.state.hitObstacleIds).toEqual([]);
+  });
+
+  it('lets extra help turn a marginal jump into a clean clearance', () => {
+    const marginalJump: RaceRunState = {
+      ...stateAt(8),
+      movement: {
+        ...createRaceMovementState(),
+        progress: 8,
+        jumpOffset: -46,
+        verticalVelocity: 0,
+        grounded: false,
+      },
+    };
+    const standardTuning = resolveRacePlayerTuning(STANDARD_RACE_DIFFICULTY, 'standard');
+    const assistedTuning = resolveRacePlayerTuning(STANDARD_RACE_DIFFICULTY, 'extra-help');
+
+    const standard = stepRaceRun(
+      marginalJump,
+      TEST_COURSE,
+      0.02,
+      false,
+      standardTuning.forwardSpeedMultiplier,
+      standardTuning,
+    );
+    const assisted = stepRaceRun(
+      marginalJump,
+      TEST_COURSE,
+      0.02,
+      false,
+      assistedTuning.forwardSpeedMultiplier,
+      assistedTuning,
+    );
+
+    expect(standard.events.some((event) => event.type === 'obstacle-hit')).toBe(true);
+    expect(assisted.events.some((event) => event.type === 'obstacle-hit')).toBe(false);
+    expect(assisted.state.movement.progress).toBeGreaterThan(standard.state.movement.progress);
   });
 
   it('moves faster while the unicorn is inside a boost zone', () => {
