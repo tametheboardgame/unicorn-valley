@@ -16,6 +16,7 @@ import {
   didWinNovaFirstRace,
   getNovaFirstRacePhase,
 } from '../story/NovaFirstRaceStory';
+import { RAINBOW_MEADOW_MAP, setRainbowMeadowPlayerSpawn } from '../world/RainbowMeadowMap';
 
 interface NovaStorySceneData {
   returnScene?: string;
@@ -179,6 +180,17 @@ export class NovaStoryScene extends Phaser.Scene {
     this.dialogueSession?.close();
     this.dialogueSession = null;
     this.dialogueCard?.hide();
+
+    if (this.returnScene === 'RainbowMeadowScene') {
+      const nova = RAINBOW_MEADOW_MAP.npcMarkers.find((marker) => marker.id === 'nova');
+      if (nova) {
+        setRainbowMeadowPlayerSpawn({
+          x: nova.position.x - 185,
+          y: nova.position.y + 35,
+        });
+      }
+    }
+
     this.scene.start(this.returnScene);
   }
 }
