@@ -15,6 +15,11 @@ export const RACE_SLOWDOWN_SECONDS = 0.85;
 export const RACE_STUMBLE_SECONDS = 0.32;
 export const RACE_SLOWDOWN_MULTIPLIER = 0.58;
 
+export interface RaceRunTuning {
+  obstacleClearanceAllowance?: number;
+  obstacleWidthMultiplier?: number;
+}
+
 export interface RaceRunState {
   movement: RaceMovementState;
   hitObstacleIds: readonly string[];
@@ -78,6 +83,7 @@ export function stepRaceRun(
   deltaSeconds: number,
   jumpRequested: boolean,
   baseForwardSpeedMultiplier = 1,
+  tuning: RaceRunTuning = {},
 ): RaceRunStepResult {
   if (state.movement.finished) {
     return { state, events: [] };
@@ -96,6 +102,12 @@ export function stepRaceRun(
       ? RACE_SLOWDOWN_MULTIPLIER
       : 1;
   const forwardSpeedMultiplier = baseSpeedMultiplier * effectSpeedMultiplier;
+  const obstacleClearanceAllowance = Number.isFinite(tuning.obstacleClearanceAllowance)
+    ? Math.max(0, tuning.obstacleClearanceAllowance ?? 0)
+    : 0;
+  const obstacleWidthMultiplier = Number.isFinite(tuning.obstacleWidthMultiplier)
+    ? Math.max(0.5, Math.min(1, tuning.obstacleWidthMultiplier ?? 1))
+    : 1;
 
   const previousMovement = state.movement;
   const movement = stepRaceMovement(
@@ -119,13 +131,13 @@ export function stepRaceRun(
         previousMovement.progress,
         movement.progress,
         obstacle.progress,
-        obstacle.width / 2,
+        (obstacle.width * obstacleWidthMultiplier) / 2,
       )
     ) {
       continue;
     }
 
-    if (playerHeight < obstacle.clearanceHeight) {
+    if (playerHeight + obstacleClearanceAllowance < obstacle.clearanceHeight) {
       hitObstacleIds.add(obstacle.id);
       slowdownRemaining = RACE_SLOWDOWN_SECONDS;
       stumbleRemaining = RACE_STUMBLE_SECONDS;
