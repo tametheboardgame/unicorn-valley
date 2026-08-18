@@ -97,6 +97,7 @@ export function createRaceSpeedStreaks(scene: Phaser.Scene, count = 18): RaceSpe
     const x = (index * 127) % (GAME_WIDTH + 180);
     const shape = scene.add
       .rectangle(x, y, width, 3 + (index % 2), 0xffffff, 0.16 + (index % 4) * 0.045)
+      .setName('race-speed-streak')
       .setOrigin(0, 0.5)
       .setScrollFactor(0)
       .setDepth(90)
@@ -122,8 +123,8 @@ export function updateRaceSpeedStreaks(
   const deltaSeconds = Math.max(0, Math.min(deltaMs, 50)) / 1000;
 
   for (const streak of streaks) {
-    streak.shape.setVisible(active);
     if (!active) {
+      streak.shape.setVisible(false);
       continue;
     }
 
@@ -131,6 +132,9 @@ export function updateRaceSpeedStreaks(
     if (streak.shape.x + streak.shape.width < 0) {
       streak.shape.x = GAME_WIDTH + streak.resetOffset;
     }
+
+    const overlapsViewport = streak.shape.x < GAME_WIDTH && streak.shape.x + streak.shape.width > 0;
+    streak.shape.setVisible(overlapsViewport);
   }
 }
 

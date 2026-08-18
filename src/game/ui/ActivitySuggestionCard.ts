@@ -1,12 +1,13 @@
 import type Phaser from 'phaser';
+import { GAME_WIDTH } from '../config/gameConstants';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { ActivitySuggestionSession } from '../suggestions/ActivitySuggestionModel';
 import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from './uiTheme';
 
-const CARD_X = 235;
-const CARD_Y = 270;
 const CARD_WIDTH = 420;
 const CARD_HEIGHT = 190;
+const CARD_X = GAME_WIDTH - CARD_WIDTH / 2 - 24;
+const CARD_Y = 270;
 const REFRESH_INTERVAL_MS = 300;
 
 const sharedSuggestionSession = new ActivitySuggestionSession();
@@ -32,6 +33,7 @@ export class ActivitySuggestionCard {
     this.shadow = createUiShadow(scene, CARD_X, CARD_Y, CARD_WIDTH, CARD_HEIGHT, 115, 0.18);
     this.panel = scene.add
       .rectangle(CARD_X, CARD_Y, CARD_WIDTH, CARD_HEIGHT, UI_COLOURS.cream, 0.99)
+      .setName('activity-suggestion-card')
       .setStrokeStyle(4, UI_COLOURS.lavenderStrong, 0.98)
       .setScrollFactor(0)
       .setDepth(116);
