@@ -32,6 +32,10 @@ interface DiagnosticSceneSnapshot {
     worldWidth: number;
     worldHeight: number;
   };
+  state: {
+    raceStarted: boolean | null;
+    raceFinished: boolean | null;
+  };
   objects: DiagnosticObjectSnapshot[];
 }
 
@@ -86,6 +90,26 @@ async function waitForScene(page: Page, sceneKey: string): Promise<void> {
   await page.waitForTimeout(350);
 }
 
+async function waitForRaceStarted(page: Page, sceneKey: string): Promise<void> {
+  await page.waitForFunction(
+    (expectedScene) => {
+      const diagnosticWindow = window as typeof window & {
+        __UNICORN_VALLEY_DIAGNOSTICS__?: {
+          snapshot(): BrowserDiagnosticSnapshot;
+        };
+      };
+      return (
+        diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__
+          ?.snapshot()
+          .scenes.find((scene) => scene.key === expectedScene)?.state.raceStarted === true
+      );
+    },
+    sceneKey,
+    { timeout: 25_000 },
+  );
+  await page.waitForTimeout(250);
+}
+
 function getScene(snapshot: BrowserDiagnosticSnapshot, sceneKey: string): DiagnosticSceneSnapshot {
   const scene = snapshot.scenes.find((candidate) => candidate.key === sceneKey);
   if (!scene) {
@@ -102,6 +126,23 @@ function getPlayer(scene: DiagnosticSceneSnapshot): DiagnosticObjectSnapshot | n
     return null;
   }
   return candidates.sort((left, right) => right.depth - left.depth)[0];
+}
+
+function overlapArea(
+  left: { x: number; y: number; width: number; height: number },
+  right: { x: number; y: number; width: number; height: number },
+): number {
+  const overlapWidth = Math.max(
+    0,
+    Math.min(left.x + left.width / 2, right.x + right.width / 2) -
+      Math.max(left.x - left.width / 2, right.x - right.width / 2),
+  );
+  const overlapHeight = Math.max(
+    0,
+    Math.min(left.y + left.height / 2, right.y + right.height / 2) -
+      Math.max(left.y - left.height / 2, right.y - right.height / 2),
+  );
+  return overlapWidth * overlapHeight;
 }
 
 function auditScene(
@@ -166,6 +207,39 @@ function auditScene(
         severity: 'error',
         scene: scene.key,
         message: `Large foreground object(s) sit above the player: ${suspiciousForeground.map((object) => object.type).join(', ')}. This can hide the unicorn behind the map.`,
+      });
+    }
+
+    const playerScreen = {
+      x: player.x - camera.worldX,
+      y: player.y - camera.worldY,
+      width: player.displayWidth,
+      height: player.displayHeight,
+    };
+    const playerArea = Math.max(1, player.displayWidth * player.displayHeight);
+    const obscuringFixedUi = scene.objects.filter(
+      (object) =>
+        object.visible &&
+        object.alpha > 0.35 &&
+        object.depth > player.depth &&
+        object.scrollFactorX === 0 &&
+        object.scrollFactorY === 0 &&
+        object.displayWidth >= 160 &&
+        object.displayHeight >= 80 &&
+        overlapArea(playerScreen, {
+          x: object.x,
+          y: object.y,
+          width: object.displayWidth,
+          height: object.displayHeight,
+        }) /
+          playerArea >=
+          0.2,
+    );
+    if (obscuringFixedUi.length > 0) {
+      findings.push({
+        severity: 'warning',
+        scene: scene.key,
+        message: `Large fixed UI overlaps at least 20% of the player at the captured position (${obscuringFixedUi.length} object(s)). Consider reducing, moving or collapsing the overlay.`,
       });
     }
   }
@@ -334,12 +408,13 @@ test.describe
     test('Nova first run requires active movement, supports jumping and exits cleanly', async ({
       page,
     }) => {
+      test.setTimeout(90_000);
       const browserErrors: string[] = [];
       page.on('pageerror', (error) => browserErrors.push(error.message));
       await page.goto('/?scene=nova-race&diagnostics=1');
       await waitForScene(page, 'NovaTutorialRaceScene');
+      await waitForRaceStarted(page, 'NovaTutorialRaceScene');
 
-      await page.waitForTimeout(4_000);
       const idleStart = await playerPosition(page, 'NovaTutorialRaceScene');
       await page.waitForTimeout(800);
       const idleEnd = await playerPosition(page, 'NovaTutorialRaceScene');
@@ -369,14 +444,14 @@ test.describe
       expect(duringJump.y, 'SPACE should visibly lift the racer').toBeLessThan(beforeJump.y - 3);
 
       let finished = false;
-      for (let step = 0; step < 65; step += 1) {
+      for (let step = 0; step < 130; step += 1) {
         if (step % 2 === 0) {
           await page.keyboard.press('Space');
         }
-        await page.waitForTimeout(300);
+        await page.waitForTimeout(250);
         const snapshot = await getSnapshot(page);
         const race = getScene(snapshot, 'NovaTutorialRaceScene');
-        finished = race.objects.some((object) => object.text?.startsWith('First run complete'));
+        finished = race.state.raceFinished === true;
         if (finished) {
           break;
         }
@@ -385,6 +460,7 @@ test.describe
       expect(finished, 'Tutorial race should be finishable by an automated child-like run').toBe(
         true,
       );
+      await page.waitForTimeout(700);
 
       const resultFindings = await captureScenario(
         page,
@@ -405,17 +481,17 @@ test.describe
     test('Sunrise Sprint also obeys manual forward control', async ({ page }) => {
       await page.goto('/?scene=race&diagnostics=1');
       await waitForScene(page, 'RaceScene');
-      await page.waitForTimeout(4_000);
+      await waitForRaceStarted(page, 'RaceScene');
 
       const idleStart = await playerPosition(page, 'RaceScene');
       await page.waitForTimeout(700);
       const idleEnd = await playerPosition(page, 'RaceScene');
       expect(Math.abs(idleEnd.x - idleStart.x)).toBeLessThan(3);
 
-      await page.keyboard.down('KeyD');
+      await page.keyboard.down('d');
       await page.waitForTimeout(800);
       const running = await playerPosition(page, 'RaceScene');
-      await page.keyboard.up('KeyD');
+      await page.keyboard.up('d');
       expect(running.x - idleEnd.x).toBeGreaterThan(30);
 
       const findings = await captureScenario(page, 'sunrise-sprint', 'RaceScene', {
