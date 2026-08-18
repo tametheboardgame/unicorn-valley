@@ -93,6 +93,11 @@ export type QuestStep =
       discoveryId: DiscoveryId;
     }
   | {
+      type: 'finish-race';
+      raceId: string;
+      label: string;
+    }
+  | {
       type: 'award-item';
       itemId: ItemId;
       quantity: number;
