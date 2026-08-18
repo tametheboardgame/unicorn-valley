@@ -19,7 +19,7 @@ export interface RacePlayerTuning {
 export const EARLY_RACE_DIFFICULTY: RaceDifficultyProfile = {
   id: 'early',
   label: 'First Run',
-  baseForwardSpeedMultiplier: 1,
+  baseForwardSpeedMultiplier: 0.98,
   obstacleClearanceAllowance: 10,
   obstacleWidthMultiplier: 0.9,
 };

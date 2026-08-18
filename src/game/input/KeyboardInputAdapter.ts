@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import type { InputAdapter } from './InputAdapter';
 import { BUTTON_INPUT_ACTIONS, type AxisInputAction, type ButtonInputAction } from './InputAction';
+import { resolvePressedButtonActions } from './KeyboardButtonPress';
 
 interface AxisBinding {
   negative: readonly Phaser.Input.Keyboard.Key[];
@@ -53,10 +54,23 @@ export class KeyboardInputAdapter implements InputAdapter {
   public update(): void {
     this.pressedThisFrame.clear();
 
+    const uniqueKeys = new Set<Phaser.Input.Keyboard.Key>();
     for (const action of BUTTON_INPUT_ACTIONS) {
-      if (this.buttons[action].some((key) => Phaser.Input.Keyboard.JustDown(key))) {
-        this.pressedThisFrame.add(action);
+      for (const key of this.buttons[action]) {
+        uniqueKeys.add(key);
       }
+    }
+
+    const pressedKeys = new Set<Phaser.Input.Keyboard.Key>();
+    for (const key of uniqueKeys) {
+      if (Phaser.Input.Keyboard.JustDown(key)) {
+        pressedKeys.add(key);
+      }
+    }
+
+    const pressedActions = resolvePressedButtonActions(this.buttons, pressedKeys);
+    for (const action of pressedActions) {
+      this.pressedThisFrame.add(action);
     }
   }
 
