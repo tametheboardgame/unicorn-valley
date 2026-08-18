@@ -1,5 +1,7 @@
 import Phaser from 'phaser';
 import './style.css';
 import { gameConfig } from './game/config/gameConfig';
+import { installBrowserDiagnostics } from './game/testing/BrowserDiagnostics';
 
-new Phaser.Game(gameConfig);
+const game = new Phaser.Game(gameConfig);
+installBrowserDiagnostics(game);
