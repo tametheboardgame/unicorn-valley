@@ -38,11 +38,7 @@ function appendUnique(values: readonly string[], value: string): string[] {
   return values.includes(value) ? [...values] : [...values, value];
 }
 
-function incrementItem(
-  quantities: Record<string, number>,
-  itemId: ItemId,
-  quantity: number,
-): void {
+function incrementItem(quantities: Record<string, number>, itemId: ItemId, quantity: number): void {
   quantities[itemId] = (quantities[itemId] ?? 0) + quantity;
 }
 
@@ -71,7 +67,9 @@ export function applyRaceResultToSave(save: SaveGame, input: RaceResultInput): A
   const previousBestTimeMs = previousRecord.bestTimeMs;
   const isPersonalBest = previousBestTimeMs === null || input.finishTimeMs < previousBestTimeMs;
   const bestTimeMs =
-    previousBestTimeMs === null ? input.finishTimeMs : Math.min(previousBestTimeMs, input.finishTimeMs);
+    previousBestTimeMs === null
+      ? input.finishTimeMs
+      : Math.min(previousBestTimeMs, input.finishTimeMs);
   const isPodium = input.place <= Math.min(3, input.participantCount);
 
   const newRibbonIds: string[] = [];
@@ -112,7 +110,10 @@ export function applyRaceResultToSave(save: SaveGame, input: RaceResultInput): A
     }
   }
 
-  const discoveryIds = appendUnique(save.collections.discoveryIds, RAINBOW_RUN_RIBBONS_DISCOVERY_ID);
+  const discoveryIds = appendUnique(
+    save.collections.discoveryIds,
+    RAINBOW_RUN_RIBBONS_DISCOVERY_ID,
+  );
   const uniqueDiscoveryIds = appendUnique(
     save.world.uniqueDiscoveryIds,
     RAINBOW_RUN_RIBBONS_DISCOVERY_ID,
