@@ -367,10 +367,7 @@ export class NovaTutorialRaceScene extends Phaser.Scene {
     const x = COURSE_START_X - 55;
     this.add.rectangle(x - 58, 470, 20, 180, 0x735164, 1).setDepth(10);
     this.add.rectangle(x + 58, 470, 20, 180, 0x735164, 1).setDepth(10);
-    this.add
-      .rectangle(x, 385, 138, 28, 0xf7e4ad, 1)
-      .setStrokeStyle(4, 0xa77da9, 1)
-      .setDepth(10);
+    this.add.rectangle(x, 385, 138, 28, 0xf7e4ad, 1).setStrokeStyle(4, 0xa77da9, 1).setDepth(10);
     this.add
       .text(x, 385, 'FIRST RUN', {
         color: '#654d70',
@@ -582,14 +579,7 @@ export class NovaTutorialRaceScene extends Phaser.Scene {
       ? 'You crossed the line first. Nova definitely noticed.'
       : 'You finished the course. Nova is waiting to hear how it felt.';
 
-    const shade = this.add.rectangle(
-      GAME_WIDTH / 2,
-      GAME_HEIGHT / 2,
-      790,
-      470,
-      0x5f4772,
-      0.97,
-    );
+    const shade = this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, 790, 470, 0x5f4772, 0.97);
     const title = this.add
       .text(
         GAME_WIDTH / 2,
