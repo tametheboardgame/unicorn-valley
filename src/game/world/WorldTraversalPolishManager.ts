@@ -122,12 +122,11 @@ function hideLegacyGatewayObjects(scene: Phaser.Scene): void {
 
     if (
       key === 'MoonflowerGladeScene' &&
-      (object instanceof Phaser.GameObjects.Rectangle || object instanceof Phaser.GameObjects.Ellipse)
+      (object instanceof Phaser.GameObjects.Rectangle ||
+        object instanceof Phaser.GameObjects.Ellipse)
     ) {
       const isOldArchPart =
-        object.depth === 8 &&
-        Math.abs(object.x - 2680) <= 120 &&
-        Math.abs(object.y - 900) <= 110;
+        object.depth === 8 && Math.abs(object.x - 2680) <= 120 && Math.abs(object.y - 900) <= 110;
       if (isOldArchPart) {
         object.setVisible(false);
       }
