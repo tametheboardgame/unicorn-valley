@@ -1,3 +1,4 @@
+import { NOVA_TUTORIAL_RACE_ID, SUNRISE_SPRINT_RACE_ID } from '../../content/r3RaceIds';
 import { RACE_COURSE_LENGTH } from './RaceMovement';
 
 export type RaceObstacleKind = 'log' | 'flower-hurdle';
@@ -36,9 +37,64 @@ export interface RaceCourseDefinition {
   collectables: readonly RaceCollectableDefinition[];
 }
 
+export const NOVA_TUTORIAL_RAINBOW_RUN_COURSE = {
+  id: NOVA_TUTORIAL_RACE_ID,
+  name: "Nova's First Run",
+  length: RACE_COURSE_LENGTH,
+  obstacles: [
+    {
+      id: 'obstacle:first-run-flower-hurdle',
+      kind: 'flower-hurdle',
+      label: 'Flower hurdle',
+      progress: 1810,
+      width: 98,
+      clearanceHeight: 72,
+    },
+  ],
+  boostZones: [
+    {
+      id: 'boost:first-run-sunbeam-strip',
+      label: 'Sunbeam boost',
+      startProgress: 2460,
+      endProgress: 2790,
+      speedMultiplier: 1.3,
+    },
+  ],
+  collectables: [
+    {
+      id: 'collectable:first-run-sparkle-one',
+      label: 'Race sparkle',
+      progress: 720,
+      heightAboveGround: 38,
+      pickupRadius: 58,
+    },
+    {
+      id: 'collectable:first-run-sparkle-two',
+      label: 'Race sparkle',
+      progress: 1820,
+      heightAboveGround: 128,
+      pickupRadius: 64,
+    },
+    {
+      id: 'collectable:first-run-sparkle-three',
+      label: 'Race sparkle',
+      progress: 2590,
+      heightAboveGround: 42,
+      pickupRadius: 60,
+    },
+    {
+      id: 'collectable:first-run-sparkle-four',
+      label: 'Race sparkle',
+      progress: 3290,
+      heightAboveGround: 46,
+      pickupRadius: 60,
+    },
+  ],
+} as const satisfies RaceCourseDefinition;
+
 export const PRACTICE_RAINBOW_RUN_COURSE = {
-  id: 'race-course:rainbow-run-practice',
-  name: 'Practice Dash',
+  id: SUNRISE_SPRINT_RACE_ID,
+  name: 'Sunrise Sprint',
   length: RACE_COURSE_LENGTH,
   obstacles: [
     {
