@@ -1,10 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { WILLOW_GARDEN_PLANTED_FLAG, WILLOW_MOONFLOWERS_QUEST_ID } from '../../content/r2Quests';
 import { NOVA_TUTORIAL_RACE_ID } from '../../content/r3RaceIds';
-import {
-  NOVA_FIRST_RACE_QUEST_ID,
-  SUNRISE_SPRINT_UNLOCKED_FLAG,
-} from '../../content/r3Quests';
+import { NOVA_FIRST_RACE_QUEST_ID, SUNRISE_SPRINT_UNLOCKED_FLAG } from '../../content/r3Quests';
 import { TypedEventBus, type GameEventMap } from '../events/GameEventBus';
 import { InventoryService } from '../inventory/InventoryService';
 import { RelationshipService } from '../relationships/RelationshipService';
