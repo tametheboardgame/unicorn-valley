@@ -6,11 +6,11 @@ The player creates her own unicorn, lives at Moonflower Cottage, explores a magi
 
 ## Project status
 
-**R3-WP3.5 - Race Results and Rewards complete.**
+**R3-WP3.6 - Nova's First Race Story complete.**
 
-R0, R1 and R2 are complete. R3 is now underway: Rainbow Run has a dedicated four-racer practice race with automatic movement and jumping, data-driven obstacles, forgiving slowdown/stumble responses, readable boost strips, optional course sparkles, deterministic NPC competition, live position tracking, finish order, persistent personal bests and participation/podium rewards that feed back into the Wonderbook and cottage decorating.
+R0, R1 and R2 are complete. R3 is now underway: Rainbow Run has a dedicated Meadow hub, a character-led first-race story with Nova, a gentler one-on-one tutorial run, persistent participation rewards and ribbons, result-sensitive encouragement, and an unlocked four-racer **Sunrise Sprint** with obstacles, boosts, course sparkles, live position tracking, finish order and personal-best records.
 
-The next package is **R3-WP3.6 - Nova's First Race Story**.
+The next package is **R3-WP3.7 - Race Assistance and Difficulty**.
 
 The production branch is deployed to `https://unicorn-valley.pages.dev/`.
 
@@ -71,13 +71,14 @@ The production branch is deployed to `https://unicorn-valley.pages.dev/`.
 - [R3 Race Obstacles, Boosts and Collectables](docs/32-R3-RACE-OBSTACLES-BOOSTS-COLLECTABLES.md)
 - [R3 NPC Racers and Position Tracking](docs/33-R3-NPC-RACERS-POSITION-TRACKING.md)
 - [R3 Race Results and Rewards](docs/34-R3-RACE-RESULTS-REWARDS.md)
+- [R3 Nova's First Race Story](docs/35-R3-NOVA-FIRST-RACE-STORY.md)
 
 ## Release plan
 
 - **R0 - Foundation and Pre-production**: complete.
 - **R1 - My Unicorn: First Playable**: complete.
 - **R2 - Living Valley Vertical Slice**: complete, including Sunbeam Village, quests, friendship, inventory, cottage decorating, visible persistent world change, pre-playtest polish, daughter playtesting and the resulting UX/visual recovery passes.
-- **R3 - Rainbow Run Racing**: in progress; the Meadow hub, core race movement, obstacle/boost/collectable course, NPC competition, live position tracking, finish order, persistent race records, participation rewards, podium bonuses and cross-system race keepsakes are complete, with Nova's first-race story next.
+- **R3 - Rainbow Run Racing**: in progress; the Meadow hub, core race movement, obstacle/boost/collectable courses, NPC competition, live position tracking, finish order, persistent race records, participation rewards, podium bonuses, cross-system race keepsakes and Nova's character-led first-race story are complete, with race assistance and difficulty next.
 - **R4 - Friendship, Secrets and Home Depth**: multi-session stories, shops, deeper decorating and stronger world memory.
 - **R5 - The Valley Gets Bigger**: Crystal Brook, Whispering Woods, more discoveries and a second major activity type.
 - **R6 - Production Presentation and Accessibility**: final-quality art/audio direction, touch refinement, performance and save hardening.
