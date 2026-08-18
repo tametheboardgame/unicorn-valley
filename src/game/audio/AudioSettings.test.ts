@@ -63,10 +63,15 @@ describe('AudioSettingsStore', () => {
 });
 
 describe('resolveAudioSceneProfile', () => {
-  it('gives the Glade and Village distinct temporary soundtrack identities', () => {
+  it('gives exploration locations distinct temporary soundtrack identities', () => {
     expect(resolveAudioSceneProfile('MoonflowerGladeScene')).toBe('glade');
     expect(resolveAudioSceneProfile('MoonflowerPatchScene')).toBe('glade');
     expect(resolveAudioSceneProfile('SunbeamVillageScene')).toBe('village');
+  });
+
+  it('gives both Rainbow Run scenes the energetic race profile', () => {
+    expect(resolveAudioSceneProfile('RaceScene')).toBe('race');
+    expect(resolveAudioSceneProfile('NovaTutorialRaceScene')).toBe('race');
   });
 
   it('leaves non-vertical-slice utility scenes silent', () => {
