@@ -141,19 +141,26 @@ Acceptance:
 
 ## R3-WP3.9F - Automated Findings and Layout Cleanup
 
-Status: **Next**
+Status: **Complete** - PR #49
 
 Purpose:
 
 - clear the concrete visual/layout issues already identified by the first automated audit before broader aesthetic refinement.
 
-Deliverables:
+Delivered:
 
-- stop the persistent activity-suggestion card obscuring the player in Sunbeam Village;
-- stop the same class of overlap in Rainbow Meadow;
-- investigate and correct fixed Sunrise Sprint UI reported outside the logical viewport;
-- review the automated screenshots for any closely related spacing, clipping or spawn-composition defects;
-- rerun the complete browser playtest and visual-audit suite after fixes.
+- moved the shared activity-suggestion card to a stable upper-right layout position so it no longer covers the captured player spawn in Sunbeam Village or Rainbow Meadow;
+- retained the existing suggestion behaviour, including rotation, acknowledgement and session dismissal;
+- identified the Sunrise Sprint off-screen fixed-object warning as camera-fixed speed-streak presentation particles staged beyond the right viewport edge;
+- changed speed streaks so they become visible only while actually intersecting the logical viewport rather than suppressing the audit finding;
+- added named diagnostic anchors for the suggestion card and speed streaks;
+- added browser regression tests for Village and Meadow suggestion-card/player separation and Sunrise Sprint off-screen streak visibility.
+
+Validation:
+
+- repository formatting, linting, TypeScript checks, unit tests, production build and static smoke test passed;
+- 10/10 Chromium browser playtests passed;
+- automated audit result: 0 errors, 0 warnings and 0 suggestions.
 
 Acceptance:
 
@@ -164,7 +171,7 @@ Acceptance:
 
 ## R3-WP3.9G - Visual Tightening Pass
 
-Status: **Planned after R3-WP3.9F**
+Status: **Next**
 
 Purpose:
 
