@@ -30,6 +30,10 @@ export interface DiagnosticSceneSnapshot {
     worldWidth: number;
     worldHeight: number;
   };
+  state: {
+    raceStarted: boolean | null;
+    raceFinished: boolean | null;
+  };
   objects: DiagnosticObjectSnapshot[];
 }
 
@@ -63,6 +67,15 @@ interface InspectableProperties {
 
 type InspectableGameObject = Phaser.GameObjects.GameObject & InspectableProperties;
 
+interface InspectableSceneRuntime {
+  raceStarted?: unknown;
+  runState?: {
+    movement?: {
+      finished?: unknown;
+    };
+  };
+}
+
 function finite(value: number | undefined, fallback = 0): number {
   return Number.isFinite(value) ? (value ?? fallback) : fallback;
 }
@@ -90,6 +103,7 @@ function snapshotObject(gameObject: Phaser.GameObjects.GameObject): DiagnosticOb
 
 function snapshotScene(scene: Phaser.Scene): DiagnosticSceneSnapshot {
   const camera = scene.cameras.main;
+  const runtime = scene as unknown as InspectableSceneRuntime;
   return {
     key: scene.scene.key,
     camera: {
@@ -101,6 +115,13 @@ function snapshotScene(scene: Phaser.Scene): DiagnosticSceneSnapshot {
       worldY: camera.worldView.y,
       worldWidth: camera.worldView.width,
       worldHeight: camera.worldView.height,
+    },
+    state: {
+      raceStarted: typeof runtime.raceStarted === 'boolean' ? runtime.raceStarted : null,
+      raceFinished:
+        typeof runtime.runState?.movement?.finished === 'boolean'
+          ? runtime.runState.movement.finished
+          : null,
     },
     objects: scene.children.list.map(snapshotObject),
   };
