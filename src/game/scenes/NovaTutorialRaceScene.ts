@@ -25,7 +25,12 @@ import {
   applyRaceResultToSave,
   type RaceRewardSummary,
 } from '../racing/RaceResults';
-import { createRaceRunState, stepRaceRun, type RaceRunEvent, type RaceRunState } from '../racing/RaceRun';
+import {
+  createRaceRunState,
+  stepRaceRun,
+  type RaceRunEvent,
+  type RaceRunState,
+} from '../racing/RaceRun';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { saveLocationCheckpoint } from '../save/saveLocationCheckpoint';
@@ -103,7 +108,11 @@ export class NovaTutorialRaceScene extends Phaser.Scene {
       .setOrigin(0.5, 0.82)
       .setDepth(30);
     this.nova = this.add
-      .sprite(COURSE_START_X - 20, COURSE_GROUND_Y + TUTORIAL_RACERS[0].laneOffset, PLAYER_TEXTURE_KEY)
+      .sprite(
+        COURSE_START_X - 20,
+        COURSE_GROUND_Y + TUTORIAL_RACERS[0].laneOffset,
+        PLAYER_TEXTURE_KEY,
+      )
       .setDisplaySize(116, 94)
       .setOrigin(0.5, 0.82)
       .setTint(TUTORIAL_RACERS[0].tint)
@@ -358,7 +367,10 @@ export class NovaTutorialRaceScene extends Phaser.Scene {
     const x = COURSE_START_X - 55;
     this.add.rectangle(x - 58, 470, 20, 180, 0x735164, 1).setDepth(10);
     this.add.rectangle(x + 58, 470, 20, 180, 0x735164, 1).setDepth(10);
-    this.add.rectangle(x, 385, 138, 28, 0xf7e4ad, 1).setStrokeStyle(4, 0xa77da9, 1).setDepth(10);
+    this.add
+      .rectangle(x, 385, 138, 28, 0xf7e4ad, 1)
+      .setStrokeStyle(4, 0xa77da9, 1)
+      .setDepth(10);
     this.add
       .text(x, 385, 'FIRST RUN', {
         color: '#654d70',
@@ -570,14 +582,26 @@ export class NovaTutorialRaceScene extends Phaser.Scene {
       ? 'You crossed the line first. Nova definitely noticed.'
       : 'You finished the course. Nova is waiting to hear how it felt.';
 
-    const shade = this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, 790, 470, 0x5f4772, 0.97);
+    const shade = this.add.rectangle(
+      GAME_WIDTH / 2,
+      GAME_HEIGHT / 2,
+      790,
+      470,
+      0x5f4772,
+      0.97,
+    );
     const title = this.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 165, `First run complete • ${formatRacePlace(place)}!`, {
-        color: '#fff5cf',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '35px',
-        fontStyle: 'bold',
-      })
+      .text(
+        GAME_WIDTH / 2,
+        GAME_HEIGHT / 2 - 165,
+        `First run complete • ${formatRacePlace(place)}!`,
+        {
+          color: '#fff5cf',
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '35px',
+          fontStyle: 'bold',
+        },
+      )
       .setOrigin(0.5);
     const result = this.add
       .text(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 88, resultText, {
