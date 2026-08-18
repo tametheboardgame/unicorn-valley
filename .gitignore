@@ -2,6 +2,7 @@ node_modules/
 dist/
 coverage/
 .vite/
+playtest-artifacts/
 .DS_Store
 *.local
 *.log
