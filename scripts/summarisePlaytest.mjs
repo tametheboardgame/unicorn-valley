@@ -25,7 +25,9 @@ if (findings.length === 0) {
   lines.push('### Findings', '');
   for (const finding of findings) {
     const icon = finding.severity === 'error' ? '❌' : finding.severity === 'warning' ? '⚠️' : '💡';
-    lines.push(`- ${icon} **${finding.severity.toUpperCase()} · ${finding.scene} · ${finding.scenario}:** ${finding.message}`);
+    lines.push(
+      `- ${icon} **${finding.severity.toUpperCase()} · ${finding.scene} · ${finding.scenario}:** ${finding.message}`,
+    );
   }
 }
 
