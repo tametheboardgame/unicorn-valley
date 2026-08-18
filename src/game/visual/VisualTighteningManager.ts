@@ -156,20 +156,14 @@ function decorateMeadow(scene: Phaser.Scene): void {
         .setDepth(worldDepthForY(650, 0.15)),
     );
   }
-  markDetail(
-    scene.add
-      .rectangle(2600, 530, 360, 9, 0xffffff, 0.32)
-      .setDepth(worldDepthForY(650, 0.2)),
-  );
+  markDetail(scene.add.rectangle(2600, 530, 360, 9, 0xffffff, 0.32).setDepth(worldDepthForY(650, 0.2)));
 
   const ribbonXs = [2410, 2460, 2510, 2560, 2610];
   const ribbonColours = [0xf18dad, 0xf5c968, 0x7cc6d8, 0xa6d77a, 0xc69be0];
   for (let index = 0; index < ribbonXs.length; index += 1) {
     const x = ribbonXs[index];
     const colour = ribbonColours[index];
-    markDetail(
-      scene.add.circle(x, 1372, 12, colour, 0.96).setDepth(worldDepthForY(1430, 0.25)),
-    );
+    markDetail(scene.add.circle(x, 1372, 12, colour, 0.96).setDepth(worldDepthForY(1430, 0.25)));
     markDetail(
       scene.add
         .triangle(x, 1408, 0, 0, 22, 0, 11, 38, colour, 0.92)
@@ -200,18 +194,8 @@ function decorateCottage(scene: Phaser.Scene): void {
   markDetail(scene.add.rectangle(1110, 735, 28, 122, 0x648e7e, 0.88).setDepth(7.5));
   markDetail(scene.add.rectangle(1380, 735, 28, 122, 0x648e7e, 0.88).setDepth(7.5));
 
-  markDetail(
-    scene.add
-      .circle(845, 493, 18, 0xfff6e5, 0.96)
-      .setStrokeStyle(3, 0xb88267, 0.8)
-      .setDepth(8.2),
-  );
-  markDetail(
-    scene.add
-      .circle(955, 493, 18, 0xfff6e5, 0.96)
-      .setStrokeStyle(3, 0xb88267, 0.8)
-      .setDepth(8.2),
-  );
+  markDetail(scene.add.circle(845, 493, 18, 0xfff6e5, 0.96).setStrokeStyle(3, 0xb88267, 0.8).setDepth(8.2));
+  markDetail(scene.add.circle(955, 493, 18, 0xfff6e5, 0.96).setStrokeStyle(3, 0xb88267, 0.8).setDepth(8.2));
   markDetail(scene.add.ellipse(900, 500, 150, 102, 0xfff4dd, 0.12).setDepth(7.2));
 
   // Shelf pegs create obvious places for future trophies and race ribbons.
@@ -227,11 +211,7 @@ function decorateRace(scene: Phaser.Scene): void {
   // Track-edge markers add rhythm and speed cues without competing with obstacles on the racing line.
   for (let x = 520, index = 0; x <= 3900; x += 520, index += 1) {
     markDetail(scene.add.rectangle(x, groundY + 87, 6, 42, 0x5c8f58, 0.8).setDepth(7));
-    markDetail(
-      scene.add
-        .circle(x, groundY + 62, 10, colours[index % colours.length], 0.86)
-        .setDepth(7.2),
-    );
+    markDetail(scene.add.circle(x, groundY + 62, 10, colours[index % colours.length], 0.86).setDepth(7.2));
     markDetail(
       scene.add
         .circle(x + 13, groundY + 66, 7, colours[(index + 1) % colours.length], 0.78)
@@ -289,10 +269,7 @@ export class VisualTighteningManager {
         continue;
       }
 
-      scene.add
-        .zone(-64, -64, 2, 2)
-        .setName(VISUAL_TIGHTENING_ANCHOR_NAME)
-        .setVisible(false);
+      scene.add.zone(-64, -64, 2, 2).setName(VISUAL_TIGHTENING_ANCHOR_NAME).setVisible(false);
       applyVisualTightening(scene);
     }
   }
