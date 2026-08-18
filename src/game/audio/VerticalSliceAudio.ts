@@ -4,8 +4,16 @@ import {
   getBrowserAudioSettingsStore,
 } from './AudioSettings';
 
-export type VerticalSliceSfx = 'ui' | 'dialogue' | 'collect' | 'discovery' | 'quest-complete';
-export type AudioSceneProfile = 'glade' | 'village' | 'cottage';
+export type VerticalSliceSfx =
+  | 'ui'
+  | 'dialogue'
+  | 'collect'
+  | 'discovery'
+  | 'quest-complete'
+  | 'race-countdown'
+  | 'race-go'
+  | 'race-finish';
+export type AudioSceneProfile = 'glade' | 'village' | 'cottage' | 'race';
 
 interface SceneAudioDefinition {
   musicNotes: readonly number[];
@@ -37,6 +45,13 @@ const SCENE_AUDIO: Record<AudioSceneProfile, SceneAudioDefinition> = {
     ambienceFilterHz: 540,
     ambienceNotes: [698.46, 783.99],
   },
+  race: {
+    musicNotes: [523.25, 659.25, 783.99, 1046.5, 880, 783.99, 659.25, 783.99],
+    musicIntervalMs: 330,
+    musicWave: 'triangle',
+    ambienceFilterHz: 1250,
+    ambienceNotes: [1046.5, 1318.51, 1567.98],
+  },
 };
 
 const SCENE_PROFILE_BY_KEY: Readonly<Record<string, AudioSceneProfile>> = {
@@ -45,6 +60,8 @@ const SCENE_PROFILE_BY_KEY: Readonly<Record<string, AudioSceneProfile>> = {
   MoonflowerPatchScene: 'glade',
   SunbeamVillageScene: 'village',
   CottageInteriorScene: 'cottage',
+  RaceScene: 'race',
+  NovaTutorialRaceScene: 'race',
 };
 
 export function resolveAudioSceneProfile(sceneKey: string): AudioSceneProfile | null {
@@ -172,6 +189,18 @@ export class VerticalSliceAudio {
           this.playTone(659.25, 0.22, 'triangle', 0.085, this.sfxGain, 0.12);
           this.playTone(783.99, 0.3, 'triangle', 0.08, this.sfxGain, 0.24);
           break;
+        case 'race-countdown':
+          this.playTone(523.25, 0.11, 'triangle', 0.12, this.sfxGain);
+          break;
+        case 'race-go':
+          this.playTone(659.25, 0.12, 'triangle', 0.12, this.sfxGain);
+          this.playTone(1046.5, 0.2, 'triangle', 0.11, this.sfxGain, 0.07);
+          break;
+        case 'race-finish':
+          this.playTone(659.25, 0.18, 'triangle', 0.11, this.sfxGain);
+          this.playTone(783.99, 0.2, 'triangle', 0.1, this.sfxGain, 0.09);
+          this.playTone(1046.5, 0.3, 'triangle', 0.1, this.sfxGain, 0.19);
+          break;
       }
     });
   }
@@ -297,6 +326,8 @@ export class VerticalSliceAudio {
     this.playTone(note, 0.25, 'sine', 0.045, this.ambienceGain);
     if (this.currentProfile === 'glade') {
       this.playTone(note * 1.25, 0.17, 'sine', 0.025, this.ambienceGain, 0.12);
+    } else if (this.currentProfile === 'race') {
+      this.playTone(note * 0.75, 0.12, 'triangle', 0.02, this.ambienceGain, 0.08);
     }
   }
 
