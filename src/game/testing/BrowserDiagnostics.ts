@@ -1,4 +1,4 @@
-import Phaser from 'phaser';
+import type Phaser from 'phaser';
 
 export interface DiagnosticObjectSnapshot {
   type: string;
@@ -42,10 +42,10 @@ export interface BrowserDiagnosticSnapshot {
 
 export interface BrowserDiagnosticsApi {
   snapshot(): BrowserDiagnosticSnapshot;
-  startScene(sceneKey: string, data?: unknown): void;
+  startScene(sceneKey: string, data?: object): void;
 }
 
-interface InspectableGameObject extends Phaser.GameObjects.GameObject {
+interface InspectableProperties {
   x?: number;
   y?: number;
   displayWidth?: number;
@@ -56,11 +56,12 @@ interface InspectableGameObject extends Phaser.GameObjects.GameObject {
   active?: boolean;
   scrollFactorX?: number;
   scrollFactorY?: number;
-  name?: string;
   text?: string;
   texture?: { key?: string };
   input?: { enabled?: boolean } | null;
 }
+
+type InspectableGameObject = Phaser.GameObjects.GameObject & InspectableProperties;
 
 function finite(value: number | undefined, fallback = 0): number {
   return Number.isFinite(value) ? (value ?? fallback) : fallback;
@@ -70,7 +71,7 @@ function snapshotObject(gameObject: Phaser.GameObjects.GameObject): DiagnosticOb
   const object = gameObject as InspectableGameObject;
   return {
     type: gameObject.type ?? gameObject.constructor.name,
-    name: object.name ?? '',
+    name: gameObject.name,
     text: typeof object.text === 'string' ? object.text : null,
     textureKey: typeof object.texture?.key === 'string' ? object.texture.key : null,
     x: finite(object.x),
