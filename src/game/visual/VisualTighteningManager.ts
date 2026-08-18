@@ -122,7 +122,7 @@ function decorateVillage(scene: Phaser.Scene): void {
 }
 
 function decorateMeadow(scene: Phaser.Scene): void {
-  // Pond ripples, reeds and stones add scale while keeping the open meadow uncluttered.
+  // Pond ripples and reeds add scale while keeping the open meadow uncluttered.
   for (const [width, height, alpha] of [
     [330, 88, 0.24],
     [225, 62, 0.2],
@@ -162,16 +162,18 @@ function decorateMeadow(scene: Phaser.Scene): void {
       .setDepth(worldDepthForY(650, 0.2)),
   );
 
-  const ribbonXs = [2405, 2455, 2505, 2555, 2605];
+  const ribbonXs = [2410, 2460, 2510, 2560, 2610];
   const ribbonColours = [0xf18dad, 0xf5c968, 0x7cc6d8, 0xa6d77a, 0xc69be0];
   for (let index = 0; index < ribbonXs.length; index += 1) {
     const x = ribbonXs[index];
     const colour = ribbonColours[index];
-    markDetail(scene.add.circle(x, 992, 12, colour, 0.96).setDepth(worldDepthForY(1110, 0.25)));
+    markDetail(
+      scene.add.circle(x, 1372, 12, colour, 0.96).setDepth(worldDepthForY(1430, 0.25)),
+    );
     markDetail(
       scene.add
-        .triangle(x, 1025, 0, 0, 22, 0, 11, 38, colour, 0.92)
-        .setDepth(worldDepthForY(1110, 0.26)),
+        .triangle(x, 1408, 0, 0, 22, 0, 11, 38, colour, 0.92)
+        .setDepth(worldDepthForY(1430, 0.26)),
     );
   }
 }
@@ -190,14 +192,6 @@ function decorateCottage(scene: Phaser.Scene): void {
   }
 
   // Bed, sofa and tea-table details make their function readable at a glance.
-  markDetail(
-    scene.add
-      .roundedRect?.(390, 590, 0, 0, 0) as unknown as Phaser.GameObjects.GameObject,
-  );
-}
-
-function decorateCottageSafe(scene: Phaser.Scene): void {
-  // Kept separate from the fireplace block so every object uses well-supported Phaser primitives.
   markDetail(scene.add.rectangle(335, 590, 95, 48, 0xfffaf0, 0.96).setDepth(8.2));
   markDetail(scene.add.rectangle(445, 590, 95, 48, 0xfffaf0, 0.96).setDepth(8.2));
   markDetail(scene.add.rectangle(390, 645, 250, 7, 0xf1d7e7, 0.42).setDepth(8.2));
@@ -206,8 +200,18 @@ function decorateCottageSafe(scene: Phaser.Scene): void {
   markDetail(scene.add.rectangle(1110, 735, 28, 122, 0x648e7e, 0.88).setDepth(7.5));
   markDetail(scene.add.rectangle(1380, 735, 28, 122, 0x648e7e, 0.88).setDepth(7.5));
 
-  markDetail(scene.add.circle(845, 493, 18, 0xfff6e5, 0.96).setStrokeStyle(3, 0xb88267, 0.8).setDepth(8.2));
-  markDetail(scene.add.circle(955, 493, 18, 0xfff6e5, 0.96).setStrokeStyle(3, 0xb88267, 0.8).setDepth(8.2));
+  markDetail(
+    scene.add
+      .circle(845, 493, 18, 0xfff6e5, 0.96)
+      .setStrokeStyle(3, 0xb88267, 0.8)
+      .setDepth(8.2),
+  );
+  markDetail(
+    scene.add
+      .circle(955, 493, 18, 0xfff6e5, 0.96)
+      .setStrokeStyle(3, 0xb88267, 0.8)
+      .setDepth(8.2),
+  );
   markDetail(scene.add.ellipse(900, 500, 150, 102, 0xfff4dd, 0.12).setDepth(7.2));
 
   // Shelf pegs create obvious places for future trophies and race ribbons.
@@ -259,7 +263,6 @@ function applyVisualTightening(scene: Phaser.Scene): void {
       break;
     case 'CottageInteriorScene':
       decorateCottage(scene);
-      decorateCottageSafe(scene);
       break;
     case 'NovaTutorialRaceScene':
     case 'RaceScene':
