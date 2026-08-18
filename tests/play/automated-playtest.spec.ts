@@ -73,19 +73,16 @@ async function getSnapshot(page: Page): Promise<BrowserDiagnosticSnapshot> {
 }
 
 async function waitForScene(page: Page, sceneKey: string): Promise<void> {
-  await page.waitForFunction(
-    (expectedScene) => {
-      const diagnosticWindow = window as typeof window & {
-        __UNICORN_VALLEY_DIAGNOSTICS__?: {
-          snapshot(): BrowserDiagnosticSnapshot;
-        };
+  await page.waitForFunction((expectedScene) => {
+    const diagnosticWindow = window as typeof window & {
+      __UNICORN_VALLEY_DIAGNOSTICS__?: {
+        snapshot(): BrowserDiagnosticSnapshot;
       };
-      return diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__
-        ?.snapshot()
-        .activeScenes.includes(expectedScene);
-    },
-    sceneKey,
-  );
+    };
+    return diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__
+      ?.snapshot()
+      .activeScenes.includes(expectedScene);
+  }, sceneKey);
   await page.waitForTimeout(350);
 }
 
@@ -98,7 +95,9 @@ function getScene(snapshot: BrowserDiagnosticSnapshot, sceneKey: string): Diagno
 }
 
 function getPlayer(scene: DiagnosticSceneSnapshot): DiagnosticObjectSnapshot | null {
-  const candidates = scene.objects.filter((object) => object.textureKey?.startsWith('player-unicorn-'));
+  const candidates = scene.objects.filter((object) =>
+    object.textureKey?.startsWith('player-unicorn-'),
+  );
   if (candidates.length === 0) {
     return null;
   }
@@ -196,7 +195,10 @@ function auditScene(
   }
 
   const zeroSizeInteractive = scene.objects.filter(
-    (object) => object.visible && object.interactive && (object.displayWidth <= 1 || object.displayHeight <= 1),
+    (object) =>
+      object.visible &&
+      object.interactive &&
+      (object.displayWidth <= 1 || object.displayHeight <= 1),
   );
   if (zeroSizeInteractive.length > 0) {
     findings.push({
@@ -266,8 +268,9 @@ function writeReport(): void {
   const summary = {
     generatedAt: new Date().toISOString(),
     scenarios: report,
-    errorCount: report.flatMap((entry) => entry.findings).filter((item) => item.severity === 'error')
-      .length,
+    errorCount: report
+      .flatMap((entry) => entry.findings)
+      .filter((item) => item.severity === 'error').length,
     warningCount: report
       .flatMap((entry) => entry.findings)
       .filter((item) => item.severity === 'warning').length,
@@ -275,136 +278,154 @@ function writeReport(): void {
       .flatMap((entry) => entry.findings)
       .filter((item) => item.severity === 'suggestion').length,
   };
-  writeFileSync(join(ARTIFACT_ROOT, 'playtest-report.json'), `${JSON.stringify(summary, null, 2)}\n`);
+  writeFileSync(
+    join(ARTIFACT_ROOT, 'playtest-report.json'),
+    `${JSON.stringify(summary, null, 2)}\n`,
+  );
 }
 
-test.describe.serial('Unicorn Valley automated playtest', () => {
-  test.beforeAll(() => {
-    rmSync(ARTIFACT_ROOT, { recursive: true, force: true });
-    mkdirSync(SCREENSHOT_ROOT, { recursive: true });
-  });
-
-  test.afterAll(() => {
-    writeReport();
-  });
-
-  const worldScenes = [
-    ['glade', 'MoonflowerGladeScene'],
-    ['cottage', 'CottageInteriorScene'],
-    ['village', 'SunbeamVillageScene'],
-    ['meadow', 'RainbowMeadowScene'],
-  ] as const;
-
-  for (const [alias, sceneKey] of worldScenes) {
-    test(`${sceneKey} renders a visible playable unicorn`, async ({ page }) => {
-      const browserErrors: string[] = [];
-      page.on('pageerror', (error) => browserErrors.push(error.message));
-      await page.goto(`/?scene=${alias}&diagnostics=1`);
-      await waitForScene(page, sceneKey);
-      const findings = await captureScenario(page, alias, sceneKey, { requirePlayer: true });
-
-      expect(browserErrors, `Browser errors in ${sceneKey}`).toEqual([]);
-      expect(findings.filter((finding) => finding.severity === 'error')).toEqual([]);
+test.describe
+  .serial('Unicorn Valley automated playtest', () => {
+    test.beforeAll(() => {
+      rmSync(ARTIFACT_ROOT, { recursive: true, force: true });
+      mkdirSync(SCREENSHOT_ROOT, { recursive: true });
     });
-  }
 
-  test('captures the main non-world interfaces for visual review', async ({ page }) => {
-    const states = [
-      ['title', '/', 'TitleScene'],
-      ['creator', '/?scene=creator&diagnostics=1', 'UnicornCreatorScene'],
-      ['nova-story', '/?scene=nova-story&diagnostics=1', 'NovaStoryScene'],
+    test.afterAll(() => {
+      writeReport();
+    });
+
+    const worldScenes = [
+      ['glade', 'MoonflowerGladeScene'],
+      ['cottage', 'CottageInteriorScene'],
+      ['village', 'SunbeamVillageScene'],
+      ['meadow', 'RainbowMeadowScene'],
     ] as const;
 
-    for (const [name, url, sceneKey] of states) {
-      const target = url.includes('?') ? url : `${url}?diagnostics=1`;
-      await page.goto(target);
-      await waitForScene(page, sceneKey);
-      const findings = await captureScenario(page, name, sceneKey);
-      expect(findings.filter((finding) => finding.severity === 'error')).toEqual([]);
+    for (const [alias, sceneKey] of worldScenes) {
+      test(`${sceneKey} renders a visible playable unicorn`, async ({ page }) => {
+        const browserErrors: string[] = [];
+        page.on('pageerror', (error) => browserErrors.push(error.message));
+        await page.goto(`/?scene=${alias}&diagnostics=1`);
+        await waitForScene(page, sceneKey);
+        const findings = await captureScenario(page, alias, sceneKey, { requirePlayer: true });
+
+        expect(browserErrors, `Browser errors in ${sceneKey}`).toEqual([]);
+        expect(findings.filter((finding) => finding.severity === 'error')).toEqual([]);
+      });
     }
-  });
 
-  test('Nova first run requires active movement, supports jumping and exits cleanly', async ({ page }) => {
-    const browserErrors: string[] = [];
-    page.on('pageerror', (error) => browserErrors.push(error.message));
-    await page.goto('/?scene=nova-race&diagnostics=1');
-    await waitForScene(page, 'NovaTutorialRaceScene');
+    test('captures the main non-world interfaces for visual review', async ({ page }) => {
+      const states = [
+        ['title', '/', 'TitleScene'],
+        ['creator', '/?scene=creator&diagnostics=1', 'UnicornCreatorScene'],
+        ['nova-story', '/?scene=nova-story&diagnostics=1', 'NovaStoryScene'],
+      ] as const;
 
-    await page.waitForTimeout(4_000);
-    const idleStart = await playerPosition(page, 'NovaTutorialRaceScene');
-    await page.waitForTimeout(800);
-    const idleEnd = await playerPosition(page, 'NovaTutorialRaceScene');
-    expect(Math.abs(idleEnd.x - idleStart.x), 'No input should not move the racer').toBeLessThan(3);
-
-    await page.keyboard.down('ArrowRight');
-    await page.waitForTimeout(900);
-    const running = await playerPosition(page, 'NovaTutorialRaceScene');
-    expect(running.x - idleEnd.x, 'Holding Right should move the racer').toBeGreaterThan(35);
-
-    await page.keyboard.up('ArrowRight');
-    await page.waitForTimeout(500);
-    const stopped = await playerPosition(page, 'NovaTutorialRaceScene');
-    expect(Math.abs(stopped.x - running.x), 'Releasing Right should stop forward progress').toBeLessThan(4);
-
-    await page.keyboard.down('ArrowRight');
-    await page.waitForTimeout(100);
-    const beforeJump = await playerPosition(page, 'NovaTutorialRaceScene');
-    await page.keyboard.press('Space');
-    await page.waitForTimeout(130);
-    const duringJump = await playerPosition(page, 'NovaTutorialRaceScene');
-    expect(duringJump.y, 'SPACE should visibly lift the racer').toBeLessThan(beforeJump.y - 3);
-
-    let finished = false;
-    for (let step = 0; step < 65; step += 1) {
-      if (step % 2 === 0) {
-        await page.keyboard.press('Space');
+      for (const [name, url, sceneKey] of states) {
+        const target = url.includes('?') ? url : `${url}?diagnostics=1`;
+        await page.goto(target);
+        await waitForScene(page, sceneKey);
+        const findings = await captureScenario(page, name, sceneKey);
+        expect(findings.filter((finding) => finding.severity === 'error')).toEqual([]);
       }
-      await page.waitForTimeout(300);
-      const snapshot = await getSnapshot(page);
-      const race = getScene(snapshot, 'NovaTutorialRaceScene');
-      finished = race.objects.some((object) => object.text?.startsWith('First run complete'));
-      if (finished) {
-        break;
-      }
-    }
-    await page.keyboard.up('ArrowRight');
-    expect(finished, 'Tutorial race should be finishable by an automated child-like run').toBe(true);
-
-    const resultFindings = await captureScenario(
-      page,
-      'nova-race-finished',
-      'NovaTutorialRaceScene',
-      { requirePlayer: true },
-    );
-    expect(resultFindings.filter((finding) => finding.severity === 'error')).toEqual([]);
-
-    const snapshot = await getSnapshot(page);
-    await logicalClick(page, snapshot.width / 2, snapshot.height / 2 + 137);
-    await waitForScene(page, 'NovaStoryScene');
-    await captureScenario(page, 'nova-post-race', 'NovaStoryScene');
-
-    expect(browserErrors, 'Browser errors during the full tutorial race').toEqual([]);
-  });
-
-  test('Sunrise Sprint also obeys manual forward control', async ({ page }) => {
-    await page.goto('/?scene=race&diagnostics=1');
-    await waitForScene(page, 'RaceScene');
-    await page.waitForTimeout(4_000);
-
-    const idleStart = await playerPosition(page, 'RaceScene');
-    await page.waitForTimeout(700);
-    const idleEnd = await playerPosition(page, 'RaceScene');
-    expect(Math.abs(idleEnd.x - idleStart.x)).toBeLessThan(3);
-
-    await page.keyboard.down('KeyD');
-    await page.waitForTimeout(800);
-    const running = await playerPosition(page, 'RaceScene');
-    await page.keyboard.up('KeyD');
-    expect(running.x - idleEnd.x).toBeGreaterThan(30);
-
-    const findings = await captureScenario(page, 'sunrise-sprint', 'RaceScene', {
-      requirePlayer: true,
     });
-    expect(findings.filter((finding) => finding.severity === 'error')).toEqual([]);
+
+    test(
+      'Nova first run requires active movement, supports jumping and exits cleanly',
+      async ({ page }) => {
+        const browserErrors: string[] = [];
+        page.on('pageerror', (error) => browserErrors.push(error.message));
+        await page.goto('/?scene=nova-race&diagnostics=1');
+        await waitForScene(page, 'NovaTutorialRaceScene');
+
+        await page.waitForTimeout(4_000);
+        const idleStart = await playerPosition(page, 'NovaTutorialRaceScene');
+        await page.waitForTimeout(800);
+        const idleEnd = await playerPosition(page, 'NovaTutorialRaceScene');
+        expect(
+          Math.abs(idleEnd.x - idleStart.x),
+          'No input should not move the racer',
+        ).toBeLessThan(3);
+
+        await page.keyboard.down('ArrowRight');
+        await page.waitForTimeout(900);
+        const running = await playerPosition(page, 'NovaTutorialRaceScene');
+        expect(running.x - idleEnd.x, 'Holding Right should move the racer').toBeGreaterThan(35);
+
+        await page.keyboard.up('ArrowRight');
+        await page.waitForTimeout(500);
+        const stopped = await playerPosition(page, 'NovaTutorialRaceScene');
+        expect(
+          Math.abs(stopped.x - running.x),
+          'Releasing Right should stop forward progress',
+        ).toBeLessThan(4);
+
+        await page.keyboard.down('ArrowRight');
+        await page.waitForTimeout(100);
+        const beforeJump = await playerPosition(page, 'NovaTutorialRaceScene');
+        await page.keyboard.press('Space');
+        await page.waitForTimeout(130);
+        const duringJump = await playerPosition(page, 'NovaTutorialRaceScene');
+        expect(duringJump.y, 'SPACE should visibly lift the racer').toBeLessThan(beforeJump.y - 3);
+
+        let finished = false;
+        for (let step = 0; step < 65; step += 1) {
+          if (step % 2 === 0) {
+            await page.keyboard.press('Space');
+          }
+          await page.waitForTimeout(300);
+          const snapshot = await getSnapshot(page);
+          const race = getScene(snapshot, 'NovaTutorialRaceScene');
+          finished = race.objects.some((object) =>
+            object.text?.startsWith('First run complete'),
+          );
+          if (finished) {
+            break;
+          }
+        }
+        await page.keyboard.up('ArrowRight');
+        expect(
+          finished,
+          'Tutorial race should be finishable by an automated child-like run',
+        ).toBe(true);
+
+        const resultFindings = await captureScenario(
+          page,
+          'nova-race-finished',
+          'NovaTutorialRaceScene',
+          { requirePlayer: true },
+        );
+        expect(resultFindings.filter((finding) => finding.severity === 'error')).toEqual([]);
+
+        const snapshot = await getSnapshot(page);
+        await logicalClick(page, snapshot.width / 2, snapshot.height / 2 + 137);
+        await waitForScene(page, 'NovaStoryScene');
+        await captureScenario(page, 'nova-post-race', 'NovaStoryScene');
+
+        expect(browserErrors, 'Browser errors during the full tutorial race').toEqual([]);
+      },
+    );
+
+    test('Sunrise Sprint also obeys manual forward control', async ({ page }) => {
+      await page.goto('/?scene=race&diagnostics=1');
+      await waitForScene(page, 'RaceScene');
+      await page.waitForTimeout(4_000);
+
+      const idleStart = await playerPosition(page, 'RaceScene');
+      await page.waitForTimeout(700);
+      const idleEnd = await playerPosition(page, 'RaceScene');
+      expect(Math.abs(idleEnd.x - idleStart.x)).toBeLessThan(3);
+
+      await page.keyboard.down('KeyD');
+      await page.waitForTimeout(800);
+      const running = await playerPosition(page, 'RaceScene');
+      await page.keyboard.up('KeyD');
+      expect(running.x - idleEnd.x).toBeGreaterThan(30);
+
+      const findings = await captureScenario(page, 'sunrise-sprint', 'RaceScene', {
+        requirePlayer: true,
+      });
+      expect(findings.filter((finding) => finding.severity === 'error')).toEqual([]);
+    });
   });
-});
