@@ -7,6 +7,10 @@ import { AudioSettingsPanel } from './AudioSettingsPanel';
 import { RewardFeedback } from './RewardFeedback';
 import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from './uiTheme';
 
+function isAutomaticWorldGate(target: InteractionTarget): boolean {
+  return target.id.includes('-gate');
+}
+
 export class InteractionPrompt {
   private readonly panelShadow: Phaser.GameObjects.Rectangle;
   private readonly panel: Phaser.GameObjects.Rectangle;
@@ -78,13 +82,13 @@ export class InteractionPrompt {
   }
 
   public setTarget(target: InteractionTarget | null): void {
-    const visible = target !== null;
+    const visible = target !== null && !isAutomaticWorldGate(target);
     this.panelShadow.setVisible(visible);
     this.panel.setVisible(visible);
     this.label.setVisible(visible);
     this.suggestionCard.refresh();
 
-    if (target) {
+    if (target && visible) {
       this.label.setText(`${target.actionLabel}: ${target.label}   ✨`);
     }
   }
