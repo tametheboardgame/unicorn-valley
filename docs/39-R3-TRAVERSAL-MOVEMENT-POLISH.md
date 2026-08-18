@@ -1,6 +1,6 @@
 # R3-WP3.9G2 - Traversal and Movement Polish
 
-Status: **In progress** - PR #51
+Status: **Complete** - PR #51
 
 ## Purpose
 
@@ -30,6 +30,13 @@ Rainbow Run remains an activity entrance and keeps its explicit interaction flow
 - add a slightly richer walking gait plus restrained hoof-puff/sparkle feedback;
 - add Chromium regressions for all three polished world scenes, both two-way gateway pairs and movement detail.
 
+## Validation
+
+- formatting, linting, TypeScript checks, unit tests, production build and static smoke test pass;
+- Chromium browser suite passes **23/23 tests**;
+- the automated audit remains at **10 scenarios, 0 errors, 0 warnings and 0 suggestions**;
+- generated Glade, Village and Meadow screenshots were reviewed after CI and show the new joined paths and open scenic gateway presentation without the previous dark path overlap or solid green gate blocks.
+
 ## Acceptance
 
 - path junctions no longer show obvious dark overlap shapes;
@@ -42,4 +49,4 @@ Rainbow Run remains an activity entrance and keeps its explicit interaction flow
 
 ## Next
 
-After this follow-up is merged, R3-WP3.9H remains the final target-player racing playtest and R3 closeout gate.
+R3-WP3.9H remains the final target-player racing playtest and R3 closeout gate.
