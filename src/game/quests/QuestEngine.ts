@@ -51,6 +51,8 @@ function objectiveLabel(step: QuestStep): string {
     }
     case 'unlock-discovery':
       return `Discover ${discoveryRegistry.get(step.discoveryId).name}`;
+    case 'finish-race':
+      return step.label;
     case 'award-item':
     case 'consume-item':
     case 'award-friendship':
@@ -79,6 +81,7 @@ export class QuestEngine {
       events.on('DISCOVERY_UNLOCKED', ({ discoveryId }) =>
         this.handleDiscoveryUnlocked(discoveryId as DiscoveryId),
       ),
+      events.on('RACE_FINISHED', ({ raceId }) => this.handleRaceFinished(raceId)),
     );
   }
 
@@ -184,6 +187,15 @@ export class QuestEngine {
     for (const quest of questRegistry.values()) {
       const step = this.getActiveStep(quest);
       if (step?.type === 'unlock-discovery' && step.discoveryId === discoveryId) {
+        this.advanceQuest(quest);
+      }
+    }
+  }
+
+  private handleRaceFinished(raceId: string): void {
+    for (const quest of questRegistry.values()) {
+      const step = this.getActiveStep(quest);
+      if (step?.type === 'finish-race' && step.raceId === raceId) {
         this.advanceQuest(quest);
       }
     }
