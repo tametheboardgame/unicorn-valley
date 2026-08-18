@@ -38,11 +38,7 @@ function appendUnique(values: readonly string[], value: string): string[] {
   return values.includes(value) ? [...values] : [...values, value];
 }
 
-function incrementItem(
-  quantities: Record<string, number>,
-  itemId: ItemId,
-  quantity: number,
-): void {
+function incrementItem(quantities: Record<string, number>, itemId: ItemId, quantity: number): void {
   quantities[itemId] = (quantities[itemId] ?? 0) + quantity;
 }
 
@@ -71,23 +67,33 @@ export function applyRaceResultToSave(save: SaveGame, input: RaceResultInput): A
   const previousBestTimeMs = previousRecord.bestTimeMs;
   const isPersonalBest = previousBestTimeMs === null || input.finishTimeMs < previousBestTimeMs;
   const bestTimeMs =
-    previousBestTimeMs === null ? input.finishTimeMs : Math.min(previousBestTimeMs, input.finishTimeMs);
+    previousBestTimeMs === null
+      ? input.finishTimeMs
+      : Math.min(previousBestTimeMs, input.finishTimeMs);
   const isPodium = input.place <= Math.min(3, input.participantCount);
 
   const newRibbonIds: string[] = [];
   const newRewardItemIds: ItemId[] = [];
   let ribbonIds = [...previousRecord.ribbonIds];
+  const alreadyOwnsFinisherRibbon =
+    (save.inventory.itemQuantities[RAINBOW_RUN_FINISHER_RIBBON_ITEM_ID] ?? 0) > 0;
+  const alreadyOwnsPodiumRosette =
+    (save.inventory.itemQuantities[RAINBOW_RUN_PODIUM_ROSETTE_ITEM_ID] ?? 0) > 0;
 
   if (!ribbonIds.includes(RAINBOW_RUN_FINISHER_RIBBON_ID)) {
     ribbonIds = appendUnique(ribbonIds, RAINBOW_RUN_FINISHER_RIBBON_ID);
-    newRibbonIds.push(RAINBOW_RUN_FINISHER_RIBBON_ID);
-    newRewardItemIds.push(RAINBOW_RUN_FINISHER_RIBBON_ITEM_ID);
+    if (!alreadyOwnsFinisherRibbon) {
+      newRibbonIds.push(RAINBOW_RUN_FINISHER_RIBBON_ID);
+      newRewardItemIds.push(RAINBOW_RUN_FINISHER_RIBBON_ITEM_ID);
+    }
   }
 
   if (isPodium && !ribbonIds.includes(RAINBOW_RUN_PODIUM_ROSETTE_ID)) {
     ribbonIds = appendUnique(ribbonIds, RAINBOW_RUN_PODIUM_ROSETTE_ID);
-    newRibbonIds.push(RAINBOW_RUN_PODIUM_ROSETTE_ID);
-    newRewardItemIds.push(RAINBOW_RUN_PODIUM_ROSETTE_ITEM_ID);
+    if (!alreadyOwnsPodiumRosette) {
+      newRibbonIds.push(RAINBOW_RUN_PODIUM_ROSETTE_ID);
+      newRewardItemIds.push(RAINBOW_RUN_PODIUM_ROSETTE_ITEM_ID);
+    }
   }
 
   const podiumBonusSparkles = isPodium ? RACE_PODIUM_BONUS_SPARKLES : 0;
@@ -104,7 +110,10 @@ export function applyRaceResultToSave(save: SaveGame, input: RaceResultInput): A
     }
   }
 
-  const discoveryIds = appendUnique(save.collections.discoveryIds, RAINBOW_RUN_RIBBONS_DISCOVERY_ID);
+  const discoveryIds = appendUnique(
+    save.collections.discoveryIds,
+    RAINBOW_RUN_RIBBONS_DISCOVERY_ID,
+  );
   const uniqueDiscoveryIds = appendUnique(
     save.world.uniqueDiscoveryIds,
     RAINBOW_RUN_RIBBONS_DISCOVERY_ID,

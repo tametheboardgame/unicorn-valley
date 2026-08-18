@@ -7,9 +7,12 @@ import { InventoryScene } from '../scenes/InventoryScene';
 import { MoonflowerGladeScene } from '../scenes/MoonflowerGladeScene';
 import { MoonflowerPatchScene } from '../scenes/MoonflowerPatchScene';
 import { MovementTestScene } from '../scenes/MovementTestScene';
+import { NovaStoryScene } from '../scenes/NovaStoryScene';
+import { NovaTutorialRaceScene } from '../scenes/NovaTutorialRaceScene';
 import { PreloadScene } from '../scenes/PreloadScene';
 import { RaceScene } from '../scenes/RaceScene';
 import { RainbowMeadowScene } from '../scenes/RainbowMeadowScene';
+import { RainbowRunEntryScene } from '../scenes/RainbowRunEntryScene';
 import { ResizeTestScene } from '../scenes/ResizeTestScene';
 import { SunbeamVillageScene } from '../scenes/SunbeamVillageScene';
 import { TitleScene } from '../scenes/TitleScene';
@@ -50,6 +53,9 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
     MoonflowerPatchScene,
     SunbeamVillageScene,
     RainbowMeadowScene,
+    RainbowRunEntryScene,
+    NovaStoryScene,
+    NovaTutorialRaceScene,
     RaceScene,
     WillowStoryScene,
     DoorwayStubScene,

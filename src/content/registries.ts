@@ -12,6 +12,8 @@ import { R2_DIALOGUES } from './r2Dialogues';
 import { R2_ITEMS } from './r2Items';
 import { R2_QUESTS } from './r2Quests';
 import { R3_CHARACTERS, R3_DISCOVERIES, R3_ITEMS } from './r3Content';
+import { R3_DIALOGUES } from './r3Dialogues';
+import { R3_QUESTS } from './r3Quests';
 import type {
   CharacterDefinition,
   CharacterId,
@@ -32,12 +34,16 @@ const ALL_CHARACTERS = [
   ...R2_CHARACTERS,
   ...R3_CHARACTERS,
 ] satisfies readonly CharacterDefinition[];
-const ALL_QUESTS = [...QUESTS, ...R2_QUESTS] satisfies readonly QuestDefinition[];
+const ALL_QUESTS = [...QUESTS, ...R2_QUESTS, ...R3_QUESTS] satisfies readonly QuestDefinition[];
 const ALL_DISCOVERIES = [
   ...DISCOVERIES,
   ...R3_DISCOVERIES,
 ] satisfies readonly DiscoveryDefinition[];
-const ALL_DIALOGUES = [...DIALOGUES, ...R2_DIALOGUES] satisfies readonly DialogueDefinition[];
+const ALL_DIALOGUES = [
+  ...DIALOGUES,
+  ...R2_DIALOGUES,
+  ...R3_DIALOGUES,
+] satisfies readonly DialogueDefinition[];
 
 assertValidContent({
   ...PLACEHOLDER_CONTENT,

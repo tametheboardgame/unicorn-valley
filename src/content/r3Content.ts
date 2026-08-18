@@ -53,6 +53,7 @@ export const R3_DISCOVERIES = [
   {
     id: 'discovery:rainbow-run-ribbons',
     name: 'Rainbow Run Ribbons',
-    description: 'Race ribbons that remember something important: reaching the finish is worth celebrating.',
+    description:
+      'Race ribbons that remember something important: reaching the finish is worth celebrating.',
   },
 ] as const satisfies readonly DiscoveryDefinition[];

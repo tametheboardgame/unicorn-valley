@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { WILLOW_GARDEN_PLANTED_FLAG, WILLOW_MOONFLOWERS_QUEST_ID } from '../../content/r2Quests';
+import { NOVA_TUTORIAL_RACE_ID } from '../../content/r3RaceIds';
+import { NOVA_FIRST_RACE_QUEST_ID, SUNRISE_SPRINT_UNLOCKED_FLAG } from '../../content/r3Quests';
 import { TypedEventBus, type GameEventMap } from '../events/GameEventBus';
 import { InventoryService } from '../inventory/InventoryService';
 import { RelationshipService } from '../relationships/RelationshipService';
@@ -148,5 +150,46 @@ describe('QuestEngine', () => {
     reloadedEngine.startQuest(WILLOW_MOONFLOWERS_QUEST_ID);
     expect(reloadedInventory.getQuantity('item:moonflower-lantern')).toBe(1);
     reloadedEngine.destroy();
+  });
+
+  it('advances Nova through a completed tutorial race regardless of finishing place', () => {
+    const repository = new MemorySaveRepository();
+    const bus = new TypedEventBus<GameEventMap>();
+    const saveService = new SaveService(repository, bus, () => '2026-08-18T06:30:00.000Z');
+    const engine = new QuestEngine(saveService, bus, () => '2026-08-18T06:30:00.000Z');
+    const relationships = new RelationshipService(saveService, bus);
+
+    engine.startQuest(NOVA_FIRST_RACE_QUEST_ID);
+    expect(engine.getCurrentObjective(NOVA_FIRST_RACE_QUEST_ID)?.label).toBe('Talk to Nova');
+
+    engine.notifyCharacterTalked('character:nova');
+    expect(engine.getCurrentObjective(NOVA_FIRST_RACE_QUEST_ID)?.label).toBe(
+      'Finish your first Rainbow Run',
+    );
+
+    bus.emit('RACE_FINISHED', {
+      raceId: 'race-course:not-the-tutorial',
+      finishTimeMs: 12_000,
+    });
+    expect(engine.getCurrentObjective(NOVA_FIRST_RACE_QUEST_ID)?.label).toBe(
+      'Finish your first Rainbow Run',
+    );
+
+    bus.emit('RACE_FINISHED', {
+      raceId: NOVA_TUTORIAL_RACE_ID,
+      finishTimeMs: 15_000,
+    });
+    expect(engine.getCurrentObjective(NOVA_FIRST_RACE_QUEST_ID)?.label).toBe('Talk to Nova');
+
+    engine.notifyCharacterTalked('character:nova');
+    expect(engine.getProgress(NOVA_FIRST_RACE_QUEST_ID)).toEqual({
+      status: 'completed',
+      currentStepId: null,
+      completedAt: '2026-08-18T06:30:00.000Z',
+    });
+    expect(relationships.getTier('character:nova')).toBe('friend');
+    expect(saveService.load()?.world.flags[SUNRISE_SPRINT_UNLOCKED_FLAG]).toBe(true);
+
+    engine.destroy();
   });
 });
