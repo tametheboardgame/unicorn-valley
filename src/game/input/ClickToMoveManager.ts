@@ -47,7 +47,7 @@ const NAVIGATION_MAPS: Readonly<Record<string, TraversalMapDefinition>> = {
 const WAYPOINT_REACHED_DISTANCE = 22;
 const STUCK_TIMEOUT_MS = 950;
 const MIN_PROGRESS_DISTANCE = 2;
-const MODAL_DEPTH = 125;
+const MODAL_DEPTH = 126;
 
 function isPlayerSprite(
   gameObject: Phaser.GameObjects.GameObject,
@@ -194,10 +194,6 @@ export class ClickToMoveManager {
 
   private hasVisibleModal(scene: Phaser.Scene): boolean {
     return scene.children.list.some((gameObject) => {
-      if (gameObject.name.startsWith('exploration-location-title')) {
-        return false;
-      }
-
       const displayObject = gameObject as Phaser.GameObjects.GameObject & {
         visible?: boolean;
         depth?: number;
