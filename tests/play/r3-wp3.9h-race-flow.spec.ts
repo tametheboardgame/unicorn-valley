@@ -112,9 +112,7 @@ test('walking to the Rainbow Run start opens a confirmation instead of requiring
     ),
   ).toBe(true);
   expect(
-    meadow.objects.some(
-      (object) => object.visible && object.text?.includes('Enter Rainbow Run'),
-    ),
+    meadow.objects.some((object) => object.visible && object.text?.includes('Enter Rainbow Run')),
   ).toBe(false);
 });
 

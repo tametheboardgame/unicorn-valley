@@ -4,10 +4,7 @@ import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { saveLocationCheckpoint } from '../save/saveLocationCheckpoint';
-import {
-  getNovaFirstRacePhase,
-  type NovaFirstRacePhase,
-} from '../story/NovaFirstRaceStory';
+import { getNovaFirstRacePhase, type NovaFirstRacePhase } from '../story/NovaFirstRaceStory';
 import {
   RAINBOW_MEADOW_LOCATION_ID,
   RAINBOW_MEADOW_MAP,
@@ -243,7 +240,14 @@ export class RacePlaytestRecoveryManager {
       0x392f44,
       0.36,
     );
-    const shadow = scene.add.rectangle(GAME_WIDTH / 2 + 8, GAME_HEIGHT / 2 + 10, 660, 310, 0x493958, 0.28);
+    const shadow = scene.add.rectangle(
+      GAME_WIDTH / 2 + 8,
+      GAME_HEIGHT / 2 + 10,
+      660,
+      310,
+      0x493958,
+      0.28,
+    );
     const panel = scene.add
       .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, 650, 300, 0xfff8e8, 0.995)
       .setStrokeStyle(6, 0xb689b8, 1);
@@ -296,7 +300,18 @@ export class RacePlaytestRecoveryManager {
       .setOrigin(0.5);
 
     state.modal = scene.add
-      .container(0, 0, [shade, shadow, panel, title, detail, yesButton, yesText, noButton, noText, hint])
+      .container(0, 0, [
+        shade,
+        shadow,
+        panel,
+        title,
+        detail,
+        yesButton,
+        yesText,
+        noButton,
+        noText,
+        hint,
+      ])
       .setName(RACE_ENTRY_CONFIRMATION_NAME)
       .setScrollFactor(0)
       .setDepth(230);
