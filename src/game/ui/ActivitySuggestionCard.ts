@@ -6,7 +6,7 @@ import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from './uiTheme
 const CARD_WIDTH = 420;
 const CARD_HEIGHT = 190;
 const CARD_X = CARD_WIDTH / 2 + 24;
-const CARD_Y = 190;
+const CARD_Y = CARD_HEIGHT / 2 + 24;
 const REOPEN_X = 52;
 const REOPEN_Y = 102;
 const REFRESH_INTERVAL_MS = 300;
