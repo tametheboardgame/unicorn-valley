@@ -78,6 +78,7 @@ export class ExplorationChrome {
         fontSize: '17px',
         fontStyle: 'bold',
       })
+      .setName('exploration-controls-label')
       .setOrigin(0.5)
       .setScrollFactor(0)
       .setDepth(125);
