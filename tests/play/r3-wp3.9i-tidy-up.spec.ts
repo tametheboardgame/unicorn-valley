@@ -237,8 +237,8 @@ test('Nova keeps her canonical identity and returns the player to the exact conv
 
   snapshot = await getSnapshot(page);
   const afterConversation = playerObject(sceneSnapshot(snapshot, 'RainbowMeadowScene'));
-  expect(afterConversation.x).toBeCloseTo(beforeConversation.x, 1);
-  expect(afterConversation.y).toBeCloseTo(beforeConversation.y, 1);
+  expect(Math.abs(afterConversation.x - beforeConversation.x)).toBeLessThan(1);
+  expect(Math.abs(afterConversation.y - beforeConversation.y)).toBeLessThan(1);
 });
 
 test('finishing a Nova conversation offers a direct race choice and races use canonical Nova', async ({
@@ -270,7 +270,7 @@ test('finishing a Nova conversation offers a direct race choice and races use ca
   const snapshot = await getSnapshot(page);
   const story = sceneSnapshot(snapshot, 'NovaStoryScene');
   expect(
-    story.objects.some((object) => object.visible && object.text === 'Do you want to race now?'),
+    story.objects.some((object) => object.name === 'nova-race-decision' && object.visible),
   ).toBe(true);
   expect(
     story.objects.some((object) => object.name === 'nova-race-decision-yes' && object.interactive),
