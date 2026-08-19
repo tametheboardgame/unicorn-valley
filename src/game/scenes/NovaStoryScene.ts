@@ -70,7 +70,9 @@ export class NovaStoryScene extends Phaser.Scene {
     }
 
     this.add.circle(GAME_WIDTH / 2, 252, 104, 0xfff0c7, 0.92).setStrokeStyle(6, 0xb97fb6, 1);
-    createNovaIdentitySprite(this, GAME_WIDTH / 2, 270).setDisplaySize(190, 134).setDepth(3);
+    createNovaIdentitySprite(this, GAME_WIDTH / 2, 270)
+      .setDisplaySize(190, 134)
+      .setDepth(3);
     this.add
       .text(GAME_WIDTH / 2, 374, 'Nova', {
         color: '#654d70',
@@ -227,7 +229,14 @@ export class NovaStoryScene extends Phaser.Scene {
     this.raceDecisionTarget = { sceneKey: copy.targetScene, payload: copy.payload };
 
     const shade = this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x392f44, 0.28).setOrigin(0);
-    const shadow = this.add.rectangle(GAME_WIDTH / 2 + 7, GAME_HEIGHT / 2 + 10, 650, 300, 0x493958, 0.24);
+    const shadow = this.add.rectangle(
+      GAME_WIDTH / 2 + 7,
+      GAME_HEIGHT / 2 + 10,
+      650,
+      300,
+      0x493958,
+      0.24,
+    );
     const panel = this.add
       .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, 640, 290, 0xfff8e8, 0.995)
       .setStrokeStyle(6, 0xb689b8, 1);
@@ -278,7 +287,18 @@ export class NovaStoryScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     this.raceDecision = this.add
-      .container(0, 0, [shade, shadow, panel, title, detail, yesButton, yesText, noButton, noText, hint])
+      .container(0, 0, [
+        shade,
+        shadow,
+        panel,
+        title,
+        detail,
+        yesButton,
+        yesText,
+        noButton,
+        noText,
+        hint,
+      ])
       .setName('nova-race-decision')
       .setScrollFactor(0)
       .setDepth(230);
