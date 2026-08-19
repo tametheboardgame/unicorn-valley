@@ -150,7 +150,8 @@ export class ExplorationChrome {
       }
 
       const text = object.text.trim();
-      const isLegacyTitle = text === locationTitle && object.scrollFactorX === 0 && object.depth >= 100;
+      const isLegacyTitle =
+        text === locationTitle && object.scrollFactorX === 0 && object.depth >= 100;
       const isLegacyControls = text.startsWith('Move: WASD / arrows');
       const isLegacyStatus = LEGACY_STATUS_PREFIXES.some((prefix) => text.startsWith(prefix));
       if (isLegacyTitle || isLegacyControls || isLegacyStatus) {
