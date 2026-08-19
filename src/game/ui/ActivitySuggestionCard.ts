@@ -1,17 +1,18 @@
 import type Phaser from 'phaser';
-import { GAME_WIDTH } from '../config/gameConstants';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { ActivitySuggestionSession } from '../suggestions/ActivitySuggestionModel';
 import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from './uiTheme';
 
 const CARD_WIDTH = 420;
 const CARD_HEIGHT = 190;
-const CARD_X = GAME_WIDTH - CARD_WIDTH / 2 - 24;
-const CARD_Y = 270;
+const CARD_X = CARD_WIDTH / 2 + 24;
+const CARD_Y = 190;
+const REOPEN_X = 52;
+const REOPEN_Y = 102;
 const REFRESH_INTERVAL_MS = 300;
 
 const sharedSuggestionSession = new ActivitySuggestionSession();
-let suggestionsHiddenForSession = false;
+let suggestionsCollapsedForSession = false;
 
 export class ActivitySuggestionCard {
   private readonly shadow: Phaser.GameObjects.Rectangle;
@@ -26,6 +27,9 @@ export class ActivitySuggestionCard {
   private readonly hideHintsLabel: Phaser.GameObjects.Text;
   private readonly closeButton: Phaser.GameObjects.Arc;
   private readonly closeLabel: Phaser.GameObjects.Text;
+  private readonly reopenShadow: Phaser.GameObjects.Arc;
+  private readonly reopenButton: Phaser.GameObjects.Arc;
+  private readonly reopenLabel: Phaser.GameObjects.Text;
   private lastRefreshAt = Number.NEGATIVE_INFINITY;
   private currentSignature = '';
 
@@ -131,6 +135,28 @@ export class ActivitySuggestionCard {
       .setDepth(119)
       .setInteractive({ useHandCursor: true });
 
+    this.reopenShadow = scene.add
+      .circle(REOPEN_X + 3, REOPEN_Y + 4, 27, 0x493958, 0.18)
+      .setScrollFactor(0)
+      .setDepth(115);
+    this.reopenButton = scene.add
+      .circle(REOPEN_X, REOPEN_Y, 25, UI_COLOURS.cream, 0.99)
+      .setName('activity-suggestion-reopen')
+      .setStrokeStyle(4, UI_COLOURS.lavenderStrong, 0.98)
+      .setScrollFactor(0)
+      .setDepth(116)
+      .setInteractive({ useHandCursor: true });
+    this.reopenLabel = scene.add
+      .text(REOPEN_X, REOPEN_Y - 1, '★', {
+        color: '#b176bd',
+        fontFamily: UI_FONT,
+        fontSize: '24px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5)
+      .setScrollFactor(0)
+      .setDepth(117);
+
     applyButtonHover(this.nextButton, UI_COLOURS.lavender, UI_COLOURS.blush);
     applyButtonHover(this.gotItButton, UI_COLOURS.gold, 0xfff4bf);
 
@@ -138,19 +164,18 @@ export class ActivitySuggestionCard {
       sharedSuggestionSession.rotate(this.getSave());
       this.refresh(true);
     });
-    this.gotItButton.on('pointerdown', () => this.acknowledgeAndHide());
-    this.closeButton.on('pointerdown', () => this.hideForSession());
-    this.hideHintsLabel.on('pointerdown', () => this.hideForSession());
+    this.gotItButton.on('pointerdown', () => this.acknowledgeAndCollapse());
+    this.closeButton.on('pointerdown', () => this.collapse());
+    this.hideHintsLabel.on('pointerdown', () => this.collapse());
+    this.reopenButton.on('pointerdown', () => {
+      suggestionsCollapsedForSession = false;
+      this.refresh(true);
+    });
 
     this.refresh(true);
   }
 
   public refresh(force = false): void {
-    if (suggestionsHiddenForSession) {
-      this.setVisible(false);
-      return;
-    }
-
     if (!force && this.scene.time.now - this.lastRefreshAt < REFRESH_INTERVAL_MS) {
       return;
     }
@@ -158,12 +183,20 @@ export class ActivitySuggestionCard {
 
     const suggestion = sharedSuggestionSession.getVisible(this.getSave())[0];
     if (!suggestion) {
-      this.setVisible(false);
+      this.setCardVisible(false);
+      this.setReopenVisible(false);
       this.currentSignature = '';
       return;
     }
 
-    this.setVisible(true);
+    if (suggestionsCollapsedForSession) {
+      this.setCardVisible(false);
+      this.setReopenVisible(true);
+      return;
+    }
+
+    this.setReopenVisible(false);
+    this.setCardVisible(true);
     const signature = `${suggestion.id}|${suggestion.title}|${suggestion.message}`;
     if (signature === this.currentSignature) {
       return;
@@ -187,16 +220,19 @@ export class ActivitySuggestionCard {
     this.hideHintsLabel.destroy();
     this.closeButton.destroy();
     this.closeLabel.destroy();
+    this.reopenShadow.destroy();
+    this.reopenButton.destroy();
+    this.reopenLabel.destroy();
   }
 
-  private acknowledgeAndHide(): void {
+  private acknowledgeAndCollapse(): void {
     sharedSuggestionSession.dismissCurrent(this.getSave());
-    this.hideForSession();
+    this.collapse();
   }
 
-  private hideForSession(): void {
-    suggestionsHiddenForSession = true;
-    this.setVisible(false);
+  private collapse(): void {
+    suggestionsCollapsedForSession = true;
+    this.refresh(true);
   }
 
   private getSave() {
@@ -204,7 +240,7 @@ export class ActivitySuggestionCard {
     return saveService.load() ?? saveService.createNewGame();
   }
 
-  private setVisible(visible: boolean): void {
+  private setCardVisible(visible: boolean): void {
     this.shadow.setVisible(visible);
     this.panel.setVisible(visible);
     this.eyebrow.setVisible(visible);
@@ -217,5 +253,11 @@ export class ActivitySuggestionCard {
     this.hideHintsLabel.setVisible(visible);
     this.closeButton.setVisible(visible);
     this.closeLabel.setVisible(visible);
+  }
+
+  private setReopenVisible(visible: boolean): void {
+    this.reopenShadow.setVisible(visible);
+    this.reopenButton.setVisible(visible);
+    this.reopenLabel.setVisible(visible);
   }
 }
