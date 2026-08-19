@@ -120,8 +120,7 @@ test('exploration chrome uses stable zones, visible help, touch toggle and a cen
   ).toBe(false);
   expect(
     glade.objects.some(
-      (object) =>
-        object.name === 'activity-suggestion-card' && object.visible && object.y < 140,
+      (object) => object.name === 'activity-suggestion-card' && object.visible && object.y < 140,
     ),
   ).toBe(true);
 
