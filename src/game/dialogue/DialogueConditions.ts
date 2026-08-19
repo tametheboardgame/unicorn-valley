@@ -64,9 +64,7 @@ export function selectDialogueVariant(
     );
 
   for (const { variant } of ordered) {
-    if (
-      (variant.conditions ?? []).every((condition) => isDialogueConditionMet(condition, input))
-    ) {
+    if ((variant.conditions ?? []).every((condition) => isDialogueConditionMet(condition, input))) {
       return dialogueRegistry.get(variant.dialogueId);
     }
   }
