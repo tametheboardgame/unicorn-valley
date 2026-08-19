@@ -7,6 +7,7 @@ import { MOONFLOWER_GLADE_MAP } from '../world/MoonflowerGladeMap';
 import { RAINBOW_MEADOW_MAP } from '../world/RainbowMeadowMap';
 import { SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
 import { findClickNavigationPath } from './ClickNavigationPath';
+import { hasHeldExplorationMovementInput } from './KeyboardInputAdapter';
 
 interface NavigationState {
   path: MapPoint[];
@@ -78,17 +79,12 @@ export class ClickToMoveManager {
         continue;
       }
 
-      if (this.hasVisibleModal(scene)) {
+      if (this.hasVisibleModal(scene) || hasHeldExplorationMovementInput()) {
         this.cancel(state);
         continue;
       }
 
       const body = player.body as Phaser.Physics.Arcade.Body;
-      if (Math.hypot(body.velocity.x, body.velocity.y) > 1) {
-        this.cancel(state);
-        continue;
-      }
-
       const waypoint = state.path[state.waypointIndex];
       if (!waypoint) {
         continue;
@@ -154,7 +150,11 @@ export class ClickToMoveManager {
       pointer: Phaser.Input.Pointer,
       currentlyOver: Phaser.GameObjects.GameObject[],
     ) => {
-      if (pointer.button !== 0 || currentlyOver.length > 0 || this.hasVisibleModal(scene)) {
+      if (pointer.button !== 0 || this.hasVisibleModal(scene)) {
+        return;
+      }
+      if (currentlyOver.length > 0 || hasHeldExplorationMovementInput()) {
+        this.cancel(state);
         return;
       }
 
