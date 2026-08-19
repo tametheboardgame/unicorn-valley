@@ -1,6 +1,7 @@
 import type Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import type { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
+import { TouchMovementPad } from '../input/TouchMovementPad';
 import type { InteractionTarget } from '../interaction/InteractionTarget';
 import { ActivitySuggestionCard } from './ActivitySuggestionCard';
 import { AudioSettingsPanel } from './AudioSettingsPanel';
@@ -21,6 +22,7 @@ export class InteractionPrompt {
   private readonly bagLabel: Phaser.GameObjects.Text;
   private readonly suggestionCard: ActivitySuggestionCard;
   private readonly audioSettingsPanel: AudioSettingsPanel;
+  private readonly touchMovementPad: TouchMovementPad;
   private readonly explorationChrome: ExplorationChrome;
   private readonly rewardFeedback: RewardFeedback;
 
@@ -66,7 +68,8 @@ export class InteractionPrompt {
 
     this.suggestionCard = new ActivitySuggestionCard(scene);
     this.audioSettingsPanel = new AudioSettingsPanel(scene);
-    this.explorationChrome = new ExplorationChrome(scene);
+    this.touchMovementPad = TouchMovementPad.ensure(scene, pointerInput);
+    this.explorationChrome = new ExplorationChrome(scene, this.touchMovementPad);
     this.rewardFeedback = new RewardFeedback(scene);
 
     this.panel.on('pointerdown', () => pointerInput.setButton('INTERACT', true));
@@ -107,6 +110,7 @@ export class InteractionPrompt {
     this.suggestionCard.destroy();
     this.audioSettingsPanel.destroy();
     this.explorationChrome.destroy();
+    this.touchMovementPad.destroy();
     this.rewardFeedback.destroy();
   }
 }
