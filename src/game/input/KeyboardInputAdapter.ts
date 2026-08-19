@@ -2,7 +2,6 @@ import Phaser from 'phaser';
 import type { InputAdapter } from './InputAdapter';
 import { BUTTON_INPUT_ACTIONS, type AxisInputAction, type ButtonInputAction } from './InputAction';
 import { resolvePressedButtonActions } from './KeyboardButtonPress';
-import { SceneTransitionMovementGate } from './SceneTransitionMovementGate';
 
 interface AxisBinding {
   negative: readonly Phaser.Input.Keyboard.Key[];
@@ -13,7 +12,6 @@ export class KeyboardInputAdapter implements InputAdapter {
   private readonly buttons: Record<ButtonInputAction, readonly Phaser.Input.Keyboard.Key[]>;
   private readonly axes: Record<AxisInputAction, AxisBinding>;
   private readonly pressedThisFrame = new Set<ButtonInputAction>();
-  private readonly movementGate = new SceneTransitionMovementGate();
 
   public constructor(scene: Phaser.Scene) {
     const keyboard = scene.input.keyboard;
@@ -74,21 +72,13 @@ export class KeyboardInputAdapter implements InputAdapter {
     for (const action of pressedActions) {
       this.pressedThisFrame.add(action);
     }
-
-    const movementKeys = new Set<Phaser.Input.Keyboard.Key>();
-    for (const binding of Object.values(this.axes)) {
-      for (const key of [...binding.negative, ...binding.positive]) {
-        movementKeys.add(key);
-      }
-    }
-    this.movementGate.update([...movementKeys].some((key) => key.isDown));
   }
 
   public getAxis(action: AxisInputAction): number {
     const binding = this.axes[action];
     const negative = binding.negative.some((key) => key.isDown) ? -1 : 0;
     const positive = binding.positive.some((key) => key.isDown) ? 1 : 0;
-    return this.movementGate.filter(negative + positive);
+    return negative + positive;
   }
 
   public isDown(action: ButtonInputAction): boolean {
