@@ -1,9 +1,17 @@
 import Phaser from 'phaser';
 import type { DialogueChoice, DialogueId } from '../../content/contentTypes';
-import { characterRegistry, dialogueRegistry } from '../../content/registries';
+import {
+  characterRegistry,
+  dialogueRegistry,
+  dialogueVariantSetRegistry,
+} from '../../content/registries';
 import { WILLOW_MOONFLOWERS_QUEST_ID } from '../../content/r2Quests';
+import {
+  WILLOW_POST_MOONFLOWERS_SEEN_FLAG,
+  WILLOW_POST_MOONFLOWERS_VARIANTS_ID,
+} from '../../content/r4DialogueVariants';
 import { DialogueCard } from '../dialogue/DialogueCard';
-import { selectDialogueVariant } from '../dialogue/DialogueConditions';
+import { selectDialogueVariantSet } from '../dialogue/DialogueConditions';
 import { DialogueSession } from '../dialogue/DialogueSession';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { InputController } from '../input/InputController';
@@ -23,8 +31,10 @@ export class WillowStoryScene extends Phaser.Scene {
   private pointerInput: PointerTouchInputAdapter | null = null;
   private dialogueCard: DialogueCard | null = null;
   private dialogueSession: DialogueSession | null = null;
+  private relationships: RelationshipService | null = null;
   private returnScene = 'SunbeamVillageScene';
   private shouldNotifyTalk = false;
+  private shouldRememberPostQuestDialogue = false;
   private closing = false;
 
   public constructor() {
@@ -34,6 +44,7 @@ export class WillowStoryScene extends Phaser.Scene {
   public create(data: WillowStorySceneData): void {
     this.returnScene = data.returnScene ?? 'SunbeamVillageScene';
     this.shouldNotifyTalk = false;
+    this.shouldRememberPostQuestDialogue = false;
     this.closing = false;
     this.cameras.main.setBackgroundColor('#91c989');
 
@@ -64,8 +75,9 @@ export class WillowStoryScene extends Phaser.Scene {
     this.inputController = new InputController([new KeyboardInputAdapter(this), this.pointerInput]);
     this.dialogueCard = new DialogueCard(this, this.pointerInput);
 
-    const relationships = new RelationshipService(getBrowserSaveService());
-    relationships.markMet(WILLOW_CHARACTER_ID);
+    const saveService = getBrowserSaveService();
+    this.relationships = new RelationshipService(saveService);
+    this.relationships.markMet(WILLOW_CHARACTER_ID);
 
     const questEngine = getBrowserQuestEngine();
     let progress = questEngine.getProgress(WILLOW_MOONFLOWERS_QUEST_ID);
@@ -84,23 +96,13 @@ export class WillowStoryScene extends Phaser.Scene {
       dialogueId = 'dialogue:willow-moonflowers-return';
       this.shouldNotifyTalk = phase === 'return-to-willow';
     } else {
+      const variantSet = dialogueVariantSetRegistry.get(WILLOW_POST_MOONFLOWERS_VARIANTS_ID);
       dialogueId =
-        selectDialogueVariant(
-          [
-            {
-              dialogueId: 'dialogue:willow-moonflowers-friend-followup',
-              conditions: [
-                {
-                  type: 'minimum-friendship-tier',
-                  characterId: WILLOW_CHARACTER_ID,
-                  tier: 'friend',
-                },
-              ],
-            },
-            { dialogueId: 'dialogue:willow-moonflowers-followup' },
-          ],
-          relationships,
-        )?.id ?? 'dialogue:willow-moonflowers-followup';
+        selectDialogueVariantSet(variantSet, {
+          relationships: this.relationships,
+          saveService,
+        })?.id ?? 'dialogue:willow-moonflowers-followup';
+      this.shouldRememberPostQuestDialogue = true;
     }
 
     this.dialogueSession = new DialogueSession(dialogueRegistry.get(dialogueId));
@@ -113,6 +115,7 @@ export class WillowStoryScene extends Phaser.Scene {
       this.dialogueCard?.destroy();
       this.dialogueCard = null;
       this.dialogueSession = null;
+      this.relationships = null;
     });
   }
 
@@ -177,6 +180,9 @@ export class WillowStoryScene extends Phaser.Scene {
     this.closing = true;
     if (completedDialogue && this.shouldNotifyTalk) {
       getBrowserQuestEngine().notifyCharacterTalked(WILLOW_CHARACTER_ID);
+    }
+    if (completedDialogue && this.shouldRememberPostQuestDialogue) {
+      this.relationships?.addFlag(WILLOW_CHARACTER_ID, WILLOW_POST_MOONFLOWERS_SEEN_FLAG);
     }
     this.dialogueSession?.close();
     this.dialogueSession = null;
