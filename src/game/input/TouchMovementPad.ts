@@ -24,7 +24,7 @@ function shouldDefaultTouchMovementPadVisible(): boolean {
 }
 
 export class TouchMovementPad {
-  private readonly objects: Phaser.GameObjects.GameObject[] = [];
+  private readonly objects: Array<Phaser.GameObjects.Arc | Phaser.GameObjects.Text> = [];
   private readonly buttons: Phaser.GameObjects.Arc[] = [];
   private visible = true;
   private destroyed = false;
