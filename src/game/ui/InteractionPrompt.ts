@@ -7,8 +7,8 @@ import { AudioSettingsPanel } from './AudioSettingsPanel';
 import { RewardFeedback } from './RewardFeedback';
 import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from './uiTheme';
 
-function isAutomaticWorldGate(target: InteractionTarget): boolean {
-  return target.id.includes('-gate');
+function isAutomaticInteraction(target: InteractionTarget): boolean {
+  return target.id.includes('-gate') || target.id === 'interaction:meadow-race-entrance';
 }
 
 export class InteractionPrompt {
@@ -82,7 +82,7 @@ export class InteractionPrompt {
   }
 
   public setTarget(target: InteractionTarget | null): void {
-    const visible = target !== null && !isAutomaticWorldGate(target);
+    const visible = target !== null && !isAutomaticInteraction(target);
     this.panelShadow.setVisible(visible);
     this.panel.setVisible(visible);
     this.label.setVisible(visible);
