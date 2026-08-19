@@ -46,7 +46,9 @@ function addWindow(
 }
 
 function addForegroundMoonflower(scene: Phaser.Scene, x: number, y: number, scale: number): void {
-  markDetail(scene.add.rectangle(x, y + 24 * scale, 7 * scale, 54 * scale, 0x5f9b67, 0.95).setDepth(13));
+  markDetail(
+    scene.add.rectangle(x, y + 24 * scale, 7 * scale, 54 * scale, 0x5f9b67, 0.95).setDepth(13),
+  );
   for (const [offsetX, offsetY] of [
     [0, -18],
     [18, -5],
@@ -264,13 +266,18 @@ function decorateCottage(scene: Phaser.Scene): void {
 function applyCanonicalNovaToRace(scene: Phaser.Scene): void {
   ensureNovaIdentityTexture(scene);
   const nova = scene.children.list.find(
-    (object) => object instanceof Phaser.GameObjects.Sprite && object.tintTopLeft === NOVA_RACE_TINT,
+    (object) =>
+      object instanceof Phaser.GameObjects.Sprite && object.tintTopLeft === NOVA_RACE_TINT,
   );
   if (!(nova instanceof Phaser.GameObjects.Sprite)) {
     return;
   }
 
-  nova.setTexture(ensureNovaIdentityTexture(scene)).clearTint().setAlpha(1).setName('nova-canonical-racer');
+  nova
+    .setTexture(ensureNovaIdentityTexture(scene))
+    .clearTint()
+    .setAlpha(1)
+    .setName('nova-canonical-racer');
 }
 
 function decorateRace(scene: Phaser.Scene): void {
