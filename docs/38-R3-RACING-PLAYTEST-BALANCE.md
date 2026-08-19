@@ -238,7 +238,7 @@ Acceptance:
 
 ## R3-WP3.9H - Final Daughter Racing Playtest and R3 Closeout
 
-Status: **Next**
+Status: **In progress** - target-player findings continue into R3-WP3.9I
 
 Purpose:
 
@@ -262,7 +262,7 @@ Deliverables:
 - any evidence-led difficulty, reward or race-length adjustments;
 - fixes for any repeated frustration point revealed by the final test;
 - final automated browser/visual validation;
-- R3 roadmap/status update and transition to R4-WP4.1.
+- identify any final whole-route polish defects that are obvious enough to block R3 closeout.
 
 Acceptance:
 
@@ -274,8 +274,117 @@ Acceptance:
 - the final automated browser suite is green;
 - any remaining visual issues are minor enough to defer deliberately to later production-art work rather than being obvious R3 defects.
 
+## R3-WP3.9I - UI Tidy-up, Alignment and Nova Consistency
+
+Status: **Next**
+
+Dependencies: R3-WP3.9H target-player findings and PR #54 racing-flow recovery
+
+Purpose:
+
+- complete one final evidence-led whole-route tidy-up before R3 closes, addressing concrete presentation, alignment, transition and character-consistency problems exposed by the production daughter playtest rather than deferring obvious defects into R4.
+
+This is a polish/recovery package, not a new feature package. It must preserve the established game structure, progression, rewards, controls and child-friendly visual direction while making the currently playable route feel intentional and internally consistent.
+
+### UI layout and suggestion system
+
+Deliverables:
+
+- standardise the location title so the current place name is centred at the top of exploration scenes;
+- move the activity/hint suggestion UI into a predictable top-left safe area where it does not cover the player, important landmarks, NPCs or interaction targets;
+- when the suggestion card is dismissed or closed, replace it with a compact star-style button in the top-left corner so suggestions can be reopened deliberately;
+- remove transient exploration status boxes such as `Pip is nearby. Explore whenever you are ready.` where they duplicate information without adding a meaningful action;
+- move the persistent controls/help information to the bottom-right safe area;
+- make controls/help collapsible so it remains available without permanently consuming play space;
+- ensure modal dialogue, race UI, inventory controls and suggestion/help UI do not compete for the same screen region;
+- preserve touch usability and large child-friendly hit targets.
+
+Acceptance:
+
+- exploration HUD elements occupy stable, predictable screen regions;
+- no persistent hint/help box covers the player or a primary world interaction in the normal camera framing;
+- dismissed suggestions remain discoverable through the compact star control;
+- location name, hints and controls are visually distinct and do not appear scattered around the screen;
+- the removed Pip/status text is not required for progression or comprehension.
+
+### World alignment, collision and browser framing
+
+Deliverables:
+
+- tighten the Moonflower Glade bridge walkable/collision area so the unicorn's hooves remain visually supported by the bridge rather than hanging over its edge;
+- inspect the bridge approach and camera framing in both travel directions so the visual bridge and walkable route agree;
+- locate and remove the reported invisible collision wall in Sunbeam Village at the daughter-playtest position unless it represents a clearly visible physical obstacle;
+- correct Moonflower Cottage foreground/layering where the nearby flower is visually buried beneath dirt/path or cottage geometry;
+- review nearby cottage/path/flower depth relationships for the same class of defect;
+- correct the browser/game centring so the canvas is horizontally centred rather than leaving a visibly larger purple gutter on one side;
+- prefer filling the available browser viewport where this can be done without distorting the logical game aspect ratio, unsafe cropping or inconsistent input mapping;
+- if full-viewport fill would create unacceptable scaling/cropping, retain aspect-preserving scaling but make the surrounding gutter symmetrical and intentional.
+
+Acceptance:
+
+- the bridge's visible surface and collision/walk area agree at normal play scale;
+- no unexplained invisible wall remains at the reported Sunbeam Village location;
+- the Moonflower Cottage flower and nearby environment layers read correctly;
+- the game is visually centred in the browser at supported desktop sizes;
+- any retained letterboxing/gutter is symmetrical rather than obviously offset;
+- pointer/touch coordinate mapping remains correct after any scaling change.
+
+### Movement consistency across scene transitions
+
+Deliverables:
+
+- standardise how held movement input behaves when travelling through doors, gates and world transitions;
+- choose one predictable transition rule for exploration and apply it consistently rather than allowing some scenes to inherit a held direction while others stop;
+- prevent stale key/button state from causing unintended movement immediately after a scene starts;
+- retain deliberate continuous movement only where it is clearly beneficial and reliable;
+- add regression coverage across representative Glade, Village, Meadow and Cottage transitions.
+
+Acceptance:
+
+- entering equivalent world/door transitions produces the same movement-state behaviour every time;
+- a held key cannot create an unexpected uncontrolled movement burst after loading the destination scene;
+- keyboard and pointer/touch adapters remain consistent with the chosen rule.
+
+### Nova visual identity and race flow
+
+Deliverables:
+
+- make Nova use one recognisable visual identity in Rainbow Meadow, Nova dialogue and racing;
+- use the pink racing-unicorn Nova design as the canonical appearance across those contexts rather than alternating between a purple unicorn, a star token and a different race model;
+- replace the star-only Nova dialogue representation with a proper Nova character/portrait treatment derived from the same pink-racer identity;
+- ensure scale differences between world/dialogue/race are presentation-only and do not change the character's colours, mane/tail identity or defining features;
+- preserve the player's sensible pre-conversation position when returning from Nova dialogue rather than moving the player unexpectedly to one side of Nova;
+- make talking to Nova offer an immediate race decision when the current quest/race phase allows it, using clear child-facing copy such as `Do you want to race now?`;
+- route a positive choice directly to Nova's First Run or Sunrise Sprint as appropriate while retaining a safe `Not now` path back to exploration;
+- keep the physical Rainbow Run start as an equally valid way to begin racing.
+
+Acceptance:
+
+- Nova is immediately recognisable as the same pink unicorn in Meadow, dialogue and race contexts;
+- returning from Nova dialogue does not unexpectedly relocate the player away from the interaction position;
+- talking to Nova can lead directly into the currently appropriate race without requiring an unnecessary extra walk to the start area;
+- declining a race returns cleanly to normal exploration;
+- existing quest/ribbon/reward progression remains unchanged.
+
+### Validation and closeout
+
+Deliverables:
+
+- add or extend Playwright regressions for HUD placement, suggestion reopen behaviour, controls collapse, bridge collision alignment, Sunbeam collision recovery, scene-transition input reset and Nova identity/race routing where practical;
+- rerun the complete static validation and Chromium browser playtest/audit suite;
+- capture updated screenshots of Moonflower Glade, Sunbeam Village, Rainbow Meadow, Nova dialogue and race presentation for final R3 visual review;
+- run a final production smoke check after Cloudflare deployment;
+- update R3-WP3.9/R3 status and transition to R4-WP4.1 only when this tidy-up and the target-player closeout gate both pass.
+
+Acceptance:
+
+- the currently playable route has no known obvious HUD-placement, bridge-alignment, invisible-collision, transition-input or Nova-identity defect from the final playtest list;
+- automated browser validation is green with no new hard findings;
+- remaining presentation defects are minor enough to defer deliberately to later production-art work;
+- the final production build is suitable to close R3 without requiring adult workarounds for these issues.
+
 ## R3-WP3.9 completion rule
 
-R3-WP3.9 is complete only after **3.9F, 3.9G and 3.9H** have passed. R4 should not begin merely because the underlying racing code exists.
+R3-WP3.9 is complete only after **3.9F, 3.9G, 3.9H and 3.9I** have passed. R4 should not begin merely because the underlying racing code exists.
 
-The release closes when both the automated quality gate and the real target-player gate support the same conclusion: Rainbow Run is understandable, finishable, visually coherent enough for this stage, recoverable when mistakes happen and enjoyable enough that replay can be chosen rather than demanded.
+The release closes when both the automated quality gate and the real target-player gate support the same conclusion: Rainbow Run and the currently playable route are understandable, finishable, visually coherent enough for this stage, recoverable when mistakes happen and enjoyable enough that replay can be chosen rather than demanded.
