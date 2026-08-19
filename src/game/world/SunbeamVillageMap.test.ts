@@ -43,6 +43,15 @@ describe('Sunbeam Village map', () => {
     expect(findUnreachableTargets(SUNBEAM_VILLAGE_MAP, targets)).toEqual([]);
   });
 
+  it('only blocks visible physical landmarks', () => {
+    expect(SUNBEAM_VILLAGE_MAP.colliders.map((collider) => collider.id)).toEqual([
+      'collision:bakery',
+      'collision:accessory-shop',
+      'collision:library',
+      'collision:fountain',
+    ]);
+  });
+
   it('reserves enough space between NPC markers for separate interactions', () => {
     const markers = SUNBEAM_VILLAGE_MAP.npcMarkers;
 
