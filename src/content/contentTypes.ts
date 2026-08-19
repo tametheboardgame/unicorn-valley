@@ -5,9 +5,11 @@ export type DiscoveryId = `discovery:${string}`;
 export type DialogueId = `dialogue:${string}`;
 export type DialogueNodeId = `dialogue-node:${string}`;
 export type DialogueFlagId = `flag:${string}`;
+export type DialogueVariantSetId = `dialogue-variants:${string}`;
 
 export type ItemCategory = 'collectable' | 'quest' | 'reward' | 'decoration' | 'accessory' | 'food';
 export type FriendshipTier = 'just-met' | 'friend' | 'good-friend' | 'best-friend';
+export type DialogueQuestStatus = 'not-started' | 'active' | 'completed';
 
 export interface ItemDefinition {
   id: ItemId;
@@ -37,11 +39,28 @@ export type DialogueEffect = {
   value: boolean;
 };
 
-export type DialogueCondition = {
-  type: 'minimum-friendship-tier';
-  characterId: CharacterId;
-  tier: FriendshipTier;
-};
+export type DialogueCondition =
+  | {
+      type: 'minimum-friendship-tier';
+      characterId: CharacterId;
+      tier: FriendshipTier;
+    }
+  | {
+      type: 'relationship-flag';
+      characterId: CharacterId;
+      flag: string;
+      value?: boolean;
+    }
+  | {
+      type: 'quest-status';
+      questId: QuestId;
+      status: DialogueQuestStatus;
+    }
+  | {
+      type: 'world-flag';
+      flagId: DialogueFlagId;
+      value: boolean;
+    };
 
 export interface DialogueChoice {
   id: string;
@@ -75,7 +94,13 @@ export interface DialogueDefinition {
 
 export interface DialogueVariant {
   dialogueId: DialogueId;
+  priority?: number;
   conditions?: readonly DialogueCondition[];
+}
+
+export interface DialogueVariantSet {
+  id: DialogueVariantSetId;
+  variants: readonly DialogueVariant[];
 }
 
 export type QuestStep =
@@ -130,4 +155,5 @@ export interface ContentBundle {
   quests: readonly QuestDefinition[];
   discoveries: readonly DiscoveryDefinition[];
   dialogues: readonly DialogueDefinition[];
+  dialogueVariantSets: readonly DialogueVariantSet[];
 }

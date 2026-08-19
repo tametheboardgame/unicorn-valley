@@ -141,4 +141,5 @@ export const PLACEHOLDER_CONTENT: ContentBundle = {
   quests: QUESTS,
   discoveries: DISCOVERIES,
   dialogues: DIALOGUES,
+  dialogueVariantSets: [],
 };

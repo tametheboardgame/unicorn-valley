@@ -1,4 +1,11 @@
-import type { ContentBundle, DialogueDefinition, DialogueNode, QuestStep } from './contentTypes';
+import type {
+  ContentBundle,
+  DialogueCondition,
+  DialogueDefinition,
+  DialogueNode,
+  DialogueVariantSet,
+  QuestStep,
+} from './contentTypes';
 
 interface IdentifiedEntry {
   id: string;
@@ -130,13 +137,77 @@ function validateDialogue(
   }
 }
 
+function validateDialogueCondition(
+  variantSetId: string,
+  condition: DialogueCondition,
+  characterIds: ReadonlySet<string>,
+  questIds: ReadonlySet<string>,
+  errors: string[],
+): void {
+  if (
+    (condition.type === 'minimum-friendship-tier' || condition.type === 'relationship-flag') &&
+    !characterIds.has(condition.characterId)
+  ) {
+    errors.push(
+      `Dialogue variant set ${variantSetId} references missing character ${condition.characterId}.`,
+    );
+  }
+
+  if (condition.type === 'relationship-flag' && !condition.flag.trim()) {
+    errors.push(`Dialogue variant set ${variantSetId} has an empty relationship flag.`);
+  }
+
+  if (condition.type === 'quest-status' && !questIds.has(condition.questId)) {
+    errors.push(
+      `Dialogue variant set ${variantSetId} references missing quest ${condition.questId}.`,
+    );
+  }
+
+  if (condition.type === 'world-flag' && !condition.flagId.startsWith('flag:')) {
+    errors.push(
+      `Dialogue variant set ${variantSetId} has invalid world flag ID ${condition.flagId}.`,
+    );
+  }
+}
+
+function validateDialogueVariantSet(
+  variantSet: DialogueVariantSet,
+  dialogueIds: ReadonlySet<string>,
+  characterIds: ReadonlySet<string>,
+  questIds: ReadonlySet<string>,
+  errors: string[],
+): void {
+  if (variantSet.variants.length === 0) {
+    errors.push(`Dialogue variant set ${variantSet.id} has no variants.`);
+  }
+
+  for (const variant of variantSet.variants) {
+    if (!dialogueIds.has(variant.dialogueId)) {
+      errors.push(
+        `Dialogue variant set ${variantSet.id} references missing dialogue ${variant.dialogueId}.`,
+      );
+    }
+
+    if (variant.priority !== undefined && !Number.isInteger(variant.priority)) {
+      errors.push(
+        `Dialogue variant set ${variantSet.id} has invalid priority ${variant.priority} for ${variant.dialogueId}.`,
+      );
+    }
+
+    for (const condition of variant.conditions ?? []) {
+      validateDialogueCondition(variantSet.id, condition, characterIds, questIds, errors);
+    }
+  }
+}
+
 export function validateContent(content: ContentBundle): string[] {
   const errors: string[] = [];
   const itemIds = validateIds(content.items, 'item', 'item:', errors);
   const characterIds = validateIds(content.characters, 'character', 'character:', errors);
   const questIds = validateIds(content.quests, 'quest', 'quest:', errors);
   const discoveryIds = validateIds(content.discoveries, 'discovery', 'discovery:', errors);
-  validateIds(content.dialogues, 'dialogue', 'dialogue:', errors);
+  const dialogueIds = validateIds(content.dialogues, 'dialogue', 'dialogue:', errors);
+  validateIds(content.dialogueVariantSets, 'dialogue variant set', 'dialogue-variants:', errors);
 
   for (const item of content.items) {
     if (item.discoveryId && !discoveryIds.has(item.discoveryId)) {
@@ -156,6 +227,10 @@ export function validateContent(content: ContentBundle): string[] {
 
   for (const dialogue of content.dialogues) {
     validateDialogue(dialogue, characterIds, errors);
+  }
+
+  for (const variantSet of content.dialogueVariantSets) {
+    validateDialogueVariantSet(variantSet, dialogueIds, characterIds, questIds, errors);
   }
 
   return errors;
