@@ -18,7 +18,8 @@ function shouldDefaultTouchMovementPadVisible(): boolean {
     'ontouchstart' in globalThis,
   );
   const coarsePointer =
-    typeof globalThis.matchMedia === 'function' && globalThis.matchMedia('(pointer: coarse)').matches;
+    typeof globalThis.matchMedia === 'function' &&
+    globalThis.matchMedia('(pointer: coarse)').matches;
   const compactViewport = typeof globalThis.innerWidth === 'number' && globalThis.innerWidth <= 900;
   return touchCapable && (coarsePointer || compactViewport);
 }
@@ -48,10 +49,7 @@ export class TouchMovementPad {
     this.createButton(originX - spacing, originY, '◀', 'MOVE_X', -1, 'left');
     this.createButton(originX + spacing, originY, '▶', 'MOVE_X', 1, 'right');
 
-    this.setVisible(
-      preferredTouchControlsVisible ?? shouldDefaultTouchMovementPadVisible(),
-      false,
-    );
+    this.setVisible(preferredTouchControlsVisible ?? shouldDefaultTouchMovementPadVisible(), false);
   }
 
   public isVisible(): boolean {
