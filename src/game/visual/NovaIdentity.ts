@@ -1,4 +1,4 @@
-import Phaser from 'phaser';
+import type Phaser from 'phaser';
 
 export const NOVA_IDENTITY_TEXTURE_KEY = 'nova-canonical-pink-racer';
 export const NOVA_RACE_TINT = 0xf09ad1;
