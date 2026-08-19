@@ -1,5 +1,11 @@
 import Phaser from 'phaser';
+import { RAINBOW_MEADOW_MAP } from '../world/RainbowMeadowMap';
 import { worldDepthForY } from '../world/WorldDepth';
+import {
+  createNovaIdentitySprite,
+  ensureNovaIdentityTexture,
+  NOVA_RACE_TINT,
+} from './NovaIdentity';
 
 export const VISUAL_TIGHTENING_DETAIL_NAME = 'visual-tightening-detail';
 const VISUAL_TIGHTENING_ANCHOR_NAME = 'visual-tightening-anchor';
@@ -39,8 +45,25 @@ function addWindow(
   }
 }
 
+function addForegroundMoonflower(scene: Phaser.Scene, x: number, y: number, scale: number): void {
+  markDetail(scene.add.rectangle(x, y + 24 * scale, 7 * scale, 54 * scale, 0x5f9b67, 0.95).setDepth(13));
+  for (const [offsetX, offsetY] of [
+    [0, -18],
+    [18, -5],
+    [12, 14],
+    [-12, 14],
+    [-18, -5],
+  ] as const) {
+    markDetail(
+      scene.add
+        .ellipse(x + offsetX * scale, y + offsetY * scale, 28 * scale, 38 * scale, 0xe0b3ff, 0.94)
+        .setDepth(13.2),
+    );
+  }
+  markDetail(scene.add.circle(x, y, 12 * scale, 0xffdca1, 1).setDepth(13.4));
+}
+
 function decorateGlade(scene: Phaser.Scene): void {
-  // Cottage details make the home read as a lived-in place rather than a single flat silhouette.
   markDetail(scene.add.rectangle(688, 302, 54, 105, 0x8b6658, 1).setDepth(9));
   markDetail(scene.add.rectangle(688, 250, 68, 18, 0x735249, 1).setDepth(10));
 
@@ -57,7 +80,6 @@ function decorateGlade(scene: Phaser.Scene): void {
     markDetail(scene.add.ellipse(x, 326, 58, 14, 0xd6b5e8, 0.36).setDepth(11));
   }
 
-  // Reeds and small bank stones give the stream edges scale without blocking the bridge route.
   for (const [x, y] of [
     [1288, 590],
     [1512, 690],
@@ -75,9 +97,12 @@ function decorateGlade(scene: Phaser.Scene): void {
     markDetail(scene.add.ellipse(x, y + 7, 68, 20, 0xbda986, 0.48).setDepth(4.5));
   }
 
-  // Growth rings reinforce the Wonderbook/display stump as a recognisable physical object.
   markDetail(scene.add.ellipse(850, 1099, 76, 28, 0x9f7757, 0.5).setDepth(11));
   markDetail(scene.add.ellipse(850, 1099, 43, 16, 0xe0bb86, 0.46).setDepth(11.1));
+
+  // The two cottage flowers were originally painted below the cottage body. Repaint them in front.
+  addForegroundMoonflower(scene, 350, 650, 1.15);
+  addForegroundMoonflower(scene, 760, 650, 1.05);
 }
 
 function decorateVillage(scene: Phaser.Scene): void {
@@ -103,7 +128,6 @@ function decorateVillage(scene: Phaser.Scene): void {
     );
   }
 
-  // A little water motion/detail keeps the square's main landmark from reading as concentric discs.
   for (const radius of [54, 70]) {
     markDetail(
       scene.add
@@ -121,8 +145,37 @@ function decorateVillage(scene: Phaser.Scene): void {
   }
 }
 
+function replaceMeadowNova(scene: Phaser.Scene): void {
+  const marker = RAINBOW_MEADOW_MAP.npcMarkers.find((item) => item.id === 'nova');
+  if (!marker) {
+    return;
+  }
+
+  const oldNova = scene.children.list.find(
+    (object) =>
+      object instanceof Phaser.GameObjects.Container &&
+      Math.abs(object.x - marker.position.x) < 2 &&
+      Math.abs(object.y - marker.position.y) < 12 &&
+      object.list.length >= 7,
+  );
+  oldNova?.setVisible(false);
+
+  const nova = createNovaIdentitySprite(scene, marker.position.x, marker.position.y)
+    .setDisplaySize(120, 96)
+    .setDepth(worldDepthForY(marker.position.y + 48, 0.24));
+  markDetail(nova);
+  nova.setName('nova-canonical-world');
+  scene.tweens.add({
+    targets: nova,
+    y: marker.position.y - 5,
+    duration: 1050,
+    yoyo: true,
+    repeat: -1,
+    ease: 'Sine.InOut',
+  });
+}
+
 function decorateMeadow(scene: Phaser.Scene): void {
-  // Pond ripples and reeds add scale while keeping the open meadow uncluttered.
   for (const [width, height, alpha] of [
     [330, 88, 0.24],
     [225, 62, 0.2],
@@ -148,7 +201,6 @@ function decorateMeadow(scene: Phaser.Scene): void {
     }
   }
 
-  // Tent trim and ribbon shapes make the race hub read immediately as an event space.
   for (let x = 2415, index = 0; x <= 2785; x += 46, index += 1) {
     markDetail(
       scene.add
@@ -172,10 +224,11 @@ function decorateMeadow(scene: Phaser.Scene): void {
         .setDepth(worldDepthForY(1430, 0.26)),
     );
   }
+
+  replaceMeadowNova(scene);
 }
 
 function decorateCottage(scene: Phaser.Scene): void {
-  // Fireplace mortar, mantel objects and hearth give the room a stronger focal point.
   for (const y of [260, 300, 380]) {
     markDetail(scene.add.rectangle(285, y, 225, 4, 0xe3b29d, 0.34).setDepth(7.1));
   }
@@ -187,7 +240,6 @@ function decorateCottage(scene: Phaser.Scene): void {
     markDetail(scene.add.circle(x, 163, 8, 0xffcf72, 0.72).setDepth(8.2));
   }
 
-  // Bed, sofa and tea-table details make their function readable at a glance.
   markDetail(scene.add.rectangle(335, 590, 95, 48, 0xfffaf0, 0.96).setDepth(8.2));
   markDetail(scene.add.rectangle(445, 590, 95, 48, 0xfffaf0, 0.96).setDepth(8.2));
   markDetail(scene.add.rectangle(390, 645, 250, 7, 0xf1d7e7, 0.42).setDepth(8.2));
@@ -204,17 +256,27 @@ function decorateCottage(scene: Phaser.Scene): void {
   );
   markDetail(scene.add.ellipse(900, 500, 150, 102, 0xfff4dd, 0.12).setDepth(7.2));
 
-  // Shelf pegs create obvious places for future trophies and race ribbons.
   for (const x of [1460, 1515, 1570]) {
     markDetail(scene.add.circle(x, 330, 7, 0xf4d79f, 0.92).setDepth(8.2));
   }
+}
+
+function applyCanonicalNovaToRace(scene: Phaser.Scene): void {
+  ensureNovaIdentityTexture(scene);
+  const nova = scene.children.list.find(
+    (object) => object instanceof Phaser.GameObjects.Sprite && object.tintTopLeft === NOVA_RACE_TINT,
+  );
+  if (!(nova instanceof Phaser.GameObjects.Sprite)) {
+    return;
+  }
+
+  nova.setTexture(ensureNovaIdentityTexture(scene)).clearTint().setAlpha(1).setName('nova-canonical-racer');
 }
 
 function decorateRace(scene: Phaser.Scene): void {
   const groundY = scene.scene.key === 'NovaTutorialRaceScene' ? 570 : 575;
   const colours = [0xf18dad, 0xf5c968, 0x7cc6d8, 0xa6d77a, 0xc69be0];
 
-  // Track-edge markers add rhythm and speed cues without competing with obstacles on the racing line.
   for (let x = 520, index = 0; x <= 3900; x += 520, index += 1) {
     markDetail(scene.add.rectangle(x, groundY + 87, 6, 42, 0x5c8f58, 0.8).setDepth(7));
     markDetail(
@@ -227,7 +289,6 @@ function decorateRace(scene: Phaser.Scene): void {
     );
   }
 
-  // Small spectator pennants sit high and off the obstacle silhouette line.
   for (let x = 700, index = 0; x <= 3500; x += 700, index += 1) {
     markDetail(scene.add.rectangle(x, groundY - 155, 6, 88, 0x755548, 0.9).setDepth(7));
     markDetail(
@@ -236,6 +297,8 @@ function decorateRace(scene: Phaser.Scene): void {
         .setDepth(7.2),
     );
   }
+
+  applyCanonicalNovaToRace(scene);
 }
 
 function applyVisualTightening(scene: Phaser.Scene): void {
