@@ -158,11 +158,15 @@ function validateDialogueCondition(
   }
 
   if (condition.type === 'quest-status' && !questIds.has(condition.questId)) {
-    errors.push(`Dialogue variant set ${variantSetId} references missing quest ${condition.questId}.`);
+    errors.push(
+      `Dialogue variant set ${variantSetId} references missing quest ${condition.questId}.`,
+    );
   }
 
   if (condition.type === 'world-flag' && !condition.flagId.startsWith('flag:')) {
-    errors.push(`Dialogue variant set ${variantSetId} has invalid world flag ID ${condition.flagId}.`);
+    errors.push(
+      `Dialogue variant set ${variantSetId} has invalid world flag ID ${condition.flagId}.`,
+    );
   }
 }
 
