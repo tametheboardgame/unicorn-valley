@@ -1,0 +1,58 @@
+name: Fix R3 WP3.9H Types
+
+on:
+  push:
+    branches:
+      - agent/r3-wp3.9h-race-flow-recovery
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    if: github.event.head_commit.message != 'Fix R3-WP3.9H nullable keys'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out recovery branch
+        uses: actions/checkout@v6
+        with:
+          ref: agent/r3-wp3.9h-race-flow-recovery
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22.23.2
+          package-manager-cache: false
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Repair nullable key checks
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('src/game/racing/RacePlaytestRecoveryManager.ts')
+          text = path.read_text()
+          needle = "function asRaceScene(scene: Phaser.Scene): RaceSceneRuntime {\n  return scene as unknown as RaceSceneRuntime;\n}\n"
+          helper = needle + "\nfunction justDown(key: Phaser.Input.Keyboard.Key | null): boolean {\n  return key ? Phaser.Input.Keyboard.JustDown(key) : false;\n}\n"
+          if 'function justDown(' not in text:
+              text = text.replace(needle, helper)
+          text = text.replace('Phaser.Input.Keyboard.JustDown(state.', 'justDown(state.')
+          text = text.replace(
+              'scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {\n      this.destroyRaceEntry(state);',
+              'scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {\n      state.sign?.destroy(true);\n      this.destroyRaceEntry(state);',
+          )
+          path.write_text(text)
+          PY
+          npx biome format --write src/game/racing/RacePlaytestRecoveryManager.ts
+          npm run typecheck
+
+      - name: Commit repair
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/game/racing/RacePlaytestRecoveryManager.ts
+          git commit -m 'Fix R3-WP3.9H nullable keys'
+          git push
