@@ -22,14 +22,17 @@ const heldExplorationMovementCodes = new Set<string>();
 let movementTrackingInstalled = false;
 
 function isEditableKeyboardTarget(target: EventTarget | null): boolean {
-  const element = target as
-    | {
-        tagName?: string;
-        isContentEditable?: boolean;
-      }
-    | null;
+  const element = target as {
+    tagName?: string;
+    isContentEditable?: boolean;
+  } | null;
   const tagName = element?.tagName?.toUpperCase();
-  return tagName === 'INPUT' || tagName === 'TEXTAREA' || tagName === 'SELECT' || element?.isContentEditable === true;
+  return (
+    tagName === 'INPUT' ||
+    tagName === 'TEXTAREA' ||
+    tagName === 'SELECT' ||
+    element?.isContentEditable === true
+  );
 }
 
 function ensureExplorationMovementTracking(): void {
@@ -38,10 +41,7 @@ function ensureExplorationMovementTracking(): void {
   }
 
   globalThis.addEventListener('keydown', (event: KeyboardEvent) => {
-    if (
-      EXPLORATION_MOVEMENT_CODES.has(event.code) &&
-      !isEditableKeyboardTarget(event.target)
-    ) {
+    if (EXPLORATION_MOVEMENT_CODES.has(event.code) && !isEditableKeyboardTarget(event.target)) {
       heldExplorationMovementCodes.add(event.code);
     }
   });
