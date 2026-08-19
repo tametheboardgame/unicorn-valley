@@ -14,11 +14,15 @@ import { R2_QUESTS } from './r2Quests';
 import { R3_CHARACTERS, R3_DISCOVERIES, R3_ITEMS } from './r3Content';
 import { R3_DIALOGUES } from './r3Dialogues';
 import { R3_QUESTS } from './r3Quests';
+import { R4_DIALOGUE_VARIANT_SETS } from './r4DialogueVariants';
+import { R4_DIALOGUES } from './r4Dialogues';
 import type {
   CharacterDefinition,
   CharacterId,
   DialogueDefinition,
   DialogueId,
+  DialogueVariantSet,
+  DialogueVariantSetId,
   DiscoveryDefinition,
   DiscoveryId,
   ItemDefinition,
@@ -43,7 +47,11 @@ const ALL_DIALOGUES = [
   ...DIALOGUES,
   ...R2_DIALOGUES,
   ...R3_DIALOGUES,
+  ...R4_DIALOGUES,
 ] satisfies readonly DialogueDefinition[];
+const ALL_DIALOGUE_VARIANT_SETS = [
+  ...R4_DIALOGUE_VARIANT_SETS,
+] satisfies readonly DialogueVariantSet[];
 
 assertValidContent({
   ...PLACEHOLDER_CONTENT,
@@ -52,6 +60,7 @@ assertValidContent({
   quests: ALL_QUESTS,
   discoveries: ALL_DISCOVERIES,
   dialogues: ALL_DIALOGUES,
+  dialogueVariantSets: ALL_DIALOGUE_VARIANT_SETS,
 });
 
 export const itemRegistry = new ContentRegistry<ItemId, ItemDefinition>('item', ALL_ITEMS);
@@ -68,3 +77,7 @@ export const dialogueRegistry = new ContentRegistry<DialogueId, DialogueDefiniti
   'dialogue',
   ALL_DIALOGUES,
 );
+export const dialogueVariantSetRegistry = new ContentRegistry<
+  DialogueVariantSetId,
+  DialogueVariantSet
+>('dialogue variant set', ALL_DIALOGUE_VARIANT_SETS);
