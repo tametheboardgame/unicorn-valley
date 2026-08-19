@@ -40,7 +40,7 @@ describe('Moonflower Glade prototype map', () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it('leaves a player-sized crossing gap where the little bridge sits', () => {
+  it('keeps the player crossing centred on the visible bridge deck', () => {
     const north = MOONFLOWER_GLADE_MAP.colliders.find(
       (collider) => collider.id === 'collision:stream-north',
     );
@@ -53,6 +53,13 @@ describe('Moonflower Glade prototype map', () => {
 
     const northEdge = (north?.y ?? 0) + (north?.height ?? 0) / 2;
     const southEdge = (south?.y ?? 0) - (south?.height ?? 0) / 2;
-    expect(southEdge - northEdge).toBeGreaterThanOrEqual(MOONFLOWER_GLADE_MAP.bridge.height);
+    const gap = southEdge - northEdge;
+
+    expect(gap).toBe(MOONFLOWER_GLADE_MAP.bridge.walkableHeight);
+    expect(gap).toBeLessThan(MOONFLOWER_GLADE_MAP.bridge.height);
+    expect((northEdge + southEdge) / 2).toBe(MOONFLOWER_GLADE_MAP.bridge.y);
+    expect(isPointBlocked(MOONFLOWER_GLADE_MAP.bridge, MOONFLOWER_GLADE_MAP.colliders, 42)).toBe(
+      false,
+    );
   });
 });

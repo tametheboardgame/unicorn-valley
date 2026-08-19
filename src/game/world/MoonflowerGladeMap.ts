@@ -17,6 +17,11 @@ export interface GladeEntrance {
 
 const DEFAULT_PLAYER_SPAWN = { x: 690, y: 900 } as const;
 const playerSpawn: MapPoint = { ...DEFAULT_PLAYER_SPAWN };
+const BRIDGE_Y = 900;
+const BRIDGE_WALKABLE_HEIGHT = 142;
+const NORTH_STREAM_HEIGHT = BRIDGE_Y - BRIDGE_WALKABLE_HEIGHT / 2;
+const SOUTH_STREAM_START = BRIDGE_Y + BRIDGE_WALKABLE_HEIGHT / 2;
+const SOUTH_STREAM_HEIGHT = 1800 - SOUTH_STREAM_START;
 
 export function setMoonflowerGladePlayerSpawn(point: MapPoint): void {
   playerSpawn.x = point.x;
@@ -34,9 +39,10 @@ export const MOONFLOWER_GLADE_MAP = {
   playerSpawn,
   bridge: {
     x: 1400,
-    y: 900,
+    y: BRIDGE_Y,
     width: 380,
     height: 190,
+    walkableHeight: BRIDGE_WALKABLE_HEIGHT,
   },
   landmarks: [
     {
@@ -87,8 +93,20 @@ export const MOONFLOWER_GLADE_MAP = {
   ] satisfies readonly GladeEntrance[],
   colliders: [
     { id: 'collision:cottage', x: 560, y: 470, width: 460, height: 360 },
-    { id: 'collision:stream-north', x: 1400, y: 402.5, width: 220, height: 805 },
-    { id: 'collision:stream-south', x: 1400, y: 1397.5, width: 220, height: 805 },
+    {
+      id: 'collision:stream-north',
+      x: 1400,
+      y: NORTH_STREAM_HEIGHT / 2,
+      width: 220,
+      height: NORTH_STREAM_HEIGHT,
+    },
+    {
+      id: 'collision:stream-south',
+      x: 1400,
+      y: SOUTH_STREAM_START + SOUTH_STREAM_HEIGHT / 2,
+      width: 220,
+      height: SOUTH_STREAM_HEIGHT,
+    },
     { id: 'collision:hollow-tree', x: 2200, y: 520, width: 170, height: 220 },
     { id: 'collision:display-stump', x: 850, y: 1120, width: 84, height: 72 },
   ] satisfies readonly CollisionRectangle[],

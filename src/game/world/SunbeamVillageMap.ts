@@ -104,8 +104,6 @@ export const SUNBEAM_VILLAGE_MAP = {
     { id: 'collision:accessory-shop', x: 1500, y: 430, width: 430, height: 320 },
     { id: 'collision:library', x: 2110, y: 480, width: 490, height: 330 },
     { id: 'collision:fountain', x: 1500, y: 1050, width: 220, height: 220 },
-    { id: 'collision:west-planter', x: 720, y: 1220, width: 210, height: 120 },
-    { id: 'collision:east-planter', x: 2280, y: 1220, width: 210, height: 120 },
   ] satisfies readonly CollisionRectangle[],
 } as const;
 
