@@ -84,7 +84,9 @@ function playerObject(scene: DiagnosticSceneSnapshot): DiagnosticObjectSnapshot 
   return player;
 }
 
-test('exploration chrome uses stable zones, collapsible ideas and a centred canvas', async ({ page }) => {
+test('exploration chrome uses stable zones, collapsible ideas and a centred canvas', async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/?scene=glade&diagnostics=1');
   await waitForScene(page, 'MoonflowerGladeScene');
@@ -116,9 +118,9 @@ test('exploration chrome uses stable zones, collapsible ideas and a centred canv
   expect(
     glade.objects.some((object) => object.visible && object.text?.startsWith('Pip is nearby.')),
   ).toBe(false);
-  expect(glade.objects.some((object) => object.name === 'activity-suggestion-card' && object.visible)).toBe(
-    true,
-  );
+  expect(
+    glade.objects.some((object) => object.name === 'activity-suggestion-card' && object.visible),
+  ).toBe(true);
 
   await logicalClick(page, 422, 117);
   await page.waitForTimeout(80);
@@ -126,29 +128,28 @@ test('exploration chrome uses stable zones, collapsible ideas and a centred canv
   glade = sceneSnapshot(snapshot, 'MoonflowerGladeScene');
   expect(
     glade.objects.some(
-      (object) => object.name === 'activity-suggestion-reopen' && object.visible && object.interactive,
+      (object) =>
+        object.name === 'activity-suggestion-reopen' && object.visible && object.interactive,
     ),
   ).toBe(true);
-  expect(glade.objects.some((object) => object.name === 'activity-suggestion-card' && object.visible)).toBe(
-    false,
-  );
+  expect(
+    glade.objects.some((object) => object.name === 'activity-suggestion-card' && object.visible),
+  ).toBe(false);
 
   await logicalClick(page, 52, 102);
   await page.waitForTimeout(80);
   snapshot = await getSnapshot(page);
   glade = sceneSnapshot(snapshot, 'MoonflowerGladeScene');
-  expect(glade.objects.some((object) => object.name === 'activity-suggestion-card' && object.visible)).toBe(
-    true,
-  );
+  expect(
+    glade.objects.some((object) => object.name === 'activity-suggestion-card' && object.visible),
+  ).toBe(true);
 
   await logicalClick(page, 1168, 682);
   await page.waitForTimeout(80);
   snapshot = await getSnapshot(page);
   glade = sceneSnapshot(snapshot, 'MoonflowerGladeScene');
   expect(
-    glade.objects.some(
-      (object) => object.name === 'exploration-controls-panel' && object.visible,
-    ),
+    glade.objects.some((object) => object.name === 'exploration-controls-panel' && object.visible),
   ).toBe(true);
 });
 
@@ -227,9 +228,7 @@ test('Nova keeps her canonical identity and returns the player to the exact conv
   snapshot = await getSnapshot(page);
   const story = sceneSnapshot(snapshot, 'NovaStoryScene');
   expect(
-    story.objects.some(
-      (object) => object.name === 'nova-canonical-identity' && object.visible,
-    ),
+    story.objects.some((object) => object.name === 'nova-canonical-identity' && object.visible),
   ).toBe(true);
 
   await page.keyboard.press('Escape');
@@ -268,20 +267,16 @@ test('finishing a Nova conversation offers a direct race choice and races use ca
     return story?.objects.some((object) => object.name === 'nova-race-decision' && object.visible);
   });
 
-  let snapshot = await getSnapshot(page);
-  let story = sceneSnapshot(snapshot, 'NovaStoryScene');
-  expect(story.objects.some((object) => object.visible && object.text === 'Do you want to race now?')).toBe(
-    true,
-  );
+  const snapshot = await getSnapshot(page);
+  const story = sceneSnapshot(snapshot, 'NovaStoryScene');
   expect(
-    story.objects.some(
-      (object) => object.name === 'nova-race-decision-yes' && object.interactive,
-    ),
+    story.objects.some((object) => object.visible && object.text === 'Do you want to race now?'),
   ).toBe(true);
   expect(
-    story.objects.some(
-      (object) => object.name === 'nova-race-decision-no' && object.interactive,
-    ),
+    story.objects.some((object) => object.name === 'nova-race-decision-yes' && object.interactive),
+  ).toBe(true);
+  expect(
+    story.objects.some((object) => object.name === 'nova-race-decision-no' && object.interactive),
   ).toBe(true);
 
   await page.keyboard.press('Enter');
@@ -296,8 +291,8 @@ test('finishing a Nova conversation offers a direct race choice and races use ca
     return race?.objects.some((object) => object.name === 'nova-canonical-racer' && object.visible);
   });
 
-  snapshot = await getSnapshot(page);
-  const race = sceneSnapshot(snapshot, 'NovaTutorialRaceScene');
+  const raceSnapshot = await getSnapshot(page);
+  const race = sceneSnapshot(raceSnapshot, 'NovaTutorialRaceScene');
   expect(
     race.objects.some((object) => object.name === 'nova-canonical-racer' && object.visible),
   ).toBe(true);
