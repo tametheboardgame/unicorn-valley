@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
+import { rememberRainbowMeadowPlayerPosition } from '../world/RainbowMeadowReturnPoint';
 import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from './uiTheme';
 
 const LOCATION_TITLES: Readonly<Record<string, string>> = {
@@ -134,6 +135,13 @@ export class ExplorationChrome {
     const locationTitle = LOCATION_TITLES[this.scene.scene.key];
     if (!locationTitle) {
       return;
+    }
+
+    if (this.scene.scene.key === 'RainbowMeadowScene') {
+      const player = this.scene.children.getByName('world-player-unicorn');
+      if (player instanceof Phaser.GameObjects.Sprite) {
+        rememberRainbowMeadowPlayerPosition({ x: player.x, y: player.y });
+      }
     }
 
     for (const object of this.scene.children.list) {
