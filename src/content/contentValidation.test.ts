@@ -4,6 +4,7 @@ import { PLACEHOLDER_CONTENT } from './placeholderContent';
 import {
   characterRegistry,
   dialogueRegistry,
+  dialogueVariantSetRegistry,
   discoveryRegistry,
   itemRegistry,
   questRegistry,
@@ -19,6 +20,7 @@ describe('content registry and validation', () => {
     expect(questRegistry.has('quest:first-sparkle')).toBe(true);
     expect(discoveryRegistry.has('discovery:moonflower-glade')).toBe(true);
     expect(dialogueRegistry.has('dialogue:interaction-sample')).toBe(true);
+    expect(dialogueVariantSetRegistry.has('dialogue-variants:willow-post-moonflowers')).toBe(true);
   });
 
   it('rejects duplicate IDs', () => {
@@ -61,6 +63,49 @@ describe('content registry and validation', () => {
 
     expect(validateContent(invalid)).toContain(
       'Dialogue dialogue:broken references missing start node dialogue-node:missing.',
+    );
+  });
+
+  it('rejects broken conditional dialogue references', () => {
+    const invalid: ContentBundle = {
+      ...PLACEHOLDER_CONTENT,
+      dialogueVariantSets: [
+        {
+          id: 'dialogue-variants:broken',
+          variants: [
+            {
+              dialogueId: 'dialogue:missing',
+              priority: 1.5,
+              conditions: [
+                {
+                  type: 'quest-status',
+                  questId: 'quest:missing',
+                  status: 'completed',
+                },
+                {
+                  type: 'relationship-flag',
+                  characterId: 'character:pip',
+                  flag: '   ',
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    };
+
+    const errors = validateContent(invalid);
+    expect(errors).toContain(
+      'Dialogue variant set dialogue-variants:broken references missing dialogue dialogue:missing.',
+    );
+    expect(errors).toContain(
+      'Dialogue variant set dialogue-variants:broken references missing quest quest:missing.',
+    );
+    expect(errors).toContain(
+      'Dialogue variant set dialogue-variants:broken has an empty relationship flag.',
+    );
+    expect(errors).toContain(
+      'Dialogue variant set dialogue-variants:broken has invalid priority 1.5 for dialogue:missing.',
     );
   });
 
