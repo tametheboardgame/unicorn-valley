@@ -428,7 +428,10 @@ export class RacePlaytestRecoveryManager {
       (feature) => feature.id === 'rainbow-run-entrance',
     );
     if (raceEntrance) {
-      setRainbowMeadowPlayerSpawn(raceEntrance.approach);
+      setRainbowMeadowPlayerSpawn({
+        x: raceEntrance.approach.x - 260,
+        y: raceEntrance.approach.y,
+      });
     }
     saveLocationCheckpoint(getBrowserSaveService(), RAINBOW_MEADOW_LOCATION_ID);
     scene.scene.start('RainbowMeadowScene');

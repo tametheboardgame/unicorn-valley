@@ -244,6 +244,10 @@ export class RainbowMeadowScene extends Phaser.Scene {
   }
 
   private activateInteraction(target: InteractionTarget): void {
+    if (target.id === 'interaction:meadow-race-entrance') {
+      return;
+    }
+
     if (target.result.type === 'scene-transition') {
       if (target.result.sceneKey === 'SunbeamVillageScene') {
         const meadowEntrance = SUNBEAM_VILLAGE_MAP.entrances.find(

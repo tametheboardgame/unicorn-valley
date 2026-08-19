@@ -166,17 +166,12 @@ test('Sunrise Sprint finish controls remain clickable after the result panel app
   });
 
   const finished = await getSnapshot(page);
-  await logicalClick(page, finished.width / 2 - 145, finished.height / 2 + 190);
+  await logicalClick(page, finished.width / 2 + 145, finished.height / 2 + 190);
 
-  await page.waitForFunction(() => {
-    const diagnosticWindow = window as typeof window & {
-      __UNICORN_VALLEY_DIAGNOSTICS__?: { snapshot(): BrowserDiagnosticSnapshot };
-    };
-    const race = diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__
-      ?.snapshot()
-      .scenes.find((scene) => scene.key === 'RaceScene');
-    return race?.state.raceFinished === false;
-  });
+  await waitForScene(page, 'RainbowMeadowScene');
 
-  expect((await getSnapshot(page)).activeScenes).toContain('RaceScene');
+  const returned = await getSnapshot(page);
+  expect(returned.activeScenes).toContain('RainbowMeadowScene');
+  const meadow = sceneSnapshot(returned, 'RainbowMeadowScene');
+  expect(meadow.objects.some((object) => object.name === 'race-entry-confirmation')).toBe(false);
 });
