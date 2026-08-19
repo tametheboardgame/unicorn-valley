@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { getClickToMoveManager } from '../input/ClickToMoveManager';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
+import { getRacePlaytestRecoveryManager } from '../racing/RacePlaytestRecoveryManager';
 import { getRacePlayerControlManager } from '../racing/RacePlayerControlManager';
 import { getVisualTighteningManager } from '../visual/VisualTighteningManager';
 import { getWorldCharacterPresentationManager } from '../world/WorldCharacterPresentationManager';
@@ -34,6 +35,7 @@ export class BootScene extends Phaser.Scene {
     getVisualTighteningManager(this.sys.game);
     getWorldTraversalPolishManager(this.sys.game);
     getRacePlayerControlManager(this.sys.game);
+    getRacePlaytestRecoveryManager(this.sys.game);
     const requestedScene = new URLSearchParams(globalThis.location.search).get('scene');
     this.registry.set(
       'postPreloadScene',
