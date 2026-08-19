@@ -33,7 +33,6 @@ body {
 #game-shell {
   display: flex;
   width: 100vw;
-  height: 100vh;
   height: 100dvh;
   align-items: center;
   justify-content: center;
@@ -44,7 +43,6 @@ body {
   position: relative;
   display: grid;
   width: 100vw;
-  height: 100vh;
   height: 100dvh;
   place-items: center;
   overflow: hidden;
@@ -53,9 +51,8 @@ body {
 canvas {
   display: block;
   max-width: 100vw;
-  max-height: 100vh;
   max-height: 100dvh;
-  margin-inline: auto !important;
+  margin-inline: auto;
 }
 
 .unicorn-name-input {
