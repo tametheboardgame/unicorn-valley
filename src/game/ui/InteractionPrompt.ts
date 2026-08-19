@@ -1,4 +1,4 @@
-import Phaser from 'phaser';
+import type Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import type { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 import type { InteractionTarget } from '../interaction/InteractionTarget';
