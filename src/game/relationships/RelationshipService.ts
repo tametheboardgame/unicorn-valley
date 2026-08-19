@@ -83,6 +83,15 @@ export class RelationshipService {
     return meetsFriendshipTier(this.getTier(characterId), minimumTier);
   }
 
+  public hasFlag(characterId: CharacterId, flag: string): boolean {
+    characterRegistry.get(characterId);
+    const trimmed = flag.trim();
+    if (!trimmed) {
+      return false;
+    }
+    return this.getRelationship(characterId).flags.includes(trimmed);
+  }
+
   public addFriendship(characterId: CharacterId, amount: number): RelationshipProgress {
     characterRegistry.get(characterId);
     if (!Number.isInteger(amount) || amount <= 0) {
