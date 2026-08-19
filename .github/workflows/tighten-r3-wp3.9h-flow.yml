@@ -1,0 +1,74 @@
+name: Tighten R3 WP3.9H Flow
+
+on:
+  push:
+    branches:
+      - agent/r3-wp3.9h-race-flow-recovery
+
+permissions:
+  contents: write
+
+jobs:
+  tighten:
+    if: github.event.head_commit.message != 'Tighten R3-WP3.9H return flow'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out recovery branch
+        uses: actions/checkout@v6
+        with:
+          ref: agent/r3-wp3.9h-race-flow-recovery
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22.23.2
+          package-manager-cache: false
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Tighten return and legacy interaction flow
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          manager = Path('src/game/racing/RacePlaytestRecoveryManager.ts')
+          text = manager.read_text()
+          text = text.replace(
+              'setRainbowMeadowPlayerSpawn(raceEntrance.approach);',
+              "setRainbowMeadowPlayerSpawn({\n        x: raceEntrance.approach.x - 260,\n        y: raceEntrance.approach.y,\n      });",
+          )
+          manager.write_text(text)
+
+          meadow = Path('src/game/scenes/RainbowMeadowScene.ts')
+          text = meadow.read_text()
+          needle = '  private activateInteraction(target: InteractionTarget): void {\n'
+          replacement = needle + "    if (target.id === 'interaction:meadow-race-entrance') {\n      return;\n    }\n\n"
+          if "target.id === 'interaction:meadow-race-entrance'" not in text:
+              text = text.replace(needle, replacement)
+          meadow.write_text(text)
+
+          test = Path('tests/play/r3-wp3.9h-race-flow.spec.ts')
+          text = test.read_text()
+          text = text.replace(
+              'await logicalClick(page, finished.width / 2 - 145, finished.height / 2 + 190);',
+              'await logicalClick(page, finished.width / 2 + 145, finished.height / 2 + 190);',
+          )
+          old = """  await page.waitForFunction(() => {\n    const diagnosticWindow = window as typeof window & {\n      __UNICORN_VALLEY_DIAGNOSTICS__?: { snapshot(): BrowserDiagnosticSnapshot };\n    };\n    const race = diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__\n      ?.snapshot()\n      .scenes.find((scene) => scene.key === 'RaceScene');\n    return race?.state.raceFinished === false;\n  });\n\n  expect((await getSnapshot(page)).activeScenes).toContain('RaceScene');\n"""
+          new = """  await waitForScene(page, 'RainbowMeadowScene');\n\n  const returned = await getSnapshot(page);\n  expect(returned.activeScenes).toContain('RainbowMeadowScene');\n  const meadow = sceneSnapshot(returned, 'RainbowMeadowScene');\n  expect(meadow.objects.some((object) => object.name === 'race-entry-confirmation')).toBe(false);\n"""
+          if old not in text:
+              raise SystemExit('Expected restart assertion block not found')
+          test.write_text(text.replace(old, new))
+          PY
+          npx biome format --write src/game/racing/RacePlaytestRecoveryManager.ts src/game/scenes/RainbowMeadowScene.ts tests/play/r3-wp3.9h-race-flow.spec.ts
+          npm run typecheck
+
+      - name: Commit tightening
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/game/racing/RacePlaytestRecoveryManager.ts src/game/scenes/RainbowMeadowScene.ts tests/play/r3-wp3.9h-race-flow.spec.ts
+          git commit -m 'Tighten R3-WP3.9H return flow'
+          git push
