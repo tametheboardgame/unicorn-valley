@@ -194,6 +194,10 @@ export class ClickToMoveManager {
 
   private hasVisibleModal(scene: Phaser.Scene): boolean {
     return scene.children.list.some((gameObject) => {
+      if (gameObject.name.startsWith('exploration-location-title')) {
+        return false;
+      }
+
       const displayObject = gameObject as Phaser.GameObjects.GameObject & {
         visible?: boolean;
         depth?: number;
