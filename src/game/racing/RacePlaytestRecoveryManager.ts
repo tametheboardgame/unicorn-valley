@@ -95,6 +95,10 @@ function asRaceScene(scene: Phaser.Scene): RaceSceneRuntime {
   return scene as unknown as RaceSceneRuntime;
 }
 
+function justDown(key: Phaser.Input.Keyboard.Key | null): boolean {
+  return key ? Phaser.Input.Keyboard.JustDown(key) : false;
+}
+
 export class RacePlaytestRecoveryManager {
   private readonly meadowStates = new WeakMap<Phaser.Scene, MeadowState>();
   private readonly finishStates = new WeakMap<Phaser.Scene, FinishState>();
@@ -124,15 +128,9 @@ export class RacePlaytestRecoveryManager {
     }
 
     if (state.modal) {
-      if (
-        Phaser.Input.Keyboard.JustDown(state.yesKey) ||
-        Phaser.Input.Keyboard.JustDown(state.enterKey)
-      ) {
+      if (justDown(state.yesKey) || justDown(state.enterKey)) {
         this.confirmRaceEntry(scene, state);
-      } else if (
-        Phaser.Input.Keyboard.JustDown(state.noKey) ||
-        Phaser.Input.Keyboard.JustDown(state.escapeKey)
-      ) {
+      } else if (justDown(state.noKey) || justDown(state.escapeKey)) {
         this.closeRaceEntry(scene, state);
       }
       return;
@@ -178,6 +176,7 @@ export class RacePlaytestRecoveryManager {
     this.meadowStates.set(scene, state);
 
     scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      state.sign?.destroy(true);
       this.destroyRaceEntry(state);
       this.meadowStates.delete(scene);
     });
@@ -366,12 +365,9 @@ export class RacePlaytestRecoveryManager {
       this.installFinishZones(scene, state);
     }
 
-    if (
-      Phaser.Input.Keyboard.JustDown(state.enterKey) ||
-      Phaser.Input.Keyboard.JustDown(state.rKey)
-    ) {
+    if (justDown(state.enterKey) || justDown(state.rKey)) {
       this.restartRace(scene);
-    } else if (Phaser.Input.Keyboard.JustDown(state.mKey)) {
+    } else if (justDown(state.mKey)) {
       this.exitRace(scene);
     }
   }
