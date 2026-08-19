@@ -154,7 +154,7 @@ function replaceMeadowNova(scene: Phaser.Scene): void {
   }
 
   const oldNova = scene.children.list.find(
-    (object) =>
+    (object): object is Phaser.GameObjects.Container =>
       object instanceof Phaser.GameObjects.Container &&
       Math.abs(object.x - marker.position.x) < 2 &&
       Math.abs(object.y - marker.position.y) < 12 &&
@@ -273,8 +273,11 @@ function applyCanonicalNovaToRace(scene: Phaser.Scene): void {
     return;
   }
 
+  const displayWidth = nova.displayWidth;
+  const displayHeight = nova.displayHeight;
   nova
     .setTexture(ensureNovaIdentityTexture(scene))
+    .setDisplaySize(displayWidth, displayHeight)
     .clearTint()
     .setAlpha(1)
     .setName('nova-canonical-racer');
