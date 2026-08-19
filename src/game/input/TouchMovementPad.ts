@@ -9,7 +9,7 @@ export function shouldShowTouchMovementPad(
   maxTouchPoints: number,
   hasTouchStart: boolean,
 ): boolean {
-  return maxTouchPoints > 0 || hasTouchStart;
+  return preferredTouchControlsVisible === true || maxTouchPoints > 0 || hasTouchStart;
 }
 
 function shouldDefaultTouchMovementPadVisible(): boolean {
