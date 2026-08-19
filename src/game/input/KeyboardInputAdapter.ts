@@ -2,20 +2,83 @@ import Phaser from 'phaser';
 import type { InputAdapter } from './InputAdapter';
 import { BUTTON_INPUT_ACTIONS, type AxisInputAction, type ButtonInputAction } from './InputAction';
 import { resolvePressedButtonActions } from './KeyboardButtonPress';
-import { SceneTransitionMovementGate } from './SceneTransitionMovementGate';
 
 interface AxisBinding {
   negative: readonly Phaser.Input.Keyboard.Key[];
   positive: readonly Phaser.Input.Keyboard.Key[];
 }
 
+const EXPLORATION_MOVEMENT_CODES = new Set([
+  'ArrowLeft',
+  'ArrowRight',
+  'ArrowUp',
+  'ArrowDown',
+  'KeyA',
+  'KeyD',
+  'KeyW',
+  'KeyS',
+]);
+const heldExplorationMovementCodes = new Set<string>();
+let movementTrackingInstalled = false;
+
+function isEditableKeyboardTarget(target: EventTarget | null): boolean {
+  const element = target as {
+    tagName?: string;
+    isContentEditable?: boolean;
+  } | null;
+  const tagName = element?.tagName?.toUpperCase();
+  return (
+    tagName === 'INPUT' ||
+    tagName === 'TEXTAREA' ||
+    tagName === 'SELECT' ||
+    element?.isContentEditable === true
+  );
+}
+
+function ensureExplorationMovementTracking(): void {
+  if (movementTrackingInstalled || typeof globalThis.addEventListener !== 'function') {
+    return;
+  }
+
+  globalThis.addEventListener('keydown', (event: KeyboardEvent) => {
+    if (EXPLORATION_MOVEMENT_CODES.has(event.code) && !isEditableKeyboardTarget(event.target)) {
+      heldExplorationMovementCodes.add(event.code);
+    }
+  });
+  globalThis.addEventListener('keyup', (event: KeyboardEvent) => {
+    if (EXPLORATION_MOVEMENT_CODES.has(event.code)) {
+      heldExplorationMovementCodes.delete(event.code);
+    }
+  });
+  globalThis.addEventListener('blur', () => heldExplorationMovementCodes.clear());
+  movementTrackingInstalled = true;
+}
+
+function trackedExplorationAxis(action: 'MOVE_X' | 'MOVE_Y'): number {
+  ensureExplorationMovementTracking();
+
+  const negativeCodes =
+    action === 'MOVE_X' ? (['ArrowLeft', 'KeyA'] as const) : (['ArrowUp', 'KeyW'] as const);
+  const positiveCodes =
+    action === 'MOVE_X' ? (['ArrowRight', 'KeyD'] as const) : (['ArrowDown', 'KeyS'] as const);
+  const negative = negativeCodes.some((code) => heldExplorationMovementCodes.has(code)) ? -1 : 0;
+  const positive = positiveCodes.some((code) => heldExplorationMovementCodes.has(code)) ? 1 : 0;
+  return negative + positive;
+}
+
+export function hasHeldExplorationMovementInput(): boolean {
+  ensureExplorationMovementTracking();
+  return heldExplorationMovementCodes.size > 0;
+}
+
 export class KeyboardInputAdapter implements InputAdapter {
   private readonly buttons: Record<ButtonInputAction, readonly Phaser.Input.Keyboard.Key[]>;
   private readonly axes: Record<AxisInputAction, AxisBinding>;
   private readonly pressedThisFrame = new Set<ButtonInputAction>();
-  private readonly movementGate = new SceneTransitionMovementGate();
 
   public constructor(scene: Phaser.Scene) {
+    ensureExplorationMovementTracking();
+
     const keyboard = scene.input.keyboard;
     if (!keyboard) {
       throw new Error('Keyboard input is unavailable for this scene.');
@@ -74,21 +137,17 @@ export class KeyboardInputAdapter implements InputAdapter {
     for (const action of pressedActions) {
       this.pressedThisFrame.add(action);
     }
-
-    const movementKeys = new Set<Phaser.Input.Keyboard.Key>();
-    for (const binding of Object.values(this.axes)) {
-      for (const key of [...binding.negative, ...binding.positive]) {
-        movementKeys.add(key);
-      }
-    }
-    this.movementGate.update([...movementKeys].some((key) => key.isDown));
   }
 
   public getAxis(action: AxisInputAction): number {
+    if (action === 'MOVE_X' || action === 'MOVE_Y') {
+      return trackedExplorationAxis(action);
+    }
+
     const binding = this.axes[action];
     const negative = binding.negative.some((key) => key.isDown) ? -1 : 0;
     const positive = binding.positive.some((key) => key.isDown) ? 1 : 0;
-    return this.movementGate.filter(negative + positive);
+    return negative + positive;
   }
 
   public isDown(action: ButtonInputAction): boolean {

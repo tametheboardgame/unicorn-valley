@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
+import type { TouchMovementPad } from '../input/TouchMovementPad';
 import { rememberRainbowMeadowPlayerPosition } from '../world/RainbowMeadowReturnPoint';
 import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from './uiTheme';
 
@@ -23,14 +24,21 @@ export class ExplorationChrome {
   private readonly titleText: Phaser.GameObjects.Text | null;
   private readonly controlsButton: Phaser.GameObjects.Rectangle | null;
   private readonly controlsLabel: Phaser.GameObjects.Text | null;
+  private readonly touchToggleButton: Phaser.GameObjects.Rectangle | null;
+  private readonly touchToggleLabel: Phaser.GameObjects.Text | null;
   private helpOpen = false;
 
-  public constructor(private readonly scene: Phaser.Scene) {
+  public constructor(
+    private readonly scene: Phaser.Scene,
+    private readonly touchMovementPad: TouchMovementPad,
+  ) {
     const locationTitle = LOCATION_TITLES[scene.scene.key];
     if (!locationTitle) {
       this.titleText = null;
       this.controlsButton = null;
       this.controlsLabel = null;
+      this.touchToggleButton = null;
+      this.touchToggleLabel = null;
       return;
     }
 
@@ -70,22 +78,23 @@ export class ExplorationChrome {
         fontSize: '17px',
         fontStyle: 'bold',
       })
+      .setName('exploration-controls-label')
       .setOrigin(0.5)
       .setScrollFactor(0)
       .setDepth(125);
     applyButtonHover(this.controlsButton, UI_COLOURS.cream, UI_COLOURS.gold);
 
     const panelX = GAME_WIDTH - 190;
-    const panelY = GAME_HEIGHT - 144;
-    const panelShadow = createUiShadow(scene, panelX, panelY, 350, 140, 126, 0.2);
+    const panelY = GAME_HEIGHT - 170;
+    const panelShadow = createUiShadow(scene, panelX, panelY, 350, 190, 126, 0.2);
     const panel = scene.add
-      .rectangle(panelX, panelY, 350, 140, UI_COLOURS.cream, 0.99)
+      .rectangle(panelX, panelY, 350, 190, UI_COLOURS.cream, 0.99)
       .setName('exploration-controls-panel')
       .setStrokeStyle(4, UI_COLOURS.lavenderStrong, 0.98)
       .setScrollFactor(0)
       .setDepth(127);
     const heading = scene.add
-      .text(panelX, panelY - 45, 'How to play', {
+      .text(panelX, panelY - 70, 'How to play', {
         color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
         fontSize: '18px',
@@ -97,21 +106,49 @@ export class ExplorationChrome {
     const help = scene.add
       .text(
         panelX,
-        panelY + 12,
-        'Move: WASD / arrows\nInteract: E / Enter / Space\nB: Wonderbook   I: Bag   Esc: title',
+        panelY - 18,
+        'Move: WASD / arrows\nClick/tap the ground: walk there\nInteract: E / Enter / Space\nB: Wonderbook   I: Bag   Esc: title',
         {
           color: UI_COLOURS.softInk,
           fontFamily: UI_FONT,
           fontSize: '14px',
           align: 'center',
-          lineSpacing: 5,
+          lineSpacing: 4,
         },
       )
+      .setName('exploration-controls-help')
       .setOrigin(0.5)
       .setScrollFactor(0)
       .setDepth(128);
 
-    this.helpObjects.push(panelShadow, panel, heading, help);
+    this.touchToggleButton = scene.add
+      .rectangle(panelX, panelY + 62, 245, 38, UI_COLOURS.lavender, 1)
+      .setName('exploration-touch-controls-toggle')
+      .setStrokeStyle(2, UI_COLOURS.lavenderStrong, 0.95)
+      .setScrollFactor(0)
+      .setDepth(128)
+      .setInteractive({ useHandCursor: true });
+    this.touchToggleLabel = scene.add
+      .text(panelX, panelY + 62, '', {
+        color: UI_COLOURS.ink,
+        fontFamily: UI_FONT,
+        fontSize: '14px',
+        fontStyle: 'bold',
+      })
+      .setName('exploration-touch-controls-toggle-label')
+      .setOrigin(0.5)
+      .setScrollFactor(0)
+      .setDepth(129);
+    applyButtonHover(this.touchToggleButton, UI_COLOURS.lavender, UI_COLOURS.blush);
+
+    this.helpObjects.push(
+      panelShadow,
+      panel,
+      heading,
+      help,
+      this.touchToggleButton,
+      this.touchToggleLabel,
+    );
     this.objects.push(
       titleShadow,
       titlePanel,
@@ -126,7 +163,12 @@ export class ExplorationChrome {
       this.helpOpen = !this.helpOpen;
       this.setHelpVisible(this.helpOpen);
     });
+    this.touchToggleButton.on('pointerdown', () => {
+      this.touchMovementPad.togglePreferredVisibility();
+      this.refreshTouchToggleLabel();
+    });
 
+    this.refreshTouchToggleLabel();
     this.setHelpVisible(false);
     this.refresh();
   }
@@ -144,6 +186,8 @@ export class ExplorationChrome {
       }
     }
 
+    this.refreshTouchToggleLabel();
+
     for (const object of this.scene.children.list) {
       if (!(object instanceof Phaser.GameObjects.Text) || object === this.titleText) {
         continue;
@@ -152,7 +196,8 @@ export class ExplorationChrome {
       const text = object.text.trim();
       const isLegacyTitle =
         text === locationTitle && object.scrollFactorX === 0 && object.depth >= 100;
-      const isLegacyControls = text.startsWith('Move: WASD / arrows');
+      const isLegacyControls =
+        object.name !== 'exploration-controls-help' && text.startsWith('Move: WASD / arrows');
       const isLegacyStatus = LEGACY_STATUS_PREFIXES.some((prefix) => text.startsWith(prefix));
       if (isLegacyTitle || isLegacyControls || isLegacyStatus) {
         object.setVisible(false);
@@ -168,9 +213,22 @@ export class ExplorationChrome {
     this.helpObjects.length = 0;
   }
 
+  private refreshTouchToggleLabel(): void {
+    this.touchToggleLabel?.setText(
+      this.touchMovementPad.isVisible() ? 'Touch buttons: On' : 'Touch buttons: Off',
+    );
+  }
+
   private setHelpVisible(visible: boolean): void {
     for (const object of this.helpObjects) {
       object.setVisible(visible);
+    }
+    if (this.touchToggleButton) {
+      if (visible) {
+        this.touchToggleButton.setInteractive({ useHandCursor: true });
+      } else {
+        this.touchToggleButton.disableInteractive();
+      }
     }
     this.controlsLabel?.setText(visible ? 'Controls  ×' : 'Controls  ?');
   }

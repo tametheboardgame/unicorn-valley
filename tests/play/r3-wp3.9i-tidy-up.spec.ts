@@ -84,7 +84,7 @@ function playerObject(scene: DiagnosticSceneSnapshot): DiagnosticObjectSnapshot 
   return player;
 }
 
-test('exploration chrome uses stable zones, collapsible ideas and a centred canvas', async ({
+test('exploration chrome uses stable zones, visible help, touch toggle and a centred canvas', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
@@ -119,10 +119,12 @@ test('exploration chrome uses stable zones, collapsible ideas and a centred canv
     glade.objects.some((object) => object.visible && object.text?.startsWith('Pip is nearby.')),
   ).toBe(false);
   expect(
-    glade.objects.some((object) => object.name === 'activity-suggestion-card' && object.visible),
+    glade.objects.some(
+      (object) => object.name === 'activity-suggestion-card' && object.visible && object.y < 140,
+    ),
   ).toBe(true);
 
-  await logicalClick(page, 422, 117);
+  await logicalClick(page, 422, 46);
   await page.waitForTimeout(80);
   snapshot = await getSnapshot(page);
   glade = sceneSnapshot(snapshot, 'MoonflowerGladeScene');
@@ -151,9 +153,47 @@ test('exploration chrome uses stable zones, collapsible ideas and a centred canv
   expect(
     glade.objects.some((object) => object.name === 'exploration-controls-panel' && object.visible),
   ).toBe(true);
+  expect(
+    glade.objects.some(
+      (object) =>
+        object.name === 'exploration-controls-help' &&
+        object.visible &&
+        object.text?.includes('Click/tap the ground: walk there'),
+    ),
+  ).toBe(true);
+  expect(
+    glade.objects.some((object) => object.name === 'touch-movement-left' && object.visible),
+  ).toBe(false);
+
+  await logicalClick(page, 1090, 612);
+  await page.waitForTimeout(80);
+  snapshot = await getSnapshot(page);
+  glade = sceneSnapshot(snapshot, 'MoonflowerGladeScene');
+  expect(
+    glade.objects.some(
+      (object) => object.name === 'touch-movement-left' && object.visible && object.interactive,
+    ),
+  ).toBe(true);
 });
 
-test('held movement is neutralised when an automatic world transition creates the next scene', async ({
+test('clicking open ground moves the unicorn again', async ({ page }) => {
+  await page.goto('/?scene=glade&diagnostics=1');
+  await waitForScene(page, 'MoonflowerGladeScene');
+
+  let snapshot = await getSnapshot(page);
+  let glade = sceneSnapshot(snapshot, 'MoonflowerGladeScene');
+  const before = playerObject(glade);
+
+  await logicalClick(page, 900, 360);
+  await page.waitForTimeout(900);
+
+  snapshot = await getSnapshot(page);
+  glade = sceneSnapshot(snapshot, 'MoonflowerGladeScene');
+  const after = playerObject(glade);
+  expect(after.x - before.x).toBeGreaterThan(60);
+});
+
+test('held movement carries through an automatic world transition on the first pass', async ({
   page,
 }) => {
   await page.goto('/?scene=glade&diagnostics=1');
@@ -169,18 +209,9 @@ test('held movement is neutralised when an automatic world transition creates th
   snapshot = await getSnapshot(page);
   village = sceneSnapshot(snapshot, 'SunbeamVillageScene');
   const stillHeld = playerObject(village);
-  expect(Math.abs(stillHeld.x - arrived.x)).toBeLessThan(4);
+  expect(stillHeld.x - arrived.x).toBeGreaterThan(20);
 
   await page.keyboard.up('ArrowRight');
-  await page.waitForTimeout(80);
-  await page.keyboard.down('ArrowRight');
-  await page.waitForTimeout(260);
-  await page.keyboard.up('ArrowRight');
-
-  snapshot = await getSnapshot(page);
-  village = sceneSnapshot(snapshot, 'SunbeamVillageScene');
-  const movedAfterRelease = playerObject(village);
-  expect(movedAfterRelease.x - stillHeld.x).toBeGreaterThan(20);
 });
 
 test('Nova keeps her canonical identity and returns the player to the exact conversation point', async ({
