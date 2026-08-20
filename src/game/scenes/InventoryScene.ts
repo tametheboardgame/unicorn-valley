@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
+import { ShimmerEconomyService } from '../economy/ShimmerEconomyService';
 import { InputController } from '../input/InputController';
 import { KeyboardInputAdapter } from '../input/KeyboardInputAdapter';
 import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
@@ -46,7 +47,20 @@ export class InventoryScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
 
-    const inventory = new InventoryService(getBrowserSaveService());
+    const saveService = getBrowserSaveService();
+    const economy = new ShimmerEconomyService(saveService);
+    this.add
+      .text(GAME_WIDTH / 2, 161, `✨ ${economy.getBalance()} Shimmer`, {
+        color: '#76518a',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '18px',
+        fontStyle: 'bold',
+        backgroundColor: '#f1e2f4',
+        padding: { x: 12, y: 5 },
+      })
+      .setOrigin(0.5);
+
+    const inventory = new InventoryService(saveService);
     const items = inventory.listOwnedItems();
     if (items.length === 0) {
       this.add
@@ -73,24 +87,42 @@ export class InventoryScene extends Phaser.Scene {
       });
     }
 
+    const closeX = GAME_WIDTH / 2 - 150;
+    const shopX = GAME_WIDTH / 2 + 150;
+    const buttonY = GAME_HEIGHT - 62;
     const closeButton = this.add
-      .rectangle(GAME_WIDTH / 2, GAME_HEIGHT - 62, 230, 60, 0xefd6ec, 1)
+      .rectangle(closeX, buttonY, 260, 60, 0xefd6ec, 1)
       .setStrokeStyle(4, 0xb985bc, 1)
       .setInteractive({ useHandCursor: true });
     this.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT - 62, 'Close Bag', {
+      .text(closeX, buttonY, 'Close Bag', {
         color: '#5d4369',
         fontFamily: 'system-ui, sans-serif',
-        fontSize: '21px',
+        fontSize: '20px',
         fontStyle: 'bold',
       })
       .setOrigin(0.5);
+    const shopButton = this.add
+      .rectangle(shopX, buttonY, 260, 60, 0xffe6a6, 1)
+      .setStrokeStyle(4, 0xd6b35f, 1)
+      .setInteractive({ useHandCursor: true });
+    const shopLabel = this.add
+      .text(shopX, buttonY, '✨ Visit the Shop', {
+        color: '#5d4369',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '20px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5)
+      .setInteractive({ useHandCursor: true });
 
     this.pointerInput = new PointerTouchInputAdapter();
     this.inputController = new InputController([new KeyboardInputAdapter(this), this.pointerInput]);
     closeButton.on('pointerdown', () => this.pointerInput?.setButton('INTERACT', true));
     closeButton.on('pointerup', () => this.pointerInput?.setButton('INTERACT', false));
     closeButton.on('pointerout', () => this.pointerInput?.setButton('INTERACT', false));
+    shopButton.on('pointerdown', () => this.openShop());
+    shopLabel.on('pointerdown', () => this.openShop());
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.inputController?.destroy();
@@ -112,6 +144,14 @@ export class InventoryScene extends Phaser.Scene {
     ) {
       this.closeBag();
     }
+  }
+
+  private openShop(): void {
+    if (this.closing) {
+      return;
+    }
+    this.closing = true;
+    this.scene.start('ShopScene', { returnScene: this.returnScene });
   }
 
   private closeBag(): void {

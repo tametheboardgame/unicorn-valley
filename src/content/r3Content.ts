@@ -3,8 +3,9 @@ import type { CharacterDefinition, DiscoveryDefinition, ItemDefinition } from '.
 export const R3_ITEMS = [
   {
     id: 'item:rainbow-run-sparkle',
-    name: 'Rainbow Sparkle',
-    description: 'A bright little race reward earned simply by reaching the Rainbow Run finish.',
+    name: 'Shimmer',
+    description:
+      'Bright valley magic earned through activities and spent on optional accessories and cottage treasures.',
     category: 'reward',
     icon: '✨',
   },
