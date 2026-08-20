@@ -68,7 +68,8 @@ export const R4_SECRET_DISCOVERIES = [
   {
     id: MOONLIT_TRAIL_DISCOVERY_ID,
     name: 'Moonlit Petal Trail',
-    description: 'A hidden trail of glowing petals linking the moonflower field back towards the old tree.',
+    description:
+      'A hidden trail of glowing petals linking the moonflower field back towards the old tree.',
     kind: 'secret',
     icon: '✨',
     undiscoveredHint: 'Two small secrets might point towards a bigger one.',
@@ -99,7 +100,8 @@ export const R4_SECRET_DEFINITIONS = [
     actionLabel: 'Listen',
     position: { x: 2025, y: 1285 },
     interactionRadius: 155,
-    feedback: 'Secret found!\nThe planted moonflowers sing three tiny notes when you listen closely. 🎵',
+    feedback:
+      'Secret found!\nThe planted moonflowers sing three tiny notes when you listen closely. 🎵',
     conditions: [
       { type: 'quest-status', questId: WILLOW_MOONFLOWERS_QUEST_ID, status: 'completed' },
       { type: 'world-flag', flagId: WILLOW_GARDEN_PLANTED_FLAG, value: true },
