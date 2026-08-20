@@ -14,6 +14,7 @@ import { createUnicornAppearanceTexture } from '../player/UnicornAppearanceRende
 import { DEFAULT_PLAYER_SPEED, resolvePlayerMovement } from '../player/PlayerMovement';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { saveLocationCheckpoint } from '../save/saveLocationCheckpoint';
+import { createMarigoldPicnicPresentation } from '../story/MarigoldPicnicPresentation';
 import { InteractionPrompt } from '../ui/InteractionPrompt';
 import { RAINBOW_MEADOW_LOCATION_ID, RAINBOW_MEADOW_MAP } from '../world/RainbowMeadowMap';
 import {
@@ -400,6 +401,7 @@ export class RainbowMeadowScene extends Phaser.Scene {
     this.createGroves();
     this.createRaceHub();
     this.createNova();
+    createMarigoldPicnicPresentation(this, getBrowserSaveService().load());
     this.createEntranceMarker();
     this.createMeadowFlowers();
   }
