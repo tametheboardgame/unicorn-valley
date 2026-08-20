@@ -60,7 +60,14 @@ export class PipEggStoryScene extends Phaser.Scene {
       })
       .setOrigin(0.5)
       .setDepth(6);
-    this.tweens.add({ targets: [body, belly], y: '-=7', duration: 900, yoyo: true, repeat: -1, ease: 'Sine.InOut' });
+    this.tweens.add({
+      targets: [body, belly],
+      y: '-=7',
+      duration: 900,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.InOut',
+    });
 
     this.pointerInput = new PointerTouchInputAdapter();
     this.inputController = new InputController([new KeyboardInputAdapter(this), this.pointerInput]);
