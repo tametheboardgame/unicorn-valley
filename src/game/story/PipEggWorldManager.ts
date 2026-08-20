@@ -103,13 +103,26 @@ export class PipEggWorldManager {
     }
 
     const markerId = awaitingIntro ? 'pip-egg-intro-marker' : target.id;
-    if (!this.gladeMarker || !this.gladeMarker.container.active || this.gladeMarker.id !== markerId) {
+    if (
+      !this.gladeMarker ||
+      !this.gladeMarker.container.active ||
+      this.gladeMarker.id !== markerId
+    ) {
       this.destroyMarker(this.gladeMarker);
       this.gladeMarker = this.createGladeMarker(scene, target, markerId, awaitingIntro);
     }
 
-    const distance = Phaser.Math.Distance.Between(player.x, player.y, target.position.x, target.position.y);
-    if (distance <= 150 && this.gladeMarker.key && Phaser.Input.Keyboard.JustDown(this.gladeMarker.key)) {
+    const distance = Phaser.Math.Distance.Between(
+      player.x,
+      player.y,
+      target.position.x,
+      target.position.y,
+    );
+    if (
+      distance <= 150 &&
+      this.gladeMarker.key &&
+      Phaser.Input.Keyboard.JustDown(this.gladeMarker.key)
+    ) {
       this.activateGladeTarget(scene, player, target, awaitingIntro);
     }
   }
@@ -121,29 +134,42 @@ export class PipEggWorldManager {
     awaitingIntro: boolean,
   ): WorldMarker {
     const glow = scene.add.circle(0, 0, 46, 0xffef9c, 0.22).setStrokeStyle(3, 0xffffff, 0.72);
-    const star = scene.add.text(0, -4, '✦', {
-      color: '#fff7bc',
-      fontFamily: 'system-ui, sans-serif',
-      fontSize: '40px',
-      fontStyle: 'bold',
-    }).setOrigin(0.5);
-    const label = scene.add.text(0, 64, awaitingIntro ? "Pip's mysterious trail" : target.label, {
-      color: '#5b4870',
-      fontFamily: 'system-ui, sans-serif',
-      fontSize: '17px',
-      fontStyle: 'bold',
-      backgroundColor: '#fff9edee',
-      padding: { x: 8, y: 5 },
-    }).setOrigin(0.5);
+    const star = scene.add
+      .text(0, -4, '✦', {
+        color: '#fff7bc',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '40px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5);
+    const label = scene.add
+      .text(0, 64, awaitingIntro ? "Pip's mysterious trail" : target.label, {
+        color: '#5b4870',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '17px',
+        fontStyle: 'bold',
+        backgroundColor: '#fff9edee',
+        padding: { x: 8, y: 5 },
+      })
+      .setOrigin(0.5);
     const zone = scene.add.zone(0, 0, 150, 150).setInteractive({ useHandCursor: true });
-    const container = scene.add.container(target.position.x, target.position.y, [glow, star, label, zone]).setDepth(21);
+    const container = scene.add
+      .container(target.position.x, target.position.y, [glow, star, label, zone])
+      .setDepth(21);
     zone.on('pointerdown', () => {
       const player = findPlayer(scene);
       if (player) {
         this.activateGladeTarget(scene, player, target, awaitingIntro);
       }
     });
-    scene.tweens.add({ targets: [glow, star], scale: 1.18, duration: 720, yoyo: true, repeat: -1, ease: 'Sine.InOut' });
+    scene.tweens.add({
+      targets: [glow, star],
+      scale: 1.18,
+      duration: 720,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.InOut',
+    });
     const key = scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.E) ?? null;
     return { id: markerId, container, key };
   }
@@ -217,41 +243,68 @@ export class PipEggWorldManager {
     this.cottageLuma?.destroy(true);
     this.cottageLuma = null;
     const markerId = `cottage-egg-${stage}`;
-    if (!this.cottageMarker || !this.cottageMarker.container.active || this.cottageMarker.id !== markerId) {
+    if (
+      !this.cottageMarker ||
+      !this.cottageMarker.container.active ||
+      this.cottageMarker.id !== markerId
+    ) {
       this.destroyMarker(this.cottageMarker);
       this.cottageMarker = this.createCottageEgg(scene, stage);
     }
 
     if (player && this.cottageMarker.key) {
-      const distance = Phaser.Math.Distance.Between(player.x, player.y, COTTAGE_NEST_POSITION.x, COTTAGE_NEST_POSITION.y);
+      const distance = Phaser.Math.Distance.Between(
+        player.x,
+        player.y,
+        COTTAGE_NEST_POSITION.x,
+        COTTAGE_NEST_POSITION.y,
+      );
       if (distance <= 150 && Phaser.Input.Keyboard.JustDown(this.cottageMarker.key)) {
         this.showFeedback(scene, this.eggStageMessage(stage));
       }
     }
   }
 
-  private createCottageEgg(scene: Phaser.Scene, stage: Exclude<PipEggStage, 'none' | 'hatch-ready' | 'hatched'>): WorldMarker {
+  private createCottageEgg(
+    scene: Phaser.Scene,
+    stage: Exclude<PipEggStage, 'none' | 'hatch-ready' | 'hatched'>,
+  ): WorldMarker {
     const nestBack = scene.add.ellipse(0, 18, 180, 78, 0xb88758, 0.72);
     const nestFront = scene.add.ellipse(0, 34, 150, 52, 0xd1a06b, 0.94);
-    const glowAlpha = stage === 'found' ? 0.08 : stage === 'warm' ? 0.2 : stage === 'glowing' ? 0.38 : 0.48;
+    const glowAlpha =
+      stage === 'found' ? 0.08 : stage === 'warm' ? 0.2 : stage === 'glowing' ? 0.38 : 0.48;
     const glow = scene.add.circle(0, -42, stage === 'cracking' ? 90 : 72, 0xffe989, glowAlpha);
     const egg = scene.add.ellipse(0, -30, 96, 126, 0xf3e7d0, 1).setStrokeStyle(5, 0xb899c8, 1);
-    const marks = scene.add.text(0, -30, stage === 'cracking' ? '✦ ϟ' : '✦ ☾', {
-      color: stage === 'glowing' || stage === 'cracking' ? '#9c77c0' : '#b58bc7',
-      fontFamily: 'system-ui, sans-serif',
-      fontSize: '23px',
-      fontStyle: 'bold',
-    }).setOrigin(0.5);
-    const label = scene.add.text(0, 92, stage === 'cracking' ? 'The egg is cracking!' : 'Strange egg', {
-      color: '#604b6d',
-      fontFamily: 'system-ui, sans-serif',
-      fontSize: '16px',
-      fontStyle: 'bold',
-      backgroundColor: '#fff9eddd',
-      padding: { x: 8, y: 4 },
-    }).setOrigin(0.5);
+    const marks = scene.add
+      .text(0, -30, stage === 'cracking' ? '✦ ϟ' : '✦ ☾', {
+        color: stage === 'glowing' || stage === 'cracking' ? '#9c77c0' : '#b58bc7',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '23px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5);
+    const label = scene.add
+      .text(0, 92, stage === 'cracking' ? 'The egg is cracking!' : 'Strange egg', {
+        color: '#604b6d',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '16px',
+        fontStyle: 'bold',
+        backgroundColor: '#fff9eddd',
+        padding: { x: 8, y: 4 },
+      })
+      .setOrigin(0.5);
     const zone = scene.add.zone(0, -18, 180, 190).setInteractive({ useHandCursor: true });
-    const container = scene.add.container(COTTAGE_NEST_POSITION.x, COTTAGE_NEST_POSITION.y, [glow, nestBack, egg, marks, nestFront, label, zone]).setDepth(15);
+    const container = scene.add
+      .container(COTTAGE_NEST_POSITION.x, COTTAGE_NEST_POSITION.y, [
+        glow,
+        nestBack,
+        egg,
+        marks,
+        nestFront,
+        label,
+        zone,
+      ])
+      .setDepth(15);
     zone.on('pointerdown', () => this.showFeedback(scene, this.eggStageMessage(stage)));
     scene.tweens.add({
       targets: [egg, marks, glow],
@@ -305,28 +358,43 @@ export class PipEggWorldManager {
     const earRight = scene.add.triangle(25, -28, 0, 27, 12, 0, 25, 29, 0x9c82ca, 1);
     const eyeLeft = scene.add.circle(-13, -6, 3.5, 0x493d67, 1);
     const eyeRight = scene.add.circle(13, -6, 3.5, 0x493d67, 1);
-    const star = scene.add.text(0, -24, '✦', {
-      color: '#fff3a8',
-      fontFamily: 'system-ui, sans-serif',
-      fontSize: '17px',
-      fontStyle: 'bold',
-    }).setOrigin(0.5);
-    const container = scene.add.container(x, y, [glow, earLeft, earRight, body, belly, eyeLeft, eyeRight, star]).setDepth(12);
-    scene.tweens.add({ targets: container, scaleY: 1.05, duration: 760, yoyo: true, repeat: -1, ease: 'Sine.InOut' });
+    const star = scene.add
+      .text(0, -24, '✦', {
+        color: '#fff3a8',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '17px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5);
+    const container = scene.add
+      .container(x, y, [glow, earLeft, earRight, body, belly, eyeLeft, eyeRight, star])
+      .setDepth(12);
+    scene.tweens.add({
+      targets: container,
+      scaleY: 1.05,
+      duration: 760,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.InOut',
+    });
     return container;
   }
 
   private showFeedback(scene: Phaser.Scene, message: string): void {
-    const text = scene.add.text(640, 120, message, {
-      color: '#5f4b6d',
-      fontFamily: 'system-ui, sans-serif',
-      fontSize: '22px',
-      fontStyle: 'bold',
-      align: 'center',
-      backgroundColor: '#fff9edf2',
-      padding: { x: 18, y: 12 },
-      wordWrap: { width: 560 },
-    }).setOrigin(0.5).setScrollFactor(0).setDepth(120);
+    const text = scene.add
+      .text(640, 120, message, {
+        color: '#5f4b6d',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '22px',
+        fontStyle: 'bold',
+        align: 'center',
+        backgroundColor: '#fff9edf2',
+        padding: { x: 18, y: 12 },
+        wordWrap: { width: 560 },
+      })
+      .setOrigin(0.5)
+      .setScrollFactor(0)
+      .setDepth(120);
     scene.time.delayedCall(3200, () => text.destroy());
   }
 
