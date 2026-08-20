@@ -17,6 +17,12 @@ import { R3_QUESTS } from './r3Quests';
 import { R4_DIALOGUE_VARIANT_SETS } from './r4DialogueVariants';
 import { R4_DIALOGUES } from './r4Dialogues';
 import { R4_EGG_CHARACTERS, R4_EGG_DISCOVERIES, R4_EGG_QUESTS } from './r4EggArc';
+import {
+  R4_PICNIC_CHARACTERS,
+  R4_PICNIC_DIALOGUES,
+  R4_PICNIC_DIALOGUE_VARIANT_SETS,
+  R4_PICNIC_QUESTS,
+} from './r4PicnicEvent';
 import { R4_SHOP_ITEMS } from './r4ShopContent';
 import type {
   CharacterDefinition,
@@ -45,12 +51,14 @@ const ALL_CHARACTERS = [
   ...R2_CHARACTERS,
   ...R3_CHARACTERS,
   ...R4_EGG_CHARACTERS,
+  ...R4_PICNIC_CHARACTERS,
 ] satisfies readonly CharacterDefinition[];
 const ALL_QUESTS = [
   ...QUESTS,
   ...R2_QUESTS,
   ...R3_QUESTS,
   ...R4_EGG_QUESTS,
+  ...R4_PICNIC_QUESTS,
 ] satisfies readonly QuestDefinition[];
 const ALL_DISCOVERIES = [
   ...DISCOVERIES,
@@ -62,9 +70,11 @@ const ALL_DIALOGUES = [
   ...R2_DIALOGUES,
   ...R3_DIALOGUES,
   ...R4_DIALOGUES,
+  ...R4_PICNIC_DIALOGUES,
 ] satisfies readonly DialogueDefinition[];
 const ALL_DIALOGUE_VARIANT_SETS = [
   ...R4_DIALOGUE_VARIANT_SETS,
+  ...R4_PICNIC_DIALOGUE_VARIANT_SETS,
 ] satisfies readonly DialogueVariantSet[];
 
 assertValidContent({

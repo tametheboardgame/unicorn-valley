@@ -95,7 +95,7 @@ export const SUNBEAM_VILLAGE_MAP = {
   ] satisfies readonly VillageEntrance[],
   npcMarkers: [
     { id: 'willow', label: 'Willow', position: { x: 1040, y: 1160 } },
-    { id: 'village-friend-west', label: 'Future friend', position: { x: 1320, y: 1350 } },
+    { id: 'marigold', label: 'Marigold', position: { x: 700, y: 860 } },
     { id: 'village-friend-east', label: 'Future friend', position: { x: 1900, y: 1210 } },
     { id: 'shopkeeper-marker', label: 'Shopkeeper', position: { x: 1730, y: 770 } },
   ] satisfies readonly VillageNpcMarker[],
