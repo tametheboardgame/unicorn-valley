@@ -16,6 +16,7 @@ import { RaceScene } from '../scenes/RaceScene';
 import { RainbowMeadowScene } from '../scenes/RainbowMeadowScene';
 import { RainbowRunEntryScene } from '../scenes/RainbowRunEntryScene';
 import { ResizeTestScene } from '../scenes/ResizeTestScene';
+import { ShopScene } from '../scenes/ShopScene';
 import { SunbeamVillageScene } from '../scenes/SunbeamVillageScene';
 import { TitleScene } from '../scenes/TitleScene';
 import { UnicornCreatorScene } from '../scenes/UnicornCreatorScene';
@@ -67,5 +68,6 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
     UnicornCreatorScene,
     WonderbookScene,
     InventoryScene,
+    ShopScene,
   ],
 };
