@@ -110,10 +110,9 @@ describe('SecretDiscoveryService', () => {
     const { saveService, service } = createReadyService();
     const [hiddenObject, conditionalClue, hiddenPath] = R4_SECRET_DEFINITIONS;
 
-    expect(service.listAvailable(R4_SECRET_DEFINITIONS, 'MoonflowerGladeScene').map(({ id }) => id)).toEqual([
-      hiddenObject.id,
-      conditionalClue.id,
-    ]);
+    expect(
+      service.listAvailable(R4_SECRET_DEFINITIONS, 'MoonflowerGladeScene').map(({ id }) => id),
+    ).toEqual([hiddenObject.id, conditionalClue.id]);
     expect(service.discover(hiddenPath).status).toBe('blocked');
 
     expect(service.discover(hiddenObject).status).toBe('discovered');
@@ -132,7 +131,9 @@ describe('SecretDiscoveryService', () => {
     expect(saved?.world.flags[MOONLIT_TRAIL_REVEALED_FLAG]).toBe(true);
     expect(service.discover(hiddenPath).status).toBe('already-discovered');
     expect(
-      saveService.load()?.collections.discoveryIds.filter((id) => id === MOONLIT_TRAIL_DISCOVERY_ID),
+      saveService
+        .load()
+        ?.collections.discoveryIds.filter((id) => id === MOONLIT_TRAIL_DISCOVERY_ID),
     ).toHaveLength(1);
   });
 });
