@@ -17,6 +17,7 @@ import { R3_QUESTS } from './r3Quests';
 import { R4_DIALOGUE_VARIANT_SETS } from './r4DialogueVariants';
 import { R4_DIALOGUES } from './r4Dialogues';
 import { R4_EGG_CHARACTERS, R4_EGG_DISCOVERIES, R4_EGG_QUESTS } from './r4EggArc';
+import { R4_SHOP_ITEMS } from './r4ShopContent';
 import type {
   CharacterDefinition,
   CharacterId,
@@ -33,7 +34,12 @@ import type {
 } from './contentTypes';
 import { assertValidContent } from './validateContent';
 
-const ALL_ITEMS = [...ITEMS, ...R2_ITEMS, ...R3_ITEMS] satisfies readonly ItemDefinition[];
+const ALL_ITEMS = [
+  ...ITEMS,
+  ...R2_ITEMS,
+  ...R3_ITEMS,
+  ...R4_SHOP_ITEMS,
+] satisfies readonly ItemDefinition[];
 const ALL_CHARACTERS = [
   ...CHARACTERS,
   ...R2_CHARACTERS,
