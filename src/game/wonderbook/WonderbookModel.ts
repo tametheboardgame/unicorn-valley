@@ -28,7 +28,8 @@ export function buildWonderbookEntries(
       index,
     }))
     .sort((left, right) => {
-      const leftRank = left.kind === 'secret' && left.discovered ? 0 : left.kind === 'secret' ? 2 : 1;
+      const leftRank =
+        left.kind === 'secret' && left.discovered ? 0 : left.kind === 'secret' ? 2 : 1;
       const rightRank =
         right.kind === 'secret' && right.discovered ? 0 : right.kind === 'secret' ? 2 : 1;
       return leftRank - rightRank || left.index - right.index;
