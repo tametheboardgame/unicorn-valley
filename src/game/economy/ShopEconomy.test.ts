@@ -75,7 +75,7 @@ describe('Twinkle & Thread shop', () => {
     expect(stock.some(({ definition }) => definition.category === 'accessory')).toBe(true);
     expect(stock.some(({ definition }) => definition.category === 'decoration')).toBe(true);
     expect(Math.min(...stock.map(({ price }) => price))).toBeLessThanOrEqual(2);
-    expect(Math.max(...stock.map(({ price }) => price)).toBeLessThanOrEqual(6);
+    expect(Math.max(...stock.map(({ price }) => price))).toBeLessThanOrEqual(6);
   });
 
   it('purchases an accessory once and persists ownership and the reduced balance', () => {
