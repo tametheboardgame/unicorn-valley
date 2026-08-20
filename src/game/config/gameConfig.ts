@@ -4,6 +4,7 @@ import { CottageInteriorScene } from '../scenes/CottageInteriorScene';
 import { DialogueTestScene } from '../scenes/DialogueTestScene';
 import { DoorwayStubScene } from '../scenes/DoorwayStubScene';
 import { InventoryScene } from '../scenes/InventoryScene';
+import { MarigoldPicnicScene } from '../scenes/MarigoldPicnicScene';
 import { MoonflowerGladeScene } from '../scenes/MoonflowerGladeScene';
 import { MoonflowerPatchScene } from '../scenes/MoonflowerPatchScene';
 import { MovementTestScene } from '../scenes/MovementTestScene';
@@ -61,6 +62,7 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
     NovaTutorialRaceScene,
     RaceScene,
     WillowStoryScene,
+    MarigoldPicnicScene,
     PipEggStoryScene,
     PipEggHatchScene,
     DoorwayStubScene,
