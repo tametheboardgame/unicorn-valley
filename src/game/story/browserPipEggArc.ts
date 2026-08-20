@@ -17,7 +17,10 @@ export function getBrowserPipEggArcService(): PipEggArcService {
       }
     });
     gameEventBus.on('DISCOVERY_UNLOCKED', ({ discoveryId }) => {
-      if (!discoveryId.startsWith('discovery:pip-egg-clue-') && discoveryId !== 'discovery:pip-strange-egg') {
+      if (
+        !discoveryId.startsWith('discovery:pip-egg-clue-') &&
+        discoveryId !== 'discovery:pip-strange-egg'
+      ) {
         browserService?.recordActivity('discovery');
       }
     });
