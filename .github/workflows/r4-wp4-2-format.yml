@@ -1,0 +1,47 @@
+name: R4 WP4.2 Formatter
+
+on:
+  push:
+    branches:
+      - agent/r4-wp4.2-pips-strange-egg
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@v6
+        with:
+          ref: agent/r4-wp4.2-pips-strange-egg
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22.23.2
+          package-manager-cache: false
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Format WP4.2 files
+        run: >-
+          npx biome format --write
+          src/content/r4EggArc.ts
+          src/game/scenes/PipEggHatchScene.ts
+          src/game/scenes/PipEggStoryScene.ts
+          src/game/story/PipEggWorldManager.ts
+          src/game/story/browserPipEggArc.ts
+
+      - name: Commit formatter output
+        run: |
+          if git diff --quiet; then
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- src/content/r4EggArc.ts src/game/scenes/PipEggHatchScene.ts src/game/scenes/PipEggStoryScene.ts src/game/story/PipEggWorldManager.ts src/game/story/browserPipEggArc.ts
+          git commit -m "Format R4-WP4.2 files"
+          git push origin HEAD:agent/r4-wp4.2-pips-strange-egg
