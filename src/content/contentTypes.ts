@@ -10,6 +10,7 @@ export type DialogueVariantSetId = `dialogue-variants:${string}`;
 export type ItemCategory = 'collectable' | 'quest' | 'reward' | 'decoration' | 'accessory' | 'food';
 export type FriendshipTier = 'just-met' | 'friend' | 'good-friend' | 'best-friend';
 export type DialogueQuestStatus = 'not-started' | 'active' | 'completed';
+export type DiscoveryKind = 'standard' | 'secret';
 
 export interface ItemDefinition {
   id: ItemId;
@@ -31,6 +32,9 @@ export interface DiscoveryDefinition {
   id: DiscoveryId;
   name: string;
   description: string;
+  kind?: DiscoveryKind;
+  icon?: string;
+  undiscoveredHint?: string;
 }
 
 export type DialogueEffect = {
