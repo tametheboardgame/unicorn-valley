@@ -2,10 +2,7 @@ import { R4_SHOP_STOCK, type ShopStockEntry } from '../../content/r4ShopContent'
 import { itemRegistry } from '../../content/registries';
 import type { ItemDefinition, ItemId } from '../../content/contentTypes';
 import type { SaveService } from '../save/SaveService';
-import {
-  applyShimmerSpendToSave,
-  getShimmerBalanceFromSave,
-} from './ShimmerEconomyService';
+import { applyShimmerSpendToSave, getShimmerBalanceFromSave } from './ShimmerEconomyService';
 
 export interface ShopItemView {
   definition: ItemDefinition;
