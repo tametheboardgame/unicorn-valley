@@ -23,6 +23,7 @@ import {
   R4_PICNIC_DIALOGUE_VARIANT_SETS,
   R4_PICNIC_QUESTS,
 } from './r4PicnicEvent';
+import { R4_SECRET_DISCOVERIES } from './r4Secrets';
 import { R4_SHOP_ITEMS } from './r4ShopContent';
 import type {
   CharacterDefinition,
@@ -64,6 +65,7 @@ const ALL_DISCOVERIES = [
   ...DISCOVERIES,
   ...R3_DISCOVERIES,
   ...R4_EGG_DISCOVERIES,
+  ...R4_SECRET_DISCOVERIES,
 ] satisfies readonly DiscoveryDefinition[];
 const ALL_DIALOGUES = [
   ...DIALOGUES,
