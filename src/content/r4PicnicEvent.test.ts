@@ -105,7 +105,9 @@ describe("Marigold's Picnic Event content", () => {
     expect(completed?.world.flags[PICNIC_READY_FLAG]).toBe(true);
     expect(getPicnicTheme(completed)).toBe('rainbow');
     expect(isMarigoldPicnicReady(completed)).toBe(true);
-    expect(completed?.relationships.byCharacterId[MARIGOLD_CHARACTER_ID]?.friendshipPoints).toBe(15);
+    expect(completed?.relationships.byCharacterId[MARIGOLD_CHARACTER_ID]?.friendshipPoints).toBe(
+      15,
+    );
 
     questEngine.destroy();
   });
