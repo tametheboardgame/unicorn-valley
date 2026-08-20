@@ -3,6 +3,7 @@ import { getClickToMoveManager } from '../input/ClickToMoveManager';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getRacePlaytestRecoveryManager } from '../racing/RacePlaytestRecoveryManager';
 import { getRacePlayerControlManager } from '../racing/RacePlayerControlManager';
+import { getBrowserPipEggArcService } from '../story/browserPipEggArc';
 import { getVisualTighteningManager } from '../visual/VisualTighteningManager';
 import { getWorldCharacterPresentationManager } from '../world/WorldCharacterPresentationManager';
 import { getWorldOcclusionManager } from '../world/WorldOcclusionManager';
@@ -29,6 +30,7 @@ export class BootScene extends Phaser.Scene {
 
   public create(): void {
     getBrowserQuestEngine();
+    getBrowserPipEggArcService();
     getClickToMoveManager(this.sys.game);
     getWorldOcclusionManager(this.sys.game);
     getWorldCharacterPresentationManager(this.sys.game);
