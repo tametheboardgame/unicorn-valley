@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { getSecretDiscoveryWorldManager } from '../discovery/SecretDiscoveryWorldManager';
 import { getClickToMoveManager } from '../input/ClickToMoveManager';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getRacePlaytestRecoveryManager } from '../racing/RacePlaytestRecoveryManager';
@@ -35,6 +36,7 @@ export class BootScene extends Phaser.Scene {
     getBrowserQuestEngine();
     getBrowserPipEggArcService();
     getPipEggWorldManager(this.sys.game);
+    getSecretDiscoveryWorldManager(this.sys.game);
     getClickToMoveManager(this.sys.game);
     getWorldOcclusionManager(this.sys.game);
     getWorldCharacterPresentationManager(this.sys.game);
