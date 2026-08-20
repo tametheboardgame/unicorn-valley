@@ -1,8 +1,4 @@
-import type {
-  CharacterDefinition,
-  DiscoveryDefinition,
-  QuestDefinition,
-} from './contentTypes';
+import type { CharacterDefinition, DiscoveryDefinition, QuestDefinition } from './contentTypes';
 
 export const PIP_STRANGE_EGG_QUEST_ID = 'quest:pips-strange-egg' as const;
 export const PIP_EGG_CLUE_DISCOVERY_IDS = [
@@ -42,7 +38,7 @@ export const R4_EGG_DISCOVERIES = [
   },
   {
     id: PIP_STRANGE_EGG_DISCOVERY_ID,
-    name: 'Pip’s Strange Egg',
+    name: "Pip's Strange Egg",
     description: 'A mysterious speckled egg with a soft glow hidden deep in Moonflower Glade.',
   },
 ] as const satisfies readonly DiscoveryDefinition[];
