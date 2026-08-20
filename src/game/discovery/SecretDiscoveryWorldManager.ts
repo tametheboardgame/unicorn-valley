@@ -33,17 +33,16 @@ function findPlayer(scene: Phaser.Scene): Phaser.GameObjects.Sprite | null {
 
 function feedbackStyle(tier: SecretFeedbackTier): {
   background: string;
-  border: number;
   fontSize: string;
   flash: boolean;
 } {
   if (tier === 'grand') {
-    return { background: '#fff0b9f2', border: 0xd29557, fontSize: '25px', flash: true };
+    return { background: '#fff0b9f2', fontSize: '25px', flash: true };
   }
   if (tier === 'secret') {
-    return { background: '#f4e8fff2', border: 0x9a75bd, fontSize: '23px', flash: true };
+    return { background: '#f4e8fff2', fontSize: '23px', flash: true };
   }
-  return { background: '#fff9edf0', border: 0xc5a85d, fontSize: '21px', flash: false };
+  return { background: '#fff9edf0', fontSize: '21px', flash: false };
 }
 
 export class SecretDiscoveryWorldManager {
@@ -70,7 +69,7 @@ export class SecretDiscoveryWorldManager {
     this.refreshPath(state);
 
     const available = this.service.listAvailable(R4_SECRET_DEFINITIONS, scene.scene.key);
-    const availableIds = new Set(available.map(({ id }) => id));
+    const availableIds = new Set<string>(available.map(({ id }) => id));
 
     for (const [id, marker] of state.markers) {
       if (!availableIds.has(id) || !marker.container.active) {
@@ -184,7 +183,7 @@ export class SecretDiscoveryWorldManager {
   }
 
   private activateSecret(state: GladeState | null, definition: SecretDiscoveryDefinition): void {
-    if (!state || !state.scene.scene.isActive()) {
+    if (!state?.scene.scene.isActive()) {
       return;
     }
 
@@ -212,7 +211,9 @@ export class SecretDiscoveryWorldManager {
       return;
     }
 
-    const definition = R4_SECRET_DEFINITIONS.find(({ pattern }) => pattern === 'hidden-path');
+    const definition: SecretDiscoveryDefinition | undefined = R4_SECRET_DEFINITIONS.find(
+      ({ pattern }) => pattern === 'hidden-path',
+    );
     if (!definition?.revealedPath) {
       return;
     }
