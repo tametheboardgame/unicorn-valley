@@ -27,7 +27,6 @@ export const PIP_EGG_PENDING_GROWTH_MEMORY = 'memory:pip-egg:pending-growth';
 export const PIP_EGG_WARM_MEMORY = 'memory:pip-egg:stage-warm';
 export const PIP_EGG_GLOWING_MEMORY = 'memory:pip-egg:stage-glowing';
 export const PIP_EGG_CRACKING_MEMORY = 'memory:pip-egg:stage-cracking';
-export const PIP_EGG_RACE_USED_MEMORY = 'memory:pip-egg:race-contributed';
 export const LUMA_COMPANION_MEMORY = 'memory:companion:luma';
 export const PIP_EGG_HATCH_SCENE_MEMORY = 'memory:pip-egg:hatch-scene-seen';
 
@@ -191,13 +190,8 @@ export class PipEggArcService {
     if (save.collections.memoryIds.includes(PIP_EGG_PENDING_GROWTH_MEMORY)) {
       return false;
     }
-    if (kind === 'race' && save.collections.memoryIds.includes(PIP_EGG_RACE_USED_MEMORY)) {
-      return false;
-    }
 
-    if (kind === 'race') {
-      save = withMemory(save, PIP_EGG_RACE_USED_MEMORY);
-    }
+    save = withMemory(save, `memory:pip-egg:activity-${kind}`);
     save = withMemory(save, PIP_EGG_PENDING_GROWTH_MEMORY);
     this.saveService.save(save);
     return true;
