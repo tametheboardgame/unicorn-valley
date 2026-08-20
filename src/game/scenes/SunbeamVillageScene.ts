@@ -65,7 +65,7 @@ const VILLAGE_INTERACTIONS = [
     result: {
       type: 'message',
       title: 'Sunbeam Bakery',
-      message: 'Warm berry buns are cooling by the window. This shop will open properly soon.',
+      message: 'Warm berry buns are cooling by the window. Marigold seems to be preparing something nearby.',
     },
   },
   {
@@ -114,6 +114,21 @@ const VILLAGE_INTERACTIONS = [
     result: {
       type: 'scene-transition',
       sceneKey: 'WillowStoryScene',
+      payload: {
+        returnScene: 'SunbeamVillageScene',
+      },
+    },
+  },
+  {
+    id: 'interaction:village-marigold',
+    label: 'Marigold',
+    actionLabel: 'Talk',
+    position: npcPosition('marigold'),
+    interactionRadius: 150,
+    priority: 30,
+    result: {
+      type: 'scene-transition',
+      sceneKey: 'MarigoldPicnicScene',
       payload: {
         returnScene: 'SunbeamVillageScene',
       },
@@ -385,12 +400,14 @@ export class SunbeamVillageScene extends Phaser.Scene {
 
   private createNpcMarkers(): void {
     for (const marker of SUNBEAM_VILLAGE_MAP.npcMarkers) {
+      const isWillow = marker.id === 'willow';
+      const isMarigold = marker.id === 'marigold';
       this.add
         .circle(marker.position.x, marker.position.y, 42, 0xfff3c6, 0.9)
-        .setStrokeStyle(4, marker.id === 'willow' ? 0x6ba271 : 0xb28ab9, 0.95)
+        .setStrokeStyle(4, isWillow ? 0x6ba271 : isMarigold ? 0xe49b55 : 0xb28ab9, 0.95)
         .setDepth(8);
       this.add
-        .text(marker.position.x, marker.position.y, marker.id === 'willow' ? '🌿' : '✦', {
+        .text(marker.position.x, marker.position.y, isWillow ? '🌿' : isMarigold ? '🥐' : '✦', {
           color: '#6c5272',
           fontFamily: 'system-ui, sans-serif',
           fontSize: '28px',
