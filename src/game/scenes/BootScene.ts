@@ -4,6 +4,7 @@ import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getRacePlaytestRecoveryManager } from '../racing/RacePlaytestRecoveryManager';
 import { getRacePlayerControlManager } from '../racing/RacePlayerControlManager';
 import { getBrowserPipEggArcService } from '../story/browserPipEggArc';
+import { getPipEggWorldManager } from '../story/PipEggWorldManager';
 import { getVisualTighteningManager } from '../visual/VisualTighteningManager';
 import { getWorldCharacterPresentationManager } from '../world/WorldCharacterPresentationManager';
 import { getWorldOcclusionManager } from '../world/WorldOcclusionManager';
@@ -20,6 +21,8 @@ const DIAGNOSTIC_SCENES: Record<string, string> = {
   meadow: 'RainbowMeadowScene',
   'nova-story': 'NovaStoryScene',
   'nova-race': 'NovaTutorialRaceScene',
+  'pip-egg-story': 'PipEggStoryScene',
+  'pip-egg-hatch': 'PipEggHatchScene',
   race: 'RaceScene',
 };
 
@@ -31,6 +34,7 @@ export class BootScene extends Phaser.Scene {
   public create(): void {
     getBrowserQuestEngine();
     getBrowserPipEggArcService();
+    getPipEggWorldManager(this.sys.game);
     getClickToMoveManager(this.sys.game);
     getWorldOcclusionManager(this.sys.game);
     getWorldCharacterPresentationManager(this.sys.game);
