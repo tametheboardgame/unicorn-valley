@@ -121,10 +121,7 @@ export class SecretDiscoveryWorldManager {
     return this.gladeState;
   }
 
-  private createMarker(
-    scene: Phaser.Scene,
-    definition: SecretDiscoveryDefinition,
-  ): SecretMarker {
+  private createMarker(scene: Phaser.Scene, definition: SecretDiscoveryDefinition): SecretMarker {
     const glint = scene.add
       .text(0, 0, definition.pattern === 'conditional-clue' ? '♪' : '✦', {
         color: definition.pattern === 'conditional-clue' ? '#e7c7ff' : '#fff0a5',
