@@ -46,7 +46,9 @@ export class SecretDiscoveryService {
     }
 
     const save = this.saveService.load() ?? this.saveService.createNewGame();
-    return (definition.conditions ?? []).every((condition) => isSecretConditionMet(condition, save));
+    return (definition.conditions ?? []).every((condition) =>
+      isSecretConditionMet(condition, save),
+    );
   }
 
   public listAvailable(
@@ -65,7 +67,9 @@ export class SecretDiscoveryService {
       return { status: 'already-discovered', save: current };
     }
 
-    if (!(definition.conditions ?? []).every((condition) => isSecretConditionMet(condition, current))) {
+    if (
+      !(definition.conditions ?? []).every((condition) => isSecretConditionMet(condition, current))
+    ) {
       return { status: 'blocked', save: current };
     }
 
