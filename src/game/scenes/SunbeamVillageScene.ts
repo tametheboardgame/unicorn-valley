@@ -65,7 +65,7 @@ const VILLAGE_INTERACTIONS = [
     result: {
       type: 'message',
       title: 'Sunbeam Bakery',
-      message: 'Warm berry buns are cooling by the window. Marigold seems to be preparing something nearby.',
+      message: 'Warm berry buns are cooling by the window. Marigold is nearby.',
     },
   },
   {
