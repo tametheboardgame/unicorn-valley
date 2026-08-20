@@ -56,11 +56,16 @@ export class ShopScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setDepth(3);
     this.add
-      .text(GAME_WIDTH / 2, 88, 'Choose something you love. Story progress never needs a purchase.', {
-        color: UI_COLOURS.softInk,
-        fontFamily: UI_FONT,
-        fontSize: '16px',
-      })
+      .text(
+        GAME_WIDTH / 2,
+        88,
+        'Choose something you love. Story progress never needs a purchase.',
+        {
+          color: UI_COLOURS.softInk,
+          fontFamily: UI_FONT,
+          fontSize: '16px',
+        },
+      )
       .setOrigin(0.5)
       .setDepth(3);
 
@@ -79,12 +84,17 @@ export class ShopScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setDepth(4);
     this.feedbackText = this.add
-      .text(GAME_WIDTH / 2, 164, 'Rainbow Run earns Shimmer. More valley activities will join in later.', {
-        color: UI_COLOURS.mutedInk,
-        fontFamily: UI_FONT,
-        fontSize: '14px',
-        fontStyle: 'bold',
-      })
+      .text(
+        GAME_WIDTH / 2,
+        164,
+        'Rainbow Run earns Shimmer. More valley activities will join in later.',
+        {
+          color: UI_COLOURS.mutedInk,
+          fontFamily: UI_FONT,
+          fontSize: '14px',
+          fontStyle: 'bold',
+        },
+      )
       .setOrigin(0.5)
       .setDepth(4);
 
@@ -232,7 +242,9 @@ export class ShopScene extends Phaser.Scene {
 
     const result = this.shopService.purchase(itemId);
     if (result.type === 'purchased') {
-      this.feedbackText?.setText(`✨ ${result.item.name} is yours! You have ${result.balance} Shimmer left.`);
+      this.feedbackText?.setText(
+        `✨ ${result.item.name} is yours! You have ${result.balance} Shimmer left.`,
+      );
       this.cameras.main.flash(120, 255, 235, 164, false);
     } else if (result.type === 'insufficient-funds') {
       this.feedbackText?.setText(
