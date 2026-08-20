@@ -16,6 +16,7 @@ import { R3_DIALOGUES } from './r3Dialogues';
 import { R3_QUESTS } from './r3Quests';
 import { R4_DIALOGUE_VARIANT_SETS } from './r4DialogueVariants';
 import { R4_DIALOGUES } from './r4Dialogues';
+import { R4_EGG_CHARACTERS, R4_EGG_DISCOVERIES, R4_EGG_QUESTS } from './r4EggArc';
 import type {
   CharacterDefinition,
   CharacterId,
@@ -37,11 +38,18 @@ const ALL_CHARACTERS = [
   ...CHARACTERS,
   ...R2_CHARACTERS,
   ...R3_CHARACTERS,
+  ...R4_EGG_CHARACTERS,
 ] satisfies readonly CharacterDefinition[];
-const ALL_QUESTS = [...QUESTS, ...R2_QUESTS, ...R3_QUESTS] satisfies readonly QuestDefinition[];
+const ALL_QUESTS = [
+  ...QUESTS,
+  ...R2_QUESTS,
+  ...R3_QUESTS,
+  ...R4_EGG_QUESTS,
+] satisfies readonly QuestDefinition[];
 const ALL_DISCOVERIES = [
   ...DISCOVERIES,
   ...R3_DISCOVERIES,
+  ...R4_EGG_DISCOVERIES,
 ] satisfies readonly DiscoveryDefinition[];
 const ALL_DIALOGUES = [
   ...DIALOGUES,

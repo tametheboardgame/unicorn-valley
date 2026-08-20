@@ -9,6 +9,8 @@ import { MoonflowerPatchScene } from '../scenes/MoonflowerPatchScene';
 import { MovementTestScene } from '../scenes/MovementTestScene';
 import { NovaStoryScene } from '../scenes/NovaStoryScene';
 import { NovaTutorialRaceScene } from '../scenes/NovaTutorialRaceScene';
+import { PipEggHatchScene } from '../scenes/PipEggHatchScene';
+import { PipEggStoryScene } from '../scenes/PipEggStoryScene';
 import { PreloadScene } from '../scenes/PreloadScene';
 import { RaceScene } from '../scenes/RaceScene';
 import { RainbowMeadowScene } from '../scenes/RainbowMeadowScene';
@@ -58,6 +60,8 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
     NovaTutorialRaceScene,
     RaceScene,
     WillowStoryScene,
+    PipEggStoryScene,
+    PipEggHatchScene,
     DoorwayStubScene,
     DialogueTestScene,
     UnicornCreatorScene,
