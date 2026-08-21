@@ -124,21 +124,30 @@ export class LumiWoodsWorldManager {
     }
   }
 
-  private createClueMarker(
-    scene: Phaser.Scene,
-    definition: SecretDiscoveryDefinition,
-  ): ClueMarker {
+  private createClueMarker(scene: Phaser.Scene, definition: SecretDiscoveryDefinition): ClueMarker {
     const isFireflies = definition.id === 'secret:woods-firefly-spiral';
     const isStarwell = definition.id === 'secret:woods-starwell';
     const objects: Phaser.GameObjects.GameObject[] = [];
 
-    const glow = scene.add.circle(0, 0, isStarwell ? 42 : 30, isFireflies ? 0xf4efa4 : 0xbce8b1, 0.12);
+    const glow = scene.add.circle(
+      0,
+      0,
+      isStarwell ? 42 : 30,
+      isFireflies ? 0xf4efa4 : 0xbce8b1,
+      0.12,
+    );
     objects.push(glow);
 
     if (isFireflies) {
       for (let index = 0; index < 7; index += 1) {
         const angle = (Math.PI * 2 * index) / 7;
-        const mote = scene.add.circle(Math.cos(angle) * 34, Math.sin(angle) * 24, 5, 0xf7ef9c, 0.86);
+        const mote = scene.add.circle(
+          Math.cos(angle) * 34,
+          Math.sin(angle) * 24,
+          5,
+          0xf7ef9c,
+          0.86,
+        );
         objects.push(mote);
         scene.tweens.add({
           targets: mote,
@@ -213,10 +222,7 @@ export class LumiWoodsWorldManager {
     return { definition, container, prompt };
   }
 
-  private activateClue(
-    state: LumiWoodsState | null,
-    definition: SecretDiscoveryDefinition,
-  ): void {
+  private activateClue(state: LumiWoodsState | null, definition: SecretDiscoveryDefinition): void {
     if (!state?.scene.scene.isActive()) {
       return;
     }
@@ -227,7 +233,13 @@ export class LumiWoodsWorldManager {
 
     state.markers.get(definition.id)?.container.destroy(true);
     state.markers.delete(definition.id);
-    state.scene.cameras.main.flash(definition.id === 'secret:woods-starwell' ? 280 : 160, 236, 255, 205, false);
+    state.scene.cameras.main.flash(
+      definition.id === 'secret:woods-starwell' ? 280 : 160,
+      236,
+      255,
+      205,
+      false,
+    );
     const feedback = state.scene.add
       .text(640, 130, definition.feedback, {
         color: '#38594e',
@@ -259,12 +271,20 @@ export class LumiWoodsWorldManager {
     if (!state.starwell?.active) {
       const wellX = 2920;
       const wellY = 1700;
-      const rim = state.scene.add.ellipse(0, 0, 260, 120, 0x546454, 1).setStrokeStyle(10, 0x7b8871, 1);
+      const rim = state.scene.add
+        .ellipse(0, 0, 260, 120, 0x546454, 1)
+        .setStrokeStyle(10, 0x7b8871, 1);
       const water = state.scene.add.ellipse(0, -2, 218, 82, 0x263f50, 1);
       const objects: Phaser.GameObjects.GameObject[] = [rim, water];
       for (let index = 0; index < 12; index += 1) {
         const angle = (Math.PI * 2 * index) / 12;
-        const star = state.scene.add.circle(Math.cos(angle) * 80, Math.sin(angle) * 28 - 3, 4, 0xe6f6ff, 0.8);
+        const star = state.scene.add.circle(
+          Math.cos(angle) * 80,
+          Math.sin(angle) * 28 - 3,
+          4,
+          0xe6f6ff,
+          0.8,
+        );
         objects.push(star);
         state.scene.tweens.add({
           targets: star,
