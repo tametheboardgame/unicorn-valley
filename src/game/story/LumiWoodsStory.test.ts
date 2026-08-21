@@ -21,7 +21,10 @@ describe('Lumi Woods discovery story', () => {
   });
 
   it('keeps the two clues independently discoverable before the reveal', () => {
-    const clueIds = new Set([FIREFLY_SPIRAL_DISCOVERY_ID, HUMMING_BARK_DISCOVERY_ID]);
+    const clueIds = new Set<SecretDiscoveryDefinition['discoveryId']>([
+      FIREFLY_SPIRAL_DISCOVERY_ID,
+      HUMMING_BARK_DISCOVERY_ID,
+    ]);
     const clues = secrets.filter(({ discoveryId }) => clueIds.has(discoveryId));
     expect(clues).toHaveLength(2);
     expect(clues.every(({ conditions }) => conditions === undefined)).toBe(true);
