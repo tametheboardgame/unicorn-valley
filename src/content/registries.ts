@@ -17,6 +17,7 @@ import { R3_QUESTS } from './r3Quests';
 import { R4_DIALOGUE_VARIANT_SETS } from './r4DialogueVariants';
 import { R4_DIALOGUES } from './r4Dialogues';
 import { R4_EGG_CHARACTERS, R4_EGG_DISCOVERIES, R4_EGG_QUESTS } from './r4EggArc';
+import { R4_FRIEND_VISIT_DIALOGUES } from './r4FriendVisitDialogues';
 import {
   R4_PEBBLE_CHARACTERS,
   R4_PEBBLE_DIALOGUES,
@@ -83,6 +84,7 @@ const ALL_DIALOGUES = [
   ...R2_DIALOGUES,
   ...R3_DIALOGUES,
   ...R4_DIALOGUES,
+  ...R4_FRIEND_VISIT_DIALOGUES,
   ...R4_PICNIC_DIALOGUES,
   ...R4_PEBBLE_DIALOGUES,
 ] satisfies readonly DialogueDefinition[];
