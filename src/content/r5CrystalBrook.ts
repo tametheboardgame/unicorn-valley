@@ -29,7 +29,8 @@ export const R5_CRYSTAL_BROOK_DISCOVERIES = [
   {
     id: CRYSTAL_BROOK_REGION_DISCOVERY_ID,
     name: 'Crystal Brook',
-    description: 'A bright stream valley filled with stepping stones, reeds and glittering river treasures.',
+    description:
+      'A bright stream valley filled with stepping stones, reeds and glittering river treasures.',
     icon: '💧',
   },
   {
