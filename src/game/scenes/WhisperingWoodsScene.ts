@@ -19,7 +19,10 @@ import { DEFAULT_PLAYER_SPEED, resolvePlayerMovement } from '../player/PlayerMov
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { saveLocationCheckpoint } from '../save/saveLocationCheckpoint';
 import { worldDepthForY } from '../world/WorldDepth';
-import { WHISPERING_WOODS_LOCATION_ID, WHISPERING_WOODS_MAP } from '../world/WhisperingWoodsMap';
+import {
+  WHISPERING_WOODS_LOCATION_ID,
+  WHISPERING_WOODS_MAP,
+} from '../world/WhisperingWoodsMap';
 
 const COLLISION_TEXTURE_KEY = 'whispering-woods-collision-pixel';
 const PLAYER_TEXTURE_KEY = 'player-unicorn-whispering-woods';
@@ -31,7 +34,6 @@ export class WhisperingWoodsScene extends Phaser.Scene {
   private pointerInput: PointerTouchInputAdapter | null = null;
   private touchMovementPad: TouchMovementPad | null = null;
   private player: PlayerEntity | null = null;
-  private collisionGroup: Phaser.Physics.Arcade.StaticGroup | null = null;
   private discoveryService: DiscoveryService | null = null;
   private feedbackText: Phaser.GameObjects.Text | null = null;
   private feedbackTimer: Phaser.Time.TimerEvent | null = null;
@@ -50,7 +52,10 @@ export class WhisperingWoodsScene extends Phaser.Scene {
     this.discoveryService = new DiscoveryService(saveService);
     const firstVisit = !this.discoveryService.hasDiscovery(WHISPERING_WOODS_REGION_DISCOVERY_ID);
     if (firstVisit) {
-      this.discoveryService.unlockDiscovery(WHISPERING_WOODS_REGION_DISCOVERY_ID, WOODS_VISITED_FLAG);
+      this.discoveryService.unlockDiscovery(
+        WHISPERING_WOODS_REGION_DISCOVERY_ID,
+        WOODS_VISITED_FLAG,
+      );
     }
 
     const appearance = parseUnicornAppearance(save.profile.appearance);
@@ -62,11 +67,11 @@ export class WhisperingWoodsScene extends Phaser.Scene {
       map.width - map.margin * 2,
       map.height - map.margin * 2,
     );
-    this.collisionGroup = this.createCollisionMap();
+
+    const blockers = this.createCollisionMap();
     this.player = new PlayerEntity(this, map.playerSpawn.x, map.playerSpawn.y, PLAYER_TEXTURE_KEY);
     this.player.sprite.setDisplaySize(112, 92);
-    this.player.sprite.setDepth(worldDepthForY(this.player.sprite.y, 0.5));
-    this.physics.add.collider(this.player.sprite, this.collisionGroup);
+    this.physics.add.collider(this.player.sprite, blockers);
 
     this.pointerInput = new PointerTouchInputAdapter();
     this.inputController = new InputController([new KeyboardInputAdapter(this), this.pointerInput]);
@@ -80,87 +85,177 @@ export class WhisperingWoodsScene extends Phaser.Scene {
     }
 
     this.createDiscoveryMarkers();
+    this.createHud();
     this.cameras.main.setBackgroundColor('#294f48');
     this.cameras.main.setBounds(0, 0, map.width, map.height);
     this.cameras.main.startFollow(this.player.sprite, true, 0.11, 0.11);
     this.cameras.main.setDeadzone(260, 150);
-    this.createHud();
 
     this.audio.enterScene(this.scene.key);
     this.input.once('pointerdown', () => void this.audio.unlock());
     this.input.keyboard?.once('keydown', () => void this.audio.unlock());
-
     if (firstVisit) {
       this.showFeedback('New place discovered!\nWhispering Woods 🌲✨');
     }
 
-    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-      this.audio.leaveScene(this.scene.key);
-      this.feedbackTimer?.destroy();
-      this.feedbackTimer = null;
-      this.touchMovementPad?.destroy();
-      this.touchMovementPad = null;
-      this.inputController?.destroy();
-      this.inputController = null;
-      this.pointerInput = null;
-      this.player?.destroy();
-      this.player = null;
-      this.collisionGroup = null;
-      this.discoveryService = null;
-      for (const marker of this.discoveryMarkers.values()) {
-        marker.destroy(true);
-      }
-      this.discoveryMarkers.clear();
-      this.feedbackText = null;
-    });
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.shutdown());
   }
 
   public update(time: number): void {
     if (!this.inputController || !this.player) {
       return;
     }
+
     this.inputController.update();
     if (this.inputController.justPressed('BACK')) {
       this.scene.start('TitleScene');
       return;
     }
 
-    const movement = resolvePlayerMovement(
-      this.inputController.getAxis('MOVE_X'),
-      this.inputController.getAxis('MOVE_Y'),
-      DEFAULT_PLAYER_SPEED,
-      this.player.getFacing(),
+    this.player.applyMovement(
+      resolvePlayerMovement(
+        this.inputController.getAxis('MOVE_X'),
+        this.inputController.getAxis('MOVE_Y'),
+        DEFAULT_PLAYER_SPEED,
+        this.player.getFacing(),
+      ),
     );
-    this.player.applyMovement(movement);
     this.player.updatePresentation(time);
     this.player.sprite.setDepth(worldDepthForY(this.player.sprite.y, 0.5));
     this.tryUnlockDiscoveries();
   }
 
-  private tryUnlockDiscoveries(): void {
-    if (!this.player || !this.discoveryService) {
-      return;
+  private createEnvironment(): void {
+    const map = WHISPERING_WOODS_MAP;
+    this.add.rectangle(map.width / 2, map.height / 2, map.width, map.height, 0x315f52).setDepth(0);
+    this.add.circle(760, 610, 710, 0x477a66, 0.34).setDepth(1);
+    this.add.circle(1900, 1540, 760, 0x254b44, 0.3).setDepth(1);
+    this.add.circle(2860, 790, 660, 0x3f705c, 0.32).setDepth(1);
+    this.createPaths();
+    this.createTrees();
+    this.createMooncaps();
+    this.createGlowfernArch();
+    this.createNavigationLights();
+    this.createAmbientMotes();
+  }
+
+  private createPaths(): void {
+    const path = this.add.graphics().setDepth(2);
+    path.lineStyle(132, 0x866f57, 0.82);
+    path.beginPath();
+    path.moveTo(100, 1090);
+    path.lineTo(720, 1090);
+    path.lineTo(1230, 980);
+    path.lineTo(1680, 1110);
+    path.lineTo(2090, 1080);
+    path.lineTo(2530, 930);
+    path.lineTo(2940, 820);
+    path.strokePath();
+    path.lineStyle(54, 0x7b684f, 0.62);
+    path.beginPath();
+    path.moveTo(1180, 980);
+    path.lineTo(1180, 620);
+    path.strokePath();
+    path.beginPath();
+    path.moveTo(2170, 1050);
+    path.lineTo(2340, 1320);
+    path.lineTo(2810, 1590);
+    path.strokePath();
+  }
+
+  private createTrees(): void {
+    const trees = [
+      [520, 510, 1.18],
+      [820, 420, 1.05],
+      [1390, 430, 1.2],
+      [1660, 1490, 1.15],
+      [2140, 1810, 1.08],
+      [2690, 540, 1.22],
+      [3070, 1190, 1.1],
+      [720, 1760, 1.12],
+    ] as const;
+    for (const [x, y, scale] of trees) {
+      const trunk = this.add.rectangle(0, -55, 42, 110, 0x5f4a3d, 1);
+      const left = this.add.circle(-38, -120, 86, 0x244a3d, 1);
+      const right = this.add.circle(48, -118, 94, 0x2d5948, 1);
+      const top = this.add.circle(5, -185, 98, 0x376a55, 1);
+      this.add
+        .container(x, y, [trunk, left, right, top])
+        .setScale(scale)
+        .setDepth(worldDepthForY(y, 0.3));
     }
-    for (const spot of WHISPERING_WOODS_MAP.discoverySpots) {
-      const marker = this.discoveryMarkers.get(spot.discoveryId);
-      if (!marker) {
-        continue;
-      }
-      const distance = Phaser.Math.Distance.Between(
-        this.player.sprite.x,
-        this.player.sprite.y,
-        spot.position.x,
-        spot.position.y,
-      );
-      if (distance > spot.collectionRadius) {
-        continue;
-      }
-      this.discoveryService.unlockDiscovery(spot.discoveryId);
-      marker.destroy(true);
-      this.discoveryMarkers.delete(spot.discoveryId);
-      this.audio.playSfx('discovery');
-      this.showFeedback(`New discovery!\n${spot.label} ✨`);
-      break;
+  }
+
+  private createMooncaps(): void {
+    for (const [x, y] of [
+      [1100, 600],
+      [1160, 655],
+      [1230, 610],
+      [1280, 675],
+    ] as const) {
+      this.add.ellipse(x, y, 54, 28, 0xc7ddf0, 0.95).setDepth(worldDepthForY(y, 0.1));
+      this.add.circle(x, y - 5, 30, 0xdff6ff, 0.16).setDepth(worldDepthForY(y, 0.05));
+    }
+  }
+
+  private createGlowfernArch(): void {
+    const roots = this.add.graphics().setDepth(worldDepthForY(1080, 0.15));
+    roots.lineStyle(28, 0x66503d, 1);
+    roots.beginPath();
+    roots.moveTo(1875, 1160);
+    roots.lineTo(1910, 1035);
+    roots.lineTo(1980, 975);
+    roots.lineTo(2050, 1035);
+    roots.lineTo(2085, 1160);
+    roots.strokePath();
+    for (const [x, y] of [
+      [1894, 1100],
+      [1916, 1052],
+      [2045, 1052],
+      [2068, 1098],
+    ] as const) {
+      this.add
+        .text(x, y, '🌿', { fontFamily: 'system-ui, sans-serif', fontSize: '32px' })
+        .setOrigin(0.5)
+        .setDepth(worldDepthForY(1080, 0.25));
+    }
+  }
+
+  private createNavigationLights(): void {
+    for (const [x, y] of [
+      [520, 1065],
+      [980, 1000],
+      [1450, 1030],
+      [1880, 1090],
+      [2300, 1010],
+      [2700, 890],
+    ] as const) {
+      this.add.circle(x, y, 11, 0xcaf5a7, 0.75).setDepth(6);
+      this.add.circle(x, y, 28, 0xb4ef9d, 0.1).setDepth(5);
+    }
+  }
+
+  private createAmbientMotes(): void {
+    const positions = [
+      [890, 760],
+      [1500, 720],
+      [1820, 1260],
+      [2440, 700],
+      [2840, 1380],
+    ] as const;
+    for (const [index, [x, y]] of positions.entries()) {
+      const mote = this.add
+        .circle(x, y, 5, index % 2 === 0 ? 0xd8f7ae : 0xc6eaff, 0.72)
+        .setDepth(16);
+      this.tweens.add({
+        targets: mote,
+        y: y - 24,
+        alpha: { from: 0.25, to: 0.9 },
+        duration: 1200 + index * 130,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.InOut',
+      });
     }
   }
 
@@ -186,9 +281,8 @@ export class WhisperingWoodsScene extends Phaser.Scene {
         .container(spot.position.x, spot.position.y, [glow, icon])
         .setDepth(worldDepthForY(spot.position.y, 0.4));
       this.tweens.add({
-        targets: [glow, icon],
-        alpha: { from: 0.5, to: 1 },
-        scale: { from: 0.92, to: 1.08 },
+        targets: marker,
+        scale: { from: 0.94, to: 1.08 },
         duration: 1050,
         yoyo: true,
         repeat: -1,
@@ -198,155 +292,30 @@ export class WhisperingWoodsScene extends Phaser.Scene {
     }
   }
 
-  private createEnvironment(): void {
-    const map = WHISPERING_WOODS_MAP;
-    this.add.rectangle(map.width / 2, map.height / 2, map.width, map.height, 0x315f52).setDepth(0);
-    this.add.circle(750, 590, 700, 0x457866, 0.36).setDepth(1);
-    this.add.circle(1850, 1550, 760, 0x284f48, 0.28).setDepth(1);
-    this.add.circle(2860, 800, 650, 0x3e705c, 0.32).setDepth(1);
-
-    this.createMainPaths();
-    this.createLayeredCanopy();
-    this.createMooncaps();
-    this.createGlowfernArch();
-    this.createNavigationLights();
-    this.createAmbientMotes();
-  }
-
-  private createMainPaths(): void {
-    const path = this.add.graphics().setDepth(2);
-    path.lineStyle(132, 0x866f57, 0.82);
-    path.beginPath();
-    path.moveTo(100, 1090);
-    path.lineTo(720, 1090);
-    path.lineTo(1230, 980);
-    path.lineTo(1680, 1110);
-    path.lineTo(2090, 1080);
-    path.lineTo(2530, 930);
-    path.lineTo(2940, 820);
-    path.strokePath();
-    path.lineStyle(72, 0xa58b68, 0.7);
-    path.strokePath();
-
-    path.lineStyle(54, 0x7b684f, 0.56);
-    path.beginPath();
-    path.moveTo(1180, 980);
-    path.lineTo(1180, 620);
-    path.strokePath();
-    path.beginPath();
-    path.moveTo(2170, 1050);
-    path.lineTo(2340, 1320);
-    path.lineTo(2550, 1510);
-    path.strokePath();
-  }
-
-  private createLayeredCanopy(): void {
-    const trees = [
-      [520, 510, 1.18],
-      [820, 420, 1.05],
-      [1390, 430, 1.2],
-      [1660, 1490, 1.15],
-      [2140, 1810, 1.08],
-      [2690, 540, 1.22],
-      [3070, 1190, 1.1],
-      [720, 1760, 1.12],
-      [1260, 1900, 1.08],
-    ] as const;
-    for (const [x, y, scale] of trees) {
-      const trunk = this.add.rectangle(0, -55, 42, 110, 0x5f4a3d, 1);
-      const lower = this.add.circle(-38, -120, 86, 0x244a3d, 1);
-      const right = this.add.circle(48, -118, 94, 0x2d5948, 1);
-      const top = this.add.circle(5, -185, 98, 0x376a55, 1);
-      const crown = this.add.circle(-5, -208, 68, 0x4a7b60, 0.72);
-      this.add
-        .container(x, y, [trunk, lower, right, top, crown])
-        .setScale(scale)
-        .setDepth(worldDepthForY(y, 0.3));
+  private tryUnlockDiscoveries(): void {
+    if (!this.player || !this.discoveryService) {
+      return;
     }
-
-    const canopy = this.add.graphics().setDepth(45).setAlpha(0.12);
-    canopy.fillStyle(0x173b34, 1);
-    canopy.fillCircle(280, 80, 360);
-    canopy.fillCircle(1000, 40, 410);
-    canopy.fillCircle(1900, 20, 430);
-    canopy.fillCircle(2860, 70, 390);
-  }
-
-  private createMooncaps(): void {
-    const positions = [
-      [1100, 600],
-      [1160, 655],
-      [1230, 610],
-      [1280, 675],
-    ] as const;
-    for (const [x, y] of positions) {
-      this.add.ellipse(x, y, 54, 28, 0xc7ddf0, 0.95).setDepth(worldDepthForY(y, 0.1));
-      this.add.circle(x, y - 5, 30, 0xdff6ff, 0.16).setDepth(worldDepthForY(y, 0.05));
-    }
-  }
-
-  private createGlowfernArch(): void {
-    const x = 1980;
-    const y = 1080;
-    const roots = this.add.graphics().setDepth(worldDepthForY(y, 0.15));
-    roots.lineStyle(28, 0x66503d, 1);
-    roots.beginPath();
-    roots.moveTo(x - 105, y + 80);
-    roots.lineTo(x - 70, y - 45);
-    roots.lineTo(x, y - 105);
-    roots.lineTo(x + 70, y - 45);
-    roots.lineTo(x + 105, y + 80);
-    roots.strokePath();
-    for (const [offsetX, offsetY] of [
-      [-86, 20],
-      [-64, -28],
-      [65, -28],
-      [88, 18],
-    ] as const) {
-      this.add
-        .text(x + offsetX, y + offsetY, '🌿', {
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '32px',
-        })
-        .setOrigin(0.5)
-        .setDepth(worldDepthForY(y, 0.25));
-    }
-  }
-
-  private createNavigationLights(): void {
-    const points = [
-      [520, 1065],
-      [980, 1000],
-      [1450, 1030],
-      [1880, 1090],
-      [2300, 1010],
-      [2700, 890],
-    ] as const;
-    for (const [x, y] of points) {
-      this.add.circle(x, y, 11, 0xcaf5a7, 0.75).setDepth(6);
-      this.add.circle(x, y, 28, 0xb4ef9d, 0.1).setDepth(5);
-    }
-  }
-
-  private createAmbientMotes(): void {
-    const motes = [
-      [890, 760],
-      [1500, 720],
-      [1820, 1260],
-      [2440, 700],
-      [2840, 1380],
-    ] as const;
-    for (const [index, [x, y]] of motes.entries()) {
-      const mote = this.add.circle(x, y, 5, index % 2 === 0 ? 0xd8f7ae : 0xc6eaff, 0.72).setDepth(16);
-      this.tweens.add({
-        targets: mote,
-        y: y - 24,
-        alpha: { from: 0.25, to: 0.9 },
-        duration: 1200 + index * 130,
-        yoyo: true,
-        repeat: -1,
-        ease: 'Sine.InOut',
-      });
+    for (const spot of WHISPERING_WOODS_MAP.discoverySpots) {
+      const marker = this.discoveryMarkers.get(spot.discoveryId);
+      if (!marker) {
+        continue;
+      }
+      const distance = Phaser.Math.Distance.Between(
+        this.player.sprite.x,
+        this.player.sprite.y,
+        spot.position.x,
+        spot.position.y,
+      );
+      if (distance > spot.collectionRadius) {
+        continue;
+      }
+      this.discoveryService.unlockDiscovery(spot.discoveryId);
+      marker.destroy(true);
+      this.discoveryMarkers.delete(spot.discoveryId);
+      this.audio.playSfx('discovery');
+      this.showFeedback(`New discovery!\n${spot.label} ✨`);
+      return;
     }
   }
 
@@ -421,5 +390,24 @@ export class WhisperingWoodsScene extends Phaser.Scene {
       this.feedbackText?.setVisible(false);
       this.feedbackTimer = null;
     });
+  }
+
+  private shutdown(): void {
+    this.audio.leaveScene(this.scene.key);
+    this.feedbackTimer?.destroy();
+    this.touchMovementPad?.destroy();
+    this.inputController?.destroy();
+    this.player?.destroy();
+    for (const marker of this.discoveryMarkers.values()) {
+      marker.destroy(true);
+    }
+    this.discoveryMarkers.clear();
+    this.feedbackTimer = null;
+    this.touchMovementPad = null;
+    this.inputController = null;
+    this.pointerInput = null;
+    this.player = null;
+    this.discoveryService = null;
+    this.feedbackText = null;
   }
 }
