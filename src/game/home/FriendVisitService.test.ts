@@ -34,9 +34,7 @@ function createEligibleSave(options: { willow?: boolean; nova?: boolean } = {}):
     ...save,
     relationships: {
       byCharacterId: {
-        ...(options.willow
-          ? { 'character:willow': { friendshipPoints: 5, flags: [] } }
-          : {}),
+        ...(options.willow ? { 'character:willow': { friendshipPoints: 5, flags: [] } } : {}),
         ...(options.nova ? { 'character:nova': { friendshipPoints: 5, flags: [] } } : {}),
       },
     },
@@ -110,9 +108,9 @@ describe('FriendVisitService', () => {
 
     service.completeVisit(willowVisit);
 
-    expect(new FriendVisitService(saveService).resolveNextVisit(EMPTY_HOME)?.definition.characterId).toBe(
-      'character:nova',
-    );
+    expect(
+      new FriendVisitService(saveService).resolveNextVisit(EMPTY_HOME)?.definition.characterId,
+    ).toBe('character:nova');
   });
 
   it('uses cottage-aware dialogue when Willow visits a decorated home', () => {
@@ -172,10 +170,8 @@ describe('FriendVisitService', () => {
       );
 
       for (const collider of COTTAGE_INTERIOR_MAP.colliders) {
-        const clearOnX =
-          Math.abs(x - collider.x) >= collider.width / 2 + visitorRadius;
-        const clearOnY =
-          Math.abs(y - collider.y) >= collider.height / 2 + visitorRadius;
+        const clearOnX = Math.abs(x - collider.x) >= collider.width / 2 + visitorRadius;
+        const clearOnY = Math.abs(y - collider.y) >= collider.height / 2 + visitorRadius;
         expect(clearOnX || clearOnY, `${visit.id} overlaps ${collider.id}`).toBe(true);
       }
     }
