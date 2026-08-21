@@ -34,6 +34,13 @@ import {
 import { R4_SECRET_DISCOVERIES } from './r4Secrets';
 import { R4_SHOP_ITEMS } from './r4ShopContent';
 import { R5_CRYSTAL_BROOK_DISCOVERIES, R5_CRYSTAL_BROOK_ITEMS } from './r5CrystalBrook';
+import {
+  R5_CRYSTAL_BROOK_STORY_CHARACTERS,
+  R5_CRYSTAL_BROOK_STORY_DIALOGUES,
+  R5_CRYSTAL_BROOK_STORY_DISCOVERIES,
+  R5_CRYSTAL_BROOK_STORY_ITEMS,
+  R5_CRYSTAL_BROOK_STORY_QUESTS,
+} from './r5CrystalBrookStory';
 import type {
   CharacterDefinition,
   CharacterId,
@@ -57,6 +64,7 @@ const ALL_ITEMS = [
   ...R4_SHOP_ITEMS,
   ...R4_PEBBLE_ITEMS,
   ...R5_CRYSTAL_BROOK_ITEMS,
+  ...R5_CRYSTAL_BROOK_STORY_ITEMS,
 ] satisfies readonly ItemDefinition[];
 const ALL_CHARACTERS = [
   ...CHARACTERS,
@@ -65,6 +73,7 @@ const ALL_CHARACTERS = [
   ...R4_EGG_CHARACTERS,
   ...R4_PICNIC_CHARACTERS,
   ...R4_PEBBLE_CHARACTERS,
+  ...R5_CRYSTAL_BROOK_STORY_CHARACTERS,
 ] satisfies readonly CharacterDefinition[];
 const ALL_QUESTS = [
   ...QUESTS,
@@ -73,6 +82,7 @@ const ALL_QUESTS = [
   ...R4_EGG_QUESTS,
   ...R4_PICNIC_QUESTS,
   ...R4_PEBBLE_QUESTS,
+  ...R5_CRYSTAL_BROOK_STORY_QUESTS,
 ] satisfies readonly QuestDefinition[];
 const ALL_DISCOVERIES = [
   ...DISCOVERIES,
@@ -81,6 +91,7 @@ const ALL_DISCOVERIES = [
   ...R4_SECRET_DISCOVERIES,
   ...R4_PEBBLE_DISCOVERIES,
   ...R5_CRYSTAL_BROOK_DISCOVERIES,
+  ...R5_CRYSTAL_BROOK_STORY_DISCOVERIES,
 ] satisfies readonly DiscoveryDefinition[];
 const ALL_DIALOGUES = [
   ...DIALOGUES,
@@ -90,6 +101,7 @@ const ALL_DIALOGUES = [
   ...R4_FRIEND_VISIT_DIALOGUES,
   ...R4_PICNIC_DIALOGUES,
   ...R4_PEBBLE_DIALOGUES,
+  ...R5_CRYSTAL_BROOK_STORY_DIALOGUES,
 ] satisfies readonly DialogueDefinition[];
 const ALL_DIALOGUE_VARIANT_SETS = [
   ...R4_DIALOGUE_VARIANT_SETS,
