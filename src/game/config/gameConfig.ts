@@ -25,6 +25,7 @@ import { ShopScene } from '../scenes/ShopScene';
 import { SunbeamVillageScene } from '../scenes/SunbeamVillageScene';
 import { TitleScene } from '../scenes/TitleScene';
 import { UnicornCreatorScene } from '../scenes/UnicornCreatorScene';
+import { WhisperingWoodsScene } from '../scenes/WhisperingWoodsScene';
 import { WillowStoryScene } from '../scenes/WillowStoryScene';
 import { WonderbookScene } from '../scenes/WonderbookScene';
 import { GAME_HEIGHT, GAME_WIDTH } from './gameConstants';
@@ -63,6 +64,7 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
     SunbeamVillageScene,
     RainbowMeadowScene,
     CrystalBrookScene,
+    WhisperingWoodsScene,
     RainbowRunEntryScene,
     NovaStoryScene,
     NovaTutorialRaceScene,
