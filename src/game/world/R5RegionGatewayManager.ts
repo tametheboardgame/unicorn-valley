@@ -6,10 +6,7 @@ import {
   CRYSTAL_BROOK_MAP,
   setCrystalBrookPlayerSpawn,
 } from './CrystalBrookMap';
-import {
-  RAINBOW_MEADOW_LOCATION_ID,
-  setRainbowMeadowPlayerSpawn,
-} from './RainbowMeadowMap';
+import { RAINBOW_MEADOW_LOCATION_ID, setRainbowMeadowPlayerSpawn } from './RainbowMeadowMap';
 import { WORLD_PLAYER_NAME } from './WorldTraversalPolishManager';
 
 interface RegionGatewayDefinition {
@@ -106,10 +103,7 @@ export class R5RegionGatewayManager {
     }
   }
 
-  private ensureState(
-    scene: Phaser.Scene,
-    definition: RegionGatewayDefinition,
-  ): GatewayState {
+  private ensureState(scene: Phaser.Scene, definition: RegionGatewayDefinition): GatewayState {
     const existing = this.states.get(definition.id);
     if (existing?.scene === scene && existing.container.active) {
       return existing;
@@ -150,7 +144,15 @@ export class R5RegionGatewayManager {
       .setVisible(false);
     const zone = scene.add.zone(0, 20, 170, 230).setInteractive({ useHandCursor: true });
     const container = scene.add
-      .container(definition.position.x, definition.position.y, [glow, arch, opening, icon, sign, prompt, zone])
+      .container(definition.position.x, definition.position.y, [
+        glow,
+        arch,
+        opening,
+        icon,
+        sign,
+        prompt,
+        zone,
+      ])
       .setDepth(17);
 
     const state: GatewayState = {
