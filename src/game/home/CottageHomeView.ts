@@ -3,7 +3,10 @@ import { itemRegistry } from '../../content/registries';
 import type { SaveGame } from '../save/saveSchema';
 import { COTTAGE_INTERIOR_MAP, type CottageDecorationSlot } from '../world/CottageInteriorMap';
 
-const TREASURE_REWARD_IDS = ['item:moonflower-lantern'] as const satisfies readonly ItemId[];
+const TREASURE_REWARD_IDS = [
+  'item:moonflower-lantern',
+  'item:pebble-curiosity-display',
+] as const satisfies readonly ItemId[];
 
 export interface CottageDecorationView {
   slotId: string;

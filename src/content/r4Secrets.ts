@@ -3,6 +3,7 @@ import type {
   DialogueQuestStatus,
   DiscoveryDefinition,
   DiscoveryId,
+  ItemId,
   QuestId,
 } from './contentTypes';
 import { WILLOW_GARDEN_PLANTED_FLAG, WILLOW_MOONFLOWERS_QUEST_ID } from './r2Quests';
@@ -41,6 +42,8 @@ export interface SecretDiscoveryDefinition {
   conditions?: readonly SecretDiscoveryCondition[];
   worldFlagId?: DialogueFlagId;
   revealedPath?: readonly { x: number; y: number }[];
+  rewardItemId?: ItemId;
+  rewardQuantity?: number;
 }
 
 export const HOLLOW_TREE_STAR_DISCOVERY_ID = 'discovery:secret-hollow-tree-star' as const;

@@ -1,5 +1,6 @@
 import type { SecretDiscoveryCondition, SecretDiscoveryDefinition } from '../../content/r4Secrets';
 import { type GameEventMap, type TypedEventBus, gameEventBus } from '../events/GameEventBus';
+import { InventoryService } from '../inventory/InventoryService';
 import type { SaveService } from '../save/SaveService';
 import type { SaveGame } from '../save/saveSchema';
 import { DiscoveryService } from './DiscoveryService';
@@ -28,12 +29,14 @@ export function isSecretConditionMet(condition: SecretDiscoveryCondition, save: 
 
 export class SecretDiscoveryService {
   private readonly discoveries: DiscoveryService;
+  private readonly inventory: InventoryService;
 
   public constructor(
     private readonly saveService: SaveService,
     events: TypedEventBus<GameEventMap> = gameEventBus,
   ) {
     this.discoveries = new DiscoveryService(saveService, events);
+    this.inventory = new InventoryService(saveService, events);
   }
 
   public isDiscovered(definition: SecretDiscoveryDefinition): boolean {
@@ -73,7 +76,17 @@ export class SecretDiscoveryService {
       return { status: 'blocked', save: current };
     }
 
-    const saved = this.discoveries.unlockDiscovery(definition.discoveryId, definition.worldFlagId);
-    return { status: 'discovered', save: saved };
+    const discovered = this.discoveries.unlockDiscovery(
+      definition.discoveryId,
+      definition.worldFlagId,
+    );
+    if (definition.rewardItemId) {
+      this.inventory.addItem(definition.rewardItemId, definition.rewardQuantity ?? 1);
+    }
+
+    return {
+      status: 'discovered',
+      save: this.saveService.load() ?? discovered,
+    };
   }
 }
