@@ -21,7 +21,7 @@ interface ClueMarker {
 interface LumiWoodsState {
   scene: Phaser.Scene;
   interactKey: Phaser.Input.Keyboard.Key | null;
-  markers: Map<string, ClueMarker>;
+  markers: Map<SecretDiscoveryDefinition['id'], ClueMarker>;
   starwell: Phaser.GameObjects.Container | null;
   lumi: Phaser.GameObjects.Container | null;
   lumiPrompt: Phaser.GameObjects.Text | null;
