@@ -9,7 +9,9 @@ import {
 
 describe('Lumi Woods discovery story', () => {
   it('requires both observed clues before the Starwell reveal', () => {
-    const starwell = R5_LUMI_SECRETS.find(({ discoveryId }) => discoveryId === STARWELL_DISCOVERY_ID);
+    const starwell = R5_LUMI_SECRETS.find(
+      ({ discoveryId }) => discoveryId === STARWELL_DISCOVERY_ID,
+    );
     expect(starwell?.conditions).toEqual([
       { type: 'discovery', discoveryId: FIREFLY_SPIRAL_DISCOVERY_ID },
       { type: 'discovery', discoveryId: HUMMING_BARK_DISCOVERY_ID },
