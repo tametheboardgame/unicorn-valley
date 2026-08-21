@@ -25,7 +25,7 @@ interface BrookStoryState {
   interactKey: Phaser.Input.Keyboard.Key | null;
   ripple: Phaser.GameObjects.Container | null;
   ripplePrompt: Phaser.GameObjects.Text | null;
-  markers: Map<string, SecretMarker>;
+  markers: Map<SecretDiscoveryDefinition['id'], SecretMarker>;
   revealedPath: Phaser.GameObjects.Container | null;
   restoredSong: Phaser.GameObjects.Container | null;
 }
@@ -282,7 +282,7 @@ export class CrystalBrookStoryWorldManager {
     const save = this.saveService.load();
     const showTrail = save?.world.flags[BROOK_ECHO_TRAIL_REVEALED_FLAG] === true;
     if (showTrail && !state.revealedPath?.active) {
-      const song = R5_CRYSTAL_BROOK_STORY_SECRETS.find(
+      const song: SecretDiscoveryDefinition | undefined = R5_CRYSTAL_BROOK_STORY_SECRETS.find(
         ({ id }) => id === 'secret:brook-water-song',
       );
       const objects: Phaser.GameObjects.GameObject[] = [];
