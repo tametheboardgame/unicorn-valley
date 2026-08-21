@@ -60,13 +60,18 @@ export class FireflyLanternScene extends Phaser.Scene {
       })
       .setOrigin(0.5, 0);
     const instruction = this.add
-      .text(GAME_WIDTH / 2, 92, 'Tap each bright firefly before it wanders on. Missed lights are completely fine.', {
-        color: '#dcefd6',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '18px',
-        align: 'center',
-        wordWrap: { width: 850 },
-      })
+      .text(
+        GAME_WIDTH / 2,
+        92,
+        'Tap each bright firefly before it wanders on. Missed lights are completely fine.',
+        {
+          color: '#dcefd6',
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '18px',
+          align: 'center',
+          wordWrap: { width: 850 },
+        },
+      )
       .setOrigin(0.5, 0);
     this.scoreText = this.add
       .text(38, 35, 'Guided: 0 / 8', {
@@ -239,7 +244,14 @@ export class FireflyLanternScene extends Phaser.Scene {
 
     const retry = this.createButton(480, 535, 'Try again', () => this.scene.restart());
     const back = this.createButton(800, 535, 'Back to the Woods', () => this.returnToWoods());
-    this.add.container(0, 0, [panel, heading, resultText, retry, back, ...(firstCompletion ? [firstCompletion] : [])]);
+    this.add.container(0, 0, [
+      panel,
+      heading,
+      resultText,
+      retry,
+      back,
+      ...(firstCompletion ? [firstCompletion] : []),
+    ]);
     this.statusText?.setText('R: retry   Esc: back');
   }
 
