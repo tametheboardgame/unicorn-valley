@@ -1,8 +1,7 @@
 import type { SaveService } from '../save/SaveService';
 
 export const FIREFLY_LANTERN_ACTIVITY_ID = 'minigame:firefly-lantern';
-export const FIREFLY_LANTERN_FIRST_COMPLETION_MEMORY =
-  'memory:r5-firefly-lantern-first-completion';
+export const FIREFLY_LANTERN_FIRST_COMPLETION_MEMORY = 'memory:r5-firefly-lantern-first-completion';
 
 export interface FireflyLanternRecordResult {
   bestScore: number;
