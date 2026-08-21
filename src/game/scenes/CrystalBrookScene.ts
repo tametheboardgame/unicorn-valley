@@ -382,7 +382,10 @@ export class CrystalBrookScene extends Phaser.Scene {
       this.add.ellipse(x, y, 180, 100, 0x6eaa76, 0.86).setDepth(depth);
       this.add.ellipse(x + 70, y + 10, 150, 90, 0x7eba7d, 0.82).setDepth(depth);
       for (let offset = -50; offset <= 50; offset += 25) {
-        this.add.rectangle(x + offset, y - 70, 7, 54, 0x579064, 0.85).setAngle(offset / 8).setDepth(depth + 0.1);
+        this.add
+          .rectangle(x + offset, y - 70, 7, 54, 0x579064, 0.85)
+          .setAngle(offset / 8)
+          .setDepth(depth + 0.1);
       }
     }
   }
@@ -437,7 +440,11 @@ export class CrystalBrookScene extends Phaser.Scene {
   private createCollisionMap(): Phaser.Physics.Arcade.StaticGroup {
     const group = this.physics.add.staticGroup();
     for (const collider of CRYSTAL_BROOK_MAP.colliders) {
-      const blocker = group.create(collider.x, collider.y, COLLISION_TEXTURE_KEY) as Phaser.Physics.Arcade.Image;
+      const blocker = group.create(
+        collider.x,
+        collider.y,
+        COLLISION_TEXTURE_KEY,
+      ) as Phaser.Physics.Arcade.Image;
       blocker.setDisplaySize(collider.width, collider.height).setVisible(false).refreshBody();
     }
     return group;
@@ -469,13 +476,18 @@ export class CrystalBrookScene extends Phaser.Scene {
       .setDepth(115);
 
     this.add
-      .text(GAME_WIDTH / 2, 72, 'Follow the water, hop between stones, and look for little treasures.', {
-        color: '#587077',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '16px',
-        backgroundColor: '#f5fff2df',
-        padding: { x: 12, y: 6 },
-      })
+      .text(
+        GAME_WIDTH / 2,
+        72,
+        'Follow the water, hop between stones, and look for little treasures.',
+        {
+          color: '#587077',
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '16px',
+          backgroundColor: '#f5fff2df',
+          padding: { x: 12, y: 6 },
+        },
+      )
       .setOrigin(0.5, 0)
       .setScrollFactor(0)
       .setDepth(114);
