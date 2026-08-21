@@ -63,7 +63,8 @@ export const R5_CRYSTAL_BROOK_STORY_DISCOVERIES = [
   {
     id: CRYSTAL_CHIME_DISCOVERY_ID,
     name: 'Crystal Chime',
-    description: 'A river crystal rings like a tiny bell when a drop lands in just the right place.',
+    description:
+      'A river crystal rings like a tiny bell when a drop lands in just the right place.',
     kind: 'secret',
     icon: '🔔',
     undiscoveredHint: 'A crystal close to the middle stream keeps catching single bright drops.',
@@ -113,7 +114,8 @@ export const R5_CRYSTAL_BROOK_STORY_SECRETS = [
     actionLabel: 'Follow the song',
     position: { x: 2570, y: 1580 },
     interactionRadius: 165,
-    feedback: 'Big discovery!\nThe reed whisper and crystal chime join into Crystal Brook’s water song. 🎵',
+    feedback:
+      'Big discovery!\nThe reed whisper and crystal chime join into Crystal Brook’s water song. 🎵',
     worldFlagId: BROOK_ECHO_TRAIL_REVEALED_FLAG,
     conditions: [
       { type: 'discovery', discoveryId: REED_WHISPER_DISCOVERY_ID },
