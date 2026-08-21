@@ -41,6 +41,7 @@ import {
   R5_CRYSTAL_BROOK_STORY_ITEMS,
   R5_CRYSTAL_BROOK_STORY_QUESTS,
 } from './r5CrystalBrookStory';
+import { R5_WHISPERING_WOODS_DISCOVERIES } from './r5WhisperingWoods';
 import type {
   CharacterDefinition,
   CharacterId,
@@ -92,6 +93,7 @@ const ALL_DISCOVERIES = [
   ...R4_PEBBLE_DISCOVERIES,
   ...R5_CRYSTAL_BROOK_DISCOVERIES,
   ...R5_CRYSTAL_BROOK_STORY_DISCOVERIES,
+  ...R5_WHISPERING_WOODS_DISCOVERIES,
 ] satisfies readonly DiscoveryDefinition[];
 const ALL_DIALOGUES = [
   ...DIALOGUES,
