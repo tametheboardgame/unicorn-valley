@@ -49,7 +49,10 @@ export class RippleStoryScene extends Phaser.Scene {
 
     this.add.circle(GAME_WIDTH / 2, 255, 88, 0xf3fff1, 0.98).setStrokeStyle(6, 0x63aebd, 1);
     this.add
-      .text(GAME_WIDTH / 2, 250, '💧', { fontFamily: 'system-ui, sans-serif', fontSize: '68px' })
+      .text(GAME_WIDTH / 2, 250, '💧', {
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '68px',
+      })
       .setOrigin(0.5);
     this.add
       .text(GAME_WIDTH / 2, 365, 'Ripple', {
@@ -111,24 +114,36 @@ export class RippleStoryScene extends Phaser.Scene {
 
   public update(): void {
     this.inputController?.update();
-    if (!this.inputController || !this.dialogueSession) return;
+    if (!this.inputController || !this.dialogueSession) {
+      return;
+    }
+
     if (this.inputController.justPressed('BACK')) {
       this.closeStory(false);
       return;
     }
-    if (!this.inputController.justPressed('INTERACT')) return;
+
+    if (!this.inputController.justPressed('INTERACT')) {
+      return;
+    }
+
     const node = this.dialogueSession.getCurrentNode();
     if (node?.type === 'line') {
       this.dialogueSession.advanceLine();
       this.refreshDialogue();
       return;
     }
+
     const choice = this.dialogueSession.getDefaultChoice();
-    if (choice) this.selectChoice(choice);
+    if (choice) {
+      this.selectChoice(choice);
+    }
   }
 
   private selectChoice(choice: DialogueChoice): void {
-    if (!this.dialogueSession) return;
+    if (!this.dialogueSession) {
+      return;
+    }
     this.dialogueSession.choose(choice.id);
     this.refreshDialogue();
   }
@@ -148,12 +163,20 @@ export class RippleStoryScene extends Phaser.Scene {
   }
 
   private closeStory(completedDialogue: boolean): void {
-    if (this.closing) return;
+    if (this.closing) {
+      return;
+    }
     this.closing = true;
+
     if (completedDialogue) {
       const questEngine = getBrowserQuestEngine();
-      if (this.shouldStartQuest) questEngine.startQuest(RIPPLE_BROOK_QUEST_ID);
-      if (this.shouldNotifyTalk) questEngine.notifyCharacterTalked(RIPPLE_CHARACTER_ID);
+      if (this.shouldStartQuest) {
+        questEngine.startQuest(RIPPLE_BROOK_QUEST_ID);
+      }
+      if (this.shouldNotifyTalk) {
+        questEngine.notifyCharacterTalked(RIPPLE_CHARACTER_ID);
+      }
+
       const inventory = new InventoryService(getBrowserSaveService());
       if (
         questEngine.getProgress(RIPPLE_BROOK_QUEST_ID).currentStepId ===
@@ -163,6 +186,7 @@ export class RippleStoryScene extends Phaser.Scene {
         gameEventBus.emit('ITEM_COLLECTED', { itemId: SINGING_SHELL_ITEM_ID, quantity: 2 });
       }
     }
+
     this.dialogueSession?.close();
     this.dialogueSession = null;
     this.dialogueCard?.hide();
