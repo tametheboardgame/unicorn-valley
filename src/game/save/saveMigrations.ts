@@ -1,13 +1,37 @@
+import { createDefaultSave } from './createDefaultSave';
 import { CURRENT_SAVE_SCHEMA_VERSION } from './saveSchema';
 
 export type SaveRecord = Record<string, unknown>;
 export type SaveMigration = (save: SaveRecord) => SaveRecord;
 
-export const SAVE_MIGRATIONS: ReadonlyMap<number, SaveMigration> = new Map();
-
 function isRecord(value: unknown): value is SaveRecord {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
+
+function mergeRecord(defaultValue: SaveRecord, value: unknown): SaveRecord {
+  return isRecord(value) ? { ...defaultValue, ...value } : { ...defaultValue };
+}
+
+const migrateV1ToV2: SaveMigration = (save) => {
+  const timestamp = typeof save.createdAt === 'string' ? save.createdAt : '1970-01-01T00:00:00.000Z';
+  const defaults = createDefaultSave(timestamp);
+
+  return {
+    ...defaults,
+    ...save,
+    schemaVersion: 2,
+    profile: mergeRecord(defaults.profile, save.profile),
+    inventory: mergeRecord(defaults.inventory, save.inventory),
+    relationships: mergeRecord(defaults.relationships, save.relationships),
+    quests: mergeRecord(defaults.quests, save.quests),
+    world: mergeRecord(defaults.world, save.world),
+    home: mergeRecord(defaults.home, save.home),
+    activities: mergeRecord(defaults.activities, save.activities),
+    collections: mergeRecord(defaults.collections, save.collections),
+  };
+};
+
+export const SAVE_MIGRATIONS: ReadonlyMap<number, SaveMigration> = new Map([[1, migrateV1ToV2]]);
 
 export function migrateSaveRecord(
   value: unknown,
