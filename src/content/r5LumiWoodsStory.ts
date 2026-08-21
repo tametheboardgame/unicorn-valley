@@ -20,10 +20,12 @@ export const R5_LUMI_DISCOVERIES = [
   {
     id: FIREFLY_SPIRAL_DISCOVERY_ID,
     name: 'Firefly Spiral',
-    description: 'A cluster of fireflies loops in the same tiny spiral whenever the Woods grows especially quiet.',
+    description:
+      'A cluster of fireflies loops in the same tiny spiral whenever the Woods grows especially quiet.',
     kind: 'secret',
     icon: '✨',
-    undiscoveredHint: 'The lights in Lantern Clearing sometimes move together instead of drifting apart.',
+    undiscoveredHint:
+      'The lights in Lantern Clearing sometimes move together instead of drifting apart.',
   },
   {
     id: HUMMING_BARK_DISCOVERY_ID,
@@ -36,7 +38,8 @@ export const R5_LUMI_DISCOVERIES = [
   {
     id: STARWELL_DISCOVERY_ID,
     name: 'The Starwell',
-    description: 'A hidden hollow where reflected firefly light makes the dark water look full of tiny stars.',
+    description:
+      'A hidden hollow where reflected firefly light makes the dark water look full of tiny stars.',
     kind: 'secret',
     icon: '🌌',
     undiscoveredHint: 'Two strange Woods clues may be pointing towards the same hidden place.',
@@ -54,7 +57,8 @@ export const R5_LUMI_SECRETS = [
     actionLabel: 'Watch',
     position: { x: 2740, y: 760 },
     interactionRadius: 155,
-    feedback: 'Something unusual!\nThe fireflies loop into a perfect spiral, then drift apart again. ✨',
+    feedback:
+      'Something unusual!\nThe fireflies loop into a perfect spiral, then drift apart again. ✨',
   },
   {
     id: 'secret:woods-humming-bark',
@@ -66,7 +70,8 @@ export const R5_LUMI_SECRETS = [
     actionLabel: 'Listen',
     position: { x: 2110, y: 940 },
     interactionRadius: 150,
-    feedback: 'Another odd clue!\nThe old bark hums the same three notes as the bright glowferns. 🌳',
+    feedback:
+      'Another odd clue!\nThe old bark hums the same three notes as the bright glowferns. 🌳',
   },
   {
     id: 'secret:woods-starwell',
