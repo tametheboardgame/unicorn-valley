@@ -166,7 +166,7 @@ export class CottageInteriorScene extends Phaser.Scene {
         id: `${DECORATION_INTERACTION_PREFIX}${slot.id}`,
         label: placement ? `${slot.label} · ${placement.name}` : `${slot.label} ✦`,
         actionLabel: placement ? 'Change decoration' : 'Decorate',
-        position: slot.position,
+        position: slot.interactionPosition ?? slot.position,
         interactionRadius: 130,
         priority: 25,
         result: {
