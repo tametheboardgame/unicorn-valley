@@ -32,7 +32,7 @@ test('Crystal Brook boots as a playable world scene without browser errors', asy
   });
 
   const scene = snapshot?.scenes.find(({ key }) => key === 'CrystalBrookScene');
-  const player = scene?.objects.find(({ name }) => name === 'world-player');
+  const player = scene?.objects.find(({ name }) => name === 'world-player-unicorn');
   expect(browserErrors).toEqual([]);
   expect(scene).toBeTruthy();
   expect(player?.visible).toBe(true);
