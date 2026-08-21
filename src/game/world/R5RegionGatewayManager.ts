@@ -7,6 +7,11 @@ import {
   setCrystalBrookPlayerSpawn,
 } from './CrystalBrookMap';
 import { RAINBOW_MEADOW_LOCATION_ID, setRainbowMeadowPlayerSpawn } from './RainbowMeadowMap';
+import {
+  setWhisperingWoodsPlayerSpawn,
+  WHISPERING_WOODS_LOCATION_ID,
+  WHISPERING_WOODS_MAP,
+} from './WhisperingWoodsMap';
 import { WORLD_PLAYER_NAME } from './WorldTraversalPolishManager';
 
 interface RegionGatewayDefinition {
@@ -32,6 +37,9 @@ interface GatewayState {
 const MEADOW_GATE_POSITION = { x: 3030, y: 1750 } as const;
 const MEADOW_RETURN_POSITION = { x: 2870, y: 1700 } as const;
 const BROOK_ENTRANCE = CRYSTAL_BROOK_MAP.entrances[0];
+const BROOK_WOODS_GATE_POSITION = { x: 3260, y: 990 } as const;
+const BROOK_WOODS_RETURN_POSITION = { x: 3070, y: 1010 } as const;
+const WOODS_ENTRANCE = WHISPERING_WOODS_MAP.entrances[0];
 
 const R5_REGION_GATEWAYS: readonly RegionGatewayDefinition[] = [
   {
@@ -55,6 +63,28 @@ const R5_REGION_GATEWAYS: readonly RegionGatewayDefinition[] = [
     destinationSpawn: MEADOW_RETURN_POSITION,
     accent: 0xe5b6df,
     icon: '🌈',
+  },
+  {
+    id: 'gateway:crystal-brook-whispering-woods',
+    sceneKey: 'CrystalBrookScene',
+    label: 'Whispering Woods',
+    position: BROOK_WOODS_GATE_POSITION,
+    destinationSceneKey: 'WhisperingWoodsScene',
+    destinationLocationId: WHISPERING_WOODS_LOCATION_ID,
+    destinationSpawn: WOODS_ENTRANCE.approach,
+    accent: 0x7aaa78,
+    icon: '🌲',
+  },
+  {
+    id: 'gateway:whispering-woods-crystal-brook',
+    sceneKey: 'WhisperingWoodsScene',
+    label: 'Crystal Brook',
+    position: WOODS_ENTRANCE.position,
+    destinationSceneKey: 'CrystalBrookScene',
+    destinationLocationId: CRYSTAL_BROOK_LOCATION_ID,
+    destinationSpawn: BROOK_WOODS_RETURN_POSITION,
+    accent: 0x74cbd3,
+    icon: '💎',
   },
 ];
 
@@ -202,6 +232,8 @@ export class R5RegionGatewayManager {
       setCrystalBrookPlayerSpawn(state.definition.destinationSpawn);
     } else if (state.definition.destinationSceneKey === 'RainbowMeadowScene') {
       setRainbowMeadowPlayerSpawn(state.definition.destinationSpawn);
+    } else if (state.definition.destinationSceneKey === 'WhisperingWoodsScene') {
+      setWhisperingWoodsPlayerSpawn(state.definition.destinationSpawn);
     }
 
     saveLocationCheckpoint(getBrowserSaveService(), state.definition.destinationLocationId);
