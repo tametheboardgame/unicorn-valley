@@ -6,6 +6,7 @@ import { CrystalBrookScene } from '../scenes/CrystalBrookScene';
 import { DialogueTestScene } from '../scenes/DialogueTestScene';
 import { DoorwayStubScene } from '../scenes/DoorwayStubScene';
 import { InventoryScene } from '../scenes/InventoryScene';
+import { LumiStoryScene } from '../scenes/LumiStoryScene';
 import { MarigoldPicnicScene } from '../scenes/MarigoldPicnicScene';
 import { MoonflowerGladeScene } from '../scenes/MoonflowerGladeScene';
 import { MoonflowerPatchScene } from '../scenes/MoonflowerPatchScene';
@@ -73,6 +74,7 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
     MarigoldPicnicScene,
     PebbleStoryScene,
     RippleStoryScene,
+    LumiStoryScene,
     PipEggStoryScene,
     PipEggHatchScene,
     DoorwayStubScene,
