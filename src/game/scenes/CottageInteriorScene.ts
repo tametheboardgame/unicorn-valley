@@ -1,5 +1,9 @@
 import Phaser from 'phaser';
 import { GAME_WIDTH } from '../config/gameConstants';
+import {
+  COTTAGE_FRIEND_VISIT_INTERACTION_ID,
+  CottageFriendVisitManager,
+} from '../home/CottageFriendVisitManager';
 import { buildCottageHomeView, type CottageHomeView } from '../home/CottageHomeView';
 import { HomeDecorationService } from '../home/HomeDecorationService';
 import { InputController } from '../input/InputController';
@@ -36,6 +40,7 @@ export class CottageInteriorScene extends Phaser.Scene {
   private feedbackText: Phaser.GameObjects.Text | null = null;
   private feedbackTimer: Phaser.Time.TimerEvent | null = null;
   private decorationService: HomeDecorationService | null = null;
+  private friendVisitManager: CottageFriendVisitManager | null = null;
   private homeView: CottageHomeView | null = null;
   private homeStateObjects: Phaser.GameObjects.GameObject[] = [];
   private interactions: readonly InteractionTarget[] = [];
@@ -51,9 +56,10 @@ export class CottageInteriorScene extends Phaser.Scene {
     const saveService = getBrowserSaveService();
     const save = saveLocationCheckpoint(saveService, COTTAGE_INTERIOR_LOCATION_ID);
     this.decorationService = new HomeDecorationService(saveService);
-    this.homeView = buildCottageHomeView(save);
-    this.renderHomeState(this.homeView);
-    this.interactions = this.createInteractions(this.homeView);
+    const homeView = buildCottageHomeView(save);
+    this.homeView = homeView;
+    this.renderHomeState(homeView);
+    this.interactions = this.createInteractions(homeView);
 
     const appearance = parseUnicornAppearance(save.profile.appearance);
     createUnicornAppearanceTexture(this, SAVED_PLAYER_TEXTURE_KEY, appearance);
@@ -87,6 +93,12 @@ export class CottageInteriorScene extends Phaser.Scene {
       this.touchMovementPad = new TouchMovementPad(this, this.pointerInput);
     }
     this.interactionPrompt = new InteractionPrompt(this, this.pointerInput);
+    this.friendVisitManager = new CottageFriendVisitManager(
+      this,
+      saveService,
+      homeView,
+      this.pointerInput,
+    );
 
     const camera = this.cameras.main;
     camera.setBackgroundColor('#f5dfcb');
@@ -99,6 +111,8 @@ export class CottageInteriorScene extends Phaser.Scene {
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.feedbackTimer?.destroy();
       this.feedbackTimer = null;
+      this.friendVisitManager?.destroy();
+      this.friendVisitManager = null;
       this.touchMovementPad?.destroy();
       this.touchMovementPad = null;
       this.inputController?.destroy();
@@ -125,6 +139,14 @@ export class CottageInteriorScene extends Phaser.Scene {
 
     this.inputController.update();
 
+    if (this.friendVisitManager?.update(this.inputController)) {
+      this.player.sprite.setVelocity(0, 0);
+      this.player.updatePresentation(time);
+      this.activeInteraction = null;
+      this.interactionPrompt?.setTarget(null);
+      return;
+    }
+
     if (this.inputController.justPressed('BACK')) {
       this.scene.start('TitleScene');
       return;
@@ -139,9 +161,13 @@ export class CottageInteriorScene extends Phaser.Scene {
     this.player.applyMovement(movement);
     this.player.updatePresentation(time);
 
+    const friendInteraction = this.friendVisitManager?.getInteraction();
+    const availableInteractions = friendInteraction
+      ? [...this.interactions, friendInteraction]
+      : this.interactions;
     this.activeInteraction = selectInteractionTarget(
       { x: this.player.sprite.x, y: this.player.sprite.y },
-      this.interactions,
+      availableInteractions,
     );
     this.interactionPrompt?.setTarget(this.activeInteraction);
 
@@ -208,6 +234,13 @@ export class CottageInteriorScene extends Phaser.Scene {
   }
 
   private activateInteraction(target: InteractionTarget): void {
+    if (target.id === COTTAGE_FRIEND_VISIT_INTERACTION_ID) {
+      this.friendVisitManager?.activate();
+      this.activeInteraction = null;
+      this.interactionPrompt?.setTarget(null);
+      return;
+    }
+
     if (target.id.startsWith(DECORATION_INTERACTION_PREFIX)) {
       this.cycleDecoration(target.id.slice(DECORATION_INTERACTION_PREFIX.length));
       return;
