@@ -1,0 +1,86 @@
+import type { ItemId } from '../../content/contentTypes';
+import type { CottageDecorationCategory } from '../world/CottageInteriorMap';
+
+export type CottageDecorationTheme =
+  | 'moonflower'
+  | 'rainbow'
+  | 'starlight'
+  | 'sunbeam'
+  | 'adventure';
+
+export interface CottageDecorationProfile {
+  categories: readonly CottageDecorationCategory[];
+  theme: CottageDecorationTheme;
+  previewColour: number;
+}
+
+const COTTAGE_DECORATION_PROFILES: Partial<Record<ItemId, CottageDecorationProfile>> = {
+  'item:sunbeam-cushion': {
+    categories: ['floor'],
+    theme: 'sunbeam',
+    previewColour: 0xffd982,
+  },
+  'item:moonflower-lantern': {
+    categories: ['wall', 'table', 'shelf', 'display'],
+    theme: 'moonflower',
+    previewColour: 0xc8a6dc,
+  },
+  'item:rainbow-run-finisher-ribbon': {
+    categories: ['wall', 'shelf', 'display'],
+    theme: 'rainbow',
+    previewColour: 0xf6a9cf,
+  },
+  'item:rainbow-run-podium-rosette': {
+    categories: ['wall', 'shelf', 'display'],
+    theme: 'rainbow',
+    previewColour: 0xffd479,
+  },
+  'item:cloud-cushion': {
+    categories: ['floor'],
+    theme: 'starlight',
+    previewColour: 0xc8dff2,
+  },
+  'item:starlight-lamp': {
+    categories: ['wall', 'table', 'shelf'],
+    theme: 'starlight',
+    previewColour: 0xb8a7df,
+  },
+  'item:rainbow-rug': {
+    categories: ['floor'],
+    theme: 'rainbow',
+    previewColour: 0xf4a7c7,
+  },
+  'item:pebble-curiosity-display': {
+    categories: ['table', 'shelf', 'display'],
+    theme: 'adventure',
+    previewColour: 0xd6b98b,
+  },
+};
+
+export function getCottageDecorationProfile(
+  itemId: ItemId,
+): CottageDecorationProfile | null {
+  return COTTAGE_DECORATION_PROFILES[itemId] ?? null;
+}
+
+export function canPlaceDecorationInCategory(
+  itemId: ItemId,
+  category: CottageDecorationCategory,
+): boolean {
+  return getCottageDecorationProfile(itemId)?.categories.includes(category) ?? false;
+}
+
+export function getCottageDecorationThemeLabel(theme: CottageDecorationTheme): string {
+  switch (theme) {
+    case 'moonflower':
+      return 'Moonflower';
+    case 'rainbow':
+      return 'Rainbow';
+    case 'starlight':
+      return 'Starlight';
+    case 'sunbeam':
+      return 'Sunbeam';
+    case 'adventure':
+      return 'Adventure';
+  }
+}
