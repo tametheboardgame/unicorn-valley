@@ -2,9 +2,12 @@ import type { CollisionRectangle, MapPoint, TraversalMapDefinition } from './Map
 
 export const COTTAGE_INTERIOR_LOCATION_ID = 'location:moonflower-cottage-interior';
 
+export type CottageDecorationCategory = 'wall' | 'floor' | 'table' | 'shelf' | 'display';
+
 export interface CottageDecorationSlot {
   id: string;
   label: string;
+  category: CottageDecorationCategory;
   position: MapPoint;
 }
 
@@ -40,10 +43,60 @@ export const COTTAGE_INTERIOR_MAP = {
     approach: { x: 1310, y: 390 },
   },
   decorationSlots: [
-    { id: 'cottage-slot:window-nook', label: 'Window nook', position: { x: 705, y: 320 } },
-    { id: 'cottage-slot:centre-rug', label: 'Centre rug', position: { x: 900, y: 790 } },
-    { id: 'cottage-slot:cosy-corner', label: 'Cosy corner', position: { x: 1450, y: 735 } },
-    { id: 'cottage-slot:bedside', label: 'Bedside', position: { x: 610, y: 720 } },
+    {
+      id: 'cottage-slot:window-nook',
+      label: 'Window nook',
+      category: 'table',
+      position: { x: 705, y: 320 },
+    },
+    {
+      id: 'cottage-slot:centre-rug',
+      label: 'Centre rug',
+      category: 'floor',
+      position: { x: 900, y: 790 },
+    },
+    {
+      id: 'cottage-slot:cosy-corner',
+      label: 'Cosy corner',
+      category: 'floor',
+      position: { x: 1450, y: 735 },
+    },
+    {
+      id: 'cottage-slot:bedside',
+      label: 'Bedside table',
+      category: 'table',
+      position: { x: 610, y: 720 },
+    },
+    {
+      id: 'cottage-slot:left-wall',
+      label: 'Left wall',
+      category: 'wall',
+      position: { x: 500, y: 300 },
+    },
+    {
+      id: 'cottage-slot:right-wall',
+      label: 'Right wall',
+      category: 'wall',
+      position: { x: 1320, y: 270 },
+    },
+    {
+      id: 'cottage-slot:tea-table',
+      label: 'Tea table',
+      category: 'table',
+      position: { x: 900, y: 455 },
+    },
+    {
+      id: 'cottage-slot:treasure-shelf',
+      label: 'Treasure shelf',
+      category: 'shelf',
+      position: { x: 1515, y: 335 },
+    },
+    {
+      id: 'cottage-slot:ribbon-display',
+      label: 'Fireplace display',
+      category: 'display',
+      position: { x: 390, y: 210 },
+    },
   ] satisfies readonly CottageDecorationSlot[],
 } satisfies TraversalMapDefinition & {
   exit: CottageInteractionPoint;
