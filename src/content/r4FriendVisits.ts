@@ -1,8 +1,4 @@
-import type {
-  CharacterId,
-  DialogueCondition,
-  DialogueId,
-} from './contentTypes';
+import type { CharacterId, DialogueCondition, DialogueId } from './contentTypes';
 import { WILLOW_GARDEN_PLANTED_FLAG, WILLOW_MOONFLOWERS_QUEST_ID } from './r2Quests';
 import { NOVA_FIRST_RACE_QUEST_ID, SUNRISE_SPRINT_UNLOCKED_FLAG } from './r3Quests';
 
