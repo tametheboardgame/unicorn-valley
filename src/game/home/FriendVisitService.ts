@@ -1,9 +1,6 @@
 import type { DialogueId } from '../../content/contentTypes';
 import { dialogueRegistry } from '../../content/registries';
-import {
-  R4_FRIEND_VISITS,
-  type FriendVisitDefinition,
-} from '../../content/r4FriendVisits';
+import { R4_FRIEND_VISITS, type FriendVisitDefinition } from '../../content/r4FriendVisits';
 import { isDialogueConditionMet } from '../dialogue/DialogueConditions';
 import { RelationshipService } from '../relationships/RelationshipService';
 import type { SaveService } from '../save/SaveService';
@@ -34,7 +31,9 @@ export class FriendVisitService {
 
     const definition = [...R4_FRIEND_VISITS]
       .sort((left, right) => right.priority - left.priority)
-      .find((visit) => visit.conditions.every((condition) => isDialogueConditionMet(condition, context)));
+      .find((visit) =>
+        visit.conditions.every((condition) => isDialogueConditionMet(condition, context)),
+      );
 
     if (!definition) {
       return null;
