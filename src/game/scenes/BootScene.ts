@@ -7,6 +7,7 @@ import { getRacePlaytestRecoveryManager } from '../racing/RacePlaytestRecoveryMa
 import { getRacePlayerControlManager } from '../racing/RacePlayerControlManager';
 import { getBrowserPipEggArcService } from '../story/browserPipEggArc';
 import { getCrystalBrookStoryWorldManager } from '../story/CrystalBrookStoryWorldManager';
+import { getLumiWoodsWorldManager } from '../story/LumiWoodsWorldManager';
 import { getPebbleCollectionWorldManager } from '../story/PebbleCollectionWorldManager';
 import { getPipEggWorldManager } from '../story/PipEggWorldManager';
 import { getVisualTighteningManager } from '../visual/VisualTighteningManager';
@@ -27,6 +28,7 @@ const DIAGNOSTIC_SCENES: Record<string, string> = {
   brook: 'CrystalBrookScene',
   woods: 'WhisperingWoodsScene',
   'ripple-story': 'RippleStoryScene',
+  'lumi-story': 'LumiStoryScene',
   'nova-story': 'NovaStoryScene',
   'nova-race': 'NovaTutorialRaceScene',
   'pebble-story': 'PebbleStoryScene',
@@ -48,6 +50,7 @@ export class BootScene extends Phaser.Scene {
     getWhisperingWoodsSecretWorldManager(this.sys.game);
     getPebbleCollectionWorldManager(this.sys.game);
     getCrystalBrookStoryWorldManager(this.sys.game);
+    getLumiWoodsWorldManager(this.sys.game);
     getClickToMoveManager(this.sys.game);
     getWorldOcclusionManager(this.sys.game);
     getWorldCharacterPresentationManager(this.sys.game);
