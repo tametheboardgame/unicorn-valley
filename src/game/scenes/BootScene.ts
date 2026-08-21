@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { getSecretDiscoveryWorldManager } from '../discovery/SecretDiscoveryWorldManager';
+import { getWhisperingWoodsSecretWorldManager } from '../discovery/WhisperingWoodsSecretWorldManager';
 import { getClickToMoveManager } from '../input/ClickToMoveManager';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getRacePlaytestRecoveryManager } from '../racing/RacePlaytestRecoveryManager';
@@ -24,6 +25,7 @@ const DIAGNOSTIC_SCENES: Record<string, string> = {
   village: 'SunbeamVillageScene',
   meadow: 'RainbowMeadowScene',
   brook: 'CrystalBrookScene',
+  woods: 'WhisperingWoodsScene',
   'ripple-story': 'RippleStoryScene',
   'nova-story': 'NovaStoryScene',
   'nova-race': 'NovaTutorialRaceScene',
@@ -43,6 +45,7 @@ export class BootScene extends Phaser.Scene {
     getBrowserPipEggArcService();
     getPipEggWorldManager(this.sys.game);
     getSecretDiscoveryWorldManager(this.sys.game);
+    getWhisperingWoodsSecretWorldManager(this.sys.game);
     getPebbleCollectionWorldManager(this.sys.game);
     getCrystalBrookStoryWorldManager(this.sys.game);
     getClickToMoveManager(this.sys.game);
