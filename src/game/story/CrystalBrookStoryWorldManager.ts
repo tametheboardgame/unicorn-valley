@@ -25,7 +25,7 @@ interface BrookStoryState {
   interactKey: Phaser.Input.Keyboard.Key | null;
   ripple: Phaser.GameObjects.Container | null;
   ripplePrompt: Phaser.GameObjects.Text | null;
-  markers: Map<string, SecretMarker>;
+  markers: Map<SecretDiscoveryDefinition['id'], SecretMarker>;
   revealedPath: Phaser.GameObjects.Container | null;
   restoredSong: Phaser.GameObjects.Container | null;
 }
@@ -132,9 +132,7 @@ export class CrystalBrookStoryWorldManager {
     const body = state.scene.add.ellipse(0, 0, 92, 60, 0x8ed8e4, 1);
     const head = state.scene.add.circle(35, -33, 30, 0xb7edf0, 1);
     const mane = state.scene.add.ellipse(3, -29, 30, 72, 0x6cb7cf, 0.95).setAngle(20);
-    const horn = state.scene.add
-      .triangle(50, -72, 0, 28, 8, 0, 16, 28, 0xe5f8ff, 1)
-      .setAngle(20);
+    const horn = state.scene.add.triangle(50, -72, 0, 28, 8, 0, 16, 28, 0xe5f8ff, 1).setAngle(20);
     const eye = state.scene.add.circle(44, -38, 4, 0x3e6670, 1);
     const tail = state.scene.add.ellipse(-56, -7, 24, 68, 0xa8e2c8, 0.96).setAngle(-35);
     const prompt = state.scene.add
@@ -284,7 +282,9 @@ export class CrystalBrookStoryWorldManager {
     const save = this.saveService.load();
     const showTrail = save?.world.flags[BROOK_ECHO_TRAIL_REVEALED_FLAG] === true;
     if (showTrail && !state.revealedPath?.active) {
-      const song = R5_CRYSTAL_BROOK_STORY_SECRETS.find(({ id }) => id === 'secret:brook-water-song');
+      const song: SecretDiscoveryDefinition | undefined = R5_CRYSTAL_BROOK_STORY_SECRETS.find(
+        ({ id }) => id === 'secret:brook-water-song',
+      );
       const objects: Phaser.GameObjects.GameObject[] = [];
       for (const [index, point] of (song?.revealedPath ?? []).entries()) {
         objects.push(
