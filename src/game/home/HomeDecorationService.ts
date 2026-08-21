@@ -2,6 +2,7 @@ import type { ItemDefinition, ItemId } from '../../content/contentTypes';
 import { itemRegistry } from '../../content/registries';
 import type { SaveService } from '../save/SaveService';
 import { COTTAGE_INTERIOR_MAP, type CottageDecorationSlot } from '../world/CottageInteriorMap';
+import { canPlaceDecorationInCategory } from './CottageDecorationCatalogue';
 
 export interface OwnedDecoration {
   definition: ItemDefinition;
@@ -61,6 +62,10 @@ function resolveDecoration(itemId: string | undefined): ItemDefinition | null {
 export class HomeDecorationService {
   public constructor(private readonly saveService: SaveService) {}
 
+  public getSlot(slotId: string): CottageDecorationSlot {
+    return requireSlot(slotId);
+  }
+
   public listOwnedDecorations(): readonly OwnedDecoration[] {
     const save = this.saveService.load() ?? this.saveService.createNewGame();
 
@@ -82,6 +87,13 @@ export class HomeDecorationService {
       .sort((left, right) => left.definition.name.localeCompare(right.definition.name));
   }
 
+  public listCompatibleDecorations(slotId: string): readonly OwnedDecoration[] {
+    const slot = requireSlot(slotId);
+    return this.listOwnedDecorations().filter(({ definition }) =>
+      canPlaceDecorationInCategory(definition.id, slot.category),
+    );
+  }
+
   public getPlacement(slotId: string): ItemDefinition | null {
     requireSlot(slotId);
     const save = this.saveService.load() ?? this.saveService.createNewGame();
@@ -94,6 +106,10 @@ export class HomeDecorationService {
   ): { item: ItemDefinition; movedFromSlot: CottageDecorationSlot | null } {
     const slot = requireSlot(slotId);
     const item = requireDecoration(itemId);
+    if (!canPlaceDecorationInCategory(itemId, slot.category)) {
+      throw new Error(`${item.name} cannot be placed in a ${slot.category} decoration slot`);
+    }
+
     const save = this.saveService.load() ?? this.saveService.createNewGame();
     const ownedQuantity = save.inventory.itemQuantities[itemId] ?? 0;
 
@@ -151,7 +167,7 @@ export class HomeDecorationService {
 
   public cycleDecoration(slotId: string): DecorationCycleResult {
     const slot = requireSlot(slotId);
-    const ownedDecorations = this.listOwnedDecorations();
+    const ownedDecorations = this.listCompatibleDecorations(slotId);
     const current = this.getPlacement(slotId);
 
     if (ownedDecorations.length === 0) {

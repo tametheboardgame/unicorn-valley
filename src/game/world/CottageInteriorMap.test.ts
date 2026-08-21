@@ -10,7 +10,7 @@ const PLAYER_CLEARANCE = 42;
 const EXIT_INTERACTION_RADIUS = 155;
 
 describe('Moonflower Cottage interior map', () => {
-  it('keeps the spawn, exit, treasure shelf and decoration slots reachable', () => {
+  it('keeps the spawn, exit, treasure shelf and decoration interactions reachable', () => {
     expect(
       isPointInsideWalkableBounds(
         COTTAGE_INTERIOR_MAP,
@@ -31,7 +31,7 @@ describe('Moonflower Cottage interior map', () => {
       { id: 'treasure-display', position: COTTAGE_INTERIOR_MAP.treasureDisplay.approach },
       ...COTTAGE_INTERIOR_MAP.decorationSlots.map((slot) => ({
         id: slot.id,
-        position: slot.position,
+        position: slot.interactionPosition ?? slot.position,
       })),
     ];
 
