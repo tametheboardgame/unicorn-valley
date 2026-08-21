@@ -5,6 +5,7 @@ import { CottageInteriorScene } from '../scenes/CottageInteriorScene';
 import { CrystalBrookScene } from '../scenes/CrystalBrookScene';
 import { DialogueTestScene } from '../scenes/DialogueTestScene';
 import { DoorwayStubScene } from '../scenes/DoorwayStubScene';
+import { FireflyLanternScene } from '../scenes/FireflyLanternScene';
 import { InventoryScene } from '../scenes/InventoryScene';
 import { LumiStoryScene } from '../scenes/LumiStoryScene';
 import { MarigoldPicnicScene } from '../scenes/MarigoldPicnicScene';
@@ -66,6 +67,7 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
     RainbowMeadowScene,
     CrystalBrookScene,
     WhisperingWoodsScene,
+    FireflyLanternScene,
     RainbowRunEntryScene,
     NovaStoryScene,
     NovaTutorialRaceScene,
