@@ -28,8 +28,9 @@ export class FriendVisitService {
       relationships: this.relationships,
       saveService: this.saveService,
     };
+    const visits: readonly FriendVisitDefinition[] = R4_FRIEND_VISITS;
 
-    const definition = [...R4_FRIEND_VISITS]
+    const definition = [...visits]
       .sort((left, right) => right.priority - left.priority)
       .find((visit) =>
         visit.conditions.every((condition) => isDialogueConditionMet(condition, context)),
