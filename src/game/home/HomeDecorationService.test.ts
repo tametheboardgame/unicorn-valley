@@ -53,6 +53,24 @@ describe('HomeDecorationService', () => {
     ]);
   });
 
+  it('filters owned decorations to the selected slot category', () => {
+    const { inventory, decorating } = createServices();
+    inventory.addItem('item:moonflower-lantern');
+    inventory.addItem('item:sunbeam-cushion');
+    inventory.addItem('item:rainbow-run-finisher-ribbon');
+
+    expect(
+      decorating
+        .listCompatibleDecorations('cottage-slot:centre-rug')
+        .map(({ definition }) => definition.id),
+    ).toEqual(['item:sunbeam-cushion']);
+    expect(
+      decorating
+        .listCompatibleDecorations('cottage-slot:left-wall')
+        .map(({ definition }) => definition.id),
+    ).toEqual(['item:moonflower-lantern', 'item:rainbow-run-finisher-ribbon']);
+  });
+
   it('places, removes and persists decorations by stable slot ID', () => {
     const { saveService, inventory, decorating } = createServices();
     inventory.addItem('item:moonflower-lantern');
@@ -81,29 +99,30 @@ describe('HomeDecorationService', () => {
     expect(decorating.getPlacement('cottage-slot:bedside')?.id).toBe('item:moonflower-lantern');
   });
 
-  it('cycles through owned decorations and then back to an empty slot', () => {
+  it('cycles through compatible owned decorations and then back to an empty slot', () => {
     const { inventory, decorating } = createServices();
-    inventory.addItem('item:moonflower-lantern');
-    inventory.addItem('item:sunbeam-cushion');
+    inventory.addItem('item:cloud-cushion');
+    inventory.addItem('item:rainbow-rug');
 
     expect(decorating.cycleDecoration('cottage-slot:centre-rug')).toMatchObject({
       type: 'placed',
-      item: { id: 'item:moonflower-lantern' },
+      item: { id: 'item:cloud-cushion' },
     });
     expect(decorating.cycleDecoration('cottage-slot:centre-rug')).toMatchObject({
       type: 'placed',
-      item: { id: 'item:sunbeam-cushion' },
+      item: { id: 'item:rainbow-rug' },
     });
     expect(decorating.cycleDecoration('cottage-slot:centre-rug')).toMatchObject({
       type: 'removed',
-      item: { id: 'item:sunbeam-cushion' },
+      item: { id: 'item:rainbow-rug' },
     });
     expect(decorating.getPlacement('cottage-slot:centre-rug')).toBeNull();
   });
 
-  it('rejects unknown slots, non-decoration items and decorations the player does not own', () => {
+  it('rejects unknown slots, non-decoration items, incompatible slots and unowned decorations', () => {
     const { inventory, decorating } = createServices();
     inventory.addItem('item:berry-bun');
+    inventory.addItem('item:sunbeam-cushion');
 
     expect(() =>
       decorating.placeDecoration('cottage-slot:not-real', 'item:moonflower-lantern'),
@@ -111,6 +130,9 @@ describe('HomeDecorationService', () => {
     expect(() => decorating.placeDecoration('cottage-slot:window-nook', 'item:berry-bun')).toThrow(
       'cannot be placed as a cottage decoration',
     );
+    expect(() =>
+      decorating.placeDecoration('cottage-slot:left-wall', 'item:sunbeam-cushion'),
+    ).toThrow('cannot be placed in a wall decoration slot');
     expect(() =>
       decorating.placeDecoration('cottage-slot:window-nook', 'item:moonflower-lantern'),
     ).toThrow('Decoration is not owned');
