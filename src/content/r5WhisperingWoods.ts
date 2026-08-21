@@ -11,7 +11,8 @@ export const R5_WHISPERING_WOODS_DISCOVERIES = [
   {
     id: WHISPERING_WOODS_REGION_DISCOVERY_ID,
     name: 'Whispering Woods',
-    description: 'A shaded woodland where soft lights, mushrooms and rustling leaves make the paths feel quietly magical.',
+    description:
+      'A shaded woodland where soft lights, mushrooms and rustling leaves make the paths feel quietly magical.',
     icon: '🌲',
   },
   {
@@ -47,7 +48,8 @@ export const R5_WHISPERING_WOODS_SECRETS = [
     actionLabel: 'Follow',
     position: { x: 2550, y: 1510 },
     interactionRadius: 170,
-    feedback: 'Secret path found!\nThe silver leaves brighten and show a mossy way between the roots. ✨',
+    feedback:
+      'Secret path found!\nThe silver leaves brighten and show a mossy way between the roots. ✨',
     worldFlagId: MOSSY_WHISPER_PATH_REVEALED_FLAG,
     revealedPath: [
       { x: 2280, y: 1320 },
