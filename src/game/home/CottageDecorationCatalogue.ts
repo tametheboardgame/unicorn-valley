@@ -55,6 +55,11 @@ const COTTAGE_DECORATION_PROFILES: Partial<Record<ItemId, CottageDecorationProfi
     theme: 'adventure',
     previewColour: 0xd6b98b,
   },
+  'item:brook-prism-mobile': {
+    categories: ['wall', 'shelf', 'display'],
+    theme: 'adventure',
+    previewColour: 0x7fd5dc,
+  },
 };
 
 export function getCottageDecorationProfile(itemId: ItemId): CottageDecorationProfile | null {
