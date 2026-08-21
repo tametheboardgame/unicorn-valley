@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { BootScene } from '../scenes/BootScene';
 import { CottageDecorateScene } from '../scenes/CottageDecorateScene';
 import { CottageInteriorScene } from '../scenes/CottageInteriorScene';
+import { CrystalBrookScene } from '../scenes/CrystalBrookScene';
 import { DialogueTestScene } from '../scenes/DialogueTestScene';
 import { DoorwayStubScene } from '../scenes/DoorwayStubScene';
 import { InventoryScene } from '../scenes/InventoryScene';
@@ -60,6 +61,7 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
     MoonflowerPatchScene,
     SunbeamVillageScene,
     RainbowMeadowScene,
+    CrystalBrookScene,
     RainbowRunEntryScene,
     NovaStoryScene,
     NovaTutorialRaceScene,

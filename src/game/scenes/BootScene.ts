@@ -8,6 +8,7 @@ import { getBrowserPipEggArcService } from '../story/browserPipEggArc';
 import { getPebbleCollectionWorldManager } from '../story/PebbleCollectionWorldManager';
 import { getPipEggWorldManager } from '../story/PipEggWorldManager';
 import { getVisualTighteningManager } from '../visual/VisualTighteningManager';
+import { getR5RegionGatewayManager } from '../world/R5RegionGatewayManager';
 import { getWorldCharacterPresentationManager } from '../world/WorldCharacterPresentationManager';
 import { getWorldOcclusionManager } from '../world/WorldOcclusionManager';
 import { getWorldTraversalPolishManager } from '../world/WorldTraversalPolishManager';
@@ -21,6 +22,7 @@ const DIAGNOSTIC_SCENES: Record<string, string> = {
   cottage: 'CottageInteriorScene',
   village: 'SunbeamVillageScene',
   meadow: 'RainbowMeadowScene',
+  brook: 'CrystalBrookScene',
   'nova-story': 'NovaStoryScene',
   'nova-race': 'NovaTutorialRaceScene',
   'pebble-story': 'PebbleStoryScene',
@@ -45,6 +47,7 @@ export class BootScene extends Phaser.Scene {
     getWorldCharacterPresentationManager(this.sys.game);
     getVisualTighteningManager(this.sys.game);
     getWorldTraversalPolishManager(this.sys.game);
+    getR5RegionGatewayManager(this.sys.game);
     getRacePlayerControlManager(this.sys.game);
     getRacePlaytestRecoveryManager(this.sys.game);
     const requestedScene = new URLSearchParams(globalThis.location.search).get('scene');
