@@ -138,7 +138,9 @@ export class CottageDecorateScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setDepth(6);
 
-    this.createButton(260, 664, 210, '◀ Previous', UI_COLOURS.lavender, () => this.selectPrevious());
+    this.createButton(260, 664, 210, '◀ Previous', UI_COLOURS.lavender, () =>
+      this.selectPrevious(),
+    );
     this.createButton(1020, 664, 210, 'Next ▶', UI_COLOURS.lavender, () => this.selectNext());
     this.placeLabel = this.createButton(
       GAME_WIDTH / 2,
@@ -250,7 +252,9 @@ export class CottageDecorateScene extends Phaser.Scene {
     const profile = getCottageDecorationProfile(selected.id);
     this.nameText?.setText(`${selected.icon ?? '✦'} ${selected.name}`);
     this.themeText?.setText(
-      profile ? `${getCottageDecorationThemeLabel(profile.theme).toUpperCase()} STYLE` : 'COTTAGE STYLE',
+      profile
+        ? `${getCottageDecorationThemeLabel(profile.theme).toUpperCase()} STYLE`
+        : 'COTTAGE STYLE',
     );
     this.descriptionText?.setText(selected.description ?? 'A lovely cottage decoration.');
     this.placeLabel?.setText('Place this');
