@@ -93,12 +93,15 @@ describe("Pebble's Peculiar Pieces", () => {
     questEngine.notifyCharacterTalked(PEBBLE_CHARACTER_ID);
 
     const save = saveService.load();
+    if (!save) {
+      throw new Error('Expected Pebble completion to persist a save.');
+    }
     expect(questEngine.getProgress(PEBBLE_COLLECTION_QUEST_ID).status).toBe('completed');
     expect(inventory.getQuantity(PEBBLE_CURIOUS_PIECE_ITEM_ID)).toBe(0);
     expect(inventory.getQuantity(PEBBLE_DISPLAY_REWARD_ITEM_ID)).toBe(1);
-    expect(save?.relationships.byCharacterId[PEBBLE_CHARACTER_ID]?.friendshipPoints).toBe(10);
+    expect(save.relationships.byCharacterId[PEBBLE_CHARACTER_ID]?.friendshipPoints).toBe(10);
     expect(isPebbleFountainRepaired(save)).toBe(true);
-    expect(buildCottageHomeView(save!).treasureRewards).toEqual(
+    expect(buildCottageHomeView(save).treasureRewards).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
           itemId: PEBBLE_DISPLAY_REWARD_ITEM_ID,

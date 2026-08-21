@@ -149,7 +149,7 @@ export class PebbleCollectionWorldManager {
       R4_PEBBLE_SECRET_DEFINITIONS,
       state.scene.scene.key,
     );
-    const availableIds = new Set(available.map(({ id }) => id));
+    const availableIds = new Set<string>(available.map(({ id }) => id));
 
     for (const [id, marker] of state.markers) {
       if (!availableIds.has(id) || !marker.container.active) {
