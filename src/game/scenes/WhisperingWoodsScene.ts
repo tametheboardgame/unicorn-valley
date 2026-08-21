@@ -19,10 +19,7 @@ import { DEFAULT_PLAYER_SPEED, resolvePlayerMovement } from '../player/PlayerMov
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { saveLocationCheckpoint } from '../save/saveLocationCheckpoint';
 import { worldDepthForY } from '../world/WorldDepth';
-import {
-  WHISPERING_WOODS_LOCATION_ID,
-  WHISPERING_WOODS_MAP,
-} from '../world/WhisperingWoodsMap';
+import { WHISPERING_WOODS_LOCATION_ID, WHISPERING_WOODS_MAP } from '../world/WhisperingWoodsMap';
 
 const COLLISION_TEXTURE_KEY = 'whispering-woods-collision-pixel';
 const PLAYER_TEXTURE_KEY = 'player-unicorn-whispering-woods';
