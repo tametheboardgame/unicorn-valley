@@ -25,7 +25,11 @@ class MemoryRepository implements SaveRepository {
 }
 
 function createService(): SaveService {
-  const service = new SaveService(new MemoryRepository(), undefined, () => '2026-08-21T10:00:00.000Z');
+  const service = new SaveService(
+    new MemoryRepository(),
+    undefined,
+    () => '2026-08-21T10:00:00.000Z',
+  );
   service.save(service.createNewGame());
   return service;
 }
