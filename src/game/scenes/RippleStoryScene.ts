@@ -1,9 +1,6 @@
 import Phaser from 'phaser';
 import type { DialogueChoice, DialogueId } from '../../content/contentTypes';
-import {
-  RIPPLE_BROOK_QUEST_ID,
-  RIPPLE_CHARACTER_ID,
-} from '../../content/r5CrystalBrookStory';
+import { RIPPLE_BROOK_QUEST_ID, RIPPLE_CHARACTER_ID } from '../../content/r5CrystalBrookStory';
 import { SINGING_SHELL_ITEM_ID } from '../../content/r5CrystalBrook';
 import { characterRegistry, dialogueRegistry } from '../../content/registries';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
