@@ -85,20 +85,14 @@ describe('R4 persistence audit', () => {
       },
       world: {
         ...save.world,
-        uniqueDiscoveryIds: [
-          ...save.world.uniqueDiscoveryIds,
-          'discovery:picnic-memory',
-        ],
+        uniqueDiscoveryIds: [...save.world.uniqueDiscoveryIds, 'discovery:picnic-memory'],
       },
       activities: {
         ...save.activities,
         racesById: {
           'race:rainbow-run': {
             bestTimeMs: 48200,
-            ribbonIds: [
-              'item:rainbow-run-finisher-ribbon',
-              'item:rainbow-run-finisher-ribbon',
-            ],
+            ribbonIds: ['item:rainbow-run-finisher-ribbon', 'item:rainbow-run-finisher-ribbon'],
           },
         },
       },
