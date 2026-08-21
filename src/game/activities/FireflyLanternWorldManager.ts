@@ -58,9 +58,7 @@ export class FireflyLanternWorldManager {
     const post = scene.add.rectangle(0, 55, 18, 120, 0x625344, 1);
     const hook = scene.add.rectangle(25, -8, 58, 12, 0x625344, 1);
     const lanternGlow = scene.add.circle(52, 28, 56, 0xf7efa3, 0.14);
-    const lantern = scene.add
-      .rectangle(52, 28, 52, 66, 0x6d5d45, 1)
-      .setStrokeStyle(5, 0xd6c789, 1);
+    const lantern = scene.add.rectangle(52, 28, 52, 66, 0x6d5d45, 1).setStrokeStyle(5, 0xd6c789, 1);
     const light = scene.add.rectangle(52, 28, 30, 42, 0xffed91, 0.88);
     const label = scene.add
       .text(0, 132, 'Firefly Lantern', {
