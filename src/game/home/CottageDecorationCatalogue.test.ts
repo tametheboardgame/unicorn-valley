@@ -37,8 +37,6 @@ describe('CottageDecorationCatalogue', () => {
         }),
     );
 
-    expect(themes).toEqual(
-      new Set(['Moonflower', 'Rainbow', 'Starlight', 'Sunbeam', 'Adventure']),
-    );
+    expect(themes).toEqual(new Set(['Moonflower', 'Rainbow', 'Starlight', 'Sunbeam', 'Adventure']));
   });
 });
