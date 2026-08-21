@@ -13,7 +13,8 @@ function mergeRecord(defaultValue: SaveRecord, value: unknown): SaveRecord {
 }
 
 const migrateV1ToV2: SaveMigration = (save) => {
-  const timestamp = typeof save.createdAt === 'string' ? save.createdAt : '1970-01-01T00:00:00.000Z';
+  const timestamp =
+    typeof save.createdAt === 'string' ? save.createdAt : '1970-01-01T00:00:00.000Z';
   const defaults = createDefaultSave(timestamp);
 
   return {
