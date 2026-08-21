@@ -20,6 +20,7 @@ import { RaceScene } from '../scenes/RaceScene';
 import { RainbowMeadowScene } from '../scenes/RainbowMeadowScene';
 import { RainbowRunEntryScene } from '../scenes/RainbowRunEntryScene';
 import { ResizeTestScene } from '../scenes/ResizeTestScene';
+import { RippleStoryScene } from '../scenes/RippleStoryScene';
 import { ShopScene } from '../scenes/ShopScene';
 import { SunbeamVillageScene } from '../scenes/SunbeamVillageScene';
 import { TitleScene } from '../scenes/TitleScene';
@@ -69,6 +70,7 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
     WillowStoryScene,
     MarigoldPicnicScene,
     PebbleStoryScene,
+    RippleStoryScene,
     PipEggStoryScene,
     PipEggHatchScene,
     DoorwayStubScene,
