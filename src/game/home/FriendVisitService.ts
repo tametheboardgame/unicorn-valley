@@ -1,3 +1,4 @@
+import type { DialogueId } from '../../content/contentTypes';
 import { dialogueRegistry } from '../../content/registries';
 import {
   R4_FRIEND_VISITS,
@@ -15,7 +16,7 @@ const RACE_DISPLAY_ITEM_IDS = new Set([
 
 export interface ResolvedFriendVisit {
   definition: FriendVisitDefinition;
-  dialogueId: ReturnType<typeof dialogueRegistry.get>['id'];
+  dialogueId: DialogueId;
 }
 
 export class FriendVisitService {
