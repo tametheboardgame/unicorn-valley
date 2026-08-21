@@ -1,9 +1,6 @@
 import Phaser from 'phaser';
 import type { DialogueChoice, DialogueId } from '../../content/contentTypes';
-import {
-  LUMI_CHARACTER_ID,
-  LUMI_INTRO_RELATIONSHIP_FLAG,
-} from '../../content/r5LumiWoodsStory';
+import { LUMI_CHARACTER_ID, LUMI_INTRO_RELATIONSHIP_FLAG } from '../../content/r5LumiWoodsStory';
 import { characterRegistry, dialogueRegistry } from '../../content/registries';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { DialogueCard } from '../dialogue/DialogueCard';
