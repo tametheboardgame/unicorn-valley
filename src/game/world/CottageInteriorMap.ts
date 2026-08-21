@@ -9,6 +9,7 @@ export interface CottageDecorationSlot {
   label: string;
   category: CottageDecorationCategory;
   position: MapPoint;
+  interactionPosition?: MapPoint;
 }
 
 export interface CottageInteractionPoint {
@@ -84,18 +85,21 @@ export const COTTAGE_INTERIOR_MAP = {
       label: 'Tea table',
       category: 'table',
       position: { x: 900, y: 455 },
+      interactionPosition: { x: 900, y: 650 },
     },
     {
       id: 'cottage-slot:treasure-shelf',
       label: 'Treasure shelf',
       category: 'shelf',
       position: { x: 1515, y: 335 },
+      interactionPosition: { x: 1515, y: 500 },
     },
     {
       id: 'cottage-slot:ribbon-display',
       label: 'Fireplace display',
       category: 'display',
       position: { x: 390, y: 210 },
+      interactionPosition: { x: 500, y: 430 },
     },
   ] satisfies readonly CottageDecorationSlot[],
 } satisfies TraversalMapDefinition & {
