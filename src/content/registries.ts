@@ -33,6 +33,7 @@ import {
 } from './r4PicnicEvent';
 import { R4_SECRET_DISCOVERIES } from './r4Secrets';
 import { R4_SHOP_ITEMS } from './r4ShopContent';
+import { R5_CRYSTAL_BROOK_DISCOVERIES, R5_CRYSTAL_BROOK_ITEMS } from './r5CrystalBrook';
 import type {
   CharacterDefinition,
   CharacterId,
@@ -55,6 +56,7 @@ const ALL_ITEMS = [
   ...R3_ITEMS,
   ...R4_SHOP_ITEMS,
   ...R4_PEBBLE_ITEMS,
+  ...R5_CRYSTAL_BROOK_ITEMS,
 ] satisfies readonly ItemDefinition[];
 const ALL_CHARACTERS = [
   ...CHARACTERS,
@@ -78,6 +80,7 @@ const ALL_DISCOVERIES = [
   ...R4_EGG_DISCOVERIES,
   ...R4_SECRET_DISCOVERIES,
   ...R4_PEBBLE_DISCOVERIES,
+  ...R5_CRYSTAL_BROOK_DISCOVERIES,
 ] satisfies readonly DiscoveryDefinition[];
 const ALL_DIALOGUES = [
   ...DIALOGUES,
