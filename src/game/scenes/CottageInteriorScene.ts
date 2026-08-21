@@ -238,41 +238,7 @@ export class CottageInteriorScene extends Phaser.Scene {
       return;
     }
 
-    const result = this.decorationService.cycleDecoration(slotId);
-    this.refreshHomeState();
-
-    if (result.type === 'no-options') {
-      this.showFeedback(
-        `Decorating · ${result.slot.label}\nYou don't have a decoration for this spot yet. Adventures can bring home new treasures!`,
-      );
-      return;
-    }
-
-    if (result.type === 'removed') {
-      this.showFeedback(
-        result.item
-          ? `Decorating · ${result.slot.label}\n${result.item.name} is safely back in your collection. ✨`
-          : `Decorating · ${result.slot.label}\nThis spot is empty and ready for something special. ✨`,
-      );
-      return;
-    }
-
-    const moveMessage = result.movedFromSlot
-      ? ` It moved here from ${result.movedFromSlot.label}.`
-      : '';
-    this.showFeedback(
-      `Decorating · ${result.slot.label}\n${result.item.icon ?? '✦'} ${result.item.name} looks lovely here!${moveMessage}`,
-    );
-  }
-
-  private refreshHomeState(): void {
-    const saveService = getBrowserSaveService();
-    const save = saveService.load() ?? saveService.createNewGame();
-    this.homeView = buildCottageHomeView(save);
-    this.renderHomeState(this.homeView);
-    this.interactions = this.createInteractions(this.homeView);
-    this.activeInteraction = null;
-    this.interactionPrompt?.setTarget(null);
+    this.scene.start('CottageDecorateScene', { slotId });
   }
 
   private showFeedback(message: string): void {
@@ -586,7 +552,7 @@ export class CottageInteriorScene extends Phaser.Scene {
       .setDepth(115);
 
     this.add
-      .text(24, 34, 'Decorate the ✦ spots', {
+      .text(24, 34, 'Choose a ✦ spot to decorate', {
         color: '#6e5064',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '17px',
