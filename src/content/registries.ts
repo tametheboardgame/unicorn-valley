@@ -41,6 +41,7 @@ import {
   R5_CRYSTAL_BROOK_STORY_ITEMS,
   R5_CRYSTAL_BROOK_STORY_QUESTS,
 } from './r5CrystalBrookStory';
+import { R5_LUMI_CHARACTERS, R5_LUMI_DIALOGUES, R5_LUMI_DISCOVERIES } from './r5LumiWoodsStory';
 import { R5_WHISPERING_WOODS_DISCOVERIES } from './r5WhisperingWoods';
 import type {
   CharacterDefinition,
@@ -75,6 +76,7 @@ const ALL_CHARACTERS = [
   ...R4_PICNIC_CHARACTERS,
   ...R4_PEBBLE_CHARACTERS,
   ...R5_CRYSTAL_BROOK_STORY_CHARACTERS,
+  ...R5_LUMI_CHARACTERS,
 ] satisfies readonly CharacterDefinition[];
 const ALL_QUESTS = [
   ...QUESTS,
@@ -94,6 +96,7 @@ const ALL_DISCOVERIES = [
   ...R5_CRYSTAL_BROOK_DISCOVERIES,
   ...R5_CRYSTAL_BROOK_STORY_DISCOVERIES,
   ...R5_WHISPERING_WOODS_DISCOVERIES,
+  ...R5_LUMI_DISCOVERIES,
 ] satisfies readonly DiscoveryDefinition[];
 const ALL_DIALOGUES = [
   ...DIALOGUES,
@@ -104,6 +107,7 @@ const ALL_DIALOGUES = [
   ...R4_PICNIC_DIALOGUES,
   ...R4_PEBBLE_DIALOGUES,
   ...R5_CRYSTAL_BROOK_STORY_DIALOGUES,
+  ...R5_LUMI_DIALOGUES,
 ] satisfies readonly DialogueDefinition[];
 const ALL_DIALOGUE_VARIANT_SETS = [
   ...R4_DIALOGUE_VARIANT_SETS,
