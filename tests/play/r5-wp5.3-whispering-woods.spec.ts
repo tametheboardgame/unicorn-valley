@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test';
 
-test('Whispering Woods boots as a playable world scene without browser errors', async ({ page }) => {
+test('Whispering Woods boots as a playable world scene without browser errors', async ({
+  page,
+}) => {
   const browserErrors: string[] = [];
   page.on('pageerror', (error) => browserErrors.push(error.message));
 
