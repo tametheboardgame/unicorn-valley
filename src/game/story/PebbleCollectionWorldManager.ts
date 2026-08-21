@@ -99,12 +99,7 @@ export class PebbleCollectionWorldManager {
 
     const pebbleDistance =
       state.scene.scene.key === 'SunbeamVillageScene'
-        ? Phaser.Math.Distance.Between(
-            player.x,
-            player.y,
-            pebblePosition().x,
-            pebblePosition().y,
-          )
+        ? Phaser.Math.Distance.Between(player.x, player.y, pebblePosition().x, pebblePosition().y)
         : Number.POSITIVE_INFINITY;
     state.pebblePrompt?.setVisible(pebbleDistance <= 225);
 
@@ -174,9 +169,7 @@ export class PebbleCollectionWorldManager {
     scene: Phaser.Scene,
     definition: SecretDiscoveryDefinition,
   ): CuriosityMarker {
-    const glow = scene.add
-      .circle(0, 0, 24, 0xffec9c, 0.1)
-      .setStrokeStyle(2, 0xffffff, 0.2);
+    const glow = scene.add.circle(0, 0, 24, 0xffec9c, 0.1).setStrokeStyle(2, 0xffffff, 0.2);
     const glint = scene.add
       .text(0, 0, '✦', {
         color: '#fff1a8',
@@ -266,9 +259,7 @@ export class PebbleCollectionWorldManager {
 
     if (!state.pebbleContainer?.active) {
       const position = pebblePosition();
-      const cover = state.scene.add
-        .circle(0, 0, 39, 0xfff1d0, 0.98)
-        .setStrokeStyle(4, 0x7a806d, 1);
+      const cover = state.scene.add.circle(0, 0, 39, 0xfff1d0, 0.98).setStrokeStyle(4, 0x7a806d, 1);
       const icon = state.scene.add
         .text(0, -2, '🪨', {
           fontFamily: 'system-ui, sans-serif',
@@ -306,8 +297,7 @@ export class PebbleCollectionWorldManager {
       });
     }
 
-    const repaired =
-      this.saveService.load()?.world.flags[PEBBLE_FOUNTAIN_REPAIRED_FLAG] === true;
+    const repaired = this.saveService.load()?.world.flags[PEBBLE_FOUNTAIN_REPAIRED_FLAG] === true;
     if (repaired && !state.fountainRepair?.active) {
       state.fountainRepair = this.createFountainRepair(state.scene);
     } else if (!repaired && state.fountainRepair) {
@@ -365,10 +355,7 @@ export class PebbleCollectionWorldManager {
       .setDepth(12);
     objects.push(chime);
 
-    return scene.add
-      .container(0, 0, objects)
-      .setName(PEBBLE_WORLD_PRESENTATION_NAME)
-      .setDepth(12);
+    return scene.add.container(0, 0, objects).setName(PEBBLE_WORLD_PRESENTATION_NAME).setDepth(12);
   }
 
   private openPebbleStory(scene: Phaser.Scene): void {

@@ -1,15 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { SecretDiscoveryService } from '../game/discovery/SecretDiscoveryService';
 import { type GameEventMap, TypedEventBus } from '../game/events/GameEventBus';
 import { buildCottageHomeView } from '../game/home/CottageHomeView';
 import { InventoryService } from '../game/inventory/InventoryService';
 import { QuestEngine, getQuestStepId } from '../game/quests/QuestEngine';
 import type { SaveRepository } from '../game/save/SaveRepository';
 import { SaveService } from '../game/save/SaveService';
-import {
-  getPebbleStoryPhase,
-  isPebbleFountainRepaired,
-} from '../game/story/PebbleCollectionStory';
+import { SecretDiscoveryService } from '../game/discovery/SecretDiscoveryService';
+import { getPebbleStoryPhase, isPebbleFountainRepaired } from '../game/story/PebbleCollectionStory';
 import { PLACEHOLDER_CONTENT } from './placeholderContent';
 import {
   PEBBLE_CHARACTER_ID,

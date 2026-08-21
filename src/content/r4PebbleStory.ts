@@ -29,7 +29,8 @@ export const R4_PEBBLE_ITEMS = [
   {
     id: PEBBLE_DISPLAY_REWARD_ITEM_ID,
     name: "Pebble's Curiosity Display",
-    description: 'A tiny display box Pebble made for the best harmless oddments from your adventures.',
+    description:
+      'A tiny display box Pebble made for the best harmless oddments from your adventures.',
     category: 'decoration',
     icon: '🗃️',
   },

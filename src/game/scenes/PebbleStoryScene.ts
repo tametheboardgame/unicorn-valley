@@ -1,9 +1,6 @@
 import Phaser from 'phaser';
 import type { DialogueChoice, DialogueId } from '../../content/contentTypes';
-import {
-  PEBBLE_CHARACTER_ID,
-  PEBBLE_COLLECTION_QUEST_ID,
-} from '../../content/r4PebbleStory';
+import { PEBBLE_CHARACTER_ID, PEBBLE_COLLECTION_QUEST_ID } from '../../content/r4PebbleStory';
 import { characterRegistry, dialogueRegistry } from '../../content/registries';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { DialogueCard } from '../dialogue/DialogueCard';
