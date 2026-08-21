@@ -57,9 +57,7 @@ const COTTAGE_DECORATION_PROFILES: Partial<Record<ItemId, CottageDecorationProfi
   },
 };
 
-export function getCottageDecorationProfile(
-  itemId: ItemId,
-): CottageDecorationProfile | null {
+export function getCottageDecorationProfile(itemId: ItemId): CottageDecorationProfile | null {
   return COTTAGE_DECORATION_PROFILES[itemId] ?? null;
 }
 
