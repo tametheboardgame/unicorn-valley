@@ -1,4 +1,4 @@
-export const CURRENT_SAVE_SCHEMA_VERSION = 1;
+export const CURRENT_SAVE_SCHEMA_VERSION = 2;
 export const SAVE_STORAGE_KEY = 'unicorn-valley.save';
 export const DEFAULT_START_LOCATION_ID = 'moonflower-cottage';
 

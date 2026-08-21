@@ -1,5 +1,6 @@
 import { type GameEventMap, type TypedEventBus, gameEventBus } from '../events/GameEventBus';
 import { createDefaultSave } from './createDefaultSave';
+import { reconcileSaveGame } from './reconcileSaveGame';
 import type { SaveRepository } from './SaveRepository';
 import { migrateSaveRecord } from './saveMigrations';
 import { CURRENT_SAVE_SCHEMA_VERSION, type SaveGame } from './saveSchema';
@@ -38,13 +39,14 @@ export class SaveService {
       return null;
     }
 
-    return migratedSave;
+    return reconcileSaveGame(migratedSave);
   }
 
   public save(save: SaveGame): SaveGame {
     const savedAt = this.now();
+    const reconciledSave = reconcileSaveGame(save);
     const nextSave: SaveGame = {
-      ...save,
+      ...reconciledSave,
       schemaVersion: CURRENT_SAVE_SCHEMA_VERSION,
       lastSavedAt: savedAt,
     };

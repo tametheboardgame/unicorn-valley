@@ -9,16 +9,25 @@ describe('migrateSaveRecord', () => {
   });
 
   it('applies migrations sequentially', () => {
-    const migration: SaveMigration = (save) => ({
+    const toVersionOne: SaveMigration = (save) => ({
       ...save,
       schemaVersion: 1,
-      migrated: true,
+      firstMigration: true,
     });
-    const migrations = new Map([[0, migration]]);
+    const toVersionTwo: SaveMigration = (save) => ({
+      ...save,
+      schemaVersion: 2,
+      secondMigration: true,
+    });
+    const migrations = new Map([
+      [0, toVersionOne],
+      [1, toVersionTwo],
+    ]);
 
     expect(migrateSaveRecord({ schemaVersion: 0 }, migrations)).toEqual({
-      schemaVersion: 1,
-      migrated: true,
+      schemaVersion: CURRENT_SAVE_SCHEMA_VERSION,
+      firstMigration: true,
+      secondMigration: true,
     });
   });
 
@@ -28,7 +37,7 @@ describe('migrateSaveRecord', () => {
     expect(
       migrateSaveRecord(
         { schemaVersion: 0 },
-        new Map([[0, () => ({ schemaVersion: CURRENT_SAVE_SCHEMA_VERSION + 1 })]]),
+        new Map([[0, () => ({ schemaVersion: CURRENT_SAVE_SCHEMA_VERSION })]]),
       ),
     ).toBeNull();
   });
