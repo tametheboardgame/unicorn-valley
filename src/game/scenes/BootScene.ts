@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { getFireflyLanternWorldManager } from '../activities/FireflyLanternWorldManager';
 import { getSecretDiscoveryWorldManager } from '../discovery/SecretDiscoveryWorldManager';
 import { getWhisperingWoodsSecretWorldManager } from '../discovery/WhisperingWoodsSecretWorldManager';
 import { getClickToMoveManager } from '../input/ClickToMoveManager';
@@ -27,6 +28,7 @@ const DIAGNOSTIC_SCENES: Record<string, string> = {
   meadow: 'RainbowMeadowScene',
   brook: 'CrystalBrookScene',
   woods: 'WhisperingWoodsScene',
+  'firefly-lantern': 'FireflyLanternScene',
   'ripple-story': 'RippleStoryScene',
   'lumi-story': 'LumiStoryScene',
   'nova-story': 'NovaStoryScene',
@@ -51,6 +53,7 @@ export class BootScene extends Phaser.Scene {
     getPebbleCollectionWorldManager(this.sys.game);
     getCrystalBrookStoryWorldManager(this.sys.game);
     getLumiWoodsWorldManager(this.sys.game);
+    getFireflyLanternWorldManager(this.sys.game);
     getClickToMoveManager(this.sys.game);
     getWorldOcclusionManager(this.sys.game);
     getWorldCharacterPresentationManager(this.sys.game);
