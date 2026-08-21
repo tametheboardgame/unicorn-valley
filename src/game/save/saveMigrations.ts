@@ -8,8 +8,8 @@ function isRecord(value: unknown): value is SaveRecord {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
-function mergeRecord(defaultValue: SaveRecord, value: unknown): SaveRecord {
-  return isRecord(value) ? { ...defaultValue, ...value } : { ...defaultValue };
+function mergeRecord<T extends object>(defaultValue: T, value: unknown): T {
+  return (isRecord(value) ? { ...defaultValue, ...value } : { ...defaultValue }) as T;
 }
 
 const migrateV1ToV2: SaveMigration = (save) => {
