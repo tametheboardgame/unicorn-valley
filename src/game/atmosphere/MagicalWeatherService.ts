@@ -37,6 +37,14 @@ export function resolveAutomaticWeather(timeState: AtmosphericTimeState): Magica
   return 'clear';
 }
 
+export function isWeatherDiscoveryAvailable(
+  currentWeather: MagicalWeatherState,
+  requiredWeather: MagicalWeatherState,
+  alreadyDiscovered: boolean,
+): boolean {
+  return !alreadyDiscovered && currentWeather === requiredWeather;
+}
+
 export function readManualMagicalWeather(save: SaveGame | null): MagicalWeatherState | null {
   if (!save) {
     return null;
@@ -90,7 +98,9 @@ export class MagicalWeatherService {
   }
 
   public getDefinition(): MagicalWeatherDefinition {
-    return MAGICAL_WEATHER_STATES.find(({ id }) => id === this.state) ?? MAGICAL_WEATHER_STATES[0];
+    return (
+      MAGICAL_WEATHER_STATES.find(({ id }) => id === this.state) ?? MAGICAL_WEATHER_STATES[0]
+    );
   }
 
   public setMode(mode: MagicalWeatherMode): MagicalWeatherState {
