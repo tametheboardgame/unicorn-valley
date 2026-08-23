@@ -35,6 +35,16 @@ const COTTAGE_DECORATION_PROFILES: Partial<Record<ItemId, CottageDecorationProfi
     theme: 'rainbow',
     previewColour: 0xffd479,
   },
+  'item:crystal-cascade-finisher-ribbon': {
+    categories: ['wall', 'shelf', 'display'],
+    theme: 'adventure',
+    previewColour: 0x78d4dc,
+  },
+  'item:crystal-cascade-podium-rosette': {
+    categories: ['wall', 'shelf', 'display'],
+    theme: 'adventure',
+    previewColour: 0xb5ecf2,
+  },
   'item:cloud-cushion': {
     categories: ['floor'],
     theme: 'starlight',
