@@ -150,9 +150,7 @@ export class AtmosphericTimeWorldManager {
       [1030, 105],
       [1160, 220],
     ].map(([x, y], index) =>
-      state.scene.add
-        .circle(x, y, index % 2 === 0 ? 3 : 2, 0xf4f4cf, 0.78)
-        .setScrollFactor(0),
+      state.scene.add.circle(x, y, index % 2 === 0 ? 3 : 2, 0xf4f4cf, 0.78).setScrollFactor(0),
     );
     state.stars = state.scene.add
       .container(0, 0, stars)
