@@ -1,7 +1,9 @@
 import Phaser from 'phaser';
-import { NOVA_FIRST_RACE_QUEST_ID } from '../../content/r3Quests';
+import { SUNRISE_SPRINT_RACE_ID } from '../../content/r3RaceIds';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
+import { selectRaceCourse } from '../racing/RaceCourse';
 import { getNovaFirstRacePhase } from '../story/NovaFirstRaceStory';
+import { NOVA_FIRST_RACE_QUEST_ID } from '../../content/r3Quests';
 
 export class RainbowRunEntryScene extends Phaser.Scene {
   public constructor() {
@@ -18,6 +20,7 @@ export class RainbowRunEntryScene extends Phaser.Scene {
     }
 
     if (phase === 'complete') {
+      selectRaceCourse(SUNRISE_SPRINT_RACE_ID);
       this.scene.start('RaceScene');
       return;
     }
