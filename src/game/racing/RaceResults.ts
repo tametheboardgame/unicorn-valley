@@ -1,4 +1,10 @@
 import type { DiscoveryId, ItemId } from '../../content/contentTypes';
+import { CRYSTAL_CASCADE_RACE_ID } from '../../content/r5RaceIds';
+import {
+  CRYSTAL_CASCADE_FINISHER_RIBBON_ITEM_ID,
+  CRYSTAL_CASCADE_PODIUM_ROSETTE_ITEM_ID,
+  CRYSTAL_CASCADE_RIBBONS_DISCOVERY_ID,
+} from '../../content/r5RaceContent';
 import type { SaveGame } from '../save/saveSchema';
 
 export const RAINBOW_RUN_SPARKLE_ITEM_ID: ItemId = 'item:rainbow-run-sparkle';
@@ -8,9 +14,35 @@ export const RAINBOW_RUN_RIBBONS_DISCOVERY_ID: DiscoveryId = 'discovery:rainbow-
 
 export const RAINBOW_RUN_FINISHER_RIBBON_ID = 'ribbon:rainbow-run-finisher';
 export const RAINBOW_RUN_PODIUM_ROSETTE_ID = 'ribbon:rainbow-run-podium';
+export const CRYSTAL_CASCADE_FINISHER_RIBBON_ID = 'ribbon:crystal-cascade-finisher';
+export const CRYSTAL_CASCADE_PODIUM_ROSETTE_ID = 'ribbon:crystal-cascade-podium';
 
 export const RACE_PARTICIPATION_SPARKLES = 2;
 export const RACE_PODIUM_BONUS_SPARKLES = 2;
+
+interface RaceRewardProfile {
+  finisherRibbonId: string;
+  finisherItemId: ItemId;
+  podiumRibbonId: string;
+  podiumItemId: ItemId;
+  discoveryId: DiscoveryId;
+}
+
+const RAINBOW_RUN_REWARD_PROFILE: RaceRewardProfile = {
+  finisherRibbonId: RAINBOW_RUN_FINISHER_RIBBON_ID,
+  finisherItemId: RAINBOW_RUN_FINISHER_RIBBON_ITEM_ID,
+  podiumRibbonId: RAINBOW_RUN_PODIUM_ROSETTE_ID,
+  podiumItemId: RAINBOW_RUN_PODIUM_ROSETTE_ITEM_ID,
+  discoveryId: RAINBOW_RUN_RIBBONS_DISCOVERY_ID,
+};
+
+const CRYSTAL_CASCADE_REWARD_PROFILE: RaceRewardProfile = {
+  finisherRibbonId: CRYSTAL_CASCADE_FINISHER_RIBBON_ID,
+  finisherItemId: CRYSTAL_CASCADE_FINISHER_RIBBON_ITEM_ID,
+  podiumRibbonId: CRYSTAL_CASCADE_PODIUM_ROSETTE_ID,
+  podiumItemId: CRYSTAL_CASCADE_PODIUM_ROSETTE_ITEM_ID,
+  discoveryId: CRYSTAL_CASCADE_RIBBONS_DISCOVERY_ID,
+};
 
 export interface RaceResultInput {
   raceId: string;
@@ -32,6 +64,12 @@ export interface RaceRewardSummary {
 export interface AppliedRaceResult {
   save: SaveGame;
   summary: RaceRewardSummary;
+}
+
+function rewardProfileForRace(raceId: string): RaceRewardProfile {
+  return raceId === CRYSTAL_CASCADE_RACE_ID
+    ? CRYSTAL_CASCADE_REWARD_PROFILE
+    : RAINBOW_RUN_REWARD_PROFILE;
 }
 
 function appendUnique(values: readonly string[], value: string): string[] {
@@ -59,6 +97,7 @@ function assertValidResult(input: RaceResultInput): void {
 
 export function applyRaceResultToSave(save: SaveGame, input: RaceResultInput): AppliedRaceResult {
   assertValidResult(input);
+  const rewardProfile = rewardProfileForRace(input.raceId);
 
   const previousRecord = save.activities.racesById[input.raceId] ?? {
     bestTimeMs: null,
@@ -76,23 +115,23 @@ export function applyRaceResultToSave(save: SaveGame, input: RaceResultInput): A
   const newRewardItemIds: ItemId[] = [];
   let ribbonIds = [...previousRecord.ribbonIds];
   const alreadyOwnsFinisherRibbon =
-    (save.inventory.itemQuantities[RAINBOW_RUN_FINISHER_RIBBON_ITEM_ID] ?? 0) > 0;
+    (save.inventory.itemQuantities[rewardProfile.finisherItemId] ?? 0) > 0;
   const alreadyOwnsPodiumRosette =
-    (save.inventory.itemQuantities[RAINBOW_RUN_PODIUM_ROSETTE_ITEM_ID] ?? 0) > 0;
+    (save.inventory.itemQuantities[rewardProfile.podiumItemId] ?? 0) > 0;
 
-  if (!ribbonIds.includes(RAINBOW_RUN_FINISHER_RIBBON_ID)) {
-    ribbonIds = appendUnique(ribbonIds, RAINBOW_RUN_FINISHER_RIBBON_ID);
+  if (!ribbonIds.includes(rewardProfile.finisherRibbonId)) {
+    ribbonIds = appendUnique(ribbonIds, rewardProfile.finisherRibbonId);
     if (!alreadyOwnsFinisherRibbon) {
-      newRibbonIds.push(RAINBOW_RUN_FINISHER_RIBBON_ID);
-      newRewardItemIds.push(RAINBOW_RUN_FINISHER_RIBBON_ITEM_ID);
+      newRibbonIds.push(rewardProfile.finisherRibbonId);
+      newRewardItemIds.push(rewardProfile.finisherItemId);
     }
   }
 
-  if (isPodium && !ribbonIds.includes(RAINBOW_RUN_PODIUM_ROSETTE_ID)) {
-    ribbonIds = appendUnique(ribbonIds, RAINBOW_RUN_PODIUM_ROSETTE_ID);
+  if (isPodium && !ribbonIds.includes(rewardProfile.podiumRibbonId)) {
+    ribbonIds = appendUnique(ribbonIds, rewardProfile.podiumRibbonId);
     if (!alreadyOwnsPodiumRosette) {
-      newRibbonIds.push(RAINBOW_RUN_PODIUM_ROSETTE_ID);
-      newRewardItemIds.push(RAINBOW_RUN_PODIUM_ROSETTE_ITEM_ID);
+      newRibbonIds.push(rewardProfile.podiumRibbonId);
+      newRewardItemIds.push(rewardProfile.podiumItemId);
     }
   }
 
@@ -110,14 +149,8 @@ export function applyRaceResultToSave(save: SaveGame, input: RaceResultInput): A
     }
   }
 
-  const discoveryIds = appendUnique(
-    save.collections.discoveryIds,
-    RAINBOW_RUN_RIBBONS_DISCOVERY_ID,
-  );
-  const uniqueDiscoveryIds = appendUnique(
-    save.world.uniqueDiscoveryIds,
-    RAINBOW_RUN_RIBBONS_DISCOVERY_ID,
-  );
+  const discoveryIds = appendUnique(save.collections.discoveryIds, rewardProfile.discoveryId);
+  const uniqueDiscoveryIds = appendUnique(save.world.uniqueDiscoveryIds, rewardProfile.discoveryId);
 
   const nextSave: SaveGame = {
     ...save,

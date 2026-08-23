@@ -42,6 +42,7 @@ import {
   R5_CRYSTAL_BROOK_STORY_QUESTS,
 } from './r5CrystalBrookStory';
 import { R5_LUMI_CHARACTERS, R5_LUMI_DIALOGUES, R5_LUMI_DISCOVERIES } from './r5LumiWoodsStory';
+import { R5_RACE_DISCOVERIES, R5_RACE_ITEMS } from './r5RaceContent';
 import { R5_WEATHER_DISCOVERIES } from './r5Weather';
 import { R5_WHISPERING_WOODS_DISCOVERIES } from './r5WhisperingWoods';
 import type {
@@ -68,6 +69,7 @@ const ALL_ITEMS = [
   ...R4_PEBBLE_ITEMS,
   ...R5_CRYSTAL_BROOK_ITEMS,
   ...R5_CRYSTAL_BROOK_STORY_ITEMS,
+  ...R5_RACE_ITEMS,
 ] satisfies readonly ItemDefinition[];
 const ALL_CHARACTERS = [
   ...CHARACTERS,
@@ -99,6 +101,7 @@ const ALL_DISCOVERIES = [
   ...R5_WHISPERING_WOODS_DISCOVERIES,
   ...R5_LUMI_DISCOVERIES,
   ...R5_WEATHER_DISCOVERIES,
+  ...R5_RACE_DISCOVERIES,
 ] satisfies readonly DiscoveryDefinition[];
 const ALL_DIALOGUES = [
   ...DIALOGUES,

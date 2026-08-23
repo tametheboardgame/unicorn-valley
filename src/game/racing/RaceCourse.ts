@@ -1,4 +1,5 @@
 import { NOVA_TUTORIAL_RACE_ID, SUNRISE_SPRINT_RACE_ID } from '../../content/r3RaceIds';
+import { CRYSTAL_CASCADE_RACE_ID } from '../../content/r5RaceIds';
 import { RACE_COURSE_LENGTH } from './RaceMovement';
 
 export type RaceObstacleKind = 'log' | 'flower-hurdle';
@@ -92,7 +93,7 @@ export const NOVA_TUTORIAL_RAINBOW_RUN_COURSE = {
   ],
 } as const satisfies RaceCourseDefinition;
 
-export const PRACTICE_RAINBOW_RUN_COURSE = {
+export const SUNRISE_SPRINT_RAINBOW_RUN_COURSE = {
   id: SUNRISE_SPRINT_RACE_ID,
   name: 'Sunrise Sprint',
   length: RACE_COURSE_LENGTH,
@@ -197,6 +198,152 @@ export const PRACTICE_RAINBOW_RUN_COURSE = {
     },
   ],
 } as const satisfies RaceCourseDefinition;
+
+export const CRYSTAL_CASCADE_RACE_COURSE = {
+  id: CRYSTAL_CASCADE_RACE_ID,
+  name: 'Crystal Cascade',
+  length: RACE_COURSE_LENGTH,
+  obstacles: [
+    {
+      id: 'obstacle:cascade-driftwood-one',
+      kind: 'log',
+      label: 'Driftwood log',
+      progress: 650,
+      width: 92,
+      clearanceHeight: 60,
+    },
+    {
+      id: 'obstacle:cascade-reed-hurdle-one',
+      kind: 'flower-hurdle',
+      label: 'Reed hurdle',
+      progress: 1450,
+      width: 110,
+      clearanceHeight: 82,
+    },
+    {
+      id: 'obstacle:cascade-driftwood-two',
+      kind: 'log',
+      label: 'Driftwood log',
+      progress: 2220,
+      width: 112,
+      clearanceHeight: 66,
+    },
+    {
+      id: 'obstacle:cascade-reed-hurdle-two',
+      kind: 'flower-hurdle',
+      label: 'Reed hurdle',
+      progress: 3090,
+      width: 116,
+      clearanceHeight: 84,
+    },
+  ],
+  boostZones: [
+    {
+      id: 'boost:cascade-current',
+      label: 'Brook current',
+      startProgress: 920,
+      endProgress: 1190,
+      speedMultiplier: 1.32,
+    },
+    {
+      id: 'boost:cascade-prism-current',
+      label: 'Prism Current shortcut',
+      startProgress: 2500,
+      endProgress: 2830,
+      speedMultiplier: 1.42,
+    },
+  ],
+  collectables: [
+    {
+      id: 'collectable:cascade-crystal-one',
+      label: 'Cascade sparkle',
+      progress: 430,
+      heightAboveGround: 44,
+      pickupRadius: 56,
+    },
+    {
+      id: 'collectable:cascade-crystal-two',
+      label: 'Cascade sparkle',
+      progress: 680,
+      heightAboveGround: 118,
+      pickupRadius: 60,
+    },
+    {
+      id: 'collectable:cascade-crystal-three',
+      label: 'Cascade sparkle',
+      progress: 1070,
+      heightAboveGround: 40,
+      pickupRadius: 58,
+    },
+    {
+      id: 'collectable:cascade-crystal-four',
+      label: 'Cascade sparkle',
+      progress: 1480,
+      heightAboveGround: 138,
+      pickupRadius: 62,
+    },
+    {
+      id: 'collectable:cascade-crystal-five',
+      label: 'Cascade sparkle',
+      progress: 1980,
+      heightAboveGround: 48,
+      pickupRadius: 58,
+    },
+    {
+      id: 'collectable:cascade-crystal-six',
+      label: 'Cascade sparkle',
+      progress: 2580,
+      heightAboveGround: 42,
+      pickupRadius: 58,
+    },
+    {
+      id: 'collectable:cascade-crystal-seven',
+      label: 'Cascade sparkle',
+      progress: 3130,
+      heightAboveGround: 132,
+      pickupRadius: 62,
+    },
+    {
+      id: 'collectable:cascade-crystal-eight',
+      label: 'Cascade sparkle',
+      progress: 3450,
+      heightAboveGround: 48,
+      pickupRadius: 58,
+    },
+  ],
+} as const satisfies RaceCourseDefinition;
+
+const PLAYABLE_RACE_COURSES = [
+  SUNRISE_SPRINT_RAINBOW_RUN_COURSE,
+  CRYSTAL_CASCADE_RACE_COURSE,
+] as const satisfies readonly RaceCourseDefinition[];
+
+let activeRaceCourse: RaceCourseDefinition = SUNRISE_SPRINT_RAINBOW_RUN_COURSE;
+
+export const PRACTICE_RAINBOW_RUN_COURSE: RaceCourseDefinition = new Proxy(
+  {} as RaceCourseDefinition,
+  {
+    get: (_target, property) => activeRaceCourse[property as keyof RaceCourseDefinition],
+  },
+);
+
+export function selectRaceCourse(courseId: string): RaceCourseDefinition {
+  const course = PLAYABLE_RACE_COURSES.find((candidate) => candidate.id === courseId);
+  if (!course) {
+    throw new Error(`Unknown playable race course: ${courseId}`);
+  }
+  activeRaceCourse = course;
+  return activeRaceCourse;
+}
+
+export function getActiveRaceCourse(): RaceCourseDefinition {
+  return activeRaceCourse;
+}
+
+export function resetActiveRaceCourse(): RaceCourseDefinition {
+  activeRaceCourse = SUNRISE_SPRINT_RAINBOW_RUN_COURSE;
+  return activeRaceCourse;
+}
 
 export function validateRaceCourse(course: RaceCourseDefinition): string[] {
   const issues: string[] = [];
