@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { getFireflyLanternWorldManager } from '../activities/FireflyLanternWorldManager';
+import { getAtmosphericTimeWorldManager } from '../atmosphere/AtmosphericTimeWorldManager';
 import { getSecretDiscoveryWorldManager } from '../discovery/SecretDiscoveryWorldManager';
 import { getWhisperingWoodsSecretWorldManager } from '../discovery/WhisperingWoodsSecretWorldManager';
 import { getClickToMoveManager } from '../input/ClickToMoveManager';
@@ -54,6 +55,7 @@ export class BootScene extends Phaser.Scene {
     getCrystalBrookStoryWorldManager(this.sys.game);
     getLumiWoodsWorldManager(this.sys.game);
     getFireflyLanternWorldManager(this.sys.game);
+    getAtmosphericTimeWorldManager(this.sys.game);
     getClickToMoveManager(this.sys.game);
     getWorldOcclusionManager(this.sys.game);
     getWorldCharacterPresentationManager(this.sys.game);
