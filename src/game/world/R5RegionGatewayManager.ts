@@ -1,11 +1,7 @@
 import Phaser from 'phaser';
 import { CRYSTAL_CASCADE_RACE_ID } from '../../content/r5RaceIds';
-import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
-import {
-  getActiveRaceCourse,
-  resetActiveRaceCourse,
-  selectRaceCourse,
-} from '../racing/RaceCourse';
+import { GAME_WIDTH } from '../config/gameConstants';
+import { getActiveRaceCourse, resetActiveRaceCourse, selectRaceCourse } from '../racing/RaceCourse';
 import type { RaceRunState } from '../racing/RaceRun';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { saveLocationCheckpoint } from '../save/saveLocationCheckpoint';
@@ -338,7 +334,10 @@ export class R5RegionGatewayManager {
   }
 
   private ensureCrystalRacePresentation(scene: Phaser.Scene): CrystalRacePresentationState {
-    if (this.crystalRacePresentation?.scene === scene && this.crystalRacePresentation.container.active) {
+    if (
+      this.crystalRacePresentation?.scene === scene &&
+      this.crystalRacePresentation.container.active
+    ) {
       return this.crystalRacePresentation;
     }
     this.clearCrystalRacePresentation();
