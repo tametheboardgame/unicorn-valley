@@ -6,6 +6,7 @@ import { getBrowserSaveService } from '../save/browserSaveService';
 import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
 import {
   getBrowserMagicalWeatherService,
+  isWeatherDiscoveryAvailable,
   type MagicalWeatherDefinition,
   type MagicalWeatherState,
 } from './MagicalWeatherService';
@@ -130,8 +131,7 @@ export class MagicalWeatherWorldManager {
   private renderDefinition(state: SceneWeatherState, definition: MagicalWeatherDefinition): void {
     const modeSuffix = this.service.getMode() === 'auto' ? ' · Auto' : '';
     state.button.setText(`${definition.icon} ${definition.label}${modeSuffix}`);
-    state.effects?.destroy(true);
-    state.effects = null;
+    this.destroyEffects(state);
 
     if (definition.id === 'rain') {
       state.effects = this.createRain(state.scene);
@@ -140,8 +140,7 @@ export class MagicalWeatherWorldManager {
     }
 
     if (definition.id !== 'sparkle') {
-      state.discoveryMarker?.destroy(true);
-      state.discoveryMarker = null;
+      this.destroyDiscoveryMarker(state);
     }
   }
 
@@ -200,11 +199,10 @@ export class MagicalWeatherWorldManager {
     if (state.scene.scene.key !== 'WhisperingWoodsScene') {
       return;
     }
-    const sparkleWeather = this.service.matches('sparkle');
     const alreadyFound = this.discoveryService.hasDiscovery(STARDEW_DROP_DISCOVERY_ID);
-    if (!sparkleWeather || alreadyFound) {
-      state.discoveryMarker?.destroy(true);
-      state.discoveryMarker = null;
+    const available = isWeatherDiscoveryAvailable(this.service.getState(), 'sparkle', alreadyFound);
+    if (!available) {
+      this.destroyDiscoveryMarker(state);
       return;
     }
 
@@ -224,8 +222,7 @@ export class MagicalWeatherWorldManager {
     }
 
     this.discoveryService.unlockDiscovery(STARDEW_DROP_DISCOVERY_ID, STARDEW_WORLD_FLAG);
-    state.discoveryMarker.destroy(true);
-    state.discoveryMarker = null;
+    this.destroyDiscoveryMarker(state);
     state.scene.cameras.main.flash(220, 240, 220, 255, false);
     this.showDiscoveryFeedback(state.scene);
   }
@@ -278,9 +275,27 @@ export class MagicalWeatherWorldManager {
     scene.time.delayedCall(2200, () => feedback.destroy());
   }
 
+  private destroyEffects(state: SceneWeatherState): void {
+    if (!state.effects) {
+      return;
+    }
+    state.scene.tweens.killTweensOf(state.effects.getAll());
+    state.effects.destroy(true);
+    state.effects = null;
+  }
+
+  private destroyDiscoveryMarker(state: SceneWeatherState): void {
+    if (!state.discoveryMarker) {
+      return;
+    }
+    state.scene.tweens.killTweensOf(state.discoveryMarker);
+    state.discoveryMarker.destroy(true);
+    state.discoveryMarker = null;
+  }
+
   private destroySceneState(state: SceneWeatherState): void {
-    state.effects?.destroy(true);
-    state.discoveryMarker?.destroy(true);
+    this.destroyEffects(state);
+    this.destroyDiscoveryMarker(state);
     state.button.destroy();
     state.hint.destroy();
   }
