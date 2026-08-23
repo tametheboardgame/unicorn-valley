@@ -21,9 +21,9 @@ describe('R5 second race course', () => {
       SUNRISE_SPRINT_RAINBOW_RUN_COURSE.obstacles,
     );
     expect(CRYSTAL_CASCADE_RACE_COURSE.obstacles).toHaveLength(4);
-    expect(CRYSTAL_CASCADE_RACE_COURSE.boostZones.some(({ label }) => label.includes('shortcut'))).toBe(
-      true,
-    );
+    expect(
+      CRYSTAL_CASCADE_RACE_COURSE.boostZones.some(({ label }) => label.includes('shortcut')),
+    ).toBe(true);
   });
 
   it('keeps the shared race geometry length compatible with the existing RaceScene', () => {
