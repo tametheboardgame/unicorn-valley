@@ -50,9 +50,8 @@ export function readManualMagicalWeather(save: SaveGame | null): MagicalWeatherS
     return null;
   }
   return (
-    MAGICAL_WEATHER_STATES.find(
-      ({ id }) => save.world.flags[MANUAL_WEATHER_FLAGS[id]] === true,
-    )?.id ?? null
+    MAGICAL_WEATHER_STATES.find(({ id }) => save.world.flags[MANUAL_WEATHER_FLAGS[id]] === true)
+      ?.id ?? null
   );
 }
 
@@ -98,9 +97,7 @@ export class MagicalWeatherService {
   }
 
   public getDefinition(): MagicalWeatherDefinition {
-    return (
-      MAGICAL_WEATHER_STATES.find(({ id }) => id === this.state) ?? MAGICAL_WEATHER_STATES[0]
-    );
+    return MAGICAL_WEATHER_STATES.find(({ id }) => id === this.state) ?? MAGICAL_WEATHER_STATES[0];
   }
 
   public setMode(mode: MagicalWeatherMode): MagicalWeatherState {
