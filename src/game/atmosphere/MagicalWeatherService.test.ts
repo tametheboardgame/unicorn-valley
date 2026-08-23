@@ -3,6 +3,7 @@ import type { SaveRepository } from '../save/SaveRepository';
 import { SaveService } from '../save/SaveService';
 import { AtmosphericTimeService } from './AtmosphericTimeService';
 import {
+  isWeatherDiscoveryAvailable,
   MAGICAL_WEATHER_STATES,
   MagicalWeatherService,
   readManualMagicalWeather,
@@ -71,5 +72,13 @@ describe('MagicalWeatherService', () => {
     reloaded.setMode('auto');
     expect(readManualMagicalWeather(saveService.load())).toBeNull();
     expect(reloaded.getState()).toBe('clear');
+  });
+
+  it('keeps a conditional discovery available whenever its weather returns until collected', () => {
+    expect(isWeatherDiscoveryAvailable('clear', 'sparkle', false)).toBe(false);
+    expect(isWeatherDiscoveryAvailable('sparkle', 'sparkle', false)).toBe(true);
+    expect(isWeatherDiscoveryAvailable('clear', 'sparkle', false)).toBe(false);
+    expect(isWeatherDiscoveryAvailable('sparkle', 'sparkle', false)).toBe(true);
+    expect(isWeatherDiscoveryAvailable('sparkle', 'sparkle', true)).toBe(false);
   });
 });
