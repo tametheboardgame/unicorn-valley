@@ -45,9 +45,10 @@ export function readManualAtmosphericTime(save: SaveGame | null): AtmosphericTim
   if (!save) {
     return null;
   }
-  return ATMOSPHERIC_TIME_STATES.find(
-    ({ id }) => save.world.flags[MANUAL_TIME_FLAGS[id]] === true,
-  )?.id ?? null;
+  return (
+    ATMOSPHERIC_TIME_STATES.find(({ id }) => save.world.flags[MANUAL_TIME_FLAGS[id]] === true)
+      ?.id ?? null
+  );
 }
 
 function saveManualAtmosphericTime(
@@ -91,7 +92,9 @@ export class AtmosphericTimeService {
   }
 
   public getDefinition(): AtmosphericTimeDefinition {
-    return ATMOSPHERIC_TIME_STATES.find(({ id }) => id === this.state) ?? ATMOSPHERIC_TIME_STATES[0];
+    return (
+      ATMOSPHERIC_TIME_STATES.find(({ id }) => id === this.state) ?? ATMOSPHERIC_TIME_STATES[0]
+    );
   }
 
   public setMode(mode: AtmosphericTimeMode): AtmosphericTimeState {
@@ -105,7 +108,13 @@ export class AtmosphericTimeService {
   }
 
   public cycleMode(): AtmosphericTimeMode {
-    const modes: readonly AtmosphericTimeMode[] = ['auto', 'morning', 'afternoon', 'sunset', 'night'];
+    const modes: readonly AtmosphericTimeMode[] = [
+      'auto',
+      'morning',
+      'afternoon',
+      'sunset',
+      'night',
+    ];
     const index = modes.indexOf(this.mode);
     const next = modes[(index + 1) % modes.length] ?? 'auto';
     this.setMode(next);
