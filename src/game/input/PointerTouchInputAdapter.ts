@@ -1,5 +1,6 @@
 import type { InputAdapter } from './InputAdapter';
 import type { AxisInputAction, ButtonInputAction } from './InputAction';
+import { setTouchGallopHeld } from './ExplorationGallop';
 
 function clampAxis(value: number): number {
   return Math.max(-1, Math.min(1, value));
@@ -17,6 +18,10 @@ export class PointerTouchInputAdapter implements InputAdapter {
 
   public setButton(action: ButtonInputAction, isDown: boolean): void {
     const wasDown = this.down.has(action);
+
+    if (action === 'GALLOP') {
+      setTouchGallopHeld(isDown);
+    }
 
     if (isDown) {
       this.down.add(action);
@@ -50,6 +55,9 @@ export class PointerTouchInputAdapter implements InputAdapter {
   }
 
   public destroy(): void {
+    if (this.down.has('GALLOP')) {
+      setTouchGallopHeld(false);
+    }
     this.axes.clear();
     this.down.clear();
     this.pendingPressed.clear();
