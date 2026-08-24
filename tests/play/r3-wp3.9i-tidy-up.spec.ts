@@ -185,7 +185,7 @@ test('clicking open ground moves the unicorn again', async ({ page }) => {
   const before = playerObject(glade);
 
   await logicalClick(page, 900, 360);
-  await page.waitForTimeout(900);
+  await page.waitForTimeout(1200);
 
   snapshot = await getSnapshot(page);
   glade = sceneSnapshot(snapshot, 'MoonflowerGladeScene');
