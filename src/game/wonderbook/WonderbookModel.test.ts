@@ -98,7 +98,9 @@ describe('paginateWonderbookEntries', () => {
     expect(spreads[1].right).toHaveLength(2);
     expect(spreads[2].left).toHaveLength(1);
     expect(spreads[2].right).toHaveLength(0);
-    expect(spreads.map(({ leftPageNumber, rightPageNumber }) => [leftPageNumber, rightPageNumber])).toEqual([
+    expect(
+      spreads.map(({ leftPageNumber, rightPageNumber }) => [leftPageNumber, rightPageNumber]),
+    ).toEqual([
       [1, 2],
       [3, 4],
       [5, 6],
