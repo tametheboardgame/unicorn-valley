@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { DiscoveryDefinition } from '../../content/contentTypes';
-import { buildWonderbookEntries } from './WonderbookModel';
+import { buildWonderbookEntries, paginateWonderbookEntries } from './WonderbookModel';
 
 const discoveries = [
   {
@@ -75,5 +75,47 @@ describe('buildWonderbookEntries', () => {
       icon: '✨',
       undiscoveredHint: 'Look somewhere quiet.',
     });
+  });
+});
+
+describe('paginateWonderbookEntries', () => {
+  it('keeps two entries on each visible page and carries overflow onto a new spread', () => {
+    const entries = buildWonderbookEntries(
+      Array.from({ length: 9 }, (_, index) => ({
+        id: `discovery:page-${index}`,
+        name: `Discovery ${index}`,
+        description: `Description ${index}`,
+      })) satisfies readonly DiscoveryDefinition[],
+      [],
+    );
+
+    const spreads = paginateWonderbookEntries(entries);
+
+    expect(spreads).toHaveLength(3);
+    expect(spreads[0].left).toHaveLength(2);
+    expect(spreads[0].right).toHaveLength(2);
+    expect(spreads[1].left).toHaveLength(2);
+    expect(spreads[1].right).toHaveLength(2);
+    expect(spreads[2].left).toHaveLength(1);
+    expect(spreads[2].right).toHaveLength(0);
+    expect(
+      spreads.map(({ leftPageNumber, rightPageNumber }) => [leftPageNumber, rightPageNumber]),
+    ).toEqual([
+      [1, 2],
+      [3, 4],
+      [5, 6],
+    ]);
+  });
+
+  it('still produces one empty spread when the registry has no entries', () => {
+    expect(paginateWonderbookEntries([])).toEqual([
+      {
+        index: 0,
+        leftPageNumber: 1,
+        rightPageNumber: 2,
+        left: [],
+        right: [],
+      },
+    ]);
   });
 });
