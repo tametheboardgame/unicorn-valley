@@ -67,7 +67,10 @@ export class ExplorationShell {
     applyButtonHover(this.bagButton, UI_COLOURS.cream, UI_COLOURS.gold);
 
     this.suggestionCard = new ActivitySuggestionCard(scene);
-    this.audioSettingsPanel = new AudioSettingsPanel(scene, shellManagesSceneAudio(scene.scene.key));
+    this.audioSettingsPanel = new AudioSettingsPanel(
+      scene,
+      shellManagesSceneAudio(scene.scene.key),
+    );
     this.touchMovementPad = TouchMovementPad.ensure(scene, pointerInput);
     this.explorationChrome = new ExplorationChrome(scene, this.touchMovementPad);
     this.rewardFeedback = new RewardFeedback(scene);
