@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { EXPLORATION_SHELL_SCENES, supportsExplorationShell } from './ExplorationShell';
+import {
+  EXPLORATION_SHELL_SCENES,
+  shellManagesSceneAudio,
+  supportsExplorationShell,
+} from './ExplorationShellConfig';
 
 describe('exploration shell coverage', () => {
   it('covers every current free-roaming exploration scene', () => {
@@ -20,5 +24,11 @@ describe('exploration shell coverage', () => {
     expect(supportsExplorationShell('RaceScene')).toBe(false);
     expect(supportsExplorationShell('FireflyLanternScene')).toBe(false);
     expect(supportsExplorationShell('LumiStoryScene')).toBe(false);
+  });
+
+  it('does not double-own scene audio where an R5 region already owns it', () => {
+    expect(shellManagesSceneAudio('CrystalBrookScene')).toBe(false);
+    expect(shellManagesSceneAudio('WhisperingWoodsScene')).toBe(false);
+    expect(shellManagesSceneAudio('RainbowMeadowScene')).toBe(true);
   });
 });
