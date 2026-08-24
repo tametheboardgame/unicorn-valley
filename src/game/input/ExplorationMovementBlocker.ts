@@ -11,7 +11,12 @@ export function isBlockingExplorationObject(
 }
 
 export function isExplorationMovementBlocked(scene: Phaser.Scene): boolean {
-  return scene.children.list.some((object) =>
-    isBlockingExplorationObject(object.name, object.active, object.visible),
-  );
+  return scene.children.list.some((object) => {
+    const displayObject = object as Phaser.GameObjects.GameObject & { visible?: boolean };
+    return isBlockingExplorationObject(
+      displayObject.name,
+      displayObject.active,
+      displayObject.visible === true,
+    );
+  });
 }
