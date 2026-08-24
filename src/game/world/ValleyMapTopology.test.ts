@@ -80,7 +80,11 @@ describe('R5-WP5.9E/G Valley map topology', () => {
   it('records a concrete revisit reason for every current major region', () => {
     const majorNodes = VALLEY_MAP_NODES.filter(({ kind }) => kind === 'home' || kind === 'region');
     expect(majorNodes.length).toBeGreaterThanOrEqual(6);
-    expect(majorNodes.every(({ revisitHint }) => Boolean(revisitHint?.trim()))).toBe(true);
+    expect(
+      majorNodes.every(
+        (node) => 'revisitHint' in node && Boolean(node.revisitHint.trim()),
+      ),
+    ).toBe(true);
   });
 
   it('reserves anonymous future branches without presenting them as implemented travel', () => {
