@@ -4,6 +4,7 @@ export const BUTTON_INPUT_ACTIONS = [
   'BACK',
   'OPEN_WONDERBOOK',
   'OPEN_INVENTORY',
+  'GALLOP',
   'RACE_JUMP',
 ] as const;
 
