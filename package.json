@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "format": "biome format --write .",
     "format:check": "biome format .",
-    "lint": "biome lint --max-diagnostics=100 .",
+    "lint": "biome lint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run src",
     "test:watch": "vitest src",
