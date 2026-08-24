@@ -1,13 +1,9 @@
 import type Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import type { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
-import { TouchMovementPad } from '../input/TouchMovementPad';
 import type { InteractionTarget } from '../interaction/InteractionTarget';
-import { ActivitySuggestionCard } from './ActivitySuggestionCard';
-import { AudioSettingsPanel } from './AudioSettingsPanel';
-import { ExplorationChrome } from './ExplorationChrome';
-import { RewardFeedback } from './RewardFeedback';
-import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from './uiTheme';
+import { ExplorationShell } from './ExplorationShell';
+import { UI_COLOURS, UI_FONT, createUiShadow } from './uiTheme';
 
 function isAutomaticInteraction(target: InteractionTarget): boolean {
   return target.id.includes('-gate') || target.id === 'interaction:meadow-race-entrance';
@@ -17,19 +13,13 @@ export class InteractionPrompt {
   private readonly panelShadow: Phaser.GameObjects.Rectangle;
   private readonly panel: Phaser.GameObjects.Rectangle;
   private readonly label: Phaser.GameObjects.Text;
-  private readonly bagShadow: Phaser.GameObjects.Rectangle;
-  private readonly bagButton: Phaser.GameObjects.Rectangle;
-  private readonly bagLabel: Phaser.GameObjects.Text;
-  private readonly suggestionCard: ActivitySuggestionCard;
-  private readonly audioSettingsPanel: AudioSettingsPanel;
-  private readonly touchMovementPad: TouchMovementPad;
-  private readonly explorationChrome: ExplorationChrome;
-  private readonly rewardFeedback: RewardFeedback;
+  private readonly shell: ExplorationShell;
 
   public constructor(scene: Phaser.Scene, pointerInput: PointerTouchInputAdapter) {
     this.panelShadow = createUiShadow(scene, GAME_WIDTH / 2, GAME_HEIGHT - 72, 470, 74, 119, 0.2);
     this.panel = scene.add
       .rectangle(GAME_WIDTH / 2, GAME_HEIGHT - 72, 470, 74, UI_COLOURS.cream, 0.98)
+      .setName('exploration-interaction-prompt')
       .setStrokeStyle(5, UI_COLOURS.lavenderStrong, 0.98)
       .setScrollFactor(0)
       .setDepth(120)
@@ -43,46 +33,16 @@ export class InteractionPrompt {
         fontStyle: 'bold',
         align: 'center',
       })
+      .setName('exploration-interaction-prompt-label')
       .setOrigin(0.5)
       .setScrollFactor(0)
       .setDepth(121);
 
-    this.bagShadow = createUiShadow(scene, GAME_WIDTH - 92, 58, 142, 64, 119, 0.16);
-    this.bagButton = scene.add
-      .rectangle(GAME_WIDTH - 92, 58, 142, 64, UI_COLOURS.cream, 0.98)
-      .setStrokeStyle(4, UI_COLOURS.lavenderStrong, 0.98)
-      .setScrollFactor(0)
-      .setDepth(120)
-      .setInteractive({ useHandCursor: true });
-    this.bagLabel = scene.add
-      .text(GAME_WIDTH - 92, 58, 'Bag 🎒', {
-        color: UI_COLOURS.ink,
-        fontFamily: UI_FONT,
-        fontSize: '19px',
-        fontStyle: 'bold',
-      })
-      .setOrigin(0.5)
-      .setScrollFactor(0)
-      .setDepth(121);
-    applyButtonHover(this.bagButton, UI_COLOURS.cream, UI_COLOURS.gold);
-
-    this.suggestionCard = new ActivitySuggestionCard(scene);
-    this.audioSettingsPanel = new AudioSettingsPanel(scene);
-    this.touchMovementPad = TouchMovementPad.ensure(scene, pointerInput);
-    this.explorationChrome = new ExplorationChrome(scene, this.touchMovementPad);
-    this.rewardFeedback = new RewardFeedback(scene);
+    this.shell = ExplorationShell.ensure(scene, pointerInput);
 
     this.panel.on('pointerdown', () => pointerInput.setButton('INTERACT', true));
     this.panel.on('pointerup', () => pointerInput.setButton('INTERACT', false));
     this.panel.on('pointerout', () => pointerInput.setButton('INTERACT', false));
-
-    this.bagButton.on('pointerdown', () => {
-      const returnScene = scene.scene.key;
-      if (!scene.scene.isActive('InventoryScene')) {
-        scene.scene.launch('InventoryScene', { returnScene });
-        scene.scene.pause();
-      }
-    });
 
     this.setTarget(null);
   }
@@ -92,8 +52,7 @@ export class InteractionPrompt {
     this.panelShadow.setVisible(visible);
     this.panel.setVisible(visible);
     this.label.setVisible(visible);
-    this.suggestionCard.refresh();
-    this.explorationChrome.refresh();
+    this.shell.refresh();
 
     if (target && visible) {
       this.label.setText(`${target.actionLabel}: ${target.label}   ✨`);
@@ -104,13 +63,5 @@ export class InteractionPrompt {
     this.panelShadow.destroy();
     this.panel.destroy();
     this.label.destroy();
-    this.bagShadow.destroy();
-    this.bagButton.destroy();
-    this.bagLabel.destroy();
-    this.suggestionCard.destroy();
-    this.audioSettingsPanel.destroy();
-    this.explorationChrome.destroy();
-    this.touchMovementPad.destroy();
-    this.rewardFeedback.destroy();
   }
 }
