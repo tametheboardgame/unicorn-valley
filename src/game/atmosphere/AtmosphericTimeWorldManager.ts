@@ -6,13 +6,15 @@ import {
   type AtmosphericTimeDefinition,
   type AtmosphericTimeState,
 } from './AtmosphericTimeService';
+import { supportsOutdoorAtmosphere } from './OutdoorWorldScenes';
 
-const SUPPORTED_SCENES = new Set(['CrystalBrookScene', 'WhisperingWoodsScene']);
 const PRESENTATION_NAME = 'atmospheric-time-presentation';
+const AMBIENCE_NAME = 'atmospheric-time-ambient-cue';
 
 interface SceneTimeState {
   scene: Phaser.Scene;
   overlay: Phaser.GameObjects.Rectangle;
+  ambience: Phaser.GameObjects.Container | null;
   stars: Phaser.GameObjects.Container | null;
   button: Phaser.GameObjects.Text;
   hint: Phaser.GameObjects.Text;
@@ -23,7 +25,6 @@ export class AtmosphericTimeWorldManager {
   private readonly service = getBrowserAtmosphericTimeService(getBrowserSaveService());
   private readonly states = new Map<string, SceneTimeState>();
   private readonly unsubscribe: () => void;
-  private refreshCounter = 0;
 
   public constructor(private readonly game: Phaser.Game) {
     this.unsubscribe = this.service.subscribe((state) => this.applyState(state));
@@ -32,14 +33,10 @@ export class AtmosphericTimeWorldManager {
   }
 
   private update(): void {
-    this.refreshCounter += 1;
-    if (this.refreshCounter >= 60) {
-      this.refreshCounter = 0;
-      this.service.refreshProgression();
-    }
+    this.service.advanceAutomatic(this.game.loop.delta);
 
     for (const scene of this.game.scene.getScenes(false)) {
-      if (!SUPPORTED_SCENES.has(scene.scene.key) || !scene.scene.isActive()) {
+      if (!supportsOutdoorAtmosphere(scene.scene.key) || !scene.scene.isActive()) {
         continue;
       }
       const state = this.ensureSceneState(scene);
@@ -51,10 +48,7 @@ export class AtmosphericTimeWorldManager {
 
     for (const [sceneKey, state] of this.states) {
       if (!state.scene.scene.isActive()) {
-        state.overlay.destroy();
-        state.stars?.destroy(true);
-        state.button.destroy();
-        state.hint.destroy();
+        this.destroySceneState(state);
         this.states.delete(sceneKey);
       }
     }
@@ -66,41 +60,43 @@ export class AtmosphericTimeWorldManager {
       return existing;
     }
 
-    this.service.refreshProgression();
     const overlay = scene.add
       .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0xffffff, 0)
       .setScrollFactor(0)
       .setDepth(96)
       .setName(PRESENTATION_NAME);
     const button = scene.add
-      .text(GAME_WIDTH - 24, 24, '', {
+      .text(GAME_WIDTH - 18, 126, '', {
         color: '#46545d',
         fontFamily: 'system-ui, sans-serif',
-        fontSize: '18px',
+        fontSize: '15px',
         fontStyle: 'bold',
         backgroundColor: '#fff9e8e8',
-        padding: { x: 12, y: 8 },
+        padding: { x: 10, y: 6 },
       })
+      .setName('atmospheric-time-control')
       .setOrigin(1, 0)
       .setScrollFactor(0)
       .setDepth(10_000)
       .setInteractive({ useHandCursor: true });
     const hint = scene.add
-      .text(GAME_WIDTH - 24, 70, 'tap / T: change sky', {
+      .text(GAME_WIDTH - 18, 160, 'T / tap: sky', {
         color: '#eaf3f2',
         fontFamily: 'system-ui, sans-serif',
-        fontSize: '13px',
+        fontSize: '12px',
         backgroundColor: '#30434ca8',
-        padding: { x: 8, y: 4 },
+        padding: { x: 7, y: 3 },
       })
+      .setName('atmospheric-time-hint')
       .setOrigin(1, 0)
       .setScrollFactor(0)
       .setDepth(10_000)
-      .setAlpha(0.85);
+      .setAlpha(0.82);
 
     const state: SceneTimeState = {
       scene,
       overlay,
+      ambience: null,
       stars: null,
       button,
       hint,
@@ -129,7 +125,46 @@ export class AtmosphericTimeWorldManager {
     state.overlay.setFillStyle(definition.overlayColor, definition.overlayAlpha);
     const modeSuffix = this.service.getMode() === 'auto' ? ' · Auto' : '';
     state.button.setText(`${definition.icon} ${definition.label}${modeSuffix}`);
+    this.setAmbientCue(state, definition.id);
     this.setNightStarsVisible(state, definition.id === 'night');
+  }
+
+  private setAmbientCue(state: SceneTimeState, timeState: AtmosphericTimeState): void {
+    state.ambience?.destroy(true);
+    state.ambience = null;
+
+    const objects: Phaser.GameObjects.GameObject[] = [];
+    if (timeState === 'morning') {
+      objects.push(
+        state.scene.add.circle(145, 150, 86, 0xfff0b8, 0.13),
+        state.scene.add.rectangle(GAME_WIDTH / 2, 108, GAME_WIDTH, 110, 0xdff2ff, 0.055),
+      );
+    } else if (timeState === 'afternoon') {
+      objects.push(
+        state.scene.add.circle(GAME_WIDTH - 210, 94, 98, 0xffe995, 0.16),
+        state.scene.add.rectangle(GAME_WIDTH / 2, 104, GAME_WIDTH, 96, 0xfff6cf, 0.045),
+      );
+    } else if (timeState === 'sunset') {
+      objects.push(
+        state.scene.add.circle(GAME_WIDTH - 175, 190, 105, 0xffc274, 0.13),
+        state.scene.add.rectangle(GAME_WIDTH / 2, 162, GAME_WIDTH, 120, 0xf59a7d, 0.06),
+      );
+    }
+
+    if (objects.length === 0) {
+      return;
+    }
+
+    for (const object of objects) {
+      if ('setScrollFactor' in object && typeof object.setScrollFactor === 'function') {
+        object.setScrollFactor(0);
+      }
+    }
+    state.ambience = state.scene.add
+      .container(0, 0, objects)
+      .setName(AMBIENCE_NAME)
+      .setScrollFactor(0)
+      .setDepth(96.5);
   }
 
   private setNightStarsVisible(state: SceneTimeState, visible: boolean): void {
@@ -165,6 +200,14 @@ export class AtmosphericTimeWorldManager {
       repeat: -1,
       ease: 'Sine.InOut',
     });
+  }
+
+  private destroySceneState(state: SceneTimeState): void {
+    state.overlay.destroy();
+    state.ambience?.destroy(true);
+    state.stars?.destroy(true);
+    state.button.destroy();
+    state.hint.destroy();
   }
 }
 
