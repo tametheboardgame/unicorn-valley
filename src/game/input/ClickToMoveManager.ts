@@ -1,11 +1,13 @@
 import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { DEFAULT_PLAYER_SPEED } from '../player/PlayerMovement';
+import { CRYSTAL_BROOK_MAP } from '../world/CrystalBrookMap';
 import type { MapPoint, TraversalMapDefinition } from '../world/MapTraversal';
 import { COTTAGE_INTERIOR_MAP } from '../world/CottageInteriorMap';
 import { MOONFLOWER_GLADE_MAP } from '../world/MoonflowerGladeMap';
 import { RAINBOW_MEADOW_MAP } from '../world/RainbowMeadowMap';
 import { SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
+import { WHISPERING_WOODS_MAP } from '../world/WhisperingWoodsMap';
 import { findClickNavigationPath } from './ClickNavigationPath';
 import { hasHeldExplorationMovementInput } from './KeyboardInputAdapter';
 
@@ -25,6 +27,8 @@ const SUPPORTED_SCENES = new Set([
   'MoonflowerGladeScene',
   'SunbeamVillageScene',
   'RainbowMeadowScene',
+  'CrystalBrookScene',
+  'WhisperingWoodsScene',
   'CottageInteriorScene',
   'MoonflowerPatchScene',
 ]);
@@ -41,6 +45,8 @@ const NAVIGATION_MAPS: Readonly<Record<string, TraversalMapDefinition>> = {
   MoonflowerGladeScene: MOONFLOWER_GLADE_MAP,
   SunbeamVillageScene: SUNBEAM_VILLAGE_MAP,
   RainbowMeadowScene: RAINBOW_MEADOW_MAP,
+  CrystalBrookScene: CRYSTAL_BROOK_MAP,
+  WhisperingWoodsScene: WHISPERING_WOODS_MAP,
   CottageInteriorScene: COTTAGE_INTERIOR_MAP,
   MoonflowerPatchScene: PATCH_NAVIGATION_MAP,
 };
