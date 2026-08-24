@@ -8,8 +8,10 @@ import { InventoryService } from '../inventory/InventoryService';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { ItemCard } from '../ui/ItemCard';
 import {
+  VALLEY_HOME_NODE_ID,
   VALLEY_MAP_CONNECTIONS,
   VALLEY_MAP_NODES,
+  getHomewardNextNode,
   getValleyMapNode,
   getValleyMapNodeForLocation,
   type ValleyMapNode,
@@ -231,6 +233,7 @@ export class InventoryScene extends Phaser.Scene {
     const saveService = getBrowserSaveService();
     const save = saveService.load() ?? saveService.createNewGame();
     const currentNode = getValleyMapNodeForLocation(save.profile.currentLocationId);
+    const homewardNode = currentNode ? getHomewardNextNode(currentNode.id) : null;
     const objects: Phaser.GameObjects.GameObject[] = [];
     const mapLeft = 150;
     const mapTop = 185;
@@ -298,30 +301,36 @@ export class InventoryScene extends Phaser.Scene {
       const point = pointForNode(node);
       const isCurrent = currentNode?.id === node.id;
       const isFuture = node.kind === 'future';
-      const radius = node.kind === 'home' ? 35 : isFuture ? 25 : 31;
-      const fill = node.kind === 'home' ? 0xffe7a8 : isFuture ? 0xd6d2d8 : 0xfff8e8;
+      const isSide = node.kind === 'side';
+      const radius = node.kind === 'home' ? 35 : isFuture ? 25 : isSide ? 20 : 31;
+      const fill =
+        node.kind === 'home' ? 0xffe7a8 : isFuture ? 0xd6d2d8 : isSide ? 0xeadcf1 : 0xfff8e8;
       const alpha = isFuture ? 0.58 : 1;
       const ring = this.add
         .circle(point.x, point.y, radius, fill, alpha)
-        .setStrokeStyle(isCurrent ? 7 : 4, isCurrent ? 0xca70b9 : 0x9e819f, isFuture ? 0.5 : 0.95)
+        .setStrokeStyle(
+          isCurrent ? 7 : isSide ? 3 : 4,
+          isCurrent ? 0xca70b9 : isSide ? 0x9b78a6 : 0x9e819f,
+          isFuture ? 0.5 : 0.95,
+        )
         .setName(isCurrent ? 'bag-map-current-location' : `bag-map-node:${node.id}`);
       const icon = this.add
         .text(point.x, point.y - 3, node.icon, {
           color: isFuture ? '#8d858f' : '#5b4961',
           fontFamily: 'system-ui, sans-serif',
-          fontSize: node.kind === 'home' ? '29px' : '24px',
+          fontSize: node.kind === 'home' ? '29px' : isSide ? '17px' : '24px',
           fontStyle: 'bold',
         })
         .setOrigin(0.5)
         .setAlpha(alpha);
       const label = this.add
-        .text(point.x, point.y + radius + 11, node.label, {
+        .text(point.x, point.y + radius + (isSide ? 7 : 11), node.label, {
           color: isFuture ? '#988f99' : '#5d4b63',
           fontFamily: 'system-ui, sans-serif',
-          fontSize: '13px',
+          fontSize: isSide ? '11px' : '13px',
           fontStyle: 'bold',
           align: 'center',
-          wordWrap: { width: 145 },
+          wordWrap: { width: isSide ? 112 : 145 },
         })
         .setOrigin(0.5, 0)
         .setAlpha(alpha);
@@ -345,13 +354,39 @@ export class InventoryScene extends Phaser.Scene {
 
     objects.push(
       this.add
-        .text(GAME_WIDTH / 2, 594, 'Solid paths are open now • dotted paths are still hidden', {
-          color: '#827286',
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '13px',
-          fontStyle: 'bold',
-        })
+        .text(
+          GAME_WIDTH / 2,
+          580,
+          'Solid paths are open • small circles are places inside a region • dotted paths are hidden',
+          {
+            color: '#827286',
+            fontFamily: 'system-ui, sans-serif',
+            fontSize: '12px',
+            fontStyle: 'bold',
+          },
+        )
         .setOrigin(0.5),
+    );
+
+    const homewardText =
+      currentNode?.id === VALLEY_HOME_NODE_ID
+        ? '🏡 Home is here.'
+        : homewardNode
+          ? `🏡 Way home: ${homewardNode.label}`
+          : '🏡 Follow the solid paths home.';
+    const nearbyText = currentNode?.revisitHint ? `Nearby: ${currentNode.revisitHint}` : '';
+    objects.push(
+      this.add
+        .text(GAME_WIDTH / 2, 607, [homewardText, nearbyText].filter(Boolean).join('   •   '), {
+          color: '#66536d',
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '12px',
+          fontStyle: 'bold',
+          align: 'center',
+          wordWrap: { width: 940 },
+        })
+        .setOrigin(0.5, 0)
+        .setName('bag-map-guidance'),
     );
 
     this.tabContent = this.add.container(0, 0, objects).setName('bag-map-content');
