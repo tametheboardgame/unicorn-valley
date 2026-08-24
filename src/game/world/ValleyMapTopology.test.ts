@@ -81,9 +81,7 @@ describe('R5-WP5.9E/G Valley map topology', () => {
     const majorNodes = VALLEY_MAP_NODES.filter(({ kind }) => kind === 'home' || kind === 'region');
     expect(majorNodes.length).toBeGreaterThanOrEqual(6);
     expect(
-      majorNodes.every(
-        (node) => 'revisitHint' in node && Boolean(node.revisitHint.trim()),
-      ),
+      majorNodes.every((node) => 'revisitHint' in node && Boolean(node.revisitHint.trim())),
     ).toBe(true);
   });
 
