@@ -65,6 +65,23 @@ function isPlayerSprite(
   );
 }
 
+function updateClickNavigationFacing(
+  player: Phaser.Physics.Arcade.Sprite,
+  directionX: number,
+  directionY: number,
+): void {
+  if (Math.abs(directionX) >= Math.abs(directionY) && Math.abs(directionX) > 2) {
+    const facing = directionX < 0 ? 'left' : 'right';
+    player.setFlipX(facing === 'left');
+    player.setData('player-facing', facing);
+    return;
+  }
+
+  if (Math.abs(directionY) > 2) {
+    player.setData('player-facing', directionY < 0 ? 'up' : 'down');
+  }
+}
+
 export class ClickToMoveManager {
   private readonly states = new WeakMap<Phaser.Scene, NavigationState>();
 
@@ -129,10 +146,7 @@ export class ClickToMoveManager {
         (directionX / magnitude) * DEFAULT_PLAYER_SPEED,
         (directionY / magnitude) * DEFAULT_PLAYER_SPEED,
       );
-
-      if (Math.abs(directionX) > 2) {
-        player.setFlipX(directionX < 0);
-      }
+      updateClickNavigationFacing(player, directionX, directionY);
       player.setAngle(Math.sin(scene.time.now * 0.018) * 1.6);
     }
   }
