@@ -384,11 +384,7 @@ export class LumiWoodsWorldManager {
   private openLumiStory(scene: Phaser.Scene): void {
     const player = findPlayer(scene);
     if (player) {
-      rememberWorldReturnState(
-        'WhisperingWoodsScene',
-        player,
-        setWhisperingWoodsPlayerSpawn,
-      );
+      rememberWorldReturnState('WhisperingWoodsScene', player, setWhisperingWoodsPlayerSpawn);
     }
     scene.scene.start('LumiStoryScene', { returnScene: 'WhisperingWoodsScene' });
   }
