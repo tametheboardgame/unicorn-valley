@@ -62,6 +62,17 @@ export const CRYSTAL_BROOK_MAP = {
       direction: 'west',
     },
   ] satisfies readonly CrystalBrookEntrance[],
+  shallowStream: {
+    width: 150,
+    points: [
+      { x: 1060, y: 960 },
+      { x: 1290, y: 1050 },
+      { x: 1580, y: 1120 },
+      { x: 1940, y: 1110 },
+      { x: 2250, y: 1230 },
+      { x: 2460, y: 1300 },
+    ] satisfies readonly MapPoint[],
+  },
   steppingStones: [
     { x: 1010, y: 1010 },
     { x: 1125, y: 970 },
@@ -130,8 +141,6 @@ export const CRYSTAL_BROOK_MAP = {
   ] satisfies readonly CrystalBrookSecretRoute[],
   colliders: [
     { id: 'collision:brook-upper-pool', x: 1370, y: 540, width: 500, height: 260 },
-    { id: 'collision:brook-middle-water-a', x: 1120, y: 1090, width: 250, height: 180 },
-    { id: 'collision:brook-middle-water-b', x: 2315, y: 1300, width: 250, height: 180 },
     { id: 'collision:brook-lower-pool', x: 2780, y: 1320, width: 460, height: 260 },
     { id: 'collision:north-crystal-bank', x: 2440, y: 420, width: 370, height: 240 },
     { id: 'collision:south-reed-bank', x: 1750, y: 1860, width: 430, height: 230 },
