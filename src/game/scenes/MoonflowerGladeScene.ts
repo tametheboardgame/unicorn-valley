@@ -416,7 +416,12 @@ export class MoonflowerGladeScene extends Phaser.Scene {
     water.fillStyle(0x87cde2, 0.9);
     water.fillRoundedRect(0, map.stream.y, map.width, map.stream.height, 48);
     water.lineStyle(5, 0xbde9ef, 0.75);
-    water.lineBetween(0, map.stream.y + 28, map.bridge.x - map.bridge.width / 2 - 40, map.stream.y + 28);
+    water.lineBetween(
+      0,
+      map.stream.y + 28,
+      map.bridge.x - map.bridge.width / 2 - 40,
+      map.stream.y + 28,
+    );
     water.lineBetween(
       map.bridge.x + map.bridge.width / 2 + 40,
       map.stream.y + 28,
@@ -425,7 +430,9 @@ export class MoonflowerGladeScene extends Phaser.Scene {
     );
 
     const bridgeWidth = 260;
-    const bridge = this.add.rectangle(map.bridge.x, map.bridge.y, bridgeWidth, 118, 0xc9976d, 1).setDepth(8);
+    const bridge = this.add
+      .rectangle(map.bridge.x, map.bridge.y, bridgeWidth, 118, 0xc9976d, 1)
+      .setDepth(8);
     bridge.setStrokeStyle(5, 0x9d6d4d, 1);
     for (let offset = -94; offset <= 94; offset += 47) {
       this.add
@@ -484,9 +491,7 @@ export class MoonflowerGladeScene extends Phaser.Scene {
       return;
     }
     this.add.ellipse(garden.position.x, garden.position.y, 440, 230, 0x795747, 0.9).setDepth(4);
-    this.add
-      .ellipse(garden.position.x, garden.position.y, 390, 190, 0x936b53, 0.85)
-      .setDepth(4.2);
+    this.add.ellipse(garden.position.x, garden.position.y, 390, 190, 0x936b53, 0.85).setDepth(4.2);
     for (const x of [-110, 0, 110]) {
       this.add.circle(garden.position.x + x, garden.position.y, 24, 0x4f9b63, 0.8).setDepth(5);
     }
