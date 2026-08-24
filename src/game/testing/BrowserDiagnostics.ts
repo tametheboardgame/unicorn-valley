@@ -68,6 +68,10 @@ interface InspectableProperties {
 
 type InspectableGameObject = Phaser.GameObjects.GameObject & InspectableProperties;
 
+type InspectableContainer = Phaser.GameObjects.GameObject & {
+  list?: Phaser.GameObjects.GameObject[];
+};
+
 interface InspectableSceneRuntime {
   raceStarted?: unknown;
   runState?: {
@@ -103,6 +107,27 @@ function snapshotObject(gameObject: Phaser.GameObjects.GameObject): DiagnosticOb
   };
 }
 
+function snapshotObjects(gameObjects: readonly Phaser.GameObjects.GameObject[]): DiagnosticObjectSnapshot[] {
+  const snapshots: DiagnosticObjectSnapshot[] = [];
+
+  const visit = (gameObject: Phaser.GameObjects.GameObject): void => {
+    snapshots.push(snapshotObject(gameObject));
+    if (gameObject.type !== 'Container') {
+      return;
+    }
+
+    const container = gameObject as InspectableContainer;
+    for (const child of container.list ?? []) {
+      visit(child);
+    }
+  };
+
+  for (const gameObject of gameObjects) {
+    visit(gameObject);
+  }
+  return snapshots;
+}
+
 function snapshotScene(scene: Phaser.Scene): DiagnosticSceneSnapshot {
   const camera = scene.cameras.main;
   const runtime = scene as unknown as InspectableSceneRuntime;
@@ -129,7 +154,7 @@ function snapshotScene(scene: Phaser.Scene): DiagnosticSceneSnapshot {
           ? runtime.runState.forwardControlMultiplier
           : null,
     },
-    objects: scene.children.list.map(snapshotObject),
+    objects: snapshotObjects(scene.children.list),
   };
 }
 
