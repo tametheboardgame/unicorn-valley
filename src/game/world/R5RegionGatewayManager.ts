@@ -488,7 +488,14 @@ export class R5RegionGatewayManager {
         for (const offset of [-38, -12, 14, 40]) {
           scenery.push(
             scene.add
-              .rectangle(x + offset, RACE_GROUND_Y - 54, 9, obstacle.clearanceHeight + 22, 0x4c956f, 1)
+              .rectangle(
+                x + offset,
+                RACE_GROUND_Y - 54,
+                9,
+                obstacle.clearanceHeight + 22,
+                0x4c956f,
+                1,
+              )
               .setAngle(offset / 8),
           );
         }
@@ -538,9 +545,7 @@ export class R5RegionGatewayManager {
       scenery.push(
         scene.add.rectangle(x - 68, 446, 22, 210, 0x467f8a, 1),
         scene.add.rectangle(x + 68, 446, 22, 210, 0x467f8a, 1),
-        scene.add
-          .rectangle(x, 350, 178, 42, 0xbceff0, 1)
-          .setStrokeStyle(5, 0x7b83c9, 1),
+        scene.add.rectangle(x, 350, 178, 42, 0xbceff0, 1).setStrokeStyle(5, 0x7b83c9, 1),
         scene.add
           .text(x, 350, title, {
             color: '#38545c',
