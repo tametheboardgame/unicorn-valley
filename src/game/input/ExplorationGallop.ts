@@ -59,7 +59,5 @@ export function isExplorationGallopHeld(sceneKey: string): boolean {
 }
 
 export function explorationSpeedMultiplier(sceneKey: string, gallopHeld: boolean): number {
-  return OUTDOOR_EXPLORATION_SCENES.has(sceneKey) && gallopHeld
-    ? EXPLORATION_GALLOP_MULTIPLIER
-    : 1;
+  return OUTDOOR_EXPLORATION_SCENES.has(sceneKey) && gallopHeld ? EXPLORATION_GALLOP_MULTIPLIER : 1;
 }
