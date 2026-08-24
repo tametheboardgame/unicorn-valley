@@ -119,7 +119,8 @@ test.describe('R5-WP5.10 final tightening', () => {
           diagnostics
             ?.snapshot()
             .scenes.find(({ key }) => key === 'FireflyLanternScene')
-            ?.objects.some(({ name, active }) => name === 'firefly-lantern-target' && active) === false
+            ?.objects.some(({ name, active }) => name === 'firefly-lantern-target' && active) ===
+          false
         );
       });
     }
@@ -166,9 +167,7 @@ test.describe('R5-WP5.10 final tightening', () => {
       throw new Error('Suggestion card geometry was not found.');
     }
 
-    expect(footer.y + footer.displayHeight / 2).toBeLessThan(
-      panel.y + panel.displayHeight / 2 - 5,
-    );
+    expect(footer.y + footer.displayHeight / 2).toBeLessThan(panel.y + panel.displayHeight / 2 - 5);
   });
 
   test('gentle rain remains readable on light outdoor regions', async ({ page }) => {
