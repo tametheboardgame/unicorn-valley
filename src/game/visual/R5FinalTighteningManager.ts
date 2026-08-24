@@ -7,7 +7,10 @@ const COTTAGE_WALL_ANCHOR = 'r5-final-cottage-wall-anchor';
 const RAIN_CONTAINER_NAME = 'magical-weather-rain-screen';
 const SUGGESTION_CARD_NAME = 'activity-suggestion-card';
 
-function findNamedContainer(scene: Phaser.Scene, name: string): Phaser.GameObjects.Container | null {
+function findNamedContainer(
+  scene: Phaser.Scene,
+  name: string,
+): Phaser.GameObjects.Container | null {
   const object = scene.children.getByName(name);
   return object instanceof Phaser.GameObjects.Container ? object : null;
 }
@@ -93,10 +96,7 @@ function tightenCottageInterior(scene: Phaser.Scene): void {
     return;
   }
 
-  scene.add
-    .rectangle(900, 210, 1610, 260, 0xf7e8d6, 1)
-    .setName(COTTAGE_WALL_ANCHOR)
-    .setDepth(2.4);
+  scene.add.rectangle(900, 210, 1610, 260, 0xf7e8d6, 1).setName(COTTAGE_WALL_ANCHOR).setDepth(2.4);
   scene.add
     .rectangle(900, 340, 1610, 12, 0xb98b72, 0.42)
     .setName('r5-final-cottage-baseboard')
