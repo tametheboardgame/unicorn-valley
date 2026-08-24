@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { isExplorationGallopHeld, explorationSpeedMultiplier } from '../input/ExplorationGallop';
+import { isExplorationMovementBlocked } from '../input/ExplorationMovementBlocker';
 import { consumeWorldArrivalFacing } from '../world/WorldArrivalState';
 import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
 import type { PlayerFacing, PlayerMotionState, PlayerMovementCommand } from './PlayerMovement';
@@ -32,17 +33,20 @@ export class PlayerEntity {
   }
 
   public applyMovement(command: PlayerMovementCommand): void {
-    this.setFacing(command.facing);
-    this.motionState = command.motionState;
+    const movementBlocked = isExplorationMovementBlocked(this.scene);
+    if (!movementBlocked) {
+      this.setFacing(command.facing);
+    }
+    this.motionState = movementBlocked ? 'idle' : command.motionState;
 
     const body = this.sprite.body as Phaser.Physics.Arcade.Body;
-    const response = command.motionState === 'moving' ? 0.34 : 0.56;
+    const response = movementBlocked || command.motionState === 'idle' ? 0.56 : 0.34;
     const multiplier = explorationSpeedMultiplier(
       this.scene.scene.key,
       isExplorationGallopHeld(this.scene.scene.key),
     );
-    const targetVelocityX = command.velocityX * multiplier;
-    const targetVelocityY = command.velocityY * multiplier;
+    const targetVelocityX = movementBlocked ? 0 : command.velocityX * multiplier;
+    const targetVelocityY = movementBlocked ? 0 : command.velocityY * multiplier;
     let velocityX = Phaser.Math.Linear(body.velocity.x, targetVelocityX, response);
     let velocityY = Phaser.Math.Linear(body.velocity.y, targetVelocityY, response);
 
