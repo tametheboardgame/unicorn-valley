@@ -3,10 +3,7 @@ import { SUNRISE_SPRINT_RACE_ID } from '../../content/r3RaceIds';
 import { CRYSTAL_CASCADE_RACE_ID } from '../../content/r5RaceIds';
 import type { SaveGame } from '../save/saveSchema';
 
-export type CrystalCascadeUnlockReason =
-  | 'unlocked'
-  | 'finish-sunrise-sprint'
-  | 'finish-nova-story';
+export type CrystalCascadeUnlockReason = 'unlocked' | 'finish-sunrise-sprint' | 'finish-nova-story';
 
 export interface CrystalCascadeUnlockState {
   unlocked: boolean;
@@ -20,7 +17,10 @@ function hasFinishedRace(save: SaveGame, raceId: string): boolean {
 }
 
 export function getCrystalCascadeUnlockState(save: SaveGame): CrystalCascadeUnlockState {
-  if (hasFinishedRace(save, CRYSTAL_CASCADE_RACE_ID) || hasFinishedRace(save, SUNRISE_SPRINT_RACE_ID)) {
+  if (
+    hasFinishedRace(save, CRYSTAL_CASCADE_RACE_ID) ||
+    hasFinishedRace(save, SUNRISE_SPRINT_RACE_ID)
+  ) {
     return {
       unlocked: true,
       reason: 'unlocked',
