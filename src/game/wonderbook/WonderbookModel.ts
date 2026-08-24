@@ -1,5 +1,7 @@
 import type { DiscoveryDefinition, DiscoveryId, DiscoveryKind } from '../../content/contentTypes';
 
+export const WONDERBOOK_ENTRIES_PER_PAGE = 2;
+
 export interface WonderbookEntry {
   id: DiscoveryId;
   name: string;
@@ -8,6 +10,14 @@ export interface WonderbookEntry {
   kind: DiscoveryKind;
   icon?: string;
   undiscoveredHint?: string;
+}
+
+export interface WonderbookSpread {
+  index: number;
+  leftPageNumber: number;
+  rightPageNumber: number;
+  left: readonly WonderbookEntry[];
+  right: readonly WonderbookEntry[];
 }
 
 export function buildWonderbookEntries(
@@ -35,4 +45,37 @@ export function buildWonderbookEntries(
       return leftRank - rightRank || left.index - right.index;
     })
     .map(({ index: _index, ...entry }) => entry);
+}
+
+export function paginateWonderbookEntries(
+  entries: readonly WonderbookEntry[],
+  entriesPerPage = WONDERBOOK_ENTRIES_PER_PAGE,
+): readonly WonderbookSpread[] {
+  const safeEntriesPerPage = Math.max(1, Math.floor(entriesPerPage));
+  const entriesPerSpread = safeEntriesPerPage * 2;
+  const spreads: WonderbookSpread[] = [];
+
+  for (let offset = 0; offset < entries.length; offset += entriesPerSpread) {
+    const index = spreads.length;
+    const spreadEntries = entries.slice(offset, offset + entriesPerSpread);
+    spreads.push({
+      index,
+      leftPageNumber: index * 2 + 1,
+      rightPageNumber: index * 2 + 2,
+      left: spreadEntries.slice(0, safeEntriesPerPage),
+      right: spreadEntries.slice(safeEntriesPerPage),
+    });
+  }
+
+  if (spreads.length === 0) {
+    spreads.push({
+      index: 0,
+      leftPageNumber: 1,
+      rightPageNumber: 2,
+      left: [],
+      right: [],
+    });
+  }
+
+  return spreads;
 }
