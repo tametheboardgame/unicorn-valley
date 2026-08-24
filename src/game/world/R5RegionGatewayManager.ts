@@ -16,10 +16,7 @@ import {
   setCrystalBrookPlayerSpawn,
 } from './CrystalBrookMap';
 import { RAINBOW_MEADOW_LOCATION_ID, setRainbowMeadowPlayerSpawn } from './RainbowMeadowMap';
-import {
-  isWithinInteractiveGateway,
-  shouldActivateWalkThroughGateway,
-} from './RegionGatewayRules';
+import { isWithinInteractiveGateway, shouldActivateWalkThroughGateway } from './RegionGatewayRules';
 import { setWorldArrivalFacing } from './WorldArrivalState';
 import {
   setWhisperingWoodsPlayerSpawn,
