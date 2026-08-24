@@ -10,6 +10,7 @@ import {
   stepRaceMovement,
   type RaceMovementState,
 } from './RaceMovement';
+import { getRaceShortcut, type RaceShortcutDefinition } from './RaceShortcut';
 
 export const RACE_SLOWDOWN_SECONDS = 0.85;
 export const RACE_STUMBLE_SECONDS = 0.32;
@@ -24,6 +25,7 @@ export interface RaceRunState {
   movement: RaceMovementState;
   hitObstacleIds: readonly string[];
   collectedIds: readonly string[];
+  usedShortcutIds: readonly string[];
   activeBoostZoneId: string | null;
   slowdownRemaining: number;
   stumbleRemaining: number;
@@ -34,6 +36,7 @@ export type RaceRunEvent =
   | { type: 'obstacle-hit'; obstacle: RaceObstacleDefinition }
   | { type: 'boost-entered'; boost: RaceBoostZoneDefinition }
   | { type: 'collectable-collected'; collectable: RaceCollectableDefinition }
+  | { type: 'shortcut-taken'; shortcut: RaceShortcutDefinition }
   | { type: 'finished' };
 
 export interface RaceRunStepResult {
@@ -46,6 +49,7 @@ export function createRaceRunState(): RaceRunState {
     movement: createRaceMovementState(),
     hitObstacleIds: [],
     collectedIds: [],
+    usedShortcutIds: [],
     activeBoostZoneId: null,
     slowdownRemaining: 0,
     stumbleRemaining: 0,
@@ -77,6 +81,25 @@ function crossesProgressSpan(
 
 function countdown(value: number, deltaSeconds: number): number {
   return Math.max(0, value - deltaSeconds);
+}
+
+function shouldTakeShortcut(
+  shortcut: RaceShortcutDefinition,
+  previousMovement: RaceMovementState,
+  movement: RaceMovementState,
+  usedShortcutIds: ReadonlySet<string>,
+): boolean {
+  if (usedShortcutIds.has(shortcut.id)) {
+    return false;
+  }
+
+  const entryCentre = (shortcut.entryStartProgress + shortcut.entryEndProgress) / 2;
+  const entryHalfWidth = (shortcut.entryEndProgress - shortcut.entryStartProgress) / 2;
+  const playerHeight = Math.max(0, -movement.jumpOffset);
+  return (
+    playerHeight >= shortcut.minimumAirborneHeight &&
+    crossesProgressSpan(previousMovement.progress, movement.progress, entryCentre, entryHalfWidth)
+  );
 }
 
 export function stepRaceRun(
@@ -116,7 +139,7 @@ export function stepRaceRun(
     : 1;
 
   const previousMovement = state.movement;
-  const movement = stepRaceMovement(
+  let movement = stepRaceMovement(
     previousMovement,
     frameSeconds,
     jumpRequested,
@@ -126,6 +149,20 @@ export function stepRaceRun(
   const events: RaceRunEvent[] = [];
   const hitObstacleIds = new Set(state.hitObstacleIds);
   const collectedIds = new Set(state.collectedIds);
+  const usedShortcutIds = new Set(state.usedShortcutIds);
+  const shortcut = getRaceShortcut(course.id);
+
+  if (shortcut && shouldTakeShortcut(shortcut, previousMovement, movement, usedShortcutIds)) {
+    usedShortcutIds.add(shortcut.id);
+    const progress = Math.min(course.length, movement.progress + shortcut.progressSkip);
+    movement = {
+      ...movement,
+      progress,
+      finished: progress >= course.length,
+    };
+    events.push({ type: 'shortcut-taken', shortcut });
+  }
+
   const playerHeight = Math.max(0, -movement.jumpOffset);
 
   for (const obstacle of course.obstacles) {
@@ -186,6 +223,7 @@ export function stepRaceRun(
       movement,
       hitObstacleIds: [...hitObstacleIds],
       collectedIds: [...collectedIds],
+      usedShortcutIds: [...usedShortcutIds],
       activeBoostZoneId: boostAtEnd?.id ?? null,
       slowdownRemaining,
       stumbleRemaining,
