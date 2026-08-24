@@ -3,17 +3,22 @@ import { STARDEW_DROP_DISCOVERY_ID } from '../../content/r5Weather';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { DiscoveryService } from '../discovery/DiscoveryService';
 import { getBrowserSaveService } from '../save/browserSaveService';
-import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
 import {
   getBrowserMagicalWeatherService,
   isWeatherDiscoveryAvailable,
   type MagicalWeatherDefinition,
   type MagicalWeatherState,
 } from './MagicalWeatherService';
+import { supportsOutdoorAtmosphere } from './OutdoorWorldScenes';
 
-const SUPPORTED_SCENES = new Set(['CrystalBrookScene', 'WhisperingWoodsScene']);
 const STARDEW_POSITION = { x: 2780, y: 1500 } as const;
 const STARDEW_WORLD_FLAG = 'flag:r5-stardew-drop-found';
+const SPARKLE_FIELD_NAME = 'magical-weather-sparkle-world';
+
+interface PositionedGameObject extends Phaser.GameObjects.GameObject {
+  x: number;
+  y: number;
+}
 
 interface SceneWeatherState {
   scene: Phaser.Scene;
@@ -22,11 +27,24 @@ interface SceneWeatherState {
   button: Phaser.GameObjects.Text;
   hint: Phaser.GameObjects.Text;
   cycleKey: Phaser.Input.Keyboard.Key | null;
+  sparkleRecycleSeed: number;
+}
+
+function isPositionedGameObject(
+  object: Phaser.GameObjects.GameObject,
+): object is PositionedGameObject {
+  const candidate = object as Partial<PositionedGameObject>;
+  return typeof candidate.x === 'number' && typeof candidate.y === 'number';
 }
 
 function findPlayer(scene: Phaser.Scene): Phaser.Physics.Arcade.Sprite | null {
-  const player = scene.children.getByName(WORLD_PLAYER_NAME);
-  return player instanceof Phaser.Physics.Arcade.Sprite ? player : null;
+  return (
+    (scene.children.list.find(
+      (object) =>
+        object instanceof Phaser.Physics.Arcade.Sprite &&
+        object.texture.key.startsWith('player-unicorn-'),
+    ) as Phaser.Physics.Arcade.Sprite | undefined) ?? null
+  );
 }
 
 export class MagicalWeatherWorldManager {
@@ -51,7 +69,7 @@ export class MagicalWeatherWorldManager {
     }
 
     for (const scene of this.game.scene.getScenes(false)) {
-      if (!SUPPORTED_SCENES.has(scene.scene.key) || !scene.scene.isActive()) {
+      if (!supportsOutdoorAtmosphere(scene.scene.key) || !scene.scene.isActive()) {
         continue;
       }
       const state = this.ensureSceneState(scene);
@@ -59,6 +77,7 @@ export class MagicalWeatherWorldManager {
         this.service.cycleMode();
         this.renderDefinition(state, this.service.getDefinition());
       }
+      this.updateSparkleField(state);
       this.updateWeatherDiscovery(state);
     }
 
@@ -78,28 +97,32 @@ export class MagicalWeatherWorldManager {
 
     this.service.refreshAutomatic();
     const button = scene.add
-      .text(24, 24, '', {
+      .text(GAME_WIDTH - 18, 196, '', {
         color: '#3e5260',
         fontFamily: 'system-ui, sans-serif',
-        fontSize: '18px',
+        fontSize: '15px',
         fontStyle: 'bold',
         backgroundColor: '#f4fbffe8',
-        padding: { x: 12, y: 8 },
+        padding: { x: 10, y: 6 },
       })
+      .setName('magical-weather-control')
+      .setOrigin(1, 0)
       .setScrollFactor(0)
       .setDepth(10_000)
       .setInteractive({ useHandCursor: true });
     const hint = scene.add
-      .text(24, 70, 'tap / Y: change weather', {
+      .text(GAME_WIDTH - 18, 230, 'Y / tap: weather', {
         color: '#eff9ff',
         fontFamily: 'system-ui, sans-serif',
-        fontSize: '13px',
+        fontSize: '12px',
         backgroundColor: '#30434ca8',
-        padding: { x: 8, y: 4 },
+        padding: { x: 7, y: 3 },
       })
+      .setName('magical-weather-hint')
+      .setOrigin(1, 0)
       .setScrollFactor(0)
       .setDepth(10_000)
-      .setAlpha(0.85);
+      .setAlpha(0.82);
 
     const state: SceneWeatherState = {
       scene,
@@ -108,6 +131,7 @@ export class MagicalWeatherWorldManager {
       button,
       hint,
       cycleKey: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.Y) ?? null,
+      sparkleRecycleSeed: 0,
     };
     button.on('pointerdown', () => {
       this.service.cycleMode();
@@ -136,7 +160,7 @@ export class MagicalWeatherWorldManager {
     if (definition.id === 'rain') {
       state.effects = this.createRain(state.scene);
     } else if (definition.id === 'sparkle') {
-      state.effects = this.createSparkleShower(state.scene);
+      state.effects = this.createSparkleShower(state);
     }
 
     if (definition.id !== 'sparkle') {
@@ -162,14 +186,21 @@ export class MagicalWeatherWorldManager {
         ease: 'Linear',
       });
     }
-    return scene.add.container(0, 0, drops).setScrollFactor(0).setDepth(98);
+    return scene.add
+      .container(0, 0, drops)
+      .setName('magical-weather-rain-screen')
+      .setScrollFactor(0)
+      .setDepth(98);
   }
 
-  private createSparkleShower(scene: Phaser.Scene): Phaser.GameObjects.Container {
-    const sparkles: Phaser.GameObjects.GameObject[] = [];
-    for (let index = 0; index < 18; index += 1) {
-      const x = (index * 211 + 93) % GAME_WIDTH;
-      const y = (index * 137 + 61) % GAME_HEIGHT;
+  private createSparkleShower(state: SceneWeatherState): Phaser.GameObjects.Container {
+    const scene = state.scene;
+    const player = findPlayer(scene);
+    const centre = player ?? scene.cameras.main.midPoint;
+    const sparkles: Phaser.GameObjects.Text[] = [];
+    for (let index = 0; index < 22; index += 1) {
+      const x = centre.x + ((index * 263 + 91) % 1400) - 700;
+      const y = centre.y + ((index * 173 + 53) % 900) - 450;
       const sparkle = scene.add
         .text(x, y, index % 4 === 0 ? '✦' : '·', {
           color: index % 3 === 0 ? '#f7dcff' : '#fff3aa',
@@ -182,9 +213,9 @@ export class MagicalWeatherWorldManager {
       sparkles.push(sparkle);
       scene.tweens.add({
         targets: sparkle,
-        y: y + 34 + (index % 3) * 12,
         alpha: { from: 0.18, to: 0.9 },
         angle: index % 2 === 0 ? 18 : -18,
+        scale: { from: 0.82, to: 1.12 },
         duration: 1150 + (index % 6) * 130,
         delay: (index % 5) * 120,
         yoyo: true,
@@ -192,7 +223,35 @@ export class MagicalWeatherWorldManager {
         ease: 'Sine.InOut',
       });
     }
-    return scene.add.container(0, 0, sparkles).setScrollFactor(0).setDepth(99);
+    return scene.add
+      .container(0, 0, sparkles)
+      .setName(SPARKLE_FIELD_NAME)
+      .setScrollFactor(1)
+      .setDepth(99);
+  }
+
+  private updateSparkleField(state: SceneWeatherState): void {
+    if (this.service.getState() !== 'sparkle' || state.effects?.name !== SPARKLE_FIELD_NAME) {
+      return;
+    }
+    const player = findPlayer(state.scene);
+    if (!player) {
+      return;
+    }
+
+    const objects = state.effects.getAll();
+    for (const [index, object] of objects.entries()) {
+      if (!isPositionedGameObject(object)) {
+        continue;
+      }
+      const tooFar = Math.abs(object.x - player.x) > 760 || Math.abs(object.y - player.y) > 520;
+      if (!tooFar) {
+        continue;
+      }
+      state.sparkleRecycleSeed += 1;
+      object.x = player.x + ((index * 263 + state.sparkleRecycleSeed * 127) % 1400) - 700;
+      object.y = player.y + ((index * 173 + state.sparkleRecycleSeed * 97) % 900) - 450;
+    }
   }
 
   private updateWeatherDiscovery(state: SceneWeatherState): void {

@@ -12,11 +12,13 @@ export interface AtmosphericTimeDefinition {
   overlayAlpha: number;
 }
 
+export const AUTO_TIME_STATE_DURATION_MS = 180_000;
+
 export const ATMOSPHERIC_TIME_STATES = [
-  { id: 'morning', label: 'Morning', icon: '🌤️', overlayColor: 0xffe6ad, overlayAlpha: 0.08 },
-  { id: 'afternoon', label: 'Afternoon', icon: '☀️', overlayColor: 0xfff5d7, overlayAlpha: 0.03 },
-  { id: 'sunset', label: 'Sunset', icon: '🌅', overlayColor: 0xf49b76, overlayAlpha: 0.13 },
-  { id: 'night', label: 'Night', icon: '🌙', overlayColor: 0x243b68, overlayAlpha: 0.3 },
+  { id: 'morning', label: 'Morning', icon: '🌤️', overlayColor: 0xcfe7ff, overlayAlpha: 0.15 },
+  { id: 'afternoon', label: 'Afternoon', icon: '☀️', overlayColor: 0xffedaa, overlayAlpha: 0.08 },
+  { id: 'sunset', label: 'Sunset', icon: '🌅', overlayColor: 0xf49b76, overlayAlpha: 0.18 },
+  { id: 'night', label: 'Night', icon: '🌙', overlayColor: 0x243b68, overlayAlpha: 0.34 },
 ] as const satisfies readonly AtmosphericTimeDefinition[];
 
 const MANUAL_TIME_FLAGS: Record<AtmosphericTimeState, string> = {
@@ -39,6 +41,11 @@ export function chooseProgressionAtmosphericTime(save: SaveGame | null): Atmosph
     return 'afternoon';
   }
   return 'morning';
+}
+
+export function nextAtmosphericTimeState(state: AtmosphericTimeState): AtmosphericTimeState {
+  const index = ATMOSPHERIC_TIME_STATES.findIndex(({ id }) => id === state);
+  return ATMOSPHERIC_TIME_STATES[(index + 1) % ATMOSPHERIC_TIME_STATES.length]?.id ?? 'morning';
 }
 
 export function readManualAtmosphericTime(save: SaveGame | null): AtmosphericTimeState | null {
@@ -71,6 +78,8 @@ function saveManualAtmosphericTime(
 
 export class AtmosphericTimeService {
   private state: AtmosphericTimeState;
+  private automaticState: AtmosphericTimeState;
+  private automaticElapsedMs = 0;
   private mode: AtmosphericTimeMode;
   private readonly listeners = new Set<(state: AtmosphericTimeState) => void>();
 
@@ -79,12 +88,17 @@ export class AtmosphericTimeService {
     initialSave: SaveGame | null,
   ) {
     const manual = readManualAtmosphericTime(initialSave);
+    this.automaticState = chooseProgressionAtmosphericTime(initialSave);
     this.mode = manual ?? 'auto';
-    this.state = manual ?? chooseProgressionAtmosphericTime(initialSave);
+    this.state = manual ?? this.automaticState;
   }
 
   public getState(): AtmosphericTimeState {
     return this.state;
+  }
+
+  public getAutomaticState(): AtmosphericTimeState {
+    return this.automaticState;
   }
 
   public getMode(): AtmosphericTimeMode {
@@ -102,8 +116,7 @@ export class AtmosphericTimeService {
     if (this.saveService) {
       saveManualAtmosphericTime(this.saveService, mode === 'auto' ? null : mode);
     }
-    const save = this.saveService?.load() ?? null;
-    this.setState(mode === 'auto' ? chooseProgressionAtmosphericTime(save) : mode);
+    this.setState(mode === 'auto' ? this.automaticState : mode);
     return this.state;
   }
 
@@ -121,12 +134,27 @@ export class AtmosphericTimeService {
     return next;
   }
 
-  public refreshProgression(): AtmosphericTimeState {
-    if (this.mode !== 'auto') {
-      return this.state;
+  public advanceAutomatic(elapsedMs: number): AtmosphericTimeState {
+    if (!Number.isFinite(elapsedMs) || elapsedMs <= 0) {
+      return this.automaticState;
     }
-    const next = chooseProgressionAtmosphericTime(this.saveService?.load() ?? null);
-    this.setState(next);
+
+    this.automaticElapsedMs += elapsedMs;
+    while (this.automaticElapsedMs >= AUTO_TIME_STATE_DURATION_MS) {
+      this.automaticElapsedMs -= AUTO_TIME_STATE_DURATION_MS;
+      this.automaticState = nextAtmosphericTimeState(this.automaticState);
+    }
+
+    if (this.mode === 'auto') {
+      this.setState(this.automaticState);
+    }
+    return this.automaticState;
+  }
+
+  public refreshProgression(): AtmosphericTimeState {
+    if (this.mode === 'auto') {
+      this.setState(this.automaticState);
+    }
     return this.state;
   }
 
