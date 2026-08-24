@@ -253,12 +253,12 @@ export class WonderbookScene extends Phaser.Scene {
     }
 
     const objects: Phaser.GameObjects.GameObject[] = [];
-    spread.left.forEach((entry, index) =>
-      objects.push(...this.createEntry(entry, 144, 190 + index * 170)),
-    );
-    spread.right.forEach((entry, index) =>
-      objects.push(...this.createEntry(entry, 678, 190 + index * 170)),
-    );
+    spread.left.forEach((entry, index) => {
+      objects.push(...this.createEntry(entry, 144, 190 + index * 170));
+    });
+    spread.right.forEach((entry, index) => {
+      objects.push(...this.createEntry(entry, 678, 190 + index * 170));
+    });
 
     if (spread.left.length === 0) {
       objects.push(this.createEmptyPageMessage(350, 310));
