@@ -393,269 +393,340 @@ export class MoonflowerGladeScene extends Phaser.Scene {
 
     path.lineStyle(92, 0xe4cf9f, 0.9);
     path.beginPath();
-    path.moveTo(1260, 900);
-    path.lineTo(1230, 650);
-    path.lineTo(1030, 515);
-    path.lineTo(820, 410);
+    path.moveTo(1770, 930);
+    path.lineTo(1840, 1160);
+    path.lineTo(1940, 1420);
+    path.lineTo(1980, 1720);
     path.strokePath();
+
+    path.lineStyle(56, 0xf1e3bd, 0.75);
     path.beginPath();
-    path.moveTo(1510, 900);
-    path.lineTo(1510, 1100);
-    path.lineTo(1530, 1260);
-    path.strokePath();
-    path.beginPath();
-    path.moveTo(2160, 900);
-    path.lineTo(2250, 660);
-    path.lineTo(2320, 510);
+    path.moveTo(760, 850);
+    path.lineTo(840, 1070);
     path.strokePath();
   }
 
   private createStreamAndBridge(): void {
-    const map = MOONFLOWER_GLADE_MAP;
-    const water = this.add.graphics().setDepth(3);
-    water.fillStyle(0x87cde2, 0.9);
-    water.fillRoundedRect(0, map.stream.y, map.width, map.stream.height, 48);
-    water.lineStyle(5, 0xbde9ef, 0.75);
-    water.lineBetween(
-      0,
-      map.stream.y + 28,
-      map.bridge.x - map.bridge.width / 2 - 40,
-      map.stream.y + 28,
-    );
-    water.lineBetween(
-      map.bridge.x + map.bridge.width / 2 + 40,
-      map.stream.y + 28,
-      map.width,
-      map.stream.y + 28,
-    );
+    const bridge = MOONFLOWER_GLADE_MAP.bridge;
 
-    const bridgeWidth = 260;
-    const bridge = this.add
-      .rectangle(map.bridge.x, map.bridge.y, bridgeWidth, 118, 0xc9976d, 1)
-      .setDepth(8);
-    bridge.setStrokeStyle(5, 0x9d6d4d, 1);
-    for (let offset = -94; offset <= 94; offset += 47) {
-      this.add
-        .rectangle(map.bridge.x + offset, map.bridge.y, 10, 108, 0x996546, 0.35)
-        .setDepth(8.2);
+    this.add.rectangle(1400, 900, 220, 1800, 0x72c8df, 0.96).setDepth(3);
+    this.add.rectangle(1400, 900, 92, 1800, 0xb9ecf0, 0.33).setDepth(4);
+
+    for (let y = 150; y < 1750; y += 210) {
+      this.add.ellipse(1375, y, 72, 18, 0xe8ffff, 0.28).setDepth(5);
+      this.add.ellipse(1440, y + 85, 58, 14, 0xe8ffff, 0.22).setDepth(5);
     }
+
     this.add
-      .rectangle(map.bridge.x, map.bridge.y - 54, bridgeWidth + 14, 12, 0x9c6e52, 1)
-      .setDepth(16);
-    this.add
-      .rectangle(map.bridge.x, map.bridge.y + 54, bridgeWidth + 14, 12, 0x9c6e52, 1)
-      .setDepth(16);
+      .rectangle(bridge.x, bridge.y, bridge.width, bridge.height, 0xd7b47b, 1)
+      .setStrokeStyle(8, 0xa87a4f, 1)
+      .setDepth(9);
+
+    for (let x = bridge.x - bridge.width / 2 + 35; x < bridge.x + bridge.width / 2; x += 48) {
+      this.add.rectangle(x, bridge.y, 7, bridge.height - 18, 0xb88d5f, 0.78).setDepth(10);
+    }
+
+    this.add.rectangle(bridge.x, bridge.y - 92, bridge.width + 20, 15, 0x9f754f, 1).setDepth(15);
+    this.add.rectangle(bridge.x, bridge.y + 92, bridge.width + 20, 18, 0x8d6548, 1).setDepth(30);
+
+    for (const x of [bridge.x - 170, bridge.x + 170]) {
+      this.add.circle(x, bridge.y - 92, 16, 0xb88a5c, 1).setDepth(16);
+      this.add.circle(x, bridge.y + 92, 17, 0xa87652, 1).setDepth(31);
+    }
   }
 
   private createCottage(): void {
-    const cottage = MOONFLOWER_GLADE_MAP.landmarks.find(({ id }) => id === 'moonflower-cottage');
-    if (!cottage) {
-      return;
-    }
+    const cottage = this.add.graphics().setDepth(10);
+    cottage.fillStyle(0xfff0cf, 1);
+    cottage.fillRoundedRect(350, 350, 420, 300, 72);
+    cottage.fillStyle(0xb791d4, 1);
+    cottage.fillEllipse(560, 355, 470, 260);
+    cottage.fillStyle(0x8d68b2, 1);
+    cottage.fillTriangle(350, 390, 560, 185, 770, 390);
+    cottage.fillStyle(0x8d6548, 1);
+    cottage.fillRoundedRect(520, 515, 82, 135, 28);
+    cottage.fillStyle(0xb8e7ef, 1);
+    cottage.fillRoundedRect(405, 440, 78, 72, 18);
+    cottage.fillRoundedRect(640, 440, 78, 72, 18);
+    cottage.fillStyle(0xffffff, 0.7);
+    cottage.fillCircle(576, 575, 6);
 
     this.add
-      .rectangle(cottage.position.x, cottage.position.y, 390, 310, 0xf3d9d7, 1)
-      .setStrokeStyle(8, 0xa5778a, 1)
-      .setDepth(7);
-    this.add
-      .triangle(
-        cottage.position.x,
-        cottage.position.y - 250,
-        -230,
-        170,
-        0,
-        0,
-        230,
-        170,
-        0xbd83b6,
-        1,
-      )
-      .setDepth(9);
-    this.add
-      .rectangle(cottage.position.x, cottage.position.y + 65, 94, 150, 0x966d80, 1)
-      .setDepth(10);
-    this.add.circle(cottage.position.x + 28, cottage.position.y + 72, 8, 0xf5d37e, 1).setDepth(11);
-    this.add
-      .rectangle(cottage.position.x - 120, cottage.position.y - 20, 72, 66, 0xb9e7ec, 1)
-      .setStrokeStyle(5, 0x966d80, 1)
-      .setDepth(10);
-    this.add
-      .rectangle(cottage.position.x + 120, cottage.position.y - 20, 72, 66, 0xb9e7ec, 1)
-      .setStrokeStyle(5, 0x966d80, 1)
-      .setDepth(10);
+      .text(560, 690, 'Moonflower Cottage', {
+        color: '#5c416e',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '21px',
+        fontStyle: 'bold',
+        backgroundColor: '#fff8eccc',
+        padding: { x: 10, y: 6 },
+      })
+      .setOrigin(0.5)
+      .setDepth(12);
+
+    this.addMoonflower(350, 650, 1.15);
+    this.addMoonflower(760, 650, 1.05);
   }
 
   private createGarden(): void {
-    const garden = MOONFLOWER_GLADE_MAP.landmarks.find(({ id }) => id === 'garden-plot');
-    if (!garden) {
-      return;
+    this.add
+      .rectangle(890, 620, 280, 190, 0x9e7656, 0.75)
+      .setStrokeStyle(8, 0xd7b77f, 0.95)
+      .setDepth(6);
+
+    for (const y of [565, 620, 675]) {
+      this.add.rectangle(890, y, 230, 18, 0x6f543f, 0.6).setDepth(7);
     }
-    this.add.ellipse(garden.position.x, garden.position.y, 440, 230, 0x795747, 0.9).setDepth(4);
-    this.add.ellipse(garden.position.x, garden.position.y, 390, 190, 0x936b53, 0.85).setDepth(4.2);
-    for (const x of [-110, 0, 110]) {
-      this.add.circle(garden.position.x + x, garden.position.y, 24, 0x4f9b63, 0.8).setDepth(5);
+
+    for (const x of [810, 860, 920, 970]) {
+      this.add.circle(x, 575 + ((x / 10) % 2) * 55, 13, 0xffd3f1, 0.9).setDepth(8);
+      this.add.circle(x + 8, 583 + ((x / 10) % 2) * 55, 8, 0xe6c1ff, 0.9).setDepth(8);
     }
   }
 
   private createDisplayStump(): void {
-    const stump = MOONFLOWER_GLADE_MAP.landmarks.find(({ id }) => id === 'display-stump');
-    if (!stump) {
-      return;
-    }
-    this.add.ellipse(stump.position.x, stump.position.y, 210, 110, 0x8b634e, 1).setDepth(6);
-    this.add.ellipse(stump.position.x, stump.position.y - 22, 190, 78, 0xa87b5c, 1).setDepth(7);
-    this.add
-      .text(stump.position.x, stump.position.y - 12, '📖', {
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '44px',
-      })
-      .setOrigin(0.5)
-      .setDepth(8);
+    this.add.ellipse(850, 1130, 118, 70, 0x8a6248, 1).setDepth(9);
+    this.add.ellipse(850, 1100, 118, 54, 0xc79b70, 1).setDepth(10);
+    this.add.circle(850, 1098, 17, 0xf4d79f, 0.72).setDepth(11);
+    this.add.circle(850, 1098, 6, 0xfff7cb, 0.9).setDepth(12);
   }
 
   private createHollowTree(): void {
-    const tree = MOONFLOWER_GLADE_MAP.landmarks.find(({ id }) => id === 'hollow-tree');
-    if (!tree) {
-      return;
-    }
-    this.add.rectangle(tree.position.x, tree.position.y, 130, 310, 0x6f5446, 1).setDepth(8);
-    this.add.circle(tree.position.x, tree.position.y - 160, 170, 0x557b5b, 1).setDepth(9);
-    this.add.ellipse(tree.position.x, tree.position.y + 35, 65, 85, 0x302b31, 0.9).setDepth(10);
+    const tree = this.add.graphics().setDepth(10);
+    tree.fillStyle(0x8c6349, 1);
+    tree.fillRoundedRect(2115, 395, 170, 300, 60);
+    tree.fillStyle(0x5b413a, 1);
+    tree.fillEllipse(2200, 555, 76, 112);
+    tree.fillStyle(0x477a58, 1);
+    tree.fillCircle(2120, 350, 150);
+    tree.fillCircle(2250, 330, 180);
+    tree.fillStyle(0x5f966a, 1);
+    tree.fillCircle(2190, 280, 180);
+    tree.fillCircle(2290, 420, 130);
+
+    this.add.circle(2200, 555, 22, 0x2f2638, 0.92).setDepth(12);
+    this.add.circle(2200, 555, 8, 0xb98ce8, 0.28).setDepth(13);
   }
 
   private createMoonflowerField(): void {
-    const field = MOONFLOWER_GLADE_MAP.landmarks.find(({ id }) => id === 'moonflower-field');
-    if (!field) {
-      return;
-    }
-    for (let index = 0; index < 8; index += 1) {
-      const angle = (Math.PI * 2 * index) / 8;
-      const radius = index % 2 === 0 ? 120 : 72;
-      const x = field.position.x + Math.cos(angle) * radius;
-      const y = field.position.y + Math.sin(angle) * radius * 0.55;
-      this.add.circle(x, y, 24, 0xded4ff, 0.92).setDepth(6);
-      this.add.circle(x, y, 8, 0xffefad, 1).setDepth(7);
+    const positions = [
+      [1920, 1110, 1],
+      [2020, 1080, 1.2],
+      [2120, 1140, 0.9],
+      [2210, 1070, 1.1],
+      [1900, 1260, 1.05],
+      [2020, 1300, 1.25],
+      [2160, 1260, 1.1],
+      [2260, 1360, 0.95],
+      [2050, 1420, 1.05],
+    ] as const;
+
+    for (const [x, y, scale] of positions) {
+      this.addMoonflower(x, y, scale);
     }
   }
 
   private createEntranceMarkers(): void {
     for (const entrance of MOONFLOWER_GLADE_MAP.entrances) {
+      const isEast = entrance.direction === 'east';
+      const archWidth = isEast ? 150 : 190;
+      const archHeight = 170;
+      const x = entrance.position.x;
+      const y = entrance.position.y;
+
+      this.add.rectangle(x - archWidth / 2, y, 26, archHeight, 0xb69a78, 0.95).setDepth(8);
+      this.add.rectangle(x + archWidth / 2, y, 26, archHeight, 0xb69a78, 0.95).setDepth(8);
+      this.add.ellipse(x, y - archHeight / 2, archWidth + 28, 64, 0xc9b08c, 0.95).setDepth(8);
+
       this.add
-        .rectangle(entrance.position.x, entrance.position.y, 170, 68, 0x5d765f, 0.8)
-        .setDepth(5);
-      this.add
-        .text(entrance.position.x, entrance.position.y, entrance.label, {
-          color: '#fff7e9',
+        .text(x, y - 132, entrance.label, {
+          color: '#54415f',
           fontFamily: 'system-ui, sans-serif',
           fontSize: '18px',
           fontStyle: 'bold',
+          backgroundColor: '#fff9edcc',
+          padding: { x: 9, y: 5 },
         })
         .setOrigin(0.5)
-        .setDepth(6);
+        .setDepth(11);
     }
   }
 
   private createBoundaryFoliage(): void {
-    const map = MOONFLOWER_GLADE_MAP;
-    const top = map.margin;
-    const bottom = map.height - map.margin;
-    for (let x = 0; x <= map.width; x += 155) {
-      this.add.circle(x, top, 78, 0x547a61, 0.85).setDepth(9);
-      this.add.circle(x, bottom, 78, 0x547a61, 0.85).setDepth(9);
-    }
-    for (let y = top + 120; y <= bottom - 120; y += 155) {
-      this.add.circle(0, y, 78, 0x547a61, 0.85).setDepth(9);
-      this.add.circle(map.width, y, 78, 0x547a61, 0.85).setDepth(9);
+    const treePositions = [
+      [170, 220],
+      [430, 150],
+      [820, 170],
+      [1180, 150],
+      [1640, 150],
+      [1980, 150],
+      [2520, 170],
+      [2660, 330],
+      [2500, 1560],
+      [2280, 1650],
+      [1570, 1670],
+      [1120, 1650],
+      [620, 1630],
+      [250, 1510],
+      [150, 1160],
+      [160, 620],
+    ] as const;
+
+    for (const [x, y] of treePositions) {
+      this.add.rectangle(x, y + 60, 34, 110, 0x816149, 0.8).setDepth(4);
+      this.add.circle(x, y, 92, 0x5d9b6d, 0.88).setDepth(5);
+      this.add.circle(x + 48, y + 18, 66, 0x72ad7b, 0.84).setDepth(5);
     }
   }
 
   private createFireflies(): void {
     const positions = [
-      [390, 500],
-      [470, 590],
-      [2300, 520],
-      [2380, 620],
-      [2050, 1150],
+      [430, 840],
+      [610, 1180],
+      [1040, 690],
+      [1660, 620],
+      [1820, 1050],
+      [2290, 770],
+      [2400, 1190],
+      [1740, 1460],
     ] as const;
-    for (const [x, y] of positions) {
-      const firefly = this.add.circle(x, y, 7, 0xffef91, 0.95).setDepth(15);
+
+    positions.forEach(([x, y], index) => {
+      const firefly = this.add.circle(x, y, 7, 0xfff4a3, 0.35).setDepth(18);
       this.tweens.add({
         targets: firefly,
-        alpha: 0.35,
-        y: '-=15',
-        duration: 850,
+        alpha: 0.95,
+        scale: 1.45,
+        duration: 850 + index * 95,
         yoyo: true,
         repeat: -1,
-        ease: 'Sine.InOut',
+        delay: index * 110,
       });
-    }
+    });
   }
 
   private createForegroundLayeringTest(): void {
-    const flower = this.add
-      .circle(
-        MOONFLOWER_GLADE_MAP.layeringProofPoint.x,
-        MOONFLOWER_GLADE_MAP.layeringProofPoint.y,
-        78,
-        0xd9bde8,
-        0.88,
-      )
-      .setDepth(25);
-    flower.setStrokeStyle(5, 0xf3e0ff, 0.8);
+    this.add.rectangle(1110, 1092, 9, 86, 0x5d9b68, 1).setDepth(8);
+
+    const petalOffsets = [
+      [0, -34],
+      [35, -6],
+      [25, 28],
+      [-25, 28],
+      [-35, -6],
+    ] as const;
+
+    for (const [offsetX, offsetY] of petalOffsets) {
+      this.add
+        .ellipse(1110 + offsetX * 0.72, 1045 + offsetY * 0.72, 42, 56, 0xdca7ff, 0.96)
+        .setDepth(32);
+    }
+
+    this.add.circle(1110, 1045, 18, 0xffe5a2, 1).setDepth(33);
+  }
+
+  private addMoonflower(x: number, y: number, scale: number): void {
+    this.add.rectangle(x, y + 24 * scale, 7 * scale, 54 * scale, 0x5f9b67, 0.95).setDepth(6);
+
+    const petalOffsets = [
+      [0, -18],
+      [18, -5],
+      [12, 14],
+      [-12, 14],
+      [-18, -5],
+    ] as const;
+
+    for (const [offsetX, offsetY] of petalOffsets) {
+      this.add
+        .ellipse(x + offsetX * scale, y + offsetY * scale, 28 * scale, 38 * scale, 0xe0b3ff, 0.94)
+        .setDepth(7);
+    }
+
+    this.add.circle(x, y, 12 * scale, 0xffdca1, 1).setDepth(8);
+  }
+
+  private createCollisionMap(): Phaser.Physics.Arcade.StaticGroup {
+    const collisionGroup = this.physics.add.staticGroup();
+
+    for (const collider of MOONFLOWER_GLADE_MAP.colliders) {
+      const blocker = collisionGroup.create(
+        collider.x,
+        collider.y,
+        COLLISION_TEXTURE_KEY,
+      ) as Phaser.Physics.Arcade.Image;
+      blocker.setDisplaySize(collider.width, collider.height).setVisible(false).refreshBody();
+    }
+
+    return collisionGroup;
   }
 
   private ensureCollisionTexture(): void {
     if (this.textures.exists(COLLISION_TEXTURE_KEY)) {
       return;
     }
-    const graphics = this.make.graphics({ x: 0, y: 0 });
+
+    const graphics = this.add.graphics();
     graphics.fillStyle(0xffffff, 1);
     graphics.fillRect(0, 0, 2, 2);
     graphics.generateTexture(COLLISION_TEXTURE_KEY, 2, 2);
     graphics.destroy();
   }
 
-  private createCollisionMap(): Phaser.Physics.Arcade.StaticGroup {
-    const collisionGroup = this.physics.add.staticGroup();
-    for (const collider of MOONFLOWER_GLADE_MAP.colliders) {
-      const object = collisionGroup.create(
-        collider.x,
-        collider.y,
-        COLLISION_TEXTURE_KEY,
-      ) as Phaser.Physics.Arcade.Image;
-      object.setDisplaySize(collider.width, collider.height);
-      object.refreshBody();
-      object.setVisible(false);
-    }
-    return collisionGroup;
-  }
-
   private createHud(): void {
+    this.add
+      .text(28, 22, 'Moonflower Glade', {
+        color: '#49355e',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '24px',
+        fontStyle: 'bold',
+        backgroundColor: '#fff9e8f2',
+        padding: { x: 14, y: 8 },
+      })
+      .setScrollFactor(0)
+      .setDepth(100);
+
+    this.add
+      .text(28, 72, 'Move: WASD / arrows  •  Interact: E / Enter / Space  •  Esc: title', {
+        color: '#5a4869',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '15px',
+        backgroundColor: '#fff9e8ee',
+        padding: { x: 10, y: 6 },
+      })
+      .setScrollFactor(0)
+      .setDepth(100);
+
+    this.guideText = this.add
+      .text(
+        28,
+        112,
+        this.hasFirstDiscovery
+          ? 'Your Moonflower Sparkle is safely remembered. Pip would love to see you.'
+          : 'Pip is nearby. Explore whenever you are ready.',
+        {
+          color: '#5b4568',
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '14px',
+          backgroundColor: '#fff9e8e8',
+          padding: { x: 10, y: 6 },
+        },
+      )
+      .setScrollFactor(0)
+      .setDepth(100);
+
     this.feedbackText = this.add
-      .text(GAME_WIDTH / 2, 112, '', {
-        color: '#513a61',
+      .text(GAME_WIDTH - 32, 108, '', {
+        color: '#4b365c',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '20px',
-        fontStyle: 'bold',
-        align: 'center',
         backgroundColor: '#fff9edee',
-        padding: { x: 20, y: 12 },
+        padding: { x: 15, y: 12 },
+        align: 'left',
+        wordWrap: { width: 420 },
+        lineSpacing: 5,
       })
-      .setOrigin(0.5, 0)
+      .setOrigin(1, 0)
       .setScrollFactor(0)
       .setDepth(122)
       .setVisible(false);
-
-    this.guideText = this.add
-      .text(GAME_WIDTH / 2, 174, '', {
-        color: '#5c4768',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '14px',
-        align: 'center',
-        wordWrap: { width: 640 },
-      })
-      .setOrigin(0.5, 0)
-      .setScrollFactor(0)
-      .setDepth(115);
   }
 }
