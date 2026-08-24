@@ -1,5 +1,6 @@
 import type { DiscoveryId } from '../../content/contentTypes';
 import type { CollisionRectangle, MapPoint } from './MapTraversal';
+import { setWorldArrivalFacing } from './WorldArrivalState';
 
 export const RAINBOW_MEADOW_LOCATION_ID = 'location:rainbow-meadow';
 
@@ -38,10 +39,14 @@ const playerSpawn: MapPoint = { ...DEFAULT_PLAYER_SPAWN };
 export function setRainbowMeadowPlayerSpawn(point: MapPoint): void {
   playerSpawn.x = point.x;
   playerSpawn.y = point.y;
+  if (point.x === 330 && point.y === 1050) {
+    setWorldArrivalFacing('RainbowMeadowScene', 'right');
+  }
 }
 
 export function resetRainbowMeadowPlayerSpawn(): void {
-  setRainbowMeadowPlayerSpawn(DEFAULT_PLAYER_SPAWN);
+  playerSpawn.x = DEFAULT_PLAYER_SPAWN.x;
+  playerSpawn.y = DEFAULT_PLAYER_SPAWN.y;
 }
 
 export const RAINBOW_MEADOW_MAP = {
