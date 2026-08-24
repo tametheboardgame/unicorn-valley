@@ -145,4 +145,26 @@ test.describe('R5-WP5.9G world layout and density', () => {
     expect(guidance?.text).toContain('Way home: Rainbow Meadow');
     expect(guidance?.text).toContain('Prism Grotto');
   });
+
+  test('Bag map recognises Moonflower Cottage interior as home', async ({ page }) => {
+    await page.goto('/?scene=glade&diagnostics=1');
+    await waitForScene(page, 'MoonflowerGladeScene');
+    await startScene(page, 'CottageInteriorScene');
+    await waitForScene(page, 'CottageInteriorScene');
+    await page.keyboard.press('i');
+    await waitForScene(page, 'InventoryScene');
+
+    let inventory = sceneFrom(await snapshot(page), 'InventoryScene');
+    const mapTab = inventory.objects.find((object) => object.name === 'bag-map-tab');
+    if (!mapTab) {
+      throw new Error('Bag map tab was not found.');
+    }
+    await page.mouse.click(mapTab.x, mapTab.y);
+    await page.waitForTimeout(250);
+
+    inventory = sceneFrom(await snapshot(page), 'InventoryScene');
+    const guidance = inventory.objects.find(({ name }) => name === 'bag-map-guidance');
+    expect(guidance?.text).toContain('Home is here.');
+    expect(guidance?.text).not.toContain('Follow the solid paths home.');
+  });
 });
