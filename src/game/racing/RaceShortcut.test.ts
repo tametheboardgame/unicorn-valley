@@ -25,12 +25,7 @@ function airborneState(progress: number, height: number): RaceRunState {
 describe('R5-WP5.9D Prism Current route variation', () => {
   it('carries an airborne player forward when they take the Prism Current entry', () => {
     const before = CRYSTAL_CASCADE_PRISM_CURRENT_SHORTCUT.entryStartProgress - 4;
-    const result = stepRaceRun(
-      airborneState(before, 70),
-      CRYSTAL_CASCADE_RACE_COURSE,
-      0.05,
-      false,
-    );
+    const result = stepRaceRun(airborneState(before, 70), CRYSTAL_CASCADE_RACE_COURSE, 0.05, false);
 
     expect(result.events.some((event) => event.type === 'shortcut-taken')).toBe(true);
     expect(result.state.usedShortcutIds).toContain(CRYSTAL_CASCADE_PRISM_CURRENT_SHORTCUT.id);
