@@ -10,6 +10,8 @@ const LOCATION_TITLES: Readonly<Record<string, string>> = {
   MoonflowerPatchScene: 'Moonflower Patch',
   SunbeamVillageScene: 'Sunbeam Village',
   RainbowMeadowScene: 'Rainbow Meadow',
+  CrystalBrookScene: 'Crystal Brook',
+  WhisperingWoodsScene: 'Whispering Woods',
 };
 
 const LEGACY_STATUS_PREFIXES = [
