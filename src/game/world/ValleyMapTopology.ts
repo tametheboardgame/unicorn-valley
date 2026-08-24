@@ -1,6 +1,6 @@
+import { MOONFLOWER_GLADE_LOCATION_ID } from '../save/saveLocationCheckpoint';
 import { CRYSTAL_BROOK_LOCATION_ID } from './CrystalBrookMap';
 import { RAINBOW_MEADOW_LOCATION_ID } from './RainbowMeadowMap';
-import { MOONFLOWER_GLADE_LOCATION_ID } from '../save/saveLocationCheckpoint';
 import { SUNBEAM_VILLAGE_LOCATION_ID } from './SunbeamVillageMap';
 import { WHISPERING_WOODS_LOCATION_ID } from './WhisperingWoodsMap';
 
@@ -115,7 +115,10 @@ export function getValleyMapNode(nodeId: string): ValleyMapNode | null {
 }
 
 export function getValleyMapNodeForLocation(locationId: string): ValleyMapNode | null {
-  return VALLEY_MAP_NODES.find((node) => node.locationIds.includes(locationId)) ?? null;
+  return (
+    VALLEY_MAP_NODES.find((node) => (node.locationIds as readonly string[]).includes(locationId)) ??
+    null
+  );
 }
 
 export function getPhysicalValleyConnections(nodeId: string): readonly ValleyMapConnection[] {
