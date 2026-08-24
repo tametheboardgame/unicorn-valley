@@ -140,8 +140,8 @@ export const CRYSTAL_BROOK_MAP = {
     },
   ] satisfies readonly CrystalBrookSecretRoute[],
   colliders: [
-    { id: 'collision:brook-upper-pool', x: 1370, y: 540, width: 500, height: 260 },
-    { id: 'collision:brook-lower-pool', x: 2780, y: 1320, width: 460, height: 260 },
+    { id: 'collision:brook-upper-pool', x: 1370, y: 540, width: 430, height: 180 },
+    { id: 'collision:brook-lower-pool', x: 2780, y: 1320, width: 390, height: 160 },
     { id: 'collision:north-crystal-bank', x: 2440, y: 420, width: 370, height: 240 },
     { id: 'collision:south-reed-bank', x: 1750, y: 1860, width: 430, height: 230 },
   ] satisfies readonly CollisionRectangle[],
