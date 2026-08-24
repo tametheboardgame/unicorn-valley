@@ -92,7 +92,9 @@ test.describe('R5-WP5.9G world layout and density', () => {
     });
   }
 
-  test('branch presentation is rebuilt exactly once after revisiting a region', async ({ page }) => {
+  test('branch presentation is rebuilt exactly once after revisiting a region', async ({
+    page,
+  }) => {
     await page.goto('/?scene=brook&diagnostics=1');
     await waitForScene(page, 'CrystalBrookScene');
     await startScene(page, 'WhisperingWoodsScene');
