@@ -2,21 +2,55 @@ import Phaser from 'phaser';
 
 export const WORLD_INTERACTION_PROMPT = 'E / Enter / tap';
 
+const INTERACTION_CODES = new Set(['KeyE', 'Enter']);
+let interactionPressSerial = 0;
+let interactionTrackingInstalled = false;
+
+function isEditableKeyboardTarget(target: EventTarget | null): boolean {
+  const element = target as {
+    tagName?: string;
+    isContentEditable?: boolean;
+  } | null;
+  const tagName = element?.tagName?.toUpperCase();
+  return (
+    tagName === 'INPUT' ||
+    tagName === 'TEXTAREA' ||
+    tagName === 'SELECT' ||
+    element?.isContentEditable === true
+  );
+}
+
+function ensureInteractionTracking(): void {
+  if (interactionTrackingInstalled || typeof globalThis.addEventListener !== 'function') {
+    return;
+  }
+
+  globalThis.addEventListener('keydown', (event: KeyboardEvent) => {
+    if (
+      INTERACTION_CODES.has(event.code) &&
+      !event.repeat &&
+      !isEditableKeyboardTarget(event.target)
+    ) {
+      interactionPressSerial += 1;
+    }
+  });
+  interactionTrackingInstalled = true;
+}
+
 export class WorldInteractionInput {
-  private readonly keys: readonly Phaser.Input.Keyboard.Key[];
+  private lastSeenPressSerial: number;
 
   public constructor(private readonly scene: Phaser.Scene) {
-    const keyboard = scene.input.keyboard;
-    this.keys = keyboard
-      ? [
-          keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E),
-          keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER),
-        ]
-      : [];
+    ensureInteractionTracking();
+    this.lastSeenPressSerial = interactionPressSerial;
   }
 
   public justPressed(): boolean {
-    return this.keys.some((key) => Phaser.Input.Keyboard.JustDown(key));
+    if (!this.scene.scene.isActive() || interactionPressSerial === this.lastSeenPressSerial) {
+      return false;
+    }
+    this.lastSeenPressSerial = interactionPressSerial;
+    return true;
   }
 
   public bindPointer(zone: Phaser.GameObjects.Zone, activate: () => void): void {
@@ -25,6 +59,6 @@ export class WorldInteractionInput {
   }
 
   public destroy(): void {
-    this.keys.forEach((key) => this.scene.input.keyboard?.removeKey(key));
+    this.lastSeenPressSerial = interactionPressSerial;
   }
 }
