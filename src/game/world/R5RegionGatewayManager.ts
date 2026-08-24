@@ -1,6 +1,11 @@
 import Phaser from 'phaser';
 import { CRYSTAL_CASCADE_RACE_ID } from '../../content/r5RaceIds';
 import { GAME_WIDTH } from '../config/gameConstants';
+import {
+  WORLD_INTERACTION_PROMPT,
+  WorldInteractionInput,
+} from '../interaction/WorldInteractionInput';
+import type { PlayerFacing } from '../player/PlayerMovement';
 import { getActiveRaceCourse, resetActiveRaceCourse, selectRaceCourse } from '../racing/RaceCourse';
 import type { RaceRunState } from '../racing/RaceRun';
 import { getBrowserSaveService } from '../save/browserSaveService';
@@ -11,6 +16,11 @@ import {
   setCrystalBrookPlayerSpawn,
 } from './CrystalBrookMap';
 import { RAINBOW_MEADOW_LOCATION_ID, setRainbowMeadowPlayerSpawn } from './RainbowMeadowMap';
+import {
+  isWithinInteractiveGateway,
+  shouldActivateWalkThroughGateway,
+} from './RegionGatewayRules';
+import { setWorldArrivalFacing } from './WorldArrivalState';
 import {
   setWhisperingWoodsPlayerSpawn,
   WHISPERING_WOODS_LOCATION_ID,
@@ -26,6 +36,7 @@ interface RegionGatewayDefinition {
   destinationSceneKey: string;
   destinationLocationId: string;
   destinationSpawn: { x: number; y: number };
+  destinationFacing: PlayerFacing;
   accent: number;
   icon: string;
   raceCourseId?: string;
@@ -36,7 +47,8 @@ interface GatewayState {
   definition: RegionGatewayDefinition;
   container: Phaser.GameObjects.Container;
   prompt: Phaser.GameObjects.Text;
-  interactKey: Phaser.Input.Keyboard.Key | null;
+  interaction: WorldInteractionInput | null;
+  insideWalkThrough: boolean;
 }
 
 interface RaceSceneRuntime extends Phaser.Scene {
@@ -67,6 +79,7 @@ const R5_REGION_GATEWAYS: readonly RegionGatewayDefinition[] = [
     destinationSceneKey: 'CrystalBrookScene',
     destinationLocationId: CRYSTAL_BROOK_LOCATION_ID,
     destinationSpawn: BROOK_ENTRANCE.approach,
+    destinationFacing: 'right',
     accent: 0x74cbd3,
     icon: '💎',
   },
@@ -78,6 +91,7 @@ const R5_REGION_GATEWAYS: readonly RegionGatewayDefinition[] = [
     destinationSceneKey: 'RainbowMeadowScene',
     destinationLocationId: RAINBOW_MEADOW_LOCATION_ID,
     destinationSpawn: MEADOW_RETURN_POSITION,
+    destinationFacing: 'left',
     accent: 0xe5b6df,
     icon: '🌈',
   },
@@ -89,6 +103,7 @@ const R5_REGION_GATEWAYS: readonly RegionGatewayDefinition[] = [
     destinationSceneKey: 'WhisperingWoodsScene',
     destinationLocationId: WHISPERING_WOODS_LOCATION_ID,
     destinationSpawn: WOODS_ENTRANCE.approach,
+    destinationFacing: 'right',
     accent: 0x7aaa78,
     icon: '🌲',
   },
@@ -100,6 +115,7 @@ const R5_REGION_GATEWAYS: readonly RegionGatewayDefinition[] = [
     destinationSceneKey: 'CrystalBrookScene',
     destinationLocationId: CRYSTAL_BROOK_LOCATION_ID,
     destinationSpawn: BROOK_WOODS_RETURN_POSITION,
+    destinationFacing: 'left',
     accent: 0x74cbd3,
     icon: '💎',
   },
@@ -111,6 +127,7 @@ const R5_REGION_GATEWAYS: readonly RegionGatewayDefinition[] = [
     destinationSceneKey: 'RaceScene',
     destinationLocationId: CRYSTAL_BROOK_LOCATION_ID,
     destinationSpawn: CRYSTAL_CASCADE_RETURN_POSITION,
+    destinationFacing: 'left',
     accent: 0x70d2da,
     icon: '🏁',
     raceCourseId: CRYSTAL_CASCADE_RACE_ID,
@@ -157,13 +174,21 @@ export class R5RegionGatewayManager {
         definition.position.x,
         definition.position.y,
       );
-      state.prompt.setVisible(distance <= 245);
 
-      if (
-        distance <= 170 &&
-        state.interactKey &&
-        Phaser.Input.Keyboard.JustDown(state.interactKey)
-      ) {
+      if (!definition.raceCourseId) {
+        state.prompt.setVisible(distance <= 245);
+        const insideWalkThrough = shouldActivateWalkThroughGateway(distance, false);
+        if (insideWalkThrough && !state.insideWalkThrough) {
+          state.insideWalkThrough = true;
+          this.activateGateway(state);
+          return;
+        }
+        state.insideWalkThrough = insideWalkThrough;
+        continue;
+      }
+
+      state.prompt.setVisible(distance <= 245);
+      if (isWithinInteractiveGateway(distance) && state.interaction?.justPressed()) {
         this.activateGateway(state);
         return;
       }
@@ -198,8 +223,11 @@ export class R5RegionGatewayManager {
         padding: { x: 10, y: 5 },
       })
       .setOrigin(0.5);
+    const promptLabel = definition.raceCourseId
+      ? `${WORLD_INTERACTION_PROMPT}: Race ${definition.label}`
+      : `Walk through to ${definition.label} →`;
     const prompt = scene.add
-      .text(0, 160, `E / tap: Go to ${definition.label}`, {
+      .text(0, 160, promptLabel, {
         color: '#5d5068',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '16px',
@@ -209,7 +237,7 @@ export class R5RegionGatewayManager {
       })
       .setOrigin(0.5)
       .setVisible(false);
-    const zone = scene.add.zone(0, 20, 170, 230).setInteractive({ useHandCursor: true });
+    const zone = scene.add.zone(0, 20, 170, 230);
     const container = scene.add
       .container(definition.position.x, definition.position.y, [
         glow,
@@ -222,29 +250,33 @@ export class R5RegionGatewayManager {
       ])
       .setDepth(17);
 
+    const interaction = definition.raceCourseId ? new WorldInteractionInput(scene) : null;
     const state: GatewayState = {
       scene,
       definition,
       container,
       prompt,
-      interactKey: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.E) ?? null,
+      interaction,
+      insideWalkThrough: false,
     };
 
-    zone.on('pointerdown', () => {
-      const player = findPlayer(scene);
-      if (!player) {
-        return;
-      }
-      const distance = Phaser.Math.Distance.Between(
-        player.x,
-        player.y,
-        definition.position.x,
-        definition.position.y,
-      );
-      if (distance <= 190) {
-        this.activateGateway(state);
-      }
-    });
+    if (interaction) {
+      interaction.bindPointer(zone, () => {
+        const player = findPlayer(scene);
+        if (!player) {
+          return;
+        }
+        const distance = Phaser.Math.Distance.Between(
+          player.x,
+          player.y,
+          definition.position.x,
+          definition.position.y,
+        );
+        if (isWithinInteractiveGateway(distance)) {
+          this.activateGateway(state);
+        }
+      });
+    }
 
     scene.tweens.add({
       targets: glow,
@@ -267,6 +299,7 @@ export class R5RegionGatewayManager {
 
     if (state.definition.raceCourseId) {
       setCrystalBrookPlayerSpawn(state.definition.destinationSpawn);
+      setWorldArrivalFacing('CrystalBrookScene', state.definition.destinationFacing);
       saveLocationCheckpoint(getBrowserSaveService(), CRYSTAL_BROOK_LOCATION_ID);
       selectRaceCourse(state.definition.raceCourseId);
       state.scene.scene.start('RaceScene');
@@ -281,6 +314,7 @@ export class R5RegionGatewayManager {
       setWhisperingWoodsPlayerSpawn(state.definition.destinationSpawn);
     }
 
+    setWorldArrivalFacing(state.definition.destinationSceneKey, state.definition.destinationFacing);
     saveLocationCheckpoint(getBrowserSaveService(), state.definition.destinationLocationId);
     state.scene.scene.start(state.definition.destinationSceneKey);
   }
@@ -328,6 +362,7 @@ export class R5RegionGatewayManager {
 
     this.crystalRaceWasActive = false;
     setCrystalBrookPlayerSpawn(CRYSTAL_CASCADE_RETURN_POSITION);
+    setWorldArrivalFacing('CrystalBrookScene', 'left');
     saveLocationCheckpoint(getBrowserSaveService(), CRYSTAL_BROOK_LOCATION_ID);
     resetActiveRaceCourse();
     meadowScene.scene.start('CrystalBrookScene');
@@ -401,6 +436,7 @@ export class R5RegionGatewayManager {
     if (!state) {
       return;
     }
+    state.interaction?.destroy();
     if (state.container.active) {
       state.container.destroy(true);
     }
