@@ -163,11 +163,7 @@ export class FireflyLanternWorldManager {
     }
     const player = findPlayer(scene);
     if (player) {
-      rememberWorldReturnState(
-        'WhisperingWoodsScene',
-        player,
-        setWhisperingWoodsPlayerSpawn,
-      );
+      rememberWorldReturnState('WhisperingWoodsScene', player, setWhisperingWoodsPlayerSpawn);
     }
     scene.scene.start('FireflyLanternScene');
   }
