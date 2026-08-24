@@ -4,6 +4,10 @@ import {
   R5_WHISPERING_WOODS_SECRETS,
 } from '../../content/r5WhisperingWoods';
 import type { SecretDiscoveryDefinition } from '../../content/r4Secrets';
+import {
+  WORLD_INTERACTION_PROMPT,
+  WorldInteractionInput,
+} from '../interaction/WorldInteractionInput';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
 import { SecretDiscoveryService } from './SecretDiscoveryService';
@@ -12,7 +16,7 @@ const PRESENTATION_NAME = 'woods-secret-presentation';
 
 interface WoodsSecretState {
   scene: Phaser.Scene;
-  interactKey: Phaser.Input.Keyboard.Key | null;
+  interaction: WorldInteractionInput;
   marker: Phaser.GameObjects.Container | null;
   prompt: Phaser.GameObjects.Text | null;
   path: Phaser.GameObjects.Container | null;
@@ -66,11 +70,7 @@ export class WhisperingWoodsSecretWorldManager {
       definition.position.y,
     );
     state.prompt.setVisible(distance <= definition.interactionRadius + 90);
-    if (
-      distance <= definition.interactionRadius &&
-      state.interactKey &&
-      Phaser.Input.Keyboard.JustDown(state.interactKey)
-    ) {
+    if (distance <= definition.interactionRadius && state.interaction.justPressed()) {
       this.activate(state, definition);
     }
   }
@@ -82,7 +82,7 @@ export class WhisperingWoodsSecretWorldManager {
     this.clearState();
     this.state = {
       scene,
-      interactKey: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.E) ?? null,
+      interaction: new WorldInteractionInput(scene),
       marker: null,
       prompt: null,
       path: null,
@@ -97,7 +97,7 @@ export class WhisperingWoodsSecretWorldManager {
       .setOrigin(0.5)
       .setAlpha(0.72);
     const prompt = state.scene.add
-      .text(0, 50, `${definition.actionLabel}: ${definition.label}  ✨`, {
+      .text(0, 50, `${WORLD_INTERACTION_PROMPT}: ${definition.label}  ✨`, {
         color: '#dbeed4',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '15px',
@@ -107,16 +107,19 @@ export class WhisperingWoodsSecretWorldManager {
       })
       .setOrigin(0.5)
       .setVisible(false);
-    const zone = state.scene.add
-      .zone(0, 0, definition.interactionRadius * 1.4, definition.interactionRadius * 1.4)
-      .setInteractive({ useHandCursor: true });
+    const zone = state.scene.add.zone(
+      0,
+      0,
+      definition.interactionRadius * 1.4,
+      definition.interactionRadius * 1.4,
+    );
     state.marker = state.scene.add
       .container(definition.position.x, definition.position.y, [glow, leaves, prompt, zone])
       .setName(PRESENTATION_NAME)
       .setDepth(20);
     state.prompt = prompt;
 
-    zone.on('pointerdown', () => {
+    state.interaction.bindPointer(zone, () => {
       const player = findPlayer(state.scene);
       if (!player) {
         return;
@@ -204,6 +207,7 @@ export class WhisperingWoodsSecretWorldManager {
     if (!this.state) {
       return;
     }
+    this.state.interaction.destroy();
     this.state.marker?.destroy(true);
     this.state.path?.destroy(true);
     this.state = null;
