@@ -17,7 +17,9 @@ const maps = [
 describe('exploration geometry audit', () => {
   it('keeps every region spawn and gateway approach clear of hard collision', () => {
     for (const [label, map] of maps) {
-      expect(isPointBlocked(map.playerSpawn, map.colliders, 32), `${label} player spawn`).toBe(false);
+      expect(isPointBlocked(map.playerSpawn, map.colliders, 32), `${label} player spawn`).toBe(
+        false,
+      );
       for (const entrance of map.entrances) {
         expect(
           isPointBlocked(entrance.approach, map.colliders, 32),
