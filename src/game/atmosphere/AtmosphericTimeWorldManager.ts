@@ -10,6 +10,7 @@ import { supportsOutdoorAtmosphere } from './OutdoorWorldScenes';
 
 const PRESENTATION_NAME = 'atmospheric-time-presentation';
 const AMBIENCE_NAME = 'atmospheric-time-ambient-cue';
+const ATMOSPHERE_WORLD_DEPTH = 3;
 
 interface SceneTimeState {
   scene: Phaser.Scene;
@@ -63,7 +64,7 @@ export class AtmosphericTimeWorldManager {
     const overlay = scene.add
       .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0xffffff, 0)
       .setScrollFactor(0)
-      .setDepth(96)
+      .setDepth(ATMOSPHERE_WORLD_DEPTH)
       .setName(PRESENTATION_NAME);
     const button = scene.add
       .text(GAME_WIDTH - 18, 126, '', {
@@ -164,7 +165,7 @@ export class AtmosphericTimeWorldManager {
       .container(0, 0, objects)
       .setName(AMBIENCE_NAME)
       .setScrollFactor(0)
-      .setDepth(96.5);
+      .setDepth(ATMOSPHERE_WORLD_DEPTH + 0.1);
   }
 
   private setNightStarsVisible(state: SceneTimeState, visible: boolean): void {
@@ -191,7 +192,7 @@ export class AtmosphericTimeWorldManager {
       .container(0, 0, stars)
       .setName(`${PRESENTATION_NAME}:stars`)
       .setScrollFactor(0)
-      .setDepth(97);
+      .setDepth(ATMOSPHERE_WORLD_DEPTH + 0.2);
     state.scene.tweens.add({
       targets: stars,
       alpha: { from: 0.35, to: 0.95 },
