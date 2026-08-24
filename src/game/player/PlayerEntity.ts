@@ -33,20 +33,23 @@ export class PlayerEntity {
   }
 
   public applyMovement(command: PlayerMovementCommand): void {
-    const movementBlocked = isExplorationMovementBlocked(this.scene);
-    if (!movementBlocked) {
-      this.setFacing(command.facing);
-    }
-    this.motionState = movementBlocked ? 'idle' : command.motionState;
-
     const body = this.sprite.body as Phaser.Physics.Arcade.Body;
-    const response = movementBlocked || command.motionState === 'idle' ? 0.56 : 0.34;
+    if (isExplorationMovementBlocked(this.scene)) {
+      this.motionState = 'idle';
+      this.sprite.setVelocity(0, 0);
+      return;
+    }
+
+    this.setFacing(command.facing);
+    this.motionState = command.motionState;
+
+    const response = command.motionState === 'moving' ? 0.34 : 0.56;
     const multiplier = explorationSpeedMultiplier(
       this.scene.scene.key,
       isExplorationGallopHeld(this.scene.scene.key),
     );
-    const targetVelocityX = movementBlocked ? 0 : command.velocityX * multiplier;
-    const targetVelocityY = movementBlocked ? 0 : command.velocityY * multiplier;
+    const targetVelocityX = command.velocityX * multiplier;
+    const targetVelocityY = command.velocityY * multiplier;
     let velocityX = Phaser.Math.Linear(body.velocity.x, targetVelocityX, response);
     let velocityY = Phaser.Math.Linear(body.velocity.y, targetVelocityY, response);
 
