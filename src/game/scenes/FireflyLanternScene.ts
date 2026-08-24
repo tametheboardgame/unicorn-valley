@@ -274,7 +274,9 @@ export class FireflyLanternScene extends Phaser.Scene {
   private showModeSelector(): void {
     this.destroySelector();
     this.activeSelector = 'mode';
-    this.instructionText?.setText('Choose a lantern game. You can always come back and try another.');
+    this.instructionText?.setText(
+      'Choose a lantern game. You can always come back and try another.',
+    );
     this.statusText?.setText('Press 1, 2 or 3 • Esc returns to the Woods');
 
     const panel = this.add
@@ -288,11 +290,8 @@ export class FireflyLanternScene extends Phaser.Scene {
         fontStyle: 'bold',
       })
       .setOrigin(0.5);
-    const normal = this.createSelectorButton(
-      310,
-      355,
-      '1  🏮 Normal\nGuide 8 golden lights',
-      () => this.showDifficultySelector(),
+    const normal = this.createSelectorButton(310, 355, '1  🏮 Normal\nGuide 8 golden lights', () =>
+      this.showDifficultySelector(),
     );
     const multicolour = this.createSelectorButton(
       640,
@@ -300,11 +299,8 @@ export class FireflyLanternScene extends Phaser.Scene {
       '2  🌈 Multicolour\nCatch yellow • skip colours',
       () => this.startAttempt('multicolour', 'classic'),
     );
-    const endless = this.createSelectorButton(
-      970,
-      355,
-      '3  ✨ Endless\nKeep the glow going',
-      () => this.startAttempt('endless', 'classic'),
+    const endless = this.createSelectorButton(970, 355, '3  ✨ Endless\nKeep the glow going', () =>
+      this.startAttempt('endless', 'classic'),
     );
     const best = this.add
       .text(GAME_WIDTH / 2, 500, `Endless best: ${this.endlessBestAtStart}`, {
@@ -324,7 +320,9 @@ export class FireflyLanternScene extends Phaser.Scene {
   private showDifficultySelector(): void {
     this.destroySelector();
     this.activeSelector = 'difficulty';
-    this.instructionText?.setText('Normal is always eight golden lights. Choose how quickly they flutter.');
+    this.instructionText?.setText(
+      'Normal is always eight golden lights. Choose how quickly they flutter.',
+    );
     this.statusText?.setText('Press 1, 2 or 3 • Esc returns to the Woods');
 
     const panel = this.add
@@ -440,9 +438,7 @@ export class FireflyLanternScene extends Phaser.Scene {
     const tuning = this.tuningForCurrentFirefly();
     const position = TARGET_POSITIONS[this.opportunityIndex % TARGET_POSITIONS.length];
     this.currentColour =
-      this.mode === 'multicolour'
-        ? getMulticolourFireflyColour(this.opportunityIndex)
-        : 'yellow';
+      this.mode === 'multicolour' ? getMulticolourFireflyColour(this.opportunityIndex) : 'yellow';
     const colours = FIREFLY_COLOURS[this.currentColour];
     const glow = this.add.circle(0, 0, tuning.hitSize * 0.47, colours.core, 0.16);
     const outer = this.add.circle(0, 0, tuning.hitSize * 0.22, colours.outer, 0.78);
@@ -476,7 +472,9 @@ export class FireflyLanternScene extends Phaser.Scene {
     });
 
     if (this.mode === 'normal') {
-      this.statusText?.setText(`Golden light ${this.opportunityIndex + 1} of ${FIREFLY_NORMAL_TARGET}`);
+      this.statusText?.setText(
+        `Golden light ${this.opportunityIndex + 1} of ${FIREFLY_NORMAL_TARGET}`,
+      );
     } else if (this.mode === 'multicolour') {
       this.statusText?.setText(
         this.currentColour === 'yellow'
@@ -655,9 +653,7 @@ export class FireflyLanternScene extends Phaser.Scene {
       this.createResultButton(885, 545, 'Back to the Woods', () => this.returnToWoods()),
     ];
     if (this.modesUnlocked) {
-      buttons.push(
-        this.createResultButton(640, 545, 'Choose game', () => this.scene.restart()),
-      );
+      buttons.push(this.createResultButton(640, 545, 'Choose game', () => this.scene.restart()));
     }
 
     this.add

@@ -17,8 +17,7 @@ export const FIREFLY_LANTERN_ACTIVITY_ID = 'minigame:firefly-lantern';
 export const FIREFLY_LANTERN_MULTICOLOUR_ACTIVITY_ID = 'minigame:firefly-lantern-multicolour';
 export const FIREFLY_LANTERN_ENDLESS_ACTIVITY_ID = 'minigame:firefly-lantern-endless';
 
-export const FIREFLY_LANTERN_FIRST_COMPLETION_MEMORY =
-  'memory:r5-firefly-lantern-first-completion';
+export const FIREFLY_LANTERN_FIRST_COMPLETION_MEMORY = 'memory:r5-firefly-lantern-first-completion';
 export const FIREFLY_LANTERN_MULTICOLOUR_COMPLETION_MEMORY =
   'memory:r5-firefly-lantern-multicolour-completion';
 export const FIREFLY_LANTERN_ENDLESS_GLOW_MEMORY = 'memory:r5-firefly-lantern-endless-glow';
@@ -38,6 +37,7 @@ export interface FireflyLanternProgress {
 }
 
 export interface FireflyLanternAttemptResult extends FireflyLanternProgress {
+  bestScore: number;
   firstCompletion: boolean;
   newMilestones: readonly FireflyLanternMilestone[];
 }
@@ -90,8 +90,7 @@ function progressFromSave(save: SaveGame): FireflyLanternProgress {
   return {
     modesUnlocked: save.collections.memoryIds.includes(FIREFLY_LANTERN_FIRST_COMPLETION_MEMORY),
     normalBest: save.activities.miniGameRecords[FIREFLY_LANTERN_ACTIVITY_ID] ?? 0,
-    multicolourBest:
-      save.activities.miniGameRecords[FIREFLY_LANTERN_MULTICOLOUR_ACTIVITY_ID] ?? 0,
+    multicolourBest: save.activities.miniGameRecords[FIREFLY_LANTERN_MULTICOLOUR_ACTIVITY_ID] ?? 0,
     endlessBest: save.activities.miniGameRecords[FIREFLY_LANTERN_ENDLESS_ACTIVITY_ID] ?? 0,
   };
 }
@@ -189,6 +188,7 @@ export function recordFireflyLanternAttempt(
 
   return {
     ...progress,
+    bestScore,
     firstCompletion: newMilestones.includes('normal-first'),
     newMilestones,
   };
