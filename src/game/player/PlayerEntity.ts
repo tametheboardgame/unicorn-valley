@@ -1,6 +1,8 @@
 import Phaser from 'phaser';
-import type { PlayerFacing, PlayerMotionState, PlayerMovementCommand } from './PlayerMovement';
+import { isExplorationGallopHeld, explorationSpeedMultiplier } from '../input/ExplorationGallop';
+import { consumeWorldArrivalFacing } from '../world/WorldArrivalState';
 import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
+import type { PlayerFacing, PlayerMotionState, PlayerMovementCommand } from './PlayerMovement';
 
 const MOVEMENT_DETAIL_NAME = 'world-movement-detail';
 
@@ -25,31 +27,33 @@ export class PlayerEntity {
 
     const body = this.sprite.body as Phaser.Physics.Arcade.Body;
     body.setSize(68, 44, true);
+
+    this.setFacing(consumeWorldArrivalFacing(scene.scene.key) ?? 'down');
   }
 
   public applyMovement(command: PlayerMovementCommand): void {
-    this.facing = command.facing;
+    this.setFacing(command.facing);
     this.motionState = command.motionState;
 
     const body = this.sprite.body as Phaser.Physics.Arcade.Body;
     const response = command.motionState === 'moving' ? 0.34 : 0.56;
-    let velocityX = Phaser.Math.Linear(body.velocity.x, command.velocityX, response);
-    let velocityY = Phaser.Math.Linear(body.velocity.y, command.velocityY, response);
+    const multiplier = explorationSpeedMultiplier(
+      this.scene.scene.key,
+      isExplorationGallopHeld(this.scene.scene.key),
+    );
+    const targetVelocityX = command.velocityX * multiplier;
+    const targetVelocityY = command.velocityY * multiplier;
+    let velocityX = Phaser.Math.Linear(body.velocity.x, targetVelocityX, response);
+    let velocityY = Phaser.Math.Linear(body.velocity.y, targetVelocityY, response);
 
-    if (command.velocityX === 0 && Math.abs(velocityX) < 4) {
+    if (targetVelocityX === 0 && Math.abs(velocityX) < 4) {
       velocityX = 0;
     }
-    if (command.velocityY === 0 && Math.abs(velocityY) < 4) {
+    if (targetVelocityY === 0 && Math.abs(velocityY) < 4) {
       velocityY = 0;
     }
 
     this.sprite.setVelocity(velocityX, velocityY);
-
-    if (command.facing === 'left') {
-      this.sprite.setFlipX(true);
-    } else if (command.facing === 'right') {
-      this.sprite.setFlipX(false);
-    }
   }
 
   public updatePresentation(time: number): void {
@@ -73,6 +77,17 @@ export class PlayerEntity {
 
   public getFacing(): PlayerFacing {
     return this.facing;
+  }
+
+  public setFacing(facing: PlayerFacing): void {
+    this.facing = facing;
+    this.sprite.setData('player-facing', facing);
+
+    if (facing === 'left') {
+      this.sprite.setFlipX(true);
+    } else if (facing === 'right') {
+      this.sprite.setFlipX(false);
+    }
   }
 
   public getMotionState(): PlayerMotionState {
