@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { CRYSTAL_BROOK_LOCATION_ID } from './CrystalBrookMap';
 import { RAINBOW_MEADOW_LOCATION_ID } from './RainbowMeadowMap';
-import { WHISPERING_WOODS_LOCATION_ID } from './WhisperingWoodsMap';
 import {
   VALLEY_MAP_CONNECTIONS,
   VALLEY_MAP_NODES,
   getPhysicalValleyConnections,
   getValleyMapNodeForLocation,
 } from './ValleyMapTopology';
+import { WHISPERING_WOODS_LOCATION_ID } from './WhisperingWoodsMap';
 
 describe('R5-WP5.9E Valley map topology', () => {
   it('resolves home and every current R5 exploration region from save location IDs', () => {
@@ -36,7 +36,11 @@ describe('R5-WP5.9E Valley map topology', () => {
     const planned = VALLEY_MAP_CONNECTIONS.filter(({ kind }) => kind === 'planned');
 
     expect(futureNodes.length).toBeGreaterThanOrEqual(2);
-    expect(futureNodes.every(({ label, locationIds }) => label === 'Unrevealed path' && locationIds.length === 0)).toBe(true);
+    expect(
+      futureNodes.every(
+        ({ label, locationIds }) => label === 'Unrevealed path' && locationIds.length === 0,
+      ),
+    ).toBe(true);
     expect(planned.length).toBeGreaterThanOrEqual(4);
   });
 });
