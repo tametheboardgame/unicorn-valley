@@ -3,8 +3,10 @@ import type { SaveRepository } from '../save/SaveRepository';
 import { SaveService } from '../save/SaveService';
 import {
   ATMOSPHERIC_TIME_STATES,
+  AUTO_TIME_STATE_DURATION_MS,
   AtmosphericTimeService,
   chooseProgressionAtmosphericTime,
+  nextAtmosphericTimeState,
   readManualAtmosphericTime,
 } from './AtmosphericTimeService';
 
@@ -35,7 +37,7 @@ function createService(): SaveService {
 }
 
 describe('AtmosphericTimeService', () => {
-  it('provides all four visual time states without using the real-world clock', () => {
+  it('provides four visually distinct time definitions without using the real-world clock', () => {
     const saveService = createService();
     const service = new AtmosphericTimeService(saveService, saveService.load());
 
@@ -46,9 +48,15 @@ describe('AtmosphericTimeService', () => {
     expect(service.cycleMode()).toBe('night');
     expect(service.cycleMode()).toBe('auto');
     expect(ATMOSPHERIC_TIME_STATES).toHaveLength(4);
+    expect(ATMOSPHERIC_TIME_STATES[0].overlayColor).not.toBe(
+      ATMOSPHERIC_TIME_STATES[1].overlayColor,
+    );
+    expect(ATMOSPHERIC_TIME_STATES[0].overlayAlpha).toBeGreaterThan(
+      ATMOSPHERIC_TIME_STATES[1].overlayAlpha,
+    );
   });
 
-  it('chooses progression-driven atmosphere from persistent game progress', () => {
+  it('uses progression only to choose the initial automatic atmosphere', () => {
     const saveService = createService();
     const save = saveService.load();
     expect(chooseProgressionAtmosphericTime(save)).toBe('morning');
@@ -66,19 +74,45 @@ describe('AtmosphericTimeService', () => {
     expect(chooseProgressionAtmosphericTime(save)).toBe('night');
   });
 
-  it('persists a manual override and can return to automatic progression', () => {
+  it('cycles automatic game time every three minutes in the locked order', () => {
+    const saveService = createService();
+    const service = new AtmosphericTimeService(saveService, saveService.load());
+
+    expect(nextAtmosphericTimeState('morning')).toBe('afternoon');
+    expect(nextAtmosphericTimeState('afternoon')).toBe('sunset');
+    expect(nextAtmosphericTimeState('sunset')).toBe('night');
+    expect(nextAtmosphericTimeState('night')).toBe('morning');
+
+    service.advanceAutomatic(AUTO_TIME_STATE_DURATION_MS - 1);
+    expect(service.getState()).toBe('morning');
+    service.advanceAutomatic(1);
+    expect(service.getState()).toBe('afternoon');
+    service.advanceAutomatic(AUTO_TIME_STATE_DURATION_MS * 3);
+    expect(service.getState()).toBe('morning');
+  });
+
+  it('keeps the automatic clock moving during a manual override and resumes predictably', () => {
     const saveService = createService();
     const service = new AtmosphericTimeService(saveService, saveService.load());
 
     service.setMode('night');
     expect(readManualAtmosphericTime(saveService.load())).toBe('night');
+    service.advanceAutomatic(AUTO_TIME_STATE_DURATION_MS * 2);
+    expect(service.getState()).toBe('night');
+    expect(service.getAutomaticState()).toBe('sunset');
 
+    service.setMode('auto');
+    expect(readManualAtmosphericTime(saveService.load())).toBeNull();
+    expect(service.getState()).toBe('sunset');
+  });
+
+  it('persists a manual override across a save reload', () => {
+    const saveService = createService();
+    const service = new AtmosphericTimeService(saveService, saveService.load());
+
+    service.setMode('night');
     const reloaded = new AtmosphericTimeService(saveService, saveService.load());
     expect(reloaded.getMode()).toBe('night');
     expect(reloaded.getState()).toBe('night');
-
-    reloaded.setMode('auto');
-    expect(readManualAtmosphericTime(saveService.load())).toBeNull();
-    expect(reloaded.getState()).toBe('morning');
   });
 });
