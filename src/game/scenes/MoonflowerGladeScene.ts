@@ -202,7 +202,12 @@ export class MoonflowerGladeScene extends Phaser.Scene {
 
   private activateInteraction(target: InteractionTarget): void {
     if (target.result.type === 'scene-transition') {
-      this.scene.start(target.result.sceneKey, target.result.payload);
+      if (target.result.sceneKey === 'WonderbookScene') {
+        this.scene.launch(target.result.sceneKey, target.result.payload);
+        this.scene.pause();
+      } else {
+        this.scene.start(target.result.sceneKey, target.result.payload);
+      }
       return;
     }
 

@@ -77,6 +77,7 @@ export class ExplorationShell {
 
     this.bagButton.on('pointerdown', this.openBag, this);
     scene.input.keyboard?.on('keydown-I', this.openBag, this);
+    scene.input.keyboard?.on('keydown-B', this.openWonderbook, this);
     this.refreshTimer = scene.time.addEvent({
       delay: 300,
       loop: true,
@@ -103,6 +104,7 @@ export class ExplorationShell {
     this.destroyed = true;
     this.refreshTimer.destroy();
     this.scene.input.keyboard?.off('keydown-I', this.openBag, this);
+    this.scene.input.keyboard?.off('keydown-B', this.openWonderbook, this);
     this.bagButton.off('pointerdown', this.openBag, this);
     this.bagShadow.destroy();
     this.bagButton.destroy();
@@ -124,6 +126,17 @@ export class ExplorationShell {
     const returnScene = this.scene.scene.key;
     if (!this.scene.scene.isActive('InventoryScene')) {
       this.scene.scene.launch('InventoryScene', { returnScene });
+      this.scene.scene.pause();
+    }
+  }
+
+  private openWonderbook(): void {
+    if (this.destroyed || !this.scene.scene.isActive()) {
+      return;
+    }
+    const returnScene = this.scene.scene.key;
+    if (!this.scene.scene.isActive('WonderbookScene')) {
+      this.scene.scene.launch('WonderbookScene', { returnScene });
       this.scene.scene.pause();
     }
   }

@@ -367,6 +367,11 @@ export class WonderbookScene extends Phaser.Scene {
     }
 
     this.closing = true;
-    this.scene.start(this.returnScene);
+    this.scene.stop();
+    if (this.scene.isPaused(this.returnScene)) {
+      this.scene.resume(this.returnScene);
+    } else if (!this.scene.isActive(this.returnScene)) {
+      this.scene.start(this.returnScene);
+    }
   }
 }
