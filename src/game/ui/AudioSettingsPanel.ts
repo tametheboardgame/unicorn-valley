@@ -25,12 +25,16 @@ export class AudioSettingsPanel {
   private readonly buttonLabel: Phaser.GameObjects.Text;
   private isOpen = false;
 
-  public constructor(private readonly scene: Phaser.Scene) {
+  public constructor(
+    private readonly scene: Phaser.Scene,
+    private readonly manageSceneAudio = true,
+  ) {
     const buttonX = GAME_WIDTH - 250;
     const buttonY = 58;
     const buttonShadow = createUiShadow(scene, buttonX, buttonY, 142, 64, 119, 0.16);
     this.button = scene.add
       .rectangle(buttonX, buttonY, 142, 64, UI_COLOURS.cream, 0.98)
+      .setName('exploration-shell-sound-button')
       .setStrokeStyle(4, UI_COLOURS.lavenderStrong, 0.98)
       .setScrollFactor(0)
       .setDepth(120)
@@ -42,6 +46,7 @@ export class AudioSettingsPanel {
         fontSize: '18px',
         fontStyle: 'bold',
       })
+      .setName('exploration-shell-sound-label')
       .setOrigin(0.5)
       .setScrollFactor(0)
       .setDepth(121);
@@ -59,6 +64,7 @@ export class AudioSettingsPanel {
     );
     const panel = scene.add
       .rectangle(PANEL_X, PANEL_Y, PANEL_WIDTH, PANEL_HEIGHT, UI_COLOURS.cream, 0.99)
+      .setName('exploration-shell-sound-panel')
       .setStrokeStyle(5, UI_COLOURS.lavenderStrong, 1)
       .setScrollFactor(0)
       .setDepth(132);
@@ -129,7 +135,9 @@ export class AudioSettingsPanel {
       this.setPanelVisible(this.isOpen);
     });
 
-    this.audio.enterScene(scene.scene.key);
+    if (this.manageSceneAudio) {
+      this.audio.enterScene(scene.scene.key);
+    }
     scene.input.once('pointerdown', () => void this.audio.unlock());
     scene.input.keyboard?.once('keydown', () => void this.audio.unlock());
 
@@ -138,7 +146,9 @@ export class AudioSettingsPanel {
   }
 
   public destroy(): void {
-    this.audio.leaveScene(this.scene.scene.key);
+    if (this.manageSceneAudio) {
+      this.audio.leaveScene(this.scene.scene.key);
+    }
     for (const object of this.objects) {
       object.destroy();
     }
