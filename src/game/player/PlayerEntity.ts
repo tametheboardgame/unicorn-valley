@@ -75,9 +75,7 @@ export class PlayerEntity {
     const body = this.sprite.body as Phaser.Physics.Arcade.Body;
     const speed = Math.hypot(body.velocity.x, body.velocity.y);
     const galloping = isExplorationGallopHeld(this.scene.scene.key);
-    this.applyProductionPose(
-      selectUnicornProductionPose(this.motionState, speed, time, galloping),
-    );
+    this.applyProductionPose(selectUnicornProductionPose(this.motionState, speed, time, galloping));
 
     if (this.motionState === 'moving' || speed > 24) {
       const gait = Math.sin(time * (galloping ? 0.032 : 0.024));
