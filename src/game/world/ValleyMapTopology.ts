@@ -4,7 +4,7 @@ import { RAINBOW_MEADOW_LOCATION_ID } from './RainbowMeadowMap';
 import { SUNBEAM_VILLAGE_LOCATION_ID } from './SunbeamVillageMap';
 import { WHISPERING_WOODS_LOCATION_ID } from './WhisperingWoodsMap';
 
-export type ValleyMapNodeKind = 'home' | 'region' | 'future';
+export type ValleyMapNodeKind = 'home' | 'region' | 'side' | 'future';
 export type ValleyMapConnectionKind = 'physical' | 'planned';
 
 export interface ValleyMapNode {
@@ -15,6 +15,7 @@ export interface ValleyMapNode {
   y: number;
   kind: ValleyMapNodeKind;
   locationIds: readonly string[];
+  revisitHint?: string;
 }
 
 export interface ValleyMapConnection {
@@ -23,15 +24,18 @@ export interface ValleyMapConnection {
   kind: ValleyMapConnectionKind;
 }
 
+export const VALLEY_HOME_NODE_ID = 'valley:moonflower-home';
+
 export const VALLEY_MAP_NODES = [
   {
-    id: 'valley:moonflower-home',
+    id: VALLEY_HOME_NODE_ID,
     label: 'Moonflower Cottage',
     icon: '🏡',
     x: 0.12,
     y: 0.58,
     kind: 'home',
     locationIds: ['moonflower-cottage'],
+    revisitHint: 'Cottage, garden and familiar Moonflower paths.',
   },
   {
     id: 'valley:moonflower-glade',
@@ -41,6 +45,7 @@ export const VALLEY_MAP_NODES = [
     y: 0.5,
     kind: 'region',
     locationIds: [MOONFLOWER_GLADE_LOCATION_ID],
+    revisitHint: 'Moonflower Field, Hollow Tree and home discoveries.',
   },
   {
     id: 'valley:sunbeam-village',
@@ -50,6 +55,7 @@ export const VALLEY_MAP_NODES = [
     y: 0.34,
     kind: 'region',
     locationIds: [SUNBEAM_VILLAGE_LOCATION_ID],
+    revisitHint: 'Friends, shops, the fountain and changing character moments.',
   },
   {
     id: 'valley:rainbow-meadow',
@@ -59,6 +65,7 @@ export const VALLEY_MAP_NODES = [
     y: 0.58,
     kind: 'region',
     locationIds: [RAINBOW_MEADOW_LOCATION_ID],
+    revisitHint: 'Rainbow Run, race rewards and meadow discoveries.',
   },
   {
     id: 'valley:crystal-brook',
@@ -68,6 +75,7 @@ export const VALLEY_MAP_NODES = [
     y: 0.34,
     kind: 'region',
     locationIds: [CRYSTAL_BROOK_LOCATION_ID],
+    revisitHint: 'River treasures, Crystal Cascade and Prism Grotto.',
   },
   {
     id: 'valley:whispering-woods',
@@ -77,6 +85,43 @@ export const VALLEY_MAP_NODES = [
     y: 0.57,
     kind: 'region',
     locationIds: [WHISPERING_WOODS_LOCATION_ID],
+    revisitHint: 'Firefly Lantern, woodland discoveries and magical weather.',
+  },
+  {
+    id: 'valley:moonflower-field',
+    label: 'Moonflower Field',
+    icon: '🌺',
+    x: 0.29,
+    y: 0.8,
+    kind: 'side',
+    locationIds: [],
+  },
+  {
+    id: 'valley:rainbow-run',
+    label: 'Rainbow Run',
+    icon: '🏁',
+    x: 0.49,
+    y: 0.81,
+    kind: 'side',
+    locationIds: [],
+  },
+  {
+    id: 'valley:prism-grotto',
+    label: 'Prism Grotto',
+    icon: '🌈',
+    x: 0.73,
+    y: 0.62,
+    kind: 'side',
+    locationIds: [],
+  },
+  {
+    id: 'valley:lantern-clearing',
+    label: 'Lantern Clearing',
+    icon: '🏮',
+    x: 0.95,
+    y: 0.31,
+    kind: 'side',
+    locationIds: [],
   },
   {
     id: 'valley:future-north',
@@ -92,18 +137,22 @@ export const VALLEY_MAP_NODES = [
     label: 'Unrevealed path',
     icon: '?',
     x: 0.76,
-    y: 0.82,
+    y: 0.84,
     kind: 'future',
     locationIds: [],
   },
 ] as const satisfies readonly ValleyMapNode[];
 
 export const VALLEY_MAP_CONNECTIONS = [
-  { from: 'valley:moonflower-home', to: 'valley:moonflower-glade', kind: 'physical' },
+  { from: VALLEY_HOME_NODE_ID, to: 'valley:moonflower-glade', kind: 'physical' },
   { from: 'valley:moonflower-glade', to: 'valley:sunbeam-village', kind: 'physical' },
   { from: 'valley:sunbeam-village', to: 'valley:rainbow-meadow', kind: 'physical' },
   { from: 'valley:rainbow-meadow', to: 'valley:crystal-brook', kind: 'physical' },
   { from: 'valley:crystal-brook', to: 'valley:whispering-woods', kind: 'physical' },
+  { from: 'valley:moonflower-glade', to: 'valley:moonflower-field', kind: 'physical' },
+  { from: 'valley:rainbow-meadow', to: 'valley:rainbow-run', kind: 'physical' },
+  { from: 'valley:crystal-brook', to: 'valley:prism-grotto', kind: 'physical' },
+  { from: 'valley:whispering-woods', to: 'valley:lantern-clearing', kind: 'physical' },
   { from: 'valley:sunbeam-village', to: 'valley:future-north', kind: 'planned' },
   { from: 'valley:future-north', to: 'valley:crystal-brook', kind: 'planned' },
   { from: 'valley:rainbow-meadow', to: 'valley:future-south', kind: 'planned' },
@@ -126,4 +175,46 @@ export function getPhysicalValleyConnections(nodeId: string): readonly ValleyMap
     (connection) =>
       connection.kind === 'physical' && (connection.from === nodeId || connection.to === nodeId),
   );
+}
+
+function getPhysicalNeighbourIds(nodeId: string): readonly string[] {
+  return getPhysicalValleyConnections(nodeId).map((connection) =>
+    connection.from === nodeId ? connection.to : connection.from,
+  );
+}
+
+export function getPhysicalValleyRoute(fromNodeId: string, toNodeId: string): readonly string[] {
+  if (!getValleyMapNode(fromNodeId) || !getValleyMapNode(toNodeId)) {
+    return [];
+  }
+  if (fromNodeId === toNodeId) {
+    return [fromNodeId];
+  }
+
+  const queue: string[][] = [[fromNodeId]];
+  const visited = new Set([fromNodeId]);
+  while (queue.length > 0) {
+    const route = queue.shift();
+    if (!route) {
+      break;
+    }
+    const current = route[route.length - 1];
+    for (const neighbour of getPhysicalNeighbourIds(current)) {
+      if (visited.has(neighbour)) {
+        continue;
+      }
+      const nextRoute = [...route, neighbour];
+      if (neighbour === toNodeId) {
+        return nextRoute;
+      }
+      visited.add(neighbour);
+      queue.push(nextRoute);
+    }
+  }
+  return [];
+}
+
+export function getHomewardNextNode(nodeId: string): ValleyMapNode | null {
+  const route = getPhysicalValleyRoute(nodeId, VALLEY_HOME_NODE_ID);
+  return route.length > 1 ? getValleyMapNode(route[1]) : null;
 }
