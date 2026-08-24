@@ -55,12 +55,17 @@ export class WonderbookScene extends Phaser.Scene {
     this.renderSpread();
 
     this.add
-      .text(104, GAME_HEIGHT - 30, `${entries.filter(({ discovered }) => discovered).length} discoveries found`, {
-        color: '#ead8f3',
-        fontFamily: UI_FONT,
-        fontSize: '14px',
-        fontStyle: 'bold',
-      })
+      .text(
+        104,
+        GAME_HEIGHT - 30,
+        `${entries.filter(({ discovered }) => discovered).length} discoveries found`,
+        {
+          color: '#ead8f3',
+          fontFamily: UI_FONT,
+          fontSize: '14px',
+          fontStyle: 'bold',
+        },
+      )
       .setOrigin(0, 0.5)
       .setName('wonderbook-discovery-count');
 
@@ -281,12 +286,16 @@ export class WonderbookScene extends Phaser.Scene {
     }
   }
 
-  private createEntry(entry: WonderbookEntry, x: number, y: number): Phaser.GameObjects.GameObject[] {
+  private createEntry(
+    entry: WonderbookEntry,
+    x: number,
+    y: number,
+  ): Phaser.GameObjects.GameObject[] {
     const sticker = this.add
       .circle(x + 42, y + 44, 37, entry.discovered ? 0xffe6a6 : 0xe9e0ea, 1)
       .setStrokeStyle(4, entry.discovered ? 0xd6b35f : 0xc7b5ca, 1);
     const icon = this.add
-      .text(x + 42, y + 44, entry.discovered ? entry.icon ?? '✦' : '?', {
+      .text(x + 42, y + 44, entry.discovered ? (entry.icon ?? '✦') : '?', {
         color: entry.discovered ? '#8b653e' : '#927f97',
         fontFamily: UI_FONT,
         fontSize: '30px',
@@ -305,7 +314,7 @@ export class WonderbookScene extends Phaser.Scene {
       y + 48,
       entry.discovered
         ? entry.description
-        : entry.undiscoveredHint ?? 'Keep exploring to fill this page.',
+        : (entry.undiscoveredHint ?? 'Keep exploring to fill this page.'),
       {
         color: entry.discovered ? UI_COLOURS.softInk : UI_COLOURS.mutedInk,
         fontFamily: UI_FONT,
