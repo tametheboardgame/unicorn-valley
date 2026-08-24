@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { SaveRepository } from '../save/SaveRepository';
 import { SaveService } from '../save/SaveService';
-import { AtmosphericTimeService } from './AtmosphericTimeService';
+import { AUTO_TIME_STATE_DURATION_MS, AtmosphericTimeService } from './AtmosphericTimeService';
 import {
   isWeatherDiscoveryAvailable,
   MAGICAL_WEATHER_STATES,
@@ -45,15 +45,17 @@ describe('MagicalWeatherService', () => {
     expect(MAGICAL_WEATHER_STATES).toHaveLength(3);
   });
 
-  it('follows atmospheric changes while automatic', () => {
+  it('follows the three-minute automatic Valley time cycle', () => {
     const saveService = createSaveService();
     const atmosphere = new AtmosphericTimeService(saveService, saveService.load());
     const weather = new MagicalWeatherService(saveService, atmosphere, saveService.load());
 
     expect(weather.getState()).toBe('clear');
-    atmosphere.setMode('afternoon');
+    atmosphere.advanceAutomatic(AUTO_TIME_STATE_DURATION_MS);
+    expect(atmosphere.getState()).toBe('afternoon');
     expect(weather.refreshAutomatic()).toBe('rain');
-    atmosphere.setMode('night');
+    atmosphere.advanceAutomatic(AUTO_TIME_STATE_DURATION_MS * 2);
+    expect(atmosphere.getState()).toBe('night');
     expect(weather.refreshAutomatic()).toBe('sparkle');
   });
 
