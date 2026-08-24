@@ -107,7 +107,9 @@ function snapshotObject(gameObject: Phaser.GameObjects.GameObject): DiagnosticOb
   };
 }
 
-function snapshotObjects(gameObjects: readonly Phaser.GameObjects.GameObject[]): DiagnosticObjectSnapshot[] {
+function snapshotObjects(
+  gameObjects: readonly Phaser.GameObjects.GameObject[],
+): DiagnosticObjectSnapshot[] {
   const snapshots: DiagnosticObjectSnapshot[] = [];
 
   const visit = (gameObject: Phaser.GameObjects.GameObject): void => {
