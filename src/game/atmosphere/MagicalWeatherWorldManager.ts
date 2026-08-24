@@ -30,7 +30,9 @@ interface SceneWeatherState {
   sparkleRecycleSeed: number;
 }
 
-function isPositionedGameObject(object: Phaser.GameObjects.GameObject): object is PositionedGameObject {
+function isPositionedGameObject(
+  object: Phaser.GameObjects.GameObject,
+): object is PositionedGameObject {
   const candidate = object as Partial<PositionedGameObject>;
   return typeof candidate.x === 'number' && typeof candidate.y === 'number';
 }
