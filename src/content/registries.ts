@@ -41,6 +41,7 @@ import {
   R5_CRYSTAL_BROOK_STORY_ITEMS,
   R5_CRYSTAL_BROOK_STORY_QUESTS,
 } from './r5CrystalBrookStory';
+import { R5_FIREFLY_LANTERN_DISCOVERIES } from './r5FireflyLantern';
 import { R5_LUMI_CHARACTERS, R5_LUMI_DIALOGUES, R5_LUMI_DISCOVERIES } from './r5LumiWoodsStory';
 import { R5_RACE_DISCOVERIES, R5_RACE_ITEMS } from './r5RaceContent';
 import { R5_WEATHER_DISCOVERIES } from './r5Weather';
@@ -102,6 +103,7 @@ const ALL_DISCOVERIES = [
   ...R5_LUMI_DISCOVERIES,
   ...R5_WEATHER_DISCOVERIES,
   ...R5_RACE_DISCOVERIES,
+  ...R5_FIREFLY_LANTERN_DISCOVERIES,
 ] satisfies readonly DiscoveryDefinition[];
 const ALL_DIALOGUES = [
   ...DIALOGUES,
