@@ -5,25 +5,11 @@ import { TouchMovementPad } from '../input/TouchMovementPad';
 import { ActivitySuggestionCard } from './ActivitySuggestionCard';
 import { AudioSettingsPanel } from './AudioSettingsPanel';
 import { ExplorationChrome } from './ExplorationChrome';
+import { shellManagesSceneAudio, supportsExplorationShell } from './ExplorationShellConfig';
 import { RewardFeedback } from './RewardFeedback';
 import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from './uiTheme';
 
 const shellsByScene = new WeakMap<Phaser.Scene, ExplorationShell>();
-const DEDICATED_AUDIO_SCENES = new Set(['CrystalBrookScene', 'WhisperingWoodsScene']);
-
-export const EXPLORATION_SHELL_SCENES = new Set([
-  'MoonflowerGladeScene',
-  'CottageInteriorScene',
-  'MoonflowerPatchScene',
-  'SunbeamVillageScene',
-  'RainbowMeadowScene',
-  'CrystalBrookScene',
-  'WhisperingWoodsScene',
-]);
-
-export function supportsExplorationShell(sceneKey: string): boolean {
-  return EXPLORATION_SHELL_SCENES.has(sceneKey);
-}
 
 export class ExplorationShell {
   private readonly bagShadow: Phaser.GameObjects.Rectangle;
@@ -81,10 +67,7 @@ export class ExplorationShell {
     applyButtonHover(this.bagButton, UI_COLOURS.cream, UI_COLOURS.gold);
 
     this.suggestionCard = new ActivitySuggestionCard(scene);
-    this.audioSettingsPanel = new AudioSettingsPanel(
-      scene,
-      !DEDICATED_AUDIO_SCENES.has(scene.scene.key),
-    );
+    this.audioSettingsPanel = new AudioSettingsPanel(scene, shellManagesSceneAudio(scene.scene.key));
     this.touchMovementPad = TouchMovementPad.ensure(scene, pointerInput);
     this.explorationChrome = new ExplorationChrome(scene, this.touchMovementPad);
     this.rewardFeedback = new RewardFeedback(scene);
