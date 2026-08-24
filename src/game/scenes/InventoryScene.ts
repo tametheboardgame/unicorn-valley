@@ -239,7 +239,14 @@ export class InventoryScene extends Phaser.Scene {
 
     objects.push(
       this.add
-        .rectangle(GAME_WIDTH / 2, mapTop + mapHeight / 2, mapWidth + 70, mapHeight + 54, 0xe7f4dc, 0.9)
+        .rectangle(
+          GAME_WIDTH / 2,
+          mapTop + mapHeight / 2,
+          mapWidth + 70,
+          mapHeight + 54,
+          0xe7f4dc,
+          0.9,
+        )
         .setStrokeStyle(5, 0xb89fbc, 0.95),
       this.add
         .text(GAME_WIDTH / 2, 166, 'Unicorn Valley • paths you can walk', {
