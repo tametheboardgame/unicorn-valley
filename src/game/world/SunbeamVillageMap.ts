@@ -1,4 +1,5 @@
 import type { CollisionRectangle, MapPoint } from './MapTraversal';
+import { setWorldArrivalFacing } from './WorldArrivalState';
 
 export const SUNBEAM_VILLAGE_LOCATION_ID = 'location:sunbeam-village';
 
@@ -30,10 +31,16 @@ const playerSpawn: MapPoint = { ...DEFAULT_PLAYER_SPAWN };
 export function setSunbeamVillagePlayerSpawn(point: MapPoint): void {
   playerSpawn.x = point.x;
   playerSpawn.y = point.y;
+  if (point.x === 330 && point.y === 950) {
+    setWorldArrivalFacing('SunbeamVillageScene', 'right');
+  } else if (point.x === 2640 && point.y === 950) {
+    setWorldArrivalFacing('SunbeamVillageScene', 'left');
+  }
 }
 
 export function resetSunbeamVillagePlayerSpawn(): void {
-  setSunbeamVillagePlayerSpawn(DEFAULT_PLAYER_SPAWN);
+  playerSpawn.x = DEFAULT_PLAYER_SPAWN.x;
+  playerSpawn.y = DEFAULT_PLAYER_SPAWN.y;
 }
 
 export const SUNBEAM_VILLAGE_MAP = {

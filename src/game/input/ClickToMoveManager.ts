@@ -1,12 +1,15 @@
 import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { DEFAULT_PLAYER_SPEED } from '../player/PlayerMovement';
+import { CRYSTAL_BROOK_MAP } from '../world/CrystalBrookMap';
 import type { MapPoint, TraversalMapDefinition } from '../world/MapTraversal';
 import { COTTAGE_INTERIOR_MAP } from '../world/CottageInteriorMap';
 import { MOONFLOWER_GLADE_MAP } from '../world/MoonflowerGladeMap';
 import { RAINBOW_MEADOW_MAP } from '../world/RainbowMeadowMap';
 import { SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
+import { WHISPERING_WOODS_MAP } from '../world/WhisperingWoodsMap';
 import { findClickNavigationPath } from './ClickNavigationPath';
+import { isExplorationMovementBlocked } from './ExplorationMovementBlocker';
 import { hasHeldExplorationMovementInput } from './KeyboardInputAdapter';
 
 interface NavigationState {
@@ -25,6 +28,8 @@ const SUPPORTED_SCENES = new Set([
   'MoonflowerGladeScene',
   'SunbeamVillageScene',
   'RainbowMeadowScene',
+  'CrystalBrookScene',
+  'WhisperingWoodsScene',
   'CottageInteriorScene',
   'MoonflowerPatchScene',
 ]);
@@ -41,6 +46,8 @@ const NAVIGATION_MAPS: Readonly<Record<string, TraversalMapDefinition>> = {
   MoonflowerGladeScene: MOONFLOWER_GLADE_MAP,
   SunbeamVillageScene: SUNBEAM_VILLAGE_MAP,
   RainbowMeadowScene: RAINBOW_MEADOW_MAP,
+  CrystalBrookScene: CRYSTAL_BROOK_MAP,
+  WhisperingWoodsScene: WHISPERING_WOODS_MAP,
   CottageInteriorScene: COTTAGE_INTERIOR_MAP,
   MoonflowerPatchScene: PATCH_NAVIGATION_MAP,
 };
@@ -48,7 +55,6 @@ const NAVIGATION_MAPS: Readonly<Record<string, TraversalMapDefinition>> = {
 const WAYPOINT_REACHED_DISTANCE = 22;
 const STUCK_TIMEOUT_MS = 950;
 const MIN_PROGRESS_DISTANCE = 2;
-const MODAL_DEPTH = 126;
 
 function isPlayerSprite(
   gameObject: Phaser.GameObjects.GameObject,
@@ -57,6 +63,23 @@ function isPlayerSprite(
     gameObject instanceof Phaser.Physics.Arcade.Sprite &&
     gameObject.texture.key.startsWith('player-unicorn-')
   );
+}
+
+function updateClickNavigationFacing(
+  player: Phaser.Physics.Arcade.Sprite,
+  directionX: number,
+  directionY: number,
+): void {
+  if (Math.abs(directionX) >= Math.abs(directionY) && Math.abs(directionX) > 2) {
+    const facing = directionX < 0 ? 'left' : 'right';
+    player.setFlipX(facing === 'left');
+    player.setData('player-facing', facing);
+    return;
+  }
+
+  if (Math.abs(directionY) > 2) {
+    player.setData('player-facing', directionY < 0 ? 'up' : 'down');
+  }
 }
 
 export class ClickToMoveManager {
@@ -79,7 +102,7 @@ export class ClickToMoveManager {
         continue;
       }
 
-      if (this.hasVisibleModal(scene) || hasHeldExplorationMovementInput()) {
+      if (isExplorationMovementBlocked(scene) || hasHeldExplorationMovementInput()) {
         this.cancel(state);
         continue;
       }
@@ -123,10 +146,7 @@ export class ClickToMoveManager {
         (directionX / magnitude) * DEFAULT_PLAYER_SPEED,
         (directionY / magnitude) * DEFAULT_PLAYER_SPEED,
       );
-
-      if (Math.abs(directionX) > 2) {
-        player.setFlipX(directionX < 0);
-      }
+      updateClickNavigationFacing(player, directionX, directionY);
       player.setAngle(Math.sin(scene.time.now * 0.018) * 1.6);
     }
   }
@@ -150,7 +170,7 @@ export class ClickToMoveManager {
       pointer: Phaser.Input.Pointer,
       currentlyOver: Phaser.GameObjects.GameObject[],
     ) => {
-      if (pointer.button !== 0 || this.hasVisibleModal(scene)) {
+      if (pointer.button !== 0 || isExplorationMovementBlocked(scene)) {
         return;
       }
       if (currentlyOver.length > 0 || hasHeldExplorationMovementInput()) {
@@ -190,20 +210,6 @@ export class ClickToMoveManager {
     });
     this.states.set(scene, state);
     return state;
-  }
-
-  private hasVisibleModal(scene: Phaser.Scene): boolean {
-    return scene.children.list.some((gameObject) => {
-      const displayObject = gameObject as Phaser.GameObjects.GameObject & {
-        visible?: boolean;
-        depth?: number;
-      };
-      return (
-        displayObject.active &&
-        displayObject.visible === true &&
-        (displayObject.depth ?? 0) >= MODAL_DEPTH
-      );
-    });
   }
 
   private showTargetMarker(scene: Phaser.Scene, state: NavigationState, target: MapPoint): void {

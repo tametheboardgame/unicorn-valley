@@ -6,7 +6,13 @@ import {
 } from '../../content/r5LumiWoodsStory';
 import type { SecretDiscoveryDefinition } from '../../content/r4Secrets';
 import { SecretDiscoveryService } from '../discovery/SecretDiscoveryService';
+import {
+  WORLD_INTERACTION_PROMPT,
+  WorldInteractionInput,
+} from '../interaction/WorldInteractionInput';
 import { getBrowserSaveService } from '../save/browserSaveService';
+import { rememberWorldReturnState } from '../world/WorldArrivalState';
+import { setWhisperingWoodsPlayerSpawn } from '../world/WhisperingWoodsMap';
 import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
 
 const PRESENTATION_NAME = 'lumi-woods-presentation';
@@ -20,7 +26,7 @@ interface ClueMarker {
 
 interface LumiWoodsState {
   scene: Phaser.Scene;
-  interactKey: Phaser.Input.Keyboard.Key | null;
+  interaction: WorldInteractionInput;
   markers: Map<SecretDiscoveryDefinition['id'], ClueMarker>;
   starwell: Phaser.GameObjects.Container | null;
   lumi: Phaser.GameObjects.Container | null;
@@ -78,7 +84,7 @@ export class LumiWoodsWorldManager {
       : Number.POSITIVE_INFINITY;
     state.lumiPrompt?.setVisible(lumiDistance <= 220);
 
-    if (!state.interactKey || !Phaser.Input.Keyboard.JustDown(state.interactKey)) {
+    if (!state.interaction.justPressed()) {
       return;
     }
     if (nearest && nearestDistance <= lumiDistance) {
@@ -97,7 +103,7 @@ export class LumiWoodsWorldManager {
     this.clearState();
     this.state = {
       scene,
-      interactKey: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.E) ?? null,
+      interaction: new WorldInteractionInput(scene),
       markers: new Map(),
       starwell: null,
       lumi: null,
@@ -173,7 +179,7 @@ export class LumiWoodsWorldManager {
     }
 
     const prompt = scene.add
-      .text(0, 58, `${definition.actionLabel}: ${definition.label}`, {
+      .text(0, 58, `${WORLD_INTERACTION_PROMPT}: ${definition.label}`, {
         color: '#dcefd6',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '15px',
@@ -183,9 +189,12 @@ export class LumiWoodsWorldManager {
       })
       .setOrigin(0.5)
       .setVisible(false);
-    const zone = scene.add
-      .zone(0, 0, definition.interactionRadius * 1.4, definition.interactionRadius * 1.4)
-      .setInteractive({ useHandCursor: true });
+    const zone = scene.add.zone(
+      0,
+      0,
+      definition.interactionRadius * 1.4,
+      definition.interactionRadius * 1.4,
+    );
     objects.push(prompt, zone);
 
     const container = scene.add
@@ -193,7 +202,7 @@ export class LumiWoodsWorldManager {
       .setName(PRESENTATION_NAME)
       .setDepth(20);
 
-    zone.on('pointerdown', () => {
+    this.state?.interaction.bindPointer(zone, () => {
       const player = findPlayer(scene);
       if (!player) {
         return;
@@ -316,7 +325,7 @@ export class LumiWoodsWorldManager {
     const tail = state.scene.add.ellipse(-55, -8, 24, 66, 0x86afa0, 0.98).setAngle(-35);
     const firefly = state.scene.add.circle(-20, -70, 6, 0xf7ef9c, 0.92);
     const prompt = state.scene.add
-      .text(0, 82, 'Talk: Lumi  💬', {
+      .text(0, 82, `${WORLD_INTERACTION_PROMPT}: Talk to Lumi  💬`, {
         color: '#dcefd6',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '15px',
@@ -326,7 +335,7 @@ export class LumiWoodsWorldManager {
       })
       .setOrigin(0.5)
       .setVisible(false);
-    const zone = state.scene.add.zone(0, 0, 180, 180).setInteractive({ useHandCursor: true });
+    const zone = state.scene.add.zone(0, 0, 180, 180);
 
     state.lumi = state.scene.add
       .container(LUMI_POSITION.x, LUMI_POSITION.y, [
@@ -345,7 +354,7 @@ export class LumiWoodsWorldManager {
       .setDepth(19);
     state.lumiPrompt = prompt;
 
-    zone.on('pointerdown', () => {
+    state.interaction.bindPointer(zone, () => {
       const player = findPlayer(state.scene);
       if (!player) {
         return;
@@ -373,6 +382,10 @@ export class LumiWoodsWorldManager {
   }
 
   private openLumiStory(scene: Phaser.Scene): void {
+    const player = findPlayer(scene);
+    if (player) {
+      rememberWorldReturnState('WhisperingWoodsScene', player, setWhisperingWoodsPlayerSpawn);
+    }
     scene.scene.start('LumiStoryScene', { returnScene: 'WhisperingWoodsScene' });
   }
 
@@ -380,6 +393,7 @@ export class LumiWoodsWorldManager {
     if (!this.state) {
       return;
     }
+    this.state.interaction.destroy();
     for (const marker of this.state.markers.values()) {
       marker.container.destroy(true);
     }

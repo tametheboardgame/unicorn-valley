@@ -1,4 +1,10 @@
 import Phaser from 'phaser';
+import {
+  WORLD_INTERACTION_PROMPT,
+  WorldInteractionInput,
+} from '../interaction/WorldInteractionInput';
+import { rememberWorldReturnState } from '../world/WorldArrivalState';
+import { setWhisperingWoodsPlayerSpawn } from '../world/WhisperingWoodsMap';
 import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
 
 const LANTERN_POSITION = { x: 2480, y: 760 } as const;
@@ -8,7 +14,7 @@ interface LanternState {
   scene: Phaser.Scene;
   container: Phaser.GameObjects.Container;
   prompt: Phaser.GameObjects.Text;
-  interactKey: Phaser.Input.Keyboard.Key | null;
+  interaction: WorldInteractionInput;
 }
 
 function findPlayer(scene: Phaser.Scene): Phaser.Physics.Arcade.Sprite | null {
@@ -44,7 +50,7 @@ export class FireflyLanternWorldManager {
     );
     state.prompt.setVisible(distance <= 230);
 
-    if (distance <= 170 && state.interactKey && Phaser.Input.Keyboard.JustDown(state.interactKey)) {
+    if (distance <= 170 && state.interaction.justPressed()) {
       this.openActivity(scene);
     }
   }
@@ -55,6 +61,7 @@ export class FireflyLanternWorldManager {
     }
     this.clearState();
 
+    const interaction = new WorldInteractionInput(scene);
     const post = scene.add.rectangle(0, 55, 18, 120, 0x625344, 1);
     const hook = scene.add.rectangle(25, -8, 58, 12, 0x625344, 1);
     const lanternGlow = scene.add.circle(52, 28, 56, 0xf7efa3, 0.14);
@@ -71,7 +78,7 @@ export class FireflyLanternWorldManager {
       })
       .setOrigin(0.5);
     const prompt = scene.add
-      .text(0, 174, 'E / tap: Play', {
+      .text(0, 174, `${WORLD_INTERACTION_PROMPT}: Play`, {
         color: '#38594e',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '16px',
@@ -81,7 +88,7 @@ export class FireflyLanternWorldManager {
       })
       .setOrigin(0.5)
       .setVisible(false);
-    const zone = scene.add.zone(25, 45, 190, 230).setInteractive({ useHandCursor: true });
+    const zone = scene.add.zone(25, 45, 190, 230);
     const container = scene.add
       .container(LANTERN_POSITION.x, LANTERN_POSITION.y, [
         post,
@@ -115,7 +122,7 @@ export class FireflyLanternWorldManager {
       });
     }
 
-    zone.on('pointerdown', () => {
+    interaction.bindPointer(zone, () => {
       const player = findPlayer(scene);
       if (!player) {
         return;
@@ -145,21 +152,27 @@ export class FireflyLanternWorldManager {
       scene,
       container,
       prompt,
-      interactKey: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.E) ?? null,
+      interaction,
     };
     return this.state;
   }
 
   private openActivity(scene: Phaser.Scene): void {
-    if (scene.scene.isActive()) {
-      scene.scene.start('FireflyLanternScene');
+    if (!scene.scene.isActive()) {
+      return;
     }
+    const player = findPlayer(scene);
+    if (player) {
+      rememberWorldReturnState('WhisperingWoodsScene', player, setWhisperingWoodsPlayerSpawn);
+    }
+    scene.scene.start('FireflyLanternScene');
   }
 
   private clearState(): void {
     if (!this.state) {
       return;
     }
+    this.state.interaction.destroy();
     if (this.state.container.active) {
       this.state.container.destroy(true);
     }

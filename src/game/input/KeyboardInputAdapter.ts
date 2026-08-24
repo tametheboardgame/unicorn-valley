@@ -100,12 +100,14 @@ export class KeyboardInputAdapter implements InputAdapter {
     const escapeKey = key(Phaser.Input.Keyboard.KeyCodes.ESC);
     const wonderbook = key(Phaser.Input.Keyboard.KeyCodes.B);
     const inventory = key(Phaser.Input.Keyboard.KeyCodes.I);
+    const shift = key(Phaser.Input.Keyboard.KeyCodes.SHIFT);
 
     this.buttons = {
       INTERACT: [space, enter, e],
       BACK: [escapeKey],
       OPEN_WONDERBOOK: [wonderbook],
       OPEN_INVENTORY: [inventory],
+      GALLOP: [shift],
       RACE_JUMP: [space],
     };
 

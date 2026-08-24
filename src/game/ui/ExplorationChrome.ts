@@ -86,15 +86,15 @@ export class ExplorationChrome {
 
     const panelX = GAME_WIDTH - 190;
     const panelY = GAME_HEIGHT - 170;
-    const panelShadow = createUiShadow(scene, panelX, panelY, 350, 190, 126, 0.2);
+    const panelShadow = createUiShadow(scene, panelX, panelY, 350, 214, 126, 0.2);
     const panel = scene.add
-      .rectangle(panelX, panelY, 350, 190, UI_COLOURS.cream, 0.99)
+      .rectangle(panelX, panelY, 350, 214, UI_COLOURS.cream, 0.99)
       .setName('exploration-controls-panel')
       .setStrokeStyle(4, UI_COLOURS.lavenderStrong, 0.98)
       .setScrollFactor(0)
       .setDepth(127);
     const heading = scene.add
-      .text(panelX, panelY - 70, 'How to play', {
+      .text(panelX, panelY - 82, 'How to play', {
         color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
         fontSize: '18px',
@@ -106,8 +106,8 @@ export class ExplorationChrome {
     const help = scene.add
       .text(
         panelX,
-        panelY - 18,
-        'Move: WASD / arrows\nClick/tap the ground: walk there\nInteract: E / Enter / Space\nB: Wonderbook   I: Bag   Esc: title',
+        panelY - 20,
+        'Move: WASD / arrows\nHold Shift: Gallop\nClick/tap the ground: walk there\nInteract: E / Enter / Space\nB: Wonderbook   I: Bag   Esc: title',
         {
           color: UI_COLOURS.softInk,
           fontFamily: UI_FONT,
@@ -122,14 +122,14 @@ export class ExplorationChrome {
       .setDepth(128);
 
     this.touchToggleButton = scene.add
-      .rectangle(panelX, panelY + 62, 245, 38, UI_COLOURS.lavender, 1)
+      .rectangle(panelX, panelY + 76, 245, 38, UI_COLOURS.lavender, 1)
       .setName('exploration-touch-controls-toggle')
       .setStrokeStyle(2, UI_COLOURS.lavenderStrong, 0.95)
       .setScrollFactor(0)
       .setDepth(128)
       .setInteractive({ useHandCursor: true });
     this.touchToggleLabel = scene.add
-      .text(panelX, panelY + 62, '', {
+      .text(panelX, panelY + 76, '', {
         color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
         fontSize: '14px',

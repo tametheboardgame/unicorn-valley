@@ -1,4 +1,5 @@
 import type { CollisionRectangle, MapPoint } from './MapTraversal';
+import { setWorldArrivalFacing } from './WorldArrivalState';
 
 export interface GladeLandmark {
   id: string;
@@ -26,10 +27,14 @@ const SOUTH_STREAM_HEIGHT = 1800 - SOUTH_STREAM_START;
 export function setMoonflowerGladePlayerSpawn(point: MapPoint): void {
   playerSpawn.x = point.x;
   playerSpawn.y = point.y;
+  if (point.x === 2470 && point.y === 900) {
+    setWorldArrivalFacing('MoonflowerGladeScene', 'left');
+  }
 }
 
 export function resetMoonflowerGladePlayerSpawn(): void {
-  setMoonflowerGladePlayerSpawn(DEFAULT_PLAYER_SPAWN);
+  playerSpawn.x = DEFAULT_PLAYER_SPAWN.x;
+  playerSpawn.y = DEFAULT_PLAYER_SPAWN.y;
 }
 
 export const MOONFLOWER_GLADE_MAP = {

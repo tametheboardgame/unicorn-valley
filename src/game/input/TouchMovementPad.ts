@@ -48,6 +48,7 @@ export class TouchMovementPad {
     this.createButton(originX, originY + spacing, '▼', 'MOVE_Y', 1, 'down');
     this.createButton(originX - spacing, originY, '◀', 'MOVE_X', -1, 'left');
     this.createButton(originX + spacing, originY, '▶', 'MOVE_X', 1, 'right');
+    this.createGallopButton(originX + spacing * 2.35, originY - spacing * 0.95);
 
     this.setVisible(preferredTouchControlsVisible ?? shouldDefaultTouchMovementPadVisible(), false);
   }
@@ -69,6 +70,7 @@ export class TouchMovementPad {
     this.destroyed = true;
     this.input.setAxis('MOVE_X', 0);
     this.input.setAxis('MOVE_Y', 0);
+    this.input.setButton('GALLOP', false);
     for (const object of this.objects) {
       object.destroy();
     }
@@ -88,6 +90,7 @@ export class TouchMovementPad {
     if (!visible) {
       this.input.setAxis('MOVE_X', 0);
       this.input.setAxis('MOVE_Y', 0);
+      this.input.setButton('GALLOP', false);
     }
 
     for (const object of this.objects) {
@@ -138,5 +141,49 @@ export class TouchMovementPad {
 
     this.buttons.push(button);
     this.objects.push(button, text);
+  }
+
+  private createGallopButton(x: number, y: number): void {
+    const button = this.scene.add
+      .circle(x, y, 35, 0xfffbef, 0.78)
+      .setName('touch-movement-gallop')
+      .setStrokeStyle(4, 0xb17bbd, 0.9)
+      .setScrollFactor(0)
+      .setDepth(117)
+      .setInteractive({ useHandCursor: true });
+    const text = this.scene.add
+      .text(x, y - 2, '✦', {
+        color: '#765080',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '27px',
+        fontStyle: 'bold',
+      })
+      .setName('touch-movement-gallop-label')
+      .setOrigin(0.5)
+      .setScrollFactor(0)
+      .setDepth(118);
+    const hint = this.scene.add
+      .text(x, y + 45, 'Gallop', {
+        color: '#5c4568',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '13px',
+        fontStyle: 'bold',
+        backgroundColor: '#fffbeed0',
+        padding: { x: 5, y: 2 },
+      })
+      .setName('touch-movement-gallop-hint')
+      .setOrigin(0.5)
+      .setScrollFactor(0)
+      .setDepth(118);
+
+    const press = (): void => this.input.setButton('GALLOP', true);
+    const release = (): void => this.input.setButton('GALLOP', false);
+    button.on('pointerdown', press);
+    button.on('pointerup', release);
+    button.on('pointerout', release);
+    button.on('pointerupoutside', release);
+
+    this.buttons.push(button);
+    this.objects.push(button, text, hint);
   }
 }
