@@ -67,13 +67,21 @@ test.describe('R5-WP5.9C global atmosphere and weather', () => {
       await waitForScene(page, sceneKey);
       const scene = sceneFrom(await snapshot(page), sceneKey);
 
-      expect(scene.objects.filter((object) => object.name === 'atmospheric-time-presentation')).toHaveLength(1);
-      expect(scene.objects.filter((object) => object.name === 'atmospheric-time-control')).toHaveLength(1);
-      expect(scene.objects.filter((object) => object.name === 'magical-weather-control')).toHaveLength(1);
+      expect(
+        scene.objects.filter((object) => object.name === 'atmospheric-time-presentation'),
+      ).toHaveLength(1);
+      expect(
+        scene.objects.filter((object) => object.name === 'atmospheric-time-control'),
+      ).toHaveLength(1);
+      expect(
+        scene.objects.filter((object) => object.name === 'magical-weather-control'),
+      ).toHaveLength(1);
     });
   }
 
-  test('Moonflower Patch inherits the outdoor atmosphere layer without bespoke scene wiring', async ({ page }) => {
+  test('Moonflower Patch inherits the outdoor atmosphere layer without bespoke scene wiring', async ({
+    page,
+  }) => {
     await page.goto('/?scene=glade&diagnostics=1');
     await waitForScene(page, 'MoonflowerGladeScene');
     await page.evaluate(() => {
@@ -87,7 +95,9 @@ test.describe('R5-WP5.9C global atmosphere and weather', () => {
     await waitForScene(page, 'MoonflowerPatchScene');
     const scene = sceneFrom(await snapshot(page), 'MoonflowerPatchScene');
 
-    expect(scene.objects.some((object) => object.name === 'atmospheric-time-presentation')).toBe(true);
+    expect(scene.objects.some((object) => object.name === 'atmospheric-time-presentation')).toBe(
+      true,
+    );
     expect(scene.objects.some((object) => object.name === 'magical-weather-control')).toBe(true);
   });
 
@@ -111,8 +121,12 @@ test.describe('R5-WP5.9C global atmosphere and weather', () => {
     });
     await waitForScene(page, 'SunbeamVillageScene');
     const village = sceneFrom(await snapshot(page), 'SunbeamVillageScene');
-    const timeControl = village.objects.find((object) => object.name === 'atmospheric-time-control');
-    const weatherControl = village.objects.find((object) => object.name === 'magical-weather-control');
+    const timeControl = village.objects.find(
+      (object) => object.name === 'atmospheric-time-control',
+    );
+    const weatherControl = village.objects.find(
+      (object) => object.name === 'magical-weather-control',
+    );
 
     expect(timeControl?.text).toContain('Afternoon');
     expect(weatherControl?.text).toContain('Gentle Rain');
@@ -127,7 +141,9 @@ test.describe('R5-WP5.9C global atmosphere and weather', () => {
     await page.waitForTimeout(180);
 
     const woods = sceneFrom(await snapshot(page), 'WhisperingWoodsScene');
-    const sparkleField = woods.objects.find((object) => object.name === 'magical-weather-sparkle-world');
+    const sparkleField = woods.objects.find(
+      (object) => object.name === 'magical-weather-sparkle-world',
+    );
     expect(sparkleField).toBeDefined();
     expect(sparkleField?.scrollFactorX).toBe(1);
     expect(sparkleField?.scrollFactorY).toBe(1);
