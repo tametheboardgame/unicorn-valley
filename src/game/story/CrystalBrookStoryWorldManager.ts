@@ -7,8 +7,13 @@ import {
 } from '../../content/r5CrystalBrookStory';
 import type { SecretDiscoveryDefinition } from '../../content/r4Secrets';
 import { SecretDiscoveryService } from '../discovery/SecretDiscoveryService';
+import {
+  WORLD_INTERACTION_PROMPT,
+  WorldInteractionInput,
+} from '../interaction/WorldInteractionInput';
 import { getBrowserSaveService } from '../save/browserSaveService';
-import { CRYSTAL_BROOK_MAP } from '../world/CrystalBrookMap';
+import { CRYSTAL_BROOK_MAP, setCrystalBrookPlayerSpawn } from '../world/CrystalBrookMap';
+import { rememberWorldReturnState } from '../world/WorldArrivalState';
 import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
 
 const PRESENTATION_NAME = 'crystal-brook-story-presentation';
@@ -22,7 +27,7 @@ interface SecretMarker {
 
 interface BrookStoryState {
   scene: Phaser.Scene;
-  interactKey: Phaser.Input.Keyboard.Key | null;
+  interaction: WorldInteractionInput;
   ripple: Phaser.GameObjects.Container | null;
   ripplePrompt: Phaser.GameObjects.Text | null;
   markers: Map<SecretDiscoveryDefinition['id'], SecretMarker>;
@@ -93,7 +98,7 @@ export class CrystalBrookStoryWorldManager {
       }
     }
 
-    if (!state.interactKey || !Phaser.Input.Keyboard.JustDown(state.interactKey)) {
+    if (!state.interaction.justPressed()) {
       return;
     }
 
@@ -115,7 +120,7 @@ export class CrystalBrookStoryWorldManager {
     this.clearState();
     this.state = {
       scene,
-      interactKey: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.E) ?? null,
+      interaction: new WorldInteractionInput(scene),
       ripple: null,
       ripplePrompt: null,
       markers: new Map(),
@@ -136,7 +141,7 @@ export class CrystalBrookStoryWorldManager {
     const eye = state.scene.add.circle(44, -38, 4, 0x3e6670, 1);
     const tail = state.scene.add.ellipse(-56, -7, 24, 68, 0xa8e2c8, 0.96).setAngle(-35);
     const prompt = state.scene.add
-      .text(0, 82, 'Talk: Ripple  💬', {
+      .text(0, 82, `${WORLD_INTERACTION_PROMPT}: Talk to Ripple  💬`, {
         color: '#3f6671',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '15px',
@@ -146,7 +151,7 @@ export class CrystalBrookStoryWorldManager {
       })
       .setOrigin(0.5)
       .setVisible(false);
-    const zone = state.scene.add.zone(0, 0, 180, 180).setInteractive({ useHandCursor: true });
+    const zone = state.scene.add.zone(0, 0, 180, 180);
 
     state.ripple = state.scene.add
       .container(position.x, position.y, [glow, tail, body, mane, head, horn, eye, prompt, zone])
@@ -154,7 +159,7 @@ export class CrystalBrookStoryWorldManager {
       .setDepth(18);
     state.ripplePrompt = prompt;
 
-    zone.on('pointerdown', () => {
+    state.interaction.bindPointer(zone, () => {
       const player = findPlayer(state.scene);
       if (!player) {
         return;
@@ -212,7 +217,7 @@ export class CrystalBrookStoryWorldManager {
       .setOrigin(0.5)
       .setAlpha(0.68);
     const prompt = scene.add
-      .text(0, 50, `${definition.actionLabel}: ${definition.label}`, {
+      .text(0, 50, `${WORLD_INTERACTION_PROMPT}: ${definition.label}`, {
         color: '#3f6671',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '15px',
@@ -222,15 +227,18 @@ export class CrystalBrookStoryWorldManager {
       })
       .setOrigin(0.5)
       .setVisible(false);
-    const zone = scene.add
-      .zone(0, 0, definition.interactionRadius * 1.4, definition.interactionRadius * 1.4)
-      .setInteractive({ useHandCursor: true });
+    const zone = scene.add.zone(
+      0,
+      0,
+      definition.interactionRadius * 1.4,
+      definition.interactionRadius * 1.4,
+    );
     const container = scene.add
       .container(definition.position.x, definition.position.y, [glow, icon, prompt, zone])
       .setName(PRESENTATION_NAME)
       .setDepth(19);
 
-    zone.on('pointerdown', () => {
+    this.state?.interaction.bindPointer(zone, () => {
       const player = findPlayer(scene);
       if (!player) {
         return;
@@ -338,6 +346,10 @@ export class CrystalBrookStoryWorldManager {
   }
 
   private openRippleStory(scene: Phaser.Scene): void {
+    const player = findPlayer(scene);
+    if (player) {
+      rememberWorldReturnState('CrystalBrookScene', player, setCrystalBrookPlayerSpawn);
+    }
     scene.scene.start('RippleStoryScene', { returnScene: 'CrystalBrookScene' });
   }
 
@@ -364,6 +376,7 @@ export class CrystalBrookStoryWorldManager {
     if (!this.state) {
       return;
     }
+    this.state.interaction.destroy();
     this.state.ripple?.destroy(true);
     for (const marker of this.state.markers.values()) {
       marker.container.destroy(true);
