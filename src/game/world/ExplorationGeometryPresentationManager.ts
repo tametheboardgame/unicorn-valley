@@ -40,7 +40,8 @@ export class ExplorationGeometryPresentationManager {
       const definition = HINTS[scene.scene.key];
       const legacyHint = scene.children.list.find(
         (object): object is Phaser.GameObjects.Text =>
-          object instanceof Phaser.GameObjects.Text && object.text.startsWith(definition.startsWith),
+          object instanceof Phaser.GameObjects.Text &&
+          object.text.startsWith(definition.startsWith),
       );
       if (legacyHint) {
         legacyHint
