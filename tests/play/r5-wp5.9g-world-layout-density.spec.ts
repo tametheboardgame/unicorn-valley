@@ -19,11 +19,16 @@ interface DiagnosticSnapshot {
   scenes: DiagnosticScene[];
 }
 
+interface DiagnosticApi {
+  snapshot(): DiagnosticSnapshot;
+  startScene(sceneKey: string, data?: object): void;
+}
+
 async function snapshot(page: Page): Promise<DiagnosticSnapshot> {
   return page.evaluate(() => {
     const diagnostics = (
       window as typeof window & {
-        __UNICORN_VALLEY_DIAGNOSTICS__?: { snapshot(): DiagnosticSnapshot };
+        __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticApi;
       }
     ).__UNICORN_VALLEY_DIAGNOSTICS__;
     if (!diagnostics) {
@@ -33,11 +38,25 @@ async function snapshot(page: Page): Promise<DiagnosticSnapshot> {
   });
 }
 
+async function startScene(page: Page, sceneKey: string): Promise<void> {
+  await page.evaluate((target) => {
+    const diagnostics = (
+      window as typeof window & {
+        __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticApi;
+      }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__;
+    if (!diagnostics) {
+      throw new Error('Browser diagnostics are unavailable.');
+    }
+    diagnostics.startScene(target);
+  }, sceneKey);
+}
+
 async function waitForScene(page: Page, sceneKey: string): Promise<void> {
   await page.waitForFunction((expected) => {
     const diagnostics = (
       window as typeof window & {
-        __UNICORN_VALLEY_DIAGNOSTICS__?: { snapshot(): DiagnosticSnapshot };
+        __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticApi;
       }
     ).__UNICORN_VALLEY_DIAGNOSTICS__;
     return diagnostics?.snapshot().activeScenes.includes(expected) === true;
@@ -72,6 +91,23 @@ test.describe('R5-WP5.9G world layout and density', () => {
       expect(cue?.active).toBe(true);
     });
   }
+
+  test('branch presentation is rebuilt exactly once after revisiting a region', async ({ page }) => {
+    await page.goto('/?scene=brook&diagnostics=1');
+    await waitForScene(page, 'CrystalBrookScene');
+    await startScene(page, 'WhisperingWoodsScene');
+    await waitForScene(page, 'WhisperingWoodsScene');
+    await startScene(page, 'CrystalBrookScene');
+    await waitForScene(page, 'CrystalBrookScene');
+
+    const brook = sceneFrom(await snapshot(page), 'CrystalBrookScene');
+    expect(
+      brook.objects.filter(({ name }) => name === 'region-branch-cue:prism-grotto'),
+    ).toHaveLength(1);
+    expect(
+      brook.objects.filter(({ name }) => name === 'exploration-geometry-presentation-anchor'),
+    ).toHaveLength(1);
+  });
 
   test('Bag map shows side branches, a homeward route and a reason to revisit Crystal Brook', async ({
     page,
