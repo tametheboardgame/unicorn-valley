@@ -1,4 +1,4 @@
-import Phaser from 'phaser';
+import type Phaser from 'phaser';
 import {
   BODY_COLOURS,
   EYE_COLOURS,
@@ -44,7 +44,7 @@ const POSE_METRICS: Readonly<Record<UnicornProductionPose, PoseMetrics>> = {
     rearLegB: 5,
     frontLegA: 6,
     frontLegB: -5,
-    tailY: -2,
+    tailY: -3,
     maneLift: 1,
   },
   'walk-b': {
@@ -108,6 +108,19 @@ function mixColour(source: number, target: number, amount: number): number {
   return (mix(sourceR, targetR) << 16) | (mix(sourceG, targetG) << 8) | mix(sourceB, targetB);
 }
 
+function drawStar(
+  graphics: Phaser.GameObjects.Graphics,
+  x: number,
+  y: number,
+  radius: number,
+): void {
+  const inner = radius * 0.34;
+  graphics.fillTriangle(x, y - radius, x - inner, y, x + inner, y);
+  graphics.fillTriangle(x, y + radius, x - inner, y, x + inner, y);
+  graphics.fillTriangle(x - radius, y, x, y - inner, x, y + inner);
+  graphics.fillTriangle(x + radius, y, x, y - inner, x, y + inner);
+}
+
 function drawHeart(
   graphics: Phaser.GameObjects.Graphics,
   x: number,
@@ -126,20 +139,7 @@ function drawHeart(
   );
 }
 
-function drawStar(
-  graphics: Phaser.GameObjects.Graphics,
-  x: number,
-  y: number,
-  radius: number,
-): void {
-  const inner = radius * 0.34;
-  graphics.fillTriangle(x, y - radius, x - inner, y, x + inner, y);
-  graphics.fillTriangle(x, y + radius, x - inner, y, x + inner, y);
-  graphics.fillTriangle(x - radius, y, x, y - inner, x, y + inner);
-  graphics.fillTriangle(x + radius, y, x, y - inner, x, y + inner);
-}
-
-function fillOutlinedEllipse(
+function outlinedEllipse(
   graphics: Phaser.GameObjects.Graphics,
   x: number,
   y: number,
@@ -155,7 +155,7 @@ function fillOutlinedEllipse(
   graphics.strokeEllipse(x, y, width, height);
 }
 
-function fillOutlinedRoundedRect(
+function outlinedRoundedRect(
   graphics: Phaser.GameObjects.Graphics,
   x: number,
   y: number,
@@ -183,63 +183,69 @@ function drawTail(
   metrics: PoseMetrics,
 ): void {
   const tailY = y + metrics.tailY * scale;
-  graphics.lineStyle(4 * scale, outline, 0.78);
   graphics.fillStyle(colour, 1);
+  graphics.lineStyle(3.5 * scale, outline, 0.84);
 
   if (appearance.tailStyle === 'curl') {
-    graphics.fillCircle(x - 67 * scale, tailY + 2 * scale, 23 * scale);
-    graphics.strokeCircle(x - 67 * scale, tailY + 2 * scale, 23 * scale);
-    graphics.fillCircle(x - 86 * scale, tailY - 11 * scale, 16 * scale);
-    graphics.strokeCircle(x - 86 * scale, tailY - 11 * scale, 16 * scale);
-    graphics.fillCircle(x - 91 * scale, tailY + 12 * scale, 12 * scale);
-    graphics.strokeCircle(x - 91 * scale, tailY + 12 * scale, 12 * scale);
-    graphics.fillStyle(0xffffff, 0.18);
-    graphics.fillCircle(x - 76 * scale, tailY - 8 * scale, 7 * scale);
-    return;
-  }
-
-  graphics.beginPath();
-  graphics.moveTo(x - 47 * scale, tailY - 4 * scale);
-  if (appearance.tailStyle === 'ribbon') {
-    graphics.bezierCurveTo(
-      x - 73 * scale,
+    for (const [dx, dy, radius] of [
+      [-66, 1, 23],
+      [-84, -12, 17],
+      [-94, 8, 13],
+    ] as const) {
+      graphics.fillCircle(x + dx * scale, tailY + dy * scale, radius * scale);
+      graphics.strokeCircle(x + dx * scale, tailY + dy * scale, radius * scale);
+    }
+  } else if (appearance.tailStyle === 'ribbon') {
+    graphics.fillTriangle(
+      x - 49 * scale,
+      tailY - 7 * scale,
+      x - 106 * scale,
       tailY - 32 * scale,
-      x - 105 * scale,
-      tailY - 30 * scale,
+      x - 83 * scale,
+      tailY + 5 * scale,
+    );
+    graphics.strokeTriangle(
+      x - 49 * scale,
+      tailY - 7 * scale,
+      x - 106 * scale,
+      tailY - 32 * scale,
+      x - 83 * scale,
+      tailY + 5 * scale,
+    );
+    graphics.fillTriangle(
+      x - 58 * scale,
+      tailY + 2 * scale,
       x - 101 * scale,
+      tailY + 32 * scale,
+      x - 80 * scale,
       tailY + 2 * scale,
     );
-    graphics.bezierCurveTo(
-      x - 99 * scale,
-      tailY + 22 * scale,
-      x - 77 * scale,
-      tailY + 24 * scale,
-      x - 61 * scale,
-      tailY + 8 * scale,
+    graphics.strokeTriangle(
+      x - 58 * scale,
+      tailY + 2 * scale,
+      x - 101 * scale,
+      tailY + 32 * scale,
+      x - 80 * scale,
+      tailY + 2 * scale,
     );
   } else {
-    graphics.bezierCurveTo(
-      x - 72 * scale,
-      tailY - 35 * scale,
-      x - 111 * scale,
-      tailY - 20 * scale,
-      x - 108 * scale,
-      tailY + 16 * scale,
+    outlinedEllipse(
+      graphics,
+      x - 77 * scale,
+      tailY - 3 * scale,
+      64 * scale,
+      38 * scale,
+      colour,
+      outline,
+      3.5 * scale,
     );
-    graphics.bezierCurveTo(
-      x - 101 * scale,
-      tailY + 42 * scale,
-      x - 72 * scale,
-      tailY + 30 * scale,
-      x - 55 * scale,
-      tailY + 10 * scale,
-    );
+    graphics.fillStyle(colour, 1);
+    graphics.fillCircle(x - 103 * scale, tailY + 2 * scale, 17 * scale);
+    graphics.strokeCircle(x - 103 * scale, tailY + 2 * scale, 17 * scale);
   }
-  graphics.closePath();
-  graphics.fillPath();
-  graphics.strokePath();
-  graphics.fillStyle(0xffffff, 0.16);
-  graphics.fillEllipse(x - 83 * scale, tailY - 8 * scale, 31 * scale, 10 * scale);
+
+  graphics.fillStyle(0xffffff, 0.17);
+  graphics.fillEllipse(x - 80 * scale, tailY - 9 * scale, 30 * scale, 9 * scale);
 }
 
 function drawMane(
@@ -254,66 +260,80 @@ function drawMane(
 ): void {
   const lift = metrics.maneLift * scale;
   graphics.fillStyle(colour, 1);
-  graphics.lineStyle(3.5 * scale, outline, 0.82);
+  graphics.lineStyle(3.2 * scale, outline, 0.84);
 
   if (appearance.maneStyle === 'fluffy') {
     for (const [dx, dy, radius] of [
       [43, -47, 14],
       [34, -31, 16],
-      [31, -13, 15],
+      [30, -13, 15],
       [27, 4, 12],
     ] as const) {
       graphics.fillCircle(x + dx * scale, y + dy * scale - lift, radius * scale);
       graphics.strokeCircle(x + dx * scale, y + dy * scale - lift, radius * scale);
     }
   } else if (appearance.maneStyle === 'swept') {
-    graphics.beginPath();
-    graphics.moveTo(x + 49 * scale, y - 60 * scale - lift);
-    graphics.bezierCurveTo(
-      x + 30 * scale,
-      y - 46 * scale - lift,
-      x + 18 * scale,
-      y - 20 * scale - lift,
-      x + 55 * scale,
+    graphics.fillTriangle(
+      x + 48 * scale,
+      y - 62 * scale - lift,
+      x + 17 * scale,
+      y - 16 * scale - lift,
+      x + 58 * scale,
       y - 4 * scale - lift,
     );
-    graphics.bezierCurveTo(
-      x + 44 * scale,
-      y - 18 * scale - lift,
-      x + 47 * scale,
-      y - 40 * scale - lift,
-      x + 49 * scale,
-      y - 60 * scale - lift,
-    );
-    graphics.closePath();
-    graphics.fillPath();
-    graphics.strokePath();
-  } else {
-    graphics.beginPath();
-    graphics.moveTo(x + 48 * scale, y - 58 * scale - lift);
-    graphics.bezierCurveTo(
-      x + 23 * scale,
-      y - 50 * scale - lift,
-      x + 19 * scale,
-      y - 23 * scale - lift,
-      x + 31 * scale,
-      y - 3 * scale - lift,
-    );
-    graphics.bezierCurveTo(
-      x + 44 * scale,
-      y - 17 * scale - lift,
-      x + 47 * scale,
-      y - 39 * scale - lift,
+    graphics.strokeTriangle(
       x + 48 * scale,
-      y - 58 * scale - lift,
+      y - 62 * scale - lift,
+      x + 17 * scale,
+      y - 16 * scale - lift,
+      x + 58 * scale,
+      y - 4 * scale - lift,
     );
-    graphics.closePath();
-    graphics.fillPath();
-    graphics.strokePath();
+    outlinedEllipse(
+      graphics,
+      x + 31 * scale,
+      y - 24 * scale - lift,
+      23 * scale,
+      42 * scale,
+      colour,
+      outline,
+      3 * scale,
+    );
+  } else {
+    outlinedEllipse(
+      graphics,
+      x + 42 * scale,
+      y - 45 * scale - lift,
+      25 * scale,
+      27 * scale,
+      colour,
+      outline,
+      3 * scale,
+    );
+    outlinedEllipse(
+      graphics,
+      x + 34 * scale,
+      y - 24 * scale - lift,
+      27 * scale,
+      43 * scale,
+      colour,
+      outline,
+      3 * scale,
+    );
+    outlinedEllipse(
+      graphics,
+      x + 29 * scale,
+      y - 3 * scale - lift,
+      23 * scale,
+      34 * scale,
+      colour,
+      outline,
+      3 * scale,
+    );
   }
 
-  graphics.fillStyle(0xffffff, 0.2);
-  graphics.fillEllipse(x + 34 * scale, y - 34 * scale - lift, 8 * scale, 27 * scale);
+  graphics.fillStyle(0xffffff, 0.18);
+  graphics.fillEllipse(x + 35 * scale, y - 35 * scale - lift, 7 * scale, 24 * scale);
 }
 
 function drawHorn(
@@ -323,29 +343,32 @@ function drawHorn(
   scale: number,
   appearance: UnicornAppearance,
 ): void {
-  const hornBase = 0xf2cf72;
-  const hornShade = 0xb8894a;
-  const hornTipY = appearance.hornStyle === 'star' ? -104 : -99;
-  graphics.fillStyle(hornBase, 1);
-  graphics.lineStyle(3 * scale, hornShade, 0.9);
-  graphics.beginPath();
-  graphics.moveTo(x + 67 * scale, y - 58 * scale);
-  graphics.lineTo(x + 78 * scale, y + hornTipY * scale);
-  graphics.lineTo(x + 84 * scale, y - 57 * scale);
-  graphics.closePath();
-  graphics.fillPath();
-  graphics.strokePath();
-
-  if (appearance.hornStyle === 'star') {
-    graphics.fillStyle(0xffe990, 1);
-    drawStar(graphics, x + 78 * scale, y - 106 * scale, 10 * scale);
-    return;
-  }
-
-  graphics.lineStyle(2.2 * scale, hornShade, 0.95);
+  const tipY = appearance.hornStyle === 'star' ? -104 : -99;
+  graphics.fillStyle(0xf3d47c, 1);
+  graphics.lineStyle(2.8 * scale, 0xb8894a, 0.92);
+  graphics.fillTriangle(
+    x + 67 * scale,
+    y - 58 * scale,
+    x + 78 * scale,
+    y + tipY * scale,
+    x + 84 * scale,
+    y - 57 * scale,
+  );
+  graphics.strokeTriangle(
+    x + 67 * scale,
+    y - 58 * scale,
+    x + 78 * scale,
+    y + tipY * scale,
+    x + 84 * scale,
+    y - 57 * scale,
+  );
+  graphics.lineStyle(2 * scale, 0xb8894a, 0.95);
   graphics.lineBetween(x + 70 * scale, y - 70 * scale, x + 82 * scale, y - 75 * scale);
   if (appearance.hornStyle === 'spiral') {
     graphics.lineBetween(x + 72 * scale, y - 82 * scale, x + 81 * scale, y - 87 * scale);
+  } else if (appearance.hornStyle === 'star') {
+    graphics.fillStyle(0xffec96, 1);
+    drawStar(graphics, x + 78 * scale, y - 106 * scale, 10 * scale);
   }
 }
 
@@ -357,7 +380,7 @@ function drawMarking(
   appearance: UnicornAppearance,
   body: number,
 ): void {
-  graphics.fillStyle(0xffffff, 0.86);
+  graphics.fillStyle(0xffffff, 0.84);
   if (appearance.marking === 'star') {
     drawStar(graphics, x - 13 * scale, y + 5 * scale, 11 * scale);
   } else if (appearance.marking === 'heart') {
@@ -430,9 +453,9 @@ export function drawUnicornAppearance(
   const eye = colourValue(EYE_COLOURS, appearance.eyeColour);
   const mane = colourValue(HAIR_COLOURS, appearance.maneColour);
   const tail = colourValue(HAIR_COLOURS, appearance.tailColour);
-  const bodyOutline = mixColour(body, 0x5a4867, 0.46);
-  const bodyShade = mixColour(body, 0x735f78, 0.22);
-  const bodyHighlight = mixColour(body, 0xffffff, 0.38);
+  const bodyOutline = mixColour(body, 0x554261, 0.48);
+  const bodyShade = mixColour(body, 0x705c78, 0.23);
+  const bodyHighlight = mixColour(body, 0xffffff, 0.4);
   const hairOutline = mixColour(mane, 0x493a58, 0.45);
   const tailOutline = mixColour(tail, 0x493a58, 0.45);
   const bodyY = y + metrics.bodyY * scale;
@@ -441,15 +464,13 @@ export function drawUnicornAppearance(
 
   graphics.fillStyle(0x4b3658, 0.12);
   graphics.fillEllipse(x - 4 * scale, y + 67 * scale, 154 * scale, 24 * scale);
-
   drawTail(graphics, x, bodyY, scale, appearance, tail, tailOutline, metrics);
 
-  const rearLegs = [
-    { x: -43, offset: metrics.rearLegA, alpha: 0.86 },
-    { x: 3, offset: metrics.rearLegB, alpha: 0.9 },
-  ] as const;
-  for (const leg of rearLegs) {
-    graphics.fillStyle(bodyShade, leg.alpha);
+  for (const leg of [
+    { x: -43, offset: metrics.rearLegA },
+    { x: 3, offset: metrics.rearLegB },
+  ] as const) {
+    graphics.fillStyle(bodyShade, 0.9);
     graphics.fillRoundedRect(
       x + leg.x * scale,
       bodyY + (27 + leg.offset) * scale,
@@ -459,7 +480,7 @@ export function drawUnicornAppearance(
     );
   }
 
-  fillOutlinedEllipse(
+  outlinedEllipse(
     graphics,
     x - 6 * scale,
     bodyY + 7 * scale,
@@ -469,7 +490,7 @@ export function drawUnicornAppearance(
     bodyOutline,
     4 * scale,
   );
-  fillOutlinedEllipse(
+  outlinedEllipse(
     graphics,
     x + 39 * scale,
     bodyY - 9 * scale,
@@ -480,12 +501,11 @@ export function drawUnicornAppearance(
     4 * scale,
   );
 
-  const frontLegs = [
+  for (const leg of [
     { x: -29, offset: metrics.frontLegA },
     { x: 27, offset: metrics.frontLegB },
-  ] as const;
-  for (const leg of frontLegs) {
-    fillOutlinedRoundedRect(
+  ] as const) {
+    outlinedRoundedRect(
       graphics,
       x + leg.x * scale,
       bodyY + (29 + leg.offset) * scale,
@@ -496,7 +516,7 @@ export function drawUnicornAppearance(
       bodyOutline,
       3 * scale,
     );
-    graphics.fillStyle(bodyShade, 0.32);
+    graphics.fillStyle(bodyShade, 0.33);
     graphics.fillRoundedRect(
       x + leg.x * scale,
       bodyY + (68 + leg.offset) * scale,
@@ -506,7 +526,7 @@ export function drawUnicornAppearance(
     );
   }
 
-  fillOutlinedEllipse(
+  outlinedEllipse(
     graphics,
     headX + 72 * scale,
     headY - 34 * scale,
@@ -516,13 +536,13 @@ export function drawUnicornAppearance(
     bodyOutline,
     4 * scale,
   );
-  fillOutlinedEllipse(
+  outlinedEllipse(
     graphics,
     headX + 101 * scale,
     headY - 18 * scale,
     32 * scale,
     23 * scale,
-    mixColour(body, 0xffdfd6, 0.12),
+    mixColour(body, 0xffdfd6, 0.13),
     bodyOutline,
     3 * scale,
   );
@@ -550,6 +570,7 @@ export function drawUnicornAppearance(
       headY + ear[5] * scale,
     );
   }
+
   graphics.fillStyle(0xffd7e0, 0.42);
   graphics.fillTriangle(
     headX + 55 * scale,
@@ -568,10 +589,10 @@ export function drawUnicornAppearance(
     headY - 57 * scale,
   );
 
-  graphics.fillStyle(bodyHighlight, 0.58);
+  graphics.fillStyle(bodyHighlight, 0.57);
   graphics.fillEllipse(x - 19 * scale, bodyY - 3 * scale, 52 * scale, 21 * scale);
   graphics.fillEllipse(headX + 58 * scale, headY - 24 * scale, 22 * scale, 34 * scale);
-  graphics.fillStyle(0xe99aba, 0.12);
+  graphics.fillStyle(0xe99aba, 0.13);
   graphics.fillEllipse(headX + 91 * scale, headY - 17 * scale, 18 * scale, 9 * scale);
 
   drawMane(graphics, headX, headY, scale, appearance, mane, hairOutline, metrics);
@@ -579,9 +600,8 @@ export function drawUnicornAppearance(
   drawMarking(graphics, x, bodyY, scale, appearance, body);
   drawAccessory(graphics, headX, headY, scale, appearance);
 
-  graphics.fillStyle(0x493955, 0.28);
+  graphics.fillStyle(0x493955, 0.3);
   graphics.fillCircle(headX + 104 * scale, headY - 15 * scale, 2.2 * scale);
-
   graphics.fillStyle(eye, 1);
   graphics.fillCircle(headX + 86 * scale, headY - 37 * scale, 7.5 * scale);
   graphics.fillStyle(0x2f2940, 0.82);
