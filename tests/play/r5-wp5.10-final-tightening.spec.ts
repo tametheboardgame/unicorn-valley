@@ -126,8 +126,9 @@ test.describe('R5-WP5.10 final tightening', () => {
     }
 
     await waitForNamedObject(page, 'FireflyLanternScene', 'firefly-result-panel');
-    await page.keyboard.press('m');
+    await page.keyboard.down('m');
     await waitForNamedObject(page, 'FireflyLanternScene', 'firefly-mode-selector');
+    await page.keyboard.up('m');
     await waitForNamedObject(page, 'FireflyLanternScene', 'r5-final-firefly-selector-button:3');
 
     const firefly = sceneFrom(await snapshot(page), 'FireflyLanternScene');
