@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
-import { ExplorationShell, supportsExplorationShell } from './ExplorationShell';
+import { ExplorationShell } from './ExplorationShell';
+import { supportsExplorationShell } from './ExplorationShellConfig';
 
 export class ExplorationShellWorldManager {
   private readonly fallbackPointerInputs = new WeakMap<Phaser.Scene, PointerTouchInputAdapter>();
