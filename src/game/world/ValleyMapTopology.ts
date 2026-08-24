@@ -1,4 +1,5 @@
 import { MOONFLOWER_GLADE_LOCATION_ID } from '../save/saveLocationCheckpoint';
+import { COTTAGE_INTERIOR_LOCATION_ID } from './CottageInteriorMap';
 import { CRYSTAL_BROOK_LOCATION_ID } from './CrystalBrookMap';
 import { RAINBOW_MEADOW_LOCATION_ID } from './RainbowMeadowMap';
 import { SUNBEAM_VILLAGE_LOCATION_ID } from './SunbeamVillageMap';
@@ -34,7 +35,7 @@ export const VALLEY_MAP_NODES = [
     x: 0.12,
     y: 0.58,
     kind: 'home',
-    locationIds: ['moonflower-cottage'],
+    locationIds: ['moonflower-cottage', COTTAGE_INTERIOR_LOCATION_ID],
     revisitHint: 'Cottage, garden and familiar Moonflower paths.',
   },
   {
