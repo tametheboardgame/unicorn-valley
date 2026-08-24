@@ -17,9 +17,7 @@ import { WHISPERING_WOODS_LOCATION_ID, WHISPERING_WOODS_MAP } from './Whispering
 describe('R5-WP5.9E/G Valley map topology', () => {
   it('resolves home and every current R5 exploration region from save location IDs', () => {
     expect(getValleyMapNodeForLocation('moonflower-cottage')?.kind).toBe('home');
-    expect(getValleyMapNodeForLocation(COTTAGE_INTERIOR_LOCATION_ID)?.id).toBe(
-      VALLEY_HOME_NODE_ID,
-    );
+    expect(getValleyMapNodeForLocation(COTTAGE_INTERIOR_LOCATION_ID)?.id).toBe(VALLEY_HOME_NODE_ID);
     expect(getValleyMapNodeForLocation(RAINBOW_MEADOW_LOCATION_ID)?.label).toBe('Rainbow Meadow');
     expect(getValleyMapNodeForLocation(CRYSTAL_BROOK_LOCATION_ID)?.label).toBe('Crystal Brook');
     expect(getValleyMapNodeForLocation(WHISPERING_WOODS_LOCATION_ID)?.label).toBe(
