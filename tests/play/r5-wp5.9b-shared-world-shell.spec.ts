@@ -45,7 +45,9 @@ async function waitForScene(page: Page, sceneKey: string): Promise<void> {
 function sceneFrom(snapshotValue: DiagnosticSnapshot, sceneKey: string): DiagnosticScene {
   const scene = snapshotValue.scenes.find((candidate) => candidate.key === sceneKey);
   if (!scene) {
-    throw new Error(`Expected ${sceneKey}; active scenes: ${snapshotValue.activeScenes.join(', ')}`);
+    throw new Error(
+      `Expected ${sceneKey}; active scenes: ${snapshotValue.activeScenes.join(', ')}`,
+    );
   }
   return scene;
 }
@@ -77,7 +79,9 @@ test.describe('R5-WP5.9B shared exploration shell', () => {
     });
   }
 
-  test('Bag keyboard access works from Crystal Brook through the shared shell', async ({ page }) => {
+  test('Bag keyboard access works from Crystal Brook through the shared shell', async ({
+    page,
+  }) => {
     await page.goto('/?scene=brook&diagnostics=1');
     await waitForScene(page, 'CrystalBrookScene');
     await page.keyboard.press('i');
@@ -96,9 +100,9 @@ test.describe('R5-WP5.9B shared exploration shell', () => {
       await waitForScene(page, sceneKey);
       const scene = sceneFrom(await snapshot(page), sceneKey);
       expect(namedCount(scene, 'region-world-guidance')).toBe(1);
-      expect(scene.objects.some((object) => object.text?.toLowerCase().includes('hop between'))).toBe(
-        false,
-      );
+      expect(
+        scene.objects.some((object) => object.text?.toLowerCase().includes('hop between')),
+      ).toBe(false);
     }
   });
 });
