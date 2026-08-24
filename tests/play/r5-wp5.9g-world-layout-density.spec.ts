@@ -90,11 +90,15 @@ test.describe('R5-WP5.9G world layout and density', () => {
     await page.waitForTimeout(250);
 
     inventory = sceneFrom(await snapshot(page), 'InventoryScene');
-    expect(inventory.objects.some(({ name }) => name === 'bag-map-node:valley:moonflower-field')).toBe(
+    expect(
+      inventory.objects.some(({ name }) => name === 'bag-map-node:valley:moonflower-field'),
+    ).toBe(true);
+    expect(inventory.objects.some(({ name }) => name === 'bag-map-node:valley:rainbow-run')).toBe(
       true,
     );
-    expect(inventory.objects.some(({ name }) => name === 'bag-map-node:valley:rainbow-run')).toBe(true);
-    expect(inventory.objects.some(({ name }) => name === 'bag-map-node:valley:prism-grotto')).toBe(true);
+    expect(inventory.objects.some(({ name }) => name === 'bag-map-node:valley:prism-grotto')).toBe(
+      true,
+    );
     expect(
       inventory.objects.some(({ name }) => name === 'bag-map-node:valley:lantern-clearing'),
     ).toBe(true);
