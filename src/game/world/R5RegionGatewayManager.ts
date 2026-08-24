@@ -7,7 +7,9 @@ import {
 } from '../interaction/WorldInteractionInput';
 import type { PlayerFacing } from '../player/PlayerMovement';
 import { getActiveRaceCourse, resetActiveRaceCourse, selectRaceCourse } from '../racing/RaceCourse';
+import { getCrystalCascadeUnlockState } from '../racing/RaceProgression';
 import type { RaceRunState } from '../racing/RaceRun';
+import { getRaceShortcut } from '../racing/RaceShortcut';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { saveLocationCheckpoint } from '../save/saveLocationCheckpoint';
 import {
@@ -56,6 +58,7 @@ interface CrystalRacePresentationState {
   scene: Phaser.Scene;
   container: Phaser.GameObjects.Container;
   finishNote: Phaser.GameObjects.Text | null;
+  shortcutNoteShown: boolean;
 }
 
 const MEADOW_GATE_POSITION = { x: 3030, y: 1750 } as const;
@@ -66,6 +69,8 @@ const BROOK_WOODS_RETURN_POSITION = { x: 3070, y: 1010 } as const;
 const CRYSTAL_CASCADE_GATE_POSITION = { x: 2860, y: 850 } as const;
 const CRYSTAL_CASCADE_RETURN_POSITION = { x: 2660, y: 900 } as const;
 const WOODS_ENTRANCE = WHISPERING_WOODS_MAP.entrances[0];
+const RACE_COURSE_START_X = 260;
+const RACE_GROUND_Y = 575;
 
 const R5_REGION_GATEWAYS: readonly RegionGatewayDefinition[] = [
   {
@@ -184,12 +189,30 @@ export class R5RegionGatewayManager {
         continue;
       }
 
-      state.prompt.setVisible(distance <= 245);
+      const unlock = this.getRaceUnlockState(definition);
+      state.prompt.setText(
+        unlock.unlocked
+          ? `${WORLD_INTERACTION_PROMPT}: Race ${definition.label}`
+          : `🔒 ${unlock.clue}`,
+      );
+      state.prompt.setVisible(distance <= 285);
       if (isWithinInteractiveGateway(distance) && state.interaction?.justPressed()) {
         this.activateGateway(state);
         return;
       }
     }
+  }
+
+  private getRaceUnlockState(definition: RegionGatewayDefinition): {
+    unlocked: boolean;
+    clue: string;
+  } {
+    if (definition.raceCourseId !== CRYSTAL_CASCADE_RACE_ID) {
+      return { unlocked: true, clue: '' };
+    }
+    const saveService = getBrowserSaveService();
+    const save = saveService.load() ?? saveService.createNewGame();
+    return getCrystalCascadeUnlockState(save);
   }
 
   private ensureState(scene: Phaser.Scene, definition: RegionGatewayDefinition): GatewayState {
@@ -229,8 +252,10 @@ export class R5RegionGatewayManager {
         fontFamily: 'system-ui, sans-serif',
         fontSize: '16px',
         fontStyle: 'bold',
+        align: 'center',
         backgroundColor: '#fff9eef0',
         padding: { x: 9, y: 5 },
+        wordWrap: { width: 360 },
       })
       .setOrigin(0.5)
       .setVisible(false);
@@ -295,6 +320,11 @@ export class R5RegionGatewayManager {
     }
 
     if (state.definition.raceCourseId) {
+      const unlock = this.getRaceUnlockState(state.definition);
+      if (!unlock.unlocked) {
+        this.showLockedRaceClue(state.scene, unlock.clue);
+        return;
+      }
       setCrystalBrookPlayerSpawn(state.definition.destinationSpawn);
       setWorldArrivalFacing('CrystalBrookScene', state.definition.destinationFacing);
       saveLocationCheckpoint(getBrowserSaveService(), CRYSTAL_BROOK_LOCATION_ID);
@@ -316,6 +346,26 @@ export class R5RegionGatewayManager {
     state.scene.scene.start(state.definition.destinationSceneKey);
   }
 
+  private showLockedRaceClue(scene: Phaser.Scene, clue: string): void {
+    const existing = scene.children.getByName('crystal-cascade-lock-clue');
+    existing?.destroy();
+    const note = scene.add
+      .text(CRYSTAL_CASCADE_GATE_POSITION.x, CRYSTAL_CASCADE_GATE_POSITION.y - 190, `🔒 ${clue}`, {
+        color: '#3c5660',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '18px',
+        fontStyle: 'bold',
+        align: 'center',
+        backgroundColor: '#effffff2',
+        padding: { x: 12, y: 8 },
+        wordWrap: { width: 370 },
+      })
+      .setName('crystal-cascade-lock-clue')
+      .setOrigin(0.5)
+      .setDepth(80);
+    scene.time.delayedCall(2600, () => note.destroy());
+  }
+
   private updateCrystalCascadeRace(): void {
     const raceScene = this.game.scene.getScene('RaceScene');
     const crystalRaceActive =
@@ -325,6 +375,15 @@ export class R5RegionGatewayManager {
       this.crystalRaceWasActive = true;
       const presentation = this.ensureCrystalRacePresentation(raceScene);
       const runtime = asRaceScene(raceScene);
+      const shortcut = getRaceShortcut(CRYSTAL_CASCADE_RACE_ID);
+      if (
+        shortcut &&
+        !presentation.shortcutNoteShown &&
+        runtime.runState?.usedShortcutIds.includes(shortcut.id)
+      ) {
+        presentation.shortcutNoteShown = true;
+        this.showShortcutFeedback(raceScene);
+      }
       if (runtime.runState?.movement.finished && !presentation.finishNote) {
         presentation.finishNote = raceScene.add
           .text(
@@ -376,7 +435,123 @@ export class R5RegionGatewayManager {
 
     const course = getActiveRaceCourse();
     const worldWidth = course.length + 760;
-    const water = scene.add.rectangle(worldWidth / 2, 674, worldWidth, 82, 0x65c7d3, 0.28);
+    const scenery: Phaser.GameObjects.GameObject[] = [];
+
+    const deepWater = scene.add.rectangle(worldWidth / 2, 650, worldWidth, 150, 0x3f9fb3, 0.86);
+    const current = scene.add.rectangle(worldWidth / 2, 590, worldWidth, 76, 0x8be5e7, 0.74);
+    const foam = scene.add.rectangle(worldWidth / 2, 552, worldWidth, 8, 0xe9ffff, 0.78);
+    scenery.push(deepWater, current, foam);
+
+    for (let x = 390, index = 0; x < worldWidth - 120; x += 260, index += 1) {
+      const arrow = scene.add
+        .text(x, 590 + (index % 2) * 14, index % 3 === 0 ? '◇  ➜' : '≈  ➜', {
+          color: index % 3 === 0 ? '#f2d8ff' : '#e8ffff',
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '23px',
+          fontStyle: 'bold',
+        })
+        .setOrigin(0.5)
+        .setAlpha(0.72);
+      scenery.push(arrow);
+    }
+
+    for (const [index, x] of [480, 980, 1510, 2050, 3190, 3680].entries()) {
+      const crystal = scene.add
+        .text(x, index % 2 === 0 ? 490 : 675, index % 3 === 0 ? '💎' : '✦', {
+          color: '#e8ffff',
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: index % 3 === 0 ? '38px' : '29px',
+          fontStyle: 'bold',
+        })
+        .setOrigin(0.5);
+      scenery.push(crystal);
+      scene.tweens.add({
+        targets: crystal,
+        alpha: { from: 0.42, to: 1 },
+        y: crystal.y - 8,
+        duration: 900 + index * 95,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.InOut',
+      });
+    }
+
+    for (const obstacle of course.obstacles) {
+      const x = RACE_COURSE_START_X + obstacle.progress;
+      if (obstacle.kind === 'log') {
+        scenery.push(
+          scene.add
+            .ellipse(x, RACE_GROUND_Y - 38, obstacle.width + 18, 30, 0x765641, 1)
+            .setStrokeStyle(4, 0xa47a58, 1),
+        );
+      } else {
+        for (const offset of [-38, -12, 14, 40]) {
+          scenery.push(
+            scene.add
+              .rectangle(x + offset, RACE_GROUND_Y - 54, 9, obstacle.clearanceHeight + 22, 0x4c956f, 1)
+              .setAngle(offset / 8),
+          );
+        }
+      }
+    }
+
+    const shortcut = getRaceShortcut(course.id);
+    if (shortcut) {
+      const entryX = RACE_COURSE_START_X + shortcut.entryStartProgress;
+      const exitX = RACE_COURSE_START_X + shortcut.entryEndProgress + shortcut.progressSkip;
+      const prismLane = scene.add
+        .rectangle((entryX + exitX) / 2, 500, exitX - entryX, 56, 0xcbb2ff, 0.62)
+        .setStrokeStyle(5, 0xf5e9ff, 0.85)
+        .setAngle(-2);
+      const prismLabel = scene.add
+        .text(entryX + 90, 440, 'PRISM CURRENT ↗\nJump into the glowing stream!', {
+          color: '#4f4771',
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '16px',
+          fontStyle: 'bold',
+          align: 'center',
+          backgroundColor: '#f5ecfff0',
+          padding: { x: 10, y: 6 },
+        })
+        .setOrigin(0.5);
+      scenery.push(prismLane, prismLabel);
+      for (let x = entryX + 45; x < exitX - 20; x += 92) {
+        scenery.push(
+          scene.add
+            .text(x, 500, '✦ ➜', {
+              color: '#fff5ff',
+              fontFamily: 'system-ui, sans-serif',
+              fontSize: '20px',
+              fontStyle: 'bold',
+            })
+            .setOrigin(0.5),
+        );
+      }
+    }
+
+    const startX = RACE_COURSE_START_X - 70;
+    const finishX = RACE_COURSE_START_X + course.length;
+    for (const [x, title] of [
+      [startX, 'CASCADE START'],
+      [finishX, 'CRYSTAL FINISH'],
+    ] as const) {
+      scenery.push(
+        scene.add.rectangle(x - 68, 446, 22, 210, 0x467f8a, 1),
+        scene.add.rectangle(x + 68, 446, 22, 210, 0x467f8a, 1),
+        scene.add
+          .rectangle(x, 350, 178, 42, 0xbceff0, 1)
+          .setStrokeStyle(5, 0x7b83c9, 1),
+        scene.add
+          .text(x, 350, title, {
+            color: '#38545c',
+            fontFamily: 'system-ui, sans-serif',
+            fontSize: '17px',
+            fontStyle: 'bold',
+          })
+          .setOrigin(0.5),
+      );
+    }
+
     const label = scene.add
       .text(GAME_WIDTH - 22, 92, '💎 Crystal Brook • Crystal Cascade', {
         color: '#31515c',
@@ -388,33 +563,37 @@ export class R5RegionGatewayManager {
       })
       .setOrigin(1, 0)
       .setScrollFactor(0);
-    const scenery: Phaser.GameObjects.GameObject[] = [water, label];
+    scenery.push(label);
 
-    for (const [index, x] of [520, 1110, 1740, 2370, 3040, 3660].entries()) {
-      const crystal = scene.add
-        .text(x, index % 2 === 0 ? 476 : 654, index % 3 === 0 ? '💎' : '✦', {
-          color: '#dfffff',
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: index % 3 === 0 ? '34px' : '26px',
-          fontStyle: 'bold',
-        })
-        .setOrigin(0.5);
-      scenery.push(crystal);
-      scene.tweens.add({
-        targets: crystal,
-        alpha: { from: 0.45, to: 1 },
-        y: crystal.y - 8,
-        duration: 950 + index * 90,
-        yoyo: true,
-        repeat: -1,
-        ease: 'Sine.InOut',
-      });
-    }
-
-    const container = scene.add.container(0, 0, scenery).setDepth(7);
+    const container = scene.add
+      .container(0, 0, scenery)
+      .setName('crystal-cascade-course-presentation')
+      .setDepth(7);
     label.setDepth(1);
-    this.crystalRacePresentation = { scene, container, finishNote: null };
+    this.crystalRacePresentation = {
+      scene,
+      container,
+      finishNote: null,
+      shortcutNoteShown: false,
+    };
     return this.crystalRacePresentation;
+  }
+
+  private showShortcutFeedback(scene: Phaser.Scene): void {
+    const note = scene.add
+      .text(GAME_WIDTH / 2, 142, '✦ Prism Current! The shortcut carried you ahead! ✦', {
+        color: '#54436f',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '18px',
+        fontStyle: 'bold',
+        backgroundColor: '#f2e9fff2',
+        padding: { x: 13, y: 7 },
+      })
+      .setOrigin(0.5)
+      .setScrollFactor(0)
+      .setDepth(221);
+    scene.cameras.main.flash(170, 227, 208, 255, false);
+    scene.time.delayedCall(1800, () => note.destroy());
   }
 
   private clearCrystalRacePresentation(): void {
