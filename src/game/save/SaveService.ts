@@ -16,6 +16,11 @@ interface DecodedSave {
   serialisedCurrent: string;
 }
 
+interface StoredSave {
+  serialised: string;
+  decoded: DecodedSave;
+}
+
 function readSchemaVersion(value: unknown): number | null {
   if (typeof value !== 'object' || value === null || Array.isArray(value)) {
     return null;
@@ -33,6 +38,11 @@ function readSerialisedSchemaVersion(serialisedSave: string): number | null {
   }
 }
 
+function savedAtMillis(save: SaveGame): number {
+  const parsed = Date.parse(save.lastSavedAt);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
 export class SaveService {
   public constructor(
     private readonly repository: SaveRepository,
@@ -45,20 +55,35 @@ export class SaveService {
   }
 
   public load(): SaveGame | null {
-    const serialisedSave = this.repository.read();
-    if (serialisedSave !== null) {
-      if (this.isFutureVersion(serialisedSave)) {
-        return null;
-      }
+    if (this.hasFutureSchemaCheckpoint()) {
+      return null;
+    }
 
-      const decoded = this.decode(serialisedSave);
-      if (decoded) {
-        if (decoded.sourceVersion < CURRENT_SAVE_SCHEMA_VERSION) {
-          this.repository.writeBackup?.(serialisedSave);
-          this.repository.write(decoded.serialisedCurrent);
-        }
-        return decoded.save;
+    const serialisedPrimary = this.repository.read();
+    if (serialisedPrimary !== null && this.isFutureVersion(serialisedPrimary)) {
+      return null;
+    }
+
+    const primary = this.decodeStored(serialisedPrimary);
+    const checkpoint = this.readCurrentCheckpoint();
+
+    if (checkpoint && this.shouldPreferCheckpoint(checkpoint, primary)) {
+      this.tryWritePrimary(checkpoint.decoded.serialisedCurrent);
+      return checkpoint.decoded.save;
+    }
+
+    if (primary) {
+      if (primary.decoded.sourceVersion < CURRENT_SAVE_SCHEMA_VERSION) {
+        this.persistMigrationBestEffort(primary.serialised, primary.decoded);
+      } else if (!checkpoint || this.shouldPreferCheckpoint(primary, checkpoint)) {
+        this.tryWriteCheckpoint(primary.decoded.serialisedCurrent);
       }
+      return primary.decoded.save;
+    }
+
+    if (checkpoint) {
+      this.tryWritePrimary(checkpoint.decoded.serialisedCurrent);
+      return checkpoint.decoded.save;
     }
 
     return this.recoverFromBackup();
@@ -73,13 +98,30 @@ export class SaveService {
       lastSavedAt: savedAt,
     };
 
+    if (this.hasFutureSchemaCheckpoint()) {
+      return nextSave;
+    }
+
     const currentPrimary = this.repository.read();
     if (currentPrimary !== null && this.isFutureVersion(currentPrimary)) {
       return nextSave;
     }
 
-    this.preserveCurrentPrimaryAsBackup();
-    this.repository.write(JSON.stringify(nextSave));
+    const previous = this.readPreferredCurrentRecord(currentPrimary);
+    const backupStored = previous === null || this.tryWriteBackup(previous.serialised);
+    const serialisedNext = JSON.stringify(nextSave);
+    if (!this.tryWriteCheckpoint(serialisedNext)) {
+      return nextSave;
+    }
+
+    if (this.hasFutureSchemaCheckpoint()) {
+      return nextSave;
+    }
+
+    if (backupStored) {
+      this.tryWritePrimary(serialisedNext);
+    }
+
     this.events.emit('SAVE_COMPLETED', {
       schemaVersion: nextSave.schemaVersion,
       savedAt,
@@ -89,13 +131,35 @@ export class SaveService {
   }
 
   public clear(): void {
+    const currentPrimary = this.repository.read();
+    if (
+      this.hasFutureSchemaCheckpoint() ||
+      (currentPrimary !== null && this.isFutureVersion(currentPrimary))
+    ) {
+      return;
+    }
+
     this.repository.remove();
     this.repository.removeBackup?.();
+    this.repository.removeSchemaCheckpointsUpTo?.(CURRENT_SAVE_SCHEMA_VERSION);
+  }
+
+  private hasFutureSchemaCheckpoint(): boolean {
+    const highestVersion = this.repository.getHighestSchemaCheckpointVersion?.() ?? null;
+    return highestVersion !== null && highestVersion > CURRENT_SAVE_SCHEMA_VERSION;
   }
 
   private isFutureVersion(serialisedSave: string): boolean {
     const version = readSerialisedSchemaVersion(serialisedSave);
     return version !== null && version > CURRENT_SAVE_SCHEMA_VERSION;
+  }
+
+  private decodeStored(serialisedSave: string | null): StoredSave | null {
+    if (serialisedSave === null) {
+      return null;
+    }
+    const decoded = this.decode(serialisedSave);
+    return decoded ? { serialised: serialisedSave, decoded } : null;
   }
 
   private decode(serialisedSave: string): DecodedSave | null {
@@ -124,27 +188,79 @@ export class SaveService {
     };
   }
 
-  private preserveCurrentPrimaryAsBackup(): void {
-    const serialisedSave = this.repository.read();
-    if (serialisedSave === null || !this.decode(serialisedSave)) {
+  private readCurrentCheckpoint(): StoredSave | null {
+    const serialisedCheckpoint =
+      this.repository.readSchemaCheckpoint?.(CURRENT_SAVE_SCHEMA_VERSION) ?? null;
+    const checkpoint = this.decodeStored(serialisedCheckpoint);
+    return checkpoint?.decoded.sourceVersion === CURRENT_SAVE_SCHEMA_VERSION ? checkpoint : null;
+  }
+
+  private shouldPreferCheckpoint(checkpoint: StoredSave, primary: StoredSave | null): boolean {
+    if (!primary || primary.decoded.sourceVersion < CURRENT_SAVE_SCHEMA_VERSION) {
+      return true;
+    }
+    return savedAtMillis(checkpoint.decoded.save) >= savedAtMillis(primary.decoded.save);
+  }
+
+  private readPreferredCurrentRecord(serialisedPrimary: string | null): StoredSave | null {
+    const primary = this.decodeStored(serialisedPrimary);
+    const checkpoint = this.readCurrentCheckpoint();
+    return checkpoint && this.shouldPreferCheckpoint(checkpoint, primary) ? checkpoint : primary;
+  }
+
+  private persistMigrationBestEffort(serialisedSource: string, decoded: DecodedSave): void {
+    if (!this.tryWriteBackup(serialisedSource)) {
       return;
     }
-
-    this.repository.writeBackup?.(serialisedSave);
+    if (!this.tryWriteCheckpoint(decoded.serialisedCurrent) || this.hasFutureSchemaCheckpoint()) {
+      return;
+    }
+    this.tryWritePrimary(decoded.serialisedCurrent);
   }
 
   private recoverFromBackup(): SaveGame | null {
     const serialisedBackup = this.repository.readBackup?.() ?? null;
-    if (serialisedBackup === null) {
+    const backup = this.decodeStored(serialisedBackup);
+    if (!backup) {
       return null;
     }
 
-    const decoded = this.decode(serialisedBackup);
-    if (!decoded) {
-      return null;
+    if (this.tryWriteCheckpoint(backup.decoded.serialisedCurrent) && !this.hasFutureSchemaCheckpoint()) {
+      this.tryWritePrimary(backup.decoded.serialisedCurrent);
     }
+    return backup.decoded.save;
+  }
 
-    this.repository.write(decoded.serialisedCurrent);
-    return decoded.save;
+  private tryWriteBackup(serialisedSave: string): boolean {
+    if (!this.repository.writeBackup) {
+      return true;
+    }
+    try {
+      this.repository.writeBackup(serialisedSave);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  private tryWriteCheckpoint(serialisedSave: string): boolean {
+    if (!this.repository.writeSchemaCheckpoint) {
+      return true;
+    }
+    try {
+      this.repository.writeSchemaCheckpoint(CURRENT_SAVE_SCHEMA_VERSION, serialisedSave);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  private tryWritePrimary(serialisedSave: string): boolean {
+    try {
+      this.repository.write(serialisedSave);
+      return true;
+    } catch {
+      return false;
+    }
   }
 }
