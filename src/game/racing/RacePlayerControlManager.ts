@@ -113,6 +113,7 @@ export class RacePlayerControlManager {
     const y = GAME_HEIGHT - 102;
     const runBackground = scene.add
       .rectangle(x, y, 228, 94, 0xffefb7, 0.98)
+      .setName('race-run-button')
       .setStrokeStyle(5, 0xd49acb, 1)
       .setScrollFactor(0)
       .setDepth(110);
@@ -123,20 +124,23 @@ export class RacePlayerControlManager {
         fontSize: '26px',
         fontStyle: 'bold',
       })
+      .setName('race-run-label')
       .setOrigin(0.5)
       .setScrollFactor(0)
       .setDepth(111);
     const runHint = scene.add
-      .text(x, y + 25, 'hold → / D', {
+      .text(x, y + 25, 'hold button / → / D', {
         color: '#7b6782',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '13px',
       })
+      .setName('race-run-hint')
       .setOrigin(0.5)
       .setScrollFactor(0)
       .setDepth(111);
     const runZone = scene.add
       .zone(x, y, 244, 108)
+      .setName('race-run-touch-zone')
       .setScrollFactor(0)
       .setDepth(112)
       .setInteractive({ useHandCursor: true });
@@ -184,6 +188,7 @@ export class RacePlayerControlManager {
   private createReturnToNovaZone(scene: Phaser.Scene): Phaser.GameObjects.Zone {
     const zone = scene.add
       .zone(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 137, 380, 118)
+      .setName('race-return-to-nova-touch-zone')
       .setScrollFactor(0)
       .setDepth(220)
       .setInteractive({ useHandCursor: true });
