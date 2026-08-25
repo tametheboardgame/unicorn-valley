@@ -72,10 +72,7 @@ export function setButtonSelected(
     .setAlpha(1);
 }
 
-export function setButtonEnabled(
-  button: Phaser.GameObjects.Rectangle,
-  enabled: boolean,
-): void {
+export function setButtonEnabled(button: Phaser.GameObjects.Rectangle, enabled: boolean): void {
   if (enabled) {
     button.setAlpha(1).setInteractive({ useHandCursor: true });
   } else {
