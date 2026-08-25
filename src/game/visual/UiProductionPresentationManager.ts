@@ -126,10 +126,7 @@ export class UiProductionPresentationManager {
       if (!spec) {
         continue;
       }
-      scene.add
-        .zone(-64, -64, 2, 2)
-        .setName(anchorName(scene.scene.key))
-        .setVisible(false);
+      scene.add.zone(-64, -64, 2, 2).setName(anchorName(scene.scene.key)).setVisible(false);
       createFrame(scene, spec);
     }
   };
