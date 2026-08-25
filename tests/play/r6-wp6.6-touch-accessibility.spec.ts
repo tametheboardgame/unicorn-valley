@@ -338,7 +338,9 @@ test('target-tablet race assistance can be changed with a native touch tap', asy
   const toggle = race.objects.find((object) => object.name === 'race-assistance-toggle');
   expect(control?.visible).toBe(true);
   expect(toggle?.interactive).toBe(true);
-  expect(Math.min(toggle?.displayWidth ?? 0, toggle?.displayHeight ?? 0)).toBeGreaterThanOrEqual(48);
+  expect(Math.min(toggle?.displayWidth ?? 0, toggle?.displayHeight ?? 0)).toBeGreaterThanOrEqual(
+    48,
+  );
   if (!control) {
     throw new Error('Missing race assistance control.');
   }
