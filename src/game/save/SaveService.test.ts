@@ -140,6 +140,27 @@ describe('SaveService', () => {
     expect(repository.backupValue).toBe(compatibleBackup);
   });
 
+  it('does not overwrite a newer-schema primary when an older client attempts to save', () => {
+    const repository = new MemorySaveRepository();
+    const events = new TypedEventBus<GameEventMap>();
+    const listener = vi.fn();
+    events.on('SAVE_COMPLETED', listener);
+    const futurePrimary = JSON.stringify({
+      schemaVersion: CURRENT_SAVE_SCHEMA_VERSION + 1,
+      marker: 'newer-client-progress',
+    });
+    const compatibleBackup = JSON.stringify(createR4LongRunningSaveFixture());
+    repository.value = futurePrimary;
+    repository.backupValue = compatibleBackup;
+    const service = new SaveService(repository, events, () => '2026-08-25T18:10:00.000Z');
+
+    service.save(service.createNewGame());
+
+    expect(repository.value).toBe(futurePrimary);
+    expect(repository.backupValue).toBe(compatibleBackup);
+    expect(listener).not.toHaveBeenCalled();
+  });
+
   it('backs up an actual schema-v1 long-running save before migrating and normalising it', () => {
     const repository = new MemorySaveRepository();
     const historical = {

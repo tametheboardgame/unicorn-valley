@@ -47,8 +47,7 @@ export class SaveService {
   public load(): SaveGame | null {
     const serialisedSave = this.repository.read();
     if (serialisedSave !== null) {
-      const primaryVersion = readSerialisedSchemaVersion(serialisedSave);
-      if (primaryVersion !== null && primaryVersion > CURRENT_SAVE_SCHEMA_VERSION) {
+      if (this.isFutureVersion(serialisedSave)) {
         return null;
       }
 
@@ -74,6 +73,11 @@ export class SaveService {
       lastSavedAt: savedAt,
     };
 
+    const currentPrimary = this.repository.read();
+    if (currentPrimary !== null && this.isFutureVersion(currentPrimary)) {
+      return nextSave;
+    }
+
     this.preserveCurrentPrimaryAsBackup();
     this.repository.write(JSON.stringify(nextSave));
     this.events.emit('SAVE_COMPLETED', {
@@ -87,6 +91,11 @@ export class SaveService {
   public clear(): void {
     this.repository.remove();
     this.repository.removeBackup?.();
+  }
+
+  private isFutureVersion(serialisedSave: string): boolean {
+    const version = readSerialisedSchemaVersion(serialisedSave);
+    return version !== null && version > CURRENT_SAVE_SCHEMA_VERSION;
   }
 
   private decode(serialisedSave: string): DecodedSave | null {
