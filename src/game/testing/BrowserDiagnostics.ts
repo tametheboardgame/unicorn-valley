@@ -172,8 +172,11 @@ export function installBrowserDiagnostics(game: Phaser.Game): BrowserDiagnostics
   }
 
   const frameDurations: number[] = [];
+  let lastFrameAt = performance.now();
   const recordFrame = (): void => {
-    const delta = game.loop.delta;
+    const now = performance.now();
+    const delta = now - lastFrameAt;
+    lastFrameAt = now;
     if (!Number.isFinite(delta) || delta <= 0) {
       return;
     }
@@ -197,6 +200,7 @@ export function installBrowserDiagnostics(game: Phaser.Game): BrowserDiagnostics
     performance: () => summariseFrameDurations(frameDurations),
     resetPerformance: () => {
       frameDurations.length = 0;
+      lastFrameAt = performance.now();
     },
     startScene: (sceneKey, data) => {
       const activeScene = game.scene.getScenes(true)[0];
