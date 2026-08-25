@@ -2,6 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 
 const SAVE_KEY = 'unicorn-valley.save';
 const BACKUP_KEY = 'unicorn-valley.save.backup';
+const CHECKPOINT_PREFIX = `${SAVE_KEY}.schema.`;
 
 interface DiagnosticObject {
   text: string | null;
@@ -196,4 +197,38 @@ test('Start over requires confirmation and clears both save copies only after th
   );
   expect(resetState.primary.profile.name).toBeNull();
   expect(resetState.backup).toBeNull();
+});
+
+test('a newer-version save is protected and the title asks the player to refresh', async ({ page }) => {
+  const futureVersion = 3;
+  const futureSave = createStoredSave('Future Star', futureVersion);
+  const serialisedFuture = JSON.stringify(futureSave);
+  await page.addInitScript(
+    ({ saveKey, checkpointKey, serialisedSave }) => {
+      window.localStorage.setItem(saveKey, serialisedSave);
+      window.localStorage.setItem(checkpointKey, serialisedSave);
+    },
+    {
+      saveKey: SAVE_KEY,
+      checkpointKey: `${CHECKPOINT_PREFIX}${futureVersion}`,
+      serialisedSave: serialisedFuture,
+    },
+  );
+
+  await page.goto('/?diagnostics=1');
+  await waitForScene(page, 'TitleScene');
+
+  const snapshot = await getSnapshot(page);
+  const title = snapshot.scenes.find((scene) => scene.key === 'TitleScene');
+  const visibleText = title?.objects.filter((object) => object.visible).map((object) => object.text) ?? [];
+
+  expect(visibleText).toContain('Refresh to Continue');
+  expect(visibleText).toContain(
+    'A newer Unicorn Valley save is here. Refresh to keep your progress safe.',
+  );
+  expect(visibleText).not.toContain('Create Your Unicorn');
+  expect(visibleText).not.toContain('Start over');
+  expect(await page.evaluate((key) => window.localStorage.getItem(key), SAVE_KEY)).toBe(
+    serialisedFuture,
+  );
 });
