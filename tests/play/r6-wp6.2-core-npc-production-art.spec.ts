@@ -117,8 +117,11 @@ test.describe('R6-WP6.2 core NPC production art', () => {
     }
 
     await startScene(page, 'RainbowMeadowScene');
+    await page.waitForTimeout(350);
     const nova = await findObject(page, 'RainbowMeadowScene', 'core-npc:nova:world');
+    const legacyNova = await findObject(page, 'RainbowMeadowScene', 'nova-canonical-world');
     expect(nova?.visible).toBe(true);
     expect(nova?.textureKey).toBe('core-npc-production:nova:neutral');
+    expect(legacyNova?.visible ?? false).toBe(false);
   });
 });
