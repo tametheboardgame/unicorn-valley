@@ -150,7 +150,9 @@ export class SaveService {
   private getFutureSchemaCheckpointVersions(): number[] {
     const discoveredVersions = this.repository.getSchemaCheckpointVersions?.();
     if (discoveredVersions) {
-      return discoveredVersions.filter((schemaVersion) => schemaVersion > CURRENT_SAVE_SCHEMA_VERSION);
+      return discoveredVersions.filter(
+        (schemaVersion) => schemaVersion > CURRENT_SAVE_SCHEMA_VERSION,
+      );
     }
 
     const highestVersion = this.repository.getHighestSchemaCheckpointVersion?.() ?? null;
