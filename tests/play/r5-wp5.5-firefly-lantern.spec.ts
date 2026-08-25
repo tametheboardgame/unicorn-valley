@@ -93,7 +93,7 @@ test('perfect first Normal completion unlocks replay modes and Normal difficulty
 
   for (let light = 0; light < 8; light += 1) {
     await waitForNamedObject(page, 'firefly-lantern-target');
-    await page.keyboard.press('Enter');
+    await page.keyboard.press('Enter', { delay: 50 });
     await waitForNamedObjectToDisappear(page, 'firefly-lantern-target');
   }
 
