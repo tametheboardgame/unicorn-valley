@@ -118,10 +118,10 @@ test('Wonderbook production tabs remain large interactive navigation controls', 
 test('dialogue and sound settings expose explicit production interaction states', async ({
   page,
 }) => {
-  await page.goto('/?scene=dialogue-test&diagnostics=1');
-  await waitForScene(page, 'DialogueTestScene');
-  await waitForObject(page, 'DialogueTestScene', 'dialogue-production-panel');
-  let scene = (await snapshot(page)).scenes.find(({ key }) => key === 'DialogueTestScene');
+  await page.goto('/?scene=lumi-story&diagnostics=1');
+  await waitForScene(page, 'LumiStoryScene');
+  await waitForObject(page, 'LumiStoryScene', 'dialogue-production-panel');
+  let scene = (await snapshot(page)).scenes.find(({ key }) => key === 'LumiStoryScene');
   expect(scene).toBeTruthy();
   if (scene) {
     expect(namedObject(scene, 'dialogue-production-continue').interactive).toBe(true);
