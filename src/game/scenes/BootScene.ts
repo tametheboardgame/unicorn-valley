@@ -1,5 +1,4 @@
 import Phaser from 'phaser';
-import { getAccessibilityPresentationManager } from '../accessibility/AccessibilityPresentationManager';
 import { getFireflyLanternWorldManager } from '../activities/FireflyLanternWorldManager';
 import { getAtmosphericTimeWorldManager } from '../atmosphere/AtmosphericTimeWorldManager';
 import { getMagicalWeatherWorldManager } from '../atmosphere/MagicalWeatherWorldManager';
@@ -73,7 +72,6 @@ export class BootScene extends Phaser.Scene {
     getWorldTraversalPolishManager(this.sys.game);
     getEnvironmentProductionPresentationManager(this.sys.game);
     getUiProductionPresentationManager(this.sys.game);
-    getAccessibilityPresentationManager(this.sys.game);
     getR5RegionGatewayManager(this.sys.game);
     getRacePlayerControlManager(this.sys.game);
     getRacePlaytestRecoveryManager(this.sys.game);
