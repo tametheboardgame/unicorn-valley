@@ -121,7 +121,8 @@ function hideLumiPlaceholder(scene: Phaser.Scene): void {
   }
 
   for (const child of container.list) {
-    const keepPrompt = child instanceof Phaser.GameObjects.Text && child.text.includes('Talk to Lumi');
+    const keepPrompt =
+      child instanceof Phaser.GameObjects.Text && child.text.includes('Talk to Lumi');
     if (keepPrompt || child instanceof Phaser.GameObjects.Zone) {
       continue;
     }
