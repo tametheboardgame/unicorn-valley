@@ -121,8 +121,7 @@ function hideLumiPlaceholder(scene: Phaser.Scene): void {
   }
 
   for (const child of container.list) {
-    const keepPrompt =
-      child instanceof Phaser.GameObjects.Text && child.text.includes('Talk to Lumi');
+    const keepPrompt = child instanceof Phaser.GameObjects.Text && child.text.includes('Talk to Lumi');
     if (keepPrompt || child instanceof Phaser.GameObjects.Zone) {
       continue;
     }
@@ -197,7 +196,9 @@ export class CoreNpcProductionPresentationManager {
     this.ensureVillageNpc(scene, 'willow', '🌿', 100, 83);
     this.ensureVillageNpc(scene, 'marigold', '🥐', 102, 84);
 
-    const pebbleMarker = SUNBEAM_VILLAGE_MAP.npcMarkers.find((candidate) => candidate.id === 'pebble');
+    const pebbleMarker = SUNBEAM_VILLAGE_MAP.npcMarkers.find(
+      (candidate) => candidate.id === 'pebble',
+    );
     if (!pebbleMarker || scene.children.getByName('core-npc:pebble:world')) {
       return;
     }
@@ -245,7 +246,13 @@ export class CoreNpcProductionPresentationManager {
       return;
     }
     hideNovaPlaceholder(scene);
-    const nova = createCoreNpcSprite(scene, 'nova', marker.position.x, marker.position.y + 4, 'world')
+    const nova = createCoreNpcSprite(
+      scene,
+      'nova',
+      marker.position.x,
+      marker.position.y + 4,
+      'world',
+    )
       .setDisplaySize(112, 92)
       .setDepth(worldDepthForY(marker.position.y + 50, 0.32));
     addCoreNpcIdleTween(scene, nova, 'nova', 5);
