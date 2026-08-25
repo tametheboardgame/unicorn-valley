@@ -356,7 +356,15 @@ function drawUnicornNpc(
   drawLeg(graphics, 83, 92, spec.bodyShadow, spec.outline, id === 'nova' ? 3 : 0);
   drawLeg(graphics, 103, 91, spec.bodyShadow, spec.outline, id === 'nova' ? -2 : 0);
 
-  drawOutlinedEllipse(graphics, 82, 78, id === 'pebble' ? 92 : 98, id === 'lumi' ? 55 : 58, spec.body, spec.outline);
+  drawOutlinedEllipse(
+    graphics,
+    82,
+    78,
+    id === 'pebble' ? 92 : 98,
+    id === 'lumi' ? 55 : 58,
+    spec.body,
+    spec.outline,
+  );
   graphics.fillStyle(0xffffff, 0.17);
   graphics.fillEllipse(73, 66, 48, 14);
 
@@ -404,10 +412,7 @@ function drawUnicornNpc(
   }
 }
 
-function drawPip(
-  graphics: Phaser.GameObjects.Graphics,
-  expression: CoreNpcExpression,
-): void {
+function drawPip(graphics: Phaser.GameObjects.Graphics, expression: CoreNpcExpression): void {
   const spec = CORE_NPC_VISUALS.pip;
 
   graphics.fillStyle(spec.bodyShadow, 1);
