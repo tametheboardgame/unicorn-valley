@@ -57,7 +57,7 @@ test.describe('R6-WP6.1 player production art', () => {
     expect(before.displayHeight).toBeGreaterThan(70);
 
     await page.keyboard.down('d');
-    await page.waitForTimeout(900);
+    await page.waitForTimeout(1050);
     await page.keyboard.up('d');
     const after = await playerSnapshot(page);
     expect(after.x - before.x).toBeGreaterThan(60);
