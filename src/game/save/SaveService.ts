@@ -38,11 +38,6 @@ function readSerialisedSchemaVersion(serialisedSave: string): number | null {
   }
 }
 
-function savedAtMillis(save: SaveGame): number {
-  const parsed = Date.parse(save.lastSavedAt);
-  return Number.isFinite(parsed) ? parsed : 0;
-}
-
 export class SaveService {
   public constructor(
     private readonly repository: SaveRepository,
@@ -67,7 +62,7 @@ export class SaveService {
     const primary = this.decodeStored(serialisedPrimary);
     const checkpoint = this.readCurrentCheckpoint();
 
-    if (checkpoint && this.shouldPreferCheckpoint(checkpoint, primary)) {
+    if (checkpoint) {
       this.tryWritePrimary(checkpoint.decoded.serialisedCurrent);
       return checkpoint.decoded.save;
     }
@@ -75,15 +70,10 @@ export class SaveService {
     if (primary) {
       if (primary.decoded.sourceVersion < CURRENT_SAVE_SCHEMA_VERSION) {
         this.persistMigrationBestEffort(primary.serialised, primary.decoded);
-      } else if (!checkpoint || this.shouldPreferCheckpoint(primary, checkpoint)) {
+      } else {
         this.tryWriteCheckpoint(primary.decoded.serialisedCurrent);
       }
       return primary.decoded.save;
-    }
-
-    if (checkpoint) {
-      this.tryWritePrimary(checkpoint.decoded.serialisedCurrent);
-      return checkpoint.decoded.save;
     }
 
     return this.recoverFromBackup();
@@ -145,16 +135,28 @@ export class SaveService {
   }
 
   private hasFutureSchemaCheckpoint(): boolean {
-    const highestVersion = this.repository.getHighestSchemaCheckpointVersion?.() ?? null;
-    if (highestVersion === null || highestVersion <= CURRENT_SAVE_SCHEMA_VERSION) {
-      return false;
+    for (const schemaVersion of this.getFutureSchemaCheckpointVersions()) {
+      const serialisedCheckpoint = this.repository.readSchemaCheckpoint?.(schemaVersion) ?? null;
+      if (
+        serialisedCheckpoint !== null &&
+        readSerialisedSchemaVersion(serialisedCheckpoint) === schemaVersion
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private getFutureSchemaCheckpointVersions(): number[] {
+    const discoveredVersions = this.repository.getSchemaCheckpointVersions?.();
+    if (discoveredVersions) {
+      return discoveredVersions.filter((schemaVersion) => schemaVersion > CURRENT_SAVE_SCHEMA_VERSION);
     }
 
-    const serialisedCheckpoint = this.repository.readSchemaCheckpoint?.(highestVersion) ?? null;
-    return (
-      serialisedCheckpoint !== null &&
-      readSerialisedSchemaVersion(serialisedCheckpoint) === highestVersion
-    );
+    const highestVersion = this.repository.getHighestSchemaCheckpointVersion?.() ?? null;
+    return highestVersion !== null && highestVersion > CURRENT_SAVE_SCHEMA_VERSION
+      ? [highestVersion]
+      : [];
   }
 
   private isFutureVersion(serialisedSave: string): boolean {
@@ -203,17 +205,8 @@ export class SaveService {
     return checkpoint?.decoded.sourceVersion === CURRENT_SAVE_SCHEMA_VERSION ? checkpoint : null;
   }
 
-  private shouldPreferCheckpoint(checkpoint: StoredSave, primary: StoredSave | null): boolean {
-    if (!primary || primary.decoded.sourceVersion < CURRENT_SAVE_SCHEMA_VERSION) {
-      return true;
-    }
-    return savedAtMillis(checkpoint.decoded.save) >= savedAtMillis(primary.decoded.save);
-  }
-
   private readPreferredCurrentRecord(serialisedPrimary: string | null): StoredSave | null {
-    const primary = this.decodeStored(serialisedPrimary);
-    const checkpoint = this.readCurrentCheckpoint();
-    return checkpoint && this.shouldPreferCheckpoint(checkpoint, primary) ? checkpoint : primary;
+    return this.readCurrentCheckpoint() ?? this.decodeStored(serialisedPrimary);
   }
 
   private persistMigrationBestEffort(serialisedSource: string, decoded: DecodedSave): void {
