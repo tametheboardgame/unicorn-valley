@@ -59,6 +59,19 @@ async function waitForScene(page: Page, sceneKey: string): Promise<void> {
   }, sceneKey);
 }
 
+async function waitForRaceStarted(page: Page): Promise<void> {
+  await page.waitForFunction(() => {
+    const diagnosticWindow = window as typeof window & {
+      __UNICORN_VALLEY_DIAGNOSTICS__?: { snapshot(): BrowserDiagnosticSnapshot };
+    };
+    return (
+      diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__
+        ?.snapshot()
+        .scenes.find((scene) => scene.key === 'RaceScene')?.state.raceStarted === true
+    );
+  });
+}
+
 function getScene(snapshot: BrowserDiagnosticSnapshot, sceneKey: string): DiagnosticSceneSnapshot {
   const scene = snapshot.scenes.find((candidate) => candidate.key === sceneKey);
   if (!scene) {
@@ -262,23 +275,14 @@ test('target-tablet touch completes creator, exploration, Book and accessibility
   expect(Math.abs((npcAfter?.y ?? 0) - (npcBefore?.y ?? 0))).toBeLessThan(0.2);
 });
 
-test('target-tablet race supports simultaneous RUN and JUMP plus touch assistance', async ({
+test('target-tablet race supports simultaneous RUN and JUMP without cancelling RUN', async ({
   page,
 }) => {
   test.setTimeout(60_000);
   await page.addInitScript(() => window.localStorage.clear());
   await page.goto('/?scene=race&diagnostics=1');
   await waitForScene(page, 'RaceScene');
-  await page.waitForFunction(() => {
-    const diagnosticWindow = window as typeof window & {
-      __UNICORN_VALLEY_DIAGNOSTICS__?: { snapshot(): BrowserDiagnosticSnapshot };
-    };
-    return (
-      diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__
-        ?.snapshot()
-        .scenes.find((scene) => scene.key === 'RaceScene')?.state.raceStarted === true
-    );
-  });
+  await waitForRaceStarted(page);
   await waitForForwardControl(page, false);
 
   let snapshot = await getSnapshot(page);
@@ -320,8 +324,26 @@ test('target-tablet race supports simultaneous RUN and JUMP plus touch assistanc
 
   await dispatchLogicalTouch(page, 'touchend', [], [runTouch]);
   await waitForForwardControl(page, false);
+});
 
-  await nativeLogicalTap(page, 1130, 165);
+test('target-tablet race assistance can be changed with a native touch tap', async ({ page }) => {
+  test.setTimeout(60_000);
+  await page.addInitScript(() => window.localStorage.clear());
+  await page.goto('/?scene=race&diagnostics=1');
+  await waitForScene(page, 'RaceScene');
+
+  const snapshot = await getSnapshot(page);
+  const race = getScene(snapshot, 'RaceScene');
+  const control = race.objects.find((object) => object.name === 'race-assistance-control');
+  const toggle = race.objects.find((object) => object.name === 'race-assistance-toggle');
+  expect(control?.visible).toBe(true);
+  expect(toggle?.interactive).toBe(true);
+  expect(Math.min(toggle?.displayWidth ?? 0, toggle?.displayHeight ?? 0)).toBeGreaterThanOrEqual(48);
+  if (!control) {
+    throw new Error('Missing race assistance control.');
+  }
+
+  await nativeLogicalTap(page, control.x, control.y);
   await page.waitForFunction(
     () => {
       const stored = JSON.parse(
@@ -332,6 +354,7 @@ test('target-tablet race supports simultaneous RUN and JUMP plus touch assistanc
     undefined,
     { timeout: 5_000 },
   );
+
   const raceSettings = await page.evaluate(() =>
     JSON.parse(window.localStorage.getItem('unicorn-valley:race-settings:v1') ?? '{}'),
   );
