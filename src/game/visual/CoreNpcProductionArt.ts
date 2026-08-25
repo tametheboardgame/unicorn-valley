@@ -379,8 +379,9 @@ function drawUnicornNpc(
   graphics.fillStyle(spec.accent, 1);
   graphics.lineStyle(2.5, spec.outline, 0.85);
   const hornHeight = id === 'lumi' ? 29 : id === 'pebble' ? 23 : 27;
-  graphics.fillTriangle(128, 25, 137, 25 - hornHeight, 143, 30);
-  graphics.strokeTriangle(128, 25, 137, 25 - hornHeight, 143, 30);
+  const hornBaseY = 34;
+  graphics.fillTriangle(128, hornBaseY, 137, hornBaseY - hornHeight, 143, hornBaseY + 5);
+  graphics.strokeTriangle(128, hornBaseY, 137, hornBaseY - hornHeight, 143, hornBaseY + 5);
 
   drawHappyFace(graphics, 136, 48, spec.outline, expression);
   drawMotif(graphics, id, spec);
@@ -434,14 +435,24 @@ function drawPip(graphics: Phaser.GameObjects.Graphics, expression: CoreNpcExpre
   graphics.fillEllipse(48, 82, 31, 24);
   graphics.strokeEllipse(48, 82, 31, 24);
 
-  drawHappyFace(graphics, 78, 63, spec.outline, expression);
-  drawHappyFace(graphics, 106, 63, spec.outline, expression);
+  if (expression === 'happy') {
+    graphics.fillStyle(spec.outline, 1);
+    graphics.fillEllipse(78, 63, 8, 5);
+    graphics.fillEllipse(106, 63, 8, 5);
+    graphics.fillStyle(0xf6a6b8, 0.52);
+    graphics.fillCircle(68, 77, 5);
+    graphics.fillCircle(116, 77, 5);
+  } else {
+    drawHappyFace(graphics, 78, 63, spec.outline, 'neutral');
+    drawHappyFace(graphics, 106, 63, spec.outline, 'neutral');
+  }
 
   graphics.fillStyle(spec.outline, 1);
   graphics.fillTriangle(87, 75, 95, 75, 91, 81);
   graphics.lineStyle(2.2, spec.outline, 0.85);
   graphics.lineBetween(91, 82, 91, 88);
-  graphics.lineBetween(91, 88, 98, 91);
+  graphics.lineBetween(91, 88, 84, expression === 'happy' ? 91 : 88);
+  graphics.lineBetween(91, 88, 98, expression === 'happy' ? 91 : 88);
 
   // Explorer scarf and satchel make Pip readable even at small world scale.
   graphics.fillStyle(spec.maneAccent, 1);
