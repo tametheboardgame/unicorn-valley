@@ -47,10 +47,16 @@ export function applyButtonHover(
   idleFill: number,
   hoverFill: number,
 ): void {
+  const idleStroke = button.strokeColor;
+  const idleStrokeAlpha = button.strokeAlpha;
+  const idleLineWidth = button.lineWidth;
+
   button.on('pointerover', () =>
     button.setFillStyle(hoverFill, 1).setStrokeStyle(4, UI_COLOURS.focus, 1),
   );
-  button.on('pointerout', () => button.setFillStyle(idleFill, 1));
+  button.on('pointerout', () =>
+    button.setFillStyle(idleFill, 1).setStrokeStyle(idleLineWidth, idleStroke, idleStrokeAlpha),
+  );
   button.on('pointerdown', () => button.setAlpha(0.86));
   button.on('pointerup', () => button.setAlpha(1));
 }
