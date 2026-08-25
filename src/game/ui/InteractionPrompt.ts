@@ -75,7 +75,10 @@ export class InteractionPrompt {
 
   private refreshPresentation(): void {
     const highVisibility = this.accessibility.load().highVisibilityInteractions;
-    this.panel.setFillStyle(highVisibility ? 0xffef9f : UI_COLOURS.cream, highVisibility ? 1 : 0.98);
+    this.panel.setFillStyle(
+      highVisibility ? 0xffef9f : UI_COLOURS.cream,
+      highVisibility ? 1 : 0.98,
+    );
     this.panel.setStrokeStyle(
       highVisibility ? 8 : 5,
       highVisibility ? 0x513161 : UI_COLOURS.lavenderStrong,
