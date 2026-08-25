@@ -13,6 +13,7 @@ import { getCrystalBrookStoryWorldManager } from '../story/CrystalBrookStoryWorl
 import { getLumiWoodsWorldManager } from '../story/LumiWoodsWorldManager';
 import { getPebbleCollectionWorldManager } from '../story/PebbleCollectionWorldManager';
 import { getPipEggWorldManager } from '../story/PipEggWorldManager';
+import { getCoreNpcProductionPresentationManager } from '../visual/CoreNpcProductionPresentationManager';
 import { getVisualTighteningManager } from '../visual/VisualTighteningManager';
 import { getR5RegionGatewayManager } from '../world/R5RegionGatewayManager';
 import { getWorldCharacterPresentationManager } from '../world/WorldCharacterPresentationManager';
@@ -61,6 +62,7 @@ export class BootScene extends Phaser.Scene {
     getClickToMoveManager(this.sys.game);
     getWorldOcclusionManager(this.sys.game);
     getWorldCharacterPresentationManager(this.sys.game);
+    getCoreNpcProductionPresentationManager(this.sys.game);
     getVisualTighteningManager(this.sys.game);
     getWorldTraversalPolishManager(this.sys.game);
     getR5RegionGatewayManager(this.sys.game);
