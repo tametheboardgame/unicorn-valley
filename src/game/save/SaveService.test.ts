@@ -200,8 +200,9 @@ describe('SaveService', () => {
     repository.backupValue = compatibleBackup;
     const service = new SaveService(repository, events, () => '2026-08-25T18:10:00.000Z');
 
-    service.save(service.createNewGame());
+    const result = service.saveWithResult(service.createNewGame());
 
+    expect(result.status).toBe('blocked-newer-version');
     expect(repository.value).toBe(futurePrimary);
     expect(repository.backupValue).toBe(compatibleBackup);
     expect(listener).not.toHaveBeenCalled();
@@ -242,7 +243,7 @@ describe('SaveService', () => {
     expect(service.load()).toBeNull();
 
     const racedPrimary = repository.value;
-    service.save(service.createNewGame());
+    expect(service.saveWithResult(service.createNewGame()).status).toBe('blocked-newer-version');
     expect(repository.value).toBe(racedPrimary);
     expect(repository.checkpoints.get(futureVersion)).toBe(serialisedFuture);
   });
