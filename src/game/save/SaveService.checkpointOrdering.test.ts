@@ -8,6 +8,7 @@ class OrderingRepository implements SaveRepository {
   public backupValue: string | null = null;
   public checkpoints = new Map<number, string>();
   public failBackupWrites = false;
+  public afterCheckpointMiss: ((schemaVersion: number) => void) | null = null;
 
   public read(): string | null {
     return this.value;
@@ -37,7 +38,13 @@ class OrderingRepository implements SaveRepository {
   }
 
   public readSchemaCheckpoint(schemaVersion: number): string | null {
-    return this.checkpoints.get(schemaVersion) ?? null;
+    const checkpoint = this.checkpoints.get(schemaVersion) ?? null;
+    if (checkpoint === null && this.afterCheckpointMiss) {
+      const afterCheckpointMiss = this.afterCheckpointMiss;
+      this.afterCheckpointMiss = null;
+      afterCheckpointMiss(schemaVersion);
+    }
+    return checkpoint;
   }
 
   public writeSchemaCheckpoint(schemaVersion: number, serialisedSave: string): void {
@@ -77,7 +84,7 @@ describe('SaveService checkpoint ordering', () => {
     now = '2026-08-25T20:00:00.000Z';
     service.save({
       ...first,
-      profile: { ...first.profile, name: 'Moonbeam' },
+      profile: { ...first?.profile, name: 'Moonbeam' },
     });
 
     expect(repository.value).toBe(firstPrimary);
@@ -88,6 +95,36 @@ describe('SaveService checkpoint ordering', () => {
     const loaded = service.load();
 
     expect(loaded?.profile.name).toBe('Moonbeam');
+    expect(JSON.parse(repository.value ?? '{}').profile.name).toBe('Moonbeam');
+  });
+
+  it('does not backfill a stale primary over a checkpoint created by another same-schema tab', () => {
+    const repository = new OrderingRepository();
+    let now = '2026-08-25T21:00:00.000Z';
+    const service = new SaveService(repository, undefined, () => now);
+    const base = service.createNewGame();
+    const first = service.save({
+      ...base,
+      profile: { ...base.profile, name: 'Starlight' },
+    });
+    expect(first).not.toBeNull();
+
+    repository.checkpoints.clear();
+    const newerSave = {
+      ...first!,
+      lastSavedAt: '2026-08-25T21:05:00.000Z',
+      profile: { ...first!.profile, name: 'Moonbeam' },
+    };
+    const serialisedNewer = JSON.stringify(newerSave);
+    repository.afterCheckpointMiss = (schemaVersion) => {
+      repository.checkpoints.set(schemaVersion, serialisedNewer);
+    };
+
+    expect(service.load()?.profile.name).toBe('Starlight');
+    expect(repository.checkpoints.get(CURRENT_SAVE_SCHEMA_VERSION)).toBe(serialisedNewer);
+
+    now = '2026-08-25T21:10:00.000Z';
+    expect(service.load()?.profile.name).toBe('Moonbeam');
     expect(JSON.parse(repository.value ?? '{}').profile.name).toBe('Moonbeam');
   });
 });
