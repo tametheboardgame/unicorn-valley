@@ -7,6 +7,19 @@ import { CURRENT_SAVE_SCHEMA_VERSION, type SaveGame } from './saveSchema';
 import { isSaveGame } from './saveValidation';
 
 export type Clock = () => string;
+export type SaveWriteStatus = 'saved' | 'blocked-newer-version' | 'storage-failed';
+
+export interface SaveWriteResult {
+  status: SaveWriteStatus;
+  save: SaveGame;
+}
+
+export class UnsupportedSaveVersionError extends Error {
+  public constructor() {
+    super('This save was created by a newer version of Unicorn Valley.');
+    this.name = 'UnsupportedSaveVersionError';
+  }
+}
 
 const systemClock: Clock = () => new Date().toISOString();
 
@@ -86,7 +99,15 @@ export class SaveService {
     return this.recoverFromBackup();
   }
 
-  public save(save: SaveGame): SaveGame | null {
+  public save(save: SaveGame): SaveGame {
+    const result = this.saveWithResult(save);
+    if (result.status === 'blocked-newer-version') {
+      throw new UnsupportedSaveVersionError();
+    }
+    return result.save;
+  }
+
+  public saveWithResult(save: SaveGame): SaveWriteResult {
     const savedAt = this.now();
     const reconciledSave = reconcileSaveGame(save);
     const nextSave: SaveGame = {
@@ -96,23 +117,23 @@ export class SaveService {
     };
 
     if (this.hasFutureSchemaCheckpoint()) {
-      return null;
+      return { status: 'blocked-newer-version', save: nextSave };
     }
 
     const currentPrimary = this.repository.read();
     if (currentPrimary !== null && this.isFutureVersion(currentPrimary)) {
-      return null;
+      return { status: 'blocked-newer-version', save: nextSave };
     }
 
     const previous = this.readPreferredCurrentRecord(currentPrimary);
     const backupStored = previous === null || this.tryWriteBackup(previous.serialised);
     const serialisedNext = JSON.stringify(nextSave);
     if (!this.tryWriteCheckpoint(serialisedNext)) {
-      return null;
+      return { status: 'storage-failed', save: nextSave };
     }
 
     if (this.hasFutureSchemaCheckpoint()) {
-      return null;
+      return { status: 'blocked-newer-version', save: nextSave };
     }
 
     if (backupStored) {
@@ -124,7 +145,7 @@ export class SaveService {
       savedAt,
     });
 
-    return nextSave;
+    return { status: 'saved', save: nextSave };
   }
 
   public clear(): void {
