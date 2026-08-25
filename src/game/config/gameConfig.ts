@@ -38,6 +38,9 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
   width: GAME_WIDTH,
   height: GAME_HEIGHT,
   backgroundColor: '#49376f',
+  input: {
+    activePointers: 2,
+  },
   render: {
     antialias: true,
   },
