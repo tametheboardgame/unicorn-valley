@@ -71,16 +71,16 @@ function hideNovaPlaceholder(scene: Phaser.Scene): void {
 
 function hidePipPlaceholder(scene: Phaser.Scene): void {
   for (const object of scene.children.list) {
-    const nearPip =
-      Math.abs(object.x - PIP_POSITION.x) <= 72 && Math.abs(object.y - PIP_POSITION.y) <= 82;
-    if (!nearPip) {
+    if (
+      !(object instanceof Phaser.GameObjects.Arc) &&
+      !(object instanceof Phaser.GameObjects.Ellipse) &&
+      !(object instanceof Phaser.GameObjects.Triangle)
+    ) {
       continue;
     }
-    if (
-      object instanceof Phaser.GameObjects.Arc ||
-      object instanceof Phaser.GameObjects.Ellipse ||
-      object instanceof Phaser.GameObjects.Triangle
-    ) {
+    const nearPip =
+      Math.abs(object.x - PIP_POSITION.x) <= 72 && Math.abs(object.y - PIP_POSITION.y) <= 82;
+    if (nearPip) {
       object.setVisible(false);
     }
   }
