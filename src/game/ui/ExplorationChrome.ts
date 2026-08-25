@@ -134,32 +134,32 @@ export class ExplorationChrome {
       .setScrollFactor(0)
       .setDepth(128);
 
-    this.touchToggleButton = this.createPreferenceButton(panelX, panelY + 18, 'touch-controls');
-    this.touchToggleLabel = this.createPreferenceLabel(panelX, panelY + 18, 'touch-controls');
-    this.reducedMotionButton = this.createPreferenceButton(panelX, panelY + 74, 'reduced-motion');
-    this.reducedMotionLabel = this.createPreferenceLabel(panelX, panelY + 74, 'reduced-motion');
+    this.reducedMotionButton = this.createPreferenceButton(panelX, panelY + 10, 'reduced-motion');
+    this.reducedMotionLabel = this.createPreferenceLabel(panelX, panelY + 10, 'reduced-motion');
     this.highVisibilityButton = this.createPreferenceButton(
       panelX,
-      panelY + 130,
+      panelY + 66,
       'high-visibility',
     );
     this.highVisibilityLabel = this.createPreferenceLabel(
       panelX,
-      panelY + 130,
+      panelY + 66,
       'high-visibility',
     );
+    this.touchToggleButton = this.createPreferenceButton(panelX, panelY + 122, 'touch-controls');
+    this.touchToggleLabel = this.createPreferenceLabel(panelX, panelY + 122, 'touch-controls');
 
     this.helpObjects.push(
       panelShadow,
       panel,
       heading,
       help,
-      this.touchToggleButton,
-      this.touchToggleLabel,
       this.reducedMotionButton,
       this.reducedMotionLabel,
       this.highVisibilityButton,
       this.highVisibilityLabel,
+      this.touchToggleButton,
+      this.touchToggleLabel,
     );
     this.objects.push(
       titleShadow,
