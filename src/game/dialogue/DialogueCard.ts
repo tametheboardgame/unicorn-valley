@@ -9,6 +9,8 @@ export class DialogueCard {
   private readonly dimmer: Phaser.GameObjects.Rectangle;
   private readonly panelShadow: Phaser.GameObjects.Rectangle;
   private readonly panel: Phaser.GameObjects.Rectangle;
+  private readonly speakerRibbon: Phaser.GameObjects.Rectangle;
+  private readonly portraitHalo: Phaser.GameObjects.Arc;
   private readonly portrait: Phaser.GameObjects.Arc;
   private readonly portraitLetter: Phaser.GameObjects.Text;
   private readonly speakerName: Phaser.GameObjects.Text;
@@ -35,15 +37,28 @@ export class DialogueCard {
     );
     this.panel = scene.add
       .rectangle(GAME_WIDTH / 2, GAME_HEIGHT - 164, 1120, 286, UI_COLOURS.cream, 0.99)
-      .setStrokeStyle(7, UI_COLOURS.lavenderStrong, 1)
+      .setName('dialogue-production-panel')
+      .setStrokeStyle(7, UI_COLOURS.ribbonStrong, 1)
       .setScrollFactor(0)
       .setDepth(126);
 
+    this.speakerRibbon = scene.add
+      .rectangle(420, GAME_HEIGHT - 286, 360, 52, UI_COLOURS.ribbon, 1)
+      .setName('dialogue-production-speaker-ribbon')
+      .setStrokeStyle(3, UI_COLOURS.ribbonStrong, 1)
+      .setScrollFactor(0)
+      .setDepth(127);
+
+    this.portraitHalo = scene.add
+      .circle(162, GAME_HEIGHT - 170, 83, UI_COLOURS.gold, 0.42)
+      .setStrokeStyle(3, UI_COLOURS.goldStrong, 0.72)
+      .setScrollFactor(0)
+      .setDepth(127);
     this.portrait = scene.add
       .circle(162, GAME_HEIGHT - 170, 72, UI_COLOURS.blush, 1)
       .setStrokeStyle(6, UI_COLOURS.white, 0.96)
       .setScrollFactor(0)
-      .setDepth(127);
+      .setDepth(128);
 
     this.portraitLetter = scene.add
       .text(162, GAME_HEIGHT - 170, '?', {
@@ -54,17 +69,18 @@ export class DialogueCard {
       })
       .setOrigin(0.5)
       .setScrollFactor(0)
-      .setDepth(128);
+      .setDepth(129);
 
     this.speakerName = scene.add
-      .text(265, GAME_HEIGHT - 285, '', {
+      .text(265, GAME_HEIGHT - 286, '', {
         color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
-        fontSize: '29px',
+        fontSize: '27px',
         fontStyle: 'bold',
       })
+      .setOrigin(0, 0.5)
       .setScrollFactor(0)
-      .setDepth(128);
+      .setDepth(129);
 
     this.body = scene.add
       .text(265, GAME_HEIGHT - 235, '', {
@@ -88,6 +104,7 @@ export class DialogueCard {
     );
     this.continueButton = scene.add
       .rectangle(GAME_WIDTH - 200, GAME_HEIGHT - 70, 210, 58, UI_COLOURS.lavender, 1)
+      .setName('dialogue-production-continue')
       .setStrokeStyle(4, UI_COLOURS.lavenderStrong, 1)
       .setScrollFactor(0)
       .setDepth(129)
@@ -148,6 +165,8 @@ export class DialogueCard {
     this.dimmer.destroy();
     this.panelShadow.destroy();
     this.panel.destroy();
+    this.speakerRibbon.destroy();
+    this.portraitHalo.destroy();
     this.portrait.destroy();
     this.portraitLetter.destroy();
     this.speakerName.destroy();
@@ -174,6 +193,7 @@ export class DialogueCard {
       const shadow = createUiShadow(scene, x, GAME_HEIGHT - 82, buttonWidth, 64, 128, 0.14);
       const button = scene.add
         .rectangle(x, GAME_HEIGHT - 82, buttonWidth, 64, UI_COLOURS.lavender, 1)
+        .setName(`dialogue-production-choice-${index + 1}`)
         .setStrokeStyle(4, UI_COLOURS.lavenderStrong, 1)
         .setScrollFactor(0)
         .setDepth(129)
@@ -208,6 +228,8 @@ export class DialogueCard {
     this.dimmer.setVisible(visible);
     this.panelShadow.setVisible(visible);
     this.panel.setVisible(visible);
+    this.speakerRibbon.setVisible(visible);
+    this.portraitHalo.setVisible(visible);
     this.portrait.setVisible(visible);
     this.portraitLetter.setVisible(visible);
     this.speakerName.setVisible(visible);
