@@ -227,8 +227,14 @@ test('Nova keeps her canonical identity and returns the player to the exact conv
     const meadow = diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__
       ?.snapshot()
       .scenes.find((scene) => scene.key === 'RainbowMeadowScene');
-    return meadow?.objects.some(
-      (object) => object.name === 'nova-canonical-world' && object.visible,
+    return (
+      meadow?.objects.some(
+        (object) =>
+          object.name === 'core-npc:nova:world' &&
+          object.visible &&
+          object.textureKey === 'core-npc-production:nova:neutral',
+      ) === true &&
+      !meadow.objects.some((object) => object.name === 'nova-canonical-world' && object.visible)
     );
   });
 
