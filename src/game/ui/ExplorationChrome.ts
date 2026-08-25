@@ -189,9 +189,10 @@ export class ExplorationChrome {
         highVisibilityInteractions: !settings.highVisibilityInteractions,
       });
     });
-    this.unsubscribeAccessibility = this.accessibility.subscribe(() =>
-      this.refreshPreferenceLabels(),
-    );
+    this.unsubscribeAccessibility = this.accessibility.subscribe(() => {
+      this.refreshPreferenceLabels();
+      this.applyReducedMotionPreference();
+    });
 
     this.refreshPreferenceLabels();
     this.setHelpVisible(false);
@@ -212,6 +213,7 @@ export class ExplorationChrome {
     }
 
     this.refreshPreferenceLabels();
+    this.applyReducedMotionPreference();
 
     for (const object of this.scene.children.list) {
       if (!(object instanceof Phaser.GameObjects.Text) || object === this.titleText) {
@@ -279,6 +281,28 @@ export class ExplorationChrome {
     this.highVisibilityLabel?.setText(
       `High visibility: ${settings.highVisibilityInteractions ? 'On' : 'Off'}`,
     );
+  }
+
+  private applyReducedMotionPreference(): void {
+    const timeScale = this.accessibility.load().reducedMotion ? 0 : 1;
+    for (const object of this.scene.children.list) {
+      if (
+        !object.name.startsWith('environment-production:') &&
+        !object.name.startsWith('core-npc:')
+      ) {
+        continue;
+      }
+
+      const targets: Phaser.GameObjects.GameObject[] = [object];
+      if (object instanceof Phaser.GameObjects.Container) {
+        targets.push(...object.list);
+      }
+      for (const target of targets) {
+        for (const tween of this.scene.tweens.getTweensOf(target)) {
+          tween.timeScale = timeScale;
+        }
+      }
+    }
   }
 
   private setHelpVisible(visible: boolean): void {
