@@ -67,6 +67,7 @@ describe('SaveService future checkpoint validation', () => {
       ...base,
       profile: { ...base.profile, name: 'Starlight' },
     });
+    expect(first).not.toBeNull();
 
     const futureVersion = CURRENT_SAVE_SCHEMA_VERSION + 1;
     repository.checkpoints.set(futureVersion, '{broken-future-checkpoint');
@@ -75,8 +76,8 @@ describe('SaveService future checkpoint validation', () => {
 
     now = '2026-08-25T20:05:00.000Z';
     service.save({
-      ...first,
-      profile: { ...first.profile, name: 'Moonbeam' },
+      ...first!,
+      profile: { ...first!.profile, name: 'Moonbeam' },
     });
 
     expect(JSON.parse(repository.value ?? '{}').profile.name).toBe('Moonbeam');
@@ -90,6 +91,7 @@ describe('SaveService future checkpoint validation', () => {
 
     now = '2026-08-25T20:10:00.000Z';
     const restarted = service.save(service.createNewGame());
+    expect(restarted).not.toBeNull();
     expect(repository.value).toBe(JSON.stringify(restarted));
   });
 
@@ -105,7 +107,8 @@ describe('SaveService future checkpoint validation', () => {
     const service = new SaveService(repository);
 
     expect(service.load()).toBeNull();
-    service.save(service.createNewGame());
+    expect(service.hasUnsupportedSaveVersion()).toBe(true);
+    expect(service.save(service.createNewGame())).toBeNull();
     expect(repository.value).toBeNull();
     service.clear();
     expect(repository.checkpoints.get(futureVersion)).toBe(futureCheckpoint);
@@ -125,7 +128,8 @@ describe('SaveService future checkpoint validation', () => {
     const service = new SaveService(repository);
 
     expect(service.load()).toBeNull();
-    service.save(service.createNewGame());
+    expect(service.hasUnsupportedSaveVersion()).toBe(true);
+    expect(service.save(service.createNewGame())).toBeNull();
     expect(repository.value).toBeNull();
     service.clear();
     expect(repository.checkpoints.get(futureVersion)).toBe(futureCheckpoint);
