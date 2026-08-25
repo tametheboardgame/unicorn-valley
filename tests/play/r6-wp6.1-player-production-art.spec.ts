@@ -44,6 +44,25 @@ async function playerSnapshot(page: Page): Promise<DiagnosticObject> {
   });
 }
 
+async function waitForPlayerTravel(page: Page, startX: number, distance: number): Promise<void> {
+  await page.waitForFunction(
+    ({ originX, requiredDistance }) => {
+      const diagnostics = (
+        window as typeof window & {
+          __UNICORN_VALLEY_DIAGNOSTICS__?: { snapshot(): DiagnosticSnapshot };
+        }
+      ).__UNICORN_VALLEY_DIAGNOSTICS__;
+      const player = diagnostics
+        ?.snapshot()
+        .scenes.find(({ key }) => key === 'MoonflowerGladeScene')
+        ?.objects.find(({ name }) => name === 'world-player-unicorn');
+      return Boolean(player && player.x - originX > requiredDistance);
+    },
+    { originX: startX, requiredDistance: distance },
+    { timeout: 4000 },
+  );
+}
+
 test.describe('R6-WP6.1 player production art', () => {
   test('upgraded player remains readable and moves at world scale', async ({ page }) => {
     await page.goto('/?scene=glade&diagnostics=1');
@@ -57,8 +76,11 @@ test.describe('R6-WP6.1 player production art', () => {
     expect(before.displayHeight).toBeGreaterThan(70);
 
     await page.keyboard.down('d');
-    await page.waitForTimeout(900);
-    await page.keyboard.up('d');
+    try {
+      await waitForPlayerTravel(page, before.x, 60);
+    } finally {
+      await page.keyboard.up('d');
+    }
     const after = await playerSnapshot(page);
     expect(after.x - before.x).toBeGreaterThan(60);
   });

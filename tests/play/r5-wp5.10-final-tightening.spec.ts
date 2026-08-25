@@ -108,7 +108,7 @@ test.describe('R5-WP5.10 final tightening', () => {
 
     for (let light = 0; light < 8; light += 1) {
       await waitForNamedObject(page, 'FireflyLanternScene', 'firefly-lantern-target');
-      await page.keyboard.press('Enter');
+      await page.keyboard.press('Enter', { delay: 50 });
       await page.waitForFunction(() => {
         const diagnostics = (
           window as typeof window & {
