@@ -101,14 +101,54 @@ function createLeafCluster(
   return container;
 }
 
+function addStorybookFlower(
+  scene: Phaser.Scene,
+  container: Phaser.GameObjects.Container,
+  x: number,
+  y: number,
+  scale: number,
+  colours: readonly [number, number],
+  centreColour = 0xffed9e,
+): void {
+  const stem = scene.add.rectangle(x, y + 24 * scale, 6 * scale, 52 * scale, 0x5f9568, 0.84);
+  const glow = scene.add.circle(x, y, 36 * scale, colours[1], 0.08);
+  const petals = [0, 1, 2, 3, 4].map((index) => {
+    const angle = (Math.PI * 2 * index) / 5 - Math.PI / 2;
+    return scene.add.ellipse(
+      x + Math.cos(angle) * 16 * scale,
+      y + Math.sin(angle) * 16 * scale,
+      24 * scale,
+      34 * scale,
+      index % 2 === 0 ? colours[0] : colours[1],
+      0.9,
+    );
+  });
+  const centre = scene.add.circle(x, y, 9 * scale, centreColour, 0.96);
+  container.add([stem, glow, ...petals, centre]);
+}
+
+function addCrystalCluster(
+  scene: Phaser.Scene,
+  container: Phaser.GameObjects.Container,
+  x: number,
+  y: number,
+  colour: number,
+): void {
+  const glow = scene.add.circle(x, y - 18, 54, colour, 0.08);
+  const left = scene.add.triangle(x - 22, y, 0, 42, 18, 0, 36, 42, colour, 0.62);
+  const centre = scene.add.triangle(x, y - 8, 0, 54, 22, 0, 44, 54, 0xe8ffff, 0.72);
+  const right = scene.add.triangle(x + 24, y + 2, 0, 38, 17, 0, 34, 38, colour, 0.5);
+  container.add([glow, left, centre, right]);
+}
+
 function createMoonflowerGladeProduction(scene: Phaser.Scene): void {
   const environment = 'moonflower-glade';
-  const background = nameObject(scene.add.graphics().setDepth(1.35), environment, 'background');
-  background.fillStyle(0xd8c8ef, 0.12);
+  const background = nameObject(scene.add.graphics().setDepth(1.55), environment, 'background');
+  background.fillStyle(0xd8c8ef, 0.24);
   background.fillEllipse(580, 360, 980, 650);
-  background.fillStyle(0xb9ebcf, 0.2);
+  background.fillStyle(0xb9ebcf, 0.24);
   background.fillEllipse(2050, 1390, 1160, 610);
-  background.fillStyle(0xe9f7d0, 0.14);
+  background.fillStyle(0xe9f7d0, 0.2);
   background.fillEllipse(2250, 430, 820, 470);
 
   const signature = nameObject(scene.add.container(0, 0), environment, 'signature');
@@ -135,7 +175,10 @@ function createMoonflowerGladeProduction(scene: Phaser.Scene): void {
     const centre = scene.add.circle(x, y - 38 * scale, 8 * scale, 0xffed9e, 0.96);
     signature.add([stem, glow, ...petals, centre]);
   }
-  signature.setDepth(worldDepthForY(1585, 0.18));
+  addStorybookFlower(scene, signature, 270, 760, 0.92, [0xd9a8f4, 0xf4b7df]);
+  addStorybookFlower(scene, signature, 1180, 1285, 1.05, [0xcfa1ef, 0xf2b8df]);
+  addStorybookFlower(scene, signature, 1090, 1320, 0.72, [0xddaaf4, 0xf3c4e7]);
+  signature.setDepth(8.4);
 
   createLeafCluster(scene, environment, 260, 1660, [0x4f8b67, 0x6ba978, 0x6d5b45]);
   createLeafCluster(scene, environment, 2540, 1645, [0x4b8464, 0x77b77f, 0x6b5942], true);
@@ -159,22 +202,23 @@ function createMoonflowerGladeProduction(scene: Phaser.Scene): void {
 
 function createSunbeamVillageProduction(scene: Phaser.Scene): void {
   const environment = 'sunbeam-village';
-  const background = nameObject(scene.add.graphics().setDepth(1.35), environment, 'background');
-  background.fillStyle(0xffefb3, 0.18);
+  const background = nameObject(scene.add.graphics().setDepth(1.55), environment, 'background');
+  background.fillStyle(0xffefb3, 0.25);
   background.fillEllipse(730, 520, 1180, 710);
-  background.fillStyle(0xc8eba2, 0.14);
+  background.fillStyle(0xc8eba2, 0.2);
   background.fillEllipse(2250, 1390, 1500, 720);
-  background.fillStyle(0xffd9b1, 0.12);
+  background.fillStyle(0xffd9b1, 0.2);
   background.fillEllipse(2420, 460, 980, 580);
 
   const signature = nameObject(scene.add.container(0, 0), environment, 'signature');
   const flowerColours = [0xef8fa9, 0xf5c968, 0x7cc6d8, 0x9fca7a, 0xc89cda];
   for (const [x, y, width] of [
-    [790, 635, 110],
-    [1190, 600, 96],
-    [1650, 620, 118],
-    [2100, 590, 102],
-    [2460, 640, 112],
+    [260, 760, 112],
+    [720, 760, 104],
+    [1080, 1280, 118],
+    [1650, 760, 118],
+    [2100, 1280, 102],
+    [2460, 760, 112],
   ] as const) {
     const basket = scene.add
       .rectangle(x, y, width, 20, 0xb07855, 0.76)
@@ -196,7 +240,7 @@ function createSunbeamVillageProduction(scene: Phaser.Scene): void {
 
   const wisps = [900, 2110].map((x, index) => {
     const wisp = scene.add
-      .ellipse(x + 55, 245 + index * 8, 34, 88, 0xfff8e6, 0.18)
+      .ellipse(x + 55, 700 + index * 18, 34, 88, 0xfff8e6, 0.18)
       .setAngle(index === 0 ? 18 : -12);
     scene.tweens.add({
       targets: wisp,
@@ -218,29 +262,29 @@ function createSunbeamVillageProduction(scene: Phaser.Scene): void {
 
 function createRainbowMeadowProduction(scene: Phaser.Scene): void {
   const environment = 'rainbow-meadow';
-  const background = nameObject(scene.add.graphics().setDepth(1.35), environment, 'background');
-  background.fillStyle(0xd9f0a9, 0.18);
+  const background = nameObject(scene.add.graphics().setDepth(1.55), environment, 'background');
+  background.fillStyle(0xd9f0a9, 0.26);
   background.fillEllipse(780, 490, 1400, 780);
-  background.fillStyle(0xb4e8c4, 0.14);
+  background.fillStyle(0xb4e8c4, 0.2);
   background.fillEllipse(2060, 1550, 1500, 730);
-  background.fillStyle(0xffefab, 0.12);
+  background.fillStyle(0xffefab, 0.2);
   background.fillEllipse(2840, 640, 1060, 680);
 
   const signature = nameObject(scene.add.container(0, 0), environment, 'signature');
   const ribbonColours = [0xef8eaa, 0xf3bd65, 0x80c8df, 0x91cd80, 0xcaa0df];
   for (let index = 0; index < ribbonColours.length; index += 1) {
-    signature.add(
-      scene.add
-        .ellipse(2660, 515, 520 - index * 34, 250 - index * 18)
-        .setStrokeStyle(10, ribbonColours[index], 0.34)
-        .setFillStyle(0xffffff, 0),
-    );
+    const arc = scene.add
+      .ellipse(2660, 515, 520 - index * 34, 250 - index * 18)
+      .setStrokeStyle(10, ribbonColours[index], 0.34)
+      .setFillStyle(0xffffff, 0);
+    signature.add(arc);
   }
+  signature.setDepth(8.2);
 
   for (const [x, y, scale] of [
-    [620, 640, 0.72],
-    [700, 610, 0.62],
-    [775, 660, 0.68],
+    [540, 780, 0.72],
+    [690, 750, 0.62],
+    [850, 800, 0.68],
   ] as const) {
     const archColours = [0xef8eaa, 0xf3bd65, 0x80c8df];
     archColours.forEach((colour, index) => {
@@ -252,20 +296,22 @@ function createRainbowMeadowProduction(scene: Phaser.Scene): void {
       );
     });
   }
-  signature.setDepth(8.2);
 
   for (const [x, y, colour] of [
-    [530, 1510, 0xef93b8],
-    [660, 1570, 0xf2c469],
-    [800, 1515, 0x8acbda],
-    [3060, 1525, 0xc49ee0],
-    [3180, 1580, 0xf1a2bb],
+    [510, 1360, 0xef93b8],
+    [650, 1410, 0xf2c469],
+    [800, 1365, 0x8acbda],
+    [980, 1400, 0xc49ee0],
+    [3060, 1425, 0xc49ee0],
+    [3180, 1480, 0xf1a2bb],
   ] as const) {
     const stem = scene.add.rectangle(x, y, 7, 64, 0x609867, 0.86);
     const bloom = scene.add.circle(x, y - 38, 18, colour, 0.9);
     const centre = scene.add.circle(x, y - 38, 7, 0xfff1a8, 0.95);
     signature.add([stem, bloom, centre]);
   }
+  addStorybookFlower(scene, signature, 1120, 760, 0.78, [0xf0a2bf, 0xc4a7e5]);
+  addStorybookFlower(scene, signature, 1190, 1360, 0.82, [0x88cddd, 0xf4c56d]);
 
   createLeafCluster(scene, environment, 330, 1810, [0x4f9362, 0x72ae70, 0x735b43]);
   createLeafCluster(scene, environment, 3200, 1790, [0x4b8c5f, 0x80b96f, 0x735b43], true);
@@ -288,12 +334,12 @@ function createRainbowMeadowProduction(scene: Phaser.Scene): void {
 
 function createCrystalBrookProduction(scene: Phaser.Scene): void {
   const environment = 'crystal-brook';
-  const background = nameObject(scene.add.graphics().setDepth(1.35), environment, 'background');
-  background.fillStyle(0xc8f1d1, 0.14);
+  const background = nameObject(scene.add.graphics().setDepth(1.55), environment, 'background');
+  background.fillStyle(0xc8f1d1, 0.22);
   background.fillEllipse(650, 480, 1300, 760);
-  background.fillStyle(0xb9e9eb, 0.14);
+  background.fillStyle(0xb9e9eb, 0.22);
   background.fillEllipse(1950, 1320, 1540, 760);
-  background.fillStyle(0xd9f4c7, 0.1);
+  background.fillStyle(0xd9f4c7, 0.18);
   background.fillEllipse(3030, 520, 1120, 660);
 
   const signature = nameObject(scene.add.container(0, 0), environment, 'signature');
@@ -316,7 +362,10 @@ function createCrystalBrookProduction(scene: Phaser.Scene): void {
     });
     signature.add(glint);
   }
-  signature.setDepth(5.7);
+  addCrystalCluster(scene, signature, 610, 790, 0x74d7df);
+  addCrystalCluster(scene, signature, 760, 1430, 0x8fdfe4);
+  addCrystalCluster(scene, signature, 1040, 1370, 0x7bcad8);
+  signature.setDepth(7.6);
 
   createLeafCluster(scene, environment, 310, 1830, [0x4e9271, 0x71b28a, 0x665546]);
   createLeafCluster(scene, environment, 3290, 1810, [0x4b8c6d, 0x7cba8e, 0x665546], true);
@@ -339,12 +388,12 @@ function createCrystalBrookProduction(scene: Phaser.Scene): void {
 
 function createWhisperingWoodsProduction(scene: Phaser.Scene): void {
   const environment = 'whispering-woods';
-  const background = nameObject(scene.add.graphics().setDepth(1.35), environment, 'background');
-  background.fillStyle(0x7eb093, 0.09);
+  const background = nameObject(scene.add.graphics().setDepth(1.55), environment, 'background');
+  background.fillStyle(0x7eb093, 0.15);
   background.fillEllipse(700, 460, 1220, 760);
-  background.fillStyle(0x203e42, 0.2);
+  background.fillStyle(0x203e42, 0.24);
   background.fillEllipse(1910, 1510, 1640, 820);
-  background.fillStyle(0x426b66, 0.13);
+  background.fillStyle(0x426b66, 0.2);
   background.fillEllipse(2960, 620, 1100, 720);
 
   const signature = nameObject(scene.add.container(0, 0), environment, 'signature');
@@ -354,6 +403,9 @@ function createWhisperingWoodsProduction(scene: Phaser.Scene): void {
   shaft.fillTriangle(2260, 0, 2460, 0, 2130, 980);
   signature.add(shaft);
   for (const [x, y, colour] of [
+    [540, 790, 0xbddbf0],
+    [650, 830, 0xd9c8f1],
+    [760, 1390, 0xb9edc5],
     [1030, 1440, 0xbddbf0],
     [1100, 1500, 0xd9c8f1],
     [1190, 1435, 0xb9edc5],
