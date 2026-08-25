@@ -308,7 +308,17 @@ test('target-tablet race supports simultaneous RUN and JUMP plus touch assistanc
   await dispatchLogicalTouch(page, 'touchend', [], [runTouch]);
   await waitForForwardControl(page, false);
 
-  await logicalTap(page, 1130, 165);
+  await logicalTap(page, 1130, 165, 3);
+  await page.waitForFunction(
+    () => {
+      const stored = JSON.parse(
+        window.localStorage.getItem('unicorn-valley:race-settings:v1') ?? '{}',
+      ) as { assistanceMode?: string };
+      return stored.assistanceMode === 'extra-help';
+    },
+    undefined,
+    { timeout: 5_000 },
+  );
   const raceSettings = await page.evaluate(() =>
     JSON.parse(window.localStorage.getItem('unicorn-valley:race-settings:v1') ?? '{}'),
   );
