@@ -15,6 +15,7 @@ interface FrameSpec {
   height: number;
   depth: number;
   label: string;
+  labelCentered?: boolean;
 }
 
 const FRAME_SPECS: Readonly<Record<string, FrameSpec>> = {
@@ -47,8 +48,9 @@ const FRAME_SPECS: Readonly<Record<string, FrameSpec>> = {
     y: 44,
     width: 1136,
     height: 576,
-    depth: 19,
+    depth: 14,
     label: 'ADVENTURE SCRAPBOOK',
+    labelCentered: true,
   },
 };
 
@@ -73,8 +75,9 @@ function createFrame(scene: Phaser.Scene, spec: FrameSpec): void {
     graphics.fillCircle(spec.x + offset, spec.y + spec.height - 7, 3);
   }
 
+  const labelX = spec.labelCentered ? spec.x + spec.width / 2 : spec.x + 28;
   const label = scene.add
-    .text(spec.x + 28, spec.y + spec.height - 17, `✦ ${spec.label} ✦`, {
+    .text(labelX, spec.y + spec.height - 17, `✦ ${spec.label} ✦`, {
       color: UI_COLOURS.creamText,
       fontFamily: UI_FONT,
       fontSize: '11px',
@@ -82,7 +85,7 @@ function createFrame(scene: Phaser.Scene, spec: FrameSpec): void {
       backgroundColor: '#76518acc',
       padding: { x: 9, y: 4 },
     })
-    .setOrigin(0, 0.5)
+    .setOrigin(spec.labelCentered ? 0.5 : 0, 0.5)
     .setScrollFactor(0);
   const sparkle = scene.add
     .text(spec.x + spec.width - 30, spec.y + 24, '✦', {
