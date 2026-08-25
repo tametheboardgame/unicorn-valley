@@ -30,7 +30,6 @@ interface RaceControlState {
   touchRunning: boolean;
   continueWasDown: boolean;
   returnToNovaZone: Phaser.GameObjects.Zone | null;
-  pointerUpHandler: () => void;
 }
 
 function asRaceScene(scene: Phaser.Scene): RaceSceneRuntime {
@@ -159,26 +158,23 @@ export class RacePlayerControlManager {
       touchRunning: false,
       continueWasDown: false,
       returnToNovaZone: null,
-      pointerUpHandler: () => undefined,
     };
 
     const stopTouchRunning = (): void => {
       state.touchRunning = false;
     };
-    state.pointerUpHandler = stopTouchRunning;
 
     runZone.on('pointerdown', () => {
       state.touchRunning = true;
     });
     runZone.on('pointerup', stopTouchRunning);
     runZone.on('pointerout', stopTouchRunning);
-    scene.input.on('pointerup', stopTouchRunning);
+    runZone.on('pointerupoutside', stopTouchRunning);
 
     this.states.set(scene, state);
 
     scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       state.touchRunning = false;
-      scene.input.off('pointerup', state.pointerUpHandler);
       this.states.delete(scene);
     });
 
