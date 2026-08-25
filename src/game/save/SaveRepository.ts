@@ -12,6 +12,7 @@ export interface SaveRepository {
   removeBackup?(): void;
   readSchemaCheckpoint?(schemaVersion: number): string | null;
   writeSchemaCheckpoint?(schemaVersion: number, serialisedSave: string): void;
+  getSchemaCheckpointVersions?(): number[];
   getHighestSchemaCheckpointVersion?(): number | null;
   removeSchemaCheckpointsUpTo?(schemaVersion: number): void;
 }
@@ -64,17 +65,15 @@ export class LocalStorageSaveRepository implements SaveRepository {
     this.storage.setItem(this.getSchemaCheckpointKey(schemaVersion), serialisedSave);
   }
 
+  public getSchemaCheckpointVersions(): number[] {
+    return this.getSchemaCheckpointKeys()
+      .map((key) => this.readCheckpointVersion(key))
+      .filter((schemaVersion): schemaVersion is number => schemaVersion !== null)
+      .sort((left, right) => right - left);
+  }
+
   public getHighestSchemaCheckpointVersion(): number | null {
-    let highestVersion: number | null = null;
-    for (const key of this.getSchemaCheckpointKeys()) {
-      const schemaVersion = this.readCheckpointVersion(key);
-      if (schemaVersion === null) {
-        continue;
-      }
-      highestVersion =
-        highestVersion === null ? schemaVersion : Math.max(highestVersion, schemaVersion);
-    }
-    return highestVersion;
+    return this.getSchemaCheckpointVersions()[0] ?? null;
   }
 
   public removeSchemaCheckpointsUpTo(schemaVersion: number): void {
