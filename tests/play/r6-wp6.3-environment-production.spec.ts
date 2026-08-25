@@ -83,11 +83,7 @@ async function waitForScene(page: Page, sceneKey: string): Promise<void> {
   }, sceneKey);
 }
 
-async function waitForObject(
-  page: Page,
-  sceneKey: string,
-  objectName: string,
-): Promise<void> {
+async function waitForObject(page: Page, sceneKey: string, objectName: string): Promise<void> {
   await page.waitForFunction(
     ({ expectedScene, expectedName }) => {
       const diagnostics = (
@@ -139,34 +135,33 @@ function playerObject(scene: DiagnosticScene): DiagnosticObject {
   return player;
 }
 
-test(
-  'production environment layers give every main region a distinct non-interactive visual pass',
-  async ({ page }) => {
-    for (const region of REGIONS) {
-      await page.goto(`/?scene=${region.route}&diagnostics=1`);
-      await waitForScene(page, region.sceneKey);
-      await waitForObject(
-        page,
-        region.sceneKey,
-        `environment-production:${region.environment}:anchor`,
-      );
+test('production environment layers give every main region a distinct non-interactive visual pass', async ({
+  page,
+}) => {
+  for (const region of REGIONS) {
+    await page.goto(`/?scene=${region.route}&diagnostics=1`);
+    await waitForScene(page, region.sceneKey);
+    await waitForObject(
+      page,
+      region.sceneKey,
+      `environment-production:${region.environment}:anchor`,
+    );
 
-      const scene = (await snapshot(page)).scenes.find(({ key }) => key === region.sceneKey);
-      expect(scene).toBeTruthy();
-      if (!scene) {
-        continue;
-      }
-
-      for (const layer of region.layers) {
-        const object = scene.objects.find(
-          ({ name }) => name === `environment-production:${region.environment}:${layer}`,
-        );
-        expect(object, `${region.environment} should expose its ${layer} layer`).toBeTruthy();
-        expect(object?.interactive).toBe(false);
-      }
+    const scene = (await snapshot(page)).scenes.find(({ key }) => key === region.sceneKey);
+    expect(scene).toBeTruthy();
+    if (!scene) {
+      continue;
     }
-  },
-);
+
+    for (const layer of region.layers) {
+      const object = scene.objects.find(
+        ({ name }) => name === `environment-production:${region.environment}:${layer}`,
+      );
+      expect(object, `${region.environment} should expose its ${layer} layer`).toBeTruthy();
+      expect(object?.interactive).toBe(false);
+    }
+  }
+});
 
 test('environment production scenery leaves established open-ground traversal intact', async ({
   page,
