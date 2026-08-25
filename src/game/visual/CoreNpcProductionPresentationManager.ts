@@ -239,14 +239,23 @@ export class CoreNpcProductionPresentationManager {
 
   private refreshNovaWorld(): void {
     const scene = sceneIfActive(this.game, 'RainbowMeadowScene');
-    if (!scene || scene.children.getByName('core-npc:nova:world')) {
+    if (!scene) {
+      return;
+    }
+
+    const tighteningNova = scene.children.getByName('nova-canonical-world');
+    if (tighteningNova instanceof Phaser.GameObjects.Sprite) {
+      tighteningNova.setVisible(false);
+    }
+    hideNovaPlaceholder(scene);
+
+    if (scene.children.getByName('core-npc:nova:world')) {
       return;
     }
     const marker = RAINBOW_MEADOW_MAP.npcMarkers.find((candidate) => candidate.id === 'nova');
     if (!marker) {
       return;
     }
-    hideNovaPlaceholder(scene);
     const nova = createCoreNpcSprite(
       scene,
       'nova',
