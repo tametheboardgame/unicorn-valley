@@ -146,7 +146,14 @@ export class SaveService {
 
   private hasFutureSchemaCheckpoint(): boolean {
     const highestVersion = this.repository.getHighestSchemaCheckpointVersion?.() ?? null;
-    return highestVersion !== null && highestVersion > CURRENT_SAVE_SCHEMA_VERSION;
+    if (highestVersion === null || highestVersion <= CURRENT_SAVE_SCHEMA_VERSION) {
+      return false;
+    }
+
+    const serialisedCheckpoint = this.repository.readSchemaCheckpoint?.(highestVersion) ?? null;
+    return (
+      serialisedCheckpoint !== null && readSerialisedSchemaVersion(serialisedCheckpoint) === highestVersion
+    );
   }
 
   private isFutureVersion(serialisedSave: string): boolean {
