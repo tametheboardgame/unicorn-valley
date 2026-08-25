@@ -26,6 +26,12 @@ interface BrowserDiagnosticSnapshot {
   scenes: DiagnosticSceneSnapshot[];
 }
 
+interface LogicalTouchPoint {
+  id: number;
+  x: number;
+  y: number;
+}
+
 test.use({ viewport: { width: 1024, height: 768 }, hasTouch: true });
 
 async function getSnapshot(page: Page): Promise<BrowserDiagnosticSnapshot> {
@@ -70,12 +76,11 @@ function getPlayer(scene: DiagnosticSceneSnapshot): DiagnosticObjectSnapshot {
   return player;
 }
 
-async function logicalPointer(
+async function dispatchLogicalTouch(
   page: Page,
-  type: 'pointerdown' | 'pointerup',
-  logicalX: number,
-  logicalY: number,
-  pointerId: number,
+  type: 'touchstart' | 'touchend',
+  touches: readonly LogicalTouchPoint[],
+  changedTouches: readonly LogicalTouchPoint[],
 ): Promise<void> {
   const snapshot = await getSnapshot(page);
   const canvas = page.locator('canvas');
@@ -84,33 +89,56 @@ async function logicalPointer(
     throw new Error('Game canvas has no browser bounds.');
   }
 
-  const clientX = bounds.x + (logicalX / snapshot.width) * bounds.width;
-  const clientY = bounds.y + (logicalY / snapshot.height) * bounds.height;
+  const toClient = ({ id, x, y }: LogicalTouchPoint) => ({
+    id,
+    clientX: bounds.x + (x / snapshot.width) * bounds.width,
+    clientY: bounds.y + (y / snapshot.height) * bounds.height,
+  });
+
   await canvas.evaluate(
     (element, event) => {
+      const makeTouch = (point: { id: number; clientX: number; clientY: number }): Touch =>
+        new Touch({
+          identifier: point.id,
+          target: element,
+          clientX: point.clientX,
+          clientY: point.clientY,
+          screenX: point.clientX,
+          screenY: point.clientY,
+          pageX: point.clientX,
+          pageY: point.clientY,
+          radiusX: 1,
+          radiusY: 1,
+          rotationAngle: 0,
+          force: event.type === 'touchstart' ? 0.5 : 0,
+        });
+
+      const active = event.touches.map(makeTouch);
+      const changed = event.changedTouches.map(makeTouch);
       element.dispatchEvent(
-        new PointerEvent(event.type, {
-          pointerId: event.pointerId,
-          pointerType: 'touch',
-          isPrimary: event.pointerId === 1,
+        new TouchEvent(event.type, {
           bubbles: true,
           cancelable: true,
-          clientX: event.clientX,
-          clientY: event.clientY,
-          button: 0,
-          buttons: event.type === 'pointerdown' ? 1 : 0,
-          pressure: event.type === 'pointerdown' ? 0.5 : 0,
+          composed: true,
+          touches: active,
+          targetTouches: active,
+          changedTouches: changed,
         }),
       );
     },
-    { type, pointerId, clientX, clientY },
+    {
+      type,
+      touches: touches.map(toClient),
+      changedTouches: changedTouches.map(toClient),
+    },
   );
 }
 
 async function logicalTap(page: Page, x: number, y: number, pointerId = 1): Promise<void> {
-  await logicalPointer(page, 'pointerdown', x, y, pointerId);
+  const touch = { id: pointerId, x, y };
+  await dispatchLogicalTouch(page, 'touchstart', [touch], [touch]);
   await page.waitForTimeout(70);
-  await logicalPointer(page, 'pointerup', x, y, pointerId);
+  await dispatchLogicalTouch(page, 'touchend', [], [touch]);
 }
 
 async function waitForForwardControl(page: Page, running: boolean): Promise<void> {
@@ -163,10 +191,21 @@ test('target-tablet touch completes creator, exploration, Book and accessibility
 
   const before = getPlayer(glade);
   await logicalTap(page, 900, 360);
-  await page.waitForTimeout(1200);
-  snapshot = await getSnapshot(page);
-  glade = getScene(snapshot, 'MoonflowerGladeScene');
-  expect(getPlayer(glade).x - before.x).toBeGreaterThan(60);
+  await page.waitForFunction(
+    ({ startX }) => {
+      const diagnosticWindow = window as typeof window & {
+        __UNICORN_VALLEY_DIAGNOSTICS__?: { snapshot(): BrowserDiagnosticSnapshot };
+      };
+      const scene = diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__
+        ?.snapshot()
+        .scenes.find((candidate) => candidate.key === 'MoonflowerGladeScene');
+      const player = scene?.objects
+        .filter((object) => object.textureKey?.startsWith('player-unicorn-'))
+        .sort((left, right) => right.y - left.y)[0];
+      return player ? player.x - startX > 60 : false;
+    },
+    { startX: before.x },
+  );
 
   await logicalTap(page, 870, 58);
   await waitForScene(page, 'WonderbookScene');
@@ -236,7 +275,9 @@ test('target-tablet race supports simultaneous RUN and JUMP plus touch assistanc
   expect(runZone?.displayHeight).toBeGreaterThanOrEqual(108);
 
   const start = getPlayer(race);
-  await logicalPointer(page, 'pointerdown', 142, 618, 1);
+  const runTouch = { id: 1, x: 142, y: 618 } as const;
+  const jumpTouch = { id: 2, x: 1152, y: 618 } as const;
+  await dispatchLogicalTouch(page, 'touchstart', [runTouch], [runTouch]);
   await waitForForwardControl(page, true);
   await page.waitForTimeout(450);
 
@@ -245,13 +286,13 @@ test('target-tablet race supports simultaneous RUN and JUMP plus touch assistanc
   const beforeJump = getPlayer(race);
   expect(beforeJump.x - start.x).toBeGreaterThan(20);
 
-  await logicalPointer(page, 'pointerdown', 1152, 618, 2);
+  await dispatchLogicalTouch(page, 'touchstart', [runTouch, jumpTouch], [jumpTouch]);
   await page.waitForTimeout(140);
   snapshot = await getSnapshot(page);
   race = getScene(snapshot, 'RaceScene');
   const airborne = getPlayer(race);
   expect(airborne.y).toBeLessThan(beforeJump.y - 3);
-  await logicalPointer(page, 'pointerup', 1152, 618, 2);
+  await dispatchLogicalTouch(page, 'touchend', [runTouch], [jumpTouch]);
 
   await page.waitForTimeout(120);
   snapshot = await getSnapshot(page);
@@ -263,7 +304,7 @@ test('target-tablet race supports simultaneous RUN and JUMP plus touch assistanc
   race = getScene(snapshot, 'RaceScene');
   expect(getPlayer(race).x - afterSecondFinger.x).toBeGreaterThan(10);
 
-  await logicalPointer(page, 'pointerup', 142, 618, 1);
+  await dispatchLogicalTouch(page, 'touchend', [], [runTouch]);
   await waitForForwardControl(page, false);
 
   await logicalTap(page, 1130, 165);
