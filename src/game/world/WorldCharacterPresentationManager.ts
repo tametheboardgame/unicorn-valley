@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { RefreshThrottle } from '../performance/RefreshThrottle';
 import { RAINBOW_MEADOW_MAP } from './RainbowMeadowMap';
 
 export const RAINBOW_MEADOW_NOVA_SCALE = 0.65;
@@ -6,12 +7,17 @@ export const RAINBOW_MEADOW_NOVA_LABEL_OFFSET_Y = 58;
 
 export class WorldCharacterPresentationManager {
   private readonly adjustedObjects = new WeakSet<Phaser.GameObjects.GameObject>();
+  private readonly syncThrottle = new RefreshThrottle(100);
 
   public constructor(private readonly game: Phaser.Game) {
     this.game.events.on(Phaser.Core.Events.POST_STEP, this.update, this);
   }
 
   private update(): void {
+    if (!this.syncThrottle.shouldRun(this.game.loop.time)) {
+      return;
+    }
+
     const scene = this.game.scene.getScene('RainbowMeadowScene');
     if (!scene?.scene.isActive()) {
       return;

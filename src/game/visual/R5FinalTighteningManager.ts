@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { RefreshThrottle } from '../performance/RefreshThrottle';
 
 const FIREFLY_BUTTON_WIDTH = 244;
 const FIREFLY_BUTTON_HEIGHT = 80;
@@ -111,6 +112,8 @@ function tightenCottageInterior(scene: Phaser.Scene): void {
 }
 
 export class R5FinalTighteningManager {
+  private readonly syncThrottle = new RefreshThrottle(100);
+
   public constructor(private readonly game: Phaser.Game) {
     this.game.events.on(Phaser.Core.Events.POST_STEP, this.update, this);
     this.game.events.once(Phaser.Core.Events.DESTROY, () => {
@@ -119,6 +122,10 @@ export class R5FinalTighteningManager {
   }
 
   private update(): void {
+    if (!this.syncThrottle.shouldRun(this.game.loop.time)) {
+      return;
+    }
+
     for (const scene of this.game.scene.getScenes(true)) {
       tightenSuggestionCard(scene);
       strengthenRain(scene);
