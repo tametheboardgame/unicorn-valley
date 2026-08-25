@@ -16,6 +16,7 @@ If later work adds external image or audio assets, they should be loaded by the 
 - Browser diagnostics are dynamically imported only for `?diagnostics=1`, keeping test-only inspection code out of the normal initial application path.
 - The browser regression suite runs against `vite preview` of the production build instead of the development server.
 - `npm run perf:budget` runs after every production build in CI and in the combined validation script.
+- the exact PR head must also complete its Cloudflare Pages preview check before merge; a stale or in-progress Pages check is treated as a deployment blocker rather than being inferred from local/CI success.
 
 ## Bundle budgets
 
@@ -32,7 +33,9 @@ Budgets should only be raised alongside an explicit explanation of the new produ
 
 ## Runtime profiling
 
-Diagnostics collect a rolling 180-frame sample only when diagnostics mode is enabled. The R6-WP6.7 browser regression checks normal world-scene transitions against deliberately tolerant CI-safe limits:
+Diagnostics collect a rolling 180-frame sample only when diagnostics mode is enabled. Frame intervals are measured from wall-clock `performance.now()` timestamps between rendered callbacks rather than Phaser's smoothed simulation delta, so a genuine main-thread transition stall cannot be hidden by engine delta smoothing/capping.
+
+The R6-WP6.7 browser regression checks normal world-scene transitions against deliberately tolerant CI-safe limits:
 
 - normal diagnostic scene transition under 1 second;
 - 95th percentile frame duration under 120 ms after settling;
