@@ -38,6 +38,7 @@ describe('LocalStorageSaveRepository schema checkpoints', () => {
     storage.setItem(`${SAVE_SCHEMA_CHECKPOINT_STORAGE_KEY_PREFIX}3`, 'v3');
     storage.setItem('unrelated', 'keep');
 
+    expect(repository.getSchemaCheckpointVersions()).toEqual([3, 2, 1]);
     expect(repository.getHighestSchemaCheckpointVersion()).toBe(3);
     expect(repository.readSchemaCheckpoint(2)).toBe('v2');
 
