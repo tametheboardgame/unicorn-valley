@@ -188,12 +188,14 @@ test('target-tablet touch completes creator, exploration, Book and accessibility
   glade = getScene(snapshot, 'MoonflowerGladeScene');
   expect(
     glade.objects.some(
-      (object) => object.name === 'exploration-reduced-motion-toggle-label' && object.text?.endsWith('On'),
+      (object) =>
+        object.name === 'exploration-reduced-motion-toggle-label' && object.text?.endsWith('On'),
     ),
   ).toBe(true);
   expect(
     glade.objects.some(
-      (object) => object.name === 'exploration-high-visibility-toggle-label' && object.text?.endsWith('On'),
+      (object) =>
+        object.name === 'exploration-high-visibility-toggle-label' && object.text?.endsWith('On'),
     ),
   ).toBe(true);
 
