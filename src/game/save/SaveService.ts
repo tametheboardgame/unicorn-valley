@@ -152,7 +152,8 @@ export class SaveService {
 
     const serialisedCheckpoint = this.repository.readSchemaCheckpoint?.(highestVersion) ?? null;
     return (
-      serialisedCheckpoint !== null && readSerialisedSchemaVersion(serialisedCheckpoint) === highestVersion
+      serialisedCheckpoint !== null &&
+      readSerialisedSchemaVersion(serialisedCheckpoint) === highestVersion
     );
   }
 
