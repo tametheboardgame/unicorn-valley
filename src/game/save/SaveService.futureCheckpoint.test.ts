@@ -40,9 +40,12 @@ class FutureCheckpointRepository implements SaveRepository {
     this.checkpoints.set(schemaVersion, serialisedSave);
   }
 
+  public getSchemaCheckpointVersions(): number[] {
+    return [...this.checkpoints.keys()].sort((left, right) => right - left);
+  }
+
   public getHighestSchemaCheckpointVersion(): number | null {
-    const versions = [...this.checkpoints.keys()];
-    return versions.length > 0 ? Math.max(...versions) : null;
+    return this.getSchemaCheckpointVersions()[0] ?? null;
   }
 
   public removeSchemaCheckpointsUpTo(schemaVersion: number): void {
@@ -106,5 +109,26 @@ describe('SaveService future checkpoint validation', () => {
     expect(repository.value).toBeNull();
     service.clear();
     expect(repository.checkpoints.get(futureVersion)).toBe(futureCheckpoint);
+  });
+
+  it('protects a valid future checkpoint hidden below a corrupt higher-version checkpoint', () => {
+    const repository = new FutureCheckpointRepository();
+    const futureVersion = CURRENT_SAVE_SCHEMA_VERSION + 1;
+    const corruptHigherVersion = CURRENT_SAVE_SCHEMA_VERSION + 2;
+    const futureCheckpoint = JSON.stringify({
+      schemaVersion: futureVersion,
+      marker: 'protected-newer-progress',
+    });
+    repository.checkpoints.set(futureVersion, futureCheckpoint);
+    repository.checkpoints.set(corruptHigherVersion, '{broken-higher-checkpoint');
+
+    const service = new SaveService(repository);
+
+    expect(service.load()).toBeNull();
+    service.save(service.createNewGame());
+    expect(repository.value).toBeNull();
+    service.clear();
+    expect(repository.checkpoints.get(futureVersion)).toBe(futureCheckpoint);
+    expect(repository.checkpoints.get(corruptHigherVersion)).toBe('{broken-higher-checkpoint');
   });
 });
