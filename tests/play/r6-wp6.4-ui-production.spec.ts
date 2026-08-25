@@ -88,7 +88,9 @@ test('production storybook shell is present on the core modal UI scenes', async 
   }
 });
 
-test('Wonderbook production tabs remain large interactive navigation controls', async ({ page }) => {
+test('Wonderbook production tabs remain large interactive navigation controls', async ({
+  page,
+}) => {
   await page.goto('/?scene=wonderbook&diagnostics=1');
   await waitForScene(page, 'WonderbookScene');
   await waitForObject(page, 'WonderbookScene', 'wonderbook-tab-secrets');
@@ -112,7 +114,9 @@ test('Wonderbook production tabs remain large interactive navigation controls', 
   expect(scene?.objects.some(({ name }) => name === 'wonderbook-page-content')).toBe(true);
 });
 
-test('dialogue and sound settings expose explicit production interaction states', async ({ page }) => {
+test('dialogue and sound settings expose explicit production interaction states', async ({
+  page,
+}) => {
   await page.goto('/?scene=dialogue-test&diagnostics=1');
   await waitForScene(page, 'DialogueTestScene');
   await waitForObject(page, 'DialogueTestScene', 'dialogue-production-panel');
