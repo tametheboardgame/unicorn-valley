@@ -18,10 +18,15 @@ export class ItemCard {
     const shadow = createUiShadow(scene, x, y, width, 136, 0, 0.16);
     const panel = scene.add
       .rectangle(x, y, width, 136, UI_COLOURS.cream, 0.99)
-      .setStrokeStyle(4, UI_COLOURS.lavenderStrong, 0.98);
+      .setName(`inventory-production-card:${item.id}`)
+      .setStrokeStyle(4, UI_COLOURS.ribbonStrong, 0.98);
+    const ribbon = scene.add
+      .rectangle(x - width / 2 + 9, y, 18, 104, UI_COLOURS.ribbon, 0.95)
+      .setStrokeStyle(2, UI_COLOURS.ribbonStrong, 0.82);
+    const iconHalo = scene.add.circle(x - width / 2 + 72, y, 49, UI_COLOURS.gold, 0.34);
     const iconCircle = scene.add
-      .circle(x - width / 2 + 72, y, 43, UI_COLOURS.lavender, 1)
-      .setStrokeStyle(3, UI_COLOURS.white, 0.92);
+      .circle(x - width / 2 + 72, y, 42, UI_COLOURS.lavender, 1)
+      .setStrokeStyle(4, UI_COLOURS.white, 0.96);
     const icon = scene.add
       .text(iconCircle.x, iconCircle.y, presentation.icon, {
         fontFamily: UI_FONT,
@@ -57,12 +62,23 @@ export class ItemCard {
         fontFamily: UI_FONT,
         fontSize: '19px',
         fontStyle: 'bold',
-        backgroundColor: '#f0ddf5',
+        backgroundColor: '#f5e5b8',
         padding: { x: 8, y: 5 },
       })
       .setOrigin(1, 0);
 
-    this.objects.push(shadow, panel, iconCircle, icon, name, category, description, quantityText);
+    this.objects.push(
+      shadow,
+      panel,
+      ribbon,
+      iconHalo,
+      iconCircle,
+      icon,
+      name,
+      category,
+      description,
+      quantityText,
+    );
   }
 
   public destroy(): void {

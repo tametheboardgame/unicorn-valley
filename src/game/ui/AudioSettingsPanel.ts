@@ -12,9 +12,9 @@ interface SettingRow {
 type VisiblePanelObject = Phaser.GameObjects.Rectangle | Phaser.GameObjects.Text;
 
 const PANEL_X = GAME_WIDTH - 190;
-const PANEL_Y = 225;
+const PANEL_Y = 235;
 const PANEL_WIDTH = 330;
-const PANEL_HEIGHT = 270;
+const PANEL_HEIGHT = 300;
 
 export class AudioSettingsPanel {
   private readonly audio = getVerticalSliceAudio();
@@ -35,7 +35,7 @@ export class AudioSettingsPanel {
     this.button = scene.add
       .rectangle(buttonX, buttonY, 142, 64, UI_COLOURS.cream, 0.98)
       .setName('exploration-shell-sound-button')
-      .setStrokeStyle(4, UI_COLOURS.lavenderStrong, 0.98)
+      .setStrokeStyle(4, UI_COLOURS.ribbonStrong, 0.98)
       .setScrollFactor(0)
       .setDepth(120)
       .setInteractive({ useHandCursor: true });
@@ -65,16 +65,16 @@ export class AudioSettingsPanel {
     const panel = scene.add
       .rectangle(PANEL_X, PANEL_Y, PANEL_WIDTH, PANEL_HEIGHT, UI_COLOURS.cream, 0.99)
       .setName('exploration-shell-sound-panel')
-      .setStrokeStyle(5, UI_COLOURS.lavenderStrong, 1)
+      .setStrokeStyle(5, UI_COLOURS.ribbonStrong, 1)
       .setScrollFactor(0)
       .setDepth(132);
     const ribbon = scene.add
-      .rectangle(PANEL_X, PANEL_Y - PANEL_HEIGHT / 2 + 32, 236, 48, UI_COLOURS.lavender, 1)
-      .setStrokeStyle(3, UI_COLOURS.lavenderStrong, 1)
+      .rectangle(PANEL_X, PANEL_Y - PANEL_HEIGHT / 2 + 34, 250, 50, UI_COLOURS.ribbon, 1)
+      .setStrokeStyle(3, UI_COLOURS.ribbonStrong, 1)
       .setScrollFactor(0)
       .setDepth(133);
     const heading = scene.add
-      .text(PANEL_X, PANEL_Y - PANEL_HEIGHT / 2 + 32, 'Sound & music ✨', {
+      .text(PANEL_X, PANEL_Y - PANEL_HEIGHT / 2 + 34, 'Sound & music ✨', {
         color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
         fontSize: '20px',
@@ -87,10 +87,11 @@ export class AudioSettingsPanel {
 
     const rowKinds: SettingRow['kind'][] = ['muted', 'music', 'ambience', 'sfx'];
     rowKinds.forEach((kind, index) => {
-      const rowY = PANEL_Y - 62 + index * 48;
+      const rowY = PANEL_Y - 68 + index * 52;
       const rowButton = scene.add
-        .rectangle(PANEL_X, rowY, 270, 38, UI_COLOURS.lavender, 1)
-        .setStrokeStyle(2, UI_COLOURS.lavenderStrong, 0.95)
+        .rectangle(PANEL_X, rowY, 270, 48, UI_COLOURS.lavender, 1)
+        .setName(`audio-setting-${kind}`)
+        .setStrokeStyle(3, UI_COLOURS.lavenderStrong, 0.95)
         .setScrollFactor(0)
         .setDepth(133)
         .setInteractive({ useHandCursor: true });
@@ -104,7 +105,11 @@ export class AudioSettingsPanel {
         .setOrigin(0.5)
         .setScrollFactor(0)
         .setDepth(134);
-      applyButtonHover(rowButton, UI_COLOURS.lavender, UI_COLOURS.gold);
+      rowButton.on('pointerover', () => rowButton.setAlpha(0.82));
+      rowButton.on('pointerout', () => {
+        rowButton.setAlpha(1);
+        this.refresh();
+      });
       rowButton.on('pointerdown', () => this.toggleSetting(kind));
       this.rows.push({ button: rowButton, label: rowLabel, kind });
       this.panelObjects.push(rowButton, rowLabel);
@@ -178,15 +183,23 @@ export class AudioSettingsPanel {
     this.buttonLabel.setText(settings.muted ? 'Sound 🔇' : 'Sound 🔊');
 
     for (const row of this.rows) {
+      let enabled = true;
       if (row.kind === 'muted') {
-        row.label.setText(`All sound: ${settings.muted ? 'Off' : 'On'}`);
+        enabled = !settings.muted;
+        row.label.setText(`All sound: ${enabled ? 'On' : 'Off'}`);
       } else if (row.kind === 'music') {
-        row.label.setText(`Music: ${settings.musicEnabled ? 'On' : 'Off'}`);
+        enabled = settings.musicEnabled;
+        row.label.setText(`Music: ${enabled ? 'On' : 'Off'}`);
       } else if (row.kind === 'ambience') {
-        row.label.setText(`Ambience: ${settings.ambienceEnabled ? 'On' : 'Off'}`);
+        enabled = settings.ambienceEnabled;
+        row.label.setText(`Ambience: ${enabled ? 'On' : 'Off'}`);
       } else {
-        row.label.setText(`Effects: ${settings.sfxEnabled ? 'On' : 'Off'}`);
+        enabled = settings.sfxEnabled;
+        row.label.setText(`Effects: ${enabled ? 'On' : 'Off'}`);
       }
+      row.button
+        .setFillStyle(enabled ? UI_COLOURS.mint : UI_COLOURS.blush, 1)
+        .setStrokeStyle(3, enabled ? UI_COLOURS.mintStrong : UI_COLOURS.blushStrong, 1);
     }
   }
 

@@ -16,8 +16,8 @@ R5 is complete.
 
 - R6-WP6.1 - Complete (PR #86): Player Unicorn Production Art
 - R6-WP6.2 - Complete (PR #87): Core NPC Production Art
-- R6-WP6.3 - In progress: Production Environment Art
-- R6-WP6.4 - Pending: Production UI and Wonderbook Art
+- R6-WP6.3 - Complete (PR #88): Production Environment Art
+- R6-WP6.4 - In progress: Production UI and Wonderbook Art
 - R6-WP6.5 - Pending: Production Audio
 - R6-WP6.6 - Pending: Touch, Tablet and Accessibility Hardening
 - R6-WP6.7 - Pending: Performance and Loading Optimisation
@@ -51,16 +51,29 @@ PR #87 established one canonical production renderer for the six core NPCs so st
 - no save-schema migration was required;
 - the final PR head passed formatting, lint, TypeScript, unit tests, production build, static smoke, all 65 browser playtests and an exact-head Cloudflare preview before squash merge.
 
-## R6-WP6.3 implementation intent
+## R6-WP6.3 implementation summary
 
-The environment pass is presentation-only and preserves established navigation and collision geometry.
+PR #88 added production environment identity as a presentation-only layer while preserving established navigation and collision geometry.
+
+- Moonflower Glade, Sunbeam Village, Rainbow Meadow, Crystal Brook and Whispering Woods now receive distinct palette treatment and signature motifs;
+- both race scenes share a dedicated Rainbow Run production layer;
+- foreground foliage, moonflowers, village planters, rainbow motifs, water glints, crystal clusters, glowing woods flora and restrained ambient motion provide region identity without adding physics bodies or interaction zones;
+- screenshot QA caught an initial depth mistake where valid production objects sat beneath prototype ground; the final pass moved those decorative layers into visible world depth while keeping paths, characters and interactables readable;
+- automated coverage confirms each region exposes non-interactive production layers and that open-ground Glade traversal remains intact;
+- no save, progression, quest, interaction, collision-map or navigation changes were required;
+- the final PR head passed formatting, lint, TypeScript, unit tests, production build, static smoke, the complete browser playtest suite, exact-head Cloudflare deployment and screenshot QA before squash merge.
+
+## R6-WP6.4 implementation intent
+
+The UI pass builds one reusable storybook visual language around the stable interaction flows rather than replacing their underlying logic.
 
 Current branch work provides:
 
-- distinct production palette overlays for Moonflower Glade, Sunbeam Village, Rainbow Meadow, Crystal Brook and Whispering Woods;
-- a dedicated Rainbow Run production layer for both race scenes;
-- signature region motifs including moonflowers, village planter colour, rainbow ribbons, water glints and glowing woods flora;
-- lightweight ambient motion using restrained motes, smoke wisps, light shafts and water highlights;
-- foreground foliage at map edges using world-depth sorting without physics bodies or interaction zones;
-- automated coverage confirming every region exposes non-interactive production layers and that open-ground Glade traversal remains intact;
-- no save, progression, quest, interaction, collision-map or navigation changes.
+- expanded shared storybook palette plus explicit hover, pressed, selected and disabled visual states;
+- a production dialogue card with speaker ribbon, portrait halo and named large interaction controls;
+- richer inventory item cards while preserving item IDs and inventory behaviour;
+- clearer sound/settings on/off states with 48-pixel row targets;
+- production frames and ornament treatment for Bag, Shop, Cottage Decoration and Wonderbook scenes without intercepting input;
+- Wonderbook All/Secrets ribbon tabs, page fade motion and sticker pop/sway animation;
+- direct diagnostic routes and browser coverage for the core polished UI scenes and Wonderbook tab interaction;
+- no save-schema, economy, decoration-placement, dialogue-content or progression changes.

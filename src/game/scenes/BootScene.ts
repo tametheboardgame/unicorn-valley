@@ -15,6 +15,7 @@ import { getPebbleCollectionWorldManager } from '../story/PebbleCollectionWorldM
 import { getPipEggWorldManager } from '../story/PipEggWorldManager';
 import { getCoreNpcProductionPresentationManager } from '../visual/CoreNpcProductionPresentationManager';
 import { getEnvironmentProductionPresentationManager } from '../visual/EnvironmentProductionPresentationManager';
+import { getUiProductionPresentationManager } from '../visual/UiProductionPresentationManager';
 import { getVisualTighteningManager } from '../visual/VisualTighteningManager';
 import { getR5RegionGatewayManager } from '../world/R5RegionGatewayManager';
 import { getWorldCharacterPresentationManager } from '../world/WorldCharacterPresentationManager';
@@ -32,6 +33,9 @@ const DIAGNOSTIC_SCENES: Record<string, string> = {
   meadow: 'RainbowMeadowScene',
   brook: 'CrystalBrookScene',
   woods: 'WhisperingWoodsScene',
+  inventory: 'InventoryScene',
+  shop: 'ShopScene',
+  wonderbook: 'WonderbookScene',
   'firefly-lantern': 'FireflyLanternScene',
   'ripple-story': 'RippleStoryScene',
   'lumi-story': 'LumiStoryScene',
@@ -67,6 +71,7 @@ export class BootScene extends Phaser.Scene {
     getVisualTighteningManager(this.sys.game);
     getWorldTraversalPolishManager(this.sys.game);
     getEnvironmentProductionPresentationManager(this.sys.game);
+    getUiProductionPresentationManager(this.sys.game);
     getR5RegionGatewayManager(this.sys.game);
     getRacePlayerControlManager(this.sys.game);
     getRacePlaytestRecoveryManager(this.sys.game);

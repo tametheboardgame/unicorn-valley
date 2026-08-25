@@ -17,11 +17,15 @@ interface WonderbookSceneData {
   returnScene?: string;
 }
 
+type WonderbookSection = 'all' | 'secrets';
+
 export class WonderbookScene extends Phaser.Scene {
   private inputController: InputController | null = null;
   private pointerInput: PointerTouchInputAdapter | null = null;
   private returnScene = 'MoonflowerGladeScene';
   private closing = false;
+  private allEntries: readonly WonderbookEntry[] = [];
+  private activeSection: WonderbookSection = 'all';
   private spreads: readonly WonderbookSpread[] = [];
   private spreadIndex = 0;
   private pageContent: Phaser.GameObjects.Container | null = null;
@@ -29,6 +33,8 @@ export class WonderbookScene extends Phaser.Scene {
   private rightPageNumber: Phaser.GameObjects.Text | null = null;
   private previousButton: Phaser.GameObjects.Text | null = null;
   private nextButton: Phaser.GameObjects.Text | null = null;
+  private allTab: Phaser.GameObjects.Text | null = null;
+  private secretsTab: Phaser.GameObjects.Text | null = null;
   private horizontalInputLatched = false;
 
   public constructor() {
@@ -38,6 +44,7 @@ export class WonderbookScene extends Phaser.Scene {
   public create(data: WonderbookSceneData): void {
     this.returnScene = data.returnScene ?? 'MoonflowerGladeScene';
     this.closing = false;
+    this.activeSection = 'all';
     this.spreadIndex = 0;
     this.horizontalInputLatched = false;
     this.cameras.main.setBackgroundColor('#5f4679');
@@ -46,11 +53,12 @@ export class WonderbookScene extends Phaser.Scene {
 
     const saveService = getBrowserSaveService();
     const save = saveService.load() ?? saveService.createNewGame();
-    const entries = buildWonderbookEntries(
+    this.allEntries = buildWonderbookEntries(
       discoveryRegistry.values(),
       save.collections.discoveryIds,
     );
-    this.spreads = paginateWonderbookEntries(entries);
+    this.spreads = paginateWonderbookEntries(this.entriesForSection());
+    this.createSectionTabs();
     this.createPageControls();
     this.renderSpread();
 
@@ -58,7 +66,7 @@ export class WonderbookScene extends Phaser.Scene {
       .text(
         104,
         GAME_HEIGHT - 30,
-        `${entries.filter(({ discovered }) => discovered).length} discoveries found`,
+        `${this.allEntries.filter(({ discovered }) => discovered).length} discoveries found`,
         {
           color: '#ead8f3',
           fontFamily: UI_FONT,
@@ -100,8 +108,11 @@ export class WonderbookScene extends Phaser.Scene {
       this.pageContent = null;
       this.previousButton = null;
       this.nextButton = null;
+      this.allTab = null;
+      this.secretsTab = null;
       this.leftPageNumber = null;
       this.rightPageNumber = null;
+      this.allEntries = [];
       this.spreads = [];
     });
   }
@@ -213,6 +224,24 @@ export class WonderbookScene extends Phaser.Scene {
       .setDepth(12);
   }
 
+  private createSectionTabs(): void {
+    this.allTab = this.add
+      .text(790, 154, '✦ All adventures', this.tabStyle(true))
+      .setName('wonderbook-tab-all')
+      .setOrigin(0.5)
+      .setDepth(18)
+      .setInteractive({ useHandCursor: true });
+    this.secretsTab = this.add
+      .text(1015, 154, '★ Secrets', this.tabStyle(false))
+      .setName('wonderbook-tab-secrets')
+      .setOrigin(0.5)
+      .setDepth(18)
+      .setInteractive({ useHandCursor: true });
+
+    this.allTab.on('pointerdown', () => this.setSection('all'));
+    this.secretsTab.on('pointerdown', () => this.setSection('secrets'));
+  }
+
   private createPageControls(): void {
     this.previousButton = this.add
       .text(126, 608, '◀ Previous', {
@@ -221,7 +250,7 @@ export class WonderbookScene extends Phaser.Scene {
         fontSize: '17px',
         fontStyle: 'bold',
         backgroundColor: '#f5e7f1',
-        padding: { x: 12, y: 7 },
+        padding: { x: 14, y: 12 },
       })
       .setName('wonderbook-previous-page')
       .setOrigin(0, 0.5)
@@ -234,7 +263,7 @@ export class WonderbookScene extends Phaser.Scene {
         fontSize: '17px',
         fontStyle: 'bold',
         backgroundColor: '#f5e7f1',
-        padding: { x: 12, y: 7 },
+        padding: { x: 14, y: 12 },
       })
       .setName('wonderbook-next-page')
       .setOrigin(1, 0.5)
@@ -268,9 +297,17 @@ export class WonderbookScene extends Phaser.Scene {
     }
 
     this.pageContent = this.add
-      .container(0, 0, objects)
+      .container(0, 5, objects)
       .setName('wonderbook-page-content')
+      .setAlpha(0)
       .setDepth(8);
+    this.tweens.add({
+      targets: this.pageContent,
+      y: 0,
+      alpha: 1,
+      duration: 220,
+      ease: 'Sine.Out',
+    });
     this.leftPageNumber?.setText(String(spread.leftPageNumber));
     this.rightPageNumber?.setText(String(spread.rightPageNumber));
 
@@ -293,6 +330,7 @@ export class WonderbookScene extends Phaser.Scene {
   ): Phaser.GameObjects.GameObject[] {
     const sticker = this.add
       .circle(x + 42, y + 44, 37, entry.discovered ? 0xffe6a6 : 0xe9e0ea, 1)
+      .setName(`wonderbook-sticker:${entry.id}`)
       .setStrokeStyle(4, entry.discovered ? 0xd6b35f : 0xc7b5ca, 1);
     const icon = this.add
       .text(x + 42, y + 44, entry.discovered ? (entry.icon ?? '✦') : '?', {
@@ -326,13 +364,25 @@ export class WonderbookScene extends Phaser.Scene {
     );
 
     if (entry.discovered) {
+      sticker.setScale(0.82);
       this.tweens.add({
         targets: sticker,
-        angle: { from: -2, to: 2 },
-        duration: 900,
-        yoyo: true,
-        repeat: -1,
-        ease: 'Sine.InOut',
+        scale: 1,
+        duration: 280,
+        ease: 'Back.Out',
+        onComplete: () => {
+          if (!sticker.active) {
+            return;
+          }
+          this.tweens.add({
+            targets: sticker,
+            angle: { from: -2, to: 2 },
+            duration: 1100,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.InOut',
+          });
+        },
       });
     }
 
@@ -340,8 +390,12 @@ export class WonderbookScene extends Phaser.Scene {
   }
 
   private createEmptyPageMessage(x: number, y: number): Phaser.GameObjects.Text {
+    const message =
+      this.activeSection === 'secrets'
+        ? 'Secret stickers appear here when you uncover them ✨'
+        : 'More discoveries will appear here ✨';
     return this.add
-      .text(x, y, 'More discoveries will appear here ✨', {
+      .text(x, y, message, {
         color: UI_COLOURS.mutedInk,
         fontFamily: UI_FONT,
         fontSize: '18px',
@@ -350,6 +404,39 @@ export class WonderbookScene extends Phaser.Scene {
         wordWrap: { width: 360 },
       })
       .setOrigin(0.5);
+  }
+
+  private setSection(section: WonderbookSection): void {
+    if (this.activeSection === section) {
+      return;
+    }
+    this.activeSection = section;
+    this.spreadIndex = 0;
+    this.spreads = paginateWonderbookEntries(this.entriesForSection());
+    this.refreshSectionTabs();
+    this.renderSpread();
+  }
+
+  private entriesForSection(): readonly WonderbookEntry[] {
+    return this.activeSection === 'secrets'
+      ? this.allEntries.filter(({ kind }) => kind === 'secret')
+      : this.allEntries;
+  }
+
+  private refreshSectionTabs(): void {
+    this.allTab?.setStyle(this.tabStyle(this.activeSection === 'all'));
+    this.secretsTab?.setStyle(this.tabStyle(this.activeSection === 'secrets'));
+  }
+
+  private tabStyle(selected: boolean): Phaser.Types.GameObjects.Text.TextStyle {
+    return {
+      color: selected ? UI_COLOURS.ink : UI_COLOURS.softInk,
+      fontFamily: UI_FONT,
+      fontSize: '18px',
+      fontStyle: 'bold',
+      backgroundColor: selected ? '#ffe6a6' : '#ead8f3',
+      padding: { x: 16, y: 14 },
+    };
   }
 
   private turnSpread(direction: -1 | 1): void {
