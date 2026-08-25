@@ -220,11 +220,11 @@ export class UnicornCreatorScene extends Phaser.Scene {
     choices.forEach((choice, index) => {
       const swatchX = x + 160 + index * 52;
       const outline = this.add
-        .circle(swatchX, y, 21, UI_COLOURS.lavender, 0.8)
+        .circle(swatchX, y, 24, UI_COLOURS.lavender, 0.8)
         .setStrokeStyle(4, UI_COLOURS.lavenderStrong, 0.72)
         .setInteractive({ useHandCursor: true })
         .setDepth(5);
-      this.add.circle(swatchX, y, 15, choice.value, 1).setDepth(6);
+      this.add.circle(swatchX, y, 16, choice.value, 1).setDepth(6);
       outline.on('pointerdown', () => {
         this.appearance = { ...this.appearance, [key]: choice.id } as UnicornAppearance;
         this.redraw();
@@ -275,9 +275,9 @@ export class UnicornCreatorScene extends Phaser.Scene {
       .setDepth(5);
 
     const leftX = x + (compact ? 112 : 115);
-    const valueX = x + (compact ? 142 : 145);
+    const valueX = x + (compact ? 148 : 151);
     const rightX = x + rightOffset;
-    const arrowRadius = compact ? 17 : 18;
+    const arrowRadius = 24;
 
     const valueText = this.add
       .text(valueX, y, '', {
