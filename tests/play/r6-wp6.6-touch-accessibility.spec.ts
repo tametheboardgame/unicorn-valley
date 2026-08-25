@@ -9,6 +9,7 @@ interface DiagnosticObjectSnapshot {
   y: number;
   displayWidth: number;
   displayHeight: number;
+  depth: number;
   visible: boolean;
   interactive: boolean;
 }
@@ -69,7 +70,7 @@ function getScene(snapshot: BrowserDiagnosticSnapshot, sceneKey: string): Diagno
 function getPlayer(scene: DiagnosticSceneSnapshot): DiagnosticObjectSnapshot {
   const player = scene.objects
     .filter((object) => object.textureKey?.startsWith('player-unicorn-'))
-    .sort((left, right) => right.y - left.y)[0];
+    .sort((left, right) => right.depth - left.depth)[0];
   if (!player) {
     throw new Error(`Missing player in ${scene.key}.`);
   }
@@ -201,7 +202,7 @@ test('target-tablet touch completes creator, exploration, Book and accessibility
         .scenes.find((candidate) => candidate.key === 'MoonflowerGladeScene');
       const player = scene?.objects
         .filter((object) => object.textureKey?.startsWith('player-unicorn-'))
-        .sort((left, right) => right.y - left.y)[0];
+        .sort((left, right) => right.depth - left.depth)[0];
       return player ? player.x - startX > 60 : false;
     },
     { startX: before.x },
