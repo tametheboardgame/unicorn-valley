@@ -54,7 +54,9 @@ async function measureTransition(page: Page, sceneKey: string): Promise<number> 
   return page.evaluate((start) => performance.now() - start, startedAt);
 }
 
-test('production world transitions stay responsive and avoid severe frame hitches', async ({ page }) => {
+test('production world transitions stay responsive and avoid severe frame hitches', async ({
+  page,
+}) => {
   test.setTimeout(45_000);
   await page.goto('/?scene=glade&diagnostics=1');
   await waitForDiagnostics(page);
