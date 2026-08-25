@@ -21,6 +21,7 @@ export function createRaceAssistanceControl(
 
   const background = scene.add
     .rectangle(0, 0, 250, 58, 0xfff8e8, 0.96)
+    .setName('race-assistance-toggle')
     .setStrokeStyle(3, 0xb996c6, 0.95)
     .setInteractive({ useHandCursor: true });
   const modeText = scene.add
@@ -30,6 +31,7 @@ export function createRaceAssistanceControl(
       fontSize: '16px',
       fontStyle: 'bold',
     })
+    .setName('race-assistance-toggle-label')
     .setOrigin(0.5);
   const hintText = scene.add
     .text(0, 14, 'tap to change', {
@@ -37,6 +39,7 @@ export function createRaceAssistanceControl(
       fontFamily: 'system-ui, sans-serif',
       fontSize: '12px',
     })
+    .setName('race-assistance-toggle-hint')
     .setOrigin(0.5);
 
   const refreshLabel = (): void => {
@@ -47,6 +50,7 @@ export function createRaceAssistanceControl(
 
   const container = scene.add
     .container(x, y, [background, modeText, hintText])
+    .setName('race-assistance-control')
     .setScrollFactor(0)
     .setDepth(113);
 
