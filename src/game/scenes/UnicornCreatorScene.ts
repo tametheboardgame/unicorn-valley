@@ -427,13 +427,13 @@ export class UnicornCreatorScene extends Phaser.Scene {
         appearance: serialiseUnicornAppearance(this.appearance),
       },
     };
-    const saved = service.save(nextSave);
-    if (!saved) {
+    const result = service.saveWithResult(nextSave);
+    if (result.status !== 'saved') {
       this.scene.start('TitleScene');
       return;
     }
 
-    this.save = saved;
+    this.save = result.save;
     this.scene.start('MoonflowerGladeScene');
   }
 }
