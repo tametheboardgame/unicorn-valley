@@ -1,9 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  CORE_NPC_IDS,
-  CORE_NPC_VISUALS,
-  getCoreNpcTextureKey,
-} from './CoreNpcProductionArt';
+import { CORE_NPC_IDS, CORE_NPC_VISUALS, getCoreNpcTextureKey } from './CoreNpcProductionArt';
 
 describe('CoreNpcProductionArt', () => {
   it('defines six stable and visually distinct core identities', () => {
