@@ -3,11 +3,21 @@ import { expect, test, type Page } from '@playwright/test';
 const SAVE_KEY = 'unicorn-valley.save';
 const BACKUP_KEY = 'unicorn-valley.save.backup';
 
+interface DiagnosticObject {
+  text: string | null;
+  visible: boolean;
+  interactive: boolean;
+  x: number;
+  y: number;
+}
+
 interface DiagnosticSnapshot {
+  width: number;
+  height: number;
   activeScenes: string[];
   scenes: Array<{
     key: string;
-    objects: Array<{ text: string | null; visible: boolean }>;
+    objects: DiagnosticObject[];
   }>;
 }
 
@@ -43,6 +53,19 @@ function createStoredSave(name: string, schemaVersion = 2): Record<string, unkno
   };
 }
 
+async function getSnapshot(page: Page): Promise<DiagnosticSnapshot> {
+  return page.evaluate(() => {
+    const diagnosticWindow = window as typeof window & {
+      __UNICORN_VALLEY_DIAGNOSTICS__?: { snapshot(): DiagnosticSnapshot };
+    };
+    const diagnostics = diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__;
+    if (!diagnostics) {
+      throw new Error('Browser diagnostics are unavailable.');
+    }
+    return diagnostics.snapshot();
+  });
+}
+
 async function waitForScene(page: Page, sceneKey: string): Promise<void> {
   await page.waitForFunction((expectedScene) => {
     const diagnosticWindow = window as typeof window & {
@@ -55,15 +78,30 @@ async function waitForScene(page: Page, sceneKey: string): Promise<void> {
 }
 
 async function titleHasContinue(page: Page): Promise<boolean> {
-  return page.evaluate(() => {
-    const diagnosticWindow = window as typeof window & {
-      __UNICORN_VALLEY_DIAGNOSTICS__?: { snapshot(): DiagnosticSnapshot };
-    };
-    const title = diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__
-      ?.snapshot()
-      .scenes.find((scene) => scene.key === 'TitleScene');
-    return Boolean(title?.objects.some((object) => object.visible && object.text === 'Continue'));
-  });
+  const snapshot = await getSnapshot(page);
+  const title = snapshot.scenes.find((scene) => scene.key === 'TitleScene');
+  return Boolean(title?.objects.some((object) => object.visible && object.text === 'Continue'));
+}
+
+async function tapTitleText(page: Page, text: string): Promise<void> {
+  const snapshot = await getSnapshot(page);
+  const title = snapshot.scenes.find((scene) => scene.key === 'TitleScene');
+  const target = title?.objects.find(
+    (object) => object.visible && object.interactive && object.text === text,
+  );
+  if (!target) {
+    throw new Error(`Missing interactive TitleScene text: ${text}`);
+  }
+
+  const bounds = await page.locator('canvas').boundingBox();
+  if (!bounds) {
+    throw new Error('Game canvas has no browser bounds.');
+  }
+
+  await page.mouse.click(
+    bounds.x + (target.x / snapshot.width) * bounds.width,
+    bounds.y + (target.y / snapshot.height) * bounds.height,
+  );
 }
 
 test('corrupt primary save recovers from the last-known-good browser backup', async ({ page }) => {
@@ -113,4 +151,49 @@ test('schema-v1 browser save is backed up before automatic migration to v2', asy
   expect(stored.primary.profile.name).toBe('Moonbeam');
   expect(stored.backup.schemaVersion).toBe(1);
   expect(stored.backup.profile.name).toBe('Moonbeam');
+});
+
+test('Start over requires confirmation and clears both save copies only after the second tap', async ({
+  page,
+}) => {
+  const current = createStoredSave('Starlight');
+  const backup = createStoredSave('Moonbeam');
+  const serialisedCurrent = JSON.stringify(current);
+  const serialisedBackup = JSON.stringify(backup);
+  await page.addInitScript(
+    ({ saveKey, backupKey, primarySave, backupSave }) => {
+      window.localStorage.setItem(saveKey, primarySave);
+      window.localStorage.setItem(backupKey, backupSave);
+    },
+    {
+      saveKey: SAVE_KEY,
+      backupKey: BACKUP_KEY,
+      primarySave: serialisedCurrent,
+      backupSave: serialisedBackup,
+    },
+  );
+
+  await page.goto('/?diagnostics=1');
+  await waitForScene(page, 'TitleScene');
+
+  await tapTitleText(page, 'Start over');
+  expect(await page.evaluate((key) => window.localStorage.getItem(key), SAVE_KEY)).toBe(
+    serialisedCurrent,
+  );
+  expect(await page.evaluate((key) => window.localStorage.getItem(key), BACKUP_KEY)).toBe(
+    serialisedBackup,
+  );
+
+  await tapTitleText(page, 'Tap again to start over');
+  await waitForScene(page, 'UnicornCreatorScene');
+
+  const resetState = await page.evaluate(
+    ({ saveKey, backupKey }) => ({
+      primary: JSON.parse(window.localStorage.getItem(saveKey) ?? '{}'),
+      backup: window.localStorage.getItem(backupKey),
+    }),
+    { saveKey: SAVE_KEY, backupKey: BACKUP_KEY },
+  );
+  expect(resetState.primary.profile.name).toBeNull();
+  expect(resetState.backup).toBeNull();
 });

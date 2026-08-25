@@ -288,6 +288,7 @@ export class TitleScene extends Phaser.Scene {
     this.starting = true;
     resetMoonflowerGladePlayerSpawn();
     const service = getBrowserSaveService();
+    service.clear();
     service.save(service.createNewGame());
     this.scene.start('UnicornCreatorScene');
   }
