@@ -225,7 +225,10 @@ export class SaveService {
       return null;
     }
 
-    if (this.tryWriteCheckpoint(backup.decoded.serialisedCurrent) && !this.hasFutureSchemaCheckpoint()) {
+    if (
+      this.tryWriteCheckpoint(backup.decoded.serialisedCurrent) &&
+      !this.hasFutureSchemaCheckpoint()
+    ) {
       this.tryWritePrimary(backup.decoded.serialisedCurrent);
     }
     return backup.decoded.save;

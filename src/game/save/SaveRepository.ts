@@ -71,7 +71,8 @@ export class LocalStorageSaveRepository implements SaveRepository {
       if (schemaVersion === null) {
         continue;
       }
-      highestVersion = highestVersion === null ? schemaVersion : Math.max(highestVersion, schemaVersion);
+      highestVersion =
+        highestVersion === null ? schemaVersion : Math.max(highestVersion, schemaVersion);
     }
     return highestVersion;
   }
