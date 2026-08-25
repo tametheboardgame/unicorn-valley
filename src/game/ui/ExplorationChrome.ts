@@ -120,7 +120,7 @@ export class ExplorationChrome {
       .text(
         panelX,
         panelY - 78,
-        'Move: arrows / WASD / touch\nTap open ground: walk there\nTap the prompt: interact\nBag and Book: top buttons\nKeyboard shortcuts still work too',
+        'Move: arrows / WASD / touch\nClick/tap the ground: walk there\nTap the prompt: interact\nBag and Book: top buttons\nKeyboard shortcuts still work too',
         {
           color: UI_COLOURS.softInk,
           fontFamily: UI_FONT,
@@ -136,16 +136,8 @@ export class ExplorationChrome {
 
     this.reducedMotionButton = this.createPreferenceButton(panelX, panelY + 10, 'reduced-motion');
     this.reducedMotionLabel = this.createPreferenceLabel(panelX, panelY + 10, 'reduced-motion');
-    this.highVisibilityButton = this.createPreferenceButton(
-      panelX,
-      panelY + 66,
-      'high-visibility',
-    );
-    this.highVisibilityLabel = this.createPreferenceLabel(
-      panelX,
-      panelY + 66,
-      'high-visibility',
-    );
+    this.highVisibilityButton = this.createPreferenceButton(panelX, panelY + 66, 'high-visibility');
+    this.highVisibilityLabel = this.createPreferenceLabel(panelX, panelY + 66, 'high-visibility');
     this.touchToggleButton = this.createPreferenceButton(panelX, panelY + 122, 'touch-controls');
     this.touchToggleLabel = this.createPreferenceLabel(panelX, panelY + 122, 'touch-controls');
 
@@ -242,11 +234,7 @@ export class ExplorationChrome {
     this.helpObjects.length = 0;
   }
 
-  private createPreferenceButton(
-    x: number,
-    y: number,
-    name: string,
-  ): Phaser.GameObjects.Rectangle {
+  private createPreferenceButton(x: number, y: number, name: string): Phaser.GameObjects.Rectangle {
     const button = this.scene.add
       .rectangle(x, y, 270, 48, UI_COLOURS.lavender, 1)
       .setName(`exploration-${name}-toggle`)
