@@ -84,7 +84,7 @@ describe('SaveService checkpoint ordering', () => {
     now = '2026-08-25T20:00:00.000Z';
     service.save({
       ...first,
-      profile: { ...first?.profile, name: 'Moonbeam' },
+      profile: { ...first.profile, name: 'Moonbeam' },
     });
 
     expect(repository.value).toBe(firstPrimary);
@@ -107,13 +107,12 @@ describe('SaveService checkpoint ordering', () => {
       ...base,
       profile: { ...base.profile, name: 'Starlight' },
     });
-    expect(first).not.toBeNull();
 
     repository.checkpoints.clear();
     const newerSave = {
-      ...first!,
+      ...first,
       lastSavedAt: '2026-08-25T21:05:00.000Z',
-      profile: { ...first!.profile, name: 'Moonbeam' },
+      profile: { ...first.profile, name: 'Moonbeam' },
     };
     const serialisedNewer = JSON.stringify(newerSave);
     repository.afterCheckpointMiss = (schemaVersion) => {
