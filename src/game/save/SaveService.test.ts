@@ -1,11 +1,13 @@
 import { describe, expect, it, vi } from 'vitest';
 import { TypedEventBus, type GameEventMap } from '../events/GameEventBus';
+import { createR4LongRunningSaveFixture } from './fixtures/r4LongRunningSaveFixture';
 import type { SaveRepository } from './SaveRepository';
 import { SaveService } from './SaveService';
 import { CURRENT_SAVE_SCHEMA_VERSION } from './saveSchema';
 
 class MemorySaveRepository implements SaveRepository {
   public value: string | null = null;
+  public backupValue: string | null = null;
 
   public read(): string | null {
     return this.value;
@@ -17,6 +19,18 @@ class MemorySaveRepository implements SaveRepository {
 
   public remove(): void {
     this.value = null;
+  }
+
+  public readBackup(): string | null {
+    return this.backupValue;
+  }
+
+  public writeBackup(serialisedSave: string): void {
+    this.backupValue = serialisedSave;
+  }
+
+  public removeBackup(): void {
+    this.backupValue = null;
   }
 }
 
@@ -69,12 +83,12 @@ describe('SaveService', () => {
     expect(reloadedSave?.profile.appearance).toEqual(appearance);
   });
 
-  it('returns null when no save exists', () => {
+  it('returns null when no save or backup exists', () => {
     const service = new SaveService(new MemorySaveRepository());
     expect(service.load()).toBeNull();
   });
 
-  it('returns null for malformed JSON or incomplete save data', () => {
+  it('returns null for malformed JSON or incomplete save data without a valid backup', () => {
     const repository = new MemorySaveRepository();
     const service = new SaveService(repository);
 
@@ -83,6 +97,59 @@ describe('SaveService', () => {
 
     repository.value = JSON.stringify({ schemaVersion: CURRENT_SAVE_SCHEMA_VERSION });
     expect(service.load()).toBeNull();
+  });
+
+  it('preserves the previous valid save and repairs a corrupt primary from that backup', () => {
+    const repository = new MemorySaveRepository();
+    const service = new SaveService(repository, undefined, () => '2026-08-25T18:00:00.000Z');
+    const base = service.createNewGame();
+    const first = service.save({
+      ...base,
+      profile: { ...base.profile, name: 'Starlight' },
+    });
+    const firstSerialised = repository.value;
+
+    service.save({
+      ...first,
+      profile: { ...first.profile, name: 'Moonbeam' },
+    });
+
+    expect(repository.backupValue).toBe(firstSerialised);
+    repository.value = '{broken-primary';
+
+    const recovered = service.load();
+    expect(recovered?.profile.name).toBe('Starlight');
+    expect(JSON.parse(repository.value ?? '{}').profile.name).toBe('Starlight');
+    expect(repository.backupValue).toBe(firstSerialised);
+  });
+
+  it('backs up an actual schema-v1 long-running save before migrating and normalising it', () => {
+    const repository = new MemorySaveRepository();
+    const historical = {
+      ...createR4LongRunningSaveFixture(),
+      schemaVersion: 1,
+    };
+    const serialisedHistorical = JSON.stringify(historical);
+    repository.value = serialisedHistorical;
+
+    const loaded = new SaveService(repository).load();
+
+    expect(loaded?.schemaVersion).toBe(CURRENT_SAVE_SCHEMA_VERSION);
+    expect(loaded?.profile.name).toBe('Starlight');
+    expect(loaded?.activities.racesById['race:rainbow-run']?.bestTimeMs).toBe(48200);
+    expect(repository.backupValue).toBe(serialisedHistorical);
+    expect(JSON.parse(repository.value ?? '{}').schemaVersion).toBe(CURRENT_SAVE_SCHEMA_VERSION);
+  });
+
+  it('clears both primary and recovery backup state', () => {
+    const repository = new MemorySaveRepository();
+    repository.value = '{}';
+    repository.backupValue = '{}';
+
+    new SaveService(repository).clear();
+
+    expect(repository.value).toBeNull();
+    expect(repository.backupValue).toBeNull();
   });
 
   it('emits SAVE_COMPLETED after persistence', () => {

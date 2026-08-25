@@ -10,6 +10,21 @@ export type Clock = () => string;
 
 const systemClock: Clock = () => new Date().toISOString();
 
+interface DecodedSave {
+  save: SaveGame;
+  sourceVersion: number;
+  serialisedCurrent: string;
+}
+
+function readSchemaVersion(value: unknown): number | null {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+    return null;
+  }
+
+  const schemaVersion = (value as Record<string, unknown>).schemaVersion;
+  return Number.isInteger(schemaVersion) ? (schemaVersion as number) : null;
+}
+
 export class SaveService {
   public constructor(
     private readonly repository: SaveRepository,
@@ -23,23 +38,18 @@ export class SaveService {
 
   public load(): SaveGame | null {
     const serialisedSave = this.repository.read();
-    if (serialisedSave === null) {
-      return null;
+    if (serialisedSave !== null) {
+      const decoded = this.decode(serialisedSave);
+      if (decoded) {
+        if (decoded.sourceVersion < CURRENT_SAVE_SCHEMA_VERSION) {
+          this.repository.writeBackup?.(serialisedSave);
+          this.repository.write(decoded.serialisedCurrent);
+        }
+        return decoded.save;
+      }
     }
 
-    let parsedSave: unknown;
-    try {
-      parsedSave = JSON.parse(serialisedSave) as unknown;
-    } catch {
-      return null;
-    }
-
-    const migratedSave = migrateSaveRecord(parsedSave);
-    if (!migratedSave || !isSaveGame(migratedSave)) {
-      return null;
-    }
-
-    return reconcileSaveGame(migratedSave);
+    return this.recoverFromBackup();
   }
 
   public save(save: SaveGame): SaveGame {
@@ -51,6 +61,7 @@ export class SaveService {
       lastSavedAt: savedAt,
     };
 
+    this.preserveCurrentPrimaryAsBackup();
     this.repository.write(JSON.stringify(nextSave));
     this.events.emit('SAVE_COMPLETED', {
       schemaVersion: nextSave.schemaVersion,
@@ -62,5 +73,56 @@ export class SaveService {
 
   public clear(): void {
     this.repository.remove();
+    this.repository.removeBackup?.();
+  }
+
+  private decode(serialisedSave: string): DecodedSave | null {
+    let parsedSave: unknown;
+    try {
+      parsedSave = JSON.parse(serialisedSave) as unknown;
+    } catch {
+      return null;
+    }
+
+    const sourceVersion = readSchemaVersion(parsedSave);
+    if (sourceVersion === null) {
+      return null;
+    }
+
+    const migratedSave = migrateSaveRecord(parsedSave);
+    if (!migratedSave || !isSaveGame(migratedSave)) {
+      return null;
+    }
+
+    const save = reconcileSaveGame(migratedSave);
+    return {
+      save,
+      sourceVersion,
+      serialisedCurrent: JSON.stringify(save),
+    };
+  }
+
+  private preserveCurrentPrimaryAsBackup(): void {
+    const serialisedSave = this.repository.read();
+    if (serialisedSave === null || !this.decode(serialisedSave)) {
+      return;
+    }
+
+    this.repository.writeBackup?.(serialisedSave);
+  }
+
+  private recoverFromBackup(): SaveGame | null {
+    const serialisedBackup = this.repository.readBackup?.() ?? null;
+    if (serialisedBackup === null) {
+      return null;
+    }
+
+    const decoded = this.decode(serialisedBackup);
+    if (!decoded) {
+      return null;
+    }
+
+    this.repository.write(decoded.serialisedCurrent);
+    return decoded.save;
   }
 }
