@@ -142,6 +142,19 @@ async function logicalTap(page: Page, x: number, y: number, pointerId = 1): Prom
   await dispatchLogicalTouch(page, 'touchend', [], [touch]);
 }
 
+async function nativeLogicalTap(page: Page, logicalX: number, logicalY: number): Promise<void> {
+  const snapshot = await getSnapshot(page);
+  const bounds = await page.locator('canvas').boundingBox();
+  if (!bounds) {
+    throw new Error('Game canvas has no browser bounds.');
+  }
+
+  await page.touchscreen.tap(
+    bounds.x + (logicalX / snapshot.width) * bounds.width,
+    bounds.y + (logicalY / snapshot.height) * bounds.height,
+  );
+}
+
 async function waitForForwardControl(page: Page, running: boolean): Promise<void> {
   await page.waitForFunction((expectedRunning) => {
     const diagnosticWindow = window as typeof window & {
@@ -308,7 +321,7 @@ test('target-tablet race supports simultaneous RUN and JUMP plus touch assistanc
   await dispatchLogicalTouch(page, 'touchend', [], [runTouch]);
   await waitForForwardControl(page, false);
 
-  await logicalTap(page, 1130, 165, 3);
+  await nativeLogicalTap(page, 1130, 165);
   await page.waitForFunction(
     () => {
       const stored = JSON.parse(
