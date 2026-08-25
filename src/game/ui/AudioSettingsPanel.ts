@@ -105,7 +105,11 @@ export class AudioSettingsPanel {
         .setOrigin(0.5)
         .setScrollFactor(0)
         .setDepth(134);
-      applyButtonHover(rowButton, UI_COLOURS.lavender, UI_COLOURS.gold);
+      rowButton.on('pointerover', () => rowButton.setAlpha(0.82));
+      rowButton.on('pointerout', () => {
+        rowButton.setAlpha(1);
+        this.refresh();
+      });
       rowButton.on('pointerdown', () => this.toggleSetting(kind));
       this.rows.push({ button: rowButton, label: rowLabel, kind });
       this.panelObjects.push(rowButton, rowLabel);
