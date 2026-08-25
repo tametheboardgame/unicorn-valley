@@ -25,6 +25,14 @@ function readSchemaVersion(value: unknown): number | null {
   return Number.isInteger(schemaVersion) ? (schemaVersion as number) : null;
 }
 
+function readSerialisedSchemaVersion(serialisedSave: string): number | null {
+  try {
+    return readSchemaVersion(JSON.parse(serialisedSave) as unknown);
+  } catch {
+    return null;
+  }
+}
+
 export class SaveService {
   public constructor(
     private readonly repository: SaveRepository,
@@ -39,6 +47,11 @@ export class SaveService {
   public load(): SaveGame | null {
     const serialisedSave = this.repository.read();
     if (serialisedSave !== null) {
+      const primaryVersion = readSerialisedSchemaVersion(serialisedSave);
+      if (primaryVersion !== null && primaryVersion > CURRENT_SAVE_SCHEMA_VERSION) {
+        return null;
+      }
+
       const decoded = this.decode(serialisedSave);
       if (decoded) {
         if (decoded.sourceVersion < CURRENT_SAVE_SCHEMA_VERSION) {

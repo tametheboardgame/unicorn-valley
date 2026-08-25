@@ -123,6 +123,23 @@ describe('SaveService', () => {
     expect(repository.backupValue).toBe(firstSerialised);
   });
 
+  it('does not replace a newer-schema primary with an older recovery backup', () => {
+    const repository = new MemorySaveRepository();
+    const futurePrimary = JSON.stringify({
+      schemaVersion: CURRENT_SAVE_SCHEMA_VERSION + 1,
+      marker: 'newer-client-progress',
+    });
+    const compatibleBackup = JSON.stringify(createR4LongRunningSaveFixture());
+    repository.value = futurePrimary;
+    repository.backupValue = compatibleBackup;
+
+    const loaded = new SaveService(repository).load();
+
+    expect(loaded).toBeNull();
+    expect(repository.value).toBe(futurePrimary);
+    expect(repository.backupValue).toBe(compatibleBackup);
+  });
+
   it('backs up an actual schema-v1 long-running save before migrating and normalising it', () => {
     const repository = new MemorySaveRepository();
     const historical = {
