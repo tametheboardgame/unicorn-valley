@@ -303,8 +303,8 @@ export class TitleScene extends Phaser.Scene {
     resetMoonflowerGladePlayerSpawn();
     const service = getBrowserSaveService();
     service.clear();
-    const newSave = service.save(service.createNewGame());
-    if (!newSave) {
+    const result = service.saveWithResult(service.createNewGame());
+    if (result.status !== 'saved') {
       this.starting = false;
       this.scene.restart();
       return;
