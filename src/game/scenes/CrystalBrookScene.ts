@@ -26,7 +26,6 @@ import { worldDepthForY } from '../world/WorldDepth';
 const COLLISION_TEXTURE_KEY = 'crystal-brook-collision-pixel';
 const PLAYER_TEXTURE_KEY = 'player-unicorn-crystal-brook';
 const BROOK_VISITED_FLAG = 'flag:visited-crystal-brook';
-const AUDIO_PROXY_SCENE_KEY = 'MoonflowerGladeScene';
 
 export class CrystalBrookScene extends Phaser.Scene {
   private readonly audio = getVerticalSliceAudio();
@@ -96,7 +95,7 @@ export class CrystalBrookScene extends Phaser.Scene {
     this.cameras.main.setDeadzone(260, 150);
     this.createHud();
 
-    this.audio.enterScene(AUDIO_PROXY_SCENE_KEY);
+    this.audio.enterScene(this.scene.key);
     this.input.once('pointerdown', () => void this.audio.unlock());
     this.input.keyboard?.once('keydown', () => void this.audio.unlock());
 
@@ -105,7 +104,7 @@ export class CrystalBrookScene extends Phaser.Scene {
     }
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-      this.audio.leaveScene(AUDIO_PROXY_SCENE_KEY);
+      this.audio.leaveScene(this.scene.key);
       this.feedbackTimer?.destroy();
       this.feedbackTimer = null;
       this.touchMovementPad?.destroy();

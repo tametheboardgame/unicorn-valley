@@ -6,7 +6,12 @@ import {
   type AudioSettingsStorage,
   normaliseAudioSettings,
 } from './AudioSettings';
-import { resolveAudioSceneProfile } from './VerticalSliceAudio';
+import {
+  AUDIO_SCENE_PROFILES,
+  PRODUCTION_AUDIO_LOOP_MINIMUM_MS,
+  getAudioSceneLoopDurationMs,
+  resolveAudioSceneProfile,
+} from './VerticalSliceAudio';
 
 class MemoryStorage implements AudioSettingsStorage {
   private readonly values = new Map<string, string>();
@@ -62,11 +67,16 @@ describe('AudioSettingsStore', () => {
   });
 });
 
-describe('resolveAudioSceneProfile', () => {
-  it('gives exploration locations distinct temporary soundtrack identities', () => {
+describe('production audio scene profiles', () => {
+  it('gives the menu, home and every major exploration region its intended identity', () => {
+    expect(resolveAudioSceneProfile('TitleScene')).toBe('menu');
     expect(resolveAudioSceneProfile('MoonflowerGladeScene')).toBe('glade');
     expect(resolveAudioSceneProfile('MoonflowerPatchScene')).toBe('glade');
     expect(resolveAudioSceneProfile('SunbeamVillageScene')).toBe('village');
+    expect(resolveAudioSceneProfile('RainbowMeadowScene')).toBe('meadow');
+    expect(resolveAudioSceneProfile('CrystalBrookScene')).toBe('brook');
+    expect(resolveAudioSceneProfile('WhisperingWoodsScene')).toBe('woods');
+    expect(resolveAudioSceneProfile('CottageInteriorScene')).toBe('cottage');
   });
 
   it('gives both Rainbow Run scenes the energetic race profile', () => {
@@ -74,7 +84,16 @@ describe('resolveAudioSceneProfile', () => {
     expect(resolveAudioSceneProfile('NovaTutorialRaceScene')).toBe('race');
   });
 
-  it('leaves non-vertical-slice utility scenes silent', () => {
+  it('keeps every production music phrase above the minimum repetition window', () => {
+    for (const profile of AUDIO_SCENE_PROFILES) {
+      expect(getAudioSceneLoopDurationMs(profile), profile).toBeGreaterThanOrEqual(
+        PRODUCTION_AUDIO_LOOP_MINIMUM_MS,
+      );
+    }
+  });
+
+  it('leaves utility scenes free of unintended location ambience', () => {
     expect(resolveAudioSceneProfile('InventoryScene')).toBeNull();
+    expect(resolveAudioSceneProfile('WonderbookScene')).toBeNull();
   });
 });

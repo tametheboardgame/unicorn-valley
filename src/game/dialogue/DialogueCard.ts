@@ -138,7 +138,7 @@ export class DialogueCard {
     this.setBaseVisible(true);
     this.speakerName.setText(speakerName);
     this.portraitLetter.setText(speakerName.trim().charAt(0).toUpperCase() || '?');
-    getVerticalSliceAudio().playSfx('dialogue');
+    getVerticalSliceAudio().playNpcReaction(node.speakerId, 'talk');
 
     if (node.type === 'line') {
       this.body.setText(node.text);

@@ -17,8 +17,8 @@ R5 is complete.
 - R6-WP6.1 - Complete (PR #86): Player Unicorn Production Art
 - R6-WP6.2 - Complete (PR #87): Core NPC Production Art
 - R6-WP6.3 - Complete (PR #88): Production Environment Art
-- R6-WP6.4 - In progress: Production UI and Wonderbook Art
-- R6-WP6.5 - Pending: Production Audio
+- R6-WP6.4 - Complete (PR #89): Production UI and Wonderbook Art
+- R6-WP6.5 - In progress: Production Audio
 - R6-WP6.6 - Pending: Touch, Tablet and Accessibility Hardening
 - R6-WP6.7 - Pending: Performance and Loading Optimisation
 - R6-WP6.8 - Pending: Save and Recovery Hardening
@@ -63,17 +63,32 @@ PR #88 added production environment identity as a presentation-only layer while 
 - no save, progression, quest, interaction, collision-map or navigation changes were required;
 - the final PR head passed formatting, lint, TypeScript, unit tests, production build, static smoke, the complete browser playtest suite, exact-head Cloudflare deployment and screenshot QA before squash merge.
 
-## R6-WP6.4 implementation intent
+## R6-WP6.4 implementation summary
 
-The UI pass builds one reusable storybook visual language around the stable interaction flows rather than replacing their underlying logic.
+PR #89 established one reusable production storybook UI language around the stable interaction flows.
+
+- shared palette and interaction helpers now provide explicit hover, pressed, selected and disabled states;
+- dialogue uses a production card with speaker ribbon, portrait treatment and large named controls;
+- inventory cards and sound settings use clearer hierarchy and interaction state without changing their underlying data contracts;
+- Bag, Shop, Cottage Decoration and Wonderbook receive shared illustrated frame and ornament treatment without intercepting input;
+- Wonderbook includes functional All/Secrets ribbon tabs, page transition motion and sticker animation while remaining a readable scrapbook rather than an achievement dashboard;
+- browser coverage exercises the real Lumi story path for production dialogue, the Wonderbook tabs and sound-setting controls;
+- screenshot QA caught and corrected a Wonderbook ornament-depth issue so Previous/Next navigation remains above the decorative frame;
+- no save-schema, economy, decoration-placement, dialogue-content or progression changes were required;
+- the final PR head passed formatting, lint, TypeScript, unit tests, production build, static smoke, all 70 browser playtests, exact-head Cloudflare deployment and screenshot QA before squash merge.
+
+## R6-WP6.5 implementation intent
+
+The audio pass upgrades the existing safe Web Audio architecture instead of introducing external licensed assets or changing gameplay contracts.
 
 Current branch work provides:
 
-- expanded shared storybook palette plus explicit hover, pressed, selected and disabled visual states;
-- a production dialogue card with speaker ribbon, portrait halo and named large interaction controls;
-- richer inventory item cards while preserving item IDs and inventory behaviour;
-- clearer sound/settings on/off states with 48-pixel row targets;
-- production frames and ornament treatment for Bag, Shop, Cottage Decoration and Wonderbook scenes without intercepting input;
-- Wonderbook All/Secrets ribbon tabs, page fade motion and sticker pop/sway animation;
-- direct diagnostic routes and browser coverage for the core polished UI scenes and Wonderbook tab interaction;
-- no save-schema, economy, decoration-placement, dialogue-content or progression changes.
+- distinct menu, Glade, Village, Meadow, Crystal Brook, Whispering Woods, cottage and Rainbow Run musical identities;
+- longer internally varied procedural phrases with a ten-second minimum repetition window;
+- region-specific ambience beds and detail timing beneath the music;
+- a broader SFX vocabulary for UI/back, collecting, discovery, quest completion, friendship, doors, decorating and race actions;
+- recognisable lightweight dialogue reaction pitches for Nova, Willow, Pip, Pebble, Lumi and Marigold, with a safe generic fallback;
+- Crystal Brook now uses its own audio profile rather than proxying Moonflower Glade;
+- the existing independent music, ambience, SFX and master/mute settings remain the controlling buses;
+- all audio remains supplementary to visible text, animation and state changes, so no critical information becomes sound-only;
+- no save-schema, progression, quest, collision or navigation changes are required.
