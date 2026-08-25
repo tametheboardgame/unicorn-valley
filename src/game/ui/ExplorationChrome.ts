@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { getBrowserAccessibilitySettingsStore } from '../accessibility/AccessibilitySettings';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import type { TouchMovementPad } from '../input/TouchMovementPad';
 import { rememberRainbowMeadowPlayerPosition } from '../world/RainbowMeadowReturnPoint';
@@ -21,6 +22,7 @@ const LEGACY_STATUS_PREFIXES = [
 ];
 
 export class ExplorationChrome {
+  private readonly accessibility = getBrowserAccessibilitySettingsStore();
   private readonly objects: Phaser.GameObjects.GameObject[] = [];
   private readonly helpObjects: Array<Phaser.GameObjects.Rectangle | Phaser.GameObjects.Text> = [];
   private readonly titleText: Phaser.GameObjects.Text | null;
@@ -28,7 +30,12 @@ export class ExplorationChrome {
   private readonly controlsLabel: Phaser.GameObjects.Text | null;
   private readonly touchToggleButton: Phaser.GameObjects.Rectangle | null;
   private readonly touchToggleLabel: Phaser.GameObjects.Text | null;
+  private readonly reducedMotionButton: Phaser.GameObjects.Rectangle | null;
+  private readonly reducedMotionLabel: Phaser.GameObjects.Text | null;
+  private readonly highVisibilityButton: Phaser.GameObjects.Rectangle | null;
+  private readonly highVisibilityLabel: Phaser.GameObjects.Text | null;
   private helpOpen = false;
+  private unsubscribeAccessibility: (() => void) | null = null;
 
   public constructor(
     private readonly scene: Phaser.Scene,
@@ -41,6 +48,10 @@ export class ExplorationChrome {
       this.controlsLabel = null;
       this.touchToggleButton = null;
       this.touchToggleLabel = null;
+      this.reducedMotionButton = null;
+      this.reducedMotionLabel = null;
+      this.highVisibilityButton = null;
+      this.highVisibilityLabel = null;
       return;
     }
 
@@ -87,19 +98,19 @@ export class ExplorationChrome {
     applyButtonHover(this.controlsButton, UI_COLOURS.cream, UI_COLOURS.gold);
 
     const panelX = GAME_WIDTH - 190;
-    const panelY = GAME_HEIGHT - 170;
-    const panelShadow = createUiShadow(scene, panelX, panelY, 350, 214, 126, 0.2);
+    const panelY = GAME_HEIGHT - 230;
+    const panelShadow = createUiShadow(scene, panelX, panelY, 350, 340, 126, 0.2);
     const panel = scene.add
-      .rectangle(panelX, panelY, 350, 214, UI_COLOURS.cream, 0.99)
+      .rectangle(panelX, panelY, 350, 340, UI_COLOURS.cream, 0.99)
       .setName('exploration-controls-panel')
       .setStrokeStyle(4, UI_COLOURS.lavenderStrong, 0.98)
       .setScrollFactor(0)
       .setDepth(127);
     const heading = scene.add
-      .text(panelX, panelY - 82, 'How to play', {
+      .text(panelX, panelY - 142, 'How to play', {
         color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
-        fontSize: '18px',
+        fontSize: '19px',
         fontStyle: 'bold',
       })
       .setOrigin(0.5)
@@ -108,12 +119,12 @@ export class ExplorationChrome {
     const help = scene.add
       .text(
         panelX,
-        panelY - 20,
-        'Move: WASD / arrows\nHold Shift: Gallop\nClick/tap the ground: walk there\nInteract: E / Enter / Space\nB: Wonderbook   I: Bag   Esc: title',
+        panelY - 78,
+        'Move: arrows / WASD / touch\nClick/tap the ground: walk there\nTap the prompt: interact\nBag and Book: top buttons\nKeyboard shortcuts still work too',
         {
           color: UI_COLOURS.softInk,
           fontFamily: UI_FONT,
-          fontSize: '14px',
+          fontSize: '15px',
           align: 'center',
           lineSpacing: 4,
         },
@@ -123,31 +134,22 @@ export class ExplorationChrome {
       .setScrollFactor(0)
       .setDepth(128);
 
-    this.touchToggleButton = scene.add
-      .rectangle(panelX, panelY + 76, 245, 38, UI_COLOURS.lavender, 1)
-      .setName('exploration-touch-controls-toggle')
-      .setStrokeStyle(2, UI_COLOURS.lavenderStrong, 0.95)
-      .setScrollFactor(0)
-      .setDepth(128)
-      .setInteractive({ useHandCursor: true });
-    this.touchToggleLabel = scene.add
-      .text(panelX, panelY + 76, '', {
-        color: UI_COLOURS.ink,
-        fontFamily: UI_FONT,
-        fontSize: '14px',
-        fontStyle: 'bold',
-      })
-      .setName('exploration-touch-controls-toggle-label')
-      .setOrigin(0.5)
-      .setScrollFactor(0)
-      .setDepth(129);
-    applyButtonHover(this.touchToggleButton, UI_COLOURS.lavender, UI_COLOURS.blush);
+    this.reducedMotionButton = this.createPreferenceButton(panelX, panelY + 10, 'reduced-motion');
+    this.reducedMotionLabel = this.createPreferenceLabel(panelX, panelY + 10, 'reduced-motion');
+    this.highVisibilityButton = this.createPreferenceButton(panelX, panelY + 66, 'high-visibility');
+    this.highVisibilityLabel = this.createPreferenceLabel(panelX, panelY + 66, 'high-visibility');
+    this.touchToggleButton = this.createPreferenceButton(panelX, panelY + 122, 'touch-controls');
+    this.touchToggleLabel = this.createPreferenceLabel(panelX, panelY + 122, 'touch-controls');
 
     this.helpObjects.push(
       panelShadow,
       panel,
       heading,
       help,
+      this.reducedMotionButton,
+      this.reducedMotionLabel,
+      this.highVisibilityButton,
+      this.highVisibilityLabel,
       this.touchToggleButton,
       this.touchToggleLabel,
     );
@@ -167,10 +169,24 @@ export class ExplorationChrome {
     });
     this.touchToggleButton.on('pointerdown', () => {
       this.touchMovementPad.togglePreferredVisibility();
-      this.refreshTouchToggleLabel();
+      this.refreshPreferenceLabels();
+    });
+    this.reducedMotionButton.on('pointerdown', () => {
+      const settings = this.accessibility.load();
+      this.accessibility.update({ reducedMotion: !settings.reducedMotion });
+    });
+    this.highVisibilityButton.on('pointerdown', () => {
+      const settings = this.accessibility.load();
+      this.accessibility.update({
+        highVisibilityInteractions: !settings.highVisibilityInteractions,
+      });
+    });
+    this.unsubscribeAccessibility = this.accessibility.subscribe(() => {
+      this.refreshPreferenceLabels();
+      this.applyReducedMotionPreference();
     });
 
-    this.refreshTouchToggleLabel();
+    this.refreshPreferenceLabels();
     this.setHelpVisible(false);
     this.refresh();
   }
@@ -188,7 +204,8 @@ export class ExplorationChrome {
       }
     }
 
-    this.refreshTouchToggleLabel();
+    this.refreshPreferenceLabels();
+    this.applyReducedMotionPreference();
 
     for (const object of this.scene.children.list) {
       if (!(object instanceof Phaser.GameObjects.Text) || object === this.titleText) {
@@ -208,6 +225,8 @@ export class ExplorationChrome {
   }
 
   public destroy(): void {
+    this.unsubscribeAccessibility?.();
+    this.unsubscribeAccessibility = null;
     for (const object of this.objects) {
       object.destroy();
     }
@@ -215,21 +234,81 @@ export class ExplorationChrome {
     this.helpObjects.length = 0;
   }
 
-  private refreshTouchToggleLabel(): void {
+  private createPreferenceButton(x: number, y: number, name: string): Phaser.GameObjects.Rectangle {
+    const button = this.scene.add
+      .rectangle(x, y, 270, 48, UI_COLOURS.lavender, 1)
+      .setName(`exploration-${name}-toggle`)
+      .setStrokeStyle(3, UI_COLOURS.lavenderStrong, 0.95)
+      .setScrollFactor(0)
+      .setDepth(128)
+      .setInteractive({ useHandCursor: true });
+    applyButtonHover(button, UI_COLOURS.lavender, UI_COLOURS.blush);
+    return button;
+  }
+
+  private createPreferenceLabel(x: number, y: number, name: string): Phaser.GameObjects.Text {
+    return this.scene.add
+      .text(x, y, '', {
+        color: UI_COLOURS.ink,
+        fontFamily: UI_FONT,
+        fontSize: '15px',
+        fontStyle: 'bold',
+      })
+      .setName(`exploration-${name}-toggle-label`)
+      .setOrigin(0.5)
+      .setScrollFactor(0)
+      .setDepth(129);
+  }
+
+  private refreshPreferenceLabels(): void {
     this.touchToggleLabel?.setText(
       this.touchMovementPad.isVisible() ? 'Touch buttons: On' : 'Touch buttons: Off',
     );
+    const settings = this.accessibility.load();
+    this.reducedMotionLabel?.setText(`Reduced motion: ${settings.reducedMotion ? 'On' : 'Off'}`);
+    this.highVisibilityLabel?.setText(
+      `High visibility: ${settings.highVisibilityInteractions ? 'On' : 'Off'}`,
+    );
+  }
+
+  private applyReducedMotionPreference(): void {
+    const timeScale = this.accessibility.load().reducedMotion ? 0 : 1;
+    for (const object of this.scene.children.list) {
+      if (
+        !object.name.startsWith('environment-production:') &&
+        !object.name.startsWith('core-npc:')
+      ) {
+        continue;
+      }
+
+      const targets: Phaser.GameObjects.GameObject[] = [object];
+      if (object instanceof Phaser.GameObjects.Container) {
+        targets.push(...object.list);
+      }
+      for (const target of targets) {
+        for (const tween of this.scene.tweens.getTweensOf(target)) {
+          tween.timeScale = timeScale;
+        }
+      }
+    }
   }
 
   private setHelpVisible(visible: boolean): void {
     for (const object of this.helpObjects) {
       object.setVisible(visible);
     }
-    if (this.touchToggleButton) {
+    for (const button of [
+      this.touchToggleButton,
+      this.reducedMotionButton,
+      this.highVisibilityButton,
+    ]) {
+      if (!button) {
+        continue;
+      }
       if (visible) {
-        this.touchToggleButton.setInteractive({ useHandCursor: true });
+        button.setInteractive({ useHandCursor: true });
       } else {
-        this.touchToggleButton.disableInteractive();
+        button.disableInteractive();
       }
     }
     this.controlsLabel?.setText(visible ? 'Controls  ×' : 'Controls  ?');

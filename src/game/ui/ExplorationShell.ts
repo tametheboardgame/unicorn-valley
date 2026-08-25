@@ -15,6 +15,9 @@ export class ExplorationShell {
   private readonly bagShadow: Phaser.GameObjects.Rectangle;
   private readonly bagButton: Phaser.GameObjects.Rectangle;
   private readonly bagLabel: Phaser.GameObjects.Text;
+  private readonly bookShadow: Phaser.GameObjects.Rectangle;
+  private readonly bookButton: Phaser.GameObjects.Rectangle;
+  private readonly bookLabel: Phaser.GameObjects.Text;
   private readonly suggestionCard: ActivitySuggestionCard;
   private readonly audioSettingsPanel: AudioSettingsPanel;
   private readonly touchMovementPad: TouchMovementPad;
@@ -66,6 +69,27 @@ export class ExplorationShell {
       .setDepth(121);
     applyButtonHover(this.bagButton, UI_COLOURS.cream, UI_COLOURS.gold);
 
+    this.bookShadow = createUiShadow(scene, GAME_WIDTH - 410, 58, 128, 64, 119, 0.16);
+    this.bookButton = scene.add
+      .rectangle(GAME_WIDTH - 410, 58, 128, 64, UI_COLOURS.cream, 0.98)
+      .setName('exploration-shell-book-button')
+      .setStrokeStyle(4, UI_COLOURS.lavenderStrong, 0.98)
+      .setScrollFactor(0)
+      .setDepth(120)
+      .setInteractive({ useHandCursor: true });
+    this.bookLabel = scene.add
+      .text(GAME_WIDTH - 410, 58, 'Book 📖', {
+        color: UI_COLOURS.ink,
+        fontFamily: UI_FONT,
+        fontSize: '18px',
+        fontStyle: 'bold',
+      })
+      .setName('exploration-shell-book-label')
+      .setOrigin(0.5)
+      .setScrollFactor(0)
+      .setDepth(121);
+    applyButtonHover(this.bookButton, UI_COLOURS.cream, UI_COLOURS.gold);
+
     this.suggestionCard = new ActivitySuggestionCard(scene);
     this.audioSettingsPanel = new AudioSettingsPanel(
       scene,
@@ -76,6 +100,7 @@ export class ExplorationShell {
     this.rewardFeedback = new RewardFeedback(scene);
 
     this.bagButton.on('pointerdown', this.openBag, this);
+    this.bookButton.on('pointerdown', this.openWonderbook, this);
     scene.input.keyboard?.on('keydown-I', this.openBag, this);
     scene.input.keyboard?.on('keydown-B', this.openWonderbook, this);
     this.refreshTimer = scene.time.addEvent({
@@ -106,9 +131,13 @@ export class ExplorationShell {
     this.scene.input.keyboard?.off('keydown-I', this.openBag, this);
     this.scene.input.keyboard?.off('keydown-B', this.openWonderbook, this);
     this.bagButton.off('pointerdown', this.openBag, this);
+    this.bookButton.off('pointerdown', this.openWonderbook, this);
     this.bagShadow.destroy();
     this.bagButton.destroy();
     this.bagLabel.destroy();
+    this.bookShadow.destroy();
+    this.bookButton.destroy();
+    this.bookLabel.destroy();
     this.suggestionCard.destroy();
     this.audioSettingsPanel.destroy();
     this.explorationChrome.destroy();
