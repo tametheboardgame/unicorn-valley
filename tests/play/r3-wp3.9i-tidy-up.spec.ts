@@ -268,7 +268,7 @@ test('Nova keeps her canonical identity and returns the player to the exact conv
     story.objects.some((object) => object.name === 'nova-canonical-identity' && object.visible),
   ).toBe(true);
 
-  await page.keyboard.press('Escape');
+  await page.keyboard.press('Escape', { delay: 50 });
   await waitForScene(page, 'RainbowMeadowScene');
   await page.waitForTimeout(100);
 
