@@ -14,6 +14,7 @@ import { getLumiWoodsWorldManager } from '../story/LumiWoodsWorldManager';
 import { getPebbleCollectionWorldManager } from '../story/PebbleCollectionWorldManager';
 import { getPipEggWorldManager } from '../story/PipEggWorldManager';
 import { getCoreNpcProductionPresentationManager } from '../visual/CoreNpcProductionPresentationManager';
+import { getEnvironmentProductionPresentationManager } from '../visual/EnvironmentProductionPresentationManager';
 import { getVisualTighteningManager } from '../visual/VisualTighteningManager';
 import { getR5RegionGatewayManager } from '../world/R5RegionGatewayManager';
 import { getWorldCharacterPresentationManager } from '../world/WorldCharacterPresentationManager';
@@ -65,6 +66,7 @@ export class BootScene extends Phaser.Scene {
     getCoreNpcProductionPresentationManager(this.sys.game);
     getVisualTighteningManager(this.sys.game);
     getWorldTraversalPolishManager(this.sys.game);
+    getEnvironmentProductionPresentationManager(this.sys.game);
     getR5RegionGatewayManager(this.sys.game);
     getRacePlayerControlManager(this.sys.game);
     getRacePlaytestRecoveryManager(this.sys.game);
