@@ -36,7 +36,9 @@ const chunks = await Promise.all(
 
 const entryMatch = indexHtml.match(/src="\/assets\/(index-[^"]+\.js)"/);
 if (!entryMatch) {
-  throw new Error('Performance budget failed: unable to identify the built application entry chunk.');
+  throw new Error(
+    'Performance budget failed: unable to identify the built application entry chunk.',
+  );
 }
 const entry = chunks.find(({ name }) => name === entryMatch[1]);
 if (!entry) {
@@ -50,10 +52,14 @@ if (!phaser) {
 
 const diagnostics = chunks.find(({ name }) => name.startsWith('BrowserDiagnostics-'));
 if (!diagnostics) {
-  throw new Error('Performance budget failed: browser diagnostics are not emitted as an on-demand chunk.');
+  throw new Error(
+    'Performance budget failed: browser diagnostics are not emitted as an on-demand chunk.',
+  );
 }
 if (indexHtml.includes(diagnostics.name)) {
-  throw new Error('Performance budget failed: diagnostics are referenced by the initial HTML payload.');
+  throw new Error(
+    'Performance budget failed: diagnostics are referenced by the initial HTML payload.',
+  );
 }
 
 const totalRawBytes = chunks.reduce((total, chunk) => total + chunk.rawBytes, 0);
