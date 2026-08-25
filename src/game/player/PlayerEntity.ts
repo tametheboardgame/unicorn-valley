@@ -3,6 +3,11 @@ import { isExplorationGallopHeld, explorationSpeedMultiplier } from '../input/Ex
 import { isExplorationMovementBlocked } from '../input/ExplorationMovementBlocker';
 import { consumeWorldArrivalFacing } from '../world/WorldArrivalState';
 import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
+import {
+  getUnicornProductionTextureKey,
+  selectUnicornProductionPose,
+  type UnicornProductionPose,
+} from './UnicornProductionArt';
 import type { PlayerFacing, PlayerMotionState, PlayerMovementCommand } from './PlayerMovement';
 
 const MOVEMENT_DETAIL_NAME = 'world-movement-detail';
@@ -14,17 +19,20 @@ export class PlayerEntity {
   private motionState: PlayerMotionState = 'idle';
   private lastStepEffectAt = -1000;
   private stepIndex = 0;
+  private activeProductionPose: UnicornProductionPose = 'idle';
 
   public constructor(
     private readonly scene: Phaser.Scene,
     x: number,
     y: number,
-    textureKey: string,
+    private readonly textureKey: string,
   ) {
     this.sprite = scene.physics.add.sprite(x, y, textureKey);
     this.sprite.setName(WORLD_PLAYER_NAME);
     this.sprite.setDepth(20);
     this.sprite.setCollideWorldBounds(true);
+    this.sprite.setData('production-art', true);
+    this.sprite.setData('production-art-pose', 'idle');
 
     const body = this.sprite.body as Phaser.Physics.Arcade.Body;
     body.setSize(68, 44, true);
@@ -66,20 +74,22 @@ export class PlayerEntity {
   public updatePresentation(time: number): void {
     const body = this.sprite.body as Phaser.Physics.Arcade.Body;
     const speed = Math.hypot(body.velocity.x, body.velocity.y);
+    const galloping = isExplorationGallopHeld(this.scene.scene.key);
+    this.applyProductionPose(selectUnicornProductionPose(this.motionState, speed, time, galloping));
 
     if (this.motionState === 'moving' || speed > 24) {
-      const gait = Math.sin(time * 0.024);
-      const directionalLean = Phaser.Math.Clamp(body.velocity.x / 300, -1, 1) * 1.25;
-      this.sprite.setAngle(gait * 1.75 + directionalLean);
+      const gait = Math.sin(time * (galloping ? 0.032 : 0.024));
+      const directionalLean = Phaser.Math.Clamp(body.velocity.x / 300, -1, 1) * 1.15;
+      this.sprite.setAngle(gait * (galloping ? 1.25 : 0.8) + directionalLean);
 
-      if (speed > 80 && time - this.lastStepEffectAt >= 185) {
+      if (speed > 80 && time - this.lastStepEffectAt >= (galloping ? 130 : 185)) {
         this.createStepEffect();
         this.lastStepEffectAt = time;
       }
       return;
     }
 
-    this.sprite.setAngle(Math.sin(time * 0.004) * 0.35);
+    this.sprite.setAngle(Math.sin(time * 0.004) * 0.28);
   }
 
   public getFacing(): PlayerFacing {
@@ -103,6 +113,21 @@ export class PlayerEntity {
 
   public destroy(): void {
     this.sprite.destroy();
+  }
+
+  private applyProductionPose(pose: UnicornProductionPose): void {
+    if (pose === this.activeProductionPose) {
+      return;
+    }
+
+    const nextTexture = getUnicornProductionTextureKey(this.textureKey, pose);
+    if (!this.scene.textures.exists(nextTexture)) {
+      return;
+    }
+
+    this.activeProductionPose = pose;
+    this.sprite.setTexture(nextTexture);
+    this.sprite.setData('production-art-pose', pose);
   }
 
   private createStepEffect(): void {
