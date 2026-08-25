@@ -41,6 +41,9 @@ jobs:
       - name: Build production bundle
         run: npm run build
 
+      - name: Check performance budget
+        run: npm run perf:budget
+
       - name: Smoke-test static output
         run: npm run smoke:static
 

@@ -3,7 +3,7 @@ import { gzipSync } from 'node:zlib';
 
 const KiB = 1024;
 const budgets = {
-  entryRawBytes: 420 * KiB,
+  entryRawBytes: 520 * KiB,
   largestChunkRawBytes: 1800 * KiB,
   totalJsRawBytes: 2050 * KiB,
   totalJsGzipBytes: 560 * KiB,

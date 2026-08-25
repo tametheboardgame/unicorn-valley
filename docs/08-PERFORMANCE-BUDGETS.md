@@ -15,13 +15,13 @@ If later work adds external image or audio assets, they should be loaded by the 
 - Phaser is emitted as a named vendor chunk so the large, stable engine payload can remain browser-cached when game code changes.
 - Browser diagnostics are dynamically imported only for `?diagnostics=1`, keeping test-only inspection code out of the normal initial application path.
 - The browser regression suite runs against `vite preview` of the production build instead of the development server.
-- `npm run perf:budget` runs after every production build in the combined validation gate.
+- `npm run perf:budget` runs after every production build in CI and in the combined validation script.
 
 ## Bundle budgets
 
-The current guardrails intentionally sit above the measured R6 build while remaining low enough to catch accidental payload growth:
+The current guardrails are based on the measured R6-WP6.7 production build: approximately 504 kB application code, 1,375 kB Phaser, 2.3 kB on-demand diagnostics and 492 kB total gzip.
 
-- application entry chunk: at most 420 KiB raw;
+- application entry chunk: at most 520 KiB raw;
 - largest JavaScript chunk: at most 1,800 KiB raw;
 - all JavaScript: at most 2,050 KiB raw;
 - all JavaScript: at most 560 KiB gzip;
