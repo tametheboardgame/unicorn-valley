@@ -472,14 +472,14 @@ export class EnvironmentProductionPresentationManager {
   }
 }
 
-let browserEnvironmentProductionPresentationManager:
-  | EnvironmentProductionPresentationManager
-  | null = null;
+let browserEnvironmentProductionPresentationManager: EnvironmentProductionPresentationManager | null =
+  null;
 
 export function getEnvironmentProductionPresentationManager(
   game: Phaser.Game,
 ): EnvironmentProductionPresentationManager {
-  browserEnvironmentProductionPresentationManager ??=
-    new EnvironmentProductionPresentationManager(game);
+  browserEnvironmentProductionPresentationManager ??= new EnvironmentProductionPresentationManager(
+    game,
+  );
   return browserEnvironmentProductionPresentationManager;
 }
