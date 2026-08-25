@@ -85,6 +85,7 @@ test('production storybook shell is present on the core modal UI scenes', async 
     expect(scene?.objects.some(({ name }) => name === `ui-production:${sceneKey}:ornaments`)).toBe(
       true,
     );
+    await page.screenshot({ path: `playtest-artifacts/screenshots/wp6.4-${route}.png` });
   }
 });
 
