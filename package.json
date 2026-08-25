@@ -15,8 +15,9 @@
     "test:watch": "vitest src",
     "test:play": "playwright test",
     "test:play:update": "playwright test --update-snapshots",
+    "perf:budget": "node scripts/checkPerformanceBudget.mjs",
     "smoke:static": "node scripts/staticSmoke.mjs",
-    "validate": "npm run format:check && npm run lint && npm run typecheck && npm run test && npm run build && npm run smoke:static"
+    "validate": "npm run format:check && npm run lint && npm run typecheck && npm run test && npm run build && npm run perf:budget && npm run smoke:static"
   },
   "dependencies": {
     "phaser": "4.2.1"

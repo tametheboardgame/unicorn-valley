@@ -1,4 +1,8 @@
-import type Phaser from 'phaser';
+import Phaser from 'phaser';
+import {
+  type FramePerformanceSnapshot,
+  summariseFrameDurations,
+} from '../performance/FramePerformance';
 
 export interface DiagnosticObjectSnapshot {
   type: string;
@@ -47,6 +51,8 @@ export interface BrowserDiagnosticSnapshot {
 
 export interface BrowserDiagnosticsApi {
   snapshot(): BrowserDiagnosticSnapshot;
+  performance(): FramePerformanceSnapshot;
+  resetPerformance(): void;
   startScene(sceneKey: string, data?: object): void;
 }
 
@@ -165,6 +171,19 @@ export function installBrowserDiagnostics(game: Phaser.Game): BrowserDiagnostics
     return null;
   }
 
+  const frameDurations: number[] = [];
+  const recordFrame = (): void => {
+    const delta = game.loop.delta;
+    if (!Number.isFinite(delta) || delta <= 0) {
+      return;
+    }
+    if (frameDurations.length >= 180) {
+      frameDurations.shift();
+    }
+    frameDurations.push(delta);
+  };
+  game.events.on(Phaser.Core.Events.POST_STEP, recordFrame);
+
   const api: BrowserDiagnosticsApi = {
     snapshot: () => {
       const activeScenes = game.scene.getScenes(true);
@@ -174,6 +193,10 @@ export function installBrowserDiagnostics(game: Phaser.Game): BrowserDiagnostics
         activeScenes: activeScenes.map((scene) => scene.scene.key),
         scenes: activeScenes.map(snapshotScene),
       };
+    },
+    performance: () => summariseFrameDurations(frameDurations),
+    resetPerformance: () => {
+      frameDurations.length = 0;
     },
     startScene: (sceneKey, data) => {
       const activeScene = game.scene.getScenes(true)[0];

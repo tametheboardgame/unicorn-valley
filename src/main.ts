@@ -2,7 +2,6 @@ import Phaser from 'phaser';
 import './style.css';
 import { gameConfig } from './game/config/gameConfig';
 import { getClickToMoveManager } from './game/input/ClickToMoveManager';
-import { installBrowserDiagnostics } from './game/testing/BrowserDiagnostics';
 import { getExplorationShellWorldManager } from './game/ui/ExplorationShellWorldManager';
 import { getR5FinalTighteningManager } from './game/visual/R5FinalTighteningManager';
 import { getExplorationGeometryPresentationManager } from './game/world/ExplorationGeometryPresentationManager';
@@ -12,4 +11,9 @@ getClickToMoveManager(game);
 getExplorationShellWorldManager(game);
 getExplorationGeometryPresentationManager(game);
 getR5FinalTighteningManager(game);
-installBrowserDiagnostics(game);
+
+if (new URLSearchParams(globalThis.location.search).get('diagnostics') === '1') {
+  void import('./game/testing/BrowserDiagnostics').then(({ installBrowserDiagnostics }) => {
+    installBrowserDiagnostics(game);
+  });
+}

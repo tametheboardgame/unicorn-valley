@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { RefreshThrottle } from '../performance/RefreshThrottle';
 import { worldDepthForY } from './WorldDepth';
 
 const PRESENTATION_ANCHOR_NAME = 'exploration-geometry-presentation-anchor';
@@ -125,11 +126,17 @@ function decorateScene(scene: Phaser.Scene): void {
 }
 
 export class ExplorationGeometryPresentationManager {
+  private readonly syncThrottle = new RefreshThrottle(120);
+
   public constructor(private readonly game: Phaser.Game) {
     this.game.events.on(Phaser.Core.Events.POST_STEP, this.update, this);
   }
 
   private update(): void {
+    if (!this.syncThrottle.shouldRun(this.game.loop.time)) {
+      return;
+    }
+
     for (const scene of this.game.scene.getScenes(true)) {
       if (!SUPPORTED_SCENES.has(scene.scene.key)) {
         continue;

@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { RefreshThrottle } from '../performance/RefreshThrottle';
 import { UI_COLOURS, UI_FONT } from '../ui/uiTheme';
 
 const UI_SCENES = new Set([
@@ -116,11 +117,17 @@ function createFrame(scene: Phaser.Scene, spec: FrameSpec): void {
 }
 
 export class UiProductionPresentationManager {
+  private readonly syncThrottle = new RefreshThrottle(120);
+
   public constructor(private readonly game: Phaser.Game) {
     this.game.events.on(Phaser.Core.Events.POST_STEP, this.sync, this);
   }
 
   private readonly sync = (): void => {
+    if (!this.syncThrottle.shouldRun(this.game.loop.time)) {
+      return;
+    }
+
     for (const scene of this.game.scene.getScenes(true)) {
       if (!UI_SCENES.has(scene.scene.key) || hasAnchor(scene)) {
         continue;

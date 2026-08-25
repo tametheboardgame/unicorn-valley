@@ -18,9 +18,9 @@ R5 is complete.
 - R6-WP6.2 - Complete (PR #87): Core NPC Production Art
 - R6-WP6.3 - Complete (PR #88): Production Environment Art
 - R6-WP6.4 - Complete (PR #89): Production UI and Wonderbook Art
-- R6-WP6.5 - In progress: Production Audio
-- R6-WP6.6 - Pending: Touch, Tablet and Accessibility Hardening
-- R6-WP6.7 - Pending: Performance and Loading Optimisation
+- R6-WP6.5 - Complete (PR #90): Production Audio
+- R6-WP6.6 - Complete (PR #91): Touch, Tablet and Accessibility Hardening
+- R6-WP6.7 - In progress: Performance and Loading Optimisation
 - R6-WP6.8 - Pending: Save and Recovery Hardening
 - R6-WP6.9 - Pending: Browser and Deployment Hardening
 
@@ -77,18 +77,44 @@ PR #89 established one reusable production storybook UI language around the stab
 - no save-schema, economy, decoration-placement, dialogue-content or progression changes were required;
 - the final PR head passed formatting, lint, TypeScript, unit tests, production build, static smoke, all 70 browser playtests, exact-head Cloudflare deployment and screenshot QA before squash merge.
 
-## R6-WP6.5 implementation intent
+## R6-WP6.5 implementation summary
 
-The audio pass upgrades the existing safe Web Audio architecture instead of introducing external licensed assets or changing gameplay contracts.
+PR #90 upgraded the existing browser-safe Web Audio architecture without introducing licensed external assets or changing gameplay contracts.
+
+- menu, Glade, Village, Meadow, Crystal Brook, Whispering Woods, cottage and Rainbow Run have distinct musical identities;
+- procedural phrases have a ten-second minimum repetition window and region-specific ambience/detail timing;
+- the SFX vocabulary covers core UI, collecting, discovery, quests, friendship, doors, decorating and race actions;
+- Nova, Willow, Pip, Pebble, Lumi and Marigold have lightweight recognisable dialogue-reaction pitches with a safe generic fallback;
+- Crystal Brook uses its own audio profile rather than proxying Moonflower Glade;
+- independent music, ambience, SFX and master/mute settings remain the controlling buses;
+- all audio remains supplementary to visible text, animation and state changes;
+- no save-schema, progression, quest, collision or navigation changes were required;
+- the final PR head passed repository validation, the complete browser playtest suite and exact-head Cloudflare deployment before squash merge.
+
+## R6-WP6.6 implementation summary
+
+PR #91 made tablet play and core accessibility preferences first-class without removing keyboard controls.
+
+- exploration exposes persistent touch Book and Bag controls and larger creator targets;
+- Reduced Motion and High Visibility interaction preferences persist locally and update active presentation;
+- reduced motion suppresses decorative production/NPC tween motion while leaving gameplay state intact;
+- Rainbow Run accepts simultaneous two-finger RUN and JUMP without releasing one finger cancelling the other;
+- race assistance remains available as a large named touch target;
+- a 1024×768 touch-capable browser suite covers creator, exploration, Wonderbook, accessibility, multi-touch racing and assistance selection;
+- no save-schema, progression, quest, collision or navigation changes were required;
+- the final PR head passed formatting, lint, TypeScript, unit tests, production build, static smoke, the complete browser playtest suite and exact-head Cloudflare deployment before squash merge.
+
+## R6-WP6.7 implementation intent
+
+The performance pass targets measured production costs while preserving frame-accurate gameplay.
 
 Current branch work provides:
 
-- distinct menu, Glade, Village, Meadow, Crystal Brook, Whispering Woods, cottage and Rainbow Run musical identities;
-- longer internally varied procedural phrases with a ten-second minimum repetition window;
-- region-specific ambience beds and detail timing beneath the music;
-- a broader SFX vocabulary for UI/back, collecting, discovery, quest completion, friendship, doors, decorating and race actions;
-- recognisable lightweight dialogue reaction pitches for Nova, Willow, Pip, Pebble, Lumi and Marigold, with a safe generic fallback;
-- Crystal Brook now uses its own audio profile rather than proxying Moonflower Glade;
-- the existing independent music, ambience, SFX and master/mute settings remain the controlling buses;
-- all audio remains supplementary to visible text, animation and state changes, so no critical information becomes sound-only;
-- no save-schema, progression, quest, collision or navigation changes are required.
+- a named Phaser vendor chunk for stable browser caching;
+- on-demand browser diagnostics so inspection code is absent from the ordinary initial path;
+- explicit raw/gzip JavaScript budgets enforced after production builds;
+- production-build Playwright execution rather than development-server browser testing;
+- diagnostics-only rolling frame profiling and scene-transition hitch coverage;
+- 100-120 ms synchronisation for presentation-only managers that previously scanned active scene graphs every frame;
+- an asset/preload audit recording that current art/audio are procedural and therefore do not justify external compression/preload payloads;
+- gameplay-critical movement, collision, gateway and race-control loops remain frame-accurate.
