@@ -1,6 +1,9 @@
-import Phaser from 'phaser';
+import type Phaser from 'phaser';
 import { GAME_HEIGHT } from '../config/gameConstants';
 import type { PointerTouchInputAdapter } from './PointerTouchInputAdapter';
+
+const SCENE_PAUSE_EVENT = 'pause';
+const SCENE_RESUME_EVENT = 'resume';
 
 let preferredTouchControlsVisible: boolean | null = null;
 const padsByScene = new WeakMap<Phaser.Scene, TouchMovementPad>();
@@ -65,8 +68,8 @@ export class TouchMovementPad {
     private readonly input: PointerTouchInputAdapter,
   ) {
     padsByScene.set(scene, this);
-    this.scene.events.on(Phaser.Scenes.Events.PAUSE, this.handleScenePause, this);
-    this.scene.events.on(Phaser.Scenes.Events.RESUME, this.handleSceneResume, this);
+    this.scene.events.on(SCENE_PAUSE_EVENT, this.handleScenePause, this);
+    this.scene.events.on(SCENE_RESUME_EVENT, this.handleSceneResume, this);
 
     if (shouldRenderPortraitDomControls()) {
       this.createPortraitDomControls();
@@ -100,8 +103,8 @@ export class TouchMovementPad {
       return;
     }
     this.destroyed = true;
-    this.scene.events.off(Phaser.Scenes.Events.PAUSE, this.handleScenePause, this);
-    this.scene.events.off(Phaser.Scenes.Events.RESUME, this.handleSceneResume, this);
+    this.scene.events.off(SCENE_PAUSE_EVENT, this.handleScenePause, this);
+    this.scene.events.off(SCENE_RESUME_EVENT, this.handleSceneResume, this);
     this.releaseInput();
     this.domRoot?.remove();
     this.domRoot = null;
