@@ -199,7 +199,9 @@ test('Start over requires confirmation and clears both save copies only after th
   expect(resetState.backup).toBeNull();
 });
 
-test('a newer-version save is protected and the title asks the player to refresh', async ({ page }) => {
+test('a newer-version save is protected and the title asks the player to refresh', async ({
+  page,
+}) => {
   const futureVersion = 3;
   const futureSave = createStoredSave('Future Star', futureVersion);
   const serialisedFuture = JSON.stringify(futureSave);
@@ -220,7 +222,8 @@ test('a newer-version save is protected and the title asks the player to refresh
 
   const snapshot = await getSnapshot(page);
   const title = snapshot.scenes.find((scene) => scene.key === 'TitleScene');
-  const visibleText = title?.objects.filter((object) => object.visible).map((object) => object.text) ?? [];
+  const visibleText =
+    title?.objects.filter((object) => object.visible).map((object) => object.text) ?? [];
 
   expect(visibleText).toContain('Refresh to Continue');
   expect(visibleText).toContain(
