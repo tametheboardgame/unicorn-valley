@@ -71,6 +71,7 @@ describe('SaveService transactional New Game reset', () => {
     expect(repository.value).toBe(currentPrimary);
     expect(JSON.parse(repository.value ?? '{}').profile.name).toBe('Starlight');
     expect(JSON.parse(repository.backupValue ?? '{}').profile.name).toBe('Starlight');
+    expect(service.load()?.profile.name).toBe('Starlight');
   });
 
   it('commits the fresh adventure before discarding the old recovery backup', () => {
