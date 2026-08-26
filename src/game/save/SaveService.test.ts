@@ -243,9 +243,7 @@ describe('SaveService', () => {
     expect(service.load()).toBeNull();
 
     const racedPrimary = repository.value;
-    expect(service.saveWithResult(service.createNewGame()).status).toBe(
-      'blocked-newer-version',
-    );
+    expect(service.saveWithResult(service.createNewGame()).status).toBe('blocked-newer-version');
     expect(repository.value).toBe(racedPrimary);
     expect(repository.checkpoints.get(futureVersion)).toBe(serialisedFuture);
   });
