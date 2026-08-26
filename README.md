@@ -6,11 +6,11 @@ The player creates her own unicorn, lives at Moonflower Cottage, explores a magi
 
 ## Project status
 
-**R3-WP3.8 - Racing Presentation Pass complete.**
+**R6 - Production Presentation and Accessibility complete through R6-WP6.9, Browser and Deployment Hardening.**
 
-R0, R1 and R2 are complete. R3 is now underway: Rainbow Run has a dedicated Meadow hub, Nova's character-led first-race story, a gentler one-on-one introductory run, the unlocked four-racer **Sunrise Sprint**, persistent participation rewards and ribbons, live position tracking and personal-best records. Racing now also has explicit early/standard difficulty profiles plus a persistent optional **Extra help** setting that widens jump timing and adds gentle player-only speed support without reducing rewards. Both playable races now have a 3, 2, 1, GO countdown, layered parallax scenery, stronger placeholder racer motion, speed streaks and boost bursts, clearer obstacle silhouettes, a dedicated procedural race soundtrack and staged finish/results celebrations.
+R0 through R6 now cover the playable foundation, living-valley vertical slice, Rainbow Run racing, deeper friendship/home systems, the expanded valley and the production-quality presentation/accessibility/hardening pass. The final R6 package adds browser-family compatibility coverage, deployment/reload/cache checks and a Cloudflare Pages production/preview verification gate.
 
-The next package is **R3-WP3.9 - Racing Playtest and Balance Pass**.
+The next package is **R7-WP7.1 - Structured Preference Review**. R7 deliberately uses observed play behaviour to decide whether customisation, cottage/garden play, racing, exploration or another demonstrated interest should receive the next major expansion.
 
 The production branch is deployed to `https://unicorn-valley.pages.dev/`.
 
@@ -74,17 +74,18 @@ The production branch is deployed to `https://unicorn-valley.pages.dev/`.
 - [R3 Nova's First Race Story](docs/35-R3-NOVA-FIRST-RACE-STORY.md)
 - [R3 Race Assistance and Difficulty](docs/36-R3-RACE-ASSISTANCE-DIFFICULTY.md)
 - [R3 Racing Presentation Pass](docs/37-R3-RACING-PRESENTATION-PASS.md)
+- [R6 Production Presentation Implementation Log](docs/07D-R6-IMPLEMENTATION-LOG.md)
 
 ## Release plan
 
 - **R0 - Foundation and Pre-production**: complete.
 - **R1 - My Unicorn: First Playable**: complete.
-- **R2 - Living Valley Vertical Slice**: complete, including Sunbeam Village, quests, friendship, inventory, cottage decorating, visible persistent world change, pre-playtest polish, daughter playtesting and the resulting UX/visual recovery passes.
-- **R3 - Rainbow Run Racing**: in progress; the Meadow hub, core race movement, obstacle/boost/collectable courses, NPC competition, live position tracking, finish order, persistent race records, participation rewards, podium bonuses, cross-system race keepsakes, Nova's character-led first-race story, persistent race assistance, explicit early/standard difficulty profiles and the racing presentation pass are complete, with racing playtest and balance next.
-- **R4 - Friendship, Secrets and Home Depth**: multi-session stories, shops, deeper decorating and stronger world memory.
-- **R5 - The Valley Gets Bigger**: Crystal Brook, Whispering Woods, more discoveries and a second major activity type.
-- **R6 - Production Presentation and Accessibility**: final-quality art/audio direction, touch refinement, performance and save hardening.
-- **R7 - Daughter-led Expansion**: expand the systems she demonstrably cares about most based on actual play behaviour.
+- **R2 - Living Valley Vertical Slice**: complete.
+- **R3 - Rainbow Run Racing**: complete.
+- **R4 - Friendship, Secrets and Home Depth**: complete.
+- **R5 - The Valley Gets Bigger**: complete.
+- **R6 - Production Presentation and Accessibility**: complete, including production art/audio, touch/accessibility, performance, save/recovery and browser/deployment hardening.
+- **R7 - Daughter-led Expansion**: next; begins with Structured Preference Review before choosing the next major expansion path.
 
 ## Development rule
 
