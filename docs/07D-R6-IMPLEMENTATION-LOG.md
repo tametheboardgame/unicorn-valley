@@ -21,8 +21,8 @@ R5 is complete.
 - R6-WP6.5 - Complete (PR #90): Production Audio
 - R6-WP6.6 - Complete (PR #91): Touch, Tablet and Accessibility Hardening
 - R6-WP6.7 - Complete (PR #92): Performance and Loading Optimisation
-- R6-WP6.8 - In progress: Save and Recovery Hardening
-- R6-WP6.9 - Pending: Browser and Deployment Hardening
+- R6-WP6.8 - Complete (PR #93): Save and Recovery Hardening
+- R6-WP6.9 - Final package (PR #94): Browser and Deployment Hardening
 
 ## R6-WP6.1 implementation summary
 
@@ -118,13 +118,11 @@ PR #92 reduced production loading and repeated presentation work while preservin
 - gameplay-critical movement, collision, gateway detection and race control remain frame-accurate;
 - the final executable head passed formatting, lint, TypeScript, unit tests, production build, performance budgets, static smoke, the complete production browser suite, Codex re-review and Cloudflare preview deployment before squash merge.
 
-## R6-WP6.8 implementation intent
+## R6-WP6.8 implementation summary
 
-The save/recovery pass protects long-running local progress without changing schema version or ordinary gameplay callers.
+PR #93 protects long-running local progress without changing schema version or ordinary gameplay callers.
 
-Current branch work provides:
-
-- a separate `unicorn-valley.save.backup` last-known-good local recovery copy;
+- a separate `unicorn-valley.save.backup` last-known-good local recovery copy is maintained;
 - every valid overwrite preserves the previous valid primary save before writing the next state;
 - malformed or invalid primary data cannot replace a valid recovery copy;
 - if the primary is missing or corrupt, a valid backup is migrated/reconciled as needed and restores the primary automatically;
@@ -133,4 +131,20 @@ Current branch work provides:
 - confirmed `Start over` clears both primary and recovery copies before creating the new game, while the existing first tap remains non-destructive confirmation;
 - browser coverage exercises corrupt-primary recovery, real v1 migration backup and destructive-reset confirmation against localStorage;
 - parent-facing export/import is not added because automatic local backup/recovery covers the current credible failure modes without introducing a file-management workflow for the target player;
-- no save-schema bump, progression reset or content migration is required.
+- no save-schema bump, progression reset or content migration was required.
+
+## R6-WP6.9 implementation summary
+
+PR #94 closes R6 with a bounded browser-family and static-host deployment gate rather than duplicating the complete gameplay regression suite in every engine.
+
+- a dedicated Playwright compatibility configuration runs the production build against Chromium, Firefox and WebKit desktop engines;
+- Chromium and WebKit also run representative 1024×768 tablet-touch and 390×844 phone-touch viewports;
+- compatibility smoke coverage verifies production boot, Moonflower Glade readiness, responsive canvas fit, same-origin fingerprinted assets and reload stability;
+- each browser target fails on console errors, uncaught page errors, failed browser requests or HTTP error responses;
+- the existing complete gameplay regression remains Chromium-based while the smaller compatibility smoke matrix supplies browser-family coverage at practical CI cost;
+- `public/_headers` explicitly revalidates `/` and `/index.html` while allowing Vite-fingerprinted `/assets/*` JavaScript/CSS to use a one-year immutable browser cache;
+- static smoke now verifies fingerprinted build references, the copied Pages `_headers` policy, file existence and successful production-output HTTP responses;
+- Cloudflare Pages deployment documentation now distinguishes exact-head preview validation from post-merge production verification and records the cache/reload audit procedure;
+- no save-schema, progression, content, interaction, collision or navigation changes are required.
+
+R6-WP6.9 is accepted only when repository validation, the complete Chromium browser regression, the Chromium/Firefox/WebKit compatibility matrix and the exact-head Cloudflare preview are green on the final PR head. After merge, the resulting `main` commit must receive a successful Cloudflare production deployment before R6 is considered fully closed in production.
