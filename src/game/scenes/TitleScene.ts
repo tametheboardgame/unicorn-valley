@@ -51,6 +51,7 @@ export class TitleScene extends Phaser.Scene {
   private audioSettingsPanel: AudioSettingsPanel | null = null;
   private starting = false;
   private hasCreatedUnicorn = false;
+  private unsupportedSaveVersion = false;
   private resetArmed = false;
   private continueScene = 'MoonflowerGladeScene';
 
@@ -61,7 +62,10 @@ export class TitleScene extends Phaser.Scene {
   public create(): void {
     this.starting = false;
     this.resetArmed = false;
-    const save = getBrowserSaveService().load();
+    const saveService = getBrowserSaveService();
+    const loadedSave = saveService.load();
+    this.unsupportedSaveVersion = saveService.hasUnsupportedSaveVersion();
+    const save = this.unsupportedSaveVersion ? null : loadedSave;
     this.hasCreatedUnicorn = Boolean(save?.profile.name);
     this.continueScene = resolveContinueScene(save?.profile.currentLocationId);
     this.cameras.main.setBackgroundColor('#6f4ba8');
@@ -144,8 +148,13 @@ export class TitleScene extends Phaser.Scene {
     this.enterButton = button;
     applyButtonHover(button, UI_COLOURS.cream, UI_COLOURS.gold);
 
+    const enterLabel = this.unsupportedSaveVersion
+      ? 'Refresh to Continue'
+      : this.hasCreatedUnicorn
+        ? 'Continue'
+        : 'Create Your Unicorn';
     this.add
-      .text(GAME_WIDTH / 2, 447, this.hasCreatedUnicorn ? 'Continue' : 'Create Your Unicorn', {
+      .text(GAME_WIDTH / 2, 447, enterLabel, {
         color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
         fontSize: '30px',
@@ -155,15 +164,22 @@ export class TitleScene extends Phaser.Scene {
       .setDepth(4);
 
     this.add
-      .text(GAME_WIDTH / 2, 507, 'Press Enter or tap the button', {
-        color: '#eadfff',
-        fontFamily: UI_FONT,
-        fontSize: '17px',
-      })
+      .text(
+        GAME_WIDTH / 2,
+        507,
+        this.unsupportedSaveVersion
+          ? 'Your save is safe. Refresh to load the newer game version.'
+          : 'Press Enter or tap the button',
+        {
+          color: '#eadfff',
+          fontFamily: UI_FONT,
+          fontSize: '17px',
+        },
+      )
       .setOrigin(0.5)
       .setDepth(2);
 
-    if (this.hasCreatedUnicorn) {
+    if (this.hasCreatedUnicorn && !this.unsupportedSaveVersion) {
       const edit = this.add
         .text(GAME_WIDTH / 2, 548, 'Change my unicorn', {
           color: '#fff5ff',
@@ -190,21 +206,19 @@ export class TitleScene extends Phaser.Scene {
       startOver.on('pointerdown', () => this.requestStartOver(startOver));
     }
 
+    const status = this.unsupportedSaveVersion
+      ? 'A newer Unicorn Valley save is here. Refresh to keep your progress safe.'
+      : this.hasCreatedUnicorn
+        ? resolveContinueStatus(this.continueScene)
+        : 'First, make a unicorn that feels like yours.';
     this.statusText = this.add
-      .text(
-        GAME_WIDTH / 2,
-        GAME_HEIGHT - 38,
-        this.hasCreatedUnicorn
-          ? resolveContinueStatus(this.continueScene)
-          : 'First, make a unicorn that feels like yours.',
-        {
-          color: '#f0e7fb',
-          fontFamily: UI_FONT,
-          fontSize: '20px',
-          backgroundColor: '#563d7ccc',
-          padding: { x: 16, y: 8 },
-        },
-      )
+      .text(GAME_WIDTH / 2, GAME_HEIGHT - 38, status, {
+        color: '#f0e7fb',
+        fontFamily: UI_FONT,
+        fontSize: '20px',
+        backgroundColor: '#563d7ccc',
+        padding: { x: 16, y: 8 },
+      })
       .setOrigin(0.5)
       .setDepth(3);
 
@@ -288,12 +302,24 @@ export class TitleScene extends Phaser.Scene {
     this.starting = true;
     resetMoonflowerGladePlayerSpawn();
     const service = getBrowserSaveService();
-    service.save(service.createNewGame());
+    service.clear();
+    const result = service.saveWithResult(service.createNewGame());
+    if (result.status !== 'saved') {
+      this.starting = false;
+      this.scene.restart();
+      return;
+    }
     this.scene.start('UnicornCreatorScene');
   }
 
   private enterValley(): void {
     if (this.starting) {
+      return;
+    }
+
+    if (this.unsupportedSaveVersion) {
+      this.statusText?.setText('Refreshing so your newer save stays safe…');
+      globalThis.location.reload();
       return;
     }
 

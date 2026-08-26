@@ -20,8 +20,8 @@ R5 is complete.
 - R6-WP6.4 - Complete (PR #89): Production UI and Wonderbook Art
 - R6-WP6.5 - Complete (PR #90): Production Audio
 - R6-WP6.6 - Complete (PR #91): Touch, Tablet and Accessibility Hardening
-- R6-WP6.7 - In progress: Performance and Loading Optimisation
-- R6-WP6.8 - Pending: Save and Recovery Hardening
+- R6-WP6.7 - Complete (PR #92): Performance and Loading Optimisation
+- R6-WP6.8 - In progress: Save and Recovery Hardening
 - R6-WP6.9 - Pending: Browser and Deployment Hardening
 
 ## R6-WP6.1 implementation summary
@@ -104,17 +104,33 @@ PR #91 made tablet play and core accessibility preferences first-class without r
 - no save-schema, progression, quest, collision or navigation changes were required;
 - the final PR head passed formatting, lint, TypeScript, unit tests, production build, static smoke, the complete browser playtest suite and exact-head Cloudflare deployment before squash merge.
 
-## R6-WP6.7 implementation intent
+## R6-WP6.7 implementation summary
 
-The performance pass targets measured production costs while preserving frame-accurate gameplay.
+PR #92 reduced production loading and repeated presentation work while preserving frame-accurate gameplay.
+
+- Phaser is isolated in a named vendor chunk so stable engine code can remain browser-cached while game code changes;
+- browser diagnostics are dynamically loaded only for `?diagnostics=1` and remain outside the normal initial application path;
+- measured raw and gzip JavaScript budgets are enforced in CI after every production build;
+- Playwright runs against the production build/preview rather than Vite development mode;
+- diagnostics record unsmoothed wall-clock frame intervals so genuine main-thread transition stalls cannot be hidden by Phaser delta smoothing;
+- presentation-only scene synchronisers run at 100-120 ms intervals instead of scanning active scene graphs every rendered frame;
+- the asset/preload audit records that current production art and audio are procedural, so there is no external raster/audio payload to compress or globally preload;
+- gameplay-critical movement, collision, gateway detection and race control remain frame-accurate;
+- the final executable head passed formatting, lint, TypeScript, unit tests, production build, performance budgets, static smoke, the complete production browser suite, Codex re-review and Cloudflare preview deployment before squash merge.
+
+## R6-WP6.8 implementation intent
+
+The save/recovery pass protects long-running local progress without changing schema version or ordinary gameplay callers.
 
 Current branch work provides:
 
-- a named Phaser vendor chunk for stable browser caching;
-- on-demand browser diagnostics so inspection code is absent from the ordinary initial path;
-- explicit raw/gzip JavaScript budgets enforced after production builds;
-- production-build Playwright execution rather than development-server browser testing;
-- diagnostics-only rolling frame profiling and scene-transition hitch coverage;
-- 100-120 ms synchronisation for presentation-only managers that previously scanned active scene graphs every frame;
-- an asset/preload audit recording that current art/audio are procedural and therefore do not justify external compression/preload payloads;
-- gameplay-critical movement, collision, gateway and race-control loops remain frame-accurate.
+- a separate `unicorn-valley.save.backup` last-known-good local recovery copy;
+- every valid overwrite preserves the previous valid primary save before writing the next state;
+- malformed or invalid primary data cannot replace a valid recovery copy;
+- if the primary is missing or corrupt, a valid backup is migrated/reconciled as needed and restores the primary automatically;
+- the actual historical schema-v1 to schema-v2 boundary is covered using the long-running R4 save fixture, including profile, inventory, friendship, quest, race and collection progress;
+- successful loading of a schema-v1 primary stores the untouched v1 record as backup before normalising the primary to schema v2;
+- confirmed `Start over` clears both primary and recovery copies before creating the new game, while the existing first tap remains non-destructive confirmation;
+- browser coverage exercises corrupt-primary recovery, real v1 migration backup and destructive-reset confirmation against localStorage;
+- parent-facing export/import is not added because automatic local backup/recovery covers the current credible failure modes without introducing a file-management workflow for the target player;
+- no save-schema bump, progression reset or content migration is required.

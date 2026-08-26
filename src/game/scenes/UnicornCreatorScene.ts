@@ -47,6 +47,11 @@ export class UnicornCreatorScene extends Phaser.Scene {
 
   public create(): void {
     const saveService = getBrowserSaveService();
+    if (saveService.hasUnsupportedSaveVersion()) {
+      this.scene.start('TitleScene');
+      return;
+    }
+
     this.save = saveService.load() ?? saveService.createNewGame();
     this.appearance = parseUnicornAppearance(this.save.profile.appearance);
 
@@ -422,7 +427,13 @@ export class UnicornCreatorScene extends Phaser.Scene {
         appearance: serialiseUnicornAppearance(this.appearance),
       },
     };
-    this.save = service.save(nextSave);
+    const result = service.saveWithResult(nextSave);
+    if (result.status !== 'saved') {
+      this.scene.start('TitleScene');
+      return;
+    }
+
+    this.save = result.save;
     this.scene.start('MoonflowerGladeScene');
   }
 }
