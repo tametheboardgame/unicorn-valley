@@ -535,7 +535,6 @@ export class TitleScene extends Phaser.Scene {
     const backdrop = this.add
       .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x302545, 0.72)
       .setName('title-settings-backdrop')
-      .setInteractive()
       .setDepth(200);
     const panelShadow = createUiShadow(this, GAME_WIDTH / 2, 362, 600, 590, 201, 0.28);
     const panel = this.add
@@ -692,6 +691,15 @@ export class TitleScene extends Phaser.Scene {
       object.setVisible(visible);
     }
 
+    const backdrop = this.children.getByName('title-settings-backdrop');
+    if (backdrop instanceof Phaser.GameObjects.Rectangle) {
+      if (visible) {
+        backdrop.setInteractive();
+      } else {
+        backdrop.disableInteractive();
+      }
+    }
+
     for (const row of this.settingsRows) {
       if (visible) {
         row.button.setInteractive({ useHandCursor: true });
@@ -778,17 +786,26 @@ export class TitleScene extends Phaser.Scene {
 
   private beginNewGame(): void {
     this.setStarting('Opening the unicorn maker…');
-    resetMoonflowerGladePlayerSpawn();
     const service = getBrowserSaveService();
-    service.clear();
-    const result = service.saveWithResult(service.createNewGame());
+    const result = service.resetToNewGameWithResult();
     if (result.status !== 'saved') {
       this.starting = false;
-      this.statusText?.setText('The valley could not start a new save. Nothing was overwritten.');
+      this.resetArmed = false;
+      this.newGameMenuButton?.label.setText('New Game');
+      this.newGameMenuButton?.button.setFillStyle(
+        this.hasCreatedUnicorn ? UI_COLOURS.lavender : UI_COLOURS.gold,
+        1,
+      );
+      this.statusText?.setText(
+        this.hasCreatedUnicorn
+          ? 'The new adventure could not be saved. Your current adventure is still safe.'
+          : 'The valley could not create a save. Please try New Game again.',
+      );
       this.setMenuEnabled(true);
       return;
     }
 
+    resetMoonflowerGladePlayerSpawn();
     this.time.delayedCall(120, () => this.scene.start('UnicornCreatorScene'));
   }
 
