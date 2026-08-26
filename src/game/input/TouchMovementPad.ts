@@ -19,9 +19,7 @@ export function shouldUsePortraitTouchControls(
   hasTouchStart: boolean,
 ): boolean {
   return (
-    shouldShowTouchMovementPad(maxTouchPoints, hasTouchStart) &&
-    width <= 700 &&
-    height > width
+    shouldShowTouchMovementPad(maxTouchPoints, hasTouchStart) && width <= 700 && height > width
   );
 }
 
@@ -189,11 +187,7 @@ export class TouchMovementPad {
     this.domRoot = root;
   }
 
-  private bindDomHold(
-    button: HTMLButtonElement,
-    press: () => void,
-    release: () => void,
-  ): void {
+  private bindDomHold(button: HTMLButtonElement, press: () => void, release: () => void): void {
     const start = (event: PointerEvent): void => {
       event.preventDefault();
       button.classList.add('is-active');
