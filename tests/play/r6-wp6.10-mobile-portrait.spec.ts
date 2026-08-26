@@ -41,9 +41,12 @@ test('portrait touch layout pins the game high and provides thumb-sized working 
   page,
 }) => {
   const viewport = page.viewportSize();
-  const maxTouchPoints = await page.evaluate(() => navigator.maxTouchPoints);
+  const projectName = test.info().project.name;
   test.skip(
-    !viewport || viewport.width > 700 || viewport.height <= viewport.width || maxTouchPoints === 0,
+    !viewport ||
+      viewport.width > 700 ||
+      viewport.height <= viewport.width ||
+      !projectName.includes('mobile-touch'),
     'Portrait touch regression runs only on the mobile touch compatibility projects.',
   );
 
