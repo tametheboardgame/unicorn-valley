@@ -87,7 +87,9 @@ canvas {
   border-radius: 999px;
   background: rgb(255 251 239 / 94%);
   color: #5c4568;
-  font: 800 clamp(24px, 7vw, 31px) system-ui, sans-serif;
+  font:
+    800 clamp(24px, 7vw, 31px) system-ui,
+    sans-serif;
   line-height: 1;
   box-shadow: 0 5px 16px rgb(36 26 61 / 26%);
   pointer-events: auto;
