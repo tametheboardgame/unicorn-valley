@@ -1,6 +1,9 @@
-import Phaser from 'phaser';
+import type Phaser from 'phaser';
 import { GAME_HEIGHT } from '../config/gameConstants';
 import type { PointerTouchInputAdapter } from './PointerTouchInputAdapter';
+
+const SCENE_PAUSE_EVENT = 'pause';
+const SCENE_RESUME_EVENT = 'resume';
 
 let preferredTouchControlsVisible: boolean | null = null;
 const padsByScene = new WeakMap<Phaser.Scene, TouchMovementPad>();
@@ -10,6 +13,17 @@ export function shouldShowTouchMovementPad(
   hasTouchStart: boolean,
 ): boolean {
   return preferredTouchControlsVisible === true || maxTouchPoints > 0 || hasTouchStart;
+}
+
+export function shouldUsePortraitTouchControls(
+  width: number,
+  height: number,
+  maxTouchPoints: number,
+  hasTouchStart: boolean,
+): boolean {
+  return (
+    shouldShowTouchMovementPad(maxTouchPoints, hasTouchStart) && width <= 700 && height > width
+  );
 }
 
 function shouldDefaultTouchMovementPadVisible(): boolean {
@@ -24,10 +38,25 @@ function shouldDefaultTouchMovementPadVisible(): boolean {
   return touchCapable && (coarsePointer || compactViewport);
 }
 
+function shouldRenderPortraitDomControls(): boolean {
+  if (typeof globalThis.document === 'undefined') {
+    return false;
+  }
+
+  return shouldUsePortraitTouchControls(
+    globalThis.innerWidth,
+    globalThis.innerHeight,
+    globalThis.navigator?.maxTouchPoints ?? 0,
+    'ontouchstart' in globalThis,
+  );
+}
+
 export class TouchMovementPad {
   private readonly objects: Array<Phaser.GameObjects.Arc | Phaser.GameObjects.Text> = [];
   private readonly buttons: Phaser.GameObjects.Arc[] = [];
+  private domRoot: HTMLDivElement | null = null;
   private visible = true;
+  private scenePaused = false;
   private destroyed = false;
 
   public static ensure(scene: Phaser.Scene, input: PointerTouchInputAdapter): TouchMovementPad {
@@ -39,16 +68,22 @@ export class TouchMovementPad {
     private readonly input: PointerTouchInputAdapter,
   ) {
     padsByScene.set(scene, this);
+    this.scene.events.on(SCENE_PAUSE_EVENT, this.handleScenePause, this);
+    this.scene.events.on(SCENE_RESUME_EVENT, this.handleSceneResume, this);
 
-    const originX = 118;
-    const originY = GAME_HEIGHT - 118;
-    const spacing = 62;
+    if (shouldRenderPortraitDomControls()) {
+      this.createPortraitDomControls();
+    } else {
+      const originX = 118;
+      const originY = GAME_HEIGHT - 118;
+      const spacing = 62;
 
-    this.createButton(originX, originY - spacing, '▲', 'MOVE_Y', -1, 'up');
-    this.createButton(originX, originY + spacing, '▼', 'MOVE_Y', 1, 'down');
-    this.createButton(originX - spacing, originY, '◀', 'MOVE_X', -1, 'left');
-    this.createButton(originX + spacing, originY, '▶', 'MOVE_X', 1, 'right');
-    this.createGallopButton(originX + spacing * 2.35, originY - spacing * 0.95);
+      this.createButton(originX, originY - spacing, '▲', 'MOVE_Y', -1, 'up');
+      this.createButton(originX, originY + spacing, '▼', 'MOVE_Y', 1, 'down');
+      this.createButton(originX - spacing, originY, '◀', 'MOVE_X', -1, 'left');
+      this.createButton(originX + spacing, originY, '▶', 'MOVE_X', 1, 'right');
+      this.createGallopButton(originX + spacing * 2.35, originY - spacing * 0.95);
+    }
 
     this.setVisible(preferredTouchControlsVisible ?? shouldDefaultTouchMovementPadVisible(), false);
   }
@@ -68,9 +103,11 @@ export class TouchMovementPad {
       return;
     }
     this.destroyed = true;
-    this.input.setAxis('MOVE_X', 0);
-    this.input.setAxis('MOVE_Y', 0);
-    this.input.setButton('GALLOP', false);
+    this.scene.events.off(SCENE_PAUSE_EVENT, this.handleScenePause, this);
+    this.scene.events.off(SCENE_RESUME_EVENT, this.handleSceneResume, this);
+    this.releaseInput();
+    this.domRoot?.remove();
+    this.domRoot = null;
     for (const object of this.objects) {
       object.destroy();
     }
@@ -88,21 +125,110 @@ export class TouchMovementPad {
     }
 
     if (!visible) {
-      this.input.setAxis('MOVE_X', 0);
-      this.input.setAxis('MOVE_Y', 0);
-      this.input.setButton('GALLOP', false);
+      this.releaseInput();
+    }
+
+    this.applyVisibility();
+  }
+
+  private handleScenePause(): void {
+    this.scenePaused = true;
+    this.releaseInput();
+    this.applyVisibility();
+  }
+
+  private handleSceneResume(): void {
+    this.scenePaused = false;
+    this.applyVisibility();
+  }
+
+  private applyVisibility(): void {
+    const renderedVisible = this.visible && !this.scenePaused;
+    if (this.domRoot) {
+      this.domRoot.hidden = !renderedVisible;
     }
 
     for (const object of this.objects) {
-      object.setVisible(visible);
+      object.setVisible(renderedVisible);
     }
     for (const button of this.buttons) {
-      if (visible) {
+      if (renderedVisible) {
         button.setInteractive({ useHandCursor: true });
       } else {
         button.disableInteractive();
       }
     }
+  }
+
+  private releaseInput(): void {
+    this.input.setAxis('MOVE_X', 0);
+    this.input.setAxis('MOVE_Y', 0);
+    this.input.setButton('GALLOP', false);
+  }
+
+  private createPortraitDomControls(): void {
+    const root = globalThis.document.createElement('div');
+    root.className = 'mobile-touch-controls';
+    root.setAttribute('role', 'group');
+    root.setAttribute('aria-label', 'Unicorn movement controls');
+
+    const dpad = globalThis.document.createElement('div');
+    dpad.className = 'mobile-touch-dpad';
+    dpad.setAttribute('aria-label', 'Movement');
+
+    const directions = [
+      ['up', '▲', 'MOVE_Y', -1],
+      ['left', '◀', 'MOVE_X', -1],
+      ['right', '▶', 'MOVE_X', 1],
+      ['down', '▼', 'MOVE_Y', 1],
+    ] as const;
+
+    for (const [direction, label, axis, value] of directions) {
+      const button = globalThis.document.createElement('button');
+      button.type = 'button';
+      button.className = `mobile-touch-button mobile-touch-${direction}`;
+      button.textContent = label;
+      button.setAttribute('aria-label', `Move ${direction}`);
+      this.bindDomHold(
+        button,
+        () => this.input.setAxis(axis, value),
+        () => this.input.setAxis(axis, 0),
+      );
+      dpad.append(button);
+    }
+
+    const gallop = globalThis.document.createElement('button');
+    gallop.type = 'button';
+    gallop.className = 'mobile-touch-button mobile-touch-gallop';
+    gallop.textContent = '✦\nGallop';
+    gallop.setAttribute('aria-label', 'Gallop');
+    this.bindDomHold(
+      gallop,
+      () => this.input.setButton('GALLOP', true),
+      () => this.input.setButton('GALLOP', false),
+    );
+
+    root.append(dpad, gallop);
+    (globalThis.document.querySelector('#game-shell') ?? globalThis.document.body).append(root);
+    this.domRoot = root;
+  }
+
+  private bindDomHold(button: HTMLButtonElement, press: () => void, release: () => void): void {
+    const start = (event: PointerEvent): void => {
+      event.preventDefault();
+      button.classList.add('is-active');
+      press();
+    };
+    const stop = (event: PointerEvent): void => {
+      event.preventDefault();
+      button.classList.remove('is-active');
+      release();
+    };
+
+    button.addEventListener('pointerdown', start);
+    button.addEventListener('pointerup', stop);
+    button.addEventListener('pointercancel', stop);
+    button.addEventListener('pointerleave', stop);
   }
 
   private createButton(

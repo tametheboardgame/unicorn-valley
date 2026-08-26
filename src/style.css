@@ -55,6 +55,100 @@ canvas {
   margin-inline: auto;
 }
 
+.mobile-touch-controls {
+  position: fixed;
+  z-index: 1000;
+  right: max(12px, env(safe-area-inset-right));
+  bottom: max(14px, env(safe-area-inset-bottom));
+  left: max(12px, env(safe-area-inset-left));
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  pointer-events: none;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.mobile-touch-controls[hidden] {
+  display: none;
+}
+
+.mobile-touch-dpad {
+  display: grid;
+  grid-template-columns: repeat(3, clamp(54px, 15vw, 64px));
+  grid-template-rows: repeat(3, clamp(54px, 15vw, 64px));
+  gap: 4px;
+  pointer-events: none;
+}
+
+.mobile-touch-button {
+  border: 3px solid rgb(157 114 173 / 92%);
+  border-radius: 999px;
+  background: rgb(255 251 239 / 94%);
+  color: #5c4568;
+  font:
+    800 clamp(24px, 7vw, 31px) system-ui,
+    sans-serif;
+  line-height: 1;
+  box-shadow: 0 5px 16px rgb(36 26 61 / 26%);
+  pointer-events: auto;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mobile-touch-button.is-active {
+  transform: scale(0.94);
+  background: #f8e9ff;
+  box-shadow: 0 2px 8px rgb(36 26 61 / 24%);
+}
+
+.mobile-touch-up {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.mobile-touch-left {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.mobile-touch-right {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+.mobile-touch-down {
+  grid-column: 2;
+  grid-row: 3;
+}
+
+.mobile-touch-gallop {
+  width: clamp(88px, 26vw, 112px);
+  height: clamp(88px, 26vw, 112px);
+  margin-bottom: clamp(18px, 7vh, 56px);
+  border-color: rgb(177 123 189 / 96%);
+  white-space: pre-line;
+  font-size: clamp(17px, 4.7vw, 22px);
+  line-height: 1.12;
+}
+
+@media (pointer: coarse) and (max-width: 700px) and (orientation: portrait) {
+  #game-shell {
+    align-items: flex-start;
+  }
+
+  #game-container {
+    place-items: start center;
+  }
+
+  #game-container canvas {
+    align-self: start;
+    margin-top: 0 !important;
+    margin-bottom: auto !important;
+  }
+}
+
 .unicorn-name-input {
   position: absolute;
   z-index: 20;

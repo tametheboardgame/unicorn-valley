@@ -6,11 +6,11 @@ The player creates her own unicorn, lives at Moonflower Cottage, explores a magi
 
 ## Project status
 
-**R6 - Production Presentation and Accessibility complete through R6-WP6.9, Browser and Deployment Hardening.**
+**R6 - Production Presentation and Accessibility complete through post-closeout R6-WP6.10, Mobile Portrait Playability Remediation.**
 
-R0 through R6 now cover the playable foundation, living-valley vertical slice, Rainbow Run racing, deeper friendship/home systems, the expanded valley and the production-quality presentation/accessibility/hardening pass. The final R6 package adds browser-family compatibility coverage, deployment/reload/cache checks and a Cloudflare Pages production/preview verification gate.
+R0 through R6 now cover the playable foundation, living-valley vertical slice, Rainbow Run racing, deeper friendship/home systems, the expanded valley and the production-quality presentation/accessibility/hardening pass. R6-WP6.9 added browser-family compatibility coverage, deployment/reload/cache checks and a Cloudflare Pages verification gate. A real-device Android portrait check immediately afterwards exposed a mobile playability gap; R6-WP6.10 corrects the portrait positioning, touch-target sizing, explicit Gallop control and shared-shell input wiring before subjective playtesting continues.
 
-The next package is **R7-WP7.1 - Structured Preference Review**. R7 deliberately uses observed play behaviour to decide whether customisation, cottage/garden play, racing, exploration or another demonstrated interest should receive the next major expansion.
+The next package is **R7-WP7.1 - Structured Preference Review**. R7 deliberately uses observed play behaviour to decide whether customisation, cottage/garden play, racing, exploration or another demonstrated interest should receive the next major expansion. It begins after the remediated production build is usable for a meaningful mobile playtest.
 
 The production branch is deployed to `https://unicorn-valley.pages.dev/`.
 
@@ -75,6 +75,7 @@ The production branch is deployed to `https://unicorn-valley.pages.dev/`.
 - [R3 Race Assistance and Difficulty](docs/36-R3-RACE-ASSISTANCE-DIFFICULTY.md)
 - [R3 Racing Presentation Pass](docs/37-R3-RACING-PRESENTATION-PASS.md)
 - [R6 Production Presentation Implementation Log](docs/07D-R6-IMPLEMENTATION-LOG.md)
+- [R6 Mobile Portrait Playability Remediation](docs/07E-R6-WP6.10-MOBILE-PORTRAIT-REMEDIATION.md)
 
 ## Release plan
 
@@ -84,7 +85,7 @@ The production branch is deployed to `https://unicorn-valley.pages.dev/`.
 - **R3 - Rainbow Run Racing**: complete.
 - **R4 - Friendship, Secrets and Home Depth**: complete.
 - **R5 - The Valley Gets Bigger**: complete.
-- **R6 - Production Presentation and Accessibility**: complete, including production art/audio, touch/accessibility, performance, save/recovery and browser/deployment hardening.
+- **R6 - Production Presentation and Accessibility**: complete, including production art/audio, touch/accessibility, performance, save/recovery, browser/deployment hardening and the post-closeout mobile portrait remediation.
 - **R7 - Daughter-led Expansion**: next; begins with Structured Preference Review before choosing the next major expansion path.
 
 ## Development rule
