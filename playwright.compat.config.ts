@@ -8,10 +8,7 @@ const sharedUse = {
 
 export default defineConfig({
   testDir: './tests/play',
-  testMatch: [
-    'r6-wp6.9-browser-deployment.spec.ts',
-    'r6-wp6.10-mobile-portrait.spec.ts',
-  ],
+  testMatch: ['r6-wp6.9-browser-deployment.spec.ts', 'r6-wp6.10-mobile-portrait.spec.ts'],
   fullyParallel: false,
   workers: 1,
   timeout: 45_000,
