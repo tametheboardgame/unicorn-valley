@@ -53,6 +53,7 @@ export class TouchMovementPad {
   private readonly buttons: Phaser.GameObjects.Arc[] = [];
   private domRoot: HTMLDivElement | null = null;
   private visible = true;
+  private scenePaused = false;
   private destroyed = false;
 
   public static ensure(scene: Phaser.Scene, input: PointerTouchInputAdapter): TouchMovementPad {
@@ -64,6 +65,8 @@ export class TouchMovementPad {
     private readonly input: PointerTouchInputAdapter,
   ) {
     padsByScene.set(scene, this);
+    this.scene.events.on(Phaser.Scenes.Events.PAUSE, this.handleScenePause, this);
+    this.scene.events.on(Phaser.Scenes.Events.RESUME, this.handleSceneResume, this);
 
     if (shouldRenderPortraitDomControls()) {
       this.createPortraitDomControls();
@@ -97,9 +100,9 @@ export class TouchMovementPad {
       return;
     }
     this.destroyed = true;
-    this.input.setAxis('MOVE_X', 0);
-    this.input.setAxis('MOVE_Y', 0);
-    this.input.setButton('GALLOP', false);
+    this.scene.events.off(Phaser.Scenes.Events.PAUSE, this.handleScenePause, this);
+    this.scene.events.off(Phaser.Scenes.Events.RESUME, this.handleSceneResume, this);
+    this.releaseInput();
     this.domRoot?.remove();
     this.domRoot = null;
     for (const object of this.objects) {
@@ -119,25 +122,45 @@ export class TouchMovementPad {
     }
 
     if (!visible) {
-      this.input.setAxis('MOVE_X', 0);
-      this.input.setAxis('MOVE_Y', 0);
-      this.input.setButton('GALLOP', false);
+      this.releaseInput();
     }
 
+    this.applyVisibility();
+  }
+
+  private handleScenePause(): void {
+    this.scenePaused = true;
+    this.releaseInput();
+    this.applyVisibility();
+  }
+
+  private handleSceneResume(): void {
+    this.scenePaused = false;
+    this.applyVisibility();
+  }
+
+  private applyVisibility(): void {
+    const renderedVisible = this.visible && !this.scenePaused;
     if (this.domRoot) {
-      this.domRoot.hidden = !visible;
+      this.domRoot.hidden = !renderedVisible;
     }
 
     for (const object of this.objects) {
-      object.setVisible(visible);
+      object.setVisible(renderedVisible);
     }
     for (const button of this.buttons) {
-      if (visible) {
+      if (renderedVisible) {
         button.setInteractive({ useHandCursor: true });
       } else {
         button.disableInteractive();
       }
     }
+  }
+
+  private releaseInput(): void {
+    this.input.setAxis('MOVE_X', 0);
+    this.input.setAxis('MOVE_Y', 0);
+    this.input.setButton('GALLOP', false);
   }
 
   private createPortraitDomControls(): void {
