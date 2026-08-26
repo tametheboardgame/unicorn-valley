@@ -4,6 +4,10 @@ import { RefreshThrottle } from '../performance/RefreshThrottle';
 import { ExplorationShell } from './ExplorationShell';
 import { supportsExplorationShell } from './ExplorationShellConfig';
 
+interface SceneWithPointerInput {
+  pointerInput?: PointerTouchInputAdapter | null;
+}
+
 export class ExplorationShellWorldManager {
   private readonly fallbackPointerInputs = new WeakMap<Phaser.Scene, PointerTouchInputAdapter>();
   private readonly syncThrottle = new RefreshThrottle(100);
@@ -22,11 +26,16 @@ export class ExplorationShellWorldManager {
         continue;
       }
 
-      ExplorationShell.ensure(scene, this.getFallbackPointerInput(scene));
+      ExplorationShell.ensure(scene, this.getPointerInput(scene));
     }
   }
 
-  private getFallbackPointerInput(scene: Phaser.Scene): PointerTouchInputAdapter {
+  private getPointerInput(scene: Phaser.Scene): PointerTouchInputAdapter {
+    const scenePointerInput = (scene as Phaser.Scene & SceneWithPointerInput).pointerInput;
+    if (scenePointerInput) {
+      return scenePointerInput;
+    }
+
     const existing = this.fallbackPointerInputs.get(scene);
     if (existing) {
       return existing;
