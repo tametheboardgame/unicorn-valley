@@ -91,7 +91,5 @@ test('portrait touch layout pins the game high and provides thumb-sized working 
     buttons: 0,
   });
 
-  await expect
-    .poll(async () => (await playerPosition(page)).x)
-    .toBeGreaterThan(before.x + 15);
+  await expect.poll(async () => (await playerPosition(page)).x).toBeGreaterThan(before.x + 15);
 });
