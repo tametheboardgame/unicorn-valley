@@ -175,10 +175,7 @@ export class TitleScene extends Phaser.Scene {
       .circle(180, 126, 88, 0xfff0ae, 0.24)
       .setName('title-art:sun-glow')
       .setDepth(1);
-    const sun = this.add
-      .circle(180, 126, 52, 0xfff3b7, 0.94)
-      .setName('title-art:sun')
-      .setDepth(2);
+    const sun = this.add.circle(180, 126, 52, 0xfff3b7, 0.94).setName('title-art:sun').setDepth(2);
     this.ambientTargets.push(sunGlow, sun);
 
     const rainbow = this.add.graphics().setName('title-art:rainbow').setDepth(2);
@@ -323,7 +320,13 @@ export class TitleScene extends Phaser.Scene {
     const colours = [0xffd2e5, 0xffefad, 0xdac9f5, 0xc8eff2];
     for (let offset = 0; offset < 4; offset += 1) {
       const flower = this.add
-        .circle(x + offset * 18, y + (offset % 2) * 8, 7, colours[(index + offset) % colours.length], 1)
+        .circle(
+          x + offset * 18,
+          y + (offset % 2) * 8,
+          7,
+          colours[(index + offset) % colours.length],
+          1,
+        )
         .setName(`title-art:flower-${index}-${offset}`)
         .setDepth(6);
       this.add.circle(flower.x, flower.y, 2.5, 0xfff7cd, 1).setDepth(7);
@@ -702,10 +705,14 @@ export class TitleScene extends Phaser.Scene {
     const doneButton = this.children.getByName('title-settings-done');
     const doneLabel = this.children.getByName('title-settings-done-label');
     if (doneButton instanceof Phaser.GameObjects.Rectangle) {
-      visible ? doneButton.setInteractive({ useHandCursor: true }) : doneButton.disableInteractive();
+      visible
+        ? doneButton.setInteractive({ useHandCursor: true })
+        : doneButton.disableInteractive();
     }
     if (doneLabel instanceof Phaser.GameObjects.Text) {
-      visible ? doneLabel.setInteractive({ useHandCursor: true }) : doneLabel.disableInteractive();
+      visible
+        ? doneLabel.setInteractive({ useHandCursor: true })
+        : doneLabel.disableInteractive();
     }
   }
 
