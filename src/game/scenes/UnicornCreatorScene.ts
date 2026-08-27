@@ -156,7 +156,15 @@ export class UnicornCreatorScene extends Phaser.Scene {
     this.createCompactChoiceRow('Marking', 'marking', MARKINGS, 935, 555, 260);
     this.createCompactChoiceRow('Accessory', 'accessory', ACCESSORIES, 670, 605, 520);
 
-    this.createActionButton(305, 625, 210, 'Surprise Me!', () => this.randomise(), false, 'surprise');
+    this.createActionButton(
+      305,
+      625,
+      210,
+      'Surprise Me!',
+      () => this.randomise(),
+      false,
+      'surprise',
+    );
     this.createActionButton(
       535,
       625,
@@ -511,11 +519,7 @@ export class UnicornCreatorScene extends Phaser.Scene {
     }
 
     const service = getBrowserSaveService();
-    const nextSave = applyProfileRedesign(
-      this.save,
-      this.nameInput?.value ?? '',
-      this.appearance,
-    );
+    const nextSave = applyProfileRedesign(this.save, this.nameInput?.value ?? '', this.appearance);
     const result = service.saveWithResult(nextSave);
     if (result.status !== 'saved') {
       this.setStatus(
