@@ -14,7 +14,7 @@ type VisiblePanelObject = Phaser.GameObjects.Rectangle | Phaser.GameObjects.Text
 const PANEL_X = GAME_WIDTH - 190;
 const PANEL_Y = 235;
 const PANEL_WIDTH = 330;
-const PANEL_HEIGHT = 370;
+const PANEL_HEIGHT = 390;
 
 export class AudioSettingsPanel {
   private readonly audio = getVerticalSliceAudio();
@@ -116,14 +116,14 @@ export class AudioSettingsPanel {
     });
 
     const fullSettingsButton = scene.add
-      .rectangle(PANEL_X, 382, 270, 52, UI_COLOURS.gold, 1)
+      .rectangle(PANEL_X, 390, 270, 64, UI_COLOURS.gold, 1)
       .setName('exploration-shell-settings-button')
       .setStrokeStyle(3, UI_COLOURS.goldStrong, 1)
       .setScrollFactor(0)
       .setDepth(133)
       .setInteractive({ useHandCursor: true });
     const fullSettingsLabel = scene.add
-      .text(PANEL_X, 382, 'More settings ⚙️', {
+      .text(PANEL_X, 390, 'More settings ⚙️', {
         color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
         fontSize: '16px',
