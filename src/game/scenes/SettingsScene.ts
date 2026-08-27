@@ -210,11 +210,7 @@ export class SettingsScene extends Phaser.Scene {
   }
 
   private selectPrevious(): void {
-    this.selectedIndex = moveGameSettingSelection(
-      this.selectedIndex,
-      -1,
-      this.rows.length + 1,
-    );
+    this.selectedIndex = moveGameSettingSelection(this.selectedIndex, -1, this.rows.length + 1);
     this.refreshFocus();
   }
 
@@ -281,7 +277,9 @@ export class SettingsScene extends Phaser.Scene {
       }
       this.audio.playSfx('ui');
     } catch {
-      this.statusText?.setText('Fullscreen could not be changed. The game can still be played here.');
+      this.statusText?.setText(
+        'Fullscreen could not be changed. The game can still be played here.',
+      );
     }
     this.refresh();
   }
