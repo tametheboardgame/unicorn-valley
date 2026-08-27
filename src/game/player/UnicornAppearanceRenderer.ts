@@ -228,6 +228,39 @@ function drawTail(
       x - 80 * scale,
       tailY + 2 * scale,
     );
+  } else if (appearance.tailStyle === 'braid') {
+    const braid = [
+      [-55, -3, 20, 17],
+      [-69, 3, 19, 16],
+      [-82, -3, 18, 15],
+      [-94, 3, 17, 14],
+      [-105, -2, 15, 12],
+    ] as const;
+    for (const [dx, dy, width, height] of braid) {
+      ellipse(
+        graphics,
+        x + dx * scale,
+        tailY + dy * scale,
+        width * scale,
+        height * scale,
+        fill,
+        outline,
+        2.4 * scale,
+      );
+    }
+    graphics.fillStyle(0xffd778, 1);
+    graphics.fillCircle(x - 113 * scale, tailY, 5 * scale);
+  } else if (appearance.tailStyle === 'puff') {
+    for (const [dx, dy, radius] of [
+      [-63, -3, 22],
+      [-83, 2, 20],
+      [-101, -2, 16],
+    ] as const) {
+      graphics.fillStyle(fill, 1);
+      graphics.fillCircle(x + dx * scale, tailY + dy * scale, radius * scale);
+      graphics.lineStyle(3 * scale, outline, 0.84);
+      graphics.strokeCircle(x + dx * scale, tailY + dy * scale, radius * scale);
+    }
   } else {
     ellipse(
       graphics,
@@ -299,6 +332,52 @@ function drawMane(
       outline,
       3 * scale,
     );
+  } else if (appearance.maneStyle === 'braid') {
+    for (const [dx, dy, width, height] of [
+      [44, -47, 18, 20],
+      [37, -31, 19, 21],
+      [32, -14, 18, 20],
+      [29, 2, 16, 18],
+    ] as const) {
+      ellipse(
+        graphics,
+        x + dx * scale,
+        y + dy * scale - lift,
+        width * scale,
+        height * scale,
+        fill,
+        outline,
+        2.4 * scale,
+      );
+    }
+    graphics.fillStyle(0xffd778, 1);
+    graphics.fillCircle(x + 28 * scale, y + 13 * scale - lift, 4.5 * scale);
+  } else if (appearance.maneStyle === 'crest') {
+    for (const [dx, top, baseY, width] of [
+      [44, -67, -43, 15],
+      [37, -53, -28, 16],
+      [31, -37, -12, 15],
+      [27, -21, 4, 13],
+    ] as const) {
+      graphics.fillStyle(fill, 1);
+      graphics.fillTriangle(
+        x + (dx - width / 2) * scale,
+        y + baseY * scale - lift,
+        x + dx * scale,
+        y + top * scale - lift,
+        x + (dx + width / 2) * scale,
+        y + baseY * scale - lift,
+      );
+      graphics.lineStyle(2.6 * scale, outline, 0.84);
+      graphics.strokeTriangle(
+        x + (dx - width / 2) * scale,
+        y + baseY * scale - lift,
+        x + dx * scale,
+        y + top * scale - lift,
+        x + (dx + width / 2) * scale,
+        y + baseY * scale - lift,
+      );
+    }
   } else {
     ellipse(
       graphics,
@@ -343,11 +422,16 @@ function drawHorn(
   scale: number,
   appearance: UnicornAppearance,
 ): void {
-  // Celebration raises the head by 11 design pixels. These offsets leave a
-  // safe top margin in every 202px frame while retaining the same texture size.
-  const tipOffset = appearance.hornStyle === 'star' ? -82 : -88;
-  graphics.fillStyle(0xf3d47c, 1);
-  graphics.lineStyle(2.8 * scale, 0xb8894a, 0.92);
+  const tipOffset =
+    appearance.hornStyle === 'star'
+      ? -82
+      : appearance.hornStyle === 'short'
+        ? -75
+        : appearance.hornStyle === 'crystal'
+          ? -85
+          : -88;
+  graphics.fillStyle(appearance.hornStyle === 'crystal' ? 0xd9f6ff : 0xf3d47c, 1);
+  graphics.lineStyle(2.8 * scale, appearance.hornStyle === 'crystal' ? 0x77a8bb : 0xb8894a, 0.92);
   graphics.fillTriangle(
     x + 67 * scale,
     y - 58 * scale,
@@ -364,13 +448,31 @@ function drawHorn(
     x + 84 * scale,
     y - 57 * scale,
   );
-  graphics.lineStyle(2 * scale, 0xb8894a, 0.95);
+  graphics.lineStyle(2 * scale, appearance.hornStyle === 'crystal' ? 0x77a8bb : 0xb8894a, 0.95);
   graphics.lineBetween(x + 70 * scale, y - 68 * scale, x + 82 * scale, y - 72 * scale);
   if (appearance.hornStyle === 'spiral') {
     graphics.lineBetween(x + 72 * scale, y - 78 * scale, x + 81 * scale, y - 82 * scale);
   } else if (appearance.hornStyle === 'star') {
     graphics.fillStyle(0xffec96, 1);
     drawStar(graphics, x + 78 * scale, y - 84 * scale, 8 * scale);
+  } else if (appearance.hornStyle === 'crystal') {
+    graphics.fillStyle(0xbdefff, 0.95);
+    graphics.fillTriangle(
+      x + 72 * scale,
+      y - 82 * scale,
+      x + 78 * scale,
+      y - 92 * scale,
+      x + 84 * scale,
+      y - 82 * scale,
+    );
+    graphics.fillTriangle(
+      x + 72 * scale,
+      y - 82 * scale,
+      x + 78 * scale,
+      y - 74 * scale,
+      x + 84 * scale,
+      y - 82 * scale,
+    );
   }
 }
 
@@ -391,6 +493,20 @@ function drawMarking(
     graphics.fillCircle(x - 13 * scale, y + 5 * scale, 12 * scale);
     graphics.fillStyle(body, 1);
     graphics.fillCircle(x - 7 * scale, y + 1 * scale, 9.5 * scale);
+  } else if (appearance.marking === 'freckles') {
+    for (const [dx, dy, radius] of [
+      [-28, -3, 3.2],
+      [-18, 5, 2.7],
+      [-7, -1, 3],
+      [4, 7, 2.5],
+      [13, -3, 2.8],
+    ] as const) {
+      graphics.fillCircle(x + dx * scale, y + dy * scale, radius * scale);
+    }
+  } else if (appearance.marking === 'sparkles') {
+    drawStar(graphics, x - 24 * scale, y + 1 * scale, 7 * scale);
+    drawStar(graphics, x - 5 * scale, y + 11 * scale, 5 * scale);
+    drawStar(graphics, x + 10 * scale, y - 2 * scale, 4.5 * scale);
   }
 }
 
@@ -439,6 +555,67 @@ function drawAccessory(
     graphics.fillCircle(x + 52 * scale, y + 21 * scale, 9 * scale);
     graphics.fillStyle(0x8495a5, 1);
     graphics.fillCircle(x + 52 * scale, y + 24 * scale, 2.4 * scale);
+  } else if (appearance.accessory === 'crown') {
+    graphics.fillStyle(0xffdf70, 1);
+    graphics.fillRect(x + 46 * scale, y - 66 * scale, 28 * scale, 7 * scale);
+    for (const [dx, height] of [
+      [48, 13],
+      [60, 18],
+      [72, 13],
+    ] as const) {
+      graphics.fillTriangle(
+        x + (dx - 5) * scale,
+        y - 64 * scale,
+        x + dx * scale,
+        y - (64 + height) * scale,
+        x + (dx + 5) * scale,
+        y - 64 * scale,
+      );
+    }
+    graphics.fillStyle(0xff8fb7, 1);
+    graphics.fillCircle(x + 60 * scale, y - 62 * scale, 3.5 * scale);
+  } else if (appearance.accessory === 'ribbon') {
+    graphics.fillStyle(0xb989dc, 1);
+    graphics.fillTriangle(
+      x + 35 * scale,
+      y + 2 * scale,
+      x + 48 * scale,
+      y + 11 * scale,
+      x + 35 * scale,
+      y + 18 * scale,
+    );
+    graphics.fillTriangle(
+      x + 61 * scale,
+      y + 2 * scale,
+      x + 48 * scale,
+      y + 11 * scale,
+      x + 61 * scale,
+      y + 18 * scale,
+    );
+    graphics.fillCircle(x + 48 * scale, y + 11 * scale, 5 * scale);
+    graphics.fillTriangle(
+      x + 45 * scale,
+      y + 14 * scale,
+      x + 42 * scale,
+      y + 31 * scale,
+      x + 50 * scale,
+      y + 18 * scale,
+    );
+    graphics.fillTriangle(
+      x + 51 * scale,
+      y + 14 * scale,
+      x + 59 * scale,
+      y + 29 * scale,
+      x + 53 * scale,
+      y + 18 * scale,
+    );
+  } else if (appearance.accessory === 'scarf') {
+    graphics.lineStyle(9 * scale, 0xe989a8, 1);
+    graphics.lineBetween(x + 32 * scale, y + 2 * scale, x + 57 * scale, y + 14 * scale);
+    graphics.lineStyle(6 * scale, 0xc96b91, 1);
+    graphics.lineBetween(x + 52 * scale, y + 12 * scale, x + 63 * scale, y + 38 * scale);
+    graphics.lineStyle(2 * scale, 0xffd3df, 0.85);
+    graphics.lineBetween(x + 56 * scale, y + 29 * scale, x + 64 * scale, y + 33 * scale);
   }
 }
 
