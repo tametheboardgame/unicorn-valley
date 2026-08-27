@@ -718,9 +718,7 @@ export class TitleScene extends Phaser.Scene {
         : doneButton.disableInteractive();
     }
     if (doneLabel instanceof Phaser.GameObjects.Text) {
-      visible
-        ? doneLabel.setInteractive({ useHandCursor: true })
-        : doneLabel.disableInteractive();
+      visible ? doneLabel.setInteractive({ useHandCursor: true }) : doneLabel.disableInteractive();
     }
   }
 
