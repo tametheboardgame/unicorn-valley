@@ -27,6 +27,7 @@ const DIAGNOSTIC_SCENES: Record<string, string> = {
   'movement-test': 'MovementTestScene',
   'dialogue-test': 'DialogueTestScene',
   creator: 'UnicornCreatorScene',
+  settings: 'SettingsScene',
   glade: 'MoonflowerGladeScene',
   cottage: 'CottageInteriorScene',
   village: 'SunbeamVillageScene',
