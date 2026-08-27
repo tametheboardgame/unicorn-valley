@@ -8,6 +8,7 @@ import { getClickToMoveManager } from '../input/ClickToMoveManager';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getRacePlaytestRecoveryManager } from '../racing/RacePlaytestRecoveryManager';
 import { getRacePlayerControlManager } from '../racing/RacePlayerControlManager';
+import { getTitleSettingsEnhancementManager } from '../settings/TitleSettingsEnhancementManager';
 import { getBrowserPipEggArcService } from '../story/browserPipEggArc';
 import { getCrystalBrookStoryWorldManager } from '../story/CrystalBrookStoryWorldManager';
 import { getLumiWoodsWorldManager } from '../story/LumiWoodsWorldManager';
@@ -76,6 +77,7 @@ export class BootScene extends Phaser.Scene {
     getR5RegionGatewayManager(this.sys.game);
     getRacePlayerControlManager(this.sys.game);
     getRacePlaytestRecoveryManager(this.sys.game);
+    getTitleSettingsEnhancementManager(this.sys.game);
     const requestedScene = new URLSearchParams(globalThis.location.search).get('scene');
     this.registry.set(
       'postPreloadScene',
