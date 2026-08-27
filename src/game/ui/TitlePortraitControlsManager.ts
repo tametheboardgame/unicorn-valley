@@ -147,7 +147,9 @@ export class TitlePortraitControlsManager {
   }
 
   private sync(): void {
-    const scene = this.game.scene.getScenes(true).find((active) => active.scene.key === TITLE_SCENE_KEY);
+    const scene = this.game.scene
+      .getScenes(true)
+      .find((active) => active.scene.key === TITLE_SCENE_KEY);
     if (!scene) {
       this.root.hidden = true;
       return;
@@ -195,7 +197,9 @@ export class TitlePortraitControlsManager {
   }
 
   private activate(objectName: string): void {
-    const scene = this.game.scene.getScenes(true).find((active) => active.scene.key === TITLE_SCENE_KEY);
+    const scene = this.game.scene
+      .getScenes(true)
+      .find((active) => active.scene.key === TITLE_SCENE_KEY);
     const target = scene?.children.getByName(objectName);
     if (!scene || !target || !isVisible(target) || !isEnabled(target)) {
       return;
