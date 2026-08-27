@@ -65,11 +65,14 @@ describe('profile redesign', () => {
     }).toEqual(beforeAdventure);
   });
 
-  it('distinguishes a named existing unicorn from a fresh New Game profile', () => {
+  it('uses the same named-profile predicate as the title menu', () => {
     const fresh = createDefaultSave('2026-08-27T08:00:00.000Z');
     expect(hasNamedUnicorn(fresh)).toBe(false);
 
     fresh.profile.name = 'Starlight';
+    expect(hasNamedUnicorn(fresh)).toBe(true);
+
+    fresh.profile.name = '   ';
     expect(hasNamedUnicorn(fresh)).toBe(true);
   });
 });
