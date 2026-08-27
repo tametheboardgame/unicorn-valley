@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { getBrowserAccessibilitySettingsStore } from '../accessibility/AccessibilitySettings';
 import { getVerticalSliceAudio } from '../audio/VerticalSliceAudio';
-import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
+import { GAME_WIDTH } from '../config/gameConstants';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
 import { UI_COLOURS, UI_FONT, applyButtonHover } from '../ui/uiTheme';
 import {
@@ -258,7 +258,7 @@ export class TitleSettingsEnhancementManager {
 
   private positionFocusMarker(): void {
     const attached = this.attached;
-    if (!attached || !attached.wasOpen) {
+    if (!attached?.wasOpen) {
       return;
     }
     if (attached.selectedIndex === GAME_SETTING_KINDS.length) {
