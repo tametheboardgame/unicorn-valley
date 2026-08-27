@@ -3,12 +3,12 @@ import { getBrowserAccessibilitySettingsStore } from '../accessibility/Accessibi
 import { getVerticalSliceAudio } from '../audio/VerticalSliceAudio';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
+import { UI_COLOURS, UI_FONT, applyButtonHover } from '../ui/uiTheme';
 import {
   GAME_SETTING_KINDS,
   describeGameSetting,
   moveGameSettingSelection,
 } from './GameSettingsModel';
-import { UI_COLOURS, UI_FONT, applyButtonHover } from '../ui/uiTheme';
 
 const TITLE_SCENE_KEY = 'TitleScene';
 const SYNC_INTERVAL_MS = 100;
@@ -274,7 +274,9 @@ export class TitleSettingsEnhancementManager {
 
   private isOpen(): boolean {
     const attached = this.attached;
-    return Boolean(attached && isVisible(attached.scene.children.getByName('title-settings-panel')));
+    return Boolean(
+      attached && isVisible(attached.scene.children.getByName('title-settings-panel')),
+    );
   }
 
   private toggleFullscreen(): void {
@@ -307,7 +309,9 @@ export class TitleSettingsEnhancementManager {
 
 let manager: TitleSettingsEnhancementManager | null = null;
 
-export function getTitleSettingsEnhancementManager(game: Phaser.Game): TitleSettingsEnhancementManager {
+export function getTitleSettingsEnhancementManager(
+  game: Phaser.Game,
+): TitleSettingsEnhancementManager {
   manager ??= new TitleSettingsEnhancementManager(game);
   return manager;
 }
