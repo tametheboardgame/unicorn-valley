@@ -11,11 +11,18 @@ describe('profile redesign', () => {
     save.profile.unlockedAbilityIds = ['ability:rainbow-jump'];
     save.inventory.itemQuantities['currency:shimmer'] = 42;
     save.inventory.ownedCosmeticIds.push('item:star-hairclip');
-    save.relationships.byCharacterId.willow = { level: 3, points: 18 };
-    save.quests.byQuestId['quest:test'] = { state: 'active', stepId: 'step:2' };
+    save.relationships.byCharacterId.willow = {
+      friendshipPoints: 18,
+      flags: ['shared-picnic'],
+    };
+    save.quests.byQuestId['quest:test'] = {
+      status: 'active',
+      currentStepId: 'step:2',
+      completedAt: null,
+    };
     save.world.discoveredZoneIds.push('crystal-brook');
     save.home.ownedFurnitureIds.push('furniture:moon-lamp');
-    save.activities.miniGameRecords['activity:test'] = { bestScore: 12 };
+    save.activities.miniGameRecords['activity:test'] = 12;
     save.collections.discoveryIds.push('discovery:test');
 
     const beforeAdventure = {
