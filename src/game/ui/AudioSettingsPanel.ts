@@ -154,12 +154,14 @@ export class AudioSettingsPanel {
     }
     scene.input.once('pointerdown', () => void this.audio.unlock());
     scene.input.keyboard?.once('keydown', () => void this.audio.unlock());
+    scene.events.on(Phaser.Scenes.Events.RESUME, this.handleSceneResume, this);
 
     this.refresh();
     this.setPanelVisible(false);
   }
 
   public destroy(): void {
+    this.scene.events.off(Phaser.Scenes.Events.RESUME, this.handleSceneResume, this);
     if (this.manageSceneAudio) {
       this.audio.leaveScene(this.scene.scene.key);
     }
@@ -169,6 +171,10 @@ export class AudioSettingsPanel {
     this.objects.length = 0;
     this.panelObjects.length = 0;
     this.rows.length = 0;
+  }
+
+  private handleSceneResume(): void {
+    this.refresh();
   }
 
   private async openFullSettings(): Promise<void> {
