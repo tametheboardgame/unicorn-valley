@@ -23,6 +23,7 @@ import { RainbowMeadowScene } from '../scenes/RainbowMeadowScene';
 import { RainbowRunEntryScene } from '../scenes/RainbowRunEntryScene';
 import { ResizeTestScene } from '../scenes/ResizeTestScene';
 import { RippleStoryScene } from '../scenes/RippleStoryScene';
+import { SettingsScene } from '../scenes/SettingsScene';
 import { ShopScene } from '../scenes/ShopScene';
 import { SunbeamVillageScene } from '../scenes/SunbeamVillageScene';
 import { TitleScene } from '../scenes/TitleScene';
@@ -60,6 +61,7 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
     BootScene,
     PreloadScene,
     TitleScene,
+    SettingsScene,
     ResizeTestScene,
     MovementTestScene,
     MoonflowerGladeScene,
