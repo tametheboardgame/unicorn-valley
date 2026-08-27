@@ -385,7 +385,7 @@ export class UnicornCreatorScene extends Phaser.Scene {
     choices.forEach((choice, index) => {
       const swatchX = x + 160 + index * 46;
       const outline = this.add
-        .circle(swatchX, y, 22, UI_COLOURS.lavender, 0.8)
+        .circle(swatchX, y, 24, UI_COLOURS.lavender, 0.8)
         .setName(`creator-${key}-${choice.id}`)
         .setStrokeStyle(4, UI_COLOURS.lavenderStrong, 0.72)
         .setInteractive({ useHandCursor: true })
