@@ -239,7 +239,7 @@ test('invalid cosmetic IDs fall back safely and never block My Unicorn or Contin
   const text = creatorText(await getSnapshot(page));
   expect(text).toContain('Redesign Starlight');
   expect(text).toContain('Soft Waves');
-  expect(text).toContain('No Accessory');
+  expect(text).toContain('Flower Clip');
 
   await tapObject(page, 'UnicornCreatorScene', 'creator-action-cancel');
   await waitForScene(page, 'TitleScene');
