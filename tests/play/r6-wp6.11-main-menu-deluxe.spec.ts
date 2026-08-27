@@ -33,7 +33,7 @@ function createStoredSave(name: string): Record<string, unknown> {
     profile: {
       name,
       appearance: { bodyColour: 'mint' },
-      currentLocationId: 'moonflower-cottage',
+      currentLocationId: 'location:moonflower-cottage-interior',
       unlockedAbilityIds: ['ability:rainbow-jump'],
     },
     inventory: {
