@@ -213,6 +213,10 @@ test('exploration can pause into the full settings screen and return with persis
   await page.keyboard.press('Escape');
   await waitForSceneGone(page, 'SettingsScene');
   await waitForScene(page, 'MoonflowerGladeScene');
+  await tapObject(page, 'MoonflowerGladeScene', 'exploration-shell-sound-button');
+  await expect
+    .poll(async () => sceneText(await snapshot(page), 'MoonflowerGladeScene'))
+    .toContain('Music: Off');
 
   await page.reload();
   await waitForScene(page, 'MoonflowerGladeScene');
