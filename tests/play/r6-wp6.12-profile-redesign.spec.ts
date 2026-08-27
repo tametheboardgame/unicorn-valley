@@ -180,7 +180,10 @@ test('My Unicorn edits only profile fields and preserves the whole adventure', a
   await tapObject(page, 'UnicornCreatorScene', 'creator-action-save-changes');
   await waitForScene(page, 'TitleScene');
 
-  const stored = await page.evaluate((key) => JSON.parse(window.localStorage.getItem(key) ?? '{}'), SAVE_KEY);
+  const stored = await page.evaluate(
+    (key) => JSON.parse(window.localStorage.getItem(key) ?? '{}'),
+    SAVE_KEY,
+  );
   const originalProfile = original.profile as Record<string, unknown>;
   expect(stored.profile.name).toBe('Moonlight Star');
   expect(stored.profile.appearance.bodyColour).toBe('pink');
@@ -199,7 +202,9 @@ test('My Unicorn edits only profile fields and preserves the whole adventure', a
   }
 });
 
-test('Cancel leaves the persisted profile and adventure byte-for-byte untouched', async ({ page }) => {
+test('Cancel leaves the persisted profile and adventure byte-for-byte untouched', async ({
+  page,
+}) => {
   const original = createRichSave();
   const originalSerialised = JSON.stringify(original);
   await seedSave(page, original);
@@ -217,7 +222,9 @@ test('Cancel leaves the persisted profile and adventure byte-for-byte untouched'
   expect(stored).toBe(originalSerialised);
 });
 
-test('invalid cosmetic IDs fall back safely and never block My Unicorn or Continue', async ({ page }) => {
+test('invalid cosmetic IDs fall back safely and never block My Unicorn or Continue', async ({
+  page,
+}) => {
   const save = createRichSave({
     bodyColour: 'impossible-colour',
     maneStyle: 'missing-mane',
@@ -240,7 +247,9 @@ test('invalid cosmetic IDs fall back safely and never block My Unicorn or Contin
   await waitForScene(page, 'CottageInteriorScene');
 });
 
-test('New Game remains visibly destructive while My Unicorn is non-destructive', async ({ page }) => {
+test('New Game remains visibly destructive while My Unicorn is non-destructive', async ({
+  page,
+}) => {
   await seedSave(page, createRichSave());
   await page.goto('/?diagnostics=1');
   await waitForScene(page, 'TitleScene');
