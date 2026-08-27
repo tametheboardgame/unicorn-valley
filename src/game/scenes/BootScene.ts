@@ -15,14 +15,11 @@ import { getPebbleCollectionWorldManager } from '../story/PebbleCollectionWorldM
 import { getPipEggWorldManager } from '../story/PipEggWorldManager';
 import { getCoreNpcProductionPresentationManager } from '../visual/CoreNpcProductionPresentationManager';
 import { getEnvironmentProductionPresentationManager } from '../visual/EnvironmentProductionPresentationManager';
-import { getUiProductionPresentationManager } from '../visual/UiProductionPresentationManager';
 import { getVisualTighteningManager } from '../visual/VisualTighteningManager';
 import { getR5RegionGatewayManager } from '../world/R5RegionGatewayManager';
 import { getWorldCharacterPresentationManager } from '../world/WorldCharacterPresentationManager';
 import { getWorldOcclusionManager } from '../world/WorldOcclusionManager';
 import { getWorldTraversalPolishManager } from '../world/WorldTraversalPolishManager';
-
-export const SETTINGS_SCENE_REGISTERED_KEY = 'wp6.14:settings-scene-registered';
 
 const DIAGNOSTIC_SCENES: Record<string, string> = {
   'resize-test': 'ResizeTestScene',
@@ -73,34 +70,26 @@ export class BootScene extends Phaser.Scene {
     getVisualTighteningManager(this.sys.game);
     getWorldTraversalPolishManager(this.sys.game);
     getEnvironmentProductionPresentationManager(this.sys.game);
-    getUiProductionPresentationManager(this.sys.game);
     getR5RegionGatewayManager(this.sys.game);
     getRacePlayerControlManager(this.sys.game);
     getRacePlaytestRecoveryManager(this.sys.game);
+
     void import('../settings/TitleSettingsEnhancementManager').then(
       ({ getTitleSettingsEnhancementManager }) => {
         getTitleSettingsEnhancementManager(this.sys.game);
       },
     );
+    void import('../visual/UiProductionPresentationManager').then(
+      ({ getUiProductionPresentationManager }) => {
+        getUiProductionPresentationManager(this.sys.game);
+      },
+    );
 
     const requestedScene = new URLSearchParams(globalThis.location.search).get('scene');
-    if (requestedScene === 'settings') {
-      void this.startSettingsDiagnostic();
-      return;
-    }
-
     this.registry.set(
       'postPreloadScene',
       (requestedScene && DIAGNOSTIC_SCENES[requestedScene]) || 'TitleScene',
     );
-    this.scene.start('PreloadScene');
-  }
-
-  private async startSettingsDiagnostic(): Promise<void> {
-    const { SettingsScene } = await import('./SettingsScene');
-    this.scene.add('SettingsScene', SettingsScene, false);
-    this.registry.set(SETTINGS_SCENE_REGISTERED_KEY, true);
-    this.registry.set('postPreloadScene', 'SettingsScene');
     this.scene.start('PreloadScene');
   }
 }
