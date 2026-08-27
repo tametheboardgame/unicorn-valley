@@ -83,9 +83,7 @@ async function tapObject(page: Page, sceneKey: string, objectName: string): Prom
   const current = await snapshot(page);
   const target = current.scenes
     .find((scene) => scene.key === sceneKey)
-    ?.objects.find(
-      (object) => object.name === objectName && object.visible && object.interactive,
-    );
+    ?.objects.find((object) => object.name === objectName && object.visible && object.interactive);
   if (!target) {
     throw new Error(`Missing interactive ${sceneKey} object: ${objectName}`);
   }
