@@ -22,7 +22,9 @@ R5 is complete.
 - R6-WP6.6 - Complete (PR #91): Touch, Tablet and Accessibility Hardening
 - R6-WP6.7 - Complete (PR #92): Performance and Loading Optimisation
 - R6-WP6.8 - Complete (PR #93): Save and Recovery Hardening
-- R6-WP6.9 - Final package (PR #94): Browser and Deployment Hardening
+- R6-WP6.9 - Complete (PR #94): Browser and Deployment Hardening
+- R6-WP6.10 - Complete (PR #95): Mobile Portrait Playability Remediation
+- R6-WP6.11 - Complete (PR #100): Main Menu Deluxe and Title Experience
 
 ## R6-WP6.1 implementation summary
 
@@ -135,7 +137,7 @@ PR #93 protects long-running local progress without changing schema version or o
 
 ## R6-WP6.9 implementation summary
 
-PR #94 closes R6 with a bounded browser-family and static-host deployment gate rather than duplicating the complete gameplay regression suite in every engine.
+PR #94 closed the original R6 production pass with a bounded browser-family and static-host deployment gate before the later pre-R7 delight extension was added.
 
 - a dedicated Playwright compatibility configuration runs the production build against Chromium, Firefox and WebKit desktop engines;
 - Chromium and WebKit also run representative 1024×768 tablet-touch and 390×844 phone-touch viewports;
@@ -143,8 +145,37 @@ PR #94 closes R6 with a bounded browser-family and static-host deployment gate r
 - each browser target fails on console errors, uncaught page errors, failed browser requests or HTTP error responses;
 - the existing complete gameplay regression remains Chromium-based while the smaller compatibility smoke matrix supplies browser-family coverage at practical CI cost;
 - `public/_headers` explicitly revalidates `/` and `/index.html` while allowing Vite-fingerprinted `/assets/*` JavaScript/CSS to use a one-year immutable browser cache;
-- static smoke now verifies fingerprinted build references, the copied Pages `_headers` policy, file existence and successful production-output HTTP responses;
-- Cloudflare Pages deployment documentation now distinguishes exact-head preview validation from post-merge production verification and records the cache/reload audit procedure;
-- no save-schema, progression, content, interaction, collision or navigation changes are required.
+- static smoke verifies fingerprinted build references, the copied Pages `_headers` policy, file existence and successful production-output HTTP responses;
+- Cloudflare Pages deployment documentation distinguishes exact-head preview validation from post-merge production verification and records the cache/reload audit procedure;
+- no save-schema, progression, content, interaction, collision or navigation changes were required;
+- the final PR head passed repository validation, the complete Chromium browser regression, the Chromium/Firefox/WebKit compatibility matrix and exact-head Cloudflare preview before squash merge.
 
-R6-WP6.9 is accepted only when repository validation, the complete Chromium browser regression, the Chromium/Firefox/WebKit compatibility matrix and the exact-head Cloudflare preview are green on the final PR head. After merge, the resulting `main` commit must receive a successful Cloudflare production deployment before R6 is considered fully closed in production.
+## R6-WP6.10 implementation summary
+
+PR #95 was a bounded mobile-only remediation after post-R6 validation showed that a 16:9 canvas centred inside a tall phone viewport left the game controls too small and poorly placed.
+
+- narrow portrait touch viewports pin the game canvas to the top of the screen instead of vertically centring it;
+- movement controls use the otherwise unused lower portrait area as large DOM touch targets rather than shrinking with the Phaser canvas;
+- a full-size Gallop action sits alongside the movement pad;
+- the shared exploration shell binds to each scene's real pointer/touch adapter, fixing the disconnected Moonflower Glade movement pad;
+- safe-area viewport handling supports modern phone insets;
+- unit and Chromium/WebKit browser coverage verify portrait control selection, physical button sizes and held movement input;
+- no save-schema, quest, story, collision or content changes were required;
+- PR #95 passed its required validation and was merged before the pre-R7 delight extension was defined.
+
+## R6-WP6.11 implementation summary
+
+PR #100 replaces the functional front door with a production-style Unicorn Valley home/title experience while preserving established save and routing contracts.
+
+- illustrated valley presentation, title lockup and restrained ambient motion establish the game identity before entering the world;
+- valid returning saves receive one obvious Continue action plus New Game, My Unicorn and Settings;
+- new players receive New Game and Settings without irrelevant returning-player controls;
+- future-schema saves remain protected and direct the player to refresh rather than overwriting newer progress;
+- New Game retains two-step destructive confirmation and now writes the fresh checkpoint transactionally before the old recovery backup is discarded, so a storage failure cannot erase the current adventure;
+- the front door exposes the existing sound, Reduced Motion and High Visibility preferences without pulling the full WP6.14 settings redesign forward;
+- Reduced Motion pauses decorative title tweens while leaving interaction and routing intact;
+- narrow portrait phones receive a touch-sized DOM mirror of the authoritative Phaser title controls in the unused space beneath the pinned canvas, including Settings, rather than duplicating title/save behaviour;
+- phone regression coverage now asserts real CSS-pixel target sizes, settings usability and successful New Game routing instead of only checking logical canvas containment;
+- no save-schema, gameplay progression, economy, quest, collision or world-navigation changes were required.
+
+R6-WP6.12 continues from this baseline with bounded Save/Profile/Redesign Unicorn UX. The next mandatory human-feedback stop remains R6-WP6.18.
