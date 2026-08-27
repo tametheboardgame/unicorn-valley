@@ -187,6 +187,7 @@ test('existing unicorn can save new Creator Plus styles without resetting advent
   await tapObject(page, 'UnicornCreatorScene', 'creator-hornStyle-next');
   await tapObject(page, 'UnicornCreatorScene', 'creator-marking-next');
   await tapObject(page, 'UnicornCreatorScene', 'creator-marking-next');
+  await tapObject(page, 'UnicornCreatorScene', 'creator-marking-next');
   await tapObject(page, 'UnicornCreatorScene', 'creator-accessory-next');
   await tapObject(page, 'UnicornCreatorScene', 'creator-accessory-next');
   await tapObject(page, 'UnicornCreatorScene', 'creator-action-save-changes');
