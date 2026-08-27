@@ -14,7 +14,7 @@ type VisiblePanelObject = Phaser.GameObjects.Rectangle | Phaser.GameObjects.Text
 const PANEL_X = GAME_WIDTH - 190;
 const PANEL_Y = 235;
 const PANEL_WIDTH = 330;
-const PANEL_HEIGHT = 300;
+const PANEL_HEIGHT = 370;
 
 export class AudioSettingsPanel {
   private readonly audio = getVerticalSliceAudio();
@@ -115,22 +115,29 @@ export class AudioSettingsPanel {
       this.panelObjects.push(rowButton, rowLabel);
     });
 
-    const hint = scene.add
-      .text(
-        PANEL_X,
-        PANEL_Y + PANEL_HEIGHT / 2 - 18,
-        'Everything important is also shown on screen.',
-        {
-          color: UI_COLOURS.softInk,
-          fontFamily: UI_FONT,
-          fontSize: '12px',
-          align: 'center',
-        },
-      )
+    const fullSettingsButton = scene.add
+      .rectangle(PANEL_X, 382, 270, 52, UI_COLOURS.gold, 1)
+      .setName('exploration-shell-settings-button')
+      .setStrokeStyle(3, UI_COLOURS.goldStrong, 1)
+      .setScrollFactor(0)
+      .setDepth(133)
+      .setInteractive({ useHandCursor: true });
+    const fullSettingsLabel = scene.add
+      .text(PANEL_X, 382, 'More settings ⚙️', {
+        color: UI_COLOURS.ink,
+        fontFamily: UI_FONT,
+        fontSize: '16px',
+        fontStyle: 'bold',
+      })
+      .setName('exploration-shell-settings-label')
       .setOrigin(0.5)
       .setScrollFactor(0)
       .setDepth(134);
-    this.panelObjects.push(hint);
+    applyButtonHover(fullSettingsButton, UI_COLOURS.gold, UI_COLOURS.cream);
+    fullSettingsButton.on('pointerdown', () => this.openFullSettings());
+    fullSettingsLabel.setInteractive({ useHandCursor: true });
+    fullSettingsLabel.on('pointerdown', () => this.openFullSettings());
+    this.panelObjects.push(fullSettingsButton, fullSettingsLabel);
     this.objects.push(...this.panelObjects);
 
     this.button.on('pointerdown', () => {
@@ -160,6 +167,19 @@ export class AudioSettingsPanel {
     this.objects.length = 0;
     this.panelObjects.length = 0;
     this.rows.length = 0;
+  }
+
+  private openFullSettings(): void {
+    if (!this.scene.scene.isActive() || this.scene.scene.isActive('SettingsScene')) {
+      return;
+    }
+    void this.audio.unlock();
+    this.audio.playSfx('ui');
+    this.isOpen = false;
+    this.setPanelVisible(false);
+    const returnScene = this.scene.scene.key;
+    this.scene.scene.launch('SettingsScene', { returnScene });
+    this.scene.scene.pause();
   }
 
   private toggleSetting(kind: SettingRow['kind']): void {
