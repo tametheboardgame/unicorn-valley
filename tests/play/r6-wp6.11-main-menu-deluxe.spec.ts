@@ -166,32 +166,50 @@ test('front-door settings expose persistent accessibility preferences', async ({
   expect(visibleTitleText(await getSnapshot(page))).not.toContain('Reduced motion: On');
 });
 
-test('deluxe menu remains inside the logical canvas on a phone portrait viewport', async ({
-  page,
-}) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/?diagnostics=1');
-  await waitForScene(page, 'TitleScene');
+test.describe('phone portrait title controls', () => {
+  test.use({ viewport: { width: 390, height: 844 }, hasTouch: true });
 
-  const snapshot = await getSnapshot(page);
-  const title = snapshot.scenes.find((scene) => scene.key === 'TitleScene');
-  const important =
-    title?.objects.filter(
-      (object) =>
-        object.visible &&
-        ['title-lockup-name', 'title-menu-new-game', 'title-menu-settings'].includes(object.name),
-    ) ?? [];
+  test('essential menu and settings actions stay physically readable and touch-sized', async ({
+    page,
+  }) => {
+    await page.goto('/?diagnostics=1');
+    await waitForScene(page, 'TitleScene');
 
-  expect(important).toHaveLength(3);
-  for (const object of important) {
-    expect(object.x - object.displayWidth / 2).toBeGreaterThanOrEqual(0);
-    expect(object.x + object.displayWidth / 2).toBeLessThanOrEqual(snapshot.width);
-    expect(object.y - object.displayHeight / 2).toBeGreaterThanOrEqual(0);
-    expect(object.y + object.displayHeight / 2).toBeLessThanOrEqual(snapshot.height);
-  }
+    const portraitControls = page.locator('[data-title-portrait-controls="true"]');
+    await expect(portraitControls).toBeVisible();
 
-  const canvas = await page.locator('canvas').boundingBox();
-  expect(canvas).not.toBeNull();
-  expect(canvas?.width ?? 0).toBeLessThanOrEqual(390);
-  expect(canvas?.height ?? 0).toBeLessThanOrEqual(844);
+    const newGame = page.locator('[data-title-action="title-menu-new-game"]');
+    const settings = page.locator('[data-title-action="title-menu-settings"]');
+    for (const target of [newGame, settings]) {
+      await expect(target).toBeVisible();
+      const bounds = await target.boundingBox();
+      expect(bounds).not.toBeNull();
+      expect(bounds?.height ?? 0).toBeGreaterThanOrEqual(54);
+      expect(bounds?.width ?? 0).toBeGreaterThanOrEqual(240);
+    }
+
+    const canvas = await page.locator('canvas').boundingBox();
+    const controls = await portraitControls.boundingBox();
+    expect(canvas).not.toBeNull();
+    expect(controls).not.toBeNull();
+    expect(canvas?.y ?? 0).toBeLessThanOrEqual(1);
+    expect((controls?.y ?? 0) + (controls?.height ?? 0)).toBeLessThanOrEqual(844);
+    expect(controls?.y ?? 0).toBeGreaterThanOrEqual((canvas?.y ?? 0) + (canvas?.height ?? 0));
+
+    await settings.click();
+    const settingTargets = page.locator('.title-portrait-settings [data-title-action]');
+    await expect(settingTargets.first()).toBeVisible();
+    const settingCount = await settingTargets.count();
+    expect(settingCount).toBe(7);
+    for (let index = 0; index < settingCount; index += 1) {
+      const bounds = await settingTargets.nth(index).boundingBox();
+      expect(bounds).not.toBeNull();
+      expect(bounds?.height ?? 0).toBeGreaterThanOrEqual(54);
+    }
+
+    await page.locator('[data-title-action="title-settings-done"]').click();
+    await newGame.click();
+    await waitForScene(page, 'UnicornCreatorScene');
+    await expect(portraitControls).toBeHidden();
+  });
 });
