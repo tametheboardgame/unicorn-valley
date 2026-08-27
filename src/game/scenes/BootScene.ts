@@ -8,7 +8,6 @@ import { getClickToMoveManager } from '../input/ClickToMoveManager';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getRacePlaytestRecoveryManager } from '../racing/RacePlaytestRecoveryManager';
 import { getRacePlayerControlManager } from '../racing/RacePlayerControlManager';
-import { getTitleSettingsEnhancementManager } from '../settings/TitleSettingsEnhancementManager';
 import { getBrowserPipEggArcService } from '../story/browserPipEggArc';
 import { getCrystalBrookStoryWorldManager } from '../story/CrystalBrookStoryWorldManager';
 import { getLumiWoodsWorldManager } from '../story/LumiWoodsWorldManager';
@@ -28,7 +27,6 @@ const DIAGNOSTIC_SCENES: Record<string, string> = {
   'movement-test': 'MovementTestScene',
   'dialogue-test': 'DialogueTestScene',
   creator: 'UnicornCreatorScene',
-  settings: 'SettingsScene',
   glade: 'MoonflowerGladeScene',
   cottage: 'CottageInteriorScene',
   village: 'SunbeamVillageScene',
@@ -77,12 +75,29 @@ export class BootScene extends Phaser.Scene {
     getR5RegionGatewayManager(this.sys.game);
     getRacePlayerControlManager(this.sys.game);
     getRacePlaytestRecoveryManager(this.sys.game);
-    getTitleSettingsEnhancementManager(this.sys.game);
+    void import('../settings/TitleSettingsEnhancementManager').then(
+      ({ getTitleSettingsEnhancementManager }) => {
+        getTitleSettingsEnhancementManager(this.sys.game);
+      },
+    );
+
     const requestedScene = new URLSearchParams(globalThis.location.search).get('scene');
+    if (requestedScene === 'settings') {
+      void this.startSettingsDiagnostic();
+      return;
+    }
+
     this.registry.set(
       'postPreloadScene',
       (requestedScene && DIAGNOSTIC_SCENES[requestedScene]) || 'TitleScene',
     );
+    this.scene.start('PreloadScene');
+  }
+
+  private async startSettingsDiagnostic(): Promise<void> {
+    const { SettingsScene } = await import('./SettingsScene');
+    this.scene.add('SettingsScene', SettingsScene, false);
+    this.registry.set('postPreloadScene', 'SettingsScene');
     this.scene.start('PreloadScene');
   }
 }
