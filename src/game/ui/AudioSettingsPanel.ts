@@ -15,6 +15,7 @@ const PANEL_X = GAME_WIDTH - 190;
 const PANEL_Y = 235;
 const PANEL_WIDTH = 330;
 const PANEL_HEIGHT = 390;
+const SETTINGS_SCENE_REGISTERED_KEY = 'wp6.14:settings-scene-registered';
 
 export class AudioSettingsPanel {
   private readonly audio = getVerticalSliceAudio();
@@ -24,6 +25,7 @@ export class AudioSettingsPanel {
   private readonly button: Phaser.GameObjects.Rectangle;
   private readonly buttonLabel: Phaser.GameObjects.Text;
   private isOpen = false;
+  private openingFullSettings = false;
 
   public constructor(
     private readonly scene: Phaser.Scene,
@@ -134,9 +136,9 @@ export class AudioSettingsPanel {
       .setScrollFactor(0)
       .setDepth(134);
     applyButtonHover(fullSettingsButton, UI_COLOURS.gold, UI_COLOURS.cream);
-    fullSettingsButton.on('pointerdown', () => this.openFullSettings());
+    fullSettingsButton.on('pointerdown', () => void this.openFullSettings());
     fullSettingsLabel.setInteractive({ useHandCursor: true });
-    fullSettingsLabel.on('pointerdown', () => this.openFullSettings());
+    fullSettingsLabel.on('pointerdown', () => void this.openFullSettings());
     this.panelObjects.push(fullSettingsButton, fullSettingsLabel);
     this.objects.push(...this.panelObjects);
 
@@ -169,17 +171,37 @@ export class AudioSettingsPanel {
     this.rows.length = 0;
   }
 
-  private openFullSettings(): void {
-    if (!this.scene.scene.isActive() || this.scene.scene.isActive('SettingsScene')) {
+  private async openFullSettings(): Promise<void> {
+    if (
+      this.openingFullSettings ||
+      !this.scene.scene.isActive() ||
+      this.scene.scene.isActive('SettingsScene')
+    ) {
       return;
     }
-    void this.audio.unlock();
-    this.audio.playSfx('ui');
-    this.isOpen = false;
-    this.setPanelVisible(false);
-    const returnScene = this.scene.scene.key;
-    this.scene.scene.launch('SettingsScene', { returnScene });
-    this.scene.scene.pause();
+
+    this.openingFullSettings = true;
+    try {
+      if (this.scene.registry.get(SETTINGS_SCENE_REGISTERED_KEY) !== true) {
+        const { SettingsScene } = await import('../scenes/SettingsScene');
+        this.scene.scene.add('SettingsScene', SettingsScene, false);
+        this.scene.registry.set(SETTINGS_SCENE_REGISTERED_KEY, true);
+      }
+
+      if (!this.scene.scene.isActive()) {
+        return;
+      }
+
+      void this.audio.unlock();
+      this.audio.playSfx('ui');
+      this.isOpen = false;
+      this.setPanelVisible(false);
+      const returnScene = this.scene.scene.key;
+      this.scene.scene.launch('SettingsScene', { returnScene });
+      this.scene.scene.pause();
+    } finally {
+      this.openingFullSettings = false;
+    }
   }
 
   private toggleSetting(kind: SettingRow['kind']): void {
