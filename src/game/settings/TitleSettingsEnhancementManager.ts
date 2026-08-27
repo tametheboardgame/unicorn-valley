@@ -292,8 +292,7 @@ export class TitleSettingsEnhancementManager {
       if (document.fullscreenElement) {
         await document.exitFullscreen();
       } else {
-        const target = document.getElementById('game-shell') ?? document.documentElement;
-        await target.requestFullscreen();
+        await document.documentElement.requestFullscreen();
       }
       this.audio.playSfx('ui');
     } catch {
