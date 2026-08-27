@@ -204,7 +204,15 @@ export class UnicornCreatorScene extends Phaser.Scene {
     this.createCompactChoiceRow('Accessory', 'accessory', ACCESSORIES, 670, 605, 520);
 
     if (this.editMode) {
-      this.createActionButton(155, 625, 145, 'Surprise!', () => this.randomise(), false, 'surprise');
+      this.createActionButton(
+        155,
+        625,
+        145,
+        'Surprise!',
+        () => this.randomise(),
+        false,
+        'surprise',
+      );
       this.createActionButton(
         325,
         625,
