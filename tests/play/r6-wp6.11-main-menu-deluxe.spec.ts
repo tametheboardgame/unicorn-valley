@@ -198,9 +198,7 @@ test.describe('phone portrait title controls', () => {
 
     await settings.click();
     const settingTargets = page.locator('.title-portrait-settings [data-title-action]');
-    await expect(
-      page.locator('[data-title-action="title-setting-fullscreen"]'),
-    ).toBeVisible();
+    await expect(page.locator('[data-title-action="title-setting-fullscreen"]')).toBeVisible();
     await expect(settingTargets.first()).toBeVisible();
     const settingCount = await settingTargets.count();
     expect(settingCount).toBe(8);
