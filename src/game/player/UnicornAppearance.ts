@@ -4,6 +4,9 @@ export const BODY_COLOURS = [
   { id: 'lavender', label: 'Lavender', value: 0xd6b9f1 },
   { id: 'mint', label: 'Mint', value: 0xbde5cc },
   { id: 'sky', label: 'Sky', value: 0xb8dcf2 },
+  { id: 'peach', label: 'Peach', value: 0xf5c7ad },
+  { id: 'buttercup', label: 'Buttercup', value: 0xf4df8f },
+  { id: 'pearl', label: 'Pearl', value: 0xe9e8f3 },
 ] as const;
 
 export const EYE_COLOURS = [
@@ -11,6 +14,8 @@ export const EYE_COLOURS = [
   { id: 'blue', label: 'Blue', value: 0x4a78a8 },
   { id: 'green', label: 'Green', value: 0x4f8967 },
   { id: 'amber', label: 'Amber', value: 0x9a713d },
+  { id: 'rose', label: 'Rose', value: 0xa95778 },
+  { id: 'aqua', label: 'Aqua', value: 0x2f8f96 },
 ] as const;
 
 export const HAIR_COLOURS = [
@@ -19,24 +24,33 @@ export const HAIR_COLOURS = [
   { id: 'aqua', label: 'Aqua', value: 0x69c8ca },
   { id: 'gold', label: 'Gold', value: 0xe8b85d },
   { id: 'midnight', label: 'Midnight', value: 0x55486e },
+  { id: 'lilac', label: 'Lilac', value: 0xb69ad9 },
+  { id: 'coral', label: 'Coral', value: 0xee8d86 },
+  { id: 'ice', label: 'Ice', value: 0xaedee7 },
 ] as const;
 
 export const MANE_STYLES = [
   { id: 'soft', label: 'Soft Waves' },
   { id: 'fluffy', label: 'Fluffy' },
   { id: 'swept', label: 'Side Swept' },
+  { id: 'braid', label: 'Moon Braid' },
+  { id: 'crest', label: 'Star Crest' },
 ] as const;
 
 export const TAIL_STYLES = [
   { id: 'swish', label: 'Big Swish' },
   { id: 'curl', label: 'Curly' },
   { id: 'ribbon', label: 'Ribbon Tail' },
+  { id: 'braid', label: 'Moon Braid' },
+  { id: 'puff', label: 'Cloud Puff' },
 ] as const;
 
 export const HORN_STYLES = [
   { id: 'classic', label: 'Classic' },
   { id: 'star', label: 'Star Tip' },
   { id: 'spiral', label: 'Spiral' },
+  { id: 'short', label: 'Little Horn' },
+  { id: 'crystal', label: 'Crystal Tip' },
 ] as const;
 
 export const MARKINGS = [
@@ -44,6 +58,8 @@ export const MARKINGS = [
   { id: 'star', label: 'Star' },
   { id: 'heart', label: 'Heart' },
   { id: 'moon', label: 'Moon' },
+  { id: 'freckles', label: 'Freckles' },
+  { id: 'sparkles', label: 'Sparkles' },
 ] as const;
 
 export const ACCESSORIES = [
@@ -51,6 +67,9 @@ export const ACCESSORIES = [
   { id: 'flower', label: 'Flower Clip' },
   { id: 'bow', label: 'Little Bow' },
   { id: 'bell', label: 'Silver Bell' },
+  { id: 'crown', label: 'Tiny Crown' },
+  { id: 'ribbon', label: 'Neck Ribbon' },
+  { id: 'scarf', label: 'Cosy Scarf' },
 ] as const;
 
 export type BodyColourId = (typeof BODY_COLOURS)[number]['id'];
@@ -73,6 +92,18 @@ export interface UnicornAppearance {
   marking: MarkingId;
   accessory: AccessoryId;
 }
+
+export const UNICORN_COSMETIC_REGISTRY = {
+  bodyColour: BODY_COLOURS,
+  eyeColour: EYE_COLOURS,
+  maneStyle: MANE_STYLES,
+  maneColour: HAIR_COLOURS,
+  tailStyle: TAIL_STYLES,
+  tailColour: HAIR_COLOURS,
+  hornStyle: HORN_STYLES,
+  marking: MARKINGS,
+  accessory: ACCESSORIES,
+} as const satisfies Record<keyof UnicornAppearance, readonly { id: string; label: string }[]>;
 
 export const DEFAULT_UNICORN_APPEARANCE: UnicornAppearance = {
   bodyColour: 'cream',
@@ -138,6 +169,26 @@ export function randomiseUnicornAppearance(random: () => number = Math.random): 
     marking: randomChoice(MARKINGS, random).id,
     accessory: randomChoice(ACCESSORIES, random).id,
   };
+}
+
+export function validateUnicornCosmeticRegistry(): string[] {
+  const issues: string[] = [];
+  for (const [category, choices] of Object.entries(UNICORN_COSMETIC_REGISTRY)) {
+    const seen = new Set<string>();
+    for (const choice of choices) {
+      if (!choice.id.trim()) {
+        issues.push(`${category} contains a blank cosmetic id`);
+      }
+      if (!choice.label.trim()) {
+        issues.push(`${category}:${choice.id} has a blank label`);
+      }
+      if (seen.has(choice.id)) {
+        issues.push(`${category} contains duplicate id ${choice.id}`);
+      }
+      seen.add(choice.id);
+    }
+  }
+  return issues;
 }
 
 export function colourValue(choices: readonly { id: string; value: number }[], id: string): number {
