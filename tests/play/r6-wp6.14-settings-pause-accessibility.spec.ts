@@ -190,7 +190,7 @@ test('exploration can pause into the full settings screen and return with persis
   }
 
   await tapObject(page, 'SettingsScene', 'settings-row-music');
-  for (let index = 0; index < 5; index += 1) {
+  for (let index = 0; index < 4; index += 1) {
     await page.keyboard.press('ArrowDown');
   }
   await page.keyboard.press('Enter');
