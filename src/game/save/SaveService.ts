@@ -62,6 +62,16 @@ export class SaveService {
     return createDefaultSave(this.now());
   }
 
+  public resetToNewGameWithResult(): SaveWriteResult {
+    const result = this.saveWithResult(this.createNewGame());
+    if (result.status !== 'saved') {
+      return result;
+    }
+
+    this.tryRemoveBackup();
+    return result;
+  }
+
   public hasUnsupportedSaveVersion(): boolean {
     if (this.hasFutureSchemaCheckpoint()) {
       return true;
@@ -295,6 +305,14 @@ export class SaveService {
       return true;
     } catch {
       return false;
+    }
+  }
+
+  private tryRemoveBackup(): void {
+    try {
+      this.repository.removeBackup?.();
+    } catch {
+      // A stale recovery backup is preferable to failing a new-game reset that already checkpointed.
     }
   }
 }

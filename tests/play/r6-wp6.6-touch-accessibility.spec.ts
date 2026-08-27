@@ -188,7 +188,7 @@ test('target-tablet touch completes creator, exploration, Book and accessibility
   await page.goto('/?diagnostics=1');
   await waitForScene(page, 'TitleScene');
 
-  await logicalTap(page, 640, 447);
+  await logicalTap(page, 955, 238);
   await waitForScene(page, 'UnicornCreatorScene');
 
   let snapshot = await getSnapshot(page);

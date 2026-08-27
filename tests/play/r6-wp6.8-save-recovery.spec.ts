@@ -154,7 +154,7 @@ test('schema-v1 browser save is backed up before automatic migration to v2', asy
   expect(stored.backup.profile.name).toBe('Moonbeam');
 });
 
-test('Start over requires confirmation and clears both save copies only after the second tap', async ({
+test('New Game requires confirmation and clears both save copies only after the second tap', async ({
   page,
 }) => {
   const current = createStoredSave('Starlight');
@@ -177,7 +177,7 @@ test('Start over requires confirmation and clears both save copies only after th
   await page.goto('/?diagnostics=1');
   await waitForScene(page, 'TitleScene');
 
-  await tapTitleText(page, 'Start over');
+  await tapTitleText(page, 'New Game');
   expect(await page.evaluate((key) => window.localStorage.getItem(key), SAVE_KEY)).toBe(
     serialisedCurrent,
   );
@@ -226,11 +226,9 @@ test('a newer-version save is protected and the title asks the player to refresh
     title?.objects.filter((object) => object.visible).map((object) => object.text) ?? [];
 
   expect(visibleText).toContain('Refresh to Continue');
-  expect(visibleText).toContain(
-    'A newer Unicorn Valley save is here. Refresh to keep your progress safe.',
-  );
-  expect(visibleText).not.toContain('Create Your Unicorn');
-  expect(visibleText).not.toContain('Start over');
+  expect(visibleText).toContain('Your save is safe. Refresh to load the newer game version.');
+  expect(visibleText).not.toContain('New Game');
+  expect(visibleText).not.toContain('My Unicorn');
   expect(await page.evaluate((key) => window.localStorage.getItem(key), SAVE_KEY)).toBe(
     serialisedFuture,
   );
