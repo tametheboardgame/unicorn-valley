@@ -6,7 +6,7 @@ import {
 import type { SaveGame } from './saveSchema';
 
 export function hasNamedUnicorn(save: SaveGame): boolean {
-  return Boolean(save.profile.name?.trim());
+  return Boolean(save.profile.name);
 }
 
 export function applyProfileRedesign(
