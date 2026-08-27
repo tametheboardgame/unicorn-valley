@@ -81,7 +81,9 @@ export class SettingsScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setDepth(4);
 
-    GAME_SETTING_KINDS.forEach((kind, index) => this.createRow(kind, index));
+    GAME_SETTING_KINDS.forEach((kind, index) => {
+      this.createRow(kind, index);
+    });
 
     this.statusText = this.add
       .text(GAME_WIDTH / 2, 610, '↑ ↓ choose • Enter changes • Esc goes back', {
