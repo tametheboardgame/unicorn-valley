@@ -10,15 +10,14 @@ import {
   HORN_STYLES,
   MANE_STYLES,
   MARKINGS,
-  normaliseUnicornName,
   parseUnicornAppearance,
   randomiseUnicornAppearance,
-  serialiseUnicornAppearance,
   TAIL_STYLES,
   type UnicornAppearance,
 } from '../player/UnicornAppearance';
 import { drawUnicornAppearance } from '../player/UnicornAppearanceRenderer';
 import { getBrowserSaveService } from '../save/browserSaveService';
+import { applyProfileRedesign, hasNamedUnicorn } from '../save/profileRedesign';
 import type { SaveGame } from '../save/saveSchema';
 import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from '../ui/uiTheme';
 
@@ -38,6 +37,8 @@ export class UnicornCreatorScene extends Phaser.Scene {
   private appearance: UnicornAppearance = { ...DEFAULT_UNICORN_APPEARANCE };
   private preview: Phaser.GameObjects.Graphics | null = null;
   private nameInput: HTMLInputElement | null = null;
+  private statusText: Phaser.GameObjects.Text | null = null;
+  private editMode = false;
   private valueLabels = new Map<string, Phaser.GameObjects.Text>();
   private swatchOutlines = new Map<string, Phaser.GameObjects.Arc[]>();
 
@@ -53,6 +54,7 @@ export class UnicornCreatorScene extends Phaser.Scene {
     }
 
     this.save = saveService.load() ?? saveService.createNewGame();
+    this.editMode = hasNamedUnicorn(this.save);
     this.appearance = parseUnicornAppearance(this.save.profile.appearance);
 
     this.input.keyboard?.disableGlobalCapture();
@@ -63,21 +65,48 @@ export class UnicornCreatorScene extends Phaser.Scene {
     this.add.circle(1100, 590, 255, 0xffecb6, 0.08);
     this.add.circle(1030, 120, 120, 0xcfefff, 0.06);
 
+    const unicornName = this.save.profile.name ?? DEFAULT_UNICORN_NAME;
     this.add
-      .text(52, 34, 'Make Your Unicorn', {
+      .text(52, 34, this.editMode ? `Redesign ${unicornName}` : 'Make Your Unicorn', {
         color: '#fff8ff',
         fontFamily: UI_FONT,
         fontSize: '43px',
         fontStyle: 'bold',
       })
+      .setName('creator-heading')
       .setDepth(20);
 
     this.add
-      .text(52, 88, 'Pick anything you like. You can change it again later.', {
-        color: '#efe6fa',
-        fontFamily: UI_FONT,
-        fontSize: '19px',
-      })
+      .text(
+        52,
+        88,
+        this.editMode
+          ? 'Try a new look or name. Your adventure stays exactly where you left it.'
+          : 'Pick anything you like. You can change it again later.',
+        {
+          color: '#efe6fa',
+          fontFamily: UI_FONT,
+          fontSize: '19px',
+        },
+      )
+      .setName('creator-subtitle')
+      .setDepth(20);
+
+    this.statusText = this.add
+      .text(
+        52,
+        116,
+        this.editMode
+          ? 'Nothing changes until you choose Save Changes.'
+          : 'This will become your one Unicorn Valley profile.',
+        {
+          color: '#fff0c9',
+          fontFamily: UI_FONT,
+          fontSize: '14px',
+          fontStyle: 'bold',
+        },
+      )
+      .setName('creator-status')
       .setDepth(20);
 
     createUiShadow(this, 325, 390, 500, 520, 1, 0.22);
@@ -90,12 +119,13 @@ export class UnicornCreatorScene extends Phaser.Scene {
       .setStrokeStyle(3, UI_COLOURS.lavenderStrong, 0.9)
       .setDepth(4);
     this.add
-      .text(325, 158, 'This is you ✨', {
+      .text(325, 158, this.editMode ? `${unicornName} ✨` : 'This is you ✨', {
         color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
         fontSize: '26px',
         fontStyle: 'bold',
       })
+      .setName('creator-profile-label')
       .setOrigin(0.5)
       .setDepth(5);
 
@@ -105,7 +135,7 @@ export class UnicornCreatorScene extends Phaser.Scene {
       .setStrokeStyle(6, UI_COLOURS.lavenderStrong, 1)
       .setDepth(2);
     this.add
-      .text(670, 146, 'Choose your look ✨', {
+      .text(670, 146, this.editMode ? 'Choose a new look ✨' : 'Choose your look ✨', {
         color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
         fontSize: '23px',
@@ -114,7 +144,7 @@ export class UnicornCreatorScene extends Phaser.Scene {
       .setDepth(5);
 
     this.preview = this.add.graphics().setDepth(6);
-    this.createNameInput(this.save.profile.name ?? DEFAULT_UNICORN_NAME);
+    this.createNameInput(unicornName);
 
     this.createColourRow('Body', 'bodyColour', BODY_COLOURS, 670, 250);
     this.createColourRow('Eyes', 'eyeColour', EYE_COLOURS, 670, 300);
@@ -126,9 +156,47 @@ export class UnicornCreatorScene extends Phaser.Scene {
     this.createCompactChoiceRow('Marking', 'marking', MARKINGS, 935, 555, 260);
     this.createCompactChoiceRow('Accessory', 'accessory', ACCESSORIES, 670, 605, 520);
 
-    this.createActionButton(305, 625, 210, 'Surprise Me!', () => this.randomise());
-    this.createActionButton(535, 625, 190, 'Nice Default', () => this.useDefault());
-    this.createActionButton(1080, 675, 275, 'Looks Good! ✨', () => this.saveAndEnter(), true);
+    this.createActionButton(
+      305,
+      625,
+      210,
+      'Surprise Me!',
+      () => this.randomise(),
+      false,
+      'surprise',
+    );
+    this.createActionButton(
+      535,
+      625,
+      190,
+      this.editMode ? 'Restore Saved' : 'Nice Default',
+      () => (this.editMode ? this.restoreSavedProfile() : this.useDefault()),
+      false,
+      this.editMode ? 'restore-saved' : 'default',
+    );
+
+    if (this.editMode) {
+      this.createActionButton(835, 675, 190, 'Cancel', () => this.cancelEdit(), false, 'cancel');
+      this.createActionButton(
+        1080,
+        675,
+        275,
+        'Save Changes ✨',
+        () => this.saveAndEnter(),
+        true,
+        'save-changes',
+      );
+    } else {
+      this.createActionButton(
+        1080,
+        675,
+        275,
+        'Looks Good! ✨',
+        () => this.saveAndEnter(),
+        true,
+        'confirm-new',
+      );
+    }
 
     this.redraw();
 
@@ -143,6 +211,7 @@ export class UnicornCreatorScene extends Phaser.Scene {
       this.nameInput = null;
       this.input.keyboard?.enableGlobalCapture();
       this.preview = null;
+      this.statusText = null;
       this.valueLabels.clear();
       this.swatchOutlines.clear();
     });
@@ -226,6 +295,7 @@ export class UnicornCreatorScene extends Phaser.Scene {
       const swatchX = x + 160 + index * 52;
       const outline = this.add
         .circle(swatchX, y, 24, UI_COLOURS.lavender, 0.8)
+        .setName(`creator-${key}-${choice.id}`)
         .setStrokeStyle(4, UI_COLOURS.lavenderStrong, 0.72)
         .setInteractive({ useHandCursor: true })
         .setDepth(5);
@@ -293,17 +363,20 @@ export class UnicornCreatorScene extends Phaser.Scene {
         backgroundColor: '#f1e2f6',
         padding: { x: compact ? 9 : 12, y: compact ? 6 : 7 },
       })
+      .setName(`creator-${key}-value`)
       .setOrigin(0, 0.5)
       .setDepth(5);
     this.valueLabels.set(key, valueText);
 
     const left = this.add
       .circle(leftX, y, arrowRadius, UI_COLOURS.lavender, 1)
+      .setName(`creator-${key}-previous`)
       .setStrokeStyle(2, UI_COLOURS.lavenderStrong, 1)
       .setInteractive({ useHandCursor: true })
       .setDepth(5);
     const right = this.add
       .circle(rightX, y, arrowRadius, UI_COLOURS.lavender, 1)
+      .setName(`creator-${key}-next`)
       .setStrokeStyle(2, UI_COLOURS.lavenderStrong, 1)
       .setInteractive({ useHandCursor: true })
       .setDepth(5);
@@ -339,12 +412,14 @@ export class UnicornCreatorScene extends Phaser.Scene {
     label: string,
     action: () => void,
     primary = false,
+    name = label.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
   ): void {
     createUiShadow(this, x, y, width, 64, 19, primary ? 0.23 : 0.15);
     const fill = primary ? UI_COLOURS.gold : UI_COLOURS.cream;
     const hover = primary ? 0xfff4bf : UI_COLOURS.lavender;
     const button = this.add
       .rectangle(x, y, width, 64, fill, 0.99)
+      .setName(`creator-action-${name}`)
       .setStrokeStyle(5, primary ? UI_COLOURS.goldStrong : UI_COLOURS.lavenderStrong, 1)
       .setInteractive({ useHandCursor: true })
       .setDepth(20);
@@ -355,6 +430,7 @@ export class UnicornCreatorScene extends Phaser.Scene {
         fontSize: primary ? '22px' : '18px',
         fontStyle: 'bold',
       })
+      .setName(`creator-action-${name}-label`)
       .setOrigin(0.5)
       .setDepth(21);
     applyButtonHover(button, fill, hover);
@@ -367,6 +443,7 @@ export class UnicornCreatorScene extends Phaser.Scene {
       this.nameInput.value = RANDOM_NAMES[Math.floor(Math.random() * RANDOM_NAMES.length)];
     }
     this.redraw();
+    this.setStatus('A surprise look! Save it only if it feels right.');
   }
 
   private useDefault(): void {
@@ -375,6 +452,29 @@ export class UnicornCreatorScene extends Phaser.Scene {
       this.nameInput.value = DEFAULT_UNICORN_NAME;
     }
     this.redraw();
+  }
+
+  private restoreSavedProfile(): void {
+    if (!this.save) {
+      return;
+    }
+    this.appearance = parseUnicornAppearance(this.save.profile.appearance);
+    if (this.nameInput) {
+      this.nameInput.value = this.save.profile.name ?? DEFAULT_UNICORN_NAME;
+    }
+    this.redraw();
+    this.setStatus('Back to the saved look. Your adventure has not changed.');
+  }
+
+  private cancelEdit(): void {
+    if (!this.editMode) {
+      return;
+    }
+    this.scene.start('TitleScene');
+  }
+
+  private setStatus(message: string, error = false): void {
+    this.statusText?.setText(message).setColor(error ? '#ffd4df' : '#fff0c9');
   }
 
   private redraw(): void {
@@ -419,21 +519,19 @@ export class UnicornCreatorScene extends Phaser.Scene {
     }
 
     const service = getBrowserSaveService();
-    const nextSave: SaveGame = {
-      ...this.save,
-      profile: {
-        ...this.save.profile,
-        name: normaliseUnicornName(this.nameInput?.value ?? ''),
-        appearance: serialiseUnicornAppearance(this.appearance),
-      },
-    };
+    const nextSave = applyProfileRedesign(this.save, this.nameInput?.value ?? '', this.appearance);
     const result = service.saveWithResult(nextSave);
     if (result.status !== 'saved') {
-      this.scene.start('TitleScene');
+      this.setStatus(
+        this.editMode
+          ? 'Could not save changes. Your previous unicorn and adventure are still safe.'
+          : 'Could not save your unicorn yet. Try again before entering the valley.',
+        true,
+      );
       return;
     }
 
     this.save = result.save;
-    this.scene.start('MoonflowerGladeScene');
+    this.scene.start(this.editMode ? 'TitleScene' : 'MoonflowerGladeScene');
   }
 }
