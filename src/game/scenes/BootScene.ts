@@ -22,6 +22,8 @@ import { getWorldCharacterPresentationManager } from '../world/WorldCharacterPre
 import { getWorldOcclusionManager } from '../world/WorldOcclusionManager';
 import { getWorldTraversalPolishManager } from '../world/WorldTraversalPolishManager';
 
+export const SETTINGS_SCENE_REGISTERED_KEY = 'wp6.14:settings-scene-registered';
+
 const DIAGNOSTIC_SCENES: Record<string, string> = {
   'resize-test': 'ResizeTestScene',
   'movement-test': 'MovementTestScene',
@@ -97,6 +99,7 @@ export class BootScene extends Phaser.Scene {
   private async startSettingsDiagnostic(): Promise<void> {
     const { SettingsScene } = await import('./SettingsScene');
     this.scene.add('SettingsScene', SettingsScene, false);
+    this.registry.set(SETTINGS_SCENE_REGISTERED_KEY, true);
     this.registry.set('postPreloadScene', 'SettingsScene');
     this.scene.start('PreloadScene');
   }
