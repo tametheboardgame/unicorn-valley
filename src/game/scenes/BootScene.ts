@@ -13,7 +13,6 @@ import { getCrystalBrookStoryWorldManager } from '../story/CrystalBrookStoryWorl
 import { getLumiWoodsWorldManager } from '../story/LumiWoodsWorldManager';
 import { getPebbleCollectionWorldManager } from '../story/PebbleCollectionWorldManager';
 import { getPipEggWorldManager } from '../story/PipEggWorldManager';
-import { getCoreNpcProductionPresentationManager } from '../visual/CoreNpcProductionPresentationManager';
 import { getEnvironmentProductionPresentationManager } from '../visual/EnvironmentProductionPresentationManager';
 import { getVisualTighteningManager } from '../visual/VisualTighteningManager';
 import { getR5RegionGatewayManager } from '../world/R5RegionGatewayManager';
@@ -66,7 +65,6 @@ export class BootScene extends Phaser.Scene {
     getClickToMoveManager(this.sys.game);
     getWorldOcclusionManager(this.sys.game);
     getWorldCharacterPresentationManager(this.sys.game);
-    getCoreNpcProductionPresentationManager(this.sys.game);
     getVisualTighteningManager(this.sys.game);
     getWorldTraversalPolishManager(this.sys.game);
     getEnvironmentProductionPresentationManager(this.sys.game);
@@ -74,6 +72,11 @@ export class BootScene extends Phaser.Scene {
     getRacePlayerControlManager(this.sys.game);
     getRacePlaytestRecoveryManager(this.sys.game);
 
+    void import('../visual/CoreNpcProductionPresentationManager').then(
+      ({ getCoreNpcProductionPresentationManager }) => {
+        getCoreNpcProductionPresentationManager(this.sys.game);
+      },
+    );
     void import('../settings/TitleSettingsEnhancementManager').then(
       ({ getTitleSettingsEnhancementManager }) => {
         getTitleSettingsEnhancementManager(this.sys.game);
