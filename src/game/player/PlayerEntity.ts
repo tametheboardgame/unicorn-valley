@@ -180,6 +180,12 @@ export class PlayerEntity {
   }
 }
 
+export function getPlayerEntityFacing(
+  sprite: Phaser.Physics.Arcade.Sprite,
+): PlayerFacing | null {
+  return PLAYER_ENTITIES.get(sprite)?.getFacing() ?? null;
+}
+
 export function setPlayerEntityFacing(
   sprite: Phaser.Physics.Arcade.Sprite,
   facing: PlayerFacing,
