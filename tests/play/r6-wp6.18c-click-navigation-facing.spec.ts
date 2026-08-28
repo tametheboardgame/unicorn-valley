@@ -111,12 +111,8 @@ test('backwards click navigation keeps authoritative facing stable until directi
     const glade = diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__
       ?.snapshot()
       .scenes.find((candidate) => candidate.key === 'MoonflowerGladeScene');
-    const currentPlayer = glade?.objects.find(
-      (object) => object.name === 'world-player-unicorn',
-    );
-    return (
-      currentPlayer?.playerFacing === 'left' && currentPlayer.authoritativeFacing === 'left'
-    );
+    const currentPlayer = glade?.objects.find((object) => object.name === 'world-player-unicorn');
+    return currentPlayer?.playerFacing === 'left' && currentPlayer.authoritativeFacing === 'left';
   });
 
   const samples: DiagnosticObject[] = [];
