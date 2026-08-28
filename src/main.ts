@@ -15,8 +15,18 @@ getTitlePortraitControlsManager(game);
 getExplorationGeometryPresentationManager(game);
 getR5FinalTighteningManager(game);
 
-void import('./game/world/R6RegionGatewayArtManager').then(({ getR6RegionGatewayArtManager }) => {
+void import('./game/scenes/VillageInteriorScene').then(({ VillageInteriorScene }) => {
+  if (!game.scene.keys.VillageInteriorScene) {
+    game.scene.add('VillageInteriorScene', VillageInteriorScene);
+  }
+});
+
+void Promise.all([
+  import('./game/world/R6RegionGatewayArtManager'),
+  import('./game/world/R6RegionGatewayArtPerformanceManager'),
+]).then(([{ getR6RegionGatewayArtManager }, { getR6RegionGatewayArtPerformanceManager }]) => {
   getR6RegionGatewayArtManager(game);
+  getR6RegionGatewayArtPerformanceManager(game);
 });
 
 const creatorPortraitQuery = globalThis.matchMedia?.(
