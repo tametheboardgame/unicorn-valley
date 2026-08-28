@@ -54,7 +54,9 @@ function installBrowserFailureAudit(page: Page): BrowserFailureAudit {
   });
   page.on('response', (response) => {
     if (response.status() >= 400) {
-      audit.httpErrors.push(`${response.status()} ${response.request().method()} ${response.url()}`);
+      audit.httpErrors.push(
+        `${response.status()} ${response.request().method()} ${response.url()}`,
+      );
     }
   });
 
