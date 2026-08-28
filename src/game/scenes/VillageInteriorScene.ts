@@ -102,9 +102,7 @@ export class VillageInteriorScene extends Phaser.Scene {
       .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 8, 1120, 650, definition.wallColour, 1)
       .setStrokeStyle(8, definition.accentColour, 0.95)
       .setDepth(2);
-    this.add
-      .rectangle(GAME_WIDTH / 2, 565, 1100, 245, definition.floorColour, 1)
-      .setDepth(3);
+    this.add.rectangle(GAME_WIDTH / 2, 565, 1100, 245, definition.floorColour, 1).setDepth(3);
     this.add.rectangle(GAME_WIDTH / 2, 444, 1100, 18, 0xffffff, 0.4).setDepth(4);
 
     this.add
@@ -175,7 +173,10 @@ export class VillageInteriorScene extends Phaser.Scene {
       [695, '🍓'],
       [780, '🥖'],
     ] as const) {
-      this.add.text(x, 335, icon, { fontFamily: UI_FONT, fontSize: '42px' }).setOrigin(0.5).setDepth(7);
+      this.add
+        .text(x, 335, icon, { fontFamily: UI_FONT, fontSize: '42px' })
+        .setOrigin(0.5)
+        .setDepth(7);
     }
     this.add.rectangle(640, 485, 300, 66, 0x7c5947, 1).setDepth(5);
     this.add
@@ -201,11 +202,11 @@ export class VillageInteriorScene extends Phaser.Scene {
       [685, '🌸'],
       [770, '👑'],
     ] as const) {
+      this.add.circle(x, 320, 42, 0xfff6fb, 0.82).setStrokeStyle(3, 0xd8a4cf, 0.9).setDepth(6);
       this.add
-        .circle(x, 320, 42, 0xfff6fb, 0.82)
-        .setStrokeStyle(3, 0xd8a4cf, 0.9)
-        .setDepth(6);
-      this.add.text(x, 320, icon, { fontFamily: UI_FONT, fontSize: '34px' }).setOrigin(0.5).setDepth(7);
+        .text(x, 320, icon, { fontFamily: UI_FONT, fontSize: '34px' })
+        .setOrigin(0.5)
+        .setDepth(7);
     }
     this.add
       .text(640, 465, 'Little treasures • no story purchase required', {
@@ -229,13 +230,23 @@ export class VillageInteriorScene extends Phaser.Scene {
         this.add.rectangle(x, 286 + row * 54, 112, 9, 0x435d72, 0.9).setDepth(6);
         for (let column = 0; column < 5; column += 1) {
           this.add
-            .rectangle(x - 42 + column * 21, 270 + row * 54, 13, 28, 0xe8a178 + column * 0x030303, 1)
+            .rectangle(
+              x - 42 + column * 21,
+              270 + row * 54,
+              13,
+              28,
+              0xe8a178 + column * 0x030303,
+              1,
+            )
             .setDepth(6);
         }
       }
     }
     this.add.ellipse(640, 535, 360, 120, 0xf2d7a7, 1).setDepth(5);
-    this.add.text(640, 528, '🌙   📖   ✨', { fontFamily: UI_FONT, fontSize: '34px' }).setOrigin(0.5).setDepth(6);
+    this.add
+      .text(640, 528, '🌙   📖   ✨', { fontFamily: UI_FONT, fontSize: '34px' })
+      .setOrigin(0.5)
+      .setDepth(6);
   }
 
   private createControls(definition: VillageInteriorDefinition): void {
