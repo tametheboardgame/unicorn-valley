@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
-import { DEFAULT_PLAYER_SPEED } from '../player/PlayerMovement';
+import { setPlayerEntityFacing } from '../player/PlayerEntity';
+import { DEFAULT_PLAYER_SPEED, type PlayerFacing } from '../player/PlayerMovement';
 import { CRYSTAL_BROOK_MAP } from '../world/CrystalBrookMap';
 import type { MapPoint, TraversalMapDefinition } from '../world/MapTraversal';
 import { COTTAGE_INTERIOR_MAP } from '../world/CottageInteriorMap';
@@ -65,20 +66,44 @@ function isPlayerSprite(
   );
 }
 
+function isPlayerFacing(value: unknown): value is PlayerFacing {
+  return value === 'up' || value === 'down' || value === 'left' || value === 'right';
+}
+
+export function resolveClickNavigationFacing(
+  directionX: number,
+  directionY: number,
+  previousFacing: PlayerFacing,
+): PlayerFacing {
+  const absoluteX = Math.abs(directionX);
+  const absoluteY = Math.abs(directionY);
+  if (absoluteX <= 2 && absoluteY <= 2) {
+    return previousFacing;
+  }
+  if (absoluteX >= absoluteY) {
+    return directionX < 0 ? 'left' : 'right';
+  }
+  return directionY < 0 ? 'up' : 'down';
+}
+
 function updateClickNavigationFacing(
   player: Phaser.Physics.Arcade.Sprite,
   directionX: number,
   directionY: number,
 ): void {
-  if (Math.abs(directionX) >= Math.abs(directionY) && Math.abs(directionX) > 2) {
-    const facing = directionX < 0 ? 'left' : 'right';
-    player.setFlipX(facing === 'left');
-    player.setData('player-facing', facing);
+  const storedFacing = player.getData('player-facing');
+  const previousFacing: PlayerFacing = isPlayerFacing(storedFacing) ? storedFacing : 'down';
+  const facing = resolveClickNavigationFacing(directionX, directionY, previousFacing);
+
+  if (setPlayerEntityFacing(player, facing)) {
     return;
   }
 
-  if (Math.abs(directionY) > 2) {
-    player.setData('player-facing', directionY < 0 ? 'up' : 'down');
+  player.setData('player-facing', facing);
+  if (facing === 'left') {
+    player.setFlipX(true);
+  } else if (facing === 'right') {
+    player.setFlipX(false);
   }
 }
 
