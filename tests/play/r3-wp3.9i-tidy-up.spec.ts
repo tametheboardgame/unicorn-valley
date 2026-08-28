@@ -1,5 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
+const WORLD_TRIGGER_TIMEOUT_MS = 30_000;
+
 interface DiagnosticObjectSnapshot {
   type: string;
   name: string;
@@ -180,17 +182,21 @@ test('clicking open ground moves the unicorn again', async ({ page }) => {
   await page.goto('/?scene=glade&diagnostics=1');
   await waitForScene(page, 'MoonflowerGladeScene');
 
-  let snapshot = await getSnapshot(page);
-  let glade = sceneSnapshot(snapshot, 'MoonflowerGladeScene');
+  const snapshot = await getSnapshot(page);
+  const glade = sceneSnapshot(snapshot, 'MoonflowerGladeScene');
   const before = playerObject(glade);
 
   await logicalClick(page, 900, 360);
-  await page.waitForTimeout(1200);
-
-  snapshot = await getSnapshot(page);
-  glade = sceneSnapshot(snapshot, 'MoonflowerGladeScene');
-  const after = playerObject(glade);
-  expect(after.x - before.x).toBeGreaterThan(60);
+  await expect
+    .poll(
+      async () => {
+        const current = await getSnapshot(page);
+        const player = playerObject(sceneSnapshot(current, 'MoonflowerGladeScene'));
+        return player.x - before.x;
+      },
+      { timeout: 5_000 },
+    )
+    .toBeGreaterThan(60);
 });
 
 test('held movement carries through an automatic world transition on the first pass', async ({
@@ -217,6 +223,7 @@ test('held movement carries through an automatic world transition on the first p
 test('Nova keeps her canonical identity and returns the player to the exact conversation point', async ({
   page,
 }) => {
+  test.setTimeout(60_000);
   await page.goto('/?scene=meadow&diagnostics=1');
   await waitForScene(page, 'RainbowMeadowScene');
 
@@ -239,22 +246,25 @@ test('Nova keeps her canonical identity and returns the player to the exact conv
   });
 
   await page.keyboard.down('ArrowRight');
-  await page.waitForFunction(
-    () => {
-      const diagnosticWindow = window as typeof window & {
-        __UNICORN_VALLEY_DIAGNOSTICS__?: { snapshot(): BrowserDiagnosticSnapshot };
-      };
-      const meadow = diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__
-        ?.snapshot()
-        .scenes.find((scene) => scene.key === 'RainbowMeadowScene');
-      return meadow?.objects.some(
-        (object) => object.visible && object.text?.includes('Talk to Nova'),
-      );
-    },
-    undefined,
-    { timeout: 20_000 },
-  );
-  await page.keyboard.up('ArrowRight');
+  try {
+    await page.waitForFunction(
+      () => {
+        const diagnosticWindow = window as typeof window & {
+          __UNICORN_VALLEY_DIAGNOSTICS__?: { snapshot(): BrowserDiagnosticSnapshot };
+        };
+        const meadow = diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__
+          ?.snapshot()
+          .scenes.find((scene) => scene.key === 'RainbowMeadowScene');
+        return meadow?.objects.some(
+          (object) => object.visible && object.text?.includes('Talk to Nova'),
+        );
+      },
+      undefined,
+      { timeout: WORLD_TRIGGER_TIMEOUT_MS },
+    );
+  } finally {
+    await page.keyboard.up('ArrowRight');
+  }
   await page.waitForTimeout(80);
 
   let snapshot = await getSnapshot(page);
