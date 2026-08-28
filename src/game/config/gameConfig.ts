@@ -27,7 +27,6 @@ import { ShopScene } from '../scenes/ShopScene';
 import { SunbeamVillageScene } from '../scenes/SunbeamVillageScene';
 import { TitleScene } from '../scenes/TitleScene';
 import { UnicornCreatorScene } from '../scenes/UnicornCreatorScene';
-import { VillageInteriorScene } from '../scenes/VillageInteriorScene';
 import { WhisperingWoodsScene } from '../scenes/WhisperingWoodsScene';
 import { WillowStoryScene } from '../scenes/WillowStoryScene';
 import { WonderbookScene } from '../scenes/WonderbookScene';
@@ -68,7 +67,6 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
     CottageDecorateScene,
     MoonflowerPatchScene,
     SunbeamVillageScene,
-    VillageInteriorScene,
     RainbowMeadowScene,
     CrystalBrookScene,
     WhisperingWoodsScene,
