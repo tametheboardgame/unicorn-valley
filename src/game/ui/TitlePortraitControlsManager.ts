@@ -40,6 +40,7 @@ const SETTING_ACTIONS: readonly ActionDefinition[] = [
     objectName: 'title-setting-high-visibility',
     labelName: 'title-setting-high-visibility-label',
   },
+  { objectName: 'title-setting-fullscreen', labelName: 'title-setting-fullscreen-label' },
 ];
 
 interface DomAction {

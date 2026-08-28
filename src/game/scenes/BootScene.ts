@@ -15,7 +15,6 @@ import { getPebbleCollectionWorldManager } from '../story/PebbleCollectionWorldM
 import { getPipEggWorldManager } from '../story/PipEggWorldManager';
 import { getCoreNpcProductionPresentationManager } from '../visual/CoreNpcProductionPresentationManager';
 import { getEnvironmentProductionPresentationManager } from '../visual/EnvironmentProductionPresentationManager';
-import { getUiProductionPresentationManager } from '../visual/UiProductionPresentationManager';
 import { getVisualTighteningManager } from '../visual/VisualTighteningManager';
 import { getR5RegionGatewayManager } from '../world/R5RegionGatewayManager';
 import { getWorldCharacterPresentationManager } from '../world/WorldCharacterPresentationManager';
@@ -71,10 +70,21 @@ export class BootScene extends Phaser.Scene {
     getVisualTighteningManager(this.sys.game);
     getWorldTraversalPolishManager(this.sys.game);
     getEnvironmentProductionPresentationManager(this.sys.game);
-    getUiProductionPresentationManager(this.sys.game);
     getR5RegionGatewayManager(this.sys.game);
     getRacePlayerControlManager(this.sys.game);
     getRacePlaytestRecoveryManager(this.sys.game);
+
+    void import('../settings/TitleSettingsEnhancementManager').then(
+      ({ getTitleSettingsEnhancementManager }) => {
+        getTitleSettingsEnhancementManager(this.sys.game);
+      },
+    );
+    void import('../visual/UiProductionPresentationManager').then(
+      ({ getUiProductionPresentationManager }) => {
+        getUiProductionPresentationManager(this.sys.game);
+      },
+    );
+
     const requestedScene = new URLSearchParams(globalThis.location.search).get('scene');
     this.registry.set(
       'postPreloadScene',

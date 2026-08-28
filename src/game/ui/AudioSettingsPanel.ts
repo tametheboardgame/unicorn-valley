@@ -14,7 +14,8 @@ type VisiblePanelObject = Phaser.GameObjects.Rectangle | Phaser.GameObjects.Text
 const PANEL_X = GAME_WIDTH - 190;
 const PANEL_Y = 235;
 const PANEL_WIDTH = 330;
-const PANEL_HEIGHT = 300;
+const PANEL_HEIGHT = 390;
+const SETTINGS_SCENE_REGISTERED_KEY = 'wp6.14:settings-scene-registered';
 
 export class AudioSettingsPanel {
   private readonly audio = getVerticalSliceAudio();
@@ -24,6 +25,7 @@ export class AudioSettingsPanel {
   private readonly button: Phaser.GameObjects.Rectangle;
   private readonly buttonLabel: Phaser.GameObjects.Text;
   private isOpen = false;
+  private openingFullSettings = false;
 
   public constructor(
     private readonly scene: Phaser.Scene,
@@ -115,22 +117,29 @@ export class AudioSettingsPanel {
       this.panelObjects.push(rowButton, rowLabel);
     });
 
-    const hint = scene.add
-      .text(
-        PANEL_X,
-        PANEL_Y + PANEL_HEIGHT / 2 - 18,
-        'Everything important is also shown on screen.',
-        {
-          color: UI_COLOURS.softInk,
-          fontFamily: UI_FONT,
-          fontSize: '12px',
-          align: 'center',
-        },
-      )
+    const fullSettingsButton = scene.add
+      .rectangle(PANEL_X, 390, 270, 64, UI_COLOURS.gold, 1)
+      .setName('exploration-shell-settings-button')
+      .setStrokeStyle(3, UI_COLOURS.goldStrong, 1)
+      .setScrollFactor(0)
+      .setDepth(133)
+      .setInteractive({ useHandCursor: true });
+    const fullSettingsLabel = scene.add
+      .text(PANEL_X, 390, 'More settings ⚙️', {
+        color: UI_COLOURS.ink,
+        fontFamily: UI_FONT,
+        fontSize: '16px',
+        fontStyle: 'bold',
+      })
+      .setName('exploration-shell-settings-label')
       .setOrigin(0.5)
       .setScrollFactor(0)
       .setDepth(134);
-    this.panelObjects.push(hint);
+    applyButtonHover(fullSettingsButton, UI_COLOURS.gold, UI_COLOURS.cream);
+    fullSettingsButton.on('pointerdown', () => void this.openFullSettings());
+    fullSettingsLabel.setInteractive({ useHandCursor: true });
+    fullSettingsLabel.on('pointerdown', () => void this.openFullSettings());
+    this.panelObjects.push(fullSettingsButton, fullSettingsLabel);
     this.objects.push(...this.panelObjects);
 
     this.button.on('pointerdown', () => {
@@ -145,12 +154,14 @@ export class AudioSettingsPanel {
     }
     scene.input.once('pointerdown', () => void this.audio.unlock());
     scene.input.keyboard?.once('keydown', () => void this.audio.unlock());
+    scene.events.on(Phaser.Scenes.Events.RESUME, this.handleSceneResume, this);
 
     this.refresh();
     this.setPanelVisible(false);
   }
 
   public destroy(): void {
+    this.scene.events.off(Phaser.Scenes.Events.RESUME, this.handleSceneResume, this);
     if (this.manageSceneAudio) {
       this.audio.leaveScene(this.scene.scene.key);
     }
@@ -160,6 +171,43 @@ export class AudioSettingsPanel {
     this.objects.length = 0;
     this.panelObjects.length = 0;
     this.rows.length = 0;
+  }
+
+  private handleSceneResume(): void {
+    this.refresh();
+  }
+
+  private async openFullSettings(): Promise<void> {
+    if (
+      this.openingFullSettings ||
+      !this.scene.scene.isActive() ||
+      this.scene.scene.isActive('SettingsScene')
+    ) {
+      return;
+    }
+
+    this.openingFullSettings = true;
+    try {
+      if (this.scene.registry.get(SETTINGS_SCENE_REGISTERED_KEY) !== true) {
+        const { SettingsScene } = await import('../scenes/SettingsScene');
+        this.scene.scene.add('SettingsScene', SettingsScene, false);
+        this.scene.registry.set(SETTINGS_SCENE_REGISTERED_KEY, true);
+      }
+
+      if (!this.scene.scene.isActive()) {
+        return;
+      }
+
+      void this.audio.unlock();
+      this.audio.playSfx('ui');
+      this.isOpen = false;
+      this.setPanelVisible(false);
+      const returnScene = this.scene.scene.key;
+      this.scene.scene.launch('SettingsScene', { returnScene });
+      this.scene.scene.pause();
+    } finally {
+      this.openingFullSettings = false;
+    }
   }
 
   private toggleSetting(kind: SettingRow['kind']): void {
