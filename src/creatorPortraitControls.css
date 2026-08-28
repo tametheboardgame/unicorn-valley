@@ -217,7 +217,9 @@
     border-radius: 999px;
     background: #eee4f7;
     color: #4f3a5d;
-    font: 900 32px/1 system-ui, sans-serif;
+    font:
+      900 32px / 1 system-ui,
+      sans-serif;
   }
 
   .creator-portrait-cycle-value {
