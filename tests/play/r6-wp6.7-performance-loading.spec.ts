@@ -8,6 +8,11 @@ interface FramePerformanceSnapshot {
   longFrameCount: number;
 }
 
+interface TransitionMeasurement {
+  elapsedMs: number;
+  performance: FramePerformanceSnapshot;
+}
+
 interface BrowserDiagnosticsApi {
   snapshot(): { activeScenes: string[] };
   performance(): FramePerformanceSnapshot;
@@ -35,7 +40,7 @@ async function waitForScene(page: Page, sceneKey: string): Promise<void> {
   }, sceneKey);
 }
 
-async function measureTransition(page: Page, sceneKey: string): Promise<number> {
+async function measureTransition(page: Page, sceneKey: string): Promise<TransitionMeasurement> {
   const startedAt = await page.evaluate((targetScene) => {
     const diagnosticWindow = window as typeof window & {
       __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
@@ -51,7 +56,39 @@ async function measureTransition(page: Page, sceneKey: string): Promise<number> 
   }, sceneKey);
 
   await waitForScene(page, sceneKey);
-  return page.evaluate((start) => performance.now() - start, startedAt);
+  return page.evaluate((start) => {
+    const diagnosticWindow = window as typeof window & {
+      __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
+    };
+    const diagnostics = diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__;
+    if (!diagnostics) {
+      throw new Error('Browser diagnostics are unavailable.');
+    }
+    return {
+      elapsedMs: performance.now() - start,
+      performance: diagnostics.performance(),
+    };
+  }, startedAt);
+}
+
+async function measureSettledPerformance(page: Page): Promise<FramePerformanceSnapshot> {
+  await page.evaluate(() => {
+    const diagnosticWindow = window as typeof window & {
+      __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
+    };
+    diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__?.resetPerformance();
+  });
+  await page.waitForTimeout(750);
+  return page.evaluate(() => {
+    const diagnosticWindow = window as typeof window & {
+      __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
+    };
+    const profile = diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__?.performance();
+    if (!profile) {
+      throw new Error('Browser diagnostics are unavailable.');
+    }
+    return profile;
+  });
 }
 
 test('production world transitions stay responsive and avoid severe frame hitches', async ({
@@ -73,18 +110,16 @@ test('production world transitions stay responsive and avoid severe frame hitche
   expect(initial?.p95FrameMs ?? Number.POSITIVE_INFINITY).toBeLessThan(120);
 
   for (const sceneKey of ['SunbeamVillageScene', 'RainbowMeadowScene', 'CrystalBrookScene']) {
-    const transitionMs = await measureTransition(page, sceneKey);
-    expect(transitionMs, `${sceneKey} transition took too long`).toBeLessThan(1000);
-    await page.waitForTimeout(650);
+    const transition = await measureTransition(page, sceneKey);
+    expect(transition.elapsedMs, `${sceneKey} transition took too long`).toBeLessThan(1000);
+    expect(
+      transition.performance.worstFrameMs,
+      `${sceneKey} transition produced a severe frame hitch`,
+    ).toBeLessThan(500);
 
-    const profile = await page.evaluate(() => {
-      const diagnosticWindow = window as typeof window & {
-        __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
-      };
-      return diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__?.performance();
-    });
-    expect(profile?.sampleCount ?? 0).toBeGreaterThan(15);
-    expect(profile?.p95FrameMs ?? Number.POSITIVE_INFINITY).toBeLessThan(120);
-    expect(profile?.worstFrameMs ?? Number.POSITIVE_INFINITY).toBeLessThan(500);
+    const profile = await measureSettledPerformance(page);
+    expect(profile.sampleCount).toBeGreaterThan(15);
+    expect(profile.p95FrameMs).toBeLessThan(120);
+    expect(profile.worstFrameMs).toBeLessThan(500);
   }
 });
