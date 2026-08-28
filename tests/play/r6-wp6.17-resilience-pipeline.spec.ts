@@ -24,6 +24,50 @@ interface DiagnosticSnapshot {
   }>;
 }
 
+interface BrowserFailureAudit {
+  consoleErrors: string[];
+  pageErrors: string[];
+  failedRequests: string[];
+  httpErrors: string[];
+}
+
+function installBrowserFailureAudit(page: Page): BrowserFailureAudit {
+  const audit: BrowserFailureAudit = {
+    consoleErrors: [],
+    pageErrors: [],
+    failedRequests: [],
+    httpErrors: [],
+  };
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') {
+      audit.consoleErrors.push(message.text());
+    }
+  });
+  page.on('pageerror', (error) => {
+    audit.pageErrors.push(error.message);
+  });
+  page.on('requestfailed', (request) => {
+    audit.failedRequests.push(
+      `${request.method()} ${request.url()}: ${request.failure()?.errorText ?? 'failed'}`,
+    );
+  });
+  page.on('response', (response) => {
+    if (response.status() >= 400) {
+      audit.httpErrors.push(`${response.status()} ${response.request().method()} ${response.url()}`);
+    }
+  });
+
+  return audit;
+}
+
+function expectBrowserFailureAuditClean(audit: BrowserFailureAudit): void {
+  expect(audit.consoleErrors).toEqual([]);
+  expect(audit.pageErrors).toEqual([]);
+  expect(audit.failedRequests).toEqual([]);
+  expect(audit.httpErrors).toEqual([]);
+}
+
 function createStoredSave(
   name: string,
   appearance: Record<string, string> = {},
@@ -145,6 +189,7 @@ function sceneText(current: DiagnosticSnapshot, sceneKey: string): string[] {
 test('a corrupted profile record recovers from backup and keeps Continue usable', async ({
   page,
 }) => {
+  const failureAudit = installBrowserFailureAudit(page);
   const corruptPrimary = createStoredSave('Broken') as Record<string, unknown>;
   corruptPrimary.profile = {
     name: 42,
@@ -174,24 +219,13 @@ test('a corrupted profile record recovers from backup and keeps Continue usable'
 
   await tapTitleText(page, 'Continue');
   await waitForScene(page, 'CottageInteriorScene');
+  expectBrowserFailureAuditClean(failureAudit);
 });
 
 test('malformed settings and optional cosmetics cannot block Settings, Redesign or Continue', async ({
   page,
 }) => {
-  const consoleErrors: string[] = [];
-  const failedRequests: string[] = [];
-  page.on('console', (message) => {
-    if (message.type() === 'error') {
-      consoleErrors.push(message.text());
-    }
-  });
-  page.on('requestfailed', (request) => {
-    failedRequests.push(
-      `${request.method()} ${request.url()}: ${request.failure()?.errorText ?? 'failed'}`,
-    );
-  });
-
+  const failureAudit = installBrowserFailureAudit(page);
   const save = createStoredSave('Starlight', {
     bodyColour: 'missing-body',
     maneStyle: 'missing-mane',
@@ -234,14 +268,13 @@ test('malformed settings and optional cosmetics cannot block Settings, Redesign 
 
   await tapTitleText(page, 'Continue');
   await waitForScene(page, 'CottageInteriorScene');
-
-  expect(consoleErrors).toEqual([]);
-  expect(failedRequests).toEqual([]);
+  expectBrowserFailureAuditClean(failureAudit);
 });
 
 test('a new player can visit Settings and still route through New Game into the creator', async ({
   page,
 }) => {
+  const failureAudit = installBrowserFailureAudit(page);
   await page.goto('/?diagnostics=1');
   await waitForScene(page, 'TitleScene');
 
@@ -251,4 +284,5 @@ test('a new player can visit Settings and still route through New Game into the 
 
   await tapTitleText(page, 'New Game');
   await waitForScene(page, 'UnicornCreatorScene');
+  expectBrowserFailureAuditClean(failureAudit);
 });
