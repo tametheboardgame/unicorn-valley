@@ -14,6 +14,8 @@ import {
   randomiseUnicornAppearance,
   serialiseUnicornAppearance,
   TAIL_STYLES,
+  UNICORN_COSMETIC_REGISTRY,
+  type UnicornAppearance,
   validateUnicornCosmeticRegistry,
 } from './UnicornAppearance';
 
@@ -66,5 +68,51 @@ describe('unicorn appearance', () => {
     expect(HORN_STYLES.length).toBeGreaterThanOrEqual(5);
     expect(MARKINGS.length).toBeGreaterThanOrEqual(6);
     expect(ACCESSORIES.length).toBeGreaterThanOrEqual(7);
+  });
+
+  it('keeps every default and registered cosmetic id parser-compatible', () => {
+    const categories = Object.keys(UNICORN_COSMETIC_REGISTRY) as Array<keyof UnicornAppearance>;
+
+    for (const category of categories) {
+      const choices = UNICORN_COSMETIC_REGISTRY[category];
+      const registeredIds = choices.map((choice) => choice.id as string);
+      expect(registeredIds, `${category} should not be empty`).not.toHaveLength(0);
+      expect(registeredIds, `${category} should contain its default`).toContain(
+        DEFAULT_UNICORN_APPEARANCE[category],
+      );
+
+      for (const choice of choices) {
+        const parsed = parseUnicornAppearance({ [category]: choice.id });
+        expect(parsed[category], `${category}:${choice.id} should survive parsing`).toBe(choice.id);
+      }
+    }
+  });
+
+  it('keeps every registered cross-category pair compatible', () => {
+    const categories = Object.keys(UNICORN_COSMETIC_REGISTRY) as Array<keyof UnicornAppearance>;
+
+    for (let firstIndex = 0; firstIndex < categories.length; firstIndex += 1) {
+      const firstCategory = categories[firstIndex];
+      for (let secondIndex = firstIndex + 1; secondIndex < categories.length; secondIndex += 1) {
+        const secondCategory = categories[secondIndex];
+
+        for (const firstChoice of UNICORN_COSMETIC_REGISTRY[firstCategory]) {
+          for (const secondChoice of UNICORN_COSMETIC_REGISTRY[secondCategory]) {
+            const parsed = parseUnicornAppearance({
+              [firstCategory]: firstChoice.id,
+              [secondCategory]: secondChoice.id,
+            });
+            expect(
+              parsed[firstCategory],
+              `${firstCategory}:${firstChoice.id} should remain compatible with ${secondCategory}:${secondChoice.id}`,
+            ).toBe(firstChoice.id);
+            expect(
+              parsed[secondCategory],
+              `${secondCategory}:${secondChoice.id} should remain compatible with ${firstCategory}:${firstChoice.id}`,
+            ).toBe(secondChoice.id);
+          }
+        }
+      }
+    }
   });
 });
