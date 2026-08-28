@@ -15,6 +15,12 @@ getTitlePortraitControlsManager(game);
 getExplorationGeometryPresentationManager(game);
 getR5FinalTighteningManager(game);
 
+void import('./game/scenes/VillageInteriorScene').then(({ VillageInteriorScene }) => {
+  if (!game.scene.keys.VillageInteriorScene) {
+    game.scene.add('VillageInteriorScene', VillageInteriorScene);
+  }
+});
+
 const creatorPortraitQuery = globalThis.matchMedia?.(
   '(pointer: coarse) and (max-width: 700px) and (orientation: portrait)',
 );
