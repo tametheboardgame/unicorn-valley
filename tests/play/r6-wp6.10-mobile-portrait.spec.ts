@@ -86,13 +86,14 @@ test('portrait touch layout pins the game high and provides thumb-sized working 
     isPrimary: true,
     buttons: 1,
   });
-  await page.waitForTimeout(500);
-  await right.dispatchEvent('pointerup', {
-    pointerId: 1,
-    pointerType: 'touch',
-    isPrimary: true,
-    buttons: 0,
-  });
-
-  await expect.poll(async () => (await playerPosition(page)).x).toBeGreaterThan(before.x + 15);
+  try {
+    await expect.poll(async () => (await playerPosition(page)).x).toBeGreaterThan(before.x + 15);
+  } finally {
+    await right.dispatchEvent('pointerup', {
+      pointerId: 1,
+      pointerType: 'touch',
+      isPrimary: true,
+      buttons: 0,
+    });
+  }
 });
