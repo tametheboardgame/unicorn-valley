@@ -94,12 +94,12 @@ test('Sunbeam Village shops read as authored open storefronts', async ({ page })
 
   const village = sceneFrom(await snapshot(page), 'SunbeamVillageScene');
   for (const shopId of ['bakery', 'accessory-shop', 'library']) {
-    expect(village.objects.some((object) => object.name === `village-shopfront:${shopId}:wall`)).toBe(
-      true,
-    );
-    expect(village.objects.some((object) => object.name === `village-shopfront:${shopId}:door`)).toBe(
-      true,
-    );
+    expect(
+      village.objects.some((object) => object.name === `village-shopfront:${shopId}:wall`),
+    ).toBe(true);
+    expect(
+      village.objects.some((object) => object.name === `village-shopfront:${shopId}:door`),
+    ).toBe(true);
     expect(
       village.objects.some((object) => object.name === `village-shopfront:${shopId}:entry-cue`),
     ).toBe(true);
@@ -126,9 +126,9 @@ test('all three village buildings have distinct usable interiors', async ({ page
   });
   interior = sceneFrom(await snapshot(page), 'VillageInteriorScene');
   expect(interior.objects.some((object) => object.name === 'village-interior:library')).toBe(true);
-  expect(interior.objects.some((object) => object.name === 'village-interior-library-shelves')).toBe(
-    true,
-  );
+  expect(
+    interior.objects.some((object) => object.name === 'village-interior-library-shelves'),
+  ).toBe(true);
 
   await startScene(page, 'VillageInteriorScene', {
     interiorId: 'accessory-shop',
