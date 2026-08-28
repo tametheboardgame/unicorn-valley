@@ -248,7 +248,7 @@ test('Nova keeps her canonical identity and returns the player to the exact conv
         ?.snapshot()
         .scenes.find((scene) => scene.key === 'RainbowMeadowScene');
       return meadow?.objects.some(
-        (object) => object.visible && object.text?.includes('Talk: Nova'),
+        (object) => object.visible && object.text?.includes('Talk to Nova'),
       );
     },
     undefined,

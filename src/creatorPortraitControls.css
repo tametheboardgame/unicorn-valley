@@ -1,0 +1,295 @@
+.creator-portrait-controls {
+  display: none;
+}
+
+.creator-portrait-controls[hidden],
+.creator-portrait-section[hidden],
+.creator-portrait-action[hidden] {
+  display: none !important;
+}
+
+@media (pointer: coarse) and (max-width: 700px) and (orientation: portrait) {
+  .creator-portrait-controls {
+    position: fixed;
+    z-index: 960;
+    top: calc(56.25vw + 8px);
+    right: max(10px, env(safe-area-inset-right));
+    bottom: max(10px, env(safe-area-inset-bottom));
+    left: max(10px, env(safe-area-inset-left));
+    display: flex;
+    max-width: 520px;
+    margin-inline: auto;
+    padding: 12px;
+    overflow-y: auto;
+    flex-direction: column;
+    gap: 10px;
+    border: 3px solid rgb(157 114 173 / 94%);
+    border-radius: 22px;
+    background: rgb(255 251 239 / 97%);
+    color: #4f3a5d;
+    box-shadow: 0 8px 28px rgb(36 26 61 / 30%);
+    overscroll-behavior: contain;
+    touch-action: manipulation;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .unicorn-name-input {
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .creator-portrait-heading {
+    margin: 0;
+    color: #5c4568;
+    font:
+      800 clamp(21px, 6vw, 28px) "Trebuchet MS",
+      "Segoe UI",
+      system-ui,
+      sans-serif;
+    line-height: 1.1;
+    text-align: center;
+  }
+
+  .creator-portrait-preview-hint,
+  .creator-portrait-status {
+    margin: 0;
+    color: #6c5a73;
+    font:
+      700 clamp(14px, 3.8vw, 17px) "Trebuchet MS",
+      "Segoe UI",
+      system-ui,
+      sans-serif;
+    line-height: 1.3;
+    text-align: center;
+  }
+
+  .creator-portrait-name-group {
+    display: grid;
+    gap: 5px;
+    color: #5c4568;
+    font:
+      800 17px "Trebuchet MS",
+      "Segoe UI",
+      system-ui,
+      sans-serif;
+  }
+
+  .creator-portrait-name-input {
+    width: 100%;
+    min-height: 54px;
+    padding: 9px 14px;
+    border: 3px solid #b38ac6;
+    border-radius: 16px;
+    outline: none;
+    background: #fffaf2;
+    color: #4f3a5d;
+    font:
+      800 clamp(18px, 5vw, 22px) "Trebuchet MS",
+      "Segoe UI",
+      system-ui,
+      sans-serif;
+    text-align: center;
+    box-shadow: 0 4px 10px rgb(54 36 71 / 14%);
+  }
+
+  .creator-portrait-name-input:focus-visible {
+    border-color: #d6b35f;
+    box-shadow: 0 0 0 3px rgb(255 230 166 / 40%);
+  }
+
+  .creator-portrait-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 7px;
+  }
+
+  .creator-portrait-tab,
+  .creator-portrait-action,
+  .creator-portrait-cycle-button,
+  .creator-portrait-swatch {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .creator-portrait-tab {
+    min-height: 48px;
+    padding: 7px 6px;
+    border: 3px solid #b38ac6;
+    border-radius: 15px;
+    background: #eee4f7;
+    color: #4f3a5d;
+    font:
+      800 clamp(14px, 3.8vw, 17px) "Trebuchet MS",
+      "Segoe UI",
+      system-ui,
+      sans-serif;
+    line-height: 1.08;
+  }
+
+  .creator-portrait-tab[aria-pressed="true"] {
+    border-color: #d6b35f;
+    background: #ffe9a9;
+  }
+
+  .creator-portrait-section {
+    display: grid;
+    gap: 10px;
+    padding: 10px;
+    border: 2px solid rgb(179 138 198 / 58%);
+    border-radius: 18px;
+    background: #f7effa;
+  }
+
+  .creator-portrait-colour-row {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .creator-portrait-colour-row legend,
+  .creator-portrait-cycle-label {
+    margin-bottom: 6px;
+    color: #5c4568;
+    font:
+      800 16px "Trebuchet MS",
+      "Segoe UI",
+      system-ui,
+      sans-serif;
+  }
+
+  .creator-portrait-swatches {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .creator-portrait-swatch {
+    display: flex;
+    min-width: 0;
+    min-height: 50px;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 9px;
+    border: 3px solid #c4a2d2;
+    border-radius: 15px;
+    background: #fffaf2;
+    color: #4f3a5d;
+    font:
+      800 clamp(13px, 3.7vw, 16px) "Trebuchet MS",
+      "Segoe UI",
+      system-ui,
+      sans-serif;
+    text-align: left;
+  }
+
+  .creator-portrait-swatch-dot {
+    width: 27px;
+    height: 27px;
+    flex: 0 0 27px;
+    border: 2px solid rgb(79 58 93 / 38%);
+    border-radius: 999px;
+    background: var(--creator-swatch);
+  }
+
+  .creator-portrait-swatch[aria-pressed="true"] {
+    border-color: #d6b35f;
+    background: #fff0bb;
+    box-shadow: 0 0 0 2px rgb(214 179 95 / 20%);
+  }
+
+  .creator-portrait-cycle-row {
+    display: grid;
+    gap: 5px;
+  }
+
+  .creator-portrait-cycle-controls {
+    display: grid;
+    grid-template-columns: 54px minmax(0, 1fr) 54px;
+    gap: 7px;
+    align-items: center;
+  }
+
+  .creator-portrait-cycle-button {
+    width: 54px;
+    height: 54px;
+    border: 3px solid #b38ac6;
+    border-radius: 999px;
+    background: #eee4f7;
+    color: #4f3a5d;
+    font:
+      900 32px / 1 system-ui,
+      sans-serif;
+  }
+
+  .creator-portrait-cycle-value {
+    display: grid;
+    min-height: 50px;
+    place-items: center;
+    padding: 8px;
+    border-radius: 14px;
+    background: #eadcf1;
+    color: #4f3a5d;
+    font:
+      800 clamp(15px, 4.2vw, 18px) "Trebuchet MS",
+      "Segoe UI",
+      system-ui,
+      sans-serif;
+    text-align: center;
+  }
+
+  .creator-portrait-status {
+    min-height: 18px;
+  }
+
+  .creator-portrait-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .creator-portrait-action {
+    min-height: 54px;
+    padding: 9px 10px;
+    border: 3px solid #b38ac6;
+    border-radius: 17px;
+    background: #eee4f7;
+    color: #4f3a5d;
+    font:
+      800 clamp(15px, 4vw, 18px) "Trebuchet MS",
+      "Segoe UI",
+      system-ui,
+      sans-serif;
+    line-height: 1.12;
+  }
+
+  .creator-portrait-action.creator-portrait-primary {
+    grid-column: 1 / -1;
+    min-height: 60px;
+    border-color: #d6b35f;
+    background: #ffe9a9;
+    font-size: clamp(18px, 5vw, 22px);
+  }
+
+  .creator-portrait-tab:active:not(:disabled),
+  .creator-portrait-action:active:not(:disabled),
+  .creator-portrait-cycle-button:active:not(:disabled),
+  .creator-portrait-swatch:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+
+  .creator-portrait-tab:focus-visible,
+  .creator-portrait-action:focus-visible,
+  .creator-portrait-cycle-button:focus-visible,
+  .creator-portrait-swatch:focus-visible {
+    outline: 4px solid #d6b35f;
+    outline-offset: 2px;
+  }
+
+  .creator-portrait-tab:disabled,
+  .creator-portrait-action:disabled,
+  .creator-portrait-cycle-button:disabled,
+  .creator-portrait-swatch:disabled {
+    opacity: 0.5;
+  }
+}
