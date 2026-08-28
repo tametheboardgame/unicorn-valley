@@ -11,6 +11,7 @@ import {
 import type { PlayerFacing, PlayerMotionState, PlayerMovementCommand } from './PlayerMovement';
 
 const MOVEMENT_DETAIL_NAME = 'world-movement-detail';
+const PLAYER_ENTITIES = new WeakMap<Phaser.Physics.Arcade.Sprite, PlayerEntity>();
 
 export class PlayerEntity {
   public readonly sprite: Phaser.Physics.Arcade.Sprite;
@@ -28,6 +29,7 @@ export class PlayerEntity {
     private readonly textureKey: string,
   ) {
     this.sprite = scene.physics.add.sprite(x, y, textureKey);
+    PLAYER_ENTITIES.set(this.sprite, this);
     this.sprite.setName(WORLD_PLAYER_NAME);
     this.sprite.setDepth(20);
     this.sprite.setCollideWorldBounds(true);
@@ -112,6 +114,7 @@ export class PlayerEntity {
   }
 
   public destroy(): void {
+    PLAYER_ENTITIES.delete(this.sprite);
     this.sprite.destroy();
   }
 
@@ -175,4 +178,20 @@ export class PlayerEntity {
       onComplete: () => sparkle.destroy(),
     });
   }
+}
+
+export function getPlayerEntityFacing(sprite: Phaser.Physics.Arcade.Sprite): PlayerFacing | null {
+  return PLAYER_ENTITIES.get(sprite)?.getFacing() ?? null;
+}
+
+export function setPlayerEntityFacing(
+  sprite: Phaser.Physics.Arcade.Sprite,
+  facing: PlayerFacing,
+): boolean {
+  const entity = PLAYER_ENTITIES.get(sprite);
+  if (!entity) {
+    return false;
+  }
+  entity.setFacing(facing);
+  return true;
 }
