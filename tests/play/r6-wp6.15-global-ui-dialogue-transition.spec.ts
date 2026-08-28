@@ -109,9 +109,9 @@ test('non-core speakers retain a readable portrait fallback', async ({ page }) =
   }
 
   expect(namedObject(scene, 'dialogue-production-portrait-fallback').visible).toBe(true);
-  expect(scene.objects.some(({ name }) => name.startsWith('dialogue-production-portrait-ripple'))).toBe(
-    false,
-  );
+  expect(
+    scene.objects.some(({ name }) => name.startsWith('dialogue-production-portrait-ripple')),
+  ).toBe(false);
 });
 
 test('Reduced Motion leaves production UI decoration static', async ({ page }) => {
