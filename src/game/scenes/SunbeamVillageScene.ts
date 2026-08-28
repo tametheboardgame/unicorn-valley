@@ -23,7 +23,11 @@ import {
   RAINBOW_MEADOW_MAP,
   setRainbowMeadowPlayerSpawn,
 } from '../world/RainbowMeadowMap';
-import { SUNBEAM_VILLAGE_LOCATION_ID, SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
+import {
+  setSunbeamVillagePlayerSpawn,
+  SUNBEAM_VILLAGE_LOCATION_ID,
+  SUNBEAM_VILLAGE_MAP,
+} from '../world/SunbeamVillageMap';
 
 const COLLISION_TEXTURE_KEY = 'village-collision-pixel';
 const SAVED_PLAYER_TEXTURE_KEY = 'player-unicorn-village';
@@ -59,37 +63,46 @@ const VILLAGE_INTERACTIONS = [
   {
     id: 'interaction:village-bakery',
     label: 'Sunbeam Bakery',
-    actionLabel: 'Look inside',
+    actionLabel: 'Enter',
     position: landmarkApproach('bakery'),
     interactionRadius: 155,
     result: {
-      type: 'message',
-      title: 'Sunbeam Bakery',
-      message: 'Warm berry buns are cooling by the window. Marigold is nearby.',
+      type: 'scene-transition',
+      sceneKey: 'VillageInteriorScene',
+      payload: {
+        interiorId: 'bakery',
+        returnScene: 'SunbeamVillageScene',
+      },
     },
   },
   {
     id: 'interaction:village-accessory-shop',
     label: 'Twinkle & Thread',
-    actionLabel: 'Peek in',
+    actionLabel: 'Enter',
     position: landmarkApproach('accessory-shop'),
     interactionRadius: 155,
     result: {
-      type: 'message',
-      title: 'Twinkle & Thread',
-      message: 'Ribbons, bows and sparkly accessories fill the window. The door is not open yet.',
+      type: 'scene-transition',
+      sceneKey: 'VillageInteriorScene',
+      payload: {
+        interiorId: 'accessory-shop',
+        returnScene: 'SunbeamVillageScene',
+      },
     },
   },
   {
     id: 'interaction:village-library',
     label: 'Story House',
-    actionLabel: 'Visit',
+    actionLabel: 'Enter',
     position: landmarkApproach('library'),
     interactionRadius: 160,
     result: {
-      type: 'message',
-      title: 'Story House',
-      message: 'A little library packed with valley stories. More shelves will be ready later.',
+      type: 'scene-transition',
+      sceneKey: 'VillageInteriorScene',
+      payload: {
+        interiorId: 'library',
+        returnScene: 'SunbeamVillageScene',
+      },
     },
   },
   {
@@ -290,6 +303,8 @@ export class SunbeamVillageScene extends Phaser.Scene {
           setRainbowMeadowPlayerSpawn(villageEntrance.approach);
         }
         saveLocationCheckpoint(getBrowserSaveService(), RAINBOW_MEADOW_LOCATION_ID);
+      } else if (target.result.sceneKey === 'VillageInteriorScene') {
+        setSunbeamVillagePlayerSpawn(target.position);
       }
       this.scene.start(target.result.sceneKey, target.result.payload);
       return;
@@ -336,9 +351,19 @@ export class SunbeamVillageScene extends Phaser.Scene {
       .setStrokeStyle(10, 0xd5aa72, 0.6)
       .setDepth(3);
 
-    this.createBuilding(900, 470, 450, 320, 0xf7a96f, 0xffdf9c, '🥐', 'SUNBEAM BAKERY');
-    this.createBuilding(1500, 430, 430, 320, 0xd99bd4, 0xffd9ef, '🎀', 'TWINKLE & THREAD');
-    this.createBuilding(2110, 480, 490, 330, 0x87b8d8, 0xd9f1ff, '📚', 'STORY HOUSE');
+    this.createBuilding('bakery', 900, 470, 450, 320, 0xf7a96f, 0xffdf9c, '🥐', 'SUNBEAM BAKERY');
+    this.createBuilding(
+      'accessory-shop',
+      1500,
+      430,
+      430,
+      320,
+      0xd99bd4,
+      0xffd9ef,
+      '🎀',
+      'TWINKLE & THREAD',
+    );
+    this.createBuilding('library', 2110, 480, 490, 330, 0x87b8d8, 0xd9f1ff, '📚', 'STORY HOUSE');
     this.createFountain();
     this.createNpcMarkers();
     this.createWillowGarden();
@@ -348,6 +373,7 @@ export class SunbeamVillageScene extends Phaser.Scene {
   }
 
   private createBuilding(
+    id: string,
     x: number,
     y: number,
     width: number,
@@ -357,30 +383,98 @@ export class SunbeamVillageScene extends Phaser.Scene {
     icon: string,
     label: string,
   ): void {
-    this.add.rectangle(x, y, width, height, wallColour, 1).setDepth(6);
+    const baseY = y + height / 2;
+    const doorY = baseY - 64;
+    const windowY = y + 4;
+
+    this.add.ellipse(x + 8, baseY + 38, width + 80, 78, 0x604c55, 0.18).setDepth(5.6);
     this.add
-      .triangle(x, y - height / 2 - 95, 0, 150, width / 2 + 45, 0, width + 90, 150, roofColour, 1)
-      .setDepth(7);
-    this.add.rectangle(x, y + height / 2 - 70, 92, 140, 0x8e654f, 1).setDepth(8);
-    this.add.circle(x, y - 25, 53, 0xfffbdf, 0.95).setDepth(8);
+      .rectangle(x, y, width, height, wallColour, 1)
+      .setStrokeStyle(7, 0x8c6b6b, 0.72)
+      .setDepth(6)
+      .setName(`village-shopfront:${id}:wall`);
     this.add
-      .text(x, y - 25, icon, {
+      .triangle(x, y - height / 2 - 96, 0, 154, width / 2 + 48, 0, width + 96, 154, roofColour, 1)
+      .setStrokeStyle(6, 0x8a6e72, 0.72)
+      .setDepth(7)
+      .setName(`village-shopfront:${id}:roof`);
+    this.add.rectangle(x, y - height / 2 + 4, width + 34, 24, 0xffffff, 0.42).setDepth(7.2);
+
+    for (const side of [-1, 1]) {
+      const windowX = x + side * (width * 0.28);
+      this.add
+        .rectangle(windowX, windowY, 112, 98, 0xbde9f0, 1)
+        .setStrokeStyle(8, 0xfff5dc, 0.95)
+        .setDepth(8);
+      this.add.rectangle(windowX, windowY, 8, 92, 0xffffff, 0.6).setDepth(8.2);
+      this.add.rectangle(windowX, windowY, 106, 8, 0xffffff, 0.6).setDepth(8.2);
+      this.add.rectangle(windowX, windowY + 67, 128, 22, 0x8a624e, 1).setDepth(8.3);
+      for (const offset of [-38, 0, 38]) {
+        this.add
+          .circle(windowX + offset, windowY + 54, 11, side < 0 ? 0xffa8c8 : 0xffdd78, 0.96)
+          .setDepth(8.5);
+      }
+    }
+
+    this.add
+      .rectangle(x, doorY, 106, 142, 0x7a584b, 1)
+      .setStrokeStyle(7, 0xffefd3, 0.92)
+      .setDepth(8.5)
+      .setName(`village-shopfront:${id}:door`);
+    this.add.rectangle(x, doorY - 20, 68, 72, 0xbfe8ed, 0.94).setDepth(8.7);
+    this.add.circle(x + 34, doorY + 27, 7, 0xffd56e, 1).setDepth(9);
+    this.add.ellipse(x, baseY + 12, 144, 42, 0xfff1b0, 0.34).setDepth(7.8);
+    this.add.rectangle(x, baseY + 20, 152, 28, 0xd0a877, 1).setDepth(8.2);
+
+    const awningY = y + height / 2 - 154;
+    this.add.rectangle(x, awningY, width - 46, 38, 0xfff5dd, 1).setDepth(8.4);
+    for (let stripe = -2; stripe <= 2; stripe += 1) {
+      this.add
+        .rectangle(
+          x + stripe * 62,
+          awningY,
+          34,
+          38,
+          stripe % 2 === 0 ? wallColour : roofColour,
+          0.88,
+        )
+        .setDepth(8.5);
+    }
+
+    this.add
+      .rectangle(x, y - 78, 164, 84, 0xfff6df, 0.98)
+      .setStrokeStyle(6, 0x9d757b, 0.88)
+      .setDepth(8.8);
+    this.add
+      .text(x, y - 80, icon, {
         fontFamily: 'system-ui, sans-serif',
-        fontSize: '48px',
+        fontSize: '43px',
       })
       .setOrigin(0.5)
       .setDepth(9);
     this.add
-      .text(x, y + height / 2 + 34, label, {
+      .text(x, baseY + 62, label, {
         color: '#684c52',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '18px',
         fontStyle: 'bold',
-        backgroundColor: '#fff8dfdd',
-        padding: { x: 10, y: 6 },
+        backgroundColor: '#fff8dff0',
+        padding: { x: 12, y: 7 },
       })
       .setOrigin(0.5)
-      .setDepth(9);
+      .setDepth(9.2);
+    this.add
+      .text(x, baseY + 95, 'DOOR OPEN • COME IN', {
+        color: '#745b62',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '12px',
+        fontStyle: 'bold',
+        backgroundColor: '#fff4c9dc',
+        padding: { x: 8, y: 4 },
+      })
+      .setOrigin(0.5)
+      .setDepth(9.1)
+      .setName(`village-shopfront:${id}:entry-cue`);
   }
 
   private createFountain(): void {
