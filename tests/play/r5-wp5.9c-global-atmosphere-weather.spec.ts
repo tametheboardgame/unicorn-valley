@@ -44,6 +44,25 @@ async function waitForScene(page: Page, sceneKey: string): Promise<void> {
   await page.waitForTimeout(450);
 }
 
+async function waitForObject(page: Page, sceneKey: string, objectName: string): Promise<void> {
+  await page.waitForFunction(
+    ({ expectedScene, expectedObject }) => {
+      const diagnostics = (
+        window as typeof window & {
+          __UNICORN_VALLEY_DIAGNOSTICS__?: { snapshot(): DiagnosticSnapshot };
+        }
+      ).__UNICORN_VALLEY_DIAGNOSTICS__;
+      return (
+        diagnostics
+          ?.snapshot()
+          .scenes.find(({ key }) => key === expectedScene)
+          ?.objects.some(({ name }) => name === expectedObject) === true
+      );
+    },
+    { expectedScene: sceneKey, expectedObject: objectName },
+  );
+}
+
 function sceneFrom(value: DiagnosticSnapshot, sceneKey: string): DiagnosticScene {
   const scene = value.scenes.find((candidate) => candidate.key === sceneKey);
   if (!scene) {
@@ -138,7 +157,7 @@ test.describe('R5-WP5.9C global atmosphere and weather', () => {
     await page.keyboard.press('y');
     await page.keyboard.press('y');
     await page.keyboard.press('y');
-    await page.waitForTimeout(180);
+    await waitForObject(page, 'WhisperingWoodsScene', 'magical-weather-sparkle-world');
 
     const woods = sceneFrom(await snapshot(page), 'WhisperingWoodsScene');
     const sparkleField = woods.objects.find(
