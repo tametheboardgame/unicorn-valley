@@ -20,7 +20,7 @@ interface BrowserDiagnosticsApi {
   startScene(sceneKey: string, data?: object): void;
 }
 
-const MIN_PERFORMANCE_SAMPLES = 16;
+const MIN_PERFORMANCE_SAMPLES = 60;
 
 async function waitForDiagnostics(page: Page): Promise<void> {
   await page.waitForFunction(() => {
@@ -56,7 +56,7 @@ async function waitForPerformanceSamples(
       );
     },
     minimumSamples,
-    { timeout: 2500 },
+    { timeout: 5000 },
   );
 
   return page.evaluate(() => {
@@ -120,7 +120,7 @@ test('production world transitions stay responsive and avoid severe frame hitche
   await waitForDiagnostics(page);
   await waitForScene(page, 'MoonflowerGladeScene');
 
-  const initial = await waitForPerformanceSamples(page);
+  const initial = await measureSettledPerformance(page);
   expect(initial.sampleCount).toBeGreaterThanOrEqual(MIN_PERFORMANCE_SAMPLES);
   expect(initial.p95FrameMs).toBeLessThan(120);
 
