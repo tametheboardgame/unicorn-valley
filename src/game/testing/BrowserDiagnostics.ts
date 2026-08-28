@@ -3,6 +3,7 @@ import {
   type FramePerformanceSnapshot,
   summariseFrameDurations,
 } from '../performance/FramePerformance';
+import { getPlayerEntityFacing } from '../player/PlayerEntity';
 
 export interface DiagnosticObjectSnapshot {
   type: string;
@@ -20,6 +21,9 @@ export interface DiagnosticObjectSnapshot {
   scrollFactorX: number;
   scrollFactorY: number;
   interactive: boolean;
+  flipX: boolean;
+  playerFacing: string | null;
+  authoritativeFacing: string | null;
 }
 
 export interface DiagnosticSceneSnapshot {
@@ -67,6 +71,7 @@ interface InspectableProperties {
   active?: boolean;
   scrollFactorX?: number;
   scrollFactorY?: number;
+  flipX?: boolean;
   text?: string;
   texture?: { key?: string };
   input?: { enabled?: boolean } | null;
@@ -94,6 +99,10 @@ function finite(value: number | undefined, fallback = 0): number {
 
 function snapshotObject(gameObject: Phaser.GameObjects.GameObject): DiagnosticObjectSnapshot {
   const object = gameObject as InspectableGameObject;
+  const playerFacing =
+    gameObject instanceof Phaser.Physics.Arcade.Sprite ? gameObject.getData('player-facing') : null;
+  const authoritativeFacing =
+    gameObject instanceof Phaser.Physics.Arcade.Sprite ? getPlayerEntityFacing(gameObject) : null;
   return {
     type: gameObject.type ?? gameObject.constructor.name,
     name: gameObject.name,
@@ -110,6 +119,9 @@ function snapshotObject(gameObject: Phaser.GameObjects.GameObject): DiagnosticOb
     scrollFactorX: finite(object.scrollFactorX, 1),
     scrollFactorY: finite(object.scrollFactorY, 1),
     interactive: object.input?.enabled === true,
+    flipX: object.flipX ?? false,
+    playerFacing: typeof playerFacing === 'string' ? playerFacing : null,
+    authoritativeFacing,
   };
 }
 

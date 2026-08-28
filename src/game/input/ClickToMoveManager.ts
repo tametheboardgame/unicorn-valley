@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
+import { setPlayerEntityFacing } from '../player/PlayerEntity';
 import { DEFAULT_PLAYER_SPEED } from '../player/PlayerMovement';
 import { CRYSTAL_BROOK_MAP } from '../world/CrystalBrookMap';
 import type { MapPoint, TraversalMapDefinition } from '../world/MapTraversal';
@@ -8,6 +9,7 @@ import { MOONFLOWER_GLADE_MAP } from '../world/MoonflowerGladeMap';
 import { RAINBOW_MEADOW_MAP } from '../world/RainbowMeadowMap';
 import { SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
 import { WHISPERING_WOODS_MAP } from '../world/WhisperingWoodsMap';
+import { parsePlayerFacing, resolveClickNavigationFacing } from './ClickNavigationFacing';
 import { findClickNavigationPath } from './ClickNavigationPath';
 import { isExplorationMovementBlocked } from './ExplorationMovementBlocker';
 import { hasHeldExplorationMovementInput } from './KeyboardInputAdapter';
@@ -70,15 +72,18 @@ function updateClickNavigationFacing(
   directionX: number,
   directionY: number,
 ): void {
-  if (Math.abs(directionX) >= Math.abs(directionY) && Math.abs(directionX) > 2) {
-    const facing = directionX < 0 ? 'left' : 'right';
-    player.setFlipX(facing === 'left');
-    player.setData('player-facing', facing);
+  const previousFacing = parsePlayerFacing(player.getData('player-facing'));
+  const facing = resolveClickNavigationFacing(directionX, directionY, previousFacing);
+
+  if (setPlayerEntityFacing(player, facing)) {
     return;
   }
 
-  if (Math.abs(directionY) > 2) {
-    player.setData('player-facing', directionY < 0 ? 'up' : 'down');
+  player.setData('player-facing', facing);
+  if (facing === 'left') {
+    player.setFlipX(true);
+  } else if (facing === 'right') {
+    player.setFlipX(false);
   }
 }
 
