@@ -250,10 +250,10 @@ export class DialogueCard {
       this.portraitHalo
         .setFillStyle(UI_COLOURS.gold, 0.42)
         .setStrokeStyle(3, UI_COLOURS.goldStrong, 0.72);
-      this.portrait
-        .setFillStyle(UI_COLOURS.blush, 1)
-        .setStrokeStyle(6, UI_COLOURS.white, 0.96);
-      this.portraitLetter.setText(speakerName.trim().charAt(0).toUpperCase() || '?').setVisible(true);
+      this.portrait.setFillStyle(UI_COLOURS.blush, 1).setStrokeStyle(6, UI_COLOURS.white, 0.96);
+      this.portraitLetter
+        .setText(speakerName.trim().charAt(0).toUpperCase() || '?')
+        .setVisible(true);
       return;
     }
 
