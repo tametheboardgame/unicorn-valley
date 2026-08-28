@@ -1,12 +1,7 @@
 import Phaser from 'phaser';
 import { getVerticalSliceAudio } from '../audio/VerticalSliceAudio';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
-import {
-  BODY_COLOURS,
-  EYE_COLOURS,
-  HAIR_COLOURS,
-  type UnicornAppearance,
-} from '../player/UnicornAppearance';
+import { BODY_COLOURS, EYE_COLOURS, HAIR_COLOURS } from '../player/UnicornAppearance';
 
 const CREATOR_SCENE_KEY = 'UnicornCreatorScene';
 const SYNC_INTERVAL_MS = 100;
@@ -45,7 +40,6 @@ interface DomAction {
   objectName: string;
   labelName: string;
   button: HTMLButtonElement;
-  primary: boolean;
 }
 
 const COLOUR_DEFINITIONS: readonly ColourDefinition[] = [
@@ -183,7 +177,7 @@ export class CreatorPortraitControlsManager {
       button.dataset.creatorAction = objectName;
       button.addEventListener('click', () => this.activate(objectName));
       actions.append(button);
-      this.actions.push({ objectName, labelName, button, primary });
+      this.actions.push({ objectName, labelName, button });
     }
     this.root.append(actions);
 
@@ -343,7 +337,7 @@ export class CreatorPortraitControlsManager {
   }
 
   private sceneNameInput(): HTMLInputElement | null {
-    return document.querySelector('#game-container .unicorn-name-input');
+    return document.querySelector<HTMLInputElement>('#game-container .unicorn-name-input');
   }
 
   private activeScene(): Phaser.Scene | null {
