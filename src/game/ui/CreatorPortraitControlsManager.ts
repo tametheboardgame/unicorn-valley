@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import '../../creatorPortraitControls.css';
 import { getVerticalSliceAudio } from '../audio/VerticalSliceAudio';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
 import { BODY_COLOURS, EYE_COLOURS, HAIR_COLOURS } from '../player/UnicornAppearance';
