@@ -1,21 +1,19 @@
-import Phaser from 'phaser';
+import type Phaser from 'phaser';
 import type { DialogueChoice, DialogueNode } from '../../content/contentTypes';
 import { isReducedMotionEnabled } from '../accessibility/AccessibilitySettings';
 import { getVerticalSliceAudio } from '../audio/VerticalSliceAudio';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import type { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from '../ui/uiTheme';
-import {
-  CORE_NPC_IDS,
-  CORE_NPC_VISUALS,
-  createCoreNpcSprite,
-  type CoreNpcId,
-} from '../visual/CoreNpcProductionArt';
+
+type CoreNpcId = 'nova' | 'willow' | 'pip' | 'pebble' | 'lumi' | 'marigold';
+
+const CORE_NPC_IDS = new Set<CoreNpcId>(['nova', 'willow', 'pip', 'pebble', 'lumi', 'marigold']);
 
 function resolveCoreNpcId(speakerId: string): CoreNpcId | null {
   const separatorIndex = speakerId.lastIndexOf(':');
   const candidate = separatorIndex >= 0 ? speakerId.slice(separatorIndex + 1) : speakerId;
-  return (CORE_NPC_IDS as readonly string[]).includes(candidate) ? (candidate as CoreNpcId) : null;
+  return CORE_NPC_IDS.has(candidate as CoreNpcId) ? (candidate as CoreNpcId) : null;
 }
 
 export class DialogueCard {
@@ -35,6 +33,8 @@ export class DialogueCard {
   private readonly advanceIndicator: Phaser.GameObjects.Text;
   private portraitSprite: Phaser.GameObjects.Sprite | null = null;
   private portraitSpeakerId: string | null = null;
+  private requestedPortraitSpeakerId: string | null = null;
+  private portraitRequestId = 0;
   private bodyTween: Phaser.Tweens.Tween | null = null;
   private advanceTween: Phaser.Tweens.Tween | null = null;
   private choiceObjects: Phaser.GameObjects.GameObject[] = [];
@@ -211,6 +211,8 @@ export class DialogueCard {
   }
 
   public hide(): void {
+    this.portraitRequestId += 1;
+    this.requestedPortraitSpeakerId = null;
     this.stopAdvanceMotion();
     this.bodyTween?.stop();
     this.bodyTween = null;
@@ -219,6 +221,8 @@ export class DialogueCard {
   }
 
   public destroy(): void {
+    this.portraitRequestId += 1;
+    this.requestedPortraitSpeakerId = null;
     this.stopAdvanceMotion();
     this.bodyTween?.stop();
     this.bodyTween = null;
@@ -243,45 +247,71 @@ export class DialogueCard {
 
   private updatePortrait(speakerId: string, speakerName: string): void {
     const coreNpcId = resolveCoreNpcId(speakerId);
+    this.requestedPortraitSpeakerId = speakerId;
+    const requestId = ++this.portraitRequestId;
+
     if (!coreNpcId) {
-      this.portraitSprite?.destroy();
-      this.portraitSprite = null;
       this.portraitSpeakerId = null;
-      this.portraitHalo
-        .setFillStyle(UI_COLOURS.gold, 0.42)
-        .setStrokeStyle(3, UI_COLOURS.goldStrong, 0.72);
-      this.portrait.setFillStyle(UI_COLOURS.blush, 1).setStrokeStyle(6, UI_COLOURS.white, 0.96);
-      this.portraitLetter
-        .setText(speakerName.trim().charAt(0).toUpperCase() || '?')
-        .setVisible(true);
+      this.requestedPortraitSpeakerId = null;
+      this.showFallbackPortrait(speakerName);
       return;
     }
 
-    const spec = CORE_NPC_VISUALS[coreNpcId];
-    this.portraitHalo.setFillStyle(spec.accent, 0.24).setStrokeStyle(3, spec.outline, 0.66);
-    this.portrait.setFillStyle(spec.frame, 1).setStrokeStyle(6, UI_COLOURS.white, 0.96);
-    this.portraitLetter.setVisible(false);
-
     if (this.portraitSpeakerId === speakerId && this.portraitSprite?.active) {
+      this.portraitLetter.setVisible(false);
       this.portraitSprite.setVisible(true);
       return;
     }
 
+    this.portraitSpeakerId = null;
+    this.showFallbackPortrait(speakerName);
+
+    void import('../visual/CoreNpcProductionArt')
+      .then(({ CORE_NPC_VISUALS, createCoreNpcSprite }) => {
+        if (
+          requestId !== this.portraitRequestId ||
+          this.requestedPortraitSpeakerId !== speakerId ||
+          !this.panel.active ||
+          !this.panel.visible
+        ) {
+          return;
+        }
+
+        const spec = CORE_NPC_VISUALS[coreNpcId];
+        this.portraitHalo.setFillStyle(spec.accent, 0.24).setStrokeStyle(3, spec.outline, 0.66);
+        this.portrait.setFillStyle(spec.frame, 1).setStrokeStyle(6, UI_COLOURS.white, 0.96);
+        this.portraitLetter.setVisible(false);
+        this.portraitSprite?.destroy();
+        const isPip = coreNpcId === 'pip';
+        this.portraitSprite = createCoreNpcSprite(
+          this.panel.scene,
+          coreNpcId,
+          162,
+          GAME_HEIGHT - 170,
+          'portrait',
+        )
+          .setName(`dialogue-production-portrait-${coreNpcId}`)
+          .setOrigin(0.5)
+          .setDisplaySize(isPip ? 132 : 150, isPip ? 106 : 120)
+          .setScrollFactor(0)
+          .setDepth(129);
+        this.portraitSpeakerId = speakerId;
+      })
+      .catch(() => {
+        // The readable fallback portrait remains in place if optional production art cannot load.
+      });
+  }
+
+  private showFallbackPortrait(speakerName: string): void {
     this.portraitSprite?.destroy();
-    const isPip = coreNpcId === 'pip';
-    this.portraitSprite = createCoreNpcSprite(
-      this.panel.scene,
-      coreNpcId,
-      162,
-      GAME_HEIGHT - 170,
-      'portrait',
-    )
-      .setName(`dialogue-production-portrait-${coreNpcId}`)
-      .setOrigin(0.5)
-      .setDisplaySize(isPip ? 132 : 150, isPip ? 106 : 120)
-      .setScrollFactor(0)
-      .setDepth(129);
-    this.portraitSpeakerId = speakerId;
+    this.portraitSprite = null;
+    this.portraitHalo
+      .setFillStyle(UI_COLOURS.gold, 0.42)
+      .setStrokeStyle(3, UI_COLOURS.goldStrong, 0.72);
+    this.portrait.setFillStyle(UI_COLOURS.blush, 1).setStrokeStyle(6, UI_COLOURS.white, 0.96);
+    this.portraitLetter
+      .setText(speakerName.trim().charAt(0).toUpperCase() || '?')
+      .setVisible(true);
   }
 
   private animateBodyChange(): void {
