@@ -96,7 +96,9 @@ test('portrait creator uses large grouped controls without changing creator save
   expect(stored.profile.appearance.maneStyle).toBe('fluffy');
 });
 
-test('portrait exploration presents Talk to Pip as a large explicit action button', async ({ page }) => {
+test('portrait exploration presents Talk to Pip as a large explicit action button', async ({
+  page,
+}) => {
   skipUnlessPortraitTouch();
 
   await page.goto('/?scene=glade&diagnostics=1', { waitUntil: 'networkidle' });
