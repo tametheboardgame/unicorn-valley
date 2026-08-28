@@ -141,10 +141,7 @@ function createCaveMouth(
       .setStrokeStyle(2, 0xe8ffff, 0.8);
     objects.push(crystal);
   }
-  name(
-    scene.add.container(x, y, objects).setDepth(worldDepthForY(y, 0.76)),
-    `${id}:cave-mouth`,
-  );
+  name(scene.add.container(x, y, objects).setDepth(worldDepthForY(y, 0.76)), `${id}:cave-mouth`);
 }
 
 function createWoodlandThreshold(
@@ -204,9 +201,7 @@ function createCascadeRaceGate(scene: Phaser.Scene, x: number, y: number): void 
     scene.add.ellipse(0, 62, 250, 60, 0x65d5dc, 0.2),
     scene.add.rectangle(-82, 0, 32, 210, 0x4d8d99, 1).setStrokeStyle(4, 0xbef3f3, 0.75),
     scene.add.rectangle(82, 0, 32, 210, 0x4d8d99, 1).setStrokeStyle(4, 0xbef3f3, 0.75),
-    scene.add
-      .rectangle(0, -88, 198, 48, 0xcaf6f3, 1)
-      .setStrokeStyle(5, 0x7189c3, 0.9),
+    scene.add.rectangle(0, -88, 198, 48, 0xcaf6f3, 1).setStrokeStyle(5, 0x7189c3, 0.9),
     scene.add
       .text(0, -88, '💎  CRYSTAL CASCADE  🏁', {
         color: '#365965',
@@ -347,7 +342,10 @@ function decorateWoods(scene: Phaser.Scene): void {
     0x91866a,
   );
 
-  const forest = name(scene.add.container(0, 0).setDepth(6.15), 'whispering-woods:production-upgrade');
+  const forest = name(
+    scene.add.container(0, 0).setDepth(6.15),
+    'whispering-woods:production-upgrade',
+  );
   for (const [x, y, scale] of [
     [390, 430, 1.15],
     [930, 350, 1.05],
