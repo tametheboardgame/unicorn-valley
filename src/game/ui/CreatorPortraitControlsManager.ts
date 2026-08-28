@@ -301,7 +301,9 @@ export class CreatorPortraitControlsManager {
     for (const { definition, value, previous, next } of this.cycleRows) {
       const valueObject = scene.children.getByName(`creator-${definition.key}-value`);
       value.textContent = valueObject instanceof Phaser.GameObjects.Text ? valueObject.text : '';
-      previous.disabled = !isEnabled(scene.children.getByName(`creator-${definition.key}-previous`));
+      previous.disabled = !isEnabled(
+        scene.children.getByName(`creator-${definition.key}-previous`),
+      );
       next.disabled = !isEnabled(scene.children.getByName(`creator-${definition.key}-next`));
     }
 
