@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { isReducedMotionEnabled } from '../accessibility/AccessibilitySettings';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
 import { UI_COLOURS, UI_FONT } from '../ui/uiTheme';
 
@@ -95,6 +96,7 @@ function createFrame(scene: Phaser.Scene, spec: FrameSpec): void {
       fontSize: '22px',
       fontStyle: 'bold',
     })
+    .setName(`ui-production:${scene.scene.key}:sparkle`)
     .setOrigin(0.5)
     .setScrollFactor(0);
 
@@ -103,15 +105,19 @@ function createFrame(scene: Phaser.Scene, spec: FrameSpec): void {
     .setName(`ui-production:${scene.scene.key}:ornaments`)
     .setDepth(spec.depth);
 
-  scene.tweens.add({
-    targets: sparkle,
-    alpha: { from: 0.45, to: 1 },
-    scale: { from: 0.92, to: 1.08 },
-    duration: 1500,
-    yoyo: true,
-    repeat: -1,
-    ease: 'Sine.InOut',
-  });
+  if (isReducedMotionEnabled()) {
+    sparkle.setAlpha(0.78).setScale(1);
+  } else {
+    scene.tweens.add({
+      targets: sparkle,
+      alpha: { from: 0.45, to: 1 },
+      scale: { from: 0.92, to: 1.08 },
+      duration: 1500,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.InOut',
+    });
+  }
 
   ornaments.setVisible(true);
 }
