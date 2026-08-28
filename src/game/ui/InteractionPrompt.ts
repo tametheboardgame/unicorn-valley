@@ -174,7 +174,9 @@ export class InteractionPrompt {
 
     if (this.currentTarget && this.panel.visible) {
       const actionLabel = formatInteractionLabel(this.currentTarget);
-      this.label.setText(`${highVisibility ? '★ ' : ''}${actionLabel}${highVisibility ? ' ★' : '   ✨'}`);
+      this.label.setText(
+        `${highVisibility ? '★ ' : ''}${actionLabel}${highVisibility ? ' ★' : '   ✨'}`,
+      );
       if (this.domButton) {
         this.domButton.textContent = `${highVisibility ? '★ ' : ''}${actionLabel}${highVisibility ? ' ★' : ''}`;
       }
