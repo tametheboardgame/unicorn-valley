@@ -1,6 +1,9 @@
 import type Phaser from 'phaser';
 import type { DialogueChoice, DialogueNode } from '../../content/contentTypes';
-import { isReducedMotionEnabled } from '../accessibility/AccessibilitySettings';
+import {
+  getBrowserAccessibilitySettingsStore,
+  isReducedMotionEnabled,
+} from '../accessibility/AccessibilitySettings';
 import { getVerticalSliceAudio } from '../audio/VerticalSliceAudio';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import type { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
@@ -31,6 +34,7 @@ export class DialogueCard {
   private readonly continueButton: Phaser.GameObjects.Rectangle;
   private readonly continueLabel: Phaser.GameObjects.Text;
   private readonly advanceIndicator: Phaser.GameObjects.Text;
+  private readonly unsubscribeAccessibility: () => void;
   private portraitSprite: Phaser.GameObjects.Sprite | null = null;
   private portraitSpeakerId: string | null = null;
   private requestedPortraitSpeakerId: string | null = null;
@@ -173,6 +177,18 @@ export class DialogueCard {
     this.continueButton.on('pointerup', () => pointerInput.setButton('INTERACT', false));
     this.continueButton.on('pointerout', () => pointerInput.setButton('INTERACT', false));
 
+    this.unsubscribeAccessibility = getBrowserAccessibilitySettingsStore().subscribe(
+      ({ reducedMotion }) => {
+        if (!reducedMotion) {
+          return;
+        }
+        this.stopAdvanceMotion();
+        this.bodyTween?.stop();
+        this.bodyTween = null;
+        this.body.setAlpha(1);
+      },
+    );
+
     this.hide();
   }
 
@@ -221,6 +237,7 @@ export class DialogueCard {
   }
 
   public destroy(): void {
+    this.unsubscribeAccessibility();
     this.portraitRequestId += 1;
     this.requestedPortraitSpeakerId = null;
     this.stopAdvanceMotion();
