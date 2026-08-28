@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { setPlayerEntityFacing } from '../player/PlayerEntity';
-import { DEFAULT_PLAYER_SPEED, type PlayerFacing } from '../player/PlayerMovement';
+import { DEFAULT_PLAYER_SPEED } from '../player/PlayerMovement';
 import { CRYSTAL_BROOK_MAP } from '../world/CrystalBrookMap';
 import type { MapPoint, TraversalMapDefinition } from '../world/MapTraversal';
 import { COTTAGE_INTERIOR_MAP } from '../world/CottageInteriorMap';
@@ -9,6 +9,7 @@ import { MOONFLOWER_GLADE_MAP } from '../world/MoonflowerGladeMap';
 import { RAINBOW_MEADOW_MAP } from '../world/RainbowMeadowMap';
 import { SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
 import { WHISPERING_WOODS_MAP } from '../world/WhisperingWoodsMap';
+import { parsePlayerFacing, resolveClickNavigationFacing } from './ClickNavigationFacing';
 import { findClickNavigationPath } from './ClickNavigationPath';
 import { isExplorationMovementBlocked } from './ExplorationMovementBlocker';
 import { hasHeldExplorationMovementInput } from './KeyboardInputAdapter';
@@ -66,33 +67,12 @@ function isPlayerSprite(
   );
 }
 
-function isPlayerFacing(value: unknown): value is PlayerFacing {
-  return value === 'up' || value === 'down' || value === 'left' || value === 'right';
-}
-
-export function resolveClickNavigationFacing(
-  directionX: number,
-  directionY: number,
-  previousFacing: PlayerFacing,
-): PlayerFacing {
-  const absoluteX = Math.abs(directionX);
-  const absoluteY = Math.abs(directionY);
-  if (absoluteX <= 2 && absoluteY <= 2) {
-    return previousFacing;
-  }
-  if (absoluteX >= absoluteY) {
-    return directionX < 0 ? 'left' : 'right';
-  }
-  return directionY < 0 ? 'up' : 'down';
-}
-
 function updateClickNavigationFacing(
   player: Phaser.Physics.Arcade.Sprite,
   directionX: number,
   directionY: number,
 ): void {
-  const storedFacing = player.getData('player-facing');
-  const previousFacing: PlayerFacing = isPlayerFacing(storedFacing) ? storedFacing : 'down';
+  const previousFacing = parsePlayerFacing(player.getData('player-facing'));
   const facing = resolveClickNavigationFacing(directionX, directionY, previousFacing);
 
   if (setPlayerEntityFacing(player, facing)) {
