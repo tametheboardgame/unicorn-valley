@@ -1,6 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
 
-const WORLD_TRIGGER_TIMEOUT_MS = 30_000;
 const INTERACTION_APPROACH_ATTEMPTS = 80;
 
 interface DiagnosticObjectSnapshot {
@@ -87,11 +86,7 @@ function playerObject(scene: DiagnosticSceneSnapshot): DiagnosticObjectSnapshot 
   return player;
 }
 
-async function approachVisiblePrompt(
-  page: Page,
-  sceneKey: string,
-  promptText: string,
-): Promise<void> {
+async function approachVisiblePrompt(page: Page, sceneKey: string, promptText: string): Promise<void> {
   for (let attempt = 0; attempt < INTERACTION_APPROACH_ATTEMPTS; attempt += 1) {
     const snapshot = await getSnapshot(page);
     const scene = sceneSnapshot(snapshot, sceneKey);
@@ -274,9 +269,9 @@ test('Nova keeps her canonical identity and returns the player to the exact conv
 
   let snapshot = await getSnapshot(page);
   let meadow = sceneSnapshot(snapshot, 'RainbowMeadowScene');
-  expect(meadow.objects.some((object) => object.visible && object.text?.includes('Talk to Nova'))).toBe(
-    true,
-  );
+  expect(
+    meadow.objects.some((object) => object.visible && object.text?.includes('Talk to Nova')),
+  ).toBe(true);
   const beforeConversation = playerObject(meadow);
 
   await page.keyboard.press('e', { delay: 50 });
