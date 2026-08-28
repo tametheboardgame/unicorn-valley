@@ -394,18 +394,7 @@ export class SunbeamVillageScene extends Phaser.Scene {
       .setDepth(6)
       .setName(`village-shopfront:${id}:wall`);
     this.add
-      .triangle(
-        x,
-        y - height / 2 - 96,
-        0,
-        154,
-        width / 2 + 48,
-        0,
-        width + 96,
-        154,
-        roofColour,
-        1,
-      )
+      .triangle(x, y - height / 2 - 96, 0, 154, width / 2 + 48, 0, width + 96, 154, roofColour, 1)
       .setStrokeStyle(6, 0x8a6e72, 0.72)
       .setDepth(7)
       .setName(`village-shopfront:${id}:roof`);
@@ -421,7 +410,9 @@ export class SunbeamVillageScene extends Phaser.Scene {
       this.add.rectangle(windowX, windowY, 106, 8, 0xffffff, 0.6).setDepth(8.2);
       this.add.rectangle(windowX, windowY + 67, 128, 22, 0x8a624e, 1).setDepth(8.3);
       for (const offset of [-38, 0, 38]) {
-        this.add.circle(windowX + offset, windowY + 54, 11, side < 0 ? 0xffa8c8 : 0xffdd78, 0.96).setDepth(8.5);
+        this.add
+          .circle(windowX + offset, windowY + 54, 11, side < 0 ? 0xffa8c8 : 0xffdd78, 0.96)
+          .setDepth(8.5);
       }
     }
 
@@ -439,7 +430,14 @@ export class SunbeamVillageScene extends Phaser.Scene {
     this.add.rectangle(x, awningY, width - 46, 38, 0xfff5dd, 1).setDepth(8.4);
     for (let stripe = -2; stripe <= 2; stripe += 1) {
       this.add
-        .rectangle(x + stripe * 62, awningY, 34, 38, stripe % 2 === 0 ? wallColour : roofColour, 0.88)
+        .rectangle(
+          x + stripe * 62,
+          awningY,
+          34,
+          38,
+          stripe % 2 === 0 ? wallColour : roofColour,
+          0.88,
+        )
         .setDepth(8.5);
     }
 
