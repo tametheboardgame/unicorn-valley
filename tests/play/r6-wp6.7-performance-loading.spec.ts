@@ -20,6 +20,8 @@ interface BrowserDiagnosticsApi {
   startScene(sceneKey: string, data?: object): void;
 }
 
+const MIN_PERFORMANCE_SAMPLES = 16;
+
 async function waitForDiagnostics(page: Page): Promise<void> {
   await page.waitForFunction(() => {
     const diagnosticWindow = window as typeof window & {
@@ -38,6 +40,35 @@ async function waitForScene(page: Page, sceneKey: string): Promise<void> {
       ?.snapshot()
       .activeScenes.includes(expectedScene);
   }, sceneKey);
+}
+
+async function waitForPerformanceSamples(
+  page: Page,
+  minimumSamples = MIN_PERFORMANCE_SAMPLES,
+): Promise<FramePerformanceSnapshot> {
+  await page.waitForFunction(
+    (minimum) => {
+      const diagnosticWindow = window as typeof window & {
+        __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
+      };
+      return (
+        (diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__?.performance().sampleCount ?? 0) >= minimum
+      );
+    },
+    minimumSamples,
+    { timeout: 2500 },
+  );
+
+  return page.evaluate(() => {
+    const diagnosticWindow = window as typeof window & {
+      __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
+    };
+    const profile = diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__?.performance();
+    if (!profile) {
+      throw new Error('Browser diagnostics are unavailable.');
+    }
+    return profile;
+  });
 }
 
 async function measureTransition(page: Page, sceneKey: string): Promise<TransitionMeasurement> {
@@ -78,17 +109,7 @@ async function measureSettledPerformance(page: Page): Promise<FramePerformanceSn
     };
     diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__?.resetPerformance();
   });
-  await page.waitForTimeout(750);
-  return page.evaluate(() => {
-    const diagnosticWindow = window as typeof window & {
-      __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
-    };
-    const profile = diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__?.performance();
-    if (!profile) {
-      throw new Error('Browser diagnostics are unavailable.');
-    }
-    return profile;
-  });
+  return waitForPerformanceSamples(page);
 }
 
 test('production world transitions stay responsive and avoid severe frame hitches', async ({
@@ -98,16 +119,10 @@ test('production world transitions stay responsive and avoid severe frame hitche
   await page.goto('/?scene=glade&diagnostics=1');
   await waitForDiagnostics(page);
   await waitForScene(page, 'MoonflowerGladeScene');
-  await page.waitForTimeout(650);
 
-  const initial = await page.evaluate(() => {
-    const diagnosticWindow = window as typeof window & {
-      __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
-    };
-    return diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__?.performance();
-  });
-  expect(initial?.sampleCount).toBeGreaterThan(15);
-  expect(initial?.p95FrameMs ?? Number.POSITIVE_INFINITY).toBeLessThan(120);
+  const initial = await waitForPerformanceSamples(page);
+  expect(initial.sampleCount).toBeGreaterThanOrEqual(MIN_PERFORMANCE_SAMPLES);
+  expect(initial.p95FrameMs).toBeLessThan(120);
 
   for (const sceneKey of ['SunbeamVillageScene', 'RainbowMeadowScene', 'CrystalBrookScene']) {
     const transition = await measureTransition(page, sceneKey);
@@ -118,7 +133,7 @@ test('production world transitions stay responsive and avoid severe frame hitche
     ).toBeLessThan(500);
 
     const profile = await measureSettledPerformance(page);
-    expect(profile.sampleCount).toBeGreaterThan(15);
+    expect(profile.sampleCount).toBeGreaterThanOrEqual(MIN_PERFORMANCE_SAMPLES);
     expect(profile.p95FrameMs).toBeLessThan(120);
     expect(profile.worstFrameMs).toBeLessThan(500);
   }
