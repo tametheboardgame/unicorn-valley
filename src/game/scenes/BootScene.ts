@@ -87,6 +87,11 @@ export class BootScene extends Phaser.Scene {
         getUiProductionPresentationManager(this.sys.game);
       },
     );
+    void import('../visual/CreatorDelightPresentationManager').then(
+      ({ getCreatorDelightPresentationManager }) => {
+        getCreatorDelightPresentationManager(this.sys.game);
+      },
+    );
 
     const requestedScene = new URLSearchParams(globalThis.location.search).get('scene');
     this.registry.set(
