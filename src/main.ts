@@ -21,6 +21,14 @@ void import('./game/scenes/VillageInteriorScene').then(({ VillageInteriorScene }
   }
 });
 
+void Promise.all([
+  import('./game/world/R6RegionGatewayArtManager'),
+  import('./game/world/R6RegionGatewayArtPerformanceManager'),
+]).then(([{ getR6RegionGatewayArtManager }, { getR6RegionGatewayArtPerformanceManager }]) => {
+  getR6RegionGatewayArtManager(game);
+  getR6RegionGatewayArtPerformanceManager(game);
+});
+
 const creatorPortraitQuery = globalThis.matchMedia?.(
   '(pointer: coarse) and (max-width: 700px) and (orientation: portrait)',
 );
