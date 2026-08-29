@@ -4,6 +4,7 @@ import {
   summariseFrameDurations,
 } from '../performance/FramePerformance';
 import { getPlayerEntityFacing } from '../player/PlayerEntity';
+import { selectRaceCourse } from '../racing/RaceCourse';
 
 export interface DiagnosticObjectSnapshot {
   type: string;
@@ -26,6 +27,19 @@ export interface DiagnosticObjectSnapshot {
   authoritativeFacing: string | null;
 }
 
+export interface DiagnosticSceneState {
+  raceStarted: boolean | null;
+  raceFinished: boolean | null;
+  raceProgress: number | null;
+  raceGrounded: boolean | null;
+  raceHitObstacleCount: number | null;
+  raceCollectedCount: number | null;
+  raceUsedShortcutCount: number | null;
+  racePlayerFinishPlace: number | null;
+  raceElapsedMs: number | null;
+  forwardControlMultiplier: number | null;
+}
+
 export interface DiagnosticSceneSnapshot {
   key: string;
   camera: {
@@ -38,11 +52,7 @@ export interface DiagnosticSceneSnapshot {
     worldWidth: number;
     worldHeight: number;
   };
-  state: {
-    raceStarted: boolean | null;
-    raceFinished: boolean | null;
-    forwardControlMultiplier: number | null;
-  };
+  state: DiagnosticSceneState;
   objects: DiagnosticObjectSnapshot[];
 }
 
@@ -55,9 +65,11 @@ export interface BrowserDiagnosticSnapshot {
 
 export interface BrowserDiagnosticsApi {
   snapshot(): BrowserDiagnosticSnapshot;
+  sceneState(sceneKey: string): DiagnosticSceneState | null;
   performance(): FramePerformanceSnapshot;
   resetPerformance(): void;
   startScene(sceneKey: string, data?: object): void;
+  selectRaceCourse(courseId: string): void;
 }
 
 interface InspectableProperties {
@@ -85,10 +97,17 @@ type InspectableContainer = Phaser.GameObjects.GameObject & {
 
 interface InspectableSceneRuntime {
   raceStarted?: unknown;
+  playerFinishPlace?: unknown;
+  elapsedMs?: unknown;
   runState?: {
     forwardControlMultiplier?: unknown;
+    hitObstacleIds?: unknown;
+    collectedIds?: unknown;
+    usedShortcutIds?: unknown;
     movement?: {
       finished?: unknown;
+      progress?: unknown;
+      grounded?: unknown;
     };
   };
 }
@@ -148,9 +167,47 @@ function snapshotObjects(
   return snapshots;
 }
 
+function snapshotSceneState(scene: Phaser.Scene): DiagnosticSceneState {
+  const runtime = scene as unknown as InspectableSceneRuntime;
+  const hitObstacleIds = Array.isArray(runtime.runState?.hitObstacleIds)
+    ? runtime.runState.hitObstacleIds
+    : null;
+  const collectedIds = Array.isArray(runtime.runState?.collectedIds)
+    ? runtime.runState.collectedIds
+    : null;
+  const usedShortcutIds = Array.isArray(runtime.runState?.usedShortcutIds)
+    ? runtime.runState.usedShortcutIds
+    : null;
+
+  return {
+    raceStarted: typeof runtime.raceStarted === 'boolean' ? runtime.raceStarted : null,
+    raceFinished:
+      typeof runtime.runState?.movement?.finished === 'boolean'
+        ? runtime.runState.movement.finished
+        : null,
+    raceProgress:
+      typeof runtime.runState?.movement?.progress === 'number'
+        ? runtime.runState.movement.progress
+        : null,
+    raceGrounded:
+      typeof runtime.runState?.movement?.grounded === 'boolean'
+        ? runtime.runState.movement.grounded
+        : null,
+    raceHitObstacleCount: hitObstacleIds?.length ?? null,
+    raceCollectedCount: collectedIds?.length ?? null,
+    raceUsedShortcutCount: usedShortcutIds?.length ?? null,
+    racePlayerFinishPlace:
+      typeof runtime.playerFinishPlace === 'number' ? runtime.playerFinishPlace : null,
+    raceElapsedMs: typeof runtime.elapsedMs === 'number' ? runtime.elapsedMs : null,
+    forwardControlMultiplier:
+      typeof runtime.runState?.forwardControlMultiplier === 'number'
+        ? runtime.runState.forwardControlMultiplier
+        : null,
+  };
+}
+
 function snapshotScene(scene: Phaser.Scene): DiagnosticSceneSnapshot {
   const camera = scene.cameras.main;
-  const runtime = scene as unknown as InspectableSceneRuntime;
   return {
     key: scene.scene.key,
     camera: {
@@ -163,17 +220,7 @@ function snapshotScene(scene: Phaser.Scene): DiagnosticSceneSnapshot {
       worldWidth: camera.worldView.width,
       worldHeight: camera.worldView.height,
     },
-    state: {
-      raceStarted: typeof runtime.raceStarted === 'boolean' ? runtime.raceStarted : null,
-      raceFinished:
-        typeof runtime.runState?.movement?.finished === 'boolean'
-          ? runtime.runState.movement.finished
-          : null,
-      forwardControlMultiplier:
-        typeof runtime.runState?.forwardControlMultiplier === 'number'
-          ? runtime.runState.forwardControlMultiplier
-          : null,
-    },
+    state: snapshotSceneState(scene),
     objects: snapshotObjects(scene.children.list),
   };
 }
@@ -209,6 +256,10 @@ export function installBrowserDiagnostics(game: Phaser.Game): BrowserDiagnostics
         scenes: activeScenes.map(snapshotScene),
       };
     },
+    sceneState: (sceneKey) => {
+      const scene = game.scene.getScene(sceneKey);
+      return scene?.scene.isActive() ? snapshotSceneState(scene) : null;
+    },
     performance: () => summariseFrameDurations(frameDurations),
     resetPerformance: () => {
       frameDurations.length = 0;
@@ -220,6 +271,9 @@ export function installBrowserDiagnostics(game: Phaser.Game): BrowserDiagnostics
         throw new Error(`Cannot start diagnostic scene ${sceneKey}: no active scene.`);
       }
       activeScene.scene.start(sceneKey, data);
+    },
+    selectRaceCourse: (courseId) => {
+      selectRaceCourse(courseId);
     },
   };
 
