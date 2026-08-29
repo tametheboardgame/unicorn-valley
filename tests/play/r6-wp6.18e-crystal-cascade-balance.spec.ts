@@ -3,7 +3,7 @@ import { expect, test, type Page } from '@playwright/test';
 const CRYSTAL_CASCADE_RACE_ID = 'race-course:crystal-brook-crystal-cascade';
 const RACE_CONDITION_TIMEOUT_MS = 15_000;
 const RACE_START_TIMEOUT_MS = 30_000;
-const CLEAN_JUMP_PROGRESS = [430, 1230, 2000, 2870] as const;
+const CLEAN_JUMP_PROGRESS = [490, 1290, 2060, 2930] as const;
 
 interface DiagnosticSceneState {
   raceStarted: boolean | null;
@@ -60,42 +60,53 @@ async function waitForRaceState(
     .toBe(true);
 }
 
-async function jumpAtProgress(page: Page, threshold: number): Promise<void> {
-  await page.waitForFunction(
-    (target) => {
-      const diagnosticWindow = window as typeof window & {
-        __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
-      };
-      const state = diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__?.sceneState('RaceScene');
-      return (
-        state?.raceProgress !== null &&
-        state?.raceProgress !== undefined &&
-        state.raceProgress >= target &&
-        state.raceGrounded === true
-      );
-    },
-    threshold,
-    { timeout: RACE_CONDITION_TIMEOUT_MS, polling: 'raf' },
-  );
+async function runBrowserTimedJumpSequence(page: Page): Promise<void> {
+  await page.evaluate(async (jumpProgresses) => {
+    const diagnosticWindow = window as typeof window & {
+      __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
+    };
+    const diagnostics = diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__;
+    if (!diagnostics) {
+      throw new Error('Browser diagnostics are unavailable for Crystal Cascade input validation.');
+    }
 
-  await page.keyboard.down('Space');
-  try {
-    await page.waitForFunction(
-      () => {
-        const diagnosticWindow = window as typeof window & {
-          __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
-        };
-        return (
-          diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__?.sceneState('RaceScene')?.raceGrounded ===
-          false
-        );
-      },
-      undefined,
-      { timeout: RACE_CONDITION_TIMEOUT_MS, polling: 'raf' },
-    );
-  } finally {
-    await page.keyboard.up('Space');
-  }
+    const nextFrame = (): Promise<void> =>
+      new Promise((resolve) => requestAnimationFrame(() => resolve()));
+    const dispatchSpace = (type: 'keydown' | 'keyup'): void => {
+      const event = new KeyboardEvent(type, {
+        key: ' ',
+        code: 'Space',
+        bubbles: true,
+        cancelable: true,
+      });
+      Object.defineProperty(event, 'keyCode', { value: 32 });
+      Object.defineProperty(event, 'which', { value: 32 });
+      globalThis.dispatchEvent(event);
+    };
+
+    for (const targetProgress of jumpProgresses) {
+      while (true) {
+        const state = diagnostics.sceneState('RaceScene');
+        if (!state || state.raceFinished === true) {
+          throw new Error(`Race ended before jump target ${targetProgress}.`);
+        }
+        if (
+          state.raceProgress !== null &&
+          state.raceProgress >= targetProgress &&
+          state.raceGrounded === true
+        ) {
+          break;
+        }
+        await nextFrame();
+      }
+
+      dispatchSpace('keydown');
+      while (diagnostics.sceneState('RaceScene')?.raceGrounded !== false) {
+        await nextFrame();
+      }
+      dispatchSpace('keyup');
+    }
+  }, CLEAN_JUMP_PROGRESS);
 }
 
 test('a clean standard Crystal Cascade run can win with ordinary run and jump input', async ({
@@ -125,10 +136,7 @@ test('a clean standard Crystal Cascade run can win with ordinary run and jump in
   await page.keyboard.down('ArrowRight');
 
   try {
-    for (const jumpProgress of CLEAN_JUMP_PROGRESS) {
-      await jumpAtProgress(page, jumpProgress);
-    }
-
+    await runBrowserTimedJumpSequence(page);
     await waitForRaceState(page, (state) => state.raceFinished === true);
   } finally {
     await page.keyboard.up('ArrowRight');
