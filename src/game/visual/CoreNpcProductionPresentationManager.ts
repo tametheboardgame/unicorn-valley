@@ -20,6 +20,11 @@ interface StoryPortraitDefinition {
   y: number;
 }
 
+interface PositionedGameObject {
+  x: number;
+  y: number;
+}
+
 const STORY_PORTRAITS: readonly StoryPortraitDefinition[] = [
   { sceneKey: 'NovaStoryScene', id: 'nova', y: 255 },
   { sceneKey: 'WillowStoryScene', id: 'willow', y: 252 },
@@ -34,18 +39,41 @@ function sceneIfActive(game: Phaser.Game, key: string): Phaser.Scene | null {
   return scene?.scene.isActive() ? scene : null;
 }
 
-function hideVillageEmoji(scene: Phaser.Scene, id: 'willow' | 'marigold', emoji: string): void {
+function hasWorldPosition(
+  object: Phaser.GameObjects.GameObject,
+): object is Phaser.GameObjects.GameObject & PositionedGameObject {
+  const positioned = object as Phaser.GameObjects.GameObject & Partial<PositionedGameObject>;
+  return typeof positioned.x === 'number' && typeof positioned.y === 'number';
+}
+
+function hideVillagePrototypeMarker(
+  scene: Phaser.Scene,
+  id: 'willow' | 'marigold' | 'pebble',
+  prototypeIcon: string,
+): void {
   const marker = SUNBEAM_VILLAGE_MAP.npcMarkers.find((candidate) => candidate.id === id);
   if (!marker) {
     return;
   }
+
   for (const object of scene.children.list) {
-    if (
+    if (!hasWorldPosition(object)) {
+      continue;
+    }
+    const atMarker =
+      Math.abs(object.x - marker.position.x) <= 1 && Math.abs(object.y - marker.position.y) <= 1;
+    if (!atMarker) {
+      continue;
+    }
+
+    const prototypeCircle =
+      object instanceof Phaser.GameObjects.Arc &&
+      object.displayWidth <= 90 &&
+      object.displayHeight <= 90;
+    const prototypeText =
       object instanceof Phaser.GameObjects.Text &&
-      object.text === emoji &&
-      Math.abs(object.x - marker.position.x) <= 1 &&
-      Math.abs(object.y - marker.position.y) <= 1
-    ) {
+      (object.text === prototypeIcon || object.text === '✦');
+    if (prototypeCircle || prototypeText) {
       object.setVisible(false);
     }
   }
@@ -203,6 +231,7 @@ export class CoreNpcProductionPresentationManager {
     if (!pebbleMarker || scene.children.getByName('core-npc:pebble:world')) {
       return;
     }
+    hideVillagePrototypeMarker(scene, 'pebble', '✦');
     hidePebblePlaceholder(scene);
     const pebble = createCoreNpcSprite(
       scene,
@@ -230,7 +259,7 @@ export class CoreNpcProductionPresentationManager {
     if (!marker) {
       return;
     }
-    hideVillageEmoji(scene, id, emoji);
+    hideVillagePrototypeMarker(scene, id, emoji);
     const sprite = createCoreNpcSprite(scene, id, marker.position.x, marker.position.y + 4, 'world')
       .setDisplaySize(width, height)
       .setDepth(worldDepthForY(marker.position.y + 47, 0.32));
