@@ -133,7 +133,9 @@ test('production world transitions stay responsive and avoid severe frame hitche
 
   const initial = await measureSettledPerformance(page);
   expect(initial.sampleCount).toBeGreaterThanOrEqual(MIN_PERFORMANCE_SAMPLES);
-  expect(initial.p95FrameMs, 'runner baseline is severely slow').toBeLessThan(SEVERE_P95_CEILING_MS);
+  expect(initial.p95FrameMs, 'runner baseline is severely slow').toBeLessThan(
+    SEVERE_P95_CEILING_MS,
+  );
   expect(initial.worstFrameMs).toBeLessThan(500);
   const p95Ceiling = settledP95Ceiling(initial.p95FrameMs);
 
