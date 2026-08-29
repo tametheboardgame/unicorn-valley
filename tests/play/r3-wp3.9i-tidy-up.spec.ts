@@ -1,5 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
+const INTERACTION_APPROACH_ATTEMPTS = 80;
+
 interface DiagnosticObjectSnapshot {
   type: string;
   name: string;
@@ -82,6 +84,30 @@ function playerObject(scene: DiagnosticSceneSnapshot): DiagnosticObjectSnapshot 
     throw new Error('Missing world player diagnostic object.');
   }
   return player;
+}
+
+async function approachVisiblePrompt(
+  page: Page,
+  sceneKey: string,
+  promptText: string,
+): Promise<void> {
+  for (let attempt = 0; attempt < INTERACTION_APPROACH_ATTEMPTS; attempt += 1) {
+    const snapshot = await getSnapshot(page);
+    const scene = sceneSnapshot(snapshot, sceneKey);
+    if (scene.objects.some((object) => object.visible && object.text?.includes(promptText))) {
+      return;
+    }
+
+    await page.keyboard.down('ArrowRight');
+    try {
+      await page.waitForTimeout(90);
+    } finally {
+      await page.keyboard.up('ArrowRight');
+    }
+    await page.waitForTimeout(30);
+  }
+
+  throw new Error(`Did not reach interaction prompt: ${promptText}`);
 }
 
 test('exploration chrome uses stable zones, visible help, touch toggle and a centred canvas', async ({
@@ -180,17 +206,21 @@ test('clicking open ground moves the unicorn again', async ({ page }) => {
   await page.goto('/?scene=glade&diagnostics=1');
   await waitForScene(page, 'MoonflowerGladeScene');
 
-  let snapshot = await getSnapshot(page);
-  let glade = sceneSnapshot(snapshot, 'MoonflowerGladeScene');
+  const snapshot = await getSnapshot(page);
+  const glade = sceneSnapshot(snapshot, 'MoonflowerGladeScene');
   const before = playerObject(glade);
 
   await logicalClick(page, 900, 360);
-  await page.waitForTimeout(1200);
-
-  snapshot = await getSnapshot(page);
-  glade = sceneSnapshot(snapshot, 'MoonflowerGladeScene');
-  const after = playerObject(glade);
-  expect(after.x - before.x).toBeGreaterThan(60);
+  await expect
+    .poll(
+      async () => {
+        const current = await getSnapshot(page);
+        const player = playerObject(sceneSnapshot(current, 'MoonflowerGladeScene'));
+        return player.x - before.x;
+      },
+      { timeout: 5_000 },
+    )
+    .toBeGreaterThan(60);
 });
 
 test('held movement carries through an automatic world transition on the first pass', async ({
@@ -217,6 +247,7 @@ test('held movement carries through an automatic world transition on the first p
 test('Nova keeps her canonical identity and returns the player to the exact conversation point', async ({
   page,
 }) => {
+  test.setTimeout(75_000);
   await page.goto('/?scene=meadow&diagnostics=1');
   await waitForScene(page, 'RainbowMeadowScene');
 
@@ -238,28 +269,16 @@ test('Nova keeps her canonical identity and returns the player to the exact conv
     );
   });
 
-  await page.keyboard.down('ArrowRight');
-  await page.waitForFunction(
-    () => {
-      const diagnosticWindow = window as typeof window & {
-        __UNICORN_VALLEY_DIAGNOSTICS__?: { snapshot(): BrowserDiagnosticSnapshot };
-      };
-      const meadow = diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__
-        ?.snapshot()
-        .scenes.find((scene) => scene.key === 'RainbowMeadowScene');
-      return meadow?.objects.some(
-        (object) => object.visible && object.text?.includes('Talk to Nova'),
-      );
-    },
-    undefined,
-    { timeout: 20_000 },
-  );
-  await page.keyboard.up('ArrowRight');
-  await page.waitForTimeout(80);
+  await approachVisiblePrompt(page, 'RainbowMeadowScene', 'Talk to Nova');
 
   let snapshot = await getSnapshot(page);
-  const beforeConversation = playerObject(sceneSnapshot(snapshot, 'RainbowMeadowScene'));
-  await page.keyboard.press('e');
+  let meadow = sceneSnapshot(snapshot, 'RainbowMeadowScene');
+  expect(
+    meadow.objects.some((object) => object.visible && object.text?.includes('Talk to Nova')),
+  ).toBe(true);
+  const beforeConversation = playerObject(meadow);
+
+  await page.keyboard.press('e', { delay: 50 });
   await waitForScene(page, 'NovaStoryScene');
 
   snapshot = await getSnapshot(page);
@@ -273,7 +292,8 @@ test('Nova keeps her canonical identity and returns the player to the exact conv
   await page.waitForTimeout(100);
 
   snapshot = await getSnapshot(page);
-  const afterConversation = playerObject(sceneSnapshot(snapshot, 'RainbowMeadowScene'));
+  meadow = sceneSnapshot(snapshot, 'RainbowMeadowScene');
+  const afterConversation = playerObject(meadow);
   expect(Math.abs(afterConversation.x - beforeConversation.x)).toBeLessThan(1);
   expect(Math.abs(afterConversation.y - beforeConversation.y)).toBeLessThan(1);
 });

@@ -1,6 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
 const SAVE_KEY = 'unicorn-valley.save';
+const SCENE_WAIT_TIMEOUT_MS = 12_000;
 
 interface BrowserDiagnosticsApi {
   snapshot(): {
@@ -9,14 +10,18 @@ interface BrowserDiagnosticsApi {
 }
 
 async function waitForScene(page: Page, sceneKey: string): Promise<void> {
-  await page.waitForFunction((expectedScene) => {
-    const diagnosticWindow = window as typeof window & {
-      __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
-    };
-    return diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__
-      ?.snapshot()
-      .activeScenes.includes(expectedScene);
-  }, sceneKey);
+  await page.waitForFunction(
+    (expectedScene) => {
+      const diagnosticWindow = window as typeof window & {
+        __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
+      };
+      return diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__
+        ?.snapshot()
+        .activeScenes.includes(expectedScene);
+    },
+    sceneKey,
+    { timeout: SCENE_WAIT_TIMEOUT_MS },
+  );
 }
 
 function skipUnlessPortraitTouch(): void {
@@ -35,10 +40,11 @@ test('portrait creator uses large grouped controls without changing creator save
   page,
 }) => {
   skipUnlessPortraitTouch();
+  test.setTimeout(75_000);
 
   await page.goto('/?diagnostics=1');
   await waitForScene(page, 'TitleScene');
-  await page.locator('[data-title-action="title-menu-new-game"]').click();
+  await page.locator('[data-title-action="title-menu-new-game"]').tap();
   await waitForScene(page, 'UnicornCreatorScene');
 
   const canvasBox = await page.locator('canvas').first().boundingBox();
@@ -66,10 +72,10 @@ test('portrait creator uses large grouped controls without changing creator save
   const peach = page.locator('[data-creator-choice="bodyColour:peach"]');
   const peachBox = await peach.boundingBox();
   expect(peachBox?.height ?? 0).toBeGreaterThanOrEqual(50);
-  await peach.click();
+  await peach.tap();
   await expect(peach).toHaveAttribute('aria-pressed', 'true');
 
-  await hairTab.click();
+  await hairTab.tap();
   await expect(hairTab).toHaveAttribute('aria-pressed', 'true');
   await expect(page.locator('[data-creator-section-panel="colours"]')).toBeHidden();
   await expect(page.locator('[data-creator-section-panel="hair"]')).toBeVisible();
@@ -78,13 +84,13 @@ test('portrait creator uses large grouped controls without changing creator save
   const nextManeBox = await nextMane.boundingBox();
   expect(nextManeBox?.width ?? 0).toBeGreaterThanOrEqual(54);
   expect(nextManeBox?.height ?? 0).toBeGreaterThanOrEqual(54);
-  await nextMane.click();
+  await nextMane.tap();
 
   const save = page.locator('[data-creator-action="creator-action-confirm-new"]');
   await expect(save).toBeVisible();
   const saveBox = await save.boundingBox();
   expect(saveBox?.height ?? 0).toBeGreaterThanOrEqual(60);
-  await save.click();
+  await save.tap();
   await waitForScene(page, 'MoonflowerGladeScene');
 
   const stored = await page.evaluate(

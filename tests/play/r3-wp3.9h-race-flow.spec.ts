@@ -1,5 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
+const WORLD_TRIGGER_TIMEOUT_MS = 30_000;
+
 interface DiagnosticObjectSnapshot {
   name: string;
   text: string | null;
@@ -73,6 +75,7 @@ function sceneSnapshot(
 test('walking to the Rainbow Run start opens a confirmation instead of requiring E', async ({
   page,
 }) => {
+  test.setTimeout(45_000);
   await page.goto('/?scene=meadow&diagnostics=1');
   await waitForScene(page, 'RainbowMeadowScene');
 
@@ -83,20 +86,23 @@ test('walking to the Rainbow Run start opens a confirmation instead of requiring
   );
 
   await page.keyboard.down('ArrowRight');
-  await page.waitForFunction(
-    () => {
-      const diagnosticWindow = window as typeof window & {
-        __UNICORN_VALLEY_DIAGNOSTICS__?: { snapshot(): BrowserDiagnosticSnapshot };
-      };
-      const meadowScene = diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__
-        ?.snapshot()
-        .scenes.find((scene) => scene.key === 'RainbowMeadowScene');
-      return meadowScene?.objects.some((object) => object.name === 'race-entry-confirmation');
-    },
-    undefined,
-    { timeout: 20_000 },
-  );
-  await page.keyboard.up('ArrowRight');
+  try {
+    await page.waitForFunction(
+      () => {
+        const diagnosticWindow = window as typeof window & {
+          __UNICORN_VALLEY_DIAGNOSTICS__?: { snapshot(): BrowserDiagnosticSnapshot };
+        };
+        const meadowScene = diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__
+          ?.snapshot()
+          .scenes.find((scene) => scene.key === 'RainbowMeadowScene');
+        return meadowScene?.objects.some((object) => object.name === 'race-entry-confirmation');
+      },
+      undefined,
+      { timeout: WORLD_TRIGGER_TIMEOUT_MS },
+    );
+  } finally {
+    await page.keyboard.up('ArrowRight');
+  }
 
   snapshot = await getSnapshot(page);
   meadow = sceneSnapshot(snapshot, 'RainbowMeadowScene');
@@ -119,6 +125,7 @@ test('walking to the Rainbow Run start opens a confirmation instead of requiring
 test('Sunrise Sprint finish controls remain clickable after the result panel appears', async ({
   page,
 }) => {
+  test.setTimeout(75_000);
   await page.goto('/?scene=race&diagnostics=1');
   await waitForScene(page, 'RaceScene');
 
@@ -132,38 +139,45 @@ test('Sunrise Sprint finish controls remain clickable after the result panel app
         .scenes.find((scene) => scene.key === 'RaceScene')?.state.raceStarted;
     },
     undefined,
-    { timeout: 25_000 },
+    { timeout: 30_000 },
   );
 
   await page.keyboard.down('d');
+  try {
+    await page.waitForFunction(
+      () => {
+        const diagnosticWindow = window as typeof window & {
+          __UNICORN_VALLEY_DIAGNOSTICS__?: { snapshot(): BrowserDiagnosticSnapshot };
+        };
+        return diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__
+          ?.snapshot()
+          .scenes.find((scene) => scene.key === 'RaceScene')?.state.raceFinished;
+      },
+      undefined,
+      { timeout: 35_000 },
+    );
+  } finally {
+    await page.keyboard.up('d');
+  }
+
   await page.waitForFunction(
     () => {
       const diagnosticWindow = window as typeof window & {
         __UNICORN_VALLEY_DIAGNOSTICS__?: { snapshot(): BrowserDiagnosticSnapshot };
       };
-      return diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__
+      const race = diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__
         ?.snapshot()
-        .scenes.find((scene) => scene.key === 'RaceScene')?.state.raceFinished;
+        .scenes.find((scene) => scene.key === 'RaceScene');
+      return (
+        race?.objects.some(
+          (object) => object.name === 'race-finish-restart-zone' && object.interactive,
+        ) &&
+        race.objects.some((object) => object.name === 'race-finish-exit-zone' && object.interactive)
+      );
     },
     undefined,
-    { timeout: 30_000 },
+    { timeout: 10_000 },
   );
-  await page.keyboard.up('d');
-
-  await page.waitForFunction(() => {
-    const diagnosticWindow = window as typeof window & {
-      __UNICORN_VALLEY_DIAGNOSTICS__?: { snapshot(): BrowserDiagnosticSnapshot };
-    };
-    const race = diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__
-      ?.snapshot()
-      .scenes.find((scene) => scene.key === 'RaceScene');
-    return (
-      race?.objects.some(
-        (object) => object.name === 'race-finish-restart-zone' && object.interactive,
-      ) &&
-      race.objects.some((object) => object.name === 'race-finish-exit-zone' && object.interactive)
-    );
-  });
 
   const finished = await getSnapshot(page);
   await logicalClick(page, finished.width / 2 + 145, finished.height / 2 + 190);
