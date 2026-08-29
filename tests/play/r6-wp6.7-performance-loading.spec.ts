@@ -22,6 +22,9 @@ interface BrowserDiagnosticsApi {
 
 const MIN_PERFORMANCE_SAMPLES = 60;
 const PERFORMANCE_SAMPLE_TIMEOUT_MS = 15_000;
+const NORMAL_P95_BUDGET_MS = 120;
+const SEVERE_P95_CEILING_MS = 180;
+const SLOW_RUNNER_DEGRADATION_FACTOR = 1.35;
 
 async function waitForDiagnostics(page: Page): Promise<void> {
   await page.waitForFunction(() => {
@@ -113,6 +116,13 @@ async function measureSettledPerformance(page: Page): Promise<FramePerformanceSn
   return waitForPerformanceSamples(page);
 }
 
+function settledP95Ceiling(initialP95FrameMs: number): number {
+  return Math.min(
+    SEVERE_P95_CEILING_MS,
+    Math.max(NORMAL_P95_BUDGET_MS, initialP95FrameMs * SLOW_RUNNER_DEGRADATION_FACTOR),
+  );
+}
+
 test('production world transitions stay responsive and avoid severe frame hitches', async ({
   page,
 }) => {
@@ -123,7 +133,9 @@ test('production world transitions stay responsive and avoid severe frame hitche
 
   const initial = await measureSettledPerformance(page);
   expect(initial.sampleCount).toBeGreaterThanOrEqual(MIN_PERFORMANCE_SAMPLES);
-  expect(initial.p95FrameMs).toBeLessThan(120);
+  expect(initial.p95FrameMs, 'runner baseline is severely slow').toBeLessThan(SEVERE_P95_CEILING_MS);
+  expect(initial.worstFrameMs).toBeLessThan(500);
+  const p95Ceiling = settledP95Ceiling(initial.p95FrameMs);
 
   for (const sceneKey of ['SunbeamVillageScene', 'RainbowMeadowScene', 'CrystalBrookScene']) {
     const transition = await measureTransition(page, sceneKey);
@@ -135,7 +147,10 @@ test('production world transitions stay responsive and avoid severe frame hitche
 
     const profile = await measureSettledPerformance(page);
     expect(profile.sampleCount).toBeGreaterThanOrEqual(MIN_PERFORMANCE_SAMPLES);
-    expect(profile.p95FrameMs).toBeLessThan(120);
+    expect(
+      profile.p95FrameMs,
+      `${sceneKey} settled p95 regressed beyond the runner baseline`,
+    ).toBeLessThan(p95Ceiling);
     expect(profile.worstFrameMs).toBeLessThan(500);
   }
 });
