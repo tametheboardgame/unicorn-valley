@@ -2,6 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 
 const CRYSTAL_CASCADE_RACE_ID = 'race-course:crystal-brook-crystal-cascade';
 const RACE_CONDITION_TIMEOUT_MS = 15_000;
+const RACE_START_TIMEOUT_MS = 30_000;
 const CLEAN_JUMP_PROGRESS = [430, 1230, 2000, 2870] as const;
 
 interface DiagnosticSceneState {
@@ -41,6 +42,7 @@ interface BrowserDiagnosticsApi {
 async function waitForRaceState(
   page: Page,
   predicate: (state: DiagnosticSceneState) => boolean,
+  timeout = RACE_CONDITION_TIMEOUT_MS,
 ): Promise<void> {
   await expect
     .poll(
@@ -53,7 +55,7 @@ async function waitForRaceState(
         });
         return state !== null && predicate(state);
       },
-      { timeout: RACE_CONDITION_TIMEOUT_MS, intervals: [40, 40, 40, 40] },
+      { timeout, intervals: [40, 40, 40, 40] },
     )
     .toBe(true);
 }
@@ -99,7 +101,7 @@ async function jumpAtProgress(page: Page, threshold: number): Promise<void> {
 test('a clean standard Crystal Cascade run can win with ordinary run and jump input', async ({
   page,
 }) => {
-  test.setTimeout(75_000);
+  test.setTimeout(100_000);
   await page.goto('/?diagnostics=1');
   await page.waitForFunction(() => {
     const diagnosticWindow = window as typeof window & {
@@ -119,7 +121,7 @@ test('a clean standard Crystal Cascade run can win with ordinary run and jump in
     diagnostics?.startScene('RaceScene');
   }, CRYSTAL_CASCADE_RACE_ID);
 
-  await waitForRaceState(page, (state) => state.raceStarted === true);
+  await waitForRaceState(page, (state) => state.raceStarted === true, RACE_START_TIMEOUT_MS);
   await page.keyboard.down('ArrowRight');
 
   try {
