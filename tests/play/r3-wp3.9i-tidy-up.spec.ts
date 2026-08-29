@@ -86,7 +86,11 @@ function playerObject(scene: DiagnosticSceneSnapshot): DiagnosticObjectSnapshot 
   return player;
 }
 
-async function approachVisiblePrompt(page: Page, sceneKey: string, promptText: string): Promise<void> {
+async function approachVisiblePrompt(
+  page: Page,
+  sceneKey: string,
+  promptText: string,
+): Promise<void> {
   for (let attempt = 0; attempt < INTERACTION_APPROACH_ATTEMPTS; attempt += 1) {
     const snapshot = await getSnapshot(page);
     const scene = sceneSnapshot(snapshot, sceneKey);
