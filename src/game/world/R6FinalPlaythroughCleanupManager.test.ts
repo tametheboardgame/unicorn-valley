@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   CORRECTED_MEADOW_CRYSTAL_BROOK_PATH_POINTS,
   LEGACY_GATEWAY_LABEL_TARGETS,
-} from './R6FinalPlaythroughCleanupManager';
+} from './R6FinalPlaythroughCleanup';
 
 const RIBBON_BOARD = {
   left: 2510 - 150 - 56,
