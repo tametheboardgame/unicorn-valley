@@ -120,9 +120,10 @@ async function waitForRunState(page: Page, sceneKey: string, running: boolean): 
       const diagnosticWindow = window as typeof window & {
         __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
       };
-      const multiplier = diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__?.sceneState(
-        activeSceneKey,
-      )?.forwardControlMultiplier;
+      const multiplier =
+        diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__?.sceneState(
+          activeSceneKey,
+        )?.forwardControlMultiplier;
       return expectedRunning ? Number(multiplier) > 0.5 : multiplier === 0;
     },
     { activeSceneKey: sceneKey, expectedRunning: running },
