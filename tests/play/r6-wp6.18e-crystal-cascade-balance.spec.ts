@@ -3,7 +3,7 @@ import { expect, test, type Page } from '@playwright/test';
 const CRYSTAL_CASCADE_RACE_ID = 'race-course:crystal-brook-crystal-cascade';
 const RACE_CONDITION_TIMEOUT_MS = 15_000;
 const RACE_START_TIMEOUT_MS = 30_000;
-const CLEAN_JUMP_PROGRESS = [490, 1290, 2080, 2930] as const;
+const CLEAN_JUMP_PROGRESS = [490, 1290, 2080, 2950] as const;
 
 interface DiagnosticSceneState {
   raceStarted: boolean | null;
