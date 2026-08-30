@@ -258,3 +258,42 @@ test.describe('landscape mobile race controls', () => {
     }
   });
 });
+
+test.describe('hybrid touch race controls', () => {
+  test.use({ viewport: { width: 1024, height: 768 }, hasTouch: false });
+
+  test('loads the touch deck when touch is available but the primary pointer is fine', async ({
+    page,
+  }) => {
+    await page.addInitScript(() => {
+      Object.defineProperty(window.navigator, 'maxTouchPoints', {
+        configurable: true,
+        get: () => 5,
+      });
+      const nativeMatchMedia = window.matchMedia.bind(window);
+      window.matchMedia = (query: string): MediaQueryList => {
+        if (query.includes('(pointer: coarse)') || query.includes('(any-pointer: coarse)')) {
+          return {
+            matches: false,
+            media: query,
+            onchange: null,
+            addListener: () => undefined,
+            removeListener: () => undefined,
+            addEventListener: () => undefined,
+            removeEventListener: () => undefined,
+            dispatchEvent: () => false,
+          };
+        }
+        return nativeMatchMedia(query);
+      };
+    });
+
+    await page.goto('/?scene=race&diagnostics=1');
+    await waitForScene(page, STANDARD_RACE_SCENE);
+    await expect(page.locator('[data-race-mobile-controls="true"]')).toBeVisible();
+    await expectControlsBelowCanvas(page);
+    await expectCanvasControlsDisabled(page, STANDARD_RACE_SCENE);
+    await expect(page.locator('[data-race-action="run"]')).toBeVisible();
+    await expect(page.locator('[data-race-action="jump"]')).toBeVisible();
+  });
+});
