@@ -89,9 +89,7 @@ test('Crystal Brook meadow branch replaces the ribbon-board crossing', async ({ 
   expect(named(meadow, 'r6-region-gateway-art:meadow-crystal-brook:path').visible).toBe(false);
   expect(named(meadow, 'r6-region-gateway-art:meadow-crystal-brook:divider').visible).toBe(false);
   expect(named(meadow, 'r6-wp6.18g:meadow-crystal-brook:path').visible).toBe(true);
-  expect(named(meadow, 'r6-region-gateway-art:meadow-crystal-brook:cave-mouth').visible).toBe(
-    true,
-  );
+  expect(named(meadow, 'r6-region-gateway-art:meadow-crystal-brook:cave-mouth').visible).toBe(true);
 });
 
 test('production region gateways suppress their legacy R5 sign labels', async ({ page }) => {
@@ -99,9 +97,7 @@ test('production region gateways suppress their legacy R5 sign labels', async ({
   await waitForScene(page, 'TitleScene');
 
   const meadow = await startScene(page, 'RainbowMeadowScene');
-  expect(named(meadow, 'r6-wp6.18g:legacy-gateway-label:meadow-crystal-brook').visible).toBe(
-    false,
-  );
+  expect(named(meadow, 'r6-wp6.18g:legacy-gateway-label:meadow-crystal-brook').visible).toBe(false);
 
   const brook = await startScene(page, 'CrystalBrookScene');
   for (const id of [
