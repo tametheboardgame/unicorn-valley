@@ -9,6 +9,7 @@ const SYNC_INTERVAL_MS = 80;
 const JUMP_X = GAME_WIDTH - 128;
 const JUMP_Y = GAME_HEIGHT - 102;
 const CONTROL_PREFIX = 'r6-wp6.18h';
+const RUN_TOUCH_ZONE_NAME = 'race-run-touch-zone';
 
 interface VisibilityGameObject extends Phaser.GameObjects.GameObject {
   setVisible(visible: boolean): this;
@@ -93,9 +94,11 @@ export class RaceMobileControlsManager {
   private readonly mediaQuery = globalThis.matchMedia?.('(pointer: coarse)') ?? null;
   private readonly root: HTMLElement;
   private readonly helpButton: HTMLButtonElement;
+  private readonly runButton: HTMLButtonElement;
   private readonly jumpButton: HTMLButtonElement;
   private readonly leaveButton: HTMLButtonElement;
   private readonly shell: HTMLElement;
+  private runHeld = false;
   private jumpHeld = false;
 
   public constructor(private readonly game: Phaser.Game) {
@@ -112,18 +115,24 @@ export class RaceMobileControlsManager {
     const heading = document.createElement('h2');
     heading.textContent = 'Race controls';
     const hint = document.createElement('p');
-    hint.textContent = 'Your unicorn runs automatically. Tap JUMP to clear obstacles.';
+    hint.textContent = 'Hold RUN to race. Tap JUMP to clear obstacles.';
     copy.append(heading, hint);
 
     const controls = document.createElement('div');
     controls.className = 'race-mobile-control-grid';
 
-    this.helpButton = document.createElement('button');
-    this.helpButton.type = 'button';
-    this.helpButton.className = 'race-mobile-button race-mobile-help';
-    this.helpButton.dataset.raceAction = 'help';
-    this.helpButton.textContent = 'Race help';
-    this.helpButton.addEventListener('click', () => this.toggleHelp());
+    this.runButton = document.createElement('button');
+    this.runButton.type = 'button';
+    this.runButton.className = 'race-mobile-button race-mobile-run';
+    this.runButton.dataset.raceAction = 'run';
+    this.runButton.innerHTML = '<strong>RUN</strong><span>Hold to gallop</span>';
+    this.runButton.addEventListener('pointerdown', (event) => {
+      event.preventDefault();
+      this.pressRun();
+    });
+    for (const eventName of ['pointerup', 'pointercancel', 'pointerleave'] as const) {
+      this.runButton.addEventListener(eventName, () => this.releaseRun());
+    }
 
     this.jumpButton = document.createElement('button');
     this.jumpButton.type = 'button';
@@ -138,6 +147,13 @@ export class RaceMobileControlsManager {
       this.jumpButton.addEventListener(eventName, () => this.releaseJump());
     }
 
+    this.helpButton = document.createElement('button');
+    this.helpButton.type = 'button';
+    this.helpButton.className = 'race-mobile-button race-mobile-help';
+    this.helpButton.dataset.raceAction = 'help';
+    this.helpButton.textContent = 'Race help';
+    this.helpButton.addEventListener('click', () => this.toggleHelp());
+
     this.leaveButton = document.createElement('button');
     this.leaveButton.type = 'button';
     this.leaveButton.className = 'race-mobile-button race-mobile-leave';
@@ -145,12 +161,13 @@ export class RaceMobileControlsManager {
     this.leaveButton.textContent = '← Leave race';
     this.leaveButton.addEventListener('click', () => this.leaveRace());
 
-    controls.append(this.helpButton, this.jumpButton, this.leaveButton);
+    controls.append(this.runButton, this.jumpButton, this.helpButton, this.leaveButton);
     this.root.append(copy, controls);
     this.shell.append(this.root);
 
     this.game.events.on(Phaser.Core.Events.POST_STEP, this.update, this);
     this.game.events.once(Phaser.Core.Events.DESTROY, () => {
+      this.releaseRun();
       this.releaseJump();
       this.game.events.off(Phaser.Core.Events.POST_STEP, this.update, this);
       this.shell.classList.remove('race-mobile-controls-active');
@@ -174,7 +191,8 @@ export class RaceMobileControlsManager {
     this.shell.classList.toggle('race-mobile-controls-active', active);
 
     if (!scene) {
-      this.jumpHeld = false;
+      this.releaseRun();
+      this.releaseJump();
       return;
     }
 
@@ -183,6 +201,7 @@ export class RaceMobileControlsManager {
     if (active) {
       this.syncHelpLabel(scene);
     } else {
+      this.releaseRun();
       this.releaseJump();
     }
   }
@@ -200,6 +219,10 @@ export class RaceMobileControlsManager {
       `${CONTROL_PREFIX}:canvas-jump-label`,
       `${CONTROL_PREFIX}:canvas-jump-hint`,
       `${CONTROL_PREFIX}:canvas-exit`,
+      'race-run-button',
+      'race-run-label',
+      'race-run-hint',
+      RUN_TOUCH_ZONE_NAME,
       'race-assistance-control',
     ]) {
       const object = scene.children.getByName(name);
@@ -211,6 +234,7 @@ export class RaceMobileControlsManager {
     for (const object of [
       scene.children.getByName(`${CONTROL_PREFIX}:canvas-jump-target`),
       scene.children.getByName(`${CONTROL_PREFIX}:canvas-exit`),
+      scene.children.getByName(RUN_TOUCH_ZONE_NAME),
       findNestedByName(scene.children.list, 'race-assistance-toggle'),
     ]) {
       if (object && hasInput(object) && object.input) {
@@ -225,9 +249,40 @@ export class RaceMobileControlsManager {
       label instanceof Phaser.GameObjects.Text ? label.text : 'Race help: Standard';
   }
 
+  private runTarget(scene: Phaser.Scene): Phaser.GameObjects.GameObject | null {
+    return scene.children.getByName(RUN_TOUCH_ZONE_NAME);
+  }
+
   private jumpTarget(scene: Phaser.Scene): Phaser.GameObjects.GameObject | null {
     nameRaceCanvasControls(scene);
     return scene.children.getByName(`${CONTROL_PREFIX}:canvas-jump-target`);
+  }
+
+  private pressRun(): void {
+    if (this.runHeld) {
+      return;
+    }
+    const scene = this.activeRaceScene();
+    const target = scene ? this.runTarget(scene) : null;
+    if (!target) {
+      return;
+    }
+
+    this.runHeld = true;
+    this.runButton.classList.add('is-active');
+    void getVerticalSliceAudio().unlock();
+    target.emit('pointerdown');
+  }
+
+  private releaseRun(): void {
+    if (!this.runHeld) {
+      return;
+    }
+    this.runHeld = false;
+    this.runButton.classList.remove('is-active');
+    const scene = this.activeRaceScene();
+    const target = scene ? this.runTarget(scene) : null;
+    target?.emit('pointerup');
   }
 
   private pressJump(): void {
