@@ -228,8 +228,10 @@
   }
 
   .race-mobile-control-grid {
-    grid-template-columns:
-      minmax(118px, 1.1fr) minmax(145px, 1.3fr) minmax(118px, 1fr) minmax(118px, 1fr);
+    grid-template-columns: minmax(118px, 1.1fr) minmax(145px, 1.3fr) minmax(118px, 1fr) minmax(
+        118px,
+        1fr
+      );
     align-items: stretch;
   }
 
