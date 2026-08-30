@@ -58,6 +58,23 @@ function ensureCreatorPortraitControls(): void {
 ensureCreatorPortraitControls();
 creatorPortraitQuery?.addEventListener('change', () => ensureCreatorPortraitControls());
 
+const raceMobileQuery = globalThis.matchMedia?.('(pointer: coarse)');
+let raceMobileControlsLoaded = false;
+
+function ensureRaceMobileControls(): void {
+  if (!raceMobileQuery?.matches || raceMobileControlsLoaded) {
+    return;
+  }
+
+  raceMobileControlsLoaded = true;
+  void import('./game/ui/RaceMobileControlsManager').then(({ getRaceMobileControlsManager }) => {
+    getRaceMobileControlsManager(game);
+  });
+}
+
+ensureRaceMobileControls();
+raceMobileQuery?.addEventListener('change', () => ensureRaceMobileControls());
+
 if (new URLSearchParams(globalThis.location.search).get('diagnostics') === '1') {
   void import('./game/testing/BrowserDiagnostics').then(({ installBrowserDiagnostics }) => {
     installBrowserDiagnostics(game);
