@@ -68,14 +68,16 @@ function drawCorrectedMeadowPath(scene: Phaser.Scene): void {
     return;
   }
 
+  const firstPoint = CORRECTED_MEADOW_CRYSTAL_BROOK_PATH_POINTS[0];
+  if (!firstPoint) {
+    return;
+  }
+
   const path = scene.add.graphics().setName(CORRECTED_MEADOW_PATH_NAME).setDepth(16.25);
   const draw = (width: number, colour: number, alpha: number): void => {
     path.lineStyle(width, colour, alpha);
     path.beginPath();
-    path.moveTo(
-      CORRECTED_MEADOW_CRYSTAL_BROOK_PATH_POINTS[0].x,
-      CORRECTED_MEADOW_CRYSTAL_BROOK_PATH_POINTS[0].y,
-    );
+    path.moveTo(firstPoint.x, firstPoint.y);
     for (const point of CORRECTED_MEADOW_CRYSTAL_BROOK_PATH_POINTS.slice(1)) {
       path.lineTo(point.x, point.y);
     }
@@ -91,8 +93,16 @@ function drawCorrectedMeadowPath(scene: Phaser.Scene): void {
 }
 
 function cleanMeadowCrystalBrookPath(scene: Phaser.Scene): void {
-  scene.children.getByName(LEGACY_MEADOW_PATH_NAME)?.setVisible(false);
-  scene.children.getByName(LEGACY_MEADOW_DIVIDER_NAME)?.setVisible(false);
+  const legacyPath = scene.children.getByName(LEGACY_MEADOW_PATH_NAME);
+  if (legacyPath instanceof Phaser.GameObjects.Graphics) {
+    legacyPath.setVisible(false);
+  }
+
+  const legacyDivider = scene.children.getByName(LEGACY_MEADOW_DIVIDER_NAME);
+  if (legacyDivider instanceof Phaser.GameObjects.Container) {
+    legacyDivider.setVisible(false);
+  }
+
   drawCorrectedMeadowPath(scene);
 }
 
