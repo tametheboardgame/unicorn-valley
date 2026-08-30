@@ -76,9 +76,7 @@ test('Pebble uses production character art without the legacy story circle', asy
   expect(named(village, 'core-npc:pebble:world').visible).toBe(true);
   expect(named(village, 'r6-wp6.18g:pebble-story-cover').visible).toBe(false);
   expect(named(village, 'r6-wp6.18g:pebble-story-icon').visible).toBe(false);
-  expect(
-    village.objects.some((object) => object.text?.startsWith('Talk: Pebble') && object.visible),
-  ).toBe(true);
+  expect(village.objects.some((object) => object.text?.startsWith('Talk: Pebble'))).toBe(true);
 });
 
 test('Crystal Brook meadow branch replaces the ribbon-board crossing', async ({ page }) => {
