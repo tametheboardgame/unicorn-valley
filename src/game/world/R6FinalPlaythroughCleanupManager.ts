@@ -146,10 +146,7 @@ function cleanLegacyGatewayLabel(scene: Phaser.Scene, target: LegacyGatewayLabel
     if (!(object instanceof Phaser.GameObjects.Container)) {
       continue;
     }
-    if (
-      Math.abs(object.x - target.position.x) > 1 ||
-      Math.abs(object.y - target.position.y) > 1
-    ) {
+    if (Math.abs(object.x - target.position.x) > 1 || Math.abs(object.y - target.position.y) > 1) {
       continue;
     }
 
@@ -161,9 +158,7 @@ function cleanLegacyGatewayLabel(scene: Phaser.Scene, target: LegacyGatewayLabel
       continue;
     }
 
-    legacyLabel
-      .setName(`${CLEANUP_PREFIX}:legacy-gateway-label:${target.id}`)
-      .setVisible(false);
+    legacyLabel.setName(`${CLEANUP_PREFIX}:legacy-gateway-label:${target.id}`).setVisible(false);
   }
 }
 
