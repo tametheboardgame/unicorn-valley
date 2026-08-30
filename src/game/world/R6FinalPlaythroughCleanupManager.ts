@@ -99,6 +99,13 @@ function cleanLegacyGatewayLabel(scene: Phaser.Scene, target: LegacyGatewayLabel
       continue;
     }
 
+    const isR5FunctionalGateway = object.list.some(
+      (child) => child instanceof Phaser.GameObjects.Zone,
+    );
+    if (!isR5FunctionalGateway) {
+      continue;
+    }
+
     const legacyLabel = object.list.find(
       (child): child is Phaser.GameObjects.Text =>
         child instanceof Phaser.GameObjects.Text && child.text === target.label,
