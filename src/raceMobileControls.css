@@ -6,142 +6,140 @@
   display: none !important;
 }
 
-@media (pointer: coarse) {
-  #game-shell.race-mobile-controls-active {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    justify-content: flex-start;
-  }
-
-  #game-shell.race-mobile-controls-active #game-container {
-    min-height: 0;
-    flex: 1 1 auto;
-  }
-
-  .race-mobile-controls {
-    z-index: 1020;
-    display: flex;
-    width: 100%;
-    flex: 0 0 auto;
-    flex-direction: column;
-    gap: 8px;
-    padding: 10px max(12px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom))
-      max(12px, env(safe-area-inset-left));
-    border-top: 4px solid #9d72ad;
-    background: rgb(255 251 239 / 98%);
-    color: #4f3a5d;
-    box-shadow: 0 -7px 22px rgb(36 26 61 / 24%);
-    touch-action: manipulation;
-    user-select: none;
-    -webkit-user-select: none;
-  }
-
-  .race-mobile-copy {
-    text-align: center;
-  }
-
-  .race-mobile-copy h2 {
-    margin: 0;
-    color: #5c4568;
-    font:
-      900 clamp(18px, 5vw, 24px) "Trebuchet MS",
-      "Segoe UI",
-      system-ui,
-      sans-serif;
-    line-height: 1.05;
-  }
-
-  .race-mobile-copy p {
-    margin: 3px 0 0;
-    color: #6c5a73;
-    font:
-      700 clamp(13px, 3.6vw, 16px) "Trebuchet MS",
-      "Segoe UI",
-      system-ui,
-      sans-serif;
-    line-height: 1.18;
-  }
-
-  .race-mobile-control-grid {
-    display: grid;
-    gap: 9px;
-  }
-
-  .race-mobile-button {
-    min-width: 0;
-    min-height: 64px;
-    padding: 10px 12px;
-    border: 4px solid #b17bbd;
-    border-radius: 18px;
-    background: #f2e9f8;
-    color: #4f3a5d;
-    font:
-      900 clamp(16px, 4.5vw, 21px) "Trebuchet MS",
-      "Segoe UI",
-      system-ui,
-      sans-serif;
-    line-height: 1.08;
-    box-shadow: 0 4px 11px rgb(54 36 71 / 18%);
-    touch-action: manipulation;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  .race-mobile-button:focus-visible {
-    outline: 4px solid #d6b35f;
-    outline-offset: 2px;
-  }
-
-  .race-mobile-button:active,
-  .race-mobile-button.is-active {
-    transform: scale(0.98);
-    background: #fff1bd;
-  }
-
-  .race-mobile-run,
-  .race-mobile-jump {
-    min-height: 96px;
-    border-width: 5px;
-    touch-action: none;
-  }
-
-  .race-mobile-run {
-    border-color: #a978b6;
-    background: #f3e7ff;
-    color: #493653;
-  }
-
-  .race-mobile-jump {
-    border-color: #9b5daa;
-    background: #ffe9a9;
-    color: #3d2848;
-  }
-
-  .race-mobile-run strong,
-  .race-mobile-run span,
-  .race-mobile-jump strong,
-  .race-mobile-jump span {
-    display: block;
-  }
-
-  .race-mobile-run strong,
-  .race-mobile-jump strong {
-    font-size: clamp(27px, 8vw, 38px);
-    letter-spacing: 0.04em;
-  }
-
-  .race-mobile-run span,
-  .race-mobile-jump span {
-    margin-top: 4px;
-    font-size: clamp(13px, 3.6vw, 16px);
-  }
-
-  .race-mobile-leave {
-    background: #fffaf2;
-  }
+#game-shell.race-mobile-controls-active {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
 }
 
-@media (pointer: coarse) and (orientation: portrait) {
+#game-shell.race-mobile-controls-active #game-container {
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
+.race-mobile-controls {
+  z-index: 1020;
+  display: flex;
+  width: 100%;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px max(12px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom))
+    max(12px, env(safe-area-inset-left));
+  border-top: 4px solid #9d72ad;
+  background: rgb(255 251 239 / 98%);
+  color: #4f3a5d;
+  box-shadow: 0 -7px 22px rgb(36 26 61 / 24%);
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.race-mobile-copy {
+  text-align: center;
+}
+
+.race-mobile-copy h2 {
+  margin: 0;
+  color: #5c4568;
+  font:
+    900 clamp(18px, 5vw, 24px) "Trebuchet MS",
+    "Segoe UI",
+    system-ui,
+    sans-serif;
+  line-height: 1.05;
+}
+
+.race-mobile-copy p {
+  margin: 3px 0 0;
+  color: #6c5a73;
+  font:
+    700 clamp(13px, 3.6vw, 16px) "Trebuchet MS",
+    "Segoe UI",
+    system-ui,
+    sans-serif;
+  line-height: 1.18;
+}
+
+.race-mobile-control-grid {
+  display: grid;
+  gap: 9px;
+}
+
+.race-mobile-button {
+  min-width: 0;
+  min-height: 64px;
+  padding: 10px 12px;
+  border: 4px solid #b17bbd;
+  border-radius: 18px;
+  background: #f2e9f8;
+  color: #4f3a5d;
+  font:
+    900 clamp(16px, 4.5vw, 21px) "Trebuchet MS",
+    "Segoe UI",
+    system-ui,
+    sans-serif;
+  line-height: 1.08;
+  box-shadow: 0 4px 11px rgb(54 36 71 / 18%);
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.race-mobile-button:focus-visible {
+  outline: 4px solid #d6b35f;
+  outline-offset: 2px;
+}
+
+.race-mobile-button:active,
+.race-mobile-button.is-active {
+  transform: scale(0.98);
+  background: #fff1bd;
+}
+
+.race-mobile-run,
+.race-mobile-jump {
+  min-height: 96px;
+  border-width: 5px;
+  touch-action: none;
+}
+
+.race-mobile-run {
+  border-color: #a978b6;
+  background: #f3e7ff;
+  color: #493653;
+}
+
+.race-mobile-jump {
+  border-color: #9b5daa;
+  background: #ffe9a9;
+  color: #3d2848;
+}
+
+.race-mobile-run strong,
+.race-mobile-run span,
+.race-mobile-jump strong,
+.race-mobile-jump span {
+  display: block;
+}
+
+.race-mobile-run strong,
+.race-mobile-jump strong {
+  font-size: clamp(27px, 8vw, 38px);
+  letter-spacing: 0.04em;
+}
+
+.race-mobile-run span,
+.race-mobile-jump span {
+  margin-top: 4px;
+  font-size: clamp(13px, 3.6vw, 16px);
+}
+
+.race-mobile-leave {
+  background: #fffaf2;
+}
+
+@media (orientation: portrait) {
   #game-shell.race-mobile-controls-active #game-container {
     width: 100vw;
     height: min(56.25vw, calc(100dvh - 260px));
@@ -189,7 +187,7 @@
   }
 }
 
-@media (pointer: coarse) and (orientation: landscape) {
+@media (orientation: landscape) {
   #game-shell.race-mobile-controls-active {
     display: grid;
     height: 100dvh;
