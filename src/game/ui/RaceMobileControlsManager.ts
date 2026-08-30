@@ -3,6 +3,7 @@ import '../../raceMobileControls.css';
 import { getVerticalSliceAudio } from '../audio/VerticalSliceAudio';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
+import { browserHasRaceTouchCapability } from './RaceTouchCapability';
 
 const RACE_SCENE_KEYS = new Set(['RaceScene', 'NovaTutorialRaceScene']);
 const SYNC_INTERVAL_MS = 80;
@@ -91,7 +92,8 @@ function nameRaceCanvasControls(scene: Phaser.Scene): void {
 
 export class RaceMobileControlsManager {
   private readonly syncThrottle = new RefreshThrottle(SYNC_INTERVAL_MS);
-  private readonly mediaQuery = globalThis.matchMedia?.('(pointer: coarse)') ?? null;
+  private readonly pointerQuery =
+    globalThis.matchMedia?.('(pointer: coarse), (any-pointer: coarse)') ?? null;
   private readonly root: HTMLElement;
   private readonly helpButton: HTMLButtonElement;
   private readonly runButton: HTMLButtonElement;
@@ -173,7 +175,7 @@ export class RaceMobileControlsManager {
       this.shell.classList.remove('race-mobile-controls-active');
       this.root.remove();
     });
-    this.mediaQuery?.addEventListener('change', () => this.sync());
+    this.pointerQuery?.addEventListener('change', () => this.sync());
   }
 
   private update(): void {
@@ -185,7 +187,7 @@ export class RaceMobileControlsManager {
 
   private sync(): void {
     const scene = this.activeRaceScene();
-    const active = Boolean(scene && this.mediaQuery?.matches);
+    const active = Boolean(scene && browserHasRaceTouchCapability());
 
     this.root.hidden = !active;
     this.shell.classList.toggle('race-mobile-controls-active', active);
