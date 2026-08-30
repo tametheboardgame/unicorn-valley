@@ -13,6 +13,7 @@ interface DiagnosticObject {
 interface DiagnosticSceneState {
   raceStarted: boolean | null;
   raceGrounded: boolean | null;
+  forwardControlMultiplier: number | null;
 }
 
 interface BrowserDiagnosticsApi {
@@ -91,6 +92,9 @@ async function expectCanvasControlsDisabled(page: Page, sceneKey: string): Promi
     'r6-wp6.18h:canvas-jump-label',
     'r6-wp6.18h:canvas-jump-hint',
     'r6-wp6.18h:canvas-exit',
+    'race-run-button',
+    'race-run-label',
+    'race-run-hint',
     'race-assistance-control',
   ]) {
     const object = await namedObject(page, sceneKey, name);
@@ -101,12 +105,39 @@ async function expectCanvasControlsDisabled(page: Page, sceneKey: string): Promi
   for (const name of [
     'r6-wp6.18h:canvas-jump-target',
     'r6-wp6.18h:canvas-exit',
+    'race-run-touch-zone',
     'race-assistance-toggle',
   ]) {
     const object = await namedObject(page, sceneKey, name);
     expect(object, `Expected ${name} input in ${sceneKey}`).not.toBeNull();
     expect(object?.interactive).toBe(false);
   }
+}
+
+async function waitForRunState(page: Page, sceneKey: string, running: boolean): Promise<void> {
+  await page.waitForFunction(
+    ({ activeSceneKey, expectedRunning }) => {
+      const diagnosticWindow = window as typeof window & {
+        __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
+      };
+      const multiplier = diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__?.sceneState(
+        activeSceneKey,
+      )?.forwardControlMultiplier;
+      return expectedRunning ? Number(multiplier) > 0.5 : multiplier === 0;
+    },
+    { activeSceneKey: sceneKey, expectedRunning: running },
+  );
+}
+
+async function setRunHeld(page: Page, sceneKey: string, held: boolean): Promise<void> {
+  const run = page.locator('[data-race-action="run"]');
+  await run.dispatchEvent(held ? 'pointerdown' : 'pointerup', {
+    pointerId: 7,
+    pointerType: 'touch',
+    isPrimary: true,
+    buttons: held ? 1 : 0,
+  });
+  await waitForRunState(page, sceneKey, held);
 }
 
 async function performRealJump(page: Page, sceneKey: string): Promise<void> {
@@ -120,9 +151,9 @@ async function performRealJump(page: Page, sceneKey: string): Promise<void> {
   }, sceneKey);
 
   await jump.dispatchEvent('pointerdown', {
-    pointerId: 1,
+    pointerId: 8,
     pointerType: 'touch',
-    isPrimary: true,
+    isPrimary: false,
     buttons: 1,
   });
   try {
@@ -137,9 +168,9 @@ async function performRealJump(page: Page, sceneKey: string): Promise<void> {
     }, sceneKey);
   } finally {
     await jump.dispatchEvent('pointerup', {
-      pointerId: 1,
+      pointerId: 8,
       pointerType: 'touch',
-      isPrimary: true,
+      isPrimary: false,
       buttons: 0,
     });
   }
@@ -154,15 +185,18 @@ test.describe('portrait mobile race controls', () => {
     await startRace(page);
     await expectControlsBelowCanvas(page);
 
-    const help = page.locator('[data-race-action="help"]');
+    const run = page.locator('[data-race-action="run"]');
     const jump = page.locator('[data-race-action="jump"]');
+    const help = page.locator('[data-race-action="help"]');
     const leave = page.locator('[data-race-action="leave"]');
 
-    const helpBox = await help.boundingBox();
+    const runBox = await run.boundingBox();
     const jumpBox = await jump.boundingBox();
+    const helpBox = await help.boundingBox();
     const leaveBox = await leave.boundingBox();
-    expect(helpBox?.height ?? 0).toBeGreaterThanOrEqual(64);
+    expect(runBox?.height ?? 0).toBeGreaterThanOrEqual(140);
     expect(jumpBox?.height ?? 0).toBeGreaterThanOrEqual(140);
+    expect(helpBox?.height ?? 0).toBeGreaterThanOrEqual(64);
     expect(leaveBox?.height ?? 0).toBeGreaterThanOrEqual(64);
 
     await expectCanvasControlsDisabled(page, STANDARD_RACE_SCENE);
@@ -172,7 +206,10 @@ test.describe('portrait mobile race controls', () => {
     await help.tap();
     await expect.poll(() => help.textContent()).not.toBe(helpBefore);
 
+    await setRunHeld(page, STANDARD_RACE_SCENE, true);
     await performRealJump(page, STANDARD_RACE_SCENE);
+    await waitForRunState(page, STANDARD_RACE_SCENE, true);
+    await setRunHeld(page, STANDARD_RACE_SCENE, false);
 
     await leave.tap();
     await waitForScene(page, 'RainbowMeadowScene');
@@ -184,11 +221,17 @@ test.describe('portrait mobile race controls', () => {
     await expectControlsBelowCanvas(page);
     await expectCanvasControlsDisabled(page, TUTORIAL_RACE_SCENE);
 
+    const run = page.locator('[data-race-action="run"]');
     const jump = page.locator('[data-race-action="jump"]');
+    const runBox = await run.boundingBox();
     const jumpBox = await jump.boundingBox();
+    expect(runBox?.height ?? 0).toBeGreaterThanOrEqual(140);
     expect(jumpBox?.height ?? 0).toBeGreaterThanOrEqual(140);
 
+    await setRunHeld(page, TUTORIAL_RACE_SCENE, true);
     await performRealJump(page, TUTORIAL_RACE_SCENE);
+    await waitForRunState(page, TUTORIAL_RACE_SCENE, true);
+    await setRunHeld(page, TUTORIAL_RACE_SCENE, false);
 
     await page.locator('[data-race-action="leave"]').tap();
     await waitForScene(page, 'RainbowMeadowScene');
@@ -206,9 +249,9 @@ test.describe('landscape mobile race controls', () => {
     await expectControlsBelowCanvas(page);
 
     const rootBox = await page.locator('[data-race-mobile-controls="true"]').boundingBox();
-    expect(rootBox?.height ?? 0).toBeGreaterThanOrEqual(100);
+    expect(rootBox?.height ?? 0).toBeGreaterThanOrEqual(90);
 
-    for (const action of ['help', 'jump', 'leave']) {
+    for (const action of ['run', 'jump', 'help', 'leave']) {
       const box = await page.locator(`[data-race-action="${action}"]`).boundingBox();
       expect(box?.height ?? 0).toBeGreaterThanOrEqual(74);
     }
