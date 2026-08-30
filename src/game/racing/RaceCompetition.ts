@@ -50,7 +50,7 @@ export const RAINBOW_RUN_NPC_RACERS = [
     variancePeriodSeconds: 2.8,
     variancePhase: 0.4,
     jumpLeadProgress: 118,
-    mistakeObstacleIds: ['obstacle:rainbow-log-two'],
+    mistakeObstacleIds: ['obstacle:rainbow-log-two', 'obstacle:cascade-reed-hurdle-one'],
   },
   {
     id: 'racer:clover',
@@ -62,7 +62,7 @@ export const RAINBOW_RUN_NPC_RACERS = [
     variancePeriodSeconds: 3.4,
     variancePhase: 2.1,
     jumpLeadProgress: 112,
-    mistakeObstacleIds: ['obstacle:flower-hurdle'],
+    mistakeObstacleIds: ['obstacle:flower-hurdle', 'obstacle:cascade-driftwood-two'],
   },
   {
     id: 'racer:breeze',
@@ -74,7 +74,12 @@ export const RAINBOW_RUN_NPC_RACERS = [
     variancePeriodSeconds: 2.2,
     variancePhase: 4.1,
     jumpLeadProgress: 118,
-    mistakeObstacleIds: ['obstacle:rainbow-log-one', 'obstacle:flower-hurdle'],
+    mistakeObstacleIds: [
+      'obstacle:rainbow-log-one',
+      'obstacle:flower-hurdle',
+      'obstacle:cascade-driftwood-one',
+      'obstacle:cascade-reed-hurdle-two',
+    ],
   },
 ] as const satisfies readonly NpcRacerDefinition[];
 
