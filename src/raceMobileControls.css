@@ -98,24 +98,39 @@
     background: #fff1bd;
   }
 
+  .race-mobile-run,
   .race-mobile-jump {
     min-height: 96px;
     border-width: 5px;
+    touch-action: none;
+  }
+
+  .race-mobile-run {
+    border-color: #a978b6;
+    background: #f3e7ff;
+    color: #493653;
+  }
+
+  .race-mobile-jump {
     border-color: #9b5daa;
     background: #ffe9a9;
     color: #3d2848;
   }
 
+  .race-mobile-run strong,
+  .race-mobile-run span,
   .race-mobile-jump strong,
   .race-mobile-jump span {
     display: block;
   }
 
+  .race-mobile-run strong,
   .race-mobile-jump strong {
     font-size: clamp(27px, 8vw, 38px);
     letter-spacing: 0.04em;
   }
 
+  .race-mobile-run span,
   .race-mobile-jump span {
     margin-top: 4px;
     font-size: clamp(13px, 3.6vw, 16px);
@@ -129,8 +144,8 @@
 @media (pointer: coarse) and (orientation: portrait) {
   #game-shell.race-mobile-controls-active #game-container {
     width: 100vw;
-    height: min(56.25vw, calc(100dvh - 230px));
-    flex: 0 0 min(56.25vw, calc(100dvh - 230px));
+    height: min(56.25vw, calc(100dvh - 260px));
+    flex: 0 0 min(56.25vw, calc(100dvh - 260px));
     place-items: start center;
   }
 
@@ -147,38 +162,63 @@
   }
 
   .race-mobile-control-grid {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.45fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
     grid-template-rows: auto auto;
   }
 
-  .race-mobile-help {
+  .race-mobile-run {
     grid-column: 1;
     grid-row: 1;
+    min-height: 142px;
   }
 
   .race-mobile-jump {
     grid-column: 2;
-    grid-row: 1 / span 2;
+    grid-row: 1;
     min-height: 142px;
   }
 
-  .race-mobile-leave {
+  .race-mobile-help {
     grid-column: 1;
+    grid-row: 2;
+  }
+
+  .race-mobile-leave {
+    grid-column: 2;
     grid-row: 2;
   }
 }
 
 @media (pointer: coarse) and (orientation: landscape) {
+  #game-shell.race-mobile-controls-active {
+    display: grid;
+    height: 100dvh;
+    grid-template-rows: minmax(0, 1fr) auto;
+    align-items: stretch;
+    justify-content: stretch;
+  }
+
   #game-shell.race-mobile-controls-active #game-container {
-    width: 100vw;
-    height: calc(100dvh - 108px - env(safe-area-inset-bottom));
-    flex: 1 1 auto;
+    grid-row: 1;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
     place-items: center;
+    overflow: hidden;
+  }
+
+  #game-shell.race-mobile-controls-active #game-container canvas {
+    width: auto !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    margin: 0 auto !important;
   }
 
   .race-mobile-controls {
-    min-height: 108px;
-    flex: 0 0 auto;
+    grid-row: 2;
+    min-height: 0;
+    flex: none;
     justify-content: center;
     padding-top: 8px;
   }
@@ -188,21 +228,25 @@
   }
 
   .race-mobile-control-grid {
-    grid-template-columns: minmax(150px, 1fr) minmax(220px, 1.5fr) minmax(150px, 1fr);
+    grid-template-columns:
+      minmax(118px, 1.1fr) minmax(145px, 1.3fr) minmax(118px, 1fr) minmax(118px, 1fr);
     align-items: stretch;
   }
 
   .race-mobile-button,
+  .race-mobile-run,
   .race-mobile-jump {
     min-height: 76px;
-    font-size: clamp(16px, 2.8vw, 21px);
+    font-size: clamp(15px, 2.6vw, 20px);
   }
 
+  .race-mobile-run strong,
   .race-mobile-jump strong {
-    font-size: clamp(25px, 4.2vw, 34px);
+    font-size: clamp(24px, 3.8vw, 32px);
   }
 
+  .race-mobile-run span,
   .race-mobile-jump span {
-    font-size: clamp(12px, 2.2vw, 15px);
+    font-size: clamp(12px, 2vw, 14px);
   }
 }
