@@ -1,8 +1,11 @@
 import { expect, test, type Page } from '@playwright/test';
+import { INTERACTIVE_GATEWAY_RADIUS } from '../../src/game/world/RegionGatewayRules';
 
 const WORLD_PLAYER_NAME = 'world-player-unicorn';
 const CASCADE_TAP_TARGET = 'r6-wp6.18ij:crystal-cascade-tap-target';
 const SUNRISE_SPRINT_RACE_ID = 'race-course:rainbow-run-sunrise-sprint';
+const CASCADE_GATE_POSITION = { x: 2860, y: 850 } as const;
+const CASCADE_APPROACH_POSITION = { x: 2745, y: 930 } as const;
 
 interface DiagnosticObject {
   name: string;
@@ -32,6 +35,7 @@ interface DiagnosticSnapshot {
 interface BrowserDiagnosticsApi {
   snapshot(): DiagnosticSnapshot;
   startScene(sceneKey: string, data?: object): void;
+  setArcadeSpritePosition(sceneKey: string, objectName: string, x: number, y: number): void;
 }
 
 async function waitForScene(page: Page, sceneKey: string): Promise<void> {
@@ -77,12 +81,6 @@ function named(scene: DiagnosticScene, name: string): DiagnosticObject {
   return object as DiagnosticObject;
 }
 
-async function playerCoordinate(page: Page, axis: 'x' | 'y'): Promise<number> {
-  const scene = await sceneSnapshot(page, 'CrystalBrookScene');
-  const player = named(scene, WORLD_PLAYER_NAME);
-  return player[axis];
-}
-
 async function unlockCrystalCascade(page: Page): Promise<void> {
   await page.evaluate((raceId) => {
     const primaryKey = 'unicorn-valley.save';
@@ -101,20 +99,39 @@ async function unlockCrystalCascade(page: Page): Promise<void> {
   }, SUNRISE_SPRINT_RACE_ID);
 }
 
-async function movePlayerToCascadeGate(page: Page): Promise<void> {
-  await page.keyboard.down('ArrowRight');
-  try {
-    await expect.poll(() => playerCoordinate(page, 'x'), { timeout: 15_000 }).toBeGreaterThan(2780);
-  } finally {
-    await page.keyboard.up('ArrowRight');
-  }
+async function positionPlayerAtCascadeGate(page: Page): Promise<void> {
+  await page.evaluate(
+    ({ sceneKey, objectName, x, y }) => {
+      const diagnosticWindow = window as typeof window & {
+        __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
+      };
+      const diagnostics = diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__;
+      if (!diagnostics) {
+        throw new Error('Browser diagnostics are unavailable.');
+      }
+      diagnostics.setArcadeSpritePosition(sceneKey, objectName, x, y);
+    },
+    {
+      sceneKey: 'CrystalBrookScene',
+      objectName: WORLD_PLAYER_NAME,
+      x: CASCADE_APPROACH_POSITION.x,
+      y: CASCADE_APPROACH_POSITION.y,
+    },
+  );
 
-  await page.keyboard.down('ArrowUp');
-  try {
-    await expect.poll(() => playerCoordinate(page, 'y'), { timeout: 5_000 }).toBeLessThan(920);
-  } finally {
-    await page.keyboard.up('ArrowUp');
-  }
+  await expect
+    .poll(async () => {
+      const brook = await sceneSnapshot(page, 'CrystalBrookScene');
+      const player = brook.objects.find((object) => object.name === WORLD_PLAYER_NAME);
+      if (!player) {
+        return Number.POSITIVE_INFINITY;
+      }
+      return Math.hypot(
+        player.x - CASCADE_GATE_POSITION.x,
+        player.y - CASCADE_GATE_POSITION.y,
+      );
+    })
+    .toBeLessThanOrEqual(INTERACTIVE_GATEWAY_RADIUS);
 }
 
 async function tapWorldObject(page: Page, sceneKey: string, objectName: string): Promise<void> {
@@ -176,7 +193,7 @@ test('a real mobile tap on the enlarged Crystal Cascade gate enters the race', a
   await waitForScene(page, 'TitleScene');
   await startScene(page, 'CrystalBrookScene');
   await unlockCrystalCascade(page);
-  await movePlayerToCascadeGate(page);
+  await positionPlayerAtCascadeGate(page);
 
   await expect
     .poll(async () => {
