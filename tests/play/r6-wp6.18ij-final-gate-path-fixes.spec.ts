@@ -126,10 +126,7 @@ async function positionPlayerAtCascadeGate(page: Page): Promise<void> {
       if (!player) {
         return Number.POSITIVE_INFINITY;
       }
-      return Math.hypot(
-        player.x - CASCADE_GATE_POSITION.x,
-        player.y - CASCADE_GATE_POSITION.y,
-      );
+      return Math.hypot(player.x - CASCADE_GATE_POSITION.x, player.y - CASCADE_GATE_POSITION.y);
     })
     .toBeLessThanOrEqual(INTERACTIVE_GATEWAY_RADIUS);
 }
