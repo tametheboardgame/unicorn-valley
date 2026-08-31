@@ -199,7 +199,7 @@
   #game-shell.race-mobile-controls-active #game-container {
     grid-row: 1;
     width: 100%;
-    height: 100%;
+    height: auto;
     min-height: 0;
     place-items: center;
     overflow: hidden;
