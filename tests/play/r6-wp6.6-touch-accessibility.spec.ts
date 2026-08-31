@@ -155,19 +155,6 @@ async function logicalTap(page: Page, x: number, y: number, pointerId = 1): Prom
   await dispatchLogicalTouch(page, 'touchend', [], [touch]);
 }
 
-async function nativeLogicalTap(page: Page, logicalX: number, logicalY: number): Promise<void> {
-  const snapshot = await getSnapshot(page);
-  const bounds = await page.locator('canvas').boundingBox();
-  if (!bounds) {
-    throw new Error('Game canvas has no browser bounds.');
-  }
-
-  await page.touchscreen.tap(
-    bounds.x + (logicalX / snapshot.width) * bounds.width,
-    bounds.y + (logicalY / snapshot.height) * bounds.height,
-  );
-}
-
 async function waitForForwardControl(page: Page, running: boolean): Promise<void> {
   await page.waitForFunction((expectedRunning) => {
     const diagnosticWindow = window as typeof window & {
@@ -285,17 +272,26 @@ test('target-tablet race supports simultaneous RUN and JUMP without cancelling R
   await waitForRaceStarted(page);
   await waitForForwardControl(page, false);
 
+  await expect(page.locator('[data-race-mobile-controls="true"]')).toBeVisible();
+  const runButton = page.locator('[data-race-action="run"]');
+  const jumpButton = page.locator('[data-race-action="jump"]');
+  const runBox = await runButton.boundingBox();
+  const jumpBox = await jumpButton.boundingBox();
+  expect(Math.min(runBox?.width ?? 0, runBox?.height ?? 0)).toBeGreaterThanOrEqual(74);
+  expect(Math.min(jumpBox?.width ?? 0, jumpBox?.height ?? 0)).toBeGreaterThanOrEqual(74);
+
   let snapshot = await getSnapshot(page);
   let race = getScene(snapshot, 'RaceScene');
-  const runZone = race.objects.find((object) => object.name === 'race-run-touch-zone');
-  expect(runZone?.interactive).toBe(true);
-  expect(runZone?.displayWidth).toBeGreaterThanOrEqual(244);
-  expect(runZone?.displayHeight).toBeGreaterThanOrEqual(108);
+  const legacyRunZone = race.objects.find((object) => object.name === 'race-run-touch-zone');
+  expect(legacyRunZone?.interactive).toBe(false);
 
   const start = getPlayer(race);
-  const runTouch = { id: 1, x: 142, y: 618 } as const;
-  const jumpTouch = { id: 2, x: 1152, y: 618 } as const;
-  await dispatchLogicalTouch(page, 'touchstart', [runTouch], [runTouch]);
+  await runButton.dispatchEvent('pointerdown', {
+    pointerId: 1,
+    pointerType: 'touch',
+    isPrimary: true,
+    buttons: 1,
+  });
   await waitForForwardControl(page, true);
   await page.waitForTimeout(450);
 
@@ -304,13 +300,23 @@ test('target-tablet race supports simultaneous RUN and JUMP without cancelling R
   const beforeJump = getPlayer(race);
   expect(beforeJump.x - start.x).toBeGreaterThan(20);
 
-  await dispatchLogicalTouch(page, 'touchstart', [runTouch, jumpTouch], [jumpTouch]);
+  await jumpButton.dispatchEvent('pointerdown', {
+    pointerId: 2,
+    pointerType: 'touch',
+    isPrimary: false,
+    buttons: 1,
+  });
   await page.waitForTimeout(140);
   snapshot = await getSnapshot(page);
   race = getScene(snapshot, 'RaceScene');
   const airborne = getPlayer(race);
   expect(airborne.y).toBeLessThan(beforeJump.y - 3);
-  await dispatchLogicalTouch(page, 'touchend', [runTouch], [jumpTouch]);
+  await jumpButton.dispatchEvent('pointerup', {
+    pointerId: 2,
+    pointerType: 'touch',
+    isPrimary: false,
+    buttons: 0,
+  });
 
   await page.waitForTimeout(120);
   snapshot = await getSnapshot(page);
@@ -322,30 +328,39 @@ test('target-tablet race supports simultaneous RUN and JUMP without cancelling R
   race = getScene(snapshot, 'RaceScene');
   expect(getPlayer(race).x - afterSecondFinger.x).toBeGreaterThan(10);
 
-  await dispatchLogicalTouch(page, 'touchend', [], [runTouch]);
+  await runButton.dispatchEvent('pointerup', {
+    pointerId: 1,
+    pointerType: 'touch',
+    isPrimary: true,
+    buttons: 0,
+  });
   await waitForForwardControl(page, false);
 });
 
-test('target-tablet race assistance can be changed with a native touch tap', async ({ page }) => {
+test('target-tablet race assistance can be changed with the replacement touch control', async ({
+  page,
+}) => {
   test.setTimeout(60_000);
   await page.addInitScript(() => window.localStorage.clear());
   await page.goto('/?scene=race&diagnostics=1');
   await waitForScene(page, 'RaceScene');
 
+  await expect(page.locator('[data-race-mobile-controls="true"]')).toBeVisible();
+  const help = page.locator('[data-race-action="help"]');
+  const helpBox = await help.boundingBox();
+  expect(Math.min(helpBox?.width ?? 0, helpBox?.height ?? 0)).toBeGreaterThanOrEqual(74);
+
   const snapshot = await getSnapshot(page);
   const race = getScene(snapshot, 'RaceScene');
   const control = race.objects.find((object) => object.name === 'race-assistance-control');
   const toggle = race.objects.find((object) => object.name === 'race-assistance-toggle');
-  expect(control?.visible).toBe(true);
-  expect(toggle?.interactive).toBe(true);
-  expect(Math.min(toggle?.displayWidth ?? 0, toggle?.displayHeight ?? 0)).toBeGreaterThanOrEqual(
-    48,
-  );
-  if (!control) {
-    throw new Error('Missing race assistance control.');
-  }
+  expect(control?.visible).toBe(false);
+  expect(toggle?.interactive).toBe(false);
 
-  await nativeLogicalTap(page, control.x, control.y);
+  if (!helpBox) {
+    throw new Error('Missing replacement race assistance control.');
+  }
+  await page.touchscreen.tap(helpBox.x + helpBox.width / 2, helpBox.y + helpBox.height / 2);
   await page.waitForFunction(
     () => {
       const stored = JSON.parse(

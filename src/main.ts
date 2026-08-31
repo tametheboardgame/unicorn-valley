@@ -4,6 +4,7 @@ import './titlePortraitControls.css';
 import { gameConfig } from './game/config/gameConfig';
 import { getClickToMoveManager } from './game/input/ClickToMoveManager';
 import { getExplorationShellWorldManager } from './game/ui/ExplorationShellWorldManager';
+import { browserHasRaceTouchCapability } from './game/ui/RaceTouchCapability';
 import { getTitlePortraitControlsManager } from './game/ui/TitlePortraitControlsManager';
 import { getR5FinalTighteningManager } from './game/visual/R5FinalTighteningManager';
 import { getExplorationGeometryPresentationManager } from './game/world/ExplorationGeometryPresentationManager';
@@ -57,6 +58,23 @@ function ensureCreatorPortraitControls(): void {
 
 ensureCreatorPortraitControls();
 creatorPortraitQuery?.addEventListener('change', () => ensureCreatorPortraitControls());
+
+const raceTouchPointerQuery = globalThis.matchMedia?.('(pointer: coarse), (any-pointer: coarse)');
+let raceMobileControlsLoaded = false;
+
+function ensureRaceMobileControls(): void {
+  if (!browserHasRaceTouchCapability() || raceMobileControlsLoaded) {
+    return;
+  }
+
+  raceMobileControlsLoaded = true;
+  void import('./game/ui/RaceMobileControlsManager').then(({ getRaceMobileControlsManager }) => {
+    getRaceMobileControlsManager(game);
+  });
+}
+
+ensureRaceMobileControls();
+raceTouchPointerQuery?.addEventListener('change', () => ensureRaceMobileControls());
 
 if (new URLSearchParams(globalThis.location.search).get('diagnostics') === '1') {
   void import('./game/testing/BrowserDiagnostics').then(({ installBrowserDiagnostics }) => {
