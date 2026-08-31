@@ -70,6 +70,7 @@ export interface BrowserDiagnosticsApi {
   resetPerformance(): void;
   startScene(sceneKey: string, data?: object): void;
   selectRaceCourse(courseId: string): void;
+  setArcadeSpritePosition(sceneKey: string, objectName: string, x: number, y: number): void;
 }
 
 interface InspectableProperties {
@@ -274,6 +275,18 @@ export function installBrowserDiagnostics(game: Phaser.Game): BrowserDiagnostics
     },
     selectRaceCourse: (courseId) => {
       selectRaceCourse(courseId);
+    },
+    setArcadeSpritePosition: (sceneKey, objectName, x, y) => {
+      const scene = game.scene.getScene(sceneKey);
+      if (!scene?.scene.isActive()) {
+        throw new Error(`Cannot position ${objectName}: diagnostic scene ${sceneKey} is not active.`);
+      }
+      const object = scene.children.getByName(objectName);
+      if (!(object instanceof Phaser.Physics.Arcade.Sprite)) {
+        throw new Error(`Cannot position ${objectName}: expected an Arcade Sprite in ${sceneKey}.`);
+      }
+      object.setVelocity(0, 0);
+      object.body.reset(x, y);
     },
   };
 
