@@ -289,7 +289,9 @@ export function installBrowserDiagnostics(game: Phaser.Game): BrowserDiagnostics
       }
       const body = object.body;
       if (!(body instanceof Phaser.Physics.Arcade.Body)) {
-        throw new Error(`Cannot position ${objectName}: expected a dynamic Arcade body in ${sceneKey}.`);
+        throw new Error(
+          `Cannot position ${objectName}: expected a dynamic Arcade body in ${sceneKey}.`,
+        );
       }
       object.setVelocity(0, 0);
       body.reset(x, y);
