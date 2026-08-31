@@ -76,12 +76,16 @@ async function namedObject(
 }
 
 async function expectControlsBelowCanvas(page: Page): Promise<void> {
-  const canvasBox = await page.locator('canvas').first().boundingBox();
+  const playArea = page.locator('#game-container');
+  const playAreaBox = await playArea.boundingBox();
   const controlsBox = await page.locator('[data-race-mobile-controls="true"]').boundingBox();
-  expect(canvasBox).not.toBeNull();
+  const overflow = await playArea.evaluate((element) => getComputedStyle(element).overflow);
+
+  expect(playAreaBox).not.toBeNull();
   expect(controlsBox).not.toBeNull();
+  expect(overflow).toBe('hidden');
   expect(controlsBox?.y ?? 0).toBeGreaterThanOrEqual(
-    (canvasBox?.y ?? 0) + (canvasBox?.height ?? 0) - 2,
+    (playAreaBox?.y ?? 0) + (playAreaBox?.height ?? 0) - 2,
   );
 }
 
