@@ -6,6 +6,7 @@ import {
   LEGACY_GATEWAY_LABEL_TARGETS,
   type LegacyGatewayLabelTarget,
 } from './R6FinalPlaythroughCleanup';
+import { INTERACTIVE_GATEWAY_RADIUS } from './RegionGatewayRules';
 import { SUNBEAM_VILLAGE_MAP } from './SunbeamVillageMap';
 import { WORLD_PLAYER_NAME } from './WorldTraversalPolishManager';
 
@@ -19,7 +20,6 @@ const BROOK_WOODS_PATH_NAME = `${FINAL_FIX_PREFIX}:brook-woods:path`;
 const CRYSTAL_CASCADE_PATH_NAME = `${FINAL_FIX_PREFIX}:crystal-cascade:path`;
 const CRYSTAL_CASCADE_TAP_TARGET_NAME = `${FINAL_FIX_PREFIX}:crystal-cascade-tap-target`;
 const CRYSTAL_CASCADE_GATE_POSITION = { x: 2860, y: 850 } as const;
-const CRYSTAL_CASCADE_TAP_RADIUS = 330;
 
 interface PathPoint {
   x: number;
@@ -221,7 +221,7 @@ function ensureCrystalCascadeTapTarget(scene: Phaser.Scene): void {
     CRYSTAL_CASCADE_GATE_POSITION.x,
     CRYSTAL_CASCADE_GATE_POSITION.y,
   );
-  if (distance > CRYSTAL_CASCADE_TAP_RADIUS) {
+  if (distance > INTERACTIVE_GATEWAY_RADIUS) {
     existing?.destroy();
     return;
   }
