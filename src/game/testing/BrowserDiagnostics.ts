@@ -279,7 +279,9 @@ export function installBrowserDiagnostics(game: Phaser.Game): BrowserDiagnostics
     setArcadeSpritePosition: (sceneKey, objectName, x, y) => {
       const scene = game.scene.getScene(sceneKey);
       if (!scene?.scene.isActive()) {
-        throw new Error(`Cannot position ${objectName}: diagnostic scene ${sceneKey} is not active.`);
+        throw new Error(
+          `Cannot position ${objectName}: diagnostic scene ${sceneKey} is not active.`,
+        );
       }
       const object = scene.children.getByName(objectName);
       if (!(object instanceof Phaser.Physics.Arcade.Sprite)) {
