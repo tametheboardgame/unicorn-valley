@@ -10,9 +10,11 @@ The player creates her own unicorn, lives at Moonflower Cottage, explores a magi
 
 R0 through R5 are complete. R6 now includes the original production presentation/accessibility programme, mobile portrait remediation, and the complete pre-R7 delight/personalisation extension through R6-WP6.17.
 
-The first R6-WP6.18 human playthrough found a bounded set of mobile UX, movement presentation, environment/shop presentation, NPC marker and Crystal Cascade balance defects. Those findings have been remediated and merged through R6-WP6.18A/B to R6-WP6.18F, with shared CI gate hardening completed separately.
+The first R6-WP6.18 human playthrough produced the bounded remediation packages R6-WP6.18A/B through R6-WP6.18F. Follow-up mobile playthroughs produced the map clean-up package R6-WP6.18G and mobile race-control package R6-WP6.18H, both of which are merged.
 
-The project is deliberately **not moving into R7 yet**. The repaired build requires another meaningful human playthrough and explicit release of the R6-WP6.18 hard stop. New defects found during that replay may still be handled as bounded R6-WP6.18 remediation packages.
+A further mobile confirmation found two remaining blockers: Crystal Cascade's visible race prompt was not reliably tappable, and the newer gateway paths read as differently coloured overlays rather than natural continuations of the existing map paths. Those final findings are assigned to **R6-WP6.18I/J** and are being handled as a bounded gate-input and path-presentation remediation.
+
+The project is deliberately **not moving into R7 yet**. After R6-WP6.18I/J is merged and deployed, a short human confirmation must verify Crystal Cascade touch entry and the repaired Meadow/Crystal Brook path presentation. R7 starts only after the user explicitly releases the R6-WP6.18 hard stop.
 
 The production branch is deployed to `https://unicorn-valley.pages.dev/`.
 
@@ -50,6 +52,7 @@ The production branch is deployed to `https://unicorn-valley.pages.dev/`.
 - [R6 Mobile Portrait Playability Remediation](docs/07E-R6-WP6.10-MOBILE-PORTRAIT-REMEDIATION.md)
 - [R6 Pre-R7 Delight and Personalisation Phase](docs/07F-R6-WP6.11-6.18-PRE-R7-DELIGHT-PHASE.md)
 - [R6-WP6.18 Playthrough Status and Remediation Record](docs/07R-R6-WP6.18-PLAYTHROUGH-STATUS.md)
+- [R6-WP6.18I/J Final Gate and Path Fixes](docs/07U-R6-WP6.18I-J-FINAL-GATE-PATH-FIXES.md)
 - [Development and Validation](docs/08-DEVELOPMENT.md)
 - [Responsive Canvas and Input Diagnostic](docs/09-RESPONSIVE-INPUT-DIAGNOSTIC.md)
 - [Cloudflare Pages Deployment](docs/10-CLOUDFLARE-PAGES-DEPLOYMENT.md)
@@ -89,7 +92,7 @@ The production branch is deployed to `https://unicorn-valley.pages.dev/`.
 - **R3 - Rainbow Run Racing**: complete.
 - **R4 - Friendship, Secrets and Home Depth**: complete.
 - **R5 - The Valley Gets Bigger**: complete.
-- **R6 - Production Presentation and Accessibility**: implementation complete through R6-WP6.17; R6-WP6.18 human playthrough/review gate remains active with the first remediation cycle complete.
+- **R6 - Production Presentation and Accessibility**: implementation complete through R6-WP6.17; R6-WP6.18 human playthrough/review gate remains active with R6-WP6.18I/J as the current final-remediation candidate.
 - **R7 - Daughter-led Expansion**: blocked until R6-WP6.18 is explicitly released; it will begin with Structured Preference Review before choosing the next major expansion path.
 
 ## Development rule
