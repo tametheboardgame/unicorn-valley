@@ -38,6 +38,15 @@ interface BrowserDiagnosticsApi {
   setArcadeSpritePosition(sceneKey: string, objectName: string, x: number, y: number): void;
 }
 
+interface CanvasPoint {
+  x: number;
+  y: number;
+  left: number;
+  right: number;
+  top: number;
+  bottom: number;
+}
+
 async function waitForScene(page: Page, sceneKey: string): Promise<void> {
   await page.waitForFunction((expectedScene) => {
     const diagnosticWindow = window as typeof window & {
@@ -131,8 +140,12 @@ async function positionPlayerAtCascadeGate(page: Page): Promise<void> {
     .toBeLessThanOrEqual(INTERACTIVE_GATEWAY_RADIUS);
 }
 
-async function tapWorldObject(page: Page, sceneKey: string, objectName: string): Promise<void> {
-  const point = await page.evaluate(
+async function worldObjectCanvasPoint(
+  page: Page,
+  sceneKey: string,
+  objectName: string,
+): Promise<CanvasPoint> {
+  return page.evaluate(
     ({ key, name }) => {
       const diagnosticWindow = window as typeof window & {
         __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
@@ -149,10 +162,30 @@ async function tapWorldObject(page: Page, sceneKey: string, objectName: string):
       return {
         x: rect.left + ((target.x - scene.camera.worldX) / scene.camera.worldWidth) * rect.width,
         y: rect.top + ((target.y - scene.camera.worldY) / scene.camera.worldHeight) * rect.height,
+        left: rect.left,
+        right: rect.right,
+        top: rect.top,
+        bottom: rect.bottom,
       };
     },
     { key: sceneKey, name: objectName },
   );
+}
+
+async function tapWorldObject(page: Page, sceneKey: string, objectName: string): Promise<void> {
+  await expect
+    .poll(async () => {
+      const point = await worldObjectCanvasPoint(page, sceneKey, objectName);
+      return (
+        point.x >= point.left + 2 &&
+        point.x <= point.right - 2 &&
+        point.y >= point.top + 2 &&
+        point.y <= point.bottom - 2
+      );
+    })
+    .toBe(true);
+
+  const point = await worldObjectCanvasPoint(page, sceneKey, objectName);
   await page.touchscreen.tap(point.x, point.y);
 }
 
@@ -200,7 +233,6 @@ test('a real mobile tap on the enlarged Crystal Cascade gate enters the race', a
     })
     .toBe(true);
 
-  await page.waitForTimeout(300);
   await tapWorldObject(page, 'CrystalBrookScene', CASCADE_TAP_TARGET);
   await waitForScene(page, 'RaceScene');
 
