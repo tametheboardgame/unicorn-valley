@@ -70,6 +70,11 @@ const COTTAGE_DECORATION_PROFILES: Partial<Record<ItemId, CottageDecorationProfi
     theme: 'adventure',
     previewColour: 0x7fd5dc,
   },
+  'item:sunbeam-picnic-basket': {
+    categories: ['floor', 'table', 'display'],
+    theme: 'sunbeam',
+    previewColour: 0xe8b56d,
+  },
 };
 
 export function getCottageDecorationProfile(itemId: ItemId): CottageDecorationProfile | null {
