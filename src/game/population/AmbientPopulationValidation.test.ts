@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import type { ResidentPlacementDefinition } from './AmbientPopulationTypes';
+import type {
+  ResidentPlacementDefinition,
+  ResidentStoryAnchorDefinition,
+} from './AmbientPopulationTypes';
 import {
   segmentCrossesRectangle,
   validateAmbientPopulationContent,
@@ -10,15 +13,17 @@ import {
   R6_SMALL_WORLD_INTERACTIONS,
   R6_SUPPORTING_RESIDENTS,
 } from './R6SupportingResidentContent';
+import { R6_AMBIENT_RESIDENT_STORY_ANCHORS } from './R6SupportingResidentStateContent';
 
 describe('ambient population validation', () => {
-  it('keeps the shipped WP2 resident and interaction definitions on authored safe ground', () => {
+  it('keeps the shipped WP2 resident, anchor and interaction definitions on authored safe ground', () => {
     expect(
       validateAmbientPopulationContent(
         R6_SUPPORTING_RESIDENTS,
         R6_AMBIENT_RESIDENT_PLACEMENTS,
         R6_SMALL_WORLD_INTERACTIONS,
         R6_AMBIENT_SAFETY_PROFILES,
+        R6_AMBIENT_RESIDENT_STORY_ANCHORS,
       ),
     ).toEqual([]);
   });
@@ -74,5 +79,24 @@ describe('ambient population validation', () => {
       R6_AMBIENT_SAFETY_PROFILES,
     );
     expect(issues.some((issue) => issue.includes('route crosses blocker'))).toBe(true);
+  });
+
+  it('rejects story anchors that would place a required resident inside collision', () => {
+    const unsafe: ResidentStoryAnchorDefinition = {
+      id: 'anchor:unsafe',
+      residentId: 'resident:juniper',
+      sceneKey: 'MoonflowerGladeScene',
+      position: { x: 1300, y: 560 },
+      interactionRadius: 120,
+      activeWhen: { worldFlags: [{ id: 'flag:test', value: true }] },
+    };
+    const issues = validateAmbientPopulationContent(
+      R6_SUPPORTING_RESIDENTS,
+      R6_AMBIENT_RESIDENT_PLACEMENTS,
+      R6_SMALL_WORLD_INTERACTIONS,
+      R6_AMBIENT_SAFETY_PROFILES,
+      [unsafe],
+    );
+    expect(issues.some((issue) => issue.includes('safe anchor ground'))).toBe(true);
   });
 });
