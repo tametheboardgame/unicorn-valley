@@ -21,40 +21,25 @@ function findInteriorId(scene: Phaser.Scene): VillageInteriorId | null {
   return null;
 }
 
-function findRectangleAt(
-  scene: Phaser.Scene,
-  x: number,
-  y: number,
-  interactiveOnly = false,
-): Phaser.GameObjects.Rectangle | null {
-  const pending: Phaser.GameObjects.GameObject[] = [...scene.children.list];
-  while (pending.length > 0) {
-    const object = pending.shift();
-    if (!object) {
-      continue;
-    }
-    if (object instanceof Phaser.GameObjects.Container) {
-      pending.push(...object.list);
-      continue;
-    }
-    if (
-      object instanceof Phaser.GameObjects.Rectangle &&
-      (!interactiveOnly || object.input?.enabled === true) &&
-      Math.abs(object.x - x) < 0.5 &&
-      Math.abs(object.y - y) < 0.5
-    ) {
-      return object;
-    }
-  }
-  return null;
-}
-
 function nameRectangleAt(scene: Phaser.Scene, x: number, y: number, name: string): void {
-  findRectangleAt(scene, x, y)?.setName(name);
+  const rectangle = scene.children.list.find(
+    (object) =>
+      object instanceof Phaser.GameObjects.Rectangle &&
+      Math.abs(object.x - x) < 0.5 &&
+      Math.abs(object.y - y) < 0.5,
+  );
+  rectangle?.setName(name);
 }
 
 function nameInteractiveRectangleAt(scene: Phaser.Scene, x: number, y: number, name: string): void {
-  findRectangleAt(scene, x, y, true)?.setName(name);
+  const rectangle = scene.children.list.find(
+    (object) =>
+      object instanceof Phaser.GameObjects.Rectangle &&
+      object.input?.enabled === true &&
+      Math.abs(object.x - x) < 0.5 &&
+      Math.abs(object.y - y) < 0.5,
+  );
+  rectangle?.setName(name);
 }
 
 export class VillageInteriorContractManager {

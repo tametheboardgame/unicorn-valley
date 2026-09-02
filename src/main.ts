@@ -28,8 +28,22 @@ void import('./game/scenes/R6VillageInteriorScene').then(({ VillageInteriorScene
   }
 });
 
+void import('./game/scenes/HollowTreeNookScene').then(({ HollowTreeNookScene }) => {
+  if (!game.scene.keys.HollowTreeNookScene) {
+    game.scene.add('HollowTreeNookScene', HollowTreeNookScene);
+  }
+});
+
 void import('./game/world/VillageLifeWorldManager').then(({ getVillageLifeWorldManager }) => {
   getVillageLifeWorldManager(game);
+});
+
+void import('./game/world/GladeDepthWorldManager').then(({ getGladeDepthWorldManager }) => {
+  getGladeDepthWorldManager(game);
+});
+
+void import('./game/world/CottageDepthWorldManager').then(({ getCottageDepthWorldManager }) => {
+  getCottageDepthWorldManager(game);
 });
 
 void Promise.all([

@@ -75,6 +75,16 @@ const COTTAGE_DECORATION_PROFILES: Partial<Record<ItemId, CottageDecorationProfi
     theme: 'sunbeam',
     previewColour: 0xe8b56d,
   },
+  'item:hollow-tree-star-jar': {
+    categories: ['table', 'shelf', 'display'],
+    theme: 'moonflower',
+    previewColour: 0xffdfa0,
+  },
+  'item:butterfly-window-charm': {
+    categories: ['wall', 'shelf', 'display'],
+    theme: 'moonflower',
+    previewColour: 0xd9b7eb,
+  },
 };
 
 export function getCottageDecorationProfile(itemId: ItemId): CottageDecorationProfile | null {

@@ -36,18 +36,6 @@ export const MOONFLOWER_GLADE_INTERACTIONS = [
     },
   },
   {
-    id: 'interaction:hollow-tree',
-    label: 'Hollow Tree',
-    actionLabel: 'Peek inside',
-    position: landmarkApproach('hollow-tree'),
-    interactionRadius: 175,
-    result: {
-      type: 'message',
-      title: 'The Hollow Tree',
-      message: 'There is a tiny purple glimmer deep inside. Something may be hiding here later…',
-    },
-  },
-  {
     id: 'interaction:display-stump',
     label: 'Wonderbook',
     actionLabel: 'Open book',

@@ -59,4 +59,19 @@ describe('Cottage home view', () => {
       }),
     ]);
   });
+
+  it('shows race and Glade accomplishments as physical home evidence', () => {
+    const save = createDefaultSave('2026-09-02T15:00:00.000Z');
+    save.inventory.itemQuantities['item:rainbow-run-finisher-ribbon'] = 1;
+    save.inventory.itemQuantities['item:hollow-tree-star-jar'] = 1;
+    save.inventory.itemQuantities['item:butterfly-window-charm'] = 1;
+
+    expect(buildCottageHomeView(save).treasureRewards.map(({ itemId }) => itemId)).toEqual(
+      expect.arrayContaining([
+        'item:rainbow-run-finisher-ribbon',
+        'item:hollow-tree-star-jar',
+        'item:butterfly-window-charm',
+      ]),
+    );
+  });
 });
