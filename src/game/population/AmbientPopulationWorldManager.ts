@@ -84,9 +84,10 @@ function findPlayer(scene: Phaser.Scene): PositionedObject | null {
   }
 
   const fallback = scene.children.list.find((object) => {
-    const candidate = object as Phaser.GameObjects.GameObject & Partial<PositionedObject> & {
-      texture?: { key?: string };
-    };
+    const candidate = object as Phaser.GameObjects.GameObject &
+      Partial<PositionedObject> & {
+        texture?: { key?: string };
+      };
     return (
       typeof candidate.x === 'number' &&
       typeof candidate.y === 'number' &&
@@ -187,10 +188,7 @@ export class AmbientPopulationWorldManager {
     return state;
   }
 
-  private refreshScene(
-    state: ScenePopulationRuntime,
-    context: AmbientPopulationContext,
-  ): void {
+  private refreshScene(state: ScenePopulationRuntime, context: AmbientPopulationContext): void {
     this.syncResidents(state, context);
     this.syncSmallInteractions(state, context);
 
@@ -235,10 +233,7 @@ export class AmbientPopulationWorldManager {
     }
   }
 
-  private syncResidents(
-    state: ScenePopulationRuntime,
-    context: AmbientPopulationContext,
-  ): void {
+  private syncResidents(state: ScenePopulationRuntime, context: AmbientPopulationContext): void {
     const wanted = new Map<SupportingResidentId, ResolvedResidentLocation>();
     for (const resident of R6_SUPPORTING_RESIDENTS) {
       const location = resolveResidentLocation(
@@ -341,11 +336,7 @@ export class AmbientPopulationWorldManager {
     );
   }
 
-  private updateResident(
-    runtime: ResidentRuntime,
-    player: PositionedObject,
-    now: number,
-  ): void {
+  private updateResident(runtime: ResidentRuntime, player: PositionedObject, now: number): void {
     runtime.container.setDepth(worldDepthForY(runtime.container.y + 52, 0.36));
 
     if (runtime.interactionUntilMs > 0) {
@@ -384,11 +375,7 @@ export class AmbientPopulationWorldManager {
     this.beginNextMovement(runtime, player, now);
   }
 
-  private beginNextMovement(
-    runtime: ResidentRuntime,
-    player: PositionedObject,
-    now: number,
-  ): void {
+  private beginNextMovement(runtime: ResidentRuntime, player: PositionedObject, now: number): void {
     const placement = runtime.location.placement;
     if (!placement || placement.waypoints.length <= 1) {
       runtime.pauseUntilMs = now + 1800;
@@ -418,7 +405,8 @@ export class AmbientPopulationWorldManager {
         runtime.tween = null;
         runtime.movementTargetIndex = null;
         runtime.movementDeadlineMs = 0;
-        runtime.pauseUntilMs = this.game.loop.time + (target.pauseMs ?? this.defaultPauseMs(placement.behaviour));
+        runtime.pauseUntilMs =
+          this.game.loop.time + (target.pauseMs ?? this.defaultPauseMs(placement.behaviour));
         const playerDx = player.x - runtime.container.x;
         if (Math.abs(playerDx) < 210) {
           runtime.sprite.setFlipX(playerDx < 0);
@@ -427,7 +415,9 @@ export class AmbientPopulationWorldManager {
     });
   }
 
-  private defaultPauseMs(behaviour: NonNullable<ResidentRuntime['location']['placement']>['behaviour']): number {
+  private defaultPauseMs(
+    behaviour: NonNullable<ResidentRuntime['location']['placement']>['behaviour'],
+  ): number {
     if (behaviour === 'activity-loop') {
       return 2800;
     }
@@ -452,11 +442,7 @@ export class AmbientPopulationWorldManager {
     runtime.pauseUntilMs = now + 1400;
   }
 
-  private activateResident(
-    runtime: ResidentRuntime,
-    player: PositionedObject,
-    now: number,
-  ): void {
+  private activateResident(runtime: ResidentRuntime, player: PositionedObject, now: number): void {
     if (runtime.interactionUntilMs > now) {
       return;
     }
@@ -501,9 +487,7 @@ export class AmbientPopulationWorldManager {
     state: ScenePopulationRuntime,
     definition: SmallWorldInteractionDefinition,
   ): SmallInteractionRuntime {
-    const glow = state.scene.add
-      .circle(0, 0, 24, 0xfff0a5, 0.08)
-      .setStrokeStyle(2, 0xffffff, 0.16);
+    const glow = state.scene.add.circle(0, 0, 24, 0xfff0a5, 0.08).setStrokeStyle(2, 0xffffff, 0.16);
     const icon = state.scene.add
       .text(0, 0, feedbackIcon(definition.kind), {
         color: '#fff1a8',
@@ -532,10 +516,7 @@ export class AmbientPopulationWorldManager {
 
     state.input.bindPointer(zone, () => {
       const player = findPlayer(state.scene);
-      if (
-        player &&
-        distanceBetween(player, container) <= definition.interactionRadius
-      ) {
+      if (player && distanceBetween(player, container) <= definition.interactionRadius) {
         this.activateSmallInteraction(state.scene, definition);
       }
     });
@@ -593,12 +574,7 @@ export class AmbientPopulationWorldManager {
     }
   }
 
-  private showFeedback(
-    scene: Phaser.Scene,
-    title: string,
-    message: string,
-    icon: string,
-  ): void {
+  private showFeedback(scene: Phaser.Scene, title: string, message: string, icon: string): void {
     scene.children.getByName('r6-5-ambient-feedback')?.destroy();
     const panel = scene.add
       .text(GAME_WIDTH / 2, 126, `${icon}  ${title}\n${message}`, {
@@ -638,9 +614,7 @@ export class AmbientPopulationWorldManager {
 
 let browserAmbientPopulationWorldManager: AmbientPopulationWorldManager | null = null;
 
-export function getAmbientPopulationWorldManager(
-  game: Phaser.Game,
-): AmbientPopulationWorldManager {
+export function getAmbientPopulationWorldManager(game: Phaser.Game): AmbientPopulationWorldManager {
   browserAmbientPopulationWorldManager ??= new AmbientPopulationWorldManager(game);
   return browserAmbientPopulationWorldManager;
 }
