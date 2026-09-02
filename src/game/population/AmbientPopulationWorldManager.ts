@@ -12,11 +12,13 @@ import {
   movementDurationMs,
   nextRouteCursor,
   resolveResidentLocation,
+  resolveResidentTalkLines,
   type ResidentRouteCursor,
   type ResolvedResidentLocation,
 } from './AmbientResidentRoutine';
 import type {
   AmbientPopulationContext,
+  ResidentTalkDefinition,
   SmallWorldInteractionDefinition,
   SupportingResidentDefinition,
   SupportingResidentId,
@@ -26,6 +28,10 @@ import {
   R6_SMALL_WORLD_INTERACTIONS,
   R6_SUPPORTING_RESIDENTS,
 } from './R6SupportingResidentContent';
+import {
+  R6_AMBIENT_RESIDENT_STORY_ANCHORS,
+  R6_SUPPORTING_RESIDENT_TALK_VARIANTS,
+} from './R6SupportingResidentStateContent';
 import {
   createSupportingResidentSprite,
   ensureSupportingResidentTexture,
@@ -166,6 +172,7 @@ export class AmbientPopulationWorldManager {
   private sceneHasAmbientContent(sceneKey: string): boolean {
     return (
       R6_AMBIENT_RESIDENT_PLACEMENTS.some((placement) => placement.sceneKey === sceneKey) ||
+      R6_AMBIENT_RESIDENT_STORY_ANCHORS.some((anchor) => anchor.sceneKey === sceneKey) ||
       R6_SMALL_WORLD_INTERACTIONS.some((interaction) => interaction.sceneKey === sceneKey)
     );
   }
@@ -240,7 +247,7 @@ export class AmbientPopulationWorldManager {
         resident.id,
         state.scene.scene.key,
         R6_AMBIENT_RESIDENT_PLACEMENTS,
-        [],
+        R6_AMBIENT_RESIDENT_STORY_ANCHORS,
         context,
       );
       if (location) {
@@ -452,7 +459,14 @@ export class AmbientPopulationWorldManager {
     runtime.sprite.setTexture(
       ensureSupportingResidentTexture(runtime.container.scene, runtime.resident, 'idle'),
     );
-    const line = chooseTalkLine(runtime.resident.talk.lines, runtime.interactionCount);
+    const talk: ResidentTalkDefinition = {
+      ...runtime.resident.talk,
+      variants:
+        R6_SUPPORTING_RESIDENT_TALK_VARIANTS[runtime.resident.id] ??
+        runtime.resident.talk.variants,
+    };
+    const lines = resolveResidentTalkLines(talk, this.getContext());
+    const line = chooseTalkLine(lines, runtime.interactionCount);
     runtime.interactionCount += 1;
     this.showFeedback(runtime.container.scene, runtime.resident.name, line, '💬');
   }
