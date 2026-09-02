@@ -1442,7 +1442,7 @@ Acceptance:
 
 R6.5 is the mandatory current release after the completed R6 human gate and before any R7 preference review.
 
-The detailed scope, quantitative content-density targets, region requirements and acceptance criteria are authoritative in `07V-R6.5-VALLEY-COMPLETENESS-BREADTH.md`. This register preserves the stable package IDs and dependency order so a fresh development session cannot bypass the breadth phase.
+The detailed scope, quantitative content-density targets, region requirements and acceptance criteria are authoritative in `07V-R6.5-VALLEY-COMPLETENESS-BREADTH.md`. `07W-R6.5-CONTENT-BLUEPRINT.md` and `07X-R6.5-AUTONOMOUS-UNICORN-LIFE.md` are mandatory companion specifications for the packages they cover; in particular, WP2 cannot be accepted without satisfying the complete 07X autonomous-life contract.
 
 ## R6.5-WP1 - Valley Content Audit and Density Contract
 
@@ -1456,9 +1456,16 @@ Goal:
 
 Dependencies: R6.5-WP1
 
+Mandatory companion specification: `07X-R6.5-AUTONOMOUS-UNICORN-LIFE.md`
+
 Goal:
 
-- provide reusable supporting-unicorn, ambient-life and small world-interaction patterns.
+- provide reusable supporting-unicorn, ambient-life and small world-interaction patterns;
+- implement purposeful autonomous routines, contextual relocation, story anchors and stop/face/talk/resume behaviour required by 07X.
+
+Acceptance:
+
+- WP2 is not complete until the full autonomous-life acceptance and regression contract in 07X passes.
 
 ## R6.5-WP3 - Economy and Reward Loop Completion
 
@@ -1546,7 +1553,12 @@ Dependencies: R6.5-WP10, R6.5-WP11, R6.5-WP12
 
 Goal:
 
-- connect the broadened valley through cross-region stories, supporting residents and character follow-ups.
+- connect the broadened valley through cross-region stories, supporting residents and character follow-ups;
+- add however many substantive threads remain necessary after the WP1/WP11 reconciliation to guarantee at least six new substantive R6.5 story threads, excluding lightweight microstories from that six-thread minimum.
+
+Acceptance:
+
+- the reconciled R6.5 content matrix reaches both at least 12 meaningful total story/quest threads and at least six new substantive R6.5 threads.
 
 ## R6.5-WP14 - Repeatable Activity Expansion
 
