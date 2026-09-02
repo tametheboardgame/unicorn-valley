@@ -8,9 +8,7 @@ export class EconomyRewardWorldManager {
 
   public constructor() {
     this.rewardService.reconcile();
-    this.unsubscribe.push(
-      gameEventBus.on('SAVE_COMPLETED', () => this.rewardService.reconcile()),
-    );
+    this.unsubscribe.push(gameEventBus.on('SAVE_COMPLETED', () => this.rewardService.reconcile()));
   }
 
   public destroy(): void {
