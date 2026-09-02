@@ -1478,7 +1478,7 @@ Goal:
 
 ## R6.5-WP5 - Moonflower Glade and Cottage Depth
 
-Dependencies: R6.5-WP2
+Dependencies: R6.5-WP2, R6.5-WP3
 
 Goal:
 
