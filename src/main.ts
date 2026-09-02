@@ -3,6 +3,7 @@ import './style.css';
 import './titlePortraitControls.css';
 import { gameConfig } from './game/config/gameConfig';
 import { getClickToMoveManager } from './game/input/ClickToMoveManager';
+import { getVillageInteriorContractManager } from './game/scenes/VillageInteriorContractManager';
 import { getExplorationShellWorldManager } from './game/ui/ExplorationShellWorldManager';
 import { browserHasRaceTouchCapability } from './game/ui/RaceTouchCapability';
 import { getTitlePortraitControlsManager } from './game/ui/TitlePortraitControlsManager';
@@ -15,15 +16,20 @@ getExplorationShellWorldManager(game);
 getTitlePortraitControlsManager(game);
 getExplorationGeometryPresentationManager(game);
 getR5FinalTighteningManager(game);
+getVillageInteriorContractManager(game);
 
 void import('./game/economy/EconomyRewardWorldManager').then(({ getEconomyRewardWorldManager }) => {
   getEconomyRewardWorldManager();
 });
 
-void import('./game/scenes/VillageInteriorScene').then(({ VillageInteriorScene }) => {
+void import('./game/scenes/R6VillageInteriorScene').then(({ VillageInteriorScene }) => {
   if (!game.scene.keys.VillageInteriorScene) {
     game.scene.add('VillageInteriorScene', VillageInteriorScene);
   }
+});
+
+void import('./game/world/VillageLifeWorldManager').then(({ getVillageLifeWorldManager }) => {
+  getVillageLifeWorldManager(game);
 });
 
 void Promise.all([
