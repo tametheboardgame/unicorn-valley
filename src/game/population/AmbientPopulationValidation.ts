@@ -1,6 +1,7 @@
 import type {
   AmbientSafetyProfile,
   ResidentPlacementDefinition,
+  ResidentStoryAnchorDefinition,
   SmallWorldInteractionDefinition,
   SupportingResidentDefinition,
 } from './AmbientPopulationTypes';
@@ -114,12 +115,15 @@ export function validateAmbientPopulationContent(
   placements: readonly ResidentPlacementDefinition[],
   interactions: readonly SmallWorldInteractionDefinition[],
   profiles: readonly AmbientSafetyProfile[],
+  anchors: readonly ResidentStoryAnchorDefinition[] = [],
 ): string[] {
   const issues: string[] = [];
   const residentIds = new Set<string>();
   const placementIds = new Set<string>();
+  const anchorIds = new Set<string>();
   const interactionIds = new Set<string>();
   const waypointIds = new Set<string>();
+  const talkVariantIds = new Set<string>();
   const profileByScene = new Map(profiles.map((profile) => [profile.sceneKey, profile]));
 
   for (const resident of residents) {
@@ -132,6 +136,15 @@ export function validateAmbientPopulationContent(
     }
     if (resident.talk.lines.length < 2) {
       issues.push(`${resident.id} should have changing ambient dialogue`);
+    }
+    for (const variant of resident.talk.variants ?? []) {
+      if (talkVariantIds.has(variant.id)) {
+        issues.push(`Duplicate resident talk variant id: ${variant.id}`);
+      }
+      talkVariantIds.add(variant.id);
+      if (variant.lines.length === 0) {
+        issues.push(`${variant.id} requires at least one talk line`);
+      }
     }
   }
 
@@ -180,6 +193,25 @@ export function validateAmbientPopulationContent(
       if (blocker) {
         issues.push(`${placement.id} route crosses blocker ${blocker.id}`);
       }
+    }
+  }
+
+  for (const anchor of anchors) {
+    if (anchorIds.has(anchor.id)) {
+      issues.push(`Duplicate resident story anchor id: ${anchor.id}`);
+    }
+    anchorIds.add(anchor.id);
+    if (!residentIds.has(anchor.residentId)) {
+      issues.push(`${anchor.id} references unknown resident ${anchor.residentId}`);
+    }
+    if (anchor.interactionRadius < 96) {
+      issues.push(`${anchor.id} interaction radius is too small for touch-safe play`);
+    }
+    const profile = profileByScene.get(anchor.sceneKey);
+    if (!profile) {
+      issues.push(`${anchor.id} has no safety profile for ${anchor.sceneKey}`);
+    } else if (!pointIsSafe(anchor.position, profile, 8)) {
+      issues.push(`${anchor.id} is not on authored safe anchor ground`);
     }
   }
 
