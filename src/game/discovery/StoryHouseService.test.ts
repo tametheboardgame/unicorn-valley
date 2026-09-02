@@ -36,7 +36,11 @@ describe('Story House service', () => {
     expect(welcome?.read).toBe(false);
 
     expect(storyHouse.readCard('welcome-to-sunbeam')?.read).toBe(true);
-    expect(new StoryHouseService(new SaveService(repository)).listCards().find(({ id }) => id === 'welcome-to-sunbeam')?.read).toBe(true);
+    expect(
+      new StoryHouseService(new SaveService(repository))
+        .listCards()
+        .find(({ id }) => id === 'welcome-to-sunbeam')?.read,
+    ).toBe(true);
   });
 
   it('unlocks story cards from normal quest and discovery progress without a purchase', () => {
