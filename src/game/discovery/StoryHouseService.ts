@@ -41,7 +41,8 @@ const CARD_DEFINITIONS: readonly StoryHouseCardDefinition[] = [
     title: 'Moonflowers Remember',
     icon: '🌙',
     text: 'Willow wrote that Moonflowers grow brightest when somebody stops to notice what they need.',
-    unlockedWhen: (save) => save.quests.byQuestId['quest:willows-moonflowers']?.status === 'completed',
+    unlockedWhen: (save) =>
+      save.quests.byQuestId['quest:willows-moonflowers']?.status === 'completed',
   },
   {
     id: 'rainbow-run-scrapbook',
@@ -55,7 +56,8 @@ const CARD_DEFINITIONS: readonly StoryHouseCardDefinition[] = [
     title: 'The Brook Sings Back',
     icon: '🎵',
     text: 'Ripple says the Brook never plays exactly the same song twice, because the water is always moving.',
-    unlockedWhen: (save) => save.quests.byQuestId['quest:ripple-brook-song']?.status === 'completed',
+    unlockedWhen: (save) =>
+      save.quests.byQuestId['quest:ripple-brook-song']?.status === 'completed',
   },
   {
     id: 'starwell-page',
