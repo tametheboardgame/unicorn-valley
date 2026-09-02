@@ -77,6 +77,11 @@ export class BootScene extends Phaser.Scene {
         getCoreNpcProductionPresentationManager(this.sys.game);
       },
     );
+    void import('../population/AmbientPopulationWorldManager').then(
+      ({ getAmbientPopulationWorldManager }) => {
+        getAmbientPopulationWorldManager(this.sys.game);
+      },
+    );
     void import('../settings/TitleSettingsEnhancementManager').then(
       ({ getTitleSettingsEnhancementManager }) => {
         getTitleSettingsEnhancementManager(this.sys.game);
