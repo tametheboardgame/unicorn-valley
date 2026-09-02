@@ -32,9 +32,17 @@ export interface ResidentCondition {
   worldFlags?: readonly ResidentWorldFlagCondition[];
 }
 
+export interface ResidentTalkVariant {
+  id: string;
+  lines: readonly string[];
+  activeWhen: ResidentCondition;
+  priority?: number;
+}
+
 export interface ResidentTalkDefinition {
   lines: readonly string[];
   dialogueId?: DialogueId;
+  variants?: readonly ResidentTalkVariant[];
 }
 
 export interface SupportingResidentDefinition {
