@@ -85,7 +85,9 @@ export class VillageInteriorContractManager {
 
 let browserVillageInteriorContractManager: VillageInteriorContractManager | null = null;
 
-export function getVillageInteriorContractManager(game: Phaser.Game): VillageInteriorContractManager {
+export function getVillageInteriorContractManager(
+  game: Phaser.Game,
+): VillageInteriorContractManager {
   browserVillageInteriorContractManager ??= new VillageInteriorContractManager(game);
   return browserVillageInteriorContractManager;
 }
