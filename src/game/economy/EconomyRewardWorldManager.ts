@@ -9,8 +9,7 @@ export class EconomyRewardWorldManager {
   public constructor() {
     this.rewardService.reconcile();
     this.unsubscribe.push(
-      gameEventBus.on('QUEST_COMPLETED', () => this.rewardService.reconcile()),
-      gameEventBus.on('DISCOVERY_UNLOCKED', () => this.rewardService.reconcile()),
+      gameEventBus.on('SAVE_COMPLETED', () => this.rewardService.reconcile()),
     );
   }
 
