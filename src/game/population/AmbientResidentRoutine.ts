@@ -4,6 +4,7 @@ import type {
   ResidentPlacementDefinition,
   ResidentRouteMode,
   ResidentStoryAnchorDefinition,
+  ResidentTalkDefinition,
   SupportingResidentId,
 } from './AmbientPopulationTypes';
 
@@ -129,6 +130,16 @@ export function resolveResidentLocation(
   }
 
   return candidates.sort((left, right) => right.priority - left.priority)[0] ?? null;
+}
+
+export function resolveResidentTalkLines(
+  talk: ResidentTalkDefinition,
+  context: AmbientPopulationContext,
+): readonly string[] {
+  const activeVariant = [...(talk.variants ?? [])]
+    .filter(({ activeWhen }) => conditionMatches(activeWhen, context))
+    .sort((left, right) => (right.priority ?? 0) - (left.priority ?? 0))[0];
+  return activeVariant?.lines.length ? activeVariant.lines : talk.lines;
 }
 
 export function chooseTalkLine(lines: readonly string[], interactionCount: number): string {
