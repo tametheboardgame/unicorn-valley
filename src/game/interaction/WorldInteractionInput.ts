@@ -20,6 +20,11 @@ function isEditableKeyboardTarget(target: EventTarget | null): boolean {
   );
 }
 
+function isModalDialogueVisible(scene: Phaser.Scene): boolean {
+  const panel = scene.children.getByName('dialogue-production-panel');
+  return panel instanceof Phaser.GameObjects.Rectangle && panel.visible;
+}
+
 function ensureInteractionTracking(): void {
   if (interactionTrackingInstalled || typeof globalThis.addEventListener !== 'function') {
     return;
@@ -46,16 +51,24 @@ export class WorldInteractionInput {
   }
 
   public justPressed(): boolean {
-    if (!this.scene.scene.isActive() || interactionPressSerial === this.lastSeenPressSerial) {
+    if (!this.scene.scene.isActive()) {
+      this.lastSeenPressSerial = interactionPressSerial;
+      return false;
+    }
+    if (interactionPressSerial === this.lastSeenPressSerial) {
       return false;
     }
     this.lastSeenPressSerial = interactionPressSerial;
-    return true;
+    return !isModalDialogueVisible(this.scene);
   }
 
   public bindPointer(zone: Phaser.GameObjects.Zone, activate: () => void): void {
     zone.setInteractive({ useHandCursor: true });
-    zone.on('pointerdown', activate);
+    zone.on('pointerdown', () => {
+      if (!isModalDialogueVisible(this.scene)) {
+        activate();
+      }
+    });
   }
 
   public destroy(): void {
