@@ -77,9 +77,9 @@ describe('R6.5 Village story flow', () => {
     expect(quests.getProgress(TANSY_MAP_QUEST_ID).status).toBe('completed');
     expect(saveService.load()?.world.flags[TANSY_MAP_HUNT_ACTIVE_FLAG]).toBe(false);
     expect(saveService.load()?.world.flags[TANSY_MAP_RESTORED_FLAG]).toBe(true);
-    expect(saveService.load()?.relationships.byCharacterId[TANSY_CHARACTER_ID]?.friendshipPoints).toBe(
-      12,
-    );
+    expect(
+      saveService.load()?.relationships.byCharacterId[TANSY_CHARACTER_ID]?.friendshipPoints,
+    ).toBe(12);
 
     quests.destroy();
   });
@@ -103,9 +103,9 @@ describe('R6.5 Village story flow', () => {
 
     quests.notifyCharacterTalked(MAPLE_CHARACTER_ID);
     expect(quests.getProgress(MAPLE_CAKE_QUEST_ID).status).toBe('completed');
-    expect(saveService.load()?.relationships.byCharacterId[MAPLE_CHARACTER_ID]?.friendshipPoints).toBe(
-      12,
-    );
+    expect(
+      saveService.load()?.relationships.byCharacterId[MAPLE_CHARACTER_ID]?.friendshipPoints,
+    ).toBe(12);
 
     quests.destroy();
   });
