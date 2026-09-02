@@ -71,6 +71,17 @@ function sceneFrom(value: DiagnosticSnapshot, sceneKey: string): DiagnosticScene
 }
 
 async function clickLogicalObject(page: Page, objectName: string): Promise<void> {
+  await page.waitForFunction((name) => {
+    const diagnosticWindow = window as typeof window & {
+      __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
+    };
+    return (
+      diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__
+        ?.snapshot()
+        .scenes.some((scene) => scene.objects.some((object) => object.name === name)) ?? false
+    );
+  }, objectName);
+
   const value = await snapshot(page);
   const scene = value.scenes.find((candidate) =>
     candidate.objects.some((object) => object.name === objectName),
