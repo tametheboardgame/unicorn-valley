@@ -32,11 +32,7 @@ export function conditionMatches(
   if (condition.timeStates && !condition.timeStates.includes(context.timeState)) {
     return false;
   }
-  if (
-    condition.worldFlags?.some(
-      ({ id, value }) => Boolean(context.worldFlags[id]) !== value,
-    )
-  ) {
+  if (condition.worldFlags?.some(({ id, value }) => Boolean(context.worldFlags[id]) !== value)) {
     return false;
   }
   return true;
@@ -135,10 +131,7 @@ export function resolveResidentLocation(
   return candidates.sort((left, right) => right.priority - left.priority)[0] ?? null;
 }
 
-export function chooseTalkLine(
-  lines: readonly string[],
-  interactionCount: number,
-): string {
+export function chooseTalkLine(lines: readonly string[], interactionCount: number): string {
   if (lines.length === 0) {
     return 'Hello!';
   }
