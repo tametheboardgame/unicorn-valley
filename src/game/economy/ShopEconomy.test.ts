@@ -57,7 +57,7 @@ describe('Shimmer economy', () => {
 
     const reloaded = saveService.load();
     expect(reloaded).not.toBeNull();
-    expect(getShimmerBalanceFromSave(reloaded!)).toBe(7);
+    expect(reloaded ? getShimmerBalanceFromSave(reloaded) : -1).toBe(7);
   });
 
   it('rejects invalid transaction amounts', () => {
@@ -111,18 +111,18 @@ describe('Twinkle & Thread shop', () => {
     expect(save ? getShimmerBalanceFromSave(save) : -1).toBe(2);
   });
 
-  it('gives clear insufficient-funds data and does not grant the item', () => {
+  it('gives clear insufficient-funds data for unlocked stock and does not grant the item', () => {
     const { saveService, economy, shop } = createServices();
     economy.earn(1);
 
-    const result = shop.purchase('item:rainbow-rug');
+    const result = shop.purchase('item:starlight-bow');
     expect(result).toMatchObject({
       type: 'insufficient-funds',
-      price: 6,
+      price: 2,
       balance: 1,
-      shortfall: 5,
+      shortfall: 1,
     });
-    expect(saveService.load()?.inventory.itemQuantities['item:rainbow-rug'] ?? 0).toBe(0);
+    expect(saveService.load()?.inventory.itemQuantities['item:starlight-bow'] ?? 0).toBe(0);
     expect(economy.getBalance()).toBe(1);
   });
 });

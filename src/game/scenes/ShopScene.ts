@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import type { ItemId } from '../../content/contentTypes';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
+import { ShopPurchaseTapGuard } from '../economy/ShopPurchaseTapGuard';
 import { ShopService } from '../economy/ShopService';
 import { ShimmerEconomyService } from '../economy/ShimmerEconomyService';
 import { InputController } from '../input/InputController';
@@ -24,6 +25,7 @@ export class ShopScene extends Phaser.Scene {
   private pointerInput: PointerTouchInputAdapter | null = null;
   private shopService: ShopService | null = null;
   private economyService: ShimmerEconomyService | null = null;
+  private readonly purchaseTapGuard = new ShopPurchaseTapGuard();
   private balanceText: Phaser.GameObjects.Text | null = null;
   private feedbackText: Phaser.GameObjects.Text | null = null;
   private readonly stockControls = new Map<ItemId, StockControls>();
@@ -37,6 +39,7 @@ export class ShopScene extends Phaser.Scene {
   public create(data: ShopSceneData): void {
     this.returnScene = data.returnScene ?? 'SunbeamVillageScene';
     this.closing = false;
+    this.purchaseTapGuard.reset();
     this.stockControls.clear();
     this.cameras.main.setBackgroundColor('rgba(69, 50, 78, 0.96)');
 
@@ -87,7 +90,7 @@ export class ShopScene extends Phaser.Scene {
       .text(
         GAME_WIDTH / 2,
         164,
-        'Rainbow Run earns Shimmer. More valley activities will join in later.',
+        'Quests, discoveries, activities and races can earn Shimmer. You never need to grind.',
         {
           color: UI_COLOURS.mutedInk,
           fontFamily: UI_FONT,
@@ -152,6 +155,7 @@ export class ShopScene extends Phaser.Scene {
       this.economyService = null;
       this.balanceText = null;
       this.feedbackText = null;
+      this.purchaseTapGuard.reset();
       this.stockControls.clear();
     });
   }
@@ -236,7 +240,11 @@ export class ShopScene extends Phaser.Scene {
   }
 
   private purchase(itemId: ItemId): void {
-    if (!this.shopService || this.closing) {
+    if (
+      !this.shopService ||
+      this.closing ||
+      !this.purchaseTapGuard.tryBegin(itemId, this.time.now)
+    ) {
       return;
     }
 
@@ -250,6 +258,8 @@ export class ShopScene extends Phaser.Scene {
       this.feedbackText?.setText(
         `Almost! You need ${result.shortfall} more Shimmer for ${result.item.name}.`,
       );
+    } else if (result.type === 'locked') {
+      this.feedbackText?.setText(`🔒 ${result.item.name}: ${result.unlockHint}`);
     } else {
       this.feedbackText?.setText(`${result.item.name} is already yours. Pick another treasure!`);
     }
@@ -268,7 +278,12 @@ export class ShopScene extends Phaser.Scene {
         continue;
       }
 
-      if (entry.isUniqueOwned) {
+      if (!entry.isUnlocked) {
+        controls.ownedLabel.setText(entry.unlockHint ?? 'Keep exploring to unlock this.');
+        controls.buyLabel.setText('Locked');
+        controls.buyButton.setFillStyle(UI_COLOURS.lavender, 0.72).disableInteractive();
+        controls.buyLabel.disableInteractive();
+      } else if (entry.isUniqueOwned) {
         controls.ownedLabel.setText('Owned ✓');
         controls.buyLabel.setText('Yours!');
         controls.buyButton.setFillStyle(UI_COLOURS.mint, 1).disableInteractive();
