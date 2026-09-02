@@ -3,12 +3,15 @@ import { itemRegistry } from '../../content/registries';
 import type { ItemDefinition, ItemId } from '../../content/contentTypes';
 import type { SaveService } from '../save/SaveService';
 import { applyShimmerSpendToSave, getShimmerBalanceFromSave } from './ShimmerEconomyService';
+import { resolveShopUnlock } from './ShopProgression';
 
 export interface ShopItemView {
   definition: ItemDefinition;
   price: number;
   ownedQuantity: number;
   isUniqueOwned: boolean;
+  isUnlocked: boolean;
+  unlockHint: string | null;
 }
 
 export type ShopPurchaseResult =
@@ -30,6 +33,12 @@ export type ShopPurchaseResult =
       type: 'already-owned';
       item: ItemDefinition;
       balance: number;
+    }
+  | {
+      type: 'locked';
+      item: ItemDefinition;
+      balance: number;
+      unlockHint: string;
     };
 
 function appendUnique(values: readonly string[], value: string): string[] {
@@ -63,11 +72,14 @@ export class ShopService {
     return R4_SHOP_STOCK.map((entry) => {
       const definition = requireShopItem(entry.itemId);
       const ownedQuantity = save.inventory.itemQuantities[entry.itemId] ?? 0;
+      const unlock = resolveShopUnlock(save, entry.itemId);
       return {
         definition,
         price: entry.price,
         ownedQuantity,
         isUniqueOwned: definition.category === 'accessory' && ownedQuantity > 0,
+        isUnlocked: unlock.unlocked,
+        unlockHint: unlock.hint,
       };
     });
   }
@@ -78,6 +90,16 @@ export class ShopService {
     const save = this.saveService.load() ?? this.saveService.createNewGame();
     const balance = getShimmerBalanceFromSave(save);
     const ownedQuantity = save.inventory.itemQuantities[itemId] ?? 0;
+    const unlock = resolveShopUnlock(save, itemId);
+
+    if (!unlock.unlocked) {
+      return {
+        type: 'locked',
+        item,
+        balance,
+        unlockHint: unlock.hint ?? 'Keep exploring the valley to unlock this.',
+      };
+    }
 
     if (item.category === 'accessory' && ownedQuantity > 0) {
       return {
