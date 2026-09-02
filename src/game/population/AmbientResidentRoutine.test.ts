@@ -3,6 +3,7 @@ import type {
   AmbientPopulationContext,
   ResidentPlacementDefinition,
   ResidentStoryAnchorDefinition,
+  ResidentTalkDefinition,
 } from './AmbientPopulationTypes';
 import {
   chooseTalkLine,
@@ -10,8 +11,16 @@ import {
   movementDurationMs,
   nextRouteCursor,
   resolveResidentLocation,
+  resolveResidentTalkLines,
 } from './AmbientResidentRoutine';
-import { R6_AMBIENT_RESIDENT_PLACEMENTS } from './R6SupportingResidentContent';
+import {
+  R6_AMBIENT_RESIDENT_PLACEMENTS,
+  R6_SUPPORTING_RESIDENTS,
+} from './R6SupportingResidentContent';
+import {
+  R6_AMBIENT_RESIDENT_STORY_ANCHORS,
+  R6_SUPPORTING_RESIDENT_TALK_VARIANTS,
+} from './R6SupportingResidentStateContent';
 
 const morning: AmbientPopulationContext = {
   timeState: 'morning',
@@ -78,13 +87,29 @@ describe('ambient resident routine contract', () => {
     ).toBe('story-anchor');
   });
 
+  it('wires a production story anchor for Juniper after Willow garden progression', () => {
+    const context: AmbientPopulationContext = {
+      ...morning,
+      worldFlags: { 'flag:willow-garden-planted': true },
+    };
+    expect(
+      resolveResidentLocation(
+        'resident:juniper',
+        'MoonflowerGladeScene',
+        R6_AMBIENT_RESIDENT_PLACEMENTS,
+        R6_AMBIENT_RESIDENT_STORY_ANCHORS,
+        context,
+      )?.id,
+    ).toBe('resident-anchor:juniper:willow-garden');
+  });
+
   it('proves contextual relocation for Tansy across day and evening', () => {
     expect(
       resolveResidentLocation(
         'resident:tansy',
         'SunbeamVillageScene',
         R6_AMBIENT_RESIDENT_PLACEMENTS,
-        [],
+        R6_AMBIENT_RESIDENT_STORY_ANCHORS,
         morning,
       )?.id,
     ).toBe('resident-placement:tansy:village-day');
@@ -93,7 +118,7 @@ describe('ambient resident routine contract', () => {
         'resident:tansy',
         'SunbeamVillageScene',
         R6_AMBIENT_RESIDENT_PLACEMENTS,
-        [],
+        R6_AMBIENT_RESIDENT_STORY_ANCHORS,
         night,
       ),
     ).toBeNull();
@@ -102,10 +127,30 @@ describe('ambient resident routine contract', () => {
         'resident:tansy',
         'RainbowMeadowScene',
         R6_AMBIENT_RESIDENT_PLACEMENTS,
-        [],
+        R6_AMBIENT_RESIDENT_STORY_ANCHORS,
         night,
       )?.id,
     ).toBe('resident-placement:tansy:meadow-evening');
+  });
+
+  it('resolves conditional talk lines from progression while preserving default talk', () => {
+    const juniper = R6_SUPPORTING_RESIDENTS.find(({ id }) => id === 'resident:juniper');
+    expect(juniper).toBeDefined();
+    if (!juniper) {
+      return;
+    }
+    const talk: ResidentTalkDefinition = {
+      ...juniper.talk,
+      variants: R6_SUPPORTING_RESIDENT_TALK_VARIANTS[juniper.id],
+    };
+
+    expect(resolveResidentTalkLines(talk, morning)).toEqual(juniper.talk.lines);
+    expect(
+      resolveResidentTalkLines(talk, {
+        ...morning,
+        worldFlags: { 'flag:willow-garden-planted': true },
+      })[0],
+    ).toContain("Willow's moonflowers");
   });
 
   it('computes movement duration from authored speed with a safe lower bound', () => {
