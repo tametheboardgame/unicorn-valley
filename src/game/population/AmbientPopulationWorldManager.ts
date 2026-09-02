@@ -461,9 +461,7 @@ export class AmbientPopulationWorldManager {
     );
     const talk: ResidentTalkDefinition = {
       ...runtime.resident.talk,
-      variants:
-        R6_SUPPORTING_RESIDENT_TALK_VARIANTS[runtime.resident.id] ??
-        runtime.resident.talk.variants,
+      variants: R6_SUPPORTING_RESIDENT_TALK_VARIANTS[runtime.resident.id] ?? runtime.resident.talk.variants,
     };
     const lines = resolveResidentTalkLines(talk, this.getContext());
     const line = chooseTalkLine(lines, runtime.interactionCount);
