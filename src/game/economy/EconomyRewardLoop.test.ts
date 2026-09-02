@@ -53,12 +53,12 @@ describe('R6.5 economy reward loop', () => {
 
     const first = applyAvailableEconomyRewards(save);
     expect(first.claimed.map(({ id }) => id)).toEqual([
-      'quest:quest:willows-moonflowers',
+      'completed:quest:willows-moonflowers',
       'discovery-milestone:5',
     ]);
     expect(getShimmerBalanceFromSave(first.save)).toBe(3);
     expect(first.save.collections.memoryIds).toContain(
-      getEconomyRewardMemoryId('quest:quest:willows-moonflowers'),
+      getEconomyRewardMemoryId('completed:quest:willows-moonflowers'),
     );
     expect(first.save.collections.memoryIds).toContain(
       getEconomyRewardMemoryId('discovery-milestone:5'),
