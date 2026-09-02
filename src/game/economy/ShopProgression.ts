@@ -31,7 +31,8 @@ function discoveryCount(save: SaveGame): number {
 }
 
 function finishedRaceCount(save: SaveGame): number {
-  return Object.values(save.activities.racesById).filter(({ bestTimeMs }) => bestTimeMs !== null).length;
+  return Object.values(save.activities.racesById).filter(({ bestTimeMs }) => bestTimeMs !== null)
+    .length;
 }
 
 export function resolveShopUnlock(save: SaveGame, itemId: ItemId): ShopUnlockState {
