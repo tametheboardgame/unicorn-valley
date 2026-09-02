@@ -459,9 +459,10 @@ export class AmbientPopulationWorldManager {
     runtime.sprite.setTexture(
       ensureSupportingResidentTexture(runtime.container.scene, runtime.resident, 'idle'),
     );
+    const configuredVariants = R6_SUPPORTING_RESIDENT_TALK_VARIANTS[runtime.resident.id];
     const talk: ResidentTalkDefinition = {
       ...runtime.resident.talk,
-      variants: R6_SUPPORTING_RESIDENT_TALK_VARIANTS[runtime.resident.id] ?? runtime.resident.talk.variants,
+      variants: configuredVariants ?? runtime.resident.talk.variants,
     };
     const lines = resolveResidentTalkLines(talk, this.getContext());
     const line = chooseTalkLine(lines, runtime.interactionCount);
