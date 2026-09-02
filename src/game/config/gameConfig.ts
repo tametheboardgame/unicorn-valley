@@ -6,7 +6,6 @@ import { CrystalBrookScene } from '../scenes/CrystalBrookScene';
 import { DialogueTestScene } from '../scenes/DialogueTestScene';
 import { DoorwayStubScene } from '../scenes/DoorwayStubScene';
 import { FireflyLanternScene } from '../scenes/FireflyLanternScene';
-import { HollowTreeNookScene } from '../scenes/HollowTreeNookScene';
 import { InventoryScene } from '../scenes/InventoryScene';
 import { LumiStoryScene } from '../scenes/LumiStoryScene';
 import { MarigoldPicnicScene } from '../scenes/MarigoldPicnicScene';
@@ -24,7 +23,6 @@ import { RainbowMeadowScene } from '../scenes/RainbowMeadowScene';
 import { RainbowRunEntryScene } from '../scenes/RainbowRunEntryScene';
 import { ResizeTestScene } from '../scenes/ResizeTestScene';
 import { RippleStoryScene } from '../scenes/RippleStoryScene';
-import { VillageInteriorScene } from '../scenes/R6VillageInteriorScene';
 import { ShopScene } from '../scenes/ShopScene';
 import { SunbeamVillageScene } from '../scenes/SunbeamVillageScene';
 import { TitleScene } from '../scenes/TitleScene';
@@ -69,11 +67,9 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
     CottageDecorateScene,
     MoonflowerPatchScene,
     SunbeamVillageScene,
-    VillageInteriorScene,
     RainbowMeadowScene,
     CrystalBrookScene,
     WhisperingWoodsScene,
-    HollowTreeNookScene,
     FireflyLanternScene,
     RainbowRunEntryScene,
     NovaStoryScene,
