@@ -80,8 +80,7 @@ const INTERIORS: Readonly<Record<VillageInteriorId, InteriorDefinition>> = {
   library: {
     id: 'library',
     title: 'Story House',
-    subtitle:
-      'Tansy keeps maps, clue cards and little stories from places you have really found.',
+    subtitle: 'Tansy keeps maps, clue cards and little stories from places you have really found.',
     icon: '📚',
     wallColour: 0xd9edff,
     floorColour: 0x8eb5c8,
@@ -272,10 +271,7 @@ export class VillageInteriorScene extends Phaser.Scene {
           .setDepth(6);
       }
     }
-    this.add
-      .ellipse(640, 515, 380, 118, 0xf2d7a7, 1)
-      .setStrokeStyle(4, 0xb58c60, 0.75)
-      .setDepth(5);
+    this.add.ellipse(640, 515, 380, 118, 0xf2d7a7, 1).setStrokeStyle(4, 0xb58c60, 0.75).setDepth(5);
     this.add
       .text(640, 505, '🗺️   📖   ✨', { fontFamily: UI_FONT, fontSize: '34px' })
       .setOrigin(0.5)
@@ -405,11 +401,7 @@ export class VillageInteriorScene extends Phaser.Scene {
           x,
           y: 294,
           width: 190,
-          label: stock.isOwned
-            ? 'Yours!'
-            : stock.isUnlocked
-              ? `Buy • ${stock.price} ✨`
-              : 'Locked',
+          label: stock.isOwned ? 'Yours!' : stock.isUnlocked ? `Buy • ${stock.price} ✨` : 'Locked',
           enabled: stock.isUnlocked && !stock.isOwned,
           onPress: () => this.buyBakeryItem(stock.definition.id),
         },
@@ -635,7 +627,9 @@ export class VillageInteriorScene extends Phaser.Scene {
       this.showFeedback(`✨ ${result.item.name} is yours! ${result.balance} Shimmer left.`);
       this.cameras.main.flash(100, 255, 236, 178, false);
     } else if (result.type === 'insufficient-funds') {
-      this.showFeedback(`Almost! You need ${result.shortfall} more Shimmer for ${result.item.name}.`);
+      this.showFeedback(
+        `Almost! You need ${result.shortfall} more Shimmer for ${result.item.name}.`,
+      );
     } else if (result.type === 'locked') {
       this.showFeedback(result.unlockHint);
     } else {
