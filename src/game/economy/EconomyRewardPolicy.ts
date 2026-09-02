@@ -1,4 +1,5 @@
 import { FIREFLY_LANTERN_KEEPER_DISCOVERY_ID } from '../../content/r5FireflyLantern';
+import { MAPLE_CAKE_QUEST_ID, TANSY_MAP_QUEST_ID } from '../../content/r6VillageContent';
 import type { SaveGame } from '../save/saveSchema';
 
 export type EconomyRewardSource = 'quest' | 'discovery' | 'activity';
@@ -28,6 +29,8 @@ const SUBSTANTIVE_QUEST_REWARDS = [
   ['quest:marigold-picnic', "Marigold's Picnic Problem"],
   ['quest:pebble-curious-pieces', "Pebble's Peculiar Pieces"],
   ['quest:ripple-brook-song', "Ripple's Brook Song"],
+  [TANSY_MAP_QUEST_ID, 'Tansy and the Lost Map Corners'],
+  [MAPLE_CAKE_QUEST_ID, 'Maple and the Wobbly Cake Plan'],
 ] as const;
 
 const DISCOVERY_MILESTONES = [

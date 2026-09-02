@@ -46,6 +46,12 @@ import { R5_LUMI_CHARACTERS, R5_LUMI_DIALOGUES, R5_LUMI_DISCOVERIES } from './r5
 import { R5_RACE_DISCOVERIES, R5_RACE_ITEMS } from './r5RaceContent';
 import { R5_WEATHER_DISCOVERIES } from './r5Weather';
 import { R5_WHISPERING_WOODS_DISCOVERIES } from './r5WhisperingWoods';
+import {
+  R6_VILLAGE_CHARACTERS,
+  R6_VILLAGE_DISCOVERIES,
+  R6_VILLAGE_ITEMS,
+  R6_VILLAGE_QUESTS,
+} from './r6VillageContent';
 import type {
   CharacterDefinition,
   CharacterId,
@@ -71,6 +77,7 @@ const ALL_ITEMS = [
   ...R5_CRYSTAL_BROOK_ITEMS,
   ...R5_CRYSTAL_BROOK_STORY_ITEMS,
   ...R5_RACE_ITEMS,
+  ...R6_VILLAGE_ITEMS,
 ] satisfies readonly ItemDefinition[];
 const ALL_CHARACTERS = [
   ...CHARACTERS,
@@ -81,6 +88,7 @@ const ALL_CHARACTERS = [
   ...R4_PEBBLE_CHARACTERS,
   ...R5_CRYSTAL_BROOK_STORY_CHARACTERS,
   ...R5_LUMI_CHARACTERS,
+  ...R6_VILLAGE_CHARACTERS,
 ] satisfies readonly CharacterDefinition[];
 const ALL_QUESTS = [
   ...QUESTS,
@@ -90,6 +98,7 @@ const ALL_QUESTS = [
   ...R4_PICNIC_QUESTS,
   ...R4_PEBBLE_QUESTS,
   ...R5_CRYSTAL_BROOK_STORY_QUESTS,
+  ...R6_VILLAGE_QUESTS,
 ] satisfies readonly QuestDefinition[];
 const ALL_DISCOVERIES = [
   ...DISCOVERIES,
@@ -104,6 +113,7 @@ const ALL_DISCOVERIES = [
   ...R5_WEATHER_DISCOVERIES,
   ...R5_RACE_DISCOVERIES,
   ...R5_FIREFLY_LANTERN_DISCOVERIES,
+  ...R6_VILLAGE_DISCOVERIES,
 ] satisfies readonly DiscoveryDefinition[];
 const ALL_DIALOGUES = [
   ...DIALOGUES,
