@@ -48,7 +48,7 @@ function uniqueDiscoveryCount(save: SaveGame): number {
 export const R6_ECONOMY_REWARD_DEFINITIONS: readonly EconomyRewardDefinition[] = [
   ...SUBSTANTIVE_QUEST_REWARDS.map(
     ([questId, label]): EconomyRewardDefinition => ({
-      id: `quest:${questId}`,
+      id: `completed:${questId}`,
       source: 'quest',
       amount: ECONOMY_BALANCE_BANDS.questReward,
       label,
