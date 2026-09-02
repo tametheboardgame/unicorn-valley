@@ -71,13 +71,10 @@ describe('ambient resident routine contract', () => {
     };
 
     expect(
-      resolveResidentLocation(
-        'resident:clover',
-        'RainbowMeadowScene',
-        [placement],
-        [anchor],
-        { ...morning, worldFlags: { 'flag:story-active': true } },
-      )?.kind,
+      resolveResidentLocation('resident:clover', 'RainbowMeadowScene', [placement], [anchor], {
+        ...morning,
+        worldFlags: { 'flag:story-active': true },
+      })?.kind,
     ).toBe('story-anchor');
   });
 
