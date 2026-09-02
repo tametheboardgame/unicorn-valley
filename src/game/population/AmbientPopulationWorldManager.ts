@@ -461,12 +461,13 @@ export class AmbientPopulationWorldManager {
     state: ScenePopulationRuntime,
     context: AmbientPopulationContext,
   ): void {
-    const available = R6_SMALL_WORLD_INTERACTIONS.filter(
+    const definitions: readonly SmallWorldInteractionDefinition[] = R6_SMALL_WORLD_INTERACTIONS;
+    const available = definitions.filter(
       (definition) =>
         definition.sceneKey === state.scene.scene.key &&
         conditionMatches(definition.activeWhen, context),
     );
-    const wantedIds = new Set(available.map(({ id }) => id));
+    const wantedIds = new Set<string>(available.map(({ id }) => id));
 
     for (const [id, runtime] of state.interactions) {
       if (!wantedIds.has(id)) {
