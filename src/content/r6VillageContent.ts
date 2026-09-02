@@ -79,7 +79,8 @@ export const R6_VILLAGE_DISCOVERIES = [
   {
     id: TANSY_BAKERY_MAP_CORNER_DISCOVERY_ID,
     name: 'Bakery Map Corner',
-    description: 'A flour-dusted map corner had somehow become a bookmark on the Bakery recipe shelf.',
+    description:
+      'A flour-dusted map corner had somehow become a bookmark on the Bakery recipe shelf.',
     kind: 'secret',
     icon: '📜',
     undiscoveredHint: 'Maple remembers seeing a very papery-looking recipe marker in the Bakery.',
