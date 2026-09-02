@@ -6,10 +6,13 @@ import {
   TANSY_SUNDIAL_MAP_CORNER_DISCOVERY_ID,
 } from '../../content/r6VillageContent';
 import { DiscoveryService } from '../discovery/DiscoveryService';
-import { WorldInteractionInput, WORLD_INTERACTION_PROMPT } from '../interaction/WorldInteractionInput';
+import {
+  WorldInteractionInput,
+  WORLD_INTERACTION_PROMPT,
+} from '../interaction/WorldInteractionInput';
 import { getBrowserSaveService } from '../save/browserSaveService';
-import { WORLD_PLAYER_NAME } from './WorldTraversalPolishManager';
 import { worldDepthForY } from './WorldDepth';
+import { WORLD_PLAYER_NAME } from './WorldTraversalPolishManager';
 
 interface VillageLifePoint {
   id: string;
@@ -45,7 +48,9 @@ const VILLAGE_POINTS: readonly VillageLifePoint[] = [
     createProp: (scene) => [
       scene.add.rectangle(0, 0, 126, 96, 0x9a684c, 1).setStrokeStyle(5, 0x6e4939, 0.95),
       scene.add.rectangle(0, -2, 102, 70, 0xffedbd, 1).setStrokeStyle(2, 0xd8a76d, 0.9),
-      scene.add.text(0, -4, '📌  ✦  📜', { fontFamily: 'system-ui, sans-serif', fontSize: '20px' }).setOrigin(0.5),
+      scene.add
+        .text(0, -4, '📌  ✦  📜', { fontFamily: 'system-ui, sans-serif', fontSize: '20px' })
+        .setOrigin(0.5),
     ],
   },
   {
@@ -57,8 +62,12 @@ const VILLAGE_POINTS: readonly VillageLifePoint[] = [
     radius: 118,
     createProp: (scene) => [
       scene.add.ellipse(0, 5, 116, 58, 0xe0b15e, 1).setStrokeStyle(4, 0xb17d43, 0.9),
-      scene.add.triangle(0, -24, 0, 46, 20, 0, 40, 46, 0x8d6845, 1).setOrigin(0.5, 1),
-      scene.add.text(0, 12, '☀️', { fontFamily: 'system-ui, sans-serif', fontSize: '22px' }).setOrigin(0.5),
+      scene.add
+        .triangle(0, -24, 0, 46, 20, 0, 40, 46, 0x8d6845, 1)
+        .setOrigin(0.5, 1),
+      scene.add
+        .text(0, 12, '☀️', { fontFamily: 'system-ui, sans-serif', fontSize: '22px' })
+        .setOrigin(0.5),
     ],
   },
   {
@@ -84,8 +93,17 @@ const VILLAGE_POINTS: readonly VillageLifePoint[] = [
     radius: 120,
     createProp: (scene) => [
       scene.add.rectangle(0, 0, 112, 80, 0x7aa5bd, 1).setStrokeStyle(4, 0x50758d, 0.95),
-      scene.add.text(0, -5, '🗺️', { fontFamily: 'system-ui, sans-serif', fontSize: '32px' }).setOrigin(0.5),
-      scene.add.text(0, 27, 'MAP', { color: '#f7fbff', fontFamily: 'system-ui, sans-serif', fontSize: '12px', fontStyle: 'bold' }).setOrigin(0.5),
+      scene.add
+        .text(0, -5, '🗺️', { fontFamily: 'system-ui, sans-serif', fontSize: '32px' })
+        .setOrigin(0.5),
+      scene.add
+        .text(0, 27, 'MAP', {
+          color: '#f7fbff',
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '12px',
+          fontStyle: 'bold',
+        })
+        .setOrigin(0.5),
     ],
   },
   {
@@ -97,7 +115,9 @@ const VILLAGE_POINTS: readonly VillageLifePoint[] = [
     radius: 116,
     createProp: (scene) => [
       scene.add.rectangle(0, 0, 112, 76, 0xf8d8ef, 1).setStrokeStyle(4, 0xb86da6, 0.9),
-      scene.add.text(0, 0, '🎀  ✨', { fontFamily: 'system-ui, sans-serif', fontSize: '25px' }).setOrigin(0.5),
+      scene.add
+        .text(0, 0, '🎀  ✨', { fontFamily: 'system-ui, sans-serif', fontSize: '25px' })
+        .setOrigin(0.5),
     ],
   },
   {
@@ -108,7 +128,10 @@ const VILLAGE_POINTS: readonly VillageLifePoint[] = [
     y: 1050,
     radius: 116,
     createProp: (scene) => [
-      scene.add.text(0, 0, '💧', { fontFamily: 'system-ui, sans-serif', fontSize: '26px' }).setOrigin(0.5).setAlpha(0.72),
+      scene.add
+        .text(0, 0, '💧', { fontFamily: 'system-ui, sans-serif', fontSize: '26px' })
+        .setOrigin(0.5)
+        .setAlpha(0.72),
     ],
   },
 ];
@@ -191,14 +214,19 @@ export class VillageLifeWorldManager {
     const state: VillageLifeState = { scene, input, points: [], feedback };
     for (const definition of VILLAGE_POINTS) {
       const prompt = scene.add
-        .text(0, 68, `${definition.actionLabel}: ${definition.label}  ·  ${WORLD_INTERACTION_PROMPT}`, {
-          color: '#5d496c',
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '14px',
-          fontStyle: 'bold',
-          backgroundColor: '#fff9edea',
-          padding: { x: 8, y: 5 },
-        })
+        .text(
+          0,
+          68,
+          `${definition.actionLabel}: ${definition.label}  ·  ${WORLD_INTERACTION_PROMPT}`,
+          {
+            color: '#5d496c',
+            fontFamily: 'system-ui, sans-serif',
+            fontSize: '14px',
+            fontStyle: 'bold',
+            backgroundColor: '#fff9edea',
+            padding: { x: 8, y: 5 },
+          },
+        )
         .setOrigin(0.5)
         .setVisible(false);
       const zone = scene.add.zone(0, 0, 180, 150);
@@ -228,37 +256,63 @@ export class VillageLifeWorldManager {
     if (definition.id === 'notice-board') {
       if (hunting && !noticeFound) {
         this.discoveryService.unlockDiscovery(TANSY_NOTICE_MAP_CORNER_DISCOVERY_ID);
-        this.showFeedback(state, '🗺️ Map corner found! It was tucked behind a notice about a missing purple mitten.');
+        this.showFeedback(
+          state,
+          '🗺️ Map corner found! It was tucked behind a notice about a missing purple mitten.',
+        );
         return;
       }
-      this.showFeedback(state, '📌 Today’s notices: “Picnic weather?”, “Race ribbons wanted for display”, and “Please stop feeding buns to the fountain fish.”');
+      this.showFeedback(
+        state,
+        '📌 Today’s notices: “Picnic weather?”, “Race ribbons wanted for display”, and “Please stop feeding buns to the fountain fish.”',
+      );
       return;
     }
 
     if (definition.id === 'sundial') {
       if (hunting && noticeFound && bakeryFound && !sundialFound) {
         this.discoveryService.unlockDiscovery(TANSY_SUNDIAL_MAP_CORNER_DISCOVERY_ID);
-        this.showFeedback(state, '🗺️ Final map corner found! It was wedged beneath the sundial where the breeze could not steal it again.');
+        this.showFeedback(
+          state,
+          '🗺️ Final map corner found! It was wedged beneath the sundial where the breeze could not steal it again.',
+        );
         return;
       }
-      this.showFeedback(state, '☀️ The little shadow points across the square. The gold marks sparkle differently as the valley light changes.');
+      this.showFeedback(
+        state,
+        '☀️ The little shadow points across the square. The gold marks sparkle differently as the valley light changes.',
+      );
       return;
     }
 
     if (definition.id === 'bench') {
-      this.showFeedback(state, '🪑 You sit for a moment. From here you can see the Bakery, the fountain and unicorns crossing the square.');
+      this.showFeedback(
+        state,
+        '🪑 You sit for a moment. From here you can see the Bakery, the fountain and unicorns crossing the square.',
+      );
       return;
     }
     if (definition.id === 'story-map-sign') {
-      this.showFeedback(state, hunting ? '🗺️ Tansy has added three tiny question marks to the Village map. The Story House might know more.' : '🗺️ The sign shows the Village in the middle, with little paths curling towards the Glade and Meadow.');
+      this.showFeedback(
+        state,
+        hunting
+          ? '🗺️ Tansy has added three tiny question marks to the Village map. The Story House might know more.'
+          : '🗺️ The sign shows the Village in the middle, with little paths curling towards the Glade and Meadow.',
+      );
       return;
     }
     if (definition.id === 'thread-window') {
-      this.showFeedback(state, '🎀 The window has a starter bow beside two empty stands labelled “More treasures appear as your adventures grow.”');
+      this.showFeedback(
+        state,
+        '🎀 The window has a starter bow beside two empty stands labelled “More treasures appear as your adventures grow.”',
+      );
       return;
     }
 
-    this.showFeedback(state, '💦 Splash! Three tiny rainbow fish-shaped sparkles leap from the fountain and plop back into the water.');
+    this.showFeedback(
+      state,
+      '💦 Splash! Three tiny rainbow fish-shaped sparkles leap from the fountain and plop back into the water.',
+    );
     state.scene.cameras.main.flash(90, 255, 238, 164, false);
   }
 
