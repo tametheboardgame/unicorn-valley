@@ -1438,17 +1438,177 @@ Acceptance:
 
 ---
 
-# R7 - Daughter-led Expansion
+# R6.5 - Valley Completeness and Breadth
 
-R7 deliberately uses evidence from play rather than fixed feature assumptions.
+R6.5 is the mandatory current release after the completed R6 human gate and before any R7 preference review.
 
-## R7-WP7.1 - Structured Preference Review
+The detailed scope, quantitative content-density targets, region requirements and acceptance criteria are authoritative in `07V-R6.5-VALLEY-COMPLETENESS-BREADTH.md`. `07W-R6.5-CONTENT-BLUEPRINT.md` and `07X-R6.5-AUTONOMOUS-UNICORN-LIFE.md` are mandatory companion specifications for the packages they cover; in particular, WP2 cannot be accepted without satisfying the complete 07X autonomous-life contract.
 
-Dependencies: R6 complete or sufficiently polished R5 build
+## R6.5-WP1 - Valley Content Audit and Density Contract
+
+Dependencies: R6-WP6.18 human gate released
 
 Goal:
 
-- determine which fantasy the target player is actually pursuing most strongly.
+- establish the exact current content baseline and final implementation checklist for R6.5.
+
+## R6.5-WP2 - Ambient Population and World Interaction Toolkit
+
+Dependencies: R6.5-WP1
+
+Mandatory companion specification: `07X-R6.5-AUTONOMOUS-UNICORN-LIFE.md`
+
+Goal:
+
+- provide reusable supporting-unicorn, ambient-life and small world-interaction patterns;
+- implement purposeful autonomous routines, contextual relocation, story anchors and stop/face/talk/resume behaviour required by 07X.
+
+Acceptance:
+
+- WP2 is not complete until the full autonomous-life acceptance and regression contract in 07X passes.
+
+## R6.5-WP3 - Economy and Reward Loop Completion
+
+Dependencies: R6.5-WP1
+
+Goal:
+
+- make rewards, Shimmer and shop progression useful without grind.
+
+## R6.5-WP4 - Sunbeam Village Life, Shops and Interiors
+
+Dependencies: R6.5-WP2, R6.5-WP3
+
+Goal:
+
+- make the Village a busy repeat-use social and commercial hub.
+
+## R6.5-WP5 - Moonflower Glade and Cottage Depth
+
+Dependencies: R6.5-WP2, R6.5-WP3
+
+Goal:
+
+- make home richer, more interactive and visibly personal over time.
+
+## R6.5-WP6 - Rainbow Meadow and Rainbow Run Depth
+
+Dependencies: R6.5-WP2, R6.5-WP3
+
+Goal:
+
+- deepen Meadow/Run landmarks, population, secrets and non-registration content.
+
+## R6.5-WP7 - Crystal Brook Depth
+
+Dependencies: R6.5-WP2
+
+Goal:
+
+- make Crystal Brook a dense exploration destination rather than a corridor.
+
+## R6.5-WP8 - Whispering Woods Depth
+
+Dependencies: R6.5-WP2
+
+Goal:
+
+- deepen Woods mysteries, population, sublocations, secrets and revisit content.
+
+## R6.5-WP9 - Starlight Beach Core Region
+
+Dependencies: R6.5-WP1, R6.5-WP2
+
+Goal:
+
+- add Starlight Beach as a full production exploration region.
+
+## R6.5-WP10 - Starlight Beach Content Pack
+
+Dependencies: R6.5-WP9, R6.5-WP3
+
+Goal:
+
+- launch Starlight Beach with residents, quests, secrets, activity hooks, rewards and race-hub integration rather than as an empty map.
+
+## R6.5-WP11 - Quest Pack A: Existing Valley
+
+Dependencies: R6.5-WP4 through R6.5-WP8
+
+Goal:
+
+- substantially increase quest/story density across the existing valley with varied verbs and follow-up content.
+
+## R6.5-WP12 - Race Expansion and Rainbow Cup
+
+Dependencies: R6.5-WP3, R6.5-WP6, R6.5-WP8, R6.5-WP9, R6.5-WP10
+
+Goal:
+
+- expand racing to five distinct course experiences and add a friendly multi-race Rainbow Cup.
+
+## R6.5-WP13 - Quest Pack B: Cross-Region and Follow-up Stories
+
+Dependencies: R6.5-WP10, R6.5-WP11, R6.5-WP12
+
+Goal:
+
+- connect the broadened valley through cross-region stories, supporting residents and character follow-ups;
+- add however many substantive threads remain necessary after the WP1/WP11 reconciliation to guarantee at least six new substantive R6.5 story threads, excluding lightweight microstories from that six-thread minimum.
+
+Acceptance:
+
+- the reconciled R6.5 content matrix reaches both at least 12 meaningful total story/quest threads and at least six new substantive R6.5 threads.
+
+## R6.5-WP14 - Repeatable Activity Expansion
+
+Dependencies: R6.5-WP3, R6.5-WP4, R6.5-WP10
+
+Goal:
+
+- add at least two repeatable non-racing activities alongside Firefly Lantern.
+
+## R6.5-WP15 - Wonderbook, Collections and Long-Term Goals
+
+Dependencies: R6.5-WP4 through R6.5-WP14
+
+Goal:
+
+- make the Wonderbook reflect and gently motivate the broadened world, characters, races, secrets and collections.
+
+## R6.5-WP16 - Valley Tidy-up, Balance and Content Polish
+
+Dependencies: R6.5-WP3 through R6.5-WP15
+
+Goal:
+
+- resolve accumulated minor defects, balance the broader content and verify mobile/performance quality.
+
+## R6.5-WP17 - Full Human Playthrough and R7 Readiness Gate
+
+Dependencies: R6.5-WP16
+
+Goal:
+
+- verify through human play that the valley is broad and complete enough for preference-led observation to be meaningful.
+
+Acceptance:
+
+- the user explicitly confirms the build has enough credible places, interactions, residents, quests, shops, races and activities to release R7-WP7.1.
+
+---
+
+# R7 - Daughter-led Expansion
+
+R7 deliberately uses evidence from play rather than fixed feature assumptions. It is blocked until the R6.5 breadth gate is explicitly released.
+
+## R7-WP7.1 - Structured Preference Review
+
+Dependencies: R6.5-WP17 explicitly released by the human breadth/readiness gate
+
+Goal:
+
+- determine which fantasy the target player is actually pursuing most strongly now that the available alternatives have credible content breadth.
 
 Deliverables:
 
@@ -1462,7 +1622,7 @@ Deliverables:
 
 Acceptance:
 
-- next major scope is justified by observed behaviour, not adult guesswork.
+- next major scope is justified by observed behaviour, not adult guesswork or uneven content availability.
 
 ## R7-WP7.2A - Customisation Expansion
 
@@ -1494,7 +1654,7 @@ Trigger: racing is a dominant behaviour.
 
 Potential deliverables:
 
-- championship/cups;
+- deeper championship/cups;
 - additional courses;
 - route choices;
 - rival story;
@@ -1506,10 +1666,10 @@ Trigger: exploration/secrets are a dominant behaviour.
 
 Potential deliverables:
 
-- Starlight Beach;
 - denser secret chains;
 - creature discoveries;
-- Cloudtop Peaks foreshadowing.
+- Cloudtop Peaks foreshadowing;
+- other new regions justified by observed play.
 
 ## R7-WP7.2E - Companion Expansion
 
@@ -1527,26 +1687,29 @@ Only the relevant branch(es) should be promoted to committed roadmap work after 
 
 ---
 
-# Immediate execution sequence
+# Current execution sequence
 
-Unless a playtest or technical blocker changes priorities, implementation should begin in this order:
+R0 through R6 are complete. The active work queue is R6.5, in this order unless a technical dependency or human blocker requires a bounded adjustment:
 
-1. R0-WP0.2 - Phaser/Vite/TypeScript Scaffold
-2. R0-WP0.3 - Quality Gates and Repository Hygiene
-3. R0-WP0.4 - Core State, Save and Event Foundations
-4. R0-WP0.5 - Input Abstraction and Responsive Canvas
-5. R0-WP0.6 - Content Registry and Validation Skeleton
-6. R0-WP0.7 - Cloudflare Deployment Smoke Build
-7. R1-WP1.1 - Player Entity and Basic Movement
-8. R1-WP1.2 - Moonflower Glade Prototype Map
-9. R1-WP1.3 - Interaction Framework
-10. R1-WP1.4 - Dialogue Framework
-11. R1-WP1.5 - Unicorn Creator V1
-12. R1-WP1.6 - Pip Intro and First Discovery
-13. R1-WP1.7 - Wonderbook Shell
-14. R1-WP1.8 - First Playable Hardening
+1. R6.5-WP1 - Valley Content Audit and Density Contract
+2. R6.5-WP2 - Ambient Population and World Interaction Toolkit
+3. R6.5-WP3 - Economy and Reward Loop Completion
+4. R6.5-WP4 - Sunbeam Village Life, Shops and Interiors
+5. R6.5-WP5 - Moonflower Glade and Cottage Depth
+6. R6.5-WP6 - Rainbow Meadow and Rainbow Run Depth
+7. R6.5-WP7 - Crystal Brook Depth
+8. R6.5-WP8 - Whispering Woods Depth
+9. R6.5-WP9 - Starlight Beach Core Region
+10. R6.5-WP10 - Starlight Beach Content Pack
+11. R6.5-WP11 - Quest Pack A: Existing Valley
+12. R6.5-WP12 - Race Expansion and Rainbow Cup
+13. R6.5-WP13 - Quest Pack B: Cross-Region and Follow-up Stories
+14. R6.5-WP14 - Repeatable Activity Expansion
+15. R6.5-WP15 - Wonderbook, Collections and Long-Term Goals
+16. R6.5-WP16 - Valley Tidy-up, Balance and Content Polish
+17. R6.5-WP17 - Full Human Playthrough and R7 Readiness Gate
 
-At that point the repository should contain the first genuinely playable version and the next decision is not architectural: it is simply to continue through R2.
+Do not begin R7-WP7.1 before item 17 has been explicitly released.
 
 # Package completion record
 

@@ -6,15 +6,15 @@ The player creates her own unicorn, lives at Moonflower Cottage, explores a magi
 
 ## Project status
 
-**R6-WP6.18 - Full Playthrough Hard Stop and Pre-R7 Review is active.**
+**R6 is complete and its final human playthrough hard stop has been released. R6.5 - Valley Completeness and Breadth is the active next release.**
 
-R0 through R5 are complete. R6 now includes the original production presentation/accessibility programme, mobile portrait remediation, and the complete pre-R7 delight/personalisation extension through R6-WP6.17.
+R0 through R6 are complete. The R6-WP6.18 human playthrough produced several bounded remediation passes covering mobile creator/action clarity, click-navigation facing, Village shops/interiors, region gateways, Crystal Cascade balance, NPC-marker clean-up, map/path clean-up and mobile race controls. The final R6-WP6.18I/J confirmation verified reliable mobile Crystal Cascade entry and native-looking gateway path integration. Remaining observations were judged small enough for a later tidy-up rather than release blockers.
 
-The first R6-WP6.18 human playthrough produced the bounded remediation packages R6-WP6.18A/B through R6-WP6.18F. Follow-up mobile playthroughs produced the map clean-up package R6-WP6.18G and mobile race-control package R6-WP6.18H, both of which are merged.
+The project is deliberately **not moving into R7 yet**. The completed R6 build is polished and playable, but the valley is still too sparse for a preference-led daughter review to be a fair comparison between play styles. There are not yet enough places, quests, races, useful shop interactions, supporting unicorns and repeatable activities.
 
-A further mobile confirmation found two remaining blockers: Crystal Cascade's visible race prompt was not reliably tappable, and the newer gateway paths read as differently coloured overlays rather than natural continuations of the existing map paths. Those final findings are assigned to **R6-WP6.18I/J** and are being handled as a bounded gate-input and path-presentation remediation.
+R6.5 is therefore a mandatory content-completion phase. It deepens every existing region, adds supporting residents and world interactions, completes shops/economy/rewards, increases quest and race breadth, adds non-racing activities, expands the Wonderbook and promotes Starlight Beach into a full content-bearing production region. Supporting residents are also expected to make the valley visibly alive through purposeful autonomous routines rather than existing mainly as static quest markers.
 
-The project is deliberately **not moving into R7 yet**. After R6-WP6.18I/J is merged and deployed, a short human confirmation must verify Crystal Cascade touch entry and the repaired Meadow/Crystal Brook path presentation. R7 starts only after the user explicitly releases the R6-WP6.18 hard stop.
+R7-WP7.1 remains blocked until **R6.5-WP17 - Full Human Playthrough and R7 Readiness Gate** is explicitly released.
 
 The production branch is deployed to `https://unicorn-valley.pages.dev/`.
 
@@ -53,6 +53,9 @@ The production branch is deployed to `https://unicorn-valley.pages.dev/`.
 - [R6 Pre-R7 Delight and Personalisation Phase](docs/07F-R6-WP6.11-6.18-PRE-R7-DELIGHT-PHASE.md)
 - [R6-WP6.18 Playthrough Status and Remediation Record](docs/07R-R6-WP6.18-PLAYTHROUGH-STATUS.md)
 - [R6-WP6.18I/J Final Gate and Path Fixes](docs/07U-R6-WP6.18I-J-FINAL-GATE-PATH-FIXES.md)
+- [R6.5 Valley Completeness and Breadth](docs/07V-R6.5-VALLEY-COMPLETENESS-BREADTH.md)
+- [R6.5 Content Blueprint](docs/07W-R6.5-CONTENT-BLUEPRINT.md)
+- [R6.5 Autonomous Unicorn Life Contract](docs/07X-R6.5-AUTONOMOUS-UNICORN-LIFE.md)
 - [Development and Validation](docs/08-DEVELOPMENT.md)
 - [Responsive Canvas and Input Diagnostic](docs/09-RESPONSIVE-INPUT-DIAGNOSTIC.md)
 - [Cloudflare Pages Deployment](docs/10-CLOUDFLARE-PAGES-DEPLOYMENT.md)
@@ -92,8 +95,9 @@ The production branch is deployed to `https://unicorn-valley.pages.dev/`.
 - **R3 - Rainbow Run Racing**: complete.
 - **R4 - Friendship, Secrets and Home Depth**: complete.
 - **R5 - The Valley Gets Bigger**: complete.
-- **R6 - Production Presentation and Accessibility**: implementation complete through R6-WP6.17; R6-WP6.18 human playthrough/review gate remains active with R6-WP6.18I/J as the current final-remediation candidate.
-- **R7 - Daughter-led Expansion**: blocked until R6-WP6.18 is explicitly released; it will begin with Structured Preference Review before choosing the next major expansion path.
+- **R6 - Production Presentation and Accessibility**: complete, including the R6-WP6.18 human remediation/release gate.
+- **R6.5 - Valley Completeness and Breadth**: active next release; `docs/07V-R6.5-VALLEY-COMPLETENESS-BREADTH.md` is the primary phase contract, with `docs/07W-R6.5-CONTENT-BLUEPRINT.md` and `docs/07X-R6.5-AUTONOMOUS-UNICORN-LIFE.md` as mandatory companion specifications for the relevant packages.
+- **R7 - Daughter-led Expansion**: blocked until R6.5-WP17 explicitly confirms the game has enough breadth for meaningful preference-led observation.
 
 ## Development rule
 

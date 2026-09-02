@@ -40,6 +40,22 @@ Returning to an area should reveal:
 - event decorations;
 - later hidden routes.
 
+### A polished region must also be populated
+
+R6 production art proved visual identity, but R6.5 establishes a stronger completeness rule: scenery alone is not content.
+
+A main region should repeatedly offer some mixture of:
+
+- unicorns to notice or talk to;
+- small environmental interactions;
+- secrets or collections;
+- quest/story use;
+- landmarks with a purpose;
+- changed state on return;
+- a reason to spend time there without immediately leaving through the next gate.
+
+Detailed quantitative targets are defined in `07V-R6.5-VALLEY-COMPLETENESS-BREADTH.md`.
+
 ## Initial world map
 
 The launch-sized game does not need every planned region. The architecture should nevertheless reserve clear expansion points.
@@ -72,6 +88,12 @@ Notable locations:
 - display stump/shelf for outdoor discoveries;
 - initially mysterious hollow tree.
 
+R6.5 direction:
+
+- pay off the hollow-tree promise or an equivalent hidden micro-location;
+- add more home-region interactions, visitors, secrets and visible achievement displays;
+- make returning home increasingly reflect the player's save history.
+
 ### 2. Sunbeam Village
 
 Purpose:
@@ -100,6 +122,13 @@ Notable locations:
 - bridge to Rainbow Meadow;
 - path to Whispering Woods.
 
+R6.5 direction:
+
+- make the village the busiest social place in the current game;
+- ensure all three authored interiors have repeat-use gameplay purposes;
+- populate the square/interiors with supporting residents;
+- make shopping, dialogue and small world interactions credible reasons to stay.
+
 ### 3. Rainbow Meadow
 
 Purpose:
@@ -127,6 +156,11 @@ Notable locations:
 - small pond;
 - hidden flower circle.
 
+R6.5 direction:
+
+- turn the landmark list into actual optional interactions/places;
+- add residents, picnickers/racers/spectators, secrets and story content unrelated to simply entering a race.
+
 ### 4. Rainbow Run
 
 Purpose:
@@ -147,6 +181,13 @@ Visual identity:
 
 The first actual race can load into a dedicated race scene rather than requiring the full course to exist physically in the overworld.
 
+R6.5 direction:
+
+- expand racing to five total course experiences;
+- make the ribbon board a meaningful record of progress;
+- stage a friendly Rainbow Cup/championship here;
+- deepen racer and spectator life around the hub.
+
 ### 5. Crystal Brook
 
 Purpose:
@@ -164,7 +205,11 @@ Visual identity:
 - willow-like trees;
 - sparkling reflections.
 
-This area can be introduced shortly after the initial vertical slice.
+R6.5 direction:
+
+- add a crystal grotto/cave or equivalent discrete exploration pocket;
+- make crystals, water, stepping stones, shells and waterfall areas responsive to curiosity;
+- add residents, stories, secrets and reasons to return after Crystal Cascade.
 
 ### 6. Whispering Woods
 
@@ -186,11 +231,53 @@ Visual identity:
 
 The woods should feel mysterious, not dark or threatening.
 
+R6.5 direction:
+
+- add a deeper secret grove/mushroom-ring/ancient-tree-style sublocation;
+- expand firefly, mushroom, treasure and time/weather-sensitive discoveries;
+- introduce enough residents/visitors and stories to make the Woods a destination rather than a one-off mystery corridor.
+
+## R6.5 committed expansion region
+
+### 7. Starlight Beach
+
+Starlight Beach is promoted from future-backlog status into the committed R6.5 breadth release.
+
+Purpose:
+
+- add a strongly different exploration fantasy before daughter-led preference review;
+- shell/tide-pool collecting;
+- beach residents and stories;
+- non-racing beach activity;
+- beach race;
+- sea-creature and future-region visual promises.
+
+Visual identity:
+
+- luminous shoreline colours;
+- broad sand and shell shapes;
+- tide pools with small animated details;
+- dunes/grasses;
+- sparkling evening reflections;
+- playful rather than realistic coastal geography.
+
+Required R6.5 content:
+
+- shell cove/shoreline;
+- tide-pool area;
+- dunes/sand area;
+- at least one sheltered or secret pocket;
+- supporting residents/visitors;
+- region-specific collectables;
+- at least two quest/story threads;
+- a repeatable beachcombing/tide-pool/shell activity;
+- secrets/discoveries;
+- a Starlight Beach race course;
+- economy and Wonderbook integration.
+
+The beach must not ship as a beautiful empty map. Its first production version is required to carry enough content to compete fairly with the older regions for the player's attention.
+
 ## Later expansion regions
-
-### Starlight Beach
-
-Shell collecting, tide pools, sand decorations, beach races and sea-creature discoveries.
 
 ### Cloudtop Peaks
 
@@ -224,6 +311,8 @@ The cumulative effect should make a long-running save look increasingly personal
 ## Initial recurring characters
 
 Names and details are working canon and can evolve during visual development.
+
+The six characters below remain the **core cast**. R6.5 does not dilute them by creating eight more hero characters with equally heavy bespoke arcs. Instead it adds a supporting-resident layer: 8-10 lighter recurring unicorns with distinct names/looks, short changing dialogue and useful roles in shops, quests, races, activities and regional life. Supporting-resident requirements are defined in `07V-R6.5-VALLEY-COMPLETENESS-BREADTH.md`.
 
 ### Nova
 
@@ -343,6 +432,8 @@ Gameplay role:
 - picnic/festival quests;
 - decorative food and friendship scenes.
 
+R6.5 promotes a small baking/decorating activity into committed scope while leaving any deeper cooking system for later expansion.
+
 ## Character writing rules
 
 Each main NPC should have:
@@ -353,6 +444,8 @@ Each main NPC should have:
 - interests that create gameplay opportunities;
 - at least one insecurity or limitation so they do not feel one-note;
 - visible changes as friendship progresses.
+
+Supporting residents may be lighter, but should still have a distinct identity, more than one permanent line and a reason to be where they are.
 
 Avoid making each character a single moral lesson.
 
@@ -451,6 +544,22 @@ Flow:
 4. Picnic remains as a temporary or persistent visual event.
 5. NPC dialogue reflects the chosen decorations.
 
+## R6.5 story-density direction
+
+The four early threads above are foundations rather than a complete story offering.
+
+By the R6.5 human gate the game should contain at least 12 meaningful quest/story threads in total, including:
+
+- follow-ups for core characters;
+- stories from supporting residents;
+- multi-region or multi-character threads;
+- exploration-discovered stories;
+- persistent world changes;
+- Starlight Beach stories;
+- a mix of short and substantive content.
+
+New stories should use varied verbs and should not collapse into repeated "collect N things and return" structure.
+
 ## World-state examples
 
 The following types of persistent state should be supported from the beginning:
@@ -515,6 +624,8 @@ Examples:
 - one race course;
 - one cottage furniture set;
 - one persistent world change;
-- one Wonderbook page.
+- one Wonderbook page;
+- one small environmental toy/interactable;
+- one supporting resident with changing dialogue.
 
 This allows future work to add depth without destabilising the entire game.
