@@ -62,9 +62,7 @@ const VILLAGE_POINTS: readonly VillageLifePoint[] = [
     radius: 118,
     createProp: (scene) => [
       scene.add.ellipse(0, 5, 116, 58, 0xe0b15e, 1).setStrokeStyle(4, 0xb17d43, 0.9),
-      scene.add
-        .triangle(0, -24, 0, 46, 20, 0, 40, 46, 0x8d6845, 1)
-        .setOrigin(0.5, 1),
+      scene.add.triangle(0, -24, 0, 46, 20, 0, 40, 46, 0x8d6845, 1).setOrigin(0.5, 1),
       scene.add
         .text(0, 12, '☀️', { fontFamily: 'system-ui, sans-serif', fontSize: '22px' })
         .setOrigin(0.5),
