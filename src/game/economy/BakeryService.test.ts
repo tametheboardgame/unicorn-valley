@@ -1,8 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  MAPLE_CAKE_QUEST_ID,
-  SUNBEAM_PICNIC_BASKET_ITEM_ID,
-} from '../../content/r6VillageContent';
+import { MAPLE_CAKE_QUEST_ID, SUNBEAM_PICNIC_BASKET_ITEM_ID } from '../../content/r6VillageContent';
 import type { SaveRepository } from '../save/SaveRepository';
 import { SaveService } from '../save/SaveService';
 import { createDefaultSave } from '../save/createDefaultSave';
@@ -34,7 +31,9 @@ describe('Sunbeam Bakery service', () => {
   it('keeps a cheap repeatable bun available while progression-locking the picnic basket', () => {
     const saveService = new SaveService(new MemorySaveRepository());
     saveService.save(createDefaultSave());
-    const stock = new Map(new BakeryService(saveService).listStock().map((entry) => [entry.definition.id, entry]));
+    const stock = new Map(
+      new BakeryService(saveService).listStock().map((entry) => [entry.definition.id, entry]),
+    );
 
     expect(stock.get('item:berry-bun')?.price).toBe(1);
     expect(stock.get('item:berry-bun')?.isUnlocked).toBe(true);
