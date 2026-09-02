@@ -22,18 +22,6 @@ void import('./game/economy/EconomyRewardWorldManager').then(({ getEconomyReward
   getEconomyRewardWorldManager();
 });
 
-void import('./game/scenes/R6VillageInteriorScene').then(({ VillageInteriorScene }) => {
-  if (!game.scene.keys.VillageInteriorScene) {
-    game.scene.add('VillageInteriorScene', VillageInteriorScene);
-  }
-});
-
-void import('./game/scenes/HollowTreeNookScene').then(({ HollowTreeNookScene }) => {
-  if (!game.scene.keys.HollowTreeNookScene) {
-    game.scene.add('HollowTreeNookScene', HollowTreeNookScene);
-  }
-});
-
 void import('./game/world/VillageLifeWorldManager').then(({ getVillageLifeWorldManager }) => {
   getVillageLifeWorldManager(game);
 });
