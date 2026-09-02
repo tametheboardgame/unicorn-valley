@@ -12,7 +12,7 @@ R0 through R6 are complete. The R6-WP6.18 human playthrough produced several bou
 
 The project is deliberately **not moving into R7 yet**. The completed R6 build is polished and playable, but the valley is still too sparse for a preference-led daughter review to be a fair comparison between play styles. There are not yet enough places, quests, races, useful shop interactions, supporting unicorns and repeatable activities.
 
-R6.5 is therefore a mandatory content-completion phase. It deepens every existing region, adds supporting residents and world interactions, completes shops/economy/rewards, increases quest and race breadth, adds non-racing activities, expands the Wonderbook and promotes Starlight Beach into a full content-bearing production region.
+R6.5 is therefore a mandatory content-completion phase. It deepens every existing region, adds supporting residents and world interactions, completes shops/economy/rewards, increases quest and race breadth, adds non-racing activities, expands the Wonderbook and promotes Starlight Beach into a full content-bearing production region. Supporting residents are also expected to make the valley visibly alive through purposeful autonomous routines rather than existing mainly as static quest markers.
 
 R7-WP7.1 remains blocked until **R6.5-WP17 - Full Human Playthrough and R7 Readiness Gate** is explicitly released.
 
@@ -54,6 +54,8 @@ The production branch is deployed to `https://unicorn-valley.pages.dev/`.
 - [R6-WP6.18 Playthrough Status and Remediation Record](docs/07R-R6-WP6.18-PLAYTHROUGH-STATUS.md)
 - [R6-WP6.18I/J Final Gate and Path Fixes](docs/07U-R6-WP6.18I-J-FINAL-GATE-PATH-FIXES.md)
 - [R6.5 Valley Completeness and Breadth](docs/07V-R6.5-VALLEY-COMPLETENESS-BREADTH.md)
+- [R6.5 Content Blueprint](docs/07W-R6.5-CONTENT-BLUEPRINT.md)
+- [R6.5 Autonomous Unicorn Life Contract](docs/07X-R6.5-AUTONOMOUS-UNICORN-LIFE.md)
 - [Development and Validation](docs/08-DEVELOPMENT.md)
 - [Responsive Canvas and Input Diagnostic](docs/09-RESPONSIVE-INPUT-DIAGNOSTIC.md)
 - [Cloudflare Pages Deployment](docs/10-CLOUDFLARE-PAGES-DEPLOYMENT.md)
@@ -94,7 +96,7 @@ The production branch is deployed to `https://unicorn-valley.pages.dev/`.
 - **R4 - Friendship, Secrets and Home Depth**: complete.
 - **R5 - The Valley Gets Bigger**: complete.
 - **R6 - Production Presentation and Accessibility**: complete, including the R6-WP6.18 human remediation/release gate.
-- **R6.5 - Valley Completeness and Breadth**: active next release; detailed 17-package plan is authoritative in `docs/07V-R6.5-VALLEY-COMPLETENESS-BREADTH.md`.
+- **R6.5 - Valley Completeness and Breadth**: active next release; `docs/07V-R6.5-VALLEY-COMPLETENESS-BREADTH.md` is the primary phase contract, with `docs/07W-R6.5-CONTENT-BLUEPRINT.md` and `docs/07X-R6.5-AUTONOMOUS-UNICORN-LIFE.md` as mandatory companion specifications for the relevant packages.
 - **R7 - Daughter-led Expansion**: blocked until R6.5-WP17 explicitly confirms the game has enough breadth for meaningful preference-led observation.
 
 ## Development rule
