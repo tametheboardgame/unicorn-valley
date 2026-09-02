@@ -1,4 +1,4 @@
-import type { DialogueId } from '../../content/contentTypes';
+import type { DialogueId, DiscoveryId } from '../../content/contentTypes';
 import type { AtmosphericTimeState } from '../atmosphere/AtmosphericTimeService';
 import type { UnicornAppearance } from '../player/UnicornAppearance';
 import type { MapPoint } from '../world/MapTraversal';
@@ -100,6 +100,7 @@ export interface SmallWorldInteractionDefinition {
   interactionRadius: number;
   feedback: string;
   activeWhen?: ResidentCondition;
+  discoveryId?: DiscoveryId;
 }
 
 export interface AmbientSafetyProfile {
