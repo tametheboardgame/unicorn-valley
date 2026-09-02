@@ -240,7 +240,11 @@ export class ShopScene extends Phaser.Scene {
   }
 
   private purchase(itemId: ItemId): void {
-    if (!this.shopService || this.closing || !this.purchaseTapGuard.tryBegin(itemId, this.time.now)) {
+    if (
+      !this.shopService ||
+      this.closing ||
+      !this.purchaseTapGuard.tryBegin(itemId, this.time.now)
+    ) {
       return;
     }
 
