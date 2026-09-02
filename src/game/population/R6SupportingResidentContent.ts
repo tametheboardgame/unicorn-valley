@@ -220,8 +220,8 @@ export const R6_SUPPORTING_RESIDENTS = [
   },
 ] as const satisfies readonly SupportingResidentDefinition[];
 
-// WP2 deliberately places only enough residents to prove the reusable life patterns.
-// Region depth WPs own the final population density and story use.
+// WP2 deliberately placed only enough residents to prove the reusable life patterns.
+// Region depth WPs extend this list with authored routines that remain within the same safety contract.
 export const R6_AMBIENT_RESIDENT_PLACEMENTS = [
   {
     id: 'resident-placement:juniper:glade-wander',
@@ -279,6 +279,21 @@ export const R6_AMBIENT_RESIDENT_PLACEMENTS = [
     waypoints: [
       { id: 'tansy-meadow-a', x: 2070, y: 1490, pauseMs: 2600 },
       { id: 'tansy-meadow-b', x: 2200, y: 1540, pauseMs: 3100 },
+    ],
+  },
+  {
+    id: 'resident-placement:maple:village-bakery-route',
+    residentId: 'resident:maple',
+    sceneKey: 'SunbeamVillageScene',
+    behaviour: 'purposeful-route',
+    routeMode: 'ping-pong',
+    speedPxPerSecond: 78,
+    interactionRadius: 124,
+    priority: 18,
+    waypoints: [
+      { id: 'maple-village-a', x: 1660, y: 1360, pauseMs: 1800 },
+      { id: 'maple-village-b', x: 1840, y: 1390, pauseMs: 1100 },
+      { id: 'maple-village-c', x: 2050, y: 1320, pauseMs: 2300 },
     ],
   },
 ] as const satisfies readonly ResidentPlacementDefinition[];
