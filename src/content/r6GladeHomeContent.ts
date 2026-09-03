@@ -131,7 +131,7 @@ export const R6_GLADE_HOME_SECRET_DEFINITIONS = [
     feedbackTier: 'twinkle',
     label: 'A patient violet butterfly',
     actionLabel: 'Watch',
-    position: { x: 1090, y: 1370 },
+    position: { x: 820, y: 1640 },
     interactionRadius: 145,
     feedback:
       'A little secret!\nThe violet butterfly lands, waits for you to notice, then flutters towards the bridge. 🦋',
@@ -159,7 +159,7 @@ export const R6_GLADE_HOME_SECRET_DEFINITIONS = [
     feedbackTier: 'grand',
     label: 'A final flutter in the flowers',
     actionLabel: 'Look closely',
-    position: { x: 1540, y: 1420 },
+    position: { x: 1400, y: 1600 },
     interactionRadius: 165,
     feedback:
       'Butterfly secret found!\nA hidden moonpetal opens where the butterfly lands, leaving a tiny ribbon charm behind. 🌸🦋',
