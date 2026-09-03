@@ -99,6 +99,7 @@ describe('R6.5 economy reward loop', () => {
     expect(initial.get('item:starlight-lamp')?.isUnlocked).toBe(false);
     expect(initial.get('item:rainbow-neck-ribbon')?.isUnlocked).toBe(false);
     expect(initial.get('item:rainbow-rug')?.isUnlocked).toBe(false);
+    expect(initial.get('item:starlight-shell-ribbon')?.isUnlocked).toBe(false);
 
     const progressed = saveService.load();
     expect(progressed).not.toBeNull();
@@ -118,7 +119,12 @@ describe('R6.5 economy reward loop', () => {
     saveService.save(progressed);
 
     const unlocked = new Map(shop.listStock().map((entry) => [entry.definition.id, entry]));
-    expect([...unlocked.values()].every(({ isUnlocked }) => isUnlocked)).toBe(true);
+    expect(
+      [...unlocked.entries()]
+        .filter(([itemId]) => itemId !== 'item:starlight-shell-ribbon')
+        .every(([, { isUnlocked }]) => isUnlocked),
+    ).toBe(true);
+    expect(unlocked.get('item:starlight-shell-ribbon')?.isUnlocked).toBe(false);
   });
 
   it('does not charge for locked stock and preserves the balance', () => {

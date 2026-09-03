@@ -54,6 +54,12 @@ void import('./game/world/MeadowDepthWorldManager').then(({ getMeadowDepthWorldM
   getMeadowDepthWorldManager(game);
 });
 
+void import('./game/story/StarlightBeachContentWorldManager').then(
+  ({ getStarlightBeachContentWorldManager }) => {
+    getStarlightBeachContentWorldManager(game);
+  },
+);
+
 void Promise.all([
   import('./game/world/R6RegionGatewayArtManager'),
   import('./game/world/R6RegionGatewayArtPerformanceManager'),

@@ -1,3 +1,7 @@
+import {
+  CORAL_SHELL_STORIES_COMPLETE_FLAG,
+  STARLIGHT_SHELL_RIBBON_ITEM_ID,
+} from '../../content/r65StarlightBeach';
 import type { ItemId } from '../../content/contentTypes';
 import type { SaveGame } from '../save/saveSchema';
 
@@ -11,6 +15,7 @@ type ShopUnlockRule =
   | { type: 'completed-quests'; count: number }
   | { type: 'discoveries'; count: number }
   | { type: 'finished-races'; count: number }
+  | { type: 'world-flag'; flagId: string; hint: string }
   | { type: 'combined'; completedQuests: number; finishedRaces: number };
 
 const SHOP_UNLOCK_RULES: Partial<Record<ItemId, ShopUnlockRule>> = {
@@ -20,6 +25,11 @@ const SHOP_UNLOCK_RULES: Partial<Record<ItemId, ShopUnlockRule>> = {
   'item:starlight-lamp': { type: 'discoveries', count: 5 },
   'item:rainbow-neck-ribbon': { type: 'finished-races', count: 1 },
   'item:rainbow-rug': { type: 'combined', completedQuests: 2, finishedRaces: 1 },
+  [STARLIGHT_SHELL_RIBBON_ITEM_ID]: {
+    type: 'world-flag',
+    flagId: CORAL_SHELL_STORIES_COMPLETE_FLAG,
+    hint: 'Help Coral tell the story of the three Starlight Shells to unlock this.',
+  },
 };
 
 function completedQuestCount(save: SaveGame): number {
@@ -60,6 +70,13 @@ export function resolveShopUnlock(save: SaveGame, itemId: ItemId): ShopUnlockSta
     return {
       unlocked,
       hint: unlocked ? null : 'Finish a race to unlock this.',
+    };
+  }
+  if (rule.type === 'world-flag') {
+    const unlocked = save.world.flags[rule.flagId] === true;
+    return {
+      unlocked,
+      hint: unlocked ? null : rule.hint,
     };
   }
 
