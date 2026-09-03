@@ -1,4 +1,10 @@
 import {
+  BEACH_RACE_ROUTE_READY_FLAG,
+  CORAL_SHELL_STORIES_ACTIVE_FLAG,
+  CORAL_SHELL_STORIES_COMPLETE_FLAG,
+  SKIPPER_WIND_STORY_ACTIVE_FLAG,
+} from '../../content/r65StarlightBeach';
+import {
   MAPLE_CAKE_READY_FLAG,
   TANSY_MAP_HUNT_ACTIVE_FLAG,
   TANSY_MAP_RESTORED_FLAG,
@@ -78,6 +84,58 @@ const BASE_RESIDENT_TALK_VARIANTS: Partial<
         'Our Wobbly Cake leaned slightly to the left and tasted completely correct.',
         'The picnic-basket pattern is in the Bakery now. I gave it extra pockets for emergency buns.',
         'I still think “more sprinkles” is a valid answer to almost every baking question.',
+      ],
+    },
+  ],
+  'resident:coral': [
+    {
+      id: 'resident-talk:coral:shell-stories-complete',
+      priority: 30,
+      activeWhen: {
+        worldFlags: [{ id: CORAL_SHELL_STORIES_COMPLETE_FLAG, value: true }],
+      },
+      lines: [
+        'Our three-shell story is still sitting at Shell Cove. The tide has not managed to edit it yet.',
+        'The beachcombing basket is ready whenever you fancy another slow look along the shore.',
+        'Twinkle & Thread copied one of the shell patterns onto a ribbon. I think it looks extremely beachy.',
+      ],
+    },
+    {
+      id: 'resident-talk:coral:shell-stories-active',
+      priority: 20,
+      activeWhen: {
+        worldFlags: [{ id: CORAL_SHELL_STORIES_ACTIVE_FLAG, value: true }],
+      },
+      lines: [
+        'We need the Sunrise Spiral, Moon-speckle and Wave-fan shells. None of them need to be taken apart or traded.',
+        'One shell hides near the Cove, one likes the tide pools and one is tucked towards Moonlit Point.',
+        'When you have all three, bring them to the little shell circle in the Cove.',
+      ],
+    },
+  ],
+  'resident:skipper': [
+    {
+      id: 'resident-talk:skipper:route-ready',
+      priority: 30,
+      activeWhen: {
+        worldFlags: [{ id: BEACH_RACE_ROUTE_READY_FLAG, value: true }],
+      },
+      lines: [
+        'The shoreline route board is up! It is still an idea, not a proper race yet, but the wind line is brilliant.',
+        'The dune marker and Moonlit Point make a very wiggly pair. Exactly what I hoped for.',
+        'I am leaving the flags where they are so the Rainbow Run crew can see the route later.',
+      ],
+    },
+    {
+      id: 'resident-talk:skipper:wind-story-active',
+      priority: 20,
+      activeWhen: {
+        worldFlags: [{ id: SKIPPER_WIND_STORY_ACTIVE_FLAG, value: true }],
+      },
+      lines: [
+        'Start with the striped marker high in Star Dunes. It whistles when the breeze is right.',
+        'If the dune marker points seaward, keep following the wind all the way to Moonlit Point.',
+        'This is route-testing, not racing. Looking around is part of the job.',
       ],
     },
   ],

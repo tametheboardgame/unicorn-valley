@@ -1,4 +1,4 @@
-import type { DialogueId } from '../../content/contentTypes';
+import type { CharacterId, DialogueId, QuestId } from '../../content/contentTypes';
 import type { AtmosphericTimeState } from '../atmosphere/AtmosphericTimeService';
 import type { UnicornAppearance } from '../player/UnicornAppearance';
 import type { MapPoint } from '../world/MapTraversal';
@@ -51,6 +51,8 @@ export interface SupportingResidentDefinition {
   role: string;
   appearance: UnicornAppearance;
   talk: ResidentTalkDefinition;
+  characterId?: CharacterId;
+  startsQuestId?: QuestId;
 }
 
 export interface ResidentWaypoint extends MapPoint {

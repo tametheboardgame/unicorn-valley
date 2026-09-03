@@ -1,4 +1,5 @@
 import { R4_SHOP_STOCK, type ShopStockEntry } from '../../content/r4ShopContent';
+import { R65_STARLIGHT_BEACH_SHOP_STOCK } from '../../content/r65StarlightBeach';
 import { itemRegistry } from '../../content/registries';
 import type { ItemDefinition, ItemId } from '../../content/contentTypes';
 import type { SaveService } from '../save/SaveService';
@@ -41,12 +42,17 @@ export type ShopPurchaseResult =
       unlockHint: string;
     };
 
+const SHOP_STOCK = [
+  ...R4_SHOP_STOCK,
+  ...R65_STARLIGHT_BEACH_SHOP_STOCK,
+] as const satisfies readonly ShopStockEntry[];
+
 function appendUnique(values: readonly string[], value: string): string[] {
   return values.includes(value) ? [...values] : [...values, value];
 }
 
 function requireStockEntry(itemId: ItemId): ShopStockEntry {
-  const entry = R4_SHOP_STOCK.find((candidate) => candidate.itemId === itemId);
+  const entry = SHOP_STOCK.find((candidate) => candidate.itemId === itemId);
   if (!entry) {
     throw new Error(`Item is not sold by Twinkle & Thread: ${itemId}`);
   }
@@ -69,7 +75,7 @@ export class ShopService {
 
   public listStock(): readonly ShopItemView[] {
     const save = this.saveService.load() ?? this.saveService.createNewGame();
-    return R4_SHOP_STOCK.map((entry) => {
+    return SHOP_STOCK.map((entry) => {
       const definition = requireShopItem(entry.itemId);
       const ownedQuantity = save.inventory.itemQuantities[entry.itemId] ?? 0;
       const unlock = resolveShopUnlock(save, entry.itemId);
