@@ -73,6 +73,11 @@ import {
   R6_VILLAGE_ITEMS,
   R6_VILLAGE_QUESTS,
 } from './r6VillageContent';
+import {
+  R6_WHISPERING_WOODS_DEPTH_DISCOVERIES,
+  R6_WHISPERING_WOODS_DEPTH_ITEMS,
+  R6_WHISPERING_WOODS_DEPTH_QUESTS,
+} from './r6WhisperingWoodsDepthContent';
 import type {
   CharacterDefinition,
   CharacterId,
@@ -102,6 +107,7 @@ const ALL_ITEMS = [
   ...R6_GLADE_HOME_ITEMS,
   ...R6_MEADOW_RUN_ITEMS,
   ...R6_CRYSTAL_BROOK_DEPTH_ITEMS,
+  ...R6_WHISPERING_WOODS_DEPTH_ITEMS,
   ...R65_STARLIGHT_BEACH_ITEMS,
 ] satisfies readonly ItemDefinition[];
 const ALL_CHARACTERS = [
@@ -128,6 +134,7 @@ const ALL_QUESTS = [
   ...R6_GLADE_HOME_QUESTS,
   ...R6_MEADOW_RUN_QUESTS,
   ...R6_CRYSTAL_BROOK_DEPTH_QUESTS,
+  ...R6_WHISPERING_WOODS_DEPTH_QUESTS,
   ...R65_STARLIGHT_BEACH_QUESTS,
 ] satisfies readonly QuestDefinition[];
 const ALL_DISCOVERIES = [
@@ -147,6 +154,7 @@ const ALL_DISCOVERIES = [
   ...R6_GLADE_HOME_DISCOVERIES,
   ...R6_MEADOW_RUN_DISCOVERIES,
   ...R6_CRYSTAL_BROOK_DEPTH_DISCOVERIES,
+  ...R6_WHISPERING_WOODS_DEPTH_DISCOVERIES,
   ...R65_STARLIGHT_BEACH_DISCOVERIES,
 ] satisfies readonly DiscoveryDefinition[];
 const ALL_DIALOGUES = [
