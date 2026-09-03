@@ -3,6 +3,7 @@ import {
   CORAL_SHELL_STORIES_QUEST_ID,
   SKIPPER_FOLLOW_THE_WIND_QUEST_ID,
 } from '../../content/r65StarlightBeach';
+import { ECHO_CRYSTAL_SONG_QUEST_ID } from '../../content/r6CrystalBrookDepthContent';
 import { PIP_HOLLOW_TREE_QUEST_ID } from '../../content/r6GladeHomeContent';
 import { BREEZE_WINDMILL_QUEST_ID } from '../../content/r6MeadowRunContent';
 import { MAPLE_CAKE_QUEST_ID, TANSY_MAP_QUEST_ID } from '../../content/r6VillageContent';
@@ -39,6 +40,7 @@ const SUBSTANTIVE_QUEST_REWARDS = [
   [MAPLE_CAKE_QUEST_ID, 'Maple and the Wobbly Cake Plan'],
   [PIP_HOLLOW_TREE_QUEST_ID, 'Pip and the Hollow Tree Whispers'],
   [BREEZE_WINDMILL_QUEST_ID, 'Breeze and the View From Up There'],
+  [ECHO_CRYSTAL_SONG_QUEST_ID, 'Echo and the Crystal Song'],
   [CORAL_SHELL_STORIES_QUEST_ID, 'Coral and the Shells With Stories'],
   [SKIPPER_FOLLOW_THE_WIND_QUEST_ID, 'Skipper and Follow the Wind'],
 ] as const;
