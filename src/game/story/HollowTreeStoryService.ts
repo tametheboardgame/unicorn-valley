@@ -6,6 +6,7 @@ import {
   HOLLOW_TREE_NOOK_OPEN_FLAG,
   PIP_HOLLOW_TREE_QUEST_ID,
 } from '../../content/r6GladeHomeContent';
+import { HOLLOW_TREE_STAR_DISCOVERY_ID } from '../../content/r4Secrets';
 import { DiscoveryService } from '../discovery/DiscoveryService';
 import { type GameEventMap, type TypedEventBus, gameEventBus } from '../events/GameEventBus';
 import { getQuestStepId, type QuestEngine } from '../quests/QuestEngine';
@@ -17,6 +18,8 @@ export interface HollowTreeInspectResult {
   state: HollowTreeInspectState;
   message: string;
 }
+
+const MOONFLOWER_SPARKLE_DISCOVERY_ID = 'discovery:moonflower-sparkle' as const;
 
 export class HollowTreeStoryService {
   private readonly discoveries: DiscoveryService;
@@ -30,14 +33,16 @@ export class HollowTreeStoryService {
   }
 
   public inspectTree(): HollowTreeInspectResult {
+    const foundLegacyStar = this.discoverLegacyHollowTreeStar();
     let progress = this.quests.getProgress(PIP_HOLLOW_TREE_QUEST_ID);
     if (progress.status === 'not-started') {
       this.quests.startQuest(PIP_HOLLOW_TREE_QUEST_ID);
       this.discoveries.unlockDiscovery(HOLLOW_TREE_MARKS_DISCOVERY_ID);
       return {
         state: 'started',
-        message:
-          'Three spiral marks brighten inside the Hollow Tree. Pip trots over, squints at them, then points towards Moonflower Bridge: “They look like ripples. Maybe the water can answer them!” 🌀',
+        message: foundLegacyStar
+          ? 'A tiny golden star is tucked beneath one old root. As you lift it free, three spiral marks brighten inside the Hollow Tree. Pip trots over, squints at them, then points towards Moonflower Bridge: “They look like ripples. Maybe the water can answer them!” 🌟🌀'
+          : 'Three spiral marks brighten inside the Hollow Tree. Pip trots over, squints at them, then points towards Moonflower Bridge: “They look like ripples. Maybe the water can answer them!” 🌀',
       };
     }
 
@@ -45,14 +50,18 @@ export class HollowTreeStoryService {
     if (progress.status === 'completed') {
       return {
         state: 'complete',
-        message: 'The Hollow Tree Nook is still open. Warm root-light glows just inside. 🌳',
+        message: foundLegacyStar
+          ? 'A tiny golden star was tucked beneath one old root. The Hollow Tree Nook is still open beyond it, warm root-light glowing just inside. 🌟🌳'
+          : 'The Hollow Tree Nook is still open. Warm root-light glows just inside. 🌳',
       };
     }
 
     if (progress.currentStepId === getQuestStepId(PIP_HOLLOW_TREE_QUEST_ID, 2)) {
       return {
         state: 'listen-bridge',
-        message: 'The spiral marks are waiting for the matching sound beneath Moonflower Bridge.',
+        message: foundLegacyStar
+          ? 'A tiny golden star was hiding beneath one old root. Behind it, the spiral marks are still waiting for the matching sound beneath Moonflower Bridge. 🌟'
+          : 'The spiral marks are waiting for the matching sound beneath Moonflower Bridge.',
       };
     }
 
@@ -109,5 +118,22 @@ export class HollowTreeStoryService {
   public isNookOpen(): boolean {
     const save = this.saveService.load();
     return save?.world.flags[HOLLOW_TREE_NOOK_OPEN_FLAG] === true;
+  }
+
+  private discoverLegacyHollowTreeStar(): boolean {
+    const save = this.saveService.load() ?? this.saveService.createNewGame();
+    const hasDiscovery = (discoveryId: string): boolean =>
+      save.collections.discoveryIds.includes(discoveryId) ||
+      save.world.uniqueDiscoveryIds.includes(discoveryId);
+
+    if (
+      !hasDiscovery(MOONFLOWER_SPARKLE_DISCOVERY_ID) ||
+      hasDiscovery(HOLLOW_TREE_STAR_DISCOVERY_ID)
+    ) {
+      return false;
+    }
+
+    this.discoveries.unlockDiscovery(HOLLOW_TREE_STAR_DISCOVERY_ID);
+    return true;
   }
 }
