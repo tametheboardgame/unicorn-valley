@@ -4,6 +4,11 @@ import {
   SKIPPER_FOLLOW_THE_WIND_QUEST_ID,
 } from '../../content/r65StarlightBeach';
 import { ECHO_CRYSTAL_SONG_QUEST_ID } from '../../content/r6CrystalBrookDepthContent';
+import {
+  NOVA_NO_FINISH_LINE_QUEST_ID,
+  PEBBLE_ODD_STONE_QUEST_ID,
+  WILLOW_AFTER_DARK_QUEST_ID,
+} from '../../content/r6ExistingValleyQuestPack';
 import { PIP_HOLLOW_TREE_QUEST_ID } from '../../content/r6GladeHomeContent';
 import { BREEZE_WINDMILL_QUEST_ID } from '../../content/r6MeadowRunContent';
 import { MAPLE_CAKE_QUEST_ID, TANSY_MAP_QUEST_ID } from '../../content/r6VillageContent';
@@ -43,6 +48,9 @@ const SUBSTANTIVE_QUEST_REWARDS = [
   [BREEZE_WINDMILL_QUEST_ID, 'Breeze and the View From Up There'],
   [ECHO_CRYSTAL_SONG_QUEST_ID, 'Echo and the Crystal Song'],
   [FERN_FIREFLY_WAY_QUEST_ID, 'Fern: Fireflies Know the Way'],
+  [WILLOW_AFTER_DARK_QUEST_ID, 'Willow and the Moonflowers After Dark'],
+  [NOVA_NO_FINISH_LINE_QUEST_ID, 'Nova, Clover and a Race With No Finish Line'],
+  [PEBBLE_ODD_STONE_QUEST_ID, 'Pebble and the Stone That Does Not Match'],
   [CORAL_SHELL_STORIES_QUEST_ID, 'Coral and the Shells With Stories'],
   [SKIPPER_FOLLOW_THE_WIND_QUEST_ID, 'Skipper and Follow the Wind'],
 ] as const;
