@@ -5,6 +5,7 @@ export const EXPLORATION_SHELL_SCENES = new Set([
   'HollowTreeNookScene',
   'SunbeamVillageScene',
   'RainbowMeadowScene',
+  'WindmillLookoutScene',
   'CrystalBrookScene',
   'WhisperingWoodsScene',
 ]);

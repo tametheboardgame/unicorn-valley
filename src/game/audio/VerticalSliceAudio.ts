@@ -169,6 +169,7 @@ const SCENE_PROFILE_BY_KEY: Readonly<Record<string, AudioSceneProfile>> = {
   HollowTreeNookScene: 'glade',
   SunbeamVillageScene: 'village',
   RainbowMeadowScene: 'meadow',
+  WindmillLookoutScene: 'meadow',
   CrystalBrookScene: 'brook',
   WhisperingWoodsScene: 'woods',
   CottageInteriorScene: 'cottage',
@@ -218,6 +219,7 @@ export class VerticalSliceAudio {
   public getSettings(): AudioSettings {
     return { ...this.settings };
   }
+
   public setSettings(settings: AudioSettings): AudioSettings {
     this.settings = this.settingsStore.save(settings);
     this.applyGainSettings();
@@ -428,7 +430,6 @@ export class VerticalSliceAudio {
         definition.musicIntervalMs,
       );
     }
-
     if (this.settings.ambienceEnabled) {
       this.startAmbienceBed(definition);
       this.playAmbienceDetail(definition);
@@ -457,7 +458,6 @@ export class VerticalSliceAudio {
     if (!this.musicGain || !this.context || !this.settings.musicEnabled || this.settings.muted) {
       return;
     }
-
     const note = definition.musicNotes[this.musicStep % definition.musicNotes.length];
     this.musicStep += 1;
     this.playTone(note, 0.52, definition.musicWave, 0.05, this.musicGain);
@@ -473,7 +473,6 @@ export class VerticalSliceAudio {
     if (!this.context || !this.ambienceGain) {
       return;
     }
-
     const bufferLength = Math.floor(this.context.sampleRate * 2);
     const buffer = this.context.createBuffer(1, bufferLength, this.context.sampleRate);
     const data = buffer.getChannelData(0);
@@ -483,7 +482,6 @@ export class VerticalSliceAudio {
       previous = previous * 0.985 + white * 0.015;
       data[index] = previous * 0.34;
     }
-
     const source = this.context.createBufferSource();
     const filter = this.context.createBiquadFilter();
     const gain = this.context.createGain();
@@ -508,11 +506,9 @@ export class VerticalSliceAudio {
     ) {
       return;
     }
-
     const note = definition.ambienceNotes[this.ambienceStep % definition.ambienceNotes.length];
     this.ambienceStep += 1;
     this.playTone(note, 0.25, definition.ambienceWave, 0.035, this.ambienceGain);
-
     switch (this.currentProfile) {
       case 'menu':
       case 'glade':
@@ -553,7 +549,6 @@ export class VerticalSliceAudio {
     if (!this.context) {
       return;
     }
-
     const oscillator = this.context.createOscillator();
     const gain = this.context.createGain();
     const start = this.context.currentTime + delaySeconds;

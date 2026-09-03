@@ -8,6 +8,7 @@ import type {
   ResidentTalkVariant,
   SupportingResidentId,
 } from './AmbientPopulationTypes';
+import { R6_MEADOW_RESIDENT_TALK_VARIANTS } from './R6MeadowPopulationContent';
 
 const WILLOW_GARDEN_PLANTED_FLAG = 'flag:willow-garden-planted';
 
@@ -24,7 +25,7 @@ export const R6_AMBIENT_RESIDENT_STORY_ANCHORS = [
   },
 ] as const satisfies readonly ResidentStoryAnchorDefinition[];
 
-export const R6_SUPPORTING_RESIDENT_TALK_VARIANTS: Partial<
+const BASE_RESIDENT_TALK_VARIANTS: Partial<
   Record<SupportingResidentId, readonly ResidentTalkVariant[]>
 > = {
   'resident:juniper': [
@@ -81,3 +82,30 @@ export const R6_SUPPORTING_RESIDENT_TALK_VARIANTS: Partial<
     },
   ],
 };
+
+const residentIds = [
+  'resident:clover',
+  'resident:breeze',
+  'resident:tansy',
+  'resident:maple',
+  'resident:juniper',
+  'resident:fern',
+  'resident:coral',
+  'resident:skipper',
+  'resident:echo',
+] as const satisfies readonly SupportingResidentId[];
+
+export const R6_SUPPORTING_RESIDENT_TALK_VARIANTS = Object.fromEntries(
+  residentIds
+    .map(
+      (residentId) =>
+        [
+          residentId,
+          [
+            ...(BASE_RESIDENT_TALK_VARIANTS[residentId] ?? []),
+            ...(R6_MEADOW_RESIDENT_TALK_VARIANTS[residentId] ?? []),
+          ],
+        ] as const,
+    )
+    .filter(([, variants]) => variants.length > 0),
+) as Partial<Record<SupportingResidentId, readonly ResidentTalkVariant[]>>;

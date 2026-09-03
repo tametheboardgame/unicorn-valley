@@ -80,7 +80,13 @@ export const RAINBOW_MEADOW_MAP = {
       id: 'ribbon-board',
       label: 'Ribbon Board',
       position: { x: 2510, y: 1430 },
-      approach: { x: 2510, y: 1260 },
+      approach: { x: 2510, y: 1590 },
+    },
+    {
+      id: 'windmill-lookout',
+      label: 'Windmill Lookout',
+      position: { x: 1280, y: 270 },
+      approach: { x: 1280, y: 440 },
     },
   ] satisfies readonly MeadowHubFeature[],
   npcMarkers: [
@@ -110,6 +116,7 @@ export const RAINBOW_MEADOW_MAP = {
     { id: 'collision:rainbow-pond', x: 1570, y: 610, width: 500, height: 300 },
     { id: 'collision:north-grove', x: 720, y: 410, width: 360, height: 250 },
     { id: 'collision:south-grove', x: 1030, y: 1660, width: 420, height: 250 },
+    { id: 'collision:windmill-lookout-base', x: 1280, y: 275, width: 190, height: 255 },
     { id: 'collision:hub-tent', x: 2600, y: 520, width: 430, height: 260 },
     { id: 'collision:ribbon-board', x: 2510, y: 1430, width: 300, height: 85 },
     { id: 'collision:race-post-north', x: 3190, y: 900, width: 70, height: 180 },
