@@ -131,7 +131,7 @@ export const R6_GLADE_HOME_SECRET_DEFINITIONS = [
     feedbackTier: 'twinkle',
     label: 'A patient violet butterfly',
     actionLabel: 'Watch',
-    position: { x: 820, y: 1640 },
+    position: { x: 650, y: 1700 },
     interactionRadius: 145,
     feedback:
       'A little secret!\nThe violet butterfly lands, waits for you to notice, then flutters towards the bridge. 🦋',
