@@ -115,8 +115,8 @@ export class CottageDepthWorldManager {
         id: 'bed',
         label: 'Moonflower bed',
         actionLabel: 'Flop',
-        position: { x: 390, y: 820 },
-        radius: 130,
+        position: { x: 325, y: 700 },
+        radius: 100,
         message: () =>
           'You flop onto the Moonflower blanket for exactly one cosy moment. The little moon shapes crinkle, then puff back up. 🌙',
       },
@@ -124,8 +124,8 @@ export class CottageDepthWorldManager {
         id: 'sofa',
         label: 'Cosy sofa',
         actionLabel: 'Sit',
-        position: { x: 1245, y: 850 },
-        radius: 125,
+        position: { x: 1175, y: 725 },
+        radius: 100,
         message: () =>
           'The sofa gives a very serious little poof when you sit down. It is clearly proud of being the comfiest seat in the Cottage.',
       },
@@ -133,8 +133,8 @@ export class CottageDepthWorldManager {
         id: 'fireplace',
         label: 'Cottage fire',
         actionLabel: 'Warm hooves',
-        position: { x: 285, y: 470 },
-        radius: 130,
+        position: { x: 225, y: 250 },
+        radius: 100,
         message: () =>
           'The fire pops softly and turns one ember bright gold. Warm hooves achieved. 🔥',
       },
@@ -142,8 +142,8 @@ export class CottageDepthWorldManager {
         id: 'window',
         label: 'Moonflower window',
         actionLabel: 'Look outside',
-        position: { x: 1130, y: 290 },
-        radius: 135,
+        position: { x: 1000, y: 125 },
+        radius: 100,
         message: () =>
           'Through the window you can see the Glade path and a sliver of the stream. Home looks different after every adventure.',
       },
@@ -151,13 +151,13 @@ export class CottageDepthWorldManager {
         id: 'companion-corner',
         label: 'Companion corner',
         actionLabel: 'Check',
-        position: { x: 590, y: 540 },
-        radius: 125,
+        position: { x: 175, y: 700 },
+        radius: 100,
         message: () => {
           const save = this.saveService.load();
           return save?.world.flags[LUMA_COMPANION_HATCHED_FLAG]
             ? 'Luma’s corner has tiny hoofprints, a warm blanket and one suspiciously sparkly feather. Somebody has definitely been cosy here. ✨'
-            : 'A soft little corner beside the bed is ready for somebody special to call home one day.';
+            : 'A soft little corner near the bed is ready for somebody special to call home one day.';
         },
       },
     ];
