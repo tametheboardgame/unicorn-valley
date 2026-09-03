@@ -2,11 +2,15 @@ import { readFile, readdir, stat } from 'node:fs/promises';
 import { gzipSync } from 'node:zlib';
 
 const KiB = 1024;
+const r6Reference = {
+  totalJsRawBytes: 2050 * KiB,
+  totalJsGzipBytes: 560 * KiB,
+};
 const budgets = {
   entryRawBytes: 520 * KiB,
   largestChunkRawBytes: 1800 * KiB,
-  totalJsRawBytes: 2050 * KiB,
-  totalJsGzipBytes: 560 * KiB,
+  totalJsRawBytes: 2400 * KiB,
+  totalJsGzipBytes: 650 * KiB,
 };
 
 const distDirectory = new URL('../dist/', import.meta.url);
@@ -81,12 +85,12 @@ if (largestChunk.rawBytes > budgets.largestChunkRawBytes) {
 }
 if (totalRawBytes > budgets.totalJsRawBytes) {
   failures.push(
-    `total JavaScript is ${(totalRawBytes / KiB).toFixed(1)} KiB raw (budget ${(budgets.totalJsRawBytes / KiB).toFixed(0)} KiB)`,
+    `total JavaScript is ${(totalRawBytes / KiB).toFixed(1)} KiB raw (R6.5 safety envelope ${(budgets.totalJsRawBytes / KiB).toFixed(0)} KiB)`,
   );
 }
 if (totalGzipBytes > budgets.totalJsGzipBytes) {
   failures.push(
-    `total JavaScript is ${(totalGzipBytes / KiB).toFixed(1)} KiB gzip (budget ${(budgets.totalJsGzipBytes / KiB).toFixed(0)} KiB)`,
+    `total JavaScript is ${(totalGzipBytes / KiB).toFixed(1)} KiB gzip (R6.5 safety envelope ${(budgets.totalJsGzipBytes / KiB).toFixed(0)} KiB)`,
   );
 }
 
@@ -103,3 +107,20 @@ for (const chunk of chunks) {
 console.log(
   `Total: ${(totalRawBytes / KiB).toFixed(1)} KiB raw / ${(totalGzipBytes / KiB).toFixed(1)} KiB gzip`,
 );
+
+const rawReferenceDelta = totalRawBytes - r6Reference.totalJsRawBytes;
+const gzipReferenceDelta = totalGzipBytes - r6Reference.totalJsGzipBytes;
+const rawReferenceStatus =
+  rawReferenceDelta > 0
+    ? `+${(rawReferenceDelta / KiB).toFixed(1)} KiB raw`
+    : 'raw within reference';
+const gzipReferenceStatus =
+  gzipReferenceDelta > 0
+    ? `+${(gzipReferenceDelta / KiB).toFixed(1)} KiB gzip`
+    : 'gzip within reference';
+
+if (rawReferenceDelta > 0 || gzipReferenceDelta > 0) {
+  console.log(
+    `R6 reference growth: ${rawReferenceStatus}, ${gzipReferenceStatus}; allowed only within the approved R6.5 breadth-phase envelope.`,
+  );
+}
