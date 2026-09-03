@@ -98,6 +98,12 @@ void import('./game/population/WhisperingWoodsFernBridgeManager').then(
   },
 );
 
+void import('./game/world/ExistingValleyQuestPackWorldManager').then(
+  ({ getExistingValleyQuestPackWorldManager }) => {
+    getExistingValleyQuestPackWorldManager(game);
+  },
+);
+
 void import('./game/story/StarlightBeachContentWorldManager').then(
   ({ getStarlightBeachContentWorldManager }) => {
     getStarlightBeachContentWorldManager(game);

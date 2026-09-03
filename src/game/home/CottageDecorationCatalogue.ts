@@ -15,11 +15,7 @@ export interface CottageDecorationProfile {
 }
 
 const COTTAGE_DECORATION_PROFILES: Partial<Record<ItemId, CottageDecorationProfile>> = {
-  'item:sunbeam-cushion': {
-    categories: ['floor'],
-    theme: 'sunbeam',
-    previewColour: 0xffd982,
-  },
+  'item:sunbeam-cushion': { categories: ['floor'], theme: 'sunbeam', previewColour: 0xffd982 },
   'item:moonflower-lantern': {
     categories: ['wall', 'table', 'shelf', 'display'],
     theme: 'moonflower',
@@ -45,21 +41,13 @@ const COTTAGE_DECORATION_PROFILES: Partial<Record<ItemId, CottageDecorationProfi
     theme: 'adventure',
     previewColour: 0xb5ecf2,
   },
-  'item:cloud-cushion': {
-    categories: ['floor'],
-    theme: 'starlight',
-    previewColour: 0xc8dff2,
-  },
+  'item:cloud-cushion': { categories: ['floor'], theme: 'starlight', previewColour: 0xc8dff2 },
   'item:starlight-lamp': {
     categories: ['wall', 'table', 'shelf'],
     theme: 'starlight',
     previewColour: 0xb8a7df,
   },
-  'item:rainbow-rug': {
-    categories: ['floor'],
-    theme: 'rainbow',
-    previewColour: 0xf4a7c7,
-  },
+  'item:rainbow-rug': { categories: ['floor'], theme: 'rainbow', previewColour: 0xf4a7c7 },
   'item:pebble-curiosity-display': {
     categories: ['table', 'shelf', 'display'],
     theme: 'adventure',
@@ -99,6 +87,21 @@ const COTTAGE_DECORATION_PROFILES: Partial<Record<ItemId, CottageDecorationProfi
     categories: ['wall', 'table', 'shelf', 'display'],
     theme: 'adventure',
     previewColour: 0xe4dc86,
+  },
+  'item:moonflower-night-memory': {
+    categories: ['wall', 'table', 'shelf', 'display'],
+    theme: 'moonflower',
+    previewColour: 0xd9c1f0,
+  },
+  'item:friendship-route-pennant': {
+    categories: ['wall', 'shelf', 'display'],
+    theme: 'rainbow',
+    previewColour: 0xf1c968,
+  },
+  'item:odd-stone-bookend': {
+    categories: ['table', 'shelf', 'display'],
+    theme: 'adventure',
+    previewColour: 0x9bb6b5,
   },
 };
 
