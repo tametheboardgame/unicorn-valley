@@ -148,7 +148,7 @@ export const R6_GLADE_HOME_SECRET_DEFINITIONS = [
     position: { x: 1535, y: 900 },
     interactionRadius: 150,
     feedback:
-      'The trail continues!\nThe butterfly flashes its wings twice, then skips towards the Moonflower Field. 🌉',
+      'The trail continues!\nThe butterfly flashes its wings twice, then skips towards a quiet flower patch away from the field gate. 🌉',
     conditions: [{ type: 'discovery', discoveryId: JUNIPER_BUTTERFLY_FIRST_DISCOVERY_ID }],
   },
   {
@@ -159,7 +159,7 @@ export const R6_GLADE_HOME_SECRET_DEFINITIONS = [
     feedbackTier: 'grand',
     label: 'A final flutter in the flowers',
     actionLabel: 'Look closely',
-    position: { x: 1880, y: 1280 },
+    position: { x: 1540, y: 1420 },
     interactionRadius: 165,
     feedback:
       'Butterfly secret found!\nA hidden moonpetal opens where the butterfly lands, leaving a tiny ribbon charm behind. 🌸🦋',
