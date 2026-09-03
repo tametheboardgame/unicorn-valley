@@ -31,16 +31,20 @@ async function waitForDiagnostics(page: Page): Promise<void> {
 }
 
 async function startScene(page: Page, sceneKey: string): Promise<void> {
+  await page.evaluate((key) => {
+    const diagnostics = (
+      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__;
+    if (!diagnostics) {
+      throw new Error('Browser diagnostics are not installed.');
+    }
+    diagnostics.startScene(key);
+  }, sceneKey);
   await page.waitForFunction((key) => {
     const diagnostics = (
       window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
     ).__UNICORN_VALLEY_DIAGNOSTICS__;
-    try {
-      diagnostics?.startScene(key);
-      return diagnostics?.snapshot().activeScenes.includes(key) ?? false;
-    } catch {
-      return false;
-    }
+    return diagnostics?.snapshot().activeScenes.includes(key) ?? false;
   }, sceneKey);
 }
 
