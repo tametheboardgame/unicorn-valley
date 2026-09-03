@@ -11,30 +11,46 @@ interface DiagnosticObject {
   visible: boolean;
 }
 
-interface DiagnosticSnapshot {
-  scenes: Array<{
-    key: string;
-    objects: DiagnosticObject[];
-  }>;
+interface DiagnosticScene {
+  key: string;
+  objects: DiagnosticObject[];
 }
 
+interface DiagnosticSnapshot {
+  scenes: DiagnosticScene[];
+}
+
+interface DiagnosticApi {
+  snapshot(): DiagnosticSnapshot;
+  startScene(sceneKey: string): void;
+}
+
+type DiagnosticWindow = typeof window & {
+  __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticApi;
+};
+
 async function waitForDiagnostics(page: Page): Promise<void> {
-  await page.waitForFunction(() => Boolean((window as any).__UNICORN_VALLEY_DIAGNOSTICS__));
+  await page.waitForFunction(() => {
+    const diagnosticWindow = window as DiagnosticWindow;
+    return Boolean(diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__);
+  });
 }
 
 async function startScene(page: Page, sceneKey: string): Promise<void> {
   await page.evaluate((key) => {
-    (window as any).__UNICORN_VALLEY_DIAGNOSTICS__.startScene(key);
+    const diagnosticWindow = window as DiagnosticWindow;
+    diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__?.startScene(key);
   }, sceneKey);
 }
 
 async function waitForObject(page: Page, sceneKey: string, objectName: string): Promise<void> {
   await page.waitForFunction(
     ({ expectedScene, expectedName }) => {
-      const snapshot = (window as any).__UNICORN_VALLEY_DIAGNOSTICS__?.snapshot();
+      const diagnosticWindow = window as DiagnosticWindow;
+      const snapshot = diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__?.snapshot();
       return snapshot?.scenes
-        .find((scene: any) => scene.key === expectedScene)
-        ?.objects.some((object: any) => object.name === expectedName);
+        .find((scene) => scene.key === expectedScene)
+        ?.objects.some((object) => object.name === expectedName);
     },
     { expectedScene: sceneKey, expectedName: objectName },
   );
@@ -42,8 +58,9 @@ async function waitForObject(page: Page, sceneKey: string, objectName: string): 
 
 async function getSceneObjects(page: Page, sceneKey: string): Promise<DiagnosticObject[]> {
   return page.evaluate((key) => {
-    const snapshot = (window as any).__UNICORN_VALLEY_DIAGNOSTICS__.snapshot() as DiagnosticSnapshot;
-    return snapshot.scenes.find((scene) => scene.key === key)?.objects ?? [];
+    const diagnosticWindow = window as DiagnosticWindow;
+    const snapshot = diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__?.snapshot();
+    return snapshot?.scenes.find((scene) => scene.key === key)?.objects ?? [];
   }, sceneKey);
 }
 
@@ -65,13 +82,12 @@ test('Whispering Woods uses one connected entrance path and one light-shaft trea
       ?.visible,
   ).toBe(false);
   expect(
-    objects.find(
-      (object) => object.name === 'r6-region-gateway-art:whispering-woods:light-shafts',
-    )?.visible,
+    objects.find((object) => object.name === 'r6-region-gateway-art:whispering-woods:light-shafts')
+      ?.visible,
   ).toBe(false);
-  expect(objects.some((object) => object.name === 'exploration-path-polish' && object.visible)).toBe(
-    true,
-  );
+  expect(
+    objects.some((object) => object.name === 'exploration-path-polish' && object.visible),
+  ).toBe(true);
 
   const largeBackdropCircles = objects.filter(
     (object) => object.type === 'Arc' && object.depth === 1 && object.displayWidth > 1200,
@@ -86,21 +102,19 @@ test('Crystal Brook replaces sharp stream joins with one rounded stream treatmen
   await page.goto('/?diagnostics=1');
   await waitForDiagnostics(page);
   await startScene(page, 'CrystalBrookScene');
-  await waitForObject(
-    page,
-    'CrystalBrookScene',
-    'final-graphics-tightening:crystal-brook-anchor',
-  );
+  await waitForObject(page, 'CrystalBrookScene', 'final-graphics-tightening:crystal-brook-anchor');
 
   const objects = await getSceneObjects(page, 'CrystalBrookScene');
   expect(
     objects.some(
-      (object) => object.name === 'final-graphics-tightening:crystal-brook-stream' && object.visible,
+      (object) =>
+        object.name === 'final-graphics-tightening:crystal-brook-stream' && object.visible,
     ),
   ).toBe(true);
   expect(
     objects.some(
-      (object) => object.type === 'Graphics' && object.name === '' && object.depth === 3 && object.visible,
+      (object) =>
+        object.type === 'Graphics' && object.name === '' && object.depth === 3 && object.visible,
     ),
   ).toBe(false);
 
