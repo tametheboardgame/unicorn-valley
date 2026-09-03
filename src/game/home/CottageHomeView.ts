@@ -14,6 +14,7 @@ const TREASURE_REWARD_IDS = [
   'item:hollow-tree-star-jar',
   'item:butterfly-window-charm',
   'item:windmill-sky-pennant',
+  'item:echo-crystal-chime',
 ] as const satisfies readonly ItemId[];
 
 export interface CottageDecorationView {
