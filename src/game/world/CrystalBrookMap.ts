@@ -140,10 +140,19 @@ export const CRYSTAL_BROOK_MAP = {
     },
   ] satisfies readonly CrystalBrookSecretRoute[],
   colliders: [
+    // Water collision stays inset from the visible pool edge so the bank reads naturally.
     { id: 'collision:brook-upper-pool', x: 1370, y: 540, width: 430, height: 180 },
     { id: 'collision:brook-lower-pool', x: 2780, y: 1320, width: 390, height: 160 },
-    { id: 'collision:north-crystal-bank', x: 2440, y: 420, width: 370, height: 240 },
-    { id: 'collision:south-reed-bank', x: 1750, y: 1860, width: 430, height: 230 },
+    // R6 cliff art is physical scenery, with collision matching the visible rock masses.
+    { id: 'collision:cliff-west', x: 520, y: 410, width: 320, height: 150 },
+    { id: 'collision:cliff-north-west', x: 880, y: 350, width: 260, height: 135 },
+    { id: 'collision:cliff-north-east', x: 2350, y: 310, width: 300, height: 150 },
+    { id: 'collision:cliff-east', x: 3190, y: 520, width: 300, height: 170 },
+    // Vegetation blocks at their visible bases instead of broad empty rectangles around them.
+    { id: 'collision:north-crystal-bank', x: 2470, y: 505, width: 230, height: 125 },
+    { id: 'collision:south-reed-bank', x: 1890, y: 1770, width: 230, height: 115 },
+    // The waterfall itself is not a walk-through object.
+    { id: 'collision:crystal-cascade', x: 3150, y: 665, width: 130, height: 235 },
   ] satisfies readonly CollisionRectangle[],
 } as const;
 

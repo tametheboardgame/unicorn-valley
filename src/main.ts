@@ -3,18 +3,24 @@ import './style.css';
 import './titlePortraitControls.css';
 import { gameConfig } from './game/config/gameConfig';
 import { getClickToMoveManager } from './game/input/ClickToMoveManager';
+import { getContinueRestoreManager } from './game/save/ContinueRestoreManager';
 import { getVillageInteriorContractManager } from './game/scenes/VillageInteriorContractManager';
 import { getExplorationShellWorldManager } from './game/ui/ExplorationShellWorldManager';
 import { browserHasRaceTouchCapability } from './game/ui/RaceTouchCapability';
 import { getTitlePortraitControlsManager } from './game/ui/TitlePortraitControlsManager';
 import { getR5FinalTighteningManager } from './game/visual/R5FinalTighteningManager';
 import { getExplorationGeometryPresentationManager } from './game/world/ExplorationGeometryPresentationManager';
+import { getExplorationPathPolishManager } from './game/world/ExplorationPathPolishManager';
+import { getWorldLayerAlignmentManager } from './game/world/WorldLayerAlignmentManager';
 
 const game = new Phaser.Game(gameConfig);
 getClickToMoveManager(game);
+getContinueRestoreManager(game);
 getExplorationShellWorldManager(game);
 getTitlePortraitControlsManager(game);
 getExplorationGeometryPresentationManager(game);
+getExplorationPathPolishManager(game);
+getWorldLayerAlignmentManager(game);
 getR5FinalTighteningManager(game);
 getVillageInteriorContractManager(game);
 
