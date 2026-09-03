@@ -37,7 +37,8 @@ export const R6_WHISPERING_WOODS_DEPTH_DISCOVERIES = [
   {
     id: FIREFLY_GROVE_DISCOVERY_ID,
     name: 'Firefly Grove',
-    description: 'A sheltered grove beyond Lantern Clearing where fireflies gather in friendly swirls.',
+    description:
+      'A sheltered grove beyond Lantern Clearing where fireflies gather in friendly swirls.',
     icon: '✨',
     undiscoveredHint: 'Fern keeps watching lights beyond Lantern Clearing.',
   },
@@ -68,7 +69,8 @@ export const R6_WHISPERING_WOODS_DEPTH_DISCOVERIES = [
   {
     id: MUSHROOM_RING_DISCOVERY_ID,
     name: 'Mooncap Ring',
-    description: 'A mooncap ring wakes after dark or in magical weather, lighting one mushroom at a time.',
+    description:
+      'A mooncap ring wakes after dark or in magical weather, lighting one mushroom at a time.',
     kind: 'secret',
     icon: '🍄',
     undiscoveredHint: 'The lower-path mooncap circle looks ordinary in bright weather.',
