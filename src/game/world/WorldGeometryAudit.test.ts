@@ -26,7 +26,10 @@ const maps: readonly [string, string, AuditedMap][] = [
   ['Starlight Beach', 'StarlightBeachScene', STARLIGHT_BEACH_MAP],
 ];
 
-function sampleRoute(points: readonly ExplorationPathPoint[], spacing = 34): ExplorationPathPoint[] {
+function sampleRoute(
+  points: readonly ExplorationPathPoint[],
+  spacing = 34,
+): ExplorationPathPoint[] {
   const samples: ExplorationPathPoint[] = [];
   for (let index = 0; index < points.length - 1; index += 1) {
     const start = points[index];
@@ -81,15 +84,18 @@ describe('exploration geometry audit', () => {
         ids.add(collider.id);
         expect(collider.width, `${label} ${collider.id} width`).toBeGreaterThan(0);
         expect(collider.height, `${label} ${collider.id} height`).toBeGreaterThan(0);
-        expect(collider.x - collider.width / 2, `${label} ${collider.id} left`).toBeGreaterThanOrEqual(
-          0,
-        );
-        expect(collider.y - collider.height / 2, `${label} ${collider.id} top`).toBeGreaterThanOrEqual(
-          0,
-        );
-        expect(collider.x + collider.width / 2, `${label} ${collider.id} right`).toBeLessThanOrEqual(
-          map.width,
-        );
+        expect(
+          collider.x - collider.width / 2,
+          `${label} ${collider.id} left`,
+        ).toBeGreaterThanOrEqual(0);
+        expect(
+          collider.y - collider.height / 2,
+          `${label} ${collider.id} top`,
+        ).toBeGreaterThanOrEqual(0);
+        expect(
+          collider.x + collider.width / 2,
+          `${label} ${collider.id} right`,
+        ).toBeLessThanOrEqual(map.width);
         expect(
           collider.y + collider.height / 2,
           `${label} ${collider.id} bottom`,
