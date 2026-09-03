@@ -90,10 +90,7 @@ function tightenCrystalBrook(scene: Phaser.Scene): void {
   softenBackdropCircles(scene, CRYSTAL_BROOK_BACKDROPS);
   replaceCrystalBrookStream(scene);
   if (!scene.children.getByName(`${PREFIX}:crystal-brook-anchor`)) {
-    scene.add
-      .zone(-64, -64, 2, 2)
-      .setName(`${PREFIX}:crystal-brook-anchor`)
-      .setVisible(false);
+    scene.add.zone(-64, -64, 2, 2).setName(`${PREFIX}:crystal-brook-anchor`).setVisible(false);
   }
 }
 
@@ -114,10 +111,7 @@ function tightenWhisperingWoods(scene: Phaser.Scene): void {
     scene.children.getByName(R6_GATEWAY_ANCHOR) &&
     !scene.children.getByName(`${PREFIX}:whispering-woods-anchor`)
   ) {
-    scene.add
-      .zone(-64, -64, 2, 2)
-      .setName(`${PREFIX}:whispering-woods-anchor`)
-      .setVisible(false);
+    scene.add.zone(-64, -64, 2, 2).setName(`${PREFIX}:whispering-woods-anchor`).setVisible(false);
   }
 }
 
@@ -148,7 +142,9 @@ export class FinalGraphicsTighteningManager {
 
 let manager: FinalGraphicsTighteningManager | null = null;
 
-export function getFinalGraphicsTighteningManager(game: Phaser.Game): FinalGraphicsTighteningManager {
+export function getFinalGraphicsTighteningManager(
+  game: Phaser.Game,
+): FinalGraphicsTighteningManager {
   manager ??= new FinalGraphicsTighteningManager(game);
   return manager;
 }
