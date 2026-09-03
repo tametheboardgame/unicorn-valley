@@ -100,6 +100,21 @@ const COTTAGE_DECORATION_PROFILES: Partial<Record<ItemId, CottageDecorationProfi
     theme: 'adventure',
     previewColour: 0xe4dc86,
   },
+  'item:moonflower-night-memory': {
+    categories: ['wall', 'table', 'shelf', 'display'],
+    theme: 'moonflower',
+    previewColour: 0xd9c1f0,
+  },
+  'item:friendship-route-pennant': {
+    categories: ['wall', 'shelf', 'display'],
+    theme: 'rainbow',
+    previewColour: 0xf1c968,
+  },
+  'item:odd-stone-bookend': {
+    categories: ['table', 'shelf', 'display'],
+    theme: 'adventure',
+    previewColour: 0x9bb6b5,
+  },
 };
 
 export function getCottageDecorationProfile(itemId: ItemId): CottageDecorationProfile | null {

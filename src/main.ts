@@ -80,6 +80,12 @@ void import('./game/world/WoodsDepthWorldManager').then(({ getWoodsDepthWorldMan
   getWoodsDepthWorldManager(game);
 });
 
+void import('./game/world/ExistingValleyQuestPackWorldManager').then(
+  ({ getExistingValleyQuestPackWorldManager }) => {
+    getExistingValleyQuestPackWorldManager(game);
+  },
+);
+
 void Promise.all([
   import('./game/world/R6RegionGatewayArtManager'),
   import('./game/world/R6RegionGatewayArtPerformanceManager'),
