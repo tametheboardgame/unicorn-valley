@@ -20,6 +20,11 @@ function isEditableKeyboardTarget(target: EventTarget | null): boolean {
   );
 }
 
+function isModalDialogueVisible(scene: Phaser.Scene): boolean {
+  const panel = scene.children.getByName('dialogue-production-panel');
+  return panel instanceof Phaser.GameObjects.Rectangle && panel.visible;
+}
+
 function ensureInteractionTracking(): void {
   if (interactionTrackingInstalled || typeof globalThis.addEventListener !== 'function') {
     return;
@@ -39,6 +44,7 @@ function ensureInteractionTracking(): void {
 
 export class WorldInteractionInput {
   private lastSeenPressSerial: number;
+  private modalWasVisible = false;
 
   public constructor(private readonly scene: Phaser.Scene) {
     ensureInteractionTracking();
@@ -46,19 +52,43 @@ export class WorldInteractionInput {
   }
 
   public justPressed(): boolean {
-    if (!this.scene.scene.isActive() || interactionPressSerial === this.lastSeenPressSerial) {
+    if (!this.scene.scene.isActive()) {
+      this.lastSeenPressSerial = interactionPressSerial;
+      this.modalWasVisible = false;
       return false;
     }
+
+    const modalVisible = isModalDialogueVisible(this.scene);
+    if (modalVisible) {
+      this.lastSeenPressSerial = interactionPressSerial;
+      this.modalWasVisible = true;
+      return false;
+    }
+
+    if (interactionPressSerial === this.lastSeenPressSerial) {
+      this.modalWasVisible = false;
+      return false;
+    }
+
     this.lastSeenPressSerial = interactionPressSerial;
+    if (this.modalWasVisible) {
+      this.modalWasVisible = false;
+      return false;
+    }
     return true;
   }
 
   public bindPointer(zone: Phaser.GameObjects.Zone, activate: () => void): void {
     zone.setInteractive({ useHandCursor: true });
-    zone.on('pointerdown', activate);
+    zone.on('pointerdown', () => {
+      if (!isModalDialogueVisible(this.scene)) {
+        activate();
+      }
+    });
   }
 
   public destroy(): void {
     this.lastSeenPressSerial = interactionPressSerial;
+    this.modalWasVisible = false;
   }
 }

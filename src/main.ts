@@ -22,14 +22,28 @@ void import('./game/economy/EconomyRewardWorldManager').then(({ getEconomyReward
   getEconomyRewardWorldManager();
 });
 
-void import('./game/scenes/R6VillageInteriorScene').then(({ VillageInteriorScene }) => {
+const registerExtendedScenes = Promise.all([
+  import('./game/scenes/R6VillageInteriorScene'),
+  import('./game/scenes/HollowTreeNookScene'),
+]).then(([{ VillageInteriorScene }, { HollowTreeNookScene }]) => {
   if (!game.scene.keys.VillageInteriorScene) {
     game.scene.add('VillageInteriorScene', VillageInteriorScene);
+  }
+  if (!game.scene.keys.HollowTreeNookScene) {
+    game.scene.add('HollowTreeNookScene', HollowTreeNookScene);
   }
 });
 
 void import('./game/world/VillageLifeWorldManager').then(({ getVillageLifeWorldManager }) => {
   getVillageLifeWorldManager(game);
+});
+
+void import('./game/world/GladeDepthWorldManager').then(({ getGladeDepthWorldManager }) => {
+  getGladeDepthWorldManager(game);
+});
+
+void import('./game/world/CottageDepthWorldManager').then(({ getCottageDepthWorldManager }) => {
+  getCottageDepthWorldManager(game);
 });
 
 void Promise.all([
@@ -87,7 +101,9 @@ ensureRaceMobileControls();
 raceTouchPointerQuery?.addEventListener('change', () => ensureRaceMobileControls());
 
 if (new URLSearchParams(globalThis.location.search).get('diagnostics') === '1') {
-  void import('./game/testing/BrowserDiagnostics').then(({ installBrowserDiagnostics }) => {
-    installBrowserDiagnostics(game);
-  });
+  void registerExtendedScenes
+    .then(() => import('./game/testing/BrowserDiagnostics'))
+    .then(({ installBrowserDiagnostics }) => {
+      installBrowserDiagnostics(game);
+    });
 }

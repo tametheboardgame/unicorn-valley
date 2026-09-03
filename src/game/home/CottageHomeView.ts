@@ -5,7 +5,14 @@ import { COTTAGE_INTERIOR_MAP, type CottageDecorationSlot } from '../world/Cotta
 
 const TREASURE_REWARD_IDS = [
   'item:moonflower-lantern',
+  'item:rainbow-run-finisher-ribbon',
+  'item:rainbow-run-podium-rosette',
   'item:pebble-curiosity-display',
+  'item:brook-prism-mobile',
+  'item:crystal-cascade-finisher-ribbon',
+  'item:crystal-cascade-podium-rosette',
+  'item:hollow-tree-star-jar',
+  'item:butterfly-window-charm',
 ] as const satisfies readonly ItemId[];
 
 export interface CottageDecorationView {

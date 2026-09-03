@@ -267,11 +267,15 @@ export function installBrowserDiagnostics(game: Phaser.Game): BrowserDiagnostics
       lastFrameAt = performance.now();
     },
     startScene: (sceneKey, data) => {
-      const activeScene = game.scene.getScenes(true)[0];
-      if (!activeScene) {
-        throw new Error(`Cannot start diagnostic scene ${sceneKey}: no active scene.`);
+      if (!game.scene.keys[sceneKey]) {
+        throw new Error(`Cannot start diagnostic scene ${sceneKey}: scene is not registered.`);
       }
-      activeScene.scene.start(sceneKey, data);
+      for (const activeScene of game.scene.getScenes(true)) {
+        if (activeScene.scene.key !== sceneKey) {
+          game.scene.stop(activeScene.scene.key);
+        }
+      }
+      game.scene.start(sceneKey, data);
     },
     selectRaceCourse: (courseId) => {
       selectRaceCourse(courseId);

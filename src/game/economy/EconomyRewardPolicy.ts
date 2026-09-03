@@ -1,4 +1,5 @@
 import { FIREFLY_LANTERN_KEEPER_DISCOVERY_ID } from '../../content/r5FireflyLantern';
+import { PIP_HOLLOW_TREE_QUEST_ID } from '../../content/r6GladeHomeContent';
 import { MAPLE_CAKE_QUEST_ID, TANSY_MAP_QUEST_ID } from '../../content/r6VillageContent';
 import type { SaveGame } from '../save/saveSchema';
 
@@ -31,6 +32,7 @@ const SUBSTANTIVE_QUEST_REWARDS = [
   ['quest:ripple-brook-song', "Ripple's Brook Song"],
   [TANSY_MAP_QUEST_ID, 'Tansy and the Lost Map Corners'],
   [MAPLE_CAKE_QUEST_ID, 'Maple and the Wobbly Cake Plan'],
+  [PIP_HOLLOW_TREE_QUEST_ID, 'Pip and the Hollow Tree Whispers'],
 ] as const;
 
 const DISCOVERY_MILESTONES = [
