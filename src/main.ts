@@ -27,12 +27,14 @@ const registerExtendedScenes = Promise.all([
   import('./game/scenes/HollowTreeNookScene'),
   import('./game/scenes/WindmillLookoutScene'),
   import('./game/scenes/CrystalGrottoScene'),
+  import('./game/scenes/FireflyGroveScene'),
 ]).then(
   ([
     { VillageInteriorScene },
     { HollowTreeNookScene },
     { WindmillLookoutScene },
     { CrystalGrottoScene },
+    { FireflyGroveScene },
   ]) => {
     if (!game.scene.keys.VillageInteriorScene) {
       game.scene.add('VillageInteriorScene', VillageInteriorScene);
@@ -45,6 +47,9 @@ const registerExtendedScenes = Promise.all([
     }
     if (!game.scene.keys.CrystalGrottoScene) {
       game.scene.add('CrystalGrottoScene', CrystalGrottoScene);
+    }
+    if (!game.scene.keys.FireflyGroveScene) {
+      game.scene.add('FireflyGroveScene', FireflyGroveScene);
     }
   },
 );
@@ -70,6 +75,10 @@ void import('./game/world/CrystalBrookDepthWorldManager').then(
     getCrystalBrookDepthWorldManager(game);
   },
 );
+
+void import('./game/world/WoodsDepthWorldManager').then(({ getWoodsDepthWorldManager }) => {
+  getWoodsDepthWorldManager(game);
+});
 
 void Promise.all([
   import('./game/world/R6RegionGatewayArtManager'),

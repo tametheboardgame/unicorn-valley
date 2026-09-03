@@ -3,6 +3,7 @@ import { ECHO_CRYSTAL_SONG_QUEST_ID } from '../../content/r6CrystalBrookDepthCon
 import { PIP_HOLLOW_TREE_QUEST_ID } from '../../content/r6GladeHomeContent';
 import { BREEZE_WINDMILL_QUEST_ID } from '../../content/r6MeadowRunContent';
 import { MAPLE_CAKE_QUEST_ID, TANSY_MAP_QUEST_ID } from '../../content/r6VillageContent';
+import { FERN_FIREFLY_WAY_QUEST_ID } from '../../content/r6WhisperingWoodsDepthContent';
 import type { SaveGame } from '../save/saveSchema';
 
 export type EconomyRewardSource = 'quest' | 'discovery' | 'activity';
@@ -37,6 +38,7 @@ const SUBSTANTIVE_QUEST_REWARDS = [
   [PIP_HOLLOW_TREE_QUEST_ID, 'Pip and the Hollow Tree Whispers'],
   [BREEZE_WINDMILL_QUEST_ID, 'Breeze and the View From Up There'],
   [ECHO_CRYSTAL_SONG_QUEST_ID, 'Echo and the Crystal Song'],
+  [FERN_FIREFLY_WAY_QUEST_ID, 'Fern: Fireflies Know the Way'],
 ] as const;
 
 const DISCOVERY_MILESTONES = [

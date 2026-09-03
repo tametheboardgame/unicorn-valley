@@ -11,6 +11,7 @@ import type {
 } from './AmbientPopulationTypes';
 import { R6_CRYSTAL_BROOK_RESIDENT_PLACEMENTS } from './R6CrystalBrookPopulationContent';
 import { R6_MEADOW_RESIDENT_PLACEMENTS } from './R6MeadowPopulationContent';
+import { R6_WOODS_RESIDENT_PLACEMENTS } from './R6WoodsPopulationContent';
 
 export const R6_SUPPORTING_RESIDENTS = [
   {
@@ -300,6 +301,7 @@ export const R6_AMBIENT_RESIDENT_PLACEMENTS = [
   },
   ...R6_MEADOW_RESIDENT_PLACEMENTS,
   ...R6_CRYSTAL_BROOK_RESIDENT_PLACEMENTS,
+  ...R6_WOODS_RESIDENT_PLACEMENTS,
 ] satisfies readonly ResidentPlacementDefinition[];
 
 export const R6_SMALL_WORLD_INTERACTIONS = [
