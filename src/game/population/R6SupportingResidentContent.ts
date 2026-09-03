@@ -300,16 +300,6 @@ export const R6_AMBIENT_RESIDENT_PLACEMENTS = [
 
 export const R6_SMALL_WORLD_INTERACTIONS = [
   {
-    id: 'world-interaction:r6-5:bridge-listen',
-    sceneKey: 'MoonflowerGladeScene',
-    kind: 'listen',
-    label: 'Little Bridge',
-    actionLabel: 'Listen',
-    position: { x: 1400, y: 900 },
-    interactionRadius: 112,
-    feedback: 'The stream burbles under the bridge like it is telling a tiny story.',
-  },
-  {
     id: 'world-interaction:r6-5:village-chime',
     sceneKey: 'SunbeamVillageScene',
     kind: 'ring',
