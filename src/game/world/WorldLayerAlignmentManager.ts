@@ -11,7 +11,10 @@ const WOODS_BOTTOM_TREES = [
   { x: 2780, y: 1830, scale: 1.16 },
 ] as const;
 
-function findNamedContainer(scene: Phaser.Scene, name: string): Phaser.GameObjects.Container | null {
+function findNamedContainer(
+  scene: Phaser.Scene,
+  name: string,
+): Phaser.GameObjects.Container | null {
   const object = scene.children.getByName(name);
   return object instanceof Phaser.GameObjects.Container ? object : null;
 }
@@ -40,14 +43,7 @@ function createWoodsTree(
     0x2c5d47,
     0.96,
   );
-  const crown = scene.add.ellipse(
-    5 * scale,
-    -182 * scale,
-    180 * scale,
-    126 * scale,
-    0x386c50,
-    0.9,
-  );
+  const crown = scene.add.ellipse(5 * scale, -182 * scale, 180 * scale, 126 * scale, 0x386c50, 0.9);
   return scene.add
     .container(x, y, [trunk, left, right, crown])
     .setName(`${WOODS_REPLACEMENT_PREFIX}:${index}`)
@@ -92,9 +88,9 @@ function alignWoods(scene: Phaser.Scene): void {
       (tree) => Math.abs(positioned.x - tree.x) <= 145 && positioned.y >= 1540,
     );
     if (belongsToSouthernTree && 'setVisible' in child) {
-      (child as Phaser.GameObjects.GameObject & { setVisible: (visible: boolean) => unknown }).setVisible(
-        false,
-      );
+      (
+        child as Phaser.GameObjects.GameObject & { setVisible: (visible: boolean) => unknown }
+      ).setVisible(false);
     }
   }
 
