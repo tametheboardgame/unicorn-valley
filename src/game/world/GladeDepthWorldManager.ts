@@ -43,6 +43,7 @@ interface GladeDepthState {
   secrets: Map<string, InteractionRuntime>;
   feedback: Phaser.GameObjects.Text;
   persistentVisuals: Phaser.GameObjects.Container | null;
+  nookDoorwayVisuals: Phaser.GameObjects.Container | null;
   persistentSignature: string;
 }
 
@@ -178,6 +179,7 @@ export class GladeDepthWorldManager {
       secrets: new Map(),
       feedback: this.createFeedback(scene),
       persistentVisuals: null,
+      nookDoorwayVisuals: null,
       persistentSignature: '',
     };
     state.fixed = FIXED_INTERACTIONS.map((definition) =>
@@ -430,15 +432,20 @@ export class GladeDepthWorldManager {
     }
     state.persistentSignature = signature;
     state.persistentVisuals?.destroy(true);
+    state.nookDoorwayVisuals?.destroy(true);
+    state.persistentVisuals = null;
+    state.nookDoorwayVisuals = null;
 
     const objects: Phaser.GameObjects.GameObject[] = [];
     if (this.story.isNookOpen()) {
       const doorway = state.scene.add
-        .ellipse(2200, 650, 106, 142, 0x59415e, 0.92)
-        .setStrokeStyle(5, 0xffe5a2, 0.72)
-        .setDepth(10);
-      const light = state.scene.add.ellipse(2200, 655, 70, 105, 0xffe8a3, 0.2).setDepth(11);
-      objects.push(doorway, light);
+        .ellipse(0, 0, 106, 142, 0x59415e, 0.92)
+        .setStrokeStyle(5, 0xffe5a2, 0.72);
+      const light = state.scene.add.ellipse(0, 5, 70, 105, 0xffe8a3, 0.2);
+      state.nookDoorwayVisuals = state.scene.add
+        .container(2200, 650, [doorway, light])
+        .setName('glade-depth:hollow-tree-open-doorway')
+        .setDepth(worldDepthForY(695, 0.25));
       state.scene.tweens.add({
         targets: light,
         alpha: { from: 0.12, to: 0.34 },
@@ -465,10 +472,11 @@ export class GladeDepthWorldManager {
 
     if (save.world.flags[JUNIPER_BUTTERFLY_TRAIL_FLAG] === true) {
       for (const [index, point] of [
-        { x: 1540, y: 900 },
-        { x: 1600, y: 1040 },
-        { x: 1580, y: 1210 },
-        { x: 1540, y: 1420 },
+        { x: 1535, y: 900 },
+        { x: 1420, y: 900 },
+        { x: 1250, y: 1070 },
+        { x: 1200, y: 1350 },
+        { x: 1200, y: 1650 },
       ].entries()) {
         const butterfly = state.scene.add
           .text(point.x, point.y, index % 2 === 0 ? '🦋' : '✦', {
@@ -519,6 +527,7 @@ export class GladeDepthWorldManager {
       runtime.container.destroy(true);
     }
     this.state.persistentVisuals?.destroy(true);
+    this.state.nookDoorwayVisuals?.destroy(true);
     this.state.feedback.destroy();
     this.state.input.destroy();
     this.state = null;
