@@ -18,6 +18,18 @@ R7-WP7.1 remains blocked until **R6.5-WP17 - Full Human Playthrough and R7 Readi
 
 The production branch is deployed to `https://unicorn-valley.pages.dev/`.
 
+## Current operating state
+
+For active implementation, start with:
+
+1. [`STATUS.md`](STATUS.md) - concise current checkpoint and next action.
+2. [`PROJECT_STATE.json`](PROJECT_STATE.json) - machine-readable current state.
+3. [`PROJECT.md`](PROJECT.md) - accepted baseline, invariants and delivery boundary.
+4. The active bounded package under [`docs/work-packages/`](docs/work-packages/).
+5. [`AGENTS.md`](AGENTS.md) - persistent execution/autonomy contract.
+
+The detailed design/release documents below remain authoritative for domain scope. The operating-state layer exists to make recovery fast and prevent agents from reconstructing current work from historical chat or stale plans.
+
 ## Core principles
 
 - Choice without pressure.
