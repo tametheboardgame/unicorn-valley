@@ -46,6 +46,7 @@ import { R5_LUMI_CHARACTERS, R5_LUMI_DIALOGUES, R5_LUMI_DISCOVERIES } from './r5
 import { R5_RACE_DISCOVERIES, R5_RACE_ITEMS } from './r5RaceContent';
 import { R5_WEATHER_DISCOVERIES } from './r5Weather';
 import { R5_WHISPERING_WOODS_DISCOVERIES } from './r5WhisperingWoods';
+import { R65_STARLIGHT_BEACH_DISCOVERIES, R65_STARLIGHT_BEACH_ITEMS } from './r65StarlightBeach';
 import {
   R6_GLADE_HOME_DISCOVERIES,
   R6_GLADE_HOME_ITEMS,
@@ -90,6 +91,7 @@ const ALL_ITEMS = [
   ...R6_VILLAGE_ITEMS,
   ...R6_GLADE_HOME_ITEMS,
   ...R6_MEADOW_RUN_ITEMS,
+  ...R65_STARLIGHT_BEACH_ITEMS,
 ] satisfies readonly ItemDefinition[];
 const ALL_CHARACTERS = [
   ...CHARACTERS,
@@ -130,6 +132,7 @@ const ALL_DISCOVERIES = [
   ...R6_VILLAGE_DISCOVERIES,
   ...R6_GLADE_HOME_DISCOVERIES,
   ...R6_MEADOW_RUN_DISCOVERIES,
+  ...R65_STARLIGHT_BEACH_DISCOVERIES,
 ] satisfies readonly DiscoveryDefinition[];
 const ALL_DIALOGUES = [
   ...DIALOGUES,

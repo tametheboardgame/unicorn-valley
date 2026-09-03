@@ -1,6 +1,7 @@
 import { CRYSTAL_BROOK_MAP } from '../world/CrystalBrookMap';
 import { MOONFLOWER_GLADE_MAP } from '../world/MoonflowerGladeMap';
 import { RAINBOW_MEADOW_MAP } from '../world/RainbowMeadowMap';
+import { STARLIGHT_BEACH_MAP } from '../world/StarlightBeachMap';
 import { SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
 import { WHISPERING_WOODS_MAP } from '../world/WhisperingWoodsMap';
 import type {
@@ -298,7 +299,37 @@ export const R6_AMBIENT_RESIDENT_PLACEMENTS = [
     ],
   },
   ...R6_MEADOW_RESIDENT_PLACEMENTS,
-] satisfies readonly ResidentPlacementDefinition[];
+  {
+    id: 'resident-placement:coral:beach-shell-cove',
+    residentId: 'resident:coral',
+    sceneKey: 'StarlightBeachScene',
+    behaviour: 'local-wander',
+    routeMode: 'random-neighbour',
+    speedPxPerSecond: 70,
+    interactionRadius: 126,
+    priority: 22,
+    waypoints: [
+      { id: 'coral-beach-a', x: 760, y: 1040, pauseMs: 2200 },
+      { id: 'coral-beach-b', x: 980, y: 1120, pauseMs: 1800 },
+      { id: 'coral-beach-c', x: 1120, y: 980, pauseMs: 2500 },
+    ],
+  },
+  {
+    id: 'resident-placement:skipper:beach-star-dunes',
+    residentId: 'resident:skipper',
+    sceneKey: 'StarlightBeachScene',
+    behaviour: 'purposeful-route',
+    routeMode: 'ping-pong',
+    speedPxPerSecond: 88,
+    interactionRadius: 126,
+    priority: 20,
+    waypoints: [
+      { id: 'skipper-beach-a', x: 2320, y: 1050, pauseMs: 1400 },
+      { id: 'skipper-beach-b', x: 2540, y: 1120, pauseMs: 1000 },
+      { id: 'skipper-beach-c', x: 2780, y: 1050, pauseMs: 1900 },
+    ],
+  },
+] as const satisfies readonly ResidentPlacementDefinition[];
 
 export const R6_SMALL_WORLD_INTERACTIONS = [
   {
@@ -320,6 +351,46 @@ export const R6_SMALL_WORLD_INTERACTIONS = [
     position: { x: 1570, y: 990 },
     interactionRadius: 120,
     feedback: 'Splash! Tiny rainbow drops sparkle for a moment before vanishing.',
+  },
+  {
+    id: 'world-interaction:r6-5:beach-tide-pool-peek',
+    sceneKey: 'StarlightBeachScene',
+    kind: 'inspect',
+    label: 'Curious tide pool',
+    actionLabel: 'Peek',
+    position: { x: 1780, y: 1450 },
+    interactionRadius: 118,
+    feedback: 'A tiny crab peeks from behind a pebble, waves one claw, then hides again. 🦀',
+  },
+  {
+    id: 'world-interaction:r6-5:beach-driftwood-chime',
+    sceneKey: 'StarlightBeachScene',
+    kind: 'ring',
+    label: 'Driftwood shell chime',
+    actionLabel: 'Ring',
+    position: { x: 1420, y: 1120 },
+    interactionRadius: 120,
+    feedback: 'Clink-clink! The little shells make a soft sea-glass tune in the breeze.',
+  },
+  {
+    id: 'world-interaction:r6-5:beach-kite-ribbons',
+    sceneKey: 'StarlightBeachScene',
+    kind: 'play',
+    label: 'Skipper’s kite ribbons',
+    actionLabel: 'Flutter',
+    position: { x: 2580, y: 980 },
+    interactionRadius: 120,
+    feedback: 'The ribbons snap into a bright zig-zag, then settle back into the sea breeze.',
+  },
+  {
+    id: 'world-interaction:r6-5:beach-moonlit-seat',
+    sceneKey: 'StarlightBeachScene',
+    kind: 'sit',
+    label: 'Moonlit Point',
+    actionLabel: 'Sit',
+    position: { x: 3040, y: 1460 },
+    interactionRadius: 126,
+    feedback: 'For a moment the whole sea looks sprinkled with tiny stars. ✨',
   },
 ] as const satisfies readonly SmallWorldInteractionDefinition[];
 
@@ -383,4 +454,11 @@ export const R6_AMBIENT_SAFETY_PROFILES = [
   ]),
   safetyProfile('CrystalBrookScene', CRYSTAL_BROOK_MAP),
   safetyProfile('WhisperingWoodsScene', WHISPERING_WOODS_MAP),
+  safetyProfile('StarlightBeachScene', STARLIGHT_BEACH_MAP, [
+    {
+      id: 'transition:whispering-woods',
+      position: STARLIGHT_BEACH_MAP.entrances[0].position,
+      radius: 190,
+    },
+  ]),
 ] as const satisfies readonly AmbientSafetyProfile[];

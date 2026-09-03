@@ -2,6 +2,7 @@ import { MOONFLOWER_GLADE_LOCATION_ID } from '../save/saveLocationCheckpoint';
 import { COTTAGE_INTERIOR_LOCATION_ID } from './CottageInteriorMap';
 import { CRYSTAL_BROOK_LOCATION_ID } from './CrystalBrookMap';
 import { RAINBOW_MEADOW_LOCATION_ID } from './RainbowMeadowMap';
+import { STARLIGHT_BEACH_LOCATION_ID } from './StarlightBeachMap';
 import { SUNBEAM_VILLAGE_LOCATION_ID } from './SunbeamVillageMap';
 import { WHISPERING_WOODS_LOCATION_ID } from './WhisperingWoodsMap';
 
@@ -89,6 +90,16 @@ export const VALLEY_MAP_NODES = [
     revisitHint: 'Firefly Lantern, woodland discoveries and magical weather.',
   },
   {
+    id: 'valley:starlight-beach',
+    label: 'Starlight Beach',
+    icon: '🏖️',
+    x: 0.94,
+    y: 0.79,
+    kind: 'region',
+    locationIds: [STARLIGHT_BEACH_LOCATION_ID],
+    revisitHint: 'Starlight Shells, Tide Pools, Star Dunes and Moonlit Point.',
+  },
+  {
     id: 'valley:moonflower-field',
     label: 'Moonflower Field',
     icon: '🌺',
@@ -137,8 +148,8 @@ export const VALLEY_MAP_NODES = [
     id: 'valley:future-south',
     label: 'Unrevealed path',
     icon: '?',
-    x: 0.76,
-    y: 0.84,
+    x: 0.72,
+    y: 0.88,
     kind: 'future',
     locationIds: [],
   },
@@ -150,6 +161,7 @@ export const VALLEY_MAP_CONNECTIONS = [
   { from: 'valley:sunbeam-village', to: 'valley:rainbow-meadow', kind: 'physical' },
   { from: 'valley:rainbow-meadow', to: 'valley:crystal-brook', kind: 'physical' },
   { from: 'valley:crystal-brook', to: 'valley:whispering-woods', kind: 'physical' },
+  { from: 'valley:whispering-woods', to: 'valley:starlight-beach', kind: 'physical' },
   { from: 'valley:moonflower-glade', to: 'valley:moonflower-field', kind: 'physical' },
   { from: 'valley:rainbow-meadow', to: 'valley:rainbow-run', kind: 'physical' },
   { from: 'valley:crystal-brook', to: 'valley:prism-grotto', kind: 'physical' },

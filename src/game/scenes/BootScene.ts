@@ -16,9 +16,11 @@ import { getPipEggWorldManager } from '../story/PipEggWorldManager';
 import { getEnvironmentProductionPresentationManager } from '../visual/EnvironmentProductionPresentationManager';
 import { getVisualTighteningManager } from '../visual/VisualTighteningManager';
 import { getR5RegionGatewayManager } from '../world/R5RegionGatewayManager';
+import { getR65StarlightBeachGatewayManager } from '../world/R65StarlightBeachGatewayManager';
 import { getWorldCharacterPresentationManager } from '../world/WorldCharacterPresentationManager';
 import { getWorldOcclusionManager } from '../world/WorldOcclusionManager';
 import { getWorldTraversalPolishManager } from '../world/WorldTraversalPolishManager';
+import { ensureStarlightBeachScene } from './StarlightBeachSceneRegistration';
 
 const DIAGNOSTIC_SCENES: Record<string, string> = {
   'resize-test': 'ResizeTestScene',
@@ -31,6 +33,7 @@ const DIAGNOSTIC_SCENES: Record<string, string> = {
   meadow: 'RainbowMeadowScene',
   brook: 'CrystalBrookScene',
   woods: 'WhisperingWoodsScene',
+  beach: 'StarlightBeachScene',
   inventory: 'InventoryScene',
   shop: 'ShopScene',
   wonderbook: 'WonderbookScene',
@@ -69,6 +72,7 @@ export class BootScene extends Phaser.Scene {
     getWorldTraversalPolishManager(this.sys.game);
     getEnvironmentProductionPresentationManager(this.sys.game);
     getR5RegionGatewayManager(this.sys.game);
+    getR65StarlightBeachGatewayManager(this.sys.game);
     getRacePlayerControlManager(this.sys.game);
     getRacePlaytestRecoveryManager(this.sys.game);
 
@@ -99,10 +103,25 @@ export class BootScene extends Phaser.Scene {
     );
 
     const requestedScene = new URLSearchParams(globalThis.location.search).get('scene');
-    this.registry.set(
-      'postPreloadScene',
-      (requestedScene && DIAGNOSTIC_SCENES[requestedScene]) || 'TitleScene',
-    );
+    const targetScene = (requestedScene && DIAGNOSTIC_SCENES[requestedScene]) || 'TitleScene';
+    if (targetScene === 'StarlightBeachScene') {
+      void this.startBeachAfterRegistration();
+      return;
+    }
+
+    this.startTargetScene(targetScene);
+  }
+
+  private async startBeachAfterRegistration(): Promise<void> {
+    await ensureStarlightBeachScene(this.sys.game);
+    if (!this.scene.isActive()) {
+      return;
+    }
+    this.startTargetScene('StarlightBeachScene');
+  }
+
+  private startTargetScene(targetScene: string): void {
+    this.registry.set('postPreloadScene', targetScene);
     this.scene.start('PreloadScene');
   }
 }

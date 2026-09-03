@@ -6,6 +6,9 @@ describe('explorationSpeedMultiplier', () => {
     expect(explorationSpeedMultiplier('RainbowMeadowScene', true)).toBe(
       EXPLORATION_GALLOP_MULTIPLIER,
     );
+    expect(explorationSpeedMultiplier('StarlightBeachScene', true)).toBe(
+      EXPLORATION_GALLOP_MULTIPLIER,
+    );
     expect(EXPLORATION_GALLOP_MULTIPLIER).toBe(1.6);
   });
 

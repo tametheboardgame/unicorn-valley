@@ -8,9 +8,14 @@ export const EXPLORATION_SHELL_SCENES = new Set([
   'WindmillLookoutScene',
   'CrystalBrookScene',
   'WhisperingWoodsScene',
+  'StarlightBeachScene',
 ]);
 
-const DEDICATED_AUDIO_SCENES = new Set(['CrystalBrookScene', 'WhisperingWoodsScene']);
+const DEDICATED_AUDIO_SCENES = new Set([
+  'CrystalBrookScene',
+  'WhisperingWoodsScene',
+  'StarlightBeachScene',
+]);
 
 export function supportsExplorationShell(sceneKey: string): boolean {
   return EXPLORATION_SHELL_SCENES.has(sceneKey);
