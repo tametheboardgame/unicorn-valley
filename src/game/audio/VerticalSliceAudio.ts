@@ -166,6 +166,7 @@ const SCENE_PROFILE_BY_KEY: Readonly<Record<string, AudioSceneProfile>> = {
   TitleScene: 'menu',
   MoonflowerGladeScene: 'glade',
   MoonflowerPatchScene: 'glade',
+  HollowTreeNookScene: 'glade',
   SunbeamVillageScene: 'village',
   RainbowMeadowScene: 'meadow',
   CrystalBrookScene: 'brook',
@@ -217,7 +218,6 @@ export class VerticalSliceAudio {
   public getSettings(): AudioSettings {
     return { ...this.settings };
   }
-
   public setSettings(settings: AudioSettings): AudioSettings {
     this.settings = this.settingsStore.save(settings);
     this.applyGainSettings();
