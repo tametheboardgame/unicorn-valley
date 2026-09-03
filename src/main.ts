@@ -77,6 +77,12 @@ void import('./game/world/CrystalBrookDepthWorldManager').then(
   },
 );
 
+void import('./game/population/CrystalBrookEchoBridgeManager').then(
+  ({ getCrystalBrookEchoBridgeManager }) => {
+    getCrystalBrookEchoBridgeManager(game);
+  },
+);
+
 void import('./game/story/StarlightBeachContentWorldManager').then(
   ({ getStarlightBeachContentWorldManager }) => {
     getStarlightBeachContentWorldManager(game);
