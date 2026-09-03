@@ -11,6 +11,7 @@ interface MutableTitleScene extends Phaser.Scene {
   starting: boolean;
   resetArmed: boolean;
   statusText: Phaser.GameObjects.Text | null;
+  unsupportedSaveVersion: boolean;
 }
 
 const TITLE_SCENE_KEY = 'TitleScene';
@@ -52,6 +53,11 @@ export class ContinueRestoreManager {
     }
 
     const title = asMutableTitleScene(scene);
+    if (title.unsupportedSaveVersion) {
+      this.lastTitleScene = scene;
+      return;
+    }
+
     const locationId = getBrowserSaveService().load()?.profile.currentLocationId;
     const destination = resolveContinueDestination(locationId);
 
