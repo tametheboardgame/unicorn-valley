@@ -34,6 +34,7 @@ const SUPPORTED_SCENES = new Set([
   'WhisperingWoodsScene',
   'CottageInteriorScene',
   'MoonflowerPatchScene',
+  'HollowTreeNookScene',
 ]);
 
 const PATCH_NAVIGATION_MAP: TraversalMapDefinition = {
@@ -44,6 +45,22 @@ const PATCH_NAVIGATION_MAP: TraversalMapDefinition = {
   colliders: [],
 };
 
+const HOLLOW_TREE_NOOK_NAVIGATION_MAP: TraversalMapDefinition = {
+  width: GAME_WIDTH,
+  height: GAME_HEIGHT,
+  margin: 65,
+  playerSpawn: { x: GAME_WIDTH / 2, y: GAME_HEIGHT - 150 },
+  colliders: [
+    {
+      id: 'collision:hollow-tree-nook-upper-bound',
+      x: GAME_WIDTH / 2,
+      y: 90,
+      width: GAME_WIDTH,
+      height: 50,
+    },
+  ],
+};
+
 const NAVIGATION_MAPS: Readonly<Record<string, TraversalMapDefinition>> = {
   MoonflowerGladeScene: MOONFLOWER_GLADE_MAP,
   SunbeamVillageScene: SUNBEAM_VILLAGE_MAP,
@@ -52,6 +69,7 @@ const NAVIGATION_MAPS: Readonly<Record<string, TraversalMapDefinition>> = {
   WhisperingWoodsScene: WHISPERING_WOODS_MAP,
   CottageInteriorScene: COTTAGE_INTERIOR_MAP,
   MoonflowerPatchScene: PATCH_NAVIGATION_MAP,
+  HollowTreeNookScene: HOLLOW_TREE_NOOK_NAVIGATION_MAP,
 };
 
 const WAYPOINT_REACHED_DISTANCE = 22;
