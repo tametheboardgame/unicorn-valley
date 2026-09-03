@@ -74,12 +74,26 @@ export const WHISPERING_WOODS_MAP = {
     },
   ] satisfies readonly WoodsDiscoverySpot[],
   colliders: [
-    { id: 'collision:north-root-cluster', x: 690, y: 420, width: 420, height: 250 },
-    { id: 'collision:mooncap-tree', x: 1370, y: 430, width: 260, height: 260 },
-    { id: 'collision:middle-root-cluster', x: 1660, y: 1430, width: 420, height: 260 },
-    { id: 'collision:lantern-oak', x: 2690, y: 520, width: 330, height: 280 },
-    { id: 'collision:south-grove', x: 2250, y: 1840, width: 520, height: 250 },
-    { id: 'collision:east-root-wall', x: 3060, y: 1160, width: 230, height: 520 },
+    // Tree collision follows the trunk/root footprint rather than the full canopy. This lets
+    // the unicorn walk behind foliage while still preventing movement through visible trunks.
+    { id: 'collision:tree-520-510', x: 520, y: 465, width: 96, height: 90 },
+    { id: 'collision:tree-820-420', x: 820, y: 382, width: 88, height: 82 },
+    { id: 'collision:tree-1390-430', x: 1390, y: 386, width: 100, height: 90 },
+    { id: 'collision:tree-1660-1490', x: 1660, y: 1447, width: 96, height: 88 },
+    { id: 'collision:tree-2140-1810', x: 2140, y: 1770, width: 92, height: 84 },
+    { id: 'collision:tree-2690-540', x: 2690, y: 495, width: 102, height: 92 },
+    { id: 'collision:tree-3070-1190', x: 3070, y: 1149, width: 92, height: 84 },
+    { id: 'collision:tree-720-1760', x: 720, y: 1718, width: 94, height: 86 },
+    // R6 production-pass boundary trees are visible physical objects too, so their trunk
+    // footprints now participate in collision instead of acting as walk-through scenery.
+    { id: 'collision:production-tree-390-430', x: 390, y: 386, width: 96, height: 90 },
+    { id: 'collision:production-tree-930-350', x: 930, y: 311, width: 88, height: 82 },
+    { id: 'collision:production-tree-1770-380', x: 1770, y: 333, width: 104, height: 94 },
+    { id: 'collision:production-tree-2300-390', x: 2300, y: 350, width: 92, height: 84 },
+    { id: 'collision:production-tree-3020-420', x: 3020, y: 374, width: 102, height: 92 },
+    { id: 'collision:production-tree-520-1830', x: 520, y: 1786, width: 96, height: 90 },
+    { id: 'collision:production-tree-1290-1810', x: 1290, y: 1771, width: 88, height: 82 },
+    { id: 'collision:production-tree-2780-1830', x: 2780, y: 1787, width: 96, height: 88 },
   ] satisfies readonly CollisionRectangle[],
 } as const;
 
