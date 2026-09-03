@@ -23,6 +23,7 @@ interface GladeState {
 }
 
 const SECRET_MARKER_PREFIX = 'secret-discovery-marker:';
+const HOLLOW_TREE_STAR_SECRET_ID = 'secret:hollow-tree-star';
 export const SECRET_REVEALED_PATH_NAME = 'secret-revealed-moonlit-trail';
 export const SECRET_FEEDBACK_NAME = 'secret-discovery-feedback';
 
@@ -68,7 +69,9 @@ export class SecretDiscoveryWorldManager {
 
     this.refreshPath(state);
 
-    const available = this.service.listAvailable(R4_SECRET_DEFINITIONS, scene.scene.key);
+    const available = this.service
+      .listAvailable(R4_SECRET_DEFINITIONS, scene.scene.key)
+      .filter(({ id }) => id !== HOLLOW_TREE_STAR_SECRET_ID);
     const availableIds = new Set<string>(available.map(({ id }) => id));
 
     for (const [id, marker] of state.markers) {
