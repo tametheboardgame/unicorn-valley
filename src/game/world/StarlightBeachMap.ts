@@ -150,13 +150,19 @@ export const STARLIGHT_BEACH_MAP = {
     },
   ] satisfies readonly BeachDiscoverySpot[],
   colliders: [
-    { id: 'collision:shell-cove-rocks', x: 620, y: 460, width: 300, height: 210 },
-    { id: 'collision:north-dune-bank', x: 1380, y: 300, width: 620, height: 250 },
-    { id: 'collision:star-dune-bank', x: 2570, y: 360, width: 620, height: 260 },
-    { id: 'collision:tide-pool-rock', x: 1700, y: 1800, width: 260, height: 170 },
-    { id: 'collision:moonlit-rocks', x: 3290, y: 1750, width: 360, height: 220 },
-    { id: 'collision:east-headland', x: 3490, y: 1120, width: 150, height: 600 },
-    { id: 'collision:deep-water', x: 1800, y: 2180, width: 3420, height: 260 },
+    // Shell Cove rocks: collide with the visible rock feet, not empty sand above them.
+    { id: 'collision:shell-cove-rock-west', x: 520, y: 610, width: 120, height: 70 },
+    { id: 'collision:shell-cove-rock-middle', x: 650, y: 560, width: 120, height: 70 },
+    { id: 'collision:shell-cove-rock-east', x: 1080, y: 590, width: 120, height: 70 },
+    // The dunes are walkable sand. Only the visible tide pools and rocks block movement.
+    { id: 'collision:tide-pool-west', x: 1740, y: 1580, width: 220, height: 92 },
+    { id: 'collision:tide-pool-middle', x: 2000, y: 1650, width: 260, height: 105 },
+    { id: 'collision:tide-pool-east', x: 2210, y: 1510, width: 175, height: 76 },
+    { id: 'collision:moonlit-rock-west', x: 3010, y: 1390, width: 120, height: 70 },
+    { id: 'collision:moonlit-rock-middle', x: 3260, y: 1450, width: 140, height: 80 },
+    { id: 'collision:moonlit-rock-east', x: 3360, y: 1600, width: 105, height: 65 },
+    // Keep deep water impassable while leaving the pale shoreline shallows readable and usable.
+    { id: 'collision:deep-water', x: 1800, y: 2160, width: 3420, height: 280 },
   ] satisfies readonly CollisionRectangle[],
 } as const;
 
