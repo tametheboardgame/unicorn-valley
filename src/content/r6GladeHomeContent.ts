@@ -159,7 +159,7 @@ export const R6_GLADE_HOME_SECRET_DEFINITIONS = [
     feedbackTier: 'grand',
     label: 'A final flutter in the flowers',
     actionLabel: 'Look closely',
-    position: { x: 1400, y: 1600 },
+    position: { x: 1200, y: 1650 },
     interactionRadius: 165,
     feedback:
       'Butterfly secret found!\nA hidden moonpetal opens where the butterfly lands, leaving a tiny ribbon charm behind. 🌸🦋',
