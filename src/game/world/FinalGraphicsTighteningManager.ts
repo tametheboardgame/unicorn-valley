@@ -12,6 +12,10 @@ interface BackdropCircleDefinition {
   alpha: number;
 }
 
+interface VisibilityObject {
+  setVisible(visible: boolean): unknown;
+}
+
 const CRYSTAL_BROOK_BACKDROPS: readonly BackdropCircleDefinition[] = [
   { x: 760, y: 510, diameter: 1220, alpha: 0.16 },
   { x: 1950, y: 1560, diameter: 1460, alpha: 0.13 },
@@ -26,6 +30,14 @@ const WHISPERING_WOODS_BACKDROPS: readonly BackdropCircleDefinition[] = [
 
 function approximately(value: number, expected: number, tolerance = 2): boolean {
   return Math.abs(value - expected) <= tolerance;
+}
+
+function setNamedObjectVisible(scene: Phaser.Scene, objectName: string, visible: boolean): void {
+  const object = scene.children.getByName(objectName);
+  if (!object || !('setVisible' in object)) {
+    return;
+  }
+  (object as Phaser.GameObjects.GameObject & VisibilityObject).setVisible(visible);
 }
 
 function softenBackdropCircles(
@@ -99,13 +111,11 @@ function tightenWhisperingWoods(scene: Phaser.Scene): void {
 
   // R6 added a second short entry path even though the canonical Woods route already reaches
   // the Brook threshold. Its endpoint sits above the real route, producing an orphaned path nub.
-  scene.children.getByName('r6-region-gateway-art:woods-entry-trail:path')?.setVisible(false);
+  setNamedObjectVisible(scene, 'r6-region-gateway-art:woods-entry-trail:path', false);
 
   // The environment-production pass already owns the soft woodland light shafts. Keeping the
   // second R6 set makes large translucent triangles stack over one another, especially at night.
-  scene.children
-    .getByName('r6-region-gateway-art:whispering-woods:light-shafts')
-    ?.setVisible(false);
+  setNamedObjectVisible(scene, 'r6-region-gateway-art:whispering-woods:light-shafts', false);
 
   if (
     scene.children.getByName(R6_GATEWAY_ANCHOR) &&
