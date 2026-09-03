@@ -1,8 +1,10 @@
 import Phaser from 'phaser';
 import { ensureStarlightBeachScene } from '../scenes/StarlightBeachSceneRegistration';
-import { STARLIGHT_BEACH_LOCATION_ID } from '../world/StarlightBeachMap';
 import { getBrowserSaveService } from './browserSaveService';
-import { resolveContinueDestination } from './ContinueLocation';
+import {
+  resolveContinueDestination,
+  STARLIGHT_BEACH_CONTINUE_LOCATION_ID,
+} from './ContinueLocation';
 
 interface MutableTitleScene extends Phaser.Scene {
   continueScene: string;
@@ -31,7 +33,7 @@ export class ContinueRestoreManager {
 
   private prepareLazyDestination(): void {
     const locationId = getBrowserSaveService().load()?.profile.currentLocationId;
-    if (locationId !== STARLIGHT_BEACH_LOCATION_ID) {
+    if (locationId !== STARLIGHT_BEACH_CONTINUE_LOCATION_ID) {
       return;
     }
     this.ensureBeachRegistered();
