@@ -9,6 +9,7 @@ export const EXPLORATION_SHELL_SCENES = new Set([
   'CrystalBrookScene',
   'CrystalGrottoScene',
   'WhisperingWoodsScene',
+  'FireflyGroveScene',
 ]);
 
 const DEDICATED_AUDIO_SCENES = new Set(['CrystalBrookScene', 'WhisperingWoodsScene']);
