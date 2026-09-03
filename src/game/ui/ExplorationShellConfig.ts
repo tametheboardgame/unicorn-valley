@@ -7,6 +7,7 @@ export const EXPLORATION_SHELL_SCENES = new Set([
   'RainbowMeadowScene',
   'WindmillLookoutScene',
   'CrystalBrookScene',
+  'CrystalGrottoScene',
   'WhisperingWoodsScene',
   'StarlightBeachScene',
 ]);
