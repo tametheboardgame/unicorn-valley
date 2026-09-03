@@ -27,8 +27,7 @@ export const R6_WHISPERING_WOODS_DEPTH_ITEMS = [
   {
     id: FERN_FIREFLY_LANTERN_ITEM_ID,
     name: 'Fern’s Firefly Lantern',
-    description:
-      'A tiny leaf-framed lantern whose warm dots of light remember the path into Firefly Grove.',
+    description: 'A leaf-framed lantern whose warm lights remember the path into Firefly Grove.',
     category: 'decoration',
     icon: '🏮',
   },
@@ -38,84 +37,73 @@ export const R6_WHISPERING_WOODS_DEPTH_DISCOVERIES = [
   {
     id: FIREFLY_GROVE_DISCOVERY_ID,
     name: 'Firefly Grove',
-    description:
-      'A sheltered grove beyond Lantern Clearing where the fireflies gather in slow, friendly swirls.',
+    description: 'A sheltered grove beyond Lantern Clearing where fireflies gather in friendly swirls.',
     icon: '✨',
-    undiscoveredHint: 'Fern keeps watching a cluster of lights beyond Lantern Clearing.',
+    undiscoveredHint: 'Fern keeps watching lights beyond Lantern Clearing.',
   },
   {
     id: FERN_LIGHT_TRAIL_DISCOVERY_ID,
     name: 'Fern’s Light Trail',
-    description:
-      'A short chain of patient fireflies waits between the main path and the hidden grove instead of drifting away.',
+    description: 'Patient fireflies line the path to the hidden grove instead of drifting away.',
     kind: 'secret',
     icon: '🌟',
-    undiscoveredHint: 'Some of the Lantern Clearing lights seem to be lining up deliberately.',
+    undiscoveredHint: 'Lantern Clearing lights seem to line up on purpose.',
   },
   {
     id: ANCIENT_FRIENDLY_TREE_DISCOVERY_ID,
     name: 'Ancient Friendly Tree',
-    description:
-      'An enormous old tree answers a gentle touch with one warm wooden hum and a shower of harmless leaves.',
+    description: 'An enormous old tree answers a gentle touch with a warm hum and harmless leaves.',
     kind: 'secret',
     icon: '🌳',
-    undiscoveredHint: 'One very old trunk looks more welcoming than mysterious.',
+    undiscoveredHint: 'One old trunk looks more welcoming than mysterious.',
   },
   {
     id: FIREFLY_GROVE_HEART_DISCOVERY_ID,
     name: 'Heart of Firefly Grove',
-    description:
-      'The grove lights gather around one little lantern plant and make the whole clearing glow together.',
+    description: 'Grove lights gather around one lantern plant until the whole clearing glows.',
     kind: 'secret',
     icon: '🏮',
-    undiscoveredHint:
-      'The deepest part of Firefly Grove has one lantern plant that never quite closes.',
+    undiscoveredHint: 'One deep-grove lantern plant never quite closes.',
   },
   {
     id: MUSHROOM_RING_DISCOVERY_ID,
     name: 'Mooncap Ring',
-    description:
-      'A neat ring of mooncaps wakes after dark or during magical weather and lights itself one mushroom at a time.',
+    description: 'A mooncap ring wakes after dark or in magical weather, lighting one mushroom at a time.',
     kind: 'secret',
     icon: '🍄',
-    undiscoveredHint:
-      'A circle of mooncaps near the lower path looks ordinary in bright clear weather.',
+    undiscoveredHint: 'The lower-path mooncap circle looks ordinary in bright weather.',
   },
   {
     id: HIDDEN_LEAF_PATH_DISCOVERY_ID,
     name: 'Hidden Leaf Path',
-    description:
-      'A soft trail under fallen leaves links the south grove back towards the friendly old tree.',
+    description: 'A soft path under fallen leaves links the south grove to the friendly old tree.',
     kind: 'secret',
     icon: '🍂',
-    undiscoveredHint: 'One patch of leaves keeps settling into a suspiciously tidy line.',
+    undiscoveredHint: 'One patch of leaves keeps settling into a tidy line.',
   },
   {
     id: TINY_TRACKS_DISCOVERY_ID,
     name: 'Tiny Mossy Tracks',
-    description: 'Three-toed little marks cross the path and disappear underneath a hollow log.',
+    description: 'Three-toed little marks cross the path and vanish under a hollow log.',
     kind: 'secret',
     icon: '🐾',
-    undiscoveredHint: 'Something very small has crossed the path near Mooncap Grove.',
+    undiscoveredHint: 'Something small crossed the path near Mooncap Grove.',
   },
   {
     id: HOLLOW_LOG_PEEK_DISCOVERY_ID,
     name: 'Hollow Log Rustle',
-    description:
-      'The tiny tracks reach a hollow log where a pair of bright eyes blink once from behind the moss.',
+    description: 'The tracks reach a hollow log where bright eyes blink once behind the moss.',
     kind: 'secret',
     icon: '🪵',
-    undiscoveredHint: 'The tracks seem to point towards an old mossy log.',
+    undiscoveredHint: 'The tracks point towards an old mossy log.',
   },
   {
     id: LITTLE_MOSS_TAIL_DISCOVERY_ID,
     name: 'Little Moss-tail',
-    description:
-      'A tiny leafy tail flicks out of sight. Whatever made the tracks is shy, harmless and definitely real.',
+    description: 'A leafy tail flicks away. Whatever made the tracks is shy, harmless and real.',
     kind: 'secret',
     icon: '🌿',
-    undiscoveredHint:
-      'Stay curious after the hollow-log rustle; the little visitor may peek out once more.',
+    undiscoveredHint: 'Stay curious after the hollow-log rustle; it may peek out again.',
   },
 ] as const satisfies readonly DiscoveryDefinition[];
 
