@@ -90,6 +90,11 @@ const COTTAGE_DECORATION_PROFILES: Partial<Record<ItemId, CottageDecorationProfi
     theme: 'rainbow',
     previewColour: 0x9edcf2,
   },
+  'item:echo-crystal-chime': {
+    categories: ['wall', 'shelf', 'display'],
+    theme: 'adventure',
+    previewColour: 0x91e3e5,
+  },
 };
 
 export function getCottageDecorationProfile(itemId: ItemId): CottageDecorationProfile | null {
