@@ -6,16 +6,20 @@ import {
 } from './ExplorationShellConfig';
 
 describe('exploration shell coverage', () => {
-  it('covers every current free-roaming exploration scene', () => {
+  it('covers every current free-roaming exploration scene and micro-location', () => {
     expect([...EXPLORATION_SHELL_SCENES]).toEqual(
       expect.arrayContaining([
         'MoonflowerGladeScene',
         'CottageInteriorScene',
         'MoonflowerPatchScene',
+        'HollowTreeNookScene',
         'SunbeamVillageScene',
         'RainbowMeadowScene',
+        'WindmillLookoutScene',
         'CrystalBrookScene',
+        'CrystalGrottoScene',
         'WhisperingWoodsScene',
+        'FireflyGroveScene',
       ]),
     );
   });
