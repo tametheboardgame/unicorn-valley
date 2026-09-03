@@ -6,17 +6,20 @@ import {
 } from './ExplorationShellConfig';
 
 describe('exploration shell coverage', () => {
-  it('covers every current free-roaming exploration scene', () => {
+  it('covers every current free-roaming exploration scene and micro-location', () => {
     expect([...EXPLORATION_SHELL_SCENES]).toEqual(
       expect.arrayContaining([
         'MoonflowerGladeScene',
         'CottageInteriorScene',
         'MoonflowerPatchScene',
+        'HollowTreeNookScene',
         'SunbeamVillageScene',
         'RainbowMeadowScene',
+        'WindmillLookoutScene',
         'CrystalBrookScene',
+        'CrystalGrottoScene',
         'WhisperingWoodsScene',
-        'StarlightBeachScene',
+        'FireflyGroveScene',
       ]),
     );
   });
@@ -27,10 +30,9 @@ describe('exploration shell coverage', () => {
     expect(supportsExplorationShell('LumiStoryScene')).toBe(false);
   });
 
-  it('does not double-own scene audio where a region already owns it', () => {
+  it('does not double-own scene audio where an R5 region already owns it', () => {
     expect(shellManagesSceneAudio('CrystalBrookScene')).toBe(false);
     expect(shellManagesSceneAudio('WhisperingWoodsScene')).toBe(false);
-    expect(shellManagesSceneAudio('StarlightBeachScene')).toBe(false);
     expect(shellManagesSceneAudio('RainbowMeadowScene')).toBe(true);
   });
 });

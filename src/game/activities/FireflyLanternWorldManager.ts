@@ -1,8 +1,10 @@
 import Phaser from 'phaser';
+import { getFireflyLanternProgress } from './FireflyLanternActivity';
 import {
   WORLD_INTERACTION_PROMPT,
   WorldInteractionInput,
 } from '../interaction/WorldInteractionInput';
+import { getBrowserSaveService } from '../save/browserSaveService';
 import { rememberWorldReturnState } from '../world/WorldArrivalState';
 import { setWhisperingWoodsPlayerSpawn } from '../world/WhisperingWoodsMap';
 import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
@@ -14,7 +16,11 @@ interface LanternState {
   scene: Phaser.Scene;
   container: Phaser.GameObjects.Container;
   prompt: Phaser.GameObjects.Text;
+  status: Phaser.GameObjects.Text;
+  light: Phaser.GameObjects.Rectangle;
+  glow: Phaser.GameObjects.Arc;
   interaction: WorldInteractionInput;
+  completionSignature: string;
 }
 
 function findPlayer(scene: Phaser.Scene): Phaser.Physics.Arcade.Sprite | null {
@@ -23,6 +29,7 @@ function findPlayer(scene: Phaser.Scene): Phaser.Physics.Arcade.Sprite | null {
 }
 
 export class FireflyLanternWorldManager {
+  private readonly saveService = getBrowserSaveService();
   private state: LanternState | null = null;
 
   public constructor(private readonly game: Phaser.Game) {
@@ -37,6 +44,7 @@ export class FireflyLanternWorldManager {
     }
 
     const state = this.ensureState(scene);
+    this.syncCompletionState(state);
     const player = findPlayer(scene);
     if (!player) {
       return;
@@ -77,8 +85,17 @@ export class FireflyLanternWorldManager {
         padding: { x: 9, y: 5 },
       })
       .setOrigin(0.5);
+    const status = scene.add
+      .text(0, 160, '', {
+        color: '#eff7aa',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '13px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5)
+      .setName('firefly-lantern-world-status');
     const prompt = scene.add
-      .text(0, 174, `${WORLD_INTERACTION_PROMPT}: Play`, {
+      .text(0, 194, `${WORLD_INTERACTION_PROMPT}: Play`, {
         color: '#38594e',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '16px',
@@ -88,7 +105,7 @@ export class FireflyLanternWorldManager {
       })
       .setOrigin(0.5)
       .setVisible(false);
-    const zone = scene.add.zone(25, 45, 190, 230);
+    const zone = scene.add.zone(25, 55, 190, 250);
     const container = scene.add
       .container(LANTERN_POSITION.x, LANTERN_POSITION.y, [
         post,
@@ -97,6 +114,7 @@ export class FireflyLanternWorldManager {
         lantern,
         light,
         label,
+        status,
         prompt,
         zone,
       ])
@@ -152,9 +170,36 @@ export class FireflyLanternWorldManager {
       scene,
       container,
       prompt,
+      status,
+      light,
+      glow: lanternGlow,
       interaction,
+      completionSignature: '',
     };
+    this.syncCompletionState(this.state, true);
     return this.state;
+  }
+
+  private syncCompletionState(state: LanternState, force = false): void {
+    const progress = getFireflyLanternProgress(this.saveService);
+    const signature = `${progress.modesUnlocked}|${progress.endlessBest}`;
+    if (!force && signature === state.completionSignature) {
+      return;
+    }
+    state.completionSignature = signature;
+    if (progress.modesUnlocked) {
+      state.status.setText(
+        progress.endlessBest > 0
+          ? `Lantern Keeper glow • best endless ${progress.endlessBest}`
+          : 'Lantern Keeper glow • extra games unlocked',
+      );
+      state.light.setFillStyle(0xfff3a8, 1);
+      state.glow.setFillStyle(0xffef91, 0.24);
+    } else {
+      state.status.setText('Guide the golden lights home');
+      state.light.setFillStyle(0xffed91, 0.88);
+      state.glow.setFillStyle(0xf7efa3, 0.14);
+    }
   }
 
   private openActivity(scene: Phaser.Scene): void {
