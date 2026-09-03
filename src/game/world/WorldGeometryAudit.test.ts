@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { CRYSTAL_BROOK_MAP } from './CrystalBrookMap';
-import { EXPLORATION_MAIN_ROUTES, type ExplorationPathPoint } from './ExplorationPathPolishManager';
+import { EXPLORATION_MAIN_ROUTES, type ExplorationPathPoint } from './ExplorationPathRoutes';
 import { isPointBlocked, type CollisionRectangle } from './MapTraversal';
 import { MOONFLOWER_GLADE_MAP } from './MoonflowerGladeMap';
 import { RAINBOW_MEADOW_MAP } from './RainbowMeadowMap';
