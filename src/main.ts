@@ -11,6 +11,7 @@ import { getTitlePortraitControlsManager } from './game/ui/TitlePortraitControls
 import { getR5FinalTighteningManager } from './game/visual/R5FinalTighteningManager';
 import { getExplorationGeometryPresentationManager } from './game/world/ExplorationGeometryPresentationManager';
 import { getExplorationPathPolishManager } from './game/world/ExplorationPathPolishManager';
+import { getWorldLayerAlignmentManager } from './game/world/WorldLayerAlignmentManager';
 
 const game = new Phaser.Game(gameConfig);
 getClickToMoveManager(game);
@@ -19,6 +20,7 @@ getExplorationShellWorldManager(game);
 getTitlePortraitControlsManager(game);
 getExplorationGeometryPresentationManager(game);
 getExplorationPathPolishManager(game);
+getWorldLayerAlignmentManager(game);
 getR5FinalTighteningManager(game);
 getVillageInteriorContractManager(game);
 
