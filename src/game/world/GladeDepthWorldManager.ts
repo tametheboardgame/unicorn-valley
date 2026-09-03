@@ -466,9 +466,9 @@ export class GladeDepthWorldManager {
     if (save.world.flags[JUNIPER_BUTTERFLY_TRAIL_FLAG] === true) {
       for (const [index, point] of [
         { x: 1540, y: 900 },
-        { x: 1640, y: 995 },
-        { x: 1760, y: 1120 },
-        { x: 1880, y: 1280 },
+        { x: 1600, y: 1040 },
+        { x: 1580, y: 1210 },
+        { x: 1540, y: 1420 },
       ].entries()) {
         const butterfly = state.scene.add
           .text(point.x, point.y, index % 2 === 0 ? '🦋' : '✦', {
@@ -495,7 +495,7 @@ export class GladeDepthWorldManager {
       );
     });
 
-    state.persistentVisuals = state.scene.add.container(0, 0, objects);
+    state.persistentVisuals = state.scene.add.container(0, 0, objects).setDepth(12);
   }
 
   private showFeedback(state: GladeDepthState, message: string): void {
