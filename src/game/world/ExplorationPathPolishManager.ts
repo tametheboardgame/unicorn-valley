@@ -17,9 +17,7 @@ interface Stroke {
   depth: number;
 }
 
-export const EXPLORATION_MAIN_ROUTES: Readonly<
-  Record<string, readonly ExplorationPathPoint[]>
-> = {
+export const EXPLORATION_MAIN_ROUTES: Readonly<Record<string, readonly ExplorationPathPoint[]>> = {
   MoonflowerGladeScene: [
     { x: 560, y: 720 },
     { x: 830, y: 820 },
