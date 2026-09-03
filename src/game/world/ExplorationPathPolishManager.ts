@@ -4,46 +4,91 @@ import { RefreshThrottle } from '../performance/RefreshThrottle';
 const PATH_POLISH_ANCHOR = 'exploration-path-polish-anchor';
 const PATH_POLISH_NAME = 'exploration-path-polish';
 
-interface Point {
+export interface ExplorationPathPoint {
   x: number;
   y: number;
 }
 
 interface Stroke {
-  points: readonly Point[];
+  points: readonly ExplorationPathPoint[];
   width: number;
   colour: number;
   alpha: number;
   depth: number;
 }
 
+export const EXPLORATION_MAIN_ROUTES: Readonly<
+  Record<string, readonly ExplorationPathPoint[]>
+> = {
+  MoonflowerGladeScene: [
+    { x: 560, y: 720 },
+    { x: 830, y: 820 },
+    { x: 1100, y: 870 },
+    { x: 1400, y: 900 },
+    { x: 1750, y: 900 },
+    { x: 2150, y: 900 },
+    { x: 2690, y: 900 },
+  ],
+  SunbeamVillageScene: [
+    { x: 120, y: 950 },
+    { x: 760, y: 950 },
+    { x: 1220, y: 950 },
+    { x: 1320, y: 850 },
+    { x: 1680, y: 850 },
+    { x: 1780, y: 950 },
+    { x: 2240, y: 950 },
+    { x: 2880, y: 950 },
+  ],
+  RainbowMeadowScene: [
+    { x: 100, y: 1050 },
+    { x: 760, y: 1050 },
+    { x: 1330, y: 1110 },
+    { x: 1900, y: 1040 },
+    { x: 2350, y: 1050 },
+    { x: 3190, y: 1040 },
+  ],
+  CrystalBrookScene: [
+    { x: 100, y: 1090 },
+    { x: 850, y: 1090 },
+    { x: 1510, y: 1260 },
+    { x: 2050, y: 1080 },
+    { x: 2600, y: 1190 },
+    { x: 3230, y: 990 },
+  ],
+  WhisperingWoodsScene: [
+    { x: 100, y: 1090 },
+    { x: 720, y: 1090 },
+    { x: 1230, y: 980 },
+    { x: 1680, y: 1110 },
+    { x: 2090, y: 1080 },
+    { x: 2530, y: 930 },
+    { x: 2940, y: 820 },
+  ],
+  StarlightBeachScene: [
+    { x: 100, y: 1140 },
+    { x: 650, y: 1120 },
+    { x: 1120, y: 1080 },
+    { x: 1510, y: 1190 },
+    { x: 1900, y: 1330 },
+    { x: 2370, y: 1180 },
+    { x: 2830, y: 1320 },
+    { x: 2870, y: 1470 },
+    { x: 2990, y: 1530 },
+    { x: 3130, y: 1540 },
+  ],
+};
+
 const PATHS: Readonly<Partial<Record<string, readonly Stroke[]>>> = {
   MoonflowerGladeScene: [
     {
-      points: [
-        { x: 560, y: 720 },
-        { x: 830, y: 820 },
-        { x: 1100, y: 870 },
-        { x: 1400, y: 900 },
-        { x: 1750, y: 900 },
-        { x: 2150, y: 900 },
-        { x: 2690, y: 900 },
-      ],
+      points: EXPLORATION_MAIN_ROUTES.MoonflowerGladeScene,
       width: 128,
       colour: 0xd7c18f,
       alpha: 1,
       depth: 2.42,
     },
     {
-      points: [
-        { x: 560, y: 720 },
-        { x: 830, y: 820 },
-        { x: 1100, y: 870 },
-        { x: 1400, y: 900 },
-        { x: 1750, y: 900 },
-        { x: 2150, y: 900 },
-        { x: 2690, y: 900 },
-      ],
+      points: EXPLORATION_MAIN_ROUTES.MoonflowerGladeScene,
       width: 108,
       colour: 0xf0dfb2,
       alpha: 1,
@@ -64,54 +109,56 @@ const PATHS: Readonly<Partial<Record<string, readonly Stroke[]>>> = {
   ],
   SunbeamVillageScene: [
     {
-      points: [
-        { x: 120, y: 950 },
-        { x: 760, y: 950 },
-        { x: 1500, y: 1050 },
-        { x: 2240, y: 950 },
-        { x: 2880, y: 950 },
-      ],
-      width: 140,
-      colour: 0xd7c18f,
-      alpha: 1,
-      depth: 2.42,
+      points: EXPLORATION_MAIN_ROUTES.SunbeamVillageScene,
+      width: 122,
+      colour: 0xe0bd82,
+      alpha: 0.95,
+      depth: 3.18,
+    },
+    {
+      points: EXPLORATION_MAIN_ROUTES.SunbeamVillageScene,
+      width: 94,
+      colour: 0xf7e9c5,
+      alpha: 0.98,
+      depth: 3.19,
     },
     {
       points: [
-        { x: 120, y: 950 },
-        { x: 760, y: 950 },
-        { x: 1500, y: 1050 },
-        { x: 2240, y: 950 },
-        { x: 2880, y: 950 },
+        { x: 900, y: 950 },
+        { x: 900, y: 710 },
+        { x: 900, y: 625 },
       ],
-      width: 116,
-      colour: 0xf0dfb2,
-      alpha: 1,
-      depth: 2.43,
+      width: 72,
+      colour: 0xf7e9c5,
+      alpha: 0.96,
+      depth: 3.19,
     },
-    ...[900, 1500, 2110].map(
-      (x): Stroke => ({
-        points: [
-          { x, y: x === 900 ? 710 : x === 1500 ? 690 : 720 },
-          { x, y: x === 900 ? 625 : x === 1500 ? 585 : 635 },
-        ],
-        width: 78,
-        colour: 0xf0dfb2,
-        alpha: 0.96,
-        depth: 2.43,
-      }),
-    ),
+    {
+      points: [
+        { x: 1500, y: 850 },
+        { x: 1500, y: 690 },
+        { x: 1500, y: 585 },
+      ],
+      width: 72,
+      colour: 0xf7e9c5,
+      alpha: 0.96,
+      depth: 3.19,
+    },
+    {
+      points: [
+        { x: 2110, y: 950 },
+        { x: 2110, y: 720 },
+        { x: 2110, y: 635 },
+      ],
+      width: 72,
+      colour: 0xf7e9c5,
+      alpha: 0.96,
+      depth: 3.19,
+    },
   ],
   RainbowMeadowScene: [
     {
-      points: [
-        { x: 100, y: 1050 },
-        { x: 760, y: 1050 },
-        { x: 1330, y: 1110 },
-        { x: 1900, y: 1040 },
-        { x: 2350, y: 1050 },
-        { x: 3190, y: 1040 },
-      ],
+      points: EXPLORATION_MAIN_ROUTES.RainbowMeadowScene,
       width: 108,
       colour: 0xf0dfb2,
       alpha: 0.98,
@@ -140,14 +187,7 @@ const PATHS: Readonly<Partial<Record<string, readonly Stroke[]>>> = {
   ],
   CrystalBrookScene: [
     {
-      points: [
-        { x: 100, y: 1090 },
-        { x: 850, y: 1090 },
-        { x: 1510, y: 1260 },
-        { x: 2050, y: 1080 },
-        { x: 2600, y: 1190 },
-        { x: 3230, y: 990 },
-      ],
+      points: EXPLORATION_MAIN_ROUTES.CrystalBrookScene,
       width: 72,
       colour: 0xf4e8c5,
       alpha: 0.94,
@@ -156,15 +196,7 @@ const PATHS: Readonly<Partial<Record<string, readonly Stroke[]>>> = {
   ],
   WhisperingWoodsScene: [
     {
-      points: [
-        { x: 100, y: 1090 },
-        { x: 720, y: 1090 },
-        { x: 1230, y: 980 },
-        { x: 1680, y: 1110 },
-        { x: 2090, y: 1080 },
-        { x: 2530, y: 930 },
-        { x: 2940, y: 820 },
-      ],
+      points: EXPLORATION_MAIN_ROUTES.WhisperingWoodsScene,
       width: 104,
       colour: 0x866f57,
       alpha: 0.86,
@@ -194,19 +226,10 @@ const PATHS: Readonly<Partial<Record<string, readonly Stroke[]>>> = {
   ],
   StarlightBeachScene: [
     {
-      points: [
-        { x: 100, y: 1140 },
-        { x: 650, y: 1120 },
-        { x: 1120, y: 1080 },
-        { x: 1510, y: 1190 },
-        { x: 1900, y: 1330 },
-        { x: 2370, y: 1180 },
-        { x: 2830, y: 1320 },
-        { x: 3220, y: 1500 },
-      ],
-      width: 94,
+      points: EXPLORATION_MAIN_ROUTES.StarlightBeachScene,
+      width: 104,
       colour: 0xe7c789,
-      alpha: 0.76,
+      alpha: 0.9,
       depth: 3.08,
     },
   ],
