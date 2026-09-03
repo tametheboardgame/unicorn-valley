@@ -84,8 +84,10 @@ function alignWoods(scene: Phaser.Scene): void {
     if (typeof positioned.x !== 'number' || typeof positioned.y !== 'number') {
       continue;
     }
+    const childX = positioned.x;
+    const childY = positioned.y;
     const belongsToSouthernTree = WOODS_BOTTOM_TREES.some(
-      (tree) => Math.abs(positioned.x - tree.x) <= 145 && positioned.y >= 1540,
+      (tree) => Math.abs(childX - tree.x) <= 145 && childY >= 1540,
     );
     if (belongsToSouthernTree && 'setVisible' in child) {
       (
