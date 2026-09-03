@@ -499,9 +499,10 @@ export class GladeDepthWorldManager {
   }
 
   private showFeedback(state: GladeDepthState, message: string): void {
-    state.feedback.setText(message).setVisible(true);
+    const serial = ((state.feedback.getData('feedback-serial') as number | undefined) ?? 0) + 1;
+    state.feedback.setData('feedback-serial', serial).setText(message).setVisible(true);
     state.scene.time.delayedCall(3900, () => {
-      if (state.feedback.active) {
+      if (state.feedback.active && state.feedback.getData('feedback-serial') === serial) {
         state.feedback.setVisible(false);
       }
     });
