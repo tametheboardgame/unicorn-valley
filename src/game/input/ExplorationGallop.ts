@@ -7,6 +7,7 @@ const OUTDOOR_EXPLORATION_SCENES = new Set([
   'RainbowMeadowScene',
   'CrystalBrookScene',
   'WhisperingWoodsScene',
+  'StarlightBeachScene',
 ]);
 
 let keyboardGallopHeld = false;

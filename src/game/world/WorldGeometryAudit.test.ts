@@ -3,6 +3,7 @@ import { CRYSTAL_BROOK_MAP } from './CrystalBrookMap';
 import { isPointBlocked } from './MapTraversal';
 import { MOONFLOWER_GLADE_MAP } from './MoonflowerGladeMap';
 import { RAINBOW_MEADOW_MAP } from './RainbowMeadowMap';
+import { STARLIGHT_BEACH_MAP } from './StarlightBeachMap';
 import { SUNBEAM_VILLAGE_MAP } from './SunbeamVillageMap';
 import { WHISPERING_WOODS_MAP } from './WhisperingWoodsMap';
 
@@ -12,6 +13,7 @@ const maps = [
   ['Rainbow Meadow', RAINBOW_MEADOW_MAP],
   ['Crystal Brook', CRYSTAL_BROOK_MAP],
   ['Whispering Woods', WHISPERING_WOODS_MAP],
+  ['Starlight Beach', STARLIGHT_BEACH_MAP],
 ] as const;
 
 describe('exploration geometry audit', () => {
@@ -59,6 +61,22 @@ describe('exploration geometry audit', () => {
     ];
     for (const point of mainRoute) {
       expect(isPointBlocked(point, WHISPERING_WOODS_MAP.colliders, 34)).toBe(false);
+    }
+  });
+
+  it('keeps the Starlight Beach warm-sand route free of invisible walls', () => {
+    const mainRoute = [
+      { x: 350, y: 1140 },
+      { x: 650, y: 1120 },
+      { x: 1120, y: 1080 },
+      { x: 1510, y: 1190 },
+      { x: 1900, y: 1330 },
+      { x: 2370, y: 1180 },
+      { x: 2830, y: 1320 },
+      { x: 3220, y: 1500 },
+    ];
+    for (const point of mainRoute) {
+      expect(isPointBlocked(point, STARLIGHT_BEACH_MAP.colliders, 34)).toBe(false);
     }
   });
 });

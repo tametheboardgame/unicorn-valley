@@ -10,6 +10,7 @@ describe('outdoor atmosphere coverage', () => {
       'RainbowMeadowScene',
       'CrystalBrookScene',
       'WhisperingWoodsScene',
+      'StarlightBeachScene',
     ]);
   });
 

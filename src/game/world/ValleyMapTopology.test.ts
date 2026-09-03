@@ -3,6 +3,7 @@ import { COTTAGE_INTERIOR_LOCATION_ID } from './CottageInteriorMap';
 import { CRYSTAL_BROOK_LOCATION_ID, CRYSTAL_BROOK_MAP } from './CrystalBrookMap';
 import { MOONFLOWER_GLADE_MAP } from './MoonflowerGladeMap';
 import { RAINBOW_MEADOW_LOCATION_ID, RAINBOW_MEADOW_MAP } from './RainbowMeadowMap';
+import { STARLIGHT_BEACH_LOCATION_ID } from './StarlightBeachMap';
 import {
   VALLEY_HOME_NODE_ID,
   VALLEY_MAP_CONNECTIONS,
@@ -14,8 +15,8 @@ import {
 } from './ValleyMapTopology';
 import { WHISPERING_WOODS_LOCATION_ID, WHISPERING_WOODS_MAP } from './WhisperingWoodsMap';
 
-describe('R5-WP5.9E/G Valley map topology', () => {
-  it('resolves home and every current R5 exploration region from save location IDs', () => {
+describe('Valley map topology', () => {
+  it('resolves home and every implemented exploration region from save location IDs', () => {
     expect(getValleyMapNodeForLocation('moonflower-cottage')?.kind).toBe('home');
     expect(getValleyMapNodeForLocation(COTTAGE_INTERIOR_LOCATION_ID)?.id).toBe(VALLEY_HOME_NODE_ID);
     expect(getValleyMapNodeForLocation(RAINBOW_MEADOW_LOCATION_ID)?.label).toBe('Rainbow Meadow');
@@ -23,13 +24,14 @@ describe('R5-WP5.9E/G Valley map topology', () => {
     expect(getValleyMapNodeForLocation(WHISPERING_WOODS_LOCATION_ID)?.label).toBe(
       'Whispering Woods',
     );
+    expect(getValleyMapNodeForLocation(STARLIGHT_BEACH_LOCATION_ID)?.label).toBe('Starlight Beach');
   });
 
   it('keeps implemented region travel physical while exposing real side branches', () => {
     const physical = VALLEY_MAP_CONNECTIONS.filter(({ kind }) => kind === 'physical');
     const sideNodes = VALLEY_MAP_NODES.filter(({ kind }) => kind === 'side');
 
-    expect(physical).toHaveLength(9);
+    expect(physical).toHaveLength(10);
     expect(sideNodes.map(({ id }) => id)).toEqual(
       expect.arrayContaining([
         'valley:moonflower-field',
@@ -49,6 +51,7 @@ describe('R5-WP5.9E/G Valley map topology', () => {
     expect(getPhysicalValleyConnections('valley:moonflower-glade')).toHaveLength(3);
     expect(getPhysicalValleyConnections('valley:rainbow-meadow')).toHaveLength(3);
     expect(getPhysicalValleyConnections('valley:crystal-brook')).toHaveLength(3);
+    expect(getPhysicalValleyConnections('valley:whispering-woods')).toHaveLength(3);
   });
 
   it('maps side destinations to places that already exist in the playable world', () => {
@@ -60,7 +63,8 @@ describe('R5-WP5.9E/G Valley map topology', () => {
     expect(WHISPERING_WOODS_MAP.landmarks.some(({ id }) => id === 'lantern-clearing')).toBe(true);
   });
 
-  it('provides a stable physical route home from regions and side destinations', () => {
+  it('provides a stable physical route home from Starlight Beach and existing destinations', () => {
+    expect(getHomewardNextNode('valley:starlight-beach')?.id).toBe('valley:whispering-woods');
     expect(getHomewardNextNode('valley:whispering-woods')?.id).toBe('valley:crystal-brook');
     expect(getHomewardNextNode('valley:crystal-brook')?.id).toBe('valley:rainbow-meadow');
     expect(getHomewardNextNode('valley:rainbow-meadow')?.id).toBe('valley:sunbeam-village');
@@ -68,8 +72,8 @@ describe('R5-WP5.9E/G Valley map topology', () => {
     expect(getHomewardNextNode('valley:moonflower-glade')?.id).toBe(VALLEY_HOME_NODE_ID);
     expect(getHomewardNextNode('valley:prism-grotto')?.id).toBe('valley:crystal-brook');
     expect(getHomewardNextNode(VALLEY_HOME_NODE_ID)).toBeNull();
-    expect(getPhysicalValleyRoute('valley:lantern-clearing', VALLEY_HOME_NODE_ID)).toEqual([
-      'valley:lantern-clearing',
+    expect(getPhysicalValleyRoute('valley:starlight-beach', VALLEY_HOME_NODE_ID)).toEqual([
+      'valley:starlight-beach',
       'valley:whispering-woods',
       'valley:crystal-brook',
       'valley:rainbow-meadow',
@@ -81,7 +85,7 @@ describe('R5-WP5.9E/G Valley map topology', () => {
 
   it('records a concrete revisit reason for every current major region', () => {
     const majorNodes = VALLEY_MAP_NODES.filter(({ kind }) => kind === 'home' || kind === 'region');
-    expect(majorNodes.length).toBeGreaterThanOrEqual(6);
+    expect(majorNodes.length).toBeGreaterThanOrEqual(7);
     expect(
       majorNodes.every((node) => 'revisitHint' in node && Boolean(node.revisitHint.trim())),
     ).toBe(true);

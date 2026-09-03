@@ -5,6 +5,7 @@ export const OUTDOOR_EXPLORATION_SCENE_KEYS = [
   'RainbowMeadowScene',
   'CrystalBrookScene',
   'WhisperingWoodsScene',
+  'StarlightBeachScene',
 ] as const;
 
 const OUTDOOR_EXPLORATION_SCENES = new Set<string>(OUTDOOR_EXPLORATION_SCENE_KEYS);
