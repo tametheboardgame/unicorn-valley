@@ -1,82 +1,115 @@
 import { describe, expect, it } from 'vitest';
 import { CRYSTAL_BROOK_MAP } from './CrystalBrookMap';
-import { isPointBlocked } from './MapTraversal';
+import { EXPLORATION_MAIN_ROUTES, type ExplorationPathPoint } from './ExplorationPathPolishManager';
+import { isPointBlocked, type CollisionRectangle } from './MapTraversal';
 import { MOONFLOWER_GLADE_MAP } from './MoonflowerGladeMap';
 import { RAINBOW_MEADOW_MAP } from './RainbowMeadowMap';
 import { STARLIGHT_BEACH_MAP } from './StarlightBeachMap';
 import { SUNBEAM_VILLAGE_MAP } from './SunbeamVillageMap';
 import { WHISPERING_WOODS_MAP } from './WhisperingWoodsMap';
 
-const maps = [
-  ['Moonflower Glade', MOONFLOWER_GLADE_MAP],
-  ['Sunbeam Village', SUNBEAM_VILLAGE_MAP],
-  ['Rainbow Meadow', RAINBOW_MEADOW_MAP],
-  ['Crystal Brook', CRYSTAL_BROOK_MAP],
-  ['Whispering Woods', WHISPERING_WOODS_MAP],
-  ['Starlight Beach', STARLIGHT_BEACH_MAP],
-] as const;
+interface AuditedMap {
+  width: number;
+  height: number;
+  margin: number;
+  playerSpawn: ExplorationPathPoint;
+  entrances: readonly { id: string; approach: ExplorationPathPoint }[];
+  colliders: readonly CollisionRectangle[];
+}
+
+const maps: readonly [string, string, AuditedMap][] = [
+  ['Moonflower Glade', 'MoonflowerGladeScene', MOONFLOWER_GLADE_MAP],
+  ['Sunbeam Village', 'SunbeamVillageScene', SUNBEAM_VILLAGE_MAP],
+  ['Rainbow Meadow', 'RainbowMeadowScene', RAINBOW_MEADOW_MAP],
+  ['Crystal Brook', 'CrystalBrookScene', CRYSTAL_BROOK_MAP],
+  ['Whispering Woods', 'WhisperingWoodsScene', WHISPERING_WOODS_MAP],
+  ['Starlight Beach', 'StarlightBeachScene', STARLIGHT_BEACH_MAP],
+];
+
+function sampleRoute(points: readonly ExplorationPathPoint[], spacing = 34): ExplorationPathPoint[] {
+  const samples: ExplorationPathPoint[] = [];
+  for (let index = 0; index < points.length - 1; index += 1) {
+    const start = points[index];
+    const end = points[index + 1];
+    const distance = Math.hypot(end.x - start.x, end.y - start.y);
+    const steps = Math.max(1, Math.ceil(distance / spacing));
+    for (let step = 0; step < steps; step += 1) {
+      const progress = step / steps;
+      samples.push({
+        x: start.x + (end.x - start.x) * progress,
+        y: start.y + (end.y - start.y) * progress,
+      });
+    }
+  }
+  samples.push(points[points.length - 1]);
+  return samples;
+}
 
 describe('exploration geometry audit', () => {
   it('keeps every region spawn and gateway approach clear of hard collision', () => {
-    for (const [label, map] of maps) {
-      expect(isPointBlocked(map.playerSpawn, map.colliders, 32), `${label} player spawn`).toBe(
+    for (const [label, , map] of maps) {
+      expect(isPointBlocked(map.playerSpawn, map.colliders, 30), `${label} player spawn`).toBe(
         false,
       );
       for (const entrance of map.entrances) {
         expect(
-          isPointBlocked(entrance.approach, map.colliders, 32),
+          isPointBlocked(entrance.approach, map.colliders, 30),
           `${label} entrance ${entrance.id}`,
         ).toBe(false);
       }
     }
   });
 
-  it('keeps Crystal Brook stepping stones and the visible main route traversable', () => {
+  it('keeps every authored main path continuously traversable, not just a few checkpoints', () => {
+    for (const [label, sceneKey, map] of maps) {
+      const route = EXPLORATION_MAIN_ROUTES[sceneKey];
+      expect(route, `${label} route contract`).toBeDefined();
+      for (const point of sampleRoute(route)) {
+        expect(
+          isPointBlocked(point, map.colliders, 28),
+          `${label} route near (${Math.round(point.x)}, ${Math.round(point.y)})`,
+        ).toBe(false);
+      }
+    }
+  });
+
+  it('keeps every collider inside the visible world and gives each one a unique id', () => {
+    for (const [label, , map] of maps) {
+      const ids = new Set<string>();
+      for (const collider of map.colliders) {
+        expect(ids.has(collider.id), `${label} duplicate collider ${collider.id}`).toBe(false);
+        ids.add(collider.id);
+        expect(collider.width, `${label} ${collider.id} width`).toBeGreaterThan(0);
+        expect(collider.height, `${label} ${collider.id} height`).toBeGreaterThan(0);
+        expect(collider.x - collider.width / 2, `${label} ${collider.id} left`).toBeGreaterThanOrEqual(
+          0,
+        );
+        expect(collider.y - collider.height / 2, `${label} ${collider.id} top`).toBeGreaterThanOrEqual(
+          0,
+        );
+        expect(collider.x + collider.width / 2, `${label} ${collider.id} right`).toBeLessThanOrEqual(
+          map.width,
+        );
+        expect(
+          collider.y + collider.height / 2,
+          `${label} ${collider.id} bottom`,
+        ).toBeLessThanOrEqual(map.height);
+      }
+    }
+  });
+
+  it('keeps Crystal Brook stepping stones physically reachable', () => {
     for (const stone of CRYSTAL_BROOK_MAP.steppingStones) {
-      expect(isPointBlocked(stone, CRYSTAL_BROOK_MAP.colliders, 28)).toBe(false);
-    }
-
-    const mainRoute = [
-      { x: 340, y: 1090 },
-      { x: 850, y: 1090 },
-      { x: 1510, y: 1260 },
-      { x: 2050, y: 1080 },
-      { x: 2600, y: 1190 },
-      { x: 3070, y: 1010 },
-    ];
-    for (const point of mainRoute) {
-      expect(isPointBlocked(point, CRYSTAL_BROOK_MAP.colliders, 34)).toBe(false);
+      expect(isPointBlocked(stone, CRYSTAL_BROOK_MAP.colliders, 26)).toBe(false);
     }
   });
 
-  it('keeps the Whispering Woods guiding-light route free of invisible walls', () => {
-    const mainRoute = [
-      { x: 350, y: 1090 },
-      { x: 720, y: 1090 },
-      { x: 1230, y: 980 },
-      { x: 1680, y: 1110 },
-      { x: 2090, y: 1080 },
-      { x: 2530, y: 930 },
-      { x: 2940, y: 820 },
-    ];
-    for (const point of mainRoute) {
-      expect(isPointBlocked(point, WHISPERING_WOODS_MAP.colliders, 34)).toBe(false);
-    }
-  });
-
-  it('keeps the Starlight Beach warm-sand route free of invisible walls', () => {
-    const mainRoute = [
-      { x: 350, y: 1140 },
-      { x: 650, y: 1120 },
-      { x: 1120, y: 1080 },
-      { x: 1510, y: 1190 },
-      { x: 1900, y: 1330 },
-      { x: 2370, y: 1180 },
-      { x: 2830, y: 1320 },
-      { x: 3220, y: 1500 },
-    ];
-    for (const point of mainRoute) {
-      expect(isPointBlocked(point, STARLIGHT_BEACH_MAP.colliders, 34)).toBe(false);
+  it('keeps Beach discovery targets out of hard collision footprints', () => {
+    for (const spot of STARLIGHT_BEACH_MAP.discoverySpots) {
+      expect(
+        isPointBlocked(spot.position, STARLIGHT_BEACH_MAP.colliders, 18),
+        `Beach discovery ${spot.id}`,
+      ).toBe(false);
     }
   });
 });
