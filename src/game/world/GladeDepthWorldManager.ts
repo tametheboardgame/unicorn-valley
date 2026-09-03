@@ -44,6 +44,7 @@ interface GladeDepthState {
   feedback: Phaser.GameObjects.Text;
   persistentVisuals: Phaser.GameObjects.Container | null;
   nookDoorwayVisuals: Phaser.GameObjects.Container | null;
+  outdoorDisplayVisuals: Phaser.GameObjects.Container | null;
   persistentSignature: string;
 }
 
@@ -76,8 +77,8 @@ const FIXED_INTERACTIONS: readonly FixedGladeInteractionDefinition[] = [
     id: 'garden-corner',
     label: 'Garden corner',
     actionLabel: 'Look closely',
-    position: { x: 890, y: 790 },
-    radius: 135,
+    position: { x: 1080, y: 540 },
+    radius: 100,
     icon: '🌸',
   },
   {
@@ -180,6 +181,7 @@ export class GladeDepthWorldManager {
       feedback: this.createFeedback(scene),
       persistentVisuals: null,
       nookDoorwayVisuals: null,
+      outdoorDisplayVisuals: null,
       persistentSignature: '',
     };
     state.fixed = FIXED_INTERACTIONS.map((definition) =>
@@ -433,8 +435,10 @@ export class GladeDepthWorldManager {
     state.persistentSignature = signature;
     state.persistentVisuals?.destroy(true);
     state.nookDoorwayVisuals?.destroy(true);
+    state.outdoorDisplayVisuals?.destroy(true);
     state.persistentVisuals = null;
     state.nookDoorwayVisuals = null;
+    state.outdoorDisplayVisuals = null;
 
     const objects: Phaser.GameObjects.GameObject[] = [];
     if (this.story.isNookOpen()) {
@@ -490,18 +494,21 @@ export class GladeDepthWorldManager {
       }
     }
 
-    displayIcons.slice(0, 6).forEach((icon, index) => {
-      const angle = (Math.PI * 2 * index) / Math.max(1, displayIcons.length);
-      objects.push(
-        state.scene.add
-          .text(850 + Math.cos(angle) * 58, 1082 + Math.sin(angle) * 34, icon, {
+    if (displayIcons.length > 0) {
+      const displayObjects = displayIcons.slice(0, 6).map((icon, index) => {
+        const angle = (Math.PI * 2 * index) / Math.max(1, displayIcons.length);
+        return state.scene.add
+          .text(Math.cos(angle) * 58, Math.sin(angle) * 34, icon, {
             fontFamily: 'system-ui, sans-serif',
             fontSize: '20px',
           })
-          .setOrigin(0.5)
-          .setDepth(11),
-      );
-    });
+          .setOrigin(0.5);
+      });
+      state.outdoorDisplayVisuals = state.scene.add
+        .container(850, 1082, displayObjects)
+        .setName('glade-depth:outdoor-achievement-display')
+        .setDepth(worldDepthForY(1135, 0.4));
+    }
 
     state.persistentVisuals = state.scene.add.container(0, 0, objects).setDepth(12);
   }
@@ -528,6 +535,7 @@ export class GladeDepthWorldManager {
     }
     this.state.persistentVisuals?.destroy(true);
     this.state.nookDoorwayVisuals?.destroy(true);
+    this.state.outdoorDisplayVisuals?.destroy(true);
     this.state.feedback.destroy();
     this.state.input.destroy();
     this.state = null;
