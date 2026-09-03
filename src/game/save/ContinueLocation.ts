@@ -1,11 +1,12 @@
 import { COTTAGE_INTERIOR_LOCATION_ID } from '../world/CottageInteriorMap';
 import { CRYSTAL_BROOK_LOCATION_ID } from '../world/CrystalBrookMap';
 import { RAINBOW_MEADOW_LOCATION_ID } from '../world/RainbowMeadowMap';
-import { STARLIGHT_BEACH_LOCATION_ID } from '../world/StarlightBeachMap';
 import { SUNBEAM_VILLAGE_LOCATION_ID } from '../world/SunbeamVillageMap';
 import { WHISPERING_WOODS_LOCATION_ID } from '../world/WhisperingWoodsMap';
 import { DEFAULT_START_LOCATION_ID } from './saveSchema';
 import { MOONFLOWER_GLADE_LOCATION_ID } from './saveLocationCheckpoint';
+
+export const STARLIGHT_BEACH_CONTINUE_LOCATION_ID = 'location:starlight-beach';
 
 export interface ContinueDestination {
   locationId: string;
@@ -79,9 +80,9 @@ const DESTINATIONS = new Map<string, ContinueDestination>([
     },
   ],
   [
-    STARLIGHT_BEACH_LOCATION_ID,
+    STARLIGHT_BEACH_CONTINUE_LOCATION_ID,
     {
-      locationId: STARLIGHT_BEACH_LOCATION_ID,
+      locationId: STARLIGHT_BEACH_CONTINUE_LOCATION_ID,
       sceneKey: 'StarlightBeachScene',
       status: 'Your unicorn is waiting on Starlight Beach.',
       lazyScene: true,
