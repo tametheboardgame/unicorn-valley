@@ -47,6 +47,11 @@ import { R5_RACE_DISCOVERIES, R5_RACE_ITEMS } from './r5RaceContent';
 import { R5_WEATHER_DISCOVERIES } from './r5Weather';
 import { R5_WHISPERING_WOODS_DISCOVERIES } from './r5WhisperingWoods';
 import {
+  R6_CRYSTAL_BROOK_DEPTH_DISCOVERIES,
+  R6_CRYSTAL_BROOK_DEPTH_ITEMS,
+  R6_CRYSTAL_BROOK_DEPTH_QUESTS,
+} from './r6CrystalBrookDepthContent';
+import {
   R6_GLADE_HOME_DISCOVERIES,
   R6_GLADE_HOME_ITEMS,
   R6_GLADE_HOME_QUESTS,
@@ -90,6 +95,7 @@ const ALL_ITEMS = [
   ...R6_VILLAGE_ITEMS,
   ...R6_GLADE_HOME_ITEMS,
   ...R6_MEADOW_RUN_ITEMS,
+  ...R6_CRYSTAL_BROOK_DEPTH_ITEMS,
 ] satisfies readonly ItemDefinition[];
 const ALL_CHARACTERS = [
   ...CHARACTERS,
@@ -113,6 +119,7 @@ const ALL_QUESTS = [
   ...R6_VILLAGE_QUESTS,
   ...R6_GLADE_HOME_QUESTS,
   ...R6_MEADOW_RUN_QUESTS,
+  ...R6_CRYSTAL_BROOK_DEPTH_QUESTS,
 ] satisfies readonly QuestDefinition[];
 const ALL_DISCOVERIES = [
   ...DISCOVERIES,
@@ -130,6 +137,7 @@ const ALL_DISCOVERIES = [
   ...R6_VILLAGE_DISCOVERIES,
   ...R6_GLADE_HOME_DISCOVERIES,
   ...R6_MEADOW_RUN_DISCOVERIES,
+  ...R6_CRYSTAL_BROOK_DEPTH_DISCOVERIES,
 ] satisfies readonly DiscoveryDefinition[];
 const ALL_DIALOGUES = [
   ...DIALOGUES,

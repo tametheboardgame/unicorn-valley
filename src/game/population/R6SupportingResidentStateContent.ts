@@ -8,6 +8,7 @@ import type {
   ResidentTalkVariant,
   SupportingResidentId,
 } from './AmbientPopulationTypes';
+import { R6_CRYSTAL_BROOK_RESIDENT_TALK_VARIANTS } from './R6CrystalBrookPopulationContent';
 import { R6_MEADOW_RESIDENT_TALK_VARIANTS } from './R6MeadowPopulationContent';
 
 const WILLOW_GARDEN_PLANTED_FLAG = 'flag:willow-garden-planted';
@@ -104,6 +105,7 @@ export const R6_SUPPORTING_RESIDENT_TALK_VARIANTS = Object.fromEntries(
           [
             ...(BASE_RESIDENT_TALK_VARIANTS[residentId] ?? []),
             ...(R6_MEADOW_RESIDENT_TALK_VARIANTS[residentId] ?? []),
+            ...(R6_CRYSTAL_BROOK_RESIDENT_TALK_VARIANTS[residentId] ?? []),
           ],
         ] as const,
     )

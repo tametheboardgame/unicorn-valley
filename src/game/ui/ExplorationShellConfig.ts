@@ -2,11 +2,10 @@ export const EXPLORATION_SHELL_SCENES = new Set([
   'MoonflowerGladeScene',
   'CottageInteriorScene',
   'MoonflowerPatchScene',
-  'HollowTreeNookScene',
   'SunbeamVillageScene',
   'RainbowMeadowScene',
-  'WindmillLookoutScene',
   'CrystalBrookScene',
+  'CrystalGrottoScene',
   'WhisperingWoodsScene',
 ]);
 
