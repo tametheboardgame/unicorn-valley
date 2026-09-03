@@ -124,9 +124,6 @@ export class ExistingValleyQuestPackWorldManager {
     for (const runtime of state.interactions) {
       const pointDistance = distance(player, runtime.definition.position);
       runtime.prompt.setVisible(pointDistance <= runtime.definition.radius + 84);
-      if (runtime.container.input) {
-        runtime.container.input.enabled = pointDistance <= runtime.definition.radius;
-      }
       if (pointDistance <= runtime.definition.radius && pointDistance < nearestDistance) {
         nearest = runtime;
         nearestDistance = pointDistance;
