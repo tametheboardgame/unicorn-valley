@@ -9,6 +9,7 @@ import type {
   SmallWorldInteractionDefinition,
   SupportingResidentDefinition,
 } from './AmbientPopulationTypes';
+import { R6_MEADOW_RESIDENT_PLACEMENTS } from './R6MeadowPopulationContent';
 
 export const R6_SUPPORTING_RESIDENTS = [
   {
@@ -296,7 +297,8 @@ export const R6_AMBIENT_RESIDENT_PLACEMENTS = [
       { id: 'maple-village-c', x: 2050, y: 1320, pauseMs: 2300 },
     ],
   },
-] as const satisfies readonly ResidentPlacementDefinition[];
+  ...R6_MEADOW_RESIDENT_PLACEMENTS,
+] satisfies readonly ResidentPlacementDefinition[];
 
 export const R6_SMALL_WORLD_INTERACTIONS = [
   {

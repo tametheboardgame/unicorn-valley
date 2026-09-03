@@ -25,12 +25,16 @@ void import('./game/economy/EconomyRewardWorldManager').then(({ getEconomyReward
 const registerExtendedScenes = Promise.all([
   import('./game/scenes/R6VillageInteriorScene'),
   import('./game/scenes/HollowTreeNookScene'),
-]).then(([{ VillageInteriorScene }, { HollowTreeNookScene }]) => {
+  import('./game/scenes/WindmillLookoutScene'),
+]).then(([{ VillageInteriorScene }, { HollowTreeNookScene }, { WindmillLookoutScene }]) => {
   if (!game.scene.keys.VillageInteriorScene) {
     game.scene.add('VillageInteriorScene', VillageInteriorScene);
   }
   if (!game.scene.keys.HollowTreeNookScene) {
     game.scene.add('HollowTreeNookScene', HollowTreeNookScene);
+  }
+  if (!game.scene.keys.WindmillLookoutScene) {
+    game.scene.add('WindmillLookoutScene', WindmillLookoutScene);
   }
 });
 
@@ -44,6 +48,10 @@ void import('./game/world/GladeDepthWorldManager').then(({ getGladeDepthWorldMan
 
 void import('./game/world/CottageDepthWorldManager').then(({ getCottageDepthWorldManager }) => {
   getCottageDepthWorldManager(game);
+});
+
+void import('./game/world/MeadowDepthWorldManager').then(({ getMeadowDepthWorldManager }) => {
+  getMeadowDepthWorldManager(game);
 });
 
 void Promise.all([

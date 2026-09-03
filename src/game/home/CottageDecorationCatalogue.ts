@@ -85,6 +85,11 @@ const COTTAGE_DECORATION_PROFILES: Partial<Record<ItemId, CottageDecorationProfi
     theme: 'moonflower',
     previewColour: 0xd9b7eb,
   },
+  'item:windmill-sky-pennant': {
+    categories: ['wall', 'shelf', 'display'],
+    theme: 'rainbow',
+    previewColour: 0x9edcf2,
+  },
 };
 
 export function getCottageDecorationProfile(itemId: ItemId): CottageDecorationProfile | null {
