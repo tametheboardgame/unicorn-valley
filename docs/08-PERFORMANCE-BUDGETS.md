@@ -1,6 +1,6 @@
-# R6 Performance and Loading Budgets
+# R6 and R6.5 Performance and Loading Budgets
 
-This note records the concrete guardrails introduced by R6-WP6.7. `docs/07-WORK-PACKAGES.md` remains authoritative for package scope.
+This note records the concrete guardrails introduced by R6-WP6.7 and the approved R6.5 breadth-phase recalibration. `docs/07-WORK-PACKAGES.md` remains authoritative for package scope.
 
 ## Asset and preload review
 
@@ -16,20 +16,41 @@ If later work adds external image or audio assets, they should be loaded by the 
 - Browser diagnostics are dynamically imported only for `?diagnostics=1`, keeping test-only inspection code out of the normal initial application path.
 - The browser regression suite runs against `vite preview` of the production build instead of the development server.
 - `npm run perf:budget` runs after every production build in CI and in the combined validation script.
-- the exact PR head must also complete its Cloudflare Pages preview check before merge; a stale or in-progress Pages check is treated as a deployment blocker rather than being inferred from local/CI success.
+- The exact PR head must also complete its Cloudflare Pages preview check before merge; a stale or in-progress Pages check is treated as a deployment blocker rather than being inferred from local/CI success.
 
-## Bundle budgets
+## R6 reference baseline
 
-The current guardrails are based on the measured R6-WP6.7 production build: approximately 504 kB application code, 1,375 kB Phaser, 2.3 kB on-demand diagnostics and 492 kB total gzip.
+The original R6 guardrails were based on the measured R6-WP6.7 production build: approximately 504 kB application code, 1,375 kB Phaser, 2.3 kB on-demand diagnostics and 492 kB total gzip.
+
+The original all-JavaScript ceilings were:
+
+- 2,050 KiB raw;
+- 560 KiB gzip.
+
+Those values remain the R6 reference baseline. CI should continue to report when the current production build exceeds them so growth remains visible.
+
+## R6.5 breadth-phase recalibration
+
+R6.5 deliberately adds substantial production content across existing regions before its final performance/load reconciliation in R6.5-WP16. WP6 still fitted the R6 total-JavaScript ceiling; WP7 first crossed the raw ceiling by approximately 1.9 KiB, and the WP5-WP8 stack measured approximately 2,075.8 KiB raw / 565.7 KiB gzip. Entry and largest-chunk limits remained healthy.
+
+That evidence shows the old total-JavaScript ceiling is being crossed by cumulative approved breadth content rather than a single accidental bundle regression. On 2026-09-03 the R6.5 performance policy was therefore explicitly recalibrated rather than silently weakened.
+
+Hard CI limits through R6.5-WP15 are:
 
 - application entry chunk: at most 520 KiB raw;
 - largest JavaScript chunk: at most 1,800 KiB raw;
-- all JavaScript: at most 2,050 KiB raw;
-- all JavaScript: at most 560 KiB gzip;
+- all JavaScript R6.5 safety envelope: at most 2,400 KiB raw;
+- all JavaScript R6.5 safety envelope: at most 650 KiB gzip;
 - Phaser must remain isolated in a named chunk;
 - BrowserDiagnostics must remain a separate on-demand chunk and must not be referenced by initial HTML.
 
-Budgets should only be raised alongside an explicit explanation of the new production content that requires the increase.
+The 2,400/650 KiB values are bounded interim safety ceilings, not new target sizes. They provide roughly 17% total-JavaScript headroom over the old R6 ceiling for the explicitly approved breadth release while preserving a hard tripwire against uncontrolled growth.
+
+The old 2,050/560 KiB R6 figures remain visible as reference metrics. Crossing the reference is expected during R6.5 and must be explained by production content; crossing the R6.5 safety envelope remains a blocking CI failure.
+
+No further increase to the R6.5 safety envelope is permitted before R6.5-WP16 without a new explicit Amber decision.
+
+R6.5-WP16 must perform the full larger-content performance/load review, including bundle composition, code splitting/dynamic loading opportunities, runtime profiling and browser regression. It must either reduce/repartition the completed content set or establish the final R6.5 release budget from measured evidence before the R6.5-WP17 human readiness gate.
 
 ## Runtime profiling
 
@@ -41,7 +62,7 @@ The R6-WP6.7 browser regression checks normal world-scene transitions against de
 - 95th percentile frame duration under 120 ms after settling;
 - no sampled frame over 500 ms during the tested transition window.
 
-These are severe-hitch regression limits, not a claim that 120 ms is the desired player-facing frame target. Ordinary play should remain close to display refresh cadence.
+These runtime limits remain unchanged by the R6.5 bundle-policy recalibration. They are severe-hitch regression limits, not a claim that 120 ms is the desired player-facing frame target. Ordinary play should remain close to display refresh cadence.
 
 ## Update-loop policy
 
