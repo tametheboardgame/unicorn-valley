@@ -95,6 +95,11 @@ const COTTAGE_DECORATION_PROFILES: Partial<Record<ItemId, CottageDecorationProfi
     theme: 'adventure',
     previewColour: 0x91e3e5,
   },
+  'item:fern-firefly-lantern': {
+    categories: ['wall', 'table', 'shelf', 'display'],
+    theme: 'adventure',
+    previewColour: 0xe4dc86,
+  },
 };
 
 export function getCottageDecorationProfile(itemId: ItemId): CottageDecorationProfile | null {
