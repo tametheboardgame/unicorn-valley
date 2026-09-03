@@ -95,9 +95,9 @@ function alignWoods(scene: Phaser.Scene): void {
   }
 
   if (!scene.children.getByName(`${WOODS_REPLACEMENT_PREFIX}:0`)) {
-    WOODS_BOTTOM_TREES.forEach((tree, index) =>
-      createWoodsTree(scene, tree.x, tree.y, tree.scale, index),
-    );
+    WOODS_BOTTOM_TREES.forEach((tree, index) => {
+      createWoodsTree(scene, tree.x, tree.y, tree.scale, index);
+    });
   }
 }
 
