@@ -30,10 +30,17 @@ Current package sequence:
 - R6.5-WP2 - Ambient Population and World Interaction Toolkit: complete.
 - R6.5-WP3 - Economy and Reward Loop Completion: complete.
 - R6.5-WP4 - Sunbeam Village Life, Shops and Interiors: complete.
-- R6.5-WP5 - Moonflower Glade and Cottage Depth: in progress, PR #125.
-- R6.5-WP6 onward: follow the canonical R6.5 contract and dependency graph.
+- R6.5-WP5 - Moonflower Glade and Cottage Depth: complete.
+- R6.5-WP6 - Rainbow Meadow and Rainbow Run Depth: complete.
+- R6.5-WP7 - Crystal Brook Depth: complete.
+- R6.5-WP8 - Whispering Woods Depth: complete.
+- R6.5-WP9 - Starlight Beach Core: complete.
+- R6.5-WP10 - Starlight Beach Content: complete.
+- R6.5-WP11 - Existing Valley Quest Pack A: complete.
+- R6.5-WP12 - Race Expansion and Rainbow Cup: in progress on `r6.5-wp12-race-expansion-rainbow-cup`.
+- R6.5-WP13 onward: follow the canonical R6.5 contract and dependency graph.
 
-R6.5-WP17 is the human readiness gate for the release.
+R6.5-WP17 remains the human readiness gate for the release.
 
 ## R7 - Daughter-led Expansion
 
