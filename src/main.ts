@@ -70,15 +70,18 @@ void Promise.all([
   import('./game/world/R6RegionGatewayArtManager'),
   import('./game/world/R6RegionGatewayArtPerformanceManager'),
   import('./game/world/R6FinalPlaythroughCleanupManager'),
+  import('./game/world/FinalGraphicsTighteningManager'),
 ]).then(
   ([
     { getR6RegionGatewayArtManager },
     { getR6RegionGatewayArtPerformanceManager },
     { getR6FinalPlaythroughCleanupManager },
+    { getFinalGraphicsTighteningManager },
   ]) => {
     getR6RegionGatewayArtManager(game);
     getR6RegionGatewayArtPerformanceManager(game);
     getR6FinalPlaythroughCleanupManager(game);
+    getFinalGraphicsTighteningManager(game);
   },
 );
 
