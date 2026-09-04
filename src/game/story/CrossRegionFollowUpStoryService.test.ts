@@ -62,10 +62,7 @@ function completeQuest(saveService: SaveService, questId: `quest:${string}`): vo
   });
 }
 
-function unlockPrerequisites(
-  saveService: SaveService,
-  relationships: RelationshipService,
-): void {
+function unlockPrerequisites(saveService: SaveService, relationships: RelationshipService): void {
   completeQuest(saveService, CORAL_SHELL_STORIES_QUEST_ID);
   relationships.markMet(LUMI_CHARACTER_ID);
   relationships.addFlag(LUMI_CHARACTER_ID, LUMI_INTRO_RELATIONSHIP_FLAG);
@@ -114,9 +111,9 @@ describe('R6.5-WP13 cross-region follow-up story', () => {
 
     expect(quests.getProgress(LIGHT_FOUND_SEA_QUEST_ID).status).toBe('completed');
     expect(saveService.load()?.world.flags[LIGHT_FOUND_SEA_COMPLETE_FLAG]).toBe(true);
-    expect(
-      saveService.load()?.inventory.itemQuantities[SHORE_AND_STARWELL_LANTERN_ITEM_ID],
-    ).toBe(1);
+    expect(saveService.load()?.inventory.itemQuantities[SHORE_AND_STARWELL_LANTERN_ITEM_ID]).toBe(
+      1,
+    );
     expect(relationships.getRelationship(LUMI_CHARACTER_ID).friendshipPoints).toBe(8);
     expect(relationships.getRelationship('character:coral').friendshipPoints).toBe(8);
 
