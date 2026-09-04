@@ -18,14 +18,7 @@ export function createRainbowCupOverlay(
   const children: Phaser.GameObjects.GameObject[] = [];
 
   children.push(
-    scene.add.rectangle(
-      GAME_WIDTH / 2 + 10,
-      GAME_HEIGHT / 2 + 10,
-      900,
-      650,
-      0x3e3650,
-      0.38,
-    ),
+    scene.add.rectangle(GAME_WIDTH / 2 + 10, GAME_HEIGHT / 2 + 10, 900, 650, 0x3e3650, 0.38),
     scene.add
       .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, 880, 630, 0xfff9e8, 0.99)
       .setStrokeStyle(6, 0xb78ab9, 1),
@@ -96,17 +89,12 @@ export function createRainbowCupOverlay(
   if (complete) {
     children.push(
       scene.add
-        .text(
-          GAME_WIDTH / 2,
-          586,
-          '🎏 Rainbow Cup Pennant added to your Cottage decorations',
-          {
-            color: '#765368',
-            fontFamily: 'system-ui, sans-serif',
-            fontSize: '16px',
-            fontStyle: 'bold',
-          },
-        )
+        .text(GAME_WIDTH / 2, 586, '🎏 Rainbow Cup Pennant added to your Cottage decorations', {
+          color: '#765368',
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '16px',
+          fontStyle: 'bold',
+        })
         .setOrigin(0.5),
     );
   }
