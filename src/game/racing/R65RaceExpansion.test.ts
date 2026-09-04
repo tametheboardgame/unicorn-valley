@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { NOVA_TUTORIAL_RACE_ID, SUNRISE_SPRINT_RACE_ID } from '../../content/r3RaceIds';
+import { SUNRISE_SPRINT_RACE_ID } from '../../content/r3RaceIds';
 import { CRYSTAL_CASCADE_RACE_ID } from '../../content/r5RaceIds';
 import {
   MOONCAP_TRAIL_FINISHER_RIBBON_ITEM_ID,
@@ -38,7 +38,6 @@ describe('R6.5-WP12 race expansion', () => {
       SHORELINE_SURGE_RACE_ID,
     ]);
     expect(REGULAR_RACE_COURSES).toHaveLength(5);
-    expect(REGULAR_RACE_COURSES.some(({ id }) => id === NOVA_TUTORIAL_RACE_ID)).toBe(false);
   });
 
   it('defines three valid new courses with different rhythms', () => {
