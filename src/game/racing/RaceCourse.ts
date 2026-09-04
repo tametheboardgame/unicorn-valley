@@ -1,5 +1,10 @@
 import { NOVA_TUTORIAL_RACE_ID, SUNRISE_SPRINT_RACE_ID } from '../../content/r3RaceIds';
 import { CRYSTAL_CASCADE_RACE_ID } from '../../content/r5RaceIds';
+import {
+  MOONCAP_TRAIL_RACE_ID,
+  PETAL_PARADE_RACE_ID,
+  SHORELINE_SURGE_RACE_ID,
+} from '../../content/r65RaceExpansion';
 import { RACE_COURSE_LENGTH } from './RaceMovement';
 
 export type RaceObstacleKind = 'log' | 'flower-hurdle';
@@ -313,10 +318,221 @@ export const CRYSTAL_CASCADE_RACE_COURSE = {
   ],
 } as const satisfies RaceCourseDefinition;
 
-const PLAYABLE_RACE_COURSES = [
+export const PETAL_PARADE_RACE_COURSE = {
+  id: PETAL_PARADE_RACE_ID,
+  name: 'Petal Parade',
+  length: RACE_COURSE_LENGTH,
+  obstacles: [
+    {
+      id: 'obstacle:petal-pink-hurdle',
+      kind: 'flower-hurdle',
+      label: 'Pink petal hurdle',
+      progress: 720,
+      width: 96,
+      clearanceHeight: 70,
+    },
+    {
+      id: 'obstacle:petal-daisy-hurdle',
+      kind: 'flower-hurdle',
+      label: 'Daisy hurdle',
+      progress: 1540,
+      width: 104,
+      clearanceHeight: 76,
+    },
+    {
+      id: 'obstacle:petal-rainbow-log',
+      kind: 'log',
+      label: 'Flower-painted log',
+      progress: 2390,
+      width: 90,
+      clearanceHeight: 58,
+    },
+    {
+      id: 'obstacle:petal-gold-hurdle',
+      kind: 'flower-hurdle',
+      label: 'Golden petal hurdle',
+      progress: 3210,
+      width: 108,
+      clearanceHeight: 80,
+    },
+  ],
+  boostZones: [
+    {
+      id: 'boost:petal-breeze',
+      label: 'Petal breeze',
+      startProgress: 1010,
+      endProgress: 1270,
+      speedMultiplier: 1.29,
+    },
+    {
+      id: 'boost:petal-rainbow-stream',
+      label: 'Rainbow petal stream',
+      startProgress: 2680,
+      endProgress: 3010,
+      speedMultiplier: 1.36,
+    },
+  ],
+  collectables: [
+    { id: 'collectable:petal-one', label: 'Petal sparkle', progress: 410, heightAboveGround: 42, pickupRadius: 56 },
+    { id: 'collectable:petal-two', label: 'Petal sparkle', progress: 760, heightAboveGround: 124, pickupRadius: 60 },
+    { id: 'collectable:petal-three', label: 'Petal sparkle', progress: 1110, heightAboveGround: 38, pickupRadius: 56 },
+    { id: 'collectable:petal-four', label: 'Petal sparkle', progress: 1570, heightAboveGround: 138, pickupRadius: 62 },
+    { id: 'collectable:petal-five', label: 'Petal sparkle', progress: 1950, heightAboveGround: 46, pickupRadius: 56 },
+    { id: 'collectable:petal-six', label: 'Petal sparkle', progress: 2420, heightAboveGround: 112, pickupRadius: 58 },
+    { id: 'collectable:petal-seven', label: 'Petal sparkle', progress: 2790, heightAboveGround: 40, pickupRadius: 58 },
+    { id: 'collectable:petal-eight', label: 'Petal sparkle', progress: 3250, heightAboveGround: 140, pickupRadius: 62 },
+    { id: 'collectable:petal-nine', label: 'Petal sparkle', progress: 3510, heightAboveGround: 44, pickupRadius: 56 },
+  ],
+} as const satisfies RaceCourseDefinition;
+
+export const MOONCAP_TRAIL_RACE_COURSE = {
+  id: MOONCAP_TRAIL_RACE_ID,
+  name: 'Mooncap Trail',
+  length: RACE_COURSE_LENGTH,
+  obstacles: [
+    {
+      id: 'obstacle:mooncap-root-one',
+      kind: 'log',
+      label: 'Mossy root',
+      progress: 590,
+      width: 106,
+      clearanceHeight: 64,
+    },
+    {
+      id: 'obstacle:mooncap-fern-gate',
+      kind: 'flower-hurdle',
+      label: 'Glowfern gate',
+      progress: 1260,
+      width: 116,
+      clearanceHeight: 84,
+    },
+    {
+      id: 'obstacle:mooncap-root-two',
+      kind: 'log',
+      label: 'Twisting root',
+      progress: 2050,
+      width: 122,
+      clearanceHeight: 68,
+    },
+    {
+      id: 'obstacle:mooncap-fern-gate-two',
+      kind: 'flower-hurdle',
+      label: 'Moonfern gate',
+      progress: 2780,
+      width: 118,
+      clearanceHeight: 86,
+    },
+    {
+      id: 'obstacle:mooncap-root-three',
+      kind: 'log',
+      label: 'Old woodland root',
+      progress: 3370,
+      width: 126,
+      clearanceHeight: 70,
+    },
+  ],
+  boostZones: [
+    {
+      id: 'boost:mooncap-glowfern-run',
+      label: 'Glowfern run',
+      startProgress: 880,
+      endProgress: 1100,
+      speedMultiplier: 1.26,
+    },
+    {
+      id: 'boost:mooncap-moonlight-lane',
+      label: 'Moonlight lane',
+      startProgress: 2270,
+      endProgress: 2580,
+      speedMultiplier: 1.33,
+    },
+  ],
+  collectables: [
+    { id: 'collectable:mooncap-one', label: 'Mooncap light', progress: 360, heightAboveGround: 48, pickupRadius: 56 },
+    { id: 'collectable:mooncap-two', label: 'Mooncap light', progress: 960, heightAboveGround: 44, pickupRadius: 56 },
+    { id: 'collectable:mooncap-three', label: 'Mooncap light', progress: 1510, heightAboveGround: 132, pickupRadius: 62 },
+    { id: 'collectable:mooncap-four', label: 'Mooncap light', progress: 2320, heightAboveGround: 42, pickupRadius: 58 },
+    { id: 'collectable:mooncap-five', label: 'Mooncap light', progress: 2810, heightAboveGround: 142, pickupRadius: 62 },
+    { id: 'collectable:mooncap-six', label: 'Mooncap light', progress: 3450, heightAboveGround: 50, pickupRadius: 58 },
+  ],
+} as const satisfies RaceCourseDefinition;
+
+export const SHORELINE_SURGE_RACE_COURSE = {
+  id: SHORELINE_SURGE_RACE_ID,
+  name: 'Shoreline Surge',
+  length: RACE_COURSE_LENGTH,
+  obstacles: [
+    {
+      id: 'obstacle:shoreline-driftwood-one',
+      kind: 'log',
+      label: 'Driftwood branch',
+      progress: 780,
+      width: 112,
+      clearanceHeight: 64,
+    },
+    {
+      id: 'obstacle:shoreline-grass-gate',
+      kind: 'flower-hurdle',
+      label: 'Dune-grass gate',
+      progress: 1680,
+      width: 120,
+      clearanceHeight: 82,
+    },
+    {
+      id: 'obstacle:shoreline-driftwood-two',
+      kind: 'log',
+      label: 'Washed-up log',
+      progress: 2650,
+      width: 128,
+      clearanceHeight: 70,
+    },
+    {
+      id: 'obstacle:shoreline-shell-gate',
+      kind: 'flower-hurdle',
+      label: 'Shell-marker gate',
+      progress: 3330,
+      width: 112,
+      clearanceHeight: 80,
+    },
+  ],
+  boostZones: [
+    {
+      id: 'boost:shoreline-outgoing-tide',
+      label: 'Outgoing tide',
+      startProgress: 1040,
+      endProgress: 1370,
+      speedMultiplier: 1.31,
+    },
+    {
+      id: 'boost:shoreline-sea-breeze',
+      label: 'Sea-breeze surge',
+      startProgress: 2860,
+      endProgress: 3200,
+      speedMultiplier: 1.39,
+    },
+  ],
+  collectables: [
+    { id: 'collectable:shoreline-one', label: 'Shell sparkle', progress: 420, heightAboveGround: 42, pickupRadius: 58 },
+    { id: 'collectable:shoreline-two', label: 'Shell sparkle', progress: 820, heightAboveGround: 126, pickupRadius: 62 },
+    { id: 'collectable:shoreline-three', label: 'Shell sparkle', progress: 1180, heightAboveGround: 44, pickupRadius: 58 },
+    { id: 'collectable:shoreline-four', label: 'Shell sparkle', progress: 1710, heightAboveGround: 138, pickupRadius: 64 },
+    { id: 'collectable:shoreline-five', label: 'Shell sparkle', progress: 2360, heightAboveGround: 48, pickupRadius: 58 },
+    { id: 'collectable:shoreline-six', label: 'Shell sparkle', progress: 2940, heightAboveGround: 42, pickupRadius: 58 },
+    { id: 'collectable:shoreline-seven', label: 'Shell sparkle', progress: 3370, heightAboveGround: 132, pickupRadius: 62 },
+  ],
+} as const satisfies RaceCourseDefinition;
+
+export const REGULAR_RACE_COURSES = [
   SUNRISE_SPRINT_RAINBOW_RUN_COURSE,
   CRYSTAL_CASCADE_RACE_COURSE,
+  PETAL_PARADE_RACE_COURSE,
+  MOONCAP_TRAIL_RACE_COURSE,
+  SHORELINE_SURGE_RACE_COURSE,
 ] as const satisfies readonly RaceCourseDefinition[];
+
+export const REGULAR_RACE_COURSE_IDS = REGULAR_RACE_COURSES.map(({ id }) => id);
+
+const PLAYABLE_RACE_COURSES: readonly RaceCourseDefinition[] = REGULAR_RACE_COURSES;
 
 let activeRaceCourse: RaceCourseDefinition = SUNRISE_SPRINT_RAINBOW_RUN_COURSE;
 
