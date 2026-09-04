@@ -1,7 +1,13 @@
 import Phaser from 'phaser';
-import { BEACHCOMBING_READY_FLAG, CORAL_SHELL_STORIES_QUEST_ID } from '../../content/r65StarlightBeach';
+import {
+  BEACHCOMBING_READY_FLAG,
+  CORAL_SHELL_STORIES_QUEST_ID,
+} from '../../content/r65StarlightBeach';
 import { MAPLE_CAKE_QUEST_ID } from '../../content/r6VillageContent';
-import { WORLD_INTERACTION_PROMPT, WorldInteractionInput } from '../interaction/WorldInteractionInput';
+import {
+  WORLD_INTERACTION_PROMPT,
+  WorldInteractionInput,
+} from '../interaction/WorldInteractionInput';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { UI_COLOURS, UI_FONT, applyButtonHover } from '../ui/uiTheme';
@@ -89,7 +95,8 @@ export class RepeatableActivityEntryWorldManager {
   }
 
   private buildBakeryEntry(scene: Phaser.Scene): void {
-    const completed = getBrowserQuestEngine().getProgress(MAPLE_CAKE_QUEST_ID).status === 'completed';
+    const completed =
+      getBrowserQuestEngine().getProgress(MAPLE_CAKE_QUEST_ID).status === 'completed';
     if (!completed) {
       return;
     }
