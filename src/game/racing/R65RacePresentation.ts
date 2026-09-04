@@ -1,4 +1,4 @@
-import Phaser from 'phaser';
+import type Phaser from 'phaser';
 import {
   MOONCAP_TRAIL_RACE_ID,
   PETAL_PARADE_RACE_ID,
