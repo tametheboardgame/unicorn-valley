@@ -41,6 +41,41 @@ const COTTAGE_DECORATION_PROFILES: Partial<Record<ItemId, CottageDecorationProfi
     theme: 'adventure',
     previewColour: 0xb5ecf2,
   },
+  'item:petal-parade-finisher-ribbon': {
+    categories: ['wall', 'shelf', 'display'],
+    theme: 'rainbow',
+    previewColour: 0xf4a7cf,
+  },
+  'item:petal-parade-podium-rosette': {
+    categories: ['wall', 'shelf', 'display'],
+    theme: 'rainbow',
+    previewColour: 0xffd66f,
+  },
+  'item:mooncap-trail-finisher-ribbon': {
+    categories: ['wall', 'shelf', 'display'],
+    theme: 'adventure',
+    previewColour: 0x9fd488,
+  },
+  'item:mooncap-trail-podium-rosette': {
+    categories: ['wall', 'shelf', 'display'],
+    theme: 'adventure',
+    previewColour: 0xc9e6a0,
+  },
+  'item:shoreline-surge-finisher-ribbon': {
+    categories: ['wall', 'shelf', 'display'],
+    theme: 'starlight',
+    previewColour: 0x80d7e5,
+  },
+  'item:shoreline-surge-podium-rosette': {
+    categories: ['wall', 'shelf', 'display'],
+    theme: 'starlight',
+    previewColour: 0xd5edf0,
+  },
+  'item:rainbow-cup-pennant': {
+    categories: ['wall', 'display'],
+    theme: 'rainbow',
+    previewColour: 0xf0c75d,
+  },
   'item:cloud-cushion': { categories: ['floor'], theme: 'starlight', previewColour: 0xc8dff2 },
   'item:starlight-lamp': {
     categories: ['wall', 'table', 'shelf'],
