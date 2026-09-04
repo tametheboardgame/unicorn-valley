@@ -1,4 +1,5 @@
 import { FIREFLY_LANTERN_KEEPER_DISCOVERY_ID } from '../../content/r5FireflyLantern';
+import { LIGHT_FOUND_SEA_QUEST_ID } from '../../content/r65CrossRegionFollowUp';
 import {
   CORAL_SHELL_STORIES_QUEST_ID,
   SKIPPER_FOLLOW_THE_WIND_QUEST_ID,
@@ -53,6 +54,7 @@ const SUBSTANTIVE_QUEST_REWARDS = [
   [PEBBLE_ODD_STONE_QUEST_ID, 'Pebble and the Stone That Does Not Match'],
   [CORAL_SHELL_STORIES_QUEST_ID, 'Coral and the Shells With Stories'],
   [SKIPPER_FOLLOW_THE_WIND_QUEST_ID, 'Skipper and Follow the Wind'],
+  [LIGHT_FOUND_SEA_QUEST_ID, 'Lumi, Coral and the Light That Found the Sea'],
 ] as const;
 
 const DISCOVERY_MILESTONES = [

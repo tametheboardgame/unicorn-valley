@@ -138,6 +138,11 @@ const COTTAGE_DECORATION_PROFILES: Partial<Record<ItemId, CottageDecorationProfi
     theme: 'adventure',
     previewColour: 0x9bb6b5,
   },
+  'item:shore-and-starwell-lantern': {
+    categories: ['wall', 'table', 'shelf', 'display'],
+    theme: 'starlight',
+    previewColour: 0xcde79d,
+  },
 };
 
 export function getCottageDecorationProfile(itemId: ItemId): CottageDecorationProfile | null {

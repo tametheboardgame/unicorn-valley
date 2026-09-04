@@ -4,14 +4,14 @@
   "project_id": "unicorn-valley",
   "display_name": "Unicorn Valley",
   "phase": "R6.5 - Valley Completeness and Breadth",
-  "current_work_package": "R6.5-WP12",
-  "current_work_package_path": "docs/work-packages/R6.5-WP12-RACE-EXPANSION-RAINBOW-CUP.md",
+  "current_work_package": "R6.5-WP13",
+  "current_work_package_path": "docs/work-packages/R6.5-WP13-CROSS-REGION-FOLLOW-UP-STORIES.md",
   "status": "in_progress",
   "autonomy_state": "green",
   "agent_state": "active",
-  "branch": "r6.5-wp12-race-expansion-rainbow-cup",
-  "latest_commit": "773ae52a5b9f8baa8ce6ff408b70f6ac20f8af8a",
-  "ci_state": "unknown",
+  "branch": "r6.5-wp13-cross-region-followups",
+  "latest_commit": "bad950957412988678013ae1d93288453193ec76",
+  "ci_state": "running",
   "technical_validation_state": "pending",
   "human_acceptance_state": "not_required",
   "next_work_package": null,
@@ -21,6 +21,6 @@
   "night_shift_state": "not_configured",
   "chat_disposition": "keep",
   "delivery_mode": "pr_required",
-  "last_activity_at": "2026-09-03T21:34:00+01:00",
-  "updated_at": "2026-09-03T21:34:00+01:00"
+  "last_activity_at": "2026-09-04T14:50:00+01:00",
+  "updated_at": "2026-09-04T14:50:00+01:00"
 }
