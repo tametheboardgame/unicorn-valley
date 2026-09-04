@@ -146,24 +146,25 @@ export class MapleBakingActivityScene extends Phaser.Scene {
     });
 
     const preview = this.add
-      .text(
-        GAME_WIDTH / 2,
-        520,
-        `Cake so far: ${this.theme} • ${this.topping} • ${this.finish}`,
-        {
-          color: '#77516e',
-          fontFamily: UI_FONT,
-          fontSize: '16px',
-          fontStyle: 'bold',
-          backgroundColor: '#fff9ebdf',
-          padding: { x: 16, y: 9 },
-        },
-      )
+      .text(GAME_WIDTH / 2, 520, `Cake so far: ${this.theme} • ${this.topping} • ${this.finish}`, {
+        color: '#77516e',
+        fontFamily: UI_FONT,
+        fontSize: '16px',
+        fontStyle: 'bold',
+        backgroundColor: '#fff9ebdf',
+        padding: { x: 16, y: 9 },
+      })
       .setOrigin(0.5);
     this.body.add(preview);
   }
 
-  private createChoiceCard(x: number, y: number, iconText: string, labelText: string, index: number): void {
+  private createChoiceCard(
+    x: number,
+    y: number,
+    iconText: string,
+    labelText: string,
+    index: number,
+  ): void {
     const card = this.add
       .rectangle(x, y, 230, 190, 0xfffbf2, 1)
       .setStrokeStyle(4, 0xe1a56e, 0.95)
