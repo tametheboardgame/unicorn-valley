@@ -19,7 +19,12 @@ interface DiagnosticSnapshot {
 interface BrowserDiagnosticsApi {
   snapshot(): DiagnosticSnapshot;
   startScene(sceneKey: string, data?: object): void;
-  setArcadeSpritePosition(sceneKey: string, objectName: string, x: number, y: number): void;
+  setArcadeSpritePosition(
+    sceneKey: string,
+    objectName: string,
+    x: number,
+    y: number,
+  ): void;
 }
 
 async function seedFollowUpPrerequisites(page: Page): Promise<void> {
@@ -187,7 +192,9 @@ test('WP13 follows Coral from Beach to Lumi in the Woods and leaves a lasting Be
     'wp13-persistent:shore-starwell-lantern',
   );
 
-  const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('unicorn-valley.save') ?? '{}'));
+  const saved = await page.evaluate(() =>
+    JSON.parse(localStorage.getItem('unicorn-valley.save') ?? '{}'),
+  );
   expect(saved.quests.byQuestId['quest:lumi-coral-light-found-sea'].status).toBe('completed');
   expect(saved.world.flags['flag:r65-wp13-light-found-sea-complete']).toBe(true);
   expect(saved.inventory.itemQuantities['item:shore-and-starwell-lantern']).toBe(1);
