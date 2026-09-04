@@ -8,15 +8,12 @@ export const MAPLE_BAKING_FIRST_COMPLETION_MEMORY =
 export const CORAL_BEACHCOMBING_FIRST_COMPLETION_MEMORY =
   'memory:r65-wp14-coral-beachcombing-first-completion' as const;
 
-export const SUNSHINE_SPRINKLE_CAKE_DISCOVERY_ID =
-  'discovery:sunshine-sprinkle-cake' as const;
-export const MOONFLOWER_BERRY_CAKE_DISCOVERY_ID =
-  'discovery:moonflower-berry-cake' as const;
+export const SUNSHINE_SPRINKLE_CAKE_DISCOVERY_ID = 'discovery:sunshine-sprinkle-cake' as const;
+export const MOONFLOWER_BERRY_CAKE_DISCOVERY_ID = 'discovery:moonflower-berry-cake' as const;
 export const RAINBOW_CLOUD_CAKE_DISCOVERY_ID = 'discovery:rainbow-cloud-cake' as const;
 
 export const CRAB_TRACK_NOTEBOOK_DISCOVERY_ID = 'discovery:crab-track-notebook-page' as const;
-export const TIDEPOOL_STAR_NOTEBOOK_DISCOVERY_ID =
-  'discovery:tidepool-star-notebook-page' as const;
+export const TIDEPOOL_STAR_NOTEBOOK_DISCOVERY_ID = 'discovery:tidepool-star-notebook-page' as const;
 export const MOON_SHELL_NOTEBOOK_DISCOVERY_ID = 'discovery:moon-shell-notebook-page' as const;
 
 export type BakeryCakeTheme = 'sunshine' | 'moonflower' | 'rainbow';
