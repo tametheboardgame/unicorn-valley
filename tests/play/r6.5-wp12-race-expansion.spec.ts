@@ -154,7 +154,9 @@ test('WP12 exposes coherent regional race and Cup entry points', async ({ page }
       window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
     ).__UNICORN_VALLEY_DIAGNOSTICS__;
     const beach = diagnostics?.snapshot().scenes.find(({ key }) => key === 'StarlightBeachScene');
-    return beach?.objects.some(({ name }) => name === 'r6.5-wp12-race-entry:shoreline-surge') ?? false;
+    return (
+      beach?.objects.some(({ name }) => name === 'r6.5-wp12-race-entry:shoreline-surge') ?? false
+    );
   });
 });
 
