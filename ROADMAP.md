@@ -37,8 +37,12 @@ Current package sequence:
 - R6.5-WP9 - Starlight Beach Core: complete.
 - R6.5-WP10 - Starlight Beach Content: complete.
 - R6.5-WP11 - Existing Valley Quest Pack A: complete.
-- R6.5-WP12 - Race Expansion and Rainbow Cup: in progress on `r6.5-wp12-race-expansion-rainbow-cup`.
-- R6.5-WP13 onward: follow the canonical R6.5 contract and dependency graph.
+- R6.5-WP12 - Race Expansion and Rainbow Cup: complete; merged as `610216ae13b96772d3a7b7e95696c695ddcd1870`.
+- R6.5-WP13 - Quest Pack B: Cross-Region and Follow-up Stories: active on `r6.5-wp13-cross-region-followups`.
+- R6.5-WP14 - Repeatable Activity Expansion: next after WP13.
+- R6.5-WP15 - Wonderbook, Collections and Long-Term Goals: follows WP14 and earlier breadth packages.
+- R6.5-WP16 - Valley Tidy-up, Balance and Content Polish: final autonomous consolidation package.
+- R6.5-WP17 - Full Human Playthrough and R7 Readiness Gate: human gate.
 
 R6.5-WP17 remains the human readiness gate for the release.
 
@@ -59,3 +63,5 @@ Potential later work including flight/Cloudtop Peaks, deeper gardening, deeper c
 - Production art follows proven mechanics unless concept work is explicitly required.
 - Any new feature should strengthen a design pillar and add a meaningful player action rather than complexity alone.
 - Detailed implementation belongs in bounded files under `docs/work-packages/` and the relevant canonical domain specifications.
+- The hard application-entry performance budget remains 520 KiB and must not be weakened or increased.
+- Production deployment requires explicit user approval.
