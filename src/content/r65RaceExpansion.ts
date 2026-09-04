@@ -91,7 +91,8 @@ export const R65_RACE_EXPANSION_DISCOVERIES = [
   {
     id: MOONCAP_TRAIL_RIBBONS_DISCOVERY_ID,
     name: 'Mooncap Trail Ribbons',
-    description: 'Silver-green race ribbons from a winding run beneath the Whispering Woods canopy.',
+    description:
+      'Silver-green race ribbons from a winding run beneath the Whispering Woods canopy.',
     icon: '🍄',
     undiscoveredHint: 'A woodland race route appears after you have explored Whispering Woods.',
   },
@@ -108,6 +109,7 @@ export const R65_RACE_EXPANSION_DISCOVERIES = [
     description:
       'You finished all five regular valley race courses. Every finish counted, whatever place you came.',
     icon: '🏆',
-    undiscoveredHint: 'The Rainbow Cup celebrates completing every regular course, not winning every one.',
+    undiscoveredHint:
+      'The Rainbow Cup celebrates completing every regular course, not winning every one.',
   },
 ] as const satisfies readonly DiscoveryDefinition[];
