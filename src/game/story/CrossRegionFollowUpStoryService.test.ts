@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { LUMI_CHARACTER_ID, LUMI_INTRO_RELATIONSHIP_FLAG, STARWELL_REVEALED_FLAG } from '../../content/r5LumiWoodsStory';
+import {
+  LUMI_CHARACTER_ID,
+  LUMI_INTRO_RELATIONSHIP_FLAG,
+  STARWELL_REVEALED_FLAG,
+} from '../../content/r5LumiWoodsStory';
 import {
   LIGHT_FOUND_SEA_COMPLETE_FLAG,
   LIGHT_FOUND_SEA_QUEST_ID,
@@ -110,7 +114,9 @@ describe('R6.5-WP13 cross-region follow-up story', () => {
 
     expect(quests.getProgress(LIGHT_FOUND_SEA_QUEST_ID).status).toBe('completed');
     expect(saveService.load()?.world.flags[LIGHT_FOUND_SEA_COMPLETE_FLAG]).toBe(true);
-    expect(saveService.load()?.inventory.itemQuantities[SHORE_AND_STARWELL_LANTERN_ITEM_ID]).toBe(1);
+    expect(
+      saveService.load()?.inventory.itemQuantities[SHORE_AND_STARWELL_LANTERN_ITEM_ID],
+    ).toBe(1);
     expect(relationships.getRelationship(LUMI_CHARACTER_ID).friendshipPoints).toBe(8);
     expect(relationships.getRelationship('character:coral').friendshipPoints).toBe(8);
 
