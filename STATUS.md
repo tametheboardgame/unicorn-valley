@@ -59,6 +59,11 @@ The next human release gate remains R6.5-WP17. R7 stays blocked until that gate 
 - R6.5-WP11 Existing Valley Quest Pack A merged as `af532922d6a071adf86b345e5c94a81143f9832d` after its Odd Stone interaction regression was fixed and fully revalidated.
 - R6.5-WP12 Race Expansion and Rainbow Cup merged as `610216ae13b96772d3a7b7e95696c695ddcd1870` after its lazy-Beach browser acceptance was corrected to traverse the real Woods gateway and the exact head went fully green.
 
+## Housekeeping
+
+- Obsolete stacked PRs #127, #128 and #135 are superseded by merged reconciliation PRs #138, #139 and #140 and should remain closed.
+- PR #142 is the WP12-to-WP13 state handoff and active WP13 delivery PR.
+
 ## Next eligible work
 
 1. Complete the WP13 substantive-story audit.
@@ -103,7 +108,7 @@ State: `not_configured`
 
 ## Chat disposition
 
-`handoff_ready`
+`keep`
 
 Essential project continuity is externalised into GitHub state/docs rather than relying on chat history.
 
