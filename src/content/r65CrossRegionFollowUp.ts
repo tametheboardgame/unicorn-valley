@@ -7,8 +7,7 @@ export const LIGHT_FOUND_SEA_COMPLETE_FLAG = 'flag:r65-wp13-light-found-sea-comp
 
 export const MOONLIT_SHELL_GLIMMER_DISCOVERY_ID = 'discovery:moonlit-shell-glimmer' as const;
 export const CORAL_SEA_LIGHT_THEORY_DISCOVERY_ID = 'discovery:coral-sea-light-theory' as const;
-export const LUMI_STARWELL_LIGHT_CLUE_DISCOVERY_ID =
-  'discovery:lumi-starwell-light-clue' as const;
+export const LUMI_STARWELL_LIGHT_CLUE_DISCOVERY_ID = 'discovery:lumi-starwell-light-clue' as const;
 export const STARWELL_SEA_REFLECTION_DISCOVERY_ID = 'discovery:starwell-sea-reflection' as const;
 export const SHORE_STARWELL_LANTERN_MEMORY_DISCOVERY_ID =
   'discovery:shore-starwell-lantern-memory' as const;
@@ -61,7 +60,8 @@ export const R65_CROSS_REGION_FOLLOW_UP_DISCOVERIES = [
       'The Starwell catches the shell’s pale wave pattern and sends the same green sparkle dancing across its dark water.',
     kind: 'secret',
     icon: '🌌',
-    undiscoveredHint: 'Lumi thinks the strange beach glimmer should be compared with the Starwell itself.',
+    undiscoveredHint:
+      'Lumi thinks the strange beach glimmer should be compared with the Starwell itself.',
   },
   {
     id: SHORE_STARWELL_LANTERN_MEMORY_DISCOVERY_ID,
