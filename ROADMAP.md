@@ -38,9 +38,9 @@ Current package sequence:
 - R6.5-WP10 - Starlight Beach Content: complete.
 - R6.5-WP11 - Existing Valley Quest Pack A: complete.
 - R6.5-WP12 - Race Expansion and Rainbow Cup: complete; merged as `610216ae13b96772d3a7b7e95696c695ddcd1870`.
-- R6.5-WP13 - Quest Pack B: Cross-Region and Follow-up Stories: active on `r6.5-wp13-cross-region-followups`.
-- R6.5-WP14 - Repeatable Activity Expansion: next after WP13.
-- R6.5-WP15 - Wonderbook, Collections and Long-Term Goals: follows WP14 and earlier breadth packages.
+- R6.5-WP13 - Quest Pack B: Cross-Region and Follow-up Stories: complete; merged as `3db374dd48445386819d1da97d4367619f7b9cef`.
+- R6.5-WP14 - Repeatable Activity Expansion: active on `r6.5-wp14-repeatable-activity-expansion`.
+- R6.5-WP15 - Wonderbook, Collections and Long-Term Goals: next after WP14.
 - R6.5-WP16 - Valley Tidy-up, Balance and Content Polish: final autonomous consolidation package.
 - R6.5-WP17 - Full Human Playthrough and R7 Readiness Gate: human gate.
 

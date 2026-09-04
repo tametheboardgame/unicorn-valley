@@ -1,6 +1,10 @@
 import { FIREFLY_LANTERN_KEEPER_DISCOVERY_ID } from '../../content/r5FireflyLantern';
 import { LIGHT_FOUND_SEA_QUEST_ID } from '../../content/r65CrossRegionFollowUp';
 import {
+  CORAL_BEACHCOMBING_FIRST_COMPLETION_MEMORY,
+  MAPLE_BAKING_FIRST_COMPLETION_MEMORY,
+} from '../../content/r65RepeatableActivities';
+import {
   CORAL_SHELL_STORIES_QUEST_ID,
   SKIPPER_FOLLOW_THE_WIND_QUEST_ID,
 } from '../../content/r65StarlightBeach';
@@ -99,6 +103,21 @@ export const R6_ECONOMY_REWARD_DEFINITIONS: readonly EconomyRewardDefinition[] =
     isEarned: (save) =>
       save.collections.discoveryIds.includes(FIREFLY_LANTERN_KEEPER_DISCOVERY_ID) ||
       save.world.uniqueDiscoveryIds.includes(FIREFLY_LANTERN_KEEPER_DISCOVERY_ID),
+  },
+  {
+    id: 'activity:maple-baking:first-complete',
+    source: 'activity',
+    amount: ECONOMY_BALANCE_BANDS.firstActivityReward,
+    label: "Maple's baking table first cake",
+    isEarned: (save) => save.collections.memoryIds.includes(MAPLE_BAKING_FIRST_COMPLETION_MEMORY),
+  },
+  {
+    id: 'activity:coral-beachcombing:first-complete',
+    source: 'activity',
+    amount: ECONOMY_BALANCE_BANDS.firstActivityReward,
+    label: "Coral's beachcombing first notebook page",
+    isEarned: (save) =>
+      save.collections.memoryIds.includes(CORAL_BEACHCOMBING_FIRST_COMPLETION_MEMORY),
   },
 ];
 
