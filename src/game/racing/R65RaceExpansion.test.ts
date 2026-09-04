@@ -84,7 +84,9 @@ describe('R6.5-WP12 race expansion', () => {
     });
 
     expect(finisher.save.inventory.itemQuantities[MOONCAP_TRAIL_FINISHER_RIBBON_ITEM_ID]).toBe(1);
-    expect(finisher.save.inventory.itemQuantities[MOONCAP_TRAIL_PODIUM_ROSETTE_ITEM_ID] ?? 0).toBe(0);
+    expect(finisher.save.inventory.itemQuantities[MOONCAP_TRAIL_PODIUM_ROSETTE_ITEM_ID] ?? 0).toBe(
+      0,
+    );
     expect(finisher.save.activities.racesById[MOONCAP_TRAIL_RACE_ID].ribbonIds).toEqual([
       MOONCAP_TRAIL_FINISHER_RIBBON_ID,
     ]);
@@ -150,8 +152,12 @@ describe('R6.5-WP12 race expansion', () => {
     const events = getRainbowCupEventStates(createDefaultSave());
     expect(events).toHaveLength(5);
     expect(events.find(({ courseId }) => courseId === PETAL_PARADE_RACE_ID)?.unlocked).toBe(true);
-    expect(events.find(({ courseId }) => courseId === SUNRISE_SPRINT_RACE_ID)?.clue).toContain('Nova');
-    expect(events.find(({ courseId }) => courseId === CRYSTAL_CASCADE_RACE_ID)?.clue).toContain('Nova');
+    expect(events.find(({ courseId }) => courseId === SUNRISE_SPRINT_RACE_ID)?.clue).toContain(
+      'Nova',
+    );
+    expect(events.find(({ courseId }) => courseId === CRYSTAL_CASCADE_RACE_ID)?.clue).toContain(
+      'Nova',
+    );
     expect(events.find(({ courseId }) => courseId === MOONCAP_TRAIL_RACE_ID)?.clue).toContain(
       'Whispering Woods',
     );
