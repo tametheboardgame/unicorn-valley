@@ -54,10 +54,7 @@ export function isRainbowCupComplete(save: SaveGame): boolean {
   return REGULAR_RACE_COURSE_IDS.every((raceId) => hasFinishedRegularRace(save, raceId));
 }
 
-function unlockStateForRace(
-  save: SaveGame,
-  raceId: string,
-): { unlocked: boolean; clue: string } {
+function unlockStateForRace(save: SaveGame, raceId: string): { unlocked: boolean; clue: string } {
   if (hasFinishedRegularRace(save, raceId)) {
     return { unlocked: true, clue: 'Finished — race again any time.' };
   }
