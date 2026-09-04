@@ -1,3 +1,9 @@
+import type { DiscoveryId } from '../../content/contentTypes';
+import {
+  LUMI_CHARACTER_ID,
+  LUMI_INTRO_RELATIONSHIP_FLAG,
+  STARWELL_REVEALED_FLAG,
+} from '../../content/r5LumiWoodsStory';
 import {
   CORAL_SEA_LIGHT_THEORY_DISCOVERY_ID,
   LIGHT_FOUND_SEA_QUEST_ID,
@@ -6,9 +12,7 @@ import {
   SHORE_STARWELL_LANTERN_MEMORY_DISCOVERY_ID,
   STARWELL_SEA_REFLECTION_DISCOVERY_ID,
 } from '../../content/r65CrossRegionFollowUp';
-import { LUMI_CHARACTER_ID, LUMI_INTRO_RELATIONSHIP_FLAG, STARWELL_REVEALED_FLAG } from '../../content/r5LumiWoodsStory';
 import { CORAL_SHELL_STORIES_QUEST_ID } from '../../content/r65StarlightBeach';
-import type { DiscoveryId } from '../../content/contentTypes';
 import { DiscoveryService } from '../discovery/DiscoveryService';
 import { type GameEventMap, type TypedEventBus, gameEventBus } from '../events/GameEventBus';
 import { getQuestStepId, type QuestEngine } from '../quests/QuestEngine';
