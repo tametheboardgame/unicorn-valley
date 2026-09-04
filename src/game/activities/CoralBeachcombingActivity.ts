@@ -18,9 +18,7 @@ const CONFIG = {
   outcomeDiscoveryIds: BEACHCOMBING_OUTCOMES.map(({ discoveryId }) => discoveryId),
 } as const;
 
-export function getCoralBeachcombingProgress(
-  saveService: SaveService,
-): RepeatableActivityProgress {
+export function getCoralBeachcombingProgress(saveService: SaveService): RepeatableActivityProgress {
   return getRepeatableActivityProgress(saveService, CONFIG);
 }
 
