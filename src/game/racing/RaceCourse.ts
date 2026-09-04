@@ -1,6 +1,13 @@
 import { NOVA_TUTORIAL_RACE_ID, SUNRISE_SPRINT_RACE_ID } from '../../content/r3RaceIds';
 import { CRYSTAL_CASCADE_RACE_ID } from '../../content/r5RaceIds';
+import {
+  MOONCAP_TRAIL_RACE_COURSE,
+  PETAL_PARADE_RACE_COURSE,
+  SHORELINE_SURGE_RACE_COURSE,
+} from './R65RaceCourses';
 import { RACE_COURSE_LENGTH } from './RaceMovement';
+
+export { MOONCAP_TRAIL_RACE_COURSE, PETAL_PARADE_RACE_COURSE, SHORELINE_SURGE_RACE_COURSE };
 
 export type RaceObstacleKind = 'log' | 'flower-hurdle';
 
@@ -313,10 +320,17 @@ export const CRYSTAL_CASCADE_RACE_COURSE = {
   ],
 } as const satisfies RaceCourseDefinition;
 
-const PLAYABLE_RACE_COURSES = [
+export const REGULAR_RACE_COURSES = [
   SUNRISE_SPRINT_RAINBOW_RUN_COURSE,
   CRYSTAL_CASCADE_RACE_COURSE,
+  PETAL_PARADE_RACE_COURSE,
+  MOONCAP_TRAIL_RACE_COURSE,
+  SHORELINE_SURGE_RACE_COURSE,
 ] as const satisfies readonly RaceCourseDefinition[];
+
+export const REGULAR_RACE_COURSE_IDS = REGULAR_RACE_COURSES.map(({ id }) => id);
+
+const PLAYABLE_RACE_COURSES: readonly RaceCourseDefinition[] = REGULAR_RACE_COURSES;
 
 let activeRaceCourse: RaceCourseDefinition = SUNRISE_SPRINT_RAINBOW_RUN_COURSE;
 

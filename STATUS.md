@@ -8,46 +8,51 @@ R6.5 - Valley Completeness and Breadth
 
 ## Current accepted baseline
 
-R0 through R6 are complete. R6.5-WP1 through WP4 are complete on `main` at `f48a037665cce6060e3bd45c8f9c7ccd6c7fa1a1`.
+R0 through R6 are complete. R6.5-WP1 through WP11 are now integrated on `main`, including the Starlight Beach core/content packages, world-state and geometry polish, final graphics tightening, Crystal Brook depth, Whispering Woods depth and Existing Valley Quest Pack A.
+
+Latest accepted `main` baseline: `af532922d6a071adf86b345e5c94a81143f9832d` (R6.5-WP11 merge).
 
 ## Active work package
 
-ID: `R6.5-WP5`
+ID: `R6.5-WP12`
 
-Path: `docs/work-packages/R6.5-WP5.md`
+Path: `docs/work-packages/R6.5-WP12-RACE-EXPANSION-RAINBOW-CUP.md`
 
-Delivery: PR #125, branch `r6.5-wp5-glade-cottage-depth`.
+Branch: `r6.5-wp12-race-expansion-rainbow-cup`.
 
-Latest observed package head: `186454acbf062efb4c4579f03eef62d20ce564c7`.
+Goal: expand the regular race roster from two to five and complete the participation-friendly five-event Rainbow Cup using the existing shared race/save/reward architecture.
 
 ## Technical validation
 
-State: `running`
+State: `pending`
 
-PR #125 has the standard CI workflow running against its current head. Required project CI includes validate/build/performance/static smoke plus browser playtest and browser compatibility jobs.
+WP12 implementation has started from the exact post-WP11 mainline. The standard gate remains formatting, lint, type-check, unit tests, production build, unchanged 520 KiB app-entry performance budget, static smoke, full Chromium playtest and Chromium/Firefox/WebKit compatibility.
 
 ## Human acceptance
 
-State: `pending`
+State: `not_required`
 
-WP5 changes child-facing home-region content and presentation. Machine validation does not replace final visual/product judgement. The package may continue technically to its review boundary.
+WP12 has no package-level human gate. Child-facing final readiness remains governed by the later R6.5-WP17 release gate.
 
 ## Completed since previous checkpoint
 
-- R6.5-WP4 merged to `main`.
-- WP5 branch and PR #125 opened.
-- Hollow Tree Nook, Glade story/secret, persistent-home feedback and associated browser/test work are present on the active package branch.
+- R6.5-WP5 and WP6 merged.
+- Starlight Beach WP9/WP10 merged.
+- Save/Continue restoration plus systemic path/collision/layering polish merged.
+- Final Brook/Woods graphics tightening merged.
+- R6.5-WP7 Crystal Brook depth reconciled and merged as `3e1224a33add119878635ad06e15c8ceb7f41c46`.
+- R6.5-WP8 Whispering Woods depth reconciled and merged as `96c5e658f7069fcb5cef6dd8031fbbd13d94d5d4`.
+- R6.5-WP11 Existing Valley Quest Pack A reconciled, its Odd Stone interaction regression fixed, full CI/browser validation passed, and merged as `af532922d6a071adf86b345e5c94a81143f9832d`.
 
 ## In progress
 
-- R6.5-WP5 - Moonflower Glade and Cottage Depth.
-- AI operating-standard retrofit is being prepared independently on `agent/aiops-retrofit` and must not interfere with PR #125 implementation.
+- R6.5-WP12 - Race Expansion and Rainbow Cup.
+- Architecture is intentionally reusing `RaceScene`, course selection, race assistance/touch controls, race records and registered reward/discovery authorities.
+- New target courses: Petal Parade (Meadow), Mooncap Trail (Whispering Woods) and Shoreline Surge (Starlight Beach).
 
 ## Next eligible work
 
-After WP5 is technically complete and its required human gate is satisfied, R6.5-WP6 - Rainbow Meadow and Rainbow Run Depth is the next sequential content package.
-
-Independent work may proceed only where the canonical R6.5 dependency graph clearly permits it.
+Continue WP12 through implementation and automated acceptance, then advance through the remaining R6.5 packages in canonical dependency order.
 
 ## Blockers
 
@@ -57,20 +62,18 @@ R7 remains hard-blocked by the R6.5-WP17 human readiness gate.
 
 ## Human decisions required
 
-No immediate input is required while WP5 technical work remains eligible. Human acceptance is required at the package's defined child-facing review boundary before it is treated as fully accepted.
+No immediate input required.
 
 ## Night Shift
 
 State: `not_configured`
 
-The repository is the Phase 4 retrofit pilot and intended candidate for later bounded autonomous-continuation and supervised Night Shift tests after the operating spine is proven.
-
 ## Chat disposition
 
 `keep`
 
-Current programme/project conversations remain useful while the retrofit and autonomous-execution experiments are active. Essential continuity should nevertheless be externalised into GitHub.
+Essential project continuity is externalised into GitHub state/docs rather than relying on chat history.
 
 ## Source-of-truth note
 
-Current repository/code state, this file, `PROJECT_STATE.json` and the active bounded work package take precedence over stale historical plans, old PR descriptions and remembered conversation context. Detailed R6.5 content scope remains canonical in `docs/07V-R6.5-VALLEY-COMPLETENESS-BREADTH.md` and its companion specifications.
+Current repository/code state, this file, `PROJECT_STATE.json` and the active bounded work package take precedence over stale historical plans, old PR descriptions and remembered conversation context. Detailed R6.5 scope remains canonical in `docs/07V-R6.5-VALLEY-COMPLETENESS-BREADTH.md` and companion specifications.

@@ -110,6 +110,12 @@ void import('./game/story/StarlightBeachContentWorldManager').then(
   },
 );
 
+void import('./game/racing/R65RaceExpansionWorldManager').then(
+  ({ getR65RaceExpansionWorldManager }) => {
+    getR65RaceExpansionWorldManager(game);
+  },
+);
+
 void Promise.all([
   import('./game/world/R6RegionGatewayArtManager'),
   import('./game/world/R6RegionGatewayArtPerformanceManager'),
