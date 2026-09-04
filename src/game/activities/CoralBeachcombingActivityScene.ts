@@ -27,22 +27,50 @@ const OBSERVATIONS: Readonly<Record<BeachcombingTrail, readonly ObservationSpot[
     { icon: '🦀', label: 'Tiny tracks', note: 'Tiny footprints zig-zag across the damp sand.' },
     { icon: '🌊', label: 'Wave edge', note: 'A small wave smooths half the trail away.' },
     { icon: '🪨', label: 'Pebble shade', note: 'The tracks pause beside a cool pebble shadow.' },
-    { icon: '👀', label: 'Quiet watch', note: 'You spot the little crab from far enough away not to bother it.' },
+    {
+      icon: '👀',
+      label: 'Quiet watch',
+      note: 'You spot the little crab from far enough away not to bother it.',
+    },
     { icon: '✏️', label: 'Sketch it', note: 'You copy the track shape into Coral’s notebook.' },
   ],
   'tidepool-star': [
-    { icon: '💧', label: 'Clear pool', note: 'The tide pool is clear enough to see patterns below.' },
+    {
+      icon: '💧',
+      label: 'Clear pool',
+      note: 'The tide pool is clear enough to see patterns below.',
+    },
     { icon: '⭐', label: 'Star shape', note: 'A star-shaped pattern appears between the stones.' },
     { icon: '🌿', label: 'Sea ribbon', note: 'A ribbon of seaweed waves gently under the water.' },
-    { icon: '🐚', label: 'Shell edge', note: 'An empty shell catches a bright reflection at the pool edge.' },
-    { icon: '✏️', label: 'Sketch it', note: 'You draw the pool without touching anything living inside.' },
+    {
+      icon: '🐚',
+      label: 'Shell edge',
+      note: 'An empty shell catches a bright reflection at the pool edge.',
+    },
+    {
+      icon: '✏️',
+      label: 'Sketch it',
+      note: 'You draw the pool without touching anything living inside.',
+    },
   ],
   'moon-shell': [
     { icon: '🌙', label: 'Moon gleam', note: 'Moonlit Point makes the damp sand look silver.' },
-    { icon: '🐚', label: 'Pearly shapes', note: 'A few empty shells make a crescent pattern near the tideline.' },
+    {
+      icon: '🐚',
+      label: 'Pearly shapes',
+      note: 'A few empty shells make a crescent pattern near the tideline.',
+    },
     { icon: '✨', label: 'Shell shine', note: 'One shell flashes when the water slides back.' },
-    { icon: '🌊', label: 'Tide line', note: 'The next wave moves the pattern without anyone needing to collect it.' },
-    { icon: '✏️', label: 'Sketch it', note: 'You record the shapes and leave the beach exactly as you found it.' },
+    {
+      icon: '🌊',
+      label: 'Tide line',
+      note: 'The next wave moves the pattern without anyone needing to collect it.',
+    },
+    {
+      icon: '✏️',
+      label: 'Sketch it',
+      note: 'You record the shapes and leave the beach exactly as you found it.',
+    },
   ],
 };
 
