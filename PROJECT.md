@@ -23,7 +23,9 @@ A young child, with the design primarily tuned around the intended seven-year-ol
 
 ## Current accepted baseline
 
-R0 through R6 are complete. R6.5 - Valley Completeness and Breadth is active. R6.5-WP1 through WP4 are complete on `main`. WP5 - Moonflower Glade and Cottage Depth is the current package and is being delivered through PR #125.
+R0 through R6 are complete. R6.5 - Valley Completeness and Breadth is active. R6.5-WP1 through WP12 are complete on `main`, with R6.5-WP13 - Quest Pack B: Cross-Region and Follow-up Stories active on `r6.5-wp13-cross-region-followups`.
+
+Latest accepted `main` gameplay baseline: `610216ae13b96772d3a7b7e95696c695ddcd1870` (R6.5-WP12 via PR #141).
 
 R7 is deliberately blocked until R6.5-WP17 releases the human readiness gate.
 
