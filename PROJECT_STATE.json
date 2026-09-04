@@ -10,17 +10,17 @@
   "autonomy_state": "green",
   "agent_state": "active",
   "branch": "r6.5-wp13-cross-region-followups",
-  "latest_commit": "610216ae13b96772d3a7b7e95696c695ddcd1870",
-  "ci_state": "unknown",
+  "latest_commit": "2a73bb30fb516e80f6f9f50fa0a3d553a52a364e",
+  "ci_state": "running",
   "technical_validation_state": "pending",
   "human_acceptance_state": "not_required",
-  "next_work_package": null,
+  "next_work_package": "R6.5-WP14",
   "next_work_package_path": null,
   "human_input_required": false,
   "blocker_reason": null,
   "night_shift_state": "not_configured",
   "chat_disposition": "keep",
   "delivery_mode": "pr_required",
-  "last_activity_at": "2026-09-04T10:56:00+01:00",
-  "updated_at": "2026-09-04T10:56:00+01:00"
+  "last_activity_at": "2026-09-04T14:35:00+01:00",
+  "updated_at": "2026-09-04T14:35:00+01:00"
 }
