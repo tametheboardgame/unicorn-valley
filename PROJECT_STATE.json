@@ -4,14 +4,14 @@
   "project_id": "unicorn-valley",
   "display_name": "Unicorn Valley",
   "phase": "R6.5 - Valley Completeness and Breadth",
-  "current_work_package": "R6.5-WP13",
-  "current_work_package_path": "docs/work-packages/R6.5-WP13-CROSS-REGION-FOLLOW-UP-STORIES.md",
+  "current_work_package": "R6.5-WP14",
+  "current_work_package_path": "docs/work-packages/R6.5-WP14-REPEATABLE-ACTIVITY-EXPANSION.md",
   "status": "in_progress",
   "autonomy_state": "green",
   "agent_state": "active",
-  "branch": "r6.5-wp13-cross-region-followups",
-  "latest_commit": "bad950957412988678013ae1d93288453193ec76",
-  "ci_state": "running",
+  "branch": "r6.5-wp14-repeatable-activity-expansion",
+  "latest_commit": "3db374dd48445386819d1da97d4367619f7b9cef",
+  "ci_state": "pending",
   "technical_validation_state": "pending",
   "human_acceptance_state": "not_required",
   "next_work_package": null,
@@ -21,6 +21,6 @@
   "night_shift_state": "not_configured",
   "chat_disposition": "keep",
   "delivery_mode": "pr_required",
-  "last_activity_at": "2026-09-04T14:50:00+01:00",
-  "updated_at": "2026-09-04T14:50:00+01:00"
+  "last_activity_at": "2026-09-04T20:24:00+01:00",
+  "updated_at": "2026-09-04T20:24:00+01:00"
 }
