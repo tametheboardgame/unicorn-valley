@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { CORAL_SHELL_STORIES_QUEST_ID, BEACHCOMBING_READY_FLAG } from '../../content/r65StarlightBeach';
+import { BEACHCOMBING_READY_FLAG, CORAL_SHELL_STORIES_QUEST_ID } from '../../content/r65StarlightBeach';
 import { MAPLE_CAKE_QUEST_ID } from '../../content/r6VillageContent';
 import { WORLD_INTERACTION_PROMPT, WorldInteractionInput } from '../interaction/WorldInteractionInput';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
@@ -20,6 +20,7 @@ interface SceneRuntime {
 }
 
 const BEACH_ENTRY = { x: 1210, y: 1490, radius: 116 } as const;
+const BEACH_PROMPT_NAME = 'wp14-activity-entry:coral-beachcombing-prompt';
 
 function findPlayer(scene: Phaser.Scene): Point | null {
   const object = scene.children.getByName(WORLD_PLAYER_NAME) as
@@ -142,6 +143,7 @@ export class RepeatableActivityEntryWorldManager {
         padding: { x: 9, y: 5 },
       })
       .setOrigin(0.5)
+      .setName(BEACH_PROMPT_NAME)
       .setVisible(false);
     const zone = scene.add.zone(0, 0, 190, 156);
     const container = scene.add
@@ -166,9 +168,7 @@ export class RepeatableActivityEntryWorldManager {
     if (!runtime?.input || !player || !container) {
       return;
     }
-    const prompt = container.list.find(
-      (object): object is Phaser.GameObjects.Text => object instanceof Phaser.GameObjects.Text,
-    );
+    const prompt = container.getByName(BEACH_PROMPT_NAME) as Phaser.GameObjects.Text | null;
     const nearby = distance(player, BEACH_ENTRY) <= BEACH_ENTRY.radius;
     prompt?.setVisible(distance(player, BEACH_ENTRY) <= BEACH_ENTRY.radius + 90);
     if (nearby && runtime.input.justPressed()) {
