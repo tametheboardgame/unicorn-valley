@@ -1,5 +1,8 @@
 import Phaser from 'phaser';
-import { LIGHT_FOUND_SEA_COMPLETE_FLAG } from '../../content/r65CrossRegionFollowUp';
+import {
+  LIGHT_FOUND_SEA_COMPLETE_FLAG,
+  LIGHT_FOUND_SEA_QUEST_ID,
+} from '../../content/r65CrossRegionFollowUp';
 import { GAME_WIDTH } from '../config/gameConstants';
 import {
   WORLD_INTERACTION_PROMPT,
@@ -215,7 +218,9 @@ export class CrossRegionFollowUpWorldManager {
     state: FollowUpSceneState,
     definition: FollowUpInteractionDefinition,
   ): FollowUpInteractionRuntime {
-    const plate = state.scene.add.circle(0, 0, 29, 0xdff5bd, 0.18).setStrokeStyle(2, 0xffffff, 0.26);
+    const plate = state.scene.add
+      .circle(0, 0, 29, 0xdff5bd, 0.18)
+      .setStrokeStyle(2, 0xffffff, 0.26);
     const icon = state.scene.add
       .text(0, 0, definition.icon, {
         fontFamily: 'system-ui, sans-serif',
@@ -308,7 +313,7 @@ export class CrossRegionFollowUpWorldManager {
   }
 
   private getSignature(sceneKey: string): string {
-    const progress = this.quests.getProgress('quest:lumi-coral-light-found-sea');
+    const progress = this.quests.getProgress(LIGHT_FOUND_SEA_QUEST_ID);
     const complete = this.saveService.load()?.world.flags[LIGHT_FOUND_SEA_COMPLETE_FLAG] === true;
     return [
       sceneKey,
@@ -335,7 +340,9 @@ export class CrossRegionFollowUpWorldManager {
 
 let manager: CrossRegionFollowUpWorldManager | null = null;
 
-export function getCrossRegionFollowUpWorldManager(game: Phaser.Game): CrossRegionFollowUpWorldManager {
+export function getCrossRegionFollowUpWorldManager(
+  game: Phaser.Game,
+): CrossRegionFollowUpWorldManager {
   manager ??= new CrossRegionFollowUpWorldManager(game);
   return manager;
 }
