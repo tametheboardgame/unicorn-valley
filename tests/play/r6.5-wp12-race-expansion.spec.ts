@@ -109,7 +109,9 @@ test('WP12 exposes coherent regional race and Cup entry points', async ({ page }
     );
   });
   const meadow = await sceneSnapshot(page, 'RainbowMeadowScene');
-  expect(meadow.objects.some(({ name }) => name === 'r6.5-wp12-race-entry:petal-parade')).toBe(true);
+  expect(meadow.objects.some(({ name }) => name === 'r6.5-wp12-race-entry:petal-parade')).toBe(
+    true,
+  );
   expect(meadow.objects.some(({ name }) => name === 'r6.5-wp12-race-entry:rainbow-cup')).toBe(true);
 
   await startScene(page, 'WhisperingWoodsScene');
@@ -118,7 +120,9 @@ test('WP12 exposes coherent regional race and Cup entry points', async ({ page }
       window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
     ).__UNICORN_VALLEY_DIAGNOSTICS__;
     const woods = diagnostics?.snapshot().scenes.find(({ key }) => key === 'WhisperingWoodsScene');
-    return woods?.objects.some(({ name }) => name === 'r6.5-wp12-race-entry:mooncap-trail') ?? false;
+    return (
+      woods?.objects.some(({ name }) => name === 'r6.5-wp12-race-entry:mooncap-trail') ?? false
+    );
   });
 
   await startScene(page, 'StarlightBeachScene');
@@ -135,7 +139,9 @@ test('WP12 exposes coherent regional race and Cup entry points', async ({ page }
   });
 });
 
-test('WP12 new courses reuse shared RaceScene controls and receive distinct themes', async ({ page }) => {
+test('WP12 new courses reuse shared RaceScene controls and receive distinct themes', async ({
+  page,
+}) => {
   await waitForDiagnostics(page);
 
   const courses = [
@@ -150,7 +156,11 @@ test('WP12 new courses reuse shared RaceScene controls and receive distinct them
     expect(race.objects.some(({ name }) => name === `r6.5-wp12-race-theme:${courseId}`)).toBe(true);
     expect(race.objects.some(({ text }) => text?.includes(courseName))).toBe(true);
     expect(race.objects.some(({ name }) => name === 'race-assistance-control')).toBe(true);
-    expect(race.objects.some(({ name, interactive }) => name === 'race-assistance-toggle' && interactive)).toBe(true);
+    expect(
+      race.objects.some(
+        ({ name, interactive }) => name === 'race-assistance-toggle' && interactive,
+      ),
+    ).toBe(true);
   }
 });
 
