@@ -28,6 +28,12 @@ void import('./game/economy/EconomyRewardWorldManager').then(({ getEconomyReward
   getEconomyRewardWorldManager();
 });
 
+void import('./game/activities/RepeatableActivityEntryWorldManager').then(
+  ({ getRepeatableActivityEntryWorldManager }) => {
+    getRepeatableActivityEntryWorldManager(game);
+  },
+);
+
 const registerExtendedScenes = Promise.all([
   import('./game/scenes/R6VillageInteriorScene'),
   import('./game/scenes/HollowTreeNookScene'),
