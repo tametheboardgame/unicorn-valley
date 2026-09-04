@@ -7,7 +7,7 @@ import {
 } from '../../content/r65RaceExpansion';
 import { BEACH_RACE_ROUTE_READY_FLAG } from '../../content/r65StarlightBeach';
 import { WHISPERING_WOODS_REGION_DISCOVERY_ID } from '../../content/r5WhisperingWoods';
-import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
+import { GAME_WIDTH } from '../config/gameConstants';
 import {
   WORLD_INTERACTION_PROMPT,
   WorldInteractionInput,
@@ -30,10 +30,17 @@ import {
 } from '../world/WhisperingWoodsMap';
 import { setWorldArrivalFacing } from '../world/WorldArrivalState';
 import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
-import { getRainbowCupEventStates, isRainbowCupComplete } from './RainbowCup';
 import { getActiveRaceCourse, selectRaceCourse } from './RaceCourse';
+import {
+  createR65RacePresentation,
+  getR65RaceThemeIcon,
+  isR65ExpandedRace,
+} from './R65RacePresentation';
+import { createRainbowCupOverlay } from './R65RainbowCupOverlay';
 import type { RaceRunState } from './RaceRun';
-import { getRaceShortcut } from './RaceShortcut';
+
+type WorldSceneKey = 'RainbowMeadowScene' | 'WhisperingWoodsScene' | 'StarlightBeachScene';
+type RaceLaunchMode = 'direct' | 'cup';
 
 interface Point {
   x: number;
@@ -42,7 +49,7 @@ interface Point {
 
 interface RaceEntryDefinition {
   id: string;
-  sceneKey: 'RainbowMeadowScene' | 'WhisperingWoodsScene' | 'StarlightBeachScene';
+  sceneKey: WorldSceneKey;
   label: string;
   actionLabel: string;
   icon: string;
@@ -56,7 +63,6 @@ interface RaceEntryRuntime {
   definition: RaceEntryDefinition;
   container: Phaser.GameObjects.Container;
   prompt: Phaser.GameObjects.Text;
-  zone: Phaser.GameObjects.Zone;
 }
 
 interface WorldSceneState {
@@ -67,32 +73,20 @@ interface WorldSceneState {
   feedbackTimer: Phaser.Time.TimerEvent | null;
 }
 
-type RaceLaunchMode = 'direct' | 'cup';
-
 interface RaceLaunchContext {
   mode: RaceLaunchMode;
-  courseId: string;
-  originSceneKey: RaceEntryDefinition['sceneKey'];
+  originSceneKey: WorldSceneKey;
 }
 
 interface RaceSceneRuntime extends Phaser.Scene {
   runState: RaceRunState;
 }
 
-interface RaceTheme {
-  background: string;
-  terrain: number;
-  accent: number;
-  secondary: number;
-  icon: string;
-  subtitle: string;
-}
-
-const NEW_COURSE_IDS = new Set([
-  PETAL_PARADE_RACE_ID,
-  MOONCAP_TRAIL_RACE_ID,
-  SHORELINE_SURGE_RACE_ID,
-]);
+const WORLD_SCENE_KEYS: readonly WorldSceneKey[] = [
+  'RainbowMeadowScene',
+  'WhisperingWoodsScene',
+  'StarlightBeachScene',
+];
 
 const ENTRIES: readonly RaceEntryDefinition[] = [
   {
@@ -137,36 +131,6 @@ const ENTRIES: readonly RaceEntryDefinition[] = [
   },
 ];
 
-const THEMES: Readonly<Record<string, RaceTheme>> = {
-  [PETAL_PARADE_RACE_ID]: {
-    background: '#a8e4f2',
-    terrain: 0x8ccd78,
-    accent: 0xf3a7ce,
-    secondary: 0xffda72,
-    icon: '🌸',
-    subtitle: 'Meadow petals, breezes and bright flower gates',
-  },
-  [MOONCAP_TRAIL_RACE_ID]: {
-    background: '#294b48',
-    terrain: 0x466b4d,
-    accent: 0xb8e58a,
-    secondary: 0xcab4e7,
-    icon: '🍄',
-    subtitle: 'Mooncaps, roots and a hidden Root Hop route',
-  },
-  [SHORELINE_SURGE_RACE_ID]: {
-    background: '#8fdcf0',
-    terrain: 0xe6d196,
-    accent: 0x7bd4e4,
-    secondary: 0xf5d7b2,
-    icon: '🐚',
-    subtitle: 'Skipper’s dunes-to-Moonlit-Point shoreline run',
-  },
-};
-
-const COURSE_START_X = 260;
-const COURSE_GROUND_Y = 575;
-
 function findPlayer(scene: Phaser.Scene): Phaser.GameObjects.Sprite | null {
   const named = scene.children.getByName(WORLD_PLAYER_NAME);
   if (named instanceof Phaser.GameObjects.Sprite) {
@@ -175,7 +139,8 @@ function findPlayer(scene: Phaser.Scene): Phaser.GameObjects.Sprite | null {
   return (
     (scene.children.list.find(
       (object) =>
-        object instanceof Phaser.GameObjects.Sprite && object.texture.key.startsWith('player-unicorn-'),
+        object instanceof Phaser.GameObjects.Sprite &&
+        object.texture.key.startsWith('player-unicorn-'),
     ) as Phaser.GameObjects.Sprite | undefined) ?? null
   );
 }
@@ -200,16 +165,12 @@ function courseUnlock(save: SaveGame, courseId: string): { unlocked: boolean; cl
   return { unlocked: true, clue: 'Ready to race.' };
 }
 
-function formatBestTime(bestTimeMs: number | null): string {
-  return bestTimeMs === null ? 'Not finished yet' : `Best ${(bestTimeMs / 1000).toFixed(1)}s`;
-}
-
 export class R65RaceExpansionWorldManager {
   private readonly saveService = getBrowserSaveService();
   private readonly worldStates = new Map<string, WorldSceneState>();
   private launchContext: RaceLaunchContext | null = null;
   private raceWasActive = false;
-  private raceThemeAnchor: Phaser.GameObjects.Container | null = null;
+  private raceTheme: Phaser.GameObjects.Container | null = null;
   private raceFinishNote: Phaser.GameObjects.Text | null = null;
   private cupOverlay: Phaser.GameObjects.Container | null = null;
   private reopenCupAfterRace = false;
@@ -225,29 +186,26 @@ export class R65RaceExpansionWorldManager {
   private update(): void {
     this.updateRacePresentationAndReturn();
 
-    for (const sceneKey of ['RainbowMeadowScene', 'WhisperingWoodsScene', 'StarlightBeachScene'] as const) {
+    for (const sceneKey of WORLD_SCENE_KEYS) {
       const scene = this.game.scene.getScene(sceneKey);
       if (!scene?.scene.isActive()) {
         this.destroyWorldState(sceneKey);
         continue;
       }
-      const state = this.ensureWorldState(scene, sceneKey);
-      this.updateWorldState(state);
+      this.updateWorldState(this.ensureWorldState(scene, sceneKey));
     }
 
-    if (this.reopenCupAfterRace) {
-      const meadow = this.game.scene.getScene('RainbowMeadowScene');
-      if (meadow?.scene.isActive()) {
-        this.reopenCupAfterRace = false;
-        this.openCupOverlay(meadow);
-      }
+    if (!this.reopenCupAfterRace) {
+      return;
+    }
+    const meadow = this.game.scene.getScene('RainbowMeadowScene');
+    if (meadow?.scene.isActive()) {
+      this.reopenCupAfterRace = false;
+      this.openCupOverlay(meadow);
     }
   }
 
-  private ensureWorldState(
-    scene: Phaser.Scene,
-    sceneKey: RaceEntryDefinition['sceneKey'],
-  ): WorldSceneState {
+  private ensureWorldState(scene: Phaser.Scene, sceneKey: WorldSceneKey): WorldSceneState {
     const existing = this.worldStates.get(sceneKey);
     if (existing?.scene === scene && existing.feedback.active) {
       return existing;
@@ -333,7 +291,7 @@ export class R65RaceExpansionWorldManager {
       repeat: -1,
       ease: 'Sine.InOut',
     });
-    return { definition, container, prompt, zone };
+    return { definition, container, prompt };
   }
 
   private updateWorldState(state: WorldSceneState): void {
@@ -379,6 +337,7 @@ export class R65RaceExpansionWorldManager {
     if (!definition.courseId) {
       return;
     }
+
     const save = this.saveService.load() ?? this.saveService.createNewGame();
     const unlock = courseUnlock(save, definition.courseId);
     if (!unlock.unlocked) {
@@ -392,10 +351,10 @@ export class R65RaceExpansionWorldManager {
     scene: Phaser.Scene,
     courseId: string,
     mode: RaceLaunchMode,
-    originSceneKey: RaceEntryDefinition['sceneKey'],
+    originSceneKey: WorldSceneKey,
   ): void {
     this.closeCupOverlay();
-    this.launchContext = { mode, courseId, originSceneKey };
+    this.launchContext = { mode, originSceneKey };
     this.reopenCupAfterRace = false;
 
     if (originSceneKey === 'RainbowMeadowScene') {
@@ -415,112 +374,14 @@ export class R65RaceExpansionWorldManager {
     }
     this.closeCupOverlay();
     const save = this.saveService.load() ?? this.saveService.createNewGame();
-    const events = getRainbowCupEventStates(save);
-    const complete = isRainbowCupComplete(save);
-    const children: Phaser.GameObjects.GameObject[] = [];
-
-    const shadow = scene.add.rectangle(GAME_WIDTH / 2 + 10, GAME_HEIGHT / 2 + 10, 900, 650, 0x3e3650, 0.38);
-    const panel = scene.add
-      .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, 880, 630, 0xfff9e8, 0.99)
-      .setStrokeStyle(6, 0xb78ab9, 1);
-    children.push(shadow, panel);
-    children.push(
-      scene.add
-        .text(GAME_WIDTH / 2, 82, complete ? '🏆 Rainbow Cup Complete!' : '🏆 Rainbow Cup', {
-          color: '#634d70',
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '31px',
-          fontStyle: 'bold',
-        })
-        .setOrigin(0.5),
-      scene.add
-        .text(
-          GAME_WIDTH / 2,
-          122,
-          complete
-            ? 'You finished every regular course. Every finish counted.'
-            : 'Finish all five courses. You never have to win for your finish to count.',
-          {
-            color: '#755e7d',
-            fontFamily: 'system-ui, sans-serif',
-            fontSize: '16px',
-            fontStyle: 'bold',
-          },
-        )
-        .setOrigin(0.5),
+    this.cupOverlay = createRainbowCupOverlay(
+      scene,
+      save,
+      (courseId) => this.startRace(scene, courseId, 'cup', 'RainbowMeadowScene'),
+      () => {
+        this.cupOverlay = null;
+      },
     );
-
-    events.forEach((event, index) => {
-      const y = 185 + index * 78;
-      const row = scene.add
-        .rectangle(GAME_WIDTH / 2, y, 750, 64, event.completed ? 0xe9f6d7 : 0xf4e9f8, 1)
-        .setStrokeStyle(3, event.unlocked ? 0xb58bc0 : 0xc2b9c6, 0.9);
-      const status = event.completed
-        ? `✓ ${formatBestTime(event.bestTimeMs)}`
-        : event.unlocked
-          ? `Ready • ${formatBestTime(event.bestTimeMs)}`
-          : `🔒 ${event.clue}`;
-      const text = scene.add
-        .text(GAME_WIDTH / 2 - 338, y, `${event.icon}  ${event.name}\n${status}`, {
-          color: event.unlocked ? '#5d4c68' : '#8a808e',
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '16px',
-          fontStyle: 'bold',
-          lineSpacing: 4,
-        })
-        .setOrigin(0, 0.5);
-      children.push(row, text);
-      if (event.unlocked) {
-        const button = scene.add
-          .text(GAME_WIDTH / 2 + 315, y, event.completed ? 'Race again' : 'Race', {
-            color: '#5c4668',
-            fontFamily: 'system-ui, sans-serif',
-            fontSize: '16px',
-            fontStyle: 'bold',
-            backgroundColor: '#ffefb7',
-            padding: { x: 12, y: 8 },
-          })
-          .setOrigin(1, 0.5)
-          .setInteractive({ useHandCursor: true });
-        button.on('pointerdown', () =>
-          this.startRace(scene, event.courseId, 'cup', 'RainbowMeadowScene'),
-        );
-        children.push(button);
-      }
-    });
-
-    if (complete) {
-      children.push(
-        scene.add
-          .text(GAME_WIDTH / 2, 586, '🎏 Rainbow Cup Pennant added to your Cottage decorations', {
-            color: '#765368',
-            fontFamily: 'system-ui, sans-serif',
-            fontSize: '16px',
-            fontStyle: 'bold',
-          })
-          .setOrigin(0.5),
-      );
-    }
-
-    const close = scene.add
-      .text(GAME_WIDTH / 2, 645, 'Close', {
-        color: '#5c4668',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '18px',
-        fontStyle: 'bold',
-        backgroundColor: '#eee1f7',
-        padding: { x: 22, y: 9 },
-      })
-      .setOrigin(0.5)
-      .setInteractive({ useHandCursor: true });
-    close.on('pointerdown', () => this.closeCupOverlay());
-    children.push(close);
-
-    this.cupOverlay = scene.add
-      .container(0, 0, children)
-      .setName('r6.5-wp12-rainbow-cup-overlay')
-      .setScrollFactor(0)
-      .setDepth(20_500);
   }
 
   private closeCupOverlay(): void {
@@ -531,45 +392,22 @@ export class R65RaceExpansionWorldManager {
   private updateRacePresentationAndReturn(): void {
     const raceScene = this.game.scene.getScene('RaceScene');
     const course = getActiveRaceCourse();
-    const newRaceActive =
-      raceScene?.scene.isActive() && NEW_COURSE_IDS.has(course.id as typeof PETAL_PARADE_RACE_ID);
+    const newRaceActive = raceScene?.scene.isActive() && isR65ExpandedRace(course.id);
 
     if (newRaceActive && raceScene) {
       this.raceWasActive = true;
-      this.ensureRaceTheme(raceScene, course.id);
+      this.ensureRacePresentation(raceScene, course.id);
       const runtime = raceScene as RaceSceneRuntime;
       if (runtime.runState?.movement.finished && !this.raceFinishNote?.active) {
-        const save = this.saveService.load() ?? this.saveService.createNewGame();
-        const cupComplete = save.world.flags[RAINBOW_CUP_COMPLETE_FLAG] === true;
-        this.raceFinishNote = raceScene.add
-          .text(
-            GAME_WIDTH / 2,
-            135,
-            cupComplete
-              ? '🏆 Rainbow Cup complete • your Pennant is waiting in the Cottage!'
-              : `${THEMES[course.id]?.icon ?? '🏁'} ${course.name} result saved • every finish counts`,
-            {
-              color: '#564b67',
-              fontFamily: 'system-ui, sans-serif',
-              fontSize: '17px',
-              fontStyle: 'bold',
-              backgroundColor: '#fff9e8ee',
-              padding: { x: 12, y: 7 },
-            },
-          )
-          .setName('r6.5-wp12-race-finish-note')
-          .setOrigin(0.5)
-          .setScrollFactor(0)
-          .setDepth(230);
+        this.createFinishNote(raceScene, course.id, course.name);
       }
       return;
     }
 
-    this.clearRaceTheme();
+    this.clearRacePresentation();
     if (!this.raceWasActive) {
       return;
     }
-
     const meadow = this.game.scene.getScene('RainbowMeadowScene');
     if (!meadow?.scene.isActive()) {
       return;
@@ -581,21 +419,56 @@ export class R65RaceExpansionWorldManager {
     if (!context) {
       return;
     }
-
     if (context.mode === 'cup') {
       this.reopenCupAfterRace = true;
       return;
     }
+    this.returnDirectRace(meadow, context.originSceneKey);
+  }
 
-    if (context.originSceneKey === 'WhisperingWoodsScene') {
+  private ensureRacePresentation(scene: Phaser.Scene, courseId: string): void {
+    const expectedName = `r6.5-wp12-race-theme:${courseId}`;
+    if (this.raceTheme?.active && this.raceTheme.name === expectedName) {
+      return;
+    }
+    this.clearRacePresentation();
+    this.raceTheme = createR65RacePresentation(scene, courseId);
+  }
+
+  private createFinishNote(scene: Phaser.Scene, courseId: string, courseName: string): void {
+    const save = this.saveService.load() ?? this.saveService.createNewGame();
+    const cupComplete = save.world.flags[RAINBOW_CUP_COMPLETE_FLAG] === true;
+    this.raceFinishNote = scene.add
+      .text(
+        GAME_WIDTH / 2,
+        135,
+        cupComplete
+          ? '🏆 Rainbow Cup complete • your Pennant is waiting in the Cottage!'
+          : `${getR65RaceThemeIcon(courseId)} ${courseName} result saved • every finish counts`,
+        {
+          color: '#564b67',
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '17px',
+          fontStyle: 'bold',
+          backgroundColor: '#fff9e8ee',
+          padding: { x: 12, y: 7 },
+        },
+      )
+      .setName('r6.5-wp12-race-finish-note')
+      .setOrigin(0.5)
+      .setScrollFactor(0)
+      .setDepth(230);
+  }
+
+  private returnDirectRace(meadow: Phaser.Scene, originSceneKey: WorldSceneKey): void {
+    if (originSceneKey === 'WhisperingWoodsScene') {
       setWhisperingWoodsPlayerSpawn({ x: 1500, y: 720 });
       setWorldArrivalFacing('WhisperingWoodsScene', 'left');
       saveLocationCheckpoint(this.saveService, WHISPERING_WOODS_LOCATION_ID);
       meadow.scene.start('WhisperingWoodsScene');
       return;
     }
-
-    if (context.originSceneKey === 'StarlightBeachScene') {
+    if (originSceneKey === 'StarlightBeachScene') {
       setStarlightBeachPlayerSpawn({ x: 2740, y: 900 });
       setWorldArrivalFacing('StarlightBeachScene', 'left');
       saveLocationCheckpoint(this.saveService, STARLIGHT_BEACH_LOCATION_ID);
@@ -612,84 +485,9 @@ export class R65RaceExpansionWorldManager {
     saveLocationCheckpoint(this.saveService, RAINBOW_MEADOW_LOCATION_ID);
   }
 
-  private ensureRaceTheme(scene: Phaser.Scene, courseId: string): void {
-    const expectedName = `r6.5-wp12-race-theme:${courseId}`;
-    if (this.raceThemeAnchor?.active && this.raceThemeAnchor.name === expectedName) {
-      return;
-    }
-    this.clearRaceTheme();
-    const theme = THEMES[courseId];
-    if (!theme) {
-      return;
-    }
-    const course = getActiveRaceCourse();
-    const worldWidth = course.length + 760;
-    scene.cameras.main.setBackgroundColor(theme.background);
-
-    const objects: Phaser.GameObjects.GameObject[] = [];
-    objects.push(
-      scene.add.rectangle(worldWidth / 2, 250, worldWidth, 500, theme.terrain, 0.18),
-      scene.add.rectangle(worldWidth / 2, 690, worldWidth, 110, theme.terrain, 0.62),
-    );
-    for (let x = 480, index = 0; x < COURSE_START_X + course.length - 120; x += 410, index += 1) {
-      objects.push(
-        scene.add
-          .text(x, index % 2 === 0 ? 470 : 670, index % 3 === 0 ? theme.icon : '✦', {
-            color: index % 2 === 0 ? '#fff7cf' : '#ffffff',
-            fontFamily: 'system-ui, sans-serif',
-            fontSize: index % 3 === 0 ? '34px' : '24px',
-            fontStyle: 'bold',
-          })
-          .setOrigin(0.5)
-          .setAlpha(0.72),
-      );
-    }
-    objects.push(
-      scene.add
-        .text(GAME_WIDTH / 2, 105, `${theme.icon} ${course.name}\n${theme.subtitle}`, {
-          color: '#594b66',
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '16px',
-          fontStyle: 'bold',
-          align: 'center',
-          backgroundColor: '#fff9e8e8',
-          padding: { x: 12, y: 7 },
-        })
-        .setOrigin(0.5)
-        .setScrollFactor(0),
-    );
-
-    const shortcut = getRaceShortcut(courseId);
-    if (shortcut) {
-      const entryX = COURSE_START_X + shortcut.entryStartProgress;
-      const exitX = COURSE_START_X + shortcut.entryEndProgress + shortcut.progressSkip;
-      objects.push(
-        scene.add
-          .rectangle((entryX + exitX) / 2, 500, Math.max(180, exitX - entryX), 48, theme.accent, 0.54)
-          .setStrokeStyle(4, theme.secondary, 0.9),
-        scene.add
-          .text(entryX + 120, 446, `${shortcut.label.toUpperCase()} ↗\nJump into the glowing route!`, {
-            color: '#4f4d62',
-            fontFamily: 'system-ui, sans-serif',
-            fontSize: '15px',
-            fontStyle: 'bold',
-            align: 'center',
-            backgroundColor: '#fff9e8e8',
-            padding: { x: 9, y: 5 },
-          })
-          .setOrigin(0.5),
-      );
-    }
-
-    this.raceThemeAnchor = scene.add
-      .container(0, 0, objects)
-      .setName(expectedName)
-      .setDepth(8);
-  }
-
-  private clearRaceTheme(): void {
-    this.raceThemeAnchor?.destroy(true);
-    this.raceThemeAnchor = null;
+  private clearRacePresentation(): void {
+    this.raceTheme?.destroy(true);
+    this.raceTheme = null;
     this.raceFinishNote?.destroy();
     this.raceFinishNote = null;
   }
@@ -727,7 +525,7 @@ export class R65RaceExpansionWorldManager {
       this.destroyWorldState(sceneKey);
     }
     this.closeCupOverlay();
-    this.clearRaceTheme();
+    this.clearRacePresentation();
     this.launchContext = null;
   }
 }
