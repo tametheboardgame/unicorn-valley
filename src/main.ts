@@ -104,6 +104,12 @@ void import('./game/world/ExistingValleyQuestPackWorldManager').then(
   },
 );
 
+void import('./game/world/CrossRegionFollowUpWorldManager').then(
+  ({ getCrossRegionFollowUpWorldManager }) => {
+    getCrossRegionFollowUpWorldManager(game);
+  },
+);
+
 void import('./game/story/StarlightBeachContentWorldManager').then(
   ({ getStarlightBeachContentWorldManager }) => {
     getStarlightBeachContentWorldManager(game);
