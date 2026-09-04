@@ -21,6 +21,19 @@ interface BrowserDiagnosticsApi {
   setArcadeSpritePosition(sceneKey: string, objectName: string, x: number, y: number): void;
 }
 
+interface SavedActivityState {
+  inventory: {
+    itemQuantities: Record<string, number>;
+  };
+  activities: {
+    miniGameRecords: Record<string, number>;
+  };
+  collections: {
+    discoveryIds: string[];
+    memoryIds: string[];
+  };
+}
+
 async function seedActivityPrerequisites(page: Page): Promise<void> {
   await page.addInitScript(() => {
     const timestamp = '2026-09-04T20:30:00.000Z';
@@ -147,11 +160,13 @@ async function movePlayer(page: Page, sceneKey: string, x: number, y: number): P
   );
 }
 
-async function readSave(page: Page): Promise<any> {
+async function readSave(page: Page): Promise<SavedActivityState> {
   return page.evaluate(() => JSON.parse(localStorage.getItem('unicorn-valley.save') ?? '{}'));
 }
 
-test('WP14 Maple baking is a three-choice replayable activity with finite rewards', async ({ page }) => {
+test('WP14 Maple baking is a three-choice replayable activity with finite rewards', async ({
+  page,
+}) => {
   await seedActivityPrerequisites(page);
   await waitForDiagnostics(page);
   await startScene(page, 'VillageInteriorScene', {
@@ -207,7 +222,11 @@ test('WP14 Coral beachcombing records a notebook page and returns safely to the 
   await page.waitForTimeout(120);
   await page.keyboard.press('e');
   await waitForScene(page, 'CoralBeachcombingActivityScene');
-  await waitForObject(page, 'CoralBeachcombingActivityScene', 'wp14-beachcombing-trail:crab-tracks');
+  await waitForObject(
+    page,
+    'CoralBeachcombingActivityScene',
+    'wp14-beachcombing-trail:crab-tracks',
+  );
 
   const canvas = page.locator('canvas');
   for (const x of [220, 430, 640, 850]) {
