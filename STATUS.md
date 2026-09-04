@@ -8,69 +8,68 @@ R6.5 - Valley Completeness and Breadth
 
 ## Current accepted baseline
 
-R0 through R6 are complete. R6.5-WP1 through WP12 are integrated on `main`, including Starlight Beach, save/Continue restoration, geometry/graphics tightening, Crystal Brook and Whispering Woods depth, Existing Valley Quest Pack A, five regular race courses and the Rainbow Cup.
+R0 through R6 are complete. R6.5-WP1 through WP13 are integrated on `main`.
 
-Latest accepted `main` gameplay baseline: `610216ae13b96772d3a7b7e95696c695ddcd1870` (R6.5-WP12 merge via PR #141).
+Latest accepted `main` gameplay baseline: `3db374dd48445386819d1da97d4367619f7b9cef` (R6.5-WP13 merge via PR #142).
 
-WP12's final exact head `beff0cb4a62e3c5c20294c6f3224d5e48e755eb3` passed the operating contract, formatting, lint, type-check, unit tests, production build, the unchanged 520 KiB application-entry budget, static smoke, Chromium/Firefox/WebKit compatibility and the full Chromium playtest before merge.
+WP13 exact head `e7c9ec9344de84bc91968e8deaaafb47d28f3c1a` passed the project contract, formatting, lint, type-check, unit tests, production build, unchanged 520 KiB application-entry budget, static smoke, Chromium/Firefox/WebKit compatibility and the full Chromium playtest before merge. Browser playtest result: 139 passed, 3 intentionally skipped, 0 failed.
 
 ## Active work package
 
-ID: `R6.5-WP13`
+ID: `R6.5-WP14`
 
-Path: `docs/work-packages/R6.5-WP13-CROSS-REGION-FOLLOW-UP-STORIES.md`
+Path: `docs/work-packages/R6.5-WP14-REPEATABLE-ACTIVITY-EXPANSION.md`
 
-Branch: `r6.5-wp13-cross-region-followups`.
+Branch: `r6.5-wp14-repeatable-activity-expansion`.
 
-Goal: connect the broadened valley through cross-region/follow-up stories and close any remaining gap to the R6.5 minimum of at least six new substantive story threads.
+Goal: add two real, optional, repeatable non-racing activities so Firefly Lantern + Bakery + Beachcombing provide at least three credible activity choices before R7 preference review.
 
-## WP13 starting state
+## WP14 implementation state
 
-No WP13 gameplay code has been implemented yet. This is an intentional clean handoff boundary.
+The initial implementation is substantive and active:
 
-The first action is to audit the actual R6.5 story-thread matrix across WP5-WP12 and the content registries. Count substantive threads separately from lightweight microstories. Do not assume how many new WP13 threads are required until that audit is complete.
-
-WP11 contributes three known substantive threads:
-
-- Willow and the Moonflowers After Dark;
-- Nova, Clover and a Race With No Finish Line;
-- Pebble and the Stone That Does Not Match.
-
-WP11's Juniper's Butterfly Count and Maple's Perfect Picnic Spot are explicitly microstories and do not count toward the release-wide six-substantive-thread minimum.
-
-After the audit, WP13 must still satisfy its qualitative coverage: a Starlight Beach follow-up, core-character friendship follow-up, supporting-resident chain, deliberate revisit to an older region after newer content unlocks, and at least one further persistent visual/dialogue state change.
+- a bounded WP14 activity contract is committed;
+- Maple's completed Wobbly Cake story now unlocks a separate repeatable Bakery activity entry;
+- the Bakery activity is a three-step, touch-first cake design flow with theme, topping and finish choices, no timer and no fail state;
+- Coral's Starlight Beach content now gains a separate beachcombing notebook interaction beside the original introductory basket;
+- the Beach activity asks the player to inspect four large observation targets, records nature-friendly notebook pages and has no timer/fail state;
+- both activities save finite 0-3 collection progress through existing `activities.miniGameRecords`;
+- six new Wonderbook discoveries cover three Bakery styles and three Beach notebook pages;
+- each activity earns the standard first-activity Shimmer reward once through the existing economy authority; replays do not farm currency;
+- no save-schema change is introduced;
+- activity presentation and scene code remain dynamically loaded/on-demand to protect the hard application-entry budget;
+- focused unit coverage and browser acceptance have been added.
 
 ## Technical validation
 
-State: `pending` for WP13.
+State: `pending` for WP14.
 
-The standard gate remains formatting, lint, type-check, unit tests, production build, unchanged 520 KiB app-entry performance budget, static smoke, full Chromium playtest and Chromium/Firefox/WebKit compatibility.
+The next action is to open the WP14 PR and run the full technical gate: project contract, formatting, lint, type-check, unit tests, production build, unchanged 520 KiB app-entry budget, static smoke, full Chromium playtest and Chromium/Firefox/WebKit compatibility.
 
 ## Human acceptance
 
-State: `not_required` for WP13.
+State: `not_required` for WP14.
 
 The next human release gate remains R6.5-WP17. R7 stays blocked until that gate is explicitly released.
 
 ## Recently completed
 
-- R6.5-WP7 Crystal Brook depth reconciled and merged as `3e1224a33add119878635ad06e15c8ceb7f41c46`.
-- R6.5-WP8 Whispering Woods depth reconciled and merged as `96c5e658f7069fcb5cef6dd8031fbbd13d94d5d4`.
-- R6.5-WP11 Existing Valley Quest Pack A merged as `af532922d6a071adf86b345e5c94a81143f9832d` after its Odd Stone interaction regression was fixed and fully revalidated.
-- R6.5-WP12 Race Expansion and Rainbow Cup merged as `610216ae13b96772d3a7b7e95696c695ddcd1870` after its lazy-Beach browser acceptance was corrected to traverse the real Woods gateway and the exact head went fully green.
+- R6.5-WP11 Existing Valley Quest Pack A merged as `af532922d6a071adf86b345e5c94a81143f9832d`.
+- R6.5-WP12 Race Expansion and Rainbow Cup merged as `610216ae13b96772d3a7b7e95696c695ddcd1870`.
+- R6.5-WP13 Cross-Region and Follow-up Stories merged as `3db374dd48445386819d1da97d4367619f7b9cef` after full exact-head validation.
 
 ## Housekeeping
 
-- Obsolete stacked PRs #127, #128 and #135 are superseded by merged reconciliation PRs #138, #139 and #140 and should remain closed.
-- PR #142 is the WP12-to-WP13 state handoff and active WP13 delivery PR.
+- Obsolete stacked PRs #127, #128 and #135 remain closed and superseded by merged reconciliation PRs #138, #139 and #140.
+- PR #142 is merged and its final body records WP13 validation/merge evidence.
+- WP12 companion implementation notes are correctly marked complete.
 
 ## Next eligible work
 
-1. Complete the WP13 substantive-story audit.
-2. Implement the smallest coherent story set that satisfies the numerical and qualitative WP13 contract.
-3. Fully validate and merge WP13.
-4. Advance to R6.5-WP14 - Repeatable Activity Expansion.
-5. Then WP15 Wonderbook/collections, WP16 final tidy/balance/content polish, and WP17 human playthrough/readiness gate.
+1. Fully validate the current WP14 implementation and fix any genuine regression.
+2. Merge WP14 once its exact head is fully green.
+3. Advance to R6.5-WP15 - Wonderbook, Collections and Long-Term Goals.
+4. Then WP16 final tidy/balance/content polish and WP17 human playthrough/readiness gate.
 
 ## Blockers
 
@@ -84,7 +83,7 @@ No immediate input required.
 
 ## Production / deployment
 
-No production deployment was performed during the WP7-WP12 reconciliation and completion sequence. Production deployment still requires explicit user approval.
+No production deployment was performed. Production deployment still requires explicit user approval.
 
 ## Non-negotiable technical guardrail
 
@@ -96,9 +95,9 @@ A new project chat can resume safely by reading, in order:
 
 1. `PROJECT_STATE.json`;
 2. this `STATUS.md`;
-3. `docs/work-packages/R6.5-WP13-CROSS-REGION-FOLLOW-UP-STORIES.md`;
-4. the WP13 section of `docs/07V-R6.5-VALLEY-COMPLETENESS-BREADTH.md`;
-5. `docs/work-packages/R6.5-WP11-EXISTING-VALLEY-QUEST-PACK.md` for the substantive-vs-microstory distinction.
+3. `docs/work-packages/R6.5-WP14-REPEATABLE-ACTIVITY-EXPANSION.md`;
+4. the WP14 section of `docs/07V-R6.5-VALLEY-COMPLETENESS-BREADTH.md`;
+5. `src/game/activities/` for the activity implementation/progress authority.
 
 The new chat should work from GitHub state rather than relying on prior chat history.
 
