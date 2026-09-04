@@ -106,14 +106,7 @@ export function createR65RacePresentation(
     const exitX = COURSE_START_X + shortcut.entryEndProgress + shortcut.progressSkip;
     objects.push(
       scene.add
-        .rectangle(
-          (entryX + exitX) / 2,
-          500,
-          Math.max(180, exitX - entryX),
-          48,
-          theme.accent,
-          0.54,
-        )
+        .rectangle((entryX + exitX) / 2, 500, Math.max(180, exitX - entryX), 48, theme.accent, 0.54)
         .setStrokeStyle(4, theme.secondary, 0.9),
       scene.add
         .text(
@@ -134,8 +127,5 @@ export function createR65RacePresentation(
     );
   }
 
-  return scene.add
-    .container(0, 0, objects)
-    .setName(`r6.5-wp12-race-theme:${courseId}`)
-    .setDepth(8);
+  return scene.add.container(0, 0, objects).setName(`r6.5-wp12-race-theme:${courseId}`).setDepth(8);
 }
