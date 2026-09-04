@@ -90,7 +90,10 @@ async function seedActivityPrerequisites(page: Page): Promise<void> {
         },
         collections: {
           discoveryIds: [],
-          memoryIds: [],
+          memoryIds: [
+            'memory:economy-reward:completed:quest:maple-wobbly-cake-plan',
+            'memory:economy-reward:completed:quest:coral-shells-with-stories',
+          ],
         },
       }),
     );
