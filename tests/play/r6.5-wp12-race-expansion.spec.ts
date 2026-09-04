@@ -25,6 +25,7 @@ interface BrowserDiagnosticsApi {
   snapshot(): DiagnosticSnapshot;
   startScene(sceneKey: string, data?: object): void;
   selectRaceCourse(courseId: string): void;
+  setArcadeSpritePosition(sceneKey: string, objectName: string, x: number, y: number): void;
 }
 
 async function waitForDiagnostics(page: Page): Promise<void> {
@@ -37,6 +38,15 @@ async function waitForDiagnostics(page: Page): Promise<void> {
   );
 }
 
+async function waitForScene(page: Page, sceneKey: string): Promise<void> {
+  await page.waitForFunction((key) => {
+    const diagnostics = (
+      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__;
+    return diagnostics?.snapshot().activeScenes.includes(key) ?? false;
+  }, sceneKey);
+}
+
 async function startScene(page: Page, sceneKey: string): Promise<void> {
   await page.evaluate((key) => {
     const diagnostics = (
@@ -47,12 +57,22 @@ async function startScene(page: Page, sceneKey: string): Promise<void> {
     }
     diagnostics.startScene(key);
   }, sceneKey);
-  await page.waitForFunction((key) => {
-    const diagnostics = (
-      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
-    ).__UNICORN_VALLEY_DIAGNOSTICS__;
-    return diagnostics?.snapshot().activeScenes.includes(key) ?? false;
-  }, sceneKey);
+  await waitForScene(page, sceneKey);
+}
+
+async function movePlayer(page: Page, sceneKey: string, x: number, y: number): Promise<void> {
+  await page.evaluate(
+    ({ key, nextX, nextY }) => {
+      const diagnostics = (
+        window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
+      ).__UNICORN_VALLEY_DIAGNOSTICS__;
+      if (!diagnostics) {
+        throw new Error('Browser diagnostics are not installed.');
+      }
+      diagnostics.setArcadeSpritePosition(key, 'world-player-unicorn', nextX, nextY);
+    },
+    { key: sceneKey, nextX: x, nextY: y },
+  );
 }
 
 async function startRace(page: Page, courseId: string): Promise<void> {
@@ -125,17 +145,16 @@ test('WP12 exposes coherent regional race and Cup entry points', async ({ page }
     );
   });
 
-  await startScene(page, 'StarlightBeachScene');
+  // Starlight Beach is intentionally lazy-registered. Exercise the real Woods gateway so this
+  // acceptance check preserves that loading contract rather than forcing the scene into startup.
+  await movePlayer(page, 'WhisperingWoodsScene', 3180, 1690);
+  await waitForScene(page, 'StarlightBeachScene');
   await page.waitForFunction(() => {
     const diagnostics = (
       window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
     ).__UNICORN_VALLEY_DIAGNOSTICS__;
     const beach = diagnostics?.snapshot().scenes.find(({ key }) => key === 'StarlightBeachScene');
-    return woodsOrBeachHasEntry(beach?.objects, 'r6.5-wp12-race-entry:shoreline-surge');
-
-    function woodsOrBeachHasEntry(objects: DiagnosticObject[] | undefined, name: string): boolean {
-      return objects?.some((object) => object.name === name) ?? false;
-    }
+    return beach?.objects.some(({ name }) => name === 'r6.5-wp12-race-entry:shoreline-surge') ?? false;
   });
 });
 
