@@ -5,7 +5,22 @@ import {
   CRYSTAL_CASCADE_PODIUM_ROSETTE_ITEM_ID,
   CRYSTAL_CASCADE_RIBBONS_DISCOVERY_ID,
 } from '../../content/r5RaceContent';
+import {
+  MOONCAP_TRAIL_FINISHER_RIBBON_ITEM_ID,
+  MOONCAP_TRAIL_PODIUM_ROSETTE_ITEM_ID,
+  MOONCAP_TRAIL_RACE_ID,
+  MOONCAP_TRAIL_RIBBONS_DISCOVERY_ID,
+  PETAL_PARADE_FINISHER_RIBBON_ITEM_ID,
+  PETAL_PARADE_PODIUM_ROSETTE_ITEM_ID,
+  PETAL_PARADE_RACE_ID,
+  PETAL_PARADE_RIBBONS_DISCOVERY_ID,
+  SHORELINE_SURGE_FINISHER_RIBBON_ITEM_ID,
+  SHORELINE_SURGE_PODIUM_ROSETTE_ITEM_ID,
+  SHORELINE_SURGE_RACE_ID,
+  SHORELINE_SURGE_RIBBONS_DISCOVERY_ID,
+} from '../../content/r65RaceExpansion';
 import type { SaveGame } from '../save/saveSchema';
+import { applyRainbowCupCompletion } from './RainbowCup';
 
 export const RAINBOW_RUN_SPARKLE_ITEM_ID: ItemId = 'item:rainbow-run-sparkle';
 export const RAINBOW_RUN_FINISHER_RIBBON_ITEM_ID: ItemId = 'item:rainbow-run-finisher-ribbon';
@@ -16,6 +31,12 @@ export const RAINBOW_RUN_FINISHER_RIBBON_ID = 'ribbon:rainbow-run-finisher';
 export const RAINBOW_RUN_PODIUM_ROSETTE_ID = 'ribbon:rainbow-run-podium';
 export const CRYSTAL_CASCADE_FINISHER_RIBBON_ID = 'ribbon:crystal-cascade-finisher';
 export const CRYSTAL_CASCADE_PODIUM_ROSETTE_ID = 'ribbon:crystal-cascade-podium';
+export const PETAL_PARADE_FINISHER_RIBBON_ID = 'ribbon:petal-parade-finisher';
+export const PETAL_PARADE_PODIUM_ROSETTE_ID = 'ribbon:petal-parade-podium';
+export const MOONCAP_TRAIL_FINISHER_RIBBON_ID = 'ribbon:mooncap-trail-finisher';
+export const MOONCAP_TRAIL_PODIUM_ROSETTE_ID = 'ribbon:mooncap-trail-podium';
+export const SHORELINE_SURGE_FINISHER_RIBBON_ID = 'ribbon:shoreline-surge-finisher';
+export const SHORELINE_SURGE_PODIUM_ROSETTE_ID = 'ribbon:shoreline-surge-podium';
 
 export const RACE_PARTICIPATION_SPARKLES = 2;
 export const RACE_PODIUM_BONUS_SPARKLES = 2;
@@ -44,6 +65,30 @@ const CRYSTAL_CASCADE_REWARD_PROFILE: RaceRewardProfile = {
   discoveryId: CRYSTAL_CASCADE_RIBBONS_DISCOVERY_ID,
 };
 
+const PETAL_PARADE_REWARD_PROFILE: RaceRewardProfile = {
+  finisherRibbonId: PETAL_PARADE_FINISHER_RIBBON_ID,
+  finisherItemId: PETAL_PARADE_FINISHER_RIBBON_ITEM_ID,
+  podiumRibbonId: PETAL_PARADE_PODIUM_ROSETTE_ID,
+  podiumItemId: PETAL_PARADE_PODIUM_ROSETTE_ITEM_ID,
+  discoveryId: PETAL_PARADE_RIBBONS_DISCOVERY_ID,
+};
+
+const MOONCAP_TRAIL_REWARD_PROFILE: RaceRewardProfile = {
+  finisherRibbonId: MOONCAP_TRAIL_FINISHER_RIBBON_ID,
+  finisherItemId: MOONCAP_TRAIL_FINISHER_RIBBON_ITEM_ID,
+  podiumRibbonId: MOONCAP_TRAIL_PODIUM_ROSETTE_ID,
+  podiumItemId: MOONCAP_TRAIL_PODIUM_ROSETTE_ITEM_ID,
+  discoveryId: MOONCAP_TRAIL_RIBBONS_DISCOVERY_ID,
+};
+
+const SHORELINE_SURGE_REWARD_PROFILE: RaceRewardProfile = {
+  finisherRibbonId: SHORELINE_SURGE_FINISHER_RIBBON_ID,
+  finisherItemId: SHORELINE_SURGE_FINISHER_RIBBON_ITEM_ID,
+  podiumRibbonId: SHORELINE_SURGE_PODIUM_ROSETTE_ID,
+  podiumItemId: SHORELINE_SURGE_PODIUM_ROSETTE_ITEM_ID,
+  discoveryId: SHORELINE_SURGE_RIBBONS_DISCOVERY_ID,
+};
+
 export interface RaceResultInput {
   raceId: string;
   finishTimeMs: number;
@@ -59,6 +104,9 @@ export interface RaceRewardSummary {
   podiumBonusSparkles: number;
   newRibbonIds: readonly string[];
   newRewardItemIds: readonly ItemId[];
+  rainbowCupCompleted: boolean;
+  rainbowCupCompletedNow: boolean;
+  rainbowCupRewardItemId: ItemId | null;
 }
 
 export interface AppliedRaceResult {
@@ -67,9 +115,18 @@ export interface AppliedRaceResult {
 }
 
 function rewardProfileForRace(raceId: string): RaceRewardProfile {
-  return raceId === CRYSTAL_CASCADE_RACE_ID
-    ? CRYSTAL_CASCADE_REWARD_PROFILE
-    : RAINBOW_RUN_REWARD_PROFILE;
+  switch (raceId) {
+    case CRYSTAL_CASCADE_RACE_ID:
+      return CRYSTAL_CASCADE_REWARD_PROFILE;
+    case PETAL_PARADE_RACE_ID:
+      return PETAL_PARADE_REWARD_PROFILE;
+    case MOONCAP_TRAIL_RACE_ID:
+      return MOONCAP_TRAIL_REWARD_PROFILE;
+    case SHORELINE_SURGE_RACE_ID:
+      return SHORELINE_SURGE_REWARD_PROFILE;
+    default:
+      return RAINBOW_RUN_REWARD_PROFILE;
+  }
 }
 
 function appendUnique(values: readonly string[], value: string): string[] {
@@ -152,7 +209,7 @@ export function applyRaceResultToSave(save: SaveGame, input: RaceResultInput): A
   const discoveryIds = appendUnique(save.collections.discoveryIds, rewardProfile.discoveryId);
   const uniqueDiscoveryIds = appendUnique(save.world.uniqueDiscoveryIds, rewardProfile.discoveryId);
 
-  const nextSave: SaveGame = {
+  const raceSave: SaveGame = {
     ...save,
     inventory: {
       ...save.inventory,
@@ -177,9 +234,10 @@ export function applyRaceResultToSave(save: SaveGame, input: RaceResultInput): A
       uniqueDiscoveryIds,
     },
   };
+  const cup = applyRainbowCupCompletion(raceSave);
 
   return {
-    save: nextSave,
+    save: cup.save,
     summary: {
       previousBestTimeMs,
       bestTimeMs,
@@ -188,6 +246,9 @@ export function applyRaceResultToSave(save: SaveGame, input: RaceResultInput): A
       podiumBonusSparkles,
       newRibbonIds,
       newRewardItemIds,
+      rainbowCupCompleted: cup.completed,
+      rainbowCupCompletedNow: cup.completedNow,
+      rainbowCupRewardItemId: cup.rewardItemId,
     },
   };
 }
