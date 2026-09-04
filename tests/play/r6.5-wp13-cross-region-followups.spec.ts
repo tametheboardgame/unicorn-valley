@@ -19,12 +19,7 @@ interface DiagnosticSnapshot {
 interface BrowserDiagnosticsApi {
   snapshot(): DiagnosticSnapshot;
   startScene(sceneKey: string, data?: object): void;
-  setArcadeSpritePosition(
-    sceneKey: string,
-    objectName: string,
-    x: number,
-    y: number,
-  ): void;
+  setArcadeSpritePosition(sceneKey: string, objectName: string, x: number, y: number): void;
 }
 
 async function seedFollowUpPrerequisites(page: Page): Promise<void> {
@@ -186,11 +181,7 @@ test('WP13 follows Coral from Beach to Lumi in the Woods and leaves a lasting Be
     'wp13-story:return-to-coral-with-starwell-answer',
   );
   await interactAt(page, 'StarlightBeachScene', 1110, 1050);
-  await waitForObject(
-    page,
-    'StarlightBeachScene',
-    'wp13-persistent:shore-starwell-lantern',
-  );
+  await waitForObject(page, 'StarlightBeachScene', 'wp13-persistent:shore-starwell-lantern');
 
   const saved = await page.evaluate(() =>
     JSON.parse(localStorage.getItem('unicorn-valley.save') ?? '{}'),
