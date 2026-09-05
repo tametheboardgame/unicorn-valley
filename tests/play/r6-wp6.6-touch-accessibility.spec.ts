@@ -407,16 +407,26 @@ test('target-tablet race supports simultaneous RUN and JUMP without cancelling R
   });
 });
 
-test('target-tablet race assistance can be changed with the replacement touch control', async ({
-  page,
-}) => {
+test('target-tablet race Pause menu exposes assistance control', async ({ page }) => {
   test.setTimeout(60_000);
   await page.addInitScript(() => window.localStorage.clear());
   await page.goto('/?scene=race&diagnostics=1');
   await waitForScene(page, 'RaceScene');
 
   await expect(page.locator('[data-race-mobile-controls="true"]')).toBeVisible();
+  const pause = page.locator('[data-race-action="pause"]');
+  await expect(pause).toBeVisible();
+  const pauseBox = await pause.boundingBox();
+  expect(Math.min(pauseBox?.width ?? 0, pauseBox?.height ?? 0)).toBeGreaterThanOrEqual(48);
+  if (!pauseBox) {
+    throw new Error('Missing tablet race Pause control.');
+  }
+  await page.touchscreen.tap(pauseBox.x + pauseBox.width / 2, pauseBox.y + pauseBox.height / 2);
+
+  const resume = page.locator('[data-race-action="resume"]');
   const help = page.locator('[data-race-action="help"]');
+  await expect(resume).toBeVisible();
+  await expect(help).toBeVisible();
   const helpBox = await help.boundingBox();
   expect(Math.min(helpBox?.width ?? 0, helpBox?.height ?? 0)).toBeGreaterThanOrEqual(48);
 
