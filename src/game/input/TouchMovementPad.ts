@@ -93,7 +93,9 @@ export class TouchMovementPad {
     }
 
     this.setVisible(
-      this.tabletMode ? true : (preferredTouchControlsVisible ?? shouldDefaultTouchMovementPadVisible()),
+      this.tabletMode
+        ? true
+        : (preferredTouchControlsVisible ?? shouldDefaultTouchMovementPadVisible()),
       false,
     );
   }
