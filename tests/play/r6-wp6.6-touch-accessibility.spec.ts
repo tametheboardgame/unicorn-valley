@@ -194,7 +194,12 @@ test('target-tablet touch completes creator, exploration, Book and accessibility
 
   snapshot = await getSnapshot(page);
   let glade = getScene(snapshot, 'MoonflowerGladeScene');
-  for (const name of ['exploration-shell-book-button', 'exploration-shell-bag-button']) {
+  for (const name of [
+    'exploration-shell-map-button',
+    'exploration-shell-bag-button',
+    'exploration-shell-book-button',
+    'exploration-shell-settings-nav-button',
+  ]) {
     const target = glade.objects.find((object) => object.name === name);
     expect(target?.visible).toBe(true);
     expect(target?.interactive).toBe(true);
@@ -203,6 +208,46 @@ test('target-tablet touch completes creator, exploration, Book and accessibility
     );
   }
 
+  for (const name of [
+    'touch-movement-up',
+    'touch-movement-down',
+    'touch-movement-left',
+    'touch-movement-right',
+    'touch-movement-gallop',
+  ]) {
+    const target = glade.objects.find((object) => object.name === name);
+    expect(target?.visible).toBe(true);
+    expect(target?.interactive).toBe(true);
+    expect(Math.min(target?.displayWidth ?? 0, target?.displayHeight ?? 0)).toBeGreaterThanOrEqual(
+      80,
+    );
+  }
+
+  expect(
+    glade.objects.some(
+      (object) =>
+        object.name === 'exploration-tablet-hint' &&
+        object.visible &&
+        object.text?.includes('Tap the path'),
+    ),
+  ).toBe(true);
+  expect(
+    glade.objects.some((object) => object.name === 'exploration-controls-button' && object.visible),
+  ).toBe(false);
+
+  await logicalTap(page, 80, 46);
+  await waitForScene(page, 'InventoryScene');
+  snapshot = await getSnapshot(page);
+  const mapScene = getScene(snapshot, 'InventoryScene');
+  expect(
+    mapScene.objects.some((object) => object.name === 'bag-map-content' && object.visible),
+  ).toBe(true);
+  expect(mapScene.objects.some((object) => object.name === 'bag-map-current-location')).toBe(true);
+  await logicalTap(page, 490, 668);
+  await waitForScene(page, 'MoonflowerGladeScene');
+
+  snapshot = await getSnapshot(page);
+  glade = getScene(snapshot, 'MoonflowerGladeScene');
   const before = getPlayer(glade);
   await logicalTap(page, 900, 360);
   await page.waitForFunction(
@@ -220,16 +265,37 @@ test('target-tablet touch completes creator, exploration, Book and accessibility
     },
     { startX: before.x },
   );
+  await page.waitForFunction(() => {
+    const diagnosticWindow = window as typeof window & {
+      __UNICORN_VALLEY_DIAGNOSTICS__?: { snapshot(): BrowserDiagnosticSnapshot };
+    };
+    const scene = diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__
+      ?.snapshot()
+      .scenes.find((candidate) => candidate.key === 'MoonflowerGladeScene');
+    return scene?.objects.some(
+      (object) => object.name === 'exploration-direct-interaction-target' && object.interactive,
+    );
+  });
+  snapshot = await getSnapshot(page);
+  glade = getScene(snapshot, 'MoonflowerGladeScene');
+  expect(
+    glade.objects.some(
+      (object) =>
+        object.name === 'exploration-interaction-prompt-label' &&
+        object.visible &&
+        object.text?.includes('Pip'),
+    ),
+  ).toBe(true);
 
-  await logicalTap(page, 870, 58);
+  await logicalTap(page, 340, 46);
   await waitForScene(page, 'WonderbookScene');
   await logicalTap(page, 640, 682);
   await waitForScene(page, 'MoonflowerGladeScene');
 
-  await logicalTap(page, 1168, 682);
-  await page.waitForTimeout(100);
-  await logicalTap(page, 1090, 500);
-  await logicalTap(page, 1090, 556);
+  await logicalTap(page, 486, 46);
+  await waitForScene(page, 'SettingsScene');
+  await logicalTap(page, 640, 418);
+  await logicalTap(page, 640, 484);
   await page.waitForTimeout(300);
 
   const stored = await page.evaluate(() =>
@@ -237,21 +303,11 @@ test('target-tablet touch completes creator, exploration, Book and accessibility
   );
   expect(stored).toEqual({ reducedMotion: true, highVisibilityInteractions: true });
 
+  await logicalTap(page, 640, 666);
+  await waitForScene(page, 'MoonflowerGladeScene');
+
   snapshot = await getSnapshot(page);
   glade = getScene(snapshot, 'MoonflowerGladeScene');
-  expect(
-    glade.objects.some(
-      (object) =>
-        object.name === 'exploration-reduced-motion-toggle-label' && object.text?.endsWith('On'),
-    ),
-  ).toBe(true);
-  expect(
-    glade.objects.some(
-      (object) =>
-        object.name === 'exploration-high-visibility-toggle-label' && object.text?.endsWith('On'),
-    ),
-  ).toBe(true);
-
   const npcBefore = glade.objects.find((object) => object.name.startsWith('core-npc:'));
   expect(npcBefore).toBeDefined();
   await page.waitForTimeout(650);
@@ -272,13 +328,25 @@ test('target-tablet race supports simultaneous RUN and JUMP without cancelling R
   await waitForRaceStarted(page);
   await waitForForwardControl(page, false);
 
-  await expect(page.locator('[data-race-mobile-controls="true"]')).toBeVisible();
+  const overlay = page.locator('[data-race-mobile-controls="true"]');
+  await expect(overlay).toBeVisible();
   const runButton = page.locator('[data-race-action="run"]');
   const jumpButton = page.locator('[data-race-action="jump"]');
   const runBox = await runButton.boundingBox();
   const jumpBox = await jumpButton.boundingBox();
-  expect(Math.min(runBox?.width ?? 0, runBox?.height ?? 0)).toBeGreaterThanOrEqual(74);
-  expect(Math.min(jumpBox?.width ?? 0, jumpBox?.height ?? 0)).toBeGreaterThanOrEqual(74);
+  expect(Math.min(runBox?.width ?? 0, runBox?.height ?? 0)).toBeGreaterThanOrEqual(96);
+  expect(Math.min(jumpBox?.width ?? 0, jumpBox?.height ?? 0)).toBeGreaterThanOrEqual(96);
+  expect(runBox?.x ?? 9999).toBeLessThan(220);
+  expect((jumpBox?.x ?? 0) + (jumpBox?.width ?? 0)).toBeGreaterThan(800);
+
+  expect(
+    await page
+      .locator('#game-shell')
+      .evaluate((element) => element.classList.contains('race-mobile-controls-active')),
+  ).toBe(false);
+  expect(await overlay.evaluate((element) => getComputedStyle(element).position)).toBe('fixed');
+  const canvasBox = await page.locator('canvas').boundingBox();
+  expect(canvasBox?.height ?? 0).toBeGreaterThan(500);
 
   let snapshot = await getSnapshot(page);
   let race = getScene(snapshot, 'RaceScene');
@@ -328,27 +396,39 @@ test('target-tablet race supports simultaneous RUN and JUMP without cancelling R
   race = getScene(snapshot, 'RaceScene');
   expect(getPlayer(race).x - afterSecondFinger.x).toBeGreaterThan(10);
 
+  await page.evaluate(() => window.dispatchEvent(new Event('blur')));
+  await waitForForwardControl(page, false);
+
   await runButton.dispatchEvent('pointerup', {
     pointerId: 1,
     pointerType: 'touch',
     isPrimary: true,
     buttons: 0,
   });
-  await waitForForwardControl(page, false);
 });
 
-test('target-tablet race assistance can be changed with the replacement touch control', async ({
-  page,
-}) => {
+test('target-tablet race Pause menu exposes assistance control', async ({ page }) => {
   test.setTimeout(60_000);
   await page.addInitScript(() => window.localStorage.clear());
   await page.goto('/?scene=race&diagnostics=1');
   await waitForScene(page, 'RaceScene');
 
   await expect(page.locator('[data-race-mobile-controls="true"]')).toBeVisible();
+  const pause = page.locator('[data-race-action="pause"]');
+  await expect(pause).toBeVisible();
+  const pauseBox = await pause.boundingBox();
+  expect(Math.min(pauseBox?.width ?? 0, pauseBox?.height ?? 0)).toBeGreaterThanOrEqual(48);
+  if (!pauseBox) {
+    throw new Error('Missing tablet race Pause control.');
+  }
+  await page.touchscreen.tap(pauseBox.x + pauseBox.width / 2, pauseBox.y + pauseBox.height / 2);
+
+  const resume = page.locator('[data-race-action="resume"]');
   const help = page.locator('[data-race-action="help"]');
+  await expect(resume).toBeVisible();
+  await expect(help).toBeVisible();
   const helpBox = await help.boundingBox();
-  expect(Math.min(helpBox?.width ?? 0, helpBox?.height ?? 0)).toBeGreaterThanOrEqual(74);
+  expect(Math.min(helpBox?.width ?? 0, helpBox?.height ?? 0)).toBeGreaterThanOrEqual(48);
 
   const snapshot = await getSnapshot(page);
   const race = getScene(snapshot, 'RaceScene');
