@@ -233,10 +233,15 @@ export class RaceMobileControlsManager {
   }
 
   private sync(): void {
-    if (this.pausedRaceScene && !this.pausedRaceScene.scene.isPaused()) {
+    const activeRaceScene = this.activeRaceScene();
+    if (
+      this.pausedRaceScene &&
+      !this.pausedRaceScene.scene.isPaused() &&
+      activeRaceScene !== this.pausedRaceScene
+    ) {
       this.pausedRaceScene = null;
     }
-    const scene = this.activeRaceScene() ?? this.pausedRaceScene;
+    const scene = activeRaceScene ?? this.pausedRaceScene;
     const active = Boolean(scene && browserHasRaceTouchCapability());
     const tabletMode = active && browserUsesLandscapeTabletPresentation();
 
