@@ -291,9 +291,7 @@ function snapshotScene(scene: Phaser.Scene): DiagnosticSceneSnapshot {
   };
 }
 
-function sceneLifecycleState(
-  scene: Phaser.Scene,
-): DiagnosticSceneHealthSnapshot['lifecycleState'] {
+function sceneLifecycleState(scene: Phaser.Scene): DiagnosticSceneHealthSnapshot['lifecycleState'] {
   if (scene.scene.isActive()) {
     return 'active';
   }
