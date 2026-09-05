@@ -15,9 +15,7 @@ import {
 } from '../../content/r65RaceExpansion';
 import { R65_CROSS_REGION_FOLLOW_UP_DISCOVERIES } from '../../content/r65CrossRegionFollowUp';
 import { R65_STARLIGHT_BEACH_DISCOVERIES } from '../../content/r65StarlightBeach';
-import {
-  R5_CRYSTAL_BROOK_DISCOVERIES,
-} from '../../content/r5CrystalBrook';
+import { R5_CRYSTAL_BROOK_DISCOVERIES } from '../../content/r5CrystalBrook';
 import { R5_CRYSTAL_BROOK_STORY_DISCOVERIES } from '../../content/r5CrystalBrookStory';
 import { R5_FIREFLY_LANTERN_DISCOVERIES } from '../../content/r5FireflyLantern';
 import { R5_LUMI_DISCOVERIES } from '../../content/r5LumiWoodsStory';
@@ -126,7 +124,8 @@ const REGION_DEFINITIONS: readonly RegionDefinition[] = [
     name: 'Moonflower Glade & Cottage',
     hiddenName: 'Moonflower Glade & Cottage',
     icon: '🌙',
-    description: 'Home, Moonflower Bridge and the little secrets that make the Glade feel lived in.',
+    description:
+      'Home, Moonflower Bridge and the little secrets that make the Glade feel lived in.',
     hint: 'There is always another small thing worth noticing near home.',
     discoveryIds: discoveryIds(R6_GLADE_HOME_DISCOVERIES),
     alwaysRevealed: true,
@@ -152,10 +151,9 @@ const REGION_DEFINITIONS: readonly RegionDefinition[] = [
     icon: '🌈',
     description: 'Picnic hills, a windmill lookout and playful races with room to wander.',
     hint: 'Follow the colour beyond the village and see what is happening away from the race gate.',
-    discoveryIds: uniqueIds(
-      discoveryIds(R6_MEADOW_RUN_DISCOVERIES),
-      [PETAL_PARADE_RIBBONS_DISCOVERY_ID],
-    ),
+    discoveryIds: uniqueIds(discoveryIds(R6_MEADOW_RUN_DISCOVERIES), [
+      PETAL_PARADE_RIBBONS_DISCOVERY_ID,
+    ]),
   },
   {
     id: 'region:crystal-brook',
@@ -185,14 +183,17 @@ const REGION_DEFINITIONS: readonly RegionDefinition[] = [
       [MOONCAP_TRAIL_RIBBONS_DISCOVERY_ID],
     ),
     collectionLine: (save) =>
-      hasPlayedFireflyLantern(save) ? 'Firefly Lantern played ✨' : 'A lantern activity is still waiting',
+      hasPlayedFireflyLantern(save)
+        ? 'Firefly Lantern played ✨'
+        : 'A lantern activity is still waiting',
   },
   {
     id: 'region:starlight-beach',
     name: 'Starlight Beach',
     hiddenName: 'A moonlit shore...',
     icon: '🐚',
-    description: 'Shell Cove, Moonlit Point, Coral’s notebook, Skipper’s course and a light linked to the Starwell.',
+    description:
+      'Shell Cove, Moonlit Point, Coral’s notebook, Skipper’s course and a light linked to the Starwell.',
     hint: 'One valley path eventually reaches a shore where moonlight meets the sea.',
     discoveryIds: uniqueIds(
       discoveryIds(R65_STARLIGHT_BEACH_DISCOVERIES),
@@ -297,7 +298,8 @@ export function buildWonderbookGoalEntries(
       id: 'goal:valley-explorer',
       name: 'Valley Explorer',
       icon: '🗺️',
-      description: 'Fill the map in your head by finding something memorable in each big part of the valley.',
+      description:
+        'Fill the map in your head by finding something memorable in each big part of the valley.',
       current: exploredRegions,
       target: regions.length,
       complete: exploredRegions >= regions.length,
@@ -308,7 +310,8 @@ export function buildWonderbookGoalEntries(
       id: 'goal:friendship-garden',
       name: 'Friendship Garden',
       icon: '💛',
-      description: 'Meet valley residents and let friendships grow naturally through stories and return visits.',
+      description:
+        'Meet valley residents and let friendships grow naturally through stories and return visits.',
       current: Math.min(friendshipTarget, options.knownFriends),
       target: friendshipTarget,
       complete: options.knownFriends >= friendshipTarget,
