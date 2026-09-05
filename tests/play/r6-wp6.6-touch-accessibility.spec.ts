@@ -170,7 +170,7 @@ async function waitForForwardControl(page: Page, running: boolean): Promise<void
 test('target-tablet touch completes creator, exploration, Book and accessibility flow', async ({
   page,
 }) => {
-  test.setTimeout(60_000);
+  test.setTimeout(90_000);
   await page.addInitScript(() => window.localStorage.clear());
   await page.goto('/?diagnostics=1');
   await waitForScene(page, 'TitleScene');

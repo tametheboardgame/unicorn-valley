@@ -14,7 +14,7 @@ This file is the concise project-level navigation layer. Detailed release conten
 
 ## R6.5 - Valley Completeness and Breadth
 
-Status: In progress
+Status: Waiting at final human readiness gate
 
 Canonical release contract: `docs/07V-R6.5-VALLEY-COMPLETENESS-BREADTH.md`
 
@@ -39,12 +39,12 @@ Current package sequence:
 - R6.5-WP11 - Existing Valley Quest Pack A: complete.
 - R6.5-WP12 - Race Expansion and Rainbow Cup: complete; merged as `610216ae13b96772d3a7b7e95696c695ddcd1870`.
 - R6.5-WP13 - Quest Pack B: Cross-Region and Follow-up Stories: complete; merged as `3db374dd48445386819d1da97d4367619f7b9cef`.
-- R6.5-WP14 - Repeatable Activity Expansion: active on `r6.5-wp14-repeatable-activity-expansion`.
-- R6.5-WP15 - Wonderbook, Collections and Long-Term Goals: next after WP14.
-- R6.5-WP16 - Valley Tidy-up, Balance and Content Polish: final autonomous consolidation package.
-- R6.5-WP17 - Full Human Playthrough and R7 Readiness Gate: human gate.
+- R6.5-WP14 - Repeatable Activity Expansion: complete; merged as `5d246ae012ef351e9dd356befc3a9608222041e6`.
+- R6.5-WP15 - Wonderbook, Collections and Long-Term Goals: complete; merged as `bdc86e05472d0f061e3b748cc42706cc6541f523`.
+- R6.5-WP16 - Valley Tidy-up, Balance and Content Polish: complete through PR #145 after final exact-head technical validation.
+- R6.5-WP17 - Full Human Playthrough and R7 Readiness Gate: **waiting for human playtest and explicit readiness approval**.
 
-R6.5-WP17 remains the human readiness gate for the release.
+R6.5-WP17 is the final release gate. Automated work must stop here unless the human playthrough produces bounded R6.5 remediation work.
 
 ## R7 - Daughter-led Expansion
 

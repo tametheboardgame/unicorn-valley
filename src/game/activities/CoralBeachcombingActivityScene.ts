@@ -5,6 +5,7 @@ import {
 } from '../../content/r65RepeatableActivities';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { getBrowserSaveService } from '../save/browserSaveService';
+import { PortraitModalCompanion } from '../ui/PortraitModalCompanion';
 import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from '../ui/uiTheme';
 import {
   getCoralBeachcombingProgress,
@@ -83,6 +84,7 @@ export class CoralBeachcombingActivityScene extends Phaser.Scene {
   private body: Phaser.GameObjects.Container | null = null;
   private noteText: Phaser.GameObjects.Text | null = null;
   private finished = false;
+  private portraitCompanion: PortraitModalCompanion | null = null;
 
   public constructor() {
     super('CoralBeachcombingActivityScene');
@@ -96,6 +98,10 @@ export class CoralBeachcombingActivityScene extends Phaser.Scene {
 
     this.cameras.main.setBackgroundColor('#527f94');
     this.createBackdrop();
+    this.portraitCompanion = PortraitModalCompanion.create(
+      'coral-beachcombing',
+      'Coral’s Beachcombing Notebook',
+    );
     this.renderRun();
 
     this.input.keyboard?.on('keydown-ESC', this.leaveActivity, this);
@@ -107,6 +113,8 @@ export class CoralBeachcombingActivityScene extends Phaser.Scene {
       for (let index = 0; index < 5; index += 1) {
         this.input.keyboard?.removeAllListeners(`keydown-${index + 1}`);
       }
+      this.portraitCompanion?.destroy();
+      this.portraitCompanion = null;
       this.body?.destroy(true);
       this.body = null;
       this.noteText = null;
@@ -217,6 +225,44 @@ export class CoralBeachcombingActivityScene extends Phaser.Scene {
       )
       .setOrigin(0.5);
     this.body.add(this.noteText);
+    this.refreshPortraitCompanion();
+  }
+
+  private refreshPortraitCompanion(note?: ObservationSpot): void {
+    if (!this.portraitCompanion || this.finished) {
+      return;
+    }
+
+    const outcome = BEACHCOMBING_OUTCOMES.find(({ trail }) => trail === this.trail);
+    const progressLine = `${this.observed.size}/${REQUIRED_OBSERVATIONS} observations recorded. Pick any four.`;
+    this.portraitCompanion.setHeader(
+      `${outcome?.icon ?? '🔎'} Coral’s Beachcombing Notebook`,
+      'Look closely at four things. Nothing living is collected, there is no timer and nothing to fail.',
+    );
+    this.portraitCompanion.setCards([
+      {
+        id: 'progress',
+        title: note ? `${note.icon} ${note.label}` : 'Today’s little clue',
+        description: note?.note ?? progressLine,
+        badge: note ? progressLine : undefined,
+      },
+    ]);
+    this.portraitCompanion.setActionGroups([
+      {
+        id: 'observations',
+        label: 'Choose things to notice',
+        actions: OBSERVATIONS[this.trail].map((spot, index) => ({
+          id: `spot-${index + 1}`,
+          label: `${spot.icon} ${spot.label}${this.observed.has(index) ? ' ✓' : ''}`,
+          selected: this.observed.has(index),
+          onPress: () => this.observe(index),
+        })),
+      },
+      {
+        id: 'exit',
+        actions: [{ id: 'back', label: '← Back to Beach', onPress: () => this.leaveActivity() }],
+      },
+    ]);
   }
 
   private observe(index: number): void {
@@ -239,6 +285,7 @@ export class CoralBeachcombingActivityScene extends Phaser.Scene {
     this.noteText?.setText(
       `${spot.icon} ${spot.note}\n${this.observed.size}/${REQUIRED_OBSERVATIONS} observations recorded.`,
     );
+    this.refreshPortraitCompanion(spot);
   }
 
   private renderResult(): void {
@@ -256,11 +303,13 @@ export class CoralBeachcombingActivityScene extends Phaser.Scene {
       })
       .setOrigin(0.5)
       .setName('wp14-beachcombing-result');
+    const summaryText =
+      'Coral adds your careful observations to the notebook. Nothing living was taken from the beach.';
     const summary = this.add
       .text(
         GAME_WIDTH / 2,
         285,
-        `Coral adds your careful observations to the notebook. Nothing living was taken from the beach.\n\nNotebook: ${progress.completedOutcomeCount}/${progress.totalOutcomeCount} pages discovered.`,
+        `${summaryText}\n\nNotebook: ${progress.completedOutcomeCount}/${progress.totalOutcomeCount} pages discovered.`,
         {
           color: UI_COLOURS.softInk,
           fontFamily: UI_FONT,
@@ -276,6 +325,25 @@ export class CoralBeachcombingActivityScene extends Phaser.Scene {
     this.body?.add([title, summary]);
     this.createButton(500, 465, 260, '🔎 Beachcomb again', () => this.restartRun(), this.body);
     this.createButton(780, 465, 260, '✓ Back to Beach', () => this.leaveActivity(), this.body);
+
+    this.portraitCompanion?.setHeader(`${outcome.icon} ${outcome.name}`, 'Notebook page complete.');
+    this.portraitCompanion?.setCards([
+      {
+        id: 'result',
+        title: 'Coral’s note',
+        description: summaryText,
+        badge: `Notebook: ${progress.completedOutcomeCount}/${progress.totalOutcomeCount} pages discovered.`,
+      },
+    ]);
+    this.portraitCompanion?.setActionGroups([
+      {
+        id: 'result-actions',
+        actions: [
+          { id: 'again', label: '🔎 Beachcomb again', onPress: () => this.restartRun() },
+          { id: 'back', label: '✓ Back to Beach', onPress: () => this.leaveActivity() },
+        ],
+      },
+    ]);
   }
 
   private restartRun(): void {
