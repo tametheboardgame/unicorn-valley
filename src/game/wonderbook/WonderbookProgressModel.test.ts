@@ -5,10 +5,7 @@ import {
   SUNSHINE_SPRINKLE_CAKE_DISCOVERY_ID,
   TIDEPOOL_STAR_NOTEBOOK_DISCOVERY_ID,
 } from '../../content/r65RepeatableActivities';
-import {
-  PETAL_PARADE_RACE_ID,
-  SHORELINE_SURGE_RACE_ID,
-} from '../../content/r65RaceExpansion';
+import { PETAL_PARADE_RACE_ID, SHORELINE_SURGE_RACE_ID } from '../../content/r65RaceExpansion';
 import { createDefaultSave } from '../save/createDefaultSave';
 import {
   buildWonderbookGoalEntries,
