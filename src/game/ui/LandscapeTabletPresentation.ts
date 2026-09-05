@@ -11,7 +11,8 @@ export function shouldUseLandscapeTabletPresentation(
 ): boolean {
   const touchCapable =
     signals.maxTouchPoints > 0 || signals.hasTouchStart || signals.hasCoarsePointer;
-  return touchCapable && width >= 800 && height >= 500 && width > height;
+  const touchPrimary = signals.hasTouchStart || signals.hasCoarsePointer;
+  return touchCapable && touchPrimary && width >= 800 && height >= 500 && width > height;
 }
 
 export function browserUsesLandscapeTabletPresentation(): boolean {
