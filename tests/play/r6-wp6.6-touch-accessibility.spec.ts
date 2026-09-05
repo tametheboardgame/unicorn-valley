@@ -232,9 +232,7 @@ test('target-tablet touch completes creator, exploration, Book and accessibility
     ),
   ).toBe(true);
   expect(
-    glade.objects.some(
-      (object) => object.name === 'exploration-controls-button' && object.visible,
-    ),
+    glade.objects.some((object) => object.name === 'exploration-controls-button' && object.visible),
   ).toBe(false);
 
   const before = getPlayer(glade);
