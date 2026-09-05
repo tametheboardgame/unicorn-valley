@@ -239,9 +239,9 @@ test('target-tablet touch completes creator, exploration, Book and accessibility
   await waitForScene(page, 'InventoryScene');
   snapshot = await getSnapshot(page);
   const mapScene = getScene(snapshot, 'InventoryScene');
-  expect(mapScene.objects.some((object) => object.name === 'bag-map-content' && object.visible)).toBe(
-    true,
-  );
+  expect(
+    mapScene.objects.some((object) => object.name === 'bag-map-content' && object.visible),
+  ).toBe(true);
   expect(mapScene.objects.some((object) => object.name === 'bag-map-current-location')).toBe(true);
   await logicalTap(page, 490, 668);
   await waitForScene(page, 'MoonflowerGladeScene');
