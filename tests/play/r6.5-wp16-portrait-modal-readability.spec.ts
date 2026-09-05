@@ -44,9 +44,9 @@ async function expectReadableCompanion(page: Page, id: string): Promise<void> {
   const root = page.locator(`[data-mobile-modal-companion="${id}"]`);
   await expect(root).toBeVisible();
 
-  const introSize = await root.locator('.mobile-modal-intro').evaluate((element) =>
-    Number.parseFloat(getComputedStyle(element).fontSize),
-  );
+  const introSize = await root
+    .locator('.mobile-modal-intro')
+    .evaluate((element) => Number.parseFloat(getComputedStyle(element).fontSize));
   expect(introSize).toBeGreaterThanOrEqual(16);
 
   const buttons = root.locator('.mobile-modal-button');
