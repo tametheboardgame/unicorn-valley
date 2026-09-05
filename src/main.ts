@@ -14,7 +14,8 @@ import { getExplorationPathPolishManager } from './game/world/ExplorationPathPol
 import { getWorldLayerAlignmentManager } from './game/world/WorldLayerAlignmentManager';
 
 const game = new Phaser.Game(gameConfig);
-const diagnosticsEnabled = new URLSearchParams(globalThis.location.search).get('diagnostics') === '1';
+const diagnosticsEnabled =
+  new URLSearchParams(globalThis.location.search).get('diagnostics') === '1';
 
 if (diagnosticsEnabled) {
   void import('./game/testing/FreezeDiagnostics').then(({ installFreezeDiagnostics }) => {
