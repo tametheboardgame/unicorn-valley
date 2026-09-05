@@ -4,13 +4,13 @@
   "project_id": "unicorn-valley",
   "display_name": "Unicorn Valley",
   "phase": "R6.5 - Valley Completeness and Breadth",
-  "current_work_package": "R6.5-WP14",
-  "current_work_package_path": "docs/work-packages/R6.5-WP14-REPEATABLE-ACTIVITY-EXPANSION.md",
+  "current_work_package": "R6.5-WP15",
+  "current_work_package_path": "docs/work-packages/R6.5-WP15-WONDERBOOK-COLLECTIONS-LONG-TERM-GOALS.md",
   "status": "in_progress",
   "autonomy_state": "green",
   "agent_state": "active",
-  "branch": "r6.5-wp14-repeatable-activity-expansion",
-  "latest_commit": "2f5e78d0c492f74795913285aff97bf935ceb627",
+  "branch": "r6.5-wp15-wonderbook-collections-long-term-goals",
+  "latest_commit": "cf22a05036205de6f7b56a11a48fe966076ed023",
   "ci_state": "running",
   "technical_validation_state": "running",
   "human_acceptance_state": "not_required",
@@ -21,6 +21,6 @@
   "night_shift_state": "not_configured",
   "chat_disposition": "keep",
   "delivery_mode": "pr_required",
-  "last_activity_at": "2026-09-04T20:37:00+01:00",
-  "updated_at": "2026-09-04T20:37:00+01:00"
+  "last_activity_at": "2026-09-05T08:27:00+01:00",
+  "updated_at": "2026-09-05T08:27:00+01:00"
 }
