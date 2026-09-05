@@ -8,7 +8,7 @@
   "current_work_package_path": "docs/work-packages/R6.5-WP18A-LANDSCAPE-TABLET-UX-CONCEPT-APPROVAL.md",
   "status": "waiting_human",
   "autonomy_state": "red",
-  "agent_state": "waiting_human_visual_approval",
+  "agent_state": "waiting_human",
   "branch": "main",
   "latest_commit": "a424ec9f50be2d83b2a7c246e5735d9e24274480",
   "ci_state": "passing",
