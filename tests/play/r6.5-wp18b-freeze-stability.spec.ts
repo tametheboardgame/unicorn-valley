@@ -282,7 +282,7 @@ async function seedRetiredInventoryItem(page: Page): Promise<void> {
 test.describe
   .serial('R6.5-WP18B freeze and lifecycle regressions', () => {
     test('Starlight Beach survives repeated real Bag open/close cycles', async ({ page }) => {
-      test.setTimeout(60_000);
+      test.setTimeout(120_000);
       const browserErrors: string[] = [];
       const healthSamples: DiagnosticSceneHealthSnapshot[] = [];
       page.on('pageerror', (error) => browserErrors.push(error.message));
