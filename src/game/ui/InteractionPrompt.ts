@@ -190,7 +190,7 @@ export class InteractionPrompt {
         }
       }
     } else {
-      this.tabletHintText?.setText('Tap the ground to move  •  Move close to friends and places');
+      this.tabletHintText?.setText('Tap the path to move  •  Move close to friends and places');
       this.directTargetZone?.disableInteractive();
     }
     this.refreshPresentation();
