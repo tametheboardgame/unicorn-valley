@@ -242,8 +242,9 @@ test.describe
 
       await logicalClick(page, 170, 674);
       await waitForScene(page, 'SunbeamVillageScene');
-      expect(browserErrors, 'Twinkle & Thread lifecycle cycling must not throw runtime errors').toEqual(
-        [],
-      );
+      expect(
+        browserErrors,
+        'Twinkle & Thread lifecycle cycling must not throw runtime errors',
+      ).toEqual([]);
     });
   });
