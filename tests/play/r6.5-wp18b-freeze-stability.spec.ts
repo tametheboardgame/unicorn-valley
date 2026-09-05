@@ -34,33 +34,61 @@ interface BrowserDiagnosticsApi {
   startScene(sceneKey: string, data?: object): void;
 }
 
-function requireDiagnostics(): BrowserDiagnosticsApi {
-  const api = (
-    window as typeof window & {
-      __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
-    }
-  ).__UNICORN_VALLEY_DIAGNOSTICS__;
-  if (!api) {
-    throw new Error('Browser diagnostics are unavailable.');
-  }
-  return api;
-}
-
 async function snapshot(page: Page): Promise<BrowserDiagnosticSnapshot> {
-  return page.evaluate(() => requireDiagnostics().snapshot());
+  return page.evaluate(() => {
+    const api = (
+      window as typeof window & {
+        __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
+      }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__;
+    if (!api) {
+      throw new Error('Browser diagnostics are unavailable.');
+    }
+    return api.snapshot();
+  });
 }
 
 async function resetPerformance(page: Page): Promise<void> {
-  await page.evaluate(() => requireDiagnostics().resetPerformance());
+  await page.evaluate(() => {
+    const api = (
+      window as typeof window & {
+        __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
+      }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__;
+    if (!api) {
+      throw new Error('Browser diagnostics are unavailable.');
+    }
+    api.resetPerformance();
+  });
 }
 
 async function performanceSnapshot(page: Page): Promise<FramePerformanceSnapshot> {
-  return page.evaluate(() => requireDiagnostics().performance());
+  return page.evaluate(() => {
+    const api = (
+      window as typeof window & {
+        __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
+      }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__;
+    if (!api) {
+      throw new Error('Browser diagnostics are unavailable.');
+    }
+    return api.performance();
+  });
 }
 
 async function startScene(page: Page, sceneKey: string, data?: object): Promise<void> {
   await page.evaluate(
-    ({ key, sceneData }) => requireDiagnostics().startScene(key, sceneData),
+    ({ key, sceneData }) => {
+      const api = (
+        window as typeof window & {
+          __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
+        }
+      ).__UNICORN_VALLEY_DIAGNOSTICS__;
+      if (!api) {
+        throw new Error('Browser diagnostics are unavailable.');
+      }
+      api.startScene(key, sceneData);
+    },
     { key: sceneKey, sceneData: data },
   );
 }
