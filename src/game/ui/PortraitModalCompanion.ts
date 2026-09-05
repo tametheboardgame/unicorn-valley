@@ -69,7 +69,9 @@ export class PortraitModalCompanion {
     this.actions.className = 'mobile-modal-actions';
 
     this.root.append(this.heading, this.intro, this.cards, this.actions);
-    (globalThis.document.querySelector('#game-shell') ?? globalThis.document.body).append(this.root);
+    (globalThis.document.querySelector('#game-shell') ?? globalThis.document.body).append(
+      this.root,
+    );
   }
 
   public setHeader(title: string, intro: string): void {
