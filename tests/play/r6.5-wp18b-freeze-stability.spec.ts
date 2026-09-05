@@ -126,6 +126,17 @@ async function waitForScene(page: Page, sceneKey: string): Promise<void> {
   await page.waitForTimeout(120);
 }
 
+async function waitForRegisteredScene(page: Page, sceneKey: string): Promise<void> {
+  await page.waitForFunction((expected) => {
+    const api = (
+      window as typeof window & {
+        __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
+      }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__;
+    return api?.snapshot().health.scenes.some((scene) => scene.key === expected) === true;
+  }, sceneKey);
+}
+
 async function logicalClick(page: Page, logicalX: number, logicalY: number): Promise<void> {
   const current = await snapshot(page);
   const canvas = page.locator('canvas');
@@ -235,18 +246,34 @@ async function openAndCloseBag(page: Page, returnScene: string): Promise<void> {
 async function seedRetiredInventoryItem(page: Page): Promise<void> {
   await page.evaluate(() => {
     const storageKey = 'unicorn-valley.save';
-    const rawSave = localStorage.getItem(storageKey);
-    if (!rawSave) {
-      throw new Error('Expected Starlight Beach to create a save before stale-item seeding.');
+    const candidateKeys: string[] = [];
+    for (let index = 0; index < localStorage.length; index += 1) {
+      const key = localStorage.key(index);
+      if (key === storageKey || key?.startsWith(`${storageKey}.schema.`)) {
+        candidateKeys.push(key);
+      }
     }
-    const save = JSON.parse(rawSave) as {
-      inventory?: { itemQuantities?: Record<string, number> };
-    };
-    if (!save.inventory?.itemQuantities) {
-      throw new Error('Current save does not contain an inventory item map.');
+
+    let mutatedRecords = 0;
+    for (const key of candidateKeys) {
+      const rawSave = localStorage.getItem(key);
+      if (!rawSave) {
+        continue;
+      }
+      const save = JSON.parse(rawSave) as {
+        inventory?: { itemQuantities?: Record<string, number> };
+      };
+      if (!save.inventory?.itemQuantities) {
+        continue;
+      }
+      save.inventory.itemQuantities['item:retired-from-old-build'] = 1;
+      localStorage.setItem(key, JSON.stringify(save));
+      mutatedRecords += 1;
     }
-    save.inventory.itemQuantities['item:retired-from-old-build'] = 1;
-    localStorage.setItem(storageKey, JSON.stringify(save));
+
+    if (mutatedRecords === 0) {
+      throw new Error('Expected Starlight Beach to create a current save before stale-item seeding.');
+    }
   });
 }
 
@@ -311,6 +338,7 @@ test.describe
 
       await page.goto('/?scene=glade&diagnostics=1');
       await waitForScene(page, 'MoonflowerGladeScene');
+      await waitForRegisteredScene(page, 'HollowTreeNookScene');
 
       for (let cycle = 0; cycle < 8; cycle += 1) {
         await startScene(page, 'HollowTreeNookScene');
@@ -339,6 +367,7 @@ test.describe
 
       await page.goto('/?scene=village&diagnostics=1');
       await waitForScene(page, 'SunbeamVillageScene');
+      await waitForRegisteredScene(page, 'VillageInteriorScene');
       await startScene(page, 'VillageInteriorScene', {
         interiorId: 'accessory-shop',
         returnScene: 'SunbeamVillageScene',
