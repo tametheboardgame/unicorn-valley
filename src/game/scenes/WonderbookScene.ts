@@ -404,11 +404,7 @@ export class WonderbookScene extends Phaser.Scene {
     }
   }
 
-  private createCard(
-    entry: WonderbookCard,
-    x: number,
-    y: number,
-  ): Phaser.GameObjects.GameObject[] {
+  private createCard(entry: WonderbookCard, x: number, y: number): Phaser.GameObjects.GameObject[] {
     const stickerColour = entry.celebrate ? 0xffe6a6 : entry.known ? 0xead8f3 : 0xe9e0ea;
     const stickerStroke = entry.celebrate ? 0xd6b35f : entry.known ? 0xc895b8 : 0xc7b5ca;
     const sticker = this.add
