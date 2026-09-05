@@ -123,9 +123,11 @@ function describeUnknown(value: unknown): string {
 }
 
 export function installFreezeDiagnostics(game: Phaser.Game): FreezeDiagnosticsApi {
-  const existing = (globalThis as typeof globalThis & {
-    __UNICORN_VALLEY_FREEZE_DIAGNOSTICS__?: FreezeDiagnosticsApi;
-  }).__UNICORN_VALLEY_FREEZE_DIAGNOSTICS__;
+  const existing = (
+    globalThis as typeof globalThis & {
+      __UNICORN_VALLEY_FREEZE_DIAGNOSTICS__?: FreezeDiagnosticsApi;
+    }
+  ).__UNICORN_VALLEY_FREEZE_DIAGNOSTICS__;
   if (existing) {
     return existing;
   }
@@ -243,7 +245,7 @@ export function installFreezeDiagnostics(game: Phaser.Game): FreezeDiagnosticsAp
         heartbeatAgeMs: Math.max(0, now - lastHeartbeatAt),
         lastFrameMs: frameDurations.at(-1) ?? 0,
         recentFrameCount: frameDurations.length,
-        recentLongFrameCount: frameDurations.filter(duration => duration > LONG_FRAME_MS).length,
+        recentLongFrameCount: frameDurations.filter((duration) => duration > LONG_FRAME_MS).length,
         worstRecentFrameMs: frameDurations.length > 0 ? Math.max(...frameDurations) : 0,
         scenes: Object.values(game.scene.keys).map(snapshotScene),
         lastInteraction,
@@ -276,9 +278,11 @@ export function installFreezeDiagnostics(game: Phaser.Game): FreezeDiagnosticsAp
     },
   };
 
-  (globalThis as typeof globalThis & {
-    __UNICORN_VALLEY_FREEZE_DIAGNOSTICS__?: FreezeDiagnosticsApi;
-  }).__UNICORN_VALLEY_FREEZE_DIAGNOSTICS__ = api;
+  (
+    globalThis as typeof globalThis & {
+      __UNICORN_VALLEY_FREEZE_DIAGNOSTICS__?: FreezeDiagnosticsApi;
+    }
+  ).__UNICORN_VALLEY_FREEZE_DIAGNOSTICS__ = api;
 
   game.events.once(Phaser.Core.Events.DESTROY, () => {
     game.events.off(Phaser.Core.Events.POST_STEP, recordFrame);
