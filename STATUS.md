@@ -8,75 +8,93 @@ R6.5 - Valley Completeness and Breadth
 
 ## Current accepted baseline
 
-R0 through R6 are complete. R6.5-WP1 through WP15 are integrated on `main`.
+R0 through R6 are complete. R6.5-WP1 through WP15 are integrated on `main`; R6.5-WP16 is the final autonomous merge candidate in PR #145 and transitions the project directly to the WP17 human gate after merge.
 
-Latest accepted `main` gameplay baseline: `bdc86e05472d0f061e3b748cc42706cc6541f523` (R6.5-WP15 merge via PR #144).
+Accepted pre-WP16 `main` gameplay baseline: `bdc86e05472d0f061e3b748cc42706cc6541f523` (R6.5-WP15 merge via PR #144).
 
-WP15 exact head `46e9d3b32391b98720d20836192e4645b11ce3b4` passed the AI project contract, formatting, lint, type-check, unit tests, production build, unchanged 520 KiB application-entry budget, static smoke, full Chromium playtest and Chromium/Firefox/WebKit compatibility before merge.
+WP16 corrected implementation/test candidate: `cc5fddfc6dbc7d92f1aaa222e8829daaf3fb5687`.
 
 ## Active work package
 
-ID: `R6.5-WP16`
+ID: `R6.5-WP17`
 
-Path: `docs/work-packages/R6.5-WP16-VALLEY-TIDY-BALANCE-CONTENT-POLISH.md`
+Path: `docs/work-packages/R6.5-WP17-FULL-HUMAN-PLAYTHROUGH-R7-READINESS-GATE.md`
 
-Branch: `r6.5-wp16-valley-tidy-balance-content-polish`.
+State: `waiting_human` after PR #145 merges green.
 
-Goal: reconcile the broadened valley against accumulated R6 playthrough feedback, mobile readability/touch safety, navigation/crowding, quest/shop/race balance, the region-density contract, legacy visual residue and final performance/regression hardening before the WP17 human gate.
+Human gate: `playtest`.
 
-## WP16 implementation state
+Goal: verify through normal human free play that the now-broadened valley is sufficiently populated, varied, readable and coherent for later daughter-led preference evidence to be meaningful.
 
-The bounded WP16 package is active. Initial mandatory audit areas are:
+## WP16 completion summary
 
-- released-R6 playthrough issues, including mobile customisation crowding, small text/action clarity, prompt/control overlap, legacy unicorn placeholders, Village shop presentation, point-and-click backwards facing flicker and Crystal Brook entrance clarity;
-- phone/tablet touch-target and readability sweep across HUD, dialogue, shops, activities, races, Wonderbook and customisation;
-- NPC crowding/navigation and path/sign/gateway clarity;
-- quest pacing/reward, shop/economy and race/reward balance;
-- region-by-region dead-zone reconciliation against the R6.5 interaction-density contract;
-- duplicate/legacy visual cleanup;
-- performance/load validation with the complete R6.5 content set and full browser regression.
+The final autonomous polish pass is complete subject to PR #145's final exact-head merge gate.
 
-The first pass must classify each issue as already resolved, needs fix or accepted exception before making broad changes.
+- Reconciled every captured released-R6 playthrough issue against current code/tests instead of blindly reopening accepted fixes.
+- Confirmed the old mobile creator/action clarity, NPC placeholder, Village shop, point-click facing and Crystal Brook gateway defects remain resolved.
+- Found one genuine post-R6.5 regression surface: portrait readability/targeting in Maple Baking, Coral Beachcombing and the expanded Wonderbook.
+- Added one reusable portrait modal companion and wired all three affected surfaces while preserving desktop/landscape/tablet canvas presentation.
+- Added a 412×915 touch browser regression requiring readable font sizes and >=54 px action controls while driving the real flows.
+- Corrected that regression to respect the existing lazy-load contract by entering Maple and Coral through their real game entry paths rather than starting unregistered scenes through diagnostics.
+- Reconciled all six major outdoor regions against the R6.5 density floor; all meet it without accepted exceptions or filler additions.
+- Reconciled economy/shop/race balance; the 2/4/6 Shimmer purchase bands remain compatible with varied ordinary quest/discovery/activity earnings, and Rainbow Cup progress remains participation-friendly rather than first-place gated.
+- Preserved the hard 520 KiB application-entry limit and existing save/progression authorities.
+
+Detailed evidence: `docs/R6.5-WP16-AUDIT.md`.
 
 ## Technical validation
 
-State: `pending` for WP16.
+PR #145 is the authoritative final exact-head validation and merge record.
 
-No WP16 gameplay/presentation fix is yet being claimed as complete. The full exact-head technical gate will run after the evidence-based audit and bounded remediation pass.
+The PR may merge only when its final head passes:
+
+- AI project contract;
+- formatting, lint and type-check;
+- unit tests;
+- production build and static smoke;
+- unchanged 520 KiB application-entry performance gate;
+- full Chromium playthrough;
+- Chromium/Firefox/WebKit compatibility;
+- branch preview build.
+
+No known gameplay technical blocker remains.
 
 ## Human acceptance
 
-State: `not_required` for WP16.
+State: `pending` for R6.5-WP17.
 
-The next human release gate is **R6.5-WP17**. R7 remains hard-blocked until that gate is explicitly released after a full human playthrough.
+This is the required next action after PR #145 merges green. Human play should answer whether the player can independently choose among multiple worthwhile quests, regions, shops, races, repeatable activities, discoveries and revisit states without major mobile/control/readability blockers.
+
+Only explicit user confirmation that the valley is broad enough releases WP17.
 
 ## Recently completed
 
 - R6.5-WP13 Cross-Region and Follow-up Stories merged as `3db374dd48445386819d1da97d4367619f7b9cef` after full exact-head validation.
 - R6.5-WP14 Repeatable Activity Expansion merged as `5d246ae012ef351e9dd356befc3a9608222041e6` after full exact-head validation.
 - R6.5-WP15 Wonderbook, Collections and Long-Term Goals merged as `bdc86e05472d0f061e3b748cc42706cc6541f523` after full exact-head validation.
+- R6.5-WP16 Valley Tidy-up, Balance and Content Polish is completed by PR #145 and must be merged only from its validated exact head.
 
 ## Next eligible work
 
-1. Complete the WP16 audit/reconciliation table against the current code and automated coverage.
-2. Fix remaining high-impact child-facing/mobile/navigation defects first.
-3. Reconcile economy, quest/race balance and region density only where evidence shows a real gap.
-4. Run the full technical gate on one frozen exact head and merge WP16 if green.
-5. Stop at R6.5-WP17 for the required human playthrough/readiness decision. Do not begin R7 autonomously.
+1. Human performs the R6.5-WP17 full playthrough and reports observations naturally as they arise.
+2. If the playthrough finds meaningful R6.5 defects, create bounded remediation work, fix and revalidate before returning to WP17.
+3. If the user explicitly confirms the build is broad enough, close WP17 and only then create R7-WP7.1.
+
+Do **not** begin R7 autonomously while WP17 is pending.
 
 ## Blockers
 
-No known technical blocker.
+No known gameplay technical blocker.
 
 R7 is intentionally blocked by the R6.5-WP17 human readiness gate.
 
 ## Human decisions required
 
-No immediate input required while WP16 remains Green/autonomous.
+A full human R6.5 playthrough and explicit R7-readiness decision are required after WP16 merges.
 
 ## Production / deployment
 
-No intentional production deployment was performed. Production deployment still requires explicit user approval.
+No intentional production deployment was performed as part of WP16. Cloudflare branch-preview builds are validation surfaces, not production-release approval. Production deployment still requires explicit user approval.
 
 ## Non-negotiable technical guardrail
 
@@ -88,10 +106,10 @@ A new project chat can resume safely by reading, in order:
 
 1. `PROJECT_STATE.json`;
 2. this `STATUS.md`;
-3. `docs/work-packages/R6.5-WP16-VALLEY-TIDY-BALANCE-CONTENT-POLISH.md`;
-4. the WP16 section and interaction-density contract in `docs/07V-R6.5-VALLEY-COMPLETENESS-BREADTH.md`;
-5. the released-R6 playthrough reconciliation list in the WP16 package;
-6. current GitHub branch/PR/CI state.
+3. `docs/work-packages/R6.5-WP17-FULL-HUMAN-PLAYTHROUGH-R7-READINESS-GATE.md`;
+4. `docs/R6.5-WP16-AUDIT.md` for the final autonomous reconciliation evidence;
+5. the WP17 section in `docs/07V-R6.5-VALLEY-COMPLETENESS-BREADTH.md`;
+6. current GitHub/main/deployment state.
 
 ## Night Shift
 
