@@ -436,7 +436,7 @@ export class WonderbookScene extends Phaser.Scene {
       })),
     );
 
-    const groups = [
+    const groups: Parameters<PortraitModalCompanion['setActionGroups']>[0] = [
       {
         id: 'sections',
         label: 'Book section',
