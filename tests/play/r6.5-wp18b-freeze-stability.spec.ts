@@ -12,11 +12,32 @@ interface DiagnosticSceneSnapshot {
   objects: DiagnosticObjectSnapshot[];
 }
 
+interface DiagnosticSceneHealthSnapshot {
+  key: string;
+  lifecycleState: 'active' | 'paused' | 'sleeping' | 'visible' | 'inactive';
+  objectCount: number;
+  timerCount: number | null;
+  tweenCount: number | null;
+}
+
+interface BrowserDiagnosticHealthSnapshot {
+  heartbeatAgeMs: number;
+  lastFrameMs: number;
+  recentFrameCount: number;
+  recentLongFrameCount: number;
+  worstRecentFrameMs: number;
+  scenes: DiagnosticSceneHealthSnapshot[];
+  lastInteraction: unknown;
+  lastError: unknown;
+  rendererContextLost: boolean;
+}
+
 interface BrowserDiagnosticSnapshot {
   width: number;
   height: number;
   activeScenes: string[];
   scenes: DiagnosticSceneSnapshot[];
+  health: BrowserDiagnosticHealthSnapshot;
 }
 
 interface FramePerformanceSnapshot {
@@ -140,6 +161,59 @@ async function playerPosition(page: Page, sceneKey: string): Promise<{ x: number
   return { x: player.x, y: player.y };
 }
 
+async function sceneHealth(
+  page: Page,
+  sceneKey: string,
+): Promise<DiagnosticSceneHealthSnapshot> {
+  const health = (await snapshot(page)).health.scenes.find((scene) => scene.key === sceneKey);
+  if (!health) {
+    throw new Error(`No lifecycle health snapshot is available for ${sceneKey}.`);
+  }
+  return health;
+}
+
+async function assertHealthyRuntime(page: Page): Promise<void> {
+  const health = (await snapshot(page)).health;
+  expect(health.lastError, 'Freeze diagnostics must not record a runtime error').toBeNull();
+  expect(health.rendererContextLost, 'Renderer context must remain available').toBe(false);
+  expect(health.heartbeatAgeMs, 'The Phaser frame heartbeat must remain live').toBeLessThan(2_000);
+  expect(health.recentFrameCount, 'Freeze diagnostics should retain bounded frame samples').toBeGreaterThan(
+    0,
+  );
+}
+
+function assertStableCounts(
+  samples: readonly DiagnosticSceneHealthSnapshot[],
+  sceneKey: string,
+): void {
+  expect(samples.length).toBeGreaterThan(1);
+  const objectCounts = samples.map((sample) => sample.objectCount);
+  expect(
+    Math.max(...objectCounts) - Math.min(...objectCounts),
+    `${sceneKey} object count should not grow across lifecycle cycles`,
+  ).toBeLessThanOrEqual(3);
+
+  const timerCounts = samples
+    .map((sample) => sample.timerCount)
+    .filter((count): count is number => count !== null);
+  if (timerCounts.length > 1) {
+    expect(
+      Math.max(...timerCounts) - Math.min(...timerCounts),
+      `${sceneKey} timer count should remain bounded`,
+    ).toBeLessThanOrEqual(1);
+  }
+
+  const tweenCounts = samples
+    .map((sample) => sample.tweenCount)
+    .filter((count): count is number => count !== null);
+  if (tweenCounts.length > 1) {
+    expect(
+      Math.max(...tweenCounts) - Math.min(...tweenCounts),
+      `${sceneKey} tween count should remain bounded`,
+    ).toBeLessThanOrEqual(1);
+  }
+}
+
 async function assertResponsiveMovement(page: Page, sceneKey: string): Promise<void> {
   const before = await playerPosition(page, sceneKey);
   await page.keyboard.down('ArrowRight');
@@ -160,11 +234,30 @@ async function openAndCloseBag(page: Page, returnScene: string): Promise<void> {
   await waitForScene(page, returnScene);
 }
 
+async function seedRetiredInventoryItem(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    const storageKey = 'unicorn-valley.save';
+    const rawSave = localStorage.getItem(storageKey);
+    if (!rawSave) {
+      throw new Error('Expected Starlight Beach to create a save before stale-item seeding.');
+    }
+    const save = JSON.parse(rawSave) as {
+      inventory?: { itemQuantities?: Record<string, number> };
+    };
+    if (!save.inventory?.itemQuantities) {
+      throw new Error('Current save does not contain an inventory item map.');
+    }
+    save.inventory.itemQuantities['item:retired-from-old-build'] = 1;
+    localStorage.setItem(storageKey, JSON.stringify(save));
+  });
+}
+
 test.describe
   .serial('R6.5-WP18B freeze and lifecycle regressions', () => {
     test('Starlight Beach survives repeated real Bag open/close cycles', async ({ page }) => {
       test.setTimeout(60_000);
       const browserErrors: string[] = [];
+      const healthSamples: DiagnosticSceneHealthSnapshot[] = [];
       page.on('pageerror', (error) => browserErrors.push(error.message));
 
       await page.goto('/?scene=beach&diagnostics=1');
@@ -176,12 +269,36 @@ test.describe
         const current = await snapshot(page);
         expect(current.activeScenes).toContain('StarlightBeachScene');
         expect(current.activeScenes).not.toContain('InventoryScene');
+        healthSamples.push(await sceneHealth(page, 'StarlightBeachScene'));
       }
 
       await assertResponsiveMovement(page, 'StarlightBeachScene');
       await page.waitForTimeout(450);
       expect((await performanceSnapshot(page)).sampleCount).toBeGreaterThan(0);
+      assertStableCounts(healthSamples, 'StarlightBeachScene');
+      await assertHealthyRuntime(page);
       expect(browserErrors, 'Starlight Beach Bag cycling must not throw runtime errors').toEqual(
+        [],
+      );
+    });
+
+    test('Starlight Beach Bag tolerates a retired item ID from a long-running save', async ({
+      page,
+    }) => {
+      test.setTimeout(45_000);
+      const browserErrors: string[] = [];
+      page.on('pageerror', (error) => browserErrors.push(error.message));
+
+      await page.goto('/?scene=beach&diagnostics=1');
+      await waitForScene(page, 'StarlightBeachScene');
+      await seedRetiredInventoryItem(page);
+      await page.reload();
+      await waitForScene(page, 'StarlightBeachScene');
+
+      await openAndCloseBag(page, 'StarlightBeachScene');
+      await assertResponsiveMovement(page, 'StarlightBeachScene');
+      await assertHealthyRuntime(page);
+      expect(browserErrors, 'A stale inventory ID must not break the real Beach Bag flow').toEqual(
         [],
       );
     });
@@ -191,6 +308,7 @@ test.describe
     }) => {
       test.setTimeout(60_000);
       const browserErrors: string[] = [];
+      const healthSamples: DiagnosticSceneHealthSnapshot[] = [];
       page.on('pageerror', (error) => browserErrors.push(error.message));
 
       await page.goto('/?scene=glade&diagnostics=1');
@@ -201,11 +319,14 @@ test.describe
         await waitForScene(page, 'HollowTreeNookScene');
         await openAndCloseBag(page, 'HollowTreeNookScene');
         await assertResponsiveMovement(page, 'HollowTreeNookScene');
+        healthSamples.push(await sceneHealth(page, 'HollowTreeNookScene'));
 
         await page.keyboard.press('Escape');
         await waitForScene(page, 'MoonflowerGladeScene');
       }
 
+      assertStableCounts(healthSamples, 'HollowTreeNookScene');
+      await assertHealthyRuntime(page);
       expect(
         browserErrors,
         'Hollow Tree Nook lifecycle cycling must not throw runtime errors',
@@ -215,6 +336,7 @@ test.describe
     test('Twinkle & Thread survives repeated shop, Bag and resume cycles', async ({ page }) => {
       test.setTimeout(60_000);
       const browserErrors: string[] = [];
+      const healthSamples: DiagnosticSceneHealthSnapshot[] = [];
       page.on('pageerror', (error) => browserErrors.push(error.message));
 
       await page.goto('/?scene=village&diagnostics=1');
@@ -238,8 +360,11 @@ test.describe
         expect(current.activeScenes).toContain('VillageInteriorScene');
         expect(current.activeScenes).not.toContain('ShopScene');
         expect(current.activeScenes).not.toContain('InventoryScene');
+        healthSamples.push(await sceneHealth(page, 'VillageInteriorScene'));
       }
 
+      assertStableCounts(healthSamples, 'VillageInteriorScene');
+      await assertHealthyRuntime(page);
       await logicalClick(page, 170, 674);
       await waitForScene(page, 'SunbeamVillageScene');
       expect(
