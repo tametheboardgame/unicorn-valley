@@ -316,9 +316,9 @@ export class ShopScene extends Phaser.Scene {
       return;
     }
     this.closing = true;
-    this.scene.stop();
     if (this.scene.isPaused(this.returnScene)) {
       this.scene.resume(this.returnScene);
     }
+    this.scene.stop();
   }
 }
