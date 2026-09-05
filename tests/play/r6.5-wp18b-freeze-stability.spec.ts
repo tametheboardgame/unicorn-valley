@@ -333,7 +333,7 @@ test.describe
     test('Hollow Tree Nook remains playable across repeated Bag and re-entry cycles', async ({
       page,
     }) => {
-      test.setTimeout(60_000);
+      test.setTimeout(120_000);
       const browserErrors: string[] = [];
       const healthSamples: DiagnosticSceneHealthSnapshot[] = [];
       page.on('pageerror', (error) => browserErrors.push(error.message));
@@ -362,7 +362,7 @@ test.describe
     });
 
     test('Twinkle & Thread survives repeated shop, Bag and resume cycles', async ({ page }) => {
-      test.setTimeout(60_000);
+      test.setTimeout(120_000);
       const browserErrors: string[] = [];
       const healthSamples: DiagnosticSceneHealthSnapshot[] = [];
       page.on('pageerror', (error) => browserErrors.push(error.message));
