@@ -12,74 +12,56 @@ R0 through R6 are complete. R6.5-WP1 through WP16 are integrated on `main`.
 
 WP17 human playtest has occurred and did not release R7 readiness. It confirmed the game is engaging, but found release-blocking landscape-tablet control/readability problems, several hard freezes and multiple functional/world-quality defects.
 
-Current `main` remediation-plan baseline before WP18A delivery: `ce0ae9da480447b314b83d4454f4ecb67352f1a5`.
+R6.5-WP18A is complete and merged through PR #147. The user's approved landscape-tablet direction is recorded in `docs/07AA-R6.5-WP18A-APPROVED-TABLET-UX-DIRECTION.md` and remains authoritative for WP18C onward.
+
+Current `main` baseline after WP18A: `2aefb4487f12b8eef79b5a4a9b297a7cb39c8ed4`.
 
 ## Active work package
 
-ID: `R6.5-WP18A`
+ID: `R6.5-WP18B`
 
-Path: `docs/work-packages/R6.5-WP18A-LANDSCAPE-TABLET-UX-CONCEPT-APPROVAL.md`
+Path: `docs/work-packages/R6.5-WP18B-FREEZE-DIAGNOSTICS-STABILITY.md`
 
-State: **human visual gate approved; delivery in progress**.
+State: **in progress; exact-head CI running**.
 
-Branch: `agent/r6.5-wp18a-approved-tablet-ux`.
+Branch: `agent/r6.5-wp18b-freeze-stability`.
 
-The user explicitly approved the supplied landscape-tablet control-layout concepts on 2026-09-05 and instructed the project to commit them as the implementation plan and begin work.
+PR: #148.
 
-Durable implementation authority: `docs/07AA-R6.5-WP18A-APPROVED-TABLET-UX-DIRECTION.md`.
+WP18B is treating the human-observed hard freezes as release-blocking defects before any production tablet-shell implementation begins.
 
-The concepts' expensive 3D rendering is illustrative only. Their layout, hierarchy, touch placement, screen occupation and interaction design are authoritative.
+Current implementation includes:
+
+- bounded rolling browser freeze diagnostics covering scene lifecycle state, frame heartbeat and long frames, object/timer/tween counts, last interaction, runtime errors/rejections, renderer context loss and browser memory where exposed;
+- diagnostics installed early enough to observe extended-scene registration/lazy-load failures;
+- repeated real-world regressions for Starlight Beach Bag cycling, Hollow Tree Nook re-entry/Bag/movement cycles and Twinkle & Thread shop/Bag/resume cycles;
+- assertions that scene object/timer/tween counts remain bounded and the Phaser heartbeat remains live;
+- a concrete stale-save fix: Bag inventory enumeration now ignores retired item IDs preserved by older long-running saves instead of throwing during inventory rendering;
+- unit and browser coverage for the retired-item failure path.
+
+The normal validation job on the current WP18B head is green, including formatting, lint, type-check, unit tests, production build, the hard 520 KiB application-entry budget and static smoke. Browser compatibility and full browser playtest remain in progress before WP18B can be accepted.
 
 ## Approved tablet direction
 
-Exploration:
+The approved WP18A concept package remains the implementation authority:
 
-- compact top Map, Bag, Book and Settings access;
-- lower-left circular movement control;
-- lower-right large contextual primary action;
-- separate Gallop action beside it;
-- bottom-centre contextual hint strip;
-- tap-to-move/direct tapping remain first-class;
-- world remains the dominant visual surface.
+- exploration: world-dominant layout, compact top utility access, lower-left movement, lower-right contextual action plus Gallop, tap-to-move/direct tapping first-class;
+- racing: corner controls, unobstructed central track, compact top progress HUD, no browser-long-press-dependent RUN behaviour;
+- Bag/Map: distinct access, scalable categories, scrolling inventory, selected-item detail/use actions;
+- Creator: dominant preview with progressive Main, Colours, Mane & Tail, Horn, Markings and Accessories categories.
 
-Racing:
-
-- lower-left left/right steering;
-- lower-right Jump and Gallop;
-- compact race position/progress at top;
-- Pause top-right;
-- central track and upcoming obstacles remain unobstructed;
-- no browser-long-press-dependent control behaviour.
-
-Bag/Map:
-
-- clear distinct Map and Bag actions;
-- large landscape Bag modal;
-- Food, Quest, Decor and Keepsakes category model;
-- scrolling inventory with no six-item ceiling;
-- large visual items with quantities;
-- selected-item detail panel and explicit use/eat action.
-
-Creator:
-
-- large unicorn preview occupying roughly half the screen;
-- progressive Main, Colours, Mane & Tail, Horn, Markings and Accessories categories;
-- only the active category exposes its options;
-- large visual choices;
-- clear Back, Randomise and Save Unicorn actions.
-
-Implementation stop rule: if a later implementation cannot reasonably follow these approved layouts, or a technical compromise would materially alter their hierarchy or child usability, stop and ask the user rather than silently drifting from the approved concepts.
+If implementation would materially drift from that hierarchy or child usability, stop for user input rather than silently substituting another design.
 
 ## WP17 human playtest outcome
 
 R6.5-WP17 remains open and unreleased.
 
-Release-blocking themes captured from the 2026-09-05 daughter playthrough include:
+Release-blocking themes include:
 
 - landscape controls/UI shell are the largest usability problem on the reference Samsung Galaxy Tab S8;
 - race controls obscure the track and Chrome long-press behaviour interrupts RUN;
 - hard freezes occurred in Tree Nook and Twinkle and Thread;
-- opening the Bag in Sunlit Beach causes a repeatable disappearance/freeze failure;
+- opening the Bag in Sunlit Beach caused a repeatable disappearance/freeze failure;
 - Echo cannot be spoken to;
 - Moonflower Cottage back-wall collision is wrong;
 - cottage decoration state is inconsistent;
@@ -106,7 +88,7 @@ Canonical remediation evidence: `docs/07Z-R6.5-WP17-PLAYTEST-REMEDIATION.md`.
 
 ## Product direction
 
-Unicorn Valley is now **landscape-tablet-first** for interface/control design.
+Unicorn Valley is landscape-tablet-first for interface/control design.
 
 Reference human-test environment:
 
@@ -119,8 +101,8 @@ The Phaser/TypeScript/Vite browser codebase remains authoritative. Desktop keybo
 
 ## Planned remediation sequence
 
-1. `R6.5-WP18A` - Landscape Tablet UX Concept and Approval: approved, delivery in progress.
-2. `R6.5-WP18B` - Freeze Diagnostics, Root Cause and Stability: next.
+1. `R6.5-WP18A` - Landscape Tablet UX Concept and Approval: complete and merged.
+2. `R6.5-WP18B` - Freeze Diagnostics, Root Cause and Stability: active.
 3. `R6.5-WP18C` - Landscape Tablet Controls and Interaction Shell.
 4. `R6.5-WP18D` - Playthrough Functional Bug and Regression Remediation.
 5. `R6.5-WP18E` - Bag, Map, Creator and Modal Tablet UX.
@@ -131,7 +113,7 @@ The Phaser/TypeScript/Vite browser codebase remains authoritative. Desktop keybo
 
 ## Technical validation
 
-WP18 work must preserve:
+WP18 must preserve:
 
 - AI project contract;
 - formatting, lint and type-check;
@@ -152,13 +134,14 @@ R6.5-WP17 R7-readiness acceptance remains pending and cannot be reconsidered unt
 
 ## Next eligible work
 
-1. Finish WP18A delivery through its PR and merge once CI/contract checks permit.
-2. Start `R6.5-WP18B` immediately afterwards.
-3. Diagnose and fix freeze root causes before WP18C shell/control implementation.
+1. Finish WP18B root-cause/stress validation and obtain exact-head green CI.
+2. Merge WP18B when its acceptance criteria are satisfied.
+3. Start `R6.5-WP18C` immediately afterwards using the approved WP18A layouts as authority.
 
 ## Blockers
 
 - R7 remains intentionally blocked by unreleased R6.5-WP17.
+- WP18C remains blocked until WP18B acceptance is satisfied.
 - No current human blocker exists for WP18B.
 
 ## Production / deployment
