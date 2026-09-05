@@ -69,3 +69,21 @@ Status: Accepted
 Decision:
 
 Unicorn Valley is the first live project retrofitted to the AI project operating standard and is the preferred candidate for the subsequent bounded autonomous-continuation and supervised Night Shift experiments, subject to the retrofit passing fresh-agent recovery.
+
+## UV-D009 - Landscape tablet control layout is approved implementation authority
+
+Status: Accepted
+
+Decision:
+
+The four landscape-tablet concepts approved by the user on 2026-09-05 define the implementation layout for WP18C and WP18E. Their high-end 3D rendering is illustrative only; control placement, hierarchy, touch zones, screen occupation and interaction design are authoritative.
+
+The durable specification is `docs/07AA-R6.5-WP18A-APPROVED-TABLET-UX-DIRECTION.md`.
+
+Key constraints are:
+
+- exploration uses lower-left movement, lower-right contextual primary action plus separate Gallop, compact top Map/Bag/Book/Settings access and a bottom-centre hint strip;
+- racing uses lower-left steering and lower-right Jump/Gallop with the track centre kept clear;
+- Bag uses category navigation, scrolling inventory, item details and explicit use/eat actions;
+- Creator uses a large preview and progressive Main/Colours/Mane & Tail/Horn/Markings/Accessories categories;
+- if implementation materially cannot follow this approved direction, stop for user input rather than silently substituting a different layout.
