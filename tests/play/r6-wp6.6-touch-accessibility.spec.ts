@@ -235,6 +235,19 @@ test('target-tablet touch completes creator, exploration, Book and accessibility
     glade.objects.some((object) => object.name === 'exploration-controls-button' && object.visible),
   ).toBe(false);
 
+  await logicalTap(page, 80, 46);
+  await waitForScene(page, 'InventoryScene');
+  snapshot = await getSnapshot(page);
+  const mapScene = getScene(snapshot, 'InventoryScene');
+  expect(mapScene.objects.some((object) => object.name === 'bag-map-content' && object.visible)).toBe(
+    true,
+  );
+  expect(mapScene.objects.some((object) => object.name === 'bag-map-current-location')).toBe(true);
+  await logicalTap(page, 490, 668);
+  await waitForScene(page, 'MoonflowerGladeScene');
+
+  snapshot = await getSnapshot(page);
+  glade = getScene(snapshot, 'MoonflowerGladeScene');
   const before = getPlayer(glade);
   await logicalTap(page, 900, 360);
   await page.waitForFunction(
@@ -252,6 +265,27 @@ test('target-tablet touch completes creator, exploration, Book and accessibility
     },
     { startX: before.x },
   );
+  await page.waitForFunction(() => {
+    const diagnosticWindow = window as typeof window & {
+      __UNICORN_VALLEY_DIAGNOSTICS__?: { snapshot(): BrowserDiagnosticSnapshot };
+    };
+    const scene = diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__
+      ?.snapshot()
+      .scenes.find((candidate) => candidate.key === 'MoonflowerGladeScene');
+    return scene?.objects.some(
+      (object) => object.name === 'exploration-direct-interaction-target' && object.interactive,
+    );
+  });
+  snapshot = await getSnapshot(page);
+  glade = getScene(snapshot, 'MoonflowerGladeScene');
+  expect(
+    glade.objects.some(
+      (object) =>
+        object.name === 'exploration-interaction-prompt-label' &&
+        object.visible &&
+        object.text?.includes('Pip'),
+    ),
+  ).toBe(true);
 
   await logicalTap(page, 340, 46);
   await waitForScene(page, 'WonderbookScene');
