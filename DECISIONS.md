@@ -83,7 +83,7 @@ The durable specification is `docs/07AA-R6.5-WP18A-APPROVED-TABLET-UX-DIRECTION.
 Key constraints are:
 
 - exploration uses lower-left movement, lower-right contextual primary action plus separate Gallop, compact top Map/Bag/Book/Settings access and a bottom-centre hint strip;
-- racing uses lower-left steering and lower-right Jump/Gallop with the track centre kept clear;
+- racing uses **RUN lower-left and JUMP lower-right only**. There is no left/right steering mechanic and no separate race Gallop control. RUN must support safe press/hold, RUN + JUMP must work simultaneously, and the track centre stays clear;
 - Bag uses category navigation, scrolling inventory, item details and explicit use/eat actions;
 - Creator uses a large preview and progressive Main/Colours/Mane & Tail/Horn/Markings/Accessories categories;
 - if implementation materially cannot follow this approved direction, stop for user input rather than silently substituting a different layout.
