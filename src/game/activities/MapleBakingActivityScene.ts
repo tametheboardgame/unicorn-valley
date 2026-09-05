@@ -7,10 +7,7 @@ import {
 } from '../../content/r65RepeatableActivities';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { getBrowserSaveService } from '../save/browserSaveService';
-import {
-  PortraitModalCompanion,
-  type PortraitModalAction,
-} from '../ui/PortraitModalCompanion';
+import { PortraitModalCompanion, type PortraitModalAction } from '../ui/PortraitModalCompanion';
 import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from '../ui/uiTheme';
 import { getMapleBakingProgress, recordMapleBakingCake } from './MapleBakingActivity';
 
