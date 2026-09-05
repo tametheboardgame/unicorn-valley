@@ -24,6 +24,7 @@ Mandatory companion material where relevant:
 - `docs/07X-R6.5-AUTONOMOUS-UNICORN-LIFE.md`
 - `docs/07Y-R6.5-WP1-AUDIT-DENSITY-CONTRACT.md`
 - `docs/07Z-R6.5-WP17-PLAYTEST-REMEDIATION.md` - authoritative remediation plan produced from the 2026-09-05 daughter playthrough.
+- `docs/07AA-R6.5-WP18A-APPROVED-TABLET-UX-DIRECTION.md` - approved landscape-tablet layout and interaction authority for WP18C/WP18E.
 
 ### Completed pre-playtest package sequence
 
@@ -85,24 +86,19 @@ Do not rewrite the game natively for Android as part of WP18. A later Android pa
 
 Path: `docs/work-packages/R6.5-WP18A-LANDSCAPE-TABLET-UX-CONCEPT-APPROVAL.md`
 
-State: **ready; human visual gate**.
+State: **complete; human visual gate released 2026-09-05**.
 
-Before any shell/control implementation, produce and iterate concept images for:
+The user approved the supplied landscape-tablet concepts as implementation authority for layout, hierarchy, thumb placement, readability and interaction design. Their expensive 3D rendering is illustrative only.
 
-- normal landscape exploration shell;
-- landscape race controls;
-- Bag/inventory plus Map access;
-- Unicorn Creator.
+Durable authority: `docs/07AA-R6.5-WP18A-APPROVED-TABLET-UX-DIRECTION.md`.
 
-Concepts must be realistic enough to judge screen occupation, thumb reach, hierarchy and readability. The user must explicitly approve the visual/control direction. Approved concept images become visual authority for later implementation when supplied to the relevant implementation chat.
-
-**No WP18C shell/control implementation may begin until WP18A is explicitly approved.**
+Implementation stop rule: if WP18C/WP18E would materially drift from the approved layouts, stop and request user input rather than silently substituting another design.
 
 ### R6.5-WP18B - Freeze Diagnostics, Root Cause and Stability
 
 Path: `docs/work-packages/R6.5-WP18B-FREEZE-DIAGNOSTICS-STABILITY.md`
 
-State: planned after WP18A.
+State: **next / unblocked**.
 
 Instrument runtime/scene/input lifecycle, reproduce and fix the known Tree Nook, Twinkle and Thread, and repeatable Sunlit Beach Bag freezes, then add stress/regression coverage for scene transitions, modals, shops, races and sustained play.
 
@@ -110,7 +106,7 @@ Instrument runtime/scene/input lifecycle, reproduce and fix the known Tree Nook,
 
 Path: `docs/work-packages/R6.5-WP18C-LANDSCAPE-TABLET-CONTROLS-INTERACTION-SHELL.md`
 
-State: planned after WP18B and dependent on the approved WP18A concepts.
+State: planned after WP18B; approved WP18A visual authority available.
 
 Implement the shared landscape-tablet shell, comfortable touch controls, first-class tap-to-move, contextual primary action, consistent direct NPC tapping, device-appropriate help, compact Bag/Map/Wonderbook/Settings access, safe multi-touch/input release and race controls that do not trigger the known Chrome long-press blocker or cover upcoming obstacles.
 
@@ -126,7 +122,7 @@ Resolve the remaining human-observed functional defects, including Echo interact
 
 Path: `docs/work-packages/R6.5-WP18E-BAG-MAP-CREATOR-MODAL-TABLET-UX.md`
 
-State: planned after WP18D.
+State: planned after WP18D; approved WP18A visual authority available.
 
 Redesign growing inventory around clear scrolling categories/pockets, make Food meaningfully usable, provide explicit Map access, implement the approved progressive-category Unicorn Creator, and reconcile Wonderbook/shops/settings/dialogue/decoration/activity modals with the shared tablet readability, overflow and touch-target contract.
 
@@ -160,7 +156,7 @@ WP18H captures evidence but **does not release R7**. It returns the project to W
 
 ### Dependency chain
 
-`WP17 evidence -> WP18A -> WP18B -> WP18C -> WP18D -> WP18E -> WP18F -> WP18G -> WP18H -> WP17 explicit readiness decision -> R7`
+`WP17 evidence -> WP18A approved -> WP18B -> WP18C -> WP18D -> WP18E -> WP18F -> WP18G -> WP18H -> WP17 explicit readiness decision -> R7`
 
 ## R6.6 - Optional Android Packaging
 
@@ -187,7 +183,7 @@ Potential later work including flight/Cloudtop Peaks, deeper gardening, deeper c
 - Build dependencies before content that uses them.
 - Prefer reusable systems over repeated bespoke implementations.
 - Production art follows proven mechanics unless concept work is explicitly required.
-- **For WP18 tablet shell/control work, approved concept images are required before implementation.**
+- **For WP18 tablet shell/control work, the WP18A approved visual/layout authority must be followed.**
 - Landscape tablet is now the primary interface authority; desktop remains a supported secondary input/presentation.
 - Point-and-click/tap movement is a first-class control scheme.
 - Human-observed defects override stale automated claims that the same surface was already fixed.
