@@ -6,6 +6,7 @@ import { KeyboardInputAdapter } from '../input/KeyboardInputAdapter';
 import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 import { RelationshipService } from '../relationships/RelationshipService';
 import { getBrowserSaveService } from '../save/browserSaveService';
+import { PortraitModalCompanion } from '../ui/PortraitModalCompanion';
 import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from '../ui/uiTheme';
 import {
   buildWonderbookCharacterEntries,
@@ -78,6 +79,7 @@ export class WonderbookScene extends Phaser.Scene {
   private sectionHeading: Phaser.GameObjects.Text | null = null;
   private summaryText: Phaser.GameObjects.Text | null = null;
   private horizontalInputLatched = false;
+  private portraitCompanion: PortraitModalCompanion | null = null;
 
   public constructor() {
     super('WonderbookScene');
@@ -114,6 +116,7 @@ export class WonderbookScene extends Phaser.Scene {
       regions: this.regionEntries,
       races: this.raceEntries,
     });
+    this.portraitCompanion = PortraitModalCompanion.create('wonderbook', 'My Wonderbook');
     this.rebuildSpreads();
     this.createSectionTabs();
     this.createDiscoveryFilters();
@@ -150,6 +153,8 @@ export class WonderbookScene extends Phaser.Scene {
       this.inputController?.destroy();
       this.inputController = null;
       this.pointerInput = null;
+      this.portraitCompanion?.destroy();
+      this.portraitCompanion = null;
       this.pageContent = null;
       this.previousButton = null;
       this.nextButton = null;
@@ -402,6 +407,94 @@ export class WonderbookScene extends Phaser.Scene {
     if (hasNext) {
       this.nextButton?.setInteractive({ useHandCursor: true });
     }
+    this.refreshPortraitCompanion();
+  }
+
+  private refreshPortraitCompanion(): void {
+    if (!this.portraitCompanion) {
+      return;
+    }
+
+    const spread = this.spreads[this.spreadIndex];
+    if (!spread) {
+      return;
+    }
+    const section = SECTION_LABELS.find(({ id }) => id === this.activeSection);
+    const cards = [...spread.left, ...spread.right];
+    const pageLabel = `Pages ${spread.leftPageNumber}–${spread.rightPageNumber}`;
+    this.portraitCompanion.setHeader(
+      `📖 ${section?.heading ?? 'My Wonderbook'}`,
+      `${this.summaryForSection()} · ${pageLabel}. Scroll this panel to read every card comfortably.`,
+    );
+    this.portraitCompanion.setCards(
+      cards.map((card) => ({
+        id: card.id,
+        icon: card.known ? card.icon : '❔',
+        title: card.title,
+        description: card.description,
+        badge: card.badge,
+      })),
+    );
+
+    const groups = [
+      {
+        id: 'sections',
+        label: 'Book section',
+        actions: SECTION_LABELS.map((entry) => ({
+          id: `section-${entry.id}`,
+          label: entry.label,
+          selected: this.activeSection === entry.id,
+          onPress: () => this.setSection(entry.id),
+        })),
+      },
+    ];
+
+    if (this.activeSection === 'discoveries') {
+      groups.push({
+        id: 'discovery-filter',
+        label: 'Discovery pages',
+        actions: [
+          {
+            id: 'filter-all',
+            label: '✦ All adventures',
+            selected: this.discoveryFilter === 'all',
+            onPress: () => this.setDiscoveryFilter('all'),
+          },
+          {
+            id: 'filter-secrets',
+            label: '★ Secrets',
+            selected: this.discoveryFilter === 'secrets',
+            onPress: () => this.setDiscoveryFilter('secrets'),
+          },
+        ],
+      });
+    }
+
+    groups.push(
+      {
+        id: 'pages',
+        label: 'Turn pages',
+        actions: [
+          {
+            id: 'previous',
+            label: '◀ Previous',
+            disabled: this.spreadIndex === 0,
+            onPress: () => this.turnSpread(-1),
+          },
+          {
+            id: 'next',
+            label: 'Next ▶',
+            disabled: this.spreadIndex >= this.spreads.length - 1,
+            onPress: () => this.turnSpread(1),
+          },
+        ],
+      },
+      {
+        id: 'close',
+        actions: [{ id: 'close', label: '✓ Close the book', onPress: () => this.closeBook() }],
+      },
+    );
+    this.portraitCompanion.setActionGroups(groups);
   }
 
   private createCard(entry: WonderbookCard, x: number, y: number): Phaser.GameObjects.GameObject[] {
