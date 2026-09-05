@@ -303,7 +303,8 @@ export class CoralBeachcombingActivityScene extends Phaser.Scene {
       })
       .setOrigin(0.5)
       .setName('wp14-beachcombing-result');
-    const summaryText = 'Coral adds your careful observations to the notebook. Nothing living was taken from the beach.';
+    const summaryText =
+      'Coral adds your careful observations to the notebook. Nothing living was taken from the beach.';
     const summary = this.add
       .text(
         GAME_WIDTH / 2,
