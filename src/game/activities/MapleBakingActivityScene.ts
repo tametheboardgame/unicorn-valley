@@ -7,6 +7,10 @@ import {
 } from '../../content/r65RepeatableActivities';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { getBrowserSaveService } from '../save/browserSaveService';
+import {
+  PortraitModalCompanion,
+  type PortraitModalAction,
+} from '../ui/PortraitModalCompanion';
 import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from '../ui/uiTheme';
 import { getMapleBakingProgress, recordMapleBakingCake } from './MapleBakingActivity';
 
@@ -47,6 +51,7 @@ export class MapleBakingActivityScene extends Phaser.Scene {
   private topping: BakeryTopping = 'berries';
   private finish: BakeryFinish = 'sprinkles';
   private body: Phaser.GameObjects.Container | null = null;
+  private portraitCompanion: PortraitModalCompanion | null = null;
 
   public constructor() {
     super('MapleBakingActivityScene');
@@ -61,6 +66,10 @@ export class MapleBakingActivityScene extends Phaser.Scene {
 
     this.cameras.main.setBackgroundColor('#7a5369');
     this.createBackdrop();
+    this.portraitCompanion = PortraitModalCompanion.create(
+      'maple-baking',
+      'Maple’s Wobbly Baking Table',
+    );
     this.renderStage();
 
     this.input.keyboard?.on('keydown-ESC', this.leaveActivity, this);
@@ -72,6 +81,8 @@ export class MapleBakingActivityScene extends Phaser.Scene {
       this.input.keyboard?.removeAllListeners('keydown-ONE');
       this.input.keyboard?.removeAllListeners('keydown-TWO');
       this.input.keyboard?.removeAllListeners('keydown-THREE');
+      this.portraitCompanion?.destroy();
+      this.portraitCompanion = null;
       this.body?.destroy(true);
       this.body = null;
     });
@@ -156,6 +167,41 @@ export class MapleBakingActivityScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
     this.body.add(preview);
+    this.refreshPortraitCompanion(heading, stageIndex, choices);
+  }
+
+  private refreshPortraitCompanion(
+    heading: string,
+    stageIndex: number,
+    choices: readonly Choice<BakeryCakeTheme | BakeryTopping | BakeryFinish>[],
+  ): void {
+    if (!this.portraitCompanion) {
+      return;
+    }
+
+    this.portraitCompanion.setHeader(
+      `🎂 ${heading}`,
+      `Step ${stageIndex} of 3. No timer and no wrong cake. Pick the one you like best.`,
+    );
+    this.portraitCompanion.setCards([
+      {
+        id: 'cake-so-far',
+        title: 'Cake so far',
+        description: `${this.theme} · ${this.topping} · ${this.finish}`,
+      },
+    ]);
+    const actions: PortraitModalAction[] = choices.map((choice, index) => ({
+      id: `choice-${index + 1}`,
+      label: `${choice.icon} ${choice.label}`,
+      onPress: () => this.chooseByIndex(index),
+    }));
+    this.portraitCompanion.setActionGroups([
+      { id: 'choices', label: 'Choose one', actions },
+      {
+        id: 'exit',
+        actions: [{ id: 'back', label: '← Back to Bakery', onPress: () => this.leaveActivity() }],
+      },
+    ]);
   }
 
   private createChoiceCard(
@@ -225,11 +271,12 @@ export class MapleBakingActivityScene extends Phaser.Scene {
       })
       .setOrigin(0.5)
       .setName('wp14-baking-result');
+    const summaryText = `Maple adds ${this.topping} and a ${this.finish} finish. It wobbles exactly enough.`;
     const summary = this.add
       .text(
         GAME_WIDTH / 2,
         275,
-        `Maple adds ${this.topping} and a ${this.finish} finish. It wobbles exactly enough.\n\nRecipe notebook: ${progress.completedOutcomeCount}/${progress.totalOutcomeCount} cake styles discovered.`,
+        `${summaryText}\n\nRecipe notebook: ${progress.completedOutcomeCount}/${progress.totalOutcomeCount} cake styles discovered.`,
         {
           color: UI_COLOURS.softInk,
           fontFamily: UI_FONT,
@@ -245,6 +292,25 @@ export class MapleBakingActivityScene extends Phaser.Scene {
     this.body?.add([title, summary]);
     this.createButton(500, 465, 260, '🎂 Bake another', () => this.restartRun(), this.body);
     this.createButton(780, 465, 260, '✓ Back to Bakery', () => this.leaveActivity(), this.body);
+
+    this.portraitCompanion?.setHeader(`${outcome.icon} ${outcome.name}`, 'Your cake is ready.');
+    this.portraitCompanion?.setCards([
+      {
+        id: 'result',
+        title: 'Maple’s verdict',
+        description: summaryText,
+        badge: `Recipe notebook: ${progress.completedOutcomeCount}/${progress.totalOutcomeCount} cake styles discovered.`,
+      },
+    ]);
+    this.portraitCompanion?.setActionGroups([
+      {
+        id: 'result-actions',
+        actions: [
+          { id: 'again', label: '🎂 Bake another', onPress: () => this.restartRun() },
+          { id: 'back', label: '✓ Back to Bakery', onPress: () => this.leaveActivity() },
+        ],
+      },
+    ]);
   }
 
   private restartRun(): void {
