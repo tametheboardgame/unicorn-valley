@@ -272,7 +272,9 @@ async function seedRetiredInventoryItem(page: Page): Promise<void> {
     }
 
     if (mutatedRecords === 0) {
-      throw new Error('Expected Starlight Beach to create a current save before stale-item seeding.');
+      throw new Error(
+        'Expected Starlight Beach to create a current save before stale-item seeding.',
+      );
     }
   });
 }
