@@ -110,15 +110,7 @@ export class InteractionPrompt {
         .setDepth(116);
       this.bindDirectTargetZone();
     } else {
-      this.panelShadow = createUiShadow(
-        scene,
-        GAME_WIDTH / 2,
-        GAME_HEIGHT - 74,
-        500,
-        82,
-        119,
-        0.2,
-      );
+      this.panelShadow = createUiShadow(scene, GAME_WIDTH / 2, GAME_HEIGHT - 74, 500, 82, 119, 0.2);
       this.panel = scene.add
         .rectangle(GAME_WIDTH / 2, GAME_HEIGHT - 74, 500, 82, UI_COLOURS.cream, 0.98)
         .setName('exploration-interaction-prompt')
@@ -292,7 +284,9 @@ export class InteractionPrompt {
       1,
     );
     this.label.setColor(highVisibility ? '#321d3b' : UI_COLOURS.ink);
-    this.label.setFontSize(highVisibility ? (this.tabletMode ? 22 : 27) : this.tabletMode ? 20 : 25);
+    this.label.setFontSize(
+      highVisibility ? (this.tabletMode ? 22 : 27) : this.tabletMode ? 20 : 25,
+    );
     this.domRoot?.classList.toggle('is-high-visibility', highVisibility);
 
     if (this.currentTarget && this.panel.visible) {
