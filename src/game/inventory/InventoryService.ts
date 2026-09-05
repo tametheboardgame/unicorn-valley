@@ -106,7 +106,10 @@ export class InventoryService {
   public listOwnedItems(): readonly OwnedInventoryItem[] {
     const save = this.saveService.load() ?? this.saveService.createNewGame();
     return Object.entries(save.inventory.itemQuantities)
-      .filter(([, quantity]) => Number.isInteger(quantity) && quantity > 0)
+      .filter(
+        ([itemId, quantity]) =>
+          Number.isInteger(quantity) && quantity > 0 && itemRegistry.has(itemId as ItemId),
+      )
       .map(([itemId, quantity]) => ({
         definition: itemRegistry.get(itemId as ItemId),
         quantity,
