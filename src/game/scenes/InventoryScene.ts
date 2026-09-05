@@ -413,9 +413,9 @@ export class InventoryScene extends Phaser.Scene {
     }
 
     this.closing = true;
-    this.scene.stop();
     if (this.scene.isPaused(this.returnScene)) {
       this.scene.resume(this.returnScene);
     }
+    this.scene.stop();
   }
 }

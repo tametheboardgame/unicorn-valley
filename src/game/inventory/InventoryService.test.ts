@@ -95,4 +95,26 @@ describe('InventoryService', () => {
       description: 'A little treasure from Unicorn Valley.',
     });
   });
+
+  it('ignores retired item IDs when a long-running save is opened in the Bag', () => {
+    const repository = new MemorySaveRepository();
+    const saveService = new SaveService(repository);
+    const save = saveService.createNewGame();
+    saveService.save({
+      ...save,
+      inventory: {
+        ...save.inventory,
+        itemQuantities: {
+          ...save.inventory.itemQuantities,
+          'item:retired-from-old-build': 1,
+          'item:berry-bun': 2,
+        },
+      },
+    });
+
+    const inventory = new InventoryService(saveService);
+    expect(
+      inventory.listOwnedItems().map(({ definition, quantity }) => [definition.id, quantity]),
+    ).toEqual([['item:berry-bun', 2]]);
+  });
 });

@@ -14,6 +14,15 @@ import { getExplorationPathPolishManager } from './game/world/ExplorationPathPol
 import { getWorldLayerAlignmentManager } from './game/world/WorldLayerAlignmentManager';
 
 const game = new Phaser.Game(gameConfig);
+const diagnosticsEnabled =
+  new URLSearchParams(globalThis.location.search).get('diagnostics') === '1';
+
+if (diagnosticsEnabled) {
+  void import('./game/testing/BrowserDiagnostics').then(({ installBrowserDiagnostics }) => {
+    installBrowserDiagnostics(game);
+  });
+}
+
 getClickToMoveManager(game);
 getContinueRestoreManager(game);
 getExplorationShellWorldManager(game);
@@ -34,7 +43,7 @@ void import('./game/activities/RepeatableActivityEntryWorldManager').then(
   },
 );
 
-const registerExtendedScenes = Promise.all([
+void Promise.all([
   import('./game/scenes/R6VillageInteriorScene'),
   import('./game/scenes/HollowTreeNookScene'),
   import('./game/scenes/WindmillLookoutScene'),
@@ -184,11 +193,3 @@ function ensureRaceMobileControls(): void {
 
 ensureRaceMobileControls();
 raceTouchPointerQuery?.addEventListener('change', () => ensureRaceMobileControls());
-
-if (new URLSearchParams(globalThis.location.search).get('diagnostics') === '1') {
-  void registerExtendedScenes
-    .then(() => import('./game/testing/BrowserDiagnostics'))
-    .then(({ installBrowserDiagnostics }) => {
-      installBrowserDiagnostics(game);
-    });
-}
