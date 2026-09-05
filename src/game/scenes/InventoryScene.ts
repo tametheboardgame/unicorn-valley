@@ -17,11 +17,12 @@ import {
   type ValleyMapNode,
 } from '../world/ValleyMapTopology';
 
+type BagTab = 'items' | 'map';
+
 interface InventorySceneData {
   returnScene?: string;
+  initialTab?: BagTab;
 }
-
-type BagTab = 'items' | 'map';
 
 export class InventoryScene extends Phaser.Scene {
   private inputController: InputController | null = null;
@@ -43,7 +44,7 @@ export class InventoryScene extends Phaser.Scene {
   public create(data: InventorySceneData): void {
     this.returnScene = data.returnScene ?? 'SunbeamVillageScene';
     this.closing = false;
-    this.activeTab = 'items';
+    this.activeTab = data.initialTab ?? 'items';
     this.cameras.main.setBackgroundColor('rgba(69, 50, 78, 0.92)');
 
     this.add
