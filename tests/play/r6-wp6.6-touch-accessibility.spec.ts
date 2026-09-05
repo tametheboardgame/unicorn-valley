@@ -294,7 +294,8 @@ test('target-tablet race supports simultaneous RUN and JUMP without cancelling R
   await waitForRaceStarted(page);
   await waitForForwardControl(page, false);
 
-  await expect(page.locator('[data-race-mobile-controls="true"]')).toBeVisible();
+  const overlay = page.locator('[data-race-mobile-controls="true"]');
+  await expect(overlay).toBeVisible();
   const runButton = page.locator('[data-race-action="run"]');
   const jumpButton = page.locator('[data-race-action="jump"]');
   const runBox = await runButton.boundingBox();
@@ -304,10 +305,10 @@ test('target-tablet race supports simultaneous RUN and JUMP without cancelling R
   expect(runBox?.x ?? 9999).toBeLessThan(220);
   expect((jumpBox?.x ?? 0) + (jumpBox?.width ?? 0)).toBeGreaterThan(800);
 
-  const controlDeckHeight = await page
-    .locator('[data-race-mobile-controls="true"]')
-    .evaluate((element) => element.getBoundingClientRect().height);
-  expect(controlDeckHeight).toBeLessThan(180);
+  expect(await page.locator('#game-shell').evaluate((element) => element.classList.contains('race-mobile-controls-active'))).toBe(false);
+  expect(await overlay.evaluate((element) => getComputedStyle(element).position)).toBe('fixed');
+  const canvasBox = await page.locator('canvas').boundingBox();
+  expect(canvasBox?.height ?? 0).toBeGreaterThan(500);
 
   let snapshot = await getSnapshot(page);
   let race = getScene(snapshot, 'RaceScene');
