@@ -14,6 +14,14 @@ import { getExplorationPathPolishManager } from './game/world/ExplorationPathPol
 import { getWorldLayerAlignmentManager } from './game/world/WorldLayerAlignmentManager';
 
 const game = new Phaser.Game(gameConfig);
+const diagnosticsEnabled = new URLSearchParams(globalThis.location.search).get('diagnostics') === '1';
+
+if (diagnosticsEnabled) {
+  void import('./game/testing/FreezeDiagnostics').then(({ installFreezeDiagnostics }) => {
+    installFreezeDiagnostics(game);
+  });
+}
+
 getClickToMoveManager(game);
 getContinueRestoreManager(game);
 getExplorationShellWorldManager(game);
@@ -185,7 +193,7 @@ function ensureRaceMobileControls(): void {
 ensureRaceMobileControls();
 raceTouchPointerQuery?.addEventListener('change', () => ensureRaceMobileControls());
 
-if (new URLSearchParams(globalThis.location.search).get('diagnostics') === '1') {
+if (diagnosticsEnabled) {
   void registerExtendedScenes
     .then(() => import('./game/testing/BrowserDiagnostics'))
     .then(({ installBrowserDiagnostics }) => {
