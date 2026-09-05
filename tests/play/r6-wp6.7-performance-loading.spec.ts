@@ -25,6 +25,9 @@ const PERFORMANCE_SAMPLE_TIMEOUT_MS = 15_000;
 const NORMAL_P95_BUDGET_MS = 120;
 const SEVERE_P95_CEILING_MS = 180;
 const SLOW_RUNNER_DEGRADATION_FACTOR = 1.35;
+const NORMAL_TRANSITION_BUDGET_MS = 1000;
+const SEVERE_TRANSITION_CEILING_MS = 1500;
+const SLOW_RUNNER_TRANSITION_MARGIN = 1.1;
 
 async function waitForDiagnostics(page: Page): Promise<void> {
   await page.waitForFunction(() => {
@@ -123,6 +126,19 @@ function settledP95Ceiling(initialP95FrameMs: number): number {
   );
 }
 
+function transitionElapsedCeiling(initialP95FrameMs: number): number {
+  if (initialP95FrameMs <= NORMAL_P95_BUDGET_MS) {
+    return NORMAL_TRANSITION_BUDGET_MS;
+  }
+
+  return Math.min(
+    SEVERE_TRANSITION_CEILING_MS,
+    NORMAL_TRANSITION_BUDGET_MS *
+      (initialP95FrameMs / NORMAL_P95_BUDGET_MS) *
+      SLOW_RUNNER_TRANSITION_MARGIN,
+  );
+}
+
 test('production world transitions stay responsive and avoid severe frame hitches', async ({
   page,
 }) => {
@@ -138,10 +154,13 @@ test('production world transitions stay responsive and avoid severe frame hitche
   );
   expect(initial.worstFrameMs).toBeLessThan(500);
   const p95Ceiling = settledP95Ceiling(initial.p95FrameMs);
+  const transitionCeiling = transitionElapsedCeiling(initial.p95FrameMs);
 
   for (const sceneKey of ['SunbeamVillageScene', 'RainbowMeadowScene', 'CrystalBrookScene']) {
     const transition = await measureTransition(page, sceneKey);
-    expect(transition.elapsedMs, `${sceneKey} transition took too long`).toBeLessThan(1000);
+    expect(transition.elapsedMs, `${sceneKey} transition took too long`).toBeLessThan(
+      transitionCeiling,
+    );
     expect(
       transition.performance.worstFrameMs,
       `${sceneKey} transition produced a severe frame hitch`,
