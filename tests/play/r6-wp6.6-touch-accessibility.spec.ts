@@ -412,10 +412,21 @@ test('target-tablet race Pause menu exposes assistance control', async ({ page }
   await page.addInitScript(() => window.localStorage.clear());
   await page.goto('/?scene=race&diagnostics=1');
   await waitForScene(page, 'RaceScene');
+  await waitForRaceStarted(page);
 
   await expect(page.locator('[data-race-mobile-controls="true"]')).toBeVisible();
   const pause = page.locator('[data-race-action="pause"]');
+  const resume = page.locator('[data-race-action="resume"]');
+  const help = page.locator('[data-race-action="help"]');
   await expect(pause).toBeVisible();
+
+  let snapshot = await getSnapshot(page);
+  let race = getScene(snapshot, 'RaceScene');
+  const control = race.objects.find((object) => object.name === 'race-assistance-control');
+  const toggle = race.objects.find((object) => object.name === 'race-assistance-toggle');
+  expect(control?.visible).toBe(false);
+  expect(toggle?.interactive).toBe(false);
+
   const pauseBox = await pause.boundingBox();
   expect(Math.min(pauseBox?.width ?? 0, pauseBox?.height ?? 0)).toBeGreaterThanOrEqual(48);
   if (!pauseBox) {
@@ -423,19 +434,12 @@ test('target-tablet race Pause menu exposes assistance control', async ({ page }
   }
   await page.touchscreen.tap(pauseBox.x + pauseBox.width / 2, pauseBox.y + pauseBox.height / 2);
 
-  const resume = page.locator('[data-race-action="resume"]');
-  const help = page.locator('[data-race-action="help"]');
   await expect(resume).toBeVisible();
   await expect(help).toBeVisible();
   const helpBox = await help.boundingBox();
+  const resumeBox = await resume.boundingBox();
   expect(Math.min(helpBox?.width ?? 0, helpBox?.height ?? 0)).toBeGreaterThanOrEqual(48);
-
-  const snapshot = await getSnapshot(page);
-  const race = getScene(snapshot, 'RaceScene');
-  const control = race.objects.find((object) => object.name === 'race-assistance-control');
-  const toggle = race.objects.find((object) => object.name === 'race-assistance-toggle');
-  expect(control?.visible).toBe(false);
-  expect(toggle?.interactive).toBe(false);
+  expect(Math.min(resumeBox?.width ?? 0, resumeBox?.height ?? 0)).toBeGreaterThanOrEqual(48);
 
   if (!helpBox) {
     throw new Error('Missing replacement race assistance control.');
@@ -456,4 +460,18 @@ test('target-tablet race Pause menu exposes assistance control', async ({ page }
     JSON.parse(window.localStorage.getItem('unicorn-valley:race-settings:v1') ?? '{}'),
   );
   expect(raceSettings.assistanceMode).toBe('extra-help');
+
+  if (!resumeBox) {
+    throw new Error('Missing tablet race Resume control.');
+  }
+  await page.touchscreen.tap(
+    resumeBox.x + resumeBox.width / 2,
+    resumeBox.y + resumeBox.height / 2,
+  );
+  await waitForScene(page, 'RaceScene');
+  await expect(pause).toBeVisible();
+
+  snapshot = await getSnapshot(page);
+  race = getScene(snapshot, 'RaceScene');
+  expect(race.state.raceStarted).toBe(true);
 });
