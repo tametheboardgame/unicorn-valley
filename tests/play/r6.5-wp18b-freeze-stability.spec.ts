@@ -161,10 +161,7 @@ async function playerPosition(page: Page, sceneKey: string): Promise<{ x: number
   return { x: player.x, y: player.y };
 }
 
-async function sceneHealth(
-  page: Page,
-  sceneKey: string,
-): Promise<DiagnosticSceneHealthSnapshot> {
+async function sceneHealth(page: Page, sceneKey: string): Promise<DiagnosticSceneHealthSnapshot> {
   const health = (await snapshot(page)).health.scenes.find((scene) => scene.key === sceneKey);
   if (!health) {
     throw new Error(`No lifecycle health snapshot is available for ${sceneKey}.`);
@@ -177,9 +174,10 @@ async function assertHealthyRuntime(page: Page): Promise<void> {
   expect(health.lastError, 'Freeze diagnostics must not record a runtime error').toBeNull();
   expect(health.rendererContextLost, 'Renderer context must remain available').toBe(false);
   expect(health.heartbeatAgeMs, 'The Phaser frame heartbeat must remain live').toBeLessThan(2_000);
-  expect(health.recentFrameCount, 'Freeze diagnostics should retain bounded frame samples').toBeGreaterThan(
-    0,
-  );
+  expect(
+    health.recentFrameCount,
+    'Freeze diagnostics should retain bounded frame samples',
+  ).toBeGreaterThan(0);
 }
 
 function assertStableCounts(
