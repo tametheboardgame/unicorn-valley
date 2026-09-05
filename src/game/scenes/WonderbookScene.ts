@@ -6,7 +6,10 @@ import { KeyboardInputAdapter } from '../input/KeyboardInputAdapter';
 import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 import { RelationshipService } from '../relationships/RelationshipService';
 import { getBrowserSaveService } from '../save/browserSaveService';
-import { PortraitModalCompanion } from '../ui/PortraitModalCompanion';
+import {
+  PortraitModalCompanion,
+  type PortraitModalActionGroup,
+} from '../ui/PortraitModalCompanion';
 import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from '../ui/uiTheme';
 import {
   buildWonderbookCharacterEntries,
@@ -436,7 +439,7 @@ export class WonderbookScene extends Phaser.Scene {
       })),
     );
 
-    const groups: Parameters<PortraitModalCompanion['setActionGroups']>[0] = [
+    const groups: PortraitModalActionGroup[] = [
       {
         id: 'sections',
         label: 'Book section',
