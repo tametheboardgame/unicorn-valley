@@ -3,6 +3,7 @@ import '../../raceMobileControls.css';
 import { getVerticalSliceAudio } from '../audio/VerticalSliceAudio';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
+import { browserUsesLandscapeTabletPresentation } from './LandscapeTabletPresentation';
 import { browserHasRaceTouchCapability } from './RaceTouchCapability';
 
 const RACE_SCENE_KEYS = new Set(['RaceScene', 'NovaTutorialRaceScene']);
@@ -99,9 +100,14 @@ export class RaceMobileControlsManager {
   private readonly runButton: HTMLButtonElement;
   private readonly jumpButton: HTMLButtonElement;
   private readonly leaveButton: HTMLButtonElement;
+  private readonly pauseButton: HTMLButtonElement;
+  private readonly resumeButton: HTMLButtonElement;
   private readonly shell: HTMLElement;
   private runHeld = false;
   private jumpHeld = false;
+  private runHeldTarget: Phaser.GameObjects.GameObject | null = null;
+  private jumpHeldTarget: Phaser.GameObjects.GameObject | null = null;
+  private pausedRaceScene: Phaser.Scene | null = null;
 
   public constructor(private readonly game: Phaser.Game) {
     this.shell = document.querySelector<HTMLElement>('#game-shell') ?? document.body;
@@ -127,7 +133,7 @@ export class RaceMobileControlsManager {
     this.runButton.type = 'button';
     this.runButton.className = 'race-mobile-button race-mobile-run';
     this.runButton.dataset.raceAction = 'run';
-    this.runButton.innerHTML = '<strong>RUN</strong><span>Hold to gallop</span>';
+    this.runButton.innerHTML = '<strong>RUN</strong><span>Hold to run</span>';
     this.runButton.addEventListener('pointerdown', (event) => {
       event.preventDefault();
       this.pressRun();
@@ -163,20 +169,61 @@ export class RaceMobileControlsManager {
     this.leaveButton.textContent = '← Leave race';
     this.leaveButton.addEventListener('click', () => this.leaveRace());
 
-    controls.append(this.runButton, this.jumpButton, this.helpButton, this.leaveButton);
+    this.pauseButton = document.createElement('button');
+    this.pauseButton.type = 'button';
+    this.pauseButton.className = 'race-mobile-button race-mobile-pause';
+    this.pauseButton.dataset.raceAction = 'pause';
+    this.pauseButton.textContent = 'Ⅱ Pause';
+    this.pauseButton.addEventListener('click', () => this.pauseRace());
+
+    this.resumeButton = document.createElement('button');
+    this.resumeButton.type = 'button';
+    this.resumeButton.className = 'race-mobile-button race-mobile-resume';
+    this.resumeButton.dataset.raceAction = 'resume';
+    this.resumeButton.textContent = '▶ Resume';
+    this.resumeButton.addEventListener('click', () => this.resumeRace());
+
+    for (const button of [this.runButton, this.jumpButton]) {
+      button.addEventListener('contextmenu', (event) => event.preventDefault());
+    }
+
+    controls.append(
+      this.runButton,
+      this.jumpButton,
+      this.helpButton,
+      this.leaveButton,
+      this.pauseButton,
+      this.resumeButton,
+    );
     this.root.append(copy, controls);
     this.shell.append(this.root);
 
+    globalThis.addEventListener('blur', this.releaseHeldControls);
+    globalThis.addEventListener('pagehide', this.releaseHeldControls);
+    document.addEventListener('visibilitychange', this.handleVisibilityChange);
     this.game.events.on(Phaser.Core.Events.POST_STEP, this.update, this);
     this.game.events.once(Phaser.Core.Events.DESTROY, () => {
-      this.releaseRun();
-      this.releaseJump();
+      this.releaseHeldControls();
       this.game.events.off(Phaser.Core.Events.POST_STEP, this.update, this);
+      globalThis.removeEventListener('blur', this.releaseHeldControls);
+      globalThis.removeEventListener('pagehide', this.releaseHeldControls);
+      document.removeEventListener('visibilitychange', this.handleVisibilityChange);
       this.shell.classList.remove('race-mobile-controls-active');
       this.root.remove();
     });
     this.pointerQuery?.addEventListener('change', () => this.sync());
   }
+
+  private readonly releaseHeldControls = (): void => {
+    this.releaseRun();
+    this.releaseJump();
+  };
+
+  private readonly handleVisibilityChange = (): void => {
+    if (document.hidden) {
+      this.releaseHeldControls();
+    }
+  };
 
   private update(): void {
     if (!this.syncThrottle.shouldRun(this.game.loop.time)) {
@@ -186,15 +233,21 @@ export class RaceMobileControlsManager {
   }
 
   private sync(): void {
-    const scene = this.activeRaceScene();
+    if (this.pausedRaceScene && !this.pausedRaceScene.scene.isPaused()) {
+      this.pausedRaceScene = null;
+    }
+    const scene = this.activeRaceScene() ?? this.pausedRaceScene;
     const active = Boolean(scene && browserHasRaceTouchCapability());
+    const tabletMode = active && browserUsesLandscapeTabletPresentation();
 
     this.root.hidden = !active;
-    this.shell.classList.toggle('race-mobile-controls-active', active);
+    this.root.classList.toggle('is-landscape-tablet', tabletMode);
+    this.root.classList.toggle('is-paused', Boolean(this.pausedRaceScene));
+    this.shell.classList.toggle('race-mobile-controls-active', active && !tabletMode);
+    this.syncTabletBounds(tabletMode);
 
     if (!scene) {
-      this.releaseRun();
-      this.releaseJump();
+      this.releaseHeldControls();
       return;
     }
 
@@ -203,15 +256,32 @@ export class RaceMobileControlsManager {
     if (active) {
       this.syncHelpLabel(scene);
     } else {
-      this.releaseRun();
-      this.releaseJump();
+      this.releaseHeldControls();
     }
+  }
+
+  private syncTabletBounds(tabletMode: boolean): void {
+    if (!tabletMode) {
+      for (const property of ['left', 'top', 'width', 'height']) {
+        this.root.style.removeProperty(property);
+      }
+      return;
+    }
+    const bounds = this.game.canvas.getBoundingClientRect();
+    this.root.style.left = `${bounds.left}px`;
+    this.root.style.top = `${bounds.top}px`;
+    this.root.style.width = `${bounds.width}px`;
+    this.root.style.height = `${bounds.height}px`;
   }
 
   private activeRaceScene(): Phaser.Scene | null {
     return (
       this.game.scene.getScenes(true).find((scene) => RACE_SCENE_KEYS.has(scene.scene.key)) ?? null
     );
+  }
+
+  private currentRaceScene(): Phaser.Scene | null {
+    return this.activeRaceScene() ?? this.pausedRaceScene;
   }
 
   private setCanvasControlsEnabled(scene: Phaser.Scene, enabled: boolean): void {
@@ -261,7 +331,7 @@ export class RaceMobileControlsManager {
   }
 
   private pressRun(): void {
-    if (this.runHeld) {
+    if (this.runHeld || this.pausedRaceScene) {
       return;
     }
     const scene = this.activeRaceScene();
@@ -271,24 +341,24 @@ export class RaceMobileControlsManager {
     }
 
     this.runHeld = true;
+    this.runHeldTarget = target;
     this.runButton.classList.add('is-active');
     void getVerticalSliceAudio().unlock();
     target.emit('pointerdown');
   }
 
   private releaseRun(): void {
-    if (!this.runHeld) {
+    if (!this.runHeld && !this.runHeldTarget) {
       return;
     }
     this.runHeld = false;
     this.runButton.classList.remove('is-active');
-    const scene = this.activeRaceScene();
-    const target = scene ? this.runTarget(scene) : null;
-    target?.emit('pointerup');
+    this.runHeldTarget?.emit('pointerup');
+    this.runHeldTarget = null;
   }
 
   private pressJump(): void {
-    if (this.jumpHeld) {
+    if (this.jumpHeld || this.pausedRaceScene) {
       return;
     }
     const scene = this.activeRaceScene();
@@ -298,24 +368,24 @@ export class RaceMobileControlsManager {
     }
 
     this.jumpHeld = true;
+    this.jumpHeldTarget = target;
     this.jumpButton.classList.add('is-active');
     void getVerticalSliceAudio().unlock();
     target.emit('pointerdown');
   }
 
   private releaseJump(): void {
-    if (!this.jumpHeld) {
+    if (!this.jumpHeld && !this.jumpHeldTarget) {
       return;
     }
     this.jumpHeld = false;
     this.jumpButton.classList.remove('is-active');
-    const scene = this.activeRaceScene();
-    const target = scene ? this.jumpTarget(scene) : null;
-    target?.emit('pointerup');
+    this.jumpHeldTarget?.emit('pointerup');
+    this.jumpHeldTarget = null;
   }
 
   private toggleHelp(): void {
-    const scene = this.activeRaceScene();
+    const scene = this.currentRaceScene();
     if (!scene) {
       return;
     }
@@ -328,11 +398,39 @@ export class RaceMobileControlsManager {
     this.syncHelpLabel(scene);
   }
 
-  private leaveRace(): void {
+  private pauseRace(): void {
     const scene = this.activeRaceScene();
+    if (!scene || !browserUsesLandscapeTabletPresentation()) {
+      return;
+    }
+    this.releaseHeldControls();
+    this.pausedRaceScene = scene;
+    scene.scene.pause();
+    this.sync();
+  }
+
+  private resumeRace(): void {
+    const scene = this.pausedRaceScene;
     if (!scene) {
       return;
     }
+    if (scene.scene.isPaused()) {
+      scene.scene.resume();
+    }
+    this.pausedRaceScene = null;
+    this.sync();
+  }
+
+  private leaveRace(): void {
+    const scene = this.currentRaceScene();
+    if (!scene) {
+      return;
+    }
+    this.releaseHeldControls();
+    if (scene.scene.isPaused()) {
+      scene.scene.resume();
+    }
+    this.pausedRaceScene = null;
     nameRaceCanvasControls(scene);
     const target = scene.children.getByName(`${CONTROL_PREFIX}:canvas-exit`);
     if (!target) {
