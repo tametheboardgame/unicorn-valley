@@ -233,15 +233,7 @@ export class RaceMobileControlsManager {
   }
 
   private sync(): void {
-    const activeRaceScene = this.activeRaceScene();
-    if (
-      this.pausedRaceScene &&
-      !this.pausedRaceScene.scene.isPaused() &&
-      activeRaceScene !== this.pausedRaceScene
-    ) {
-      this.pausedRaceScene = null;
-    }
-    const scene = activeRaceScene ?? this.pausedRaceScene;
+    const scene = this.activeRaceScene() ?? this.pausedRaceScene;
     const active = Boolean(scene && browserHasRaceTouchCapability());
     const tabletMode = active && browserUsesLandscapeTabletPresentation();
 
@@ -410,6 +402,13 @@ export class RaceMobileControlsManager {
     }
     this.releaseHeldControls();
     this.pausedRaceScene = scene;
+    scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      if (this.pausedRaceScene !== scene) {
+        return;
+      }
+      this.pausedRaceScene = null;
+      this.sync();
+    });
     scene.scene.pause();
     this.sync();
   }
