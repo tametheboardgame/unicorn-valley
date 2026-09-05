@@ -53,7 +53,7 @@ The 2026-09-05 substantially unguided daughter playthrough produced strong posit
 
 - landscape-tablet controls and shell layout are the largest usability barrier;
 - racing is effectively blocked on the reference Galaxy Tab S8 because controls obscure the track and Chrome long-press behaviour interrupts RUN;
-- multiple hard freezes occurred, including a repeatable Sunlit Beach Bag freeze;
+- multiple hard freezes occurred, including a repeatable Sunlit/Starlight Beach Bag freeze;
 - several functional interaction/progression/state defects remain;
 - shell readability/overflow, inventory scalability and creator layout need a coherent tablet-first pass;
 - world/character consistency and selected visual areas need targeted improvement.
@@ -98,17 +98,19 @@ Implementation stop rule: if WP18C/WP18E would materially drift from the approve
 
 Path: `docs/work-packages/R6.5-WP18B-FREEZE-DIAGNOSTICS-STABILITY.md`
 
-State: **next / unblocked**.
+State: **complete; delivery-ready through PR #148**.
 
-Instrument runtime/scene/input lifecycle, reproduce and fix the known Tree Nook, Twinkle and Thread, and repeatable Sunlit Beach Bag freezes, then add stress/regression coverage for scene transitions, modals, shops, races and sustained play.
+WP18B added bounded runtime freeze diagnostics, fixed the deterministic long-running-save retired-inventory-ID Bag crash, hardened Bag/Shop resume sequencing and added repeated real-flow stress coverage. Exact-head validation completed with 150 Chromium tests passed and 3 intentionally skipped, all WP18B stress cases green, browser compatibility green and the hard 520 KiB budget preserved.
 
 ### R6.5-WP18C - Landscape Tablet Controls and Interaction Shell
 
 Path: `docs/work-packages/R6.5-WP18C-LANDSCAPE-TABLET-CONTROLS-INTERACTION-SHELL.md`
 
-State: planned after WP18B; approved WP18A visual authority available.
+State: **next / unblocked after WP18B merge; approved WP18A visual authority available**.
 
 Implement the shared landscape-tablet shell, comfortable touch controls, first-class tap-to-move, contextual primary action, consistent direct NPC tapping, device-appropriate help, compact Bag/Map/Wonderbook/Settings access, safe multi-touch/input release and race controls that do not trigger the known Chrome long-press blocker or cover upcoming obstacles.
+
+Race-control clarification approved by the user on 2026-09-05: **RUN and JUMP only**, with RUN lower-left and JUMP lower-right. There is no left/right steering and no separate race Gallop control. RUN + JUMP must work simultaneously and the central track must remain unobstructed.
 
 ### R6.5-WP18D - Playthrough Functional Bug and Regression Remediation
 
@@ -156,7 +158,7 @@ WP18H captures evidence but **does not release R7**. It returns the project to W
 
 ### Dependency chain
 
-`WP17 evidence -> WP18A approved -> WP18B -> WP18C -> WP18D -> WP18E -> WP18F -> WP18G -> WP18H -> WP17 explicit readiness decision -> R7`
+`WP17 evidence -> WP18A approved -> WP18B complete -> WP18C -> WP18D -> WP18E -> WP18F -> WP18G -> WP18H -> WP17 explicit readiness decision -> R7`
 
 ## R6.6 - Optional Android Packaging
 
