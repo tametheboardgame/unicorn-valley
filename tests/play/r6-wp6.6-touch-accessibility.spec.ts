@@ -464,10 +464,7 @@ test('target-tablet race Pause menu exposes assistance control', async ({ page }
   if (!resumeBox) {
     throw new Error('Missing tablet race Resume control.');
   }
-  await page.touchscreen.tap(
-    resumeBox.x + resumeBox.width / 2,
-    resumeBox.y + resumeBox.height / 2,
-  );
+  await page.touchscreen.tap(resumeBox.x + resumeBox.width / 2, resumeBox.y + resumeBox.height / 2);
   await waitForScene(page, 'RaceScene');
   await expect(pause).toBeVisible();
 
