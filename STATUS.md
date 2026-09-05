@@ -8,79 +8,75 @@ R6.5 - Valley Completeness and Breadth
 
 ## Current accepted baseline
 
-R0 through R6 are complete. R6.5-WP1 through WP14 are integrated on `main`.
+R0 through R6 are complete. R6.5-WP1 through WP15 are integrated on `main`.
 
-Latest accepted `main` gameplay baseline: `5d246ae012ef351e9dd356befc3a9608222041e6` (R6.5-WP14 merge via PR #143).
+Latest accepted `main` gameplay baseline: `bdc86e05472d0f061e3b748cc42706cc6541f523` (R6.5-WP15 merge via PR #144).
 
-WP14 exact head `c6f9dd3f52166ba9c06330301059fec2ed3a9a6a` passed the project contract, formatting, lint, type-check, unit tests, production build, unchanged 520 KiB application-entry budget, static smoke, Chromium/Firefox/WebKit compatibility and the full Chromium playtest before merge. Browser playtest result: 141 passed, 3 intentionally skipped, 0 failed.
+WP15 exact head `46e9d3b32391b98720d20836192e4645b11ce3b4` passed the AI project contract, formatting, lint, type-check, unit tests, production build, unchanged 520 KiB application-entry budget, static smoke, full Chromium playtest and Chromium/Firefox/WebKit compatibility before merge.
 
 ## Active work package
 
-ID: `R6.5-WP15`
+ID: `R6.5-WP16`
 
-Path: `docs/work-packages/R6.5-WP15-WONDERBOOK-COLLECTIONS-LONG-TERM-GOALS.md`
+Path: `docs/work-packages/R6.5-WP16-VALLEY-TIDY-BALANCE-CONTENT-POLISH.md`
 
-Branch: `r6.5-wp15-wonderbook-collections-long-term-goals`.
+Branch: `r6.5-wp16-valley-tidy-balance-content-polish`.
 
-Goal: expand the Wonderbook into a child-readable record of discoveries, friends, regions/collections, races/ribbons and gentle long-term goals derived from existing save state.
+Goal: reconcile the broadened valley against accumulated R6 playthrough feedback, mobile readability/touch safety, navigation/crowding, quest/shop/race balance, the region-density contract, legacy visual residue and final performance/regression hardening before the WP17 human gate.
 
-## WP15 implementation state
+## WP16 implementation state
 
-The bounded package is active and the foundation audit is complete:
+The bounded WP16 package is active. Initial mandatory audit areas are:
 
-- the existing Wonderbook currently presents discovery stickers plus All/Secrets only;
-- `WonderbookCharacterModel` already exposes character/friendship state but is not yet surfaced by the scene;
-- save schema v2 already contains discoveries, memories, relationship progress, world changes, race records/ribbons and mini-game records;
-- WP12 race/Cup progress and WP14 Bakery/Beachcombing collection progress can therefore be represented without new persistence;
-- WP15 will aggregate existing authorities rather than introduce a second completion ledger or save migration;
-- the planned sections are discoveries/secrets, friends, places/region collections, races/ribbons and gentle long-term goals;
-- the planned long-term tracks include Valley Explorer, Friendship Garden, Ribbon Journey and Curiosity Cabinet, with no streaks, timers, FOMO or punitive incompletion state.
+- released-R6 playthrough issues, including mobile customisation crowding, small text/action clarity, prompt/control overlap, legacy unicorn placeholders, Village shop presentation, point-and-click backwards facing flicker and Crystal Brook entrance clarity;
+- phone/tablet touch-target and readability sweep across HUD, dialogue, shops, activities, races, Wonderbook and customisation;
+- NPC crowding/navigation and path/sign/gateway clarity;
+- quest pacing/reward, shop/economy and race/reward balance;
+- region-by-region dead-zone reconciliation against the R6.5 interaction-density contract;
+- duplicate/legacy visual cleanup;
+- performance/load validation with the complete R6.5 content set and full browser regression.
+
+The first pass must classify each issue as already resolved, needs fix or accepted exception before making broad changes.
 
 ## Technical validation
 
-State: `pending` for WP15.
+State: `pending` for WP16.
 
-Implementation and focused tests are in progress. The full technical gate will run after the Wonderbook model/UI and browser acceptance are complete.
+No WP16 gameplay/presentation fix is yet being claimed as complete. The full exact-head technical gate will run after the evidence-based audit and bounded remediation pass.
 
 ## Human acceptance
 
-State: `not_required` for WP15.
+State: `not_required` for WP16.
 
-The next human release gate remains R6.5-WP17. R7 stays blocked until that gate is explicitly released.
+The next human release gate is **R6.5-WP17**. R7 remains hard-blocked until that gate is explicitly released after a full human playthrough.
 
 ## Recently completed
 
-- R6.5-WP12 Race Expansion and Rainbow Cup merged as `610216ae13b96772d3a7b7e95696c695ddcd1870`.
 - R6.5-WP13 Cross-Region and Follow-up Stories merged as `3db374dd48445386819d1da97d4367619f7b9cef` after full exact-head validation.
 - R6.5-WP14 Repeatable Activity Expansion merged as `5d246ae012ef351e9dd356befc3a9608222041e6` after full exact-head validation.
-
-## Housekeeping
-
-- Obsolete stacked PRs #127, #128 and #135 remain closed and superseded by merged reconciliation PRs #138, #139 and #140.
-- PR #142 and PR #143 are merged and their final state records the validated WP13/WP14 work.
-- WP14's bounded package is now marked complete on the WP15 hand-off branch.
+- R6.5-WP15 Wonderbook, Collections and Long-Term Goals merged as `bdc86e05472d0f061e3b748cc42706cc6541f523` after full exact-head validation.
 
 ## Next eligible work
 
-1. Complete the pure WP15 Wonderbook aggregation model and focused unit tests.
-2. Expand `WonderbookScene` to surface friends, regions/collections, races and long-term goals while preserving existing discovery/secret behaviour.
-3. Add focused browser acceptance and run the full technical gate.
-4. Merge WP15 once its exact head is fully green.
-5. Advance to R6.5-WP16 tidy/balance/content polish, then WP17 human playthrough/readiness gate.
+1. Complete the WP16 audit/reconciliation table against the current code and automated coverage.
+2. Fix remaining high-impact child-facing/mobile/navigation defects first.
+3. Reconcile economy, quest/race balance and region density only where evidence shows a real gap.
+4. Run the full technical gate on one frozen exact head and merge WP16 if green.
+5. Stop at R6.5-WP17 for the required human playthrough/readiness decision. Do not begin R7 autonomously.
 
 ## Blockers
 
 No known technical blocker.
 
-R7 remains hard-blocked by the R6.5-WP17 human readiness gate.
+R7 is intentionally blocked by the R6.5-WP17 human readiness gate.
 
 ## Human decisions required
 
-No immediate input required.
+No immediate input required while WP16 remains Green/autonomous.
 
 ## Production / deployment
 
-No production deployment was performed. Production deployment still requires explicit user approval.
+No intentional production deployment was performed. Production deployment still requires explicit user approval.
 
 ## Non-negotiable technical guardrail
 
@@ -92,11 +88,10 @@ A new project chat can resume safely by reading, in order:
 
 1. `PROJECT_STATE.json`;
 2. this `STATUS.md`;
-3. `docs/work-packages/R6.5-WP15-WONDERBOOK-COLLECTIONS-LONG-TERM-GOALS.md`;
-4. the WP15 section of `docs/07V-R6.5-VALLEY-COMPLETENESS-BREADTH.md`;
-5. `src/game/wonderbook/` and `src/game/scenes/WonderbookScene.ts`.
-
-The new chat should work from GitHub state rather than relying on prior chat history.
+3. `docs/work-packages/R6.5-WP16-VALLEY-TIDY-BALANCE-CONTENT-POLISH.md`;
+4. the WP16 section and interaction-density contract in `docs/07V-R6.5-VALLEY-COMPLETENESS-BREADTH.md`;
+5. the released-R6 playthrough reconciliation list in the WP16 package;
+6. current GitHub branch/PR/CI state.
 
 ## Night Shift
 
