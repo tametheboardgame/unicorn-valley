@@ -251,7 +251,13 @@ export class ExplorationShell {
     }
     const returnScene = this.scene.scene.key;
     if (!this.scene.scene.isActive('InventoryScene')) {
-      this.scene.scene.launch('InventoryScene', { returnScene, initialTab });
+      if (initialTab === 'map') {
+        const inventoryScene = this.scene.scene.get('InventoryScene');
+        inventoryScene.events.once(Phaser.Scenes.Events.CREATE, () => {
+          inventoryScene.children.getByName('bag-map-tab')?.emit('pointerdown');
+        });
+      }
+      this.scene.scene.launch('InventoryScene', { returnScene });
       this.scene.scene.pause();
     }
   }
