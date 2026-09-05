@@ -4,7 +4,7 @@ import { shouldUseLandscapeTabletPresentation } from './LandscapeTabletPresentat
 const touch = { maxTouchPoints: 5, hasTouchStart: false, hasCoarsePointer: true };
 
 describe('landscape tablet presentation', () => {
-  it('selects a touch-capable landscape tablet', () => {
+  it('selects a touch-primary landscape tablet', () => {
     expect(shouldUseLandscapeTabletPresentation(1280, 800, touch)).toBe(true);
     expect(shouldUseLandscapeTabletPresentation(1024, 768, touch)).toBe(true);
   });
@@ -15,6 +15,16 @@ describe('landscape tablet presentation', () => {
 
   it('does not use the landscape tablet shell in portrait', () => {
     expect(shouldUseLandscapeTabletPresentation(800, 1280, touch)).toBe(false);
+  });
+
+  it('keeps a fine-pointer hybrid on the secondary touch layout', () => {
+    expect(
+      shouldUseLandscapeTabletPresentation(1024, 768, {
+        maxTouchPoints: 5,
+        hasTouchStart: false,
+        hasCoarsePointer: false,
+      }),
+    ).toBe(false);
   });
 
   it('does not use touch presentation on a conventional desktop', () => {
