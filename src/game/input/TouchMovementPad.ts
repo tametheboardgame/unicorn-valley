@@ -9,6 +9,8 @@ const SCENE_RESUME_EVENT = 'resume';
 let preferredTouchControlsVisible: boolean | null = null;
 const padsByScene = new WeakMap<Phaser.Scene, TouchMovementPad>();
 
+export type TouchMovementPresentation = 'portrait-dom' | 'landscape-tablet' | 'canvas';
+
 export function shouldShowTouchMovementPad(
   maxTouchPoints: number,
   hasTouchStart: boolean,
@@ -27,6 +29,22 @@ export function shouldUsePortraitTouchControls(
   );
 }
 
+export function selectTouchMovementPresentation(
+  width: number,
+  height: number,
+  maxTouchPoints: number,
+  hasTouchStart: boolean,
+  usesLandscapeTabletPresentation: boolean,
+): TouchMovementPresentation {
+  if (shouldUsePortraitTouchControls(width, height, maxTouchPoints, hasTouchStart)) {
+    return 'portrait-dom';
+  }
+  if (usesLandscapeTabletPresentation) {
+    return 'landscape-tablet';
+  }
+  return 'canvas';
+}
+
 function shouldDefaultTouchMovementPadVisible(): boolean {
   const touchCapable = shouldShowTouchMovementPad(
     globalThis.navigator?.maxTouchPoints ?? 0,
@@ -39,23 +57,20 @@ function shouldDefaultTouchMovementPadVisible(): boolean {
   return touchCapable && (coarsePointer || compactViewport);
 }
 
-function shouldRenderPortraitDomControls(): boolean {
-  if (typeof globalThis.document === 'undefined') {
-    return false;
-  }
-
-  return shouldUsePortraitTouchControls(
+function browserTouchMovementPresentation(): TouchMovementPresentation {
+  return selectTouchMovementPresentation(
     globalThis.innerWidth,
     globalThis.innerHeight,
     globalThis.navigator?.maxTouchPoints ?? 0,
     'ontouchstart' in globalThis,
+    browserUsesLandscapeTabletPresentation(),
   );
 }
 
 export class TouchMovementPad {
   private readonly objects: Array<Phaser.GameObjects.Arc | Phaser.GameObjects.Text> = [];
   private readonly buttons: Phaser.GameObjects.Arc[] = [];
-  private readonly tabletMode: boolean;
+  private presentation: TouchMovementPresentation;
   private domRoot: HTMLDivElement | null = null;
   private visible = true;
   private scenePaused = false;
@@ -70,30 +85,16 @@ export class TouchMovementPad {
     private readonly input: PointerTouchInputAdapter,
   ) {
     padsByScene.set(scene, this);
-    this.tabletMode = browserUsesLandscapeTabletPresentation();
+    this.presentation = browserTouchMovementPresentation();
     this.scene.events.on(SCENE_PAUSE_EVENT, this.handleScenePause, this);
     this.scene.events.on(SCENE_RESUME_EVENT, this.handleSceneResume, this);
     globalThis.addEventListener?.('blur', this.handleWindowBlur);
+    globalThis.addEventListener?.('resize', this.handleViewportChange);
     globalThis.document?.addEventListener('visibilitychange', this.handleVisibilityChange);
 
-    if (shouldRenderPortraitDomControls()) {
-      this.createPortraitDomControls();
-    } else if (this.tabletMode) {
-      this.createLandscapeTabletControls();
-    } else {
-      const originX = 118;
-      const originY = GAME_HEIGHT - 118;
-      const spacing = 62;
-
-      this.createButton(originX, originY - spacing, '▲', 'MOVE_Y', -1, 'up');
-      this.createButton(originX, originY + spacing, '▼', 'MOVE_Y', 1, 'down');
-      this.createButton(originX - spacing, originY, '◀', 'MOVE_X', -1, 'left');
-      this.createButton(originX + spacing, originY, '▶', 'MOVE_X', 1, 'right');
-      this.createGallopButton(originX + spacing * 2.35, originY - spacing * 0.95);
-    }
-
+    this.createPresentation();
     this.setVisible(
-      this.tabletMode
+      this.presentation === 'landscape-tablet'
         ? true
         : (preferredTouchControlsVisible ?? shouldDefaultTouchMovementPadVisible()),
       false,
@@ -105,7 +106,7 @@ export class TouchMovementPad {
   }
 
   public togglePreferredVisibility(): boolean {
-    if (this.tabletMode) {
+    if (this.presentation === 'landscape-tablet') {
       return true;
     }
     const nextVisible = !this.visible;
@@ -121,15 +122,10 @@ export class TouchMovementPad {
     this.scene.events.off(SCENE_PAUSE_EVENT, this.handleScenePause, this);
     this.scene.events.off(SCENE_RESUME_EVENT, this.handleSceneResume, this);
     globalThis.removeEventListener?.('blur', this.handleWindowBlur);
+    globalThis.removeEventListener?.('resize', this.handleViewportChange);
     globalThis.document?.removeEventListener('visibilitychange', this.handleVisibilityChange);
     this.releaseInput();
-    this.domRoot?.remove();
-    this.domRoot = null;
-    for (const object of this.objects) {
-      object.destroy();
-    }
-    this.objects.length = 0;
-    this.buttons.length = 0;
+    this.clearPresentation();
     if (padsByScene.get(this.scene) === this) {
       padsByScene.delete(this.scene);
     }
@@ -137,6 +133,10 @@ export class TouchMovementPad {
 
   private readonly handleWindowBlur = (): void => {
     this.releaseInput();
+  };
+
+  private readonly handleViewportChange = (): void => {
+    this.refreshPresentation();
   };
 
   private readonly handleVisibilityChange = (): void => {
@@ -169,6 +169,47 @@ export class TouchMovementPad {
     this.applyVisibility();
   }
 
+  private refreshPresentation(): void {
+    if (this.destroyed) {
+      return;
+    }
+    const nextPresentation = browserTouchMovementPresentation();
+    if (nextPresentation === this.presentation) {
+      return;
+    }
+
+    this.releaseInput();
+    this.clearPresentation();
+    this.presentation = nextPresentation;
+    if (nextPresentation === 'landscape-tablet') {
+      this.visible = true;
+    }
+    this.createPresentation();
+    this.applyVisibility();
+  }
+
+  private createPresentation(): void {
+    if (this.presentation === 'portrait-dom') {
+      this.createPortraitDomControls();
+      return;
+    }
+    if (this.presentation === 'landscape-tablet') {
+      this.createLandscapeTabletControls();
+      return;
+    }
+    this.createDefaultCanvasControls();
+  }
+
+  private clearPresentation(): void {
+    this.domRoot?.remove();
+    this.domRoot = null;
+    for (const object of this.objects) {
+      object.destroy();
+    }
+    this.objects.length = 0;
+    this.buttons.length = 0;
+  }
+
   private applyVisibility(): void {
     const renderedVisible = this.visible && !this.scenePaused;
     if (this.domRoot) {
@@ -191,6 +232,18 @@ export class TouchMovementPad {
     this.input.setAxis('MOVE_X', 0);
     this.input.setAxis('MOVE_Y', 0);
     this.input.setButton('GALLOP', false);
+  }
+
+  private createDefaultCanvasControls(): void {
+    const originX = 118;
+    const originY = GAME_HEIGHT - 118;
+    const spacing = 62;
+
+    this.createButton(originX, originY - spacing, '▲', 'MOVE_Y', -1, 'up');
+    this.createButton(originX, originY + spacing, '▼', 'MOVE_Y', 1, 'down');
+    this.createButton(originX - spacing, originY, '◀', 'MOVE_X', -1, 'left');
+    this.createButton(originX + spacing, originY, '▶', 'MOVE_X', 1, 'right');
+    this.createGallopButton(originX + spacing * 2.35, originY - spacing * 0.95);
   }
 
   private createLandscapeTabletControls(): void {
