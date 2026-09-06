@@ -70,14 +70,32 @@ function unlockFor(save: ReturnType<SaveService['createNewGame']>, stock: Bakery
   };
 }
 
+function withVisibleRepeatOwnership(
+  definition: ItemDefinition,
+  unique: boolean,
+  ownedQuantity: number,
+): ItemDefinition {
+  if (unique || ownedQuantity <= 0) {
+    return definition;
+  }
+  return {
+    ...definition,
+    name: `${definition.name} ×${ownedQuantity}`,
+  };
+}
+
 export class BakeryService {
   public constructor(private readonly saveService: SaveService) {}
 
   public listStock(): readonly BakeryStockView[] {
     const save = this.saveService.load() ?? this.saveService.createNewGame();
     return R6_BAKERY_STOCK.map((stock) => {
-      const definition = itemRegistry.get(stock.itemId);
       const ownedQuantity = save.inventory.itemQuantities[stock.itemId] ?? 0;
+      const definition = withVisibleRepeatOwnership(
+        itemRegistry.get(stock.itemId),
+        stock.unique,
+        ownedQuantity,
+      );
       const unlock = unlockFor(save, stock);
       return {
         definition,

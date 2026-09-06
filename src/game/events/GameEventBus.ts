@@ -14,6 +14,7 @@ export interface GameEventMap {
   WORLD_FLAG_CHANGED: { flagId: string; value: boolean };
   RACE_FINISHED: { raceId: string; finishTimeMs: number };
   DISCOVERY_UNLOCKED: { discoveryId: string };
+  SHIMMER_REWARDED: { amount: number; balance: number; labels: readonly string[] };
   SAVE_COMPLETED: { schemaVersion: number; savedAt: string };
 }
 

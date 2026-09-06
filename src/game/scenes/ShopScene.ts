@@ -250,8 +250,12 @@ export class ShopScene extends Phaser.Scene {
 
     const result = this.shopService.purchase(itemId);
     if (result.type === 'purchased') {
+      const ownershipMessage =
+        result.ownedQuantity === 1
+          ? `${result.item.name} added to your collection.`
+          : `Another ${result.item.name} added. Owned now: ${result.ownedQuantity}.`;
       this.feedbackText?.setText(
-        `✨ ${result.item.name} is yours! You have ${result.balance} Shimmer left.`,
+        `✨ ${ownershipMessage} ${result.price} Shimmer spent, ${result.balance} left.`,
       );
       this.cameras.main.flash(120, 255, 235, 164, false);
     } else if (result.type === 'insufficient-funds') {

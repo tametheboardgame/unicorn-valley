@@ -47,6 +47,28 @@ describe('Moonflower Cottage interior map', () => {
     expect(distanceFromExit).toBeGreaterThan(EXIT_INTERACTION_RADIUS);
   });
 
+  it('blocks every room edge, including the lower boundary behind the exit', () => {
+    const colliderIds = COTTAGE_INTERIOR_MAP.colliders.map(({ id }) => id);
+    expect(colliderIds).toEqual(
+      expect.arrayContaining(['wall-top', 'wall-left', 'wall-right', 'wall-bottom']),
+    );
+
+    expect(
+      isPointBlocked(
+        { x: COTTAGE_INTERIOR_MAP.exit.position.x, y: 1160 },
+        COTTAGE_INTERIOR_MAP.colliders,
+        0,
+      ),
+    ).toBe(true);
+    expect(
+      isPointBlocked(
+        COTTAGE_INTERIOR_MAP.exit.approach,
+        COTTAGE_INTERIOR_MAP.colliders,
+        PLAYER_CLEARANCE,
+      ),
+    ).toBe(false);
+  });
+
   it('uses unique stable decoration slot IDs', () => {
     const ids = COTTAGE_INTERIOR_MAP.decorationSlots.map((slot) => slot.id);
     expect(new Set(ids).size).toBe(ids.length);

@@ -18,6 +18,7 @@ import { hasHeldExplorationMovementInput } from './KeyboardInputAdapter';
 interface NavigationState {
   path: MapPoint[];
   waypointIndex: number;
+  target: MapPoint | null;
   marker: Phaser.GameObjects.Container | null;
   lastDistance: number;
   lastProgressAt: number;
@@ -182,7 +183,12 @@ export class ClickToMoveManager {
         (directionX / magnitude) * DEFAULT_PLAYER_SPEED,
         (directionY / magnitude) * DEFAULT_PLAYER_SPEED,
       );
-      updateClickNavigationFacing(player, directionX, directionY);
+
+      // Pathfinding may alternate tiny horizontal/vertical segments around obstacles.
+      // Face towards the player's actual click target instead of each intermediate
+      // waypoint so presentation remains stable while velocity follows the safe path.
+      const facingTarget = state.target ?? waypoint;
+      updateClickNavigationFacing(player, facingTarget.x - player.x, facingTarget.y - player.y);
       player.setAngle(Math.sin(scene.time.now * 0.018) * 1.6);
     }
   }
@@ -196,6 +202,7 @@ export class ClickToMoveManager {
     const state: NavigationState = {
       path: [],
       waypointIndex: 0,
+      target: null,
       marker: null,
       lastDistance: Number.POSITIVE_INFINITY,
       lastProgressAt: scene.time.now,
@@ -233,9 +240,12 @@ export class ClickToMoveManager {
 
       state.path = path;
       state.waypointIndex = 0;
+      state.target = path[path.length - 1] ?? null;
       state.lastDistance = Number.POSITIVE_INFINITY;
       state.lastProgressAt = scene.time.now;
-      this.showTargetMarker(scene, state, path[path.length - 1]);
+      if (state.target) {
+        this.showTargetMarker(scene, state, state.target);
+      }
     };
 
     scene.input.on('pointerdown', state.pointerHandler);
@@ -276,6 +286,7 @@ export class ClickToMoveManager {
   private cancel(state: NavigationState, destroyMarker = true): void {
     state.path = [];
     state.waypointIndex = 0;
+    state.target = null;
     state.lastDistance = Number.POSITIVE_INFINITY;
     if (destroyMarker) {
       state.marker?.destroy(true);
