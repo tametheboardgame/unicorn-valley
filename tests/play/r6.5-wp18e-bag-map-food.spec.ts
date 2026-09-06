@@ -198,7 +198,9 @@ test('the landscape exploration Map action opens a distinct Map surface rather t
   expect(await objectVisible(page, 'InventoryScene', 'bag-map-guidance')).toBe(true);
 });
 
-test('landscape Creator progressively reveals one approved category at a time', async ({ page }) => {
+test('landscape Creator progressively reveals one approved category at a time', async ({
+  page,
+}) => {
   await diagnostics(page);
   await startScene(page, 'UnicornCreatorScene');
 
