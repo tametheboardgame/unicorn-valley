@@ -6,13 +6,13 @@
   "phase": "R6.5 - Valley Completeness and Breadth, human-playtest remediation",
   "current_work_package": "R6.5-WP18G",
   "current_work_package_path": "docs/work-packages/R6.5-WP18G-TABLET-DEVICE-HARDENING-CROSS-INPUT-REGRESSION.md",
-  "status": "in_progress",
+  "status": "complete",
   "autonomy_state": "green",
   "agent_state": "active",
   "branch": "agent/r6.5-wp18g-tablet-device-hardening",
-  "latest_commit": "06d8b452b1f499e0101ea1d40f81e77901a8309d",
-  "ci_state": "running",
-  "technical_validation_state": "running",
+  "latest_commit": "4f71e843e024b7974405e00f469ea0e359a2180b",
+  "ci_state": "passing",
+  "technical_validation_state": "passing",
   "human_acceptance_state": "not_required",
   "next_work_package": "R6.5-WP18H",
   "next_work_package_path": "docs/work-packages/R6.5-WP18H-FULL-HUMAN-TABLET-REPLAY-RETURN-WP17.md",
@@ -21,6 +21,6 @@
   "night_shift_state": "not_configured",
   "chat_disposition": "keep",
   "delivery_mode": "pr_required",
-  "last_activity_at": "2026-09-06T18:20:00+01:00",
-  "updated_at": "2026-09-06T18:20:00+01:00"
+  "last_activity_at": "2026-09-06T20:14:00+01:00",
+  "updated_at": "2026-09-06T20:14:00+01:00"
 }
