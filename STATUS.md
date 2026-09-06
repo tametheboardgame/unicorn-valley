@@ -24,31 +24,30 @@ Path: `docs/work-packages/R6.5-WP18G-TABLET-DEVICE-HARDENING-CROSS-INPUT-REGRESS
 
 Branch: `agent/r6.5-wp18g-tablet-device-hardening`
 
-State: **in progress**.
+State: **technically complete on PR #153; awaiting merge**.
 
-WP18G hardens the completed tablet-first experience across realistic landscape tablet aspect ratios and secondary desktop/browser input without redesigning already-approved UI.
+WP18G delivered:
 
-Initial audit findings:
+- explicit canvas gesture suppression without globally breaking DOM text input or modal scrolling;
+- live touch-control presentation refresh across landscape/portrait/orientation changes;
+- input release before control-presentation rebuild;
+- browser-space landscape matrix coverage for 16:9, 16:10, 4:3, smaller and larger tablet shapes;
+- Bag/Map/Creator containment checks;
+- race control containment and clear central track coverage;
+- secondary desktop click-to-move, creator name-entry and race regressions;
+- WP18G Chromium/Firefox/WebKit browser health coverage.
 
-- existing race RUN/JUMP controls already release correctly on pointer cancel/leave, blur, visibility loss and page lifecycle changes;
-- existing exploration touch controls already release movement/Gallop on blur, visibility loss and pointer exit/up-outside;
-- the page already opts into `viewport-fit=cover`, and safe-area CSS is already present;
-- browser compatibility already covers Chromium/WebKit tablet-touch projects but not the current WP18 tablet shell hardening matrix;
-- exploration `TouchMovementPad` chooses portrait versus landscape presentation only when it is constructed, so a live orientation cycle can retain the wrong presentation. WP18G will cover and fix this rather than rewriting the input model;
-- the game canvas has no explicit `touch-action` rule even though touch control DOM elements do. WP18G will test browser gesture interference and only add broader gesture suppression if evidence requires it;
-- 4:3 tablet scaling makes browser-space target size more important than logical Phaser dimensions, so the matrix will assert rendered/browser-space usability rather than logical sizes alone.
+Validated implementation head `4f71e843e024b7974405e00f469ea0e359a2180b` is fully green:
 
-Planned evidence matrix:
+- project contract run `34050864146` green;
+- CI run `34050864147` green;
+- formatting/lint/type-check, 426 unit tests, production build/static smoke and hard 520 KiB budget green;
+- Chromium/Firefox/WebKit compatibility green;
+- full serial Chromium playtest: 164 passed / 3 skipped;
+- automated summary: 0 errors, 0 warnings, 2 non-blocking live-object-count suggestions;
+- WP18B long-session freeze regressions remain green.
 
-- 16:9 landscape tablet;
-- 16:10 reference-style landscape tablet;
-- 4:3 landscape tablet;
-- smaller and larger landscape tablet variants where useful;
-- landscape race control containment and visibility;
-- live landscape/portrait/orientation-cycle stability;
-- hybrid touch capability plus secondary desktop keyboard/mouse behaviour;
-- compact Chromium/Firefox/WebKit tablet compatibility smoke;
-- existing long-session/freeze regression suites and hard 520 KiB budget remain mandatory rather than duplicated.
+The only earlier red run was a test-only Playwright timeout caused by repeated browser round-trips in the new viewport matrix. The test was optimised without weakening product assertions and the corrected exact head is green.
 
 ## Next eligible work
 
@@ -56,11 +55,11 @@ Planned evidence matrix:
 
 Path: `docs/work-packages/R6.5-WP18H-FULL-HUMAN-TABLET-REPLAY-RETURN-WP17.md`
 
-WP18H starts only after WP18G is technically complete. It is the final full human tablet replay gate before returning to WP17 for the explicit R7-readiness decision.
+WP18H starts after PR #153 merges. It is the final real-device human tablet replay gate before returning to WP17 for the explicit R7-readiness decision.
 
 ## Remaining remediation sequence
 
-`WP18G -> WP18H -> WP17 explicit R7-readiness decision`
+`WP18G merge -> WP18H human replay -> WP17 explicit R7-readiness decision`
 
 ## Human acceptance
 
@@ -76,9 +75,11 @@ WP18E human gate: none.
 
 WP18F human gate: **approved 2026-09-06**, with a non-blocking later tightening pass requested.
 
-WP18G human gate: none.
+WP18G human gate: none; technical acceptance complete.
 
-Full human confirmation remains WP18H. R6.5-WP17 R7-readiness remains blocked until WP18H completes another full tablet playthrough.
+WP18H human gate: **required** on the reference Samsung Galaxy Tab S8 in Chrome landscape.
+
+R6.5-WP17 R7-readiness remains blocked until WP18H completes another full tablet playthrough and the user then makes the explicit WP17 readiness decision.
 
 ## Production / deployment
 
