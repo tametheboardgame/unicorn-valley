@@ -253,8 +253,7 @@ export class CoreNpcProductionPresentationManager {
   }
 
   private refreshPresenceAuthority(): void {
-    this.novaArea =
-      this.presenceService.resolve(NOVA_CHARACTER_ID)?.area ?? 'rainbow-run-hub';
+    this.novaArea = this.presenceService.resolve(NOVA_CHARACTER_ID)?.area ?? 'rainbow-run-hub';
     syncNovaRaceInteractionTarget(this.novaArea === 'rainbow-run-hub');
   }
 
