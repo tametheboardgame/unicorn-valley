@@ -95,7 +95,9 @@ describe('HomeDecorationService', () => {
     );
     expect(reloaded.getPlacement('cottage-slot:window-nook')).toBeNull();
     expect(
-      reloaded.listOwnedDecorations().find(({ definition }) => definition.id === 'item:moonflower-lantern'),
+      reloaded
+        .listOwnedDecorations()
+        .find(({ definition }) => definition.id === 'item:moonflower-lantern'),
     ).toMatchObject({ quantity: 1, placedQuantity: 0 });
   });
 
@@ -122,7 +124,9 @@ describe('HomeDecorationService', () => {
     expect(decorating.getPlacement('cottage-slot:window-nook')?.id).toBe('item:moonflower-lantern');
     expect(decorating.getPlacement('cottage-slot:bedside')?.id).toBe('item:moonflower-lantern');
     expect(
-      decorating.listOwnedDecorations().find(({ definition }) => definition.id === 'item:moonflower-lantern'),
+      decorating
+        .listOwnedDecorations()
+        .find(({ definition }) => definition.id === 'item:moonflower-lantern'),
     ).toMatchObject({ quantity: 2, placedQuantity: 2 });
   });
 
@@ -148,7 +152,9 @@ describe('HomeDecorationService', () => {
     });
 
     expect(
-      decorating.listOwnedDecorations().find(({ definition }) => definition.id === 'item:moonflower-lantern'),
+      decorating
+        .listOwnedDecorations()
+        .find(({ definition }) => definition.id === 'item:moonflower-lantern'),
     ).toMatchObject({ quantity: 1, placedQuantity: 1 });
     expect(decorating.getPlacement('cottage-slot:window-nook')?.id).toBe('item:moonflower-lantern');
     expect(decorating.getPlacement('cottage-slot:bedside')).toBeNull();
