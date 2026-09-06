@@ -1,9 +1,11 @@
 import Phaser from 'phaser';
+import { RefreshThrottle } from '../performance/RefreshThrottle';
 import {
   CREATOR_CATEGORIES,
   creatorCategoryLabel,
   type CreatorCategoryId,
 } from './CreatorProgressiveModel';
+import { browserUsesLandscapeTabletPresentation } from './LandscapeTabletPresentation';
 import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from './uiTheme';
 
 interface PositionedObject extends Phaser.GameObjects.GameObject {
@@ -42,8 +44,8 @@ const LEGACY_ROW_TARGETS: Readonly<Record<number, number>> = {
 export class LandscapeCreatorProgressiveManager {
   private readonly managedControls: ManagedControl[] = [];
   private readonly categoryButtons = new Map<CreatorCategoryId, CategoryButtonSet>();
-  private readonly transientObjects: Phaser.GameObjects.GameObject[] = [];
-  private activeCategory: CreatorCategoryId = 'main';
+  private readonly persistentObjects: Phaser.GameObjects.GameObject[] = [];
+  private readonly categoryDescriptionObjects: Phaser.GameObjects.GameObject[] = [];
 
   public constructor(
     private readonly scene: Phaser.Scene,
@@ -111,7 +113,8 @@ export class LandscapeCreatorProgressiveManager {
         .text(x, y, `${definition.icon} ${definition.label}`, {
           color: UI_COLOURS.ink,
           fontFamily: UI_FONT,
-          fontSize: definition.id === 'mane-tail' || definition.id === 'accessories' ? '14px' : '16px',
+          fontSize:
+            definition.id === 'mane-tail' || definition.id === 'accessories' ? '14px' : '16px',
           fontStyle: 'bold',
           align: 'center',
         })
@@ -120,7 +123,7 @@ export class LandscapeCreatorProgressiveManager {
       applyButtonHover(button, UI_COLOURS.cream, UI_COLOURS.gold);
       button.on('pointerdown', () => this.showCategory(definition.id));
       this.categoryButtons.set(definition.id, { button, label });
-      this.transientObjects.push(shadow);
+      this.persistentObjects.push(shadow, button, label);
     });
   }
 
@@ -133,7 +136,7 @@ export class LandscapeCreatorProgressiveManager {
       return;
     }
 
-    createUiShadow(this.scene, 730, 675, 150, 64, 29, 0.15);
+    const shadow = createUiShadow(this.scene, 730, 675, 150, 64, 29, 0.15);
     const back = this.scene.add
       .rectangle(730, 675, 150, 64, UI_COLOURS.cream, 0.99)
       .setName('creator-action-back')
@@ -152,20 +155,16 @@ export class LandscapeCreatorProgressiveManager {
       .setDepth(31);
     applyButtonHover(back, UI_COLOURS.cream, UI_COLOURS.lavender);
     back.on('pointerdown', () => this.scene.scene.start('TitleScene'));
-    this.transientObjects.push(back, label);
+    this.persistentObjects.push(shadow, back, label);
   }
 
   private showCategory(category: CreatorCategoryId): void {
-    this.activeCategory = category;
     this.clearCategoryDescription();
 
     for (const control of this.managedControls) {
       const visible = control.category === category;
       control.object.setVisible(visible);
-      control.object.setPosition(
-        control.originalX,
-        visible ? control.targetY + (control.originalY - Math.round(control.originalY)) : control.originalY,
-      );
+      control.object.setPosition(control.originalX, visible ? control.targetY : control.originalY);
       if (control.object.input) {
         control.object.input.enabled = visible && control.interactive;
       }
@@ -184,7 +183,7 @@ export class LandscapeCreatorProgressiveManager {
 
   private renderCategoryDescription(category: CreatorCategoryId): void {
     const heading = this.scene.add
-      .text(940, 360, creatorCategoryLabel(category), {
+      .text(940, 355, creatorCategoryLabel(category), {
         color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
         fontSize: '22px',
@@ -197,27 +196,16 @@ export class LandscapeCreatorProgressiveManager {
       .container(0, 0)
       .setName(`creator-tablet-category-content:${category}`)
       .setDepth(28);
-    this.transientObjects.push(heading, marker);
+    this.categoryDescriptionObjects.push(heading, marker);
 
     if (category !== 'main') {
-      const hint = this.scene.add
-        .text(940, 390, 'Tap any option. Your unicorn updates instantly on the left.', {
-          color: '#7d6880',
-          fontFamily: UI_FONT,
-          fontSize: '13px',
-          fontStyle: 'bold',
-          align: 'center',
-        })
-        .setOrigin(0.5)
-        .setDepth(28);
-      this.transientObjects.push(hint);
       return;
     }
 
     const intro = this.scene.add
       .text(
         940,
-        440,
+        445,
         'Name your unicorn above, then choose one section at a time.\n\nThe big preview stays visible while you try every look.',
         {
           color: '#664f6e',
@@ -233,30 +221,28 @@ export class LandscapeCreatorProgressiveManager {
       .setOrigin(0.5)
       .setDepth(28);
     const footer = this.scene.add
-      .text(940, 555, 'Randomise and reset options are below the preview. Save only when it feels right.', {
-        color: '#806b84',
-        fontFamily: UI_FONT,
-        fontSize: '14px',
-        align: 'center',
-        wordWrap: { width: 490 },
-      })
+      .text(
+        940,
+        555,
+        'Randomise and reset options are below the preview. Save only when it feels right.',
+        {
+          color: '#806b84',
+          fontFamily: UI_FONT,
+          fontSize: '14px',
+          align: 'center',
+          wordWrap: { width: 490 },
+        },
+      )
       .setOrigin(0.5)
       .setDepth(28);
-    this.transientObjects.push(intro, footer);
+    this.categoryDescriptionObjects.push(intro, footer);
   }
 
   private clearCategoryDescription(): void {
-    for (let index = this.transientObjects.length - 1; index >= 0; index -= 1) {
-      const object = this.transientObjects[index];
-      if (
-        object.name.startsWith('creator-tablet-category-') ||
-        object.name === 'creator-tablet-main-guidance' ||
-        (object instanceof Phaser.GameObjects.Text && object.y >= 350 && object.y <= 590)
-      ) {
-        object.destroy();
-        this.transientObjects.splice(index, 1);
-      }
+    for (const object of this.categoryDescriptionObjects) {
+      object.destroy();
     }
+    this.categoryDescriptionObjects.length = 0;
   }
 
   private nearestLegacyRow(y: number): number | null {
@@ -299,4 +285,53 @@ export class LandscapeCreatorProgressiveManager {
       typeof object.setVisible === 'function'
     );
   }
+}
+
+export class LandscapeCreatorProgressiveWorldManager {
+  private readonly refreshThrottle = new RefreshThrottle(80);
+  private readonly appliedScenes = new WeakSet<Phaser.Scene>();
+
+  public constructor(private readonly game: Phaser.Game) {
+    this.game.events.on(Phaser.Core.Events.POST_STEP, this.update, this);
+    this.game.events.once(Phaser.Core.Events.DESTROY, () => {
+      this.game.events.off(Phaser.Core.Events.POST_STEP, this.update, this);
+    });
+  }
+
+  private update(): void {
+    if (
+      !browserUsesLandscapeTabletPresentation() ||
+      !this.refreshThrottle.shouldRun(this.game.loop.time)
+    ) {
+      return;
+    }
+
+    const scene = this.game.scene.getScene('UnicornCreatorScene');
+    if (!scene?.scene.isActive() || this.appliedScenes.has(scene)) {
+      return;
+    }
+
+    const saveAction =
+      scene.children.getByName('creator-action-save-changes') ??
+      scene.children.getByName('creator-action-confirm-new');
+    if (!saveAction) {
+      return;
+    }
+
+    const editMode = Boolean(scene.children.getByName('creator-action-cancel'));
+    new LandscapeCreatorProgressiveManager(scene, editMode);
+    this.appliedScenes.add(scene);
+    scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.appliedScenes.delete(scene);
+    });
+  }
+}
+
+let manager: LandscapeCreatorProgressiveWorldManager | null = null;
+
+export function getLandscapeCreatorProgressiveWorldManager(
+  game: Phaser.Game,
+): LandscapeCreatorProgressiveWorldManager {
+  manager ??= new LandscapeCreatorProgressiveWorldManager(game);
+  return manager;
 }
