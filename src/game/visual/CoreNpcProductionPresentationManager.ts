@@ -22,6 +22,11 @@ import {
 const LUMI_WORLD_POSITION = { x: 2980, y: 1530 } as const;
 const NOVA_PICNIC_POSITION = { x: 2045, y: 1400 } as const;
 const NOVA_PRESENCE_REFRESH_MS = 500;
+const NOVA_OFFSTAGE_INTERACTION_POSITION = { x: -10000, y: -10000 } as const;
+const novaRaceMarker = RAINBOW_MEADOW_MAP.npcMarkers.find((candidate) => candidate.id === 'nova');
+const NOVA_RACE_POSITION = novaRaceMarker
+  ? { x: novaRaceMarker.position.x, y: novaRaceMarker.position.y }
+  : null;
 
 interface StoryPortraitDefinition {
   sceneKey: string;
@@ -64,6 +69,20 @@ function destroyNamedObject(scene: Phaser.Scene, name: string): void {
   object.destroy();
 }
 
+function syncNovaRaceInteractionTarget(atRaceHub: boolean): void {
+  if (!novaRaceMarker || !NOVA_RACE_POSITION) {
+    return;
+  }
+
+  // RainbowMeadowScene's Nova interaction keeps the same marker-position object by reference.
+  // Moving that shared target off-stage removes the talk interaction while Nova is elsewhere;
+  // restoring the canonical coordinates re-enables it without duplicating scene progression rules.
+  const mutablePosition = novaRaceMarker.position as { x: number; y: number };
+  const target = atRaceHub ? NOVA_RACE_POSITION : NOVA_OFFSTAGE_INTERACTION_POSITION;
+  mutablePosition.x = target.x;
+  mutablePosition.y = target.y;
+}
+
 function hideVillagePrototypeMarker(
   scene: Phaser.Scene,
   id: 'willow' | 'marigold' | 'pebble',
@@ -98,8 +117,7 @@ function hideVillagePrototypeMarker(
 }
 
 function hideNovaPlaceholder(scene: Phaser.Scene, hideRaceLabel: boolean): void {
-  const marker = RAINBOW_MEADOW_MAP.npcMarkers.find((candidate) => candidate.id === 'nova');
-  if (!marker) {
+  if (!NOVA_RACE_POSITION) {
     return;
   }
 
@@ -107,8 +125,8 @@ function hideNovaPlaceholder(scene: Phaser.Scene, hideRaceLabel: boolean): void 
     if (
       object instanceof Phaser.GameObjects.Container &&
       object.name !== 'core-npc:nova:world' &&
-      Math.abs(object.x - marker.position.x) <= 1 &&
-      Math.abs(object.y - marker.position.y) <= 8 &&
+      Math.abs(object.x - NOVA_RACE_POSITION.x) <= 1 &&
+      Math.abs(object.y - NOVA_RACE_POSITION.y) <= 8 &&
       object.list.length >= 8
     ) {
       object.setVisible(false);
@@ -119,8 +137,8 @@ function hideNovaPlaceholder(scene: Phaser.Scene, hideRaceLabel: boolean): void 
       hideRaceLabel &&
       object instanceof Phaser.GameObjects.Text &&
       object.text === 'Nova' &&
-      Math.abs(object.x - marker.position.x) <= 4 &&
-      Math.abs(object.y - (marker.position.y + 72)) <= 10
+      Math.abs(object.x - NOVA_RACE_POSITION.x) <= 4 &&
+      Math.abs(object.y - (NOVA_RACE_POSITION.y + 72)) <= 10
     ) {
       object.setVisible(false);
     }
@@ -237,6 +255,7 @@ export class CoreNpcProductionPresentationManager {
   private refreshPresenceAuthority(): void {
     this.novaArea =
       this.presenceService.resolve(NOVA_CHARACTER_ID)?.area ?? 'rainbow-run-hub';
+    syncNovaRaceInteractionTarget(this.novaArea === 'rainbow-run-hub');
   }
 
   private refreshStoryPortraits(): void {
@@ -365,22 +384,18 @@ export class CoreNpcProductionPresentationManager {
   }
 
   private ensureRaceHubNova(scene: Phaser.Scene): void {
-    if (scene.children.getByName('core-npc:nova:world')) {
-      return;
-    }
-    const marker = RAINBOW_MEADOW_MAP.npcMarkers.find((candidate) => candidate.id === 'nova');
-    if (!marker) {
+    if (scene.children.getByName('core-npc:nova:world') || !NOVA_RACE_POSITION) {
       return;
     }
     const nova = createCoreNpcSprite(
       scene,
       'nova',
-      marker.position.x,
-      marker.position.y + 4,
+      NOVA_RACE_POSITION.x,
+      NOVA_RACE_POSITION.y + 4,
       'world',
     )
       .setDisplaySize(112, 92)
-      .setDepth(worldDepthForY(marker.position.y + 50, 0.32));
+      .setDepth(worldDepthForY(NOVA_RACE_POSITION.y + 50, 0.32));
     addCoreNpcIdleTween(scene, nova, 'nova', 5);
   }
 
