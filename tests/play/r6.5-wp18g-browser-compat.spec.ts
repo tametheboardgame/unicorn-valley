@@ -17,9 +17,11 @@ test('WP18G browser hardening keeps the game surface contained and healthy', asy
   await expect(page.locator('canvas')).toBeVisible();
 
   const state = await page.evaluate(() => {
-    const diagnostics = (window as typeof window & {
-      __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
-    }).__UNICORN_VALLEY_DIAGNOSTICS__;
+    const diagnostics = (
+      window as typeof window & {
+        __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
+      }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__;
     if (!diagnostics) {
       throw new Error('Browser diagnostics are unavailable.');
     }
@@ -27,7 +29,8 @@ test('WP18G browser hardening keeps the game surface contained and healthy', asy
     if (!canvas) {
       throw new Error('Game canvas is unavailable.');
     }
-    const viewportMeta = document.querySelector('meta[name="viewport"]')?.getAttribute('content') ?? '';
+    const viewportMeta =
+      document.querySelector('meta[name="viewport"]')?.getAttribute('content') ?? '';
     const snapshot = diagnostics.snapshot();
     return {
       viewportMeta,
