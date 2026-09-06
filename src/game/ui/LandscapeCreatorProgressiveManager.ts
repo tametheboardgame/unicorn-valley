@@ -13,7 +13,6 @@ interface PositionedObject extends Phaser.GameObjects.GameObject {
   y: number;
   setPosition(x: number, y: number): this;
   setVisible(visible: boolean): this;
-  input?: Phaser.Types.Input.InteractiveObject | null;
 }
 
 interface ManagedControl {
