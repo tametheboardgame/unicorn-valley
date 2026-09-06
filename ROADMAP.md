@@ -10,135 +10,55 @@ This file is the concise project-level navigation layer. Detailed release conten
 - R3 - Rainbow Run Racing: complete.
 - R4 - Friendship, Secrets and Home Depth: complete.
 - R5 - The Valley Gets Bigger: complete.
-- R6 - Production Presentation and Accessibility: complete, including the final human remediation gate.
+- R6 - Production Presentation and Accessibility: complete.
 
 ## R6.5 - Valley Completeness and Breadth
 
-Status: Human playtest completed; R7 readiness gate **not released**; tablet-first remediation required
+Status: Human playtest completed; R7 readiness gate **not released**; tablet-first remediation in progress.
 
 Canonical release contract: `docs/07V-R6.5-VALLEY-COMPLETENESS-BREADTH.md`
 
-Mandatory companion material where relevant:
+Authoritative remediation evidence: `docs/07Z-R6.5-WP17-PLAYTEST-REMEDIATION.md`
 
-- `docs/07W-R6.5-CONTENT-BLUEPRINT.md`
-- `docs/07X-R6.5-AUTONOMOUS-UNICORN-LIFE.md`
-- `docs/07Y-R6.5-WP1-AUDIT-DENSITY-CONTRACT.md`
-- `docs/07Z-R6.5-WP17-PLAYTEST-REMEDIATION.md` - authoritative remediation plan produced from the 2026-09-05 daughter playthrough.
-- `docs/07AA-R6.5-WP18A-APPROVED-TABLET-UX-DIRECTION.md` - approved landscape-tablet layout and interaction authority for WP18C/WP18E.
+Approved tablet direction: `docs/07AA-R6.5-WP18A-APPROVED-TABLET-UX-DIRECTION.md`
 
-### Completed pre-playtest package sequence
+### Completed pre-playtest sequence
 
-- R6.5-WP1 - Valley Content Audit and Density Contract: complete.
-- R6.5-WP2 - Ambient Population and World Interaction Toolkit: complete.
-- R6.5-WP3 - Economy and Reward Loop Completion: complete.
-- R6.5-WP4 - Sunbeam Village Life, Shops and Interiors: complete.
-- R6.5-WP5 - Moonflower Glade and Cottage Depth: complete.
-- R6.5-WP6 - Rainbow Meadow and Rainbow Run Depth: complete.
-- R6.5-WP7 - Crystal Brook Depth: complete.
-- R6.5-WP8 - Whispering Woods Depth: complete.
-- R6.5-WP9 - Starlight Beach Core: complete.
-- R6.5-WP10 - Starlight Beach Content: complete.
-- R6.5-WP11 - Existing Valley Quest Pack A: complete.
-- R6.5-WP12 - Race Expansion and Rainbow Cup: complete; merged as `610216ae13b96772d3a7b7e95696c695ddcd1870`.
-- R6.5-WP13 - Quest Pack B: Cross-Region and Follow-up Stories: complete; merged as `3db374dd48445386819d1da97d4367619f7b9cef`.
-- R6.5-WP14 - Repeatable Activity Expansion: complete; merged as `5d246ae012ef351e9dd356befc3a9608222041e6`.
-- R6.5-WP15 - Wonderbook, Collections and Long-Term Goals: complete; merged as `bdc86e05472d0f061e3b748cc42706cc6541f523`.
-- R6.5-WP16 - Valley Tidy-up, Balance and Content Polish: complete through PR #145; merged to `main` as `a424ec9f50be2d83b2a7c246e5735d9e24274480` after final exact-head technical validation.
+R6.5-WP1 through R6.5-WP16 are complete and integrated.
 
 ### R6.5-WP17 - Full Human Playthrough and R7 Readiness Gate
 
 State: **open / remediation required**.
 
-The 2026-09-05 substantially unguided daughter playthrough produced strong positive evidence that the underlying game is engaging, but also found release-blocking problems:
-
-- landscape-tablet controls and shell layout are the largest usability barrier;
-- racing is effectively blocked on the reference Galaxy Tab S8 because controls obscure the track and Chrome long-press behaviour interrupts RUN;
-- multiple hard freezes occurred, including a repeatable Sunlit/Starlight Beach Bag freeze;
-- several functional interaction/progression/state defects remain;
-- shell readability/overflow, inventory scalability and creator layout need a coherent tablet-first pass;
-- world/character consistency and selected visual areas need targeted improvement.
-
-Therefore WP17 does **not** release R7. Per its gate contract, bounded remediation work is inserted under R6.5 and the project returns to WP17 only after another complete human tablet replay.
-
-Authoritative detail: `docs/07Z-R6.5-WP17-PLAYTEST-REMEDIATION.md`.
+The 2026-09-05 daughter playthrough showed that the underlying game is engaging but identified release-blocking landscape-tablet controls, freezes, functional defects, Bag/Creator usability issues and world/character consistency problems. WP17 therefore does not release R7 until the WP18 remediation sequence and another full tablet replay are complete.
 
 ## R6.5-WP18 - Landscape Tablet and Playtest Remediation
 
-Product direction: **landscape-tablet-first interface and controls** while retaining the existing Phaser/TypeScript/Vite browser codebase and secondary desktop keyboard/mouse support.
+Product direction: **landscape-tablet-first** while retaining the Phaser/TypeScript/Vite browser codebase and secondary desktop keyboard/mouse support.
 
 Reference human-test device: Samsung Galaxy Tab S8, current supported Android, Chrome, landscape.
 
-Do not rewrite the game natively for Android as part of WP18. A later Android package of the existing web game may be evaluated only after the tablet-first build is stable and accepted.
+Do not rewrite the game natively for Android as part of WP18.
 
-### Priority order
+### Completed packages
 
-1. human-approved tablet UI/control concepts;
-2. freezing/root-cause stability work;
-3. shared tablet controls and interaction shell;
-4. concrete functional defects/regressions;
-5. Bag/Map/Creator/modal UX;
-6. world consistency, visual quality and selected experience improvements;
-7. cross-device tablet hardening;
-8. full human tablet replay;
-9. return to WP17 for explicit R7-readiness decision.
+- R6.5-WP18A - Landscape Tablet UX Concept and Approval: complete, human visual gate released 2026-09-05, PR #147.
+- R6.5-WP18B - Freeze Diagnostics, Root Cause and Stability: complete, PR #148.
+- R6.5-WP18C - Landscape Tablet Controls and Interaction Shell: complete, PR #149.
+- R6.5-WP18D - Playthrough Functional Bug and Regression Remediation: complete and merged through PR #150.
+- R6.5-WP18E - Bag, Map, Creator and Modal Tablet UX: **complete and delivery-ready through PR #151**, with exact-head contract, core validation, browser compatibility and full Chromium playtest green on implementation head `5c848ea33d62944c80a153608f9e9ecf4f9b106d`.
 
-### R6.5-WP18A - Landscape Tablet UX Concept and Approval
-
-Path: `docs/work-packages/R6.5-WP18A-LANDSCAPE-TABLET-UX-CONCEPT-APPROVAL.md`
-
-State: **complete; human visual gate released 2026-09-05**.
-
-The user approved the supplied landscape-tablet concepts as implementation authority for layout, hierarchy, thumb placement, readability and interaction design. Their expensive 3D rendering is illustrative only.
-
-Durable authority: `docs/07AA-R6.5-WP18A-APPROVED-TABLET-UX-DIRECTION.md`.
-
-Implementation stop rule: if WP18C/WP18E would materially drift from the approved layouts, stop and request user input rather than silently substituting another design.
-
-### R6.5-WP18B - Freeze Diagnostics, Root Cause and Stability
-
-Path: `docs/work-packages/R6.5-WP18B-FREEZE-DIAGNOSTICS-STABILITY.md`
-
-State: **complete; merged through PR #148**.
-
-WP18B added bounded runtime freeze diagnostics, fixed the deterministic long-running-save retired-inventory-ID Bag crash, hardened Bag/Shop resume sequencing and added repeated real-flow stress coverage. Exact-head validation completed with 150 Chromium tests passed and 3 intentionally skipped, all WP18B stress cases green, browser compatibility green and the hard 520 KiB budget preserved.
-
-### R6.5-WP18C - Landscape Tablet Controls and Interaction Shell
-
-Path: `docs/work-packages/R6.5-WP18C-LANDSCAPE-TABLET-CONTROLS-INTERACTION-SHELL.md`
-
-State: **complete; merged through PR #149**.
-
-WP18C implements the approved landscape-tablet shell with compact Map/Bag/Book/Settings navigation, Shimmer/location status, a large lower-left exploration pad, separate Gallop, large lower-right contextual action, bottom-centre child-facing hints, direct target tapping through the authoritative interaction path and safe input release across pause/focus/visibility transitions.
-
-Race controls follow the user's explicit 2026-09-05 clarification: **RUN and JUMP only**, with RUN lower-left and JUMP lower-right. There is no left/right steering and no separate race Gallop. RUN + JUMP works simultaneously, the old landscape bottom race deck no longer shrinks the track, Chrome long-press/context behaviour is suppressed for required actions, and tablet Pause/Resume/assistance is covered.
-
-### R6.5-WP18D - Playthrough Functional Bug and Regression Remediation
-
-Path: `docs/work-packages/R6.5-WP18D-PLAYTHROUGH-FUNCTIONAL-BUG-REGRESSION-REMEDIATION.md`
-
-State: **complete; delivery-ready through PR #150 pending final exact-head validation**.
-
-WP18D resolves the bounded human-observed functional defects. Echo and Fern now use the shared resident interaction runtime; Maple follows a reachable bakery-side route; Moonflower Cottage has a closed collision perimeter; decoration ownership and placement have explicit save-safe authority rules; tap/click facing follows the final destination rather than pathfinding micro-waypoints; reward and general-shop feedback are explicit; repeatable Bakery purchases persistently show owned quantity; and the earlier production-NPC marker cleanup has been revalidated.
-
-Implementation/regression evidence is recorded in `docs/work-packages/R6.5-WP18D-IMPLEMENTATION-NOTES.md`. WP18D has no human gate. The performance guard remains unchanged and final exact-head CI determines merge readiness.
-
-### R6.5-WP18E - Bag, Map, Creator and Modal Tablet UX
-
-Path: `docs/work-packages/R6.5-WP18E-BAG-MAP-CREATOR-MODAL-TABLET-UX.md`
-
-State: **next / unblocked after WP18D merge; approved WP18A visual authority available**.
-
-Redesign growing inventory around clear scrolling categories/pockets, make Food meaningfully usable, provide explicit Map access, implement the approved progressive-category Unicorn Creator, and reconcile Wonderbook/shops/settings/dialogue/decoration/activity modals with the shared tablet readability, overflow and touch-target contract.
+WP18E delivered scalable Bag categories and scrolling, bounded useful Food consumption, distinct Map access and surface, the approved progressive-category Unicorn Creator, and modal tablet-contract reconciliation. Human gate: none.
 
 ### R6.5-WP18F - World Consistency, Visual Quality and Experience Improvements
 
 Path: `docs/work-packages/R6.5-WP18F-WORLD-CONSISTENCY-VISUAL-EXPERIENCE.md`
 
-State: planned after WP18E.
+State: **next after WP18E merge**.
 
-Introduce authoritative presence/activity state for recurring core friends, using Nova as the initial proof so characters cannot occupy mutually exclusive places simultaneously. Clean up symbol/placeholder character representations, improve unicorn neck/mane presentation, Shell Cove identity, Crystal Brook/crystal readability and shop place-quality, while preserving positive areas such as Rainbow Meadow, Whispering Woods and Tree Nook. Bounded daughter-led additions such as interactive mushrooms or unicorn sandcastles may be included where coherent and low-risk.
+Introduce authoritative presence/activity state for recurring core friends, using Nova as the initial proof so mutually exclusive appearances cannot coexist. Clean up symbol/placeholder character representations, improve unicorn neck/mane presentation, Shell Cove identity, Crystal Brook/crystal readability and shop place quality. Preserve positive areas such as Rainbow Meadow, Whispering Woods and Tree Nook. Bounded daughter-led additions such as interactive mushrooms or unicorn sandcastles may be included where coherent and low-risk.
 
-Larger daughter-led ideas such as Unicorn Palace and multi-step social events remain evidence for R7/backlog unless deliberately promoted later.
+Human gate: **visual spot-checks**.
 
 ### R6.5-WP18G - Tablet Device Hardening and Cross-Input Regression
 
@@ -146,7 +66,7 @@ Path: `docs/work-packages/R6.5-WP18G-TABLET-DEVICE-HARDENING-CROSS-INPUT-REGRESS
 
 State: planned after WP18F.
 
-Validate representative landscape 16:9, 16:10 and 4:3 tablet layouts plus secondary desktop support. Recheck browser gesture interference, multi-touch, safe areas, overflow, race visibility, long-session/freeze regressions, browser compatibility and the unchanged 520 KiB application-entry budget.
+Validate representative 16:9, 16:10 and 4:3 landscape-tablet layouts plus secondary desktop support, browser gesture interference, multi-touch, safe areas, overflow, race visibility, long-session stability, browser compatibility and the unchanged 520 KiB budget.
 
 ### R6.5-WP18H - Full Human Tablet Replay and Return to WP17
 
@@ -154,45 +74,36 @@ Path: `docs/work-packages/R6.5-WP18H-FULL-HUMAN-TABLET-REPLAY-RETURN-WP17.md`
 
 State: planned final human gate.
 
-Run another substantially unguided playthrough on the reference Galaxy Tab S8 in landscape. Revalidate controls, racing, previously frozen scenes, Bag/Map/Creator, interactions, progression, readability, character/world consistency and retained positive areas.
-
-WP18H captures evidence but **does not release R7**. It returns the project to WP17 for the user's explicit readiness decision.
+Run another substantially unguided playthrough on the reference Galaxy Tab S8 in landscape. WP18H records evidence and then returns to WP17 for the user's explicit R7-readiness decision.
 
 ### Dependency chain
 
-`WP17 evidence -> WP18A approved -> WP18B complete -> WP18C complete -> WP18D complete -> WP18E -> WP18F -> WP18G -> WP18H -> WP17 explicit readiness decision -> R7`
+`WP17 evidence -> WP18A approved -> WP18B complete -> WP18C complete -> WP18D complete -> WP18E complete -> WP18F -> WP18G -> WP18H -> WP17 explicit readiness decision -> R7`
 
 ## R6.6 - Optional Android Packaging
 
-Status: future candidate only.
-
-After WP18 is stable and WP17 is explicitly accepted, the project may evaluate packaging the existing Phaser/Vite build as an Android application using Capacitor or an equivalent thin wrapper.
-
-This is **packaging, not a native rewrite**. It must reuse the existing game code and may provide benefits such as app-style launch, controlled landscape/full-screen presentation, Android icon/splash and lifecycle integration while retaining the browser/Cloudflare build.
-
-Do not begin R6.6 while WP18 or WP17 remains unresolved.
+Status: future candidate only after WP18 is stable and WP17 explicitly accepts the remediated build. Packaging must reuse the existing game code and is not a native rewrite.
 
 ## R7 - Daughter-led Expansion
 
-Status: Blocked
+Status: Blocked.
 
-R7-WP7.1 may not begin until the remediated build has completed WP18H and R6.5-WP17 explicitly confirms through human play that the valley is ready for preference-led expansion.
+R7-WP7.1 may not begin until WP18H completes and R6.5-WP17 explicitly confirms through human play that the valley is ready for preference-led expansion.
 
 ## Future releases
 
-Potential later work including flight/Cloudtop Peaks, deeper gardening, deeper cooking, companion expansion, further regions, festival systems, Unicorn Palace and richer multi-step social events remains backlog until later play evidence justifies it.
+Potential later work includes flight/Cloudtop Peaks, deeper gardening/cooking, companion expansion, further regions, festival systems, Unicorn Palace and richer multi-step social events. These remain backlog until later play evidence justifies them.
 
 ## Operating rules
 
 - Build dependencies before content that uses them.
 - Prefer reusable systems over repeated bespoke implementations.
 - Production art follows proven mechanics unless concept work is explicitly required.
-- **For WP18 tablet shell/control work, the WP18A approved visual/layout authority must be followed.**
-- Landscape tablet is now the primary interface authority; desktop remains a supported secondary input/presentation.
-- Point-and-click/tap movement is a first-class control scheme.
-- Human-observed defects override stale automated claims that the same surface was already fixed.
+- WP18 tablet shell/control work follows the approved WP18A visual/layout authority.
+- Landscape tablet is the primary interface authority; desktop remains supported secondarily.
+- Point-and-click/tap movement is first-class.
+- Human-observed defects override stale automated claims.
 - Positive human feedback is a preservation requirement.
-- Any new feature should strengthen a design pillar and add a meaningful player action rather than complexity alone.
-- Detailed implementation belongs in bounded files under `docs/work-packages/` and the relevant canonical domain specifications.
+- New features should strengthen a design pillar and add a meaningful player action rather than complexity alone.
 - The hard application-entry performance budget remains 520 KiB and must not be weakened or increased.
 - Production deployment requires explicit user approval.

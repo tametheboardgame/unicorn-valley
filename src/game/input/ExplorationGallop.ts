@@ -1,4 +1,6 @@
 export const EXPLORATION_GALLOP_MULTIPLIER = 1.6;
+export const EXPLORATION_SNACK_MULTIPLIER = 1.18;
+export const EXPLORATION_SNACK_DURATION_MS = 45_000;
 
 const GALLOP_CODES = new Set(['ShiftLeft', 'ShiftRight']);
 const OUTDOOR_EXPLORATION_SCENES = new Set([
@@ -13,6 +15,7 @@ const OUTDOOR_EXPLORATION_SCENES = new Set([
 let keyboardGallopHeld = false;
 let touchGallopHeld = false;
 let trackingInstalled = false;
+let snackBoostExpiresAt = 0;
 
 function isEditableKeyboardTarget(target: EventTarget | null): boolean {
   const element = target as {
@@ -59,6 +62,37 @@ export function isExplorationGallopHeld(sceneKey: string): boolean {
   return OUTDOOR_EXPLORATION_SCENES.has(sceneKey) && (keyboardGallopHeld || touchGallopHeld);
 }
 
-export function explorationSpeedMultiplier(sceneKey: string, gallopHeld: boolean): number {
-  return OUTDOOR_EXPLORATION_SCENES.has(sceneKey) && gallopHeld ? EXPLORATION_GALLOP_MULTIPLIER : 1;
+export function activateExplorationSnackBoost(now = Date.now()): number {
+  snackBoostExpiresAt = now + EXPLORATION_SNACK_DURATION_MS;
+  return snackBoostExpiresAt;
+}
+
+export function clearExplorationSnackBoost(): void {
+  snackBoostExpiresAt = 0;
+}
+
+export function getExplorationSnackBoostRemainingMs(now = Date.now()): number {
+  return Math.max(0, snackBoostExpiresAt - now);
+}
+
+export function getExplorationSnackBoostRemainingSeconds(now = Date.now()): number {
+  return Math.ceil(getExplorationSnackBoostRemainingMs(now) / 1000);
+}
+
+export function isExplorationSnackBoostActive(now = Date.now()): boolean {
+  return getExplorationSnackBoostRemainingMs(now) > 0;
+}
+
+export function explorationSpeedMultiplier(
+  sceneKey: string,
+  gallopHeld: boolean,
+  now = Date.now(),
+): number {
+  if (!OUTDOOR_EXPLORATION_SCENES.has(sceneKey)) {
+    return 1;
+  }
+  if (gallopHeld) {
+    return EXPLORATION_GALLOP_MULTIPLIER;
+  }
+  return isExplorationSnackBoostActive(now) ? EXPLORATION_SNACK_MULTIPLIER : 1;
 }

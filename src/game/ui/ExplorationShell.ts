@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { GAME_WIDTH } from '../config/gameConstants';
 import { ShimmerEconomyService } from '../economy/ShimmerEconomyService';
+import { getExplorationSnackBoostRemainingSeconds } from '../input/ExplorationGallop';
 import type { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 import { TouchMovementPad } from '../input/TouchMovementPad';
 import { getBrowserSaveService } from '../save/browserSaveService';
@@ -101,16 +102,16 @@ export class ExplorationShell {
         16,
       );
       this.shimmerPanel = scene.add
-        .rectangle(698, 46, 180, 54, UI_COLOURS.cream, 0.92)
+        .rectangle(708, 46, 210, 54, UI_COLOURS.cream, 0.92)
         .setName('exploration-shell-shimmer-panel')
         .setStrokeStyle(3, UI_COLOURS.goldStrong, 0.88)
         .setScrollFactor(0)
         .setDepth(119);
       this.shimmerLabel = scene.add
-        .text(698, 46, '', {
+        .text(708, 46, '', {
           color: UI_COLOURS.ink,
           fontFamily: UI_FONT,
-          fontSize: '17px',
+          fontSize: '16px',
           fontStyle: 'bold',
         })
         .setName('exploration-shell-shimmer-label')
@@ -163,7 +164,12 @@ export class ExplorationShell {
     this.suggestionCard?.refresh();
     this.explorationChrome.refresh();
     if (this.shimmerLabel && this.economy) {
-      this.shimmerLabel.setText(`✨ ${this.economy.getBalance()} Shimmer`);
+      const snackSeconds = getExplorationSnackBoostRemainingSeconds();
+      this.shimmerLabel.setText(
+        snackSeconds > 0
+          ? `✨ ${this.economy.getBalance()}  •  ⚡ ${snackSeconds}s`
+          : `✨ ${this.economy.getBalance()} Shimmer`,
+      );
     }
   }
 
@@ -251,13 +257,7 @@ export class ExplorationShell {
     }
     const returnScene = this.scene.scene.key;
     if (!this.scene.scene.isActive('InventoryScene')) {
-      if (initialTab === 'map') {
-        const inventoryScene = this.scene.scene.get('InventoryScene');
-        inventoryScene.events.once(Phaser.Scenes.Events.CREATE, () => {
-          inventoryScene.children.getByName('bag-map-tab')?.emit('pointerdown');
-        });
-      }
-      this.scene.scene.launch('InventoryScene', { returnScene });
+      this.scene.scene.launch('InventoryScene', { returnScene, initialTab });
       this.scene.scene.pause();
     }
   }

@@ -6,6 +6,7 @@ import { getClickToMoveManager } from './game/input/ClickToMoveManager';
 import { getContinueRestoreManager } from './game/save/ContinueRestoreManager';
 import { getVillageInteriorContractManager } from './game/scenes/VillageInteriorContractManager';
 import { getExplorationShellWorldManager } from './game/ui/ExplorationShellWorldManager';
+import { getLandscapeCreatorProgressiveWorldManager } from './game/ui/LandscapeCreatorProgressiveManager';
 import { browserHasRaceTouchCapability } from './game/ui/RaceTouchCapability';
 import { getTitlePortraitControlsManager } from './game/ui/TitlePortraitControlsManager';
 import { getR5FinalTighteningManager } from './game/visual/R5FinalTighteningManager';
@@ -26,6 +27,7 @@ if (diagnosticsEnabled) {
 getClickToMoveManager(game);
 getContinueRestoreManager(game);
 getExplorationShellWorldManager(game);
+getLandscapeCreatorProgressiveWorldManager(game);
 getTitlePortraitControlsManager(game);
 getExplorationGeometryPresentationManager(game);
 getExplorationPathPolishManager(game);
