@@ -1,6 +1,7 @@
 import type { ItemDefinition, ItemId } from '../../content/contentTypes';
 import { itemRegistry } from '../../content/registries';
 import type { SaveService } from '../save/SaveService';
+import type { SaveGame } from '../save/saveSchema';
 import { COTTAGE_INTERIOR_MAP, type CottageDecorationSlot } from '../world/CottageInteriorMap';
 import { canPlaceDecorationInCategory } from './CottageDecorationCatalogue';
 
@@ -59,6 +60,42 @@ function resolveDecoration(itemId: string | undefined): ItemDefinition | null {
   return item.category === 'decoration' ? item : null;
 }
 
+function normaliseDecorationPlacements(save: SaveGame): SaveGame {
+  const furnitureBySlot = { ...save.home.furnitureBySlot };
+  const placementsByItem = new Map<ItemId, string[]>();
+  let changed = false;
+
+  for (const slot of COTTAGE_INTERIOR_MAP.decorationSlots) {
+    const item = resolveDecoration(furnitureBySlot[slot.id]);
+    if (!item) {
+      continue;
+    }
+    const placements = placementsByItem.get(item.id) ?? [];
+    placements.push(slot.id);
+    placementsByItem.set(item.id, placements);
+  }
+
+  for (const [itemId, slotIds] of placementsByItem) {
+    const ownedQuantity = Math.max(0, save.inventory.itemQuantities[itemId] ?? 0);
+    for (const slotId of slotIds.slice(ownedQuantity)) {
+      delete furnitureBySlot[slotId];
+      changed = true;
+    }
+  }
+
+  if (!changed) {
+    return save;
+  }
+
+  return {
+    ...save,
+    home: {
+      ...save.home,
+      furnitureBySlot,
+    },
+  };
+}
+
 export class HomeDecorationService {
   public constructor(private readonly saveService: SaveService) {}
 
@@ -67,7 +104,7 @@ export class HomeDecorationService {
   }
 
   public listOwnedDecorations(): readonly OwnedDecoration[] {
-    const save = this.saveService.load() ?? this.saveService.createNewGame();
+    const save = this.loadNormalisedSave();
 
     return itemRegistry
       .values()
@@ -96,7 +133,7 @@ export class HomeDecorationService {
 
   public getPlacement(slotId: string): ItemDefinition | null {
     requireSlot(slotId);
-    const save = this.saveService.load() ?? this.saveService.createNewGame();
+    const save = this.loadNormalisedSave();
     return resolveDecoration(save.home.furnitureBySlot[slotId]);
   }
 
@@ -110,7 +147,7 @@ export class HomeDecorationService {
       throw new Error(`${item.name} cannot be placed in a ${slot.category} decoration slot`);
     }
 
-    const save = this.saveService.load() ?? this.saveService.createNewGame();
+    const save = this.loadNormalisedSave();
     const ownedQuantity = save.inventory.itemQuantities[itemId] ?? 0;
 
     if (ownedQuantity <= 0) {
@@ -145,7 +182,7 @@ export class HomeDecorationService {
 
   public removeDecoration(slotId: string): ItemDefinition | null {
     requireSlot(slotId);
-    const save = this.saveService.load() ?? this.saveService.createNewGame();
+    const save = this.loadNormalisedSave();
     const item = resolveDecoration(save.home.furnitureBySlot[slotId]);
 
     if (!(slotId in save.home.furnitureBySlot)) {
@@ -194,5 +231,11 @@ export class HomeDecorationService {
       item: placed.item,
       movedFromSlot: placed.movedFromSlot,
     };
+  }
+
+  private loadNormalisedSave(): SaveGame {
+    const save = this.saveService.load() ?? this.saveService.createNewGame();
+    const normalised = normaliseDecorationPlacements(save);
+    return normalised === save ? save : this.saveService.save(normalised);
   }
 }
