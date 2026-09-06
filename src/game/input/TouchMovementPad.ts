@@ -74,7 +74,6 @@ export class TouchMovementPad {
     this.scene.events.on(SCENE_PAUSE_EVENT, this.handleScenePause, this);
     this.scene.events.on(SCENE_RESUME_EVENT, this.handleSceneResume, this);
     globalThis.addEventListener?.('blur', this.handleWindowBlur);
-    globalThis.addEventListener?.('resize', this.handleViewportChange);
     globalThis.document?.addEventListener('visibilitychange', this.handleVisibilityChange);
 
     this.createPresentation();
@@ -99,28 +98,7 @@ export class TouchMovementPad {
     return nextVisible;
   }
 
-  public destroy(): void {
-    if (this.destroyed) {
-      return;
-    }
-    this.destroyed = true;
-    this.scene.events.off(SCENE_PAUSE_EVENT, this.handleScenePause, this);
-    this.scene.events.off(SCENE_RESUME_EVENT, this.handleSceneResume, this);
-    globalThis.removeEventListener?.('blur', this.handleWindowBlur);
-    globalThis.removeEventListener?.('resize', this.handleViewportChange);
-    globalThis.document?.removeEventListener('visibilitychange', this.handleVisibilityChange);
-    this.releaseInput();
-    this.clearPresentation();
-    if (padsByScene.get(this.scene) === this) {
-      padsByScene.delete(this.scene);
-    }
-  }
-
-  private readonly handleWindowBlur = (): void => {
-    this.releaseInput();
-  };
-
-  private readonly handleViewportChange = (): void => {
+  public refresh(): void {
     const portraitMode = shouldRenderPortraitDomControls();
     const tabletMode = !portraitMode && browserUsesLandscapeTabletPresentation();
     if (portraitMode === this.portraitMode && tabletMode === this.tabletMode) {
@@ -136,6 +114,26 @@ export class TouchMovementPad {
     }
     this.createPresentation();
     this.applyVisibility();
+  }
+
+  public destroy(): void {
+    if (this.destroyed) {
+      return;
+    }
+    this.destroyed = true;
+    this.scene.events.off(SCENE_PAUSE_EVENT, this.handleScenePause, this);
+    this.scene.events.off(SCENE_RESUME_EVENT, this.handleSceneResume, this);
+    globalThis.removeEventListener?.('blur', this.handleWindowBlur);
+    globalThis.document?.removeEventListener('visibilitychange', this.handleVisibilityChange);
+    this.releaseInput();
+    this.clearPresentation();
+    if (padsByScene.get(this.scene) === this) {
+      padsByScene.delete(this.scene);
+    }
+  }
+
+  private readonly handleWindowBlur = (): void => {
+    this.releaseInput();
   };
 
   private readonly handleVisibilityChange = (): void => {
