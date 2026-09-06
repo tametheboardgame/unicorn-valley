@@ -6,13 +6,13 @@
   "phase": "R6.5 - Valley Completeness and Breadth, human-playtest remediation",
   "current_work_package": "R6.5-WP18F",
   "current_work_package_path": "docs/work-packages/R6.5-WP18F-WORLD-CONSISTENCY-VISUAL-EXPERIENCE.md",
-  "status": "in_progress",
+  "status": "waiting_human",
   "autonomy_state": "amber",
-  "agent_state": "active",
+  "agent_state": "waiting_human",
   "branch": "agent/r6.5-wp18f-world-consistency-visual-experience",
   "latest_commit": "4971da091ea64a4a3a87a7f28dffeb320ddd7a83",
-  "ci_state": "success",
-  "technical_validation_state": "passed",
+  "ci_state": "passing",
+  "technical_validation_state": "passing",
   "human_acceptance_state": "pending",
   "next_work_package": "R6.5-WP18G",
   "next_work_package_path": "docs/work-packages/R6.5-WP18G-TABLET-DEVICE-HARDENING-CROSS-INPUT-REGRESSION.md",
@@ -21,6 +21,6 @@
   "night_shift_state": "not_configured",
   "chat_disposition": "keep",
   "delivery_mode": "pr_required",
-  "last_activity_at": "2026-09-06T17:27:00+01:00",
-  "updated_at": "2026-09-06T17:27:00+01:00"
+  "last_activity_at": "2026-09-06T17:33:00+01:00",
+  "updated_at": "2026-09-06T17:33:00+01:00"
 }
