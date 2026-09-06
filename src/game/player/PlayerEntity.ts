@@ -1,11 +1,8 @@
 import Phaser from 'phaser';
 import { isExplorationGallopHeld, explorationSpeedMultiplier } from '../input/ExplorationGallop';
 import { isExplorationMovementBlocked } from '../input/ExplorationMovementBlocker';
-import { getBrowserSaveService } from '../save/browserSaveService';
 import { consumeWorldArrivalFacing } from '../world/WorldArrivalState';
 import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
-import { parseUnicornAppearance } from './UnicornAppearance';
-import { PlayerManeCoverageLayer } from './PlayerManeCoverage';
 import {
   getUnicornProductionTextureKey,
   selectUnicornProductionPose,
@@ -24,7 +21,6 @@ export class PlayerEntity {
   private lastStepEffectAt = -1000;
   private stepIndex = 0;
   private activeProductionPose: UnicornProductionPose = 'idle';
-  private readonly maneCoverage: PlayerManeCoverageLayer | null;
 
   public constructor(
     private readonly scene: Phaser.Scene,
@@ -42,15 +38,6 @@ export class PlayerEntity {
 
     const body = this.sprite.body as Phaser.Physics.Arcade.Body;
     body.setSize(68, 44, true);
-
-    const save = getBrowserSaveService().load();
-    this.maneCoverage = save
-      ? new PlayerManeCoverageLayer(
-          scene,
-          parseUnicornAppearance(save.profile.appearance),
-          this.sprite,
-        )
-      : null;
 
     this.setFacing(consumeWorldArrivalFacing(scene.scene.key) ?? 'down');
   }
@@ -101,12 +88,10 @@ export class PlayerEntity {
         this.createStepEffect();
         this.lastStepEffectAt = time;
       }
-      this.syncManeCoverage();
       return;
     }
 
     this.sprite.setAngle(Math.sin(time * 0.004) * 0.28);
-    this.syncManeCoverage();
   }
 
   public getFacing(): PlayerFacing {
@@ -122,7 +107,6 @@ export class PlayerEntity {
     } else if (facing === 'right') {
       this.sprite.setFlipX(false);
     }
-    this.syncManeCoverage();
   }
 
   public getMotionState(): PlayerMotionState {
@@ -131,7 +115,6 @@ export class PlayerEntity {
 
   public destroy(): void {
     PLAYER_ENTITIES.delete(this.sprite);
-    this.maneCoverage?.destroy();
     this.sprite.destroy();
   }
 
@@ -148,10 +131,6 @@ export class PlayerEntity {
     this.activeProductionPose = pose;
     this.sprite.setTexture(nextTexture);
     this.sprite.setData('production-art-pose', pose);
-  }
-
-  private syncManeCoverage(): void {
-    this.maneCoverage?.sync(this.sprite, this.activeProductionPose);
   }
 
   private createStepEffect(): void {
