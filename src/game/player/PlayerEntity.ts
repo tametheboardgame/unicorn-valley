@@ -5,9 +5,7 @@ import { getBrowserSaveService } from '../save/browserSaveService';
 import { consumeWorldArrivalFacing } from '../world/WorldArrivalState';
 import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
 import { parseUnicornAppearance } from './UnicornAppearance';
-import {
-  PlayerManeCoverageLayer,
-} from './PlayerManeCoverage';
+import { PlayerManeCoverageLayer } from './PlayerManeCoverage';
 import {
   getUnicornProductionTextureKey,
   selectUnicornProductionPose,
