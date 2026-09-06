@@ -106,29 +106,27 @@ WP18B added bounded runtime freeze diagnostics, fixed the deterministic long-run
 
 Path: `docs/work-packages/R6.5-WP18C-LANDSCAPE-TABLET-CONTROLS-INTERACTION-SHELL.md`
 
-State: **complete; delivery-ready through PR #149**.
+State: **complete; merged through PR #149**.
 
 WP18C implements the approved landscape-tablet shell with compact Map/Bag/Book/Settings navigation, Shimmer/location status, a large lower-left exploration pad, separate Gallop, large lower-right contextual action, bottom-centre child-facing hints, direct target tapping through the authoritative interaction path and safe input release across pause/focus/visibility transitions.
 
-Race controls now follow the user's explicit 2026-09-05 clarification: **RUN and JUMP only**, with RUN lower-left and JUMP lower-right. There is no left/right steering and no separate race Gallop. RUN + JUMP works simultaneously, the old landscape bottom control deck no longer shrinks the track, Chrome long-press/context behaviour is suppressed for required actions, and tablet Pause/Resume/assistance is covered.
-
-Implementation head `456f721c78bbfe1ccf734745415dd380c48763b3` passed the AI contract, formatting, lint, type-check, unit tests, build, static smoke, the hard 520 KiB budget, Chromium/Firefox/WebKit compatibility and the full Chromium suite with **150 passed, 3 intentionally skipped**.
+Race controls follow the user's explicit 2026-09-05 clarification: **RUN and JUMP only**, with RUN lower-left and JUMP lower-right. There is no left/right steering and no separate race Gallop. RUN + JUMP works simultaneously, the old landscape bottom race deck no longer shrinks the track, Chrome long-press/context behaviour is suppressed for required actions, and tablet Pause/Resume/assistance is covered.
 
 ### R6.5-WP18D - Playthrough Functional Bug and Regression Remediation
 
 Path: `docs/work-packages/R6.5-WP18D-PLAYTHROUGH-FUNCTIONAL-BUG-REGRESSION-REMEDIATION.md`
 
-State: **next / unblocked after WP18C merge**.
+State: **complete; delivery-ready through PR #150 pending final exact-head validation**.
 
-Resolve the remaining human-observed functional defects, including Echo interaction, cottage back-wall collision, cottage decoration state, Maple discoverability/root cause, purchase/reward feedback, point-and-click facing flicker and any remaining placeholder/icon-over-unicorn regressions. Human-visible failure modes must be reproduced and regression-tested where practical.
+WP18D resolves the bounded human-observed functional defects. Echo and Fern now use the shared resident interaction runtime; Maple follows a reachable bakery-side route; Moonflower Cottage has a closed collision perimeter; decoration ownership and placement have explicit save-safe authority rules; tap/click facing follows the final destination rather than pathfinding micro-waypoints; reward and general-shop feedback are explicit; repeatable Bakery purchases persistently show owned quantity; and the earlier production-NPC marker cleanup has been revalidated.
 
-Initial code inspection has already identified useful WP18D leads to verify and fix rather than rediscover: Echo is represented by presentation/population content without an equivalent authoritative interaction route; the Cottage collision map lacks a real back-wall blocker; Maple's outdoor placement does not align well with Bakery discoverability; Bakery repeat purchases do not clearly surface owned quantity; and economy reward reconciliation can award Shimmer without surfacing the resulting reward feedback to the player. These are investigation leads, not acceptance claims, until WP18D regression evidence is added.
+Implementation/regression evidence is recorded in `docs/work-packages/R6.5-WP18D-IMPLEMENTATION-NOTES.md`. WP18D has no human gate. The performance guard remains unchanged and final exact-head CI determines merge readiness.
 
 ### R6.5-WP18E - Bag, Map, Creator and Modal Tablet UX
 
 Path: `docs/work-packages/R6.5-WP18E-BAG-MAP-CREATOR-MODAL-TABLET-UX.md`
 
-State: planned after WP18D; approved WP18A visual authority available.
+State: **next / unblocked after WP18D merge; approved WP18A visual authority available**.
 
 Redesign growing inventory around clear scrolling categories/pockets, make Food meaningfully usable, provide explicit Map access, implement the approved progressive-category Unicorn Creator, and reconcile Wonderbook/shops/settings/dialogue/decoration/activity modals with the shared tablet readability, overflow and touch-target contract.
 
@@ -162,7 +160,7 @@ WP18H captures evidence but **does not release R7**. It returns the project to W
 
 ### Dependency chain
 
-`WP17 evidence -> WP18A approved -> WP18B complete -> WP18C complete -> WP18D -> WP18E -> WP18F -> WP18G -> WP18H -> WP17 explicit readiness decision -> R7`
+`WP17 evidence -> WP18A approved -> WP18B complete -> WP18C complete -> WP18D complete -> WP18E -> WP18F -> WP18G -> WP18H -> WP17 explicit readiness decision -> R7`
 
 ## R6.6 - Optional Android Packaging
 
