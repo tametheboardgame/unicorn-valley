@@ -1,4 +1,4 @@
-import Phaser from 'phaser';
+import type Phaser from 'phaser';
 import { characterRegistry, dialogueRegistry } from '../../content/registries';
 import { DialogueCard } from '../dialogue/DialogueCard';
 import { DialogueSession } from '../dialogue/DialogueSession';
@@ -6,11 +6,7 @@ import type { InputController } from '../input/InputController';
 import type { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 import type { InteractionTarget } from '../interaction/InteractionTarget';
 import type { SaveService } from '../save/SaveService';
-import {
-  addCoreNpcIdleTween,
-  createCoreNpcSprite,
-  type CoreNpcId,
-} from '../visual/CoreNpcProductionArt';
+import type { CoreNpcId } from '../visual/CoreNpcProductionArt';
 import type { CottageHomeView } from './CottageHomeView';
 import { FriendVisitService, type ResolvedFriendVisit } from './FriendVisitService';
 
@@ -41,6 +37,7 @@ export class CottageFriendVisitManager {
   private dialogueCard: DialogueCard | null = null;
   private dialogueSession: DialogueSession | null = null;
   private visitorObjects: Phaser.GameObjects.GameObject[] = [];
+  private visitorGeneration = 0;
 
   public constructor(
     private readonly scene: Phaser.Scene,
@@ -153,14 +150,13 @@ export class CottageFriendVisitManager {
   }
 
   private renderVisitor(visit: ResolvedFriendVisit): void {
+    const generation = ++this.visitorGeneration;
     const { x, y } = visit.definition.position;
     const character = characterRegistry.get(visit.definition.characterId);
     const coreNpcId = coreNpcIdForCharacter(visit.definition.characterId);
 
     const glow = this.scene.add.circle(x, y, 72, 0xffe8a3, 0.18).setDepth(12);
-    const renderedVisitor = coreNpcId
-      ? this.renderProductionVisitor(coreNpcId, x, y)
-      : this.renderFallbackVisitor(visit, x, y);
+    const fallbackVisitor = coreNpcId ? [] : this.renderFallbackVisitor(visit, x, y);
     const label = this.scene.add
       .text(x, y + 78, `${character.name} is visiting`, {
         color: '#654f63',
@@ -173,7 +169,10 @@ export class CottageFriendVisitManager {
       .setOrigin(0.5)
       .setDepth(14);
 
-    this.visitorObjects = [glow, ...renderedVisitor, label];
+    this.visitorObjects = [glow, ...fallbackVisitor, label];
+    if (coreNpcId) {
+      void this.renderProductionVisitor(coreNpcId, x, y, generation);
+    }
     this.scene.tweens.add({
       targets: glow,
       scale: 1.12,
@@ -185,16 +184,24 @@ export class CottageFriendVisitManager {
     });
   }
 
-  private renderProductionVisitor(
+  private async renderProductionVisitor(
     coreNpcId: CoreNpcId,
     x: number,
     y: number,
-  ): Phaser.GameObjects.GameObject[] {
+    generation: number,
+  ): Promise<void> {
+    const { addCoreNpcIdleTween, createCoreNpcSprite } = await import(
+      '../visual/CoreNpcProductionArt'
+    );
+    if (generation !== this.visitorGeneration || !this.visit) {
+      return;
+    }
+
     const sprite = createCoreNpcSprite(this.scene, coreNpcId, x, y + 7, 'world')
       .setDisplaySize(coreNpcId === 'pip' ? 96 : 112, coreNpcId === 'pip' ? 78 : 92)
       .setDepth(14);
     addCoreNpcIdleTween(this.scene, sprite, coreNpcId, 4);
-    return [sprite];
+    this.visitorObjects.push(sprite);
   }
 
   private renderFallbackVisitor(
@@ -217,6 +224,7 @@ export class CottageFriendVisitManager {
   }
 
   private clearVisitor(): void {
+    this.visitorGeneration += 1;
     for (const object of this.visitorObjects) {
       this.scene.tweens.killTweensOf(object);
       object.destroy();
