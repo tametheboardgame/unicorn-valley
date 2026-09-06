@@ -40,15 +40,24 @@ describe('Sunbeam Bakery service', () => {
     expect(stock.get(SUNBEAM_PICNIC_BASKET_ITEM_ID)?.isUnlocked).toBe(false);
   });
 
-  it('supports repeat bun purchases with clear Shimmer spend', () => {
+  it('supports repeat bun purchases with persistent visible ownership and clear Shimmer spend', () => {
     const saveService = new SaveService(new MemorySaveRepository());
     saveService.save(createDefaultSave());
     const economy = new ShimmerEconomyService(saveService);
     economy.earn(3);
     const bakery = new BakeryService(saveService);
 
-    expect(bakery.purchase('item:berry-bun').type).toBe('purchased');
-    expect(bakery.purchase('item:berry-bun').type).toBe('purchased');
+    const first = bakery.purchase('item:berry-bun');
+    expect(first).toMatchObject({ type: 'purchased', price: 1, balance: 2, ownedQuantity: 1 });
+    expect(
+      bakery.listStock().find(({ definition }) => definition.id === 'item:berry-bun'),
+    ).toMatchObject({ ownedQuantity: 1, definition: { name: 'Berry Bun ×1' } });
+
+    const second = bakery.purchase('item:berry-bun');
+    expect(second).toMatchObject({ type: 'purchased', price: 1, balance: 1, ownedQuantity: 2 });
+    expect(
+      bakery.listStock().find(({ definition }) => definition.id === 'item:berry-bun'),
+    ).toMatchObject({ ownedQuantity: 2, definition: { name: 'Berry Bun ×2' } });
     expect(saveService.load()?.inventory.itemQuantities['item:berry-bun']).toBe(2);
     expect(economy.getBalance()).toBe(1);
   });
