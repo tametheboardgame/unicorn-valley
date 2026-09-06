@@ -22,12 +22,15 @@ describe('R6.5 functional resident placements', () => {
     expect(echo.waypoints[0]).toMatchObject({ x: 2860, y: 1690 });
   });
 
-  it('keeps Fern on the shared interactive resident runtime instead of a visual-only bridge', () => {
-    const fern = requirePlacement('resident:fern', 'WhisperingWoodsScene');
+  it(
+    'keeps Fern on the shared interactive resident runtime instead of a visual-only bridge',
+    () => {
+      const fern = requirePlacement('resident:fern', 'WhisperingWoodsScene');
 
-    expect(fern.interactionRadius).toBeGreaterThanOrEqual(130);
-    expect(fern.waypoints.length).toBeGreaterThanOrEqual(2);
-  });
+      expect(fern.interactionRadius).toBeGreaterThanOrEqual(130);
+      expect(fern.waypoints.length).toBeGreaterThanOrEqual(2);
+    },
+  );
 
   it('puts Maple on the bakery approach rather than the remote south-east village route', () => {
     const maple = requirePlacement('resident:maple', 'SunbeamVillageScene');
