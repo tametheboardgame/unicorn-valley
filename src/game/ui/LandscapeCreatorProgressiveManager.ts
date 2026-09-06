@@ -254,10 +254,7 @@ export class LandscapeCreatorProgressiveManager {
     return null;
   }
 
-  private categoryForPosition(
-    x: number,
-    rowY: number,
-  ): Exclude<CreatorCategoryId, 'main'> | null {
+  private categoryForPosition(x: number, rowY: number): Exclude<CreatorCategoryId, 'main'> | null {
     if (rowY === 250 || rowY === 300) {
       return 'colours';
     }
