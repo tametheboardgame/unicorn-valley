@@ -25,6 +25,10 @@ export const COTTAGE_INTERIOR_MAP = {
   margin: 70,
   playerSpawn: { x: 900, y: 820 },
   colliders: [
+    { id: 'wall-top', x: 900, y: 105, width: 1640, height: 70 },
+    { id: 'wall-left', x: 105, y: 610, width: 70, height: 1010 },
+    { id: 'wall-right', x: 1695, y: 610, width: 70, height: 1010 },
+    { id: 'wall-bottom', x: 900, y: 1150, width: 1640, height: 100 },
     { id: 'fireplace', x: 285, y: 305, width: 250, height: 150 },
     { id: 'bed', x: 390, y: 670, width: 300, height: 230 },
     { id: 'tea-table', x: 900, y: 500, width: 230, height: 165 },
