@@ -48,16 +48,10 @@ describe('Moonflower Cottage interior map', () => {
   });
 
   it('blocks every room edge, including the lower boundary behind the exit', () => {
-    const colliderIds = new Set(COTTAGE_INTERIOR_MAP.colliders.map(({ id }) => id));
+    const colliderIds = COTTAGE_INTERIOR_MAP.colliders.map(({ id }) => id);
     expect(colliderIds).toEqual(
-      expect.objectContaining({
-        has: expect.any(Function),
-      }),
+      expect.arrayContaining(['wall-top', 'wall-left', 'wall-right', 'wall-bottom']),
     );
-    expect(colliderIds.has('wall-top')).toBe(true);
-    expect(colliderIds.has('wall-left')).toBe(true);
-    expect(colliderIds.has('wall-right')).toBe(true);
-    expect(colliderIds.has('wall-bottom')).toBe(true);
 
     expect(
       isPointBlocked(
