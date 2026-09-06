@@ -185,7 +185,11 @@ export class CottageFriendVisitManager {
     });
   }
 
-  private renderProductionVisitor(coreNpcId: CoreNpcId, x: number, y: number): Phaser.GameObjects.GameObject[] {
+  private renderProductionVisitor(
+    coreNpcId: CoreNpcId,
+    x: number,
+    y: number,
+  ): Phaser.GameObjects.GameObject[] {
     const sprite = createCoreNpcSprite(this.scene, coreNpcId, x, y + 7, 'world')
       .setDisplaySize(coreNpcId === 'pip' ? 96 : 112, coreNpcId === 'pip' ? 78 : 92)
       .setDepth(14);
