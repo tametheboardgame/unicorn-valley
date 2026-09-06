@@ -1,10 +1,7 @@
 import type Phaser from 'phaser';
 import type { UnicornAppearance } from './UnicornAppearance';
 import { HAIR_COLOURS, colourValue } from './UnicornAppearance';
-import {
-  type UnicornProductionPose,
-  UNICORN_PRODUCTION_POSES,
-} from './UnicornProductionArt';
+import { type UnicornProductionPose, UNICORN_PRODUCTION_POSES } from './UnicornProductionArt';
 
 export const PLAYER_MANE_COVERAGE_NAME = 'world-player-mane-coverage';
 
