@@ -67,11 +67,17 @@ async function movePlayer(page: Page, sceneKey: string, x: number, y: number): P
 async function sceneObjectNames(page: Page, sceneKey: string): Promise<string[]> {
   return page.evaluate((key) => {
     const snapshot = (window as DiagnosticWindow).__UNICORN_VALLEY_DIAGNOSTICS__?.snapshot();
-    return snapshot?.scenes.find((scene) => scene.key === key)?.objects.map(({ name }) => name) ?? [];
+    return (
+      snapshot?.scenes.find((scene) => scene.key === key)?.objects.map(({ name }) => name) ?? []
+    );
   }, sceneKey);
 }
 
-async function expectObjects(page: Page, sceneKey: string, names: readonly string[]): Promise<void> {
+async function expectObjects(
+  page: Page,
+  sceneKey: string,
+  names: readonly string[],
+): Promise<void> {
   await page.waitForFunction(
     ({ key, requiredNames }) => {
       const snapshot = (window as DiagnosticWindow).__UNICORN_VALLEY_DIAGNOSTICS__?.snapshot();
