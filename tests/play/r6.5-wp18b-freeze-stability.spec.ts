@@ -349,7 +349,7 @@ test.describe
         await assertResponsiveMovement(page, 'HollowTreeNookScene');
         healthSamples.push(await sceneHealth(page, 'HollowTreeNookScene'));
 
-        await page.keyboard.press('Escape');
+        await clickNamedObject(page, 'HollowTreeNookScene', 'exploration-interaction-prompt');
         await waitForScene(page, 'MoonflowerGladeScene');
       }
 
