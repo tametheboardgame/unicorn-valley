@@ -110,30 +110,34 @@ export function createMarigoldPicnicPresentation(scene: Phaser.Scene, save: Save
       .setDepth(depth + 2);
   }
 
-  const guests = [
-    { x: x - 255, y: y + 205, icon: '🥐', label: 'Marigold' },
-    { x: x - 75, y: y + 235, icon: '🌿', label: 'Willow' },
-    { x: x + 115, y: y + 225, icon: '🧭', label: 'Pip' },
-    { x: x + 285, y: y + 190, icon: '⭐', label: 'Nova' },
+  // These are clearly labelled contributions, not stand-ins for character bodies.
+  // Recurring friends are rendered physically only when their presence authority puts them here.
+  const contributions = [
+    { x: x - 255, y: y + 205, icon: '🥐', label: "Marigold's buns" },
+    { x: x - 65, y: y + 235, icon: '🌿', label: "Willow's flowers" },
+    { x: x + 125, y: y + 225, icon: '🧭', label: "Pip's compass" },
   ] as const;
 
-  for (const guest of guests) {
-    scene.add.circle(guest.x, guest.y, 37, 0xfff5dc, 0.96).setDepth(depth + 2);
+  for (const contribution of contributions) {
     scene.add
-      .text(guest.x, guest.y, guest.icon, {
+      .rectangle(contribution.x, contribution.y, 132, 72, 0xfff5dc, 0.94)
+      .setStrokeStyle(3, 0xd7b78a, 0.8)
+      .setDepth(depth + 2);
+    scene.add
+      .text(contribution.x, contribution.y - 8, contribution.icon, {
         fontFamily: 'system-ui, sans-serif',
-        fontSize: '27px',
+        fontSize: '25px',
       })
       .setOrigin(0.5)
       .setDepth(depth + 3);
     scene.add
-      .text(guest.x, guest.y + 52, guest.label, {
+      .text(contribution.x, contribution.y + 24, contribution.label, {
         color: '#654d61',
         fontFamily: 'system-ui, sans-serif',
-        fontSize: '14px',
+        fontSize: '12px',
         fontStyle: 'bold',
         backgroundColor: '#fff8e5cc',
-        padding: { x: 5, y: 3 },
+        padding: { x: 4, y: 2 },
       })
       .setOrigin(0.5)
       .setDepth(depth + 3);
