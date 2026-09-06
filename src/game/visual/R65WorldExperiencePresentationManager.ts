@@ -171,6 +171,67 @@ function enhanceVillageShops(scene: Phaser.Scene): void {
   addShopPropCard(scene, `${ROOT_NAME}:story-lamp`, 2310, 705, '🏮', 0x9cc9d9);
 }
 
+function enhanceWhisperingWoods(scene: Phaser.Scene): void {
+  if (scene.children.getByName(`${ROOT_NAME}:whispering-woods`)) {
+    return;
+  }
+  scene.add.container(0, 0).setName(`${ROOT_NAME}:whispering-woods`).setVisible(false);
+
+  for (const [x, y, width, height, colour] of [
+    [1175, 635, 360, 180, 0xa8c8ff],
+    [1980, 1080, 430, 190, 0xb6f0c3],
+    [2730, 910, 390, 170, 0xabc7ee],
+  ] as const) {
+    scene.add
+      .ellipse(x, y, width, height, colour, 0.07)
+      .setStrokeStyle(3, colour, 0.09)
+      .setDepth(1.7);
+  }
+
+  for (const [index, [x, y]] of [
+    [1040, 560],
+    [1280, 700],
+    [1880, 980],
+    [2070, 1170],
+    [2540, 840],
+    [2860, 1050],
+  ].entries()) {
+    const mote = scene.add
+      .circle(x, y, index % 2 === 0 ? 6 : 4, index % 2 === 0 ? 0xe4f6ae : 0xcce8ff, 0.7)
+      .setName(`${ROOT_NAME}:woods-mote:${index}`)
+      .setDepth(15.5);
+    if (index % 2 === 0) {
+      scene.tweens.add({
+        targets: mote,
+        y: y - 22,
+        alpha: { from: 0.22, to: 0.86 },
+        scale: { from: 0.8, to: 1.18 },
+        duration: 1500 + index * 120,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.InOut',
+      });
+    }
+  }
+
+  for (const [x, y] of [
+    [1115, 580],
+    [1245, 645],
+    [1935, 1030],
+    [2035, 1055],
+  ] as const) {
+    scene.add
+      .text(x, y, '✦', {
+        color: '#efffc7',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '17px',
+      })
+      .setOrigin(0.5)
+      .setAlpha(0.52)
+      .setDepth(worldDepthForY(y, 0.24));
+  }
+}
+
 export class R65WorldExperiencePresentationManager {
   private readonly refresh = new RefreshThrottle(250);
 
@@ -193,6 +254,8 @@ export class R65WorldExperiencePresentationManager {
         enhanceCrystalBrook(scene);
       } else if (scene.scene.key === 'SunbeamVillageScene') {
         enhanceVillageShops(scene);
+      } else if (scene.scene.key === 'WhisperingWoodsScene') {
+        enhanceWhisperingWoods(scene);
       }
     }
   }
