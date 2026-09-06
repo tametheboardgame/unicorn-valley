@@ -155,6 +155,21 @@ async function logicalTap(page: Page, x: number, y: number, pointerId = 1): Prom
   await dispatchLogicalTouch(page, 'touchend', [], [touch]);
 }
 
+async function logicalTapNamedObject(
+  page: Page,
+  sceneKey: string,
+  objectName: string,
+): Promise<void> {
+  const snapshot = await getSnapshot(page);
+  const object = getScene(snapshot, sceneKey).objects.find(
+    (candidate) => candidate.name === objectName && candidate.visible && candidate.interactive,
+  );
+  if (!object) {
+    throw new Error(`Missing interactive ${objectName} in ${sceneKey}.`);
+  }
+  await logicalTap(page, object.x, object.y);
+}
+
 async function waitForForwardControl(page: Page, running: boolean): Promise<void> {
   await page.waitForFunction((expectedRunning) => {
     const diagnosticWindow = window as typeof window & {
@@ -243,7 +258,7 @@ test('target-tablet touch completes creator, exploration, Book and accessibility
     mapScene.objects.some((object) => object.name === 'bag-map-content' && object.visible),
   ).toBe(true);
   expect(mapScene.objects.some((object) => object.name === 'bag-map-current-location')).toBe(true);
-  await logicalTap(page, 490, 668);
+  await logicalTapNamedObject(page, 'InventoryScene', 'bag-close-button');
   await waitForScene(page, 'MoonflowerGladeScene');
 
   snapshot = await getSnapshot(page);
