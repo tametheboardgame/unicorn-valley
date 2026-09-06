@@ -38,18 +38,21 @@ async function snapshot(page: Page): Promise<DiagnosticSnapshot> {
   });
 }
 
-async function startScene(page: Page, sceneKey: string): Promise<void> {
-  await page.evaluate((target) => {
-    const diagnostics = (
-      window as typeof window & {
-        __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticApi;
+async function startScene(page: Page, sceneKey: string, data?: object): Promise<void> {
+  await page.evaluate(
+    ({ target, sceneData }) => {
+      const diagnostics = (
+        window as typeof window & {
+          __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticApi;
+        }
+      ).__UNICORN_VALLEY_DIAGNOSTICS__;
+      if (!diagnostics) {
+        throw new Error('Browser diagnostics are unavailable.');
       }
-    ).__UNICORN_VALLEY_DIAGNOSTICS__;
-    if (!diagnostics) {
-      throw new Error('Browser diagnostics are unavailable.');
-    }
-    diagnostics.startScene(target);
-  }, sceneKey);
+      diagnostics.startScene(target, sceneData);
+    },
+    { target: sceneKey, sceneData: data },
+  );
 }
 
 async function waitForScene(page: Page, sceneKey: string): Promise<void> {
@@ -111,23 +114,18 @@ test.describe('R5-WP5.9G world layout and density', () => {
     ).toHaveLength(1);
   });
 
-  test('Bag map shows side branches, a homeward route and a reason to revisit Crystal Brook', async ({
+  test('Map shows side branches, a homeward route and a reason to revisit Crystal Brook', async ({
     page,
   }) => {
     await page.goto('/?scene=brook&diagnostics=1');
     await waitForScene(page, 'CrystalBrookScene');
-    await page.keyboard.press('i');
+    await startScene(page, 'InventoryScene', {
+      returnScene: 'CrystalBrookScene',
+      initialTab: 'map',
+    });
     await waitForScene(page, 'InventoryScene');
 
-    let inventory = sceneFrom(await snapshot(page), 'InventoryScene');
-    const mapTab = inventory.objects.find((object) => object.name === 'bag-map-tab');
-    if (!mapTab) {
-      throw new Error('Bag map tab was not found.');
-    }
-    await page.mouse.click(mapTab.x, mapTab.y);
-    await page.waitForTimeout(250);
-
-    inventory = sceneFrom(await snapshot(page), 'InventoryScene');
+    const inventory = sceneFrom(await snapshot(page), 'InventoryScene');
     expect(
       inventory.objects.some(({ name }) => name === 'bag-map-node:valley:moonflower-field'),
     ).toBe(true);
@@ -146,23 +144,18 @@ test.describe('R5-WP5.9G world layout and density', () => {
     expect(guidance?.text).toContain('Prism Grotto');
   });
 
-  test('Bag map recognises Moonflower Cottage interior as home', async ({ page }) => {
+  test('Map recognises Moonflower Cottage interior as home', async ({ page }) => {
     await page.goto('/?scene=glade&diagnostics=1');
     await waitForScene(page, 'MoonflowerGladeScene');
     await startScene(page, 'CottageInteriorScene');
     await waitForScene(page, 'CottageInteriorScene');
-    await page.keyboard.press('i');
+    await startScene(page, 'InventoryScene', {
+      returnScene: 'CottageInteriorScene',
+      initialTab: 'map',
+    });
     await waitForScene(page, 'InventoryScene');
 
-    let inventory = sceneFrom(await snapshot(page), 'InventoryScene');
-    const mapTab = inventory.objects.find((object) => object.name === 'bag-map-tab');
-    if (!mapTab) {
-      throw new Error('Bag map tab was not found.');
-    }
-    await page.mouse.click(mapTab.x, mapTab.y);
-    await page.waitForTimeout(250);
-
-    inventory = sceneFrom(await snapshot(page), 'InventoryScene');
+    const inventory = sceneFrom(await snapshot(page), 'InventoryScene');
     const guidance = inventory.objects.find(({ name }) => name === 'bag-map-guidance');
     expect(guidance?.text).toContain('Home is here.');
     expect(guidance?.text).not.toContain('Follow the solid paths home.');
