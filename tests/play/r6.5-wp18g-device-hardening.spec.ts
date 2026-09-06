@@ -201,12 +201,7 @@ test.describe('WP18G landscape tablet matrix', () => {
         'exploration-shell-book-button',
         'exploration-shell-settings-nav-button',
       ]) {
-        const rect = renderedObjectRectFromSnapshot(
-          snapshot,
-          canvas,
-          'MoonflowerGladeScene',
-          name,
-        );
+        const rect = renderedObjectRectFromSnapshot(snapshot, canvas, 'MoonflowerGladeScene', name);
         expectRectInsideViewport(rect, viewport);
         expect(
           Math.min(rect.width, rect.height),
@@ -221,12 +216,7 @@ test.describe('WP18G landscape tablet matrix', () => {
         'touch-movement-right',
         'touch-movement-gallop',
       ]) {
-        const rect = renderedObjectRectFromSnapshot(
-          snapshot,
-          canvas,
-          'MoonflowerGladeScene',
-          name,
-        );
+        const rect = renderedObjectRectFromSnapshot(snapshot, canvas, 'MoonflowerGladeScene', name);
         expectRectInsideViewport(rect, viewport);
         expect(
           Math.min(rect.width, rect.height),
