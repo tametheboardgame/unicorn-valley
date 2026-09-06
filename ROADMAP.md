@@ -14,7 +14,7 @@ This file is the concise project-level navigation layer. Detailed release conten
 
 ## R6.5 - Valley Completeness and Breadth
 
-Status: Human playtest completed; R7 readiness gate **not released**; tablet-first remediation in progress.
+Status: Human playtest completed; R7 readiness gate **not released**; tablet-first remediation is at the final human replay gate.
 
 Canonical release contract: `docs/07V-R6.5-VALLEY-COMPLETENESS-BREADTH.md`
 
@@ -48,32 +48,29 @@ Do not rewrite the game natively for Android as part of WP18.
 - R6.5-WP18D - Playthrough Functional Bug and Regression Remediation: complete, PR #150.
 - R6.5-WP18E - Bag, Map, Creator and Modal Tablet UX: complete and merged through PR #151 at `1ea5268c09d8e669057eec3c391dd2a020247cc5`.
 - R6.5-WP18F - World Consistency, Visual Quality and Experience Improvements: complete, visually approved 2026-09-06 and merged through PR #152 at `a9d6125330fcc5f3f87be15af2ad31eabcb610bb`.
+- R6.5-WP18G - Tablet Device Hardening and Cross-Input Regression: technically complete on PR #153; merge pending final exact-head documentation validation.
 
 WP18F delivered Nova authoritative presence across race/picnic/cottage states, production-character representation cleanup, player and NPC mane/neck coverage improvements, Shell Cove identity and unicorn sandcastle detail, Crystal Brook/Prism Grotto readability, stronger Sunbeam Village shop identities, restrained Whispering Woods atmosphere and one lightweight Hollow Tree Nook mushroom interaction.
 
-Final WP18F acceptance head `1615b2865203c64334818f45bbaeb9b2c4dfb1f1` passed contract validation, formatting/lint, type-check, 426 unit tests, build/static smoke, the unchanged 520 KiB application-entry budget, Chromium/Firefox/WebKit compatibility and the full serial Chromium playtest before merge.
+WP18G delivered canvas gesture hardening, orientation-safe exploration touch controls, representative 16:9/16:10/4:3/smaller/larger landscape coverage, Bag/Map/Creator containment checks, race control visibility checks and secondary desktop-input regressions. Validated implementation head `4f71e843e024b7974405e00f469ea0e359a2180b` passed project contract, formatting/lint/type-check, 426 unit tests, production build/static smoke, the unchanged 520 KiB application-entry budget, Chromium/Firefox/WebKit compatibility and the full serial Chromium playtest at 164 passed / 3 skipped. Existing WP18B freeze regressions remain green.
 
-Human gate: **approved 2026-09-06**. The user also requested another broader visual tightening/polish pass later; retain that as non-blocking follow-up work rather than reopening WP18F.
+Human gate for WP18G: none.
 
-### R6.5-WP18G - Tablet Device Hardening and Cross-Input Regression
-
-Path: `docs/work-packages/R6.5-WP18G-TABLET-DEVICE-HARDENING-CROSS-INPUT-REGRESSION.md`
-
-State: **in progress** on `agent/r6.5-wp18g-tablet-device-hardening`.
-
-Validate representative 16:9, 16:10 and 4:3 landscape-tablet layouts plus smaller/larger tablet variants and secondary desktop support, browser gesture interference, multi-touch, safe areas, overflow, race visibility, orientation changes, long-session stability, browser compatibility and the unchanged 520 KiB budget.
+The user also requested another broader visual tightening/polish pass later; retain that as non-blocking follow-up work rather than reopening WP18F.
 
 ### R6.5-WP18H - Full Human Tablet Replay and Return to WP17
 
 Path: `docs/work-packages/R6.5-WP18H-FULL-HUMAN-TABLET-REPLAY-RETURN-WP17.md`
 
-State: planned final human gate.
+State: **next / human gate required after WP18G merge**.
 
 Run another substantially unguided playthrough on the reference Galaxy Tab S8 in landscape. WP18H records evidence and then returns to WP17 for the user's explicit R7-readiness decision.
 
+Automated browser/device evidence cannot replace the remaining real Android/Chrome questions around physical comfort, long-press behaviour, OS/browser gesture interference and child comprehension. Those are deliberately owned by WP18H.
+
 ### Dependency chain
 
-`WP17 evidence -> WP18A approved -> WP18B complete -> WP18C complete -> WP18D complete -> WP18E complete -> WP18F approved/merged -> WP18G -> WP18H -> WP17 explicit readiness decision -> R7`
+`WP17 evidence -> WP18A approved -> WP18B complete -> WP18C complete -> WP18D complete -> WP18E complete -> WP18F approved/merged -> WP18G technically complete -> WP18H human replay -> WP17 explicit readiness decision -> R7`
 
 ## R6.6 - Optional Android Packaging
 
