@@ -224,13 +224,18 @@ export class InventoryScene extends Phaser.Scene {
     if (pocketItems.length === 0) {
       this.track(
         this.add
-          .text(495, 385, `Nothing in ${this.pocketLabel(this.activePocket)} yet.\nNew treasures will appear here.`, {
-            color: '#806985',
-            fontFamily: 'system-ui, sans-serif',
-            fontSize: '23px',
-            align: 'center',
-            lineSpacing: 8,
-          })
+          .text(
+            495,
+            385,
+            `Nothing in ${this.pocketLabel(this.activePocket)} yet.\nNew treasures will appear here.`,
+            {
+              color: '#806985',
+              fontFamily: 'system-ui, sans-serif',
+              fontSize: '23px',
+              align: 'center',
+              lineSpacing: 8,
+            },
+          )
           .setOrigin(0.5)
           .setName('bag-pocket-empty'),
       );
@@ -359,7 +364,14 @@ export class InventoryScene extends Phaser.Scene {
         fontStyle: 'bold',
       })
       .setOrigin(0.5);
-    const scrollTrack = this.add.rectangle(810, trackTop + trackHeight / 2, 12, trackHeight, 0xddcddd, 1);
+    const scrollTrack = this.add.rectangle(
+      810,
+      trackTop + trackHeight / 2,
+      12,
+      trackHeight,
+      0xddcddd,
+      1,
+    );
     const scrollThumb = this.add
       .rectangle(810, thumbY, 22, thumbHeight, 0xa979aa, 1)
       .setName('bag-scroll-thumb');
@@ -377,10 +389,7 @@ export class InventoryScene extends Phaser.Scene {
     this.track(scrollTrack, scrollThumb, up, upLabel, down, downLabel, hint);
   }
 
-  private renderBagDetail(
-    selected: OwnedInventoryItem | null,
-    inventory: InventoryService,
-  ): void {
+  private renderBagDetail(selected: OwnedInventoryItem | null, inventory: InventoryService): void {
     if (!selected) {
       this.track(
         this.add
@@ -457,7 +466,9 @@ export class InventoryScene extends Phaser.Scene {
           .text(
             1020,
             505,
-            selected.definition.questCritical ? 'Kept safe for your adventure' : 'A treasure to keep',
+            selected.definition.questCritical
+              ? 'Kept safe for your adventure'
+              : 'A treasure to keep',
             {
               color: '#7d6880',
               fontFamily: 'system-ui, sans-serif',
