@@ -6,10 +6,34 @@ import type { InputController } from '../input/InputController';
 import type { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 import type { InteractionTarget } from '../interaction/InteractionTarget';
 import type { SaveService } from '../save/SaveService';
+import {
+  addCoreNpcIdleTween,
+  createCoreNpcSprite,
+  type CoreNpcId,
+} from '../visual/CoreNpcProductionArt';
 import type { CottageHomeView } from './CottageHomeView';
 import { FriendVisitService, type ResolvedFriendVisit } from './FriendVisitService';
 
 export const COTTAGE_FRIEND_VISIT_INTERACTION_ID = 'interaction:cottage-friend-visit';
+
+function coreNpcIdForCharacter(characterId: string): CoreNpcId | null {
+  switch (characterId) {
+    case 'character:nova':
+      return 'nova';
+    case 'character:willow':
+      return 'willow';
+    case 'character:pip':
+      return 'pip';
+    case 'character:pebble':
+      return 'pebble';
+    case 'character:lumi':
+      return 'lumi';
+    case 'character:marigold':
+      return 'marigold';
+    default:
+      return null;
+  }
+}
 
 export class CottageFriendVisitManager {
   private readonly service: FriendVisitService;
@@ -131,19 +155,12 @@ export class CottageFriendVisitManager {
   private renderVisitor(visit: ResolvedFriendVisit): void {
     const { x, y } = visit.definition.position;
     const character = characterRegistry.get(visit.definition.characterId);
+    const coreNpcId = coreNpcIdForCharacter(visit.definition.characterId);
 
     const glow = this.scene.add.circle(x, y, 72, 0xffe8a3, 0.18).setDepth(12);
-    const body = this.scene.add
-      .circle(x, y, 54, 0xfff4df, 0.98)
-      .setStrokeStyle(6, 0xb78bc4, 0.9)
-      .setDepth(13);
-    const icon = this.scene.add
-      .text(x, y - 3, visit.definition.icon, {
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '48px',
-      })
-      .setOrigin(0.5)
-      .setDepth(14);
+    const renderedVisitor = coreNpcId
+      ? this.renderProductionVisitor(coreNpcId, x, y)
+      : this.renderFallbackVisitor(visit, x, y);
     const label = this.scene.add
       .text(x, y + 78, `${character.name} is visiting`, {
         color: '#654f63',
@@ -156,7 +173,7 @@ export class CottageFriendVisitManager {
       .setOrigin(0.5)
       .setDepth(14);
 
-    this.visitorObjects = [glow, body, icon, label];
+    this.visitorObjects = [glow, ...renderedVisitor, label];
     this.scene.tweens.add({
       targets: glow,
       scale: 1.12,
@@ -166,6 +183,33 @@ export class CottageFriendVisitManager {
       repeat: -1,
       ease: 'Sine.InOut',
     });
+  }
+
+  private renderProductionVisitor(coreNpcId: CoreNpcId, x: number, y: number): Phaser.GameObjects.GameObject[] {
+    const sprite = createCoreNpcSprite(this.scene, coreNpcId, x, y + 7, 'world')
+      .setDisplaySize(coreNpcId === 'pip' ? 96 : 112, coreNpcId === 'pip' ? 78 : 92)
+      .setDepth(14);
+    addCoreNpcIdleTween(this.scene, sprite, coreNpcId, 4);
+    return [sprite];
+  }
+
+  private renderFallbackVisitor(
+    visit: ResolvedFriendVisit,
+    x: number,
+    y: number,
+  ): Phaser.GameObjects.GameObject[] {
+    const body = this.scene.add
+      .circle(x, y, 54, 0xfff4df, 0.98)
+      .setStrokeStyle(6, 0xb78bc4, 0.9)
+      .setDepth(13);
+    const icon = this.scene.add
+      .text(x, y - 3, visit.definition.icon, {
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '48px',
+      })
+      .setOrigin(0.5)
+      .setDepth(14);
+    return [body, icon];
   }
 
   private clearVisitor(): void {
