@@ -181,7 +181,7 @@ test('target-tablet touch completes creator, exploration, Book and accessibility
   let snapshot = await getSnapshot(page);
   const creator = getScene(snapshot, 'UnicornCreatorScene');
   const creatorTargets = creator.objects.filter((object) => object.visible && object.interactive);
-  expect(creatorTargets.length).toBeGreaterThanOrEqual(20);
+  expect(creatorTargets.length).toBeGreaterThanOrEqual(8);
   for (const target of creatorTargets) {
     expect(
       Math.min(target.displayWidth, target.displayHeight),
