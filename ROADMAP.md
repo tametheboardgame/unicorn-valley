@@ -47,26 +47,19 @@ Do not rewrite the game natively for Android as part of WP18.
 - R6.5-WP18C - Landscape Tablet Controls and Interaction Shell: complete, PR #149.
 - R6.5-WP18D - Playthrough Functional Bug and Regression Remediation: complete, PR #150.
 - R6.5-WP18E - Bag, Map, Creator and Modal Tablet UX: complete and merged through PR #151 at `1ea5268c09d8e669057eec3c391dd2a020247cc5`.
+- R6.5-WP18F - World Consistency, Visual Quality and Experience Improvements: **complete and visually approved 2026-09-06 on PR #152; merge pending final exact-head validation**.
 
-WP18E delivered scalable Bag categories and scrolling, bounded useful Food consumption, distinct Map access and surface, the approved progressive-category Unicorn Creator, and modal tablet-contract reconciliation. Human gate: none.
-
-### R6.5-WP18F - World Consistency, Visual Quality and Experience Improvements
-
-Path: `docs/work-packages/R6.5-WP18F-WORLD-CONSISTENCY-VISUAL-EXPERIENCE.md`
-
-State: **technical implementation complete on PR #152; human visual spot-check gate pending**.
-
-Delivered scope includes Nova authoritative presence across race/picnic/cottage states, production-character representation cleanup, player and NPC mane/neck coverage improvements, Shell Cove identity and unicorn sandcastle detail, Crystal Brook/Prism Grotto readability, stronger Sunbeam Village shop identities, restrained Whispering Woods atmosphere and one lightweight Hollow Tree Nook mushroom interaction.
+WP18F delivered Nova authoritative presence across race/picnic/cottage states, production-character representation cleanup, player and NPC mane/neck coverage improvements, Shell Cove identity and unicorn sandcastle detail, Crystal Brook/Prism Grotto readability, stronger Sunbeam Village shop identities, restrained Whispering Woods atmosphere and one lightweight Hollow Tree Nook mushroom interaction.
 
 Implementation/evidence head `4971da091ea64a4a3a87a7f28dffeb320ddd7a83` is green for contract validation, formatting/lint, type-check, 426 unit tests, build/static smoke, the unchanged 520 KiB application-entry budget, Chromium/Firefox/WebKit compatibility and the full Chromium playtest. The browser playtest completed 158 passed / 3 skipped and all five dedicated WP18F evidence scenarios passed.
 
-Human gate: **visual spot-checks**. PR #152 must not merge until this gate is accepted.
+Human gate: **approved 2026-09-06**. Approval releases WP18F for merge. The user also requested another broader visual tightening/polish pass later; retain that as non-blocking follow-up work rather than reopening WP18F.
 
 ### R6.5-WP18G - Tablet Device Hardening and Cross-Input Regression
 
 Path: `docs/work-packages/R6.5-WP18G-TABLET-DEVICE-HARDENING-CROSS-INPUT-REGRESSION.md`
 
-State: **blocked on WP18F visual acceptance and merge**.
+State: **next after WP18F merge**.
 
 Validate representative 16:9, 16:10 and 4:3 landscape-tablet layouts plus secondary desktop support, browser gesture interference, multi-touch, safe areas, overflow, race visibility, long-session stability, browser compatibility and the unchanged 520 KiB budget.
 
@@ -80,7 +73,7 @@ Run another substantially unguided playthrough on the reference Galaxy Tab S8 in
 
 ### Dependency chain
 
-`WP17 evidence -> WP18A approved -> WP18B complete -> WP18C complete -> WP18D complete -> WP18E complete -> WP18F visual approval -> WP18G -> WP18H -> WP17 explicit readiness decision -> R7`
+`WP17 evidence -> WP18A approved -> WP18B complete -> WP18C complete -> WP18D complete -> WP18E complete -> WP18F approved/merged -> WP18G -> WP18H -> WP17 explicit readiness decision -> R7`
 
 ## R6.6 - Optional Android Packaging
 
@@ -94,7 +87,7 @@ R7-WP7.1 may not begin until WP18H completes and R6.5-WP17 explicitly confirms t
 
 ## Future releases
 
-Potential later work includes flight/Cloudtop Peaks, deeper gardening/cooking, companion expansion, further regions, festival systems, Unicorn Palace and richer multi-step social events. These remain backlog until later play evidence justifies them.
+Potential later work includes flight/Cloudtop Peaks, deeper gardening/cooking, companion expansion, further regions, festival systems, Unicorn Palace, richer multi-step social events, and the user-requested additional visual tightening/polish pass after the current remediation sequence. These remain backlog until later play evidence justifies their ordering.
 
 ## Operating rules
 
