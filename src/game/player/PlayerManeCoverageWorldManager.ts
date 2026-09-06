@@ -73,7 +73,9 @@ export class PlayerManeCoverageWorldManager {
 
 let manager: PlayerManeCoverageWorldManager | null = null;
 
-export function getPlayerManeCoverageWorldManager(game: Phaser.Game): PlayerManeCoverageWorldManager {
+export function getPlayerManeCoverageWorldManager(
+  game: Phaser.Game,
+): PlayerManeCoverageWorldManager {
   manager ??= new PlayerManeCoverageWorldManager(game);
   return manager;
 }
