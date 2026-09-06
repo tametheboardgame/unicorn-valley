@@ -15,12 +15,7 @@ function owned(definition: ItemDefinition, quantity = 1): OwnedInventoryItem {
 
 describe('BagInventoryModel', () => {
   it('uses the approved four child-readable pockets', () => {
-    expect(BAG_POCKETS.map((pocket) => pocket.id)).toEqual([
-      'food',
-      'quest',
-      'decor',
-      'keepsakes',
-    ]);
+    expect(BAG_POCKETS.map((pocket) => pocket.id)).toEqual(['food', 'quest', 'decor', 'keepsakes']);
   });
 
   it('normalises all existing item categories into those pockets', () => {
@@ -28,15 +23,15 @@ describe('BagInventoryModel', () => {
     expect(getBagPocketForItem({ id: 'item:quest', name: 'Quest', category: 'quest' })).toBe(
       'quest',
     );
-    expect(
-      getBagPocketForItem({ id: 'item:decor', name: 'Decor', category: 'decoration' }),
-    ).toBe('decor');
+    expect(getBagPocketForItem({ id: 'item:decor', name: 'Decor', category: 'decoration' })).toBe(
+      'decor',
+    );
     expect(
       getBagPocketForItem({ id: 'item:accessory', name: 'Accessory', category: 'accessory' }),
     ).toBe('keepsakes');
-    expect(
-      getBagPocketForItem({ id: 'item:reward', name: 'Reward', category: 'reward' }),
-    ).toBe('keepsakes');
+    expect(getBagPocketForItem({ id: 'item:reward', name: 'Reward', category: 'reward' })).toBe(
+      'keepsakes',
+    );
     expect(getBagPocketForItem({ id: 'item:legacy', name: 'Legacy' })).toBe('keepsakes');
   });
 
@@ -63,7 +58,12 @@ describe('BagInventoryModel', () => {
     expect(getFirstPopulatedBagPocket(grouped)).toBe('decor');
     expect(isUsableFood({ id: 'item:bun', name: 'Bun', category: 'food' })).toBe(true);
     expect(
-      isUsableFood({ id: 'item:quest-food', name: 'Quest Food', category: 'food', questCritical: true }),
+      isUsableFood({
+        id: 'item:quest-food',
+        name: 'Quest Food',
+        category: 'food',
+        questCritical: true,
+      }),
     ).toBe(false);
     expect(isUsableFood({ id: 'item:quest', name: 'Quest', category: 'quest' })).toBe(false);
   });
