@@ -235,6 +235,13 @@ async function assertResponsiveMovement(page: Page, sceneKey: string): Promise<v
   ).toBeGreaterThan(2);
 }
 
+async function returnToNookExitRange(page: Page): Promise<void> {
+  await page.keyboard.down('ArrowLeft');
+  await page.waitForTimeout(340);
+  await page.keyboard.up('ArrowLeft');
+  await page.waitForTimeout(80);
+}
+
 async function openAndCloseBag(page: Page, returnScene: string): Promise<void> {
   await clickNamedObject(page, returnScene, 'exploration-shell-bag-button');
   await waitForScene(page, 'InventoryScene');
@@ -349,6 +356,7 @@ test.describe
         await assertResponsiveMovement(page, 'HollowTreeNookScene');
         healthSamples.push(await sceneHealth(page, 'HollowTreeNookScene'));
 
+        await returnToNookExitRange(page);
         await clickNamedObject(page, 'HollowTreeNookScene', 'exploration-interaction-prompt');
         await waitForScene(page, 'MoonflowerGladeScene');
       }
