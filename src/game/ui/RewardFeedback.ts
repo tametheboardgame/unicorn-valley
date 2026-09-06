@@ -23,6 +23,10 @@ export class RewardFeedback {
         getVerticalSliceAudio().playSfx('quest-complete');
         this.show('You helped! The valley remembers.', '🌟', UI_COLOURS.mint);
       }),
+      gameEventBus.on('SHIMMER_REWARDED', ({ amount, balance }) => {
+        getVerticalSliceAudio().playSfx('collect');
+        this.show(`+${amount} Shimmer earned! Balance: ${balance}`, '✨', UI_COLOURS.gold);
+      }),
     );
   }
 
