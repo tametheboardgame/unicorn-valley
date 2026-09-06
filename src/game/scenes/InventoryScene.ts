@@ -244,7 +244,9 @@ export class InventoryScene extends Phaser.Scene {
         this.bagScrollOffset,
         this.bagScrollOffset + BAG_VISIBLE_ITEMS,
       );
-      visibleItems.forEach((item, index) => this.renderBagItemTile(item, index));
+      visibleItems.forEach((item, index) => {
+        this.renderBagItemTile(item, index);
+      });
       this.renderBagScrollAffordance(pocketItems.length);
     }
 
