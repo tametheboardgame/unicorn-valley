@@ -160,9 +160,9 @@ test('Bag exposes categories, safely scrolls past six items and consumes Food ex
   await waitForObject(page, 'InventoryScene', 'bag-pocket:decor');
   await clickCanvasLogical(page, 605, 132);
   await waitForObject(page, 'InventoryScene', 'bag-scroll-down');
-  expect(await objectVisible(page, 'InventoryScene', 'bag-item-tile:item:sunbeam-picnic-basket')).toBe(
-    false,
-  );
+  expect(
+    await objectVisible(page, 'InventoryScene', 'bag-item-tile:item:sunbeam-picnic-basket'),
+  ).toBe(false);
 
   await clickCanvasLogical(page, 810, 535);
   await waitForObject(page, 'InventoryScene', 'bag-item-tile:item:sunbeam-picnic-basket');
