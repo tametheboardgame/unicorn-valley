@@ -22,6 +22,7 @@ export class AudioSettingsPanel {
   private readonly objects: Phaser.GameObjects.GameObject[] = [];
   private readonly panelObjects: VisiblePanelObject[] = [];
   private readonly rows: SettingRow[] = [];
+  private readonly buttonShadow: Phaser.GameObjects.Rectangle;
   private readonly button: Phaser.GameObjects.Rectangle;
   private readonly buttonLabel: Phaser.GameObjects.Text;
   private isOpen = false;
@@ -33,7 +34,7 @@ export class AudioSettingsPanel {
   ) {
     const buttonX = GAME_WIDTH - 250;
     const buttonY = 58;
-    const buttonShadow = createUiShadow(scene, buttonX, buttonY, 142, 64, 119, 0.16);
+    this.buttonShadow = createUiShadow(scene, buttonX, buttonY, 142, 64, 119, 0.16);
     this.button = scene.add
       .rectangle(buttonX, buttonY, 142, 64, UI_COLOURS.cream, 0.98)
       .setName('exploration-shell-sound-button')
@@ -53,7 +54,7 @@ export class AudioSettingsPanel {
       .setScrollFactor(0)
       .setDepth(121);
     applyButtonHover(this.button, UI_COLOURS.cream, UI_COLOURS.gold);
-    this.objects.push(buttonShadow, this.button, this.buttonLabel);
+    this.objects.push(this.buttonShadow, this.button, this.buttonLabel);
 
     const panelShadow = createUiShadow(
       scene,
@@ -158,6 +159,23 @@ export class AudioSettingsPanel {
 
     this.refresh();
     this.setPanelVisible(false);
+  }
+
+  public setLauncherVisible(visible: boolean): void {
+    this.buttonShadow.setVisible(visible);
+    this.button.setVisible(visible);
+    this.buttonLabel.setVisible(visible);
+    if (visible) {
+      this.button.setInteractive({ useHandCursor: true });
+    } else {
+      this.button.disableInteractive();
+      this.isOpen = false;
+      this.setPanelVisible(false);
+    }
+  }
+
+  public openSettings(): Promise<void> {
+    return this.openFullSettings();
   }
 
   public destroy(): void {

@@ -3,16 +3,22 @@ import { getBrowserAccessibilitySettingsStore } from '../accessibility/Accessibi
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import type { TouchMovementPad } from '../input/TouchMovementPad';
 import { rememberRainbowMeadowPlayerPosition } from '../world/RainbowMeadowReturnPoint';
+import { browserUsesLandscapeTabletPresentation } from './LandscapeTabletPresentation';
 import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from './uiTheme';
 
 const LOCATION_TITLES: Readonly<Record<string, string>> = {
   MoonflowerGladeScene: 'Moonflower Glade',
   CottageInteriorScene: 'Moonflower Cottage',
   MoonflowerPatchScene: 'Moonflower Patch',
+  HollowTreeNookScene: 'Hollow Tree Nook',
   SunbeamVillageScene: 'Sunbeam Village',
   RainbowMeadowScene: 'Rainbow Meadow',
+  WindmillLookoutScene: 'Windmill Lookout',
   CrystalBrookScene: 'Crystal Brook',
+  CrystalGrottoScene: 'Crystal Grotto',
   WhisperingWoodsScene: 'Whispering Woods',
+  FireflyGroveScene: 'Firefly Grove',
+  StarlightBeachScene: 'Starlight Beach',
 };
 
 const LEGACY_STATUS_PREFIXES = [
@@ -25,6 +31,7 @@ export class ExplorationChrome {
   private readonly accessibility = getBrowserAccessibilitySettingsStore();
   private readonly objects: Phaser.GameObjects.GameObject[] = [];
   private readonly helpObjects: Array<Phaser.GameObjects.Rectangle | Phaser.GameObjects.Text> = [];
+  private readonly tabletMode = browserUsesLandscapeTabletPresentation();
   private readonly titleText: Phaser.GameObjects.Text | null;
   private readonly controlsButton: Phaser.GameObjects.Rectangle | null;
   private readonly controlsLabel: Phaser.GameObjects.Text | null;
@@ -52,6 +59,45 @@ export class ExplorationChrome {
       this.reducedMotionLabel = null;
       this.highVisibilityButton = null;
       this.highVisibilityLabel = null;
+      return;
+    }
+
+    if (this.tabletMode) {
+      const titleX = GAME_WIDTH - 145;
+      const titleY = 46;
+      const titleShadow = createUiShadow(scene, titleX, titleY + 2, 260, 58, 123, 0.14);
+      const titlePanel = scene.add
+        .rectangle(titleX, titleY, 260, 58, UI_COLOURS.cream, 0.94)
+        .setName('exploration-location-title-panel')
+        .setStrokeStyle(3, UI_COLOURS.lavenderStrong, 0.92)
+        .setScrollFactor(0)
+        .setDepth(124);
+      this.titleText = scene.add
+        .text(titleX, titleY, locationTitle, {
+          color: UI_COLOURS.ink,
+          fontFamily: UI_FONT,
+          fontSize: '19px',
+          fontStyle: 'bold',
+          align: 'center',
+          wordWrap: { width: 230 },
+        })
+        .setName('exploration-location-title')
+        .setOrigin(0.5)
+        .setScrollFactor(0)
+        .setDepth(125);
+      this.controlsButton = null;
+      this.controlsLabel = null;
+      this.touchToggleButton = null;
+      this.touchToggleLabel = null;
+      this.reducedMotionButton = null;
+      this.reducedMotionLabel = null;
+      this.highVisibilityButton = null;
+      this.highVisibilityLabel = null;
+      this.objects.push(titleShadow, titlePanel, this.titleText);
+      this.unsubscribeAccessibility = this.accessibility.subscribe(() => {
+        this.applyReducedMotionPreference();
+      });
+      this.refresh();
       return;
     }
 
@@ -216,7 +262,8 @@ export class ExplorationChrome {
       const isLegacyTitle =
         text === locationTitle && object.scrollFactorX === 0 && object.depth >= 100;
       const isLegacyControls =
-        object.name !== 'exploration-controls-help' && text.startsWith('Move: WASD / arrows');
+        object.name !== 'exploration-controls-help' &&
+        (text.startsWith('Move: WASD / arrows') || text.startsWith('Move: arrows / WASD'));
       const isLegacyStatus = LEGACY_STATUS_PREFIXES.some((prefix) => text.startsWith(prefix));
       if (isLegacyTitle || isLegacyControls || isLegacyStatus) {
         object.setVisible(false);
