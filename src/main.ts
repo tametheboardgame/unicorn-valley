@@ -97,21 +97,15 @@ void import('./game/world/CrystalBrookDepthWorldManager').then(
   },
 );
 
-void import('./game/population/CrystalBrookEchoBridgeManager').then(
-  ({ getCrystalBrookEchoBridgeManager }) => {
-    getCrystalBrookEchoBridgeManager(game);
+void import('./game/population/AmbientPopulationWorldManager').then(
+  ({ getAmbientPopulationWorldManager }) => {
+    getAmbientPopulationWorldManager(game);
   },
 );
 
 void import('./game/world/WoodsDepthWorldManager').then(({ getWoodsDepthWorldManager }) => {
   getWoodsDepthWorldManager(game);
 });
-
-void import('./game/population/WhisperingWoodsFernBridgeManager').then(
-  ({ getWhisperingWoodsFernBridgeManager }) => {
-    getWhisperingWoodsFernBridgeManager(game);
-  },
-);
 
 void import('./game/world/ExistingValleyQuestPackWorldManager').then(
   ({ getExistingValleyQuestPackWorldManager }) => {
