@@ -71,12 +71,21 @@ describe('HomeDecorationService', () => {
     ).toEqual(['item:moonflower-lantern', 'item:rainbow-run-finisher-ribbon']);
   });
 
-  it('places, removes and persists decorations by stable slot ID', () => {
+  it('places, removes and persists decorations by stable slot ID without consuming ownership', () => {
     const { saveService, inventory, decorating } = createServices();
     inventory.addItem('item:moonflower-lantern');
 
     decorating.placeDecoration('cottage-slot:window-nook', 'item:moonflower-lantern');
     expect(decorating.getPlacement('cottage-slot:window-nook')?.id).toBe('item:moonflower-lantern');
+    expect(decorating.listOwnedDecorations()).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          quantity: 1,
+          placedQuantity: 1,
+          definition: expect.objectContaining({ id: 'item:moonflower-lantern' }),
+        }),
+      ]),
+    );
 
     const reloaded = new HomeDecorationService(saveService);
     expect(reloaded.getPlacement('cottage-slot:window-nook')?.name).toBe('Moonflower Lantern');
@@ -85,6 +94,9 @@ describe('HomeDecorationService', () => {
       'item:moonflower-lantern',
     );
     expect(reloaded.getPlacement('cottage-slot:window-nook')).toBeNull();
+    expect(
+      reloaded.listOwnedDecorations().find(({ definition }) => definition.id === 'item:moonflower-lantern'),
+    ).toMatchObject({ quantity: 1, placedQuantity: 0 });
   });
 
   it('moves a single owned decoration instead of duplicating it', () => {
@@ -97,6 +109,50 @@ describe('HomeDecorationService', () => {
     expect(result.movedFromSlot?.id).toBe('cottage-slot:window-nook');
     expect(decorating.getPlacement('cottage-slot:window-nook')).toBeNull();
     expect(decorating.getPlacement('cottage-slot:bedside')?.id).toBe('item:moonflower-lantern');
+  });
+
+  it('allows two placements when two copies are owned', () => {
+    const { inventory, decorating } = createServices();
+    inventory.addItem('item:moonflower-lantern', 2);
+
+    decorating.placeDecoration('cottage-slot:window-nook', 'item:moonflower-lantern');
+    const second = decorating.placeDecoration('cottage-slot:bedside', 'item:moonflower-lantern');
+
+    expect(second.movedFromSlot).toBeNull();
+    expect(decorating.getPlacement('cottage-slot:window-nook')?.id).toBe('item:moonflower-lantern');
+    expect(decorating.getPlacement('cottage-slot:bedside')?.id).toBe('item:moonflower-lantern');
+    expect(
+      decorating.listOwnedDecorations().find(({ definition }) => definition.id === 'item:moonflower-lantern'),
+    ).toMatchObject({ quantity: 2, placedQuantity: 2 });
+  });
+
+  it('repairs legacy over-placement without changing the owned quantity', () => {
+    const { saveService, inventory, decorating } = createServices();
+    inventory.addItem('item:moonflower-lantern');
+    const save = saveService.load();
+    expect(save).not.toBeNull();
+    if (!save) {
+      return;
+    }
+
+    saveService.save({
+      ...save,
+      home: {
+        ...save.home,
+        furnitureBySlot: {
+          ...save.home.furnitureBySlot,
+          'cottage-slot:window-nook': 'item:moonflower-lantern',
+          'cottage-slot:bedside': 'item:moonflower-lantern',
+        },
+      },
+    });
+
+    expect(
+      decorating.listOwnedDecorations().find(({ definition }) => definition.id === 'item:moonflower-lantern'),
+    ).toMatchObject({ quantity: 1, placedQuantity: 1 });
+    expect(decorating.getPlacement('cottage-slot:window-nook')?.id).toBe('item:moonflower-lantern');
+    expect(decorating.getPlacement('cottage-slot:bedside')).toBeNull();
+    expect(saveService.load()?.inventory.itemQuantities['item:moonflower-lantern']).toBe(1);
   });
 
   it('cycles through compatible owned decorations and then back to an empty slot', () => {
