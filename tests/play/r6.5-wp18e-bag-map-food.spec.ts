@@ -197,3 +197,40 @@ test('the landscape exploration Map action opens a distinct Map surface rather t
   expect(await objectVisible(page, 'InventoryScene', 'bag-pocket:food')).toBe(false);
   expect(await objectVisible(page, 'InventoryScene', 'bag-map-guidance')).toBe(true);
 });
+
+test('landscape Creator progressively reveals one approved category at a time', async ({ page }) => {
+  await diagnostics(page);
+  await startScene(page, 'UnicornCreatorScene');
+
+  await waitForObject(page, 'UnicornCreatorScene', 'creator-category-main');
+  await waitForObject(page, 'UnicornCreatorScene', 'creator-tablet-category-content:main');
+  await waitForObject(page, 'UnicornCreatorScene', 'creator-action-back');
+  await expect(page.locator('.unicorn-name-input')).toBeVisible();
+  expect(await objectVisible(page, 'UnicornCreatorScene', 'creator-bodyColour-peach')).toBe(false);
+  expect(await objectVisible(page, 'UnicornCreatorScene', 'creator-maneStyle-next')).toBe(false);
+
+  await clickCanvasLogical(page, 940, 255);
+  await waitForObject(page, 'UnicornCreatorScene', 'creator-tablet-category-content:colours');
+  await waitForObject(page, 'UnicornCreatorScene', 'creator-bodyColour-peach');
+  expect(await objectVisible(page, 'UnicornCreatorScene', 'creator-maneStyle-next')).toBe(false);
+
+  await clickCanvasLogical(page, 1145, 255);
+  await waitForObject(page, 'UnicornCreatorScene', 'creator-tablet-category-content:mane-tail');
+  await waitForObject(page, 'UnicornCreatorScene', 'creator-maneStyle-next');
+  expect(await objectVisible(page, 'UnicornCreatorScene', 'creator-bodyColour-peach')).toBe(false);
+
+  await clickCanvasLogical(page, 735, 317);
+  await waitForObject(page, 'UnicornCreatorScene', 'creator-tablet-category-content:horn');
+  await waitForObject(page, 'UnicornCreatorScene', 'creator-hornStyle-next');
+  expect(await objectVisible(page, 'UnicornCreatorScene', 'creator-marking-next')).toBe(false);
+
+  await clickCanvasLogical(page, 940, 317);
+  await waitForObject(page, 'UnicornCreatorScene', 'creator-tablet-category-content:markings');
+  await waitForObject(page, 'UnicornCreatorScene', 'creator-marking-next');
+  expect(await objectVisible(page, 'UnicornCreatorScene', 'creator-hornStyle-next')).toBe(false);
+
+  await clickCanvasLogical(page, 1145, 317);
+  await waitForObject(page, 'UnicornCreatorScene', 'creator-tablet-category-content:accessories');
+  await waitForObject(page, 'UnicornCreatorScene', 'creator-accessory-next');
+  expect(await objectVisible(page, 'UnicornCreatorScene', 'creator-marking-next')).toBe(false);
+});
