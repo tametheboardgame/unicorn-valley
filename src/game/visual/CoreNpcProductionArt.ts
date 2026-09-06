@@ -97,6 +97,13 @@ export const CORE_NPC_VISUALS: Readonly<Record<CoreNpcId, CoreNpcVisualSpec>> = 
 const TEXTURE_WIDTH = 184;
 const TEXTURE_HEIGHT = 148;
 
+export const CORE_NPC_MANE_NECK_COVERAGE = {
+  x: 101,
+  y: 75,
+  width: 26,
+  height: 44,
+} as const;
+
 function drawStar(
   graphics: Phaser.GameObjects.Graphics,
   x: number,
@@ -233,6 +240,16 @@ function drawUnicornMane(
 ): void {
   graphics.fillStyle(spec.mane, 1);
   graphics.lineStyle(3.5, spec.outline, 0.86);
+  drawOutlinedEllipse(
+    graphics,
+    CORE_NPC_MANE_NECK_COVERAGE.x,
+    CORE_NPC_MANE_NECK_COVERAGE.y,
+    CORE_NPC_MANE_NECK_COVERAGE.width,
+    CORE_NPC_MANE_NECK_COVERAGE.height,
+    spec.mane,
+    spec.outline,
+    3.2,
+  );
 
   if (id === 'nova') {
     graphics.fillTriangle(116, 34, 83, 20, 100, 57);

@@ -1,6 +1,13 @@
 import Phaser from 'phaser';
 import { GAME_WIDTH } from '../config/gameConstants';
 import { PIP_POSITION } from '../intro/PipIntro';
+import { RefreshThrottle } from '../performance/RefreshThrottle';
+import { getBrowserSaveService } from '../save/browserSaveService';
+import {
+  CoreNpcPresenceService,
+  NOVA_CHARACTER_ID,
+  type CoreNpcPresenceArea,
+} from '../world/CoreNpcPresenceService';
 import { RAINBOW_MEADOW_MAP } from '../world/RainbowMeadowMap';
 import { SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
 import { worldDepthForY } from '../world/WorldDepth';
@@ -13,6 +20,13 @@ import {
 } from './CoreNpcProductionArt';
 
 const LUMI_WORLD_POSITION = { x: 2980, y: 1530 } as const;
+const NOVA_PICNIC_POSITION = { x: 2045, y: 1400 } as const;
+const NOVA_PRESENCE_REFRESH_MS = 500;
+const NOVA_OFFSTAGE_INTERACTION_POSITION = { x: -10000, y: -10000 } as const;
+const novaRaceMarker = RAINBOW_MEADOW_MAP.npcMarkers.find((candidate) => candidate.id === 'nova');
+const NOVA_RACE_POSITION = novaRaceMarker
+  ? { x: novaRaceMarker.position.x, y: novaRaceMarker.position.y }
+  : null;
 
 interface StoryPortraitDefinition {
   sceneKey: string;
@@ -44,6 +58,29 @@ function hasWorldPosition(
 ): object is Phaser.GameObjects.GameObject & PositionedGameObject {
   const positioned = object as Phaser.GameObjects.GameObject & Partial<PositionedGameObject>;
   return typeof positioned.x === 'number' && typeof positioned.y === 'number';
+}
+
+function destroyNamedObject(scene: Phaser.Scene, name: string): void {
+  const object = scene.children.getByName(name);
+  if (!object) {
+    return;
+  }
+  scene.tweens.killTweensOf(object);
+  object.destroy();
+}
+
+function syncNovaRaceInteractionTarget(atRaceHub: boolean): void {
+  if (!novaRaceMarker || !NOVA_RACE_POSITION) {
+    return;
+  }
+
+  // RainbowMeadowScene's Nova interaction keeps the same marker-position object by reference.
+  // Moving that shared target off-stage removes the talk interaction while Nova is elsewhere;
+  // restoring the canonical coordinates re-enables it without duplicating scene progression rules.
+  const mutablePosition = novaRaceMarker.position as { x: number; y: number };
+  const target = atRaceHub ? NOVA_RACE_POSITION : NOVA_OFFSTAGE_INTERACTION_POSITION;
+  mutablePosition.x = target.x;
+  mutablePosition.y = target.y;
 }
 
 function hideVillagePrototypeMarker(
@@ -79,19 +116,54 @@ function hideVillagePrototypeMarker(
   }
 }
 
-function hideNovaPlaceholder(scene: Phaser.Scene): void {
-  const marker = RAINBOW_MEADOW_MAP.npcMarkers.find((candidate) => candidate.id === 'nova');
-  if (!marker) {
+function hideNovaPlaceholder(scene: Phaser.Scene, hideRaceLabel: boolean): void {
+  if (!NOVA_RACE_POSITION) {
     return;
   }
+
   for (const object of scene.children.list) {
     if (
       object instanceof Phaser.GameObjects.Container &&
       object.name !== 'core-npc:nova:world' &&
-      Math.abs(object.x - marker.position.x) <= 1 &&
-      Math.abs(object.y - marker.position.y) <= 8 &&
+      Math.abs(object.x - NOVA_RACE_POSITION.x) <= 1 &&
+      Math.abs(object.y - NOVA_RACE_POSITION.y) <= 8 &&
       object.list.length >= 8
     ) {
+      object.setVisible(false);
+      continue;
+    }
+
+    if (
+      hideRaceLabel &&
+      object instanceof Phaser.GameObjects.Text &&
+      object.text === 'Nova' &&
+      Math.abs(object.x - NOVA_RACE_POSITION.x) <= 4 &&
+      Math.abs(object.y - (NOVA_RACE_POSITION.y + 72)) <= 10
+    ) {
+      object.setVisible(false);
+    }
+  }
+}
+
+function hidePicnicNovaPlaceholder(scene: Phaser.Scene): void {
+  for (const object of scene.children.list) {
+    if (!hasWorldPosition(object)) {
+      continue;
+    }
+    const nearPicnicNova =
+      Math.abs(object.x - NOVA_PICNIC_POSITION.x) <= 55 &&
+      Math.abs(object.y - NOVA_PICNIC_POSITION.y) <= 70;
+    if (!nearPicnicNova) {
+      continue;
+    }
+
+    const prototypeCircle =
+      object instanceof Phaser.GameObjects.Arc &&
+      object.displayWidth <= 90 &&
+      object.displayHeight <= 90;
+    const prototypeText =
+      object instanceof Phaser.GameObjects.Text && (object.text === '⭐' || object.text === 'Nova');
+    if (prototypeCircle || prototypeText) {
       object.setVisible(false);
     }
   }
@@ -161,16 +233,28 @@ function hideLumiPlaceholder(scene: Phaser.Scene): void {
 }
 
 export class CoreNpcProductionPresentationManager {
+  private readonly presenceService = new CoreNpcPresenceService(getBrowserSaveService());
+  private readonly presenceRefresh = new RefreshThrottle(NOVA_PRESENCE_REFRESH_MS);
+  private novaArea: CoreNpcPresenceArea = 'rainbow-run-hub';
+
   public constructor(private readonly game: Phaser.Game) {
     this.game.events.on(Phaser.Core.Events.POST_STEP, this.update, this);
   }
 
   private update(): void {
+    if (this.presenceRefresh.shouldRun(Date.now())) {
+      this.refreshPresenceAuthority();
+    }
     this.refreshStoryPortraits();
     this.refreshPipWorld();
     this.refreshVillageWorld();
     this.refreshNovaWorld();
     this.refreshLumiWorld();
+  }
+
+  private refreshPresenceAuthority(): void {
+    this.novaArea = this.presenceService.resolve(NOVA_CHARACTER_ID)?.area ?? 'rainbow-run-hub';
+    syncNovaRaceInteractionTarget(this.novaArea === 'rainbow-run-hub');
   }
 
   private refreshStoryPortraits(): void {
@@ -276,25 +360,73 @@ export class CoreNpcProductionPresentationManager {
     if (tighteningNova instanceof Phaser.GameObjects.Sprite) {
       tighteningNova.setVisible(false);
     }
-    hideNovaPlaceholder(scene);
 
-    if (scene.children.getByName('core-npc:nova:world')) {
+    hideNovaPlaceholder(scene, this.novaArea !== 'rainbow-run-hub');
+    hidePicnicNovaPlaceholder(scene);
+
+    if (this.novaArea === 'moonflower-cottage') {
+      destroyNamedObject(scene, 'core-npc:nova:world');
+      destroyNamedObject(scene, 'core-npc:nova:picnic');
+      destroyNamedObject(scene, 'core-npc:nova:picnic-label');
       return;
     }
-    const marker = RAINBOW_MEADOW_MAP.npcMarkers.find((candidate) => candidate.id === 'nova');
-    if (!marker) {
+
+    if (this.novaArea === 'picnic-hill') {
+      destroyNamedObject(scene, 'core-npc:nova:world');
+      this.ensurePicnicNova(scene);
+      return;
+    }
+
+    destroyNamedObject(scene, 'core-npc:nova:picnic');
+    destroyNamedObject(scene, 'core-npc:nova:picnic-label');
+    this.ensureRaceHubNova(scene);
+  }
+
+  private ensureRaceHubNova(scene: Phaser.Scene): void {
+    if (scene.children.getByName('core-npc:nova:world') || !NOVA_RACE_POSITION) {
       return;
     }
     const nova = createCoreNpcSprite(
       scene,
       'nova',
-      marker.position.x,
-      marker.position.y + 4,
+      NOVA_RACE_POSITION.x,
+      NOVA_RACE_POSITION.y + 4,
       'world',
     )
       .setDisplaySize(112, 92)
-      .setDepth(worldDepthForY(marker.position.y + 50, 0.32));
+      .setDepth(worldDepthForY(NOVA_RACE_POSITION.y + 50, 0.32));
     addCoreNpcIdleTween(scene, nova, 'nova', 5);
+  }
+
+  private ensurePicnicNova(scene: Phaser.Scene): void {
+    if (!scene.children.getByName('core-npc:nova:picnic')) {
+      const nova = createCoreNpcSprite(
+        scene,
+        'nova',
+        NOVA_PICNIC_POSITION.x,
+        NOVA_PICNIC_POSITION.y + 4,
+        'world',
+      )
+        .setName('core-npc:nova:picnic')
+        .setDisplaySize(112, 92)
+        .setDepth(worldDepthForY(NOVA_PICNIC_POSITION.y + 50, 0.32));
+      addCoreNpcIdleTween(scene, nova, 'nova', 5);
+    }
+
+    if (!scene.children.getByName('core-npc:nova:picnic-label')) {
+      scene.add
+        .text(NOVA_PICNIC_POSITION.x, NOVA_PICNIC_POSITION.y + 72, 'Nova', {
+          color: '#5e4669',
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '16px',
+          fontStyle: 'bold',
+          backgroundColor: '#fff8dfdd',
+          padding: { x: 7, y: 3 },
+        })
+        .setName('core-npc:nova:picnic-label')
+        .setOrigin(0.5)
+        .setDepth(worldDepthForY(NOVA_PICNIC_POSITION.y + 82, 0.34));
+    }
   }
 
   private refreshLumiWorld(): void {

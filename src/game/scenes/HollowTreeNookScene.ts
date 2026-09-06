@@ -10,10 +10,12 @@ import { MOONFLOWER_GLADE_MAP, setMoonflowerGladePlayerSpawn } from '../world/Mo
 import { InteractiveMicroLocationScene } from './InteractiveMicroLocationScene';
 
 const PLAYER_TEXTURE_KEY = 'player-unicorn-hollow-tree-nook';
+const MUSHROOM_RING_POSITION = { x: 260, y: 545 } as const;
 
 export class HollowTreeNookScene extends InteractiveMicroLocationScene {
   private story: HollowTreeStoryService | null = null;
   private discoveryService: DiscoveryService | null = null;
+  private mushroomGlow: Phaser.GameObjects.Arc | null = null;
 
   public constructor() {
     super('HollowTreeNookScene');
@@ -74,6 +76,14 @@ export class HollowTreeNookScene extends InteractiveMicroLocationScene {
         interactionRadius: 125,
         result: { type: 'message', title: 'Root Chimes', message: '' },
       },
+      {
+        id: 'interaction:hollow-tree-mushrooms',
+        label: 'Tiny mushroom ring',
+        actionLabel: 'Say hello',
+        position: MUSHROOM_RING_POSITION,
+        interactionRadius: 120,
+        result: { type: 'message', title: 'Mushrooms', message: '' },
+      },
     ];
   }
 
@@ -103,6 +113,21 @@ export class HollowTreeNookScene extends InteractiveMicroLocationScene {
       );
       return;
     }
+    if (id === 'interaction:hollow-tree-mushrooms') {
+      this.showMicroLocationFeedback(
+        'The tiny mushrooms glow one after another, then all wiggle at once. It looks very much like they are saying hello back. 🍄✨',
+      );
+      this.mushroomGlow?.setAlpha(0.78).setScale(1.22);
+      this.tweens.add({
+        targets: this.mushroomGlow,
+        alpha: 0.16,
+        scale: 1,
+        duration: 900,
+        ease: 'Sine.Out',
+      });
+      this.cameras.main.flash(120, 226, 202, 255, false);
+      return;
+    }
     this.showMicroLocationFeedback(
       'Three hanging roots tap together: ting, ting, tumm. It is the same gentle rhythm the bridge answered outside.',
     );
@@ -119,6 +144,7 @@ export class HollowTreeNookScene extends InteractiveMicroLocationScene {
   protected onMicroLocationShutdown(): void {
     this.story = null;
     this.discoveryService = null;
+    this.mushroomGlow = null;
   }
 
   private createEnvironment(): void {
@@ -141,6 +167,10 @@ export class HollowTreeNookScene extends InteractiveMicroLocationScene {
         .text(x, y, '🍄', { fontFamily: 'system-ui, sans-serif', fontSize: `${34 * scale}px` })
         .setOrigin(0.5);
     }
+    this.mushroomGlow = this.add
+      .circle(MUSHROOM_RING_POSITION.x, MUSHROOM_RING_POSITION.y, 48, 0xd6b4ff, 0.16)
+      .setStrokeStyle(3, 0xf5ddff, 0.32)
+      .setDepth(0.5);
     this.add
       .rectangle(405, 320, 220, 68, 0x7c5a50, 1)
       .setStrokeStyle(5, 0x5f413d, 0.9)
