@@ -6,7 +6,7 @@
   "phase": "R6.5 - Valley Completeness and Breadth, human-playtest remediation",
   "current_work_package": "R6.5-WP18G",
   "current_work_package_path": "docs/work-packages/R6.5-WP18G-TABLET-DEVICE-HARDENING-CROSS-INPUT-REGRESSION.md",
-  "status": "complete",
+  "status": "in_progress",
   "autonomy_state": "green",
   "agent_state": "active",
   "branch": "agent/r6.5-wp18g-tablet-device-hardening",
