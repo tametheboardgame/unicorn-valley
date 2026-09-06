@@ -28,6 +28,13 @@ interface BrowserDiagnosticsApi {
   startScene(sceneKey: string, data?: object): void;
 }
 
+interface BrowserRect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 const LANDSCAPE_MATRIX = [
   { name: '16:9', width: 1280, height: 720 },
   { name: '16:10', width: 1280, height: 800 },
@@ -106,21 +113,17 @@ async function waitForNamedObject(page: Page, sceneKey: string, objectName: stri
   );
 }
 
-async function renderedObjectRect(
-  page: Page,
+function renderedObjectRectFromSnapshot(
+  snapshot: BrowserDiagnosticSnapshot,
+  canvas: BrowserRect,
   sceneKey: string,
   objectName: string,
-): Promise<{ x: number; y: number; width: number; height: number }> {
-  const snapshot = await getSnapshot(page);
+): BrowserRect {
   const object = getScene(snapshot, sceneKey).objects.find(
     (candidate) => candidate.name === objectName && candidate.visible,
   );
   if (!object) {
     throw new Error(`Missing visible ${objectName} in ${sceneKey}.`);
-  }
-  const canvas = await page.locator('canvas').boundingBox();
-  if (!canvas) {
-    throw new Error('Game canvas has no browser bounds.');
   }
   const scaleX = canvas.width / snapshot.width;
   const scaleY = canvas.height / snapshot.height;
@@ -132,8 +135,21 @@ async function renderedObjectRect(
   };
 }
 
+async function renderedObjectRect(
+  page: Page,
+  sceneKey: string,
+  objectName: string,
+): Promise<BrowserRect> {
+  const snapshot = await getSnapshot(page);
+  const canvas = await page.locator('canvas').boundingBox();
+  if (!canvas) {
+    throw new Error('Game canvas has no browser bounds.');
+  }
+  return renderedObjectRectFromSnapshot(snapshot, canvas, sceneKey, objectName);
+}
+
 function expectRectInsideViewport(
-  rect: { x: number; y: number; width: number; height: number },
+  rect: BrowserRect,
   viewport: { width: number; height: number },
 ): void {
   expect(rect.x).toBeGreaterThanOrEqual(-1);
@@ -171,6 +187,7 @@ test.describe('WP18G landscape tablet matrix', () => {
       await page.waitForTimeout(80);
       await expectNoPageOverflow(page);
 
+      const snapshot = await getSnapshot(page);
       const canvas = await page.locator('canvas').boundingBox();
       expect(canvas, `${viewport.name} canvas`).not.toBeNull();
       if (!canvas) {
@@ -184,7 +201,12 @@ test.describe('WP18G landscape tablet matrix', () => {
         'exploration-shell-book-button',
         'exploration-shell-settings-nav-button',
       ]) {
-        const rect = await renderedObjectRect(page, 'MoonflowerGladeScene', name);
+        const rect = renderedObjectRectFromSnapshot(
+          snapshot,
+          canvas,
+          'MoonflowerGladeScene',
+          name,
+        );
         expectRectInsideViewport(rect, viewport);
         expect(
           Math.min(rect.width, rect.height),
@@ -199,7 +221,12 @@ test.describe('WP18G landscape tablet matrix', () => {
         'touch-movement-right',
         'touch-movement-gallop',
       ]) {
-        const rect = await renderedObjectRect(page, 'MoonflowerGladeScene', name);
+        const rect = renderedObjectRectFromSnapshot(
+          snapshot,
+          canvas,
+          'MoonflowerGladeScene',
+          name,
+        );
         expectRectInsideViewport(rect, viewport);
         expect(
           Math.min(rect.width, rect.height),
