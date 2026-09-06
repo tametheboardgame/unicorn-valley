@@ -42,9 +42,7 @@ function enhanceShellCove(scene: Phaser.Scene): void {
     .ellipse(0, 15, 570, 300, 0x59bfd1, 0.94)
     .setStrokeStyle(13, 0xf8edcf, 0.92);
   const innerWater = scene.add.ellipse(18, 9, 435, 210, 0xa3e5e2, 0.54);
-  const foam = scene.add
-    .ellipse(-18, 88, 380, 74, 0xfaf2d6, 0.5)
-    .setStrokeStyle(5, 0xffffff, 0.36);
+  const foam = scene.add.ellipse(-18, 88, 380, 74, 0xfaf2d6, 0.5).setStrokeStyle(5, 0xffffff, 0.36);
   anchor.add([outerWater, innerWater, foam]);
 
   for (const [x, y, width, height, colour] of [
@@ -150,9 +148,7 @@ function addShopPropCard(
   fill: number,
 ): void {
   const depth = worldDepthForY(y, 0.22);
-  const mat = scene.add
-    .ellipse(0, 20, 150, 44, fill, 0.28)
-    .setStrokeStyle(3, 0xffffff, 0.28);
+  const mat = scene.add.ellipse(0, 20, 150, 44, fill, 0.28).setStrokeStyle(3, 0xffffff, 0.28);
   const prop = scene.add
     .text(0, -3, icon, { fontFamily: 'system-ui, sans-serif', fontSize: '38px' })
     .setOrigin(0.5);
