@@ -98,7 +98,7 @@ Implementation stop rule: if WP18C/WP18E would materially drift from the approve
 
 Path: `docs/work-packages/R6.5-WP18B-FREEZE-DIAGNOSTICS-STABILITY.md`
 
-State: **complete; delivery-ready through PR #148**.
+State: **complete; merged through PR #148**.
 
 WP18B added bounded runtime freeze diagnostics, fixed the deterministic long-running-save retired-inventory-ID Bag crash, hardened Bag/Shop resume sequencing and added repeated real-flow stress coverage. Exact-head validation completed with 150 Chromium tests passed and 3 intentionally skipped, all WP18B stress cases green, browser compatibility green and the hard 520 KiB budget preserved.
 
@@ -106,19 +106,23 @@ WP18B added bounded runtime freeze diagnostics, fixed the deterministic long-run
 
 Path: `docs/work-packages/R6.5-WP18C-LANDSCAPE-TABLET-CONTROLS-INTERACTION-SHELL.md`
 
-State: **next / unblocked after WP18B merge; approved WP18A visual authority available**.
+State: **complete; delivery-ready through PR #149**.
 
-Implement the shared landscape-tablet shell, comfortable touch controls, first-class tap-to-move, contextual primary action, consistent direct NPC tapping, device-appropriate help, compact Bag/Map/Wonderbook/Settings access, safe multi-touch/input release and race controls that do not trigger the known Chrome long-press blocker or cover upcoming obstacles.
+WP18C implements the approved landscape-tablet shell with compact Map/Bag/Book/Settings navigation, Shimmer/location status, a large lower-left exploration pad, separate Gallop, large lower-right contextual action, bottom-centre child-facing hints, direct target tapping through the authoritative interaction path and safe input release across pause/focus/visibility transitions.
 
-Race-control clarification approved by the user on 2026-09-05: **RUN and JUMP only**, with RUN lower-left and JUMP lower-right. There is no left/right steering and no separate race Gallop control. RUN + JUMP must work simultaneously and the central track must remain unobstructed.
+Race controls now follow the user's explicit 2026-09-05 clarification: **RUN and JUMP only**, with RUN lower-left and JUMP lower-right. There is no left/right steering and no separate race Gallop. RUN + JUMP works simultaneously, the old landscape bottom control deck no longer shrinks the track, Chrome long-press/context behaviour is suppressed for required actions, and tablet Pause/Resume/assistance is covered.
+
+Implementation head `456f721c78bbfe1ccf734745415dd380c48763b3` passed the AI contract, formatting, lint, type-check, unit tests, build, static smoke, the hard 520 KiB budget, Chromium/Firefox/WebKit compatibility and the full Chromium suite with **150 passed, 3 intentionally skipped**.
 
 ### R6.5-WP18D - Playthrough Functional Bug and Regression Remediation
 
 Path: `docs/work-packages/R6.5-WP18D-PLAYTHROUGH-FUNCTIONAL-BUG-REGRESSION-REMEDIATION.md`
 
-State: planned after WP18C.
+State: **next / unblocked after WP18C merge**.
 
 Resolve the remaining human-observed functional defects, including Echo interaction, cottage back-wall collision, cottage decoration state, Maple discoverability/root cause, purchase/reward feedback, point-and-click facing flicker and any remaining placeholder/icon-over-unicorn regressions. Human-visible failure modes must be reproduced and regression-tested where practical.
+
+Initial code inspection has already identified useful WP18D leads to verify and fix rather than rediscover: Echo is represented by presentation/population content without an equivalent authoritative interaction route; the Cottage collision map lacks a real back-wall blocker; Maple's outdoor placement does not align well with Bakery discoverability; Bakery repeat purchases do not clearly surface owned quantity; and economy reward reconciliation can award Shimmer without surfacing the resulting reward feedback to the player. These are investigation leads, not acceptance claims, until WP18D regression evidence is added.
 
 ### R6.5-WP18E - Bag, Map, Creator and Modal Tablet UX
 
@@ -158,7 +162,7 @@ WP18H captures evidence but **does not release R7**. It returns the project to W
 
 ### Dependency chain
 
-`WP17 evidence -> WP18A approved -> WP18B complete -> WP18C -> WP18D -> WP18E -> WP18F -> WP18G -> WP18H -> WP17 explicit readiness decision -> R7`
+`WP17 evidence -> WP18A approved -> WP18B complete -> WP18C complete -> WP18D -> WP18E -> WP18F -> WP18G -> WP18H -> WP17 explicit readiness decision -> R7`
 
 ## R6.6 - Optional Android Packaging
 
