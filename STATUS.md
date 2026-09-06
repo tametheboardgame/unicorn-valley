@@ -6,91 +6,67 @@ Last updated: 2026-09-06
 
 R6.5 - Valley Completeness and Breadth, human-playtest remediation
 
-## Current accepted baseline
+## Accepted baseline
 
 R0 through R6 are complete. R6.5-WP1 through WP16 are integrated on `main`.
 
-WP17 human playtest did not release R7 readiness. It confirmed that the underlying game is engaging, while identifying release-blocking landscape-tablet usability, freeze/stability, functional and world-quality defects.
+WP17 human playtest did not release R7 readiness. It confirmed that the game is engaging while exposing release-blocking landscape-tablet usability, stability, functional and world-quality defects.
 
-R6.5-WP18A is complete and merged through PR #147. R6.5-WP18B is complete and merged through PR #148. R6.5-WP18C is complete and merged through PR #149. The user's approved WP18A tablet direction remains authoritative for WP18E.
+R6.5-WP18A through WP18D are complete and merged through PRs #147-#150. The WP18A approved landscape-tablet direction remains authoritative for tablet UI work.
 
 ## Current work package
 
-ID: `R6.5-WP18D`
+ID: `R6.5-WP18E`
 
-Path: `docs/work-packages/R6.5-WP18D-PLAYTHROUGH-FUNCTIONAL-BUG-REGRESSION-REMEDIATION.md`
+Path: `docs/work-packages/R6.5-WP18E-BAG-MAP-CREATOR-MODAL-TABLET-UX.md`
 
-Branch: `agent/r6.5-wp18d-functional-regression-remediation`
+Branch: `agent/r6.5-wp18e-bag-map-creator-modal-tablet-ux`
 
-PR: #150
+PR: #151
 
-State: **complete and delivery-ready pending final exact-head validation**.
+State: **complete and delivery-ready**.
 
-WP18D delivered the bounded human-playthrough functional remediation:
+WP18E delivered:
 
-- Echo now uses the shared ambient resident runtime, with direct tap and contextual E/Enter routed through the same activation authority;
-- Fern moved off the duplicate visual-only bridge path onto the same shared resident runtime;
-- Maple now follows a reachable bakery-approach route with stronger interaction discoverability while preserving exploration;
-- Moonflower Cottage has an explicit closed room perimeter while retaining the intended exit approach;
-- decoration inventory quantity is authoritative ownership, placement does not consume ownership, multi-copy placement is bounded by owned quantity, clearing/replacing affects placement only, and legacy over-placement is repaired without a save-schema change;
-- point-and-click movement keeps velocity on the safe path while facing the final clicked destination, preventing waypoint-driven direction flicker;
-- Shimmer reward feedback now states amount earned and resulting balance;
-- general shop feedback distinguishes first ownership from repeat purchases;
-- repeatable Bakery stock now visibly retains owned quantity after purchase (`×1`, `×2`, etc.) so a successful purchase cannot redraw as if nothing happened;
-- the earlier Willow/Marigold/Pebble prototype-marker cleanup was revalidated: hidden topology fixtures remain hidden and production character sprites remain the visible world representation.
+- scalable Bag pockets for Food, Quest, Decor and Keepsakes;
+- touch-safe scrolling for inventories larger than six items;
+- selected-item details with explicit quantity/state/action presentation;
+- safe Food use with a bounded 45-second 1.18x exploration speed boost and no quest-critical consumption;
+- no Food-effect stacking and preservation of the existing 1.6x Gallop cap;
+- distinct Map shell access and standalone Map presentation while preserving discovery/progression rules;
+- progressive Unicorn Creator categories: Main, Colours, Mane & Tail, Horn, Markings and Accessories;
+- preservation of naming input isolation, existing-profile editing, save/cancel/reset behaviour and large preview;
+- regression alignment for the intended tablet interaction model without restoring hidden compatibility controls;
+- audit of major modal surfaces against the landscape readability, overflow and touch contract.
 
-Implementation and regression detail: `docs/work-packages/R6.5-WP18D-IMPLEMENTATION-NOTES.md`.
+Validated implementation head: `5c848ea33d62944c80a153608f9e9ecf4f9b106d`.
 
-Core exact-head validation on the latest implementation sequence is green for:
+Exact-head validation is green for:
 
 - AI project operating contract;
 - formatting and lint;
 - type-check;
-- unit tests, including repeat Bakery ownership feedback and decoration state regressions;
+- unit tests;
 - production build and static smoke;
 - hard **520 KiB** application-entry budget;
-- Chromium/Firefox/WebKit compatibility.
+- Chromium/Firefox/WebKit compatibility;
+- full Chromium automated playtest.
 
-The first WP18D full browser run exposed one marginal performance-guard failure in Rainbow Meadow: settled p95 187.2 ms against the 180 ms runner-baseline ceiling. All generated functional scenarios passed with zero errors and zero warnings. The performance guard is not being weakened; the final exact-head browser result remains the merge authority.
-
-## Approved tablet direction
-
-Landscape tablet remains the primary interface authority, using the approved WP18A concepts for hierarchy, placement and touch ergonomics.
-
-The durable race clarification remains:
-
-- RUN and JUMP only;
-- no left/right steering;
-- no separate race Gallop;
-- RUN lower-left;
-- JUMP lower-right;
-- simultaneous RUN + JUMP;
-- central track unobstructed;
-- no Chrome long-press dependency.
+The final lifecycle regression correction only made the Hollow Tree Nook stress test return the player to the authored exit range before activating the real exit. It did not weaken timeouts, runtime behaviour or production code.
 
 ## Next eligible work
 
-`R6.5-WP18E - Bag, Map, Creator and Modal Tablet UX`
+`R6.5-WP18F - World Consistency, Visual Quality and Experience Improvements`
 
-Path: `docs/work-packages/R6.5-WP18E-BAG-MAP-CREATOR-MODAL-TABLET-UX.md`
+Path: `docs/work-packages/R6.5-WP18F-WORLD-CONSISTENCY-VISUAL-EXPERIENCE.md`
 
-Start after PR #150 merges.
+Start from the merged WP18E SHA.
 
-WP18E applies the approved landscape-tablet design language to growing inventory, useful Food interactions, distinct Map access, progressive-disclosure Unicorn Creator controls and the major child-facing modal surfaces.
+WP18F introduces authoritative recurring-character presence with Nova as the initial proof, removes placeholder-like world representations, improves unicorn mane/neck presentation, Shell Cove identity, crystal readability and shop place quality, while preserving successful Rainbow Meadow, Whispering Woods and Tree Nook identity. Its human gate is bounded visual spot-checks.
 
-## Remaining WP17 remediation themes after WP18D
+## Remaining remediation sequence
 
-- Bag scalability and Food usability;
-- Map and Creator tablet UX;
-- modal text, scrolling and overflow consistency;
-- mutually exclusive recurring-character presence;
-- world consistency and selected visual-quality issues;
-- cross-device tablet hardening;
-- final full human tablet replay.
-
-Positive evidence to preserve includes Rainbow Meadow, Whispering Woods, Tree Nook/mushrooms, the Firefly activity, earning/spending/discovery/quest loops, tap-to-move and the daughter's willingness to play again.
-
-Canonical remediation evidence: `docs/07Z-R6.5-WP17-PLAYTEST-REMEDIATION.md`.
+`WP18F -> WP18G -> WP18H -> WP17 explicit R7-readiness decision`
 
 ## Human acceptance
 
@@ -102,13 +78,11 @@ WP18C human gate: none.
 
 WP18D human gate: none.
 
-Full human confirmation remains WP18H. R6.5-WP17 R7-readiness acceptance remains pending and cannot be reconsidered until WP18H completes another full tablet playthrough.
+WP18E human gate: none.
 
-## Blockers
+WP18F human gate: visual spot-checks.
 
-- R7 remains intentionally blocked by unreleased R6.5-WP17.
-- No human blocker exists for WP18D merge once final exact-head automated validation is green.
-- WP18E depends on the merged WP18D baseline.
+Full human confirmation remains WP18H. R6.5-WP17 R7-readiness remains blocked until WP18H completes another full tablet playthrough.
 
 ## Production / deployment
 
