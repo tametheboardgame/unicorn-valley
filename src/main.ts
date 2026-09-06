@@ -133,6 +133,12 @@ void import('./game/racing/R65RaceExpansionWorldManager').then(
   },
 );
 
+void import('./game/player/PlayerManeCoverageWorldManager').then(
+  ({ getPlayerManeCoverageWorldManager }) => {
+    getPlayerManeCoverageWorldManager(game);
+  },
+);
+
 void import('./game/visual/R65WorldExperiencePresentationManager').then(
   ({ getR65WorldExperiencePresentationManager }) => {
     getR65WorldExperiencePresentationManager(game);
