@@ -42,9 +42,11 @@ async function waitForDiagnostics(page: Page): Promise<void> {
 
 async function getSnapshot(page: Page): Promise<BrowserDiagnosticSnapshot> {
   return page.evaluate(() => {
-    const diagnostics = (window as typeof window & {
-      __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
-    }).__UNICORN_VALLEY_DIAGNOSTICS__;
+    const diagnostics = (
+      window as typeof window & {
+        __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
+      }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__;
     if (!diagnostics) {
       throw new Error('Browser diagnostics are unavailable.');
     }
@@ -54,9 +56,11 @@ async function getSnapshot(page: Page): Promise<BrowserDiagnosticSnapshot> {
 
 async function waitForScene(page: Page, sceneKey: string): Promise<void> {
   await page.waitForFunction((expectedScene) => {
-    const diagnostics = (window as typeof window & {
-      __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
-    }).__UNICORN_VALLEY_DIAGNOSTICS__;
+    const diagnostics = (
+      window as typeof window & {
+        __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
+      }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__;
     return diagnostics?.snapshot().activeScenes.includes(expectedScene) === true;
   }, sceneKey);
 }
@@ -64,9 +68,11 @@ async function waitForScene(page: Page, sceneKey: string): Promise<void> {
 async function startScene(page: Page, sceneKey: string, data?: object): Promise<void> {
   await page.evaluate(
     ({ key, sceneData }) => {
-      const diagnostics = (window as typeof window & {
-        __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
-      }).__UNICORN_VALLEY_DIAGNOSTICS__;
+      const diagnostics = (
+        window as typeof window & {
+          __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
+        }
+      ).__UNICORN_VALLEY_DIAGNOSTICS__;
       if (!diagnostics) {
         throw new Error('Browser diagnostics are unavailable.');
       }
@@ -88,9 +94,11 @@ function getScene(snapshot: BrowserDiagnosticSnapshot, sceneKey: string): Diagno
 async function waitForNamedObject(page: Page, sceneKey: string, objectName: string): Promise<void> {
   await page.waitForFunction(
     ({ key, name }) => {
-      const diagnostics = (window as typeof window & {
-        __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
-      }).__UNICORN_VALLEY_DIAGNOSTICS__;
+      const diagnostics = (
+        window as typeof window & {
+          __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
+        }
+      ).__UNICORN_VALLEY_DIAGNOSTICS__;
       const scene = diagnostics?.snapshot().scenes.find((candidate) => candidate.key === key);
       return scene?.objects.some((object) => object.name === name && object.visible) === true;
     },
@@ -178,9 +186,10 @@ test.describe('WP18G landscape tablet matrix', () => {
       ]) {
         const rect = await renderedObjectRect(page, 'MoonflowerGladeScene', name);
         expectRectInsideViewport(rect, viewport);
-        expect(Math.min(rect.width, rect.height), `${viewport.name} ${name}`).toBeGreaterThanOrEqual(
-          40,
-        );
+        expect(
+          Math.min(rect.width, rect.height),
+          `${viewport.name} ${name}`,
+        ).toBeGreaterThanOrEqual(40);
       }
 
       for (const name of [
@@ -192,9 +201,10 @@ test.describe('WP18G landscape tablet matrix', () => {
       ]) {
         const rect = await renderedObjectRect(page, 'MoonflowerGladeScene', name);
         expectRectInsideViewport(rect, viewport);
-        expect(Math.min(rect.width, rect.height), `${viewport.name} ${name}`).toBeGreaterThanOrEqual(
-          64,
-        );
+        expect(
+          Math.min(rect.width, rect.height),
+          `${viewport.name} ${name}`,
+        ).toBeGreaterThanOrEqual(64);
       }
     }
   });
@@ -211,13 +221,17 @@ test.describe('WP18G landscape tablet matrix', () => {
     await page.setViewportSize({ width: 600, height: 900 });
     await expect(page.locator('.mobile-touch-controls')).toBeVisible();
     await page.waitForFunction(() => {
-      const diagnostics = (window as typeof window & {
-        __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
-      }).__UNICORN_VALLEY_DIAGNOSTICS__;
+      const diagnostics = (
+        window as typeof window & {
+          __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
+        }
+      ).__UNICORN_VALLEY_DIAGNOSTICS__;
       const scene = diagnostics
         ?.snapshot()
         .scenes.find((candidate) => candidate.key === 'MoonflowerGladeScene');
-      return !scene?.objects.some((object) => object.name === 'tablet-movement-pad' && object.visible);
+      return !scene?.objects.some(
+        (object) => object.name === 'tablet-movement-pad' && object.visible,
+      );
     });
     await expectNoPageOverflow(page);
 
@@ -227,7 +241,9 @@ test.describe('WP18G landscape tablet matrix', () => {
     await expectNoPageOverflow(page);
   });
 
-  test('keeps Bag, Map and Creator tablet controls contained at 16:10 and 4:3', async ({ page }) => {
+  test('keeps Bag, Map and Creator tablet controls contained at 16:10 and 4:3', async ({
+    page,
+  }) => {
     await page.goto('/?diagnostics=1');
     await waitForDiagnostics(page);
 
@@ -335,8 +351,8 @@ test.describe('WP18G secondary desktop inputs', () => {
     await startScene(page, 'MoonflowerGladeScene');
     await expect(page.locator('.mobile-touch-controls')).toHaveCount(0);
 
-    let snapshot = await getSnapshot(page);
-    let scene = getScene(snapshot, 'MoonflowerGladeScene');
+    const snapshot = await getSnapshot(page);
+    const scene = getScene(snapshot, 'MoonflowerGladeScene');
     const playerBefore = scene.objects
       .filter((object) => object.textureKey?.startsWith('player-unicorn-'))
       .sort((left, right) => right.y - left.y)[0];
@@ -355,9 +371,11 @@ test.describe('WP18G secondary desktop inputs', () => {
     });
     await page.waitForFunction(
       ({ startX }) => {
-        const diagnostics = (window as typeof window & {
-          __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
-        }).__UNICORN_VALLEY_DIAGNOSTICS__;
+        const diagnostics = (
+          window as typeof window & {
+            __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
+          }
+        ).__UNICORN_VALLEY_DIAGNOSTICS__;
         const active = diagnostics
           ?.snapshot()
           .scenes.find((candidate) => candidate.key === 'MoonflowerGladeScene');
