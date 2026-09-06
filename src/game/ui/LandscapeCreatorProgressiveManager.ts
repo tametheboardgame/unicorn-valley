@@ -135,18 +135,18 @@ export class LandscapeCreatorProgressiveManager {
       return;
     }
 
-    const shadow = createUiShadow(this.scene, 730, 675, 150, 64, 29, 0.15);
+    const shadow = createUiShadow(this.scene, 690, 172, 140, 52, 29, 0.15);
     const back = this.scene.add
-      .rectangle(730, 675, 150, 64, UI_COLOURS.cream, 0.99)
+      .rectangle(690, 170, 140, 52, UI_COLOURS.cream, 0.99)
       .setName('creator-action-back')
-      .setStrokeStyle(5, UI_COLOURS.lavenderStrong, 1)
+      .setStrokeStyle(4, UI_COLOURS.lavenderStrong, 1)
       .setInteractive({ useHandCursor: true })
       .setDepth(30);
     const label = this.scene.add
-      .text(730, 675, 'Back', {
+      .text(690, 170, '← Back', {
         color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
-        fontSize: '18px',
+        fontSize: '17px',
         fontStyle: 'bold',
       })
       .setName('creator-action-back-label')
