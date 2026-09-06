@@ -7,14 +7,27 @@ export class EconomyRewardWorldManager {
   private readonly unsubscribe: (() => void)[] = [];
 
   public constructor() {
-    this.rewardService.reconcile();
-    this.unsubscribe.push(gameEventBus.on('SAVE_COMPLETED', () => this.rewardService.reconcile()));
+    this.reconcileAndAnnounce();
+    this.unsubscribe.push(gameEventBus.on('SAVE_COMPLETED', () => this.reconcileAndAnnounce()));
   }
 
   public destroy(): void {
     for (const unsubscribe of this.unsubscribe.splice(0)) {
       unsubscribe();
     }
+  }
+
+  private reconcileAndAnnounce(): void {
+    const result = this.rewardService.reconcile();
+    if (result.totalAwarded <= 0 || result.balance === null) {
+      return;
+    }
+
+    gameEventBus.emit('SHIMMER_REWARDED', {
+      amount: result.totalAwarded,
+      balance: result.balance,
+      labels: result.claimed.map(({ label }) => label),
+    });
   }
 }
 
