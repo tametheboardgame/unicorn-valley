@@ -206,7 +206,7 @@ export class SettingsScene extends Phaser.Scene {
   }
 
   private createListMask(): void {
-    const graphics = this.make.graphics({ x: 0, y: 0, add: false });
+    const graphics = this.make.graphics({ x: 0, y: 0 });
     graphics.fillStyle(0xffffff, 1);
     graphics.fillRect(VIEWPORT_LEFT, VIEWPORT_TOP, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
     this.listMaskGraphics = graphics;
