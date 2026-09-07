@@ -364,13 +364,7 @@ export class SettingsScene extends Phaser.Scene {
       ROW_RADIUS,
     );
     row.surface.fillStyle(UI_COLOURS.white, 0.18);
-    row.surface.fillRoundedRect(
-      -ROW_WIDTH / 2 + 6,
-      -ROW_HEIGHT / 2 + 6,
-      ROW_WIDTH - 12,
-      18,
-      14,
-    );
+    row.surface.fillRoundedRect(-ROW_WIDTH / 2 + 6, -ROW_HEIGHT / 2 + 6, ROW_WIDTH - 12, 18, 14);
   }
 
   private createScrollbar(): void {
