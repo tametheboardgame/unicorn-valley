@@ -1,5 +1,8 @@
 import Phaser from 'phaser';
-import { getBrowserAccessibilitySettingsStore, type AccessibilitySettings } from '../accessibility/AccessibilitySettings';
+import {
+  getBrowserAccessibilitySettingsStore,
+  type AccessibilitySettings,
+} from '../accessibility/AccessibilitySettings';
 import { getBrowserAtmosphericTimeService } from '../atmosphere/AtmosphericTimeService';
 import { getBrowserMagicalWeatherService } from '../atmosphere/MagicalWeatherService';
 import { getVerticalSliceAudio } from '../audio/VerticalSliceAudio';
