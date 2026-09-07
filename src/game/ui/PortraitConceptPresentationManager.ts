@@ -55,7 +55,9 @@ function usesPortraitConceptPresentation(): boolean {
     (globalThis.navigator?.maxTouchPoints ?? 0) > 0 ||
     'ontouchstart' in globalThis ||
     coarsePointer;
-  return touchCapable && globalThis.innerWidth <= 700 && globalThis.innerHeight > globalThis.innerWidth;
+  return (
+    touchCapable && globalThis.innerWidth <= 700 && globalThis.innerHeight > globalThis.innerWidth
+  );
 }
 
 function canSuppress(
@@ -147,7 +149,10 @@ export class PortraitConceptPresentationManager {
 
     root.append(meta, nav);
     (globalThis.document.querySelector('#game-shell') ?? globalThis.document.body).append(root);
-    globalThis.document.documentElement.style.setProperty('--portrait-exploration-dock-offset', '142px');
+    globalThis.document.documentElement.style.setProperty(
+      '--portrait-exploration-dock-offset',
+      '142px',
+    );
     return { scene, root, location, shimmer };
   }
 
@@ -207,7 +212,18 @@ export class PortraitConceptPresentationManager {
         object.depth <= 119 &&
         object.x <= 460 &&
         object.y <= 230;
-      if (!namedLegacy && !topChromeDecoration && !suggestionChrome) {
+      const lowerControlsDecoration =
+        object.scrollFactorX === 0 &&
+        object.depth >= 120 &&
+        object.depth <= 126 &&
+        object.x >= 1000 &&
+        object.y >= 600;
+      if (
+        !namedLegacy &&
+        !topChromeDecoration &&
+        !suggestionChrome &&
+        !lowerControlsDecoration
+      ) {
         continue;
       }
       if (!this.suppressed.has(object)) {
@@ -239,7 +255,10 @@ export class PortraitConceptPresentationManager {
   private clearDock(): void {
     this.dock?.root.remove();
     this.dock = null;
-    globalThis.document?.documentElement.style.setProperty('--portrait-exploration-dock-offset', '0px');
+    globalThis.document?.documentElement.style.setProperty(
+      '--portrait-exploration-dock-offset',
+      '0px',
+    );
   }
 
   private async openInventory(scene: Phaser.Scene, initialTab: 'items' | 'map'): Promise<void> {
