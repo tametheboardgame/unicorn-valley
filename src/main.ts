@@ -5,7 +5,6 @@ import { gameConfig } from './game/config/gameConfig';
 import { getClickToMoveManager } from './game/input/ClickToMoveManager';
 import { getContinueRestoreManager } from './game/save/ContinueRestoreManager';
 import { getVillageInteriorContractManager } from './game/scenes/VillageInteriorContractManager';
-import { getExplorationShellWorldManager } from './game/ui/ExplorationShellWorldManager';
 import { getLandscapeCreatorProgressiveWorldManager } from './game/ui/LandscapeCreatorProgressiveManager';
 import { browserHasRaceTouchCapability } from './game/ui/RaceTouchCapability';
 import { getTitlePortraitControlsManager } from './game/ui/TitlePortraitControlsManager';
@@ -26,7 +25,6 @@ if (diagnosticsEnabled) {
 
 getClickToMoveManager(game);
 getContinueRestoreManager(game);
-getExplorationShellWorldManager(game);
 getLandscapeCreatorProgressiveWorldManager(game);
 getTitlePortraitControlsManager(game);
 getExplorationGeometryPresentationManager(game);
@@ -34,6 +32,12 @@ getExplorationPathPolishManager(game);
 getWorldLayerAlignmentManager(game);
 getR5FinalTighteningManager(game);
 getVillageInteriorContractManager(game);
+
+void import('./game/ui/ExplorationShellWorldManager').then(
+  ({ getExplorationShellWorldManager }) => {
+    getExplorationShellWorldManager(game);
+  },
+);
 
 void import('./game/economy/EconomyRewardWorldManager').then(({ getEconomyRewardWorldManager }) => {
   getEconomyRewardWorldManager();
