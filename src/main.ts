@@ -62,8 +62,12 @@ void import('./game/ui/ModalConceptPresentationManager').then(
 );
 
 void import('./game/ui/DesktopConceptPresentationManager').then(
-  ({ getDesktopConceptPresentationManager }) => {
+  async ({ getDesktopConceptPresentationManager }) => {
     getDesktopConceptPresentationManager(game);
+    const { getDesktopConceptCleanupManager } = await import(
+      './game/ui/DesktopConceptCleanupManager'
+    );
+    getDesktopConceptCleanupManager(game);
   },
 );
 
