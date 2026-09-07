@@ -1,10 +1,7 @@
 import Phaser from 'phaser';
-import { getBrowserAtmosphericTimeService } from '../atmosphere/AtmosphericTimeService';
-import { getBrowserMagicalWeatherService } from '../atmosphere/MagicalWeatherService';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
-import { getBrowserSaveService } from '../save/browserSaveService';
 import { browserUsesLandscapeTabletPresentation } from './LandscapeTabletPresentation';
-import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from './uiTheme';
+import { UI_FONT } from './uiTheme';
 
 const LOCATION_TITLES: Readonly<Record<string, string>> = {
   MoonflowerGladeScene: 'Moonflower Glade',
@@ -31,14 +28,6 @@ const ATMOSPHERE_HUD_NAMES = [
   'magical-weather-hint',
 ] as const;
 
-interface AtmosphereSettingsPresentation {
-  objects: Phaser.GameObjects.GameObject[];
-  timeButton: Phaser.GameObjects.Rectangle;
-  timeLabel: Phaser.GameObjects.Text;
-  weatherButton: Phaser.GameObjects.Rectangle;
-  weatherLabel: Phaser.GameObjects.Text;
-}
-
 function usesDesktopConceptPresentation(): boolean {
   return (
     !browserUsesLandscapeTabletPresentation() &&
@@ -60,10 +49,6 @@ function hideRectangle(object: Phaser.GameObjects.Rectangle): void {
 
 export class DesktopConceptCleanupManager {
   private readonly locationLabels = new WeakMap<Phaser.Scene, Phaser.GameObjects.Text>();
-  private readonly atmosphereSettings = new WeakMap<Phaser.Scene, AtmosphereSettingsPresentation>();
-  private readonly saveService = getBrowserSaveService();
-  private readonly atmosphericTime = getBrowserAtmosphericTimeService(this.saveService);
-  private readonly magicalWeather = getBrowserMagicalWeatherService(this.saveService);
 
   public constructor(private readonly game: Phaser.Game) {
     this.game.events.on(Phaser.Core.Events.POST_STEP, this.update, this);
@@ -76,9 +61,6 @@ export class DesktopConceptCleanupManager {
     for (const scene of this.game.scene.getScenes(true)) {
       this.hideAtmosphereHud(scene);
       this.hideLegacyInputInstruction(scene);
-      if (scene.scene.key === 'SettingsScene') {
-        this.ensureAtmosphereSettings(scene);
-      }
     }
 
     if (!usesDesktopConceptPresentation()) {
@@ -123,90 +105,6 @@ export class DesktopConceptCleanupManager {
         object.setVisible(false).setAlpha(0.001).disableInteractive();
       }
     }
-  }
-
-  private ensureAtmosphereSettings(scene: Phaser.Scene): void {
-    let presentation = this.atmosphereSettings.get(scene);
-    if (!presentation?.timeButton.active) {
-      const status = scene.children.getByName('settings-status');
-      if (status instanceof Phaser.GameObjects.Text) {
-        status.setVisible(false);
-      }
-
-      const objects: Phaser.GameObjects.GameObject[] = [];
-      const timeX = GAME_WIDTH / 2 - 150;
-      const weatherX = GAME_WIDTH / 2 + 150;
-      const y = 610;
-      const width = 280;
-      const height = 48;
-
-      const timeShadow = createUiShadow(scene, timeX, y, width, height, 4, 0.13);
-      const timeButton = scene.add
-        .rectangle(timeX, y, width, height, UI_COLOURS.lavender, 1)
-        .setName('settings-atmosphere-time')
-        .setStrokeStyle(3, UI_COLOURS.lavenderStrong, 1)
-        .setDepth(5)
-        .setInteractive({ useHandCursor: true });
-      const timeLabel = scene.add
-        .text(timeX, y, '', {
-          color: UI_COLOURS.ink,
-          fontFamily: UI_FONT,
-          fontSize: '15px',
-          fontStyle: 'bold',
-        })
-        .setName('settings-atmosphere-time-label')
-        .setOrigin(0.5)
-        .setDepth(6);
-
-      const weatherShadow = createUiShadow(scene, weatherX, y, width, height, 4, 0.13);
-      const weatherButton = scene.add
-        .rectangle(weatherX, y, width, height, UI_COLOURS.lavender, 1)
-        .setName('settings-atmosphere-weather')
-        .setStrokeStyle(3, UI_COLOURS.lavenderStrong, 1)
-        .setDepth(5)
-        .setInteractive({ useHandCursor: true });
-      const weatherLabel = scene.add
-        .text(weatherX, y, '', {
-          color: UI_COLOURS.ink,
-          fontFamily: UI_FONT,
-          fontSize: '15px',
-          fontStyle: 'bold',
-        })
-        .setName('settings-atmosphere-weather-label')
-        .setOrigin(0.5)
-        .setDepth(6);
-
-      applyButtonHover(timeButton, UI_COLOURS.lavender, UI_COLOURS.gold);
-      applyButtonHover(weatherButton, UI_COLOURS.lavender, UI_COLOURS.gold);
-      timeButton.on('pointerdown', () => this.atmosphericTime.cycleMode());
-      weatherButton.on('pointerdown', () => this.magicalWeather.cycleMode());
-
-      objects.push(timeShadow, timeButton, timeLabel, weatherShadow, weatherButton, weatherLabel);
-      presentation = { objects, timeButton, timeLabel, weatherButton, weatherLabel };
-      this.atmosphereSettings.set(scene, presentation);
-      scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-        for (const object of objects) {
-          object.destroy();
-        }
-        this.atmosphereSettings.delete(scene);
-      });
-    }
-
-    const status = scene.children.getByName('settings-status');
-    if (status instanceof Phaser.GameObjects.Text) {
-      status.setVisible(false);
-    }
-    const timeDefinition = this.atmosphericTime.getDefinition();
-    const timeMode = this.atmosphericTime.getMode() === 'auto' ? 'Auto' : 'Manual';
-    presentation.timeLabel.setText(
-      `Time: ${timeDefinition.icon} ${timeDefinition.label} · ${timeMode}`,
-    );
-
-    const weatherDefinition = this.magicalWeather.getDefinition();
-    const weatherMode = this.magicalWeather.getMode() === 'auto' ? 'Auto' : 'Manual';
-    presentation.weatherLabel.setText(
-      `Weather: ${weatherDefinition.icon} ${weatherDefinition.label} · ${weatherMode}`,
-    );
   }
 
   private ensureConceptLocationLabel(scene: Phaser.Scene, locationTitle: string): void {
