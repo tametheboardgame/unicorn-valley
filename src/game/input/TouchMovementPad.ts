@@ -54,7 +54,9 @@ function shouldRenderPortraitDomControls(): boolean {
 }
 
 export class TouchMovementPad {
-  private readonly objects: Phaser.GameObjects.GameObject[] = [];
+  private readonly objects: Array<
+    Phaser.GameObjects.Arc | Phaser.GameObjects.Text | Phaser.GameObjects.Graphics
+  > = [];
   private readonly buttons: Phaser.GameObjects.Arc[] = [];
   private portraitMode = shouldRenderPortraitDomControls();
   private tabletMode = !this.portraitMode && browserUsesLandscapeTabletPresentation();
