@@ -6,7 +6,6 @@ import { CrystalBrookScene } from '../scenes/CrystalBrookScene';
 import { DialogueTestScene } from '../scenes/DialogueTestScene';
 import { DoorwayStubScene } from '../scenes/DoorwayStubScene';
 import { FireflyLanternScene } from '../scenes/FireflyLanternScene';
-import { InventoryScene } from '../scenes/InventoryScene';
 import { LumiStoryScene } from '../scenes/LumiStoryScene';
 import { MarigoldPicnicScene } from '../scenes/MarigoldPicnicScene';
 import { MoonflowerGladeScene } from '../scenes/MoonflowerGladeScene';
@@ -23,13 +22,11 @@ import { RainbowMeadowScene } from '../scenes/RainbowMeadowScene';
 import { RainbowRunEntryScene } from '../scenes/RainbowRunEntryScene';
 import { ResizeTestScene } from '../scenes/ResizeTestScene';
 import { RippleStoryScene } from '../scenes/RippleStoryScene';
-import { ShopScene } from '../scenes/ShopScene';
 import { SunbeamVillageScene } from '../scenes/SunbeamVillageScene';
 import { TitleScene } from '../scenes/TitleScene';
 import { UnicornCreatorScene } from '../scenes/UnicornCreatorScene';
 import { WhisperingWoodsScene } from '../scenes/WhisperingWoodsScene';
 import { WillowStoryScene } from '../scenes/WillowStoryScene';
-import { WonderbookScene } from '../scenes/WonderbookScene';
 import { GAME_HEIGHT, GAME_WIDTH } from './gameConstants';
 
 export const gameConfig: Phaser.Types.Core.GameConfig = {
@@ -85,8 +82,5 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
     DoorwayStubScene,
     DialogueTestScene,
     UnicornCreatorScene,
-    WonderbookScene,
-    InventoryScene,
-    ShopScene,
   ],
 };
