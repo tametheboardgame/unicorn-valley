@@ -24,11 +24,15 @@ ID: `R6.5-WP18J`
 
 Path: `docs/work-packages/R6.5-WP18J-BAG-MAP-BOOK-THEMED-POLISH.md`
 
-State: **implementation complete on stacked branch / automated validation and human visual approval pending**.
+State: **implementation and WP18J-specific automated validation complete / human visual approval pending**.
 
 Implementation branch: `work/r6.5-wp18j-bag-map-book-polish`
 
-Base: `agent/r6.5-wp18i-concept-grade-ui` / WP18I PR #156.
+Draft PR: #158, stacked on WP18I PR #156.
+
+Exact validated head: `e44141dac0f20908501168758415bc0ec979e664`.
+
+Cloudflare branch preview: `https://work-r6-5-wp18j-bag-map-book.unicorn-valley.pages.dev`
 
 Hard scope: **Bag, Map and Wonderbook only**.
 
@@ -39,6 +43,18 @@ Approved visual identities:
 - Wonderbook = friendly enchanted spellbook/storybook with a coherent open-book spread, chapter/ribbon tabs and subtle magical flourishes.
 
 WP18J preserves all underlying inventory, map, discovery, collection, progression, save and input behaviour. It does not authorise new gameplay semantics or another global UI rewrite.
+
+### WP18J validation result
+
+- project contract, format, lint, TypeScript, unit tests, production build, static smoke and the hard 520 KiB application-entry budget pass;
+- Chromium, Firefox and WebKit compatibility passes;
+- the serial Chromium suite completed with 155 passed, 13 failed, 3 skipped and 3 not run;
+- the stacked WP18I baseline completed the same suite with 154 passed, 14 failed, 3 skipped and 3 not run;
+- WP18J introduced **zero new aggregate browser failures** and one unrelated baseline performance failure no longer reproduces;
+- both Wonderbook progress/filter regressions pass on the WP18J head;
+- the Bag scroll/food regression and distinct Map surface regression pass on the WP18J head;
+- the remaining 13 aggregate failures are inherited WP18I/pre-remediation test assumptions, primarily legacy HUD/Settings diagnostics and related timeouts, rather than WP18J regressions;
+- automated playtest summary reports 10 scenarios, 0 errors, 0 warnings and 3 existing high-object-count suggestions.
 
 Human gate for WP18J: **visual spot-check required before merge/deployment**.
 
