@@ -58,16 +58,18 @@ test.describe('WP18J shared responsive concept UI', () => {
       .toBe(4);
 
     const objects = await sceneObjects(page, 'MoonflowerGladeScene');
-    expect(objects.some(({ name, visible }) => name === 'exploration-shell-nav-group' && visible)).toBe(
-      true,
-    );
+    expect(
+      objects.some(({ name, visible }) => name === 'exploration-shell-nav-group' && visible),
+    ).toBe(true);
     expect(
       objects.some(({ name, visible }) => name === 'exploration-shell-shimmer-panel' && visible),
     ).toBe(true);
     expect(
       objects.some(({ name, visible }) => name === 'exploration-location-title-panel' && visible),
     ).toBe(true);
-    expect(objects.some(({ name, visible }) => name === 'tablet-movement-pad' && visible)).toBe(true);
+    expect(objects.some(({ name, visible }) => name === 'tablet-movement-pad' && visible)).toBe(
+      true,
+    );
     expect(
       objects.some(({ name, visible }) => name === 'exploration-shell-sound-button' && visible),
     ).toBe(false);
