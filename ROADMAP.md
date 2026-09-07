@@ -14,7 +14,7 @@ This file is the concise project-level navigation layer. Detailed release conten
 
 ## R6.5 - Valley Completeness and Breadth
 
-Status: Human playtest completed; R7 readiness gate **not released**; a concept-grade UI remediation pass now precedes the final human tablet replay.
+Status: Human playtest completed; R7 readiness gate **not released**; concept-grade UI remediation and a final themed Bag/Map/Wonderbook polish pass now precede the final human tablet replay.
 
 Canonical release contract: `docs/07V-R6.5-VALLEY-COMPLETENESS-BREADTH.md`
 
@@ -23,6 +23,8 @@ Authoritative remediation evidence: `docs/07Z-R6.5-WP17-PLAYTEST-REMEDIATION.md`
 Approved tablet direction: `docs/07AA-R6.5-WP18A-APPROVED-TABLET-UX-DIRECTION.md`
 
 Latest UI visual authority: the user-supplied 2026-09-07 high-fidelity Rainbow Meadow HUD concept, with its button layout, grouping, hierarchy and visual quality treated as the target for WP18I. The concept's Unicorn Valley logo and left-side mini-map are explicitly not required.
+
+For WP18J, the user-approved thematic direction is equally explicit: Bag should feel like a magical satchel/saddlebag, Map like a magical quest/adventure map, and Wonderbook like a friendly enchanted spellbook/storybook, while retaining the shared WP18I quality language.
 
 ### Completed pre-playtest sequence
 
@@ -58,9 +60,9 @@ WP18G delivered canvas gesture hardening, orientation-safe exploration touch con
 
 The 2026-09-07 production inspection confirmed the new touch control mechanics are present, but the HUD/button/text-box presentation is still materially below the approved concept quality. The live interface remains too fragmented and box-heavy, with separate top controls, weak status/location hierarchy, an overly dominant lower backing panel, inconsistent buttons/text boxes and no sufficiently strong concept-style contextual action composition.
 
-That evidence pauses WP18H and inserts a bounded UI-only remediation package before the next human replay.
+That evidence paused WP18H and inserted bounded UI-only remediation before the next human replay.
 
-The same production inspection also reconfirmed a cottage/window collision defect. That defect remains separately logged and **must not be mixed into WP18I**, whose scope is UI only.
+The same production inspection also reconfirmed a cottage/window collision defect. That defect remains separately logged and **must not be mixed into WP18I or WP18J**, whose scope is UI only.
 
 ### R6.5-WP18I - Concept-Grade HUD, Button and Text-Box Remediation
 
@@ -88,19 +90,47 @@ Hard boundary: UI layout/styling/presentation only. No collision, world art, que
 
 Human gate: **visual spot-check required**. The acceptance question is whether the interface now genuinely resembles the concept's hierarchy and polish rather than merely fitting on the screen.
 
+### R6.5-WP18J - Bag, Map and Wonderbook Themed Polish Pass
+
+Path: `docs/work-packages/R6.5-WP18J-BAG-MAP-BOOK-THEMED-POLISH.md`
+
+State: **approved / queued immediately after WP18I visual approval**.
+
+Objective: finish the three major player-facing modal surfaces that still show alignment, spacing, border-density and identity issues after the common WP18I styling pass.
+
+Hard scope: **Bag, Map and Wonderbook only**.
+
+Themed targets:
+
+- **Bag:** magical satchel/saddlebag identity using restrained pocket, stitch, tag and compartment cues;
+- **Map:** magical quest/adventure map identity using parchment, compass/cartographic and journey-map cues while keeping existing route/location logic unchanged;
+- **Wonderbook:** friendly enchanted spellbook/storybook identity using a coherent open-book spread, chapter/ribbon tabs, page navigation and subtle magical flourishes.
+
+Shared quality targets:
+
+- repair alignment and spacing defects from the user screenshots;
+- reduce nested-border clutter and duplicate shadows;
+- establish clean header/content/footer zones;
+- improve negative space and grid alignment;
+- preserve readability and touch targets;
+- keep all existing inventory, map, discovery and Wonderbook behaviour unchanged;
+- retain the hard 520 KiB application-entry budget.
+
+Human gate: **visual spot-check required**. Each screen must read as a deliberately authored themed object, not a generic modal with decoration pasted on top.
+
 ### R6.5-WP18H - Full Human Tablet Replay and Return to WP17
 
 Path: `docs/work-packages/R6.5-WP18H-FULL-HUMAN-TABLET-REPLAY-RETURN-WP17.md`
 
-State: **deferred until WP18I is complete and visually accepted**.
+State: **deferred until WP18J is complete and visually accepted**.
 
-Run another substantially unguided playthrough on the reference Galaxy Tab S8 in landscape only after the concept-grade UI remediation is approved. WP18H records evidence and then returns to WP17 for the user's explicit R7-readiness decision.
+Run another substantially unguided playthrough on the reference Galaxy Tab S8 in landscape only after WP18I and WP18J are visually approved. WP18H records evidence and then returns to WP17 for the user's explicit R7-readiness decision.
 
 Automated browser/device evidence cannot replace the remaining real Android/Chrome questions around physical comfort, long-press behaviour, OS/browser gesture interference and child comprehension. Those remain owned by WP18H.
 
 ### Dependency chain
 
-`WP17 evidence -> WP18A approved -> WP18B complete -> WP18C complete -> WP18D complete -> WP18E complete -> WP18F approved/merged -> WP18G complete/merged -> WP18I concept-grade UI remediation + visual approval -> WP18H human replay -> WP17 explicit readiness decision -> R7`
+`WP17 evidence -> WP18A approved -> WP18B complete -> WP18C complete -> WP18D complete -> WP18E complete -> WP18F approved/merged -> WP18G complete/merged -> WP18I concept-grade UI remediation + visual approval -> WP18J Bag/Map/Wonderbook themed polish + visual approval -> WP18H human replay -> WP17 explicit readiness decision -> R7`
 
 ## R6.6 - Optional Android Packaging
 
@@ -110,7 +140,7 @@ Status: future candidate only after WP18 is stable and WP17 explicitly accepts t
 
 Status: Blocked.
 
-R7-WP7.1 may not begin until WP18I is complete and visually accepted, WP18H completes, and R6.5-WP17 explicitly confirms through human play that the valley is ready for preference-led expansion.
+R7-WP7.1 may not begin until WP18I and WP18J are complete and visually accepted, WP18H completes, and R6.5-WP17 explicitly confirms through human play that the valley is ready for preference-led expansion.
 
 ## Future releases
 
@@ -123,6 +153,7 @@ Potential later work includes flight/Cloudtop Peaks, deeper gardening/cooking, c
 - Production art follows proven mechanics unless concept work is explicitly required.
 - WP18 tablet shell/control work follows the approved WP18A structural direction.
 - WP18I visual layout and styling follows the 2026-09-07 high-fidelity Rainbow Meadow concept as the primary UI quality authority, excluding its logo and mini-map.
+- WP18J is limited to Bag, Map and Wonderbook and applies the user-approved satchel / quest-map / enchanted-book thematic identities without changing underlying behaviour.
 - Landscape tablet is the primary interface authority; desktop remains supported secondarily.
 - Point-and-click/tap movement is first-class.
 - Human-observed defects override stale automated claims.
