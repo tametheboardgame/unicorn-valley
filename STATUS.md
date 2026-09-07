@@ -24,19 +24,26 @@ ID: `R6.5-WP18J`
 
 Path: `docs/work-packages/R6.5-WP18J-BAG-MAP-BOOK-THEMED-POLISH.md`
 
-State: **first implementation validated / landscape-tablet review rejected approval / bounded remediation authorised and now in progress**.
+State: **bounded remediation implementation complete / latest exact-head automated validation in progress / human visual approval pending**.
 
 Implementation branch: `work/r6.5-wp18j-bag-map-book-polish`
 
 Draft PR: #158, stacked on WP18I PR #156.
 
-Previously validated game-code head: `e44141dac0f20908501168758415bc0ec979e664`.
+First validated WP18J game-code head: `e44141dac0f20908501168758415bc0ec979e664`.
 
-Cloudflare branch preview used for the 2026-09-07 tablet review: `https://work-r6-5-wp18j-bag-map-book.unicorn-valley.pages.dev`
+Latest remediation implementation includes:
+
+- simplified Bag/Map scene-owned framing and removal of repeated stitch/dash treatments;
+- removal of the obsolete R6 production-frame overlay from Inventory/Map and Wonderbook, eliminating the duplicate dotted/gold/purple frame and the stale `MY BAG` / `ADVENTURE SCRAPBOOK` labels;
+- Wonderbook section navigation moved to five page-edge filing/index tabs with no spine crossing and a restrained directional page-skip transition;
+- corrected Map/Bag/Book/Settings icon-label alignment plus normalised Settings and Shimmer icon scale.
+
+Cloudflare branch preview: `https://work-r6-5-wp18j-bag-map-book.unicorn-valley.pages.dev`
 
 ### Authorised remediation scope
 
-The 2026-09-07 Galaxy Tab S8 Chrome landscape review identified four remaining presentation issues. These are now explicitly part of WP18J and must be fixed before another human visual gate:
+The 2026-09-07 Galaxy Tab S8 Chrome landscape review identified four remaining presentation issues. These are explicitly part of WP18J and must be fixed before another human visual gate:
 
 - **Bag frame cleanup:** simplify excessive borders/stitching so decorative lines no longer crowd or cross category controls, Close or Shop; retain the magical satchel identity and all existing behaviour.
 - **Map frame cleanup:** simplify excessive borders so title/Close/map content sit in clean space; preserve all topology, routing, labels and guidance exactly.
@@ -54,7 +61,7 @@ Approved visual identities remain:
 
 ### Previous WP18J validation result
 
-The first implementation remains useful as the regression baseline for the remediation:
+The first implementation remains the regression baseline for the remediation:
 
 - project contract, format, lint, TypeScript, unit tests, production build, static smoke and the hard 520 KiB application-entry budget passed;
 - Chromium, Firefox and WebKit compatibility passed;
@@ -66,7 +73,7 @@ The first implementation remains useful as the regression baseline for the remed
 - the remaining 13 aggregate failures were inherited WP18I/pre-remediation test assumptions, primarily legacy HUD/Settings diagnostics and related timeouts, rather than WP18J regressions;
 - automated playtest summary reported 10 scenarios, 0 errors, 0 warnings and 3 existing high-object-count suggestions.
 
-Because visual approval was rejected after that validation, these results do **not** complete WP18J. The remediation must be implemented and revalidated, then presented again on the target tablet.
+The latest remediation must complete exact-head validation before the next human visual gate. Do not infer completion from the earlier validated head.
 
 Human gate for WP18J: **re-run visual spot-check after remediation before merge/deployment**.
 
