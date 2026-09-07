@@ -54,7 +54,9 @@ async function sceneSnapshot(
 test.describe('R6.5-WP18I desktop concept HUD cleanup', () => {
   test.use({ viewport: { width: 1280, height: 720 }, hasTouch: false });
 
-  test('uses the concept HUD without legacy shadows or duplicate interaction copy', async ({ page }) => {
+  test('uses the concept HUD without legacy shadows or duplicate interaction copy', async ({
+    page,
+  }) => {
     await page.goto('/?diagnostics=1');
     await waitForDiagnostics(page);
     await page.evaluate(() => {
@@ -78,7 +80,10 @@ test.describe('R6.5-WP18I desktop concept HUD cleanup', () => {
 
     const location = scene.objects.find(
       (object) =>
-        object.text === 'Moonflower Glade' && object.depth >= 190 && object.x > 800 && object.visible,
+        object.text === 'Moonflower Glade' &&
+        object.depth >= 190 &&
+        object.x > 800 &&
+        object.visible,
     );
     expect(location?.alpha ?? 0).toBeGreaterThan(0.9);
 
