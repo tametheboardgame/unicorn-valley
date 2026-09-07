@@ -32,6 +32,8 @@ Draft PR: #158, stacked on WP18I PR #156.
 
 First validated WP18J game-code head: `e44141dac0f20908501168758415bc0ec979e664`.
 
+Latest remediation game-code head: `5f46fb9ca9b6b47dc57f9ec7cb98013e20de586b`.
+
 Latest remediation implementation includes:
 
 - simplified Bag/Map scene-owned framing and removal of repeated stitch/dash treatments;
