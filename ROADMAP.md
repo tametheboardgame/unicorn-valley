@@ -14,7 +14,7 @@ This file is the concise project-level navigation layer. Detailed release conten
 
 ## R6.5 - Valley Completeness and Breadth
 
-Status: Human playtest completed; R7 readiness gate **not released**; tablet-first remediation is at the final human replay gate.
+Status: Human playtest completed; R7 readiness gate **not released**; tablet-first remediation is now at the final human replay gate.
 
 Canonical release contract: `docs/07V-R6.5-VALLEY-COMPLETENESS-BREADTH.md`
 
@@ -28,7 +28,7 @@ R6.5-WP1 through R6.5-WP16 are complete and integrated.
 
 ### R6.5-WP17 - Full Human Playthrough and R7 Readiness Gate
 
-State: **open / remediation required**.
+State: **open / remediation replay required**.
 
 The 2026-09-05 daughter playthrough showed that the underlying game is engaging but identified release-blocking landscape-tablet controls, freezes, functional defects, Bag/Creator usability issues and world/character consistency problems. WP17 therefore does not release R7 until the WP18 remediation sequence and another full tablet replay are complete.
 
@@ -48,11 +48,11 @@ Do not rewrite the game natively for Android as part of WP18.
 - R6.5-WP18D - Playthrough Functional Bug and Regression Remediation: complete, PR #150.
 - R6.5-WP18E - Bag, Map, Creator and Modal Tablet UX: complete and merged through PR #151 at `1ea5268c09d8e669057eec3c391dd2a020247cc5`.
 - R6.5-WP18F - World Consistency, Visual Quality and Experience Improvements: complete, visually approved 2026-09-06 and merged through PR #152 at `a9d6125330fcc5f3f87be15af2ad31eabcb610bb`.
-- R6.5-WP18G - Tablet Device Hardening and Cross-Input Regression: technically complete on PR #153; merge pending final exact-head documentation validation.
+- R6.5-WP18G - Tablet Device Hardening and Cross-Input Regression: complete and merged through PR #153 at `d4de16122757122dfeb12dc74898057e35c6538a`.
 
 WP18F delivered Nova authoritative presence across race/picnic/cottage states, production-character representation cleanup, player and NPC mane/neck coverage improvements, Shell Cove identity and unicorn sandcastle detail, Crystal Brook/Prism Grotto readability, stronger Sunbeam Village shop identities, restrained Whispering Woods atmosphere and one lightweight Hollow Tree Nook mushroom interaction.
 
-WP18G delivered canvas gesture hardening, orientation-safe exploration touch controls, representative 16:9/16:10/4:3/smaller/larger landscape coverage, Bag/Map/Creator containment checks, race control visibility checks and secondary desktop-input regressions. Validated implementation head `4f71e843e024b7974405e00f469ea0e359a2180b` passed project contract, formatting/lint/type-check, 426 unit tests, production build/static smoke, the unchanged 520 KiB application-entry budget, Chromium/Firefox/WebKit compatibility and the full serial Chromium playtest at 164 passed / 3 skipped. Existing WP18B freeze regressions remain green.
+WP18G delivered canvas gesture hardening, orientation-safe exploration touch controls, representative 16:9/16:10/4:3/smaller/larger landscape coverage, Bag/Map/Creator containment checks, race control visibility checks and secondary desktop-input regressions. Validated implementation head `4f71e843e024b7974405e00f469ea0e359a2180b` passed project contract, formatting/lint/type-check, 426 unit tests, production build/static smoke, the unchanged 520 KiB application-entry performance budget, Chromium/Firefox/WebKit compatibility and the full serial Chromium playtest at 164 passed / 3 skipped. Existing WP18B freeze regressions remain green.
 
 Human gate for WP18G: none.
 
@@ -62,7 +62,7 @@ The user also requested another broader visual tightening/polish pass later; ret
 
 Path: `docs/work-packages/R6.5-WP18H-FULL-HUMAN-TABLET-REPLAY-RETURN-WP17.md`
 
-State: **next / human gate required after WP18G merge**.
+State: **current / waiting for human replay**.
 
 Run another substantially unguided playthrough on the reference Galaxy Tab S8 in landscape. WP18H records evidence and then returns to WP17 for the user's explicit R7-readiness decision.
 
@@ -70,7 +70,7 @@ Automated browser/device evidence cannot replace the remaining real Android/Chro
 
 ### Dependency chain
 
-`WP17 evidence -> WP18A approved -> WP18B complete -> WP18C complete -> WP18D complete -> WP18E complete -> WP18F approved/merged -> WP18G technically complete -> WP18H human replay -> WP17 explicit readiness decision -> R7`
+`WP17 evidence -> WP18A approved -> WP18B complete -> WP18C complete -> WP18D complete -> WP18E complete -> WP18F approved/merged -> WP18G complete/merged -> WP18H human replay -> WP17 explicit readiness decision -> R7`
 
 ## R6.6 - Optional Android Packaging
 
@@ -98,4 +98,4 @@ Potential later work includes flight/Cloudtop Peaks, deeper gardening/cooking, c
 - Positive human feedback is a preservation requirement.
 - New features should strengthen a design pillar and add a meaningful player action rather than complexity alone.
 - The hard application-entry performance budget remains 520 KiB and must not be weakened or increased.
-- Production deployment requires explicit user approval.
+- The 2026-09-07 WP18G production deployment was explicitly authorised by the user; future production deployments still require explicit user approval.
