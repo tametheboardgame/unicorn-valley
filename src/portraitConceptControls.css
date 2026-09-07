@@ -20,8 +20,7 @@
     padding: 8px;
     border: 3px solid rgb(160 118 180 / 92%);
     border-radius: 22px;
-    background:
-      linear-gradient(180deg, rgb(255 253 246 / 98%), rgb(247 235 249 / 98%));
+    background: linear-gradient(180deg, rgb(255 253 246 / 98%), rgb(247 235 249 / 98%));
     box-shadow:
       0 8px 22px rgb(36 26 61 / 28%),
       inset 0 1px 0 rgb(255 255 255 / 88%);
