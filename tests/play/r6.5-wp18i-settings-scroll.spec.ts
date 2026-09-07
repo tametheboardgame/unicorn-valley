@@ -53,9 +53,9 @@ async function getSettings(page: Page): Promise<DiagnosticSceneSnapshot> {
     const diagnostics = (
       window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
     ).__UNICORN_VALLEY_DIAGNOSTICS__;
-    const scene = diagnostics?.snapshot().scenes.find(
-      (candidate) => candidate.key === 'SettingsScene',
-    );
+    const scene = diagnostics
+      ?.snapshot()
+      .scenes.find((candidate) => candidate.key === 'SettingsScene');
     if (!scene) {
       throw new Error('Missing SettingsScene.');
     }
