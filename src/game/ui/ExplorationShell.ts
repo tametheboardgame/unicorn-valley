@@ -273,7 +273,17 @@ export class ExplorationShell {
     const shadow = createFixedGraphics(this.scene, 'exploration-shell-nav-shadow', 117);
     drawPanelShadow(shadow, x, y, width, height, 28, 7, 8, 0.2);
     const surface = createFixedGraphics(this.scene, 'exploration-shell-nav-group', 118);
-    drawRoundedPanel(surface, x, y, width, height, 28, CONCEPT_UI.cream, CONCEPT_UI.lavenderLine, 4);
+    drawRoundedPanel(
+      surface,
+      x,
+      y,
+      width,
+      height,
+      28,
+      CONCEPT_UI.cream,
+      CONCEPT_UI.lavenderLine,
+      4,
+    );
     surface.lineStyle(2, CONCEPT_UI.lavenderLine, 0.34);
     for (const dividerX of [150, 270, 390]) {
       surface.lineBetween(dividerX, 23, dividerX, 81);
@@ -307,11 +317,7 @@ export class ExplorationShell {
         .setScrollFactor(0)
         .setDepth(120)
         .setInteractive({ useHandCursor: true });
-      const iconGraphic = createFixedGraphics(
-        this.scene,
-        `exploration-shell-${name}-icon`,
-        121,
-      );
+      const iconGraphic = createFixedGraphics(this.scene, `exploration-shell-${name}-icon`, 121);
       drawConceptIcon(iconGraphic, icon, x, y - 13, 0.92, CONCEPT_UI.purpleDeep);
       const label = this.scene.add
         .text(x, y + 21, text, {
