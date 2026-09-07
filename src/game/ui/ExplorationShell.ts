@@ -7,6 +7,14 @@ import { TouchMovementPad } from '../input/TouchMovementPad';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { ActivitySuggestionCard } from './ActivitySuggestionCard';
 import { AudioSettingsPanel } from './AudioSettingsPanel';
+import {
+  CONCEPT_UI,
+  createFixedGraphics,
+  drawConceptIcon,
+  drawPanelShadow,
+  drawRoundedPanel,
+  type ConceptIcon,
+} from './ConceptUi';
 import { ExplorationChrome } from './ExplorationChrome';
 import { shellManagesSceneAudio, supportsExplorationShell } from './ExplorationShellConfig';
 import { browserUsesLandscapeTabletPresentation } from './LandscapeTabletPresentation';
@@ -17,6 +25,7 @@ interface ShellButton {
   shadow: Phaser.GameObjects.Rectangle;
   button: Phaser.GameObjects.Rectangle;
   label: Phaser.GameObjects.Text;
+  decorations: Phaser.GameObjects.GameObject[];
 }
 
 const shellsByScene = new WeakMap<Phaser.Scene, ExplorationShell>();
@@ -40,6 +49,7 @@ export class ExplorationShell {
   private readonly explorationChrome: ExplorationChrome;
   private readonly rewardFeedback: RewardFeedback;
   private readonly refreshTimer: Phaser.Time.TimerEvent;
+  private readonly decorations: Phaser.GameObjects.GameObject[] = [];
   private destroyed = false;
 
   public static ensure(
@@ -64,60 +74,105 @@ export class ExplorationShell {
       throw new Error(`Exploration shell is not supported in ${scene.scene.key}.`);
     }
 
+    if (this.tabletMode) {
+      this.createTabletNavigationGroup();
+    }
+
     const bag = this.createShellButton(
       this.tabletMode ? 210 : GAME_WIDTH - 92,
-      this.tabletMode ? 46 : 58,
-      this.tabletMode ? 116 : 142,
-      this.tabletMode ? 58 : 64,
-      'Bag 🎒',
+      this.tabletMode ? 52 : 58,
+      this.tabletMode ? 118 : 142,
+      this.tabletMode ? 72 : 64,
+      this.tabletMode ? 'Bag' : 'Bag 🎒',
       'bag',
-      this.tabletMode ? 17 : 19,
+      this.tabletMode ? 16 : 19,
+      'bag',
     );
     this.bagShadow = bag.shadow;
     this.bagButton = bag.button;
     this.bagLabel = bag.label;
+    this.decorations.push(...bag.decorations);
 
     const book = this.createShellButton(
-      this.tabletMode ? 340 : GAME_WIDTH - 410,
-      this.tabletMode ? 46 : 58,
-      this.tabletMode ? 116 : 128,
-      this.tabletMode ? 58 : 64,
-      'Book 📖',
+      this.tabletMode ? 330 : GAME_WIDTH - 410,
+      this.tabletMode ? 52 : 58,
+      this.tabletMode ? 118 : 128,
+      this.tabletMode ? 72 : 64,
+      this.tabletMode ? 'Book' : 'Book 📖',
       'book',
-      this.tabletMode ? 17 : 18,
+      this.tabletMode ? 16 : 18,
+      'book',
     );
     this.bookShadow = book.shadow;
     this.bookButton = book.button;
     this.bookLabel = book.label;
+    this.decorations.push(...book.decorations);
 
     if (this.tabletMode) {
-      this.mapButtonSet = this.createShellButton(80, 46, 116, 58, 'Map 🗺️', 'map', 17);
+      this.mapButtonSet = this.createShellButton(90, 52, 118, 72, 'Map', 'map', 16, 'map');
       this.settingsButtonSet = this.createShellButton(
-        486,
-        46,
-        150,
-        58,
-        'Settings ⚙️',
+        465,
+        52,
+        136,
+        72,
+        'Settings',
         'settings-nav',
-        16,
+        15,
+        'settings',
       );
+      this.decorations.push(
+        ...this.mapButtonSet.decorations,
+        ...this.settingsButtonSet.decorations,
+      );
+
+      const shimmerX = 700;
+      const shimmerY = 52;
+      const shimmerWidth = 210;
+      const shimmerHeight = 62;
+      const shimmerShadow = createFixedGraphics(scene, 'exploration-shell-shimmer-shadow', 118);
+      drawPanelShadow(
+        shimmerShadow,
+        shimmerX,
+        shimmerY,
+        shimmerWidth,
+        shimmerHeight,
+        28,
+        5,
+        6,
+        0.18,
+      );
+      const shimmerSurface = createFixedGraphics(scene, 'exploration-shell-shimmer-surface', 119);
+      drawRoundedPanel(
+        shimmerSurface,
+        shimmerX,
+        shimmerY,
+        shimmerWidth,
+        shimmerHeight,
+        28,
+        CONCEPT_UI.cream,
+        CONCEPT_UI.lavenderLine,
+        4,
+      );
+      const shimmerIcon = createFixedGraphics(scene, 'exploration-shell-shimmer-icon', 121);
+      drawConceptIcon(shimmerIcon, 'shimmer', shimmerX - 72, shimmerY, 0.85, CONCEPT_UI.goldStrong);
+      this.decorations.push(shimmerShadow, shimmerSurface, shimmerIcon);
+
       this.shimmerPanel = scene.add
-        .rectangle(708, 46, 210, 54, UI_COLOURS.cream, 0.92)
+        .rectangle(shimmerX, shimmerY, shimmerWidth, shimmerHeight, CONCEPT_UI.white, 0.001)
         .setName('exploration-shell-shimmer-panel')
-        .setStrokeStyle(3, UI_COLOURS.goldStrong, 0.88)
         .setScrollFactor(0)
-        .setDepth(119);
+        .setDepth(120);
       this.shimmerLabel = scene.add
-        .text(708, 46, '', {
-          color: UI_COLOURS.ink,
+        .text(shimmerX + 12, shimmerY, '', {
+          color: '#4b2b66',
           fontFamily: UI_FONT,
-          fontSize: '16px',
+          fontSize: '18px',
           fontStyle: 'bold',
         })
         .setName('exploration-shell-shimmer-label')
         .setOrigin(0.5)
         .setScrollFactor(0)
-        .setDepth(120);
+        .setDepth(121);
       this.economy = new ShimmerEconomyService(getBrowserSaveService());
       this.suggestionCard = null;
     } else {
@@ -168,8 +223,8 @@ export class ExplorationShell {
       const snackSeconds = getExplorationSnackBoostRemainingSeconds();
       this.shimmerLabel.setText(
         snackSeconds > 0
-          ? `✨ ${this.economy.getBalance()}  •  ⚡ ${snackSeconds}s`
-          : `✨ ${this.economy.getBalance()} Shimmer`,
+          ? `${this.economy.getBalance()}  •  Boost ${snackSeconds}s`
+          : `${this.economy.getBalance()} Shimmer`,
       );
     }
   }
@@ -196,6 +251,10 @@ export class ExplorationShell {
     this.destroyShellButton(this.settingsButtonSet);
     this.shimmerPanel?.destroy();
     this.shimmerLabel?.destroy();
+    for (const decoration of this.decorations) {
+      decoration.destroy();
+    }
+    this.decorations.length = 0;
     this.suggestionCard?.destroy();
     this.audioSettingsPanel.destroy();
     this.explorationChrome.destroy();
@@ -206,6 +265,22 @@ export class ExplorationShell {
     }
   }
 
+  private createTabletNavigationGroup(): void {
+    const x = 278;
+    const y = 52;
+    const width = 524;
+    const height = 80;
+    const shadow = createFixedGraphics(this.scene, 'exploration-shell-nav-shadow', 117);
+    drawPanelShadow(shadow, x, y, width, height, 28, 7, 8, 0.2);
+    const surface = createFixedGraphics(this.scene, 'exploration-shell-nav-group', 118);
+    drawRoundedPanel(surface, x, y, width, height, 28, CONCEPT_UI.cream, CONCEPT_UI.lavenderLine, 4);
+    surface.lineStyle(2, CONCEPT_UI.lavenderLine, 0.34);
+    for (const dividerX of [150, 270, 390]) {
+      surface.lineBetween(dividerX, 23, dividerX, 81);
+    }
+    this.decorations.push(shadow, surface);
+  }
+
   private createShellButton(
     x: number,
     y: number,
@@ -214,7 +289,62 @@ export class ExplorationShell {
     text: string,
     name: string,
     fontSize: number,
+    icon?: ConceptIcon,
   ): ShellButton {
+    if (this.tabletMode && icon) {
+      const shadow = this.scene.add
+        .rectangle(x, y, width, height, CONCEPT_UI.shadow, 0)
+        .setScrollFactor(0)
+        .setDepth(119);
+      const hover = this.scene.add
+        .rectangle(x, y, width - 8, height - 10, CONCEPT_UI.purpleLight, 0)
+        .setName(`exploration-shell-${name}-hover`)
+        .setScrollFactor(0)
+        .setDepth(119);
+      const button = this.scene.add
+        .rectangle(x, y, width, height, CONCEPT_UI.white, 0.001)
+        .setName(`exploration-shell-${name}-button`)
+        .setScrollFactor(0)
+        .setDepth(120)
+        .setInteractive({ useHandCursor: true });
+      const iconGraphic = createFixedGraphics(
+        this.scene,
+        `exploration-shell-${name}-icon`,
+        121,
+      );
+      drawConceptIcon(iconGraphic, icon, x, y - 13, 0.92, CONCEPT_UI.purpleDeep);
+      const label = this.scene.add
+        .text(x, y + 21, text, {
+          color: '#4b2b66',
+          fontFamily: UI_FONT,
+          fontSize: `${fontSize}px`,
+          fontStyle: 'bold',
+        })
+        .setName(`exploration-shell-${name}-label`)
+        .setOrigin(0.5)
+        .setScrollFactor(0)
+        .setDepth(122);
+
+      button.on('pointerover', () => {
+        hover.setFillStyle(CONCEPT_UI.purpleLight, 0.17);
+        label.setColor('#642d8a');
+      });
+      button.on('pointerout', () => {
+        hover.setFillStyle(CONCEPT_UI.purpleLight, 0);
+        label.setColor('#4b2b66');
+      });
+      button.on('pointerdown', () => {
+        hover.setFillStyle(CONCEPT_UI.goldLight, 0.28);
+        iconGraphic.setScale(0.94);
+        label.setScale(0.96);
+      });
+      button.on('pointerup', () => {
+        iconGraphic.setScale(1);
+        label.setScale(1);
+      });
+      return { shadow, button, label, decorations: [hover, iconGraphic] };
+    }
+
     const shadow = createUiShadow(this.scene, x, y + 2, width, height, 119, 0.16);
     const button = this.scene.add
       .rectangle(x, y, width, height, UI_COLOURS.cream, 0.96)
@@ -235,7 +365,7 @@ export class ExplorationShell {
       .setScrollFactor(0)
       .setDepth(121);
     applyButtonHover(button, UI_COLOURS.cream, UI_COLOURS.gold);
-    return { shadow, button, label };
+    return { shadow, button, label, decorations: [] };
   }
 
   private destroyShellButton(buttonSet: ShellButton | null): void {
