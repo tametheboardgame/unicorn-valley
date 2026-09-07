@@ -100,12 +100,8 @@ export class DesktopConceptCleanupManager {
   private hideAtmosphereHud(scene: Phaser.Scene): void {
     for (const name of ATMOSPHERE_HUD_NAMES) {
       const object = scene.children.getByName(name);
-      if (!object) {
-        continue;
-      }
-      object.setVisible(false);
-      if ('disableInteractive' in object && typeof object.disableInteractive === 'function') {
-        object.disableInteractive();
+      if (object instanceof Phaser.GameObjects.Text) {
+        object.setVisible(false).disableInteractive();
       }
     }
   }
@@ -114,7 +110,9 @@ export class DesktopConceptCleanupManager {
     let presentation = this.atmosphereSettings.get(scene);
     if (!presentation?.timeButton.active) {
       const status = scene.children.getByName('settings-status');
-      status?.setVisible(false);
+      if (status instanceof Phaser.GameObjects.Text) {
+        status.setVisible(false);
+      }
 
       const objects: Phaser.GameObjects.GameObject[] = [];
       const timeX = GAME_WIDTH / 2 - 150;
@@ -175,7 +173,10 @@ export class DesktopConceptCleanupManager {
       });
     }
 
-    scene.children.getByName('settings-status')?.setVisible(false);
+    const status = scene.children.getByName('settings-status');
+    if (status instanceof Phaser.GameObjects.Text) {
+      status.setVisible(false);
+    }
     const timeDefinition = this.atmosphericTime.getDefinition();
     const timeMode = this.atmosphericTime.getMode() === 'auto' ? 'Auto' : 'Manual';
     presentation.timeLabel.setText(
