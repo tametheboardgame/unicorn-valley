@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import './style.css';
+import './portraitConceptControls.css';
 import './titlePortraitControls.css';
 import { gameConfig } from './game/config/gameConfig';
 import { getClickToMoveManager } from './game/input/ClickToMoveManager';
