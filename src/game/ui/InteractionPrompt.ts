@@ -166,17 +166,7 @@ export class InteractionPrompt {
       const hintWidth = 520;
       const hintHeight = 50;
       this.tabletHintSurface = createFixedGraphics(scene, 'exploration-tablet-hint-surface', 118);
-      drawPanelShadow(
-        this.tabletHintSurface,
-        hintX,
-        hintY,
-        hintWidth,
-        hintHeight,
-        24,
-        5,
-        6,
-        0.17,
-      );
+      drawPanelShadow(this.tabletHintSurface, hintX, hintY, hintWidth, hintHeight, 24, 5, 6, 0.17);
       drawRoundedPanel(
         this.tabletHintSurface,
         hintX,
@@ -416,7 +406,11 @@ export class InteractionPrompt {
     );
     this.panel.setStrokeStyle(
       highVisibility ? 8 : this.tabletMode ? 6 : 5,
-      highVisibility ? 0x513161 : this.tabletMode ? CONCEPT_UI.purpleStrong : UI_COLOURS.lavenderStrong,
+      highVisibility
+        ? 0x513161
+        : this.tabletMode
+          ? CONCEPT_UI.purpleStrong
+          : UI_COLOURS.lavenderStrong,
       1,
     );
     this.label.setColor(highVisibility ? '#321d3b' : this.tabletMode ? '#fffaf1' : UI_COLOURS.ink);
