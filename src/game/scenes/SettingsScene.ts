@@ -265,7 +265,7 @@ export class SettingsScene extends Phaser.Scene {
   private createSectionHeading(title: string, contentY: number): void {
     const label = this.add
       .text(VIEWPORT_LEFT + 12, VIEWPORT_TOP + contentY, title, {
-        color: UI_COLOURS.lavenderDark,
+        color: UI_COLOURS.softInk,
         fontFamily: UI_FONT,
         fontSize: '17px',
         fontStyle: 'bold',
