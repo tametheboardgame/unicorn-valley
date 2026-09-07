@@ -244,7 +244,14 @@ export function drawConceptIcon(
     }
     case 'start': {
       graphics.fillStyle(CONCEPT_UI.white, 0.96);
-      graphics.fillTriangle(x - 10 * scale, y - 15 * scale, x - 10 * scale, y + 15 * scale, x + 16 * scale, y);
+      graphics.fillTriangle(
+        x - 10 * scale,
+        y - 15 * scale,
+        x - 10 * scale,
+        y + 15 * scale,
+        x + 16 * scale,
+        y,
+      );
       break;
     }
     case 'inspect': {
