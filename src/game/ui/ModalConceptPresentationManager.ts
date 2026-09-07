@@ -115,7 +115,10 @@ function setSettingsRowVisibility(scene: Phaser.Scene): void {
     if (!isSettingsRowObject(object)) {
       continue;
     }
-    if (!(object instanceof Phaser.GameObjects.Rectangle) && !(object instanceof Phaser.GameObjects.Text)) {
+    if (
+      !(object instanceof Phaser.GameObjects.Rectangle) &&
+      !(object instanceof Phaser.GameObjects.Text)
+    ) {
       continue;
     }
 
@@ -163,7 +166,12 @@ export class ModalConceptPresentationManager {
 
   private syncSettingsClipGuards(scene: Phaser.Scene): void {
     let clips = this.settingsClipPresentations.get(scene);
-    if (!clips?.top.active || !clips.bottom.active || !clips.outerTop.active || !clips.outerBottom.active) {
+    if (
+      !clips?.top.active ||
+      !clips.bottom.active ||
+      !clips.outerTop.active ||
+      !clips.outerBottom.active
+    ) {
       const topHeight = SETTINGS_VIEWPORT_TOP - SETTINGS_PANEL_TOP;
       const top = scene.add
         .rectangle(
