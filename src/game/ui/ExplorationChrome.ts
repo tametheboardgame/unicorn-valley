@@ -3,6 +3,13 @@ import { getBrowserAccessibilitySettingsStore } from '../accessibility/Accessibi
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import type { TouchMovementPad } from '../input/TouchMovementPad';
 import { rememberRainbowMeadowPlayerPosition } from '../world/RainbowMeadowReturnPoint';
+import {
+  CONCEPT_UI,
+  createFixedGraphics,
+  drawConceptIcon,
+  drawPanelShadow,
+  drawRoundedPanel,
+} from './ConceptUi';
 import { browserUsesLandscapeTabletPresentation } from './LandscapeTabletPresentation';
 import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from './uiTheme';
 
@@ -63,28 +70,44 @@ export class ExplorationChrome {
     }
 
     if (this.tabletMode) {
-      const titleX = GAME_WIDTH - 145;
-      const titleY = 46;
-      const titleShadow = createUiShadow(scene, titleX, titleY + 2, 260, 58, 123, 0.14);
+      const titleX = 1044;
+      const titleY = 52;
+      const titleWidth = 370;
+      const titleHeight = 62;
+      const titleShadow = createFixedGraphics(scene, 'exploration-location-title-shadow', 123);
+      drawPanelShadow(titleShadow, titleX, titleY, titleWidth, titleHeight, 28, 5, 6, 0.18);
+      const titleSurface = createFixedGraphics(scene, 'exploration-location-title-surface', 124);
+      drawRoundedPanel(
+        titleSurface,
+        titleX,
+        titleY,
+        titleWidth,
+        titleHeight,
+        28,
+        CONCEPT_UI.cream,
+        CONCEPT_UI.lavenderLine,
+        4,
+      );
       const titlePanel = scene.add
-        .rectangle(titleX, titleY, 260, 58, UI_COLOURS.cream, 0.94)
+        .rectangle(titleX, titleY, titleWidth, titleHeight, CONCEPT_UI.white, 0.001)
         .setName('exploration-location-title-panel')
-        .setStrokeStyle(3, UI_COLOURS.lavenderStrong, 0.92)
         .setScrollFactor(0)
         .setDepth(124);
+      const locationIcon = createFixedGraphics(scene, 'exploration-location-icon', 126);
+      drawConceptIcon(locationIcon, 'location', titleX - 140, titleY, 0.9, CONCEPT_UI.purpleDeep);
       this.titleText = scene.add
-        .text(titleX, titleY, locationTitle, {
-          color: UI_COLOURS.ink,
+        .text(titleX + 22, titleY, locationTitle, {
+          color: '#4b2b66',
           fontFamily: UI_FONT,
           fontSize: '19px',
           fontStyle: 'bold',
           align: 'center',
-          wordWrap: { width: 230 },
+          wordWrap: { width: 270 },
         })
         .setName('exploration-location-title')
         .setOrigin(0.5)
         .setScrollFactor(0)
-        .setDepth(125);
+        .setDepth(126);
       this.controlsButton = null;
       this.controlsLabel = null;
       this.touchToggleButton = null;
@@ -93,7 +116,7 @@ export class ExplorationChrome {
       this.reducedMotionLabel = null;
       this.highVisibilityButton = null;
       this.highVisibilityLabel = null;
-      this.objects.push(titleShadow, titlePanel, this.titleText);
+      this.objects.push(titleShadow, titleSurface, titlePanel, locationIcon, this.titleText);
       this.unsubscribeAccessibility = this.accessibility.subscribe(() => {
         this.applyReducedMotionPreference();
       });
