@@ -71,6 +71,12 @@ void import('./game/ui/DesktopConceptPresentationManager').then(
   },
 );
 
+void import('./game/ui/PortraitConceptPresentationManager').then(
+  ({ getPortraitConceptPresentationManager }) => {
+    getPortraitConceptPresentationManager(game);
+  },
+);
+
 void import('./game/economy/EconomyRewardWorldManager').then(({ getEconomyRewardWorldManager }) => {
   getEconomyRewardWorldManager();
 });
