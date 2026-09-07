@@ -75,6 +75,7 @@ export class DesktopConceptCleanupManager {
   private readonly update = (): void => {
     for (const scene of this.game.scene.getScenes(true)) {
       this.hideAtmosphereHud(scene);
+      this.hideLegacyInputInstruction(scene);
       if (scene.scene.key === 'SettingsScene') {
         this.ensureAtmosphereSettings(scene);
       }
@@ -102,6 +103,21 @@ export class DesktopConceptCleanupManager {
       const object = scene.children.getByName(name);
       if (object instanceof Phaser.GameObjects.Text) {
         object.setVisible(false).disableInteractive();
+      }
+    }
+  }
+
+  private hideLegacyInputInstruction(scene: Phaser.Scene): void {
+    for (const object of scene.children.list) {
+      if (!(object instanceof Phaser.GameObjects.Text)) {
+        continue;
+      }
+      if (object.name.startsWith('desktop-concept-') || object.name.startsWith('exploration-tablet-')) {
+        continue;
+      }
+      const text = object.text.trim();
+      if (LEGACY_ACTION_PROMPT.test(text) && LEGACY_INPUT_INSTRUCTION.test(text)) {
+        object.setVisible(false).setAlpha(0.001).disableInteractive();
       }
     }
   }
