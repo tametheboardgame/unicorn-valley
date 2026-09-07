@@ -363,9 +363,7 @@ export class InventoryScene extends Phaser.Scene {
 
     if (selected) {
       this.track(
-        this.add
-          .rectangle(x + 3, y + 4, 324, 88, 0xd09a66, 0.2)
-          .setStrokeStyle(6, 0xe4b85f, 0.32),
+        this.add.rectangle(x + 3, y + 4, 324, 88, 0xd09a66, 0.2).setStrokeStyle(6, 0xe4b85f, 0.32),
       );
     }
 
@@ -517,9 +515,7 @@ export class InventoryScene extends Phaser.Scene {
 
     const presentation = getItemPresentation(selected.definition);
     this.track(
-      this.add
-        .circle(1005, 286, 52, 0xf1cdbd, 1)
-        .setStrokeStyle(4, 0xb8788f, 0.92),
+      this.add.circle(1005, 286, 52, 0xf1cdbd, 1).setStrokeStyle(4, 0xb8788f, 0.92),
       this.add
         .text(1005, 286, presentation.icon, {
           fontFamily: 'system-ui, sans-serif',
@@ -671,9 +667,7 @@ export class InventoryScene extends Phaser.Scene {
           lineSpacing: -5,
         })
         .setOrigin(0.5),
-      this.add
-        .circle(1092, 535, 34, 0xf5dfad, 0.42)
-        .setStrokeStyle(2, 0x9d7449, 0.6),
+      this.add.circle(1092, 535, 34, 0xf5dfad, 0.42).setStrokeStyle(2, 0x9d7449, 0.6),
     );
 
     const pointForNode = (node: ValleyMapNode): { x: number; y: number } => ({
