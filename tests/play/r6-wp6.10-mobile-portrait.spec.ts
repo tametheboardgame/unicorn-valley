@@ -115,6 +115,11 @@ test('portrait touch layout pins the game high and moves concept controls below 
     });
   }
 
+  await page.screenshot({
+    path: test.info().outputPath('wp18j-phone-portrait.png'),
+    fullPage: true,
+  });
+
   await page.getByRole('button', { name: 'Map', exact: true }).click();
   await waitForScene(page, 'InventoryScene');
   await expect(dock).toBeHidden();
