@@ -1,7 +1,12 @@
+import { mkdirSync } from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
+
+const SCREENSHOT_DIR = 'playtest-artifacts/screenshots';
+const WORLD_PLAYER_NAME = 'world-player-unicorn';
 
 interface DiagnosticObjectSnapshot {
   name: string;
+  text: string | null;
   x: number;
   y: number;
   displayWidth: number;
@@ -22,6 +27,7 @@ interface BrowserDiagnosticSnapshot {
 interface BrowserDiagnosticsApi {
   snapshot(): BrowserDiagnosticSnapshot;
   startScene(sceneKey: string, data?: object): void;
+  setArcadeSpritePosition(sceneKey: string, objectName: string, x: number, y: number): void;
 }
 
 async function waitForDiagnostics(page: Page): Promise<void> {
@@ -50,6 +56,23 @@ async function startScene(page: Page, sceneKey: string): Promise<void> {
   }, sceneKey);
 }
 
+async function positionPlayer(page: Page, sceneKey: string, x: number, y: number): Promise<void> {
+  await page.evaluate(
+    ({ key, objectName, targetX, targetY }) => {
+      const diagnostics = (
+        window as typeof window & {
+          __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
+        }
+      ).__UNICORN_VALLEY_DIAGNOSTICS__;
+      if (!diagnostics) {
+        throw new Error('Browser diagnostics are unavailable.');
+      }
+      diagnostics.setArcadeSpritePosition(key, objectName, targetX, targetY);
+    },
+    { key: sceneKey, objectName: WORLD_PLAYER_NAME, targetX: x, targetY: y },
+  );
+}
+
 async function getScene(page: Page, sceneKey: string): Promise<DiagnosticSceneSnapshot> {
   return page.evaluate((key) => {
     const diagnostics = (
@@ -63,6 +86,22 @@ async function getScene(page: Page, sceneKey: string): Promise<DiagnosticSceneSn
     }
     return scene;
   }, sceneKey);
+}
+
+async function waitForActionLabel(page: Page, expected: string): Promise<void> {
+  await expect
+    .poll(async () => {
+      const scene = await getScene(page, 'MoonflowerGladeScene');
+      return scene.objects.find(
+        (object) => object.name === 'exploration-interaction-prompt-label' && object.visible,
+      )?.text;
+    })
+    .toBe(expected);
+}
+
+async function captureEvidence(page: Page, filename: string): Promise<void> {
+  mkdirSync(SCREENSHOT_DIR, { recursive: true });
+  await page.screenshot({ path: `${SCREENSHOT_DIR}/${filename}`, fullPage: true });
 }
 
 function objectByName(scene: DiagnosticSceneSnapshot, name: string): DiagnosticObjectSnapshot {
@@ -143,6 +182,30 @@ test.describe('R6.5-WP18I concept-grade tablet HUD', () => {
     expect(contextualAction.x).toBeGreaterThan(930);
     expect(contextualAction.x).toBeLessThan(gallop.x);
     expect(contextualAction.y).toBeGreaterThan(500);
+
+    await captureEvidence(page, 'wp18i-exploration-idle.png');
+  });
+
+  test('renders explicit Talk and Enter actions from real Moonflower Glade interaction targets', async ({
+    page,
+  }) => {
+    await page.goto('/?diagnostics=1');
+    await waitForDiagnostics(page);
+    await startScene(page, 'MoonflowerGladeScene');
+
+    await positionPlayer(page, 'MoonflowerGladeScene', 840, 825);
+    await waitForActionLabel(page, 'Talk');
+    let scene = await getScene(page, 'MoonflowerGladeScene');
+    expect(objectByName(scene, 'exploration-interaction-prompt').visible).toBe(true);
+    expect(objectByName(scene, 'exploration-tablet-hint').text).toContain('Tap Talk');
+    await captureEvidence(page, 'wp18i-talk.png');
+
+    await positionPlayer(page, 'MoonflowerGladeScene', 560, 720);
+    await waitForActionLabel(page, 'Enter');
+    scene = await getScene(page, 'MoonflowerGladeScene');
+    expect(objectByName(scene, 'exploration-interaction-prompt').visible).toBe(true);
+    expect(objectByName(scene, 'exploration-tablet-hint').text).toContain('Tap Enter');
+    await captureEvidence(page, 'wp18i-enter.png');
   });
 
   test('keeps the concept composition contained across the landscape tablet matrix', async ({
@@ -193,6 +256,7 @@ test.describe('R6.5-WP18I concept-grade tablet HUD', () => {
     ]) {
       expect(objectByName(bag, name).visible, name).toBe(true);
     }
+    await captureEvidence(page, 'wp18i-bag.png');
 
     await startScene(page, 'SettingsScene');
     await page.waitForTimeout(250);
@@ -204,5 +268,34 @@ test.describe('R6.5-WP18I concept-grade tablet HUD', () => {
     ]) {
       expect(objectByName(settings, name).visible, name).toBe(true);
     }
+    await captureEvidence(page, 'wp18i-settings.png');
+  });
+
+  test('captures decoration and race surfaces in the same touch-first visual family', async ({
+    page,
+  }) => {
+    await page.goto('/?diagnostics=1');
+    await waitForDiagnostics(page);
+    await page.waitForTimeout(700);
+
+    await startScene(page, 'CottageDecorateScene');
+    await page.waitForTimeout(300);
+    await captureEvidence(page, 'wp18i-decoration.png');
+
+    await startScene(page, 'RaceScene');
+    const raceControls = page.locator('[data-race-mobile-controls="true"]');
+    await expect(raceControls).toBeVisible();
+    await expect(raceControls).toHaveClass(/is-landscape-tablet/);
+    const run = page.locator('[data-race-action="run"]');
+    const jump = page.locator('[data-race-action="jump"]');
+    await expect(run).toBeVisible();
+    await expect(jump).toBeVisible();
+    expect(await run.evaluate((element) => getComputedStyle(element).backgroundImage)).toContain(
+      'linear-gradient',
+    );
+    expect(await jump.evaluate((element) => getComputedStyle(element).backgroundImage)).toContain(
+      'linear-gradient',
+    );
+    await captureEvidence(page, 'wp18i-race.png');
   });
 });
