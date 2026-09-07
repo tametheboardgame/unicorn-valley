@@ -164,14 +164,7 @@ export class DesktopConceptCleanupManager {
       timeButton.on('pointerdown', () => this.atmosphericTime.cycleMode());
       weatherButton.on('pointerdown', () => this.magicalWeather.cycleMode());
 
-      objects.push(
-        timeShadow,
-        timeButton,
-        timeLabel,
-        weatherShadow,
-        weatherButton,
-        weatherLabel,
-      );
+      objects.push(timeShadow, timeButton, timeLabel, weatherShadow, weatherButton, weatherLabel);
       presentation = { objects, timeButton, timeLabel, weatherButton, weatherLabel };
       this.atmosphereSettings.set(scene, presentation);
       scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
@@ -260,9 +253,7 @@ export class DesktopConceptCleanupManager {
         approximately(object.y, 43) &&
         object.displayWidth >= 300;
       const oldControlsShadow =
-        object.depth === 123 &&
-        object.x >= GAME_WIDTH - 260 &&
-        object.y >= GAME_HEIGHT - 110;
+        object.depth === 123 && object.x >= GAME_WIDTH - 260 && object.y >= GAME_HEIGHT - 110;
       const oldInteractionShadow =
         object.depth === 119 &&
         approximately(object.x, GAME_WIDTH / 2, 28) &&
