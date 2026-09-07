@@ -218,12 +218,7 @@ export class PortraitConceptPresentationManager {
         object.depth <= 126 &&
         object.x >= 1000 &&
         object.y >= 600;
-      if (
-        !namedLegacy &&
-        !topChromeDecoration &&
-        !suggestionChrome &&
-        !lowerControlsDecoration
-      ) {
+      if (!namedLegacy && !topChromeDecoration && !suggestionChrome && !lowerControlsDecoration) {
         continue;
       }
       if (!this.suppressed.has(object)) {
