@@ -18,7 +18,13 @@ const SYNC_INTERVAL_MS = 120;
 const HIDDEN_SOURCE_ALPHA = 0.001;
 const SETTINGS_VIEWPORT_TOP = 132;
 const SETTINGS_VIEWPORT_BOTTOM = 590;
+const SETTINGS_ROW_HALF_HEIGHT = 32;
 const SETTINGS_CLIP_WIDTH = 650;
+const SETTINGS_PANEL_WIDTH = 760;
+const SETTINGS_PANEL_HEIGHT = 690;
+const SETTINGS_PANEL_TOP = (GAME_HEIGHT - SETTINGS_PANEL_HEIGHT) / 2;
+const SETTINGS_PANEL_BOTTOM = SETTINGS_PANEL_TOP + SETTINGS_PANEL_HEIGHT;
+const SETTINGS_BACKDROP = 0x302545;
 const SETTINGS_CHROME_DEPTH = 19;
 const SETTINGS_FOREGROUND_DEPTH = 22;
 
@@ -30,6 +36,9 @@ interface ConceptSurfacePresentation {
 interface SettingsClipPresentation {
   top: Phaser.GameObjects.Rectangle;
   bottom: Phaser.GameObjects.Rectangle;
+  outerTop: Phaser.GameObjects.Rectangle;
+  outerBottom: Phaser.GameObjects.Rectangle;
+  frame: Phaser.GameObjects.Graphics;
 }
 
 function shouldStyleRectangle(rectangle: Phaser.GameObjects.Rectangle): boolean {
@@ -96,6 +105,27 @@ function setNamedDepth(scene: Phaser.Scene, name: string, depth: number): void {
   }
 }
 
+function isSettingsRowObject(object: Phaser.GameObjects.GameObject): boolean {
+  const name = object.name.trim();
+  return name.startsWith('settings-row-') && !name.startsWith('settings-row-shadow');
+}
+
+function setSettingsRowVisibility(scene: Phaser.Scene): void {
+  for (const object of scene.children.list) {
+    if (!isSettingsRowObject(object)) {
+      continue;
+    }
+    if (!(object instanceof Phaser.GameObjects.Rectangle) && !(object instanceof Phaser.GameObjects.Text)) {
+      continue;
+    }
+
+    const fullyInside =
+      object.y - SETTINGS_ROW_HALF_HEIGHT >= SETTINGS_VIEWPORT_TOP &&
+      object.y + SETTINGS_ROW_HALF_HEIGHT <= SETTINGS_VIEWPORT_BOTTOM;
+    object.setVisible(fullyInside);
+  }
+}
+
 export class ModalConceptPresentationManager {
   private readonly syncThrottle = new RefreshThrottle(SYNC_INTERVAL_MS);
   private readonly presentations = new WeakMap<
@@ -124,6 +154,7 @@ export class ModalConceptPresentationManager {
         continue;
       }
       if (scene.scene.key === 'SettingsScene') {
+        setSettingsRowVisibility(scene);
         this.syncSettingsClipGuards(scene);
       }
       this.syncScene(scene);
@@ -132,12 +163,12 @@ export class ModalConceptPresentationManager {
 
   private syncSettingsClipGuards(scene: Phaser.Scene): void {
     let clips = this.settingsClipPresentations.get(scene);
-    if (!clips?.top.active || !clips.bottom.active) {
-      const topHeight = SETTINGS_VIEWPORT_TOP - 18;
+    if (!clips?.top.active || !clips.bottom.active || !clips.outerTop.active || !clips.outerBottom.active) {
+      const topHeight = SETTINGS_VIEWPORT_TOP - SETTINGS_PANEL_TOP;
       const top = scene.add
         .rectangle(
           GAME_WIDTH / 2,
-          18 + topHeight / 2,
+          SETTINGS_PANEL_TOP + topHeight / 2,
           SETTINGS_CLIP_WIDTH,
           topHeight,
           CONCEPT_UI.cream,
@@ -145,7 +176,7 @@ export class ModalConceptPresentationManager {
         )
         .setName('settings-clip-top')
         .setDepth(SETTINGS_CHROME_DEPTH);
-      const bottomHeight = GAME_HEIGHT - 18 - SETTINGS_VIEWPORT_BOTTOM;
+      const bottomHeight = SETTINGS_PANEL_BOTTOM - SETTINGS_VIEWPORT_BOTTOM;
       const bottom = scene.add
         .rectangle(
           GAME_WIDTH / 2,
@@ -157,17 +188,59 @@ export class ModalConceptPresentationManager {
         )
         .setName('settings-clip-bottom')
         .setDepth(SETTINGS_CHROME_DEPTH);
-      clips = { top, bottom };
+      const outerTop = scene.add
+        .rectangle(
+          GAME_WIDTH / 2,
+          SETTINGS_PANEL_TOP / 2,
+          SETTINGS_PANEL_WIDTH,
+          SETTINGS_PANEL_TOP,
+          SETTINGS_BACKDROP,
+          1,
+        )
+        .setName('settings-clip-outer-top')
+        .setDepth(SETTINGS_CHROME_DEPTH + 1);
+      const outerBottomHeight = GAME_HEIGHT - SETTINGS_PANEL_BOTTOM;
+      const outerBottom = scene.add
+        .rectangle(
+          GAME_WIDTH / 2,
+          SETTINGS_PANEL_BOTTOM + outerBottomHeight / 2,
+          SETTINGS_PANEL_WIDTH,
+          outerBottomHeight,
+          SETTINGS_BACKDROP,
+          1,
+        )
+        .setName('settings-clip-outer-bottom')
+        .setDepth(SETTINGS_CHROME_DEPTH + 1);
+      const frame = scene.add
+        .graphics()
+        .setName('settings-frame-overlay')
+        .setDepth(SETTINGS_FOREGROUND_DEPTH + 3);
+      frame.lineStyle(6, CONCEPT_UI.lavenderLine, 1);
+      frame.strokeRoundedRect(
+        GAME_WIDTH / 2 - SETTINGS_PANEL_WIDTH / 2,
+        SETTINGS_PANEL_TOP,
+        SETTINGS_PANEL_WIDTH,
+        SETTINGS_PANEL_HEIGHT,
+        30,
+      );
+
+      clips = { top, bottom, outerTop, outerBottom, frame };
       this.settingsClipPresentations.set(scene, clips);
       scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
         top.destroy();
         bottom.destroy();
+        outerTop.destroy();
+        outerBottom.destroy();
+        frame.destroy();
         this.settingsClipPresentations.delete(scene);
       });
     }
 
     clips.top.setVisible(true).setDepth(SETTINGS_CHROME_DEPTH);
     clips.bottom.setVisible(true).setDepth(SETTINGS_CHROME_DEPTH);
+    clips.outerTop.setVisible(true).setDepth(SETTINGS_CHROME_DEPTH + 1);
+    clips.outerBottom.setVisible(true).setDepth(SETTINGS_CHROME_DEPTH + 1);
+    clips.frame.setVisible(true).setDepth(SETTINGS_FOREGROUND_DEPTH + 3);
 
     setNamedDepth(scene, 'settings-heading', SETTINGS_FOREGROUND_DEPTH);
     setNamedDepth(scene, 'settings-hint', SETTINGS_FOREGROUND_DEPTH);
