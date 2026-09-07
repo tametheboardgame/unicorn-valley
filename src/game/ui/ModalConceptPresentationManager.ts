@@ -25,10 +25,10 @@ function shouldStyleRectangle(
   scene: Phaser.Scene,
   rectangle: Phaser.GameObjects.Rectangle,
 ): boolean {
-  const name = rectangle.name.trim();
-  if (scene.scene.key === 'SettingsScene' && name.startsWith('settings-row-')) {
+  if (scene.scene.key === 'SettingsScene') {
     return false;
   }
+  const name = rectangle.name.trim();
   return Boolean(name && !name.includes('backdrop') && SURFACE_NAME_PATTERN.test(name));
 }
 
