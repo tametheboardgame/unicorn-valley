@@ -84,7 +84,7 @@ test.describe('R6.5-WP18I scrollable Settings', () => {
     const musicBefore = objectByName(before, 'settings-row-music-label');
     const timeBefore = objectByName(before, 'settings-row-time-of-day-label');
     const thumbBefore = objectByName(before, 'settings-scrollbar-thumb');
-    const doneBefore = objectByName(before, 'settings-done');
+    const doneBefore = objectByName(before, 'settings-done-label');
 
     expect(musicBefore.y - mutedBefore.y).toBeGreaterThanOrEqual(80);
     expect(timeBefore.y).toBeGreaterThan(590);
@@ -101,7 +101,7 @@ test.describe('R6.5-WP18I scrollable Settings', () => {
     const mutedAfterWheel = objectByName(afterWheel, 'settings-row-muted-label');
     const timeAfterWheel = objectByName(afterWheel, 'settings-row-time-of-day-label');
     const thumbAfterWheel = objectByName(afterWheel, 'settings-scrollbar-thumb');
-    const doneAfterWheel = objectByName(afterWheel, 'settings-done');
+    const doneAfterWheel = objectByName(afterWheel, 'settings-done-label');
 
     expect(mutedAfterWheel.y).toBeLessThan(mutedBefore.y);
     expect(timeAfterWheel.y).toBeLessThan(timeBefore.y);
@@ -120,6 +120,6 @@ test.describe('R6.5-WP18I scrollable Settings', () => {
     expect(objectByName(afterDrag, 'settings-row-time-of-day-label').y).toBeLessThanOrEqual(
       timeAfterWheelY,
     );
-    expect(objectByName(afterDrag, 'settings-done').y).toBe(doneBefore.y);
+    expect(objectByName(afterDrag, 'settings-done-label').y).toBe(doneBefore.y);
   });
 });
