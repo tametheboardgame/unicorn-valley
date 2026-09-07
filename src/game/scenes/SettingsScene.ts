@@ -404,19 +404,15 @@ export class SettingsScene extends Phaser.Scene {
     if (PANEL_BOTTOM < GAME_HEIGHT) {
       const height = GAME_HEIGHT - PANEL_BOTTOM;
       this.add
-        .rectangle(
-          GAME_WIDTH / 2,
-          PANEL_BOTTOM + height / 2,
-          GAME_WIDTH,
-          height,
-          BACKDROP,
-          1,
-        )
+        .rectangle(GAME_WIDTH / 2, PANEL_BOTTOM + height / 2, GAME_WIDTH, height, BACKDROP, 1)
         .setName('settings-viewport-outer-bottom-guard')
         .setDepth(CLIP_GUARD_DEPTH + 1);
     }
 
-    const frame = this.add.graphics().setName('settings-panel-frame').setDepth(FIXED_CHROME_DEPTH + 4);
+    const frame = this.add
+      .graphics()
+      .setName('settings-panel-frame')
+      .setDepth(FIXED_CHROME_DEPTH + 4);
     frame.lineStyle(6, UI_COLOURS.ribbonStrong, 1);
     frame.strokeRoundedRect(
       GAME_WIDTH / 2 - PANEL_WIDTH / 2,
