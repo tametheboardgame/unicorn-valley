@@ -106,7 +106,6 @@ export class PortraitConceptPresentationManager {
 
     if (!scene) {
       this.clearDock();
-      this.restoreSuppressed();
       return;
     }
 
