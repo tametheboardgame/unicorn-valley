@@ -9,7 +9,6 @@ import { getVerticalSliceAudio } from '../audio/VerticalSliceAudio';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import {
-  GAME_SETTING_KINDS,
   describeGameSetting,
   moveGameSettingSelection,
   type GameSettingKind,
@@ -22,26 +21,51 @@ interface SettingsSceneData {
 
 type SettingsRowKind = GameSettingKind | 'time-of-day' | 'weather';
 
+interface SettingsSectionDefinition {
+  title: string;
+  kinds: readonly SettingsRowKind[];
+}
+
 interface SettingRow {
-  shadow: Phaser.GameObjects.Rectangle;
+  surface: Phaser.GameObjects.Graphics;
   button: Phaser.GameObjects.Rectangle;
   label: Phaser.GameObjects.Text;
   kind: SettingsRowKind;
   contentY: number;
+  hovered: boolean;
 }
 
-const SETTINGS_ROW_KINDS: readonly SettingsRowKind[] = [
-  ...GAME_SETTING_KINDS,
-  'time-of-day',
-  'weather',
+interface SettingsSectionHeading {
+  label: Phaser.GameObjects.Text;
+  contentY: number;
+}
+
+const SETTINGS_SECTIONS: readonly SettingsSectionDefinition[] = [
+  {
+    title: 'Sound',
+    kinds: ['muted', 'music', 'ambience', 'sfx'],
+  },
+  {
+    title: 'Accessibility',
+    kinds: ['reduced-motion', 'high-visibility'],
+  },
+  {
+    title: 'Display & World',
+    kinds: ['fullscreen', 'time-of-day', 'weather'],
+  },
 ];
 
 const ROW_X = GAME_WIDTH / 2;
 const ROW_WIDTH = 590;
-const ROW_HEIGHT = 64;
-const ROW_STEP = 84;
-const VIEWPORT_TOP = 132;
-const VIEWPORT_HEIGHT = 458;
+const ROW_HEIGHT = 58;
+const ROW_RADIUS = 22;
+const ROW_GAP = 14;
+const SECTION_HEADING_HEIGHT = 24;
+const SECTION_HEADING_GAP = 10;
+const SECTION_GAP = 24;
+const CONTENT_PADDING = 8;
+const VIEWPORT_TOP = 145;
+const VIEWPORT_HEIGHT = 420;
 const VIEWPORT_BOTTOM = VIEWPORT_TOP + VIEWPORT_HEIGHT;
 const VIEWPORT_LEFT = ROW_X - ROW_WIDTH / 2 - 8;
 const VIEWPORT_WIDTH = ROW_WIDTH + 16;
@@ -58,6 +82,8 @@ export class SettingsScene extends Phaser.Scene {
   private readonly magicalWeather = getBrowserMagicalWeatherService(this.saveService);
   private returnScene = 'MoonflowerGladeScene';
   private rows: SettingRow[] = [];
+  private sectionHeadings: SettingsSectionHeading[] = [];
+  private contentHeight = 0;
   private doneButton: Phaser.GameObjects.Rectangle | null = null;
   private statusText: Phaser.GameObjects.Text | null = null;
   private scrollbarThumb: Phaser.GameObjects.Rectangle | null = null;
@@ -81,6 +107,8 @@ export class SettingsScene extends Phaser.Scene {
   public create(data: SettingsSceneData): void {
     this.returnScene = data.returnScene ?? 'MoonflowerGladeScene';
     this.rows = [];
+    this.sectionHeadings = [];
+    this.contentHeight = 0;
     this.selectedIndex = 0;
     this.scrollOffset = 0;
     this.maxScroll = 0;
@@ -120,14 +148,12 @@ export class SettingsScene extends Phaser.Scene {
       .setDepth(4);
 
     this.createListMask();
-    SETTINGS_ROW_KINDS.forEach((kind, index) => {
-      this.createRow(kind, index);
-    });
-    this.maxScroll = Math.max(0, this.getContentHeight() - VIEWPORT_HEIGHT);
+    this.createSectionedRows();
+    this.maxScroll = Math.max(0, this.contentHeight - VIEWPORT_HEIGHT);
     this.createScrollbar();
 
     this.statusText = this.add
-      .text(GAME_WIDTH / 2, 612, 'Swipe or scroll for more  •  ↑ ↓ choose  •  Enter changes', {
+      .text(GAME_WIDTH / 2, 600, 'Swipe or scroll for more  •  ↑ ↓ choose  •  Enter changes', {
         color: UI_COLOURS.mutedInk,
         fontFamily: UI_FONT,
         fontSize: '13px',
@@ -137,15 +163,15 @@ export class SettingsScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setDepth(4);
 
-    createUiShadow(this, GAME_WIDTH / 2, 666, 260, 64, 4, 0.16);
+    createUiShadow(this, GAME_WIDTH / 2, 656, 260, 64, 4, 0.16);
     this.doneButton = this.add
-      .rectangle(GAME_WIDTH / 2, 666, 260, 64, UI_COLOURS.gold, 1)
+      .rectangle(GAME_WIDTH / 2, 656, 260, 64, UI_COLOURS.gold, 1)
       .setName('settings-done')
       .setStrokeStyle(4, UI_COLOURS.goldStrong, 1)
       .setInteractive({ useHandCursor: true })
       .setDepth(5);
     this.add
-      .text(GAME_WIDTH / 2, 666, 'Done', {
+      .text(GAME_WIDTH / 2, 656, 'Done', {
         color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
         fontSize: '21px',
@@ -199,6 +225,7 @@ export class SettingsScene extends Phaser.Scene {
       this.listMaskGraphics?.destroy();
       this.listMaskGraphics = null;
       this.rows = [];
+      this.sectionHeadings = [];
       this.doneButton = null;
       this.statusText = null;
       this.scrollbarThumb = null;
@@ -212,16 +239,59 @@ export class SettingsScene extends Phaser.Scene {
     this.listMaskGraphics = graphics;
   }
 
-  private createRow(kind: SettingsRowKind, index: number): void {
-    const contentY = ROW_HEIGHT / 2 + index * ROW_STEP;
+  private createSectionedRows(): void {
+    let cursor = CONTENT_PADDING;
+
+    SETTINGS_SECTIONS.forEach((section, sectionIndex) => {
+      if (sectionIndex > 0) {
+        cursor += SECTION_GAP;
+      }
+
+      const headingY = cursor + SECTION_HEADING_HEIGHT / 2;
+      this.createSectionHeading(section.title, headingY);
+      cursor += SECTION_HEADING_HEIGHT + SECTION_HEADING_GAP;
+
+      for (const kind of section.kinds) {
+        const contentY = cursor + ROW_HEIGHT / 2;
+        this.createRow(kind, this.rows.length, contentY);
+        cursor += ROW_HEIGHT + ROW_GAP;
+      }
+      cursor -= ROW_GAP;
+    });
+
+    this.contentHeight = cursor + CONTENT_PADDING;
+  }
+
+  private createSectionHeading(title: string, contentY: number): void {
+    const label = this.add
+      .text(VIEWPORT_LEFT + 12, VIEWPORT_TOP + contentY, title, {
+        color: UI_COLOURS.lavenderDark,
+        fontFamily: UI_FONT,
+        fontSize: '17px',
+        fontStyle: 'bold',
+      })
+      .setName(`settings-section-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`)
+      .setOrigin(0, 0.5)
+      .setDepth(6);
+
+    if (this.listMaskGraphics) {
+      label.setMask(this.listMaskGraphics.createGeometryMask());
+    }
+    this.sectionHeadings.push({ label, contentY });
+  }
+
+  private createRow(kind: SettingsRowKind, index: number, contentY: number): void {
     const y = VIEWPORT_TOP + contentY;
-    const shadow = createUiShadow(this, ROW_X, y, ROW_WIDTH, ROW_HEIGHT, 4, 0.11);
-    const button = this.add
-      .rectangle(ROW_X, y, ROW_WIDTH, ROW_HEIGHT, UI_COLOURS.lavender, 1)
-      .setName(`settings-row-${kind}`)
-      .setStrokeStyle(4, UI_COLOURS.lavenderStrong, 0.96)
-      .setInteractive({ useHandCursor: true })
+    const surface = this.add
+      .graphics()
+      .setName(`settings-row-surface-${kind}`)
+      .setPosition(ROW_X, y)
       .setDepth(5);
+    const button = this.add
+      .rectangle(ROW_X, y, ROW_WIDTH, ROW_HEIGHT, UI_COLOURS.white, 0.001)
+      .setName(`settings-row-${kind}`)
+      .setInteractive({ useHandCursor: true })
+      .setDepth(6);
     const label = this.add
       .text(ROW_X, y, '', {
         color: UI_COLOURS.ink,
@@ -231,15 +301,23 @@ export class SettingsScene extends Phaser.Scene {
       })
       .setName(`settings-row-${kind}-label`)
       .setOrigin(0.5)
-      .setDepth(6);
+      .setDepth(7);
 
     if (this.listMaskGraphics) {
-      const mask = this.listMaskGraphics.createGeometryMask();
-      shadow.setMask(mask);
-      button.setMask(mask);
-      label.setMask(mask);
+      surface.setMask(this.listMaskGraphics.createGeometryMask());
+      button.setMask(this.listMaskGraphics.createGeometryMask());
+      label.setMask(this.listMaskGraphics.createGeometryMask());
     }
 
+    const row: SettingRow = { surface, button, label, kind, contentY, hovered: false };
+    button.on('pointerover', () => {
+      row.hovered = true;
+      this.redrawRow(row);
+    });
+    button.on('pointerout', () => {
+      row.hovered = false;
+      this.redrawRow(row);
+    });
     button.on('pointerup', () => {
       if (this.dragDistance >= DRAG_THRESHOLD) {
         return;
@@ -248,7 +326,51 @@ export class SettingsScene extends Phaser.Scene {
       this.ensureSelectedVisible();
       void this.toggleSetting(kind);
     });
-    this.rows.push({ shadow, button, label, kind, contentY });
+    this.rows.push(row);
+  }
+
+  private redrawRow(row: SettingRow): void {
+    const presentation = this.getRowPresentation(row.kind);
+    const selected = this.rows[this.selectedIndex] === row;
+    const fill = row.hovered
+      ? UI_COLOURS.cream
+      : presentation.enabled
+        ? UI_COLOURS.mint
+        : UI_COLOURS.lavender;
+    const stroke = selected
+      ? UI_COLOURS.goldStrong
+      : presentation.enabled
+        ? UI_COLOURS.mintStrong
+        : UI_COLOURS.lavenderStrong;
+    const lineWidth = selected ? 5 : 3;
+
+    row.surface.clear();
+    row.surface.fillStyle(UI_COLOURS.shadow, 0.12);
+    row.surface.fillRoundedRect(
+      -ROW_WIDTH / 2 + 5,
+      -ROW_HEIGHT / 2 + 6,
+      ROW_WIDTH,
+      ROW_HEIGHT,
+      ROW_RADIUS,
+    );
+    row.surface.fillStyle(fill, 1);
+    row.surface.fillRoundedRect(-ROW_WIDTH / 2, -ROW_HEIGHT / 2, ROW_WIDTH, ROW_HEIGHT, ROW_RADIUS);
+    row.surface.lineStyle(lineWidth, stroke, 1);
+    row.surface.strokeRoundedRect(
+      -ROW_WIDTH / 2,
+      -ROW_HEIGHT / 2,
+      ROW_WIDTH,
+      ROW_HEIGHT,
+      ROW_RADIUS,
+    );
+    row.surface.fillStyle(UI_COLOURS.white, 0.18);
+    row.surface.fillRoundedRect(
+      -ROW_WIDTH / 2 + 6,
+      -ROW_HEIGHT / 2 + 6,
+      ROW_WIDTH - 12,
+      18,
+      14,
+    );
   }
 
   private createScrollbar(): void {
@@ -275,13 +397,6 @@ export class SettingsScene extends Phaser.Scene {
       )
       .setName('settings-scrollbar-thumb')
       .setDepth(6);
-  }
-
-  private getContentHeight(): number {
-    if (SETTINGS_ROW_KINDS.length === 0) {
-      return 0;
-    }
-    return ROW_HEIGHT + (SETTINGS_ROW_KINDS.length - 1) * ROW_STEP;
   }
 
   private getRowPresentation(kind: SettingsRowKind) {
@@ -317,25 +432,15 @@ export class SettingsScene extends Phaser.Scene {
     for (const row of this.rows) {
       const presentation = this.getRowPresentation(row.kind);
       row.label.setText(presentation.label);
-      row.button.setFillStyle(presentation.enabled ? UI_COLOURS.mint : UI_COLOURS.lavender, 1);
+      this.redrawRow(row);
     }
     this.refreshFocus();
   }
 
   private refreshFocus(): void {
-    this.rows.forEach((row, index) => {
-      const presentation = this.getRowPresentation(row.kind);
-      const selected = index === this.selectedIndex;
-      row.button.setStrokeStyle(
-        selected ? 6 : 4,
-        selected
-          ? UI_COLOURS.goldStrong
-          : presentation.enabled
-            ? UI_COLOURS.mintStrong
-            : UI_COLOURS.lavenderStrong,
-        1,
-      );
-    });
+    for (const row of this.rows) {
+      this.redrawRow(row);
+    }
     this.doneButton?.setStrokeStyle(
       this.selectedIndex === this.rows.length ? 6 : 4,
       UI_COLOURS.goldStrong,
@@ -363,8 +468,8 @@ export class SettingsScene extends Phaser.Scene {
     if (!row) {
       return;
     }
-    const rowTop = row.contentY - ROW_HEIGHT / 2;
-    const rowBottom = row.contentY + ROW_HEIGHT / 2;
+    const rowTop = row.contentY - ROW_HEIGHT / 2 - 8;
+    const rowBottom = row.contentY + ROW_HEIGHT / 2 + 8;
     if (rowTop < this.scrollOffset) {
       this.setScrollOffset(rowTop);
     } else if (rowBottom > this.scrollOffset + VIEWPORT_HEIGHT) {
@@ -374,9 +479,12 @@ export class SettingsScene extends Phaser.Scene {
 
   private setScrollOffset(value: number): void {
     this.scrollOffset = Phaser.Math.Clamp(value, 0, this.maxScroll);
+    for (const heading of this.sectionHeadings) {
+      heading.label.setY(VIEWPORT_TOP + heading.contentY - this.scrollOffset);
+    }
     for (const row of this.rows) {
       const y = VIEWPORT_TOP + row.contentY - this.scrollOffset;
-      row.shadow.setY(y + 4);
+      row.surface.setY(y);
       row.button.setY(y);
       row.label.setY(y);
       if (row.button.input) {
@@ -391,10 +499,9 @@ export class SettingsScene extends Phaser.Scene {
     if (!this.scrollbarThumb) {
       return;
     }
-    const contentHeight = this.getContentHeight();
     const thumbHeight = Math.max(
       SCROLLBAR_MIN_THUMB,
-      VIEWPORT_HEIGHT * (VIEWPORT_HEIGHT / Math.max(VIEWPORT_HEIGHT, contentHeight)),
+      VIEWPORT_HEIGHT * (VIEWPORT_HEIGHT / Math.max(VIEWPORT_HEIGHT, this.contentHeight)),
     );
     const travel = VIEWPORT_HEIGHT - thumbHeight;
     const ratio = this.maxScroll > 0 ? this.scrollOffset / this.maxScroll : 0;
