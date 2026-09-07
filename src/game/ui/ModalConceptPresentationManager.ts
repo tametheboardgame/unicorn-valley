@@ -91,7 +91,7 @@ function redrawSurface(
 
 function setNamedDepth(scene: Phaser.Scene, name: string, depth: number): void {
   const object = scene.children.getByName(name);
-  if (object instanceof Phaser.GameObjects.GameObject) {
+  if (object instanceof Phaser.GameObjects.Rectangle || object instanceof Phaser.GameObjects.Text) {
     object.setDepth(depth);
   }
 }
