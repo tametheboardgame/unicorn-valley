@@ -74,5 +74,10 @@ test.describe('WP18J shared responsive concept UI', () => {
       objects.some(({ name, visible }) => name === 'exploration-shell-sound-button' && visible),
     ).toBe(false);
     expect(objects.some(({ name }) => name === 'activity-suggestion-card')).toBe(false);
+
+    await page.screenshot({
+      path: test.info().outputPath('wp18j-phone-landscape.png'),
+      fullPage: true,
+    });
   });
 });
