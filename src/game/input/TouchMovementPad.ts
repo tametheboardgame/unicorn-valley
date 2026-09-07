@@ -55,7 +55,8 @@ function shouldRenderPortraitDomControls(): boolean {
 export class TouchMovementPad {
   private readonly objects: Array<Phaser.GameObjects.Arc | Phaser.GameObjects.Text> = [];
   private readonly buttons: Phaser.GameObjects.Arc[] = [];
-  private readonly tabletMode: boolean;
+  private portraitMode = shouldRenderPortraitDomControls();
+  private tabletMode = !this.portraitMode && browserUsesLandscapeTabletPresentation();
   private domRoot: HTMLDivElement | null = null;
   private visible = true;
   private scenePaused = false;
@@ -70,28 +71,12 @@ export class TouchMovementPad {
     private readonly input: PointerTouchInputAdapter,
   ) {
     padsByScene.set(scene, this);
-    this.tabletMode = browserUsesLandscapeTabletPresentation();
     this.scene.events.on(SCENE_PAUSE_EVENT, this.handleScenePause, this);
     this.scene.events.on(SCENE_RESUME_EVENT, this.handleSceneResume, this);
     globalThis.addEventListener?.('blur', this.handleWindowBlur);
     globalThis.document?.addEventListener('visibilitychange', this.handleVisibilityChange);
 
-    if (shouldRenderPortraitDomControls()) {
-      this.createPortraitDomControls();
-    } else if (this.tabletMode) {
-      this.createLandscapeTabletControls();
-    } else {
-      const originX = 118;
-      const originY = GAME_HEIGHT - 118;
-      const spacing = 62;
-
-      this.createButton(originX, originY - spacing, '▲', 'MOVE_Y', -1, 'up');
-      this.createButton(originX, originY + spacing, '▼', 'MOVE_Y', 1, 'down');
-      this.createButton(originX - spacing, originY, '◀', 'MOVE_X', -1, 'left');
-      this.createButton(originX + spacing, originY, '▶', 'MOVE_X', 1, 'right');
-      this.createGallopButton(originX + spacing * 2.35, originY - spacing * 0.95);
-    }
-
+    this.createPresentation();
     this.setVisible(
       this.tabletMode
         ? true
@@ -113,6 +98,24 @@ export class TouchMovementPad {
     return nextVisible;
   }
 
+  public refresh(): void {
+    const portraitMode = shouldRenderPortraitDomControls();
+    const tabletMode = !portraitMode && browserUsesLandscapeTabletPresentation();
+    if (portraitMode === this.portraitMode && tabletMode === this.tabletMode) {
+      return;
+    }
+
+    this.releaseInput();
+    this.clearPresentation();
+    this.portraitMode = portraitMode;
+    this.tabletMode = tabletMode;
+    if (tabletMode) {
+      this.visible = true;
+    }
+    this.createPresentation();
+    this.applyVisibility();
+  }
+
   public destroy(): void {
     if (this.destroyed) {
       return;
@@ -123,13 +126,7 @@ export class TouchMovementPad {
     globalThis.removeEventListener?.('blur', this.handleWindowBlur);
     globalThis.document?.removeEventListener('visibilitychange', this.handleVisibilityChange);
     this.releaseInput();
-    this.domRoot?.remove();
-    this.domRoot = null;
-    for (const object of this.objects) {
-      object.destroy();
-    }
-    this.objects.length = 0;
-    this.buttons.length = 0;
+    this.clearPresentation();
     if (padsByScene.get(this.scene) === this) {
       padsByScene.delete(this.scene);
     }
@@ -169,6 +166,26 @@ export class TouchMovementPad {
     this.applyVisibility();
   }
 
+  private createPresentation(): void {
+    if (this.portraitMode) {
+      this.createPortraitDomControls();
+    } else if (this.tabletMode) {
+      this.createLandscapeTabletControls();
+    } else {
+      this.createDefaultCanvasControls();
+    }
+  }
+
+  private clearPresentation(): void {
+    this.domRoot?.remove();
+    this.domRoot = null;
+    for (const object of this.objects) {
+      object.destroy();
+    }
+    this.objects.length = 0;
+    this.buttons.length = 0;
+  }
+
   private applyVisibility(): void {
     const renderedVisible = this.visible && !this.scenePaused;
     if (this.domRoot) {
@@ -191,6 +208,18 @@ export class TouchMovementPad {
     this.input.setAxis('MOVE_X', 0);
     this.input.setAxis('MOVE_Y', 0);
     this.input.setButton('GALLOP', false);
+  }
+
+  private createDefaultCanvasControls(): void {
+    const originX = 118;
+    const originY = GAME_HEIGHT - 118;
+    const spacing = 62;
+
+    this.createButton(originX, originY - spacing, '▲', 'MOVE_Y', -1, 'up');
+    this.createButton(originX, originY + spacing, '▼', 'MOVE_Y', 1, 'down');
+    this.createButton(originX - spacing, originY, '◀', 'MOVE_X', -1, 'left');
+    this.createButton(originX + spacing, originY, '▶', 'MOVE_X', 1, 'right');
+    this.createGallopButton(originX + spacing * 2.35, originY - spacing * 0.95);
   }
 
   private createLandscapeTabletControls(): void {

@@ -161,6 +161,7 @@ export class ExplorationShell {
     if (this.destroyed) {
       return;
     }
+    this.touchMovementPad.refresh();
     this.suggestionCard?.refresh();
     this.explorationChrome.refresh();
     if (this.shimmerLabel && this.economy) {
