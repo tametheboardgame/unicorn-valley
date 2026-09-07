@@ -17,6 +17,9 @@ const LOCATION_TITLES: Readonly<Record<string, string>> = {
   StarlightBeachScene: 'Starlight Beach',
 };
 
+const LEGACY_ACTION_PROMPT =
+  /^(talk(?:\s+to)?|speak(?:\s+to)?|sit|enter|inspect|interact|start|play|buy|shop|use|read|look|visit|open|pick|choose|place)\b/i;
+
 function usesDesktopConceptPresentation(): boolean {
   return (
     !browserUsesLandscapeTabletPresentation() &&
@@ -28,6 +31,7 @@ function usesDesktopConceptPresentation(): boolean {
 
 function hideRectangle(object: Phaser.GameObjects.Rectangle): void {
   object.setAlpha(0.001);
+  object.setFillStyle(object.fillColor, 0.001);
   object.disableInteractive();
 }
 
@@ -77,13 +81,12 @@ export class DesktopConceptCleanupManager {
       if (object.name.length > 0 || object.scrollFactorX !== 0 || object.scrollFactorY !== 0) {
         continue;
       }
-      if (object.alpha > 0.35 || object.depth < 115 || object.depth > 124) {
+      if (object.depth < 115 || object.depth > 124 || object.fillAlpha > 0.35) {
         continue;
       }
 
-      const legacyTopShadow = object.y <= 105 && object.x > 500;
-      const legacyBottomShadow =
-        object.y >= GAME_HEIGHT - 150 && (object.x > 500 || object.displayWidth >= 350);
+      const legacyTopShadow = object.y <= 125;
+      const legacyBottomShadow = object.y >= GAME_HEIGHT - 170;
       if (legacyTopShadow || legacyBottomShadow) {
         hideRectangle(object);
       }
@@ -95,17 +98,16 @@ export class DesktopConceptCleanupManager {
       if (!(object instanceof Phaser.GameObjects.Text)) {
         continue;
       }
-      if (object.depth >= 190 || object.scrollFactorX !== 0 || object.y < GAME_HEIGHT - 170) {
+      if (object.depth >= 190 || object.scrollFactorX !== 0 || object.scrollFactorY !== 0) {
         continue;
       }
 
-      const text = object.text.trim().toLowerCase();
-      if (
-        text.startsWith('talk to ') ||
-        text.startsWith('speak to ') ||
-        text.startsWith('interact') ||
-        text.startsWith('enter ')
-      ) {
+      const text = object.text.trim();
+      const isOldActionPrompt = LEGACY_ACTION_PROMPT.test(text);
+      const carriesOldInputInstruction =
+        /\b(?:e\s*\/\s*enter|enter\s*\/|\/\s*tap\b|tap\s*:)\b/i.test(text);
+
+      if (isOldActionPrompt && (carriesOldInputInstruction || object.y >= GAME_HEIGHT - 190)) {
         object.setAlpha(0.001).disableInteractive();
       }
     }
