@@ -6,12 +6,12 @@
   "phase": "R6.5 - Valley Completeness and Breadth, human-playtest remediation",
   "current_work_package": "R6.5-WP18I",
   "current_work_package_path": "docs/work-packages/R6.5-WP18I-CONCEPT-GRADE-UI-REMEDIATION.md",
-  "status": "planned",
+  "status": "in_progress",
   "autonomy_state": "green",
-  "agent_state": "idle",
-  "branch": "main",
-  "latest_commit": "d9caf300930427e719559fa16bfe0654a3fe1aa7",
-  "ci_state": "passing",
+  "agent_state": "active",
+  "branch": "agent/r6.5-wp18i-concept-grade-ui",
+  "latest_commit": "d9f9addb9937d75005738ce835af1e9b5e79a8f3",
+  "ci_state": "unknown",
   "technical_validation_state": "pending",
   "human_acceptance_state": "pending",
   "next_work_package": "R6.5-WP18H",
@@ -21,6 +21,6 @@
   "night_shift_state": "not_configured",
   "chat_disposition": "keep",
   "delivery_mode": "pr_required",
-  "last_activity_at": "2026-09-07T06:58:00+01:00",
-  "updated_at": "2026-09-07T06:58:00+01:00"
+  "last_activity_at": "2026-09-07T07:10:00+01:00",
+  "updated_at": "2026-09-07T07:10:00+01:00"
 }
