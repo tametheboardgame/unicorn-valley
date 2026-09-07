@@ -120,7 +120,9 @@ export class SettingsScene extends Phaser.Scene {
       .setDepth(4);
 
     this.createListMask();
-    SETTINGS_ROW_KINDS.forEach((kind, index) => this.createRow(kind, index));
+    SETTINGS_ROW_KINDS.forEach((kind, index) => {
+      this.createRow(kind, index);
+    });
     this.maxScroll = Math.max(0, this.getContentHeight() - VIEWPORT_HEIGHT);
     this.createScrollbar();
 
