@@ -616,9 +616,7 @@ export class InventoryScene extends Phaser.Scene {
     parchment.lineBetween(760, 420, 1120, 386);
     this.track(parchment);
 
-    const compass = this.add
-      .circle(1092, 535, 34, 0xf5dfad, 0.42)
-      .setStrokeStyle(2, 0x9d7449, 0.6);
+    const compass = this.add.circle(1092, 535, 34, 0xf5dfad, 0.42).setStrokeStyle(2, 0x9d7449, 0.6);
     const compassLabel = this.add
       .text(1092, 535, '✦\nN', {
         color: '#7f6247',

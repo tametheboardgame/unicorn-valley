@@ -161,7 +161,9 @@ async function visibleTexts(page: Page): Promise<string[]> {
   });
 }
 
-async function sectionTabPositions(page: Page): Promise<Array<{ name: string; x: number; y: number }>> {
+async function sectionTabPositions(
+  page: Page,
+): Promise<Array<{ name: string; x: number; y: number }>> {
   return page.evaluate(() => {
     const diagnostics = (
       window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
@@ -184,10 +186,14 @@ test('WP15 Wonderbook surfaces friends, places, races and gentle long-term goals
   await waitForDiagnostics(page);
   await startWonderbook(page);
 
-  const indexTabs = (await sectionTabPositions(page)).filter(({ name }) => !name.includes('shadow'));
+  const indexTabs = (await sectionTabPositions(page)).filter(
+    ({ name }) => !name.includes('shadow'),
+  );
   expect(indexTabs).toHaveLength(5);
   expect(indexTabs.every(({ x }) => x > 1140)).toBe(true);
-  expect(indexTabs.map(({ y }) => y)).toEqual([...indexTabs.map(({ y }) => y)].sort((a, b) => a - b));
+  expect(indexTabs.map(({ y }) => y)).toEqual(
+    [...indexTabs.map(({ y }) => y)].sort((a, b) => a - b),
+  );
 
   await clickNamedObject(page, 'wonderbook-section-friends');
   await waitForObject(page, 'wonderbook-sticker:character:pip');
