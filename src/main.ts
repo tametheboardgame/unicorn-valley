@@ -55,6 +55,12 @@ void import('./game/ui/ExplorationShellWorldManager').then(
   },
 );
 
+void import('./game/ui/ModalConceptPresentationManager').then(
+  ({ getModalConceptPresentationManager }) => {
+    getModalConceptPresentationManager(game);
+  },
+);
+
 void import('./game/economy/EconomyRewardWorldManager').then(({ getEconomyRewardWorldManager }) => {
   getEconomyRewardWorldManager();
 });
