@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import type { ItemId } from '../../content/contentTypes';
-import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
+import { GAME_WIDTH } from '../config/gameConstants';
 import { ShimmerEconomyService } from '../economy/ShimmerEconomyService';
 import { InputController } from '../input/InputController';
 import { KeyboardInputAdapter } from '../input/KeyboardInputAdapter';
@@ -635,11 +635,10 @@ export class InventoryScene extends Phaser.Scene {
     parchment.fillStyle(0xe8c1a1, 0.22);
     parchment.fillEllipse(955, 265, 280, 170);
     parchment.lineStyle(2, 0x9ab2a5, 0.35);
-    parchment.beginPath();
-    parchment.moveTo(150, 520);
-    parchment.bezierCurveTo(330, 420, 430, 560, 610, 454);
-    parchment.bezierCurveTo(760, 365, 870, 500, 1120, 386);
-    parchment.strokePath();
+    parchment.lineBetween(150, 520, 330, 470);
+    parchment.lineBetween(330, 470, 520, 510);
+    parchment.lineBetween(520, 510, 760, 420);
+    parchment.lineBetween(760, 420, 1120, 386);
     for (const y of [166, 565]) {
       for (let x = 134; x < 1148; x += 26) {
         parchment.lineStyle(2, 0x9d7449, 0.42);
