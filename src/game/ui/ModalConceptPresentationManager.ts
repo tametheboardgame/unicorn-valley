@@ -55,13 +55,7 @@ function redrawSurface(
 
   graphics.clear();
   graphics.fillStyle(CONCEPT_UI.shadow, height >= 150 ? 0.13 : 0.2);
-  graphics.fillRoundedRect(
-    x - width / 2 + 5,
-    y - height / 2 + 7,
-    width,
-    height,
-    radius,
-  );
+  graphics.fillRoundedRect(x - width / 2 + 5, y - height / 2 + 7, width, height, radius);
   graphics.fillStyle(fill, Math.max(0.9, rectangle.fillAlpha || 1));
   graphics.fillRoundedRect(x - width / 2, y - height / 2, width, height, radius);
   graphics.lineStyle(lineWidth, stroke, Math.max(0.76, rectangle.strokeAlpha || 1));
@@ -148,7 +142,9 @@ export class ModalConceptPresentationManager {
 
 let manager: ModalConceptPresentationManager | null = null;
 
-export function getModalConceptPresentationManager(game: Phaser.Game): ModalConceptPresentationManager {
+export function getModalConceptPresentationManager(
+  game: Phaser.Game,
+): ModalConceptPresentationManager {
   manager ??= new ModalConceptPresentationManager(game);
   return manager;
 }
