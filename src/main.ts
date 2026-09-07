@@ -33,6 +33,22 @@ getWorldLayerAlignmentManager(game);
 getR5FinalTighteningManager(game);
 getVillageInteriorContractManager(game);
 
+void Promise.all([
+  import('./game/scenes/InventoryScene'),
+  import('./game/scenes/WonderbookScene'),
+  import('./game/scenes/ShopScene'),
+]).then(([{ InventoryScene }, { WonderbookScene }, { ShopScene }]) => {
+  if (!game.scene.keys.InventoryScene) {
+    game.scene.add('InventoryScene', InventoryScene);
+  }
+  if (!game.scene.keys.WonderbookScene) {
+    game.scene.add('WonderbookScene', WonderbookScene);
+  }
+  if (!game.scene.keys.ShopScene) {
+    game.scene.add('ShopScene', ShopScene);
+  }
+});
+
 void import('./game/ui/ExplorationShellWorldManager').then(
   ({ getExplorationShellWorldManager }) => {
     getExplorationShellWorldManager(game);
