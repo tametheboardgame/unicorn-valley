@@ -112,7 +112,10 @@ export class DesktopConceptCleanupManager {
       if (!(object instanceof Phaser.GameObjects.Text)) {
         continue;
       }
-      if (object.name.startsWith('desktop-concept-') || object.name.startsWith('exploration-tablet-')) {
+      if (
+        object.name.startsWith('desktop-concept-') ||
+        object.name.startsWith('exploration-tablet-')
+      ) {
         continue;
       }
       const text = object.text.trim();
