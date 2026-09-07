@@ -109,7 +109,7 @@ export class ExplorationShell {
     this.decorations.push(...book.decorations);
 
     if (this.tabletMode) {
-      this.mapButtonSet = this.createShellButton(90, 52, 118, 72, 'Map', 'map', 16, 'map');
+      this.mapButtonSet = this.createShellButton(83, 52, 118, 72, 'Map', 'map', 16, 'map');
       this.settingsButtonSet = this.createShellButton(
         465,
         52,
@@ -154,7 +154,7 @@ export class ExplorationShell {
         4,
       );
       const shimmerIcon = createFixedGraphics(scene, 'exploration-shell-shimmer-icon', 121);
-      drawConceptIcon(shimmerIcon, 'shimmer', shimmerX - 72, shimmerY, 0.85, CONCEPT_UI.goldStrong);
+      drawConceptIcon(shimmerIcon, 'shimmer', shimmerX - 72, shimmerY, 0.82, CONCEPT_UI.goldStrong);
       this.decorations.push(shimmerShadow, shimmerSurface, shimmerIcon);
 
       this.shimmerPanel = scene.add
@@ -318,9 +318,10 @@ export class ExplorationShell {
         .setDepth(120)
         .setInteractive({ useHandCursor: true });
       const iconGraphic = createFixedGraphics(this.scene, `exploration-shell-${name}-icon`, 121);
-      drawConceptIcon(iconGraphic, icon, x, y - 13, 0.92, CONCEPT_UI.purpleDeep);
+      const iconScale = icon === 'settings' ? 0.76 : 0.9;
+      drawConceptIcon(iconGraphic, icon, x, y - 14, iconScale, CONCEPT_UI.purpleDeep);
       const label = this.scene.add
-        .text(x, y + 21, text, {
+        .text(x, y + 22, text, {
           color: '#4b2b66',
           fontFamily: UI_FONT,
           fontSize: `${fontSize}px`,

@@ -284,6 +284,9 @@ export class WonderbookScene extends Phaser.Scene {
       book.lineBetween(x, 566, Math.min(x + 11, 1144), 566);
     }
 
+    book.fillStyle(0x6c4665, 0.48);
+    book.fillRoundedRect(1148, 130, 30, 352, 10);
+
     this.add
       .text(350, 112, '✦ My Wonderbook ✦', {
         color: '#5d3f58',
@@ -294,7 +297,7 @@ export class WonderbookScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setDepth(6);
     this.sectionHeading = this.add
-      .text(900, 112, 'Discoveries ✨', {
+      .text(875, 112, 'Discoveries ✨', {
         color: '#5d3f58',
         fontFamily: UI_FONT,
         fontSize: '26px',
@@ -324,13 +327,20 @@ export class WonderbookScene extends Phaser.Scene {
   }
 
   private createSectionTabs(): void {
-    const startX = 260;
-    const gap = 190;
+    const tabX = 1154;
+    const startY = 158;
+    const gap = 70;
     SECTION_LABELS.forEach((section, index) => {
+      const y = startY + index * gap;
+      this.add
+        .rectangle(tabX + 7, y + 4, 112, 48, 0x2f1d43, 0.14)
+        .setOrigin(0, 0.5)
+        .setDepth(16)
+        .setName(`wonderbook-section-shadow:${section.id}`);
       const tab = this.add
-        .text(startX + index * gap, 154, section.label, this.tabStyle(section.id === 'discoveries'))
+        .text(tabX, y, section.label, this.tabStyle(section.id === 'discoveries'))
         .setName(`wonderbook-section-${section.id}`)
-        .setOrigin(0.5)
+        .setOrigin(0, 0.5)
         .setDepth(18)
         .setInteractive({ useHandCursor: true });
       tab.on('pointerdown', () => this.setSection(section.id));
@@ -340,13 +350,13 @@ export class WonderbookScene extends Phaser.Scene {
 
   private createDiscoveryFilters(): void {
     this.allTab = this.add
-      .text(810, 198, '✦ All adventures', this.filterStyle(true))
+      .text(790, 178, '✦ All adventures', this.filterStyle(true))
       .setName('wonderbook-tab-all')
       .setOrigin(0.5)
       .setDepth(18)
       .setInteractive({ useHandCursor: true });
     this.secretsTab = this.add
-      .text(1030, 198, '★ Secrets', this.filterStyle(false))
+      .text(1015, 178, '★ Secrets', this.filterStyle(false))
       .setName('wonderbook-tab-secrets')
       .setOrigin(0.5)
       .setDepth(18)
@@ -402,14 +412,14 @@ export class WonderbookScene extends Phaser.Scene {
       .setName('wonderbook-discovery-count');
   }
 
-  private renderSpread(): void {
+  private renderSpread(horizontalOffset = 0): void {
     this.pageContent?.destroy(true);
     const spread = this.spreads[this.spreadIndex];
     if (!spread) {
       return;
     }
 
-    const yStart = this.activeSection === 'discoveries' ? 238 : 210;
+    const yStart = this.activeSection === 'discoveries' ? 218 : 202;
     const rowGap = this.activeSection === 'discoveries' ? 148 : 156;
     const objects: Phaser.GameObjects.GameObject[] = [];
     spread.left.forEach((entry, index) => {
@@ -427,12 +437,13 @@ export class WonderbookScene extends Phaser.Scene {
     }
 
     this.pageContent = this.add
-      .container(0, 5, objects)
+      .container(horizontalOffset, 5, objects)
       .setName('wonderbook-page-content')
       .setAlpha(0)
       .setDepth(8);
     this.tweens.add({
       targets: this.pageContent,
+      x: 0,
       y: 0,
       alpha: 1,
       duration: 220,
@@ -664,11 +675,13 @@ export class WonderbookScene extends Phaser.Scene {
     if (this.activeSection === section) {
       return;
     }
+    const currentIndex = SECTION_LABELS.findIndex(({ id }) => id === this.activeSection);
+    const nextIndex = SECTION_LABELS.findIndex(({ id }) => id === section);
     this.activeSection = section;
     this.spreadIndex = 0;
     this.rebuildSpreads();
     this.refreshSectionChrome();
-    this.renderSpread();
+    this.renderSpread(nextIndex >= currentIndex ? 22 : -22);
   }
 
   private setDiscoveryFilter(filter: DiscoveryFilter): void {
@@ -822,12 +835,12 @@ export class WonderbookScene extends Phaser.Scene {
 
   private tabStyle(selected: boolean): Phaser.Types.GameObjects.Text.TextStyle {
     return {
-      color: selected ? '#5e422e' : '#664c65',
+      color: selected ? '#5e422e' : '#fff6e8',
       fontFamily: UI_FONT,
-      fontSize: selected ? '17px' : '15px',
+      fontSize: '15px',
       fontStyle: 'bold',
-      backgroundColor: selected ? '#f2c86f' : '#dfbfd1',
-      padding: { x: selected ? 16 : 13, y: 11 },
+      backgroundColor: selected ? '#f2c86f' : '#8d5d7c',
+      padding: { x: 13, y: 11 },
     };
   }
 
@@ -848,7 +861,7 @@ export class WonderbookScene extends Phaser.Scene {
       return;
     }
     this.spreadIndex = nextIndex;
-    this.renderSpread();
+    this.renderSpread(direction * 14);
   }
 
   private closeBook(): void {

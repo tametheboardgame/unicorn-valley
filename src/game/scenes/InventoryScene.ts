@@ -71,25 +71,21 @@ export class InventoryScene extends Phaser.Scene {
     this.cameras.main.setBackgroundColor('rgba(55, 37, 64, 0.94)');
 
     const shell = this.add.graphics().setName('inventory-modal-panel');
-    shell.fillStyle(0x211827, 0.26);
+    shell.fillStyle(0x211827, 0.24);
     shell.fillRoundedRect(49, 42, 1200, 660, 34);
     shell.fillStyle(this.activeView === 'map' ? 0x8f7153 : 0x875671, 1);
     shell.fillRoundedRect(40, 30, 1200, 660, 34);
-    shell.lineStyle(6, this.activeView === 'map' ? 0xd7b878 : 0xc98eb7, 1);
+    shell.lineStyle(5, this.activeView === 'map' ? 0xd7b878 : 0xc98eb7, 1);
     shell.strokeRoundedRect(40, 30, 1200, 660, 34);
     shell.fillStyle(0xfff5df, 1);
-    shell.fillRoundedRect(56, 46, 1168, 628, 26);
-    shell.lineStyle(2, this.activeView === 'map' ? 0xc8a66c : 0xddbdcf, 0.9);
-    shell.strokeRoundedRect(56, 46, 1168, 628, 26);
-
-    for (let x = 76; x <= 1204; x += 24) {
-      shell.lineStyle(2, this.activeView === 'map' ? 0xa78358 : 0xa66f8e, 0.52);
-      shell.lineBetween(x, 56, Math.min(x + 11, 1210), 56);
-      shell.lineBetween(x, 664, Math.min(x + 11, 1210), 664);
-    }
+    shell.fillRoundedRect(54, 44, 1172, 632, 26);
+    shell.fillStyle(this.activeView === 'map' ? 0xead5a8 : 0xead4ee, 0.24);
+    shell.fillRoundedRect(68, 48, 1144, 58, 18);
+    shell.lineStyle(2, this.activeView === 'map' ? 0xc8a66c : 0xddbdcf, 0.48);
+    shell.lineBetween(72, 108, 1208, 108);
 
     this.viewBadge = this.add
-      .text(124, 73, this.activeView === 'map' ? '🗺️ MAP' : '🎒 BAG', {
+      .text(124, 72, this.activeView === 'map' ? '🗺️ MAP' : '🎒 BAG', {
         color: this.activeView === 'map' ? '#5d4936' : '#5d4369',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '18px',
@@ -190,32 +186,23 @@ export class InventoryScene extends Phaser.Scene {
     }
 
     const satchel = this.add.graphics().setName('bag-themed-satchel');
-    satchel.fillStyle(0x4b3045, 0.15);
-    satchel.fillRoundedRect(124, 112, 1037, 509, 30);
-    satchel.fillStyle(0xb77b8f, 0.28);
-    satchel.fillRoundedRect(116, 104, 1037, 509, 30);
-    satchel.lineStyle(4, 0x925971, 0.72);
-    satchel.strokeRoundedRect(116, 104, 1037, 509, 30);
+    satchel.fillStyle(0x4b3045, 0.13);
+    satchel.fillRoundedRect(124, 124, 1037, 488, 28);
+    satchel.fillStyle(0xb77b8f, 0.24);
+    satchel.fillRoundedRect(116, 116, 1037, 488, 28);
+    satchel.lineStyle(3, 0x925971, 0.7);
+    satchel.strokeRoundedRect(116, 116, 1037, 488, 28);
+    satchel.fillStyle(0xe4bbc6, 0.24);
+    satchel.fillRoundedRect(132, 126, 1005, 49, 16);
     satchel.fillStyle(0xf7e4d1, 0.92);
-    satchel.fillRoundedRect(132, 174, 1005, 422, 22);
-    satchel.lineStyle(2, 0xa96d81, 0.46);
-    satchel.strokeRoundedRect(132, 174, 1005, 422, 22);
-    satchel.fillStyle(0x8f5a70, 0.74);
-    satchel.fillRoundedRect(542, 104, 190, 42, 17);
-    satchel.fillStyle(0xd9ad70, 1);
-    satchel.fillCircle(637, 125, 10);
-    satchel.lineStyle(3, 0x8f6744, 1);
-    satchel.strokeCircle(637, 125, 10);
-    for (let x = 148; x < 1126; x += 22) {
-      satchel.lineStyle(2, 0x9b6378, 0.52);
-      satchel.lineBetween(x, 184, Math.min(x + 10, 1125), 184);
-      satchel.lineBetween(x, 586, Math.min(x + 10, 1125), 586);
-    }
+    satchel.fillRoundedRect(132, 180, 1005, 408, 20);
+    satchel.lineStyle(2, 0xa96d81, 0.42);
+    satchel.strokeRoundedRect(132, 180, 1005, 408, 20);
     this.track(satchel);
 
     this.track(
       this.add
-        .text(1040, 125, `✨ ${economy.getBalance()} Shimmer`, {
+        .text(1040, 145, `✨ ${economy.getBalance()} Shimmer`, {
           color: '#69435d',
           fontFamily: 'system-ui, sans-serif',
           fontSize: '17px',
@@ -225,32 +212,24 @@ export class InventoryScene extends Phaser.Scene {
         })
         .setOrigin(0.5)
         .setName('bag-shimmer-balance'),
-      this.add
-        .text(637, 125, '✦', {
-          color: '#6f4b5e',
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '12px',
-          fontStyle: 'bold',
-        })
-        .setOrigin(0.5),
     );
 
     BAG_POCKETS.forEach((pocket, index) => {
       const x = 230 + index * 185;
       const selected = pocket.id === this.activePocket;
       const tabShadow = this.add
-        .rectangle(x + 3, 143, 170, 56, 0x4d3243, 0.15)
+        .rectangle(x + 3, 149, 170, 54, 0x4d3243, 0.13)
         .setName(`bag-pocket-shadow:${pocket.id}`);
       const tab = this.add
-        .rectangle(x, 139, 170, 56, selected ? 0xf3d9a4 : 0xd8a8b8, 1)
-        .setStrokeStyle(4, selected ? 0xb7834e : 0x9a6479, 1)
+        .rectangle(x, 145, 170, 54, selected ? 0xf3d9a4 : 0xd8a8b8, 1)
+        .setStrokeStyle(3, selected ? 0xb7834e : 0x9a6479, 1)
         .setInteractive({ useHandCursor: true })
         .setName(`bag-pocket:${pocket.id}`);
       const hole = this.add
-        .circle(x - 71, 139, 6, 0x8c5c70, 0.82)
+        .circle(x - 71, 145, 6, 0x8c5c70, 0.82)
         .setStrokeStyle(2, 0xf4d7df, 0.68);
       const label = this.add
-        .text(x + 5, 139, `${pocket.icon} ${pocket.label}  ${grouped[pocket.id].length}`, {
+        .text(x + 5, 145, `${pocket.icon} ${pocket.label}  ${grouped[pocket.id].length}`, {
           color: selected ? '#664631' : '#5d4360',
           fontFamily: 'system-ui, sans-serif',
           fontSize: '16px',
@@ -262,23 +241,21 @@ export class InventoryScene extends Phaser.Scene {
     });
 
     const listPanel = this.add.graphics().setName('bag-list-panel');
-    listPanel.fillStyle(0x573d4f, 0.12);
+    listPanel.fillStyle(0x573d4f, 0.1);
     listPanel.fillRoundedRect(146, 194, 710, 393, 21);
     listPanel.fillStyle(0xfff7e7, 1);
     listPanel.fillRoundedRect(140, 188, 710, 393, 21);
-    listPanel.lineStyle(3, 0xc28da0, 0.82);
+    listPanel.lineStyle(3, 0xc28da0, 0.75);
     listPanel.strokeRoundedRect(140, 188, 710, 393, 21);
-    listPanel.lineStyle(1, 0xd8b5bd, 0.7);
-    listPanel.strokeRoundedRect(149, 197, 692, 375, 16);
 
     const detailPanel = this.add.graphics().setName('bag-detail-panel');
-    detailPanel.fillStyle(0x573d4f, 0.14);
+    detailPanel.fillStyle(0x573d4f, 0.11);
     detailPanel.fillRoundedRect(875, 194, 272, 393, 21);
     detailPanel.fillStyle(0xf7e8e3, 1);
     detailPanel.fillRoundedRect(869, 188, 272, 393, 21);
-    detailPanel.lineStyle(3, 0xb87a94, 0.88);
+    detailPanel.lineStyle(3, 0xb87a94, 0.82);
     detailPanel.strokeRoundedRect(869, 188, 272, 393, 21);
-    detailPanel.fillStyle(0xe2b6c3, 0.28);
+    detailPanel.fillStyle(0xe2b6c3, 0.24);
     detailPanel.fillRoundedRect(887, 202, 236, 43, 13);
     this.track(listPanel, detailPanel);
 
@@ -618,16 +595,14 @@ export class InventoryScene extends Phaser.Scene {
     const mapHeight = 430;
 
     const parchment = this.add.graphics().setName('bag-map-parchment');
-    parchment.fillStyle(0x3f3028, 0.17);
-    parchment.fillRoundedRect(111, 137, 1076, 471, 26);
+    parchment.fillStyle(0x3f3028, 0.14);
+    parchment.fillRoundedRect(111, 137, 1076, 462, 24);
     parchment.fillStyle(0xe7c98d, 1);
-    parchment.fillRoundedRect(102, 128, 1076, 471, 26);
-    parchment.lineStyle(5, 0xa47a4c, 0.92);
-    parchment.strokeRoundedRect(102, 128, 1076, 471, 26);
+    parchment.fillRoundedRect(102, 128, 1076, 462, 24);
+    parchment.lineStyle(4, 0xa47a4c, 0.88);
+    parchment.strokeRoundedRect(102, 128, 1076, 462, 24);
     parchment.fillStyle(0xf8e9bd, 1);
-    parchment.fillRoundedRect(116, 142, 1048, 443, 20);
-    parchment.lineStyle(2, 0xc49c64, 0.64);
-    parchment.strokeRoundedRect(116, 142, 1048, 443, 20);
+    parchment.fillRoundedRect(116, 142, 1048, 434, 18);
     parchment.fillStyle(0xc9dba3, 0.23);
     parchment.fillEllipse(315, 330, 310, 210);
     parchment.fillStyle(0xb9d3c8, 0.24);
@@ -639,14 +614,21 @@ export class InventoryScene extends Phaser.Scene {
     parchment.lineBetween(330, 470, 520, 510);
     parchment.lineBetween(520, 510, 760, 420);
     parchment.lineBetween(760, 420, 1120, 386);
-    for (const y of [166, 565]) {
-      for (let x = 134; x < 1148; x += 26) {
-        parchment.lineStyle(2, 0x9d7449, 0.42);
-        parchment.lineBetween(x, y, Math.min(x + 12, 1148), y);
-      }
-    }
     this.track(parchment);
 
+    const compass = this.add
+      .circle(1092, 535, 34, 0xf5dfad, 0.42)
+      .setStrokeStyle(2, 0x9d7449, 0.6);
+    const compassLabel = this.add
+      .text(1092, 535, '✦\nN', {
+        color: '#7f6247',
+        fontFamily: 'Georgia, serif',
+        fontSize: '18px',
+        fontStyle: 'bold',
+        align: 'center',
+        lineSpacing: -5,
+      })
+      .setOrigin(0.5);
     this.track(
       this.add
         .text(GAME_WIDTH / 2, 116, '✦ Paths, places and little mysteries ✦', {
@@ -656,17 +638,8 @@ export class InventoryScene extends Phaser.Scene {
           fontStyle: 'bold',
         })
         .setOrigin(0.5),
-      this.add
-        .text(1092, 535, '✦\nN', {
-          color: '#7f6247',
-          fontFamily: 'Georgia, serif',
-          fontSize: '18px',
-          fontStyle: 'bold',
-          align: 'center',
-          lineSpacing: -5,
-        })
-        .setOrigin(0.5),
-      this.add.circle(1092, 535, 34, 0xf5dfad, 0.42).setStrokeStyle(2, 0x9d7449, 0.6),
+      compass,
+      compassLabel,
     );
 
     const pointForNode = (node: ValleyMapNode): { x: number; y: number } => ({
