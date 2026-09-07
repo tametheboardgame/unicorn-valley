@@ -100,8 +100,7 @@ test.describe('R6.5-WP18I desktop concept HUD cleanup', () => {
         object.alpha > 0.05 &&
         object.depth >= 115 &&
         object.depth <= 124 &&
-        ((object.y <= 105 && object.x > 500) ||
-          (object.y >= 570 && (object.x > 500 || object.displayWidth >= 350))),
+        (object.y <= 125 || object.y >= 550),
     );
     expect(visibleLegacyShadows).toEqual([]);
 
@@ -132,5 +131,16 @@ test.describe('R6.5-WP18I desktop concept HUD cleanup', () => {
     );
     expect(oldPrompt?.alpha ?? 0).toBeLessThanOrEqual(0.01);
     expect(oldPromptLabel?.alpha ?? 0).toBeLessThanOrEqual(0.01);
+
+    const lingeringLegacyActionCopy = scene.objects.filter((object) => {
+      if (object.type !== 'Text' || !object.text || object.depth >= 190 || object.alpha <= 0.05) {
+        return false;
+      }
+      const action =
+        /^(talk(?:\s+to)?|speak(?:\s+to)?|sit|enter|inspect|interact|start|play|buy|shop|use|read|look|visit|open|pick|choose|place)\b/i;
+      const oldInput = /\b(?:e\s*\/\s*enter|enter\s*\/|\/\s*tap\b|tap\s*:)\b/i;
+      return action.test(object.text.trim()) && oldInput.test(object.text.trim());
+    });
+    expect(lingeringLegacyActionCopy).toEqual([]);
   });
 });
