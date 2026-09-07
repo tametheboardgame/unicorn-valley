@@ -73,6 +73,26 @@ function objectByName(scene: DiagnosticSceneSnapshot, name: string): DiagnosticO
   return object;
 }
 
+const TABLET_VIEWPORTS = [
+  { name: '16:9', width: 1280, height: 720 },
+  { name: '16:10 reference', width: 1280, height: 800 },
+  { name: '4:3', width: 1024, height: 768 },
+  { name: 'small landscape', width: 960, height: 600 },
+  { name: 'large landscape', width: 1600, height: 1000 },
+] as const;
+
+const CORE_HUD_OBJECTS = [
+  'exploration-shell-map-button',
+  'exploration-shell-bag-button',
+  'exploration-shell-book-button',
+  'exploration-shell-settings-nav-button',
+  'exploration-shell-shimmer-panel',
+  'exploration-location-title-panel',
+  'tablet-movement-pad',
+  'touch-movement-gallop',
+  'exploration-tablet-hint-panel',
+] as const;
+
 test.describe('R6.5-WP18I concept-grade tablet HUD', () => {
   test.use({ viewport: { width: 1280, height: 800 }, hasTouch: true });
 
@@ -125,34 +145,64 @@ test.describe('R6.5-WP18I concept-grade tablet HUD', () => {
     expect(contextualAction.y).toBeGreaterThan(500);
   });
 
-  test('keeps the same composition on 4:3 landscape without page overflow', async ({ page }) => {
-    await page.setViewportSize({ width: 1024, height: 768 });
+  test('keeps the concept composition contained across the landscape tablet matrix', async ({
+    page,
+  }) => {
+    for (const viewport of TABLET_VIEWPORTS) {
+      await page.setViewportSize({ width: viewport.width, height: viewport.height });
+      await page.goto('/?diagnostics=1');
+      await waitForDiagnostics(page);
+      await startScene(page, 'RainbowMeadowScene');
+
+      const metrics = await page.evaluate(() => ({
+        width: innerWidth,
+        height: innerHeight,
+        scrollWidth: document.documentElement.scrollWidth,
+        scrollHeight: document.documentElement.scrollHeight,
+      }));
+      expect(metrics.scrollWidth, `${viewport.name} horizontal overflow`).toBeLessThanOrEqual(
+        metrics.width,
+      );
+      expect(metrics.scrollHeight, `${viewport.name} vertical overflow`).toBeLessThanOrEqual(
+        metrics.height,
+      );
+
+      const scene = await getScene(page, 'RainbowMeadowScene');
+      for (const name of CORE_HUD_OBJECTS) {
+        expect(objectByName(scene, name).visible, `${viewport.name}: ${name}`).toBe(true);
+      }
+    }
+  });
+
+  test('reconciles Bag and Settings controls into the shared rounded surface system', async ({
+    page,
+  }) => {
     await page.goto('/?diagnostics=1');
     await waitForDiagnostics(page);
-    await startScene(page, 'RainbowMeadowScene');
+    await page.waitForTimeout(700);
 
-    const metrics = await page.evaluate(() => ({
-      width: innerWidth,
-      height: innerHeight,
-      scrollWidth: document.documentElement.scrollWidth,
-      scrollHeight: document.documentElement.scrollHeight,
-    }));
-    expect(metrics.scrollWidth).toBeLessThanOrEqual(metrics.width);
-    expect(metrics.scrollHeight).toBeLessThanOrEqual(metrics.height);
-
-    const scene = await getScene(page, 'RainbowMeadowScene');
+    await startScene(page, 'InventoryScene');
+    await page.waitForTimeout(250);
+    const bag = await getScene(page, 'InventoryScene');
     for (const name of [
-      'exploration-shell-map-button',
-      'exploration-shell-bag-button',
-      'exploration-shell-book-button',
-      'exploration-shell-settings-nav-button',
-      'exploration-shell-shimmer-panel',
-      'exploration-location-title-panel',
-      'tablet-movement-pad',
-      'touch-movement-gallop',
-      'exploration-tablet-hint-panel',
+      'concept-modal-surface:inventory-modal-panel',
+      'concept-modal-surface:bag-close-button',
+      'concept-modal-surface:bag-list-panel',
+      'concept-modal-surface:bag-detail-panel',
+      'concept-modal-surface:bag-shop-button',
     ]) {
-      expect(objectByName(scene, name).visible, name).toBe(true);
+      expect(objectByName(bag, name).visible, name).toBe(true);
+    }
+
+    await startScene(page, 'SettingsScene');
+    await page.waitForTimeout(250);
+    const settings = await getScene(page, 'SettingsScene');
+    for (const name of [
+      'concept-modal-surface:settings-panel',
+      'concept-modal-surface:settings-done',
+      'concept-modal-surface:settings-row-muted',
+    ]) {
+      expect(objectByName(settings, name).visible, name).toBe(true);
     }
   });
 });
