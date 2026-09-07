@@ -102,7 +102,10 @@ export class ModalConceptPresentationManager {
     Phaser.GameObjects.Rectangle,
     ConceptSurfacePresentation
   >();
-  private readonly settingsClipPresentations = new WeakMap<Phaser.Scene, SettingsClipPresentation>();
+  private readonly settingsClipPresentations = new WeakMap<
+    Phaser.Scene,
+    SettingsClipPresentation
+  >();
 
   public constructor(private readonly game: Phaser.Game) {
     this.game.events.on(Phaser.Core.Events.POST_STEP, this.update, this);
