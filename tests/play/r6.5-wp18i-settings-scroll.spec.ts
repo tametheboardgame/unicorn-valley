@@ -71,10 +71,10 @@ function objectByName(scene: DiagnosticSceneSnapshot, name: string): DiagnosticO
   return object;
 }
 
-test.describe('R6.5-WP18I scrollable Settings', () => {
+test.describe('R6.5-WP18I sectioned scrollable Settings', () => {
   test.use({ viewport: { width: 1280, height: 720 }, hasTouch: true });
 
-  test('spaces rows, scrolls the list and keeps Done fixed', async ({ page }) => {
+  test('groups settings, scrolls the list and keeps Done fixed', async ({ page }) => {
     await page.goto('/?diagnostics=1');
     await waitForDiagnostics(page);
     await startSettings(page);
@@ -86,7 +86,10 @@ test.describe('R6.5-WP18I scrollable Settings', () => {
     const thumbBefore = objectByName(before, 'settings-scrollbar-thumb');
     const doneBefore = objectByName(before, 'settings-done-label');
 
-    expect(musicBefore.y - mutedBefore.y).toBeGreaterThanOrEqual(80);
+    expect(objectByName(before, 'settings-section-sound').text).toBe('Sound');
+    expect(objectByName(before, 'settings-section-accessibility').text).toBe('Accessibility');
+    expect(objectByName(before, 'settings-section-display-world').text).toBe('Display & World');
+    expect(musicBefore.y - mutedBefore.y).toBeGreaterThanOrEqual(68);
     expect(timeBefore.y).toBeGreaterThan(590);
     expect(objectByName(before, 'settings-row-weather-label').text).toContain('Weather:');
     expect(timeBefore.text).toContain('Time of day:');
@@ -105,7 +108,7 @@ test.describe('R6.5-WP18I scrollable Settings', () => {
 
     expect(mutedAfterWheel.y).toBeLessThan(mutedBefore.y);
     expect(timeAfterWheel.y).toBeLessThan(timeBefore.y);
-    expect(timeAfterWheel.y).toBeLessThanOrEqual(590);
+    expect(timeAfterWheel.y).toBeLessThanOrEqual(565);
     expect(thumbAfterWheel.y).toBeGreaterThan(thumbBefore.y);
     expect(doneAfterWheel.y).toBe(doneBefore.y);
 
