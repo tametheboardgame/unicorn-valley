@@ -1,5 +1,6 @@
 import type Phaser from 'phaser';
 import { GAME_HEIGHT } from '../config/gameConstants';
+import { CONCEPT_UI, createFixedGraphics, drawConceptIcon } from '../ui/ConceptUi';
 import { browserUsesLandscapeTabletPresentation } from '../ui/LandscapeTabletPresentation';
 import type { PointerTouchInputAdapter } from './PointerTouchInputAdapter';
 
@@ -53,7 +54,7 @@ function shouldRenderPortraitDomControls(): boolean {
 }
 
 export class TouchMovementPad {
-  private readonly objects: Array<Phaser.GameObjects.Arc | Phaser.GameObjects.Text> = [];
+  private readonly objects: Phaser.GameObjects.GameObject[] = [];
   private readonly buttons: Phaser.GameObjects.Arc[] = [];
   private portraitMode = shouldRenderPortraitDomControls();
   private tabletMode = !this.portraitMode && browserUsesLandscapeTabletPresentation();
@@ -223,38 +224,47 @@ export class TouchMovementPad {
   }
 
   private createLandscapeTabletControls(): void {
-    const originX = 132;
+    const originX = 142;
     const originY = 574;
     const spacing = 72;
 
+    const shadow = this.scene.add
+      .circle(originX + 7, originY + 9, 124, CONCEPT_UI.shadow, 0.2)
+      .setScrollFactor(0)
+      .setDepth(114);
     const backdrop = this.scene.add
-      .circle(originX, originY, 116, 0x513a61, 0.2)
+      .circle(originX, originY, 120, CONCEPT_UI.creamHighlight, 0.38)
       .setName('tablet-movement-pad')
-      .setStrokeStyle(4, 0xffffff, 0.34)
+      .setStrokeStyle(5, CONCEPT_UI.creamHighlight, 0.72)
+      .setScrollFactor(0)
+      .setDepth(115);
+    const innerRing = this.scene.add
+      .circle(originX, originY, 108, CONCEPT_UI.purpleDeep, 0.13)
+      .setStrokeStyle(3, CONCEPT_UI.lavenderLine, 0.52)
       .setScrollFactor(0)
       .setDepth(115);
     const centre = this.scene.add
-      .circle(originX, originY, 31, 0xfffbef, 0.52)
-      .setStrokeStyle(3, 0xc192d5, 0.64)
+      .circle(originX, originY, 31, CONCEPT_UI.creamHighlight, 0.48)
+      .setStrokeStyle(3, CONCEPT_UI.lavenderLine, 0.72)
       .setScrollFactor(0)
       .setDepth(116);
     const centreMark = this.scene.add
       .text(originX, originY - 1, '✦', {
-        color: '#8b639a',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '24px',
+        color: '#76518a',
+        fontFamily: 'Trebuchet MS, Segoe UI, system-ui, sans-serif',
+        fontSize: '23px',
         fontStyle: 'bold',
       })
       .setOrigin(0.5)
       .setScrollFactor(0)
       .setDepth(117);
-    this.objects.push(backdrop, centre, centreMark);
+    this.objects.push(shadow, backdrop, innerRing, centre, centreMark);
 
-    this.createButton(originX, originY - spacing, '▲', 'MOVE_Y', -1, 'up', 43, 0.92);
-    this.createButton(originX, originY + spacing, '▼', 'MOVE_Y', 1, 'down', 43, 0.92);
-    this.createButton(originX - spacing, originY, '◀', 'MOVE_X', -1, 'left', 43, 0.92);
-    this.createButton(originX + spacing, originY, '▶', 'MOVE_X', 1, 'right', 43, 0.92);
-    this.createGallopButton(930, 608, true);
+    this.createButton(originX, originY - spacing, '▲', 'MOVE_Y', -1, 'up', 43, 1, true);
+    this.createButton(originX, originY + spacing, '▼', 'MOVE_Y', 1, 'down', 43, 1, true);
+    this.createButton(originX - spacing, originY, '◀', 'MOVE_X', -1, 'left', 43, 1, true);
+    this.createButton(originX + spacing, originY, '▶', 'MOVE_X', 1, 'right', 43, 1, true);
+    this.createGallopButton(1200, 600, true);
   }
 
   private createPortraitDomControls(): void {
@@ -331,18 +341,42 @@ export class TouchMovementPad {
     direction: 'up' | 'down' | 'left' | 'right',
     radius = 29,
     alpha = 0.72,
+    tablet = false,
   ): void {
+    if (tablet) {
+      const shadow = this.scene.add
+        .circle(x + 4, y + 6, radius + 4, CONCEPT_UI.shadow, 0.24)
+        .setScrollFactor(0)
+        .setDepth(116);
+      const halo = this.scene.add
+        .circle(x, y, radius + 4, CONCEPT_UI.creamHighlight, 0.88)
+        .setStrokeStyle(3, CONCEPT_UI.purpleStrong, 0.72)
+        .setScrollFactor(0)
+        .setDepth(116);
+      this.objects.push(shadow, halo);
+    }
+
     const button = this.scene.add
-      .circle(x, y, radius, 0xfffbef, alpha)
+      .circle(
+        x,
+        y,
+        radius,
+        tablet ? CONCEPT_UI.purple : 0xfffbef,
+        tablet ? 1 : alpha,
+      )
       .setName(`touch-movement-${direction}`)
-      .setStrokeStyle(4, 0x9d72ad, 0.9)
+      .setStrokeStyle(
+        tablet ? 4 : 4,
+        tablet ? CONCEPT_UI.purpleStrong : 0x9d72ad,
+        tablet ? 1 : 0.9,
+      )
       .setScrollFactor(0)
       .setDepth(117)
       .setInteractive({ useHandCursor: true });
     const text = this.scene.add
       .text(x, y, label, {
-        color: '#5c4568',
-        fontFamily: 'system-ui, sans-serif',
+        color: tablet ? '#fffaf1' : '#5c4568',
+        fontFamily: 'Trebuchet MS, Segoe UI, system-ui, sans-serif',
         fontSize: radius >= 40 ? '31px' : '23px',
         fontStyle: 'bold',
       })
@@ -351,8 +385,16 @@ export class TouchMovementPad {
       .setScrollFactor(0)
       .setDepth(118);
 
-    const press = (): void => this.input.setAxis(axis, value);
-    const release = (): void => this.input.setAxis(axis, 0);
+    const press = (): void => {
+      button.setScale(0.94);
+      text.setScale(0.94);
+      this.input.setAxis(axis, value);
+    };
+    const release = (): void => {
+      button.setScale(1);
+      text.setScale(1);
+      this.input.setAxis(axis, 0);
+    };
     button.on('pointerdown', press);
     button.on('pointerup', release);
     button.on('pointerout', release);
@@ -364,28 +406,51 @@ export class TouchMovementPad {
 
   private createGallopButton(x: number, y: number, tablet = false): void {
     const radius = tablet ? 55 : 35;
+    if (tablet) {
+      const shadow = this.scene.add
+        .circle(x + 5, y + 7, radius + 5, CONCEPT_UI.shadow, 0.24)
+        .setScrollFactor(0)
+        .setDepth(116);
+      const halo = this.scene.add
+        .circle(x, y, radius + 5, CONCEPT_UI.creamHighlight, 0.94)
+        .setStrokeStyle(3, CONCEPT_UI.goldStrong, 0.72)
+        .setScrollFactor(0)
+        .setDepth(116);
+      const icon = createFixedGraphics(this.scene, 'touch-movement-gallop-icon', 119);
+      drawConceptIcon(icon, 'gallop', x, y - 17, 0.82, CONCEPT_UI.goldDeep);
+      this.objects.push(shadow, halo, icon);
+    }
+
     const button = this.scene.add
-      .circle(x, y, radius, tablet ? 0xffe6a6 : 0xfffbef, tablet ? 0.96 : 0.78)
+      .circle(x, y, radius, tablet ? CONCEPT_UI.gold : 0xfffbef, tablet ? 1 : 0.78)
       .setName('touch-movement-gallop')
-      .setStrokeStyle(tablet ? 5 : 4, tablet ? 0xd6b35f : 0xb17bbd, 0.96)
+      .setStrokeStyle(tablet ? 5 : 4, tablet ? CONCEPT_UI.goldStrong : 0xb17bbd, 0.96)
       .setScrollFactor(0)
       .setDepth(117)
       .setInteractive({ useHandCursor: true });
     const text = this.scene.add
-      .text(x, tablet ? y - 5 : y - 2, tablet ? '✦\nGallop' : '✦', {
-        color: tablet ? '#664d31' : '#765080',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: tablet ? '18px' : '27px',
+      .text(x, tablet ? y + 20 : y - 2, tablet ? 'Gallop' : '✦', {
+        color: tablet ? '#6a421f' : '#765080',
+        fontFamily: 'Trebuchet MS, Segoe UI, system-ui, sans-serif',
+        fontSize: tablet ? '17px' : '27px',
         fontStyle: 'bold',
         align: 'center',
       })
       .setName('touch-movement-gallop-label')
       .setOrigin(0.5)
       .setScrollFactor(0)
-      .setDepth(118);
+      .setDepth(120);
 
-    const press = (): void => this.input.setButton('GALLOP', true);
-    const release = (): void => this.input.setButton('GALLOP', false);
+    const press = (): void => {
+      button.setScale(0.95);
+      text.setScale(0.96);
+      this.input.setButton('GALLOP', true);
+    };
+    const release = (): void => {
+      button.setScale(1);
+      text.setScale(1);
+      this.input.setButton('GALLOP', false);
+    };
     button.on('pointerdown', press);
     button.on('pointerup', release);
     button.on('pointerout', release);
