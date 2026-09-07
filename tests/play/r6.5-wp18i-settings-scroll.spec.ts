@@ -71,10 +71,21 @@ function objectByName(scene: DiagnosticSceneSnapshot, name: string): DiagnosticO
   return object;
 }
 
+function assertVisibleRowsStayInViewport(scene: DiagnosticSceneSnapshot): void {
+  const visibleLabels = scene.objects.filter(
+    ({ name, visible }) => name.startsWith('settings-row-') && name.endsWith('-label') && visible,
+  );
+  expect(visibleLabels.length).toBeGreaterThan(0);
+  for (const label of visibleLabels) {
+    expect(label.y, `${label.name} above viewport`).toBeGreaterThanOrEqual(145);
+    expect(label.y, `${label.name} below viewport`).toBeLessThanOrEqual(565);
+  }
+}
+
 test.describe('R6.5-WP18I sectioned scrollable Settings', () => {
   test.use({ viewport: { width: 1280, height: 720 }, hasTouch: true });
 
-  test('groups settings, scrolls the list and keeps Done fixed', async ({ page }) => {
+  test('groups settings, clips the scroll viewport and keeps Done fixed', async ({ page }) => {
     await page.goto('/?diagnostics=1');
     await waitForDiagnostics(page);
     await startSettings(page);
@@ -89,12 +100,15 @@ test.describe('R6.5-WP18I sectioned scrollable Settings', () => {
     expect(objectByName(before, 'settings-section-sound').text).toBe('Sound');
     expect(objectByName(before, 'settings-section-accessibility').text).toBe('Accessibility');
     expect(objectByName(before, 'settings-section-display-world').text).toBe('Display & World');
+    expect(objectByName(before, 'settings-viewport-top-guard').visible).toBe(true);
+    expect(objectByName(before, 'settings-viewport-bottom-guard').visible).toBe(true);
     expect(musicBefore.y - mutedBefore.y).toBeGreaterThanOrEqual(68);
     expect(timeBefore.y).toBeGreaterThan(590);
     expect(objectByName(before, 'settings-row-weather-label').text).toContain('Weather:');
     expect(timeBefore.text).toContain('Time of day:');
     expect(objectByName(before, 'settings-scrollbar-track').visible).toBe(true);
     expect(thumbBefore.visible).toBe(true);
+    assertVisibleRowsStayInViewport(before);
 
     await page.mouse.move(640, 360);
     await page.mouse.wheel(0, 700);
@@ -111,6 +125,7 @@ test.describe('R6.5-WP18I sectioned scrollable Settings', () => {
     expect(timeAfterWheel.y).toBeLessThanOrEqual(565);
     expect(thumbAfterWheel.y).toBeGreaterThan(thumbBefore.y);
     expect(doneAfterWheel.y).toBe(doneBefore.y);
+    assertVisibleRowsStayInViewport(afterWheel);
 
     const timeAfterWheelY = timeAfterWheel.y;
     await page.mouse.move(640, 430);
@@ -124,5 +139,6 @@ test.describe('R6.5-WP18I sectioned scrollable Settings', () => {
       timeAfterWheelY,
     );
     expect(objectByName(afterDrag, 'settings-done-label').y).toBe(doneBefore.y);
+    assertVisibleRowsStayInViewport(afterDrag);
   });
 });
