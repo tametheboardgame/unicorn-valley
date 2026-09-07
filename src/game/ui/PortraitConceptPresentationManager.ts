@@ -234,7 +234,7 @@ export class PortraitConceptPresentationManager {
 
   private restoreSuppressed(): void {
     for (const [object, state] of this.suppressed) {
-      if (!object.active) {
+      if (!object.active || !canSuppress(object)) {
         continue;
       }
       object.setAlpha(state.alpha);
