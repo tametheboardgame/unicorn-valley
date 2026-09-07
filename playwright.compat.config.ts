@@ -13,6 +13,7 @@ export default defineConfig({
     'r6-wp6.10-mobile-portrait.spec.ts',
     'r6-wp6.18a-mobile-creator-action.spec.ts',
     'r6.5-wp18g-browser-compat.spec.ts',
+    'r6.5-wp18j-responsive-concept-ui.spec.ts',
   ],
   fullyParallel: false,
   workers: 1,
