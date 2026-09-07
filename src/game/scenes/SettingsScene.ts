@@ -13,7 +13,7 @@ import {
   moveGameSettingSelection,
   type GameSettingKind,
 } from '../settings/GameSettingsModel';
-import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from '../ui/uiTheme';
+import { UI_COLOURS, UI_FONT } from '../ui/uiTheme';
 
 interface SettingsSceneData {
   returnScene?: string;
@@ -55,15 +55,25 @@ const SETTINGS_SECTIONS: readonly SettingsSectionDefinition[] = [
   },
 ];
 
+const PANEL_WIDTH = 760;
+const PANEL_HEIGHT = 690;
+const PANEL_TOP = (GAME_HEIGHT - PANEL_HEIGHT) / 2;
+const PANEL_BOTTOM = PANEL_TOP + PANEL_HEIGHT;
+const PANEL_RADIUS = 30;
+const BACKDROP = 0x302545;
+
 const ROW_X = GAME_WIDTH / 2;
 const ROW_WIDTH = 590;
 const ROW_HEIGHT = 58;
 const ROW_RADIUS = 22;
 const ROW_GAP = 14;
+const ROW_SHADOW_X = 5;
+const ROW_SHADOW_Y = 6;
 const SECTION_HEADING_HEIGHT = 24;
 const SECTION_HEADING_GAP = 10;
 const SECTION_GAP = 24;
 const CONTENT_PADDING = 8;
+
 const VIEWPORT_TOP = 145;
 const VIEWPORT_HEIGHT = 420;
 const VIEWPORT_BOTTOM = VIEWPORT_TOP + VIEWPORT_HEIGHT;
@@ -74,20 +84,28 @@ const SCROLLBAR_WIDTH = 8;
 const SCROLLBAR_MIN_THUMB = 58;
 const DRAG_THRESHOLD = 12;
 
+const LIST_SURFACE_DEPTH = 5;
+const LIST_CONTROL_DEPTH = 6;
+const LIST_LABEL_DEPTH = 7;
+const CLIP_GUARD_DEPTH = 20;
+const FIXED_CHROME_DEPTH = 24;
+
 export class SettingsScene extends Phaser.Scene {
   private readonly accessibility = getBrowserAccessibilitySettingsStore();
   private readonly audio = getVerticalSliceAudio();
   private readonly saveService = getBrowserSaveService();
   private readonly atmosphericTime = getBrowserAtmosphericTimeService(this.saveService);
   private readonly magicalWeather = getBrowserMagicalWeatherService(this.saveService);
+
   private returnScene = 'MoonflowerGladeScene';
   private rows: SettingRow[] = [];
   private sectionHeadings: SettingsSectionHeading[] = [];
   private contentHeight = 0;
   private doneButton: Phaser.GameObjects.Rectangle | null = null;
+  private doneSurface: Phaser.GameObjects.Graphics | null = null;
+  private doneHovered = false;
   private statusText: Phaser.GameObjects.Text | null = null;
   private scrollbarThumb: Phaser.GameObjects.Rectangle | null = null;
-  private listMaskGraphics: Phaser.GameObjects.Graphics | null = null;
   private selectedIndex = 0;
   private scrollOffset = 0;
   private maxScroll = 0;
@@ -114,74 +132,20 @@ export class SettingsScene extends Phaser.Scene {
     this.maxScroll = 0;
     this.dragPointerId = null;
     this.dragDistance = 0;
+    this.doneHovered = false;
     this.closing = false;
 
     this.cameras.main.setBackgroundColor('rgba(48, 37, 69, 0.96)');
     this.add
-      .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x302545, 0.94)
+      .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, BACKDROP, 0.94)
       .setName('settings-backdrop');
-    createUiShadow(this, GAME_WIDTH / 2, GAME_HEIGHT / 2, 760, 690, 2, 0.3);
-    this.add
-      .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, 760, 690, UI_COLOURS.cream, 1)
-      .setName('settings-panel')
-      .setStrokeStyle(6, UI_COLOURS.ribbonStrong, 1)
-      .setDepth(3);
+    this.createPanel();
 
-    this.add
-      .text(GAME_WIDTH / 2, 52, 'Settings', {
-        color: UI_COLOURS.ink,
-        fontFamily: UI_FONT,
-        fontSize: '34px',
-        fontStyle: 'bold',
-      })
-      .setName('settings-heading')
-      .setOrigin(0.5)
-      .setDepth(4);
-    this.add
-      .text(GAME_WIDTH / 2, 91, 'Make the valley comfortable for you.', {
-        color: UI_COLOURS.softInk,
-        fontFamily: UI_FONT,
-        fontSize: '17px',
-      })
-      .setName('settings-hint')
-      .setOrigin(0.5)
-      .setDepth(4);
-
-    this.createListMask();
     this.createSectionedRows();
     this.maxScroll = Math.max(0, this.contentHeight - VIEWPORT_HEIGHT);
     this.createScrollbar();
-
-    this.statusText = this.add
-      .text(GAME_WIDTH / 2, 600, 'Swipe or scroll for more  •  ↑ ↓ choose  •  Enter changes', {
-        color: UI_COLOURS.mutedInk,
-        fontFamily: UI_FONT,
-        fontSize: '13px',
-        align: 'center',
-      })
-      .setName('settings-status')
-      .setOrigin(0.5)
-      .setDepth(4);
-
-    createUiShadow(this, GAME_WIDTH / 2, 656, 260, 64, 4, 0.16);
-    this.doneButton = this.add
-      .rectangle(GAME_WIDTH / 2, 656, 260, 64, UI_COLOURS.gold, 1)
-      .setName('settings-done')
-      .setStrokeStyle(4, UI_COLOURS.goldStrong, 1)
-      .setInteractive({ useHandCursor: true })
-      .setDepth(5);
-    this.add
-      .text(GAME_WIDTH / 2, 656, 'Done', {
-        color: UI_COLOURS.ink,
-        fontFamily: UI_FONT,
-        fontSize: '21px',
-        fontStyle: 'bold',
-      })
-      .setName('settings-done-label')
-      .setOrigin(0.5)
-      .setDepth(6);
-    applyButtonHover(this.doneButton, UI_COLOURS.gold, UI_COLOURS.cream);
-    this.doneButton.on('pointerdown', () => this.closeSettings());
+    this.createViewportGuards();
+    this.createFixedChrome();
 
     this.input.keyboard?.on('keydown-UP', this.selectPrevious, this);
     this.input.keyboard?.on('keydown-DOWN', this.selectNext, this);
@@ -222,21 +186,41 @@ export class SettingsScene extends Phaser.Scene {
       this.unsubscribeAccessibility = null;
       this.unsubscribeAtmosphericTime = null;
       this.unsubscribeWeather = null;
-      this.listMaskGraphics?.destroy();
-      this.listMaskGraphics = null;
       this.rows = [];
       this.sectionHeadings = [];
       this.doneButton = null;
+      this.doneSurface = null;
       this.statusText = null;
       this.scrollbarThumb = null;
     });
   }
 
-  private createListMask(): void {
-    const graphics = this.make.graphics({ x: 0, y: 0 });
-    graphics.fillStyle(0xffffff, 1);
-    graphics.fillRect(VIEWPORT_LEFT, VIEWPORT_TOP, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
-    this.listMaskGraphics = graphics;
+  private createPanel(): void {
+    const panel = this.add.graphics().setName('settings-panel').setDepth(2);
+    panel.fillStyle(UI_COLOURS.shadow, 0.28);
+    panel.fillRoundedRect(
+      GAME_WIDTH / 2 - PANEL_WIDTH / 2 + 8,
+      PANEL_TOP + 9,
+      PANEL_WIDTH,
+      PANEL_HEIGHT,
+      PANEL_RADIUS,
+    );
+    panel.fillStyle(UI_COLOURS.cream, 1);
+    panel.fillRoundedRect(
+      GAME_WIDTH / 2 - PANEL_WIDTH / 2,
+      PANEL_TOP,
+      PANEL_WIDTH,
+      PANEL_HEIGHT,
+      PANEL_RADIUS,
+    );
+    panel.lineStyle(6, UI_COLOURS.ribbonStrong, 1);
+    panel.strokeRoundedRect(
+      GAME_WIDTH / 2 - PANEL_WIDTH / 2,
+      PANEL_TOP,
+      PANEL_WIDTH,
+      PANEL_HEIGHT,
+      PANEL_RADIUS,
+    );
   }
 
   private createSectionedRows(): void {
@@ -272,11 +256,7 @@ export class SettingsScene extends Phaser.Scene {
       })
       .setName(`settings-section-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`)
       .setOrigin(0, 0.5)
-      .setDepth(6);
-
-    if (this.listMaskGraphics) {
-      label.setMask(this.listMaskGraphics.createGeometryMask());
-    }
+      .setDepth(LIST_LABEL_DEPTH);
     this.sectionHeadings.push({ label, contentY });
   }
 
@@ -286,12 +266,12 @@ export class SettingsScene extends Phaser.Scene {
       .graphics()
       .setName(`settings-row-surface-${kind}`)
       .setPosition(ROW_X, y)
-      .setDepth(5);
+      .setDepth(LIST_SURFACE_DEPTH);
     const button = this.add
       .rectangle(ROW_X, y, ROW_WIDTH, ROW_HEIGHT, UI_COLOURS.white, 0.001)
       .setName(`settings-row-${kind}`)
       .setInteractive({ useHandCursor: true })
-      .setDepth(6);
+      .setDepth(LIST_CONTROL_DEPTH);
     const label = this.add
       .text(ROW_X, y, '', {
         color: UI_COLOURS.ink,
@@ -301,13 +281,7 @@ export class SettingsScene extends Phaser.Scene {
       })
       .setName(`settings-row-${kind}-label`)
       .setOrigin(0.5)
-      .setDepth(7);
-
-    if (this.listMaskGraphics) {
-      surface.setMask(this.listMaskGraphics.createGeometryMask());
-      button.setMask(this.listMaskGraphics.createGeometryMask());
-      label.setMask(this.listMaskGraphics.createGeometryMask());
-    }
+      .setDepth(LIST_LABEL_DEPTH);
 
     const row: SettingRow = { surface, button, label, kind, contentY, hovered: false };
     button.on('pointerover', () => {
@@ -345,10 +319,10 @@ export class SettingsScene extends Phaser.Scene {
     const lineWidth = selected ? 5 : 3;
 
     row.surface.clear();
-    row.surface.fillStyle(UI_COLOURS.shadow, 0.12);
+    row.surface.fillStyle(UI_COLOURS.shadow, 0.11);
     row.surface.fillRoundedRect(
-      -ROW_WIDTH / 2 + 5,
-      -ROW_HEIGHT / 2 + 6,
+      -ROW_WIDTH / 2 + ROW_SHADOW_X,
+      -ROW_HEIGHT / 2 + ROW_SHADOW_Y,
       ROW_WIDTH,
       ROW_HEIGHT,
       ROW_RADIUS,
@@ -375,10 +349,10 @@ export class SettingsScene extends Phaser.Scene {
         SCROLLBAR_WIDTH,
         VIEWPORT_HEIGHT,
         UI_COLOURS.lavenderStrong,
-        0.22,
+        0.2,
       )
       .setName('settings-scrollbar-track')
-      .setDepth(5);
+      .setDepth(FIXED_CHROME_DEPTH + 1);
 
     this.scrollbarThumb = this.add
       .rectangle(
@@ -387,10 +361,153 @@ export class SettingsScene extends Phaser.Scene {
         12,
         SCROLLBAR_MIN_THUMB,
         UI_COLOURS.ribbonStrong,
-        0.9,
+        0.92,
       )
       .setName('settings-scrollbar-thumb')
-      .setDepth(6);
+      .setDepth(FIXED_CHROME_DEPTH + 2);
+  }
+
+  private createViewportGuards(): void {
+    const innerWidth = PANEL_WIDTH - 12;
+    const topGuardHeight = VIEWPORT_TOP - PANEL_TOP;
+    const bottomGuardHeight = PANEL_BOTTOM - VIEWPORT_BOTTOM;
+
+    this.add
+      .rectangle(
+        GAME_WIDTH / 2,
+        PANEL_TOP + topGuardHeight / 2,
+        innerWidth,
+        topGuardHeight,
+        UI_COLOURS.cream,
+        1,
+      )
+      .setName('settings-viewport-top-guard')
+      .setDepth(CLIP_GUARD_DEPTH);
+    this.add
+      .rectangle(
+        GAME_WIDTH / 2,
+        VIEWPORT_BOTTOM + bottomGuardHeight / 2,
+        innerWidth,
+        bottomGuardHeight,
+        UI_COLOURS.cream,
+        1,
+      )
+      .setName('settings-viewport-bottom-guard')
+      .setDepth(CLIP_GUARD_DEPTH);
+
+    if (PANEL_TOP > 0) {
+      this.add
+        .rectangle(GAME_WIDTH / 2, PANEL_TOP / 2, GAME_WIDTH, PANEL_TOP, BACKDROP, 1)
+        .setName('settings-viewport-outer-top-guard')
+        .setDepth(CLIP_GUARD_DEPTH + 1);
+    }
+    if (PANEL_BOTTOM < GAME_HEIGHT) {
+      const height = GAME_HEIGHT - PANEL_BOTTOM;
+      this.add
+        .rectangle(
+          GAME_WIDTH / 2,
+          PANEL_BOTTOM + height / 2,
+          GAME_WIDTH,
+          height,
+          BACKDROP,
+          1,
+        )
+        .setName('settings-viewport-outer-bottom-guard')
+        .setDepth(CLIP_GUARD_DEPTH + 1);
+    }
+
+    const frame = this.add.graphics().setName('settings-panel-frame').setDepth(FIXED_CHROME_DEPTH + 4);
+    frame.lineStyle(6, UI_COLOURS.ribbonStrong, 1);
+    frame.strokeRoundedRect(
+      GAME_WIDTH / 2 - PANEL_WIDTH / 2,
+      PANEL_TOP,
+      PANEL_WIDTH,
+      PANEL_HEIGHT,
+      PANEL_RADIUS,
+    );
+  }
+
+  private createFixedChrome(): void {
+    this.add
+      .text(GAME_WIDTH / 2, 52, 'Settings', {
+        color: UI_COLOURS.ink,
+        fontFamily: UI_FONT,
+        fontSize: '34px',
+        fontStyle: 'bold',
+      })
+      .setName('settings-heading')
+      .setOrigin(0.5)
+      .setDepth(FIXED_CHROME_DEPTH + 5);
+    this.add
+      .text(GAME_WIDTH / 2, 91, 'Make the valley comfortable for you.', {
+        color: UI_COLOURS.softInk,
+        fontFamily: UI_FONT,
+        fontSize: '17px',
+      })
+      .setName('settings-hint')
+      .setOrigin(0.5)
+      .setDepth(FIXED_CHROME_DEPTH + 5);
+
+    this.statusText = this.add
+      .text(GAME_WIDTH / 2, 600, 'Swipe or scroll for more  •  ↑ ↓ choose  •  Enter changes', {
+        color: UI_COLOURS.mutedInk,
+        fontFamily: UI_FONT,
+        fontSize: '13px',
+        align: 'center',
+      })
+      .setName('settings-status')
+      .setOrigin(0.5)
+      .setDepth(FIXED_CHROME_DEPTH + 5);
+
+    this.doneSurface = this.add
+      .graphics()
+      .setName('settings-done-surface')
+      .setDepth(FIXED_CHROME_DEPTH + 5);
+    this.doneButton = this.add
+      .rectangle(GAME_WIDTH / 2, 656, 260, 64, UI_COLOURS.white, 0.001)
+      .setName('settings-done')
+      .setInteractive({ useHandCursor: true })
+      .setDepth(FIXED_CHROME_DEPTH + 6);
+    this.add
+      .text(GAME_WIDTH / 2, 656, 'Done', {
+        color: UI_COLOURS.ink,
+        fontFamily: UI_FONT,
+        fontSize: '21px',
+        fontStyle: 'bold',
+      })
+      .setName('settings-done-label')
+      .setOrigin(0.5)
+      .setDepth(FIXED_CHROME_DEPTH + 7);
+
+    this.doneButton.on('pointerover', () => {
+      this.doneHovered = true;
+      this.redrawDone();
+    });
+    this.doneButton.on('pointerout', () => {
+      this.doneHovered = false;
+      this.redrawDone();
+    });
+    this.doneButton.on('pointerdown', () => this.closeSettings());
+    this.redrawDone();
+  }
+
+  private redrawDone(): void {
+    if (!this.doneSurface) {
+      return;
+    }
+    const selected = this.selectedIndex === this.rows.length;
+    const fill = this.doneHovered ? UI_COLOURS.cream : UI_COLOURS.gold;
+    const lineWidth = selected ? 6 : 4;
+
+    this.doneSurface.clear();
+    this.doneSurface.fillStyle(UI_COLOURS.shadow, 0.16);
+    this.doneSurface.fillRoundedRect(GAME_WIDTH / 2 - 130 + 6, 656 - 32 + 7, 260, 64, 22);
+    this.doneSurface.fillStyle(fill, 1);
+    this.doneSurface.fillRoundedRect(GAME_WIDTH / 2 - 130, 656 - 32, 260, 64, 22);
+    this.doneSurface.lineStyle(lineWidth, UI_COLOURS.goldStrong, 1);
+    this.doneSurface.strokeRoundedRect(GAME_WIDTH / 2 - 130, 656 - 32, 260, 64, 22);
+    this.doneSurface.fillStyle(UI_COLOURS.white, 0.22);
+    this.doneSurface.fillRoundedRect(GAME_WIDTH / 2 - 122, 656 - 25, 244, 18, 14);
   }
 
   private getRowPresentation(kind: SettingsRowKind) {
@@ -435,11 +552,7 @@ export class SettingsScene extends Phaser.Scene {
     for (const row of this.rows) {
       this.redrawRow(row);
     }
-    this.doneButton?.setStrokeStyle(
-      this.selectedIndex === this.rows.length ? 6 : 4,
-      UI_COLOURS.goldStrong,
-      1,
-    );
+    this.redrawDone();
   }
 
   private selectPrevious(): void {
@@ -473,19 +586,31 @@ export class SettingsScene extends Phaser.Scene {
 
   private setScrollOffset(value: number): void {
     this.scrollOffset = Phaser.Math.Clamp(value, 0, this.maxScroll);
+
     for (const heading of this.sectionHeadings) {
-      heading.label.setY(VIEWPORT_TOP + heading.contentY - this.scrollOffset);
+      const y = VIEWPORT_TOP + heading.contentY - this.scrollOffset;
+      heading.label.setY(y);
+      heading.label.setVisible(
+        y + SECTION_HEADING_HEIGHT / 2 > VIEWPORT_TOP &&
+          y - SECTION_HEADING_HEIGHT / 2 < VIEWPORT_BOTTOM,
+      );
     }
+
     for (const row of this.rows) {
       const y = VIEWPORT_TOP + row.contentY - this.scrollOffset;
-      row.surface.setY(y);
-      row.button.setY(y);
-      row.label.setY(y);
+      const top = y - ROW_HEIGHT / 2;
+      const bottom = y + ROW_HEIGHT / 2 + ROW_SHADOW_Y;
+      const intersectsViewport = bottom > VIEWPORT_TOP && top < VIEWPORT_BOTTOM;
+      const fullyInsideViewport = top >= VIEWPORT_TOP && bottom <= VIEWPORT_BOTTOM;
+
+      row.surface.setY(y).setVisible(intersectsViewport);
+      row.button.setY(y).setVisible(intersectsViewport);
+      row.label.setY(y).setVisible(intersectsViewport);
       if (row.button.input) {
-        row.button.input.enabled =
-          y - ROW_HEIGHT / 2 >= VIEWPORT_TOP && y + ROW_HEIGHT / 2 <= VIEWPORT_BOTTOM;
+        row.button.input.enabled = fullyInsideViewport;
       }
     }
+
     this.updateScrollbar();
   }
 
