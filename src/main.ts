@@ -61,6 +61,12 @@ void import('./game/ui/ModalConceptPresentationManager').then(
   },
 );
 
+void import('./game/ui/DesktopConceptPresentationManager').then(
+  ({ getDesktopConceptPresentationManager }) => {
+    getDesktopConceptPresentationManager(game);
+  },
+);
+
 void import('./game/economy/EconomyRewardWorldManager').then(({ getEconomyRewardWorldManager }) => {
   getEconomyRewardWorldManager();
 });
