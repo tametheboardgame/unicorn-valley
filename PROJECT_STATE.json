@@ -14,13 +14,13 @@
   "ci_state": "passing",
   "technical_validation_state": "pending",
   "human_acceptance_state": "pending",
-  "next_work_package": "R6.5-WP18H",
-  "next_work_package_path": "docs/work-packages/R6.5-WP18H-FULL-HUMAN-TABLET-REPLAY-RETURN-WP17.md",
+  "next_work_package": "R6.5-WP18J",
+  "next_work_package_path": "docs/work-packages/R6.5-WP18J-BAG-MAP-BOOK-THEMED-POLISH.md",
   "human_input_required": false,
   "blocker_reason": null,
   "night_shift_state": "not_configured",
   "chat_disposition": "keep",
   "delivery_mode": "pr_required",
-  "last_activity_at": "2026-09-07T06:58:00+01:00",
-  "updated_at": "2026-09-07T06:58:00+01:00"
+  "last_activity_at": "2026-09-07T18:24:00+01:00",
+  "updated_at": "2026-09-07T18:24:00+01:00"
 }
