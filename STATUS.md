@@ -24,39 +24,51 @@ ID: `R6.5-WP18J`
 
 Path: `docs/work-packages/R6.5-WP18J-BAG-MAP-BOOK-THEMED-POLISH.md`
 
-State: **implementation and WP18J-specific automated validation complete / human visual approval pending**.
+State: **first implementation validated / landscape-tablet review rejected approval / bounded remediation authorised and now in progress**.
 
 Implementation branch: `work/r6.5-wp18j-bag-map-book-polish`
 
 Draft PR: #158, stacked on WP18I PR #156.
 
-Exact validated head: `e44141dac0f20908501168758415bc0ec979e664`.
+Previously validated game-code head: `e44141dac0f20908501168758415bc0ec979e664`.
 
-Cloudflare branch preview: `https://work-r6-5-wp18j-bag-map-book.unicorn-valley.pages.dev`
+Cloudflare branch preview used for the 2026-09-07 tablet review: `https://work-r6-5-wp18j-bag-map-book.unicorn-valley.pages.dev`
 
-Hard scope: **Bag, Map and Wonderbook only**.
+### Authorised remediation scope
 
-Approved visual identities:
+The 2026-09-07 Galaxy Tab S8 Chrome landscape review identified four remaining presentation issues. These are now explicitly part of WP18J and must be fixed before another human visual gate:
+
+- **Bag frame cleanup:** simplify excessive borders/stitching so decorative lines no longer crowd or cross category controls, Close or Shop; retain the magical satchel identity and all existing behaviour.
+- **Map frame cleanup:** simplify excessive borders so title/Close/map content sit in clean space; preserve all topology, routing, labels and guidance exactly.
+- **Wonderbook index navigation:** keep the successful open-book treatment but replace the top-floating section controls with filing/index tabs on the outer page edges; no tab may cross the book spine.
+- **Existing in-game HUD alignment:** correct icon/label alignment in Map, Bag, Book and Settings and tighten alignment of the Shimmer/location pills; preserve the existing shell structure, actions and hit targets.
+
+This is a presentation/layout remediation only. It does not authorise gameplay, save, progression, map-topology, inventory-semantic, input-semantic, settings-behaviour, creator/title, collision or world-art changes.
+
+Approved visual identities remain:
 
 - Bag = magical satchel/saddlebag with restrained pocket, stitch, tag and compartment cues;
 - Map = magical quest/adventure map with parchment, compass and cartographic cues;
-- Wonderbook = friendly enchanted spellbook/storybook with a coherent open-book spread, chapter/ribbon tabs and subtle magical flourishes.
+- Wonderbook = friendly enchanted spellbook/storybook with a coherent open-book spread and page-edge index navigation;
+- top HUD = concept-grade buttons/status pills with consistent icon/text alignment.
 
-WP18J preserves all underlying inventory, map, discovery, collection, progression, save and input behaviour. It does not authorise new gameplay semantics or another global UI rewrite.
+### Previous WP18J validation result
 
-### WP18J validation result
+The first implementation remains useful as the regression baseline for the remediation:
 
-- project contract, format, lint, TypeScript, unit tests, production build, static smoke and the hard 520 KiB application-entry budget pass;
-- Chromium, Firefox and WebKit compatibility passes;
+- project contract, format, lint, TypeScript, unit tests, production build, static smoke and the hard 520 KiB application-entry budget passed;
+- Chromium, Firefox and WebKit compatibility passed;
 - the serial Chromium suite completed with 155 passed, 13 failed, 3 skipped and 3 not run;
 - the stacked WP18I baseline completed the same suite with 154 passed, 14 failed, 3 skipped and 3 not run;
-- WP18J introduced **zero new aggregate browser failures** and one unrelated baseline performance failure no longer reproduces;
-- both Wonderbook progress/filter regressions pass on the WP18J head;
-- the Bag scroll/food regression and distinct Map surface regression pass on the WP18J head;
-- the remaining 13 aggregate failures are inherited WP18I/pre-remediation test assumptions, primarily legacy HUD/Settings diagnostics and related timeouts, rather than WP18J regressions;
-- automated playtest summary reports 10 scenarios, 0 errors, 0 warnings and 3 existing high-object-count suggestions.
+- WP18J introduced **zero new aggregate browser failures** and one unrelated baseline performance failure no longer reproduced;
+- both Wonderbook progress/filter regressions passed on the validated WP18J game-code head;
+- the Bag scroll/food regression and distinct Map surface regression passed on the validated WP18J game-code head;
+- the remaining 13 aggregate failures were inherited WP18I/pre-remediation test assumptions, primarily legacy HUD/Settings diagnostics and related timeouts, rather than WP18J regressions;
+- automated playtest summary reported 10 scenarios, 0 errors, 0 warnings and 3 existing high-object-count suggestions.
 
-Human gate for WP18J: **visual spot-check required before merge/deployment**.
+Because visual approval was rejected after that validation, these results do **not** complete WP18J. The remediation must be implemented and revalidated, then presented again on the target tablet.
+
+Human gate for WP18J: **re-run visual spot-check after remediation before merge/deployment**.
 
 ## Deferred human replay
 
@@ -76,7 +88,7 @@ The 2026-09-07 production inspection also reconfirmed that the Moonflower Cottag
 - existing authoritative interaction/input paths must be reused rather than duplicated;
 - desktop keyboard/mouse support remains secondary but supported;
 - no new gameplay system is authorised by WP18I or WP18J;
-- WP18J may theme only Bag, Map and Wonderbook.
+- WP18J remediation may change only Bag/Map/Wonderbook presentation plus the explicitly authorised existing-HUD alignment correction.
 
 ## Production / deployment
 
