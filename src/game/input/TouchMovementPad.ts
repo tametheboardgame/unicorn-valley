@@ -357,19 +357,9 @@ export class TouchMovementPad {
     }
 
     const button = this.scene.add
-      .circle(
-        x,
-        y,
-        radius,
-        tablet ? CONCEPT_UI.purple : 0xfffbef,
-        tablet ? 1 : alpha,
-      )
+      .circle(x, y, radius, tablet ? CONCEPT_UI.purple : 0xfffbef, tablet ? 1 : alpha)
       .setName(`touch-movement-${direction}`)
-      .setStrokeStyle(
-        tablet ? 4 : 4,
-        tablet ? CONCEPT_UI.purpleStrong : 0x9d72ad,
-        tablet ? 1 : 0.9,
-      )
+      .setStrokeStyle(tablet ? 4 : 4, tablet ? CONCEPT_UI.purpleStrong : 0x9d72ad, tablet ? 1 : 0.9)
       .setScrollFactor(0)
       .setDepth(117)
       .setInteractive({ useHandCursor: true });
