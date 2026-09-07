@@ -52,7 +52,7 @@ export function drawRoundedPanel(
   height: number,
   radius: number,
   fill: number,
-  stroke = CONCEPT_UI.lavenderLine,
+  stroke: number = CONCEPT_UI.lavenderLine,
   lineWidth = 4,
   alpha = 0.98,
 ): void {
@@ -113,7 +113,7 @@ export function drawConceptIcon(
   x: number,
   y: number,
   scale = 1,
-  colour = CONCEPT_UI.purpleDeep,
+  colour: number = CONCEPT_UI.purpleDeep,
 ): void {
   graphics.clear();
   graphics.lineStyle(Math.max(2, 3 * scale), colour, 1);
