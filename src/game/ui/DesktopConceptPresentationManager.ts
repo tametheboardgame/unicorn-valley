@@ -120,11 +120,7 @@ function actionPresentation(text: string): ActionPresentation {
   if (normalised.includes('buy') || normalised.includes('shop')) {
     return { label: 'Buy', icon: 'buy', hint: 'Tap Buy to shop' };
   }
-  if (
-    normalised.includes('use') ||
-    normalised.includes('place') ||
-    normalised.includes('choose')
-  ) {
+  if (normalised.includes('use') || normalised.includes('place') || normalised.includes('choose')) {
     return { label: 'Use', icon: 'use', hint: 'Tap Use to continue' };
   }
   return { label: 'Interact', icon: 'interact', hint: 'Tap Interact to continue' };
@@ -254,24 +250,11 @@ export class DesktopConceptPresentationManager {
     return presentation;
   }
 
-  private createTopNavigation(
-    scene: Phaser.Scene,
-    objects: Phaser.GameObjects.GameObject[],
-  ): void {
+  private createTopNavigation(scene: Phaser.Scene, objects: Phaser.GameObjects.GameObject[]): void {
     const shadow = createFixedGraphics(scene, 'desktop-concept-nav-shadow', 197);
     drawPanelShadow(shadow, 278, 52, 524, 80, 28, 7, 8, 0.2);
     const surface = createFixedGraphics(scene, 'desktop-concept-nav-group', 198);
-    drawRoundedPanel(
-      surface,
-      278,
-      52,
-      524,
-      80,
-      28,
-      CONCEPT_UI.cream,
-      CONCEPT_UI.lavenderLine,
-      4,
-    );
+    drawRoundedPanel(surface, 278, 52, 524, 80, 28, CONCEPT_UI.cream, CONCEPT_UI.lavenderLine, 4);
     surface.lineStyle(2, CONCEPT_UI.lavenderLine, 0.34);
     for (const x of [150, 270, 390]) {
       surface.lineBetween(x, 23, x, 81);
@@ -307,14 +290,7 @@ export class DesktopConceptPresentationManager {
 
     for (const item of items) {
       const hover = scene.add
-        .rectangle(
-          item.x,
-          52,
-          item.label === 'Settings' ? 130 : 112,
-          66,
-          CONCEPT_UI.purpleLight,
-          0,
-        )
+        .rectangle(item.x, 52, item.label === 'Settings' ? 130 : 112, 66, CONCEPT_UI.purpleLight, 0)
         .setScrollFactor(0)
         .setDepth(199);
       const hit = scene.add
@@ -353,17 +329,7 @@ export class DesktopConceptPresentationManager {
     const shadow = createFixedGraphics(scene, 'desktop-concept-shimmer-shadow', 197);
     drawPanelShadow(shadow, 700, 52, 210, 62, 28, 5, 6, 0.18);
     const surface = createFixedGraphics(scene, 'desktop-concept-shimmer-surface', 198);
-    drawRoundedPanel(
-      surface,
-      700,
-      52,
-      210,
-      62,
-      28,
-      CONCEPT_UI.cream,
-      CONCEPT_UI.lavenderLine,
-      4,
-    );
+    drawRoundedPanel(surface, 700, 52, 210, 62, 28, CONCEPT_UI.cream, CONCEPT_UI.lavenderLine, 4);
     const icon = createFixedGraphics(scene, 'desktop-concept-shimmer-icon', 201);
     drawConceptIcon(icon, 'shimmer', 628, 52, 0.85, CONCEPT_UI.goldStrong);
     const label = scene.add
@@ -380,24 +346,11 @@ export class DesktopConceptPresentationManager {
     return label;
   }
 
-  private createLocation(
-    scene: Phaser.Scene,
-    objects: Phaser.GameObjects.GameObject[],
-  ): void {
+  private createLocation(scene: Phaser.Scene, objects: Phaser.GameObjects.GameObject[]): void {
     const shadow = createFixedGraphics(scene, 'desktop-concept-location-shadow', 197);
     drawPanelShadow(shadow, 1044, 52, 370, 62, 28, 5, 6, 0.18);
     const surface = createFixedGraphics(scene, 'desktop-concept-location-surface', 198);
-    drawRoundedPanel(
-      surface,
-      1044,
-      52,
-      370,
-      62,
-      28,
-      CONCEPT_UI.cream,
-      CONCEPT_UI.lavenderLine,
-      4,
-    );
+    drawRoundedPanel(surface, 1044, 52, 370, 62, 28, CONCEPT_UI.cream, CONCEPT_UI.lavenderLine, 4);
     const icon = createFixedGraphics(scene, 'desktop-concept-location-icon', 201);
     drawConceptIcon(icon, 'location', 904, 52, 0.9, CONCEPT_UI.purpleDeep);
     const label = scene.add
