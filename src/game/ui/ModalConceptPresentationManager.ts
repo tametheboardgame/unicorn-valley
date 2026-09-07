@@ -21,7 +21,10 @@ interface ConceptSurfacePresentation {
   hideSource: () => void;
 }
 
-function shouldStyleRectangle(scene: Phaser.Scene, rectangle: Phaser.GameObjects.Rectangle): boolean {
+function shouldStyleRectangle(
+  scene: Phaser.Scene,
+  rectangle: Phaser.GameObjects.Rectangle,
+): boolean {
   const name = rectangle.name.trim();
   if (scene.scene.key === 'SettingsScene' && name.startsWith('settings-row-')) {
     return false;
