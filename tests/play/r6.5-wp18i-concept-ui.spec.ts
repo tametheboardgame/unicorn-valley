@@ -237,9 +237,7 @@ test.describe('R6.5-WP18I concept-grade tablet HUD', () => {
     }
   });
 
-  test('reconciles Bag and Settings controls into the shared rounded surface system', async ({
-    page,
-  }) => {
+  test('reconciles Bag and Settings controls into the concept surface system', async ({ page }) => {
     await page.goto('/?diagnostics=1');
     await waitForDiagnostics(page);
     await page.waitForTimeout(700);
@@ -262,9 +260,11 @@ test.describe('R6.5-WP18I concept-grade tablet HUD', () => {
     await page.waitForTimeout(250);
     const settings = await getScene(page, 'SettingsScene');
     for (const name of [
-      'concept-modal-surface:settings-panel',
-      'concept-modal-surface:settings-done',
-      'concept-modal-surface:settings-row-muted',
+      'settings-panel',
+      'settings-done-surface',
+      'settings-row-surface-muted',
+      'settings-viewport-top-guard',
+      'settings-viewport-bottom-guard',
     ]) {
       expect(objectByName(settings, name).visible, name).toBe(true);
     }
