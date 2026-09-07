@@ -54,7 +54,7 @@ async function sceneSnapshot(
 test.describe('R6.5-WP18I desktop concept HUD cleanup', () => {
   test.use({ viewport: { width: 1280, height: 720 }, hasTouch: false });
 
-  test('uses the concept HUD without legacy shadows or duplicate interaction copy', async ({
+  test('uses the concept HUD without legacy controls and keeps atmosphere choices in Settings', async ({
     page,
   }) => {
     await page.goto('/?diagnostics=1');
@@ -95,6 +95,17 @@ test.describe('R6.5-WP18I desktop concept HUD cleanup', () => {
     );
     expect(legacyControls?.alpha ?? 0).toBeLessThanOrEqual(0.01);
     expect(legacySound?.alpha ?? 0).toBeLessThanOrEqual(0.01);
+
+    const visibleAtmosphereHud = scene.objects.filter(
+      (object) =>
+        [
+          'atmospheric-time-control',
+          'atmospheric-time-hint',
+          'magical-weather-control',
+          'magical-weather-hint',
+        ].includes(object.name) && object.visible,
+    );
+    expect(visibleAtmosphereHud).toEqual([]);
 
     const visibleLegacyShadows = scene.objects.filter(
       (object) =>
@@ -143,9 +154,36 @@ test.describe('R6.5-WP18I desktop concept HUD cleanup', () => {
       }
       const action =
         /^(talk(?:\s+to)?|speak(?:\s+to)?|sit|enter|inspect|interact|start|play|buy|shop|use|read|look|visit|open|pick|choose|place)\b/i;
-      const oldInput = /\b(?:e\s*\/\s*enter|enter\s*\/|\/\s*tap\b|tap\s*:)\b/i;
+      const oldInput = /(?:\be\s*\/\s*enter\b|\benter\s*\/|\/\s*tap\b|\btap\s*:)/i;
       return action.test(object.text.trim()) && oldInput.test(object.text.trim());
     });
     expect(lingeringLegacyActionCopy).toEqual([]);
+
+    await page.mouse.click(465, 52);
+    await page.waitForFunction(() => {
+      const diagnostics = (
+        window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
+      ).__UNICORN_VALLEY_DIAGNOSTICS__;
+      return diagnostics?.snapshot().activeScenes.includes('SettingsScene') === true;
+    });
+    await page.waitForTimeout(250);
+
+    const settings = await sceneSnapshot(page, 'SettingsScene');
+    const timeControl = settings.objects.find(
+      (object) => object.name === 'settings-atmosphere-time' && object.visible,
+    );
+    const weatherControl = settings.objects.find(
+      (object) => object.name === 'settings-atmosphere-weather' && object.visible,
+    );
+    const timeLabel = settings.objects.find(
+      (object) => object.name === 'settings-atmosphere-time-label' && object.visible,
+    );
+    const weatherLabel = settings.objects.find(
+      (object) => object.name === 'settings-atmosphere-weather-label' && object.visible,
+    );
+    expect(timeControl).toBeDefined();
+    expect(weatherControl).toBeDefined();
+    expect(timeLabel?.text).toMatch(/^Time: .+ · (Auto|Manual)$/);
+    expect(weatherLabel?.text).toMatch(/^Weather: .+ · (Auto|Manual)$/);
   });
 });
