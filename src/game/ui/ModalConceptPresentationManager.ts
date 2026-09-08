@@ -28,6 +28,14 @@ function shouldStyleRectangle(
   if (scene.scene.key === 'SettingsScene') {
     return false;
   }
+
+  // WP18J deliberately presents Bag/Map close as a glyph-only control. The source
+  // rectangle remains as the generous invisible touch target, so do not generate
+  // the generic rounded modal surface around it.
+  if (scene.scene.key === 'InventoryScene' && rectangle.name === 'bag-close-button') {
+    return false;
+  }
+
   const name = rectangle.name.trim();
   return Boolean(name && !name.includes('backdrop') && SURFACE_NAME_PATTERN.test(name));
 }
