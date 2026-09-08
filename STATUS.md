@@ -8,7 +8,7 @@ Last updated: 2026-09-08
 
 Path: `docs/work-packages/R6.5-WP19A-PERSISTENCE-SAFETY.md`
 
-State: **WP19A prepared for Codex implementation dispatch**. The full plan is approved in draft PR #159. This branch begins the first approved implementation package; no gameplay fix is complete yet.
+State: **WP19A dispatched but blocked: Codex reports no cloud environment for this repo**. The full plan is approved in draft PR #159. This branch begins the first approved implementation package; no gameplay fix is complete yet.
 
 Read first:
 
@@ -76,3 +76,7 @@ Chat disposition: `keep`.
 ## Implementation delivery
 
 Branch: `agent/r6.5-wp19a-persistence-safety`, stacked on the approved planning branch while PR #159 remains unmerged. Keep gameplay changes off PR #159. The project manager reviews results and reports the verified preview URL to David before required human gates.
+
+## Codex setup blocker
+
+Implementation PR: https://github.com/tametheboardgame/unicorn-valley/pull/160. Dispatch: issuecomment-5584158968. Codex replied in issuecomment-5584160637 that an environment must be created at https://chatgpt.com/codex/cloud/settings/environments. No worker implementation has started. David must create/select a Codex cloud environment for this repo, then confirm so the existing task can be retried once. The hourly delivery-manager automation is enabled; do not repeat task launches while this blocker remains.
