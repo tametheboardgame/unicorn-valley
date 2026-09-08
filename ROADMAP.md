@@ -1,6 +1,6 @@
 # Operating Roadmap
 
-This file is the concise project-level navigation layer. Detailed release content remains authoritative in the existing design documents under `docs/`.
+This file is the concise project-level navigation layer. Detailed release and human-playtest evidence remains authoritative in `docs/`.
 
 ## Completed releases
 
@@ -14,119 +14,100 @@ This file is the concise project-level navigation layer. Detailed release conten
 
 ## R6.5 - Valley Completeness and Breadth
 
-Status: Human playtest completed; R7 readiness gate **not released**; a concept-grade UI remediation pass now precedes the final human tablet replay.
+Status: **active remediation; R7 blocked**.
 
-Canonical release contract: `docs/07V-R6.5-VALLEY-COMPLETENESS-BREADTH.md`
+Canonical human evidence: `docs/07Z-R6.5-WP17-PLAYTEST-REMEDIATION.md`
 
-Authoritative remediation evidence: `docs/07Z-R6.5-WP17-PLAYTEST-REMEDIATION.md`
+Current feedback ledger: `docs/HUMAN-PLAYTEST-FEEDBACK-LEDGER.md`
 
-Approved tablet direction: `docs/07AA-R6.5-WP18A-APPROVED-TABLET-UX-DIRECTION.md`
+Reference human device: Samsung Galaxy Tab S8, Android/Chrome, landscape.
 
-Latest UI visual authority: the user-supplied 2026-09-07 high-fidelity Rainbow Meadow HUD concept, with its button layout, grouping, hierarchy and visual quality treated as the target for WP18I. The concept's Unicorn Valley logo and left-side mini-map are explicitly not required.
-
-### Completed pre-playtest sequence
+### Completed sequence
 
 R6.5-WP1 through R6.5-WP16 are complete and integrated.
 
-### R6.5-WP17 - Full Human Playthrough and R7 Readiness Gate
+R6.5-WP17 - Full Human Playthrough and R7 Readiness Gate remains **open**. The 2026-09-05 daughter playthrough did not release R7.
 
-State: **open / remediation replay required**.
-
-The 2026-09-05 daughter playthrough showed that the underlying game is engaging but identified release-blocking landscape-tablet controls, freezes, functional defects, Bag/Creator usability issues and world/character consistency problems. WP17 therefore does not release R7 until the WP18 remediation sequence and another full tablet replay are complete.
-
-## R6.5-WP18 - Landscape Tablet and Playtest Remediation
-
-Product direction: **landscape-tablet-first** while retaining the Phaser/TypeScript/Vite browser codebase and secondary desktop keyboard/mouse support.
-
-Reference human-test device: Samsung Galaxy Tab S8, current supported Android, Chrome, landscape.
-
-Do not rewrite the game natively for Android as part of WP18.
-
-### Completed packages
-
-- R6.5-WP18A - Landscape Tablet UX Concept and Approval: complete, human visual gate released 2026-09-05, PR #147.
-- R6.5-WP18B - Freeze Diagnostics, Root Cause and Stability: complete, PR #148.
-- R6.5-WP18C - Landscape Tablet Controls and Interaction Shell: complete, PR #149.
-- R6.5-WP18D - Playthrough Functional Bug and Regression Remediation: complete, PR #150.
-- R6.5-WP18E - Bag, Map, Creator and Modal Tablet UX: complete and merged through PR #151 at `1ea5268c09d8e669057eec3c391dd2a020247cc5`.
-- R6.5-WP18F - World Consistency, Visual Quality and Experience Improvements: complete, visually approved 2026-09-06 and merged through PR #152 at `a9d6125330fcc5f3f87be15af2ad31eabcb610bb`.
-- R6.5-WP18G - Tablet Device Hardening and Cross-Input Regression: complete and merged through PR #153 at `d4de16122757122dfeb12dc74898057e35c6538a`.
-
-WP18G delivered canvas gesture hardening, orientation-safe exploration touch controls, representative 16:9/16:10/4:3/smaller/larger landscape coverage, Bag/Map/Creator containment checks, race control visibility checks and secondary desktop-input regressions. Validated implementation head `4f71e843e024b7974405e00f469ea0e359a2180b` passed project contract, formatting/lint/type-check, 426 unit tests, production build/static smoke, the unchanged 520 KiB application-entry performance budget, Chromium/Firefox/WebKit compatibility and the full serial Chromium playtest at 164 passed / 3 skipped. Existing WP18B freeze regressions remain green.
-
-### New production evidence after WP18G
-
-The 2026-09-07 production inspection confirmed the new touch control mechanics are present, but the HUD/button/text-box presentation is still materially below the approved concept quality. The live interface remains too fragmented and box-heavy, with separate top controls, weak status/location hierarchy, an overly dominant lower backing panel, inconsistent buttons/text boxes and no sufficiently strong concept-style contextual action composition.
-
-That evidence pauses WP18H and inserts a bounded UI-only remediation package before the next human replay.
-
-The same production inspection also reconfirmed a cottage/window collision defect. That defect remains separately logged and **must not be mixed into WP18I**, whose scope is UI only.
+R6.5-WP18A through WP18G are complete and integrated through PRs #147-#153.
 
 ### R6.5-WP18I - Concept-Grade HUD, Button and Text-Box Remediation
 
+State: **complete / human-approved 2026-09-08**.
+
 Path: `docs/work-packages/R6.5-WP18I-CONCEPT-GRADE-UI-REMEDIATION.md`
 
-State: **current / approved for implementation**.
+Delivered the canonical concept-grade exploration UI. The retired legacy landscape shell is no longer an acceptable fallback. Map / Bag / Book / Settings, Shimmer, location, movement, Gallop, contextual action and hint presentation use the approved cream/lavender/purple/gold visual family.
 
-Objective: replace the still-fragmented HUD/button/text-box presentation with one cohesive, polished child-facing UI system that follows the 2026-09-07 high-fidelity concept as closely as practical without changing gameplay or world logic.
+### R6.5-WP18J - Bag, Map and Wonderbook Themed Polish
 
-Core target composition:
+State: **complete / human-approved 2026-09-08**.
 
-- one joined top navigation group for Map, Bag, Book and Settings;
-- top-right authoritative currency/progress counters and a polished location pill;
-- compact polished lower-left movement pad without a large opaque lower-screen slab;
-- one large lower-right contextual primary action that appears only when relevant and uses clear verbs such as Talk, Enter, Interact or Start;
-- separate polished Gallop action beside it;
-- one bottom-centre contextual hint pill;
-- optional compact quest/info card where useful;
-- shared high-quality button, card, pill, modal and text-box styling across the wider UI;
-- race/activity controls reconciled into the same visual family without changing RUN/JUMP mechanics.
+Path: `docs/work-packages/R6.5-WP18J-BAG-MAP-BOOK-THEMED-POLISH.md`
 
-The concept's logo and left-side mini-map are omitted by design.
+Final accepted game-code head: `e4d64c0fa258bd91eb29579321e7da6b0968f71e`.
 
-Hard boundary: UI layout/styling/presentation only. No collision, world art, quest, movement, race logic, economy, save, NPC placement or content changes.
+Final accepted preview: `https://8292d7b9.unicorn-valley.pages.dev`.
 
-Human gate: **visual spot-check required**. The acceptance question is whether the interface now genuinely resembles the concept's hierarchy and polish rather than merely fitting on the screen.
+Final presentation includes:
+
+- stable top HUD rendered independently from the world-follow camera;
+- one canonical concept shell for desktop/laptop, tablet landscape and phone landscape;
+- approved portrait-phone dock/control composition below gameplay;
+- magical satchel Bag with cleaner spacing and no Shop teleport shortcut;
+- draggable parchment Map with fixed North marker and hard camera-viewport clipping beneath the inner frame;
+- enchanted Wonderbook with page-edge index tabs;
+- glyph-only close controls with large invisible touch targets.
+
+Responsive presentation changes are incomplete unless all four display classes are considered together: desktop/laptop, tablet landscape, phone landscape and phone portrait.
+
+### R6.5-WP18K - Architecture Consolidation and Legacy Retirement
+
+State: **current / ready for Work mode**.
+
+Path: `docs/work-packages/R6.5-WP18K-ARCHITECTURE-CONSOLIDATION-LEGACY-RETIREMENT.md`
+
+Objective: perform a repo-wide, behaviour-preserving architecture audit and remove obsolete presentation systems, duplicate managers, compatibility shims, dead code/assets/tests and temporary remediation layers that accumulated during R0-R6.5. Consolidate the approved UI into clear canonical owners rather than continuing to layer fixes.
+
+WP18K must preserve current gameplay, saves, progression, map topology, inventory semantics, race/movement rules and the exact approved UI behaviour. It must not use cleanup as an excuse for a visual redesign.
+
+The hard 520 KiB application-entry performance budget remains unchanged.
+
+### Known open defect outside WP18K
+
+Moonflower Cottage/window/back-wall collision remains a **known unresolved gameplay/world-geometry defect**. It must not be lost during architecture cleanup and must be closed or explicitly accepted before the final R7-readiness decision. WP18K itself is behaviour-preserving and does not silently absorb this defect.
 
 ### R6.5-WP18H - Full Human Tablet Replay and Return to WP17
 
+State: **deferred until WP18K is complete and known open blockers are accounted for**.
+
 Path: `docs/work-packages/R6.5-WP18H-FULL-HUMAN-TABLET-REPLAY-RETURN-WP17.md`
 
-State: **deferred until WP18I is complete and visually accepted**.
-
-Run another substantially unguided playthrough on the reference Galaxy Tab S8 in landscape only after the concept-grade UI remediation is approved. WP18H records evidence and then returns to WP17 for the user's explicit R7-readiness decision.
-
-Automated browser/device evidence cannot replace the remaining real Android/Chrome questions around physical comfort, long-press behaviour, OS/browser gesture interference and child comprehension. Those remain owned by WP18H.
+Run another substantially unguided daughter playthrough on the Galaxy Tab S8 after architecture cleanup. Use the human feedback ledger as the replay checklist. WP18H captures evidence and returns to WP17 for the user's explicit R7-readiness decision.
 
 ### Dependency chain
 
-`WP17 evidence -> WP18A approved -> WP18B complete -> WP18C complete -> WP18D complete -> WP18E complete -> WP18F approved/merged -> WP18G complete/merged -> WP18I concept-grade UI remediation + visual approval -> WP18H human replay -> WP17 explicit readiness decision -> R7`
+`WP17 evidence -> WP18A-G complete -> WP18I approved -> WP18J approved -> WP18K architecture consolidation -> account for known open blockers -> WP18H human replay -> WP17 explicit readiness decision -> R7`
 
 ## R6.6 - Optional Android Packaging
 
-Status: future candidate only after WP18 is stable and WP17 explicitly accepts the remediated build. Packaging must reuse the existing game code and is not a native rewrite.
+Future candidate only after WP17 explicitly accepts the remediated browser build. Packaging must reuse the existing Phaser/TypeScript/Vite codebase and is not a native rewrite.
 
 ## R7 - Daughter-led Expansion
 
-Status: Blocked.
+Status: **blocked**.
 
-R7-WP7.1 may not begin until WP18I is complete and visually accepted, WP18H completes, and R6.5-WP17 explicitly confirms through human play that the valley is ready for preference-led expansion.
+R7 may not start until WP18K is complete, WP18H has run, all known readiness blockers are accounted for, and WP17 receives an explicit user readiness decision.
 
-## Future releases
-
-Potential later work includes flight/Cloudtop Peaks, deeper gardening/cooking, companion expansion, further regions, festival systems, Unicorn Palace, richer multi-step social events, and the user-requested broader world visual tightening/polish pass. These remain backlog until later play evidence justifies their ordering.
+Deferred daughter-led ideas and preservation requirements are listed in `docs/HUMAN-PLAYTEST-FEEDBACK-LEDGER.md` and must survive cleanup.
 
 ## Operating rules
 
-- Build dependencies before content that uses them.
-- Prefer reusable systems over repeated bespoke implementations.
-- Production art follows proven mechanics unless concept work is explicitly required.
-- WP18 tablet shell/control work follows the approved WP18A structural direction.
-- WP18I visual layout and styling follows the 2026-09-07 high-fidelity Rainbow Meadow concept as the primary UI quality authority, excluding its logo and mini-map.
-- Landscape tablet is the primary interface authority; desktop remains supported secondarily.
-- Point-and-click/tap movement is first-class.
 - Human-observed defects override stale automated claims.
 - Positive human feedback is a preservation requirement.
-- New features should strengthen a design pillar and add a meaningful player action rather than complexity alone.
-- The hard application-entry performance budget remains 520 KiB and must not be weakened or increased.
-- The 2026-09-07 WP18G production deployment was explicitly authorised by the user; future production deployments still require explicit user approval.
+- Point-and-click/tap movement is first-class.
+- The approved concept UI is canonical across desktop/laptop, tablet landscape, phone landscape and phone portrait.
+- Do not resurrect retired legacy UI to satisfy stale tests. Update stale tests to current authoritative behaviour.
+- Prefer clear ownership and reusable systems over repeated presentation managers or patches.
+- Save compatibility is preserved unless a bounded migration is explicitly authorised and tested.
+- The hard application-entry performance budget remains **520 KiB**.
+- Production deployment still requires explicit user approval.

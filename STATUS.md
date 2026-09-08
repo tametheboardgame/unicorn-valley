@@ -1,113 +1,85 @@
 # Project Status
 
-Last updated: 2026-09-07
+Last updated: 2026-09-08
 
 ## Current phase
 
-R6.5 - Valley Completeness and Breadth, human-playtest remediation
-
-## Accepted baseline
-
-R0 through R6 are complete. R6.5-WP1 through WP16 are integrated on `main`.
-
-WP17 human playtest did not release R7 readiness. It confirmed that the game is engaging while exposing release-blocking landscape-tablet usability, stability, functional and world-quality defects.
-
-R6.5-WP18A through WP18G are complete and merged through PRs #147-#153. WP18F was human-approved on 2026-09-06. WP18G merged to `main` on 2026-09-07 as `d4de16122757122dfeb12dc74898057e35c6538a` after green exact-head validation.
-
-The 2026-09-07 production inspection established that the touch mechanics were substantially improved but the HUD/button/text-box presentation still fell materially short of the user-approved high-fidelity Rainbow Meadow concept. R6.5-WP18I therefore became the bounded global UI remediation pass.
-
-WP18I implementation is currently represented by draft PR #156 on `agent/r6.5-wp18i-concept-grade-ui`. Subsequent visual review established that Bag, Map and Wonderbook require one further tightly bounded themed pass rather than reopening the wider shell.
+R6.5 - Valley Completeness and Breadth, human-playtest remediation.
 
 ## Current work package
 
-ID: `R6.5-WP18J`
+`R6.5-WP18K - Architecture Consolidation and Legacy Retirement`
 
-Path: `docs/work-packages/R6.5-WP18J-BAG-MAP-BOOK-THEMED-POLISH.md`
+Path: `docs/work-packages/R6.5-WP18K-ARCHITECTURE-CONSOLIDATION-LEGACY-RETIREMENT.md`
 
-State: **bounded remediation implementation complete / latest exact-head automated validation in progress / human visual approval pending**.
+State: **ready for Work-mode execution after WP18I/J integration**.
 
-Implementation branch: `work/r6.5-wp18j-bag-map-book-polish`
+## Accepted baseline
 
-Draft PR: #158, stacked on WP18I PR #156.
+R0-R6 are complete. R6.5-WP1 through WP16 are integrated. WP17 remains open because the daughter playthrough did not release R7 readiness.
 
-First validated WP18J game-code head: `e44141dac0f20908501168758415bc0ec979e664`.
+WP18A-G are complete. WP18I and WP18J are now **human visually approved** following the 2026-09-08 responsive UI remediation and final Map clipping correction.
 
-Latest remediation game-code head: `5f46fb9ca9b6b47dc57f9ec7cb98013e20de586b`.
+Final approved WP18I/J game-code head: `e4d64c0fa258bd91eb29579321e7da6b0968f71e`.
 
-Latest remediation implementation includes:
+Final approved immutable preview: `https://8292d7b9.unicorn-valley.pages.dev`.
 
-- simplified Bag/Map scene-owned framing and removal of repeated stitch/dash treatments;
-- removal of the obsolete R6 production-frame overlay from Inventory/Map and Wonderbook, eliminating the duplicate dotted/gold/purple frame and the stale `MY BAG` / `ADVENTURE SCRAPBOOK` labels;
-- Wonderbook section navigation moved to five page-edge filing/index tabs with no spine crossing and a restrained directional page-skip transition;
-- corrected Map/Bag/Book/Settings icon-label alignment plus normalised Settings and Shimmer icon scale.
+Exact-head validation:
 
-Cloudflare branch preview: `https://work-r6-5-wp18j-bag-map-book.unicorn-valley.pages.dev`
+- project contract: passing;
+- formatting/lint/type-check: passing;
+- unit tests: passing;
+- production build/static smoke: passing;
+- hard 520 KiB application-entry budget: passing;
+- Chromium/Firefox/WebKit compatibility: **48 passed / 15 skipped / 0 failed**;
+- full serial Chromium playtest: still running when this handoff record was prepared; its final result must be read before WP18K closes, but it does not invalidate the already-green core/compatibility evidence.
 
-### Authorised remediation scope
+## Canonical UI state to preserve
 
-The 2026-09-07 Galaxy Tab S8 Chrome landscape review identified four remaining presentation issues. These are explicitly part of WP18J and must be fixed before another human visual gate:
+- one concept-grade shell, not legacy viewport fallbacks;
+- Map / Bag / Book / Settings + Shimmer + location presentation;
+- static HUD overlay independent of world camera follow;
+- landscape phone behaves as a smaller landscape tablet;
+- portrait phone uses the approved below-gameplay dock/control composition;
+- Bag has no `Visit the Shop` shortcut;
+- Map is draggable, North stays fixed, moving geography hard-clips beneath the parchment frame;
+- Wonderbook uses page-edge index tabs;
+- close controls show only a cross while retaining generous invisible touch targets.
 
-- **Bag frame cleanup:** simplify excessive borders/stitching so decorative lines no longer crowd or cross category controls, Close or Shop; retain the magical satchel identity and all existing behaviour.
-- **Map frame cleanup:** simplify excessive borders so title/Close/map content sit in clean space; preserve all topology, routing, labels and guidance exactly.
-- **Wonderbook index navigation:** keep the successful open-book treatment but replace the top-floating section controls with filing/index tabs on the outer page edges; no tab may cross the book spine.
-- **Existing in-game HUD alignment:** correct icon/label alignment in Map, Bag, Book and Settings and tighten alignment of the Shimmer/location pills; preserve the existing shell structure, actions and hit targets.
+## Human feedback record
 
-This is a presentation/layout remediation only. It does not authorise gameplay, save, progression, map-topology, inventory-semantic, input-semantic, settings-behaviour, creator/title, collision or world-art changes.
+Canonical original evidence: `docs/07Z-R6.5-WP17-PLAYTEST-REMEDIATION.md`.
 
-Approved visual identities remain:
+Current status ledger: `docs/HUMAN-PLAYTEST-FEEDBACK-LEDGER.md`.
 
-- Bag = magical satchel/saddlebag with restrained pocket, stitch, tag and compartment cues;
-- Map = magical quest/adventure map with parchment, compass and cartographic cues;
-- Wonderbook = friendly enchanted spellbook/storybook with a coherent open-book spread and page-edge index navigation;
-- top HUD = concept-grade buttons/status pills with consistent icon/text alignment.
+The ledger separates implemented/revalidation items, known open defects, deferred daughter-led ideas and positive features that must be preserved.
 
-### Previous WP18J validation result
+## Known open defect
 
-The first implementation remains the regression baseline for the remediation:
+**Moonflower Cottage/window/back-wall collision remains unresolved.** This is a real gameplay/world-geometry defect and was deliberately excluded from WP18I/J. WP18K must not delete the record or accidentally mask it.
 
-- project contract, format, lint, TypeScript, unit tests, production build, static smoke and the hard 520 KiB application-entry budget passed;
-- Chromium, Firefox and WebKit compatibility passed;
-- the serial Chromium suite completed with 155 passed, 13 failed, 3 skipped and 3 not run;
-- the stacked WP18I baseline completed the same suite with 154 passed, 14 failed, 3 skipped and 3 not run;
-- WP18J introduced **zero new aggregate browser failures** and one unrelated baseline performance failure no longer reproduced;
-- both Wonderbook progress/filter regressions passed on the validated WP18J game-code head;
-- the Bag scroll/food regression and distinct Map surface regression passed on the validated WP18J game-code head;
-- the remaining 13 aggregate failures were inherited WP18I/pre-remediation test assumptions, primarily legacy HUD/Settings diagnostics and related timeouts, rather than WP18J regressions;
-- automated playtest summary reported 10 scenarios, 0 errors, 0 warnings and 3 existing high-object-count suggestions.
+## Next human gate
 
-The latest remediation must complete exact-head validation before the next human visual gate. Do not infer completion from the earlier validated head.
-
-Human gate for WP18J: **re-run visual spot-check after remediation before merge/deployment**.
-
-## Deferred human replay
-
-`R6.5-WP18H - Full Human Tablet Replay and Return to WP17` remains deferred until WP18I/WP18J UI work is integrated and WP18J is visually accepted.
-
-After WP18J approval, WP18H resumes the substantially unguided Galaxy Tab S8 Chrome landscape replay and then returns to WP17 for the explicit R7-readiness decision.
+`R6.5-WP18H - Full Human Tablet Replay and Return to WP17` remains deferred until WP18K completes and known open blockers are accounted for.
 
 R7 remains blocked.
 
-## Separately known defect
+## WP18K guardrails
 
-The 2026-09-07 production inspection also reconfirmed that the Moonflower Cottage/window collision remains wrong. That defect is real, but WP18I/WP18J are UI-only, so collision work remains excluded and unresolved for separate remediation before final R7 readiness.
+- behaviour-preserving architecture cleanup only;
+- audit before deletion;
+- identify canonical vs obsolete code with dependency evidence;
+- remove dead/retired paths rather than hiding them;
+- consolidate temporary remediation managers into proper owners where safe;
+- simplify bootstrapping and responsive authority;
+- do not change saves, progression, inventory semantics, map topology, quest logic, race/movement rules or content;
+- do not visually redesign the user-approved UI;
+- preserve four-display-class responsive acceptance;
+- do not weaken tests or the 520 KiB budget to make cleanup pass.
 
-## Technical guardrails
+## Production
 
-- hard application-entry performance budget remains **520 KiB**;
-- existing authoritative interaction/input paths must be reused rather than duplicated;
-- desktop keyboard/mouse support remains secondary but supported;
-- no new gameplay system is authorised by WP18I or WP18J;
-- WP18J remediation may change only Bag/Map/Wonderbook presentation plus the explicitly authorised existing-HUD alignment correction.
-
-## Production / deployment
-
-The user explicitly authorised merging WP18G and deploying the resulting remediated build on 2026-09-07.
-
-No production deployment of WP18I or WP18J is authorised yet. Future production deployment still requires explicit user approval.
-
-## Night Shift
-
-State: `not_configured`
+No new production deployment is authorised by this status update. Repo integration and Work-mode preparation do not waive the existing production-approval rule.
 
 ## Chat disposition
 
