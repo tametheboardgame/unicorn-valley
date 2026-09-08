@@ -40,6 +40,11 @@ export type ShopPurchaseResult =
       item: ItemDefinition;
       balance: number;
       unlockHint: string;
+    }
+  | {
+      type: 'persistence-failed';
+      item: ItemDefinition;
+      balance: number;
     };
 
 const SHOP_STOCK = [
@@ -144,7 +149,7 @@ export class ShopService {
         ? appendUnique(spentSave.home.ownedFurnitureIds, itemId)
         : [...spentSave.home.ownedFurnitureIds];
 
-    const saved = this.saveService.save({
+    const result = this.saveService.saveWithResult({
       ...spentSave,
       inventory: {
         ...spentSave.inventory,
@@ -157,6 +162,10 @@ export class ShopService {
         ownedFurnitureIds,
       },
     });
+    if (result.status !== 'saved') {
+      return { type: 'persistence-failed', item, balance };
+    }
+    const saved = result.save;
 
     return {
       type: 'purchased',

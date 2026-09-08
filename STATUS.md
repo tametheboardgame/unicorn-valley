@@ -8,7 +8,7 @@ Last updated: 2026-09-08
 
 Path: `docs/work-packages/R6.5-WP19A-PERSISTENCE-SAFETY.md`
 
-State: **WP19A dispatched but blocked: Codex reports no cloud environment for this repo**. The full plan is approved in draft PR #159. This branch begins the first approved implementation package; no gameplay fix is complete yet.
+State: **WP19A implemented locally; PR CI/preview verification pending**. David's “environment made” confirmation superseded the setup blocker and authorised the single retry. The bounded implementation is on PR #160's existing stacked branch; no duplicate PR or production deployment is authorised.
 
 Read first:
 
@@ -40,7 +40,7 @@ WP19A-I bounded files are **approved**, subject to their dependencies and human 
 - Roaming residents and scene targets use separate interaction/feedback routes.
 - Cottage back-wall/window collision remains unresolved.
 - Grotto/Grove are absent from the preferred tap-navigation support list.
-- Storage fault tests reproduce an uncaught read failure and false Bakery purchase success after a rejected save.
+- WP19A now guards storage reads and prevents failed persistence from producing Bakery/Shop purchase success or dependent collection events; PR CI verification remains pending.
 - New-game Map shows Cottage as current while the player is in Glade; investigate checkpoint/location consistency.
 - Generated title image and MP3 catalogue/playback are new work, not already delivered features.
 
@@ -54,6 +54,7 @@ Full evidence, severity and source references are in the audit. Source risks are
 - Main CI run `34210921262`: Validate and Browser compatibility succeeded; Browser playtest subsequently ended **cancelled**. Main does not have complete green full-playtest evidence from that run.
 - Local Chromium was initially missing, then installed successfully. The serial broad suite stopped at its three-failure limit: 23 passed, 3 failed, 155 did not run. The failures assert historical suggestion cards and a retired controls button. The separate current R6.5 suite finished with 34 passed, 5 failed and 21 not run. Failures cover stale Bag coordinates/wrapper assertions, Nook/race total-budget timeouts, and a numerical Bag size failure. Trace-based distinctions and unverified coverage are in the audit addendum.
 - Documentation project-state validation, formatting and whitespace checks pass on the final handoff changes. Overall browser qualification remains failing/incomplete.
+- WP19A local `npm run validate` passes with 114 test files / 433 tests and a 515.29 KiB entry bundle. Its focused storage-fault suite passes 6 tests. Targeted Chromium, full serial Chromium and compatibility runs were attempted, but this runner lacks required Playwright host libraries; the configured apt sources did not install them. This environment failure is distinct from, and does not supersede, the audit's known stale-assertion/browser baseline. No full-green browser qualification is claimed.
 
 ## Human feedback and gates
 
@@ -69,7 +70,7 @@ Documentation-only branch: `agent/r6.5-whole-game-audit-plan`. David explicitly 
 
 ## Next action
 
-WP19A implementation is authorised and being handed to Codex through its dedicated draft PR. Follow `docs/CODEX-DELIVERY-WORKFLOW.md`. Next after verified WP19A: WP18K. All six plan decisions are approved; future visual and replay gates remain.
+Push the WP19A implementation, verify PR CI and the exact immutable Cloudflare preview for that commit, then let the project manager review it. Next only after verified WP19A: WP18K. All six plan decisions are approved; future visual and replay gates remain.
 
 Chat disposition: `keep`.
 
@@ -77,6 +78,6 @@ Chat disposition: `keep`.
 
 Branch: `agent/r6.5-wp19a-persistence-safety`, stacked on the approved planning branch while PR #159 remains unmerged. Keep gameplay changes off PR #159. The project manager reviews results and reports the verified preview URL to David before required human gates.
 
-## Codex setup blocker
+## Codex execution
 
-Implementation PR: https://github.com/tametheboardgame/unicorn-valley/pull/160. Dispatch: issuecomment-5584158968. Codex replied in issuecomment-5584160637 that an environment must be created at https://chatgpt.com/codex/cloud/settings/environments. No worker implementation has started. David must create/select a Codex cloud environment for this repo, then confirm so the existing task can be retried once. The hourly delivery-manager automation is enabled; do not repeat task launches while this blocker remains.
+Implementation PR: https://github.com/tametheboardgame/unicorn-valley/pull/160. Dispatch: issuecomment-5584158968. Codex initially replied in issuecomment-5584160637 that an environment was required. David confirmed “environment made”; the authorised retry executed in the existing PR branch. The former setup blocker is resolved. Local browser launch is separately blocked by missing system libraries, so CI is the remaining technical evidence source.

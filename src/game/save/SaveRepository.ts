@@ -112,5 +112,18 @@ export class LocalStorageSaveRepository implements SaveRepository {
 }
 
 export function createBrowserSaveRepository(): LocalStorageSaveRepository {
-  return new LocalStorageSaveRepository(globalThis.localStorage);
+  // Access to the localStorage getter itself can be denied (for example by a
+  // privacy policy). Defer that access until a repository operation so the
+  // SaveService recovery boundary can report it as a recoverable storage
+  // failure instead of letting it escape while the service is constructed.
+  const storage: KeyValueStorage = {
+    get length() {
+      return globalThis.localStorage.length;
+    },
+    key: (index) => globalThis.localStorage.key(index),
+    getItem: (key) => globalThis.localStorage.getItem(key),
+    setItem: (key, value) => globalThis.localStorage.setItem(key, value),
+    removeItem: (key) => globalThis.localStorage.removeItem(key),
+  };
+  return new LocalStorageSaveRepository(storage);
 }

@@ -126,7 +126,7 @@ The original rows remain historical remediation/replay evidence. These new obser
 - Generated title background: REQUESTED / PROPOSED WP19F; existing title is procedural artwork.
 - MP3 music/SFX upload workflow: REQUESTED / PROPOSED WP19G/H; existing audio is procedural.
 - Grotto/Grove preferred tap navigation: OPEN SOURCE GAP, WP19B proposed; confirm and cover normal input during implementation.
-- Save-read failure and false purchase success on storage failure: OPEN / FAULT-REPRODUCED, WP19A proposed.
+- Save-read failure and false purchase success on storage failure: IMPLEMENTED / CI VERIFICATION PENDING in WP19A. Focused tests cover denied reads and the three-Shimmer/Berry-Bun failed-write/retry order; browser execution remains pending because the implementation runner lacks Playwright host libraries.
 - Cottage collision remains OPEN; WP19B owns proposed closure.
 
 No new daughter replay occurred during this audit. Future ideas and all positive preservation requirements above remain unchanged. WP18H now follows the proposed integrated WP19I gate if the plan is approved.

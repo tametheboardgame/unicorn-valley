@@ -1,7 +1,7 @@
 import { R6_BAKERY_STOCK, type BakeryStockEntry } from '../../content/r6VillageContent';
 import { itemRegistry } from '../../content/registries';
 import type { ItemDefinition, ItemId } from '../../content/contentTypes';
-import { gameEventBus } from '../events/GameEventBus';
+import { type GameEventMap, type TypedEventBus, gameEventBus } from '../events/GameEventBus';
 import type { SaveService } from '../save/SaveService';
 import { applyShimmerSpendToSave, getShimmerBalanceFromSave } from './ShimmerEconomyService';
 
@@ -40,6 +40,11 @@ export type BakeryPurchaseResult =
       item: ItemDefinition;
       balance: number;
       unlockHint: string;
+    }
+  | {
+      type: 'persistence-failed';
+      item: ItemDefinition;
+      balance: number;
     };
 
 function appendUnique(values: readonly string[], value: string): string[] {
@@ -85,7 +90,10 @@ function withVisibleRepeatOwnership(
 }
 
 export class BakeryService {
-  public constructor(private readonly saveService: SaveService) {}
+  public constructor(
+    private readonly saveService: SaveService,
+    private readonly events: TypedEventBus<GameEventMap> = gameEventBus,
+  ) {}
 
   public listStock(): readonly BakeryStockView[] {
     const save = this.saveService.load() ?? this.saveService.createNewGame();
@@ -142,7 +150,7 @@ export class BakeryService {
 
     const nextQuantity = ownedQuantity + 1;
     const decoration = item.category === 'decoration';
-    const saved = this.saveService.save({
+    const result = this.saveService.saveWithResult({
       ...spent,
       inventory: {
         ...spent.inventory,
@@ -161,7 +169,11 @@ export class BakeryService {
           : [...spent.home.ownedFurnitureIds],
       },
     });
-    gameEventBus.emit('ITEM_COLLECTED', { itemId, quantity: 1 });
+    if (result.status !== 'saved') {
+      return { type: 'persistence-failed', item, balance };
+    }
+    const saved = result.save;
+    this.events.emit('ITEM_COLLECTED', { itemId, quantity: 1 });
 
     return {
       type: 'purchased',
