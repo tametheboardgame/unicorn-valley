@@ -218,10 +218,10 @@ export class InventoryScene extends Phaser.Scene {
       const x = 230 + index * 185;
       const selected = pocket.id === this.activePocket;
       const tabShadow = this.add
-        .rectangle(x + 3, 159, 158, 45, 0x4d3243, 0.13)
+        .rectangle(x + 3, 159, 158, 60, 0x4d3243, 0.13)
         .setName(`bag-pocket-shadow:${pocket.id}`);
       const tab = this.add
-        .rectangle(x, 155, 156, 45, selected ? 0xf3d9a4 : 0xd8a8b8, 1)
+        .rectangle(x, 155, 156, 60, selected ? 0xf3d9a4 : 0xd8a8b8, 1)
         .setStrokeStyle(3, selected ? 0xb7834e : 0x9a6479, 1)
         .setInteractive({ useHandCursor: true })
         .setName(`bag-pocket:${pocket.id}`);

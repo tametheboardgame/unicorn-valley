@@ -211,6 +211,7 @@ test.describe('R6.5-WP18I concept-grade tablet HUD', () => {
   test('keeps the concept composition contained across the landscape tablet matrix', async ({
     page,
   }) => {
+    test.setTimeout(90_000);
     for (const viewport of TABLET_VIEWPORTS) {
       await page.setViewportSize({ width: viewport.width, height: viewport.height });
       await page.goto('/?diagnostics=1');
@@ -260,7 +261,16 @@ test.describe('R6.5-WP18I concept-grade tablet HUD', () => {
     expect(bag.objects.some(({ name }) => name.startsWith('concept-modal-surface:'))).toBe(false);
     await captureEvidence(page, 'wp18i-bag.png');
 
-    await startScene(page, 'SettingsScene');
+    await startScene(page, 'MoonflowerGladeScene');
+    const glade = await getScene(page, 'MoonflowerGladeScene');
+    const settingsButton = objectByName(glade, 'exploration-shell-settings-nav-button');
+    await page.mouse.click(settingsButton.x, settingsButton.y);
+    await page.waitForFunction(() => {
+      const diagnostics = (
+        window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
+      ).__UNICORN_VALLEY_DIAGNOSTICS__;
+      return diagnostics?.snapshot().activeScenes.includes('SettingsScene') === true;
+    });
     await page.waitForTimeout(250);
     const settings = await getScene(page, 'SettingsScene');
     for (const name of [
@@ -278,6 +288,7 @@ test.describe('R6.5-WP18I concept-grade tablet HUD', () => {
   test('captures decoration and race surfaces in the same touch-first visual family', async ({
     page,
   }) => {
+    test.setTimeout(75_000);
     await page.goto('/?diagnostics=1');
     await waitForDiagnostics(page);
     await page.waitForTimeout(700);

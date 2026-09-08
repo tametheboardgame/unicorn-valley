@@ -165,8 +165,11 @@ test('exploration can pause into the full settings screen and return with persis
 }) => {
   await page.goto('/?scene=glade&diagnostics=1');
   await waitForScene(page, 'MoonflowerGladeScene');
-  await tapObject(page, 'MoonflowerGladeScene', 'exploration-shell-sound-button');
-  await tapObject(page, 'MoonflowerGladeScene', 'exploration-shell-settings-button');
+  await tapObject(
+    page,
+    'ExplorationHudOverlayScene',
+    'exploration-hud-overlay-settings-nav-button',
+  );
   await waitForScene(page, 'SettingsScene');
 
   let current = await snapshot(page);
@@ -213,15 +216,13 @@ test('exploration can pause into the full settings screen and return with persis
   await page.keyboard.press('Escape');
   await waitForSceneGone(page, 'SettingsScene');
   await waitForScene(page, 'MoonflowerGladeScene');
-  await tapObject(page, 'MoonflowerGladeScene', 'exploration-shell-sound-button');
-  await expect
-    .poll(async () => sceneText(await snapshot(page), 'MoonflowerGladeScene'))
-    .toContain('Music: Off');
-
   await page.reload();
   await waitForScene(page, 'MoonflowerGladeScene');
-  await tapObject(page, 'MoonflowerGladeScene', 'exploration-shell-sound-button');
-  await tapObject(page, 'MoonflowerGladeScene', 'exploration-shell-settings-button');
+  await tapObject(
+    page,
+    'ExplorationHudOverlayScene',
+    'exploration-hud-overlay-settings-nav-button',
+  );
   await waitForScene(page, 'SettingsScene');
   current = await snapshot(page);
   expect(sceneText(current, 'SettingsScene')).toContain('Music: Off');

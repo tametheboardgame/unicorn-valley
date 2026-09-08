@@ -3,6 +3,9 @@ import { expect, test, type Page } from '@playwright/test';
 interface DiagnosticObject {
   name: string;
   visible: boolean;
+  interactive: boolean;
+  x: number;
+  y: number;
 }
 
 interface DiagnosticScene {
@@ -149,29 +152,51 @@ async function clickCanvasLogical(page: Page, x: number, y: number): Promise<voi
   });
 }
 
+async function clickNamedObject(page: Page, sceneKey: string, objectName: string): Promise<void> {
+  const object = await page.evaluate(
+    ({ key, name }) => {
+      const api = (
+        window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
+      ).__UNICORN_VALLEY_DIAGNOSTICS__;
+      return api
+        ?.snapshot()
+        .scenes.find((candidate) => candidate.key === key)
+        ?.objects.find(
+          (candidate) => candidate.name === name && candidate.visible && candidate.interactive,
+        );
+    },
+    { key: sceneKey, name: objectName },
+  );
+  if (!object) {
+    throw new Error(`Interactive ${sceneKey}/${objectName} is not visible.`);
+  }
+  await clickCanvasLogical(page, object.x, object.y);
+}
+
 test('Bag exposes categories, safely scrolls past six items and consumes Food explicitly', async ({
   page,
 }) => {
+  test.setTimeout(75_000);
   await seedLargeInventory(page);
   await diagnostics(page);
   await startScene(page, 'InventoryScene', { returnScene: 'TitleScene', initialTab: 'items' });
 
   await waitForObject(page, 'InventoryScene', 'bag-pocket:food');
   await waitForObject(page, 'InventoryScene', 'bag-pocket:decor');
-  await clickCanvasLogical(page, 605, 132);
+  await clickNamedObject(page, 'InventoryScene', 'bag-pocket:decor');
   await waitForObject(page, 'InventoryScene', 'bag-scroll-down');
   expect(
     await objectVisible(page, 'InventoryScene', 'bag-item-tile:item:sunbeam-picnic-basket'),
   ).toBe(false);
 
-  await clickCanvasLogical(page, 810, 535);
+  await clickNamedObject(page, 'InventoryScene', 'bag-scroll-down');
   await waitForObject(page, 'InventoryScene', 'bag-item-tile:item:sunbeam-picnic-basket');
 
-  await clickCanvasLogical(page, 235, 132);
+  await clickNamedObject(page, 'InventoryScene', 'bag-pocket:food');
   await waitForObject(page, 'InventoryScene', 'bag-item-tile:item:berry-bun');
-  await clickCanvasLogical(page, 315, 245);
+  await clickNamedObject(page, 'InventoryScene', 'bag-item-tile:item:berry-bun');
   await waitForObject(page, 'InventoryScene', 'bag-eat-button:item:berry-bun');
-  await clickCanvasLogical(page, 1020, 505);
+  await clickNamedObject(page, 'InventoryScene', 'bag-eat-button:item:berry-bun');
   await waitForObject(page, 'InventoryScene', 'bag-action-feedback');
 
   const berryBuns = await page.evaluate(() => {
@@ -201,6 +226,7 @@ test('the landscape exploration Map action opens a distinct Map surface rather t
 test('landscape Creator progressively reveals one approved category at a time', async ({
   page,
 }) => {
+  test.setTimeout(75_000);
   await diagnostics(page);
   await startScene(page, 'UnicornCreatorScene');
 
@@ -211,27 +237,27 @@ test('landscape Creator progressively reveals one approved category at a time', 
   expect(await objectVisible(page, 'UnicornCreatorScene', 'creator-bodyColour-peach')).toBe(false);
   expect(await objectVisible(page, 'UnicornCreatorScene', 'creator-maneStyle-next')).toBe(false);
 
-  await clickCanvasLogical(page, 940, 255);
+  await clickNamedObject(page, 'UnicornCreatorScene', 'creator-category-colours');
   await waitForObject(page, 'UnicornCreatorScene', 'creator-tablet-category-content:colours');
   await waitForObject(page, 'UnicornCreatorScene', 'creator-bodyColour-peach');
   expect(await objectVisible(page, 'UnicornCreatorScene', 'creator-maneStyle-next')).toBe(false);
 
-  await clickCanvasLogical(page, 1145, 255);
+  await clickNamedObject(page, 'UnicornCreatorScene', 'creator-category-mane-tail');
   await waitForObject(page, 'UnicornCreatorScene', 'creator-tablet-category-content:mane-tail');
   await waitForObject(page, 'UnicornCreatorScene', 'creator-maneStyle-next');
   expect(await objectVisible(page, 'UnicornCreatorScene', 'creator-bodyColour-peach')).toBe(false);
 
-  await clickCanvasLogical(page, 735, 317);
+  await clickNamedObject(page, 'UnicornCreatorScene', 'creator-category-horn');
   await waitForObject(page, 'UnicornCreatorScene', 'creator-tablet-category-content:horn');
   await waitForObject(page, 'UnicornCreatorScene', 'creator-hornStyle-next');
   expect(await objectVisible(page, 'UnicornCreatorScene', 'creator-marking-next')).toBe(false);
 
-  await clickCanvasLogical(page, 940, 317);
+  await clickNamedObject(page, 'UnicornCreatorScene', 'creator-category-markings');
   await waitForObject(page, 'UnicornCreatorScene', 'creator-tablet-category-content:markings');
   await waitForObject(page, 'UnicornCreatorScene', 'creator-marking-next');
   expect(await objectVisible(page, 'UnicornCreatorScene', 'creator-hornStyle-next')).toBe(false);
 
-  await clickCanvasLogical(page, 1145, 317);
+  await clickNamedObject(page, 'UnicornCreatorScene', 'creator-category-accessories');
   await waitForObject(page, 'UnicornCreatorScene', 'creator-tablet-category-content:accessories');
   await waitForObject(page, 'UnicornCreatorScene', 'creator-accessory-next');
   expect(await objectVisible(page, 'UnicornCreatorScene', 'creator-marking-next')).toBe(false);

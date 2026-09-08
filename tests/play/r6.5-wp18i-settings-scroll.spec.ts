@@ -8,6 +8,7 @@ interface DiagnosticObjectSnapshot {
   displayWidth: number;
   displayHeight: number;
   visible: boolean;
+  interactive: boolean;
 }
 
 interface DiagnosticSceneSnapshot {
@@ -37,8 +38,30 @@ async function startSettings(page: Page): Promise<void> {
     if (!diagnostics) {
       throw new Error('Browser diagnostics are unavailable.');
     }
-    diagnostics.startScene('SettingsScene');
+    diagnostics.startScene('MoonflowerGladeScene');
   });
+  await page.waitForFunction(() => {
+    const diagnostics = (
+      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__;
+    return diagnostics?.snapshot().activeScenes.includes('MoonflowerGladeScene') === true;
+  });
+  const settingsButton = await page.evaluate(() => {
+    const diagnostics = (
+      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__;
+    return diagnostics
+      ?.snapshot()
+      .scenes.find(({ key }) => key === 'MoonflowerGladeScene')
+      ?.objects.find(
+        ({ name, visible, interactive }) =>
+          name === 'exploration-shell-settings-nav-button' && visible && interactive,
+      );
+  });
+  if (!settingsButton) {
+    throw new Error('Missing canonical exploration Settings control.');
+  }
+  await page.mouse.click(settingsButton.x, settingsButton.y);
   await page.waitForFunction(() => {
     const diagnostics = (
       window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }

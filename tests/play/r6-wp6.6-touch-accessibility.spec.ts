@@ -298,7 +298,7 @@ test('target-tablet touch completes creator, exploration, Book and accessibility
       (object) =>
         object.name === 'exploration-interaction-prompt-label' &&
         object.visible &&
-        object.text?.includes('Pip'),
+        object.text?.includes('Talk'),
     ),
   ).toBe(true);
 

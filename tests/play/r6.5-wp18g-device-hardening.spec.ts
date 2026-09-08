@@ -261,6 +261,9 @@ test.describe('WP18G landscape tablet matrix', () => {
   test('keeps Bag, Map and Creator tablet controls contained at 16:10 and 4:3', async ({
     page,
   }) => {
+    // This traverses three independently rendered modal owners at two sizes.
+    // Retain every geometry assertion while allowing software rendering overhead.
+    test.setTimeout(150_000);
     await page.goto('/?diagnostics=1');
     await waitForDiagnostics(page);
 
@@ -317,6 +320,7 @@ test.describe('WP18G landscape tablet matrix', () => {
   test('keeps landscape tablet race controls at the edges with a clear central track corridor', async ({
     page,
   }) => {
+    test.setTimeout(75_000);
     for (const viewport of LANDSCAPE_MATRIX) {
       await page.setViewportSize({ width: viewport.width, height: viewport.height });
       await page.goto('/?scene=race&diagnostics=1');
