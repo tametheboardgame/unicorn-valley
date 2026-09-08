@@ -8,7 +8,7 @@ Last updated: 2026-09-08
 
 Path: `docs/work-packages/R6.5-WP19A-PERSISTENCE-SAFETY.md`
 
-State: **WP19A implementation pushed; PR browser CI/preview URL verification pending**. David's “environment made” confirmation superseded the setup blocker and authorised the single retry. The bounded implementation is on PR #160's existing stacked branch; no duplicate PR or production deployment is authorised.
+State: **WP19A review corrections committed; corrected-head CI/preview verification pending**. The bounded implementation remains on PR #160's existing stacked branch; no duplicate PR or production deployment is authorised.
 
 Read first:
 
@@ -40,7 +40,7 @@ WP19A-I bounded files are **approved**, subject to their dependencies and human 
 - Roaming residents and scene targets use separate interaction/feedback routes.
 - Cottage back-wall/window collision remains unresolved.
 - Grotto/Grove are absent from the preferred tap-navigation support list.
-- WP19A now guards storage reads and prevents failed persistence from producing Bakery/Shop purchase success or dependent collection events; PR CI verification remains pending.
+- WP19A now guards title-flow storage reads, prevents rejected writes from producing purchase success, requires primary success where checkpoints are unsupported, and keeps post-commit listener faults from inviting a duplicate charge; corrected-head CI remains pending.
 - New-game Map shows Cottage as current while the player is in Glade; investigate checkpoint/location consistency.
 - Generated title image and MP3 catalogue/playback are new work, not already delivered features.
 
@@ -54,7 +54,8 @@ Full evidence, severity and source references are in the audit. Source risks are
 - Main CI run `34210921262`: Validate and Browser compatibility succeeded; Browser playtest subsequently ended **cancelled**. Main does not have complete green full-playtest evidence from that run.
 - Local Chromium was initially missing, then installed successfully. The serial broad suite stopped at its three-failure limit: 23 passed, 3 failed, 155 did not run. The failures assert historical suggestion cards and a retired controls button. The separate current R6.5 suite finished with 34 passed, 5 failed and 21 not run. Failures cover stale Bag coordinates/wrapper assertions, Nook/race total-budget timeouts, and a numerical Bag size failure. Trace-based distinctions and unverified coverage are in the audit addendum.
 - Documentation project-state validation, formatting and whitespace checks pass on the final handoff changes. Overall browser qualification remains failing/incomplete.
-- WP19A local `npm run validate` passes with 114 test files / 433 tests and a 515.29 KiB entry bundle. Its focused storage-fault suite passes 6 tests. Targeted Chromium, full serial Chromium and compatibility runs were attempted, but this runner lacks required Playwright host libraries; the configured apt sources did not install them. This environment failure is distinct from, and does not supersede, the audit's known stale-assertion/browser baseline. No full-green browser qualification is claimed.
+- WP19A corrected-head `npm run validate` passes with 114 test files / 435 tests and a 480.38 KiB entry bundle; the focused SaveService run passes 22 tests. The matching Chromium download completed, but host libraries remain unavailable, so the new denied-getter browser regression awaits CI. No full-green browser qualification is claimed.
+- CI run `34222463247` on the preceding head passed Validate and Browser compatibility. Browser playtest was cancelled at 35 minutes after the package-relevant main-menu, profile and save-recovery groups passed; unrelated historical UI failures and integrated qualification remain open in their planned packages.
 
 ## Human feedback and gates
 
@@ -70,7 +71,7 @@ Documentation-only branch: `agent/r6.5-whole-game-audit-plan`. David explicitly 
 
 ## Next action
 
-Wait for PR browser CI and obtain the exact immutable Cloudflare preview for implementation commit `79cf7fa219159cbd434f1166722ed343d97222fc`, then let the project manager review it. Next only after verified WP19A: WP18K. All six plan decisions are approved; future visual and replay gates remain.
+Push correction commit `7fdc3500ca2f137f46a39492b375b66be4ca1fa2`, then wait for corrected-head CI and an exact immutable Cloudflare preview before manager review. Next only after verified WP19A: WP18K. All six plan decisions are approved; future visual and replay gates remain.
 
 Chat disposition: `keep`.
 
