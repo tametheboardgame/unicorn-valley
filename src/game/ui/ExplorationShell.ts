@@ -78,6 +78,10 @@ export class ExplorationShell {
       throw new Error(`Exploration shell is not supported in ${scene.scene.key}.`);
     }
 
+    // Exploration cameras use smooth follow, which naturally produces fractional scroll values.
+    // Round only the rendered camera pixels so fixed HUD text stays visually locked to the screen.
+    scene.cameras.main.roundPixels = true;
+
     this.createConceptNavigationGroup();
 
     const bag = this.createShellButton(210, 52, 118, 72, 'Bag', 'bag', 16, 'bag');
@@ -178,11 +182,16 @@ export class ExplorationShell {
     this.touchMovementPad.refresh();
     this.explorationChrome.refresh();
     const snackSeconds = getExplorationSnackBoostRemainingSeconds();
-    this.shimmerLabel.setText(
+    const shimmerText =
       snackSeconds > 0
         ? `${this.economy.getBalance()}  •  Boost ${snackSeconds}s`
-        : `${this.economy.getBalance()} Shimmer`,
-    );
+        : `${this.economy.getBalance()} Shimmer`;
+
+    // Phaser rebuilds a Text object's canvas texture on setText. Avoid doing that every 300 ms
+    // when the value has not changed, as repeated re-rasterisation can look like a tiny HUD wobble.
+    if (this.shimmerLabel.text !== shimmerText) {
+      this.shimmerLabel.setText(shimmerText);
+    }
   }
 
   public destroy(): void {
@@ -292,7 +301,8 @@ export class ExplorationShell {
     });
     button.on('pointerout', () => {
       hover.setFillStyle(CONCEPT_UI.purpleLight, 0);
-      label.setColor('#4b2b66');
+      iconGraphic.setScale(1);
+      label.setScale(1).setColor('#4b2b66');
     });
     button.on('pointerdown', () => {
       hover.setFillStyle(CONCEPT_UI.goldLight, 0.28);
