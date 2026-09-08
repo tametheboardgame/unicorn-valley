@@ -31,9 +31,7 @@ function isTouchCapable(): boolean {
     typeof globalThis.matchMedia === 'function' &&
     globalThis.matchMedia('(pointer: coarse), (any-pointer: coarse)').matches;
   return (
-    (globalThis.navigator?.maxTouchPoints ?? 0) > 0 ||
-    'ontouchstart' in globalThis ||
-    coarsePointer
+    (globalThis.navigator?.maxTouchPoints ?? 0) > 0 || 'ontouchstart' in globalThis || coarsePointer
   );
 }
 
