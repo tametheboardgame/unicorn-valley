@@ -24,18 +24,6 @@ interface BrowserDiagnosticsApi {
   setArcadeSpritePosition(sceneKey: string, objectName: string, x: number, y: number): void;
 }
 
-async function diagnostics(page: Page): Promise<BrowserDiagnosticsApi> {
-  return page.evaluate(() => {
-    const api = (
-      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
-    ).__UNICORN_VALLEY_DIAGNOSTICS__;
-    if (!api) {
-      throw new Error('Browser diagnostics are not installed.');
-    }
-    return api;
-  });
-}
-
 async function snapshot(page: Page): Promise<ReturnType<BrowserDiagnosticsApi['snapshot']>> {
   return page.evaluate(() => {
     const api = (
