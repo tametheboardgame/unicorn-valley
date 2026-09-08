@@ -345,7 +345,8 @@ export class InteractionPrompt {
 
   private refreshPresentation(): void {
     const portrait = shouldRenderPortraitDomPrompt();
-    const targetVisible = this.currentTarget !== null && !isAutomaticInteraction(this.currentTarget);
+    const targetVisible =
+      this.currentTarget !== null && !isAutomaticInteraction(this.currentTarget);
     const canvasActionVisible = targetVisible && !portrait;
     const canvasHintVisible = !portrait;
     const highVisibility = this.accessibility.load().highVisibilityInteractions;
@@ -370,7 +371,10 @@ export class InteractionPrompt {
     }
 
     if (this.currentTarget && canvasActionVisible) {
-      this.directTargetZone.setPosition(this.currentTarget.position.x, this.currentTarget.position.y);
+      this.directTargetZone.setPosition(
+        this.currentTarget.position.x,
+        this.currentTarget.position.y,
+      );
       if (this.directTargetZone.input?.enabled !== true) {
         this.directTargetZone.setInteractive({ useHandCursor: true });
       }
