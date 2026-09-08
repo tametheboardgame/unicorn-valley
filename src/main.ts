@@ -82,11 +82,9 @@ void import('./game/ui/Wp18jResponsiveUiPolishManager').then(
   },
 );
 
-void import('./game/ui/Wp18jMapViewportClipManager').then(
-  ({ getWp18jMapViewportClipManager }) => {
-    getWp18jMapViewportClipManager(game);
-  },
-);
+void import('./game/ui/Wp18jMapViewportClipManager').then(({ getWp18jMapViewportClipManager }) => {
+  getWp18jMapViewportClipManager(game);
+});
 
 void import('./game/economy/EconomyRewardWorldManager').then(({ getEconomyRewardWorldManager }) => {
   getEconomyRewardWorldManager();
