@@ -12,7 +12,7 @@
   "branch": "agent/r6.5-wp18k-architecture-consolidation",
   "latest_commit": "ff444dbf290d557e2e8e034796ee55aa582a1626",
   "ci_state": "running",
-  "technical_validation_state": "in_progress",
+  "technical_validation_state": "running",
   "human_acceptance_state": "pending",
   "next_work_package": "R6.5-WP19B",
   "next_work_package_path": "docs/work-packages/R6.5-WP19B-WORLD-BOUNDARIES-NAVIGATION.md",
