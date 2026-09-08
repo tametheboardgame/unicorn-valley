@@ -69,7 +69,13 @@ No new daughter replay occurred. Preserve all positive feedback and deferred ide
 
 ## Delivery
 
-Documentation-only branch: `agent/r6.5-whole-game-audit-plan`. David explicitly authorised the documentation branch push and draft PR on 2026-09-08, resolving the earlier automatic-review block. Published through the connected GitHub app after shell Git authentication was unavailable: https://github.com/tametheboardgame/unicorn-valley/pull/159. Draft PR remains open; no merge has occurred. No merge or production deployment is authorised by completion of this audit. Production was previously updated by the approved WP18I/J merge; this proposal does not change the game.
+WP19A planning PR #159 and implementation PR #160 are accepted and merged to
+main `d8f3de6`; David authorised that production deployment. WP18K is delivered
+as draft PR #161 from `agent/r6.5-wp18k-architecture-consolidation` against
+main. Exact implementation preview: `https://cf10dee8.unicorn-valley.pages.dev`
+for `ff444db`. Exact current documentation-head preview:
+`https://c1888d5c.unicorn-valley.pages.dev` for `f16f2e7`. No WP18K merge or
+production deployment is authorised.
 
 ## Next action
 
@@ -82,8 +88,13 @@ is WP19B; full integrated closure remains WP19I.
 ## Implementation delivery
 
 Branch: `agent/r6.5-wp18k-architecture-consolidation`, based on current main.
-One draft PR targets main. No merge or production deployment is authorised.
+Draft PR: https://github.com/tametheboardgame/unicorn-valley/pull/161.
 
 ## Codex execution
 
-Implementation PR: https://github.com/tametheboardgame/unicorn-valley/pull/161. Dispatch: issuecomment-5584158968. Codex initially replied in issuecomment-5584160637 that an environment was required. David confirmed “environment made”; the authorised retry executed in the existing PR branch. The former setup blocker is resolved. Local browser launch is separately blocked by missing system libraries, so CI is the remaining technical evidence source.
+WP18K started from verified main `d8f3de6`; no prior WP18K branch, PR or worker
+was present. K1-K4 and the current K5 checkpoint are committed and pushed. The
+runner can execute local browsers after supported dependencies were installed,
+but its HTTP CONNECT proxy blocks Cloudflare Pages hosts with 403, so production
+and immutable-preview browser smokes require external verification. CI remains
+running for the final documentation head.
