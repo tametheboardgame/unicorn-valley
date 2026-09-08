@@ -107,9 +107,9 @@ test('Bag uses a glyph-only close control and a lower aligned pocket row', async
   expect(closeHitArea?.displayWidth ?? 0).toBeGreaterThanOrEqual(70);
   expect(closeHitArea?.displayHeight ?? 0).toBeGreaterThanOrEqual(60);
   expect(closeIcon?.visible).toBe(true);
-  expect(objects.some(({ name, visible }) => name === 'wp18j-inventory-close-visual' && visible)).toBe(
-    false,
-  );
+  expect(
+    objects.some(({ name, visible }) => name === 'wp18j-inventory-close-visual' && visible),
+  ).toBe(false);
   expect(foodTab?.y ?? 0).toBeGreaterThanOrEqual(153);
   expect(shimmer?.y ?? 0).toBeGreaterThanOrEqual(153);
 });
@@ -128,9 +128,9 @@ test('Map keeps a glyph-only close target and can be dragged inside its clipped 
 
   expect(closeHitArea?.interactive).toBe(true);
   expect(closeHitArea?.alpha ?? 1).toBeLessThanOrEqual(0.01);
-  expect(before.some(({ name, visible }) => name === 'wp18j-inventory-close-visual' && visible)).toBe(
-    false,
-  );
+  expect(
+    before.some(({ name, visible }) => name === 'wp18j-inventory-close-visual' && visible),
+  ).toBe(false);
   expect(mapContentBefore?.x ?? 999).toBe(0);
   expect(mapContentBefore?.y ?? 999).toBe(0);
 
