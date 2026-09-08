@@ -114,3 +114,25 @@ If any deferred idea already has a partial implementation, WP18K must not delete
 ## Readiness rule
 
 WP18K cleanup may change architecture, ownership and dead code only. It must not erase this evidence. WP18H must update this ledger from the next real daughter replay. R7 stays blocked until WP17 explicitly releases readiness.
+
+## 2026-09-08 additional audit and user-request disposition
+
+The original rows remain historical remediation/replay evidence. These new observations supersede any implication that all creator/layout/prompt work is already satisfactory. See the audit for evidence and the proposal for approval-dependent scope.
+
+- Creator crowding/progressive categories: OPEN, latest user report plus desktop browser confirmation; WP19C proposed.
+- Keyboard/tap labels beneath objects: OPEN, Glade label reproduced; WP19D proposed, migrate all actions before removing labels.
+- Roaming-resident short speech/engagement consistency: OPEN DESIGN GAP; timed 2.6-second feedback and independent interaction path confirmed in source; WP19D/E proposed.
+- All applicable moving residents must expose Talk: VERIFICATION REQUIRED for the full resident inventory; no blanket claim of completion from Nova/Echo fixes.
+- Generated title background: REQUESTED / PROPOSED WP19F; existing title is procedural artwork.
+- MP3 music/SFX upload workflow: REQUESTED / PROPOSED WP19G/H; existing audio is procedural.
+- Grotto/Grove preferred tap navigation: OPEN SOURCE GAP, WP19B proposed; confirm and cover normal input during implementation.
+- Save-read failure and false purchase success on storage failure: OPEN / FAULT-REPRODUCED, WP19A proposed.
+- Cottage collision remains OPEN; WP19B owns proposed closure.
+
+No new daughter replay occurred during this audit. Future ideas and all positive preservation requirements above remain unchanged. WP18H now follows the proposed integrated WP19I gate if the plan is approved.
+
+- New-game Map current-location mismatch: OPEN / BROWSER-REPRODUCED. Map marks Cottage during Glade play; audit A16 / proposed WP19B.
+
+### Audit validation addendum, 8 September 2026
+
+Core validation passed 427 tests. Current-release Chromium run: 34 passed, 5 failed, 21 not run. Beach repeated Bag and retired-item checks passed. Nook completed seven full returns before its total-budget timeout; this does not establish a renewed freeze. Twinkle & Thread was skipped by the serial group and remains unverified. Bag tests include stale coordinates/wrappers plus a distinct numerical tablet size failure (A17). Race matrix timed out without a specific proven gameplay defect. Keep human items open for their required replay; see the audit for exact trace evidence and coverage.

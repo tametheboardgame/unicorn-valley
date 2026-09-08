@@ -87,3 +87,15 @@ Key constraints are:
 - Bag uses category navigation, scrolling inventory, item details and explicit use/eat actions;
 - Creator uses a large preview and progressive Main/Colours/Mane & Tail/Horn/Markings/Accessories categories;
 - if implementation materially cannot follow this approved direction, stop for user input rather than silently substituting a different layout.
+
+## UV-D010 - Whole-game audit precedes further remediation implementation
+
+Status: Accepted scope instruction, 2026-09-08.
+
+David requested a full analysis of the game/code, reconciliation of daughter feedback and a detailed plan for approval, including generated title art, a clearer creator, contextual-action-only visible instructions, consistent conversations/NPCs and an MP3 audio workflow. This authorises analysis and a reviewable proposal, not automatic implementation or deployment. The resulting proposal is `docs/2026-09-08-REMEDIATION-PROPOSAL.md`; its product decisions were subsequently accepted in UV-D011. Existing approved HUD/Bag/Map/Book history and the WP17/R7 gate remain intact.
+
+## UV-D011 - Remediation plan and documentation publication approved
+
+Status: Accepted, 2026-09-08.
+
+David replied “I approve this” to the completed audit handoff explicitly requesting approval of the plan and authorisation to push the documentation branch/open its draft PR. All six decisions in `docs/2026-09-08-REMEDIATION-PROPOSAL.md` are accepted, including the sequence, contextual visible instructions, compact speech, progressive creator, generated title and two-folder MP3 workflow. WP19A-I are approved within their dependencies; WP19A is the next implementation package. Existing future visual acceptance, daughter replay, WP17 readiness and production gates remain. No merge or deployment is included in this publication approval.
