@@ -10,7 +10,7 @@ Authorised by David on 8 September 2026: the project manager breaks down and dis
 - Remain within the approved package. Preserve save compatibility and the accepted game/UI invariants. Future generated-art and child-UX gates remain human decisions.
 - Report each completed package once with what changed, actual validation and remaining limitations, PR link, verified immutable game-preview link for that commit, and a short targeted check for David. Do not invent a preview URL or describe a docs-only preview as a completed feature.
 - A coding task finishing is not enough to declare the package complete. Report a blocked or test-failing result accurately and request only essential input.
-- Continue eligible approved work only when dependencies and required acceptance are satisfied. No automatic merge or production deployment is authorised by this workflow. Do not start R7 before WP17 acceptance.
+- Continue eligible approved work only when dependencies and required acceptance are satisfied. Under UV-D013, the manager may accept, merge and deploy technically qualified dependency-ready packages; workers still stop at any task-specific delivery boundary. This delegated manager acceptance is not physical human acceptance. Do not start R7 before the human-only WP18H replay and WP17 readiness decision.
 
 ## First dispatch: R6.5-WP19A
 

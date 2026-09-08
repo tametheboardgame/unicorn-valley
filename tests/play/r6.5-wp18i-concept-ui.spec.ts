@@ -311,11 +311,33 @@ test.describe('R6.5-WP18I concept-grade tablet HUD', () => {
     await waitForDiagnostics(page);
     await page.waitForTimeout(700);
 
-    await startScene(page, 'CottageDecorateScene');
+    await page.goto('/?scene=cottage&diagnostics=1');
+    await waitForDiagnostics(page);
+    await page.evaluate(() => {
+      const diagnostics = (
+        window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
+      ).__UNICORN_VALLEY_DIAGNOSTICS__;
+      diagnostics?.startScene('CottageDecorateScene', {
+        slotId: 'cottage-slot:centre-rug',
+      });
+    });
+    await page.waitForFunction(() => {
+      const diagnostics = (
+        window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
+      ).__UNICORN_VALLEY_DIAGNOSTICS__;
+      return diagnostics?.snapshot().activeScenes.includes('CottageDecorateScene') === true;
+    });
     await page.waitForTimeout(300);
     await captureEvidence(page, 'wp18i-decoration.png');
 
-    await startScene(page, 'RaceScene');
+    await page.goto('/?scene=race&diagnostics=1');
+    await waitForDiagnostics(page);
+    await page.waitForFunction(() => {
+      const diagnostics = (
+        window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
+      ).__UNICORN_VALLEY_DIAGNOSTICS__;
+      return diagnostics?.snapshot().activeScenes.includes('RaceScene') === true;
+    });
     const raceControls = page.locator('[data-race-mobile-controls="true"]');
     await expect(raceControls).toBeVisible();
     await expect(raceControls).toHaveClass(/is-landscape-tablet/);

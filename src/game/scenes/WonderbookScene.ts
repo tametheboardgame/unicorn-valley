@@ -7,10 +7,10 @@ import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 import { RelationshipService } from '../relationships/RelationshipService';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import {
-  PortraitModalCompanion,
   type PortraitModalActionGroup,
+  PortraitModalCompanion,
 } from '../ui/PortraitModalCompanion';
-import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from '../ui/uiTheme';
+import { applyButtonHover, createUiShadow, UI_COLOURS, UI_FONT } from '../ui/uiTheme';
 import {
   buildWonderbookCharacterEntries,
   type WonderbookCharacterEntry,
@@ -365,12 +365,12 @@ export class WonderbookScene extends Phaser.Scene {
     // The page-edge labels keep their accepted visual geometry while these
     // transparent controls provide the real child-sized pointer targets.
     this.allTab = this.add
-      .rectangle(790, 178, 190, 52, 0xffffff, 0.001)
+      .rectangle(790, 178, 190, 60, 0xffffff, 0.001)
       .setName('wonderbook-tab-all')
       .setDepth(19)
       .setInteractive({ useHandCursor: true });
     this.secretsTab = this.add
-      .rectangle(1015, 178, 150, 52, 0xffffff, 0.001)
+      .rectangle(1015, 178, 150, 60, 0xffffff, 0.001)
       .setName('wonderbook-tab-secrets')
       .setDepth(19)
       .setInteractive({ useHandCursor: true });

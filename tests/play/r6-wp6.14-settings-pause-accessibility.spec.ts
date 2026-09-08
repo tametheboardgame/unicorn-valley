@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, type Page, test } from '@playwright/test';
 
 const ACCESSIBILITY_KEY = 'unicorn-valley:accessibility-settings:v1';
 const AUDIO_KEY = 'unicorn-valley:audio-settings:v1';
@@ -205,7 +205,6 @@ test('exploration can pause into the full settings screen and return with persis
   expect(reducedMotion?.interactive).toBe(true);
   expect(reducedMotion?.displayHeight ?? 0).toBeGreaterThanOrEqual(64);
 
-  await page.keyboard.press('ArrowDown');
   current = await snapshot(page);
   const highVisibility = current.scenes
     .find((scene) => scene.key === 'SettingsScene')
@@ -214,6 +213,9 @@ test('exploration can pause into the full settings screen and return with persis
   expect(highVisibility?.interactive).toBe(true);
   expect(highVisibility?.displayHeight ?? 0).toBeGreaterThanOrEqual(64);
 
+  // Clicking Music selects that named row. Four keyboard moves select High
+  // Visibility (Ambience, SFX, Reduced Motion, High Visibility); do not move
+  // once more onto Fullscreen before activating the real focused control.
   await page.keyboard.press('Enter');
 
   await expect
@@ -244,6 +246,12 @@ test('exploration can pause into the full settings screen and return with persis
     'exploration-hud-overlay-settings-nav-button',
   );
   await waitForScene(page, 'SettingsScene');
+  // Re-opened Settings starts at the top of its clipped viewport. Move focus
+  // to the persisted High Visibility row so its real label is rendered before
+  // asserting the saved state (without activating it a second time).
+  for (let index = 0; index < 5; index += 1) {
+    await page.keyboard.press('ArrowDown');
+  }
   current = await snapshot(page);
   expect(sceneText(current, 'SettingsScene')).toContain('Music: Off');
   expect(sceneText(current, 'SettingsScene')).toContain('High visibility: On');

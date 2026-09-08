@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, type Page, test } from '@playwright/test';
 
 interface DiagnosticObject {
   name: string;
@@ -130,6 +130,7 @@ test('Wonderbook production tabs remain large interactive navigation controls', 
   page,
 }) => {
   test.setTimeout(75_000);
+  await page.setViewportSize({ width: 1024, height: 768 });
   await startRegisteredScene(page, 'WonderbookScene');
   await waitForObject(page, 'WonderbookScene', 'wonderbook-tab-secrets');
 
@@ -143,8 +144,11 @@ test('Wonderbook production tabs remain large interactive navigation controls', 
   const secretsTab = namedObject(scene, 'wonderbook-tab-secrets');
   expect(allTab.interactive).toBe(true);
   expect(secretsTab.interactive).toBe(true);
-  expect(allTab.displayHeight).toBeGreaterThanOrEqual(48);
-  expect(secretsTab.displayHeight).toBeGreaterThanOrEqual(48);
+  const canvas = await page.locator('canvas').boundingBox();
+  expect(canvas).not.toBeNull();
+  const renderedScale = (canvas?.height ?? 0) / 720;
+  expect(allTab.displayHeight * renderedScale).toBeGreaterThanOrEqual(48);
+  expect(secretsTab.displayHeight * renderedScale).toBeGreaterThanOrEqual(48);
   expect(Math.abs(secretsTab.x - allTab.x)).toBeGreaterThan(150);
 
   await page.mouse.click(secretsTab.x, secretsTab.y);

@@ -8,7 +8,7 @@ Last updated: 2026-09-08
 
 Path: `docs/work-packages/R6.5-WP18K-ARCHITECTURE-CONSOLIDATION-LEGACY-RETIREMENT.md`
 
-State: **implementation complete; technical qualification in progress**. David accepted WP19A's bounded qualification, authorised merging/deploying PRs #159/#160 and starting WP18K. Both PRs are merged; the production baseline is main `d8f3de6f264fa5fd6e2d77d539a47f288eb50cd4`. WP18K K1 ownership/removal evidence preceded implementation. K2-K4 consolidated Bag/Map ownership and removed five proven legacy managers/bridges. K5 has classified the completed correction-head browser run (169 passed / 10 failed / 3 skipped), applied evidence-led Settings/Wonderbook/HUD corrections and split complete CI coverage into three bounded shards. Manager review remains pending; no physical human acceptance is claimed.
+State: **implementation complete; technical qualification in progress**. David accepted WP19A's bounded qualification, authorised merging/deploying PRs #159/#160 and starting WP18K. Both PRs are merged; the production baseline is main `d8f3de6f264fa5fd6e2d77d539a47f288eb50cd4`. WP18K K1 ownership/removal evidence preceded implementation. K2-K4 consolidated Bag/Map ownership and removed five proven legacy managers/bridges. K5 has classified exact `f80271d` sharded CI (171 passed / 7 failed / 3 configured skips / 1 serially unrun), applied evidence-led Settings, Wonderbook, HUD, nested-prompt and supported-route corrections, and preserved complete three-shard coverage. Manager review remains pending; no physical human acceptance is claimed.
 
 Read first:
 
@@ -65,7 +65,7 @@ No new daughter replay occurred. Preserve all positive feedback and deferred ide
 
 ## Delivery
 
-WP19A planning/implementation PRs #159/#160 are accepted and merged to main `d8f3de6`. WP18K remains draft PR #161 on `agent/r6.5-wp18k-architecture-consolidation`. Cloudflare verified `https://51d8c0eb.unicorn-valley.pages.dev` for exact starting head `a958d0c`; do not infer a correction-head immutable URL until Cloudflare reports it. No WP18K merge or production deployment is authorised.
+WP19A planning/implementation PRs #159/#160 are accepted and merged to main `d8f3de6`. WP18K remains draft PR #161 on `agent/r6.5-wp18k-architecture-consolidation`. Cloudflare verified `https://a62d4c47.unicorn-valley.pages.dev` for exact prior head `f80271d`; do not infer a new correction-head immutable URL until Cloudflare reports it. UV-D013 authorises the manager to accept, merge and deploy technically qualified WP18K; this correction task remains delivery-only and performs none of those actions.
 
 ## Next action
 
@@ -78,4 +78,4 @@ Draft PR: https://github.com/tametheboardgame/unicorn-valley/pull/161.
 
 ## Codex execution
 
-WP18K K1–K4 started from verified main `d8f3de6`. K5 now has a package-specific ledger, exact CI/compatibility counts, all 40 unfinished dispositions and planned-versus-actual scanner ownership. The bounded K5 correction is committed at implementation SHA `a6c9cf7c03f8b2d51a464cfa8103caac4ec2ed36`; exact-head three-shard CI, immutable preview verification and manager review remain next. The conversation disposition remains `keep` until those external results and David's visual gate are durable.
+WP18K K1–K4 started from verified main `d8f3de6`. K5 now has a package-specific ledger, exact CI/compatibility counts, all 40 unfinished dispositions and planned-versus-actual scanner ownership. The latest bounded K5 correction fixes the seven-failure run’s K-owned Settings, Decor route, nested prompt, Nova route and rendered Wonderbook target issues. Exact-head three-shard CI, immutable preview verification and delegated manager review remain next. The conversation disposition remains `keep` until those external results and manager gate are durable.

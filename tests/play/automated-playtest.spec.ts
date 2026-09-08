@@ -1,6 +1,6 @@
-import { expect, test, type Page } from '@playwright/test';
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { expect, type Page, test } from '@playwright/test';
 
 interface DiagnosticObjectSnapshot {
   type: string;
@@ -434,7 +434,31 @@ test.describe
       test.setTimeout(90_000);
       const browserErrors: string[] = [];
       page.on('pageerror', (error) => browserErrors.push(error.message));
-      await page.goto('/?scene=nova-race&diagnostics=1');
+      await page.goto('/?scene=nova-story&diagnostics=1');
+      await waitForScene(page, 'NovaStoryScene');
+      for (let index = 0; index < 12; index += 1) {
+        const story = getScene(await getSnapshot(page), 'NovaStoryScene');
+        if (
+          story.objects.some((object) => object.name === 'nova-race-decision' && object.visible)
+        ) {
+          break;
+        }
+        await page.keyboard.press('Enter');
+        await page.waitForTimeout(90);
+      }
+      await page.waitForFunction(() => {
+        const diagnostics = (
+          window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
+        ).__UNICORN_VALLEY_DIAGNOSTICS__;
+        return diagnostics
+          ?.snapshot()
+          .scenes.find((scene) => scene.key === 'NovaStoryScene')
+          ?.objects.some((object) => object.name === 'nova-race-decision' && object.visible);
+      });
+      // Let the interaction edge that revealed the decision clear before
+      // selecting its visible default action with a fresh key press.
+      await page.waitForTimeout(150);
+      await page.keyboard.press('Enter', { delay: 50 });
       await waitForScene(page, 'NovaTutorialRaceScene');
       await waitForRaceStarted(page, 'NovaTutorialRaceScene');
       await waitForForwardControl(page, 'NovaTutorialRaceScene', false);

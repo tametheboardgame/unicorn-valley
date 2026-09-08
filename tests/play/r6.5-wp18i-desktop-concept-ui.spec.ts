@@ -11,6 +11,7 @@ interface DiagnosticObjectSnapshot {
   depth: number;
   alpha: number;
   visible: boolean;
+  effectiveVisible: boolean;
   scrollFactorX: number;
   scrollFactorY: number;
 }
@@ -132,7 +133,13 @@ test.describe('R6.5-WP18I desktop concept HUD cleanup', () => {
     expect(promptLabel?.text).toContain('Talk');
 
     const lingeringLegacyActionCopy = scene.objects.filter((object) => {
-      if (object.type !== 'Text' || !object.text || object.depth >= 190 || object.alpha <= 0.05) {
+      if (
+        object.type !== 'Text' ||
+        !object.text ||
+        !object.effectiveVisible ||
+        object.depth >= 190 ||
+        object.alpha <= 0.05
+      ) {
         return false;
       }
       const action =
@@ -157,23 +164,26 @@ test.describe('R6.5-WP18I desktop concept HUD cleanup', () => {
       return diagnostics?.snapshot().activeScenes.includes('SettingsScene') === true;
     });
     await page.waitForTimeout(250);
+    for (let index = 0; index < 8; index += 1) {
+      await page.keyboard.press('ArrowDown');
+    }
 
     const settings = await sceneSnapshot(page, 'SettingsScene');
     const timeControl = settings.objects.find(
-      (object) => object.name === 'settings-atmosphere-time' && object.visible,
+      (object) => object.name === 'settings-row-time-of-day' && object.visible,
     );
     const weatherControl = settings.objects.find(
-      (object) => object.name === 'settings-atmosphere-weather' && object.visible,
+      (object) => object.name === 'settings-row-weather' && object.visible,
     );
     const timeLabel = settings.objects.find(
-      (object) => object.name === 'settings-atmosphere-time-label' && object.visible,
+      (object) => object.name === 'settings-row-time-of-day-label' && object.visible,
     );
     const weatherLabel = settings.objects.find(
-      (object) => object.name === 'settings-atmosphere-weather-label' && object.visible,
+      (object) => object.name === 'settings-row-weather-label' && object.visible,
     );
     expect(timeControl).toBeDefined();
     expect(weatherControl).toBeDefined();
-    expect(timeLabel?.text).toMatch(/^Time: .+ · (Auto|Manual)$/);
+    expect(timeLabel?.text).toMatch(/^Time of day: .+ · (Auto|Manual)$/);
     expect(weatherLabel?.text).toMatch(/^Weather: .+ · (Auto|Manual)$/);
   });
 });

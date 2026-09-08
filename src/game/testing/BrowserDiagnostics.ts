@@ -22,6 +22,7 @@ export interface DiagnosticObjectSnapshot {
   depth: number;
   alpha: number;
   visible: boolean;
+  effectiveVisible: boolean;
   active: boolean;
   scrollFactorX: number;
   scrollFactorY: number;
@@ -182,7 +183,10 @@ function finite(value: number | undefined, fallback = 0): number {
   return Number.isFinite(value) ? (value ?? fallback) : fallback;
 }
 
-function snapshotObject(gameObject: Phaser.GameObjects.GameObject): DiagnosticObjectSnapshot {
+function snapshotObject(
+  gameObject: Phaser.GameObjects.GameObject,
+  ancestorsVisible = true,
+): DiagnosticObjectSnapshot {
   const object = gameObject as InspectableGameObject;
   const playerFacing =
     gameObject instanceof Phaser.Physics.Arcade.Sprite ? gameObject.getData('player-facing') : null;
@@ -200,6 +204,7 @@ function snapshotObject(gameObject: Phaser.GameObjects.GameObject): DiagnosticOb
     depth: finite(object.depth),
     alpha: finite(object.alpha, 1),
     visible: object.visible ?? true,
+    effectiveVisible: ancestorsVisible && (object.visible ?? true) && finite(object.alpha, 1) > 0,
     active: object.active ?? true,
     scrollFactorX: finite(object.scrollFactorX, 1),
     scrollFactorY: finite(object.scrollFactorY, 1),
@@ -215,15 +220,16 @@ function snapshotObjects(
 ): DiagnosticObjectSnapshot[] {
   const snapshots: DiagnosticObjectSnapshot[] = [];
 
-  const visit = (gameObject: Phaser.GameObjects.GameObject): void => {
-    snapshots.push(snapshotObject(gameObject));
+  const visit = (gameObject: Phaser.GameObjects.GameObject, ancestorsVisible = true): void => {
+    const snapshot = snapshotObject(gameObject, ancestorsVisible);
+    snapshots.push(snapshot);
     if (gameObject.type !== 'Container') {
       return;
     }
 
     const container = gameObject as InspectableContainer;
     for (const child of container.list ?? []) {
-      visit(child);
+      visit(child, snapshot.effectiveVisible);
     }
   };
 
