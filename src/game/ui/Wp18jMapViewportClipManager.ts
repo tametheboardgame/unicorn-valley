@@ -74,9 +74,7 @@ function installMapCameraClip(scene: Phaser.Scene): void {
     .add(0, 0, GAME_WIDTH, GAME_HEIGHT, false, MAP_OVERLAY_CAMERA_NAME)
     .setScroll(0, 0)
     .setRoundPixels(true);
-  overlayCamera.ignore(
-    scene.children.list.filter((object) => !overlayObjects.includes(object)),
-  );
+  overlayCamera.ignore(scene.children.list.filter((object) => !overlayObjects.includes(object)));
 
   // Keep the non-rendering diagnostic marker out of all visual cameras.
   scene.cameras.main.ignore(clipGuard);
