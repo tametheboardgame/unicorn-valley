@@ -44,6 +44,28 @@ async function clickGamePoint(page: Page, x: number, y: number): Promise<void> {
   await page.mouse.click(box.x + (x / 1280) * box.width, box.y + (y / 720) * box.height);
 }
 
+async function dragGamePoint(
+  page: Page,
+  from: { x: number; y: number },
+  to: { x: number; y: number },
+): Promise<void> {
+  const canvas = page.locator('canvas');
+  const box = await canvas.boundingBox();
+  if (!box) {
+    throw new Error('Game canvas is not available');
+  }
+
+  const startX = box.x + (from.x / 1280) * box.width;
+  const startY = box.y + (from.y / 720) * box.height;
+  const endX = box.x + (to.x / 1280) * box.width;
+  const endY = box.y + (to.y / 720) * box.height;
+
+  await page.mouse.move(startX, startY);
+  await page.mouse.down();
+  await page.mouse.move(endX, endY, { steps: 6 });
+  await page.mouse.up();
+}
+
 async function expectCanonicalLandscapeShell(page: Page): Promise<void> {
   await expect
     .poll(async () => {
@@ -182,7 +204,7 @@ test.describe('WP18J shared responsive concept UI', () => {
     expect(shop?.visible ?? false).toBe(false);
     expect(shop?.interactive ?? false).toBe(false);
 
-    await clickGamePoint(page, 1170, 76);
+    await clickGamePoint(page, 1172, 76);
     await waitForScene(page, 'MoonflowerGladeScene');
     await expectCanonicalLandscapeShell(page);
 
@@ -191,7 +213,7 @@ test.describe('WP18J shared responsive concept UI', () => {
       .toEqual(before);
   });
 
-  test('Map uses the same isolated icon-only close target and padded header', async ({ page }) => {
+  test('Map clips draggable geography under its frame and keeps North fixed', async ({ page }) => {
     await page.setViewportSize({ width: 1180, height: 664 });
     await page.goto('/?scene=glade&diagnostics=1', { waitUntil: 'networkidle' });
     await waitForScene(page, 'MoonflowerGladeScene');
@@ -205,24 +227,56 @@ test.describe('WP18J shared responsive concept UI', () => {
         const close = objects.find(({ name }) => name === 'bag-close-button');
         const icon = objects.find(({ name }) => name === 'wp18j-inventory-close-icon');
         const boxedVisual = objects.find(({ name }) => name === 'wp18j-inventory-close-visual');
+        const frame = objects.find(({ name }) => name === 'wp18j-map-pan-frame');
+        const compass = objects.find(({ name }) => name === 'wp18j-map-compass');
+        const compassLabel = objects.find(({ name }) => name === 'wp18j-map-compass-label');
         return {
           closeWidth: close?.displayWidth ?? 0,
           closeHeight: close?.displayHeight ?? 0,
           closeX: close?.x ?? 0,
           iconPresent: Boolean(icon?.visible),
           boxedVisualPresent: Boolean(boxedVisual?.visible),
+          framePresent: Boolean(frame?.visible),
+          compassX: compass?.x ?? 0,
+          compassY: compass?.y ?? 0,
+          compassLabelPresent: Boolean(compassLabel?.visible),
         };
       })
       .toEqual({
         closeWidth: 82,
         closeHeight: 70,
-        closeX: 1170,
+        closeX: 1172,
         iconPresent: true,
         boxedVisualPresent: false,
+        framePresent: true,
+        compassX: 170,
+        compassY: 192,
+        compassLabelPresent: true,
       });
 
+    const beforeDrag = await sceneObjects(page, 'InventoryScene');
+    const contentBefore = beforeDrag.find(({ name }) => name === 'bag-map-content');
+    const compassBefore = beforeDrag.find(({ name }) => name === 'wp18j-map-compass');
+    expect(contentBefore).toBeDefined();
+    expect(compassBefore).toBeDefined();
+
+    await dragGamePoint(page, { x: 720, y: 390 }, { x: 590, y: 300 });
+
+    await expect
+      .poll(async () => {
+        const objects = await sceneObjects(page, 'InventoryScene');
+        const content = objects.find(({ name }) => name === 'bag-map-content');
+        const compass = objects.find(({ name }) => name === 'wp18j-map-compass');
+        return {
+          contentMoved: (content?.x ?? 0) < (contentBefore?.x ?? 0) - 20,
+          compassX: compass?.x ?? 0,
+          compassY: compass?.y ?? 0,
+        };
+      })
+      .toEqual({ contentMoved: true, compassX: 170, compassY: 192 });
+
     await page.screenshot({
-      path: test.info().outputPath('wp18j-map-spacing.png'),
+      path: test.info().outputPath('wp18j-map-panned-clipped.png'),
       fullPage: true,
     });
   });
