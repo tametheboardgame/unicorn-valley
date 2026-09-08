@@ -8,7 +8,7 @@ Last updated: 2026-09-08
 
 Path: `docs/work-packages/R6.5-WP19A-PERSISTENCE-SAFETY.md`
 
-State: **WP19A review corrections committed; corrected-head CI/preview verification pending**. The bounded implementation remains on PR #160's existing stacked branch; no duplicate PR or production deployment is authorised.
+State: **WP19A denied-storage boot regression fixed; latest-head CI/preview verification pending**. The bounded implementation remains on PR #160's existing stacked branch; no merge or production deployment is authorised.
 
 Read first:
 
@@ -40,7 +40,7 @@ WP19A-I bounded files are **approved**, subject to their dependencies and human 
 - Roaming residents and scene targets use separate interaction/feedback routes.
 - Cottage back-wall/window collision remains unresolved.
 - Grotto/Grove are absent from the preferred tap-navigation support list.
-- WP19A now guards title-flow storage reads, prevents rejected writes from producing purchase success, requires primary success where checkpoints are unsupported, and keeps post-commit listener faults from inviting a duplicate charge; corrected-head CI remains pending.
+- WP19A now guards title and boot-manager storage reads, prevents rejected writes from producing purchase success, requires primary success where checkpoints are unsupported, and keeps post-commit listener faults from inviting a duplicate charge; latest-head CI remains pending.
 - New-game Map shows Cottage as current while the player is in Glade; investigate checkpoint/location consistency.
 - Generated title image and MP3 catalogue/playback are new work, not already delivered features.
 
@@ -56,6 +56,7 @@ Full evidence, severity and source references are in the audit. Source risks are
 - Documentation project-state validation, formatting and whitespace checks pass on the final handoff changes. Overall browser qualification remains failing/incomplete.
 - WP19A corrected-head `npm run validate` passes with 114 test files / 435 tests and a 480.38 KiB entry bundle; the focused SaveService run passes 22 tests. The matching Chromium download completed, but host libraries remain unavailable, so the new denied-getter browser regression awaits CI. No full-green browser qualification is claimed.
 - CI run `34222463247` on the preceding head passed Validate and Browser compatibility. Browser playtest was cancelled at 35 minutes after the package-relevant main-menu, profile and save-recovery groups passed; unrelated historical UI failures and integrated qualification remain open in their planned packages.
+- CI run `34231264234` on `bec98fa` passed Validate and Browser compatibility, but its timed browser job exposed a package-relevant failure in the new denied-storage title regression. Its trace showed boot-time Continue restore, Pip egg, atmosphere/weather and reward initialisation still calling the throwing legacy load path before Title could render. Commit `8a6d35e` routes those passive boot reads through typed outcomes; the complete five-case save-recovery browser spec now passes locally.
 
 ## Human feedback and gates
 
@@ -71,7 +72,7 @@ Documentation-only branch: `agent/r6.5-whole-game-audit-plan`. David explicitly 
 
 ## Next action
 
-Push correction commit `7fdc3500ca2f137f46a39492b375b66be4ca1fa2`, then wait for corrected-head CI and an exact immutable Cloudflare preview before manager review. Next only after verified WP19A: WP18K. All six plan decisions are approved; future visual and replay gates remain.
+Push denied-storage boot fix `8a6d35e487c84f6367c2cd1d4c58c3100bee6116`, then wait for latest-head CI and an exact immutable Cloudflare preview before manager review. Next only after verified WP19A: WP18K. All six plan decisions are approved; future visual and replay gates remain.
 
 Chat disposition: `keep`.
 
