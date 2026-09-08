@@ -179,8 +179,8 @@ test.describe('WP18J shared responsive concept UI', () => {
     }
 
     const shop = bagObjects.find(({ name }) => name === 'bag-shop-button');
-    expect(shop?.displayHeight ?? 0).toBeLessThanOrEqual(52);
-    expect(shop?.y ?? 0).toBeGreaterThanOrEqual(628);
+    expect(shop?.visible ?? false).toBe(false);
+    expect(shop?.interactive ?? false).toBe(false);
 
     await clickGamePoint(page, 1170, 76);
     await waitForScene(page, 'MoonflowerGladeScene');
@@ -203,15 +203,23 @@ test.describe('WP18J shared responsive concept UI', () => {
       .poll(async () => {
         const objects = await sceneObjects(page, 'InventoryScene');
         const close = objects.find(({ name }) => name === 'bag-close-button');
-        const visual = objects.find(({ name }) => name === 'wp18j-inventory-close-visual');
+        const icon = objects.find(({ name }) => name === 'wp18j-inventory-close-icon');
+        const boxedVisual = objects.find(({ name }) => name === 'wp18j-inventory-close-visual');
         return {
           closeWidth: close?.displayWidth ?? 0,
           closeHeight: close?.displayHeight ?? 0,
           closeX: close?.x ?? 0,
-          visualPresent: Boolean(visual?.visible),
+          iconPresent: Boolean(icon?.visible),
+          boxedVisualPresent: Boolean(boxedVisual?.visible),
         };
       })
-      .toEqual({ closeWidth: 82, closeHeight: 70, closeX: 1170, visualPresent: true });
+      .toEqual({
+        closeWidth: 82,
+        closeHeight: 70,
+        closeX: 1170,
+        iconPresent: true,
+        boxedVisualPresent: false,
+      });
 
     await page.screenshot({
       path: test.info().outputPath('wp18j-map-spacing.png'),
