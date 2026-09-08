@@ -78,4 +78,4 @@ Draft PR: https://github.com/tametheboardgame/unicorn-valley/pull/161.
 
 ## Codex execution
 
-WP18K K1–K4 started from verified main `d8f3de6`. K5 now has a package-specific ledger, exact CI/compatibility counts, all 40 unfinished dispositions and planned-versus-actual scanner ownership. Corrections are committed at implementation SHA `7617f763f992077f7009fe2e1c4e23c208b96f1e` on the existing package branch; correction-head CI/preview verification remains next. The conversation disposition remains `keep` until those external results and David's visual gate are durable.
+WP18K K1–K4 started from verified main `d8f3de6`. K5 now has a package-specific ledger, exact CI/compatibility counts, all 40 unfinished dispositions and planned-versus-actual scanner ownership. The bounded K5 correction is committed at implementation SHA `a6c9cf7c03f8b2d51a464cfa8103caac4ec2ed36`; exact-head three-shard CI, immutable preview verification and manager review remain next. The conversation disposition remains `keep` until those external results and David's visual gate are durable.
