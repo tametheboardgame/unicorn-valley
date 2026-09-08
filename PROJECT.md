@@ -23,9 +23,9 @@ A young child, with the design primarily tuned around the intended seven-year-ol
 
 ## Current accepted baseline
 
-R0 through R6 are complete. R6.5 - Valley Completeness and Breadth is active. R6.5-WP1 through WP14 are complete on `main`, with R6.5-WP15 - Wonderbook, Collections and Long-Term Goals active on `r6.5-wp15-wonderbook-collections-long-term-goals`.
+R0 through R6 and R6.5-WP1 through WP16 are integrated. WP18A-G and human-approved WP18I/J are integrated through PR #158. Accepted gameplay head: `e4d64c0fa258bd91eb29579321e7da6b0968f71e`; audit base main: `d9b765c0293045251619783a4ced4b01068e993a`.
 
-Latest accepted `main` gameplay baseline: `5d246ae012ef351e9dd356befc3a9608222041e6` (R6.5-WP14 via PR #143).
+The 2026-09-08 user request commissions a whole-game audit and revised remediation proposal before further implementation. `R6.5-WP19-PLAN` was approved on 2026-09-08, including its documentation push/draft PR. WP19A is next; WP18K remains bounded foundation work and approved WP19A-I precede the final WP18H/WP17 replay gates. See `docs/2026-09-08-REMEDIATION-PROPOSAL.md`.
 
 R7 is deliberately blocked until R6.5-WP17 releases the human readiness gate.
 

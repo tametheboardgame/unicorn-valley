@@ -2,87 +2,73 @@
 
 Last updated: 2026-09-08
 
-## Current phase
+## Current work
 
-R6.5 - Valley Completeness and Breadth, human-playtest remediation.
+`R6.5-WP19-PLAN - Whole-game audit and remediation proposal`
 
-## Current work package
+Path: `docs/work-packages/R6.5-WP19-PLAN-WHOLE-GAME-AUDIT.md`
 
-`R6.5-WP18K - Architecture Consolidation and Legacy Retirement`
+State: **analysis and detailed plan approved by David on 2026-09-08; authorised documentation publication in progress**. No gameplay implementation occurred in this package.
 
-Path: `docs/work-packages/R6.5-WP18K-ARCHITECTURE-CONSOLIDATION-LEGACY-RETIREMENT.md`
+Read first:
 
-State: **ready for Work-mode execution**.
+- `docs/audits/2026-09-08-WHOLE-GAME-AUDIT.md`
+- `docs/2026-09-08-REMEDIATION-PROPOSAL.md`
 
-## Accepted baseline
+## Accepted gameplay baseline
 
-R0-R6 are complete. R6.5-WP1 through WP16 are integrated. WP17 remains open because the daughter playthrough did not release R7 readiness.
+R0-R6 and R6.5-WP1-16 are integrated. WP17 remains open; R7 is blocked. WP18A-G are integrated. WP18I/J were visually approved on 2026-09-08 and integrated through PR #158 / `45c858edc4537d49621a644d8131e0e4affe2f3b`.
 
-WP18A-G are complete. WP18I and WP18J are **human visually approved** following the 2026-09-08 responsive UI remediation and final Map clipping correction, and were integrated to `main` through PR #158.
+Approved game-code head: `e4d64c0fa258bd91eb29579321e7da6b0968f71e`.
 
-Integration commit: `45c858edc4537d49621a644d8131e0e4affe2f3b`.
+Approved immutable preview: `https://8292d7b9.unicorn-valley.pages.dev`.
 
-Final approved WP18I/J game-code head: `e4d64c0fa258bd91eb29579321e7da6b0968f71e`.
+Audit base main: `d9b765c0293045251619783a4ced4b01068e993a`.
 
-Final approved immutable preview: `https://8292d7b9.unicorn-valley.pages.dev`.
+Retain the accepted HUD camera stability, cream/lavender/purple/gold controls, Bag categories/no Shop shortcut, Map drag/North/clipping, Wonderbook page tabs and cross-only close controls. Four display classes remain mandatory.
 
-Validation evidence:
+## Approved next sequence
 
-- AI project contract: passing on the integrated handoff;
-- formatting/lint/type-check: passing;
-- unit tests: passing;
-- production build/static smoke: passing;
-- hard 520 KiB application-entry budget: passing;
-- Chromium/Firefox/WebKit compatibility on the final approved game-code head: **48 passed / 15 skipped / 0 failed**;
-- the full serial Chromium playtest is still running in CI and must be reviewed before WP18K closes; it is not a blocker to beginning the architecture audit because the accepted code already has green core and cross-browser evidence.
+WP19A persistence safety → WP18K ownership foundation → WP19B world boundaries/navigation → WP19C creator → WP19D interactions/NPCs → WP19E conversations → WP19F UI consistency/generated title → WP19G/H MP3 audio → WP19I integrated qualification → WP18H daughter replay → WP17 readiness decision.
 
-## Canonical UI state to preserve
+WP19A-I bounded files are **approved**, subject to their dependencies and human gates. WP19A is next, followed by WP18K. WP18K remains behaviour-preserving; it must not silently absorb functional redesign.
 
-- one concept-grade shell, not legacy viewport fallbacks;
-- Map / Bag / Book / Settings + Shimmer + location presentation;
-- static HUD overlay independent of world camera follow;
-- landscape phone behaves as a smaller landscape tablet;
-- portrait phone uses the approved below-gameplay dock/control composition;
-- Bag has no `Visit the Shop` shortcut;
-- Map is draggable, North stays fixed, moving geography hard-clips beneath the parchment frame;
-- Wonderbook uses page-edge index tabs;
-- close controls show only a cross while retaining generous invisible touch targets.
+## Important open findings
 
-## Human feedback record
+- Creator crowded on desktop; progressive layout ownership is inconsistent.
+- Legacy E/Enter/tap labels remain visible beneath world objects.
+- Roaming residents and scene targets use separate interaction/feedback routes.
+- Cottage back-wall/window collision remains unresolved.
+- Grotto/Grove are absent from the preferred tap-navigation support list.
+- Storage fault tests reproduce an uncaught read failure and false Bakery purchase success after a rejected save.
+- New-game Map shows Cottage as current while the player is in Glade; investigate checkpoint/location consistency.
+- Generated title image and MP3 catalogue/playback are new work, not already delivered features.
 
-Canonical original evidence: `docs/07Z-R6.5-WP17-PLAYTEST-REMEDIATION.md`.
+Full evidence, severity and source references are in the audit. Source risks are distinguished from runtime reproductions.
 
-Current status ledger: `docs/HUMAN-PLAYTEST-FEEDBACK-LEDGER.md`.
+## Validation
 
-The ledger separates implemented/revalidation items, known open defects, deferred daughter-led ideas and positive features that must be preserved.
+- Local baseline `npm run validate`: passing, 113 test files / 427 tests plus format/lint/type/build/performance/static checks.
+- Two temporary storage fault tests confirmed the documented defects; removed from the repository after diagnosis.
+- Live-browser checks covered title, creator, naming/start, tap movement, Pip dialogue, Bag and Map. No full daughter-style replay is claimed.
+- Main CI run `34210921262`: Validate and Browser compatibility succeeded; Browser playtest subsequently ended **cancelled**. Main does not have complete green full-playtest evidence from that run.
+- Local Chromium was initially missing, then installed successfully. The serial broad suite stopped at its three-failure limit: 23 passed, 3 failed, 155 did not run. The failures assert historical suggestion cards and a retired controls button. The separate current R6.5 suite finished with 34 passed, 5 failed and 21 not run. Failures cover stale Bag coordinates/wrapper assertions, Nook/race total-budget timeouts, and a numerical Bag size failure. Trace-based distinctions and unverified coverage are in the audit addendum.
+- Documentation project-state validation, formatting and whitespace checks pass on the final handoff changes. Overall browser qualification remains failing/incomplete.
 
-## Known open defect
+## Human feedback and gates
 
-**Moonflower Cottage/window/back-wall collision remains unresolved.** This is a real gameplay/world-geometry defect and was deliberately excluded from WP18I/J. WP18K must not delete the record or accidentally mask it.
+Original evidence: `docs/07Z-R6.5-WP17-PLAYTEST-REMEDIATION.md`.
 
-## Next human gate
+Current ledger: `docs/HUMAN-PLAYTEST-FEEDBACK-LEDGER.md`.
 
-`R6.5-WP18H - Full Human Tablet Replay and Return to WP17` remains deferred until WP18K completes and known open blockers are accounted for.
+No new daughter replay occurred. Preserve all positive feedback and deferred ideas. WP18H remains the physical Galaxy Tab S8 replay; WP17 requires David's explicit readiness decision. R7 remains blocked.
 
-R7 remains blocked.
+## Delivery
 
-## WP18K guardrails
+Documentation-only branch: `agent/r6.5-whole-game-audit-plan`. David explicitly authorised the documentation branch push and draft PR on 2026-09-08, resolving the earlier automatic-review block. Publication is in progress. No merge or production deployment is authorised by completion of this audit. Production was previously updated by the approved WP18I/J merge; this proposal does not change the game.
 
-- behaviour-preserving architecture cleanup only;
-- audit before deletion;
-- identify canonical vs obsolete code with dependency evidence;
-- remove dead/retired paths rather than hiding them;
-- consolidate temporary remediation managers into proper owners where safe;
-- simplify bootstrapping and responsive authority;
-- do not change saves, progression, inventory semantics, map topology, quest logic, race/movement rules or content;
-- do not visually redesign the user-approved UI;
-- preserve four-display-class responsive acceptance;
-- do not weaken tests or the 520 KiB budget to make cleanup pass.
+## Next action
 
-## Production
+Deliver the authorised documentation draft PR. Next implementation package: `Start R6.5-WP19A`. All six plan decisions are approved; future visual and replay gates remain.
 
-Merging the approved WP18I/J integration to `main` on 2026-09-08 automatically triggered the repository's Cloudflare Pages deployment, which completed successfully. Future production deployments still require explicit user approval.
-
-## Chat disposition
-
-`keep`
+Chat disposition: `keep`.

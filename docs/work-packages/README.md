@@ -43,3 +43,7 @@ Each package should cover:
 - Completion Record
 
 The detailed canonical release document may contain more context. The bounded package must still be sufficient for a fresh agent to know what it is authorised to do, how to validate it and where it must stop.
+
+## Current proposed programme
+
+Start with `R6.5-WP19-PLAN-WHOLE-GAME-AUDIT.md` and `docs/2026-09-08-REMEDIATION-PROPOSAL.md`. WP19A-I bounded files are proposed and await approval. WP18K remains the behaviour-preserving foundation between WP19A and WP19B. No gameplay implementation was done by the audit.
