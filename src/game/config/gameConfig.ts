@@ -40,6 +40,10 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
   },
   render: {
     antialias: true,
+    // Camera follow uses fractional world positions. Rounding final render positions prevents
+    // fixed HUD text/icons from visibly oscillating by a pixel while the camera eases behind
+    // the unicorn, without changing movement, collision or input coordinates.
+    roundPixels: true,
   },
   physics: {
     default: 'arcade',
