@@ -6,6 +6,8 @@ interface DiagnosticObject {
   interactive: boolean;
   x: number;
   y: number;
+  displayWidth: number;
+  displayHeight: number;
 }
 
 interface BrowserDiagnosticsApi {
@@ -31,6 +33,15 @@ async function sceneObjects(page: Page, sceneKey: string): Promise<DiagnosticObj
     ).__UNICORN_VALLEY_DIAGNOSTICS__;
     return diagnostics?.snapshot().scenes.find((scene) => scene.key === key)?.objects ?? [];
   }, sceneKey);
+}
+
+async function clickGamePoint(page: Page, x: number, y: number): Promise<void> {
+  const canvas = page.locator('canvas');
+  const box = await canvas.boundingBox();
+  if (!box) {
+    throw new Error('Game canvas is not available');
+  }
+  await page.mouse.click(box.x + (x / 1280) * box.width, box.y + (y / 720) * box.height);
 }
 
 async function expectCanonicalLandscapeShell(page: Page): Promise<void> {
@@ -68,6 +79,35 @@ async function expectCanonicalLandscapeShell(page: Page): Promise<void> {
   expect(objects.some(({ name }) => name === 'activity-suggestion-card')).toBe(false);
 }
 
+function navigationGeometry(objects: DiagnosticObject[]): Array<{
+  name: string;
+  x: number;
+  y: number;
+  displayWidth: number;
+  displayHeight: number;
+}> {
+  const wanted = new Set([
+    'exploration-shell-map-icon',
+    'exploration-shell-bag-icon',
+    'exploration-shell-book-icon',
+    'exploration-shell-settings-nav-icon',
+    'exploration-shell-map-label',
+    'exploration-shell-bag-label',
+    'exploration-shell-book-label',
+    'exploration-shell-settings-nav-label',
+  ]);
+  return objects
+    .filter(({ name }) => wanted.has(name))
+    .map(({ name, x, y, displayWidth, displayHeight }) => ({
+      name,
+      x,
+      y,
+      displayWidth,
+      displayHeight,
+    }))
+    .sort((left, right) => left.name.localeCompare(right.name));
+}
+
 test.describe('WP18J shared responsive concept UI', () => {
   test.use({ viewport: { width: 844, height: 390 }, hasTouch: true });
 
@@ -101,6 +141,80 @@ test.describe('WP18J shared responsive concept UI', () => {
 
     await page.screenshot({
       path: test.info().outputPath('wp18j-phone-portrait-to-landscape.png'),
+      fullPage: true,
+    });
+  });
+
+  test('opening and closing Bag cannot leave the main navigation geometry misaligned', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1180, height: 664 });
+    await page.goto('/?scene=glade&diagnostics=1', { waitUntil: 'networkidle' });
+    await waitForScene(page, 'MoonflowerGladeScene');
+    await expectCanonicalLandscapeShell(page);
+
+    const before = navigationGeometry(await sceneObjects(page, 'MoonflowerGladeScene'));
+    expect(before).toHaveLength(8);
+
+    await clickGamePoint(page, 210, 52);
+    await waitForScene(page, 'InventoryScene');
+
+    await expect
+      .poll(async () => {
+        const objects = await sceneObjects(page, 'InventoryScene');
+        return objects.find(({ name }) => name === 'bag-close-button')?.displayWidth ?? 0;
+      })
+      .toBeGreaterThanOrEqual(80);
+
+    const bagObjects = await sceneObjects(page, 'InventoryScene');
+    const pocketTabs = bagObjects
+      .filter(({ name }) => name.startsWith('bag-pocket:'))
+      .sort((left, right) => left.x - right.x);
+    expect(pocketTabs).toHaveLength(4);
+    for (let index = 1; index < pocketTabs.length; index += 1) {
+      const previous = pocketTabs[index - 1];
+      const current = pocketTabs[index];
+      const gap = current.x - current.displayWidth / 2 - (previous.x + previous.displayWidth / 2);
+      expect(gap).toBeGreaterThanOrEqual(24);
+    }
+
+    const shop = bagObjects.find(({ name }) => name === 'bag-shop-button');
+    expect(shop?.displayHeight ?? 0).toBeLessThanOrEqual(52);
+    expect(shop?.y ?? 0).toBeGreaterThanOrEqual(628);
+
+    await clickGamePoint(page, 1170, 76);
+    await waitForScene(page, 'MoonflowerGladeScene');
+    await expectCanonicalLandscapeShell(page);
+
+    await expect
+      .poll(async () => navigationGeometry(await sceneObjects(page, 'MoonflowerGladeScene')))
+      .toEqual(before);
+  });
+
+  test('Map uses the same isolated icon-only close target and padded header', async ({ page }) => {
+    await page.setViewportSize({ width: 1180, height: 664 });
+    await page.goto('/?scene=glade&diagnostics=1', { waitUntil: 'networkidle' });
+    await waitForScene(page, 'MoonflowerGladeScene');
+
+    await clickGamePoint(page, 83, 52);
+    await waitForScene(page, 'InventoryScene');
+
+    await expect
+      .poll(async () => {
+        const objects = await sceneObjects(page, 'InventoryScene');
+        const close = objects.find(({ name }) => name === 'bag-close-button');
+        const visual = objects.find(({ name }) => name === 'wp18j-inventory-close-visual');
+        return {
+          closeWidth: close?.displayWidth ?? 0,
+          closeHeight: close?.displayHeight ?? 0,
+          closeX: close?.x ?? 0,
+          visualPresent: Boolean(visual?.visible),
+        };
+      })
+      .toEqual({ closeWidth: 82, closeHeight: 70, closeX: 1170, visualPresent: true });
+
+    await page.screenshot({
+      path: test.info().outputPath('wp18j-map-spacing.png'),
       fullPage: true,
     });
   });
