@@ -1,6 +1,5 @@
 import Phaser from 'phaser';
 import { getBrowserAccessibilitySettingsStore } from '../accessibility/AccessibilitySettings';
-import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import type { TouchMovementPad } from '../input/TouchMovementPad';
 import { rememberRainbowMeadowPlayerPosition } from '../world/RainbowMeadowReturnPoint';
 import {
@@ -10,8 +9,7 @@ import {
   drawPanelShadow,
   drawRoundedPanel,
 } from './ConceptUi';
-import { browserUsesLandscapeTabletPresentation } from './LandscapeTabletPresentation';
-import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from './uiTheme';
+import { UI_FONT } from './uiTheme';
 
 const LOCATION_TITLES: Readonly<Record<string, string>> = {
   MoonflowerGladeScene: 'Moonflower Glade',
@@ -34,229 +32,73 @@ const LEGACY_STATUS_PREFIXES = [
   'Pip noticed!',
 ];
 
+/**
+ * Canonical exploration chrome.
+ *
+ * The retired centred title / Controls panel presentation is intentionally absent. Every canvas
+ * exploration layout now owns the same concept location pill; portrait phone suppresses the canvas
+ * chrome and replaces it with its responsive DOM dock.
+ */
 export class ExplorationChrome {
   private readonly accessibility = getBrowserAccessibilitySettingsStore();
   private readonly objects: Phaser.GameObjects.GameObject[] = [];
-  private readonly helpObjects: Array<Phaser.GameObjects.Rectangle | Phaser.GameObjects.Text> = [];
-  private readonly tabletMode = browserUsesLandscapeTabletPresentation();
   private readonly titleText: Phaser.GameObjects.Text | null;
-  private readonly controlsButton: Phaser.GameObjects.Rectangle | null;
-  private readonly controlsLabel: Phaser.GameObjects.Text | null;
-  private readonly touchToggleButton: Phaser.GameObjects.Rectangle | null;
-  private readonly touchToggleLabel: Phaser.GameObjects.Text | null;
-  private readonly reducedMotionButton: Phaser.GameObjects.Rectangle | null;
-  private readonly reducedMotionLabel: Phaser.GameObjects.Text | null;
-  private readonly highVisibilityButton: Phaser.GameObjects.Rectangle | null;
-  private readonly highVisibilityLabel: Phaser.GameObjects.Text | null;
-  private helpOpen = false;
   private unsubscribeAccessibility: (() => void) | null = null;
 
   public constructor(
     private readonly scene: Phaser.Scene,
-    private readonly touchMovementPad: TouchMovementPad,
+    touchMovementPad: TouchMovementPad,
   ) {
+    void touchMovementPad;
     const locationTitle = LOCATION_TITLES[scene.scene.key];
     if (!locationTitle) {
       this.titleText = null;
-      this.controlsButton = null;
-      this.controlsLabel = null;
-      this.touchToggleButton = null;
-      this.touchToggleLabel = null;
-      this.reducedMotionButton = null;
-      this.reducedMotionLabel = null;
-      this.highVisibilityButton = null;
-      this.highVisibilityLabel = null;
       return;
     }
 
-    if (this.tabletMode) {
-      const titleX = 1044;
-      const titleY = 52;
-      const titleWidth = 370;
-      const titleHeight = 62;
-      const titleShadow = createFixedGraphics(scene, 'exploration-location-title-shadow', 123);
-      drawPanelShadow(titleShadow, titleX, titleY, titleWidth, titleHeight, 28, 5, 6, 0.18);
-      const titleSurface = createFixedGraphics(scene, 'exploration-location-title-surface', 124);
-      drawRoundedPanel(
-        titleSurface,
-        titleX,
-        titleY,
-        titleWidth,
-        titleHeight,
-        28,
-        CONCEPT_UI.cream,
-        CONCEPT_UI.lavenderLine,
-        4,
-      );
-      const titlePanel = scene.add
-        .rectangle(titleX, titleY, titleWidth, titleHeight, CONCEPT_UI.white, 0.001)
-        .setName('exploration-location-title-panel')
-        .setScrollFactor(0)
-        .setDepth(124);
-      const locationIcon = createFixedGraphics(scene, 'exploration-location-icon', 126);
-      drawConceptIcon(locationIcon, 'location', titleX - 140, titleY, 0.9, CONCEPT_UI.purpleDeep);
-      this.titleText = scene.add
-        .text(titleX + 22, titleY, locationTitle, {
-          color: '#4b2b66',
-          fontFamily: UI_FONT,
-          fontSize: '19px',
-          fontStyle: 'bold',
-          align: 'center',
-          wordWrap: { width: 270 },
-        })
-        .setName('exploration-location-title')
-        .setOrigin(0.5)
-        .setScrollFactor(0)
-        .setDepth(126);
-      this.controlsButton = null;
-      this.controlsLabel = null;
-      this.touchToggleButton = null;
-      this.touchToggleLabel = null;
-      this.reducedMotionButton = null;
-      this.reducedMotionLabel = null;
-      this.highVisibilityButton = null;
-      this.highVisibilityLabel = null;
-      this.objects.push(titleShadow, titleSurface, titlePanel, locationIcon, this.titleText);
-      this.unsubscribeAccessibility = this.accessibility.subscribe(() => {
-        this.applyReducedMotionPreference();
-      });
-      this.refresh();
-      return;
-    }
-
-    const titleShadow = createUiShadow(scene, GAME_WIDTH / 2, 43, 340, 58, 123, 0.15);
+    const titleX = 1044;
+    const titleY = 52;
+    const titleWidth = 370;
+    const titleHeight = 62;
+    const titleShadow = createFixedGraphics(scene, 'exploration-location-title-shadow', 123);
+    drawPanelShadow(titleShadow, titleX, titleY, titleWidth, titleHeight, 28, 5, 6, 0.18);
+    const titleSurface = createFixedGraphics(scene, 'exploration-location-title-surface', 124);
+    drawRoundedPanel(
+      titleSurface,
+      titleX,
+      titleY,
+      titleWidth,
+      titleHeight,
+      28,
+      CONCEPT_UI.cream,
+      CONCEPT_UI.lavenderLine,
+      4,
+    );
     const titlePanel = scene.add
-      .rectangle(GAME_WIDTH / 2, 40, 340, 58, UI_COLOURS.cream, 0.96)
+      .rectangle(titleX, titleY, titleWidth, titleHeight, CONCEPT_UI.white, 0.001)
       .setName('exploration-location-title-panel')
-      .setStrokeStyle(3, UI_COLOURS.lavenderStrong, 0.92)
       .setScrollFactor(0)
       .setDepth(124);
+    const locationIcon = createFixedGraphics(scene, 'exploration-location-icon', 126);
+    drawConceptIcon(locationIcon, 'location', titleX - 140, titleY, 0.9, CONCEPT_UI.purpleDeep);
     this.titleText = scene.add
-      .text(GAME_WIDTH / 2, 40, locationTitle, {
-        color: UI_COLOURS.ink,
+      .text(titleX + 22, titleY, locationTitle, {
+        color: '#4b2b66',
         fontFamily: UI_FONT,
-        fontSize: '24px',
+        fontSize: '19px',
         fontStyle: 'bold',
+        align: 'center',
+        wordWrap: { width: 270 },
       })
       .setName('exploration-location-title')
       .setOrigin(0.5)
       .setScrollFactor(0)
-      .setDepth(125);
+      .setDepth(126);
 
-    const buttonX = GAME_WIDTH - 112;
-    const buttonY = GAME_HEIGHT - 38;
-    const buttonShadow = createUiShadow(scene, buttonX, buttonY, 188, 52, 123, 0.16);
-    this.controlsButton = scene.add
-      .rectangle(buttonX, buttonY, 188, 52, UI_COLOURS.cream, 0.98)
-      .setName('exploration-controls-button')
-      .setStrokeStyle(4, UI_COLOURS.lavenderStrong, 0.96)
-      .setScrollFactor(0)
-      .setDepth(124)
-      .setInteractive({ useHandCursor: true });
-    this.controlsLabel = scene.add
-      .text(buttonX, buttonY, 'Controls  ?', {
-        color: UI_COLOURS.ink,
-        fontFamily: UI_FONT,
-        fontSize: '17px',
-        fontStyle: 'bold',
-      })
-      .setName('exploration-controls-label')
-      .setOrigin(0.5)
-      .setScrollFactor(0)
-      .setDepth(125);
-    applyButtonHover(this.controlsButton, UI_COLOURS.cream, UI_COLOURS.gold);
-
-    const panelX = GAME_WIDTH - 190;
-    const panelY = GAME_HEIGHT - 230;
-    const panelShadow = createUiShadow(scene, panelX, panelY, 350, 340, 126, 0.2);
-    const panel = scene.add
-      .rectangle(panelX, panelY, 350, 340, UI_COLOURS.cream, 0.99)
-      .setName('exploration-controls-panel')
-      .setStrokeStyle(4, UI_COLOURS.lavenderStrong, 0.98)
-      .setScrollFactor(0)
-      .setDepth(127);
-    const heading = scene.add
-      .text(panelX, panelY - 142, 'How to play', {
-        color: UI_COLOURS.ink,
-        fontFamily: UI_FONT,
-        fontSize: '19px',
-        fontStyle: 'bold',
-      })
-      .setOrigin(0.5)
-      .setScrollFactor(0)
-      .setDepth(128);
-    const help = scene.add
-      .text(
-        panelX,
-        panelY - 78,
-        'Move: arrows / WASD / touch\nClick/tap the ground: walk there\nTap the prompt: interact\nBag and Book: top buttons\nKeyboard shortcuts still work too',
-        {
-          color: UI_COLOURS.softInk,
-          fontFamily: UI_FONT,
-          fontSize: '15px',
-          align: 'center',
-          lineSpacing: 4,
-        },
-      )
-      .setName('exploration-controls-help')
-      .setOrigin(0.5)
-      .setScrollFactor(0)
-      .setDepth(128);
-
-    this.reducedMotionButton = this.createPreferenceButton(panelX, panelY + 10, 'reduced-motion');
-    this.reducedMotionLabel = this.createPreferenceLabel(panelX, panelY + 10, 'reduced-motion');
-    this.highVisibilityButton = this.createPreferenceButton(panelX, panelY + 66, 'high-visibility');
-    this.highVisibilityLabel = this.createPreferenceLabel(panelX, panelY + 66, 'high-visibility');
-    this.touchToggleButton = this.createPreferenceButton(panelX, panelY + 122, 'touch-controls');
-    this.touchToggleLabel = this.createPreferenceLabel(panelX, panelY + 122, 'touch-controls');
-
-    this.helpObjects.push(
-      panelShadow,
-      panel,
-      heading,
-      help,
-      this.reducedMotionButton,
-      this.reducedMotionLabel,
-      this.highVisibilityButton,
-      this.highVisibilityLabel,
-      this.touchToggleButton,
-      this.touchToggleLabel,
-    );
-    this.objects.push(
-      titleShadow,
-      titlePanel,
-      this.titleText,
-      buttonShadow,
-      this.controlsButton,
-      this.controlsLabel,
-      ...this.helpObjects,
-    );
-
-    this.controlsButton.on('pointerdown', () => {
-      this.helpOpen = !this.helpOpen;
-      this.setHelpVisible(this.helpOpen);
-    });
-    this.touchToggleButton.on('pointerdown', () => {
-      this.touchMovementPad.togglePreferredVisibility();
-      this.refreshPreferenceLabels();
-    });
-    this.reducedMotionButton.on('pointerdown', () => {
-      const settings = this.accessibility.load();
-      this.accessibility.update({ reducedMotion: !settings.reducedMotion });
-    });
-    this.highVisibilityButton.on('pointerdown', () => {
-      const settings = this.accessibility.load();
-      this.accessibility.update({
-        highVisibilityInteractions: !settings.highVisibilityInteractions,
-      });
-    });
+    this.objects.push(titleShadow, titleSurface, titlePanel, locationIcon, this.titleText);
     this.unsubscribeAccessibility = this.accessibility.subscribe(() => {
-      this.refreshPreferenceLabels();
       this.applyReducedMotionPreference();
     });
-
-    this.refreshPreferenceLabels();
-    this.setHelpVisible(false);
     this.refresh();
   }
 
@@ -273,7 +115,6 @@ export class ExplorationChrome {
       }
     }
 
-    this.refreshPreferenceLabels();
     this.applyReducedMotionPreference();
 
     for (const object of this.scene.children.list) {
@@ -285,11 +126,10 @@ export class ExplorationChrome {
       const isLegacyTitle =
         text === locationTitle && object.scrollFactorX === 0 && object.depth >= 100;
       const isLegacyControls =
-        object.name !== 'exploration-controls-help' &&
-        (text.startsWith('Move: WASD / arrows') || text.startsWith('Move: arrows / WASD'));
+        text.startsWith('Move: WASD / arrows') || text.startsWith('Move: arrows / WASD');
       const isLegacyStatus = LEGACY_STATUS_PREFIXES.some((prefix) => text.startsWith(prefix));
       if (isLegacyTitle || isLegacyControls || isLegacyStatus) {
-        object.setVisible(false);
+        object.setVisible(false).disableInteractive();
       }
     }
   }
@@ -301,44 +141,6 @@ export class ExplorationChrome {
       object.destroy();
     }
     this.objects.length = 0;
-    this.helpObjects.length = 0;
-  }
-
-  private createPreferenceButton(x: number, y: number, name: string): Phaser.GameObjects.Rectangle {
-    const button = this.scene.add
-      .rectangle(x, y, 270, 48, UI_COLOURS.lavender, 1)
-      .setName(`exploration-${name}-toggle`)
-      .setStrokeStyle(3, UI_COLOURS.lavenderStrong, 0.95)
-      .setScrollFactor(0)
-      .setDepth(128)
-      .setInteractive({ useHandCursor: true });
-    applyButtonHover(button, UI_COLOURS.lavender, UI_COLOURS.blush);
-    return button;
-  }
-
-  private createPreferenceLabel(x: number, y: number, name: string): Phaser.GameObjects.Text {
-    return this.scene.add
-      .text(x, y, '', {
-        color: UI_COLOURS.ink,
-        fontFamily: UI_FONT,
-        fontSize: '15px',
-        fontStyle: 'bold',
-      })
-      .setName(`exploration-${name}-toggle-label`)
-      .setOrigin(0.5)
-      .setScrollFactor(0)
-      .setDepth(129);
-  }
-
-  private refreshPreferenceLabels(): void {
-    this.touchToggleLabel?.setText(
-      this.touchMovementPad.isVisible() ? 'Touch buttons: On' : 'Touch buttons: Off',
-    );
-    const settings = this.accessibility.load();
-    this.reducedMotionLabel?.setText(`Reduced motion: ${settings.reducedMotion ? 'On' : 'Off'}`);
-    this.highVisibilityLabel?.setText(
-      `High visibility: ${settings.highVisibilityInteractions ? 'On' : 'Off'}`,
-    );
   }
 
   private applyReducedMotionPreference(): void {
@@ -361,26 +163,5 @@ export class ExplorationChrome {
         }
       }
     }
-  }
-
-  private setHelpVisible(visible: boolean): void {
-    for (const object of this.helpObjects) {
-      object.setVisible(visible);
-    }
-    for (const button of [
-      this.touchToggleButton,
-      this.reducedMotionButton,
-      this.highVisibilityButton,
-    ]) {
-      if (!button) {
-        continue;
-      }
-      if (visible) {
-        button.setInteractive({ useHandCursor: true });
-      } else {
-        button.disableInteractive();
-      }
-    }
-    this.controlsLabel?.setText(visible ? 'Controls  ×' : 'Controls  ?');
   }
 }
