@@ -33,50 +33,72 @@ async function sceneObjects(page: Page, sceneKey: string): Promise<DiagnosticObj
   }, sceneKey);
 }
 
+async function expectCanonicalLandscapeShell(page: Page): Promise<void> {
+  await expect
+    .poll(async () => {
+      const objects = await sceneObjects(page, 'MoonflowerGladeScene');
+      return objects.filter(
+        ({ name, visible, interactive }) =>
+          visible &&
+          interactive &&
+          [
+            'exploration-shell-map-button',
+            'exploration-shell-bag-button',
+            'exploration-shell-book-button',
+            'exploration-shell-settings-nav-button',
+          ].includes(name),
+      ).length;
+    })
+    .toBe(4);
+
+  const objects = await sceneObjects(page, 'MoonflowerGladeScene');
+  expect(
+    objects.some(({ name, visible }) => name === 'exploration-shell-nav-group' && visible),
+  ).toBe(true);
+  expect(
+    objects.some(({ name, visible }) => name === 'exploration-shell-shimmer-panel' && visible),
+  ).toBe(true);
+  expect(
+    objects.some(({ name, visible }) => name === 'exploration-location-title-panel' && visible),
+  ).toBe(true);
+  expect(objects.some(({ name, visible }) => name === 'tablet-movement-pad' && visible)).toBe(true);
+
+  expect(objects.some(({ name }) => name === 'exploration-shell-sound-button')).toBe(false);
+  expect(objects.some(({ name }) => name === 'exploration-controls-button')).toBe(false);
+  expect(objects.some(({ name }) => name === 'activity-suggestion-card')).toBe(false);
+}
+
 test.describe('WP18J shared responsive concept UI', () => {
   test.use({ viewport: { width: 844, height: 390 }, hasTouch: true });
 
-  test('landscape phone uses the same concept shell family as a tablet', async ({ page }) => {
+  test('short landscape phone cannot fall back to the retired exploration layout', async ({ page }) => {
+    await page.setViewportSize({ width: 844, height: 280 });
     await page.goto('/?scene=glade&diagnostics=1', { waitUntil: 'networkidle' });
     await waitForScene(page, 'MoonflowerGladeScene');
 
-    await expect
-      .poll(async () => {
-        const objects = await sceneObjects(page, 'MoonflowerGladeScene');
-        return objects.filter(
-          ({ name, visible, interactive }) =>
-            visible &&
-            interactive &&
-            [
-              'exploration-shell-map-button',
-              'exploration-shell-bag-button',
-              'exploration-shell-book-button',
-              'exploration-shell-settings-nav-button',
-            ].includes(name),
-        ).length;
-      })
-      .toBe(4);
-
-    const objects = await sceneObjects(page, 'MoonflowerGladeScene');
-    expect(
-      objects.some(({ name, visible }) => name === 'exploration-shell-nav-group' && visible),
-    ).toBe(true);
-    expect(
-      objects.some(({ name, visible }) => name === 'exploration-shell-shimmer-panel' && visible),
-    ).toBe(true);
-    expect(
-      objects.some(({ name, visible }) => name === 'exploration-location-title-panel' && visible),
-    ).toBe(true);
-    expect(objects.some(({ name, visible }) => name === 'tablet-movement-pad' && visible)).toBe(
-      true,
-    );
-    expect(
-      objects.some(({ name, visible }) => name === 'exploration-shell-sound-button' && visible),
-    ).toBe(false);
-    expect(objects.some(({ name }) => name === 'activity-suggestion-card')).toBe(false);
+    await expectCanonicalLandscapeShell(page);
 
     await page.screenshot({
-      path: test.info().outputPath('wp18j-phone-landscape.png'),
+      path: test.info().outputPath('wp18j-phone-landscape-short.png'),
+      fullPage: true,
+    });
+  });
+
+  test('rotating portrait to landscape restores the concept canvas shell, never legacy UI', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/?scene=glade&diagnostics=1', { waitUntil: 'networkidle' });
+    await waitForScene(page, 'MoonflowerGladeScene');
+
+    await expect(page.locator('.mobile-exploration-concept-dock')).toBeVisible();
+
+    await page.setViewportSize({ width: 844, height: 280 });
+    await expect(page.locator('.mobile-exploration-concept-dock')).toHaveCount(0);
+    await expectCanonicalLandscapeShell(page);
+
+    await page.screenshot({
+      path: test.info().outputPath('wp18j-phone-portrait-to-landscape.png'),
       fullPage: true,
     });
   });
