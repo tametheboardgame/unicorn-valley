@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, type Page, test } from '@playwright/test';
 
 interface DiagnosticObjectSnapshot {
   name: string;
@@ -56,28 +56,11 @@ async function waitForScene(page: Page, sceneKey: string): Promise<void> {
   await page.waitForTimeout(350);
 }
 
-function overlapArea(
-  left: { x: number; y: number; width: number; height: number },
-  right: { x: number; y: number; width: number; height: number },
-): number {
-  const overlapWidth = Math.max(
-    0,
-    Math.min(left.x + left.width / 2, right.x + right.width / 2) -
-      Math.max(left.x - left.width / 2, right.x - right.width / 2),
-  );
-  const overlapHeight = Math.max(
-    0,
-    Math.min(left.y + left.height / 2, right.y + right.height / 2) -
-      Math.max(left.y - left.height / 2, right.y - right.height / 2),
-  );
-  return overlapWidth * overlapHeight;
-}
-
 for (const [alias, sceneKey] of [
   ['village', 'SunbeamVillageScene'],
   ['meadow', 'RainbowMeadowScene'],
 ] as const) {
-  test(`${sceneKey} suggestion card stays clear of the player spawn`, async ({ page }) => {
+  test(`${sceneKey} does not resurrect the retired suggestion card`, async ({ page }) => {
     await page.goto(`/?scene=${alias}&diagnostics=1`);
     await waitForScene(page, sceneKey);
 
@@ -90,26 +73,7 @@ for (const [alias, sceneKey] of [
     );
     const card = scene?.objects.find((object) => object.name === 'activity-suggestion-card');
     expect(player).toBeTruthy();
-    expect(card).toBeTruthy();
-
-    if (!scene || !player || !card) {
-      return;
-    }
-
-    const playerScreen = {
-      x: player.x - scene.camera.worldX,
-      y: player.y - scene.camera.worldY,
-      width: player.displayWidth,
-      height: player.displayHeight,
-    };
-    const overlap = overlapArea(playerScreen, {
-      x: card.x,
-      y: card.y,
-      width: card.displayWidth,
-      height: card.displayHeight,
-    });
-
-    expect(overlap).toBe(0);
+    expect(card).toBeUndefined();
   });
 }
 

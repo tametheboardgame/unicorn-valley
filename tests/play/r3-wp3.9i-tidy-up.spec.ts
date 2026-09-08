@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, type Page, test } from '@playwright/test';
 
 const INTERACTION_APPROACH_ATTEMPTS = 80;
 
@@ -110,9 +110,7 @@ async function approachVisiblePrompt(
   throw new Error(`Did not reach interaction prompt: ${promptText}`);
 }
 
-test('exploration chrome uses stable zones, visible help, touch toggle and a centred canvas', async ({
-  page,
-}) => {
+test('exploration chrome uses the canonical static HUD and a centred canvas', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/?scene=glade&diagnostics=1');
   await waitForScene(page, 'MoonflowerGladeScene');
@@ -126,8 +124,8 @@ test('exploration chrome uses stable zones, visible help, touch toggle and a cen
   const rightGutter = 1440 - (canvas.x + canvas.width);
   expect(Math.abs(leftGutter - rightGutter)).toBeLessThanOrEqual(2);
 
-  let snapshot = await getSnapshot(page);
-  let glade = sceneSnapshot(snapshot, 'MoonflowerGladeScene');
+  const snapshot = await getSnapshot(page);
+  const glade = sceneSnapshot(snapshot, 'MoonflowerGladeScene');
   expect(
     glade.objects.some(
       (object) =>
@@ -136,70 +134,12 @@ test('exploration chrome uses stable zones, visible help, touch toggle and a cen
         object.visible,
     ),
   ).toBe(true);
-  expect(
-    glade.objects.some(
-      (object) => object.name === 'exploration-controls-button' && object.interactive,
-    ),
-  ).toBe(true);
+  expect(glade.objects.some((object) => object.name === 'exploration-controls-button')).toBe(false);
   expect(
     glade.objects.some((object) => object.visible && object.text?.startsWith('Pip is nearby.')),
   ).toBe(false);
-  expect(
-    glade.objects.some(
-      (object) => object.name === 'activity-suggestion-card' && object.visible && object.y < 140,
-    ),
-  ).toBe(true);
-
-  await logicalClick(page, 422, 46);
-  await page.waitForTimeout(80);
-  snapshot = await getSnapshot(page);
-  glade = sceneSnapshot(snapshot, 'MoonflowerGladeScene');
-  expect(
-    glade.objects.some(
-      (object) =>
-        object.name === 'activity-suggestion-reopen' && object.visible && object.interactive,
-    ),
-  ).toBe(true);
-  expect(
-    glade.objects.some((object) => object.name === 'activity-suggestion-card' && object.visible),
-  ).toBe(false);
-
-  await logicalClick(page, 52, 102);
-  await page.waitForTimeout(80);
-  snapshot = await getSnapshot(page);
-  glade = sceneSnapshot(snapshot, 'MoonflowerGladeScene');
-  expect(
-    glade.objects.some((object) => object.name === 'activity-suggestion-card' && object.visible),
-  ).toBe(true);
-
-  await logicalClick(page, 1168, 682);
-  await page.waitForTimeout(80);
-  snapshot = await getSnapshot(page);
-  glade = sceneSnapshot(snapshot, 'MoonflowerGladeScene');
-  expect(
-    glade.objects.some((object) => object.name === 'exploration-controls-panel' && object.visible),
-  ).toBe(true);
-  expect(
-    glade.objects.some(
-      (object) =>
-        object.name === 'exploration-controls-help' &&
-        object.visible &&
-        object.text?.includes('Click/tap the ground: walk there'),
-    ),
-  ).toBe(true);
-  expect(
-    glade.objects.some((object) => object.name === 'touch-movement-left' && object.visible),
-  ).toBe(false);
-
-  await logicalClick(page, 1090, 612);
-  await page.waitForTimeout(80);
-  snapshot = await getSnapshot(page);
-  glade = sceneSnapshot(snapshot, 'MoonflowerGladeScene');
-  expect(
-    glade.objects.some(
-      (object) => object.name === 'touch-movement-left' && object.visible && object.interactive,
-    ),
-  ).toBe(true);
+  expect(glade.objects.some((object) => object.name === 'activity-suggestion-card')).toBe(false);
+  expect(snapshot.activeScenes).toContain('ExplorationHudOverlayScene');
 });
 
 test('clicking open ground moves the unicorn again', async ({ page }) => {

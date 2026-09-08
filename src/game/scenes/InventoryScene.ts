@@ -1,31 +1,31 @@
 import Phaser from 'phaser';
 import type { ItemId } from '../../content/contentTypes';
-import { GAME_WIDTH } from '../config/gameConstants';
+import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { ShimmerEconomyService } from '../economy/ShimmerEconomyService';
 import { InputController } from '../input/InputController';
 import { KeyboardInputAdapter } from '../input/KeyboardInputAdapter';
 import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 import {
   BAG_POCKETS,
+  type BagPocketId,
   getFirstPopulatedBagPocket,
   groupBagItems,
   isUsableFood,
-  type BagPocketId,
 } from '../inventory/BagInventoryModel';
 import { FoodUseService } from '../inventory/FoodUseService';
 import {
-  InventoryService,
   getItemPresentation,
+  InventoryService,
   type OwnedInventoryItem,
 } from '../inventory/InventoryService';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import {
-  VALLEY_HOME_NODE_ID,
-  VALLEY_MAP_CONNECTIONS,
-  VALLEY_MAP_NODES,
   getHomewardNextNode,
   getValleyMapNode,
   getValleyMapNodeForLocation,
+  VALLEY_HOME_NODE_ID,
+  VALLEY_MAP_CONNECTIONS,
+  VALLEY_MAP_NODES,
   type ValleyMapNode,
 } from '../world/ValleyMapTopology';
 
@@ -39,6 +39,8 @@ interface InventorySceneData {
 const BAG_VISIBLE_ITEMS = 6;
 const BAG_SCROLL_STEP = 2;
 const BAG_LIST_BOUNDS = { left: 145, right: 850, top: 185, bottom: 588 } as const;
+const MAP_VIEWPORT = { x: 124, y: 148, width: 1032, height: 422 } as const;
+const MAP_CLIP_VIEWPORT = { x: 132, y: 156, width: 1016, height: 406 } as const;
 
 export class InventoryScene extends Phaser.Scene {
   private inputController: InputController | null = null;
@@ -107,18 +109,20 @@ export class InventoryScene extends Phaser.Scene {
       .setName('inventory-modal-title');
 
     const closeButton = this.add
-      .rectangle(1140, 70, 160, 52, this.activeView === 'map' ? 0xead5a8 : 0xefd6ec, 1)
-      .setStrokeStyle(4, this.activeView === 'map' ? 0xb58d56 : 0xb985bc, 1)
+      .rectangle(1172, 76, 82, 70, 0xffffff, 0.001)
+      .setAlpha(0.001)
       .setInteractive({ useHandCursor: true })
       .setName('bag-close-button');
     this.add
-      .text(1140, 70, '✕ Close', {
+      .text(1172, 76, '×', {
         color: this.activeView === 'map' ? '#5d4936' : '#5d4369',
         fontFamily: 'system-ui, sans-serif',
-        fontSize: '19px',
+        fontSize: '38px',
         fontStyle: 'bold',
       })
-      .setOrigin(0.5);
+      .setName('wp18j-inventory-close-icon')
+      .setOrigin(0.5)
+      .setDepth(11);
     closeButton.on('pointerdown', () => this.closeBag());
 
     this.pointerInput = new PointerTouchInputAdapter();
@@ -187,28 +191,24 @@ export class InventoryScene extends Phaser.Scene {
 
     const satchel = this.add.graphics().setName('bag-themed-satchel');
     satchel.fillStyle(0x4b3045, 0.13);
-    satchel.fillRoundedRect(124, 124, 1037, 488, 28);
-    satchel.fillStyle(0xb77b8f, 0.24);
-    satchel.fillRoundedRect(116, 116, 1037, 488, 28);
-    satchel.lineStyle(3, 0x925971, 0.7);
-    satchel.strokeRoundedRect(116, 116, 1037, 488, 28);
-    satchel.fillStyle(0xe4bbc6, 0.24);
-    satchel.fillRoundedRect(132, 126, 1005, 49, 16);
-    satchel.fillStyle(0xf7e4d1, 0.92);
-    satchel.fillRoundedRect(132, 180, 1005, 408, 20);
-    satchel.lineStyle(2, 0xa96d81, 0.42);
-    satchel.strokeRoundedRect(132, 180, 1005, 408, 20);
+    satchel.fillRoundedRect(123, 123, 1033, 472, 26);
+    satchel.fillStyle(0xb77b8f, 0.19);
+    satchel.fillRoundedRect(116, 116, 1037, 472, 26);
+    satchel.lineStyle(2, 0x925971, 0.58);
+    satchel.strokeRoundedRect(116, 116, 1037, 472, 26);
+    satchel.fillStyle(0xe4bbc6, 0.2);
+    satchel.fillRoundedRect(132, 124, 1005, 54, 15);
     this.track(satchel);
 
     this.track(
       this.add
-        .text(1040, 145, `✨ ${economy.getBalance()} Shimmer`, {
+        .text(1040, 155, `✨ ${economy.getBalance()} Shimmer`, {
           color: '#69435d',
           fontFamily: 'system-ui, sans-serif',
-          fontSize: '17px',
+          fontSize: '15px',
           fontStyle: 'bold',
           backgroundColor: '#f4d9df',
-          padding: { x: 14, y: 8 },
+          padding: { x: 12, y: 6 },
         })
         .setOrigin(0.5)
         .setName('bag-shimmer-balance'),
@@ -218,18 +218,18 @@ export class InventoryScene extends Phaser.Scene {
       const x = 230 + index * 185;
       const selected = pocket.id === this.activePocket;
       const tabShadow = this.add
-        .rectangle(x + 3, 149, 170, 54, 0x4d3243, 0.13)
+        .rectangle(x + 3, 159, 158, 45, 0x4d3243, 0.13)
         .setName(`bag-pocket-shadow:${pocket.id}`);
       const tab = this.add
-        .rectangle(x, 145, 170, 54, selected ? 0xf3d9a4 : 0xd8a8b8, 1)
+        .rectangle(x, 155, 156, 45, selected ? 0xf3d9a4 : 0xd8a8b8, 1)
         .setStrokeStyle(3, selected ? 0xb7834e : 0x9a6479, 1)
         .setInteractive({ useHandCursor: true })
         .setName(`bag-pocket:${pocket.id}`);
       const hole = this.add
-        .circle(x - 71, 145, 6, 0x8c5c70, 0.82)
+        .circle(x - 66, 155, 6, 0x8c5c70, 0.82)
         .setStrokeStyle(2, 0xf4d7df, 0.68);
       const label = this.add
-        .text(x + 5, 145, `${pocket.icon} ${pocket.label}  ${grouped[pocket.id].length}`, {
+        .text(x + 5, 155, `${pocket.icon} ${pocket.label}  ${grouped[pocket.id].length}`, {
           color: selected ? '#664631' : '#5d4360',
           fontFamily: 'system-ui, sans-serif',
           fontSize: '16px',
@@ -242,22 +242,21 @@ export class InventoryScene extends Phaser.Scene {
 
     const listPanel = this.add.graphics().setName('bag-list-panel');
     listPanel.fillStyle(0x573d4f, 0.1);
-    listPanel.fillRoundedRect(146, 194, 710, 393, 21);
+    listPanel.fillRoundedRect(146, 204, 710, 381, 20);
     listPanel.fillStyle(0xfff7e7, 1);
-    listPanel.fillRoundedRect(140, 188, 710, 393, 21);
-    listPanel.lineStyle(3, 0xc28da0, 0.75);
-    listPanel.strokeRoundedRect(140, 188, 710, 393, 21);
+    listPanel.fillRoundedRect(140, 198, 710, 381, 20);
+    listPanel.lineStyle(2, 0xc28da0, 0.62);
+    listPanel.strokeRoundedRect(140, 198, 710, 381, 20);
 
     const detailPanel = this.add.graphics().setName('bag-detail-panel');
     detailPanel.fillStyle(0x573d4f, 0.11);
-    detailPanel.fillRoundedRect(875, 194, 272, 393, 21);
+    detailPanel.fillRoundedRect(875, 204, 272, 381, 20);
     detailPanel.fillStyle(0xf7e8e3, 1);
-    detailPanel.fillRoundedRect(869, 188, 272, 393, 21);
-    detailPanel.lineStyle(3, 0xb87a94, 0.82);
-    detailPanel.strokeRoundedRect(869, 188, 272, 393, 21);
-    detailPanel.fillStyle(0xe2b6c3, 0.24);
-    detailPanel.fillRoundedRect(887, 202, 236, 43, 13);
-    this.track(listPanel, detailPanel);
+    detailPanel.fillRoundedRect(869, 198, 272, 381, 20);
+    detailPanel.lineStyle(2, 0xb87a94, 0.7);
+    detailPanel.strokeRoundedRect(869, 198, 272, 381, 20);
+    detailPanel.fillStyle(0xe2b6c3, 0.2);
+    detailPanel.fillRoundedRect(887, 212, 236, 40, 12);
 
     this.track(
       this.add
@@ -310,22 +309,6 @@ export class InventoryScene extends Phaser.Scene {
 
     const selected = ownedItems.find(({ definition }) => definition.id === this.selectedItemId);
     this.renderBagDetail(selected ?? null, inventory);
-
-    const shopButton = this.add
-      .rectangle(1005, 628, 286, 58, 0xffdfa0, 1)
-      .setStrokeStyle(4, 0xc08a4f, 1)
-      .setInteractive({ useHandCursor: true })
-      .setName('bag-shop-button');
-    const shopLabel = this.add
-      .text(1005, 628, '✨ Visit the Shop', {
-        color: '#5d4369',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '19px',
-        fontStyle: 'bold',
-      })
-      .setOrigin(0.5);
-    shopButton.on('pointerdown', () => this.openShop());
-    this.track(shopButton, shopLabel);
 
     this.track(this.add.container(0, 0).setName('bag-items-content'));
   }
@@ -596,13 +579,13 @@ export class InventoryScene extends Phaser.Scene {
 
     const parchment = this.add.graphics().setName('bag-map-parchment');
     parchment.fillStyle(0x3f3028, 0.14);
-    parchment.fillRoundedRect(111, 137, 1076, 462, 24);
+    parchment.fillRoundedRect(118, 142, 1056, 450, 22);
     parchment.fillStyle(0xe7c98d, 1);
-    parchment.fillRoundedRect(102, 128, 1076, 462, 24);
-    parchment.lineStyle(4, 0xa47a4c, 0.88);
-    parchment.strokeRoundedRect(102, 128, 1076, 462, 24);
+    parchment.fillRoundedRect(110, 134, 1060, 450, 22);
+    parchment.lineStyle(3, 0xa47a4c, 0.72);
+    parchment.strokeRoundedRect(110, 134, 1060, 450, 22);
     parchment.fillStyle(0xf8e9bd, 1);
-    parchment.fillRoundedRect(116, 142, 1048, 434, 18);
+    parchment.fillRoundedRect(124, 148, 1032, 422, 17);
     parchment.fillStyle(0xc9dba3, 0.23);
     parchment.fillEllipse(315, 330, 310, 210);
     parchment.fillStyle(0xb9d3c8, 0.24);
@@ -627,6 +610,7 @@ export class InventoryScene extends Phaser.Scene {
         lineSpacing: -5,
       })
       .setOrigin(0.5);
+    const mapContent = this.add.container(0, 0).setName('bag-map-content');
     this.track(
       this.add
         .text(GAME_WIDTH / 2, 116, '✦ Paths, places and little mysteries ✦', {
@@ -770,8 +754,133 @@ export class InventoryScene extends Phaser.Scene {
         })
         .setOrigin(0.5)
         .setName('bag-map-guidance'),
-      this.add.container(0, 0).setName('bag-map-content'),
+      mapContent,
     );
+    this.installMapPanning(parchment, mapContent, compass, compassLabel);
+  }
+
+  private installMapPanning(
+    parchment: Phaser.GameObjects.Graphics,
+    mapContent: Phaser.GameObjects.Container,
+    compass: Phaser.GameObjects.Arc,
+    compassLabel: Phaser.GameObjects.Text,
+  ): void {
+    const parchmentIndex = this.children.list.indexOf(parchment);
+    const contentIndex = this.children.list.indexOf(mapContent);
+    const movingObjects = this.children.list
+      .slice(parchmentIndex + 1, contentIndex)
+      .filter(
+        (object) =>
+          object !== compass &&
+          object !== compassLabel &&
+          object.name !== 'bag-map-guidance' &&
+          !(
+            object instanceof Phaser.GameObjects.Text &&
+            (object.text === '✦ Paths, places and little mysteries ✦' ||
+              object.text.startsWith('Solid trails are open'))
+          ),
+      );
+    mapContent.add(movingObjects).setDepth(2);
+
+    const frame = this.add.graphics().setName('wp18j-map-pan-frame').setDepth(5);
+    frame.lineStyle(4, 0xa47a4c, 0.72);
+    frame.strokeRoundedRect(110, 134, 1060, 450, 22);
+    frame.lineStyle(2, 0xe7c98d, 0.92);
+    frame.strokeRoundedRect(
+      MAP_VIEWPORT.x - 1,
+      MAP_VIEWPORT.y - 1,
+      MAP_VIEWPORT.width + 2,
+      MAP_VIEWPORT.height + 2,
+      18,
+    );
+
+    compass.setPosition(170, 192).setName('wp18j-map-compass').setDepth(6);
+    compassLabel.setPosition(170, 192).setName('wp18j-map-compass-label').setDepth(7);
+
+    const zone = this.add
+      .zone(
+        MAP_VIEWPORT.x + MAP_VIEWPORT.width / 2,
+        MAP_VIEWPORT.y + MAP_VIEWPORT.height / 2,
+        MAP_VIEWPORT.width,
+        MAP_VIEWPORT.height,
+      )
+      .setName('wp18j-map-pan-zone')
+      .setInteractive({ useHandCursor: true })
+      .setDepth(8);
+    this.input.setDraggable(zone);
+    zone.on('dragstart', (pointer: Phaser.Input.Pointer) => {
+      zone.setData({
+        'content-start-x': mapContent.x,
+        'content-start-y': mapContent.y,
+        'pointer-start-x': pointer.x,
+        'pointer-start-y': pointer.y,
+      });
+    });
+    zone.on('drag', (pointer: Phaser.Input.Pointer) => {
+      mapContent.setPosition(
+        Phaser.Math.Clamp(
+          Number(zone.getData('content-start-x') ?? 0) +
+            pointer.x -
+            Number(zone.getData('pointer-start-x') ?? pointer.x),
+          -150,
+          90,
+        ),
+        Phaser.Math.Clamp(
+          Number(zone.getData('content-start-y') ?? 0) +
+            pointer.y -
+            Number(zone.getData('pointer-start-y') ?? pointer.y),
+          -90,
+          70,
+        ),
+      );
+    });
+
+    const panHint = this.add
+      .text(1046, 164, '↔ Drag map to explore', {
+        color: '#725039',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '12px',
+        fontStyle: 'bold',
+        backgroundColor: '#fff0ccd9',
+        padding: { x: 8, y: 4 },
+      })
+      .setName('wp18j-map-pan-hint')
+      .setOrigin(0.5)
+      .setDepth(9);
+
+    const clipGuard = this.add
+      .zone(
+        MAP_CLIP_VIEWPORT.x + MAP_CLIP_VIEWPORT.width / 2,
+        MAP_CLIP_VIEWPORT.y + MAP_CLIP_VIEWPORT.height / 2,
+        MAP_CLIP_VIEWPORT.width,
+        MAP_CLIP_VIEWPORT.height,
+      )
+      .setName('wp18j-map-camera-clip-guard');
+    const mapCamera = this.cameras
+      .add(
+        MAP_CLIP_VIEWPORT.x,
+        MAP_CLIP_VIEWPORT.y,
+        MAP_CLIP_VIEWPORT.width,
+        MAP_CLIP_VIEWPORT.height,
+        false,
+        'wp18j-map-content-camera',
+      )
+      .setScroll(MAP_CLIP_VIEWPORT.x, MAP_CLIP_VIEWPORT.y)
+      .setRoundPixels(true);
+    this.cameras.main.ignore(mapContent);
+    mapCamera.ignore(this.children.list.filter((object) => object !== mapContent));
+
+    const overlays: Phaser.GameObjects.GameObject[] = [frame, compass, compassLabel, panHint];
+    this.cameras.main.ignore(overlays);
+    const overlayCamera = this.cameras
+      .add(0, 0, GAME_WIDTH, GAME_HEIGHT, false, 'wp18j-map-overlay-camera')
+      .setRoundPixels(true);
+    overlayCamera.ignore(this.children.list.filter((object) => !overlays.includes(object)));
+    this.cameras.main.ignore(clipGuard);
+    mapCamera.ignore(clipGuard);
+    overlayCamera.ignore(clipGuard);
+
+    this.track(frame, zone, panHint, clipGuard);
   }
 
   private selectPocket(pocket: BagPocketId): void {
@@ -872,14 +981,6 @@ export class InventoryScene extends Phaser.Scene {
       object.destroy();
     }
     this.viewObjects.length = 0;
-  }
-
-  private openShop(): void {
-    if (this.closing || this.activeView !== 'items') {
-      return;
-    }
-    this.closing = true;
-    this.scene.start('ShopScene', { returnScene: this.returnScene });
   }
 
   private closeBag(): void {

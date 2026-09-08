@@ -62,8 +62,8 @@ void import('./game/ui/ModalConceptPresentationManager').then(
   },
 );
 
-// The exploration shell itself is now the single concept-grade canvas presentation.
-// Keep the cleanup manager for old world-level copy, but do not layer a second desktop shell over it.
+// The exploration shell is the single concept-grade canvas presentation. The cleanup
+// manager remains temporarily responsible only for scene-owned legacy world copy.
 void import('./game/ui/DesktopConceptCleanupManager').then(
   ({ getDesktopConceptCleanupManager }) => {
     getDesktopConceptCleanupManager(game);
@@ -75,16 +75,6 @@ void import('./game/ui/PortraitConceptPresentationManager').then(
     getPortraitConceptPresentationManager(game);
   },
 );
-
-void import('./game/ui/Wp18jResponsiveUiPolishManager').then(
-  ({ getWp18jResponsiveUiPolishManager }) => {
-    getWp18jResponsiveUiPolishManager(game);
-  },
-);
-
-void import('./game/ui/Wp18jMapViewportClipManager').then(({ getWp18jMapViewportClipManager }) => {
-  getWp18jMapViewportClipManager(game);
-});
 
 void import('./game/economy/EconomyRewardWorldManager').then(({ getEconomyRewardWorldManager }) => {
   getEconomyRewardWorldManager();

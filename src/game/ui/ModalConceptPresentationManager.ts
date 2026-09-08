@@ -3,7 +3,6 @@ import { RefreshThrottle } from '../performance/RefreshThrottle';
 import { CONCEPT_UI } from './ConceptUi';
 
 const MODAL_SCENE_KEYS = new Set([
-  'InventoryScene',
   'WonderbookScene',
   'SettingsScene',
   'UnicornCreatorScene',

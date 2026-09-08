@@ -1,5 +1,5 @@
 import { mkdirSync } from 'node:fs';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, type Page, test } from '@playwright/test';
 
 const SCREENSHOT_DIR = 'playtest-artifacts/screenshots';
 const WORLD_PLAYER_NAME = 'world-player-unicorn';
@@ -237,7 +237,9 @@ test.describe('R6.5-WP18I concept-grade tablet HUD', () => {
     }
   });
 
-  test('reconciles Bag and Settings controls into the concept surface system', async ({ page }) => {
+  test('keeps scene-owned Bag and Settings controls in the concept surface system', async ({
+    page,
+  }) => {
     await page.goto('/?diagnostics=1');
     await waitForDiagnostics(page);
     await page.waitForTimeout(700);
@@ -246,14 +248,16 @@ test.describe('R6.5-WP18I concept-grade tablet HUD', () => {
     await page.waitForTimeout(250);
     const bag = await getScene(page, 'InventoryScene');
     for (const name of [
-      'concept-modal-surface:inventory-modal-panel',
-      'concept-modal-surface:bag-close-button',
-      'concept-modal-surface:bag-list-panel',
-      'concept-modal-surface:bag-detail-panel',
-      'concept-modal-surface:bag-shop-button',
+      'inventory-modal-panel',
+      'bag-close-button',
+      'bag-list-panel',
+      'bag-detail-panel',
+      'wp18j-inventory-close-icon',
     ]) {
       expect(objectByName(bag, name).visible, name).toBe(true);
     }
+    expect(bag.objects.some(({ name }) => name === 'bag-shop-button')).toBe(false);
+    expect(bag.objects.some(({ name }) => name.startsWith('concept-modal-surface:'))).toBe(false);
     await captureEvidence(page, 'wp18i-bag.png');
 
     await startScene(page, 'SettingsScene');
