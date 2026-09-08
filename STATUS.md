@@ -4,11 +4,11 @@ Last updated: 2026-09-08
 
 ## Current work
 
-`R6.5-WP19-PLAN - Whole-game audit and remediation proposal`
+`R6.5-WP19A - Persistence and truthful success feedback`
 
-Path: `docs/work-packages/R6.5-WP19-PLAN-WHOLE-GAME-AUDIT.md`
+Path: `docs/work-packages/R6.5-WP19A-PERSISTENCE-SAFETY.md`
 
-State: **analysis and detailed plan approved by David on 2026-09-08; published in draft PR #159**. No gameplay implementation occurred in this package.
+State: **WP19A prepared for Codex implementation dispatch**. The full plan is approved in draft PR #159. This branch begins the first approved implementation package; no gameplay fix is complete yet.
 
 Read first:
 
@@ -69,6 +69,10 @@ Documentation-only branch: `agent/r6.5-whole-game-audit-plan`. David explicitly 
 
 ## Next action
 
-Documentation delivery is complete in draft PR #159. Next implementation package: `Start R6.5-WP19A`. All six plan decisions are approved; future visual and replay gates remain.
+WP19A implementation is authorised and being handed to Codex through its dedicated draft PR. Follow `docs/CODEX-DELIVERY-WORKFLOW.md`. Next after verified WP19A: WP18K. All six plan decisions are approved; future visual and replay gates remain.
 
 Chat disposition: `keep`.
+
+## Implementation delivery
+
+Branch: `agent/r6.5-wp19a-persistence-safety`, stacked on the approved planning branch while PR #159 remains unmerged. Keep gameplay changes off PR #159. The project manager reviews results and reports the verified preview URL to David before required human gates.
