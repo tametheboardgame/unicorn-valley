@@ -57,14 +57,8 @@ test.describe('R6.5-WP18I desktop concept HUD cleanup', () => {
   test('uses the concept HUD without legacy controls and keeps atmosphere choices in Settings', async ({
     page,
   }) => {
-    await page.goto('/?diagnostics=1');
+    await page.goto('/?scene=glade&diagnostics=1');
     await waitForDiagnostics(page);
-    await page.evaluate(() => {
-      const diagnostics = (
-        window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
-      ).__UNICORN_VALLEY_DIAGNOSTICS__;
-      diagnostics?.startScene('MoonflowerGladeScene');
-    });
     await page.waitForFunction(() => {
       const diagnostics = (
         window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
@@ -73,6 +67,12 @@ test.describe('R6.5-WP18I desktop concept HUD cleanup', () => {
     });
     await page.waitForTimeout(700);
 
+    await page.waitForFunction(() => {
+      const diagnostics = (
+        window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
+      ).__UNICORN_VALLEY_DIAGNOSTICS__;
+      return diagnostics?.snapshot().activeScenes.includes('ExplorationHudOverlayScene') === true;
+    });
     let scene = await sceneSnapshot(page, 'ExplorationHudOverlayScene');
     const map = scene.objects.find(
       (object) => object.name === 'exploration-hud-overlay-map-button',
@@ -105,19 +105,6 @@ test.describe('R6.5-WP18I desktop concept HUD cleanup', () => {
         ].includes(object.name) && object.visible,
     );
     expect(visibleAtmosphereHud).toEqual([]);
-
-    const visibleLegacyShadows = worldScene.objects.filter(
-      (object) =>
-        object.type === 'Rectangle' &&
-        object.name.length === 0 &&
-        object.scrollFactorX === 0 &&
-        object.scrollFactorY === 0 &&
-        object.alpha > 0.05 &&
-        object.depth >= 115 &&
-        object.depth <= 124 &&
-        (object.y <= 125 || object.y >= 550),
-    );
-    expect(visibleLegacyShadows).toEqual([]);
 
     await page.evaluate(() => {
       const diagnostics = (

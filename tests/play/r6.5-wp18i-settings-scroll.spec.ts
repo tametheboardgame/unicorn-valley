@@ -95,13 +95,14 @@ function objectByName(scene: DiagnosticSceneSnapshot, name: string): DiagnosticO
 }
 
 function assertVisibleRowsStayInViewport(scene: DiagnosticSceneSnapshot): void {
-  const visibleLabels = scene.objects.filter(
-    ({ name, visible }) => name.startsWith('settings-row-') && name.endsWith('-label') && visible,
+  const interactiveRows = scene.objects.filter(
+    ({ name, interactive }) =>
+      name.startsWith('settings-row-') && !name.includes('-surface-') && interactive,
   );
-  expect(visibleLabels.length).toBeGreaterThan(0);
-  for (const label of visibleLabels) {
-    expect(label.y, `${label.name} above viewport`).toBeGreaterThanOrEqual(145);
-    expect(label.y, `${label.name} below viewport`).toBeLessThanOrEqual(565);
+  expect(interactiveRows.length).toBeGreaterThan(0);
+  for (const row of interactiveRows) {
+    expect(row.y - row.displayHeight / 2, `${row.name} above viewport`).toBeGreaterThanOrEqual(145);
+    expect(row.y + row.displayHeight / 2, `${row.name} below viewport`).toBeLessThanOrEqual(565);
   }
 }
 
@@ -109,6 +110,7 @@ test.describe('R6.5-WP18I sectioned scrollable Settings', () => {
   test.use({ viewport: { width: 1280, height: 720 }, hasTouch: true });
 
   test('groups settings, clips the scroll viewport and keeps Done fixed', async ({ page }) => {
+    test.setTimeout(75_000);
     await page.goto('/?diagnostics=1');
     await waitForDiagnostics(page);
     await startSettings(page);

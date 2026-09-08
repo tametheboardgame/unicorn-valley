@@ -111,3 +111,17 @@ baseline. This releases behaviour-preserving WP18K implementation only; WP18K
 still requires separate visual-regression sign-off and is not authorised for
 merge or production deployment. The approved next package after K is WP19B, not
 the superseded direct WP18H exit.
+
+## UV-D013 - Delegated overnight remediation acceptance authority
+
+Status: Accepted, 2026-09-08.
+
+David authorised the approved remediation roadmap to continue overnight. The
+manager may accept, merge and deploy technically qualified, dependency-ready
+work packages and dispatch the next approved package without routine further
+David sign-off. This is delegated **manager acceptance**, not evidence of
+physical human or daughter/device acceptance. WP18H's physical Galaxy Tab S8
+replay and WP17's final readiness decision remain human-only; R7, unapproved
+scope, purchases and unsafe/destructive actions remain prohibited. WP18K's
+current correction task remains delivery-only on PR #161: the worker does not
+merge, deploy production or start WP19B.

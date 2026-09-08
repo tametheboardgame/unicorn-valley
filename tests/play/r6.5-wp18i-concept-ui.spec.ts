@@ -241,6 +241,7 @@ test.describe('R6.5-WP18I concept-grade tablet HUD', () => {
   test('keeps scene-owned Bag and Settings controls in the concept surface system', async ({
     page,
   }) => {
+    test.setTimeout(75_000);
     await page.goto('/?diagnostics=1');
     await waitForDiagnostics(page);
     await page.waitForTimeout(700);
@@ -261,10 +262,27 @@ test.describe('R6.5-WP18I concept-grade tablet HUD', () => {
     expect(bag.objects.some(({ name }) => name.startsWith('concept-modal-surface:'))).toBe(false);
     await captureEvidence(page, 'wp18i-bag.png');
 
-    await startScene(page, 'MoonflowerGladeScene');
-    const glade = await getScene(page, 'MoonflowerGladeScene');
-    const settingsButton = objectByName(glade, 'exploration-shell-settings-nav-button');
-    await page.mouse.click(settingsButton.x, settingsButton.y);
+    await page.goto('/?scene=glade&diagnostics=1');
+    await waitForDiagnostics(page);
+    await expect
+      .poll(async () => {
+        try {
+          return (await getScene(page, 'ExplorationHudOverlayScene')).objects.length;
+        } catch {
+          return 0;
+        }
+      })
+      .toBeGreaterThan(0);
+    const overlay = await getScene(page, 'ExplorationHudOverlayScene');
+    const settingsButton = objectByName(overlay, 'exploration-hud-overlay-settings-nav-button');
+    const canvasBox = await page.locator('canvas').boundingBox();
+    if (!canvasBox) {
+      throw new Error('Game canvas has no browser bounds.');
+    }
+    await page.mouse.click(
+      canvasBox.x + (settingsButton.x / 1280) * canvasBox.width,
+      canvasBox.y + (settingsButton.y / 720) * canvasBox.height,
+    );
     await page.waitForFunction(() => {
       const diagnostics = (
         window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }

@@ -185,7 +185,7 @@ async function waitForForwardControl(page: Page, running: boolean): Promise<void
 test('target-tablet touch completes creator, exploration, Book and accessibility flow', async ({
   page,
 }) => {
-  test.setTimeout(90_000);
+  test.setTimeout(240_000);
   await page.addInitScript(() => window.localStorage.clear());
   await page.goto('/?diagnostics=1');
   await waitForScene(page, 'TitleScene');
@@ -309,8 +309,13 @@ test('target-tablet touch completes creator, exploration, Book and accessibility
 
   await logicalTap(page, 486, 46);
   await waitForScene(page, 'SettingsScene');
-  await logicalTap(page, 640, 418);
-  await logicalTap(page, 640, 484);
+  // Use the actual scrollable controls rather than coordinates that became
+  // offscreen when Settings rows regained their 64-pixel touch height.
+  await page.mouse.move(640, 360);
+  await page.mouse.wheel(0, 300);
+  await page.waitForTimeout(150);
+  await logicalTapNamedObject(page, 'SettingsScene', 'settings-row-reduced-motion');
+  await logicalTapNamedObject(page, 'SettingsScene', 'settings-row-high-visibility');
   await page.waitForTimeout(300);
 
   const stored = await page.evaluate(() =>

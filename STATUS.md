@@ -8,7 +8,7 @@ Last updated: 2026-09-08
 
 Path: `docs/work-packages/R6.5-WP18K-ARCHITECTURE-CONSOLIDATION-LEGACY-RETIREMENT.md`
 
-State: **implementation complete; technical qualification in progress**. David accepted WP19A's bounded qualification, authorised merging/deploying PRs #159/#160 and starting WP18K. Both PRs are merged; the production baseline is main `d8f3de6f264fa5fd6e2d77d539a47f288eb50cd4`. WP18K K1 ownership/removal evidence preceded implementation. K2-K4 consolidated Bag/Map ownership and removed five proven legacy managers/bridges. K5 has classified the cancelled exact-head CI, run all 40 unfinished cases in bounded groups, and applied evidence-led test/geometry corrections. Core validation passes; correction-head CI is pending and David's visual gate remains pending.
+State: **implementation complete; technical qualification in progress**. David accepted WP19A's bounded qualification, authorised merging/deploying PRs #159/#160 and starting WP18K. Both PRs are merged; the production baseline is main `d8f3de6f264fa5fd6e2d77d539a47f288eb50cd4`. WP18K K1 ownership/removal evidence preceded implementation. K2-K4 consolidated Bag/Map ownership and removed five proven legacy managers/bridges. K5 has classified the completed correction-head browser run (169 passed / 10 failed / 3 skipped), applied evidence-led Settings/Wonderbook/HUD corrections and split complete CI coverage into three bounded shards. Manager review remains pending; no physical human acceptance is claimed.
 
 Read first:
 
@@ -48,7 +48,7 @@ Full evidence, severity and source references are in the audit. Source risks are
 
 ## Validation
 
-- Correction-head `npm run validate` passes 114 test files / 435 tests plus format, lint, type-check, production build, the unchanged 520 KiB budget (480.01 KiB entry) and static smoke.
+- Prior correction-head `npm run validate` passed 114 test files / 435 tests plus format, lint, type-check, production build, the unchanged 520 KiB budget (480.01 KiB entry) and static smoke. Current bounded corrections require new exact-head CI.
 - Exact starting-head CI run `34262336206`: Validate passed; project-contract run `34262336101` passed; compatibility passed 48 with 15 configured skips. Browser playtest was cancelled at 35 minutes with 130 passed, 9 failed and 3 skipped, leaving 40 unfinished. It is not represented as green.
 - All 40 unfinished cases were attempted in four bounded serial Chromium groups: initial totals 29 passed, 10 failed and 1 serial skip. Ten world-depth cases and all seven WP18J preservation cases passed. Named-control corrections then passed Food, Map and Creator 3/3; remaining trace-led touch/timeout corrections await correction-head CI.
 - The nine completed CI failures and all unfinished/skip dispositions are individually recorded in `docs/evidence/R6.5-WP18K-BROWSER-QUALIFICATION.md`. Nova/dialogue/race failures remain outside K ownership; current Settings/modal/Bag/HUD/Wonderbook assertions were rebased to actual owners without reducing touch requirements.
@@ -69,7 +69,7 @@ WP19A planning/implementation PRs #159/#160 are accepted and merged to main `d8f
 
 ## Next action
 
-Correction-head Validate and project-contract checks pass; browser playtest, compatibility and Cloudflare preview are running. Review their final results and immutable Cloudflare evidence. Technical qualification is not ready for manager sign-off until the relevant corrected checks pass and every remaining failure is still correctly bounded. Then David checks the verified immutable preview across all four display classes. Stop at that visual gate; WP19B, R7, merge and production deployment remain out of scope.
+Run exact-head three-shard browser CI and review all failures plus updated four-class evidence. The manager may accept/release technically qualified WP18K under UV-D013, but this task must stop on PR #161 without merge, production deploy or WP19B. Physical daughter/device acceptance is not claimed; WP18H and WP17 remain human-only.
 
 ## Implementation delivery
 

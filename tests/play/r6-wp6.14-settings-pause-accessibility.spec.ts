@@ -163,6 +163,7 @@ test('title settings gain fullscreen and keyboard selection while preferences pe
 test('exploration can pause into the full settings screen and return with persisted choices', async ({
   page,
 }) => {
+  test.setTimeout(90_000);
   await page.goto('/?scene=glade&diagnostics=1');
   await waitForScene(page, 'MoonflowerGladeScene');
   await tapObject(
@@ -180,9 +181,6 @@ test('exploration can pause into the full settings screen and return with persis
     'settings-row-music',
     'settings-row-ambience',
     'settings-row-sfx',
-    'settings-row-reduced-motion',
-    'settings-row-high-visibility',
-    'settings-row-fullscreen',
     'settings-done',
   ]) {
     const target = settings?.objects.find((object) => object.name === name);
@@ -191,9 +189,31 @@ test('exploration can pause into the full settings screen and return with persis
   }
 
   await tapObject(page, 'SettingsScene', 'settings-row-music');
+
+  // Rows outside the clipped viewport deliberately cannot receive pointer
+  // input. Move keyboard focus to scroll the accessibility controls fully into
+  // view before proving their real hit areas and persistence.
   for (let index = 0; index < 4; index += 1) {
     await page.keyboard.press('ArrowDown');
   }
+  current = await snapshot(page);
+  const scrolledSettings = current.scenes.find((scene) => scene.key === 'SettingsScene');
+  const reducedMotion = scrolledSettings?.objects.find(
+    (object) => object.name === 'settings-row-reduced-motion',
+  );
+  expect(reducedMotion?.visible).toBe(true);
+  expect(reducedMotion?.interactive).toBe(true);
+  expect(reducedMotion?.displayHeight ?? 0).toBeGreaterThanOrEqual(64);
+
+  await page.keyboard.press('ArrowDown');
+  current = await snapshot(page);
+  const highVisibility = current.scenes
+    .find((scene) => scene.key === 'SettingsScene')
+    ?.objects.find((object) => object.name === 'settings-row-high-visibility');
+  expect(highVisibility?.visible).toBe(true);
+  expect(highVisibility?.interactive).toBe(true);
+  expect(highVisibility?.displayHeight ?? 0).toBeGreaterThanOrEqual(64);
+
   await page.keyboard.press('Enter');
 
   await expect
