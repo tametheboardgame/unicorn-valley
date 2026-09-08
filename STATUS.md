@@ -8,7 +8,7 @@ Last updated: 2026-09-08
 
 Path: `docs/work-packages/R6.5-WP18K-ARCHITECTURE-CONSOLIDATION-LEGACY-RETIREMENT.md`
 
-State: **implementation complete; technical qualification in progress**. David accepted WP19A's bounded qualification, authorised merging/deploying PRs #159/#160 and starting WP18K. Both PRs are merged; the production baseline is main `d8f3de6f264fa5fd6e2d77d539a47f288eb50cd4`. WP18K K1 ownership/removal evidence preceded implementation. K2-K4 consolidated Bag/Map ownership and removed five proven legacy managers/bridges. Core validation passes; current-head compatibility and serial browser CI are running, and David's visual gate remains pending.
+State: **implementation complete; technical qualification in progress**. David accepted WP19A's bounded qualification, authorised merging/deploying PRs #159/#160 and starting WP18K. Both PRs are merged; the production baseline is main `d8f3de6f264fa5fd6e2d77d539a47f288eb50cd4`. WP18K K1 ownership/removal evidence preceded implementation. K2-K4 consolidated Bag/Map ownership and removed five proven legacy managers/bridges. K5 has classified the cancelled exact-head CI, run all 40 unfinished cases in bounded groups, and applied evidence-led test/geometry corrections. Core validation passes; correction-head CI is pending and David's visual gate remains pending.
 
 Read first:
 
@@ -31,7 +31,7 @@ Retain the accepted HUD camera stability, cream/lavender/purple/gold controls, B
 
 WP19A persistence safety → WP18K ownership foundation → WP19B world boundaries/navigation → WP19C creator → WP19D interactions/NPCs → WP19E conversations → WP19F UI consistency/generated title → WP19G/H MP3 audio → WP19I integrated qualification → WP18H daughter replay → WP17 readiness decision.
 
-WP19A-I bounded files are **approved**, subject to their dependencies and human gates. WP19A is next, followed by WP18K. WP18K remains behaviour-preserving; it must not silently absorb functional redesign.
+WP19A-I bounded files are **approved**, subject to their dependencies and human gates. WP19A is complete and WP18K is active; WP19B follows only after WP18K qualification and its human gate. WP18K remains behaviour-preserving; it must not silently absorb functional redesign.
 
 ## Important open findings
 
@@ -48,16 +48,12 @@ Full evidence, severity and source references are in the audit. Source risks are
 
 ## Validation
 
-- Local baseline `npm run validate`: passing, 113 test files / 427 tests plus format/lint/type/build/performance/static checks.
-- Two temporary storage fault tests confirmed the documented defects; removed from the repository after diagnosis.
-- Live-browser checks covered title, creator, naming/start, tap movement, Pip dialogue, Bag and Map. No full daughter-style replay is claimed.
-- Main CI run `34210921262`: Validate and Browser compatibility succeeded; Browser playtest subsequently ended **cancelled**. Main does not have complete green full-playtest evidence from that run.
-- Local Chromium was initially missing, then installed successfully. The serial broad suite stopped at its three-failure limit: 23 passed, 3 failed, 155 did not run. The failures assert historical suggestion cards and a retired controls button. The separate current R6.5 suite finished with 34 passed, 5 failed and 21 not run. Failures cover stale Bag coordinates/wrapper assertions, Nook/race total-budget timeouts, and a numerical Bag size failure. Trace-based distinctions and unverified coverage are in the audit addendum.
-- Documentation project-state validation, formatting and whitespace checks pass on the final handoff changes. Overall browser qualification remains failing/incomplete.
-- WP19A corrected-head `npm run validate` passes with 114 test files / 435 tests and a 480.38 KiB entry bundle; the focused SaveService run passes 22 tests. The matching Chromium download completed, but host libraries remain unavailable, so the new denied-getter browser regression awaits CI. No full-green browser qualification is claimed.
-- CI run `34222463247` on the preceding head passed Validate and Browser compatibility. Browser playtest was cancelled at 35 minutes after the package-relevant main-menu, profile and save-recovery groups passed; unrelated historical UI failures and integrated qualification remain open in their planned packages.
-- CI run `34231264234` on `bec98fa` passed Validate and Browser compatibility, but its timed browser job exposed a package-relevant failure in the new denied-storage title regression. Its trace showed boot-time Continue restore, Pip egg, atmosphere/weather and reward initialisation still calling the throwing legacy load path before Title could render. Commit `8a6d35e` routes those passive boot reads through typed outcomes; the complete five-case save-recovery browser spec now passes locally.
-- CI run `34237540616` on exact head `4b6b742` passed Validate, browser compatibility and all five save-recovery cases; project-contract run `34237540863` passed. The broad job was cancelled at 35 minutes with 136 passes, 20 failures, 3 skips and 23 unfinished cases, so overall CI is not green. All 20 failures match the preceding-head run individually and are outside persistence scope. A bounded run closed the unfinished group with 17 passes and 6 explicit UI-scope failures. See `docs/evidence/R6.5-WP19A-BROWSER-QUALIFICATION.md`.
+- Correction-head `npm run validate` passes 114 test files / 435 tests plus format, lint, type-check, production build, the unchanged 520 KiB budget (480.01 KiB entry) and static smoke.
+- Exact starting-head CI run `34262336206`: Validate passed; project-contract run `34262336101` passed; compatibility passed 48 with 15 configured skips. Browser playtest was cancelled at 35 minutes with 130 passed, 9 failed and 3 skipped, leaving 40 unfinished. It is not represented as green.
+- All 40 unfinished cases were attempted in four bounded serial Chromium groups: initial totals 29 passed, 10 failed and 1 serial skip. Ten world-depth cases and all seven WP18J preservation cases passed. Named-control corrections then passed Food, Map and Creator 3/3; remaining trace-led touch/timeout corrections await correction-head CI.
+- The nine completed CI failures and all unfinished/skip dispositions are individually recorded in `docs/evidence/R6.5-WP18K-BROWSER-QUALIFICATION.md`. Nova/dialogue/race failures remain outside K ownership; current Settings/modal/Bag/HUD/Wonderbook assertions were rebased to actual owners without reducing touch requirements.
+- The local host can run Chromium after supported browser/dependency installation. Its software renderer is materially slower than CI; retained multi-cycle/multi-scene tests use trace-justified total budgets while preserving cycles and responsiveness assertions.
+- The runner HTTP CONNECT proxy still blocks Cloudflare Pages with 403. Remote production/preview smoke was not run or bypassed; equivalent local static/start/save evidence and Cloudflare deployment status are recorded.
 
 ## Human feedback and gates
 
@@ -69,21 +65,11 @@ No new daughter replay occurred. Preserve all positive feedback and deferred ide
 
 ## Delivery
 
-WP19A planning PR #159 and implementation PR #160 are accepted and merged to
-main `d8f3de6`; David authorised that production deployment. WP18K is delivered
-as draft PR #161 from `agent/r6.5-wp18k-architecture-consolidation` against
-main. Exact implementation preview: `https://cf10dee8.unicorn-valley.pages.dev`
-for `ff444db`. Exact current documentation-head preview:
-`https://c1888d5c.unicorn-valley.pages.dev` for `f16f2e7`. No WP18K merge or
-production deployment is authorised.
+WP19A planning/implementation PRs #159/#160 are accepted and merged to main `d8f3de6`. WP18K remains draft PR #161 on `agent/r6.5-wp18k-architecture-consolidation`. Cloudflare verified `https://51d8c0eb.unicorn-valley.pages.dev` for exact starting head `a958d0c`; do not infer a correction-head immutable URL until Cloudflare reports it. No WP18K merge or production deployment is authorised.
 
 ## Next action
 
-Review current-head browser/compatibility CI and classify every failure, skip or
-unfinished case against the WP19A ledger. When technical evidence is complete,
-David checks the immutable preview across the four display classes using the
-package checklist. Stop at that visual gate. The next approved package after K
-is WP19B; full integrated closure remains WP19I.
+Review correction-head CI and immutable Cloudflare evidence. Technical qualification is not ready for manager sign-off until the relevant corrected checks pass and every remaining failure is still correctly bounded. Then David checks the verified immutable preview across all four display classes. Stop at that visual gate; WP19B, R7, merge and production deployment remain out of scope.
 
 ## Implementation delivery
 
@@ -92,9 +78,4 @@ Draft PR: https://github.com/tametheboardgame/unicorn-valley/pull/161.
 
 ## Codex execution
 
-WP18K started from verified main `d8f3de6`; no prior WP18K branch, PR or worker
-was present. K1-K4 and the current K5 checkpoint are committed and pushed. The
-runner can execute local browsers after supported dependencies were installed,
-but its HTTP CONNECT proxy blocks Cloudflare Pages hosts with 403, so production
-and immutable-preview browser smokes require external verification. CI remains
-running for the final documentation head.
+WP18K K1–K4 started from verified main `d8f3de6`. K5 now has a package-specific ledger, exact CI/compatibility counts, all 40 unfinished dispositions and planned-versus-actual scanner ownership. Corrections are committed at implementation SHA `7617f763f992077f7009fe2e1c4e23c208b96f1e` on the existing package branch; correction-head CI/preview verification remains next. The conversation disposition remains `keep` until those external results and David's visual gate are durable.
