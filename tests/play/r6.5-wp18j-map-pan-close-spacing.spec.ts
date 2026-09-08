@@ -110,6 +110,11 @@ test('Bag uses a glyph-only close control and a lower aligned pocket row', async
   expect(
     objects.some(({ name, visible }) => name === 'wp18j-inventory-close-visual' && visible),
   ).toBe(false);
+  expect(
+    objects.some(
+      ({ name, visible }) => name === 'concept-modal-surface:bag-close-button' && visible,
+    ),
+  ).toBe(false);
   expect(foodTab?.y ?? 0).toBeGreaterThanOrEqual(153);
   expect(shimmer?.y ?? 0).toBeGreaterThanOrEqual(153);
 });
@@ -130,6 +135,11 @@ test('Map keeps a glyph-only close target and can be dragged inside its clipped 
   expect(closeHitArea?.alpha ?? 1).toBeLessThanOrEqual(0.01);
   expect(
     before.some(({ name, visible }) => name === 'wp18j-inventory-close-visual' && visible),
+  ).toBe(false);
+  expect(
+    before.some(
+      ({ name, visible }) => name === 'concept-modal-surface:bag-close-button' && visible,
+    ),
   ).toBe(false);
   expect(mapContentBefore?.x ?? 999).toBe(0);
   expect(mapContentBefore?.y ?? 999).toBe(0);
