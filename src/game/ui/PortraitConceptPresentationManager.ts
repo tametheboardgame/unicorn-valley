@@ -62,11 +62,16 @@ function usesPortraitConceptPresentation(): boolean {
 
 function canSuppress(
   object: Phaser.GameObjects.GameObject,
-): object is Phaser.GameObjects.Rectangle | Phaser.GameObjects.Arc | Phaser.GameObjects.Text {
+): object is
+  | Phaser.GameObjects.Rectangle
+  | Phaser.GameObjects.Arc
+  | Phaser.GameObjects.Text
+  | Phaser.GameObjects.Graphics {
   return (
     object instanceof Phaser.GameObjects.Rectangle ||
     object instanceof Phaser.GameObjects.Arc ||
-    object instanceof Phaser.GameObjects.Text
+    object instanceof Phaser.GameObjects.Text ||
+    object instanceof Phaser.GameObjects.Graphics
   );
 }
 
