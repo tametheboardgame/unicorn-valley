@@ -8,7 +8,7 @@ Last updated: 2026-09-08
 
 Path: `docs/work-packages/R6.5-WP19A-PERSISTENCE-SAFETY.md`
 
-State: **WP19A implemented locally; PR CI/preview verification pending**. David's “environment made” confirmation superseded the setup blocker and authorised the single retry. The bounded implementation is on PR #160's existing stacked branch; no duplicate PR or production deployment is authorised.
+State: **WP19A implementation pushed; PR browser CI/preview URL verification pending**. David's “environment made” confirmation superseded the setup blocker and authorised the single retry. The bounded implementation is on PR #160's existing stacked branch; no duplicate PR or production deployment is authorised.
 
 Read first:
 
@@ -70,7 +70,7 @@ Documentation-only branch: `agent/r6.5-whole-game-audit-plan`. David explicitly 
 
 ## Next action
 
-Push the WP19A implementation, verify PR CI and the exact immutable Cloudflare preview for that commit, then let the project manager review it. Next only after verified WP19A: WP18K. All six plan decisions are approved; future visual and replay gates remain.
+Wait for PR browser CI and obtain the exact immutable Cloudflare preview for implementation commit `79cf7fa219159cbd434f1166722ed343d97222fc`, then let the project manager review it. Next only after verified WP19A: WP18K. All six plan decisions are approved; future visual and replay gates remain.
 
 Chat disposition: `keep`.
 
