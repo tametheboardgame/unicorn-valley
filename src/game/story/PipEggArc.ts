@@ -198,7 +198,8 @@ export class PipEggArcService {
   }
 
   public beginSession(): PipEggStage {
-    let save = this.saveService.load();
+    const loadResult = this.saveService.loadWithResult();
+    let save = loadResult.status === 'loaded' ? loadResult.save : null;
     if (!save || !save.collections.memoryIds.includes(PIP_EGG_PENDING_GROWTH_MEMORY)) {
       return getPipEggStage(save);
     }

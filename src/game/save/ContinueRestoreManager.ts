@@ -11,6 +11,7 @@ interface MutableTitleScene extends Phaser.Scene {
   starting: boolean;
   resetArmed: boolean;
   statusText: Phaser.GameObjects.Text | null;
+  storageUnavailable: boolean;
   unsupportedSaveVersion: boolean;
 }
 
@@ -33,7 +34,9 @@ export class ContinueRestoreManager {
   }
 
   private prepareLazyDestination(): void {
-    const locationId = getBrowserSaveService().load()?.profile.currentLocationId;
+    const loadResult = getBrowserSaveService().loadWithResult();
+    const locationId =
+      loadResult.status === 'loaded' ? loadResult.save.profile.currentLocationId : undefined;
     if (locationId !== STARLIGHT_BEACH_CONTINUE_LOCATION_ID) {
       return;
     }
@@ -53,12 +56,18 @@ export class ContinueRestoreManager {
     }
 
     const title = asMutableTitleScene(scene);
-    if (title.unsupportedSaveVersion) {
+    if (title.unsupportedSaveVersion || title.storageUnavailable) {
       this.lastTitleScene = scene;
       return;
     }
 
-    const locationId = getBrowserSaveService().load()?.profile.currentLocationId;
+    const loadResult = getBrowserSaveService().loadWithResult();
+    if (loadResult.status === 'storage-failed') {
+      this.lastTitleScene = scene;
+      return;
+    }
+    const locationId =
+      loadResult.status === 'loaded' ? loadResult.save.profile.currentLocationId : undefined;
     const destination = resolveContinueDestination(locationId);
 
     if (destination.lazyScene && !this.game.scene.keys[destination.sceneKey]) {

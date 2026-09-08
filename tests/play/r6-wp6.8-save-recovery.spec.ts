@@ -127,6 +127,31 @@ test('corrupt primary save recovers from the last-known-good browser backup', as
   expect(repaired.schemaVersion).toBe(2);
 });
 
+test('denied browser storage renders a recoverable title state', async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(window, 'localStorage', {
+      configurable: true,
+      get: () => {
+        throw new DOMException('Storage access denied', 'SecurityError');
+      },
+    });
+  });
+
+  await page.goto('/?diagnostics=1');
+  await waitForScene(page, 'TitleScene');
+
+  const snapshot = await getSnapshot(page);
+  const title = snapshot.scenes.find((scene) => scene.key === 'TitleScene');
+  const visibleText =
+    title?.objects.filter((object) => object.visible).map((object) => object.text) ?? [];
+
+  expect(visibleText).toContain('Try Again');
+  expect(visibleText).toContain(
+    'Your adventure is still safe. Check this browser, then try again.',
+  );
+  expect(visibleText).not.toContain('New Game');
+});
+
 test('schema-v1 browser save is backed up before automatic migration to v2', async ({ page }) => {
   const historical = createStoredSave('Moonbeam', 1);
   await page.addInitScript(

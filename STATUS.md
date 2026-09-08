@@ -4,11 +4,11 @@ Last updated: 2026-09-08
 
 ## Current work
 
-`R6.5-WP19-PLAN - Whole-game audit and remediation proposal`
+`R6.5-WP19A - Persistence and truthful success feedback`
 
-Path: `docs/work-packages/R6.5-WP19-PLAN-WHOLE-GAME-AUDIT.md`
+Path: `docs/work-packages/R6.5-WP19A-PERSISTENCE-SAFETY.md`
 
-State: **analysis and detailed plan approved by David on 2026-09-08; published in draft PR #159**. No gameplay implementation occurred in this package.
+State: **WP19A technically qualified; awaiting manager closure**. The bounded implementation remains on PR #160's existing stacked branch; no merge or production deployment is authorised.
 
 Read first:
 
@@ -40,7 +40,7 @@ WP19A-I bounded files are **approved**, subject to their dependencies and human 
 - Roaming residents and scene targets use separate interaction/feedback routes.
 - Cottage back-wall/window collision remains unresolved.
 - Grotto/Grove are absent from the preferred tap-navigation support list.
-- Storage fault tests reproduce an uncaught read failure and false Bakery purchase success after a rejected save.
+- WP19A guards title and boot-manager storage reads, prevents rejected writes from producing purchase success, requires primary success where checkpoints are unsupported, and keeps post-commit listener faults from inviting a duplicate charge. Exact-head package qualification passes; the cancelled integrated browser baseline remains assigned to WP19I.
 - New-game Map shows Cottage as current while the player is in Glade; investigate checkpoint/location consistency.
 - Generated title image and MP3 catalogue/playback are new work, not already delivered features.
 
@@ -54,6 +54,10 @@ Full evidence, severity and source references are in the audit. Source risks are
 - Main CI run `34210921262`: Validate and Browser compatibility succeeded; Browser playtest subsequently ended **cancelled**. Main does not have complete green full-playtest evidence from that run.
 - Local Chromium was initially missing, then installed successfully. The serial broad suite stopped at its three-failure limit: 23 passed, 3 failed, 155 did not run. The failures assert historical suggestion cards and a retired controls button. The separate current R6.5 suite finished with 34 passed, 5 failed and 21 not run. Failures cover stale Bag coordinates/wrapper assertions, Nook/race total-budget timeouts, and a numerical Bag size failure. Trace-based distinctions and unverified coverage are in the audit addendum.
 - Documentation project-state validation, formatting and whitespace checks pass on the final handoff changes. Overall browser qualification remains failing/incomplete.
+- WP19A corrected-head `npm run validate` passes with 114 test files / 435 tests and a 480.38 KiB entry bundle; the focused SaveService run passes 22 tests. The matching Chromium download completed, but host libraries remain unavailable, so the new denied-getter browser regression awaits CI. No full-green browser qualification is claimed.
+- CI run `34222463247` on the preceding head passed Validate and Browser compatibility. Browser playtest was cancelled at 35 minutes after the package-relevant main-menu, profile and save-recovery groups passed; unrelated historical UI failures and integrated qualification remain open in their planned packages.
+- CI run `34231264234` on `bec98fa` passed Validate and Browser compatibility, but its timed browser job exposed a package-relevant failure in the new denied-storage title regression. Its trace showed boot-time Continue restore, Pip egg, atmosphere/weather and reward initialisation still calling the throwing legacy load path before Title could render. Commit `8a6d35e` routes those passive boot reads through typed outcomes; the complete five-case save-recovery browser spec now passes locally.
+- CI run `34237540616` on exact head `4b6b742` passed Validate, browser compatibility and all five save-recovery cases; project-contract run `34237540863` passed. The broad job was cancelled at 35 minutes with 136 passes, 20 failures, 3 skips and 23 unfinished cases, so overall CI is not green. All 20 failures match the preceding-head run individually and are outside persistence scope. A bounded run closed the unfinished group with 17 passes and 6 explicit UI-scope failures. See `docs/evidence/R6.5-WP19A-BROWSER-QUALIFICATION.md`.
 
 ## Human feedback and gates
 
@@ -69,6 +73,14 @@ Documentation-only branch: `agent/r6.5-whole-game-audit-plan`. David explicitly 
 
 ## Next action
 
-Documentation delivery is complete in draft PR #159. Next implementation package: `Start R6.5-WP19A`. All six plan decisions are approved; future visual and replay gates remain.
+Manager reviews the completed WP19A qualification ledger and may close WP19A, then dispatch WP18K. Exact-head preview: `https://323968ac.unicorn-valley.pages.dev`. Full integrated browser closure remains WP19I; future visual and replay gates remain.
 
 Chat disposition: `keep`.
+
+## Implementation delivery
+
+Branch: `agent/r6.5-wp19a-persistence-safety`, stacked on the approved planning branch while PR #159 remains unmerged. Keep gameplay changes off PR #159. The project manager reviews results and reports the verified preview URL to David before required human gates.
+
+## Codex execution
+
+Implementation PR: https://github.com/tametheboardgame/unicorn-valley/pull/160. Dispatch: issuecomment-5584158968. Codex initially replied in issuecomment-5584160637 that an environment was required. David confirmed “environment made”; the authorised retry executed in the existing PR branch. The former setup blocker is resolved. Local browser launch is separately blocked by missing system libraries, so CI is the remaining technical evidence source.

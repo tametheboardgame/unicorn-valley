@@ -264,6 +264,8 @@ export class ShopScene extends Phaser.Scene {
       );
     } else if (result.type === 'locked') {
       this.feedbackText?.setText(`🔒 ${result.item.name}: ${result.unlockHint}`);
+    } else if (result.type === 'persistence-failed') {
+      this.feedbackText?.setText('That did not save, so no Shimmer was spent. Please try again.');
     } else {
       this.feedbackText?.setText(`${result.item.name} is already yours. Pick another treasure!`);
     }

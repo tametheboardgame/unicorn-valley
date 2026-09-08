@@ -632,6 +632,8 @@ export class VillageInteriorScene extends Phaser.Scene {
       );
     } else if (result.type === 'locked') {
       this.showFeedback(result.unlockHint);
+    } else if (result.type === 'persistence-failed') {
+      this.showFeedback('That did not save, so no Shimmer was spent. Please try again.');
     } else {
       this.showFeedback(`${result.item.name} is already tucked safely into your collection.`);
     }

@@ -92,6 +92,7 @@ export class TitleScene extends Phaser.Scene {
   private starting = false;
   private hasCreatedUnicorn = false;
   private unsupportedSaveVersion = false;
+  private storageUnavailable = false;
   private resetArmed = false;
   private continueScene = 'MoonflowerGladeScene';
 
@@ -109,9 +110,10 @@ export class TitleScene extends Phaser.Scene {
     this.ambientTargets = [];
 
     const saveService = getBrowserSaveService();
-    const loadedSave = saveService.load();
-    this.unsupportedSaveVersion = saveService.hasUnsupportedSaveVersion();
-    const save = this.unsupportedSaveVersion ? null : loadedSave;
+    const loadResult = saveService.loadWithResult();
+    this.unsupportedSaveVersion = loadResult.status === 'blocked-newer-version';
+    this.storageUnavailable = loadResult.status === 'storage-failed';
+    const save = loadResult.status === 'loaded' ? loadResult.save : null;
     this.hasCreatedUnicorn = Boolean(save?.profile.name);
     this.continueScene = resolveContinueScene(save?.profile.currentLocationId);
 
@@ -401,11 +403,13 @@ export class TitleScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setDepth(14);
 
-    const menuSubtitle = this.unsupportedSaveVersion
-      ? 'Your save was made by a newer version.'
-      : this.hasCreatedUnicorn
-        ? 'Your valley is ready when you are.'
-        : 'Make a unicorn and begin your adventure.';
+    const menuSubtitle = this.storageUnavailable
+      ? 'Your adventure could not be opened just now.'
+      : this.unsupportedSaveVersion
+        ? 'Your save was made by a newer version.'
+        : this.hasCreatedUnicorn
+          ? 'Your valley is ready when you are.'
+          : 'Make a unicorn and begin your adventure.';
     this.add
       .text(MENU_X, 174, menuSubtitle, {
         color: UI_COLOURS.softInk,
@@ -419,7 +423,13 @@ export class TitleScene extends Phaser.Scene {
       .setDepth(14);
 
     let nextY = 238;
-    if (this.unsupportedSaveVersion) {
+    if (this.storageUnavailable) {
+      const retry = this.createMenuButton(nextY, 'Try Again', 'retry-save', UI_COLOURS.gold, () =>
+        this.retryStorageAccess(),
+      );
+      this.primaryButton = retry.button;
+      nextY += 76;
+    } else if (this.unsupportedSaveVersion) {
       const refresh = this.createMenuButton(
         nextY,
         'Refresh to Continue',
@@ -441,7 +451,7 @@ export class TitleScene extends Phaser.Scene {
       nextY += 76;
     }
 
-    if (!this.unsupportedSaveVersion) {
+    if (!this.unsupportedSaveVersion && !this.storageUnavailable) {
       const newGame = this.createMenuButton(
         nextY,
         'New Game',
@@ -469,11 +479,13 @@ export class TitleScene extends Phaser.Scene {
       this.setSettingsVisible(true);
     });
 
-    const status = this.unsupportedSaveVersion
-      ? 'Your save is safe. Refresh to load the newer game version.'
-      : this.hasCreatedUnicorn
-        ? resolveContinueStatus(this.continueScene)
-        : 'First, make a unicorn that feels like yours.';
+    const status = this.storageUnavailable
+      ? 'Your adventure is still safe. Check this browser, then try again.'
+      : this.unsupportedSaveVersion
+        ? 'Your save is safe. Refresh to load the newer game version.'
+        : this.hasCreatedUnicorn
+          ? resolveContinueStatus(this.continueScene)
+          : 'First, make a unicorn that feels like yours.';
     this.statusText = this.add
       .text(MENU_X, 606, status, {
         color: UI_COLOURS.softInk,
@@ -732,6 +744,10 @@ export class TitleScene extends Phaser.Scene {
   }
 
   private activatePrimaryAction(): void {
+    if (this.storageUnavailable) {
+      this.retryStorageAccess();
+      return;
+    }
     if (this.unsupportedSaveVersion) {
       this.refreshForNewerSave();
       return;
@@ -822,6 +838,14 @@ export class TitleScene extends Phaser.Scene {
     }
     this.setStarting('Refreshing so your newer save stays safe…');
     globalThis.location.reload();
+  }
+
+  private retryStorageAccess(): void {
+    if (this.starting) {
+      return;
+    }
+    this.setStarting('Trying to open your adventure again…');
+    this.scene.restart();
   }
 
   private setStarting(message: string): void {

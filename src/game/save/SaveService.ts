@@ -14,10 +14,23 @@ export interface SaveWriteResult {
   save: SaveGame;
 }
 
+export type SaveReadResult =
+  | { status: 'loaded'; save: SaveGame }
+  | { status: 'empty'; save: null }
+  | { status: 'blocked-newer-version'; save: null }
+  | { status: 'storage-failed'; save: null };
+
 export class UnsupportedSaveVersionError extends Error {
   public constructor() {
     super('This save was created by a newer version of Unicorn Valley.');
     this.name = 'UnsupportedSaveVersionError';
+  }
+}
+
+export class SaveStorageUnavailableError extends Error {
+  public constructor() {
+    super('Your adventure could not be saved. Please try again.');
+    this.name = 'SaveStorageUnavailableError';
   }
 }
 
@@ -73,22 +86,42 @@ export class SaveService {
   }
 
   public hasUnsupportedSaveVersion(): boolean {
-    if (this.hasFutureSchemaCheckpoint()) {
-      return true;
-    }
+    try {
+      if (this.hasFutureSchemaCheckpoint()) {
+        return true;
+      }
 
-    const serialisedPrimary = this.repository.read();
-    return serialisedPrimary !== null && this.isFutureVersion(serialisedPrimary);
+      const serialisedPrimary = this.repository.read();
+      return serialisedPrimary !== null && this.isFutureVersion(serialisedPrimary);
+    } catch {
+      return false;
+    }
   }
 
   public load(): SaveGame | null {
+    const result = this.loadWithResult();
+    if (result.status === 'storage-failed') {
+      throw new SaveStorageUnavailableError();
+    }
+    return result.save;
+  }
+
+  public loadWithResult(): SaveReadResult {
+    try {
+      return this.loadFromRepository();
+    } catch {
+      return { status: 'storage-failed', save: null };
+    }
+  }
+
+  private loadFromRepository(): SaveReadResult {
     if (this.hasFutureSchemaCheckpoint()) {
-      return null;
+      return { status: 'blocked-newer-version', save: null };
     }
 
     const serialisedPrimary = this.repository.read();
     if (serialisedPrimary !== null && this.isFutureVersion(serialisedPrimary)) {
-      return null;
+      return { status: 'blocked-newer-version', save: null };
     }
 
     const primary = this.decodeStored(serialisedPrimary);
@@ -96,17 +129,18 @@ export class SaveService {
 
     if (checkpoint) {
       this.tryWritePrimary(checkpoint.decoded.serialisedCurrent);
-      return checkpoint.decoded.save;
+      return { status: 'loaded', save: checkpoint.decoded.save };
     }
 
     if (primary) {
       if (primary.decoded.sourceVersion < CURRENT_SAVE_SCHEMA_VERSION) {
         this.persistMigrationBestEffort(primary.serialised, primary.decoded);
       }
-      return primary.decoded.save;
+      return { status: 'loaded', save: primary.decoded.save };
     }
 
-    return this.recoverFromBackup();
+    const recovered = this.recoverFromBackup();
+    return recovered ? { status: 'loaded', save: recovered } : { status: 'empty', save: null };
   }
 
   public save(save: SaveGame): SaveGame {
@@ -114,10 +148,36 @@ export class SaveService {
     if (result.status === 'blocked-newer-version') {
       throw new UnsupportedSaveVersionError();
     }
+    if (result.status === 'storage-failed') {
+      throw new SaveStorageUnavailableError();
+    }
     return result.save;
   }
 
   public saveWithResult(save: SaveGame): SaveWriteResult {
+    let result: SaveWriteResult;
+    try {
+      result = this.saveToRepository(save);
+    } catch {
+      return { status: 'storage-failed', save };
+    }
+
+    if (result.status === 'saved') {
+      try {
+        this.events.emit('SAVE_COMPLETED', {
+          schemaVersion: result.save.schemaVersion,
+          savedAt: result.save.lastSavedAt,
+        });
+      } catch {
+        // The save is already committed. A dependent listener must not turn that
+        // success into a failed purchase that invites the player to pay again.
+      }
+    }
+
+    return result;
+  }
+
+  private saveToRepository(save: SaveGame): SaveWriteResult {
     const savedAt = this.now();
     const reconciledSave = reconcileSaveGame(save);
     const nextSave: SaveGame = {
@@ -138,7 +198,8 @@ export class SaveService {
     const previous = this.readPreferredCurrentRecord(currentPrimary);
     const backupStored = previous === null || this.tryWriteBackup(previous.serialised);
     const serialisedNext = JSON.stringify(nextSave);
-    if (!this.tryWriteCheckpoint(serialisedNext)) {
+    const supportsCheckpoints = this.repository.writeSchemaCheckpoint !== undefined;
+    if (supportsCheckpoints && !this.tryWriteCheckpoint(serialisedNext)) {
       return { status: 'storage-failed', save: nextSave };
     }
 
@@ -146,30 +207,33 @@ export class SaveService {
       return { status: 'blocked-newer-version', save: nextSave };
     }
 
-    if (backupStored) {
+    if (!supportsCheckpoints) {
+      if (!backupStored || !this.tryWritePrimary(serialisedNext)) {
+        return { status: 'storage-failed', save: nextSave };
+      }
+    } else if (backupStored) {
       this.tryWritePrimary(serialisedNext);
     }
-
-    this.events.emit('SAVE_COMPLETED', {
-      schemaVersion: nextSave.schemaVersion,
-      savedAt,
-    });
 
     return { status: 'saved', save: nextSave };
   }
 
   public clear(): void {
-    const currentPrimary = this.repository.read();
-    if (
-      this.hasFutureSchemaCheckpoint() ||
-      (currentPrimary !== null && this.isFutureVersion(currentPrimary))
-    ) {
-      return;
-    }
+    try {
+      const currentPrimary = this.repository.read();
+      if (
+        this.hasFutureSchemaCheckpoint() ||
+        (currentPrimary !== null && this.isFutureVersion(currentPrimary))
+      ) {
+        return;
+      }
 
-    this.repository.remove();
-    this.repository.removeBackup?.();
-    this.repository.removeSchemaCheckpointsUpTo?.(CURRENT_SAVE_SCHEMA_VERSION);
+      this.repository.remove();
+      this.repository.removeBackup?.();
+      this.repository.removeSchemaCheckpointsUpTo?.(CURRENT_SAVE_SCHEMA_VERSION);
+    } catch {
+      // Unreadable storage is not empty storage. Preserve it for a later retry.
+    }
   }
 
   private hasFutureSchemaCheckpoint(): boolean {
