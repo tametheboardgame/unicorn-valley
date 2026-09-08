@@ -301,17 +301,10 @@ export class ExplorationShell {
     });
     button.on('pointerout', () => {
       hover.setFillStyle(CONCEPT_UI.purpleLight, 0);
-      iconGraphic.setScale(1);
-      label.setScale(1).setColor('#4b2b66');
+      label.setColor('#4b2b66');
     });
     button.on('pointerdown', () => {
       hover.setFillStyle(CONCEPT_UI.goldLight, 0.28);
-      iconGraphic.setScale(0.94);
-      label.setScale(0.96);
-    });
-    button.on('pointerup', () => {
-      iconGraphic.setScale(1);
-      label.setScale(1);
     });
     return { shadow, button, label, decorations: [hover, iconGraphic] };
   }
