@@ -6,11 +6,11 @@
   "phase": "R6.5 - Valley Completeness and Breadth, human-playtest remediation",
   "current_work_package": "R6.5-WP19-PLAN",
   "current_work_package_path": "docs/work-packages/R6.5-WP19-PLAN-WHOLE-GAME-AUDIT.md",
-  "status": "in_progress",
+  "status": "idle",
   "autonomy_state": "amber",
-  "agent_state": "active",
+  "agent_state": "idle",
   "branch": "agent/r6.5-whole-game-audit-plan",
-  "latest_commit": "4f1ccdc",
+  "latest_commit": "ff43c1cbc2757bdf0f1bed719c1d6a5597764aec",
   "ci_state": "unknown",
   "technical_validation_state": "failing",
   "human_acceptance_state": "accepted",
@@ -21,6 +21,6 @@
   "night_shift_state": "not_configured",
   "chat_disposition": "keep",
   "delivery_mode": "pr_required",
-  "last_activity_at": "2026-09-08T10:57:56.469127+00:00",
-  "updated_at": "2026-09-08T10:57:56.469127+00:00"
+  "last_activity_at": "2026-09-08T10:59:55.406648+00:00",
+  "updated_at": "2026-09-08T10:59:55.406648+00:00"
 }

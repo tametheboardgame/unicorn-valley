@@ -8,7 +8,7 @@ Last updated: 2026-09-08
 
 Path: `docs/work-packages/R6.5-WP19-PLAN-WHOLE-GAME-AUDIT.md`
 
-State: **analysis and detailed plan approved by David on 2026-09-08; authorised documentation publication in progress**. No gameplay implementation occurred in this package.
+State: **analysis and detailed plan approved by David on 2026-09-08; published in draft PR #159**. No gameplay implementation occurred in this package.
 
 Read first:
 
@@ -65,10 +65,10 @@ No new daughter replay occurred. Preserve all positive feedback and deferred ide
 
 ## Delivery
 
-Documentation-only branch: `agent/r6.5-whole-game-audit-plan`. David explicitly authorised the documentation branch push and draft PR on 2026-09-08, resolving the earlier automatic-review block. Publication is in progress. No merge or production deployment is authorised by completion of this audit. Production was previously updated by the approved WP18I/J merge; this proposal does not change the game.
+Documentation-only branch: `agent/r6.5-whole-game-audit-plan`. David explicitly authorised the documentation branch push and draft PR on 2026-09-08, resolving the earlier automatic-review block. Published through the connected GitHub app after shell Git authentication was unavailable: https://github.com/tametheboardgame/unicorn-valley/pull/159. Draft PR remains open; no merge has occurred. No merge or production deployment is authorised by completion of this audit. Production was previously updated by the approved WP18I/J merge; this proposal does not change the game.
 
 ## Next action
 
-Deliver the authorised documentation draft PR. Next implementation package: `Start R6.5-WP19A`. All six plan decisions are approved; future visual and replay gates remain.
+Documentation delivery is complete in draft PR #159. Next implementation package: `Start R6.5-WP19A`. All six plan decisions are approved; future visual and replay gates remain.
 
 Chat disposition: `keep`.
