@@ -25,7 +25,7 @@ A young child, with the design primarily tuned around the intended seven-year-ol
 
 R0 through R6 and R6.5-WP1 through WP16 are integrated. WP18A-G and human-approved WP18I/J are integrated through PR #158. Accepted gameplay head: `e4d64c0fa258bd91eb29579321e7da6b0968f71e`; audit base main: `d9b765c0293045251619783a4ced4b01068e993a`.
 
-The 2026-09-08 user request commissions a whole-game audit and revised remediation proposal before further implementation. `R6.5-WP19-PLAN` was approved on 2026-09-08, including its documentation push/draft PR. WP19A is next; WP18K remains bounded foundation work and approved WP19A-I precede the final WP18H/WP17 replay gates. See `docs/2026-09-08-REMEDIATION-PROPOSAL.md`.
+The 2026-09-08 user request commissions a whole-game audit and revised remediation proposal before further implementation. `R6.5-WP19-PLAN` was approved on 2026-09-08. WP19A and its planning PR are accepted, merged and deployed through main `d8f3de6f264fa5fd6e2d77d539a47f288eb50cd4`. WP18K is the active bounded foundation package; WP19B-I follow before the final WP18H/WP17 replay gates. See `docs/2026-09-08-REMEDIATION-PROPOSAL.md`.
 
 R7 is deliberately blocked until R6.5-WP17 releases the human readiness gate.
 

@@ -4,11 +4,11 @@ Last updated: 2026-09-08
 
 ## Current work
 
-`R6.5-WP19A - Persistence and truthful success feedback`
+`R6.5-WP18K - Architecture Consolidation and Legacy Retirement`
 
-Path: `docs/work-packages/R6.5-WP19A-PERSISTENCE-SAFETY.md`
+Path: `docs/work-packages/R6.5-WP18K-ARCHITECTURE-CONSOLIDATION-LEGACY-RETIREMENT.md`
 
-State: **WP19A technically qualified; awaiting manager closure**. The bounded implementation remains on PR #160's existing stacked branch; no merge or production deployment is authorised.
+State: **in progress**. David accepted WP19A's bounded qualification, authorised merging/deploying PRs #159/#160 and starting WP18K. Both PRs are merged; the production baseline is main `d8f3de6f264fa5fd6e2d77d539a47f288eb50cd4`. WP18K K1 ownership/removal evidence is recorded before implementation deletion.
 
 Read first:
 
@@ -73,13 +73,15 @@ Documentation-only branch: `agent/r6.5-whole-game-audit-plan`. David explicitly 
 
 ## Next action
 
-Manager reviews the completed WP19A qualification ledger and may close WP19A, then dispatch WP18K. Exact-head preview: `https://323968ac.unicorn-valley.pages.dev`. Full integrated browser closure remains WP19I; future visual and replay gates remain.
-
-Chat disposition: `keep`.
+Execute WP18K K2-K5 from the recorded architecture map, publish one draft PR,
+complete technical/browser evidence and stop for David's visual-regression spot
+check. The next approved package after K is WP19B. Full integrated browser
+closure remains WP19I; future visual and replay gates remain.
 
 ## Implementation delivery
 
-Branch: `agent/r6.5-wp19a-persistence-safety`, stacked on the approved planning branch while PR #159 remains unmerged. Keep gameplay changes off PR #159. The project manager reviews results and reports the verified preview URL to David before required human gates.
+Branch: `agent/r6.5-wp18k-architecture-consolidation`, based on current main.
+One draft PR targets main. No merge or production deployment is authorised.
 
 ## Codex execution
 
