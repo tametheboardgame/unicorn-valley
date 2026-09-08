@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
+import { ensureExplorationHudOverlayScene } from './ExplorationHudOverlayScene';
 import { ExplorationShell } from './ExplorationShell';
 import { supportsExplorationShell } from './ExplorationShellConfig';
 
@@ -13,6 +14,7 @@ export class ExplorationShellWorldManager {
   private readonly syncThrottle = new RefreshThrottle(100);
 
   public constructor(private readonly game: Phaser.Game) {
+    ensureExplorationHudOverlayScene(game);
     this.game.events.on(Phaser.Core.Events.POST_STEP, this.update, this);
   }
 
