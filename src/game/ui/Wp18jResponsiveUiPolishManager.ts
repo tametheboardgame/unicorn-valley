@@ -3,6 +3,7 @@ import { RefreshThrottle } from '../performance/RefreshThrottle';
 
 const REVISION = 'wp18j-spacing-v3';
 const BAG_ROW_REVISION = 'wp18j-bag-row-v3';
+const MAP_VIEWPORT = { x: 124, y: 148, width: 1032, height: 422 } as const;
 
 function byName<T extends Phaser.GameObjects.GameObject>(
   scene: Phaser.Scene,
@@ -205,6 +206,41 @@ function polishBag(scene: Phaser.Scene): void {
   shopLabel?.setPosition(1005, 632).setFontSize(17);
 }
 
+function findMapCompass(scene: Phaser.Scene): {
+  marker: Phaser.GameObjects.Arc | null;
+  label: Phaser.GameObjects.Text | null;
+} {
+  const label = textByValue(scene, '✦\nN');
+  const marker =
+    (scene.children.list.find(
+      (object) =>
+        object instanceof Phaser.GameObjects.Arc &&
+        Math.abs(object.x - 1092) < 1 &&
+        Math.abs(object.y - 535) < 1,
+    ) as Phaser.GameObjects.Arc | undefined) ?? null;
+
+  marker?.setName('wp18j-map-compass');
+  label?.setName('wp18j-map-compass-label');
+  return { marker, label };
+}
+
+function createMapViewportFrame(scene: Phaser.Scene): Phaser.GameObjects.Graphics {
+  const frame = scene.add.graphics().setName('wp18j-map-pan-frame').setDepth(5);
+
+  // A foreground lip makes the draggable layer visibly pass underneath the parchment opening.
+  frame.lineStyle(4, 0xa47a4c, 0.72);
+  frame.strokeRoundedRect(110, 134, 1060, 450, 22);
+  frame.lineStyle(2, 0xe7c98d, 0.92);
+  frame.strokeRoundedRect(
+    MAP_VIEWPORT.x - 1,
+    MAP_VIEWPORT.y - 1,
+    MAP_VIEWPORT.width + 2,
+    MAP_VIEWPORT.height + 2,
+    18,
+  );
+  return frame;
+}
+
 function installMapPanning(scene: Phaser.Scene): void {
   if (byName(scene, 'wp18j-map-pan-zone')) {
     return;
@@ -222,10 +258,15 @@ function installMapPanning(scene: Phaser.Scene): void {
     return;
   }
 
+  const { marker: compass, label: compassLabel } = findMapCompass(scene);
   const movingObjects = scene.children.list
     .slice(parchmentIndex + 1, contentIndex)
     .filter((object) => {
-      if (object.name === 'bag-map-guidance') {
+      if (
+        object === compass ||
+        object === compassLabel ||
+        object.name === 'bag-map-guidance'
+      ) {
         return false;
       }
       if (!(object instanceof Phaser.GameObjects.Text)) {
@@ -239,14 +280,36 @@ function installMapPanning(scene: Phaser.Scene): void {
 
   mapContent.add(movingObjects).setDepth(2);
 
-  const maskShape = scene.add.graphics().setName('wp18j-map-pan-mask').setVisible(false);
+  // Geometry masks must remain renderable. Creating this mask-only Graphics object outside the
+  // display list avoids the old setVisible(false) path, which disabled clipping in some browsers.
+  const maskShape = scene.make
+    .graphics({ x: 0, y: 0, add: false })
+    .setName('wp18j-map-pan-mask');
   maskShape.fillStyle(0xffffff, 1);
-  maskShape.fillRoundedRect(124, 148, 1032, 422, 17);
+  maskShape.fillRoundedRect(
+    MAP_VIEWPORT.x,
+    MAP_VIEWPORT.y,
+    MAP_VIEWPORT.width,
+    MAP_VIEWPORT.height,
+    17,
+  );
   const mask = maskShape.createGeometryMask();
   mapContent.setMask(mask);
 
+  createMapViewportFrame(scene);
+
+  // North is a fixed map control, not part of the draggable geography. Keep it in a quiet corner
+  // above the moving layer so routes and nodes slide beneath it rather than carrying or covering it.
+  compass?.setPosition(170, 192).setDepth(6);
+  compassLabel?.setPosition(170, 192).setDepth(7);
+
   const zone = scene.add
-    .zone(640, 359, 1032, 422)
+    .zone(
+      MAP_VIEWPORT.x + MAP_VIEWPORT.width / 2,
+      MAP_VIEWPORT.y + MAP_VIEWPORT.height / 2,
+      MAP_VIEWPORT.width,
+      MAP_VIEWPORT.height,
+    )
     .setName('wp18j-map-pan-zone')
     .setInteractive({ useHandCursor: true })
     .setDepth(8);
@@ -283,7 +346,9 @@ function installMapPanning(scene: Phaser.Scene): void {
     .setDepth(9);
 
   scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+    mapContent.clearMask();
     mask.destroy();
+    maskShape.destroy();
   });
 }
 
