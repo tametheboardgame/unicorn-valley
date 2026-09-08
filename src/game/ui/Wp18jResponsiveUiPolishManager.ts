@@ -42,7 +42,12 @@ function normaliseExplorationNavigation(scene: Phaser.Scene): void {
       scene,
       name,
     );
-    object?.setScale(1);
+    // This manager exists to repair the pressed scale if a modal pauses the scene before pointerup.
+    // Do not continuously re-apply scale 1 to already-correct text/icons because that needlessly
+    // invalidates their transforms while the camera is moving and can present as a tiny HUD wobble.
+    if (object && (object.scaleX !== 1 || object.scaleY !== 1)) {
+      object.setScale(1);
+    }
   }
 }
 
