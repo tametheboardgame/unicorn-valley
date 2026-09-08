@@ -98,6 +98,38 @@ describe('SaveService storage fault boundary', () => {
     expect(completed).toEqual(['saved']);
   });
 
+  it('requires the primary write when a repository has no checkpoint support', () => {
+    const repository: SaveRepository = {
+      read: () => null,
+      write: () => {
+        throw new Error('primary quota exceeded');
+      },
+      remove: () => undefined,
+    };
+    const events = new TypedEventBus<GameEventMap>();
+    const completed: string[] = [];
+    events.on('SAVE_COMPLETED', () => completed.push('saved'));
+
+    expect(
+      new SaveService(repository, events).saveWithResult(
+        new SaveService(repository).createNewGame(),
+      ).status,
+    ).toBe('storage-failed');
+    expect(completed).toEqual([]);
+  });
+
+  it('keeps a committed save successful when a SAVE_COMPLETED listener throws', () => {
+    const repository = new FaultRepository();
+    const events = new TypedEventBus<GameEventMap>();
+    events.on('SAVE_COMPLETED', () => {
+      throw new Error('dependent reconciliation failed');
+    });
+    const service = new SaveService(repository, events);
+
+    expect(service.saveWithResult(service.createNewGame()).status).toBe('saved');
+    expect(repository.checkpoints.has(CURRENT_SAVE_SCHEMA_VERSION)).toBe(true);
+  });
+
   it('does not report or emit a three-Shimmer Berry Bun purchase until retry commits', () => {
     const repository = new FaultRepository();
     const events = new TypedEventBus<GameEventMap>();

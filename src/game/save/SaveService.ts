@@ -155,11 +155,26 @@ export class SaveService {
   }
 
   public saveWithResult(save: SaveGame): SaveWriteResult {
+    let result: SaveWriteResult;
     try {
-      return this.saveToRepository(save);
+      result = this.saveToRepository(save);
     } catch {
       return { status: 'storage-failed', save };
     }
+
+    if (result.status === 'saved') {
+      try {
+        this.events.emit('SAVE_COMPLETED', {
+          schemaVersion: result.save.schemaVersion,
+          savedAt: result.save.lastSavedAt,
+        });
+      } catch {
+        // The save is already committed. A dependent listener must not turn that
+        // success into a failed purchase that invites the player to pay again.
+      }
+    }
+
+    return result;
   }
 
   private saveToRepository(save: SaveGame): SaveWriteResult {
@@ -183,7 +198,8 @@ export class SaveService {
     const previous = this.readPreferredCurrentRecord(currentPrimary);
     const backupStored = previous === null || this.tryWriteBackup(previous.serialised);
     const serialisedNext = JSON.stringify(nextSave);
-    if (!this.tryWriteCheckpoint(serialisedNext)) {
+    const supportsCheckpoints = this.repository.writeSchemaCheckpoint !== undefined;
+    if (supportsCheckpoints && !this.tryWriteCheckpoint(serialisedNext)) {
       return { status: 'storage-failed', save: nextSave };
     }
 
@@ -191,14 +207,13 @@ export class SaveService {
       return { status: 'blocked-newer-version', save: nextSave };
     }
 
-    if (backupStored) {
+    if (!supportsCheckpoints) {
+      if (!backupStored || !this.tryWritePrimary(serialisedNext)) {
+        return { status: 'storage-failed', save: nextSave };
+      }
+    } else if (backupStored) {
       this.tryWritePrimary(serialisedNext);
     }
-
-    this.events.emit('SAVE_COMPLETED', {
-      schemaVersion: nextSave.schemaVersion,
-      savedAt,
-    });
 
     return { status: 'saved', save: nextSave };
   }
