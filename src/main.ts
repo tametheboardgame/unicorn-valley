@@ -62,12 +62,10 @@ void import('./game/ui/ModalConceptPresentationManager').then(
   },
 );
 
-void import('./game/ui/DesktopConceptPresentationManager').then(
-  async ({ getDesktopConceptPresentationManager }) => {
-    getDesktopConceptPresentationManager(game);
-    const { getDesktopConceptCleanupManager } = await import(
-      './game/ui/DesktopConceptCleanupManager'
-    );
+// The exploration shell itself is now the single concept-grade canvas presentation.
+// Keep the cleanup manager for old world-level copy, but do not layer a second desktop shell over it.
+void import('./game/ui/DesktopConceptCleanupManager').then(
+  ({ getDesktopConceptCleanupManager }) => {
     getDesktopConceptCleanupManager(game);
   },
 );
