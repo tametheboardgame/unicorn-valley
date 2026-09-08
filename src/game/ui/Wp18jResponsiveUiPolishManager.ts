@@ -114,7 +114,8 @@ function moveBagHeaderRowDown(scene: Phaser.Scene): void {
       continue;
     }
 
-    const transform = object as Phaser.GameObjects.GameObject & Phaser.GameObjects.Components.Transform;
+    const transform = object as Phaser.GameObjects.GameObject &
+      Phaser.GameObjects.Components.Transform;
     const isPocketRow =
       transform.x >= 150 && transform.x <= 870 && transform.y >= 143 && transform.y <= 150;
     if (!isPocketRow) {
@@ -233,10 +234,7 @@ function installMapPanning(scene: Phaser.Scene): void {
 
   mapContent.add(movingObjects).setDepth(2);
 
-  const maskShape = scene.add
-    .graphics()
-    .setName('wp18j-map-pan-mask')
-    .setVisible(false);
+  const maskShape = scene.add.graphics().setName('wp18j-map-pan-mask').setVisible(false);
   maskShape.fillStyle(0xffffff, 1);
   maskShape.fillRoundedRect(124, 148, 1032, 422, 17);
   const mask = maskShape.createGeometryMask();
