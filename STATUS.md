@@ -12,27 +12,29 @@ R6.5 - Valley Completeness and Breadth, human-playtest remediation.
 
 Path: `docs/work-packages/R6.5-WP18K-ARCHITECTURE-CONSOLIDATION-LEGACY-RETIREMENT.md`
 
-State: **ready for Work-mode execution after WP18I/J integration**.
+State: **ready for Work-mode execution**.
 
 ## Accepted baseline
 
 R0-R6 are complete. R6.5-WP1 through WP16 are integrated. WP17 remains open because the daughter playthrough did not release R7 readiness.
 
-WP18A-G are complete. WP18I and WP18J are now **human visually approved** following the 2026-09-08 responsive UI remediation and final Map clipping correction.
+WP18A-G are complete. WP18I and WP18J are **human visually approved** following the 2026-09-08 responsive UI remediation and final Map clipping correction, and were integrated to `main` through PR #158.
+
+Integration commit: `45c858edc4537d49621a644d8131e0e4affe2f3b`.
 
 Final approved WP18I/J game-code head: `e4d64c0fa258bd91eb29579321e7da6b0968f71e`.
 
 Final approved immutable preview: `https://8292d7b9.unicorn-valley.pages.dev`.
 
-Exact-head validation:
+Validation evidence:
 
-- project contract: passing;
+- AI project contract: passing on the integrated handoff;
 - formatting/lint/type-check: passing;
 - unit tests: passing;
 - production build/static smoke: passing;
 - hard 520 KiB application-entry budget: passing;
-- Chromium/Firefox/WebKit compatibility: **48 passed / 15 skipped / 0 failed**;
-- full serial Chromium playtest: still running when this handoff record was prepared; its final result must be read before WP18K closes, but it does not invalidate the already-green core/compatibility evidence.
+- Chromium/Firefox/WebKit compatibility on the final approved game-code head: **48 passed / 15 skipped / 0 failed**;
+- the full serial Chromium playtest is still running in CI and must be reviewed before WP18K closes; it is not a blocker to beginning the architecture audit because the accepted code already has green core and cross-browser evidence.
 
 ## Canonical UI state to preserve
 
@@ -79,7 +81,7 @@ R7 remains blocked.
 
 ## Production
 
-No new production deployment is authorised by this status update. Repo integration and Work-mode preparation do not waive the existing production-approval rule.
+Merging the approved WP18I/J integration to `main` on 2026-09-08 automatically triggered the repository's Cloudflare Pages deployment, which completed successfully. Future production deployments still require explicit user approval.
 
 ## Chat disposition
 
