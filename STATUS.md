@@ -8,7 +8,7 @@ Last updated: 2026-09-08
 
 Path: `docs/work-packages/R6.5-WP18K-ARCHITECTURE-CONSOLIDATION-LEGACY-RETIREMENT.md`
 
-State: **in progress**. David accepted WP19A's bounded qualification, authorised merging/deploying PRs #159/#160 and starting WP18K. Both PRs are merged; the production baseline is main `d8f3de6f264fa5fd6e2d77d539a47f288eb50cd4`. WP18K K1 ownership/removal evidence is recorded before implementation deletion.
+State: **implementation complete; technical qualification in progress**. David accepted WP19A's bounded qualification, authorised merging/deploying PRs #159/#160 and starting WP18K. Both PRs are merged; the production baseline is main `d8f3de6f264fa5fd6e2d77d539a47f288eb50cd4`. WP18K K1 ownership/removal evidence preceded implementation. K2-K4 consolidated Bag/Map ownership and removed five proven legacy managers/bridges. Core validation passes; current-head compatibility and serial browser CI are running, and David's visual gate remains pending.
 
 Read first:
 
@@ -73,10 +73,11 @@ Documentation-only branch: `agent/r6.5-whole-game-audit-plan`. David explicitly 
 
 ## Next action
 
-Execute WP18K K2-K5 from the recorded architecture map, publish one draft PR,
-complete technical/browser evidence and stop for David's visual-regression spot
-check. The next approved package after K is WP19B. Full integrated browser
-closure remains WP19I; future visual and replay gates remain.
+Review current-head browser/compatibility CI and classify every failure, skip or
+unfinished case against the WP19A ledger. When technical evidence is complete,
+David checks the immutable preview across the four display classes using the
+package checklist. Stop at that visual gate. The next approved package after K
+is WP19B; full integrated closure remains WP19I.
 
 ## Implementation delivery
 
@@ -85,4 +86,4 @@ One draft PR targets main. No merge or production deployment is authorised.
 
 ## Codex execution
 
-Implementation PR: https://github.com/tametheboardgame/unicorn-valley/pull/160. Dispatch: issuecomment-5584158968. Codex initially replied in issuecomment-5584160637 that an environment was required. David confirmed “environment made”; the authorised retry executed in the existing PR branch. The former setup blocker is resolved. Local browser launch is separately blocked by missing system libraries, so CI is the remaining technical evidence source.
+Implementation PR: https://github.com/tametheboardgame/unicorn-valley/pull/161. Dispatch: issuecomment-5584158968. Codex initially replied in issuecomment-5584160637 that an environment was required. David confirmed “environment made”; the authorised retry executed in the existing PR branch. The former setup blocker is resolved. Local browser launch is separately blocked by missing system libraries, so CI is the remaining technical evidence source.
