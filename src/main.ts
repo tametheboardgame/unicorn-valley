@@ -1,11 +1,11 @@
 import Phaser from 'phaser';
 import './style.css';
+import './portraitConceptControls.css';
 import './titlePortraitControls.css';
 import { gameConfig } from './game/config/gameConfig';
 import { getClickToMoveManager } from './game/input/ClickToMoveManager';
 import { getContinueRestoreManager } from './game/save/ContinueRestoreManager';
 import { getVillageInteriorContractManager } from './game/scenes/VillageInteriorContractManager';
-import { getExplorationShellWorldManager } from './game/ui/ExplorationShellWorldManager';
 import { getLandscapeCreatorProgressiveWorldManager } from './game/ui/LandscapeCreatorProgressiveManager';
 import { browserHasRaceTouchCapability } from './game/ui/RaceTouchCapability';
 import { getTitlePortraitControlsManager } from './game/ui/TitlePortraitControlsManager';
@@ -26,7 +26,6 @@ if (diagnosticsEnabled) {
 
 getClickToMoveManager(game);
 getContinueRestoreManager(game);
-getExplorationShellWorldManager(game);
 getLandscapeCreatorProgressiveWorldManager(game);
 getTitlePortraitControlsManager(game);
 getExplorationGeometryPresentationManager(game);
@@ -34,6 +33,58 @@ getExplorationPathPolishManager(game);
 getWorldLayerAlignmentManager(game);
 getR5FinalTighteningManager(game);
 getVillageInteriorContractManager(game);
+
+void Promise.all([
+  import('./game/scenes/InventoryScene'),
+  import('./game/scenes/WonderbookScene'),
+  import('./game/scenes/ShopScene'),
+]).then(([{ InventoryScene }, { WonderbookScene }, { ShopScene }]) => {
+  if (!game.scene.keys.InventoryScene) {
+    game.scene.add('InventoryScene', InventoryScene);
+  }
+  if (!game.scene.keys.WonderbookScene) {
+    game.scene.add('WonderbookScene', WonderbookScene);
+  }
+  if (!game.scene.keys.ShopScene) {
+    game.scene.add('ShopScene', ShopScene);
+  }
+});
+
+void import('./game/ui/ExplorationShellWorldManager').then(
+  ({ getExplorationShellWorldManager }) => {
+    getExplorationShellWorldManager(game);
+  },
+);
+
+void import('./game/ui/ModalConceptPresentationManager').then(
+  ({ getModalConceptPresentationManager }) => {
+    getModalConceptPresentationManager(game);
+  },
+);
+
+// The exploration shell itself is now the single concept-grade canvas presentation.
+// Keep the cleanup manager for old world-level copy, but do not layer a second desktop shell over it.
+void import('./game/ui/DesktopConceptCleanupManager').then(
+  ({ getDesktopConceptCleanupManager }) => {
+    getDesktopConceptCleanupManager(game);
+  },
+);
+
+void import('./game/ui/PortraitConceptPresentationManager').then(
+  ({ getPortraitConceptPresentationManager }) => {
+    getPortraitConceptPresentationManager(game);
+  },
+);
+
+void import('./game/ui/Wp18jResponsiveUiPolishManager').then(
+  ({ getWp18jResponsiveUiPolishManager }) => {
+    getWp18jResponsiveUiPolishManager(game);
+  },
+);
+
+void import('./game/ui/Wp18jMapViewportClipManager').then(({ getWp18jMapViewportClipManager }) => {
+  getWp18jMapViewportClipManager(game);
+});
 
 void import('./game/economy/EconomyRewardWorldManager').then(({ getEconomyRewardWorldManager }) => {
   getEconomyRewardWorldManager();

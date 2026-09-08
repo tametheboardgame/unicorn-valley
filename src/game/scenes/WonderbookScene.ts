@@ -96,7 +96,7 @@ export class WonderbookScene extends Phaser.Scene {
     this.spreadIndex = 0;
     this.horizontalInputLatched = false;
     this.sectionTabs.clear();
-    this.cameras.main.setBackgroundColor('#5f4679');
+    this.cameras.main.setBackgroundColor('#503960');
 
     this.createBook();
 
@@ -206,92 +206,141 @@ export class WonderbookScene extends Phaser.Scene {
   }
 
   private createBook(): void {
-    this.add.circle(135, 110, 58, 0xffe6a6, 0.08);
-    this.add.circle(1145, 585, 86, 0xead8f3, 0.08);
-    this.add
-      .text(95, 54, '✦', {
-        color: '#f9e7a9',
-        fontFamily: UI_FONT,
-        fontSize: '28px',
-      })
-      .setAlpha(0.6);
-    this.add
-      .text(1160, 82, '✦', {
-        color: '#ead8f3',
-        fontFamily: UI_FONT,
-        fontSize: '24px',
-      })
-      .setAlpha(0.65);
-
-    const book = this.add.graphics().setDepth(2);
-    book.fillStyle(0x3f2f4d, 0.28);
-    book.fillRoundedRect(82, 66, 1116, 556, 34);
-    book.fillStyle(0x8d5f86, 1);
-    book.fillRoundedRect(72, 54, 1116, 556, 34);
-    book.lineStyle(5, 0xc895b8, 1);
-    book.strokeRoundedRect(72, 54, 1116, 556, 34);
-    book.fillStyle(0xfff8e9, 1);
-    book.fillRoundedRect(102, 76, 522, 508, 28);
-    book.fillRoundedRect(636, 76, 522, 508, 28);
-    book.lineStyle(3, 0xe8d8c4, 1);
-    book.strokeRoundedRect(102, 76, 522, 508, 28);
-    book.strokeRoundedRect(636, 76, 522, 508, 28);
-    book.fillStyle(0x6f486d, 0.34);
-    book.fillRoundedRect(618, 72, 24, 516, 12);
-    book.fillStyle(0xffffff, 0.5);
-    book.fillRoundedRect(626, 82, 5, 496, 3);
-
-    book.lineStyle(2, 0xe9ddca, 0.7);
-    for (const y of [360, 520]) {
-      book.lineBetween(132, y, 592, y);
-      book.lineBetween(668, y, 1128, y);
+    this.add.circle(105, 92, 70, 0xffdd91, 0.08);
+    this.add.circle(1188, 575, 104, 0xe9c9f4, 0.08);
+    for (const [x, y, size] of [
+      [92, 55, 26],
+      [1180, 78, 22],
+      [1210, 246, 16],
+      [54, 492, 18],
+    ] as const) {
+      this.add
+        .text(x, y, '✦', {
+          color: '#f6df9f',
+          fontFamily: UI_FONT,
+          fontSize: `${size}px`,
+        })
+        .setOrigin(0.5)
+        .setAlpha(0.55);
     }
 
+    const book = this.add.graphics().setDepth(2).setName('wonderbook-themed-book');
+    book.fillStyle(0x241a2a, 0.34);
+    book.fillRoundedRect(78, 68, 1124, 548, 38);
+
+    book.fillStyle(0x704766, 1);
+    book.fillRoundedRect(62, 48, 1156, 556, 38);
+    book.lineStyle(6, 0xb97a9f, 1);
+    book.strokeRoundedRect(62, 48, 1156, 556, 38);
+    book.lineStyle(2, 0xe2b2c6, 0.72);
+    book.strokeRoundedRect(74, 60, 1132, 532, 30);
+
+    book.fillStyle(0x9c6a82, 1);
+    book.fillRoundedRect(91, 69, 533, 515, 29);
+    book.fillRoundedRect(636, 69, 533, 515, 29);
+    book.fillStyle(0xe8d1a6, 1);
+    book.fillRoundedRect(97, 74, 527, 508, 27);
+    book.fillRoundedRect(636, 74, 527, 508, 27);
+
+    book.fillStyle(0xfff7df, 1);
+    book.fillRoundedRect(104, 78, 516, 500, 24);
+    book.fillStyle(0xfff3d9, 1);
+    book.fillRoundedRect(640, 78, 516, 500, 24);
+    book.lineStyle(2, 0xd7c29f, 0.9);
+    book.strokeRoundedRect(104, 78, 516, 500, 24);
+    book.strokeRoundedRect(640, 78, 516, 500, 24);
+
+    book.fillStyle(0xdabf91, 0.34);
+    for (const y of [88, 96, 568]) {
+      book.fillRoundedRect(116, y, 492, 3, 2);
+      book.fillRoundedRect(652, y, 492, 3, 2);
+    }
+
+    book.fillStyle(0x5a3659, 0.42);
+    book.fillRoundedRect(615, 66, 30, 522, 13);
+    book.fillStyle(0x8d6684, 0.5);
+    book.fillRoundedRect(621, 74, 18, 506, 9);
+    book.fillStyle(0xffffff, 0.38);
+    book.fillRoundedRect(626, 84, 5, 486, 3);
+
+    book.fillStyle(0x7f4f70, 1);
+    book.fillTriangle(360, 48, 403, 48, 382, 84);
+    book.fillTriangle(856, 48, 899, 48, 878, 84);
+    book.fillStyle(0xe5b84f, 0.88);
+    book.fillCircle(382, 62, 8);
+    book.fillCircle(878, 62, 8);
+
+    book.lineStyle(2, 0xd5bd99, 0.7);
+    for (const y of [354, 510]) {
+      book.lineBetween(136, y, 592, y);
+      book.lineBetween(668, y, 1124, y);
+    }
+
+    book.lineStyle(2, 0xb17698, 0.58);
+    for (let x = 116; x < 602; x += 25) {
+      book.lineBetween(x, 566, Math.min(x + 11, 604), 566);
+    }
+    for (let x = 654; x < 1142; x += 25) {
+      book.lineBetween(x, 566, Math.min(x + 11, 1144), 566);
+    }
+
+    book.fillStyle(0x6c4665, 0.48);
+    book.fillRoundedRect(1148, 130, 30, 352, 10);
+
     this.add
-      .text(350, 112, 'My Wonderbook', {
-        color: UI_COLOURS.ink,
+      .text(350, 112, '✦ My Wonderbook ✦', {
+        color: '#5d3f58',
         fontFamily: UI_FONT,
-        fontSize: '32px',
+        fontSize: '30px',
         fontStyle: 'bold',
       })
       .setOrigin(0.5)
       .setDepth(6);
     this.sectionHeading = this.add
-      .text(900, 112, 'Discoveries ✨', {
-        color: UI_COLOURS.ink,
+      .text(875, 112, 'Discoveries ✨', {
+        color: '#5d3f58',
         fontFamily: UI_FONT,
-        fontSize: '27px',
+        fontSize: '26px',
         fontStyle: 'bold',
       })
       .setOrigin(0.5)
       .setDepth(6);
 
     this.leftPageNumber = this.add
-      .text(350, 560, '1', {
-        color: '#a18c92',
+      .text(350, 558, '1', {
+        color: '#947c75',
         fontFamily: UI_FONT,
         fontSize: '14px',
+        fontStyle: 'bold',
       })
       .setOrigin(0.5)
       .setDepth(12);
     this.rightPageNumber = this.add
-      .text(900, 560, '2', {
-        color: '#a18c92',
+      .text(900, 558, '2', {
+        color: '#947c75',
         fontFamily: UI_FONT,
         fontSize: '14px',
+        fontStyle: 'bold',
       })
       .setOrigin(0.5)
       .setDepth(12);
   }
 
   private createSectionTabs(): void {
-    const startX = 260;
-    const gap = 190;
+    const tabX = 1154;
+    const startY = 158;
+    const gap = 70;
     SECTION_LABELS.forEach((section, index) => {
+      const y = startY + index * gap;
+      this.add
+        .rectangle(tabX + 7, y + 4, 112, 48, 0x2f1d43, 0.14)
+        .setOrigin(0, 0.5)
+        .setDepth(16)
+        .setName(`wonderbook-section-shadow:${section.id}`);
       const tab = this.add
-        .text(startX + index * gap, 154, section.label, this.tabStyle(section.id === 'discoveries'))
+        .text(tabX, y, section.label, this.tabStyle(section.id === 'discoveries'))
         .setName(`wonderbook-section-${section.id}`)
-        .setOrigin(0.5)
+        .setOrigin(0, 0.5)
         .setDepth(18)
         .setInteractive({ useHandCursor: true });
       tab.on('pointerdown', () => this.setSection(section.id));
@@ -301,13 +350,13 @@ export class WonderbookScene extends Phaser.Scene {
 
   private createDiscoveryFilters(): void {
     this.allTab = this.add
-      .text(810, 198, '✦ All adventures', this.filterStyle(true))
+      .text(790, 178, '✦ All adventures', this.filterStyle(true))
       .setName('wonderbook-tab-all')
       .setOrigin(0.5)
       .setDepth(18)
       .setInteractive({ useHandCursor: true });
     this.secretsTab = this.add
-      .text(1030, 198, '★ Secrets', this.filterStyle(false))
+      .text(1015, 178, '★ Secrets', this.filterStyle(false))
       .setName('wonderbook-tab-secrets')
       .setOrigin(0.5)
       .setDepth(18)
@@ -320,12 +369,12 @@ export class WonderbookScene extends Phaser.Scene {
   private createPageControls(): void {
     this.previousButton = this.add
       .text(126, 608, '◀ Previous', {
-        color: '#5f4679',
+        color: '#fff6df',
         fontFamily: UI_FONT,
         fontSize: '17px',
         fontStyle: 'bold',
-        backgroundColor: '#f5e7f1',
-        padding: { x: 14, y: 12 },
+        backgroundColor: '#79536f',
+        padding: { x: 15, y: 12 },
       })
       .setName('wonderbook-previous-page')
       .setOrigin(0, 0.5)
@@ -333,12 +382,12 @@ export class WonderbookScene extends Phaser.Scene {
       .setInteractive({ useHandCursor: true });
     this.nextButton = this.add
       .text(GAME_WIDTH - 126, 608, 'Next ▶', {
-        color: '#5f4679',
+        color: '#fff6df',
         fontFamily: UI_FONT,
         fontSize: '17px',
         fontStyle: 'bold',
-        backgroundColor: '#f5e7f1',
-        padding: { x: 14, y: 12 },
+        backgroundColor: '#79536f',
+        padding: { x: 15, y: 12 },
       })
       .setName('wonderbook-next-page')
       .setOrigin(1, 0.5)
@@ -352,23 +401,25 @@ export class WonderbookScene extends Phaser.Scene {
   private createSummary(): void {
     this.summaryText = this.add
       .text(104, GAME_HEIGHT - 30, '', {
-        color: '#ead8f3',
+        color: '#f2dcef',
         fontFamily: UI_FONT,
         fontSize: '14px',
         fontStyle: 'bold',
+        backgroundColor: '#432f50b8',
+        padding: { x: 10, y: 6 },
       })
       .setOrigin(0, 0.5)
       .setName('wonderbook-discovery-count');
   }
 
-  private renderSpread(): void {
+  private renderSpread(horizontalOffset = 0): void {
     this.pageContent?.destroy(true);
     const spread = this.spreads[this.spreadIndex];
     if (!spread) {
       return;
     }
 
-    const yStart = this.activeSection === 'discoveries' ? 238 : 210;
+    const yStart = this.activeSection === 'discoveries' ? 218 : 202;
     const rowGap = this.activeSection === 'discoveries' ? 148 : 156;
     const objects: Phaser.GameObjects.GameObject[] = [];
     spread.left.forEach((entry, index) => {
@@ -386,12 +437,13 @@ export class WonderbookScene extends Phaser.Scene {
     }
 
     this.pageContent = this.add
-      .container(0, 5, objects)
+      .container(horizontalOffset, 5, objects)
       .setName('wonderbook-page-content')
       .setAlpha(0)
       .setDepth(8);
     this.tweens.add({
       targets: this.pageContent,
+      x: 0,
       y: 0,
       alpha: 1,
       duration: 220,
@@ -501,8 +553,19 @@ export class WonderbookScene extends Phaser.Scene {
   }
 
   private createCard(entry: WonderbookCard, x: number, y: number): Phaser.GameObjects.GameObject[] {
+    const paper = this.add.graphics().setName(`wonderbook-card:${entry.id}`);
+    paper.fillStyle(0x8d6a75, 0.09);
+    paper.fillRoundedRect(x + 3, y + 4, 438, 132, 15);
+    paper.fillStyle(entry.known ? 0xfff9e8 : 0xf2eadf, 0.88);
+    paper.fillRoundedRect(x, y, 438, 132, 15);
+    paper.lineStyle(2, entry.celebrate ? 0xd2aa58 : 0xd5c3a7, 0.82);
+    paper.strokeRoundedRect(x, y, 438, 132, 15);
+    paper.fillStyle(entry.celebrate ? 0xffd976 : 0xc999b2, entry.known ? 0.24 : 0.13);
+    paper.fillRoundedRect(x + 8, y + 8, 7, 116, 4);
+
     const stickerColour = entry.celebrate ? 0xffe6a6 : entry.known ? 0xead8f3 : 0xe9e0ea;
-    const stickerStroke = entry.celebrate ? 0xd6b35f : entry.known ? 0xc895b8 : 0xc7b5ca;
+    const stickerStroke = entry.celebrate ? 0xd6b35f : entry.known ? 0xb97b9e : 0xbcaabf;
+    const stickerShadow = this.add.circle(x + 45, y + 46, 37, 0x5b4254, 0.12);
     const sticker = this.add
       .circle(x + 42, y + 42, 36, stickerColour, 1)
       .setName(`wonderbook-sticker:${entry.id}`)
@@ -515,33 +578,42 @@ export class WonderbookScene extends Phaser.Scene {
         fontStyle: 'bold',
       })
       .setOrigin(0.5);
-    const title = this.add.text(x + 94, y + 4, entry.title, {
+    const title = this.add.text(x + 94, y + 9, entry.title, {
       color: UI_COLOURS.ink,
       fontFamily: UI_FONT,
-      fontSize: '20px',
+      fontSize: '19px',
       fontStyle: 'bold',
-      wordWrap: { width: 342 },
+      wordWrap: { width: 326 },
       maxLines: 2,
     });
-    const description = this.add.text(x + 94, y + 43, entry.description, {
+    const description = this.add.text(x + 94, y + 46, entry.description, {
       color: entry.known ? UI_COLOURS.softInk : UI_COLOURS.mutedInk,
       fontFamily: UI_FONT,
       fontSize: '14px',
-      wordWrap: { width: 342 },
+      wordWrap: { width: 326 },
       lineSpacing: 2,
       maxLines: 3,
     });
-    const objects: Phaser.GameObjects.GameObject[] = [sticker, icon, title, description];
+    const objects: Phaser.GameObjects.GameObject[] = [
+      paper,
+      stickerShadow,
+      sticker,
+      icon,
+      title,
+      description,
+    ];
 
     if (entry.badge) {
       objects.push(
-        this.add.text(x + 94, y + 112, entry.badge, {
-          color: entry.celebrate ? '#8b653e' : '#765e75',
+        this.add.text(x + 94, y + 107, entry.badge, {
+          color: entry.celebrate ? '#835f34' : '#765e75',
           fontFamily: UI_FONT,
-          fontSize: '13px',
+          fontSize: '12px',
           fontStyle: 'bold',
-          wordWrap: { width: 342 },
-          maxLines: 2,
+          backgroundColor: entry.celebrate ? '#fff0bd' : '#efe1eb',
+          padding: { x: 6, y: 3 },
+          wordWrap: { width: 326 },
+          maxLines: 1,
         }),
       );
     }
@@ -586,12 +658,14 @@ export class WonderbookScene extends Phaser.Scene {
       message = 'These are ideas for later, never chores 🌟';
     }
     return this.add
-      .text(x, y, message, {
+      .text(x, y, `✦ ${message} ✦`, {
         color: UI_COLOURS.mutedInk,
         fontFamily: UI_FONT,
         fontSize: '18px',
         fontStyle: 'bold',
         align: 'center',
+        backgroundColor: '#f5ead8',
+        padding: { x: 16, y: 12 },
         wordWrap: { width: 360 },
       })
       .setOrigin(0.5);
@@ -601,11 +675,13 @@ export class WonderbookScene extends Phaser.Scene {
     if (this.activeSection === section) {
       return;
     }
+    const currentIndex = SECTION_LABELS.findIndex(({ id }) => id === this.activeSection);
+    const nextIndex = SECTION_LABELS.findIndex(({ id }) => id === section);
     this.activeSection = section;
     this.spreadIndex = 0;
     this.rebuildSpreads();
     this.refreshSectionChrome();
-    this.renderSpread();
+    this.renderSpread(nextIndex >= currentIndex ? 22 : -22);
   }
 
   private setDiscoveryFilter(filter: DiscoveryFilter): void {
@@ -759,22 +835,22 @@ export class WonderbookScene extends Phaser.Scene {
 
   private tabStyle(selected: boolean): Phaser.Types.GameObjects.Text.TextStyle {
     return {
-      color: selected ? UI_COLOURS.ink : UI_COLOURS.softInk,
+      color: selected ? '#5e422e' : '#fff6e8',
       fontFamily: UI_FONT,
-      fontSize: '16px',
+      fontSize: '15px',
       fontStyle: 'bold',
-      backgroundColor: selected ? '#ffe6a6' : '#ead8f3',
+      backgroundColor: selected ? '#f2c86f' : '#8d5d7c',
       padding: { x: 13, y: 11 },
     };
   }
 
   private filterStyle(selected: boolean): Phaser.Types.GameObjects.Text.TextStyle {
     return {
-      color: selected ? UI_COLOURS.ink : UI_COLOURS.softInk,
+      color: selected ? '#5e422e' : UI_COLOURS.softInk,
       fontFamily: UI_FONT,
       fontSize: '14px',
       fontStyle: 'bold',
-      backgroundColor: selected ? '#ffe6a6' : '#f2e9f3',
+      backgroundColor: selected ? '#f4d58d' : '#eee0e9',
       padding: { x: 12, y: 8 },
     };
   }
@@ -785,7 +861,7 @@ export class WonderbookScene extends Phaser.Scene {
       return;
     }
     this.spreadIndex = nextIndex;
-    this.renderSpread();
+    this.renderSpread(direction * 14);
   }
 
   private closeBook(): void {

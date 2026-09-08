@@ -3,12 +3,7 @@ import { isReducedMotionEnabled } from '../accessibility/AccessibilitySettings';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
 import { UI_COLOURS, UI_FONT } from '../ui/uiTheme';
 
-const UI_SCENES = new Set([
-  'InventoryScene',
-  'ShopScene',
-  'CottageDecorateScene',
-  'WonderbookScene',
-]);
+const UI_SCENES = new Set(['ShopScene', 'CottageDecorateScene']);
 
 interface FrameSpec {
   x: number;
@@ -21,14 +16,6 @@ interface FrameSpec {
 }
 
 const FRAME_SPECS: Readonly<Record<string, FrameSpec>> = {
-  InventoryScene: {
-    x: 72,
-    y: 28,
-    width: 1136,
-    height: 664,
-    depth: 30,
-    label: 'MY BAG',
-  },
   ShopScene: {
     x: 52,
     y: 22,
@@ -44,15 +31,6 @@ const FRAME_SPECS: Readonly<Record<string, FrameSpec>> = {
     height: 696,
     depth: 20,
     label: 'COTTAGE DECORATING',
-  },
-  WonderbookScene: {
-    x: 62,
-    y: 44,
-    width: 1136,
-    height: 576,
-    depth: 14,
-    label: 'ADVENTURE SCRAPBOOK',
-    labelCentered: true,
   },
 };
 

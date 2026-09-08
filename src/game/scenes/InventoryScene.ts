@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import type { ItemId } from '../../content/contentTypes';
-import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
+import { GAME_WIDTH } from '../config/gameConstants';
 import { ShimmerEconomyService } from '../economy/ShimmerEconomyService';
 import { InputController } from '../input/InputController';
 import { KeyboardInputAdapter } from '../input/KeyboardInputAdapter';
@@ -68,43 +68,52 @@ export class InventoryScene extends Phaser.Scene {
     this.bagScrollOffset = 0;
     this.bagInitialised = false;
     this.bagFeedback = '';
-    this.cameras.main.setBackgroundColor('rgba(69, 50, 78, 0.92)');
+    this.cameras.main.setBackgroundColor('rgba(55, 37, 64, 0.94)');
 
-    this.add
-      .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, 1200, 660, 0xfff6e8, 0.99)
-      .setStrokeStyle(8, 0xd6a9d5, 1)
-      .setName('inventory-modal-panel');
+    const shell = this.add.graphics().setName('inventory-modal-panel');
+    shell.fillStyle(0x211827, 0.24);
+    shell.fillRoundedRect(49, 42, 1200, 660, 34);
+    shell.fillStyle(this.activeView === 'map' ? 0x8f7153 : 0x875671, 1);
+    shell.fillRoundedRect(40, 30, 1200, 660, 34);
+    shell.lineStyle(5, this.activeView === 'map' ? 0xd7b878 : 0xc98eb7, 1);
+    shell.strokeRoundedRect(40, 30, 1200, 660, 34);
+    shell.fillStyle(0xfff5df, 1);
+    shell.fillRoundedRect(54, 44, 1172, 632, 26);
+    shell.fillStyle(this.activeView === 'map' ? 0xead5a8 : 0xead4ee, 0.24);
+    shell.fillRoundedRect(68, 48, 1144, 58, 18);
+    shell.lineStyle(2, this.activeView === 'map' ? 0xc8a66c : 0xddbdcf, 0.48);
+    shell.lineBetween(72, 108, 1208, 108);
 
     this.viewBadge = this.add
-      .text(112, 68, this.activeView === 'map' ? '🗺️ MAP' : '🎒 BAG', {
-        color: '#5d4369',
+      .text(124, 72, this.activeView === 'map' ? '🗺️ MAP' : '🎒 BAG', {
+        color: this.activeView === 'map' ? '#5d4936' : '#5d4369',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '18px',
         fontStyle: 'bold',
-        backgroundColor: '#ead4ee',
+        backgroundColor: this.activeView === 'map' ? '#ead5a8' : '#ead4ee',
         padding: { x: 16, y: 10 },
       })
       .setOrigin(0.5)
       .setName('inventory-view-badge');
 
     this.titleText = this.add
-      .text(GAME_WIDTH / 2, 68, this.activeView === 'map' ? 'Valley Map' : 'My Bag', {
-        color: '#5a4265',
+      .text(GAME_WIDTH / 2, 70, this.activeView === 'map' ? 'Valley Map' : 'My Magical Bag', {
+        color: this.activeView === 'map' ? '#634a35' : '#5a4265',
         fontFamily: 'system-ui, sans-serif',
-        fontSize: '40px',
+        fontSize: '38px',
         fontStyle: 'bold',
       })
       .setOrigin(0.5)
       .setName('inventory-modal-title');
 
     const closeButton = this.add
-      .rectangle(1140, 68, 160, 52, 0xefd6ec, 1)
-      .setStrokeStyle(4, 0xb985bc, 1)
+      .rectangle(1140, 70, 160, 52, this.activeView === 'map' ? 0xead5a8 : 0xefd6ec, 1)
+      .setStrokeStyle(4, this.activeView === 'map' ? 0xb58d56 : 0xb985bc, 1)
       .setInteractive({ useHandCursor: true })
       .setName('bag-close-button');
     this.add
-      .text(1140, 68, '✕ Close', {
-        color: '#5d4369',
+      .text(1140, 70, '✕ Close', {
+        color: this.activeView === 'map' ? '#5d4936' : '#5d4369',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '19px',
         fontStyle: 'bold',
@@ -144,7 +153,7 @@ export class InventoryScene extends Phaser.Scene {
 
   private renderView(): void {
     this.clearViewObjects();
-    this.titleText?.setText(this.activeView === 'map' ? 'Valley Map' : 'My Bag');
+    this.titleText?.setText(this.activeView === 'map' ? 'Valley Map' : 'My Magical Bag');
     this.viewBadge?.setText(this.activeView === 'map' ? '🗺️ MAP' : '🎒 BAG');
     if (this.activeView === 'map') {
       this.renderMap();
@@ -176,49 +185,98 @@ export class InventoryScene extends Phaser.Scene {
       this.selectedItemId = pocketItems[0]?.definition.id ?? null;
     }
 
+    const satchel = this.add.graphics().setName('bag-themed-satchel');
+    satchel.fillStyle(0x4b3045, 0.13);
+    satchel.fillRoundedRect(124, 124, 1037, 488, 28);
+    satchel.fillStyle(0xb77b8f, 0.24);
+    satchel.fillRoundedRect(116, 116, 1037, 488, 28);
+    satchel.lineStyle(3, 0x925971, 0.7);
+    satchel.strokeRoundedRect(116, 116, 1037, 488, 28);
+    satchel.fillStyle(0xe4bbc6, 0.24);
+    satchel.fillRoundedRect(132, 126, 1005, 49, 16);
+    satchel.fillStyle(0xf7e4d1, 0.92);
+    satchel.fillRoundedRect(132, 180, 1005, 408, 20);
+    satchel.lineStyle(2, 0xa96d81, 0.42);
+    satchel.strokeRoundedRect(132, 180, 1005, 408, 20);
+    this.track(satchel);
+
     this.track(
       this.add
-        .text(1050, 126, `✨ ${economy.getBalance()} Shimmer`, {
-          color: '#76518a',
+        .text(1040, 145, `✨ ${economy.getBalance()} Shimmer`, {
+          color: '#69435d',
           fontFamily: 'system-ui, sans-serif',
           fontSize: '17px',
           fontStyle: 'bold',
-          backgroundColor: '#f1e2f4',
-          padding: { x: 13, y: 7 },
+          backgroundColor: '#f4d9df',
+          padding: { x: 14, y: 8 },
         })
         .setOrigin(0.5)
         .setName('bag-shimmer-balance'),
     );
 
     BAG_POCKETS.forEach((pocket, index) => {
-      const x = 235 + index * 185;
+      const x = 230 + index * 185;
       const selected = pocket.id === this.activePocket;
+      const tabShadow = this.add
+        .rectangle(x + 3, 149, 170, 54, 0x4d3243, 0.13)
+        .setName(`bag-pocket-shadow:${pocket.id}`);
       const tab = this.add
-        .rectangle(x, 132, 170, 54, selected ? 0xe1c1e3 : 0xf2e4f3, 1)
-        .setStrokeStyle(4, selected ? 0xa56ba6 : 0xc8a9c8, 1)
+        .rectangle(x, 145, 170, 54, selected ? 0xf3d9a4 : 0xd8a8b8, 1)
+        .setStrokeStyle(3, selected ? 0xb7834e : 0x9a6479, 1)
         .setInteractive({ useHandCursor: true })
         .setName(`bag-pocket:${pocket.id}`);
+      const hole = this.add
+        .circle(x - 71, 145, 6, 0x8c5c70, 0.82)
+        .setStrokeStyle(2, 0xf4d7df, 0.68);
       const label = this.add
-        .text(x, 132, `${pocket.icon} ${pocket.label} ${grouped[pocket.id].length}`, {
-          color: '#5d4369',
+        .text(x + 5, 145, `${pocket.icon} ${pocket.label}  ${grouped[pocket.id].length}`, {
+          color: selected ? '#664631' : '#5d4360',
           fontFamily: 'system-ui, sans-serif',
           fontSize: '16px',
           fontStyle: 'bold',
         })
         .setOrigin(0.5);
       tab.on('pointerdown', () => this.selectPocket(pocket.id));
-      this.track(tab, label);
+      this.track(tabShadow, tab, hole, label);
     });
+
+    const listPanel = this.add.graphics().setName('bag-list-panel');
+    listPanel.fillStyle(0x573d4f, 0.1);
+    listPanel.fillRoundedRect(146, 194, 710, 393, 21);
+    listPanel.fillStyle(0xfff7e7, 1);
+    listPanel.fillRoundedRect(140, 188, 710, 393, 21);
+    listPanel.lineStyle(3, 0xc28da0, 0.75);
+    listPanel.strokeRoundedRect(140, 188, 710, 393, 21);
+
+    const detailPanel = this.add.graphics().setName('bag-detail-panel');
+    detailPanel.fillStyle(0x573d4f, 0.11);
+    detailPanel.fillRoundedRect(875, 194, 272, 393, 21);
+    detailPanel.fillStyle(0xf7e8e3, 1);
+    detailPanel.fillRoundedRect(869, 188, 272, 393, 21);
+    detailPanel.lineStyle(3, 0xb87a94, 0.82);
+    detailPanel.strokeRoundedRect(869, 188, 272, 393, 21);
+    detailPanel.fillStyle(0xe2b6c3, 0.24);
+    detailPanel.fillRoundedRect(887, 202, 236, 43, 13);
+    this.track(listPanel, detailPanel);
 
     this.track(
       this.add
-        .rectangle(495, 388, 710, 420, 0xfffbf2, 1)
-        .setStrokeStyle(4, 0xd6c2d3, 1)
-        .setName('bag-list-panel'),
+        .text(170, 208, `${this.pocketLabel(this.activePocket)} pocket`, {
+          color: '#785266',
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '13px',
+          fontStyle: 'bold',
+        })
+        .setOrigin(0, 0.5),
       this.add
-        .rectangle(1020, 388, 330, 420, 0xf8edf8, 1)
-        .setStrokeStyle(4, 0xc8a3ca, 1)
-        .setName('bag-detail-panel'),
+        .text(1005, 223, 'TREASURE TAG', {
+          color: '#7e5669',
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '12px',
+          fontStyle: 'bold',
+          letterSpacing: 1.5,
+        })
+        .setOrigin(0.5),
     );
 
     if (pocketItems.length === 0) {
@@ -254,12 +312,12 @@ export class InventoryScene extends Phaser.Scene {
     this.renderBagDetail(selected ?? null, inventory);
 
     const shopButton = this.add
-      .rectangle(1020, 642, 300, 58, 0xffe6a6, 1)
-      .setStrokeStyle(4, 0xd6b35f, 1)
+      .rectangle(1005, 628, 286, 58, 0xffdfa0, 1)
+      .setStrokeStyle(4, 0xc08a4f, 1)
       .setInteractive({ useHandCursor: true })
       .setName('bag-shop-button');
     const shopLabel = this.add
-      .text(1020, 642, '✨ Visit the Shop', {
+      .text(1005, 628, '✨ Visit the Shop', {
         color: '#5d4369',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '19px',
@@ -276,54 +334,78 @@ export class InventoryScene extends Phaser.Scene {
     const column = index % 2;
     const row = Math.floor(index / 2);
     const x = 315 + column * 350;
-    const y = 245 + row * 112;
+    const y = 268 + row * 104;
     const selected = item.definition.id === this.selectedItemId;
     const presentation = getItemPresentation(item.definition);
+
+    if (selected) {
+      this.track(
+        this.add.rectangle(x + 3, y + 4, 324, 88, 0xd09a66, 0.2).setStrokeStyle(6, 0xe4b85f, 0.32),
+      );
+    }
+
     const tile = this.add
-      .rectangle(x, y, 320, 92, selected ? 0xead0e9 : 0xfff7e9, 1)
-      .setStrokeStyle(4, selected ? 0xa45f9f : 0xd8bdd2, 1)
+      .rectangle(x, y, 316, 82, selected ? 0xffe6b7 : 0xfffbef, 1)
+      .setStrokeStyle(4, selected ? 0xb67873 : 0xd1a4ad, 1)
       .setInteractive({ useHandCursor: true })
       .setName(`bag-item-tile:${item.definition.id}`);
+    const iconWell = this.add
+      .circle(x - 124, y, 30, selected ? 0xe7b5a4 : 0xf0d7cf, 1)
+      .setStrokeStyle(3, selected ? 0xa86978 : 0xc995a4, 0.9);
     const icon = this.add
-      .text(x - 125, y, presentation.icon, {
+      .text(x - 124, y, presentation.icon, {
         fontFamily: 'system-ui, sans-serif',
-        fontSize: '36px',
+        fontSize: '32px',
       })
       .setOrigin(0.5);
     const name = this.add
-      .text(x - 88, y - 18, item.definition.name, {
+      .text(x - 82, y - 14, item.definition.name, {
         color: '#5b4662',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '17px',
         fontStyle: 'bold',
-        wordWrap: { width: 182 },
+        wordWrap: { width: 174 },
       })
       .setOrigin(0, 0.5);
     const quantity = this.add
-      .text(x + 118, y + 23, `×${item.quantity}`, {
-        color: '#76518a',
+      .text(x + 118, y + 20, `×${item.quantity}`, {
+        color: '#714d65',
         fontFamily: 'system-ui, sans-serif',
-        fontSize: '16px',
+        fontSize: '15px',
         fontStyle: 'bold',
-        backgroundColor: '#f0dff2',
+        backgroundColor: selected ? '#f4c98a' : '#ead3d8',
         padding: { x: 7, y: 3 },
       })
       .setOrigin(0.5);
+
+    const objects: Phaser.GameObjects.GameObject[] = [tile, iconWell, icon, name, quantity];
+    if (selected) {
+      objects.push(
+        this.add
+          .text(x + 102, y - 24, 'SELECTED ✦', {
+            color: '#8a5961',
+            fontFamily: 'system-ui, sans-serif',
+            fontSize: '10px',
+            fontStyle: 'bold',
+          })
+          .setOrigin(0.5),
+      );
+    }
 
     tile.on('pointerup', (pointer: Phaser.Input.Pointer) => {
       if (Math.abs(pointer.y - pointer.downY) <= 14) {
         this.selectItem(item.definition.id);
       }
     });
-    this.track(tile, icon, name, quantity);
+    this.track(...objects);
   }
 
   private renderBagScrollAffordance(itemCount: number): void {
     if (itemCount <= BAG_VISIBLE_ITEMS) {
       this.track(
         this.add
-          .text(495, 565, `${itemCount} item${itemCount === 1 ? '' : 's'} in this pocket`, {
-            color: '#8a758b',
+          .text(495, 563, `${itemCount} item${itemCount === 1 ? '' : 's'} tucked in this pocket`, {
+            color: '#8a6674',
             fontFamily: 'system-ui, sans-serif',
             fontSize: '13px',
             fontStyle: 'bold',
@@ -335,50 +417,50 @@ export class InventoryScene extends Phaser.Scene {
 
     const maxOffset = Math.max(1, itemCount - BAG_VISIBLE_ITEMS);
     const progress = this.bagScrollOffset / maxOffset;
-    const trackTop = 235;
-    const trackHeight = 260;
+    const trackTop = 250;
+    const trackHeight = 250;
     const thumbHeight = Math.max(62, trackHeight * (BAG_VISIBLE_ITEMS / itemCount));
     const thumbY = trackTop + thumbHeight / 2 + progress * (trackHeight - thumbHeight);
 
     const up = this.add
-      .rectangle(810, 210, 58, 48, 0xead9ed, 1)
-      .setStrokeStyle(3, 0xb58ab6, 1)
+      .rectangle(810, 224, 54, 42, 0xe5bdc8, 1)
+      .setStrokeStyle(3, 0x9d6e80, 1)
       .setInteractive({ useHandCursor: true })
       .setName('bag-scroll-up');
     const upLabel = this.add
-      .text(810, 210, '▲', {
+      .text(810, 224, '▲', {
         color: '#674c70',
         fontFamily: 'system-ui, sans-serif',
-        fontSize: '21px',
+        fontSize: '19px',
         fontStyle: 'bold',
       })
       .setOrigin(0.5);
     const down = this.add
-      .rectangle(810, 535, 58, 48, 0xead9ed, 1)
-      .setStrokeStyle(3, 0xb58ab6, 1)
+      .rectangle(810, 530, 54, 42, 0xe5bdc8, 1)
+      .setStrokeStyle(3, 0x9d6e80, 1)
       .setInteractive({ useHandCursor: true })
       .setName('bag-scroll-down');
     const downLabel = this.add
-      .text(810, 535, '▼', {
+      .text(810, 530, '▼', {
         color: '#674c70',
         fontFamily: 'system-ui, sans-serif',
-        fontSize: '21px',
+        fontSize: '19px',
         fontStyle: 'bold',
       })
       .setOrigin(0.5);
     const scrollTrack = this.add.rectangle(
       810,
       trackTop + trackHeight / 2,
-      12,
+      10,
       trackHeight,
-      0xddcddd,
+      0xd8b3bd,
       1,
     );
     const scrollThumb = this.add
-      .rectangle(810, thumbY, 22, thumbHeight, 0xa979aa, 1)
+      .rectangle(810, thumbY, 20, thumbHeight, 0x98667d, 1)
       .setName('bag-scroll-thumb');
     const hint = this.add
-      .text(495, 565, `↕ Drag or scroll to see all ${itemCount} items`, {
+      .text(495, 563, `↕ Drag or scroll to see all ${itemCount} items`, {
         color: '#7b687f',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '13px',
@@ -395,7 +477,7 @@ export class InventoryScene extends Phaser.Scene {
     if (!selected) {
       this.track(
         this.add
-          .text(1020, 385, 'Choose an item\nto see it here.', {
+          .text(1005, 390, 'Choose a treasure\nto read its tag.', {
             color: '#806985',
             fontFamily: 'system-ui, sans-serif',
             fontSize: '22px',
@@ -410,53 +492,54 @@ export class InventoryScene extends Phaser.Scene {
 
     const presentation = getItemPresentation(selected.definition);
     this.track(
+      this.add.circle(1005, 286, 52, 0xf1cdbd, 1).setStrokeStyle(4, 0xb8788f, 0.92),
       this.add
-        .text(1020, 245, presentation.icon, {
+        .text(1005, 286, presentation.icon, {
           fontFamily: 'system-ui, sans-serif',
-          fontSize: '58px',
+          fontSize: '52px',
         })
         .setOrigin(0.5),
       this.add
-        .text(1020, 305, selected.definition.name, {
+        .text(1005, 353, selected.definition.name, {
           color: '#59445f',
           fontFamily: 'system-ui, sans-serif',
-          fontSize: '23px',
+          fontSize: '22px',
           fontStyle: 'bold',
           align: 'center',
-          wordWrap: { width: 270 },
+          wordWrap: { width: 235 },
         })
         .setOrigin(0.5),
       this.add
-        .text(1020, 346, `You have ×${selected.quantity}`, {
+        .text(1005, 386, `In your bag: ×${selected.quantity}`, {
           color: '#76518a',
           fontFamily: 'system-ui, sans-serif',
-          fontSize: '16px',
+          fontSize: '14px',
           fontStyle: 'bold',
         })
         .setOrigin(0.5),
       this.add
-        .text(1020, 405, presentation.description, {
+        .text(1005, 438, presentation.description, {
           color: '#6f5b74',
           fontFamily: 'system-ui, sans-serif',
-          fontSize: '16px',
+          fontSize: '15px',
           align: 'center',
-          lineSpacing: 5,
-          wordWrap: { width: 275 },
+          lineSpacing: 4,
+          wordWrap: { width: 235 },
         })
         .setOrigin(0.5),
     );
 
     if (isUsableFood(selected.definition)) {
       const eatButton = this.add
-        .rectangle(1020, 505, 238, 62, 0xffd98f, 1)
+        .rectangle(1005, 522, 218, 52, 0xffd98f, 1)
         .setStrokeStyle(4, 0xd2a95c, 1)
         .setInteractive({ useHandCursor: true })
         .setName(`bag-eat-button:${selected.definition.id}`);
       const eatLabel = this.add
-        .text(1020, 505, `Eat ${presentation.icon}`, {
+        .text(1005, 522, `Eat ${presentation.icon}`, {
           color: '#5d4369',
           fontFamily: 'system-ui, sans-serif',
-          fontSize: '20px',
+          fontSize: '19px',
           fontStyle: 'bold',
         })
         .setOrigin(0.5);
@@ -466,17 +549,17 @@ export class InventoryScene extends Phaser.Scene {
       this.track(
         this.add
           .text(
-            1020,
-            505,
+            1005,
+            522,
             selected.definition.questCritical
               ? 'Kept safe for your adventure'
               : 'A treasure to keep',
             {
-              color: '#7d6880',
+              color: '#7d5668',
               fontFamily: 'system-ui, sans-serif',
-              fontSize: '15px',
+              fontSize: '14px',
               fontStyle: 'bold',
-              backgroundColor: '#eaddec',
+              backgroundColor: '#ead0d7',
               padding: { x: 10, y: 7 },
             },
           )
@@ -487,13 +570,13 @@ export class InventoryScene extends Phaser.Scene {
     if (this.bagFeedback) {
       this.track(
         this.add
-          .text(1020, 562, this.bagFeedback, {
+          .text(1005, 562, this.bagFeedback, {
             color: '#6f4f72',
             fontFamily: 'system-ui, sans-serif',
-            fontSize: '14px',
+            fontSize: '13px',
             fontStyle: 'bold',
             align: 'center',
-            wordWrap: { width: 280 },
+            wordWrap: { width: 240 },
           })
           .setOrigin(0.5)
           .setName('bag-action-feedback'),
@@ -511,25 +594,50 @@ export class InventoryScene extends Phaser.Scene {
     const mapWidth = 1000;
     const mapHeight = 430;
 
+    const parchment = this.add.graphics().setName('bag-map-parchment');
+    parchment.fillStyle(0x3f3028, 0.14);
+    parchment.fillRoundedRect(111, 137, 1076, 462, 24);
+    parchment.fillStyle(0xe7c98d, 1);
+    parchment.fillRoundedRect(102, 128, 1076, 462, 24);
+    parchment.lineStyle(4, 0xa47a4c, 0.88);
+    parchment.strokeRoundedRect(102, 128, 1076, 462, 24);
+    parchment.fillStyle(0xf8e9bd, 1);
+    parchment.fillRoundedRect(116, 142, 1048, 434, 18);
+    parchment.fillStyle(0xc9dba3, 0.23);
+    parchment.fillEllipse(315, 330, 310, 210);
+    parchment.fillStyle(0xb9d3c8, 0.24);
+    parchment.fillEllipse(760, 430, 420, 240);
+    parchment.fillStyle(0xe8c1a1, 0.22);
+    parchment.fillEllipse(955, 265, 280, 170);
+    parchment.lineStyle(2, 0x9ab2a5, 0.35);
+    parchment.lineBetween(150, 520, 330, 470);
+    parchment.lineBetween(330, 470, 520, 510);
+    parchment.lineBetween(520, 510, 760, 420);
+    parchment.lineBetween(760, 420, 1120, 386);
+    this.track(parchment);
+
+    const compass = this.add.circle(1092, 535, 34, 0xf5dfad, 0.42).setStrokeStyle(2, 0x9d7449, 0.6);
+    const compassLabel = this.add
+      .text(1092, 535, '✦\nN', {
+        color: '#7f6247',
+        fontFamily: 'Georgia, serif',
+        fontSize: '18px',
+        fontStyle: 'bold',
+        align: 'center',
+        lineSpacing: -5,
+      })
+      .setOrigin(0.5);
     this.track(
       this.add
-        .rectangle(
-          GAME_WIDTH / 2,
-          mapTop + mapHeight / 2,
-          mapWidth + 70,
-          mapHeight + 54,
-          0xe7f4dc,
-          0.9,
-        )
-        .setStrokeStyle(5, 0xb89fbc, 0.95),
-      this.add
-        .text(GAME_WIDTH / 2, 126, 'Paths and places you have reached', {
-          color: '#725b78',
+        .text(GAME_WIDTH / 2, 116, '✦ Paths, places and little mysteries ✦', {
+          color: '#725039',
           fontFamily: 'system-ui, sans-serif',
-          fontSize: '17px',
+          fontSize: '16px',
           fontStyle: 'bold',
         })
         .setOrigin(0.5),
+      compass,
+      compassLabel,
     );
 
     const pointForNode = (node: ValleyMapNode): { x: number; y: number } => ({
@@ -548,7 +656,7 @@ export class InventoryScene extends Phaser.Scene {
       if (connection.kind === 'physical') {
         this.track(
           this.add
-            .line(0, 0, start.x, start.y, end.x, end.y, 0x8a7290, 0.78)
+            .line(0, 0, start.x, start.y, end.x, end.y, 0x816247, 0.8)
             .setOrigin(0, 0)
             .setLineWidth(7),
         );
@@ -560,8 +668,8 @@ export class InventoryScene extends Phaser.Scene {
               Phaser.Math.Linear(start.x, end.x, ratio),
               Phaser.Math.Linear(start.y, end.y, ratio),
               4,
-              0xa998ab,
-              0.42,
+              0x9a7c62,
+              0.5,
             ),
           );
         }
@@ -575,19 +683,26 @@ export class InventoryScene extends Phaser.Scene {
       const isSide = node.kind === 'side';
       const radius = node.kind === 'home' ? 35 : isFuture ? 25 : isSide ? 20 : 31;
       const fill =
-        node.kind === 'home' ? 0xffe7a8 : isFuture ? 0xd6d2d8 : isSide ? 0xeadcf1 : 0xfff8e8;
+        node.kind === 'home' ? 0xffe29a : isFuture ? 0xd4c7af : isSide ? 0xe9d8bb : 0xfff4ce;
       const alpha = isFuture ? 0.58 : 1;
+      if (isCurrent) {
+        this.track(
+          this.add
+            .circle(point.x, point.y, radius + 10, 0xf2a8cc, 0.2)
+            .setStrokeStyle(3, 0xc35e9e, 0.55),
+        );
+      }
       const ring = this.add
         .circle(point.x, point.y, radius, fill, alpha)
         .setStrokeStyle(
           isCurrent ? 7 : isSide ? 3 : 4,
-          isCurrent ? 0xca70b9 : isSide ? 0x9b78a6 : 0x9e819f,
+          isCurrent ? 0xbd5b99 : isSide ? 0x876c62 : 0x8a684d,
           isFuture ? 0.5 : 0.95,
         )
         .setName(isCurrent ? 'bag-map-current-location' : `bag-map-node:${node.id}`);
       const icon = this.add
         .text(point.x, point.y - 3, node.icon, {
-          color: isFuture ? '#8d858f' : '#5b4961',
+          color: isFuture ? '#8d858f' : '#5b493c',
           fontFamily: 'system-ui, sans-serif',
           fontSize: node.kind === 'home' ? '29px' : isSide ? '17px' : '24px',
           fontStyle: 'bold',
@@ -596,7 +711,7 @@ export class InventoryScene extends Phaser.Scene {
         .setAlpha(alpha);
       const label = this.add
         .text(point.x, point.y + radius + (isSide ? 7 : 11), node.label, {
-          color: isFuture ? '#988f99' : '#5d4b63',
+          color: isFuture ? '#8f8578' : '#5f4939',
           fontFamily: 'system-ui, sans-serif',
           fontSize: isSide ? '11px' : '13px',
           fontStyle: 'bold',
@@ -611,12 +726,12 @@ export class InventoryScene extends Phaser.Scene {
         this.track(
           this.add
             .text(point.x, point.y - radius - 15, 'YOU ARE HERE', {
-              color: '#784d75',
+              color: '#714255',
               fontFamily: 'system-ui, sans-serif',
               fontSize: '11px',
               fontStyle: 'bold',
-              backgroundColor: '#fff4f9e8',
-              padding: { x: 5, y: 3 },
+              backgroundColor: '#fff0cce8',
+              padding: { x: 7, y: 4 },
             })
             .setOrigin(0.5),
         );
@@ -634,10 +749,10 @@ export class InventoryScene extends Phaser.Scene {
       this.add
         .text(
           GAME_WIDTH / 2,
-          608,
-          'Solid paths are open • small circles are places inside a region • dotted paths stay mysterious',
+          614,
+          'Solid trails are open • small marks are places inside a region • dotted trails stay mysterious',
           {
-            color: '#827286',
+            color: '#80684f',
             fontFamily: 'system-ui, sans-serif',
             fontSize: '12px',
             fontStyle: 'bold',
@@ -645,8 +760,8 @@ export class InventoryScene extends Phaser.Scene {
         )
         .setOrigin(0.5),
       this.add
-        .text(GAME_WIDTH / 2, 640, [homewardText, nearbyText].filter(Boolean).join('   •   '), {
-          color: '#66536d',
+        .text(GAME_WIDTH / 2, 644, [homewardText, nearbyText].filter(Boolean).join('   •   '), {
+          color: '#66513f',
           fontFamily: 'system-ui, sans-serif',
           fontSize: '13px',
           fontStyle: 'bold',

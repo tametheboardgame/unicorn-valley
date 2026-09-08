@@ -3,18 +3,24 @@ import { shouldUseLandscapeTabletPresentation } from './LandscapeTabletPresentat
 
 const touch = { maxTouchPoints: 5, hasTouchStart: false, hasCoarsePointer: true };
 
-describe('landscape tablet presentation', () => {
-  it('selects a touch-primary landscape tablet', () => {
+describe('shared landscape touch presentation', () => {
+  it('selects touch-primary landscape tablets', () => {
     expect(shouldUseLandscapeTabletPresentation(1280, 800, touch)).toBe(true);
     expect(shouldUseLandscapeTabletPresentation(1024, 768, touch)).toBe(true);
   });
 
-  it('does not mistake a short landscape phone for a tablet', () => {
-    expect(shouldUseLandscapeTabletPresentation(844, 390, touch)).toBe(false);
+  it('uses the same concept composition on a landscape phone', () => {
+    expect(shouldUseLandscapeTabletPresentation(844, 390, touch)).toBe(true);
+    expect(shouldUseLandscapeTabletPresentation(740, 360, touch)).toBe(true);
   });
 
-  it('does not use the landscape tablet shell in portrait', () => {
-    expect(shouldUseLandscapeTabletPresentation(800, 1280, touch)).toBe(false);
+  it('keeps portrait phones on their dedicated below-game arrangement', () => {
+    expect(shouldUseLandscapeTabletPresentation(390, 844, touch)).toBe(false);
+    expect(shouldUseLandscapeTabletPresentation(700, 900, touch)).toBe(false);
+  });
+
+  it('rejects viewports too small to contain the landscape composition safely', () => {
+    expect(shouldUseLandscapeTabletPresentation(540, 280, touch)).toBe(false);
   });
 
   it('keeps a fine-pointer hybrid on the secondary touch layout', () => {

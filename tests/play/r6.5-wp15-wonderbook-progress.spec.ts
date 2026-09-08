@@ -4,6 +4,9 @@ interface DiagnosticObject {
   name: string;
   text: string | null;
   visible: boolean;
+  interactive: boolean;
+  x: number;
+  y: number;
 }
 
 interface DiagnosticScene {
@@ -123,6 +126,25 @@ async function waitForObject(page: Page, objectName: string): Promise<void> {
   }, objectName);
 }
 
+async function clickNamedObject(page: Page, objectName: string): Promise<void> {
+  const point = await page.evaluate((name) => {
+    const diagnostics = (
+      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__;
+    const scene = diagnostics
+      ?.snapshot()
+      .scenes.find((candidate) => candidate.key === 'WonderbookScene');
+    const object = scene?.objects.find(
+      (candidate) => candidate.name === name && candidate.visible && candidate.interactive,
+    );
+    return object ? { x: object.x, y: object.y } : null;
+  }, objectName);
+  if (!point) {
+    throw new Error(`Missing interactive Wonderbook object: ${objectName}`);
+  }
+  await page.locator('canvas').click({ position: point });
+}
+
 async function visibleTexts(page: Page): Promise<string[]> {
   return page.evaluate(() => {
     const diagnostics = (
@@ -139,40 +161,66 @@ async function visibleTexts(page: Page): Promise<string[]> {
   });
 }
 
+async function sectionTabPositions(
+  page: Page,
+): Promise<Array<{ name: string; x: number; y: number }>> {
+  return page.evaluate(() => {
+    const diagnostics = (
+      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__;
+    const scene = diagnostics
+      ?.snapshot()
+      .scenes.find((candidate) => candidate.key === 'WonderbookScene');
+    return (
+      scene?.objects
+        .filter((object) => object.visible && object.name.startsWith('wonderbook-section-'))
+        .map(({ name, x, y }) => ({ name, x, y })) ?? []
+    );
+  });
+}
+
 test('WP15 Wonderbook surfaces friends, places, races and gentle long-term goals', async ({
   page,
 }) => {
   await seedWonderbookProgress(page);
   await waitForDiagnostics(page);
   await startWonderbook(page);
-  const canvas = page.locator('canvas');
 
-  await canvas.click({ position: { x: 450, y: 154 } });
+  const indexTabs = (await sectionTabPositions(page)).filter(
+    ({ name }) => !name.includes('shadow'),
+  );
+  expect(indexTabs).toHaveLength(5);
+  expect(indexTabs.every(({ x }) => x > 1140)).toBe(true);
+  expect(indexTabs.map(({ y }) => y)).toEqual(
+    [...indexTabs.map(({ y }) => y)].sort((a, b) => a - b),
+  );
+
+  await clickNamedObject(page, 'wonderbook-section-friends');
   await waitForObject(page, 'wonderbook-sticker:character:pip');
   let texts = await visibleTexts(page);
   expect(texts).toContain('Pip');
   expect(texts).toContain('Good Friend');
   expect(texts).toContain('Someone to meet...');
 
-  await canvas.click({ position: { x: 640, y: 154 } });
+  await clickNamedObject(page, 'wonderbook-section-places');
   await waitForObject(page, 'wonderbook-sticker:region:sunbeam-village');
   texts = await visibleTexts(page);
   expect(texts).toContain('Sunbeam Village');
   expect(texts.some((text) => text.includes('Cake styles 2 of 3'))).toBe(true);
 
-  await canvas.click({ position: { x: 1140, y: 608 } });
+  await clickNamedObject(page, 'wonderbook-next-page');
   await waitForObject(page, 'wonderbook-sticker:region:starlight-beach');
   texts = await visibleTexts(page);
   expect(texts).toContain('Starlight Beach');
   expect(texts.some((text) => text.includes('Beach notebook 1 of 3'))).toBe(true);
 
-  await canvas.click({ position: { x: 830, y: 154 } });
+  await clickNamedObject(page, 'wonderbook-section-races');
   await waitForObject(page, 'wonderbook-sticker:race-course:rainbow-meadow-petal-parade');
   texts = await visibleTexts(page);
   expect(texts).toContain('Petal Parade');
   expect(texts).toContain('Course finished ✨');
 
-  await canvas.click({ position: { x: 1020, y: 154 } });
+  await clickNamedObject(page, 'wonderbook-section-goals');
   await waitForObject(page, 'wonderbook-sticker:goal:valley-explorer');
   texts = await visibleTexts(page);
   expect(texts).toContain('Valley Explorer');
@@ -186,11 +234,10 @@ test('WP15 keeps the discovery secret filter and mystery presentation', async ({
   await seedWonderbookProgress(page);
   await waitForDiagnostics(page);
   await startWonderbook(page);
-  const canvas = page.locator('canvas');
 
-  await canvas.click({ position: { x: 260, y: 154 } });
+  await clickNamedObject(page, 'wonderbook-section-discoveries');
   await waitForObject(page, 'wonderbook-tab-secrets');
-  await canvas.click({ position: { x: 1030, y: 198 } });
+  await clickNamedObject(page, 'wonderbook-tab-secrets');
 
   await page.waitForFunction(() => {
     const diagnostics = (

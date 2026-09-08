@@ -10,15 +10,15 @@ interface BrowserDiagnosticsApi {
   };
 }
 
-async function waitForGlade(page: Page): Promise<void> {
-  await page.waitForFunction(() => {
+async function waitForScene(page: Page, sceneKey: string): Promise<void> {
+  await page.waitForFunction((expectedScene) => {
     const diagnosticWindow = window as typeof window & {
       __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
     };
     return diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__
       ?.snapshot()
-      .activeScenes.includes('MoonflowerGladeScene');
-  });
+      .activeScenes.includes(expectedScene);
+  }, sceneKey);
 }
 
 async function playerPosition(page: Page): Promise<{ x: number; y: number }> {
@@ -37,7 +37,7 @@ async function playerPosition(page: Page): Promise<{ x: number; y: number }> {
   });
 }
 
-test('portrait touch layout pins the game high and provides thumb-sized working controls', async ({
+test('portrait touch layout pins the game high and moves concept controls below gameplay', async ({
   page,
 }) => {
   const viewport = page.viewportSize();
@@ -51,12 +51,30 @@ test('portrait touch layout pins the game high and provides thumb-sized working 
   );
 
   await page.goto('/?scene=glade&diagnostics=1', { waitUntil: 'networkidle' });
-  await waitForGlade(page);
+  await waitForScene(page, 'MoonflowerGladeScene');
 
   const canvas = page.locator('canvas').first();
   const canvasBox = await canvas.boundingBox();
   expect(canvasBox).not.toBeNull();
   expect(canvasBox?.y ?? 999).toBeLessThanOrEqual(2);
+
+  const dock = page.locator('.mobile-exploration-concept-dock');
+  await expect(dock).toBeVisible();
+  const dockBox = await dock.boundingBox();
+  expect(dockBox).not.toBeNull();
+  expect(dockBox?.y ?? 0).toBeGreaterThanOrEqual(
+    (canvasBox?.y ?? 0) + (canvasBox?.height ?? 0) - 3,
+  );
+  await expect(page.locator('.mobile-exploration-location')).toContainText('Moonflower Glade');
+  await expect(page.locator('.mobile-exploration-shimmer')).toContainText('Shimmer');
+
+  for (const action of ['Map', 'Bag', 'Book', 'Settings']) {
+    const button = page.getByRole('button', { name: action, exact: true });
+    await expect(button).toBeVisible();
+    const box = await button.boundingBox();
+    expect(box).not.toBeNull();
+    expect(box?.height ?? 0).toBeGreaterThanOrEqual(60);
+  }
 
   const controls = page.locator('.mobile-touch-controls');
   await expect(controls).toBeVisible();
@@ -96,4 +114,13 @@ test('portrait touch layout pins the game high and provides thumb-sized working 
       buttons: 0,
     });
   }
+
+  await page.screenshot({
+    path: test.info().outputPath('wp18j-phone-portrait.png'),
+    fullPage: true,
+  });
+
+  await page.getByRole('button', { name: 'Map', exact: true }).click();
+  await waitForScene(page, 'InventoryScene');
+  await expect(dock).toBeHidden();
 });
