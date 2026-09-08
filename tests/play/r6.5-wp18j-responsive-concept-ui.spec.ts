@@ -71,7 +71,9 @@ async function expectCanonicalLandscapeShell(page: Page): Promise<void> {
 test.describe('WP18J shared responsive concept UI', () => {
   test.use({ viewport: { width: 844, height: 390 }, hasTouch: true });
 
-  test('short landscape phone cannot fall back to the retired exploration layout', async ({ page }) => {
+  test('short landscape phone cannot fall back to the retired exploration layout', async ({
+    page,
+  }) => {
     await page.setViewportSize({ width: 844, height: 280 });
     await page.goto('/?scene=glade&diagnostics=1', { waitUntil: 'networkidle' });
     await waitForScene(page, 'MoonflowerGladeScene');
