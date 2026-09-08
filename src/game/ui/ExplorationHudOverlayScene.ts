@@ -93,7 +93,7 @@ export class ExplorationHudOverlayScene extends Phaser.Scene {
   private shimmerLabel: Phaser.GameObjects.Text | null = null;
   private syncTimer: Phaser.Time.TimerEvent | null = null;
   private currentWorld: Phaser.Scene | null = null;
-  private hudVisible = false;
+  private hudVisible = true;
 
   public constructor() {
     super(SCENE_KEY);
@@ -372,7 +372,10 @@ export class ExplorationHudOverlayScene extends Phaser.Scene {
     }
     this.hudVisible = visible;
     for (const object of this.hudObjects) {
-      object.setVisible(visible);
+      const visibleObject = object as Phaser.GameObjects.GameObject & {
+        setVisible: (nextVisible: boolean) => unknown;
+      };
+      visibleObject.setVisible(visible);
     }
   }
 
