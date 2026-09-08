@@ -89,7 +89,8 @@ export class TouchMovementPad {
 
     this.createPresentation();
     this.setVisible(
-      preferredTouchControlsVisible ?? shouldDefaultTouchMovementPadVisible() || this.portraitMode,
+      preferredTouchControlsVisible ??
+        (shouldDefaultTouchMovementPadVisible() || this.portraitMode),
       false,
     );
   }
