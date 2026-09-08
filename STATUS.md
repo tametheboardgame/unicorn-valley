@@ -69,7 +69,7 @@ WP19A planning/implementation PRs #159/#160 are accepted and merged to main `d8f
 
 ## Next action
 
-Review correction-head CI and immutable Cloudflare evidence. Technical qualification is not ready for manager sign-off until the relevant corrected checks pass and every remaining failure is still correctly bounded. Then David checks the verified immutable preview across all four display classes. Stop at that visual gate; WP19B, R7, merge and production deployment remain out of scope.
+Correction-head Validate and project-contract checks pass; browser playtest, compatibility and Cloudflare preview are running. Review their final results and immutable Cloudflare evidence. Technical qualification is not ready for manager sign-off until the relevant corrected checks pass and every remaining failure is still correctly bounded. Then David checks the verified immutable preview across all four display classes. Stop at that visual gate; WP19B, R7, merge and production deployment remain out of scope.
 
 ## Implementation delivery
 
