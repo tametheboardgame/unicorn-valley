@@ -76,6 +76,12 @@ void import('./game/ui/PortraitConceptPresentationManager').then(
   },
 );
 
+void import('./game/ui/Wp18jResponsiveUiPolishManager').then(
+  ({ getWp18jResponsiveUiPolishManager }) => {
+    getWp18jResponsiveUiPolishManager(game);
+  },
+);
+
 void import('./game/economy/EconomyRewardWorldManager').then(({ getEconomyRewardWorldManager }) => {
   getEconomyRewardWorldManager();
 });
