@@ -69,7 +69,9 @@ function usesPortraitDock(): boolean {
     (globalThis.navigator?.maxTouchPoints ?? 0) > 0 ||
     'ontouchstart' in globalThis ||
     coarsePointer;
-  return touchCapable && globalThis.innerWidth <= 700 && globalThis.innerHeight > globalThis.innerWidth;
+  return (
+    touchCapable && globalThis.innerWidth <= 700 && globalThis.innerHeight > globalThis.innerWidth
+  );
 }
 
 function textObject(scene: Phaser.Scene, name: string): Phaser.GameObjects.Text | null {
@@ -140,7 +142,17 @@ export class ExplorationHudOverlayScene extends Phaser.Scene {
 
     this.createButton(83, 52, 118, 72, 'Map', 'map', 16, 'map', 'exploration-shell-map-button');
     this.createButton(210, 52, 118, 72, 'Bag', 'bag', 16, 'bag', 'exploration-shell-bag-button');
-    this.createButton(330, 52, 118, 72, 'Book', 'book', 16, 'book', 'exploration-shell-book-button');
+    this.createButton(
+      330,
+      52,
+      118,
+      72,
+      'Book',
+      'book',
+      16,
+      'book',
+      'exploration-shell-book-button',
+    );
     this.createButton(
       465,
       52,
@@ -347,7 +359,9 @@ export class ExplorationHudOverlayScene extends Phaser.Scene {
       if (!SOURCE_TOP_HUD_NAMES.has(object.name)) {
         continue;
       }
-      const suppressible = object as Phaser.GameObjects.GameObject & { setAlpha?: (alpha: number) => unknown };
+      const suppressible = object as Phaser.GameObjects.GameObject & {
+        setAlpha?: (alpha: number) => unknown;
+      };
       suppressible.setAlpha?.(0.001);
     }
   }
