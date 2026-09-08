@@ -99,3 +99,15 @@ David requested a full analysis of the game/code, reconciliation of daughter fee
 Status: Accepted, 2026-09-08.
 
 David replied “I approve this” to the completed audit handoff explicitly requesting approval of the plan and authorisation to push the documentation branch/open its draft PR. All six decisions in `docs/2026-09-08-REMEDIATION-PROPOSAL.md` are accepted, including the sequence, contextual visible instructions, compact speech, progressive creator, generated title and two-folder MP3 workflow. WP19A-I are approved within their dependencies; WP19A is the next implementation package. Existing future visual acceptance, daughter replay, WP17 readiness and production gates remain. No merge or deployment is included in this publication approval.
+
+## UV-D012 - WP19A accepted and WP18K released
+
+Status: Accepted, 2026-09-08.
+
+David explicitly approved WP19A closure under its documented bounded browser
+qualification, merging and production deployment of PRs #159/#160, and the start
+of WP18K. Main `d8f3de6f264fa5fd6e2d77d539a47f288eb50cd4` is the resulting production
+baseline. This releases behaviour-preserving WP18K implementation only; WP18K
+still requires separate visual-regression sign-off and is not authorised for
+merge or production deployment. The approved next package after K is WP19B, not
+the superseded direct WP18H exit.

@@ -71,7 +71,7 @@ test.describe('R5-WP5.9B shared exploration shell', () => {
       await waitForScene(page, sceneKey);
       const scene = sceneFrom(await snapshot(page), sceneKey);
 
-      expect(namedCount(scene, 'exploration-shell-bag-button')).toBe(0);
+      expect(namedCount(scene, 'exploration-shell-bag-button')).toBe(1);
       expect(namedCount(scene, 'exploration-controls-button')).toBe(0);
       expect(namedCount(scene, 'exploration-location-title')).toBe(1);
       expect(namedCount(scene, 'activity-suggestion-card')).toBe(0);
