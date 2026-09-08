@@ -3,16 +3,19 @@ import { RefreshThrottle } from '../performance/RefreshThrottle';
 
 const REVISION = 'wp18j-spacing-v2';
 
-function byName<T extends Phaser.GameObjects.GameObject>(scene: Phaser.Scene, name: string): T | null {
+function byName<T extends Phaser.GameObjects.GameObject>(
+  scene: Phaser.Scene,
+  name: string,
+): T | null {
   return (scene.children.list.find((object) => object.name === name) as T | undefined) ?? null;
 }
 
 function textByValue(scene: Phaser.Scene, value: string): Phaser.GameObjects.Text | null {
   return (
-    scene.children.list.find(
+    (scene.children.list.find(
       (object) => object instanceof Phaser.GameObjects.Text && object.text === value,
-    ) as Phaser.GameObjects.Text | undefined
-  ) ?? null;
+    ) as Phaser.GameObjects.Text | undefined) ?? null
+  );
 }
 
 function markOnce(object: Phaser.GameObjects.GameObject, callback: () => void): void {
@@ -34,7 +37,10 @@ function normaliseExplorationNavigation(scene: Phaser.Scene): void {
     'exploration-shell-book-label',
     'exploration-shell-settings-nav-label',
   ]) {
-    const object = byName<Phaser.GameObjects.GameObject & Phaser.GameObjects.Components.Transform>(scene, name);
+    const object = byName<Phaser.GameObjects.GameObject & Phaser.GameObjects.Components.Transform>(
+      scene,
+      name,
+    );
     object?.setScale(1);
   }
 }
@@ -77,7 +83,10 @@ function polishInventoryFrame(scene: Phaser.Scene, isMap: boolean): void {
     const colour = isMap ? 0xead5a8 : 0xefd6ec;
     const stroke = isMap ? 0xb58d56 : 0xb985bc;
     const ink = isMap ? '#5d4936' : '#5d4369';
-    const visual = scene.add.graphics().setName('wp18j-inventory-close-visual').setDepth(10);
+    const visual = scene.add
+      .graphics()
+      .setName('wp18j-inventory-close-visual')
+      .setDepth(10);
     visual.fillStyle(0x3b2b3f, 0.14);
     visual.fillRoundedRect(1143, 52, 58, 58, 22);
     visual.fillStyle(colour, 1);
@@ -145,7 +154,10 @@ function polishBag(scene: Phaser.Scene): void {
     if (object.name.startsWith('bag-pocket:') && object instanceof Phaser.GameObjects.Rectangle) {
       object.setScale(0.92, 0.88);
     }
-    if (object.name.startsWith('bag-pocket-shadow:') && object instanceof Phaser.GameObjects.Rectangle) {
+    if (
+      object.name.startsWith('bag-pocket-shadow:') &&
+      object instanceof Phaser.GameObjects.Rectangle
+    ) {
       object.setScale(0.93, 0.88);
     }
   }
@@ -223,7 +235,9 @@ export class Wp18jResponsiveUiPolishManager {
 
 let manager: Wp18jResponsiveUiPolishManager | null = null;
 
-export function getWp18jResponsiveUiPolishManager(game: Phaser.Game): Wp18jResponsiveUiPolishManager {
+export function getWp18jResponsiveUiPolishManager(
+  game: Phaser.Game,
+): Wp18jResponsiveUiPolishManager {
   manager ??= new Wp18jResponsiveUiPolishManager(game);
   return manager;
 }
