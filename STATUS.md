@@ -8,7 +8,7 @@ Last updated: 2026-09-08
 
 Path: `docs/work-packages/R6.5-WP19A-PERSISTENCE-SAFETY.md`
 
-State: **WP19A denied-storage boot regression fixed; latest-head CI/preview verification pending**. The bounded implementation remains on PR #160's existing stacked branch; no merge or production deployment is authorised.
+State: **WP19A technically qualified; awaiting manager closure**. The bounded implementation remains on PR #160's existing stacked branch; no merge or production deployment is authorised.
 
 Read first:
 
@@ -40,7 +40,7 @@ WP19A-I bounded files are **approved**, subject to their dependencies and human 
 - Roaming residents and scene targets use separate interaction/feedback routes.
 - Cottage back-wall/window collision remains unresolved.
 - Grotto/Grove are absent from the preferred tap-navigation support list.
-- WP19A now guards title and boot-manager storage reads, prevents rejected writes from producing purchase success, requires primary success where checkpoints are unsupported, and keeps post-commit listener faults from inviting a duplicate charge; latest-head CI remains pending.
+- WP19A guards title and boot-manager storage reads, prevents rejected writes from producing purchase success, requires primary success where checkpoints are unsupported, and keeps post-commit listener faults from inviting a duplicate charge. Exact-head package qualification passes; the cancelled integrated browser baseline remains assigned to WP19I.
 - New-game Map shows Cottage as current while the player is in Glade; investigate checkpoint/location consistency.
 - Generated title image and MP3 catalogue/playback are new work, not already delivered features.
 
@@ -57,6 +57,7 @@ Full evidence, severity and source references are in the audit. Source risks are
 - WP19A corrected-head `npm run validate` passes with 114 test files / 435 tests and a 480.38 KiB entry bundle; the focused SaveService run passes 22 tests. The matching Chromium download completed, but host libraries remain unavailable, so the new denied-getter browser regression awaits CI. No full-green browser qualification is claimed.
 - CI run `34222463247` on the preceding head passed Validate and Browser compatibility. Browser playtest was cancelled at 35 minutes after the package-relevant main-menu, profile and save-recovery groups passed; unrelated historical UI failures and integrated qualification remain open in their planned packages.
 - CI run `34231264234` on `bec98fa` passed Validate and Browser compatibility, but its timed browser job exposed a package-relevant failure in the new denied-storage title regression. Its trace showed boot-time Continue restore, Pip egg, atmosphere/weather and reward initialisation still calling the throwing legacy load path before Title could render. Commit `8a6d35e` routes those passive boot reads through typed outcomes; the complete five-case save-recovery browser spec now passes locally.
+- CI run `34237540616` on exact head `4b6b742` passed Validate, browser compatibility and all five save-recovery cases; project-contract run `34237540863` passed. The broad job was cancelled at 35 minutes with 136 passes, 20 failures, 3 skips and 23 unfinished cases, so overall CI is not green. All 20 failures match the preceding-head run individually and are outside persistence scope. A bounded run closed the unfinished group with 17 passes and 6 explicit UI-scope failures. See `docs/evidence/R6.5-WP19A-BROWSER-QUALIFICATION.md`.
 
 ## Human feedback and gates
 
@@ -72,7 +73,7 @@ Documentation-only branch: `agent/r6.5-whole-game-audit-plan`. David explicitly 
 
 ## Next action
 
-Push denied-storage boot fix `8a6d35e487c84f6367c2cd1d4c58c3100bee6116`, then wait for latest-head CI and an exact immutable Cloudflare preview before manager review. Next only after verified WP19A: WP18K. All six plan decisions are approved; future visual and replay gates remain.
+Manager reviews the completed WP19A qualification ledger and may close WP19A, then dispatch WP18K. Exact-head preview: `https://323968ac.unicorn-valley.pages.dev`. Full integrated browser closure remains WP19I; future visual and replay gates remain.
 
 Chat disposition: `keep`.
 
