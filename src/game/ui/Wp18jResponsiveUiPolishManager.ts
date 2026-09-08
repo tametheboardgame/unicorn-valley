@@ -276,9 +276,9 @@ function installMapPanning(scene: Phaser.Scene): void {
 
   mapContent.add(movingObjects).setDepth(2);
 
-  // Geometry masks must remain renderable. Creating this mask-only Graphics object outside the
-  // display list avoids the old setVisible(false) path, which disabled clipping in some browsers.
-  const maskShape = scene.make.graphics({ x: 0, y: 0, add: false }).setName('wp18j-map-pan-mask');
+  // Keep the mask Graphics renderable; a near-transparent display object avoids the old
+  // setVisible(false) path, which disabled clipping in some browsers.
+  const maskShape = scene.add.graphics().setName('wp18j-map-pan-mask').setAlpha(0.001);
   maskShape.fillStyle(0xffffff, 1);
   maskShape.fillRoundedRect(
     MAP_VIEWPORT.x,
