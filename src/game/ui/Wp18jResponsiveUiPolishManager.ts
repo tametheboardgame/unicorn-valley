@@ -1,7 +1,8 @@
 import Phaser from 'phaser';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
 
-const REVISION = 'wp18j-spacing-v2';
+const REVISION = 'wp18j-spacing-v3';
+const BAG_ROW_REVISION = 'wp18j-bag-row-v3';
 
 function byName<T extends Phaser.GameObjects.GameObject>(
   scene: Phaser.Scene,
@@ -45,6 +46,36 @@ function normaliseExplorationNavigation(scene: Phaser.Scene): void {
   }
 }
 
+function ensureCloseIcon(scene: Phaser.Scene, isMap: boolean): void {
+  const closeButton = byName<Phaser.GameObjects.Rectangle>(scene, 'bag-close-button');
+  if (closeButton) {
+    closeButton.setPosition(1172, 76).setDisplaySize(82, 70).setAlpha(0.001);
+  }
+
+  const legacyCloseLabel = textByValue(scene, '✕ Close');
+  legacyCloseLabel?.setVisible(false);
+
+  byName(scene, 'wp18j-inventory-close-visual')?.destroy();
+
+  const ink = isMap ? '#5d4936' : '#5d4369';
+  const existingIcon = byName<Phaser.GameObjects.Text>(scene, 'wp18j-inventory-close-icon');
+  if (existingIcon) {
+    existingIcon.setPosition(1172, 76).setColor(ink).setFontSize(38).setVisible(true);
+    return;
+  }
+
+  scene.add
+    .text(1172, 76, '×', {
+      color: ink,
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '38px',
+      fontStyle: 'bold',
+    })
+    .setName('wp18j-inventory-close-icon')
+    .setOrigin(0.5)
+    .setDepth(11);
+}
+
 function polishInventoryFrame(scene: Phaser.Scene, isMap: boolean): void {
   const shell = byName<Phaser.GameObjects.Graphics>(scene, 'inventory-modal-panel');
   if (shell) {
@@ -71,35 +102,33 @@ function polishInventoryFrame(scene: Phaser.Scene, isMap: boolean): void {
   const badge = byName<Phaser.GameObjects.Text>(scene, 'inventory-view-badge');
   badge?.setPosition(122, 76).setFontSize(16).setPadding(12, 8);
 
-  const closeButton = byName<Phaser.GameObjects.Rectangle>(scene, 'bag-close-button');
-  if (closeButton) {
-    closeButton.setPosition(1170, 76).setDisplaySize(82, 70).setAlpha(0.001);
+  ensureCloseIcon(scene, isMap);
+}
+
+function moveBagHeaderRowDown(scene: Phaser.Scene): void {
+  for (const object of scene.children.list) {
+    if (object.getData(BAG_ROW_REVISION) === true) {
+      continue;
+    }
+    if (!('x' in object) || !('y' in object)) {
+      continue;
+    }
+
+    const transform = object as Phaser.GameObjects.GameObject & Phaser.GameObjects.Components.Transform;
+    const isPocketRow =
+      transform.x >= 150 && transform.x <= 870 && transform.y >= 143 && transform.y <= 150;
+    if (!isPocketRow) {
+      continue;
+    }
+
+    transform.setY(transform.y + 10);
+    object.setData(BAG_ROW_REVISION, true);
   }
 
-  const legacyCloseLabel = textByValue(scene, '✕ Close');
-  legacyCloseLabel?.setVisible(false);
-
-  if (!byName(scene, 'wp18j-inventory-close-visual')) {
-    const colour = isMap ? 0xead5a8 : 0xefd6ec;
-    const stroke = isMap ? 0xb58d56 : 0xb985bc;
-    const ink = isMap ? '#5d4936' : '#5d4369';
-    const visual = scene.add.graphics().setName('wp18j-inventory-close-visual').setDepth(10);
-    visual.fillStyle(0x3b2b3f, 0.14);
-    visual.fillRoundedRect(1143, 52, 58, 58, 22);
-    visual.fillStyle(colour, 1);
-    visual.fillRoundedRect(1140, 49, 58, 58, 22);
-    visual.lineStyle(3, stroke, 0.95);
-    visual.strokeRoundedRect(1140, 49, 58, 58, 22);
-    scene.add
-      .text(1169, 77, '×', {
-        color: ink,
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '34px',
-        fontStyle: 'bold',
-      })
-      .setName('wp18j-inventory-close-icon')
-      .setOrigin(0.5)
-      .setDepth(11);
+  const shimmer = byName<Phaser.GameObjects.Text>(scene, 'bag-shimmer-balance');
+  if (shimmer && shimmer.getData(BAG_ROW_REVISION) !== true) {
+    shimmer.setY(shimmer.y + 10);
+    shimmer.setData(BAG_ROW_REVISION, true);
   }
 }
 
@@ -115,7 +144,7 @@ function polishBag(scene: Phaser.Scene): void {
       satchel.lineStyle(2, 0x925971, 0.58);
       satchel.strokeRoundedRect(116, 116, 1037, 472, 26);
       satchel.fillStyle(0xe4bbc6, 0.2);
-      satchel.fillRoundedRect(132, 124, 1005, 50, 15);
+      satchel.fillRoundedRect(132, 124, 1005, 54, 15);
     });
   }
 
@@ -124,11 +153,11 @@ function polishBag(scene: Phaser.Scene): void {
     markOnce(listPanel, () => {
       listPanel.clear();
       listPanel.fillStyle(0x573d4f, 0.08);
-      listPanel.fillRoundedRect(146, 200, 710, 385, 20);
+      listPanel.fillRoundedRect(146, 204, 710, 381, 20);
       listPanel.fillStyle(0xfff7e7, 1);
-      listPanel.fillRoundedRect(140, 194, 710, 385, 20);
+      listPanel.fillRoundedRect(140, 198, 710, 381, 20);
       listPanel.lineStyle(2, 0xc28da0, 0.62);
-      listPanel.strokeRoundedRect(140, 194, 710, 385, 20);
+      listPanel.strokeRoundedRect(140, 198, 710, 381, 20);
     });
   }
 
@@ -137,25 +166,27 @@ function polishBag(scene: Phaser.Scene): void {
     markOnce(detailPanel, () => {
       detailPanel.clear();
       detailPanel.fillStyle(0x573d4f, 0.09);
-      detailPanel.fillRoundedRect(875, 200, 272, 385, 20);
+      detailPanel.fillRoundedRect(875, 204, 272, 381, 20);
       detailPanel.fillStyle(0xf7e8e3, 1);
-      detailPanel.fillRoundedRect(869, 194, 272, 385, 20);
+      detailPanel.fillRoundedRect(869, 198, 272, 381, 20);
       detailPanel.lineStyle(2, 0xb87a94, 0.7);
-      detailPanel.strokeRoundedRect(869, 194, 272, 385, 20);
+      detailPanel.strokeRoundedRect(869, 198, 272, 381, 20);
       detailPanel.fillStyle(0xe2b6c3, 0.2);
-      detailPanel.fillRoundedRect(887, 208, 236, 40, 12);
+      detailPanel.fillRoundedRect(887, 212, 236, 40, 12);
     });
   }
 
+  moveBagHeaderRowDown(scene);
+
   for (const object of scene.children.list) {
     if (object.name.startsWith('bag-pocket:') && object instanceof Phaser.GameObjects.Rectangle) {
-      object.setScale(0.92, 0.88);
+      object.setScale(0.92, 0.84);
     }
     if (
       object.name.startsWith('bag-pocket-shadow:') &&
       object instanceof Phaser.GameObjects.Rectangle
     ) {
-      object.setScale(0.93, 0.88);
+      object.setScale(0.93, 0.84);
     }
   }
 
@@ -163,9 +194,94 @@ function polishBag(scene: Phaser.Scene): void {
   shimmer?.setFontSize(15).setPadding(12, 6);
 
   const shopButton = byName<Phaser.GameObjects.Rectangle>(scene, 'bag-shop-button');
-  shopButton?.setPosition(1005, 630).setScale(0.88, 0.86);
+  shopButton?.setPosition(1005, 632).setScale(0.86, 0.82);
   const shopLabel = textByValue(scene, '✨ Visit the Shop');
-  shopLabel?.setPosition(1005, 630).setFontSize(17);
+  shopLabel?.setPosition(1005, 632).setFontSize(17);
+}
+
+function installMapPanning(scene: Phaser.Scene): void {
+  if (byName(scene, 'wp18j-map-pan-zone')) {
+    return;
+  }
+
+  const parchment = byName<Phaser.GameObjects.Graphics>(scene, 'bag-map-parchment');
+  const mapContent = byName<Phaser.GameObjects.Container>(scene, 'bag-map-content');
+  if (!parchment || !mapContent) {
+    return;
+  }
+
+  const parchmentIndex = scene.children.list.indexOf(parchment);
+  const contentIndex = scene.children.list.indexOf(mapContent);
+  if (parchmentIndex < 0 || contentIndex <= parchmentIndex) {
+    return;
+  }
+
+  const movingObjects = scene.children.list
+    .slice(parchmentIndex + 1, contentIndex)
+    .filter((object) => {
+      if (object.name === 'bag-map-guidance') {
+        return false;
+      }
+      if (!(object instanceof Phaser.GameObjects.Text)) {
+        return true;
+      }
+      return (
+        object.text !== '✦ Paths, places and little mysteries ✦' &&
+        !object.text.startsWith('Solid trails are open')
+      );
+    });
+
+  mapContent.add(movingObjects).setDepth(2);
+
+  const maskShape = scene.add
+    .graphics()
+    .setName('wp18j-map-pan-mask')
+    .setVisible(false);
+  maskShape.fillStyle(0xffffff, 1);
+  maskShape.fillRoundedRect(124, 148, 1032, 422, 17);
+  const mask = maskShape.createGeometryMask();
+  mapContent.setMask(mask);
+
+  const zone = scene.add
+    .zone(640, 359, 1032, 422)
+    .setName('wp18j-map-pan-zone')
+    .setInteractive({ useHandCursor: true })
+    .setDepth(8);
+  scene.input.setDraggable(zone);
+
+  zone.on('dragstart', (pointer: Phaser.Input.Pointer) => {
+    zone.setData('content-start-x', mapContent.x);
+    zone.setData('content-start-y', mapContent.y);
+    zone.setData('pointer-start-x', pointer.x);
+    zone.setData('pointer-start-y', pointer.y);
+  });
+  zone.on('drag', (pointer: Phaser.Input.Pointer) => {
+    const contentStartX = Number(zone.getData('content-start-x') ?? 0);
+    const contentStartY = Number(zone.getData('content-start-y') ?? 0);
+    const pointerStartX = Number(zone.getData('pointer-start-x') ?? pointer.x);
+    const pointerStartY = Number(zone.getData('pointer-start-y') ?? pointer.y);
+    mapContent.setPosition(
+      Phaser.Math.Clamp(contentStartX + pointer.x - pointerStartX, -150, 90),
+      Phaser.Math.Clamp(contentStartY + pointer.y - pointerStartY, -90, 70),
+    );
+  });
+
+  scene.add
+    .text(1046, 164, '↔ Drag map to explore', {
+      color: '#725039',
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '12px',
+      fontStyle: 'bold',
+      backgroundColor: '#fff0ccd9',
+      padding: { x: 8, y: 4 },
+    })
+    .setName('wp18j-map-pan-hint')
+    .setOrigin(0.5)
+    .setDepth(9);
+
+  scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+    mask.destroy();
+  });
 }
 
 function polishMap(scene: Phaser.Scene): void {
@@ -197,6 +313,7 @@ function polishMap(scene: Phaser.Scene): void {
 
   const subtitle = textByValue(scene, '✦ Paths, places and little mysteries ✦');
   subtitle?.setPosition(640, 121).setFontSize(14);
+  installMapPanning(scene);
 }
 
 function polishInventoryScene(scene: Phaser.Scene): void {
