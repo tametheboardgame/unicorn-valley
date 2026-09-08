@@ -103,27 +103,14 @@ export class ExplorationShell {
       15,
       'settings',
     );
-    this.decorations.push(
-      ...this.mapButtonSet.decorations,
-      ...this.settingsButtonSet.decorations,
-    );
+    this.decorations.push(...this.mapButtonSet.decorations, ...this.settingsButtonSet.decorations);
 
     const shimmerX = 700;
     const shimmerY = 52;
     const shimmerWidth = 210;
     const shimmerHeight = 62;
     const shimmerShadow = createFixedGraphics(scene, 'exploration-shell-shimmer-shadow', 118);
-    drawPanelShadow(
-      shimmerShadow,
-      shimmerX,
-      shimmerY,
-      shimmerWidth,
-      shimmerHeight,
-      28,
-      5,
-      6,
-      0.18,
-    );
+    drawPanelShadow(shimmerShadow, shimmerX, shimmerY, shimmerWidth, shimmerHeight, 28, 5, 6, 0.18);
     const shimmerSurface = createFixedGraphics(scene, 'exploration-shell-shimmer-surface', 119);
     drawRoundedPanel(
       shimmerSurface,
