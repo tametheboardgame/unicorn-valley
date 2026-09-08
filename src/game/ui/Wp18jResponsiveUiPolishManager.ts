@@ -83,10 +83,7 @@ function polishInventoryFrame(scene: Phaser.Scene, isMap: boolean): void {
     const colour = isMap ? 0xead5a8 : 0xefd6ec;
     const stroke = isMap ? 0xb58d56 : 0xb985bc;
     const ink = isMap ? '#5d4936' : '#5d4369';
-    const visual = scene.add
-      .graphics()
-      .setName('wp18j-inventory-close-visual')
-      .setDepth(10);
+    const visual = scene.add.graphics().setName('wp18j-inventory-close-visual').setDepth(10);
     visual.fillStyle(0x3b2b3f, 0.14);
     visual.fillRoundedRect(1143, 52, 58, 58, 22);
     visual.fillStyle(colour, 1);
