@@ -184,7 +184,8 @@ export function getBrowserAtmosphericTimeService(
   saveService?: SaveService,
 ): AtmosphericTimeService {
   if (!browserAtmosphericTimeService) {
-    const save = saveService?.load() ?? null;
+    const loadResult = saveService?.loadWithResult();
+    const save = loadResult?.status === 'loaded' ? loadResult.save : null;
     browserAtmosphericTimeService = new AtmosphericTimeService(saveService ?? null, save);
   }
   return browserAtmosphericTimeService;

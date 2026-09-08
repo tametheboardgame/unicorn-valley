@@ -152,10 +152,11 @@ let browserMagicalWeatherService: MagicalWeatherService | null = null;
 export function getBrowserMagicalWeatherService(saveService?: SaveService): MagicalWeatherService {
   if (!browserMagicalWeatherService) {
     const atmosphericTime = getBrowserAtmosphericTimeService(saveService);
+    const loadResult = saveService?.loadWithResult();
     browserMagicalWeatherService = new MagicalWeatherService(
       saveService ?? null,
       atmosphericTime,
-      saveService?.load() ?? null,
+      loadResult?.status === 'loaded' ? loadResult.save : null,
     );
   }
   return browserMagicalWeatherService;

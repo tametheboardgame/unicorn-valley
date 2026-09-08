@@ -64,10 +64,11 @@ export class EconomyRewardService {
   public constructor(private readonly saveService: SaveService) {}
 
   public reconcile(): EconomyRewardReconcileResult {
-    const save = this.saveService.load();
-    if (!save) {
+    const loadResult = this.saveService.loadWithResult();
+    if (loadResult.status !== 'loaded') {
       return { claimed: [], totalAwarded: 0, balance: null };
     }
+    const save = loadResult.save;
 
     const result = applyAvailableEconomyRewards(save);
     if (result.claimed.length === 0) {
