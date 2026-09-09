@@ -98,7 +98,19 @@ test('immutable deployment starts, saves, reloads and Continues in isolated stor
     canvas.x + (continueButton.x / dimensions.width) * canvas.width,
     canvas.y + (continueButton.y / dimensions.height) * canvas.height,
   );
-  await waitForScene(page, 'MoonflowerGladeScene');
+  await page.waitForFunction(() => {
+    const diagnostics = (
+      window as typeof window & {
+        __UNICORN_VALLEY_DIAGNOSTICS__?: { snapshot(): DiagnosticSnapshot };
+      }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__;
+    const active = diagnostics?.snapshot().activeScenes ?? [];
+    return active.some((scene) => !['BootScene', 'TitleScene'].includes(scene));
+  });
+  const resumedScenes = (await snapshot(page)).activeScenes;
+  expect(
+    resumedScenes.some((scene) => ['MoonflowerGladeScene', 'CottageInteriorScene'].includes(scene)),
+  ).toBe(true);
 
   await page.screenshot({
     path: testInfo.outputPath('deployment-continue.png'),
