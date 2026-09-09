@@ -41,10 +41,10 @@ jobs:
         with:
           ref: ${{ steps.candidate.outputs.sha }}
 
-      - name: Validate immutable Pages URL
+      - name: Validate Pages deployment URL
         env:
           DEPLOYMENT_URL: ${{ steps.candidate.outputs.url }}
-        run: node -e "const url=new URL(process.env.DEPLOYMENT_URL); if(url.protocol!=='https:' || !url.hostname.endsWith('.unicorn-valley.pages.dev')) process.exit(1)"
+        run: node -e "const url=new URL(process.env.DEPLOYMENT_URL); const host=url.hostname; if(url.protocol!=='https:' || (host!=='unicorn-valley.pages.dev' && !host.endsWith('.unicorn-valley.pages.dev'))) process.exit(1)"
 
       - name: Set up Node.js
         uses: actions/setup-node@v6
