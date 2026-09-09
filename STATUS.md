@@ -8,7 +8,7 @@ Last updated: 2026-09-09
 
 Path: `docs/work-packages/R6.5-WP19B-WORLD-BOUNDARIES-NAVIGATION.md`
 
-State: **implementation complete; exact-head qualification pending**. David approved WP18K; PR #161 merged as main `250f0855f013f4ba54a6de4056181cf5affa0d57`. Cloudflare reports immutable deployment `https://7a667b82.unicorn-valley.pages.dev`, and production-alias Actions smoke `34345075418` passed isolated startup/save/reload/Continue bound to that merge SHA. WP19B runtime candidate `0f980b6` aligns the Cottage floor seam, adds collider-aware Grotto/Grove tap movement and reconciles new-game location identity. Local validation and focused browser coverage pass; exact-head CI, compatibility, immutable preview/smoke and David’s visual collision gate remain.
+State: **technically qualified; awaiting David’s collision/visual approval**. David approved WP18K; PR #161 merged as main `250f0855f013f4ba54a6de4056181cf5affa0d57`. Cloudflare reports immutable deployment `https://7a667b82.unicorn-valley.pages.dev`, and production-alias Actions smoke `34345075418` passed isolated startup/save/reload/Continue bound to that merge SHA. WP19B runtime candidate `0f980b6` aligns the Cottage floor seam, adds collider-aware Grotto/Grove tap movement and reconciles new-game location identity. Local and exact-head validation pass; Cloudflare and candidate-bound smoke evidence are verified. David’s visual collision gate remains.
 
 ## Accepted gameplay baseline
 
@@ -65,7 +65,7 @@ WP18K is human-approved, technically qualified and merged through PR #161 at mai
 
 ## Next action
 
-Push the complete WP19B candidate and obtain all three required browser-shard dispositions, Actions browser compatibility, project-contract validation, an immutable Cloudflare preview and candidate-bound deployment smoke. Fix any current-package regressions. Then present `docs/evidence/R6.5-WP19B-WORLD-NAVIGATION-QUALIFICATION.md` and its collision/movement checklist to David. Stop without WP19B merge/deployment, WP19C or physical daughter acceptance.
+David reviews `https://9502b39e.unicorn-valley.pages.dev`, the four-class whole-unicorn evidence under `docs/evidence/wp19b-current-head/`, and the collision/movement checklist in `docs/evidence/R6.5-WP19B-WORLD-NAVIGATION-QUALIFICATION.md`; he then explicitly approves or rejects WP19B. Stop without WP19B merge/deployment, WP19C or physical daughter acceptance.
 
 ## Implementation delivery
 
@@ -74,4 +74,4 @@ Draft PR: https://github.com/tametheboardgame/unicorn-valley/pull/162.
 
 ## Codex execution
 
-WP18K acceptance, production association and release smoke are durable. WP19B implementation is locally green: `npm run validate` passes 116 files / 441 tests with a 481.00 KiB entry; the focused 10-case browser group passes. Local compatibility completed Chromium surfaces but lacks installed Firefox/WebKit binaries and recorded two software-rendered mobile timeouts; Actions remains authoritative. Four-class whole-unicorn evidence is committed under `docs/evidence/wp19b-current-head/`. The conversation disposition remains `keep` through the human gate.
+Runtime implementation: `0f980b6`. Exact qualified head: `15be0d3`. CI `34349746804` passed 184 browser cases with 3 configured skips and no failures/unrun; compatibility passed 48 with 15 configured skips; Validate passed 116 files / 441 tests and 481.00 KiB. Immutable preview: `https://9502b39e.unicorn-valley.pages.dev`. Candidate smoke `34348947787` passed against `https://5b6e9886.unicorn-valley.pages.dev`. The conversation disposition is `keep` through David’s gate.
