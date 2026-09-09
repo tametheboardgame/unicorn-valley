@@ -8,7 +8,7 @@ Last updated: 2026-09-08
 
 Path: `docs/work-packages/R6.5-WP18K-ARCHITECTURE-CONSOLIDATION-LEGACY-RETIREMENT.md`
 
-State: **implementation complete; technical qualification in progress**. David accepted WP19A's bounded qualification, authorised merging/deploying PRs #159/#160 and starting WP18K. Both PRs are merged; the production baseline is main `d8f3de6f264fa5fd6e2d77d539a47f288eb50cd4`. WP18K K1 ownership/removal evidence preceded implementation. K2-K4 consolidated Bag/Map ownership and removed five proven legacy managers/bridges. K5 has classified exact `5f13cc3` sharded CI (176 passed / 3 failed / 3 configured skips / 0 unrun), traced and corrected the final Nova contextual-action, Lumi production-guidance and landscape race-overlay assertions, and added an authorised GitHub Actions immutable-preview smoke route. Fresh exact-head CI and delegated manager review remain pending; Actions network access succeeded and the first deployed smoke reached Continue but exposed an over-specific resume-scene assertion now corrected; no physical human acceptance is claimed.
+State: **implementation and technical qualification complete; delegated manager review pending**. David accepted WP19A's bounded qualification, authorised merging/deploying PRs #159/#160 and starting WP18K. Both PRs are merged; the production baseline is main `d8f3de6f264fa5fd6e2d77d539a47f288eb50cd4`. WP18K K1 ownership/removal evidence preceded implementation. K2-K4 consolidated Bag/Map ownership and removed five proven legacy managers/bridges. K5 has classified exact `5f13cc3` sharded CI (176 passed / 3 failed / 3 configured skips / 0 unrun), traced and corrected the final Nova contextual-action, Lumi production-guidance and landscape race-overlay assertions, and added an authorised GitHub Actions immutable-preview smoke route. Exact candidate CI passed all required shards and compatibility, and the authorised Actions deployed startup/save/reload/Continue smoke passed; delegated manager review remains pending and no physical human acceptance is claimed.
 
 Read first:
 
@@ -48,12 +48,12 @@ Full evidence, severity and source references are in the audit. Source risks are
 
 ## Validation
 
-- Exact `5f13cc3` CI run `34292365366` passed Validate (114 files / 435 tests, build/static smoke and 480.01 KiB under the unchanged 520 KiB budget), compatibility (48 passed / 15 configured skips) and project-contract. Its browser shards totalled 176 passed / 3 failed / 3 configured skips / 0 unrun and are not green. The three bounded corrections pass focused checks; a new exact-head run remains required.
+- Exact `5f13cc3` CI run `34292365366` passed Validate (114 files / 435 tests, build/static smoke and 480.01 KiB under the unchanged 520 KiB budget), compatibility (48 passed / 15 configured skips) and project-contract. Its browser shards totalled 176 passed / 3 failed / 3 configured skips / 0 unrun and are not green. The three bounded corrections pass focused checks. Exact candidate `c4697e8` run `34300718194` passed all three browser shards (179 passed / 0 failed / 3 configured skips / 0 unrun), compatibility (48 / 15 configured skips), Validate and project-contract.
 - Exact starting-head CI run `34262336206`: Validate passed; project-contract run `34262336101` passed; compatibility passed 48 with 15 configured skips. Browser playtest was cancelled at 35 minutes with 130 passed, 9 failed and 3 skipped, leaving 40 unfinished. It is not represented as green.
 - All 40 unfinished cases were attempted in four bounded serial Chromium groups: initial totals 29 passed, 10 failed and 1 serial skip. Ten world-depth cases and all seven WP18J preservation cases passed. Named-control corrections then passed Food, Map and Creator 3/3; remaining trace-led touch/timeout corrections await correction-head CI.
 - The complete historical and current dispositions are recorded in `docs/evidence/R6.5-WP18K-BROWSER-QUALIFICATION.md`. The final failures were not waived: Nova now uses its canonical contextual action and return point; production dialogue guidance is protected from the legacy scanner; landscape race geometry tests the accepted corner overlay and real simultaneous controls.
 - The local host can run Chromium after supported browser/dependency installation. Its software renderer is materially slower than CI; retained multi-cycle/multi-scene tests use trace-justified total budgets while preserving cycles and responsiveness assertions.
-- The local runner HTTP CONNECT proxy still blocks Cloudflare Pages with 403 and was not bypassed. A reusable manually dispatched existing-Actions workflow now performs isolated deployed startup/save/reload/Continue qualification against an immutable Pages URL using ordinary network access; its actual outcome must be recorded before qualification.
+- The local runner HTTP CONNECT proxy still blocks Cloudflare Pages with 403 and was not bypassed. The reusable existing-Actions workflow passed isolated deployed startup/save/reload/Continue qualification in run `34300718207` against immutable preview `https://19e1602a.unicorn-valley.pages.dev`; artifact `10084829132` records the result.
 
 ## Human feedback and gates
 
@@ -69,7 +69,7 @@ WP19A planning/implementation PRs #159/#160 are accepted and merged to main `d8f
 
 ## Next action
 
-Run exact-head three-shard browser CI and the existing-Actions immutable-preview smoke, then review the current four-class Bag/Settings/Book/HUD evidence. The manager may accept/release technically qualified WP18K under UV-D013, but this task must stop on PR #161 without merge, production deploy or WP19B. Physical daughter/device acceptance is not claimed; WP18H and WP17 remain human-only.
+Delegated manager review should compare the current four-class Bag/Settings/Book/HUD evidence and may accept/release technically qualified WP18K under UV-D013. The manager may accept/release technically qualified WP18K under UV-D013, but this task must stop on PR #161 without merge, production deploy or WP19B. Physical daughter/device acceptance is not claimed; WP18H and WP17 remain human-only.
 
 ## Implementation delivery
 
@@ -78,4 +78,4 @@ Draft PR: https://github.com/tametheboardgame/unicorn-valley/pull/161.
 
 ## Codex execution
 
-WP18K K1–K4 started from verified main `d8f3de6`. K5 now has a package-specific ledger, exact CI/compatibility counts, all 40 unfinished dispositions and planned-versus-actual scanner ownership. The latest bounded K5 correction closes the final three failures from the 176-pass run without changing dialogue or race mechanics. Exact-head three-shard CI, immutable preview smoke and delegated manager review remain next. The conversation disposition remains `keep` until those external results and manager gate are durable.
+WP18K K1–K4 started from verified main `d8f3de6`. K5 now has a package-specific ledger, exact CI/compatibility counts, all 40 unfinished dispositions and planned-versus-actual scanner ownership. The latest bounded K5 correction closes the final three failures from the 176-pass run without changing dialogue or race mechanics. Exact-head CI and immutable-preview smoke pass; delegated manager review is the next action. The conversation disposition remains `keep` until those external results and manager gate are durable.
