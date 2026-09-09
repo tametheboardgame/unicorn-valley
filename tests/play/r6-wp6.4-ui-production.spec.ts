@@ -172,6 +172,9 @@ test('Wonderbook production tabs remain large interactive navigation controls', 
   expect(closeTarget.interactive).toBe(true);
   expect(closeTarget.displayWidth * renderedScale).toBeGreaterThanOrEqual(48);
   expect(closeTarget.displayHeight * renderedScale).toBeGreaterThanOrEqual(48);
+  expect(closeTarget.x).toBeGreaterThanOrEqual(1190);
+  expect(closeTarget.x + closeTarget.displayWidth / 2).toBeLessThanOrEqual(1226);
+  expect(closeIcon.x).toBe(closeTarget.x);
   expect(closeIcon.visible).toBe(true);
   expect(
     scene.objects.some(({ text, visible }) => text?.includes('Close the book') && visible),

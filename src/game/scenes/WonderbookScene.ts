@@ -131,13 +131,13 @@ export class WonderbookScene extends Phaser.Scene {
     this.renderSpread();
 
     const closeButton = this.add
-      .rectangle(1172, 76, 82, 70, 0xffffff, 0.001)
+      .rectangle(1190, 76, 72, 70, 0xffffff, 0.001)
       .setInteractive({ useHandCursor: true })
       .setName('wonderbook-close-button')
       .setDepth(15);
     this.add
-      .text(1172, 76, '×', {
-        color: '#5d4369',
+      .text(1190, 76, '×', {
+        color: '#f8e7b0',
         fontFamily: UI_FONT,
         fontSize: '38px',
         fontStyle: 'bold',

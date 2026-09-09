@@ -2,6 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 
 interface DiagnosticObject {
   name: string;
+  text: string | null;
   visible: boolean;
   interactive: boolean;
   alpha: number;
@@ -102,6 +103,8 @@ test('Bag uses a glyph-only close control and a lower aligned pocket row', async
   const foodTab = objects.find(({ name }) => name === 'bag-pocket:food');
   const shimmer = objects.find(({ name }) => name === 'bag-shimmer-balance');
 
+  expect(objects.some(({ name }) => name === 'inventory-view-badge')).toBe(false);
+  expect(objects.find(({ name }) => name === 'inventory-modal-title')?.text).toBe('My Magical Bag');
   expect(closeHitArea?.interactive).toBe(true);
   expect(closeHitArea?.alpha ?? 1).toBeLessThanOrEqual(0.01);
   expect(closeHitArea?.displayWidth ?? 0).toBeGreaterThanOrEqual(70);
@@ -152,5 +155,5 @@ test('Map keeps a glyph-only close target and can be dragged inside its clipped 
       const content = objects.find(({ name }) => name === 'bag-map-content');
       return { x: content?.x ?? 0, y: content?.y ?? 0 };
     })
-    .toEqual({ x: -130, y: -70 });
+    .toEqual({ x: -100, y: -70 });
 });

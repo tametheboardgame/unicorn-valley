@@ -39,8 +39,8 @@ interface InventorySceneData {
 const BAG_VISIBLE_ITEMS = 6;
 const BAG_SCROLL_STEP = 2;
 const BAG_LIST_BOUNDS = { left: 145, right: 850, top: 185, bottom: 588 } as const;
-const MAP_VIEWPORT = { x: 124, y: 148, width: 1032, height: 422 } as const;
-const MAP_CLIP_VIEWPORT = { x: 132, y: 156, width: 1016, height: 406 } as const;
+const MAP_VIEWPORT = { x: 124, y: 138, width: 1032, height: 436 } as const;
+const MAP_CLIP_VIEWPORT = { x: 132, y: 146, width: 1016, height: 420 } as const;
 
 export class InventoryScene extends Phaser.Scene {
   private inputController: InputController | null = null;
@@ -55,7 +55,6 @@ export class InventoryScene extends Phaser.Scene {
   private bagInitialised = false;
   private bagFeedback = '';
   private titleText: Phaser.GameObjects.Text | null = null;
-  private viewBadge: Phaser.GameObjects.Text | null = null;
 
   public constructor() {
     super('InventoryScene');
@@ -85,18 +84,6 @@ export class InventoryScene extends Phaser.Scene {
     shell.fillRoundedRect(68, 48, 1144, 58, 18);
     shell.lineStyle(2, this.activeView === 'map' ? 0xc8a66c : 0xddbdcf, 0.48);
     shell.lineBetween(72, 108, 1208, 108);
-
-    this.viewBadge = this.add
-      .text(124, 72, this.activeView === 'map' ? '🗺️ MAP' : '🎒 BAG', {
-        color: this.activeView === 'map' ? '#5d4936' : '#5d4369',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '18px',
-        fontStyle: 'bold',
-        backgroundColor: this.activeView === 'map' ? '#ead5a8' : '#ead4ee',
-        padding: { x: 16, y: 10 },
-      })
-      .setOrigin(0.5)
-      .setName('inventory-view-badge');
 
     this.titleText = this.add
       .text(GAME_WIDTH / 2, 70, this.activeView === 'map' ? 'Valley Map' : 'My Magical Bag', {
@@ -140,7 +127,6 @@ export class InventoryScene extends Phaser.Scene {
       this.pointerInput = null;
       this.clearViewObjects();
       this.titleText = null;
-      this.viewBadge = null;
     });
   }
 
@@ -158,7 +144,6 @@ export class InventoryScene extends Phaser.Scene {
   private renderView(): void {
     this.clearViewObjects();
     this.titleText?.setText(this.activeView === 'map' ? 'Valley Map' : 'My Magical Bag');
-    this.viewBadge?.setText(this.activeView === 'map' ? '🗺️ MAP' : '🎒 BAG');
     if (this.activeView === 'map') {
       this.renderMap();
       return;
@@ -572,20 +557,22 @@ export class InventoryScene extends Phaser.Scene {
     const save = saveService.load() ?? saveService.createNewGame();
     const currentNode = getValleyMapNodeForLocation(save.profile.currentLocationId);
     const homewardNode = currentNode ? getHomewardNextNode(currentNode.id) : null;
-    const mapLeft = 140;
-    const mapTop = 155;
-    const mapWidth = 1000;
-    const mapHeight = 430;
+    // Extend the geography beyond the clipped parchment window so dragging reveals
+    // meaningful detail in both axes instead of shifting already fully visible content.
+    const mapLeft = 70;
+    const mapTop = 100;
+    const mapWidth = 1140;
+    const mapHeight = 520;
 
     const parchment = this.add.graphics().setName('bag-map-parchment');
     parchment.fillStyle(0x3f3028, 0.14);
-    parchment.fillRoundedRect(118, 142, 1056, 450, 22);
+    parchment.fillRoundedRect(118, 132, 1056, 456, 22);
     parchment.fillStyle(0xe7c98d, 1);
-    parchment.fillRoundedRect(110, 134, 1060, 450, 22);
+    parchment.fillRoundedRect(110, 124, 1060, 456, 22);
     parchment.lineStyle(3, 0xa47a4c, 0.72);
-    parchment.strokeRoundedRect(110, 134, 1060, 450, 22);
+    parchment.strokeRoundedRect(110, 124, 1060, 456, 22);
     parchment.fillStyle(0xf8e9bd, 1);
-    parchment.fillRoundedRect(124, 148, 1032, 422, 17);
+    parchment.fillRoundedRect(124, 138, 1032, 436, 17);
     parchment.fillStyle(0xc9dba3, 0.23);
     parchment.fillEllipse(315, 330, 310, 210);
     parchment.fillStyle(0xb9d3c8, 0.24);
@@ -611,18 +598,7 @@ export class InventoryScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
     const mapContent = this.add.container(0, 0).setName('bag-map-content');
-    this.track(
-      this.add
-        .text(GAME_WIDTH / 2, 116, '✦ Paths, places and little mysteries ✦', {
-          color: '#725039',
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '16px',
-          fontStyle: 'bold',
-        })
-        .setOrigin(0.5),
-      compass,
-      compassLabel,
-    );
+    this.track(compass, compassLabel);
 
     const pointForNode = (node: ValleyMapNode): { x: number; y: number } => ({
       x: mapLeft + node.x * mapWidth,
@@ -733,7 +709,7 @@ export class InventoryScene extends Phaser.Scene {
       this.add
         .text(
           GAME_WIDTH / 2,
-          614,
+          610,
           'Solid trails are open • small marks are places inside a region • dotted trails stay mysterious',
           {
             color: '#80684f',
@@ -744,7 +720,7 @@ export class InventoryScene extends Phaser.Scene {
         )
         .setOrigin(0.5),
       this.add
-        .text(GAME_WIDTH / 2, 644, [homewardText, nearbyText].filter(Boolean).join('   •   '), {
+        .text(GAME_WIDTH / 2, 642, [homewardText, nearbyText].filter(Boolean).join('   •   '), {
           color: '#66513f',
           fontFamily: 'system-ui, sans-serif',
           fontSize: '13px',
@@ -756,19 +732,17 @@ export class InventoryScene extends Phaser.Scene {
         .setName('bag-map-guidance'),
       mapContent,
     );
-    this.installMapPanning(parchment, mapContent, compass, compassLabel);
+    this.installMapPanning(mapContent, compass, compassLabel);
   }
 
   private installMapPanning(
-    parchment: Phaser.GameObjects.Graphics,
     mapContent: Phaser.GameObjects.Container,
     compass: Phaser.GameObjects.Arc,
     compassLabel: Phaser.GameObjects.Text,
   ): void {
-    const parchmentIndex = this.children.list.indexOf(parchment);
     const contentIndex = this.children.list.indexOf(mapContent);
     const movingObjects = this.children.list
-      .slice(parchmentIndex + 1, contentIndex)
+      .slice(contentIndex + 1)
       .filter(
         (object) =>
           object !== compass &&
@@ -776,15 +750,24 @@ export class InventoryScene extends Phaser.Scene {
           object.name !== 'bag-map-guidance' &&
           !(
             object instanceof Phaser.GameObjects.Text &&
-            (object.text === '✦ Paths, places and little mysteries ✦' ||
-              object.text.startsWith('Solid trails are open'))
+            object.text.startsWith('Solid trails are open')
           ),
       );
     mapContent.add(movingObjects).setDepth(2);
+    const clipShape = this.add.graphics().setName('wp18k-map-geometry-clip');
+    clipShape.fillStyle(0xffffff, 1);
+    clipShape.fillRect(
+      MAP_CLIP_VIEWPORT.x,
+      MAP_CLIP_VIEWPORT.y,
+      MAP_CLIP_VIEWPORT.width,
+      MAP_CLIP_VIEWPORT.height,
+    );
+    mapContent.setMask(clipShape.createGeometryMask());
+    clipShape.setVisible(false);
 
     const frame = this.add.graphics().setName('wp18j-map-pan-frame').setDepth(5);
     frame.lineStyle(4, 0xa47a4c, 0.72);
-    frame.strokeRoundedRect(110, 134, 1060, 450, 22);
+    frame.strokeRoundedRect(110, 124, 1060, 456, 22);
     frame.lineStyle(2, 0xe7c98d, 0.92);
     frame.strokeRoundedRect(
       MAP_VIEWPORT.x - 1,
@@ -822,14 +805,14 @@ export class InventoryScene extends Phaser.Scene {
           Number(zone.getData('content-start-x') ?? 0) +
             pointer.x -
             Number(zone.getData('pointer-start-x') ?? pointer.x),
-          -150,
-          90,
+          -100,
+          100,
         ),
         Phaser.Math.Clamp(
           Number(zone.getData('content-start-y') ?? 0) +
             pointer.y -
             Number(zone.getData('pointer-start-y') ?? pointer.y),
-          -90,
+          -70,
           70,
         ),
       );
@@ -867,6 +850,9 @@ export class InventoryScene extends Phaser.Scene {
       )
       .setScroll(MAP_CLIP_VIEWPORT.x, MAP_CLIP_VIEWPORT.y)
       .setRoundPixels(true);
+    // These cameras only compose clipping and fixed chrome. Leaving them input-enabled
+    // lets a rendering camera become the pointer owner above the main-camera drag zone.
+    mapCamera.inputEnabled = false;
     this.cameras.main.ignore(mapContent);
     mapCamera.ignore(this.children.list.filter((object) => object !== mapContent));
 
@@ -875,12 +861,13 @@ export class InventoryScene extends Phaser.Scene {
     const overlayCamera = this.cameras
       .add(0, 0, GAME_WIDTH, GAME_HEIGHT, false, 'wp18j-map-overlay-camera')
       .setRoundPixels(true);
+    overlayCamera.inputEnabled = false;
     overlayCamera.ignore(this.children.list.filter((object) => !overlays.includes(object)));
     this.cameras.main.ignore(clipGuard);
     mapCamera.ignore(clipGuard);
     overlayCamera.ignore(clipGuard);
 
-    this.track(frame, zone, panHint, clipGuard);
+    this.track(clipShape, frame, zone, panHint, clipGuard);
   }
 
   private selectPocket(pocket: BagPocketId): void {
