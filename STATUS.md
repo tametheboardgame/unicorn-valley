@@ -8,7 +8,7 @@ Last updated: 2026-09-08
 
 Path: `docs/work-packages/R6.5-WP18K-ARCHITECTURE-CONSOLIDATION-LEGACY-RETIREMENT.md`
 
-State: **final tablet correction implemented; exact-head requalification pending**. David accepted WP19A's bounded qualification, authorised merging/deploying PRs #159/#160 and starting WP18K. Both PRs are merged; the production baseline is main `d8f3de6f264fa5fd6e2d77d539a47f288eb50cd4`. WP18K K1 ownership/removal evidence preceded implementation. K2-K4 consolidated Bag/Map ownership and removed five proven legacy managers/bridges. K5's visual-preservation correction restored readable Wonderbook filters and the cross-only close. CI `34318525681` passed Validate, compatibility and shards 1/3 and 3/3; shard 2/3 had 57 passes, 3 configured skips and one tablet-journey failure. The failure used the retired bottom Book-close coordinate after the accepted cross-only close was restored; the journey now taps the named real cross target. Exact-head requalification remains pending and no human acceptance is claimed.
+State: **technically qualified; David approval pending**. David accepted WP19A's bounded qualification, authorised merging/deploying PRs #159/#160 and starting WP18K. Both PRs are merged; the production baseline is main `d8f3de6f264fa5fd6e2d77d539a47f288eb50cd4`. WP18K K1 ownership/removal evidence preceded implementation. K2-K4 consolidated Bag/Map ownership and removed five proven legacy managers/bridges. K5's visual-preservation correction restored readable Wonderbook filters and the cross-only close. Exact correction-head CI `34322134793` passed 179 browser cases with 3 configured skips and no failures or unrun cases; Validate and compatibility passed. The obsolete bottom-coordinate tablet interaction now uses the named real cross target. Technical evidence is ready, but UV-D014 requires David's explicit approval before merge, production deployment or WP19B.
 
 Read first:
 
@@ -69,7 +69,7 @@ WP19A planning/implementation PRs #159/#160 are accepted and merged to main `d8f
 
 ## Next action
 
-Run exact-head CI for the named-cross tablet correction, verify the resulting immutable preview and smoke if runtime changes, then present `docs/evidence/WP18K-VISUAL-REVIEW-INDEX.md` and the sign-off checklist to David. Baseline evidence identifies the phone Bag/Settings scaling as inherited WP19F work rather than accepting it as child-sized. Stop on PR #161 without merge, production deployment or WP19B until David explicitly approves. Physical daughter/device acceptance is not claimed; WP18H and WP17 remain human-only.
+Present `docs/evidence/WP18K-VISUAL-REVIEW-INDEX.md` and the sign-off checklist to David. Baseline evidence identifies the phone Bag/Settings scaling as inherited WP19F work rather than accepting it as child-sized. Stop on PR #161 without merge, production deployment or WP19B until David explicitly approves. Physical daughter/device acceptance is not claimed; WP18H and WP17 remain human-only.
 
 ## Implementation delivery
 
@@ -78,4 +78,4 @@ Draft PR: https://github.com/tametheboardgame/unicorn-valley/pull/161.
 
 ## Codex execution
 
-WP18K K1–K4 started from verified main `d8f3de6`. K5 has a package-specific ledger, exact CI/compatibility counts, complete shard dispositions and planned-versus-actual scanner ownership. The remaining tablet failure was an obsolete interaction in the test, not slow execution: the restored cross-only Book no longer owns the tapped bottom coordinate. The corrected journey retains real touch input and uses the named interactive cross. Exact-head CI is pending; David's explicit approval is required after qualification. The conversation disposition remains `keep` until those results and the human gate are durable.
+WP18K K1–K4 started from verified main `d8f3de6`. K5 has a package-specific ledger, exact CI/compatibility counts, complete shard dispositions and planned-versus-actual scanner ownership. The remaining tablet failure was an obsolete interaction in the test, not slow execution: the restored cross-only Book no longer owns the tapped bottom coordinate. The corrected journey retains real touch input and uses the named interactive cross. Exact correction-head CI passes; David's explicit approval is now required. The conversation disposition remains `keep` until those results and the human gate are durable.
