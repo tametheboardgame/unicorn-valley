@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, type Page, test } from '@playwright/test';
 
 interface DiagnosticObject {
   name: string;
@@ -59,7 +59,10 @@ async function waitForPlayerTravel(page: Page, startX: number, distance: number)
       return Boolean(player && player.x - originX > requiredDistance);
     },
     { originX: startX, requiredDistance: distance },
-    { timeout: 4000 },
+    // Fresh CI/software-rendered scenes can spend the first few seconds warming
+    // Phaser before movement advances. Keep the same 60-unit travel assertion,
+    // but allow the established slow-runner envelope used by browser qualification.
+    { timeout: 8000 },
   );
 }
 
