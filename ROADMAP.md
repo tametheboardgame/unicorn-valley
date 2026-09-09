@@ -81,7 +81,7 @@ The hard 520 KiB application-entry performance budget remains unchanged.
 
 ### R6.5-WP19B - World Boundaries and Tap-Navigation Parity
 
-State: **active; production release verification precedes implementation**.
+State: **active; implementation complete and technical/human qualification pending**.
 
 Path: `docs/work-packages/R6.5-WP19B-WORLD-BOUNDARIES-NAVIGATION.md`
 

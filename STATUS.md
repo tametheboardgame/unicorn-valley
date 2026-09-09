@@ -8,7 +8,7 @@ Last updated: 2026-09-09
 
 Path: `docs/work-packages/R6.5-WP19B-WORLD-BOUNDARIES-NAVIGATION.md`
 
-State: **active; release verification first**. David explicitly approved WP18K after reviewing the corrected preview. PR #161 merged as main `250f0855f013f4ba54a6de4056181cf5affa0d57`; its exact-head CI and project-contract checks passed. Cloudflare reports a successful deployment for that merge SHA at immutable `https://7a667b82.unicorn-valley.pages.dev`. The production alias still requires an isolated, merge-SHA-bound startup/save/reload/Continue smoke before WP19B implementation proceeds.
+State: **implementation complete; exact-head qualification pending**. David approved WP18K; PR #161 merged as main `250f0855f013f4ba54a6de4056181cf5affa0d57`. Cloudflare reports immutable deployment `https://7a667b82.unicorn-valley.pages.dev`, and production-alias Actions smoke `34345075418` passed isolated startup/save/reload/Continue bound to that merge SHA. WP19B runtime candidate `0f980b6` aligns the Cottage floor seam, adds collider-aware Grotto/Grove tap movement and reconciles new-game location identity. Local validation and focused browser coverage pass; exact-head CI, compatibility, immutable preview/smoke and David’s visual collision gate remain.
 
 ## Accepted gameplay baseline
 
@@ -65,13 +65,13 @@ WP18K is human-approved, technically qualified and merged through PR #161 at mai
 
 ## Next action
 
-Run the supported Actions smoke against the production alias with candidate SHA `250f0855f013f4ba54a6de4056181cf5affa0d57`. Once the alias and isolated save/Continue journey are verified, implement and qualify WP19B. Stop at its human collision/visual approval gate; do not merge, deploy, start WP19C or claim physical daughter acceptance.
+Push the complete WP19B candidate and obtain all three required browser-shard dispositions, Actions browser compatibility, project-contract validation, an immutable Cloudflare preview and candidate-bound deployment smoke. Fix any current-package regressions. Then present `docs/evidence/R6.5-WP19B-WORLD-NAVIGATION-QUALIFICATION.md` and its collision/movement checklist to David. Stop without WP19B merge/deployment, WP19C or physical daughter acceptance.
 
 ## Implementation delivery
 
-Branch: `agent/r6.5-wp19b-world-boundaries-navigation`, based on current main.
-Draft PR: pending initial release-verification checkpoint.
+Branch: `agent/r6.5-wp19b-world-boundaries-navigation`, based on main `250f0855`.
+Draft PR: https://github.com/tametheboardgame/unicorn-valley/pull/162.
 
 ## Codex execution
 
-WP18K acceptance and merge are durable. WP19B is authorised, bounded by its package contract, and begins with production verification. The conversation disposition remains `keep` until WP19B evidence and its human gate are durable.
+WP18K acceptance, production association and release smoke are durable. WP19B implementation is locally green: `npm run validate` passes 116 files / 441 tests with a 481.00 KiB entry; the focused 10-case browser group passes. Local compatibility completed Chromium surfaces but lacks installed Firefox/WebKit binaries and recorded two software-rendered mobile timeouts; Actions remains authoritative. Four-class whole-unicorn evidence is committed under `docs/evidence/wp19b-current-head/`. The conversation disposition remains `keep` through the human gate.
