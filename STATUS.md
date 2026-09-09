@@ -4,11 +4,11 @@ Last updated: 2026-09-09
 
 ## Current work
 
-`R6.5-WP19B - World Boundaries and Tap-Navigation Parity`
+`R6.5-WP19C - Progressive Unicorn Creator`
 
-Path: `docs/work-packages/R6.5-WP19B-WORLD-BOUNDARIES-NAVIGATION.md`
+Path: `docs/work-packages/R6.5-WP19C-PROGRESSIVE-CREATOR.md`
 
-State: **technically qualified; awaiting David’s collision/visual approval**. David approved WP18K; PR #161 merged as main `250f0855f013f4ba54a6de4056181cf5affa0d57`. Cloudflare reports immutable deployment `https://7a667b82.unicorn-valley.pages.dev`, and production-alias Actions smoke `34345075418` passed isolated startup/save/reload/Continue bound to that merge SHA. WP19B runtime candidate `0f980b6` aligns the Cottage floor seam, adds collider-aware Grotto/Grove tap movement and reconciles new-game location identity. Local and exact-head validation pass; Cloudflare and candidate-bound smoke evidence are verified. David’s visual collision gate remains.
+State: **release verification in progress; implementation not started**. David approved WP19B; PR #162 merged as main `c2d98ae3287cc8ab6b2548f5efbf5548b7d87979` from approved head `fc07a52588a080260303328e65d0a4ce7267d6d7`. Cloudflare reports successful deployment at `https://39034745.unicorn-valley.pages.dev`. The supported production-alias Actions smoke is required before creator implementation; the local token cannot dispatch workflows, so this branch binds the existing PR-triggered smoke to the exact merge SHA without bypassing controls.
 
 ## Accepted gameplay baseline
 
@@ -65,7 +65,7 @@ WP18K is human-approved, technically qualified and merged through PR #161 at mai
 
 ## Next action
 
-David reviews `https://9502b39e.unicorn-valley.pages.dev`, the four-class whole-unicorn evidence under `docs/evidence/wp19b-current-head/`, and the collision/movement checklist in `docs/evidence/R6.5-WP19B-WORLD-NAVIGATION-QUALIFICATION.md`; he then explicitly approves or rejects WP19B. Stop without WP19B merge/deployment, WP19C or physical daughter acceptance.
+Open the WP19C draft PR so its supported smoke verifies the production alias against main `c2d98ae`; begin creator implementation only after that run passes. Then implement and qualify WP19C, stopping for David's visual approval without merge, production deployment, WP19D, R7 or physical daughter acceptance.
 
 ## Implementation delivery
 

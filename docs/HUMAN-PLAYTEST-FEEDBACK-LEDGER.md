@@ -1,6 +1,12 @@
 # Human Playtest Feedback Ledger
 
-Last reconciled: 2026-09-08
+Last reconciled: 2026-09-09
+
+## David follow-up — 9 September 2026
+
+| Observation | Status | Durable handling |
+| --- | --- | --- |
+| Some places appear to have two layers of paths. | DEFERRED | David described this as a mild visual issue and explicitly deferred it to the final graphics-specific pass. It did not block WP19B and is outside WP19C. Preserve the observation without inventing affected locations or a diagnosis. |
 
 Canonical source: `docs/07Z-R6.5-WP17-PLAYTEST-REMEDIATION.md`.
 

@@ -151,3 +151,22 @@ passed. Cloudflare reports a successful deployment for that merge SHA at
 only after the production alias passes the supported isolated startup, save,
 reload and Continue smoke bound to the merge SHA. UV-D014 continues to require
 David's explicit approval before WP19B merge, production deployment or WP19C.
+
+
+## UV-D016 - WP19B accepted and WP19C released after production verification
+
+Status: Accepted, 2026-09-09.
+
+David explicitly approved WP19B after playing its preview and authorised merge
+and progression to WP19C. PR #162 merged as main
+`c2d98ae3287cc8ab6b2548f5efbf5548b7d87979` from approved head
+`fc07a52588a080260303328e65d0a4ce7267d6d7`; its three workflows passed and no
+review threads were open. Cloudflare reports successful production deployment
+of the merge SHA at `https://39034745.unicorn-valley.pages.dev`. WP19C begins
+only after the supported isolated startup/save/reload/Continue smoke passes
+against the production alias while checked out at that SHA. David also observed
+that some places appear to have two layers of paths; this mild visual issue is
+explicitly deferred to the final graphics-specific pass, did not block WP19B,
+and is not WP19C scope. No locations or diagnosis are inferred. UV-D014 still
+requires David's explicit approval before WP19C merge, production deployment or
+WP19D.
