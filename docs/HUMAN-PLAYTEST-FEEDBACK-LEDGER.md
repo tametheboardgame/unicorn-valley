@@ -42,7 +42,7 @@ Status meanings:
 | Feedback | Status | Current handling |
 | --- | --- | --- |
 | Echo could not be spoken to | IMPLEMENTED / REVALIDATE | Addressed in functional remediation; verify through real progression. |
-| Moonflower Cottage back wall/window collision wrong | **OPEN** | Still reproducible in 2026-09-07 review. Explicitly excluded from WP18I/J and WP18K. Must remain visible before R7 readiness. |
+| Moonflower Cottage back wall/window collision wrong | IMPLEMENTED / AWAITING HUMAN CHECK | WP19B aligns the physics/tap boundary and foreground seam at the visible floor while retaining every authored approach; four-class whole-unicorn evidence and a focused collision checklist await David. |
 | Decoration placement/removal/bag state was confusing/inconsistent | IMPLEMENTED / REVALIDATE | Functional/modal remediation exists; replay required. |
 | Bag exposed only six items/no scalable access | IMPLEMENTED / REVALIDATE | Category/scroll behaviour added; verify with a populated Bag. |
 | Food could be collected but not meaningfully used | IMPLEMENTED / REVALIDATE | Food-use behaviour exists; verify child can discover/use it. |
@@ -125,13 +125,13 @@ The original rows remain historical remediation/replay evidence. These new obser
 - All applicable moving residents must expose Talk: VERIFICATION REQUIRED for the full resident inventory; no blanket claim of completion from Nova/Echo fixes.
 - Generated title background: REQUESTED / PROPOSED WP19F; existing title is procedural artwork.
 - MP3 music/SFX upload workflow: REQUESTED / PROPOSED WP19G/H; existing audio is procedural.
-- Grotto/Grove preferred tap navigation: OPEN SOURCE GAP, WP19B proposed; confirm and cover normal input during implementation.
+- Grotto/Grove preferred tap navigation: IMPLEMENTED / AWAITING HUMAN CHECK in WP19B with authored collider-aware maps, blocked-target recovery and real-touch regression coverage.
 - Save-read failure and false purchase success on storage failure: IMPLEMENTED / TECHNICALLY QUALIFIED in WP19A, awaiting manager closure. Focused tests cover denied reads, checkpoint-less primary failure, throwing post-commit listeners and the three-Shimmer/Berry-Bun failed-write/retry order. Exact-head CI passes all five save-recovery cases, including denied storage. David confirmed that the Berry Bun and unicorn edits persisted after reload; this remains normal-use evidence, not fault injection. The full browser job timed out with unrelated explicit UI failures and is not claimed green; see `docs/evidence/R6.5-WP19A-BROWSER-QUALIFICATION.md`.
-- Cottage collision remains OPEN; WP19B owns proposed closure.
+- Cottage collision: IMPLEMENTED / AWAITING HUMAN CHECK in WP19B; the complete-unicorn seam evidence and interaction approaches remain subject to David’s package gate.
 
 No new daughter replay occurred during this audit. Future ideas and all positive preservation requirements above remain unchanged. WP18H now follows the proposed integrated WP19I gate if the plan is approved.
 
-- New-game Map current-location mismatch: OPEN / BROWSER-REPRODUCED. Map marks Cottage during Glade play; audit A16 / proposed WP19B.
+- New-game Map current-location mismatch: IMPLEMENTED / TECHNICAL QUALIFICATION PENDING in WP19B. New saves use the actual Glade location while the legacy Cottage ID remains compatible.
 
 ### Audit validation addendum, 8 September 2026
 

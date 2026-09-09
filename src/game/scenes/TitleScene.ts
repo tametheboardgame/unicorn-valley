@@ -16,10 +16,8 @@ import {
   createUiShadow,
   setButtonEnabled,
 } from '../ui/uiTheme';
-import { COTTAGE_INTERIOR_LOCATION_ID } from '../world/CottageInteriorMap';
+import { resolveContinueDestination } from '../save/ContinueLocation';
 import { resetMoonflowerGladePlayerSpawn } from '../world/MoonflowerGladeMap';
-import { RAINBOW_MEADOW_LOCATION_ID } from '../world/RainbowMeadowMap';
-import { SUNBEAM_VILLAGE_LOCATION_ID } from '../world/SunbeamVillageMap';
 
 const BUILD_LABEL = 'v0.1.0 • R6-WP6.11';
 const MENU_X = 955;
@@ -43,38 +41,6 @@ interface SettingRow {
   kind: 'muted' | 'music' | 'ambience' | 'sfx' | 'reduced-motion' | 'high-visibility';
 }
 
-function resolveContinueScene(currentLocationId: string | undefined): string {
-  if (currentLocationId === COTTAGE_INTERIOR_LOCATION_ID) {
-    return 'CottageInteriorScene';
-  }
-
-  if (currentLocationId === SUNBEAM_VILLAGE_LOCATION_ID) {
-    return 'SunbeamVillageScene';
-  }
-
-  if (currentLocationId === RAINBOW_MEADOW_LOCATION_ID) {
-    return 'RainbowMeadowScene';
-  }
-
-  return 'MoonflowerGladeScene';
-}
-
-function resolveContinueStatus(sceneKey: string): string {
-  if (sceneKey === 'CottageInteriorScene') {
-    return 'Your unicorn is cosy inside Moonflower Cottage.';
-  }
-
-  if (sceneKey === 'SunbeamVillageScene') {
-    return 'Your unicorn is waiting in Sunbeam Village.';
-  }
-
-  if (sceneKey === 'RainbowMeadowScene') {
-    return 'Your unicorn is waiting in Rainbow Meadow.';
-  }
-
-  return 'Your unicorn is waiting in Moonflower Glade.';
-}
-
 export class TitleScene extends Phaser.Scene {
   private readonly accessibility = getBrowserAccessibilitySettingsStore();
   private readonly audio = getVerticalSliceAudio();
@@ -95,6 +61,7 @@ export class TitleScene extends Phaser.Scene {
   private storageUnavailable = false;
   private resetArmed = false;
   private continueScene = 'MoonflowerGladeScene';
+  private continueStatus = 'Your unicorn is waiting in Moonflower Glade.';
 
   public constructor() {
     super('TitleScene');
@@ -115,7 +82,9 @@ export class TitleScene extends Phaser.Scene {
     this.storageUnavailable = loadResult.status === 'storage-failed';
     const save = loadResult.status === 'loaded' ? loadResult.save : null;
     this.hasCreatedUnicorn = Boolean(save?.profile.name);
-    this.continueScene = resolveContinueScene(save?.profile.currentLocationId);
+    const continueDestination = resolveContinueDestination(save?.profile.currentLocationId);
+    this.continueScene = continueDestination.sceneKey;
+    this.continueStatus = continueDestination.status;
 
     this.cameras.main.setBackgroundColor('#7ac4df');
     this.createValleyArtwork();
@@ -484,7 +453,7 @@ export class TitleScene extends Phaser.Scene {
       : this.unsupportedSaveVersion
         ? 'Your save is safe. Refresh to load the newer game version.'
         : this.hasCreatedUnicorn
-          ? resolveContinueStatus(this.continueScene)
+          ? this.continueStatus
           : 'First, make a unicorn that feels like yours.';
     this.statusText = this.add
       .text(MENU_X, 606, status, {
@@ -790,7 +759,7 @@ export class TitleScene extends Phaser.Scene {
         this.resetArmed = false;
         menuButton.label.setText('New Game');
         menuButton.button.setFillStyle(UI_COLOURS.lavender, 1);
-        this.statusText?.setText(resolveContinueStatus(this.continueScene));
+        this.statusText?.setText(this.continueStatus);
       });
       return;
     }

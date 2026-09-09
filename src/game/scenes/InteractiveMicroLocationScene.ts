@@ -12,6 +12,7 @@ import { parseUnicornAppearance } from '../player/UnicornAppearance';
 import { createUnicornAppearanceTexture } from '../player/UnicornAppearanceRenderer';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { InteractionPrompt } from '../ui/InteractionPrompt';
+import type { CollisionRectangle } from '../world/MapTraversal';
 
 export interface MicroLocationRuntimeOptions {
   playerTextureKey: string;
@@ -24,6 +25,7 @@ export interface MicroLocationRuntimeOptions {
     depth?: number;
     durationMs?: number;
   };
+  colliders?: readonly CollisionRectangle[];
 }
 
 export abstract class InteractiveMicroLocationScene extends Phaser.Scene {
@@ -49,6 +51,20 @@ export abstract class InteractiveMicroLocationScene extends Phaser.Scene {
     const spawn = options.playerSpawn ?? { x: GAME_WIDTH / 2, y: GAME_HEIGHT - 150 };
     this.player = new PlayerEntity(this, spawn.x, spawn.y, options.playerTextureKey);
     this.player.sprite.setDisplaySize(104, 86).setCollideWorldBounds(true);
+    if (options.colliders?.length) {
+      const blockers = this.physics.add.staticGroup();
+      const key = 'micro-location-collision-pixel';
+      if (!this.textures.exists(key)) {
+        const graphics = this.add.graphics().fillStyle(0xffffff).fillRect(0, 0, 2, 2);
+        graphics.generateTexture(key, 2, 2).destroy();
+      }
+      for (const collider of options.colliders) {
+        const blocker = blockers.create(collider.x, collider.y, key) as Phaser.Physics.Arcade.Image;
+        blocker.setDisplaySize(collider.width, collider.height).setVisible(false).refreshBody();
+        blocker.setName(`micro-location-collider:${collider.id}`);
+      }
+      this.physics.add.collider(this.player.sprite, blockers);
+    }
 
     this.pointerInput = new PointerTouchInputAdapter();
     this.inputController = new InputController([new KeyboardInputAdapter(this), this.pointerInput]);

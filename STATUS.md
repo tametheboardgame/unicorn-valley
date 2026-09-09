@@ -1,19 +1,14 @@
 # Project Status
 
-Last updated: 2026-09-08
+Last updated: 2026-09-09
 
 ## Current work
 
-`R6.5-WP18K - Architecture Consolidation and Legacy Retirement`
+`R6.5-WP19B - World Boundaries and Tap-Navigation Parity`
 
-Path: `docs/work-packages/R6.5-WP18K-ARCHITECTURE-CONSOLIDATION-LEGACY-RETIREMENT.md`
+Path: `docs/work-packages/R6.5-WP19B-WORLD-BOUNDARIES-NAVIGATION.md`
 
-State: **active correction; technical requalification pending**. David accepted WP19A's bounded qualification, authorised merging/deploying PRs #159/#160 and starting WP18K. Both PRs are merged; the production baseline is main `d8f3de6f264fa5fd6e2d77d539a47f288eb50cd4`. WP18K K1 ownership/removal evidence preceded implementation. K2-K4 consolidated Bag/Map ownership and removed five proven legacy managers/bridges. K5's visual-preservation correction restored readable Wonderbook filters and the cross-only close. Correction-head CI `34322134793` passed 179 browser cases with 3 configured skips and no failures or unrun cases, but the later exact documentation-head run `34323584335` recorded one Firefly Lantern failure in shard 1. Trace-equivalent local reproduction showed that short press/release events could fall entirely between Phaser update frames: the result recorded 7/8, so replay modes never unlocked and the difficulty selector could not appear. Candidate `c7fd62f` now holds each real keyboard edge until the corresponding named UI transition, and three focused repetitions pass without changing the timeout, cycles or assertions. Exact-head CI `34328261135` passed all three browser shards, Validate and compatibility; UV-D014 requires David's explicit approval before merge, production deployment or WP19B.
-
-Read first:
-
-- `docs/audits/2026-09-08-WHOLE-GAME-AUDIT.md`
-- `docs/2026-09-08-REMEDIATION-PROPOSAL.md`
+State: **technically qualified; awaiting David’s collision/visual approval**. David approved WP18K; PR #161 merged as main `250f0855f013f4ba54a6de4056181cf5affa0d57`. Cloudflare reports immutable deployment `https://7a667b82.unicorn-valley.pages.dev`, and production-alias Actions smoke `34345075418` passed isolated startup/save/reload/Continue bound to that merge SHA. WP19B runtime candidate `0f980b6` aligns the Cottage floor seam, adds collider-aware Grotto/Grove tap movement and reconciles new-game location identity. Local and exact-head validation pass; Cloudflare and candidate-bound smoke evidence are verified. David’s visual collision gate remains.
 
 ## Accepted gameplay baseline
 
@@ -31,7 +26,7 @@ Retain the accepted HUD camera stability, cream/lavender/purple/gold controls, B
 
 WP19A persistence safety → WP18K ownership foundation → WP19B world boundaries/navigation → WP19C creator → WP19D interactions/NPCs → WP19E conversations → WP19F UI consistency/generated title → WP19G/H MP3 audio → WP19I integrated qualification → WP18H daughter replay → WP17 readiness decision.
 
-WP19A-I bounded files are **approved**, subject to their dependencies and human gates. WP19A is complete and WP18K is active; WP19B follows only after WP18K qualification and its human gate. WP18K remains behaviour-preserving; it must not silently absorb functional redesign.
+WP19A-I bounded files are **approved**, subject to their dependencies and human gates. WP19A and WP18K are complete; WP19B is active after production release verification. WP18K remains behaviour-preserving; it must not silently absorb functional redesign.
 
 ## Important open findings
 
@@ -66,17 +61,17 @@ No new daughter replay occurred. Preserve all positive feedback and deferred ide
 
 ## Delivery
 
-WP19A planning/implementation PRs #159/#160 are accepted and merged to main `d8f3de6`. WP18K remains draft PR #161 on `agent/r6.5-wp18k-architecture-consolidation`. Cloudflare verified `https://890a12f5.unicorn-valley.pages.dev` for runtime candidate `febfe2d`, and Actions smoke `34318525592` passed against that exact deployment. UV-D014 supersedes the overnight delegated authority: after technical qualification, WP18K pauses for David's explicit approval before merge, production deployment or WP19B.
+WP18K is human-approved, technically qualified and merged through PR #161 at main `250f0855f013f4ba54a6de4056181cf5affa0d57`. Cloudflare reports immutable deployment `https://7a667b82.unicorn-valley.pages.dev` for that merge SHA. WP19B uses `agent/r6.5-wp19b-world-boundaries-navigation` and must remain a draft PR through its separate UV-D014 human collision/visual gate.
 
 ## Next action
 
-Complete manifest-bound smoke against `https://38f17b6c.unicorn-valley.pages.dev`, then present the sign-off checklist to David. Baseline evidence identifies the phone Bag/Settings scaling as inherited WP19F work rather than accepting it as child-sized. Stop on PR #161 without merge, production deployment or WP19B until David explicitly approves. Physical daughter/device acceptance is not claimed; WP18H and WP17 remain human-only.
+David reviews `https://9502b39e.unicorn-valley.pages.dev`, the four-class whole-unicorn evidence under `docs/evidence/wp19b-current-head/`, and the collision/movement checklist in `docs/evidence/R6.5-WP19B-WORLD-NAVIGATION-QUALIFICATION.md`; he then explicitly approves or rejects WP19B. Stop without WP19B merge/deployment, WP19C or physical daughter acceptance.
 
 ## Implementation delivery
 
-Branch: `agent/r6.5-wp18k-architecture-consolidation`, based on current main.
-Draft PR: https://github.com/tametheboardgame/unicorn-valley/pull/161.
+Branch: `agent/r6.5-wp19b-world-boundaries-navigation`, based on main `250f0855`.
+Draft PR: https://github.com/tametheboardgame/unicorn-valley/pull/162.
 
 ## Codex execution
 
-WP18K K1–K4 started from verified main `d8f3de6`. K5 has a package-specific ledger, exact CI/compatibility counts, complete shard dispositions and planned-versus-actual scanner ownership. The remaining tablet failure was an obsolete interaction in the test, not slow execution: the restored cross-only Book no longer owns the tapped bottom coordinate. The corrected journey retains real touch input and uses the named interactive cross. The later documentation-head Firefly failure invalidated the earlier claim until candidate `c7fd62f` passed focused repetitions and exact-head CI `34328261135`. David's playtest invalidated that historical qualification: the current visual/input correction must pass exact-head qualification before his explicit approval can be requested again. The conversation disposition remains `keep` until those results and the human gate are durable.
+Runtime implementation: `0f980b6`. Exact qualified head: `15be0d3`. CI `34349746804` passed 184 browser cases with 3 configured skips and no failures/unrun; compatibility passed 48 with 15 configured skips; Validate passed 116 files / 441 tests and 481.00 KiB. Immutable preview: `https://9502b39e.unicorn-valley.pages.dev`. Candidate smoke `34348947787` passed against `https://5b6e9886.unicorn-valley.pages.dev`. The conversation disposition is `keep` through David’s gate.

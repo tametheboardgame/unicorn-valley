@@ -6,6 +6,7 @@ import { COTTAGE_INTERIOR_MAP } from '../world/CottageInteriorMap';
 import { CRYSTAL_BROOK_MAP } from '../world/CrystalBrookMap';
 import type { MapPoint, TraversalMapDefinition } from '../world/MapTraversal';
 import { MOONFLOWER_GLADE_MAP } from '../world/MoonflowerGladeMap';
+import { CRYSTAL_GROTTO_MAP, FIREFLY_GROVE_MAP } from '../world/MicroLocationTraversalMaps';
 import { RAINBOW_MEADOW_MAP } from '../world/RainbowMeadowMap';
 import { STARLIGHT_BEACH_MAP } from '../world/StarlightBeachMap';
 import { SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
@@ -14,6 +15,7 @@ import { parsePlayerFacing, resolveClickNavigationFacing } from './ClickNavigati
 import { findClickNavigationPath } from './ClickNavigationPath';
 import { isExplorationMovementBlocked } from './ExplorationMovementBlocker';
 import { hasHeldExplorationMovementInput } from './KeyboardInputAdapter';
+import { CLICK_NAVIGATION_SUPPORTED_SCENES } from './ClickNavigationSceneClassification';
 
 interface NavigationState {
   path: MapPoint[];
@@ -28,18 +30,7 @@ interface NavigationState {
   ) => void;
 }
 
-const SUPPORTED_SCENES = new Set([
-  'MoonflowerGladeScene',
-  'SunbeamVillageScene',
-  'RainbowMeadowScene',
-  'CrystalBrookScene',
-  'WhisperingWoodsScene',
-  'StarlightBeachScene',
-  'CottageInteriorScene',
-  'MoonflowerPatchScene',
-  'HollowTreeNookScene',
-  'WindmillLookoutScene',
-]);
+const SUPPORTED_SCENES = new Set<string>(CLICK_NAVIGATION_SUPPORTED_SCENES);
 
 const PATCH_NAVIGATION_MAP: TraversalMapDefinition = {
   width: GAME_WIDTH,
@@ -84,6 +75,8 @@ const NAVIGATION_MAPS: Readonly<Record<string, TraversalMapDefinition>> = {
   MoonflowerPatchScene: PATCH_NAVIGATION_MAP,
   HollowTreeNookScene: HOLLOW_TREE_NOOK_NAVIGATION_MAP,
   WindmillLookoutScene: WINDMILL_LOOKOUT_NAVIGATION_MAP,
+  CrystalGrottoScene: CRYSTAL_GROTTO_MAP,
+  FireflyGroveScene: FIREFLY_GROVE_MAP,
 };
 
 const WAYPOINT_REACHED_DISTANCE = 22;

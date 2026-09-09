@@ -138,3 +138,16 @@ WP18K correction and qualification work on PR #161, but WP18K must then stop for
 David's explicit approval. No merge, production deployment, WP19B or R7 work is
 authorised before that approval. WP18H's physical Galaxy Tab S8 replay and
 WP17's readiness decision remain separate human-only gates.
+
+## UV-D015 - WP18K accepted and WP19B released after production verification
+
+Status: Accepted, 2026-09-09.
+
+David explicitly approved WP18K after reviewing the corrected immutable preview
+and authorised its merge and the start of WP19B. PR #161 merged as main
+`250f0855f013f4ba54a6de4056181cf5affa0d57`; exact-head CI and contract checks
+passed. Cloudflare reports a successful deployment for that merge SHA at
+`https://7a667b82.unicorn-valley.pages.dev`. WP19B implementation is released
+only after the production alias passes the supported isolated startup, save,
+reload and Continue smoke bound to the merge SHA. UV-D014 continues to require
+David's explicit approval before WP19B merge, production deployment or WP19C.

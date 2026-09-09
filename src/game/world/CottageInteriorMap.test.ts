@@ -69,6 +69,20 @@ describe('Moonflower Cottage interior map', () => {
     ).toBe(false);
   });
 
+  it('aligns the back-wall blocker to the visible floor seam and keeps approaches below it', () => {
+    const wall = COTTAGE_INTERIOR_MAP.colliders.find(({ id }) => id === 'wall-top');
+    expect(wall && wall.y + wall.height / 2).toBe(390);
+
+    for (const id of [
+      'cottage-slot:window-nook',
+      'cottage-slot:left-wall',
+      'cottage-slot:right-wall',
+    ]) {
+      const slot = COTTAGE_INTERIOR_MAP.decorationSlots.find((candidate) => candidate.id === id);
+      expect(slot?.interactionPosition?.y).toBeGreaterThan(390 + PLAYER_CLEARANCE);
+    }
+  });
+
   it('uses unique stable decoration slot IDs', () => {
     const ids = COTTAGE_INTERIOR_MAP.decorationSlots.map((slot) => slot.id);
     expect(new Set(ids).size).toBe(ids.length);

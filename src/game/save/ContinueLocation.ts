@@ -3,7 +3,7 @@ import { CRYSTAL_BROOK_LOCATION_ID } from '../world/CrystalBrookMap';
 import { RAINBOW_MEADOW_LOCATION_ID } from '../world/RainbowMeadowMap';
 import { SUNBEAM_VILLAGE_LOCATION_ID } from '../world/SunbeamVillageMap';
 import { WHISPERING_WOODS_LOCATION_ID } from '../world/WhisperingWoodsMap';
-import { DEFAULT_START_LOCATION_ID } from './saveSchema';
+import { DEFAULT_START_LOCATION_ID, NEW_GAME_START_LOCATION_ID } from './saveSchema';
 import { MOONFLOWER_GLADE_LOCATION_ID } from './saveLocationCheckpoint';
 
 export const STARLIGHT_BEACH_CONTINUE_LOCATION_ID = 'location:starlight-beach';
@@ -22,6 +22,15 @@ const DESTINATIONS = new Map<string, ContinueDestination>([
       locationId: DEFAULT_START_LOCATION_ID,
       sceneKey: 'CottageInteriorScene',
       status: 'Your unicorn is cosy inside Moonflower Cottage.',
+      lazyScene: false,
+    },
+  ],
+  [
+    NEW_GAME_START_LOCATION_ID,
+    {
+      locationId: NEW_GAME_START_LOCATION_ID,
+      sceneKey: 'MoonflowerGladeScene',
+      status: 'Your unicorn is waiting in Moonflower Glade.',
       lazyScene: false,
     },
   ],

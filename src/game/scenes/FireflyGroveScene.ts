@@ -15,6 +15,7 @@ import { getBrowserSaveService } from '../save/browserSaveService';
 import { WoodsDepthStoryService } from '../story/WoodsDepthStoryService';
 import { InteractionPrompt } from '../ui/InteractionPrompt';
 import { setWhisperingWoodsPlayerSpawn } from '../world/WhisperingWoodsMap';
+import { FIREFLY_GROVE_MAP } from '../world/MicroLocationTraversalMaps';
 
 const PLAYER_TEXTURE_KEY = 'player-unicorn-firefly-grove';
 const WOODS_RETURN = { x: 2960, y: 835 } as const;
@@ -32,6 +33,7 @@ export class FireflyGroveScene extends Phaser.Scene {
   private lanternPlant: Phaser.GameObjects.Ellipse | null = null;
   private lanternPlantLabel: Phaser.GameObjects.Text | null = null;
   private fireflyLights: Phaser.GameObjects.Arc[] = [];
+  private collisionGroup: Phaser.Physics.Arcade.StaticGroup | null = null;
 
   public constructor() {
     super('FireflyGroveScene');
@@ -49,8 +51,15 @@ export class FireflyGroveScene extends Phaser.Scene {
       parseUnicornAppearance(save.profile.appearance),
     );
     this.physics.world.setBounds(65, 115, GAME_WIDTH - 130, GAME_HEIGHT - 185);
-    this.player = new PlayerEntity(this, GAME_WIDTH / 2, GAME_HEIGHT - 150, PLAYER_TEXTURE_KEY);
+    this.player = new PlayerEntity(
+      this,
+      FIREFLY_GROVE_MAP.playerSpawn.x,
+      FIREFLY_GROVE_MAP.playerSpawn.y,
+      PLAYER_TEXTURE_KEY,
+    );
     this.player.sprite.setDisplaySize(104, 86).setCollideWorldBounds(true);
+    this.collisionGroup = this.createCollisionMap();
+    this.physics.add.collider(this.player.sprite, this.collisionGroup);
 
     this.pointerInput = new PointerTouchInputAdapter();
     this.inputController = new InputController([new KeyboardInputAdapter(this), this.pointerInput]);
@@ -96,6 +105,7 @@ export class FireflyGroveScene extends Phaser.Scene {
       this.lanternPlant = null;
       this.lanternPlantLabel = null;
       this.fireflyLights = [];
+      this.collisionGroup = null;
     });
   }
 
@@ -313,5 +323,20 @@ export class FireflyGroveScene extends Phaser.Scene {
         fontSize: '15px',
       })
       .setOrigin(0.5);
+  }
+
+  private createCollisionMap(): Phaser.Physics.Arcade.StaticGroup {
+    const key = 'firefly-grove-collision-pixel';
+    if (!this.textures.exists(key)) {
+      const graphics = this.add.graphics().fillStyle(0xffffff).fillRect(0, 0, 2, 2);
+      graphics.generateTexture(key, 2, 2).destroy();
+    }
+    const group = this.physics.add.staticGroup();
+    for (const collider of FIREFLY_GROVE_MAP.colliders) {
+      const blocker = group.create(collider.x, collider.y, key) as Phaser.Physics.Arcade.Image;
+      blocker.setDisplaySize(collider.width, collider.height).setVisible(false).refreshBody();
+      blocker.setName(`firefly-grove-collider:${collider.id}`);
+    }
+    return group;
   }
 }

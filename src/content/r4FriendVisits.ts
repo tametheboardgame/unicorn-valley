@@ -27,7 +27,7 @@ export const R4_FRIEND_VISITS = [
     characterId: 'character:willow',
     priority: 200,
     seenFlag: WILLOW_COTTAGE_VISIT_SEEN_FLAG,
-    position: { x: 650, y: 430 },
+    position: { x: 650, y: 470 },
     icon: '🌿',
     conditions: [
       {
@@ -58,7 +58,7 @@ export const R4_FRIEND_VISITS = [
     characterId: 'character:nova',
     priority: 100,
     seenFlag: NOVA_COTTAGE_VISIT_SEEN_FLAG,
-    position: { x: 1180, y: 430 },
+    position: { x: 1180, y: 470 },
     icon: '🏁',
     conditions: [
       {

@@ -5,6 +5,7 @@ import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { CrystalGrottoStoryService, type CrystalNoteId } from '../story/CrystalGrottoStoryService';
 import { setCrystalBrookPlayerSpawn } from '../world/CrystalBrookMap';
+import { CRYSTAL_GROTTO_MAP } from '../world/MicroLocationTraversalMaps';
 import { InteractiveMicroLocationScene } from './InteractiveMicroLocationScene';
 
 const PLAYER_TEXTURE_KEY = 'player-unicorn-crystal-grotto';
@@ -50,7 +51,8 @@ export class CrystalGrottoScene extends InteractiveMicroLocationScene {
     this.initialiseMicroLocation({
       playerTextureKey: PLAYER_TEXTURE_KEY,
       worldBounds: { x: 70, y: 115, width: GAME_WIDTH - 140, height: GAME_HEIGHT - 185 },
-      playerSpawn: { x: GAME_WIDTH / 2, y: GAME_HEIGHT - 155 },
+      playerSpawn: CRYSTAL_GROTTO_MAP.playerSpawn,
+      colliders: CRYSTAL_GROTTO_MAP.colliders,
       feedback: { y: 112, color: '#4b4668', backgroundColor: '#f4fbfff0' },
     });
   }

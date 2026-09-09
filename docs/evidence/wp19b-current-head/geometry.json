@@ -1,0 +1,172 @@
+{
+  "candidateSha": "0f980b68deebf04a596ec92d0920de54181907a1",
+  "capturedAt": "2026-09-09T12:07:41.960Z",
+  "baseUrl": "http://127.0.0.1:4173",
+  "floorSeamY": 390,
+  "displays": {
+    "desktop": {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "canvas": {
+        "x": 0,
+        "y": 67.5,
+        "width": 1440,
+        "height": 810
+      },
+      "player": {
+        "centre": {
+          "x": 705,
+          "y": 400.019801980198
+        },
+        "display": {
+          "width": 112,
+          "height": 92
+        },
+        "visualTop": 354.019801980198,
+        "visualBottom": 446.019801980198,
+        "physicsBody": {
+          "x": 689.3934426229508,
+          "y": 390,
+          "width": 31.21311475409836,
+          "height": 20.03960396039604,
+          "feet": {
+            "x": 705,
+            "y": 410.03960396039605
+          }
+        },
+        "facing": "up"
+      },
+      "seam": {
+        "x": 900,
+        "y": 390,
+        "width": 1610,
+        "height": 18
+      }
+    },
+    "tablet-landscape": {
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "canvas": {
+        "x": 0,
+        "y": 144,
+        "width": 1024,
+        "height": 576
+      },
+      "player": {
+        "centre": {
+          "x": 705,
+          "y": 400.019801980198
+        },
+        "display": {
+          "width": 112,
+          "height": 92
+        },
+        "visualTop": 354.019801980198,
+        "visualBottom": 446.019801980198,
+        "physicsBody": {
+          "x": 689.3934426229508,
+          "y": 390,
+          "width": 31.21311475409836,
+          "height": 20.03960396039604,
+          "feet": {
+            "x": 705,
+            "y": 410.03960396039605
+          }
+        },
+        "facing": "up"
+      },
+      "seam": {
+        "x": 900,
+        "y": 390,
+        "width": 1610,
+        "height": 18
+      }
+    },
+    "phone-landscape": {
+      "viewport": {
+        "width": 844,
+        "height": 390
+      },
+      "canvas": {
+        "x": 75,
+        "y": 0,
+        "width": 693.328125,
+        "height": 390
+      },
+      "player": {
+        "centre": {
+          "x": 705,
+          "y": 400.019801980198
+        },
+        "display": {
+          "width": 112,
+          "height": 92
+        },
+        "visualTop": 354.019801980198,
+        "visualBottom": 446.019801980198,
+        "physicsBody": {
+          "x": 689.3934426229508,
+          "y": 390,
+          "width": 31.21311475409836,
+          "height": 20.03960396039604,
+          "feet": {
+            "x": 705,
+            "y": 410.03960396039605
+          }
+        },
+        "facing": "up"
+      },
+      "seam": {
+        "x": 900,
+        "y": 390,
+        "width": 1610,
+        "height": 18
+      }
+    },
+    "phone-portrait": {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "canvas": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 219.375
+      },
+      "player": {
+        "centre": {
+          "x": 705,
+          "y": 400.019801980198
+        },
+        "display": {
+          "width": 112,
+          "height": 92
+        },
+        "visualTop": 354.019801980198,
+        "visualBottom": 446.019801980198,
+        "physicsBody": {
+          "x": 689.3934426229508,
+          "y": 390,
+          "width": 31.21311475409836,
+          "height": 20.03960396039604,
+          "feet": {
+            "x": 705,
+            "y": 410.03960396039605
+          }
+        },
+        "facing": "up"
+      },
+      "seam": {
+        "x": 900,
+        "y": 390,
+        "width": 1610,
+        "height": 18
+      }
+    }
+  }
+}
