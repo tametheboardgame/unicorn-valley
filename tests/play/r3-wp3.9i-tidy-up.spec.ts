@@ -1,7 +1,5 @@
 import { expect, type Page, test } from '@playwright/test';
 
-const INTERACTION_APPROACH_ATTEMPTS = 80;
-
 interface DiagnosticObjectSnapshot {
   type: string;
   name: string;
@@ -86,28 +84,42 @@ function playerObject(scene: DiagnosticSceneSnapshot): DiagnosticObjectSnapshot 
   return player;
 }
 
-async function approachVisiblePrompt(
-  page: Page,
-  sceneKey: string,
-  promptText: string,
-): Promise<void> {
-  for (let attempt = 0; attempt < INTERACTION_APPROACH_ATTEMPTS; attempt += 1) {
-    const snapshot = await getSnapshot(page);
-    const scene = sceneSnapshot(snapshot, sceneKey);
-    if (scene.objects.some((object) => object.visible && object.text?.includes(promptText))) {
-      return;
-    }
-
-    await page.keyboard.down('ArrowRight');
-    try {
-      await page.waitForTimeout(90);
-    } finally {
-      await page.keyboard.up('ArrowRight');
-    }
-    await page.waitForTimeout(30);
-  }
-
-  throw new Error(`Did not reach interaction prompt: ${promptText}`);
+async function positionAtNovaContextualAction(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    const diagnostics = (
+      window as typeof window & {
+        __UNICORN_VALLEY_DIAGNOSTICS__?: {
+          setArcadeSpritePosition(sceneKey: string, objectName: string, x: number, y: number): void;
+        };
+      }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__;
+    diagnostics?.setArcadeSpritePosition('RainbowMeadowScene', 'world-player-unicorn', 2_380, 950);
+  });
+  await page.waitForFunction(
+    () => {
+      const diagnostics = (
+        window as typeof window & {
+          __UNICORN_VALLEY_DIAGNOSTICS__?: { snapshot(): BrowserDiagnosticSnapshot };
+        }
+      ).__UNICORN_VALLEY_DIAGNOSTICS__;
+      const meadow = diagnostics
+        ?.snapshot()
+        .scenes.find((scene) => scene.key === 'RainbowMeadowScene');
+      return (
+        meadow?.objects.some(
+          (object) => object.name === 'exploration-interaction-prompt' && object.visible,
+        ) === true &&
+        meadow.objects.some(
+          (object) =>
+            object.name === 'exploration-tablet-hint' &&
+            object.visible &&
+            object.text?.includes('Nova'),
+        )
+      );
+    },
+    undefined,
+    { timeout: 5_000 },
+  );
 }
 
 test('exploration chrome uses the canonical static HUD and a centred canvas', async ({ page }) => {
@@ -209,12 +221,25 @@ test('Nova keeps her canonical identity and returns the player to the exact conv
     );
   });
 
-  await approachVisiblePrompt(page, 'RainbowMeadowScene', 'Talk to Nova');
+  await positionAtNovaContextualAction(page);
 
   let snapshot = await getSnapshot(page);
   let meadow = sceneSnapshot(snapshot, 'RainbowMeadowScene');
   expect(
-    meadow.objects.some((object) => object.visible && object.text?.includes('Talk to Nova')),
+    meadow.objects.some(
+      (object) =>
+        object.name === 'exploration-interaction-prompt-label' &&
+        object.visible &&
+        object.text === 'Talk',
+    ),
+  ).toBe(true);
+  expect(
+    meadow.objects.some(
+      (object) =>
+        object.name === 'exploration-tablet-hint' &&
+        object.visible &&
+        object.text?.includes('Nova'),
+    ),
   ).toBe(true);
   const beforeConversation = playerObject(meadow);
 

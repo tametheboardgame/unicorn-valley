@@ -108,7 +108,8 @@ export class DesktopConceptCleanupManager {
       }
       if (
         object.name.startsWith('desktop-concept-') ||
-        object.name.startsWith('exploration-tablet-')
+        object.name.startsWith('exploration-tablet-') ||
+        object.name.startsWith('dialogue-production-')
       ) {
         return;
       }
