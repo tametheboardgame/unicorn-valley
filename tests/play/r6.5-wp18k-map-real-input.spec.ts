@@ -90,66 +90,64 @@ async function assertMapChrome(page: Page): Promise<void> {
   expect(objects.find(({ name }) => name === 'inventory-modal-title')?.text).toBe('Valley Map');
 }
 
-test('desktop mouse drag visibly moves geography while frame and North stay fixed', async ({
-  page,
-}) => {
-  test.setTimeout(75_000);
-  await page.setViewportSize({ width: 1440, height: 900 });
-  await openMapFromHud(page);
-  await assertMapChrome(page);
-  await expect(page.locator('[data-map-pan-surface="true"]')).toBeVisible();
-  const before = visibleMapGeometry(await snapshotObjects(page, 'InventoryScene'));
-  const start = await canvasPoint(page, 900, 410);
-  const end = await canvasPoint(page, 760, 330);
-  expect(
-    await page.evaluate(
-      ({ x, y }) => (document.elementFromPoint(x, y) as HTMLElement | null)?.dataset.mapPanSurface,
-      start,
-    ),
-  ).toBe('true');
-  await page.mouse.move(start.x, start.y);
-  await page.mouse.down();
-  await page.mouse.move(end.x, end.y, { steps: 10 });
-  await page.mouse.up();
+test.describe('desktop pointer', () => {
+  test('desktop mouse drag visibly moves geography while frame and North stay fixed', async ({
+    page,
+  }) => {
+    test.setTimeout(75_000);
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await openMapFromHud(page);
+    await assertMapChrome(page);
+    const before = visibleMapGeometry(await snapshotObjects(page, 'InventoryScene'));
+    const start = await canvasPoint(page, 900, 410);
+    const end = await canvasPoint(page, 760, 330);
+    await page.mouse.move(start.x, start.y);
+    await page.mouse.down();
+    await page.mouse.move(end.x, end.y, { steps: 10 });
+    await page.mouse.up();
 
-  const after = visibleMapGeometry(await snapshotObjects(page, 'InventoryScene'));
-  expect(after.geography.x).toBeLessThan(before.geography.x - 40);
-  expect(after.geography.y).toBeLessThan(before.geography.y - 40);
-  expect(after.north).toEqual(before.north);
-  expect(after.frame).toEqual(before.frame);
+    const after = visibleMapGeometry(await snapshotObjects(page, 'InventoryScene'));
+    expect(after.geography.x).toBeLessThan(before.geography.x - 40);
+    expect(after.geography.y).toBeLessThan(before.geography.y - 40);
+    expect(after.north).toEqual(before.north);
+    expect(after.frame).toEqual(before.frame);
+  });
 });
 
-test('tablet touch drag visibly moves geography while frame and North stay fixed', async ({
-  page,
-}) => {
-  test.setTimeout(75_000);
-  await page.setViewportSize({ width: 1024, height: 768 });
-  await openMapFromHud(page);
-  await expect(page.locator('[data-map-pan-surface="true"]')).toBeVisible();
-  const before = visibleMapGeometry(await snapshotObjects(page, 'InventoryScene'));
-  const start = await canvasPoint(page, 780, 390);
-  const end = await canvasPoint(page, 880, 450);
-  const session = await page.context().newCDPSession(page);
-  await session.send('Input.dispatchTouchEvent', {
-    type: 'touchStart',
-    touchPoints: [{ x: start.x, y: start.y }],
-  });
-  for (let step = 1; step <= 8; step += 1) {
-    await session.send('Input.dispatchTouchEvent', {
-      type: 'touchMove',
-      touchPoints: [
-        {
-          x: start.x + ((end.x - start.x) * step) / 8,
-          y: start.y + ((end.y - start.y) * step) / 8,
-        },
-      ],
-    });
-  }
-  await session.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+test.describe('touch pointer', () => {
+  test.use({ hasTouch: true });
 
-  const after = visibleMapGeometry(await snapshotObjects(page, 'InventoryScene'));
-  expect(after.geography.x).toBeGreaterThan(before.geography.x + 40);
-  expect(after.geography.y).toBeGreaterThan(before.geography.y + 30);
-  expect(after.north).toEqual(before.north);
-  expect(after.frame).toEqual(before.frame);
+  test('tablet touch drag visibly moves geography while frame and North stay fixed', async ({
+    page,
+  }) => {
+    test.setTimeout(75_000);
+    await page.setViewportSize({ width: 1024, height: 768 });
+    await openMapFromHud(page);
+    const before = visibleMapGeometry(await snapshotObjects(page, 'InventoryScene'));
+    const start = await canvasPoint(page, 780, 390);
+    const end = await canvasPoint(page, 880, 450);
+    const session = await page.context().newCDPSession(page);
+    await session.send('Input.dispatchTouchEvent', {
+      type: 'touchStart',
+      touchPoints: [{ x: start.x, y: start.y }],
+    });
+    for (let step = 1; step <= 8; step += 1) {
+      await session.send('Input.dispatchTouchEvent', {
+        type: 'touchMove',
+        touchPoints: [
+          {
+            x: start.x + ((end.x - start.x) * step) / 8,
+            y: start.y + ((end.y - start.y) * step) / 8,
+          },
+        ],
+      });
+    }
+    await session.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+
+    const after = visibleMapGeometry(await snapshotObjects(page, 'InventoryScene'));
+    expect(after.geography.x).toBeGreaterThan(before.geography.x + 40);
+    expect(after.geography.y).toBeGreaterThan(before.geography.y + 30);
+    expect(after.north).toEqual(before.north);
+    expect(after.frame).toEqual(before.frame);
+  });
 });

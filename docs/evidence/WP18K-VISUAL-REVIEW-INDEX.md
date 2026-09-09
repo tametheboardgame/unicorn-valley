@@ -1,6 +1,6 @@
 # WP18K visual-preservation review index
 
-Candidate implementation: `d7cf5f46949e1aec35c994dc00915fe223595305`.
+Candidate implementation: `aa68c604c40eb34d1d25c8c5414ed1293b3a2255`.
 
 ## Current candidate
 
@@ -22,10 +22,12 @@ Phone portrait additionally has `phone-portrait-book-controls.png`, showing the
 scrollable companion's real All adventures, Secrets and cross-only close
 controls together.
 
+The refreshed Map pairs `*-map-before-drag.png` and `*-map-after-drag.png` show real geography displacement while the parchment frame and North marker remain fixed. The redundant Map/Bag corner badges and Map subtitle are absent, and the heading/explanation spacing is separated from the clipped viewport.
+
 The Book filter labels remain readable because `ModalConceptPresentationManager`
 no longer converts their transparent pointer rectangles into bright surfaces.
 The canvas Book close is now the accepted top-right cross over an invisible
-82 × 70 logical-pixel target; the old bottom “Close the book” button is absent.
+72 × 70 logical-pixel target, moved right and rendered in warm pale gold; the old bottom “Close the book” button is absent.
 
 ## Evidence-backed inherited phone limitation
 
@@ -43,7 +45,7 @@ row is 19.5 CSS pixels high, compared with 17.671875 CSS pixels at baseline.
 Neither result proves child-sized phone touch acceptance, and Bag/Settings have
 no DOM companion in either capture. This inherited all-modal phone consistency
 work belongs to approved WP19F; broad modal redesign is deliberately not folded
-into behaviour-preserving WP18K. Delegated manager disposition remains required.
+into behaviour-preserving WP18K. David’s explicit disposition remains required under UV-D014.
 
 Wonderbook is different: its existing phone companion survives and exposes
 58–63.28125 CSS-pixel actions, including real filters and cross close. That is

@@ -1,6 +1,6 @@
 {
-  "candidateSha": "d7cf5f46949e1aec35c994dc00915fe223595305",
-  "capturedAt": "2026-09-09T04:08:08.220Z",
+  "candidateSha": "aa68c604c40eb34d1d25c8c5414ed1293b3a2255",
+  "capturedAt": "2026-09-09T10:21:49.727Z",
   "baseUrl": "http://127.0.0.1:4173",
   "displays": {
     "desktop": {
@@ -1477,21 +1477,6 @@
             },
             "interactive": false
           },
-          "inventory-view-badge": {
-            "logical": {
-              "x": 124,
-              "y": 72,
-              "width": 103,
-              "height": 42
-            },
-            "css": {
-              "x": 81.5625,
-              "y": 124.875,
-              "width": 115.875,
-              "height": 47.25
-            },
-            "interactive": false
-          },
           "inventory-modal-title": {
             "logical": {
               "x": 640,
@@ -1541,13 +1526,13 @@
             "logical": {
               "x": 1040,
               "y": 155,
-              "width": 140,
+              "width": 130,
               "height": 32
             },
             "css": {
-              "x": 1091.25,
+              "x": 1096.875,
               "y": 223.875,
-              "width": 157.5,
+              "width": 146.25,
               "height": 36
             },
             "interactive": false
@@ -1782,21 +1767,6 @@
             },
             "interactive": false
           },
-          "inventory-view-badge": {
-            "logical": {
-              "x": 124,
-              "y": 72,
-              "width": 103,
-              "height": 42
-            },
-            "css": {
-              "x": 81.5625,
-              "y": 124.875,
-              "width": 115.875,
-              "height": 47.25
-            },
-            "interactive": false
-          },
           "inventory-modal-title": {
             "logical": {
               "x": 640,
@@ -1846,13 +1816,13 @@
             "logical": {
               "x": 1040,
               "y": 155,
-              "width": 140,
+              "width": 130,
               "height": 32
             },
             "css": {
-              "x": 1091.25,
+              "x": 1096.875,
               "y": 223.875,
-              "width": 157.5,
+              "width": 146.25,
               "height": 36
             },
             "interactive": false
@@ -2085,7 +2055,7 @@
           "y": 1.125
         },
         "domCompanions": [],
-        "activeScenes": ["InventoryScene", "ExplorationHudOverlayScene"],
+        "activeScenes": ["ExplorationHudOverlayScene", "InventoryScene"],
         "namedObjects": {
           "inventory-modal-panel": {
             "logical": {
@@ -2099,21 +2069,6 @@
               "y": 67.5,
               "width": 0,
               "height": 0
-            },
-            "interactive": false
-          },
-          "inventory-view-badge": {
-            "logical": {
-              "x": 124,
-              "y": 72,
-              "width": 106,
-              "height": 42
-            },
-            "css": {
-              "x": 79.875,
-              "y": 124.875,
-              "width": 119.25,
-              "height": 47.25
             },
             "interactive": false
           },
@@ -2164,14 +2119,14 @@
           },
           "bag-map-node:valley:moonflower-home": {
             "logical": {
-              "x": 260,
-              "y": 404.4,
+              "x": 206.79999999999998,
+              "y": 401.59999999999997,
               "width": 70,
               "height": 70
             },
             "css": {
-              "x": 253.125,
-              "y": 483.075,
+              "x": 193.27499999999998,
+              "y": 479.92499999999995,
               "width": 78.75,
               "height": 78.75
             },
@@ -2179,14 +2134,14 @@
           },
           "bag-map-current-location": {
             "logical": {
-              "x": 410,
-              "y": 370,
+              "x": 377.8,
+              "y": 360,
               "width": 62,
               "height": 62
             },
             "css": {
-              "x": 426.375,
-              "y": 448.875,
+              "x": 390.15000000000003,
+              "y": 437.625,
               "width": 69.75,
               "height": 69.75
             },
@@ -2194,14 +2149,14 @@
           },
           "bag-map-node:valley:sunbeam-village": {
             "logical": {
-              "x": 580,
-              "y": 301.20000000000005,
+              "x": 571.6,
+              "y": 276.8,
               "width": 62,
               "height": 62
             },
             "css": {
-              "x": 617.625,
-              "y": 371.475,
+              "x": 608.1750000000001,
+              "y": 344.02500000000003,
               "width": 69.75,
               "height": 69.75
             },
@@ -2209,14 +2164,14 @@
           },
           "bag-map-node:valley:rainbow-meadow": {
             "logical": {
-              "x": 720,
-              "y": 404.4,
+              "x": 731.1999999999999,
+              "y": 401.59999999999997,
               "width": 62,
               "height": 62
             },
             "css": {
-              "x": 775.125,
-              "y": 487.575,
+              "x": 787.7249999999999,
+              "y": 484.42499999999995,
               "width": 69.75,
               "height": 69.75
             },
@@ -2224,14 +2179,14 @@
           },
           "bag-map-node:valley:crystal-brook": {
             "logical": {
-              "x": 870,
-              "y": 301.20000000000005,
+              "x": 902.1999999999999,
+              "y": 276.8,
               "width": 62,
               "height": 62
             },
             "css": {
-              "x": 943.875,
-              "y": 371.475,
+              "x": 980.0999999999999,
+              "y": 344.02500000000003,
               "width": 69.75,
               "height": 69.75
             },
@@ -2239,14 +2194,14 @@
           },
           "bag-map-node:valley:whispering-woods": {
             "logical": {
-              "x": 1020,
-              "y": 400.09999999999997,
+              "x": 1073.2,
+              "y": 396.4,
               "width": 62,
               "height": 62
             },
             "css": {
-              "x": 1112.625,
-              "y": 482.73749999999995,
+              "x": 1172.4750000000001,
+              "y": 478.575,
               "width": 69.75,
               "height": 69.75
             },
@@ -2254,14 +2209,14 @@
           },
           "bag-map-node:valley:starlight-beach": {
             "logical": {
-              "x": 1080,
-              "y": 494.7,
+              "x": 1141.6,
+              "y": 510.8,
               "width": 62,
               "height": 62
             },
             "css": {
-              "x": 1180.125,
-              "y": 589.1625,
+              "x": 1249.425,
+              "y": 607.275,
               "width": 69.75,
               "height": 69.75
             },
@@ -2269,14 +2224,14 @@
           },
           "bag-map-node:valley:moonflower-field": {
             "logical": {
-              "x": 430,
-              "y": 499,
+              "x": 400.59999999999997,
+              "y": 516,
               "width": 40,
               "height": 40
             },
             "css": {
-              "x": 461.25,
-              "y": 606.375,
+              "x": 428.17499999999995,
+              "y": 625.5,
               "width": 45,
               "height": 45
             },
@@ -2284,14 +2239,14 @@
           },
           "bag-map-node:valley:rainbow-run": {
             "logical": {
-              "x": 630,
-              "y": 503.3,
+              "x": 628.6,
+              "y": 521.2,
               "width": 40,
               "height": 40
             },
             "css": {
-              "x": 686.25,
-              "y": 611.2125,
+              "x": 684.6750000000001,
+              "y": 631.35,
               "width": 45,
               "height": 45
             },
@@ -2299,14 +2254,14 @@
           },
           "bag-map-node:valley:prism-grotto": {
             "logical": {
-              "x": 870,
-              "y": 421.6,
+              "x": 902.1999999999999,
+              "y": 422.4,
               "width": 40,
               "height": 40
             },
             "css": {
-              "x": 956.25,
-              "y": 519.3,
+              "x": 992.4749999999999,
+              "y": 520.2,
               "width": 45,
               "height": 45
             },
@@ -2314,14 +2269,14 @@
           },
           "bag-map-node:valley:lantern-clearing": {
             "logical": {
-              "x": 1090,
-              "y": 288.3,
+              "x": 1153,
+              "y": 261.2,
               "width": 40,
               "height": 40
             },
             "css": {
-              "x": 1203.75,
-              "y": 369.33750000000003,
+              "x": 1274.625,
+              "y": 338.84999999999997,
               "width": 45,
               "height": 45
             },
@@ -2329,14 +2284,14 @@
           },
           "bag-map-node:valley:future-north": {
             "logical": {
-              "x": 730,
-              "y": 206.6,
+              "x": 742.5999999999999,
+              "y": 162.4,
               "width": 50,
               "height": 50
             },
             "css": {
-              "x": 793.125,
-              "y": 271.79999999999995,
+              "x": 807.3,
+              "y": 222.07500000000002,
               "width": 56.25,
               "height": 56.25
             },
@@ -2344,14 +2299,14 @@
           },
           "bag-map-node:valley:future-south": {
             "logical": {
-              "x": 860,
-              "y": 533.4,
+              "x": 890.8,
+              "y": 557.6,
               "width": 50,
               "height": 50
             },
             "css": {
-              "x": 939.375,
-              "y": 639.4499999999999,
+              "x": 974.025,
+              "y": 666.6750000000001,
               "width": 56.25,
               "height": 56.25
             },
@@ -2360,14 +2315,14 @@
           "bag-map-guidance": {
             "logical": {
               "x": 640,
-              "y": 644,
-              "width": 743,
+              "y": 642,
+              "width": 735,
               "height": 15
             },
             "css": {
-              "x": 302.0625,
-              "y": 783.5625,
-              "width": 835.875,
+              "x": 306.5625,
+              "y": 781.3125,
+              "width": 826.875,
               "height": 16.875
             },
             "interactive": false
@@ -2375,15 +2330,15 @@
           "wp18j-map-camera-clip-guard": {
             "logical": {
               "x": 640,
-              "y": 359,
+              "y": 356,
               "width": 1016,
-              "height": 406
+              "height": 420
             },
             "css": {
               "x": 148.5,
-              "y": 243,
+              "y": 231.75,
               "width": 1143,
-              "height": 456.75
+              "height": 472.5
             },
             "interactive": false
           },
@@ -2436,29 +2391,29 @@
             "logical": {
               "x": 170,
               "y": 192,
-              "width": 15,
-              "height": 37
+              "width": 17,
+              "height": 41
             },
             "css": {
-              "x": 182.8125,
-              "y": 262.6875,
-              "width": 16.875,
-              "height": 41.625
+              "x": 181.6875,
+              "y": 260.4375,
+              "width": 19.125,
+              "height": 46.125
             },
             "interactive": false
           },
           "wp18j-map-pan-zone": {
             "logical": {
               "x": 640,
-              "y": 359,
+              "y": 356,
               "width": 1032,
-              "height": 422
+              "height": 436
             },
             "css": {
               "x": 139.5,
-              "y": 234,
+              "y": 222.75,
               "width": 1161,
-              "height": 474.75
+              "height": 490.5
             },
             "interactive": true
           },
@@ -2510,7 +2465,7 @@
           "y": 1.125
         },
         "domCompanions": [],
-        "activeScenes": ["InventoryScene", "ExplorationHudOverlayScene"],
+        "activeScenes": ["ExplorationHudOverlayScene", "InventoryScene"],
         "namedObjects": {
           "inventory-modal-panel": {
             "logical": {
@@ -2524,21 +2479,6 @@
               "y": 67.5,
               "width": 0,
               "height": 0
-            },
-            "interactive": false
-          },
-          "inventory-view-badge": {
-            "logical": {
-              "x": 124,
-              "y": 72,
-              "width": 106,
-              "height": 42
-            },
-            "css": {
-              "x": 79.875,
-              "y": 124.875,
-              "width": 119.25,
-              "height": 47.25
             },
             "interactive": false
           },
@@ -2589,14 +2529,14 @@
           },
           "bag-map-node:valley:moonflower-home": {
             "logical": {
-              "x": 260,
-              "y": 404.4,
+              "x": 206.79999999999998,
+              "y": 401.59999999999997,
               "width": 70,
               "height": 70
             },
             "css": {
-              "x": 253.125,
-              "y": 483.075,
+              "x": 193.27499999999998,
+              "y": 479.92499999999995,
               "width": 78.75,
               "height": 78.75
             },
@@ -2604,14 +2544,14 @@
           },
           "bag-map-current-location": {
             "logical": {
-              "x": 410,
-              "y": 370,
+              "x": 377.8,
+              "y": 360,
               "width": 62,
               "height": 62
             },
             "css": {
-              "x": 426.375,
-              "y": 448.875,
+              "x": 390.15000000000003,
+              "y": 437.625,
               "width": 69.75,
               "height": 69.75
             },
@@ -2619,14 +2559,14 @@
           },
           "bag-map-node:valley:sunbeam-village": {
             "logical": {
-              "x": 580,
-              "y": 301.20000000000005,
+              "x": 571.6,
+              "y": 276.8,
               "width": 62,
               "height": 62
             },
             "css": {
-              "x": 617.625,
-              "y": 371.475,
+              "x": 608.1750000000001,
+              "y": 344.02500000000003,
               "width": 69.75,
               "height": 69.75
             },
@@ -2634,14 +2574,14 @@
           },
           "bag-map-node:valley:rainbow-meadow": {
             "logical": {
-              "x": 720,
-              "y": 404.4,
+              "x": 731.1999999999999,
+              "y": 401.59999999999997,
               "width": 62,
               "height": 62
             },
             "css": {
-              "x": 775.125,
-              "y": 487.575,
+              "x": 787.7249999999999,
+              "y": 484.42499999999995,
               "width": 69.75,
               "height": 69.75
             },
@@ -2649,14 +2589,14 @@
           },
           "bag-map-node:valley:crystal-brook": {
             "logical": {
-              "x": 870,
-              "y": 301.20000000000005,
+              "x": 902.1999999999999,
+              "y": 276.8,
               "width": 62,
               "height": 62
             },
             "css": {
-              "x": 943.875,
-              "y": 371.475,
+              "x": 980.0999999999999,
+              "y": 344.02500000000003,
               "width": 69.75,
               "height": 69.75
             },
@@ -2664,14 +2604,14 @@
           },
           "bag-map-node:valley:whispering-woods": {
             "logical": {
-              "x": 1020,
-              "y": 400.09999999999997,
+              "x": 1073.2,
+              "y": 396.4,
               "width": 62,
               "height": 62
             },
             "css": {
-              "x": 1112.625,
-              "y": 482.73749999999995,
+              "x": 1172.4750000000001,
+              "y": 478.575,
               "width": 69.75,
               "height": 69.75
             },
@@ -2679,14 +2619,14 @@
           },
           "bag-map-node:valley:starlight-beach": {
             "logical": {
-              "x": 1080,
-              "y": 494.7,
+              "x": 1141.6,
+              "y": 510.8,
               "width": 62,
               "height": 62
             },
             "css": {
-              "x": 1180.125,
-              "y": 589.1625,
+              "x": 1249.425,
+              "y": 607.275,
               "width": 69.75,
               "height": 69.75
             },
@@ -2694,14 +2634,14 @@
           },
           "bag-map-node:valley:moonflower-field": {
             "logical": {
-              "x": 430,
-              "y": 499,
+              "x": 400.59999999999997,
+              "y": 516,
               "width": 40,
               "height": 40
             },
             "css": {
-              "x": 461.25,
-              "y": 606.375,
+              "x": 428.17499999999995,
+              "y": 625.5,
               "width": 45,
               "height": 45
             },
@@ -2709,14 +2649,14 @@
           },
           "bag-map-node:valley:rainbow-run": {
             "logical": {
-              "x": 630,
-              "y": 503.3,
+              "x": 628.6,
+              "y": 521.2,
               "width": 40,
               "height": 40
             },
             "css": {
-              "x": 686.25,
-              "y": 611.2125,
+              "x": 684.6750000000001,
+              "y": 631.35,
               "width": 45,
               "height": 45
             },
@@ -2724,14 +2664,14 @@
           },
           "bag-map-node:valley:prism-grotto": {
             "logical": {
-              "x": 870,
-              "y": 421.6,
+              "x": 902.1999999999999,
+              "y": 422.4,
               "width": 40,
               "height": 40
             },
             "css": {
-              "x": 956.25,
-              "y": 519.3,
+              "x": 992.4749999999999,
+              "y": 520.2,
               "width": 45,
               "height": 45
             },
@@ -2739,14 +2679,14 @@
           },
           "bag-map-node:valley:lantern-clearing": {
             "logical": {
-              "x": 1090,
-              "y": 288.3,
+              "x": 1153,
+              "y": 261.2,
               "width": 40,
               "height": 40
             },
             "css": {
-              "x": 1203.75,
-              "y": 369.33750000000003,
+              "x": 1274.625,
+              "y": 338.84999999999997,
               "width": 45,
               "height": 45
             },
@@ -2754,14 +2694,14 @@
           },
           "bag-map-node:valley:future-north": {
             "logical": {
-              "x": 730,
-              "y": 206.6,
+              "x": 742.5999999999999,
+              "y": 162.4,
               "width": 50,
               "height": 50
             },
             "css": {
-              "x": 793.125,
-              "y": 271.79999999999995,
+              "x": 807.3,
+              "y": 222.07500000000002,
               "width": 56.25,
               "height": 56.25
             },
@@ -2769,14 +2709,14 @@
           },
           "bag-map-node:valley:future-south": {
             "logical": {
-              "x": 860,
-              "y": 533.4,
+              "x": 890.8,
+              "y": 557.6,
               "width": 50,
               "height": 50
             },
             "css": {
-              "x": 939.375,
-              "y": 639.4499999999999,
+              "x": 974.025,
+              "y": 666.6750000000001,
               "width": 56.25,
               "height": 56.25
             },
@@ -2785,14 +2725,14 @@
           "bag-map-guidance": {
             "logical": {
               "x": 640,
-              "y": 644,
-              "width": 743,
+              "y": 642,
+              "width": 735,
               "height": 15
             },
             "css": {
-              "x": 302.0625,
-              "y": 783.5625,
-              "width": 835.875,
+              "x": 306.5625,
+              "y": 781.3125,
+              "width": 826.875,
               "height": 16.875
             },
             "interactive": false
@@ -2800,28 +2740,28 @@
           "wp18j-map-camera-clip-guard": {
             "logical": {
               "x": 640,
-              "y": 359,
+              "y": 356,
               "width": 1016,
-              "height": 406
+              "height": 420
             },
             "css": {
               "x": 148.5,
-              "y": 243,
+              "y": 231.75,
               "width": 1143,
-              "height": 456.75
+              "height": 472.5
             },
             "interactive": false
           },
           "bag-map-content": {
             "logical": {
-              "x": -129.77777777777783,
-              "y": -69.33333333333331,
+              "x": -100,
+              "y": -70,
               "width": 0,
               "height": 0
             },
             "css": {
-              "x": -146.00000000000006,
-              "y": -10.499999999999972,
+              "x": -112.5,
+              "y": -11.25,
               "width": 0,
               "height": 0
             },
@@ -2861,29 +2801,29 @@
             "logical": {
               "x": 170,
               "y": 192,
-              "width": 15,
-              "height": 37
+              "width": 17,
+              "height": 41
             },
             "css": {
-              "x": 182.8125,
-              "y": 262.6875,
-              "width": 16.875,
-              "height": 41.625
+              "x": 181.6875,
+              "y": 260.4375,
+              "width": 19.125,
+              "height": 46.125
             },
             "interactive": false
           },
           "wp18j-map-pan-zone": {
             "logical": {
               "x": 640,
-              "y": 359,
+              "y": 356,
               "width": 1032,
-              "height": 422
+              "height": 436
             },
             "css": {
               "x": 139.5,
-              "y": 234,
+              "y": 222.75,
               "width": 1161,
-              "height": 474.75
+              "height": 490.5
             },
             "interactive": true
           },
@@ -2935,7 +2875,7 @@
           "y": 1.125
         },
         "domCompanions": [],
-        "activeScenes": ["ExplorationHudOverlayScene", "WonderbookScene"],
+        "activeScenes": ["WonderbookScene", "ExplorationHudOverlayScene"],
         "namedObjects": {
           "wonderbook-discovery-count": {
             "logical": {
@@ -3104,15 +3044,15 @@
           },
           "wonderbook-close-button": {
             "logical": {
-              "x": 1172,
+              "x": 1190,
               "y": 76,
-              "width": 82,
+              "width": 72,
               "height": 70
             },
             "css": {
-              "x": 1272.375,
+              "x": 1298.25,
               "y": 113.625,
-              "width": 92.25,
+              "width": 81,
               "height": 78.75
             },
             "interactive": true
@@ -3194,13 +3134,13 @@
           },
           "wonderbook-close-icon": {
             "logical": {
-              "x": 1172,
+              "x": 1190,
               "y": 76,
               "width": 32,
               "height": 45
             },
             "css": {
-              "x": 1300.5,
+              "x": 1320.75,
               "y": 127.6875,
               "width": 36,
               "height": 50.625
@@ -3211,13 +3151,13 @@
             "logical": {
               "x": 1154,
               "y": 158,
-              "width": 96,
+              "width": 86,
               "height": 42
             },
             "css": {
-              "x": 1244.25,
+              "x": 1249.875,
               "y": 221.625,
-              "width": 108,
+              "width": 96.75,
               "height": 47.25
             },
             "interactive": true
@@ -3226,13 +3166,13 @@
             "logical": {
               "x": 1154,
               "y": 228,
-              "width": 113,
+              "width": 103,
               "height": 42
             },
             "css": {
-              "x": 1234.6875,
+              "x": 1240.3125,
               "y": 300.375,
-              "width": 127.125,
+              "width": 115.875,
               "height": 47.25
             },
             "interactive": true
@@ -3241,13 +3181,13 @@
             "logical": {
               "x": 1154,
               "y": 298,
-              "width": 101,
+              "width": 95,
               "height": 42
             },
             "css": {
-              "x": 1241.4375,
+              "x": 1244.8125,
               "y": 379.125,
-              "width": 113.625,
+              "width": 106.875,
               "height": 47.25
             },
             "interactive": true
@@ -3256,13 +3196,13 @@
             "logical": {
               "x": 1154,
               "y": 368,
-              "width": 100,
+              "width": 90,
               "height": 42
             },
             "css": {
-              "x": 1242,
+              "x": 1247.625,
               "y": 457.875,
-              "width": 112.5,
+              "width": 101.25,
               "height": 47.25
             },
             "interactive": true
@@ -3271,13 +3211,13 @@
             "logical": {
               "x": 1154,
               "y": 438,
-              "width": 98,
+              "width": 88,
               "height": 42
             },
             "css": {
-              "x": 1243.125,
+              "x": 1248.75,
               "y": 536.625,
-              "width": 110.25,
+              "width": 99,
               "height": 47.25
             },
             "interactive": true
@@ -4849,21 +4789,6 @@
             },
             "interactive": false
           },
-          "inventory-view-badge": {
-            "logical": {
-              "x": 124,
-              "y": 72,
-              "width": 103,
-              "height": 42
-            },
-            "css": {
-              "x": 58,
-              "y": 184.8,
-              "width": 82.4,
-              "height": 33.6
-            },
-            "interactive": false
-          },
           "inventory-modal-title": {
             "logical": {
               "x": 640,
@@ -4913,13 +4838,13 @@
             "logical": {
               "x": 1040,
               "y": 155,
-              "width": 140,
+              "width": 130,
               "height": 32
             },
             "css": {
-              "x": 776,
+              "x": 780,
               "y": 255.2,
-              "width": 112,
+              "width": 104,
               "height": 25.6
             },
             "interactive": false
@@ -5154,21 +5079,6 @@
             },
             "interactive": false
           },
-          "inventory-view-badge": {
-            "logical": {
-              "x": 124,
-              "y": 72,
-              "width": 103,
-              "height": 42
-            },
-            "css": {
-              "x": 58,
-              "y": 184.8,
-              "width": 82.4,
-              "height": 33.6
-            },
-            "interactive": false
-          },
           "inventory-modal-title": {
             "logical": {
               "x": 640,
@@ -5218,13 +5128,13 @@
             "logical": {
               "x": 1040,
               "y": 155,
-              "width": 140,
+              "width": 130,
               "height": 32
             },
             "css": {
-              "x": 776,
+              "x": 780,
               "y": 255.2,
-              "width": 112,
+              "width": 104,
               "height": 25.6
             },
             "interactive": false
@@ -5457,7 +5367,7 @@
           "y": 0.8
         },
         "domCompanions": [],
-        "activeScenes": ["InventoryScene", "ExplorationHudOverlayScene"],
+        "activeScenes": ["ExplorationHudOverlayScene", "InventoryScene"],
         "namedObjects": {
           "inventory-modal-panel": {
             "logical": {
@@ -5471,21 +5381,6 @@
               "y": 144,
               "width": 0,
               "height": 0
-            },
-            "interactive": false
-          },
-          "inventory-view-badge": {
-            "logical": {
-              "x": 124,
-              "y": 72,
-              "width": 106,
-              "height": 42
-            },
-            "css": {
-              "x": 56.800000000000004,
-              "y": 184.8,
-              "width": 84.80000000000001,
-              "height": 33.6
             },
             "interactive": false
           },
@@ -5534,212 +5429,17 @@
             },
             "interactive": false
           },
-          "bag-map-node:valley:moonflower-home": {
-            "logical": {
-              "x": 260,
-              "y": 404.4,
-              "width": 70,
-              "height": 70
-            },
-            "css": {
-              "x": 180,
-              "y": 439.52,
-              "width": 56,
-              "height": 56
-            },
-            "interactive": false
-          },
-          "bag-map-current-location": {
-            "logical": {
-              "x": 410,
-              "y": 370,
-              "width": 62,
-              "height": 62
-            },
-            "css": {
-              "x": 303.2,
-              "y": 415.2,
-              "width": 49.6,
-              "height": 49.6
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:sunbeam-village": {
-            "logical": {
-              "x": 580,
-              "y": 301.20000000000005,
-              "width": 62,
-              "height": 62
-            },
-            "css": {
-              "x": 439.20000000000005,
-              "y": 360.1600000000001,
-              "width": 49.6,
-              "height": 49.6
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:rainbow-meadow": {
-            "logical": {
-              "x": 720,
-              "y": 404.4,
-              "width": 62,
-              "height": 62
-            },
-            "css": {
-              "x": 551.2,
-              "y": 442.71999999999997,
-              "width": 49.6,
-              "height": 49.6
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:crystal-brook": {
-            "logical": {
-              "x": 870,
-              "y": 301.20000000000005,
-              "width": 62,
-              "height": 62
-            },
-            "css": {
-              "x": 671.2,
-              "y": 360.1600000000001,
-              "width": 49.6,
-              "height": 49.6
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:whispering-woods": {
-            "logical": {
-              "x": 1020,
-              "y": 400.09999999999997,
-              "width": 62,
-              "height": 62
-            },
-            "css": {
-              "x": 791.2,
-              "y": 439.28,
-              "width": 49.6,
-              "height": 49.6
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:starlight-beach": {
-            "logical": {
-              "x": 1080,
-              "y": 494.7,
-              "width": 62,
-              "height": 62
-            },
-            "css": {
-              "x": 839.2,
-              "y": 514.96,
-              "width": 49.6,
-              "height": 49.6
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:moonflower-field": {
-            "logical": {
-              "x": 430,
-              "y": 499,
-              "width": 40,
-              "height": 40
-            },
-            "css": {
-              "x": 328,
-              "y": 527.2,
-              "width": 32,
-              "height": 32
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:rainbow-run": {
-            "logical": {
-              "x": 630,
-              "y": 503.3,
-              "width": 40,
-              "height": 40
-            },
-            "css": {
-              "x": 488,
-              "y": 530.6400000000001,
-              "width": 32,
-              "height": 32
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:prism-grotto": {
-            "logical": {
-              "x": 870,
-              "y": 421.6,
-              "width": 40,
-              "height": 40
-            },
-            "css": {
-              "x": 680,
-              "y": 465.28000000000003,
-              "width": 32,
-              "height": 32
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:lantern-clearing": {
-            "logical": {
-              "x": 1090,
-              "y": 288.3,
-              "width": 40,
-              "height": 40
-            },
-            "css": {
-              "x": 856,
-              "y": 358.64,
-              "width": 32,
-              "height": 32
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:future-north": {
-            "logical": {
-              "x": 730,
-              "y": 206.6,
-              "width": 50,
-              "height": 50
-            },
-            "css": {
-              "x": 564,
-              "y": 289.28,
-              "width": 40,
-              "height": 40
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:future-south": {
-            "logical": {
-              "x": 860,
-              "y": 533.4,
-              "width": 50,
-              "height": 50
-            },
-            "css": {
-              "x": 668,
-              "y": 550.72,
-              "width": 40,
-              "height": 40
-            },
-            "interactive": false
-          },
           "bag-map-guidance": {
             "logical": {
               "x": 640,
-              "y": 644,
-              "width": 743,
+              "y": 642,
+              "width": 735,
               "height": 15
             },
             "css": {
-              "x": 214.8,
-              "y": 653.2,
-              "width": 594.4,
+              "x": 218,
+              "y": 651.6,
+              "width": 588,
               "height": 12
             },
             "interactive": false
@@ -5747,15 +5447,15 @@
           "wp18j-map-camera-clip-guard": {
             "logical": {
               "x": 640,
-              "y": 359,
+              "y": 356,
               "width": 1016,
-              "height": 406
+              "height": 420
             },
             "css": {
               "x": 105.60000000000001,
-              "y": 268.8,
+              "y": 260.8,
               "width": 812.8000000000001,
-              "height": 324.8
+              "height": 336
             },
             "interactive": false
           },
@@ -5771,6 +5471,201 @@
               "y": 144,
               "width": 0,
               "height": 0
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:moonflower-home": {
+            "logical": {
+              "x": 206.79999999999998,
+              "y": 401.59999999999997,
+              "width": 70,
+              "height": 70
+            },
+            "css": {
+              "x": 137.44,
+              "y": 437.28,
+              "width": 56,
+              "height": 56
+            },
+            "interactive": false
+          },
+          "bag-map-current-location": {
+            "logical": {
+              "x": 377.8,
+              "y": 360,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 277.44,
+              "y": 407.2,
+              "width": 49.6,
+              "height": 49.6
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:sunbeam-village": {
+            "logical": {
+              "x": 571.6,
+              "y": 276.8,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 432.48,
+              "y": 340.64,
+              "width": 49.6,
+              "height": 49.6
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:rainbow-meadow": {
+            "logical": {
+              "x": 731.1999999999999,
+              "y": 401.59999999999997,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 560.16,
+              "y": 440.47999999999996,
+              "width": 49.6,
+              "height": 49.6
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:crystal-brook": {
+            "logical": {
+              "x": 902.1999999999999,
+              "y": 276.8,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 696.96,
+              "y": 340.64,
+              "width": 49.6,
+              "height": 49.6
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:whispering-woods": {
+            "logical": {
+              "x": 1073.2,
+              "y": 396.4,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 833.7600000000001,
+              "y": 436.32,
+              "width": 49.6,
+              "height": 49.6
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:starlight-beach": {
+            "logical": {
+              "x": 1141.6,
+              "y": 510.8,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 888.48,
+              "y": 527.84,
+              "width": 49.6,
+              "height": 49.6
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:moonflower-field": {
+            "logical": {
+              "x": 400.59999999999997,
+              "y": 516,
+              "width": 40,
+              "height": 40
+            },
+            "css": {
+              "x": 304.47999999999996,
+              "y": 540.8,
+              "width": 32,
+              "height": 32
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:rainbow-run": {
+            "logical": {
+              "x": 628.6,
+              "y": 521.2,
+              "width": 40,
+              "height": 40
+            },
+            "css": {
+              "x": 486.88000000000005,
+              "y": 544.96,
+              "width": 32,
+              "height": 32
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:prism-grotto": {
+            "logical": {
+              "x": 902.1999999999999,
+              "y": 422.4,
+              "width": 40,
+              "height": 40
+            },
+            "css": {
+              "x": 705.76,
+              "y": 465.92,
+              "width": 32,
+              "height": 32
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:lantern-clearing": {
+            "logical": {
+              "x": 1153,
+              "y": 261.2,
+              "width": 40,
+              "height": 40
+            },
+            "css": {
+              "x": 906.4000000000001,
+              "y": 336.96000000000004,
+              "width": 32,
+              "height": 32
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:future-north": {
+            "logical": {
+              "x": 742.5999999999999,
+              "y": 162.4,
+              "width": 50,
+              "height": 50
+            },
+            "css": {
+              "x": 574.0799999999999,
+              "y": 253.92000000000002,
+              "width": 40,
+              "height": 40
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:future-south": {
+            "logical": {
+              "x": 890.8,
+              "y": 557.6,
+              "width": 50,
+              "height": 50
+            },
+            "css": {
+              "x": 692.64,
+              "y": 570.08,
+              "width": 40,
+              "height": 40
             },
             "interactive": false
           },
@@ -5808,29 +5703,29 @@
             "logical": {
               "x": 170,
               "y": 192,
-              "width": 15,
-              "height": 37
+              "width": 17,
+              "height": 41
             },
             "css": {
-              "x": 130,
-              "y": 282.8,
-              "width": 12,
-              "height": 29.6
+              "x": 129.20000000000002,
+              "y": 281.20000000000005,
+              "width": 13.600000000000001,
+              "height": 32.800000000000004
             },
             "interactive": false
           },
           "wp18j-map-pan-zone": {
             "logical": {
               "x": 640,
-              "y": 359,
+              "y": 356,
               "width": 1032,
-              "height": 422
+              "height": 436
             },
             "css": {
               "x": 99.2,
-              "y": 262.4,
+              "y": 254.4,
               "width": 825.6,
-              "height": 337.6
+              "height": 348.8
             },
             "interactive": true
           },
@@ -5882,7 +5777,7 @@
           "y": 0.8
         },
         "domCompanions": [],
-        "activeScenes": ["InventoryScene", "ExplorationHudOverlayScene"],
+        "activeScenes": ["ExplorationHudOverlayScene", "InventoryScene"],
         "namedObjects": {
           "inventory-modal-panel": {
             "logical": {
@@ -5896,21 +5791,6 @@
               "y": 144,
               "width": 0,
               "height": 0
-            },
-            "interactive": false
-          },
-          "inventory-view-badge": {
-            "logical": {
-              "x": 124,
-              "y": 72,
-              "width": 106,
-              "height": 42
-            },
-            "css": {
-              "x": 56.800000000000004,
-              "y": 184.8,
-              "width": 84.80000000000001,
-              "height": 33.6
             },
             "interactive": false
           },
@@ -5959,212 +5839,17 @@
             },
             "interactive": false
           },
-          "bag-map-node:valley:moonflower-home": {
-            "logical": {
-              "x": 260,
-              "y": 404.4,
-              "width": 70,
-              "height": 70
-            },
-            "css": {
-              "x": 180,
-              "y": 439.52,
-              "width": 56,
-              "height": 56
-            },
-            "interactive": false
-          },
-          "bag-map-current-location": {
-            "logical": {
-              "x": 410,
-              "y": 370,
-              "width": 62,
-              "height": 62
-            },
-            "css": {
-              "x": 303.2,
-              "y": 415.2,
-              "width": 49.6,
-              "height": 49.6
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:sunbeam-village": {
-            "logical": {
-              "x": 580,
-              "y": 301.20000000000005,
-              "width": 62,
-              "height": 62
-            },
-            "css": {
-              "x": 439.20000000000005,
-              "y": 360.1600000000001,
-              "width": 49.6,
-              "height": 49.6
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:rainbow-meadow": {
-            "logical": {
-              "x": 720,
-              "y": 404.4,
-              "width": 62,
-              "height": 62
-            },
-            "css": {
-              "x": 551.2,
-              "y": 442.71999999999997,
-              "width": 49.6,
-              "height": 49.6
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:crystal-brook": {
-            "logical": {
-              "x": 870,
-              "y": 301.20000000000005,
-              "width": 62,
-              "height": 62
-            },
-            "css": {
-              "x": 671.2,
-              "y": 360.1600000000001,
-              "width": 49.6,
-              "height": 49.6
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:whispering-woods": {
-            "logical": {
-              "x": 1020,
-              "y": 400.09999999999997,
-              "width": 62,
-              "height": 62
-            },
-            "css": {
-              "x": 791.2,
-              "y": 439.28,
-              "width": 49.6,
-              "height": 49.6
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:starlight-beach": {
-            "logical": {
-              "x": 1080,
-              "y": 494.7,
-              "width": 62,
-              "height": 62
-            },
-            "css": {
-              "x": 839.2,
-              "y": 514.96,
-              "width": 49.6,
-              "height": 49.6
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:moonflower-field": {
-            "logical": {
-              "x": 430,
-              "y": 499,
-              "width": 40,
-              "height": 40
-            },
-            "css": {
-              "x": 328,
-              "y": 527.2,
-              "width": 32,
-              "height": 32
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:rainbow-run": {
-            "logical": {
-              "x": 630,
-              "y": 503.3,
-              "width": 40,
-              "height": 40
-            },
-            "css": {
-              "x": 488,
-              "y": 530.6400000000001,
-              "width": 32,
-              "height": 32
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:prism-grotto": {
-            "logical": {
-              "x": 870,
-              "y": 421.6,
-              "width": 40,
-              "height": 40
-            },
-            "css": {
-              "x": 680,
-              "y": 465.28000000000003,
-              "width": 32,
-              "height": 32
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:lantern-clearing": {
-            "logical": {
-              "x": 1090,
-              "y": 288.3,
-              "width": 40,
-              "height": 40
-            },
-            "css": {
-              "x": 856,
-              "y": 358.64,
-              "width": 32,
-              "height": 32
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:future-north": {
-            "logical": {
-              "x": 730,
-              "y": 206.6,
-              "width": 50,
-              "height": 50
-            },
-            "css": {
-              "x": 564,
-              "y": 289.28,
-              "width": 40,
-              "height": 40
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:future-south": {
-            "logical": {
-              "x": 860,
-              "y": 533.4,
-              "width": 50,
-              "height": 50
-            },
-            "css": {
-              "x": 668,
-              "y": 550.72,
-              "width": 40,
-              "height": 40
-            },
-            "interactive": false
-          },
           "bag-map-guidance": {
             "logical": {
               "x": 640,
-              "y": 644,
-              "width": 743,
+              "y": 642,
+              "width": 735,
               "height": 15
             },
             "css": {
-              "x": 214.8,
-              "y": 653.2,
-              "width": 594.4,
+              "x": 218,
+              "y": 651.6,
+              "width": 588,
               "height": 12
             },
             "interactive": false
@@ -6172,30 +5857,225 @@
           "wp18j-map-camera-clip-guard": {
             "logical": {
               "x": 640,
-              "y": 359,
+              "y": 356,
               "width": 1016,
-              "height": 406
+              "height": 420
             },
             "css": {
               "x": 105.60000000000001,
-              "y": 268.8,
+              "y": 260.8,
               "width": 812.8000000000001,
-              "height": 324.8
+              "height": 336
             },
             "interactive": false
           },
           "bag-map-content": {
             "logical": {
-              "x": -130,
+              "x": -100,
               "y": -70,
               "width": 0,
               "height": 0
             },
             "css": {
-              "x": -104,
+              "x": -80,
               "y": 88,
               "width": 0,
               "height": 0
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:moonflower-home": {
+            "logical": {
+              "x": 206.79999999999998,
+              "y": 401.59999999999997,
+              "width": 70,
+              "height": 70
+            },
+            "css": {
+              "x": 137.44,
+              "y": 437.28,
+              "width": 56,
+              "height": 56
+            },
+            "interactive": false
+          },
+          "bag-map-current-location": {
+            "logical": {
+              "x": 377.8,
+              "y": 360,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 277.44,
+              "y": 407.2,
+              "width": 49.6,
+              "height": 49.6
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:sunbeam-village": {
+            "logical": {
+              "x": 571.6,
+              "y": 276.8,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 432.48,
+              "y": 340.64,
+              "width": 49.6,
+              "height": 49.6
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:rainbow-meadow": {
+            "logical": {
+              "x": 731.1999999999999,
+              "y": 401.59999999999997,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 560.16,
+              "y": 440.47999999999996,
+              "width": 49.6,
+              "height": 49.6
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:crystal-brook": {
+            "logical": {
+              "x": 902.1999999999999,
+              "y": 276.8,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 696.96,
+              "y": 340.64,
+              "width": 49.6,
+              "height": 49.6
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:whispering-woods": {
+            "logical": {
+              "x": 1073.2,
+              "y": 396.4,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 833.7600000000001,
+              "y": 436.32,
+              "width": 49.6,
+              "height": 49.6
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:starlight-beach": {
+            "logical": {
+              "x": 1141.6,
+              "y": 510.8,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 888.48,
+              "y": 527.84,
+              "width": 49.6,
+              "height": 49.6
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:moonflower-field": {
+            "logical": {
+              "x": 400.59999999999997,
+              "y": 516,
+              "width": 40,
+              "height": 40
+            },
+            "css": {
+              "x": 304.47999999999996,
+              "y": 540.8,
+              "width": 32,
+              "height": 32
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:rainbow-run": {
+            "logical": {
+              "x": 628.6,
+              "y": 521.2,
+              "width": 40,
+              "height": 40
+            },
+            "css": {
+              "x": 486.88000000000005,
+              "y": 544.96,
+              "width": 32,
+              "height": 32
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:prism-grotto": {
+            "logical": {
+              "x": 902.1999999999999,
+              "y": 422.4,
+              "width": 40,
+              "height": 40
+            },
+            "css": {
+              "x": 705.76,
+              "y": 465.92,
+              "width": 32,
+              "height": 32
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:lantern-clearing": {
+            "logical": {
+              "x": 1153,
+              "y": 261.2,
+              "width": 40,
+              "height": 40
+            },
+            "css": {
+              "x": 906.4000000000001,
+              "y": 336.96000000000004,
+              "width": 32,
+              "height": 32
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:future-north": {
+            "logical": {
+              "x": 742.5999999999999,
+              "y": 162.4,
+              "width": 50,
+              "height": 50
+            },
+            "css": {
+              "x": 574.0799999999999,
+              "y": 253.92000000000002,
+              "width": 40,
+              "height": 40
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:future-south": {
+            "logical": {
+              "x": 890.8,
+              "y": 557.6,
+              "width": 50,
+              "height": 50
+            },
+            "css": {
+              "x": 692.64,
+              "y": 570.08,
+              "width": 40,
+              "height": 40
             },
             "interactive": false
           },
@@ -6233,29 +6113,29 @@
             "logical": {
               "x": 170,
               "y": 192,
-              "width": 15,
-              "height": 37
+              "width": 17,
+              "height": 41
             },
             "css": {
-              "x": 130,
-              "y": 282.8,
-              "width": 12,
-              "height": 29.6
+              "x": 129.20000000000002,
+              "y": 281.20000000000005,
+              "width": 13.600000000000001,
+              "height": 32.800000000000004
             },
             "interactive": false
           },
           "wp18j-map-pan-zone": {
             "logical": {
               "x": 640,
-              "y": 359,
+              "y": 356,
               "width": 1032,
-              "height": 422
+              "height": 436
             },
             "css": {
               "x": 99.2,
-              "y": 262.4,
+              "y": 254.4,
               "width": 825.6,
-              "height": 337.6
+              "height": 348.8
             },
             "interactive": true
           },
@@ -6476,15 +6356,15 @@
           },
           "wonderbook-close-button": {
             "logical": {
-              "x": 1172,
+              "x": 1190,
               "y": 76,
-              "width": 82,
+              "width": 72,
               "height": 70
             },
             "css": {
-              "x": 904.8000000000001,
+              "x": 923.2,
               "y": 176.8,
-              "width": 65.60000000000001,
+              "width": 57.6,
               "height": 56
             },
             "interactive": true
@@ -6566,13 +6446,13 @@
           },
           "wonderbook-close-icon": {
             "logical": {
-              "x": 1172,
+              "x": 1190,
               "y": 76,
               "width": 32,
               "height": 45
             },
             "css": {
-              "x": 924.8000000000001,
+              "x": 939.2,
               "y": 186.8,
               "width": 25.6,
               "height": 36
@@ -6583,13 +6463,13 @@
             "logical": {
               "x": 1154,
               "y": 158,
-              "width": 96,
+              "width": 86,
               "height": 42
             },
             "css": {
-              "x": 884.8000000000001,
+              "x": 888.8000000000001,
               "y": 253.60000000000002,
-              "width": 76.80000000000001,
+              "width": 68.8,
               "height": 33.6
             },
             "interactive": true
@@ -6598,13 +6478,13 @@
             "logical": {
               "x": 1154,
               "y": 228,
-              "width": 113,
+              "width": 103,
               "height": 42
             },
             "css": {
-              "x": 878,
+              "x": 882,
               "y": 309.6,
-              "width": 90.4,
+              "width": 82.4,
               "height": 33.6
             },
             "interactive": true
@@ -6613,13 +6493,13 @@
             "logical": {
               "x": 1154,
               "y": 298,
-              "width": 101,
+              "width": 95,
               "height": 42
             },
             "css": {
-              "x": 882.8000000000001,
+              "x": 885.2,
               "y": 365.6,
-              "width": 80.80000000000001,
+              "width": 76,
               "height": 33.6
             },
             "interactive": true
@@ -6628,13 +6508,13 @@
             "logical": {
               "x": 1154,
               "y": 368,
-              "width": 100,
+              "width": 90,
               "height": 42
             },
             "css": {
-              "x": 883.2,
+              "x": 887.2,
               "y": 421.6,
-              "width": 80,
+              "width": 72,
               "height": 33.6
             },
             "interactive": true
@@ -6643,13 +6523,13 @@
             "logical": {
               "x": 1154,
               "y": 438,
-              "width": 98,
+              "width": 88,
               "height": 42
             },
             "css": {
-              "x": 884,
+              "x": 888,
               "y": 477.6,
-              "width": 78.4,
+              "width": 70.4,
               "height": 33.6
             },
             "interactive": true
@@ -8221,21 +8101,6 @@
             },
             "interactive": false
           },
-          "inventory-view-badge": {
-            "logical": {
-              "x": 124,
-              "y": 72,
-              "width": 103,
-              "height": 42
-            },
-            "css": {
-              "x": 114.27053833007812,
-              "y": 27.624999999999996,
-              "width": 55.79124755859375,
-              "height": 22.75
-            },
-            "interactive": false
-          },
           "inventory-modal-title": {
             "logical": {
               "x": 640,
@@ -8285,13 +8150,13 @@
             "logical": {
               "x": 1040,
               "y": 155,
-              "width": 140,
+              "width": 130,
               "height": 32
             },
             "css": {
-              "x": 600.4127197265625,
+              "x": 603.1210327148438,
               "y": 75.29166666666666,
-              "width": 75.832763671875,
+              "width": 70.4161376953125,
               "height": 17.333333333333332
             },
             "interactive": false
@@ -8526,21 +8391,6 @@
             },
             "interactive": false
           },
-          "inventory-view-badge": {
-            "logical": {
-              "x": 124,
-              "y": 72,
-              "width": 103,
-              "height": 42
-            },
-            "css": {
-              "x": 114.27053833007812,
-              "y": 27.624999999999996,
-              "width": 55.79124755859375,
-              "height": 22.75
-            },
-            "interactive": false
-          },
           "inventory-modal-title": {
             "logical": {
               "x": 640,
@@ -8590,13 +8440,13 @@
             "logical": {
               "x": 1040,
               "y": 155,
-              "width": 140,
+              "width": 130,
               "height": 32
             },
             "css": {
-              "x": 600.4127197265625,
+              "x": 603.1210327148438,
               "y": 75.29166666666666,
-              "width": 75.832763671875,
+              "width": 70.4161376953125,
               "height": 17.333333333333332
             },
             "interactive": false
@@ -8846,21 +8696,6 @@
             },
             "interactive": false
           },
-          "inventory-view-badge": {
-            "logical": {
-              "x": 124,
-              "y": 72,
-              "width": 106,
-              "height": 42
-            },
-            "css": {
-              "x": 113.45804443359376,
-              "y": 27.624999999999996,
-              "width": 57.416235351562506,
-              "height": 22.75
-            },
-            "interactive": false
-          },
           "inventory-modal-title": {
             "logical": {
               "x": 640,
@@ -8906,212 +8741,17 @@
             },
             "interactive": false
           },
-          "bag-map-node:valley:moonflower-home": {
-            "logical": {
-              "x": 260,
-              "y": 404.4,
-              "width": 70,
-              "height": 70
-            },
-            "css": {
-              "x": 196.87408447265625,
-              "y": 200.09166666666664,
-              "width": 37.9163818359375,
-              "height": 37.916666666666664
-            },
-            "interactive": false
-          },
-          "bag-map-current-location": {
-            "logical": {
-              "x": 410,
-              "y": 370,
-              "width": 62,
-              "height": 62
-            },
-            "css": {
-              "x": 280.2901245117188,
-              "y": 183.625,
-              "width": 33.583081054687504,
-              "height": 33.58333333333333
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:sunbeam-village": {
-            "logical": {
-              "x": 580,
-              "y": 301.20000000000005,
-              "width": 62,
-              "height": 62
-            },
-            "css": {
-              "x": 372.3727661132813,
-              "y": 146.35833333333335,
-              "width": 33.583081054687504,
-              "height": 33.58333333333333
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:rainbow-meadow": {
-            "logical": {
-              "x": 720,
-              "y": 404.4,
-              "width": 62,
-              "height": 62
-            },
-            "css": {
-              "x": 448.2055297851563,
-              "y": 202.2583333333333,
-              "width": 33.583081054687504,
-              "height": 33.58333333333333
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:crystal-brook": {
-            "logical": {
-              "x": 870,
-              "y": 301.20000000000005,
-              "width": 62,
-              "height": 62
-            },
-            "css": {
-              "x": 529.4549194335938,
-              "y": 146.35833333333335,
-              "width": 33.583081054687504,
-              "height": 33.58333333333333
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:whispering-woods": {
-            "logical": {
-              "x": 1020,
-              "y": 400.09999999999997,
-              "width": 62,
-              "height": 62
-            },
-            "css": {
-              "x": 610.7043090820313,
-              "y": 199.92916666666665,
-              "width": 33.583081054687504,
-              "height": 33.58333333333333
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:starlight-beach": {
-            "logical": {
-              "x": 1080,
-              "y": 494.7,
-              "width": 62,
-              "height": 62
-            },
-            "css": {
-              "x": 643.2040649414063,
-              "y": 251.17083333333332,
-              "width": 33.583081054687504,
-              "height": 33.58333333333333
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:moonflower-field": {
-            "logical": {
-              "x": 430,
-              "y": 499,
-              "width": 40,
-              "height": 40
-            },
-            "css": {
-              "x": 297.0816650390625,
-              "y": 259.4583333333333,
-              "width": 21.66650390625,
-              "height": 21.666666666666664
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:rainbow-run": {
-            "logical": {
-              "x": 630,
-              "y": 503.3,
-              "width": 40,
-              "height": 40
-            },
-            "css": {
-              "x": 405.4141845703125,
-              "y": 261.78749999999997,
-              "width": 21.66650390625,
-              "height": 21.666666666666664
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:prism-grotto": {
-            "logical": {
-              "x": 870,
-              "y": 421.6,
-              "width": 40,
-              "height": 40
-            },
-            "css": {
-              "x": 535.4132080078125,
-              "y": 217.53333333333333,
-              "width": 21.66650390625,
-              "height": 21.666666666666664
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:lantern-clearing": {
-            "logical": {
-              "x": 1090,
-              "y": 288.3,
-              "width": 40,
-              "height": 40
-            },
-            "css": {
-              "x": 654.5789794921875,
-              "y": 145.32916666666665,
-              "width": 21.66650390625,
-              "height": 21.666666666666664
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:future-north": {
-            "logical": {
-              "x": 730,
-              "y": 206.6,
-              "width": 50,
-              "height": 50
-            },
-            "css": {
-              "x": 456.87213134765625,
-              "y": 98.36666666666666,
-              "width": 27.0831298828125,
-              "height": 27.083333333333332
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:future-south": {
-            "logical": {
-              "x": 860,
-              "y": 533.4,
-              "width": 50,
-              "height": 50
-            },
-            "css": {
-              "x": 527.2882690429688,
-              "y": 275.3833333333333,
-              "width": 27.0831298828125,
-              "height": 27.083333333333332
-            },
-            "interactive": false
-          },
           "bag-map-guidance": {
             "logical": {
               "x": 640,
-              "y": 644,
-              "width": 743,
+              "y": 642,
+              "width": 735,
               "height": 15
             },
             "css": {
-              "x": 220.43640747070313,
-              "y": 344.7708333333333,
-              "width": 402.45531005859374,
+              "x": 222.60305786132812,
+              "y": 343.6875,
+              "width": 398.12200927734375,
               "height": 8.125
             },
             "interactive": false
@@ -9119,15 +8759,15 @@
           "wp18j-map-camera-clip-guard": {
             "logical": {
               "x": 640,
-              "y": 359,
+              "y": 356,
               "width": 1016,
-              "height": 406
+              "height": 420
             },
             "css": {
               "x": 146.499462890625,
-              "y": 84.5,
+              "y": 79.08333333333333,
               "width": 550.32919921875,
-              "height": 219.91666666666666
+              "height": 227.49999999999997
             },
             "interactive": false
           },
@@ -9143,6 +8783,201 @@
               "y": 0,
               "width": 0,
               "height": 0
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:moonflower-home": {
+            "logical": {
+              "x": 206.79999999999998,
+              "y": 401.59999999999997,
+              "width": 70,
+              "height": 70
+            },
+            "css": {
+              "x": 168.05763427734374,
+              "y": 198.57499999999996,
+              "width": 37.9163818359375,
+              "height": 37.916666666666664
+            },
+            "interactive": false
+          },
+          "bag-map-current-location": {
+            "logical": {
+              "x": 377.8,
+              "y": 360,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 262.8485888671875,
+              "y": 178.20833333333331,
+              "width": 33.583081054687504,
+              "height": 33.58333333333333
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:sunbeam-village": {
+            "logical": {
+              "x": 571.6,
+              "y": 276.8,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 367.8228002929688,
+              "y": 133.14166666666665,
+              "width": 33.583081054687504,
+              "height": 33.58333333333333
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:rainbow-meadow": {
+            "logical": {
+              "x": 731.1999999999999,
+              "y": 401.59999999999997,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 454.27215087890625,
+              "y": 200.74166666666665,
+              "width": 33.583081054687504,
+              "height": 33.58333333333333
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:crystal-brook": {
+            "logical": {
+              "x": 902.1999999999999,
+              "y": 276.8,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 546.896455078125,
+              "y": 133.14166666666665,
+              "width": 33.583081054687504,
+              "height": 33.58333333333333
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:whispering-woods": {
+            "logical": {
+              "x": 1073.2,
+              "y": 396.4,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 639.5207592773438,
+              "y": 197.92499999999998,
+              "width": 33.583081054687504,
+              "height": 33.58333333333333
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:starlight-beach": {
+            "logical": {
+              "x": 1141.6,
+              "y": 510.8,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 676.5704809570312,
+              "y": 259.89166666666665,
+              "width": 33.583081054687504,
+              "height": 33.58333333333333
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:moonflower-field": {
+            "logical": {
+              "x": 400.59999999999997,
+              "y": 516,
+              "width": 40,
+              "height": 40
+            },
+            "css": {
+              "x": 281.15678466796874,
+              "y": 268.66666666666663,
+              "width": 21.66650390625,
+              "height": 21.666666666666664
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:rainbow-run": {
+            "logical": {
+              "x": 628.6,
+              "y": 521.2,
+              "width": 40,
+              "height": 40
+            },
+            "css": {
+              "x": 404.6558569335938,
+              "y": 271.48333333333335,
+              "width": 21.66650390625,
+              "height": 21.666666666666664
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:prism-grotto": {
+            "logical": {
+              "x": 902.1999999999999,
+              "y": 422.4,
+              "width": 40,
+              "height": 40
+            },
+            "css": {
+              "x": 552.8547436523438,
+              "y": 217.96666666666664,
+              "width": 21.66650390625,
+              "height": 21.666666666666664
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:lantern-clearing": {
+            "logical": {
+              "x": 1153,
+              "y": 261.2,
+              "width": 40,
+              "height": 40
+            },
+            "css": {
+              "x": 688.7037231445313,
+              "y": 130.64999999999998,
+              "width": 21.66650390625,
+              "height": 21.666666666666664
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:future-north": {
+            "logical": {
+              "x": 742.5999999999999,
+              "y": 162.4,
+              "width": 50,
+              "height": 50
+            },
+            "css": {
+              "x": 463.69708007812494,
+              "y": 74.425,
+              "width": 27.0831298828125,
+              "height": 27.083333333333332
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:future-south": {
+            "logical": {
+              "x": 890.8,
+              "y": 557.6,
+              "width": 50,
+              "height": 50
+            },
+            "css": {
+              "x": 543.9714770507812,
+              "y": 288.4916666666667,
+              "width": 27.0831298828125,
+              "height": 27.083333333333332
             },
             "interactive": false
           },
@@ -9180,29 +9015,29 @@
             "logical": {
               "x": 170,
               "y": 192,
-              "width": 15,
-              "height": 37
+              "width": 17,
+              "height": 41
             },
             "css": {
-              "x": 163.02017211914062,
-              "y": 93.97916666666666,
-              "width": 8.12493896484375,
-              "height": 20.041666666666664
+              "x": 162.4785095214844,
+              "y": 92.89583333333333,
+              "width": 9.20826416015625,
+              "height": 22.208333333333332
             },
             "interactive": false
           },
           "wp18j-map-pan-zone": {
             "logical": {
               "x": 640,
-              "y": 359,
+              "y": 356,
               "width": 1032,
-              "height": 422
+              "height": 436
             },
             "css": {
               "x": 142.16616210937502,
-              "y": 80.16666666666666,
+              "y": 74.75,
               "width": 558.9958007812501,
-              "height": 228.58333333333331
+              "height": 236.16666666666666
             },
             "interactive": true
           },
@@ -9271,21 +9106,6 @@
             },
             "interactive": false
           },
-          "inventory-view-badge": {
-            "logical": {
-              "x": 124,
-              "y": 72,
-              "width": 106,
-              "height": 42
-            },
-            "css": {
-              "x": 113.45804443359376,
-              "y": 27.624999999999996,
-              "width": 57.416235351562506,
-              "height": 22.75
-            },
-            "interactive": false
-          },
           "inventory-modal-title": {
             "logical": {
               "x": 640,
@@ -9331,212 +9151,17 @@
             },
             "interactive": false
           },
-          "bag-map-node:valley:moonflower-home": {
-            "logical": {
-              "x": 260,
-              "y": 404.4,
-              "width": 70,
-              "height": 70
-            },
-            "css": {
-              "x": 196.87408447265625,
-              "y": 200.09166666666664,
-              "width": 37.9163818359375,
-              "height": 37.916666666666664
-            },
-            "interactive": false
-          },
-          "bag-map-current-location": {
-            "logical": {
-              "x": 410,
-              "y": 370,
-              "width": 62,
-              "height": 62
-            },
-            "css": {
-              "x": 280.2901245117188,
-              "y": 183.625,
-              "width": 33.583081054687504,
-              "height": 33.58333333333333
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:sunbeam-village": {
-            "logical": {
-              "x": 580,
-              "y": 301.20000000000005,
-              "width": 62,
-              "height": 62
-            },
-            "css": {
-              "x": 372.3727661132813,
-              "y": 146.35833333333335,
-              "width": 33.583081054687504,
-              "height": 33.58333333333333
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:rainbow-meadow": {
-            "logical": {
-              "x": 720,
-              "y": 404.4,
-              "width": 62,
-              "height": 62
-            },
-            "css": {
-              "x": 448.2055297851563,
-              "y": 202.2583333333333,
-              "width": 33.583081054687504,
-              "height": 33.58333333333333
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:crystal-brook": {
-            "logical": {
-              "x": 870,
-              "y": 301.20000000000005,
-              "width": 62,
-              "height": 62
-            },
-            "css": {
-              "x": 529.4549194335938,
-              "y": 146.35833333333335,
-              "width": 33.583081054687504,
-              "height": 33.58333333333333
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:whispering-woods": {
-            "logical": {
-              "x": 1020,
-              "y": 400.09999999999997,
-              "width": 62,
-              "height": 62
-            },
-            "css": {
-              "x": 610.7043090820313,
-              "y": 199.92916666666665,
-              "width": 33.583081054687504,
-              "height": 33.58333333333333
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:starlight-beach": {
-            "logical": {
-              "x": 1080,
-              "y": 494.7,
-              "width": 62,
-              "height": 62
-            },
-            "css": {
-              "x": 643.2040649414063,
-              "y": 251.17083333333332,
-              "width": 33.583081054687504,
-              "height": 33.58333333333333
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:moonflower-field": {
-            "logical": {
-              "x": 430,
-              "y": 499,
-              "width": 40,
-              "height": 40
-            },
-            "css": {
-              "x": 297.0816650390625,
-              "y": 259.4583333333333,
-              "width": 21.66650390625,
-              "height": 21.666666666666664
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:rainbow-run": {
-            "logical": {
-              "x": 630,
-              "y": 503.3,
-              "width": 40,
-              "height": 40
-            },
-            "css": {
-              "x": 405.4141845703125,
-              "y": 261.78749999999997,
-              "width": 21.66650390625,
-              "height": 21.666666666666664
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:prism-grotto": {
-            "logical": {
-              "x": 870,
-              "y": 421.6,
-              "width": 40,
-              "height": 40
-            },
-            "css": {
-              "x": 535.4132080078125,
-              "y": 217.53333333333333,
-              "width": 21.66650390625,
-              "height": 21.666666666666664
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:lantern-clearing": {
-            "logical": {
-              "x": 1090,
-              "y": 288.3,
-              "width": 40,
-              "height": 40
-            },
-            "css": {
-              "x": 654.5789794921875,
-              "y": 145.32916666666665,
-              "width": 21.66650390625,
-              "height": 21.666666666666664
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:future-north": {
-            "logical": {
-              "x": 730,
-              "y": 206.6,
-              "width": 50,
-              "height": 50
-            },
-            "css": {
-              "x": 456.87213134765625,
-              "y": 98.36666666666666,
-              "width": 27.0831298828125,
-              "height": 27.083333333333332
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:future-south": {
-            "logical": {
-              "x": 860,
-              "y": 533.4,
-              "width": 50,
-              "height": 50
-            },
-            "css": {
-              "x": 527.2882690429688,
-              "y": 275.3833333333333,
-              "width": 27.0831298828125,
-              "height": 27.083333333333332
-            },
-            "interactive": false
-          },
           "bag-map-guidance": {
             "logical": {
               "x": 640,
-              "y": 644,
-              "width": 743,
+              "y": 642,
+              "width": 735,
               "height": 15
             },
             "css": {
-              "x": 220.43640747070313,
-              "y": 344.7708333333333,
-              "width": 402.45531005859374,
+              "x": 222.60305786132812,
+              "y": 343.6875,
+              "width": 398.12200927734375,
               "height": 8.125
             },
             "interactive": false
@@ -9544,30 +9169,225 @@
           "wp18j-map-camera-clip-guard": {
             "logical": {
               "x": 640,
-              "y": 359,
+              "y": 356,
               "width": 1016,
-              "height": 406
+              "height": 420
             },
             "css": {
               "x": 146.499462890625,
-              "y": 84.5,
+              "y": 79.08333333333333,
               "width": 550.32919921875,
-              "height": 219.91666666666666
+              "height": 227.49999999999997
             },
             "interactive": false
           },
           "bag-map-content": {
             "logical": {
-              "x": -129.23174002208555,
-              "y": -70.15384615384613,
+              "x": -100,
+              "y": -70,
               "width": 0,
               "height": 0
             },
             "css": {
-              "x": 4.999999999999972,
-              "y": -37.999999999999986,
+              "x": 20.833740234375,
+              "y": -37.916666666666664,
               "width": 0,
               "height": 0
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:moonflower-home": {
+            "logical": {
+              "x": 206.79999999999998,
+              "y": 401.59999999999997,
+              "width": 70,
+              "height": 70
+            },
+            "css": {
+              "x": 168.05763427734374,
+              "y": 198.57499999999996,
+              "width": 37.9163818359375,
+              "height": 37.916666666666664
+            },
+            "interactive": false
+          },
+          "bag-map-current-location": {
+            "logical": {
+              "x": 377.8,
+              "y": 360,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 262.8485888671875,
+              "y": 178.20833333333331,
+              "width": 33.583081054687504,
+              "height": 33.58333333333333
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:sunbeam-village": {
+            "logical": {
+              "x": 571.6,
+              "y": 276.8,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 367.8228002929688,
+              "y": 133.14166666666665,
+              "width": 33.583081054687504,
+              "height": 33.58333333333333
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:rainbow-meadow": {
+            "logical": {
+              "x": 731.1999999999999,
+              "y": 401.59999999999997,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 454.27215087890625,
+              "y": 200.74166666666665,
+              "width": 33.583081054687504,
+              "height": 33.58333333333333
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:crystal-brook": {
+            "logical": {
+              "x": 902.1999999999999,
+              "y": 276.8,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 546.896455078125,
+              "y": 133.14166666666665,
+              "width": 33.583081054687504,
+              "height": 33.58333333333333
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:whispering-woods": {
+            "logical": {
+              "x": 1073.2,
+              "y": 396.4,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 639.5207592773438,
+              "y": 197.92499999999998,
+              "width": 33.583081054687504,
+              "height": 33.58333333333333
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:starlight-beach": {
+            "logical": {
+              "x": 1141.6,
+              "y": 510.8,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 676.5704809570312,
+              "y": 259.89166666666665,
+              "width": 33.583081054687504,
+              "height": 33.58333333333333
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:moonflower-field": {
+            "logical": {
+              "x": 400.59999999999997,
+              "y": 516,
+              "width": 40,
+              "height": 40
+            },
+            "css": {
+              "x": 281.15678466796874,
+              "y": 268.66666666666663,
+              "width": 21.66650390625,
+              "height": 21.666666666666664
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:rainbow-run": {
+            "logical": {
+              "x": 628.6,
+              "y": 521.2,
+              "width": 40,
+              "height": 40
+            },
+            "css": {
+              "x": 404.6558569335938,
+              "y": 271.48333333333335,
+              "width": 21.66650390625,
+              "height": 21.666666666666664
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:prism-grotto": {
+            "logical": {
+              "x": 902.1999999999999,
+              "y": 422.4,
+              "width": 40,
+              "height": 40
+            },
+            "css": {
+              "x": 552.8547436523438,
+              "y": 217.96666666666664,
+              "width": 21.66650390625,
+              "height": 21.666666666666664
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:lantern-clearing": {
+            "logical": {
+              "x": 1153,
+              "y": 261.2,
+              "width": 40,
+              "height": 40
+            },
+            "css": {
+              "x": 688.7037231445313,
+              "y": 130.64999999999998,
+              "width": 21.66650390625,
+              "height": 21.666666666666664
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:future-north": {
+            "logical": {
+              "x": 742.5999999999999,
+              "y": 162.4,
+              "width": 50,
+              "height": 50
+            },
+            "css": {
+              "x": 463.69708007812494,
+              "y": 74.425,
+              "width": 27.0831298828125,
+              "height": 27.083333333333332
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:future-south": {
+            "logical": {
+              "x": 890.8,
+              "y": 557.6,
+              "width": 50,
+              "height": 50
+            },
+            "css": {
+              "x": 543.9714770507812,
+              "y": 288.4916666666667,
+              "width": 27.0831298828125,
+              "height": 27.083333333333332
             },
             "interactive": false
           },
@@ -9605,29 +9425,29 @@
             "logical": {
               "x": 170,
               "y": 192,
-              "width": 15,
-              "height": 37
+              "width": 17,
+              "height": 41
             },
             "css": {
-              "x": 163.02017211914062,
-              "y": 93.97916666666666,
-              "width": 8.12493896484375,
-              "height": 20.041666666666664
+              "x": 162.4785095214844,
+              "y": 92.89583333333333,
+              "width": 9.20826416015625,
+              "height": 22.208333333333332
             },
             "interactive": false
           },
           "wp18j-map-pan-zone": {
             "logical": {
               "x": 640,
-              "y": 359,
+              "y": 356,
               "width": 1032,
-              "height": 422
+              "height": 436
             },
             "css": {
               "x": 142.16616210937502,
-              "y": 80.16666666666666,
+              "y": 74.75,
               "width": 558.9958007812501,
-              "height": 228.58333333333331
+              "height": 236.16666666666666
             },
             "interactive": true
           },
@@ -9848,15 +9668,15 @@
           },
           "wonderbook-close-button": {
             "logical": {
-              "x": 1172,
+              "x": 1190,
               "y": 76,
-              "width": 82,
+              "width": 72,
               "height": 70
             },
             "css": {
-              "x": 687.6203979492187,
+              "x": 700.0786376953125,
               "y": 22.208333333333332,
-              "width": 44.416333007812504,
+              "width": 38.999707031250004,
               "height": 37.916666666666664
             },
             "interactive": true
@@ -9938,13 +9758,13 @@
           },
           "wonderbook-close-icon": {
             "logical": {
-              "x": 1172,
+              "x": 1190,
               "y": 76,
               "width": 32,
               "height": 45
             },
             "css": {
-              "x": 701.161962890625,
+              "x": 710.9118896484375,
               "y": 28.979166666666664,
               "width": 17.333203125,
               "height": 24.375
@@ -9955,13 +9775,13 @@
             "logical": {
               "x": 1154,
               "y": 158,
-              "width": 96,
+              "width": 86,
               "height": 42
             },
             "css": {
-              "x": 674.0788330078125,
+              "x": 676.7871459960937,
               "y": 74.20833333333333,
-              "width": 51.999609375000006,
+              "width": 46.5829833984375,
               "height": 22.75
             },
             "interactive": true
@@ -9970,13 +9790,13 @@
             "logical": {
               "x": 1154,
               "y": 228,
-              "width": 113,
+              "width": 103,
               "height": 42
             },
             "css": {
-              "x": 669.4747009277344,
+              "x": 672.1830139160156,
               "y": 112.12499999999999,
-              "width": 61.20787353515625,
+              "width": 55.79124755859375,
               "height": 22.75
             },
             "interactive": true
@@ -9985,13 +9805,13 @@
             "logical": {
               "x": 1154,
               "y": 298,
-              "width": 101,
+              "width": 95,
               "height": 42
             },
             "css": {
-              "x": 672.7246765136719,
+              "x": 674.3496643066406,
               "y": 150.04166666666666,
-              "width": 54.707922363281256,
+              "width": 51.45794677734375,
               "height": 22.75
             },
             "interactive": true
@@ -10000,13 +9820,13 @@
             "logical": {
               "x": 1154,
               "y": 368,
-              "width": 100,
+              "width": 90,
               "height": 42
             },
             "css": {
-              "x": 672.9955078125,
+              "x": 675.7038208007813,
               "y": 187.95833333333331,
-              "width": 54.166259765625,
+              "width": 48.7496337890625,
               "height": 22.75
             },
             "interactive": true
@@ -10015,13 +9835,13 @@
             "logical": {
               "x": 1154,
               "y": 438,
-              "width": 98,
+              "width": 88,
               "height": 42
             },
             "css": {
-              "x": 673.5371704101562,
+              "x": 676.2454833984375,
               "y": 225.87499999999997,
-              "width": 53.0829345703125,
+              "width": 47.66630859375,
               "height": 22.75
             },
             "interactive": true
@@ -11155,7 +10975,7 @@
           "y": 0.3046875
         },
         "domCompanions": [],
-        "activeScenes": ["ExplorationHudOverlayScene", "InventoryScene"],
+        "activeScenes": ["InventoryScene", "ExplorationHudOverlayScene"],
         "namedObjects": {
           "inventory-modal-panel": {
             "logical": {
@@ -11169,21 +10989,6 @@
               "y": 0,
               "width": 0,
               "height": 0
-            },
-            "interactive": false
-          },
-          "inventory-view-badge": {
-            "logical": {
-              "x": 124,
-              "y": 72,
-              "width": 103,
-              "height": 42
-            },
-            "css": {
-              "x": 22.08984375,
-              "y": 15.5390625,
-              "width": 31.3828125,
-              "height": 12.796875
             },
             "interactive": false
           },
@@ -11236,13 +11041,13 @@
             "logical": {
               "x": 1040,
               "y": 155,
-              "width": 140,
+              "width": 130,
               "height": 32
             },
             "css": {
-              "x": 295.546875,
+              "x": 297.0703125,
               "y": 42.3515625,
-              "width": 42.65625,
+              "width": 39.609375,
               "height": 9.75
             },
             "interactive": false
@@ -11460,7 +11265,7 @@
           "y": 0.3046875
         },
         "domCompanions": [],
-        "activeScenes": ["InventoryScene", "ExplorationHudOverlayScene"],
+        "activeScenes": ["ExplorationHudOverlayScene", "InventoryScene"],
         "namedObjects": {
           "inventory-modal-panel": {
             "logical": {
@@ -11474,21 +11279,6 @@
               "y": 0,
               "width": 0,
               "height": 0
-            },
-            "interactive": false
-          },
-          "inventory-view-badge": {
-            "logical": {
-              "x": 124,
-              "y": 72,
-              "width": 103,
-              "height": 42
-            },
-            "css": {
-              "x": 22.08984375,
-              "y": 15.5390625,
-              "width": 31.3828125,
-              "height": 12.796875
             },
             "interactive": false
           },
@@ -11541,13 +11331,13 @@
             "logical": {
               "x": 1040,
               "y": 155,
-              "width": 140,
+              "width": 130,
               "height": 32
             },
             "css": {
-              "x": 295.546875,
+              "x": 297.0703125,
               "y": 42.3515625,
-              "width": 42.65625,
+              "width": 39.609375,
               "height": 9.75
             },
             "interactive": false
@@ -11797,21 +11587,6 @@
             },
             "interactive": false
           },
-          "inventory-view-badge": {
-            "logical": {
-              "x": 124,
-              "y": 72,
-              "width": 106,
-              "height": 42
-            },
-            "css": {
-              "x": 21.6328125,
-              "y": 15.5390625,
-              "width": 32.296875,
-              "height": 12.796875
-            },
-            "interactive": false
-          },
           "inventory-modal-title": {
             "logical": {
               "x": 640,
@@ -11857,212 +11632,17 @@
             },
             "interactive": false
           },
-          "bag-map-node:valley:moonflower-home": {
-            "logical": {
-              "x": 260,
-              "y": 404.4,
-              "width": 70,
-              "height": 70
-            },
-            "css": {
-              "x": 68.5546875,
-              "y": 112.55156249999999,
-              "width": 21.328125,
-              "height": 21.328125
-            },
-            "interactive": false
-          },
-          "bag-map-current-location": {
-            "logical": {
-              "x": 410,
-              "y": 370,
-              "width": 62,
-              "height": 62
-            },
-            "css": {
-              "x": 115.4765625,
-              "y": 103.2890625,
-              "width": 18.890625,
-              "height": 18.890625
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:sunbeam-village": {
-            "logical": {
-              "x": 580,
-              "y": 301.20000000000005,
-              "width": 62,
-              "height": 62
-            },
-            "css": {
-              "x": 167.2734375,
-              "y": 82.32656250000001,
-              "width": 18.890625,
-              "height": 18.890625
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:rainbow-meadow": {
-            "logical": {
-              "x": 720,
-              "y": 404.4,
-              "width": 62,
-              "height": 62
-            },
-            "css": {
-              "x": 209.9296875,
-              "y": 113.77031249999999,
-              "width": 18.890625,
-              "height": 18.890625
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:crystal-brook": {
-            "logical": {
-              "x": 870,
-              "y": 301.20000000000005,
-              "width": 62,
-              "height": 62
-            },
-            "css": {
-              "x": 255.6328125,
-              "y": 82.32656250000001,
-              "width": 18.890625,
-              "height": 18.890625
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:whispering-woods": {
-            "logical": {
-              "x": 1020,
-              "y": 400.09999999999997,
-              "width": 62,
-              "height": 62
-            },
-            "css": {
-              "x": 301.3359375,
-              "y": 112.46015624999998,
-              "width": 18.890625,
-              "height": 18.890625
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:starlight-beach": {
-            "logical": {
-              "x": 1080,
-              "y": 494.7,
-              "width": 62,
-              "height": 62
-            },
-            "css": {
-              "x": 319.6171875,
-              "y": 141.28359375,
-              "width": 18.890625,
-              "height": 18.890625
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:moonflower-field": {
-            "logical": {
-              "x": 430,
-              "y": 499,
-              "width": 40,
-              "height": 40
-            },
-            "css": {
-              "x": 124.921875,
-              "y": 145.9453125,
-              "width": 12.1875,
-              "height": 12.1875
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:rainbow-run": {
-            "logical": {
-              "x": 630,
-              "y": 503.3,
-              "width": 40,
-              "height": 40
-            },
-            "css": {
-              "x": 185.859375,
-              "y": 147.25546875,
-              "width": 12.1875,
-              "height": 12.1875
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:prism-grotto": {
-            "logical": {
-              "x": 870,
-              "y": 421.6,
-              "width": 40,
-              "height": 40
-            },
-            "css": {
-              "x": 258.984375,
-              "y": 122.36250000000001,
-              "width": 12.1875,
-              "height": 12.1875
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:lantern-clearing": {
-            "logical": {
-              "x": 1090,
-              "y": 288.3,
-              "width": 40,
-              "height": 40
-            },
-            "css": {
-              "x": 326.015625,
-              "y": 81.74765625,
-              "width": 12.1875,
-              "height": 12.1875
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:future-north": {
-            "logical": {
-              "x": 730,
-              "y": 206.6,
-              "width": 50,
-              "height": 50
-            },
-            "css": {
-              "x": 214.8046875,
-              "y": 55.33125,
-              "width": 15.234375,
-              "height": 15.234375
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:future-south": {
-            "logical": {
-              "x": 860,
-              "y": 533.4,
-              "width": 50,
-              "height": 50
-            },
-            "css": {
-              "x": 254.4140625,
-              "y": 154.903125,
-              "width": 15.234375,
-              "height": 15.234375
-            },
-            "interactive": false
-          },
           "bag-map-guidance": {
             "logical": {
               "x": 640,
-              "y": 644,
-              "width": 743,
+              "y": 642,
+              "width": 735,
               "height": 15
             },
             "css": {
-              "x": 81.80859375,
-              "y": 193.93359375,
-              "width": 226.3828125,
+              "x": 83.02734375,
+              "y": 193.32421875,
+              "width": 223.9453125,
               "height": 4.5703125
             },
             "interactive": false
@@ -12070,15 +11650,15 @@
           "wp18j-map-camera-clip-guard": {
             "logical": {
               "x": 640,
-              "y": 359,
+              "y": 356,
               "width": 1016,
-              "height": 406
+              "height": 420
             },
             "css": {
               "x": 40.21875,
-              "y": 47.53125,
+              "y": 44.484375,
               "width": 309.5625,
-              "height": 123.703125
+              "height": 127.96875
             },
             "interactive": false
           },
@@ -12094,6 +11674,201 @@
               "y": 0,
               "width": 0,
               "height": 0
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:moonflower-home": {
+            "logical": {
+              "x": 206.79999999999998,
+              "y": 401.59999999999997,
+              "width": 70,
+              "height": 70
+            },
+            "css": {
+              "x": 52.34531249999999,
+              "y": 111.69843749999998,
+              "width": 21.328125,
+              "height": 21.328125
+            },
+            "interactive": false
+          },
+          "bag-map-current-location": {
+            "logical": {
+              "x": 377.8,
+              "y": 360,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 105.665625,
+              "y": 100.2421875,
+              "width": 18.890625,
+              "height": 18.890625
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:sunbeam-village": {
+            "logical": {
+              "x": 571.6,
+              "y": 276.8,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 164.7140625,
+              "y": 74.8921875,
+              "width": 18.890625,
+              "height": 18.890625
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:rainbow-meadow": {
+            "logical": {
+              "x": 731.1999999999999,
+              "y": 401.59999999999997,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 213.34218749999997,
+              "y": 112.91718749999998,
+              "width": 18.890625,
+              "height": 18.890625
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:crystal-brook": {
+            "logical": {
+              "x": 902.1999999999999,
+              "y": 276.8,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 265.44374999999997,
+              "y": 74.8921875,
+              "width": 18.890625,
+              "height": 18.890625
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:whispering-woods": {
+            "logical": {
+              "x": 1073.2,
+              "y": 396.4,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 317.5453125,
+              "y": 111.33281249999999,
+              "width": 18.890625,
+              "height": 18.890625
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:starlight-beach": {
+            "logical": {
+              "x": 1141.6,
+              "y": 510.8,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 338.38593749999995,
+              "y": 146.1890625,
+              "width": 18.890625,
+              "height": 18.890625
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:moonflower-field": {
+            "logical": {
+              "x": 400.59999999999997,
+              "y": 516,
+              "width": 40,
+              "height": 40
+            },
+            "css": {
+              "x": 115.96406249999998,
+              "y": 151.125,
+              "width": 12.1875,
+              "height": 12.1875
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:rainbow-run": {
+            "logical": {
+              "x": 628.6,
+              "y": 521.2,
+              "width": 40,
+              "height": 40
+            },
+            "css": {
+              "x": 185.4328125,
+              "y": 152.70937500000002,
+              "width": 12.1875,
+              "height": 12.1875
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:prism-grotto": {
+            "logical": {
+              "x": 902.1999999999999,
+              "y": 422.4,
+              "width": 40,
+              "height": 40
+            },
+            "css": {
+              "x": 268.79531249999997,
+              "y": 122.60624999999999,
+              "width": 12.1875,
+              "height": 12.1875
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:lantern-clearing": {
+            "logical": {
+              "x": 1153,
+              "y": 261.2,
+              "width": 40,
+              "height": 40
+            },
+            "css": {
+              "x": 345.2109375,
+              "y": 73.490625,
+              "width": 12.1875,
+              "height": 12.1875
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:future-north": {
+            "logical": {
+              "x": 742.5999999999999,
+              "y": 162.4,
+              "width": 50,
+              "height": 50
+            },
+            "css": {
+              "x": 218.64374999999998,
+              "y": 41.8640625,
+              "width": 15.234375,
+              "height": 15.234375
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:future-south": {
+            "logical": {
+              "x": 890.8,
+              "y": 557.6,
+              "width": 50,
+              "height": 50
+            },
+            "css": {
+              "x": 263.7984375,
+              "y": 162.2765625,
+              "width": 15.234375,
+              "height": 15.234375
             },
             "interactive": false
           },
@@ -12131,29 +11906,29 @@
             "logical": {
               "x": 170,
               "y": 192,
-              "width": 15,
-              "height": 37
+              "width": 17,
+              "height": 41
             },
             "css": {
-              "x": 49.51171875,
-              "y": 52.86328125,
-              "width": 4.5703125,
-              "height": 11.2734375
+              "x": 49.20703125,
+              "y": 52.25390625,
+              "width": 5.1796875,
+              "height": 12.4921875
             },
             "interactive": false
           },
           "wp18j-map-pan-zone": {
             "logical": {
               "x": 640,
-              "y": 359,
+              "y": 356,
               "width": 1032,
-              "height": 422
+              "height": 436
             },
             "css": {
               "x": 37.78125,
-              "y": 45.09375,
+              "y": 42.046875,
               "width": 314.4375,
-              "height": 128.578125
+              "height": 132.84375
             },
             "interactive": true
           },
@@ -12222,21 +11997,6 @@
             },
             "interactive": false
           },
-          "inventory-view-badge": {
-            "logical": {
-              "x": 124,
-              "y": 72,
-              "width": 106,
-              "height": 42
-            },
-            "css": {
-              "x": 21.6328125,
-              "y": 15.5390625,
-              "width": 32.296875,
-              "height": 12.796875
-            },
-            "interactive": false
-          },
           "inventory-modal-title": {
             "logical": {
               "x": 640,
@@ -12282,212 +12042,17 @@
             },
             "interactive": false
           },
-          "bag-map-node:valley:moonflower-home": {
-            "logical": {
-              "x": 260,
-              "y": 404.4,
-              "width": 70,
-              "height": 70
-            },
-            "css": {
-              "x": 68.5546875,
-              "y": 112.55156249999999,
-              "width": 21.328125,
-              "height": 21.328125
-            },
-            "interactive": false
-          },
-          "bag-map-current-location": {
-            "logical": {
-              "x": 410,
-              "y": 370,
-              "width": 62,
-              "height": 62
-            },
-            "css": {
-              "x": 115.4765625,
-              "y": 103.2890625,
-              "width": 18.890625,
-              "height": 18.890625
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:sunbeam-village": {
-            "logical": {
-              "x": 580,
-              "y": 301.20000000000005,
-              "width": 62,
-              "height": 62
-            },
-            "css": {
-              "x": 167.2734375,
-              "y": 82.32656250000001,
-              "width": 18.890625,
-              "height": 18.890625
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:rainbow-meadow": {
-            "logical": {
-              "x": 720,
-              "y": 404.4,
-              "width": 62,
-              "height": 62
-            },
-            "css": {
-              "x": 209.9296875,
-              "y": 113.77031249999999,
-              "width": 18.890625,
-              "height": 18.890625
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:crystal-brook": {
-            "logical": {
-              "x": 870,
-              "y": 301.20000000000005,
-              "width": 62,
-              "height": 62
-            },
-            "css": {
-              "x": 255.6328125,
-              "y": 82.32656250000001,
-              "width": 18.890625,
-              "height": 18.890625
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:whispering-woods": {
-            "logical": {
-              "x": 1020,
-              "y": 400.09999999999997,
-              "width": 62,
-              "height": 62
-            },
-            "css": {
-              "x": 301.3359375,
-              "y": 112.46015624999998,
-              "width": 18.890625,
-              "height": 18.890625
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:starlight-beach": {
-            "logical": {
-              "x": 1080,
-              "y": 494.7,
-              "width": 62,
-              "height": 62
-            },
-            "css": {
-              "x": 319.6171875,
-              "y": 141.28359375,
-              "width": 18.890625,
-              "height": 18.890625
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:moonflower-field": {
-            "logical": {
-              "x": 430,
-              "y": 499,
-              "width": 40,
-              "height": 40
-            },
-            "css": {
-              "x": 124.921875,
-              "y": 145.9453125,
-              "width": 12.1875,
-              "height": 12.1875
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:rainbow-run": {
-            "logical": {
-              "x": 630,
-              "y": 503.3,
-              "width": 40,
-              "height": 40
-            },
-            "css": {
-              "x": 185.859375,
-              "y": 147.25546875,
-              "width": 12.1875,
-              "height": 12.1875
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:prism-grotto": {
-            "logical": {
-              "x": 870,
-              "y": 421.6,
-              "width": 40,
-              "height": 40
-            },
-            "css": {
-              "x": 258.984375,
-              "y": 122.36250000000001,
-              "width": 12.1875,
-              "height": 12.1875
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:lantern-clearing": {
-            "logical": {
-              "x": 1090,
-              "y": 288.3,
-              "width": 40,
-              "height": 40
-            },
-            "css": {
-              "x": 326.015625,
-              "y": 81.74765625,
-              "width": 12.1875,
-              "height": 12.1875
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:future-north": {
-            "logical": {
-              "x": 730,
-              "y": 206.6,
-              "width": 50,
-              "height": 50
-            },
-            "css": {
-              "x": 214.8046875,
-              "y": 55.33125,
-              "width": 15.234375,
-              "height": 15.234375
-            },
-            "interactive": false
-          },
-          "bag-map-node:valley:future-south": {
-            "logical": {
-              "x": 860,
-              "y": 533.4,
-              "width": 50,
-              "height": 50
-            },
-            "css": {
-              "x": 254.4140625,
-              "y": 154.903125,
-              "width": 15.234375,
-              "height": 15.234375
-            },
-            "interactive": false
-          },
           "bag-map-guidance": {
             "logical": {
               "x": 640,
-              "y": 644,
-              "width": 743,
+              "y": 642,
+              "width": 735,
               "height": 15
             },
             "css": {
-              "x": 81.80859375,
-              "y": 193.93359375,
-              "width": 226.3828125,
+              "x": 83.02734375,
+              "y": 193.32421875,
+              "width": 223.9453125,
               "height": 4.5703125
             },
             "interactive": false
@@ -12495,30 +12060,225 @@
           "wp18j-map-camera-clip-guard": {
             "logical": {
               "x": 640,
-              "y": 359,
+              "y": 356,
               "width": 1016,
-              "height": 406
+              "height": 420
             },
             "css": {
               "x": 40.21875,
-              "y": 47.53125,
+              "y": 44.484375,
               "width": 309.5625,
-              "height": 123.703125
+              "height": 127.96875
             },
             "interactive": false
           },
           "bag-map-content": {
             "logical": {
-              "x": -131.28205128205127,
+              "x": -100,
               "y": -68.9230769230769,
               "width": 0,
               "height": 0
             },
             "css": {
-              "x": -40,
+              "x": -30.46875,
               "y": -20.999999999999993,
               "width": 0,
               "height": 0
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:moonflower-home": {
+            "logical": {
+              "x": 206.79999999999998,
+              "y": 401.59999999999997,
+              "width": 70,
+              "height": 70
+            },
+            "css": {
+              "x": 52.34531249999999,
+              "y": 111.69843749999998,
+              "width": 21.328125,
+              "height": 21.328125
+            },
+            "interactive": false
+          },
+          "bag-map-current-location": {
+            "logical": {
+              "x": 377.8,
+              "y": 360,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 105.665625,
+              "y": 100.2421875,
+              "width": 18.890625,
+              "height": 18.890625
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:sunbeam-village": {
+            "logical": {
+              "x": 571.6,
+              "y": 276.8,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 164.7140625,
+              "y": 74.8921875,
+              "width": 18.890625,
+              "height": 18.890625
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:rainbow-meadow": {
+            "logical": {
+              "x": 731.1999999999999,
+              "y": 401.59999999999997,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 213.34218749999997,
+              "y": 112.91718749999998,
+              "width": 18.890625,
+              "height": 18.890625
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:crystal-brook": {
+            "logical": {
+              "x": 902.1999999999999,
+              "y": 276.8,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 265.44374999999997,
+              "y": 74.8921875,
+              "width": 18.890625,
+              "height": 18.890625
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:whispering-woods": {
+            "logical": {
+              "x": 1073.2,
+              "y": 396.4,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 317.5453125,
+              "y": 111.33281249999999,
+              "width": 18.890625,
+              "height": 18.890625
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:starlight-beach": {
+            "logical": {
+              "x": 1141.6,
+              "y": 510.8,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 338.38593749999995,
+              "y": 146.1890625,
+              "width": 18.890625,
+              "height": 18.890625
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:moonflower-field": {
+            "logical": {
+              "x": 400.59999999999997,
+              "y": 516,
+              "width": 40,
+              "height": 40
+            },
+            "css": {
+              "x": 115.96406249999998,
+              "y": 151.125,
+              "width": 12.1875,
+              "height": 12.1875
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:rainbow-run": {
+            "logical": {
+              "x": 628.6,
+              "y": 521.2,
+              "width": 40,
+              "height": 40
+            },
+            "css": {
+              "x": 185.4328125,
+              "y": 152.70937500000002,
+              "width": 12.1875,
+              "height": 12.1875
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:prism-grotto": {
+            "logical": {
+              "x": 902.1999999999999,
+              "y": 422.4,
+              "width": 40,
+              "height": 40
+            },
+            "css": {
+              "x": 268.79531249999997,
+              "y": 122.60624999999999,
+              "width": 12.1875,
+              "height": 12.1875
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:lantern-clearing": {
+            "logical": {
+              "x": 1153,
+              "y": 261.2,
+              "width": 40,
+              "height": 40
+            },
+            "css": {
+              "x": 345.2109375,
+              "y": 73.490625,
+              "width": 12.1875,
+              "height": 12.1875
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:future-north": {
+            "logical": {
+              "x": 742.5999999999999,
+              "y": 162.4,
+              "width": 50,
+              "height": 50
+            },
+            "css": {
+              "x": 218.64374999999998,
+              "y": 41.8640625,
+              "width": 15.234375,
+              "height": 15.234375
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:future-south": {
+            "logical": {
+              "x": 890.8,
+              "y": 557.6,
+              "width": 50,
+              "height": 50
+            },
+            "css": {
+              "x": 263.7984375,
+              "y": 162.2765625,
+              "width": 15.234375,
+              "height": 15.234375
             },
             "interactive": false
           },
@@ -12556,29 +12316,29 @@
             "logical": {
               "x": 170,
               "y": 192,
-              "width": 15,
-              "height": 37
+              "width": 17,
+              "height": 41
             },
             "css": {
-              "x": 49.51171875,
-              "y": 52.86328125,
-              "width": 4.5703125,
-              "height": 11.2734375
+              "x": 49.20703125,
+              "y": 52.25390625,
+              "width": 5.1796875,
+              "height": 12.4921875
             },
             "interactive": false
           },
           "wp18j-map-pan-zone": {
             "logical": {
               "x": 640,
-              "y": 359,
+              "y": 356,
               "width": 1032,
-              "height": 422
+              "height": 436
             },
             "css": {
               "x": 37.78125,
-              "y": 45.09375,
+              "y": 42.046875,
               "width": 314.4375,
-              "height": 128.578125
+              "height": 132.84375
             },
             "interactive": true
           },
@@ -12911,15 +12671,15 @@
           },
           "wonderbook-close-button": {
             "logical": {
-              "x": 1172,
+              "x": 1190,
               "y": 76,
-              "width": 82,
+              "width": 72,
               "height": 70
             },
             "css": {
-              "x": 344.6015625,
+              "x": 351.609375,
               "y": 12.4921875,
-              "width": 24.984375,
+              "width": 21.9375,
               "height": 21.328125
             },
             "interactive": true
@@ -13001,13 +12761,13 @@
           },
           "wonderbook-close-icon": {
             "logical": {
-              "x": 1172,
+              "x": 1190,
               "y": 76,
               "width": 32,
               "height": 45
             },
             "css": {
-              "x": 352.21875,
+              "x": 357.703125,
               "y": 16.30078125,
               "width": 9.75,
               "height": 13.7109375
@@ -13018,13 +12778,13 @@
             "logical": {
               "x": 1154,
               "y": 158,
-              "width": 96,
+              "width": 86,
               "height": 42
             },
             "css": {
-              "x": 336.984375,
+              "x": 338.5078125,
               "y": 41.7421875,
-              "width": 29.25,
+              "width": 26.203125,
               "height": 12.796875
             },
             "interactive": true
@@ -13033,13 +12793,13 @@
             "logical": {
               "x": 1154,
               "y": 228,
-              "width": 113,
+              "width": 103,
               "height": 42
             },
             "css": {
-              "x": 334.39453125,
+              "x": 335.91796875,
               "y": 63.0703125,
-              "width": 34.4296875,
+              "width": 31.3828125,
               "height": 12.796875
             },
             "interactive": true
@@ -13048,13 +12808,13 @@
             "logical": {
               "x": 1154,
               "y": 298,
-              "width": 101,
+              "width": 95,
               "height": 42
             },
             "css": {
-              "x": 336.22265625,
+              "x": 337.13671875,
               "y": 84.3984375,
-              "width": 30.7734375,
+              "width": 28.9453125,
               "height": 12.796875
             },
             "interactive": true
@@ -13063,13 +12823,13 @@
             "logical": {
               "x": 1154,
               "y": 368,
-              "width": 100,
+              "width": 90,
               "height": 42
             },
             "css": {
-              "x": 336.375,
+              "x": 337.8984375,
               "y": 105.7265625,
-              "width": 30.46875,
+              "width": 27.421875,
               "height": 12.796875
             },
             "interactive": true
@@ -13078,13 +12838,13 @@
             "logical": {
               "x": 1154,
               "y": 438,
-              "width": 98,
+              "width": 88,
               "height": 42
             },
             "css": {
-              "x": 336.6796875,
+              "x": 338.203125,
               "y": 127.0546875,
-              "width": 29.859375,
+              "width": 26.8125,
               "height": 12.796875
             },
             "interactive": true
@@ -13478,15 +13238,15 @@
           },
           "wonderbook-close-button": {
             "logical": {
-              "x": 1172,
+              "x": 1190,
               "y": 76,
-              "width": 82,
+              "width": 72,
               "height": 70
             },
             "css": {
-              "x": 344.6015625,
+              "x": 351.609375,
               "y": 12.4921875,
-              "width": 24.984375,
+              "width": 21.9375,
               "height": 21.328125
             },
             "interactive": true
@@ -13568,13 +13328,13 @@
           },
           "wonderbook-close-icon": {
             "logical": {
-              "x": 1172,
+              "x": 1190,
               "y": 76,
               "width": 32,
               "height": 45
             },
             "css": {
-              "x": 352.21875,
+              "x": 357.703125,
               "y": 16.30078125,
               "width": 9.75,
               "height": 13.7109375
@@ -13585,13 +13345,13 @@
             "logical": {
               "x": 1154,
               "y": 158,
-              "width": 96,
+              "width": 86,
               "height": 42
             },
             "css": {
-              "x": 336.984375,
+              "x": 338.5078125,
               "y": 41.7421875,
-              "width": 29.25,
+              "width": 26.203125,
               "height": 12.796875
             },
             "interactive": true
@@ -13600,13 +13360,13 @@
             "logical": {
               "x": 1154,
               "y": 228,
-              "width": 113,
+              "width": 103,
               "height": 42
             },
             "css": {
-              "x": 334.39453125,
+              "x": 335.91796875,
               "y": 63.0703125,
-              "width": 34.4296875,
+              "width": 31.3828125,
               "height": 12.796875
             },
             "interactive": true
@@ -13615,13 +13375,13 @@
             "logical": {
               "x": 1154,
               "y": 298,
-              "width": 101,
+              "width": 95,
               "height": 42
             },
             "css": {
-              "x": 336.22265625,
+              "x": 337.13671875,
               "y": 84.3984375,
-              "width": 30.7734375,
+              "width": 28.9453125,
               "height": 12.796875
             },
             "interactive": true
@@ -13630,13 +13390,13 @@
             "logical": {
               "x": 1154,
               "y": 368,
-              "width": 100,
+              "width": 90,
               "height": 42
             },
             "css": {
-              "x": 336.375,
+              "x": 337.8984375,
               "y": 105.7265625,
-              "width": 30.46875,
+              "width": 27.421875,
               "height": 12.796875
             },
             "interactive": true
@@ -13645,13 +13405,13 @@
             "logical": {
               "x": 1154,
               "y": 438,
-              "width": 98,
+              "width": 88,
               "height": 42
             },
             "css": {
-              "x": 336.6796875,
+              "x": 338.203125,
               "y": 127.0546875,
-              "width": 29.859375,
+              "width": 26.8125,
               "height": 12.796875
             },
             "interactive": true
