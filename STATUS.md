@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: 2026-09-08
+Last updated: 2026-09-09
 
 ## Current work
 
@@ -8,7 +8,7 @@ Last updated: 2026-09-08
 
 Path: `docs/work-packages/R6.5-WP18K-ARCHITECTURE-CONSOLIDATION-LEGACY-RETIREMENT.md`
 
-State: **technically qualified after playtest corrections; David approval pending**. David accepted WP19A's bounded qualification, authorised merging/deploying PRs #159/#160 and starting WP18K. Both PRs are merged; the production baseline is main `d8f3de6f264fa5fd6e2d77d539a47f288eb50cd4`. WP18K K1 ownership/removal evidence preceded implementation. K2-K4 consolidated Bag/Map ownership and removed five proven legacy managers/bridges. K5's visual-preservation correction restored readable Wonderbook filters and the cross-only close. Correction-head CI `34322134793` passed 179 browser cases with 3 configured skips and no failures or unrun cases, but the later exact documentation-head run `34323584335` recorded one Firefly Lantern failure in shard 1. Trace-equivalent local reproduction showed that short press/release events could fall entirely between Phaser update frames: the result recorded 7/8, so replay modes never unlocked and the difficulty selector could not appear. Candidate `c7fd62f` now holds each real keyboard edge until the corresponding named UI transition, and three focused repetitions pass without changing the timeout, cycles or assertions. Exact-head CI `34328261135` passed all three browser shards, Validate and compatibility; UV-D014 requires David's explicit approval before merge, production deployment or WP19B.
+State: **technically qualified after playtest corrections; David approval pending**. David accepted WP19A's bounded qualification, authorised merging/deploying PRs #159/#160 and starting WP18K. Both PRs are merged; the production baseline is main `d8f3de6f264fa5fd6e2d77d539a47f288eb50cd4`. WP18K K1 ownership/removal evidence preceded implementation. K2-K4 consolidated Bag/Map ownership and removed five proven legacy managers/bridges. K5's visual-preservation correction restored readable Wonderbook filters and the cross-only close. Correction-head CI `34322134793` passed 179 browser cases with 3 configured skips and no failures or unrun cases, but the later exact documentation-head run `34323584335` recorded one Firefly Lantern failure in shard 1. Trace-equivalent local reproduction showed that short press/release events could fall entirely between Phaser update frames: the result recorded 7/8, so replay modes never unlocked and the difficulty selector could not appear. Candidate `c7fd62f` now holds each real keyboard edge until the corresponding named UI transition, and three focused repetitions pass without changing the timeout, cycles or assertions. David’s subsequent preview playtest rejected the Map interaction and modal chrome. Runtime correction `aa68c60` now moves the actual geography under real mouse/touch input, removes the redundant Map/Bag badges and Map subtitle, and improves the Wonderbook cross. Final candidate CI `34342836362` passes 181 browser cases / 3 configured skips and compatibility 48 / 15 configured skips; UV-D014 still requires David’s explicit approval before merge, production deployment or WP19B.
 
 Read first:
 
@@ -66,7 +66,7 @@ No new daughter replay occurred. Preserve all positive feedback and deferred ide
 
 ## Delivery
 
-WP19A planning/implementation PRs #159/#160 are accepted and merged to main `d8f3de6`. WP18K remains draft PR #161 on `agent/r6.5-wp18k-architecture-consolidation`. Cloudflare verified `https://890a12f5.unicorn-valley.pages.dev` for runtime candidate `febfe2d`, and Actions smoke `34318525592` passed against that exact deployment. UV-D014 supersedes the overnight delegated authority: after technical qualification, WP18K pauses for David's explicit approval before merge, production deployment or WP19B.
+WP19A planning/implementation PRs #159/#160 are accepted and merged to main `d8f3de6`. WP18K remains draft PR #161 on `agent/r6.5-wp18k-architecture-consolidation`. Cloudflare verified `https://38f17b6c.unicorn-valley.pages.dev` for correction delivery `d781a1a` containing runtime `aa68c60`, and manifest-bound Actions smoke `34342836166` passed against that exact deployment. UV-D014 supersedes the overnight delegated authority: after technical qualification, WP18K pauses for David's explicit approval before merge, production deployment or WP19B.
 
 ## Next action
 
