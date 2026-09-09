@@ -303,7 +303,13 @@ export class CottageInteriorScene extends Phaser.Scene {
   }
 
   private createFloorboards(): void {
-    for (let y = 160; y <= 1040; y += 72) {
+    this.add.rectangle(900, 230, 1610, 320, 0xe8cdb6, 0.72).setDepth(2);
+    this.add
+      .rectangle(900, 390, 1610, 18, 0xa77b65, 0.82)
+      .setName('cottage-floor-seam')
+      .setDepth(21);
+
+    for (let y = 414; y <= 1040; y += 72) {
       this.add.rectangle(900, y, 1610, 3, 0xcda889, 0.28).setDepth(2);
     }
 
@@ -553,6 +559,7 @@ export class CottageInteriorScene extends Phaser.Scene {
         COLLISION_TEXTURE_KEY,
       ) as Phaser.Physics.Arcade.Image;
       blocker.setDisplaySize(collider.width, collider.height).setVisible(false).refreshBody();
+      blocker.setName(`cottage-collider:${collider.id}`);
     }
 
     return collisionGroup;

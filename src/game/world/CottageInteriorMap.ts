@@ -25,7 +25,9 @@ export const COTTAGE_INTERIOR_MAP = {
   margin: 70,
   playerSpawn: { x: 900, y: 820 },
   colliders: [
-    { id: 'wall-top', x: 900, y: 105, width: 1640, height: 70 },
+    // The illustrated back wall ends at the skirting seam at y=390. The player's
+    // physics body represents its feet, so this blocker ends at the visible floor.
+    { id: 'wall-top', x: 900, y: 230, width: 1640, height: 320 },
     { id: 'wall-left', x: 105, y: 610, width: 70, height: 1010 },
     { id: 'wall-right', x: 1695, y: 610, width: 70, height: 1010 },
     { id: 'wall-bottom', x: 900, y: 1150, width: 1640, height: 100 },
@@ -45,7 +47,7 @@ export const COTTAGE_INTERIOR_MAP = {
     id: 'treasure-display',
     label: 'Treasure Shelf',
     position: { x: 1515, y: 345 },
-    approach: { x: 1310, y: 390 },
+    approach: { x: 1310, y: 470 },
   },
   decorationSlots: [
     {
@@ -53,6 +55,7 @@ export const COTTAGE_INTERIOR_MAP = {
       label: 'Window nook',
       category: 'table',
       position: { x: 705, y: 320 },
+      interactionPosition: { x: 705, y: 455 },
     },
     {
       id: 'cottage-slot:centre-rug',
@@ -77,12 +80,14 @@ export const COTTAGE_INTERIOR_MAP = {
       label: 'Left wall',
       category: 'wall',
       position: { x: 500, y: 300 },
+      interactionPosition: { x: 500, y: 445 },
     },
     {
       id: 'cottage-slot:right-wall',
       label: 'Right wall',
       category: 'wall',
       position: { x: 1320, y: 270 },
+      interactionPosition: { x: 1320, y: 445 },
     },
     {
       id: 'cottage-slot:tea-table',

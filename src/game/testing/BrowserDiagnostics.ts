@@ -30,6 +30,10 @@ export interface DiagnosticObjectSnapshot {
   flipX: boolean;
   playerFacing: string | null;
   authoritativeFacing: string | null;
+  bodyX: number | null;
+  bodyY: number | null;
+  bodyWidth: number | null;
+  bodyHeight: number | null;
 }
 
 export interface DiagnosticSceneState {
@@ -192,6 +196,11 @@ function snapshotObject(
     gameObject instanceof Phaser.Physics.Arcade.Sprite ? gameObject.getData('player-facing') : null;
   const authoritativeFacing =
     gameObject instanceof Phaser.Physics.Arcade.Sprite ? getPlayerEntityFacing(gameObject) : null;
+  const arcadeBody =
+    gameObject instanceof Phaser.Physics.Arcade.Sprite &&
+    gameObject.body instanceof Phaser.Physics.Arcade.Body
+      ? gameObject.body
+      : null;
   return {
     type: gameObject.type ?? gameObject.constructor.name,
     name: gameObject.name,
@@ -212,6 +221,10 @@ function snapshotObject(
     flipX: object.flipX ?? false,
     playerFacing: typeof playerFacing === 'string' ? playerFacing : null,
     authoritativeFacing,
+    bodyX: arcadeBody ? arcadeBody.x : null,
+    bodyY: arcadeBody ? arcadeBody.y : null,
+    bodyWidth: arcadeBody ? arcadeBody.width : null,
+    bodyHeight: arcadeBody ? arcadeBody.height : null,
   };
 }
 

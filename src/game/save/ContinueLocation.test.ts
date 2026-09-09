@@ -6,12 +6,13 @@ import { STARLIGHT_BEACH_LOCATION_ID } from '../world/StarlightBeachMap';
 import { SUNBEAM_VILLAGE_LOCATION_ID } from '../world/SunbeamVillageMap';
 import { WHISPERING_WOODS_LOCATION_ID } from '../world/WhisperingWoodsMap';
 import { CONTINUE_LOCATION_IDS, resolveContinueDestination } from './ContinueLocation';
-import { DEFAULT_START_LOCATION_ID } from './saveSchema';
+import { DEFAULT_START_LOCATION_ID, NEW_GAME_START_LOCATION_ID } from './saveSchema';
 import { MOONFLOWER_GLADE_LOCATION_ID } from './saveLocationCheckpoint';
 
 describe('continue-location contract', () => {
   it.each([
     [DEFAULT_START_LOCATION_ID, 'CottageInteriorScene'],
+    [NEW_GAME_START_LOCATION_ID, 'MoonflowerGladeScene'],
     [COTTAGE_INTERIOR_LOCATION_ID, 'CottageInteriorScene'],
     [MOONFLOWER_GLADE_LOCATION_ID, 'MoonflowerGladeScene'],
     [SUNBEAM_VILLAGE_LOCATION_ID, 'SunbeamVillageScene'],
@@ -27,6 +28,7 @@ describe('continue-location contract', () => {
     expect(new Set(CONTINUE_LOCATION_IDS)).toEqual(
       new Set([
         DEFAULT_START_LOCATION_ID,
+        NEW_GAME_START_LOCATION_ID,
         COTTAGE_INTERIOR_LOCATION_ID,
         MOONFLOWER_GLADE_LOCATION_ID,
         SUNBEAM_VILLAGE_LOCATION_ID,

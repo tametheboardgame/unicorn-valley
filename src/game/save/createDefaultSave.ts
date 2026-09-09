@@ -1,6 +1,6 @@
 import {
   CURRENT_SAVE_SCHEMA_VERSION,
-  DEFAULT_START_LOCATION_ID,
+  NEW_GAME_START_LOCATION_ID,
   type SaveGame,
 } from './saveSchema';
 
@@ -12,7 +12,7 @@ export function createDefaultSave(timestamp: string = new Date().toISOString()):
     profile: {
       name: null,
       appearance: {},
-      currentLocationId: DEFAULT_START_LOCATION_ID,
+      currentLocationId: NEW_GAME_START_LOCATION_ID,
       unlockedAbilityIds: [],
     },
     inventory: {

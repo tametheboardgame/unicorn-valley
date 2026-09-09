@@ -6,6 +6,7 @@ import {
 } from '../player/UnicornAppearance';
 import type { SaveRepository } from './SaveRepository';
 import { SaveService } from './SaveService';
+import { NEW_GAME_START_LOCATION_ID } from './saveSchema';
 import { MOONFLOWER_GLADE_LOCATION_ID, saveLocationCheckpoint } from './saveLocationCheckpoint';
 
 class MemorySaveRepository implements SaveRepository {
@@ -25,6 +26,12 @@ class MemorySaveRepository implements SaveRepository {
 }
 
 describe('R1 first playable persistence chain', () => {
+  it('starts a new adventure at the Glade scene used by creator, Map and Continue', () => {
+    const service = new SaveService(new MemorySaveRepository());
+    expect(service.createNewGame().profile.currentLocationId).toBe(NEW_GAME_START_LOCATION_ID);
+    expect(NEW_GAME_START_LOCATION_ID).toBe(MOONFLOWER_GLADE_LOCATION_ID);
+  });
+
   it('survives creator -> Glade -> discovery -> fresh service reload', () => {
     const repository = new MemorySaveRepository();
     const service = new SaveService(repository);
