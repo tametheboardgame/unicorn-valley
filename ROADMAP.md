@@ -69,7 +69,7 @@ Responsive presentation changes are incomplete unless all four display classes a
 
 ### R6.5-WP18K - Architecture Consolidation and Legacy Retirement
 
-State: **active implementation**.
+State: **complete / human-approved 2026-09-09 / merged through PR #161**.
 
 Path: `docs/work-packages/R6.5-WP18K-ARCHITECTURE-CONSOLIDATION-LEGACY-RETIREMENT.md`
 
@@ -78,6 +78,14 @@ Objective: perform a repo-wide, behaviour-preserving architecture audit and remo
 WP18K must preserve current gameplay, saves, progression, map topology, inventory semantics, race/movement rules and the exact approved UI behaviour. It must not use cleanup as an excuse for a visual redesign.
 
 The hard 520 KiB application-entry performance budget remains unchanged.
+
+### R6.5-WP19B - World Boundaries and Tap-Navigation Parity
+
+State: **active; production release verification precedes implementation**.
+
+Path: `docs/work-packages/R6.5-WP19B-WORLD-BOUNDARIES-NAVIGATION.md`
+
+Objective: close the Cottage wall/floor defect, add collider-aware tap movement to every supported explorable scene, and reconcile new-game scene/Map/checkpoint/Continue identity without changing save IDs or movement/race rules. The package stops at its separate human collision/visual gate.
 
 ### Known open defect outside WP18K
 
