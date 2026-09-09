@@ -65,11 +65,11 @@ No new daughter replay occurred. Preserve all positive feedback and deferred ide
 
 ## Delivery
 
-WP19A planning/implementation PRs #159/#160 are accepted and merged to main `d8f3de6`. WP18K remains draft PR #161 on `agent/r6.5-wp18k-architecture-consolidation`. Cloudflare verified `https://55e7e35f.unicorn-valley.pages.dev` for exact prior head `5f13cc3`; do not infer a new correction-head immutable URL until Cloudflare reports it. UV-D013 authorises the manager to accept, merge and deploy technically qualified WP18K; this correction task remains delivery-only and performs none of those actions.
+WP19A planning/implementation PRs #159/#160 are accepted and merged to main `d8f3de6`. WP18K remains draft PR #161 on `agent/r6.5-wp18k-architecture-consolidation`. Cloudflare verified `https://cc5b61db.unicorn-valley.pages.dev` for exact qualified candidate `c4697e8`; the final branch head is state-only documentation after that candidate. UV-D013 authorises the manager to accept, merge and deploy technically qualified WP18K; this correction task remains delivery-only and performs none of those actions.
 
 ## Next action
 
-Delegated manager review should compare the current four-class Bag/Settings/Book/HUD evidence and may accept/release technically qualified WP18K under UV-D013. The manager may accept/release technically qualified WP18K under UV-D013, but this task must stop on PR #161 without merge, production deploy or WP19B. Physical daughter/device acceptance is not claimed; WP18H and WP17 remain human-only.
+Delegated manager review should compare the current four-class Bag/Settings/Book/HUD evidence and may accept/release technically qualified WP18K under UV-D013, but this task must stop on PR #161 without merge, production deploy or WP19B. Physical daughter/device acceptance is not claimed; WP18H and WP17 remain human-only.
 
 ## Implementation delivery
 
