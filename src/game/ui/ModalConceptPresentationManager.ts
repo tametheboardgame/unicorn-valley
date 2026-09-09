@@ -28,6 +28,22 @@ function shouldStyleRectangle(
     return false;
   }
 
+  if (
+    scene.scene.key === 'WonderbookScene' &&
+    ['wonderbook-tab-all', 'wonderbook-tab-secrets', 'wonderbook-close-button'].includes(
+      rectangle.name,
+    )
+  ) {
+    return false;
+  }
+
+  // Some scene-owned rectangles deliberately exist only as generous pointer
+  // targets behind separately rendered labels/icons. Restyling those almost
+  // transparent targets would paint an opaque modal surface over their visual.
+  if (rectangle.fillAlpha <= 0.01 && rectangle.lineWidth === 0) {
+    return false;
+  }
+
   // WP18J deliberately presents Bag/Map close as a glyph-only control. The source
   // rectangle remains as the generous invisible touch target, so do not generate
   // the generic rounded modal surface around it.

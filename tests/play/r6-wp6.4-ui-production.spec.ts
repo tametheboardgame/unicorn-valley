@@ -6,6 +6,9 @@ interface DiagnosticObject {
   interactive: boolean;
   x: number;
   y: number;
+  displayWidth: number;
+  displayHeight: number;
+  text: string | null;
   textureKey: string | null;
 }
 
@@ -142,6 +145,8 @@ test('Wonderbook production tabs remain large interactive navigation controls', 
 
   const allTab = namedObject(scene, 'wonderbook-tab-all');
   const secretsTab = namedObject(scene, 'wonderbook-tab-secrets');
+  const allLabel = namedObject(scene, 'wonderbook-tab-all-label');
+  const secretsLabel = namedObject(scene, 'wonderbook-tab-secrets-label');
   expect(allTab.interactive).toBe(true);
   expect(secretsTab.interactive).toBe(true);
   const canvas = await page.locator('canvas').boundingBox();
@@ -150,6 +155,27 @@ test('Wonderbook production tabs remain large interactive navigation controls', 
   expect(allTab.displayHeight * renderedScale).toBeGreaterThanOrEqual(48);
   expect(secretsTab.displayHeight * renderedScale).toBeGreaterThanOrEqual(48);
   expect(Math.abs(secretsTab.x - allTab.x)).toBeGreaterThan(150);
+  expect(allLabel.visible).toBe(true);
+  expect(secretsLabel.visible).toBe(true);
+  expect(
+    scene.objects.some(
+      ({ name, visible }) =>
+        [
+          'concept-modal-surface:wonderbook-tab-all',
+          'concept-modal-surface:wonderbook-tab-secrets',
+        ].includes(name) && visible,
+    ),
+  ).toBe(false);
+
+  const closeTarget = namedObject(scene, 'wonderbook-close-button');
+  const closeIcon = namedObject(scene, 'wonderbook-close-icon');
+  expect(closeTarget.interactive).toBe(true);
+  expect(closeTarget.displayWidth * renderedScale).toBeGreaterThanOrEqual(48);
+  expect(closeTarget.displayHeight * renderedScale).toBeGreaterThanOrEqual(48);
+  expect(closeIcon.visible).toBe(true);
+  expect(
+    scene.objects.some(({ text, visible }) => text?.includes('Close the book') && visible),
+  ).toBe(false);
 
   await page.mouse.click(secretsTab.x, secretsTab.y);
   await page.waitForTimeout(300);

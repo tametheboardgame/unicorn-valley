@@ -10,7 +10,7 @@ import {
   type PortraitModalActionGroup,
   PortraitModalCompanion,
 } from '../ui/PortraitModalCompanion';
-import { applyButtonHover, createUiShadow, UI_COLOURS, UI_FONT } from '../ui/uiTheme';
+import { UI_COLOURS, UI_FONT } from '../ui/uiTheme';
 import {
   buildWonderbookCharacterEntries,
   type WonderbookCharacterEntry,
@@ -130,23 +130,21 @@ export class WonderbookScene extends Phaser.Scene {
     this.refreshSectionChrome();
     this.renderSpread();
 
-    createUiShadow(this, GAME_WIDTH / 2, GAME_HEIGHT - 38, 250, 54, 14, 0.24);
     const closeButton = this.add
-      .rectangle(GAME_WIDTH / 2, GAME_HEIGHT - 38, 250, 54, UI_COLOURS.gold, 1)
-      .setStrokeStyle(4, UI_COLOURS.goldStrong, 1)
+      .rectangle(1172, 76, 82, 70, 0xffffff, 0.001)
       .setInteractive({ useHandCursor: true })
       .setName('wonderbook-close-button')
       .setDepth(15);
     this.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT - 38, 'Close the book ✨', {
-        color: UI_COLOURS.ink,
+      .text(1172, 76, '×', {
+        color: '#5d4369',
         fontFamily: UI_FONT,
-        fontSize: '20px',
+        fontSize: '38px',
         fontStyle: 'bold',
       })
+      .setName('wonderbook-close-icon')
       .setOrigin(0.5)
       .setDepth(16);
-    applyButtonHover(closeButton, UI_COLOURS.gold, 0xfff2bd);
 
     this.pointerInput = new PointerTouchInputAdapter();
     this.inputController = new InputController([new KeyboardInputAdapter(this), this.pointerInput]);
@@ -559,7 +557,7 @@ export class WonderbookScene extends Phaser.Scene {
       },
       {
         id: 'close',
-        actions: [{ id: 'close', label: '✓ Close the book', onPress: () => this.closeBook() }],
+        actions: [{ id: 'close', label: '×', onPress: () => this.closeBook() }],
       },
     );
     this.portraitCompanion.setActionGroups(groups);
