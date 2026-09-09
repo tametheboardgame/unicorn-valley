@@ -10,17 +10,17 @@
   "autonomy_state": "green",
   "agent_state": "active",
   "branch": "agent/r6.5-wp18k-architecture-consolidation",
-  "latest_commit": "aa68c604c40eb34d1d25c8c5414ed1293b3a2255",
-  "ci_state": "running",
+  "latest_commit": "d781a1a67034dc12571a421d5e31f500041db498",
+  "ci_state": "passing",
   "technical_validation_state": "pending",
   "human_acceptance_state": "rejected",
   "next_work_package": "R6.5-WP19B",
   "next_work_package_path": "docs/work-packages/R6.5-WP19B-WORLD-BOUNDARIES-NAVIGATION.md",
   "human_input_required": false,
-  "blocker_reason": "David reported real preview Map drag failure and requested bounded Map/Bag/Wonderbook corrections. Candidate aa68c60 passes focused real mouse/touch displacement checks; exact-head CI, preview and smoke remain pending before the UV-D014 approval pause.",
+  "blocker_reason": "WP18K corrected candidate d781a1a passes exact-head CI 34340757180 (181 browser passes / 3 configured skips; compatibility 48 / 15 skips). Cloudflare published https://38f17b6c.unicorn-valley.pages.dev; the manifest is updated and candidate-bound smoke remains required before David’s UV-D014 approval pause.",
   "night_shift_state": "not_configured",
   "chat_disposition": "keep",
   "delivery_mode": "pr_required",
-  "last_activity_at": "2026-09-09T10:10:00Z",
-  "updated_at": "2026-09-09T10:10:00Z"
+  "last_activity_at": "2026-09-09T11:05:00Z",
+  "updated_at": "2026-09-09T11:05:00Z"
 }
