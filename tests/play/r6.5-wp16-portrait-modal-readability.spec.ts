@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, type Page, test } from '@playwright/test';
 
 interface DiagnosticObject {
   name: string;
@@ -175,14 +175,14 @@ async function expectReadableCompanion(page: Page, id: string): Promise<void> {
 
   const buttons = root.locator('.mobile-modal-button');
   expect(await buttons.count()).toBeGreaterThan(0);
-  for (let index = 0; index < (await buttons.count()); index += 1) {
-    const button = buttons.nth(index);
-    const box = await button.boundingBox();
-    expect(box).not.toBeNull();
-    expect(box?.height ?? 0).toBeGreaterThanOrEqual(54);
-    const fontSize = await button.evaluate((element) =>
-      Number.parseFloat(getComputedStyle(element).fontSize),
-    );
+  const metrics = await buttons.evaluateAll((elements) =>
+    elements.map((element) => ({
+      height: element.getBoundingClientRect().height,
+      fontSize: Number.parseFloat(getComputedStyle(element).fontSize),
+    })),
+  );
+  for (const { height, fontSize } of metrics) {
+    expect(height).toBeGreaterThanOrEqual(54);
     expect(fontSize).toBeGreaterThanOrEqual(17);
   }
 }
@@ -241,6 +241,10 @@ test('portrait phone can read and complete Coral beachcombing through large comp
 test('portrait phone can read and navigate the expanded Wonderbook without tiny canvas tabs', async ({
   page,
 }) => {
+  // The complete companion check scrolls every offscreen action into view and
+  // measures it. Software rendering can exhaust the default total while those
+  // real layout operations remain responsive individually.
+  test.setTimeout(75_000);
   await diagnostics(page);
   await startScene(page, 'WonderbookScene', { returnScene: 'TitleScene' });
   await expectReadableCompanion(page, 'wonderbook');
