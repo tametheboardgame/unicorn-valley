@@ -129,6 +129,27 @@ async function openHudModal(page, buttonName, sceneKey) {
   await waitForScene(page, sceneKey);
 }
 
+async function clickNamed(page, sceneKey, objectName) {
+  const object = await page.evaluate(
+    ({ sceneKey, objectName }) =>
+      window.__UNICORN_VALLEY_DIAGNOSTICS__
+        .snapshot()
+        .scenes.find(({ key }) => key === sceneKey)
+        ?.objects.find(
+          (candidate) =>
+            candidate.name === objectName && candidate.visible && candidate.interactive,
+        ),
+    { sceneKey, objectName },
+  );
+  if (!object) throw new Error(`Missing interactive ${sceneKey}/${objectName}`);
+  const canvas = await page.locator('canvas').boundingBox();
+  if (!canvas) throw new Error('Canvas unavailable');
+  await page.mouse.click(
+    canvas.x + (object.x / 1280) * canvas.width,
+    canvas.y + (object.y / 720) * canvas.height,
+  );
+}
+
 try {
   for (const [displayName, options] of Object.entries(displayClasses)) {
     if (process.env.EVIDENCE_DISPLAY && process.env.EVIDENCE_DISPLAY !== displayName) continue;
@@ -143,6 +164,8 @@ try {
     await capture(page, displayName, 'settings', 'SettingsScene');
     await page.mouse.wheel(0, 520);
     await capture(page, displayName, 'settings-scrolled', 'SettingsScene');
+    await clickNamed(page, 'SettingsScene', 'settings-done');
+    await waitForScene(page, 'ExplorationHudOverlayScene');
 
     await openHudModal(page, 'exploration-hud-overlay-bag-button', 'InventoryScene');
     await capture(page, displayName, 'bag-empty', 'InventoryScene');

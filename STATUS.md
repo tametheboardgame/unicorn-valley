@@ -8,7 +8,7 @@ Last updated: 2026-09-08
 
 Path: `docs/work-packages/R6.5-WP18K-ARCHITECTURE-CONSOLIDATION-LEGACY-RETIREMENT.md`
 
-State: **implementation and technical qualification complete; delegated manager review pending**. David accepted WP19A's bounded qualification, authorised merging/deploying PRs #159/#160 and starting WP18K. Both PRs are merged; the production baseline is main `d8f3de6f264fa5fd6e2d77d539a47f288eb50cd4`. WP18K K1 ownership/removal evidence preceded implementation. K2-K4 consolidated Bag/Map ownership and removed five proven legacy managers/bridges. K5 has classified exact `5f13cc3` sharded CI (176 passed / 3 failed / 3 configured skips / 0 unrun), traced and corrected the final Nova contextual-action, Lumi production-guidance and landscape race-overlay assertions, and added an authorised GitHub Actions immutable-preview smoke route. Exact candidate CI passed all required shards and compatibility, and the authorised Actions deployed startup/save/reload/Continue smoke passed; delegated manager review remains pending and no physical human acceptance is claimed.
+State: **visual-preservation correction implemented; exact-candidate requalification pending**. David accepted WP19A's bounded qualification, authorised merging/deploying PRs #159/#160 and starting WP18K. Both PRs are merged; the production baseline is main `d8f3de6f264fa5fd6e2d77d539a47f288eb50cd4`. WP18K K1 ownership/removal evidence preceded implementation. K2-K4 consolidated Bag/Map ownership and removed five proven legacy managers/bridges. K5 has classified exact `5f13cc3` sharded CI (176 passed / 3 failed / 3 configured skips / 0 unrun), traced and corrected the final Nova contextual-action, Lumi production-guidance and landscape race-overlay assertions, and added an authorised GitHub Actions immutable-preview smoke route. Exact candidate CI passed all required shards and compatibility, and the authorised Actions deployed startup/save/reload/Continue smoke passed; delegated manager review remains pending and no physical human acceptance is claimed.
 
 Read first:
 
@@ -69,7 +69,7 @@ WP19A planning/implementation PRs #159/#160 are accepted and merged to main `d8f
 
 ## Next action
 
-Delegated manager review should compare the current four-class Bag/Settings/Book/HUD evidence and may accept/release technically qualified WP18K under UV-D013, but this task must stop on PR #161 without merge, production deploy or WP19B. Physical daughter/device acceptance is not claimed; WP18H and WP17 remain human-only.
+Complete exact-candidate CI/deployment smoke, then delegated manager review should compare `docs/evidence/WP18K-VISUAL-REVIEW-INDEX.md`. The correction restores readable Book filters and cross-only close. Baseline evidence identifies the phone Bag/Settings scaling as inherited WP19F work rather than accepting it as child-sized. This task stops on PR #161 without merge, production deploy or WP19B. Physical daughter/device acceptance is not claimed; WP18H and WP17 remain human-only.
 
 ## Implementation delivery
 
