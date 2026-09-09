@@ -54,6 +54,9 @@ try {
         455,
       ),
     );
+    await page.keyboard.down('ArrowUp');
+    await page.waitForTimeout(7_000);
+    await page.keyboard.up('ArrowUp');
     await page.waitForTimeout(250);
     const cottage = await sceneSnapshot(page, 'CottageInteriorScene');
     const player = cottage.objects.find(({ name }) => name === 'world-player-unicorn');

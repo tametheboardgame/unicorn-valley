@@ -1,6 +1,6 @@
 {
-  "candidateSha": "0f980b67f0aa1365721bb5ae83672cbfa350e3d1",
-  "capturedAt": "2026-09-09T11:56:21.567Z",
+  "candidateSha": "0f980b68deebf04a596ec92d0920de54181907a1",
+  "capturedAt": "2026-09-09T12:07:41.960Z",
   "baseUrl": "http://127.0.0.1:4173",
   "floorSeamY": 390,
   "displays": {
@@ -18,25 +18,25 @@
       "player": {
         "centre": {
           "x": 705,
-          "y": 455
+          "y": 400.019801980198
         },
         "display": {
           "width": 112,
           "height": 92
         },
-        "visualTop": 409,
-        "visualBottom": 501,
+        "visualTop": 354.019801980198,
+        "visualBottom": 446.019801980198,
         "physicsBody": {
           "x": 689.3934426229508,
-          "y": 444.980198019802,
+          "y": 390,
           "width": 31.21311475409836,
           "height": 20.03960396039604,
           "feet": {
             "x": 705,
-            "y": 465.01980198019805
+            "y": 410.03960396039605
           }
         },
-        "facing": "down"
+        "facing": "up"
       },
       "seam": {
         "x": 900,
@@ -59,25 +59,25 @@
       "player": {
         "centre": {
           "x": 705,
-          "y": 455
+          "y": 400.019801980198
         },
         "display": {
           "width": 112,
           "height": 92
         },
-        "visualTop": 409,
-        "visualBottom": 501,
+        "visualTop": 354.019801980198,
+        "visualBottom": 446.019801980198,
         "physicsBody": {
           "x": 689.3934426229508,
-          "y": 444.980198019802,
+          "y": 390,
           "width": 31.21311475409836,
           "height": 20.03960396039604,
           "feet": {
             "x": 705,
-            "y": 465.01980198019805
+            "y": 410.03960396039605
           }
         },
-        "facing": "down"
+        "facing": "up"
       },
       "seam": {
         "x": 900,
@@ -100,25 +100,25 @@
       "player": {
         "centre": {
           "x": 705,
-          "y": 455
+          "y": 400.019801980198
         },
         "display": {
           "width": 112,
           "height": 92
         },
-        "visualTop": 409,
-        "visualBottom": 501,
+        "visualTop": 354.019801980198,
+        "visualBottom": 446.019801980198,
         "physicsBody": {
           "x": 689.3934426229508,
-          "y": 444.980198019802,
+          "y": 390,
           "width": 31.21311475409836,
           "height": 20.03960396039604,
           "feet": {
             "x": 705,
-            "y": 465.01980198019805
+            "y": 410.03960396039605
           }
         },
-        "facing": "down"
+        "facing": "up"
       },
       "seam": {
         "x": 900,
@@ -141,25 +141,25 @@
       "player": {
         "centre": {
           "x": 705,
-          "y": 455
+          "y": 400.019801980198
         },
         "display": {
           "width": 112,
           "height": 92
         },
-        "visualTop": 409,
-        "visualBottom": 501,
+        "visualTop": 354.019801980198,
+        "visualBottom": 446.019801980198,
         "physicsBody": {
           "x": 689.3934426229508,
-          "y": 444.980198019802,
+          "y": 390,
           "width": 31.21311475409836,
           "height": 20.03960396039604,
           "feet": {
             "x": 705,
-            "y": 465.01980198019805
+            "y": 410.03960396039605
           }
         },
-        "facing": "down"
+        "facing": "up"
       },
       "seam": {
         "x": 900,

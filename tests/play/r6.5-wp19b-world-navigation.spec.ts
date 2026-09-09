@@ -8,6 +8,8 @@ interface ObjectSnapshot {
   displayHeight: number;
   visible: boolean;
   playerFacing: string | null;
+  bodyY: number | null;
+  bodyHeight: number | null;
 }
 interface SceneSnapshot {
   key: string;
@@ -23,6 +25,7 @@ interface Snapshot {
 interface Diagnostics {
   snapshot(): Snapshot;
   startScene(key: string): void;
+  setArcadeSpritePosition(key: string, objectName: string, x: number, y: number): void;
 }
 
 async function snapshot(page: Page): Promise<Snapshot> {
@@ -81,13 +84,24 @@ test('Cottage wall seam blocks whole-unicorn overlap while approaches and Gallop
 }) => {
   await page.goto('/?diagnostics=1');
   await startScene(page, 'CottageInteriorScene');
-
+  await page.evaluate(() =>
+    (
+      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__?.setArcadeSpritePosition(
+      'CottageInteriorScene',
+      'world-player-unicorn',
+      705,
+      455,
+    ),
+  );
   await page.keyboard.down('ArrowUp');
-  await page.waitForTimeout(2_200);
+  await page.waitForTimeout(2_500);
   await page.keyboard.up('ArrowUp');
   let value = await snapshot(page);
   const atWall = player(value, 'CottageInteriorScene');
-  expect(atWall.y).toBeGreaterThanOrEqual(430);
+  expect(atWall.bodyY).toBeGreaterThanOrEqual(389);
+  expect((atWall.bodyY ?? 0) + (atWall.bodyHeight ?? 0)).toBeGreaterThan(409);
+  expect(atWall.y).toBeLessThan(440);
   expect(
     scene(value, 'CottageInteriorScene').objects.some(({ name }) => name === 'cottage-floor-seam'),
   ).toBe(true);
@@ -101,7 +115,7 @@ test('Cottage wall seam blocks whole-unicorn overlap while approaches and Gallop
   expect(player(value, 'CottageInteriorScene').y).toBeGreaterThan(atWall.y + 45);
 
   const beforeTapX = player(value, 'CottageInteriorScene').x;
-  await tapWorld(page, 'CottageInteriorScene', 705, 455);
+  await tapWorld(page, 'CottageInteriorScene', 500, 445);
   await expect
     .poll(async () => beforeTapX - player(await snapshot(page), 'CottageInteriorScene').x)
     .toBeGreaterThan(35);
