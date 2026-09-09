@@ -105,7 +105,7 @@ test('immutable deployment starts, saves, reloads and Continues in isolated stor
       }
     ).__UNICORN_VALLEY_DIAGNOSTICS__;
     const active = diagnostics?.snapshot().activeScenes ?? [];
-    return active.some((scene) => !['BootScene', 'TitleScene'].includes(scene));
+    return active.length > 0 && !active.includes('TitleScene');
   });
   const resumedScenes = (await snapshot(page)).activeScenes;
   expect(
