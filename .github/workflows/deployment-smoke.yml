@@ -1,6 +1,7 @@
 name: Immutable deployment smoke
 
 on:
+  pull_request:
   workflow_dispatch:
     inputs:
       deployment_url:
@@ -17,18 +18,19 @@ permissions:
 
 jobs:
   startup-save-continue:
-    name: Startup, save, reload and Continue (${{ inputs.candidate_sha }})
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.number == 161
+    name: Startup, save, reload and Continue
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - name: Check out candidate
         uses: actions/checkout@v6
         with:
-          ref: ${{ inputs.candidate_sha }}
+          ref: ${{ inputs.candidate_sha || github.sha }}
 
       - name: Validate immutable Pages URL
         env:
-          DEPLOYMENT_URL: ${{ inputs.deployment_url }}
+          DEPLOYMENT_URL: ${{ inputs.deployment_url || 'https://19e1602a.unicorn-valley.pages.dev' }}
         run: node -e "const url=new URL(process.env.DEPLOYMENT_URL); if(url.protocol!=='https:' || !url.hostname.endsWith('.unicorn-valley.pages.dev')) process.exit(1)"
 
       - name: Set up Node.js
@@ -45,14 +47,14 @@ jobs:
 
       - name: Exercise deployed startup and persistence
         env:
-          DEPLOYMENT_URL: ${{ inputs.deployment_url }}
+          DEPLOYMENT_URL: ${{ inputs.deployment_url || 'https://19e1602a.unicorn-valley.pages.dev' }}
         run: npx playwright test --config=playwright.deployment.config.ts
 
       - name: Upload deployed smoke evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: immutable-deployment-smoke-${{ inputs.candidate_sha }}
+          name: immutable-deployment-smoke-${{ inputs.candidate_sha || 'pr-161-ebd524b' }}
           path: deployment-smoke-artifacts
           if-no-files-found: warn
           retention-days: 14
