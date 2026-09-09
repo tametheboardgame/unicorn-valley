@@ -10,7 +10,7 @@
   "autonomy_state": "green",
   "agent_state": "active",
   "branch": "agent/r6.5-wp18k-architecture-consolidation",
-  "latest_commit": "pending-final-wp18k-k5-correction",
+  "latest_commit": "781e12fc565003e7e5cd42932cf64ddf6f6d45c7",
   "ci_state": "running",
   "technical_validation_state": "running",
   "human_acceptance_state": "pending",
