@@ -10,9 +10,9 @@ import {
 describe('CreatorProgressiveModel', () => {
   it('uses the six approved progressive landscape categories in order', () => {
     expect(CREATOR_CATEGORIES.map(({ id }) => id)).toEqual([
-      'main',
       'colours',
-      'mane-tail',
+      'mane',
+      'tail',
       'horn',
       'markings',
       'accessories',
@@ -20,8 +20,8 @@ describe('CreatorProgressiveModel', () => {
   });
 
   it('exposes short child-readable labels for category navigation', () => {
-    expect(creatorCategoryLabel('main')).toBe('Main');
-    expect(creatorCategoryLabel('mane-tail')).toBe('Mane & Tail');
+    expect(creatorCategoryLabel('mane')).toBe('Mane');
+    expect(creatorCategoryLabel('tail')).toBe('Tail');
     expect(creatorCategoryLabel('accessories')).toBe('Accessories');
   });
 
@@ -35,9 +35,9 @@ describe('CreatorProgressiveModel', () => {
     expect(draft.appearance).toEqual(saved);
   });
 
-  it('describes every non-main category without coordinate inference', () => {
+  it('describes every approved category without coordinate inference', () => {
     expect(new Set(CREATOR_CONTROL_DESCRIPTORS.map(({ category }) => category))).toEqual(
-      new Set(['colours', 'mane-tail', 'horn', 'markings', 'accessories']),
+      new Set(['colours', 'mane', 'tail', 'horn', 'markings', 'accessories']),
     );
   });
 });

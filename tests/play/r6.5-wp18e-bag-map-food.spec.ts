@@ -230,35 +230,35 @@ test('landscape Creator progressively reveals one approved category at a time', 
   await diagnostics(page);
   await startScene(page, 'UnicornCreatorScene');
 
-  await waitForObject(page, 'UnicornCreatorScene', 'creator-category-main');
-  await waitForObject(page, 'UnicornCreatorScene', 'creator-tablet-category-content:main');
+  await waitForObject(page, 'UnicornCreatorScene', 'creator-category-colours');
+  await waitForObject(page, 'UnicornCreatorScene', 'creator-card-bodyColour-cream');
   await waitForObject(page, 'UnicornCreatorScene', 'creator-action-back');
   await expect(page.locator('.unicorn-name-input')).toBeVisible();
   expect(await objectVisible(page, 'UnicornCreatorScene', 'creator-bodyColour-peach')).toBe(false);
   expect(await objectVisible(page, 'UnicornCreatorScene', 'creator-maneStyle-next')).toBe(false);
 
   await clickNamedObject(page, 'UnicornCreatorScene', 'creator-category-colours');
-  await waitForObject(page, 'UnicornCreatorScene', 'creator-tablet-category-content:colours');
+  await waitForObject(page, 'UnicornCreatorScene', 'creator-card-bodyColour-cream');
   await waitForObject(page, 'UnicornCreatorScene', 'creator-bodyColour-peach');
   expect(await objectVisible(page, 'UnicornCreatorScene', 'creator-maneStyle-next')).toBe(false);
 
-  await clickNamedObject(page, 'UnicornCreatorScene', 'creator-category-mane-tail');
-  await waitForObject(page, 'UnicornCreatorScene', 'creator-tablet-category-content:mane-tail');
+  await clickNamedObject(page, 'UnicornCreatorScene', 'creator-category-mane');
+  await waitForObject(page, 'UnicornCreatorScene', 'creator-card-maneStyle-soft');
   await waitForObject(page, 'UnicornCreatorScene', 'creator-maneStyle-next');
   expect(await objectVisible(page, 'UnicornCreatorScene', 'creator-bodyColour-peach')).toBe(false);
 
   await clickNamedObject(page, 'UnicornCreatorScene', 'creator-category-horn');
-  await waitForObject(page, 'UnicornCreatorScene', 'creator-tablet-category-content:horn');
+  await waitForObject(page, 'UnicornCreatorScene', 'creator-card-hornStyle-classic');
   await waitForObject(page, 'UnicornCreatorScene', 'creator-hornStyle-next');
   expect(await objectVisible(page, 'UnicornCreatorScene', 'creator-marking-next')).toBe(false);
 
   await clickNamedObject(page, 'UnicornCreatorScene', 'creator-category-markings');
-  await waitForObject(page, 'UnicornCreatorScene', 'creator-tablet-category-content:markings');
+  await waitForObject(page, 'UnicornCreatorScene', 'creator-card-marking-none');
   await waitForObject(page, 'UnicornCreatorScene', 'creator-marking-next');
   expect(await objectVisible(page, 'UnicornCreatorScene', 'creator-hornStyle-next')).toBe(false);
 
   await clickNamedObject(page, 'UnicornCreatorScene', 'creator-category-accessories');
-  await waitForObject(page, 'UnicornCreatorScene', 'creator-tablet-category-content:accessories');
+  await waitForObject(page, 'UnicornCreatorScene', 'creator-card-accessory-none');
   await waitForObject(page, 'UnicornCreatorScene', 'creator-accessory-next');
   expect(await objectVisible(page, 'UnicornCreatorScene', 'creator-marking-next')).toBe(false);
 });

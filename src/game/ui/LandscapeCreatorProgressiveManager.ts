@@ -1,296 +1,283 @@
 import Phaser from 'phaser';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
 import {
-  CREATOR_CATEGORIES,
-  CREATOR_CONTROL_DESCRIPTORS,
-  creatorCategoryLabel,
-  type CreatorCategoryId,
-} from './CreatorProgressiveModel';
-import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from './uiTheme';
+  ACCESSORIES,
+  BODY_COLOURS,
+  EYE_COLOURS,
+  HAIR_COLOURS,
+  HORN_STYLES,
+  MANE_STYLES,
+  MARKINGS,
+  TAIL_STYLES,
+  type UnicornAppearance,
+} from '../player/UnicornAppearance';
+import { drawUnicornAppearance } from '../player/UnicornAppearanceRenderer';
+import { CREATOR_CATEGORIES, type CreatorCategoryId } from './CreatorProgressiveModel';
+import { UI_COLOURS, UI_FONT, applyButtonHover } from './uiTheme';
 
-interface PositionedObject extends Phaser.GameObjects.GameObject {
-  x: number;
-  y: number;
-  setPosition(x: number, y: number): this;
-  setVisible(visible: boolean): this;
+interface CreatorOwner extends Phaser.Scene {
+  creatorValue(key: keyof UnicornAppearance): string;
+  creatorSelect(key: keyof UnicornAppearance, value: string): void;
 }
 
-interface ManagedControl {
-  object: PositionedObject;
-  category: Exclude<CreatorCategoryId, 'main'>;
-  originalX: number;
-  originalY: number;
-  targetY: number;
-  interactive: boolean;
-}
+type Choice = { id: string; label: string; value?: number };
+type CategoryConfig = {
+  key: keyof UnicornAppearance;
+  title: string;
+  choices: readonly Choice[];
+  colours?: { key: keyof UnicornAppearance; title: string; choices: readonly Choice[] };
+};
 
-interface CategoryButtonSet {
-  button: Phaser.GameObjects.Rectangle;
-  label: Phaser.GameObjects.Text;
-}
+const CONFIG: Record<CreatorCategoryId, CategoryConfig[]> = {
+  colours: [
+    { key: 'bodyColour', title: 'Body colour', choices: BODY_COLOURS },
+    { key: 'eyeColour', title: 'Eye colour', choices: EYE_COLOURS },
+  ],
+  mane: [
+    {
+      key: 'maneStyle',
+      title: 'Choose a mane',
+      choices: MANE_STYLES,
+      colours: { key: 'maneColour', title: 'Mane colour', choices: HAIR_COLOURS },
+    },
+  ],
+  tail: [
+    {
+      key: 'tailStyle',
+      title: 'Choose a tail',
+      choices: TAIL_STYLES,
+      colours: { key: 'tailColour', title: 'Tail colour', choices: HAIR_COLOURS },
+    },
+  ],
+  horn: [{ key: 'hornStyle', title: 'Choose a horn', choices: HORN_STYLES }],
+  markings: [{ key: 'marking', title: 'Choose a marking', choices: MARKINGS }],
+  accessories: [{ key: 'accessory', title: 'Choose an accessory', choices: ACCESSORIES }],
+};
 
 export class LandscapeCreatorProgressiveManager {
-  private readonly managedControls: ManagedControl[] = [];
-  private readonly categoryButtons = new Map<CreatorCategoryId, CategoryButtonSet>();
-  private readonly persistentObjects: Phaser.GameObjects.GameObject[] = [];
-  private readonly categoryDescriptionObjects: Phaser.GameObjects.GameObject[] = [];
+  private readonly categoryButtons = new Map<CreatorCategoryId, Phaser.GameObjects.Rectangle>();
+  private readonly content: Phaser.GameObjects.GameObject[] = [];
+  private active: CreatorCategoryId = 'colours';
 
   public constructor(
     private readonly scene: Phaser.Scene,
     private readonly editMode: boolean,
   ) {
-    this.captureLegacyControls();
-    this.hideLegacySectionPills();
+    this.hideLegacyControls();
     this.createCategoryNavigation();
     this.ensureBackAction();
-    this.showCategory('main');
+    this.showCategory('colours');
   }
 
-  private captureLegacyControls(): void {
+  private hideLegacyControls(): void {
     for (const candidate of this.scene.children.list) {
-      if (!this.isPositioned(candidate)) {
-        continue;
-      }
-      const descriptor = CREATOR_CONTROL_DESCRIPTORS.find(({ namePrefix }) =>
-        candidate.name.startsWith(namePrefix),
-      );
-      if (!descriptor) {
-        continue;
-      }
-      this.managedControls.push({
-        object: candidate,
-        category: descriptor.category,
-        originalX: candidate.x,
-        originalY: candidate.y,
-        targetY: descriptor.targetY,
-        interactive: Boolean(candidate.input),
-      });
-    }
-  }
-
-  private hideLegacySectionPills(): void {
-    for (const candidate of this.scene.children.list) {
-      if (!this.isPositioned(candidate)) {
-        continue;
-      }
+      if (!candidate.name.startsWith('creator-')) continue;
       if (
-        candidate.name.startsWith('creator-legacy-section-') ||
-        candidate.name === 'creator-legacy-controls-heading' ||
-        candidate.name === 'creator-legacy-name-label'
-      ) {
+        ['creator-heading', 'creator-profile-label'].includes(candidate.name) ||
+        candidate.name.startsWith('creator-action-surprise') ||
+        candidate.name.startsWith('creator-action-default') ||
+        candidate.name.startsWith('creator-action-confirm-new') ||
+        candidate.name.startsWith('creator-action-save-changes') ||
+        candidate.name.startsWith('creator-action-cancel')
+      )
+        continue;
+      if ('setVisible' in candidate && typeof candidate.setVisible === 'function')
         candidate.setVisible(false);
-        if (candidate.input) {
-          candidate.input.enabled = false;
-        }
-      }
+      if ('input' in candidate && candidate.input) candidate.input.enabled = false;
     }
   }
 
   private createCategoryNavigation(): void {
     CREATOR_CATEGORIES.forEach((definition, index) => {
-      const column = index % 3;
-      const row = Math.floor(index / 3);
-      const x = 735 + column * 205;
-      const y = 255 + row * 62;
-      const shadow = createUiShadow(this.scene, x, y + 2, 180, 52, 29, 0.13);
+      const x = 735 + (index % 3) * 188;
+      const y = 184 + Math.floor(index / 3) * 55;
       const button = this.scene.add
-        .rectangle(x, y, 180, 52, UI_COLOURS.cream, 0.98)
+        .rectangle(x, y, 172, 45, UI_COLOURS.lavender, 1)
         .setName(`creator-category-${definition.id}`)
-        .setStrokeStyle(4, UI_COLOURS.lavenderStrong, 0.9)
+        .setStrokeStyle(3, UI_COLOURS.lavenderStrong, 0.9)
         .setInteractive({ useHandCursor: true })
         .setDepth(30);
-      const label = this.scene.add
-        .text(x, y, `${definition.icon} ${definition.label}`, {
+      this.scene.add
+        .text(x, y, `${definition.icon}  ${definition.label}`, {
           color: UI_COLOURS.ink,
           fontFamily: UI_FONT,
-          fontSize:
-            definition.id === 'mane-tail' || definition.id === 'accessories' ? '14px' : '16px',
+          fontSize: '16px',
           fontStyle: 'bold',
-          align: 'center',
         })
         .setOrigin(0.5)
         .setDepth(31);
-      applyButtonHover(button, UI_COLOURS.cream, UI_COLOURS.gold);
+      applyButtonHover(button, UI_COLOURS.lavender, UI_COLOURS.gold);
       button.on('pointerdown', () => this.showCategory(definition.id));
-      this.categoryButtons.set(definition.id, { button, label });
-      this.persistentObjects.push(shadow, button, label);
+      this.categoryButtons.set(definition.id, button);
     });
   }
 
   private ensureBackAction(): void {
-    if (this.editMode) {
-      const cancelLabel = this.scene.children.getByName('creator-action-cancel-label');
-      if (cancelLabel instanceof Phaser.GameObjects.Text) {
-        cancelLabel.setText('Back');
-      }
+    const existing = this.scene.children.getByName('creator-action-cancel');
+    if (this.editMode && existing && 'setVisible' in existing) {
+      (existing as Phaser.GameObjects.Rectangle).setVisible(true);
+      if ('input' in existing && existing.input) existing.input.enabled = true;
       return;
     }
-
-    const shadow = createUiShadow(this.scene, 690, 172, 140, 52, 29, 0.15);
     const back = this.scene.add
-      .rectangle(690, 170, 140, 52, UI_COLOURS.cream, 0.99)
+      .rectangle(785, 620, 210, 54, UI_COLOURS.lavender, 1)
       .setName('creator-action-back')
-      .setStrokeStyle(4, UI_COLOURS.lavenderStrong, 1)
+      .setStrokeStyle(3, UI_COLOURS.lavenderStrong, 1)
       .setInteractive({ useHandCursor: true })
       .setDepth(30);
-    const label = this.scene.add
-      .text(690, 170, '← Back', {
+    this.scene.add
+      .text(785, 620, '←  Back', {
         color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
-        fontSize: '17px',
+        fontSize: '19px',
         fontStyle: 'bold',
       })
-      .setName('creator-action-back-label')
       .setOrigin(0.5)
       .setDepth(31);
-    applyButtonHover(back, UI_COLOURS.cream, UI_COLOURS.lavender);
     back.on('pointerdown', () => this.scene.scene.start('TitleScene'));
-    this.persistentObjects.push(shadow, back, label);
   }
 
   private showCategory(category: CreatorCategoryId): void {
-    this.clearCategoryDescription();
-
-    for (const control of this.managedControls) {
-      const visible = control.category === category;
-      control.object.setVisible(visible);
-      control.object.setPosition(control.originalX, visible ? control.targetY : control.originalY);
-      if (control.object.input) {
-        control.object.input.enabled = visible && control.interactive;
-      }
+    this.active = category;
+    for (const object of this.content) object.destroy();
+    this.content.length = 0;
+    for (const [id, button] of this.categoryButtons) {
+      button
+        .setFillStyle(id === category ? UI_COLOURS.gold : UI_COLOURS.lavender, 1)
+        .setStrokeStyle(3, id === category ? UI_COLOURS.goldStrong : UI_COLOURS.lavenderStrong, 1);
     }
-
-    for (const [id, set] of this.categoryButtons) {
-      const selected = id === category;
-      set.button
-        .setFillStyle(selected ? UI_COLOURS.gold : UI_COLOURS.cream, 0.99)
-        .setStrokeStyle(4, selected ? UI_COLOURS.goldStrong : UI_COLOURS.lavenderStrong, 1);
-      set.label.setColor(selected ? '#5a4265' : UI_COLOURS.ink);
-    }
-
-    this.renderCategoryDescription(category);
+    const configs = CONFIG[category];
+    if (category === 'colours') this.renderColourGroups(configs);
+    else this.renderStyleGroup(configs[0]);
   }
 
-  private renderCategoryDescription(category: CreatorCategoryId): void {
-    const heading = this.scene.add
-      .text(940, 355, creatorCategoryLabel(category), {
+  private renderColourGroups(groups: CategoryConfig[]): void {
+    groups.forEach((group, index) => {
+      this.renderSwatches(group.key, group.title, group.choices, 300 + index * 145);
+    });
+  }
+
+  private renderStyleGroup(group: CategoryConfig): void {
+    this.addText(660, 295, group.title, '22px');
+    const count = group.choices.length;
+    const columns = count > 6 ? 4 : 3;
+    const width = columns === 4 ? 128 : 164;
+    const gap = columns === 4 ? 137 : 174;
+    group.choices.forEach((choice, index) => {
+      const x = 682 + (index % columns) * gap;
+      const y = 370 + Math.floor(index / columns) * 122;
+      const selected = (this.scene as CreatorOwner).creatorValue(group.key) === choice.id;
+      const card = this.scene.add
+        .rectangle(x, y, width, 108, selected ? 0xfff2c1 : UI_COLOURS.cream, 1)
+        .setName(`creator-card-${String(group.key)}-${choice.id}`)
+        .setStrokeStyle(selected ? 5 : 2, selected ? UI_COLOURS.goldStrong : 0xcbb8cd, 1)
+        .setInteractive({ useHandCursor: true })
+        .setDepth(32);
+      const art = this.scene.add.graphics().setDepth(33);
+      // The scene is the rendering authority: cards use the same supported renderer as preview/world.
+      const base = this.currentAppearance();
+      const variant = { ...base, [group.key]: choice.id } as UnicornAppearance;
+      drawUnicornAppearance(art, x + 8, y - 13, variant, 0.43);
+      const label = this.scene.add
+        .text(x, y + 39, `${selected ? '✓ ' : ''}${choice.label}`, {
+          color: UI_COLOURS.ink,
+          fontFamily: UI_FONT,
+          fontSize: columns === 4 ? '12px' : '14px',
+          fontStyle: 'bold',
+        })
+        .setOrigin(0.5)
+        .setDepth(34);
+      card.on('pointerdown', () => {
+        (this.scene as CreatorOwner).creatorSelect(group.key, choice.id);
+        this.showCategory(this.active);
+      });
+      this.content.push(card, art, label);
+    });
+    if (group.colours)
+      this.renderSwatches(group.colours.key, group.colours.title, group.colours.choices, 610);
+  }
+
+  private currentAppearance(): UnicornAppearance {
+    return Object.fromEntries(
+      [
+        'bodyColour',
+        'eyeColour',
+        'maneStyle',
+        'maneColour',
+        'tailStyle',
+        'tailColour',
+        'hornStyle',
+        'marking',
+        'accessory',
+      ].map((key) => [
+        key,
+        (this.scene as CreatorOwner).creatorValue(key as keyof UnicornAppearance),
+      ]),
+    ) as unknown as UnicornAppearance;
+  }
+
+  private renderSwatches(
+    key: keyof UnicornAppearance,
+    title: string,
+    choices: readonly Choice[],
+    y: number,
+  ): void {
+    this.addText(660, y, title, '20px');
+    choices.forEach((choice, index) => {
+      const x = 815 + index * 52;
+      const selected = (this.scene as CreatorOwner).creatorValue(key) === choice.id;
+      const swatch = this.scene.add
+        .circle(x, y, 21, choice.value ?? 0x9b65b5, 1)
+        .setName(`creator-card-${String(key)}-${choice.id}`)
+        .setStrokeStyle(selected ? 6 : 3, selected ? UI_COLOURS.goldStrong : 0xffffff, 1)
+        .setInteractive({ useHandCursor: true })
+        .setDepth(33);
+      swatch.on('pointerdown', () => {
+        (this.scene as CreatorOwner).creatorSelect(key, choice.id);
+        this.showCategory(this.active);
+      });
+      this.content.push(swatch);
+    });
+  }
+
+  private addText(x: number, y: number, value: string, size: string): void {
+    const text = this.scene.add
+      .text(x, y, value, {
         color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
-        fontSize: '22px',
+        fontSize: size,
         fontStyle: 'bold',
       })
-      .setName(`creator-tablet-category-heading:${category}`)
-      .setOrigin(0.5)
-      .setDepth(28);
-    const marker = this.scene.add
-      .container(0, 0)
-      .setName(`creator-tablet-category-content:${category}`)
-      .setDepth(28);
-    this.categoryDescriptionObjects.push(heading, marker);
-
-    if (category !== 'main') {
-      return;
-    }
-
-    const intro = this.scene.add
-      .text(
-        940,
-        445,
-        'Name your unicorn above, then choose one section at a time.\n\nThe big preview stays visible while you try every look.',
-        {
-          color: '#664f6e',
-          fontFamily: UI_FONT,
-          fontSize: '19px',
-          fontStyle: 'bold',
-          align: 'center',
-          lineSpacing: 8,
-          wordWrap: { width: 500 },
-        },
-      )
-      .setName('creator-tablet-main-guidance')
-      .setOrigin(0.5)
-      .setDepth(28);
-    const footer = this.scene.add
-      .text(
-        940,
-        555,
-        'Randomise and reset options are below the preview. Save only when it feels right.',
-        {
-          color: '#806b84',
-          fontFamily: UI_FONT,
-          fontSize: '14px',
-          align: 'center',
-          wordWrap: { width: 490 },
-        },
-      )
-      .setOrigin(0.5)
-      .setDepth(28);
-    this.categoryDescriptionObjects.push(intro, footer);
-  }
-
-  private clearCategoryDescription(): void {
-    for (const object of this.categoryDescriptionObjects) {
-      object.destroy();
-    }
-    this.categoryDescriptionObjects.length = 0;
-  }
-
-  private isPositioned(object: Phaser.GameObjects.GameObject): object is PositionedObject {
-    return (
-      'x' in object &&
-      typeof object.x === 'number' &&
-      'y' in object &&
-      typeof object.y === 'number' &&
-      'setPosition' in object &&
-      typeof object.setPosition === 'function' &&
-      'setVisible' in object &&
-      typeof object.setVisible === 'function'
-    );
+      .setOrigin(0, 0.5)
+      .setDepth(34);
+    this.content.push(text);
   }
 }
 
 export class LandscapeCreatorProgressiveWorldManager {
   private readonly refreshThrottle = new RefreshThrottle(80);
   private readonly appliedScenes = new WeakSet<Phaser.Scene>();
-
   public constructor(private readonly game: Phaser.Game) {
     this.game.events.on(Phaser.Core.Events.POST_STEP, this.update, this);
-    this.game.events.once(Phaser.Core.Events.DESTROY, () => {
-      this.game.events.off(Phaser.Core.Events.POST_STEP, this.update, this);
-    });
+    this.game.events.once(Phaser.Core.Events.DESTROY, () =>
+      this.game.events.off(Phaser.Core.Events.POST_STEP, this.update, this),
+    );
   }
-
-  private update(): void {
-    if (
-      globalThis.innerWidth <= globalThis.innerHeight ||
-      !this.refreshThrottle.shouldRun(this.game.loop.time)
-    ) {
-      return;
-    }
-
-    const scene = this.game.scene.getScene('UnicornCreatorScene');
-    if (!scene?.scene.isActive() || this.appliedScenes.has(scene)) {
-      return;
-    }
-
-    const saveAction =
-      scene.children.getByName('creator-action-save-changes') ??
-      scene.children.getByName('creator-action-confirm-new');
-    if (!saveAction) {
-      return;
-    }
-
-    const editMode = Boolean(scene.children.getByName('creator-action-cancel'));
-    new LandscapeCreatorProgressiveManager(scene, editMode);
+  private update = (): void => {
+    if (!this.refreshThrottle.shouldRun(this.game.loop.time)) return;
+    const scene = this.game.scene
+      .getScenes(true)
+      .find((candidate) => candidate.scene.key === 'UnicornCreatorScene');
+    if (!scene || this.appliedScenes.has(scene)) return;
     this.appliedScenes.add(scene);
-    scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-      this.appliedScenes.delete(scene);
-    });
-  }
+    new LandscapeCreatorProgressiveManager(
+      scene,
+      Boolean((scene as Phaser.Scene & { editMode?: boolean }).editMode),
+    );
+  };
 }
 
 let manager: LandscapeCreatorProgressiveWorldManager | null = null;
-
 export function getLandscapeCreatorProgressiveWorldManager(
   game: Phaser.Game,
 ): LandscapeCreatorProgressiveWorldManager {

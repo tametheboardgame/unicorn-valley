@@ -170,3 +170,18 @@ explicitly deferred to the final graphics-specific pass, did not block WP19B,
 and is not WP19C scope. No locations or diagnosis are inferred. UV-D014 still
 requires David's explicit approval before WP19C merge, production deployment or
 WP19D.
+
+## UV-D017 - David-approved WP19C creator concept supersedes the first preview
+
+Status: Accepted implementation authority, 2026-09-09.
+
+David rejected the first WP19C preview's alignment, text behind the unicorn,
+small cycling controls and redundant renaming. He then explicitly approved the
+concept committed at `docs/design/wp19c-approved-creator-concept.jpg` as the
+visual target. Its inner cream/lavender/plum/gold interface, large contained
+preview, pencil-only rename entry, separate Colours/Mane/Tail/Horn/Markings/
+Accessories categories, direct illustrated cards, swatches and aligned footer
+actions supersede UV-D009's old Main plus combined Mane & Tail creator detail.
+Only supported cosmetic IDs may be depicted, using the shared appearance
+renderer. This approves implementation, not merge, production deployment or
+WP19D; David's finished-WP visual gate remains pending.

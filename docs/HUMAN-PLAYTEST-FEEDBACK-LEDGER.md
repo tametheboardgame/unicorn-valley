@@ -142,3 +142,7 @@ No new daughter replay occurred during this audit. Future ideas and all positive
 ### Audit validation addendum, 8 September 2026
 
 Core validation passed 427 tests. Current-release Chromium run: 34 passed, 5 failed, 21 not run. Beach repeated Bag and retired-item checks passed. Nook completed seven full returns before its total-budget timeout; this does not establish a renewed freeze. Twinkle & Thread was skipped by the serial group and remains unverified. Bag tests include stale coordinates/wrappers plus a distinct numerical tablet size failure (A17). Race matrix timed out without a specific proven gameplay defect. Keep human items open for their required replay; see the audit for exact trace evidence and coverage.
+
+## 2026-09-09 WP19C visual direction
+
+David rejected the first progressive-creator preview because its alignment was messy, legacy text sat behind the unicorn, Horn controls were too small and renaming was redundant. He approved `docs/design/wp19c-approved-creator-concept.jpg` as implementation authority. WP19C now follows its inner two-panel cream/lavender/plum/gold interface, pencil-only rename, separate Mane and Tail categories, direct supported-style cards and swatches. This is implementation approval only; David must still approve the finished immutable preview before merge, production or WP19D.

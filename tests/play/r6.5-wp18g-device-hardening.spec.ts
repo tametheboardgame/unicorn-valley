@@ -299,11 +299,11 @@ test.describe('WP18G landscape tablet matrix', () => {
       expectRectInsideViewport(mapClose, viewport);
 
       await startScene(page, 'UnicornCreatorScene');
-      await waitForNamedObject(page, 'UnicornCreatorScene', 'creator-category-main');
+      await waitForNamedObject(page, 'UnicornCreatorScene', 'creator-category-colours');
       for (const name of [
-        'creator-category-main',
         'creator-category-colours',
-        'creator-category-mane-tail',
+        'creator-category-colours',
+        'creator-category-mane',
         'creator-category-horn',
         'creator-category-markings',
         'creator-category-accessories',

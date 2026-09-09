@@ -1,10 +1,4 @@
-export type CreatorCategoryId =
-  | 'main'
-  | 'colours'
-  | 'mane-tail'
-  | 'horn'
-  | 'markings'
-  | 'accessories';
+export type CreatorCategoryId = 'colours' | 'mane' | 'tail' | 'horn' | 'markings' | 'accessories';
 
 export interface CreatorCategoryDefinition {
   id: CreatorCategoryId;
@@ -13,9 +7,9 @@ export interface CreatorCategoryDefinition {
 }
 
 export const CREATOR_CATEGORIES = [
-  { id: 'main', label: 'Main', icon: '🦄' },
   { id: 'colours', label: 'Colours', icon: '🎨' },
-  { id: 'mane-tail', label: 'Mane & Tail', icon: '✨' },
+  { id: 'mane', label: 'Mane', icon: '✨' },
+  { id: 'tail', label: 'Tail', icon: '✨' },
   { id: 'horn', label: 'Horn', icon: '🌟' },
   { id: 'markings', label: 'Markings', icon: '💫' },
   { id: 'accessories', label: 'Accessories', icon: '🎀' },
@@ -28,7 +22,7 @@ export function creatorCategoryLabel(category: CreatorCategoryId): string {
 export type CreatorAppearanceKey = keyof UnicornAppearance;
 
 export interface CreatorControlDescriptor {
-  category: Exclude<CreatorCategoryId, 'main'>;
+  category: CreatorCategoryId;
   namePrefix: string;
   targetY: number;
 }
@@ -36,10 +30,10 @@ export interface CreatorControlDescriptor {
 export const CREATOR_CONTROL_DESCRIPTORS: readonly CreatorControlDescriptor[] = [
   { category: 'colours', namePrefix: 'creator-bodyColour-', targetY: 410 },
   { category: 'colours', namePrefix: 'creator-eyeColour-', targetY: 490 },
-  { category: 'mane-tail', namePrefix: 'creator-maneStyle-', targetY: 390 },
-  { category: 'mane-tail', namePrefix: 'creator-maneColour-', targetY: 450 },
-  { category: 'mane-tail', namePrefix: 'creator-tailStyle-', targetY: 515 },
-  { category: 'mane-tail', namePrefix: 'creator-tailColour-', targetY: 575 },
+  { category: 'mane', namePrefix: 'creator-maneStyle-', targetY: 390 },
+  { category: 'mane', namePrefix: 'creator-maneColour-', targetY: 450 },
+  { category: 'tail', namePrefix: 'creator-tailStyle-', targetY: 390 },
+  { category: 'tail', namePrefix: 'creator-tailColour-', targetY: 450 },
   { category: 'horn', namePrefix: 'creator-hornStyle-', targetY: 465 },
   { category: 'markings', namePrefix: 'creator-marking-', targetY: 465 },
   { category: 'accessories', namePrefix: 'creator-accessory-', targetY: 465 },

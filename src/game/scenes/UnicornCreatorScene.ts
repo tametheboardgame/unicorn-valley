@@ -38,9 +38,9 @@ const RANDOM_NAMES = [
   'Rosie',
   'Skydrop',
 ];
-const NAME_INPUT_X = 982;
-const NAME_INPUT_Y = 196;
-const NAME_INPUT_WIDTH = 390;
+const NAME_INPUT_X = 325;
+const NAME_INPUT_Y = 140;
+const NAME_INPUT_WIDTH = 300;
 const NAME_INPUT_HEIGHT = 48;
 
 export class UnicornCreatorScene extends Phaser.Scene {
@@ -49,6 +49,7 @@ export class UnicornCreatorScene extends Phaser.Scene {
   private preview: Phaser.GameObjects.Graphics | null = null;
   private nameInput: HTMLInputElement | null = null;
   private statusText: Phaser.GameObjects.Text | null = null;
+  private profileLabel: Phaser.GameObjects.Text | null = null;
   private editMode = false;
   private valueLabels = new Map<string, Phaser.GameObjects.Text>();
   private swatchOutlines = new Map<string, Phaser.GameObjects.Arc[]>();
@@ -150,8 +151,8 @@ export class UnicornCreatorScene extends Phaser.Scene {
       .rectangle(325, 158, 270, 50, UI_COLOURS.lavender, 1)
       .setStrokeStyle(3, UI_COLOURS.lavenderStrong, 0.9)
       .setDepth(4);
-    this.add
-      .text(325, 158, this.editMode ? `${unicornName} ✨` : 'This is you ✨', {
+    this.profileLabel = this.add
+      .text(325, 158, `${unicornName}  ✎`, {
         color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
         fontSize: '26px',
@@ -159,7 +160,15 @@ export class UnicornCreatorScene extends Phaser.Scene {
       })
       .setName('creator-profile-label')
       .setOrigin(0.5)
+      .setInteractive({ useHandCursor: true })
       .setDepth(5);
+    this.profileLabel.on('pointerdown', () => {
+      if (!this.nameInput) return;
+      this.nameInput.style.visibility = 'visible';
+      this.nameInput.style.pointerEvents = 'auto';
+      this.nameInput.focus();
+      this.nameInput.select();
+    });
 
     this.add
       .ellipse(325, 535, 350, 62, 0xd7c3e7, 0.38)
@@ -209,9 +218,9 @@ export class UnicornCreatorScene extends Phaser.Scene {
 
     if (this.editMode) {
       this.createActionButton(
-        155,
-        625,
-        145,
+        205,
+        605,
+        220,
         'Surprise!',
         () => this.randomise(),
         false,
@@ -219,7 +228,7 @@ export class UnicornCreatorScene extends Phaser.Scene {
       );
       this.createActionButton(
         325,
-        625,
+        605,
         155,
         'Restore Saved',
         () => this.restoreSavedProfile(),
@@ -227,18 +236,18 @@ export class UnicornCreatorScene extends Phaser.Scene {
         'restore-saved',
       );
       this.createActionButton(
-        495,
-        625,
-        145,
-        'Default Look',
+        455,
+        605,
+        180,
+        'Reset',
         () => this.useDefaultLook(),
         false,
         'default',
       );
-      this.createActionButton(835, 675, 190, 'Cancel', () => this.cancelEdit(), false, 'cancel');
+      this.createActionButton(785, 620, 210, '← Back', () => this.cancelEdit(), false, 'cancel');
       this.createActionButton(
         1080,
-        675,
+        620,
         275,
         'Save Changes ✨',
         () => this.saveAndEnter(),
@@ -248,25 +257,17 @@ export class UnicornCreatorScene extends Phaser.Scene {
     } else {
       this.createActionButton(
         205,
-        625,
+        605,
         220,
         'Surprise Me!',
         () => this.randomise(),
         false,
         'surprise',
       );
-      this.createActionButton(
-        455,
-        625,
-        180,
-        'Nice Default',
-        () => this.useDefault(),
-        false,
-        'default',
-      );
+      this.createActionButton(455, 605, 180, 'Reset', () => this.useDefault(), false, 'default');
       this.createActionButton(
         1080,
-        675,
+        620,
         275,
         'Looks Good! ✨',
         () => this.saveAndEnter(),
@@ -329,7 +330,16 @@ export class UnicornCreatorScene extends Phaser.Scene {
     input.spellcheck = false;
     input.addEventListener('keydown', (event) => event.stopPropagation());
     input.addEventListener('keyup', (event) => event.stopPropagation());
+    input.addEventListener('input', () =>
+      this.profileLabel?.setText(`${input.value || DEFAULT_UNICORN_NAME}  ✎`),
+    );
+    input.addEventListener('blur', () => {
+      input.style.visibility = 'hidden';
+      input.style.pointerEvents = 'none';
+    });
     container.append(input);
+    input.style.visibility = 'hidden';
+    input.style.pointerEvents = 'none';
     this.nameInput = input;
 
     this.add
@@ -601,7 +611,7 @@ export class UnicornCreatorScene extends Phaser.Scene {
     }
 
     this.preview.clear();
-    drawUnicornAppearance(this.preview, 312, 410, this.draft.appearance, 2.28);
+    drawUnicornAppearance(this.preview, 312, 385, this.draft.appearance, 2.05);
 
     for (const [key, outlines] of this.swatchOutlines) {
       const currentValue = this.draft.appearance[key as keyof UnicornAppearance];
@@ -640,6 +650,11 @@ export class UnicornCreatorScene extends Phaser.Scene {
 
   public creatorChoiceSelected(key: CreatorAppearanceKey, value: string): boolean {
     return this.creatorValue(key) === value;
+  }
+
+  public creatorSelect(key: CreatorAppearanceKey, value: string): void {
+    this.draft.set(key, value as UnicornAppearance[typeof key]);
+    this.redraw();
   }
 
   private saveAndEnter(): void {
