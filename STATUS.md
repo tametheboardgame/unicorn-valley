@@ -8,7 +8,7 @@ Last updated: 2026-09-09
 
 Path: `docs/work-packages/R6.5-WP19C-PROGRESSIVE-CREATOR.md`
 
-State: **release verification in progress; implementation not started**. David approved WP19B; PR #162 merged as main `c2d98ae3287cc8ab6b2548f5efbf5548b7d87979` from approved head `fc07a52588a080260303328e65d0a4ce7267d6d7`. Cloudflare reports successful deployment at `https://39034745.unicorn-valley.pages.dev`. The supported production-alias Actions smoke is required before creator implementation; the local token cannot dispatch workflows, so this branch binds the existing PR-triggered smoke to the exact merge SHA without bypassing controls.
+State: **implementation complete; technical qualification in progress**. David approved WP19B; PR #162 merged as main `c2d98ae3287cc8ab6b2548f5efbf5548b7d87979` from approved head `fc07a52588a080260303328e65d0a4ce7267d6d7`. Cloudflare reports successful deployment at `https://39034745.unicorn-valley.pages.dev`. Supported Actions run `34356744951` passed production-alias startup/save/reload/Continue while bound to the exact merge SHA. The progressive creator implementation now owns detached draft state, explicit named control descriptors and six-category landscape/portrait presentation; local qualification and four-class evidence are in progress.
 
 ## Accepted gameplay baseline
 

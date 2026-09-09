@@ -63,12 +63,17 @@ test('portrait creator uses large grouped controls without changing creator save
   await name.fill('Rosie Spark');
 
   const coloursTab = page.locator('[data-creator-section="colours"]');
-  const hairTab = page.locator('[data-creator-section="hair"]');
-  const magicTab = page.locator('[data-creator-section="magic"]');
-  await expect(coloursTab).toHaveAttribute('aria-pressed', 'true');
+  const hairTab = page.locator('[data-creator-section="mane-tail"]');
+  const magicTab = page.locator('[data-creator-section="horn"]');
+  await expect(page.locator('[data-creator-section="main"]')).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
+  await expect(coloursTab).toHaveAttribute('aria-pressed', 'false');
   await expect(hairTab).toHaveAttribute('aria-pressed', 'false');
   await expect(magicTab).toHaveAttribute('aria-pressed', 'false');
 
+  await coloursTab.tap();
   const peach = page.locator('[data-creator-choice="bodyColour:peach"]');
   const peachBox = await peach.boundingBox();
   expect(peachBox?.height ?? 0).toBeGreaterThanOrEqual(50);
@@ -78,7 +83,7 @@ test('portrait creator uses large grouped controls without changing creator save
   await hairTab.tap();
   await expect(hairTab).toHaveAttribute('aria-pressed', 'true');
   await expect(page.locator('[data-creator-section-panel="colours"]')).toBeHidden();
-  await expect(page.locator('[data-creator-section-panel="hair"]')).toBeVisible();
+  await expect(page.locator('[data-creator-section-panel="mane-tail"]')).toBeVisible();
 
   const nextMane = page.getByRole('button', { name: 'Next Mane style' });
   const nextManeBox = await nextMane.boundingBox();

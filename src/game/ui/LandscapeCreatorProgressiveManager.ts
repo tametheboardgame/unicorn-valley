@@ -2,10 +2,10 @@ import Phaser from 'phaser';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
 import {
   CREATOR_CATEGORIES,
+  CREATOR_CONTROL_DESCRIPTORS,
   creatorCategoryLabel,
   type CreatorCategoryId,
 } from './CreatorProgressiveModel';
-import { browserUsesLandscapeTabletPresentation } from './LandscapeTabletPresentation';
 import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from './uiTheme';
 
 interface PositionedObject extends Phaser.GameObjects.GameObject {
@@ -29,17 +29,6 @@ interface CategoryButtonSet {
   label: Phaser.GameObjects.Text;
 }
 
-const LEGACY_ROW_TARGETS: Readonly<Record<number, number>> = {
-  250: 410,
-  300: 490,
-  350: 390,
-  400: 450,
-  450: 515,
-  500: 575,
-  555: 465,
-  605: 465,
-};
-
 export class LandscapeCreatorProgressiveManager {
   private readonly managedControls: ManagedControl[] = [];
   private readonly categoryButtons = new Map<CreatorCategoryId, CategoryButtonSet>();
@@ -62,20 +51,18 @@ export class LandscapeCreatorProgressiveManager {
       if (!this.isPositioned(candidate)) {
         continue;
       }
-      const rowY = this.nearestLegacyRow(candidate.y);
-      if (rowY === null) {
-        continue;
-      }
-      const category = this.categoryForPosition(candidate.x, rowY);
-      if (!category) {
+      const descriptor = CREATOR_CONTROL_DESCRIPTORS.find(({ namePrefix }) =>
+        candidate.name.startsWith(namePrefix),
+      );
+      if (!descriptor) {
         continue;
       }
       this.managedControls.push({
         object: candidate,
-        category,
+        category: descriptor.category,
         originalX: candidate.x,
         originalY: candidate.y,
-        targetY: LEGACY_ROW_TARGETS[rowY],
+        targetY: descriptor.targetY,
         interactive: Boolean(candidate.input),
       });
     }
@@ -86,7 +73,7 @@ export class LandscapeCreatorProgressiveManager {
       if (!this.isPositioned(candidate)) {
         continue;
       }
-      if ([226, 326, 532].some((y) => Math.abs(candidate.y - y) <= 1)) {
+      if (candidate.name.startsWith('creator-legacy-section-')) {
         candidate.setVisible(false);
         if (candidate.input) {
           candidate.input.enabled = false;
@@ -244,31 +231,6 @@ export class LandscapeCreatorProgressiveManager {
     this.categoryDescriptionObjects.length = 0;
   }
 
-  private nearestLegacyRow(y: number): number | null {
-    for (const row of Object.keys(LEGACY_ROW_TARGETS).map(Number)) {
-      if (Math.abs(y - row) <= 1) {
-        return row;
-      }
-    }
-    return null;
-  }
-
-  private categoryForPosition(x: number, rowY: number): Exclude<CreatorCategoryId, 'main'> | null {
-    if (rowY === 250 || rowY === 300) {
-      return 'colours';
-    }
-    if (rowY === 350 || rowY === 400 || rowY === 450 || rowY === 500) {
-      return 'mane-tail';
-    }
-    if (rowY === 555) {
-      return x < 925 ? 'horn' : 'markings';
-    }
-    if (rowY === 605) {
-      return 'accessories';
-    }
-    return null;
-  }
-
   private isPositioned(object: Phaser.GameObjects.GameObject): object is PositionedObject {
     return (
       'x' in object &&
@@ -296,7 +258,7 @@ export class LandscapeCreatorProgressiveWorldManager {
 
   private update(): void {
     if (
-      !browserUsesLandscapeTabletPresentation() ||
+      globalThis.innerWidth <= globalThis.innerHeight ||
       !this.refreshThrottle.shouldRun(this.game.loop.time)
     ) {
       return;

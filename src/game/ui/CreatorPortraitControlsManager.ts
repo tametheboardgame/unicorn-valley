@@ -3,13 +3,14 @@ import '../../creatorPortraitControls.css';
 import { getVerticalSliceAudio } from '../audio/VerticalSliceAudio';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
 import { BODY_COLOURS, EYE_COLOURS, HAIR_COLOURS } from '../player/UnicornAppearance';
+import { CREATOR_CATEGORIES, type CreatorCategoryId } from './CreatorProgressiveModel';
 
 const CREATOR_SCENE_KEY = 'UnicornCreatorScene';
 const SYNC_INTERVAL_MS = 100;
 
 type ColourKey = 'bodyColour' | 'eyeColour' | 'maneColour' | 'tailColour';
 type CycleKey = 'maneStyle' | 'tailStyle' | 'hornStyle' | 'marking' | 'accessory';
-type SectionKey = 'colours' | 'hair' | 'magic';
+type SectionKey = CreatorCategoryId;
 
 interface ColourDefinition {
   key: ColourKey;
@@ -46,23 +47,21 @@ interface DomAction {
 const COLOUR_DEFINITIONS: readonly ColourDefinition[] = [
   { key: 'bodyColour', label: 'Body', section: 'colours', choices: BODY_COLOURS },
   { key: 'eyeColour', label: 'Eyes', section: 'colours', choices: EYE_COLOURS },
-  { key: 'maneColour', label: 'Mane colour', section: 'hair', choices: HAIR_COLOURS },
-  { key: 'tailColour', label: 'Tail colour', section: 'hair', choices: HAIR_COLOURS },
+  { key: 'maneColour', label: 'Mane colour', section: 'mane-tail', choices: HAIR_COLOURS },
+  { key: 'tailColour', label: 'Tail colour', section: 'mane-tail', choices: HAIR_COLOURS },
 ];
 
 const CYCLE_DEFINITIONS: readonly CycleDefinition[] = [
-  { key: 'maneStyle', label: 'Mane style', section: 'hair' },
-  { key: 'tailStyle', label: 'Tail style', section: 'hair' },
-  { key: 'hornStyle', label: 'Horn', section: 'magic' },
-  { key: 'marking', label: 'Marking', section: 'magic' },
-  { key: 'accessory', label: 'Accessory', section: 'magic' },
+  { key: 'maneStyle', label: 'Mane style', section: 'mane-tail' },
+  { key: 'tailStyle', label: 'Tail style', section: 'mane-tail' },
+  { key: 'hornStyle', label: 'Horn', section: 'horn' },
+  { key: 'marking', label: 'Marking', section: 'markings' },
+  { key: 'accessory', label: 'Accessory', section: 'accessories' },
 ];
 
-const SECTION_LABELS: Readonly<Record<SectionKey, string>> = {
-  colours: 'Colours',
-  hair: 'Hair & Tail',
-  magic: 'Magic',
-};
+const SECTION_LABELS = Object.fromEntries(
+  CREATOR_CATEGORIES.map(({ id, label }) => [id, label]),
+) as Readonly<Record<SectionKey, string>>;
 
 const ACTION_DEFINITIONS = [
   ['creator-action-surprise', 'creator-action-surprise-label', false],
@@ -99,7 +98,7 @@ export class CreatorPortraitControlsManager {
   private readonly colourChoices: DomColourChoice[] = [];
   private readonly cycleRows: DomCycleRow[] = [];
   private readonly actions: DomAction[] = [];
-  private activeSection: SectionKey = 'colours';
+  private activeSection: SectionKey = 'main';
 
   public constructor(private readonly game: Phaser.Game) {
     this.root = document.createElement('section');
@@ -136,7 +135,7 @@ export class CreatorPortraitControlsManager {
     sectionTabs.className = 'creator-portrait-tabs';
     sectionTabs.setAttribute('role', 'group');
     sectionTabs.setAttribute('aria-label', 'Customisation sections');
-    for (const key of Object.keys(SECTION_LABELS) as SectionKey[]) {
+    for (const key of CREATOR_CATEGORIES.map(({ id }) => id)) {
       const button = document.createElement('button');
       button.type = 'button';
       button.className = 'creator-portrait-tab';
@@ -148,13 +147,21 @@ export class CreatorPortraitControlsManager {
     }
     this.root.append(sectionTabs);
 
-    for (const key of Object.keys(SECTION_LABELS) as SectionKey[]) {
+    for (const key of CREATOR_CATEGORIES.map(({ id }) => id)) {
       const panel = document.createElement('div');
       panel.className = 'creator-portrait-section';
       panel.dataset.creatorSectionPanel = key;
       panel.setAttribute('aria-label', SECTION_LABELS[key]);
       this.sectionPanels.set(key, panel);
       this.root.append(panel);
+    }
+
+    const mainPanel = this.sectionPanels.get('main');
+    if (mainPanel) {
+      const guidance = document.createElement('p');
+      guidance.className = 'creator-portrait-preview-hint';
+      guidance.textContent = 'Choose a category, try a look, then save only when it feels right.';
+      mainPanel.append(guidance);
     }
 
     for (const definition of COLOUR_DEFINITIONS) {
@@ -293,7 +300,7 @@ export class CreatorPortraitControlsManager {
 
     for (const { definition, choiceId, button } of this.colourChoices) {
       const target = scene.children.getByName(`creator-${definition.key}-${choiceId}`);
-      const selected = target instanceof Phaser.GameObjects.Arc && target.scaleX > 1.03;
+      const selected = this.choiceSelected(scene, definition.key, choiceId);
       button.setAttribute('aria-pressed', String(selected));
       button.classList.toggle('is-selected', selected);
       button.disabled = !isEnabled(target);
@@ -317,6 +324,13 @@ export class CreatorPortraitControlsManager {
         action.button.textContent = label.text;
       }
     }
+  }
+
+  private choiceSelected(scene: Phaser.Scene, key: ColourKey, value: string): boolean {
+    const owner = scene as Phaser.Scene & {
+      creatorChoiceSelected?: (key: ColourKey, value: string) => boolean;
+    };
+    return owner.creatorChoiceSelected?.(key, value) ?? false;
   }
 
   private showSection(section: SectionKey): void {
