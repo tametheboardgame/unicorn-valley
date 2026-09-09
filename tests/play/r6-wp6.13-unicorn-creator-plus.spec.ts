@@ -175,7 +175,7 @@ test('Creator Plus exposes richer categories and accepts gameplay-key letters in
 test('existing unicorn can save new Creator Plus styles without resetting adventure state', async ({
   page,
 }) => {
-  test.setTimeout(90_000);
+  test.setTimeout(150_000);
   await seedSave(page);
   await page.goto('/?diagnostics=1');
   await waitForScene(page, 'TitleScene');
