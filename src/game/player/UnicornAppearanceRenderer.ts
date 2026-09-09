@@ -619,6 +619,43 @@ function drawAccessory(
   }
 }
 
+export type UnicornComponent = 'maneStyle' | 'tailStyle' | 'hornStyle' | 'marking' | 'accessory';
+
+/** Draws one supported appearance component without a miniature unicorn body. */
+export function drawUnicornComponent(
+  graphics: Phaser.GameObjects.Graphics,
+  component: UnicornComponent,
+  x: number,
+  y: number,
+  appearance: UnicornAppearance,
+  scale = 1,
+): void {
+  const mane = colourValue(HAIR_COLOURS, appearance.maneColour);
+  const tail = colourValue(HAIR_COLOURS, appearance.tailColour);
+  const maneOutline = mixColour(mane, 0x493a58, 0.45);
+  const tailOutline = mixColour(tail, 0x493a58, 0.45);
+  if (component === 'maneStyle') {
+    drawMane(
+      graphics,
+      x - 34 * scale,
+      y + 32 * scale,
+      scale,
+      appearance,
+      mane,
+      maneOutline,
+      POSES.idle,
+    );
+  } else if (component === 'tailStyle') {
+    drawTail(graphics, x + 82 * scale, y, scale, appearance, tail, tailOutline, POSES.idle);
+  } else if (component === 'hornStyle') {
+    drawHorn(graphics, x - 77 * scale, y + 77 * scale, scale, appearance);
+  } else if (component === 'marking') {
+    drawMarking(graphics, x + 13 * scale, y - 5 * scale, scale, appearance, 0xf3d7c7);
+  } else {
+    drawAccessory(graphics, x - 50 * scale, y + 20 * scale, scale, appearance);
+  }
+}
+
 export function drawUnicornAppearance(
   graphics: Phaser.GameObjects.Graphics,
   x: number,

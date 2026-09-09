@@ -53,6 +53,8 @@ export class UnicornCreatorScene extends Phaser.Scene {
   private editMode = false;
   private valueLabels = new Map<string, Phaser.GameObjects.Text>();
   private swatchOutlines = new Map<string, Phaser.GameObjects.Arc[]>();
+  public creatorProgressiveRefresh?: () => void;
+  private renameButton: HTMLButtonElement | null = null;
 
   public constructor() {
     super('UnicornCreatorScene');
@@ -100,13 +102,14 @@ export class UnicornCreatorScene extends Phaser.Scene {
 
     const unicornName = this.save.profile.name ?? DEFAULT_UNICORN_NAME;
     this.add
-      .text(52, 34, this.editMode ? `Redesign ${unicornName}` : 'Make Your Unicorn', {
+      .text(GAME_WIDTH / 2, 28, this.editMode ? `Redesign ${unicornName}` : 'Make Your Unicorn', {
         color: '#fff8ff',
         fontFamily: UI_FONT,
         fontSize: '43px',
         fontStyle: 'bold',
       })
       .setName('creator-heading')
+      .setOrigin(0.5, 0)
       .setDepth(20);
 
     this.add
@@ -148,7 +151,8 @@ export class UnicornCreatorScene extends Phaser.Scene {
       .setStrokeStyle(6, UI_COLOURS.lavenderStrong, 1)
       .setDepth(2);
     this.add
-      .rectangle(325, 158, 270, 50, UI_COLOURS.lavender, 1)
+      .rectangle(325, 158, 270, 50, UI_COLOURS.cream, 0.96)
+      .setName('creator-legacy-name-banner')
       .setStrokeStyle(3, UI_COLOURS.lavenderStrong, 0.9)
       .setDepth(4);
     this.profileLabel = this.add
@@ -162,16 +166,11 @@ export class UnicornCreatorScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setInteractive({ useHandCursor: true })
       .setDepth(5);
-    this.profileLabel.on('pointerdown', () => {
-      if (!this.nameInput) return;
-      this.nameInput.style.visibility = 'visible';
-      this.nameInput.style.pointerEvents = 'auto';
-      this.nameInput.focus();
-      this.nameInput.select();
-    });
+    this.profileLabel.on('pointerdown', () => this.openNameEditor());
 
     this.add
       .ellipse(325, 535, 350, 62, 0xd7c3e7, 0.38)
+      .setName('creator-legacy-preview-shadow')
       .setStrokeStyle(3, 0xc39bd7, 0.44)
       .setDepth(3);
     this.add
@@ -181,6 +180,7 @@ export class UnicornCreatorScene extends Phaser.Scene {
         fontSize: '12px',
         fontStyle: 'bold',
       })
+      .setName('creator-legacy-live-preview')
       .setOrigin(0.5)
       .setDepth(5);
 
@@ -205,6 +205,7 @@ export class UnicornCreatorScene extends Phaser.Scene {
 
     this.preview = this.add.graphics().setDepth(6);
     this.createNameInput(unicornName);
+    this.createRenameButton();
 
     this.createColourRow('Body', 'bodyColour', BODY_COLOURS, 670, 250);
     this.createColourRow('Eyes', 'eyeColour', EYE_COLOURS, 670, 300);
@@ -286,6 +287,8 @@ export class UnicornCreatorScene extends Phaser.Scene {
       this.scale.off('resize', this.positionNameInput, this);
       globalThis.removeEventListener?.('resize', this.positionNameInput);
       this.nameInput?.remove();
+      this.renameButton?.remove();
+      this.renameButton = null;
       this.nameInput = null;
       this.input.keyboard?.enableGlobalCapture();
       this.preview = null;
@@ -356,6 +359,32 @@ export class UnicornCreatorScene extends Phaser.Scene {
     this.positionNameInput();
   }
 
+  private createRenameButton(): void {
+    const container = document.getElementById('game-container');
+    if (!container) return;
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'creator-landscape-rename-button';
+    button.setAttribute('aria-label', 'Change unicorn name');
+    button.textContent = '✎';
+    button.addEventListener('click', () => this.openNameEditor());
+    container.append(button);
+    this.renameButton = button;
+    this.positionNameInput();
+  }
+
+  private openNameEditor(): void {
+    if (!this.nameInput) return;
+    this.nameInput.style.visibility = 'visible';
+    this.nameInput.style.pointerEvents = 'auto';
+    this.nameInput.focus();
+    this.nameInput.select();
+  }
+
+  private syncDisplayedName(value: string): void {
+    this.profileLabel?.setText(`${value || DEFAULT_UNICORN_NAME}  ✎`);
+  }
+
   private positionNameInput = (): void => {
     if (!this.nameInput) {
       return;
@@ -380,6 +409,12 @@ export class UnicornCreatorScene extends Phaser.Scene {
     this.nameInput.style.height = `${NAME_INPUT_HEIGHT * scaleY}px`;
     this.nameInput.style.fontSize = `${Math.max(14, 20 * Math.min(scaleX, scaleY))}px`;
     this.nameInput.style.borderWidth = `${Math.max(2, 4 * Math.min(scaleX, scaleY))}px`;
+    if (this.renameButton) {
+      this.renameButton.style.left = `${canvasRect.left - containerRect.left + 390 * scaleX}px`;
+      this.renameButton.style.top = `${canvasRect.top - containerRect.top + 134 * scaleY}px`;
+      this.renameButton.style.width = `${Math.max(38, 42 * scaleX)}px`;
+      this.renameButton.style.height = `${Math.max(38, 42 * scaleY)}px`;
+    }
   };
 
   private createColourRow(
@@ -558,6 +593,7 @@ export class UnicornCreatorScene extends Phaser.Scene {
     this.draft.randomise();
     if (this.nameInput && !this.editMode) {
       this.nameInput.value = RANDOM_NAMES[Math.floor(Math.random() * RANDOM_NAMES.length)];
+      this.syncDisplayedName(this.nameInput.value);
     }
     this.redraw();
     this.setStatus(
@@ -571,6 +607,7 @@ export class UnicornCreatorScene extends Phaser.Scene {
     this.draft.resetToDefault();
     if (this.nameInput) {
       this.nameInput.value = DEFAULT_UNICORN_NAME;
+      this.syncDisplayedName(this.nameInput.value);
     }
     this.redraw();
     this.setStatus('Back to the classic Starlight look.');
@@ -589,6 +626,7 @@ export class UnicornCreatorScene extends Phaser.Scene {
     this.draft.restoreOriginal();
     if (this.nameInput) {
       this.nameInput.value = this.save.profile.name ?? DEFAULT_UNICORN_NAME;
+      this.syncDisplayedName(this.nameInput.value);
     }
     this.redraw();
     this.setStatus('Back to the saved look. Your adventure has not changed.');
@@ -642,6 +680,7 @@ export class UnicornCreatorScene extends Phaser.Scene {
         labelSources[key]?.find((choice) => choice.id === value)?.label ?? String(value),
       );
     }
+    this.creatorProgressiveRefresh?.();
   }
 
   public creatorValue(key: CreatorAppearanceKey): string {

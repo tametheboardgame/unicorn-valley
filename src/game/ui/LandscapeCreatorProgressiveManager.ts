@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import '../../creatorPortraitControls.css';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
 import {
   ACCESSORIES,
@@ -11,13 +12,14 @@ import {
   TAIL_STYLES,
   type UnicornAppearance,
 } from '../player/UnicornAppearance';
-import { drawUnicornAppearance } from '../player/UnicornAppearanceRenderer';
+import { drawUnicornComponent } from '../player/UnicornAppearanceRenderer';
 import { CREATOR_CATEGORIES, type CreatorCategoryId } from './CreatorProgressiveModel';
 import { UI_COLOURS, UI_FONT, applyButtonHover } from './uiTheme';
 
 interface CreatorOwner extends Phaser.Scene {
   creatorValue(key: keyof UnicornAppearance): string;
   creatorSelect(key: keyof UnicornAppearance, value: string): void;
+  creatorProgressiveRefresh?: () => void;
 }
 
 type Choice = { id: string; label: string; value?: number };
@@ -67,6 +69,11 @@ export class LandscapeCreatorProgressiveManager {
     this.createCategoryNavigation();
     this.ensureBackAction();
     this.showCategory('colours');
+    (this.scene as CreatorOwner).creatorProgressiveRefresh = () => this.showCategory(this.active);
+    this.scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      (this.scene as CreatorOwner).creatorProgressiveRefresh = undefined;
+      this.destroy();
+    });
   }
 
   private hideLegacyControls(): void {
@@ -106,7 +113,10 @@ export class LandscapeCreatorProgressiveManager {
         })
         .setOrigin(0.5)
         .setDepth(31);
-      applyButtonHover(button, UI_COLOURS.lavender, UI_COLOURS.gold);
+      button.on('pointerover', () => {
+        if (this.active !== definition.id) button.setFillStyle(UI_COLOURS.gold, 1);
+      });
+      button.on('pointerout', () => this.applyCategoryStyles());
       button.on('pointerdown', () => this.showCategory(definition.id));
       this.categoryButtons.set(definition.id, button);
     });
@@ -141,14 +151,22 @@ export class LandscapeCreatorProgressiveManager {
     this.active = category;
     for (const object of this.content) object.destroy();
     this.content.length = 0;
-    for (const [id, button] of this.categoryButtons) {
-      button
-        .setFillStyle(id === category ? UI_COLOURS.gold : UI_COLOURS.lavender, 1)
-        .setStrokeStyle(3, id === category ? UI_COLOURS.goldStrong : UI_COLOURS.lavenderStrong, 1);
-    }
+    this.applyCategoryStyles();
     const configs = CONFIG[category];
     if (category === 'colours') this.renderColourGroups(configs);
     else this.renderStyleGroup(configs[0]);
+  }
+
+  private applyCategoryStyles(): void {
+    for (const [id, button] of this.categoryButtons) {
+      button
+        .setFillStyle(id === this.active ? UI_COLOURS.gold : UI_COLOURS.lavender, 1)
+        .setStrokeStyle(
+          3,
+          id === this.active ? UI_COLOURS.goldStrong : UI_COLOURS.lavenderStrong,
+          1,
+        );
+    }
   }
 
   private renderColourGroups(groups: CategoryConfig[]): void {
@@ -161,11 +179,11 @@ export class LandscapeCreatorProgressiveManager {
     this.addText(660, 295, group.title, '22px');
     const count = group.choices.length;
     const columns = count > 6 ? 4 : 3;
-    const width = columns === 4 ? 128 : 164;
-    const gap = columns === 4 ? 137 : 174;
+    const width = columns === 4 ? 120 : 154;
+    const gap = columns === 4 ? 130 : 166;
     group.choices.forEach((choice, index) => {
-      const x = 682 + (index % columns) * gap;
-      const y = 370 + Math.floor(index / columns) * 122;
+      const x = (columns === 4 ? 704 : 728) + (index % columns) * gap;
+      const y = 354 + Math.floor(index / columns) * 108;
       const selected = (this.scene as CreatorOwner).creatorValue(group.key) === choice.id;
       const card = this.scene.add
         .rectangle(x, y, width, 108, selected ? 0xfff2c1 : UI_COLOURS.cream, 1)
@@ -174,27 +192,35 @@ export class LandscapeCreatorProgressiveManager {
         .setInteractive({ useHandCursor: true })
         .setDepth(32);
       const art = this.scene.add.graphics().setDepth(33);
-      // The scene is the rendering authority: cards use the same supported renderer as preview/world.
       const base = this.currentAppearance();
       const variant = { ...base, [group.key]: choice.id } as UnicornAppearance;
-      drawUnicornAppearance(art, x + 8, y - 13, variant, 0.43);
+      drawUnicornComponent(
+        art,
+        group.key as Exclude<
+          typeof group.key,
+          'bodyColour' | 'eyeColour' | 'maneColour' | 'tailColour'
+        >,
+        x,
+        y - 12,
+        variant,
+        group.key === 'tailStyle' ? 0.62 : 0.72,
+      );
       const label = this.scene.add
         .text(x, y + 39, `${selected ? '✓ ' : ''}${choice.label}`, {
           color: UI_COLOURS.ink,
           fontFamily: UI_FONT,
-          fontSize: columns === 4 ? '12px' : '14px',
+          fontSize: '13px',
           fontStyle: 'bold',
         })
         .setOrigin(0.5)
         .setDepth(34);
       card.on('pointerdown', () => {
         (this.scene as CreatorOwner).creatorSelect(group.key, choice.id);
-        this.showCategory(this.active);
       });
       this.content.push(card, art, label);
     });
     if (group.colours)
-      this.renderSwatches(group.colours.key, group.colours.title, group.colours.choices, 610);
+      this.renderSwatches(group.colours.key, group.colours.title, group.colours.choices, 536);
   }
 
   private currentAppearance(): UnicornAppearance {
@@ -234,7 +260,6 @@ export class LandscapeCreatorProgressiveManager {
         .setDepth(33);
       swatch.on('pointerdown', () => {
         (this.scene as CreatorOwner).creatorSelect(key, choice.id);
-        this.showCategory(this.active);
       });
       this.content.push(swatch);
     });
@@ -251,6 +276,13 @@ export class LandscapeCreatorProgressiveManager {
       .setOrigin(0, 0.5)
       .setDepth(34);
     this.content.push(text);
+  }
+
+  private destroy(): void {
+    for (const object of this.content) object.destroy();
+    this.content.length = 0;
+    for (const button of this.categoryButtons.values()) button.destroy();
+    this.categoryButtons.clear();
   }
 }
 
@@ -274,6 +306,7 @@ export class LandscapeCreatorProgressiveWorldManager {
       scene,
       Boolean((scene as Phaser.Scene & { editMode?: boolean }).editMode),
     );
+    scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.appliedScenes.delete(scene));
   };
 }
 

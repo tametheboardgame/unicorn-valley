@@ -47,6 +47,14 @@ interface DomCycleRow {
   choices: { id: string; button: HTMLButtonElement }[];
 }
 
+const COMPONENT_SYMBOLS: Readonly<Record<CycleKey, Record<string, string>>> = {
+  maneStyle: { soft: '〰', fluffy: '☁', swept: '◒', braid: '⛓', crest: '♒' },
+  tailStyle: { swish: '〰', curl: '➰', ribbon: '◢', braid: '⛓', puff: '☁' },
+  hornStyle: { classic: '◭', spiral: '▱', short: '▴', star: '★', crystal: '♦' },
+  marking: { none: '—', star: '★', heart: '♥', moon: '☾', freckles: '⠿', sparkles: '✦' },
+  accessory: { none: '—', flower: '✿', bow: '⋈', bell: '♢', crown: '♛', ribbon: '🎀', scarf: '⌁' },
+};
+
 interface DomAction {
   objectName: string;
   labelName: string;
@@ -248,7 +256,15 @@ export class CreatorPortraitControlsManager {
       const button = document.createElement('button');
       button.type = 'button';
       button.className = 'creator-portrait-style-card';
-      button.textContent = choice.label;
+      button.dataset.creatorComponent = definition.key;
+      button.dataset.creatorComponentId = choice.id;
+      const art = document.createElement('span');
+      art.className = 'creator-portrait-component-art';
+      art.setAttribute('aria-hidden', 'true');
+      art.textContent = COMPONENT_SYMBOLS[definition.key][choice.id] ?? '✦';
+      const text = document.createElement('span');
+      text.textContent = choice.label;
+      button.append(art, text);
       button.addEventListener('click', () => this.selectChoice(definition.key, choice.id));
       controls.append(button);
       return { id: choice.id, button };

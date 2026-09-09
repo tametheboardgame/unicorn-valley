@@ -185,3 +185,15 @@ actions supersede UV-D009's old Main plus combined Mane & Tail creator detail.
 Only supported cosmetic IDs may be depicted, using the shared appearance
 renderer. This approves implementation, not merge, production deployment or
 WP19D; David's finished-WP visual gate remains pending.
+
+## UV-D018 - David's WP19C tablet layout feedback is correction authority
+
+Status: Accepted implementation feedback, 2026-09-09.
+
+David accepted the direction but rejected preview `cb1417d6` as finished work.
+The four original tablet captures under
+`docs/evidence/wp19c-david-layout-feedback/` require bounded WP19C correction:
+contained grids, component-only option artwork, clear footer separation,
+retirement of legacy preview/name decoration, persistent tab/selection state,
+keyboard-accessible pencil renaming and repeat-entry lifecycle safety. This
+does not release the visual gate or authorise merge, production or WP19D.

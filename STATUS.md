@@ -8,7 +8,7 @@ Last updated: 2026-09-09
 
 Path: `docs/work-packages/R6.5-WP19C-PROGRESSIVE-CREATOR.md`
 
-State: **approved-concept replacement implemented; qualification pending**. David rejected the first preview and approved `docs/design/wp19c-approved-creator-concept.jpg` as implementation authority. The replacement now has the clean cream/lavender/plum/gold two-panel hierarchy, a fully contained shared-renderer preview, pencil-only rename, separate Mane and Tail categories, large direct supported-style cards/swatches and aligned footer actions. Fresh four-class evidence exists. Local validation and the desktop real-input create/save journey pass; a focused portrait run exposed and fixed disabled swatches but its enlarged local rerun reached the slow-renderer total timeout without an assertion, so portrait/full compatibility and new exact-head CI remain pending. The old shard-2 failure is superseded evidence, not waived. David must approve the finished immutable preview before merge, production or WP19D.
+State: **David layout corrections implemented locally; corrected-head qualification pending**. David's four tablet captures reject preview `cb1417d6` as finished work. The correction retires named legacy preview/name decoration, contains responsive option grids above a separate footer, uses isolated supported-component art, preserves active/selected state after pointer exit and draft replacement, restores repeated scene ownership, synchronises displayed names and provides a keyboard-focusable pencil control. Local validation passes; corrected browser evidence, exact-head CI and immutable preview remain pending. David must approve the finished immutable preview before merge, production or WP19D.
 
 ## Accepted gameplay baseline
 
@@ -65,7 +65,7 @@ WP18K is human-approved, technically qualified and merged through PR #161 at mai
 
 ## Next action
 
-Complete exact-head CI and retrieve/reproduce any failure; publish an immutable preview from the committed replacement and give David the four-class screenshots plus concise sign-off checklist. Stop for his finished-WP19C visual approval without merge, production deployment or WP19D.
+Capture and inspect corrected category/four-class evidence, run exact-head CI, diagnose any remaining failure and publish the immutable corrected preview. Stop for David's finished-WP19C visual approval without merge, production deployment or WP19D.
 
 ## Implementation delivery
 
