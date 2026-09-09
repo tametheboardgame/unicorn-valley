@@ -125,3 +125,16 @@ replay and WP17's final readiness decision remain human-only; R7, unapproved
 scope, purchases and unsafe/destructive actions remain prohibited. WP18K's
 current correction task remains delivery-only on PR #161: the worker does not
 merge, deploy production or start WP19B.
+
+## UV-D014 - Per-package human approval restored
+
+Status: Accepted, 2026-09-09.
+
+David ended the overnight delegation and explicitly restored a human approval
+pause at every completed work package. This supersedes UV-D013 for future
+acceptance, merge, production deployment and dependency continuation while
+preserving its historical record. Codex and the manager may complete bounded
+WP18K correction and qualification work on PR #161, but WP18K must then stop for
+David's explicit approval. No merge, production deployment, WP19B or R7 work is
+authorised before that approval. WP18H's physical Galaxy Tab S8 replay and
+WP17's readiness decision remain separate human-only gates.

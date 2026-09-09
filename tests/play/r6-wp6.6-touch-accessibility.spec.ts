@@ -304,7 +304,10 @@ test('target-tablet touch completes creator, exploration, Book and accessibility
 
   await logicalTap(page, 340, 46);
   await waitForScene(page, 'WonderbookScene');
-  await logicalTap(page, 640, 682);
+  // Close through the accepted top-right cross target. The former bottom
+  // coordinate was retired with the labelled "Close the book" button and now
+  // lands on inert page content, so waiting for the Glade could never succeed.
+  await logicalTapNamedObject(page, 'WonderbookScene', 'wonderbook-close-button');
   await waitForScene(page, 'MoonflowerGladeScene');
 
   await logicalTap(page, 486, 46);
