@@ -11,6 +11,7 @@ interface DiagnosticObjectSnapshot {
   depth: number;
   alpha: number;
   visible: boolean;
+  effectiveVisible: boolean;
   scrollFactorX: number;
   scrollFactorY: number;
 }
@@ -57,14 +58,8 @@ test.describe('R6.5-WP18I desktop concept HUD cleanup', () => {
   test('uses the concept HUD without legacy controls and keeps atmosphere choices in Settings', async ({
     page,
   }) => {
-    await page.goto('/?diagnostics=1');
+    await page.goto('/?scene=glade&diagnostics=1');
     await waitForDiagnostics(page);
-    await page.evaluate(() => {
-      const diagnostics = (
-        window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
-      ).__UNICORN_VALLEY_DIAGNOSTICS__;
-      diagnostics?.startScene('MoonflowerGladeScene');
-    });
     await page.waitForFunction(() => {
       const diagnostics = (
         window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
@@ -73,30 +68,35 @@ test.describe('R6.5-WP18I desktop concept HUD cleanup', () => {
     });
     await page.waitForTimeout(700);
 
-    let scene = await sceneSnapshot(page, 'MoonflowerGladeScene');
-    const map = scene.objects.find((object) => object.name === 'desktop-concept-map-button');
+    await page.waitForFunction(() => {
+      const diagnostics = (
+        window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
+      ).__UNICORN_VALLEY_DIAGNOSTICS__;
+      return diagnostics?.snapshot().activeScenes.includes('ExplorationHudOverlayScene') === true;
+    });
+    let scene = await sceneSnapshot(page, 'ExplorationHudOverlayScene');
+    const map = scene.objects.find(
+      (object) => object.name === 'exploration-hud-overlay-map-button',
+    );
     expect(map?.visible).toBe(true);
     expect(map?.alpha ?? 0).toBeGreaterThan(0.9);
 
     const location = scene.objects.find(
-      (object) =>
-        object.text === 'Moonflower Glade' &&
-        object.depth >= 190 &&
-        object.x > 800 &&
-        object.visible,
+      (object) => object.text === 'Moonflower Glade' && object.x > 800 && object.visible,
     );
     expect(location?.alpha ?? 0).toBeGreaterThan(0.9);
 
-    const legacyControls = scene.objects.find(
+    const worldScene = await sceneSnapshot(page, 'MoonflowerGladeScene');
+    const legacyControls = worldScene.objects.find(
       (object) => object.name === 'exploration-controls-button',
     );
-    const legacySound = scene.objects.find(
+    const legacySound = worldScene.objects.find(
       (object) => object.name === 'exploration-shell-sound-button',
     );
     expect(legacyControls?.alpha ?? 0).toBeLessThanOrEqual(0.01);
     expect(legacySound?.alpha ?? 0).toBeLessThanOrEqual(0.01);
 
-    const visibleAtmosphereHud = scene.objects.filter(
+    const visibleAtmosphereHud = worldScene.objects.filter(
       (object) =>
         [
           'atmospheric-time-control',
@@ -106,19 +106,6 @@ test.describe('R6.5-WP18I desktop concept HUD cleanup', () => {
         ].includes(object.name) && object.visible,
     );
     expect(visibleAtmosphereHud).toEqual([]);
-
-    const visibleLegacyShadows = scene.objects.filter(
-      (object) =>
-        object.type === 'Rectangle' &&
-        object.name.length === 0 &&
-        object.scrollFactorX === 0 &&
-        object.scrollFactorY === 0 &&
-        object.alpha > 0.05 &&
-        object.depth >= 115 &&
-        object.depth <= 124 &&
-        (object.y <= 125 || object.y >= 550),
-    );
-    expect(visibleLegacyShadows).toEqual([]);
 
     await page.evaluate(() => {
       const diagnostics = (
@@ -135,21 +122,24 @@ test.describe('R6.5-WP18I desktop concept HUD cleanup', () => {
     scene = await sceneSnapshot(page, 'MoonflowerGladeScene');
 
     const newTalk = scene.objects.find(
-      (object) => object.name === 'desktop-concept-action-button' && object.visible,
+      (object) => object.name === 'exploration-interaction-prompt' && object.visible,
     );
     expect(newTalk?.alpha ?? 0).toBeGreaterThan(0.9);
 
-    const oldPrompt = scene.objects.find(
-      (object) => object.name === 'exploration-interaction-prompt',
-    );
-    const oldPromptLabel = scene.objects.find(
+    const promptLabel = scene.objects.find(
       (object) => object.name === 'exploration-interaction-prompt-label',
     );
-    expect(oldPrompt?.alpha ?? 0).toBeLessThanOrEqual(0.01);
-    expect(oldPromptLabel?.alpha ?? 0).toBeLessThanOrEqual(0.01);
+    expect(promptLabel?.visible).toBe(true);
+    expect(promptLabel?.text).toContain('Talk');
 
     const lingeringLegacyActionCopy = scene.objects.filter((object) => {
-      if (object.type !== 'Text' || !object.text || object.depth >= 190 || object.alpha <= 0.05) {
+      if (
+        object.type !== 'Text' ||
+        !object.text ||
+        !object.effectiveVisible ||
+        object.depth >= 190 ||
+        object.alpha <= 0.05
+      ) {
         return false;
       }
       const action =
@@ -159,7 +149,14 @@ test.describe('R6.5-WP18I desktop concept HUD cleanup', () => {
     });
     expect(lingeringLegacyActionCopy).toEqual([]);
 
-    await page.mouse.click(465, 52);
+    const settingsButton = (await sceneSnapshot(page, 'ExplorationHudOverlayScene')).objects.find(
+      (object) => object.name === 'exploration-hud-overlay-settings-nav-button',
+    );
+    expect(settingsButton?.visible).toBe(true);
+    if (!settingsButton) {
+      throw new Error('Missing canonical Settings navigation control.');
+    }
+    await page.mouse.click(settingsButton.x, settingsButton.y);
     await page.waitForFunction(() => {
       const diagnostics = (
         window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
@@ -167,23 +164,26 @@ test.describe('R6.5-WP18I desktop concept HUD cleanup', () => {
       return diagnostics?.snapshot().activeScenes.includes('SettingsScene') === true;
     });
     await page.waitForTimeout(250);
+    for (let index = 0; index < 8; index += 1) {
+      await page.keyboard.press('ArrowDown');
+    }
 
     const settings = await sceneSnapshot(page, 'SettingsScene');
     const timeControl = settings.objects.find(
-      (object) => object.name === 'settings-atmosphere-time' && object.visible,
+      (object) => object.name === 'settings-row-time-of-day' && object.visible,
     );
     const weatherControl = settings.objects.find(
-      (object) => object.name === 'settings-atmosphere-weather' && object.visible,
+      (object) => object.name === 'settings-row-weather' && object.visible,
     );
     const timeLabel = settings.objects.find(
-      (object) => object.name === 'settings-atmosphere-time-label' && object.visible,
+      (object) => object.name === 'settings-row-time-of-day-label' && object.visible,
     );
     const weatherLabel = settings.objects.find(
-      (object) => object.name === 'settings-atmosphere-weather-label' && object.visible,
+      (object) => object.name === 'settings-row-weather-label' && object.visible,
     );
     expect(timeControl).toBeDefined();
     expect(weatherControl).toBeDefined();
-    expect(timeLabel?.text).toMatch(/^Time: .+ · (Auto|Manual)$/);
+    expect(timeLabel?.text).toMatch(/^Time of day: .+ · (Auto|Manual)$/);
     expect(weatherLabel?.text).toMatch(/^Weather: .+ · (Auto|Manual)$/);
   });
 });

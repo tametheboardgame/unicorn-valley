@@ -6,8 +6,8 @@ import { getSecretDiscoveryWorldManager } from '../discovery/SecretDiscoveryWorl
 import { getWhisperingWoodsSecretWorldManager } from '../discovery/WhisperingWoodsSecretWorldManager';
 import { getClickToMoveManager } from '../input/ClickToMoveManager';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
-import { getRacePlaytestRecoveryManager } from '../racing/RacePlaytestRecoveryManager';
 import { getRacePlayerControlManager } from '../racing/RacePlayerControlManager';
+import { getRacePlaytestRecoveryManager } from '../racing/RacePlaytestRecoveryManager';
 import { getBrowserPipEggArcService } from '../story/browserPipEggArc';
 import { getCrystalBrookStoryWorldManager } from '../story/CrystalBrookStoryWorldManager';
 import { getLumiWoodsWorldManager } from '../story/LumiWoodsWorldManager';

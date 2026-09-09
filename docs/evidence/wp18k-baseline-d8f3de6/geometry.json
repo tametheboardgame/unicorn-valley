@@ -1,0 +1,2870 @@
+{
+  "candidateSha": "d8f3de6f264fa5fd6e2d77d539a47f288eb50cd4",
+  "capturedAt": "2026-09-09T03:54:05.839Z",
+  "baseUrl": "http://127.0.0.1:4174",
+  "displays": {
+    "phone-portrait": {
+      "hud": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "canvas": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 219.375
+        },
+        "logicalToCssScale": {
+          "x": 0.3046875,
+          "y": 0.3046875
+        },
+        "domCompanions": [],
+        "activeScenes": ["MoonflowerGladeScene", "ExplorationHudOverlayScene"],
+        "namedObjects": {}
+      },
+      "settings": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "canvas": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 219.375
+        },
+        "logicalToCssScale": {
+          "x": 0.3046875,
+          "y": 0.3046875
+        },
+        "domCompanions": [],
+        "activeScenes": ["ExplorationHudOverlayScene", "SettingsScene"],
+        "namedObjects": {
+          "settings-backdrop": {
+            "logical": {
+              "x": 640,
+              "y": 360,
+              "width": 1280,
+              "height": 720
+            },
+            "css": {
+              "x": 0,
+              "y": 0,
+              "width": 390,
+              "height": 219.375
+            },
+            "interactive": false
+          },
+          "settings-panel": {
+            "logical": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "settings-row-surface-muted": {
+            "logical": {
+              "x": 640,
+              "y": 216,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 195,
+              "y": 65.8125,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "settings-row-surface-music": {
+            "logical": {
+              "x": 640,
+              "y": 288,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 195,
+              "y": 87.75,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "settings-row-surface-ambience": {
+            "logical": {
+              "x": 640,
+              "y": 360,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 195,
+              "y": 109.6875,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "settings-row-surface-sfx": {
+            "logical": {
+              "x": 640,
+              "y": 432,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 195,
+              "y": 131.625,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "settings-row-surface-reduced-motion": {
+            "logical": {
+              "x": 640,
+              "y": 548,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 195,
+              "y": 166.96875,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "settings-row-muted": {
+            "logical": {
+              "x": 640,
+              "y": 216,
+              "width": 590,
+              "height": 58
+            },
+            "css": {
+              "x": 105.1171875,
+              "y": 56.9765625,
+              "width": 179.765625,
+              "height": 17.671875
+            },
+            "interactive": true
+          },
+          "settings-row-music": {
+            "logical": {
+              "x": 640,
+              "y": 288,
+              "width": 590,
+              "height": 58
+            },
+            "css": {
+              "x": 105.1171875,
+              "y": 78.9140625,
+              "width": 179.765625,
+              "height": 17.671875
+            },
+            "interactive": true
+          },
+          "settings-row-ambience": {
+            "logical": {
+              "x": 640,
+              "y": 360,
+              "width": 590,
+              "height": 58
+            },
+            "css": {
+              "x": 105.1171875,
+              "y": 100.8515625,
+              "width": 179.765625,
+              "height": 17.671875
+            },
+            "interactive": true
+          },
+          "settings-row-sfx": {
+            "logical": {
+              "x": 640,
+              "y": 432,
+              "width": 590,
+              "height": 58
+            },
+            "css": {
+              "x": 105.1171875,
+              "y": 122.7890625,
+              "width": 179.765625,
+              "height": 17.671875
+            },
+            "interactive": true
+          },
+          "settings-row-reduced-motion": {
+            "logical": {
+              "x": 640,
+              "y": 548,
+              "width": 590,
+              "height": 58
+            },
+            "css": {
+              "x": 105.1171875,
+              "y": 158.1328125,
+              "width": 179.765625,
+              "height": 17.671875
+            },
+            "interactive": false
+          },
+          "settings-section-sound": {
+            "logical": {
+              "x": 349,
+              "y": 165,
+              "width": 61,
+              "height": 22
+            },
+            "css": {
+              "x": 97.04296875,
+              "y": 46.921875,
+              "width": 18.5859375,
+              "height": 6.703125
+            },
+            "interactive": false
+          },
+          "settings-row-muted-label": {
+            "logical": {
+              "x": 640,
+              "y": 216,
+              "width": 136,
+              "height": 22
+            },
+            "css": {
+              "x": 174.28125,
+              "y": 62.4609375,
+              "width": 41.4375,
+              "height": 6.703125
+            },
+            "interactive": false
+          },
+          "settings-row-music-label": {
+            "logical": {
+              "x": 640,
+              "y": 288,
+              "width": 100,
+              "height": 22
+            },
+            "css": {
+              "x": 179.765625,
+              "y": 84.3984375,
+              "width": 30.46875,
+              "height": 6.703125
+            },
+            "interactive": false
+          },
+          "settings-row-ambience-label": {
+            "logical": {
+              "x": 640,
+              "y": 360,
+              "width": 142,
+              "height": 22
+            },
+            "css": {
+              "x": 173.3671875,
+              "y": 106.3359375,
+              "width": 43.265625,
+              "height": 6.703125
+            },
+            "interactive": false
+          },
+          "settings-row-sfx-label": {
+            "logical": {
+              "x": 640,
+              "y": 432,
+              "width": 111,
+              "height": 22
+            },
+            "css": {
+              "x": 178.08984375,
+              "y": 128.2734375,
+              "width": 33.8203125,
+              "height": 6.703125
+            },
+            "interactive": false
+          },
+          "settings-section-accessibility": {
+            "logical": {
+              "x": 349,
+              "y": 497,
+              "width": 120,
+              "height": 22
+            },
+            "css": {
+              "x": 88.0546875,
+              "y": 148.078125,
+              "width": 36.5625,
+              "height": 6.703125
+            },
+            "interactive": false
+          },
+          "settings-row-reduced-motion-label": {
+            "logical": {
+              "x": 640,
+              "y": 548,
+              "width": 209,
+              "height": 22
+            },
+            "css": {
+              "x": 163.16015625,
+              "y": 163.6171875,
+              "width": 63.6796875,
+              "height": 6.703125
+            },
+            "interactive": false
+          },
+          "settings-viewport-top-guard": {
+            "logical": {
+              "x": 640,
+              "y": 80,
+              "width": 748,
+              "height": 130
+            },
+            "css": {
+              "x": 81.046875,
+              "y": 4.5703125,
+              "width": 227.90625,
+              "height": 39.609375
+            },
+            "interactive": false
+          },
+          "settings-viewport-bottom-guard": {
+            "logical": {
+              "x": 640,
+              "y": 635,
+              "width": 748,
+              "height": 140
+            },
+            "css": {
+              "x": 81.046875,
+              "y": 172.1484375,
+              "width": 227.90625,
+              "height": 42.65625
+            },
+            "interactive": false
+          },
+          "settings-viewport-outer-top-guard": {
+            "logical": {
+              "x": 640,
+              "y": 7.5,
+              "width": 1280,
+              "height": 15
+            },
+            "css": {
+              "x": 0,
+              "y": 0,
+              "width": 390,
+              "height": 4.5703125
+            },
+            "interactive": false
+          },
+          "settings-viewport-outer-bottom-guard": {
+            "logical": {
+              "x": 640,
+              "y": 712.5,
+              "width": 1280,
+              "height": 15
+            },
+            "css": {
+              "x": 0,
+              "y": 214.8046875,
+              "width": 390,
+              "height": 4.5703125
+            },
+            "interactive": false
+          },
+          "settings-scrollbar-track": {
+            "logical": {
+              "x": 962,
+              "y": 355,
+              "width": 8,
+              "height": 420
+            },
+            "css": {
+              "x": 291.890625,
+              "y": 44.1796875,
+              "width": 2.4375,
+              "height": 127.96875
+            },
+            "interactive": false
+          },
+          "settings-scrollbar-thumb": {
+            "logical": {
+              "x": 962,
+              "y": 259.24870466321244,
+              "width": 12,
+              "height": 228.4974093264249
+            },
+            "css": {
+              "x": 291.28125,
+              "y": 44.1796875,
+              "width": 3.65625,
+              "height": 69.62030440414509
+            },
+            "interactive": false
+          },
+          "settings-panel-frame": {
+            "logical": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "settings-heading": {
+            "logical": {
+              "x": 640,
+              "y": 52,
+              "width": 161,
+              "height": 40
+            },
+            "css": {
+              "x": 170.47265625,
+              "y": 9.75,
+              "width": 49.0546875,
+              "height": 12.1875
+            },
+            "interactive": false
+          },
+          "settings-hint": {
+            "logical": {
+              "x": 640,
+              "y": 91,
+              "width": 313,
+              "height": 21
+            },
+            "css": {
+              "x": 147.31640625,
+              "y": 24.52734375,
+              "width": 95.3671875,
+              "height": 6.3984375
+            },
+            "interactive": false
+          },
+          "settings-status": {
+            "logical": {
+              "x": 640,
+              "y": 600,
+              "width": 373,
+              "height": 15
+            },
+            "css": {
+              "x": 138.17578125,
+              "y": 180.52734375,
+              "width": 113.6484375,
+              "height": 4.5703125
+            },
+            "interactive": false
+          },
+          "settings-done-surface": {
+            "logical": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "settings-done": {
+            "logical": {
+              "x": 640,
+              "y": 656,
+              "width": 260,
+              "height": 64
+            },
+            "css": {
+              "x": 155.390625,
+              "y": 190.125,
+              "width": 79.21875,
+              "height": 19.5
+            },
+            "interactive": true
+          },
+          "settings-done-label": {
+            "logical": {
+              "x": 640,
+              "y": 656,
+              "width": 62,
+              "height": 26
+            },
+            "css": {
+              "x": 185.5546875,
+              "y": 195.9140625,
+              "width": 18.890625,
+              "height": 7.921875
+            },
+            "interactive": false
+          }
+        }
+      },
+      "settings-scrolled": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "canvas": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 219.375
+        },
+        "logicalToCssScale": {
+          "x": 0.3046875,
+          "y": 0.3046875
+        },
+        "domCompanions": [],
+        "activeScenes": ["ExplorationHudOverlayScene", "SettingsScene"],
+        "namedObjects": {
+          "settings-backdrop": {
+            "logical": {
+              "x": 640,
+              "y": 360,
+              "width": 1280,
+              "height": 720
+            },
+            "css": {
+              "x": 0,
+              "y": 0,
+              "width": 390,
+              "height": 219.375
+            },
+            "interactive": false
+          },
+          "settings-panel": {
+            "logical": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "settings-row-surface-muted": {
+            "logical": {
+              "x": 640,
+              "y": 216,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 195,
+              "y": 65.8125,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "settings-row-surface-music": {
+            "logical": {
+              "x": 640,
+              "y": 288,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 195,
+              "y": 87.75,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "settings-row-surface-ambience": {
+            "logical": {
+              "x": 640,
+              "y": 360,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 195,
+              "y": 109.6875,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "settings-row-surface-sfx": {
+            "logical": {
+              "x": 640,
+              "y": 432,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 195,
+              "y": 131.625,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "settings-row-surface-reduced-motion": {
+            "logical": {
+              "x": 640,
+              "y": 548,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 195,
+              "y": 166.96875,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "settings-row-muted": {
+            "logical": {
+              "x": 640,
+              "y": 216,
+              "width": 590,
+              "height": 58
+            },
+            "css": {
+              "x": 105.1171875,
+              "y": 56.9765625,
+              "width": 179.765625,
+              "height": 17.671875
+            },
+            "interactive": true
+          },
+          "settings-row-music": {
+            "logical": {
+              "x": 640,
+              "y": 288,
+              "width": 590,
+              "height": 58
+            },
+            "css": {
+              "x": 105.1171875,
+              "y": 78.9140625,
+              "width": 179.765625,
+              "height": 17.671875
+            },
+            "interactive": true
+          },
+          "settings-row-ambience": {
+            "logical": {
+              "x": 640,
+              "y": 360,
+              "width": 590,
+              "height": 58
+            },
+            "css": {
+              "x": 105.1171875,
+              "y": 100.8515625,
+              "width": 179.765625,
+              "height": 17.671875
+            },
+            "interactive": true
+          },
+          "settings-row-sfx": {
+            "logical": {
+              "x": 640,
+              "y": 432,
+              "width": 590,
+              "height": 58
+            },
+            "css": {
+              "x": 105.1171875,
+              "y": 122.7890625,
+              "width": 179.765625,
+              "height": 17.671875
+            },
+            "interactive": true
+          },
+          "settings-row-reduced-motion": {
+            "logical": {
+              "x": 640,
+              "y": 548,
+              "width": 590,
+              "height": 58
+            },
+            "css": {
+              "x": 105.1171875,
+              "y": 158.1328125,
+              "width": 179.765625,
+              "height": 17.671875
+            },
+            "interactive": false
+          },
+          "settings-section-sound": {
+            "logical": {
+              "x": 349,
+              "y": 165,
+              "width": 61,
+              "height": 22
+            },
+            "css": {
+              "x": 97.04296875,
+              "y": 46.921875,
+              "width": 18.5859375,
+              "height": 6.703125
+            },
+            "interactive": false
+          },
+          "settings-row-muted-label": {
+            "logical": {
+              "x": 640,
+              "y": 216,
+              "width": 136,
+              "height": 22
+            },
+            "css": {
+              "x": 174.28125,
+              "y": 62.4609375,
+              "width": 41.4375,
+              "height": 6.703125
+            },
+            "interactive": false
+          },
+          "settings-row-music-label": {
+            "logical": {
+              "x": 640,
+              "y": 288,
+              "width": 100,
+              "height": 22
+            },
+            "css": {
+              "x": 179.765625,
+              "y": 84.3984375,
+              "width": 30.46875,
+              "height": 6.703125
+            },
+            "interactive": false
+          },
+          "settings-row-ambience-label": {
+            "logical": {
+              "x": 640,
+              "y": 360,
+              "width": 142,
+              "height": 22
+            },
+            "css": {
+              "x": 173.3671875,
+              "y": 106.3359375,
+              "width": 43.265625,
+              "height": 6.703125
+            },
+            "interactive": false
+          },
+          "settings-row-sfx-label": {
+            "logical": {
+              "x": 640,
+              "y": 432,
+              "width": 111,
+              "height": 22
+            },
+            "css": {
+              "x": 178.08984375,
+              "y": 128.2734375,
+              "width": 33.8203125,
+              "height": 6.703125
+            },
+            "interactive": false
+          },
+          "settings-section-accessibility": {
+            "logical": {
+              "x": 349,
+              "y": 497,
+              "width": 120,
+              "height": 22
+            },
+            "css": {
+              "x": 88.0546875,
+              "y": 148.078125,
+              "width": 36.5625,
+              "height": 6.703125
+            },
+            "interactive": false
+          },
+          "settings-row-reduced-motion-label": {
+            "logical": {
+              "x": 640,
+              "y": 548,
+              "width": 209,
+              "height": 22
+            },
+            "css": {
+              "x": 163.16015625,
+              "y": 163.6171875,
+              "width": 63.6796875,
+              "height": 6.703125
+            },
+            "interactive": false
+          },
+          "settings-viewport-top-guard": {
+            "logical": {
+              "x": 640,
+              "y": 80,
+              "width": 748,
+              "height": 130
+            },
+            "css": {
+              "x": 81.046875,
+              "y": 4.5703125,
+              "width": 227.90625,
+              "height": 39.609375
+            },
+            "interactive": false
+          },
+          "settings-viewport-bottom-guard": {
+            "logical": {
+              "x": 640,
+              "y": 635,
+              "width": 748,
+              "height": 140
+            },
+            "css": {
+              "x": 81.046875,
+              "y": 172.1484375,
+              "width": 227.90625,
+              "height": 42.65625
+            },
+            "interactive": false
+          },
+          "settings-viewport-outer-top-guard": {
+            "logical": {
+              "x": 640,
+              "y": 7.5,
+              "width": 1280,
+              "height": 15
+            },
+            "css": {
+              "x": 0,
+              "y": 0,
+              "width": 390,
+              "height": 4.5703125
+            },
+            "interactive": false
+          },
+          "settings-viewport-outer-bottom-guard": {
+            "logical": {
+              "x": 640,
+              "y": 712.5,
+              "width": 1280,
+              "height": 15
+            },
+            "css": {
+              "x": 0,
+              "y": 214.8046875,
+              "width": 390,
+              "height": 4.5703125
+            },
+            "interactive": false
+          },
+          "settings-scrollbar-track": {
+            "logical": {
+              "x": 962,
+              "y": 355,
+              "width": 8,
+              "height": 420
+            },
+            "css": {
+              "x": 291.890625,
+              "y": 44.1796875,
+              "width": 2.4375,
+              "height": 127.96875
+            },
+            "interactive": false
+          },
+          "settings-scrollbar-thumb": {
+            "logical": {
+              "x": 962,
+              "y": 259.24870466321244,
+              "width": 12,
+              "height": 228.4974093264249
+            },
+            "css": {
+              "x": 291.28125,
+              "y": 44.1796875,
+              "width": 3.65625,
+              "height": 69.62030440414509
+            },
+            "interactive": false
+          },
+          "settings-panel-frame": {
+            "logical": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "settings-heading": {
+            "logical": {
+              "x": 640,
+              "y": 52,
+              "width": 161,
+              "height": 40
+            },
+            "css": {
+              "x": 170.47265625,
+              "y": 9.75,
+              "width": 49.0546875,
+              "height": 12.1875
+            },
+            "interactive": false
+          },
+          "settings-hint": {
+            "logical": {
+              "x": 640,
+              "y": 91,
+              "width": 313,
+              "height": 21
+            },
+            "css": {
+              "x": 147.31640625,
+              "y": 24.52734375,
+              "width": 95.3671875,
+              "height": 6.3984375
+            },
+            "interactive": false
+          },
+          "settings-status": {
+            "logical": {
+              "x": 640,
+              "y": 600,
+              "width": 373,
+              "height": 15
+            },
+            "css": {
+              "x": 138.17578125,
+              "y": 180.52734375,
+              "width": 113.6484375,
+              "height": 4.5703125
+            },
+            "interactive": false
+          },
+          "settings-done-surface": {
+            "logical": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "settings-done": {
+            "logical": {
+              "x": 640,
+              "y": 656,
+              "width": 260,
+              "height": 64
+            },
+            "css": {
+              "x": 155.390625,
+              "y": 190.125,
+              "width": 79.21875,
+              "height": 19.5
+            },
+            "interactive": true
+          },
+          "settings-done-label": {
+            "logical": {
+              "x": 640,
+              "y": 656,
+              "width": 62,
+              "height": 26
+            },
+            "css": {
+              "x": 185.5546875,
+              "y": 195.9140625,
+              "width": 18.890625,
+              "height": 7.921875
+            },
+            "interactive": false
+          }
+        }
+      },
+      "bag": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "canvas": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 219.375
+        },
+        "logicalToCssScale": {
+          "x": 0.3046875,
+          "y": 0.3046875
+        },
+        "domCompanions": [],
+        "activeScenes": ["InventoryScene", "ExplorationHudOverlayScene"],
+        "namedObjects": {
+          "inventory-modal-panel": {
+            "logical": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "inventory-view-badge": {
+            "logical": {
+              "x": 122,
+              "y": 76,
+              "width": 88,
+              "height": 36
+            },
+            "css": {
+              "x": 23.765625,
+              "y": 17.671875,
+              "width": 26.8125,
+              "height": 10.96875
+            },
+            "interactive": false
+          },
+          "inventory-modal-title": {
+            "logical": {
+              "x": 640,
+              "y": 76,
+              "width": 301,
+              "height": 40
+            },
+            "css": {
+              "x": 149.14453125,
+              "y": 17.0625,
+              "width": 91.7109375,
+              "height": 12.1875
+            },
+            "interactive": false
+          },
+          "bag-close-button": {
+            "logical": {
+              "x": 1172,
+              "y": 76,
+              "width": 82,
+              "height": 70
+            },
+            "css": {
+              "x": 344.6015625,
+              "y": 12.4921875,
+              "width": 24.984375,
+              "height": 21.328125
+            },
+            "interactive": true
+          },
+          "bag-themed-satchel": {
+            "logical": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "bag-shimmer-balance": {
+            "logical": {
+              "x": 1040,
+              "y": 155,
+              "width": 140,
+              "height": 32
+            },
+            "css": {
+              "x": 295.546875,
+              "y": 42.3515625,
+              "width": 42.65625,
+              "height": 9.75
+            },
+            "interactive": false
+          },
+          "concept-modal-surface:bag-pocket-shadow:food": {
+            "logical": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "bag-pocket-shadow:food": {
+            "logical": {
+              "x": 233,
+              "y": 159,
+              "width": 158.1,
+              "height": 45.36
+            },
+            "css": {
+              "x": 46.906640624999994,
+              "y": 41.535,
+              "width": 48.17109375,
+              "height": 13.820625
+            },
+            "interactive": false
+          },
+          "concept-modal-surface:bag-pocket:food": {
+            "logical": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "bag-pocket:food": {
+            "logical": {
+              "x": 230,
+              "y": 155,
+              "width": 156.4,
+              "height": 45.36
+            },
+            "css": {
+              "x": 46.251562500000006,
+              "y": 40.31625,
+              "width": 47.653125,
+              "height": 13.820625
+            },
+            "interactive": true
+          },
+          "concept-modal-surface:bag-pocket-shadow:quest": {
+            "logical": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "bag-pocket-shadow:quest": {
+            "logical": {
+              "x": 418,
+              "y": 159,
+              "width": 158.1,
+              "height": 45.36
+            },
+            "css": {
+              "x": 103.273828125,
+              "y": 41.535,
+              "width": 48.17109375,
+              "height": 13.820625
+            },
+            "interactive": false
+          },
+          "concept-modal-surface:bag-pocket:quest": {
+            "logical": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "bag-pocket:quest": {
+            "logical": {
+              "x": 415,
+              "y": 155,
+              "width": 156.4,
+              "height": 45.36
+            },
+            "css": {
+              "x": 102.61875,
+              "y": 40.31625,
+              "width": 47.653125,
+              "height": 13.820625
+            },
+            "interactive": true
+          },
+          "concept-modal-surface:bag-pocket-shadow:decor": {
+            "logical": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "bag-pocket-shadow:decor": {
+            "logical": {
+              "x": 603,
+              "y": 159,
+              "width": 158.1,
+              "height": 45.36
+            },
+            "css": {
+              "x": 159.64101562500002,
+              "y": 41.535,
+              "width": 48.17109375,
+              "height": 13.820625
+            },
+            "interactive": false
+          },
+          "concept-modal-surface:bag-pocket:decor": {
+            "logical": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "bag-pocket:decor": {
+            "logical": {
+              "x": 600,
+              "y": 155,
+              "width": 156.4,
+              "height": 45.36
+            },
+            "css": {
+              "x": 158.98593749999998,
+              "y": 40.31625,
+              "width": 47.653125,
+              "height": 13.820625
+            },
+            "interactive": true
+          },
+          "concept-modal-surface:bag-pocket-shadow:keepsakes": {
+            "logical": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "bag-pocket-shadow:keepsakes": {
+            "logical": {
+              "x": 788,
+              "y": 159,
+              "width": 158.1,
+              "height": 45.36
+            },
+            "css": {
+              "x": 216.00820312500002,
+              "y": 41.535,
+              "width": 48.17109375,
+              "height": 13.820625
+            },
+            "interactive": false
+          },
+          "concept-modal-surface:bag-pocket:keepsakes": {
+            "logical": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "bag-pocket:keepsakes": {
+            "logical": {
+              "x": 785,
+              "y": 155,
+              "width": 156.4,
+              "height": 45.36
+            },
+            "css": {
+              "x": 215.35312499999998,
+              "y": 40.31625,
+              "width": 47.653125,
+              "height": 13.820625
+            },
+            "interactive": true
+          },
+          "bag-list-panel": {
+            "logical": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "bag-detail-panel": {
+            "logical": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "bag-pocket-empty": {
+            "logical": {
+              "x": 495,
+              "y": 385,
+              "width": 366,
+              "height": 62
+            },
+            "css": {
+              "x": 95.0625,
+              "y": 107.859375,
+              "width": 111.515625,
+              "height": 18.890625
+            },
+            "interactive": false
+          },
+          "bag-items-content": {
+            "logical": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "wp18j-inventory-close-icon": {
+            "logical": {
+              "x": 1172,
+              "y": 76,
+              "width": 32,
+              "height": 45
+            },
+            "css": {
+              "x": 352.21875,
+              "y": 16.30078125,
+              "width": 9.75,
+              "height": 13.7109375
+            },
+            "interactive": false
+          }
+        }
+      },
+      "map-before-drag": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "canvas": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 219.375
+        },
+        "logicalToCssScale": {
+          "x": 0.3046875,
+          "y": 0.3046875
+        },
+        "domCompanions": [],
+        "activeScenes": ["InventoryScene", "ExplorationHudOverlayScene"],
+        "namedObjects": {
+          "inventory-modal-panel": {
+            "logical": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "inventory-view-badge": {
+            "logical": {
+              "x": 122,
+              "y": 76,
+              "width": 90,
+              "height": 36
+            },
+            "css": {
+              "x": 23.4609375,
+              "y": 17.671875,
+              "width": 27.421875,
+              "height": 10.96875
+            },
+            "interactive": false
+          },
+          "inventory-modal-title": {
+            "logical": {
+              "x": 640,
+              "y": 76,
+              "width": 209,
+              "height": 40
+            },
+            "css": {
+              "x": 163.16015625,
+              "y": 17.0625,
+              "width": 63.6796875,
+              "height": 12.1875
+            },
+            "interactive": false
+          },
+          "bag-close-button": {
+            "logical": {
+              "x": 1172,
+              "y": 76,
+              "width": 82,
+              "height": 70
+            },
+            "css": {
+              "x": 344.6015625,
+              "y": 12.4921875,
+              "width": 24.984375,
+              "height": 21.328125
+            },
+            "interactive": true
+          },
+          "bag-map-parchment": {
+            "logical": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "bag-map-guidance": {
+            "logical": {
+              "x": 640,
+              "y": 644,
+              "width": 574,
+              "height": 15
+            },
+            "css": {
+              "x": 107.5546875,
+              "y": 193.93359375,
+              "width": 174.890625,
+              "height": 4.5703125
+            },
+            "interactive": false
+          },
+          "wp18j-map-pan-mask": {
+            "logical": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "wp18j-map-camera-clip-guard": {
+            "logical": {
+              "x": 640,
+              "y": 359,
+              "width": 1016,
+              "height": 406
+            },
+            "css": {
+              "x": 40.21875,
+              "y": 47.53125,
+              "width": 309.5625,
+              "height": 123.703125
+            },
+            "interactive": false
+          },
+          "bag-map-content": {
+            "logical": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "bag-map-current-location": {
+            "logical": {
+              "x": 260,
+              "y": 404.4,
+              "width": 70,
+              "height": 70
+            },
+            "css": {
+              "x": 68.5546875,
+              "y": 112.55156249999999,
+              "width": 21.328125,
+              "height": 21.328125
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:moonflower-glade": {
+            "logical": {
+              "x": 410,
+              "y": 370,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 115.4765625,
+              "y": 103.2890625,
+              "width": 18.890625,
+              "height": 18.890625
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:sunbeam-village": {
+            "logical": {
+              "x": 580,
+              "y": 301.20000000000005,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 167.2734375,
+              "y": 82.32656250000001,
+              "width": 18.890625,
+              "height": 18.890625
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:rainbow-meadow": {
+            "logical": {
+              "x": 720,
+              "y": 404.4,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 209.9296875,
+              "y": 113.77031249999999,
+              "width": 18.890625,
+              "height": 18.890625
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:crystal-brook": {
+            "logical": {
+              "x": 870,
+              "y": 301.20000000000005,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 255.6328125,
+              "y": 82.32656250000001,
+              "width": 18.890625,
+              "height": 18.890625
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:whispering-woods": {
+            "logical": {
+              "x": 1020,
+              "y": 400.09999999999997,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 301.3359375,
+              "y": 112.46015624999998,
+              "width": 18.890625,
+              "height": 18.890625
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:starlight-beach": {
+            "logical": {
+              "x": 1080,
+              "y": 494.7,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 319.6171875,
+              "y": 141.28359375,
+              "width": 18.890625,
+              "height": 18.890625
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:moonflower-field": {
+            "logical": {
+              "x": 430,
+              "y": 499,
+              "width": 40,
+              "height": 40
+            },
+            "css": {
+              "x": 124.921875,
+              "y": 145.9453125,
+              "width": 12.1875,
+              "height": 12.1875
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:rainbow-run": {
+            "logical": {
+              "x": 630,
+              "y": 503.3,
+              "width": 40,
+              "height": 40
+            },
+            "css": {
+              "x": 185.859375,
+              "y": 147.25546875,
+              "width": 12.1875,
+              "height": 12.1875
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:prism-grotto": {
+            "logical": {
+              "x": 870,
+              "y": 421.6,
+              "width": 40,
+              "height": 40
+            },
+            "css": {
+              "x": 258.984375,
+              "y": 122.36250000000001,
+              "width": 12.1875,
+              "height": 12.1875
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:lantern-clearing": {
+            "logical": {
+              "x": 1090,
+              "y": 288.3,
+              "width": 40,
+              "height": 40
+            },
+            "css": {
+              "x": 326.015625,
+              "y": 81.74765625,
+              "width": 12.1875,
+              "height": 12.1875
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:future-north": {
+            "logical": {
+              "x": 730,
+              "y": 206.6,
+              "width": 50,
+              "height": 50
+            },
+            "css": {
+              "x": 214.8046875,
+              "y": 55.33125,
+              "width": 15.234375,
+              "height": 15.234375
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:future-south": {
+            "logical": {
+              "x": 860,
+              "y": 533.4,
+              "width": 50,
+              "height": 50
+            },
+            "css": {
+              "x": 254.4140625,
+              "y": 154.903125,
+              "width": 15.234375,
+              "height": 15.234375
+            },
+            "interactive": false
+          },
+          "wp18j-map-pan-frame": {
+            "logical": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "wp18j-map-compass": {
+            "logical": {
+              "x": 170,
+              "y": 192,
+              "width": 68,
+              "height": 68
+            },
+            "css": {
+              "x": 41.4375,
+              "y": 48.140625,
+              "width": 20.71875,
+              "height": 20.71875
+            },
+            "interactive": false
+          },
+          "wp18j-map-compass-label": {
+            "logical": {
+              "x": 170,
+              "y": 192,
+              "width": 15,
+              "height": 37
+            },
+            "css": {
+              "x": 49.51171875,
+              "y": 52.86328125,
+              "width": 4.5703125,
+              "height": 11.2734375
+            },
+            "interactive": false
+          },
+          "wp18j-map-pan-zone": {
+            "logical": {
+              "x": 640,
+              "y": 359,
+              "width": 1032,
+              "height": 422
+            },
+            "css": {
+              "x": 37.78125,
+              "y": 45.09375,
+              "width": 314.4375,
+              "height": 128.578125
+            },
+            "interactive": true
+          },
+          "wp18j-map-pan-hint": {
+            "logical": {
+              "x": 1046,
+              "y": 164,
+              "width": 170,
+              "height": 23
+            },
+            "css": {
+              "x": 292.8046875,
+              "y": 46.46484375,
+              "width": 51.796875,
+              "height": 7.0078125
+            },
+            "interactive": false
+          },
+          "wp18j-inventory-close-icon": {
+            "logical": {
+              "x": 1172,
+              "y": 76,
+              "width": 32,
+              "height": 45
+            },
+            "css": {
+              "x": 352.21875,
+              "y": 16.30078125,
+              "width": 9.75,
+              "height": 13.7109375
+            },
+            "interactive": false
+          }
+        }
+      },
+      "map-after-drag": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "canvas": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 219.375
+        },
+        "logicalToCssScale": {
+          "x": 0.3046875,
+          "y": 0.3046875
+        },
+        "domCompanions": [],
+        "activeScenes": ["InventoryScene", "ExplorationHudOverlayScene"],
+        "namedObjects": {
+          "inventory-modal-panel": {
+            "logical": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "inventory-view-badge": {
+            "logical": {
+              "x": 122,
+              "y": 76,
+              "width": 90,
+              "height": 36
+            },
+            "css": {
+              "x": 23.4609375,
+              "y": 17.671875,
+              "width": 27.421875,
+              "height": 10.96875
+            },
+            "interactive": false
+          },
+          "inventory-modal-title": {
+            "logical": {
+              "x": 640,
+              "y": 76,
+              "width": 209,
+              "height": 40
+            },
+            "css": {
+              "x": 163.16015625,
+              "y": 17.0625,
+              "width": 63.6796875,
+              "height": 12.1875
+            },
+            "interactive": false
+          },
+          "bag-close-button": {
+            "logical": {
+              "x": 1172,
+              "y": 76,
+              "width": 82,
+              "height": 70
+            },
+            "css": {
+              "x": 344.6015625,
+              "y": 12.4921875,
+              "width": 24.984375,
+              "height": 21.328125
+            },
+            "interactive": true
+          },
+          "bag-map-parchment": {
+            "logical": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "bag-map-guidance": {
+            "logical": {
+              "x": 640,
+              "y": 644,
+              "width": 574,
+              "height": 15
+            },
+            "css": {
+              "x": 107.5546875,
+              "y": 193.93359375,
+              "width": 174.890625,
+              "height": 4.5703125
+            },
+            "interactive": false
+          },
+          "wp18j-map-pan-mask": {
+            "logical": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "wp18j-map-camera-clip-guard": {
+            "logical": {
+              "x": 640,
+              "y": 359,
+              "width": 1016,
+              "height": 406
+            },
+            "css": {
+              "x": 40.21875,
+              "y": 47.53125,
+              "width": 309.5625,
+              "height": 123.703125
+            },
+            "interactive": false
+          },
+          "bag-map-content": {
+            "logical": {
+              "x": -131.28205128205127,
+              "y": -68.9230769230769,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": -40,
+              "y": -20.999999999999993,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "bag-map-current-location": {
+            "logical": {
+              "x": 260,
+              "y": 404.4,
+              "width": 70,
+              "height": 70
+            },
+            "css": {
+              "x": 68.5546875,
+              "y": 112.55156249999999,
+              "width": 21.328125,
+              "height": 21.328125
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:moonflower-glade": {
+            "logical": {
+              "x": 410,
+              "y": 370,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 115.4765625,
+              "y": 103.2890625,
+              "width": 18.890625,
+              "height": 18.890625
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:sunbeam-village": {
+            "logical": {
+              "x": 580,
+              "y": 301.20000000000005,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 167.2734375,
+              "y": 82.32656250000001,
+              "width": 18.890625,
+              "height": 18.890625
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:rainbow-meadow": {
+            "logical": {
+              "x": 720,
+              "y": 404.4,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 209.9296875,
+              "y": 113.77031249999999,
+              "width": 18.890625,
+              "height": 18.890625
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:crystal-brook": {
+            "logical": {
+              "x": 870,
+              "y": 301.20000000000005,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 255.6328125,
+              "y": 82.32656250000001,
+              "width": 18.890625,
+              "height": 18.890625
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:whispering-woods": {
+            "logical": {
+              "x": 1020,
+              "y": 400.09999999999997,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 301.3359375,
+              "y": 112.46015624999998,
+              "width": 18.890625,
+              "height": 18.890625
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:starlight-beach": {
+            "logical": {
+              "x": 1080,
+              "y": 494.7,
+              "width": 62,
+              "height": 62
+            },
+            "css": {
+              "x": 319.6171875,
+              "y": 141.28359375,
+              "width": 18.890625,
+              "height": 18.890625
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:moonflower-field": {
+            "logical": {
+              "x": 430,
+              "y": 499,
+              "width": 40,
+              "height": 40
+            },
+            "css": {
+              "x": 124.921875,
+              "y": 145.9453125,
+              "width": 12.1875,
+              "height": 12.1875
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:rainbow-run": {
+            "logical": {
+              "x": 630,
+              "y": 503.3,
+              "width": 40,
+              "height": 40
+            },
+            "css": {
+              "x": 185.859375,
+              "y": 147.25546875,
+              "width": 12.1875,
+              "height": 12.1875
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:prism-grotto": {
+            "logical": {
+              "x": 870,
+              "y": 421.6,
+              "width": 40,
+              "height": 40
+            },
+            "css": {
+              "x": 258.984375,
+              "y": 122.36250000000001,
+              "width": 12.1875,
+              "height": 12.1875
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:lantern-clearing": {
+            "logical": {
+              "x": 1090,
+              "y": 288.3,
+              "width": 40,
+              "height": 40
+            },
+            "css": {
+              "x": 326.015625,
+              "y": 81.74765625,
+              "width": 12.1875,
+              "height": 12.1875
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:future-north": {
+            "logical": {
+              "x": 730,
+              "y": 206.6,
+              "width": 50,
+              "height": 50
+            },
+            "css": {
+              "x": 214.8046875,
+              "y": 55.33125,
+              "width": 15.234375,
+              "height": 15.234375
+            },
+            "interactive": false
+          },
+          "bag-map-node:valley:future-south": {
+            "logical": {
+              "x": 860,
+              "y": 533.4,
+              "width": 50,
+              "height": 50
+            },
+            "css": {
+              "x": 254.4140625,
+              "y": 154.903125,
+              "width": 15.234375,
+              "height": 15.234375
+            },
+            "interactive": false
+          },
+          "wp18j-map-pan-frame": {
+            "logical": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "wp18j-map-compass": {
+            "logical": {
+              "x": 170,
+              "y": 192,
+              "width": 68,
+              "height": 68
+            },
+            "css": {
+              "x": 41.4375,
+              "y": 48.140625,
+              "width": 20.71875,
+              "height": 20.71875
+            },
+            "interactive": false
+          },
+          "wp18j-map-compass-label": {
+            "logical": {
+              "x": 170,
+              "y": 192,
+              "width": 15,
+              "height": 37
+            },
+            "css": {
+              "x": 49.51171875,
+              "y": 52.86328125,
+              "width": 4.5703125,
+              "height": 11.2734375
+            },
+            "interactive": false
+          },
+          "wp18j-map-pan-zone": {
+            "logical": {
+              "x": 640,
+              "y": 359,
+              "width": 1032,
+              "height": 422
+            },
+            "css": {
+              "x": 37.78125,
+              "y": 45.09375,
+              "width": 314.4375,
+              "height": 128.578125
+            },
+            "interactive": true
+          },
+          "wp18j-map-pan-hint": {
+            "logical": {
+              "x": 1046,
+              "y": 164,
+              "width": 170,
+              "height": 23
+            },
+            "css": {
+              "x": 292.8046875,
+              "y": 46.46484375,
+              "width": 51.796875,
+              "height": 7.0078125
+            },
+            "interactive": false
+          },
+          "wp18j-inventory-close-icon": {
+            "logical": {
+              "x": 1172,
+              "y": 76,
+              "width": 32,
+              "height": 45
+            },
+            "css": {
+              "x": 352.21875,
+              "y": 16.30078125,
+              "width": 9.75,
+              "height": 13.7109375
+            },
+            "interactive": false
+          }
+        }
+      },
+      "book": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "canvas": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 219.375
+        },
+        "logicalToCssScale": {
+          "x": 0.3046875,
+          "y": 0.3046875
+        },
+        "domCompanions": [
+          {
+            "id": "wonderbook",
+            "rect": {
+              "x": 8,
+              "y": 227.375,
+              "width": 374,
+              "height": 608.625
+            },
+            "actions": [
+              {
+                "id": "section-discoveries",
+                "label": "✨ Finds",
+                "rect": {
+                  "x": 25,
+                  "y": 712.890625,
+                  "width": 166,
+                  "height": 58
+                }
+              },
+              {
+                "id": "section-friends",
+                "label": "🦄 Friends",
+                "rect": {
+                  "x": 199,
+                  "y": 712.890625,
+                  "width": 166,
+                  "height": 58
+                }
+              },
+              {
+                "id": "section-places",
+                "label": "🗺 Places",
+                "rect": {
+                  "x": 25,
+                  "y": 778.890625,
+                  "width": 166,
+                  "height": 58
+                }
+              },
+              {
+                "id": "section-races",
+                "label": "🎀 Races",
+                "rect": {
+                  "x": 199,
+                  "y": 778.890625,
+                  "width": 166,
+                  "height": 58
+                }
+              },
+              {
+                "id": "section-goals",
+                "label": "🌟 Goals",
+                "rect": {
+                  "x": 25,
+                  "y": 844.890625,
+                  "width": 166,
+                  "height": 58
+                }
+              },
+              {
+                "id": "filter-all",
+                "label": "✦ All adventures",
+                "rect": {
+                  "x": 25,
+                  "y": 939.890625,
+                  "width": 166,
+                  "height": 63.28125
+                }
+              },
+              {
+                "id": "filter-secrets",
+                "label": "★ Secrets",
+                "rect": {
+                  "x": 199,
+                  "y": 939.890625,
+                  "width": 166,
+                  "height": 63.28125
+                }
+              },
+              {
+                "id": "previous",
+                "label": "◀ Previous",
+                "rect": {
+                  "x": 25,
+                  "y": 1040.171875,
+                  "width": 166,
+                  "height": 58
+                }
+              },
+              {
+                "id": "next",
+                "label": "Next ▶",
+                "rect": {
+                  "x": 199,
+                  "y": 1040.171875,
+                  "width": 166,
+                  "height": 58
+                }
+              },
+              {
+                "id": "close",
+                "label": "✓ Close the book",
+                "rect": {
+                  "x": 25,
+                  "y": 1110.171875,
+                  "width": 166,
+                  "height": 63.28125
+                }
+              }
+            ]
+          }
+        ],
+        "activeScenes": ["WonderbookScene", "ExplorationHudOverlayScene"],
+        "namedObjects": {
+          "wonderbook-discovery-count": {
+            "logical": {
+              "x": 104,
+              "y": 690,
+              "width": 175,
+              "height": 29
+            },
+            "css": {
+              "x": 5.02734375,
+              "y": 205.81640625,
+              "width": 53.3203125,
+              "height": 8.8359375
+            },
+            "interactive": false
+          },
+          "wonderbook-themed-book": {
+            "logical": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "wonderbook-page-content": {
+            "logical": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "wonderbook-card:discovery:moonflower-glade": {
+            "logical": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "wonderbook-sticker:discovery:moonflower-glade": {
+            "logical": {
+              "x": 186,
+              "y": 260,
+              "width": 72,
+              "height": 72
+            },
+            "css": {
+              "x": 45.703125,
+              "y": 68.25,
+              "width": 21.9375,
+              "height": 21.9375
+            },
+            "interactive": false
+          },
+          "wonderbook-card:discovery:moonflower-sparkle": {
+            "logical": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "wonderbook-sticker:discovery:moonflower-sparkle": {
+            "logical": {
+              "x": 186,
+              "y": 408,
+              "width": 72,
+              "height": 72
+            },
+            "css": {
+              "x": 45.703125,
+              "y": 113.34375,
+              "width": 21.9375,
+              "height": 21.9375
+            },
+            "interactive": false
+          },
+          "wonderbook-card:discovery:rainbow-meadow": {
+            "logical": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "wonderbook-sticker:discovery:rainbow-meadow": {
+            "logical": {
+              "x": 720,
+              "y": 260,
+              "width": 72,
+              "height": 72
+            },
+            "css": {
+              "x": 208.40625,
+              "y": 68.25,
+              "width": 21.9375,
+              "height": 21.9375
+            },
+            "interactive": false
+          },
+          "wonderbook-card:discovery:prism-bloom": {
+            "logical": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "wonderbook-sticker:discovery:prism-bloom": {
+            "logical": {
+              "x": 720,
+              "y": 408,
+              "width": 72,
+              "height": 72
+            },
+            "css": {
+              "x": 208.40625,
+              "y": 113.34375,
+              "width": 21.9375,
+              "height": 21.9375
+            },
+            "interactive": false
+          },
+          "concept-modal-surface:wonderbook-close-button": {
+            "logical": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "css": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "interactive": false
+          },
+          "wonderbook-close-button": {
+            "logical": {
+              "x": 640,
+              "y": 682,
+              "width": 250,
+              "height": 54
+            },
+            "css": {
+              "x": 156.9140625,
+              "y": 199.5703125,
+              "width": 76.171875,
+              "height": 16.453125
+            },
+            "interactive": true
+          },
+          "wonderbook-section-shadow:discoveries": {
+            "logical": {
+              "x": 1161,
+              "y": 162,
+              "width": 112,
+              "height": 48
+            },
+            "css": {
+              "x": 336.6796875,
+              "y": 42.046875,
+              "width": 34.125,
+              "height": 14.625
+            },
+            "interactive": false
+          },
+          "wonderbook-section-shadow:friends": {
+            "logical": {
+              "x": 1161,
+              "y": 232,
+              "width": 112,
+              "height": 48
+            },
+            "css": {
+              "x": 336.6796875,
+              "y": 63.375,
+              "width": 34.125,
+              "height": 14.625
+            },
+            "interactive": false
+          },
+          "wonderbook-section-shadow:places": {
+            "logical": {
+              "x": 1161,
+              "y": 302,
+              "width": 112,
+              "height": 48
+            },
+            "css": {
+              "x": 336.6796875,
+              "y": 84.703125,
+              "width": 34.125,
+              "height": 14.625
+            },
+            "interactive": false
+          },
+          "wonderbook-section-shadow:races": {
+            "logical": {
+              "x": 1161,
+              "y": 372,
+              "width": 112,
+              "height": 48
+            },
+            "css": {
+              "x": 336.6796875,
+              "y": 106.03125,
+              "width": 34.125,
+              "height": 14.625
+            },
+            "interactive": false
+          },
+          "wonderbook-section-shadow:goals": {
+            "logical": {
+              "x": 1161,
+              "y": 442,
+              "width": 112,
+              "height": 48
+            },
+            "css": {
+              "x": 336.6796875,
+              "y": 127.359375,
+              "width": 34.125,
+              "height": 14.625
+            },
+            "interactive": false
+          },
+          "wonderbook-section-discoveries": {
+            "logical": {
+              "x": 1154,
+              "y": 158,
+              "width": 96,
+              "height": 42
+            },
+            "css": {
+              "x": 336.984375,
+              "y": 41.7421875,
+              "width": 29.25,
+              "height": 12.796875
+            },
+            "interactive": true
+          },
+          "wonderbook-section-friends": {
+            "logical": {
+              "x": 1154,
+              "y": 228,
+              "width": 113,
+              "height": 42
+            },
+            "css": {
+              "x": 334.39453125,
+              "y": 63.0703125,
+              "width": 34.4296875,
+              "height": 12.796875
+            },
+            "interactive": true
+          },
+          "wonderbook-section-places": {
+            "logical": {
+              "x": 1154,
+              "y": 298,
+              "width": 101,
+              "height": 42
+            },
+            "css": {
+              "x": 336.22265625,
+              "y": 84.3984375,
+              "width": 30.7734375,
+              "height": 12.796875
+            },
+            "interactive": true
+          },
+          "wonderbook-section-races": {
+            "logical": {
+              "x": 1154,
+              "y": 368,
+              "width": 100,
+              "height": 42
+            },
+            "css": {
+              "x": 336.375,
+              "y": 105.7265625,
+              "width": 30.46875,
+              "height": 12.796875
+            },
+            "interactive": true
+          },
+          "wonderbook-section-goals": {
+            "logical": {
+              "x": 1154,
+              "y": 438,
+              "width": 98,
+              "height": 42
+            },
+            "css": {
+              "x": 336.6796875,
+              "y": 127.0546875,
+              "width": 29.859375,
+              "height": 12.796875
+            },
+            "interactive": true
+          },
+          "wonderbook-tab-all": {
+            "logical": {
+              "x": 790,
+              "y": 178,
+              "width": 156,
+              "height": 33
+            },
+            "css": {
+              "x": 216.9375,
+              "y": 49.20703125,
+              "width": 47.53125,
+              "height": 10.0546875
+            },
+            "interactive": true
+          },
+          "wonderbook-tab-secrets": {
+            "logical": {
+              "x": 1015,
+              "y": 178,
+              "width": 101,
+              "height": 33
+            },
+            "css": {
+              "x": 293.87109375,
+              "y": 49.20703125,
+              "width": 30.7734375,
+              "height": 10.0546875
+            },
+            "interactive": true
+          },
+          "wonderbook-previous-page": {
+            "logical": {
+              "x": 126,
+              "y": 608,
+              "width": 133,
+              "height": 46
+            },
+            "css": {
+              "x": 18.12890625,
+              "y": 178.2421875,
+              "width": 40.5234375,
+              "height": 14.015625
+            },
+            "interactive": false
+          },
+          "wonderbook-next-page": {
+            "logical": {
+              "x": 1154,
+              "y": 608,
+              "width": 94,
+              "height": 46
+            },
+            "css": {
+              "x": 337.2890625,
+              "y": 178.2421875,
+              "width": 28.640625,
+              "height": 14.015625
+            },
+            "interactive": true
+          }
+        }
+      }
+    }
+  }
+}

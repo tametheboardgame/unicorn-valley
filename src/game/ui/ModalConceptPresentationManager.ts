@@ -3,7 +3,6 @@ import { RefreshThrottle } from '../performance/RefreshThrottle';
 import { CONCEPT_UI } from './ConceptUi';
 
 const MODAL_SCENE_KEYS = new Set([
-  'InventoryScene',
   'WonderbookScene',
   'SettingsScene',
   'UnicornCreatorScene',
@@ -26,6 +25,15 @@ function shouldStyleRectangle(
   rectangle: Phaser.GameObjects.Rectangle,
 ): boolean {
   if (scene.scene.key === 'SettingsScene') {
+    return false;
+  }
+
+  if (
+    scene.scene.key === 'WonderbookScene' &&
+    ['wonderbook-tab-all', 'wonderbook-tab-secrets', 'wonderbook-close-button'].includes(
+      rectangle.name,
+    )
+  ) {
     return false;
   }
 

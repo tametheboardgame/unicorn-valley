@@ -7,10 +7,10 @@ import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 import { RelationshipService } from '../relationships/RelationshipService';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import {
-  PortraitModalCompanion,
   type PortraitModalActionGroup,
+  PortraitModalCompanion,
 } from '../ui/PortraitModalCompanion';
-import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from '../ui/uiTheme';
+import { UI_COLOURS, UI_FONT } from '../ui/uiTheme';
 import {
   buildWonderbookCharacterEntries,
   type WonderbookCharacterEntry,
@@ -76,8 +76,10 @@ export class WonderbookScene extends Phaser.Scene {
   private rightPageNumber: Phaser.GameObjects.Text | null = null;
   private previousButton: Phaser.GameObjects.Text | null = null;
   private nextButton: Phaser.GameObjects.Text | null = null;
-  private allTab: Phaser.GameObjects.Text | null = null;
-  private secretsTab: Phaser.GameObjects.Text | null = null;
+  private allTab: Phaser.GameObjects.Rectangle | null = null;
+  private secretsTab: Phaser.GameObjects.Rectangle | null = null;
+  private allTabLabel: Phaser.GameObjects.Text | null = null;
+  private secretsTabLabel: Phaser.GameObjects.Text | null = null;
   private sectionTabs = new Map<WonderbookSection, Phaser.GameObjects.Text>();
   private sectionHeading: Phaser.GameObjects.Text | null = null;
   private summaryText: Phaser.GameObjects.Text | null = null;
@@ -128,23 +130,21 @@ export class WonderbookScene extends Phaser.Scene {
     this.refreshSectionChrome();
     this.renderSpread();
 
-    createUiShadow(this, GAME_WIDTH / 2, GAME_HEIGHT - 38, 250, 54, 14, 0.24);
     const closeButton = this.add
-      .rectangle(GAME_WIDTH / 2, GAME_HEIGHT - 38, 250, 54, UI_COLOURS.gold, 1)
-      .setStrokeStyle(4, UI_COLOURS.goldStrong, 1)
+      .rectangle(1190, 76, 72, 70, 0xffffff, 0.001)
       .setInteractive({ useHandCursor: true })
       .setName('wonderbook-close-button')
       .setDepth(15);
     this.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT - 38, 'Close the book ✨', {
-        color: UI_COLOURS.ink,
+      .text(1190, 76, '×', {
+        color: '#f8e7b0',
         fontFamily: UI_FONT,
-        fontSize: '20px',
+        fontSize: '38px',
         fontStyle: 'bold',
       })
+      .setName('wonderbook-close-icon')
       .setOrigin(0.5)
       .setDepth(16);
-    applyButtonHover(closeButton, UI_COLOURS.gold, 0xfff2bd);
 
     this.pointerInput = new PointerTouchInputAdapter();
     this.inputController = new InputController([new KeyboardInputAdapter(this), this.pointerInput]);
@@ -349,17 +349,28 @@ export class WonderbookScene extends Phaser.Scene {
   }
 
   private createDiscoveryFilters(): void {
-    this.allTab = this.add
+    this.allTabLabel = this.add
       .text(790, 178, '✦ All adventures', this.filterStyle(true))
-      .setName('wonderbook-tab-all')
+      .setName('wonderbook-tab-all-label')
       .setOrigin(0.5)
-      .setDepth(18)
+      .setDepth(18);
+    this.secretsTabLabel = this.add
+      .text(1015, 178, '★ Secrets', this.filterStyle(false))
+      .setName('wonderbook-tab-secrets-label')
+      .setOrigin(0.5)
+      .setDepth(18);
+
+    // The page-edge labels keep their accepted visual geometry while these
+    // transparent controls provide the real child-sized pointer targets.
+    this.allTab = this.add
+      .rectangle(790, 178, 190, 60, 0xffffff, 0.001)
+      .setName('wonderbook-tab-all')
+      .setDepth(19)
       .setInteractive({ useHandCursor: true });
     this.secretsTab = this.add
-      .text(1015, 178, '★ Secrets', this.filterStyle(false))
+      .rectangle(1015, 178, 150, 60, 0xffffff, 0.001)
       .setName('wonderbook-tab-secrets')
-      .setOrigin(0.5)
-      .setDepth(18)
+      .setDepth(19)
       .setInteractive({ useHandCursor: true });
 
     this.allTab.on('pointerdown', () => this.setDiscoveryFilter('all'));
@@ -546,7 +557,7 @@ export class WonderbookScene extends Phaser.Scene {
       },
       {
         id: 'close',
-        actions: [{ id: 'close', label: '✓ Close the book', onPress: () => this.closeBook() }],
+        actions: [{ id: 'close', label: '×', onPress: () => this.closeBook() }],
       },
     );
     this.portraitCompanion.setActionGroups(groups);
@@ -794,9 +805,11 @@ export class WonderbookScene extends Phaser.Scene {
     const discoveriesActive = this.activeSection === 'discoveries';
     this.allTab?.setVisible(discoveriesActive);
     this.secretsTab?.setVisible(discoveriesActive);
+    this.allTabLabel?.setVisible(discoveriesActive);
+    this.secretsTabLabel?.setVisible(discoveriesActive);
     if (discoveriesActive) {
-      this.allTab?.setStyle(this.filterStyle(this.discoveryFilter === 'all'));
-      this.secretsTab?.setStyle(this.filterStyle(this.discoveryFilter === 'secrets'));
+      this.allTabLabel?.setStyle(this.filterStyle(this.discoveryFilter === 'all'));
+      this.secretsTabLabel?.setStyle(this.filterStyle(this.discoveryFilter === 'secrets'));
       this.allTab?.setInteractive({ useHandCursor: true });
       this.secretsTab?.setInteractive({ useHandCursor: true });
     } else {

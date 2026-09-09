@@ -1,0 +1,138 @@
+[
+  {
+    "class": "desktop",
+    "viewport": [1440, 900],
+    "activeScenes": ["MoonflowerGladeScene", "ExplorationHudOverlayScene"],
+    "controls": [
+      {
+        "name": "exploration-hud-overlay-map-button",
+        "x": 83,
+        "y": 52,
+        "displayWidth": 118,
+        "displayHeight": 72,
+        "visible": true,
+        "interactive": true
+      },
+      {
+        "name": "exploration-hud-overlay-bag-button",
+        "x": 210,
+        "y": 52,
+        "displayWidth": 118,
+        "displayHeight": 72,
+        "visible": true,
+        "interactive": true
+      },
+      {
+        "name": "exploration-hud-overlay-book-button",
+        "x": 330,
+        "y": 52,
+        "displayWidth": 118,
+        "displayHeight": 72,
+        "visible": true,
+        "interactive": true
+      }
+    ]
+  },
+  {
+    "class": "tablet-landscape",
+    "viewport": [1280, 800],
+    "activeScenes": ["MoonflowerGladeScene", "ExplorationHudOverlayScene"],
+    "controls": [
+      {
+        "name": "exploration-hud-overlay-map-button",
+        "x": 83,
+        "y": 52,
+        "displayWidth": 118,
+        "displayHeight": 72,
+        "visible": true,
+        "interactive": true
+      },
+      {
+        "name": "exploration-hud-overlay-bag-button",
+        "x": 210,
+        "y": 52,
+        "displayWidth": 118,
+        "displayHeight": 72,
+        "visible": true,
+        "interactive": true
+      },
+      {
+        "name": "exploration-hud-overlay-book-button",
+        "x": 330,
+        "y": 52,
+        "displayWidth": 118,
+        "displayHeight": 72,
+        "visible": true,
+        "interactive": true
+      }
+    ]
+  },
+  {
+    "class": "phone-landscape",
+    "viewport": [844, 390],
+    "activeScenes": ["MoonflowerGladeScene", "ExplorationHudOverlayScene"],
+    "controls": [
+      {
+        "name": "exploration-hud-overlay-map-button",
+        "x": 83,
+        "y": 52,
+        "displayWidth": 118,
+        "displayHeight": 72,
+        "visible": true,
+        "interactive": true
+      },
+      {
+        "name": "exploration-hud-overlay-bag-button",
+        "x": 210,
+        "y": 52,
+        "displayWidth": 118,
+        "displayHeight": 72,
+        "visible": true,
+        "interactive": true
+      },
+      {
+        "name": "exploration-hud-overlay-book-button",
+        "x": 330,
+        "y": 52,
+        "displayWidth": 118,
+        "displayHeight": 72,
+        "visible": true,
+        "interactive": true
+      }
+    ]
+  },
+  {
+    "class": "phone-portrait",
+    "viewport": [390, 844],
+    "activeScenes": ["MoonflowerGladeScene", "ExplorationHudOverlayScene"],
+    "controls": [
+      {
+        "name": "exploration-hud-overlay-map-button",
+        "x": 83,
+        "y": 52,
+        "displayWidth": 118,
+        "displayHeight": 72,
+        "visible": false,
+        "interactive": true
+      },
+      {
+        "name": "exploration-hud-overlay-bag-button",
+        "x": 210,
+        "y": 52,
+        "displayWidth": 118,
+        "displayHeight": 72,
+        "visible": false,
+        "interactive": true
+      },
+      {
+        "name": "exploration-hud-overlay-book-button",
+        "x": 330,
+        "y": 52,
+        "displayWidth": 118,
+        "displayHeight": 72,
+        "visible": false,
+        "interactive": true
+      }
+    ]
+  }
+]

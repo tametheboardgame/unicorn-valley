@@ -1,5 +1,5 @@
 import { mkdirSync } from 'node:fs';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, type Page, test } from '@playwright/test';
 
 const SCREENSHOT_DIR = 'playtest-artifacts/screenshots';
 const WORLD_PLAYER_NAME = 'world-player-unicorn';
@@ -211,6 +211,7 @@ test.describe('R6.5-WP18I concept-grade tablet HUD', () => {
   test('keeps the concept composition contained across the landscape tablet matrix', async ({
     page,
   }) => {
+    test.setTimeout(90_000);
     for (const viewport of TABLET_VIEWPORTS) {
       await page.setViewportSize({ width: viewport.width, height: viewport.height });
       await page.goto('/?diagnostics=1');
@@ -237,7 +238,10 @@ test.describe('R6.5-WP18I concept-grade tablet HUD', () => {
     }
   });
 
-  test('reconciles Bag and Settings controls into the concept surface system', async ({ page }) => {
+  test('keeps scene-owned Bag and Settings controls in the concept surface system', async ({
+    page,
+  }) => {
+    test.setTimeout(75_000);
     await page.goto('/?diagnostics=1');
     await waitForDiagnostics(page);
     await page.waitForTimeout(700);
@@ -246,17 +250,45 @@ test.describe('R6.5-WP18I concept-grade tablet HUD', () => {
     await page.waitForTimeout(250);
     const bag = await getScene(page, 'InventoryScene');
     for (const name of [
-      'concept-modal-surface:inventory-modal-panel',
-      'concept-modal-surface:bag-close-button',
-      'concept-modal-surface:bag-list-panel',
-      'concept-modal-surface:bag-detail-panel',
-      'concept-modal-surface:bag-shop-button',
+      'inventory-modal-panel',
+      'bag-close-button',
+      'bag-list-panel',
+      'bag-detail-panel',
+      'wp18j-inventory-close-icon',
     ]) {
       expect(objectByName(bag, name).visible, name).toBe(true);
     }
+    expect(bag.objects.some(({ name }) => name === 'bag-shop-button')).toBe(false);
+    expect(bag.objects.some(({ name }) => name.startsWith('concept-modal-surface:'))).toBe(false);
     await captureEvidence(page, 'wp18i-bag.png');
 
-    await startScene(page, 'SettingsScene');
+    await page.goto('/?scene=glade&diagnostics=1');
+    await waitForDiagnostics(page);
+    await expect
+      .poll(async () => {
+        try {
+          return (await getScene(page, 'ExplorationHudOverlayScene')).objects.length;
+        } catch {
+          return 0;
+        }
+      })
+      .toBeGreaterThan(0);
+    const overlay = await getScene(page, 'ExplorationHudOverlayScene');
+    const settingsButton = objectByName(overlay, 'exploration-hud-overlay-settings-nav-button');
+    const canvasBox = await page.locator('canvas').boundingBox();
+    if (!canvasBox) {
+      throw new Error('Game canvas has no browser bounds.');
+    }
+    await page.mouse.click(
+      canvasBox.x + (settingsButton.x / 1280) * canvasBox.width,
+      canvasBox.y + (settingsButton.y / 720) * canvasBox.height,
+    );
+    await page.waitForFunction(() => {
+      const diagnostics = (
+        window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
+      ).__UNICORN_VALLEY_DIAGNOSTICS__;
+      return diagnostics?.snapshot().activeScenes.includes('SettingsScene') === true;
+    });
     await page.waitForTimeout(250);
     const settings = await getScene(page, 'SettingsScene');
     for (const name of [
@@ -274,15 +306,38 @@ test.describe('R6.5-WP18I concept-grade tablet HUD', () => {
   test('captures decoration and race surfaces in the same touch-first visual family', async ({
     page,
   }) => {
+    test.setTimeout(75_000);
     await page.goto('/?diagnostics=1');
     await waitForDiagnostics(page);
     await page.waitForTimeout(700);
 
-    await startScene(page, 'CottageDecorateScene');
+    await page.goto('/?scene=cottage&diagnostics=1');
+    await waitForDiagnostics(page);
+    await page.evaluate(() => {
+      const diagnostics = (
+        window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
+      ).__UNICORN_VALLEY_DIAGNOSTICS__;
+      diagnostics?.startScene('CottageDecorateScene', {
+        slotId: 'cottage-slot:centre-rug',
+      });
+    });
+    await page.waitForFunction(() => {
+      const diagnostics = (
+        window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
+      ).__UNICORN_VALLEY_DIAGNOSTICS__;
+      return diagnostics?.snapshot().activeScenes.includes('CottageDecorateScene') === true;
+    });
     await page.waitForTimeout(300);
     await captureEvidence(page, 'wp18i-decoration.png');
 
-    await startScene(page, 'RaceScene');
+    await page.goto('/?scene=race&diagnostics=1');
+    await waitForDiagnostics(page);
+    await page.waitForFunction(() => {
+      const diagnostics = (
+        window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
+      ).__UNICORN_VALLEY_DIAGNOSTICS__;
+      return diagnostics?.snapshot().activeScenes.includes('RaceScene') === true;
+    });
     const raceControls = page.locator('[data-race-mobile-controls="true"]');
     await expect(raceControls).toBeVisible();
     await expect(raceControls).toHaveClass(/is-landscape-tablet/);

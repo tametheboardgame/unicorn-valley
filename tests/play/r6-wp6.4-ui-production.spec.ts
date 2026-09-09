@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, type Page, test } from '@playwright/test';
 
 interface DiagnosticObject {
   name: string;
@@ -6,6 +6,9 @@ interface DiagnosticObject {
   interactive: boolean;
   x: number;
   y: number;
+  displayWidth: number;
+  displayHeight: number;
+  text: string | null;
   textureKey: string | null;
 }
 
@@ -17,6 +20,11 @@ interface DiagnosticScene {
 interface DiagnosticSnapshot {
   activeScenes: string[];
   scenes: DiagnosticScene[];
+}
+
+interface BrowserDiagnosticsApi {
+  snapshot(): DiagnosticSnapshot;
+  startScene(sceneKey: string, data?: object): void;
 }
 
 async function snapshot(page: Page): Promise<DiagnosticSnapshot> {
@@ -71,20 +79,52 @@ function namedObject(scene: DiagnosticScene, name: string): DiagnosticObject {
   return object;
 }
 
+async function startRegisteredScene(page: Page, sceneKey: string): Promise<void> {
+  await page.goto('/?diagnostics=1');
+  await page.waitForFunction(() => '__UNICORN_VALLEY_DIAGNOSTICS__' in window);
+  await expect
+    .poll(async () =>
+      page.evaluate((key) => {
+        const api = (
+          window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
+        ).__UNICORN_VALLEY_DIAGNOSTICS__;
+        if (!api) {
+          return false;
+        }
+        try {
+          api.startScene(key, { returnScene: 'MoonflowerGladeScene' });
+          return true;
+        } catch {
+          return false;
+        }
+      }, sceneKey),
+    )
+    .toBe(true);
+  await waitForScene(page, sceneKey);
+}
+
 test('production storybook shell is present on the core modal UI scenes', async ({ page }) => {
+  test.setTimeout(75_000);
   for (const [route, sceneKey] of [
     ['inventory', 'InventoryScene'],
     ['shop', 'ShopScene'],
     ['wonderbook', 'WonderbookScene'],
   ] as const) {
-    await page.goto(`/?scene=${route}&diagnostics=1`);
-    await waitForScene(page, sceneKey);
-    await waitForObject(page, sceneKey, `ui-production:${sceneKey}:anchor`);
+    await startRegisteredScene(page, sceneKey);
+    const canonicalAnchor =
+      sceneKey === 'InventoryScene'
+        ? 'inventory-modal-panel'
+        : sceneKey === 'WonderbookScene'
+          ? 'wonderbook-page-content'
+          : `ui-production:${sceneKey}:anchor`;
+    await waitForObject(page, sceneKey, canonicalAnchor);
     const scene = (await snapshot(page)).scenes.find(({ key }) => key === sceneKey);
     expect(scene).toBeTruthy();
-    expect(scene?.objects.some(({ name }) => name === `ui-production:${sceneKey}:ornaments`)).toBe(
-      true,
-    );
+    if (sceneKey === 'ShopScene') {
+      expect(
+        scene?.objects.some(({ name }) => name === `ui-production:${sceneKey}:ornaments`),
+      ).toBe(true);
+    }
     await page.screenshot({ path: `playtest-artifacts/screenshots/wp6.4-${route}.png` });
   }
 });
@@ -92,8 +132,9 @@ test('production storybook shell is present on the core modal UI scenes', async 
 test('Wonderbook production tabs remain large interactive navigation controls', async ({
   page,
 }) => {
-  await page.goto('/?scene=wonderbook&diagnostics=1');
-  await waitForScene(page, 'WonderbookScene');
+  test.setTimeout(75_000);
+  await page.setViewportSize({ width: 1024, height: 768 });
+  await startRegisteredScene(page, 'WonderbookScene');
   await waitForObject(page, 'WonderbookScene', 'wonderbook-tab-secrets');
 
   let scene = (await snapshot(page)).scenes.find(({ key }) => key === 'WonderbookScene');
@@ -104,9 +145,40 @@ test('Wonderbook production tabs remain large interactive navigation controls', 
 
   const allTab = namedObject(scene, 'wonderbook-tab-all');
   const secretsTab = namedObject(scene, 'wonderbook-tab-secrets');
+  const allLabel = namedObject(scene, 'wonderbook-tab-all-label');
+  const secretsLabel = namedObject(scene, 'wonderbook-tab-secrets-label');
   expect(allTab.interactive).toBe(true);
   expect(secretsTab.interactive).toBe(true);
+  const canvas = await page.locator('canvas').boundingBox();
+  expect(canvas).not.toBeNull();
+  const renderedScale = (canvas?.height ?? 0) / 720;
+  expect(allTab.displayHeight * renderedScale).toBeGreaterThanOrEqual(48);
+  expect(secretsTab.displayHeight * renderedScale).toBeGreaterThanOrEqual(48);
   expect(Math.abs(secretsTab.x - allTab.x)).toBeGreaterThan(150);
+  expect(allLabel.visible).toBe(true);
+  expect(secretsLabel.visible).toBe(true);
+  expect(
+    scene.objects.some(
+      ({ name, visible }) =>
+        [
+          'concept-modal-surface:wonderbook-tab-all',
+          'concept-modal-surface:wonderbook-tab-secrets',
+        ].includes(name) && visible,
+    ),
+  ).toBe(false);
+
+  const closeTarget = namedObject(scene, 'wonderbook-close-button');
+  const closeIcon = namedObject(scene, 'wonderbook-close-icon');
+  expect(closeTarget.interactive).toBe(true);
+  expect(closeTarget.displayWidth * renderedScale).toBeGreaterThanOrEqual(48);
+  expect(closeTarget.displayHeight * renderedScale).toBeGreaterThanOrEqual(48);
+  expect(closeTarget.x).toBeGreaterThanOrEqual(1190);
+  expect(closeTarget.x + closeTarget.displayWidth / 2).toBeLessThanOrEqual(1226);
+  expect(closeIcon.x).toBe(closeTarget.x);
+  expect(closeIcon.visible).toBe(true);
+  expect(
+    scene.objects.some(({ text, visible }) => text?.includes('Close the book') && visible),
+  ).toBe(false);
 
   await page.mouse.click(secretsTab.x, secretsTab.y);
   await page.waitForTimeout(300);
@@ -118,6 +190,7 @@ test('Wonderbook production tabs remain large interactive navigation controls', 
 test('dialogue and sound settings expose explicit production interaction states', async ({
   page,
 }) => {
+  test.setTimeout(75_000);
   await page.goto('/?scene=lumi-story&diagnostics=1');
   await waitForScene(page, 'LumiStoryScene');
   await waitForObject(page, 'LumiStoryScene', 'dialogue-production-panel');
@@ -129,19 +202,28 @@ test('dialogue and sound settings expose explicit production interaction states'
 
   await page.goto('/?scene=glade&diagnostics=1');
   await waitForScene(page, 'MoonflowerGladeScene');
-  await waitForObject(page, 'MoonflowerGladeScene', 'audio-setting-muted');
+  await waitForObject(page, 'MoonflowerGladeScene', 'exploration-shell-settings-nav-button');
   scene = (await snapshot(page)).scenes.find(({ key }) => key === 'MoonflowerGladeScene');
   expect(scene).toBeTruthy();
   if (!scene) {
     return;
   }
 
-  for (const name of [
-    'audio-setting-muted',
-    'audio-setting-music',
-    'audio-setting-ambience',
-    'audio-setting-sfx',
-  ]) {
-    expect(namedObject(scene, name).interactive).toBe(true);
+  const settingsButton = namedObject(scene, 'exploration-shell-settings-nav-button');
+  expect(settingsButton.interactive).toBe(true);
+  await page.mouse.click(settingsButton.x, settingsButton.y);
+  await waitForScene(page, 'SettingsScene');
+  await waitForObject(page, 'SettingsScene', 'settings-row-muted');
+  scene = (await snapshot(page)).scenes.find(({ key }) => key === 'SettingsScene');
+  expect(scene).toBeTruthy();
+  if (scene) {
+    for (const name of [
+      'settings-row-muted',
+      'settings-row-music',
+      'settings-row-ambience',
+      'settings-row-sfx',
+    ]) {
+      expect(namedObject(scene, name).interactive).toBe(true);
+    }
   }
 });

@@ -64,7 +64,7 @@ const BACKDROP = 0x302545;
 
 const ROW_X = GAME_WIDTH / 2;
 const ROW_WIDTH = 590;
-const ROW_HEIGHT = 58;
+const ROW_HEIGHT = 64;
 const ROW_RADIUS = 22;
 const ROW_GAP = 14;
 const ROW_SHADOW_X = 5;

@@ -50,10 +50,14 @@ jobs:
         run: npm run smoke:static
 
   browser-playtest:
-    name: Browser playtest
+    name: Browser playtest (${{ matrix.shard }}/3)
     needs: validate
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
 
     steps:
       - name: Check out repository
@@ -72,7 +76,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Run automated browser playtest
-        run: npm run test:play
+        run: npm run test:play -- --shard=${{ matrix.shard }}/3
 
       - name: Summarise automated findings
         if: always()
@@ -82,7 +86,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: automated-playtest
+          name: automated-playtest-${{ matrix.shard }}-of-3
           path: |
             playtest-artifacts
             package-lock.json

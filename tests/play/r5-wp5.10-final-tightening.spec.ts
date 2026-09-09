@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, type Page, test } from '@playwright/test';
 
 interface DiagnosticObject {
   type: string;
@@ -156,19 +156,14 @@ test.describe('R5-WP5.10 final tightening', () => {
     }
   });
 
-  test('suggestion footer stays visibly inside its card', async ({ page }) => {
+  test('retired suggestion card cannot reappear over the canonical HUD', async ({ page }) => {
     await page.goto('/?scene=village&diagnostics=1');
     await waitForScene(page, 'SunbeamVillageScene');
-    await waitForNamedObject(page, 'SunbeamVillageScene', 'r5-final-suggestion-footer');
-
     const village = sceneFrom(await snapshot(page), 'SunbeamVillageScene');
     const panel = village.objects.find(({ name }) => name === 'activity-suggestion-card');
     const footer = village.objects.find(({ name }) => name === 'r5-final-suggestion-footer');
-    if (!panel || !footer) {
-      throw new Error('Suggestion card geometry was not found.');
-    }
-
-    expect(footer.y + footer.displayHeight / 2).toBeLessThan(panel.y + panel.displayHeight / 2 - 5);
+    expect(panel).toBeUndefined();
+    expect(footer).toBeUndefined();
   });
 
   test('gentle rain remains readable on light outdoor regions', async ({ page }) => {

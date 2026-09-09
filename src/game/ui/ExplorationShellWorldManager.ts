@@ -1,7 +1,6 @@
 import Phaser from 'phaser';
 import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
-import { getBagInPersonShoppingManager } from './BagInPersonShoppingManager';
 import { ensureExplorationHudOverlayScene } from './ExplorationHudOverlayScene';
 import { ExplorationShell } from './ExplorationShell';
 import { supportsExplorationShell } from './ExplorationShellConfig';
@@ -16,7 +15,6 @@ export class ExplorationShellWorldManager {
 
   public constructor(private readonly game: Phaser.Game) {
     ensureExplorationHudOverlayScene(game);
-    getBagInPersonShoppingManager(game);
     this.game.events.on(Phaser.Core.Events.POST_STEP, this.update, this);
   }
 

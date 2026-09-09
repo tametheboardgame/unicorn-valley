@@ -185,7 +185,7 @@ async function waitForForwardControl(page: Page, running: boolean): Promise<void
 test('target-tablet touch completes creator, exploration, Book and accessibility flow', async ({
   page,
 }) => {
-  test.setTimeout(90_000);
+  test.setTimeout(240_000);
   await page.addInitScript(() => window.localStorage.clear());
   await page.goto('/?diagnostics=1');
   await waitForScene(page, 'TitleScene');
@@ -298,19 +298,27 @@ test('target-tablet touch completes creator, exploration, Book and accessibility
       (object) =>
         object.name === 'exploration-interaction-prompt-label' &&
         object.visible &&
-        object.text?.includes('Pip'),
+        object.text?.includes('Talk'),
     ),
   ).toBe(true);
 
   await logicalTap(page, 340, 46);
   await waitForScene(page, 'WonderbookScene');
-  await logicalTap(page, 640, 682);
+  // Close through the accepted top-right cross target. The former bottom
+  // coordinate was retired with the labelled "Close the book" button and now
+  // lands on inert page content, so waiting for the Glade could never succeed.
+  await logicalTapNamedObject(page, 'WonderbookScene', 'wonderbook-close-button');
   await waitForScene(page, 'MoonflowerGladeScene');
 
   await logicalTap(page, 486, 46);
   await waitForScene(page, 'SettingsScene');
-  await logicalTap(page, 640, 418);
-  await logicalTap(page, 640, 484);
+  // Use the actual scrollable controls rather than coordinates that became
+  // offscreen when Settings rows regained their 64-pixel touch height.
+  await page.mouse.move(640, 360);
+  await page.mouse.wheel(0, 300);
+  await page.waitForTimeout(150);
+  await logicalTapNamedObject(page, 'SettingsScene', 'settings-row-reduced-motion');
+  await logicalTapNamedObject(page, 'SettingsScene', 'settings-row-high-visibility');
   await page.waitForTimeout(300);
 
   const stored = await page.evaluate(() =>

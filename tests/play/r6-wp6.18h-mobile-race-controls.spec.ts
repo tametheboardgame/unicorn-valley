@@ -56,25 +56,6 @@ async function startRace(page: Page, sceneKey = STANDARD_RACE_SCENE): Promise<vo
   await expect(page.locator('[data-race-mobile-controls="true"]')).toBeVisible();
 }
 
-async function namedObject(
-  page: Page,
-  sceneKey: string,
-  name: string,
-): Promise<DiagnosticObject | null> {
-  return page.evaluate(
-    ({ activeSceneKey, objectName }) => {
-      const diagnosticWindow = window as typeof window & {
-        __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
-      };
-      const race = diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__
-        ?.snapshot()
-        .scenes.find((scene) => scene.key === activeSceneKey);
-      return race?.objects.find((object) => object.name === objectName) ?? null;
-    },
-    { activeSceneKey: sceneKey, objectName: name },
-  );
-}
-
 async function expectControlsBelowCanvas(page: Page): Promise<void> {
   const playArea = page.locator('#game-container');
   const playAreaBox = await playArea.boundingBox();
@@ -89,7 +70,44 @@ async function expectControlsBelowCanvas(page: Page): Promise<void> {
   );
 }
 
+async function expectLandscapeControlsAroundClearTrack(page: Page): Promise<void> {
+  const canvasBox = await page.locator('canvas').boundingBox();
+  const controlsBox = await page.locator('[data-race-mobile-controls="true"]').boundingBox();
+  const runBox = await page.locator('[data-race-action="run"]').boundingBox();
+  const jumpBox = await page.locator('[data-race-action="jump"]').boundingBox();
+
+  expect(canvasBox).not.toBeNull();
+  expect(controlsBox).not.toBeNull();
+  expect(runBox).not.toBeNull();
+  expect(jumpBox).not.toBeNull();
+  if (!canvasBox || !controlsBox || !runBox || !jumpBox) {
+    return;
+  }
+
+  // The accepted landscape composition is an overlay aligned to the canvas, not the
+  // portrait/phone control deck below it. Only the real corner targets may cover it.
+  expect(Math.abs(controlsBox.x - canvasBox.x)).toBeLessThanOrEqual(2);
+  expect(Math.abs(controlsBox.y - canvasBox.y)).toBeLessThanOrEqual(2);
+  expect(Math.abs(controlsBox.width - canvasBox.width)).toBeLessThanOrEqual(2);
+  expect(Math.abs(controlsBox.height - canvasBox.height)).toBeLessThanOrEqual(2);
+  expect(runBox.x + runBox.width).toBeLessThan(canvasBox.x + canvasBox.width * 0.36);
+  expect(jumpBox.x).toBeGreaterThan(canvasBox.x + canvasBox.width * 0.64);
+}
+
 async function expectCanvasControlsDisabled(page: Page, sceneKey: string): Promise<void> {
+  const sceneObjects = await page.evaluate((activeSceneKey) => {
+    const diagnosticWindow = window as typeof window & {
+      __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
+    };
+    return (
+      diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__
+        ?.snapshot()
+        .scenes.find((scene) => scene.key === activeSceneKey)?.objects ?? []
+    );
+  }, sceneKey);
+  const objectByName = (name: string): DiagnosticObject | null =>
+    sceneObjects.find((object) => object.name === name) ?? null;
+
   for (const name of [
     'r6-wp6.18h:canvas-jump-target',
     'r6-wp6.18h:canvas-jump-shadow',
@@ -101,7 +119,7 @@ async function expectCanvasControlsDisabled(page: Page, sceneKey: string): Promi
     'race-run-hint',
     'race-assistance-control',
   ]) {
-    const object = await namedObject(page, sceneKey, name);
+    const object = objectByName(name);
     expect(object, `Expected ${name} in ${sceneKey}`).not.toBeNull();
     expect(object?.visible).toBe(false);
   }
@@ -112,7 +130,7 @@ async function expectCanvasControlsDisabled(page: Page, sceneKey: string): Promi
     'race-run-touch-zone',
     'race-assistance-toggle',
   ]) {
-    const object = await namedObject(page, sceneKey, name);
+    const object = objectByName(name);
     expect(object, `Expected ${name} input in ${sceneKey}`).not.toBeNull();
     expect(object?.interactive).toBe(false);
   }
@@ -247,19 +265,24 @@ test.describe('portrait mobile race controls', () => {
 test.describe('landscape mobile race controls', () => {
   test.use({ viewport: { width: 844, height: 390 }, hasTouch: true });
 
-  test('reserves a dedicated bottom control bar instead of covering race graphics', async ({
-    page,
-  }) => {
+  test('keeps large corner controls around a clear landscape track centre', async ({ page }) => {
+    // The retained real countdown, RUN hold and JUMP edge complete in ~80 seconds on
+    // the repository's software renderer; this remains bounded below the CI shard budget.
+    test.setTimeout(90_000);
     await startRace(page);
-    await expectControlsBelowCanvas(page);
+    await expectLandscapeControlsAroundClearTrack(page);
+    await expectCanvasControlsDisabled(page, STANDARD_RACE_SCENE);
 
-    const rootBox = await page.locator('[data-race-mobile-controls="true"]').boundingBox();
-    expect(rootBox?.height ?? 0).toBeGreaterThanOrEqual(90);
-
-    for (const action of ['run', 'jump', 'help', 'leave']) {
+    for (const action of ['run', 'jump']) {
       const box = await page.locator(`[data-race-action="${action}"]`).boundingBox();
-      expect(box?.height ?? 0).toBeGreaterThanOrEqual(74);
+      expect(box?.width ?? 0).toBeGreaterThanOrEqual(122);
+      expect(box?.height ?? 0).toBeGreaterThanOrEqual(122);
     }
+
+    await setRunHeld(page, STANDARD_RACE_SCENE, true);
+    await performRealJump(page, STANDARD_RACE_SCENE);
+    await waitForRunState(page, STANDARD_RACE_SCENE, true);
+    await setRunHeld(page, STANDARD_RACE_SCENE, false);
   });
 });
 

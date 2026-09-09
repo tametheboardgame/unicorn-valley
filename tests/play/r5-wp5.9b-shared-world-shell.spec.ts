@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, type Page, test } from '@playwright/test';
 
 interface DiagnosticObject {
   name: string;
@@ -72,10 +72,10 @@ test.describe('R5-WP5.9B shared exploration shell', () => {
       const scene = sceneFrom(await snapshot(page), sceneKey);
 
       expect(namedCount(scene, 'exploration-shell-bag-button')).toBe(1);
-      expect(namedCount(scene, 'exploration-shell-sound-button')).toBe(1);
-      expect(namedCount(scene, 'exploration-controls-button')).toBe(1);
+      expect(namedCount(scene, 'exploration-controls-button')).toBe(0);
       expect(namedCount(scene, 'exploration-location-title')).toBe(1);
-      expect(namedCount(scene, 'activity-suggestion-card')).toBe(1);
+      expect(namedCount(scene, 'activity-suggestion-card')).toBe(0);
+      expect(namedCount(scene, 'exploration-location-title-surface')).toBe(1);
     });
   }
 

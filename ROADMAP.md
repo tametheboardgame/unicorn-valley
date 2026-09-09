@@ -69,7 +69,7 @@ Responsive presentation changes are incomplete unless all four display classes a
 
 ### R6.5-WP18K - Architecture Consolidation and Legacy Retirement
 
-State: **current / ready for Work mode**.
+State: **active implementation**.
 
 Path: `docs/work-packages/R6.5-WP18K-ARCHITECTURE-CONSOLIDATION-LEGACY-RETIREMENT.md`
 
@@ -93,7 +93,7 @@ Run another substantially unguided daughter playthrough on the Galaxy Tab S8 aft
 
 ### Dependency chain
 
-`WP17 evidence -> WP18A-G complete -> WP18I approved -> WP18J approved -> WP18K architecture consolidation -> account for known open blockers -> WP18H human replay -> WP17 explicit readiness decision -> R7`
+`WP17 evidence -> WP18A-G complete -> WP18I/J approved -> WP19A accepted -> WP18K architecture consolidation -> WP19B-I remediation -> WP18H human replay -> WP17 explicit readiness decision -> R7`
 
 ## R6.6 - Optional Android Packaging
 

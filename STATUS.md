@@ -4,11 +4,11 @@ Last updated: 2026-09-08
 
 ## Current work
 
-`R6.5-WP19A - Persistence and truthful success feedback`
+`R6.5-WP18K - Architecture Consolidation and Legacy Retirement`
 
-Path: `docs/work-packages/R6.5-WP19A-PERSISTENCE-SAFETY.md`
+Path: `docs/work-packages/R6.5-WP18K-ARCHITECTURE-CONSOLIDATION-LEGACY-RETIREMENT.md`
 
-State: **WP19A technically qualified; awaiting manager closure**. The bounded implementation remains on PR #160's existing stacked branch; no merge or production deployment is authorised.
+State: **active correction; technical requalification pending**. David accepted WP19A's bounded qualification, authorised merging/deploying PRs #159/#160 and starting WP18K. Both PRs are merged; the production baseline is main `d8f3de6f264fa5fd6e2d77d539a47f288eb50cd4`. WP18K K1 ownership/removal evidence preceded implementation. K2-K4 consolidated Bag/Map ownership and removed five proven legacy managers/bridges. K5's visual-preservation correction restored readable Wonderbook filters and the cross-only close. Correction-head CI `34322134793` passed 179 browser cases with 3 configured skips and no failures or unrun cases, but the later exact documentation-head run `34323584335` recorded one Firefly Lantern failure in shard 1. Trace-equivalent local reproduction showed that short press/release events could fall entirely between Phaser update frames: the result recorded 7/8, so replay modes never unlocked and the difficulty selector could not appear. Candidate `c7fd62f` now holds each real keyboard edge until the corresponding named UI transition, and three focused repetitions pass without changing the timeout, cycles or assertions. Exact-head CI `34328261135` passed all three browser shards, Validate and compatibility; UV-D014 requires David's explicit approval before merge, production deployment or WP19B.
 
 Read first:
 
@@ -31,7 +31,7 @@ Retain the accepted HUD camera stability, cream/lavender/purple/gold controls, B
 
 WP19A persistence safety → WP18K ownership foundation → WP19B world boundaries/navigation → WP19C creator → WP19D interactions/NPCs → WP19E conversations → WP19F UI consistency/generated title → WP19G/H MP3 audio → WP19I integrated qualification → WP18H daughter replay → WP17 readiness decision.
 
-WP19A-I bounded files are **approved**, subject to their dependencies and human gates. WP19A is next, followed by WP18K. WP18K remains behaviour-preserving; it must not silently absorb functional redesign.
+WP19A-I bounded files are **approved**, subject to their dependencies and human gates. WP19A is complete and WP18K is active; WP19B follows only after WP18K qualification and its human gate. WP18K remains behaviour-preserving; it must not silently absorb functional redesign.
 
 ## Important open findings
 
@@ -48,16 +48,13 @@ Full evidence, severity and source references are in the audit. Source risks are
 
 ## Validation
 
-- Local baseline `npm run validate`: passing, 113 test files / 427 tests plus format/lint/type/build/performance/static checks.
-- Two temporary storage fault tests confirmed the documented defects; removed from the repository after diagnosis.
-- Live-browser checks covered title, creator, naming/start, tap movement, Pip dialogue, Bag and Map. No full daughter-style replay is claimed.
-- Main CI run `34210921262`: Validate and Browser compatibility succeeded; Browser playtest subsequently ended **cancelled**. Main does not have complete green full-playtest evidence from that run.
-- Local Chromium was initially missing, then installed successfully. The serial broad suite stopped at its three-failure limit: 23 passed, 3 failed, 155 did not run. The failures assert historical suggestion cards and a retired controls button. The separate current R6.5 suite finished with 34 passed, 5 failed and 21 not run. Failures cover stale Bag coordinates/wrapper assertions, Nook/race total-budget timeouts, and a numerical Bag size failure. Trace-based distinctions and unverified coverage are in the audit addendum.
-- Documentation project-state validation, formatting and whitespace checks pass on the final handoff changes. Overall browser qualification remains failing/incomplete.
-- WP19A corrected-head `npm run validate` passes with 114 test files / 435 tests and a 480.38 KiB entry bundle; the focused SaveService run passes 22 tests. The matching Chromium download completed, but host libraries remain unavailable, so the new denied-getter browser regression awaits CI. No full-green browser qualification is claimed.
-- CI run `34222463247` on the preceding head passed Validate and Browser compatibility. Browser playtest was cancelled at 35 minutes after the package-relevant main-menu, profile and save-recovery groups passed; unrelated historical UI failures and integrated qualification remain open in their planned packages.
-- CI run `34231264234` on `bec98fa` passed Validate and Browser compatibility, but its timed browser job exposed a package-relevant failure in the new denied-storage title regression. Its trace showed boot-time Continue restore, Pip egg, atmosphere/weather and reward initialisation still calling the throwing legacy load path before Title could render. Commit `8a6d35e` routes those passive boot reads through typed outcomes; the complete five-case save-recovery browser spec now passes locally.
-- CI run `34237540616` on exact head `4b6b742` passed Validate, browser compatibility and all five save-recovery cases; project-contract run `34237540863` passed. The broad job was cancelled at 35 minutes with 136 passes, 20 failures, 3 skips and 23 unfinished cases, so overall CI is not green. All 20 failures match the preceding-head run individually and are outside persistence scope. A bounded run closed the unfinished group with 17 passes and 6 explicit UI-scope failures. See `docs/evidence/R6.5-WP19A-BROWSER-QUALIFICATION.md`.
+- Documentation-head CI run `34323584335` passed Validate, project-contract, compatibility and browser shards 2/3 and 3/3, but shard 1 recorded 60 passed and 1 failed. The Firefly Lantern replay-unlock case reached the result after only 7/8 catches because synthetic key down/up could occur between Phaser update frames; it then timed out waiting for a selector that correctly remained locked. Candidate `c7fd62f` holds each real key edge until the named transition and passes three focused repetitions. Exact-head CI `34328261135` historically passed 179 browser cases with 3 configured skips and no failures or unrun cases; compatibility passed 48 with 15 configured skips. David’s subsequent preview playtest found that Map drag did not work through real pointer gestures, so that green run is not current qualification evidence. Candidate `aa68c60` gives the parchment a real mouse/touch gesture owner, meaningful overscanned geography and bounded travel, removes redundant Bag/Map badges and Map subtitle, and improves the Wonderbook cross contrast/position. Focused real-input checks pass. Exact-head CI `34340757180` passed 181 browser cases with 3 configured skips, compatibility passed 48 with 15 configured skips, and Validate passed 114 files / 435 tests. Cloudflare published `d781a1a` at `https://38f17b6c.unicorn-valley.pages.dev`; manifest-bound smoke against that candidate is pending (the first workflow run truthfully targeted the previous manifest).
+- CI run `34318525681` passed Validate, project-contract, compatibility (48 passed / 15 configured skips) and browser shards 1/3 and 3/3. Shard 2/3 recorded 57 passed, 1 failed and 3 configured skips. Its sole failure timed out waiting for `MoonflowerGladeScene` after tapping the retired bottom Book-close coordinate; the accepted current owner is the named top-right `wonderbook-close-button`, which the corrected real-touch journey now uses. Exact-head CI must pass before qualification is claimed.
+- Exact starting-head CI run `34262336206`: Validate passed; project-contract run `34262336101` passed; compatibility passed 48 with 15 configured skips. Browser playtest was cancelled at 35 minutes with 130 passed, 9 failed and 3 skipped, leaving 40 unfinished. It is not represented as green.
+- All 40 unfinished cases were attempted in four bounded serial Chromium groups: initial totals 29 passed, 10 failed and 1 serial skip. Ten world-depth cases and all seven WP18J preservation cases passed. Named-control corrections then passed Food, Map and Creator 3/3; remaining trace-led touch/timeout corrections await correction-head CI.
+- The complete historical and current dispositions are recorded in `docs/evidence/R6.5-WP18K-BROWSER-QUALIFICATION.md`. The final failures were not waived: Nova now uses its canonical contextual action and return point; production dialogue guidance is protected from the legacy scanner; landscape race geometry tests the accepted corner overlay and real simultaneous controls.
+- The local host can run Chromium after supported browser/dependency installation. Its software renderer is materially slower than CI; retained multi-cycle/multi-scene tests use trace-justified total budgets while preserving cycles and responsiveness assertions.
+- The local runner HTTP CONNECT proxy still blocks Cloudflare Pages with 403 and was not bypassed. The reusable existing-Actions workflow passed isolated deployed startup/save/reload/Continue qualification in run `34300718207` against immutable preview `https://19e1602a.unicorn-valley.pages.dev`; artifact `10084829132` records the result.
 
 ## Human feedback and gates
 
@@ -69,18 +66,17 @@ No new daughter replay occurred. Preserve all positive feedback and deferred ide
 
 ## Delivery
 
-Documentation-only branch: `agent/r6.5-whole-game-audit-plan`. David explicitly authorised the documentation branch push and draft PR on 2026-09-08, resolving the earlier automatic-review block. Published through the connected GitHub app after shell Git authentication was unavailable: https://github.com/tametheboardgame/unicorn-valley/pull/159. Draft PR remains open; no merge has occurred. No merge or production deployment is authorised by completion of this audit. Production was previously updated by the approved WP18I/J merge; this proposal does not change the game.
+WP19A planning/implementation PRs #159/#160 are accepted and merged to main `d8f3de6`. WP18K remains draft PR #161 on `agent/r6.5-wp18k-architecture-consolidation`. Cloudflare verified `https://890a12f5.unicorn-valley.pages.dev` for runtime candidate `febfe2d`, and Actions smoke `34318525592` passed against that exact deployment. UV-D014 supersedes the overnight delegated authority: after technical qualification, WP18K pauses for David's explicit approval before merge, production deployment or WP19B.
 
 ## Next action
 
-Manager reviews the completed WP19A qualification ledger and may close WP19A, then dispatch WP18K. Exact-head preview: `https://323968ac.unicorn-valley.pages.dev`. Full integrated browser closure remains WP19I; future visual and replay gates remain.
-
-Chat disposition: `keep`.
+Complete manifest-bound smoke against `https://38f17b6c.unicorn-valley.pages.dev`, then present the sign-off checklist to David. Baseline evidence identifies the phone Bag/Settings scaling as inherited WP19F work rather than accepting it as child-sized. Stop on PR #161 without merge, production deployment or WP19B until David explicitly approves. Physical daughter/device acceptance is not claimed; WP18H and WP17 remain human-only.
 
 ## Implementation delivery
 
-Branch: `agent/r6.5-wp19a-persistence-safety`, stacked on the approved planning branch while PR #159 remains unmerged. Keep gameplay changes off PR #159. The project manager reviews results and reports the verified preview URL to David before required human gates.
+Branch: `agent/r6.5-wp18k-architecture-consolidation`, based on current main.
+Draft PR: https://github.com/tametheboardgame/unicorn-valley/pull/161.
 
 ## Codex execution
 
-Implementation PR: https://github.com/tametheboardgame/unicorn-valley/pull/160. Dispatch: issuecomment-5584158968. Codex initially replied in issuecomment-5584160637 that an environment was required. David confirmed “environment made”; the authorised retry executed in the existing PR branch. The former setup blocker is resolved. Local browser launch is separately blocked by missing system libraries, so CI is the remaining technical evidence source.
+WP18K K1–K4 started from verified main `d8f3de6`. K5 has a package-specific ledger, exact CI/compatibility counts, complete shard dispositions and planned-versus-actual scanner ownership. The remaining tablet failure was an obsolete interaction in the test, not slow execution: the restored cross-only Book no longer owns the tapped bottom coordinate. The corrected journey retains real touch input and uses the named interactive cross. The later documentation-head Firefly failure invalidated the earlier claim until candidate `c7fd62f` passed focused repetitions and exact-head CI `34328261135`. David's playtest invalidated that historical qualification: the current visual/input correction must pass exact-head qualification before his explicit approval can be requested again. The conversation disposition remains `keep` until those results and the human gate are durable.

@@ -115,7 +115,7 @@ test('non-core speakers retain a readable portrait fallback', async ({ page }) =
 });
 
 test('Reduced Motion leaves production UI decoration static', async ({ page }) => {
-  await page.goto('/?scene=inventory&diagnostics=1');
+  await page.goto('/?diagnostics=1');
   await page.evaluate(() => {
     localStorage.setItem(
       'unicorn-valley:accessibility-settings:v1',
@@ -123,24 +123,47 @@ test('Reduced Motion leaves production UI decoration static', async ({ page }) =
     );
   });
   await page.reload();
-  await waitForScene(page, 'InventoryScene');
-  await waitForObject(page, 'InventoryScene', 'ui-production:InventoryScene:sparkle');
+  await page.waitForFunction(() => '__UNICORN_VALLEY_DIAGNOSTICS__' in window);
+  await expect
+    .poll(async () =>
+      page.evaluate(() => {
+        const api = (
+          window as typeof window & {
+            __UNICORN_VALLEY_DIAGNOSTICS__?: {
+              startScene(sceneKey: string): void;
+            };
+          }
+        ).__UNICORN_VALLEY_DIAGNOSTICS__;
+        if (!api) {
+          return false;
+        }
+        try {
+          api.startScene('ShopScene');
+          return true;
+        } catch {
+          return false;
+        }
+      }),
+    )
+    .toBe(true);
+  await waitForScene(page, 'ShopScene');
+  await waitForObject(page, 'ShopScene', 'ui-production:ShopScene:sparkle');
 
-  const firstScene = (await snapshot(page)).scenes.find(({ key }) => key === 'InventoryScene');
+  const firstScene = (await snapshot(page)).scenes.find(({ key }) => key === 'ShopScene');
   expect(firstScene).toBeTruthy();
   if (!firstScene) {
     return;
   }
-  const firstAlpha = namedObject(firstScene, 'ui-production:InventoryScene:sparkle').alpha;
+  const firstAlpha = namedObject(firstScene, 'ui-production:ShopScene:sparkle').alpha;
 
   await page.waitForTimeout(800);
 
-  const secondScene = (await snapshot(page)).scenes.find(({ key }) => key === 'InventoryScene');
+  const secondScene = (await snapshot(page)).scenes.find(({ key }) => key === 'ShopScene');
   expect(secondScene).toBeTruthy();
   if (!secondScene) {
     return;
   }
-  const secondAlpha = namedObject(secondScene, 'ui-production:InventoryScene:sparkle').alpha;
+  const secondAlpha = namedObject(secondScene, 'ui-production:ShopScene:sparkle').alpha;
 
   expect(firstAlpha).toBeCloseTo(0.78, 4);
   expect(secondAlpha).toBeCloseTo(firstAlpha, 4);

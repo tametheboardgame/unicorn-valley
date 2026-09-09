@@ -47,6 +47,18 @@ function hideRectangle(object: Phaser.GameObjects.Rectangle): void {
   object.disableInteractive();
 }
 
+function visitSceneObjects(
+  objects: readonly Phaser.GameObjects.GameObject[],
+  visit: (object: Phaser.GameObjects.GameObject) => void,
+): void {
+  for (const object of objects) {
+    visit(object);
+    if (object instanceof Phaser.GameObjects.Container) {
+      visitSceneObjects(object.list, visit);
+    }
+  }
+}
+
 export class DesktopConceptCleanupManager {
   private readonly locationLabels = new WeakMap<Phaser.Scene, Phaser.GameObjects.Text>();
 
@@ -90,21 +102,22 @@ export class DesktopConceptCleanupManager {
   }
 
   private hideLegacyInputInstruction(scene: Phaser.Scene): void {
-    for (const object of scene.children.list) {
+    visitSceneObjects(scene.children.list, (object) => {
       if (!(object instanceof Phaser.GameObjects.Text)) {
-        continue;
+        return;
       }
       if (
         object.name.startsWith('desktop-concept-') ||
-        object.name.startsWith('exploration-tablet-')
+        object.name.startsWith('exploration-tablet-') ||
+        object.name.startsWith('dialogue-production-')
       ) {
-        continue;
+        return;
       }
       const text = object.text.trim();
       if (LEGACY_ACTION_PROMPT.test(text) && LEGACY_INPUT_INSTRUCTION.test(text)) {
         object.setVisible(false).setAlpha(0.001).disableInteractive();
       }
-    }
+    });
   }
 
   private ensureConceptLocationLabel(scene: Phaser.Scene, locationTitle: string): void {
@@ -185,12 +198,12 @@ export class DesktopConceptCleanupManager {
   }
 
   private hideLegacyInteractionCopy(scene: Phaser.Scene): void {
-    for (const object of scene.children.list) {
+    visitSceneObjects(scene.children.list, (object) => {
       if (!(object instanceof Phaser.GameObjects.Text)) {
-        continue;
+        return;
       }
       if (object.name.startsWith('desktop-concept-') || object.depth >= 190) {
-        continue;
+        return;
       }
 
       const text = object.text.trim();
@@ -202,7 +215,7 @@ export class DesktopConceptCleanupManager {
       if (isOldActionPrompt && (carriesOldInputInstruction || isOldBottomAction)) {
         object.setVisible(false).setAlpha(0.001).disableInteractive();
       }
-    }
+    });
   }
 }
 
