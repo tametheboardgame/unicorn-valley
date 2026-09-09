@@ -10,17 +10,17 @@
   "autonomy_state": "green",
   "agent_state": "active",
   "branch": "agent/r6.5-wp18k-architecture-consolidation",
-  "latest_commit": "d7cf5f46949e1aec35c994dc00915fe223595305",
-  "ci_state": "running",
+  "latest_commit": "febfe2db78cdd338662ecc05febf22f8aa70d890",
+  "ci_state": "failing",
   "technical_validation_state": "pending",
   "human_acceptance_state": "pending",
   "next_work_package": "R6.5-WP19B",
   "next_work_package_path": "docs/work-packages/R6.5-WP19B-WORLD-BOUNDARIES-NAVIGATION.md",
   "human_input_required": false,
-  "blocker_reason": "Visual-preservation correction is implemented. Exact-candidate CI, immutable deployment smoke and delegated manager review remain pending; physical WP18H/WP17 acceptance remains human-only.",
+  "blocker_reason": "Visual correction and immutable deployment smoke pass, but exact-head CI 34317210684 is non-green (177 passed / 2 failed / 3 configured skips). Delegated manager review and focused failure disposition remain pending; physical WP18H/WP17 acceptance remains human-only.",
   "night_shift_state": "not_configured",
   "chat_disposition": "keep",
   "delivery_mode": "pr_required",
-  "last_activity_at": "2026-09-09T04:15:00Z",
-  "updated_at": "2026-09-09T04:15:00Z"
+  "last_activity_at": "2026-09-09T06:15:00Z",
+  "updated_at": "2026-09-09T06:15:00Z"
 }
