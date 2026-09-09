@@ -8,7 +8,7 @@ Last updated: 2026-09-09
 
 Path: `docs/work-packages/R6.5-WP19C-PROGRESSIVE-CREATOR.md`
 
-State: **implementation complete; technical qualification in progress**. David approved WP19B; PR #162 merged as main `c2d98ae3287cc8ab6b2548f5efbf5548b7d87979` from approved head `fc07a52588a080260303328e65d0a4ce7267d6d7`. Cloudflare reports successful deployment at `https://39034745.unicorn-valley.pages.dev`. Supported Actions run `34356744951` passed production-alias startup/save/reload/Continue while bound to the exact merge SHA. The progressive creator implementation now owns detached draft state, explicit named control descriptors and six-category landscape/portrait presentation; local qualification and four-class evidence are in progress.
+State: **implementation complete; technical qualification failing**. David approved WP19B; PR #162 merged as main `c2d98ae3287cc8ab6b2548f5efbf5548b7d87979` from approved head `fc07a52588a080260303328e65d0a4ce7267d6d7`. Cloudflare reports successful deployment at `https://39034745.unicorn-valley.pages.dev`. Supported Actions run `34356744951` passed production-alias startup/save/reload/Continue while bound to the exact merge SHA. The progressive creator implementation now owns detached draft state, explicit named control descriptors and six-category landscape/portrait presentation; local validation and four-class evidence exist. Exact-head CI `34359405200` passed Validate, compatibility and browser shards 1/3 and 3/3, but shard 2/3 failed. GitHub returns HTTP 403 for that job’s logs/artifacts from this runner, so its exact failing case is not yet known and technical qualification is not claimed.
 
 ## Accepted gameplay baseline
 
