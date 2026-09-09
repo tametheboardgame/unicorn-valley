@@ -73,7 +73,11 @@ export class LandscapeCreatorProgressiveManager {
       if (!this.isPositioned(candidate)) {
         continue;
       }
-      if (candidate.name.startsWith('creator-legacy-section-')) {
+      if (
+        candidate.name.startsWith('creator-legacy-section-') ||
+        candidate.name === 'creator-legacy-controls-heading' ||
+        candidate.name === 'creator-legacy-name-label'
+      ) {
         candidate.setVisible(false);
         if (candidate.input) {
           candidate.input.enabled = false;

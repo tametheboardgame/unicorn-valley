@@ -187,6 +187,7 @@ export class UnicornCreatorScene extends Phaser.Scene {
         fontSize: '23px',
         fontStyle: 'bold',
       })
+      .setName('creator-legacy-controls-heading')
       .setDepth(5);
 
     this.createSectionPill(710, 226, 112, 'COLOURS');
@@ -338,6 +339,7 @@ export class UnicornCreatorScene extends Phaser.Scene {
         fontSize: '18px',
         fontStyle: 'bold',
       })
+      .setName('creator-legacy-name-label')
       .setOrigin(0, 0.5)
       .setDepth(20);
 
