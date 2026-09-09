@@ -11,16 +11,16 @@
   "agent_state": "active",
   "branch": "agent/r6.5-wp19c-progressive-creator",
   "latest_commit": "f7d20b619fb22036fd9efd5ddeeac52359ed63d7",
-  "ci_state": "running",
+  "ci_state": "pending",
   "technical_validation_state": "pending",
   "human_acceptance_state": "pending",
   "next_work_package": "R6.5-WP19D",
   "next_work_package_path": "docs/work-packages/R6.5-WP19D-UNIFIED-INTERACTIONS-NPCS.md",
   "human_input_required": false,
-  "blocker_reason": "Corrected implementation and local evidence are committed; exact-head CI, immutable preview and complete category evidence remain pending, followed by David's finished-WP approval.",
+  "blocker_reason": "Category-complete visual evidence is captured and the obsolete creator regression steps behind the reproducible shard failure are corrected; replacement exact-head CI, candidate-bound smoke and immutable preview remain pending before David approval.",
   "night_shift_state": "not_configured",
   "chat_disposition": "keep",
   "delivery_mode": "pr_required",
-  "last_activity_at": "2026-09-09T20:05:00Z",
-  "updated_at": "2026-09-09T20:05:00Z"
+  "last_activity_at": "2026-09-09T21:05:00Z",
+  "updated_at": "2026-09-09T21:05:00Z"
 }

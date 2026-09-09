@@ -175,8 +175,9 @@ test('My Unicorn edits only profile fields and preserves the whole adventure', a
   expect(creatorText(await getSnapshot(page))).toContain('Redesign Starlight');
   await expect(page.locator('.unicorn-name-input')).toHaveValue('Starlight');
 
+  await page.locator('.creator-landscape-rename-button').click();
   await page.locator('.unicorn-name-input').fill('Moonlight Star');
-  await tapObject(page, 'UnicornCreatorScene', 'creator-bodyColour-pink');
+  await tapObject(page, 'UnicornCreatorScene', 'creator-card-bodyColour-pink');
   await tapObject(page, 'UnicornCreatorScene', 'creator-action-save-changes');
   await waitForScene(page, 'TitleScene');
 
@@ -213,8 +214,9 @@ test('Cancel leaves the persisted profile and adventure byte-for-byte untouched'
 
   await tapTitleText(page, 'My Unicorn');
   await waitForScene(page, 'UnicornCreatorScene');
+  await page.locator('.creator-landscape-rename-button').click();
   await page.locator('.unicorn-name-input').fill('Changed Locally');
-  await tapObject(page, 'UnicornCreatorScene', 'creator-bodyColour-pink');
+  await tapObject(page, 'UnicornCreatorScene', 'creator-card-bodyColour-pink');
   await tapObject(page, 'UnicornCreatorScene', 'creator-action-cancel');
   await waitForScene(page, 'TitleScene');
 
