@@ -19,6 +19,10 @@ export interface DiagnosticObjectSnapshot {
   y: number;
   displayWidth: number;
   displayHeight: number;
+  boundsX: number;
+  boundsY: number;
+  boundsWidth: number;
+  boundsHeight: number;
   depth: number;
   alpha: number;
   visible: boolean;
@@ -201,6 +205,12 @@ function snapshotObject(
     gameObject.body instanceof Phaser.Physics.Arcade.Body
       ? gameObject.body
       : null;
+  const nativeBounds =
+    'getBounds' in object && typeof object.getBounds === 'function' ? object.getBounds() : null;
+  const fittedBounds = gameObject.getData('art-rendered-bounds') as
+    | { x: number; y: number; width: number; height: number }
+    | undefined;
+  const bounds = fittedBounds ?? nativeBounds;
   return {
     type: gameObject.type ?? gameObject.constructor.name,
     name: gameObject.name,
@@ -210,6 +220,10 @@ function snapshotObject(
     y: finite(object.y),
     displayWidth: Math.max(0, finite(object.displayWidth)),
     displayHeight: Math.max(0, finite(object.displayHeight)),
+    boundsX: finite(bounds?.x),
+    boundsY: finite(bounds?.y),
+    boundsWidth: Math.max(0, finite(bounds?.width)),
+    boundsHeight: Math.max(0, finite(bounds?.height)),
     depth: finite(object.depth),
     alpha: finite(object.alpha, 1),
     visible: object.visible ?? true,

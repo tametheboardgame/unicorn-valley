@@ -8,7 +8,7 @@ Last updated: 2026-09-10
 
 Path: `docs/work-packages/R6.5-WP19C-PROGRESSIVE-CREATOR.md`
 
-State: **technically qualified at exact code candidate; awaiting David's visual approval**. Final four-class and focused long-name/transition/marking evidence is under `docs/evidence/wp19c-current-head/`. Exact code-head CI `34454561329` passed Validate, compatibility and all three browser shards. Candidate-bound smoke `34456611147` checked out `818a668`, exercised immutable preview `https://e721f939.unicorn-valley.pages.dev`, and passed startup, save, reload and Continue. The delivery head adds qualification metadata only and its automatic CI rerun is still running; this is not misrepresented as a new code candidate. David's visual approval remains pending. No merge, production or WP19D.
+State: **drawn-bounds visual correction implemented; replacement qualification pending**. David rejected the remaining card/category/preview alignment after the previously qualified candidate. The new correction fits isolated components and the complete preview by their drawn bounds, centres the 3x2 category group on the panel, and records four-class plus sequential phone evidence under `docs/evidence/wp19c-current-head/alignment-correction/`. Local focused rendered-bounds validation passes; exact-head CI, immutable candidate smoke and David's visual approval remain pending. No merge, production or WP19D.
 
 
 ## Accepted gameplay baseline
@@ -66,7 +66,7 @@ WP18K is human-approved, technically qualified and merged through PR #161 at mai
 
 ## Next action
 
-Commit and push the qualification correction, obtain green exact-head CI, bind startup/save/reload/Continue smoke to that immutable candidate, and stop for David's finished-WP19C approval without merge, production deployment or WP19D.
+Commit and push the drawn-bounds correction, obtain green exact-head CI, bind startup/save/reload/Continue smoke to the new immutable candidate, and stop for David's finished-WP19C recheck without merge, production deployment or WP19D.
 
 ## Implementation delivery
 

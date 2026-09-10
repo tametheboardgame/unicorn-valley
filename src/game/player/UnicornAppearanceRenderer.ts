@@ -669,6 +669,86 @@ function drawAccessory(
 
 export type UnicornComponent = 'maneStyle' | 'tailStyle' | 'hornStyle' | 'marking' | 'accessory';
 
+export type ArtworkRegion = { x: number; y: number; width: number; height: number };
+export type ArtworkBounds = { x: number; y: number; width: number; height: number };
+
+/**
+ * Fits already-drawn Graphics commands by their real rendered bounds. This deliberately
+ * happens after drawing: component attachment origins are useful on a unicorn, but are
+ * not meaningful centres for an isolated card illustration.
+ */
+export function fitUnicornArtwork(
+  graphics: Phaser.GameObjects.Graphics,
+  bounds: ArtworkBounds,
+  region: ArtworkRegion,
+  maximumScale = Number.POSITIVE_INFINITY,
+): void {
+  graphics.setPosition(0, 0).setScale(1);
+  if (bounds.width <= 0 || bounds.height <= 0) return;
+  const scale = Math.min(maximumScale, region.width / bounds.width, region.height / bounds.height);
+  graphics
+    .setScale(scale)
+    .setPosition(
+      region.x + region.width / 2 - (bounds.x + bounds.width / 2) * scale,
+      region.y + region.height / 2 - (bounds.y + bounds.height / 2) * scale,
+    )
+    .setData('art-region', region)
+    .setData('art-fit-scale', scale)
+    .setData('art-rendered-bounds', {
+      x: region.x + (region.width - bounds.width * scale) / 2,
+      y: region.y + (region.height - bounds.height * scale) / 2,
+      width: bounds.width * scale,
+      height: bounds.height * scale,
+    });
+}
+
+/** Bounds of drawUnicornComponent at (0, 0), including its widest stroke. */
+export function unicornComponentBounds(
+  component: UnicornComponent,
+  appearance: UnicornAppearance,
+): ArtworkBounds {
+  if (component === 'maneStyle') {
+    const bounds: Record<string, ArtworkBounds> = {
+      soft: { x: -22, y: -56, width: 46, height: 83 },
+      fluffy: { x: -22, y: -58, width: 47, height: 87 },
+      swept: { x: -19, y: -60, width: 46, height: 72 },
+      braid: { x: -2, y: -53, width: 23, height: 77 },
+      crest: { x: -1, y: -74, width: 22, height: 84 },
+      cascade: { x: -27, y: -63, width: 52, height: 115 },
+    };
+    return bounds[appearance.maneStyle] ?? bounds.soft;
+  }
+  if (component === 'tailStyle') {
+    const bounds: Record<string, ArtworkBounds> = {
+      swish: { x: -42, y: -24, width: 81, height: 47 },
+      curl: { x: -27, y: -31, width: 68, height: 55 },
+      ribbon: { x: -27, y: -35, width: 62, height: 70 },
+      braid: { x: -39, y: -14, width: 76, height: 29 },
+      puff: { x: -38, y: -24, width: 81, height: 49 },
+      plume: { x: -45, y: -27, width: 88, height: 57 },
+    };
+    return bounds[appearance.tailStyle] ?? bounds.swish;
+  }
+  if (component === 'hornStyle') return { x: -12, y: -18, width: 22, height: 41 };
+  if (component === 'marking') return { x: -40, y: -34, width: 80, height: 60 };
+  const bounds: Record<string, ArtworkBounds> = {
+    none: { x: 33, y: -27, width: 34, height: 34 },
+    flower: { x: -7, y: -41, width: 18, height: 18 },
+    bow: { x: -19, y: 9, width: 38, height: 24 },
+    bell: { x: -10, y: 20, width: 23, height: 35 },
+    crown: { x: -10, y: -66, width: 36, height: 29 },
+    ribbon: { x: -17, y: 20, width: 30, height: 33 },
+    scarf: { x: -20, y: 18, width: 36, height: 43 },
+    glasses: { x: -20, y: -11, width: 41, height: 25 },
+  };
+  return bounds[appearance.accessory] ?? bounds.none;
+}
+
+/** Conservative complete idle-unicorn bounds including every catalogue extreme. */
+export function unicornAppearanceBounds(): ArtworkBounds {
+  return { x: -128, y: -106, width: 238, height: 251 };
+}
+
 /** Draws one supported appearance component without a miniature unicorn body. */
 export function drawUnicornComponent(
   graphics: Phaser.GameObjects.Graphics,

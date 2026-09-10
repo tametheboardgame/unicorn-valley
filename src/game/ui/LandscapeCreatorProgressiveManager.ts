@@ -12,7 +12,11 @@ import {
   TAIL_STYLES,
   type UnicornAppearance,
 } from '../player/UnicornAppearance';
-import { drawUnicornComponent } from '../player/UnicornAppearanceRenderer';
+import {
+  drawUnicornComponent,
+  fitUnicornArtwork,
+  unicornComponentBounds,
+} from '../player/UnicornAppearanceRenderer';
 import { CREATOR_CATEGORIES, type CreatorCategoryId } from './CreatorProgressiveModel';
 import { UI_COLOURS, UI_FONT, applyButtonHover } from './uiTheme';
 
@@ -96,8 +100,10 @@ export class LandscapeCreatorProgressiveManager {
 
   private createCategoryNavigation(): void {
     CREATOR_CATEGORIES.forEach((definition, index) => {
-      const x = 735 + (index % 3) * 188;
-      const y = 184 + Math.floor(index / 3) * 55;
+      // The options panel's inner rectangle is x=650..1230. Keep the complete
+      // group centred on x=940 rather than centring its first two columns.
+      const x = 752 + (index % 3) * 188;
+      const y = 168 + Math.floor(index / 3) * 55;
       const button = this.scene.add
         .rectangle(x, y, 172, 50, UI_COLOURS.lavender, 1)
         .setName(`creator-category-${definition.id}`)
@@ -176,14 +182,14 @@ export class LandscapeCreatorProgressiveManager {
   }
 
   private renderStyleGroup(group: CategoryConfig): void {
-    this.addText(666, 272, group.title, '20px');
+    this.addText(666, 278, group.title, '20px');
     const count = group.choices.length;
     const columns = count > 6 ? 4 : 3;
     const width = columns === 4 ? 126 : 166;
     const gap = columns === 4 ? 137 : 181;
     group.choices.forEach((choice, index) => {
       const x = (columns === 4 ? 715 : 750) + (index % columns) * gap;
-      const y = 345 + Math.floor(index / columns) * 108;
+      const y = 354 + Math.floor(index / columns) * 104;
       const selected = (this.scene as CreatorOwner).creatorValue(group.key) === choice.id;
       const card = this.scene.add
         .rectangle(x, y, width, 96, selected ? 0xfff2c1 : UI_COLOURS.cream, 1)
@@ -191,7 +197,10 @@ export class LandscapeCreatorProgressiveManager {
         .setStrokeStyle(selected ? 5 : 2, selected ? UI_COLOURS.goldStrong : 0xcbb8cd, 1)
         .setInteractive({ useHandCursor: true })
         .setDepth(32);
-      const art = this.scene.add.graphics().setDepth(33);
+      const art = this.scene.add
+        .graphics()
+        .setName(`creator-card-art-${String(group.key)}-${choice.id}`)
+        .setDepth(33);
       const base = this.currentAppearance();
       const variant = { ...base, [group.key]: choice.id } as UnicornAppearance;
       drawUnicornComponent(
@@ -200,10 +209,29 @@ export class LandscapeCreatorProgressiveManager {
           typeof group.key,
           'bodyColour' | 'eyeColour' | 'maneColour' | 'tailColour'
         >,
-        x,
-        y - 9,
+        0,
+        0,
         variant,
-        group.key === 'tailStyle' ? 0.84 : group.key === 'hornStyle' ? 1.15 : 0.96,
+        1,
+      );
+      // Reserve the lower 25px as a label band. getBounds() includes strokes and
+      // decorations, so every style is centred and uniformly fitted by what it
+      // actually draws rather than by its full-unicorn attachment coordinate.
+      fitUnicornArtwork(
+        art,
+        unicornComponentBounds(
+          group.key as Exclude<
+            typeof group.key,
+            'bodyColour' | 'eyeColour' | 'maneColour' | 'tailColour'
+          >,
+          variant,
+        ),
+        {
+          x: x - width / 2 + 9,
+          y: y - 48 + 7,
+          width: width - 18,
+          height: 58,
+        },
       );
       const label = this.scene.add
         .text(x, y + 34, `${selected ? '✓ ' : ''}${choice.label}`, {
@@ -220,7 +248,7 @@ export class LandscapeCreatorProgressiveManager {
       this.content.push(card, art, label);
     });
     if (group.colours)
-      this.renderSwatches(group.colours.key, group.colours.title, group.colours.choices, 548);
+      this.renderSwatches(group.colours.key, group.colours.title, group.colours.choices, 558);
   }
 
   private currentAppearance(): UnicornAppearance {

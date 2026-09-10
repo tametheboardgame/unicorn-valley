@@ -210,3 +210,17 @@ adaptive accessible pencil, and polish Randomise/Reset with authored icons.
 This feedback explicitly authorises one new save-compatible mane, tail and horn
 and one accessory, producing six/six/six/eight actual catalogue choices while
 preserving every existing ID. It does not approve merge, production or WP19D.
+
+## UV-D020 - WP19C phone drawn-bounds correction is binding
+
+Status: Accepted implementation feedback, 2026-09-10.
+
+David's original Android landscape captures under
+`docs/evidence/wp19c-david-phone-20260910/` and subsequent large-landscape
+recheck reject the remaining fixed-scale, attachment-origin card artwork. The
+creator must centre and uniformly fit complete drawn bounds inside a dedicated
+card art region, fit the entire preview silhouette, and centre the final 3x2
+category group on the cream panel with an explicit gap before the heading.
+Screenshot inspection and final rendered-bounds regression are both required;
+object-presence metadata alone is insufficient. This does not approve merge,
+production or WP19D.

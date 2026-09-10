@@ -6,6 +6,10 @@ interface DiagnosticObject {
   interactive: boolean;
   x: number;
   y: number;
+  boundsX: number;
+  boundsY: number;
+  boundsWidth: number;
+  boundsHeight: number;
 }
 
 interface DiagnosticScene {
@@ -138,6 +142,39 @@ async function waitForObject(page: Page, sceneKey: string, objectName: string): 
   );
 }
 
+async function expectCardArtworkContained(
+  page: Page,
+  component: string,
+  ids: readonly string[],
+): Promise<void> {
+  const objects = await page.evaluate(() => {
+    const api = (
+      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__;
+    return (
+      api?.snapshot().scenes.find((scene) => scene.key === 'UnicornCreatorScene')?.objects ?? []
+    );
+  });
+  for (const id of ids) {
+    const art = objects.find((object) => object.name === `creator-card-art-${component}-${id}`);
+    const card = objects.find((object) => object.name === `creator-card-${component}-${id}`);
+    expect(art, `${component}:${id} artwork exists`).toBeDefined();
+    expect(card, `${component}:${id} card exists`).toBeDefined();
+    if (!art || !card) continue;
+    const cardLeft = card.x - card.boundsWidth / 2;
+    const cardTop = card.y - card.boundsHeight / 2;
+    expect(art.boundsX, `${component}:${id} left`).toBeGreaterThanOrEqual(cardLeft + 7);
+    expect(art.boundsY, `${component}:${id} top`).toBeGreaterThanOrEqual(cardTop + 5);
+    expect(art.boundsX + art.boundsWidth, `${component}:${id} right`).toBeLessThanOrEqual(
+      cardLeft + card.boundsWidth - 7,
+    );
+    expect(
+      art.boundsY + art.boundsHeight,
+      `${component}:${id} label clearance`,
+    ).toBeLessThanOrEqual(card.y + 17);
+  }
+}
+
 async function clickCanvasLogical(page: Page, x: number, y: number): Promise<void> {
   const canvas = page.locator('canvas');
   const box = await canvas.boundingBox();
@@ -242,21 +279,63 @@ test('landscape Creator progressively reveals one approved category at a time', 
 
   await clickNamedObject(page, 'UnicornCreatorScene', 'creator-category-mane');
   await waitForObject(page, 'UnicornCreatorScene', 'creator-card-maneStyle-soft');
+  await expectCardArtworkContained(page, 'maneStyle', [
+    'soft',
+    'fluffy',
+    'swept',
+    'braid',
+    'crest',
+    'cascade',
+  ]);
   expect(await objectVisible(page, 'UnicornCreatorScene', 'creator-bodyColour-peach')).toBe(false);
 
   await clickNamedObject(page, 'UnicornCreatorScene', 'creator-category-tail');
   await waitForObject(page, 'UnicornCreatorScene', 'creator-card-tailStyle-swish');
+  await expectCardArtworkContained(page, 'tailStyle', [
+    'swish',
+    'curl',
+    'ribbon',
+    'braid',
+    'puff',
+    'plume',
+  ]);
 
   await clickNamedObject(page, 'UnicornCreatorScene', 'creator-category-horn');
   await waitForObject(page, 'UnicornCreatorScene', 'creator-card-hornStyle-classic');
+  await expectCardArtworkContained(page, 'hornStyle', [
+    'classic',
+    'spiral',
+    'short',
+    'star',
+    'crystal',
+    'moon',
+  ]);
   expect(await objectVisible(page, 'UnicornCreatorScene', 'creator-marking-next')).toBe(false);
 
   await clickNamedObject(page, 'UnicornCreatorScene', 'creator-category-markings');
   await waitForObject(page, 'UnicornCreatorScene', 'creator-card-marking-none');
+  await expectCardArtworkContained(page, 'marking', [
+    'none',
+    'star',
+    'heart',
+    'moon',
+    'freckles',
+    'sparkles',
+  ]);
   expect(await objectVisible(page, 'UnicornCreatorScene', 'creator-hornStyle-next')).toBe(false);
 
   await clickNamedObject(page, 'UnicornCreatorScene', 'creator-category-accessories');
   await waitForObject(page, 'UnicornCreatorScene', 'creator-card-accessory-none');
+  await expectCardArtworkContained(page, 'accessory', [
+    'none',
+    'flower',
+    'bow',
+    'bell',
+    'crown',
+    'ribbon',
+    'scarf',
+    'glasses',
+  ]);
   expect(await objectVisible(page, 'UnicornCreatorScene', 'creator-marking-next')).toBe(false);
 
   await clickNamedObject(page, 'UnicornCreatorScene', 'creator-category-colours');

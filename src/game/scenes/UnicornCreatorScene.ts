@@ -14,7 +14,11 @@ import {
   TAIL_STYLES,
   type UnicornAppearance,
 } from '../player/UnicornAppearance';
-import { drawUnicornAppearance } from '../player/UnicornAppearanceRenderer';
+import {
+  drawUnicornAppearance,
+  fitUnicornArtwork,
+  unicornAppearanceBounds,
+} from '../player/UnicornAppearanceRenderer';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { applyProfileRedesign, hasNamedUnicorn } from '../save/profileRedesign';
 import type { SaveGame } from '../save/saveSchema';
@@ -692,7 +696,16 @@ export class UnicornCreatorScene extends Phaser.Scene {
     }
 
     this.preview.clear();
-    drawUnicornAppearance(this.preview, 312, 385, this.draft.appearance, 2.05);
+    this.preview.setPosition(0, 0).setScale(1);
+    drawUnicornAppearance(this.preview, 0, 0, this.draft.appearance, 1);
+    // Fit the complete drawn silhouette, including long tails, horns, accessories
+    // and strokes, inside the space between the name row and action buttons.
+    fitUnicornArtwork(
+      this.preview,
+      unicornAppearanceBounds(),
+      { x: 108, y: 205, width: 434, height: 344 },
+      2.05,
+    );
 
     for (const [key, outlines] of this.swatchOutlines) {
       const currentValue = this.draft.appearance[key as keyof UnicornAppearance];
