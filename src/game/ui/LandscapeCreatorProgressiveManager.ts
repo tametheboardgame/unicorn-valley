@@ -214,9 +214,9 @@ export class LandscapeCreatorProgressiveManager {
         variant,
         1,
       );
-      // Reserve the lower 25px as a label band. getBounds() includes strokes and
-      // decorations, so every style is centred and uniformly fitted by what it
-      // actually draws rather than by its full-unicorn attachment coordinate.
+      // Reserve the lower 25px as a label band. Catalogue bounds include strokes
+      // and decorations, so each style is fitted by what it actually draws rather
+      // than by its asymmetric full-unicorn attachment coordinate.
       fitUnicornArtwork(
         art,
         unicornComponentBounds(
