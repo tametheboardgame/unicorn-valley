@@ -4,6 +4,7 @@ import { KeyboardInputAdapter } from '../input/KeyboardInputAdapter';
 import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 import { InteractionPrompt } from '../ui/InteractionPrompt';
 import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
+import { isInteractionModalActive } from './InteractionModalState';
 import type { InteractionTarget } from './InteractionTarget';
 import {
   getInteractionTargetPosition,
@@ -49,6 +50,9 @@ function findPlayer(scene: Phaser.Scene): Point | null {
 }
 
 function isDialogueBlocking(scene: Phaser.Scene): boolean {
+  if (isInteractionModalActive(scene)) {
+    return true;
+  }
   const panel = scene.children.getByName('dialogue-production-panel');
   return panel instanceof Phaser.GameObjects.Rectangle && panel.visible;
 }
@@ -122,7 +126,7 @@ export class WorldInteractionCoordinator {
       state.prompt.setTarget(null);
       state.retainedTargetId = null;
       state.preferredTargetId = null;
-      this.syncDirectZones(state, targets, player);
+      this.syncDirectZones(state, targets, null);
       return;
     }
 
@@ -224,7 +228,9 @@ export class WorldInteractionCoordinator {
         return;
       }
       case 'dialogue':
-        throw new Error(`Dialogue target ${target.id} must provide a callback until WP19E presenter owns dialogue.`);
+        throw new Error(
+          `Dialogue target ${target.id} must provide a callback until WP19E presenter owns dialogue.`,
+        );
     }
   }
 
@@ -235,7 +241,6 @@ export class WorldInteractionCoordinator {
     state.directZones.clear();
     state.prompt.destroy();
     state.input.destroy();
-    state.pointer.destroy();
   }
 }
 
