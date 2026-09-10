@@ -165,6 +165,7 @@ export class UnicornCreatorScene extends Phaser.Scene {
       .setName('creator-profile-label')
       .setOrigin(0.5)
       .setDepth(5);
+    this.fitDisplayedName();
 
     this.add
       .ellipse(325, 535, 350, 62, 0xd7c3e7, 0.38)
@@ -329,15 +330,21 @@ export class UnicornCreatorScene extends Phaser.Scene {
     input.setAttribute('aria-label', 'Your unicorn name');
     input.autocomplete = 'off';
     input.spellcheck = false;
-    input.addEventListener('keydown', (event) => event.stopPropagation());
+    input.addEventListener('keydown', (event) => {
+      event.stopPropagation();
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        input.blur();
+      }
+    });
     input.addEventListener('keyup', (event) => event.stopPropagation());
     input.addEventListener('input', () => {
-      this.profileLabel?.setText(input.value || DEFAULT_UNICORN_NAME);
-      this.positionNameInput();
+      this.syncDisplayedName(input.value);
     });
     input.addEventListener('blur', () => {
       input.style.visibility = 'hidden';
       input.style.pointerEvents = 'none';
+      this.profileLabel?.setVisible(true);
     });
     container.append(input);
     input.style.visibility = 'hidden';
@@ -374,6 +381,7 @@ export class UnicornCreatorScene extends Phaser.Scene {
 
   private openNameEditor(): void {
     if (!this.nameInput) return;
+    this.profileLabel?.setVisible(false);
     this.nameInput.style.visibility = 'visible';
     this.nameInput.style.pointerEvents = 'auto';
     this.nameInput.focus();
@@ -382,7 +390,18 @@ export class UnicornCreatorScene extends Phaser.Scene {
 
   private syncDisplayedName(value: string): void {
     this.profileLabel?.setText(value || DEFAULT_UNICORN_NAME);
+    this.fitDisplayedName();
     this.positionNameInput();
+  }
+
+  private fitDisplayedName(): void {
+    if (!this.profileLabel) return;
+    this.profileLabel.setFontSize(26);
+    if (this.profileLabel.displayWidth > 270) {
+      this.profileLabel.setFontSize(
+        Math.max(18, Math.floor((26 * 270) / this.profileLabel.displayWidth)),
+      );
+    }
   }
 
   private positionNameInput = (): void => {
@@ -410,7 +429,7 @@ export class UnicornCreatorScene extends Phaser.Scene {
     this.nameInput.style.fontSize = `${Math.max(14, 20 * Math.min(scaleX, scaleY))}px`;
     this.nameInput.style.borderWidth = `${Math.max(2, 4 * Math.min(scaleX, scaleY))}px`;
     if (this.renameButton) {
-      const labelWidth = Math.min(300, this.profileLabel?.displayWidth ?? 150);
+      const labelWidth = this.profileLabel?.displayWidth ?? 150;
       const buttonX = 325 + labelWidth / 2 + 14;
       this.renameButton.style.left = `${canvasRect.left - containerRect.left + buttonX * scaleX}px`;
       this.renameButton.style.top = `${canvasRect.top - containerRect.top + 134 * scaleY}px`;

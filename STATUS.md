@@ -8,7 +8,7 @@ Last updated: 2026-09-10
 
 Path: `docs/work-packages/R6.5-WP19C-PROGRESSIVE-CREATOR.md`
 
-State: **David's binding 10 September visual addendum implemented; exact-head qualification pending**. Generated card skins now share source-object lifetimes, eliminating transition echoes; landscape grids have explicit vertical regions; the catalogue contains six real mane/tail/horn choices and eight accessories; marking tiles use the selected body colour; the name has one adaptive accessible pencil; component art and authored action icons are refreshed. Sequential local evidence is under `docs/evidence/wp19c-current-head/visual-addendum/`. Local type-check, 443 unit tests, build and focused six-tab journey pass. Exact-head CI, candidate-bound smoke, final four-class evidence and David's visual approval remain pending. No merge, production or WP19D.
+State: **David's binding 10 September visual addendum implemented; exact-head qualification pending**. Generated card skins share source-object lifetimes; the catalogue contains six real mane/tail/horn choices and eight accessories; marking tiles use the selected body colour; and the name has one adaptive accessible pencil. Final four-class and focused long-name/transition/marking evidence is under `docs/evidence/wp19c-current-head/`. CI `34445609506` passed Validate, compatibility and shard 3 but failed shards 1 and 2. Bounded reproduction corrected shard 2's remaining retired-label test and added new-style save/reload/Continue coverage; shard 1's inaccessible result is not waived. Automatic smoke `34445609498` demonstrably used historical production metadata, so corrected-candidate smoke remains pending. David's visual approval remains pending. No merge, production or WP19D.
 
 
 ## Accepted gameplay baseline
@@ -66,7 +66,7 @@ WP18K is human-approved, technically qualified and merged through PR #161 at mai
 
 ## Next action
 
-Commit and push the visual-addendum correction, run exact-head CI, bind smoke to its immutable candidate, complete the four-class recapture, and stop for David's finished-WP19C approval without merge, production deployment or WP19D.
+Commit and push the qualification correction, obtain green exact-head CI, bind startup/save/reload/Continue smoke to that immutable candidate, and stop for David's finished-WP19C approval without merge, production deployment or WP19D.
 
 ## Implementation delivery
 

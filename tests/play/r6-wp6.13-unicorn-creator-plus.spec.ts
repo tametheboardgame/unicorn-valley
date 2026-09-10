@@ -158,8 +158,11 @@ test('Creator Plus exposes richer categories and accepts gameplay-key letters in
 
   await tapObject(page, 'UnicornCreatorScene', 'creator-category-colours');
   await tapObject(page, 'UnicornCreatorScene', 'creator-card-bodyColour-peach');
-  await tapObject(page, 'UnicornCreatorScene', 'creator-profile-label');
+  const renameButton = page.locator('.creator-landscape-rename-button');
+  await renameButton.focus();
+  await page.keyboard.press('Enter');
   const nameInput = page.locator('.unicorn-name-input');
+  await expect(nameInput).toBeFocused();
   await nameInput.fill('Essie Star');
   await expect(nameInput).toHaveValue('Essie Star');
 
@@ -221,6 +224,42 @@ test('existing unicorn can save new Creator Plus styles without resetting advent
   expect(stored.inventory.itemQuantities['currency:shimmer']).toBe(42);
 });
 
+test('new WP19C styles survive save, reload and Continue', async ({ page }) => {
+  test.setTimeout(150_000);
+  await page.goto('/?diagnostics=1');
+  await waitForScene(page, 'TitleScene');
+  await tapTitleText(page, 'New Game');
+  await waitForScene(page, 'UnicornCreatorScene');
+
+  for (const [category, choice] of [
+    ['mane', 'creator-card-maneStyle-cascade'],
+    ['tail', 'creator-card-tailStyle-plume'],
+    ['horn', 'creator-card-hornStyle-moon'],
+    ['accessories', 'creator-card-accessory-glasses'],
+  ] as const) {
+    await tapObject(page, 'UnicornCreatorScene', `creator-category-${category}`);
+    await tapObject(page, 'UnicornCreatorScene', choice);
+  }
+
+  await tapObject(page, 'UnicornCreatorScene', 'creator-action-confirm-new');
+  await waitForScene(page, 'MoonflowerGladeScene');
+  await page.reload();
+  await waitForScene(page, 'TitleScene');
+  await tapTitleText(page, 'Continue');
+  await waitForScene(page, 'MoonflowerGladeScene');
+
+  const stored = await page.evaluate(
+    (key) => JSON.parse(window.localStorage.getItem(key) ?? '{}'),
+    SAVE_KEY,
+  );
+  expect(stored.profile.appearance).toMatchObject({
+    maneStyle: 'cascade',
+    tailStyle: 'plume',
+    hornStyle: 'moon',
+    accessory: 'glasses',
+  });
+});
+
 test('Reset changes appearance only and Back preserves the saved profile', async ({ page }) => {
   test.setTimeout(75_000);
   await seedSave(page);
@@ -229,8 +268,11 @@ test('Reset changes appearance only and Back preserves the saved profile', async
   await tapTitleText(page, 'My Unicorn');
   await waitForScene(page, 'UnicornCreatorScene');
 
-  await tapObject(page, 'UnicornCreatorScene', 'creator-profile-label');
+  const renameButton = page.locator('.creator-landscape-rename-button');
+  await renameButton.focus();
+  await page.keyboard.press('Enter');
   const input = page.locator('.unicorn-name-input');
+  await expect(input).toBeFocused();
   await input.fill('Moonlight');
   await tapObject(page, 'UnicornCreatorScene', 'creator-action-default');
   await expect(input).toHaveValue('Moonlight');
