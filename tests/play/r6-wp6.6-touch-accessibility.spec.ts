@@ -204,7 +204,7 @@ test('target-tablet touch completes creator, exploration, Book and accessibility
     ).toBeGreaterThanOrEqual(48);
   }
 
-  await logicalTap(page, 1080, 675);
+  await logicalTapNamedObject(page, 'UnicornCreatorScene', 'creator-action-confirm-new');
   await waitForScene(page, 'MoonflowerGladeScene');
 
   snapshot = await getSnapshot(page);

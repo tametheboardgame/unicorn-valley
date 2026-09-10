@@ -8,7 +8,7 @@ Last updated: 2026-09-10
 
 Path: `docs/work-packages/R6.5-WP19C-PROGRESSIVE-CREATOR.md`
 
-State: **David layout corrections and category-complete evidence committed; second replacement qualification pending**. CI `34404549752` passed Validate and compatibility but all three numbered Chromium shards failed. Bounded local reproduction identified a slow real-countdown wait, a portrait journey total timeout, one stale multi-category fallback expectation, two stale always-visible-name-input assumptions and a 4:3 tab touch-target shortfall. These are corrected without removing interaction or geometry assertions; local validation passes. Replacement exact-head CI, candidate-bound smoke and the corrected immutable preview remain pending. David must approve the finished immutable preview before merge, production or WP19D.
+State: **David layout corrections and category-complete evidence committed; final replacement qualification pending**. CI `34441843861` passed Validate, compatibility and browser shards 1/3 and 3/3; shard 2/3 retained a stale resilience multi-category expectation and touch journey. Bounded reproduction corrected those without removing persistence, input or geometry assertions, made the canvas name label display-only beside the accessible DOM pencil, retained 48-logical-pixel swatches and replaced the retired confirmation coordinate with its named owner. Another exact-head CI run, candidate-bound smoke and the corrected immutable preview remain pending. David must approve the finished immutable preview before merge, production or WP19D.
 
 ## Accepted gameplay baseline
 

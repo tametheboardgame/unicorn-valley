@@ -261,10 +261,18 @@ test('malformed settings and optional cosmetics cannot block Settings, Redesign 
 
   await tapTitleText(page, 'My Unicorn');
   await waitForScene(page, 'UnicornCreatorScene');
-  const creatorText = sceneText(await snapshot(page), 'UnicornCreatorScene');
-  expect(creatorText).toContain('Soft Waves');
-  expect(creatorText).toContain('Classic');
-  expect(creatorText).toContain('Flower Clip');
+  const creator = (await snapshot(page)).scenes.find(
+    (scene) => scene.key === 'UnicornCreatorScene',
+  );
+  expect(creator?.objects.find((object) => object.name === 'creator-maneStyle-value')?.text).toBe(
+    'Soft Waves',
+  );
+  expect(creator?.objects.find((object) => object.name === 'creator-hornStyle-value')?.text).toBe(
+    'Classic',
+  );
+  expect(creator?.objects.find((object) => object.name === 'creator-accessory-value')?.text).toBe(
+    'Flower Clip',
+  );
   await tapObject(page, 'UnicornCreatorScene', 'creator-action-cancel');
   await waitForScene(page, 'TitleScene');
 

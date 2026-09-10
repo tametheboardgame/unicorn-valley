@@ -253,7 +253,7 @@ export class LandscapeCreatorProgressiveManager {
       const x = 815 + index * 52;
       const selected = (this.scene as CreatorOwner).creatorValue(key) === choice.id;
       const swatch = this.scene.add
-        .circle(x, y, 21, choice.value ?? 0x9b65b5, 1)
+        .circle(x, y, 24, choice.value ?? 0x9b65b5, 1)
         .setName(`creator-card-${String(key)}-${choice.id}`)
         .setStrokeStyle(selected ? 6 : 3, selected ? UI_COLOURS.goldStrong : 0xffffff, 1)
         .setInteractive({ useHandCursor: true })

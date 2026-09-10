@@ -164,9 +164,7 @@ export class UnicornCreatorScene extends Phaser.Scene {
       })
       .setName('creator-profile-label')
       .setOrigin(0.5)
-      .setInteractive({ useHandCursor: true })
       .setDepth(5);
-    this.profileLabel.on('pointerdown', () => this.openNameEditor());
 
     this.add
       .ellipse(325, 535, 350, 62, 0xd7c3e7, 0.38)
