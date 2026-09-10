@@ -1,3 +1,4 @@
+import { isInteractionModalActive } from '../interaction/InteractionModalState';
 import type { InputAdapter } from './InputAdapter';
 import type { AxisInputAction, ButtonInputAction } from './InputAction';
 
@@ -15,14 +16,23 @@ export class InputController {
   }
 
   public getAxis(action: AxisInputAction): number {
+    if (isInteractionModalActive() && (action === 'MOVE_X' || action === 'MOVE_Y')) {
+      return 0;
+    }
     return clampAxis(this.adapters.reduce((total, adapter) => total + adapter.getAxis(action), 0));
   }
 
   public isDown(action: ButtonInputAction): boolean {
+    if (isInteractionModalActive() && action === 'GALLOP') {
+      return false;
+    }
     return this.adapters.some((adapter) => adapter.isDown(action));
   }
 
   public justPressed(action: ButtonInputAction): boolean {
+    if (isInteractionModalActive() && action === 'INTERACT') {
+      return false;
+    }
     return this.adapters.some((adapter) => adapter.justPressed(action));
   }
 
