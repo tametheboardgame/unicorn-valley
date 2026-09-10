@@ -3,7 +3,8 @@ import { getBrowserAccessibilitySettingsStore } from '../accessibility/Accessibi
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import type { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 import { shouldUsePortraitTouchControls } from '../input/TouchMovementPad';
-import type { InteractionTarget } from '../interaction/InteractionTarget';
+import type { InteractionActionKind, InteractionTarget } from '../interaction/InteractionTarget';
+import { getInteractionTargetPosition } from '../interaction/InteractionTargeting';
 import {
   CONCEPT_UI,
   createFixedGraphics,
@@ -20,72 +21,27 @@ interface PrimaryActionPresentation {
   icon: ConceptIcon;
 }
 
-function isAutomaticInteraction(target: InteractionTarget): boolean {
-  return target.id.includes('-gate') || target.id === 'interaction:meadow-race-entrance';
-}
+const ACTION_PRESENTATION: Record<InteractionActionKind, PrimaryActionPresentation> = {
+  talk: { label: 'Talk', icon: 'talk' },
+  enter: { label: 'Enter', icon: 'enter' },
+  start: { label: 'Start', icon: 'start' },
+  inspect: { label: 'Inspect', icon: 'inspect' },
+  buy: { label: 'Buy', icon: 'buy' },
+  use: { label: 'Use', icon: 'use' },
+  interact: { label: 'Interact', icon: 'interact' },
+};
 
-function formatInteractionLabel(target: InteractionTarget): string {
-  const action = target.actionLabel.trim().replace(/:\s*$/, '');
-  const normalisedAction = action.toLowerCase();
-  if (normalisedAction === 'talk' || normalisedAction === 'talk to') {
-    return `Talk to ${target.label}`;
-  }
-  if (normalisedAction === 'speak' || normalisedAction === 'speak to') {
-    return `Speak to ${target.label}`;
-  }
-  return `${action}: ${target.label}`;
+function isAutomaticInteraction(target: InteractionTarget): boolean {
+  return target.activationMode === 'automatic';
 }
 
 function getPrimaryActionPresentation(target: InteractionTarget): PrimaryActionPresentation {
-  const action = target.actionLabel.trim().replace(/:\s*$/, '').toLowerCase();
-  if (action.includes('talk') || action.includes('speak')) {
-    return { label: 'Talk', icon: 'talk' };
-  }
-  if (action.includes('enter') || action.includes('go inside') || action.includes('visit')) {
-    return { label: 'Enter', icon: 'enter' };
-  }
-  if (
-    action.includes('start') ||
-    action.includes('race') ||
-    action.includes('play') ||
-    action.includes('begin')
-  ) {
-    return { label: 'Start', icon: 'start' };
-  }
-  if (
-    action.includes('inspect') ||
-    action.includes('look') ||
-    action.includes('read') ||
-    action.includes('check')
-  ) {
-    return { label: 'Inspect', icon: 'inspect' };
-  }
-  if (action.includes('buy') || action.includes('shop')) {
-    return { label: 'Buy', icon: 'buy' };
-  }
-  if (action.includes('use') || action.includes('place') || action.includes('choose')) {
-    return { label: 'Use', icon: 'use' };
-  }
-  return { label: 'Interact', icon: 'interact' };
+  return ACTION_PRESENTATION[target.actionKind ?? 'interact'];
 }
 
-function formatConceptHint(target: InteractionTarget, action: PrimaryActionPresentation): string {
-  switch (action.label) {
-    case 'Talk':
-      return `Tap Talk to chat with ${target.label}`;
-    case 'Enter':
-      return `Tap Enter to go into ${target.label}`;
-    case 'Start':
-      return `Tap Start for ${target.label}`;
-    case 'Inspect':
-      return `Tap Inspect to look at ${target.label}`;
-    case 'Buy':
-      return `Tap Buy to shop with ${target.label}`;
-    case 'Use':
-      return `Tap Use for ${target.label}`;
-    default:
-      return `Tap Interact for ${target.label}`;
-  }
+function formatInteractionLabel(target: InteractionTarget): string {
+  const action = getPrimaryActionPresentation(target).label;
+  return target.actionKind === 'talk' ? `${action} to ${target.label}` : `${action}: ${target.label}`;
 }
 
 function shouldRenderPortraitDomPrompt(): boolean {
@@ -100,14 +56,7 @@ function shouldRenderPortraitDomPrompt(): boolean {
   );
 }
 
-/**
- * One interaction presentation for every canvas layout.
- *
- * The retired rectangular "E / Enter / tap" prompt has been removed. Desktop, tablet and phone
- * landscape use the concept circular action + hint. Portrait phone hides those canvas controls and
- * exposes the equivalent DOM action beneath the gameplay window. The DOM control is created once so
- * rotating the same page can switch presentation without recreating the scene.
- */
+/** One semantic contextual action presentation for every exploration layout. */
 export class InteractionPrompt {
   private readonly accessibility = getBrowserAccessibilitySettingsStore();
   private readonly panelShadow: Phaser.GameObjects.Arc;
@@ -130,6 +79,7 @@ export class InteractionPrompt {
   public constructor(
     private readonly scene: Phaser.Scene,
     private readonly pointerInput: PointerTouchInputAdapter,
+    private readonly onDirectTarget?: (targetId: string) => void,
   ) {
     const promptX = 1040;
     const promptY = 578;
@@ -165,7 +115,7 @@ export class InteractionPrompt {
 
     const hintX = GAME_WIDTH / 2;
     const hintY = GAME_HEIGHT - 35;
-    const hintWidth = 520;
+    const hintWidth = 420;
     const hintHeight = 50;
     this.hintSurface = createFixedGraphics(scene, 'exploration-tablet-hint-surface', 118);
     drawPanelShadow(this.hintSurface, hintX, hintY, hintWidth, hintHeight, 24, 5, 6, 0.17);
@@ -201,7 +151,7 @@ export class InteractionPrompt {
         fontSize: '16px',
         fontStyle: 'bold',
         align: 'center',
-        wordWrap: { width: 440 },
+        wordWrap: { width: 340 },
       })
       .setName('exploration-tablet-hint')
       .setOrigin(0.5)
@@ -214,14 +164,13 @@ export class InteractionPrompt {
     this.bindDirectTargetZone();
 
     this.shell = ExplorationShell.ensure(scene, pointerInput);
-
-    this.panel.on('pointerdown', () => pointerInput.setButton('INTERACT', true));
-    this.panel.on('pointerup', () => pointerInput.setButton('INTERACT', false));
-    this.panel.on('pointerout', () => pointerInput.setButton('INTERACT', false));
-    this.panel.on('pointerupoutside', () => pointerInput.setButton('INTERACT', false));
+    this.panel.on('pointerdown', this.pressCurrentTarget);
+    this.panel.on('pointerup', this.releaseInteraction);
+    this.panel.on('pointerout', this.releaseInteraction);
+    this.panel.on('pointerupoutside', this.releaseInteraction);
 
     if (typeof globalThis.document !== 'undefined') {
-      this.createResponsiveDomPrompt(pointerInput);
+      this.createResponsiveDomPrompt();
     }
 
     scene.events.on('pause', this.releaseInteraction, this);
@@ -236,25 +185,27 @@ export class InteractionPrompt {
   public setTarget(target: InteractionTarget | null): void {
     this.currentTarget = target;
     const visible = target !== null && !isAutomaticInteraction(target);
-
     if (target && visible) {
       const fullActionLabel = formatInteractionLabel(target);
       const primaryAction = getPrimaryActionPresentation(target);
       this.label.setText(primaryAction.label);
       drawConceptIcon(this.actionIcon, primaryAction.icon, 1040, 548, 1.05, CONCEPT_UI.white);
-      this.hintText.setText(formatConceptHint(target, primaryAction));
+      this.hintText.setText(target.label);
       this.domButton?.setAttribute('aria-label', fullActionLabel);
       if (this.domButton) {
         this.domButton.textContent = fullActionLabel;
       }
       if (this.domHint) {
-        this.domHint.textContent = 'Tap the big action button when it appears.';
+        this.domHint.textContent = target.label;
       }
-      this.directTargetZone.setPosition(target.position.x, target.position.y);
+      const position = getInteractionTargetPosition(target);
+      this.directTargetZone.setPosition(position.x, position.y);
     } else {
-      this.hintText.setText('Tap the path to move  •  Move close to friends and places');
+      this.hintText.setText('');
+      if (this.domHint) {
+        this.domHint.textContent = '';
+      }
     }
-
     this.refreshPresentation();
     this.shell.refresh();
   }
@@ -283,6 +234,13 @@ export class InteractionPrompt {
     this.label.destroy();
   }
 
+  private readonly pressCurrentTarget = (): void => {
+    if (this.currentTarget) {
+      this.onDirectTarget?.(this.currentTarget.id);
+    }
+    this.pointerInput.setButton('INTERACT', true);
+  };
+
   private readonly releaseInteraction = (): void => {
     this.pointerInput.setButton('INTERACT', false);
   };
@@ -299,14 +257,14 @@ export class InteractionPrompt {
   };
 
   private bindDirectTargetZone(): void {
-    this.directTargetZone.on('pointerdown', () => this.pointerInput.setButton('INTERACT', true));
+    this.directTargetZone.on('pointerdown', this.pressCurrentTarget);
     this.directTargetZone.on('pointerup', this.releaseInteraction);
     this.directTargetZone.on('pointerout', this.releaseInteraction);
     this.directTargetZone.on('pointerupoutside', this.releaseInteraction);
     this.directTargetZone.disableInteractive();
   }
 
-  private createResponsiveDomPrompt(pointerInput: PointerTouchInputAdapter): void {
+  private createResponsiveDomPrompt(): void {
     const root = globalThis.document.createElement('div');
     root.className = 'mobile-interaction-prompt';
     root.dataset.mobileInteractionPrompt = 'true';
@@ -314,7 +272,7 @@ export class InteractionPrompt {
 
     const hint = globalThis.document.createElement('p');
     hint.className = 'mobile-interaction-hint';
-    hint.textContent = 'Move close to something to see what you can do.';
+    hint.textContent = '';
 
     const button = globalThis.document.createElement('button');
     button.type = 'button';
@@ -324,12 +282,12 @@ export class InteractionPrompt {
     const press = (event: PointerEvent): void => {
       event.preventDefault();
       button.classList.add('is-active');
-      pointerInput.setButton('INTERACT', true);
+      this.pressCurrentTarget();
     };
     const release = (event: PointerEvent): void => {
       event.preventDefault();
       button.classList.remove('is-active');
-      pointerInput.setButton('INTERACT', false);
+      this.releaseInteraction();
     };
     button.addEventListener('pointerdown', press);
     button.addEventListener('pointerup', release);
@@ -345,10 +303,9 @@ export class InteractionPrompt {
 
   private refreshPresentation(): void {
     const portrait = shouldRenderPortraitDomPrompt();
-    const targetVisible =
-      this.currentTarget !== null && !isAutomaticInteraction(this.currentTarget);
+    const targetVisible = this.currentTarget !== null && !isAutomaticInteraction(this.currentTarget);
     const canvasActionVisible = targetVisible && !portrait;
-    const canvasHintVisible = !portrait;
+    const canvasHintVisible = targetVisible && !portrait;
     const highVisibility = this.accessibility.load().highVisibilityInteractions;
 
     this.panelShadow.setVisible(canvasActionVisible);
@@ -371,10 +328,8 @@ export class InteractionPrompt {
     }
 
     if (this.currentTarget && canvasActionVisible) {
-      this.directTargetZone.setPosition(
-        this.currentTarget.position.x,
-        this.currentTarget.position.y,
-      );
+      const position = getInteractionTargetPosition(this.currentTarget);
+      this.directTargetZone.setPosition(position.x, position.y);
       if (this.directTargetZone.input?.enabled !== true) {
         this.directTargetZone.setInteractive({ useHandCursor: true });
       }
