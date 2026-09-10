@@ -16,10 +16,8 @@ import {
 } from '../../content/r6ExistingValleyQuestPack';
 import { MEADOW_FLOWER_CIRCLE_DISCOVERY_ID } from '../../content/r6MeadowRunContent';
 import { getBrowserAtmosphericTimeService } from '../atmosphere/AtmosphericTimeService';
-import {
-  WorldInteractionInput,
-  WORLD_INTERACTION_PROMPT,
-} from '../interaction/WorldInteractionInput';
+import type { InteractionActionKind, InteractionTarget } from '../interaction/InteractionTarget';
+import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { getQuestStepId } from '../quests/QuestEngine';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
@@ -28,7 +26,6 @@ import {
   type ExistingValleyStoryResult,
 } from '../story/ExistingValleyQuestPackService';
 import { worldDepthForY } from './WorldDepth';
-import { WORLD_PLAYER_NAME } from './WorldTraversalPolishManager';
 
 interface Point {
   x: number;
@@ -39,6 +36,7 @@ interface QuestPackInteractionDefinition {
   id: string;
   label: string;
   actionLabel: string;
+  actionKind: InteractionActionKind;
   icon: string;
   position: Point;
   radius: number;
@@ -48,12 +46,10 @@ interface QuestPackInteractionDefinition {
 interface QuestPackInteractionRuntime {
   definition: QuestPackInteractionDefinition;
   container: Phaser.GameObjects.Container;
-  prompt: Phaser.GameObjects.Text;
 }
 
 interface QuestPackSceneState {
   scene: Phaser.Scene;
-  input: WorldInteractionInput;
   interactions: QuestPackInteractionRuntime[];
   feedback: Phaser.GameObjects.Text;
   persistent: Phaser.GameObjects.Container | null;
@@ -66,20 +62,7 @@ const TARGET_SCENES = [
   'RainbowMeadowScene',
   'CrystalBrookScene',
 ] as const;
-
-function findPlayer(scene: Phaser.Scene): Point | null {
-  const object = scene.children.getByName(WORLD_PLAYER_NAME) as
-    | (Phaser.GameObjects.GameObject & Partial<Point>)
-    | null;
-  if (object && typeof object.x === 'number' && typeof object.y === 'number') {
-    return { x: object.x, y: object.y };
-  }
-  return null;
-}
-
-function distance(left: Point, right: Point): number {
-  return Phaser.Math.Distance.Between(left.x, left.y, right.x, right.y);
-}
+const REGISTRY_OWNER = 'existing-valley-quest-pack';
 
 export class ExistingValleyQuestPackWorldManager {
   private readonly saveService = getBrowserSaveService();
@@ -109,37 +92,12 @@ export class ExistingValleyQuestPackWorldManager {
     if (!this.state || this.state.scene !== scene || this.state.signature !== signature) {
       this.buildState(scene, signature);
     }
-    const state = this.state;
-    if (!state) {
-      return;
-    }
-
-    const player = findPlayer(scene);
-    if (!player) {
-      return;
-    }
-
-    let nearest: QuestPackInteractionRuntime | null = null;
-    let nearestDistance = Number.POSITIVE_INFINITY;
-    for (const runtime of state.interactions) {
-      const pointDistance = distance(player, runtime.definition.position);
-      runtime.prompt.setVisible(pointDistance <= runtime.definition.radius + 84);
-      if (pointDistance <= runtime.definition.radius && pointDistance < nearestDistance) {
-        nearest = runtime;
-        nearestDistance = pointDistance;
-      }
-    }
-
-    if (nearest && state.input.justPressed()) {
-      this.activate(state, nearest.definition);
-    }
   }
 
   private buildState(scene: Phaser.Scene, signature: string): void {
     this.destroyState();
     const state: QuestPackSceneState = {
       scene,
-      input: new WorldInteractionInput(scene),
       interactions: [],
       feedback: scene.add
         .text(640, 112, '', {
@@ -164,6 +122,7 @@ export class ExistingValleyQuestPackWorldManager {
     );
     state.persistent = this.createPersistentState(scene);
     this.state = state;
+    this.publishTargets(state);
   }
 
   private definitionsForScene(sceneKey: string): QuestPackInteractionDefinition[] {
@@ -194,6 +153,7 @@ export class ExistingValleyQuestPackWorldManager {
         id: 'moonflowers-after-dark',
         label: 'Moonflower starlight pattern',
         actionLabel: 'Watch',
+        actionKind: 'inspect',
         icon: '🌙',
         position: { x: 880, y: 520 },
         radius: 104,
@@ -211,6 +171,7 @@ export class ExistingValleyQuestPackWorldManager {
         id: 'clover-route-card',
         label: 'Clover’s no-finish-line route card',
         actionLabel: 'Read',
+        actionKind: 'inspect',
         icon: '🗺️',
         position: { x: 2200, y: 870 },
         radius: 116,
@@ -224,6 +185,7 @@ export class ExistingValleyQuestPackWorldManager {
           id: 'no-finish-pond-turn',
           label: 'First untimed route flag',
           actionLabel: 'Loop around',
+          actionKind: 'interact',
           icon: '🚩',
           position: { x: 1770, y: 770 },
           radius: 104,
@@ -235,6 +197,7 @@ export class ExistingValleyQuestPackWorldManager {
           id: 'no-finish-picnic-turn',
           label: 'Second untimed route flag',
           actionLabel: 'Climb slowly',
+          actionKind: 'interact',
           icon: '🚩',
           position: { x: 1990, y: 1580 },
           radius: 108,
@@ -246,6 +209,7 @@ export class ExistingValleyQuestPackWorldManager {
           id: 'no-finish-windmill-turn',
           label: 'Final untimed route flag',
           actionLabel: 'Follow the curve',
+          actionKind: 'interact',
           icon: '🚩',
           position: { x: 1580, y: 565 },
           radius: 108,
@@ -264,6 +228,7 @@ export class ExistingValleyQuestPackWorldManager {
         id: 'juniper-butterfly-count',
         label: 'Juniper’s butterfly counting game',
         actionLabel: 'Count together',
+        actionKind: 'start',
         icon: '🦋',
         position: { x: 835, y: 1510 },
         radius: 108,
@@ -278,6 +243,7 @@ export class ExistingValleyQuestPackWorldManager {
         id: 'maple-picnic-spot',
         label: 'Maple’s bun-safe picnic test',
         actionLabel: 'Test the spot',
+        actionKind: 'inspect',
         icon: '🧺',
         position: { x: 2070, y: 1460 },
         radius: 110,
@@ -301,6 +267,7 @@ export class ExistingValleyQuestPackWorldManager {
         id: 'odd-stone-storyhouse-rubbing',
         label: 'Story House stone-rubbing drawer',
         actionLabel: 'Compare patterns',
+        actionKind: 'inspect',
         icon: '📜',
         position: { x: 2665, y: 930 },
         radius: 112,
@@ -320,6 +287,7 @@ export class ExistingValleyQuestPackWorldManager {
         id: 'odd-stone-bank',
         label: 'One oddly patterned stone',
         actionLabel: 'Inspect',
+        actionKind: 'inspect',
         icon: '🪨',
         position: { x: 1370, y: 1470 },
         radius: 112,
@@ -334,6 +302,7 @@ export class ExistingValleyQuestPackWorldManager {
         id: 'odd-stone-reflection-match',
         label: 'Still-water stone reflection',
         actionLabel: 'Line up the pattern',
+        actionKind: 'inspect',
         icon: '💧',
         position: { x: 2855, y: 1650 },
         radius: 112,
@@ -347,7 +316,9 @@ export class ExistingValleyQuestPackWorldManager {
     state: QuestPackSceneState,
     definition: QuestPackInteractionDefinition,
   ): QuestPackInteractionRuntime {
-    const glow = state.scene.add.circle(0, 0, 26, 0xffe89a, 0.08).setStrokeStyle(2, 0xffffff, 0.18);
+    const glow = state.scene.add
+      .circle(0, 0, 26, 0xffe89a, 0.08)
+      .setStrokeStyle(2, 0xffffff, 0.18);
     const icon = state.scene.add
       .text(0, 0, definition.icon, {
         fontFamily: 'system-ui, sans-serif',
@@ -355,37 +326,10 @@ export class ExistingValleyQuestPackWorldManager {
       })
       .setOrigin(0.5)
       .setAlpha(0.78);
-    const prompt = state.scene.add
-      .text(
-        0,
-        50,
-        `${definition.actionLabel}: ${definition.label}  ·  ${WORLD_INTERACTION_PROMPT}`,
-        {
-          color: '#5b4d68',
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '14px',
-          fontStyle: 'bold',
-          backgroundColor: '#fff9edef',
-          padding: { x: 8, y: 5 },
-        },
-      )
-      .setOrigin(0.5)
-      .setVisible(false);
-    const zone = state.scene.add.zone(0, 0, 176, 148);
     const container = state.scene.add
-      .container(definition.position.x, definition.position.y, [glow, icon, prompt, zone])
+      .container(definition.position.x, definition.position.y, [glow, icon])
       .setName(`wp11-story:${definition.id}`)
       .setDepth(worldDepthForY(definition.position.y + 18, 0.62));
-    container.setInteractive(
-      new Phaser.Geom.Rectangle(-88, -74, 176, 148),
-      Phaser.Geom.Rectangle.Contains,
-    );
-    state.input.bindPointer(zone, () => {
-      const player = findPlayer(state.scene);
-      if (player && distance(player, definition.position) <= definition.radius) {
-        this.activate(state, definition);
-      }
-    });
     state.scene.tweens.add({
       targets: [glow, icon],
       alpha: { from: 0.42, to: 0.9 },
@@ -395,7 +339,25 @@ export class ExistingValleyQuestPackWorldManager {
       repeat: -1,
       ease: 'Sine.InOut',
     });
-    return { definition, container, prompt };
+    return { definition, container };
+  }
+
+  private publishTargets(state: QuestPackSceneState): void {
+    const targets: InteractionTarget[] = state.interactions.map(({ definition, container }) => ({
+      id: `interaction:quest-pack:${definition.id}`,
+      label: definition.label,
+      actionLabel: definition.actionLabel,
+      actionKind: definition.actionKind,
+      position: definition.position,
+      interactionRadius: definition.radius,
+      priority: 20,
+      visible: () => container.active,
+      result: {
+        type: 'callback',
+        activate: () => this.activate(state, definition),
+      },
+    }));
+    getSceneInteractionRegistry(state.scene).replaceOwnerTargets(REGISTRY_OWNER, targets);
   }
 
   private activate(state: QuestPackSceneState, definition: QuestPackInteractionDefinition): void {
@@ -540,12 +502,12 @@ export class ExistingValleyQuestPackWorldManager {
     if (!this.state) {
       return;
     }
+    getSceneInteractionRegistry(this.state.scene).clearOwner(REGISTRY_OWNER);
     for (const runtime of this.state.interactions) {
       runtime.container.destroy(true);
     }
     this.state.persistent?.destroy(true);
     this.state.feedback.destroy();
-    this.state.input.destroy();
     this.state = null;
   }
 }
