@@ -8,7 +8,7 @@ Last updated: 2026-09-10
 
 Path: `docs/work-packages/R6.5-WP19C-PROGRESSIVE-CREATOR.md`
 
-State: **final action-surface correction implemented; replacement qualification pending**. David judged candidate `baa88f36` excellent but withheld approval. Scene-owned rectangular action shadows and the obsolete Back shadow owner are removed; the modal presentation manager now owns one rounded face and one rounded shadow per action, and Reset ends in a solid tangent arrowhead. The original local recovery commits were unavailable in this workspace, so the bounded patch was reapplied from recorded task evidence. Exact-head CI, candidate-bound smoke and desktop/phone screenshot inspection remain pending. David's visual approval remains pending. No merge, production or WP19D.
+State: **final action-surface correction delivered; replacement qualification running**. David judged candidate `baa88f36` excellent but withheld approval. Scene-owned rectangular action shadows and the obsolete Back shadow owner are removed; the modal presentation manager now owns one rounded face and one rounded shadow per action, and Reset ends in a solid tangent arrowhead. The original local recovery commits were unavailable in this workspace, so the bounded patch was reapplied from recorded task evidence. GitHub now has delivery head `4b8043f`; Cloudflare published it at `https://240412c1.unicorn-valley.pages.dev`. Validate and compatibility pass; all three browser shards remain running. Candidate-bound smoke is being rerun against the new immutable preview, and desktop/phone screenshot inspection remains pending. David's visual approval remains pending. No merge, production or WP19D.
 
 
 ## Accepted gameplay baseline

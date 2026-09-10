@@ -17,7 +17,7 @@
   "next_work_package": "R6.5-WP19D",
   "next_work_package_path": "docs/work-packages/R6.5-WP19D-UNIFIED-INTERACTIONS-NPCS.md",
   "human_input_required": false,
-  "blocker_reason": "Recovered final-action-surface exact-head CI, candidate smoke and rendered screenshot inspection are pending; David's finished-WP19C visual approval remains pending.",
+  "blocker_reason": "Recovered final-action-surface browser shards, candidate-bound smoke and rendered screenshot inspection are pending; David's finished-WP19C visual approval remains pending.",
   "night_shift_state": "not_configured",
   "chat_disposition": "keep",
   "delivery_mode": "pr_required",
