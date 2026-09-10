@@ -176,17 +176,17 @@ export class LandscapeCreatorProgressiveManager {
   }
 
   private renderStyleGroup(group: CategoryConfig): void {
-    this.addText(660, 295, group.title, '22px');
+    this.addText(666, 272, group.title, '20px');
     const count = group.choices.length;
     const columns = count > 6 ? 4 : 3;
-    const width = columns === 4 ? 120 : 154;
-    const gap = columns === 4 ? 130 : 166;
+    const width = columns === 4 ? 126 : 166;
+    const gap = columns === 4 ? 137 : 181;
     group.choices.forEach((choice, index) => {
-      const x = (columns === 4 ? 704 : 728) + (index % columns) * gap;
-      const y = 354 + Math.floor(index / columns) * 108;
+      const x = (columns === 4 ? 715 : 750) + (index % columns) * gap;
+      const y = 345 + Math.floor(index / columns) * 108;
       const selected = (this.scene as CreatorOwner).creatorValue(group.key) === choice.id;
       const card = this.scene.add
-        .rectangle(x, y, width, 108, selected ? 0xfff2c1 : UI_COLOURS.cream, 1)
+        .rectangle(x, y, width, 96, selected ? 0xfff2c1 : UI_COLOURS.cream, 1)
         .setName(`creator-card-${String(group.key)}-${choice.id}`)
         .setStrokeStyle(selected ? 5 : 2, selected ? UI_COLOURS.goldStrong : 0xcbb8cd, 1)
         .setInteractive({ useHandCursor: true })
@@ -201,12 +201,12 @@ export class LandscapeCreatorProgressiveManager {
           'bodyColour' | 'eyeColour' | 'maneColour' | 'tailColour'
         >,
         x,
-        y - 12,
+        y - 9,
         variant,
-        group.key === 'tailStyle' ? 0.62 : 0.72,
+        group.key === 'tailStyle' ? 0.84 : group.key === 'hornStyle' ? 1.15 : 0.96,
       );
       const label = this.scene.add
-        .text(x, y + 39, `${selected ? '✓ ' : ''}${choice.label}`, {
+        .text(x, y + 34, `${selected ? '✓ ' : ''}${choice.label}`, {
           color: UI_COLOURS.ink,
           fontFamily: UI_FONT,
           fontSize: '13px',
@@ -220,7 +220,7 @@ export class LandscapeCreatorProgressiveManager {
       this.content.push(card, art, label);
     });
     if (group.colours)
-      this.renderSwatches(group.colours.key, group.colours.title, group.colours.choices, 536);
+      this.renderSwatches(group.colours.key, group.colours.title, group.colours.choices, 548);
   }
 
   private currentAppearance(): UnicornAppearance {

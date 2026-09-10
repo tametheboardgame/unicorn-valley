@@ -261,6 +261,23 @@ function drawTail(
       graphics.lineStyle(3 * scale, outline, 0.84);
       graphics.strokeCircle(x + dx * scale, tailY + dy * scale, radius * scale);
     }
+  } else if (appearance.tailStyle === 'plume') {
+    for (const [dx, dy, width, height] of [
+      [-61, -11, 43, 28],
+      [-83, 2, 49, 32],
+      [-106, 15, 38, 26],
+    ] as const) {
+      ellipse(
+        graphics,
+        x + dx * scale,
+        tailY + dy * scale,
+        width * scale,
+        height * scale,
+        fill,
+        outline,
+        3 * scale,
+      );
+    }
   } else {
     ellipse(
       graphics,
@@ -378,6 +395,24 @@ function drawMane(
         y + baseY * scale - lift,
       );
     }
+  } else if (appearance.maneStyle === 'cascade') {
+    for (const [dx, dy, width, height] of [
+      [43, -50, 29, 30],
+      [35, -25, 34, 38],
+      [27, 3, 31, 42],
+      [21, 28, 24, 34],
+    ] as const) {
+      ellipse(
+        graphics,
+        x + dx * scale,
+        y + dy * scale - lift,
+        width * scale,
+        height * scale,
+        fill,
+        outline,
+        2.8 * scale,
+      );
+    }
   } else {
     ellipse(
       graphics,
@@ -427,7 +462,7 @@ function drawHorn(
       ? -82
       : appearance.hornStyle === 'short'
         ? -75
-        : appearance.hornStyle === 'crystal'
+        : appearance.hornStyle === 'crystal' || appearance.hornStyle === 'moon'
           ? -85
           : -88;
   graphics.fillStyle(appearance.hornStyle === 'crystal' ? 0xd9f6ff : 0xf3d47c, 1);
@@ -465,6 +500,11 @@ function drawHorn(
       x + 84 * scale,
       y - 82 * scale,
     );
+  } else if (appearance.hornStyle === 'moon') {
+    graphics.fillStyle(0xffe394, 1);
+    graphics.fillCircle(x + 78 * scale, y - 88 * scale, 9 * scale);
+    graphics.fillStyle(0x7558a0, 1);
+    graphics.fillCircle(x + 82 * scale, y - 91 * scale, 8 * scale);
     graphics.fillTriangle(
       x + 72 * scale,
       y - 82 * scale,
@@ -616,6 +656,14 @@ function drawAccessory(
     graphics.lineBetween(x + 52 * scale, y + 12 * scale, x + 63 * scale, y + 38 * scale);
     graphics.lineStyle(2 * scale, 0xffd3df, 0.85);
     graphics.lineBetween(x + 56 * scale, y + 29 * scale, x + 64 * scale, y + 33 * scale);
+  } else if (appearance.accessory === 'glasses') {
+    graphics.lineStyle(4 * scale, 0x8d63b2, 1);
+    graphics.strokeCircle(x + 43 * scale, y - 19 * scale, 11 * scale);
+    graphics.strokeCircle(x + 68 * scale, y - 19 * scale, 11 * scale);
+    graphics.lineBetween(x + 54 * scale, y - 19 * scale, x + 57 * scale, y - 19 * scale);
+    graphics.fillStyle(0xffe27c, 0.9);
+    drawStar(graphics, x + 43 * scale, y - 19 * scale, 5 * scale);
+    drawStar(graphics, x + 68 * scale, y - 19 * scale, 5 * scale);
   }
 }
 
@@ -638,7 +686,7 @@ export function drawUnicornComponent(
     drawMane(
       graphics,
       x - 34 * scale,
-      y + 32 * scale,
+      y + 10 * scale,
       scale,
       appearance,
       mane,
@@ -650,8 +698,26 @@ export function drawUnicornComponent(
   } else if (component === 'hornStyle') {
     drawHorn(graphics, x - 77 * scale, y + 77 * scale, scale, appearance);
   } else if (component === 'marking') {
-    drawMarking(graphics, x + 13 * scale, y - 5 * scale, scale, appearance, 0xf3d7c7);
+    const body = colourValue(BODY_COLOURS, appearance.bodyColour);
+    const keyline = mixColour(body, 0x554261, 0.45);
+    graphics.fillStyle(body, 1);
+    graphics.lineStyle(2.5 * scale, keyline, 0.65);
+    graphics.fillRoundedRect(x - 38 * scale, y - 31 * scale, 76 * scale, 55 * scale, 15 * scale);
+    graphics.strokeRoundedRect(x - 38 * scale, y - 31 * scale, 76 * scale, 55 * scale, 15 * scale);
+    if (appearance.marking === 'none') {
+      graphics.lineStyle(4 * scale, 0x8f7698, 0.8);
+      graphics.strokeCircle(x, y - 4 * scale, 12 * scale);
+      graphics.lineBetween(x - 9 * scale, y + 5 * scale, x + 9 * scale, y - 13 * scale);
+    } else {
+      drawMarking(graphics, x + 13 * scale, y - 9 * scale, scale * 1.25, appearance, body);
+    }
   } else {
+    if (appearance.accessory === 'none') {
+      graphics.lineStyle(4 * scale, 0x8f7698, 0.8);
+      graphics.strokeCircle(x + 50 * scale, y - 10 * scale, 15 * scale);
+      graphics.lineBetween(x + 39 * scale, y + 1 * scale, x + 61 * scale, y - 21 * scale);
+      return;
+    }
     drawAccessory(graphics, x - 50 * scale, y + 20 * scale, scale, appearance);
   }
 }

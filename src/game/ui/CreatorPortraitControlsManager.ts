@@ -48,11 +48,20 @@ interface DomCycleRow {
 }
 
 const COMPONENT_SYMBOLS: Readonly<Record<CycleKey, Record<string, string>>> = {
-  maneStyle: { soft: '〰', fluffy: '☁', swept: '◒', braid: '⛓', crest: '♒' },
-  tailStyle: { swish: '〰', curl: '➰', ribbon: '◢', braid: '⛓', puff: '☁' },
-  hornStyle: { classic: '◭', spiral: '▱', short: '▴', star: '★', crystal: '♦' },
+  maneStyle: { soft: '〰', fluffy: '☁', swept: '◒', braid: '⛓', crest: '♒', cascade: '≋' },
+  tailStyle: { swish: '〰', curl: '➰', ribbon: '◢', braid: '⛓', puff: '☁', plume: '≈' },
+  hornStyle: { classic: '◭', spiral: '▱', short: '▴', star: '★', crystal: '♦', moon: '☾' },
   marking: { none: '—', star: '★', heart: '♥', moon: '☾', freckles: '⠿', sparkles: '✦' },
-  accessory: { none: '—', flower: '✿', bow: '⋈', bell: '♢', crown: '♛', ribbon: '🎀', scarf: '⌁' },
+  accessory: {
+    none: '—',
+    flower: '✿',
+    bow: '⋈',
+    bell: '♢',
+    crown: '♛',
+    ribbon: '◇',
+    scarf: '⌁',
+    glasses: '☆',
+  },
 };
 
 interface DomAction {

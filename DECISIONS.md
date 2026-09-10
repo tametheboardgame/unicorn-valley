@@ -197,3 +197,16 @@ contained grids, component-only option artwork, clear footer separation,
 retirement of legacy preview/name decoration, persistent tab/selection state,
 keyboard-accessible pencil renaming and repeat-entry lifecycle safety. This
 does not release the visual gate or authorise merge, production or WP19D.
+
+## UV-D019 - David's second WP19C correction expands the supported catalogue
+
+Status: Accepted implementation feedback, 2026-09-10.
+
+David rejected candidate `068f3f4e` after reviewing all six category captures
+under `docs/evidence/wp19c-david-20260910/`. WP19C must remove generated-surface
+echoes at their lifecycle owner, improve vertical rhythm and component-card
+scale, use the selected body colour behind marking art, retain exactly one
+adaptive accessible pencil, and polish Randomise/Reset with authored icons.
+This feedback explicitly authorises one new save-compatible mane, tail and horn
+and one accessory, producing six/six/six/eight actual catalogue choices while
+preserving every existing ID. It does not approve merge, production or WP19D.

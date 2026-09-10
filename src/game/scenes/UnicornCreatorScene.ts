@@ -156,7 +156,7 @@ export class UnicornCreatorScene extends Phaser.Scene {
       .setStrokeStyle(3, UI_COLOURS.lavenderStrong, 0.9)
       .setDepth(4);
     this.profileLabel = this.add
-      .text(325, 158, `${unicornName}  ✎`, {
+      .text(325, 158, unicornName, {
         color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
         fontSize: '26px',
@@ -331,9 +331,10 @@ export class UnicornCreatorScene extends Phaser.Scene {
     input.spellcheck = false;
     input.addEventListener('keydown', (event) => event.stopPropagation());
     input.addEventListener('keyup', (event) => event.stopPropagation());
-    input.addEventListener('input', () =>
-      this.profileLabel?.setText(`${input.value || DEFAULT_UNICORN_NAME}  ✎`),
-    );
+    input.addEventListener('input', () => {
+      this.profileLabel?.setText(input.value || DEFAULT_UNICORN_NAME);
+      this.positionNameInput();
+    });
     input.addEventListener('blur', () => {
       input.style.visibility = 'hidden';
       input.style.pointerEvents = 'none';
@@ -380,7 +381,8 @@ export class UnicornCreatorScene extends Phaser.Scene {
   }
 
   private syncDisplayedName(value: string): void {
-    this.profileLabel?.setText(`${value || DEFAULT_UNICORN_NAME}  ✎`);
+    this.profileLabel?.setText(value || DEFAULT_UNICORN_NAME);
+    this.positionNameInput();
   }
 
   private positionNameInput = (): void => {
@@ -408,7 +410,9 @@ export class UnicornCreatorScene extends Phaser.Scene {
     this.nameInput.style.fontSize = `${Math.max(14, 20 * Math.min(scaleX, scaleY))}px`;
     this.nameInput.style.borderWidth = `${Math.max(2, 4 * Math.min(scaleX, scaleY))}px`;
     if (this.renameButton) {
-      this.renameButton.style.left = `${canvasRect.left - containerRect.left + 390 * scaleX}px`;
+      const labelWidth = Math.min(300, this.profileLabel?.displayWidth ?? 150);
+      const buttonX = 325 + labelWidth / 2 + 14;
+      this.renameButton.style.left = `${canvasRect.left - containerRect.left + buttonX * scaleX}px`;
       this.renameButton.style.top = `${canvasRect.top - containerRect.top + 134 * scaleY}px`;
       this.renameButton.style.width = `${Math.max(38, 42 * scaleX)}px`;
       this.renameButton.style.height = `${Math.max(38, 42 * scaleY)}px`;
@@ -573,7 +577,7 @@ export class UnicornCreatorScene extends Phaser.Scene {
       .setInteractive({ useHandCursor: true })
       .setDepth(20);
     this.add
-      .text(x, y, label, {
+      .text(x + (name === 'surprise' || name === 'default' ? 14 : 0), y, label, {
         color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
         fontSize: primary ? '22px' : width < 165 ? '15px' : '18px',
@@ -583,6 +587,28 @@ export class UnicornCreatorScene extends Phaser.Scene {
       .setName(`creator-action-${name}-label`)
       .setOrigin(0.5)
       .setDepth(21);
+    if (name === 'surprise' || name === 'default') {
+      const icon = this.add.graphics().setDepth(21).setName(`creator-action-${name}-icon`);
+      if (name === 'surprise') {
+        icon.fillStyle(0x4f3a5d, 1);
+        icon.fillRoundedRect(x - 77, y - 12, 24, 24, 5);
+        icon.fillStyle(UI_COLOURS.cream, 1);
+        for (const [dx, dy] of [
+          [-70, -5],
+          [-60, 5],
+          [-60, -5],
+          [-70, 5],
+        ] as const)
+          icon.fillCircle(x + dx, y + dy, 2.2);
+      } else {
+        icon.lineStyle(4, 0x4f3a5d, 1);
+        icon.beginPath();
+        icon.arc(x - 63, y, 11, -0.7, 4.5, false);
+        icon.strokePath();
+        icon.fillStyle(0x4f3a5d, 1);
+        icon.fillTriangle(x - 77, y - 7, x - 66, y - 9, x - 71, y + 1);
+      }
+    }
     applyButtonHover(button, fill, hover);
     button.on('pointerdown', action);
   }

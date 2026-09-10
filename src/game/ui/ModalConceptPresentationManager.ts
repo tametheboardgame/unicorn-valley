@@ -162,6 +162,14 @@ export class ModalConceptPresentationManager {
 
     const presentation = { graphics, hideSource };
     this.presentations.set(rectangle, presentation);
+    // A rectangle can be replaced many times while a modal remains active (the
+    // creator category cards are the important example). Keep the generated
+    // skin's lifetime tied to its source instead of leaving painted surfaces in
+    // the scene display list after the source has been destroyed.
+    rectangle.once(Phaser.GameObjects.Events.DESTROY, () => {
+      if (graphics.active) graphics.destroy();
+      this.presentations.delete(rectangle);
+    });
     return presentation;
   }
 }
