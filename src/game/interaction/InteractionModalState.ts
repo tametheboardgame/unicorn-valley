@@ -2,6 +2,8 @@ import type Phaser from 'phaser';
 
 const lockedScenes = new WeakSet<Phaser.Scene>();
 let lockCount = 0;
+let suppressInteractionUntil = 0;
+const CLOSE_CLICK_THROUGH_GUARD_MS = 160;
 
 /**
  * Shared gameplay lock for an active conversation/interaction surface.
@@ -22,8 +24,16 @@ export function setInteractionModalActive(scene: Phaser.Scene, active: boolean):
 
   lockedScenes.delete(scene);
   lockCount = Math.max(0, lockCount - 1);
+  suppressInteractionUntil = Math.max(
+    suppressInteractionUntil,
+    Date.now() + CLOSE_CLICK_THROUGH_GUARD_MS,
+  );
 }
 
 export function isInteractionModalActive(scene?: Phaser.Scene): boolean {
   return scene ? lockedScenes.has(scene) : lockCount > 0;
+}
+
+export function isInteractionActivationSuppressed(): boolean {
+  return lockCount > 0 || Date.now() < suppressInteractionUntil;
 }
