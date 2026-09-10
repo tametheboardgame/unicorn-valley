@@ -19,21 +19,19 @@ import {
 } from '../../content/r65StarlightBeach';
 import { GAME_WIDTH } from '../config/gameConstants';
 import { DiscoveryService } from '../discovery/DiscoveryService';
-import {
-  WorldInteractionInput,
-  WORLD_INTERACTION_PROMPT,
-} from '../interaction/WorldInteractionInput';
+import type { InteractionActionKind, InteractionTarget } from '../interaction/InteractionTarget';
+import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { InventoryService } from '../inventory/InventoryService';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import type { SaveGame } from '../save/saveSchema';
 import { worldDepthForY } from '../world/WorldDepth';
-import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
 
 interface BeachContentPoint {
   id: string;
   label: string;
   actionLabel: string;
+  actionKind: InteractionActionKind;
   icon: string;
   x: number;
   y: number;
@@ -44,12 +42,10 @@ interface BeachContentPoint {
 interface BeachContentRuntime {
   definition: BeachContentPoint;
   container: Phaser.GameObjects.Container;
-  prompt: Phaser.GameObjects.Text;
 }
 
 interface BeachContentState {
   scene: Phaser.Scene;
-  input: WorldInteractionInput;
   points: BeachContentRuntime[];
   feedback: Phaser.GameObjects.Text;
   feedbackTimer: Phaser.Time.TimerEvent | null;
@@ -57,6 +53,7 @@ interface BeachContentState {
 }
 
 const SCENE_KEY = 'StarlightBeachScene';
+const REGISTRY_OWNER = 'starlight-beach-content';
 const SHELL_IDS = [
   SUNRISE_SPIRAL_SHELL_ITEM_ID,
   MOON_SPECKLE_SHELL_ITEM_ID,
@@ -67,7 +64,8 @@ const BEACH_CONTENT_POINTS: readonly BeachContentPoint[] = [
   {
     id: 'coral-story-table',
     label: "Coral's shell table",
-    actionLabel: 'Talk',
+    actionLabel: 'Talk to Coral',
+    actionKind: 'talk',
     icon: '🐚',
     x: 900,
     y: 1050,
@@ -78,6 +76,7 @@ const BEACH_CONTENT_POINTS: readonly BeachContentPoint[] = [
     id: 'shell-story-circle',
     label: 'Shell story circle',
     actionLabel: 'Arrange',
+    actionKind: 'interact',
     icon: '✨',
     x: 900,
     y: 820,
@@ -88,6 +87,7 @@ const BEACH_CONTENT_POINTS: readonly BeachContentPoint[] = [
     id: 'shell-story-display',
     label: 'Three-shell story',
     actionLabel: 'Remember',
+    actionKind: 'inspect',
     icon: '🐚',
     x: 900,
     y: 820,
@@ -97,7 +97,8 @@ const BEACH_CONTENT_POINTS: readonly BeachContentPoint[] = [
   {
     id: 'skipper-route-sketch',
     label: "Skipper's route sketch",
-    actionLabel: 'Talk',
+    actionLabel: 'Talk to Skipper',
+    actionKind: 'talk',
     icon: '🪁',
     x: 2500,
     y: 1060,
@@ -108,6 +109,7 @@ const BEACH_CONTENT_POINTS: readonly BeachContentPoint[] = [
     id: 'dune-wind-marker',
     label: 'Striped wind marker',
     actionLabel: 'Listen',
+    actionKind: 'inspect',
     icon: '🌬️',
     x: 2760,
     y: 920,
@@ -120,6 +122,7 @@ const BEACH_CONTENT_POINTS: readonly BeachContentPoint[] = [
     id: 'moonlit-cross-breeze',
     label: 'Moonlit breeze',
     actionLabel: 'Feel',
+    actionKind: 'interact',
     icon: '🌙',
     x: 3110,
     y: 1610,
@@ -133,6 +136,7 @@ const BEACH_CONTENT_POINTS: readonly BeachContentPoint[] = [
     id: 'beachcombing-basket',
     label: "Coral's beachcombing basket",
     actionLabel: 'Beachcomb',
+    actionKind: 'start',
     icon: '🔎',
     x: 1210,
     y: 1320,
@@ -143,6 +147,7 @@ const BEACH_CONTENT_POINTS: readonly BeachContentPoint[] = [
     id: 'shoreline-route-board',
     label: 'Shoreline route board',
     actionLabel: 'Inspect',
+    actionKind: 'inspect',
     icon: '🏁',
     x: 2580,
     y: 820,
@@ -150,20 +155,6 @@ const BEACH_CONTENT_POINTS: readonly BeachContentPoint[] = [
     isAvailable: (save) => save.world.flags[BEACH_RACE_ROUTE_READY_FLAG] === true,
   },
 ];
-
-function findPlayer(scene: Phaser.Scene): { x: number; y: number } | null {
-  const player = scene.children.getByName(WORLD_PLAYER_NAME) as
-    | (Phaser.GameObjects.GameObject & Partial<{ x: number; y: number }>)
-    | null;
-  if (player && typeof player.x === 'number' && typeof player.y === 'number') {
-    return { x: player.x, y: player.y };
-  }
-  return null;
-}
-
-function distance(left: { x: number; y: number }, right: { x: number; y: number }): number {
-  return Phaser.Math.Distance.Between(left.x, left.y, right.x, right.y);
-}
 
 export class StarlightBeachContentWorldManager {
   private readonly saveService = getBrowserSaveService();
@@ -188,31 +179,9 @@ export class StarlightBeachContentWorldManager {
     }
 
     const state = this.ensureState(scene);
-    const player = findPlayer(scene);
     const save = this.saveService.load() ?? this.saveService.createNewGame();
-    if (!player) {
-      return;
-    }
-
-    let nearest: BeachContentRuntime | null = null;
-    let nearestDistance = Number.POSITIVE_INFINITY;
     for (const runtime of state.points) {
-      const available = runtime.definition.isAvailable(save);
-      runtime.container.setVisible(available);
-      if (!available) {
-        runtime.prompt.setVisible(false);
-        continue;
-      }
-      const pointDistance = distance(player, runtime.container);
-      runtime.prompt.setVisible(pointDistance <= runtime.definition.radius + 92);
-      if (pointDistance <= runtime.definition.radius && pointDistance < nearestDistance) {
-        nearest = runtime;
-        nearestDistance = pointDistance;
-      }
-    }
-
-    if (state.input.justPressed() && nearest) {
-      this.activate(state, nearest.definition);
+      runtime.container.setVisible(runtime.definition.isAvailable(save));
     }
   }
 
@@ -222,7 +191,6 @@ export class StarlightBeachContentWorldManager {
     }
     this.destroyState();
 
-    const input = new WorldInteractionInput(scene);
     const feedback = scene.add
       .text(GAME_WIDTH / 2, 174, '', {
         color: '#4f5262',
@@ -242,7 +210,6 @@ export class StarlightBeachContentWorldManager {
 
     const state: BeachContentState = {
       scene,
-      input,
       points: [],
       feedback,
       feedbackTimer: null,
@@ -250,48 +217,40 @@ export class StarlightBeachContentWorldManager {
     };
 
     for (const definition of BEACH_CONTENT_POINTS) {
-      const plate = scene.add.circle(0, 0, 30, 0xfff3bd, 0.18).setStrokeStyle(2, 0xffffff, 0.28);
+      const plate = scene.add
+        .circle(0, 0, 30, 0xfff3bd, 0.18)
+        .setStrokeStyle(2, 0xffffff, 0.28);
       const icon = scene.add
         .text(0, 0, definition.icon, { fontFamily: 'system-ui, sans-serif', fontSize: '28px' })
         .setOrigin(0.5);
-      const prompt = scene.add
-        .text(
-          0,
-          54,
-          `${definition.actionLabel}: ${definition.label}  ·  ${WORLD_INTERACTION_PROMPT}`,
-          {
-            color: '#5d496c',
-            fontFamily: 'system-ui, sans-serif',
-            fontSize: '14px',
-            fontStyle: 'bold',
-            backgroundColor: '#fff9edea',
-            padding: { x: 8, y: 5 },
-          },
-        )
-        .setOrigin(0.5)
-        .setVisible(false);
-      const zone = scene.add.zone(0, 0, 184, 156);
       const container = scene.add
-        .container(definition.x, definition.y, [plate, icon, prompt, zone])
+        .container(definition.x, definition.y, [plate, icon])
         .setName(`beach-content:${definition.id}`)
         .setDepth(worldDepthForY(definition.y + 18, 0.44));
-
-      input.bindPointer(zone, () => {
-        const currentSave = this.saveService.load() ?? this.saveService.createNewGame();
-        const currentPlayer = findPlayer(scene);
-        if (
-          currentPlayer &&
-          definition.isAvailable(currentSave) &&
-          distance(currentPlayer, container) <= definition.radius
-        ) {
-          this.activate(state, definition);
-        }
-      });
-      state.points.push({ definition, container, prompt });
+      state.points.push({ definition, container });
     }
 
     this.state = state;
+    this.publishTargets(state);
     return state;
+  }
+
+  private publishTargets(state: BeachContentState): void {
+    const targets: InteractionTarget[] = state.points.map(({ definition, container }) => ({
+      id: `interaction:beach-content:${definition.id}`,
+      label: definition.label,
+      actionLabel: definition.actionLabel,
+      actionKind: definition.actionKind,
+      position: { x: definition.x, y: definition.y },
+      interactionRadius: definition.radius,
+      priority: definition.actionKind === 'talk' ? 30 : definition.actionKind === 'start' ? 20 : 12,
+      visible: () => {
+        const save = this.saveService.load() ?? this.saveService.createNewGame();
+        return container.active && definition.isAvailable(save);
+      },
+      result: { type: 'callback', activate: () => this.activate(state, definition) },
+    }));
+    getSceneInteractionRegistry(state.scene).replaceOwnerTargets(REGISTRY_OWNER, targets);
   }
 
   private activate(state: BeachContentState, definition: BeachContentPoint): void {
@@ -464,11 +423,11 @@ export class StarlightBeachContentWorldManager {
       return;
     }
     this.state.feedbackTimer?.destroy();
+    getSceneInteractionRegistry(this.state.scene).clearOwner(REGISTRY_OWNER);
     for (const runtime of this.state.points) {
       runtime.container.destroy(true);
     }
     this.state.feedback.destroy();
-    this.state.input.destroy();
     this.state = null;
   }
 }
