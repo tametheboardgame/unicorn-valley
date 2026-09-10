@@ -263,7 +263,7 @@ test.describe('WP18G landscape tablet matrix', () => {
   }) => {
     // This traverses three independently rendered modal owners at two sizes.
     // Retain every geometry assertion while allowing software rendering overhead.
-    test.setTimeout(150_000);
+    test.setTimeout(210_000);
     await page.goto('/?diagnostics=1');
     await waitForDiagnostics(page);
 
@@ -302,8 +302,8 @@ test.describe('WP18G landscape tablet matrix', () => {
       await waitForNamedObject(page, 'UnicornCreatorScene', 'creator-category-colours');
       for (const name of [
         'creator-category-colours',
-        'creator-category-colours',
         'creator-category-mane',
+        'creator-category-tail',
         'creator-category-horn',
         'creator-category-markings',
         'creator-category-accessories',
@@ -312,7 +312,11 @@ test.describe('WP18G landscape tablet matrix', () => {
         expectRectInsideViewport(rect, viewport);
         expect(Math.min(rect.width, rect.height)).toBeGreaterThanOrEqual(40);
       }
-      await expect(page.locator('.unicorn-name-input')).toBeVisible();
+      const renameButton = page.locator('.creator-landscape-rename-button');
+      await expect(renameButton).toBeVisible();
+      await renameButton.focus();
+      await page.keyboard.press('Enter');
+      await expect(page.locator('.unicorn-name-input')).toBeFocused();
       await expectNoPageOverflow(page);
     }
   });
@@ -410,7 +414,11 @@ test.describe('WP18G secondary desktop inputs', () => {
 
     await startScene(page, 'UnicornCreatorScene');
     const nameInput = page.locator('.unicorn-name-input');
-    await expect(nameInput).toBeVisible();
+    const renameButton = page.locator('.creator-landscape-rename-button');
+    await expect(renameButton).toBeVisible();
+    await renameButton.focus();
+    await page.keyboard.press('Enter');
+    await expect(nameInput).toBeFocused();
     await nameInput.fill('Esme');
     await expect(nameInput).toHaveValue('Esme');
 

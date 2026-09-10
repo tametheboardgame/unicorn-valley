@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: 2026-09-09
+Last updated: 2026-09-10
 
 ## Current work
 
@@ -8,7 +8,7 @@ Last updated: 2026-09-09
 
 Path: `docs/work-packages/R6.5-WP19C-PROGRESSIVE-CREATOR.md`
 
-State: **David layout corrections and category-complete evidence committed; replacement exact-head qualification pending**. David's four tablet captures reject preview `cb1417d6` as finished work. The correction retires named legacy preview/name decoration, contains responsive option grids above a separate footer, uses isolated supported-component art, preserves active/selected state after pointer exit and draft replacement, restores repeated scene ownership, synchronises displayed names and provides a keyboard-focusable pencil control. Local validation passes; corrected browser evidence, exact-head CI and immutable preview remain pending. David must approve the finished immutable preview before merge, production or WP19D.
+State: **David layout corrections and category-complete evidence committed; second replacement qualification pending**. CI `34404549752` passed Validate and compatibility but all three numbered Chromium shards failed. Bounded local reproduction identified a slow real-countdown wait, a portrait journey total timeout, one stale multi-category fallback expectation, two stale always-visible-name-input assumptions and a 4:3 tab touch-target shortfall. These are corrected without removing interaction or geometry assertions; local validation passes. Replacement exact-head CI, candidate-bound smoke and the corrected immutable preview remain pending. David must approve the finished immutable preview before merge, production or WP19D.
 
 ## Accepted gameplay baseline
 
@@ -65,7 +65,7 @@ WP18K is human-approved, technically qualified and merged through PR #161 at mai
 
 ## Next action
 
-Run replacement exact-head CI after correcting obsolete creator regressions, bind smoke to the new candidate, and publish its immutable corrected preview. Stop for David’s finished-WP19C visual approval. Stop for David's finished-WP19C visual approval without merge, production deployment or WP19D.
+Run replacement exact-head CI for the corrected shard cases, bind smoke to that exact immutable candidate, and publish its corrected preview. Stop for David's finished-WP19C visual approval without merge, production deployment or WP19D.
 
 ## Implementation delivery
 

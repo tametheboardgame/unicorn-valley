@@ -99,7 +99,7 @@ export class LandscapeCreatorProgressiveManager {
       const x = 735 + (index % 3) * 188;
       const y = 184 + Math.floor(index / 3) * 55;
       const button = this.scene.add
-        .rectangle(x, y, 172, 45, UI_COLOURS.lavender, 1)
+        .rectangle(x, y, 172, 50, UI_COLOURS.lavender, 1)
         .setName(`creator-category-${definition.id}`)
         .setStrokeStyle(3, UI_COLOURS.lavenderStrong, 0.9)
         .setInteractive({ useHandCursor: true })
