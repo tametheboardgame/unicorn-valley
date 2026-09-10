@@ -10,17 +10,17 @@
   "autonomy_state": "amber",
   "agent_state": "active",
   "branch": "agent/r6.5-wp19c-progressive-creator",
-  "latest_commit": "057a8c1",
+  "latest_commit": "424f49e",
   "ci_state": "running",
   "technical_validation_state": "pending",
   "human_acceptance_state": "pending",
   "next_work_package": "R6.5-WP19D",
   "next_work_package_path": "docs/work-packages/R6.5-WP19D-UNIFIED-INTERACTIONS-NPCS.md",
   "human_input_required": false,
-  "blocker_reason": "Replacement exact-head CI and immutable candidate smoke are pending; David's finished-WP19C visual approval remains pending.",
+  "blocker_reason": "Final-polish exact-head CI and immutable candidate smoke are pending; David's finished-WP19C visual approval remains pending.",
   "night_shift_state": "not_configured",
   "chat_disposition": "keep",
   "delivery_mode": "pr_required",
-  "last_activity_at": "2026-09-10T09:05:00Z",
-  "updated_at": "2026-09-10T09:05:00Z"
+  "last_activity_at": "2026-09-10T11:35:00Z",
+  "updated_at": "2026-09-10T11:35:00Z"
 }

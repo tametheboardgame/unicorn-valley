@@ -8,7 +8,7 @@ Last updated: 2026-09-10
 
 Path: `docs/work-packages/R6.5-WP19C-PROGRESSIVE-CREATOR.md`
 
-State: **drawn-bounds visual correction implemented; replacement qualification pending**. David rejected the remaining card/category/preview alignment after the previously qualified candidate. The new correction fits isolated components and the complete preview by their drawn bounds, centres the 3x2 category group on the panel, and records four-class plus sequential phone evidence under `docs/evidence/wp19c-current-head/alignment-correction/`. Local focused rendered-bounds validation passes; exact-head CI, immutable candidate smoke and David's visual approval remain pending. No merge, production or WP19D.
+State: **four-item final polish implemented; replacement qualification pending**. David judged candidate `fef8df2f` almost complete but withheld approval. Reset now has a smooth tangent circular arrow, Flower Clip and Star Glasses use corrected padded drawn bounds, Colours has balanced Body/Eye rows, and the wider primary footer action shares Back's reduced height, centre line and clearance. Four-class Accessories/Colours evidence is under `docs/evidence/wp19c-current-head/final-polish/`. Exact correction-head CI, immutable candidate smoke and David's visual approval remain pending. No merge, production or WP19D.
 
 
 ## Accepted gameplay baseline
@@ -66,7 +66,7 @@ WP18K is human-approved, technically qualified and merged through PR #161 at mai
 
 ## Next action
 
-Commit and push the drawn-bounds correction, obtain green exact-head CI, bind startup/save/reload/Continue smoke to the new immutable candidate, and stop for David's finished-WP19C recheck without merge, production deployment or WP19D.
+Commit and push the final-polish correction, obtain green exact-head CI, bind startup/save/reload/Continue smoke to the new immutable candidate, and stop for David's finished-WP19C recheck without merge, production deployment or WP19D.
 
 ## Implementation delivery
 

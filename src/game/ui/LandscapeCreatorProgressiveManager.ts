@@ -18,7 +18,7 @@ import {
   unicornComponentBounds,
 } from '../player/UnicornAppearanceRenderer';
 import { CREATOR_CATEGORIES, type CreatorCategoryId } from './CreatorProgressiveModel';
-import { UI_COLOURS, UI_FONT, applyButtonHover } from './uiTheme';
+import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from './uiTheme';
 
 interface CreatorOwner extends Phaser.Scene {
   creatorValue(key: keyof UnicornAppearance): string;
@@ -135,14 +135,15 @@ export class LandscapeCreatorProgressiveManager {
       if ('input' in existing && existing.input) existing.input.enabled = true;
       return;
     }
+    createUiShadow(this.scene, 785, 612, 210, 56, 29, 0.15).setName('creator-action-back-shadow');
     const back = this.scene.add
-      .rectangle(785, 620, 210, 54, UI_COLOURS.lavender, 1)
+      .rectangle(785, 612, 210, 56, UI_COLOURS.lavender, 1)
       .setName('creator-action-back')
       .setStrokeStyle(3, UI_COLOURS.lavenderStrong, 1)
       .setInteractive({ useHandCursor: true })
       .setDepth(30);
     this.scene.add
-      .text(785, 620, '←  Back', {
+      .text(785, 612, '←  Back', {
         color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
         fontSize: '19px',
@@ -176,8 +177,9 @@ export class LandscapeCreatorProgressiveManager {
   }
 
   private renderColourGroups(groups: CategoryConfig[]): void {
+    // Treat Body and Eye as one balanced group between the tabs and footer.
     groups.forEach((group, index) => {
-      this.renderSwatches(group.key, group.title, group.choices, 300 + index * 145);
+      this.renderSwatches(group.key, group.title, group.choices, 350 + index * 120);
     });
   }
 
@@ -217,6 +219,7 @@ export class LandscapeCreatorProgressiveManager {
       // Reserve the lower 25px as a label band. Catalogue bounds include strokes
       // and decorations, so each style is fitted by what it actually draws rather
       // than by its asymmetric full-unicorn attachment coordinate.
+      const isAccessory = group.key === 'accessory';
       fitUnicornArtwork(
         art,
         unicornComponentBounds(
@@ -227,10 +230,10 @@ export class LandscapeCreatorProgressiveManager {
           variant,
         ),
         {
-          x: x - width / 2 + 9,
-          y: y - 48 + 7,
-          width: width - 18,
-          height: 58,
+          x: x - width / 2 + (isAccessory ? 13 : 9),
+          y: y - 48 + (isAccessory ? 11 : 7),
+          width: width - (isAccessory ? 26 : 18),
+          height: isAccessory ? 48 : 58,
         },
       );
       const label = this.scene.add
@@ -248,7 +251,7 @@ export class LandscapeCreatorProgressiveManager {
       this.content.push(card, art, label);
     });
     if (group.colours)
-      this.renderSwatches(group.colours.key, group.colours.title, group.colours.choices, 558);
+      this.renderSwatches(group.colours.key, group.colours.title, group.colours.choices, 548);
   }
 
   private currentAppearance(): UnicornAppearance {

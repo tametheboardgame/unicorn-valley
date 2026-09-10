@@ -224,3 +224,15 @@ category group on the cream panel with an explicit gap before the heading.
 Screenshot inspection and final rendered-bounds regression are both required;
 object-presence metadata alone is insufficient. This does not approve merge,
 production or WP19D.
+
+## UV-D021 - WP19C final-polish corrections are binding
+
+Status: Accepted implementation feedback, 2026-09-10.
+
+David judged candidate `fef8df2f` almost complete but explicitly withheld final
+approval. WP19C must finish four bounded details: a clean tangent circular Reset
+arrow; accurate, padded Flower Clip and Star Glasses artwork bounds; balanced
+Body/Eye colour-row spacing; and a wider primary footer action aligned to Back
+at the same reduced height and centre line with comfortable panel clearance.
+Rendered phone-scale inspection is required. This does not approve merge,
+production deployment or WP19D.

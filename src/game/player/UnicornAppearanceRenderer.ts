@@ -733,13 +733,15 @@ export function unicornComponentBounds(
   if (component === 'marking') return { x: -40, y: -34, width: 80, height: 60 };
   const bounds: Record<string, ArtworkBounds> = {
     none: { x: 33, y: -27, width: 34, height: 34 },
-    flower: { x: -7, y: -41, width: 18, height: 18 },
+    // Include every petal, rather than just the centre and two inner radii.
+    flower: { x: -13, y: -47, width: 30, height: 30 },
     bow: { x: -19, y: 9, width: 38, height: 24 },
     bell: { x: -10, y: 20, width: 23, height: 35 },
     crown: { x: -10, y: -66, width: 36, height: 29 },
     ribbon: { x: -17, y: 20, width: 30, height: 33 },
     scarf: { x: -20, y: 18, width: 36, height: 43 },
-    glasses: { x: -20, y: -11, width: 41, height: 25 },
+    // Both stroked lenses extend beyond the bridge and star centres.
+    glasses: { x: -20, y: -12, width: 51, height: 26 },
   };
   return bounds[appearance.accessory] ?? bounds.none;
 }

@@ -248,10 +248,10 @@ export class UnicornCreatorScene extends Phaser.Scene {
         false,
         'default',
       );
-      this.createActionButton(785, 620, 210, '← Back', () => this.cancelEdit(), false, 'cancel');
+      this.createActionButton(785, 612, 210, '← Back', () => this.cancelEdit(), false, 'cancel');
       this.createActionButton(
         1080,
-        620,
+        612,
         275,
         'Save Changes ✨',
         () => this.saveAndEnter(),
@@ -271,7 +271,7 @@ export class UnicornCreatorScene extends Phaser.Scene {
       this.createActionButton(455, 605, 180, 'Reset', () => this.useDefault(), false, 'default');
       this.createActionButton(
         1080,
-        620,
+        612,
         275,
         'Looks Good! ✨',
         () => this.saveAndEnter(),
@@ -590,11 +590,13 @@ export class UnicornCreatorScene extends Phaser.Scene {
     primary = false,
     name = label.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
   ): void {
-    createUiShadow(this, x, y, width, 64, 19, primary ? 0.23 : 0.15);
+    const footerAction = ['cancel', 'save-changes', 'confirm-new'].includes(name);
+    const height = footerAction ? 56 : 64;
+    createUiShadow(this, x, y, width, height, 19, primary ? 0.23 : 0.15);
     const fill = primary ? UI_COLOURS.gold : UI_COLOURS.cream;
     const hover = primary ? 0xfff4bf : UI_COLOURS.lavender;
     const button = this.add
-      .rectangle(x, y, width, 64, fill, 0.99)
+      .rectangle(x, y, width, height, fill, 0.99)
       .setName(`creator-action-${name}`)
       .setStrokeStyle(5, primary ? UI_COLOURS.goldStrong : UI_COLOURS.lavenderStrong, 1)
       .setInteractive({ useHandCursor: true })
@@ -626,10 +628,12 @@ export class UnicornCreatorScene extends Phaser.Scene {
       } else {
         icon.lineStyle(4, 0x4f3a5d, 1);
         icon.beginPath();
-        icon.arc(x - 63, y, 11, -0.7, 4.5, false);
+        // One smooth, deliberately open loop. The arrowhead continues the
+        // tangent at the end of the arc instead of floating beside it.
+        icon.arc(x - 63, y, 11, 0.65, 5.5, false);
         icon.strokePath();
-        icon.fillStyle(0x4f3a5d, 1);
-        icon.fillTriangle(x - 77, y - 7, x - 66, y - 9, x - 71, y + 1);
+        icon.lineBetween(x - 55, y - 8, x - 49, y);
+        icon.lineBetween(x - 49, y, x - 58, y + 1);
       }
     }
     applyButtonHover(button, fill, hover);
