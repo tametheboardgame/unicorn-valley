@@ -17,7 +17,7 @@
   "next_work_package": "R6.5-WP19D",
   "next_work_package_path": "docs/work-packages/R6.5-WP19D-UNIFIED-INTERACTIONS-NPCS.md",
   "human_input_required": false,
-  "blocker_reason": "Candidate-bound smoke and David's finished-WP19C visual approval remain pending.",
+  "blocker_reason": "Replacement candidate-bound smoke and David's finished-WP19C visual approval remain pending.",
   "night_shift_state": "not_configured",
   "chat_disposition": "keep",
   "delivery_mode": "pr_required",
