@@ -11,6 +11,7 @@ export function createPipInteraction(hasFirstDiscovery: boolean): InteractionTar
     id: 'interaction:pip',
     label: 'Pip',
     actionLabel: 'Talk',
+    actionKind: 'talk',
     position: PIP_POSITION,
     interactionRadius: 185,
     priority: 20,
