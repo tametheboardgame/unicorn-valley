@@ -2,14 +2,25 @@ import Phaser from 'phaser';
 import '../../creatorPortraitControls.css';
 import { getVerticalSliceAudio } from '../audio/VerticalSliceAudio';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
-import { BODY_COLOURS, EYE_COLOURS, HAIR_COLOURS } from '../player/UnicornAppearance';
+import {
+  ACCESSORIES,
+  BODY_COLOURS,
+  EYE_COLOURS,
+  HAIR_COLOURS,
+  HORN_STYLES,
+  MANE_STYLES,
+  MARKINGS,
+  TAIL_STYLES,
+  type UnicornAppearance,
+} from '../player/UnicornAppearance';
+import { CREATOR_CATEGORIES, type CreatorCategoryId } from './CreatorProgressiveModel';
 
 const CREATOR_SCENE_KEY = 'UnicornCreatorScene';
 const SYNC_INTERVAL_MS = 100;
 
 type ColourKey = 'bodyColour' | 'eyeColour' | 'maneColour' | 'tailColour';
 type CycleKey = 'maneStyle' | 'tailStyle' | 'hornStyle' | 'marking' | 'accessory';
-type SectionKey = 'colours' | 'hair' | 'magic';
+type SectionKey = CreatorCategoryId;
 
 interface ColourDefinition {
   key: ColourKey;
@@ -22,6 +33,7 @@ interface CycleDefinition {
   key: CycleKey;
   label: string;
   section: SectionKey;
+  choices: readonly { id: string; label: string }[];
 }
 
 interface DomColourChoice {
@@ -32,10 +44,25 @@ interface DomColourChoice {
 
 interface DomCycleRow {
   definition: CycleDefinition;
-  value: HTMLElement;
-  previous: HTMLButtonElement;
-  next: HTMLButtonElement;
+  choices: { id: string; button: HTMLButtonElement }[];
 }
+
+const COMPONENT_SYMBOLS: Readonly<Record<CycleKey, Record<string, string>>> = {
+  maneStyle: { soft: '〰', fluffy: '☁', swept: '◒', braid: '⛓', crest: '♒', cascade: '≋' },
+  tailStyle: { swish: '〰', curl: '➰', ribbon: '◢', braid: '⛓', puff: '☁', plume: '≈' },
+  hornStyle: { classic: '◭', spiral: '▱', short: '▴', star: '★', crystal: '♦', moon: '☾' },
+  marking: { none: '—', star: '★', heart: '♥', moon: '☾', freckles: '⠿', sparkles: '✦' },
+  accessory: {
+    none: '—',
+    flower: '✿',
+    bow: '⋈',
+    bell: '♢',
+    crown: '♛',
+    ribbon: '◇',
+    scarf: '⌁',
+    glasses: '☆',
+  },
+};
 
 interface DomAction {
   objectName: string;
@@ -46,23 +73,21 @@ interface DomAction {
 const COLOUR_DEFINITIONS: readonly ColourDefinition[] = [
   { key: 'bodyColour', label: 'Body', section: 'colours', choices: BODY_COLOURS },
   { key: 'eyeColour', label: 'Eyes', section: 'colours', choices: EYE_COLOURS },
-  { key: 'maneColour', label: 'Mane colour', section: 'hair', choices: HAIR_COLOURS },
-  { key: 'tailColour', label: 'Tail colour', section: 'hair', choices: HAIR_COLOURS },
+  { key: 'maneColour', label: 'Mane colour', section: 'mane', choices: HAIR_COLOURS },
+  { key: 'tailColour', label: 'Tail colour', section: 'tail', choices: HAIR_COLOURS },
 ];
 
 const CYCLE_DEFINITIONS: readonly CycleDefinition[] = [
-  { key: 'maneStyle', label: 'Mane style', section: 'hair' },
-  { key: 'tailStyle', label: 'Tail style', section: 'hair' },
-  { key: 'hornStyle', label: 'Horn', section: 'magic' },
-  { key: 'marking', label: 'Marking', section: 'magic' },
-  { key: 'accessory', label: 'Accessory', section: 'magic' },
+  { key: 'maneStyle', label: 'Choose a mane', section: 'mane', choices: MANE_STYLES },
+  { key: 'tailStyle', label: 'Choose a tail', section: 'tail', choices: TAIL_STYLES },
+  { key: 'hornStyle', label: 'Choose a horn', section: 'horn', choices: HORN_STYLES },
+  { key: 'marking', label: 'Choose a marking', section: 'markings', choices: MARKINGS },
+  { key: 'accessory', label: 'Choose an accessory', section: 'accessories', choices: ACCESSORIES },
 ];
 
-const SECTION_LABELS: Readonly<Record<SectionKey, string>> = {
-  colours: 'Colours',
-  hair: 'Hair & Tail',
-  magic: 'Magic',
-};
+const SECTION_LABELS = Object.fromEntries(
+  CREATOR_CATEGORIES.map(({ id, label }) => [id, label]),
+) as Readonly<Record<SectionKey, string>>;
 
 const ACTION_DEFINITIONS = [
   ['creator-action-surprise', 'creator-action-surprise-label', false],
@@ -121,7 +146,7 @@ export class CreatorPortraitControlsManager {
     const nameGroup = document.createElement('label');
     nameGroup.className = 'creator-portrait-name-group';
     const nameLabel = document.createElement('span');
-    nameLabel.textContent = 'Name';
+    nameLabel.textContent = '✎ Change name';
     this.nameInput = document.createElement('input');
     this.nameInput.className = 'creator-portrait-name-input';
     this.nameInput.maxLength = 16;
@@ -136,7 +161,7 @@ export class CreatorPortraitControlsManager {
     sectionTabs.className = 'creator-portrait-tabs';
     sectionTabs.setAttribute('role', 'group');
     sectionTabs.setAttribute('aria-label', 'Customisation sections');
-    for (const key of Object.keys(SECTION_LABELS) as SectionKey[]) {
+    for (const key of CREATOR_CATEGORIES.map(({ id }) => id)) {
       const button = document.createElement('button');
       button.type = 'button';
       button.className = 'creator-portrait-tab';
@@ -148,7 +173,7 @@ export class CreatorPortraitControlsManager {
     }
     this.root.append(sectionTabs);
 
-    for (const key of Object.keys(SECTION_LABELS) as SectionKey[]) {
+    for (const key of CREATOR_CATEGORIES.map(({ id }) => id)) {
       const panel = document.createElement('div');
       panel.className = 'creator-portrait-section';
       panel.dataset.creatorSectionPanel = key;
@@ -214,9 +239,7 @@ export class CreatorPortraitControlsManager {
       const text = document.createElement('span');
       text.textContent = choice.label;
       button.append(dot, text);
-      button.addEventListener('click', () =>
-        this.activate(`creator-${definition.key}-${choice.id}`),
-      );
+      button.addEventListener('click', () => this.selectChoice(definition.key, choice.id));
       choices.append(button);
       this.colourChoices.push({ definition, choiceId: choice.id, button });
     }
@@ -237,28 +260,27 @@ export class CreatorPortraitControlsManager {
     label.textContent = definition.label;
 
     const controls = document.createElement('div');
-    controls.className = 'creator-portrait-cycle-controls';
-    const previous = document.createElement('button');
-    previous.type = 'button';
-    previous.className = 'creator-portrait-cycle-button';
-    previous.textContent = '‹';
-    previous.setAttribute('aria-label', `Previous ${definition.label}`);
-    previous.addEventListener('click', () => this.activate(`creator-${definition.key}-previous`));
-
-    const value = document.createElement('strong');
-    value.className = 'creator-portrait-cycle-value';
-
-    const next = document.createElement('button');
-    next.type = 'button';
-    next.className = 'creator-portrait-cycle-button';
-    next.textContent = '›';
-    next.setAttribute('aria-label', `Next ${definition.label}`);
-    next.addEventListener('click', () => this.activate(`creator-${definition.key}-next`));
-
-    controls.append(previous, value, next);
+    controls.className = 'creator-portrait-style-cards';
+    const choices = definition.choices.map((choice) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'creator-portrait-style-card';
+      button.dataset.creatorComponent = definition.key;
+      button.dataset.creatorComponentId = choice.id;
+      const art = document.createElement('span');
+      art.className = 'creator-portrait-component-art';
+      art.setAttribute('aria-hidden', 'true');
+      art.textContent = COMPONENT_SYMBOLS[definition.key][choice.id] ?? '✦';
+      const text = document.createElement('span');
+      text.textContent = choice.label;
+      button.append(art, text);
+      button.addEventListener('click', () => this.selectChoice(definition.key, choice.id));
+      controls.append(button);
+      return { id: choice.id, button };
+    });
     row.append(label, controls);
     panel.append(row);
-    this.cycleRows.push({ definition, value, previous, next });
+    this.cycleRows.push({ definition, choices });
   }
 
   private update(): void {
@@ -292,20 +314,22 @@ export class CreatorPortraitControlsManager {
     }
 
     for (const { definition, choiceId, button } of this.colourChoices) {
-      const target = scene.children.getByName(`creator-${definition.key}-${choiceId}`);
-      const selected = target instanceof Phaser.GameObjects.Arc && target.scaleX > 1.03;
+      const selected = this.choiceSelected(scene, definition.key, choiceId);
       button.setAttribute('aria-pressed', String(selected));
       button.classList.toggle('is-selected', selected);
-      button.disabled = !isEnabled(target);
+      button.disabled = false;
     }
 
-    for (const { definition, value, previous, next } of this.cycleRows) {
-      const valueObject = scene.children.getByName(`creator-${definition.key}-value`);
-      value.textContent = valueObject instanceof Phaser.GameObjects.Text ? valueObject.text : '';
-      previous.disabled = !isEnabled(
-        scene.children.getByName(`creator-${definition.key}-previous`),
-      );
-      next.disabled = !isEnabled(scene.children.getByName(`creator-${definition.key}-next`));
+    for (const { definition, choices } of this.cycleRows) {
+      for (const choice of choices) {
+        const selected =
+          (
+            scene as Phaser.Scene & {
+              creatorChoiceSelected?: (key: CycleKey, value: string) => boolean;
+            }
+          ).creatorChoiceSelected?.(definition.key, choice.id) ?? false;
+        choice.button.setAttribute('aria-pressed', String(selected));
+      }
     }
 
     for (const action of this.actions) {
@@ -319,6 +343,13 @@ export class CreatorPortraitControlsManager {
     }
   }
 
+  private choiceSelected(scene: Phaser.Scene, key: ColourKey, value: string): boolean {
+    const owner = scene as Phaser.Scene & {
+      creatorChoiceSelected?: (key: ColourKey, value: string) => boolean;
+    };
+    return owner.creatorChoiceSelected?.(key, value) ?? false;
+  }
+
   private showSection(section: SectionKey): void {
     this.activeSection = section;
     for (const [key, button] of this.sectionButtons) {
@@ -329,6 +360,16 @@ export class CreatorPortraitControlsManager {
     for (const [key, panel] of this.sectionPanels) {
       panel.hidden = key !== section;
     }
+  }
+
+  private selectChoice(key: keyof UnicornAppearance, value: string): void {
+    const scene = this.activeScene() as
+      | (Phaser.Scene & {
+          creatorSelect?: (key: keyof UnicornAppearance, value: string) => void;
+        })
+      | null;
+    scene?.creatorSelect?.(key, value);
+    this.sync();
   }
 
   private copyNameToScene(): void {

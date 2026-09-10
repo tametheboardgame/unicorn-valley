@@ -106,7 +106,11 @@ async function waitForRaceStarted(page: Page, sceneKey: string): Promise<void> {
       );
     },
     sceneKey,
-    { timeout: 25_000 },
+    // The countdown advances from capped Phaser frame deltas so it remains a
+    // real interaction on slow software renderers instead of skipping ahead.
+    // Allow those renderers to complete the same countdown and retain every
+    // subsequent movement, jump and clean-exit assertion.
+    { timeout: 75_000 },
   );
   await page.waitForTimeout(250);
 }
@@ -431,7 +435,7 @@ test.describe
     test('Nova first run requires active movement, supports jumping and exits cleanly', async ({
       page,
     }) => {
-      test.setTimeout(90_000);
+      test.setTimeout(180_000);
       const browserErrors: string[] = [];
       page.on('pageerror', (error) => browserErrors.push(error.message));
       await page.goto('/?scene=nova-story&diagnostics=1');

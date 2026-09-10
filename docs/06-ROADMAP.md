@@ -2,6 +2,8 @@
 
 ## 2026-09-08 approved remediation plan
 
+WP19B was human-approved and merged as `c2d98ae` on 9 September 2026; its merge-SHA-bound production smoke passed in Actions `34356744951`. WP19C is now active on its draft branch and remains behind its separate visual gate. David’s mild observation that some places appear to have two path layers is deferred unchanged to the final graphics-specific pass, not WP19C.
+
 David approved the whole-game audit remediation plan on 2026-09-08. Read `docs/audits/2026-09-08-WHOLE-GAME-AUDIT.md` and `docs/2026-09-08-REMEDIATION-PROPOSAL.md` first. Approved next order: WP19A persistence safety → WP18K foundation → WP19B boundaries/navigation → WP19C creator → WP19D interactions/NPCs → WP19E conversations → WP19F consistent UI/generated title → WP19G/H audio → WP19I qualification → WP18H daughter replay → WP17 readiness. Independent preparation is described in the proposal.
 
 This approves the work programme, not completion of its implementation. Existing delivery history below is preserved. R7 and production release remain gated. This plan supersedes the previous direct WP18K→WP18H sequence.

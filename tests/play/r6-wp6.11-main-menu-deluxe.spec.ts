@@ -172,6 +172,10 @@ test.describe('phone portrait title controls', () => {
   test('essential menu and settings actions stay physically readable and touch-sized', async ({
     page,
   }) => {
+    // Preserve the complete settings geometry and navigation journey on slow
+    // software renderers rather than allowing the default total timeout to
+    // expire after the creator has already opened.
+    test.setTimeout(120_000);
     await page.goto('/?diagnostics=1');
     await waitForScene(page, 'TitleScene');
 

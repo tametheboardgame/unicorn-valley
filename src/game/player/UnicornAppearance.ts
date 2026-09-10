@@ -35,6 +35,7 @@ export const MANE_STYLES = [
   { id: 'swept', label: 'Side Swept' },
   { id: 'braid', label: 'Moon Braid' },
   { id: 'crest', label: 'Star Crest' },
+  { id: 'cascade', label: 'Silken Cascade' },
 ] as const;
 
 export const TAIL_STYLES = [
@@ -43,6 +44,7 @@ export const TAIL_STYLES = [
   { id: 'ribbon', label: 'Ribbon Tail' },
   { id: 'braid', label: 'Moon Braid' },
   { id: 'puff', label: 'Cloud Puff' },
+  { id: 'plume', label: 'Dream Plume' },
 ] as const;
 
 export const HORN_STYLES = [
@@ -51,6 +53,7 @@ export const HORN_STYLES = [
   { id: 'spiral', label: 'Spiral' },
   { id: 'short', label: 'Little Horn' },
   { id: 'crystal', label: 'Crystal Tip' },
+  { id: 'moon', label: 'Moon Horn' },
 ] as const;
 
 export const MARKINGS = [
@@ -70,6 +73,7 @@ export const ACCESSORIES = [
   { id: 'crown', label: 'Tiny Crown' },
   { id: 'ribbon', label: 'Neck Ribbon' },
   { id: 'scarf', label: 'Cosy Scarf' },
+  { id: 'glasses', label: 'Star Glasses' },
 ] as const;
 
 export type BodyColourId = (typeof BODY_COLOURS)[number]['id'];

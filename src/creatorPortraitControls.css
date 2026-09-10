@@ -2,6 +2,24 @@
   display: none;
 }
 
+.creator-landscape-rename-button {
+  position: absolute;
+  z-index: 950;
+  border: 3px solid #b38ac6;
+  border-radius: 12px;
+  background: #fffaf2;
+  color: #4f3a5d;
+  font:
+    800 22px "Trebuchet MS",
+    sans-serif;
+  cursor: pointer;
+}
+
+.creator-landscape-rename-button:focus-visible {
+  outline: 4px solid #d6b35f;
+  outline-offset: 2px;
+}
+
 .creator-portrait-controls[hidden],
 .creator-portrait-section[hidden],
 .creator-portrait-action[hidden] {
@@ -36,6 +54,10 @@
   .unicorn-name-input {
     visibility: hidden;
     pointer-events: none;
+  }
+
+  .creator-landscape-rename-button {
+    display: none;
   }
 
   .creator-portrait-heading {
@@ -291,5 +313,41 @@
   .creator-portrait-cycle-button:disabled,
   .creator-portrait-swatch:disabled {
     opacity: 0.5;
+  }
+}
+
+@media (pointer: coarse) and (max-width: 700px) and (orientation: portrait) {
+  .creator-portrait-style-cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .creator-portrait-style-card {
+    display: grid;
+    min-height: 72px;
+    padding: 10px;
+    border: 3px solid #b38ac6;
+    border-radius: 16px;
+    background: linear-gradient(#fffaf2, #f1e5f6);
+    color: #4f3a5d;
+    font:
+      800 15px "Trebuchet MS",
+      "Segoe UI",
+      system-ui,
+      sans-serif;
+    touch-action: manipulation;
+  }
+  .creator-portrait-component-art {
+    display: grid;
+    min-height: 44px;
+    place-items: center;
+    color: #8551a4;
+    font:
+      900 38px / 1 "Trebuchet MS",
+      sans-serif;
+  }
+  .creator-portrait-style-card[aria-pressed="true"] {
+    border: 4px solid #d19a21;
+    background: #ffedb1;
   }
 }

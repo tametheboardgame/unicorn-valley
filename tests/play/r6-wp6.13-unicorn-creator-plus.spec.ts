@@ -148,14 +148,21 @@ test('Creator Plus exposes richer categories and accepts gameplay-key letters in
   await tapTitleText(page, 'New Game');
   await waitForScene(page, 'UnicornCreatorScene');
 
-  const text = creatorText(await getSnapshot(page));
-  expect(text).toContain('COLOURS');
-  expect(text).toContain('HAIR & TAIL');
-  expect(text).toContain('MAGIC DETAILS');
-  expect(text).toContain('LIVE PREVIEW');
+  const text = creatorText(await getSnapshot(page)).join(' ');
+  expect(text).toContain('Colours');
+  expect(text).toContain('Mane');
+  expect(text).toContain('Tail');
+  expect(text).toContain('Horn');
+  expect(text).toContain('Markings');
+  expect(text).toContain('Accessories');
 
-  await tapObject(page, 'UnicornCreatorScene', 'creator-bodyColour-peach');
+  await tapObject(page, 'UnicornCreatorScene', 'creator-category-colours');
+  await tapObject(page, 'UnicornCreatorScene', 'creator-card-bodyColour-peach');
+  const renameButton = page.locator('.creator-landscape-rename-button');
+  await renameButton.focus();
+  await page.keyboard.press('Enter');
   const nameInput = page.locator('.unicorn-name-input');
+  await expect(nameInput).toBeFocused();
   await nameInput.fill('Essie Star');
   await expect(nameInput).toHaveValue('Essie Star');
 
@@ -172,24 +179,31 @@ test('Creator Plus exposes richer categories and accepts gameplay-key letters in
 test('existing unicorn can save new Creator Plus styles without resetting adventure state', async ({
   page,
 }) => {
+  test.setTimeout(150_000);
   await seedSave(page);
   await page.goto('/?diagnostics=1');
   await waitForScene(page, 'TitleScene');
   await tapTitleText(page, 'My Unicorn');
   await waitForScene(page, 'UnicornCreatorScene');
 
-  await tapObject(page, 'UnicornCreatorScene', 'creator-bodyColour-buttercup');
-  await tapObject(page, 'UnicornCreatorScene', 'creator-maneStyle-next');
-  await tapObject(page, 'UnicornCreatorScene', 'creator-maneStyle-next');
-  await tapObject(page, 'UnicornCreatorScene', 'creator-tailStyle-next');
-  await tapObject(page, 'UnicornCreatorScene', 'creator-tailStyle-next');
-  await tapObject(page, 'UnicornCreatorScene', 'creator-hornStyle-next');
-  await tapObject(page, 'UnicornCreatorScene', 'creator-hornStyle-next');
-  await tapObject(page, 'UnicornCreatorScene', 'creator-marking-next');
-  await tapObject(page, 'UnicornCreatorScene', 'creator-marking-next');
-  await tapObject(page, 'UnicornCreatorScene', 'creator-marking-next');
-  await tapObject(page, 'UnicornCreatorScene', 'creator-accessory-next');
-  await tapObject(page, 'UnicornCreatorScene', 'creator-accessory-next');
+  await tapObject(page, 'UnicornCreatorScene', 'creator-category-colours');
+  await tapObject(page, 'UnicornCreatorScene', 'creator-card-bodyColour-buttercup');
+  await tapObject(page, 'UnicornCreatorScene', 'creator-category-mane');
+  await tapObject(page, 'UnicornCreatorScene', 'creator-card-maneStyle-braid');
+  await tapObject(page, 'UnicornCreatorScene', 'creator-card-maneStyle-braid');
+  await tapObject(page, 'UnicornCreatorScene', 'creator-category-tail');
+  await tapObject(page, 'UnicornCreatorScene', 'creator-card-tailStyle-braid');
+  await tapObject(page, 'UnicornCreatorScene', 'creator-card-tailStyle-braid');
+  await tapObject(page, 'UnicornCreatorScene', 'creator-category-horn');
+  await tapObject(page, 'UnicornCreatorScene', 'creator-card-hornStyle-crystal');
+  await tapObject(page, 'UnicornCreatorScene', 'creator-card-hornStyle-crystal');
+  await tapObject(page, 'UnicornCreatorScene', 'creator-category-markings');
+  await tapObject(page, 'UnicornCreatorScene', 'creator-card-marking-sparkles');
+  await tapObject(page, 'UnicornCreatorScene', 'creator-card-marking-sparkles');
+  await tapObject(page, 'UnicornCreatorScene', 'creator-card-marking-sparkles');
+  await tapObject(page, 'UnicornCreatorScene', 'creator-category-accessories');
+  await tapObject(page, 'UnicornCreatorScene', 'creator-card-accessory-crown');
+  await tapObject(page, 'UnicornCreatorScene', 'creator-card-accessory-crown');
   await tapObject(page, 'UnicornCreatorScene', 'creator-action-save-changes');
   await waitForScene(page, 'TitleScene');
 
@@ -210,24 +224,66 @@ test('existing unicorn can save new Creator Plus styles without resetting advent
   expect(stored.inventory.itemQuantities['currency:shimmer']).toBe(42);
 });
 
-test('Default Look changes appearance only and Restore Saved recovers the complete profile', async ({
-  page,
-}) => {
+test('new WP19C styles survive save, reload and Continue', async ({ page }) => {
+  test.setTimeout(150_000);
+  await page.goto('/?diagnostics=1');
+  await waitForScene(page, 'TitleScene');
+  await tapTitleText(page, 'New Game');
+  await waitForScene(page, 'UnicornCreatorScene');
+
+  for (const [category, choice] of [
+    ['mane', 'creator-card-maneStyle-cascade'],
+    ['tail', 'creator-card-tailStyle-plume'],
+    ['horn', 'creator-card-hornStyle-moon'],
+    ['accessories', 'creator-card-accessory-glasses'],
+  ] as const) {
+    await tapObject(page, 'UnicornCreatorScene', `creator-category-${category}`);
+    await tapObject(page, 'UnicornCreatorScene', choice);
+  }
+
+  await tapObject(page, 'UnicornCreatorScene', 'creator-action-confirm-new');
+  await waitForScene(page, 'MoonflowerGladeScene');
+  await page.reload();
+  await waitForScene(page, 'TitleScene');
+  await tapTitleText(page, 'Continue');
+  await waitForScene(page, 'MoonflowerGladeScene');
+
+  const stored = await page.evaluate(
+    (key) => JSON.parse(window.localStorage.getItem(key) ?? '{}'),
+    SAVE_KEY,
+  );
+  expect(stored.profile.appearance).toMatchObject({
+    maneStyle: 'cascade',
+    tailStyle: 'plume',
+    hornStyle: 'moon',
+    accessory: 'glasses',
+  });
+});
+
+test('Reset changes appearance only and Back preserves the saved profile', async ({ page }) => {
+  test.setTimeout(75_000);
   await seedSave(page);
   await page.goto('/?diagnostics=1');
   await waitForScene(page, 'TitleScene');
   await tapTitleText(page, 'My Unicorn');
   await waitForScene(page, 'UnicornCreatorScene');
 
+  const renameButton = page.locator('.creator-landscape-rename-button');
+  await renameButton.focus();
+  await page.keyboard.press('Enter');
   const input = page.locator('.unicorn-name-input');
+  await expect(input).toBeFocused();
   await input.fill('Moonlight');
   await tapObject(page, 'UnicornCreatorScene', 'creator-action-default');
   await expect(input).toHaveValue('Moonlight');
-  expect(creatorText(await getSnapshot(page))).toContain('Soft Waves');
-
-  await tapObject(page, 'UnicornCreatorScene', 'creator-action-restore-saved');
-  await expect(input).toHaveValue('Starlight');
-  const restoredText = creatorText(await getSnapshot(page));
-  expect(restoredText).toContain('Fluffy');
-  expect(restoredText).toContain('Little Bow');
+  await tapObject(page, 'UnicornCreatorScene', 'creator-category-mane');
+  expect(creatorText(await getSnapshot(page))).toContain('✓ Soft Waves');
+  await tapObject(page, 'UnicornCreatorScene', 'creator-action-cancel');
+  await waitForScene(page, 'TitleScene');
+  const stored = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SAVE_KEY,
+  );
+  expect(stored.profile.name).toBe('Starlight');
+  expect(stored.profile.appearance.maneStyle).toBe('fluffy');
 });

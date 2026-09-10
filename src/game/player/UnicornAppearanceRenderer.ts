@@ -261,6 +261,23 @@ function drawTail(
       graphics.lineStyle(3 * scale, outline, 0.84);
       graphics.strokeCircle(x + dx * scale, tailY + dy * scale, radius * scale);
     }
+  } else if (appearance.tailStyle === 'plume') {
+    for (const [dx, dy, width, height] of [
+      [-61, -11, 43, 28],
+      [-83, 2, 49, 32],
+      [-106, 15, 38, 26],
+    ] as const) {
+      ellipse(
+        graphics,
+        x + dx * scale,
+        tailY + dy * scale,
+        width * scale,
+        height * scale,
+        fill,
+        outline,
+        3 * scale,
+      );
+    }
   } else {
     ellipse(
       graphics,
@@ -378,6 +395,24 @@ function drawMane(
         y + baseY * scale - lift,
       );
     }
+  } else if (appearance.maneStyle === 'cascade') {
+    for (const [dx, dy, width, height] of [
+      [43, -50, 29, 30],
+      [35, -25, 34, 38],
+      [27, 3, 31, 42],
+      [21, 28, 24, 34],
+    ] as const) {
+      ellipse(
+        graphics,
+        x + dx * scale,
+        y + dy * scale - lift,
+        width * scale,
+        height * scale,
+        fill,
+        outline,
+        2.8 * scale,
+      );
+    }
   } else {
     ellipse(
       graphics,
@@ -427,7 +462,7 @@ function drawHorn(
       ? -82
       : appearance.hornStyle === 'short'
         ? -75
-        : appearance.hornStyle === 'crystal'
+        : appearance.hornStyle === 'crystal' || appearance.hornStyle === 'moon'
           ? -85
           : -88;
   graphics.fillStyle(appearance.hornStyle === 'crystal' ? 0xd9f6ff : 0xf3d47c, 1);
@@ -465,6 +500,11 @@ function drawHorn(
       x + 84 * scale,
       y - 82 * scale,
     );
+  } else if (appearance.hornStyle === 'moon') {
+    graphics.fillStyle(0xffe394, 1);
+    graphics.fillCircle(x + 78 * scale, y - 88 * scale, 9 * scale);
+    graphics.fillStyle(0x7558a0, 1);
+    graphics.fillCircle(x + 82 * scale, y - 91 * scale, 8 * scale);
     graphics.fillTriangle(
       x + 72 * scale,
       y - 82 * scale,
@@ -616,6 +656,151 @@ function drawAccessory(
     graphics.lineBetween(x + 52 * scale, y + 12 * scale, x + 63 * scale, y + 38 * scale);
     graphics.lineStyle(2 * scale, 0xffd3df, 0.85);
     graphics.lineBetween(x + 56 * scale, y + 29 * scale, x + 64 * scale, y + 33 * scale);
+  } else if (appearance.accessory === 'glasses') {
+    graphics.lineStyle(4 * scale, 0x8d63b2, 1);
+    graphics.strokeCircle(x + 43 * scale, y - 19 * scale, 11 * scale);
+    graphics.strokeCircle(x + 68 * scale, y - 19 * scale, 11 * scale);
+    graphics.lineBetween(x + 54 * scale, y - 19 * scale, x + 57 * scale, y - 19 * scale);
+    graphics.fillStyle(0xffe27c, 0.9);
+    drawStar(graphics, x + 43 * scale, y - 19 * scale, 5 * scale);
+    drawStar(graphics, x + 68 * scale, y - 19 * scale, 5 * scale);
+  }
+}
+
+export type UnicornComponent = 'maneStyle' | 'tailStyle' | 'hornStyle' | 'marking' | 'accessory';
+
+export type ArtworkRegion = { x: number; y: number; width: number; height: number };
+export type ArtworkBounds = { x: number; y: number; width: number; height: number };
+
+/**
+ * Fits already-drawn Graphics commands by their real rendered bounds. This deliberately
+ * happens after drawing: component attachment origins are useful on a unicorn, but are
+ * not meaningful centres for an isolated card illustration.
+ */
+export function fitUnicornArtwork(
+  graphics: Phaser.GameObjects.Graphics,
+  bounds: ArtworkBounds,
+  region: ArtworkRegion,
+  maximumScale = Number.POSITIVE_INFINITY,
+): void {
+  graphics.setPosition(0, 0).setScale(1);
+  if (bounds.width <= 0 || bounds.height <= 0) return;
+  const scale = Math.min(maximumScale, region.width / bounds.width, region.height / bounds.height);
+  graphics
+    .setScale(scale)
+    .setPosition(
+      region.x + region.width / 2 - (bounds.x + bounds.width / 2) * scale,
+      region.y + region.height / 2 - (bounds.y + bounds.height / 2) * scale,
+    )
+    .setData('art-region', region)
+    .setData('art-fit-scale', scale)
+    .setData('art-rendered-bounds', {
+      x: region.x + (region.width - bounds.width * scale) / 2,
+      y: region.y + (region.height - bounds.height * scale) / 2,
+      width: bounds.width * scale,
+      height: bounds.height * scale,
+    });
+}
+
+/** Bounds of drawUnicornComponent at (0, 0), including its widest stroke. */
+export function unicornComponentBounds(
+  component: UnicornComponent,
+  appearance: UnicornAppearance,
+): ArtworkBounds {
+  if (component === 'maneStyle') {
+    const bounds: Record<string, ArtworkBounds> = {
+      soft: { x: -22, y: -56, width: 46, height: 83 },
+      fluffy: { x: -22, y: -58, width: 47, height: 87 },
+      swept: { x: -19, y: -60, width: 46, height: 72 },
+      braid: { x: -2, y: -53, width: 23, height: 77 },
+      crest: { x: -1, y: -74, width: 22, height: 84 },
+      cascade: { x: -27, y: -63, width: 52, height: 115 },
+    };
+    return bounds[appearance.maneStyle] ?? bounds.soft;
+  }
+  if (component === 'tailStyle') {
+    const bounds: Record<string, ArtworkBounds> = {
+      swish: { x: -42, y: -24, width: 81, height: 47 },
+      curl: { x: -27, y: -31, width: 68, height: 55 },
+      ribbon: { x: -27, y: -35, width: 62, height: 70 },
+      braid: { x: -39, y: -14, width: 76, height: 29 },
+      puff: { x: -38, y: -24, width: 81, height: 49 },
+      plume: { x: -45, y: -27, width: 88, height: 57 },
+    };
+    return bounds[appearance.tailStyle] ?? bounds.swish;
+  }
+  if (component === 'hornStyle') return { x: -12, y: -18, width: 22, height: 41 };
+  if (component === 'marking') return { x: -40, y: -34, width: 80, height: 60 };
+  const bounds: Record<string, ArtworkBounds> = {
+    none: { x: 33, y: -27, width: 34, height: 34 },
+    // Include every petal, rather than just the centre and two inner radii.
+    flower: { x: -13, y: -47, width: 30, height: 30 },
+    bow: { x: -19, y: 9, width: 38, height: 24 },
+    bell: { x: -10, y: 20, width: 23, height: 35 },
+    crown: { x: -10, y: -66, width: 36, height: 29 },
+    ribbon: { x: -17, y: 20, width: 30, height: 33 },
+    scarf: { x: -20, y: 18, width: 36, height: 43 },
+    // Both stroked lenses extend beyond the bridge and star centres.
+    glasses: { x: -20, y: -12, width: 51, height: 26 },
+  };
+  return bounds[appearance.accessory] ?? bounds.none;
+}
+
+/** Conservative complete idle-unicorn bounds including every catalogue extreme. */
+export function unicornAppearanceBounds(): ArtworkBounds {
+  return { x: -128, y: -106, width: 238, height: 251 };
+}
+
+/** Draws one supported appearance component without a miniature unicorn body. */
+export function drawUnicornComponent(
+  graphics: Phaser.GameObjects.Graphics,
+  component: UnicornComponent,
+  x: number,
+  y: number,
+  appearance: UnicornAppearance,
+  scale = 1,
+): void {
+  const mane = colourValue(HAIR_COLOURS, appearance.maneColour);
+  const tail = colourValue(HAIR_COLOURS, appearance.tailColour);
+  const maneOutline = mixColour(mane, 0x493a58, 0.45);
+  const tailOutline = mixColour(tail, 0x493a58, 0.45);
+  if (component === 'maneStyle') {
+    drawMane(
+      graphics,
+      x - 34 * scale,
+      y + 10 * scale,
+      scale,
+      appearance,
+      mane,
+      maneOutline,
+      POSES.idle,
+    );
+  } else if (component === 'tailStyle') {
+    drawTail(graphics, x + 82 * scale, y, scale, appearance, tail, tailOutline, POSES.idle);
+  } else if (component === 'hornStyle') {
+    drawHorn(graphics, x - 77 * scale, y + 77 * scale, scale, appearance);
+  } else if (component === 'marking') {
+    const body = colourValue(BODY_COLOURS, appearance.bodyColour);
+    const keyline = mixColour(body, 0x554261, 0.45);
+    graphics.fillStyle(body, 1);
+    graphics.lineStyle(2.5 * scale, keyline, 0.65);
+    graphics.fillRoundedRect(x - 38 * scale, y - 31 * scale, 76 * scale, 55 * scale, 15 * scale);
+    graphics.strokeRoundedRect(x - 38 * scale, y - 31 * scale, 76 * scale, 55 * scale, 15 * scale);
+    if (appearance.marking === 'none') {
+      graphics.lineStyle(4 * scale, 0x8f7698, 0.8);
+      graphics.strokeCircle(x, y - 4 * scale, 12 * scale);
+      graphics.lineBetween(x - 9 * scale, y + 5 * scale, x + 9 * scale, y - 13 * scale);
+    } else {
+      drawMarking(graphics, x + 13 * scale, y - 9 * scale, scale * 1.25, appearance, body);
+    }
+  } else {
+    if (appearance.accessory === 'none') {
+      graphics.lineStyle(4 * scale, 0x8f7698, 0.8);
+      graphics.strokeCircle(x + 50 * scale, y - 10 * scale, 15 * scale);
+      graphics.lineBetween(x + 39 * scale, y + 1 * scale, x + 61 * scale, y - 21 * scale);
+      return;
+    }
+    drawAccessory(graphics, x - 50 * scale, y + 20 * scale, scale, appearance);
   }
 }
 

@@ -175,8 +175,9 @@ test('My Unicorn edits only profile fields and preserves the whole adventure', a
   expect(creatorText(await getSnapshot(page))).toContain('Redesign Starlight');
   await expect(page.locator('.unicorn-name-input')).toHaveValue('Starlight');
 
+  await page.locator('.creator-landscape-rename-button').click();
   await page.locator('.unicorn-name-input').fill('Moonlight Star');
-  await tapObject(page, 'UnicornCreatorScene', 'creator-bodyColour-pink');
+  await tapObject(page, 'UnicornCreatorScene', 'creator-card-bodyColour-pink');
   await tapObject(page, 'UnicornCreatorScene', 'creator-action-save-changes');
   await waitForScene(page, 'TitleScene');
 
@@ -213,8 +214,9 @@ test('Cancel leaves the persisted profile and adventure byte-for-byte untouched'
 
   await tapTitleText(page, 'My Unicorn');
   await waitForScene(page, 'UnicornCreatorScene');
+  await page.locator('.creator-landscape-rename-button').click();
   await page.locator('.unicorn-name-input').fill('Changed Locally');
-  await tapObject(page, 'UnicornCreatorScene', 'creator-bodyColour-pink');
+  await tapObject(page, 'UnicornCreatorScene', 'creator-card-bodyColour-pink');
   await tapObject(page, 'UnicornCreatorScene', 'creator-action-cancel');
   await waitForScene(page, 'TitleScene');
 
@@ -236,10 +238,16 @@ test('invalid cosmetic IDs fall back safely and never block My Unicorn or Contin
 
   await tapTitleText(page, 'My Unicorn');
   await waitForScene(page, 'UnicornCreatorScene');
-  const text = creatorText(await getSnapshot(page));
-  expect(text).toContain('Redesign Starlight');
-  expect(text).toContain('Soft Waves');
-  expect(text).toContain('Flower Clip');
+  const creator = (await getSnapshot(page)).scenes.find(
+    (scene) => scene.key === 'UnicornCreatorScene',
+  );
+  expect(creatorText(await getSnapshot(page))).toContain('Redesign Starlight');
+  expect(creator?.objects.find((object) => object.name === 'creator-maneStyle-value')?.text).toBe(
+    'Soft Waves',
+  );
+  expect(creator?.objects.find((object) => object.name === 'creator-accessory-value')?.text).toBe(
+    'Flower Clip',
+  );
 
   await tapObject(page, 'UnicornCreatorScene', 'creator-action-cancel');
   await waitForScene(page, 'TitleScene');

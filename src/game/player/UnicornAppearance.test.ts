@@ -63,11 +63,11 @@ describe('unicorn appearance', () => {
   it('keeps the cosmetic registry complete, labelled and duplicate-free', () => {
     expect(validateUnicornCosmeticRegistry()).toEqual([]);
     expect(BODY_COLOURS.length).toBeGreaterThanOrEqual(8);
-    expect(MANE_STYLES.length).toBeGreaterThanOrEqual(5);
-    expect(TAIL_STYLES.length).toBeGreaterThanOrEqual(5);
-    expect(HORN_STYLES.length).toBeGreaterThanOrEqual(5);
+    expect(MANE_STYLES).toHaveLength(6);
+    expect(TAIL_STYLES).toHaveLength(6);
+    expect(HORN_STYLES).toHaveLength(6);
     expect(MARKINGS.length).toBeGreaterThanOrEqual(6);
-    expect(ACCESSORIES.length).toBeGreaterThanOrEqual(7);
+    expect(ACCESSORIES).toHaveLength(8);
   });
 
   it('keeps every default and registered cosmetic id parser-compatible', () => {

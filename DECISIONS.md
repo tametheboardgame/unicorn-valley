@@ -151,3 +151,99 @@ passed. Cloudflare reports a successful deployment for that merge SHA at
 only after the production alias passes the supported isolated startup, save,
 reload and Continue smoke bound to the merge SHA. UV-D014 continues to require
 David's explicit approval before WP19B merge, production deployment or WP19C.
+
+
+## UV-D016 - WP19B accepted and WP19C released after production verification
+
+Status: Accepted, 2026-09-09.
+
+David explicitly approved WP19B after playing its preview and authorised merge
+and progression to WP19C. PR #162 merged as main
+`c2d98ae3287cc8ab6b2548f5efbf5548b7d87979` from approved head
+`fc07a52588a080260303328e65d0a4ce7267d6d7`; its three workflows passed and no
+review threads were open. Cloudflare reports successful production deployment
+of the merge SHA at `https://39034745.unicorn-valley.pages.dev`. WP19C begins
+only after the supported isolated startup/save/reload/Continue smoke passes
+against the production alias while checked out at that SHA. David also observed
+that some places appear to have two layers of paths; this mild visual issue is
+explicitly deferred to the final graphics-specific pass, did not block WP19B,
+and is not WP19C scope. No locations or diagnosis are inferred. UV-D014 still
+requires David's explicit approval before WP19C merge, production deployment or
+WP19D.
+
+## UV-D017 - David-approved WP19C creator concept supersedes the first preview
+
+Status: Accepted implementation authority, 2026-09-09.
+
+David rejected the first WP19C preview's alignment, text behind the unicorn,
+small cycling controls and redundant renaming. He then explicitly approved the
+concept committed at `docs/design/wp19c-approved-creator-concept.jpg` as the
+visual target. Its inner cream/lavender/plum/gold interface, large contained
+preview, pencil-only rename entry, separate Colours/Mane/Tail/Horn/Markings/
+Accessories categories, direct illustrated cards, swatches and aligned footer
+actions supersede UV-D009's old Main plus combined Mane & Tail creator detail.
+Only supported cosmetic IDs may be depicted, using the shared appearance
+renderer. This approves implementation, not merge, production deployment or
+WP19D; David's finished-WP visual gate remains pending.
+
+## UV-D018 - David's WP19C tablet layout feedback is correction authority
+
+Status: Accepted implementation feedback, 2026-09-09.
+
+David accepted the direction but rejected preview `cb1417d6` as finished work.
+The four original tablet captures under
+`docs/evidence/wp19c-david-layout-feedback/` require bounded WP19C correction:
+contained grids, component-only option artwork, clear footer separation,
+retirement of legacy preview/name decoration, persistent tab/selection state,
+keyboard-accessible pencil renaming and repeat-entry lifecycle safety. This
+does not release the visual gate or authorise merge, production or WP19D.
+
+## UV-D019 - David's second WP19C correction expands the supported catalogue
+
+Status: Accepted implementation feedback, 2026-09-10.
+
+David rejected candidate `068f3f4e` after reviewing all six category captures
+under `docs/evidence/wp19c-david-20260910/`. WP19C must remove generated-surface
+echoes at their lifecycle owner, improve vertical rhythm and component-card
+scale, use the selected body colour behind marking art, retain exactly one
+adaptive accessible pencil, and polish Randomise/Reset with authored icons.
+This feedback explicitly authorises one new save-compatible mane, tail and horn
+and one accessory, producing six/six/six/eight actual catalogue choices while
+preserving every existing ID. It does not approve merge, production or WP19D.
+
+## UV-D020 - WP19C phone drawn-bounds correction is binding
+
+Status: Accepted implementation feedback, 2026-09-10.
+
+David's original Android landscape captures under
+`docs/evidence/wp19c-david-phone-20260910/` and subsequent large-landscape
+recheck reject the remaining fixed-scale, attachment-origin card artwork. The
+creator must centre and uniformly fit complete drawn bounds inside a dedicated
+card art region, fit the entire preview silhouette, and centre the final 3x2
+category group on the cream panel with an explicit gap before the heading.
+Screenshot inspection and final rendered-bounds regression are both required;
+object-presence metadata alone is insufficient. This does not approve merge,
+production or WP19D.
+
+## UV-D021 - WP19C final-polish corrections are binding
+
+Status: Accepted implementation feedback, 2026-09-10.
+
+David judged candidate `fef8df2f` almost complete but explicitly withheld final
+approval. WP19C must finish four bounded details: a clean tangent circular Reset
+arrow; accurate, padded Flower Clip and Star Glasses artwork bounds; balanced
+Body/Eye colour-row spacing; and a wider primary footer action aligned to Back
+at the same reduced height and centre line with comfortable panel clearance.
+Rendered phone-scale inspection is required. This does not approve merge,
+production deployment or WP19D.
+
+## UV-D022 - WP19C final action surfaces are binding
+
+Status: Accepted implementation feedback, 2026-09-10.
+
+David judged candidate `baa88f36` excellent but withheld finished-WP approval.
+The creator action row must have one rounded face and one restrained rounded
+shadow per action, without an obsolete Back layer or square scene-owned
+underlay. Reset must use a complete solid tangent arrowhead that reads clearly
+at native phone scale. Rendered desktop and phone evidence remains required;
+this does not approve merge, production deployment or WP19D.

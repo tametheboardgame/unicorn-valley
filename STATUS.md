@@ -1,14 +1,15 @@
 # Project Status
 
-Last updated: 2026-09-09
+Last updated: 2026-09-10
 
 ## Current work
 
-`R6.5-WP19B - World Boundaries and Tap-Navigation Parity`
+`R6.5-WP19C - Progressive Unicorn Creator`
 
-Path: `docs/work-packages/R6.5-WP19B-WORLD-BOUNDARIES-NAVIGATION.md`
+Path: `docs/work-packages/R6.5-WP19C-PROGRESSIVE-CREATOR.md`
 
-State: **technically qualified; awaiting David’s collision/visual approval**. David approved WP18K; PR #161 merged as main `250f0855f013f4ba54a6de4056181cf5affa0d57`. Cloudflare reports immutable deployment `https://7a667b82.unicorn-valley.pages.dev`, and production-alias Actions smoke `34345075418` passed isolated startup/save/reload/Continue bound to that merge SHA. WP19B runtime candidate `0f980b6` aligns the Cottage floor seam, adds collider-aware Grotto/Grove tap movement and reconciles new-game location identity. Local and exact-head validation pass; Cloudflare and candidate-bound smoke evidence are verified. David’s visual collision gate remains.
+State: **final action-surface correction delivered; replacement qualification running**. David judged candidate `baa88f36` excellent but withheld approval. Scene-owned rectangular action shadows and the obsolete Back shadow owner are removed; the modal presentation manager now owns one rounded face and one rounded shadow per action, and Reset ends in a solid tangent arrowhead. The original local recovery commits were unavailable in this workspace, so the bounded patch was reapplied from recorded task evidence. GitHub now has delivery head `4b8043f`; Cloudflare published it at `https://240412c1.unicorn-valley.pages.dev`. Validate and compatibility pass; all three browser shards remain running. Candidate-bound smoke is being rerun against the new immutable preview, and desktop/phone screenshot inspection remains pending. David's visual approval remains pending. No merge, production or WP19D.
+
 
 ## Accepted gameplay baseline
 
@@ -65,7 +66,7 @@ WP18K is human-approved, technically qualified and merged through PR #161 at mai
 
 ## Next action
 
-David reviews `https://9502b39e.unicorn-valley.pages.dev`, the four-class whole-unicorn evidence under `docs/evidence/wp19b-current-head/`, and the collision/movement checklist in `docs/evidence/R6.5-WP19B-WORLD-NAVIGATION-QUALIFICATION.md`; he then explicitly approves or rejects WP19B. Stop without WP19B merge/deployment, WP19C or physical daughter acceptance.
+Push the recovered final-action-surface correction, obtain green exact-head CI, bind startup/save/reload/Continue smoke to the new immutable candidate, inspect desktop/phone action screenshots, and stop for David's finished-WP19C recheck without merge, production deployment or WP19D.
 
 ## Implementation delivery
 

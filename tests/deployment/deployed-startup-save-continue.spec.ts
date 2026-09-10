@@ -67,7 +67,12 @@ test('immutable deployment starts, saves, reloads and Continues in isolated stor
   await waitForScene(page, 'TitleScene');
   await tapNamedObject(page, 'TitleScene', 'New Game');
   await waitForScene(page, 'UnicornCreatorScene');
-  await page.locator('.unicorn-name-input').fill('Actions Smoke');
+  const renameButton = page.locator('.creator-landscape-rename-button');
+  await renameButton.focus();
+  await page.keyboard.press('Enter');
+  const nameInput = page.locator('.unicorn-name-input');
+  await expect(nameInput).toBeFocused();
+  await nameInput.fill('Actions Smoke');
   await tapNamedObject(page, 'UnicornCreatorScene', 'creator-action-confirm-new');
   await waitForScene(page, 'MoonflowerGladeScene');
 
