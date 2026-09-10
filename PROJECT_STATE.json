@@ -11,7 +11,7 @@
   "agent_state": "active",
   "branch": "agent/r6.5-wp19c-progressive-creator",
   "latest_commit": "3b9058b",
-  "ci_state": "passed",
+  "ci_state": "running",
   "technical_validation_state": "pending",
   "human_acceptance_state": "pending",
   "next_work_package": "R6.5-WP19D",
