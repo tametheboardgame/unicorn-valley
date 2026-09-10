@@ -1,4 +1,7 @@
-import { isInteractionModalActive } from '../interaction/InteractionModalState';
+import {
+  isInteractionActivationSuppressed,
+  isInteractionModalActive,
+} from '../interaction/InteractionModalState';
 import type { InputAdapter } from './InputAdapter';
 import type { AxisInputAction, ButtonInputAction } from './InputAction';
 
@@ -30,7 +33,7 @@ export class InputController {
   }
 
   public justPressed(action: ButtonInputAction): boolean {
-    if (isInteractionModalActive() && action === 'INTERACT') {
+    if (action === 'INTERACT' && isInteractionActivationSuppressed()) {
       return false;
     }
     return this.adapters.some((adapter) => adapter.justPressed(action));
