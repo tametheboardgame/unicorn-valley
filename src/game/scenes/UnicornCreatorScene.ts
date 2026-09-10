@@ -592,7 +592,6 @@ export class UnicornCreatorScene extends Phaser.Scene {
   ): void {
     const footerAction = ['cancel', 'save-changes', 'confirm-new'].includes(name);
     const height = footerAction ? 56 : 64;
-    createUiShadow(this, x, y, width, height, 19, primary ? 0.23 : 0.15);
     const fill = primary ? UI_COLOURS.gold : UI_COLOURS.cream;
     const hover = primary ? 0xfff4bf : UI_COLOURS.lavender;
     const button = this.add
@@ -628,12 +627,12 @@ export class UnicornCreatorScene extends Phaser.Scene {
       } else {
         icon.lineStyle(4, 0x4f3a5d, 1);
         icon.beginPath();
-        // One smooth, deliberately open loop. The arrowhead continues the
-        // tangent at the end of the arc instead of floating beside it.
-        icon.arc(x - 63, y, 11, 0.65, 5.5, false);
+        // One smooth, deliberately open loop. A solid arrowhead continues the
+        // tangent at the end of the arc so the icon stays legible at phone scale.
+        icon.arc(x - 63, y, 11, 0.7, 5.25, false);
         icon.strokePath();
-        icon.lineBetween(x - 55, y - 8, x - 49, y);
-        icon.lineBetween(x - 49, y, x - 58, y + 1);
+        icon.fillStyle(0x4f3a5d, 1);
+        icon.fillTriangle(x - 57, y - 10, x - 47, y - 8, x - 54, y - 1);
       }
     }
     applyButtonHover(button, fill, hover);

@@ -45,7 +45,12 @@ function shouldStyleRectangle(
   }
 
   const name = rectangle.name.trim();
-  return Boolean(name && !name.includes('backdrop') && SURFACE_NAME_PATTERN.test(name));
+  return Boolean(
+    name &&
+      !name.includes('backdrop') &&
+      !name.includes('shadow') &&
+      SURFACE_NAME_PATTERN.test(name),
+  );
 }
 
 function surfaceRadius(width: number, height: number): number {

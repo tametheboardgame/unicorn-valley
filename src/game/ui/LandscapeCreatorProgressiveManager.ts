@@ -18,7 +18,7 @@ import {
   unicornComponentBounds,
 } from '../player/UnicornAppearanceRenderer';
 import { CREATOR_CATEGORIES, type CreatorCategoryId } from './CreatorProgressiveModel';
-import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from './uiTheme';
+import { UI_COLOURS, UI_FONT, applyButtonHover } from './uiTheme';
 
 interface CreatorOwner extends Phaser.Scene {
   creatorValue(key: keyof UnicornAppearance): string;
@@ -135,7 +135,6 @@ export class LandscapeCreatorProgressiveManager {
       if ('input' in existing && existing.input) existing.input.enabled = true;
       return;
     }
-    createUiShadow(this.scene, 785, 612, 210, 56, 29, 0.15).setName('creator-action-back-shadow');
     const back = this.scene.add
       .rectangle(785, 612, 210, 56, UI_COLOURS.lavender, 1)
       .setName('creator-action-back')
