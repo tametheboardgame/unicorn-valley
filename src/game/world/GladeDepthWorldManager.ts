@@ -1,27 +1,25 @@
 import Phaser from 'phaser';
+import { WILLOW_GARDEN_PLANTED_FLAG } from '../../content/r2Quests';
+import type { SecretDiscoveryDefinition } from '../../content/r4Secrets';
 import {
   JUNIPER_BUTTERFLY_TRAIL_FLAG,
   PIP_HOLLOW_TREE_QUEST_ID,
   R6_GLADE_HOME_SECRET_DEFINITIONS,
 } from '../../content/r6GladeHomeContent';
-import { WILLOW_GARDEN_PLANTED_FLAG } from '../../content/r2Quests';
-import type { SecretDiscoveryDefinition } from '../../content/r4Secrets';
 import { SecretDiscoveryService } from '../discovery/SecretDiscoveryService';
-import {
-  WorldInteractionInput,
-  WORLD_INTERACTION_PROMPT,
-} from '../interaction/WorldInteractionInput';
+import type { InteractionActionKind, InteractionTarget } from '../interaction/InteractionTarget';
+import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { HollowTreeStoryService } from '../story/HollowTreeStoryService';
 import { MOONFLOWER_GLADE_MAP } from './MoonflowerGladeMap';
 import { worldDepthForY } from './WorldDepth';
-import { WORLD_PLAYER_NAME } from './WorldTraversalPolishManager';
 
 interface FixedGladeInteractionDefinition {
   id: string;
   label: string;
   actionLabel: string;
+  actionKind: InteractionActionKind;
   position: { x: number; y: number };
   radius: number;
   icon: string;
@@ -29,16 +27,17 @@ interface FixedGladeInteractionDefinition {
 
 interface InteractionRuntime {
   id: string;
+  label: string;
+  actionLabel: string;
+  actionKind: InteractionActionKind;
   position: { x: number; y: number };
   radius: number;
   container: Phaser.GameObjects.Container;
-  prompt: Phaser.GameObjects.Text;
   activate: () => void;
 }
 
 interface GladeDepthState {
   scene: Phaser.Scene;
-  input: WorldInteractionInput;
   fixed: InteractionRuntime[];
   secrets: Map<string, InteractionRuntime>;
   feedback: Phaser.GameObjects.Text;
@@ -48,11 +47,13 @@ interface GladeDepthState {
   persistentSignature: string;
 }
 
+const REGISTRY_OWNER = 'glade-depth';
 const FIXED_INTERACTIONS: readonly FixedGladeInteractionDefinition[] = [
   {
     id: 'hollow-tree',
     label: 'Hollow Tree',
     actionLabel: 'Peek',
+    actionKind: 'inspect',
     position: { x: 2140, y: 710 },
     radius: 170,
     icon: '🌳',
@@ -61,6 +62,7 @@ const FIXED_INTERACTIONS: readonly FixedGladeInteractionDefinition[] = [
     id: 'moonflower-bridge',
     label: 'Moonflower Bridge',
     actionLabel: 'Listen / skim pebble',
+    actionKind: 'interact',
     position: { x: 1400, y: 900 },
     radius: 145,
     icon: '🌉',
@@ -69,6 +71,7 @@ const FIXED_INTERACTIONS: readonly FixedGladeInteractionDefinition[] = [
     id: 'stream-bank',
     label: 'Sparkling stream',
     actionLabel: 'Splash',
+    actionKind: 'interact',
     position: { x: 1240, y: 1180 },
     radius: 135,
     icon: '💧',
@@ -77,6 +80,7 @@ const FIXED_INTERACTIONS: readonly FixedGladeInteractionDefinition[] = [
     id: 'garden-corner',
     label: 'Garden corner',
     actionLabel: 'Look closely',
+    actionKind: 'inspect',
     position: { x: 1080, y: 540 },
     radius: 100,
     icon: '🌸',
@@ -85,6 +89,7 @@ const FIXED_INTERACTIONS: readonly FixedGladeInteractionDefinition[] = [
     id: 'cottage-step',
     label: 'Cottage step',
     actionLabel: 'Sit',
+    actionKind: 'interact',
     position: { x: 760, y: 720 },
     radius: 115,
     icon: '🏡',
@@ -93,6 +98,7 @@ const FIXED_INTERACTIONS: readonly FixedGladeInteractionDefinition[] = [
     id: 'home-fireflies',
     label: 'Little home fireflies',
     actionLabel: 'Watch',
+    actionKind: 'inspect',
     position: { x: 2320, y: 1480 },
     radius: 145,
     icon: '✨',
@@ -107,19 +113,6 @@ const OUTDOOR_DISPLAY_ITEMS = [
   ['item:hollow-tree-star-jar', '🌟'],
   ['item:butterfly-window-charm', '🦋'],
 ] as const;
-
-function findPlayer(scene: Phaser.Scene): { x: number; y: number } | null {
-  const object = scene.children.getByName(WORLD_PLAYER_NAME) as Phaser.GameObjects.GameObject &
-    Partial<{ x: number; y: number }>;
-  if (object && typeof object.x === 'number' && typeof object.y === 'number') {
-    return { x: object.x, y: object.y };
-  }
-  return null;
-}
-
-function distance(left: { x: number; y: number }, right: { x: number; y: number }): number {
-  return Phaser.Math.Distance.Between(left.x, left.y, right.x, right.y);
-}
 
 export class GladeDepthWorldManager {
   private readonly saveService = getBrowserSaveService();
@@ -145,26 +138,6 @@ export class GladeDepthWorldManager {
     const state = this.ensureState(scene);
     this.syncSecrets(state);
     this.syncPersistentVisuals(state);
-    const player = findPlayer(scene);
-    if (!player) {
-      return;
-    }
-
-    const runtimes = [...state.fixed, ...state.secrets.values()];
-    let nearest: InteractionRuntime | null = null;
-    let nearestDistance = Number.POSITIVE_INFINITY;
-    for (const runtime of runtimes) {
-      const pointDistance = distance(player, runtime.position);
-      runtime.prompt.setVisible(pointDistance <= runtime.radius + 82);
-      if (pointDistance <= runtime.radius && pointDistance < nearestDistance) {
-        nearest = runtime;
-        nearestDistance = pointDistance;
-      }
-    }
-
-    if (nearest && state.input.justPressed()) {
-      nearest.activate();
-    }
   }
 
   private ensureState(scene: Phaser.Scene): GladeDepthState {
@@ -175,7 +148,6 @@ export class GladeDepthWorldManager {
     this.destroyState();
     const state: GladeDepthState = {
       scene,
-      input: new WorldInteractionInput(scene),
       fixed: [],
       secrets: new Map(),
       feedback: this.createFeedback(scene),
@@ -188,6 +160,8 @@ export class GladeDepthWorldManager {
       this.createFixedRuntime(state, definition),
     );
     this.state = state;
+    this.syncSecrets(state);
+    this.publishTargets(state);
     return state;
   }
 
@@ -220,34 +194,11 @@ export class GladeDepthWorldManager {
       })
       .setOrigin(0.5)
       .setAlpha(definition.id === 'hollow-tree' ? 0.5 : 0.7);
-    const prompt = state.scene.add
-      .text(
-        0,
-        48,
-        `${definition.actionLabel}: ${definition.label}  ·  ${WORLD_INTERACTION_PROMPT}`,
-        {
-          color: '#5d496c',
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '14px',
-          fontStyle: 'bold',
-          backgroundColor: '#fff9edea',
-          padding: { x: 8, y: 5 },
-        },
-      )
-      .setOrigin(0.5)
-      .setVisible(false);
-    const zone = state.scene.add.zone(0, 0, 176, 146);
     const container = state.scene.add
-      .container(definition.position.x, definition.position.y, [icon, prompt, zone])
+      .container(definition.position.x, definition.position.y, [icon])
       .setName(`glade-depth:${definition.id}`)
       .setDepth(worldDepthForY(definition.position.y + 20, 0.42));
     const activate = () => this.activateFixed(state, definition);
-    state.input.bindPointer(zone, () => {
-      const player = findPlayer(state.scene);
-      if (player && distance(player, definition.position) <= definition.radius) {
-        activate();
-      }
-    });
     state.scene.tweens.add({
       targets: icon,
       alpha: { from: 0.38, to: 0.85 },
@@ -259,10 +210,12 @@ export class GladeDepthWorldManager {
     });
     return {
       id: definition.id,
+      label: definition.label,
+      actionLabel: definition.actionLabel,
+      actionKind: definition.actionKind,
       position: definition.position,
       radius: definition.radius,
       container,
-      prompt,
       activate,
     };
   }
@@ -333,18 +286,25 @@ export class GladeDepthWorldManager {
       'MoonflowerGladeScene',
     );
     const wantedIds = new Set<string>(available.map(({ id }) => id));
+    let changed = false;
 
     for (const [id, runtime] of state.secrets) {
       if (!wantedIds.has(id)) {
         runtime.container.destroy(true);
         state.secrets.delete(id);
+        changed = true;
       }
     }
 
     for (const definition of available) {
       if (!state.secrets.has(definition.id)) {
         state.secrets.set(definition.id, this.createSecretRuntime(state, definition));
+        changed = true;
       }
+    }
+
+    if (changed) {
+      this.publishTargets(state);
     }
   }
 
@@ -359,34 +319,11 @@ export class GladeDepthWorldManager {
       })
       .setOrigin(0.5)
       .setAlpha(0.72);
-    const prompt = state.scene.add
-      .text(
-        0,
-        48,
-        `${definition.actionLabel}: ${definition.label}  ·  ${WORLD_INTERACTION_PROMPT}`,
-        {
-          color: '#5d496c',
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '14px',
-          fontStyle: 'bold',
-          backgroundColor: '#fff9edea',
-          padding: { x: 8, y: 5 },
-        },
-      )
-      .setOrigin(0.5)
-      .setVisible(false);
-    const zone = state.scene.add.zone(0, 0, 176, 146);
     const container = state.scene.add
-      .container(definition.position.x, definition.position.y, [icon, prompt, zone])
+      .container(definition.position.x, definition.position.y, [icon])
       .setName(`glade-butterfly-secret:${definition.id}`)
       .setDepth(worldDepthForY(definition.position.y + 18, 0.48));
     const activate = () => this.activateSecret(state, definition);
-    state.input.bindPointer(zone, () => {
-      const player = findPlayer(state.scene);
-      if (player && distance(player, definition.position) <= definition.interactionRadius) {
-        activate();
-      }
-    });
     state.scene.tweens.add({
       targets: icon,
       x: { from: -5, to: 5 },
@@ -399,12 +336,30 @@ export class GladeDepthWorldManager {
     });
     return {
       id: definition.id,
+      label: definition.label,
+      actionLabel: definition.actionLabel,
+      actionKind: 'inspect',
       position: definition.position,
       radius: definition.interactionRadius,
       container,
-      prompt,
       activate,
     };
+  }
+
+  private publishTargets(state: GladeDepthState): void {
+    const runtimes = [...state.fixed, ...state.secrets.values()];
+    const targets: InteractionTarget[] = runtimes.map((runtime) => ({
+      id: `interaction:glade-depth:${runtime.id}`,
+      label: runtime.label,
+      actionLabel: runtime.actionLabel,
+      actionKind: runtime.actionKind,
+      position: runtime.position,
+      interactionRadius: runtime.radius,
+      priority: 15,
+      visible: () => runtime.container.active,
+      result: { type: 'callback', activate: runtime.activate },
+    }));
+    getSceneInteractionRegistry(state.scene).replaceOwnerTargets(REGISTRY_OWNER, targets);
   }
 
   private activateSecret(state: GladeDepthState, definition: SecretDiscoveryDefinition): void {
@@ -527,6 +482,7 @@ export class GladeDepthWorldManager {
     if (!this.state) {
       return;
     }
+    getSceneInteractionRegistry(this.state.scene).clearOwner(REGISTRY_OWNER);
     for (const runtime of this.state.fixed) {
       runtime.container.destroy(true);
     }
@@ -537,7 +493,6 @@ export class GladeDepthWorldManager {
     this.state.nookDoorwayVisuals?.destroy(true);
     this.state.outdoorDisplayVisuals?.destroy(true);
     this.state.feedback.destroy();
-    this.state.input.destroy();
     this.state = null;
   }
 }
