@@ -8,7 +8,7 @@ Last updated: 2026-09-10
 
 Path: `docs/work-packages/R6.5-WP19C-PROGRESSIVE-CREATOR.md`
 
-State: **four-item final polish implemented; replacement qualification pending**. David judged candidate `fef8df2f` almost complete but withheld approval. Reset now has a smooth tangent circular arrow, Flower Clip and Star Glasses use corrected padded drawn bounds, Colours has balanced Body/Eye rows, and the wider primary footer action shares Back's reduced height, centre line and clearance. Four-class Accessories/Colours evidence is under `docs/evidence/wp19c-current-head/final-polish/`. Immutable preview `https://24001efb.unicorn-valley.pages.dev` is bound to candidate `e4b9bbc`; exact-head CI and replacement candidate-bound smoke remain pending. David's visual approval remains pending. No merge, production or WP19D.
+State: **final action-surface correction implemented; replacement qualification pending**. David judged candidate `baa88f36` excellent but withheld approval. Scene-owned rectangular action shadows and the obsolete Back shadow owner are removed; the modal presentation manager now owns one rounded face and one rounded shadow per action, and Reset ends in a solid tangent arrowhead. The original local recovery commits were unavailable in this workspace, so the bounded patch was reapplied from recorded task evidence. Exact-head CI, candidate-bound smoke and desktop/phone screenshot inspection remain pending. David's visual approval remains pending. No merge, production or WP19D.
 
 
 ## Accepted gameplay baseline
@@ -66,7 +66,7 @@ WP18K is human-approved, technically qualified and merged through PR #161 at mai
 
 ## Next action
 
-Commit and push the final-polish correction, obtain green exact-head CI, bind startup/save/reload/Continue smoke to the new immutable candidate, and stop for David's finished-WP19C recheck without merge, production deployment or WP19D.
+Push the recovered final-action-surface correction, obtain green exact-head CI, bind startup/save/reload/Continue smoke to the new immutable candidate, inspect desktop/phone action screenshots, and stop for David's finished-WP19C recheck without merge, production deployment or WP19D.
 
 ## Implementation delivery
 

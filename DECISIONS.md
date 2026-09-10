@@ -236,3 +236,14 @@ Body/Eye colour-row spacing; and a wider primary footer action aligned to Back
 at the same reduced height and centre line with comfortable panel clearance.
 Rendered phone-scale inspection is required. This does not approve merge,
 production deployment or WP19D.
+
+## UV-D022 - WP19C final action surfaces are binding
+
+Status: Accepted implementation feedback, 2026-09-10.
+
+David judged candidate `baa88f36` excellent but withheld finished-WP approval.
+The creator action row must have one rounded face and one restrained rounded
+shadow per action, without an obsolete Back layer or square scene-owned
+underlay. Reset must use a complete solid tangent arrowhead that reads clearly
+at native phone scale. Rendered desktop and phone evidence remains required;
+this does not approve merge, production deployment or WP19D.
