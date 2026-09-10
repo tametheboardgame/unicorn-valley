@@ -10,15 +10,12 @@ import {
   type AtmosphericTimeState,
 } from '../atmosphere/AtmosphericTimeService';
 import { getBrowserMagicalWeatherService } from '../atmosphere/MagicalWeatherService';
-import {
-  WORLD_INTERACTION_PROMPT,
-  WorldInteractionInput,
-} from '../interaction/WorldInteractionInput';
+import type { InteractionActionKind, InteractionTarget } from '../interaction/InteractionTarget';
+import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { WoodsDepthStoryService } from '../story/WoodsDepthStoryService';
 import { worldDepthForY } from './WorldDepth';
-import { WORLD_PLAYER_NAME } from './WorldTraversalPolishManager';
 
 interface Point {
   x: number;
@@ -29,6 +26,7 @@ interface WoodsInteractionDefinition {
   id: string;
   label: string;
   actionLabel: string;
+  actionKind: InteractionActionKind;
   position: Point;
   radius: number;
   icon: string;
@@ -37,24 +35,23 @@ interface WoodsInteractionDefinition {
 interface WoodsInteractionRuntime {
   definition: WoodsInteractionDefinition;
   container: Phaser.GameObjects.Container;
-  prompt: Phaser.GameObjects.Text;
-  zone: Phaser.GameObjects.Zone;
 }
 
 interface WoodsDepthState {
   scene: Phaser.Scene;
-  input: WorldInteractionInput;
   interactions: WoodsInteractionRuntime[];
   feedback: Phaser.GameObjects.Text;
   persistent: Phaser.GameObjects.Container | null;
   signature: string;
 }
 
+const REGISTRY_OWNER = 'woods-depth';
 const INTERACTIONS: readonly WoodsInteractionDefinition[] = [
   {
     id: 'fern-firefly-clue',
     label: 'Fern’s patient fireflies',
     actionLabel: 'Listen with Fern',
+    actionKind: 'talk',
     position: { x: 2850, y: 1150 },
     radius: 130,
     icon: '✨',
@@ -63,6 +60,7 @@ const INTERACTIONS: readonly WoodsInteractionDefinition[] = [
     id: 'firefly-grove',
     label: 'Firefly Grove',
     actionLabel: 'Go inside',
+    actionKind: 'enter',
     position: { x: 3130, y: 780 },
     radius: 160,
     icon: '🌿',
@@ -71,6 +69,7 @@ const INTERACTIONS: readonly WoodsInteractionDefinition[] = [
     id: 'fern-light-trail',
     label: 'Patient light trail',
     actionLabel: 'Follow',
+    actionKind: 'interact',
     position: { x: 2860, y: 970 },
     radius: 145,
     icon: '🌟',
@@ -79,6 +78,7 @@ const INTERACTIONS: readonly WoodsInteractionDefinition[] = [
     id: 'mooncap-sequence',
     label: 'Mooncap Grove',
     actionLabel: 'Touch the mooncaps',
+    actionKind: 'interact',
     position: { x: 1180, y: 620 },
     radius: 150,
     icon: '🍄',
@@ -87,6 +87,7 @@ const INTERACTIONS: readonly WoodsInteractionDefinition[] = [
     id: 'firefly-gather',
     label: 'Drifting fireflies',
     actionLabel: 'Stand quietly',
+    actionKind: 'interact',
     position: { x: 2260, y: 820 },
     radius: 145,
     icon: '✦',
@@ -95,6 +96,7 @@ const INTERACTIONS: readonly WoodsInteractionDefinition[] = [
     id: 'leaf-pile',
     label: 'Soft leaf pile',
     actionLabel: 'Rustle',
+    actionKind: 'interact',
     position: { x: 1740, y: 1270 },
     radius: 145,
     icon: '🍂',
@@ -103,6 +105,7 @@ const INTERACTIONS: readonly WoodsInteractionDefinition[] = [
     id: 'tiny-tracks',
     label: 'Tiny mossy tracks',
     actionLabel: 'Inspect',
+    actionKind: 'inspect',
     position: { x: 1030, y: 820 },
     radius: 145,
     icon: '🐾',
@@ -111,6 +114,7 @@ const INTERACTIONS: readonly WoodsInteractionDefinition[] = [
     id: 'hollow-log',
     label: 'Hollow mossy log',
     actionLabel: 'Peek inside',
+    actionKind: 'inspect',
     position: { x: 1460, y: 760 },
     radius: 145,
     icon: '🪵',
@@ -119,6 +123,7 @@ const INTERACTIONS: readonly WoodsInteractionDefinition[] = [
     id: 'moss-tail',
     label: 'A leafy little rustle',
     actionLabel: 'Wait and watch',
+    actionKind: 'inspect',
     position: { x: 1740, y: 720 },
     radius: 145,
     icon: '🌿',
@@ -127,6 +132,7 @@ const INTERACTIONS: readonly WoodsInteractionDefinition[] = [
     id: 'mushroom-ring',
     label: 'Mooncap Ring',
     actionLabel: 'Watch the ring',
+    actionKind: 'inspect',
     position: { x: 2150, y: 1580 },
     radius: 155,
     icon: '🍄',
@@ -135,25 +141,12 @@ const INTERACTIONS: readonly WoodsInteractionDefinition[] = [
     id: 'hidden-leaf-path',
     label: 'Tidy fallen leaves',
     actionLabel: 'Follow the leaves',
+    actionKind: 'interact',
     position: { x: 3100, y: 1800 },
     radius: 140,
     icon: '🍁',
   },
 ];
-
-function findPlayer(scene: Phaser.Scene): Point | null {
-  const object = scene.children.getByName(WORLD_PLAYER_NAME) as
-    | (Phaser.GameObjects.GameObject & Partial<Point>)
-    | null;
-  if (object && typeof object.x === 'number' && typeof object.y === 'number') {
-    return { x: object.x, y: object.y };
-  }
-  return null;
-}
-
-function distance(left: Point, right: Point): number {
-  return Phaser.Math.Distance.Between(left.x, left.y, right.x, right.y);
-}
 
 export class WoodsDepthWorldManager {
   private readonly saveService = getBrowserSaveService();
@@ -179,29 +172,6 @@ export class WoodsDepthWorldManager {
 
     const state = this.ensureState(scene);
     this.syncPersistent(state);
-    const player = findPlayer(scene);
-    if (!player) {
-      return;
-    }
-
-    let nearest: WoodsInteractionRuntime | null = null;
-    let nearestDistance = Number.POSITIVE_INFINITY;
-    for (const runtime of state.interactions) {
-      const pointDistance = distance(player, runtime.definition.position);
-      const inInteractionRange = pointDistance <= runtime.definition.radius;
-      runtime.prompt.setVisible(pointDistance <= runtime.definition.radius + 80);
-      if (runtime.zone.input) {
-        runtime.zone.input.enabled = inInteractionRange;
-      }
-      if (inInteractionRange && pointDistance < nearestDistance) {
-        nearest = runtime;
-        nearestDistance = pointDistance;
-      }
-    }
-
-    if (nearest && state.input.justPressed()) {
-      this.activate(state, nearest.definition);
-    }
   }
 
   private ensureState(scene: Phaser.Scene): WoodsDepthState {
@@ -211,7 +181,6 @@ export class WoodsDepthWorldManager {
     this.destroyState();
     const state: WoodsDepthState = {
       scene,
-      input: new WorldInteractionInput(scene),
       interactions: [],
       feedback: scene.add
         .text(640, 116, '', {
@@ -235,6 +204,7 @@ export class WoodsDepthWorldManager {
       this.createInteraction(state, definition),
     );
     this.state = state;
+    this.publishTargets(state);
     this.syncPersistent(state, true);
     return state;
   }
@@ -251,38 +221,26 @@ export class WoodsDepthWorldManager {
       })
       .setOrigin(0.5)
       .setAlpha(0.72);
-    const prompt = state.scene.add
-      .text(
-        0,
-        47,
-        `${definition.actionLabel}: ${definition.label}  ·  ${WORLD_INTERACTION_PROMPT}`,
-        {
-          color: '#dcefd6',
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '14px',
-          fontStyle: 'bold',
-          backgroundColor: '#284940ed',
-          padding: { x: 8, y: 5 },
-        },
-      )
-      .setOrigin(0.5)
-      .setVisible(false);
-    const zone = state.scene.add.zone(0, 0, 180, 150);
     const container = state.scene.add
-      .container(definition.position.x, definition.position.y, [glow, icon, prompt, zone])
+      .container(definition.position.x, definition.position.y, [glow, icon])
       .setName(`woods-depth:${definition.id}`)
       .setDepth(worldDepthForY(definition.position.y + 15, 0.35));
+    return { definition, container };
+  }
 
-    state.input.bindPointer(zone, () => {
-      const player = findPlayer(state.scene);
-      if (player && distance(player, definition.position) <= definition.radius) {
-        this.activate(state, definition);
-      }
-    });
-    if (zone.input) {
-      zone.input.enabled = false;
-    }
-    return { definition, container, prompt, zone };
+  private publishTargets(state: WoodsDepthState): void {
+    const targets: InteractionTarget[] = state.interactions.map(({ definition, container }) => ({
+      id: `interaction:woods-depth:${definition.id}`,
+      label: definition.label,
+      actionLabel: definition.actionLabel,
+      actionKind: definition.actionKind,
+      position: definition.position,
+      interactionRadius: definition.radius,
+      priority: definition.actionKind === 'talk' ? 30 : definition.actionKind === 'enter' ? 20 : 12,
+      visible: () => container.active,
+      result: { type: 'callback', activate: () => this.activate(state, definition) },
+    }));
+    getSceneInteractionRegistry(state.scene).replaceOwnerTargets(REGISTRY_OWNER, targets);
   }
 
   private activate(state: WoodsDepthState, definition: WoodsInteractionDefinition): void {
@@ -569,12 +527,12 @@ export class WoodsDepthWorldManager {
     if (!this.state) {
       return;
     }
+    getSceneInteractionRegistry(this.state.scene).clearOwner(REGISTRY_OWNER);
     for (const runtime of this.state.interactions) {
       runtime.container.destroy(true);
     }
     this.state.persistent?.destroy(true);
     this.state.feedback.destroy();
-    this.state.input.destroy();
     this.state = null;
   }
 }
