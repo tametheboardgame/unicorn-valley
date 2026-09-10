@@ -1,10 +1,7 @@
 import Phaser from 'phaser';
 import { CRYSTAL_CASCADE_RACE_ID } from '../../content/r5RaceIds';
 import { GAME_WIDTH } from '../config/gameConstants';
-import {
-  WORLD_INTERACTION_PROMPT,
-  WorldInteractionInput,
-} from '../interaction/WorldInteractionInput';
+import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import type { PlayerFacing } from '../player/PlayerMovement';
 import { getActiveRaceCourse, resetActiveRaceCourse, selectRaceCourse } from '../racing/RaceCourse';
 import { getCrystalCascadeUnlockState } from '../racing/RaceProgression';
@@ -18,7 +15,7 @@ import {
   setCrystalBrookPlayerSpawn,
 } from './CrystalBrookMap';
 import { RAINBOW_MEADOW_LOCATION_ID, setRainbowMeadowPlayerSpawn } from './RainbowMeadowMap';
-import { isWithinInteractiveGateway, shouldActivateWalkThroughGateway } from './RegionGatewayRules';
+import { INTERACTIVE_GATEWAY_RADIUS, shouldActivateWalkThroughGateway } from './RegionGatewayRules';
 import { setWorldArrivalFacing } from './WorldArrivalState';
 import {
   setWhisperingWoodsPlayerSpawn,
@@ -45,8 +42,7 @@ interface GatewayState {
   scene: Phaser.Scene;
   definition: RegionGatewayDefinition;
   container: Phaser.GameObjects.Container;
-  prompt: Phaser.GameObjects.Text;
-  interaction: WorldInteractionInput | null;
+  lockClue: Phaser.GameObjects.Text | null;
   insideWalkThrough: boolean;
 }
 
@@ -178,7 +174,6 @@ export class R5RegionGatewayManager {
       );
 
       if (!definition.raceCourseId) {
-        state.prompt.setVisible(distance <= 245);
         const insideWalkThrough = shouldActivateWalkThroughGateway(distance, false);
         if (insideWalkThrough && !state.insideWalkThrough) {
           state.insideWalkThrough = true;
@@ -190,16 +185,7 @@ export class R5RegionGatewayManager {
       }
 
       const unlock = this.getRaceUnlockState(definition);
-      state.prompt.setText(
-        unlock.unlocked
-          ? `${WORLD_INTERACTION_PROMPT}: Race ${definition.label}`
-          : `🔒 ${unlock.clue}`,
-      );
-      state.prompt.setVisible(distance <= 285);
-      if (isWithinInteractiveGateway(distance) && state.interaction?.justPressed()) {
-        this.activateGateway(state);
-        return;
-      }
+      state.lockClue?.setText(`🔒 ${unlock.clue}`).setVisible(!unlock.unlocked && distance <= 285);
     }
   }
 
@@ -243,62 +229,36 @@ export class R5RegionGatewayManager {
         padding: { x: 10, y: 5 },
       })
       .setOrigin(0.5);
-    const promptLabel = definition.raceCourseId
-      ? `${WORLD_INTERACTION_PROMPT}: Race ${definition.label}`
-      : `Walk through to ${definition.label} →`;
-    const prompt = scene.add
-      .text(0, 160, promptLabel, {
-        color: '#5d5068',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '16px',
-        fontStyle: 'bold',
-        align: 'center',
-        backgroundColor: '#fff9eef0',
-        padding: { x: 9, y: 5 },
-        wordWrap: { width: 360 },
-      })
-      .setOrigin(0.5)
-      .setVisible(false);
-    const zone = scene.add.zone(0, 20, 170, 230);
+    const lockClue = definition.raceCourseId
+      ? scene.add
+          .text(0, 166, '', {
+            color: '#3c5660',
+            fontFamily: 'system-ui, sans-serif',
+            fontSize: '15px',
+            fontStyle: 'bold',
+            align: 'center',
+            backgroundColor: '#effffff2',
+            padding: { x: 10, y: 6 },
+            wordWrap: { width: 360 },
+          })
+          .setOrigin(0.5)
+          .setVisible(false)
+      : null;
+    const children: Phaser.GameObjects.GameObject[] = [glow, arch, opening, icon, sign];
+    if (lockClue) {
+      children.push(lockClue);
+    }
     const container = scene.add
-      .container(definition.position.x, definition.position.y, [
-        glow,
-        arch,
-        opening,
-        icon,
-        sign,
-        prompt,
-        zone,
-      ])
+      .container(definition.position.x, definition.position.y, children)
       .setDepth(17);
 
-    const interaction = definition.raceCourseId ? new WorldInteractionInput(scene) : null;
     const state: GatewayState = {
       scene,
       definition,
       container,
-      prompt,
-      interaction,
+      lockClue,
       insideWalkThrough: false,
     };
-
-    if (interaction) {
-      interaction.bindPointer(zone, () => {
-        const player = findPlayer(scene);
-        if (!player) {
-          return;
-        }
-        const distance = Phaser.Math.Distance.Between(
-          player.x,
-          player.y,
-          definition.position.x,
-          definition.position.y,
-        );
-        if (isWithinInteractiveGateway(distance)) {
-          this.activateGateway(state);
-        }
-      });
-    }
 
     scene.tweens.add({
       targets: glow,
@@ -311,6 +271,22 @@ export class R5RegionGatewayManager {
     });
 
     this.states.set(definition.id, state);
+    if (definition.raceCourseId) {
+      getSceneInteractionRegistry(scene).replaceOwnerTargets(`r5-gateway:${definition.id}`, [
+        {
+          id: `interaction:${definition.id}`,
+          label: definition.label,
+          actionLabel: 'Start race',
+          actionKind: 'start',
+          position: definition.position,
+          interactionRadius: INTERACTIVE_GATEWAY_RADIUS,
+          priority: 25,
+          visible: () => state.container.active,
+          enabled: () => this.getRaceUnlockState(definition).unlocked,
+          result: { type: 'callback', activate: () => this.activateGateway(state) },
+        },
+      ]);
+    }
     return state;
   }
 
@@ -617,7 +593,9 @@ export class R5RegionGatewayManager {
     if (!state) {
       return;
     }
-    state.interaction?.destroy();
+    if (state.definition.raceCourseId) {
+      getSceneInteractionRegistry(state.scene).clearOwner(`r5-gateway:${state.definition.id}`);
+    }
     if (state.container.active) {
       state.container.destroy(true);
     }
