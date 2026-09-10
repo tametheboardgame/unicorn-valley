@@ -8,10 +8,9 @@ import {
 import { BEACH_RACE_ROUTE_READY_FLAG } from '../../content/r65StarlightBeach';
 import { WHISPERING_WOODS_REGION_DISCOVERY_ID } from '../../content/r5WhisperingWoods';
 import { GAME_WIDTH } from '../config/gameConstants';
-import {
-  WORLD_INTERACTION_PROMPT,
-  WorldInteractionInput,
-} from '../interaction/WorldInteractionInput';
+import { setInteractionModalActive } from '../interaction/InteractionModalState';
+import type { InteractionTarget } from '../interaction/InteractionTarget';
+import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { saveLocationCheckpoint } from '../save/saveLocationCheckpoint';
 import type { SaveGame } from '../save/saveSchema';
@@ -62,12 +61,11 @@ interface RaceEntryDefinition {
 interface RaceEntryRuntime {
   definition: RaceEntryDefinition;
   container: Phaser.GameObjects.Container;
-  prompt: Phaser.GameObjects.Text;
+  clue: Phaser.GameObjects.Text | null;
 }
 
 interface WorldSceneState {
   scene: Phaser.Scene;
-  input: WorldInteractionInput;
   entries: RaceEntryRuntime[];
   feedback: Phaser.GameObjects.Text;
   feedbackTimer: Phaser.Time.TimerEvent | null;
@@ -173,6 +171,7 @@ export class R65RaceExpansionWorldManager {
   private raceTheme: Phaser.GameObjects.Container | null = null;
   private raceFinishNote: Phaser.GameObjects.Text | null = null;
   private cupOverlay: Phaser.GameObjects.Container | null = null;
+  private cupOverlayScene: Phaser.Scene | null = null;
   private reopenCupAfterRace = false;
 
   public constructor(private readonly game: Phaser.Game) {
@@ -214,7 +213,6 @@ export class R65RaceExpansionWorldManager {
 
     const state: WorldSceneState = {
       scene,
-      input: new WorldInteractionInput(scene),
       entries: [],
       feedback: scene.add
         .text(GAME_WIDTH / 2, 128, '', {
@@ -239,6 +237,7 @@ export class R65RaceExpansionWorldManager {
       state.entries.push(this.createEntry(state, definition));
     }
     this.worldStates.set(sceneKey, state);
+    this.publishTargets(state, sceneKey);
     return state;
   }
 
@@ -262,26 +261,30 @@ export class R65RaceExpansionWorldManager {
         padding: { x: 9, y: 5 },
       })
       .setOrigin(0.5);
-    const prompt = state.scene.add
-      .text(0, 61, '', {
-        color: '#594c67',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '15px',
-        fontStyle: 'bold',
-        align: 'center',
-        backgroundColor: '#fff9e8f0',
-        padding: { x: 9, y: 5 },
-        wordWrap: { width: 310 },
-      })
-      .setOrigin(0.5)
-      .setVisible(false);
-    const zone = state.scene.add.zone(0, 0, 150, 150);
+    const clue = definition.courseId
+      ? state.scene.add
+          .text(0, 61, '', {
+            color: '#594c67',
+            fontFamily: 'system-ui, sans-serif',
+            fontSize: '15px',
+            fontStyle: 'bold',
+            align: 'center',
+            backgroundColor: '#fff9e8f0',
+            padding: { x: 9, y: 5 },
+            wordWrap: { width: 310 },
+          })
+          .setOrigin(0.5)
+          .setVisible(false)
+      : null;
+    const children: Phaser.GameObjects.GameObject[] = [plate, icon, name];
+    if (clue) {
+      children.push(clue);
+    }
     const container = state.scene.add
-      .container(definition.position.x, definition.position.y, [plate, icon, name, prompt, zone])
+      .container(definition.position.x, definition.position.y, children)
       .setName(`r6.5-wp12-race-entry:${definition.id}`)
       .setDepth(16);
 
-    state.input.bindPointer(zone, () => this.tryActivateEntry(state, definition));
     state.scene.tweens.add({
       targets: plate,
       alpha: { from: 0.56, to: 1 },
@@ -291,7 +294,29 @@ export class R65RaceExpansionWorldManager {
       repeat: -1,
       ease: 'Sine.InOut',
     });
-    return { definition, container, prompt };
+    return { definition, container, clue };
+  }
+
+  private publishTargets(state: WorldSceneState, sceneKey: WorldSceneKey): void {
+    const targets: InteractionTarget[] = state.entries.map(({ definition, container }) => ({
+      id: `interaction:race-entry:${definition.id}`,
+      label: definition.label,
+      actionLabel: definition.actionLabel,
+      actionKind: 'start',
+      position: definition.position,
+      interactionRadius: definition.radius,
+      priority: 25,
+      visible: () => container.active,
+      enabled: () => {
+        if (!definition.courseId) {
+          return true;
+        }
+        const save = this.saveService.load() ?? this.saveService.createNewGame();
+        return courseUnlock(save, definition.courseId).unlocked;
+      },
+      result: { type: 'callback', activate: () => this.tryActivateEntry(state, definition) },
+    }));
+    getSceneInteractionRegistry(state.scene).replaceOwnerTargets(`r65-races:${sceneKey}`, targets);
   }
 
   private updateWorldState(state: WorldSceneState): void {
@@ -300,36 +325,19 @@ export class R65RaceExpansionWorldManager {
       return;
     }
     const save = this.saveService.load() ?? this.saveService.createNewGame();
-    let nearest: RaceEntryRuntime | null = null;
-    let nearestDistance = Number.POSITIVE_INFINITY;
 
     for (const runtime of state.entries) {
-      const pointDistance = distance(player, runtime.definition.position);
-      const unlock = runtime.definition.courseId
-        ? courseUnlock(save, runtime.definition.courseId)
-        : { unlocked: true, clue: '' };
-      runtime.prompt.setText(
-        unlock.unlocked
-          ? `${runtime.definition.actionLabel}: ${runtime.definition.label} · ${WORLD_INTERACTION_PROMPT}`
-          : `🔒 ${unlock.clue}`,
-      );
-      runtime.prompt.setVisible(pointDistance <= runtime.definition.radius + 105);
-      if (pointDistance <= runtime.definition.radius && pointDistance < nearestDistance) {
-        nearest = runtime;
-        nearestDistance = pointDistance;
+      if (!runtime.definition.courseId || !runtime.clue) {
+        continue;
       }
-    }
-
-    if (nearest && state.input.justPressed()) {
-      this.tryActivateEntry(state, nearest.definition);
+      const pointDistance = distance(player, runtime.definition.position);
+      const unlock = courseUnlock(save, runtime.definition.courseId);
+      runtime.clue.setText(`🔒 ${unlock.clue}`);
+      runtime.clue.setVisible(!unlock.unlocked && pointDistance <= runtime.definition.radius + 105);
     }
   }
 
   private tryActivateEntry(state: WorldSceneState, definition: RaceEntryDefinition): void {
-    const player = findPlayer(state.scene);
-    if (!player || distance(player, definition.position) > definition.radius) {
-      return;
-    }
     if (definition.cup) {
       this.openCupOverlay(state.scene);
       return;
@@ -337,7 +345,6 @@ export class R65RaceExpansionWorldManager {
     if (!definition.courseId) {
       return;
     }
-
     const save = this.saveService.load() ?? this.saveService.createNewGame();
     const unlock = courseUnlock(save, definition.courseId);
     if (!unlock.unlocked) {
@@ -374,17 +381,27 @@ export class R65RaceExpansionWorldManager {
     }
     this.closeCupOverlay();
     const save = this.saveService.load() ?? this.saveService.createNewGame();
+    setInteractionModalActive(scene, true);
+    this.cupOverlayScene = scene;
     this.cupOverlay = createRainbowCupOverlay(
       scene,
       save,
       (courseId) => this.startRace(scene, courseId, 'cup', 'RainbowMeadowScene'),
       () => {
         this.cupOverlay = null;
+        if (this.cupOverlayScene) {
+          setInteractionModalActive(this.cupOverlayScene, false);
+        }
+        this.cupOverlayScene = null;
       },
     );
   }
 
   private closeCupOverlay(): void {
+    if (this.cupOverlayScene) {
+      setInteractionModalActive(this.cupOverlayScene, false);
+    }
+    this.cupOverlayScene = null;
     this.cupOverlay?.destroy(true);
     this.cupOverlay = null;
   }
@@ -509,7 +526,7 @@ export class R65RaceExpansionWorldManager {
       return;
     }
     state.feedbackTimer?.destroy();
-    state.input.destroy();
+    getSceneInteractionRegistry(state.scene).clearOwner(`r65-races:${sceneKey}`);
     for (const entry of state.entries) {
       entry.container.destroy(true);
     }
