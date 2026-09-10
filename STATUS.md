@@ -8,7 +8,7 @@ Last updated: 2026-09-10
 
 Path: `docs/work-packages/R6.5-WP19C-PROGRESSIVE-CREATOR.md`
 
-State: **four-item final polish implemented; replacement qualification pending**. David judged candidate `fef8df2f` almost complete but withheld approval. Reset now has a smooth tangent circular arrow, Flower Clip and Star Glasses use corrected padded drawn bounds, Colours has balanced Body/Eye rows, and the wider primary footer action shares Back's reduced height, centre line and clearance. Four-class Accessories/Colours evidence is under `docs/evidence/wp19c-current-head/final-polish/`. Exact correction-head CI, immutable candidate smoke and David's visual approval remain pending. No merge, production or WP19D.
+State: **four-item final polish implemented; replacement qualification pending**. David judged candidate `fef8df2f` almost complete but withheld approval. Reset now has a smooth tangent circular arrow, Flower Clip and Star Glasses use corrected padded drawn bounds, Colours has balanced Body/Eye rows, and the wider primary footer action shares Back's reduced height, centre line and clearance. Four-class Accessories/Colours evidence is under `docs/evidence/wp19c-current-head/final-polish/`. Immutable preview `https://24001efb.unicorn-valley.pages.dev` is bound to candidate `e4b9bbc`; exact-head CI and replacement candidate-bound smoke remain pending. David's visual approval remains pending. No merge, production or WP19D.
 
 
 ## Accepted gameplay baseline
