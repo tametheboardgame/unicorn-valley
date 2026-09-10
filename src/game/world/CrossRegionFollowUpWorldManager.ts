@@ -4,10 +4,8 @@ import {
   LIGHT_FOUND_SEA_QUEST_ID,
 } from '../../content/r65CrossRegionFollowUp';
 import { GAME_WIDTH } from '../config/gameConstants';
-import {
-  WORLD_INTERACTION_PROMPT,
-  WorldInteractionInput,
-} from '../interaction/WorldInteractionInput';
+import type { InteractionActionKind, InteractionTarget } from '../interaction/InteractionTarget';
+import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import {
@@ -15,7 +13,6 @@ import {
   type CrossRegionFollowUpResult,
 } from '../story/CrossRegionFollowUpStoryService';
 import { worldDepthForY } from './WorldDepth';
-import { WORLD_PLAYER_NAME } from './WorldTraversalPolishManager';
 
 interface Point {
   x: number;
@@ -26,6 +23,7 @@ interface FollowUpInteractionDefinition {
   id: string;
   label: string;
   actionLabel: string;
+  actionKind: InteractionActionKind;
   icon: string;
   position: Point;
   radius: number;
@@ -35,12 +33,10 @@ interface FollowUpInteractionDefinition {
 interface FollowUpInteractionRuntime {
   definition: FollowUpInteractionDefinition;
   container: Phaser.GameObjects.Container;
-  prompt: Phaser.GameObjects.Text;
 }
 
 interface FollowUpSceneState {
   scene: Phaser.Scene;
-  input: WorldInteractionInput;
   interactions: FollowUpInteractionRuntime[];
   feedback: Phaser.GameObjects.Text;
   persistent: Phaser.GameObjects.Container | null;
@@ -48,20 +44,7 @@ interface FollowUpSceneState {
 }
 
 const TARGET_SCENES = ['StarlightBeachScene', 'WhisperingWoodsScene'] as const;
-
-function findPlayer(scene: Phaser.Scene): Point | null {
-  const object = scene.children.getByName(WORLD_PLAYER_NAME) as
-    | (Phaser.GameObjects.GameObject & Partial<Point>)
-    | null;
-  if (object && typeof object.x === 'number' && typeof object.y === 'number') {
-    return { x: object.x, y: object.y };
-  }
-  return null;
-}
-
-function distance(left: Point, right: Point): number {
-  return Phaser.Math.Distance.Between(left.x, left.y, right.x, right.y);
-}
+const REGISTRY_OWNER = 'cross-region-follow-up';
 
 export class CrossRegionFollowUpWorldManager {
   private readonly saveService = getBrowserSaveService();
@@ -90,33 +73,12 @@ export class CrossRegionFollowUpWorldManager {
     if (!this.state || this.state.scene !== scene || this.state.signature !== signature) {
       this.buildState(scene, signature);
     }
-    const state = this.state;
-    const player = findPlayer(scene);
-    if (!state || !player) {
-      return;
-    }
-
-    let nearest: FollowUpInteractionRuntime | null = null;
-    let nearestDistance = Number.POSITIVE_INFINITY;
-    for (const runtime of state.interactions) {
-      const pointDistance = distance(player, runtime.definition.position);
-      runtime.prompt.setVisible(pointDistance <= runtime.definition.radius + 88);
-      if (pointDistance <= runtime.definition.radius && pointDistance < nearestDistance) {
-        nearest = runtime;
-        nearestDistance = pointDistance;
-      }
-    }
-
-    if (nearest && state.input.justPressed()) {
-      this.activate(state, nearest.definition);
-    }
   }
 
   private buildState(scene: Phaser.Scene, signature: string): void {
     this.destroyState();
     const state: FollowUpSceneState = {
       scene,
-      input: new WorldInteractionInput(scene),
       interactions: [],
       feedback: scene.add
         .text(GAME_WIDTH / 2, 122, '', {
@@ -141,6 +103,7 @@ export class CrossRegionFollowUpWorldManager {
     );
     state.persistent = this.createPersistentState(scene);
     this.state = state;
+    this.publishTargets(state);
   }
 
   private definitionsForScene(sceneKey: string): FollowUpInteractionDefinition[] {
@@ -151,6 +114,7 @@ export class CrossRegionFollowUpWorldManager {
           id: 'moonlit-shell-glimmer',
           label: 'Unusual green shell-light',
           actionLabel: 'Look closely',
+          actionKind: 'inspect',
           icon: '🐚',
           position: { x: 2860, y: 1800 },
           radius: 116,
@@ -162,6 +126,7 @@ export class CrossRegionFollowUpWorldManager {
           id: 'ask-coral-about-glimmer',
           label: 'Coral and the strange green glimmer',
           actionLabel: 'Ask Coral',
+          actionKind: 'talk',
           icon: '💬',
           position: { x: 1110, y: 1050 },
           radius: 118,
@@ -173,6 +138,7 @@ export class CrossRegionFollowUpWorldManager {
           id: 'return-to-coral-with-starwell-answer',
           label: 'Coral and the Starwell answer',
           actionLabel: 'Tell Coral',
+          actionKind: 'talk',
           icon: '🏮',
           position: { x: 1110, y: 1050 },
           radius: 118,
@@ -189,6 +155,7 @@ export class CrossRegionFollowUpWorldManager {
             id: 'ask-lumi-about-glimmer',
             label: 'Lumi and Coral’s wandering light',
             actionLabel: 'Ask Lumi',
+            actionKind: 'talk',
             icon: '✨',
             position: { x: 2735, y: 1510 },
             radius: 118,
@@ -202,6 +169,7 @@ export class CrossRegionFollowUpWorldManager {
             id: 'starwell-sea-reflection',
             label: 'Starwell water and the beach glimmer',
             actionLabel: 'Compare',
+            actionKind: 'inspect',
             icon: '🌌',
             position: { x: 2920, y: 1700 },
             radius: 118,
@@ -227,36 +195,30 @@ export class CrossRegionFollowUpWorldManager {
         fontSize: '27px',
       })
       .setOrigin(0.5);
-    const prompt = state.scene.add
-      .text(
-        0,
-        54,
-        `${definition.actionLabel}: ${definition.label}  ·  ${WORLD_INTERACTION_PROMPT}`,
-        {
-          color: '#554c67',
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '14px',
-          fontStyle: 'bold',
-          backgroundColor: '#fff9edef',
-          padding: { x: 8, y: 5 },
-        },
-      )
-      .setOrigin(0.5)
-      .setVisible(false);
-    const zone = state.scene.add.zone(0, 0, 180, 154);
     const container = state.scene.add
-      .container(definition.position.x, definition.position.y, [plate, icon, prompt, zone])
+      .container(definition.position.x, definition.position.y, [plate, icon])
       .setName(`wp13-story:${definition.id}`)
       .setDepth(worldDepthForY(definition.position.y + 18, 0.58));
 
-    state.input.bindPointer(zone, () => {
-      const player = findPlayer(state.scene);
-      if (player && distance(player, definition.position) <= definition.radius) {
-        this.activate(state, definition);
-      }
-    });
+    return { definition, container };
+  }
 
-    return { definition, container, prompt };
+  private publishTargets(state: FollowUpSceneState): void {
+    const targets: InteractionTarget[] = state.interactions.map(({ definition, container }) => ({
+      id: `interaction:cross-region:${definition.id}`,
+      label: definition.label,
+      actionLabel: definition.actionLabel,
+      actionKind: definition.actionKind,
+      position: definition.position,
+      interactionRadius: definition.radius,
+      priority: definition.actionKind === 'talk' ? 30 : 20,
+      visible: () => container.active,
+      result: {
+        type: 'callback',
+        activate: () => this.activate(state, definition),
+      },
+    }));
+    getSceneInteractionRegistry(state.scene).replaceOwnerTargets(REGISTRY_OWNER, targets);
   }
 
   private createPersistentState(scene: Phaser.Scene): Phaser.GameObjects.Container | null {
@@ -328,7 +290,7 @@ export class CrossRegionFollowUpWorldManager {
     if (!this.state) {
       return;
     }
-    this.state.input.destroy();
+    getSceneInteractionRegistry(this.state.scene).clearOwner(REGISTRY_OWNER);
     for (const runtime of this.state.interactions) {
       runtime.container.destroy(true);
     }
