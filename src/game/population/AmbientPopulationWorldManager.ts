@@ -432,8 +432,13 @@ export class AmbientPopulationWorldManager {
     message: string,
   ): void {
     this.destroyConversationObjects(state);
+    state.scene.children.getByName('r6-5-ambient-feedback')?.destroy();
     setInteractionModalActive(state.scene, true);
 
+    const panelY = GAME_HEIGHT - 116;
+    const titleY = GAME_HEIGHT - 180;
+    const bodyY = GAME_HEIGHT - 128;
+    const doneY = GAME_HEIGHT - 66;
     const blocker = state.scene.add
       .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.001)
       .setName('wp19d-resident-conversation-blocker')
@@ -441,44 +446,49 @@ export class AmbientPopulationWorldManager {
       .setDepth(20_000)
       .setInteractive();
     const panel = state.scene.add
-      .rectangle(GAME_WIDTH / 2, 114, 690, 154, 0xfff9ed, 0.98)
+      .rectangle(GAME_WIDTH / 2, panelY, 690, 174, 0xfff9ed, 0.98)
+      .setName('wp19d-resident-conversation-panel')
       .setStrokeStyle(4, 0x9b72b5, 0.9)
       .setScrollFactor(0)
       .setDepth(20_010);
     const title = state.scene.add
-      .text(GAME_WIDTH / 2, 72, runtime.resident.name, {
+      .text(GAME_WIDTH / 2, titleY, runtime.resident.name, {
         color: '#5b3f69',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '20px',
         fontStyle: 'bold',
       })
+      .setName('wp19d-resident-conversation-name')
       .setOrigin(0.5)
       .setScrollFactor(0)
       .setDepth(20_011);
     const body = state.scene.add
-      .text(GAME_WIDTH / 2, 112, message, {
+      .text(GAME_WIDTH / 2, bodyY, message, {
         color: '#574663',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '18px',
         align: 'center',
         wordWrap: { width: 570 },
       })
+      .setName('wp19d-resident-conversation-body')
       .setOrigin(0.5)
       .setScrollFactor(0)
       .setDepth(20_011);
     const done = state.scene.add
-      .rectangle(GAME_WIDTH / 2 + 278, 158, 88, 42, 0x7d55a1, 1)
+      .rectangle(GAME_WIDTH / 2 + 278, doneY, 88, 42, 0x7d55a1, 1)
+      .setName('wp19d-resident-conversation-done')
       .setStrokeStyle(3, 0xffefaf, 0.95)
       .setScrollFactor(0)
       .setDepth(20_012)
       .setInteractive({ useHandCursor: true });
     const doneLabel = state.scene.add
-      .text(GAME_WIDTH / 2 + 278, 158, 'Done', {
+      .text(GAME_WIDTH / 2 + 278, doneY, 'Done', {
         color: '#fffaf1',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '16px',
         fontStyle: 'bold',
       })
+      .setName('wp19d-resident-conversation-done-label')
       .setOrigin(0.5)
       .setScrollFactor(0)
       .setDepth(20_013);
@@ -665,7 +675,7 @@ export class AmbientPopulationWorldManager {
   private showFeedback(scene: Phaser.Scene, title: string, message: string, icon: string): void {
     scene.children.getByName('r6-5-ambient-feedback')?.destroy();
     const panel = scene.add
-      .text(GAME_WIDTH / 2, 126, `${icon}  ${title}\n${message}`, {
+      .text(GAME_WIDTH / 2, GAME_HEIGHT - 196, `${icon}  ${title}\n${message}`, {
         color: '#574663',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '18px',
@@ -676,7 +686,7 @@ export class AmbientPopulationWorldManager {
         wordWrap: { width: 600 },
       })
       .setName('r6-5-ambient-feedback')
-      .setOrigin(0.5, 0)
+      .setOrigin(0.5, 1)
       .setScrollFactor(0)
       .setDepth(20_000);
     scene.time.delayedCall(2600, () => panel.destroy());
