@@ -88,6 +88,12 @@ describe('interaction target selection', () => {
     expect(selected?.id).toBe('nearest');
   });
 
+  it('keeps enlarged direct tap geometry range gated', () => {
+    const enlarged = target('enlarged-touch-target', 100, 0, 50);
+    enlarged.directArea = { width: 360, height: 360 };
+    expect(selectInteractionTarget({ x: 0, y: 0 }, [enlarged])).toBeNull();
+  });
+
   it('retains the current target inside the anti-flicker margin', () => {
     const selected = selectInteractionTarget(
       { x: 0, y: 0 },
