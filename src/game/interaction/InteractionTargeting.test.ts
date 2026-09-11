@@ -56,11 +56,8 @@ describe('interaction target selection', () => {
     const invisible = target('invisible', 20, 0);
     invisible.visible = () => false;
     expect(
-      selectInteractionTarget({ x: 0, y: 0 }, [
-        disabled,
-        invisible,
-        target('available', 60, 0),
-      ])?.id,
+      selectInteractionTarget({ x: 0, y: 0 }, [disabled, invisible, target('available', 60, 0)])
+        ?.id,
     ).toBe('available');
   });
 

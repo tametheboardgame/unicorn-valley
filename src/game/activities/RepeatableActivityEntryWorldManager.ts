@@ -107,9 +107,7 @@ export class RepeatableActivityEntryWorldManager {
       return;
     }
 
-    const plate = scene.add
-      .circle(0, 0, 31, 0xccefeb, 0.22)
-      .setStrokeStyle(3, 0xffffff, 0.38);
+    const plate = scene.add.circle(0, 0, 31, 0xccefeb, 0.22).setStrokeStyle(3, 0xffffff, 0.38);
     const icon = scene.add
       .text(0, 0, '📓', { fontFamily: UI_FONT, fontSize: '29px' })
       .setOrigin(0.5);

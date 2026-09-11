@@ -202,9 +202,7 @@ export class CrystalBrookDepthWorldManager {
     state: BrookDepthState,
     definition: BrookInteractionDefinition,
   ): BrookInteractionRuntime {
-    const glow = state.scene.add
-      .circle(0, 0, 25, 0xb8f3ff, 0.07)
-      .setStrokeStyle(2, 0xffffff, 0.15);
+    const glow = state.scene.add.circle(0, 0, 25, 0xb8f3ff, 0.07).setStrokeStyle(2, 0xffffff, 0.15);
     const icon = state.scene.add
       .text(0, 0, definition.icon, {
         fontFamily: 'system-ui, sans-serif',

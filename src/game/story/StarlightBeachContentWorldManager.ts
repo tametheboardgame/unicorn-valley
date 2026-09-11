@@ -217,9 +217,7 @@ export class StarlightBeachContentWorldManager {
     };
 
     for (const definition of BEACH_CONTENT_POINTS) {
-      const plate = scene.add
-        .circle(0, 0, 30, 0xfff3bd, 0.18)
-        .setStrokeStyle(2, 0xffffff, 0.28);
+      const plate = scene.add.circle(0, 0, 30, 0xfff3bd, 0.18).setStrokeStyle(2, 0xffffff, 0.28);
       const icon = scene.add
         .text(0, 0, definition.icon, { fontFamily: 'system-ui, sans-serif', fontSize: '28px' })
         .setOrigin(0.5);

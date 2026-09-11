@@ -29,7 +29,11 @@ let villageActivate: LegacyActivator | null = null;
 let meadowActivate: LegacyActivator | null = null;
 
 function requiredPoint(
-  points: readonly { id: string; approach?: { x: number; y: number }; position: { x: number; y: number } }[],
+  points: readonly {
+    id: string;
+    approach?: { x: number; y: number };
+    position: { x: number; y: number };
+  }[],
   id: string,
   useApproach: boolean,
 ): { x: number; y: number } {
@@ -53,10 +57,7 @@ function callbackTarget(
   };
 }
 
-function captureAndDisable(
-  prototype: ScenePrototype,
-  sceneName: string,
-): LegacyActivator {
+function captureAndDisable(prototype: ScenePrototype, sceneName: string): LegacyActivator {
   const original = prototype.activateInteraction;
   if (typeof original !== 'function') {
     throw new Error(`WP19D could not capture ${sceneName}.activateInteraction`);

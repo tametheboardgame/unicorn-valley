@@ -316,9 +316,7 @@ export class ExistingValleyQuestPackWorldManager {
     state: QuestPackSceneState,
     definition: QuestPackInteractionDefinition,
   ): QuestPackInteractionRuntime {
-    const glow = state.scene.add
-      .circle(0, 0, 26, 0xffe89a, 0.08)
-      .setStrokeStyle(2, 0xffffff, 0.18);
+    const glow = state.scene.add.circle(0, 0, 26, 0xffe89a, 0.08).setStrokeStyle(2, 0xffffff, 0.18);
     const icon = state.scene.add
       .text(0, 0, definition.icon, {
         fontFamily: 'system-ui, sans-serif',

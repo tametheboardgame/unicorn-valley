@@ -554,9 +554,7 @@ export class AmbientPopulationWorldManager {
     state: ScenePopulationRuntime,
     definition: SmallWorldInteractionDefinition,
   ): SmallInteractionRuntime {
-    const glow = state.scene.add
-      .circle(0, 0, 24, 0xfff0a5, 0.08)
-      .setStrokeStyle(2, 0xffffff, 0.16);
+    const glow = state.scene.add.circle(0, 0, 24, 0xfff0a5, 0.08).setStrokeStyle(2, 0xffffff, 0.16);
     const icon = state.scene.add
       .text(0, 0, feedbackIcon(definition.kind), {
         color: '#fff1a8',

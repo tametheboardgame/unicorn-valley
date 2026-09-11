@@ -217,9 +217,7 @@ export class MeadowDepthWorldManager {
     state: MeadowDepthState,
     definition: MeadowInteractionDefinition,
   ): MeadowInteractionRuntime {
-    const glow = state.scene.add
-      .circle(0, 0, 25, 0xffef9c, 0.06)
-      .setStrokeStyle(2, 0xffffff, 0.15);
+    const glow = state.scene.add.circle(0, 0, 25, 0xffef9c, 0.06).setStrokeStyle(2, 0xffffff, 0.15);
     const icon = state.scene.add
       .text(0, 0, definition.icon, {
         fontFamily: 'system-ui, sans-serif',
@@ -454,9 +452,7 @@ export class MeadowDepthWorldManager {
       .rectangle(1280, 275, 130, 250, 0xe7d09a, 1)
       .setStrokeStyle(7, 0x9a7455, 0.95)
       .setDepth(7);
-    const roof = scene.add
-      .triangle(1280, 115, 0, 80, 78, 0, 156, 80, 0xbb7d68, 1)
-      .setDepth(8);
+    const roof = scene.add.triangle(1280, 115, 0, 80, 78, 0, 156, 80, 0xbb7d68, 1).setDepth(8);
     const hub = scene.add.circle(1280, 205, 21, 0xf2c85f, 1).setDepth(10);
     objects.push(tower, roof, hub);
 

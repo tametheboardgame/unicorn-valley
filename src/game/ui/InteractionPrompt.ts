@@ -41,7 +41,9 @@ function getPrimaryActionPresentation(target: InteractionTarget): PrimaryActionP
 
 function formatInteractionLabel(target: InteractionTarget): string {
   const action = getPrimaryActionPresentation(target).label;
-  return target.actionKind === 'talk' ? `${action} to ${target.label}` : `${action}: ${target.label}`;
+  return target.actionKind === 'talk'
+    ? `${action} to ${target.label}`
+    : `${action}: ${target.label}`;
 }
 
 function shouldRenderPortraitDomPrompt(): boolean {
@@ -303,7 +305,8 @@ export class InteractionPrompt {
 
   private refreshPresentation(): void {
     const portrait = shouldRenderPortraitDomPrompt();
-    const targetVisible = this.currentTarget !== null && !isAutomaticInteraction(this.currentTarget);
+    const targetVisible =
+      this.currentTarget !== null && !isAutomaticInteraction(this.currentTarget);
     const canvasActionVisible = targetVisible && !portrait;
     const canvasHintVisible = targetVisible && !portrait;
     const highVisibility = this.accessibility.load().highVisibilityInteractions;
