@@ -2,6 +2,9 @@ import { expect, test, type Page } from '@playwright/test';
 
 const PLAYER_NAME = 'world-player-unicorn';
 const PIP_APPROACH = { x: 1060, y: 825 } as const;
+const WILLOW_APPROACH = { x: 1160, y: 1160 } as const;
+const MARIGOLD_APPROACH = { x: 820, y: 860 } as const;
+const NOVA_APPROACH = { x: 2590, y: 930 } as const;
 const RETIRED_CONVERSATION_SCENES = [
   'WillowStoryScene',
   'MarigoldPicnicScene',
@@ -87,16 +90,16 @@ async function startScene(page: Page, sceneKey: string): Promise<void> {
 
 async function positionPlayer(page: Page, sceneKey: string, x: number, y: number): Promise<void> {
   await page.evaluate(
-    ({ key, targetX, targetY }) => {
+    ({ key, playerName, targetX, targetY }) => {
       const diagnostics = (
         window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi }
       ).__UNICORN_VALLEY_DIAGNOSTICS__;
       if (!diagnostics) {
         throw new Error('Browser diagnostics are unavailable.');
       }
-      diagnostics.setArcadeSpritePosition(key, PLAYER_NAME, targetX, targetY);
+      diagnostics.setArcadeSpritePosition(key, playerName, targetX, targetY);
     },
-    { key: sceneKey, targetX: x, targetY: y },
+    { key: sceneKey, playerName: PLAYER_NAME, targetX: x, targetY: y },
   );
 }
 
@@ -138,6 +141,29 @@ async function openPipConversation(page: Page): Promise<void> {
   await waitForTalkTarget(page, 'MoonflowerGladeScene', 'Pip');
   await page.keyboard.press('KeyE');
   await waitForVisibleObject(page, 'MoonflowerGladeScene', 'dialogue-production-panel');
+}
+
+async function assertMigratedConversationStarts(
+  page: Page,
+  sceneKey: 'SunbeamVillageScene' | 'RainbowMeadowScene',
+  speaker: 'Willow' | 'Marigold' | 'Nova',
+  position: { x: number; y: number },
+): Promise<void> {
+  await startScene(page, sceneKey);
+  await positionPlayer(page, sceneKey, position.x, position.y);
+  await waitForTalkTarget(page, sceneKey, speaker);
+  await page.keyboard.press('KeyE');
+  await waitForVisibleObject(page, sceneKey, 'dialogue-production-panel');
+
+  const scene = await sceneSnapshot(page, sceneKey);
+  expect(namedObject(scene, 'dialogue-production-speaker-name').text).toBe(speaker);
+  expect(namedObject(scene, 'dialogue-production-body').visible).toBe(true);
+  expect(namedObject(scene, 'dialogue-production-continue').interactive).toBe(true);
+  for (const retiredScene of RETIRED_CONVERSATION_SCENES) {
+    expect((await snapshot(page)).activeScenes).not.toContain(retiredScene);
+  }
+
+  await page.keyboard.press('Escape');
 }
 
 test('ordinary Pip conversation stays in-world, compact and explicitly paced', async ({ page }) => {
@@ -228,6 +254,18 @@ test('supporting resident uses the same compact family with readable fallback id
   await page.screenshot({
     path: 'playtest-artifacts/screenshots/wp19e-juniper-compact-desktop.png',
   });
+});
+
+test('Willow, Marigold and Nova migrated conversations activate from the shared Talk action', async ({
+  page,
+}) => {
+  await page.addInitScript(() => window.localStorage.clear());
+  await page.goto('/?diagnostics=1');
+  await waitForDiagnostics(page);
+
+  await assertMigratedConversationStarts(page, 'SunbeamVillageScene', 'Willow', WILLOW_APPROACH);
+  await assertMigratedConversationStarts(page, 'SunbeamVillageScene', 'Marigold', MARIGOLD_APPROACH);
+  await assertMigratedConversationStarts(page, 'RainbowMeadowScene', 'Nova', NOVA_APPROACH);
 });
 
 test('Reduced Motion keeps conversation reveal and advance decoration static', async ({ page }) => {
