@@ -1,0 +1,9 @@
+
+> unicorn-valley@0.1.0 typecheck
+> tsc --noEmit
+
+src/game/interaction/CoreSceneInteractionBridge.ts(360,42): error TS2551: Property 'setTargets' does not exist on type 'SceneInteractionRegistry'. Did you mean 'getTargets'?
+src/game/scenes/MoonflowerGladeScene.ts(219,40): error TS2339: Property 'title' does not exist on type '{ type: "message"; title: string; message: string; } | { type: "callback"; activate: () => void; }'.
+  Property 'title' does not exist on type '{ type: "callback"; activate: () => void; }'.
+src/game/scenes/MoonflowerGladeScene.ts(219,64): error TS2339: Property 'message' does not exist on type '{ type: "message"; title: string; message: string; } | { type: "callback"; activate: () => void; }'.
+  Property 'message' does not exist on type '{ type: "callback"; activate: () => void; }'.
