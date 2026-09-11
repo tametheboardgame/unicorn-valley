@@ -291,9 +291,7 @@ export class DialogueCard {
     const useCompactChoiceLayout =
       node.prompt.length <= COMPACT_CHOICE_PROMPT_CHARACTER_LIMIT &&
       node.choices.length <= 3 &&
-      node.choices.every(
-        (choice) => choice.label.length <= COMPACT_CHOICE_LABEL_CHARACTER_LIMIT,
-      );
+      node.choices.every((choice) => choice.label.length <= COMPACT_CHOICE_LABEL_CHARACTER_LIMIT);
     this.applyLayout(useCompactChoiceLayout ? 'compact' : 'expanded');
     this.updatePortrait(node.speakerId, speakerName);
     this.stopAdvanceMotion();
