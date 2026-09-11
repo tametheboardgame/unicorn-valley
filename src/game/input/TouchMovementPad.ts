@@ -28,7 +28,8 @@ export function shouldUsePortraitTouchControls(
 
 function hasPrimaryCoarsePointer(): boolean {
   return (
-    typeof globalThis.matchMedia === 'function' && globalThis.matchMedia('(pointer: coarse)').matches
+    typeof globalThis.matchMedia === 'function' &&
+    globalThis.matchMedia('(pointer: coarse)').matches
   );
 }
 
