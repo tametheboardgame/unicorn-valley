@@ -205,7 +205,9 @@ test.describe('R6.5-WP19F UI consistency', () => {
     await page.route('**/assets/title/wp19f-title-*.webp', async (route) => route.abort());
     await diagnostics(page);
     await page.waitForFunction(() =>
-      document.querySelector('link[rel="preload"][href$="/assets/title/wp19f-title-landscape.webp"]'),
+      document.querySelector(
+        'link[rel="preload"][href$="/assets/title/wp19f-title-landscape.webp"]',
+      ),
     );
 
     await expect(
@@ -217,19 +219,13 @@ test.describe('R6.5-WP19F UI consistency', () => {
 
     const title = sceneFrom(await snapshot(page), 'TitleScene');
     expect(
-      title.objects.some(
-        (object) => object.name === 'title-art:sky' && object.effectiveVisible,
-      ),
+      title.objects.some((object) => object.name === 'title-art:sky' && object.effectiveVisible),
     ).toBe(true);
     expect(
-      title.objects.some(
-        (object) => object.name === 'title-menu-new-game' && object.interactive,
-      ),
+      title.objects.some((object) => object.name === 'title-menu-new-game' && object.interactive),
     ).toBe(true);
     expect(
-      title.objects.some(
-        (object) => object.name === 'title-menu-settings' && object.interactive,
-      ),
+      title.objects.some((object) => object.name === 'title-menu-settings' && object.interactive),
     ).toBe(true);
   });
 
@@ -242,7 +238,9 @@ test.describe('R6.5-WP19F UI consistency', () => {
       await page.route('**/assets/title/wp19f-title-*.webp', async (route) => route.abort());
       await diagnostics(page);
       await page.waitForFunction(() =>
-        document.querySelector('link[rel="preload"][href$="/assets/title/wp19f-title-portrait.webp"]'),
+        document.querySelector(
+          'link[rel="preload"][href$="/assets/title/wp19f-title-portrait.webp"]',
+        ),
       );
 
       await expect(
