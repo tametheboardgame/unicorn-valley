@@ -269,7 +269,7 @@ function meadowTargets(scene: Phaser.Scene): InteractionTarget[] {
         priority: 20,
         result: {
           type: 'message',
-          title: 'Ribbon Board',
+          title: 'Rainbow Run Ribbon Board',
           message:
             'The polished board has hooks for Rainbow Run ribbons. Nova keeps the race names painted neatly beside them.',
         },
