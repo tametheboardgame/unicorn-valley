@@ -112,7 +112,9 @@ test.describe('R6.5-WP19F UI consistency', () => {
       if (!control) continue;
       expect(control.interactive, `${control.name} interactive`).toBe(true);
       expect(control.boundsWidth * scaleX, `${control.name} CSS width`).toBeGreaterThanOrEqual(40);
-      expect(control.boundsHeight * scaleY, `${control.name} CSS height`).toBeGreaterThanOrEqual(40);
+      expect(control.boundsHeight * scaleY, `${control.name} CSS height`).toBeGreaterThanOrEqual(
+        40,
+      );
     }
 
     await page.screenshot({
@@ -121,7 +123,9 @@ test.describe('R6.5-WP19F UI consistency', () => {
     });
   });
 
-  test('Hollow Tree Nook title sits below the top HUD rather than competing with it', async ({ page }) => {
+  test('Hollow Tree Nook title sits below the top HUD rather than competing with it', async ({
+    page,
+  }) => {
     await page.setViewportSize({ width: 1280, height: 720 });
     await diagnostics(page);
     await startScene(page, 'HollowTreeNookScene');
