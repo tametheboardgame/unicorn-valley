@@ -250,11 +250,14 @@ export class WorldInteractionCoordinator {
       }
       wanted.add(target.id);
       const position = getInteractionTargetPosition(target);
+      const area = target.directArea;
+      const zoneX = position.x + (area?.offsetX ?? 0);
+      const zoneY = position.y + (area?.offsetY ?? 0);
       let zone = state.directZones.get(target.id);
       if (!zone) {
         zone = state.scene.add
-          .zone(position.x, position.y, 126, 126)
-          .setName(`interaction-direct-zone:${target.id}`)
+          .zone(zoneX, zoneY, area?.width ?? 126, area?.height ?? 126)
+          .setName(area?.name ?? `interaction-direct-zone:${target.id}`)
           .setDepth(117)
           .setInteractive({ useHandCursor: true });
         zone.on('pointerdown', () => {
@@ -267,7 +270,7 @@ export class WorldInteractionCoordinator {
         zone.on('pointerupoutside', release);
         state.directZones.set(target.id, zone);
       }
-      zone.setPosition(position.x, position.y).setVisible(true);
+      zone.setPosition(zoneX, zoneY).setVisible(true);
     }
 
     for (const [targetId, zone] of state.directZones) {
