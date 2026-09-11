@@ -47,16 +47,21 @@ function destroyNamedObject(scene: Phaser.Scene, name: string): void {
   object.destroy();
 }
 
-function syncNovaRaceInteractionTarget(atRaceHub: boolean): void {
+function syncNovaInteractionTarget(area: CoreNpcPresenceArea): void {
   if (!novaRaceMarker || !NOVA_RACE_POSITION) {
     return;
   }
 
-  // RainbowMeadowScene's Nova interaction keeps the same marker-position object by reference.
-  // Moving that shared target off-stage removes the talk interaction while Nova is elsewhere;
-  // restoring the canonical coordinates re-enables it without duplicating scene progression rules.
+  // RainbowMeadowScene and CoreSceneInteractionBridge both retain this marker-position
+  // object by reference. Keep the shared Talk target with Nova's authoritative presence
+  // instead of leaving an invisible race-hub interaction behind when she moves.
   const mutablePosition = novaRaceMarker.position as { x: number; y: number };
-  const target = atRaceHub ? NOVA_RACE_POSITION : NOVA_OFFSTAGE_INTERACTION_POSITION;
+  const target =
+    area === 'rainbow-run-hub'
+      ? NOVA_RACE_POSITION
+      : area === 'picnic-hill'
+        ? NOVA_PICNIC_POSITION
+        : NOVA_OFFSTAGE_INTERACTION_POSITION;
   mutablePosition.x = target.x;
   mutablePosition.y = target.y;
 }
@@ -231,7 +236,7 @@ export class CoreNpcProductionPresentationManager {
 
   private refreshPresenceAuthority(): void {
     this.novaArea = this.presenceService.resolve(NOVA_CHARACTER_ID)?.area ?? 'rainbow-run-hub';
-    syncNovaRaceInteractionTarget(this.novaArea === 'rainbow-run-hub');
+    syncNovaInteractionTarget(this.novaArea);
   }
 
   private refreshPipWorld(): void {
