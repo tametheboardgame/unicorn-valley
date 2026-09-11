@@ -504,12 +504,9 @@ test.describe
       const snapshot = await getSnapshot(page);
       await logicalClick(page, snapshot.width / 2, snapshot.height / 2 + 137);
       await waitForScene(page, 'RainbowMeadowScene');
-      const postRaceFindings = await captureScenario(
-        page,
-        'nova-post-race',
-        'RainbowMeadowScene',
-        { requirePlayer: true },
-      );
+      const postRaceFindings = await captureScenario(page, 'nova-post-race', 'RainbowMeadowScene', {
+        requirePlayer: true,
+      });
       expect(postRaceFindings.filter((finding) => finding.severity === 'error')).toEqual([]);
       expect((await getSnapshot(page)).activeScenes).not.toContain('NovaStoryScene');
 
