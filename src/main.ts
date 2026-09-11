@@ -3,6 +3,11 @@ import './style.css';
 import './portraitConceptControls.css';
 import './titlePortraitControls.css';
 import { gameConfig } from './game/config/gameConfig';
+import {
+  getCoreSceneInteractionBridge,
+  patchCoreSceneInteractionHandlers,
+} from './game/interaction/CoreSceneInteractionBridge';
+import { getWorldInteractionCoordinator } from './game/interaction/WorldInteractionCoordinator';
 import { getClickToMoveManager } from './game/input/ClickToMoveManager';
 import { getContinueRestoreManager } from './game/save/ContinueRestoreManager';
 import { getVillageInteriorContractManager } from './game/scenes/VillageInteriorContractManager';
@@ -14,6 +19,7 @@ import { getExplorationGeometryPresentationManager } from './game/world/Explorat
 import { getExplorationPathPolishManager } from './game/world/ExplorationPathPolishManager';
 import { getWorldLayerAlignmentManager } from './game/world/WorldLayerAlignmentManager';
 
+patchCoreSceneInteractionHandlers();
 const game = new Phaser.Game(gameConfig);
 const diagnosticsEnabled =
   new URLSearchParams(globalThis.location.search).get('diagnostics') === '1';
@@ -24,6 +30,8 @@ if (diagnosticsEnabled) {
   });
 }
 
+getCoreSceneInteractionBridge(game);
+getWorldInteractionCoordinator(game);
 getClickToMoveManager(game);
 getContinueRestoreManager(game);
 getLandscapeCreatorProgressiveWorldManager(game);
