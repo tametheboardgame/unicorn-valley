@@ -4,18 +4,24 @@ Last updated: 2026-09-11
 
 ## Current work
 
-`R6.5-WP19E - Conversation and feedback system`
+`R6.5-WP19E1 - Contextual Feedback Placement Remediation`
 
-Path: `docs/work-packages/R6.5-WP19E-CONVERSATION-FEEDBACK.md`
+Path: `docs/work-packages/R6.5-WP19E1-CONTEXTUAL-FEEDBACK-PLACEMENT.md`
 
-State: **implementation active** on `agent/r6.5-wp19e-conversation-feedback`. David explicitly authorised the package after WP19D was human-approved, merged and released.
+State: **complete and human-approved**. David approved the visual treatment on 11 September 2026 after reviewing the lower guidance presentation, source-anchored environmental reactions and their distinction from Wonderbook discovery feedback.
 
-The canonical `WorldConversationPresenter` now owns Pip, roaming-resident speech and the migrated Willow, Marigold, Nova, Lumi, Pebble, Ripple and Pip egg conversations without leaving their active world scenes. The seven conversation-only scenes and routes are retired; genuine race, hatch and activity modes remain. Local unit/type/build/static/performance validation passes. Browser qualification, four-class rendered evidence and immutable candidate smoke remain before technical completion.
+WP19E1 introduces the shared `WorldFeedbackPresenter`, migrates recognised legacy top-screen world feedback into guidance or local-reaction treatments, suppresses obsolete duplicate discovery banners, and keeps dialogue, contextual action controls, Wonderbook/reward feedback and explicit status/error surfaces semantically separate. No quest, save, reward, collision or interaction-distance semantics were changed.
+
+## Qualification
+
+The accepted runtime candidate is `1e0748f83f975f37e71b1f7597600f7467299233` with immutable Cloudflare preview `https://d7d2697a.unicorn-valley.pages.dev`.
+
+Format, lint, type-check, unit tests, production build, performance budget, static smoke, focused WP19E1 browser coverage and browser compatibility are green. The immutable candidate passed startup, save, reload and Continue smoke testing. A repeated generic Nova tutorial-race browser test showed one intermittent scene-entry failure on a later metadata-only run; the same candidate passed that shard separately and the failure is unrelated to WP19E1.
 
 ## Accepted baseline
 
-WP19D is complete, human-approved and merged as `753bea0e10078d0367e0ec21c937e05ec5577c80`. Current main is `56fd3e2f227ecb0039c2c0505bcec79b48282e3f`. Cloudflare production deployment/check `103213965600` succeeded with immutable deployment `https://da45f87b.unicorn-valley.pages.dev`.
+WP19E and WP19E1 are both human-approved. PR #166 is the WP19E1 delivery PR.
 
-## Gate and next action
+## Next action
 
-Complete browser qualification and four-class rendered evidence on the existing draft PR, then publish and smoke-bind an immutable review candidate. Stop for David's visual and child-reading approval. Do not merge, deploy production, or start WP19F/R7.
+Merge PR #166 once the final metadata head completes required validation. After merge and production deployment verification, `R6.5-WP19F - UI consistency and generated title` is the next work package. Do not start WP19F until WP19E1 is merged and production is confirmed healthy.
