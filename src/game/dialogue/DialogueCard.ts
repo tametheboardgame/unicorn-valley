@@ -13,7 +13,6 @@ type CoreNpcId = 'nova' | 'willow' | 'pip' | 'pebble' | 'lumi' | 'marigold';
 type DialogueLayout = 'compact' | 'expanded';
 
 const CORE_NPC_IDS = new Set<CoreNpcId>(['nova', 'willow', 'pip', 'pebble', 'lumi', 'marigold']);
-const COMPACT_LINE_CHARACTER_LIMIT = 118;
 const COMPACT_CHOICE_PROMPT_CHARACTER_LIMIT = 70;
 const COMPACT_CHOICE_LABEL_CHARACTER_LIMIT = 24;
 
@@ -23,10 +22,16 @@ const COMPACT_LAYOUT = {
   portrait: { x: 250, y: GAME_HEIGHT - 108, haloSize: 136, frameSize: 118 },
   speaker: { x: 330, y: GAME_HEIGHT - 194, fontSize: 24 },
   hint: { x: 1050, y: GAME_HEIGHT - 194, fontSize: 14 },
-  body: { x: 330, y: GAME_HEIGHT - 158, width: 620, fontSize: 23 },
-  action: { x: 985, y: GAME_HEIGHT - 62, width: 180, height: 52 },
+  body: { x: 330, y: GAME_HEIGHT - 164, width: 620, fontSize: 23 },
+  action: { x: 985, y: GAME_HEIGHT - 44, width: 180, height: 46 },
   indicatorX: 1047,
 } as const;
+
+const COMPACT_BODY_MAX_HEIGHT =
+  COMPACT_LAYOUT.action.y -
+  COMPACT_LAYOUT.action.height / 2 -
+  COMPACT_LAYOUT.body.y -
+  8;
 
 const EXPANDED_LAYOUT = {
   panel: { x: GAME_WIDTH / 2, y: GAME_HEIGHT - 164, width: 1120, height: 286 },
@@ -273,9 +278,12 @@ export class DialogueCard {
     getVerticalSliceAudio().playNpcReaction(node.speakerId, 'talk');
 
     if (node.type === 'line') {
-      this.applyLayout(node.text.length <= COMPACT_LINE_CHARACTER_LIMIT ? 'compact' : 'expanded');
-      this.updatePortrait(node.speakerId, speakerName);
+      this.applyLayout('compact');
       this.body.setText(node.text);
+      if (this.body.height > COMPACT_BODY_MAX_HEIGHT) {
+        this.applyLayout('expanded');
+      }
+      this.updatePortrait(node.speakerId, speakerName);
       const finalLine = node.nextNodeId === undefined;
       this.modeHint.setText(finalLine ? 'Enter / tap when done' : 'Enter / tap to continue');
       this.continueLabel.setText(finalLine ? 'Done' : 'Continue');
@@ -516,8 +524,8 @@ export class DialogueCard {
       (totalWidth - Math.max(0, choices.length - 1) * gap) / choices.length,
     );
     const startX = layoutSpec.body.x + buttonWidth / 2;
-    const buttonY = compact ? GAME_HEIGHT - 62 : GAME_HEIGHT - 82;
-    const buttonHeight = compact ? 56 : 64;
+    const buttonY = compact ? COMPACT_LAYOUT.action.y : GAME_HEIGHT - 82;
+    const buttonHeight = compact ? COMPACT_LAYOUT.action.height : 64;
 
     choices.forEach((choice, index) => {
       const x = startX + index * (buttonWidth + gap);
