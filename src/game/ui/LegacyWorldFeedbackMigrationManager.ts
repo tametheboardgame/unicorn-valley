@@ -1,7 +1,10 @@
 import Phaser from 'phaser';
-import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import type { InteractionTarget } from '../interaction/InteractionTarget';
-import { getInteractionTargetPosition, selectInteractionTarget } from '../interaction/InteractionTargeting';
+import {
+  getInteractionTargetPosition,
+  selectInteractionTarget,
+} from '../interaction/InteractionTargeting';
+import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
 import { getWorldFeedbackPresenter } from './WorldFeedbackPresenter';
 
@@ -68,7 +71,10 @@ function isLegacyTopFeedback(text: Phaser.GameObjects.Text): boolean {
     return false;
   }
 
-  if (text.name === 'wp19d-interaction-feedback' || DISCOVERY_DUPLICATE_NAMES.has(text.name)) {
+  if (
+    text.name === 'wp19d-interaction-feedback' ||
+    DISCOVERY_DUPLICATE_NAMES.has(text.name)
+  ) {
     return true;
   }
 
@@ -108,7 +114,11 @@ function classify(
     return 'guidance';
   }
 
-  if (target?.actionKind === 'talk' || target?.actionKind === 'enter' || target?.actionKind === 'start') {
+  if (
+    target?.actionKind === 'talk' ||
+    target?.actionKind === 'enter' ||
+    target?.actionKind === 'start'
+  ) {
     return 'guidance';
   }
 
@@ -122,7 +132,7 @@ function classify(
  * moved to the shared presenter directly this adapter can be deleted without changing gameplay.
  */
 export class LegacyWorldFeedbackMigrationManager {
-  private readonly handledText = new WeakMap<Phaser.GameObjects.Text, string>();
+  private readonly handledVisibility = new WeakSet<Phaser.GameObjects.Text>();
 
   public constructor(private readonly game: Phaser.Game) {
     this.game.events.on(Phaser.Core.Events.POST_STEP, this.update, this);
@@ -134,16 +144,24 @@ export class LegacyWorldFeedbackMigrationManager {
   private update(): void {
     for (const scene of this.game.scene.getScenes(true)) {
       for (const child of scene.children.list) {
-        if (!(child instanceof Phaser.GameObjects.Text) || !isLegacyTopFeedback(child)) {
+        if (!(child instanceof Phaser.GameObjects.Text)) {
+          continue;
+        }
+        if (!child.visible) {
+          this.handledVisibility.delete(child);
+          continue;
+        }
+        if (!isLegacyTopFeedback(child)) {
           continue;
         }
 
-        const message = child.text.trim();
-        if (this.handledText.get(child) === message) {
+        if (this.handledVisibility.has(child)) {
           child.setVisible(false);
           continue;
         }
-        this.handledText.set(child, message);
+        this.handledVisibility.add(child);
+
+        const message = child.text.trim();
         child.setVisible(false);
 
         const target = selectedTarget(scene);
