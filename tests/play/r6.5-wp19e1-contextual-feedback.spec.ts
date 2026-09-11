@@ -120,7 +120,9 @@ async function visibleObject(
     })
     .toBe(name);
   const scene = await getScene(page, sceneKey);
-  const object = scene.objects.find((candidate) => candidate.name === name && candidate.effectiveVisible);
+  const object = scene.objects.find(
+    (candidate) => candidate.name === name && candidate.effectiveVisible,
+  );
   if (!object) {
     throw new Error(`Missing visible ${name} in ${sceneKey}.`);
   }
