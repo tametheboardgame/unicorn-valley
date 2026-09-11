@@ -14,6 +14,14 @@ export type InteractionActivationMode = 'explicit' | 'automatic';
 export type InteractionPosition = MapPoint | (() => MapPoint);
 export type InteractionCondition = boolean | (() => boolean);
 
+export interface InteractionDirectArea {
+  width: number;
+  height: number;
+  offsetX?: number;
+  offsetY?: number;
+  name?: string;
+}
+
 export type InteractionResult =
   | {
       type: 'message';
@@ -39,7 +47,9 @@ export type InteractionResult =
  *
  * Position, visibility and enabled state may be live functions so moving residents and changing
  * quest objects do not need duplicate hit zones or stale target copies. Presentation consumes
- * actionKind directly and never infers behaviour from rendered text.
+ * actionKind directly and never infers behaviour from rendered text. directArea is optional
+ * presentation geometry for targets that need a larger touch affordance; activation still routes
+ * through the shared coordinator and the target remains range-gated by interactionRadius.
  */
 export interface InteractionTarget {
   id: string;
@@ -54,5 +64,6 @@ export interface InteractionTarget {
   enabled?: InteractionCondition;
   reachable?: InteractionCondition | ((playerPosition: MapPoint) => boolean);
   approachPosition?: InteractionPosition;
+  directArea?: InteractionDirectArea;
   result: InteractionResult;
 }
