@@ -264,7 +264,12 @@ test('Willow, Marigold and Nova migrated conversations activate from the shared 
   await waitForDiagnostics(page);
 
   await assertMigratedConversationStarts(page, 'SunbeamVillageScene', 'Willow', WILLOW_APPROACH);
-  await assertMigratedConversationStarts(page, 'SunbeamVillageScene', 'Marigold', MARIGOLD_APPROACH);
+  await assertMigratedConversationStarts(
+    page,
+    'SunbeamVillageScene',
+    'Marigold',
+    MARIGOLD_APPROACH,
+  );
   await assertMigratedConversationStarts(page, 'RainbowMeadowScene', 'Nova', NOVA_APPROACH);
 });
 
