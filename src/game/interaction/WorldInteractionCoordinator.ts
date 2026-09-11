@@ -26,6 +26,7 @@ interface SceneCoordinatorState {
   retainedTargetId: string | null;
   preferredTargetId: string | null;
   directZones: Map<string, Phaser.GameObjects.Zone>;
+  wasDialogueBlocking: boolean;
 }
 
 function findPlayer(scene: Phaser.Scene): Point | null {
@@ -111,6 +112,7 @@ export class WorldInteractionCoordinator {
       retainedTargetId: null,
       preferredTargetId: null,
       directZones: new Map(),
+      wasDialogueBlocking: false,
     };
     state.prompt = new InteractionPrompt(scene, pointer, (targetId) => {
       state.preferredTargetId = targetId;
@@ -122,13 +124,19 @@ export class WorldInteractionCoordinator {
   private refreshState(state: SceneCoordinatorState, targets: readonly InteractionTarget[]): void {
     state.input.update();
     const player = findPlayer(state.scene);
-    if (!player || isDialogueBlocking(state.scene)) {
+    const dialogueBlocking = isDialogueBlocking(state.scene);
+    if (!player || dialogueBlocking) {
+      state.wasDialogueBlocking = dialogueBlocking;
       state.prompt.setTarget(null);
       state.retainedTargetId = null;
       state.preferredTargetId = null;
+      state.pointer.setButton('INTERACT', false);
       this.syncDirectZones(state, targets, null);
       return;
     }
+
+    const suppressActivationAfterDialogue = state.wasDialogueBlocking;
+    state.wasDialogueBlocking = false;
 
     const selected = selectInteractionTarget(player, targets, {
       preferredTargetId: state.preferredTargetId,
@@ -139,6 +147,11 @@ export class WorldInteractionCoordinator {
     state.retainedTargetId = selected?.id ?? null;
     state.prompt.setTarget(selected);
     this.syncDirectZones(state, targets, player);
+
+    if (suppressActivationAfterDialogue) {
+      state.pointer.setButton('INTERACT', false);
+      return;
+    }
 
     if (!selected || !state.input.justPressed('INTERACT')) {
       return;
