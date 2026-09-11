@@ -13,7 +13,7 @@ interface Point {
   y: number;
 }
 
-type FeedbackClassification = 'guidance' | 'reaction' | 'discovery-duplicate';
+type FeedbackClassification = 'guidance' | 'reaction' | 'suppressed-duplicate';
 
 const KNOWN_LEGACY_TOP_BACKGROUNDS = new Set([
   '#fff8ecf2',
@@ -25,6 +25,10 @@ const KNOWN_LEGACY_TOP_BACKGROUNDS = new Set([
   '#f2fff0f2',
   '#fff7eaf0',
   '#fff9edf2',
+  '#fff9e8ee',
+  '#fff9edee',
+  '#f5fff2ee',
+  '#efffeeea',
 ]);
 
 const LEGACY_TOP_NAMES = new Set(['wp19d-interaction-feedback', 'r6-5-beach-content-feedback']);
@@ -46,8 +50,14 @@ const GUIDANCE_PATTERNS = [
   /explore .+ first/i,
 ];
 
-const DISCOVERY_DUPLICATE_NAMES = new Set(['crystal-brook-story-feedback']);
-const DISCOVERY_DUPLICATE_BACKGROUNDS = new Set(['#efffeef2', '#f4fff1f2']);
+const SUPPRESSED_DUPLICATE_NAMES = new Set(['crystal-brook-story-feedback']);
+const SUPPRESSED_DUPLICATE_BACKGROUNDS = new Set(['#efffeef2', '#f4fff1f2']);
+const SUPPRESSED_DUPLICATE_PATTERNS = [
+  /^New discovery!/i,
+  /^New place discovered!/i,
+  /^Secret place discovered!/i,
+  /^Found .+!/i,
+];
 
 function findPlayer(scene: Phaser.Scene): Point | null {
   const named = scene.children.getByName(WORLD_PLAYER_NAME) as
@@ -85,7 +95,7 @@ function isLegacyTopFeedback(text: Phaser.GameObjects.Text): boolean {
     return false;
   }
 
-  if (LEGACY_TOP_NAMES.has(text.name) || DISCOVERY_DUPLICATE_NAMES.has(text.name)) {
+  if (LEGACY_TOP_NAMES.has(text.name) || SUPPRESSED_DUPLICATE_NAMES.has(text.name)) {
     return true;
   }
 
@@ -93,7 +103,7 @@ function isLegacyTopFeedback(text: Phaser.GameObjects.Text): boolean {
   return (
     text.y >= 100 &&
     text.y <= 190 &&
-    text.depth >= 130 &&
+    text.depth >= 120 &&
     background !== null &&
     KNOWN_LEGACY_TOP_BACKGROUNDS.has(background)
   );
@@ -115,10 +125,11 @@ function classify(
 ): FeedbackClassification {
   const background = backgroundColour(text);
   if (
-    DISCOVERY_DUPLICATE_NAMES.has(text.name) ||
-    (background !== null && DISCOVERY_DUPLICATE_BACKGROUNDS.has(background))
+    SUPPRESSED_DUPLICATE_NAMES.has(text.name) ||
+    (background !== null && SUPPRESSED_DUPLICATE_BACKGROUNDS.has(background)) ||
+    SUPPRESSED_DUPLICATE_PATTERNS.some((pattern) => pattern.test(text.text))
   ) {
-    return 'discovery-duplicate';
+    return 'suppressed-duplicate';
   }
 
   if (GUIDANCE_PATTERNS.some((pattern) => pattern.test(text.text))) {
@@ -177,9 +188,9 @@ export class LegacyWorldFeedbackMigrationManager {
 
         const target = selectedTarget(scene);
         const classification = classify(child, target);
-        if (classification === 'discovery-duplicate') {
-          // DiscoveryService already emits the Wonderbook/reward presentation. Suppress only the
-          // obsolete duplicate top banner so discovery meaning remains owned by that system.
+        if (classification === 'suppressed-duplicate') {
+          // Dedicated discovery/reward feedback already communicates this event. Suppress only the
+          // obsolete duplicate top banner so discovery and collection semantics remain distinct.
           continue;
         }
 
