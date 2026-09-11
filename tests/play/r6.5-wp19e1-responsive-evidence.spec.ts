@@ -151,7 +151,9 @@ function registerEvidenceCase(
   test.describe(`R6.5-WP19E1 ${name} evidence`, () => {
     test.use({ viewport, hasTouch });
 
-    test('keeps reference guidance readable and clear of the contextual action', async ({ page }, testInfo) => {
+    test('keeps reference guidance readable and clear of the contextual action', async ({
+      page,
+    }, testInfo) => {
       await captureGuidanceEvidence(page, testInfo, portraitDomAction);
     });
   });
