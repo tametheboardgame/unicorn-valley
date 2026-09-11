@@ -16,6 +16,7 @@ interface CottageTouchPoint {
 
 interface RuntimePoint {
   definition: CottageTouchPoint;
+  marker: Phaser.GameObjects.Zone;
 }
 
 interface CottageDepthState {
@@ -130,7 +131,14 @@ export class CottageDepthWorldManager {
       },
     ];
 
-    state.points = points.map((definition) => ({ definition }));
+    state.points = points.map((definition) => ({
+      definition,
+      // Preserve the authored world marker/name for diagnostics and layout ownership without
+      // giving it its own input handler. The shared interaction coordinator owns activation.
+      marker: scene.add
+        .zone(definition.position.x, definition.position.y, 170, 150)
+        .setName(`cottage-depth:${definition.id}`),
+    }));
     this.state = state;
     this.publishTargets(state);
     return state;
@@ -168,6 +176,9 @@ export class CottageDepthWorldManager {
       return;
     }
     getSceneInteractionRegistry(this.state.scene).clearOwner(REGISTRY_OWNER);
+    for (const point of this.state.points) {
+      point.marker.destroy();
+    }
     this.state.feedback.destroy();
     this.state = null;
   }
