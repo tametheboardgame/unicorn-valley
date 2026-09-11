@@ -74,7 +74,15 @@ export class FireflyLanternWorldManager {
       .setOrigin(0.5)
       .setName('firefly-lantern-world-status');
     const container = scene.add
-      .container(LANTERN_POSITION.x, LANTERN_POSITION.y, [post, hook, lanternGlow, lantern, light, label, status])
+      .container(LANTERN_POSITION.x, LANTERN_POSITION.y, [
+        post,
+        hook,
+        lanternGlow,
+        lantern,
+        light,
+        label,
+        status,
+      ])
       .setName(PRESENTATION_NAME)
       .setDepth(18);
 

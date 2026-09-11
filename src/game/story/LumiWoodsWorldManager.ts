@@ -283,7 +283,16 @@ export class LumiWoodsWorldManager {
     const firefly = state.scene.add.circle(-20, -70, 6, 0xf7ef9c, 0.92);
 
     state.lumi = state.scene.add
-      .container(LUMI_POSITION.x, LUMI_POSITION.y, [glow, tail, body, mane, head, horn, eye, firefly])
+      .container(LUMI_POSITION.x, LUMI_POSITION.y, [
+        glow,
+        tail,
+        body,
+        mane,
+        head,
+        horn,
+        eye,
+        firefly,
+      ])
       .setName(PRESENTATION_NAME)
       .setDepth(19);
 
