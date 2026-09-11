@@ -122,7 +122,11 @@ async function positionAtNovaContextualAction(page: Page): Promise<void> {
   );
 }
 
-async function waitForVisibleObject(page: Page, sceneKey: string, objectName: string): Promise<void> {
+async function waitForVisibleObject(
+  page: Page,
+  sceneKey: string,
+  objectName: string,
+): Promise<void> {
   await page.waitForFunction(
     ({ expectedScene, expectedObject }) => {
       const diagnostics = (
@@ -133,9 +137,7 @@ async function waitForVisibleObject(page: Page, sceneKey: string, objectName: st
       const scene = diagnostics
         ?.snapshot()
         .scenes.find((candidate) => candidate.key === expectedScene);
-      return scene?.objects.some(
-        (object) => object.name === expectedObject && object.visible,
-      );
+      return scene?.objects.some((object) => object.name === expectedObject && object.visible);
     },
     { expectedScene: sceneKey, expectedObject: objectName },
   );
@@ -264,7 +266,9 @@ test('Nova keeps her canonical identity and conversation stays at the exact worl
   expect(
     meadow.objects.some(
       (object) =>
-        object.name === 'dialogue-production-speaker-name' && object.visible && object.text === 'Nova',
+        object.name === 'dialogue-production-speaker-name' &&
+        object.visible &&
+        object.text === 'Nova',
     ),
   ).toBe(true);
   expect(
@@ -315,7 +319,7 @@ test('finishing Nova conversation offers an in-world race choice and uses canoni
   await waitForVisibleObject(page, 'RainbowMeadowScene', 'nova-race-decision');
 
   let snapshot = await getSnapshot(page);
-  let meadow = sceneSnapshot(snapshot, 'RainbowMeadowScene');
+  const meadow = sceneSnapshot(snapshot, 'RainbowMeadowScene');
   expect(snapshot.activeScenes).not.toContain('NovaStoryScene');
   expect(
     meadow.objects.some((object) => object.name === 'nova-race-decision-yes' && object.interactive),
