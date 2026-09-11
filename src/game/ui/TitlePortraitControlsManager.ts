@@ -167,10 +167,6 @@ export class TitlePortraitControlsManager {
 
     this.root.append(this.mainView, this.settingsView);
     document.body.append(this.root);
-    this.preloadArtwork(currentArtworkTarget());
-    globalThis.matchMedia?.(PORTRAIT_MEDIA_QUERY).addEventListener('change', () => {
-      this.preloadArtwork(currentArtworkTarget());
-    });
     this.game.events.on(Phaser.Core.Events.POST_STEP, this.update, this);
   }
 
