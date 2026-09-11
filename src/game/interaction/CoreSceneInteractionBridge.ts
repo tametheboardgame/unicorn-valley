@@ -357,7 +357,7 @@ export class CoreSceneInteractionBridge {
         getSceneInteractionRegistry(previous).clearOwner(OWNER_KEY);
       }
       this.activeScenes.set(sceneKey, scene);
-      getSceneInteractionRegistry(scene).setTargets(OWNER_KEY, createTargets(scene));
+      getSceneInteractionRegistry(scene).replaceOwnerTargets(OWNER_KEY, createTargets(scene));
     }
   }
 

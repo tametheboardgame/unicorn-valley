@@ -216,6 +216,11 @@ export class MoonflowerGladeScene extends Phaser.Scene {
       return;
     }
 
+    if (target.result.type === 'callback') {
+      target.result.activate();
+      return;
+    }
+
     this.showFeedback(`${target.result.title}\n${target.result.message}`);
   }
 
