@@ -154,6 +154,12 @@ void import('./game/population/AmbientPopulationWorldManager').then(
   },
 );
 
+void import('./game/population/ResidentCollisionManager').then(
+  ({ getResidentCollisionManager }) => {
+    getResidentCollisionManager(game);
+  },
+);
+
 void import('./game/world/WoodsDepthWorldManager').then(({ getWoodsDepthWorldManager }) => {
   getWoodsDepthWorldManager(game);
 });
