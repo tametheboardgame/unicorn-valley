@@ -1,9 +1,16 @@
 import Phaser from 'phaser';
 import { getVerticalSliceAudio } from '../audio/VerticalSliceAudio';
+import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
 
 const TITLE_SCENE_KEY = 'TitleScene';
 const SYNC_INTERVAL_MS = 100;
+const PORTRAIT_MEDIA_QUERY = '(pointer: coarse) and (max-width: 700px) and (orientation: portrait)';
+const TITLE_ARTWORK_NAME = 'title-generated-artwork';
+const TITLE_ARTWORK_LANDSCAPE_KEY = 'title-generated-landscape';
+const TITLE_ARTWORK_PORTRAIT_KEY = 'title-generated-portrait';
+const TITLE_ARTWORK_LANDSCAPE_URL = '/assets/title/unicorn-valley-title-landscape.webp';
+const TITLE_ARTWORK_PORTRAIT_URL = '/assets/title/unicorn-valley-title-portrait.webp';
 
 interface ActionDefinition {
   objectName: string;
@@ -67,6 +74,27 @@ function isEnabled(object: Phaser.GameObjects.GameObject | null): boolean {
   return Boolean(object.input?.enabled);
 }
 
+interface TitleArtworkTarget {
+  key: string;
+  url: string;
+  portrait: boolean;
+}
+
+function currentArtworkTarget(): TitleArtworkTarget {
+  const portrait = globalThis.matchMedia?.(PORTRAIT_MEDIA_QUERY).matches === true;
+  return portrait
+    ? {
+        key: TITLE_ARTWORK_PORTRAIT_KEY,
+        url: TITLE_ARTWORK_PORTRAIT_URL,
+        portrait: true,
+      }
+    : {
+        key: TITLE_ARTWORK_LANDSCAPE_KEY,
+        url: TITLE_ARTWORK_LANDSCAPE_URL,
+        portrait: false,
+      };
+}
+
 export class TitlePortraitControlsManager {
   private readonly syncThrottle = new RefreshThrottle(SYNC_INTERVAL_MS);
   private readonly root: HTMLElement;
@@ -77,6 +105,8 @@ export class TitlePortraitControlsManager {
   private readonly mainActions: DomAction[];
   private readonly settingActions: DomAction[];
   private readonly doneButton: HTMLButtonElement;
+  private readonly requestedArtwork = new Set<string>();
+  private readonly preloadedArtwork = new Set<string>();
 
   public constructor(private readonly game: Phaser.Game) {
     this.root = document.createElement('section');
@@ -137,6 +167,10 @@ export class TitlePortraitControlsManager {
 
     this.root.append(this.mainView, this.settingsView);
     document.body.append(this.root);
+    this.preloadArtwork(currentArtworkTarget());
+    globalThis.matchMedia?.(PORTRAIT_MEDIA_QUERY).addEventListener('change', () => {
+      this.preloadArtwork(currentArtworkTarget());
+    });
     this.game.events.on(Phaser.Core.Events.POST_STEP, this.update, this);
   }
 
@@ -156,6 +190,7 @@ export class TitlePortraitControlsManager {
       return;
     }
 
+    this.syncArtwork(scene);
     this.root.hidden = false;
     const settingsPanel = scene.children.getByName('title-settings-panel');
     const settingsOpen = isVisible(settingsPanel);
@@ -177,6 +212,59 @@ export class TitlePortraitControlsManager {
 
     const done = scene.children.getByName('title-settings-done');
     this.doneButton.disabled = !isEnabled(done);
+  }
+
+  private preloadArtwork(target: TitleArtworkTarget): void {
+    if (this.preloadedArtwork.has(target.url)) {
+      return;
+    }
+    this.preloadedArtwork.add(target.url);
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.as = 'image';
+    link.href = target.url;
+    link.type = 'image/webp';
+    link.setAttribute('fetchpriority', 'high');
+    document.head.append(link);
+  }
+
+  private syncArtwork(scene: Phaser.Scene): void {
+    const target = currentArtworkTarget();
+    this.preloadArtwork(target);
+    const existing = scene.children.getByName(TITLE_ARTWORK_NAME);
+    if (existing instanceof Phaser.GameObjects.Image && existing.texture.key === target.key) {
+      return;
+    }
+
+    if (existing instanceof Phaser.GameObjects.Image) {
+      existing.destroy();
+    }
+
+    if (scene.textures.exists(target.key)) {
+      this.attachArtwork(scene, target);
+      return;
+    }
+
+    if (this.requestedArtwork.has(target.key)) {
+      return;
+    }
+
+    this.requestedArtwork.add(target.key);
+    scene.load.image(target.key, target.url);
+    scene.load.start();
+  }
+
+  private attachArtwork(scene: Phaser.Scene, target: TitleArtworkTarget): void {
+    const frame = scene.textures.get(target.key).get();
+    const sourceWidth = Math.max(1, frame.realWidth);
+    const sourceHeight = Math.max(1, frame.realHeight);
+    const coverScale = Math.max(GAME_WIDTH / sourceWidth, GAME_HEIGHT / sourceHeight);
+    const artwork = scene.add
+      .image(GAME_WIDTH / 2, target.portrait ? 850 : GAME_HEIGHT / 2, target.key)
+      .setName(TITLE_ARTWORK_NAME)
+      .setScale(coverScale)
+      .setDepth(8);
+    artwork.setData('titleArtworkVariant', target.portrait ? 'portrait' : 'landscape');
   }
 
   private syncActions(scene: Phaser.Scene, actions: DomAction[], settings = false): void {
