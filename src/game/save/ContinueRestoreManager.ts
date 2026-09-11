@@ -35,8 +35,8 @@ export class ContinueRestoreManager {
 
   private prepareLazyDestination(): void {
     const loadResult = getBrowserSaveService().loadWithResult();
-    const locationId =
-      loadResult.status === 'loaded' ? loadResult.save.profile.currentLocationId : undefined;
+    const save = loadResult.status === 'loaded' ? loadResult.save : null;
+    const locationId = save?.profile.name ? save.profile.currentLocationId : undefined;
     if (locationId !== STARLIGHT_BEACH_CONTINUE_LOCATION_ID) {
       return;
     }
@@ -66,9 +66,14 @@ export class ContinueRestoreManager {
       this.lastTitleScene = scene;
       return;
     }
-    const locationId =
-      loadResult.status === 'loaded' ? loadResult.save.profile.currentLocationId : undefined;
-    const destination = resolveContinueDestination(locationId);
+
+    const save = loadResult.status === 'loaded' ? loadResult.save : null;
+    if (!save?.profile.name) {
+      this.lastTitleScene = scene;
+      return;
+    }
+
+    const destination = resolveContinueDestination(save.profile.currentLocationId);
 
     if (destination.lazyScene && !this.game.scene.keys[destination.sceneKey]) {
       if (!title.starting) {
