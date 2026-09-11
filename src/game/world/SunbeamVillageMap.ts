@@ -28,12 +28,15 @@ export interface VillageNpcMarker {
 const DEFAULT_PLAYER_SPAWN = { x: 300, y: 950 } as const;
 const playerSpawn: MapPoint = { ...DEFAULT_PLAYER_SPAWN };
 
-export function setSunbeamVillagePlayerSpawn(point: MapPoint): void {
-  playerSpawn.x = point.x;
-  playerSpawn.y = point.y;
-  if (point.x === 330 && point.y === 950) {
+type SpawnPoint = MapPoint | (() => MapPoint);
+
+export function setSunbeamVillagePlayerSpawn(point: SpawnPoint): void {
+  const resolved = typeof point === 'function' ? point() : point;
+  playerSpawn.x = resolved.x;
+  playerSpawn.y = resolved.y;
+  if (resolved.x === 330 && resolved.y === 950) {
     setWorldArrivalFacing('SunbeamVillageScene', 'right');
-  } else if (point.x === 2640 && point.y === 950) {
+  } else if (resolved.x === 2640 && resolved.y === 950) {
     setWorldArrivalFacing('SunbeamVillageScene', 'left');
   }
 }
