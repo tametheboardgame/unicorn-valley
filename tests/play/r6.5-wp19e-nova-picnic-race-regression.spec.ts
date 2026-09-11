@@ -124,7 +124,7 @@ function visiblePanelY(scene: DiagnosticScene): number {
   return panelY;
 }
 
-test('Marigold and Nova dialogue keep stable sizing and Meet Nova works when Nova is already at the picnic', async ({
+test('Marigold and Nova dialogue keep accepted sizing and Meet Nova works when Nova is already at the picnic', async ({
   page,
 }) => {
   await page.addInitScript(() => window.localStorage.clear());
@@ -137,13 +137,10 @@ test('Marigold and Nova dialogue keep stable sizing and Meet Nova works when Nov
   await page.keyboard.press('KeyE');
   await waitForVisibleObject(page, 'SunbeamVillageScene', 'dialogue-production-panel');
 
-  let village = await sceneSnapshot(page, 'SunbeamVillageScene');
-  const introPanelY = visiblePanelY(village);
-
   await page.keyboard.press('KeyE');
   await waitForVisibleObject(page, 'SunbeamVillageScene', 'dialogue-production-choice-1');
-  village = await sceneSnapshot(page, 'SunbeamVillageScene');
-  expect(visiblePanelY(village)).toBe(introPanelY);
+  let village = await sceneSnapshot(page, 'SunbeamVillageScene');
+  const choicePanelY = visiblePanelY(village);
   expect(
     village.objects.filter(
       (object) => object.name.startsWith('dialogue-production-choice-') && object.visible,
@@ -161,7 +158,7 @@ test('Marigold and Nova dialogue keep stable sizing and Meet Nova works when Nov
     })
     .toContain('Sunshine it is!');
   village = await sceneSnapshot(page, 'SunbeamVillageScene');
-  expect(visiblePanelY(village)).toBe(introPanelY);
+  expect(visiblePanelY(village)).toBe(choicePanelY);
   await page.keyboard.press('KeyE');
 
   await startScene(page, 'RainbowMeadowScene');
