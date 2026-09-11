@@ -25,6 +25,7 @@ interface DiagnosticSnapshot {
 interface BrowserDiagnosticsApi {
   snapshot(): DiagnosticSnapshot;
   startScene(sceneKey: string, data?: object): void;
+  setArcadeSpritePosition(sceneKey: string, objectName: string, x: number, y: number): void;
 }
 
 async function snapshot(page: Page): Promise<DiagnosticSnapshot> {
@@ -191,17 +192,36 @@ test('dialogue and sound settings expose explicit production interaction states'
   page,
 }) => {
   test.setTimeout(75_000);
-  await page.goto('/?scene=lumi-story&diagnostics=1');
-  await waitForScene(page, 'LumiStoryScene');
-  await waitForObject(page, 'LumiStoryScene', 'dialogue-production-panel');
-  let scene = (await snapshot(page)).scenes.find(({ key }) => key === 'LumiStoryScene');
+  await page.addInitScript(() => window.localStorage.clear());
+  await page.goto('/?scene=glade&diagnostics=1');
+  await waitForScene(page, 'MoonflowerGladeScene');
+  await page.evaluate(() => {
+    const diagnostics = (
+      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__;
+    diagnostics?.setArcadeSpritePosition('MoonflowerGladeScene', 'world-player-unicorn', 1060, 825);
+  });
+  await page.waitForFunction(() => {
+    const diagnostics = (
+      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__;
+    const glade = diagnostics
+      ?.snapshot()
+      .scenes.find(({ key }) => key === 'MoonflowerGladeScene');
+    return glade?.objects.some(
+      ({ name, text, visible }) =>
+        name === 'exploration-interaction-prompt-label' && text === 'Talk' && visible,
+    );
+  });
+  await page.keyboard.press('KeyE');
+  await waitForObject(page, 'MoonflowerGladeScene', 'dialogue-production-panel');
+  let scene = (await snapshot(page)).scenes.find(({ key }) => key === 'MoonflowerGladeScene');
   expect(scene).toBeTruthy();
   if (scene) {
     expect(namedObject(scene, 'dialogue-production-continue').interactive).toBe(true);
   }
+  await page.keyboard.press('Escape');
 
-  await page.goto('/?scene=glade&diagnostics=1');
-  await waitForScene(page, 'MoonflowerGladeScene');
   await waitForObject(page, 'MoonflowerGladeScene', 'exploration-shell-settings-nav-button');
   scene = (await snapshot(page)).scenes.find(({ key }) => key === 'MoonflowerGladeScene');
   expect(scene).toBeTruthy();
