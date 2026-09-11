@@ -68,7 +68,7 @@ async function openCrystalBrook(page: Page): Promise<void> {
     ).__UNICORN_VALLEY_DIAGNOSTICS__;
     return api?.snapshot().activeScenes.includes('CrystalBrookScene') === true;
   });
-  await page.evaluate(() => {
+  await page.evaluate((objectName) => {
     const api = (
       window as typeof window & {
         __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
@@ -77,8 +77,8 @@ async function openCrystalBrook(page: Page): Promise<void> {
     if (!api) {
       throw new Error('Browser diagnostics are unavailable.');
     }
-    api.setArcadeSpritePosition('CrystalBrookScene', WORLD_PLAYER_NAME, 3130, 1850);
-  });
+    api.setArcadeSpritePosition('CrystalBrookScene', objectName, 3130, 1850);
+  }, WORLD_PLAYER_NAME);
 }
 
 async function showReferenceGuidance(page: Page): Promise<void> {
