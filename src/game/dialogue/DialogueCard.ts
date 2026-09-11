@@ -43,9 +43,13 @@ export class DialogueCard {
   private advanceTween: Phaser.Tweens.Tween | null = null;
   private choiceObjects: Phaser.GameObjects.GameObject[] = [];
 
-  public constructor(scene: Phaser.Scene, pointerInput: PointerTouchInputAdapter) {
+  public constructor(
+    scene: Phaser.Scene,
+    pointerInput: PointerTouchInputAdapter,
+    onAdvance?: () => void,
+  ) {
     this.dimmer = scene.add
-      .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x241c33, 0.34)
+      .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x241c33, 0)
       .setScrollFactor(0)
       .setDepth(125);
 
@@ -174,7 +178,10 @@ export class DialogueCard {
     applyButtonHover(this.continueButton, UI_COLOURS.lavender, UI_COLOURS.gold);
 
     this.continueButton.on('pointerdown', () => pointerInput.setButton('INTERACT', true));
-    this.continueButton.on('pointerup', () => pointerInput.setButton('INTERACT', false));
+    this.continueButton.on('pointerup', () => {
+      pointerInput.setButton('INTERACT', false);
+      onAdvance?.();
+    });
     this.continueButton.on('pointerout', () => pointerInput.setButton('INTERACT', false));
 
     this.unsubscribeAccessibility = getBrowserAccessibilitySettingsStore().subscribe(
@@ -205,7 +212,9 @@ export class DialogueCard {
 
     if (node.type === 'line') {
       this.body.setText(node.text);
-      this.modeHint.setText('Enter / tap to continue');
+      const finalLine = node.nextNodeId === undefined;
+      this.modeHint.setText(finalLine ? 'Enter / tap when done' : 'Enter / tap to continue');
+      this.continueLabel.setText(finalLine ? 'Done' : 'Continue');
       this.continueShadow.setVisible(true);
       this.continueButton.setVisible(true);
       this.continueLabel.setVisible(true);

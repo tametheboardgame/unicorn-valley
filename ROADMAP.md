@@ -2,7 +2,7 @@
 
 ## 2026-09-08 approved remediation plan
 
-WP19B was human-approved and merged as `c2d98ae` on 9 September 2026; its merge-SHA-bound production smoke passed in Actions `34356744951`. WP19C was subsequently human-approved, merged through PR #163 and released to production. WP19D is now the active package on draft PR #164. David’s mild observation that some places appear to have two path layers remains deferred unchanged to the final graphics-specific pass.
+WP19B was human-approved and merged as `c2d98ae` on 9 September 2026; its merge-SHA-bound production smoke passed in Actions `34356744951`. WP19C was subsequently human-approved, merged through PR #163 and released to production. WP19D is complete, human-approved, merged and released; WP19E is active. David’s mild observation that some places appear to have two path layers remains deferred unchanged to the final graphics-specific pass.
 
 David approved the whole-game audit remediation plan on 2026-09-08. Read `docs/audits/2026-09-08-WHOLE-GAME-AUDIT.md` and `docs/2026-09-08-REMEDIATION-PROPOSAL.md` first. Approved next order: WP19A persistence safety → WP18K foundation → WP19B boundaries/navigation → WP19C creator → WP19D interactions/NPCs → WP19E conversations → WP19F consistent UI/generated title → WP19G/H audio → WP19I qualification → WP18H daughter replay → WP17 readiness. Independent preparation is described in the proposal.
 
@@ -98,7 +98,7 @@ The approved creator uses the progressive concept layout, supported real appeara
 
 ### R6.5-WP19D - Unified Interactions and NPC Engagement
 
-State: **active remediation after David review on 2026-09-11; draft PR #164 remains unmerged**.
+State: **complete / human-approved / merged through PR #164 / production released**.
 
 Path: `docs/work-packages/R6.5-WP19D-UNIFIED-INTERACTIONS-NPCS.md`
 
@@ -119,7 +119,7 @@ Do **not** add a temporary ordinary-conversation return-position/checkpoint syst
 
 ### R6.5-WP19E - Conversation and Feedback System
 
-State: **approved next package; blocked until WP19D is accepted**.
+State: **active implementation; Amber visual/child-reading gate remains pending**.
 
 Path: `docs/work-packages/R6.5-WP19E-CONVERSATION-FEEDBACK.md`
 

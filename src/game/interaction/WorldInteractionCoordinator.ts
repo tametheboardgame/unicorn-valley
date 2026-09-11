@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { InputController } from '../input/InputController';
+import { getWorldConversationPresenter } from '../dialogue/WorldConversationPresenter';
 import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 import { InteractionPrompt } from '../ui/InteractionPrompt';
 import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
@@ -306,9 +307,8 @@ export class WorldInteractionCoordinator {
         return;
       }
       case 'dialogue':
-        throw new Error(
-          `Dialogue target ${target.id} must provide a callback until WP19E presenter owns dialogue.`,
-        );
+        getWorldConversationPresenter().start(scene, target.result.dialogueId);
+        return;
     }
   }
 

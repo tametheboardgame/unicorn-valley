@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { getBrowserAtmosphericTimeService } from '../atmosphere/AtmosphericTimeService';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
-import { setInteractionModalActive } from '../interaction/InteractionModalState';
+import { getWorldConversationPresenter } from '../dialogue/WorldConversationPresenter';
 import type { InteractionActionKind, InteractionTarget } from '../interaction/InteractionTarget';
 import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
@@ -72,8 +72,6 @@ interface ScenePopulationRuntime {
   residents: Map<SupportingResidentId, ResidentRuntime>;
   interactions: Map<string, SmallInteractionRuntime>;
   activeResidentId: SupportingResidentId | null;
-  conversationObjects: Phaser.GameObjects.GameObject[];
-  conversationKeyHandler: ((event: KeyboardEvent) => void) | null;
 }
 
 function findPlayer(scene: Phaser.Scene): PositionedObject | null {
@@ -191,8 +189,6 @@ export class AmbientPopulationWorldManager {
       residents: new Map(),
       interactions: new Map(),
       activeResidentId: null,
-      conversationObjects: [],
-      conversationKeyHandler: null,
     };
     this.states.set(scene.scene.key, state);
     return state;
@@ -431,88 +427,23 @@ export class AmbientPopulationWorldManager {
     runtime: ResidentRuntime,
     message: string,
   ): void {
-    this.destroyConversationObjects(state);
     state.scene.children.getByName('r6-5-ambient-feedback')?.destroy();
-    setInteractionModalActive(state.scene, true);
-
-    const panelY = GAME_HEIGHT - 116;
-    const titleY = GAME_HEIGHT - 180;
-    const bodyY = GAME_HEIGHT - 128;
-    const doneY = GAME_HEIGHT - 66;
-    const blocker = state.scene.add
-      .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.001)
-      .setName('wp19d-resident-conversation-blocker')
-      .setScrollFactor(0)
-      .setDepth(20_000)
-      .setInteractive();
-    const panel = state.scene.add
-      .rectangle(GAME_WIDTH / 2, panelY, 690, 174, 0xfff9ed, 0.98)
-      .setName('wp19d-resident-conversation-panel')
-      .setStrokeStyle(4, 0x9b72b5, 0.9)
-      .setScrollFactor(0)
-      .setDepth(20_010);
-    const title = state.scene.add
-      .text(GAME_WIDTH / 2, titleY, runtime.resident.name, {
-        color: '#5b3f69',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '20px',
-        fontStyle: 'bold',
-      })
-      .setName('wp19d-resident-conversation-name')
-      .setOrigin(0.5)
-      .setScrollFactor(0)
-      .setDepth(20_011);
-    const body = state.scene.add
-      .text(GAME_WIDTH / 2, bodyY, message, {
-        color: '#574663',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '18px',
-        align: 'center',
-        wordWrap: { width: 570 },
-      })
-      .setName('wp19d-resident-conversation-body')
-      .setOrigin(0.5)
-      .setScrollFactor(0)
-      .setDepth(20_011);
-    const done = state.scene.add
-      .rectangle(GAME_WIDTH / 2 + 278, doneY, 88, 42, 0x7d55a1, 1)
-      .setName('wp19d-resident-conversation-done')
-      .setStrokeStyle(3, 0xffefaf, 0.95)
-      .setScrollFactor(0)
-      .setDepth(20_012)
-      .setInteractive({ useHandCursor: true });
-    const doneLabel = state.scene.add
-      .text(GAME_WIDTH / 2 + 278, doneY, 'Done', {
-        color: '#fffaf1',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '16px',
-        fontStyle: 'bold',
-      })
-      .setName('wp19d-resident-conversation-done-label')
-      .setOrigin(0.5)
-      .setScrollFactor(0)
-      .setDepth(20_013);
-
-    const close = () => this.closeResidentConversation(state);
-    done.on('pointerdown', close);
-    const keyHandler = (event: KeyboardEvent): void => {
-      if (event.repeat || !['Escape', 'Enter', 'KeyE'].includes(event.code)) {
-        return;
-      }
-      event.preventDefault();
-      close();
-    };
-    globalThis.addEventListener?.('keydown', keyHandler);
-    state.conversationKeyHandler = keyHandler;
-    state.conversationObjects = [blocker, panel, title, body, done, doneLabel];
+    getWorldConversationPresenter().startShort(
+      state.scene,
+      runtime.resident.characterId ?? runtime.resident.id,
+      runtime.resident.name,
+      message,
+      {
+        onComplete: () => this.closeResidentConversation(state),
+        onClose: () => this.closeResidentConversation(state),
+      },
+    );
   }
 
   private closeResidentConversation(state: ScenePopulationRuntime): void {
     const residentId = state.activeResidentId;
     const runtime = residentId ? state.residents.get(residentId) : null;
-    this.destroyConversationObjects(state);
     state.activeResidentId = null;
-    setInteractionModalActive(state.scene, false);
 
     if (runtime) {
       runtime.engaged = false;
@@ -520,17 +451,6 @@ export class AmbientPopulationWorldManager {
       runtime.tween?.resume();
     }
     this.publishTargets(state);
-  }
-
-  private destroyConversationObjects(state: ScenePopulationRuntime): void {
-    if (state.conversationKeyHandler) {
-      globalThis.removeEventListener?.('keydown', state.conversationKeyHandler);
-      state.conversationKeyHandler = null;
-    }
-    for (const object of state.conversationObjects) {
-      object.destroy();
-    }
-    state.conversationObjects = [];
   }
 
   private syncSmallInteractions(
@@ -698,11 +618,7 @@ export class AmbientPopulationWorldManager {
   }
 
   private destroySceneState(state: ScenePopulationRuntime): void {
-    if (state.activeResidentId !== null) {
-      setInteractionModalActive(state.scene, false);
-      state.activeResidentId = null;
-    }
-    this.destroyConversationObjects(state);
+    state.activeResidentId = null;
     getSceneInteractionRegistry(state.scene).clearOwner(REGISTRY_OWNER);
     for (const runtime of state.residents.values()) {
       this.destroyResident(runtime);

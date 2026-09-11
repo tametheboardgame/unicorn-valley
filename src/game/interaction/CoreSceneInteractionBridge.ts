@@ -49,6 +49,9 @@ function callbackTarget(
   actionKind: InteractionActionKind,
   activate: () => void,
 ): InteractionTarget {
+  if (target.result.type === 'dialogue') {
+    return { ...target, actionKind, activationMode: 'explicit' };
+  }
   return {
     ...target,
     actionKind,
