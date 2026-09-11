@@ -205,9 +205,7 @@ test('dialogue and sound settings expose explicit production interaction states'
     const diagnostics = (
       window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
     ).__UNICORN_VALLEY_DIAGNOSTICS__;
-    const glade = diagnostics
-      ?.snapshot()
-      .scenes.find(({ key }) => key === 'MoonflowerGladeScene');
+    const glade = diagnostics?.snapshot().scenes.find(({ key }) => key === 'MoonflowerGladeScene');
     return glade?.objects.some(
       ({ name, text, visible }) =>
         name === 'exploration-interaction-prompt-label' && text === 'Talk' && visible,
