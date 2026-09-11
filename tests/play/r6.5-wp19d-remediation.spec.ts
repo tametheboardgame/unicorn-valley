@@ -174,10 +174,7 @@ test.describe('R6.5-WP19D desktop control remediation', () => {
       .poll(async () => {
         const current = await getScene(page, 'MoonflowerGladeScene');
         const currentPlayer = player(current);
-        return Math.hypot(
-          currentPlayer.x - PIP_POSITION.x,
-          currentPlayer.y - PIP_POSITION.y,
-        );
+        return Math.hypot(currentPlayer.x - PIP_POSITION.x, currentPlayer.y - PIP_POSITION.y);
       })
       .toBeGreaterThanOrEqual(70);
 
