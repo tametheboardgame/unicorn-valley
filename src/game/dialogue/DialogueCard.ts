@@ -343,7 +343,9 @@ export class DialogueCard {
     this.panelShadow
       .setPosition(spec.panel.x, spec.panel.y)
       .setDisplaySize(spec.panel.width, spec.panel.height);
-    this.panel.setPosition(spec.panel.x, spec.panel.y).setDisplaySize(spec.panel.width, spec.panel.height);
+    this.panel
+      .setPosition(spec.panel.x, spec.panel.y)
+      .setDisplaySize(spec.panel.width, spec.panel.height);
     this.speakerRibbon
       .setPosition(spec.ribbon.x, spec.ribbon.y)
       .setDisplaySize(spec.ribbon.width, spec.ribbon.height);
@@ -358,9 +360,7 @@ export class DialogueCard {
       .setPosition(spec.portrait.x, spec.portrait.y)
       .setFontSize(layout === 'compact' ? 44 : 54);
 
-    this.speakerName
-      .setPosition(spec.speaker.x, spec.speaker.y)
-      .setFontSize(spec.speaker.fontSize);
+    this.speakerName.setPosition(spec.speaker.x, spec.speaker.y).setFontSize(spec.speaker.fontSize);
     this.modeHint.setPosition(spec.hint.x, spec.hint.y).setFontSize(spec.hint.fontSize);
     this.body
       .setPosition(spec.body.x, spec.body.y)
