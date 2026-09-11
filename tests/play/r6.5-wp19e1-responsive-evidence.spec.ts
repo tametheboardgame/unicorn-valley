@@ -207,7 +207,8 @@ test.describe('R6.5-WP19E1 semantic distinction evidence', () => {
       .poll(async () => {
         const scene = await sceneSnapshot(page);
         return scene.objects.find(
-          (object) => object.effectiveVisible && object.text === 'New discovery for your Wonderbook!',
+          (object) =>
+            object.effectiveVisible && object.text === 'New discovery for your Wonderbook!',
         )?.text;
       })
       .toBe('New discovery for your Wonderbook!');
