@@ -96,11 +96,7 @@ export class WorldInteractionCoordinator {
   }
 
   private readonly onKeyDown = (event: KeyboardEvent): void => {
-    if (
-      event.repeat ||
-      isEditableKeyboardTarget(event.target) ||
-      !isWorldInteractionKey(event)
-    ) {
+    if (event.repeat || isEditableKeyboardTarget(event.target) || !isWorldInteractionKey(event)) {
       return;
     }
 
