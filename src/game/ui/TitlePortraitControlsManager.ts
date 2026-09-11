@@ -100,6 +100,7 @@ export class TitlePortraitControlsManager {
   private readonly root: HTMLElement;
   private readonly mainView: HTMLElement;
   private readonly settingsView: HTMLElement;
+  private readonly brand: HTMLElement;
   private readonly heading: HTMLElement;
   private readonly status: HTMLElement;
   private readonly mainActions: DomAction[];
@@ -118,9 +119,15 @@ export class TitlePortraitControlsManager {
     this.mainView = document.createElement('div');
     this.mainView.className = 'title-portrait-view title-portrait-main';
 
-    this.heading = document.createElement('h1');
+    this.brand = document.createElement('h1');
+    this.brand.className = 'title-portrait-brand';
+    this.brand.dataset.titlePortraitBrand = 'true';
+    this.brand.textContent = 'Unicorn Valley';
+    this.mainView.append(this.brand);
+
+    this.heading = document.createElement('h2');
     this.heading.className = 'title-portrait-heading';
-    this.heading.textContent = 'Unicorn Valley';
+    this.heading.textContent = 'Welcome!';
     this.mainView.append(this.heading);
 
     const mainActions = document.createElement('div');
@@ -183,10 +190,13 @@ export class TitlePortraitControlsManager {
       .find((active) => active.scene.key === TITLE_SCENE_KEY);
     if (!scene) {
       this.root.hidden = true;
+      this.game.canvas.style.pointerEvents = '';
       return;
     }
 
-    this.syncArtwork(scene);
+    const artworkTarget = currentArtworkTarget();
+    this.game.canvas.style.pointerEvents = artworkTarget.portrait ? 'none' : '';
+    this.syncArtwork(scene, artworkTarget);
     this.root.hidden = false;
     const settingsPanel = scene.children.getByName('title-settings-panel');
     const settingsOpen = isVisible(settingsPanel);
@@ -224,8 +234,7 @@ export class TitlePortraitControlsManager {
     document.head.append(link);
   }
 
-  private syncArtwork(scene: Phaser.Scene): void {
-    const target = currentArtworkTarget();
+  private syncArtwork(scene: Phaser.Scene, target: TitleArtworkTarget): void {
     this.preloadArtwork(target);
     const existing = scene.children.getByName(TITLE_ARTWORK_NAME);
     if (existing instanceof Phaser.GameObjects.Image && existing.texture.key === target.key) {
@@ -259,7 +268,7 @@ export class TitlePortraitControlsManager {
       .image(GAME_WIDTH / 2, target.portrait ? 850 : GAME_HEIGHT / 2, target.key)
       .setName(TITLE_ARTWORK_NAME)
       .setScale(coverScale)
-      .setDepth(8);
+      .setDepth(target.portrait ? 300 : 8);
     artwork.setData('titleArtworkVariant', target.portrait ? 'portrait' : 'landscape');
   }
 
