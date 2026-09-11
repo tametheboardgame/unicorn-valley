@@ -2,12 +2,11 @@
 
 ## 2026-09-08 approved remediation plan
 
-WP19B was human-approved and merged as `c2d98ae` on 9 September 2026; its merge-SHA-bound production smoke passed in Actions `34356744951`. WP19C is now active on its draft branch and remains behind its separate visual gate. David’s mild observation that some places appear to have two path layers is deferred unchanged to the final graphics-specific pass, not WP19C.
+WP19B was human-approved and merged as `c2d98ae` on 9 September 2026; its merge-SHA-bound production smoke passed in Actions `34356744951`. WP19C was subsequently human-approved, merged through PR #163 and released to production. WP19D is now the active package on draft PR #164. David’s mild observation that some places appear to have two path layers remains deferred unchanged to the final graphics-specific pass.
 
 David approved the whole-game audit remediation plan on 2026-09-08. Read `docs/audits/2026-09-08-WHOLE-GAME-AUDIT.md` and `docs/2026-09-08-REMEDIATION-PROPOSAL.md` first. Approved next order: WP19A persistence safety → WP18K foundation → WP19B boundaries/navigation → WP19C creator → WP19D interactions/NPCs → WP19E conversations → WP19F consistent UI/generated title → WP19G/H audio → WP19I qualification → WP18H daughter replay → WP17 readiness. Independent preparation is described in the proposal.
 
 This approves the work programme, not completion of its implementation. Existing delivery history below is preserved. R7 and production release remain gated. This plan supersedes the previous direct WP18K→WP18H sequence.
-
 
 This file is the concise project-level navigation layer. Detailed release and human-playtest evidence remains authoritative in `docs/`.
 
@@ -83,27 +82,64 @@ The hard 520 KiB application-entry performance budget remains unchanged.
 
 ### R6.5-WP19B - World Boundaries and Tap-Navigation Parity
 
-State: **technically qualified; awaiting David’s collision/visual approval**.
+State: **complete / human-approved / merged before WP19C**.
 
 Path: `docs/work-packages/R6.5-WP19B-WORLD-BOUNDARIES-NAVIGATION.md`
 
-Objective: close the Cottage wall/floor defect, add collider-aware tap movement to every supported explorable scene, and reconcile new-game scene/Map/checkpoint/Continue identity without changing save IDs or movement/race rules. The package stops at its separate human collision/visual gate.
+Objective: close the Cottage wall/floor defect, add collider-aware tap movement to every supported explorable scene, and reconcile new-game scene/Map/checkpoint/Continue identity without changing save IDs or movement/race rules.
+
+### R6.5-WP19C - Progressive Unicorn Creator
+
+State: **complete / human-approved / merged through PR #163 / production released**.
+
+Path: `docs/work-packages/R6.5-WP19C-PROGRESSIVE-CREATOR.md`
+
+The approved creator uses the progressive concept layout, supported real appearance renderer and corrected action surfaces. WP19D is based on this merged baseline.
+
+### R6.5-WP19D - Unified Interactions and NPC Engagement
+
+State: **active remediation after David review on 2026-09-11; draft PR #164 remains unmerged**.
+
+Path: `docs/work-packages/R6.5-WP19D-UNIFIED-INTERACTIONS-NPCS.md`
+
+The interaction foundation is accepted as the direction: contextual actions work, roaming NPCs stop and face the player, and distance gating behaves correctly. The current candidate is not accepted for merge until this bounded remediation is complete and re-reviewed.
+
+Required WP19D remediation:
+
+- hide touch movement/Gallop controls on desktop/laptop while preserving contextual Talk/Interact/Enter/Start actions;
+- give visible unicorn NPCs appropriate physical/soft collision so player and residents cannot pass through one another;
+- move conversation presentation into the protected lower-screen speech area;
+- while speech is active, hide the contextual target/name/hint surface so only the conversation owns that lower area, then restore it only after the closing input has been consumed/released;
+- move or reduce Wonderbook discovery feedback so it cannot collide with the top HUD or active speech UI;
+- restore the persistent exploration top HUD in Starlight Beach;
+- normalise equivalent NPC conversation entry through the shared interaction owner;
+- preserve the already-successful interaction coordinator, NPC engagement and distance behaviour.
+
+Do **not** add a temporary ordinary-conversation return-position/checkpoint system. Conversation-only scene transitions are being retired by WP19E, which removes that failure mode instead of patching it.
+
+### R6.5-WP19E - Conversation and Feedback System
+
+State: **approved next package; blocked until WP19D is accepted**.
+
+Path: `docs/work-packages/R6.5-WP19E-CONVERSATION-FEEDBACK.md`
+
+Accepted direction clarified 2026-09-11: ordinary NPC and quest conversations remain in the active world scene. The player and speaker stay visible; movement/background interaction is locked; the NPC remains stopped/facing the player; short dialogue, multi-line dialogue, quest hand-ins and choices all use one lower-screen conversation family. Existing conversation-only cutscene/scene transitions are retired rather than supplemented with return-position bookkeeping. Dedicated scenes remain valid for genuine modes such as races, minigames, creator flows and required interiors/shops.
 
 ### Known open defect outside WP18K
 
-Moonflower Cottage/window/back-wall collision remains a **known unresolved gameplay/world-geometry defect**. It must not be lost during architecture cleanup and must be closed or explicitly accepted before the final R7-readiness decision. WP18K itself is behaviour-preserving and does not silently absorb this defect.
+Any remaining world-geometry or interaction defects discovered by human testing must be closed or explicitly accepted before the final R7-readiness decision. Human-observed behaviour overrides stale automated qualification.
 
 ### R6.5-WP18H - Full Human Tablet Replay and Return to WP17
 
-State: **deferred until WP18K is complete and known open blockers are accounted for**.
+State: **deferred until WP19A-I remediation is complete and known open blockers are accounted for**.
 
 Path: `docs/work-packages/R6.5-WP18H-FULL-HUMAN-TABLET-REPLAY-RETURN-WP17.md`
 
-Run another substantially unguided daughter playthrough on the Galaxy Tab S8 after architecture cleanup. Use the human feedback ledger as the replay checklist. WP18H captures evidence and returns to WP17 for the user's explicit R7-readiness decision.
+Run another substantially unguided daughter playthrough on the Galaxy Tab S8 after remediation. Use the human feedback ledger as the replay checklist. WP18H captures evidence and returns to WP17 for the user's explicit R7-readiness decision.
 
 ### Dependency chain
 
-`WP17 evidence -> WP18A-G complete -> WP18I/J approved -> WP19A accepted -> WP18K architecture consolidation -> WP19B-I remediation -> WP18H human replay -> WP17 explicit readiness decision -> R7`
+`WP17 evidence -> WP18A-G complete -> WP18I/J approved -> WP19A accepted -> WP18K complete -> WP19B complete -> WP19C complete -> WP19D remediation/acceptance -> WP19E-H -> WP19I qualification -> WP18H human replay -> WP17 explicit readiness decision -> R7`
 
 ## R6.6 - Optional Android Packaging
 
@@ -113,7 +149,7 @@ Future candidate only after WP17 explicitly accepts the remediated browser build
 
 Status: **blocked**.
 
-R7 may not start until WP18K is complete, WP18H has run, all known readiness blockers are accounted for, and WP17 receives an explicit user readiness decision.
+R7 may not start until WP18H has run, all known readiness blockers are accounted for, and WP17 receives an explicit user readiness decision.
 
 Deferred daughter-led ideas and preservation requirements are listed in `docs/HUMAN-PLAYTEST-FEEDBACK-LEDGER.md` and must survive cleanup.
 
