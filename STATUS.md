@@ -1,78 +1,48 @@
 # Project Status
 
-Last updated: 2026-09-10
+Last updated: 2026-09-11
 
 ## Current work
 
-`R6.5-WP19C - Progressive Unicorn Creator`
+`R6.5-WP19D - Unified interactions and reliable NPC engagement`
 
-Path: `docs/work-packages/R6.5-WP19C-PROGRESSIVE-CREATOR.md`
+Path: `docs/work-packages/R6.5-WP19D-UNIFIED-INTERACTIONS-NPCS.md`
 
-State: **final action-surface correction delivered; replacement qualification running**. David judged candidate `baa88f36` excellent but withheld approval. Scene-owned rectangular action shadows and the obsolete Back shadow owner are removed; the modal presentation manager now owns one rounded face and one rounded shadow per action, and Reset ends in a solid tangent arrowhead. The original local recovery commits were unavailable in this workspace, so the bounded patch was reapplied from recorded task evidence. GitHub now has delivery head `4b8043f`; Cloudflare published it at `https://240412c1.unicorn-valley.pages.dev`. Validate and compatibility pass; all three browser shards remain running. Candidate-bound smoke is being rerun against the new immutable preview, and desktop/phone screenshot inspection remains pending. David's visual approval remains pending. No merge, production or WP19D.
+State: **corrected review candidate ready at the human gate**. The runtime candidate is `8c4c995c654dda2168d82610eeb07b5d6ff8208f`, published by Cloudflare at `https://a13f68a2.unicorn-valley.pages.dev`. PR #164 remains draft and unmerged.
 
+The remediation preserves the accepted unified interaction architecture and fixes the live-review defects: desktop touchscreen laptops no longer show the mobile movement pad merely because touch hardware exists; visible unicorn residents now have physical separation from the player while preserving roaming behaviour; conversation presentation owns the protected lower-screen speech area and suppresses overlapping contextual interaction UI; discovery/reward feedback is moved out of the top HUD and deferred while conversation owns the lower area; and Starlight Beach retains the canonical exploration HUD rather than a Beach-specific replacement.
 
-## Accepted gameplay baseline
+## Technical qualification
 
-R0-R6 and R6.5-WP1-16 are integrated. WP17 remains open; R7 is blocked. WP18A-G are integrated. WP18I/J were visually approved on 2026-09-08 and integrated through PR #158 / `45c858edc4537d49621a644d8131e0e4affe2f3b`.
+- Exact runtime-head CI run `34580599114` is green: Validate, Browser playtest 1/3, 2/3 and 3/3, and Browser compatibility all passed.
+- AI project-contract run `34580599030` passed.
+- The replacement WP19D acceptance tests that previously failed due to browser-harness defects now pass in the full matrix.
+- The immutable deployment manifest now targets `https://a13f68a2.unicorn-valley.pages.dev` at runtime SHA `8c4c995c654dda2168d82610eeb07b5d6ff8208f`. Only a smoke run resolved from this corrected manifest counts as WP19D deployment evidence. Earlier smoke run `34580599195` passed against the stale WP19C manifest and is retained only as historical evidence, not as WP19D qualification.
 
-Approved game-code head: `e4d64c0fa258bd91eb29579321e7da6b0968f71e`.
+## Human feedback and gate
 
-Approved immutable preview: `https://8292d7b9.unicorn-valley.pages.dev`.
+David's first WP19D review accepted the interaction direction and specifically confirmed that contextual interaction, NPC stop/face behaviour, distance gating and general NPC behaviour were materially improved. The candidate was rejected for merge until desktop control ownership, NPC physical presence, lower-screen conversation ownership, discovery placement and Starlight Beach HUD were remediated. Those bounded fixes are now implemented and automatically covered.
 
-Audit base main: `d9b765c0293045251619783a4ced4b01068e993a`.
+The remaining gate is David's corrected-candidate re-review. Do not merge PR #164, deploy WP19D to production, or start WP19E until that approval is explicit.
 
-Retain the accepted HUD camera stability, cream/lavender/purple/gold controls, Bag categories/no Shop shortcut, Map drag/North/clipping, Wonderbook page tabs and cross-only close controls. Four display classes remain mandatory.
-
-## Approved next sequence
+## Accepted sequence
 
 WP19A persistence safety → WP18K ownership foundation → WP19B world boundaries/navigation → WP19C creator → WP19D interactions/NPCs → WP19E conversations → WP19F UI consistency/generated title → WP19G/H MP3 audio → WP19I integrated qualification → WP18H daughter replay → WP17 readiness decision.
 
-WP19A-I bounded files are **approved**, subject to their dependencies and human gates. WP19A and WP18K are complete; WP19B is active after production release verification. WP18K remains behaviour-preserving; it must not silently absorb functional redesign.
+WP19A, WP18K, WP19B and WP19C are integrated. WP19D is at its human gate. WP19E is next after approval. R7 remains blocked until the R6.5 qualification/replay/readiness gates complete.
 
-## Important open findings
+## Production baseline
 
-- Creator crowded on desktop; progressive layout ownership is inconsistent.
-- Legacy E/Enter/tap labels remain visible beneath world objects.
-- Roaming residents and scene targets use separate interaction/feedback routes.
-- Cottage back-wall/window collision remains unresolved.
-- Grotto/Grove are absent from the preferred tap-navigation support list.
-- WP19A guards title and boot-manager storage reads, prevents rejected writes from producing purchase success, requires primary success where checkpoints are unsupported, and keeps post-commit listener faults from inviting a duplicate charge. Exact-head package qualification passes; the cancelled integrated browser baseline remains assigned to WP19I.
-- New-game Map shows Cottage as current while the player is in Glade; investigate checkpoint/location consistency.
-- Generated title image and MP3 catalogue/playback are new work, not already delivered features.
+Production remains on the merged WP19C baseline at main `1a622dbecf52ca79a378c51e417c8e4d4cc6f6ea`. The corrected WP19D candidate is review-only and must not be merged or promoted until the human gate passes.
 
-Full evidence, severity and source references are in the audit. Source risks are distinguished from runtime reproductions.
+## Review candidate
 
-## Validation
+Immutable preview: `https://a13f68a2.unicorn-valley.pages.dev`
 
-- Documentation-head CI run `34323584335` passed Validate, project-contract, compatibility and browser shards 2/3 and 3/3, but shard 1 recorded 60 passed and 1 failed. The Firefly Lantern replay-unlock case reached the result after only 7/8 catches because synthetic key down/up could occur between Phaser update frames; it then timed out waiting for a selector that correctly remained locked. Candidate `c7fd62f` holds each real key edge until the named transition and passes three focused repetitions. Exact-head CI `34328261135` historically passed 179 browser cases with 3 configured skips and no failures or unrun cases; compatibility passed 48 with 15 configured skips. David’s subsequent preview playtest found that Map drag did not work through real pointer gestures, so that green run is not current qualification evidence. Candidate `aa68c60` gives the parchment a real mouse/touch gesture owner, meaningful overscanned geography and bounded travel, removes redundant Bag/Map badges and Map subtitle, and improves the Wonderbook cross contrast/position. Focused real-input checks pass. Exact-head CI `34340757180` passed 181 browser cases with 3 configured skips, compatibility passed 48 with 15 configured skips, and Validate passed 114 files / 435 tests. Cloudflare published `d781a1a` at `https://38f17b6c.unicorn-valley.pages.dev`; manifest-bound smoke against that candidate is pending (the first workflow run truthfully targeted the previous manifest).
-- CI run `34318525681` passed Validate, project-contract, compatibility (48 passed / 15 configured skips) and browser shards 1/3 and 3/3. Shard 2/3 recorded 57 passed, 1 failed and 3 configured skips. Its sole failure timed out waiting for `MoonflowerGladeScene` after tapping the retired bottom Book-close coordinate; the accepted current owner is the named top-right `wonderbook-close-button`, which the corrected real-touch journey now uses. Exact-head CI must pass before qualification is claimed.
-- Exact starting-head CI run `34262336206`: Validate passed; project-contract run `34262336101` passed; compatibility passed 48 with 15 configured skips. Browser playtest was cancelled at 35 minutes with 130 passed, 9 failed and 3 skipped, leaving 40 unfinished. It is not represented as green.
-- All 40 unfinished cases were attempted in four bounded serial Chromium groups: initial totals 29 passed, 10 failed and 1 serial skip. Ten world-depth cases and all seven WP18J preservation cases passed. Named-control corrections then passed Food, Map and Creator 3/3; remaining trace-led touch/timeout corrections await correction-head CI.
-- The complete historical and current dispositions are recorded in `docs/evidence/R6.5-WP18K-BROWSER-QUALIFICATION.md`. The final failures were not waived: Nova now uses its canonical contextual action and return point; production dialogue guidance is protected from the legacy scanner; landscape race geometry tests the accepted corner overlay and real simultaneous controls.
-- The local host can run Chromium after supported browser/dependency installation. Its software renderer is materially slower than CI; retained multi-cycle/multi-scene tests use trace-justified total budgets while preserving cycles and responsiveness assertions.
-- The local runner HTTP CONNECT proxy still blocks Cloudflare Pages with 403 and was not bypassed. The reusable existing-Actions workflow passed isolated deployed startup/save/reload/Continue qualification in run `34300718207` against immutable preview `https://19e1602a.unicorn-valley.pages.dev`; artifact `10084829132` records the result.
+Branch preview: `https://agent-r6-5-wp19d-unified-int.unicorn-valley.pages.dev`
 
-## Human feedback and gates
-
-Original evidence: `docs/07Z-R6.5-WP17-PLAYTEST-REMEDIATION.md`.
-
-Current ledger: `docs/HUMAN-PLAYTEST-FEEDBACK-LEDGER.md`.
-
-No new daughter replay occurred. Preserve all positive feedback and deferred ideas. WP18H remains the physical Galaxy Tab S8 replay; WP17 requires David's explicit readiness decision. R7 remains blocked.
-
-## Delivery
-
-WP18K is human-approved, technically qualified and merged through PR #161 at main `250f0855f013f4ba54a6de4056181cf5affa0d57`. Cloudflare reports immutable deployment `https://7a667b82.unicorn-valley.pages.dev` for that merge SHA. WP19B uses `agent/r6.5-wp19b-world-boundaries-navigation` and must remain a draft PR through its separate UV-D014 human collision/visual gate.
+Draft PR: `https://github.com/tametheboardgame/unicorn-valley/pull/164`
 
 ## Next action
 
-Push the recovered final-action-surface correction, obtain green exact-head CI, bind startup/save/reload/Continue smoke to the new immutable candidate, inspect desktop/phone action screenshots, and stop for David's finished-WP19C recheck without merge, production deployment or WP19D.
-
-## Implementation delivery
-
-Branch: `agent/r6.5-wp19b-world-boundaries-navigation`, based on main `250f0855`.
-Draft PR: https://github.com/tametheboardgame/unicorn-valley/pull/162.
-
-## Codex execution
-
-Runtime implementation: `0f980b6`. Exact qualified head: `15be0d3`. CI `34349746804` passed 184 browser cases with 3 configured skips and no failures/unrun; compatibility passed 48 with 15 configured skips; Validate passed 116 files / 441 tests and 481.00 KiB. Immutable preview: `https://9502b39e.unicorn-valley.pages.dev`. Candidate smoke `34348947787` passed against `https://5b6e9886.unicorn-valley.pages.dev`. The conversation disposition is `keep` through David’s gate.
+Confirm the corrected manifest-bound immutable smoke completes successfully, then stop for David's WP19D re-review. On explicit approval, merge PR #164, verify production deployment, and move to `R6.5-WP19E - Conversation feedback`.
