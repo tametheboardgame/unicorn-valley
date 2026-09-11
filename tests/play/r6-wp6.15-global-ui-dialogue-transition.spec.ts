@@ -180,20 +180,32 @@ test('ordinary Pip conversation stays in-world, compact and explicitly paced', a
 
   await page.keyboard.press('KeyE');
   await expect
-    .poll(async () => namedObject(await sceneSnapshot(page, 'MoonflowerGladeScene'), 'dialogue-production-body').text)
+    .poll(
+      async () =>
+        namedObject(
+          await sceneSnapshot(page, 'MoonflowerGladeScene'),
+          'dialogue-production-body',
+        ).text,
+    )
     .toBe('Try a little exploring. I saw something sparkling beside the path. No rush!');
   scene = await sceneSnapshot(page, 'MoonflowerGladeScene');
   expect(namedObject(scene, 'dialogue-production-continue-label').text).toBe('Done');
 
   await page.keyboard.press('KeyE');
   await expect
-    .poll(async () =>
-      namedObject(await sceneSnapshot(page, 'MoonflowerGladeScene'), 'dialogue-production-panel').visible,
+    .poll(
+      async () =>
+        namedObject(
+          await sceneSnapshot(page, 'MoonflowerGladeScene'),
+          'dialogue-production-panel',
+        ).visible,
     )
     .toBe(false);
 });
 
-test('supporting resident uses the same compact family with readable fallback identity', async ({ page }) => {
+test('supporting resident uses the same compact family with readable fallback identity', async ({
+  page,
+}) => {
   await page.addInitScript(() => window.localStorage.clear());
   await page.goto('/?diagnostics=1');
   await waitForDiagnostics(page);
@@ -217,7 +229,9 @@ test('supporting resident uses the same compact family with readable fallback id
   expect(namedObject(scene, 'dialogue-production-speaker-name').text).toBe('Juniper');
   expect(namedObject(scene, 'dialogue-production-portrait-fallback').visible).toBe(true);
   expect(namedObject(scene, 'dialogue-production-continue-label').text).toBe('Done');
-  await page.screenshot({ path: 'playtest-artifacts/screenshots/wp19e-juniper-compact-desktop.png' });
+  await page.screenshot({
+    path: 'playtest-artifacts/screenshots/wp19e-juniper-compact-desktop.png',
+  });
 });
 
 test('Reduced Motion keeps conversation reveal and advance decoration static', async ({ page }) => {
