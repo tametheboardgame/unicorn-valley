@@ -24,6 +24,7 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
+          nl = chr(10)
           bridge = Path('src/game/interaction/CoreSceneInteractionBridge.ts')
           text = bridge.read_text()
           old = 'getSceneInteractionRegistry(scene).setTargets(OWNER_KEY, createTargets(scene));'
@@ -34,7 +35,14 @@ jobs:
           glade = Path('src/game/scenes/MoonflowerGladeScene.ts')
           text = glade.read_text()
           marker = "    this.showFeedback(`${target.result.title}\\n${target.result.message}`);"
-          insertion = "    if (target.result.type === 'callback') {\\n      target.result.activate();\\n      return;\\n    }\\n\\n" + marker
+          insertion = nl.join([
+              "    if (target.result.type === 'callback') {",
+              "      target.result.activate();",
+              "      return;",
+              "    }",
+              "",
+              marker,
+          ])
           if marker not in text:
               raise SystemExit('Expected Moonflower message fallback not found')
           glade.write_text(text.replace(marker, insertion, 1))
