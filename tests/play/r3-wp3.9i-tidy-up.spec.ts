@@ -276,7 +276,7 @@ test('Nova keeps her canonical identity and conversation stays at the exact worl
       (object) =>
         object.name === 'dialogue-production-portrait-nova' &&
         object.visible &&
-        object.textureKey === 'core-npc-production:nova:neutral',
+        object.textureKey === 'core-npc-production:nova:happy',
     ),
   ).toBe(true);
 
