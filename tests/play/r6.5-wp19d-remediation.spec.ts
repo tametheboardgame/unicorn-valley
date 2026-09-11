@@ -29,20 +29,6 @@ interface BrowserDiagnosticsApi {
   setArcadeSpritePosition(sceneKey: string, objectName: string, x: number, y: number): void;
 }
 
-async function diagnostics(page: Page): Promise<BrowserDiagnosticsApi> {
-  return page.evaluate(() => {
-    const api = (
-      window as typeof window & {
-        __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
-      }
-    ).__UNICORN_VALLEY_DIAGNOSTICS__;
-    if (!api) {
-      throw new Error('Browser diagnostics are unavailable.');
-    }
-    return api;
-  });
-}
-
 async function waitForDiagnostics(page: Page): Promise<void> {
   await page.waitForFunction(() => '__UNICORN_VALLEY_DIAGNOSTICS__' in window);
 }
@@ -147,7 +133,7 @@ async function waitForTalkTarget(page: Page, sceneKey: string, label: string): P
     .toBe(`Talk|${label}`);
 }
 
-function installFinePrimaryPointerOverride(): () => void {
+function installFinePrimaryPointerOverride(): void {
   const nativeMatchMedia = window.matchMedia.bind(window);
   const finePrimaryPointer: MediaQueryList = {
     matches: false,
@@ -164,11 +150,7 @@ function installFinePrimaryPointerOverride(): () => void {
     value: (query: string) =>
       query.trim() === '(pointer: coarse)' ? finePrimaryPointer : nativeMatchMedia(query),
   });
-  return () => undefined;
 }
-
-void diagnostics;
-
 
 test.describe('R6.5-WP19D desktop control remediation', () => {
   test.use({ viewport: { width: 1280, height: 720 }, hasTouch: true });
@@ -192,7 +174,6 @@ test.describe('R6.5-WP19D desktop control remediation', () => {
     expect(objectByName(scene, 'exploration-interaction-prompt').visible).toBe(true);
   });
 });
-
 
 test.describe('R6.5-WP19D interaction remediation', () => {
   test.use({ viewport: { width: 1280, height: 720 }, hasTouch: false });
@@ -251,10 +232,12 @@ test.describe('R6.5-WP19D interaction remediation', () => {
     await page.waitForTimeout(450);
     scene = await getScene(page, 'MoonflowerGladeScene');
     const stillEngagedResident = objectByName(scene, 'supporting-resident:resident:juniper');
-    expect(Math.hypot(
-      stillEngagedResident.x - engagedResident.x,
-      stillEngagedResident.y - engagedResident.y,
-    )).toBeLessThan(1);
+    expect(
+      Math.hypot(
+        stillEngagedResident.x - engagedResident.x,
+        stillEngagedResident.y - engagedResident.y,
+      ),
+    ).toBeLessThan(1);
 
     await page.keyboard.press('KeyE');
     await page.waitForTimeout(80);
@@ -264,11 +247,7 @@ test.describe('R6.5-WP19D interaction remediation', () => {
         (object) => object.name === 'wp19d-resident-conversation-panel' && object.visible,
       ),
     ).toBe(false);
-    expect(
-      scene.objects.some(
-        (object) => object.name === 'wp19d-resident-conversation-panel' && object.visible,
-      ),
-    ).toBe(false);
+    expect(objectByName(scene, 'exploration-interaction-prompt').visible).toBe(false);
   });
 
   test('Starlight Beach keeps the canonical HUD and discovery feedback out of the top chrome', async ({
