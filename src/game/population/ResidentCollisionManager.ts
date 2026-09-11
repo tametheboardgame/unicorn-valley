@@ -36,17 +36,22 @@ function findPlayer(scene: Phaser.Scene): Phaser.Physics.Arcade.Sprite | null {
 function findCollisionActors(scene: Phaser.Scene): CollisionActor[] {
   const actors: CollisionActor[] = [];
   for (const object of scene.children.list) {
-    if (!object.active || !object.visible) {
+    if (!object.active) {
       continue;
     }
     if (
       object instanceof Phaser.GameObjects.Container &&
+      object.visible &&
       object.name.startsWith(RESIDENT_NAME_PREFIX)
     ) {
       actors.push({ object, pausesRoute: true });
       continue;
     }
-    if (object instanceof Phaser.GameObjects.Sprite && CORE_NPC_WORLD_NAME.test(object.name)) {
+    if (
+      object instanceof Phaser.GameObjects.Sprite &&
+      object.visible &&
+      CORE_NPC_WORLD_NAME.test(object.name)
+    ) {
       actors.push({ object, pausesRoute: false });
     }
   }
