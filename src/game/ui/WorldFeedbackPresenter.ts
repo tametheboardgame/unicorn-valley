@@ -15,6 +15,8 @@ interface PendingReaction {
   durationMs: number;
 }
 
+type FeedbackObject = Phaser.GameObjects.Graphics | Phaser.GameObjects.Text;
+
 const GUIDANCE_NAME = 'world-feedback-guidance';
 const REACTION_NAME = 'world-feedback-reaction';
 const GUIDANCE_Y = GAME_HEIGHT - 150;
@@ -35,8 +37,8 @@ const BOTTOM_SAFE_MARGIN = 92;
  * Wonderbook discovery presenters remain separate semantic owners.
  */
 export class WorldFeedbackPresenter {
-  private guidanceObjects: Phaser.GameObjects.GameObject[] = [];
-  private reactionObjects: Phaser.GameObjects.GameObject[] = [];
+  private guidanceObjects: FeedbackObject[] = [];
+  private reactionObjects: FeedbackObject[] = [];
   private guidanceTimer: Phaser.Time.TimerEvent | null = null;
   private reactionTimer: Phaser.Time.TimerEvent | null = null;
   private pendingTimer: Phaser.Time.TimerEvent | null = null;
@@ -47,7 +49,11 @@ export class WorldFeedbackPresenter {
   private reactionText: Phaser.GameObjects.Text | null = null;
 
   public constructor(private readonly scene: Phaser.Scene) {
-    this.scene.events.on(Phaser.Scenes.Events.POST_UPDATE, this.refreshReactionPosition, this);
+    this.scene.events.on(
+      Phaser.Scenes.Events.POST_UPDATE,
+      this.refreshReactionPosition,
+      this,
+    );
     this.scene.events.once(Phaser.Scenes.Events.SHUTDOWN, this.destroy, this);
     this.scene.events.once(Phaser.Scenes.Events.DESTROY, this.destroy, this);
   }
@@ -173,7 +179,10 @@ export class WorldFeedbackPresenter {
       .setOrigin(0.5)
       .setDepth(20_122);
 
-    const width = Math.min(REACTION_MAX_TEXT_WIDTH + 38, Math.max(210, text.width + 34));
+    const width = Math.min(
+      REACTION_MAX_TEXT_WIDTH + 38,
+      Math.max(210, text.width + 34),
+    );
     const height = Math.max(54, text.height + 24);
     const panel = this.scene.add.graphics().setName(REACTION_NAME).setDepth(20_121);
     panel.fillStyle(0x4b3022, 0.18);
@@ -206,7 +215,11 @@ export class WorldFeedbackPresenter {
   }
 
   public destroy(): void {
-    this.scene.events.off(Phaser.Scenes.Events.POST_UPDATE, this.refreshReactionPosition, this);
+    this.scene.events.off(
+      Phaser.Scenes.Events.POST_UPDATE,
+      this.refreshReactionPosition,
+      this,
+    );
     this.scene.events.off(Phaser.Scenes.Events.SHUTDOWN, this.destroy, this);
     this.scene.events.off(Phaser.Scenes.Events.DESTROY, this.destroy, this);
     this.pendingTimer?.destroy();
@@ -215,6 +228,7 @@ export class WorldFeedbackPresenter {
     this.pendingReaction = null;
     this.clearGuidance();
     this.clearReaction();
+    presenters.delete(this.scene);
   }
 
   private readonly refreshReactionPosition = (): void => {
