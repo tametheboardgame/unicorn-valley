@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, type Page, test } from '@playwright/test';
 
 interface DiagnosticObjectSnapshot {
   type: string;
@@ -245,7 +245,7 @@ test('target-tablet touch completes creator, exploration, Book and accessibility
         object.visible &&
         object.text?.includes('Tap the path'),
     ),
-  ).toBe(true);
+  ).toBe(false);
   expect(
     glade.objects.some((object) => object.name === 'exploration-controls-button' && object.visible),
   ).toBe(false);

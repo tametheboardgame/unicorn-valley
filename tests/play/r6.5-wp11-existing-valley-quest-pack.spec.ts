@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, type Page, test } from '@playwright/test';
 
 interface DiagnosticObject {
   name: string;
@@ -19,6 +19,7 @@ interface DiagnosticSnapshot {
 interface BrowserDiagnosticsApi {
   snapshot(): DiagnosticSnapshot;
   startScene(sceneKey: string, data?: object): void;
+  setArcadeSpritePosition(sceneKey: string, objectName: string, x: number, y: number): void;
 }
 
 async function waitForDiagnostics(page: Page): Promise<void> {
@@ -77,7 +78,28 @@ test('WP11 exposes the exploration-discovered Brook thread on a fresh save', asy
   const oddStone = brook.objects.find(({ name }) => name === 'wp11-story:odd-stone-bank');
   expect(oddStone).toBeTruthy();
   expect(oddStone?.visible).toBe(true);
-  expect(oddStone?.interactive).toBe(true);
+  expect(oddStone?.interactive).toBe(false);
+
+  await page.evaluate(() => {
+    const diagnostics = (
+      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__;
+    diagnostics?.setArcadeSpritePosition('CrystalBrookScene', 'world-player-unicorn', 1370, 1470);
+  });
+  await page.waitForFunction(() => {
+    const diagnostics = (
+      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__;
+    const brook = diagnostics?.snapshot().scenes.find(({ key }) => key === 'CrystalBrookScene');
+    return (
+      brook?.objects.some(
+        ({ name, visible, interactive }) =>
+          name === 'interaction-direct-zone:interaction:quest-pack:odd-stone-bank' &&
+          visible &&
+          interactive,
+      ) ?? false
+    );
+  });
 });
 
 test('WP11 does not expose later Meadow route beats before their story prerequisites', async ({

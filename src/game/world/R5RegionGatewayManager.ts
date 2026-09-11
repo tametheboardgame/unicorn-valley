@@ -16,12 +16,12 @@ import {
 } from './CrystalBrookMap';
 import { RAINBOW_MEADOW_LOCATION_ID, setRainbowMeadowPlayerSpawn } from './RainbowMeadowMap';
 import { INTERACTIVE_GATEWAY_RADIUS, shouldActivateWalkThroughGateway } from './RegionGatewayRules';
-import { setWorldArrivalFacing } from './WorldArrivalState';
 import {
   setWhisperingWoodsPlayerSpawn,
   WHISPERING_WOODS_LOCATION_ID,
   WHISPERING_WOODS_MAP,
 } from './WhisperingWoodsMap';
+import { setWorldArrivalFacing } from './WorldArrivalState';
 import { WORLD_PLAYER_NAME } from './WorldTraversalPolishManager';
 
 interface RegionGatewayDefinition {
@@ -281,6 +281,12 @@ export class R5RegionGatewayManager {
           position: definition.position,
           interactionRadius: INTERACTIVE_GATEWAY_RADIUS,
           priority: 25,
+          directArea: {
+            width: 360,
+            height: 360,
+            offsetY: 55,
+            name: 'r6-wp6.18ij:crystal-cascade-tap-target',
+          },
           visible: () => state.container.active,
           enabled: () => this.getRaceUnlockState(definition).unlocked,
           result: { type: 'callback', activate: () => this.activateGateway(state) },
