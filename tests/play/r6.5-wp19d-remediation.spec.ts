@@ -1,6 +1,7 @@
 import { expect, type Page, test } from '@playwright/test';
 
 const WORLD_PLAYER_NAME = 'world-player-unicorn';
+const PIP_POSITION = { x: 970, y: 825 } as const;
 
 interface DiagnosticObjectSnapshot {
   name: string;
@@ -168,22 +169,18 @@ test.describe('R6.5-WP19D desktop control remediation', () => {
     expect(objectByName(scene, 'tablet-movement-pad').visible).toBe(false);
     expect(objectByName(scene, 'touch-movement-gallop').visible).toBe(false);
 
-    const pip = await waitForNamedObject(
-      page,
-      'MoonflowerGladeScene',
-      (object) => object.name === 'core-npc:pip:world',
-    );
-    await positionPlayer(page, 'MoonflowerGladeScene', pip.x, pip.y);
+    await positionPlayer(page, 'MoonflowerGladeScene', PIP_POSITION.x, PIP_POSITION.y);
     await expect
       .poll(async () => {
         const current = await getScene(page, 'MoonflowerGladeScene');
-        const currentPip = objectByName(current, 'core-npc:pip:world');
         const currentPlayer = player(current);
-        return Math.hypot(currentPlayer.x - currentPip.x, currentPlayer.y - currentPip.y);
+        return Math.hypot(
+          currentPlayer.x - PIP_POSITION.x,
+          currentPlayer.y - PIP_POSITION.y,
+        );
       })
       .toBeGreaterThanOrEqual(70);
 
-    await positionPlayer(page, 'MoonflowerGladeScene', 840, 825);
     await waitForTalkTarget(page, 'MoonflowerGladeScene', 'Pip');
     scene = await getScene(page, 'MoonflowerGladeScene');
     expect(objectByName(scene, 'exploration-interaction-prompt').visible).toBe(true);
