@@ -1,8 +1,10 @@
 import Phaser from 'phaser';
+import type { InteractionCondition } from '../interaction/InteractionTarget';
+import { getInteractionTargetPosition } from '../interaction/InteractionTargeting';
+import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
 
 const RESIDENT_NAME_PREFIX = 'supporting-resident:';
-const CORE_NPC_WORLD_NAME = /^core-npc:[^:]+:(?:world|picnic)$/;
 const MINIMUM_CENTRE_DISTANCE = 76;
 const PAUSE_DISTANCE = 92;
 const RESUME_DISTANCE = 108;
@@ -13,9 +15,9 @@ interface PausedResidentTweens {
   tweens: Phaser.Tweens.Tween[];
 }
 
-interface CollisionActor {
-  object: Phaser.GameObjects.Container | Phaser.GameObjects.Sprite;
-  pausesRoute: boolean;
+interface PositionedObject {
+  x: number;
+  y: number;
 }
 
 function findPlayer(scene: Phaser.Scene): Phaser.Physics.Arcade.Sprite | null {
@@ -33,38 +35,38 @@ function findPlayer(scene: Phaser.Scene): Phaser.Physics.Arcade.Sprite | null {
   );
 }
 
-function findCollisionActors(scene: Phaser.Scene): CollisionActor[] {
-  const actors: CollisionActor[] = [];
-  for (const object of scene.children.list) {
-    if (!object.active) {
-      continue;
-    }
-    if (
+function findResidents(scene: Phaser.Scene): Phaser.GameObjects.Container[] {
+  return scene.children.list.filter(
+    (object): object is Phaser.GameObjects.Container =>
       object instanceof Phaser.GameObjects.Container &&
+      object.active &&
       object.visible &&
-      object.name.startsWith(RESIDENT_NAME_PREFIX)
-    ) {
-      actors.push({ object, pausesRoute: true });
-      continue;
-    }
-    if (
-      object instanceof Phaser.GameObjects.Sprite &&
-      object.visible &&
-      CORE_NPC_WORLD_NAME.test(object.name)
-    ) {
-      actors.push({ object, pausesRoute: false });
-    }
+      object.name.startsWith(RESIDENT_NAME_PREFIX),
+  );
+}
+
+function conditionIsTrue(condition: InteractionCondition | undefined): boolean {
+  if (condition === undefined) {
+    return true;
   }
-  return actors;
+  return typeof condition === 'function' ? condition() : condition;
+}
+
+function findVisibleTalkPositions(scene: Phaser.Scene): PositionedObject[] {
+  return getSceneInteractionRegistry(scene)
+    .getTargets()
+    .filter((target) => target.actionKind === 'talk' && conditionIsTrue(target.visible))
+    .map((target) => getInteractionTargetPosition(target));
 }
 
 /**
  * Presentation-safe physical separation for visible world NPCs.
  *
+ * Every live semantic Talk target contributes physical personal space, so core NPCs and supporting
+ * residents cannot be walked through even when their visuals are owned by different scene systems.
  * Tween-driven supporting residents keep their authored routes in AmbientPopulationWorldManager;
- * this manager pauses that route before a resident walks through the player. Core NPC world sprites
- * are stationary presentation actors, so they only need separation. In both cases the Arcade player
- * is moved to the edge of the NPC's personal space without introducing a second NPC movement owner.
+ * this manager pauses those routes before they walk through the player, without introducing a
+ * second NPC movement authority.
  */
 export class ResidentCollisionManager {
   private readonly pausedTweens = new WeakMap<Phaser.GameObjects.Container, PausedResidentTweens>();
@@ -81,30 +83,36 @@ export class ResidentCollisionManager {
         continue;
       }
 
-      for (const actor of findCollisionActors(scene)) {
-        this.resolvePair(scene, player, actor);
+      for (const resident of findResidents(scene)) {
+        this.syncResidentRoute(scene, player, resident);
+      }
+      for (const targetPosition of findVisibleTalkPositions(scene)) {
+        this.separatePlayer(scene, player, targetPosition);
       }
     }
   };
 
-  private resolvePair(
+  private syncResidentRoute(
     scene: Phaser.Scene,
     player: Phaser.Physics.Arcade.Sprite,
-    actor: CollisionActor,
+    resident: Phaser.GameObjects.Container,
   ): void {
-    const resident = actor.object;
-    const dx = player.x - resident.x;
-    const dy = player.y - resident.y;
-    const distance = Math.hypot(dx, dy);
-
-    if (actor.pausesRoute && resident instanceof Phaser.GameObjects.Container) {
-      if (distance <= PAUSE_DISTANCE) {
-        this.pauseResidentRoute(scene, resident);
-      } else if (distance >= RESUME_DISTANCE) {
-        this.resumeResidentRoute(resident);
-      }
+    const distance = Phaser.Math.Distance.Between(player.x, player.y, resident.x, resident.y);
+    if (distance <= PAUSE_DISTANCE) {
+      this.pauseResidentRoute(scene, resident);
+    } else if (distance >= RESUME_DISTANCE) {
+      this.resumeResidentRoute(resident);
     }
+  }
 
+  private separatePlayer(
+    scene: Phaser.Scene,
+    player: Phaser.Physics.Arcade.Sprite,
+    target: PositionedObject,
+  ): void {
+    const dx = player.x - target.x;
+    const dy = player.y - target.y;
+    const distance = Math.hypot(dx, dy);
     if (distance >= MINIMUM_CENTRE_DISTANCE) {
       return;
     }
@@ -119,18 +127,18 @@ export class ResidentCollisionManager {
     const normalY = distance > 0.001 ? dy / safeDistance : 0;
     const bounds = scene.physics.world.bounds;
     const nextX = Phaser.Math.Clamp(
-      resident.x + normalX * MINIMUM_CENTRE_DISTANCE,
+      target.x + normalX * MINIMUM_CENTRE_DISTANCE,
       bounds.left + PLAYER_EDGE_PADDING,
       bounds.right - PLAYER_EDGE_PADDING,
     );
     const nextY = Phaser.Math.Clamp(
-      resident.y + normalY * MINIMUM_CENTRE_DISTANCE,
+      target.y + normalY * MINIMUM_CENTRE_DISTANCE,
       bounds.top + PLAYER_EDGE_PADDING,
       bounds.bottom - PLAYER_EDGE_PADDING,
     );
 
     // body.reset keeps the Arcade body and visual in the same place and clears movement into the
-    // resident. The player's normal controls take over again immediately when they move away.
+    // NPC. The player's normal controls take over again immediately when they move away.
     body.reset(nextX, nextY);
   }
 
