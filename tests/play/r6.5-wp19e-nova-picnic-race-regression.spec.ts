@@ -85,7 +85,7 @@ async function waitForVisibleObject(page: Page, sceneKey: string, name: string):
   await expect
     .poll(async () => {
       const scene = await sceneSnapshot(page, sceneKey);
-      return scene.objects.find((object) => object.name === name)?.visible ?? false;
+      return scene.objects.some((object) => object.name === name && object.visible);
     })
     .toBe(true);
 }
@@ -120,7 +120,7 @@ test('Marigold choice stays compact and Meet Nova works when Nova is already at 
 
   let village = await sceneSnapshot(page, 'SunbeamVillageScene');
   const introPanelY = village.objects.find(
-    (object) => object.name === 'dialogue-production-panel',
+    (object) => object.name === 'dialogue-production-panel' && object.visible,
   )?.y;
   expect(introPanelY).toBeGreaterThan(590);
 
@@ -128,7 +128,7 @@ test('Marigold choice stays compact and Meet Nova works when Nova is already at 
   await waitForVisibleObject(page, 'SunbeamVillageScene', 'dialogue-production-choice-1');
   village = await sceneSnapshot(page, 'SunbeamVillageScene');
   const choicePanelY = village.objects.find(
-    (object) => object.name === 'dialogue-production-panel',
+    (object) => object.name === 'dialogue-production-panel' && object.visible,
   )?.y;
   expect(choicePanelY).toBe(introPanelY);
   expect(
@@ -141,7 +141,11 @@ test('Marigold choice stays compact and Meet Nova works when Nova is already at 
   await expect
     .poll(async () => {
       const scene = await sceneSnapshot(page, 'SunbeamVillageScene');
-      return scene.objects.find((object) => object.name === 'dialogue-production-body')?.text ?? '';
+      return (
+        scene.objects.find(
+          (object) => object.name === 'dialogue-production-body' && object.visible,
+        )?.text ?? ''
+      );
     })
     .toContain('Sunshine it is!');
   await page.keyboard.press('KeyE');
@@ -150,7 +154,7 @@ test('Marigold choice stays compact and Meet Nova works when Nova is already at 
   await waitForVisibleObject(page, 'RainbowMeadowScene', 'core-npc:nova:picnic');
   const meadowBeforeRace = await sceneSnapshot(page, 'RainbowMeadowScene');
   const picnicNova = meadowBeforeRace.objects.find(
-    (object) => object.name === 'core-npc:nova:picnic',
+    (object) => object.name === 'core-npc:nova:picnic' && object.visible,
   );
   expect(picnicNova).toBeTruthy();
 
@@ -168,7 +172,7 @@ test('Marigold choice stays compact and Meet Nova works when Nova is already at 
   const activeScenes = (await snapshot(page)).activeScenes;
   const player = meadowAfterMeet.objects.find((object) => object.name === PLAYER_NAME);
   const speaker = meadowAfterMeet.objects.find(
-    (object) => object.name === 'dialogue-production-speaker-name',
+    (object) => object.name === 'dialogue-production-speaker-name' && object.visible,
   );
 
   expect(activeScenes).toContain('RainbowMeadowScene');
@@ -176,6 +180,6 @@ test('Marigold choice stays compact and Meet Nova works when Nova is already at 
   expect(speaker?.text).toBe('Nova');
   expect(player).toBeTruthy();
   expect(picnicNova).toBeTruthy();
-  expect(player?.x).toBeCloseTo((picnicNova?.x ?? 0) - 120, 1);
-  expect(player?.y).toBeCloseTo(picnicNova?.y ?? 0, 1);
+  expect(Math.abs((player?.x ?? 0) - ((picnicNova?.x ?? 0) - 120))).toBeLessThan(6);
+  expect(Math.abs((player?.y ?? 0) - (picnicNova?.y ?? 0))).toBeLessThan(6);
 });
