@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
 
 const RESIDENT_NAME_PREFIX = 'supporting-resident:';
+const CORE_NPC_WORLD_NAME = /^core-npc:[^:]+:(?:world|picnic)$/;
 const MINIMUM_CENTRE_DISTANCE = 76;
 const PAUSE_DISTANCE = 92;
 const RESUME_DISTANCE = 108;
@@ -10,6 +11,11 @@ const PLAYER_EDGE_PADDING = 34;
 interface PausedResidentTweens {
   resident: Phaser.GameObjects.Container;
   tweens: Phaser.Tweens.Tween[];
+}
+
+interface CollisionActor {
+  object: Phaser.GameObjects.Container | Phaser.GameObjects.Sprite;
+  pausesRoute: boolean;
 }
 
 function findPlayer(scene: Phaser.Scene): Phaser.Physics.Arcade.Sprite | null {
@@ -27,23 +33,33 @@ function findPlayer(scene: Phaser.Scene): Phaser.Physics.Arcade.Sprite | null {
   );
 }
 
-function findResidents(scene: Phaser.Scene): Phaser.GameObjects.Container[] {
-  return scene.children.list.filter(
-    (object): object is Phaser.GameObjects.Container =>
+function findCollisionActors(scene: Phaser.Scene): CollisionActor[] {
+  const actors: CollisionActor[] = [];
+  for (const object of scene.children.list) {
+    if (!object.active || !object.visible) {
+      continue;
+    }
+    if (
       object instanceof Phaser.GameObjects.Container &&
-      object.active &&
-      object.name.startsWith(RESIDENT_NAME_PREFIX),
-  );
+      object.name.startsWith(RESIDENT_NAME_PREFIX)
+    ) {
+      actors.push({ object, pausesRoute: true });
+      continue;
+    }
+    if (object instanceof Phaser.GameObjects.Sprite && CORE_NPC_WORLD_NAME.test(object.name)) {
+      actors.push({ object, pausesRoute: false });
+    }
+  }
+  return actors;
 }
 
 /**
- * Presentation-safe physical separation for the tween-driven supporting residents.
+ * Presentation-safe physical separation for visible world NPCs.
  *
- * The roaming residents are deliberately not converted into Arcade-driven actors here: their
- * authored routes remain owned by AmbientPopulationWorldManager. Instead, this manager pauses a
- * resident's route before it walks through the player and enforces a small body separation on the
- * Arcade player. That gives both unicorns physical presence without introducing a second movement
- * authority or changing resident routes.
+ * Tween-driven supporting residents keep their authored routes in AmbientPopulationWorldManager;
+ * this manager pauses that route before a resident walks through the player. Core NPC world sprites
+ * are stationary presentation actors, so they only need separation. In both cases the Arcade player
+ * is moved to the edge of the NPC's personal space without introducing a second NPC movement owner.
  */
 export class ResidentCollisionManager {
   private readonly pausedTweens = new WeakMap<Phaser.GameObjects.Container, PausedResidentTweens>();
@@ -60,8 +76,8 @@ export class ResidentCollisionManager {
         continue;
       }
 
-      for (const resident of findResidents(scene)) {
-        this.resolvePair(scene, player, resident);
+      for (const actor of findCollisionActors(scene)) {
+        this.resolvePair(scene, player, actor);
       }
     }
   };
@@ -69,16 +85,19 @@ export class ResidentCollisionManager {
   private resolvePair(
     scene: Phaser.Scene,
     player: Phaser.Physics.Arcade.Sprite,
-    resident: Phaser.GameObjects.Container,
+    actor: CollisionActor,
   ): void {
+    const resident = actor.object;
     const dx = player.x - resident.x;
     const dy = player.y - resident.y;
     const distance = Math.hypot(dx, dy);
 
-    if (distance <= PAUSE_DISTANCE) {
-      this.pauseResidentRoute(scene, resident);
-    } else if (distance >= RESUME_DISTANCE) {
-      this.resumeResidentRoute(resident);
+    if (actor.pausesRoute && resident instanceof Phaser.GameObjects.Container) {
+      if (distance <= PAUSE_DISTANCE) {
+        this.pauseResidentRoute(scene, resident);
+      } else if (distance >= RESUME_DISTANCE) {
+        this.resumeResidentRoute(resident);
+      }
     }
 
     if (distance >= MINIMUM_CENTRE_DISTANCE) {
