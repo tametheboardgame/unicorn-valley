@@ -124,13 +124,7 @@ const VILLAGE_INTERACTIONS = [
     position: npcPosition('willow'),
     interactionRadius: 150,
     priority: 30,
-    result: {
-      type: 'scene-transition',
-      sceneKey: 'WillowStoryScene',
-      payload: {
-        returnScene: 'SunbeamVillageScene',
-      },
-    },
+    result: { type: 'message', title: 'Willow', message: 'Talk with Willow.' },
   },
   {
     id: 'interaction:village-marigold',
@@ -139,13 +133,7 @@ const VILLAGE_INTERACTIONS = [
     position: npcPosition('marigold'),
     interactionRadius: 150,
     priority: 30,
-    result: {
-      type: 'scene-transition',
-      sceneKey: 'MarigoldPicnicScene',
-      payload: {
-        returnScene: 'SunbeamVillageScene',
-      },
-    },
+    result: { type: 'message', title: 'Marigold', message: 'Talk with Marigold.' },
   },
   {
     id: 'interaction:village-glade-gate',

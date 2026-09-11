@@ -10,9 +10,9 @@ import { SecretDiscoveryService } from '../discovery/SecretDiscoveryService';
 import type { InteractionTarget } from '../interaction/InteractionTarget';
 import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { getBrowserSaveService } from '../save/browserSaveService';
-import { CRYSTAL_BROOK_MAP, setCrystalBrookPlayerSpawn } from '../world/CrystalBrookMap';
-import { rememberWorldReturnState } from '../world/WorldArrivalState';
+import { CRYSTAL_BROOK_MAP } from '../world/CrystalBrookMap';
 import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
+import { startRippleConversation } from './WorldStoryConversations';
 
 const PRESENTATION_NAME = 'crystal-brook-story-presentation';
 const FEEDBACK_NAME = 'crystal-brook-story-feedback';
@@ -277,11 +277,7 @@ export class CrystalBrookStoryWorldManager {
   }
 
   private openRippleStory(scene: Phaser.Scene): void {
-    const player = findPlayer(scene);
-    if (player) {
-      rememberWorldReturnState('CrystalBrookScene', player, setCrystalBrookPlayerSpawn);
-    }
-    scene.scene.start('RippleStoryScene', { returnScene: 'CrystalBrookScene' });
+    startRippleConversation(scene);
   }
 
   private showFeedback(scene: Phaser.Scene, message: string): void {

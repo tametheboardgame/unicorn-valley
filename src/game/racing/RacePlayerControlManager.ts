@@ -207,7 +207,7 @@ export class RacePlayerControlManager {
     }
 
     saveLocationCheckpoint(getBrowserSaveService(), RAINBOW_MEADOW_LOCATION_ID);
-    scene.scene.start('NovaStoryScene', { returnScene: 'RainbowMeadowScene' });
+    scene.scene.start('RainbowMeadowScene');
   }
 }
 

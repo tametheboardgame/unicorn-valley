@@ -77,8 +77,7 @@ export function resolveRaceEntryPrompt(phase: NovaFirstRacePhase): RaceEntryProm
       title: 'Go back to Nova?',
       detail: 'Nova is waiting to hear how your first run went.',
       yesLabel: 'Yes, find Nova',
-      targetScene: 'NovaStoryScene',
-      payload: { returnScene: 'RainbowMeadowScene' },
+      targetScene: 'RainbowMeadowScene',
     };
   }
 
@@ -86,8 +85,7 @@ export function resolveRaceEntryPrompt(phase: NovaFirstRacePhase): RaceEntryProm
     title: 'Meet Nova before racing?',
     detail: 'Nova will show you how Rainbow Run works.',
     yesLabel: 'Yes, meet Nova',
-    targetScene: 'NovaStoryScene',
-    payload: { returnScene: 'RainbowMeadowScene' },
+    targetScene: 'RainbowMeadowScene',
   };
 }
 

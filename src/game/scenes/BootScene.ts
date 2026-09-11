@@ -38,12 +38,7 @@ const DIAGNOSTIC_SCENES: Record<string, string> = {
   shop: 'ShopScene',
   wonderbook: 'WonderbookScene',
   'firefly-lantern': 'FireflyLanternScene',
-  'ripple-story': 'RippleStoryScene',
-  'lumi-story': 'LumiStoryScene',
-  'nova-story': 'NovaStoryScene',
   'nova-race': 'NovaTutorialRaceScene',
-  'pebble-story': 'PebbleStoryScene',
-  'pip-egg-story': 'PipEggStoryScene',
   'pip-egg-hatch': 'PipEggHatchScene',
   race: 'RaceScene',
 };

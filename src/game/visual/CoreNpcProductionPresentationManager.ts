@@ -1,5 +1,4 @@
 import Phaser from 'phaser';
-import { GAME_WIDTH } from '../config/gameConstants';
 import { PIP_POSITION } from '../intro/PipIntro';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
 import { getBrowserSaveService } from '../save/browserSaveService';
@@ -11,13 +10,7 @@ import {
 import { RAINBOW_MEADOW_MAP } from '../world/RainbowMeadowMap';
 import { SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
 import { worldDepthForY } from '../world/WorldDepth';
-import {
-  addCoreNpcIdleTween,
-  CORE_NPC_VISUALS,
-  createCoreNpcSprite,
-  type CoreNpcId,
-  playCoreNpcReaction,
-} from './CoreNpcProductionArt';
+import { addCoreNpcIdleTween, createCoreNpcSprite } from './CoreNpcProductionArt';
 
 const LUMI_WORLD_POSITION = { x: 2980, y: 1530 } as const;
 const NOVA_PICNIC_POSITION = { x: 2045, y: 1400 } as const;
@@ -28,25 +21,10 @@ const NOVA_RACE_POSITION = novaRaceMarker
   ? { x: novaRaceMarker.position.x, y: novaRaceMarker.position.y }
   : null;
 
-interface StoryPortraitDefinition {
-  sceneKey: string;
-  id: CoreNpcId;
-  y: number;
-}
-
 interface PositionedGameObject {
   x: number;
   y: number;
 }
-
-const STORY_PORTRAITS: readonly StoryPortraitDefinition[] = [
-  { sceneKey: 'NovaStoryScene', id: 'nova', y: 255 },
-  { sceneKey: 'WillowStoryScene', id: 'willow', y: 252 },
-  { sceneKey: 'PipEggStoryScene', id: 'pip', y: 268 },
-  { sceneKey: 'PebbleStoryScene', id: 'pebble', y: 252 },
-  { sceneKey: 'LumiStoryScene', id: 'lumi', y: 252 },
-  { sceneKey: 'MarigoldPicnicScene', id: 'marigold', y: 240 },
-] as const;
 
 function sceneIfActive(game: Phaser.Game, key: string): Phaser.Scene | null {
   const scene = game.scene.getScene(key);
@@ -245,7 +223,6 @@ export class CoreNpcProductionPresentationManager {
     if (this.presenceRefresh.shouldRun(Date.now())) {
       this.refreshPresenceAuthority();
     }
-    this.refreshStoryPortraits();
     this.refreshPipWorld();
     this.refreshVillageWorld();
     this.refreshNovaWorld();
@@ -255,37 +232,6 @@ export class CoreNpcProductionPresentationManager {
   private refreshPresenceAuthority(): void {
     this.novaArea = this.presenceService.resolve(NOVA_CHARACTER_ID)?.area ?? 'rainbow-run-hub';
     syncNovaRaceInteractionTarget(this.novaArea === 'rainbow-run-hub');
-  }
-
-  private refreshStoryPortraits(): void {
-    for (const definition of STORY_PORTRAITS) {
-      const scene = sceneIfActive(this.game, definition.sceneKey);
-      if (!scene || scene.children.getByName(`core-npc:${definition.id}:portrait`)) {
-        continue;
-      }
-
-      const spec = CORE_NPC_VISUALS[definition.id];
-      scene.add
-        .circle(GAME_WIDTH / 2, definition.y, 98, spec.frame, 0.99)
-        .setName(`core-npc:${definition.id}:portrait-frame`)
-        .setStrokeStyle(6, spec.outline, 0.82)
-        .setDepth(7);
-      const portrait = createCoreNpcSprite(
-        scene,
-        definition.id,
-        GAME_WIDTH / 2,
-        definition.y + 12,
-        'portrait',
-      )
-        .setDisplaySize(definition.id === 'pip' ? 174 : 190, definition.id === 'pip' ? 140 : 148)
-        .setDepth(8);
-      addCoreNpcIdleTween(scene, portrait, definition.id, 2.5);
-      scene.time.delayedCall(380, () => {
-        if (portrait.active) {
-          playCoreNpcReaction(scene, portrait);
-        }
-      });
-    }
   }
 
   private refreshPipWorld(): void {

@@ -25,6 +25,6 @@ export class RainbowRunEntryScene extends Phaser.Scene {
       return;
     }
 
-    this.scene.start('NovaStoryScene', { returnScene: 'RainbowMeadowScene' });
+    this.scene.start('RainbowMeadowScene');
   }
 }

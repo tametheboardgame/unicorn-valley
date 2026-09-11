@@ -10,7 +10,7 @@ Path: `docs/work-packages/R6.5-WP19E-CONVERSATION-FEEDBACK.md`
 
 State: **implementation active** on `agent/r6.5-wp19e-conversation-feedback`. David explicitly authorised the package after WP19D was human-approved, merged and released.
 
-The first implementation checkpoint adds canonical dialogue ownership to `WorldInteractionCoordinator`, routes Pip's existing dialogue result through it, and migrates roaming-resident short speech onto the same manually dismissed `DialogueCard` family. Ordinary dialogue no longer adds a visible full-screen dimmer. Work remains to migrate the Willow, Marigold, Nova, Lumi, Pebble, Ripple and Pip egg conversation-only scenes while preserving their exact quest, relationship, choice and completion semantics, then complete responsive rendered evidence and qualification.
+The canonical `WorldConversationPresenter` now owns Pip, roaming-resident speech and the migrated Willow, Marigold, Nova, Lumi, Pebble, Ripple and Pip egg conversations without leaving their active world scenes. The seven conversation-only scenes and routes are retired; genuine race, hatch and activity modes remain. Local unit/type/build/static/performance validation passes. Browser qualification, four-class rendered evidence and immutable candidate smoke remain before technical completion.
 
 ## Accepted baseline
 
@@ -18,4 +18,4 @@ WP19D is complete, human-approved and merged as `753bea0e10078d0367e0ec21c937e05
 
 ## Gate and next action
 
-Continue bounded WP19E implementation and technical qualification. Open and maintain one draft PR against main. Stop when the immutable review candidate is technically qualified. David's visual and child-reading approval remains mandatory before merge or production deployment. Do not start WP19F or R7.
+Complete browser qualification and four-class rendered evidence on the existing draft PR, then publish and smoke-bind an immutable review candidate. Stop for David's visual and child-reading approval. Do not merge, deploy production, or start WP19F/R7.

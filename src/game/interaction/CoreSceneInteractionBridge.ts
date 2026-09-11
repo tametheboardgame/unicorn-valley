@@ -8,6 +8,11 @@ import { MOONFLOWER_GLADE_INTERACTIONS } from './MoonflowerGladeInteractions';
 import { getSceneInteractionRegistry } from './SceneInteractionRegistry';
 import { RAINBOW_MEADOW_MAP } from '../world/RainbowMeadowMap';
 import { SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
+import {
+  startMarigoldConversation,
+  startNovaConversation,
+  startWillowConversation,
+} from '../story/WorldStoryConversations';
 
 const OWNER_KEY = 'wp19d-core-scene-interactions';
 
@@ -173,11 +178,7 @@ function villageTargets(scene: Phaser.Scene): InteractionTarget[] {
         position: npc('willow'),
         interactionRadius: 150,
         priority: 30,
-        result: {
-          type: 'scene-transition',
-          sceneKey: 'WillowStoryScene',
-          payload: { returnScene: 'SunbeamVillageScene' },
-        },
+        result: { type: 'callback', activate: () => startWillowConversation(scene) },
       },
       'talk',
     ],
@@ -189,11 +190,7 @@ function villageTargets(scene: Phaser.Scene): InteractionTarget[] {
         position: npc('marigold'),
         interactionRadius: 150,
         priority: 30,
-        result: {
-          type: 'scene-transition',
-          sceneKey: 'MarigoldPicnicScene',
-          payload: { returnScene: 'SunbeamVillageScene' },
-        },
+        result: { type: 'callback', activate: () => startMarigoldConversation(scene) },
       },
       'talk',
     ],
@@ -258,11 +255,7 @@ function meadowTargets(scene: Phaser.Scene): InteractionTarget[] {
         position: npc('nova'),
         interactionRadius: 155,
         priority: 30,
-        result: {
-          type: 'scene-transition',
-          sceneKey: 'NovaStoryScene',
-          payload: { returnScene: 'RainbowMeadowScene' },
-        },
+        result: { type: 'callback', activate: () => startNovaConversation(scene) },
       },
       'talk',
     ],
