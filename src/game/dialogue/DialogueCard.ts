@@ -23,15 +23,12 @@ const COMPACT_LAYOUT = {
   speaker: { x: 330, y: GAME_HEIGHT - 194, fontSize: 24 },
   hint: { x: 1050, y: GAME_HEIGHT - 194, fontSize: 14 },
   body: { x: 330, y: GAME_HEIGHT - 164, width: 620, fontSize: 23 },
-  action: { x: 985, y: GAME_HEIGHT - 44, width: 180, height: 46 },
+  action: { x: 985, y: GAME_HEIGHT - 44, width: 180, height: 48 },
   indicatorX: 1047,
 } as const;
 
 const COMPACT_BODY_MAX_HEIGHT =
-  COMPACT_LAYOUT.action.y -
-  COMPACT_LAYOUT.action.height / 2 -
-  COMPACT_LAYOUT.body.y -
-  8;
+  COMPACT_LAYOUT.action.y - COMPACT_LAYOUT.action.height / 2 - COMPACT_LAYOUT.body.y - 8;
 
 const EXPANDED_LAYOUT = {
   panel: { x: GAME_WIDTH / 2, y: GAME_HEIGHT - 164, width: 1120, height: 286 },
