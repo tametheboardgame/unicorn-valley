@@ -4,7 +4,6 @@ import { DiscoveryService } from '../discovery/DiscoveryService';
 import { FIRST_DISCOVERY_ID } from '../intro/PipIntro';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
-import { setMoonflowerGladePlayerSpawn } from '../world/MoonflowerGladeMap';
 import {
   PIP_EGG_CLUE_SPOTS,
   getActivePipEggClue,
@@ -12,6 +11,7 @@ import {
   type PipEggClueSpot,
   type PipEggStage,
 } from './PipEggArc';
+import { startPipEggConversation } from './WorldStoryConversations';
 
 const COTTAGE_NEST_POSITION = { x: 1225, y: 970 } as const;
 
@@ -181,8 +181,7 @@ export class PipEggWorldManager {
     awaitingIntro: boolean,
   ): void {
     if (awaitingIntro) {
-      setMoonflowerGladePlayerSpawn({ x: player.x, y: player.y });
-      scene.scene.start('PipEggStoryScene', { returnScene: 'MoonflowerGladeScene' });
+      startPipEggConversation(scene);
       return;
     }
 

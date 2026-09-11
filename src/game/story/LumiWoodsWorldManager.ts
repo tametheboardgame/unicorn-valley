@@ -9,9 +9,8 @@ import { SecretDiscoveryService } from '../discovery/SecretDiscoveryService';
 import type { InteractionTarget } from '../interaction/InteractionTarget';
 import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { getBrowserSaveService } from '../save/browserSaveService';
-import { rememberWorldReturnState } from '../world/WorldArrivalState';
-import { setWhisperingWoodsPlayerSpawn } from '../world/WhisperingWoodsMap';
 import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
+import { startLumiConversation } from './WorldStoryConversations';
 
 const PRESENTATION_NAME = 'lumi-woods-presentation';
 const LUMI_POSITION = { x: 2980, y: 1530 } as const;
@@ -308,11 +307,7 @@ export class LumiWoodsWorldManager {
   }
 
   private openLumiStory(scene: Phaser.Scene): void {
-    const player = findPlayer(scene);
-    if (player) {
-      rememberWorldReturnState('WhisperingWoodsScene', player, setWhisperingWoodsPlayerSpawn);
-    }
-    scene.scene.start('LumiStoryScene', { returnScene: 'WhisperingWoodsScene' });
+    startLumiConversation(scene);
   }
 
   private clearState(): void {

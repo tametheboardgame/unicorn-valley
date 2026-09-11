@@ -247,3 +247,9 @@ shadow per action, without an obsolete Back layer or square scene-owned
 underlay. Reset must use a complete solid tangent arrowhead that reads clearly
 at native phone scale. Rendered desktop and phone evidence remains required;
 this does not approve merge, production deployment or WP19D.
+
+## UV-D023 - WP19E conversation ownership begins in the interaction coordinator
+
+Status: Accepted implementation decision, 2026-09-11.
+
+David explicitly released WP19E after approving WP19D. Ordinary in-world dialogue is owned by one `WorldConversationPresenter` entered through `WorldInteractionCoordinator`; it retains `DialogueSession`, registered dialogue IDs and domain effect execution, uses `InteractionModalState` for the complete lifetime, and uses the existing close-input suppression boundary. Pip and roaming-resident short speech are the first migrated routes. A transparent input surface may intercept background input, but ordinary speech must not visibly dim the world. Conversation-only story scenes are retirement targets, while races, minigames, creator flows and actual interiors remain genuine-mode exceptions.

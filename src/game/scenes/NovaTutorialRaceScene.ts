@@ -905,7 +905,7 @@ export class NovaTutorialRaceScene extends Phaser.Scene {
     });
 
     continueButton.on('pointerdown', () => {
-      this.scene.start('NovaStoryScene', { returnScene: 'RainbowMeadowScene' });
+      this.exitToMeadow();
     });
   }
 

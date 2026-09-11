@@ -8,6 +8,7 @@ import { SecretDiscoveryService } from '../discovery/SecretDiscoveryService';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
 import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
+import { startPebbleConversation } from './WorldStoryConversations';
 
 const SUPPORTED_SCENES = [
   'MoonflowerGladeScene',
@@ -362,7 +363,7 @@ export class PebbleCollectionWorldManager {
     if (!scene.scene.isActive()) {
       return;
     }
-    scene.scene.start('PebbleStoryScene', { returnScene: 'SunbeamVillageScene' });
+    startPebbleConversation(scene);
   }
 
   private showDiscoveryFeedback(scene: Phaser.Scene, message: string): void {

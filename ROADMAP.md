@@ -2,7 +2,7 @@
 
 ## 2026-09-08 approved remediation plan
 
-WP19B was human-approved and merged as `c2d98ae` on 9 September 2026; its merge-SHA-bound production smoke passed in Actions `34356744951`. WP19C was subsequently human-approved, merged through PR #163 and released to production. WP19D is now the active package on draft PR #164. David’s mild observation that some places appear to have two path layers is now explicitly owned by the post-audio area-by-area final polish programme rather than a generic final graphics pass.
+WP19B was human-approved and merged as `c2d98ae` on 9 September 2026; its merge-SHA-bound production smoke passed in Actions `34356744951`. WP19C was subsequently human-approved, merged through PR #163 and released to production. WP19D is complete, human-approved, merged and released; WP19E is active. David’s mild observation that some places appear to have two path layers is explicitly owned by the post-audio area-by-area final polish programme rather than a generic final graphics pass.
 
 David approved the whole-game audit remediation plan on 2026-09-08. Read `docs/audits/2026-09-08-WHOLE-GAME-AUDIT.md` and `docs/2026-09-08-REMEDIATION-PROPOSAL.md` first. Approved next order: WP19A persistence safety → WP18K foundation → WP19B boundaries/navigation → WP19C creator → WP19D interactions/NPCs → WP19E conversations → WP19F consistent UI/generated title → WP19G/H audio → WP19H1-H13 area-by-area final polish → WP19I qualification → WP18H daughter replay → WP17 readiness. Independent preparation is described in the proposal.
 
@@ -98,28 +98,17 @@ The approved creator uses the progressive concept layout, supported real appeara
 
 ### R6.5-WP19D - Unified Interactions and NPC Engagement
 
-State: **active remediation after David review on 2026-09-11; draft PR #164 remains unmerged**.
+State: **complete / human-approved / merged through PR #164 / production released**.
 
 Path: `docs/work-packages/R6.5-WP19D-UNIFIED-INTERACTIONS-NPCS.md`
 
-The interaction foundation is accepted as the direction: contextual actions work, roaming NPCs stop and face the player, and distance gating behaves correctly. The current candidate is not accepted for merge until this bounded remediation is complete and re-reviewed.
-
-Required WP19D remediation:
-
-- hide touch movement/Gallop controls on desktop/laptop while preserving contextual Talk/Interact/Enter/Start actions;
-- give visible unicorn NPCs appropriate physical/soft collision so player and residents cannot pass through one another;
-- move conversation presentation into the protected lower-screen speech area;
-- while speech is active, hide the contextual target/name/hint surface so only the conversation owns that lower area, then restore it only after the closing input has been consumed/released;
-- move or reduce Wonderbook discovery feedback so it cannot collide with the top HUD or active speech UI;
-- restore the persistent exploration top HUD in Starlight Beach;
-- normalise equivalent NPC conversation entry through the shared interaction owner;
-- preserve the already-successful interaction coordinator, NPC engagement and distance behaviour.
+The interaction foundation is accepted: contextual actions work, roaming NPCs stop and face the player, distance gating behaves correctly, desktop touch movement controls are hidden, visible unicorn NPC collision is present, lower-screen feedback placement was corrected, Starlight Beach keeps the exploration HUD, and equivalent NPC entry now uses the shared interaction owner.
 
 Do **not** add a temporary ordinary-conversation return-position/checkpoint system. Conversation-only scene transitions are being retired by WP19E, which removes that failure mode instead of patching it.
 
 ### R6.5-WP19E - Conversation and Feedback System
 
-State: **approved next package; blocked until WP19D is accepted**.
+State: **active implementation; Amber visual/child-reading gate remains pending**.
 
 Path: `docs/work-packages/R6.5-WP19E-CONVERSATION-FEEDBACK.md`
 
@@ -197,7 +186,7 @@ Run another substantially unguided daughter playthrough on the Galaxy Tab S8 aft
 
 ### Dependency chain
 
-`WP17 evidence -> WP18A-G complete -> WP18I/J approved -> WP19A accepted -> WP18K complete -> WP19B complete -> WP19C complete -> WP19D remediation/acceptance -> WP19E -> WP19F -> WP19G -> WP19H audio -> WP19H1-H13 area final passes (+ any inventory-discovered additions) -> WP19I qualification -> WP18H human replay -> WP17 explicit readiness decision -> R7`
+`WP17 evidence -> WP18A-G complete -> WP18I/J approved -> WP19A accepted -> WP18K complete -> WP19B complete -> WP19C complete -> WP19D complete -> WP19E -> WP19F -> WP19G -> WP19H audio -> WP19H1-H13 area final passes (+ any inventory-discovered additions) -> WP19I qualification -> WP18H human replay -> WP17 explicit readiness decision -> R7`
 
 ## R6.6 - Optional Android Packaging
 

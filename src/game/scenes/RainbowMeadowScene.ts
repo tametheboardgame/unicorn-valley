@@ -76,11 +76,7 @@ const MEADOW_INTERACTIONS = [
     position: npcPosition('nova'),
     interactionRadius: 155,
     priority: 30,
-    result: {
-      type: 'scene-transition',
-      sceneKey: 'NovaStoryScene',
-      payload: { returnScene: 'RainbowMeadowScene' },
-    },
+    result: { type: 'message', title: 'Nova', message: 'Talk with Nova.' },
   },
   {
     id: 'interaction:meadow-ribbon-board',

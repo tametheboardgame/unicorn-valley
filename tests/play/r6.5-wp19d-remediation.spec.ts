@@ -229,13 +229,13 @@ test.describe('R6.5-WP19D interaction remediation', () => {
       .poll(async () => {
         const current = await getScene(page, 'MoonflowerGladeScene');
         return current.objects.some(
-          (object) => object.name === 'wp19d-resident-conversation-panel' && object.visible,
+          (object) => object.name === 'dialogue-production-panel' && object.visible,
         );
       })
       .toBe(true);
 
     scene = await getScene(page, 'MoonflowerGladeScene');
-    const conversation = objectByName(scene, 'wp19d-resident-conversation-panel');
+    const conversation = objectByName(scene, 'dialogue-production-panel');
     expect(conversation.y).toBeGreaterThan(500);
     expect(objectByName(scene, 'exploration-location-title-panel').visible).toBe(true);
     expect(objectByName(scene, 'exploration-interaction-prompt').visible).toBe(false);
@@ -256,9 +256,7 @@ test.describe('R6.5-WP19D interaction remediation', () => {
     await page.waitForTimeout(250);
     scene = await getScene(page, 'MoonflowerGladeScene');
     expect(
-      scene.objects.some(
-        (object) => object.name === 'wp19d-resident-conversation-panel' && object.visible,
-      ),
+      scene.objects.some((object) => object.name === 'dialogue-production-panel' && object.visible),
     ).toBe(false);
   });
 

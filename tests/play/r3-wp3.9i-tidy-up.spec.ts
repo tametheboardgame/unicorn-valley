@@ -122,6 +122,27 @@ async function positionAtNovaContextualAction(page: Page): Promise<void> {
   );
 }
 
+async function waitForVisibleObject(
+  page: Page,
+  sceneKey: string,
+  objectName: string,
+): Promise<void> {
+  await page.waitForFunction(
+    ({ expectedScene, expectedObject }) => {
+      const diagnostics = (
+        window as typeof window & {
+          __UNICORN_VALLEY_DIAGNOSTICS__?: { snapshot(): BrowserDiagnosticSnapshot };
+        }
+      ).__UNICORN_VALLEY_DIAGNOSTICS__;
+      const scene = diagnostics
+        ?.snapshot()
+        .scenes.find((candidate) => candidate.key === expectedScene);
+      return scene?.objects.some((object) => object.name === expectedObject && object.visible);
+    },
+    { expectedScene: sceneKey, expectedObject: objectName },
+  );
+}
+
 test('exploration chrome uses the canonical static HUD and a centred canvas', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/?scene=glade&diagnostics=1');
@@ -196,10 +217,10 @@ test('held movement carries through an automatic world transition on the first p
   await page.keyboard.up('ArrowRight');
 });
 
-test('Nova keeps her canonical identity and returns the player to the exact conversation point', async ({
+test('Nova keeps her canonical identity and conversation stays at the exact world point', async ({
   page,
 }) => {
-  test.setTimeout(75_000);
+  await page.addInitScript(() => window.localStorage.clear());
   await page.goto('/?scene=meadow&diagnostics=1');
   await waitForScene(page, 'RainbowMeadowScene');
 
@@ -233,28 +254,41 @@ test('Nova keeps her canonical identity and returns the player to the exact conv
         object.text === 'Talk',
     ),
   ).toBe(true);
-  expect(
-    meadow.objects.some(
-      (object) =>
-        object.name === 'exploration-tablet-hint' &&
-        object.visible &&
-        object.text?.includes('Nova'),
-    ),
-  ).toBe(true);
   const beforeConversation = playerObject(meadow);
 
   await page.keyboard.press('e', { delay: 50 });
-  await waitForScene(page, 'NovaStoryScene');
+  await waitForVisibleObject(page, 'RainbowMeadowScene', 'dialogue-production-panel');
 
   snapshot = await getSnapshot(page);
-  const story = sceneSnapshot(snapshot, 'NovaStoryScene');
+  meadow = sceneSnapshot(snapshot, 'RainbowMeadowScene');
+  expect(snapshot.activeScenes).toContain('RainbowMeadowScene');
+  expect(snapshot.activeScenes).not.toContain('NovaStoryScene');
   expect(
-    story.objects.some((object) => object.name === 'nova-canonical-identity' && object.visible),
+    meadow.objects.some(
+      (object) =>
+        object.name === 'dialogue-production-speaker-name' &&
+        object.visible &&
+        object.text === 'Nova',
+    ),
+  ).toBe(true);
+  expect(
+    meadow.objects.some(
+      (object) =>
+        object.name === 'dialogue-production-portrait-nova' &&
+        object.visible &&
+        object.textureKey === 'core-npc-production:nova:happy',
+    ),
   ).toBe(true);
 
   await page.keyboard.press('Escape', { delay: 50 });
-  await waitForScene(page, 'RainbowMeadowScene');
-  await page.waitForTimeout(100);
+  await expect
+    .poll(async () => {
+      const current = sceneSnapshot(await getSnapshot(page), 'RainbowMeadowScene');
+      return current.objects.some(
+        (object) => object.name === 'dialogue-production-panel' && object.visible,
+      );
+    })
+    .toBe(false);
 
   snapshot = await getSnapshot(page);
   meadow = sceneSnapshot(snapshot, 'RainbowMeadowScene');
@@ -263,42 +297,35 @@ test('Nova keeps her canonical identity and returns the player to the exact conv
   expect(Math.abs(afterConversation.y - beforeConversation.y)).toBeLessThan(1);
 });
 
-test('finishing a Nova conversation offers a direct race choice and races use canonical Nova', async ({
+test('finishing Nova conversation offers an in-world race choice and uses canonical Nova', async ({
   page,
 }) => {
-  await page.goto('/?scene=nova-story&diagnostics=1');
-  await waitForScene(page, 'NovaStoryScene');
+  await page.addInitScript(() => window.localStorage.clear());
+  await page.goto('/?scene=meadow&diagnostics=1');
+  await waitForScene(page, 'RainbowMeadowScene');
+  await positionAtNovaContextualAction(page);
+  await page.keyboard.press('e', { delay: 50 });
+  await waitForVisibleObject(page, 'RainbowMeadowScene', 'dialogue-production-panel');
 
   for (let index = 0; index < 12; index += 1) {
-    const snapshot = await getSnapshot(page);
-    const story = sceneSnapshot(snapshot, 'NovaStoryScene');
-    if (story.objects.some((object) => object.name === 'nova-race-decision' && object.visible)) {
+    const current = sceneSnapshot(await getSnapshot(page), 'RainbowMeadowScene');
+    if (current.objects.some((object) => object.name === 'nova-race-decision' && object.visible)) {
       break;
     }
     await page.keyboard.press('Enter');
     await page.waitForTimeout(90);
   }
 
-  await page.waitForFunction(() => {
-    const diagnosticWindow = window as typeof window & {
-      __UNICORN_VALLEY_DIAGNOSTICS__?: { snapshot(): BrowserDiagnosticSnapshot };
-    };
-    const story = diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__
-      ?.snapshot()
-      .scenes.find((scene) => scene.key === 'NovaStoryScene');
-    return story?.objects.some((object) => object.name === 'nova-race-decision' && object.visible);
-  });
+  await waitForVisibleObject(page, 'RainbowMeadowScene', 'nova-race-decision');
 
-  const snapshot = await getSnapshot(page);
-  const story = sceneSnapshot(snapshot, 'NovaStoryScene');
+  let snapshot = await getSnapshot(page);
+  const meadow = sceneSnapshot(snapshot, 'RainbowMeadowScene');
+  expect(snapshot.activeScenes).not.toContain('NovaStoryScene');
   expect(
-    story.objects.some((object) => object.name === 'nova-race-decision' && object.visible),
+    meadow.objects.some((object) => object.name === 'nova-race-decision-yes' && object.interactive),
   ).toBe(true);
   expect(
-    story.objects.some((object) => object.name === 'nova-race-decision-yes' && object.interactive),
-  ).toBe(true);
-  expect(
-    story.objects.some((object) => object.name === 'nova-race-decision-no' && object.interactive),
+    meadow.objects.some((object) => object.name === 'nova-race-decision-no' && object.interactive),
   ).toBe(true);
 
   await page.keyboard.press('Enter');
@@ -313,8 +340,8 @@ test('finishing a Nova conversation offers a direct race choice and races use ca
     return race?.objects.some((object) => object.name === 'nova-canonical-racer' && object.visible);
   });
 
-  const raceSnapshot = await getSnapshot(page);
-  const race = sceneSnapshot(raceSnapshot, 'NovaTutorialRaceScene');
+  snapshot = await getSnapshot(page);
+  const race = sceneSnapshot(snapshot, 'NovaTutorialRaceScene');
   expect(
     race.objects.some((object) => object.name === 'nova-canonical-racer' && object.visible),
   ).toBe(true);

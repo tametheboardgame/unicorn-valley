@@ -6,27 +6,20 @@ import { CrystalBrookScene } from '../scenes/CrystalBrookScene';
 import { DialogueTestScene } from '../scenes/DialogueTestScene';
 import { DoorwayStubScene } from '../scenes/DoorwayStubScene';
 import { FireflyLanternScene } from '../scenes/FireflyLanternScene';
-import { LumiStoryScene } from '../scenes/LumiStoryScene';
-import { MarigoldPicnicScene } from '../scenes/MarigoldPicnicScene';
 import { MoonflowerGladeScene } from '../scenes/MoonflowerGladeScene';
 import { MoonflowerPatchScene } from '../scenes/MoonflowerPatchScene';
 import { MovementTestScene } from '../scenes/MovementTestScene';
-import { NovaStoryScene } from '../scenes/NovaStoryScene';
 import { NovaTutorialRaceScene } from '../scenes/NovaTutorialRaceScene';
-import { PebbleStoryScene } from '../scenes/PebbleStoryScene';
 import { PipEggHatchScene } from '../scenes/PipEggHatchScene';
-import { PipEggStoryScene } from '../scenes/PipEggStoryScene';
 import { PreloadScene } from '../scenes/PreloadScene';
 import { RaceScene } from '../scenes/RaceScene';
 import { RainbowMeadowScene } from '../scenes/RainbowMeadowScene';
 import { RainbowRunEntryScene } from '../scenes/RainbowRunEntryScene';
 import { ResizeTestScene } from '../scenes/ResizeTestScene';
-import { RippleStoryScene } from '../scenes/RippleStoryScene';
 import { SunbeamVillageScene } from '../scenes/SunbeamVillageScene';
 import { TitleScene } from '../scenes/TitleScene';
 import { UnicornCreatorScene } from '../scenes/UnicornCreatorScene';
 import { WhisperingWoodsScene } from '../scenes/WhisperingWoodsScene';
-import { WillowStoryScene } from '../scenes/WillowStoryScene';
 import { GAME_HEIGHT, GAME_WIDTH } from './gameConstants';
 
 export const gameConfig: Phaser.Types.Core.GameConfig = {
@@ -73,15 +66,8 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
     WhisperingWoodsScene,
     FireflyLanternScene,
     RainbowRunEntryScene,
-    NovaStoryScene,
     NovaTutorialRaceScene,
     RaceScene,
-    WillowStoryScene,
-    MarigoldPicnicScene,
-    PebbleStoryScene,
-    RippleStoryScene,
-    LumiStoryScene,
-    PipEggStoryScene,
     PipEggHatchScene,
     DoorwayStubScene,
     DialogueTestScene,

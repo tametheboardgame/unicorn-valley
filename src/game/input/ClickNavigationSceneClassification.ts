@@ -31,12 +31,5 @@ export const CLICK_NAVIGATION_SCENE_CLASSIFICATION = {
     'NovaTutorialRaceScene',
     'RaceScene',
     'FireflyLanternScene',
-    'PipEggStoryScene',
-    'WillowStoryScene',
-    'NovaStoryScene',
-    'RippleStoryScene',
-    'PebbleStoryScene',
-    'LumiStoryScene',
-    'MarigoldPicnicScene',
   ],
 } as const;
