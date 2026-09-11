@@ -7,10 +7,8 @@ import {
 } from '../../content/r5CrystalBrookStory';
 import type { SecretDiscoveryDefinition } from '../../content/r4Secrets';
 import { SecretDiscoveryService } from '../discovery/SecretDiscoveryService';
-import {
-  WORLD_INTERACTION_PROMPT,
-  WorldInteractionInput,
-} from '../interaction/WorldInteractionInput';
+import type { InteractionTarget } from '../interaction/InteractionTarget';
+import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { CRYSTAL_BROOK_MAP, setCrystalBrookPlayerSpawn } from '../world/CrystalBrookMap';
 import { rememberWorldReturnState } from '../world/WorldArrivalState';
@@ -18,18 +16,16 @@ import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
 
 const PRESENTATION_NAME = 'crystal-brook-story-presentation';
 const FEEDBACK_NAME = 'crystal-brook-story-feedback';
+const REGISTRY_OWNER = 'crystal-brook-story';
 
 interface SecretMarker {
   definition: SecretDiscoveryDefinition;
   container: Phaser.GameObjects.Container;
-  prompt: Phaser.GameObjects.Text;
 }
 
 interface BrookStoryState {
   scene: Phaser.Scene;
-  interaction: WorldInteractionInput;
   ripple: Phaser.GameObjects.Container | null;
-  ripplePrompt: Phaser.GameObjects.Text | null;
   markers: Map<SecretDiscoveryDefinition['id'], SecretMarker>;
   revealedPath: Phaser.GameObjects.Container | null;
   restoredSong: Phaser.GameObjects.Container | null;
@@ -65,51 +61,9 @@ export class CrystalBrookStoryWorldManager {
     }
 
     const state = this.ensureState(scene);
-    const player = findPlayer(scene);
-    if (!player) {
-      return;
-    }
-
     this.refreshSecrets(state);
     this.refreshWorldState(state);
-
-    const ripplePosition = getRipplePosition();
-    const rippleDistance = Phaser.Math.Distance.Between(
-      player.x,
-      player.y,
-      ripplePosition.x,
-      ripplePosition.y,
-    );
-    state.ripplePrompt?.setVisible(rippleDistance <= 220);
-
-    let nearestSecret: SecretMarker | null = null;
-    let nearestSecretDistance = Number.POSITIVE_INFINITY;
-    for (const marker of state.markers.values()) {
-      const distance = Phaser.Math.Distance.Between(
-        player.x,
-        player.y,
-        marker.definition.position.x,
-        marker.definition.position.y,
-      );
-      marker.prompt.setVisible(distance <= marker.definition.interactionRadius + 90);
-      if (distance <= marker.definition.interactionRadius && distance < nearestSecretDistance) {
-        nearestSecret = marker;
-        nearestSecretDistance = distance;
-      }
-    }
-
-    if (!state.interaction.justPressed()) {
-      return;
-    }
-
-    if (nearestSecret && nearestSecretDistance <= rippleDistance) {
-      this.activateSecret(state, nearestSecret.definition);
-      return;
-    }
-
-    if (rippleDistance <= 150) {
-      this.openRippleStory(scene);
-    }
+    this.syncInteractionTargets(state);
   }
 
   private ensureState(scene: Phaser.Scene): BrookStoryState {
@@ -120,9 +74,7 @@ export class CrystalBrookStoryWorldManager {
     this.clearState();
     this.state = {
       scene,
-      interaction: new WorldInteractionInput(scene),
       ripple: null,
-      ripplePrompt: null,
       markers: new Map(),
       revealedPath: null,
       restoredSong: null,
@@ -140,35 +92,11 @@ export class CrystalBrookStoryWorldManager {
     const horn = state.scene.add.triangle(50, -72, 0, 28, 8, 0, 16, 28, 0xe5f8ff, 1).setAngle(20);
     const eye = state.scene.add.circle(44, -38, 4, 0x3e6670, 1);
     const tail = state.scene.add.ellipse(-56, -7, 24, 68, 0xa8e2c8, 0.96).setAngle(-35);
-    const prompt = state.scene.add
-      .text(0, 82, `${WORLD_INTERACTION_PROMPT}: Talk to Ripple  💬`, {
-        color: '#3f6671',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '15px',
-        fontStyle: 'bold',
-        backgroundColor: '#f4fff1ed',
-        padding: { x: 8, y: 5 },
-      })
-      .setOrigin(0.5)
-      .setVisible(false);
-    const zone = state.scene.add.zone(0, 0, 180, 180);
 
     state.ripple = state.scene.add
-      .container(position.x, position.y, [glow, tail, body, mane, head, horn, eye, prompt, zone])
+      .container(position.x, position.y, [glow, tail, body, mane, head, horn, eye])
       .setName(PRESENTATION_NAME)
       .setDepth(18);
-    state.ripplePrompt = prompt;
-
-    state.interaction.bindPointer(zone, () => {
-      const player = findPlayer(state.scene);
-      if (!player) {
-        return;
-      }
-      const distance = Phaser.Math.Distance.Between(player.x, player.y, position.x, position.y);
-      if (distance <= 150) {
-        this.openRippleStory(state.scene);
-      }
-    });
 
     state.scene.tweens.add({
       targets: glow,
@@ -216,43 +144,10 @@ export class CrystalBrookStoryWorldManager {
       })
       .setOrigin(0.5)
       .setAlpha(0.68);
-    const prompt = scene.add
-      .text(0, 50, `${WORLD_INTERACTION_PROMPT}: ${definition.label}`, {
-        color: '#3f6671',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '15px',
-        fontStyle: 'bold',
-        backgroundColor: '#f4fff1ed',
-        padding: { x: 8, y: 5 },
-      })
-      .setOrigin(0.5)
-      .setVisible(false);
-    const zone = scene.add.zone(
-      0,
-      0,
-      definition.interactionRadius * 1.4,
-      definition.interactionRadius * 1.4,
-    );
     const container = scene.add
-      .container(definition.position.x, definition.position.y, [glow, icon, prompt, zone])
+      .container(definition.position.x, definition.position.y, [glow, icon])
       .setName(PRESENTATION_NAME)
       .setDepth(19);
-
-    this.state?.interaction.bindPointer(zone, () => {
-      const player = findPlayer(scene);
-      if (!player) {
-        return;
-      }
-      const distance = Phaser.Math.Distance.Between(
-        player.x,
-        player.y,
-        definition.position.x,
-        definition.position.y,
-      );
-      if (distance <= definition.interactionRadius) {
-        this.activateSecret(this.state, definition);
-      }
-    });
 
     scene.tweens.add({
       targets: [glow, icon],
@@ -264,7 +159,42 @@ export class CrystalBrookStoryWorldManager {
       ease: 'Sine.InOut',
     });
 
-    return { definition, container, prompt };
+    return { definition, container };
+  }
+
+  private syncInteractionTargets(state: BrookStoryState): void {
+    const targets: InteractionTarget[] = [];
+    const ripplePosition = getRipplePosition();
+    if (state.ripple?.active) {
+      targets.push({
+        id: 'interaction:crystal-brook-ripple',
+        label: 'Ripple',
+        actionLabel: 'Talk',
+        actionKind: 'talk',
+        position: ripplePosition,
+        interactionRadius: 150,
+        priority: 30,
+        visible: () => state.ripple?.active === true,
+        result: { type: 'callback', activate: () => this.openRippleStory(state.scene) },
+      });
+    }
+
+    for (const marker of state.markers.values()) {
+      const { definition } = marker;
+      targets.push({
+        id: `interaction:${definition.id}`,
+        label: definition.label,
+        actionLabel: 'Inspect',
+        actionKind: 'inspect',
+        position: definition.position,
+        interactionRadius: definition.interactionRadius,
+        priority: 20,
+        visible: () => marker.container.active,
+        result: { type: 'callback', activate: () => this.activateSecret(state, definition) },
+      });
+    }
+
+    getSceneInteractionRegistry(state.scene).replaceOwnerTargets(REGISTRY_OWNER, targets);
   }
 
   private activateSecret(
@@ -284,6 +214,7 @@ export class CrystalBrookStoryWorldManager {
     state.markers.delete(definition.id);
     this.showFeedback(state.scene, definition.feedback);
     this.refreshWorldState(state);
+    this.syncInteractionTargets(state);
   }
 
   private refreshWorldState(state: BrookStoryState): void {
@@ -376,7 +307,7 @@ export class CrystalBrookStoryWorldManager {
     if (!this.state) {
       return;
     }
-    this.state.interaction.destroy();
+    getSceneInteractionRegistry(this.state.scene).clearOwner(REGISTRY_OWNER);
     this.state.ripple?.destroy(true);
     for (const marker of this.state.markers.values()) {
       marker.container.destroy(true);
