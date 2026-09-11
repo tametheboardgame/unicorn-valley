@@ -88,15 +88,21 @@ async function openCrystalBrook(page: Page, x = 3130, y = 1850): Promise<void> {
   await positionPlayer(page, x, y);
 }
 
-async function showReferenceGuidance(page: Page): Promise<void> {
-  await expect
-    .poll(async () => {
-      const scene = await sceneSnapshot(page);
-      return scene.objects.find(
-        (object) => object.name === 'exploration-tablet-hint' && object.effectiveVisible,
-      )?.text;
-    })
-    .toBe('Crystal Grotto');
+async function showReferenceGuidance(page: Page, portraitDomAction: boolean): Promise<void> {
+  if (portraitDomAction) {
+    const domPrompt = page.locator('[data-mobile-interaction-prompt="true"]');
+    await expect(domPrompt).toBeVisible();
+    await expect(domPrompt).toContainText('Crystal Grotto');
+  } else {
+    await expect
+      .poll(async () => {
+        const scene = await sceneSnapshot(page);
+        return scene.objects.find(
+          (object) => object.name === 'exploration-tablet-hint' && object.effectiveVisible,
+        )?.text;
+      })
+      .toBe('Crystal Grotto');
+  }
 
   await page.keyboard.press('KeyE');
   await expect
@@ -115,7 +121,7 @@ async function captureGuidanceEvidence(
   portraitDomAction: boolean,
 ): Promise<void> {
   await openCrystalBrook(page);
-  await showReferenceGuidance(page);
+  await showReferenceGuidance(page, portraitDomAction);
 
   const scene = await sceneSnapshot(page);
   const guidance = scene.objects.find(
