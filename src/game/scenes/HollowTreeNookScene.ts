@@ -30,7 +30,7 @@ export class HollowTreeNookScene extends InteractiveMicroLocationScene {
       playerTextureKey: PLAYER_TEXTURE_KEY,
       worldBounds: { x: 65, y: 115, width: GAME_WIDTH - 130, height: GAME_HEIGHT - 180 },
       feedback: {
-        y: 126,
+        y: 214,
         color: '#58455d',
         backgroundColor: '#fff7eaf2',
         depth: 50,
@@ -219,20 +219,30 @@ export class HollowTreeNookScene extends InteractiveMicroLocationScene {
         fontStyle: 'bold',
       })
       .setOrigin(0.5);
+
     this.add
-      .text(GAME_WIDTH / 2, 58, '🌳 Hollow Tree Nook', {
+      .rectangle(GAME_WIDTH / 2, 154, 520, 78, 0x241d31, 0.82)
+      .setStrokeStyle(2, 0x9a7aa6, 0.55)
+      .setName('nook-room-title-panel')
+      .setDepth(4);
+    this.add
+      .text(GAME_WIDTH / 2, 138, '🌳 Hollow Tree Nook', {
         color: '#fff3d8',
         fontFamily: 'system-ui, sans-serif',
-        fontSize: '30px',
+        fontSize: '25px',
         fontStyle: 'bold',
       })
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setName('nook-room-title')
+      .setDepth(5);
     this.add
-      .text(GAME_WIDTH / 2, 92, 'A tiny room hidden inside one of the oldest trees near home', {
+      .text(GAME_WIDTH / 2, 169, 'A tiny room hidden inside one of the oldest trees near home', {
         color: '#decde0',
         fontFamily: 'system-ui, sans-serif',
-        fontSize: '15px',
+        fontSize: '13px',
       })
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setName('nook-room-subtitle')
+      .setDepth(5);
   }
 }
