@@ -78,7 +78,14 @@ async function expectWorldIdentity(
   sceneKey: string,
   id: 'pip' | 'willow' | 'marigold' | 'pebble' | 'nova' | 'lumi',
 ): Promise<void> {
-  const npc = await findObject(page, sceneKey, `core-npc:${id}:world`);
+  const objectName = `core-npc:${id}:world`;
+  await expect
+    .poll(async () => (await findObject(page, sceneKey, objectName))?.visible ?? false, {
+      timeout: 6_000,
+    })
+    .toBe(true);
+
+  const npc = await findObject(page, sceneKey, objectName);
   expect(npc, `${id} overworld sprite should exist`).toBeTruthy();
   expect(npc?.visible).toBe(true);
   expect(npc?.active).toBe(true);
