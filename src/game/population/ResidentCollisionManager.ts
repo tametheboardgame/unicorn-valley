@@ -9,6 +9,7 @@ const MINIMUM_CENTRE_DISTANCE = 76;
 const PAUSE_DISTANCE = 92;
 const RESUME_DISTANCE = 108;
 const PLAYER_EDGE_PADDING = 34;
+const MOVEMENT_EPSILON = 1;
 
 interface PausedResidentTweens {
   resident: Phaser.GameObjects.Container;
@@ -122,24 +123,87 @@ export class ResidentCollisionManager {
       return;
     }
 
-    const safeDistance = Math.max(distance, 0.001);
-    const normalX = distance > 0.001 ? dx / safeDistance : 1;
-    const normalY = distance > 0.001 ? dy / safeDistance : 0;
+    const velocityX = body.velocity.x;
+    const velocityY = body.velocity.y;
+    const speed = Math.hypot(velocityX, velocityY);
+    const movingTowardTarget =
+      speed > MOVEMENT_EPSILON &&
+      velocityX * (target.x - player.x) + velocityY * (target.y - player.y) > 0;
+
+    let offsetX: number;
+    let offsetY: number;
+
+    if (movingTowardTarget) {
+      // Sliding around the edge prevents an NPC standing on a path from becoming a hard wall. Keep
+      // the player's progress along the held movement axis and add only the minimum perpendicular
+      // displacement required to restore personal space.
+      const forwardX = velocityX / speed;
+      const forwardY = velocityY / speed;
+      const perpendicularX = -forwardY;
+      const perpendicularY = forwardX;
+      const parallelDistance = dx * forwardX + dy * forwardY;
+      const perpendicularDistance = dx * perpendicularX + dy * perpendicularY;
+      const requiredPerpendicularDistance = Math.sqrt(
+        Math.max(
+          0,
+          MINIMUM_CENTRE_DISTANCE ** 2 -
+            Math.min(Math.abs(parallelDistance), MINIMUM_CENTRE_DISTANCE) ** 2,
+        ),
+      );
+
+      let side = Math.sign(perpendicularDistance);
+      if (side === 0) {
+        const bounds = scene.physics.world.bounds;
+        const positiveX = target.x + perpendicularX * requiredPerpendicularDistance;
+        const positiveY = target.y + perpendicularY * requiredPerpendicularDistance;
+        const negativeX = target.x - perpendicularX * requiredPerpendicularDistance;
+        const negativeY = target.y - perpendicularY * requiredPerpendicularDistance;
+        const positiveClearance = Math.min(
+          positiveX - bounds.left,
+          bounds.right - positiveX,
+          positiveY - bounds.top,
+          bounds.bottom - positiveY,
+        );
+        const negativeClearance = Math.min(
+          negativeX - bounds.left,
+          bounds.right - negativeX,
+          negativeY - bounds.top,
+          bounds.bottom - negativeY,
+        );
+        side = positiveClearance >= negativeClearance ? 1 : -1;
+      }
+
+      offsetX =
+        parallelDistance * forwardX +
+        side * requiredPerpendicularDistance * perpendicularX;
+      offsetY =
+        parallelDistance * forwardY +
+        side * requiredPerpendicularDistance * perpendicularY;
+    } else {
+      const safeDistance = Math.max(distance, 0.001);
+      offsetX = (distance > 0.001 ? dx / safeDistance : 1) * MINIMUM_CENTRE_DISTANCE;
+      offsetY = (distance > 0.001 ? dy / safeDistance : 0) * MINIMUM_CENTRE_DISTANCE;
+    }
+
     const bounds = scene.physics.world.bounds;
     const nextX = Phaser.Math.Clamp(
-      target.x + normalX * MINIMUM_CENTRE_DISTANCE,
+      target.x + offsetX,
       bounds.left + PLAYER_EDGE_PADDING,
       bounds.right - PLAYER_EDGE_PADDING,
     );
     const nextY = Phaser.Math.Clamp(
-      target.y + normalY * MINIMUM_CENTRE_DISTANCE,
+      target.y + offsetY,
       bounds.top + PLAYER_EDGE_PADDING,
       bounds.bottom - PLAYER_EDGE_PADDING,
     );
 
-    // body.reset keeps the Arcade body and visual in the same place and clears movement into the
-    // NPC. The player's normal controls take over again immediately when they move away.
+    // reset keeps Arcade physics and presentation aligned. Restore the active velocity afterwards so
+    // a held movement input naturally carries the player around the NPC instead of pinning them to
+    // the edge until the key or stick is released.
     body.reset(nextX, nextY);
+    if (speed > MOVEMENT_EPSILON) {
+      body.setVelocity(velocityX, velocityY);
+    }
   }
 
   private pauseResidentRoute(scene: Phaser.Scene, resident: Phaser.GameObjects.Container): void {
