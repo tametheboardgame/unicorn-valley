@@ -27,6 +27,15 @@ const ATMOSPHERE_HUD_NAMES = [
   'magical-weather-control',
   'magical-weather-hint',
 ] as const;
+const STARLIGHT_BEACH_LEGACY_FIXED_COPY = [
+  'Starlight Beach',
+  'Follow the warm sand between Shell Cove, the Tide Pools and Star Dunes.',
+] as const;
+const STARLIGHT_BEACH_LEGACY_FEEDBACK_PREFIXES = [
+  'New place discovered!',
+  'Starlight Shell found!',
+  'New discovery!',
+] as const;
 
 function usesDesktopConceptPresentation(): boolean {
   return (
@@ -73,6 +82,7 @@ export class DesktopConceptCleanupManager {
     for (const scene of this.game.scene.getScenes(true)) {
       this.hideAtmosphereHud(scene);
       this.hideLegacyInputInstruction(scene);
+      this.hideStarlightBeachLegacyHud(scene);
     }
 
     if (!usesDesktopConceptPresentation()) {
@@ -99,6 +109,35 @@ export class DesktopConceptCleanupManager {
         object.setVisible(false).disableInteractive();
       }
     }
+  }
+
+  private hideStarlightBeachLegacyHud(scene: Phaser.Scene): void {
+    if (scene.scene.key !== 'StarlightBeachScene') {
+      return;
+    }
+
+    // Starlight Beach predates the canonical exploration shell and still creates its own fixed
+    // title/instruction/discovery copy. The canonical shell and RewardFeedback now own those
+    // surfaces on every display class, so retire the old fixed copy rather than layering it under
+    // the persistent HUD.
+    visitSceneObjects(scene.children.list, (object) => {
+      if (!(object instanceof Phaser.GameObjects.Text)) {
+        return;
+      }
+      if (object.scrollFactorX !== 0 || object.scrollFactorY !== 0 || object.y >= 190) {
+        return;
+      }
+      const text = object.text.trim();
+      const isLegacyFixedCopy = STARLIGHT_BEACH_LEGACY_FIXED_COPY.includes(
+        text as (typeof STARLIGHT_BEACH_LEGACY_FIXED_COPY)[number],
+      );
+      const isLegacyFeedback = STARLIGHT_BEACH_LEGACY_FEEDBACK_PREFIXES.some((prefix) =>
+        text.startsWith(prefix),
+      );
+      if (isLegacyFixedCopy || isLegacyFeedback) {
+        object.setVisible(false).setAlpha(0.001).disableInteractive();
+      }
+    });
   }
 
   private hideLegacyInputInstruction(scene: Phaser.Scene): void {
