@@ -173,12 +173,8 @@ export class ResidentCollisionManager {
         side = positiveClearance >= negativeClearance ? 1 : -1;
       }
 
-      offsetX =
-        parallelDistance * forwardX +
-        side * requiredPerpendicularDistance * perpendicularX;
-      offsetY =
-        parallelDistance * forwardY +
-        side * requiredPerpendicularDistance * perpendicularY;
+      offsetX = parallelDistance * forwardX + side * requiredPerpendicularDistance * perpendicularX;
+      offsetY = parallelDistance * forwardY + side * requiredPerpendicularDistance * perpendicularY;
     } else {
       const safeDistance = Math.max(distance, 0.001);
       offsetX = (distance > 0.001 ? dx / safeDistance : 1) * MINIMUM_CENTRE_DISTANCE;
