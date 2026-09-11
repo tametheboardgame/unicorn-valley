@@ -5,6 +5,7 @@ import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { saveLocationCheckpoint } from '../save/saveLocationCheckpoint';
 import { getNovaFirstRacePhase, type NovaFirstRacePhase } from '../story/NovaFirstRaceStory';
+import { startNovaConversation } from '../story/WorldStoryConversations';
 import {
   RAINBOW_MEADOW_LOCATION_ID,
   RAINBOW_MEADOW_MAP,
@@ -335,7 +336,31 @@ export class RacePlaytestRecoveryManager {
     const copy = resolveRaceEntryPrompt(getNovaFirstRacePhase(progress));
     this.destroyRaceEntry(state);
     scene.physics.world.resume();
+
+    if (copy.targetScene === scene.scene.key && scene.scene.key === 'RainbowMeadowScene') {
+      this.meetNovaInActiveMeadow(scene, state);
+      return;
+    }
+
     scene.scene.start(copy.targetScene, copy.payload);
+  }
+
+  private meetNovaInActiveMeadow(scene: Phaser.Scene, state: MeadowState): void {
+    const player = scene.children.getByName(WORLD_PLAYER_NAME) as Phaser.GameObjects.Sprite | null;
+    const nova =
+      (scene.children.getByName('core-npc:nova:picnic') as Phaser.GameObjects.Sprite | null) ??
+      (scene.children.getByName('core-npc:nova:world') as Phaser.GameObjects.Sprite | null);
+
+    state.wasInside = false;
+    if (!player || !nova) {
+      return;
+    }
+
+    player.setPosition(nova.x - 120, nova.y);
+    const arcadeBody = player.body as Phaser.Physics.Arcade.Body | null;
+    arcadeBody?.setVelocity(0, 0);
+    scene.cameras.main.centerOn(player.x, player.y);
+    startNovaConversation(scene);
   }
 
   private closeRaceEntry(scene: Phaser.Scene, state: MeadowState): void {
