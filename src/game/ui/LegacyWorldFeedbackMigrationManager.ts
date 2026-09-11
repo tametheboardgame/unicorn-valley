@@ -27,10 +27,7 @@ const KNOWN_LEGACY_TOP_BACKGROUNDS = new Set([
   '#fff9edf2',
 ]);
 
-const LEGACY_TOP_NAMES = new Set([
-  'wp19d-interaction-feedback',
-  'r6-5-beach-content-feedback',
-]);
+const LEGACY_TOP_NAMES = new Set(['wp19d-interaction-feedback', 'r6-5-beach-content-feedback']);
 
 const EXCLUDED_STATUS_NAMES = new Set(['r6.5-wp12-race-feedback']);
 
