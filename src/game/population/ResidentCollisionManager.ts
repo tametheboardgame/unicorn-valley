@@ -85,6 +85,11 @@ export class ResidentCollisionManager {
       return;
     }
 
+    const body = player.body;
+    if (!(body instanceof Phaser.Physics.Arcade.Body)) {
+      return;
+    }
+
     const safeDistance = Math.max(distance, 0.001);
     const normalX = distance > 0.001 ? dx / safeDistance : 1;
     const normalY = distance > 0.001 ? dy / safeDistance : 0;
@@ -102,7 +107,7 @@ export class ResidentCollisionManager {
 
     // body.reset keeps the Arcade body and visual in the same place and clears movement into the
     // resident. The player's normal controls take over again immediately when they move away.
-    player.body.reset(nextX, nextY);
+    body.reset(nextX, nextY);
   }
 
   private pauseResidentRoute(scene: Phaser.Scene, resident: Phaser.GameObjects.Container): void {
