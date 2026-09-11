@@ -86,7 +86,9 @@ async function captureLandscape(
 }
 
 test.describe('R6.5-WP19F generated title visual evidence', () => {
-  test('desktop renders generated landscape art beneath the live title controls', async ({ page }) => {
+  test('desktop renders generated landscape art beneath the live title controls', async ({
+    page,
+  }) => {
     await captureLandscape(page, 1440, 900, 'wp19f-title-desktop.png');
   });
 
