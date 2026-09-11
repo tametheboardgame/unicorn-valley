@@ -13,7 +13,6 @@ export type InteractionActionKind =
 export type InteractionActivationMode = 'explicit' | 'automatic';
 export type InteractionPosition = MapPoint | (() => MapPoint);
 export type InteractionCondition = boolean | (() => boolean);
-export type InteractionDialogueId = DialogueId | (() => DialogueId);
 
 export interface InteractionDirectArea {
   width: number;
@@ -21,12 +20,6 @@ export interface InteractionDirectArea {
   offsetX?: number;
   offsetY?: number;
   name?: string;
-}
-
-export interface InteractionDialogueLifecycle {
-  onStart?: () => void;
-  onComplete?: () => void;
-  onCancel?: () => void;
 }
 
 export type InteractionResult =
@@ -40,10 +33,10 @@ export type InteractionResult =
       sceneKey: string;
       payload?: Record<string, unknown>;
     }
-  | ({
+  | {
       type: 'dialogue';
-      dialogueId: InteractionDialogueId;
-    } & InteractionDialogueLifecycle)
+      dialogueId: DialogueId;
+    }
   | {
       type: 'callback';
       activate: () => void;
@@ -57,11 +50,6 @@ export type InteractionResult =
  * actionKind directly and never infers behaviour from rendered text. directArea is optional
  * presentation geometry for targets that need a larger touch affordance; activation still routes
  * through the shared coordinator and the target remains range-gated by interactionRadius.
- *
- * Dialogue IDs may resolve at activation time so quest/friendship state can select the correct
- * branch without rebuilding the interaction registry. Lifecycle hooks carry existing story side
- * effects while WP19E retires conversation-only scenes; the shared presenter remains responsible
- * for visual/input ownership and DialogueSession remains responsible for node progression.
  */
 export interface InteractionTarget {
   id: string;
