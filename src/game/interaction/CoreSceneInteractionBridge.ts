@@ -54,7 +54,7 @@ function callbackTarget(
   actionKind: InteractionActionKind,
   activate: () => void,
 ): InteractionTarget {
-  if (target.result.type === 'dialogue') {
+  if (target.result.type === 'dialogue' || target.result.type === 'callback') {
     return { ...target, actionKind, activationMode: 'explicit' };
   }
   return {
@@ -269,7 +269,7 @@ function meadowTargets(scene: Phaser.Scene): InteractionTarget[] {
         priority: 20,
         result: {
           type: 'message',
-          title: 'Rainbow Run Ribbon Board',
+          title: 'Ribbon Board',
           message:
             'The polished board has hooks for Rainbow Run ribbons. Nova keeps the race names painted neatly beside them.',
         },
