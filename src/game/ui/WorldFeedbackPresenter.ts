@@ -49,11 +49,7 @@ export class WorldFeedbackPresenter {
   private reactionText: Phaser.GameObjects.Text | null = null;
 
   public constructor(private readonly scene: Phaser.Scene) {
-    this.scene.events.on(
-      Phaser.Scenes.Events.POST_UPDATE,
-      this.refreshReactionPosition,
-      this,
-    );
+    this.scene.events.on(Phaser.Scenes.Events.POST_UPDATE, this.refreshReactionPosition, this);
     this.scene.events.once(Phaser.Scenes.Events.SHUTDOWN, this.destroy, this);
     this.scene.events.once(Phaser.Scenes.Events.DESTROY, this.destroy, this);
   }
@@ -179,10 +175,7 @@ export class WorldFeedbackPresenter {
       .setOrigin(0.5)
       .setDepth(20_122);
 
-    const width = Math.min(
-      REACTION_MAX_TEXT_WIDTH + 38,
-      Math.max(210, text.width + 34),
-    );
+    const width = Math.min(REACTION_MAX_TEXT_WIDTH + 38, Math.max(210, text.width + 34));
     const height = Math.max(54, text.height + 24);
     const panel = this.scene.add.graphics().setName(REACTION_NAME).setDepth(20_121);
     panel.fillStyle(0x4b3022, 0.18);
@@ -215,11 +208,7 @@ export class WorldFeedbackPresenter {
   }
 
   public destroy(): void {
-    this.scene.events.off(
-      Phaser.Scenes.Events.POST_UPDATE,
-      this.refreshReactionPosition,
-      this,
-    );
+    this.scene.events.off(Phaser.Scenes.Events.POST_UPDATE, this.refreshReactionPosition, this);
     this.scene.events.off(Phaser.Scenes.Events.SHUTDOWN, this.destroy, this);
     this.scene.events.off(Phaser.Scenes.Events.DESTROY, this.destroy, this);
     this.pendingTimer?.destroy();
