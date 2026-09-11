@@ -182,10 +182,8 @@ test('ordinary Pip conversation stays in-world, compact and explicitly paced', a
   await expect
     .poll(
       async () =>
-        namedObject(
-          await sceneSnapshot(page, 'MoonflowerGladeScene'),
-          'dialogue-production-body',
-        ).text,
+        namedObject(await sceneSnapshot(page, 'MoonflowerGladeScene'), 'dialogue-production-body')
+          .text,
     )
     .toBe('Try a little exploring. I saw something sparkling beside the path. No rush!');
   scene = await sceneSnapshot(page, 'MoonflowerGladeScene');
@@ -195,10 +193,8 @@ test('ordinary Pip conversation stays in-world, compact and explicitly paced', a
   await expect
     .poll(
       async () =>
-        namedObject(
-          await sceneSnapshot(page, 'MoonflowerGladeScene'),
-          'dialogue-production-panel',
-        ).visible,
+        namedObject(await sceneSnapshot(page, 'MoonflowerGladeScene'), 'dialogue-production-panel')
+          .visible,
     )
     .toBe(false);
 });
