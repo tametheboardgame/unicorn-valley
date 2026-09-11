@@ -14,6 +14,8 @@ type DialogueLayout = 'compact' | 'expanded';
 
 const CORE_NPC_IDS = new Set<CoreNpcId>(['nova', 'willow', 'pip', 'pebble', 'lumi', 'marigold']);
 const COMPACT_LINE_CHARACTER_LIMIT = 118;
+const COMPACT_CHOICE_PROMPT_CHARACTER_LIMIT = 70;
+const COMPACT_CHOICE_LABEL_CHARACTER_LIMIT = 24;
 
 const COMPACT_LAYOUT = {
   panel: { x: GAME_WIDTH / 2, y: GAME_HEIGHT - 112, width: 900, height: 190 },
@@ -286,7 +288,13 @@ export class DialogueCard {
       return;
     }
 
-    this.applyLayout('expanded');
+    const useCompactChoiceLayout =
+      node.prompt.length <= COMPACT_CHOICE_PROMPT_CHARACTER_LIMIT &&
+      node.choices.length <= 3 &&
+      node.choices.every(
+        (choice) => choice.label.length <= COMPACT_CHOICE_LABEL_CHARACTER_LIMIT,
+      );
+    this.applyLayout(useCompactChoiceLayout ? 'compact' : 'expanded');
     this.updatePortrait(node.speakerId, speakerName);
     this.stopAdvanceMotion();
     this.body.setText(node.prompt);
@@ -501,31 +509,36 @@ export class DialogueCard {
     onChoice: (choice: DialogueChoice) => void,
   ): void {
     const scene = this.panel.scene;
-    const totalWidth = 760;
+    const compact = this.layout === 'compact';
+    const layoutSpec = compact ? COMPACT_LAYOUT : EXPANDED_LAYOUT;
+    const totalWidth = layoutSpec.body.width;
+    const gap = compact ? 18 : 22;
     const buttonWidth = Math.min(
-      330,
-      (totalWidth - Math.max(0, choices.length - 1) * 22) / choices.length,
+      compact ? 190 : 330,
+      (totalWidth - Math.max(0, choices.length - 1) * gap) / choices.length,
     );
-    const startX = 265 + buttonWidth / 2;
+    const startX = layoutSpec.body.x + buttonWidth / 2;
+    const buttonY = compact ? GAME_HEIGHT - 62 : GAME_HEIGHT - 82;
+    const buttonHeight = compact ? 56 : 64;
 
     choices.forEach((choice, index) => {
-      const x = startX + index * (buttonWidth + 22);
-      const shadow = createUiShadow(scene, x, GAME_HEIGHT - 82, buttonWidth, 64, 128, 0.14);
+      const x = startX + index * (buttonWidth + gap);
+      const shadow = createUiShadow(scene, x, buttonY, buttonWidth, buttonHeight, 128, 0.14);
       const button = scene.add
-        .rectangle(x, GAME_HEIGHT - 82, buttonWidth, 64, UI_COLOURS.lavender, 1)
+        .rectangle(x, buttonY, buttonWidth, buttonHeight, UI_COLOURS.lavender, 1)
         .setName(`dialogue-production-choice-${index + 1}`)
         .setStrokeStyle(4, UI_COLOURS.lavenderStrong, 1)
         .setScrollFactor(0)
         .setDepth(129)
         .setInteractive({ useHandCursor: true });
       const label = scene.add
-        .text(x, GAME_HEIGHT - 82, choice.label, {
+        .text(x, buttonY, choice.label, {
           color: UI_COLOURS.ink,
           fontFamily: UI_FONT,
-          fontSize: '18px',
+          fontSize: compact ? '16px' : '18px',
           fontStyle: 'bold',
           align: 'center',
-          wordWrap: { width: buttonWidth - 24 },
+          wordWrap: { width: buttonWidth - 20 },
         })
         .setOrigin(0.5)
         .setScrollFactor(0)
