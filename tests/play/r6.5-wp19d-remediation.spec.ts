@@ -34,6 +34,17 @@ async function waitForDiagnostics(page: Page): Promise<void> {
   await page.waitForFunction(() => '__UNICORN_VALLEY_DIAGNOSTICS__' in window);
 }
 
+async function waitForScene(page: Page, sceneKey: string): Promise<void> {
+  await page.waitForFunction((key) => {
+    const api = (
+      window as typeof window & {
+        __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
+      }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__;
+    return api?.snapshot().activeScenes.includes(key) === true;
+  }, sceneKey);
+}
+
 async function startScene(page: Page, sceneKey: string): Promise<void> {
   await page.evaluate((key) => {
     const api = (
@@ -46,14 +57,7 @@ async function startScene(page: Page, sceneKey: string): Promise<void> {
     }
     api.startScene(key);
   }, sceneKey);
-  await page.waitForFunction((key) => {
-    const api = (
-      window as typeof window & {
-        __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
-      }
-    ).__UNICORN_VALLEY_DIAGNOSTICS__;
-    return api?.snapshot().activeScenes.includes(key) === true;
-  }, sceneKey);
+  await waitForScene(page, sceneKey);
 }
 
 async function getScene(page: Page, sceneKey: string): Promise<DiagnosticSceneSnapshot> {
@@ -73,7 +77,7 @@ async function getScene(page: Page, sceneKey: string): Promise<DiagnosticSceneSn
 
 async function positionPlayer(page: Page, sceneKey: string, x: number, y: number): Promise<void> {
   await page.evaluate(
-    ({ key, targetX, targetY }) => {
+    ({ key, objectName, targetX, targetY }) => {
       const api = (
         window as typeof window & {
           __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
@@ -82,9 +86,9 @@ async function positionPlayer(page: Page, sceneKey: string, x: number, y: number
       if (!api) {
         throw new Error('Browser diagnostics are unavailable.');
       }
-      api.setArcadeSpritePosition(key, WORLD_PLAYER_NAME, targetX, targetY);
+      api.setArcadeSpritePosition(key, objectName, targetX, targetY);
     },
-    { key: sceneKey, targetX: x, targetY: y },
+    { key: sceneKey, objectName: WORLD_PLAYER_NAME, targetX: x, targetY: y },
   );
 }
 
@@ -262,9 +266,9 @@ test.describe('R6.5-WP19D interaction remediation', () => {
     page,
   }) => {
     await page.addInitScript(() => window.localStorage.clear());
-    await page.goto('/?diagnostics=1');
+    await page.goto('/?scene=beach&diagnostics=1');
     await waitForDiagnostics(page);
-    await startScene(page, 'StarlightBeachScene');
+    await waitForScene(page, 'StarlightBeachScene');
     await page.waitForTimeout(350);
 
     let scene = await getScene(page, 'StarlightBeachScene');
