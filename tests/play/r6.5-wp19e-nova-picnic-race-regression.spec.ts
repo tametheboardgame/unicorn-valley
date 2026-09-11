@@ -149,7 +149,9 @@ test('Marigold choice stays compact and Meet Nova works when Nova is already at 
   await startScene(page, 'RainbowMeadowScene');
   await waitForVisibleObject(page, 'RainbowMeadowScene', 'core-npc:nova:picnic');
   const meadowBeforeRace = await sceneSnapshot(page, 'RainbowMeadowScene');
-  const picnicNova = meadowBeforeRace.objects.find((object) => object.name === 'core-npc:nova:picnic');
+  const picnicNova = meadowBeforeRace.objects.find(
+    (object) => object.name === 'core-npc:nova:picnic',
+  );
   expect(picnicNova).toBeTruthy();
 
   await positionPlayer(
