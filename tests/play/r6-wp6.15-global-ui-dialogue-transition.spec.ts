@@ -1,10 +1,10 @@
 import { expect, test, type Page } from '@playwright/test';
 
 const PLAYER_NAME = 'world-player-unicorn';
-const PIP_APPROACH = { x: 1060, y: 825 } as const;
-const WILLOW_APPROACH = { x: 1160, y: 1160 } as const;
-const MARIGOLD_APPROACH = { x: 820, y: 860 } as const;
-const NOVA_APPROACH = { x: 2590, y: 930 } as const;
+const PIP_APPROACH = { x: 840, y: 825 } as const;
+const WILLOW_APPROACH = { x: 940, y: 1160 } as const;
+const MARIGOLD_APPROACH = { x: 600, y: 860 } as const;
+const NOVA_APPROACH = { x: 2370, y: 930 } as const;
 const RETIRED_CONVERSATION_SCENES = [
   'WillowStoryScene',
   'MarigoldPicnicScene',
@@ -104,20 +104,28 @@ async function positionPlayer(page: Page, sceneKey: string, x: number, y: number
 }
 
 function namedObject(scene: DiagnosticScene, name: string): DiagnosticObject {
-  const object = scene.objects.find((candidate) => candidate.name === name);
+  const matches = scene.objects.filter((candidate) => candidate.name === name);
+  const object = matches.find((candidate) => candidate.visible) ?? matches.at(-1);
   if (!object) {
     throw new Error(`Missing diagnostic object: ${name}`);
   }
   return object;
 }
 
+function hasVisibleNamedObject(scene: DiagnosticScene, name: string): boolean {
+  return scene.objects.some((object) => object.name === name && object.visible);
+}
+
 async function waitForVisibleObject(page: Page, sceneKey: string, name: string): Promise<void> {
   await expect
-    .poll(async () => {
-      const scene = await sceneSnapshot(page, sceneKey);
-      return scene.objects.find((object) => object.name === name)?.visible ?? false;
-    })
+    .poll(async () => hasVisibleNamedObject(await sceneSnapshot(page, sceneKey), name))
     .toBe(true);
+}
+
+async function waitForHiddenObject(page: Page, sceneKey: string, name: string): Promise<void> {
+  await expect
+    .poll(async () => hasVisibleNamedObject(await sceneSnapshot(page, sceneKey), name))
+    .toBe(false);
 }
 
 async function waitForTalkTarget(page: Page, sceneKey: string, label: string): Promise<void> {
@@ -164,6 +172,7 @@ async function assertMigratedConversationStarts(
   }
 
   await page.keyboard.press('Escape');
+  await waitForHiddenObject(page, sceneKey, 'dialogue-production-panel');
 }
 
 test('ordinary Pip conversation stays in-world, compact and explicitly paced', async ({ page }) => {
@@ -181,8 +190,8 @@ test('ordinary Pip conversation stays in-world, compact and explicitly paced', a
     "Hi! I'm Pip. I was hoping you'd arrive!",
   );
   expect(namedObject(scene, 'dialogue-production-continue-label').text).toBe('Continue');
-  expect(namedObject(scene, 'exploration-interaction-prompt').visible).toBe(false);
-  expect(namedObject(scene, 'exploration-tablet-hint-panel').visible).toBe(false);
+  expect(hasVisibleNamedObject(scene, 'exploration-interaction-prompt')).toBe(false);
+  expect(hasVisibleNamedObject(scene, 'exploration-tablet-hint-panel')).toBe(false);
 
   await waitForVisibleObject(page, 'MoonflowerGladeScene', 'dialogue-production-portrait-pip');
   scene = await sceneSnapshot(page, 'MoonflowerGladeScene');
@@ -216,13 +225,7 @@ test('ordinary Pip conversation stays in-world, compact and explicitly paced', a
   expect(namedObject(scene, 'dialogue-production-continue-label').text).toBe('Done');
 
   await page.keyboard.press('KeyE');
-  await expect
-    .poll(
-      async () =>
-        namedObject(await sceneSnapshot(page, 'MoonflowerGladeScene'), 'dialogue-production-panel')
-          .visible,
-    )
-    .toBe(false);
+  await waitForHiddenObject(page, 'MoonflowerGladeScene', 'dialogue-production-panel');
 });
 
 test('supporting resident uses the same compact family with readable fallback identity', async ({
@@ -260,17 +263,18 @@ test('Willow, Marigold and Nova migrated conversations activate from the shared 
   page,
 }) => {
   await page.addInitScript(() => window.localStorage.clear());
-  await page.goto('/?diagnostics=1');
-  await waitForDiagnostics(page);
 
-  await assertMigratedConversationStarts(page, 'SunbeamVillageScene', 'Willow', WILLOW_APPROACH);
-  await assertMigratedConversationStarts(
-    page,
-    'SunbeamVillageScene',
-    'Marigold',
-    MARIGOLD_APPROACH,
-  );
-  await assertMigratedConversationStarts(page, 'RainbowMeadowScene', 'Nova', NOVA_APPROACH);
+  const cases = [
+    ['SunbeamVillageScene', 'Willow', WILLOW_APPROACH],
+    ['SunbeamVillageScene', 'Marigold', MARIGOLD_APPROACH],
+    ['RainbowMeadowScene', 'Nova', NOVA_APPROACH],
+  ] as const;
+
+  for (const [sceneKey, speaker, position] of cases) {
+    await page.goto('/?diagnostics=1');
+    await waitForDiagnostics(page);
+    await assertMigratedConversationStarts(page, sceneKey, speaker, position);
+  }
 });
 
 test('Reduced Motion keeps conversation reveal and advance decoration static', async ({ page }) => {
