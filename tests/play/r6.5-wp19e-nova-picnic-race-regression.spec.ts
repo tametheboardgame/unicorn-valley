@@ -1,0 +1,179 @@
+import { expect, test, type Page } from '@playwright/test';
+
+const PLAYER_NAME = 'world-player-unicorn';
+const MARIGOLD_APPROACH = { x: 820, y: 860 } as const;
+const RACE_ENTRANCE_APPROACH = { x: 2970, y: 1040 } as const;
+
+interface DiagnosticObject {
+  name: string;
+  text: string | null;
+  visible: boolean;
+  x: number;
+  y: number;
+}
+
+interface DiagnosticScene {
+  key: string;
+  objects: DiagnosticObject[];
+}
+
+interface DiagnosticSnapshot {
+  activeScenes: string[];
+  scenes: DiagnosticScene[];
+}
+
+interface DiagnosticsApi {
+  snapshot(): DiagnosticSnapshot;
+  startScene(sceneKey: string, data?: object): void;
+  setArcadeSpritePosition(sceneKey: string, objectName: string, x: number, y: number): void;
+}
+
+async function waitForDiagnostics(page: Page): Promise<void> {
+  await page.waitForFunction(() => '__UNICORN_VALLEY_DIAGNOSTICS__' in window);
+}
+
+async function snapshot(page: Page): Promise<DiagnosticSnapshot> {
+  return page.evaluate(() => {
+    const diagnostics = (
+      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__;
+    if (!diagnostics) throw new Error('Browser diagnostics are unavailable.');
+    return diagnostics.snapshot();
+  });
+}
+
+async function sceneSnapshot(page: Page, sceneKey: string): Promise<DiagnosticScene> {
+  const scene = (await snapshot(page)).scenes.find(({ key }) => key === sceneKey);
+  if (!scene) throw new Error(`Missing diagnostic scene ${sceneKey}.`);
+  return scene;
+}
+
+async function waitForScene(page: Page, sceneKey: string): Promise<void> {
+  await page.waitForFunction((expectedScene) => {
+    const diagnostics = (
+      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__;
+    return diagnostics?.snapshot().activeScenes.includes(expectedScene) === true;
+  }, sceneKey);
+}
+
+async function startScene(page: Page, sceneKey: string): Promise<void> {
+  await page.evaluate((key) => {
+    const diagnostics = (
+      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__;
+    if (!diagnostics) throw new Error('Browser diagnostics are unavailable.');
+    diagnostics.startScene(key);
+  }, sceneKey);
+  await waitForScene(page, sceneKey);
+}
+
+async function positionPlayer(page: Page, sceneKey: string, x: number, y: number): Promise<void> {
+  await page.evaluate(
+    ({ key, targetX, targetY }) => {
+      const diagnostics = (
+        window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi }
+      ).__UNICORN_VALLEY_DIAGNOSTICS__;
+      if (!diagnostics) throw new Error('Browser diagnostics are unavailable.');
+      diagnostics.setArcadeSpritePosition(key, 'world-player-unicorn', targetX, targetY);
+    },
+    { key: sceneKey, targetX: x, targetY: y },
+  );
+}
+
+async function waitForVisibleObject(page: Page, sceneKey: string, name: string): Promise<void> {
+  await expect
+    .poll(async () => {
+      const scene = await sceneSnapshot(page, sceneKey);
+      return scene.objects.find((object) => object.name === name)?.visible ?? false;
+    })
+    .toBe(true);
+}
+
+async function waitForTalkTarget(page: Page, sceneKey: string, label: string): Promise<void> {
+  await expect
+    .poll(async () => {
+      const scene = await sceneSnapshot(page, sceneKey);
+      const action = scene.objects.find(
+        (object) => object.name === 'exploration-interaction-prompt-label' && object.visible,
+      );
+      const hint = scene.objects.find(
+        (object) => object.name === 'exploration-tablet-hint' && object.visible,
+      );
+      return `${action?.text ?? ''}|${hint?.text ?? ''}`;
+    })
+    .toBe(`Talk|${label}`);
+}
+
+test('Marigold choice stays compact and Meet Nova works when Nova is already at the picnic', async ({
+  page,
+}) => {
+  await page.addInitScript(() => window.localStorage.clear());
+  await page.goto('/?diagnostics=1');
+  await waitForDiagnostics(page);
+
+  await startScene(page, 'SunbeamVillageScene');
+  await positionPlayer(page, 'SunbeamVillageScene', MARIGOLD_APPROACH.x, MARIGOLD_APPROACH.y);
+  await waitForTalkTarget(page, 'SunbeamVillageScene', 'Marigold');
+  await page.keyboard.press('KeyE');
+  await waitForVisibleObject(page, 'SunbeamVillageScene', 'dialogue-production-panel');
+
+  let village = await sceneSnapshot(page, 'SunbeamVillageScene');
+  const introPanelY = village.objects.find(
+    (object) => object.name === 'dialogue-production-panel',
+  )?.y;
+  expect(introPanelY).toBeGreaterThan(590);
+
+  await page.keyboard.press('KeyE');
+  await waitForVisibleObject(page, 'SunbeamVillageScene', 'dialogue-production-choice-1');
+  village = await sceneSnapshot(page, 'SunbeamVillageScene');
+  const choicePanelY = village.objects.find(
+    (object) => object.name === 'dialogue-production-panel',
+  )?.y;
+  expect(choicePanelY).toBe(introPanelY);
+  expect(
+    village.objects.filter(
+      (object) => object.name.startsWith('dialogue-production-choice-') && object.visible,
+    ),
+  ).toHaveLength(3);
+
+  await page.keyboard.press('Enter');
+  await expect
+    .poll(async () => {
+      const scene = await sceneSnapshot(page, 'SunbeamVillageScene');
+      return scene.objects.find((object) => object.name === 'dialogue-production-body')?.text ?? '';
+    })
+    .toContain('Sunshine it is!');
+  await page.keyboard.press('KeyE');
+
+  await startScene(page, 'RainbowMeadowScene');
+  await waitForVisibleObject(page, 'RainbowMeadowScene', 'core-npc:nova:picnic');
+  const meadowBeforeRace = await sceneSnapshot(page, 'RainbowMeadowScene');
+  const picnicNova = meadowBeforeRace.objects.find((object) => object.name === 'core-npc:nova:picnic');
+  expect(picnicNova).toBeTruthy();
+
+  await positionPlayer(
+    page,
+    'RainbowMeadowScene',
+    RACE_ENTRANCE_APPROACH.x,
+    RACE_ENTRANCE_APPROACH.y,
+  );
+  await waitForVisibleObject(page, 'RainbowMeadowScene', 'race-entry-confirmation');
+  await page.keyboard.press('Enter');
+  await waitForVisibleObject(page, 'RainbowMeadowScene', 'dialogue-production-panel');
+
+  const meadowAfterMeet = await sceneSnapshot(page, 'RainbowMeadowScene');
+  const activeScenes = (await snapshot(page)).activeScenes;
+  const player = meadowAfterMeet.objects.find((object) => object.name === PLAYER_NAME);
+  const speaker = meadowAfterMeet.objects.find(
+    (object) => object.name === 'dialogue-production-speaker-name',
+  );
+
+  expect(activeScenes).toContain('RainbowMeadowScene');
+  expect(activeScenes).not.toContain('NovaStoryScene');
+  expect(speaker?.text).toBe('Nova');
+  expect(player).toBeTruthy();
+  expect(picnicNova).toBeTruthy();
+  expect(player?.x).toBeCloseTo((picnicNova?.x ?? 0) - 120, 1);
+  expect(player?.y).toBeCloseTo(picnicNova?.y ?? 0, 1);
+});
