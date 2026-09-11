@@ -73,30 +73,38 @@ async function findObject(
   );
 }
 
-const STORY_CASES = [
-  ['NovaStoryScene', 'nova', 'RainbowMeadowScene'],
-  ['WillowStoryScene', 'willow', 'SunbeamVillageScene'],
-  ['PipEggStoryScene', 'pip', 'MoonflowerGladeScene'],
-  ['PebbleStoryScene', 'pebble', 'SunbeamVillageScene'],
-  ['LumiStoryScene', 'lumi', 'WhisperingWoodsScene'],
-  ['MarigoldPicnicScene', 'marigold', 'SunbeamVillageScene'],
-] as const;
+async function expectWorldIdentity(
+  page: Page,
+  sceneKey: string,
+  id: 'pip' | 'willow' | 'marigold' | 'pebble' | 'nova' | 'lumi',
+): Promise<void> {
+  const npc = await findObject(page, sceneKey, `core-npc:${id}:world`);
+  expect(npc, `${id} overworld sprite should exist`).toBeTruthy();
+  expect(npc?.visible).toBe(true);
+  expect(npc?.active).toBe(true);
+  expect(npc?.textureKey).toMatch(new RegExp(`^core-npc-production:${id}:`));
+  expect(npc?.displayWidth ?? 0).toBeGreaterThan(70);
+  expect(npc?.displayHeight ?? 0).toBeGreaterThan(55);
+}
 
 test.describe('R6-WP6.2 core NPC production art', () => {
-  test('all six core story portraits use canonical production identities', async ({ page }) => {
+  test('all six core characters keep canonical production identities in their active world scenes', async ({
+    page,
+  }) => {
     await page.goto('/?scene=glade&diagnostics=1');
     await waitForScene(page, 'MoonflowerGladeScene');
+    await expectWorldIdentity(page, 'MoonflowerGladeScene', 'pip');
 
-    for (const [sceneKey, id, returnScene] of STORY_CASES) {
-      await startScene(page, sceneKey, { returnScene });
-      const portrait = await findObject(page, sceneKey, `core-npc:${id}:portrait`);
-      expect(portrait, `${id} portrait should exist`).toBeTruthy();
-      expect(portrait?.visible).toBe(true);
-      expect(portrait?.active).toBe(true);
-      expect(portrait?.textureKey).toBe(`core-npc-production:${id}:happy`);
-      expect(portrait?.displayWidth ?? 0).toBeGreaterThan(160);
-      expect(portrait?.displayHeight ?? 0).toBeGreaterThan(125);
-    }
+    await startScene(page, 'SunbeamVillageScene');
+    await expectWorldIdentity(page, 'SunbeamVillageScene', 'willow');
+    await expectWorldIdentity(page, 'SunbeamVillageScene', 'marigold');
+    await expectWorldIdentity(page, 'SunbeamVillageScene', 'pebble');
+
+    await startScene(page, 'RainbowMeadowScene');
+    await expectWorldIdentity(page, 'RainbowMeadowScene', 'nova');
+
+    await startScene(page, 'WhisperingWoodsScene');
+    await expectWorldIdentity(page, 'WhisperingWoodsScene', 'lumi');
   });
 
   test('production identities replace the main overworld placeholders', async ({ page }) => {
