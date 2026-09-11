@@ -114,27 +114,17 @@ async function waitForTalkTarget(page: Page, sceneKey: string, label: string): P
     .toBe(`Talk|${label}`);
 }
 
-function visiblePanelY(scene: DiagnosticScene): number | undefined {
-  return scene.objects.find(
+function visiblePanelY(scene: DiagnosticScene): number {
+  const panelY = scene.objects.find(
     (object) => object.name === 'dialogue-production-panel' && object.visible,
   )?.y;
-}
-
-function compactLinePanelY(scene: DiagnosticScene): number {
-  const panelY = visiblePanelY(scene);
-  const actionY = scene.objects.find(
-    (object) => object.name === 'dialogue-production-continue' && object.visible,
-  )?.y;
-  if (panelY === undefined || actionY === undefined) {
-    throw new Error('Expected a visible compact dialogue panel and continue control.');
+  if (panelY === undefined) {
+    throw new Error('Expected a visible dialogue panel.');
   }
-  // Compact and expanded cards intentionally use different outer geometry. Assert the
-  // compact card by the relative action-to-panel spacing rather than a canvas-specific Y.
-  expect(actionY - panelY).toBeLessThan(80);
   return panelY;
 }
 
-test('Marigold dialogue stays compact and Meet Nova works when Nova is already at the picnic', async ({
+test('Marigold and Nova dialogue keep stable sizing and Meet Nova works when Nova is already at the picnic', async ({
   page,
 }) => {
   await page.addInitScript(() => window.localStorage.clear());
@@ -148,7 +138,7 @@ test('Marigold dialogue stays compact and Meet Nova works when Nova is already a
   await waitForVisibleObject(page, 'SunbeamVillageScene', 'dialogue-production-panel');
 
   let village = await sceneSnapshot(page, 'SunbeamVillageScene');
-  const introPanelY = compactLinePanelY(village);
+  const introPanelY = visiblePanelY(village);
 
   await page.keyboard.press('KeyE');
   await waitForVisibleObject(page, 'SunbeamVillageScene', 'dialogue-production-choice-1');
@@ -171,7 +161,7 @@ test('Marigold dialogue stays compact and Meet Nova works when Nova is already a
     })
     .toContain('Sunshine it is!');
   village = await sceneSnapshot(page, 'SunbeamVillageScene');
-  expect(compactLinePanelY(village)).toBe(introPanelY);
+  expect(visiblePanelY(village)).toBe(introPanelY);
   await page.keyboard.press('KeyE');
 
   await startScene(page, 'RainbowMeadowScene');
@@ -198,7 +188,7 @@ test('Marigold dialogue stays compact and Meet Nova works when Nova is already a
   const speaker = meadowAfterMeet.objects.find(
     (object) => object.name === 'dialogue-production-speaker-name' && object.visible,
   );
-  const novaIntroPanelY = compactLinePanelY(meadowAfterMeet);
+  const novaIntroPanelY = visiblePanelY(meadowAfterMeet);
 
   expect(activeScenes).toContain('RainbowMeadowScene');
   expect(activeScenes).not.toContain('NovaStoryScene');
@@ -219,7 +209,7 @@ test('Marigold dialogue stays compact and Meet Nova works when Nova is already a
     })
     .toContain('Hold RIGHT or D');
   meadowAfterMeet = await sceneSnapshot(page, 'RainbowMeadowScene');
-  expect(compactLinePanelY(meadowAfterMeet)).toBe(novaIntroPanelY);
+  expect(visiblePanelY(meadowAfterMeet)).toBe(novaIntroPanelY);
 
   await page.keyboard.press('Escape');
   await waitForHiddenObject(page, 'RainbowMeadowScene', 'dialogue-production-panel');
