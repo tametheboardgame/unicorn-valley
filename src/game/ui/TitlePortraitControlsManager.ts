@@ -9,8 +9,8 @@ const PORTRAIT_MEDIA_QUERY = '(pointer: coarse) and (max-width: 700px) and (orie
 const TITLE_ARTWORK_NAME = 'title-generated-artwork';
 const TITLE_ARTWORK_LANDSCAPE_KEY = 'title-generated-landscape';
 const TITLE_ARTWORK_PORTRAIT_KEY = 'title-generated-portrait';
-const TITLE_ARTWORK_LANDSCAPE_URL = '/assets/title/unicorn-valley-title-landscape.webp';
-const TITLE_ARTWORK_PORTRAIT_URL = '/assets/title/unicorn-valley-title-portrait.webp';
+const TITLE_ARTWORK_LANDSCAPE_URL = '/assets/title/wp19f-title-landscape.webp';
+const TITLE_ARTWORK_PORTRAIT_URL = '/assets/title/wp19f-title-portrait.webp';
 
 interface ActionDefinition {
   objectName: string;
