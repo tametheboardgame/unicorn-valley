@@ -27,9 +27,7 @@ export function openNovaRaceDecision(scene: Phaser.Scene): boolean {
   const copy = resolveRaceEntryPrompt(phase);
   let closed = false;
 
-  const shade = scene.add
-    .rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x392f44, 0.28)
-    .setOrigin(0);
+  const shade = scene.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x392f44, 0.28).setOrigin(0);
   const shadow = scene.add.rectangle(
     GAME_WIDTH / 2 + 7,
     GAME_HEIGHT / 2 + 10,
