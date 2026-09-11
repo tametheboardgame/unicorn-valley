@@ -1,21 +1,21 @@
 import type Phaser from 'phaser';
 import type { DialogueId } from '../../content/contentTypes';
+import { NOVA_FIRST_RACE_QUEST_ID } from '../../content/r3Quests';
+import { WILLOW_MOONFLOWERS_QUEST_ID } from '../../content/r2Quests';
 import { PIP_STRANGE_EGG_QUEST_ID } from '../../content/r4EggArc';
+import {
+  WILLOW_POST_MOONFLOWERS_SEEN_FLAG,
+  WILLOW_POST_MOONFLOWERS_VARIANTS_ID,
+} from '../../content/r4DialogueVariants';
 import {
   MARIGOLD_CHARACTER_ID,
   MARIGOLD_PICNIC_QUEST_ID,
   MARIGOLD_PICNIC_VARIANTS_ID,
 } from '../../content/r4PicnicEvent';
 import { PEBBLE_CHARACTER_ID, PEBBLE_COLLECTION_QUEST_ID } from '../../content/r4PebbleStory';
-import { LUMI_CHARACTER_ID, LUMI_INTRO_RELATIONSHIP_FLAG } from '../../content/r5LumiWoodsStory';
-import { RIPPLE_BROOK_QUEST_ID, RIPPLE_CHARACTER_ID } from '../../content/r5CrystalBrookStory';
 import { SINGING_SHELL_ITEM_ID } from '../../content/r5CrystalBrook';
-import { NOVA_FIRST_RACE_QUEST_ID } from '../../content/r3Quests';
-import { WILLOW_MOONFLOWERS_QUEST_ID } from '../../content/r2Quests';
-import {
-  WILLOW_POST_MOONFLOWERS_SEEN_FLAG,
-  WILLOW_POST_MOONFLOWERS_VARIANTS_ID,
-} from '../../content/r4DialogueVariants';
+import { RIPPLE_BROOK_QUEST_ID, RIPPLE_CHARACTER_ID } from '../../content/r5CrystalBrookStory';
+import { LUMI_CHARACTER_ID, LUMI_INTRO_RELATIONSHIP_FLAG } from '../../content/r5LumiWoodsStory';
 import { dialogueVariantSetRegistry } from '../../content/registries';
 import { selectDialogueVariantSet } from '../dialogue/DialogueConditions';
 import { getWorldConversationPresenter } from '../dialogue/WorldConversationPresenter';
@@ -31,6 +31,7 @@ import {
   getNovaFirstRacePhase,
   NOVA_CHARACTER_ID,
 } from './NovaFirstRaceStory';
+import { openNovaRaceDecision } from './NovaRaceDecision';
 import { getPebbleStoryPhase } from './PebbleCollectionStory';
 import { getPipEggDialogueId } from './PipEggArc';
 import { getWillowStoryPhase, WILLOW_CHARACTER_ID } from './WillowMoonflowersStory';
@@ -184,10 +185,12 @@ export function startNovaConversation(scene: Phaser.Scene): void {
           : 'dialogue:nova-first-race-followup';
   start(scene, {
     dialogueId,
-    complete:
-      phase === 'invitation' || phase === 'result-ready'
-        ? () => quests.notifyCharacterTalked(NOVA_CHARACTER_ID)
-        : undefined,
+    complete: () => {
+      if (phase === 'invitation' || phase === 'result-ready') {
+        quests.notifyCharacterTalked(NOVA_CHARACTER_ID);
+      }
+      openNovaRaceDecision(scene);
+    },
   });
 }
 
