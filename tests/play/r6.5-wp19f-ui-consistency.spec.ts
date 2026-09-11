@@ -197,4 +197,69 @@ test.describe('R6.5-WP19F UI consistency', () => {
       fullPage: true,
     });
   });
+
+  test('landscape title preloads only the landscape artwork and keeps the live menu usable on image failure', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1280, height: 720 });
+    await page.route('**/assets/title/wp19f-title-*.webp', async (route) => route.abort());
+    await diagnostics(page);
+    await page.waitForFunction(() =>
+      document.querySelector('link[rel="preload"][href$="/assets/title/wp19f-title-landscape.webp"]'),
+    );
+
+    await expect(
+      page.locator('link[rel="preload"][href$="/assets/title/wp19f-title-landscape.webp"]'),
+    ).toHaveCount(1);
+    await expect(
+      page.locator('link[rel="preload"][href$="/assets/title/wp19f-title-portrait.webp"]'),
+    ).toHaveCount(0);
+
+    const title = sceneFrom(await snapshot(page), 'TitleScene');
+    expect(
+      title.objects.some(
+        (object) => object.name === 'title-art:sky' && object.effectiveVisible,
+      ),
+    ).toBe(true);
+    expect(
+      title.objects.some(
+        (object) => object.name === 'title-menu-new-game' && object.interactive,
+      ),
+    ).toBe(true);
+    expect(
+      title.objects.some(
+        (object) => object.name === 'title-menu-settings' && object.interactive,
+      ),
+    ).toBe(true);
+  });
+
+  test.describe('phone portrait title artwork selection', () => {
+    test.use({ viewport: { width: 390, height: 844 }, hasTouch: true });
+
+    test('portrait presentation selects only the portrait derivative and keeps live controls above it', async ({
+      page,
+    }) => {
+      await page.route('**/assets/title/wp19f-title-*.webp', async (route) => route.abort());
+      await diagnostics(page);
+      await page.waitForFunction(() =>
+        document.querySelector('link[rel="preload"][href$="/assets/title/wp19f-title-portrait.webp"]'),
+      );
+
+      await expect(
+        page.locator('link[rel="preload"][href$="/assets/title/wp19f-title-portrait.webp"]'),
+      ).toHaveCount(1);
+      await expect(
+        page.locator('link[rel="preload"][href$="/assets/title/wp19f-title-landscape.webp"]'),
+      ).toHaveCount(0);
+
+      const controls = page.locator('[data-title-portrait-controls="true"]');
+      await expect(controls).toBeVisible();
+      const backgroundImage = await controls.evaluate(
+        (element) => getComputedStyle(element).backgroundImage,
+      );
+      expect(backgroundImage).toContain('/assets/title/wp19f-title-portrait.webp');
+      await expect(page.locator('[data-title-action="title-menu-new-game"]')).toBeVisible();
+      await expect(page.locator('[data-title-action="title-menu-settings"]')).toBeVisible();
+    });
+  });
 });
