@@ -22,7 +22,17 @@ const KNOWN_LEGACY_TOP_BACKGROUNDS = new Set([
   '#fff8eaf2',
   '#efffeef2',
   '#f4fff1f2',
+  '#f2fff0f2',
+  '#fff7eaf0',
+  '#fff9edf2',
 ]);
+
+const LEGACY_TOP_NAMES = new Set([
+  'wp19d-interaction-feedback',
+  'r6-5-beach-content-feedback',
+]);
+
+const EXCLUDED_STATUS_NAMES = new Set(['r6.5-wp12-race-feedback']);
 
 const GUIDANCE_PATTERNS = [
   /may know how/i,
@@ -35,6 +45,8 @@ const GUIDANCE_PATTERNS = [
   /head (?:to|towards?)/i,
   /find .+(?:first|near|at|in)/i,
   /(?:door|gate|steps?).+(?:closed|locked|folded|won't open|will not open)/i,
+  /help .+ first/i,
+  /explore .+ first/i,
 ];
 
 const DISCOVERY_DUPLICATE_NAMES = new Set(['crystal-brook-story-feedback']);
@@ -67,21 +79,23 @@ function backgroundColour(text: Phaser.GameObjects.Text): string | null {
 }
 
 function isLegacyTopFeedback(text: Phaser.GameObjects.Text): boolean {
-  if (!text.visible || text.text.trim().length === 0 || text.scrollFactorX !== 0) {
+  if (
+    !text.visible ||
+    text.text.trim().length === 0 ||
+    text.scrollFactorX !== 0 ||
+    EXCLUDED_STATUS_NAMES.has(text.name)
+  ) {
     return false;
   }
 
-  if (
-    text.name === 'wp19d-interaction-feedback' ||
-    DISCOVERY_DUPLICATE_NAMES.has(text.name)
-  ) {
+  if (LEGACY_TOP_NAMES.has(text.name) || DISCOVERY_DUPLICATE_NAMES.has(text.name)) {
     return true;
   }
 
   const background = backgroundColour(text);
   return (
     text.y >= 100 &&
-    text.y <= 150 &&
+    text.y <= 190 &&
     text.depth >= 130 &&
     background !== null &&
     KNOWN_LEGACY_TOP_BACKGROUNDS.has(background)
