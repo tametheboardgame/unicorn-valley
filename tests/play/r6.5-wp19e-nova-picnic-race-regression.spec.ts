@@ -90,6 +90,15 @@ async function waitForVisibleObject(page: Page, sceneKey: string, name: string):
     .toBe(true);
 }
 
+async function waitForHiddenObject(page: Page, sceneKey: string, name: string): Promise<void> {
+  await expect
+    .poll(async () => {
+      const scene = await sceneSnapshot(page, sceneKey);
+      return scene.objects.some((object) => object.name === name && object.visible);
+    })
+    .toBe(false);
+}
+
 async function waitForTalkTarget(page: Page, sceneKey: string, label: string): Promise<void> {
   await expect
     .poll(async () => {
@@ -142,9 +151,8 @@ test('Marigold choice stays compact and Meet Nova works when Nova is already at 
     .poll(async () => {
       const scene = await sceneSnapshot(page, 'SunbeamVillageScene');
       return (
-        scene.objects.find(
-          (object) => object.name === 'dialogue-production-body' && object.visible,
-        )?.text ?? ''
+        scene.objects.find((object) => object.name === 'dialogue-production-body' && object.visible)
+          ?.text ?? ''
       );
     })
     .toContain('Sunshine it is!');
@@ -182,4 +190,8 @@ test('Marigold choice stays compact and Meet Nova works when Nova is already at 
   expect(picnicNova).toBeTruthy();
   expect(Math.abs((player?.x ?? 0) - ((picnicNova?.x ?? 0) - 120))).toBeLessThan(6);
   expect(Math.abs((player?.y ?? 0) - (picnicNova?.y ?? 0))).toBeLessThan(6);
+
+  await page.keyboard.press('Escape');
+  await waitForHiddenObject(page, 'RainbowMeadowScene', 'dialogue-production-panel');
+  await waitForTalkTarget(page, 'RainbowMeadowScene', 'Nova');
 });
