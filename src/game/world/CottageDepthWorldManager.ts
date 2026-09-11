@@ -1,15 +1,14 @@
 import Phaser from 'phaser';
 import { LUMA_COMPANION_HATCHED_FLAG } from '../../content/r4EggArc';
-import {
-  WorldInteractionInput,
-  WORLD_INTERACTION_PROMPT,
-} from '../interaction/WorldInteractionInput';
+import type { InteractionActionKind, InteractionTarget } from '../interaction/InteractionTarget';
+import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { getBrowserSaveService } from '../save/browserSaveService';
 
 interface CottageTouchPoint {
   id: string;
   label: string;
   actionLabel: string;
+  actionKind: InteractionActionKind;
   position: { x: number; y: number };
   radius: number;
   message: () => string;
@@ -17,30 +16,16 @@ interface CottageTouchPoint {
 
 interface RuntimePoint {
   definition: CottageTouchPoint;
-  prompt: Phaser.GameObjects.Text;
-  zone: Phaser.GameObjects.Zone;
+  marker: Phaser.GameObjects.Zone;
 }
 
 interface CottageDepthState {
   scene: Phaser.Scene;
-  input: WorldInteractionInput;
   points: RuntimePoint[];
   feedback: Phaser.GameObjects.Text;
 }
 
-function findPlayer(scene: Phaser.Scene): Phaser.Physics.Arcade.Sprite | null {
-  return (
-    (scene.children.list.find(
-      (object) =>
-        object instanceof Phaser.Physics.Arcade.Sprite &&
-        object.texture.key.startsWith('player-unicorn-'),
-    ) as Phaser.Physics.Arcade.Sprite | undefined) ?? null
-  );
-}
-
-function distance(left: { x: number; y: number }, right: { x: number; y: number }): number {
-  return Phaser.Math.Distance.Between(left.x, left.y, right.x, right.y);
-}
+const REGISTRY_OWNER = 'cottage-depth';
 
 export class CottageDepthWorldManager {
   private readonly saveService = getBrowserSaveService();
@@ -60,27 +45,7 @@ export class CottageDepthWorldManager {
       this.destroyState();
       return;
     }
-
-    const state = this.ensureState(scene);
-    const player = findPlayer(scene);
-    if (!player) {
-      return;
-    }
-
-    let nearest: RuntimePoint | null = null;
-    let nearestDistance = Number.POSITIVE_INFINITY;
-    for (const point of state.points) {
-      const pointDistance = distance(player, point.definition.position);
-      point.prompt.setVisible(pointDistance <= point.definition.radius + 72);
-      if (pointDistance <= point.definition.radius && pointDistance < nearestDistance) {
-        nearest = point;
-        nearestDistance = pointDistance;
-      }
-    }
-
-    if (nearest && state.input.justPressed()) {
-      this.showFeedback(state, nearest.definition.message());
-    }
+    this.ensureState(scene);
   }
 
   private ensureState(scene: Phaser.Scene): CottageDepthState {
@@ -91,7 +56,6 @@ export class CottageDepthWorldManager {
 
     const state: CottageDepthState = {
       scene,
-      input: new WorldInteractionInput(scene),
       points: [],
       feedback: scene.add
         .text(900, 108, '', {
@@ -115,6 +79,7 @@ export class CottageDepthWorldManager {
         id: 'bed',
         label: 'Moonflower bed',
         actionLabel: 'Flop',
+        actionKind: 'interact',
         position: { x: 325, y: 700 },
         radius: 100,
         message: () =>
@@ -124,6 +89,7 @@ export class CottageDepthWorldManager {
         id: 'sofa',
         label: 'Cosy sofa',
         actionLabel: 'Sit',
+        actionKind: 'interact',
         position: { x: 1175, y: 725 },
         radius: 100,
         message: () =>
@@ -133,6 +99,7 @@ export class CottageDepthWorldManager {
         id: 'fireplace',
         label: 'Cottage fire',
         actionLabel: 'Warm hooves',
+        actionKind: 'interact',
         position: { x: 225, y: 250 },
         radius: 100,
         message: () =>
@@ -142,6 +109,7 @@ export class CottageDepthWorldManager {
         id: 'window',
         label: 'Moonflower window',
         actionLabel: 'Look outside',
+        actionKind: 'inspect',
         position: { x: 1000, y: 125 },
         radius: 100,
         message: () =>
@@ -151,6 +119,7 @@ export class CottageDepthWorldManager {
         id: 'companion-corner',
         label: 'Companion corner',
         actionLabel: 'Check',
+        actionKind: 'inspect',
         position: { x: 175, y: 700 },
         radius: 100,
         message: () => {
@@ -162,40 +131,34 @@ export class CottageDepthWorldManager {
       },
     ];
 
-    state.points = points.map((definition) => this.createPoint(state, definition));
+    state.points = points.map((definition) => ({
+      definition,
+      // Preserve the authored world marker/name for diagnostics and layout ownership without
+      // giving it its own input handler. The shared interaction coordinator owns activation.
+      marker: scene.add
+        .zone(definition.position.x, definition.position.y, 170, 150)
+        .setName(`cottage-depth:${definition.id}`),
+    }));
     this.state = state;
+    this.publishTargets(state);
     return state;
   }
 
-  private createPoint(state: CottageDepthState, definition: CottageTouchPoint): RuntimePoint {
-    const prompt = state.scene.add
-      .text(
-        definition.position.x,
-        definition.position.y - 60,
-        `${definition.actionLabel}: ${definition.label}  ·  ${WORLD_INTERACTION_PROMPT}`,
-        {
-          color: '#5d496c',
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '14px',
-          fontStyle: 'bold',
-          backgroundColor: '#fff9edea',
-          padding: { x: 8, y: 5 },
-        },
-      )
-      .setOrigin(0.5)
-      .setDepth(120)
-      .setVisible(false)
-      .setName(`cottage-depth:${definition.id}:prompt`);
-    const zone = state.scene.add
-      .zone(definition.position.x, definition.position.y, 170, 150)
-      .setName(`cottage-depth:${definition.id}`);
-    state.input.bindPointer(zone, () => {
-      const player = findPlayer(state.scene);
-      if (player && distance(player, definition.position) <= definition.radius) {
-        this.showFeedback(state, definition.message());
-      }
-    });
-    return { definition, prompt, zone };
+  private publishTargets(state: CottageDepthState): void {
+    const targets: InteractionTarget[] = state.points.map(({ definition }) => ({
+      id: `interaction:cottage:${definition.id}`,
+      label: definition.label,
+      actionLabel: definition.actionLabel,
+      actionKind: definition.actionKind,
+      position: definition.position,
+      interactionRadius: definition.radius,
+      priority: 10,
+      result: {
+        type: 'callback',
+        activate: () => this.showFeedback(state, definition.message()),
+      },
+    }));
+    getSceneInteractionRegistry(state.scene).replaceOwnerTargets(REGISTRY_OWNER, targets);
   }
 
   private showFeedback(state: CottageDepthState, message: string): void {
@@ -212,12 +175,11 @@ export class CottageDepthWorldManager {
     if (!this.state) {
       return;
     }
+    getSceneInteractionRegistry(this.state.scene).clearOwner(REGISTRY_OWNER);
     for (const point of this.state.points) {
-      point.prompt.destroy();
-      point.zone.destroy();
+      point.marker.destroy();
     }
     this.state.feedback.destroy();
-    this.state.input.destroy();
     this.state = null;
   }
 }

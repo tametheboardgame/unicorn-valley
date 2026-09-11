@@ -6,18 +6,16 @@ import {
   TANSY_SUNDIAL_MAP_CORNER_DISCOVERY_ID,
 } from '../../content/r6VillageContent';
 import { DiscoveryService } from '../discovery/DiscoveryService';
-import {
-  WorldInteractionInput,
-  WORLD_INTERACTION_PROMPT,
-} from '../interaction/WorldInteractionInput';
+import type { InteractionActionKind, InteractionTarget } from '../interaction/InteractionTarget';
+import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { worldDepthForY } from './WorldDepth';
-import { WORLD_PLAYER_NAME } from './WorldTraversalPolishManager';
 
 interface VillageLifePoint {
   id: string;
   label: string;
   actionLabel: string;
+  actionKind: InteractionActionKind;
   x: number;
   y: number;
   radius: number;
@@ -27,21 +25,21 @@ interface VillageLifePoint {
 interface VillageLifeRuntime {
   definition: VillageLifePoint;
   container: Phaser.GameObjects.Container;
-  prompt: Phaser.GameObjects.Text;
 }
 
 interface VillageLifeState {
   scene: Phaser.Scene;
-  input: WorldInteractionInput;
   points: VillageLifeRuntime[];
   feedback: Phaser.GameObjects.Text;
 }
 
+const REGISTRY_OWNER = 'village-life';
 const VILLAGE_POINTS: readonly VillageLifePoint[] = [
   {
     id: 'notice-board',
     label: 'Village notice board',
     actionLabel: 'Read',
+    actionKind: 'inspect',
     x: 1180,
     y: 830,
     radius: 122,
@@ -57,6 +55,7 @@ const VILLAGE_POINTS: readonly VillageLifePoint[] = [
     id: 'sundial',
     label: 'Sunny little sundial',
     actionLabel: 'Inspect',
+    actionKind: 'inspect',
     x: 1320,
     y: 1320,
     radius: 118,
@@ -72,6 +71,7 @@ const VILLAGE_POINTS: readonly VillageLifePoint[] = [
     id: 'bench',
     label: 'Village bench',
     actionLabel: 'Sit',
+    actionKind: 'interact',
     x: 1880,
     y: 920,
     radius: 118,
@@ -86,6 +86,7 @@ const VILLAGE_POINTS: readonly VillageLifePoint[] = [
     id: 'story-map-sign',
     label: 'Story House map sign',
     actionLabel: 'Peek',
+    actionKind: 'inspect',
     x: 2470,
     y: 770,
     radius: 120,
@@ -108,6 +109,7 @@ const VILLAGE_POINTS: readonly VillageLifePoint[] = [
     id: 'thread-window',
     label: 'Twinkle & Thread window',
     actionLabel: 'Look',
+    actionKind: 'inspect',
     x: 1260,
     y: 760,
     radius: 116,
@@ -122,6 +124,7 @@ const VILLAGE_POINTS: readonly VillageLifePoint[] = [
     id: 'fountain-splash',
     label: 'Sunbeam Fountain water',
     actionLabel: 'Splash',
+    actionKind: 'interact',
     x: 1690,
     y: 1050,
     radius: 116,
@@ -133,19 +136,6 @@ const VILLAGE_POINTS: readonly VillageLifePoint[] = [
     ],
   },
 ];
-
-function findPlayer(scene: Phaser.Scene): { x: number; y: number } | null {
-  const named = scene.children.getByName(WORLD_PLAYER_NAME) as Phaser.GameObjects.GameObject &
-    Partial<{ x: number; y: number }>;
-  if (named && typeof named.x === 'number' && typeof named.y === 'number') {
-    return { x: named.x, y: named.y };
-  }
-  return null;
-}
-
-function distance(left: { x: number; y: number }, right: { x: number; y: number }): number {
-  return Phaser.Math.Distance.Between(left.x, left.y, right.x, right.y);
-}
 
 export class VillageLifeWorldManager {
   private readonly saveService = getBrowserSaveService();
@@ -166,26 +156,7 @@ export class VillageLifeWorldManager {
       this.destroyState();
       return;
     }
-    const state = this.ensureState(scene);
-    const player = findPlayer(scene);
-    if (!player) {
-      return;
-    }
-
-    let nearest: VillageLifeRuntime | null = null;
-    let nearestDistance = Number.POSITIVE_INFINITY;
-    for (const runtime of state.points) {
-      const pointDistance = distance(player, runtime.container);
-      runtime.prompt.setVisible(pointDistance <= runtime.definition.radius + 88);
-      if (pointDistance <= runtime.definition.radius && pointDistance < nearestDistance) {
-        nearest = runtime;
-        nearestDistance = pointDistance;
-      }
-    }
-
-    if (state.input.justPressed() && nearest) {
-      this.activate(state, nearest.definition);
-    }
+    this.ensureState(scene);
   }
 
   private ensureState(scene: Phaser.Scene): VillageLifeState {
@@ -193,7 +164,6 @@ export class VillageLifeWorldManager {
       return this.state;
     }
     this.destroyState();
-    const input = new WorldInteractionInput(scene);
     const feedback = scene.add
       .text(640, 116, '', {
         color: '#574a61',
@@ -209,39 +179,35 @@ export class VillageLifeWorldManager {
       .setScrollFactor(0)
       .setDepth(184)
       .setVisible(false);
-    const state: VillageLifeState = { scene, input, points: [], feedback };
+    const state: VillageLifeState = { scene, points: [], feedback };
     for (const definition of VILLAGE_POINTS) {
-      const prompt = scene.add
-        .text(
-          0,
-          68,
-          `${definition.actionLabel}: ${definition.label}  ·  ${WORLD_INTERACTION_PROMPT}`,
-          {
-            color: '#5d496c',
-            fontFamily: 'system-ui, sans-serif',
-            fontSize: '14px',
-            fontStyle: 'bold',
-            backgroundColor: '#fff9edea',
-            padding: { x: 8, y: 5 },
-          },
-        )
-        .setOrigin(0.5)
-        .setVisible(false);
-      const zone = scene.add.zone(0, 0, 180, 150);
       const container = scene.add
-        .container(definition.x, definition.y, [...definition.createProp(scene), prompt, zone])
+        .container(definition.x, definition.y, definition.createProp(scene))
         .setName(`village-life:${definition.id}`)
         .setDepth(worldDepthForY(definition.y + 24, 0.3));
-      input.bindPointer(zone, () => {
-        const player = findPlayer(scene);
-        if (player && distance(player, container) <= definition.radius) {
-          this.activate(state, definition);
-        }
-      });
-      state.points.push({ definition, container, prompt });
+      state.points.push({ definition, container });
     }
     this.state = state;
+    this.publishTargets(state);
     return state;
+  }
+
+  private publishTargets(state: VillageLifeState): void {
+    const targets: InteractionTarget[] = state.points.map(({ definition, container }) => ({
+      id: `interaction:village-life:${definition.id}`,
+      label: definition.label,
+      actionLabel: definition.actionLabel,
+      actionKind: definition.actionKind,
+      position: { x: definition.x, y: definition.y },
+      interactionRadius: definition.radius,
+      priority: 10,
+      visible: () => container.active,
+      result: {
+        type: 'callback',
+        activate: () => this.activate(state, definition),
+      },
+    }));
+    getSceneInteractionRegistry(state.scene).replaceOwnerTargets(REGISTRY_OWNER, targets);
   }
 
   private activate(state: VillageLifeState, definition: VillageLifePoint): void {
@@ -327,11 +293,11 @@ export class VillageLifeWorldManager {
     if (!this.state) {
       return;
     }
+    getSceneInteractionRegistry(this.state.scene).clearOwner(REGISTRY_OWNER);
     for (const runtime of this.state.points) {
       runtime.container.destroy(true);
     }
     this.state.feedback.destroy();
-    this.state.input.destroy();
     this.state = null;
   }
 }

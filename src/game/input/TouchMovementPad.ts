@@ -26,18 +26,28 @@ export function shouldUsePortraitTouchControls(
   );
 }
 
-function isTouchCapable(): boolean {
-  const coarsePointer =
-    typeof globalThis.matchMedia === 'function' &&
-    globalThis.matchMedia('(pointer: coarse), (any-pointer: coarse)').matches;
+function hasPrimaryCoarsePointer(): boolean {
   return (
-    (globalThis.navigator?.maxTouchPoints ?? 0) > 0 || 'ontouchstart' in globalThis || coarsePointer
+    typeof globalThis.matchMedia === 'function' &&
+    globalThis.matchMedia('(pointer: coarse)').matches
+  );
+}
+
+function isTouchCapable(): boolean {
+  return (
+    (globalThis.navigator?.maxTouchPoints ?? 0) > 0 ||
+    'ontouchstart' in globalThis ||
+    hasPrimaryCoarsePointer()
   );
 }
 
 function shouldDefaultTouchMovementPadVisible(): boolean {
   const compactViewport = typeof globalThis.innerWidth === 'number' && globalThis.innerWidth <= 900;
-  return isTouchCapable() && (compactViewport || globalThis.innerWidth > globalThis.innerHeight);
+  // Touchscreen laptops commonly report maxTouchPoints/ontouchstart even though their primary
+  // interaction is a fine mouse/trackpad. Do not turn the mobile movement pad on merely because
+  // such a secondary touch surface exists. Tablets/phones normally expose a coarse primary pointer;
+  // compact touch viewports remain supported as a defensive fallback.
+  return isTouchCapable() && (hasPrimaryCoarsePointer() || compactViewport);
 }
 
 function shouldRenderPortraitDomControls(): boolean {
@@ -109,8 +119,9 @@ export class TouchMovementPad {
   public refresh(): void {
     const portraitMode = shouldRenderPortraitDomControls();
     if (portraitMode === this.portraitMode) {
-      if (isTouchCapable() && !this.visible) {
-        this.setVisible(true, false);
+      const shouldAutoShow = shouldDefaultTouchMovementPadVisible() || portraitMode;
+      if (preferredTouchControlsVisible === null && this.visible !== shouldAutoShow) {
+        this.setVisible(shouldAutoShow, false);
       }
       return;
     }
@@ -118,8 +129,8 @@ export class TouchMovementPad {
     this.releaseInput();
     this.clearPresentation();
     this.portraitMode = portraitMode;
-    if (isTouchCapable()) {
-      this.visible = true;
+    if (preferredTouchControlsVisible === null) {
+      this.visible = shouldDefaultTouchMovementPadVisible() || portraitMode;
     }
     this.createPresentation();
     this.applyVisibility();

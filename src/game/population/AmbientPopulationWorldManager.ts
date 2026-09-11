@@ -1,7 +1,9 @@
 import Phaser from 'phaser';
 import { getBrowserAtmosphericTimeService } from '../atmosphere/AtmosphericTimeService';
-import { GAME_WIDTH } from '../config/gameConstants';
-import { WorldInteractionInput } from '../interaction/WorldInteractionInput';
+import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
+import { setInteractionModalActive } from '../interaction/InteractionModalState';
+import type { InteractionActionKind, InteractionTarget } from '../interaction/InteractionTarget';
+import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
@@ -38,9 +40,8 @@ import {
 } from './SupportingResidentArt';
 
 const UPDATE_INTERVAL_MS = 90;
-const RESIDENT_INTERACTION_HOLD_MS = 2300;
 const ROUTE_TIMEOUT_GRACE_MS = 1400;
-const PROMPT_EXTRA_RANGE = 96;
+const REGISTRY_OWNER = 'ambient-population';
 
 interface PositionedObject {
   x: number;
@@ -52,33 +53,27 @@ interface ResidentRuntime {
   location: ResolvedResidentLocation;
   container: Phaser.GameObjects.Container;
   sprite: Phaser.GameObjects.Sprite;
-  prompt: Phaser.GameObjects.Text;
   cursor: ResidentRouteCursor;
   tween: Phaser.Tweens.Tween | null;
   movementTargetIndex: number | null;
   movementDeadlineMs: number;
   pauseUntilMs: number;
-  interactionUntilMs: number;
+  engaged: boolean;
   interactionCount: number;
 }
 
 interface SmallInteractionRuntime {
   definition: SmallWorldInteractionDefinition;
   container: Phaser.GameObjects.Container;
-  prompt: Phaser.GameObjects.Text;
 }
 
 interface ScenePopulationRuntime {
   scene: Phaser.Scene;
-  input: WorldInteractionInput;
   residents: Map<SupportingResidentId, ResidentRuntime>;
   interactions: Map<string, SmallInteractionRuntime>;
-}
-
-interface NearbyTarget {
-  distance: number;
-  radius: number;
-  activate: () => void;
+  activeResidentId: SupportingResidentId | null;
+  conversationObjects: Phaser.GameObjects.GameObject[];
+  conversationKeyHandler: ((event: KeyboardEvent) => void) | null;
 }
 
 function findPlayer(scene: Phaser.Scene): PositionedObject | null {
@@ -104,10 +99,6 @@ function findPlayer(scene: Phaser.Scene): PositionedObject | null {
   return fallback ?? null;
 }
 
-function distanceBetween(left: PositionedObject, right: PositionedObject): number {
-  return Phaser.Math.Distance.Between(left.x, left.y, right.x, right.y);
-}
-
 function feedbackIcon(kind: SmallWorldInteractionDefinition['kind']): string {
   const icons: Record<SmallWorldInteractionDefinition['kind'], string> = {
     inspect: '✦',
@@ -119,6 +110,16 @@ function feedbackIcon(kind: SmallWorldInteractionDefinition['kind']): string {
     reveal: '✧',
   };
   return icons[kind];
+}
+
+function smallActionKind(kind: SmallWorldInteractionDefinition['kind']): InteractionActionKind {
+  if (kind === 'inspect' || kind === 'listen' || kind === 'reveal') {
+    return 'inspect';
+  }
+  if (kind === 'play') {
+    return 'start';
+  }
+  return 'interact';
 }
 
 export class AmbientPopulationWorldManager {
@@ -187,9 +188,11 @@ export class AmbientPopulationWorldManager {
     }
     const state: ScenePopulationRuntime = {
       scene,
-      input: new WorldInteractionInput(scene),
       residents: new Map(),
       interactions: new Map(),
+      activeResidentId: null,
+      conversationObjects: [],
+      conversationKeyHandler: null,
     };
     this.states.set(scene.scene.key, state);
     return state;
@@ -200,44 +203,14 @@ export class AmbientPopulationWorldManager {
     this.syncSmallInteractions(state, context);
 
     const player = findPlayer(state.scene);
-    if (!player) {
-      return;
-    }
-
-    const now = this.game.loop.time;
-    const nearby: NearbyTarget[] = [];
-
-    for (const runtime of state.residents.values()) {
-      this.updateResident(runtime, player, now);
-      const distance = distanceBetween(player, runtime.container);
-      const radius = this.residentInteractionRadius(runtime);
-      runtime.prompt.setVisible(distance <= radius + PROMPT_EXTRA_RANGE);
-      if (distance <= radius) {
-        nearby.push({
-          distance,
-          radius,
-          activate: () => this.activateResident(runtime, player, now),
-        });
+    if (player) {
+      const now = this.game.loop.time;
+      for (const runtime of state.residents.values()) {
+        this.updateResident(runtime, player, now);
       }
     }
 
-    for (const runtime of state.interactions.values()) {
-      const distance = distanceBetween(player, runtime.container);
-      runtime.prompt.setVisible(
-        distance <= runtime.definition.interactionRadius + PROMPT_EXTRA_RANGE,
-      );
-      if (distance <= runtime.definition.interactionRadius) {
-        nearby.push({
-          distance,
-          radius: runtime.definition.interactionRadius,
-          activate: () => this.activateSmallInteraction(state.scene, runtime.definition),
-        });
-      }
-    }
-
-    if (state.input.justPressed()) {
-      nearby.sort((left, right) => left.distance - right.distance)[0]?.activate();
-    }
+    this.publishTargets(state);
   }
 
   private syncResidents(state: ScenePopulationRuntime, context: AmbientPopulationContext): void {
@@ -258,6 +231,9 @@ export class AmbientPopulationWorldManager {
     for (const [residentId, runtime] of state.residents) {
       const location = wanted.get(residentId);
       if (!location || location.id !== runtime.location.id) {
+        if (state.activeResidentId === residentId) {
+          this.closeResidentConversation(state);
+        }
         this.destroyResident(runtime);
         state.residents.delete(residentId);
       }
@@ -289,34 +265,10 @@ export class AmbientPopulationWorldManager {
     }
 
     const sprite = createSupportingResidentSprite(state.scene, resident);
-    const prompt = state.scene.add
-      .text(0, 74, `Talk to ${resident.name}  ·  E / Enter / tap`, {
-        color: '#56455f',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '15px',
-        fontStyle: 'bold',
-        backgroundColor: '#fff9edee',
-        padding: { x: 9, y: 5 },
-      })
-      .setOrigin(0.5)
-      .setVisible(false);
-    const zone = state.scene.add.zone(0, -14, 190, 160);
     const container = state.scene.add
-      .container(start.x, start.y, [sprite, prompt, zone])
+      .container(start.x, start.y, [sprite])
       .setName(`supporting-resident:${resident.id}`)
       .setDepth(worldDepthForY(start.y + 52, 0.36));
-
-    state.input.bindPointer(zone, () => {
-      const player = findPlayer(state.scene);
-      const runtime = state.residents.get(resident.id);
-      if (!player || !runtime) {
-        return;
-      }
-      const distance = distanceBetween(player, runtime.container);
-      if (distance <= this.residentInteractionRadius(runtime)) {
-        this.activateResident(runtime, player, this.game.loop.time);
-      }
-    });
 
     const firstPause = location.placement?.waypoints[0]?.pauseMs ?? 1200;
     return {
@@ -324,13 +276,12 @@ export class AmbientPopulationWorldManager {
       location,
       container,
       sprite,
-      prompt,
       cursor: { index: 0, direction: 1 },
       tween: null,
       movementTargetIndex: null,
       movementDeadlineMs: 0,
       pauseUntilMs: this.game.loop.time + firstPause,
-      interactionUntilMs: 0,
+      engaged: false,
       interactionCount: 0,
     };
   }
@@ -346,15 +297,12 @@ export class AmbientPopulationWorldManager {
   private updateResident(runtime: ResidentRuntime, player: PositionedObject, now: number): void {
     runtime.container.setDepth(worldDepthForY(runtime.container.y + 52, 0.36));
 
-    if (runtime.interactionUntilMs > 0) {
-      if (now < runtime.interactionUntilMs) {
-        runtime.sprite.setTexture(
-          ensureSupportingResidentTexture(runtime.container.scene, runtime.resident, 'idle'),
-        );
-        return;
-      }
-      runtime.interactionUntilMs = 0;
-      runtime.tween?.resume();
+    if (runtime.engaged) {
+      runtime.sprite.setTexture(
+        ensureSupportingResidentTexture(runtime.container.scene, runtime.resident, 'idle'),
+      );
+      runtime.sprite.setFlipX(player.x < runtime.container.x);
+      return;
     }
 
     if (runtime.location.kind === 'story-anchor') {
@@ -449,16 +397,22 @@ export class AmbientPopulationWorldManager {
     runtime.pauseUntilMs = now + 1400;
   }
 
-  private activateResident(runtime: ResidentRuntime, player: PositionedObject, now: number): void {
-    if (runtime.interactionUntilMs > now) {
+  private activateResident(state: ScenePopulationRuntime, runtime: ResidentRuntime): void {
+    if (runtime.engaged || state.activeResidentId !== null) {
       return;
     }
+    const player = findPlayer(state.scene);
+    if (!player) {
+      return;
+    }
+
     runtime.tween?.pause();
-    runtime.interactionUntilMs = now + RESIDENT_INTERACTION_HOLD_MS;
+    runtime.engaged = true;
     runtime.sprite.setFlipX(player.x < runtime.container.x);
     runtime.sprite.setTexture(
       ensureSupportingResidentTexture(runtime.container.scene, runtime.resident, 'idle'),
     );
+
     const configuredVariants = R6_SUPPORTING_RESIDENT_TALK_VARIANTS[runtime.resident.id];
     const talk: ResidentTalkDefinition = {
       ...runtime.resident.talk,
@@ -467,7 +421,116 @@ export class AmbientPopulationWorldManager {
     const lines = resolveResidentTalkLines(talk, this.getContext());
     const line = chooseTalkLine(lines, runtime.interactionCount);
     runtime.interactionCount += 1;
-    this.showFeedback(runtime.container.scene, runtime.resident.name, line, '💬');
+    state.activeResidentId = runtime.resident.id;
+    this.showResidentConversation(state, runtime, line);
+    this.publishTargets(state);
+  }
+
+  private showResidentConversation(
+    state: ScenePopulationRuntime,
+    runtime: ResidentRuntime,
+    message: string,
+  ): void {
+    this.destroyConversationObjects(state);
+    state.scene.children.getByName('r6-5-ambient-feedback')?.destroy();
+    setInteractionModalActive(state.scene, true);
+
+    const panelY = GAME_HEIGHT - 116;
+    const titleY = GAME_HEIGHT - 180;
+    const bodyY = GAME_HEIGHT - 128;
+    const doneY = GAME_HEIGHT - 66;
+    const blocker = state.scene.add
+      .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.001)
+      .setName('wp19d-resident-conversation-blocker')
+      .setScrollFactor(0)
+      .setDepth(20_000)
+      .setInteractive();
+    const panel = state.scene.add
+      .rectangle(GAME_WIDTH / 2, panelY, 690, 174, 0xfff9ed, 0.98)
+      .setName('wp19d-resident-conversation-panel')
+      .setStrokeStyle(4, 0x9b72b5, 0.9)
+      .setScrollFactor(0)
+      .setDepth(20_010);
+    const title = state.scene.add
+      .text(GAME_WIDTH / 2, titleY, runtime.resident.name, {
+        color: '#5b3f69',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '20px',
+        fontStyle: 'bold',
+      })
+      .setName('wp19d-resident-conversation-name')
+      .setOrigin(0.5)
+      .setScrollFactor(0)
+      .setDepth(20_011);
+    const body = state.scene.add
+      .text(GAME_WIDTH / 2, bodyY, message, {
+        color: '#574663',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '18px',
+        align: 'center',
+        wordWrap: { width: 570 },
+      })
+      .setName('wp19d-resident-conversation-body')
+      .setOrigin(0.5)
+      .setScrollFactor(0)
+      .setDepth(20_011);
+    const done = state.scene.add
+      .rectangle(GAME_WIDTH / 2 + 278, doneY, 88, 42, 0x7d55a1, 1)
+      .setName('wp19d-resident-conversation-done')
+      .setStrokeStyle(3, 0xffefaf, 0.95)
+      .setScrollFactor(0)
+      .setDepth(20_012)
+      .setInteractive({ useHandCursor: true });
+    const doneLabel = state.scene.add
+      .text(GAME_WIDTH / 2 + 278, doneY, 'Done', {
+        color: '#fffaf1',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '16px',
+        fontStyle: 'bold',
+      })
+      .setName('wp19d-resident-conversation-done-label')
+      .setOrigin(0.5)
+      .setScrollFactor(0)
+      .setDepth(20_013);
+
+    const close = () => this.closeResidentConversation(state);
+    done.on('pointerdown', close);
+    const keyHandler = (event: KeyboardEvent): void => {
+      if (event.repeat || !['Escape', 'Enter', 'KeyE'].includes(event.code)) {
+        return;
+      }
+      event.preventDefault();
+      close();
+    };
+    globalThis.addEventListener?.('keydown', keyHandler);
+    state.conversationKeyHandler = keyHandler;
+    state.conversationObjects = [blocker, panel, title, body, done, doneLabel];
+  }
+
+  private closeResidentConversation(state: ScenePopulationRuntime): void {
+    const residentId = state.activeResidentId;
+    const runtime = residentId ? state.residents.get(residentId) : null;
+    this.destroyConversationObjects(state);
+    state.activeResidentId = null;
+    setInteractionModalActive(state.scene, false);
+
+    if (runtime) {
+      runtime.engaged = false;
+      runtime.pauseUntilMs = this.game.loop.time + 700;
+      runtime.tween?.resume();
+    }
+    this.publishTargets(state);
+  }
+
+  private destroyConversationObjects(state: ScenePopulationRuntime): void {
+    if (state.conversationKeyHandler) {
+      globalThis.removeEventListener?.('keydown', state.conversationKeyHandler);
+      state.conversationKeyHandler = null;
+    }
+    for (const object of state.conversationObjects) {
+      object.destroy();
+    }
+    state.conversationObjects = [];
   }
 
   private syncSmallInteractions(
@@ -511,29 +574,10 @@ export class AmbientPopulationWorldManager {
       })
       .setOrigin(0.5)
       .setAlpha(0.72);
-    const prompt = state.scene.add
-      .text(0, 50, `${definition.actionLabel}: ${definition.label}  ·  E / Enter / tap`, {
-        color: '#5d496c',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '14px',
-        fontStyle: 'bold',
-        backgroundColor: '#fff9edea',
-        padding: { x: 8, y: 5 },
-      })
-      .setOrigin(0.5)
-      .setVisible(false);
-    const zone = state.scene.add.zone(0, 0, 178, 154);
     const container = state.scene.add
-      .container(definition.position.x, definition.position.y, [glow, icon, prompt, zone])
+      .container(definition.position.x, definition.position.y, [glow, icon])
       .setName(`small-world-interaction:${definition.id}`)
       .setDepth(worldDepthForY(definition.position.y + 12, 0.22));
-
-    state.input.bindPointer(zone, () => {
-      const player = findPlayer(state.scene);
-      if (player && distanceBetween(player, container) <= definition.interactionRadius) {
-        this.activateSmallInteraction(state.scene, definition);
-      }
-    });
 
     state.scene.tweens.add({
       targets: [glow, icon],
@@ -544,7 +588,49 @@ export class AmbientPopulationWorldManager {
       ease: 'Sine.InOut',
     });
 
-    return { definition, container, prompt };
+    return { definition, container };
+  }
+
+  private publishTargets(state: ScenePopulationRuntime): void {
+    const targets: InteractionTarget[] = [];
+
+    for (const runtime of state.residents.values()) {
+      targets.push({
+        id: `interaction:resident:${runtime.resident.id}`,
+        label: runtime.resident.name,
+        actionLabel: 'Talk',
+        actionKind: 'talk',
+        position: () => ({ x: runtime.container.x, y: runtime.container.y }),
+        interactionRadius: this.residentInteractionRadius(runtime),
+        priority: 30,
+        visible: () => runtime.container.active,
+        enabled: () => !runtime.engaged && state.activeResidentId === null,
+        result: {
+          type: 'callback',
+          activate: () => this.activateResident(state, runtime),
+        },
+      });
+    }
+
+    for (const runtime of state.interactions.values()) {
+      targets.push({
+        id: `interaction:ambient:${runtime.definition.id}`,
+        label: runtime.definition.label,
+        actionLabel: runtime.definition.actionLabel,
+        actionKind: smallActionKind(runtime.definition.kind),
+        position: runtime.definition.position,
+        interactionRadius: runtime.definition.interactionRadius,
+        priority: 10,
+        visible: () => runtime.container.active,
+        enabled: () => state.activeResidentId === null,
+        result: {
+          type: 'callback',
+          activate: () => this.activateSmallInteraction(state.scene, runtime.definition),
+        },
+      });
+    }
+
+    getSceneInteractionRegistry(state.scene).replaceOwnerTargets(REGISTRY_OWNER, targets);
   }
 
   private activateSmallInteraction(
@@ -559,7 +645,6 @@ export class AmbientPopulationWorldManager {
     scene: Phaser.Scene,
     definition: SmallWorldInteractionDefinition,
   ): void {
-    const objects: Phaser.GameObjects.GameObject[] = [];
     for (let index = 0; index < 4; index += 1) {
       const angle = (Math.PI * 2 * index) / 4;
       const object =
@@ -574,7 +659,6 @@ export class AmbientPopulationWorldManager {
               })
               .setOrigin(0.5);
       object.setDepth(worldDepthForY(definition.position.y + 30, 0.8));
-      objects.push(object);
       scene.tweens.add({
         targets: object,
         x: definition.position.x + Math.cos(angle) * 64,
@@ -591,7 +675,7 @@ export class AmbientPopulationWorldManager {
   private showFeedback(scene: Phaser.Scene, title: string, message: string, icon: string): void {
     scene.children.getByName('r6-5-ambient-feedback')?.destroy();
     const panel = scene.add
-      .text(GAME_WIDTH / 2, 126, `${icon}  ${title}\n${message}`, {
+      .text(GAME_WIDTH / 2, GAME_HEIGHT - 196, `${icon}  ${title}\n${message}`, {
         color: '#574663',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '18px',
@@ -602,7 +686,7 @@ export class AmbientPopulationWorldManager {
         wordWrap: { width: 600 },
       })
       .setName('r6-5-ambient-feedback')
-      .setOrigin(0.5, 0)
+      .setOrigin(0.5, 1)
       .setScrollFactor(0)
       .setDepth(20_000);
     scene.time.delayedCall(2600, () => panel.destroy());
@@ -614,7 +698,12 @@ export class AmbientPopulationWorldManager {
   }
 
   private destroySceneState(state: ScenePopulationRuntime): void {
-    state.input.destroy();
+    if (state.activeResidentId !== null) {
+      setInteractionModalActive(state.scene, false);
+      state.activeResidentId = null;
+    }
+    this.destroyConversationObjects(state);
+    getSceneInteractionRegistry(state.scene).clearOwner(REGISTRY_OWNER);
     for (const runtime of state.residents.values()) {
       this.destroyResident(runtime);
     }

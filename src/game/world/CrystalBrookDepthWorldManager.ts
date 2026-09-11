@@ -7,15 +7,12 @@ import {
 } from '../../content/r6CrystalBrookDepthContent';
 import { getBrowserAtmosphericTimeService } from '../atmosphere/AtmosphericTimeService';
 import { getBrowserMagicalWeatherService } from '../atmosphere/MagicalWeatherService';
-import {
-  WorldInteractionInput,
-  WORLD_INTERACTION_PROMPT,
-} from '../interaction/WorldInteractionInput';
+import type { InteractionActionKind, InteractionTarget } from '../interaction/InteractionTarget';
+import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { CrystalGrottoStoryService } from '../story/CrystalGrottoStoryService';
 import { worldDepthForY } from './WorldDepth';
-import { WORLD_PLAYER_NAME } from './WorldTraversalPolishManager';
 
 interface Point {
   x: number;
@@ -26,6 +23,7 @@ interface BrookInteractionDefinition {
   id: string;
   label: string;
   actionLabel: string;
+  actionKind: InteractionActionKind;
   position: Point;
   radius: number;
   icon: string;
@@ -34,24 +32,23 @@ interface BrookInteractionDefinition {
 interface BrookInteractionRuntime {
   definition: BrookInteractionDefinition;
   container: Phaser.GameObjects.Container;
-  prompt: Phaser.GameObjects.Text;
-  zone: Phaser.GameObjects.Zone;
 }
 
 interface BrookDepthState {
   scene: Phaser.Scene;
-  input: WorldInteractionInput;
   interactions: BrookInteractionRuntime[];
   feedback: Phaser.GameObjects.Text;
   persistent: Phaser.GameObjects.Container | null;
   signature: string;
 }
 
+const REGISTRY_OWNER = 'crystal-brook-depth';
 const INTERACTIONS: readonly BrookInteractionDefinition[] = [
   {
     id: 'echo-crystal-song',
     label: 'Echo’s crystal clue',
     actionLabel: 'Listen with Echo',
+    actionKind: 'talk',
     position: { x: 2800, y: 1400 },
     radius: 130,
     icon: '🎵',
@@ -60,6 +57,7 @@ const INTERACTIONS: readonly BrookInteractionDefinition[] = [
     id: 'crystal-grotto',
     label: 'Crystal Grotto',
     actionLabel: 'Go inside',
+    actionKind: 'enter',
     position: { x: 3130, y: 1850 },
     radius: 155,
     icon: '💎',
@@ -68,6 +66,7 @@ const INTERACTIONS: readonly BrookInteractionDefinition[] = [
     id: 'waterfall-mist',
     label: 'Waterfall Mist',
     actionLabel: 'Step into the mist',
+    actionKind: 'interact',
     position: { x: 2470, y: 670 },
     radius: 145,
     icon: '🌈',
@@ -76,6 +75,7 @@ const INTERACTIONS: readonly BrookInteractionDefinition[] = [
     id: 'reflection-pool',
     label: 'Reflection Pool',
     actionLabel: 'Look into the water',
+    actionKind: 'inspect',
     position: { x: 2150, y: 1650 },
     radius: 120,
     icon: '💧',
@@ -84,6 +84,7 @@ const INTERACTIONS: readonly BrookInteractionDefinition[] = [
     id: 'stepping-chime',
     label: 'Stepping-Stone Bend',
     actionLabel: 'Try the stones',
+    actionKind: 'interact',
     position: { x: 2320, y: 1370 },
     radius: 150,
     icon: '🪨',
@@ -92,6 +93,7 @@ const INTERACTIONS: readonly BrookInteractionDefinition[] = [
     id: 'shallow-ripple',
     label: 'Shallow Brook',
     actionLabel: 'Splash',
+    actionKind: 'interact',
     position: { x: 1900, y: 1260 },
     radius: 145,
     icon: '≈',
@@ -100,6 +102,7 @@ const INTERACTIONS: readonly BrookInteractionDefinition[] = [
     id: 'singing-crystals',
     label: 'River crystal cluster',
     actionLabel: 'Tap a crystal',
+    actionKind: 'interact',
     position: { x: 2380, y: 720 },
     radius: 145,
     icon: '🔷',
@@ -108,6 +111,7 @@ const INTERACTIONS: readonly BrookInteractionDefinition[] = [
     id: 'shell-sparkle',
     label: 'Shell-sparkle bank',
     actionLabel: 'Search',
+    actionKind: 'inspect',
     position: { x: 1880, y: 800 },
     radius: 145,
     icon: '🐚',
@@ -116,6 +120,7 @@ const INTERACTIONS: readonly BrookInteractionDefinition[] = [
     id: 'pebble-stack',
     label: 'Flat pebble pile',
     actionLabel: 'Stack',
+    actionKind: 'interact',
     position: { x: 1160, y: 1290 },
     radius: 145,
     icon: '🪨',
@@ -124,25 +129,12 @@ const INTERACTIONS: readonly BrookInteractionDefinition[] = [
     id: 'cascade-memory',
     label: 'Crystal Cascade overlook',
     actionLabel: 'Look towards the course',
+    actionKind: 'inspect',
     position: { x: 2540, y: 1060 },
     radius: 150,
     icon: '🏁',
   },
 ];
-
-function findPlayer(scene: Phaser.Scene): Point | null {
-  const object = scene.children.getByName(WORLD_PLAYER_NAME) as
-    | (Phaser.GameObjects.GameObject & Partial<Point>)
-    | null;
-  if (object && typeof object.x === 'number' && typeof object.y === 'number') {
-    return { x: object.x, y: object.y };
-  }
-  return null;
-}
-
-function distance(left: Point, right: Point): number {
-  return Phaser.Math.Distance.Between(left.x, left.y, right.x, right.y);
-}
 
 export class CrystalBrookDepthWorldManager {
   private readonly saveService = getBrowserSaveService();
@@ -168,29 +160,6 @@ export class CrystalBrookDepthWorldManager {
 
     const state = this.ensureState(scene);
     this.syncPersistent(state);
-    const player = findPlayer(scene);
-    if (!player) {
-      return;
-    }
-
-    let nearest: BrookInteractionRuntime | null = null;
-    let nearestDistance = Number.POSITIVE_INFINITY;
-    for (const runtime of state.interactions) {
-      const pointDistance = distance(player, runtime.definition.position);
-      const inInteractionRange = pointDistance <= runtime.definition.radius;
-      runtime.prompt.setVisible(pointDistance <= runtime.definition.radius + 80);
-      if (runtime.zone.input) {
-        runtime.zone.input.enabled = inInteractionRange;
-      }
-      if (inInteractionRange && pointDistance < nearestDistance) {
-        nearest = runtime;
-        nearestDistance = pointDistance;
-      }
-    }
-
-    if (nearest && state.input.justPressed()) {
-      this.activate(state, nearest.definition);
-    }
   }
 
   private ensureState(scene: Phaser.Scene): BrookDepthState {
@@ -201,7 +170,6 @@ export class CrystalBrookDepthWorldManager {
 
     const state: BrookDepthState = {
       scene,
-      input: new WorldInteractionInput(scene),
       interactions: [],
       feedback: scene.add
         .text(640, 116, '', {
@@ -225,6 +193,7 @@ export class CrystalBrookDepthWorldManager {
       this.createInteraction(state, definition),
     );
     this.state = state;
+    this.publishTargets(state);
     this.syncPersistent(state, true);
     return state;
   }
@@ -241,37 +210,11 @@ export class CrystalBrookDepthWorldManager {
       })
       .setOrigin(0.5)
       .setAlpha(0.75);
-    const prompt = state.scene.add
-      .text(
-        0,
-        48,
-        `${definition.actionLabel}: ${definition.label}  ·  ${WORLD_INTERACTION_PROMPT}`,
-        {
-          color: '#45616b',
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '14px',
-          fontStyle: 'bold',
-          backgroundColor: '#f3fff8ed',
-          padding: { x: 8, y: 5 },
-        },
-      )
-      .setOrigin(0.5)
-      .setVisible(false);
-    const zone = state.scene.add.zone(0, 0, 180, 150);
     const container = state.scene.add
-      .container(definition.position.x, definition.position.y, [glow, icon, prompt, zone])
+      .container(definition.position.x, definition.position.y, [glow, icon])
       .setName(`brook-depth:${definition.id}`)
       .setDepth(worldDepthForY(definition.position.y + 15, 0.35));
 
-    state.input.bindPointer(zone, () => {
-      const player = findPlayer(state.scene);
-      if (player && distance(player, definition.position) <= definition.radius) {
-        this.activate(state, definition);
-      }
-    });
-    if (zone.input) {
-      zone.input.enabled = false;
-    }
     state.scene.tweens.add({
       targets: [glow, icon],
       alpha: { from: 0.38, to: 0.86 },
@@ -280,7 +223,22 @@ export class CrystalBrookDepthWorldManager {
       repeat: -1,
       ease: 'Sine.InOut',
     });
-    return { definition, container, prompt, zone };
+    return { definition, container };
+  }
+
+  private publishTargets(state: BrookDepthState): void {
+    const targets: InteractionTarget[] = state.interactions.map(({ definition, container }) => ({
+      id: `interaction:brook-depth:${definition.id}`,
+      label: definition.label,
+      actionLabel: definition.actionLabel,
+      actionKind: definition.actionKind,
+      position: definition.position,
+      interactionRadius: definition.radius,
+      priority: definition.actionKind === 'talk' ? 30 : definition.actionKind === 'enter' ? 20 : 12,
+      visible: () => container.active,
+      result: { type: 'callback', activate: () => this.activate(state, definition) },
+    }));
+    getSceneInteractionRegistry(state.scene).replaceOwnerTargets(REGISTRY_OWNER, targets);
   }
 
   private activate(state: BrookDepthState, definition: BrookInteractionDefinition): void {
@@ -494,12 +452,12 @@ export class CrystalBrookDepthWorldManager {
     if (!this.state) {
       return;
     }
+    getSceneInteractionRegistry(this.state.scene).clearOwner(REGISTRY_OWNER);
     for (const runtime of this.state.interactions) {
       runtime.container.destroy(true);
     }
     this.state.persistent?.destroy(true);
     this.state.feedback.destroy();
-    this.state.input.destroy();
     this.state = null;
   }
 }

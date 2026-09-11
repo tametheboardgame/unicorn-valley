@@ -173,7 +173,7 @@ test.describe('R6.5-WP18I concept-grade tablet HUD', () => {
     expect(gallop.visible).toBe(true);
     expect(gallop.x).toBeGreaterThan(1120);
     expect(gallop.y).toBeGreaterThan(500);
-    expect(hint.visible).toBe(true);
+    expect(hint.visible).toBe(false);
     expect(hint.x).toBeGreaterThan(420);
     expect(hint.x).toBeLessThan(860);
     expect(hint.y).toBeGreaterThan(630);
@@ -197,14 +197,14 @@ test.describe('R6.5-WP18I concept-grade tablet HUD', () => {
     await waitForActionLabel(page, 'Talk');
     let scene = await getScene(page, 'MoonflowerGladeScene');
     expect(objectByName(scene, 'exploration-interaction-prompt').visible).toBe(true);
-    expect(objectByName(scene, 'exploration-tablet-hint').text).toContain('Tap Talk');
+    expect(objectByName(scene, 'exploration-tablet-hint').text).toBe('Pip');
     await captureEvidence(page, 'wp18i-talk.png');
 
     await positionPlayer(page, 'MoonflowerGladeScene', 560, 720);
     await waitForActionLabel(page, 'Enter');
     scene = await getScene(page, 'MoonflowerGladeScene');
     expect(objectByName(scene, 'exploration-interaction-prompt').visible).toBe(true);
-    expect(objectByName(scene, 'exploration-tablet-hint').text).toContain('Tap Enter');
+    expect(objectByName(scene, 'exploration-tablet-hint').text).toBe('Moonflower Cottage');
     await captureEvidence(page, 'wp18i-enter.png');
   });
 

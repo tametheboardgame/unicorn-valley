@@ -1,9 +1,6 @@
 import Phaser from 'phaser';
 import { getFireflyLanternProgress } from './FireflyLanternActivity';
-import {
-  WORLD_INTERACTION_PROMPT,
-  WorldInteractionInput,
-} from '../interaction/WorldInteractionInput';
+import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { rememberWorldReturnState } from '../world/WorldArrivalState';
 import { setWhisperingWoodsPlayerSpawn } from '../world/WhisperingWoodsMap';
@@ -11,15 +8,14 @@ import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
 
 const LANTERN_POSITION = { x: 2480, y: 760 } as const;
 const PRESENTATION_NAME = 'firefly-lantern-world-presentation';
+const REGISTRY_OWNER = 'firefly-lantern-world';
 
 interface LanternState {
   scene: Phaser.Scene;
   container: Phaser.GameObjects.Container;
-  prompt: Phaser.GameObjects.Text;
   status: Phaser.GameObjects.Text;
   light: Phaser.GameObjects.Rectangle;
   glow: Phaser.GameObjects.Arc;
-  interaction: WorldInteractionInput;
   completionSignature: string;
 }
 
@@ -45,22 +41,6 @@ export class FireflyLanternWorldManager {
 
     const state = this.ensureState(scene);
     this.syncCompletionState(state);
-    const player = findPlayer(scene);
-    if (!player) {
-      return;
-    }
-
-    const distance = Phaser.Math.Distance.Between(
-      player.x,
-      player.y,
-      LANTERN_POSITION.x,
-      LANTERN_POSITION.y,
-    );
-    state.prompt.setVisible(distance <= 230);
-
-    if (distance <= 170 && state.interaction.justPressed()) {
-      this.openActivity(scene);
-    }
   }
 
   private ensureState(scene: Phaser.Scene): LanternState {
@@ -69,7 +49,6 @@ export class FireflyLanternWorldManager {
     }
     this.clearState();
 
-    const interaction = new WorldInteractionInput(scene);
     const post = scene.add.rectangle(0, 55, 18, 120, 0x625344, 1);
     const hook = scene.add.rectangle(25, -8, 58, 12, 0x625344, 1);
     const lanternGlow = scene.add.circle(52, 28, 56, 0xf7efa3, 0.14);
@@ -94,18 +73,6 @@ export class FireflyLanternWorldManager {
       })
       .setOrigin(0.5)
       .setName('firefly-lantern-world-status');
-    const prompt = scene.add
-      .text(0, 194, `${WORLD_INTERACTION_PROMPT}: Play`, {
-        color: '#38594e',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '16px',
-        fontStyle: 'bold',
-        backgroundColor: '#efffeef2',
-        padding: { x: 9, y: 5 },
-      })
-      .setOrigin(0.5)
-      .setVisible(false);
-    const zone = scene.add.zone(25, 55, 190, 250);
     const container = scene.add
       .container(LANTERN_POSITION.x, LANTERN_POSITION.y, [
         post,
@@ -115,8 +82,6 @@ export class FireflyLanternWorldManager {
         light,
         label,
         status,
-        prompt,
-        zone,
       ])
       .setName(PRESENTATION_NAME)
       .setDepth(18);
@@ -140,22 +105,6 @@ export class FireflyLanternWorldManager {
       });
     }
 
-    interaction.bindPointer(zone, () => {
-      const player = findPlayer(scene);
-      if (!player) {
-        return;
-      }
-      const distance = Phaser.Math.Distance.Between(
-        player.x,
-        player.y,
-        LANTERN_POSITION.x,
-        LANTERN_POSITION.y,
-      );
-      if (distance <= 190) {
-        this.openActivity(scene);
-      }
-    });
-
     scene.tweens.add({
       targets: lanternGlow,
       alpha: { from: 0.08, to: 0.32 },
@@ -169,13 +118,24 @@ export class FireflyLanternWorldManager {
     this.state = {
       scene,
       container,
-      prompt,
       status,
       light,
       glow: lanternGlow,
-      interaction,
       completionSignature: '',
     };
+    getSceneInteractionRegistry(scene).replaceOwnerTargets(REGISTRY_OWNER, [
+      {
+        id: 'interaction:firefly-lantern',
+        label: 'Firefly Lantern',
+        actionLabel: 'Play',
+        actionKind: 'start',
+        position: LANTERN_POSITION,
+        interactionRadius: 170,
+        priority: 20,
+        visible: () => container.active,
+        result: { type: 'callback', activate: () => this.openActivity(scene) },
+      },
+    ]);
     this.syncCompletionState(this.state, true);
     return this.state;
   }
@@ -217,7 +177,7 @@ export class FireflyLanternWorldManager {
     if (!this.state) {
       return;
     }
-    this.state.interaction.destroy();
+    getSceneInteractionRegistry(this.state.scene).clearOwner(REGISTRY_OWNER);
     if (this.state.container.active) {
       this.state.container.destroy(true);
     }

@@ -23,12 +23,23 @@ export class ExplorationShellWorldManager {
       return;
     }
 
+    let hasActiveExplorationScene = false;
     for (const scene of this.game.scene.getScenes(true)) {
       if (!supportsExplorationShell(scene.scene.key)) {
         continue;
       }
 
+      hasActiveExplorationScene = true;
       ExplorationShell.ensure(scene, this.getPointerInput(scene));
+    }
+
+    // Some regions, notably Starlight Beach, are registered/started lazily after the persistent
+    // HUD overlay scene already exists. Phaser renders later-started scenes above older scenes, so
+    // without restoring scene order the world can cover the otherwise-correct HUD. Keep the
+    // canonical exploration HUD topmost whenever an exploration world is active; the overlay
+    // itself still hides while a modal scene is open.
+    if (hasActiveExplorationScene && this.game.scene.isActive('ExplorationHudOverlayScene')) {
+      this.game.scene.bringToTop('ExplorationHudOverlayScene');
     }
   }
 

@@ -4,43 +4,19 @@ import {
   CORAL_SHELL_STORIES_QUEST_ID,
 } from '../../content/r65StarlightBeach';
 import { MAPLE_CAKE_QUEST_ID } from '../../content/r6VillageContent';
-import {
-  WORLD_INTERACTION_PROMPT,
-  WorldInteractionInput,
-} from '../interaction/WorldInteractionInput';
+import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { UI_COLOURS, UI_FONT, applyButtonHover } from '../ui/uiTheme';
 import { worldDepthForY } from '../world/WorldDepth';
-import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
-
-interface Point {
-  x: number;
-  y: number;
-}
 
 interface SceneRuntime {
   scene: Phaser.Scene;
   objects: Phaser.GameObjects.GameObject[];
-  input: WorldInteractionInput | null;
 }
 
 const BEACH_ENTRY = { x: 1210, y: 1490, radius: 116 } as const;
-const BEACH_PROMPT_NAME = 'wp14-activity-entry:coral-beachcombing-prompt';
-
-function findPlayer(scene: Phaser.Scene): Point | null {
-  const object = scene.children.getByName(WORLD_PLAYER_NAME) as
-    | (Phaser.GameObjects.GameObject & Partial<Point>)
-    | null;
-  if (object && typeof object.x === 'number' && typeof object.y === 'number') {
-    return { x: object.x, y: object.y };
-  }
-  return null;
-}
-
-function distance(left: Point, right: Point): number {
-  return Phaser.Math.Distance.Between(left.x, left.y, right.x, right.y);
-}
+const REGISTRY_OWNER = 'repeatable-activity-entry';
 
 function isBakeryScene(scene: Phaser.Scene): boolean {
   const interior = scene as Phaser.Scene & { interiorId?: string };
@@ -77,15 +53,11 @@ export class RepeatableActivityEntryWorldManager {
     if (this.runtime?.scene !== target) {
       this.buildRuntime(target);
     }
-
-    if (target.scene.key === 'StarlightBeachScene') {
-      this.updateBeachInteraction(target);
-    }
   }
 
   private buildRuntime(scene: Phaser.Scene): void {
     this.destroyRuntime();
-    this.runtime = { scene, objects: [], input: null };
+    this.runtime = { scene, objects: [] };
 
     if (isBakeryScene(scene)) {
       this.buildBakeryEntry(scene);
@@ -127,60 +99,40 @@ export class RepeatableActivityEntryWorldManager {
   }
 
   private buildBeachEntry(scene: Phaser.Scene): void {
-    const save = getBrowserSaveService().load() ?? getBrowserSaveService().createNewGame();
+    const saveService = getBrowserSaveService();
+    const save = saveService.load() ?? saveService.createNewGame();
     const storyComplete =
       getBrowserQuestEngine().getProgress(CORAL_SHELL_STORIES_QUEST_ID).status === 'completed';
     if (save.world.flags[BEACHCOMBING_READY_FLAG] !== true || !storyComplete) {
       return;
     }
 
-    const input = new WorldInteractionInput(scene);
-    this.runtime!.input = input;
     const plate = scene.add.circle(0, 0, 31, 0xccefeb, 0.22).setStrokeStyle(3, 0xffffff, 0.38);
     const icon = scene.add
       .text(0, 0, '📓', { fontFamily: UI_FONT, fontSize: '29px' })
       .setOrigin(0.5);
-    const prompt = scene.add
-      .text(0, 55, `Beachcombing notebook  ·  ${WORLD_INTERACTION_PROMPT}`, {
-        color: '#496474',
-        fontFamily: UI_FONT,
-        fontSize: '14px',
-        fontStyle: 'bold',
-        backgroundColor: '#f5ffffef',
-        padding: { x: 9, y: 5 },
-      })
-      .setOrigin(0.5)
-      .setName(BEACH_PROMPT_NAME)
-      .setVisible(false);
-    const zone = scene.add.zone(0, 0, 190, 156);
     const container = scene.add
-      .container(BEACH_ENTRY.x, BEACH_ENTRY.y, [plate, icon, prompt, zone])
+      .container(BEACH_ENTRY.x, BEACH_ENTRY.y, [plate, icon])
       .setDepth(worldDepthForY(BEACH_ENTRY.y + 20, 0.5))
       .setName('wp14-activity-entry:coral-beachcombing');
-    input.bindPointer(zone, () => {
-      const player = findPlayer(scene);
-      if (player && distance(player, BEACH_ENTRY) <= BEACH_ENTRY.radius) {
-        void this.launchBeachcombing(scene);
-      }
-    });
     this.runtime?.objects.push(container);
-  }
 
-  private updateBeachInteraction(scene: Phaser.Scene): void {
-    const runtime = this.runtime;
-    const player = findPlayer(scene);
-    const container = scene.children.getByName(
-      'wp14-activity-entry:coral-beachcombing',
-    ) as Phaser.GameObjects.Container | null;
-    if (!runtime?.input || !player || !container) {
-      return;
-    }
-    const prompt = container.getByName(BEACH_PROMPT_NAME) as Phaser.GameObjects.Text | null;
-    const nearby = distance(player, BEACH_ENTRY) <= BEACH_ENTRY.radius;
-    prompt?.setVisible(distance(player, BEACH_ENTRY) <= BEACH_ENTRY.radius + 90);
-    if (nearby && runtime.input.justPressed()) {
-      void this.launchBeachcombing(scene);
-    }
+    getSceneInteractionRegistry(scene).replaceOwnerTargets(REGISTRY_OWNER, [
+      {
+        id: 'interaction:activity:coral-beachcombing',
+        label: 'Beachcombing notebook',
+        actionLabel: 'Start beachcombing',
+        actionKind: 'start',
+        position: BEACH_ENTRY,
+        interactionRadius: BEACH_ENTRY.radius,
+        priority: 20,
+        visible: () => container.active,
+        result: {
+          type: 'callback',
+          activate: () => void this.launchBeachcombing(scene),
+        },
+      },
+    ]);
   }
 
   private async launchMapleBaking(scene: Phaser.Scene): Promise<void> {
@@ -221,7 +173,7 @@ export class RepeatableActivityEntryWorldManager {
     if (!this.runtime) {
       return;
     }
-    this.runtime.input?.destroy();
+    getSceneInteractionRegistry(this.runtime.scene).clearOwner(REGISTRY_OWNER);
     for (const object of this.runtime.objects) {
       object.destroy();
     }

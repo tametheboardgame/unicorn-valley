@@ -6,10 +6,8 @@ import {
 } from '../../content/r5LumiWoodsStory';
 import type { SecretDiscoveryDefinition } from '../../content/r4Secrets';
 import { SecretDiscoveryService } from '../discovery/SecretDiscoveryService';
-import {
-  WORLD_INTERACTION_PROMPT,
-  WorldInteractionInput,
-} from '../interaction/WorldInteractionInput';
+import type { InteractionTarget } from '../interaction/InteractionTarget';
+import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { rememberWorldReturnState } from '../world/WorldArrivalState';
 import { setWhisperingWoodsPlayerSpawn } from '../world/WhisperingWoodsMap';
@@ -17,20 +15,18 @@ import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
 
 const PRESENTATION_NAME = 'lumi-woods-presentation';
 const LUMI_POSITION = { x: 2980, y: 1530 } as const;
+const REGISTRY_OWNER = 'lumi-woods-story';
 
 interface ClueMarker {
   definition: SecretDiscoveryDefinition;
   container: Phaser.GameObjects.Container;
-  prompt: Phaser.GameObjects.Text;
 }
 
 interface LumiWoodsState {
   scene: Phaser.Scene;
-  interaction: WorldInteractionInput;
   markers: Map<SecretDiscoveryDefinition['id'], ClueMarker>;
   starwell: Phaser.GameObjects.Container | null;
   lumi: Phaser.GameObjects.Container | null;
-  lumiPrompt: Phaser.GameObjects.Text | null;
 }
 
 function findPlayer(scene: Phaser.Scene): Phaser.Physics.Arcade.Sprite | null {
@@ -55,45 +51,9 @@ export class LumiWoodsWorldManager {
     }
 
     const state = this.ensureState(scene);
-    const player = findPlayer(scene);
-    if (!player) {
-      return;
-    }
-
     this.refreshClues(state);
     this.refreshStarwell(state);
-
-    let nearest: ClueMarker | null = null;
-    let nearestDistance = Number.POSITIVE_INFINITY;
-    for (const marker of state.markers.values()) {
-      const distance = Phaser.Math.Distance.Between(
-        player.x,
-        player.y,
-        marker.definition.position.x,
-        marker.definition.position.y,
-      );
-      marker.prompt.setVisible(distance <= marker.definition.interactionRadius + 90);
-      if (distance <= marker.definition.interactionRadius && distance < nearestDistance) {
-        nearest = marker;
-        nearestDistance = distance;
-      }
-    }
-
-    const lumiDistance = state.lumi
-      ? Phaser.Math.Distance.Between(player.x, player.y, LUMI_POSITION.x, LUMI_POSITION.y)
-      : Number.POSITIVE_INFINITY;
-    state.lumiPrompt?.setVisible(lumiDistance <= 220);
-
-    if (!state.interaction.justPressed()) {
-      return;
-    }
-    if (nearest && nearestDistance <= lumiDistance) {
-      this.activateClue(state, nearest.definition);
-      return;
-    }
-    if (lumiDistance <= 150) {
-      this.openLumiStory(scene);
-    }
+    this.syncInteractionTargets(state);
   }
 
   private ensureState(scene: Phaser.Scene): LumiWoodsState {
@@ -103,11 +63,9 @@ export class LumiWoodsWorldManager {
     this.clearState();
     this.state = {
       scene,
-      interaction: new WorldInteractionInput(scene),
       markers: new Map(),
       starwell: null,
       lumi: null,
-      lumiPrompt: null,
     };
     return this.state;
   }
@@ -178,45 +136,10 @@ export class LumiWoodsWorldManager {
       objects.push(icon);
     }
 
-    const prompt = scene.add
-      .text(0, 58, `${WORLD_INTERACTION_PROMPT}: ${definition.label}`, {
-        color: '#dcefd6',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '15px',
-        fontStyle: 'bold',
-        backgroundColor: '#284940ed',
-        padding: { x: 8, y: 5 },
-      })
-      .setOrigin(0.5)
-      .setVisible(false);
-    const zone = scene.add.zone(
-      0,
-      0,
-      definition.interactionRadius * 1.4,
-      definition.interactionRadius * 1.4,
-    );
-    objects.push(prompt, zone);
-
     const container = scene.add
       .container(definition.position.x, definition.position.y, objects)
       .setName(PRESENTATION_NAME)
       .setDepth(20);
-
-    this.state?.interaction.bindPointer(zone, () => {
-      const player = findPlayer(scene);
-      if (!player) {
-        return;
-      }
-      const distance = Phaser.Math.Distance.Between(
-        player.x,
-        player.y,
-        definition.position.x,
-        definition.position.y,
-      );
-      if (distance <= definition.interactionRadius) {
-        this.activateClue(this.state, definition);
-      }
-    });
 
     scene.tweens.add({
       targets: glow,
@@ -228,7 +151,41 @@ export class LumiWoodsWorldManager {
       ease: 'Sine.InOut',
     });
 
-    return { definition, container, prompt };
+    return { definition, container };
+  }
+
+  private syncInteractionTargets(state: LumiWoodsState): void {
+    const targets: InteractionTarget[] = [];
+    for (const marker of state.markers.values()) {
+      const { definition } = marker;
+      targets.push({
+        id: `interaction:${definition.id}`,
+        label: definition.label,
+        actionLabel: 'Inspect',
+        actionKind: 'inspect',
+        position: definition.position,
+        interactionRadius: definition.interactionRadius,
+        priority: 20,
+        visible: () => marker.container.active,
+        result: { type: 'callback', activate: () => this.activateClue(state, definition) },
+      });
+    }
+
+    if (state.lumi?.active) {
+      targets.push({
+        id: 'interaction:woods-lumi',
+        label: 'Lumi',
+        actionLabel: 'Talk',
+        actionKind: 'talk',
+        position: LUMI_POSITION,
+        interactionRadius: 150,
+        priority: 30,
+        visible: () => state.lumi?.active === true,
+        result: { type: 'callback', activate: () => this.openLumiStory(state.scene) },
+      });
+    }
+
+    getSceneInteractionRegistry(state.scene).replaceOwnerTargets(REGISTRY_OWNER, targets);
   }
 
   private activateClue(state: LumiWoodsState | null, definition: SecretDiscoveryDefinition): void {
@@ -264,6 +221,7 @@ export class LumiWoodsWorldManager {
       .setDepth(140);
     state.scene.time.delayedCall(3800, () => feedback.destroy());
     this.refreshStarwell(state);
+    this.syncInteractionTargets(state);
   }
 
   private refreshStarwell(state: LumiWoodsState): void {
@@ -273,7 +231,6 @@ export class LumiWoodsWorldManager {
       state.starwell = null;
       state.lumi?.destroy(true);
       state.lumi = null;
-      state.lumiPrompt = null;
       return;
     }
 
@@ -324,18 +281,6 @@ export class LumiWoodsWorldManager {
     const eye = state.scene.add.circle(43, -38, 4, 0x3a514e, 1);
     const tail = state.scene.add.ellipse(-55, -8, 24, 66, 0x86afa0, 0.98).setAngle(-35);
     const firefly = state.scene.add.circle(-20, -70, 6, 0xf7ef9c, 0.92);
-    const prompt = state.scene.add
-      .text(0, 82, `${WORLD_INTERACTION_PROMPT}: Talk to Lumi  💬`, {
-        color: '#dcefd6',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '15px',
-        fontStyle: 'bold',
-        backgroundColor: '#284940ed',
-        padding: { x: 8, y: 5 },
-      })
-      .setOrigin(0.5)
-      .setVisible(false);
-    const zone = state.scene.add.zone(0, 0, 180, 180);
 
     state.lumi = state.scene.add
       .container(LUMI_POSITION.x, LUMI_POSITION.y, [
@@ -347,28 +292,9 @@ export class LumiWoodsWorldManager {
         horn,
         eye,
         firefly,
-        prompt,
-        zone,
       ])
       .setName(PRESENTATION_NAME)
       .setDepth(19);
-    state.lumiPrompt = prompt;
-
-    state.interaction.bindPointer(zone, () => {
-      const player = findPlayer(state.scene);
-      if (!player) {
-        return;
-      }
-      const distance = Phaser.Math.Distance.Between(
-        player.x,
-        player.y,
-        LUMI_POSITION.x,
-        LUMI_POSITION.y,
-      );
-      if (distance <= 150) {
-        this.openLumiStory(state.scene);
-      }
-    });
 
     state.scene.tweens.add({
       targets: firefly,
@@ -393,7 +319,7 @@ export class LumiWoodsWorldManager {
     if (!this.state) {
       return;
     }
-    this.state.interaction.destroy();
+    getSceneInteractionRegistry(this.state.scene).clearOwner(REGISTRY_OWNER);
     for (const marker of this.state.markers.values()) {
       marker.container.destroy(true);
     }

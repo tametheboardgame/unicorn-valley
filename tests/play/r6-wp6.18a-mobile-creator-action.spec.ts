@@ -140,7 +140,7 @@ test('portrait exploration presents Talk to Pip as a large explicit action butto
   await expect(action).toHaveText('Talk to Pip');
   const actionBox = await action.boundingBox();
   expect(actionBox?.height ?? 0).toBeGreaterThanOrEqual(62);
-  await expect(page.locator('.mobile-interaction-hint')).toContainText('big action button');
+  await expect(page.locator('.mobile-interaction-hint')).toHaveText('Pip');
 
   await action.dispatchEvent('pointerdown', {
     pointerId: 2,

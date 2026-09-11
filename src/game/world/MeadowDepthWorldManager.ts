@@ -9,15 +9,12 @@ import {
 import { getBrowserAtmosphericTimeService } from '../atmosphere/AtmosphericTimeService';
 import { getBrowserMagicalWeatherService } from '../atmosphere/MagicalWeatherService';
 import { DiscoveryService } from '../discovery/DiscoveryService';
-import {
-  WorldInteractionInput,
-  WORLD_INTERACTION_PROMPT,
-} from '../interaction/WorldInteractionInput';
+import type { InteractionActionKind, InteractionTarget } from '../interaction/InteractionTarget';
+import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { MeadowWindmillStoryService } from '../story/MeadowWindmillStoryService';
 import { worldDepthForY } from './WorldDepth';
-import { WORLD_PLAYER_NAME } from './WorldTraversalPolishManager';
 
 interface Point {
   x: number;
@@ -28,6 +25,7 @@ interface MeadowInteractionDefinition {
   id: string;
   label: string;
   actionLabel: string;
+  actionKind: InteractionActionKind;
   position: Point;
   radius: number;
   icon: string;
@@ -36,24 +34,23 @@ interface MeadowInteractionDefinition {
 interface MeadowInteractionRuntime {
   definition: MeadowInteractionDefinition;
   container: Phaser.GameObjects.Container;
-  prompt: Phaser.GameObjects.Text;
-  zone: Phaser.GameObjects.Zone;
 }
 
 interface MeadowDepthState {
   scene: Phaser.Scene;
-  input: WorldInteractionInput;
   interactions: MeadowInteractionRuntime[];
   feedback: Phaser.GameObjects.Text;
   persistent: Phaser.GameObjects.Container | null;
   signature: string;
 }
 
+const REGISTRY_OWNER = 'meadow-depth';
 const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
   {
     id: 'windmill-story',
     label: 'Breeze’s wind ribbon',
     actionLabel: 'Look',
+    actionKind: 'inspect',
     position: { x: 1130, y: 465 },
     radius: 130,
     icon: '🎐',
@@ -62,6 +59,7 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     id: 'windmill-bell',
     label: 'Windmill bell',
     actionLabel: 'Ring',
+    actionKind: 'interact',
     position: { x: 1280, y: 435 },
     radius: 135,
     icon: '🔔',
@@ -70,6 +68,7 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     id: 'windmill-lookout',
     label: 'Windmill Lookout',
     actionLabel: 'Go up',
+    actionKind: 'enter',
     position: { x: 1395, y: 425 },
     radius: 145,
     icon: '🌬️',
@@ -78,6 +77,7 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     id: 'rainbow-pond',
     label: 'Rainbow Pond',
     actionLabel: 'Splash / watch',
+    actionKind: 'interact',
     position: { x: 1570, y: 710 },
     radius: 130,
     icon: '🐸',
@@ -86,6 +86,7 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     id: 'picnic-hill',
     label: 'Picnic Hill',
     actionLabel: 'Sit and look',
+    actionKind: 'interact',
     position: { x: 1760, y: 1490 },
     radius: 150,
     icon: '🧺',
@@ -94,6 +95,7 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     id: 'petal-patch',
     label: 'Bouncy flower patch',
     actionLabel: 'Brush past',
+    actionKind: 'interact',
     position: { x: 920, y: 1240 },
     radius: 135,
     icon: '🌸',
@@ -102,6 +104,7 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     id: 'flower-circle',
     label: 'Quiet flower circle',
     actionLabel: 'Look closely',
+    actionKind: 'inspect',
     position: { x: 650, y: 1360 },
     radius: 150,
     icon: '🌼',
@@ -110,6 +113,7 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     id: 'butterfly-parade',
     label: 'Meadow butterflies',
     actionLabel: 'Follow',
+    actionKind: 'interact',
     position: { x: 790, y: 1320 },
     radius: 145,
     icon: '🦋',
@@ -118,6 +122,7 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     id: 'run-poster',
     label: 'Rainbow Run course poster',
     actionLabel: 'Look',
+    actionKind: 'inspect',
     position: { x: 2860, y: 825 },
     radius: 145,
     icon: '🏁',
@@ -126,6 +131,7 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     id: 'ribbon-record',
     label: 'Ribbon Board',
     actionLabel: 'Check record',
+    actionKind: 'inspect',
     position: { x: 2510, y: 1260 },
     radius: 150,
     icon: '🎀',
@@ -134,25 +140,12 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     id: 'cup-board',
     label: 'Rainbow Cup board',
     actionLabel: 'Peek',
+    actionKind: 'inspect',
     position: { x: 2840, y: 1465 },
     radius: 150,
     icon: '🏆',
   },
 ];
-
-function findPlayer(scene: Phaser.Scene): Point | null {
-  const object = scene.children.getByName(WORLD_PLAYER_NAME) as
-    | (Phaser.GameObjects.GameObject & Partial<Point>)
-    | null;
-  if (object && typeof object.x === 'number' && typeof object.y === 'number') {
-    return { x: object.x, y: object.y };
-  }
-  return null;
-}
-
-function distance(left: Point, right: Point): number {
-  return Phaser.Math.Distance.Between(left.x, left.y, right.x, right.y);
-}
 
 export class MeadowDepthWorldManager {
   private readonly saveService = getBrowserSaveService();
@@ -182,29 +175,6 @@ export class MeadowDepthWorldManager {
 
     const state = this.ensureState(scene);
     this.syncPersistent(state);
-    const player = findPlayer(scene);
-    if (!player) {
-      return;
-    }
-
-    let nearest: MeadowInteractionRuntime | null = null;
-    let nearestDistance = Number.POSITIVE_INFINITY;
-    for (const runtime of state.interactions) {
-      const pointDistance = distance(player, runtime.definition.position);
-      const inInteractionRange = pointDistance <= runtime.definition.radius;
-      runtime.prompt.setVisible(pointDistance <= runtime.definition.radius + 78);
-      if (runtime.zone.input) {
-        runtime.zone.input.enabled = inInteractionRange;
-      }
-      if (inInteractionRange && pointDistance < nearestDistance) {
-        nearest = runtime;
-        nearestDistance = pointDistance;
-      }
-    }
-
-    if (nearest && state.input.justPressed()) {
-      this.activate(state, nearest.definition);
-    }
   }
 
   private ensureState(scene: Phaser.Scene): MeadowDepthState {
@@ -215,7 +185,6 @@ export class MeadowDepthWorldManager {
 
     const state: MeadowDepthState = {
       scene,
-      input: new WorldInteractionInput(scene),
       interactions: [],
       feedback: scene.add
         .text(640, 116, '', {
@@ -239,6 +208,7 @@ export class MeadowDepthWorldManager {
       this.createInteraction(state, definition),
     );
     this.state = state;
+    this.publishTargets(state);
     this.syncPersistent(state, true);
     return state;
   }
@@ -255,37 +225,11 @@ export class MeadowDepthWorldManager {
       })
       .setOrigin(0.5)
       .setAlpha(0.75);
-    const prompt = state.scene.add
-      .text(
-        0,
-        48,
-        `${definition.actionLabel}: ${definition.label}  ·  ${WORLD_INTERACTION_PROMPT}`,
-        {
-          color: '#5d496c',
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '14px',
-          fontStyle: 'bold',
-          backgroundColor: '#fff9edea',
-          padding: { x: 8, y: 5 },
-        },
-      )
-      .setOrigin(0.5)
-      .setVisible(false);
-    const zone = state.scene.add.zone(0, 0, 180, 150);
     const container = state.scene.add
-      .container(definition.position.x, definition.position.y, [glow, icon, prompt, zone])
+      .container(definition.position.x, definition.position.y, [glow, icon])
       .setName(`meadow-depth:${definition.id}`)
       .setDepth(worldDepthForY(definition.position.y + 15, 0.35));
 
-    state.input.bindPointer(zone, () => {
-      const player = findPlayer(state.scene);
-      if (player && distance(player, definition.position) <= definition.radius) {
-        this.activate(state, definition);
-      }
-    });
-    if (zone.input) {
-      zone.input.enabled = false;
-    }
     state.scene.tweens.add({
       targets: [glow, icon],
       alpha: { from: 0.38, to: 0.86 },
@@ -294,7 +238,22 @@ export class MeadowDepthWorldManager {
       repeat: -1,
       ease: 'Sine.InOut',
     });
-    return { definition, container, prompt, zone };
+    return { definition, container };
+  }
+
+  private publishTargets(state: MeadowDepthState): void {
+    const targets: InteractionTarget[] = state.interactions.map(({ definition, container }) => ({
+      id: `interaction:meadow-depth:${definition.id}`,
+      label: definition.label,
+      actionLabel: definition.actionLabel,
+      actionKind: definition.actionKind,
+      position: definition.position,
+      interactionRadius: definition.radius,
+      priority: definition.actionKind === 'enter' ? 20 : 12,
+      visible: () => container.active,
+      result: { type: 'callback', activate: () => this.activate(state, definition) },
+    }));
+    getSceneInteractionRegistry(state.scene).replaceOwnerTargets(REGISTRY_OWNER, targets);
   }
 
   private activate(state: MeadowDepthState, definition: MeadowInteractionDefinition): void {
@@ -655,12 +614,12 @@ export class MeadowDepthWorldManager {
     if (!this.state) {
       return;
     }
+    getSceneInteractionRegistry(this.state.scene).clearOwner(REGISTRY_OWNER);
     for (const runtime of this.state.interactions) {
       runtime.container.destroy(true);
     }
     this.state.persistent?.destroy(true);
     this.state.feedback.destroy();
-    this.state.input.destroy();
     this.state = null;
   }
 }
