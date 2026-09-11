@@ -285,7 +285,11 @@ export class WorldFeedbackPresenter {
       alpha: 0,
       duration: 180,
       ease: 'Sine.In',
-      onComplete: () => objects.forEach((object) => object.destroy()),
+      onComplete: () => {
+        objects.forEach((object) => {
+          object.destroy();
+        });
+      },
     });
   }
 
@@ -310,7 +314,11 @@ export class WorldFeedbackPresenter {
       y: '-=6',
       duration: 160,
       ease: 'Sine.In',
-      onComplete: () => objects.forEach((object) => object.destroy()),
+      onComplete: () => {
+        objects.forEach((object) => {
+          object.destroy();
+        });
+      },
     });
   }
 
