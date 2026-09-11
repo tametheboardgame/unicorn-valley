@@ -16,11 +16,14 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: agent/r6.5-wp19d-unified-interactions-npcs
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
       - name: Apply WP19D type fixes
         run: |
           python - <<'PY'
           from pathlib import Path
-
           bridge = Path('src/game/interaction/CoreSceneInteractionBridge.ts')
           text = bridge.read_text()
           old = 'getSceneInteractionRegistry(scene).setTargets(OWNER_KEY, createTargets(scene));'
@@ -28,40 +31,23 @@ jobs:
           if old not in text:
               raise SystemExit('Expected CoreSceneInteractionBridge setTargets call not found')
           bridge.write_text(text.replace(old, new, 1))
-
           glade = Path('src/game/scenes/MoonflowerGladeScene.ts')
           text = glade.read_text()
-          old = """    if (target.result.type === 'dialogue') {
-      this.startDialogue(target.result.dialogueId);
-      return;
-    }
-
-    this.showFeedback(`${target.result.title}\\n${target.result.message}`);
-"""
-          new = """    if (target.result.type === 'dialogue') {
-      this.startDialogue(target.result.dialogueId);
-      return;
-    }
-
-    if (target.result.type === 'callback') {
-      target.result.activate();
-      return;
-    }
-
-    this.showFeedback(`${target.result.title}\\n${target.result.message}`);
-"""
-          if old not in text:
-              raise SystemExit('Expected Moonflower interaction result block not found')
-          glade.write_text(text.replace(old, new, 1))
+          marker = "    this.showFeedback(`${target.result.title}\\n${target.result.message}`);"
+          insertion = "    if (target.result.type === 'callback') {\\n      target.result.activate();\\n      return;\\n    }\\n\\n" + marker
+          if marker not in text:
+              raise SystemExit('Expected Moonflower message fallback not found')
+          glade.write_text(text.replace(marker, insertion, 1))
           PY
           rm -f wp19d-typecheck.txt
           rm -f .github/workflows/wp19d-typecheck-diagnostics.yml
           rm -f .github/workflows/wp19d-typefix.yml
-      - name: Format and type-check
-        run: |
-          npm ci
-          npm run format
-          npm run typecheck
+      - name: Install dependencies
+        run: npm ci
+      - name: Format
+        run: npm run format
+      - name: Type-check
+        run: npm run typecheck
       - name: Commit fixes
         run: |
           git config user.name "github-actions[bot]"
