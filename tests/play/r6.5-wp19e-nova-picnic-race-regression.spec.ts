@@ -137,10 +137,12 @@ test('Marigold and Nova dialogue keep accepted sizing and Meet Nova works when N
   await page.keyboard.press('KeyE');
   await waitForVisibleObject(page, 'SunbeamVillageScene', 'dialogue-production-panel');
 
+  let village = await sceneSnapshot(page, 'SunbeamVillageScene');
+  const marigoldLinePanelY = visiblePanelY(village);
+
   await page.keyboard.press('KeyE');
   await waitForVisibleObject(page, 'SunbeamVillageScene', 'dialogue-production-choice-1');
-  let village = await sceneSnapshot(page, 'SunbeamVillageScene');
-  const choicePanelY = visiblePanelY(village);
+  village = await sceneSnapshot(page, 'SunbeamVillageScene');
   expect(
     village.objects.filter(
       (object) => object.name.startsWith('dialogue-production-choice-') && object.visible,
@@ -158,7 +160,7 @@ test('Marigold and Nova dialogue keep accepted sizing and Meet Nova works when N
     })
     .toContain('Sunshine it is!');
   village = await sceneSnapshot(page, 'SunbeamVillageScene');
-  expect(visiblePanelY(village)).toBe(choicePanelY);
+  expect(visiblePanelY(village)).toBe(marigoldLinePanelY);
   await page.keyboard.press('KeyE');
 
   await startScene(page, 'RainbowMeadowScene');
