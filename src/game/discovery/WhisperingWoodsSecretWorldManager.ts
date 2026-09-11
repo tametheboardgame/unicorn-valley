@@ -4,27 +4,18 @@ import {
   R5_WHISPERING_WOODS_SECRETS,
 } from '../../content/r5WhisperingWoods';
 import type { SecretDiscoveryDefinition } from '../../content/r4Secrets';
-import {
-  WORLD_INTERACTION_PROMPT,
-  WorldInteractionInput,
-} from '../interaction/WorldInteractionInput';
+import type { InteractionTarget } from '../interaction/InteractionTarget';
+import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { getBrowserSaveService } from '../save/browserSaveService';
-import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
 import { SecretDiscoveryService } from './SecretDiscoveryService';
 
 const PRESENTATION_NAME = 'woods-secret-presentation';
+const REGISTRY_OWNER = 'woods-secret';
 
 interface WoodsSecretState {
   scene: Phaser.Scene;
-  interaction: WorldInteractionInput;
   marker: Phaser.GameObjects.Container | null;
-  prompt: Phaser.GameObjects.Text | null;
   path: Phaser.GameObjects.Container | null;
-}
-
-function findPlayer(scene: Phaser.Scene): Phaser.GameObjects.Sprite | null {
-  const player = scene.children.getByName(WORLD_PLAYER_NAME);
-  return player instanceof Phaser.GameObjects.Sprite ? player : null;
 }
 
 export class WhisperingWoodsSecretWorldManager {
@@ -43,11 +34,6 @@ export class WhisperingWoodsSecretWorldManager {
     }
 
     const state = this.ensureState(scene);
-    const player = findPlayer(scene);
-    if (!player) {
-      return;
-    }
-
     this.refreshPath(state);
     const definition = R5_WHISPERING_WOODS_SECRETS[0];
     const available = this.service.isAvailable(definition);
@@ -56,23 +42,8 @@ export class WhisperingWoodsSecretWorldManager {
     } else if (!available && state.marker?.active) {
       state.marker.destroy(true);
       state.marker = null;
-      state.prompt = null;
     }
-
-    if (!state.marker || !state.prompt) {
-      return;
-    }
-
-    const distance = Phaser.Math.Distance.Between(
-      player.x,
-      player.y,
-      definition.position.x,
-      definition.position.y,
-    );
-    state.prompt.setVisible(distance <= definition.interactionRadius + 90);
-    if (distance <= definition.interactionRadius && state.interaction.justPressed()) {
-      this.activate(state, definition);
-    }
+    this.syncInteractionTarget(state, definition, available);
   }
 
   private ensureState(scene: Phaser.Scene): WoodsSecretState {
@@ -82,9 +53,7 @@ export class WhisperingWoodsSecretWorldManager {
     this.clearState();
     this.state = {
       scene,
-      interaction: new WorldInteractionInput(scene),
       marker: null,
-      prompt: null,
       path: null,
     };
     return this.state;
@@ -96,44 +65,10 @@ export class WhisperingWoodsSecretWorldManager {
       .text(0, 0, '🍃', { fontFamily: 'system-ui, sans-serif', fontSize: '28px' })
       .setOrigin(0.5)
       .setAlpha(0.72);
-    const prompt = state.scene.add
-      .text(0, 50, `${WORLD_INTERACTION_PROMPT}: ${definition.label}  ✨`, {
-        color: '#dbeed4',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '15px',
-        fontStyle: 'bold',
-        backgroundColor: '#24483feb',
-        padding: { x: 8, y: 5 },
-      })
-      .setOrigin(0.5)
-      .setVisible(false);
-    const zone = state.scene.add.zone(
-      0,
-      0,
-      definition.interactionRadius * 1.4,
-      definition.interactionRadius * 1.4,
-    );
     state.marker = state.scene.add
-      .container(definition.position.x, definition.position.y, [glow, leaves, prompt, zone])
+      .container(definition.position.x, definition.position.y, [glow, leaves])
       .setName(PRESENTATION_NAME)
       .setDepth(20);
-    state.prompt = prompt;
-
-    state.interaction.bindPointer(zone, () => {
-      const player = findPlayer(state.scene);
-      if (!player) {
-        return;
-      }
-      const distance = Phaser.Math.Distance.Between(
-        player.x,
-        player.y,
-        definition.position.x,
-        definition.position.y,
-      );
-      if (distance <= definition.interactionRadius) {
-        this.activate(this.state, definition);
-      }
-    });
 
     state.scene.tweens.add({
       targets: [glow, leaves],
@@ -146,6 +81,28 @@ export class WhisperingWoodsSecretWorldManager {
     });
   }
 
+  private syncInteractionTarget(
+    state: WoodsSecretState,
+    definition: SecretDiscoveryDefinition,
+    available: boolean,
+  ): void {
+    const targets: InteractionTarget[] = [];
+    if (available && state.marker?.active) {
+      targets.push({
+        id: `interaction:${definition.id}`,
+        label: definition.label,
+        actionLabel: 'Inspect',
+        actionKind: 'inspect',
+        position: definition.position,
+        interactionRadius: definition.interactionRadius,
+        priority: 20,
+        visible: () => state.marker?.active === true,
+        result: { type: 'callback', activate: () => this.activate(state, definition) },
+      });
+    }
+    getSceneInteractionRegistry(state.scene).replaceOwnerTargets(REGISTRY_OWNER, targets);
+  }
+
   private activate(state: WoodsSecretState | null, definition: SecretDiscoveryDefinition): void {
     if (!state?.scene.scene.isActive()) {
       return;
@@ -156,7 +113,7 @@ export class WhisperingWoodsSecretWorldManager {
     }
     state.marker?.destroy(true);
     state.marker = null;
-    state.prompt = null;
+    getSceneInteractionRegistry(state.scene).clearOwner(REGISTRY_OWNER);
     this.refreshPath(state);
     const feedback = state.scene.add
       .text(640, 130, definition.feedback, {
@@ -207,7 +164,7 @@ export class WhisperingWoodsSecretWorldManager {
     if (!this.state) {
       return;
     }
-    this.state.interaction.destroy();
+    getSceneInteractionRegistry(this.state.scene).clearOwner(REGISTRY_OWNER);
     this.state.marker?.destroy(true);
     this.state.path?.destroy(true);
     this.state = null;
