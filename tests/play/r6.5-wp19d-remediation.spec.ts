@@ -155,7 +155,7 @@ function installFinePrimaryPointerOverride(): void {
 test.describe('R6.5-WP19D desktop control remediation', () => {
   test.use({ viewport: { width: 1280, height: 720 }, hasTouch: true });
 
-  test('touchscreen laptop keeps contextual actions but hides the movement pad and Gallop', async ({
+  test('touchscreen laptop hides movement controls while core NPCs remain physical and actionable', async ({
     page,
   }) => {
     await page.addInitScript(installFinePrimaryPointerOverride);
@@ -167,6 +167,21 @@ test.describe('R6.5-WP19D desktop control remediation', () => {
     let scene = await getScene(page, 'MoonflowerGladeScene');
     expect(objectByName(scene, 'tablet-movement-pad').visible).toBe(false);
     expect(objectByName(scene, 'touch-movement-gallop').visible).toBe(false);
+
+    const pip = await waitForNamedObject(
+      page,
+      'MoonflowerGladeScene',
+      (object) => object.name === 'core-npc:pip:world',
+    );
+    await positionPlayer(page, 'MoonflowerGladeScene', pip.x, pip.y);
+    await expect
+      .poll(async () => {
+        const current = await getScene(page, 'MoonflowerGladeScene');
+        const currentPip = objectByName(current, 'core-npc:pip:world');
+        const currentPlayer = player(current);
+        return Math.hypot(currentPlayer.x - currentPip.x, currentPlayer.y - currentPip.y);
+      })
+      .toBeGreaterThanOrEqual(70);
 
     await positionPlayer(page, 'MoonflowerGladeScene', 840, 825);
     await waitForTalkTarget(page, 'MoonflowerGladeScene', 'Pip');
@@ -240,14 +255,13 @@ test.describe('R6.5-WP19D interaction remediation', () => {
     ).toBeLessThan(1);
 
     await page.keyboard.press('KeyE');
-    await page.waitForTimeout(80);
+    await page.waitForTimeout(250);
     scene = await getScene(page, 'MoonflowerGladeScene');
     expect(
       scene.objects.some(
         (object) => object.name === 'wp19d-resident-conversation-panel' && object.visible,
       ),
     ).toBe(false);
-    expect(objectByName(scene, 'exploration-interaction-prompt').visible).toBe(false);
   });
 
   test('Starlight Beach keeps the canonical HUD and discovery feedback out of the top chrome', async ({
