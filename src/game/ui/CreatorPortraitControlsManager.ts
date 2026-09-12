@@ -397,9 +397,12 @@ export class CreatorPortraitControlsManager {
       return;
     }
 
-    void getVerticalSliceAudio().unlock();
+    // The user action must never be blocked by browser media initialisation. WebKit can
+    // stall while creating/resuming WebAudio, so perform the real Phaser action and UI
+    // synchronisation first, then attempt audio unlock within the same activation callback.
     target.emit('pointerdown');
     this.sync();
+    void getVerticalSliceAudio().unlock();
   }
 }
 
