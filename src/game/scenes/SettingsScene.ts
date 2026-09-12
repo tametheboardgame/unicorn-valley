@@ -521,7 +521,8 @@ export class SettingsScene extends Phaser.Scene {
       };
     }
     if (kind === 'music-volume') return { label: 'Music volume', enabled: true };
-    if (kind === 'ambience-volume') return { label: 'Ambience volume', enabled: audio.ambienceEnabled };
+    if (kind === 'ambience-volume')
+      return { label: 'Ambience volume', enabled: audio.ambienceEnabled };
     if (kind === 'sfx-volume') return { label: 'Effects volume', enabled: audio.sfxEnabled };
     if (kind === 'time-of-day') {
       const definition = this.atmosphericTime.getDefinition();
