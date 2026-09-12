@@ -60,11 +60,6 @@ export const SFX_BINDINGS: Partial<Record<VerticalSliceSfx, string>> = {
   discovery: 'sfx:discoveries/discovery',
 };
 
-/**
- * Optional one-shot cue overrides for world objects. These are keyed by the stable interaction ID,
- * never by display text, coordinates or scene object names. Unlisted interactions fall back to
- * their semantic action (for example Talk -> dialogue and Enter -> door).
- */
 export const INTERACTION_SFX_BINDINGS: Readonly<Record<string, VerticalSliceSfx>> = {
   'interaction:display-stump': 'ui',
   'interaction:meadow-ribbon-board': 'ui',
@@ -110,15 +105,13 @@ export function getAudioAsset(id: string | null | undefined): AudioCatalogueEntr
 
 export function resolveSfxAsset(kind: VerticalSliceSfx): AudioCatalogueEntry | null {
   const asset = getAudioAsset(SFX_BINDINGS[kind]);
-  return asset?.kind === 'sfx' ? asset : null;
+  return asset?.id.startsWith('sfx:') ? asset : null;
 }
 
 export function resolveContextPlaylist(
   contextId: MusicContextId | null,
 ): readonly AudioCatalogueEntry[] {
-  if (!contextId) {
-    return [];
-  }
+  if (!contextId) return [];
   const binding = MUSIC_BINDINGS[contextId];
   const ids = binding.themeTrackId
     ? [binding.themeTrackId, ...binding.playlistTrackIds]
@@ -126,9 +119,7 @@ export function resolveContextPlaylist(
   const tracks: AudioCatalogueEntry[] = [];
   for (const id of ids) {
     const asset = getAudioAsset(id);
-    if (asset?.kind === 'music' && !tracks.includes(asset)) {
-      tracks.push(asset);
-    }
+    if (asset?.id.startsWith('music:') && !tracks.includes(asset)) tracks.push(asset);
   }
   return tracks;
 }
@@ -142,9 +133,8 @@ export function validateAudioBindings(): string[] {
       : binding.playlistTrackIds;
     for (const id of ids) {
       const asset = getAudioAsset(id);
-      if (!asset) {
-        errors.push(`${contextId} references missing audio asset ${id}`);
-      } else if (asset.kind !== 'music') {
+      if (!asset) errors.push(`${contextId} references missing audio asset ${id}`);
+      else if (!asset.id.startsWith('music:')) {
         errors.push(`${contextId} references non-music audio asset ${id}`);
       }
     }
@@ -152,11 +142,8 @@ export function validateAudioBindings(): string[] {
 
   for (const [cue, id] of Object.entries(SFX_BINDINGS)) {
     const asset = getAudioAsset(id);
-    if (!asset) {
-      errors.push(`${cue} references missing audio asset ${id}`);
-    } else if (asset.kind !== 'sfx') {
-      errors.push(`${cue} references non-SFX audio asset ${id}`);
-    }
+    if (!asset) errors.push(`${cue} references missing audio asset ${id}`);
+    else if (!asset.id.startsWith('sfx:')) errors.push(`${cue} references non-SFX audio asset ${id}`);
   }
   return errors;
 }
