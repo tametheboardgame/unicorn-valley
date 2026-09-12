@@ -19,12 +19,7 @@ interface SettingsSceneData {
   returnScene?: string;
 }
 
-type AudioControlKind =
-  | 'master-volume'
-  | 'music-track'
-  | 'music-volume'
-  | 'ambience-volume'
-  | 'sfx-volume';
+type AudioControlKind = 'master-volume' | 'music-volume' | 'ambience-volume' | 'sfx-volume';
 
 type SettingsRowKind = GameSettingKind | AudioControlKind | 'time-of-day' | 'weather';
 
@@ -54,7 +49,7 @@ const SETTINGS_SECTIONS: readonly SettingsSectionDefinition[] = [
   },
   {
     title: 'Music',
-    kinds: ['music', 'music-track', 'music-volume', 'ambience', 'ambience-volume'],
+    kinds: ['music', 'music-volume', 'ambience', 'ambience-volume'],
   },
   {
     title: 'Sound effects',
@@ -514,12 +509,6 @@ export class SettingsScene extends Phaser.Scene {
   private getRowPresentation(kind: SettingsRowKind) {
     const audio = this.audio.getSettings();
     if (kind === 'master-volume') return { label: 'All sound level', enabled: !audio.muted };
-    if (kind === 'music-track') {
-      return {
-        label: audio.musicEnabled ? 'Track follows each area' : 'Chosen track',
-        enabled: !audio.musicEnabled,
-      };
-    }
     if (kind === 'music-volume') return { label: 'Music volume', enabled: true };
     if (kind === 'ambience-volume')
       return { label: 'Ambience volume', enabled: audio.ambienceEnabled };
@@ -682,7 +671,6 @@ export class SettingsScene extends Phaser.Scene {
   private async toggleSetting(kind: SettingsRowKind): Promise<void> {
     if (
       kind === 'master-volume' ||
-      kind === 'music-track' ||
       kind === 'music-volume' ||
       kind === 'ambience-volume' ||
       kind === 'sfx-volume'
