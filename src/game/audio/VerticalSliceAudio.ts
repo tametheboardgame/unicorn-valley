@@ -1,6 +1,6 @@
 import {
+  MUSIC_BINDINGS,
   getAudioAsset,
-  resolveContextPlaylist,
   resolveMusicContext,
   resolveSfxAsset,
   type MusicContextId,
@@ -170,15 +170,16 @@ export class VerticalSliceAudio {
 
   private restartSceneLoops(): void {
     this.stopProceduralLoops();
-    if (!resolveAudioSceneProfile(this.currentSceneKey ?? '') || this.settings.muted) {
+    const context = resolveMusicContext(this.currentSceneKey ?? '');
+    if (!context || this.settings.muted) {
       this.stopMusic();
       return;
     }
 
     if (this.settings.musicEnabled) {
       const manual = getAudioAsset(this.settings.selectedMusicTrackId);
-      const context = resolveMusicContext(this.currentSceneKey ?? '');
-      const track = manual?.kind === 'music' ? manual : resolveContextPlaylist(context)[0];
+      const track =
+        manual?.kind === 'music' ? manual : getAudioAsset(MUSIC_BINDINGS[context].themeTrackId);
       if (track) {
         this.playTrack(track);
       } else {
