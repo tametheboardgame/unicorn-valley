@@ -224,7 +224,7 @@ export class VerticalSliceAudio {
   private musicElementTargetVolume(): number {
     return this.settings.muted
       ? 0
-      : Math.min(1, this.settings.masterVolume * this.settings.musicVolume * 0.72);
+      : this.settings.masterVolume * this.settings.musicVolume * 0.72;
   }
 
   private async playAuthoredSfx(kind: VerticalSliceSfx): Promise<boolean> {
@@ -232,7 +232,7 @@ export class VerticalSliceAudio {
     if (!asset || typeof Audio === 'undefined') return false;
     try {
       const element = new Audio(asset.path);
-      element.volume = Math.min(1, this.settings.masterVolume * this.settings.sfxVolume * 0.68);
+      element.volume = this.settings.masterVolume * this.settings.sfxVolume * 0.68;
       await element.play();
       return true;
     } catch {
