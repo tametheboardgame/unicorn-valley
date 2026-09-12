@@ -22,9 +22,7 @@ function makeId(kind, relativePath) {
 
 function makeLabel(relativePath) {
   const base = path.basename(relativePath, path.extname(relativePath));
-  return base
-    .replace(/[-_]+/g, ' ')
-    .replace(/\b\w/g, (character) => character.toUpperCase());
+  return base.replace(/[-_]+/g, ' ').replace(/\b\w/g, (character) => character.toUpperCase());
 }
 
 async function walk(directory) {
@@ -69,7 +67,9 @@ async function discover(kind) {
       const publicPath = `/audio/${kind}/${relativePath}`;
       const buffer = await fs.readFile(absolutePath);
       if (!looksLikeMp3(buffer)) {
-        throw new Error(`Audio catalogue rejected ${publicPath}: file does not look like MP3 audio.`);
+        throw new Error(
+          `Audio catalogue rejected ${publicPath}: file does not look like MP3 audio.`,
+        );
       }
       return {
         id: makeId(kind, relativePath),
