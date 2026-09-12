@@ -7,7 +7,7 @@ export interface AudioCatalogueEntry {
   kind: AudioAssetKind;
   path: string;
   label: string;
-  sha256: string;
+  revision: string;
 }
 
 export const AUDIO_CATALOGUE = [
@@ -16,105 +16,105 @@ export const AUDIO_CATALOGUE = [
     "kind": "music",
     "path": "/audio/music/crystal-brook/09 - Crystal Currents.mp3",
     "label": "09   Crystal Currents",
-    "sha256": "JSLv7K-YDQBYkSVPcg3i3JPGmQQV9uRIdP3oPi-2g-Y"
+    "revision": "JSLv7K-YDQ"
   },
   {
     "id": "music:crystal-grotto/10-echoes-of-the-crystal-cave",
     "kind": "music",
     "path": "/audio/music/crystal-grotto/10 - Echoes of the Crystal Cave.mp3",
     "label": "10   Echoes Of The Crystal Cave",
-    "sha256": "WB_wPsnsVXsvnuYR6K7ghEAl6Sq6-ijCK45kpWSwx2g"
+    "revision": "WB_wPsnsVX"
   },
   {
     "id": "music:moonflower-glade/02-morning-by-the-stream",
     "kind": "music",
     "path": "/audio/music/moonflower-glade/02 - Morning by the Stream.mp3",
     "label": "02   Morning By The Stream",
-    "sha256": "bqk7oeplXwZw4KQ333CffJzdViOiFA44AAgJNK0X-c4"
+    "revision": "bqk7oeplXw"
   },
   {
     "id": "music:moonflower-glade/03-moonlit-garden-whispers",
     "kind": "music",
     "path": "/audio/music/moonflower-glade/03 - Moonlit Garden Whispers.mp3",
     "label": "03   Moonlit Garden Whispers",
-    "sha256": "ArLW3_h5Qx7jzPkdM447HJaOWwb_89174h6g30o-ORQ"
+    "revision": "ArLW3_h5Qx"
   },
   {
     "id": "music:rainbow-meadow/07-meadow-under-the-blue-sky",
     "kind": "music",
     "path": "/audio/music/rainbow-meadow/07 - Meadow under the Blue Sky.mp3",
     "label": "07   Meadow Under The Blue Sky",
-    "sha256": "ah_jXMtTCqLkTTJ_i4UZqTwFZhzvUWocCM849caj2eg"
+    "revision": "ah_jXMtTCq"
   },
   {
     "id": "music:rainbow-run/08-speedy-sprints",
     "kind": "music",
     "path": "/audio/music/rainbow-run/08 - Speedy Sprints.mp3",
     "label": "08   Speedy Sprints",
-    "sha256": "USMz2mOnLTVpeELzVYzuAG09HWHT9LDnVa8Y4Nl72FI"
+    "revision": "USMz2mOnLT"
   },
   {
     "id": "music:sunbeam-village/04-bustling-village-square",
     "kind": "music",
     "path": "/audio/music/sunbeam-village/04 - Bustling Village Square.mp3",
     "label": "04   Bustling Village Square",
-    "sha256": "svFLLuVl1eA2MPBeQomlovE16lKHcBnt0NkDEXK_Mlg"
+    "revision": "svFLLuVl1e"
   },
   {
     "id": "music:sunbeam-village/05-sweet-pastry-song",
     "kind": "music",
     "path": "/audio/music/sunbeam-village/05 - Sweet Pastry Song.mp3",
     "label": "05   Sweet Pastry Song",
-    "sha256": "YYVzRwfypL_1oJuwETSz2gNlxCTZm9avKkA1eQImSZ4"
+    "revision": "YYVzRwfypL"
   },
   {
     "id": "music:sunbeam-village/06-the-illustrated-map",
     "kind": "music",
     "path": "/audio/music/sunbeam-village/06 - The Illustrated Map.mp3",
     "label": "06   The Illustrated Map",
-    "sha256": "AAbl9azp5zIyIVjSoT2oukQ05b2p8zO7m5yl8hiv4CQ"
+    "revision": "AAbl9azp5z"
   },
   {
     "id": "music:title/01-the-four-note-path",
     "kind": "music",
     "path": "/audio/music/title/01 - The Four-note Path.mp3",
     "label": "01   The Four Note Path",
-    "sha256": "ya2mydhPdNPddPmhLfsAnLMophgMfWMnbW_0A2mR1M0"
+    "revision": "ya2mydhPdN"
   },
   {
     "id": "music:whispering-woods/11-whispering-woodpath",
     "kind": "music",
     "path": "/audio/music/whispering-woods/11 - Whispering Woodpath.mp3",
     "label": "11   Whispering Woodpath",
-    "sha256": "57kjzVwF83He4seDVmWHQpalrz5mB-J0uD3-1ZgBZnI"
+    "revision": "57kjzVwF83"
   },
   {
     "id": "music:whispering-woods/12-fireflies-in-the-ancient-woods",
     "kind": "music",
     "path": "/audio/music/whispering-woods/12 - Fireflies in the Ancient Woods.mp3",
     "label": "12   Fireflies In The Ancient Woods",
-    "sha256": "CJGINe3oC2CjXd355YUN_Nh1I-UtkAO-j58mGHuCGW4"
+    "revision": "CJGINe3oC2"
   },
   {
     "id": "sfx:discoveries/discovery",
     "kind": "sfx",
     "path": "/audio/sfx/discoveries/discovery.mp3",
     "label": "Discovery",
-    "sha256": "GXO5cBAcg53msJIXA6vJW33IhyI1k7zZnxiovM9vzRg"
+    "revision": "GXO5cBAcg5"
   },
   {
     "id": "sfx:ui-soft-chime",
     "kind": "sfx",
     "path": "/audio/sfx/ui-soft-chime.mp3",
     "label": "Ui Soft Chime",
-    "sha256": "HSQAlqpg2aXah3LCTR5QjlhB89oj8XzSu39syA21Px8"
+    "revision": "HSQAlqpg2a"
   },
   {
     "id": "sfx:ui/ui-back",
     "kind": "sfx",
     "path": "/audio/sfx/ui/ui-back.mp3",
     "label": "Ui Back",
-    "sha256": "STW1jBc2BwT820vwP4jTMQVMxtaKzGzEDkmCh359xio"
+    "revision": "STW1jBc2Bw"
   },
 ] as const satisfies readonly AudioCatalogueEntry[];
 
