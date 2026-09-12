@@ -5,7 +5,10 @@ import { getVerticalSliceAudio, type VerticalSliceSfx } from './VerticalSliceAud
 
 interface SceneInputState {
   scene: Phaser.Scene;
-  onGameObjectDown: (pointer: Phaser.Input.Pointer, gameObject: Phaser.GameObjects.GameObject) => void;
+  onGameObjectDown: (
+    pointer: Phaser.Input.Pointer,
+    gameObject: Phaser.GameObjects.GameObject,
+  ) => void;
 }
 
 const RATE_LIMIT_MS: Readonly<Record<VerticalSliceSfx, number>> = {
