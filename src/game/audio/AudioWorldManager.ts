@@ -34,18 +34,15 @@ class AudioWorldManager {
         this.play(cue);
       }
     });
-    globalThis.addEventListener?.('pointerdown', () => this.audio.resumeMusic(), {
+    const recoverAudio = () => {
+      this.audio.resumeMusic();
+      void this.audio.unlock();
+    };
+    globalThis.addEventListener?.('pointerdown', recoverAudio, {
       once: true,
       capture: true,
     });
-    globalThis.addEventListener?.(
-      'keydown',
-      () => {
-        this.audio.resumeMusic();
-        queueMicrotask(() => void this.audio.unlock());
-      },
-      { once: true },
-    );
+    globalThis.addEventListener?.('keydown', recoverAudio, { once: true });
     game.events.on('poststep', this.update, this);
   }
 
@@ -72,7 +69,7 @@ class AudioWorldManager {
     gameObject: Phaser.GameObjects.GameObject,
   ): void {
     const name = gameObject.name;
-    if (name.includes('interaction') || name === 'race-jump-control') {
+    if (/interaction|^race-jump-control$/.test(name)) {
       return;
     }
     const text = (gameObject as Phaser.GameObjects.GameObject & { text?: unknown }).text;
