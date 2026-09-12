@@ -31,7 +31,21 @@ export const MUSIC_BINDINGS: Readonly<Record<MusicContextId, MusicContextBinding
 };
 
 export const SFX_BINDINGS: Partial<Record<VerticalSliceSfx, string>> = {
-  ui: 'sfx:ui-soft-chime',
+  ui: 'sfx:ui/ui-select',
+  'ui-back': 'sfx:ui/ui-back',
+  dialogue: 'sfx:dialogue/talk-acknowledge',
+  collect: 'sfx:collections/collectible-chime',
+  discovery: 'sfx:discoveries/discovery',
+  'quest-complete': 'sfx:events/quest-success',
+  friendship: 'sfx:events/friendship',
+  door: 'sfx:doors/door-open',
+  decoration: 'sfx:home/decoration-place',
+  'race-countdown': 'sfx:race/race-countdown',
+  'race-go': 'sfx:race/race-go',
+  'race-jump': 'sfx:race/race-jump',
+  'race-boost': 'sfx:race/race-boost',
+  'race-impact': 'sfx:race/race-impact',
+  'race-finish': 'sfx:race/race-finish',
 };
 
 /**
