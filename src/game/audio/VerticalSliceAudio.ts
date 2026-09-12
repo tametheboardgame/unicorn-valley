@@ -199,7 +199,7 @@ export class VerticalSliceAudio {
       return;
     }
     this.stopMusic();
-    const element = new Audio(this.assetUrl(track));
+    const element = new Audio(track.path);
     element.volume = this.musicElementTargetVolume();
     element.loop = true;
     this.musicElement = element;
@@ -217,17 +217,13 @@ export class VerticalSliceAudio {
       : Math.min(1, this.settings.masterVolume * this.settings.musicVolume * 0.72);
   }
 
-  private assetUrl(asset: AudioCatalogueEntry): string {
-    return `${asset.path}?v=${asset.sha256}`;
-  }
-
   private async playAuthoredSfx(kind: VerticalSliceSfx): Promise<boolean> {
     const asset = resolveSfxAsset(kind);
     if (!asset || typeof Audio === 'undefined') {
       return false;
     }
     try {
-      const element = new Audio(this.assetUrl(asset));
+      const element = new Audio(asset.path);
       element.volume = Math.min(1, this.settings.masterVolume * this.settings.sfxVolume * 0.68);
       await element.play();
       return true;
