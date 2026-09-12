@@ -38,11 +38,6 @@ export type AudioSceneProfile =
   | 'cottage'
   | 'race';
 
-interface ProceduralProfile {
-  notes: readonly number[];
-  intervalMs: number;
-}
-
 export const AUDIO_SCENE_PROFILES: readonly AudioSceneProfile[] = [
   'menu',
   'glade',
@@ -55,20 +50,17 @@ export const AUDIO_SCENE_PROFILES: readonly AudioSceneProfile[] = [
 ];
 export const PRODUCTION_AUDIO_LOOP_MINIMUM_MS = 10_000;
 
-const BRIGHT_NOTES = [523.25, 659.25, 783.99, 659.25] as const;
-const EARTHY_NOTES = [349.23, 440, 523.25, 440] as const;
-const RACE_NOTES = [523.25, 783.99, 1046.5, 783.99] as const;
-
-const PROCEDURAL_PROFILES: Readonly<Record<AudioSceneProfile, ProceduralProfile>> = {
-  menu: { notes: BRIGHT_NOTES, intervalMs: 2700 },
-  glade: { notes: BRIGHT_NOTES, intervalMs: 2600 },
-  village: { notes: EARTHY_NOTES, intervalMs: 2600 },
-  meadow: { notes: BRIGHT_NOTES, intervalMs: 2550 },
-  brook: { notes: EARTHY_NOTES, intervalMs: 2800 },
-  woods: { notes: EARTHY_NOTES, intervalMs: 2900 },
-  cottage: { notes: EARTHY_NOTES, intervalMs: 2850 },
-  race: { notes: RACE_NOTES, intervalMs: 2500 },
+const PROCEDURAL_PROFILES: Readonly<Record<AudioSceneProfile, readonly [number, number]>> = {
+  menu: [523.25, 2700],
+  glade: [523.25, 2600],
+  village: [349.23, 2600],
+  meadow: [523.25, 2550],
+  brook: [349.23, 2800],
+  woods: [349.23, 2900],
+  cottage: [349.23, 2850],
+  race: [523.25, 2500],
 };
+const NOTE_STEPS = [1, 1.25, 1.5, 1.25] as const;
 
 const PROFILE_BY_CONTEXT: Readonly<Record<MusicContextId, AudioSceneProfile>> = {
   'title-creator': 'menu',
@@ -81,8 +73,6 @@ const PROFILE_BY_CONTEXT: Readonly<Record<MusicContextId, AudioSceneProfile>> = 
   race: 'race',
 };
 
-const MAX_SFX_CACHE = 24;
-
 export function resolveAudioSceneProfile(sceneKey: string): AudioSceneProfile | null {
   if (sceneKey === 'CottageInteriorScene') {
     return 'cottage';
@@ -92,16 +82,13 @@ export function resolveAudioSceneProfile(sceneKey: string): AudioSceneProfile | 
 }
 
 export function getAudioSceneLoopDurationMs(profile: AudioSceneProfile): number {
-  const definition = PROCEDURAL_PROFILES[profile];
-  return definition.notes.length * definition.intervalMs;
+  return PROCEDURAL_PROFILES[profile][1] * NOTE_STEPS.length;
 }
 
 export class VerticalSliceAudio {
   private settings: AudioSettings;
   private context: AudioContext | null = null;
   private masterGain: GainNode | null = null;
-  private musicGain: GainNode | null = null;
-  private ambienceGain: GainNode | null = null;
   private sfxGain: GainNode | null = null;
   private proceduralMusicTimer: number | null = null;
   private ambienceTimer: number | null = null;
@@ -174,11 +161,7 @@ export class VerticalSliceAudio {
     if (!this.context) {
       this.context = new AudioContext();
       this.masterGain = this.context.createGain();
-      this.musicGain = this.context.createGain();
-      this.ambienceGain = this.context.createGain();
       this.sfxGain = this.context.createGain();
-      this.musicGain.connect(this.masterGain);
-      this.ambienceGain.connect(this.masterGain);
       this.sfxGain.connect(this.masterGain);
       this.masterGain.connect(this.context.destination);
       shouldRestart = true;
@@ -203,16 +186,13 @@ export class VerticalSliceAudio {
       return;
     }
     void this.unlock().then(async () => {
-      if (await this.playAuthoredSfx(kind)) {
-        return;
+      if (!(await this.playAuthoredSfx(kind))) {
+        this.playProceduralSfx(kind);
       }
-      this.playProceduralSfx(kind);
     });
   }
 
-  public playNpcReaction(_characterId: string, _reaction?: string): void {
-    this.playSfx('dialogue');
-  }
+  public playNpcReaction(_characterId: string, _reaction?: string): void {}
 
   private restartSceneLoops(): void {
     this.stopProceduralLoops();
@@ -230,14 +210,14 @@ export class VerticalSliceAudio {
         this.startPlaylist();
       } else {
         this.stopMusic();
-        this.startProceduralMusic(PROCEDURAL_PROFILES[profile]);
+        this.startProceduralMusic(profile);
       }
     } else {
       this.stopMusic();
     }
 
     if (this.settings.ambienceEnabled) {
-      this.startProceduralAmbience(PROCEDURAL_PROFILES[profile]);
+      this.startProceduralAmbience(profile);
     }
   }
 
@@ -251,14 +231,11 @@ export class VerticalSliceAudio {
   }
 
   private chooseNextTrack(): AudioCatalogueEntry | null {
-    if (this.playlist.length === 0) {
-      return null;
-    }
-    if (this.playlist.length === 1) {
+    if (this.playlist.length <= 1) {
       return this.playlist[0] ?? null;
     }
     const candidates = this.playlist.filter((track) => track.id !== this.lastPlaylistTrackId);
-    return candidates[Math.floor(Math.random() * candidates.length)] ?? this.playlist[0] ?? null;
+    return candidates[Math.floor(Math.random() * candidates.length)] ?? null;
   }
 
   private playTrack(track: AudioCatalogueEntry): void {
@@ -283,11 +260,6 @@ export class VerticalSliceAudio {
         this.startPlaylist();
       }
     });
-    element.addEventListener('error', () => {
-      if (this.musicElement === element) {
-        this.stopMusic();
-      }
-    });
     this.musicElement = element;
     this.currentTrackId = track.id;
     void element.play().catch(() => {
@@ -299,16 +271,14 @@ export class VerticalSliceAudio {
 
   private stopMusic(): void {
     this.musicElement?.pause();
-    this.musicElement?.removeAttribute('src');
     this.musicElement = null;
     this.currentTrackId = null;
   }
 
   private musicElementTargetVolume(): number {
-    if (this.settings.muted || !this.settings.musicEnabled) {
-      return 0;
-    }
-    return Math.min(1, this.settings.masterVolume * this.settings.musicVolume * 0.72);
+    return this.settings.muted || !this.settings.musicEnabled
+      ? 0
+      : Math.min(1, this.settings.masterVolume * this.settings.musicVolume * 0.72);
   }
 
   private applyMusicElementVolume(): void {
@@ -333,14 +303,7 @@ export class VerticalSliceAudio {
         if (!response.ok) {
           return false;
         }
-        const bytes = await response.arrayBuffer();
-        buffer = await this.context.decodeAudioData(bytes.slice(0));
-        if (this.sfxBuffers.size >= MAX_SFX_CACHE) {
-          const oldestKey = this.sfxBuffers.keys().next().value as string | undefined;
-          if (oldestKey) {
-            this.sfxBuffers.delete(oldestKey);
-          }
-        }
+        buffer = await this.context.decodeAudioData(await response.arrayBuffer());
         this.sfxBuffers.set(asset.id, buffer);
       }
       const source = this.context.createBufferSource();
@@ -358,62 +321,60 @@ export class VerticalSliceAudio {
     if (!this.sfxGain || !this.context || this.context.state !== 'running') {
       return;
     }
-    const patterns: Readonly<Record<VerticalSliceSfx, readonly [number, number]>> = {
-      ui: [659.25, 0.09],
-      'ui-back': [493.88, 0.1],
-      dialogue: [523.25, 0.08],
-      collect: [880, 0.16],
-      discovery: [783.99, 0.22],
-      'quest-complete': [659.25, 0.24],
-      friendship: [783.99, 0.18],
-      door: [392, 0.14],
-      decoration: [987.77, 0.16],
-      'race-countdown': [523.25, 0.11],
-      'race-go': [1046.5, 0.18],
-      'race-jump': [783.99, 0.1],
-      'race-boost': [987.77, 0.12],
-      'race-impact': [220, 0.14],
-      'race-finish': [1046.5, 0.28],
-    };
-    const [frequency, duration] = patterns[kind];
-    this.playTone(
-      frequency,
-      duration,
-      kind.startsWith('race') ? 'triangle' : 'sine',
-      0.09,
-      this.sfxGain,
-    );
+    const frequency =
+      kind === 'race-impact'
+        ? 220
+        : kind === 'dialogue' || kind === 'door'
+          ? 440
+          : kind.startsWith('race')
+            ? 1046.5
+            : 783.99;
+    const duration = kind === 'quest-complete' || kind === 'race-finish' ? 0.22 : 0.12;
+    this.playTone(frequency, duration, kind.startsWith('race') ? 'triangle' : 'sine', 0.09, this.sfxGain);
   }
 
-  private startProceduralMusic(definition: ProceduralProfile): void {
-    const gain = this.musicGain;
-    if (!this.context || !gain || this.context.state !== 'running') {
+  private startProceduralMusic(profile: AudioSceneProfile): void {
+    if (!this.context || !this.masterGain || this.context.state !== 'running') {
       return;
     }
+    const [base, intervalMs] = PROCEDURAL_PROFILES[profile];
     const play = () => {
-      const note = definition.notes[this.musicStep % definition.notes.length] ?? 523.25;
+      const ratio = NOTE_STEPS[this.musicStep % NOTE_STEPS.length] ?? 1;
       this.musicStep += 1;
-      this.playTone(note, 0.5, 'triangle', 0.05, gain);
+      this.playTone(
+        base * ratio,
+        0.5,
+        'triangle',
+        0.007 * this.settings.musicVolume,
+        this.masterGain as GainNode,
+      );
     };
     play();
-    this.proceduralMusicTimer = window.setInterval(play, definition.intervalMs);
+    this.proceduralMusicTimer = window.setInterval(play, intervalMs);
   }
 
-  private startProceduralAmbience(definition: ProceduralProfile): void {
-    const gain = this.ambienceGain;
-    if (!this.context || !gain || this.context.state !== 'running') {
+  private startProceduralAmbience(profile: AudioSceneProfile): void {
+    if (!this.context || !this.masterGain || this.context.state !== 'running') {
       return;
     }
-    const play = () => this.playTone((definition.notes[0] ?? 440) * 2, 0.28, 'sine', 0.024, gain);
+    const [base] = PROCEDURAL_PROFILES[profile];
+    const play = () =>
+      this.playTone(
+        base * 2,
+        0.28,
+        'sine',
+        0.002 * this.settings.ambienceVolume,
+        this.masterGain as GainNode,
+      );
     play();
     this.ambienceTimer = window.setInterval(play, 5_500);
   }
 
   private stopProceduralLoops(): void {
-    if (this.proceduralMusicTimer !== null && typeof window !== 'undefined') {
+    if (this.proceduralMusicTimer !== null) {
       window.clearInterval(this.proceduralMusicTimer);
     }
-    if (this.ambienceTimer !== null && typeof window !== 'undefined') {
+    if (this.ambienceTimer !== null) {
       window.clearInterval(this.ambienceTimer);
     }
     this.proceduralMusicTimer = null;
@@ -426,13 +387,7 @@ export class VerticalSliceAudio {
   }
 
   private applyGainSettings(): void {
-    if (
-      !this.context ||
-      !this.masterGain ||
-      !this.musicGain ||
-      !this.ambienceGain ||
-      !this.sfxGain
-    ) {
+    if (!this.context || !this.masterGain || !this.sfxGain) {
       return;
     }
     const now = this.context.currentTime;
@@ -440,16 +395,6 @@ export class VerticalSliceAudio {
       this.settings.muted ? 0 : this.settings.masterVolume,
       now,
       0.03,
-    );
-    this.musicGain.gain.setTargetAtTime(
-      this.settings.musicEnabled ? 0.14 * this.settings.musicVolume : 0,
-      now,
-      0.04,
-    );
-    this.ambienceGain.gain.setTargetAtTime(
-      this.settings.ambienceEnabled ? 0.08 * this.settings.ambienceVolume : 0,
-      now,
-      0.04,
     );
     this.sfxGain.gain.setTargetAtTime(
       this.settings.sfxEnabled ? 0.68 * this.settings.sfxVolume : 0,
@@ -497,9 +442,7 @@ export class VerticalSliceAudio {
         if (this.context?.state === 'running') {
           void this.context.suspend().catch(() => undefined);
         }
-        return;
-      }
-      if (this.currentSceneKey && !this.settings.muted) {
+      } else if (this.currentSceneKey && !this.settings.muted) {
         void this.unlock();
       }
     });
