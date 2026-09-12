@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { validateAudioBindings } from '../../content/audioBindings';
 import {
   AUDIO_SETTINGS_STORAGE_KEY,
   AudioSettingsStore,
@@ -31,24 +32,47 @@ describe('AudioSettingsStore', () => {
     expect(store.load()).toEqual(DEFAULT_AUDIO_SETTINGS);
   });
 
-  it('persists independent music, ambience and effects controls', () => {
+  it('persists independent channel levels and music selection', () => {
     const storage = new MemoryStorage();
     const store = new AudioSettingsStore(storage);
 
     store.save({
-      muted: false,
+      ...DEFAULT_AUDIO_SETTINGS,
       musicEnabled: false,
-      ambienceEnabled: true,
       sfxEnabled: false,
       masterVolume: 0.4,
+      musicVolume: 0.7,
+      ambienceVolume: 0.5,
+      sfxVolume: 0.8,
+      selectedMusicTrackId: 'music:moonflower-theme',
     });
 
     expect(new AudioSettingsStore(storage).load()).toEqual({
-      muted: false,
+      ...DEFAULT_AUDIO_SETTINGS,
       musicEnabled: false,
-      ambienceEnabled: true,
       sfxEnabled: false,
       masterVolume: 0.4,
+      musicVolume: 0.7,
+      ambienceVolume: 0.5,
+      sfxVolume: 0.8,
+      selectedMusicTrackId: 'music:moonflower-theme',
+    });
+  });
+
+  it('migrates the old settings shape without losing mute state', () => {
+    expect(
+      normaliseAudioSettings({
+        muted: true,
+        musicEnabled: false,
+        ambienceEnabled: true,
+        sfxEnabled: true,
+        masterVolume: 0.5,
+      }),
+    ).toEqual({
+      ...DEFAULT_AUDIO_SETTINGS,
+      muted: true,
+      musicEnabled: false,
+      masterVolume: 0.5,
     });
   });
 
@@ -58,12 +82,29 @@ describe('AudioSettingsStore', () => {
     expect(new AudioSettingsStore(storage).load()).toEqual(DEFAULT_AUDIO_SETTINGS);
   });
 
-  it('normalises partial values and clamps volume', () => {
-    expect(normaliseAudioSettings({ musicEnabled: false, masterVolume: 8 })).toEqual({
+  it('normalises partial values and clamps every volume', () => {
+    expect(
+      normaliseAudioSettings({
+        musicEnabled: false,
+        masterVolume: 8,
+        musicVolume: -1,
+        ambienceVolume: 2,
+        sfxVolume: 0.25,
+      }),
+    ).toEqual({
       ...DEFAULT_AUDIO_SETTINGS,
       musicEnabled: false,
       masterVolume: 1,
+      musicVolume: 0,
+      ambienceVolume: 1,
+      sfxVolume: 0.25,
     });
+  });
+});
+
+describe('audio catalogue bindings', () => {
+  it('contains no missing or wrong-kind explicit bindings', () => {
+    expect(validateAudioBindings()).toEqual([]);
   });
 });
 
@@ -84,7 +125,7 @@ describe('production audio scene profiles', () => {
     expect(resolveAudioSceneProfile('NovaTutorialRaceScene')).toBe('race');
   });
 
-  it('keeps every production music phrase above the minimum repetition window', () => {
+  it('keeps every procedural fallback phrase above the minimum repetition window', () => {
     for (const profile of AUDIO_SCENE_PROFILES) {
       expect(getAudioSceneLoopDurationMs(profile), profile).toBeGreaterThanOrEqual(
         PRODUCTION_AUDIO_LOOP_MINIMUM_MS,
