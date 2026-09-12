@@ -6,99 +6,83 @@ export interface AudioCatalogueEntry {
   id: string;
   kind: AudioAssetKind;
   path: string;
-  label: string;
 }
 
 export const AUDIO_CATALOGUE = [
   {
     "id": "music:crystal-brook/09-crystal-currents",
     "kind": "music",
-    "path": "/audio/music/crystal-brook/09 - Crystal Currents.mp3",
-    "label": "09   Crystal Currents"
+    "path": "/audio/music/crystal-brook/09 - Crystal Currents.mp3"
   },
   {
     "id": "music:crystal-grotto/10-echoes-of-the-crystal-cave",
     "kind": "music",
-    "path": "/audio/music/crystal-grotto/10 - Echoes of the Crystal Cave.mp3",
-    "label": "10   Echoes Of The Crystal Cave"
+    "path": "/audio/music/crystal-grotto/10 - Echoes of the Crystal Cave.mp3"
   },
   {
     "id": "music:moonflower-glade/02-morning-by-the-stream",
     "kind": "music",
-    "path": "/audio/music/moonflower-glade/02 - Morning by the Stream.mp3",
-    "label": "02   Morning By The Stream"
+    "path": "/audio/music/moonflower-glade/02 - Morning by the Stream.mp3"
   },
   {
     "id": "music:moonflower-glade/03-moonlit-garden-whispers",
     "kind": "music",
-    "path": "/audio/music/moonflower-glade/03 - Moonlit Garden Whispers.mp3",
-    "label": "03   Moonlit Garden Whispers"
+    "path": "/audio/music/moonflower-glade/03 - Moonlit Garden Whispers.mp3"
   },
   {
     "id": "music:rainbow-meadow/07-meadow-under-the-blue-sky",
     "kind": "music",
-    "path": "/audio/music/rainbow-meadow/07 - Meadow under the Blue Sky.mp3",
-    "label": "07   Meadow Under The Blue Sky"
+    "path": "/audio/music/rainbow-meadow/07 - Meadow under the Blue Sky.mp3"
   },
   {
     "id": "music:rainbow-run/08-speedy-sprints",
     "kind": "music",
-    "path": "/audio/music/rainbow-run/08 - Speedy Sprints.mp3",
-    "label": "08   Speedy Sprints"
+    "path": "/audio/music/rainbow-run/08 - Speedy Sprints.mp3"
   },
   {
     "id": "music:sunbeam-village/04-bustling-village-square",
     "kind": "music",
-    "path": "/audio/music/sunbeam-village/04 - Bustling Village Square.mp3",
-    "label": "04   Bustling Village Square"
+    "path": "/audio/music/sunbeam-village/04 - Bustling Village Square.mp3"
   },
   {
     "id": "music:sunbeam-village/05-sweet-pastry-song",
     "kind": "music",
-    "path": "/audio/music/sunbeam-village/05 - Sweet Pastry Song.mp3",
-    "label": "05   Sweet Pastry Song"
+    "path": "/audio/music/sunbeam-village/05 - Sweet Pastry Song.mp3"
   },
   {
     "id": "music:sunbeam-village/06-the-illustrated-map",
     "kind": "music",
-    "path": "/audio/music/sunbeam-village/06 - The Illustrated Map.mp3",
-    "label": "06   The Illustrated Map"
+    "path": "/audio/music/sunbeam-village/06 - The Illustrated Map.mp3"
   },
   {
     "id": "music:title/01-the-four-note-path",
     "kind": "music",
-    "path": "/audio/music/title/01 - The Four-note Path.mp3",
-    "label": "01   The Four Note Path"
+    "path": "/audio/music/title/01 - The Four-note Path.mp3"
   },
   {
     "id": "music:whispering-woods/11-whispering-woodpath",
     "kind": "music",
-    "path": "/audio/music/whispering-woods/11 - Whispering Woodpath.mp3",
-    "label": "11   Whispering Woodpath"
+    "path": "/audio/music/whispering-woods/11 - Whispering Woodpath.mp3"
   },
   {
     "id": "music:whispering-woods/12-fireflies-in-the-ancient-woods",
     "kind": "music",
-    "path": "/audio/music/whispering-woods/12 - Fireflies in the Ancient Woods.mp3",
-    "label": "12   Fireflies In The Ancient Woods"
+    "path": "/audio/music/whispering-woods/12 - Fireflies in the Ancient Woods.mp3"
   },
   {
     "id": "sfx:discoveries/discovery",
     "kind": "sfx",
-    "path": "/audio/sfx/discoveries/discovery.mp3",
-    "label": "Discovery"
+    "path": "/audio/sfx/discoveries/discovery.mp3"
   },
   {
     "id": "sfx:ui-soft-chime",
     "kind": "sfx",
-    "path": "/audio/sfx/ui-soft-chime.mp3",
-    "label": "Ui Soft Chime"
+    "path": "/audio/sfx/ui-soft-chime.mp3"
   },
   {
     "id": "sfx:ui/ui-back",
     "kind": "sfx",
-    "path": "/audio/sfx/ui/ui-back.mp3",
-    "label": "Ui Back"
+    "path": "/audio/sfx/ui/ui-back.mp3"
   },
 ] as const satisfies readonly AudioCatalogueEntry[];
 
