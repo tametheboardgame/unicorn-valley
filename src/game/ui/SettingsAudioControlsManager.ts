@@ -41,7 +41,7 @@ export function getSettingsAudioControlsManager(game: Phaser.Game): void {
     select.append(option);
   }
   select.addEventListener('change', () =>
-    audio.updateSettings({ musicEnabled: false, selectedMusicTrackId: select.value }),
+    audio.updateSettings({ selectedMusicTrackId: select.value }),
   );
   host.append(select);
 
@@ -74,6 +74,6 @@ export function getSettingsAudioControlsManager(game: Phaser.Game): void {
       place(kind, input, 220);
     }
     select.value = settings.selectedMusicTrackId ?? select.value;
-    place('music-track', select, 255, !settings.musicEnabled);
+    place('music', select, 220, !settings.musicEnabled);
   });
 }
