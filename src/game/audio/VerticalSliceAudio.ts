@@ -222,9 +222,7 @@ export class VerticalSliceAudio {
   }
 
   private musicElementTargetVolume(): number {
-    return this.settings.muted
-      ? 0
-      : this.settings.masterVolume * this.settings.musicVolume * 0.72;
+    return this.settings.muted ? 0 : this.settings.masterVolume * this.settings.musicVolume * 0.72;
   }
 
   private async playAuthoredSfx(kind: VerticalSliceSfx): Promise<boolean> {
