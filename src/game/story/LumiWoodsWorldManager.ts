@@ -9,7 +9,6 @@ import { SecretDiscoveryService } from '../discovery/SecretDiscoveryService';
 import type { InteractionTarget } from '../interaction/InteractionTarget';
 import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { getBrowserSaveService } from '../save/browserSaveService';
-import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
 import { startLumiConversation } from './WorldStoryConversations';
 
 const PRESENTATION_NAME = 'lumi-woods-presentation';
@@ -26,11 +25,6 @@ interface LumiWoodsState {
   markers: Map<SecretDiscoveryDefinition['id'], ClueMarker>;
   starwell: Phaser.GameObjects.Container | null;
   lumi: Phaser.GameObjects.Container | null;
-}
-
-function findPlayer(scene: Phaser.Scene): Phaser.Physics.Arcade.Sprite | null {
-  const player = scene.children.getByName(WORLD_PLAYER_NAME);
-  return player instanceof Phaser.Physics.Arcade.Sprite ? player : null;
 }
 
 export class LumiWoodsWorldManager {
