@@ -498,23 +498,25 @@ export class VerticalSliceAudio {
   }
 
   private startProceduralMusic(definition: ProceduralProfile): void {
-    if (!this.context || !this.musicGain || this.context.state !== 'running') {
+    const gain = this.musicGain;
+    if (!this.context || !gain || this.context.state !== 'running') {
       return;
     }
     const play = () => {
       const note = definition.notes[this.musicStep % definition.notes.length] ?? 523.25;
       this.musicStep += 1;
-      this.playTone(note, 0.5, 'triangle', 0.05, this.musicGain);
+      this.playTone(note, 0.5, 'triangle', 0.05, gain);
     };
     play();
     this.proceduralMusicTimer = window.setInterval(play, definition.intervalMs);
   }
 
   private startProceduralAmbience(definition: ProceduralProfile): void {
-    if (!this.context || !this.ambienceGain || this.context.state !== 'running') {
+    const gain = this.ambienceGain;
+    if (!this.context || !gain || this.context.state !== 'running') {
       return;
     }
-    const play = () => this.playTone(definition.ambienceHz, 0.28, 'sine', 0.024, this.ambienceGain);
+    const play = () => this.playTone(definition.ambienceHz, 0.28, 'sine', 0.024, gain);
     play();
     this.ambienceTimer = window.setInterval(play, 5_500);
   }
