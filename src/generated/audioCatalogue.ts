@@ -24,4 +24,3 @@ export const AUDIO_CATALOGUE = [
 
 const AUDIO_CATALOGUE_ENTRIES: readonly AudioCatalogueEntry[] = AUDIO_CATALOGUE;
 export const MUSIC_CATALOGUE = AUDIO_CATALOGUE_ENTRIES.filter((entry) => entry.kind === 'music');
-export const SFX_CATALOGUE = AUDIO_CATALOGUE_ENTRIES.filter((entry) => entry.kind === 'sfx');
