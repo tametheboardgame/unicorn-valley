@@ -26,17 +26,8 @@ interface BrowserDiagnosticsApi {
 
 const AUDIO_STORAGE_KEY = 'unicorn-valley:audio-settings:v1';
 
-async function diagnostics(page: Page): Promise<BrowserDiagnosticsApi> {
+async function waitForDiagnostics(page: Page): Promise<void> {
   await page.waitForFunction(() => '__UNICORN_VALLEY_DIAGNOSTICS__' in window);
-  return page.evaluate(() => {
-    const value = (
-      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
-    ).__UNICORN_VALLEY_DIAGNOSTICS__;
-    if (!value) {
-      throw new Error('Browser diagnostics are unavailable.');
-    }
-    return value;
-  });
 }
 
 async function sceneSnapshot(page: Page, sceneKey: string): Promise<DiagnosticSceneSnapshot> {
@@ -106,7 +97,7 @@ test.describe('R6.5-WP19G MP3 audio foundation', () => {
     expect((await mp3.body()).byteLength).toBeGreaterThan(1000);
 
     await page.goto('/?diagnostics=1');
-    await diagnostics(page);
+    await waitForDiagnostics(page);
     await openSettings(page);
 
     let settings = await sceneSnapshot(page, 'SettingsScene');
