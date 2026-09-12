@@ -3,6 +3,7 @@ import {
   getAudioAsset,
   resolveMusicContext,
   resolveSfxAsset,
+  type MusicContextId,
 } from '../../content/audioBindings';
 import { MUSIC_CATALOGUE, type AudioCatalogueEntry } from '../../generated/audioCatalogue';
 import {
@@ -27,6 +28,48 @@ export type VerticalSliceSfx =
   | 'race-boost'
   | 'race-impact'
   | 'race-finish';
+export type AudioSceneProfile =
+  | 'menu'
+  | 'glade'
+  | 'village'
+  | 'meadow'
+  | 'brook'
+  | 'woods'
+  | 'cottage'
+  | 'race';
+
+export const AUDIO_SCENE_PROFILES: readonly AudioSceneProfile[] = [
+  'menu',
+  'glade',
+  'village',
+  'meadow',
+  'brook',
+  'woods',
+  'cottage',
+  'race',
+];
+export const PRODUCTION_AUDIO_LOOP_MINIMUM_MS = 10_000;
+
+const PROFILE_BY_CONTEXT: Readonly<Record<MusicContextId, AudioSceneProfile>> = {
+  'title-creator': 'menu',
+  'glade-cottage': 'glade',
+  'village-interiors': 'village',
+  meadow: 'meadow',
+  'brook-grotto': 'brook',
+  'woods-nook-grove': 'woods',
+  beach: 'meadow',
+  race: 'race',
+};
+
+export function resolveAudioSceneProfile(sceneKey: string): AudioSceneProfile | null {
+  if (sceneKey === 'CottageInteriorScene') return 'cottage';
+  const context = resolveMusicContext(sceneKey);
+  return context ? PROFILE_BY_CONTEXT[context] : null;
+}
+
+export function getAudioSceneLoopDurationMs(_profile: AudioSceneProfile): number {
+  return 11_000;
+}
 
 export class VerticalSliceAudio {
   private settings: AudioSettings;
@@ -55,9 +98,7 @@ export class VerticalSliceAudio {
   public setSettings(settings: AudioSettings): AudioSettings {
     const previous = this.settings;
     this.settings = this.settingsStore.save(settings);
-    if (this.musicElement) {
-      this.musicElement.volume = this.musicElementTargetVolume();
-    }
+    if (this.musicElement) this.musicElement.volume = this.musicElementTargetVolume();
     if (
       previous.muted !== this.settings.muted ||
       previous.musicEnabled !== this.settings.musicEnabled ||
@@ -77,6 +118,10 @@ export class VerticalSliceAudio {
     if (this.currentSceneKey === sceneKey) return;
     this.currentSceneKey = sceneKey;
     this.restartSceneLoops();
+  }
+
+  public leaveScene(sceneKey: string): void {
+    if (this.currentSceneKey === sceneKey) this.currentSceneKey = null;
   }
 
   public resumeMusic(): void {
@@ -107,6 +152,8 @@ export class VerticalSliceAudio {
       if (!played) void this.unlock().then(() => this.playProceduralSfx(kind));
     });
   }
+
+  public playNpcReaction(_characterId: string, _reaction?: string): void {}
 
   private restartSceneLoops(): void {
     this.stopProceduralLoops();
