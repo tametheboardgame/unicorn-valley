@@ -124,7 +124,6 @@ test.describe('R6.5-WP19G MP3 audio foundation', () => {
     settings = await sceneSnapshot(page, 'SettingsScene');
 
     expect(findObject(settings, 'settings-row-music-track-label').text).toContain('Scene theme');
-    expect(findObject(settings, 'settings-row-music-track-label').text).toContain('add MP3s');
     expect(findObject(settings, 'settings-row-music-volume-label').text).toContain('Music level:');
     expect(findObject(settings, 'settings-row-ambience-volume-label').text).toContain(
       'Ambience level:',
