@@ -1,10 +1,5 @@
 import type { VerticalSliceSfx } from '../game/audio/VerticalSliceAudio';
-import {
-  AUDIO_CATALOGUE,
-  MUSIC_CATALOGUE,
-  SFX_CATALOGUE,
-  type AudioCatalogueEntry,
-} from '../generated/audioCatalogue';
+import { AUDIO_CATALOGUE, type AudioCatalogueEntry } from '../generated/audioCatalogue';
 
 export const MUSIC_CONTEXT_IDS = [
   'title-creator',
@@ -57,24 +52,12 @@ const SCENE_MUSIC_CONTEXT: Readonly<Record<string, MusicContextId>> = {
   NovaTutorialRaceScene: 'race',
 };
 
-const CATALOGUE_BY_ID = new Map<string, AudioCatalogueEntry>(
-  AUDIO_CATALOGUE.map((entry) => [entry.id, entry] as const),
-);
-
 export function resolveMusicContext(sceneKey: string): MusicContextId | null {
   return SCENE_MUSIC_CONTEXT[sceneKey] ?? null;
 }
 
 export function getAudioAsset(id: string | null | undefined): AudioCatalogueEntry | null {
-  return id ? (CATALOGUE_BY_ID.get(id) ?? null) : null;
-}
-
-export function getMusicTracks(): readonly AudioCatalogueEntry[] {
-  return MUSIC_CATALOGUE;
-}
-
-export function getSfxTracks(): readonly AudioCatalogueEntry[] {
-  return SFX_CATALOGUE;
+  return id ? (AUDIO_CATALOGUE.find((entry) => entry.id === id) ?? null) : null;
 }
 
 export function resolveSfxAsset(kind: VerticalSliceSfx): AudioCatalogueEntry | null {
@@ -92,15 +75,10 @@ export function resolveContextPlaylist(
   const ids = binding.themeTrackId
     ? [binding.themeTrackId, ...binding.playlistTrackIds]
     : [...binding.playlistTrackIds];
-  const seen = new Set<string>();
   const tracks: AudioCatalogueEntry[] = [];
   for (const id of ids) {
-    if (seen.has(id)) {
-      continue;
-    }
-    seen.add(id);
     const asset = getAudioAsset(id);
-    if (asset?.kind === 'music') {
+    if (asset?.kind === 'music' && !tracks.includes(asset)) {
       tracks.push(asset);
     }
   }
