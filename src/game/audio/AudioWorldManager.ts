@@ -69,7 +69,9 @@ class AudioWorldManager {
     const name = gameObject.name;
     if (/interaction|^race-jump-control$/.test(name)) return;
     const text = (gameObject as Phaser.GameObjects.GameObject & { text?: unknown }).text;
-    this.play(/(?:←|back|cancel|close)/i.test(typeof text === 'string' ? text : name) ? 'ui-back' : 'ui');
+    this.play(
+      /(?:←|back|cancel|close)/i.test(typeof text === 'string' ? text : name) ? 'ui-back' : 'ui',
+    );
   }
 
   private play(cue: VerticalSliceSfx): void {
