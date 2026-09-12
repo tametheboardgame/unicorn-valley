@@ -35,7 +35,6 @@ class AudioWorldManager {
       }
     });
     const unlock = () => queueMicrotask(() => void this.audio.unlock());
-    globalThis.addEventListener?.('pointerdown', unlock, { once: true });
     globalThis.addEventListener?.('keydown', unlock, { once: true });
     game.events.on('poststep', this.update, this);
   }
