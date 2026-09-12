@@ -20,32 +20,44 @@ export interface MusicContextBinding {
 }
 
 export const MUSIC_BINDINGS: Readonly<Record<MusicContextId, MusicContextBinding>> = {
-  'title-creator': { themeTrackId: null, playlistTrackIds: [] },
-  'glade-cottage': { themeTrackId: null, playlistTrackIds: [] },
-  'village-interiors': { themeTrackId: null, playlistTrackIds: [] },
-  meadow: { themeTrackId: null, playlistTrackIds: [] },
-  'brook-grotto': { themeTrackId: null, playlistTrackIds: [] },
-  'woods-nook-grove': { themeTrackId: null, playlistTrackIds: [] },
+  'title-creator': {
+    themeTrackId: 'music:title/01-the-four-note-path',
+    playlistTrackIds: [],
+  },
+  'glade-cottage': {
+    themeTrackId: 'music:moonflower-glade/02-morning-by-the-stream',
+    playlistTrackIds: ['music:moonflower-glade/03-moonlit-garden-whispers'],
+  },
+  'village-interiors': {
+    themeTrackId: 'music:sunbeam-village/04-bustling-village-square',
+    playlistTrackIds: [
+      'music:sunbeam-village/05-sweet-pastry-song',
+      'music:sunbeam-village/06-the-illustrated-map',
+    ],
+  },
+  meadow: {
+    themeTrackId: 'music:rainbow-meadow/07-meadow-under-the-blue-sky',
+    playlistTrackIds: [],
+  },
+  'brook-grotto': {
+    themeTrackId: 'music:crystal-brook/09-crystal-currents',
+    playlistTrackIds: ['music:crystal-grotto/10-echoes-of-the-crystal-cave'],
+  },
+  'woods-nook-grove': {
+    themeTrackId: 'music:whispering-woods/11-whispering-woodpath',
+    playlistTrackIds: ['music:whispering-woods/12-fireflies-in-the-ancient-woods'],
+  },
   beach: { themeTrackId: null, playlistTrackIds: [] },
-  race: { themeTrackId: null, playlistTrackIds: [] },
+  race: {
+    themeTrackId: 'music:rainbow-run/08-speedy-sprints',
+    playlistTrackIds: [],
+  },
 };
 
 export const SFX_BINDINGS: Partial<Record<VerticalSliceSfx, string>> = {
-  ui: 'sfx:ui/ui-select',
+  ui: 'sfx:ui-soft-chime',
   'ui-back': 'sfx:ui/ui-back',
-  dialogue: 'sfx:dialogue/talk-acknowledge',
-  collect: 'sfx:collections/collectible-chime',
   discovery: 'sfx:discoveries/discovery',
-  'quest-complete': 'sfx:events/quest-success',
-  friendship: 'sfx:events/friendship',
-  door: 'sfx:doors/door-open',
-  decoration: 'sfx:home/decoration-place',
-  'race-countdown': 'sfx:race/race-countdown',
-  'race-go': 'sfx:race/race-go',
-  'race-jump': 'sfx:race/race-jump',
-  'race-boost': 'sfx:race/race-boost',
-  'race-impact': 'sfx:race/race-impact',
-  'race-finish': 'sfx:race/race-finish',
 };
 
 /**
