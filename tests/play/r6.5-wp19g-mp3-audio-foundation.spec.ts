@@ -122,7 +122,9 @@ test.describe('R6.5-WP19G MP3 audio foundation', () => {
     await page.mouse.wheel(0, 550);
     await page.waitForTimeout(150);
     settings = await sceneSnapshot(page, 'SettingsScene');
-    expect(findObject(settings, 'settings-row-music-track-label').text).toContain('follows each area');
+    expect(findObject(settings, 'settings-row-music-track-label').text).toContain(
+      'follows each area',
+    );
 
     const mode = findObject(settings, 'settings-row-music');
     await page.mouse.click(mode.x, mode.y);
