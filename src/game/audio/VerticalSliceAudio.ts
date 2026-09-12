@@ -75,7 +75,7 @@ const PROCEDURAL_PROFILES: Readonly<Record<AudioSceneProfile, ProceduralProfile>
   },
   village: {
     notes: [392, 493.88, 587.33, 523.25, 493.88, 440, 523.25, 659.25],
-    intervalMs: 1240,
+    intervalMs: 1250,
     ambienceHz: 783.99,
   },
   meadow: {
@@ -338,7 +338,7 @@ export class VerticalSliceAudio {
       return;
     }
 
-    const element = new Audio(track.path);
+    const element = new Audio(this.assetUrl(track));
     element.preload = 'metadata';
     element.volume = 0;
     element.loop = this.playlist.length === 1;
@@ -425,6 +425,10 @@ export class VerticalSliceAudio {
     }
   }
 
+  private assetUrl(asset: AudioCatalogueEntry): string {
+    return `${asset.path}?v=${asset.sha256.slice(0, 12)}`;
+  }
+
   private async playAuthoredSfx(kind: VerticalSliceSfx): Promise<boolean> {
     const asset = resolveSfxAsset(kind);
     if (!asset || !this.context || !this.sfxGain || this.context.state !== 'running') {
@@ -433,7 +437,7 @@ export class VerticalSliceAudio {
     try {
       let buffer = this.sfxBuffers.get(asset.id);
       if (!buffer) {
-        const response = await fetch(asset.path);
+        const response = await fetch(this.assetUrl(asset));
         if (!response.ok) {
           return false;
         }
@@ -610,14 +614,14 @@ export class VerticalSliceAudio {
     this.visibilityListenerInstalled = true;
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) {
-        for (const voice of this.musicVoices) {
-          voice.element.pause();
+        this.stopSceneLoops();
+        if (this.context?.state === 'running') {
+          void this.context.suspend().catch(() => undefined);
         }
         return;
       }
-      if (this.currentSceneKey && !this.settings.muted && this.settings.musicEnabled) {
+      if (this.currentSceneKey && !this.settings.muted) {
         void this.unlock();
-        this.restartSceneLoops();
       }
     });
   }
