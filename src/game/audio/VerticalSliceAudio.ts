@@ -91,10 +91,6 @@ export class VerticalSliceAudio {
     return { ...this.settings };
   }
 
-  public getMusicTracks(): readonly AudioCatalogueEntry[] {
-    return MUSIC_CATALOGUE;
-  }
-
   public setSettings(settings: AudioSettings): AudioSettings {
     const previous = this.settings;
     this.settings = this.settingsStore.save(settings);
