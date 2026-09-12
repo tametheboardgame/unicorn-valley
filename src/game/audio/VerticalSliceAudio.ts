@@ -164,7 +164,7 @@ export class VerticalSliceAudio {
     const selected = getAudioAsset(this.settings.selectedMusicTrackId);
     const track = this.settings.musicEnabled
       ? getAudioAsset(MUSIC_BINDINGS[context].themeTrackId)
-      : selected?.id.startsWith('music:')
+      : selected?.id[0] === 'm'
         ? selected
         : MUSIC_CATALOGUE[0];
     if (track) this.playTrack(track);
@@ -247,14 +247,14 @@ export class VerticalSliceAudio {
         ? 220
         : kind === 'dialogue' || kind === 'door'
           ? 440
-          : kind.startsWith('race')
+          : kind[0] === 'r'
             ? 1046.5
             : 783.99;
     const duration = kind === 'quest-complete' || kind === 'race-finish' ? 0.22 : 0.12;
     this.playTone(
       frequency,
       duration,
-      kind.startsWith('race') ? 'triangle' : 'sine',
+      kind[0] === 'r' ? 'triangle' : 'sine',
       0.09 * this.settings.masterVolume * this.settings.sfxVolume,
     );
   }
