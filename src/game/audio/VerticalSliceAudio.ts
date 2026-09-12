@@ -162,7 +162,7 @@ export class VerticalSliceAudio {
     const selected = getAudioAsset(this.settings.selectedMusicTrackId);
     const track = this.settings.musicEnabled
       ? getAudioAsset(MUSIC_BINDINGS[context].themeTrackId)
-      : selected?.kind === 'music'
+      : selected?.id.startsWith('music:')
         ? selected
         : MUSIC_CATALOGUE[0];
     if (track) this.playTrack(track);
