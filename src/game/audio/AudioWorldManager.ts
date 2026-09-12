@@ -44,21 +44,21 @@ class AudioWorldManager {
   }
 
   private update(): void {
-    const scenes = this.game.scene.getScenes(true).filter(Boolean);
-    for (const scene of scenes) {
+    const scenes = this.game.scene.getScenes(true);
+    let musicSceneKey: string | undefined;
+    for (let index = scenes.length - 1; index >= 0; index -= 1) {
+      const scene = scenes[index];
+      if (!scene) continue;
       if (!this.attachedScenes.has(scene)) {
         scene.input.on('gameobjectdown', this.onGameObjectDown, this);
         scene.events.once('shutdown', () => this.attachedScenes.delete(scene));
         this.attachedScenes.add(scene);
       }
-    }
-    for (let index = scenes.length - 1; index >= 0; index -= 1) {
-      const key = scenes[index].scene.key;
-      if (resolveMusicContext(key)) {
-        this.audio.enterScene(key);
-        return;
+      if (!musicSceneKey && resolveMusicContext(scene.scene.key)) {
+        musicSceneKey = scene.scene.key;
       }
     }
+    if (musicSceneKey) this.audio.enterScene(musicSceneKey);
   }
 
   private onGameObjectDown(
