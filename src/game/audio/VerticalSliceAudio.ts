@@ -514,8 +514,7 @@ export class VerticalSliceAudio {
     if (!this.context || !this.ambienceGain || this.context.state !== 'running') {
       return;
     }
-    const play = () =>
-      this.playTone(definition.ambienceHz, 0.28, 'sine', 0.024, this.ambienceGain);
+    const play = () => this.playTone(definition.ambienceHz, 0.28, 'sine', 0.024, this.ambienceGain);
     play();
     this.ambienceTimer = window.setInterval(play, 5_500);
   }
