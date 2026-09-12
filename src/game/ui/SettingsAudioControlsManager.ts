@@ -31,7 +31,9 @@ export function getSettingsAudioControlsManager(game: Phaser.Game): void {
   const select = document.createElement('select');
   select.ariaLabel = 'Chosen music track';
   select.style.position = 'absolute';
-  for (const track of MUSIC_CATALOGUE) select.add(new Option(track.label, track.id));
+  for (const track of MUSIC_CATALOGUE) {
+    select.add(new Option(track.path.slice(track.path.lastIndexOf('/') + 1, -4), track.id));
+  }
   select.onchange = () => audio.updateSettings({ selectedMusicTrackId: select.value });
   host.append(select);
 
