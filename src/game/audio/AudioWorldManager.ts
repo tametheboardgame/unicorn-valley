@@ -85,5 +85,8 @@ class AudioWorldManager {
 let manager: AudioWorldManager | undefined;
 
 export function getAudioWorldManager(game: Phaser.Game): AudioWorldManager {
-  return (manager ??= new AudioWorldManager(game));
+  if (!manager) {
+    manager = new AudioWorldManager(game);
+  }
+  return manager;
 }
