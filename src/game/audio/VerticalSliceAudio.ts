@@ -3,7 +3,6 @@ import {
   getAudioAsset,
   resolveMusicContext,
   resolveSfxAsset,
-  type MusicContextId,
 } from '../../content/audioBindings';
 import { MUSIC_CATALOGUE, type AudioCatalogueEntry } from '../../generated/audioCatalogue';
 import {
@@ -28,50 +27,6 @@ export type VerticalSliceSfx =
   | 'race-boost'
   | 'race-impact'
   | 'race-finish';
-export type AudioSceneProfile =
-  | 'menu'
-  | 'glade'
-  | 'village'
-  | 'meadow'
-  | 'brook'
-  | 'woods'
-  | 'cottage'
-  | 'race';
-
-export const AUDIO_SCENE_PROFILES: readonly AudioSceneProfile[] = [
-  'menu',
-  'glade',
-  'village',
-  'meadow',
-  'brook',
-  'woods',
-  'cottage',
-  'race',
-];
-export const PRODUCTION_AUDIO_LOOP_MINIMUM_MS = 10_000;
-
-const PROFILE_BY_CONTEXT: Readonly<Record<MusicContextId, AudioSceneProfile>> = {
-  'title-creator': 'menu',
-  'glade-cottage': 'glade',
-  'village-interiors': 'village',
-  meadow: 'meadow',
-  'brook-grotto': 'brook',
-  'woods-nook-grove': 'woods',
-  beach: 'meadow',
-  race: 'race',
-};
-
-export function resolveAudioSceneProfile(sceneKey: string): AudioSceneProfile | null {
-  if (sceneKey === 'CottageInteriorScene') {
-    return 'cottage';
-  }
-  const context = resolveMusicContext(sceneKey);
-  return context ? PROFILE_BY_CONTEXT[context] : null;
-}
-
-export function getAudioSceneLoopDurationMs(_profile: AudioSceneProfile): number {
-  return 11_000;
-}
 
 export class VerticalSliceAudio {
   private settings: AudioSettings;
@@ -81,8 +36,6 @@ export class VerticalSliceAudio {
   private currentSceneKey: string | null = null;
   private musicElement: HTMLAudioElement | null = null;
   private musicTrackId: string | null = null;
-  private fadingMusicElement: HTMLAudioElement | null = null;
-  private musicFadeTimer: number | null = null;
 
   public constructor(
     private readonly settingsStore: AudioSettingsStore = getBrowserAudioSettingsStore(),
@@ -102,7 +55,7 @@ export class VerticalSliceAudio {
   public setSettings(settings: AudioSettings): AudioSettings {
     const previous = this.settings;
     this.settings = this.settingsStore.save(settings);
-    if (this.musicElement && this.musicFadeTimer === null) {
+    if (this.musicElement) {
       this.musicElement.volume = this.musicElementTargetVolume();
     }
     if (
@@ -121,19 +74,9 @@ export class VerticalSliceAudio {
   }
 
   public enterScene(sceneKey: string): void {
-    if (this.currentSceneKey === sceneKey) {
-      return;
-    }
+    if (this.currentSceneKey === sceneKey) return;
     this.currentSceneKey = sceneKey;
     this.restartSceneLoops();
-  }
-
-  public leaveScene(sceneKey: string): void {
-    if (this.currentSceneKey !== sceneKey) {
-      return;
-    }
-    this.currentSceneKey = null;
-    this.stopSceneLoops();
   }
 
   public resumeMusic(): void {
@@ -141,39 +84,29 @@ export class VerticalSliceAudio {
   }
 
   public async unlock(): Promise<void> {
-    if (typeof window === 'undefined') {
-      return;
-    }
-    let shouldRestart = false;
+    if (typeof window === 'undefined') return;
+    let restart = false;
     if (!this.context) {
       this.context = new AudioContext();
-      shouldRestart = true;
+      restart = true;
     }
     if (this.context.state === 'suspended') {
       try {
         await this.context.resume();
-        shouldRestart = true;
+        restart = true;
       } catch {
         return;
       }
     }
-    if (shouldRestart) {
-      this.restartSceneLoops();
-    }
+    if (restart) this.restartSceneLoops();
   }
 
   public playSfx(kind: VerticalSliceSfx): void {
-    if (this.settings.muted || !this.settings.sfxEnabled) {
-      return;
-    }
+    if (this.settings.muted || !this.settings.sfxEnabled) return;
     void this.playAuthoredSfx(kind).then((played) => {
-      if (!played) {
-        void this.unlock().then(() => this.playProceduralSfx(kind));
-      }
+      if (!played) void this.unlock().then(() => this.playProceduralSfx(kind));
     });
   }
-
-  public playNpcReaction(_characterId: string, _reaction?: string): void {}
 
   private restartSceneLoops(): void {
     this.stopProceduralLoops();
@@ -189,22 +122,16 @@ export class VerticalSliceAudio {
       : selected?.kind === 'music'
         ? selected
         : MUSIC_CATALOGUE[0];
-    if (track) {
-      this.playTrack(track);
-    } else {
+    if (track) this.playTrack(track);
+    else {
       this.stopMusic();
       this.startProceduralMusic();
     }
-
-    if (this.settings.ambienceEnabled) {
-      this.startProceduralAmbience();
-    }
+    if (this.settings.ambienceEnabled) this.startProceduralAmbience();
   }
 
   private playTrack(track: AudioCatalogueEntry): void {
-    if (typeof Audio === 'undefined') {
-      return;
-    }
+    if (typeof Audio === 'undefined') return;
     if (this.musicElement && this.musicTrackId === track.id) {
       this.musicElement.volume = this.musicElementTargetVolume();
       this.resumeMusic();
@@ -213,7 +140,6 @@ export class VerticalSliceAudio {
 
     const previous = this.musicElement;
     const previousId = this.musicTrackId;
-    this.clearMusicFade();
     const next = new Audio(track.path);
     next.loop = true;
     next.volume = previous ? 0 : this.musicElementTargetVolume();
@@ -222,46 +148,31 @@ export class VerticalSliceAudio {
 
     void next.play().then(
       () => {
-        if (!previous) {
-          return;
-        }
+        if (!previous) return;
         const startVolume = previous.volume;
-        let step = 0;
-        this.fadingMusicElement = previous;
-        this.musicFadeTimer = window.setInterval(() => {
-          step += 1;
-          const mix = Math.min(1, step / 12);
-          previous.volume = startVolume * (1 - mix);
-          next.volume = this.musicElementTargetVolume() * mix;
-          if (mix === 1) {
-            this.clearMusicFade();
-          }
-        }, 50);
+        for (let step = 1; step <= 6; step += 1) {
+          window.setTimeout(() => {
+            if (this.musicElement !== next) {
+              previous.pause();
+              return;
+            }
+            const mix = step / 6;
+            previous.volume = startVolume * (1 - mix);
+            next.volume = this.musicElementTargetVolume() * mix;
+            if (step === 6) previous.pause();
+          }, step * 100);
+        }
       },
       () => {
-        if (this.musicElement !== next) {
-          return;
-        }
+        if (this.musicElement !== next) return;
         this.musicElement = previous;
         this.musicTrackId = previousId;
-        if (previous) {
-          previous.volume = this.musicElementTargetVolume();
-        }
+        if (previous) previous.volume = this.musicElementTargetVolume();
       },
     );
   }
 
-  private clearMusicFade(): void {
-    if (this.musicFadeTimer !== null) {
-      window.clearInterval(this.musicFadeTimer);
-    }
-    this.musicFadeTimer = null;
-    this.fadingMusicElement?.pause();
-    this.fadingMusicElement = null;
-  }
-
   private stopMusic(): void {
-    this.clearMusicFade();
     this.musicElement?.pause();
     this.musicElement = null;
     this.musicTrackId = null;
@@ -275,9 +186,7 @@ export class VerticalSliceAudio {
 
   private async playAuthoredSfx(kind: VerticalSliceSfx): Promise<boolean> {
     const asset = resolveSfxAsset(kind);
-    if (!asset || typeof Audio === 'undefined') {
-      return false;
-    }
+    if (!asset || typeof Audio === 'undefined') return false;
     try {
       const element = new Audio(asset.path);
       element.volume = Math.min(1, this.settings.masterVolume * this.settings.sfxVolume * 0.68);
@@ -289,9 +198,7 @@ export class VerticalSliceAudio {
   }
 
   private playProceduralSfx(kind: VerticalSliceSfx): void {
-    if (this.context?.state !== 'running') {
-      return;
-    }
+    if (this.context?.state !== 'running') return;
     const frequency =
       kind === 'race-impact'
         ? 220
@@ -310,9 +217,7 @@ export class VerticalSliceAudio {
   }
 
   private startProceduralMusic(): void {
-    if (this.context?.state !== 'running') {
-      return;
-    }
+    if (this.context?.state !== 'running') return;
     const play = () =>
       this.playTone(
         523.25,
@@ -325,9 +230,7 @@ export class VerticalSliceAudio {
   }
 
   private startProceduralAmbience(): void {
-    if (this.context?.state !== 'running') {
-      return;
-    }
+    if (this.context?.state !== 'running') return;
     const play = () =>
       this.playTone(
         698.46,
@@ -340,12 +243,8 @@ export class VerticalSliceAudio {
   }
 
   private stopProceduralLoops(): void {
-    if (this.proceduralMusicTimer !== null) {
-      window.clearInterval(this.proceduralMusicTimer);
-    }
-    if (this.ambienceTimer !== null) {
-      window.clearInterval(this.ambienceTimer);
-    }
+    if (this.proceduralMusicTimer !== null) window.clearInterval(this.proceduralMusicTimer);
+    if (this.ambienceTimer !== null) window.clearInterval(this.ambienceTimer);
     this.proceduralMusicTimer = null;
     this.ambienceTimer = null;
   }
@@ -361,9 +260,7 @@ export class VerticalSliceAudio {
     wave: OscillatorType,
     volume: number,
   ): void {
-    if (!this.context) {
-      return;
-    }
+    if (!this.context) return;
     const oscillator = this.context.createOscillator();
     const gain = this.context.createGain();
     const start = this.context.currentTime;
@@ -377,15 +274,11 @@ export class VerticalSliceAudio {
   }
 
   private installVisibilityListener(): void {
-    if (typeof document === 'undefined') {
-      return;
-    }
+    if (typeof document === 'undefined') return;
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) {
         this.stopSceneLoops();
-        if (this.context?.state === 'running') {
-          void this.context.suspend().catch(() => undefined);
-        }
+        if (this.context?.state === 'running') void this.context.suspend().catch(() => undefined);
       } else if (this.currentSceneKey && !this.settings.muted) {
         this.restartSceneLoops();
         this.resumeMusic();
