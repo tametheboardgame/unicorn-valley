@@ -4,7 +4,7 @@ import {
   resolveMusicContext,
   resolveSfxAsset,
 } from '../../content/audioBindings';
-import type { AudioCatalogueEntry } from '../../generated/audioCatalogue';
+import { MUSIC_CATALOGUE, type AudioCatalogueEntry } from '../../generated/audioCatalogue';
 import {
   type AudioSettings,
   type AudioSettingsStore,
@@ -63,14 +63,46 @@ export const AUDIO_SCENE_PROFILES: readonly AudioSceneProfile[] = [
 export const PRODUCTION_AUDIO_LOOP_MINIMUM_MS = 10_000;
 
 const PROCEDURAL_PROFILES: Readonly<Record<AudioSceneProfile, ProceduralProfile>> = {
-  menu: { notes: [523.25, 659.25, 783.99, 659.25, 587.33, 698.46, 783.99, 880], intervalMs: 1840, ambienceHz: 1046.5 },
-  glade: { notes: [523.25, 659.25, 783.99, 659.25, 587.33, 659.25, 523.25, 392], intervalMs: 1520, ambienceHz: 1174.66 },
-  village: { notes: [392, 493.88, 587.33, 523.25, 493.88, 440, 523.25, 659.25], intervalMs: 1240, ambienceHz: 783.99 },
-  meadow: { notes: [392, 523.25, 659.25, 783.99, 659.25, 783.99, 880, 1046.5], intervalMs: 1360, ambienceHz: 1046.5 },
-  brook: { notes: [349.23, 440, 523.25, 659.25, 587.33, 523.25, 440, 392], intervalMs: 1640, ambienceHz: 880 },
-  woods: { notes: [293.66, 349.23, 440, 523.25, 493.88, 440, 392, 349.23], intervalMs: 1760, ambienceHz: 659.25 },
-  cottage: { notes: [349.23, 440, 523.25, 440, 392, 440, 349.23, 293.66], intervalMs: 1680, ambienceHz: 698.46 },
-  race: { notes: [523.25, 659.25, 783.99, 1046.5, 880, 783.99, 659.25, 783.99], intervalMs: 1360, ambienceHz: 1318.51 },
+  menu: {
+    notes: [523.25, 659.25, 783.99, 659.25, 587.33, 698.46, 783.99, 880],
+    intervalMs: 1840,
+    ambienceHz: 1046.5,
+  },
+  glade: {
+    notes: [523.25, 659.25, 783.99, 659.25, 587.33, 659.25, 523.25, 392],
+    intervalMs: 1520,
+    ambienceHz: 1174.66,
+  },
+  village: {
+    notes: [392, 493.88, 587.33, 523.25, 493.88, 440, 523.25, 659.25],
+    intervalMs: 1240,
+    ambienceHz: 783.99,
+  },
+  meadow: {
+    notes: [392, 523.25, 659.25, 783.99, 659.25, 783.99, 880, 1046.5],
+    intervalMs: 1360,
+    ambienceHz: 1046.5,
+  },
+  brook: {
+    notes: [349.23, 440, 523.25, 659.25, 587.33, 523.25, 440, 392],
+    intervalMs: 1640,
+    ambienceHz: 880,
+  },
+  woods: {
+    notes: [293.66, 349.23, 440, 523.25, 493.88, 440, 392, 349.23],
+    intervalMs: 1760,
+    ambienceHz: 659.25,
+  },
+  cottage: {
+    notes: [349.23, 440, 523.25, 440, 392, 440, 349.23, 293.66],
+    intervalMs: 1680,
+    ambienceHz: 698.46,
+  },
+  race: {
+    notes: [523.25, 659.25, 783.99, 1046.5, 880, 783.99, 659.25, 783.99],
+    intervalMs: 1360,
+    ambienceHz: 1318.51,
+  },
 };
 
 const SCENE_PROFILE_BY_KEY: Readonly<Record<string, AudioSceneProfile>> = {
@@ -145,7 +177,6 @@ export class VerticalSliceAudio {
   }
 
   public getMusicTracks(): readonly AudioCatalogueEntry[] {
-    const { MUSIC_CATALOGUE } = requireMusicCatalogue();
     return MUSIC_CATALOGUE;
   }
 
@@ -457,7 +488,13 @@ export class VerticalSliceAudio {
       'race-finish': [1046.5, 0.28],
     };
     const [frequency, duration] = patterns[kind];
-    this.playTone(frequency, duration, kind.startsWith('race') ? 'triangle' : 'sine', 0.09, this.sfxGain);
+    this.playTone(
+      frequency,
+      duration,
+      kind.startsWith('race') ? 'triangle' : 'sine',
+      0.09,
+      this.sfxGain,
+    );
   }
 
   private startProceduralMusic(definition: ProceduralProfile): void {
@@ -477,7 +514,8 @@ export class VerticalSliceAudio {
     if (!this.context || !this.ambienceGain || this.context.state !== 'running') {
       return;
     }
-    const play = () => this.playTone(definition.ambienceHz, 0.28, 'sine', 0.024, this.ambienceGain);
+    const play = () =>
+      this.playTone(definition.ambienceHz, 0.28, 'sine', 0.024, this.ambienceGain);
     play();
     this.ambienceTimer = window.setInterval(play, 5_500);
   }
@@ -502,14 +540,36 @@ export class VerticalSliceAudio {
   }
 
   private applyGainSettings(): void {
-    if (!this.context || !this.masterGain || !this.musicGain || !this.ambienceGain || !this.sfxGain) {
+    if (
+      !this.context ||
+      !this.masterGain ||
+      !this.musicGain ||
+      !this.ambienceGain ||
+      !this.sfxGain
+    ) {
       return;
     }
     const now = this.context.currentTime;
-    this.masterGain.gain.setTargetAtTime(this.settings.muted ? 0 : this.settings.masterVolume, now, 0.03);
-    this.musicGain.gain.setTargetAtTime(this.settings.musicEnabled ? 0.14 * this.settings.musicVolume : 0, now, 0.04);
-    this.ambienceGain.gain.setTargetAtTime(this.settings.ambienceEnabled ? 0.08 * this.settings.ambienceVolume : 0, now, 0.04);
-    this.sfxGain.gain.setTargetAtTime(this.settings.sfxEnabled ? 0.68 * this.settings.sfxVolume : 0, now, 0.02);
+    this.masterGain.gain.setTargetAtTime(
+      this.settings.muted ? 0 : this.settings.masterVolume,
+      now,
+      0.03,
+    );
+    this.musicGain.gain.setTargetAtTime(
+      this.settings.musicEnabled ? 0.14 * this.settings.musicVolume : 0,
+      now,
+      0.04,
+    );
+    this.ambienceGain.gain.setTargetAtTime(
+      this.settings.ambienceEnabled ? 0.08 * this.settings.ambienceVolume : 0,
+      now,
+      0.04,
+    );
+    this.sfxGain.gain.setTargetAtTime(
+      this.settings.sfxEnabled ? 0.68 * this.settings.sfxVolume : 0,
+      now,
+      0.02,
+    );
   }
 
   private playTone(
@@ -560,12 +620,6 @@ export class VerticalSliceAudio {
       }
     });
   }
-}
-
-function requireMusicCatalogue(): { MUSIC_CATALOGUE: readonly AudioCatalogueEntry[] } {
-  // Kept as a tiny indirection so callers can ask the persistent audio owner for the current
-  // generated catalogue without owning or scanning the public folder themselves.
-  return { MUSIC_CATALOGUE: [] };
 }
 
 let verticalSliceAudio: VerticalSliceAudio | null = null;
