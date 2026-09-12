@@ -44,7 +44,7 @@ class AudioWorldManager {
   }
 
   private update(): void {
-    const scenes = this.game.scene.getScenes(true);
+    const scenes = this.game.scene.getScenes(true).filter(Boolean);
     for (const scene of scenes) {
       if (!this.attachedScenes.has(scene)) {
         scene.input.on('gameobjectdown', this.onGameObjectDown, this);
