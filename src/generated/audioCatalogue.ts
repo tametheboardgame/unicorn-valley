@@ -6,7 +6,6 @@ export interface AudioCatalogueEntry {
   id: string;
   kind: AudioAssetKind;
   path: string;
-  relativePath: string;
   label: string;
   sha256: string;
 }
@@ -16,9 +15,8 @@ export const AUDIO_CATALOGUE = [
     "id": "sfx:ui-soft-chime",
     "kind": "sfx",
     "path": "/audio/sfx/ui-soft-chime.mp3",
-    "relativePath": "ui-soft-chime.mp3",
     "label": "Ui Soft Chime",
-    "sha256": "a3458915f8292ed712dc92418a5ddb31da1bb177bfd885da26411b39ae680598"
+    "sha256": "o0WJFfgpLtcS3JJBil3bMdobsXe_2IXaJkEbOa5oBZg"
   },
 ] as const satisfies readonly AudioCatalogueEntry[];
 
