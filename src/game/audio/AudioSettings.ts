@@ -4,6 +4,10 @@ export interface AudioSettings {
   ambienceEnabled: boolean;
   sfxEnabled: boolean;
   masterVolume: number;
+  musicVolume: number;
+  ambienceVolume: number;
+  sfxVolume: number;
+  selectedMusicTrackId: string | null;
 }
 
 export interface AudioSettingsStorage {
@@ -19,10 +23,18 @@ export const DEFAULT_AUDIO_SETTINGS: AudioSettings = {
   ambienceEnabled: true,
   sfxEnabled: true,
   masterVolume: 0.62,
+  musicVolume: 1,
+  ambienceVolume: 1,
+  sfxVolume: 1,
+  selectedMusicTrackId: null,
 };
 
 function clampVolume(value: number): number {
   return Math.min(1, Math.max(0, value));
+}
+
+function normaliseVolume(value: unknown, fallback: number): number {
+  return typeof value === 'number' && Number.isFinite(value) ? clampVolume(value) : fallback;
 }
 
 export function normaliseAudioSettings(value: unknown): AudioSettings {
@@ -45,10 +57,14 @@ export function normaliseAudioSettings(value: unknown): AudioSettings {
       typeof candidate.sfxEnabled === 'boolean'
         ? candidate.sfxEnabled
         : DEFAULT_AUDIO_SETTINGS.sfxEnabled,
-    masterVolume:
-      typeof candidate.masterVolume === 'number' && Number.isFinite(candidate.masterVolume)
-        ? clampVolume(candidate.masterVolume)
-        : DEFAULT_AUDIO_SETTINGS.masterVolume,
+    masterVolume: normaliseVolume(candidate.masterVolume, DEFAULT_AUDIO_SETTINGS.masterVolume),
+    musicVolume: normaliseVolume(candidate.musicVolume, DEFAULT_AUDIO_SETTINGS.musicVolume),
+    ambienceVolume: normaliseVolume(candidate.ambienceVolume, DEFAULT_AUDIO_SETTINGS.ambienceVolume),
+    sfxVolume: normaliseVolume(candidate.sfxVolume, DEFAULT_AUDIO_SETTINGS.sfxVolume),
+    selectedMusicTrackId:
+      typeof candidate.selectedMusicTrackId === 'string' && candidate.selectedMusicTrackId.length > 0
+        ? candidate.selectedMusicTrackId
+        : null,
   };
 }
 
