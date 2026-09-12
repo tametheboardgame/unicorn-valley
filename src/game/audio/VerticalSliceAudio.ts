@@ -80,6 +80,9 @@ export class VerticalSliceAudio {
   private ambienceTimer: number | null = null;
   private currentSceneKey: string | null = null;
   private musicElement: HTMLAudioElement | null = null;
+  private musicTrackId: string | null = null;
+  private fadingMusicElement: HTMLAudioElement | null = null;
+  private musicFadeTimer: number | null = null;
 
   public constructor(
     private readonly settingsStore: AudioSettingsStore = getBrowserAudioSettingsStore(),
@@ -99,7 +102,7 @@ export class VerticalSliceAudio {
   public setSettings(settings: AudioSettings): AudioSettings {
     const previous = this.settings;
     this.settings = this.settingsStore.save(settings);
-    if (this.musicElement) {
+    if (this.musicElement && this.musicFadeTimer === null) {
       this.musicElement.volume = this.musicElementTargetVolume();
     }
     if (
@@ -131,6 +134,10 @@ export class VerticalSliceAudio {
     }
     this.currentSceneKey = null;
     this.stopSceneLoops();
+  }
+
+  public resumeMusic(): void {
+    void this.musicElement?.play().catch(() => undefined);
   }
 
   public async unlock(): Promise<void> {
@@ -176,18 +183,17 @@ export class VerticalSliceAudio {
       return;
     }
 
-    if (this.settings.musicEnabled) {
-      const manual = getAudioAsset(this.settings.selectedMusicTrackId);
-      const track =
-        manual?.kind === 'music' ? manual : getAudioAsset(MUSIC_BINDINGS[context].themeTrackId);
-      if (track) {
-        this.playTrack(track);
-      } else {
-        this.stopMusic();
-        this.startProceduralMusic();
-      }
+    const selected = getAudioAsset(this.settings.selectedMusicTrackId);
+    const track = this.settings.musicEnabled
+      ? getAudioAsset(MUSIC_BINDINGS[context].themeTrackId)
+      : selected?.kind === 'music'
+        ? selected
+        : MUSIC_CATALOGUE[0];
+    if (track) {
+      this.playTrack(track);
     } else {
       this.stopMusic();
+      this.startProceduralMusic();
     }
 
     if (this.settings.ambienceEnabled) {
@@ -199,21 +205,70 @@ export class VerticalSliceAudio {
     if (typeof Audio === 'undefined') {
       return;
     }
-    this.stopMusic();
-    const element = new Audio(track.path);
-    element.volume = this.musicElementTargetVolume();
-    element.loop = true;
-    this.musicElement = element;
-    void element.play().catch(() => undefined);
+    if (this.musicElement && this.musicTrackId === track.id) {
+      this.musicElement.volume = this.musicElementTargetVolume();
+      this.resumeMusic();
+      return;
+    }
+
+    const previous = this.musicElement;
+    const previousId = this.musicTrackId;
+    this.clearMusicFade();
+    const next = new Audio(track.path);
+    next.loop = true;
+    next.volume = previous ? 0 : this.musicElementTargetVolume();
+    this.musicElement = next;
+    this.musicTrackId = track.id;
+
+    void next.play().then(
+      () => {
+        if (!previous) {
+          return;
+        }
+        const startVolume = previous.volume;
+        let step = 0;
+        this.fadingMusicElement = previous;
+        this.musicFadeTimer = window.setInterval(() => {
+          step += 1;
+          const mix = Math.min(1, step / 12);
+          previous.volume = startVolume * (1 - mix);
+          next.volume = this.musicElementTargetVolume() * mix;
+          if (mix === 1) {
+            this.clearMusicFade();
+          }
+        }, 50);
+      },
+      () => {
+        if (this.musicElement !== next) {
+          return;
+        }
+        this.musicElement = previous;
+        this.musicTrackId = previousId;
+        if (previous) {
+          previous.volume = this.musicElementTargetVolume();
+        }
+      },
+    );
+  }
+
+  private clearMusicFade(): void {
+    if (this.musicFadeTimer !== null) {
+      window.clearInterval(this.musicFadeTimer);
+    }
+    this.musicFadeTimer = null;
+    this.fadingMusicElement?.pause();
+    this.fadingMusicElement = null;
   }
 
   private stopMusic(): void {
+    this.clearMusicFade();
     this.musicElement?.pause();
     this.musicElement = null;
+    this.musicTrackId = null;
   }
 
   private musicElementTargetVolume(): number {
-    return this.settings.muted || !this.settings.musicEnabled
+    return this.settings.muted
       ? 0
       : Math.min(1, this.settings.masterVolume * this.settings.musicVolume * 0.72);
   }
@@ -332,7 +387,8 @@ export class VerticalSliceAudio {
           void this.context.suspend().catch(() => undefined);
         }
       } else if (this.currentSceneKey && !this.settings.muted) {
-        void this.unlock();
+        this.restartSceneLoops();
+        this.resumeMusic();
       }
     });
   }
