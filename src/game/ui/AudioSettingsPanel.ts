@@ -1,4 +1,4 @@
-import Phaser from 'phaser';
+import type Phaser from 'phaser';
 import { getVerticalSliceAudio } from '../audio/VerticalSliceAudio';
 
 const SETTINGS_SCENE_REGISTERED_KEY = 'wp6.14:settings-scene-registered';
