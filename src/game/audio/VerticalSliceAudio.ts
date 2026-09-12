@@ -120,10 +120,6 @@ export class VerticalSliceAudio {
     if (this.currentSceneKey === sceneKey) this.currentSceneKey = null;
   }
 
-  public resumeMusic(): void {
-    void this.musicElement?.play().catch(() => undefined);
-  }
-
   public async unlock(): Promise<void> {
     if (typeof window === 'undefined') return;
     let restart = false;
@@ -140,6 +136,7 @@ export class VerticalSliceAudio {
       }
     }
     if (restart) this.restartSceneLoops();
+    void this.musicElement?.play().catch(() => undefined);
   }
 
   public playSfx(kind: VerticalSliceSfx): void {
@@ -147,6 +144,10 @@ export class VerticalSliceAudio {
     void this.playAuthoredSfx(kind).then((played) => {
       if (!played) void this.unlock().then(() => this.playProceduralSfx(kind));
     });
+  }
+
+  public playNpcReaction(_characterId: string, _reaction?: string): void {
+    this.playSfx('dialogue');
   }
 
   private restartSceneLoops(): void {
@@ -175,7 +176,7 @@ export class VerticalSliceAudio {
     if (typeof Audio === 'undefined') return;
     if (this.musicElement && this.musicTrackId === track.id) {
       this.musicElement.volume = this.musicElementTargetVolume();
-      this.resumeMusic();
+      void this.musicElement.play().catch(() => undefined);
       return;
     }
 
@@ -315,7 +316,6 @@ export class VerticalSliceAudio {
         if (this.context?.state === 'running') void this.context.suspend().catch(() => undefined);
       } else if (this.currentSceneKey && !this.settings.muted) {
         this.restartSceneLoops();
-        this.resumeMusic();
       }
     });
   }
