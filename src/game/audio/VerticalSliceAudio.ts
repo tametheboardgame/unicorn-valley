@@ -210,6 +210,10 @@ export class VerticalSliceAudio {
     });
   }
 
+  public playNpcReaction(_characterId: string, _reaction?: string): void {
+    this.playSfx('dialogue');
+  }
+
   private restartSceneLoops(): void {
     this.stopProceduralLoops();
     const profile = resolveAudioSceneProfile(this.currentSceneKey ?? '');
