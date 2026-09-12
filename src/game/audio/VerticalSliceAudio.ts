@@ -50,18 +50,6 @@ export const AUDIO_SCENE_PROFILES: readonly AudioSceneProfile[] = [
 ];
 export const PRODUCTION_AUDIO_LOOP_MINIMUM_MS = 10_000;
 
-const PROCEDURAL_PROFILES: Readonly<Record<AudioSceneProfile, readonly [number, number]>> = {
-  menu: [523.25, 2700],
-  glade: [523.25, 2600],
-  village: [349.23, 2600],
-  meadow: [523.25, 2550],
-  brook: [349.23, 2800],
-  woods: [349.23, 2900],
-  cottage: [349.23, 2850],
-  race: [523.25, 2500],
-};
-const NOTE_STEPS = [1, 1.25, 1.5, 1.25] as const;
-
 const PROFILE_BY_CONTEXT: Readonly<Record<MusicContextId, AudioSceneProfile>> = {
   'title-creator': 'menu',
   'glade-cottage': 'glade',
@@ -81,8 +69,8 @@ export function resolveAudioSceneProfile(sceneKey: string): AudioSceneProfile | 
   return context ? PROFILE_BY_CONTEXT[context] : null;
 }
 
-export function getAudioSceneLoopDurationMs(profile: AudioSceneProfile): number {
-  return PROCEDURAL_PROFILES[profile][1] * NOTE_STEPS.length;
+export function getAudioSceneLoopDurationMs(_profile: AudioSceneProfile): number {
+  return 11_000;
 }
 
 export class VerticalSliceAudio {
@@ -92,13 +80,8 @@ export class VerticalSliceAudio {
   private sfxGain: GainNode | null = null;
   private proceduralMusicTimer: number | null = null;
   private ambienceTimer: number | null = null;
-  private musicStep = 0;
   private currentSceneKey: string | null = null;
   private musicElement: HTMLAudioElement | null = null;
-  private currentTrackId: string | null = null;
-  private playlist: readonly AudioCatalogueEntry[] = [];
-  private lastPlaylistTrackId: string | null = null;
-  private musicNeedsRestart = false;
   private sfxBuffers = new Map<string, AudioBuffer>();
 
   public constructor(
@@ -120,7 +103,9 @@ export class VerticalSliceAudio {
     const previous = this.settings;
     this.settings = this.settingsStore.save(settings);
     this.applyGainSettings();
-    this.applyMusicElementVolume();
+    if (this.musicElement) {
+      this.musicElement.volume = this.musicElementTargetVolume();
+    }
     if (
       previous.muted !== this.settings.muted ||
       previous.musicEnabled !== this.settings.musicEnabled ||
@@ -141,7 +126,6 @@ export class VerticalSliceAudio {
       return;
     }
     this.currentSceneKey = sceneKey;
-    this.musicStep = 0;
     this.restartSceneLoops();
   }
 
@@ -175,8 +159,7 @@ export class VerticalSliceAudio {
       }
     }
     this.applyGainSettings();
-    if (shouldRestart || this.musicNeedsRestart) {
-      this.musicNeedsRestart = false;
+    if (shouldRestart) {
       this.restartSceneLoops();
     }
   }
@@ -196,8 +179,7 @@ export class VerticalSliceAudio {
 
   private restartSceneLoops(): void {
     this.stopProceduralLoops();
-    const profile = resolveAudioSceneProfile(this.currentSceneKey ?? '');
-    if (!profile || this.settings.muted) {
+    if (!resolveAudioSceneProfile(this.currentSceneKey ?? '') || this.settings.muted) {
       this.stopMusic();
       return;
     }
@@ -205,86 +187,44 @@ export class VerticalSliceAudio {
     if (this.settings.musicEnabled) {
       const manual = getAudioAsset(this.settings.selectedMusicTrackId);
       const context = resolveMusicContext(this.currentSceneKey ?? '');
-      this.playlist = manual?.kind === 'music' ? [manual] : resolveContextPlaylist(context);
-      if (this.playlist.length > 0) {
-        this.startPlaylist();
+      const track = manual?.kind === 'music' ? manual : resolveContextPlaylist(context)[0];
+      if (track) {
+        this.playTrack(track);
       } else {
         this.stopMusic();
-        this.startProceduralMusic(profile);
+        this.startProceduralMusic();
       }
     } else {
       this.stopMusic();
     }
 
     if (this.settings.ambienceEnabled) {
-      this.startProceduralAmbience(profile);
+      this.startProceduralAmbience();
     }
-  }
-
-  private startPlaylist(): void {
-    const next = this.chooseNextTrack();
-    if (!next) {
-      return;
-    }
-    this.lastPlaylistTrackId = next.id;
-    this.playTrack(next);
-  }
-
-  private chooseNextTrack(): AudioCatalogueEntry | null {
-    if (this.playlist.length <= 1) {
-      return this.playlist[0] ?? null;
-    }
-    const candidates = this.playlist.filter((track) => track.id !== this.lastPlaylistTrackId);
-    return candidates[Math.floor(Math.random() * candidates.length)] ?? null;
   }
 
   private playTrack(track: AudioCatalogueEntry): void {
     if (typeof Audio === 'undefined') {
       return;
     }
-    if (this.musicElement && this.currentTrackId === track.id) {
-      this.applyMusicElementVolume();
-      void this.musicElement.play().catch(() => {
-        this.musicNeedsRestart = true;
-      });
-      return;
-    }
-
     this.stopMusic();
     const element = new Audio(this.assetUrl(track));
     element.preload = 'metadata';
     element.volume = this.musicElementTargetVolume();
-    element.loop = this.playlist.length === 1;
-    element.addEventListener('ended', () => {
-      if (this.musicElement === element && this.playlist.length > 1) {
-        this.startPlaylist();
-      }
-    });
+    element.loop = true;
     this.musicElement = element;
-    this.currentTrackId = track.id;
-    void element.play().catch(() => {
-      if (this.musicElement === element) {
-        this.musicNeedsRestart = true;
-      }
-    });
+    void element.play().catch(() => undefined);
   }
 
   private stopMusic(): void {
     this.musicElement?.pause();
     this.musicElement = null;
-    this.currentTrackId = null;
   }
 
   private musicElementTargetVolume(): number {
     return this.settings.muted || !this.settings.musicEnabled
       ? 0
       : Math.min(1, this.settings.masterVolume * this.settings.musicVolume * 0.72);
-  }
-
-  private applyMusicElementVolume(): void {
-    if (this.musicElement) {
-      this.musicElement.volume = this.musicElementTargetVolume();
-    }
   }
 
   private assetUrl(asset: AudioCatalogueEntry): string {
@@ -339,39 +279,22 @@ export class VerticalSliceAudio {
     );
   }
 
-  private startProceduralMusic(profile: AudioSceneProfile): void {
+  private startProceduralMusic(): void {
     if (!this.context || !this.masterGain || this.context.state !== 'running') {
       return;
     }
-    const [base, intervalMs] = PROCEDURAL_PROFILES[profile];
-    const play = () => {
-      const ratio = NOTE_STEPS[this.musicStep % NOTE_STEPS.length] ?? 1;
-      this.musicStep += 1;
-      this.playTone(
-        base * ratio,
-        0.5,
-        'triangle',
-        0.007 * this.settings.musicVolume,
-        this.masterGain as GainNode,
-      );
-    };
+    const play = () =>
+      this.playTone(523.25, 0.5, 'triangle', 0.007 * this.settings.musicVolume, this.masterGain!);
     play();
-    this.proceduralMusicTimer = window.setInterval(play, intervalMs);
+    this.proceduralMusicTimer = window.setInterval(play, 11_000);
   }
 
-  private startProceduralAmbience(profile: AudioSceneProfile): void {
+  private startProceduralAmbience(): void {
     if (!this.context || !this.masterGain || this.context.state !== 'running') {
       return;
     }
-    const [base] = PROCEDURAL_PROFILES[profile];
     const play = () =>
-      this.playTone(
-        base * 2,
-        0.28,
-        'sine',
-        0.002 * this.settings.ambienceVolume,
-        this.masterGain as GainNode,
-      );
+      this.playTone(698.46, 0.28, 'sine', 0.002 * this.settings.ambienceVolume, this.masterGain!);
     play();
     this.ambienceTimer = window.setInterval(play, 5_500);
   }
