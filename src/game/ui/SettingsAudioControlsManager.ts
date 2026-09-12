@@ -9,19 +9,14 @@ const VOLUMES = [
   ['sfx-volume', 'sfxVolume', 'Effects volume'],
 ] as const;
 
-let installed = false;
-
 export function getSettingsAudioControlsManager(game: Phaser.Game): void {
-  if (installed) return;
-  const host = document.getElementById('game-container');
-  if (!host) return;
-  installed = true;
+  const host = document.getElementById('game-container')!;
   const audio = getVerticalSliceAudio();
   const sliders = VOLUMES.map(([kind, key, label]) => {
     const input = document.createElement('input');
     input.type = 'range';
     input.max = '1';
-    input.step = '0.01';
+    input.step = '.01';
     input.ariaLabel = label;
     input.style.position = 'absolute';
     input.oninput = () => audio.updateSettings({ [key]: +input.value });
@@ -39,7 +34,7 @@ export function getSettingsAudioControlsManager(game: Phaser.Game): void {
 
   game.events.on('poststep', () => {
     const scene = game.scene.getScene('SettingsScene');
-    if (!scene?.scene.isActive()) {
+    if (!scene.scene.isActive()) {
       select.hidden = true;
       for (const [, , input] of sliders) input.hidden = true;
       return;
@@ -54,7 +49,6 @@ export function getSettingsAudioControlsManager(game: Phaser.Game): void {
       const row = scene.children.getByName(
         `settings-row-${kind}`,
       ) as Phaser.GameObjects.Rectangle | null;
-      if (row?.input) row.input.enabled = false;
       control.hidden = !show || !row?.visible;
       if (!row || control.hidden) return;
       control.style.width = `${220 * sx}px`;
