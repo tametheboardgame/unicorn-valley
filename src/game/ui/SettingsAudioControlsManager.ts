@@ -18,14 +18,12 @@ export function getSettingsAudioControlsManager(game: Phaser.Game): void {
     input.max = '1';
     input.step = '.01';
     input.ariaLabel = label;
-    input.style.position = 'absolute';
     input.oninput = () => audio.updateSettings({ [key]: +input.value });
     host.append(input);
     return [kind, key, input] as const;
   });
   const select = document.createElement('select');
   select.ariaLabel = 'Chosen music track';
-  select.style.position = 'absolute';
   for (const track of MUSIC_CATALOGUE) {
     select.add(new Option(track.path.slice(track.path.lastIndexOf('/') + 1, -4), track.id));
   }
