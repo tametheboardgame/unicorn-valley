@@ -100,8 +100,8 @@ Object-specific sounds use the stable interaction ID rather than display text or
 To replace a sound while keeping its assignment:
 
 1. Upload the replacement MP3 using exactly the same folder and filename.
-2. The catalogue hash must be regenerated so browsers receive the new version instead of a cached copy.
-3. Re-test the assigned scene/event for level, timing and audible start/end artefacts.
+2. Regenerate the catalogue and re-test the assigned scene/event for level, timing and audible start/end artefacts.
+3. Because catalogue identity follows the path rather than a content hash, a browser or CDN may temporarily serve a cached copy when the path is unchanged. Use a hard refresh or clear the relevant cache while testing. If stale playback persists, give the replacement a new filename and update its assignment.
 
 Changing the filename creates a new catalogue ID, so its previous assignments must also be updated.
 
