@@ -28,7 +28,6 @@ export type VerticalSliceSfx =
   | 'race-boost'
   | 'race-impact'
   | 'race-finish';
-export type NpcReaction = 'talk' | 'happy' | 'surprised';
 export type AudioSceneProfile =
   | 'menu'
   | 'glade'
@@ -42,11 +41,6 @@ export type AudioSceneProfile =
 interface ProceduralProfile {
   notes: readonly number[];
   intervalMs: number;
-}
-
-interface MusicVoice {
-  element: HTMLAudioElement;
-  trackId: string;
 }
 
 export const AUDIO_SCENE_PROFILES: readonly AudioSceneProfile[] = [
@@ -87,9 +81,7 @@ const PROFILE_BY_CONTEXT: Readonly<Record<MusicContextId, AudioSceneProfile>> = 
   race: 'race',
 };
 
-const MUSIC_FADE_MS = 650;
 const MAX_SFX_CACHE = 24;
-const MAX_ACTIVE_SFX = 32;
 
 export function resolveAudioSceneProfile(sceneKey: string): AudioSceneProfile | null {
   if (sceneKey === 'CottageInteriorScene') {
@@ -115,13 +107,12 @@ export class VerticalSliceAudio {
   private ambienceTimer: number | null = null;
   private musicStep = 0;
   private currentSceneKey: string | null = null;
-  private musicVoices: MusicVoice[] = [];
-  private musicRequestId = 0;
+  private musicElement: HTMLAudioElement | null = null;
+  private currentTrackId: string | null = null;
   private playlist: readonly AudioCatalogueEntry[] = [];
   private lastPlaylistTrackId: string | null = null;
-  private pendingMusicRetry = false;
+  private musicNeedsRestart = false;
   private sfxBuffers = new Map<string, AudioBuffer>();
-  private activeSfx = new Set<AudioBufferSourceNode>();
 
   public constructor(
     private readonly settingsStore: AudioSettingsStore = getBrowserAudioSettingsStore(),
@@ -142,7 +133,7 @@ export class VerticalSliceAudio {
     const previous = this.settings;
     this.settings = this.settingsStore.save(settings);
     this.applyGainSettings();
-    this.applyMusicElementVolumes();
+    this.applyMusicElementVolume();
     if (
       previous.muted !== this.settings.muted ||
       previous.musicEnabled !== this.settings.musicEnabled ||
@@ -201,25 +192,10 @@ export class VerticalSliceAudio {
       }
     }
     this.applyGainSettings();
-    if (shouldRestart || this.pendingMusicRetry) {
-      this.pendingMusicRetry = false;
+    if (shouldRestart || this.musicNeedsRestart) {
+      this.musicNeedsRestart = false;
       this.restartSceneLoops();
     }
-  }
-
-  public playNpcReaction(characterId: string, reaction: NpcReaction = 'talk'): void {
-    if (this.settings.muted || !this.settings.sfxEnabled) {
-      return;
-    }
-    void this.unlock().then(() => {
-      if (!this.sfxGain) {
-        return;
-      }
-      const base = 440 + (characterId.length % 6) * 55;
-      const multiplier = reaction === 'happy' ? 1.25 : reaction === 'surprised' ? 1.5 : 1;
-      this.playTone(base * multiplier, 0.1, 'triangle', 0.055, this.sfxGain);
-      this.playTone(base * multiplier * 1.125, 0.09, 'sine', 0.04, this.sfxGain, 0.055);
-    });
   }
 
   public playSfx(kind: VerticalSliceSfx): void {
@@ -236,10 +212,9 @@ export class VerticalSliceAudio {
 
   private restartSceneLoops(): void {
     this.stopProceduralLoops();
-    this.musicRequestId += 1;
     const profile = resolveAudioSceneProfile(this.currentSceneKey ?? '');
     if (!profile || this.settings.muted) {
-      this.fadeOutAllMusic();
+      this.stopMusic();
       return;
     }
 
@@ -248,13 +223,13 @@ export class VerticalSliceAudio {
       const context = resolveMusicContext(this.currentSceneKey ?? '');
       this.playlist = manual?.kind === 'music' ? [manual] : resolveContextPlaylist(context);
       if (this.playlist.length > 0) {
-        this.startPlaylist(this.musicRequestId);
+        this.startPlaylist();
       } else {
-        this.fadeOutAllMusic();
+        this.stopMusic();
         this.startProceduralMusic(PROCEDURAL_PROFILES[profile]);
       }
     } else {
-      this.fadeOutAllMusic();
+      this.stopMusic();
     }
 
     if (this.settings.ambienceEnabled) {
@@ -262,13 +237,13 @@ export class VerticalSliceAudio {
     }
   }
 
-  private startPlaylist(requestId: number): void {
+  private startPlaylist(): void {
     const next = this.chooseNextTrack();
     if (!next) {
       return;
     }
     this.lastPlaylistTrackId = next.id;
-    this.crossfadeTo(next, requestId);
+    this.playTrack(next);
   }
 
   private chooseNextTrack(): AudioCatalogueEntry | null {
@@ -282,87 +257,47 @@ export class VerticalSliceAudio {
     return candidates[Math.floor(Math.random() * candidates.length)] ?? this.playlist[0] ?? null;
   }
 
-  private crossfadeTo(track: AudioCatalogueEntry, requestId: number): void {
-    if (typeof Audio === 'undefined' || requestId !== this.musicRequestId) {
+  private playTrack(track: AudioCatalogueEntry): void {
+    if (typeof Audio === 'undefined') {
       return;
     }
-    const existingSameTrack = this.musicVoices.find((voice) => voice.trackId === track.id);
-    if (existingSameTrack) {
-      this.applyMusicElementVolumes();
+    if (this.musicElement && this.currentTrackId === track.id) {
+      this.applyMusicElementVolume();
+      void this.musicElement.play().catch(() => {
+        this.musicNeedsRestart = true;
+      });
       return;
     }
 
+    this.stopMusic();
     const element = new Audio(this.assetUrl(track));
     element.preload = 'metadata';
-    element.volume = 0;
+    element.volume = this.musicElementTargetVolume();
     element.loop = this.playlist.length === 1;
-    const voice: MusicVoice = { element, trackId: track.id };
     element.addEventListener('ended', () => {
-      if (requestId === this.musicRequestId && this.playlist.length > 1) {
-        this.startPlaylist(requestId);
+      if (this.musicElement === element && this.playlist.length > 1) {
+        this.startPlaylist();
       }
     });
-    element.addEventListener('error', () => this.removeMusicVoice(voice));
-    this.musicVoices.push(voice);
-    while (this.musicVoices.length > 2) {
-      const oldest = this.musicVoices.shift();
-      oldest?.element.pause();
-    }
-
-    void element.play().then(
-      () => this.fadeVoiceIn(voice),
-      () => {
-        this.pendingMusicRetry = true;
-        this.removeMusicVoice(voice);
-      },
-    );
-    for (const other of [...this.musicVoices]) {
-      if (other !== voice) {
-        this.fadeVoiceOut(other);
+    element.addEventListener('error', () => {
+      if (this.musicElement === element) {
+        this.stopMusic();
       }
-    }
-  }
-
-  private fadeVoiceIn(voice: MusicVoice): void {
-    const target = this.musicElementTargetVolume();
-    this.animateVolume(voice, target, false);
-  }
-
-  private fadeVoiceOut(voice: MusicVoice): void {
-    this.animateVolume(voice, 0, true);
-  }
-
-  private animateVolume(voice: MusicVoice, target: number, removeAfter: boolean): void {
-    if (typeof window === 'undefined') {
-      return;
-    }
-    const start = performance.now();
-    const initial = voice.element.volume;
-    const tick = (now: number) => {
-      if (!this.musicVoices.includes(voice)) {
-        return;
+    });
+    this.musicElement = element;
+    this.currentTrackId = track.id;
+    void element.play().catch(() => {
+      if (this.musicElement === element) {
+        this.musicNeedsRestart = true;
       }
-      const progress = Math.min(1, (now - start) / MUSIC_FADE_MS);
-      voice.element.volume = Math.max(0, Math.min(1, initial + (target - initial) * progress));
-      if (progress < 1) {
-        window.requestAnimationFrame(tick);
-      } else if (removeAfter) {
-        this.removeMusicVoice(voice);
-      }
-    };
-    window.requestAnimationFrame(tick);
+    });
   }
 
-  private removeMusicVoice(voice: MusicVoice): void {
-    voice.element.pause();
-    voice.element.removeAttribute('src');
-    this.musicVoices = this.musicVoices.filter((candidate) => candidate !== voice);
-  }
-
-  private fadeOutAllMusic(): void {
-    for (const voice of [...this.musicVoices]) {
-      this.fadeVoiceOut(voice);
-    }
+  private stopMusic(): void {
+    this.musicElement?.pause();
+    this.musicElement?.removeAttribute('src');
+    this.musicElement = null;
+    this.currentTrackId = null;
   }
 
   private musicElementTargetVolume(): number {
@@ -372,15 +307,14 @@ export class VerticalSliceAudio {
     return Math.min(1, this.settings.masterVolume * this.settings.musicVolume * 0.72);
   }
 
-  private applyMusicElementVolumes(): void {
-    const target = this.musicElementTargetVolume();
-    for (const voice of this.musicVoices) {
-      voice.element.volume = target;
+  private applyMusicElementVolume(): void {
+    if (this.musicElement) {
+      this.musicElement.volume = this.musicElementTargetVolume();
     }
   }
 
   private assetUrl(asset: AudioCatalogueEntry): string {
-    return `${asset.path}?v=${asset.sha256.slice(0, 12)}`;
+    return `${asset.path}?v=${asset.sha256}`;
   }
 
   private async playAuthoredSfx(kind: VerticalSliceSfx): Promise<boolean> {
@@ -405,18 +339,10 @@ export class VerticalSliceAudio {
         }
         this.sfxBuffers.set(asset.id, buffer);
       }
-      if (this.activeSfx.size >= MAX_ACTIVE_SFX) {
-        const oldest = this.activeSfx.values().next().value as AudioBufferSourceNode | undefined;
-        oldest?.stop();
-      }
       const source = this.context.createBufferSource();
       source.buffer = buffer;
       source.connect(this.sfxGain);
-      this.activeSfx.add(source);
-      source.addEventListener('ended', () => {
-        this.activeSfx.delete(source);
-        source.disconnect();
-      });
+      source.addEventListener('ended', () => source.disconnect());
       source.start();
       return true;
     } catch {
@@ -492,10 +418,7 @@ export class VerticalSliceAudio {
 
   private stopSceneLoops(): void {
     this.stopProceduralLoops();
-    this.musicRequestId += 1;
-    for (const voice of [...this.musicVoices]) {
-      this.removeMusicVoice(voice);
-    }
+    this.stopMusic();
   }
 
   private applyGainSettings(): void {
@@ -537,14 +460,13 @@ export class VerticalSliceAudio {
     wave: OscillatorType,
     volume: number,
     destination: AudioNode,
-    delaySeconds = 0,
   ): void {
     if (!this.context) {
       return;
     }
     const oscillator = this.context.createOscillator();
     const gain = this.context.createGain();
-    const start = this.context.currentTime + delaySeconds;
+    const start = this.context.currentTime;
     const end = start + durationSeconds;
     oscillator.type = wave;
     oscillator.frequency.setValueAtTime(frequency, start);
