@@ -177,8 +177,6 @@ export class SettingsScene extends Phaser.Scene {
     this.unsubscribeAccessibility = this.accessibility.subscribe(() => this.refresh());
     this.unsubscribeAtmosphericTime = this.atmosphericTime.subscribe(() => this.refresh());
     this.unsubscribeWeather = this.magicalWeather.subscribe(() => this.refresh());
-    this.input.once('pointerdown', () => void this.audio.unlock());
-    this.input.keyboard?.once('keydown', () => void this.audio.unlock());
 
     this.setScrollOffset(0);
     this.refresh();
@@ -242,10 +240,7 @@ export class SettingsScene extends Phaser.Scene {
     let cursor = CONTENT_PADDING;
 
     SETTINGS_SECTIONS.forEach((section, sectionIndex) => {
-      if (sectionIndex > 0) {
-        cursor += SECTION_GAP;
-      }
-
+      if (sectionIndex > 0) cursor += SECTION_GAP;
       const headingY = cursor + SECTION_HEADING_HEIGHT / 2;
       this.createSectionHeading(section.title, headingY);
       cursor += SECTION_HEADING_HEIGHT + SECTION_HEADING_GAP;
@@ -297,7 +292,6 @@ export class SettingsScene extends Phaser.Scene {
       .setName(`settings-row-${kind}-label`)
       .setOrigin(0.5)
       .setDepth(LIST_LABEL_DEPTH);
-
     const row: SettingRow = { surface, button, label, kind, contentY, hovered: false };
     button.on('pointerover', () => {
       row.hovered = true;
@@ -308,9 +302,7 @@ export class SettingsScene extends Phaser.Scene {
       this.redrawRow(row);
     });
     button.on('pointerup', () => {
-      if (this.dragDistance >= DRAG_THRESHOLD) {
-        return;
-      }
+      if (this.dragDistance >= DRAG_THRESHOLD) return;
       this.selectedIndex = index;
       this.ensureSelectedVisible();
       void this.toggleSetting(kind);
@@ -503,9 +495,7 @@ export class SettingsScene extends Phaser.Scene {
   }
 
   private redrawDone(): void {
-    if (!this.doneSurface) {
-      return;
-    }
+    if (!this.doneSurface) return;
     const selected = this.selectedIndex === this.rows.length;
     const fill = this.doneHovered ? UI_COLOURS.cream : UI_COLOURS.gold;
     const lineWidth = selected ? 6 : 4;
@@ -522,40 +512,17 @@ export class SettingsScene extends Phaser.Scene {
   }
 
   private getRowPresentation(kind: SettingsRowKind) {
-    const audioSettings = this.audio.getSettings();
-    if (kind === 'master-volume') {
-      return {
-        label: `All sound level: ${this.formatVolume(audioSettings.masterVolume)}`,
-        enabled: !audioSettings.muted && audioSettings.masterVolume > 0,
-      };
-    }
+    const audio = this.audio.getSettings();
+    if (kind === 'master-volume') return { label: 'All sound level', enabled: !audio.muted };
     if (kind === 'music-track') {
-      const tracks = this.audio.getMusicTracks();
-      const selected = tracks.find((track) => track.id === audioSettings.selectedMusicTrackId);
-      const suffix = tracks.length === 0 ? ' · add MP3s to the music folder' : '';
       return {
-        label: `Music track: ${selected?.label ?? 'Scene theme'}${suffix}`,
-        enabled: selected !== undefined,
+        label: audio.musicEnabled ? 'Track follows each area' : 'Chosen track',
+        enabled: !audio.musicEnabled,
       };
     }
-    if (kind === 'music-volume') {
-      return {
-        label: `Music level: ${this.formatVolume(audioSettings.musicVolume)}`,
-        enabled: audioSettings.musicEnabled && audioSettings.musicVolume > 0,
-      };
-    }
-    if (kind === 'ambience-volume') {
-      return {
-        label: `Ambience level: ${this.formatVolume(audioSettings.ambienceVolume)}`,
-        enabled: audioSettings.ambienceEnabled && audioSettings.ambienceVolume > 0,
-      };
-    }
-    if (kind === 'sfx-volume') {
-      return {
-        label: `Effects level: ${this.formatVolume(audioSettings.sfxVolume)}`,
-        enabled: audioSettings.sfxEnabled && audioSettings.sfxVolume > 0,
-      };
-    }
+    if (kind === 'music-volume') return { label: 'Music volume', enabled: true };
+    if (kind === 'ambience-volume') return { label: 'Ambience volume', enabled: audio.ambienceEnabled };
+    if (kind === 'sfx-volume') return { label: 'Effects volume', enabled: audio.sfxEnabled };
     if (kind === 'time-of-day') {
       const definition = this.atmosphericTime.getDefinition();
       const mode = this.atmosphericTime.getMode() === 'auto' ? 'Auto' : 'Manual';
@@ -573,28 +540,6 @@ export class SettingsScene extends Phaser.Scene {
       };
     }
     return describeGameSetting(kind, this.snapshot());
-  }
-
-  private formatVolume(value: number): string {
-    return `${Math.round(value * 100)}%`;
-  }
-
-  private nextVolume(value: number): number {
-    const percent = Math.round(value * 100);
-    return percent >= 100 ? 0 : Math.min(100, Math.ceil((percent + 1) / 10) * 10) / 100;
-  }
-
-  private cycleMusicTrack(): void {
-    const tracks = this.audio.getMusicTracks();
-    if (tracks.length === 0) {
-      this.statusText?.setText('Add MP3 files to public/audio/music to make them available here.');
-      return;
-    }
-    const settings = this.audio.getSettings();
-    const ids: (string | null)[] = [null, ...tracks.map((track) => track.id)];
-    const currentIndex = ids.findIndex((id) => id === settings.selectedMusicTrackId);
-    const nextIndex = currentIndex < 0 ? 0 : (currentIndex + 1) % ids.length;
-    this.audio.updateSettings({ selectedMusicTrackId: ids[nextIndex] ?? null });
   }
 
   private snapshot() {
@@ -616,9 +561,7 @@ export class SettingsScene extends Phaser.Scene {
   }
 
   private refreshFocus(): void {
-    for (const row of this.rows) {
-      this.redrawRow(row);
-    }
+    for (const row of this.rows) this.redrawRow(row);
     this.redrawDone();
   }
 
@@ -635,13 +578,9 @@ export class SettingsScene extends Phaser.Scene {
   }
 
   private ensureSelectedVisible(): void {
-    if (this.selectedIndex >= this.rows.length) {
-      return;
-    }
+    if (this.selectedIndex >= this.rows.length) return;
     const row = this.rows[this.selectedIndex];
-    if (!row) {
-      return;
-    }
+    if (!row) return;
     const rowTop = row.contentY - ROW_HEIGHT / 2 - 8;
     const rowBottom = row.contentY + ROW_HEIGHT / 2 + 8;
     if (rowTop < this.scrollOffset) {
@@ -673,18 +612,14 @@ export class SettingsScene extends Phaser.Scene {
       row.surface.setY(y).setVisible(intersectsViewport);
       row.button.setY(y).setVisible(intersectsViewport);
       row.label.setY(y).setVisible(intersectsViewport);
-      if (row.button.input) {
-        row.button.input.enabled = fullyInsideViewport;
-      }
+      if (row.button.input) row.button.input.enabled = fullyInsideViewport;
     }
 
     this.updateScrollbar();
   }
 
   private updateScrollbar(): void {
-    if (!this.scrollbarThumb) {
-      return;
-    }
+    if (!this.scrollbarThumb) return;
     const thumbHeight = Math.max(
       SCROLLBAR_MIN_THUMB,
       VIEWPORT_HEIGHT * (VIEWPORT_HEIGHT / Math.max(VIEWPORT_HEIGHT, this.contentHeight)),
@@ -711,16 +646,12 @@ export class SettingsScene extends Phaser.Scene {
     _deltaX: number,
     deltaY: number,
   ): void {
-    if (!this.pointerInsideViewport(pointer)) {
-      return;
-    }
+    if (!this.pointerInsideViewport(pointer)) return;
     this.setScrollOffset(this.scrollOffset + deltaY * 0.65);
   }
 
   private handlePointerDown(pointer: Phaser.Input.Pointer): void {
-    if (!this.pointerInsideViewport(pointer)) {
-      return;
-    }
+    if (!this.pointerInsideViewport(pointer)) return;
     this.dragPointerId = pointer.id;
     this.dragStartPointerY = pointer.y;
     this.dragStartScroll = this.scrollOffset;
@@ -728,18 +659,14 @@ export class SettingsScene extends Phaser.Scene {
   }
 
   private handlePointerMove(pointer: Phaser.Input.Pointer): void {
-    if (this.dragPointerId !== pointer.id || !pointer.isDown) {
-      return;
-    }
+    if (this.dragPointerId !== pointer.id || !pointer.isDown) return;
     const delta = pointer.y - this.dragStartPointerY;
     this.dragDistance = Math.max(this.dragDistance, Math.abs(delta));
     this.setScrollOffset(this.dragStartScroll - delta);
   }
 
   private handlePointerUp(pointer: Phaser.Input.Pointer): void {
-    if (this.dragPointerId === pointer.id) {
-      this.dragPointerId = null;
-    }
+    if (this.dragPointerId === pointer.id) this.dragPointerId = null;
   }
 
   private activateSelected(): void {
@@ -748,13 +675,19 @@ export class SettingsScene extends Phaser.Scene {
       return;
     }
     const row = this.rows[this.selectedIndex];
-    if (row) {
-      void this.toggleSetting(row.kind);
-    }
+    if (row) void this.toggleSetting(row.kind);
   }
 
   private async toggleSetting(kind: SettingsRowKind): Promise<void> {
-    void this.audio.unlock();
+    if (
+      kind === 'master-volume' ||
+      kind === 'music-track' ||
+      kind === 'music-volume' ||
+      kind === 'ambience-volume' ||
+      kind === 'sfx-volume'
+    ) {
+      return;
+    }
     if (kind === 'time-of-day') {
       this.atmosphericTime.cycleMode();
       this.magicalWeather.refreshAutomatic();
@@ -772,22 +705,12 @@ export class SettingsScene extends Phaser.Scene {
     const audioSettings = this.audio.getSettings();
     if (kind === 'muted') {
       this.audio.updateSettings({ muted: !audioSettings.muted });
-    } else if (kind === 'master-volume') {
-      this.audio.updateSettings({ masterVolume: this.nextVolume(audioSettings.masterVolume) });
     } else if (kind === 'music') {
       this.audio.updateSettings({ musicEnabled: !audioSettings.musicEnabled });
-    } else if (kind === 'music-track') {
-      this.cycleMusicTrack();
-    } else if (kind === 'music-volume') {
-      this.audio.updateSettings({ musicVolume: this.nextVolume(audioSettings.musicVolume) });
     } else if (kind === 'ambience') {
       this.audio.updateSettings({ ambienceEnabled: !audioSettings.ambienceEnabled });
-    } else if (kind === 'ambience-volume') {
-      this.audio.updateSettings({ ambienceVolume: this.nextVolume(audioSettings.ambienceVolume) });
     } else if (kind === 'sfx') {
       this.audio.updateSettings({ sfxEnabled: !audioSettings.sfxEnabled });
-    } else if (kind === 'sfx-volume') {
-      this.audio.updateSettings({ sfxVolume: this.nextVolume(audioSettings.sfxVolume) });
     } else if (kind === 'fullscreen') {
       await this.toggleFullscreen();
       return;
@@ -836,14 +759,10 @@ export class SettingsScene extends Phaser.Scene {
   };
 
   private closeSettings(): void {
-    if (this.closing) {
-      return;
-    }
+    if (this.closing) return;
     this.closing = true;
     this.audio.playSfx('ui-back');
-    if (this.scene.isPaused(this.returnScene)) {
-      this.scene.resume(this.returnScene);
-    }
+    if (this.scene.isPaused(this.returnScene)) this.scene.resume(this.returnScene);
     this.scene.stop();
   }
 }
