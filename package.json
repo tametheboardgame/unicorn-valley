@@ -4,7 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "audio:catalogue": "node scripts/generateAudioCatalogue.mjs",
+    "audio:catalogue:check": "node scripts/generateAudioCatalogue.mjs --check",
+    "predev": "npm run audio:catalogue",
     "dev": "vite",
+    "prebuild": "npm run audio:catalogue",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "format": "biome format --write .",
@@ -18,7 +22,7 @@
     "test:play:update": "playwright test --update-snapshots",
     "perf:budget": "node scripts/checkPerformanceBudget.mjs",
     "smoke:static": "node scripts/staticSmoke.mjs",
-    "validate": "npm run format:check && npm run lint && npm run typecheck && npm run test && npm run build && npm run perf:budget && npm run smoke:static"
+    "validate": "npm run audio:catalogue:check && npm run format:check && npm run lint && npm run typecheck && npm run test && npm run build && npm run perf:budget && npm run smoke:static"
   },
   "dependencies": {
     "phaser": "4.2.1"
