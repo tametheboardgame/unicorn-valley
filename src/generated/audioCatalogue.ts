@@ -68,5 +68,6 @@ export const AUDIO_CATALOGUE = [
   },
 ] as const satisfies readonly AudioCatalogueEntry[];
 
-const AUDIO_CATALOGUE_ENTRIES: readonly AudioCatalogueEntry[] = AUDIO_CATALOGUE;
-export const MUSIC_CATALOGUE = AUDIO_CATALOGUE_ENTRIES.filter((entry) => entry.id.startsWith('music:'));
+export const MUSIC_CATALOGUE: readonly AudioCatalogueEntry[] = AUDIO_CATALOGUE.filter(
+  (entry) => entry.id[0] === 'm',
+);
