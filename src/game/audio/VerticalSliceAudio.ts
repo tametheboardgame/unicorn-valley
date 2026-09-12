@@ -47,7 +47,6 @@ interface ProceduralProfile {
 interface MusicVoice {
   element: HTMLAudioElement;
   trackId: string;
-  requestId: number;
 }
 
 export const AUDIO_SCENE_PROFILES: readonly AudioSceneProfile[] = [
@@ -62,47 +61,19 @@ export const AUDIO_SCENE_PROFILES: readonly AudioSceneProfile[] = [
 ];
 export const PRODUCTION_AUDIO_LOOP_MINIMUM_MS = 10_000;
 
+const BRIGHT_NOTES = [523.25, 659.25, 783.99, 659.25] as const;
+const EARTHY_NOTES = [349.23, 440, 523.25, 440] as const;
+const RACE_NOTES = [523.25, 783.99, 1046.5, 783.99] as const;
+
 const PROCEDURAL_PROFILES: Readonly<Record<AudioSceneProfile, ProceduralProfile>> = {
-  menu: {
-    notes: [523.25, 659.25, 783.99, 659.25, 587.33, 698.46, 783.99, 880],
-    intervalMs: 1840,
-    ambienceHz: 1046.5,
-  },
-  glade: {
-    notes: [523.25, 659.25, 783.99, 659.25, 587.33, 659.25, 523.25, 392],
-    intervalMs: 1520,
-    ambienceHz: 1174.66,
-  },
-  village: {
-    notes: [392, 493.88, 587.33, 523.25, 493.88, 440, 523.25, 659.25],
-    intervalMs: 1250,
-    ambienceHz: 783.99,
-  },
-  meadow: {
-    notes: [392, 523.25, 659.25, 783.99, 659.25, 783.99, 880, 1046.5],
-    intervalMs: 1360,
-    ambienceHz: 1046.5,
-  },
-  brook: {
-    notes: [349.23, 440, 523.25, 659.25, 587.33, 523.25, 440, 392],
-    intervalMs: 1640,
-    ambienceHz: 880,
-  },
-  woods: {
-    notes: [293.66, 349.23, 440, 523.25, 493.88, 440, 392, 349.23],
-    intervalMs: 1760,
-    ambienceHz: 659.25,
-  },
-  cottage: {
-    notes: [349.23, 440, 523.25, 440, 392, 440, 349.23, 293.66],
-    intervalMs: 1680,
-    ambienceHz: 698.46,
-  },
-  race: {
-    notes: [523.25, 659.25, 783.99, 1046.5, 880, 783.99, 659.25, 783.99],
-    intervalMs: 1360,
-    ambienceHz: 1318.51,
-  },
+  menu: { notes: BRIGHT_NOTES, intervalMs: 2700, ambienceHz: 1046.5 },
+  glade: { notes: BRIGHT_NOTES, intervalMs: 2600, ambienceHz: 1174.66 },
+  village: { notes: EARTHY_NOTES, intervalMs: 2600, ambienceHz: 783.99 },
+  meadow: { notes: BRIGHT_NOTES, intervalMs: 2550, ambienceHz: 1046.5 },
+  brook: { notes: EARTHY_NOTES, intervalMs: 2800, ambienceHz: 880 },
+  woods: { notes: EARTHY_NOTES, intervalMs: 2900, ambienceHz: 659.25 },
+  cottage: { notes: EARTHY_NOTES, intervalMs: 2850, ambienceHz: 698.46 },
+  race: { notes: RACE_NOTES, intervalMs: 2500, ambienceHz: 1318.51 },
 };
 
 const SCENE_PROFILE_BY_KEY: Readonly<Record<string, AudioSceneProfile>> = {
@@ -342,7 +313,7 @@ export class VerticalSliceAudio {
     element.preload = 'metadata';
     element.volume = 0;
     element.loop = this.playlist.length === 1;
-    const voice: MusicVoice = { element, trackId: track.id, requestId };
+    const voice: MusicVoice = { element, trackId: track.id };
     element.addEventListener('ended', () => {
       if (requestId === this.musicRequestId && this.playlist.length > 1) {
         this.startPlaylist(requestId);
