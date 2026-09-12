@@ -1,4 +1,5 @@
 import type Phaser from 'phaser';
+import { MUSIC_CATALOGUE } from '../../generated/audioCatalogue';
 import { getVerticalSliceAudio } from '../audio/VerticalSliceAudio';
 
 const VOLUMES = [
@@ -32,7 +33,7 @@ export function getSettingsAudioControlsManager(game: Phaser.Game): void {
   const select = document.createElement('select');
   select.ariaLabel = 'Chosen music track';
   select.style.position = 'absolute';
-  for (const track of audio.getMusicTracks()) select.add(new Option(track.label, track.id));
+  for (const track of MUSIC_CATALOGUE) select.add(new Option(track.label, track.id));
   select.onchange = () => audio.updateSettings({ selectedMusicTrackId: select.value });
   host.append(select);
 
