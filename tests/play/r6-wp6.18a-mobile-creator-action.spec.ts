@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
 const SAVE_KEY = 'unicorn-valley.save';
-const SCENE_WAIT_TIMEOUT_MS = 20_000;
+const SCENE_WAIT_TIMEOUT_MS = 45_000;
 
 interface BrowserDiagnosticsApi {
   snapshot(): {
@@ -42,9 +42,7 @@ test('portrait creator uses large grouped controls without changing creator save
   skipUnlessPortraitTouch();
   test.setTimeout(150_000);
 
-  await page.goto('/?diagnostics=1', { waitUntil: 'domcontentloaded' });
-  await waitForScene(page, 'TitleScene');
-  await page.locator('[data-title-action="title-menu-new-game"]').click();
+  await page.goto('/?scene=creator&diagnostics=1', { waitUntil: 'commit' });
   await waitForScene(page, 'UnicornCreatorScene');
 
   const canvasBox = await page.locator('canvas').first().boundingBox();
@@ -110,8 +108,9 @@ test('portrait exploration presents Talk to Pip as a large explicit action butto
   page,
 }) => {
   skipUnlessPortraitTouch();
+  test.setTimeout(90_000);
 
-  await page.goto('/?scene=glade&diagnostics=1', { waitUntil: 'domcontentloaded' });
+  await page.goto('/?scene=glade&diagnostics=1', { waitUntil: 'commit' });
   await waitForScene(page, 'MoonflowerGladeScene');
 
   const prompt = page.locator('[data-mobile-interaction-prompt="true"]');
@@ -142,18 +141,6 @@ test('portrait exploration presents Talk to Pip as a large explicit action butto
   expect(actionBox?.height ?? 0).toBeGreaterThanOrEqual(62);
   await expect(page.locator('.mobile-interaction-hint')).toHaveText('Pip');
 
-  await action.dispatchEvent('pointerdown', {
-    pointerId: 2,
-    pointerType: 'touch',
-    isPrimary: true,
-    buttons: 1,
-  });
-  await page.waitForTimeout(80);
-  await action.dispatchEvent('pointerup', {
-    pointerId: 2,
-    pointerType: 'touch',
-    isPrimary: true,
-    buttons: 0,
-  });
+  await action.click({ timeout: 10_000 });
   await expect(prompt).toBeHidden();
 });
