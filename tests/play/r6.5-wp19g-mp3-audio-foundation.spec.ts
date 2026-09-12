@@ -102,6 +102,9 @@ test.describe('R6.5-WP19G MP3 audio foundation', () => {
     expect(findObject(settings, 'settings-section-sound-effects').text).toBe('Sound effects');
     expect(findObject(settings, 'settings-row-music-label').text).toContain('Scene music');
 
+    const trackPicker = page.locator('select[aria-label="Chosen music track"]');
+    await expect(trackPicker).toBeHidden();
+
     const master = page.locator('input[aria-label="All sound"]');
     await expect(master).toBeVisible();
     await master.evaluate((element) => {
@@ -122,13 +125,9 @@ test.describe('R6.5-WP19G MP3 audio foundation', () => {
     await page.mouse.wheel(0, 550);
     await page.waitForTimeout(150);
     settings = await sceneSnapshot(page, 'SettingsScene');
-    expect(findObject(settings, 'settings-row-music-track-label').text).toContain(
-      'follows each area',
-    );
-
     const mode = findObject(settings, 'settings-row-music');
     await page.mouse.click(mode.x, mode.y);
-    await expect(page.locator('select[aria-label="Chosen music track"]')).toBeVisible();
+    await expect(trackPicker).toBeVisible();
     await expect(page.locator('input[aria-label="Music volume"]')).toBeVisible();
     await expect(page.locator('input[aria-label="Ambience volume"]')).toBeVisible();
 
