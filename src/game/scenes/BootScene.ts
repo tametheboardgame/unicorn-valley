@@ -14,6 +14,7 @@ import { getCrystalBrookStoryWorldManager } from '../story/CrystalBrookStoryWorl
 import { getLumiWoodsWorldManager } from '../story/LumiWoodsWorldManager';
 import { getPebbleCollectionWorldManager } from '../story/PebbleCollectionWorldManager';
 import { getPipEggWorldManager } from '../story/PipEggWorldManager';
+import { getSettingsAudioControlsManager } from '../ui/SettingsAudioControlsManager';
 import { getEnvironmentProductionPresentationManager } from '../visual/EnvironmentProductionPresentationManager';
 import { getVisualTighteningManager } from '../visual/VisualTighteningManager';
 import { getR5RegionGatewayManager } from '../world/R5RegionGatewayManager';
@@ -60,6 +61,7 @@ export class BootScene extends Phaser.Scene {
     getLumiWoodsWorldManager(this.sys.game);
     getFireflyLanternWorldManager(this.sys.game);
     getAudioWorldManager(this.sys.game);
+    getSettingsAudioControlsManager(this.sys.game);
     getAtmosphericTimeWorldManager(this.sys.game);
     getMagicalWeatherWorldManager(this.sys.game);
     getClickToMoveManager(this.sys.game);
