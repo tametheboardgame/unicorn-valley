@@ -34,7 +34,7 @@ export function getSettingsAudioControlsManager(game: Phaser.Game): void {
 
   game.events.on('poststep', () => {
     const scene = game.scene.getScene('SettingsScene');
-    if (!scene.scene.isActive()) {
+    if (!scene?.scene.isActive()) {
       select.hidden = true;
       for (const [, , input] of sliders) input.hidden = true;
       return;
