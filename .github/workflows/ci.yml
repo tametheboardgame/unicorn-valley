@@ -28,6 +28,12 @@ jobs:
       - name: Install dependencies
         run: npm ci --no-audit --no-fund
 
+      - name: Generate audio catalogue
+        run: npm run audio:catalogue
+
+      - name: Print generated audio catalogue
+        run: cat src/generated/audioCatalogue.ts
+
       - name: Check formatting
         run: npm run format:check
 
