@@ -77,12 +77,10 @@ export class VerticalSliceAudio {
   private settings: AudioSettings;
   private context: AudioContext | null = null;
   private masterGain: GainNode | null = null;
-  private sfxGain: GainNode | null = null;
   private proceduralMusicTimer: number | null = null;
   private ambienceTimer: number | null = null;
   private currentSceneKey: string | null = null;
   private musicElement: HTMLAudioElement | null = null;
-  private sfxBuffers = new Map<string, AudioBuffer>();
 
   public constructor(
     private readonly settingsStore: AudioSettingsStore = getBrowserAudioSettingsStore(),
@@ -145,8 +143,6 @@ export class VerticalSliceAudio {
     if (!this.context) {
       this.context = new AudioContext();
       this.masterGain = this.context.createGain();
-      this.sfxGain = this.context.createGain();
-      this.sfxGain.connect(this.masterGain);
       this.masterGain.connect(this.context.destination);
       shouldRestart = true;
     }
@@ -233,24 +229,13 @@ export class VerticalSliceAudio {
 
   private async playAuthoredSfx(kind: VerticalSliceSfx): Promise<boolean> {
     const asset = resolveSfxAsset(kind);
-    if (!asset || !this.context || !this.sfxGain || this.context.state !== 'running') {
+    if (!asset || typeof Audio === 'undefined') {
       return false;
     }
     try {
-      let buffer = this.sfxBuffers.get(asset.id);
-      if (!buffer) {
-        const response = await fetch(this.assetUrl(asset));
-        if (!response.ok) {
-          return false;
-        }
-        buffer = await this.context.decodeAudioData(await response.arrayBuffer());
-        this.sfxBuffers.set(asset.id, buffer);
-      }
-      const source = this.context.createBufferSource();
-      source.buffer = buffer;
-      source.connect(this.sfxGain);
-      source.addEventListener('ended', () => source.disconnect());
-      source.start();
+      const element = new Audio(this.assetUrl(asset));
+      element.volume = Math.min(1, this.settings.masterVolume * this.settings.sfxVolume * 0.68);
+      await element.play();
       return true;
     } catch {
       return false;
@@ -258,7 +243,8 @@ export class VerticalSliceAudio {
   }
 
   private playProceduralSfx(kind: VerticalSliceSfx): void {
-    if (!this.sfxGain || !this.context || this.context.state !== 'running') {
+    const gain = this.masterGain;
+    if (!gain || !this.context || this.context.state !== 'running') {
       return;
     }
     const frequency =
@@ -274,27 +260,29 @@ export class VerticalSliceAudio {
       frequency,
       duration,
       kind.startsWith('race') ? 'triangle' : 'sine',
-      0.09,
-      this.sfxGain,
+      0.09 * this.settings.sfxVolume,
+      gain,
     );
   }
 
   private startProceduralMusic(): void {
-    if (!this.context || !this.masterGain || this.context.state !== 'running') {
+    const gain = this.masterGain;
+    if (!this.context || !gain || this.context.state !== 'running') {
       return;
     }
     const play = () =>
-      this.playTone(523.25, 0.5, 'triangle', 0.007 * this.settings.musicVolume, this.masterGain!);
+      this.playTone(523.25, 0.5, 'triangle', 0.007 * this.settings.musicVolume, gain);
     play();
     this.proceduralMusicTimer = window.setInterval(play, 11_000);
   }
 
   private startProceduralAmbience(): void {
-    if (!this.context || !this.masterGain || this.context.state !== 'running') {
+    const gain = this.masterGain;
+    if (!this.context || !gain || this.context.state !== 'running') {
       return;
     }
     const play = () =>
-      this.playTone(698.46, 0.28, 'sine', 0.002 * this.settings.ambienceVolume, this.masterGain!);
+      this.playTone(698.46, 0.28, 'sine', 0.002 * this.settings.ambienceVolume, gain);
     play();
     this.ambienceTimer = window.setInterval(play, 5_500);
   }
@@ -316,19 +304,13 @@ export class VerticalSliceAudio {
   }
 
   private applyGainSettings(): void {
-    if (!this.context || !this.masterGain || !this.sfxGain) {
+    if (!this.context || !this.masterGain) {
       return;
     }
-    const now = this.context.currentTime;
     this.masterGain.gain.setTargetAtTime(
       this.settings.muted ? 0 : this.settings.masterVolume,
-      now,
+      this.context.currentTime,
       0.03,
-    );
-    this.sfxGain.gain.setTargetAtTime(
-      this.settings.sfxEnabled ? 0.68 * this.settings.sfxVolume : 0,
-      now,
-      0.02,
     );
   }
 
