@@ -121,13 +121,14 @@ test.describe('R6.5-WP19G MP3 audio foundation', () => {
       )
       .toBe(0.7);
 
-    await page.mouse.move(640, 360);
-    await page.mouse.wheel(0, 550);
-    await page.waitForTimeout(150);
     settings = await sceneSnapshot(page, 'SettingsScene');
     const mode = findObject(settings, 'settings-row-music');
     await page.mouse.click(mode.x, mode.y);
     await expect(trackPicker).toBeVisible();
+
+    await page.mouse.move(640, 360);
+    await page.mouse.wheel(0, 550);
+    await page.waitForTimeout(150);
     await expect(page.locator('input[aria-label="Music volume"]')).toBeVisible();
     await expect(page.locator('input[aria-label="Ambience volume"]')).toBeVisible();
 
