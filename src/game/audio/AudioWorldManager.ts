@@ -34,7 +34,14 @@ class AudioWorldManager {
         this.play(cue);
       }
     });
-    const unlock = () => void this.audio.unlock();
+    const unlock = () => {
+      const run = () => void this.audio.unlock();
+      if (typeof queueMicrotask === 'function') {
+        queueMicrotask(run);
+      } else {
+        void Promise.resolve().then(run);
+      }
+    };
     globalThis.addEventListener?.('pointerdown', unlock);
     globalThis.addEventListener?.('keydown', unlock);
     game.events.on('poststep', this.update, this);
