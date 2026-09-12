@@ -25,9 +25,7 @@ export function getSettingsAudioControlsManager(game: Phaser.Game): void {
     input.step = '0.01';
     input.setAttribute('aria-label', label);
     input.style.cssText = 'position:absolute;z-index:1100;accent-color:#9d72ad';
-    input.addEventListener('input', () =>
-      audio.updateSettings({ [key]: Number(input.value) }),
-    );
+    input.addEventListener('input', () => audio.updateSettings({ [key]: Number(input.value) }));
     host.append(input);
     return [kind, key, input] as const;
   });
