@@ -58,7 +58,7 @@ const SCENE_MUSIC_CONTEXT: Readonly<Record<string, MusicContextId>> = {
 };
 
 const CATALOGUE_BY_ID = new Map<string, AudioCatalogueEntry>(
-  AUDIO_CATALOGUE.map((entry) => [entry.id, entry]),
+  AUDIO_CATALOGUE.map((entry) => [entry.id, entry] as const),
 );
 
 export function resolveMusicContext(sceneKey: string): MusicContextId | null {
@@ -82,7 +82,9 @@ export function resolveSfxAsset(kind: VerticalSliceSfx): AudioCatalogueEntry | n
   return asset?.kind === 'sfx' ? asset : null;
 }
 
-export function resolveContextPlaylist(contextId: MusicContextId | null): readonly AudioCatalogueEntry[] {
+export function resolveContextPlaylist(
+  contextId: MusicContextId | null,
+): readonly AudioCatalogueEntry[] {
   if (!contextId) {
     return [];
   }
