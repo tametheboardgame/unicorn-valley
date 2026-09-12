@@ -30,9 +30,7 @@ class AudioWorldManager {
           : event.actionKind === 'enter'
             ? 'door'
             : null);
-      if (cue) {
-        this.play(cue);
-      }
+      if (cue) this.play(cue);
     });
     const recoverAudio = () => {
       this.audio.resumeMusic();
@@ -55,7 +53,7 @@ class AudioWorldManager {
         this.attachedScenes.add(scene);
       }
     }
-    for (let index = scenes.length - 1; index >= 0; index -= 1) {
+    for (let index = scenes.length; index-- > 0; ) {
       const key = scenes[index].scene.key;
       if (resolveMusicContext(key)) {
         this.audio.enterScene(key);
@@ -69,19 +67,14 @@ class AudioWorldManager {
     gameObject: Phaser.GameObjects.GameObject,
   ): void {
     const name = gameObject.name;
-    if (/interaction|^race-jump-control$/.test(name)) {
-      return;
-    }
+    if (/interaction|^race-jump-control$/.test(name)) return;
     const text = (gameObject as Phaser.GameObjects.GameObject & { text?: unknown }).text;
-    const label = typeof text === 'string' ? text : name;
-    this.play(/(?:←|back|cancel|close)/i.test(label) ? 'ui-back' : 'ui');
+    this.play(/(?:←|back|cancel|close)/i.test(typeof text === 'string' ? text : name) ? 'ui-back' : 'ui');
   }
 
   private play(cue: VerticalSliceSfx): void {
     const now = Date.now();
-    if (cue === this.lastCue && now - this.lastCueAt < 120) {
-      return;
-    }
+    if (cue === this.lastCue && now - this.lastCueAt < 120) return;
     this.lastCue = cue;
     this.lastCueAt = now;
     this.audio.playSfx(cue);
@@ -91,8 +84,6 @@ class AudioWorldManager {
 let manager: AudioWorldManager | undefined;
 
 export function getAudioWorldManager(game: Phaser.Game): AudioWorldManager {
-  if (!manager) {
-    manager = new AudioWorldManager(game);
-  }
+  manager ??= new AudioWorldManager(game);
   return manager;
 }
