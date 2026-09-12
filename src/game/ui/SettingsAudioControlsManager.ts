@@ -27,9 +27,7 @@ class SettingsAudioControlsManager {
     const settings = this.audio.getSettings();
     if (!settings.musicEnabled && !settings.selectedMusicTrackId) {
       const first = this.audio.getMusicTracks()[0];
-      if (first) {
-        this.audio.updateSettings({ selectedMusicTrackId: first.id });
-      }
+      if (first) this.audio.updateSettings({ selectedMusicTrackId: first.id });
     }
 
     for (const [kind, key, label] of VOLUMES) {
@@ -40,7 +38,10 @@ class SettingsAudioControlsManager {
       const text = scene.children.getByName(`settings-row-${kind}-label`) as
         | Phaser.GameObjects.Text
         | null;
-      text?.setText(`${label} · ${Math.round(Number(input.value) * 100)}%`).setX(430).setOrigin(0, 0.5);
+      text
+        ?.setText(`${label} · ${Math.round(Number(input.value) * 100)}%`)
+        .setX(430)
+        .setOrigin(0, 0.5);
       const row = scene.children.getByName(`settings-row-${kind}`) as
         | Phaser.GameObjects.Rectangle
         | null;
@@ -54,12 +55,10 @@ class SettingsAudioControlsManager {
       | Phaser.GameObjects.Text
       | null;
     if (trackRow?.input) trackRow.input.enabled = false;
-    if (trackLabel) {
-      trackLabel
-        .setText(settings.musicEnabled ? 'Track follows each area' : 'Chosen track')
-        .setX(settings.musicEnabled ? 640 : 430)
-        .setOrigin(settings.musicEnabled ? 0.5 : 0, 0.5);
-    }
+    trackLabel
+      ?.setText(settings.musicEnabled ? 'Track follows each area' : 'Chosen track')
+      .setX(settings.musicEnabled ? 640 : 430)
+      .setOrigin(settings.musicEnabled ? 0.5 : 0, 0.5);
     if (this.trackSelect) {
       this.trackSelect.value = settings.selectedMusicTrackId ?? this.trackSelect.value;
       this.place(scene, 'music-track', this.trackSelect, 255, !settings.musicEnabled);
@@ -115,7 +114,7 @@ class SettingsAudioControlsManager {
       | Phaser.GameObjects.Rectangle
       | null;
     const host = document.getElementById('game-container');
-    if (!row || !host || !enabled || !row.visible || !row.input?.enabled) {
+    if (!row || !host || !enabled || !row.visible) {
       control.hidden = true;
       return;
     }
