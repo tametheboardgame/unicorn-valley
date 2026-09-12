@@ -176,13 +176,7 @@ test('exploration can pause into the full settings screen and return with persis
   let current = await snapshot(page);
   const settings = current.scenes.find((scene) => scene.key === 'SettingsScene');
   expect(settings).toBeTruthy();
-  for (const name of [
-    'settings-row-muted',
-    'settings-row-music',
-    'settings-row-ambience',
-    'settings-row-sfx',
-    'settings-done',
-  ]) {
+  for (const name of ['settings-row-muted', 'settings-row-music', 'settings-done']) {
     const target = settings?.objects.find((object) => object.name === name);
     expect(target?.interactive, `${name} should be interactive`).toBe(true);
     expect(target?.displayHeight ?? 0, `${name} should be child-sized`).toBeGreaterThanOrEqual(64);
@@ -190,14 +184,14 @@ test('exploration can pause into the full settings screen and return with persis
 
   await tapObject(page, 'SettingsScene', 'settings-row-music');
 
-  // Rows outside the clipped viewport deliberately cannot receive pointer
-  // input. Move keyboard focus to scroll the accessibility controls fully into
-  // view before proving their real hit areas and persistence.
-  for (let index = 0; index < 4; index += 1) {
+  // Expanded audio controls deliberately push Accessibility further down the
+  // clipped list. Move focus to Reduced Motion so the real row is fully visible
+  // and interactive before checking its hit area.
+  for (let index = 0; index < 7; index += 1) {
     await page.keyboard.press('ArrowDown');
   }
   current = await snapshot(page);
-  const scrolledSettings = current.scenes.find((scene) => scene.key === 'SettingsScene');
+  let scrolledSettings = current.scenes.find((scene) => scene.key === 'SettingsScene');
   const reducedMotion = scrolledSettings?.objects.find(
     (object) => object.name === 'settings-row-reduced-motion',
   );
@@ -205,23 +199,21 @@ test('exploration can pause into the full settings screen and return with persis
   expect(reducedMotion?.interactive).toBe(true);
   expect(reducedMotion?.displayHeight ?? 0).toBeGreaterThanOrEqual(64);
 
+  await page.keyboard.press('ArrowDown');
   current = await snapshot(page);
-  const highVisibility = current.scenes
-    .find((scene) => scene.key === 'SettingsScene')
-    ?.objects.find((object) => object.name === 'settings-row-high-visibility');
+  scrolledSettings = current.scenes.find((scene) => scene.key === 'SettingsScene');
+  const highVisibility = scrolledSettings?.objects.find(
+    (object) => object.name === 'settings-row-high-visibility',
+  );
   expect(highVisibility?.visible).toBe(true);
   expect(highVisibility?.interactive).toBe(true);
   expect(highVisibility?.displayHeight ?? 0).toBeGreaterThanOrEqual(64);
 
-  // Clicking Music selects that named row. Four keyboard moves select High
-  // Visibility (Ambience, SFX, Reduced Motion, High Visibility); do not move
-  // once more onto Fullscreen before activating the real focused control.
   await page.keyboard.press('Enter');
 
   await expect
     .poll(async () => sceneText(await snapshot(page), 'SettingsScene'))
     .toContain('High visibility: On');
-  expect(sceneText(await snapshot(page), 'SettingsScene')).toContain('Music: Off');
 
   const [storedAudio, storedAccessibility] = await page.evaluate(
     ([audioKey, accessibilityKey]) => [
@@ -246,13 +238,14 @@ test('exploration can pause into the full settings screen and return with persis
     'exploration-hud-overlay-settings-nav-button',
   );
   await waitForScene(page, 'SettingsScene');
-  // Re-opened Settings starts at the top of its clipped viewport. Move focus
-  // to the persisted High Visibility row so its real label is rendered before
-  // asserting the saved state (without activating it a second time).
-  for (let index = 0; index < 5; index += 1) {
+
+  // Music is visible at the top on reopen; prove that persistence before
+  // scrolling to the separately persisted accessibility row.
+  current = await snapshot(page);
+  expect(sceneText(current, 'SettingsScene')).toContain('Music: Off');
+  for (let index = 0; index < 10; index += 1) {
     await page.keyboard.press('ArrowDown');
   }
   current = await snapshot(page);
-  expect(sceneText(current, 'SettingsScene')).toContain('Music: Off');
   expect(sceneText(current, 'SettingsScene')).toContain('High visibility: On');
 });

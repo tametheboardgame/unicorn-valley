@@ -136,7 +136,7 @@ test.describe('R6.5-WP18I sectioned scrollable Settings', () => {
     assertVisibleRowsStayInViewport(before);
 
     await page.mouse.move(640, 360);
-    await page.mouse.wheel(0, 700);
+    await page.mouse.wheel(0, 1300);
     await page.waitForTimeout(180);
 
     const afterWheel = await getSettings(page);

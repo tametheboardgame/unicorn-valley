@@ -164,7 +164,7 @@ test.describe('R6.5-WP18I desktop concept HUD cleanup', () => {
       return diagnostics?.snapshot().activeScenes.includes('SettingsScene') === true;
     });
     await page.waitForTimeout(250);
-    for (let index = 0; index < 8; index += 1) {
+    for (let index = 0; index < 13; index += 1) {
       await page.keyboard.press('ArrowDown');
     }
 

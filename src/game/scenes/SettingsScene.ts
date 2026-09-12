@@ -19,7 +19,14 @@ interface SettingsSceneData {
   returnScene?: string;
 }
 
-type SettingsRowKind = GameSettingKind | 'time-of-day' | 'weather';
+type AudioControlKind =
+  | 'master-volume'
+  | 'music-track'
+  | 'music-volume'
+  | 'ambience-volume'
+  | 'sfx-volume';
+
+type SettingsRowKind = GameSettingKind | AudioControlKind | 'time-of-day' | 'weather';
 
 interface SettingsSectionDefinition {
   title: string;
@@ -43,7 +50,15 @@ interface SettingsSectionHeading {
 const SETTINGS_SECTIONS: readonly SettingsSectionDefinition[] = [
   {
     title: 'Sound',
-    kinds: ['muted', 'music', 'ambience', 'sfx'],
+    kinds: ['muted', 'master-volume'],
+  },
+  {
+    title: 'Music',
+    kinds: ['music', 'music-track', 'music-volume', 'ambience', 'ambience-volume'],
+  },
+  {
+    title: 'Sound effects',
+    kinds: ['sfx', 'sfx-volume'],
   },
   {
     title: 'Accessibility',
@@ -507,6 +522,40 @@ export class SettingsScene extends Phaser.Scene {
   }
 
   private getRowPresentation(kind: SettingsRowKind) {
+    const audioSettings = this.audio.getSettings();
+    if (kind === 'master-volume') {
+      return {
+        label: `All sound level: ${this.formatVolume(audioSettings.masterVolume)}`,
+        enabled: !audioSettings.muted && audioSettings.masterVolume > 0,
+      };
+    }
+    if (kind === 'music-track') {
+      const tracks = this.audio.getMusicTracks();
+      const selected = tracks.find((track) => track.id === audioSettings.selectedMusicTrackId);
+      const suffix = tracks.length === 0 ? ' · add MP3s to the music folder' : '';
+      return {
+        label: `Music track: ${selected?.label ?? 'Scene theme'}${suffix}`,
+        enabled: selected !== undefined,
+      };
+    }
+    if (kind === 'music-volume') {
+      return {
+        label: `Music level: ${this.formatVolume(audioSettings.musicVolume)}`,
+        enabled: audioSettings.musicEnabled && audioSettings.musicVolume > 0,
+      };
+    }
+    if (kind === 'ambience-volume') {
+      return {
+        label: `Ambience level: ${this.formatVolume(audioSettings.ambienceVolume)}`,
+        enabled: audioSettings.ambienceEnabled && audioSettings.ambienceVolume > 0,
+      };
+    }
+    if (kind === 'sfx-volume') {
+      return {
+        label: `Effects level: ${this.formatVolume(audioSettings.sfxVolume)}`,
+        enabled: audioSettings.sfxEnabled && audioSettings.sfxVolume > 0,
+      };
+    }
     if (kind === 'time-of-day') {
       const definition = this.atmosphericTime.getDefinition();
       const mode = this.atmosphericTime.getMode() === 'auto' ? 'Auto' : 'Manual';
@@ -524,6 +573,28 @@ export class SettingsScene extends Phaser.Scene {
       };
     }
     return describeGameSetting(kind, this.snapshot());
+  }
+
+  private formatVolume(value: number): string {
+    return `${Math.round(value * 100)}%`;
+  }
+
+  private nextVolume(value: number): number {
+    const percent = Math.round(value * 100);
+    return percent >= 100 ? 0 : Math.min(100, Math.ceil((percent + 1) / 10) * 10) / 100;
+  }
+
+  private cycleMusicTrack(): void {
+    const tracks = this.audio.getMusicTracks();
+    if (tracks.length === 0) {
+      this.statusText?.setText('Add MP3 files to public/audio/music to make them available here.');
+      return;
+    }
+    const settings = this.audio.getSettings();
+    const ids: (string | null)[] = [null, ...tracks.map((track) => track.id)];
+    const currentIndex = ids.findIndex((id) => id === settings.selectedMusicTrackId);
+    const nextIndex = currentIndex < 0 ? 0 : (currentIndex + 1) % ids.length;
+    this.audio.updateSettings({ selectedMusicTrackId: ids[nextIndex] ?? null });
   }
 
   private snapshot() {
@@ -701,12 +772,22 @@ export class SettingsScene extends Phaser.Scene {
     const audioSettings = this.audio.getSettings();
     if (kind === 'muted') {
       this.audio.updateSettings({ muted: !audioSettings.muted });
+    } else if (kind === 'master-volume') {
+      this.audio.updateSettings({ masterVolume: this.nextVolume(audioSettings.masterVolume) });
     } else if (kind === 'music') {
       this.audio.updateSettings({ musicEnabled: !audioSettings.musicEnabled });
+    } else if (kind === 'music-track') {
+      this.cycleMusicTrack();
+    } else if (kind === 'music-volume') {
+      this.audio.updateSettings({ musicVolume: this.nextVolume(audioSettings.musicVolume) });
     } else if (kind === 'ambience') {
       this.audio.updateSettings({ ambienceEnabled: !audioSettings.ambienceEnabled });
+    } else if (kind === 'ambience-volume') {
+      this.audio.updateSettings({ ambienceVolume: this.nextVolume(audioSettings.ambienceVolume) });
     } else if (kind === 'sfx') {
       this.audio.updateSettings({ sfxEnabled: !audioSettings.sfxEnabled });
+    } else if (kind === 'sfx-volume') {
+      this.audio.updateSettings({ sfxVolume: this.nextVolume(audioSettings.sfxVolume) });
     } else if (kind === 'fullscreen') {
       await this.toggleFullscreen();
       return;
