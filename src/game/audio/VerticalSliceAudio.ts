@@ -116,10 +116,6 @@ export class VerticalSliceAudio {
     this.restartSceneLoops();
   }
 
-  public leaveScene(sceneKey: string): void {
-    if (this.currentSceneKey === sceneKey) this.currentSceneKey = null;
-  }
-
   public resumeMusic(): void {
     void this.musicElement?.play().catch(() => undefined);
   }
@@ -220,7 +216,6 @@ export class VerticalSliceAudio {
   private stopMusic(): void {
     this.musicElement?.pause();
     this.musicElement = null;
-    this.musicTrackId = null;
   }
 
   private musicElementTargetVolume(): number {
@@ -292,11 +287,6 @@ export class VerticalSliceAudio {
     this.ambienceTimer = null;
   }
 
-  private stopSceneLoops(): void {
-    this.stopProceduralLoops();
-    this.stopMusic();
-  }
-
   private playTone(
     frequency: number,
     durationSeconds: number,
@@ -320,7 +310,8 @@ export class VerticalSliceAudio {
     if (typeof document === 'undefined') return;
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) {
-        this.stopSceneLoops();
+        this.stopProceduralLoops();
+        this.stopMusic();
         if (this.context?.state === 'running') void this.context.suspend().catch(() => undefined);
       } else if (this.currentSceneKey && !this.settings.muted) {
         this.restartSceneLoops();
