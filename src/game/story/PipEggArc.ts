@@ -103,7 +103,7 @@ function withoutMemory(save: SaveGame, memoryId: string): SaveGame {
 }
 
 export function getPipEggStage(save: SaveGame | null): PipEggStage {
-  if (!save || save.world.flags[PIP_STRANGE_EGG_FOUND_FLAG] !== true) {
+  if (save?.world.flags[PIP_STRANGE_EGG_FOUND_FLAG] !== true) {
     return 'none';
   }
   if (save.world.flags[LUMA_COMPANION_HATCHED_FLAG] === true) {
@@ -200,7 +200,7 @@ export class PipEggArcService {
   public beginSession(): PipEggStage {
     const loadResult = this.saveService.loadWithResult();
     let save = loadResult.status === 'loaded' ? loadResult.save : null;
-    if (!save || !save.collections.memoryIds.includes(PIP_EGG_PENDING_GROWTH_MEMORY)) {
+    if (!save?.collections.memoryIds.includes(PIP_EGG_PENDING_GROWTH_MEMORY)) {
       return getPipEggStage(save);
     }
 
@@ -236,7 +236,7 @@ export class PipEggArcService {
 
   public completeHatch(): boolean {
     let save = this.saveService.load();
-    if (!save || save.world.flags[PIP_EGG_HATCH_READY_FLAG] !== true) {
+    if (save?.world.flags[PIP_EGG_HATCH_READY_FLAG] !== true) {
       return false;
     }
 
