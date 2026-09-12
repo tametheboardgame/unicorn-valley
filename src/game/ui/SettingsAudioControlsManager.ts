@@ -35,25 +35,25 @@ class SettingsAudioControlsManager {
       if (!input) continue;
       input.value = String(this.audio.getSettings()[key]);
       this.place(scene, kind, input, 220);
-      const text = scene.children.getByName(`settings-row-${kind}-label`) as
-        | Phaser.GameObjects.Text
-        | null;
+      const text = scene.children.getByName(
+        `settings-row-${kind}-label`,
+      ) as Phaser.GameObjects.Text | null;
       text
         ?.setText(`${label} · ${Math.round(Number(input.value) * 100)}%`)
         .setX(430)
         .setOrigin(0, 0.5);
-      const row = scene.children.getByName(`settings-row-${kind}`) as
-        | Phaser.GameObjects.Rectangle
-        | null;
+      const row = scene.children.getByName(
+        `settings-row-${kind}`,
+      ) as Phaser.GameObjects.Rectangle | null;
       if (row?.input) row.input.enabled = false;
     }
 
-    const trackRow = scene.children.getByName('settings-row-music-track') as
-      | Phaser.GameObjects.Rectangle
-      | null;
-    const trackLabel = scene.children.getByName('settings-row-music-track-label') as
-      | Phaser.GameObjects.Text
-      | null;
+    const trackRow = scene.children.getByName(
+      'settings-row-music-track',
+    ) as Phaser.GameObjects.Rectangle | null;
+    const trackLabel = scene.children.getByName(
+      'settings-row-music-track-label',
+    ) as Phaser.GameObjects.Text | null;
     if (trackRow?.input) trackRow.input.enabled = false;
     trackLabel
       ?.setText(settings.musicEnabled ? 'Track follows each area' : 'Chosen track')
@@ -110,9 +110,9 @@ class SettingsAudioControlsManager {
     width: number,
     enabled = true,
   ): void {
-    const row = scene.children.getByName(`settings-row-${kind}`) as
-      | Phaser.GameObjects.Rectangle
-      | null;
+    const row = scene.children.getByName(
+      `settings-row-${kind}`,
+    ) as Phaser.GameObjects.Rectangle | null;
     const host = document.getElementById('game-container');
     if (!row || !host || !enabled || !row.visible) {
       control.hidden = true;
