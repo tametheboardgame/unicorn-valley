@@ -61,9 +61,7 @@ async function openSettings(page: Page): Promise<void> {
     ({ name, visible, interactive }) =>
       name === 'exploration-shell-settings-nav-button' && visible && interactive,
   );
-  if (!button) {
-    throw new Error('Missing Settings navigation button.');
-  }
+  if (!button) throw new Error('Missing Settings navigation button.');
   await page.mouse.click(button.x, button.y);
   await page.waitForFunction(() => {
     const api = (
@@ -75,16 +73,14 @@ async function openSettings(page: Page): Promise<void> {
 
 function findObject(scene: DiagnosticSceneSnapshot, name: string): DiagnosticObjectSnapshot {
   const object = scene.objects.find((candidate) => candidate.name === name);
-  if (!object) {
-    throw new Error(`Missing ${name}.`);
-  }
+  if (!object) throw new Error(`Missing ${name}.`);
   return object;
 }
 
 test.describe('R6.5-WP19G MP3 audio foundation', () => {
   test.use({ viewport: { width: 1280, height: 720 } });
 
-  test('serves the authored MP3 fixture and exposes persistent channel controls', async ({
+  test('serves authored MP3s and exposes persistent music mode and slider controls', async ({
     page,
     request,
   }) => {
@@ -104,11 +100,15 @@ test.describe('R6.5-WP19G MP3 audio foundation', () => {
     expect(findObject(settings, 'settings-section-sound').text).toBe('Sound');
     expect(findObject(settings, 'settings-section-music').text).toBe('Music');
     expect(findObject(settings, 'settings-section-sound-effects').text).toBe('Sound effects');
-    expect(findObject(settings, 'settings-row-master-volume-label').text).toContain('62%');
+    expect(findObject(settings, 'settings-row-music-label').text).toContain('Scene music');
 
-    const master = findObject(settings, 'settings-row-master-volume');
-    expect(master.visible && master.interactive).toBe(true);
-    await page.mouse.click(master.x, master.y);
+    const master = page.locator('input[aria-label="All sound"]');
+    await expect(master).toBeVisible();
+    await master.evaluate((element) => {
+      const input = element as HTMLInputElement;
+      input.value = '0.7';
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    });
     await expect
       .poll(() =>
         page.evaluate((key) => {
@@ -122,18 +122,17 @@ test.describe('R6.5-WP19G MP3 audio foundation', () => {
     await page.mouse.wheel(0, 550);
     await page.waitForTimeout(150);
     settings = await sceneSnapshot(page, 'SettingsScene');
+    expect(findObject(settings, 'settings-row-music-track-label').text).toContain('follows each area');
 
-    expect(findObject(settings, 'settings-row-music-track-label').text).toContain('Scene theme');
-    expect(findObject(settings, 'settings-row-music-volume-label').text).toContain('Music level:');
-    expect(findObject(settings, 'settings-row-ambience-volume-label').text).toContain(
-      'Ambience level:',
-    );
+    const mode = findObject(settings, 'settings-row-music');
+    await page.mouse.click(mode.x, mode.y);
+    await expect(page.locator('select[aria-label="Chosen music track"]')).toBeVisible();
+    await expect(page.locator('input[aria-label="Music volume"]')).toBeVisible();
+    await expect(page.locator('input[aria-label="Ambience volume"]')).toBeVisible();
 
     await page.mouse.wheel(0, 500);
     await page.waitForTimeout(150);
-    settings = await sceneSnapshot(page, 'SettingsScene');
-    expect(findObject(settings, 'settings-row-sfx-label').text).toContain('Effects:');
-    expect(findObject(settings, 'settings-row-sfx-volume-label').text).toContain('Effects level:');
+    await expect(page.locator('input[aria-label="Effects volume"]')).toBeVisible();
     expect(errors).toEqual([]);
   });
 });
