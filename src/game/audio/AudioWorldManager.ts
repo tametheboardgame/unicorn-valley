@@ -79,7 +79,9 @@ export class AudioWorldManager {
       return;
     }
     const label =
-      gameObject instanceof Phaser.GameObjects.Text ? gameObject.text.trim() : gameObject.name.trim();
+      gameObject instanceof Phaser.GameObjects.Text
+        ? gameObject.text.trim()
+        : gameObject.name.trim();
     this.playCue(/^(?:←|back\b|cancel\b|close\b)/i.test(label) ? 'ui-back' : 'ui');
   }
 
