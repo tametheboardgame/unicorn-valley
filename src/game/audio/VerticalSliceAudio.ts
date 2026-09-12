@@ -330,7 +330,13 @@ export class VerticalSliceAudio {
             ? 1046.5
             : 783.99;
     const duration = kind === 'quest-complete' || kind === 'race-finish' ? 0.22 : 0.12;
-    this.playTone(frequency, duration, kind.startsWith('race') ? 'triangle' : 'sine', 0.09, this.sfxGain);
+    this.playTone(
+      frequency,
+      duration,
+      kind.startsWith('race') ? 'triangle' : 'sine',
+      0.09,
+      this.sfxGain,
+    );
   }
 
   private startProceduralMusic(profile: AudioSceneProfile): void {
