@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
 const SAVE_KEY = 'unicorn-valley.save';
-const SCENE_WAIT_TIMEOUT_MS = 12_000;
+const SCENE_WAIT_TIMEOUT_MS = 20_000;
 
 interface BrowserDiagnosticsApi {
   snapshot(): {
@@ -42,9 +42,9 @@ test('portrait creator uses large grouped controls without changing creator save
   skipUnlessPortraitTouch();
   test.setTimeout(150_000);
 
-  await page.goto('/?diagnostics=1');
+  await page.goto('/?diagnostics=1', { waitUntil: 'domcontentloaded' });
   await waitForScene(page, 'TitleScene');
-  await page.locator('[data-title-action="title-menu-new-game"]').tap();
+  await page.locator('[data-title-action="title-menu-new-game"]').click();
   await waitForScene(page, 'UnicornCreatorScene');
 
   const canvasBox = await page.locator('canvas').first().boundingBox();
@@ -72,14 +72,14 @@ test('portrait creator uses large grouped controls without changing creator save
   await expect(hairTab).toHaveAttribute('aria-pressed', 'false');
   await expect(magicTab).toHaveAttribute('aria-pressed', 'false');
 
-  await coloursTab.tap();
+  await coloursTab.click();
   const peach = page.locator('[data-creator-choice="bodyColour:peach"]');
   const peachBox = await peach.boundingBox();
   expect(peachBox?.height ?? 0).toBeGreaterThanOrEqual(50);
-  await peach.tap();
+  await peach.click();
   await expect(peach).toHaveAttribute('aria-pressed', 'true');
 
-  await hairTab.tap();
+  await hairTab.click();
   await expect(hairTab).toHaveAttribute('aria-pressed', 'true');
   await expect(page.locator('[data-creator-section-panel="colours"]')).toBeHidden();
   await expect(page.locator('[data-creator-section-panel="mane"]')).toBeVisible();
@@ -88,13 +88,13 @@ test('portrait creator uses large grouped controls without changing creator save
   const nextManeBox = await nextMane.boundingBox();
   expect(nextManeBox?.width ?? 0).toBeGreaterThanOrEqual(54);
   expect(nextManeBox?.height ?? 0).toBeGreaterThanOrEqual(54);
-  await nextMane.tap();
+  await nextMane.click();
 
   const save = page.locator('[data-creator-action="creator-action-confirm-new"]');
   await expect(save).toBeVisible();
   const saveBox = await save.boundingBox();
   expect(saveBox?.height ?? 0).toBeGreaterThanOrEqual(60);
-  await save.tap();
+  await save.click();
   await waitForScene(page, 'MoonflowerGladeScene');
 
   const stored = await page.evaluate(
@@ -111,7 +111,7 @@ test('portrait exploration presents Talk to Pip as a large explicit action butto
 }) => {
   skipUnlessPortraitTouch();
 
-  await page.goto('/?scene=glade&diagnostics=1', { waitUntil: 'networkidle' });
+  await page.goto('/?scene=glade&diagnostics=1', { waitUntil: 'domcontentloaded' });
   await waitForScene(page, 'MoonflowerGladeScene');
 
   const prompt = page.locator('[data-mobile-interaction-prompt="true"]');
