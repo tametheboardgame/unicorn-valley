@@ -159,9 +159,9 @@ export class VerticalSliceAudio {
     if (this.settings.muted || !this.settings.sfxEnabled) {
       return;
     }
-    void this.unlock().then(async () => {
-      if (!(await this.playAuthoredSfx(kind))) {
-        this.playProceduralSfx(kind);
+    void this.playAuthoredSfx(kind).then((played) => {
+      if (!played) {
+        void this.unlock().then(() => this.playProceduralSfx(kind));
       }
     });
   }
