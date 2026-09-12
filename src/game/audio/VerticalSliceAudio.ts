@@ -3,6 +3,7 @@ import {
   resolveContextPlaylist,
   resolveMusicContext,
   resolveSfxAsset,
+  type MusicContextId,
 } from '../../content/audioBindings';
 import { MUSIC_CATALOGUE, type AudioCatalogueEntry } from '../../generated/audioCatalogue';
 import {
@@ -76,21 +77,15 @@ const PROCEDURAL_PROFILES: Readonly<Record<AudioSceneProfile, ProceduralProfile>
   race: { notes: RACE_NOTES, intervalMs: 2500, ambienceHz: 1318.51 },
 };
 
-const SCENE_PROFILE_BY_KEY: Readonly<Record<string, AudioSceneProfile>> = {
-  TitleScene: 'menu',
-  MoonflowerGladeScene: 'glade',
-  MoonflowerPatchScene: 'glade',
-  HollowTreeNookScene: 'glade',
-  SunbeamVillageScene: 'village',
-  RainbowMeadowScene: 'meadow',
-  WindmillLookoutScene: 'meadow',
-  CrystalBrookScene: 'brook',
-  CrystalGrottoScene: 'brook',
-  WhisperingWoodsScene: 'woods',
-  StarBeachScene: 'meadow',
-  CottageInteriorScene: 'cottage',
-  RaceScene: 'race',
-  NovaTutorialRaceScene: 'race',
+const PROFILE_BY_CONTEXT: Readonly<Record<MusicContextId, AudioSceneProfile>> = {
+  'title-creator': 'menu',
+  'glade-cottage': 'glade',
+  'village-interiors': 'village',
+  meadow: 'meadow',
+  'brook-grotto': 'brook',
+  'woods-nook-grove': 'woods',
+  beach: 'meadow',
+  race: 'race',
 };
 
 const NPC_REACTION_BASE_FREQUENCY: Readonly<Record<string, number>> = {
@@ -107,7 +102,11 @@ const MAX_SFX_CACHE = 24;
 const MAX_ACTIVE_SFX = 32;
 
 export function resolveAudioSceneProfile(sceneKey: string): AudioSceneProfile | null {
-  return SCENE_PROFILE_BY_KEY[sceneKey] ?? null;
+  if (sceneKey === 'CottageInteriorScene') {
+    return 'cottage';
+  }
+  const context = resolveMusicContext(sceneKey);
+  return context ? PROFILE_BY_CONTEXT[context] : null;
 }
 
 export function getAudioSceneLoopDurationMs(profile: AudioSceneProfile): number {
