@@ -204,6 +204,7 @@ export class RaceScene extends Phaser.Scene {
     }
 
     const wasFinished = this.runState.movement.finished;
+    const wasGrounded = this.runState.movement.grounded;
     const jumpRequested = this.inputController.justPressed('RACE_JUMP');
     const tuning = resolveRacePlayerTuning(
       STANDARD_RACE_DIFFICULTY,
@@ -218,6 +219,9 @@ export class RaceScene extends Phaser.Scene {
       tuning,
     );
     this.runState = result.state;
+    if (jumpRequested && wasGrounded && !this.runState.movement.grounded) {
+      this.audio.playSfx('race-jump');
+    }
     this.competitionState = stepRaceCompetition(
       this.competitionState,
       RAINBOW_RUN_NPC_RACERS,
@@ -436,11 +440,11 @@ export class RaceScene extends Phaser.Scene {
     for (const event of events) {
       if (event.type === 'obstacle-hit') {
         this.cameras.main.shake(110, 0.006);
-        this.audio.playSfx('ui');
+        this.audio.playSfx('race-impact');
         this.showRaceStatus(`Bump! ${event.obstacle.label} slowed you a little. Keep going!`);
       } else if (event.type === 'boost-entered') {
         this.speedBurstRemainingMs = 780;
-        this.audio.playSfx('collect');
+        this.audio.playSfx('race-boost');
         this.cameras.main.flash(150, 255, 239, 160, false);
         this.showRaceStatus(`${event.boost.label}! Faster! ✨`);
       } else if (event.type === 'collectable-collected') {
@@ -818,6 +822,7 @@ export class RaceScene extends Phaser.Scene {
       .setDepth(109);
     const button = this.add
       .circle(x, y, 70, 0xfff2c6, 0.97)
+      .setName('race-jump-control')
       .setStrokeStyle(6, 0xc887c4, 1)
       .setInteractive({ useHandCursor: true })
       .setScrollFactor(0)
