@@ -15,7 +15,7 @@ const EVENT_CUES = [
 class AudioWorldManager {
   private readonly audio = getVerticalSliceAudio();
   private readonly attachedScenes = new WeakSet<Phaser.Scene>();
-  private lastCue: VerticalSliceSfx | null = null;
+  private lastCue?: VerticalSliceSfx;
   private lastCueAt = 0;
 
   public constructor(private readonly game: Phaser.Game) {
@@ -44,17 +44,15 @@ class AudioWorldManager {
   }
 
   private update(): void {
-    const scenes = this.game.scene.getScenes(true);
     let musicSceneKey: string | undefined;
-    for (let index = scenes.length - 1; index >= 0; index -= 1) {
-      const scene = scenes[index];
+    for (const scene of this.game.scene.getScenes(true)) {
       if (!scene) continue;
       if (!this.attachedScenes.has(scene)) {
         scene.input.on('gameobjectdown', this.onGameObjectDown, this);
         scene.events.once('shutdown', () => this.attachedScenes.delete(scene));
         this.attachedScenes.add(scene);
       }
-      if (!musicSceneKey && resolveMusicContext(scene.scene.key)) {
+      if (resolveMusicContext(scene.scene.key)) {
         musicSceneKey = scene.scene.key;
       }
     }
