@@ -137,16 +137,23 @@ Music ducking is not enabled by default. Add it only if a listening test shows t
 
 As of WP19H implementation:
 
-- UI soft chime: **assigned and available as the integration fixture**.
-- Final area/theme music: **missing final assets**, procedural fallback remains active.
-- UI back/close: **missing final asset**, procedural fallback remains active.
+- Title/creator music: **assigned and ready for listening test**.
+- Moonflower Glade/cottage music: **two tracks assigned and ready for listening test**.
+- Sunbeam Village/interiors music: **three tracks assigned and ready for listening test**.
+- Rainbow Meadow music: **assigned and ready for listening test**.
+- Crystal Brook/Grotto music: **two tracks assigned and ready for listening test**.
+- Whispering Woods/Firefly music: **two tracks assigned and ready for listening test**.
+- Rainbow Run music: **assigned and ready for listening test**.
+- Starlight Beach music: **missing final asset**, procedural fallback remains active.
+- UI select: **assigned to the soft-chime integration fixture**.
+- UI back/close: **authored asset assigned**, final listening test pending.
+- Discovery: **authored asset assigned**, final listening test pending.
 - Talk acknowledgement: **missing final asset**, procedural fallback remains active.
 - Collection: **missing final asset**, procedural fallback remains active.
-- Discovery: **missing final asset**, procedural fallback remains active.
 - Quest completion: **missing final asset**, procedural fallback remains active.
 - Friendship: **missing final asset**, procedural fallback remains active.
 - Door/enter: **missing final asset**, procedural fallback remains active.
 - Decoration: **missing final asset**, procedural fallback remains active.
-- Race cues: **missing final assets**, procedural fallback remains active.
+- Race countdown/go/jump/boost/impact/finish: **missing final assets**, procedural fallbacks remain active.
 
-The absence of final MP3s does not disable the game. The procedural cues remain the explicit fallback until authored files are supplied and accepted.
+The absence of final MP3s does not disable the game. Each unassigned semantic cue keeps its explicit procedural fallback until an authored file is supplied and accepted.
