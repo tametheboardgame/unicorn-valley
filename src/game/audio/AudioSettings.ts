@@ -59,10 +59,14 @@ export function normaliseAudioSettings(value: unknown): AudioSettings {
         : DEFAULT_AUDIO_SETTINGS.sfxEnabled,
     masterVolume: normaliseVolume(candidate.masterVolume, DEFAULT_AUDIO_SETTINGS.masterVolume),
     musicVolume: normaliseVolume(candidate.musicVolume, DEFAULT_AUDIO_SETTINGS.musicVolume),
-    ambienceVolume: normaliseVolume(candidate.ambienceVolume, DEFAULT_AUDIO_SETTINGS.ambienceVolume),
+    ambienceVolume: normaliseVolume(
+      candidate.ambienceVolume,
+      DEFAULT_AUDIO_SETTINGS.ambienceVolume,
+    ),
     sfxVolume: normaliseVolume(candidate.sfxVolume, DEFAULT_AUDIO_SETTINGS.sfxVolume),
     selectedMusicTrackId:
-      typeof candidate.selectedMusicTrackId === 'string' && candidate.selectedMusicTrackId.length > 0
+      typeof candidate.selectedMusicTrackId === 'string' &&
+      candidate.selectedMusicTrackId.length > 0
         ? candidate.selectedMusicTrackId
         : null,
   };
