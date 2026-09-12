@@ -105,7 +105,7 @@ export function getAudioAsset(id: string | null | undefined): AudioCatalogueEntr
 
 export function resolveSfxAsset(kind: VerticalSliceSfx): AudioCatalogueEntry | null {
   const asset = getAudioAsset(SFX_BINDINGS[kind]);
-  return asset?.id.startsWith('sfx:') ? asset : null;
+  return asset?.id[0] === 's' ? asset : null;
 }
 
 export function resolveContextPlaylist(
@@ -119,7 +119,7 @@ export function resolveContextPlaylist(
   const tracks: AudioCatalogueEntry[] = [];
   for (const id of ids) {
     const asset = getAudioAsset(id);
-    if (asset?.id.startsWith('music:') && !tracks.includes(asset)) tracks.push(asset);
+    if (asset?.id[0] === 'm' && !tracks.includes(asset)) tracks.push(asset);
   }
   return tracks;
 }
@@ -134,7 +134,7 @@ export function validateAudioBindings(): string[] {
     for (const id of ids) {
       const asset = getAudioAsset(id);
       if (!asset) errors.push(`${contextId} references missing audio asset ${id}`);
-      else if (!asset.id.startsWith('music:')) {
+      else if (asset.id[0] !== 'm') {
         errors.push(`${contextId} references non-music audio asset ${id}`);
       }
     }
@@ -143,8 +143,7 @@ export function validateAudioBindings(): string[] {
   for (const [cue, id] of Object.entries(SFX_BINDINGS)) {
     const asset = getAudioAsset(id);
     if (!asset) errors.push(`${cue} references missing audio asset ${id}`);
-    else if (!asset.id.startsWith('sfx:'))
-      errors.push(`${cue} references non-SFX audio asset ${id}`);
+    else if (asset.id[0] !== 's') errors.push(`${cue} references non-SFX audio asset ${id}`);
   }
   return errors;
 }
