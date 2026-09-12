@@ -116,6 +116,10 @@ export class VerticalSliceAudio {
     this.restartSceneLoops();
   }
 
+  public leaveScene(sceneKey: string): void {
+    if (this.currentSceneKey === sceneKey) this.currentSceneKey = null;
+  }
+
   public resumeMusic(): void {
     void this.musicElement?.play().catch(() => undefined);
   }
