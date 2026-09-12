@@ -42,7 +42,6 @@ export type AudioSceneProfile =
 interface ProceduralProfile {
   notes: readonly number[];
   intervalMs: number;
-  ambienceHz: number;
 }
 
 interface MusicVoice {
@@ -67,14 +66,14 @@ const EARTHY_NOTES = [349.23, 440, 523.25, 440] as const;
 const RACE_NOTES = [523.25, 783.99, 1046.5, 783.99] as const;
 
 const PROCEDURAL_PROFILES: Readonly<Record<AudioSceneProfile, ProceduralProfile>> = {
-  menu: { notes: BRIGHT_NOTES, intervalMs: 2700, ambienceHz: 1046.5 },
-  glade: { notes: BRIGHT_NOTES, intervalMs: 2600, ambienceHz: 1174.66 },
-  village: { notes: EARTHY_NOTES, intervalMs: 2600, ambienceHz: 783.99 },
-  meadow: { notes: BRIGHT_NOTES, intervalMs: 2550, ambienceHz: 1046.5 },
-  brook: { notes: EARTHY_NOTES, intervalMs: 2800, ambienceHz: 880 },
-  woods: { notes: EARTHY_NOTES, intervalMs: 2900, ambienceHz: 659.25 },
-  cottage: { notes: EARTHY_NOTES, intervalMs: 2850, ambienceHz: 698.46 },
-  race: { notes: RACE_NOTES, intervalMs: 2500, ambienceHz: 1318.51 },
+  menu: { notes: BRIGHT_NOTES, intervalMs: 2700 },
+  glade: { notes: BRIGHT_NOTES, intervalMs: 2600 },
+  village: { notes: EARTHY_NOTES, intervalMs: 2600 },
+  meadow: { notes: BRIGHT_NOTES, intervalMs: 2550 },
+  brook: { notes: EARTHY_NOTES, intervalMs: 2800 },
+  woods: { notes: EARTHY_NOTES, intervalMs: 2900 },
+  cottage: { notes: EARTHY_NOTES, intervalMs: 2850 },
+  race: { notes: RACE_NOTES, intervalMs: 2500 },
 };
 
 const PROFILE_BY_CONTEXT: Readonly<Record<MusicContextId, AudioSceneProfile>> = {
@@ -86,15 +85,6 @@ const PROFILE_BY_CONTEXT: Readonly<Record<MusicContextId, AudioSceneProfile>> = 
   'woods-nook-grove': 'woods',
   beach: 'meadow',
   race: 'race',
-};
-
-const NPC_REACTION_BASE_FREQUENCY: Readonly<Record<string, number>> = {
-  nova: 698.46,
-  willow: 493.88,
-  pip: 880,
-  pebble: 392,
-  lumi: 659.25,
-  marigold: 587.33,
 };
 
 const MUSIC_FADE_MS = 650;
@@ -125,7 +115,6 @@ export class VerticalSliceAudio {
   private ambienceTimer: number | null = null;
   private musicStep = 0;
   private currentSceneKey: string | null = null;
-  private currentProfile: AudioSceneProfile | null = null;
   private musicVoices: MusicVoice[] = [];
   private musicRequestId = 0;
   private playlist: readonly AudioCatalogueEntry[] = [];
@@ -133,7 +122,6 @@ export class VerticalSliceAudio {
   private pendingMusicRetry = false;
   private sfxBuffers = new Map<string, AudioBuffer>();
   private activeSfx = new Set<AudioBufferSourceNode>();
-  private visibilityListenerInstalled = false;
 
   public constructor(
     private readonly settingsStore: AudioSettingsStore = getBrowserAudioSettingsStore(),
@@ -171,12 +159,10 @@ export class VerticalSliceAudio {
   }
 
   public enterScene(sceneKey: string): void {
-    const nextProfile = resolveAudioSceneProfile(sceneKey);
-    if (this.currentSceneKey === sceneKey && this.currentProfile === nextProfile) {
+    if (this.currentSceneKey === sceneKey) {
       return;
     }
     this.currentSceneKey = sceneKey;
-    this.currentProfile = nextProfile;
     this.musicStep = 0;
     this.restartSceneLoops();
   }
@@ -186,7 +172,6 @@ export class VerticalSliceAudio {
       return;
     }
     this.currentSceneKey = null;
-    this.currentProfile = null;
     this.stopSceneLoops();
   }
 
@@ -230,9 +215,7 @@ export class VerticalSliceAudio {
       if (!this.sfxGain) {
         return;
       }
-      const parts = characterId.split(':');
-      const npcId = parts[parts.length - 1] ?? '';
-      const base = NPC_REACTION_BASE_FREQUENCY[npcId] ?? 523.25;
+      const base = 440 + (characterId.length % 6) * 55;
       const multiplier = reaction === 'happy' ? 1.25 : reaction === 'surprised' ? 1.5 : 1;
       this.playTone(base * multiplier, 0.1, 'triangle', 0.055, this.sfxGain);
       this.playTone(base * multiplier * 1.125, 0.09, 'sine', 0.04, this.sfxGain, 0.055);
@@ -254,7 +237,8 @@ export class VerticalSliceAudio {
   private restartSceneLoops(): void {
     this.stopProceduralLoops();
     this.musicRequestId += 1;
-    if (!this.currentProfile || this.settings.muted) {
+    const profile = resolveAudioSceneProfile(this.currentSceneKey ?? '');
+    if (!profile || this.settings.muted) {
       this.fadeOutAllMusic();
       return;
     }
@@ -267,14 +251,14 @@ export class VerticalSliceAudio {
         this.startPlaylist(this.musicRequestId);
       } else {
         this.fadeOutAllMusic();
-        this.startProceduralMusic(PROCEDURAL_PROFILES[this.currentProfile]);
+        this.startProceduralMusic(PROCEDURAL_PROFILES[profile]);
       }
     } else {
       this.fadeOutAllMusic();
     }
 
     if (this.settings.ambienceEnabled) {
-      this.startProceduralAmbience(PROCEDURAL_PROFILES[this.currentProfile]);
+      this.startProceduralAmbience(PROCEDURAL_PROFILES[profile]);
     }
   }
 
@@ -490,7 +474,8 @@ export class VerticalSliceAudio {
     if (!this.context || !gain || this.context.state !== 'running') {
       return;
     }
-    const play = () => this.playTone(definition.ambienceHz, 0.28, 'sine', 0.024, gain);
+    const play = () =>
+      this.playTone((definition.notes[0] ?? 440) * 2, 0.28, 'sine', 0.024, gain);
     play();
     this.ambienceTimer = window.setInterval(play, 5_500);
   }
@@ -578,10 +563,9 @@ export class VerticalSliceAudio {
   }
 
   private installVisibilityListener(): void {
-    if (typeof document === 'undefined' || this.visibilityListenerInstalled) {
+    if (typeof document === 'undefined') {
       return;
     }
-    this.visibilityListenerInstalled = true;
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) {
         this.stopSceneLoops();
