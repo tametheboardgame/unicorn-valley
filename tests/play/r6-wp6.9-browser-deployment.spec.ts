@@ -59,7 +59,7 @@ test('production build boots cleanly, uses fingerprinted local assets and surviv
     }
   });
 
-  await page.goto('/?scene=glade&diagnostics=1', { waitUntil: 'domcontentloaded' });
+  await page.goto('/?scene=glade&diagnostics=1', { waitUntil: 'commit' });
   await expect(page).toHaveTitle('Unicorn Valley');
   await waitForGlade(page);
   await expectResponsiveCanvas(page);
@@ -83,7 +83,7 @@ test('production build boots cleanly, uses fingerprinted local assets and surviv
 
   const firstAssetPaths = firstLoadAssets.map((asset) => new URL(asset.url).pathname).sort();
 
-  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.reload({ waitUntil: 'commit', timeout: 20_000 });
   await expect(page).toHaveTitle('Unicorn Valley');
   await waitForGlade(page);
   await expectResponsiveCanvas(page);
