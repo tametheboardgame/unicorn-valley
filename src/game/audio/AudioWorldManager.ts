@@ -34,10 +34,7 @@ class AudioWorldManager {
         this.play(cue);
       }
     });
-    const recoverAudio = () => {
-      this.audio.resumeMusic();
-      void this.audio.unlock();
-    };
+    const recoverAudio = () => void this.audio.unlock();
     globalThis.addEventListener?.('pointerdown', recoverAudio, {
       once: true,
       capture: true,
