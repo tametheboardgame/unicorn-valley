@@ -312,10 +312,11 @@ test('target-tablet touch completes creator, exploration, Book and accessibility
 
   await logicalTap(page, 486, 46);
   await waitForScene(page, 'SettingsScene');
-  // Use the actual scrollable controls rather than coordinates that became
-  // offscreen when Settings rows regained their 64-pixel touch height.
+  // WP19G adds several real audio rows ahead of Accessibility. Scroll far
+  // enough to place both accessibility controls fully inside the clipped
+  // viewport before exercising their touch targets.
   await page.mouse.move(640, 360);
-  await page.mouse.wheel(0, 300);
+  await page.mouse.wheel(0, 1000);
   await page.waitForTimeout(150);
   await logicalTapNamedObject(page, 'SettingsScene', 'settings-row-reduced-motion');
   await logicalTapNamedObject(page, 'SettingsScene', 'settings-row-high-visibility');
