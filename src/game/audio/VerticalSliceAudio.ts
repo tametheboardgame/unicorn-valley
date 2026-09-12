@@ -233,7 +233,7 @@ export class VerticalSliceAudio {
   }
 
   private playProceduralSfx(kind: VerticalSliceSfx): void {
-    if (!this.context || this.context.state !== 'running') {
+    if (this.context?.state !== 'running') {
       return;
     }
     const frequency =
@@ -254,7 +254,7 @@ export class VerticalSliceAudio {
   }
 
   private startProceduralMusic(): void {
-    if (!this.context || this.context.state !== 'running') {
+    if (this.context?.state !== 'running') {
       return;
     }
     const play = () =>
@@ -269,7 +269,7 @@ export class VerticalSliceAudio {
   }
 
   private startProceduralAmbience(): void {
-    if (!this.context || this.context.state !== 'running') {
+    if (this.context?.state !== 'running') {
       return;
     }
     const play = () =>
