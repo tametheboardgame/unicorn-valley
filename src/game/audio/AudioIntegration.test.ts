@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import {
   INTERACTION_SFX_BINDINGS,
+  MUSIC_BINDINGS,
+  SFX_BINDINGS,
+  resolveContextPlaylist,
   resolveInteractionSfxCue,
   resolveMusicContext,
   validateAudioBindings,
@@ -21,10 +24,28 @@ describe('WP19H audio integration bindings', () => {
     expect(resolveMusicContext('RaceScene')).toBe('race');
   });
 
+  it('assigns uploaded music while leaving beach on its explicit fallback', () => {
+    expect(resolveContextPlaylist('title-creator')).toHaveLength(1);
+    expect(resolveContextPlaylist('glade-cottage')).toHaveLength(2);
+    expect(resolveContextPlaylist('village-interiors')).toHaveLength(3);
+    expect(resolveContextPlaylist('brook-grotto')).toHaveLength(2);
+    expect(resolveContextPlaylist('woods-nook-grove')).toHaveLength(2);
+    expect(resolveContextPlaylist('race')).toHaveLength(1);
+    expect(MUSIC_BINDINGS.beach.themeTrackId).toBeNull();
+    expect(resolveContextPlaylist('beach')).toEqual([]);
+  });
+
   it('leaves context-free modals free to inherit the current area music', () => {
     expect(resolveMusicContext('SettingsScene')).toBeNull();
     expect(resolveMusicContext('InventoryScene')).toBeNull();
     expect(resolveMusicContext('WonderbookScene')).toBeNull();
+  });
+
+  it('binds the available authored SFX and leaves other cues eligible for fallback', () => {
+    expect(SFX_BINDINGS.ui).toBe('sfx:ui-soft-chime');
+    expect(SFX_BINDINGS['ui-back']).toBe('sfx:ui/ui-back');
+    expect(SFX_BINDINGS.discovery).toBe('sfx:discoveries/discovery');
+    expect(SFX_BINDINGS.dialogue).toBeUndefined();
   });
 
   it('resolves optional object sounds from stable interaction IDs', () => {
