@@ -143,7 +143,8 @@ export function validateAudioBindings(): string[] {
   for (const [cue, id] of Object.entries(SFX_BINDINGS)) {
     const asset = getAudioAsset(id);
     if (!asset) errors.push(`${cue} references missing audio asset ${id}`);
-    else if (!asset.id.startsWith('sfx:')) errors.push(`${cue} references non-SFX audio asset ${id}`);
+    else if (!asset.id.startsWith('sfx:'))
+      errors.push(`${cue} references non-SFX audio asset ${id}`);
   }
   return errors;
 }
