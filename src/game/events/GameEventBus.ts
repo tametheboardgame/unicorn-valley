@@ -1,4 +1,5 @@
 import type { FriendshipTier } from '../../content/contentTypes';
+import type { InteractionActionKind, InteractionResult } from '../interaction/InteractionTarget';
 
 export interface GameEventMap {
   ITEM_COLLECTED: { itemId: string; quantity: number };
@@ -16,6 +17,16 @@ export interface GameEventMap {
   DISCOVERY_UNLOCKED: { discoveryId: string };
   SHIMMER_REWARDED: { amount: number; balance: number; labels: readonly string[] };
   SAVE_COMPLETED: { schemaVersion: number; savedAt: string };
+  INTERACTION_ACTIVATED: {
+    interactionId: string;
+    actionKind: InteractionActionKind;
+    resultType: InteractionResult['type'];
+  };
+  HOME_DECORATION_CHANGED: {
+    slotId: string;
+    itemId: string | null;
+    change: 'placed' | 'removed';
+  };
 }
 
 export type EventListener<TPayload> = (payload: TPayload) => void;

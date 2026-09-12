@@ -137,7 +137,7 @@ test.describe('WP18J shared responsive concept UI', () => {
     page,
   }) => {
     await page.setViewportSize({ width: 844, height: 280 });
-    await page.goto('/?scene=glade&diagnostics=1', { waitUntil: 'networkidle' });
+    await page.goto('/?scene=glade&diagnostics=1', { waitUntil: 'domcontentloaded' });
     await waitForScene(page, 'MoonflowerGladeScene');
 
     await expectCanonicalLandscapeShell(page);
@@ -152,7 +152,7 @@ test.describe('WP18J shared responsive concept UI', () => {
     page,
   }) => {
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('/?scene=glade&diagnostics=1', { waitUntil: 'networkidle' });
+    await page.goto('/?scene=glade&diagnostics=1', { waitUntil: 'domcontentloaded' });
     await waitForScene(page, 'MoonflowerGladeScene');
 
     await expect(page.locator('.mobile-exploration-concept-dock')).toBeVisible();
@@ -171,7 +171,7 @@ test.describe('WP18J shared responsive concept UI', () => {
     page,
   }) => {
     await page.setViewportSize({ width: 1180, height: 664 });
-    await page.goto('/?scene=glade&diagnostics=1', { waitUntil: 'networkidle' });
+    await page.goto('/?scene=glade&diagnostics=1', { waitUntil: 'domcontentloaded' });
     await waitForScene(page, 'MoonflowerGladeScene');
     await expectCanonicalLandscapeShell(page);
 
@@ -215,7 +215,7 @@ test.describe('WP18J shared responsive concept UI', () => {
 
   test('Map clips draggable geography under its frame and keeps North fixed', async ({ page }) => {
     await page.setViewportSize({ width: 1180, height: 664 });
-    await page.goto('/?scene=glade&diagnostics=1', { waitUntil: 'networkidle' });
+    await page.goto('/?scene=glade&diagnostics=1', { waitUntil: 'domcontentloaded' });
     await waitForScene(page, 'MoonflowerGladeScene');
 
     await clickGamePoint(page, 83, 52);

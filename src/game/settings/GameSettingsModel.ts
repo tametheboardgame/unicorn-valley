@@ -35,10 +35,12 @@ export function describeGameSetting(
       const enabled = !snapshot.audio.muted;
       return { label: `All sound: ${enabled ? 'On' : 'Off'}`, enabled, available: true };
     }
-    case 'music': {
-      const enabled = snapshot.audio.musicEnabled;
-      return { label: `Music: ${enabled ? 'On' : 'Off'}`, enabled, available: true };
-    }
+    case 'music':
+      return {
+        label: `Music: ${snapshot.audio.musicEnabled ? 'Scene music' : 'Chosen track'}`,
+        enabled: true,
+        available: true,
+      };
     case 'ambience': {
       const enabled = snapshot.audio.ambienceEnabled;
       return { label: `Ambience: ${enabled ? 'On' : 'Off'}`, enabled, available: true };

@@ -20,40 +20,88 @@ export interface MusicContextBinding {
 }
 
 export const MUSIC_BINDINGS: Readonly<Record<MusicContextId, MusicContextBinding>> = {
-  'title-creator': { themeTrackId: null, playlistTrackIds: [] },
-  'glade-cottage': { themeTrackId: null, playlistTrackIds: [] },
-  'village-interiors': { themeTrackId: null, playlistTrackIds: [] },
-  meadow: { themeTrackId: null, playlistTrackIds: [] },
-  'brook-grotto': { themeTrackId: null, playlistTrackIds: [] },
-  'woods-nook-grove': { themeTrackId: null, playlistTrackIds: [] },
+  'title-creator': {
+    themeTrackId: 'music:title/01-the-four-note-path',
+    playlistTrackIds: [],
+  },
+  'glade-cottage': {
+    themeTrackId: 'music:moonflower-glade/02-morning-by-the-stream',
+    playlistTrackIds: ['music:moonflower-glade/03-moonlit-garden-whispers'],
+  },
+  'village-interiors': {
+    themeTrackId: 'music:sunbeam-village/04-bustling-village-square',
+    playlistTrackIds: [
+      'music:sunbeam-village/05-sweet-pastry-song',
+      'music:sunbeam-village/06-the-illustrated-map',
+    ],
+  },
+  meadow: {
+    themeTrackId: 'music:rainbow-meadow/07-meadow-under-the-blue-sky',
+    playlistTrackIds: [],
+  },
+  'brook-grotto': {
+    themeTrackId: 'music:crystal-brook/09-crystal-currents',
+    playlistTrackIds: ['music:crystal-grotto/10-echoes-of-the-crystal-cave'],
+  },
+  'woods-nook-grove': {
+    themeTrackId: 'music:whispering-woods/11-whispering-woodpath',
+    playlistTrackIds: ['music:whispering-woods/12-fireflies-in-the-ancient-woods'],
+  },
   beach: { themeTrackId: null, playlistTrackIds: [] },
-  race: { themeTrackId: null, playlistTrackIds: [] },
+  race: {
+    themeTrackId: 'music:rainbow-run/08-speedy-sprints',
+    playlistTrackIds: [],
+  },
 };
 
 export const SFX_BINDINGS: Partial<Record<VerticalSliceSfx, string>> = {
   ui: 'sfx:ui-soft-chime',
+  'ui-back': 'sfx:ui/ui-back',
+  discovery: 'sfx:discoveries/discovery',
 };
 
-const SCENE_MUSIC_CONTEXT: Readonly<Record<string, MusicContextId>> = {
+/**
+ * Optional one-shot cue overrides for world objects. These are keyed by the stable interaction ID,
+ * never by display text, coordinates or scene object names. Unlisted interactions fall back to
+ * their semantic action (for example Talk -> dialogue and Enter -> door).
+ */
+export const INTERACTION_SFX_BINDINGS: Readonly<Record<string, VerticalSliceSfx>> = {
+  'interaction:display-stump': 'ui',
+  'interaction:meadow-ribbon-board': 'ui',
+};
+
+export const SCENE_MUSIC_CONTEXT: Readonly<Record<string, MusicContextId>> = {
   TitleScene: 'title-creator',
   UnicornCreatorScene: 'title-creator',
   MoonflowerGladeScene: 'glade-cottage',
   MoonflowerPatchScene: 'glade-cottage',
   CottageInteriorScene: 'glade-cottage',
+  CottageDecorateScene: 'glade-cottage',
+  PipEggHatchScene: 'glade-cottage',
   SunbeamVillageScene: 'village-interiors',
+  VillageInteriorScene: 'village-interiors',
+  R6VillageInteriorScene: 'village-interiors',
+  ShopScene: 'village-interiors',
   RainbowMeadowScene: 'meadow',
   WindmillLookoutScene: 'meadow',
   CrystalBrookScene: 'brook-grotto',
   CrystalGrottoScene: 'brook-grotto',
   WhisperingWoodsScene: 'woods-nook-grove',
   HollowTreeNookScene: 'woods-nook-grove',
-  StarBeachScene: 'beach',
+  FireflyGroveScene: 'woods-nook-grove',
+  FireflyLanternScene: 'woods-nook-grove',
+  StarlightBeachScene: 'beach',
+  RainbowRunEntryScene: 'race',
   RaceScene: 'race',
   NovaTutorialRaceScene: 'race',
 };
 
 export function resolveMusicContext(sceneKey: string): MusicContextId | null {
   return SCENE_MUSIC_CONTEXT[sceneKey] ?? null;
+}
+
+export function resolveInteractionSfxCue(interactionId: string): VerticalSliceSfx | null {
+  return INTERACTION_SFX_BINDINGS[interactionId] ?? null;
 }
 
 export function getAudioAsset(id: string | null | undefined): AudioCatalogueEntry | null {
