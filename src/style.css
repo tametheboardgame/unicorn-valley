@@ -49,6 +49,11 @@ body {
   overflow: hidden;
 }
 
+#game-container > input[type="range"],
+#game-container > select[aria-label="Chosen music track"] {
+  position: absolute;
+}
+
 canvas {
   display: block;
   max-width: 100vw;
