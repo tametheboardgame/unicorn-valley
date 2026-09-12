@@ -232,16 +232,34 @@ test('dialogue and sound settings expose explicit production interaction states'
   await page.mouse.click(settingsButton.x, settingsButton.y);
   await waitForScene(page, 'SettingsScene');
   await waitForObject(page, 'SettingsScene', 'settings-row-muted');
+
+  scene = (await snapshot(page)).scenes.find(({ key }) => key === 'SettingsScene');
+  expect(scene).toBeTruthy();
+  if (!scene) {
+    return;
+  }
+  expect(namedObject(scene, 'settings-row-muted').interactive).toBe(true);
+  expect(namedObject(scene, 'settings-row-music').interactive).toBe(true);
+
+  // The expanded MP3 controls make the list longer. Use keyboard focus to
+  // scroll each lower audio control into the real interactive viewport before
+  // checking the production interaction state.
+  for (let index = 0; index < 5; index += 1) {
+    await page.keyboard.press('ArrowDown');
+  }
+  scene = (await snapshot(page)).scenes.find(({ key }) => key === 'SettingsScene');
+  expect(scene).toBeTruthy();
+  if (!scene) {
+    return;
+  }
+  expect(namedObject(scene, 'settings-row-ambience').interactive).toBe(true);
+
+  for (let index = 0; index < 2; index += 1) {
+    await page.keyboard.press('ArrowDown');
+  }
   scene = (await snapshot(page)).scenes.find(({ key }) => key === 'SettingsScene');
   expect(scene).toBeTruthy();
   if (scene) {
-    for (const name of [
-      'settings-row-muted',
-      'settings-row-music',
-      'settings-row-ambience',
-      'settings-row-sfx',
-    ]) {
-      expect(namedObject(scene, name).interactive).toBe(true);
-    }
+    expect(namedObject(scene, 'settings-row-sfx').interactive).toBe(true);
   }
 });
