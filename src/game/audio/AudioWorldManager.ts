@@ -3,47 +3,42 @@ import { resolveInteractionSfxCue, resolveMusicContext } from '../../content/aud
 import { gameEventBus } from '../events/GameEventBus';
 import { getVerticalSliceAudio, type VerticalSliceSfx } from './VerticalSliceAudio';
 
-const RATE_LIMIT_MS: Partial<Record<VerticalSliceSfx, number>> = {
-  dialogue: 180,
-  discovery: 400,
-  'quest-complete': 800,
-  friendship: 350,
-  door: 250,
-  decoration: 160,
-  'race-finish': 800,
-};
+const EVENT_CUES = [
+  ['CHARACTER_TALKED', 'dialogue'],
+  ['ITEM_COLLECTED', 'collect'],
+  ['DISCOVERY_UNLOCKED', 'discovery'],
+  ['QUEST_COMPLETED', 'quest-complete'],
+  ['RELATIONSHIP_CHANGED', 'friendship'],
+  ['HOME_DECORATION_CHANGED', 'decoration'],
+] as const;
 
-export class AudioWorldManager {
+class AudioWorldManager {
   private readonly audio = getVerticalSliceAudio();
   private readonly attachedScenes = new WeakSet<Phaser.Scene>();
   private lastCue: VerticalSliceSfx | null = null;
   private lastCueAt = 0;
 
   public constructor(private readonly game: Phaser.Game) {
-    gameEventBus.on('CHARACTER_TALKED', () => this.play('dialogue'));
-    gameEventBus.on('ITEM_COLLECTED', () => this.play('collect'));
-    gameEventBus.on('DISCOVERY_UNLOCKED', () => this.play('discovery'));
-    gameEventBus.on('QUEST_COMPLETED', () => this.play('quest-complete'));
-    gameEventBus.on('RELATIONSHIP_CHANGED', () => this.play('friendship'));
-    gameEventBus.on('HOME_DECORATION_CHANGED', () => this.play('decoration'));
+    for (const [event, cue] of EVENT_CUES) {
+      gameEventBus.on(event, () => this.play(cue));
+    }
     gameEventBus.on('INTERACTION_ACTIVATED', (event) => {
-      const cue = resolveInteractionSfxCue(event.interactionId);
+      const cue =
+        resolveInteractionSfxCue(event.interactionId) ??
+        (event.actionKind === 'talk' || event.resultType === 'dialogue'
+          ? 'dialogue'
+          : event.actionKind === 'enter'
+            ? 'door'
+            : null);
       if (cue) {
         this.play(cue);
-      } else if (event.actionKind === 'talk' || event.resultType === 'dialogue') {
-        this.play('dialogue');
-      } else if (event.actionKind === 'enter') {
-        this.play('door');
       }
     });
-    globalThis.addEventListener?.('pointerdown', this.unlock);
-    globalThis.addEventListener?.('keydown', this.unlock);
+    const unlock = () => void this.audio.unlock();
+    globalThis.addEventListener?.('pointerdown', unlock);
+    globalThis.addEventListener?.('keydown', unlock);
     game.events.on('poststep', this.update, this);
   }
-
-  private readonly unlock = (): void => {
-    void this.audio.unlock();
-  };
 
   private update(): void {
     const scenes = this.game.scene.getScenes(true);
@@ -58,7 +53,7 @@ export class AudioWorldManager {
       const key = scenes[index].scene.key;
       if (resolveMusicContext(key)) {
         this.audio.enterScene(key);
-        break;
+        return;
       }
     }
   }
@@ -67,22 +62,18 @@ export class AudioWorldManager {
     _pointer: Phaser.Input.Pointer,
     gameObject: Phaser.GameObjects.GameObject,
   ): void {
-    if (
-      gameObject.name === 'exploration-interaction-prompt' ||
-      gameObject.name === 'exploration-direct-interaction-target' ||
-      gameObject.name === 'race-jump-control' ||
-      gameObject.name.startsWith('interaction-direct-zone:')
-    ) {
+    const name = gameObject.name;
+    if (name.includes('interaction') || name === 'race-jump-control') {
       return;
     }
     const text = (gameObject as Phaser.GameObjects.GameObject & { text?: unknown }).text;
-    const label = typeof text === 'string' ? text.trim() : gameObject.name.trim();
-    this.play(/^(?:←|back\b|cancel\b|close\b)/i.test(label) ? 'ui-back' : 'ui');
+    const label = typeof text === 'string' ? text : name;
+    this.play(/(?:←|back|cancel|close)/i.test(label) ? 'ui-back' : 'ui');
   }
 
   private play(cue: VerticalSliceSfx): void {
     const now = Date.now();
-    if (cue === this.lastCue && now - this.lastCueAt < (RATE_LIMIT_MS[cue] ?? 90)) {
+    if (cue === this.lastCue && now - this.lastCueAt < 120) {
       return;
     }
     this.lastCue = cue;
@@ -91,9 +82,8 @@ export class AudioWorldManager {
   }
 }
 
-let manager: AudioWorldManager | null = null;
+let manager: AudioWorldManager | undefined;
 
 export function getAudioWorldManager(game: Phaser.Game): AudioWorldManager {
-  manager ??= new AudioWorldManager(game);
-  return manager;
+  return (manager ??= new AudioWorldManager(game));
 }
