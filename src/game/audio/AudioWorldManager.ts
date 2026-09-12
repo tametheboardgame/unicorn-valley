@@ -74,6 +74,7 @@ export class AudioWorldManager {
     if (
       gameObject.name === 'exploration-interaction-prompt' ||
       gameObject.name === 'exploration-direct-interaction-target' ||
+      gameObject.name === 'race-jump-control' ||
       gameObject.name.startsWith('interaction-direct-zone:')
     ) {
       return;
