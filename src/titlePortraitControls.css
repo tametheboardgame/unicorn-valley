@@ -23,7 +23,12 @@
     overflow-y: auto;
     border: 3px solid rgb(157 114 173 / 92%);
     border-radius: 22px;
-    background: rgb(255 251 239 / 96%);
+    background-color: rgb(255 251 239 / 96%);
+    background-image:
+      linear-gradient(rgb(255 251 239 / 62%), rgb(255 251 239 / 74%)),
+      url("/assets/title/wp19f-title-portrait.webp");
+    background-position: center 58%;
+    background-size: cover;
     color: #4f3a5d;
     box-shadow: 0 8px 28px rgb(36 26 61 / 28%);
     overscroll-behavior: contain;
@@ -39,6 +44,21 @@
     gap: 10px;
   }
 
+  .title-portrait-brand {
+    margin: 0;
+    color: #4b356f;
+    font:
+      900 clamp(28px, 8vw, 36px) "Trebuchet MS",
+      "Segoe UI",
+      system-ui,
+      sans-serif;
+    line-height: 1;
+    text-align: center;
+    text-shadow:
+      0 2px 0 rgb(255 255 255 / 86%),
+      0 4px 10px rgb(75 53 111 / 18%);
+  }
+
   .title-portrait-heading {
     margin: 0 0 2px;
     color: #5c4568;
@@ -49,6 +69,7 @@
       sans-serif;
     line-height: 1.1;
     text-align: center;
+    text-shadow: 0 1px 0 rgb(255 255 255 / 78%);
   }
 
   .title-portrait-actions {
@@ -62,7 +83,7 @@
     padding: 10px 16px;
     border: 3px solid #b38ac6;
     border-radius: 18px;
-    background: #eee4f7;
+    background: rgb(238 228 247 / 94%);
     color: #4f3a5d;
     font:
       800 clamp(17px, 4.8vw, 21px) "Trebuchet MS",
@@ -90,17 +111,20 @@
 
   .title-portrait-button.title-portrait-primary {
     border-color: #d6b35f;
-    background: #ffe9a9;
+    background: rgb(255 233 169 / 96%);
   }
 
   .title-portrait-button[aria-pressed="true"] {
     border-color: #75aa91;
-    background: #d8f0df;
+    background: rgb(216 240 223 / 96%);
   }
 
   .title-portrait-status {
     min-height: 36px;
     margin: 0;
+    padding: 4px 8px;
+    border-radius: 12px;
+    background: rgb(255 251 239 / 82%);
     color: #6c5a73;
     font:
       700 15px "Trebuchet MS",

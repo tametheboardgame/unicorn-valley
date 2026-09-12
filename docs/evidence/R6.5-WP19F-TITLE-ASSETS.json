@@ -1,0 +1,56 @@
+{
+  "work_package": "R6.5-WP19F",
+  "direction_approved_at": "2026-09-11",
+  "visual_gate_status": "approved_2026-09-11",
+  "generation_provenance": {
+    "method": "OpenAI image generation in the Unicorn Valley project conversation",
+    "direction": "warm storybook Unicorn Valley title scene; cosy cottage, winding path, flowers, magical woodland, gentle rainbow/light; no baked-in UI text",
+    "direction_approved_by": "David",
+    "source_landscape": {
+      "dimensions": [1600, 900],
+      "bytes": 203612,
+      "sha256": "97cfb776bebf0abc9ae56275e84ea20790725a6606db0ac056bbf680a06c23fb"
+    },
+    "source_portrait": {
+      "dimensions": [900, 1600],
+      "bytes": 123316,
+      "sha256": "f825155c4d4483b1a7ef145380dd02bfa1163fb1ea555c781e5762fcf49888df"
+    }
+  },
+  "repository_assets": [
+    {
+      "role": "canonical-production-master",
+      "path": "public/assets/title/wp19f-title-master.webp",
+      "dimensions": [720, 405],
+      "bytes": 14510,
+      "sha256": "a3e4fbe51d0d13565812bb46ca9b43e4dc92c6a7016878d7eebb24828a0b9f6d",
+      "git_blob": "236a80a97e92c19b85fb415e12bf58bbcd769871",
+      "derived_from": "source_landscape"
+    },
+    {
+      "role": "landscape-runtime",
+      "path": "public/assets/title/wp19f-title-landscape.webp",
+      "dimensions": [704, 396],
+      "bytes": 13748,
+      "sha256": "a88d3159c44683aeb73bfca4cdcdad482e06d1f26297e0c4cc4324cfe319967c",
+      "git_blob": "efbd58f99019b5392363d4a17d13b40b0dd318f5",
+      "derived_from": "source_landscape"
+    },
+    {
+      "role": "portrait-runtime",
+      "path": "public/assets/title/wp19f-title-portrait.webp",
+      "dimensions": [396, 704],
+      "bytes": 11476,
+      "sha256": "35290876ab8509cccfe0f65afea573233124698d90c2d91f9266d300d218d0a9",
+      "git_blob": "1c2347159f273eea725072c68d9c02ff94661efe",
+      "derived_from": "source_portrait"
+    }
+  ],
+  "runtime": {
+    "landscape_url": "/assets/title/wp19f-title-landscape.webp",
+    "portrait_url": "/assets/title/wp19f-title-portrait.webp",
+    "portrait_selection": "coarse pointer, max-width 700px, portrait orientation",
+    "preload_scope": "only while TitleScene is active",
+    "fallback": "existing live primitive TitleScene remains readable and interactive if generated artwork fails to load"
+  }
+}

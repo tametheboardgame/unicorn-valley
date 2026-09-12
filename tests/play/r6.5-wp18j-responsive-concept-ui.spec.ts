@@ -186,11 +186,11 @@ test.describe('WP18J shared responsive concept UI', () => {
         const objects = await sceneObjects(page, 'InventoryScene');
         return objects.find(({ name }) => name === 'bag-close-button')?.displayWidth ?? 0;
       })
-      .toBeGreaterThanOrEqual(80);
+      .toBeGreaterThanOrEqual(96);
 
     const bagObjects = await sceneObjects(page, 'InventoryScene');
     const pocketTabs = bagObjects
-      .filter(({ name }) => name.startsWith('bag-pocket:'))
+      .filter(({ name }) => name.startsWith('bag-pocket-visual:'))
       .sort((left, right) => left.x - right.x);
     expect(pocketTabs).toHaveLength(4);
     for (let index = 1; index < pocketTabs.length; index += 1) {
@@ -231,8 +231,8 @@ test.describe('WP18J shared responsive concept UI', () => {
         const compass = objects.find(({ name }) => name === 'wp18j-map-compass');
         const compassLabel = objects.find(({ name }) => name === 'wp18j-map-compass-label');
         return {
-          closeWidth: close?.displayWidth ?? 0,
-          closeHeight: close?.displayHeight ?? 0,
+          closeWidthAtLeast96: (close?.displayWidth ?? 0) >= 96,
+          closeHeightAtLeast84: (close?.displayHeight ?? 0) >= 84,
           closeX: close?.x ?? 0,
           iconPresent: Boolean(icon?.visible),
           boxedVisualPresent: Boolean(boxedVisual?.visible),
@@ -243,8 +243,8 @@ test.describe('WP18J shared responsive concept UI', () => {
         };
       })
       .toEqual({
-        closeWidth: 82,
-        closeHeight: 70,
+        closeWidthAtLeast96: true,
+        closeHeightAtLeast84: true,
         closeX: 1172,
         iconPresent: true,
         boxedVisualPresent: false,

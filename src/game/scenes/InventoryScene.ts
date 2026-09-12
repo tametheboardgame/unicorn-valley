@@ -96,7 +96,7 @@ export class InventoryScene extends Phaser.Scene {
       .setName('inventory-modal-title');
 
     const closeButton = this.add
-      .rectangle(1172, 76, 82, 70, 0xffffff, 0.001)
+      .rectangle(1172, 76, 96, 84, 0xffffff, 0.001)
       .setAlpha(0.001)
       .setInteractive({ useHandCursor: true })
       .setName('bag-close-button');
@@ -208,6 +208,10 @@ export class InventoryScene extends Phaser.Scene {
       const tab = this.add
         .rectangle(x, 155, 156, 60, selected ? 0xf3d9a4 : 0xd8a8b8, 1)
         .setStrokeStyle(3, selected ? 0xb7834e : 0x9a6479, 1)
+        .setName(`bag-pocket-visual:${pocket.id}`);
+      const tabHit = this.add
+        .rectangle(x, 155, 168, 84, 0xffffff, 0.001)
+        .setAlpha(0.001)
         .setInteractive({ useHandCursor: true })
         .setName(`bag-pocket:${pocket.id}`);
       const hole = this.add
@@ -221,8 +225,8 @@ export class InventoryScene extends Phaser.Scene {
           fontStyle: 'bold',
         })
         .setOrigin(0.5);
-      tab.on('pointerdown', () => this.selectPocket(pocket.id));
-      this.track(tabShadow, tab, hole, label);
+      tabHit.on('pointerdown', () => this.selectPocket(pocket.id));
+      this.track(tabShadow, tab, tabHit, hole, label);
     });
 
     const listPanel = this.add.graphics().setName('bag-list-panel');
