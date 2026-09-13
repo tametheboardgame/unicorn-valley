@@ -5,6 +5,7 @@ interface DiagnosticObjectSnapshot {
   text: string | null;
   x: number;
   y: number;
+  displayHeight: number;
   visible: boolean;
   interactive: boolean;
 }
@@ -101,12 +102,17 @@ test.describe('R6.5-WP19G MP3 audio foundation', () => {
     expect(findObject(settings, 'settings-section-music').text).toBe('Music');
     expect(findObject(settings, 'settings-section-sound-effects').text).toBe('Sound effects');
     expect(findObject(settings, 'settings-row-music-label').text).toContain('Scene music');
+    expect(findObject(settings, 'settings-row-master-volume').displayHeight).toBeGreaterThan(
+      findObject(settings, 'settings-row-muted').displayHeight,
+    );
+    expect(findObject(settings, 'settings-row-music-track').visible).toBe(false);
 
     const trackPicker = page.locator('select[aria-label="Chosen music track"]');
     await expect(trackPicker).toBeHidden();
 
     const master = page.locator('input[aria-label="All sound"]');
     await expect(master).toBeVisible();
+    expect((await master.boundingBox())?.height ?? 0).toBeGreaterThanOrEqual(44);
     await master.evaluate((element) => {
       const input = element as HTMLInputElement;
       input.value = '0.7';
@@ -125,6 +131,13 @@ test.describe('R6.5-WP19G MP3 audio foundation', () => {
     const mode = findObject(settings, 'settings-row-music');
     await page.mouse.click(mode.x, mode.y);
     await expect(trackPicker).toBeVisible();
+    expect((await trackPicker.boundingBox())?.height ?? 0).toBeGreaterThanOrEqual(44);
+
+    settings = await sceneSnapshot(page, 'SettingsScene');
+    const trackRow = findObject(settings, 'settings-row-music-track');
+    expect(trackRow.visible).toBe(true);
+    expect(trackRow.displayHeight).toBeGreaterThan(mode.displayHeight);
+    expect(findObject(settings, 'settings-row-music-track-label').text).toBe('Chosen track');
 
     await page.mouse.move(640, 360);
     await page.mouse.wheel(0, 550);
