@@ -1,0 +1,2338 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "97167f6b78913c16012f636b5733d04e3e7bff41",
+  "scenes": [
+    {
+      "class": "CoralBeachcombingActivityScene",
+      "key": "CoralBeachcombingActivityScene",
+      "file": "src/game/activities/CoralBeachcombingActivityScene.ts",
+      "category": "race/minigame",
+      "production": true,
+      "registration": "runtime game.scene.add / feature manager"
+    },
+    {
+      "class": "MapleBakingActivityScene",
+      "key": "MapleBakingActivityScene",
+      "file": "src/game/activities/MapleBakingActivityScene.ts",
+      "category": "race/minigame",
+      "production": true,
+      "registration": "runtime game.scene.add / feature manager"
+    },
+    {
+      "class": "BootScene",
+      "key": "BootScene",
+      "file": "src/game/scenes/BootScene.ts",
+      "category": "bootstrap/title",
+      "production": true,
+      "registration": "static gameConfig"
+    },
+    {
+      "class": "CottageDecorateScene",
+      "key": "CottageDecorateScene",
+      "file": "src/game/scenes/CottageDecorateScene.ts",
+      "category": "shared/abstract",
+      "production": true,
+      "registration": "static gameConfig"
+    },
+    {
+      "class": "CottageInteriorScene",
+      "key": "CottageInteriorScene",
+      "file": "src/game/scenes/CottageInteriorScene.ts",
+      "category": "interior",
+      "production": true,
+      "registration": "static gameConfig"
+    },
+    {
+      "class": "CrystalBrookScene",
+      "key": "CrystalBrookScene",
+      "file": "src/game/scenes/CrystalBrookScene.ts",
+      "category": "exploration area",
+      "production": true,
+      "registration": "static gameConfig"
+    },
+    {
+      "class": "CrystalGrottoScene",
+      "key": "CrystalGrottoScene",
+      "file": "src/game/scenes/CrystalGrottoScene.ts",
+      "category": "interior",
+      "production": true,
+      "registration": "runtime game.scene.add / feature manager"
+    },
+    {
+      "class": "DialogueTestScene",
+      "key": "DialogueTestScene",
+      "file": "src/game/scenes/DialogueTestScene.ts",
+      "category": "test/dev-only",
+      "production": false,
+      "registration": "static gameConfig"
+    },
+    {
+      "class": "DoorwayStubScene",
+      "key": "DoorwayStubScene",
+      "file": "src/game/scenes/DoorwayStubScene.ts",
+      "category": "interior",
+      "production": true,
+      "registration": "static gameConfig"
+    },
+    {
+      "class": "FireflyGroveScene",
+      "key": "FireflyGroveScene",
+      "file": "src/game/scenes/FireflyGroveScene.ts",
+      "category": "interior",
+      "production": true,
+      "registration": "runtime game.scene.add / feature manager"
+    },
+    {
+      "class": "FireflyLanternScene",
+      "key": "FireflyLanternScene",
+      "file": "src/game/scenes/FireflyLanternScene.ts",
+      "category": "race/minigame",
+      "production": true,
+      "registration": "static gameConfig"
+    },
+    {
+      "class": "HollowTreeNookScene",
+      "key": "HollowTreeNookScene",
+      "file": "src/game/scenes/HollowTreeNookScene.ts",
+      "category": "interior",
+      "production": true,
+      "registration": "runtime game.scene.add / feature manager"
+    },
+    {
+      "class": "InventoryScene",
+      "key": "InventoryScene",
+      "file": "src/game/scenes/InventoryScene.ts",
+      "category": "modal",
+      "production": true,
+      "registration": "runtime game.scene.add / feature manager"
+    },
+    {
+      "class": "MoonflowerGladeScene",
+      "key": "MoonflowerGladeScene",
+      "file": "src/game/scenes/MoonflowerGladeScene.ts",
+      "category": "exploration area",
+      "production": true,
+      "registration": "static gameConfig"
+    },
+    {
+      "class": "MoonflowerPatchScene",
+      "key": "MoonflowerPatchScene",
+      "file": "src/game/scenes/MoonflowerPatchScene.ts",
+      "category": "exploration area",
+      "production": true,
+      "registration": "static gameConfig"
+    },
+    {
+      "class": "MovementTestScene",
+      "key": "MovementTestScene",
+      "file": "src/game/scenes/MovementTestScene.ts",
+      "category": "test/dev-only",
+      "production": false,
+      "registration": "static gameConfig"
+    },
+    {
+      "class": "NovaTutorialRaceScene",
+      "key": "NovaTutorialRaceScene",
+      "file": "src/game/scenes/NovaTutorialRaceScene.ts",
+      "category": "race/minigame",
+      "production": true,
+      "registration": "static gameConfig"
+    },
+    {
+      "class": "PipEggHatchScene",
+      "key": "PipEggHatchScene",
+      "file": "src/game/scenes/PipEggHatchScene.ts",
+      "category": "creator/onboarding",
+      "production": true,
+      "registration": "static gameConfig"
+    },
+    {
+      "class": "PreloadScene",
+      "key": "PreloadScene",
+      "file": "src/game/scenes/PreloadScene.ts",
+      "category": "bootstrap/title",
+      "production": true,
+      "registration": "static gameConfig"
+    },
+    {
+      "class": "VillageInteriorScene",
+      "key": "VillageInteriorScene",
+      "file": "src/game/scenes/R6VillageInteriorScene.ts",
+      "category": "interior",
+      "production": true,
+      "registration": "runtime game.scene.add / feature manager"
+    },
+    {
+      "class": "RaceScene",
+      "key": "RaceScene",
+      "file": "src/game/scenes/RaceScene.ts",
+      "category": "race/minigame",
+      "production": true,
+      "registration": "static gameConfig"
+    },
+    {
+      "class": "RainbowMeadowScene",
+      "key": "RainbowMeadowScene",
+      "file": "src/game/scenes/RainbowMeadowScene.ts",
+      "category": "exploration area",
+      "production": true,
+      "registration": "static gameConfig"
+    },
+    {
+      "class": "RainbowRunEntryScene",
+      "key": "RainbowRunEntryScene",
+      "file": "src/game/scenes/RainbowRunEntryScene.ts",
+      "category": "race/minigame",
+      "production": true,
+      "registration": "static gameConfig"
+    },
+    {
+      "class": "ResizeTestScene",
+      "key": "ResizeTestScene",
+      "file": "src/game/scenes/ResizeTestScene.ts",
+      "category": "test/dev-only",
+      "production": false,
+      "registration": "static gameConfig"
+    },
+    {
+      "class": "SettingsScene",
+      "key": "SettingsScene",
+      "file": "src/game/scenes/SettingsScene.ts",
+      "category": "modal",
+      "production": true,
+      "registration": "runtime game.scene.add / feature manager"
+    },
+    {
+      "class": "ShopScene",
+      "key": "ShopScene",
+      "file": "src/game/scenes/ShopScene.ts",
+      "category": "modal",
+      "production": true,
+      "registration": "runtime game.scene.add / feature manager"
+    },
+    {
+      "class": "StarlightBeachScene",
+      "key": "StarlightBeachScene",
+      "file": "src/game/scenes/StarlightBeachScene.ts",
+      "category": "exploration area",
+      "production": true,
+      "registration": "runtime game.scene.add / feature manager"
+    },
+    {
+      "class": "SunbeamVillageScene",
+      "key": "SunbeamVillageScene",
+      "file": "src/game/scenes/SunbeamVillageScene.ts",
+      "category": "exploration area",
+      "production": true,
+      "registration": "static gameConfig"
+    },
+    {
+      "class": "TitleScene",
+      "key": "TitleScene",
+      "file": "src/game/scenes/TitleScene.ts",
+      "category": "bootstrap/title",
+      "production": true,
+      "registration": "static gameConfig"
+    },
+    {
+      "class": "UnicornCreatorScene",
+      "key": "UnicornCreatorScene",
+      "file": "src/game/scenes/UnicornCreatorScene.ts",
+      "category": "creator/onboarding",
+      "production": true,
+      "registration": "static gameConfig"
+    },
+    {
+      "class": "VillageInteriorScene",
+      "key": "VillageInteriorScene",
+      "file": "src/game/scenes/VillageInteriorScene.ts",
+      "category": "interior",
+      "production": true,
+      "registration": "runtime game.scene.add / feature manager"
+    },
+    {
+      "class": "WhisperingWoodsScene",
+      "key": "WhisperingWoodsScene",
+      "file": "src/game/scenes/WhisperingWoodsScene.ts",
+      "category": "exploration area",
+      "production": true,
+      "registration": "static gameConfig"
+    },
+    {
+      "class": "WindmillLookoutScene",
+      "key": "WindmillLookoutScene",
+      "file": "src/game/scenes/WindmillLookoutScene.ts",
+      "category": "interior",
+      "production": true,
+      "registration": "runtime game.scene.add / feature manager"
+    },
+    {
+      "class": "WonderbookScene",
+      "key": "WonderbookScene",
+      "file": "src/game/scenes/WonderbookScene.ts",
+      "category": "modal",
+      "production": true,
+      "registration": "runtime game.scene.add / feature manager"
+    },
+    {
+      "class": "ExplorationHudOverlayScene",
+      "key": "ExplorationHudOverlayScene",
+      "file": "src/game/ui/ExplorationHudOverlayScene.ts",
+      "category": "modal",
+      "production": true,
+      "registration": "runtime game.scene.add / feature manager"
+    }
+  ],
+  "owners": [
+    {
+      "name": "FireflyLanternWorldManager",
+      "file": "src/game/activities/FireflyLanternWorldManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": false,
+      "lifetime": "scene/feature-created or transient",
+      "evidence": "src/game/activities/FireflyLanternWorldManager.ts"
+    },
+    {
+      "name": "RepeatableActivityEntryWorldManager",
+      "file": "src/game/activities/RepeatableActivityEntryWorldManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": true,
+      "lifetime": "application/game lifetime",
+      "evidence": "src/main.ts"
+    },
+    {
+      "name": "AtmosphericTimeService",
+      "file": "src/game/atmosphere/AtmosphericTimeService.ts",
+      "ownerKind": "Service",
+      "bootstrapReferenced": false,
+      "lifetime": "module singleton or browser state",
+      "evidence": "src/game/atmosphere/AtmosphericTimeService.ts"
+    },
+    {
+      "name": "AtmosphericTimeWorldManager",
+      "file": "src/game/atmosphere/AtmosphericTimeWorldManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": false,
+      "lifetime": "scene/feature-created or transient",
+      "evidence": "src/game/atmosphere/AtmosphericTimeWorldManager.ts"
+    },
+    {
+      "name": "MagicalWeatherService",
+      "file": "src/game/atmosphere/MagicalWeatherService.ts",
+      "ownerKind": "Service",
+      "bootstrapReferenced": false,
+      "lifetime": "module singleton or browser state",
+      "evidence": "src/game/atmosphere/MagicalWeatherService.ts"
+    },
+    {
+      "name": "MagicalWeatherWorldManager",
+      "file": "src/game/atmosphere/MagicalWeatherWorldManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": false,
+      "lifetime": "scene/feature-created or transient",
+      "evidence": "src/game/atmosphere/MagicalWeatherWorldManager.ts"
+    },
+    {
+      "name": "AudioWorldManager",
+      "file": "src/game/audio/AudioWorldManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": false,
+      "lifetime": "scene/feature-created or transient",
+      "evidence": "src/game/audio/AudioWorldManager.ts"
+    },
+    {
+      "name": "WorldConversationPresenter",
+      "file": "src/game/dialogue/WorldConversationPresenter.ts",
+      "ownerKind": "Presenter",
+      "bootstrapReferenced": false,
+      "lifetime": "module singleton or browser state",
+      "evidence": "src/game/dialogue/WorldConversationPresenter.ts"
+    },
+    {
+      "name": "DiscoveryService",
+      "file": "src/game/discovery/DiscoveryService.ts",
+      "ownerKind": "Service",
+      "bootstrapReferenced": false,
+      "lifetime": "scene/feature-created or transient",
+      "evidence": "src/game/discovery/DiscoveryService.ts"
+    },
+    {
+      "name": "SecretDiscoveryService",
+      "file": "src/game/discovery/SecretDiscoveryService.ts",
+      "ownerKind": "Service",
+      "bootstrapReferenced": false,
+      "lifetime": "scene/feature-created or transient",
+      "evidence": "src/game/discovery/SecretDiscoveryService.ts"
+    },
+    {
+      "name": "SecretDiscoveryWorldManager",
+      "file": "src/game/discovery/SecretDiscoveryWorldManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": false,
+      "lifetime": "module singleton or browser state",
+      "evidence": "src/game/discovery/SecretDiscoveryWorldManager.ts"
+    },
+    {
+      "name": "StoryHouseService",
+      "file": "src/game/discovery/StoryHouseService.ts",
+      "ownerKind": "Service",
+      "bootstrapReferenced": false,
+      "lifetime": "module singleton or browser state",
+      "evidence": "src/game/discovery/StoryHouseService.ts"
+    },
+    {
+      "name": "WhisperingWoodsSecretWorldManager",
+      "file": "src/game/discovery/WhisperingWoodsSecretWorldManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": false,
+      "lifetime": "scene/feature-created or transient",
+      "evidence": "src/game/discovery/WhisperingWoodsSecretWorldManager.ts"
+    },
+    {
+      "name": "BakeryService",
+      "file": "src/game/economy/BakeryService.ts",
+      "ownerKind": "Service",
+      "bootstrapReferenced": false,
+      "lifetime": "scene/feature-created or transient",
+      "evidence": "src/game/economy/BakeryService.ts"
+    },
+    {
+      "name": "EconomyRewardService",
+      "file": "src/game/economy/EconomyRewardService.ts",
+      "ownerKind": "Service",
+      "bootstrapReferenced": false,
+      "lifetime": "scene/feature-created or transient",
+      "evidence": "src/game/economy/EconomyRewardService.ts"
+    },
+    {
+      "name": "EconomyRewardWorldManager",
+      "file": "src/game/economy/EconomyRewardWorldManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": true,
+      "lifetime": "application/game lifetime",
+      "evidence": "src/main.ts"
+    },
+    {
+      "name": "ShimmerEconomyService",
+      "file": "src/game/economy/ShimmerEconomyService.ts",
+      "ownerKind": "Service",
+      "bootstrapReferenced": false,
+      "lifetime": "scene/feature-created or transient",
+      "evidence": "src/game/economy/ShimmerEconomyService.ts"
+    },
+    {
+      "name": "ShopService",
+      "file": "src/game/economy/ShopService.ts",
+      "ownerKind": "Service",
+      "bootstrapReferenced": false,
+      "lifetime": "scene/feature-created or transient",
+      "evidence": "src/game/economy/ShopService.ts"
+    },
+    {
+      "name": "CottageFriendVisitManager",
+      "file": "src/game/home/CottageFriendVisitManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": false,
+      "lifetime": "scene/feature-created or transient",
+      "evidence": "src/game/home/CottageFriendVisitManager.ts"
+    },
+    {
+      "name": "FriendVisitService",
+      "file": "src/game/home/FriendVisitService.ts",
+      "ownerKind": "Service",
+      "bootstrapReferenced": false,
+      "lifetime": "module singleton or browser state",
+      "evidence": "src/game/home/FriendVisitService.ts"
+    },
+    {
+      "name": "HomeDecorationService",
+      "file": "src/game/home/HomeDecorationService.ts",
+      "ownerKind": "Service",
+      "bootstrapReferenced": false,
+      "lifetime": "module singleton or browser state",
+      "evidence": "src/game/home/HomeDecorationService.ts"
+    },
+    {
+      "name": "ClickToMoveManager",
+      "file": "src/game/input/ClickToMoveManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": true,
+      "lifetime": "application/game lifetime",
+      "evidence": "src/main.ts"
+    },
+    {
+      "name": "WorldInteractionCoordinator",
+      "file": "src/game/interaction/WorldInteractionCoordinator.ts",
+      "ownerKind": "Coordinator",
+      "bootstrapReferenced": true,
+      "lifetime": "application/game lifetime",
+      "evidence": "src/main.ts"
+    },
+    {
+      "name": "FoodUseService",
+      "file": "src/game/inventory/FoodUseService.ts",
+      "ownerKind": "Service",
+      "bootstrapReferenced": false,
+      "lifetime": "scene/feature-created or transient",
+      "evidence": "src/game/inventory/FoodUseService.ts"
+    },
+    {
+      "name": "InventoryService",
+      "file": "src/game/inventory/InventoryService.ts",
+      "ownerKind": "Service",
+      "bootstrapReferenced": false,
+      "lifetime": "scene/feature-created or transient",
+      "evidence": "src/game/inventory/InventoryService.ts"
+    },
+    {
+      "name": "PlayerManeCoverageWorldManager",
+      "file": "src/game/player/PlayerManeCoverageWorldManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": true,
+      "lifetime": "application/game lifetime",
+      "evidence": "src/main.ts"
+    },
+    {
+      "name": "AmbientPopulationWorldManager",
+      "file": "src/game/population/AmbientPopulationWorldManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": true,
+      "lifetime": "application/game lifetime",
+      "evidence": "src/main.ts"
+    },
+    {
+      "name": "ResidentCollisionManager",
+      "file": "src/game/population/ResidentCollisionManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": true,
+      "lifetime": "application/game lifetime",
+      "evidence": "src/main.ts"
+    },
+    {
+      "name": "WhisperingWoodsFernBridgeManager",
+      "file": "src/game/population/WhisperingWoodsFernBridgeManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": false,
+      "lifetime": "scene/feature-created or transient",
+      "evidence": "src/game/population/WhisperingWoodsFernBridgeManager.ts"
+    },
+    {
+      "name": "R65RaceExpansionWorldManager",
+      "file": "src/game/racing/R65RaceExpansionWorldManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": true,
+      "lifetime": "application/game lifetime",
+      "evidence": "src/main.ts"
+    },
+    {
+      "name": "RacePlayerControlManager",
+      "file": "src/game/racing/RacePlayerControlManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": false,
+      "lifetime": "module singleton or browser state",
+      "evidence": "src/game/racing/RacePlayerControlManager.ts"
+    },
+    {
+      "name": "RacePlaytestRecoveryManager",
+      "file": "src/game/racing/RacePlaytestRecoveryManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": false,
+      "lifetime": "module singleton or browser state",
+      "evidence": "src/game/racing/RacePlaytestRecoveryManager.ts"
+    },
+    {
+      "name": "RelationshipService",
+      "file": "src/game/relationships/RelationshipService.ts",
+      "ownerKind": "Service",
+      "bootstrapReferenced": false,
+      "lifetime": "scene/feature-created or transient",
+      "evidence": "src/game/relationships/RelationshipService.ts"
+    },
+    {
+      "name": "ContinueRestoreManager",
+      "file": "src/game/save/ContinueRestoreManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": true,
+      "lifetime": "application/game lifetime",
+      "evidence": "src/main.ts"
+    },
+    {
+      "name": "SaveService",
+      "file": "src/game/save/SaveService.ts",
+      "ownerKind": "Service",
+      "bootstrapReferenced": false,
+      "lifetime": "scene/feature-created or transient",
+      "evidence": "src/game/save/SaveService.ts"
+    },
+    {
+      "name": "browserSaveService",
+      "file": "src/game/save/browserSaveService.ts",
+      "ownerKind": "Service",
+      "bootstrapReferenced": false,
+      "lifetime": "module singleton or browser state",
+      "evidence": "src/game/save/browserSaveService.ts"
+    },
+    {
+      "name": "VillageInteriorContractManager",
+      "file": "src/game/scenes/VillageInteriorContractManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": true,
+      "lifetime": "application/game lifetime",
+      "evidence": "src/main.ts"
+    },
+    {
+      "name": "TitleSettingsEnhancementManager",
+      "file": "src/game/settings/TitleSettingsEnhancementManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": false,
+      "lifetime": "scene/feature-created or transient",
+      "evidence": "src/game/settings/TitleSettingsEnhancementManager.ts"
+    },
+    {
+      "name": "CrossRegionFollowUpStoryService",
+      "file": "src/game/story/CrossRegionFollowUpStoryService.ts",
+      "ownerKind": "Service",
+      "bootstrapReferenced": false,
+      "lifetime": "scene/feature-created or transient",
+      "evidence": "src/game/story/CrossRegionFollowUpStoryService.ts"
+    },
+    {
+      "name": "CrystalBrookStoryWorldManager",
+      "file": "src/game/story/CrystalBrookStoryWorldManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": false,
+      "lifetime": "module singleton or browser state",
+      "evidence": "src/game/story/CrystalBrookStoryWorldManager.ts"
+    },
+    {
+      "name": "CrystalGrottoStoryService",
+      "file": "src/game/story/CrystalGrottoStoryService.ts",
+      "ownerKind": "Service",
+      "bootstrapReferenced": false,
+      "lifetime": "scene/feature-created or transient",
+      "evidence": "src/game/story/CrystalGrottoStoryService.ts"
+    },
+    {
+      "name": "ExistingValleyQuestPackService",
+      "file": "src/game/story/ExistingValleyQuestPackService.ts",
+      "ownerKind": "Service",
+      "bootstrapReferenced": false,
+      "lifetime": "scene/feature-created or transient",
+      "evidence": "src/game/story/ExistingValleyQuestPackService.ts"
+    },
+    {
+      "name": "HollowTreeStoryService",
+      "file": "src/game/story/HollowTreeStoryService.ts",
+      "ownerKind": "Service",
+      "bootstrapReferenced": false,
+      "lifetime": "scene/feature-created or transient",
+      "evidence": "src/game/story/HollowTreeStoryService.ts"
+    },
+    {
+      "name": "LumiWoodsWorldManager",
+      "file": "src/game/story/LumiWoodsWorldManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": false,
+      "lifetime": "module singleton or browser state",
+      "evidence": "src/game/story/LumiWoodsWorldManager.ts"
+    },
+    {
+      "name": "MeadowWindmillStoryService",
+      "file": "src/game/story/MeadowWindmillStoryService.ts",
+      "ownerKind": "Service",
+      "bootstrapReferenced": false,
+      "lifetime": "scene/feature-created or transient",
+      "evidence": "src/game/story/MeadowWindmillStoryService.ts"
+    },
+    {
+      "name": "PebbleCollectionWorldManager",
+      "file": "src/game/story/PebbleCollectionWorldManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": false,
+      "lifetime": "module singleton or browser state",
+      "evidence": "src/game/story/PebbleCollectionWorldManager.ts"
+    },
+    {
+      "name": "PipEggWorldManager",
+      "file": "src/game/story/PipEggWorldManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": false,
+      "lifetime": "module singleton or browser state",
+      "evidence": "src/game/story/PipEggWorldManager.ts"
+    },
+    {
+      "name": "StarlightBeachContentWorldManager",
+      "file": "src/game/story/StarlightBeachContentWorldManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": true,
+      "lifetime": "application/game lifetime",
+      "evidence": "src/main.ts"
+    },
+    {
+      "name": "WoodsDepthStoryService",
+      "file": "src/game/story/WoodsDepthStoryService.ts",
+      "ownerKind": "Service",
+      "bootstrapReferenced": false,
+      "lifetime": "scene/feature-created or transient",
+      "evidence": "src/game/story/WoodsDepthStoryService.ts"
+    },
+    {
+      "name": "CreatorPortraitControlsManager",
+      "file": "src/game/ui/CreatorPortraitControlsManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": true,
+      "lifetime": "application/game lifetime",
+      "evidence": "src/main.ts"
+    },
+    {
+      "name": "DesktopConceptCleanupManager",
+      "file": "src/game/ui/DesktopConceptCleanupManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": true,
+      "lifetime": "application/game lifetime",
+      "evidence": "src/main.ts"
+    },
+    {
+      "name": "ExplorationShellWorldManager",
+      "file": "src/game/ui/ExplorationShellWorldManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": true,
+      "lifetime": "application/game lifetime",
+      "evidence": "src/main.ts"
+    },
+    {
+      "name": "LandscapeCreatorProgressiveManager",
+      "file": "src/game/ui/LandscapeCreatorProgressiveManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": true,
+      "lifetime": "application/game lifetime",
+      "evidence": "src/main.ts"
+    },
+    {
+      "name": "LegacyWorldFeedbackMigrationManager",
+      "file": "src/game/ui/LegacyWorldFeedbackMigrationManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": true,
+      "lifetime": "application/game lifetime",
+      "evidence": "src/main.ts"
+    },
+    {
+      "name": "ModalConceptPresentationManager",
+      "file": "src/game/ui/ModalConceptPresentationManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": true,
+      "lifetime": "application/game lifetime",
+      "evidence": "src/main.ts"
+    },
+    {
+      "name": "PortraitConceptPresentationManager",
+      "file": "src/game/ui/PortraitConceptPresentationManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": true,
+      "lifetime": "application/game lifetime",
+      "evidence": "src/main.ts"
+    },
+    {
+      "name": "RaceMobileControlsManager",
+      "file": "src/game/ui/RaceMobileControlsManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": true,
+      "lifetime": "application/game lifetime",
+      "evidence": "src/main.ts"
+    },
+    {
+      "name": "SettingsAudioControlsManager",
+      "file": "src/game/ui/SettingsAudioControlsManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": false,
+      "lifetime": "scene/feature-created or transient",
+      "evidence": "src/game/ui/SettingsAudioControlsManager.ts"
+    },
+    {
+      "name": "TitlePortraitControlsManager",
+      "file": "src/game/ui/TitlePortraitControlsManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": true,
+      "lifetime": "application/game lifetime",
+      "evidence": "src/main.ts"
+    },
+    {
+      "name": "WorldFeedbackPresenter",
+      "file": "src/game/ui/WorldFeedbackPresenter.ts",
+      "ownerKind": "Presenter",
+      "bootstrapReferenced": false,
+      "lifetime": "module singleton or browser state",
+      "evidence": "src/game/ui/WorldFeedbackPresenter.ts"
+    },
+    {
+      "name": "CoreNpcProductionPresentationManager",
+      "file": "src/game/visual/CoreNpcProductionPresentationManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": false,
+      "lifetime": "module singleton or browser state",
+      "evidence": "src/game/visual/CoreNpcProductionPresentationManager.ts"
+    },
+    {
+      "name": "CreatorDelightPresentationManager",
+      "file": "src/game/visual/CreatorDelightPresentationManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": false,
+      "lifetime": "module singleton or browser state",
+      "evidence": "src/game/visual/CreatorDelightPresentationManager.ts"
+    },
+    {
+      "name": "EnvironmentProductionPresentationManager",
+      "file": "src/game/visual/EnvironmentProductionPresentationManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": false,
+      "lifetime": "module singleton or browser state",
+      "evidence": "src/game/visual/EnvironmentProductionPresentationManager.ts"
+    },
+    {
+      "name": "R5FinalTighteningManager",
+      "file": "src/game/visual/R5FinalTighteningManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": true,
+      "lifetime": "application/game lifetime",
+      "evidence": "src/main.ts"
+    },
+    {
+      "name": "R65WorldExperiencePresentationManager",
+      "file": "src/game/visual/R65WorldExperiencePresentationManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": true,
+      "lifetime": "application/game lifetime",
+      "evidence": "src/main.ts"
+    },
+    {
+      "name": "UiProductionPresentationManager",
+      "file": "src/game/visual/UiProductionPresentationManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": false,
+      "lifetime": "module singleton or browser state",
+      "evidence": "src/game/visual/UiProductionPresentationManager.ts"
+    },
+    {
+      "name": "VisualTighteningManager",
+      "file": "src/game/visual/VisualTighteningManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": false,
+      "lifetime": "module singleton or browser state",
+      "evidence": "src/game/visual/VisualTighteningManager.ts"
+    },
+    {
+      "name": "CoreNpcPresenceService",
+      "file": "src/game/world/CoreNpcPresenceService.ts",
+      "ownerKind": "Service",
+      "bootstrapReferenced": false,
+      "lifetime": "scene/feature-created or transient",
+      "evidence": "src/game/world/CoreNpcPresenceService.ts"
+    },
+    {
+      "name": "CottageDepthWorldManager",
+      "file": "src/game/world/CottageDepthWorldManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": true,
+      "lifetime": "application/game lifetime",
+      "evidence": "src/main.ts"
+    },
+    {
+      "name": "CrossRegionFollowUpWorldManager",
+      "file": "src/game/world/CrossRegionFollowUpWorldManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": true,
+      "lifetime": "application/game lifetime",
+      "evidence": "src/main.ts"
+    },
+    {
+      "name": "CrystalBrookDepthWorldManager",
+      "file": "src/game/world/CrystalBrookDepthWorldManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": true,
+      "lifetime": "application/game lifetime",
+      "evidence": "src/main.ts"
+    },
+    {
+      "name": "ExistingValleyQuestPackWorldManager",
+      "file": "src/game/world/ExistingValleyQuestPackWorldManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": true,
+      "lifetime": "application/game lifetime",
+      "evidence": "src/main.ts"
+    },
+    {
+      "name": "ExplorationGeometryPresentationManager",
+      "file": "src/game/world/ExplorationGeometryPresentationManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": true,
+      "lifetime": "application/game lifetime",
+      "evidence": "src/main.ts"
+    },
+    {
+      "name": "ExplorationPathPolishManager",
+      "file": "src/game/world/ExplorationPathPolishManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": true,
+      "lifetime": "application/game lifetime",
+      "evidence": "src/main.ts"
+    },
+    {
+      "name": "FinalGraphicsTighteningManager",
+      "file": "src/game/world/FinalGraphicsTighteningManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": true,
+      "lifetime": "application/game lifetime",
+      "evidence": "src/main.ts"
+    },
+    {
+      "name": "GladeDepthWorldManager",
+      "file": "src/game/world/GladeDepthWorldManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": true,
+      "lifetime": "application/game lifetime",
+      "evidence": "src/main.ts"
+    },
+    {
+      "name": "MeadowDepthWorldManager",
+      "file": "src/game/world/MeadowDepthWorldManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": true,
+      "lifetime": "application/game lifetime",
+      "evidence": "src/main.ts"
+    },
+    {
+      "name": "R5RegionGatewayManager",
+      "file": "src/game/world/R5RegionGatewayManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": false,
+      "lifetime": "scene/feature-created or transient",
+      "evidence": "src/game/world/R5RegionGatewayManager.ts"
+    },
+    {
+      "name": "R65StarlightBeachGatewayManager",
+      "file": "src/game/world/R65StarlightBeachGatewayManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": false,
+      "lifetime": "scene/feature-created or transient",
+      "evidence": "src/game/world/R65StarlightBeachGatewayManager.ts"
+    },
+    {
+      "name": "R6FinalPlaythroughCleanupManager",
+      "file": "src/game/world/R6FinalPlaythroughCleanupManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": true,
+      "lifetime": "application/game lifetime",
+      "evidence": "src/main.ts"
+    },
+    {
+      "name": "R6RegionGatewayArtManager",
+      "file": "src/game/world/R6RegionGatewayArtManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": true,
+      "lifetime": "application/game lifetime",
+      "evidence": "src/main.ts"
+    },
+    {
+      "name": "R6RegionGatewayArtPerformanceManager",
+      "file": "src/game/world/R6RegionGatewayArtPerformanceManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": true,
+      "lifetime": "application/game lifetime",
+      "evidence": "src/main.ts"
+    },
+    {
+      "name": "VillageLifeWorldManager",
+      "file": "src/game/world/VillageLifeWorldManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": true,
+      "lifetime": "application/game lifetime",
+      "evidence": "src/main.ts"
+    },
+    {
+      "name": "WoodsDepthWorldManager",
+      "file": "src/game/world/WoodsDepthWorldManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": true,
+      "lifetime": "application/game lifetime",
+      "evidence": "src/main.ts"
+    },
+    {
+      "name": "WorldCharacterPresentationManager",
+      "file": "src/game/world/WorldCharacterPresentationManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": false,
+      "lifetime": "module singleton or browser state",
+      "evidence": "src/game/world/WorldCharacterPresentationManager.ts"
+    },
+    {
+      "name": "WorldLayerAlignmentManager",
+      "file": "src/game/world/WorldLayerAlignmentManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": true,
+      "lifetime": "application/game lifetime",
+      "evidence": "src/main.ts"
+    },
+    {
+      "name": "WorldOcclusionManager",
+      "file": "src/game/world/WorldOcclusionManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": false,
+      "lifetime": "module singleton or browser state",
+      "evidence": "src/game/world/WorldOcclusionManager.ts"
+    },
+    {
+      "name": "WorldTraversalPolishManager",
+      "file": "src/game/world/WorldTraversalPolishManager.ts",
+      "ownerKind": "Manager",
+      "bootstrapReferenced": false,
+      "lifetime": "module singleton or browser state",
+      "evidence": "src/game/world/WorldTraversalPolishManager.ts"
+    }
+  ],
+  "tests": [
+    {
+      "file": "src/content/contentValidation.test.ts",
+      "level": "unit",
+      "subsystem": "content",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/content/r4PebbleStory.test.ts",
+      "level": "unit",
+      "subsystem": "content",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/content/r4PicnicEvent.test.ts",
+      "level": "unit",
+      "subsystem": "content",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/accessibility/AccessibilitySettings.test.ts",
+      "level": "unit",
+      "subsystem": "accessibility",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/activities/FireflyLanternActivity.test.ts",
+      "level": "unit",
+      "subsystem": "activities",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/activities/FireflyLanternRules.test.ts",
+      "level": "unit",
+      "subsystem": "activities",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/activities/RepeatableActivityProgress.test.ts",
+      "level": "unit",
+      "subsystem": "activities",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/atmosphere/AtmosphericTimeService.test.ts",
+      "level": "unit",
+      "subsystem": "atmosphere",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/atmosphere/MagicalWeatherService.test.ts",
+      "level": "unit",
+      "subsystem": "atmosphere",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/atmosphere/OutdoorWorldScenes.test.ts",
+      "level": "unit",
+      "subsystem": "atmosphere",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/audio/AudioIntegration.test.ts",
+      "level": "unit",
+      "subsystem": "audio",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/audio/AudioSettings.test.ts",
+      "level": "unit",
+      "subsystem": "audio",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/config/gameConstants.test.ts",
+      "level": "unit",
+      "subsystem": "config",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/dialogue/DialogueConditions.test.ts",
+      "level": "unit",
+      "subsystem": "dialogue",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/dialogue/DialogueSession.test.ts",
+      "level": "unit",
+      "subsystem": "dialogue",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/discovery/DiscoveryService.test.ts",
+      "level": "unit",
+      "subsystem": "discovery",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/discovery/R6GladeSecretFlow.test.ts",
+      "level": "unit",
+      "subsystem": "discovery",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/discovery/SecretDiscoveryService.test.ts",
+      "level": "unit",
+      "subsystem": "discovery",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/discovery/StoryHouseService.test.ts",
+      "level": "unit",
+      "subsystem": "discovery",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/economy/BakeryService.test.ts",
+      "level": "unit",
+      "subsystem": "economy",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/economy/EconomyRewardLoop.test.ts",
+      "level": "unit",
+      "subsystem": "economy",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/economy/ShopEconomy.test.ts",
+      "level": "unit",
+      "subsystem": "economy",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/economy/StarlightBeachEconomy.test.ts",
+      "level": "unit",
+      "subsystem": "economy",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/events/GameEventBus.test.ts",
+      "level": "unit",
+      "subsystem": "events",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/home/CottageDecorationCatalogue.test.ts",
+      "level": "unit",
+      "subsystem": "home",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/home/CottageHomeView.test.ts",
+      "level": "unit",
+      "subsystem": "home",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/home/FriendVisitService.test.ts",
+      "level": "unit",
+      "subsystem": "home",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/home/HomeDecorationService.test.ts",
+      "level": "unit",
+      "subsystem": "home",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/input/ClickNavigationFacing.test.ts",
+      "level": "unit",
+      "subsystem": "input",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/input/ClickNavigationPath.test.ts",
+      "level": "unit",
+      "subsystem": "input",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/input/ClickToMoveManager.test.ts",
+      "level": "unit",
+      "subsystem": "input",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/input/ExplorationGallop.test.ts",
+      "level": "unit",
+      "subsystem": "input",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/input/ExplorationMovementBlocker.test.ts",
+      "level": "unit",
+      "subsystem": "input",
+      "classification": "critical product contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/input/InputController.test.ts",
+      "level": "unit",
+      "subsystem": "input",
+      "classification": "critical product contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/input/KeyboardButtonPress.test.ts",
+      "level": "unit",
+      "subsystem": "input",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/input/SceneTransitionMovementGate.test.ts",
+      "level": "unit",
+      "subsystem": "input",
+      "classification": "critical product contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/input/TouchMovementPad.test.ts",
+      "level": "unit",
+      "subsystem": "input",
+      "classification": "critical product contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/interaction/InteractionTargeting.test.ts",
+      "level": "unit",
+      "subsystem": "interaction",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/interaction/SceneInteractionRegistry.test.ts",
+      "level": "unit",
+      "subsystem": "interaction",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/interaction/UnifiedInteractionOwnership.test.ts",
+      "level": "unit",
+      "subsystem": "interaction",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/inventory/BagInventoryModel.test.ts",
+      "level": "unit",
+      "subsystem": "inventory",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/inventory/FoodUseService.test.ts",
+      "level": "unit",
+      "subsystem": "inventory",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/inventory/InventoryService.test.ts",
+      "level": "unit",
+      "subsystem": "inventory",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/performance/FramePerformance.test.ts",
+      "level": "unit",
+      "subsystem": "performance",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/performance/RefreshThrottle.test.ts",
+      "level": "unit",
+      "subsystem": "performance",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/player/PlayerManeCoverage.test.ts",
+      "level": "unit",
+      "subsystem": "player",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/player/PlayerMovement.test.ts",
+      "level": "unit",
+      "subsystem": "player",
+      "classification": "critical product contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/player/UnicornAppearance.test.ts",
+      "level": "unit",
+      "subsystem": "player",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/player/UnicornProductionArt.test.ts",
+      "level": "unit",
+      "subsystem": "player",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/population/AmbientPopulationValidation.test.ts",
+      "level": "unit",
+      "subsystem": "population",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/population/AmbientResidentRoutine.test.ts",
+      "level": "unit",
+      "subsystem": "population",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/population/R65StarlightBeachPopulation.test.ts",
+      "level": "unit",
+      "subsystem": "population",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/population/R6SupportingResidentContent.test.ts",
+      "level": "unit",
+      "subsystem": "population",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/quests/QuestEngine.test.ts",
+      "level": "unit",
+      "subsystem": "quests",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/quests/R65StarlightBeachQuestFlow.test.ts",
+      "level": "unit",
+      "subsystem": "quests",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/quests/R6VillageQuestFlow.test.ts",
+      "level": "unit",
+      "subsystem": "quests",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/racing/CrystalCascadeBalance.test.ts",
+      "level": "unit",
+      "subsystem": "racing",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/racing/NovaFirstRace.test.ts",
+      "level": "unit",
+      "subsystem": "racing",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/racing/R65RaceExpansion.test.ts",
+      "level": "unit",
+      "subsystem": "racing",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/racing/RaceCompetition.test.ts",
+      "level": "unit",
+      "subsystem": "racing",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/racing/RaceCourseExpansion.test.ts",
+      "level": "unit",
+      "subsystem": "racing",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/racing/RaceDifficulty.test.ts",
+      "level": "unit",
+      "subsystem": "racing",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/racing/RaceIdentityRegression.test.ts",
+      "level": "unit",
+      "subsystem": "racing",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/racing/RaceManualControl.test.ts",
+      "level": "unit",
+      "subsystem": "racing",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/racing/RaceMovement.test.ts",
+      "level": "unit",
+      "subsystem": "racing",
+      "classification": "critical product contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/racing/RacePresentation.test.ts",
+      "level": "unit",
+      "subsystem": "racing",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/racing/RaceProgression.test.ts",
+      "level": "unit",
+      "subsystem": "racing",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/racing/RaceResults.test.ts",
+      "level": "unit",
+      "subsystem": "racing",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/racing/RaceResultsCrystalCascade.test.ts",
+      "level": "unit",
+      "subsystem": "racing",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/racing/RaceRun.test.ts",
+      "level": "unit",
+      "subsystem": "racing",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/racing/RaceSettings.test.ts",
+      "level": "unit",
+      "subsystem": "racing",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/racing/RaceShortcut.test.ts",
+      "level": "unit",
+      "subsystem": "racing",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/relationships/RelationshipService.test.ts",
+      "level": "unit",
+      "subsystem": "relationships",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/save/ContinueLocation.test.ts",
+      "level": "unit",
+      "subsystem": "save",
+      "classification": "critical product contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/save/FirstPlayablePersistence.test.ts",
+      "level": "unit",
+      "subsystem": "save",
+      "classification": "critical product contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/save/R4PersistenceAudit.test.ts",
+      "level": "unit",
+      "subsystem": "save",
+      "classification": "critical product contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/save/SaveRepository.test.ts",
+      "level": "unit",
+      "subsystem": "save",
+      "classification": "critical product contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/save/SaveService.checkpointOrdering.test.ts",
+      "level": "unit",
+      "subsystem": "save",
+      "classification": "critical product contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/save/SaveService.futureCheckpoint.test.ts",
+      "level": "unit",
+      "subsystem": "save",
+      "classification": "critical product contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/save/SaveService.newGameReset.test.ts",
+      "level": "unit",
+      "subsystem": "save",
+      "classification": "critical product contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/save/SaveService.storageFaults.test.ts",
+      "level": "unit",
+      "subsystem": "save",
+      "classification": "critical product contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/save/SaveService.test.ts",
+      "level": "unit",
+      "subsystem": "save",
+      "classification": "critical product contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/save/profileRedesign.test.ts",
+      "level": "unit",
+      "subsystem": "save",
+      "classification": "critical product contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/save/saveMigrations.test.ts",
+      "level": "unit",
+      "subsystem": "save",
+      "classification": "critical product contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/settings/GameSettingsModel.test.ts",
+      "level": "unit",
+      "subsystem": "settings",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/story/ConversationRouteInventory.test.ts",
+      "level": "unit",
+      "subsystem": "story",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/story/CrossRegionFollowUpStoryService.test.ts",
+      "level": "unit",
+      "subsystem": "story",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/story/CrystalBrookStory.test.ts",
+      "level": "unit",
+      "subsystem": "story",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/story/CrystalGrottoStoryService.test.ts",
+      "level": "unit",
+      "subsystem": "story",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/story/ExistingValleyQuestPackService.test.ts",
+      "level": "unit",
+      "subsystem": "story",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/story/HollowTreeStoryService.test.ts",
+      "level": "unit",
+      "subsystem": "story",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/story/LumiWoodsStory.test.ts",
+      "level": "unit",
+      "subsystem": "story",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/story/MeadowWindmillStoryService.test.ts",
+      "level": "unit",
+      "subsystem": "story",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/story/NovaFirstRaceStory.test.ts",
+      "level": "unit",
+      "subsystem": "story",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/story/PipEggArc.test.ts",
+      "level": "unit",
+      "subsystem": "story",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/story/WoodsDepthStoryService.test.ts",
+      "level": "unit",
+      "subsystem": "story",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/suggestions/ActivitySuggestionModel.test.ts",
+      "level": "unit",
+      "subsystem": "suggestions",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/ui/CreatorProgressiveModel.test.ts",
+      "level": "unit",
+      "subsystem": "ui",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/ui/ExplorationShell.test.ts",
+      "level": "unit",
+      "subsystem": "ui",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/ui/LandscapeTabletPresentation.test.ts",
+      "level": "unit",
+      "subsystem": "ui",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/ui/safeUiBounds.test.ts",
+      "level": "unit",
+      "subsystem": "ui",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/visual/CoreNpcProductionArt.test.ts",
+      "level": "unit",
+      "subsystem": "visual",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/wonderbook/WonderbookModel.test.ts",
+      "level": "unit",
+      "subsystem": "wonderbook",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/wonderbook/WonderbookProgressModel.test.ts",
+      "level": "unit",
+      "subsystem": "wonderbook",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/world/CoreNpcPresenceService.test.ts",
+      "level": "unit",
+      "subsystem": "world",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/world/CottageInteriorMap.test.ts",
+      "level": "unit",
+      "subsystem": "world",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/world/CrystalBrookMap.test.ts",
+      "level": "unit",
+      "subsystem": "world",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/world/FirstPlayablePlacement.test.ts",
+      "level": "unit",
+      "subsystem": "world",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/world/MicroLocationTraversalMaps.test.ts",
+      "level": "unit",
+      "subsystem": "world",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/world/MoonflowerGladeMap.test.ts",
+      "level": "unit",
+      "subsystem": "world",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/world/R6FinalPlaythroughCleanupManager.test.ts",
+      "level": "unit",
+      "subsystem": "world",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/world/RainbowMeadowMap.test.ts",
+      "level": "unit",
+      "subsystem": "world",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/world/RegionGatewayRules.test.ts",
+      "level": "unit",
+      "subsystem": "world",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/world/StarlightBeachMap.test.ts",
+      "level": "unit",
+      "subsystem": "world",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/world/SunbeamVillageMap.test.ts",
+      "level": "unit",
+      "subsystem": "world",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/world/ValleyMapTopology.test.ts",
+      "level": "unit",
+      "subsystem": "world",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/world/WhisperingWoodsMap.test.ts",
+      "level": "unit",
+      "subsystem": "world",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/world/WorldArrivalState.test.ts",
+      "level": "unit",
+      "subsystem": "world",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/world/WorldDepth.test.ts",
+      "level": "unit",
+      "subsystem": "world",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "src/game/world/WorldGeometryAudit.test.ts",
+      "level": "unit",
+      "subsystem": "world",
+      "classification": "feature contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/deployment/deployed-startup-save-continue.spec.ts",
+      "level": "browser",
+      "subsystem": "deployment",
+      "classification": "critical product contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/automated-playtest.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "critical product contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r3-wp3.9f-layout.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "visual/layout contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r3-wp3.9g-visual-tightening.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "visual/layout contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r3-wp3.9g2-traversal-polish.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r3-wp3.9h-race-flow.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r3-wp3.9i-tidy-up.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r5-wp5.1-crystal-brook.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r5-wp5.10-final-tightening.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r5-wp5.3-whispering-woods.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r5-wp5.5-firefly-lantern.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r5-wp5.9b-shared-world-shell.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r5-wp5.9c-global-atmosphere-weather.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r5-wp5.9g-world-layout-density.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "visual/layout contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6-wp6.1-player-production-art.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "visual/layout contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6-wp6.10-mobile-portrait.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "visual/layout contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6-wp6.11-main-menu-deluxe.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": ["implementation-sensitive collection/index"]
+    },
+    {
+      "file": "tests/play/r6-wp6.12-profile-redesign.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6-wp6.13-unicorn-creator-plus.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6-wp6.14-settings-pause-accessibility.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6-wp6.15-global-ui-dialogue-transition.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "visual/layout contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6-wp6.16-front-end-delight.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6-wp6.17-resilience-pipeline.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6-wp6.18a-mobile-creator-action.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6-wp6.18c-click-navigation-facing.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6-wp6.18d1-sunbeam-shops.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6-wp6.18d2-region-gateways-art.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "visual/layout contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6-wp6.18e-crystal-cascade-balance.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6-wp6.18f-npc-marker-cleanup.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6-wp6.18g-final-map-cleanup.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6-wp6.18h-mobile-race-controls.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6-wp6.18ij-final-gate-path-fixes.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6-wp6.2-core-npc-production-art.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "visual/layout contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6-wp6.3-environment-production.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6-wp6.4-ui-production.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "visual/layout contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6-wp6.6-touch-accessibility.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6-wp6.7-performance-loading.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6-wp6.8-save-recovery.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "critical product contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6-wp6.9-browser-deployment.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "critical product contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6.5-final-graphics-tightening.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "visual/layout contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6.5-world-state-continue.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "critical product contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6.5-wp11-existing-valley-quest-pack.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6.5-wp12-race-expansion.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6.5-wp13-cross-region-followups.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6.5-wp14-repeatable-activities.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": ["coordinate-sensitive"]
+    },
+    {
+      "file": "tests/play/r6.5-wp15-wonderbook-progress.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": ["coordinate-sensitive"]
+    },
+    {
+      "file": "tests/play/r6.5-wp16-portrait-modal-readability.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "visual/layout contract",
+      "reviewFlags": ["coordinate-sensitive"]
+    },
+    {
+      "file": "tests/play/r6.5-wp18b-freeze-stability.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6.5-wp18e-bag-map-food.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": ["coordinate-sensitive"]
+    },
+    {
+      "file": "tests/play/r6.5-wp18f-world-consistency-visual-experience.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "visual/layout contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6.5-wp18g-browser-compat.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6.5-wp18g-device-hardening.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": ["coordinate-sensitive"]
+    },
+    {
+      "file": "tests/play/r6.5-wp18i-concept-ui.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "visual/layout contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6.5-wp18i-desktop-concept-ui.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "visual/layout contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6.5-wp18i-settings-scroll.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6.5-wp18j-hud-overlay-stability.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6.5-wp18j-map-pan-close-spacing.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "visual/layout contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6.5-wp18j-responsive-concept-ui.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "visual/layout contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6.5-wp18k-map-real-input.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6.5-wp19b-world-navigation.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "critical product contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6.5-wp19d-remediation.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6.5-wp19e-nova-picnic-race-regression.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6.5-wp19e1-contextual-feedback.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6.5-wp19e1-responsive-evidence.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6.5-wp19f-title-visual-evidence.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "visual/layout contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6.5-wp19f-ui-consistency.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "visual/layout contract",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6.5-wp19g-mp3-audio-foundation.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6.5-wp5-glade-cottage-depth.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6.5-wp6-meadow-run-depth.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6.5-wp7-crystal-brook-depth.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6.5-wp8-whispering-woods-depth.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    },
+    {
+      "file": "tests/play/r6.5-wp9-starlight-beach-core.spec.ts",
+      "level": "browser",
+      "subsystem": "play",
+      "classification": "historical regression",
+      "reviewFlags": []
+    }
+  ]
+}

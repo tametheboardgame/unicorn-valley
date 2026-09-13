@@ -1,0 +1,143 @@
+{
+  "total_count": 1,
+  "jobs": [
+    {
+      "id": 103710501677,
+      "run_id": 34752197603,
+      "workflow_name": "Immutable deployment smoke",
+      "head_branch": "agent/r6.5-wp19h0-consolidation",
+      "run_url": "https://api.github.com/repos/tametheboardgame/unicorn-valley/actions/runs/34752197603",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOT64DI88AAAAYJaCrLQ",
+      "head_sha": "97167f6b78913c16012f636b5733d04e3e7bff41",
+      "url": "https://api.github.com/repos/tametheboardgame/unicorn-valley/actions/jobs/103710501677",
+      "html_url": "https://github.com/tametheboardgame/unicorn-valley/actions/runs/34752197603/job/103710501677",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-09-13T10:34:15Z",
+      "started_at": "2026-09-13T10:34:18Z",
+      "completed_at": "2026-09-13T10:35:19Z",
+      "name": "Startup, save, reload and Continue",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-09-13T10:34:19Z",
+          "completed_at": "2026-09-13T10:34:19Z"
+        },
+        {
+          "name": "Check out qualification metadata",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-09-13T10:34:19Z",
+          "completed_at": "2026-09-13T10:34:22Z"
+        },
+        {
+          "name": "Resolve immutable candidate",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-09-13T10:34:22Z",
+          "completed_at": "2026-09-13T10:34:22Z"
+        },
+        {
+          "name": "Check out candidate",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-09-13T10:34:22Z",
+          "completed_at": "2026-09-13T10:34:24Z"
+        },
+        {
+          "name": "Validate Pages deployment URL",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-09-13T10:34:24Z",
+          "completed_at": "2026-09-13T10:34:24Z"
+        },
+        {
+          "name": "Set up Node.js",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-09-13T10:34:24Z",
+          "completed_at": "2026-09-13T10:34:24Z"
+        },
+        {
+          "name": "Install dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-09-13T10:34:24Z",
+          "completed_at": "2026-09-13T10:34:30Z"
+        },
+        {
+          "name": "Install Chromium",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-09-13T10:34:30Z",
+          "completed_at": "2026-09-13T10:34:50Z"
+        },
+        {
+          "name": "Exercise deployed startup and persistence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-09-13T10:34:50Z",
+          "completed_at": "2026-09-13T10:35:14Z"
+        },
+        {
+          "name": "Upload deployed smoke evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-09-13T10:35:14Z",
+          "completed_at": "2026-09-13T10:35:15Z"
+        },
+        {
+          "name": "Post Set up Node.js",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 18,
+          "started_at": "2026-09-13T10:35:15Z",
+          "completed_at": "2026-09-13T10:35:16Z"
+        },
+        {
+          "name": "Post Check out candidate",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19,
+          "started_at": "2026-09-13T10:35:16Z",
+          "completed_at": "2026-09-13T10:35:16Z"
+        },
+        {
+          "name": "Post Check out qualification metadata",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 20,
+          "started_at": "2026-09-13T10:35:16Z",
+          "completed_at": "2026-09-13T10:35:16Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21,
+          "started_at": "2026-09-13T10:35:16Z",
+          "completed_at": "2026-09-13T10:35:16Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/tametheboardgame/unicorn-valley/check-runs/103710501677",
+      "labels": ["ubuntu-latest"],
+      "runner_id": 1000023631,
+      "runner_name": "GitHub Actions 1000023631",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    }
+  ]
+}

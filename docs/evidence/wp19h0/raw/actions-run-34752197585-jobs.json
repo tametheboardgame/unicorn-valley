@@ -1,0 +1,87 @@
+{
+  "total_count": 1,
+  "jobs": [
+    {
+      "id": 103710501738,
+      "run_id": 34752197585,
+      "workflow_name": "Validate AI Project Contract",
+      "head_branch": "agent/r6.5-wp19h0-consolidation",
+      "run_url": "https://api.github.com/repos/tametheboardgame/unicorn-valley/actions/runs/34752197585",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOT64DI88AAAAYJaCrag",
+      "head_sha": "97167f6b78913c16012f636b5733d04e3e7bff41",
+      "url": "https://api.github.com/repos/tametheboardgame/unicorn-valley/actions/jobs/103710501738",
+      "html_url": "https://github.com/tametheboardgame/unicorn-valley/actions/runs/34752197585/job/103710501738",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-09-13T10:34:15Z",
+      "started_at": "2026-09-13T10:34:18Z",
+      "completed_at": "2026-09-13T10:34:26Z",
+      "name": "validate",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-09-13T10:34:19Z",
+          "completed_at": "2026-09-13T10:34:20Z"
+        },
+        {
+          "name": "Check out repository",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-09-13T10:34:20Z",
+          "completed_at": "2026-09-13T10:34:22Z"
+        },
+        {
+          "name": "Set up Python",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-09-13T10:34:22Z",
+          "completed_at": "2026-09-13T10:34:23Z"
+        },
+        {
+          "name": "Validate operating contract",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-09-13T10:34:23Z",
+          "completed_at": "2026-09-13T10:34:23Z"
+        },
+        {
+          "name": "Post Set up Python",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-09-13T10:34:23Z",
+          "completed_at": "2026-09-13T10:34:23Z"
+        },
+        {
+          "name": "Post Check out repository",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-09-13T10:34:23Z",
+          "completed_at": "2026-09-13T10:34:24Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-09-13T10:34:24Z",
+          "completed_at": "2026-09-13T10:34:24Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/tametheboardgame/unicorn-valley/check-runs/103710501738",
+      "labels": ["ubuntu-latest"],
+      "runner_id": 1000023632,
+      "runner_name": "GitHub Actions 1000023632",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    }
+  ]
+}

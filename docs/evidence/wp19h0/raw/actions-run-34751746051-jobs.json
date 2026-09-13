@@ -1,0 +1,193 @@
+{
+  "total_count": 3,
+  "jobs": [
+    {
+      "id": 103709358344,
+      "run_id": 34751746051,
+      "workflow_name": "CI",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/tametheboardgame/unicorn-valley/actions/runs/34751746051",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOT64DI88AAAAYJY85CA",
+      "head_sha": "ba60ede9ba8697f6015bfb3d79e98152a972403d",
+      "url": "https://api.github.com/repos/tametheboardgame/unicorn-valley/actions/jobs/103709358344",
+      "html_url": "https://github.com/tametheboardgame/unicorn-valley/actions/runs/34751746051/job/103709358344",
+      "status": "completed",
+      "conclusion": "failure",
+      "created_at": "2026-09-13T10:24:00Z",
+      "started_at": "2026-09-13T10:24:02Z",
+      "completed_at": "2026-09-13T10:24:31Z",
+      "name": "Validate",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-09-13T10:24:04Z",
+          "completed_at": "2026-09-13T10:24:05Z"
+        },
+        {
+          "name": "Check out repository",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-09-13T10:24:05Z",
+          "completed_at": "2026-09-13T10:24:07Z"
+        },
+        {
+          "name": "Set up Node.js",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-09-13T10:24:07Z",
+          "completed_at": "2026-09-13T10:24:08Z"
+        },
+        {
+          "name": "Install dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-09-13T10:24:08Z",
+          "completed_at": "2026-09-13T10:24:14Z"
+        },
+        {
+          "name": "Check formatting",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-09-13T10:24:14Z",
+          "completed_at": "2026-09-13T10:24:14Z"
+        },
+        {
+          "name": "Lint",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-09-13T10:24:14Z",
+          "completed_at": "2026-09-13T10:24:15Z"
+        },
+        {
+          "name": "Type-check",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-09-13T10:24:15Z",
+          "completed_at": "2026-09-13T10:24:16Z"
+        },
+        {
+          "name": "Run unit tests",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-09-13T10:24:16Z",
+          "completed_at": "2026-09-13T10:24:27Z"
+        },
+        {
+          "name": "Build production bundle",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-09-13T10:24:27Z",
+          "completed_at": "2026-09-13T10:24:29Z"
+        },
+        {
+          "name": "Check performance budget",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 10,
+          "started_at": "2026-09-13T10:24:29Z",
+          "completed_at": "2026-09-13T10:24:29Z"
+        },
+        {
+          "name": "Smoke-test static output",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 11,
+          "started_at": "2026-09-13T10:24:29Z",
+          "completed_at": "2026-09-13T10:24:29Z"
+        },
+        {
+          "name": "Post Set up Node.js",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 21,
+          "started_at": "2026-09-13T10:24:29Z",
+          "completed_at": "2026-09-13T10:24:29Z"
+        },
+        {
+          "name": "Post Check out repository",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 22,
+          "started_at": "2026-09-13T10:24:29Z",
+          "completed_at": "2026-09-13T10:24:29Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 23,
+          "started_at": "2026-09-13T10:24:29Z",
+          "completed_at": "2026-09-13T10:24:29Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/tametheboardgame/unicorn-valley/check-runs/103709358344",
+      "labels": ["ubuntu-latest"],
+      "runner_id": 1000023625,
+      "runner_name": "GitHub Actions 1000023625",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 103709419594,
+      "run_id": 34751746051,
+      "workflow_name": "CI",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/tametheboardgame/unicorn-valley/actions/runs/34751746051",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOT64DI88AAAAYJZAoSg",
+      "head_sha": "ba60ede9ba8697f6015bfb3d79e98152a972403d",
+      "url": "https://api.github.com/repos/tametheboardgame/unicorn-valley/actions/jobs/103709419594",
+      "html_url": "https://github.com/tametheboardgame/unicorn-valley/actions/runs/34751746051/job/103709419594",
+      "status": "completed",
+      "conclusion": "skipped",
+      "created_at": "2026-09-13T10:24:31Z",
+      "started_at": "2026-09-13T10:24:31Z",
+      "completed_at": "2026-09-13T10:24:31Z",
+      "name": "Browser compatibility",
+      "steps": [],
+      "check_run_url": "https://api.github.com/repos/tametheboardgame/unicorn-valley/check-runs/103709419594",
+      "labels": ["ubuntu-latest"],
+      "runner_id": null,
+      "runner_name": null,
+      "runner_group_id": null,
+      "runner_group_name": null
+    },
+    {
+      "id": 103709419752,
+      "run_id": 34751746051,
+      "workflow_name": "CI",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/tametheboardgame/unicorn-valley/actions/runs/34751746051",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOT64DI88AAAAYJZAo6A",
+      "head_sha": "ba60ede9ba8697f6015bfb3d79e98152a972403d",
+      "url": "https://api.github.com/repos/tametheboardgame/unicorn-valley/actions/jobs/103709419752",
+      "html_url": "https://github.com/tametheboardgame/unicorn-valley/actions/runs/34751746051/job/103709419752",
+      "status": "completed",
+      "conclusion": "skipped",
+      "created_at": "2026-09-13T10:24:31Z",
+      "started_at": "2026-09-13T10:24:31Z",
+      "completed_at": "2026-09-13T10:24:31Z",
+      "name": "Browser playtest (${{ matrix.shard }}/3)",
+      "steps": [],
+      "check_run_url": "https://api.github.com/repos/tametheboardgame/unicorn-valley/check-runs/103709419752",
+      "labels": ["ubuntu-latest"],
+      "runner_id": null,
+      "runner_name": null,
+      "runner_group_id": null,
+      "runner_group_name": null
+    }
+  ]
+}
