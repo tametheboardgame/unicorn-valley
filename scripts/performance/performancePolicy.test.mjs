@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
   evaluatePerformanceMetrics,
+  findMaterialDuplicateGroups,
   PERFORMANCE_BUDGETS,
   staticClosure,
 } from './performancePolicy.mjs';
@@ -15,6 +16,7 @@ function healthyMetrics() {
       gzipBytes: PERFORMANCE_BUDGETS.largestLazyChunkGzipBytes - 1024,
     },
     javascriptChunkCount: PERFORMANCE_BUDGETS.javascriptChunkCount - 1,
+    duplicateJavaScriptGroups: [],
     diagnosticsInInitialGraph: false,
   };
 }
@@ -67,4 +69,41 @@ test('diagnostics cannot become startup payload', () => {
   assert.deepEqual(failures, [
     'BrowserDiagnostics is part of the initial/title/first-playable graph',
   ]);
+});
+
+test('material identical chunks are detected and fail', () => {
+  const duplicateJavaScriptGroups = findMaterialDuplicateGroups([
+    {
+      file: 'assets/a.js',
+      gzipBytes: 4096,
+      contentHash: 'same',
+    },
+    {
+      file: 'assets/b.js',
+      gzipBytes: 4096,
+      contentHash: 'same',
+    },
+    {
+      file: 'assets/tiny-a.js',
+      gzipBytes: 512,
+      contentHash: 'tiny',
+    },
+    {
+      file: 'assets/tiny-b.js',
+      gzipBytes: 512,
+      contentHash: 'tiny',
+    },
+  ]);
+
+  assert.deepEqual(duplicateJavaScriptGroups, [
+    {
+      contentHash: 'same',
+      gzipBytes: 4096,
+      files: ['assets/a.js', 'assets/b.js'],
+    },
+  ]);
+  assert.equal(
+    evaluatePerformanceMetrics({ ...healthyMetrics(), duplicateJavaScriptGroups }).length,
+    1,
+  );
 });
