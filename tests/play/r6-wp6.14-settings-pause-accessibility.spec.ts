@@ -159,7 +159,7 @@ test('title launches canonical settings with fullscreen and persistent accessibi
   expect(
     current.scenes
       .find((scene) => scene.key === 'TitleScene')
-      ?.objects.some((object) => object.name === 'title-setting-fullscreen'),
+      ?.objects.some((object) => object.name === 'title-setting-fullscreen') ?? false,
   ).toBe(false);
 
   await moveSelectionUntilVisible(page, 'SettingsScene', 'settings-row-reduced-motion');
@@ -196,6 +196,11 @@ test('exploration can pause into the full settings screen and return with persis
   test.setTimeout(90_000);
   await page.goto('/?scene=glade&diagnostics=1');
   await waitForScene(page, 'MoonflowerGladeScene');
+  await waitForObject(
+    page,
+    'ExplorationHudOverlayScene',
+    'exploration-hud-overlay-settings-nav-button',
+  );
   await tapObject(
     page,
     'ExplorationHudOverlayScene',
@@ -261,6 +266,11 @@ test('exploration can pause into the full settings screen and return with persis
   await waitForScene(page, 'MoonflowerGladeScene');
   await page.reload();
   await waitForScene(page, 'MoonflowerGladeScene');
+  await waitForObject(
+    page,
+    'ExplorationHudOverlayScene',
+    'exploration-hud-overlay-settings-nav-button',
+  );
   await tapObject(
     page,
     'ExplorationHudOverlayScene',
