@@ -1,30 +1,31 @@
 import Phaser from 'phaser';
+import { cssColourToPhaser, UI_DESIGN_TOKENS } from './UiDesignSystem';
 
-export const UI_FONT = 'Trebuchet MS, Segoe UI, system-ui, sans-serif';
-export const UI_MIN_TOUCH_TARGET = 48;
+export const UI_FONT = UI_DESIGN_TOKENS.typography.family;
+export const UI_MIN_TOUCH_TARGET = UI_DESIGN_TOKENS.control.minimumTouchTargetPx;
 
 export const UI_COLOURS = {
-  ink: '#4f3a5d',
-  softInk: '#6f5a79',
-  mutedInk: '#8d7193',
-  cream: 0xfffbef,
-  creamText: '#fffaf1',
-  parchment: 0xfff4dc,
-  parchmentStrong: 0xf1ddbc,
-  lavender: 0xead8f3,
-  lavenderStrong: 0xc192d5,
-  lavenderDark: 0x76518a,
-  ribbon: 0xd9b5e7,
-  ribbonStrong: 0xb97dcc,
-  gold: 0xffe6a6,
-  goldStrong: 0xd6b35f,
-  blush: 0xffdbe8,
-  blushStrong: 0xe99ab7,
-  mint: 0xdff1df,
-  mintStrong: 0x90c89a,
-  focus: 0x7d5a92,
-  shadow: 0x4b3658,
-  white: 0xffffff,
+  ink: UI_DESIGN_TOKENS.colour.ink,
+  softInk: UI_DESIGN_TOKENS.colour.softInk,
+  mutedInk: UI_DESIGN_TOKENS.colour.mutedInk,
+  cream: cssColourToPhaser(UI_DESIGN_TOKENS.colour.cream),
+  creamText: UI_DESIGN_TOKENS.colour.creamText,
+  parchment: cssColourToPhaser(UI_DESIGN_TOKENS.colour.parchment),
+  parchmentStrong: cssColourToPhaser(UI_DESIGN_TOKENS.colour.parchmentStrong),
+  lavender: cssColourToPhaser(UI_DESIGN_TOKENS.colour.lavender),
+  lavenderStrong: cssColourToPhaser(UI_DESIGN_TOKENS.colour.lavenderStrong),
+  lavenderDark: cssColourToPhaser(UI_DESIGN_TOKENS.colour.lavenderDark),
+  ribbon: cssColourToPhaser(UI_DESIGN_TOKENS.colour.ribbon),
+  ribbonStrong: cssColourToPhaser(UI_DESIGN_TOKENS.colour.ribbonStrong),
+  gold: cssColourToPhaser(UI_DESIGN_TOKENS.colour.gold),
+  goldStrong: cssColourToPhaser(UI_DESIGN_TOKENS.colour.goldStrong),
+  blush: cssColourToPhaser(UI_DESIGN_TOKENS.colour.blush),
+  blushStrong: cssColourToPhaser(UI_DESIGN_TOKENS.colour.blushStrong),
+  mint: cssColourToPhaser(UI_DESIGN_TOKENS.colour.mint),
+  mintStrong: cssColourToPhaser(UI_DESIGN_TOKENS.colour.mintStrong),
+  focus: cssColourToPhaser(UI_DESIGN_TOKENS.colour.focus),
+  shadow: cssColourToPhaser(UI_DESIGN_TOKENS.colour.shadow),
+  white: cssColourToPhaser(UI_DESIGN_TOKENS.colour.white),
 } as const;
 
 export function createUiShadow(
@@ -37,7 +38,14 @@ export function createUiShadow(
   alpha = 0.18,
 ): Phaser.GameObjects.Rectangle {
   return scene.add
-    .rectangle(x + 7, y + 8, width, height, UI_COLOURS.shadow, alpha)
+    .rectangle(
+      x + UI_DESIGN_TOKENS.shadow.offsetXPx + 1,
+      y + UI_DESIGN_TOKENS.shadow.offsetYPx + 1,
+      width,
+      height,
+      UI_COLOURS.shadow,
+      alpha,
+    )
     .setScrollFactor(0)
     .setDepth(depth);
 }
@@ -52,7 +60,9 @@ export function applyButtonHover(
   const idleLineWidth = button.lineWidth;
 
   button.on('pointerover', () =>
-    button.setFillStyle(hoverFill, 1).setStrokeStyle(4, UI_COLOURS.focus, 1),
+    button
+      .setFillStyle(hoverFill, 1)
+      .setStrokeStyle(UI_DESIGN_TOKENS.border.strongPx, UI_COLOURS.focus, 1),
   );
   button.on('pointerout', () =>
     button.setFillStyle(idleFill, 1).setStrokeStyle(idleLineWidth, idleStroke, idleStrokeAlpha),
@@ -68,7 +78,11 @@ export function setButtonSelected(
 ): void {
   button
     .setFillStyle(selected ? UI_COLOURS.gold : idleFill, 1)
-    .setStrokeStyle(4, selected ? UI_COLOURS.goldStrong : UI_COLOURS.lavenderStrong, 1)
+    .setStrokeStyle(
+      UI_DESIGN_TOKENS.border.strongPx,
+      selected ? UI_COLOURS.goldStrong : UI_COLOURS.lavenderStrong,
+      1,
+    )
     .setAlpha(1);
 }
 
