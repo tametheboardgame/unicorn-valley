@@ -1,29 +1,44 @@
 # Project Status
 
-Last updated: 2026-09-11
+Last updated: 2026-09-13
 
 ## Current work
 
-`R6.5-WP19F - UI Consistency and Generated Home Screen`
+No implementation package is currently active.
 
-Path: `docs/work-packages/R6.5-WP19F-UI-CONSISTENCY-GENERATED-TITLE.md`
+`R6.5-WP19H - Audio Integration and Authoring Guide` is **complete, human-approved, merged and production released** through PR #169.
 
-State: **complete and human-approved**.
+Main/production merge SHA: `b38820675e37e3e98d00fd163c185a3f3cc4ecd1`.
 
-WP19F retains the accepted Bag/Map/Book/HUD shell, fixes the remaining Bag touch-target and Hollow Tree Nook/Woods presentation issues, and delivers the generated storybook title/home artwork with responsive live controls.
+The durable audio authoring workflow is `docs/AUDIO-UPLOAD-GUIDE.md`.
 
-Validated candidate: `76773f4b7d7b3e782c3a2fa2c357b20d3431fe96`.
+## Planning now completed
 
-Technical validation is green on that exact candidate: formatting, lint, type-check, unit tests, production build, 520 KiB entry budget, static smoke, all three serial Chromium browser-playtest shards, Chromium/Firefox/WebKit compatibility, immutable deployed startup/save/reload/Continue smoke and project-contract validation.
+`R6.5-WP19H0 - Architecture, UI, Test and Performance Consolidation` has been expanded into the detailed H0A-H0K execution programme requested on 13 September 2026.
 
-David approved the integrated title/home screen across desktop, tablet landscape, phone landscape and phone portrait on 11 September 2026. He noted that any further refinements can be handled in a later bounded pass rather than holding this package open.
+Path: `docs/work-packages/R6.5-WP19H0-PERFORMANCE-ARCHITECTURE-CODEBASE-CONSOLIDATION.md`
 
-## Delivery
+H0 now explicitly owns:
 
-PR #167 is the WP19F delivery PR. Merge and production deployment are authorised following the completed technical and human gates.
+- architecture inventory/boundaries/lifecycle ownership;
+- canonical reusable UI/design tokens and a Phaser-canvas/DOM-overlay contract;
+- composition-first scene standardisation and new-scene scaffolding;
+- test-suite contract audit and brittle-test remediation;
+- tiered/selective CI for small fixes versus full WP/release qualification;
+- change-to-test ownership/classification with fail-safe escalation;
+- measured startup/first-playable/lazy-chunk performance architecture;
+- engineering standards and mechanical guardrails;
+- migration/deletion of proven-obsolete legacy/duplicate paths;
+- final before/after engineering evidence and full qualification.
+
+Implementation has **not** started. This planning branch changes durable documentation only.
 
 ## Next work
 
-After WP19F is merged and production is verified healthy, the next approved package is `R6.5-WP19G - MP3 Audio Foundation`.
+The next implementation command is:
 
-Path: `docs/work-packages/R6.5-WP19G-MP3-AUDIO-FOUNDATION.md`.
+`Start R6.5-WP19H0`
+
+The intended execution environment is a fresh Work chat using Work as package orchestrator and Codex for bounded H0A-H0K repo tasks. The Work chat must read the H0 spec before editing code and begin with H0A evidence/baseline rather than jumping directly into refactoring.
+
+H0 remains behaviour-preserving and must stop after H0K technical qualification for David's explicit approval before merge/production or `R6.5-WP19H1`.
