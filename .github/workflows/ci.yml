@@ -87,6 +87,8 @@ jobs:
         run: npm run architecture:validate
       - name: Check verification policy
         run: npm run verification:policy:test
+      - name: Check performance policy
+        run: npm run performance:policy:test
       - name: Type-check runtime changes
         if: needs.plan.outputs.run_typecheck == 'true'
         run: npm run typecheck
@@ -121,7 +123,7 @@ jobs:
         run: npm run test:unit:selected
 
   build-performance:
-    name: Build, static smoke and inherited performance gate
+    name: Build, static smoke and performance architecture
     needs: [plan, tier0]
     if: needs.plan.outputs.run_build == 'true'
     runs-on: ubuntu-latest
@@ -133,13 +135,21 @@ jobs:
           node-version: 22.23.2
           package-manager-cache: false
       - run: npm ci --no-audit --no-fund
-      - name: Build production bundle
+      - name: Build production bundle with manifest
         run: npm run build
       - name: Smoke-test static output
         run: npm run smoke:static
-      - name: Check performance budget
+      - name: Check performance architecture budget
         if: needs.plan.outputs.run_performance == 'true'
         run: npm run perf:budget
+      - name: Upload performance report
+        if: always() && needs.plan.outputs.run_performance == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: performance-report
+          path: performance-report.json
+          if-no-files-found: warn
+          retention-days: 30
 
   tier2:
     name: Tier 2 - targeted browser smoke
