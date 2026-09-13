@@ -169,8 +169,7 @@ export const SCENE_MANIFEST = [
     'activity',
     'on-demand',
     'feature',
-    async () =>
-      (await import('../activities/MapleBakingActivityScene')).MapleBakingActivityScene,
+    async () => (await import('../activities/MapleBakingActivityScene')).MapleBakingActivityScene,
   ),
   runtime(
     'CoralBeachcombingActivityScene',
@@ -204,7 +203,5 @@ export function getSceneManifestEntry(key: SceneKey): SceneManifestEntry {
 }
 
 export function getStartupSceneConstructors(): SceneConstructor[] {
-  return SCENE_MANIFEST.flatMap((entry) =>
-    entry.loadBoundary === 'startup' ? [entry.scene] : [],
-  );
+  return SCENE_MANIFEST.flatMap((entry) => (entry.loadBoundary === 'startup' ? [entry.scene] : []));
 }
