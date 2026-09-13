@@ -36,7 +36,6 @@ interface SettingRow {
   kind: SettingsRowKind;
   contentY: number;
   height: number;
-  layoutVisible: boolean;
   hovered: boolean;
 }
 
@@ -81,6 +80,7 @@ const ROW_HEIGHT = 64;
 const AUDIO_CONTROL_ROW_HEIGHT = 96;
 const ROW_RADIUS = 22;
 const ROW_GAP = 14;
+const TRACK_ROW_SPACE = AUDIO_CONTROL_ROW_HEIGHT + ROW_GAP;
 const ROW_SHADOW_X = 5;
 const ROW_SHADOW_Y = 6;
 const AUDIO_CONTROL_LABEL_OFFSET_Y = -21;
@@ -105,22 +105,6 @@ const LIST_LABEL_DEPTH = 7;
 const CLIP_GUARD_DEPTH = 20;
 const FIXED_CHROME_DEPTH = 24;
 
-function isAudioControlRow(kind: SettingsRowKind): boolean {
-  return kind === 'music-track' || kind.endsWith('-volume');
-}
-
-function rowHeight(kind: SettingsRowKind): number {
-  return isAudioControlRow(kind) ? AUDIO_CONTROL_ROW_HEIGHT : ROW_HEIGHT;
-}
-
-function rowLabelOffsetY(kind: SettingsRowKind): number {
-  return isAudioControlRow(kind) ? AUDIO_CONTROL_LABEL_OFFSET_Y : 0;
-}
-
-function rowSelectable(kind: SettingsRowKind): boolean {
-  return kind !== 'music-track';
-}
-
 export class SettingsScene extends Phaser.Scene {
   private readonly accessibility = getBrowserAccessibilitySettingsStore();
   private readonly audio = getVerticalSliceAudio();
@@ -132,6 +116,7 @@ export class SettingsScene extends Phaser.Scene {
   private rows: SettingRow[] = [];
   private sectionHeadings: SettingsSectionHeading[] = [];
   private contentHeight = 0;
+  private musicTrackContentY = 0;
   private doneButton: Phaser.GameObjects.Rectangle | null = null;
   private doneSurface: Phaser.GameObjects.Graphics | null = null;
   private doneHovered = false;
@@ -158,6 +143,7 @@ export class SettingsScene extends Phaser.Scene {
     this.rows = [];
     this.sectionHeadings = [];
     this.contentHeight = 0;
+    this.musicTrackContentY = 0;
     this.selectedIndex = 0;
     this.scrollOffset = 0;
     this.maxScroll = 0;
@@ -173,7 +159,6 @@ export class SettingsScene extends Phaser.Scene {
     this.createPanel();
 
     this.createSectionedRows();
-    this.relayoutRows();
     this.createScrollbar();
     this.createViewportGuards();
     this.createFixedChrome();
@@ -253,41 +238,32 @@ export class SettingsScene extends Phaser.Scene {
   }
 
   private createSectionedRows(): void {
-    SETTINGS_SECTIONS.forEach((section) => {
-      this.createSectionHeading(section.title, 0);
-      for (const kind of section.kinds) {
-        this.createRow(kind, this.rows.length, 0);
-      }
-    });
-  }
-
-  private relayoutRows(): void {
     let cursor = CONTENT_PADDING;
-    let rowIndex = 0;
-    const chosenTrackMode = !this.audio.getSettings().musicEnabled;
 
     SETTINGS_SECTIONS.forEach((section, sectionIndex) => {
       if (sectionIndex > 0) cursor += SECTION_GAP;
-      const heading = this.sectionHeadings[sectionIndex];
-      if (heading) heading.contentY = cursor + SECTION_HEADING_HEIGHT / 2;
+      const headingY = cursor + SECTION_HEADING_HEIGHT / 2;
+      this.createSectionHeading(section.title, headingY);
       cursor += SECTION_HEADING_HEIGHT + SECTION_HEADING_GAP;
 
-      let visibleRows = 0;
       for (const kind of section.kinds) {
-        const row = this.rows[rowIndex++];
-        if (!row) continue;
-        row.layoutVisible = kind !== 'music-track' || chosenTrackMode;
-        if (!row.layoutVisible) continue;
-        row.contentY = cursor + row.height / 2;
-        cursor += row.height + ROW_GAP;
-        visibleRows += 1;
+        const tall = kind === 'music-track' || kind.endsWith('-volume');
+        const height = tall ? AUDIO_CONTROL_ROW_HEIGHT : ROW_HEIGHT;
+        const contentY = cursor + height / 2;
+        this.createRow(kind, this.rows.length, contentY, height);
+        if (kind === 'music-track') this.musicTrackContentY = contentY;
+        cursor += height + ROW_GAP;
       }
-      if (visibleRows > 0) cursor -= ROW_GAP;
+      cursor -= ROW_GAP;
     });
 
     this.contentHeight = cursor + CONTENT_PADDING;
-    this.maxScroll = Math.max(0, this.contentHeight - VIEWPORT_HEIGHT);
-    this.scrollOffset = Phaser.Math.Clamp(this.scrollOffset, 0, this.maxScroll);
+    this.maxScroll = Math.max(
+      0,
+      this.contentHeight -
+        (this.audio.getSettings().musicEnabled ? TRACK_ROW_SPACE : 0) -
+        VIEWPORT_HEIGHT,
+    );
   }
 
   private createSectionHeading(title: string, contentY: number): void {
@@ -304,8 +280,12 @@ export class SettingsScene extends Phaser.Scene {
     this.sectionHeadings.push({ label, contentY });
   }
 
-  private createRow(kind: SettingsRowKind, index: number, contentY: number): void {
-    const height = rowHeight(kind);
+  private createRow(
+    kind: SettingsRowKind,
+    index: number,
+    contentY: number,
+    height: number,
+  ): void {
     const y = VIEWPORT_TOP + contentY;
     const surface = this.add
       .graphics()
@@ -317,7 +297,7 @@ export class SettingsScene extends Phaser.Scene {
       .setName(`settings-row-${kind}`)
       .setDepth(LIST_CONTROL_DEPTH);
     const label = this.add
-      .text(ROW_X, y + rowLabelOffsetY(kind), '', {
+      .text(ROW_X, y + (height === AUDIO_CONTROL_ROW_HEIGHT ? AUDIO_CONTROL_LABEL_OFFSET_Y : 0), '', {
         color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
         fontSize: '18px',
@@ -326,18 +306,9 @@ export class SettingsScene extends Phaser.Scene {
       .setName(`settings-row-${kind}-label`)
       .setOrigin(0.5)
       .setDepth(LIST_LABEL_DEPTH);
-    const row: SettingRow = {
-      surface,
-      button,
-      label,
-      kind,
-      contentY,
-      height,
-      layoutVisible: true,
-      hovered: false,
-    };
+    const row: SettingRow = { surface, button, label, kind, contentY, height, hovered: false };
 
-    if (rowSelectable(kind)) {
+    if (kind !== 'music-track') {
       button.setInteractive({ useHandCursor: true });
       button.on('pointerover', () => {
         row.hovered = true;
@@ -595,7 +566,12 @@ export class SettingsScene extends Phaser.Scene {
   }
 
   private refresh(): void {
-    this.relayoutRows();
+    this.maxScroll = Math.max(
+      0,
+      this.contentHeight -
+        (this.audio.getSettings().musicEnabled ? TRACK_ROW_SPACE : 0) -
+        VIEWPORT_HEIGHT,
+    );
     for (const row of this.rows) {
       const presentation = this.getRowPresentation(row.kind);
       row.label.setText(presentation.label);
@@ -615,10 +591,7 @@ export class SettingsScene extends Phaser.Scene {
     let next = this.selectedIndex;
     do {
       next = (next + delta + total) % total;
-      if (next === this.rows.length) break;
-      const row = this.rows[next];
-      if (row?.layoutVisible && rowSelectable(row.kind)) break;
-    } while (next !== this.selectedIndex);
+    } while (next < this.rows.length && this.rows[next]?.kind === 'music-track');
     this.selectedIndex = next;
     this.ensureSelectedVisible();
     this.refreshFocus();
@@ -635,9 +608,11 @@ export class SettingsScene extends Phaser.Scene {
   private ensureSelectedVisible(): void {
     if (this.selectedIndex >= this.rows.length) return;
     const row = this.rows[this.selectedIndex];
-    if (!row?.layoutVisible) return;
-    const rowTop = row.contentY - row.height / 2 - 8;
-    const rowBottom = row.contentY + row.height / 2 + 8;
+    if (!row) return;
+    const collapse = this.audio.getSettings().musicEnabled ? TRACK_ROW_SPACE : 0;
+    const contentY = row.contentY - (row.contentY > this.musicTrackContentY ? collapse : 0);
+    const rowTop = contentY - row.height / 2 - 8;
+    const rowBottom = contentY + row.height / 2 + 8;
     if (rowTop < this.scrollOffset) {
       this.setScrollOffset(rowTop);
     } else if (rowBottom > this.scrollOffset + VIEWPORT_HEIGHT) {
@@ -647,9 +622,13 @@ export class SettingsScene extends Phaser.Scene {
 
   private setScrollOffset(value: number): void {
     this.scrollOffset = Phaser.Math.Clamp(value, 0, this.maxScroll);
+    const sceneMusic = this.audio.getSettings().musicEnabled;
+    const collapse = sceneMusic ? TRACK_ROW_SPACE : 0;
 
     for (const heading of this.sectionHeadings) {
-      const y = VIEWPORT_TOP + heading.contentY - this.scrollOffset;
+      const contentY =
+        heading.contentY - (heading.contentY > this.musicTrackContentY ? collapse : 0);
+      const y = VIEWPORT_TOP + contentY - this.scrollOffset;
       heading.label.setY(y);
       heading.label.setVisible(
         y + SECTION_HEADING_HEIGHT / 2 > VIEWPORT_TOP &&
@@ -658,15 +637,15 @@ export class SettingsScene extends Phaser.Scene {
     }
 
     for (const row of this.rows) {
-      if (!row.layoutVisible) {
+      if (sceneMusic && row.kind === 'music-track') {
         row.surface.setVisible(false);
         row.button.setVisible(false);
         row.label.setVisible(false);
-        if (row.button.input) row.button.input.enabled = false;
         continue;
       }
 
-      const y = VIEWPORT_TOP + row.contentY - this.scrollOffset;
+      const contentY = row.contentY - (row.contentY > this.musicTrackContentY ? collapse : 0);
+      const y = VIEWPORT_TOP + contentY - this.scrollOffset;
       const top = y - row.height / 2;
       const bottom = y + row.height / 2 + ROW_SHADOW_Y;
       const intersectsViewport = bottom > VIEWPORT_TOP && top < VIEWPORT_BOTTOM;
@@ -674,10 +653,10 @@ export class SettingsScene extends Phaser.Scene {
 
       row.surface.setY(y).setVisible(intersectsViewport);
       row.button.setY(y).setVisible(intersectsViewport);
-      row.label.setY(y + rowLabelOffsetY(row.kind)).setVisible(intersectsViewport);
-      if (row.button.input) {
-        row.button.input.enabled = fullyInsideViewport && rowSelectable(row.kind);
-      }
+      row.label
+        .setY(y + (row.height === AUDIO_CONTROL_ROW_HEIGHT ? AUDIO_CONTROL_LABEL_OFFSET_Y : 0))
+        .setVisible(intersectsViewport);
+      if (row.button.input) row.button.input.enabled = fullyInsideViewport;
     }
 
     this.updateScrollbar();
@@ -685,9 +664,11 @@ export class SettingsScene extends Phaser.Scene {
 
   private updateScrollbar(): void {
     if (!this.scrollbarThumb) return;
+    const effectiveHeight =
+      this.contentHeight - (this.audio.getSettings().musicEnabled ? TRACK_ROW_SPACE : 0);
     const thumbHeight = Math.max(
       SCROLLBAR_MIN_THUMB,
-      VIEWPORT_HEIGHT * (VIEWPORT_HEIGHT / Math.max(VIEWPORT_HEIGHT, this.contentHeight)),
+      VIEWPORT_HEIGHT * (VIEWPORT_HEIGHT / Math.max(VIEWPORT_HEIGHT, effectiveHeight)),
     );
     const travel = VIEWPORT_HEIGHT - thumbHeight;
     const ratio = this.maxScroll > 0 ? this.scrollOffset / this.maxScroll : 0;
@@ -740,7 +721,7 @@ export class SettingsScene extends Phaser.Scene {
       return;
     }
     const row = this.rows[this.selectedIndex];
-    if (row?.layoutVisible && rowSelectable(row.kind)) void this.toggleSetting(row.kind);
+    if (row) void this.toggleSetting(row.kind);
   }
 
   private async toggleSetting(kind: SettingsRowKind): Promise<void> {
