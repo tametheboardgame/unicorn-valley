@@ -1,96 +1,56 @@
-import { readFile, readdir, stat } from 'node:fs/promises';
-import { gzipSync } from 'node:zlib';
+import { writeFile } from 'node:fs/promises';
+import {
+  evaluatePerformanceMetrics,
+  KiB,
+  LEGACY_METRICS,
+  measurePerformance,
+  PERFORMANCE_BUDGETS,
+} from './performance/performancePolicy.mjs';
 
-const KiB = 1024;
-const r6Reference = {
-  totalJsRawBytes: 2050 * KiB,
-  totalJsGzipBytes: 560 * KiB,
-};
-const budgets = {
-  entryRawBytes: 520 * KiB,
-  largestChunkRawBytes: 1800 * KiB,
-  totalJsRawBytes: 2400 * KiB,
-  totalJsGzipBytes: 650 * KiB,
-};
+const repositoryRoot = new URL('../', import.meta.url);
+const distDirectory = new URL('dist/', repositoryRoot);
+const manifestUrl = new URL('dist/.vite/manifest.json', repositoryRoot);
+const reportUrl = new URL('performance-report.json', repositoryRoot);
 
-const distDirectory = new URL('../dist/', import.meta.url);
-const assetsDirectory = new URL('assets/', distDirectory);
-const indexHtml = await readFile(new URL('index.html', distDirectory), 'utf8');
-const assetNames = await readdir(assetsDirectory);
-const jsNames = assetNames.filter((name) => name.endsWith('.js')).sort();
+const report = await measurePerformance({ manifestUrl, distDirectory });
+const failures = evaluatePerformanceMetrics(report);
 
-if (jsNames.length < 3) {
-  throw new Error(
-    `Performance budget failed: expected split application, Phaser and diagnostics chunks, found ${jsNames.length} JavaScript files.`,
-  );
-}
-
-const chunks = await Promise.all(
-  jsNames.map(async (name) => {
-    const url = new URL(name, assetsDirectory);
-    const body = await readFile(url);
-    const metadata = await stat(url);
-    return {
-      name,
-      rawBytes: metadata.size,
-      gzipBytes: gzipSync(body).byteLength,
-    };
-  }),
+await writeFile(
+  reportUrl,
+  `${JSON.stringify(
+    {
+      ...report,
+      generatedAt: new Date().toISOString(),
+      failures,
+    },
+    null,
+    2,
+  )}\n`,
 );
 
-const entryMatch = indexHtml.match(/src="\/assets\/(index-[^"]+\.js)"/);
-if (!entryMatch) {
-  throw new Error(
-    'Performance budget failed: unable to identify the built application entry chunk.',
-  );
-}
-const entry = chunks.find(({ name }) => name === entryMatch[1]);
-if (!entry) {
-  throw new Error(`Performance budget failed: missing entry chunk ${entryMatch[1]}.`);
-}
-
-const phaser = chunks.find(({ name }) => name.startsWith('phaser-'));
-if (!phaser) {
-  throw new Error('Performance budget failed: Phaser is not isolated in a stable vendor chunk.');
-}
-
-const diagnostics = chunks.find(({ name }) => name.startsWith('BrowserDiagnostics-'));
-if (!diagnostics) {
-  throw new Error(
-    'Performance budget failed: browser diagnostics are not emitted as an on-demand chunk.',
-  );
-}
-if (indexHtml.includes(diagnostics.name)) {
-  throw new Error(
-    'Performance budget failed: diagnostics are referenced by the initial HTML payload.',
-  );
-}
-
-const totalRawBytes = chunks.reduce((total, chunk) => total + chunk.rawBytes, 0);
-const totalGzipBytes = chunks.reduce((total, chunk) => total + chunk.gzipBytes, 0);
-const largestChunk = chunks.reduce((largest, chunk) =>
-  chunk.rawBytes > largest.rawBytes ? chunk : largest,
+console.log('H0H performance architecture report');
+console.log(
+  `- entry: ${(report.entry.rawBytes / KiB).toFixed(1)} KiB raw / ${(report.entry.gzipBytes / KiB).toFixed(1)} KiB gzip (raw budget ${(PERFORMANCE_BUDGETS.entryRawBytes / KiB).toFixed(0)} KiB)`,
+);
+console.log(
+  `- initial/title/first-playable: ${(report.initialGraph.gzipBytes / KiB).toFixed(1)} KiB gzip across ${report.initialGraph.chunkCount} chunks (budget ${(PERFORMANCE_BUDGETS.initialGraphGzipBytes / KiB).toFixed(0)} KiB)`,
+);
+console.log(
+  `- largest lazy chunk: ${report.largestLazyChunk.file}, ${(report.largestLazyChunk.gzipBytes / KiB).toFixed(1)} KiB gzip (budget ${(PERFORMANCE_BUDGETS.largestLazyChunkGzipBytes / KiB).toFixed(0)} KiB)`,
+);
+console.log(
+  `- JavaScript chunks: ${report.javascriptChunkCount} (budget ${PERFORMANCE_BUDGETS.javascriptChunkCount})`,
+);
+console.log(
+  `- total JavaScript breadth: ${(report.totalJavaScript.rawBytes / KiB).toFixed(1)} KiB raw / ${(report.totalJavaScript.gzipBytes / KiB).toFixed(1)} KiB gzip (trend only)`,
+);
+console.log(
+  `- legacy total-JS metric: ${(report.totalJavaScript.gzipBytes / KiB).toFixed(1)} KiB gzip vs ${(LEGACY_METRICS.totalJavaScriptGzipBytes / KiB).toFixed(0)} KiB historical envelope; retained for visibility, not used as the startup gate`,
 );
 
-const failures = [];
-if (entry.rawBytes > budgets.entryRawBytes) {
-  failures.push(
-    `entry ${entry.name} is ${(entry.rawBytes / KiB).toFixed(1)} KiB raw (budget ${(budgets.entryRawBytes / KiB).toFixed(0)} KiB)`,
-  );
-}
-if (largestChunk.rawBytes > budgets.largestChunkRawBytes) {
-  failures.push(
-    `largest chunk ${largestChunk.name} is ${(largestChunk.rawBytes / KiB).toFixed(1)} KiB raw (budget ${(budgets.largestChunkRawBytes / KiB).toFixed(0)} KiB)`,
-  );
-}
-if (totalRawBytes > budgets.totalJsRawBytes) {
-  failures.push(
-    `total JavaScript is ${(totalRawBytes / KiB).toFixed(1)} KiB raw (R6.5 safety envelope ${(budgets.totalJsRawBytes / KiB).toFixed(0)} KiB)`,
-  );
-}
-if (totalGzipBytes > budgets.totalJsGzipBytes) {
-  failures.push(
-    `total JavaScript is ${(totalGzipBytes / KiB).toFixed(1)} KiB gzip (R6.5 safety envelope ${(budgets.totalJsGzipBytes / KiB).toFixed(0)} KiB)`,
+if (report.diagnosticsChunk) {
+  console.log(
+    `- diagnostics: ${report.diagnosticsChunk.file}, ${(report.diagnosticsChunk.gzipBytes / KiB).toFixed(1)} KiB gzip, initial=${report.diagnosticsInInitialGraph ? 'yes' : 'no'}`,
   );
 }
 
@@ -98,29 +58,4 @@ if (failures.length > 0) {
   throw new Error(`Performance budget failed:\n- ${failures.join('\n- ')}`);
 }
 
-console.log('Performance bundle budget passed.');
-for (const chunk of chunks) {
-  console.log(
-    `- ${chunk.name}: ${(chunk.rawBytes / KiB).toFixed(1)} KiB raw / ${(chunk.gzipBytes / KiB).toFixed(1)} KiB gzip`,
-  );
-}
-console.log(
-  `Total: ${(totalRawBytes / KiB).toFixed(1)} KiB raw / ${(totalGzipBytes / KiB).toFixed(1)} KiB gzip`,
-);
-
-const rawReferenceDelta = totalRawBytes - r6Reference.totalJsRawBytes;
-const gzipReferenceDelta = totalGzipBytes - r6Reference.totalJsGzipBytes;
-const rawReferenceStatus =
-  rawReferenceDelta > 0
-    ? `+${(rawReferenceDelta / KiB).toFixed(1)} KiB raw`
-    : 'raw within reference';
-const gzipReferenceStatus =
-  gzipReferenceDelta > 0
-    ? `+${(gzipReferenceDelta / KiB).toFixed(1)} KiB gzip`
-    : 'gzip within reference';
-
-if (rawReferenceDelta > 0 || gzipReferenceDelta > 0) {
-  console.log(
-    `R6 reference growth: ${rawReferenceStatus}, ${gzipReferenceStatus}; allowed only within the approved R6.5 breadth-phase envelope.`,
-  );
-}
+console.log(`Performance architecture budget passed. Report: ${reportUrl.pathname}`);
