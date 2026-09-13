@@ -26,6 +26,31 @@ export const ARCHITECTURE_RULES = [
   },
 ];
 
+export const RETIRED_SOURCE_PATHS = new Map([
+  [
+    'src/game/scenes/VillageInteriorScene.ts',
+    'H0J retired the duplicate pre-R6 VillageInteriorScene. The stable VillageInteriorScene key is owned by R6VillageInteriorScene through SceneManifest.',
+  ],
+]);
+
+export function validateRetiredSourcePath(sourcePath) {
+  const source = normaliseRepoPath(sourcePath);
+  const rationale = RETIRED_SOURCE_PATHS.get(source);
+  if (!rationale) {
+    return [];
+  }
+
+  return [
+    {
+      ruleId: 'retired-source-path-does-not-return',
+      sourcePath: source,
+      importSpecifier: '<source>',
+      resolvedTarget: source,
+      rationale,
+    },
+  ];
+}
+
 export function validateDependency(sourcePath, importSpecifier) {
   const source = normaliseRepoPath(sourcePath);
   const target = resolveRelativeImport(source, importSpecifier);
