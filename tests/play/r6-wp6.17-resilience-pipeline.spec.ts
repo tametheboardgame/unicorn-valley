@@ -254,10 +254,12 @@ test('malformed settings and optional cosmetics cannot block Settings, Redesign 
   expect(titleText).toEqual(expect.arrayContaining(['Continue', 'My Unicorn', 'Settings']));
 
   await tapTitleText(page, 'Settings');
-  const settingsText = sceneText(await snapshot(page), 'TitleScene');
+  await waitForScene(page, 'SettingsScene');
+  const settingsText = sceneText(await snapshot(page), 'SettingsScene');
   expect(settingsText).toContain('Music: On');
   expect(settingsText).toContain('Reduced motion: Off');
-  await tapTitleText(page, 'Done');
+  await tapObject(page, 'SettingsScene', 'settings-done');
+  await waitForScene(page, 'TitleScene');
 
   await tapTitleText(page, 'My Unicorn');
   await waitForScene(page, 'UnicornCreatorScene');
@@ -289,8 +291,10 @@ test('a new player can visit Settings and still route through New Game into the 
   await waitForScene(page, 'TitleScene');
 
   await tapTitleText(page, 'Settings');
-  expect(sceneText(await snapshot(page), 'TitleScene')).toContain('Done');
-  await tapTitleText(page, 'Done');
+  await waitForScene(page, 'SettingsScene');
+  expect(sceneText(await snapshot(page), 'SettingsScene')).toContain('Done');
+  await tapObject(page, 'SettingsScene', 'settings-done');
+  await waitForScene(page, 'TitleScene');
 
   await tapTitleText(page, 'New Game');
   await waitForScene(page, 'UnicornCreatorScene');
