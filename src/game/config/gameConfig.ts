@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { getStartupSceneConstructors } from '../scenes/SceneManifest';
+import { getStartupSceneConstructors } from '../scenes/StartupSceneRegistry';
 import { GAME_HEIGHT, GAME_WIDTH } from './gameConstants';
 
 export const gameConfig: Phaser.Types.Core.GameConfig = {

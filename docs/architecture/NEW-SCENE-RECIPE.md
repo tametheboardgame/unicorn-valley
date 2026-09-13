@@ -24,7 +24,7 @@ If the scene key or persistence identity already exists, treat it as a compatibi
 
 Add the scene to `SCENE_MANIFEST`.
 
-- Startup scenes must preserve deliberate startup order and provide their constructor.
+- Startup scenes must preserve deliberate startup order and also map their key to their constructor in `StartupSceneRegistry.ts`.
 - Runtime scenes must provide a lazy constructor factory and state whether bootstrap or the feature owns registration.
 - Do not add a second implementation for an existing stable scene key.
 - Do not move a scene between startup/runtime/on-demand boundaries without performance evidence and the relevant H0 qualification.

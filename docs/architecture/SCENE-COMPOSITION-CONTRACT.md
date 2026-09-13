@@ -46,7 +46,7 @@ Scene keys, save-facing location IDs and return payload keys are compatibility b
 
 ## Manifest and loading
 
-`SceneManifest.ts` is the canonical identity/loading inventory for live scenes. It preserves the existing startup order and records runtime-eager/on-demand factories without changing those loading boundaries in H0D. H0H may later change loading policy only with measured evidence.
+`SceneManifest.ts` is the canonical, side-effect-free identity/loading inventory for live scenes. Startup order and runtime-eager/on-demand loading policy can therefore be tested without booting Phaser. `StartupSceneRegistry.ts` is the browser composition adapter that maps startup manifest keys to constructors; this keeps constructor imports out of the metadata contract while preserving the existing startup graph. H0H may later change loading policy only with measured evidence.
 
 The stable `VillageInteriorScene` key intentionally points to `R6VillageInteriorScene.ts`, the live implementation. The older duplicate remains a retirement candidate for H0J and is not deleted by H0D.
 

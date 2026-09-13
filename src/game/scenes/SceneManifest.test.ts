@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { SCENE_MANIFEST, getStartupSceneConstructors } from './SceneManifest';
+import { SCENE_MANIFEST, getStartupSceneKeys } from './SceneManifest';
 
 const EXPECTED_STARTUP_KEYS = [
   'BootScene',
@@ -32,10 +32,7 @@ describe('SCENE_MANIFEST', () => {
   });
 
   it('preserves the established startup registration order', () => {
-    expect(
-      SCENE_MANIFEST.filter((entry) => entry.loadBoundary === 'startup').map((entry) => entry.key),
-    ).toEqual(EXPECTED_STARTUP_KEYS);
-    expect(getStartupSceneConstructors()).toHaveLength(EXPECTED_STARTUP_KEYS.length);
+    expect(getStartupSceneKeys()).toEqual(EXPECTED_STARTUP_KEYS);
   });
 
   it('requires every non-startup scene to expose a lazy constructor factory', () => {

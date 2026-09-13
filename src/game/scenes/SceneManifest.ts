@@ -1,25 +1,4 @@
 import type Phaser from 'phaser';
-import { BootScene } from './BootScene';
-import { CottageDecorateScene } from './CottageDecorateScene';
-import { CottageInteriorScene } from './CottageInteriorScene';
-import { CrystalBrookScene } from './CrystalBrookScene';
-import { DialogueTestScene } from './DialogueTestScene';
-import { DoorwayStubScene } from './DoorwayStubScene';
-import { FireflyLanternScene } from './FireflyLanternScene';
-import { MoonflowerGladeScene } from './MoonflowerGladeScene';
-import { MoonflowerPatchScene } from './MoonflowerPatchScene';
-import { MovementTestScene } from './MovementTestScene';
-import { NovaTutorialRaceScene } from './NovaTutorialRaceScene';
-import { PipEggHatchScene } from './PipEggHatchScene';
-import { PreloadScene } from './PreloadScene';
-import { RaceScene } from './RaceScene';
-import { RainbowMeadowScene } from './RainbowMeadowScene';
-import { RainbowRunEntryScene } from './RainbowRunEntryScene';
-import { ResizeTestScene } from './ResizeTestScene';
-import { SunbeamVillageScene } from './SunbeamVillageScene';
-import { TitleScene } from './TitleScene';
-import { UnicornCreatorScene } from './UnicornCreatorScene';
-import { WhisperingWoodsScene } from './WhisperingWoodsScene';
 import type { SceneCategory, SceneLoadBoundary } from './SceneCompositionContract';
 
 export type SceneConstructor = new () => Phaser.Scene;
@@ -36,7 +15,6 @@ export interface StartupSceneManifestEntry<Key extends string = string>
   extends SceneManifestBase<Key> {
   loadBoundary: 'startup';
   registrationOwner: 'game-config';
-  scene: SceneConstructor;
 }
 
 export interface RuntimeSceneManifestEntry<Key extends string = string>
@@ -51,14 +29,12 @@ export type SceneManifestEntry = StartupSceneManifestEntry | RuntimeSceneManifes
 function startup<const Key extends string>(
   key: Key,
   category: SceneCategory,
-  scene: SceneConstructor,
 ): StartupSceneManifestEntry<Key> {
   return {
     key,
     category,
     loadBoundary: 'startup',
     registrationOwner: 'game-config',
-    scene,
   };
 }
 
@@ -73,27 +49,27 @@ function runtime<const Key extends string>(
 }
 
 export const SCENE_MANIFEST = [
-  startup('BootScene', 'bootstrap', BootScene),
-  startup('PreloadScene', 'bootstrap', PreloadScene),
-  startup('TitleScene', 'bootstrap', TitleScene),
-  startup('ResizeTestScene', 'diagnostic', ResizeTestScene),
-  startup('MovementTestScene', 'diagnostic', MovementTestScene),
-  startup('MoonflowerGladeScene', 'exploration', MoonflowerGladeScene),
-  startup('CottageInteriorScene', 'interior', CottageInteriorScene),
-  startup('CottageDecorateScene', 'interior', CottageDecorateScene),
-  startup('MoonflowerPatchScene', 'exploration', MoonflowerPatchScene),
-  startup('SunbeamVillageScene', 'exploration', SunbeamVillageScene),
-  startup('RainbowMeadowScene', 'exploration', RainbowMeadowScene),
-  startup('CrystalBrookScene', 'exploration', CrystalBrookScene),
-  startup('WhisperingWoodsScene', 'exploration', WhisperingWoodsScene),
-  startup('FireflyLanternScene', 'activity', FireflyLanternScene),
-  startup('RainbowRunEntryScene', 'race', RainbowRunEntryScene),
-  startup('NovaTutorialRaceScene', 'race', NovaTutorialRaceScene),
-  startup('RaceScene', 'race', RaceScene),
-  startup('PipEggHatchScene', 'story', PipEggHatchScene),
-  startup('DoorwayStubScene', 'utility', DoorwayStubScene),
-  startup('DialogueTestScene', 'diagnostic', DialogueTestScene),
-  startup('UnicornCreatorScene', 'onboarding', UnicornCreatorScene),
+  startup('BootScene', 'bootstrap'),
+  startup('PreloadScene', 'bootstrap'),
+  startup('TitleScene', 'bootstrap'),
+  startup('ResizeTestScene', 'diagnostic'),
+  startup('MovementTestScene', 'diagnostic'),
+  startup('MoonflowerGladeScene', 'exploration'),
+  startup('CottageInteriorScene', 'interior'),
+  startup('CottageDecorateScene', 'interior'),
+  startup('MoonflowerPatchScene', 'exploration'),
+  startup('SunbeamVillageScene', 'exploration'),
+  startup('RainbowMeadowScene', 'exploration'),
+  startup('CrystalBrookScene', 'exploration'),
+  startup('WhisperingWoodsScene', 'exploration'),
+  startup('FireflyLanternScene', 'activity'),
+  startup('RainbowRunEntryScene', 'race'),
+  startup('NovaTutorialRaceScene', 'race'),
+  startup('RaceScene', 'race'),
+  startup('PipEggHatchScene', 'story'),
+  startup('DoorwayStubScene', 'utility'),
+  startup('DialogueTestScene', 'diagnostic'),
+  startup('UnicornCreatorScene', 'onboarding'),
   runtime(
     'InventoryScene',
     'modal',
@@ -189,6 +165,10 @@ export const SCENE_MANIFEST = [
 ] as const satisfies readonly SceneManifestEntry[];
 
 export type SceneKey = (typeof SCENE_MANIFEST)[number]['key'];
+export type StartupSceneKey = Extract<
+  (typeof SCENE_MANIFEST)[number],
+  { loadBoundary: 'startup' }
+>['key'];
 
 const SCENE_BY_KEY = new Map<SceneKey, SceneManifestEntry>(
   SCENE_MANIFEST.map((entry) => [entry.key, entry] as const),
@@ -202,6 +182,8 @@ export function getSceneManifestEntry(key: SceneKey): SceneManifestEntry {
   return entry;
 }
 
-export function getStartupSceneConstructors(): SceneConstructor[] {
-  return SCENE_MANIFEST.flatMap((entry) => (entry.loadBoundary === 'startup' ? [entry.scene] : []));
+export function getStartupSceneKeys(): StartupSceneKey[] {
+  return SCENE_MANIFEST.flatMap((entry) =>
+    entry.loadBoundary === 'startup' ? [entry.key as StartupSceneKey] : [],
+  );
 }
