@@ -3,21 +3,21 @@ import { MUSIC_CATALOGUE } from '../../generated/audioCatalogue';
 import { getVerticalSliceAudio } from '../audio/VerticalSliceAudio';
 
 const VOLUMES = [
-  ['master-volume', 'masterVolume', 'All sound'],
-  ['music-volume', 'musicVolume', 'Music volume'],
-  ['ambience-volume', 'ambienceVolume', 'Ambience volume'],
-  ['sfx-volume', 'sfxVolume', 'Effects volume'],
+  ['master-volume', 'masterVolume'],
+  ['music-volume', 'musicVolume'],
+  ['ambience-volume', 'ambienceVolume'],
+  ['sfx-volume', 'sfxVolume'],
 ] as const;
 
 export function getSettingsAudioControlsManager(game: Phaser.Game): void {
   const host = document.getElementById('game-container')!;
   const audio = getVerticalSliceAudio();
-  const sliders = VOLUMES.map(([kind, key, label]) => {
+  const sliders = VOLUMES.map(([kind, key]) => {
     const input = document.createElement('input');
     input.type = 'range';
     input.max = '1';
     input.step = '.01';
-    input.ariaLabel = label;
+    input.ariaLabel = kind;
     input.style.position = 'absolute';
     input.oninput = () => audio.updateSettings({ [key]: +input.value });
     host.append(input);
@@ -57,14 +57,14 @@ export function getSettingsAudioControlsManager(game: Phaser.Game): void {
       const target = row(kind);
       input.value = String(settings[key]);
       input.hidden = !target?.visible;
-      if (target && !input.hidden) place(target, input);
+      if (!input.hidden) place(target!, input);
     }
 
     const mode = row('music');
     select.hidden = settings.musicEnabled || !mode?.visible;
-    if (!select.hidden && mode) {
+    if (!select.hidden) {
       select.value = settings.selectedMusicTrackId ?? MUSIC_CATALOGUE[0]?.id ?? '';
-      place(mode, select);
+      place(mode!, select);
     }
   });
 }
