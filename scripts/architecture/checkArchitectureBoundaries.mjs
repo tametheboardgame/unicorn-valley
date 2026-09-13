@@ -1,6 +1,10 @@
 import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
-import { extractImportSpecifiers, validateDependency } from './architectureBoundaries.mjs';
+import {
+  extractImportSpecifiers,
+  validateDependency,
+  validateRetiredSourcePath,
+} from './architectureBoundaries.mjs';
 
 const repositoryRoot = process.cwd();
 const sourceRoot = path.join(repositoryRoot, 'src', 'game');
@@ -30,6 +34,8 @@ const violations = [];
 for (const filePath of sourceFiles) {
   const sourcePath = path.relative(repositoryRoot, filePath).replaceAll('\\', '/');
   const sourceText = await readFile(filePath, 'utf8');
+
+  violations.push(...validateRetiredSourcePath(sourcePath));
 
   for (const importSpecifier of extractImportSpecifiers(sourceText)) {
     violations.push(...validateDependency(sourcePath, importSpecifier));
