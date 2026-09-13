@@ -176,9 +176,9 @@ test('title launches canonical settings with fullscreen and persistent accessibi
 
   await moveSelectionUntilVisible(page, 'SettingsScene', 'settings-row-fullscreen');
   current = await snapshot(page);
-  expect(sceneText(current, 'SettingsScene').some((value) => value.startsWith('Fullscreen: '))).toBe(
-    true,
-  );
+  expect(
+    sceneText(current, 'SettingsScene').some((value) => value.startsWith('Fullscreen: ')),
+  ).toBe(true);
 
   await page.keyboard.press('Escape');
   await waitForScene(page, 'TitleScene');
