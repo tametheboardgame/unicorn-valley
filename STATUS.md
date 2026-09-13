@@ -6,24 +6,11 @@ Last updated: 2026-09-13
 
 `R6.5-WP19H0 - Architecture, UI, Test and Performance Consolidation` is active on draft PR #172 / branch `agent/r6.5-wp19h0-consolidation`.
 
-H0A and H0B are complete and accepted. H0C is active.
+H0A-H0E are complete and accepted. H0F is active.
 
-H0B established the canonical runtime architecture/lifetime contract, added executable dependency-boundary checks, and moved `ContinueRestoreManager` from persistence into application orchestration without changing its runtime behaviour or compatibility IDs.
+H0E completed the test-contract redesign: brittle index/raw-coordinate assertions were replaced with semantic player-facing hooks where appropriate, a shared browser diagnostics helper now owns scene/object interaction, meaningful geometry/spatial assertions were retained, and no complete test file was deleted without retirement evidence. Final H0E qualification passed 123 Vitest files / 476 tests plus 19 focused Chromium browser contracts in 4.6 minutes, project-contract validation, deployed startup/save/reload/Continue smoke and the inherited Settings/UI regression.
 
-H0B qualification on checkpoint `e0b588c49cea3fa7eec748a79892b6f8bbdc1ed1`:
-
-- formatting: pass;
-- lint: pass with the same 34 inherited warnings;
-- architecture self-tests: 4/4 pass, including deliberate prohibited-edge rejection;
-- repository architecture scan: pass across 380 `src/game` files;
-- type-check: pass;
-- Vitest: 120 files / 465 tests pass;
-- production build: pass;
-- AI project operating contract: pass;
-- immutable deployed startup/save/reload/Continue smoke: pass;
-- performance envelope: still fails only at the inherited total-JavaScript ceiling, now 650.2 KiB gzip against 650 KiB, slightly below H0A's 650.4 KiB baseline but not a pass.
-
-H0C now owns the reusable UI design-system and canvas/DOM bridge work. The first proof slice will converge overlapping token sources and migrate Settings audio controls away from bespoke post-step positioning onto a reusable overlay contract.
+The unchanged inherited performance ceiling remains the only core CI failure: 653.9 KiB total JavaScript gzip against the 650 KiB envelope. It has not been raised.
 
 `R6.5-WP19H - Audio Integration and Authoring Guide` remains complete, human-approved, merged and production released through PR #169.
 
@@ -33,11 +20,12 @@ Path: `docs/work-packages/R6.5-WP19H0-PERFORMANCE-ARCHITECTURE-CODEBASE-CONSOLID
 
 - H0A: complete.
 - H0B: complete.
-- H0C: active.
-- H0D-H0K: not started.
-
-The unchanged performance ceiling remains a known inherited qualification failure and must not be raised merely to obtain green CI.
+- H0C: complete.
+- H0D: complete.
+- H0E: complete.
+- H0F: active.
+- H0G-H0K: not started.
 
 ## Next work
 
-Complete and validate H0C before beginning H0D. H0 remains behaviour-preserving and must stop after H0K technical qualification for David's explicit approval before merge/production or `R6.5-WP19H1`.
+Implement and validate H0F's tiered verification model, preserving the complete H0K safety floor and leaving deterministic source-to-test ownership mapping to H0G. H0 remains behaviour-preserving and must stop after H0K technical qualification for David's explicit approval before merge/production or `R6.5-WP19H1`.

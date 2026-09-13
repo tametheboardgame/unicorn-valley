@@ -15,8 +15,8 @@ David authorised H0A-H0K in strict order on one long-lived delivery branch. Code
 - H0B: complete and accepted.
 - H0C: complete and accepted.
 - H0D: complete and accepted.
-- H0E: active.
-- H0F: not started.
+- H0E: complete and accepted.
+- H0F: active.
 - H0G: not started.
 - H0H: not started.
 - H0I: not started.
@@ -94,16 +94,28 @@ Final H0D qualification on `2f792fc46364287b9cae147b0874473c3057c8e8`:
 
 H0D therefore satisfies scene identity, composition/scaffolding, proof migration and lifecycle/input-cleanup acceptance and is closed.
 
-## H0E active scope
+## H0E acceptance evidence
 
-H0E is auditing the existing H0A test inventory against stable player/product contracts. The first implementation checkpoint:
+H0E redesigned test ownership around stable player/product contracts while preserving meaningful historical regressions and geometry checks. `docs/evidence/wp19h0/test-contract-audit.md` contains the classification contract, critical safety-floor matrix, rewrite/removal ledger and measured runtime/flake baseline. `tests/support/browserDiagnostics.ts` now provides one semantic diagnostics path for scene/object interaction.
 
-- introduces a shared browser diagnostics helper for semantic scene/object interaction;
-- rewrites flagged raw coordinate and collection-count assertions where stable semantic IDs already exist;
-- narrows duplicate browser proof when the same pure reward rule already has authoritative unit coverage;
-- deliberately retains coordinate/geometry assertions when spatial geometry is the actual product contract;
-- records a critical safety-floor matrix, rewrite/removal ledger and measured runtime/flake baseline in `test-contract-audit.md`;
-- adds a bounded Chromium verification workflow for the audited brittle-test set while the inherited performance ceiling continues to prevent normal downstream browser shards.
+Flagged brittle cases were either rewritten or explicitly retained where spatial geometry is itself the contract. No complete test file was deleted. The duplicate second Maple replay browser sequence was consolidated because finite repeat-reward behaviour is already authoritatively covered by `src/game/activities/RepeatableActivityProgress.test.ts`; the browser journey still proves entry, real interaction, persistence and safe return.
+
+Final H0E qualification on `c1bcb8102a22dc04dae928b14d7eb053da40ab7a`:
+
+- formatting, lint, architecture boundaries and type-check pass;
+- 123 Vitest files / 476 tests pass in 10.38 seconds;
+- production build passes;
+- AI project contract passes;
+- immutable deployed startup/save/reload/Continue smoke passes;
+- inherited targeted Settings/UI regression passes;
+- H0E semantic browser regression passes all 19 audited tests in 4.6 minutes; run `34757264316`, artifact `h0e-semantic-contract-regression` / ID `10317457735`;
+- total JS remains 653.9 KiB gzip against the unchanged 650 KiB envelope. The budget was not raised.
+
+H0E therefore satisfies test classification, critical-contract ownership, brittle-assertion redesign, removal/rewrite evidence and measured runtime/flake acceptance and is closed.
+
+## H0F active scope
+
+H0F now owns the tiered verification model. It must separate fast feedback from authoritative final qualification while preserving the complete H0K safety floor. The implementation must provide Tier 0 static/architecture checks, Tier 1 affected/full unit verification as appropriate, Tier 2 targeted subsystem browser smoke, Tier 3 full Chromium qualification and Tier 4 cross-browser/deployed qualification. It must classify docs-only, micro-fix, bounded-feature, cross-cutting and full-WP/release changes, emit the selected class/groups, automatically escalate shared/core changes, expose a manual full-CI escape hatch and schedule periodic full qualification. H0G will subsequently make source-to-test selection deterministic through the version-controlled ownership map and merge-base classifier.
 
 ## Preservation and gates
 

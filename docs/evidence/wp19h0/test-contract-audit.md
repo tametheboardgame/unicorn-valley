@@ -55,11 +55,26 @@ No entire test file is removed in this checkpoint. A test may be removed later o
 
 `tests/support/browserDiagnostics.ts` establishes one reusable path for diagnostics boot, snapshots, scene waits/starts, named-object waits/clicks and sprite positioning. Named-object clicking converts logical game coordinates through the diagnostic snapshot and current canvas bounds, so tests no longer embed arbitrary screen coordinates merely to activate known controls.
 
+## Final H0E qualification
+
+Final qualification head: `c1bcb8102a22dc04dae928b14d7eb053da40ab7a`.
+
+- Formatting, lint, architecture boundaries and type-check passed.
+- Vitest passed 123 files / 476 tests in 10.38 seconds.
+- Production build passed.
+- AI project contract validation passed.
+- Immutable deployed startup/save/reload/Continue smoke passed.
+- The inherited targeted Settings/UI browser regression passed.
+- H0E semantic contract run `34757264316` passed all 19 audited Chromium tests in 4.6 minutes. Evidence artifact: `h0e-semantic-contract-regression`, artifact ID `10317457735`.
+- The inherited performance gate remains visible and unchanged at 653.9 KiB total-JavaScript gzip versus the 650 KiB envelope.
+
 ## Flake and runtime baseline
 
 H0A timing evidence in `ci-timing-baseline.json` records Validate at roughly 26-28 seconds, unit tests around 10 seconds and production build around 2-3 seconds on sampled successful runs. Full Chromium playtest shards are materially more expensive, with sampled execution around 521-1,003 seconds per shard. Browser compatibility sampled around 411-485 seconds end-to-end, with the browser step itself around 344-420 seconds. Immutable deployed smoke is roughly one minute in the captured sample.
 
 The clean H0D compatibility run `34756628024` completed 48 applicable cases with 15 intentional portrait/project skips across Chromium, Firefox and WebKit desktop/tablet/mobile projects in 7.1 minutes. An earlier H0C WebKit-tablet attempt timed out before canvas visibility and then passed on an unchanged-code rerun in 1.4 seconds. This is classified `flaky/environmental`, owned by browser startup/compatibility infrastructure. It is not silently skipped, converted into a product pass or used to weaken assertions.
+
+The final H0E semantic regression ran 19 audited Chromium tests serially in 4.6 minutes. This provides a measured Tier 2-style subsystem baseline and reinforces the need to reserve full multi-browser/multi-shard qualification for higher-risk/final gates.
 
 ## H0F hand-off
 

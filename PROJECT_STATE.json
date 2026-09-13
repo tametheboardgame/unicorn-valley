@@ -10,9 +10,9 @@
   "autonomy_state": "green",
   "agent_state": "active",
   "branch": "agent/r6.5-wp19h0-consolidation",
-  "latest_commit": "e0b588c49cea3fa7eec748a79892b6f8bbdc1ed1",
-  "ci_state": "failing",
-  "technical_validation_state": "running",
+  "latest_commit": "c1bcb8102a22dc04dae928b14d7eb053da40ab7a",
+  "ci_state": "failing_known_performance_gate",
+  "technical_validation_state": "running_h0f",
   "human_acceptance_state": "pending",
   "next_work_package": "R6.5-WP19H0",
   "next_work_package_path": "docs/work-packages/R6.5-WP19H0-PERFORMANCE-ARCHITECTURE-CODEBASE-CONSOLIDATION.md",
@@ -21,6 +21,6 @@
   "night_shift_state": "not_configured",
   "chat_disposition": "keep",
   "delivery_mode": "pr_required",
-  "last_activity_at": "2026-09-13T12:08:00+01:00",
-  "updated_at": "2026-09-13T12:08:00+01:00"
+  "last_activity_at": "2026-09-13T13:30:10+01:00",
+  "updated_at": "2026-09-13T13:30:10+01:00"
 }
