@@ -137,7 +137,6 @@ export class VerticalSliceAudio {
       }
     }
     if (restart) this.restartSceneLoops();
-    void this.musicElement?.play().catch(() => undefined);
   }
 
   public playSfx(kind: VerticalSliceSfx): void {
