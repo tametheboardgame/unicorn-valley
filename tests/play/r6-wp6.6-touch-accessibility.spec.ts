@@ -170,6 +170,26 @@ async function logicalTapNamedObject(
   await logicalTap(page, object.x, object.y);
 }
 
+async function scrollUntilNamedObjectVisible(
+  page: Page,
+  sceneKey: string,
+  objectName: string,
+): Promise<void> {
+  await page.mouse.move(640, 360);
+  for (let attempt = 0; attempt < 8; attempt += 1) {
+    const snapshot = await getSnapshot(page);
+    const object = getScene(snapshot, sceneKey).objects.find(
+      (candidate) => candidate.name === objectName && candidate.visible && candidate.interactive,
+    );
+    if (object) {
+      return;
+    }
+    await page.mouse.wheel(0, 280);
+    await page.waitForTimeout(100);
+  }
+  throw new Error(`Could not scroll ${objectName} into view in ${sceneKey}.`);
+}
+
 async function waitForForwardControl(page: Page, running: boolean): Promise<void> {
   await page.waitForFunction((expectedRunning) => {
     const diagnosticWindow = window as typeof window & {
@@ -312,13 +332,12 @@ test('target-tablet touch completes creator, exploration, Book and accessibility
 
   await logicalTap(page, 486, 46);
   await waitForScene(page, 'SettingsScene');
-  // WP19G adds several real audio rows ahead of Accessibility. Scroll far
-  // enough to place both accessibility controls fully inside the clipped
-  // viewport before exercising their touch targets.
-  await page.mouse.move(640, 360);
-  await page.mouse.wheel(0, 1000);
-  await page.waitForTimeout(150);
+  // WP19G adds several real audio rows ahead of Accessibility. Follow the
+  // semantic rows instead of assuming one fixed wheel distance maps to the
+  // current Settings content height.
+  await scrollUntilNamedObjectVisible(page, 'SettingsScene', 'settings-row-reduced-motion');
   await logicalTapNamedObject(page, 'SettingsScene', 'settings-row-reduced-motion');
+  await scrollUntilNamedObjectVisible(page, 'SettingsScene', 'settings-row-high-visibility');
   await logicalTapNamedObject(page, 'SettingsScene', 'settings-row-high-visibility');
   await page.waitForTimeout(300);
 
