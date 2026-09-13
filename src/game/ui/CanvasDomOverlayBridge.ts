@@ -7,6 +7,8 @@ export interface CanvasDomOverlayPlacement {
   width: number;
   height: number;
   visible?: boolean;
+  minCssWidth?: number;
+  minCssHeight?: number;
   clip?: {
     left: number;
     top: number;
@@ -48,7 +50,7 @@ export class CanvasDomOverlayBridge {
     element.style.position = 'absolute';
     element.style.boxSizing = 'border-box';
     element.style.zIndex = String(UI_DESIGN_TOKENS.depth.domOverlay);
-    element.onpointerdown = (event) => event.stopPropagation();
+    element.addEventListener('pointerdown', (event) => event.stopPropagation());
     this.host.append(element);
 
     const registration = { element, resolve };
@@ -74,7 +76,11 @@ export class CanvasDomOverlayBridge {
   private syncOne(registration: OverlayRegistration): void {
     const placement = registration.resolve();
     const element = registration.element;
-    if (!placement || placement.visible === false || (placement.clip && !intersectsClip(placement, placement.clip))) {
+    if (
+      !placement ||
+      placement.visible === false ||
+      (placement.clip && !intersectsClip(placement, placement.clip))
+    ) {
       element.hidden = true;
       return;
     }
@@ -87,7 +93,13 @@ export class CanvasDomOverlayBridge {
     element.hidden = false;
     element.style.left = `${canvasRect.left - hostRect.left + placement.x * scaleX}px`;
     element.style.top = `${canvasRect.top - hostRect.top + placement.y * scaleY}px`;
-    element.style.width = `${Math.max(UI_DESIGN_TOKENS.control.minimumTouchTargetPx, placement.width * scaleX)}px`;
-    element.style.height = `${Math.max(UI_DESIGN_TOKENS.control.nativeHeightPx, placement.height * scaleY)}px`;
+    element.style.width = `${Math.max(
+      placement.minCssWidth ?? UI_DESIGN_TOKENS.control.minimumTouchTargetPx,
+      placement.width * scaleX,
+    )}px`;
+    element.style.height = `${Math.max(
+      placement.minCssHeight ?? UI_DESIGN_TOKENS.control.nativeHeightPx,
+      placement.height * scaleY,
+    )}px`;
   }
 }
