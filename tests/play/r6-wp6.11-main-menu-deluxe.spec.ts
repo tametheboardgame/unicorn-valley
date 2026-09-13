@@ -109,12 +109,13 @@ function visibleTitleText(snapshot: DiagnosticSnapshot): string[] {
   );
 }
 
-function titlePanelHeight(snapshot: DiagnosticSnapshot): number {
-  return (
-    snapshot.scenes
-      .find((scene) => scene.key === 'TitleScene')
-      ?.objects.find((object) => object.name === 'title-menu-panel')?.displayHeight ?? 0
+function titleActionSpan(snapshot: DiagnosticSnapshot, names: readonly string[]): number {
+  const title = snapshot.scenes.find((scene) => scene.key === 'TitleScene');
+  const actionYs = names.map(
+    (name) => title?.objects.find((object) => object.name === name)?.y ?? Number.NaN,
   );
+  expect(actionYs.every(Number.isFinite)).toBe(true);
+  return Math.max(...actionYs) - Math.min(...actionYs);
 }
 
 test('new players get a compact front door without irrelevant returning-player actions', async ({
@@ -130,7 +131,8 @@ test('new players get a compact front door without irrelevant returning-player a
   expect(visibleText).toContain('Settings');
   expect(visibleText).not.toContain('Continue');
   expect(visibleText).not.toContain('My Unicorn');
-  expect(titlePanelHeight(snapshot)).toBeLessThan(400);
+  expect(titleActionSpan(snapshot, ['title-menu-new-game', 'title-menu-settings'])).toBeGreaterThanOrEqual(70);
+  expect(titleActionSpan(snapshot, ['title-menu-new-game', 'title-menu-settings'])).toBeLessThan(100);
 
   await tapTitleText(page, 'New Game');
   await waitForScene(page, 'UnicornCreatorScene');
@@ -155,7 +157,22 @@ test('returning players get the expanded card, one-tap Continue and protected Ne
   expect(visibleText).toContain('New Game');
   expect(visibleText).toContain('My Unicorn');
   expect(visibleText).toContain('Settings');
-  expect(titlePanelHeight(snapshot)).toBeGreaterThan(450);
+  expect(
+    titleActionSpan(snapshot, [
+      'title-menu-continue',
+      'title-menu-new-game',
+      'title-menu-my-unicorn',
+      'title-menu-settings',
+    ]),
+  ).toBeGreaterThanOrEqual(210);
+  expect(
+    titleActionSpan(snapshot, [
+      'title-menu-continue',
+      'title-menu-new-game',
+      'title-menu-my-unicorn',
+      'title-menu-settings',
+    ]),
+  ).toBeLessThan(230);
 
   await tapTitleText(page, 'Continue');
   await waitForScene(page, 'CottageInteriorScene');
