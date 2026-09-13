@@ -131,8 +131,12 @@ test('new players get a compact front door without irrelevant returning-player a
   expect(visibleText).toContain('Settings');
   expect(visibleText).not.toContain('Continue');
   expect(visibleText).not.toContain('My Unicorn');
-  expect(titleActionSpan(snapshot, ['title-menu-new-game', 'title-menu-settings'])).toBeGreaterThanOrEqual(70);
-  expect(titleActionSpan(snapshot, ['title-menu-new-game', 'title-menu-settings'])).toBeLessThan(100);
+  expect(
+    titleActionSpan(snapshot, ['title-menu-new-game', 'title-menu-settings']),
+  ).toBeGreaterThanOrEqual(70);
+  expect(titleActionSpan(snapshot, ['title-menu-new-game', 'title-menu-settings'])).toBeLessThan(
+    100,
+  );
 
   await tapTitleText(page, 'New Game');
   await waitForScene(page, 'UnicornCreatorScene');
