@@ -2,11 +2,11 @@
 
 ## 2026-09-08 approved remediation plan
 
-WP19B was human-approved and merged as `c2d98ae` on 9 September 2026; its merge-SHA-bound production smoke passed in Actions `34356744951`. WP19C was subsequently human-approved, merged through PR #163 and released to production. WP19D is complete, human-approved, merged and released; WP19E is active. David’s mild observation that some places appear to have two path layers is explicitly owned by the post-audio area-by-area final polish programme rather than a generic final graphics pass.
+WP19B was human-approved and merged as `c2d98ae` on 9 September 2026; its merge-SHA-bound production smoke passed in Actions `34356744951`. WP19C was subsequently human-approved, merged through PR #163 and released to production. WP19D is complete, human-approved, merged and released; later WP19 remediation has progressed through the audio programme. David’s mild observation that some places appear to have two path layers is explicitly owned by the post-audio area-by-area final polish programme rather than a generic final graphics pass.
 
-David approved the whole-game audit remediation plan on 2026-09-08. Read `docs/audits/2026-09-08-WHOLE-GAME-AUDIT.md` and `docs/2026-09-08-REMEDIATION-PROPOSAL.md` first. Approved next order: WP19A persistence safety → WP18K foundation → WP19B boundaries/navigation → WP19C creator → WP19D interactions/NPCs → WP19E conversations → WP19F consistent UI/generated title → WP19G/H audio → WP19H1-H13 area-by-area final polish → WP19I qualification → WP18H daughter replay → WP17 readiness. Independent preparation is described in the proposal.
+David approved the whole-game audit remediation plan on 2026-09-08. Read `docs/audits/2026-09-08-WHOLE-GAME-AUDIT.md` and `docs/2026-09-08-REMEDIATION-PROPOSAL.md` first. Approved order, as amended on 12 September 2026: WP19A persistence safety → WP18K foundation → WP19B boundaries/navigation → WP19C creator → WP19D interactions/NPCs → WP19E conversations → WP19F consistent UI/generated title → WP19G/H audio → **WP19H0 performance architecture/codebase consolidation** → WP19H1-H13 area-by-area final polish → WP19I qualification → WP18H daughter replay → WP17 readiness. Independent preparation is described in the proposal.
 
-The 2026-09-11 area-polish decision supersedes the earlier direct WP19H → WP19I transition. This approves the work programme, not completion of its implementation. Existing delivery history below is preserved. R7 and production release remain gated. This plan supersedes the previous direct WP18K→WP18H sequence.
+The 2026-09-11 area-polish decision superseded the earlier direct WP19H → WP19I transition. On 2026-09-12, WP19H exposed that the fixed 650 KiB whole-game gzip safety envelope was becoming an artificial product-size ceiling because it sums lazy/on-demand chunks as well as startup code. David therefore approved WP19H0 as a mandatory architecture/performance gate between audio and area polish. Existing delivery history below is preserved. R7 and production release remain gated.
 
 This file is the concise project-level navigation layer. Detailed release and human-playtest evidence remains authoritative in `docs/`.
 
@@ -78,7 +78,7 @@ Objective: perform a repo-wide, behaviour-preserving architecture audit and remo
 
 WP18K must preserve current gameplay, saves, progression, map topology, inventory semantics, race/movement rules and the exact approved UI behaviour. It must not use cleanup as an excuse for a visual redesign.
 
-The hard 520 KiB application-entry performance budget remains unchanged.
+The hard 520 KiB application-entry performance budget remains unchanged pending the later H0 measured performance-policy redesign.
 
 ### R6.5-WP19B - World Boundaries and Tap-Navigation Parity
 
@@ -108,40 +108,56 @@ Do **not** add a temporary ordinary-conversation return-position/checkpoint syst
 
 ### R6.5-WP19E - Conversation and Feedback System
 
-State: **active implementation; Amber visual/child-reading gate remains pending**.
-
 Path: `docs/work-packages/R6.5-WP19E-CONVERSATION-FEEDBACK.md`
 
 Accepted direction clarified 2026-09-11: ordinary NPC and quest conversations remain in the active world scene. The player and speaker stay visible; movement/background interaction is locked; the NPC remains stopped/facing the player; short dialogue, multi-line dialogue, quest hand-ins and choices all use one lower-screen conversation family. Existing conversation-only cutscene/scene transitions are retired rather than supplemented with return-position bookkeeping. Dedicated scenes remain valid for genuine modes such as races, minigames, creator flows and required interiors/shops.
 
 ### R6.5-WP19F - Final UI Consistency and Generated Home Screen
 
-State: **approved future package after WP19E**.
+Path: `docs/work-packages/R6.5-WP19F-UI-CONSISTENCY-GENERATED-TITLE.md`
 
 Objective: complete remaining UI/copy consistency work while preserving the approved HUD, Bag, Map and Wonderbook structures, and add the approved generated storybook title/home artwork with live controls above it. Actual artwork remains subject to human visual approval.
 
 ### R6.5-WP19G - MP3 Catalogue and Playback Foundation
 
-State: **approved future package after WP19F**.
+Path: `docs/work-packages/R6.5-WP19G-MP3-AUDIO-FOUNDATION.md`
 
 Objective: establish the explicit MP3 catalogue, playback, settings and lifecycle foundation so committed music/audio files can be mapped without scene-specific code changes.
 
 ### R6.5-WP19H - Audio Integration and Authoring Guide
 
-State: **approved future package after WP19G**.
+State: **active implementation/remediation in PR #169; final human soundtrack/mix review pending**.
 
-Objective: wire music and sound effects to the intended regions/events, provide the upload/assignment guide, and complete subjective soundtrack/mix review. Completion of WP19H unlocks the area-by-area final polish programme below.
+Path: `docs/work-packages/R6.5-WP19H-AUDIO-INTEGRATION-GUIDE.md`
+
+Objective: wire music and sound effects to the intended regions/events, provide the upload/assignment guide, and complete subjective soundtrack/mix review. Human-review remediation requires seamless same-track continuity, location-independent Chosen-track playback, crossfade only when contextual music genuinely changes, one Scene/Chosen music-mode control, a conditional track picker, real volume sliders and the title theme on the title screen.
+
+WP19H must finish and receive David's audio acceptance before H0 implementation starts. The existing WP19H performance gate is kept for this package so functional audio completion remains separate from the later performance-policy redesign.
+
+### R6.5-WP19H0 - Performance Architecture and Codebase Consolidation
+
+State: **approved 2026-09-12; mandatory immediately after accepted WP19H**.
+
+Path: `docs/work-packages/R6.5-WP19H0-PERFORMANCE-ARCHITECTURE-CODEBASE-CONSOLIDATION.md`
+
+Purpose: give Unicorn Valley durable headroom for substantial future growth. H0 measures the real startup/first-playable dependency graph, adds attributable bundle analysis, introduces deliberate region/feature code-splitting, removes evidence-backed dead/duplicate/legacy code and redesigns the performance policy so hard gates protect player-visible startup and pathological lazy chunks rather than imposing a permanent fixed ceiling on the total breadth of the game.
+
+H0 must **not** simply raise 650 KiB to a larger arbitrary total. The final policy must retain hard startup/entry and chunk-level controls, track total emitted JavaScript as a trend, and derive thresholds from measured healthy baselines with deliberate future headroom.
+
+H0 is behaviour-preserving. Save/progression, accepted UI, movement/racing, conversations/interactions and accepted WP19H audio behaviour remain frozen. David explicitly reviews/accepts H0 technical evidence before H1 begins.
 
 ### R6.5-WP19H1-H13 - Area-by-Area Final Polish Programme
 
-State: **approved 2026-09-11; starts only after WP19H audio integration**.
+State: **approved 2026-09-11; starts only after WP19H0 is accepted**.
+
+Path: `docs/work-packages/R6.5-WP19H1-H13-AREA-FINAL-POLISH-PROGRAMME.md`
 
 Purpose: give every playable area an explicit final human-led quality pass before integrated qualification and the daughter replay. This replaces the vague idea of one generic final graphics pass. The goal is not only bug fixing: each package may tighten graphics, increase scenery density, correct layering/depth, improve atmosphere, resolve local navigation/collision/interaction problems and make mild visual redesigns where the area would materially benefit.
 
 Every area package follows the same mandatory five-stage contract:
 
 1. **Human review first.** David reviews the area on laptop, tablet and phone before implementation begins, and records everything that should be improved. The agent must not pre-empt this stage with a visual redesign.
-2. **Area audit.** Reconcile David’s feedback with a focused technical/visual inspection covering scenery and composition, art consistency, paths and layering, collision/navigation, interactions/NPCs, responsive presentation, performance and any area-specific defects.
+2. **Area audit.** Reconcile David’s feedback with a focused technical/visual inspection covering scenery and composition, art consistency, paths and layering, collision/navigation, interactions/NPCs, responsive presentation, the H0 performance contract and any area-specific defects.
 3. **Remediation.** Implement the agreed tightening. Mild visual redesign is explicitly permitted when justified by the review, while preserving accepted gameplay/progression unless the package explicitly owns a correction.
 4. **Cross-device validation.** Recheck the finished area on laptop, tablet and phone, backed by targeted automated regression and representative responsive evidence.
 5. **Human acceptance.** David reviews the finished area and explicitly accepts it before that area package closes.
@@ -168,9 +184,9 @@ Known graphical observations such as apparently duplicated path layers are owned
 
 ### R6.5-WP19I - Integrated Qualification
 
-State: **approved, but now blocked by WP19H1-H13 (and any additional area packages discovered by the inventory reconciliation)**.
+State: **approved, but blocked by WP19H0, WP19H1-H13 and any additional area packages discovered by the inventory reconciliation**.
 
-WP19I remains the whole-game technical qualification package. It must run only after the audio work and every area final-pass package has been accepted, so qualification measures the actual intended R6.5 release candidate rather than a pre-polish build.
+WP19I remains the whole-game technical qualification package. It must run only after the audio work, H0 architecture gate and every area final-pass package have been accepted, so qualification measures the actual intended R6.5 release candidate rather than a pre-polish build.
 
 ### Known open defect outside WP18K
 
@@ -178,7 +194,7 @@ Any remaining world-geometry or interaction defects discovered by human testing 
 
 ### R6.5-WP18H - Full Human Tablet Replay and Return to WP17
 
-State: **deferred until WP19A-H, the full area-by-area final polish programme, WP19I qualification and known open blockers are accounted for**.
+State: **deferred until WP19H, WP19H0, the full area-by-area final polish programme, WP19I qualification and known open blockers are accounted for**.
 
 Path: `docs/work-packages/R6.5-WP18H-FULL-HUMAN-TABLET-REPLAY-RETURN-WP17.md`
 
@@ -186,7 +202,7 @@ Run another substantially unguided daughter playthrough on the Galaxy Tab S8 aft
 
 ### Dependency chain
 
-`WP17 evidence -> WP18A-G complete -> WP18I/J approved -> WP19A accepted -> WP18K complete -> WP19B complete -> WP19C complete -> WP19D complete -> WP19E -> WP19F -> WP19G -> WP19H audio -> WP19H1-H13 area final passes (+ any inventory-discovered additions) -> WP19I qualification -> WP18H human replay -> WP17 explicit readiness decision -> R7`
+`WP17 evidence -> WP18A-G complete -> WP18I/J approved -> WP19A accepted -> WP18K complete -> WP19B complete -> WP19C complete -> WP19D complete -> WP19E -> WP19F -> WP19G -> WP19H audio -> WP19H0 performance architecture/codebase consolidation -> WP19H1-H13 area final passes (+ any inventory-discovered additions) -> WP19I qualification -> WP18H human replay -> WP17 explicit readiness decision -> R7`
 
 ## R6.6 - Optional Android Packaging
 
@@ -209,5 +225,6 @@ Deferred daughter-led ideas and preservation requirements are listed in `docs/HU
 - Do not resurrect retired legacy UI to satisfy stale tests. Update stale tests to current authoritative behaviour.
 - Prefer clear ownership and reusable systems over repeated presentation managers or patches.
 - Save compatibility is preserved unless a bounded migration is explicitly authorised and tested.
-- The hard application-entry performance budget remains **520 KiB**.
+- Until H0 is accepted, the hard application-entry budget remains **520 KiB** and the existing R6.5 performance checks remain authoritative for active pre-H0 packages.
+- After H0, the measured startup/first-playable/lazy-chunk performance contract supersedes the fixed whole-game 650 KiB gzip ceiling; total emitted JavaScript remains tracked rather than ignored.
 - Production deployment still requires explicit user approval.

@@ -1,5 +1,6 @@
 import type { ItemDefinition, ItemId } from '../../content/contentTypes';
 import { itemRegistry } from '../../content/registries';
+import { type GameEventMap, type TypedEventBus, gameEventBus } from '../events/GameEventBus';
 import type { SaveService } from '../save/SaveService';
 import type { SaveGame } from '../save/saveSchema';
 import { COTTAGE_INTERIOR_MAP, type CottageDecorationSlot } from '../world/CottageInteriorMap';
@@ -97,7 +98,10 @@ function normaliseDecorationPlacements(save: SaveGame): SaveGame {
 }
 
 export class HomeDecorationService {
-  public constructor(private readonly saveService: SaveService) {}
+  public constructor(
+    private readonly saveService: SaveService,
+    private readonly events: TypedEventBus<GameEventMap> = gameEventBus,
+  ) {}
 
   public getSlot(slotId: string): CottageDecorationSlot {
     return requireSlot(slotId);
@@ -176,6 +180,11 @@ export class HomeDecorationService {
         furnitureBySlot,
       },
     });
+    this.events.emit('HOME_DECORATION_CHANGED', {
+      slotId: slot.id,
+      itemId: item.id,
+      change: 'placed',
+    });
 
     return { item, movedFromSlot };
   }
@@ -197,6 +206,11 @@ export class HomeDecorationService {
         ...save.home,
         furnitureBySlot,
       },
+    });
+    this.events.emit('HOME_DECORATION_CHANGED', {
+      slotId,
+      itemId: item?.id ?? null,
+      change: 'removed',
     });
 
     return item;

@@ -20,34 +20,73 @@ export interface MusicContextBinding {
 }
 
 export const MUSIC_BINDINGS: Readonly<Record<MusicContextId, MusicContextBinding>> = {
-  'title-creator': { themeTrackId: null, playlistTrackIds: [] },
-  'glade-cottage': { themeTrackId: null, playlistTrackIds: [] },
-  'village-interiors': { themeTrackId: null, playlistTrackIds: [] },
-  meadow: { themeTrackId: null, playlistTrackIds: [] },
-  'brook-grotto': { themeTrackId: null, playlistTrackIds: [] },
-  'woods-nook-grove': { themeTrackId: null, playlistTrackIds: [] },
+  'title-creator': {
+    themeTrackId: 'music:title/01-the-four-note-path',
+    playlistTrackIds: [],
+  },
+  'glade-cottage': {
+    themeTrackId: 'music:moonflower-glade/02-morning-by-the-stream',
+    playlistTrackIds: ['music:moonflower-glade/03-moonlit-garden-whispers'],
+  },
+  'village-interiors': {
+    themeTrackId: 'music:sunbeam-village/04-bustling-village-square',
+    playlistTrackIds: [
+      'music:sunbeam-village/05-sweet-pastry-song',
+      'music:sunbeam-village/06-the-illustrated-map',
+    ],
+  },
+  meadow: {
+    themeTrackId: 'music:rainbow-meadow/07-meadow-under-the-blue-sky',
+    playlistTrackIds: [],
+  },
+  'brook-grotto': {
+    themeTrackId: 'music:crystal-brook/09-crystal-currents',
+    playlistTrackIds: ['music:crystal-grotto/10-echoes-of-the-crystal-cave'],
+  },
+  'woods-nook-grove': {
+    themeTrackId: 'music:whispering-woods/11-whispering-woodpath',
+    playlistTrackIds: ['music:whispering-woods/12-fireflies-in-the-ancient-woods'],
+  },
   beach: { themeTrackId: null, playlistTrackIds: [] },
-  race: { themeTrackId: null, playlistTrackIds: [] },
+  race: {
+    themeTrackId: 'music:rainbow-run/08-speedy-sprints',
+    playlistTrackIds: [],
+  },
 };
 
 export const SFX_BINDINGS: Partial<Record<VerticalSliceSfx, string>> = {
   ui: 'sfx:ui-soft-chime',
+  'ui-back': 'sfx:ui/ui-back',
+  discovery: 'sfx:discoveries/discovery',
 };
 
-const SCENE_MUSIC_CONTEXT: Readonly<Record<string, MusicContextId>> = {
+export const INTERACTION_SFX_BINDINGS: Readonly<Record<string, VerticalSliceSfx>> = {
+  'interaction:display-stump': 'ui',
+  'interaction:meadow-ribbon-board': 'ui',
+};
+
+export const SCENE_MUSIC_CONTEXT: Readonly<Record<string, MusicContextId>> = {
   TitleScene: 'title-creator',
   UnicornCreatorScene: 'title-creator',
   MoonflowerGladeScene: 'glade-cottage',
   MoonflowerPatchScene: 'glade-cottage',
   CottageInteriorScene: 'glade-cottage',
+  CottageDecorateScene: 'glade-cottage',
+  PipEggHatchScene: 'glade-cottage',
   SunbeamVillageScene: 'village-interiors',
+  VillageInteriorScene: 'village-interiors',
+  R6VillageInteriorScene: 'village-interiors',
+  ShopScene: 'village-interiors',
   RainbowMeadowScene: 'meadow',
   WindmillLookoutScene: 'meadow',
   CrystalBrookScene: 'brook-grotto',
   CrystalGrottoScene: 'brook-grotto',
   WhisperingWoodsScene: 'woods-nook-grove',
   HollowTreeNookScene: 'woods-nook-grove',
-  StarBeachScene: 'beach',
+  FireflyGroveScene: 'woods-nook-grove',
+  FireflyLanternScene: 'woods-nook-grove',
+  StarlightBeachScene: 'beach',
+  RainbowRunEntryScene: 'race',
   RaceScene: 'race',
   NovaTutorialRaceScene: 'race',
 };
@@ -56,21 +95,23 @@ export function resolveMusicContext(sceneKey: string): MusicContextId | null {
   return SCENE_MUSIC_CONTEXT[sceneKey] ?? null;
 }
 
+export function resolveInteractionSfxCue(interactionId: string): VerticalSliceSfx | null {
+  return INTERACTION_SFX_BINDINGS[interactionId] ?? null;
+}
+
 export function getAudioAsset(id: string | null | undefined): AudioCatalogueEntry | null {
   return id ? (AUDIO_CATALOGUE.find((entry) => entry.id === id) ?? null) : null;
 }
 
 export function resolveSfxAsset(kind: VerticalSliceSfx): AudioCatalogueEntry | null {
   const asset = getAudioAsset(SFX_BINDINGS[kind]);
-  return asset?.kind === 'sfx' ? asset : null;
+  return asset?.id[0] === 's' ? asset : null;
 }
 
 export function resolveContextPlaylist(
   contextId: MusicContextId | null,
 ): readonly AudioCatalogueEntry[] {
-  if (!contextId) {
-    return [];
-  }
+  if (!contextId) return [];
   const binding = MUSIC_BINDINGS[contextId];
   const ids = binding.themeTrackId
     ? [binding.themeTrackId, ...binding.playlistTrackIds]
@@ -78,9 +119,7 @@ export function resolveContextPlaylist(
   const tracks: AudioCatalogueEntry[] = [];
   for (const id of ids) {
     const asset = getAudioAsset(id);
-    if (asset?.kind === 'music' && !tracks.includes(asset)) {
-      tracks.push(asset);
-    }
+    if (asset?.id[0] === 'm' && !tracks.includes(asset)) tracks.push(asset);
   }
   return tracks;
 }
@@ -94,9 +133,8 @@ export function validateAudioBindings(): string[] {
       : binding.playlistTrackIds;
     for (const id of ids) {
       const asset = getAudioAsset(id);
-      if (!asset) {
-        errors.push(`${contextId} references missing audio asset ${id}`);
-      } else if (asset.kind !== 'music') {
+      if (!asset) errors.push(`${contextId} references missing audio asset ${id}`);
+      else if (asset.id[0] !== 'm') {
         errors.push(`${contextId} references non-music audio asset ${id}`);
       }
     }
@@ -104,11 +142,8 @@ export function validateAudioBindings(): string[] {
 
   for (const [cue, id] of Object.entries(SFX_BINDINGS)) {
     const asset = getAudioAsset(id);
-    if (!asset) {
-      errors.push(`${cue} references missing audio asset ${id}`);
-    } else if (asset.kind !== 'sfx') {
-      errors.push(`${cue} references non-SFX audio asset ${id}`);
-    }
+    if (!asset) errors.push(`${cue} references missing audio asset ${id}`);
+    else if (asset.id[0] !== 's') errors.push(`${cue} references non-SFX audio asset ${id}`);
   }
   return errors;
 }

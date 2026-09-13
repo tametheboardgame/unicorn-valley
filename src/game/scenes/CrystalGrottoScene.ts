@@ -1,4 +1,3 @@
-import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import type { InteractionTarget } from '../interaction/InteractionTarget';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';

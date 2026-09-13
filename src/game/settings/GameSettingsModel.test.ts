@@ -11,9 +11,15 @@ const baseSnapshot = {
 };
 
 describe('GameSettingsModel', () => {
-  it('uses the same child-facing labels for persisted sound and accessibility settings', () => {
+  it('uses child-facing labels for sound mode and accessibility settings', () => {
     expect(describeGameSetting('muted', baseSnapshot).label).toBe('All sound: On');
-    expect(describeGameSetting('music', baseSnapshot).label).toBe('Music: On');
+    expect(describeGameSetting('music', baseSnapshot).label).toBe('Music: Scene music');
+    expect(
+      describeGameSetting('music', {
+        ...baseSnapshot,
+        audio: { ...baseSnapshot.audio, musicEnabled: false },
+      }).label,
+    ).toBe('Music: Chosen track');
     expect(describeGameSetting('reduced-motion', baseSnapshot).label).toBe('Reduced motion: Off');
     expect(describeGameSetting('high-visibility', baseSnapshot).label).toBe('High visibility: Off');
   });

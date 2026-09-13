@@ -8,11 +8,7 @@ import { getBrowserMagicalWeatherService } from '../atmosphere/MagicalWeatherSer
 import { getVerticalSliceAudio } from '../audio/VerticalSliceAudio';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { getBrowserSaveService } from '../save/browserSaveService';
-import {
-  describeGameSetting,
-  moveGameSettingSelection,
-  type GameSettingKind,
-} from '../settings/GameSettingsModel';
+import { describeGameSetting, type GameSettingKind } from '../settings/GameSettingsModel';
 import { UI_COLOURS, UI_FONT } from '../ui/uiTheme';
 
 interface SettingsSceneData {
@@ -39,6 +35,7 @@ interface SettingRow {
   label: Phaser.GameObjects.Text;
   kind: SettingsRowKind;
   contentY: number;
+  height: number;
   hovered: boolean;
 }
 
@@ -80,10 +77,13 @@ const BACKDROP = 0x302545;
 const ROW_X = GAME_WIDTH / 2;
 const ROW_WIDTH = 590;
 const ROW_HEIGHT = 64;
+const AUDIO_CONTROL_ROW_HEIGHT = 96;
 const ROW_RADIUS = 22;
 const ROW_GAP = 14;
+const TRACK_ROW_SPACE = AUDIO_CONTROL_ROW_HEIGHT + ROW_GAP;
 const ROW_SHADOW_X = 5;
 const ROW_SHADOW_Y = 6;
+const AUDIO_CONTROL_LABEL_OFFSET_Y = -21;
 const SECTION_HEADING_HEIGHT = 24;
 const SECTION_HEADING_GAP = 10;
 const SECTION_GAP = 24;
@@ -116,6 +116,7 @@ export class SettingsScene extends Phaser.Scene {
   private rows: SettingRow[] = [];
   private sectionHeadings: SettingsSectionHeading[] = [];
   private contentHeight = 0;
+  private musicTrackContentY = 0;
   private doneButton: Phaser.GameObjects.Rectangle | null = null;
   private doneSurface: Phaser.GameObjects.Graphics | null = null;
   private doneHovered = false;
@@ -142,6 +143,7 @@ export class SettingsScene extends Phaser.Scene {
     this.rows = [];
     this.sectionHeadings = [];
     this.contentHeight = 0;
+    this.musicTrackContentY = 0;
     this.selectedIndex = 0;
     this.scrollOffset = 0;
     this.maxScroll = 0;
@@ -157,7 +159,6 @@ export class SettingsScene extends Phaser.Scene {
     this.createPanel();
 
     this.createSectionedRows();
-    this.maxScroll = Math.max(0, this.contentHeight - VIEWPORT_HEIGHT);
     this.createScrollbar();
     this.createViewportGuards();
     this.createFixedChrome();
@@ -177,8 +178,6 @@ export class SettingsScene extends Phaser.Scene {
     this.unsubscribeAccessibility = this.accessibility.subscribe(() => this.refresh());
     this.unsubscribeAtmosphericTime = this.atmosphericTime.subscribe(() => this.refresh());
     this.unsubscribeWeather = this.magicalWeather.subscribe(() => this.refresh());
-    this.input.once('pointerdown', () => void this.audio.unlock());
-    this.input.keyboard?.once('keydown', () => void this.audio.unlock());
 
     this.setScrollOffset(0);
     this.refresh();
@@ -242,23 +241,29 @@ export class SettingsScene extends Phaser.Scene {
     let cursor = CONTENT_PADDING;
 
     SETTINGS_SECTIONS.forEach((section, sectionIndex) => {
-      if (sectionIndex > 0) {
-        cursor += SECTION_GAP;
-      }
-
+      if (sectionIndex > 0) cursor += SECTION_GAP;
       const headingY = cursor + SECTION_HEADING_HEIGHT / 2;
       this.createSectionHeading(section.title, headingY);
       cursor += SECTION_HEADING_HEIGHT + SECTION_HEADING_GAP;
 
       for (const kind of section.kinds) {
-        const contentY = cursor + ROW_HEIGHT / 2;
-        this.createRow(kind, this.rows.length, contentY);
-        cursor += ROW_HEIGHT + ROW_GAP;
+        const tall = kind === 'music-track' || kind.endsWith('-volume');
+        const height = tall ? AUDIO_CONTROL_ROW_HEIGHT : ROW_HEIGHT;
+        const contentY = cursor + height / 2;
+        this.createRow(kind, this.rows.length, contentY, height);
+        if (kind === 'music-track') this.musicTrackContentY = contentY;
+        cursor += height + ROW_GAP;
       }
       cursor -= ROW_GAP;
     });
 
     this.contentHeight = cursor + CONTENT_PADDING;
+    this.maxScroll = Math.max(
+      0,
+      this.contentHeight -
+        (this.audio.getSettings().musicEnabled ? TRACK_ROW_SPACE : 0) -
+        VIEWPORT_HEIGHT,
+    );
   }
 
   private createSectionHeading(title: string, contentY: number): void {
@@ -275,7 +280,7 @@ export class SettingsScene extends Phaser.Scene {
     this.sectionHeadings.push({ label, contentY });
   }
 
-  private createRow(kind: SettingsRowKind, index: number, contentY: number): void {
+  private createRow(kind: SettingsRowKind, index: number, contentY: number, height: number): void {
     const y = VIEWPORT_TOP + contentY;
     const surface = this.add
       .graphics()
@@ -283,38 +288,43 @@ export class SettingsScene extends Phaser.Scene {
       .setPosition(ROW_X, y)
       .setDepth(LIST_SURFACE_DEPTH);
     const button = this.add
-      .rectangle(ROW_X, y, ROW_WIDTH, ROW_HEIGHT, UI_COLOURS.white, 0.001)
+      .rectangle(ROW_X, y, ROW_WIDTH, height, UI_COLOURS.white, 0.001)
       .setName(`settings-row-${kind}`)
-      .setInteractive({ useHandCursor: true })
       .setDepth(LIST_CONTROL_DEPTH);
     const label = this.add
-      .text(ROW_X, y, '', {
-        color: UI_COLOURS.ink,
-        fontFamily: UI_FONT,
-        fontSize: '18px',
-        fontStyle: 'bold',
-      })
+      .text(
+        ROW_X,
+        y + (height === AUDIO_CONTROL_ROW_HEIGHT ? AUDIO_CONTROL_LABEL_OFFSET_Y : 0),
+        '',
+        {
+          color: UI_COLOURS.ink,
+          fontFamily: UI_FONT,
+          fontSize: '18px',
+          fontStyle: 'bold',
+        },
+      )
       .setName(`settings-row-${kind}-label`)
       .setOrigin(0.5)
       .setDepth(LIST_LABEL_DEPTH);
+    const row: SettingRow = { surface, button, label, kind, contentY, height, hovered: false };
 
-    const row: SettingRow = { surface, button, label, kind, contentY, hovered: false };
-    button.on('pointerover', () => {
-      row.hovered = true;
-      this.redrawRow(row);
-    });
-    button.on('pointerout', () => {
-      row.hovered = false;
-      this.redrawRow(row);
-    });
-    button.on('pointerup', () => {
-      if (this.dragDistance >= DRAG_THRESHOLD) {
-        return;
-      }
-      this.selectedIndex = index;
-      this.ensureSelectedVisible();
-      void this.toggleSetting(kind);
-    });
+    if (kind !== 'music-track') {
+      button.setInteractive({ useHandCursor: true });
+      button.on('pointerover', () => {
+        row.hovered = true;
+        this.redrawRow(row);
+      });
+      button.on('pointerout', () => {
+        row.hovered = false;
+        this.redrawRow(row);
+      });
+      button.on('pointerup', () => {
+        if (this.dragDistance >= DRAG_THRESHOLD) return;
+        this.selectedIndex = index;
+        this.ensureSelectedVisible();
+        void this.toggleSetting(kind);
+      });
+    }
     this.rows.push(row);
   }
 
@@ -337,23 +347,23 @@ export class SettingsScene extends Phaser.Scene {
     row.surface.fillStyle(UI_COLOURS.shadow, 0.11);
     row.surface.fillRoundedRect(
       -ROW_WIDTH / 2 + ROW_SHADOW_X,
-      -ROW_HEIGHT / 2 + ROW_SHADOW_Y,
+      -row.height / 2 + ROW_SHADOW_Y,
       ROW_WIDTH,
-      ROW_HEIGHT,
+      row.height,
       ROW_RADIUS,
     );
     row.surface.fillStyle(fill, 1);
-    row.surface.fillRoundedRect(-ROW_WIDTH / 2, -ROW_HEIGHT / 2, ROW_WIDTH, ROW_HEIGHT, ROW_RADIUS);
+    row.surface.fillRoundedRect(-ROW_WIDTH / 2, -row.height / 2, ROW_WIDTH, row.height, ROW_RADIUS);
     row.surface.lineStyle(lineWidth, stroke, 1);
     row.surface.strokeRoundedRect(
       -ROW_WIDTH / 2,
-      -ROW_HEIGHT / 2,
+      -row.height / 2,
       ROW_WIDTH,
-      ROW_HEIGHT,
+      row.height,
       ROW_RADIUS,
     );
     row.surface.fillStyle(UI_COLOURS.white, 0.18);
-    row.surface.fillRoundedRect(-ROW_WIDTH / 2 + 6, -ROW_HEIGHT / 2 + 6, ROW_WIDTH - 12, 18, 14);
+    row.surface.fillRoundedRect(-ROW_WIDTH / 2 + 6, -row.height / 2 + 6, ROW_WIDTH - 12, 18, 14);
   }
 
   private createScrollbar(): void {
@@ -503,9 +513,7 @@ export class SettingsScene extends Phaser.Scene {
   }
 
   private redrawDone(): void {
-    if (!this.doneSurface) {
-      return;
-    }
+    if (!this.doneSurface) return;
     const selected = this.selectedIndex === this.rows.length;
     const fill = this.doneHovered ? UI_COLOURS.cream : UI_COLOURS.gold;
     const lineWidth = selected ? 6 : 4;
@@ -522,40 +530,13 @@ export class SettingsScene extends Phaser.Scene {
   }
 
   private getRowPresentation(kind: SettingsRowKind) {
-    const audioSettings = this.audio.getSettings();
-    if (kind === 'master-volume') {
-      return {
-        label: `All sound level: ${this.formatVolume(audioSettings.masterVolume)}`,
-        enabled: !audioSettings.muted && audioSettings.masterVolume > 0,
-      };
-    }
-    if (kind === 'music-track') {
-      const tracks = this.audio.getMusicTracks();
-      const selected = tracks.find((track) => track.id === audioSettings.selectedMusicTrackId);
-      const suffix = tracks.length === 0 ? ' · add MP3s to the music folder' : '';
-      return {
-        label: `Music track: ${selected?.label ?? 'Scene theme'}${suffix}`,
-        enabled: selected !== undefined,
-      };
-    }
-    if (kind === 'music-volume') {
-      return {
-        label: `Music level: ${this.formatVolume(audioSettings.musicVolume)}`,
-        enabled: audioSettings.musicEnabled && audioSettings.musicVolume > 0,
-      };
-    }
-    if (kind === 'ambience-volume') {
-      return {
-        label: `Ambience level: ${this.formatVolume(audioSettings.ambienceVolume)}`,
-        enabled: audioSettings.ambienceEnabled && audioSettings.ambienceVolume > 0,
-      };
-    }
-    if (kind === 'sfx-volume') {
-      return {
-        label: `Effects level: ${this.formatVolume(audioSettings.sfxVolume)}`,
-        enabled: audioSettings.sfxEnabled && audioSettings.sfxVolume > 0,
-      };
-    }
+    const audio = this.audio.getSettings();
+    if (kind === 'master-volume') return { label: 'All sound level', enabled: !audio.muted };
+    if (kind === 'music-track') return { label: 'Chosen track', enabled: true };
+    if (kind === 'music-volume') return { label: 'Music volume', enabled: true };
+    if (kind === 'ambience-volume')
+      return { label: 'Ambience volume', enabled: audio.ambienceEnabled };
+    if (kind === 'sfx-volume') return { label: 'Effects volume', enabled: audio.sfxEnabled };
     if (kind === 'time-of-day') {
       const definition = this.atmosphericTime.getDefinition();
       const mode = this.atmosphericTime.getMode() === 'auto' ? 'Auto' : 'Manual';
@@ -575,28 +556,6 @@ export class SettingsScene extends Phaser.Scene {
     return describeGameSetting(kind, this.snapshot());
   }
 
-  private formatVolume(value: number): string {
-    return `${Math.round(value * 100)}%`;
-  }
-
-  private nextVolume(value: number): number {
-    const percent = Math.round(value * 100);
-    return percent >= 100 ? 0 : Math.min(100, Math.ceil((percent + 1) / 10) * 10) / 100;
-  }
-
-  private cycleMusicTrack(): void {
-    const tracks = this.audio.getMusicTracks();
-    if (tracks.length === 0) {
-      this.statusText?.setText('Add MP3 files to public/audio/music to make them available here.');
-      return;
-    }
-    const settings = this.audio.getSettings();
-    const ids: (string | null)[] = [null, ...tracks.map((track) => track.id)];
-    const currentIndex = ids.findIndex((id) => id === settings.selectedMusicTrackId);
-    const nextIndex = currentIndex < 0 ? 0 : (currentIndex + 1) % ids.length;
-    this.audio.updateSettings({ selectedMusicTrackId: ids[nextIndex] ?? null });
-  }
-
   private snapshot() {
     return {
       audio: this.audio.getSettings(),
@@ -607,43 +566,53 @@ export class SettingsScene extends Phaser.Scene {
   }
 
   private refresh(): void {
+    this.maxScroll = Math.max(
+      0,
+      this.contentHeight -
+        (this.audio.getSettings().musicEnabled ? TRACK_ROW_SPACE : 0) -
+        VIEWPORT_HEIGHT,
+    );
     for (const row of this.rows) {
       const presentation = this.getRowPresentation(row.kind);
       row.label.setText(presentation.label);
       this.redrawRow(row);
     }
+    this.setScrollOffset(this.scrollOffset);
     this.refreshFocus();
   }
 
   private refreshFocus(): void {
-    for (const row of this.rows) {
-      this.redrawRow(row);
-    }
+    for (const row of this.rows) this.redrawRow(row);
     this.redrawDone();
   }
 
-  private selectPrevious(): void {
-    this.selectedIndex = moveGameSettingSelection(this.selectedIndex, -1, this.rows.length + 1);
+  private moveSelection(delta: -1 | 1): void {
+    const total = this.rows.length + 1;
+    let next = this.selectedIndex;
+    do {
+      next = (next + delta + total) % total;
+    } while (next < this.rows.length && this.rows[next]?.kind === 'music-track');
+    this.selectedIndex = next;
     this.ensureSelectedVisible();
     this.refreshFocus();
+  }
+
+  private selectPrevious(): void {
+    this.moveSelection(-1);
   }
 
   private selectNext(): void {
-    this.selectedIndex = moveGameSettingSelection(this.selectedIndex, 1, this.rows.length + 1);
-    this.ensureSelectedVisible();
-    this.refreshFocus();
+    this.moveSelection(1);
   }
 
   private ensureSelectedVisible(): void {
-    if (this.selectedIndex >= this.rows.length) {
-      return;
-    }
+    if (this.selectedIndex >= this.rows.length) return;
     const row = this.rows[this.selectedIndex];
-    if (!row) {
-      return;
-    }
-    const rowTop = row.contentY - ROW_HEIGHT / 2 - 8;
-    const rowBottom = row.contentY + ROW_HEIGHT / 2 + 8;
+    if (!row) return;
+    const collapse = this.audio.getSettings().musicEnabled ? TRACK_ROW_SPACE : 0;
+    const contentY = row.contentY - (row.contentY > this.musicTrackContentY ? collapse : 0);
+    const rowTop = contentY - row.height / 2 - 8;
+    const rowBottom = contentY + row.height / 2 + 8;
     if (rowTop < this.scrollOffset) {
       this.setScrollOffset(rowTop);
     } else if (rowBottom > this.scrollOffset + VIEWPORT_HEIGHT) {
@@ -653,9 +622,13 @@ export class SettingsScene extends Phaser.Scene {
 
   private setScrollOffset(value: number): void {
     this.scrollOffset = Phaser.Math.Clamp(value, 0, this.maxScroll);
+    const sceneMusic = this.audio.getSettings().musicEnabled;
+    const collapse = sceneMusic ? TRACK_ROW_SPACE : 0;
 
     for (const heading of this.sectionHeadings) {
-      const y = VIEWPORT_TOP + heading.contentY - this.scrollOffset;
+      const contentY =
+        heading.contentY - (heading.contentY > this.musicTrackContentY ? collapse : 0);
+      const y = VIEWPORT_TOP + contentY - this.scrollOffset;
       heading.label.setY(y);
       heading.label.setVisible(
         y + SECTION_HEADING_HEIGHT / 2 > VIEWPORT_TOP &&
@@ -664,30 +637,38 @@ export class SettingsScene extends Phaser.Scene {
     }
 
     for (const row of this.rows) {
-      const y = VIEWPORT_TOP + row.contentY - this.scrollOffset;
-      const top = y - ROW_HEIGHT / 2;
-      const bottom = y + ROW_HEIGHT / 2 + ROW_SHADOW_Y;
+      if (sceneMusic && row.kind === 'music-track') {
+        row.surface.setVisible(false);
+        row.button.setVisible(false);
+        row.label.setVisible(false);
+        continue;
+      }
+
+      const contentY = row.contentY - (row.contentY > this.musicTrackContentY ? collapse : 0);
+      const y = VIEWPORT_TOP + contentY - this.scrollOffset;
+      const top = y - row.height / 2;
+      const bottom = y + row.height / 2 + ROW_SHADOW_Y;
       const intersectsViewport = bottom > VIEWPORT_TOP && top < VIEWPORT_BOTTOM;
       const fullyInsideViewport = top >= VIEWPORT_TOP && bottom <= VIEWPORT_BOTTOM;
 
       row.surface.setY(y).setVisible(intersectsViewport);
       row.button.setY(y).setVisible(intersectsViewport);
-      row.label.setY(y).setVisible(intersectsViewport);
-      if (row.button.input) {
-        row.button.input.enabled = fullyInsideViewport;
-      }
+      row.label
+        .setY(y + (row.height === AUDIO_CONTROL_ROW_HEIGHT ? AUDIO_CONTROL_LABEL_OFFSET_Y : 0))
+        .setVisible(intersectsViewport);
+      if (row.button.input) row.button.input.enabled = fullyInsideViewport;
     }
 
     this.updateScrollbar();
   }
 
   private updateScrollbar(): void {
-    if (!this.scrollbarThumb) {
-      return;
-    }
+    if (!this.scrollbarThumb) return;
+    const effectiveHeight =
+      this.contentHeight - (this.audio.getSettings().musicEnabled ? TRACK_ROW_SPACE : 0);
     const thumbHeight = Math.max(
       SCROLLBAR_MIN_THUMB,
-      VIEWPORT_HEIGHT * (VIEWPORT_HEIGHT / Math.max(VIEWPORT_HEIGHT, this.contentHeight)),
+      VIEWPORT_HEIGHT * (VIEWPORT_HEIGHT / Math.max(VIEWPORT_HEIGHT, effectiveHeight)),
     );
     const travel = VIEWPORT_HEIGHT - thumbHeight;
     const ratio = this.maxScroll > 0 ? this.scrollOffset / this.maxScroll : 0;
@@ -711,16 +692,12 @@ export class SettingsScene extends Phaser.Scene {
     _deltaX: number,
     deltaY: number,
   ): void {
-    if (!this.pointerInsideViewport(pointer)) {
-      return;
-    }
+    if (!this.pointerInsideViewport(pointer)) return;
     this.setScrollOffset(this.scrollOffset + deltaY * 0.65);
   }
 
   private handlePointerDown(pointer: Phaser.Input.Pointer): void {
-    if (!this.pointerInsideViewport(pointer)) {
-      return;
-    }
+    if (!this.pointerInsideViewport(pointer)) return;
     this.dragPointerId = pointer.id;
     this.dragStartPointerY = pointer.y;
     this.dragStartScroll = this.scrollOffset;
@@ -728,18 +705,14 @@ export class SettingsScene extends Phaser.Scene {
   }
 
   private handlePointerMove(pointer: Phaser.Input.Pointer): void {
-    if (this.dragPointerId !== pointer.id || !pointer.isDown) {
-      return;
-    }
+    if (this.dragPointerId !== pointer.id || !pointer.isDown) return;
     const delta = pointer.y - this.dragStartPointerY;
     this.dragDistance = Math.max(this.dragDistance, Math.abs(delta));
     this.setScrollOffset(this.dragStartScroll - delta);
   }
 
   private handlePointerUp(pointer: Phaser.Input.Pointer): void {
-    if (this.dragPointerId === pointer.id) {
-      this.dragPointerId = null;
-    }
+    if (this.dragPointerId === pointer.id) this.dragPointerId = null;
   }
 
   private activateSelected(): void {
@@ -748,13 +721,19 @@ export class SettingsScene extends Phaser.Scene {
       return;
     }
     const row = this.rows[this.selectedIndex];
-    if (row) {
-      void this.toggleSetting(row.kind);
-    }
+    if (row) void this.toggleSetting(row.kind);
   }
 
   private async toggleSetting(kind: SettingsRowKind): Promise<void> {
-    void this.audio.unlock();
+    if (
+      kind === 'master-volume' ||
+      kind === 'music-track' ||
+      kind === 'music-volume' ||
+      kind === 'ambience-volume' ||
+      kind === 'sfx-volume'
+    ) {
+      return;
+    }
     if (kind === 'time-of-day') {
       this.atmosphericTime.cycleMode();
       this.magicalWeather.refreshAutomatic();
@@ -772,22 +751,12 @@ export class SettingsScene extends Phaser.Scene {
     const audioSettings = this.audio.getSettings();
     if (kind === 'muted') {
       this.audio.updateSettings({ muted: !audioSettings.muted });
-    } else if (kind === 'master-volume') {
-      this.audio.updateSettings({ masterVolume: this.nextVolume(audioSettings.masterVolume) });
     } else if (kind === 'music') {
       this.audio.updateSettings({ musicEnabled: !audioSettings.musicEnabled });
-    } else if (kind === 'music-track') {
-      this.cycleMusicTrack();
-    } else if (kind === 'music-volume') {
-      this.audio.updateSettings({ musicVolume: this.nextVolume(audioSettings.musicVolume) });
     } else if (kind === 'ambience') {
       this.audio.updateSettings({ ambienceEnabled: !audioSettings.ambienceEnabled });
-    } else if (kind === 'ambience-volume') {
-      this.audio.updateSettings({ ambienceVolume: this.nextVolume(audioSettings.ambienceVolume) });
     } else if (kind === 'sfx') {
       this.audio.updateSettings({ sfxEnabled: !audioSettings.sfxEnabled });
-    } else if (kind === 'sfx-volume') {
-      this.audio.updateSettings({ sfxVolume: this.nextVolume(audioSettings.sfxVolume) });
     } else if (kind === 'fullscreen') {
       await this.toggleFullscreen();
       return;
@@ -836,14 +805,10 @@ export class SettingsScene extends Phaser.Scene {
   };
 
   private closeSettings(): void {
-    if (this.closing) {
-      return;
-    }
+    if (this.closing) return;
     this.closing = true;
     this.audio.playSfx('ui-back');
-    if (this.scene.isPaused(this.returnScene)) {
-      this.scene.resume(this.returnScene);
-    }
+    if (this.scene.isPaused(this.returnScene)) this.scene.resume(this.returnScene);
     this.scene.stop();
   }
 }

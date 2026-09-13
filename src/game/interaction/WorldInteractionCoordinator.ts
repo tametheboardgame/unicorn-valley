@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
-import { InputController } from '../input/InputController';
 import { getWorldConversationPresenter } from '../dialogue/WorldConversationPresenter';
+import { gameEventBus } from '../events/GameEventBus';
+import { InputController } from '../input/InputController';
 import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 import { InteractionPrompt } from '../ui/InteractionPrompt';
 import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
@@ -279,6 +280,12 @@ export class WorldInteractionCoordinator {
   }
 
   private activate(scene: Phaser.Scene, target: InteractionTarget): void {
+    gameEventBus.emit('INTERACTION_ACTIVATED', {
+      interactionId: target.id,
+      actionKind: target.actionKind ?? 'interact',
+      resultType: target.result.type,
+    });
+
     switch (target.result.type) {
       case 'callback':
         target.result.activate();

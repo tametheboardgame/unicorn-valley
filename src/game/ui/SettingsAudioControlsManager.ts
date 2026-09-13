@@ -1,0 +1,83 @@
+import '../../settingsAudioControls.css';
+import type Phaser from 'phaser';
+import { MUSIC_CATALOGUE } from '../../generated/audioCatalogue';
+import { getVerticalSliceAudio } from '../audio/VerticalSliceAudio';
+
+const VOLUMES = [
+  ['master', 'masterVolume', 'All sound'],
+  ['music', 'musicVolume', 'Music volume'],
+  ['ambience', 'ambienceVolume', 'Ambience volume'],
+  ['sfx', 'sfxVolume', 'Effects volume'],
+] as const;
+
+export function getSettingsAudioControlsManager(game: Phaser.Game): void {
+  const host = document.getElementById('game-container')!;
+  const audio = getVerticalSliceAudio();
+  const sliders = VOLUMES.map(([kind, key, label]) => {
+    const input = document.createElement('input');
+    input.type = 'range';
+    input.min = '0';
+    input.max = '1';
+    input.step = '.01';
+    input.ariaLabel = label;
+    input.className = 'settings-audio-control settings-audio-slider';
+    input.oninput = () => audio.updateSettings({ [key]: +input.value });
+    input.onpointerdown = (event) => event.stopPropagation();
+    host.append(input);
+    return [kind, key, input] as const;
+  });
+
+  const select = document.createElement('select');
+  select.ariaLabel = 'Chosen music track';
+  select.className = 'settings-audio-control settings-audio-select';
+  for (const track of MUSIC_CATALOGUE) {
+    select.add(new Option(track.path.slice(track.path.lastIndexOf('/') + 1, -4), track.id));
+  }
+  select.onchange = () => audio.updateSettings({ selectedMusicTrackId: select.value });
+  select.onpointerdown = (event) => event.stopPropagation();
+  host.append(select);
+
+  game.events.on('poststep', () => {
+    const scene = game.scene.getScene('SettingsScene');
+    if (!scene?.scene.isActive()) {
+      select.hidden = true;
+      for (const [, , input] of sliders) input.hidden = true;
+      return;
+    }
+
+    const settings = audio.getSettings();
+    const canvas = game.canvas;
+    const sx = canvas.clientWidth / 1280;
+    const sy = canvas.clientHeight / 720;
+    const width = Math.max(260, 490 * sx);
+    const height = Math.max(44, 44 * sy);
+    const left = canvas.offsetLeft + (640 - 245) * sx;
+    const row = (kind: string) =>
+      scene.children.getByName(`settings-row-${kind}`) as Phaser.GameObjects.Rectangle | null;
+    const place = (target: Phaser.GameObjects.Rectangle, control: HTMLElement) => {
+      control.style.width = `${width}px`;
+      control.style.height = `${height}px`;
+      control.style.left = `${left}px`;
+      control.style.top = `${canvas.offsetTop + (target.y + 1) * sy}px`;
+    };
+
+    for (const [kind, key, input] of sliders) {
+      const target = row(`${kind}-volume`);
+      input.value = String(settings[key]);
+      input.style.setProperty('--settings-audio-progress', `${settings[key] * 100}%`);
+      input.hidden = !target?.input?.enabled;
+      if (!input.hidden) place(target!, input);
+    }
+
+    const trackRow = row('music-track');
+    const trackVisible =
+      trackRow?.visible &&
+      trackRow.y - trackRow.height / 2 >= 145 &&
+      trackRow.y + trackRow.height / 2 + 6 <= 565;
+    select.hidden = settings.musicEnabled || !trackVisible;
+    if (!select.hidden) {
+      select.value = settings.selectedMusicTrackId ?? MUSIC_CATALOGUE[0]?.id ?? '';
+      place(trackRow!, select);
+    }
+  });
+}

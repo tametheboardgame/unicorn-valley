@@ -34,7 +34,7 @@ export class DialogueSession {
 
   public advanceLine(): void {
     const node = this.getCurrentNode();
-    if (!node || node.type !== 'line') {
+    if (node?.type !== 'line') {
       throw new Error('Dialogue can only advance while a line node is active.');
     }
     this.moveTo(node.nextNodeId);
@@ -42,7 +42,7 @@ export class DialogueSession {
 
   public choose(choiceId: string): readonly DialogueEffect[] {
     const node = this.getCurrentNode();
-    if (!node || node.type !== 'choice') {
+    if (node?.type !== 'choice') {
       throw new Error('Dialogue choice requires an active choice node.');
     }
 

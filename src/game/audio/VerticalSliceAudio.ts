@@ -1,6 +1,6 @@
 import {
+  MUSIC_BINDINGS,
   getAudioAsset,
-  resolveContextPlaylist,
   resolveMusicContext,
   resolveSfxAsset,
   type MusicContextId,
@@ -28,7 +28,6 @@ export type VerticalSliceSfx =
   | 'race-boost'
   | 'race-impact'
   | 'race-finish';
-export type NpcReaction = 'talk' | 'happy' | 'surprised';
 export type AudioSceneProfile =
   | 'menu'
   | 'glade'
@@ -38,16 +37,6 @@ export type AudioSceneProfile =
   | 'woods'
   | 'cottage'
   | 'race';
-
-interface ProceduralProfile {
-  notes: readonly number[];
-  intervalMs: number;
-}
-
-interface MusicVoice {
-  element: HTMLAudioElement;
-  trackId: string;
-}
 
 export const AUDIO_SCENE_PROFILES: readonly AudioSceneProfile[] = [
   'menu',
@@ -61,21 +50,6 @@ export const AUDIO_SCENE_PROFILES: readonly AudioSceneProfile[] = [
 ];
 export const PRODUCTION_AUDIO_LOOP_MINIMUM_MS = 10_000;
 
-const BRIGHT_NOTES = [523.25, 659.25, 783.99, 659.25] as const;
-const EARTHY_NOTES = [349.23, 440, 523.25, 440] as const;
-const RACE_NOTES = [523.25, 783.99, 1046.5, 783.99] as const;
-
-const PROCEDURAL_PROFILES: Readonly<Record<AudioSceneProfile, ProceduralProfile>> = {
-  menu: { notes: BRIGHT_NOTES, intervalMs: 2700 },
-  glade: { notes: BRIGHT_NOTES, intervalMs: 2600 },
-  village: { notes: EARTHY_NOTES, intervalMs: 2600 },
-  meadow: { notes: BRIGHT_NOTES, intervalMs: 2550 },
-  brook: { notes: EARTHY_NOTES, intervalMs: 2800 },
-  woods: { notes: EARTHY_NOTES, intervalMs: 2900 },
-  cottage: { notes: EARTHY_NOTES, intervalMs: 2850 },
-  race: { notes: RACE_NOTES, intervalMs: 2500 },
-};
-
 const PROFILE_BY_CONTEXT: Readonly<Record<MusicContextId, AudioSceneProfile>> = {
   'title-creator': 'menu',
   'glade-cottage': 'glade',
@@ -87,41 +61,24 @@ const PROFILE_BY_CONTEXT: Readonly<Record<MusicContextId, AudioSceneProfile>> = 
   race: 'race',
 };
 
-const MUSIC_FADE_MS = 650;
-const MAX_SFX_CACHE = 24;
-const MAX_ACTIVE_SFX = 32;
-
 export function resolveAudioSceneProfile(sceneKey: string): AudioSceneProfile | null {
-  if (sceneKey === 'CottageInteriorScene') {
-    return 'cottage';
-  }
+  if (sceneKey === 'CottageInteriorScene') return 'cottage';
   const context = resolveMusicContext(sceneKey);
   return context ? PROFILE_BY_CONTEXT[context] : null;
 }
 
-export function getAudioSceneLoopDurationMs(profile: AudioSceneProfile): number {
-  const definition = PROCEDURAL_PROFILES[profile];
-  return definition.notes.length * definition.intervalMs;
+export function getAudioSceneLoopDurationMs(_profile: AudioSceneProfile): number {
+  return 11_000;
 }
 
 export class VerticalSliceAudio {
   private settings: AudioSettings;
   private context: AudioContext | null = null;
-  private masterGain: GainNode | null = null;
-  private musicGain: GainNode | null = null;
-  private ambienceGain: GainNode | null = null;
-  private sfxGain: GainNode | null = null;
   private proceduralMusicTimer: number | null = null;
   private ambienceTimer: number | null = null;
-  private musicStep = 0;
   private currentSceneKey: string | null = null;
-  private musicVoices: MusicVoice[] = [];
-  private musicRequestId = 0;
-  private playlist: readonly AudioCatalogueEntry[] = [];
-  private lastPlaylistTrackId: string | null = null;
-  private pendingMusicRetry = false;
-  private sfxBuffers = new Map<string, AudioBuffer>();
-  private activeSfx = new Set<AudioBufferSourceNode>();
+  private musicElement: HTMLAudioElement | null = null;
+  private musicTrackId: string | null = null;
 
   public constructor(
     private readonly settingsStore: AudioSettingsStore = getBrowserAudioSettingsStore(),
@@ -134,15 +91,10 @@ export class VerticalSliceAudio {
     return { ...this.settings };
   }
 
-  public getMusicTracks(): readonly AudioCatalogueEntry[] {
-    return MUSIC_CATALOGUE;
-  }
-
   public setSettings(settings: AudioSettings): AudioSettings {
     const previous = this.settings;
     this.settings = this.settingsStore.save(settings);
-    this.applyGainSettings();
-    this.applyMusicElementVolumes();
+    if (this.musicElement) this.musicElement.volume = this.musicElementTargetVolume();
     if (
       previous.muted !== this.settings.muted ||
       previous.musicEnabled !== this.settings.musicEnabled ||
@@ -159,265 +111,128 @@ export class VerticalSliceAudio {
   }
 
   public enterScene(sceneKey: string): void {
-    if (this.currentSceneKey === sceneKey) {
-      return;
-    }
+    if (this.currentSceneKey === sceneKey) return;
     this.currentSceneKey = sceneKey;
-    this.musicStep = 0;
     this.restartSceneLoops();
   }
 
   public leaveScene(sceneKey: string): void {
-    if (this.currentSceneKey !== sceneKey) {
-      return;
-    }
-    this.currentSceneKey = null;
-    this.stopSceneLoops();
+    if (this.currentSceneKey === sceneKey) this.currentSceneKey = null;
   }
 
   public async unlock(): Promise<void> {
-    if (typeof window === 'undefined') {
-      return;
-    }
-    let shouldRestart = false;
+    if (typeof window === 'undefined') return;
+    void this.musicElement?.play().catch(() => undefined);
+    let restart = false;
     if (!this.context) {
       this.context = new AudioContext();
-      this.masterGain = this.context.createGain();
-      this.musicGain = this.context.createGain();
-      this.ambienceGain = this.context.createGain();
-      this.sfxGain = this.context.createGain();
-      this.musicGain.connect(this.masterGain);
-      this.ambienceGain.connect(this.masterGain);
-      this.sfxGain.connect(this.masterGain);
-      this.masterGain.connect(this.context.destination);
-      shouldRestart = true;
+      restart = true;
     }
     if (this.context.state === 'suspended') {
       try {
         await this.context.resume();
-        shouldRestart = true;
+        restart = true;
       } catch {
         return;
       }
     }
-    this.applyGainSettings();
-    if (shouldRestart || this.pendingMusicRetry) {
-      this.pendingMusicRetry = false;
-      this.restartSceneLoops();
-    }
-  }
-
-  public playNpcReaction(characterId: string, reaction: NpcReaction = 'talk'): void {
-    if (this.settings.muted || !this.settings.sfxEnabled) {
-      return;
-    }
-    void this.unlock().then(() => {
-      if (!this.sfxGain) {
-        return;
-      }
-      const base = 440 + (characterId.length % 6) * 55;
-      const multiplier = reaction === 'happy' ? 1.25 : reaction === 'surprised' ? 1.5 : 1;
-      this.playTone(base * multiplier, 0.1, 'triangle', 0.055, this.sfxGain);
-      this.playTone(base * multiplier * 1.125, 0.09, 'sine', 0.04, this.sfxGain, 0.055);
-    });
+    if (restart) this.restartSceneLoops();
   }
 
   public playSfx(kind: VerticalSliceSfx): void {
-    if (this.settings.muted || !this.settings.sfxEnabled) {
-      return;
-    }
-    void this.unlock().then(async () => {
-      if (await this.playAuthoredSfx(kind)) {
-        return;
-      }
-      this.playProceduralSfx(kind);
+    if (this.settings.muted || !this.settings.sfxEnabled) return;
+    void this.playAuthoredSfx(kind).then((played) => {
+      if (!played) void this.unlock().then(() => this.playProceduralSfx(kind));
     });
+  }
+
+  public playNpcReaction(_characterId: string, _reaction?: string): void {
+    this.playSfx('dialogue');
   }
 
   private restartSceneLoops(): void {
     this.stopProceduralLoops();
-    this.musicRequestId += 1;
-    const profile = resolveAudioSceneProfile(this.currentSceneKey ?? '');
-    if (!profile || this.settings.muted) {
-      this.fadeOutAllMusic();
+    const context = resolveMusicContext(this.currentSceneKey ?? '');
+    if (!context || this.settings.muted) {
+      this.stopMusic();
       return;
     }
 
-    if (this.settings.musicEnabled) {
-      const manual = getAudioAsset(this.settings.selectedMusicTrackId);
-      const context = resolveMusicContext(this.currentSceneKey ?? '');
-      this.playlist = manual?.kind === 'music' ? [manual] : resolveContextPlaylist(context);
-      if (this.playlist.length > 0) {
-        this.startPlaylist(this.musicRequestId);
-      } else {
-        this.fadeOutAllMusic();
-        this.startProceduralMusic(PROCEDURAL_PROFILES[profile]);
-      }
-    } else {
-      this.fadeOutAllMusic();
+    const selected = getAudioAsset(this.settings.selectedMusicTrackId);
+    const track = this.settings.musicEnabled
+      ? getAudioAsset(MUSIC_BINDINGS[context].themeTrackId)
+      : selected?.id[0] === 'm'
+        ? selected
+        : MUSIC_CATALOGUE[0];
+    if (track) this.playTrack(track);
+    else {
+      this.stopMusic();
+      this.startProceduralMusic();
     }
-
-    if (this.settings.ambienceEnabled) {
-      this.startProceduralAmbience(PROCEDURAL_PROFILES[profile]);
-    }
+    if (this.settings.ambienceEnabled) this.startProceduralAmbience();
   }
 
-  private startPlaylist(requestId: number): void {
-    const next = this.chooseNextTrack();
-    if (!next) {
-      return;
-    }
-    this.lastPlaylistTrackId = next.id;
-    this.crossfadeTo(next, requestId);
-  }
-
-  private chooseNextTrack(): AudioCatalogueEntry | null {
-    if (this.playlist.length === 0) {
-      return null;
-    }
-    if (this.playlist.length === 1) {
-      return this.playlist[0] ?? null;
-    }
-    const candidates = this.playlist.filter((track) => track.id !== this.lastPlaylistTrackId);
-    return candidates[Math.floor(Math.random() * candidates.length)] ?? this.playlist[0] ?? null;
-  }
-
-  private crossfadeTo(track: AudioCatalogueEntry, requestId: number): void {
-    if (typeof Audio === 'undefined' || requestId !== this.musicRequestId) {
-      return;
-    }
-    const existingSameTrack = this.musicVoices.find((voice) => voice.trackId === track.id);
-    if (existingSameTrack) {
-      this.applyMusicElementVolumes();
+  private playTrack(track: AudioCatalogueEntry): void {
+    if (typeof Audio === 'undefined') return;
+    if (this.musicElement && this.musicTrackId === track.id) {
+      this.musicElement.volume = this.musicElementTargetVolume();
+      void this.musicElement.play().catch(() => undefined);
       return;
     }
 
-    const element = new Audio(this.assetUrl(track));
-    element.preload = 'metadata';
-    element.volume = 0;
-    element.loop = this.playlist.length === 1;
-    const voice: MusicVoice = { element, trackId: track.id };
-    element.addEventListener('ended', () => {
-      if (requestId === this.musicRequestId && this.playlist.length > 1) {
-        this.startPlaylist(requestId);
-      }
-    });
-    element.addEventListener('error', () => this.removeMusicVoice(voice));
-    this.musicVoices.push(voice);
-    while (this.musicVoices.length > 2) {
-      const oldest = this.musicVoices.shift();
-      oldest?.element.pause();
-    }
+    const previous = this.musicElement;
+    const previousId = this.musicTrackId;
+    const next = new Audio(track.path);
+    next.loop = true;
+    next.volume = previous ? 0 : this.musicElementTargetVolume();
+    this.musicElement = next;
+    this.musicTrackId = track.id;
 
-    void element.play().then(
-      () => this.fadeVoiceIn(voice),
+    void next.play().then(
       () => {
-        this.pendingMusicRetry = true;
-        this.removeMusicVoice(voice);
+        if (!previous) return;
+        const startVolume = previous.volume;
+        for (let step = 1; step <= 6; step += 1) {
+          window.setTimeout(() => {
+            if (this.musicElement !== next) {
+              previous.pause();
+              return;
+            }
+            const mix = step / 6;
+            previous.volume = startVolume * (1 - mix);
+            next.volume = this.musicElementTargetVolume() * mix;
+            if (step === 6) previous.pause();
+          }, step * 100);
+        }
+      },
+      () => {
+        if (this.musicElement !== next) return;
+        if (previous) {
+          this.musicElement = previous;
+          this.musicTrackId = previousId;
+          previous.volume = this.musicElementTargetVolume();
+        }
       },
     );
-    for (const other of [...this.musicVoices]) {
-      if (other !== voice) {
-        this.fadeVoiceOut(other);
-      }
-    }
   }
 
-  private fadeVoiceIn(voice: MusicVoice): void {
-    const target = this.musicElementTargetVolume();
-    this.animateVolume(voice, target, false);
-  }
-
-  private fadeVoiceOut(voice: MusicVoice): void {
-    this.animateVolume(voice, 0, true);
-  }
-
-  private animateVolume(voice: MusicVoice, target: number, removeAfter: boolean): void {
-    if (typeof window === 'undefined') {
-      return;
-    }
-    const start = performance.now();
-    const initial = voice.element.volume;
-    const tick = (now: number) => {
-      if (!this.musicVoices.includes(voice)) {
-        return;
-      }
-      const progress = Math.min(1, (now - start) / MUSIC_FADE_MS);
-      voice.element.volume = Math.max(0, Math.min(1, initial + (target - initial) * progress));
-      if (progress < 1) {
-        window.requestAnimationFrame(tick);
-      } else if (removeAfter) {
-        this.removeMusicVoice(voice);
-      }
-    };
-    window.requestAnimationFrame(tick);
-  }
-
-  private removeMusicVoice(voice: MusicVoice): void {
-    voice.element.pause();
-    voice.element.removeAttribute('src');
-    this.musicVoices = this.musicVoices.filter((candidate) => candidate !== voice);
-  }
-
-  private fadeOutAllMusic(): void {
-    for (const voice of [...this.musicVoices]) {
-      this.fadeVoiceOut(voice);
-    }
+  private stopMusic(): void {
+    this.musicElement?.pause();
+    this.musicElement = null;
+    this.musicTrackId = null;
   }
 
   private musicElementTargetVolume(): number {
-    if (this.settings.muted || !this.settings.musicEnabled) {
-      return 0;
-    }
-    return Math.min(1, this.settings.masterVolume * this.settings.musicVolume * 0.72);
-  }
-
-  private applyMusicElementVolumes(): void {
-    const target = this.musicElementTargetVolume();
-    for (const voice of this.musicVoices) {
-      voice.element.volume = target;
-    }
-  }
-
-  private assetUrl(asset: AudioCatalogueEntry): string {
-    return `${asset.path}?v=${asset.sha256.slice(0, 12)}`;
+    return this.settings.muted ? 0 : this.settings.masterVolume * this.settings.musicVolume * 0.72;
   }
 
   private async playAuthoredSfx(kind: VerticalSliceSfx): Promise<boolean> {
     const asset = resolveSfxAsset(kind);
-    if (!asset || !this.context || !this.sfxGain || this.context.state !== 'running') {
-      return false;
-    }
+    if (!asset || typeof Audio === 'undefined') return false;
     try {
-      let buffer = this.sfxBuffers.get(asset.id);
-      if (!buffer) {
-        const response = await fetch(this.assetUrl(asset));
-        if (!response.ok) {
-          return false;
-        }
-        const bytes = await response.arrayBuffer();
-        buffer = await this.context.decodeAudioData(bytes.slice(0));
-        if (this.sfxBuffers.size >= MAX_SFX_CACHE) {
-          const oldestKey = this.sfxBuffers.keys().next().value as string | undefined;
-          if (oldestKey) {
-            this.sfxBuffers.delete(oldestKey);
-          }
-        }
-        this.sfxBuffers.set(asset.id, buffer);
-      }
-      if (this.activeSfx.size >= MAX_ACTIVE_SFX) {
-        const oldest = this.activeSfx.values().next().value as AudioBufferSourceNode | undefined;
-        oldest?.stop();
-      }
-      const source = this.context.createBufferSource();
-      source.buffer = buffer;
-      source.connect(this.sfxGain);
-      this.activeSfx.add(source);
-      source.addEventListener('ended', () => {
-        this.activeSfx.delete(source);
-        source.disconnect();
-      });
-      source.start();
+      const element = new Audio(asset.path);
+      element.volume = this.settings.masterVolume * this.settings.sfxVolume * 0.68;
+      await element.play();
       return true;
     } catch {
       return false;
@@ -425,110 +240,55 @@ export class VerticalSliceAudio {
   }
 
   private playProceduralSfx(kind: VerticalSliceSfx): void {
-    if (!this.sfxGain || !this.context || this.context.state !== 'running') {
-      return;
-    }
-    const patterns: Readonly<Record<VerticalSliceSfx, readonly [number, number]>> = {
-      ui: [659.25, 0.09],
-      'ui-back': [493.88, 0.1],
-      dialogue: [523.25, 0.08],
-      collect: [880, 0.16],
-      discovery: [783.99, 0.22],
-      'quest-complete': [659.25, 0.24],
-      friendship: [783.99, 0.18],
-      door: [392, 0.14],
-      decoration: [987.77, 0.16],
-      'race-countdown': [523.25, 0.11],
-      'race-go': [1046.5, 0.18],
-      'race-jump': [783.99, 0.1],
-      'race-boost': [987.77, 0.12],
-      'race-impact': [220, 0.14],
-      'race-finish': [1046.5, 0.28],
-    };
-    const [frequency, duration] = patterns[kind];
+    if (this.context?.state !== 'running') return;
+    const frequency =
+      kind === 'race-impact'
+        ? 220
+        : kind === 'dialogue' || kind === 'door'
+          ? 440
+          : kind[0] === 'r'
+            ? 1046.5
+            : 783.99;
+    const duration = kind === 'quest-complete' || kind === 'race-finish' ? 0.22 : 0.12;
     this.playTone(
       frequency,
       duration,
-      kind.startsWith('race') ? 'triangle' : 'sine',
-      0.09,
-      this.sfxGain,
+      kind[0] === 'r' ? 'triangle' : 'sine',
+      0.09 * this.settings.masterVolume * this.settings.sfxVolume,
     );
   }
 
-  private startProceduralMusic(definition: ProceduralProfile): void {
-    const gain = this.musicGain;
-    if (!this.context || !gain || this.context.state !== 'running') {
-      return;
-    }
-    const play = () => {
-      const note = definition.notes[this.musicStep % definition.notes.length] ?? 523.25;
-      this.musicStep += 1;
-      this.playTone(note, 0.5, 'triangle', 0.05, gain);
-    };
+  private startProceduralMusic(): void {
+    if (this.context?.state !== 'running') return;
+    const play = () =>
+      this.playTone(
+        523.25,
+        0.5,
+        'triangle',
+        0.007 * this.settings.masterVolume * this.settings.musicVolume,
+      );
     play();
-    this.proceduralMusicTimer = window.setInterval(play, definition.intervalMs);
+    this.proceduralMusicTimer = window.setInterval(play, 11_000);
   }
 
-  private startProceduralAmbience(definition: ProceduralProfile): void {
-    const gain = this.ambienceGain;
-    if (!this.context || !gain || this.context.state !== 'running') {
-      return;
-    }
-    const play = () => this.playTone((definition.notes[0] ?? 440) * 2, 0.28, 'sine', 0.024, gain);
+  private startProceduralAmbience(): void {
+    if (this.context?.state !== 'running') return;
+    const play = () =>
+      this.playTone(
+        698.46,
+        0.28,
+        'sine',
+        0.002 * this.settings.masterVolume * this.settings.ambienceVolume,
+      );
     play();
     this.ambienceTimer = window.setInterval(play, 5_500);
   }
 
   private stopProceduralLoops(): void {
-    if (this.proceduralMusicTimer !== null && typeof window !== 'undefined') {
-      window.clearInterval(this.proceduralMusicTimer);
-    }
-    if (this.ambienceTimer !== null && typeof window !== 'undefined') {
-      window.clearInterval(this.ambienceTimer);
-    }
+    if (this.proceduralMusicTimer !== null) window.clearInterval(this.proceduralMusicTimer);
+    if (this.ambienceTimer !== null) window.clearInterval(this.ambienceTimer);
     this.proceduralMusicTimer = null;
     this.ambienceTimer = null;
-  }
-
-  private stopSceneLoops(): void {
-    this.stopProceduralLoops();
-    this.musicRequestId += 1;
-    for (const voice of [...this.musicVoices]) {
-      this.removeMusicVoice(voice);
-    }
-  }
-
-  private applyGainSettings(): void {
-    if (
-      !this.context ||
-      !this.masterGain ||
-      !this.musicGain ||
-      !this.ambienceGain ||
-      !this.sfxGain
-    ) {
-      return;
-    }
-    const now = this.context.currentTime;
-    this.masterGain.gain.setTargetAtTime(
-      this.settings.muted ? 0 : this.settings.masterVolume,
-      now,
-      0.03,
-    );
-    this.musicGain.gain.setTargetAtTime(
-      this.settings.musicEnabled ? 0.14 * this.settings.musicVolume : 0,
-      now,
-      0.04,
-    );
-    this.ambienceGain.gain.setTargetAtTime(
-      this.settings.ambienceEnabled ? 0.08 * this.settings.ambienceVolume : 0,
-      now,
-      0.04,
-    );
-    this.sfxGain.gain.setTargetAtTime(
-      this.settings.sfxEnabled ? 0.68 * this.settings.sfxVolume : 0,
-      now,
-      0.02,
-    );
   }
 
   private playTone(
@@ -536,45 +296,29 @@ export class VerticalSliceAudio {
     durationSeconds: number,
     wave: OscillatorType,
     volume: number,
-    destination: AudioNode,
-    delaySeconds = 0,
   ): void {
-    if (!this.context) {
-      return;
-    }
+    if (!this.context) return;
     const oscillator = this.context.createOscillator();
     const gain = this.context.createGain();
-    const start = this.context.currentTime + delaySeconds;
-    const end = start + durationSeconds;
+    const start = this.context.currentTime;
     oscillator.type = wave;
-    oscillator.frequency.setValueAtTime(frequency, start);
-    gain.gain.setValueAtTime(0.0001, start);
-    gain.gain.exponentialRampToValueAtTime(Math.max(0.0001, volume), start + 0.025);
-    gain.gain.exponentialRampToValueAtTime(0.0001, end);
+    oscillator.frequency.value = frequency;
+    gain.gain.value = volume;
     oscillator.connect(gain);
-    gain.connect(destination);
+    gain.connect(this.context.destination);
     oscillator.start(start);
-    oscillator.stop(end + 0.02);
-    oscillator.addEventListener('ended', () => {
-      oscillator.disconnect();
-      gain.disconnect();
-    });
+    oscillator.stop(start + durationSeconds);
   }
 
   private installVisibilityListener(): void {
-    if (typeof document === 'undefined') {
-      return;
-    }
+    if (typeof document === 'undefined') return;
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) {
-        this.stopSceneLoops();
-        if (this.context?.state === 'running') {
-          void this.context.suspend().catch(() => undefined);
-        }
-        return;
-      }
-      if (this.currentSceneKey && !this.settings.muted) {
-        void this.unlock();
+        this.stopProceduralLoops();
+        this.stopMusic();
+        if (this.context?.state === 'running') void this.context.suspend().catch(() => undefined);
+      } else if (this.currentSceneKey && !this.settings.muted) {
+        this.restartSceneLoops();
       }
     });
   }

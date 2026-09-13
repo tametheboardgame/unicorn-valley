@@ -11,7 +11,6 @@ import type { InteractionTarget } from '../interaction/InteractionTarget';
 import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { CRYSTAL_BROOK_MAP } from '../world/CrystalBrookMap';
-import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
 import { startRippleConversation } from './WorldStoryConversations';
 
 const PRESENTATION_NAME = 'crystal-brook-story-presentation';
@@ -29,11 +28,6 @@ interface BrookStoryState {
   markers: Map<SecretDiscoveryDefinition['id'], SecretMarker>;
   revealedPath: Phaser.GameObjects.Container | null;
   restoredSong: Phaser.GameObjects.Container | null;
-}
-
-function findPlayer(scene: Phaser.Scene): Phaser.Physics.Arcade.Sprite | null {
-  const player = scene.children.getByName(WORLD_PLAYER_NAME);
-  return player instanceof Phaser.Physics.Arcade.Sprite ? player : null;
 }
 
 function getRipplePosition(): { x: number; y: number } {

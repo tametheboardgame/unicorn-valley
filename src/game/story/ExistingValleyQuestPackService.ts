@@ -46,7 +46,7 @@ export class ExistingValleyQuestPackService {
   private readonly discoveries: DiscoveryService;
 
   public constructor(
-    private readonly saveService: SaveService,
+    saveService: SaveService,
     private readonly quests: QuestEngine,
     events: TypedEventBus<GameEventMap> = gameEventBus,
   ) {

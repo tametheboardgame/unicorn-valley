@@ -184,10 +184,9 @@ test('exploration can pause into the full settings screen and return with persis
 
   await tapObject(page, 'SettingsScene', 'settings-row-music');
 
-  // Expanded audio controls deliberately push Accessibility further down the
-  // clipped list. Move focus to Reduced Motion so the real row is fully visible
-  // and interactive before checking its hit area.
-  for (let index = 0; index < 7; index += 1) {
+  // WP19H replaced the old canvas music-track row with the conditional DOM
+  // picker, so there is one fewer canvas focus step before Accessibility.
+  for (let index = 0; index < 6; index += 1) {
     await page.keyboard.press('ArrowDown');
   }
   current = await snapshot(page);
@@ -242,7 +241,7 @@ test('exploration can pause into the full settings screen and return with persis
   // Music is visible at the top on reopen; prove that persistence before
   // scrolling to the separately persisted accessibility row.
   current = await snapshot(page);
-  expect(sceneText(current, 'SettingsScene')).toContain('Music: Off');
+  expect(sceneText(current, 'SettingsScene')).toContain('Music: Chosen track');
   for (let index = 0; index < 10; index += 1) {
     await page.keyboard.press('ArrowDown');
   }
