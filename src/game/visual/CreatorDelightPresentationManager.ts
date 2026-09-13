@@ -6,6 +6,7 @@ import { UI_COLOURS, UI_FONT } from '../ui/uiTheme';
 
 const CREATOR_SCENE_KEY = 'UnicornCreatorScene';
 const CREATOR_AUDIO_PROFILE_SCENE = 'TitleScene';
+const CREATOR_PROGRESSIVE_READY_NAME = 'creator-category-colours';
 const ANCHOR_NAME = 'creator-delight:anchor';
 const PREVIEW_HALO_NAME = 'creator-delight:preview-halo';
 
@@ -63,7 +64,11 @@ export class CreatorDelightPresentationManager {
     const creator = this.game.scene
       .getScenes(true)
       .find((scene) => scene.scene.key === CREATOR_SCENE_KEY);
-    if (!creator || creator.children.getByName(ANCHOR_NAME)) {
+    if (
+      !creator ||
+      !creator.children.getByName(CREATOR_PROGRESSIVE_READY_NAME) ||
+      creator.children.getByName(ANCHOR_NAME)
+    ) {
       return;
     }
 
