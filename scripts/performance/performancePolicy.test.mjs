@@ -64,5 +64,7 @@ test('diagnostics cannot become startup payload', () => {
     diagnosticsInInitialGraph: true,
   });
 
-  assert.deepEqual(failures, ['BrowserDiagnostics is part of the initial/title/first-playable graph']);
+  assert.deepEqual(failures, [
+    'BrowserDiagnostics is part of the initial/title/first-playable graph',
+  ]);
 });
