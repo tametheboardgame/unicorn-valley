@@ -1,0 +1,4 @@
+#game-container > input[type="range"],
+#game-container > select[aria-label="Chosen music track"] {
+  position: absolute;
+}
