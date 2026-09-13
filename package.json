@@ -9,6 +9,7 @@
     "architecture:check": "node scripts/architecture/checkArchitectureBoundaries.mjs",
     "architecture:test": "node --test scripts/architecture/architectureBoundaries.test.mjs",
     "architecture:validate": "npm run architecture:test && npm run architecture:check",
+    "verification:policy:test": "node --test scripts/verification/verificationPolicy.test.mjs",
     "predev": "npm run audio:catalogue",
     "dev": "vite",
     "prebuild": "npm run audio:catalogue",

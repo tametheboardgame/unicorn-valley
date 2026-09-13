@@ -1,9 +1,7 @@
 name: H0E Test Contract Verification
 
 on:
-  pull_request:
-    branches:
-      - main
+  workflow_dispatch:
 
 permissions:
   contents: read
