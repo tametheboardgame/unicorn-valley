@@ -2,6 +2,55 @@
 
 This guide is for adding finished audio without needing to understand the game code.
 
+## The important bit: tell ChatGPT where the audio belongs
+
+Adding an MP3 to the repository makes it available to the audio catalogue, but it does not automatically tell the game **when or where it should play**.
+
+When adding music, tell ChatGPT the intended scene, area or gameplay context. For example:
+
+> Add `starlight-beach-night.mp3` as the Scene music for Starlight Beach and replace the current procedural fallback.
+
+Or:
+
+> Add `moonflower-evening.mp3` to the Moonflower Glade/cottage music selection alongside the existing tracks.
+
+When adding a sound effect, describe the exact event or action that should trigger it. For example:
+
+> Play `bag-open.mp3` whenever the player opens the Bag.
+
+> Play `crystal-pickup.mp3` when the crystal-cluster interaction successfully gives the player the item.
+
+> Play `quest-sparkle.mp3` whenever a quest is completed.
+
+A single file can be assigned to several scenes or events if that is intentional.
+
+If you only want a file added to the library for later use, say so explicitly. For example:
+
+> Add this MP3 to the SFX catalogue but do not connect it to anything yet.
+
+In that case the file should be catalogued without inventing a gameplay binding.
+
+### Useful copy/paste template
+
+For music:
+
+```text
+File: <filename/path>
+Use it for: <scene(s), area or race/minigame>
+Behaviour: <replace current theme / add alongside existing tracks / chosen-track library only>
+Notes: <optional loop, transition or mix instructions>
+```
+
+For sound effects:
+
+```text
+File: <filename/path>
+Play it when: <exact event, action, button or interaction>
+Behaviour: <every time / once per discovery / once per reward / other>
+Replace an existing fallback: <yes/no>
+Shared by other events: <optional>
+```
+
 ## Where files go
 
 There are two audio folders:
@@ -48,14 +97,14 @@ These are practical targets, not hard limits:
 
 MP3 looping can have audible encoder padding. A file should be listened to in the game before it is described as seamless or suitable for a continuous loop.
 
-## How to add music without editing code
+## How music assignment works
 
 1. Upload the MP3 into `public/audio/music/` or an appropriate subfolder.
-2. Say which part of Unicorn Valley it belongs to, for example “use this as the Starlight Beach theme” or “add this to the Whispering Woods playlist”.
-3. The catalogue and assignment file can then be updated for you.
+2. Say which part of Unicorn Valley it belongs to, for example “use this as the Starlight Beach theme” or “add this to the Whispering Woods selection”.
+3. The catalogue and central music-context assignment are then updated.
 4. Test the area in-game and check transitions, volume and looping before accepting the track.
 
-The available music contexts are:
+The available music contexts include:
 
 - Title and unicorn creator.
 - Moonflower Glade and cottage.
@@ -68,14 +117,21 @@ The available music contexts are:
 
 Bag, Map, Wonderbook and Settings do not select a new area theme. They retain the music context that was already playing.
 
-## How to add a sound effect without editing code
+The Settings music modes are deliberately different:
+
+- **Scene music** follows the scene/context assignments above.
+- **Chosen track** plays the selected catalogue track independently of the current scene.
+
+Therefore a newly catalogued music file can appear in the Chosen-track library without being assigned as Scene music anywhere. If it should become contextual Scene music, say which scene(s) or area(s) it belongs to.
+
+## How sound-effect assignment works
 
 1. Upload the MP3 into `public/audio/sfx/` or an appropriate subfolder.
 2. Describe the intended moment as specifically as possible.
 3. If it belongs to a particular world object, include the object or interaction name, for example “play this when the player successfully inspects the crystal cluster”.
-4. The sound is then assigned to a semantic cue or stable interaction ID and tested once at the successful action point.
+4. The sound is then assigned centrally to a semantic cue or stable interaction ID and tested at the successful action point.
 
-Supported semantic cue types are:
+Supported semantic cue types include:
 
 - UI select.
 - UI back/close.
@@ -95,6 +151,8 @@ Supported semantic cue types are:
 
 Object-specific sounds use the stable interaction ID rather than display text or coordinates. That means changing a label or moving the object does not break its audio assignment.
 
+For a new kind of event that does not already expose an audio cue, say what should happen in player terms. The implementation should add or reuse a stable semantic event rather than wiring audio to brittle coordinates, displayed text or arbitrary timing.
+
 ## Replacing an existing file
 
 To replace a sound while keeping its assignment:
@@ -110,11 +168,10 @@ Changing the filename creates a new catalogue ID, so its previous assignments mu
 Settings provides independent controls for:
 
 - Master volume.
-- Music volume and enable/disable.
+- Music volume and Scene/Chosen-track mode.
 - Ambience volume and enable/disable.
 - Sound-effects volume and enable/disable.
 - Full mute.
-- A specific uploaded music track, or the contextual Scene theme.
 
 Full mute always takes priority over the individual channels.
 
@@ -135,25 +192,25 @@ Music ducking is not enabled by default. Add it only if a listening test shows t
 
 ## Current authored-audio checklist
 
-As of WP19H implementation:
+At WP19H acceptance:
 
-- Title/creator music: **assigned and ready for listening test**.
-- Moonflower Glade/cottage music: **two tracks assigned and ready for listening test**.
-- Sunbeam Village/interiors music: **three tracks assigned and ready for listening test**.
-- Rainbow Meadow music: **assigned and ready for listening test**.
-- Crystal Brook/Grotto music: **two tracks assigned and ready for listening test**.
-- Whispering Woods/Firefly music: **two tracks assigned and ready for listening test**.
-- Rainbow Run music: **assigned and ready for listening test**.
-- Starlight Beach music: **missing final asset**, procedural fallback remains active.
-- UI select: **assigned to the soft-chime integration fixture**.
-- UI back/close: **authored asset assigned**, final listening test pending.
-- Discovery: **authored asset assigned**, final listening test pending.
-- Talk acknowledgement: **missing final asset**, procedural fallback remains active.
-- Collection: **missing final asset**, procedural fallback remains active.
-- Quest completion: **missing final asset**, procedural fallback remains active.
-- Friendship: **missing final asset**, procedural fallback remains active.
-- Door/enter: **missing final asset**, procedural fallback remains active.
-- Decoration: **missing final asset**, procedural fallback remains active.
-- Race countdown/go/jump/boost/impact/finish: **missing final assets**, procedural fallbacks remain active.
+- Title/creator music: **assigned and accepted**.
+- Moonflower Glade/cottage music: **assigned and accepted**.
+- Sunbeam Village/interiors music: **assigned and accepted**.
+- Rainbow Meadow music: **assigned and accepted**.
+- Crystal Brook/Grotto music: **assigned and accepted**.
+- Whispering Woods/Firefly music: **assigned and accepted**.
+- Rainbow Run music: **assigned and accepted**.
+- Starlight Beach music: **no final authored asset yet; procedural fallback remains active**.
+- UI select: **authored soft-chime assigned**.
+- UI back/close: **authored asset assigned**.
+- Discovery: **authored asset assigned**.
+- Talk acknowledgement: **no final authored asset yet; procedural fallback remains active**.
+- Collection: **no final authored asset yet; procedural fallback remains active**.
+- Quest completion: **no final authored asset yet; procedural fallback remains active**.
+- Friendship: **no final authored asset yet; procedural fallback remains active**.
+- Door/enter: **no final authored asset yet; procedural fallback remains active**.
+- Decoration: **no final authored asset yet; procedural fallback remains active**.
+- Race countdown/go/jump/boost/impact/finish: **no final authored assets yet; procedural fallbacks remain active**.
 
 The absence of final MP3s does not disable the game. Each unassigned semantic cue keeps its explicit procedural fallback until an authored file is supplied and accepted.
