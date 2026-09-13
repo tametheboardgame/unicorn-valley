@@ -325,7 +325,10 @@ export class TitlePortraitControlsManager {
       return;
     }
 
-    logo.setAlpha(0).setScale(finalScale * 0.86).setY(TITLE_LOGO_Y + 24);
+    logo
+      .setAlpha(0)
+      .setScale(finalScale * 0.86)
+      .setY(TITLE_LOGO_Y + 24);
     scene.tweens.add({
       targets: logo,
       alpha: 1,
