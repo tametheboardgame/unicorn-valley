@@ -79,6 +79,25 @@ async function waitForObject(page: Page, sceneKey: string, objectName: string): 
   );
 }
 
+async function moveSelectionUntilVisible(
+  page: Page,
+  sceneKey: string,
+  objectName: string,
+  maxSteps = 16,
+): Promise<void> {
+  for (let step = 0; step <= maxSteps; step += 1) {
+    const current = await snapshot(page);
+    const object = current.scenes
+      .find((scene) => scene.key === sceneKey)
+      ?.objects.find((candidate) => candidate.name === objectName);
+    if (object?.visible && object.interactive) {
+      return;
+    }
+    await page.keyboard.press('ArrowDown');
+  }
+  throw new Error(`${objectName} did not become visible and interactive.`);
+}
+
 async function tapObject(page: Page, sceneKey: string, objectName: string): Promise<void> {
   const current = await snapshot(page);
   const target = current.scenes
@@ -126,23 +145,27 @@ function sceneText(current: DiagnosticSnapshot, sceneKey: string): string[] {
   );
 }
 
-test('title settings gain fullscreen and keyboard selection while preferences persist', async ({
+test('title launches canonical settings with fullscreen and persistent accessibility choices', async ({
   page,
 }) => {
   await page.goto('/?diagnostics=1');
   await waitForScene(page, 'TitleScene');
   await tapTitleText(page, 'Settings');
-  await waitForObject(page, 'TitleScene', 'title-setting-fullscreen');
+  await waitForScene(page, 'SettingsScene');
+  await waitForObject(page, 'SettingsScene', 'settings-row-fullscreen');
 
-  let text = sceneText(await snapshot(page), 'TitleScene');
-  expect(text.some((value) => value.startsWith('Fullscreen: '))).toBe(true);
+  let current = await snapshot(page);
+  expect(current.activeScenes).not.toContain('TitleScene');
+  expect(
+    current.scenes
+      .find((scene) => scene.key === 'TitleScene')
+      ?.objects.some((object) => object.name === 'title-setting-fullscreen'),
+  ).toBe(false);
 
-  for (let index = 0; index < 4; index += 1) {
-    await page.keyboard.press('ArrowDown');
-  }
-  await page.keyboard.press('Enter');
+  await moveSelectionUntilVisible(page, 'SettingsScene', 'settings-row-reduced-motion');
+  await tapObject(page, 'SettingsScene', 'settings-row-reduced-motion');
   await expect
-    .poll(async () => sceneText(await snapshot(page), 'TitleScene'))
+    .poll(async () => sceneText(await snapshot(page), 'SettingsScene'))
     .toContain('Reduced motion: On');
 
   const storedAccessibility = await page.evaluate(
@@ -151,13 +174,20 @@ test('title settings gain fullscreen and keyboard selection while preferences pe
   );
   expect(JSON.parse(storedAccessibility ?? '{}')).toMatchObject({ reducedMotion: true });
 
+  await moveSelectionUntilVisible(page, 'SettingsScene', 'settings-row-fullscreen');
+  current = await snapshot(page);
+  expect(sceneText(current, 'SettingsScene').some((value) => value.startsWith('Fullscreen: '))).toBe(
+    true,
+  );
+
   await page.keyboard.press('Escape');
+  await waitForScene(page, 'TitleScene');
   await page.reload();
   await waitForScene(page, 'TitleScene');
   await tapTitleText(page, 'Settings');
-  await waitForObject(page, 'TitleScene', 'title-setting-fullscreen');
-  text = sceneText(await snapshot(page), 'TitleScene');
-  expect(text).toContain('Reduced motion: On');
+  await waitForScene(page, 'SettingsScene');
+  await moveSelectionUntilVisible(page, 'SettingsScene', 'settings-row-reduced-motion');
+  expect(sceneText(await snapshot(page), 'SettingsScene')).toContain('Reduced motion: On');
 });
 
 test('exploration can pause into the full settings screen and return with persisted choices', async ({
