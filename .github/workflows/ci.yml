@@ -25,7 +25,15 @@ jobs:
     outputs:
       change_class: ${{ steps.plan.outputs.change_class }}
       tiers: ${{ steps.plan.outputs.tiers }}
+      owners: ${{ steps.plan.outputs.owners }}
+      unit_mode: ${{ steps.plan.outputs.unit_mode }}
+      unit_groups: ${{ steps.plan.outputs.unit_groups }}
+      unit_filters: ${{ steps.plan.outputs.unit_filters }}
+      unit_related_files: ${{ steps.plan.outputs.unit_related_files }}
+      unit_tests: ${{ steps.plan.outputs.unit_tests }}
       browser_group: ${{ steps.plan.outputs.browser_group }}
+      browser_groups: ${{ steps.plan.outputs.browser_groups }}
+      browser_tests: ${{ steps.plan.outputs.browser_tests }}
       run_typecheck: ${{ steps.plan.outputs.run_typecheck }}
       run_unit: ${{ steps.plan.outputs.run_unit }}
       run_build: ${{ steps.plan.outputs.run_build }}
@@ -104,8 +112,13 @@ jobs:
           node-version: 22.23.2
           package-manager-cache: false
       - run: npm ci --no-audit --no-fund
-      - name: Run unit contracts
-        run: npm run test
+      - name: Run selected unit contracts
+        env:
+          UNIT_MODE: ${{ needs.plan.outputs.unit_mode }}
+          UNIT_FILTERS: ${{ needs.plan.outputs.unit_filters }}
+          UNIT_RELATED_FILES: ${{ needs.plan.outputs.unit_related_files }}
+          UNIT_TESTS: ${{ needs.plan.outputs.unit_tests }}
+        run: npm run test:unit:selected
 
   build-performance:
     name: Build, static smoke and inherited performance gate
@@ -143,27 +156,10 @@ jobs:
       - run: npm ci --no-audit --no-fund
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
-      - name: Run selected browser group
+      - name: Run selected browser contracts
         env:
-          BROWSER_GROUP: ${{ needs.plan.outputs.browser_group }}
-        run: |
-          case "$BROWSER_GROUP" in
-            presentation-smoke)
-              npx playwright test \
-                tests/play/r6-wp6.14-settings-pause-accessibility.spec.ts \
-                tests/play/r6.5-wp18j-responsive-concept-ui.spec.ts
-              ;;
-            critical-runtime-smoke)
-              npx playwright test \
-                tests/play/automated-playtest.spec.ts \
-                tests/play/r6.5-world-state-continue.spec.ts \
-                tests/play/r6.5-wp19b-world-navigation.spec.ts
-              ;;
-            *)
-              echo "Unknown Tier 2 browser group: $BROWSER_GROUP" >&2
-              exit 1
-              ;;
-          esac
+          BROWSER_TESTS: ${{ needs.plan.outputs.browser_tests }}
+        run: npm run test:browser:selected
       - name: Upload targeted browser evidence
         if: always()
         uses: actions/upload-artifact@v4
