@@ -161,7 +161,9 @@ test('returning players get the expanded card, one-tap Continue and protected Ne
   await waitForScene(page, 'CottageInteriorScene');
 });
 
-test('front-door Settings launches the same canonical SettingsScene as the game', async ({ page }) => {
+test('front-door Settings launches the same canonical SettingsScene as the game', async ({
+  page,
+}) => {
   await page.goto('/?diagnostics=1');
   await waitForScene(page, 'TitleScene');
 
