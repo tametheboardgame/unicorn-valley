@@ -25,10 +25,7 @@ const MENU_WIDTH = 430;
 const MENU_BUTTON_WIDTH = 330;
 const MENU_BUTTON_HEIGHT = 58;
 
-type TitleVisibleObject =
-  | Phaser.GameObjects.Rectangle
-  | Phaser.GameObjects.Text
-  | Phaser.GameObjects.Graphics;
+type TitleVisibleObject = Phaser.GameObjects.Rectangle | Phaser.GameObjects.Text;
 
 interface MenuButton {
   button: Phaser.GameObjects.Rectangle;
