@@ -118,9 +118,11 @@ test.describe('R6.5-WP19H0.5 home screen polish', () => {
     expect(titleObject(current, 'title-menu-continue')).toBeUndefined();
     expect(titleObject(current, 'title-menu-my-unicorn')).toBeUndefined();
     expect(titleObject(current, 'title-settings-panel')).toBeUndefined();
-    expect(current.scenes.find((scene) => scene.key === 'TitleScene')?.objects.some((object) =>
-      object.name.startsWith('title-art:'),
-    )).toBe(false);
+    expect(
+      current.scenes
+        .find((scene) => scene.key === 'TitleScene')
+        ?.objects.some((object) => object.name.startsWith('title-art:')),
+    ).toBe(false);
 
     await page.screenshot({
       path: test.info().outputPath('wp19h0.5-home-desktop-fresh.png'),
