@@ -1,4 +1,126 @@
-#game-container > input[type="range"],
-#game-container > select[aria-label="Chosen music track"] {
+#game-container > .settings-audio-control {
   position: absolute;
+  z-index: 30;
+  box-sizing: border-box;
+  margin: 0;
+  color: #4f3a5d;
+  font-family: "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+  touch-action: manipulation;
+}
+
+#game-container > .settings-audio-control:focus-visible {
+  outline: 4px solid #7d5a92;
+  outline-offset: 3px;
+}
+
+#game-container > .settings-audio-slider {
+  --settings-audio-progress: 50%;
+
+  appearance: none;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  cursor: pointer;
+}
+
+#game-container > .settings-audio-slider::-webkit-slider-runnable-track {
+  height: 12px;
+  border: 2px solid #c192d5;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    #d9b5e7 0 var(--settings-audio-progress),
+    #fffaf1 var(--settings-audio-progress) 100%
+  );
+  box-shadow: inset 0 2px 3px rgb(75 54 88 / 10%);
+}
+
+#game-container > .settings-audio-slider::-webkit-slider-thumb {
+  width: 30px;
+  height: 30px;
+  margin-top: -11px;
+  appearance: none;
+  border: 3px solid #b97dcc;
+  border-radius: 50%;
+  background: #ffe6a6;
+  box-shadow:
+    0 3px 0 rgb(75 54 88 / 18%),
+    0 4px 10px rgb(75 54 88 / 16%);
+}
+
+#game-container > .settings-audio-slider:hover::-webkit-slider-thumb {
+  background: #fff4dc;
+}
+
+#game-container > .settings-audio-slider::-moz-range-track {
+  height: 8px;
+  border: 2px solid #c192d5;
+  border-radius: 999px;
+  background: #fffaf1;
+  box-shadow: inset 0 2px 3px rgb(75 54 88 / 10%);
+}
+
+#game-container > .settings-audio-slider::-moz-range-progress {
+  height: 8px;
+  border: 2px solid #c192d5;
+  border-radius: 999px;
+  background: #d9b5e7;
+}
+
+#game-container > .settings-audio-slider::-moz-range-thumb {
+  width: 26px;
+  height: 26px;
+  border: 3px solid #b97dcc;
+  border-radius: 50%;
+  background: #ffe6a6;
+  box-shadow:
+    0 3px 0 rgb(75 54 88 / 18%),
+    0 4px 10px rgb(75 54 88 / 16%);
+}
+
+#game-container > .settings-audio-select {
+  appearance: none;
+  min-height: 44px;
+  padding: 0 52px 0 18px;
+  border: 3px solid #c192d5;
+  border-radius: 16px;
+  background-color: #fffaf1;
+  background-image:
+    linear-gradient(45deg, transparent 50%, #4f3a5d 50%),
+    linear-gradient(135deg, #4f3a5d 50%, transparent 50%);
+  background-position:
+    calc(100% - 22px) 50%,
+    calc(100% - 15px) 50%;
+  background-size: 7px 7px, 7px 7px;
+  background-repeat: no-repeat;
+  box-shadow:
+    0 4px 0 rgb(75 54 88 / 12%),
+    inset 0 2px 0 rgb(255 255 255 / 72%);
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#game-container > .settings-audio-select:hover {
+  border-color: #b97dcc;
+  background-color: #fff4dc;
+}
+
+#game-container > .settings-audio-select:focus-visible {
+  border-color: #7d5a92;
+  outline-offset: 2px;
+}
+
+#game-container > .settings-audio-select option {
+  background: #fffaf1;
+  color: #4f3a5d;
+  font-weight: 700;
+}
+
+@media (forced-colors: active) {
+  #game-container > .settings-audio-control {
+    forced-color-adjust: auto;
+  }
 }
