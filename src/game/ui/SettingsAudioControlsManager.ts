@@ -1,24 +1,24 @@
+import '../../settingsAudioControls.css';
 import type Phaser from 'phaser';
 import { MUSIC_CATALOGUE } from '../../generated/audioCatalogue';
 import { getVerticalSliceAudio } from '../audio/VerticalSliceAudio';
 
 const VOLUMES = [
-  ['master-volume', 'masterVolume'],
-  ['music-volume', 'musicVolume'],
-  ['ambience-volume', 'ambienceVolume'],
-  ['sfx-volume', 'sfxVolume'],
+  ['master', 'masterVolume', 'All sound'],
+  ['music', 'musicVolume', 'Music volume'],
+  ['ambience', 'ambienceVolume', 'Ambience volume'],
+  ['sfx', 'sfxVolume', 'Effects volume'],
 ] as const;
 
 export function getSettingsAudioControlsManager(game: Phaser.Game): void {
   const host = document.getElementById('game-container')!;
   const audio = getVerticalSliceAudio();
-  const sliders = VOLUMES.map(([kind, key]) => {
+  const sliders = VOLUMES.map(([kind, key, label]) => {
     const input = document.createElement('input');
     input.type = 'range';
     input.max = '1';
     input.step = '.01';
-    input.ariaLabel = kind;
-    input.style.position = 'absolute';
+    input.ariaLabel = label;
     input.oninput = () => audio.updateSettings({ [key]: +input.value });
     host.append(input);
     return [kind, key, input] as const;
@@ -26,7 +26,6 @@ export function getSettingsAudioControlsManager(game: Phaser.Game): void {
 
   const select = document.createElement('select');
   select.ariaLabel = 'Chosen music track';
-  select.style.position = 'absolute';
   for (const track of MUSIC_CATALOGUE) {
     select.add(new Option(track.path.slice(track.path.lastIndexOf('/') + 1, -4), track.id));
   }
@@ -54,7 +53,7 @@ export function getSettingsAudioControlsManager(game: Phaser.Game): void {
     };
 
     for (const [kind, key, input] of sliders) {
-      const target = row(kind);
+      const target = row(`${kind}-volume`);
       input.value = String(settings[key]);
       input.hidden = !target?.visible;
       if (!input.hidden) place(target!, input);
