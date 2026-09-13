@@ -114,7 +114,9 @@ test.describe('R6.5-WP19F generated title visual evidence', () => {
 test.describe('R6.5-WP19F phone portrait generated title visual evidence', () => {
   test.use({ viewport: { width: 390, height: 844 }, hasTouch: true });
 
-  test('phone portrait uses a scenic canvas banner and one live DOM menu', async ({ page }) => {
+  test('phone portrait uses a full scenic composition with the real logo and one live DOM menu', async ({
+    page,
+  }) => {
     await prepareFreshTitle(page);
     await openDiagnostics(page);
     await waitForGeneratedArtwork(page);
@@ -128,7 +130,10 @@ test.describe('R6.5-WP19F phone portrait generated title visual evidence', () =>
 
     const controls = page.locator('[data-title-portrait-controls="true"]');
     await expect(controls).toBeVisible();
-    await expect(page.locator('[data-title-portrait-brand="true"]')).toHaveText('Unicorn Valley');
+    const logo = page.locator('[data-title-portrait-brand="true"]');
+    await expect(logo).toBeVisible();
+    await expect(logo).toHaveAttribute('src', /unicorn-valley-logo\.webp$/);
+    await expect(logo).toHaveAttribute('alt', /Unicorn Valley/);
     await expect(page.locator('[data-title-action="title-menu-new-game"]')).toBeVisible();
     await expect(page.locator('[data-title-action="title-menu-settings"]')).toBeVisible();
     await expect(controls.locator('.title-portrait-status')).toHaveText(
@@ -138,8 +143,15 @@ test.describe('R6.5-WP19F phone portrait generated title visual evidence', () =>
 
     const controlsBounds = await controls.boundingBox();
     expect(controlsBounds).not.toBeNull();
-    expect(controlsBounds?.width ?? 0).toBeGreaterThanOrEqual(300);
-    expect((controlsBounds?.y ?? 0) + (controlsBounds?.height ?? 0)).toBeLessThanOrEqual(844);
+    expect(controlsBounds?.x ?? 999).toBeLessThanOrEqual(1);
+    expect(controlsBounds?.y ?? 999).toBeLessThanOrEqual(1);
+    expect(controlsBounds?.width ?? 0).toBeGreaterThanOrEqual(388);
+    expect(controlsBounds?.height ?? 0).toBeGreaterThanOrEqual(840);
+
+    const card = controls.locator('.title-portrait-card');
+    const cardBounds = await card.boundingBox();
+    expect(cardBounds).not.toBeNull();
+    expect(cardBounds?.height ?? 999).toBeLessThan(400);
 
     await page.screenshot({
       path: test.info().outputPath('wp19f-title-phone-portrait.png'),
