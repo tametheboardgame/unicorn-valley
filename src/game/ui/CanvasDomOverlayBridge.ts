@@ -49,7 +49,9 @@ function satisfiesVisibilityBounds(
   const bottom = placement.y + placement.height;
 
   if (placement.visibilityMode === 'contain') {
-    return left >= bounds.left && top >= bounds.top && right <= bounds.right && bottom <= bounds.bottom;
+    return (
+      left >= bounds.left && top >= bounds.top && right <= bounds.right && bottom <= bounds.bottom
+    );
   }
 
   return right > bounds.left && left < bounds.right && bottom > bounds.top && top < bounds.bottom;
