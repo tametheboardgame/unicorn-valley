@@ -4,41 +4,37 @@ Last updated: 2026-09-13
 
 ## Current work
 
-`R6.5-WP19H0 - Architecture, UI, Test and Performance Consolidation` is active on draft PR #172 / branch `agent/r6.5-wp19h0-consolidation`.
+`R6.5-WP19H0.5 - Home Screen Final Polish` is active on draft PR #173 / branch `agent/r6.5-wp19h0.5-home-polish`.
 
-H0A-H0J are implementation-complete and accepted. H0K final qualification is active. Nothing from this branch has been merged or production deployed.
+`R6.5-WP19H0 - Architecture, UI, Test and Performance Consolidation` completed technical qualification, was explicitly approved, merged and incorporated into `main` before H0.5 began.
 
-H0G established deterministic affected-test ownership and fail-safe escalation. H0H replaced the obsolete total-JavaScript breadth failure with measured player-visible loading budgets while retaining total JavaScript as a trend metric. H0I codified the canonical architecture, scene, UI, overlay, testing and performance standards. H0J removed the proven-obsolete pre-R6 `VillageInteriorScene.ts`, added a guard against its return and recorded explicit owners/review milestones for compatibility paths that still own accepted runtime behaviour.
+David's H0.5 home-screen review is recorded in `docs/work-packages/R6.5-WP19H0.5-HOME-SCREEN-FINAL-POLISH.md`. The approved remediation is implementation-complete on the branch and is now in technical qualification.
 
-The H0J code/evidence checkpoint is `69c75662572d9bf38406ed8b393d5c9b914f04b2`. CI run `34767743173` has passed Tier 0, the complete unit suite (124 files / 479 tests), production build, static smoke and the H0H performance architecture checks. The authoritative three-shard Chromium and Chromium/Firefox/WebKit jobs are queued/running as part of the same full-qualification run.
+Current H0.5 implementation includes:
 
-Current measured bundle evidence on that checkpoint:
+- the approved generated Unicorn Valley logo and restrained entrance animation;
+- complete removal of the retired procedural title background and old title lock-up;
+- preloaded generated title artwork to prevent the retired-background startup flash;
+- an intrinsic rounded desktop options card which contracts to New Game + Settings for first-run players and expands to Continue/New Game/My Unicorn/Settings for returning players;
+- canonical rounded UI primitives, layered shadows, restrained surface detail, stronger action hierarchy and keyboard selection/focus treatment;
+- Home Settings routed through the same `AudioSettingsPanel` / `SettingsScene` flow used by the rest of the game, with the duplicate title-specific Settings implementation removed;
+- full-viewport touch title compositions for phone/tablet portrait and small-screen landscape, with safe-area-aware layouts and child-sized controls;
+- a restrained ambient sparkle layer behind the logo/options UI, with reduced-motion handling;
+- targeted responsive and regression evidence for fresh/returning desktop, tablet portrait, phone landscape, canonical Settings and reduced motion.
 
-- entry: 469.5 KiB raw / 126.0 KiB gzip, against a 520 KiB raw hard budget;
-- initial/title/first-playable graph: 514.6 KiB gzip across 26 chunks, against a 560 KiB hard budget;
-- largest lazy JavaScript chunk: 7.8 KiB gzip, against a 32 KiB hard budget;
-- JavaScript chunks: 82, against a 112 hard budget;
-- total JavaScript breadth: 654.1 KiB gzip, retained as trend evidence rather than a startup gate;
-- diagnostics remain outside the initial graph.
+The latest implementation checkpoint before state-only documentation updates is `2106a8b69f9105f809a7581cf1d024dad8049743`. Its authoritative qualification selected Tier 0, the complete unit suite, production build/performance checks, full three-shard Chromium and Chromium/Firefox/WebKit compatibility. Tier 0, unit and build/performance checks are green; the full browser matrix is running.
 
-`R6.5-WP19H - Audio Integration and Authoring Guide` remains complete, human-approved, merged and production released through PR #169.
+## Current gate
 
-## H0 programme
+H0.5 remains open and draft. It is not accepted, merged or production deployed.
 
-Path: `docs/work-packages/R6.5-WP19H0-PERFORMANCE-ARCHITECTURE-CODEBASE-CONSOLIDATION.md`
+The remaining gates are:
 
-- H0A: complete and accepted.
-- H0B: complete and accepted.
-- H0C: complete and accepted.
-- H0D: complete and accepted.
-- H0E: complete and accepted.
-- H0F: complete and accepted.
-- H0G: complete and accepted.
-- H0H: complete and accepted.
-- H0I: complete and accepted.
-- H0J: complete and accepted.
-- H0K: active.
+1. complete exact-head technical qualification;
+2. confirm the updated Cloudflare branch preview;
+3. David reviews the finished home screen across the relevant layouts;
+4. David explicitly accepts or rejects H0.5.
 
 ## Next work
 
-Qualify the final H0K candidate with the complete authoritative CI path, then run the exact-candidate immutable Cloudflare Pages startup/save/reload/Continue smoke. Once technical qualification is complete, stop for David's explicit approval. No merge, production deployment or `R6.5-WP19H1`-`H13` work is authorised before that approval.
+Do not start `R6.5-WP19H1` until H0.5 is technically qualified and David has explicitly accepted the finished home screen. Do not merge PR #173 or production deploy H0.5 without that approval.
