@@ -256,7 +256,7 @@ test('malformed settings and optional cosmetics cannot block Settings, Redesign 
   await tapTitleText(page, 'Settings');
   await waitForScene(page, 'SettingsScene');
   const settingsText = sceneText(await snapshot(page), 'SettingsScene');
-  expect(settingsText).toContain('Music: On');
+  expect(settingsText).toContain('Music: Scene music');
   expect(settingsText).toContain('Reduced motion: Off');
   await tapObject(page, 'SettingsScene', 'settings-done');
   await waitForScene(page, 'TitleScene');
