@@ -1,9 +1,5 @@
 export const UNIT_GROUPS = Object.freeze({
-  'settings-ui-accessibility': [
-    'src/game/accessibility',
-    'src/game/settings',
-    'src/game/ui',
-  ],
+  'settings-ui-accessibility': ['src/game/accessibility', 'src/game/settings', 'src/game/ui'],
   audio: ['src/game/audio'],
   'input-player': ['src/game/input', 'src/game/player'],
   'world-navigation': ['src/game/world'],
@@ -210,12 +206,7 @@ export const OWNERSHIP_MAP = Object.freeze([
   },
   {
     id: 'visual-presentation',
-    sourceGlobs: [
-      'src/game/visual/**',
-      'src/*.css',
-      'src/**/*.css',
-      'public/**',
-    ],
+    sourceGlobs: ['src/game/visual/**', 'src/*.css', 'src/**/*.css', 'public/**'],
     unitGroups: ['visual-presentation'],
     browserGroups: ['visual-presentation'],
   },
@@ -349,9 +340,7 @@ export function selectVerificationOwnership(files, options = {}) {
   }
 
   const selectedUnitGroups = uniqueSorted(unitGroups);
-  const unitFilters = uniqueSorted(
-    selectedUnitGroups.flatMap((group) => UNIT_GROUPS[group] ?? []),
-  );
+  const unitFilters = uniqueSorted(selectedUnitGroups.flatMap((group) => UNIT_GROUPS[group] ?? []));
   const selectedBrowserGroups = uniqueSorted(browserGroups);
   const browserTests = uniqueSorted([
     ...selectedBrowserGroups.flatMap((group) => BROWSER_GROUPS[group] ?? []),
