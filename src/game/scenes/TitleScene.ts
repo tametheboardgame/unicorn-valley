@@ -8,11 +8,7 @@ import { resolveContinueDestination } from '../save/ContinueLocation';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { AudioSettingsPanel } from '../ui/AudioSettingsPanel';
 import { UI_DESIGN_TOKENS } from '../ui/UiDesignSystem';
-import {
-  createUiActionHitTarget,
-  drawUiPanel,
-  drawUiPanelShadow,
-} from '../ui/UiPrimitives';
+import { createUiActionHitTarget, drawUiPanel, drawUiPanelShadow } from '../ui/UiPrimitives';
 import { UI_COLOURS, UI_FONT, setButtonEnabled } from '../ui/uiTheme';
 import { resetMoonflowerGladePlayerSpawn } from '../world/MoonflowerGladeMap';
 
@@ -138,11 +134,19 @@ export class TitleScene extends Phaser.Scene {
     const panelTop = panelY - panelHeight / 2;
 
     const panel = this.add.graphics().setName('title-menu-panel').setDepth(MENU_PANEL_DEPTH);
-    drawUiPanelShadow(panel, MENU_X, panelY, MENU_WIDTH, panelHeight, UI_DESIGN_TOKENS.radius.panelPx, {
-      alpha: 0.24,
-      offsetX: 8,
-      offsetY: 10,
-    });
+    drawUiPanelShadow(
+      panel,
+      MENU_X,
+      panelY,
+      MENU_WIDTH,
+      panelHeight,
+      UI_DESIGN_TOKENS.radius.panelPx,
+      {
+        alpha: 0.24,
+        offsetX: 8,
+        offsetY: 10,
+      },
+    );
     drawUiPanel(panel, MENU_X, panelY, MENU_WIDTH, panelHeight, {
       fill: UI_COLOURS.cream,
       stroke: UI_COLOURS.ribbonStrong,
@@ -151,27 +155,16 @@ export class TitleScene extends Phaser.Scene {
       alpha: 0.97,
     });
     panel.fillStyle(UI_COLOURS.parchment, 0.42);
-    panel.fillRoundedRect(
-      MENU_X - MENU_WIDTH / 2 + 12,
-      panelTop + 12,
-      MENU_WIDTH - 24,
-      88,
-      22,
-    );
+    panel.fillRoundedRect(MENU_X - MENU_WIDTH / 2 + 12, panelTop + 12, MENU_WIDTH - 24, 88, 22);
     panel.fillStyle(UI_COLOURS.white, 0.2);
-    panel.fillRoundedRect(
-      MENU_X - MENU_WIDTH / 2 + 22,
-      panelTop + 20,
-      MENU_WIDTH - 44,
-      11,
-      6,
-    );
+    panel.fillRoundedRect(MENU_X - MENU_WIDTH / 2 + 22, panelTop + 20, MENU_WIDTH - 44, 11, 6);
 
-    const heading = this.storageUnavailable || this.unsupportedSaveVersion
-      ? 'Welcome'
-      : this.hasCreatedUnicorn
-        ? 'Welcome back!'
-        : 'Welcome to Unicorn Valley';
+    const heading =
+      this.storageUnavailable || this.unsupportedSaveVersion
+        ? 'Welcome'
+        : this.hasCreatedUnicorn
+          ? 'Welcome back!'
+          : 'Welcome to Unicorn Valley';
     this.add
       .text(MENU_X, panelTop + 39, heading, {
         color: UI_COLOURS.ink,
@@ -290,7 +283,9 @@ export class TitleScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setDepth(MENU_LABEL_DEPTH);
 
-    const primaryIndex = this.menuButtons.findIndex((menuButton) => menuButton.button === this.primaryButton);
+    const primaryIndex = this.menuButtons.findIndex(
+      (menuButton) => menuButton.button === this.primaryButton,
+    );
     this.selectMenuButton(primaryIndex >= 0 ? primaryIndex : 0);
   }
 
@@ -494,7 +489,10 @@ export class TitleScene extends Phaser.Scene {
       this.starting = false;
       this.resetArmed = false;
       this.newGameMenuButton?.label.setText('New Game');
-      this.setMenuButtonFill(this.newGameMenuButton, this.newGameMenuButton?.fill ?? UI_COLOURS.gold);
+      this.setMenuButtonFill(
+        this.newGameMenuButton,
+        this.newGameMenuButton?.fill ?? UI_COLOURS.gold,
+      );
       this.statusText?.setText(
         this.hasCreatedUnicorn
           ? 'The new adventure could not be saved. Your current adventure is still safe.'
