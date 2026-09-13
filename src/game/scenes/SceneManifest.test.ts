@@ -33,9 +33,7 @@ describe('SCENE_MANIFEST', () => {
 
   it('preserves the established startup registration order', () => {
     expect(
-      SCENE_MANIFEST.filter((entry) => entry.loadBoundary === 'startup').map(
-        (entry) => entry.key,
-      ),
+      SCENE_MANIFEST.filter((entry) => entry.loadBoundary === 'startup').map((entry) => entry.key),
     ).toEqual(EXPECTED_STARTUP_KEYS);
     expect(getStartupSceneConstructors()).toHaveLength(EXPECTED_STARTUP_KEYS.length);
   });
