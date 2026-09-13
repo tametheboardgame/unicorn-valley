@@ -17,6 +17,20 @@ export interface CanvasDomOverlayPlacement {
   };
 }
 
+export interface OverlayRect {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+}
+
+export interface CanvasDomOverlayStyle {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+}
+
 interface OverlayRegistration {
   element: HTMLElement;
   resolve: () => CanvasDomOverlayPlacement | null;
@@ -31,6 +45,34 @@ function intersectsClip(
   const right = placement.x + placement.width;
   const bottom = placement.y + placement.height;
   return right > clip.left && left < clip.right && bottom > clip.top && top < clip.bottom;
+}
+
+export function calculateCanvasDomOverlayStyle(
+  canvasRect: OverlayRect,
+  hostRect: OverlayRect,
+  placement: CanvasDomOverlayPlacement,
+): CanvasDomOverlayStyle | null {
+  if (
+    placement.visible === false ||
+    (placement.clip && !intersectsClip(placement, placement.clip))
+  ) {
+    return null;
+  }
+
+  const scaleX = canvasRect.width / UI_DESIGN_TOKENS.viewport.logicalWidth;
+  const scaleY = canvasRect.height / UI_DESIGN_TOKENS.viewport.logicalHeight;
+  return {
+    left: canvasRect.left - hostRect.left + placement.x * scaleX,
+    top: canvasRect.top - hostRect.top + placement.y * scaleY,
+    width: Math.max(
+      placement.minCssWidth ?? UI_DESIGN_TOKENS.control.minimumTouchTargetPx,
+      placement.width * scaleX,
+    ),
+    height: Math.max(
+      placement.minCssHeight ?? UI_DESIGN_TOKENS.control.nativeHeightPx,
+      placement.height * scaleY,
+    ),
+  };
 }
 
 export class CanvasDomOverlayBridge {
@@ -76,30 +118,25 @@ export class CanvasDomOverlayBridge {
   private syncOne(registration: OverlayRegistration): void {
     const placement = registration.resolve();
     const element = registration.element;
-    if (
-      !placement ||
-      placement.visible === false ||
-      (placement.clip && !intersectsClip(placement, placement.clip))
-    ) {
+    if (!placement) {
       element.hidden = true;
       return;
     }
 
-    const canvasRect = this.game.canvas.getBoundingClientRect();
-    const hostRect = this.host.getBoundingClientRect();
-    const scaleX = canvasRect.width / UI_DESIGN_TOKENS.viewport.logicalWidth;
-    const scaleY = canvasRect.height / UI_DESIGN_TOKENS.viewport.logicalHeight;
+    const style = calculateCanvasDomOverlayStyle(
+      this.game.canvas.getBoundingClientRect(),
+      this.host.getBoundingClientRect(),
+      placement,
+    );
+    if (!style) {
+      element.hidden = true;
+      return;
+    }
 
     element.hidden = false;
-    element.style.left = `${canvasRect.left - hostRect.left + placement.x * scaleX}px`;
-    element.style.top = `${canvasRect.top - hostRect.top + placement.y * scaleY}px`;
-    element.style.width = `${Math.max(
-      placement.minCssWidth ?? UI_DESIGN_TOKENS.control.minimumTouchTargetPx,
-      placement.width * scaleX,
-    )}px`;
-    element.style.height = `${Math.max(
-      placement.minCssHeight ?? UI_DESIGN_TOKENS.control.nativeHeightPx,
-      placement.height * scaleY,
-    )}px`;
+    element.style.left = `${style.left}px`;
+    element.style.top = `${style.top}px`;
+    element.style.width = `${style.width}px`;
+    element.style.height = `${style.height}px`;
   }
 }
