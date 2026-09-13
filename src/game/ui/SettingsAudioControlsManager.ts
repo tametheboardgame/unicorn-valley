@@ -16,8 +16,12 @@ const CONTROL_X = 640 - 245;
 const CONTROL_WIDTH = 490;
 const CONTROL_HEIGHT = UI_DESIGN_TOKENS.control.nativeHeightPx;
 const CONTROL_MIN_CSS_WIDTH = 260;
-const VIEWPORT_TOP = 145;
-const VIEWPORT_BOTTOM = 565;
+const SETTINGS_VIEWPORT = {
+  left: CONTROL_X,
+  top: 145,
+  right: CONTROL_X + CONTROL_WIDTH,
+  bottom: 565,
+} as const;
 const INSTALLED = new WeakSet<Phaser.Game>();
 
 function applyDesignTokens(host: HTMLElement): void {
@@ -53,6 +57,7 @@ export function getSettingsAudioControlsManager(game: Phaser.Game): void {
   const placement = (
     target: Phaser.GameObjects.Rectangle | null,
     visible: boolean,
+    containInViewport = false,
   ): CanvasDomOverlayPlacement | null => {
     if (!target || !visible) return null;
     return {
@@ -62,6 +67,12 @@ export function getSettingsAudioControlsManager(game: Phaser.Game): void {
       height: CONTROL_HEIGHT,
       minCssWidth: CONTROL_MIN_CSS_WIDTH,
       minCssHeight: CONTROL_HEIGHT,
+      ...(containInViewport
+        ? {
+            visibilityBounds: SETTINGS_VIEWPORT,
+            visibilityMode: 'contain' as const,
+          }
+        : {}),
     };
   };
 
@@ -95,13 +106,7 @@ export function getSettingsAudioControlsManager(game: Phaser.Game): void {
   bridge.register(select, () => {
     const target = row('music-track');
     const settings = audio.getSettings();
-    const visible = Boolean(
-      !settings.musicEnabled &&
-        target?.visible &&
-        target.y - target.height / 2 >= VIEWPORT_TOP &&
-        target.y + target.height / 2 + 6 <= VIEWPORT_BOTTOM,
-    );
     select.value = settings.selectedMusicTrackId ?? MUSIC_CATALOGUE[0]?.id ?? '';
-    return placement(target, visible);
+    return placement(target, Boolean(!settings.musicEnabled && target?.visible), true);
   });
 }
