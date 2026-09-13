@@ -80,7 +80,21 @@ jobs:
           package-manager-cache: false
       - run: npm ci --no-audit --no-fund
       - name: Check formatting
-        run: npm run format:check
+        id: format
+        run: |
+          if ! npm run format:check; then
+            npm run format
+            git diff -- . > formatting.patch
+            exit 1
+          fi
+      - name: Upload formatter remediation
+        if: failure() && steps.format.conclusion == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: formatter-remediation
+          path: formatting.patch
+          if-no-files-found: warn
+          retention-days: 7
       - name: Lint
         run: npm run lint
       - name: Check architecture boundaries
