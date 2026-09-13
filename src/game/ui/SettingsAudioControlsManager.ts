@@ -65,7 +65,7 @@ export function getSettingsAudioControlsManager(game: Phaser.Game): void {
       const target = row(`${kind}-volume`);
       input.value = String(settings[key]);
       input.style.setProperty('--settings-audio-progress', `${settings[key] * 100}%`);
-      input.hidden = !target?.visible;
+      input.hidden = !target?.input?.enabled;
       if (!input.hidden) place(target!, input);
     }
 
