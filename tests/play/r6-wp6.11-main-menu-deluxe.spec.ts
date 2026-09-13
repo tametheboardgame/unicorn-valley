@@ -1,7 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 
 const SAVE_KEY = 'unicorn-valley.save';
-const ACCESSIBILITY_KEY = 'unicorn-valley:accessibility-settings:v1';
 
 interface DiagnosticObject {
   name: string;
@@ -110,7 +109,15 @@ function visibleTitleText(snapshot: DiagnosticSnapshot): string[] {
   );
 }
 
-test('new players get a clean front door without irrelevant returning-player actions', async ({
+function titlePanelHeight(snapshot: DiagnosticSnapshot): number {
+  return (
+    snapshot.scenes
+      .find((scene) => scene.key === 'TitleScene')
+      ?.objects.find((object) => object.name === 'title-menu-panel')?.displayHeight ?? 0
+  );
+}
+
+test('new players get a compact front door without irrelevant returning-player actions', async ({
   page,
 }) => {
   await page.goto('/?diagnostics=1');
@@ -118,17 +125,18 @@ test('new players get a clean front door without irrelevant returning-player act
 
   const snapshot = await getSnapshot(page);
   const visibleText = visibleTitleText(snapshot);
-  expect(visibleText).toContain('Unicorn Valley');
+  expect(visibleText).toContain('Welcome to Unicorn Valley');
   expect(visibleText).toContain('New Game');
   expect(visibleText).toContain('Settings');
   expect(visibleText).not.toContain('Continue');
   expect(visibleText).not.toContain('My Unicorn');
+  expect(titlePanelHeight(snapshot)).toBeLessThan(400);
 
   await tapTitleText(page, 'New Game');
   await waitForScene(page, 'UnicornCreatorScene');
 });
 
-test('returning players get one-tap Continue plus protected New Game and My Unicorn', async ({
+test('returning players get the expanded card, one-tap Continue and protected New Game', async ({
   page,
 }) => {
   const save = createStoredSave('Starlight');
@@ -140,36 +148,51 @@ test('returning players get one-tap Continue plus protected New Game and My Unic
   await page.goto('/?diagnostics=1');
   await waitForScene(page, 'TitleScene');
 
-  const visibleText = visibleTitleText(await getSnapshot(page));
+  const snapshot = await getSnapshot(page);
+  const visibleText = visibleTitleText(snapshot);
+  expect(visibleText).toContain('Welcome back!');
   expect(visibleText).toContain('Continue');
   expect(visibleText).toContain('New Game');
   expect(visibleText).toContain('My Unicorn');
   expect(visibleText).toContain('Settings');
+  expect(titlePanelHeight(snapshot)).toBeGreaterThan(450);
 
   await tapTitleText(page, 'Continue');
   await waitForScene(page, 'CottageInteriorScene');
 });
 
-test('front-door settings expose persistent accessibility preferences', async ({ page }) => {
+test('front-door Settings launches the same canonical SettingsScene as the game', async ({ page }) => {
   await page.goto('/?diagnostics=1');
   await waitForScene(page, 'TitleScene');
 
+  const before = await getSnapshot(page);
+  expect(
+    before.scenes
+      .find((scene) => scene.key === 'TitleScene')
+      ?.objects.some((object) => object.name === 'title-settings-panel'),
+  ).toBe(false);
+
   await tapTitleText(page, 'Settings');
-  expect(visibleTitleText(await getSnapshot(page))).toContain('Reduced motion: Off');
+  await waitForScene(page, 'SettingsScene');
 
-  await tapTitleText(page, 'Reduced motion: Off');
-  expect(visibleTitleText(await getSnapshot(page))).toContain('Reduced motion: On');
-  const stored = await page.evaluate((key) => window.localStorage.getItem(key), ACCESSIBILITY_KEY);
-  expect(JSON.parse(stored ?? '{}')).toMatchObject({ reducedMotion: true });
+  const opened = await getSnapshot(page);
+  expect(opened.activeScenes).toContain('SettingsScene');
+  expect(opened.activeScenes).not.toContain('TitleScene');
+  expect(
+    opened.scenes
+      .find((scene) => scene.key === 'SettingsScene')
+      ?.objects.some((object) => object.name === 'settings-panel'),
+  ).toBe(true);
 
-  await tapTitleText(page, 'Done');
-  expect(visibleTitleText(await getSnapshot(page))).not.toContain('Reduced motion: On');
+  await page.keyboard.press('Escape');
+  await waitForScene(page, 'TitleScene');
+  expect((await getSnapshot(page)).activeScenes).not.toContain('SettingsScene');
 });
 
 test.describe('phone portrait title controls', () => {
   test.use({ viewport: { width: 390, height: 844 }, hasTouch: true });
 
-  test('essential menu and settings actions stay physically readable and touch-sized', async ({
+  test('portrait is a full scenic composition with touch-sized actions and canonical Settings', async ({
     page,
   }) => {
     test.setTimeout(120_000);
@@ -178,6 +201,9 @@ test.describe('phone portrait title controls', () => {
 
     const portraitControls = page.locator('[data-title-portrait-controls="true"]');
     await expect(portraitControls).toBeVisible();
+    const logo = page.locator('[data-title-portrait-brand="true"]');
+    await expect(logo).toBeVisible();
+    await expect(logo).toHaveAttribute('src', /unicorn-valley-logo\.webp$/);
 
     const newGame = page.locator('[data-title-action="title-menu-new-game"]');
     const settings = page.locator('[data-title-action="title-menu-settings"]');
@@ -185,38 +211,25 @@ test.describe('phone portrait title controls', () => {
       await expect(target).toBeVisible();
       const bounds = await target.boundingBox();
       expect(bounds).not.toBeNull();
-      expect(bounds?.height ?? 0).toBeGreaterThanOrEqual(54);
+      expect(bounds?.height ?? 0).toBeGreaterThanOrEqual(58);
       expect(bounds?.width ?? 0).toBeGreaterThanOrEqual(240);
     }
 
-    const canvas = await page.locator('canvas').boundingBox();
     const controls = await portraitControls.boundingBox();
-    expect(canvas).not.toBeNull();
     expect(controls).not.toBeNull();
-    expect(canvas?.y ?? 0).toBeLessThanOrEqual(1);
-    expect((controls?.y ?? 0) + (controls?.height ?? 0)).toBeLessThanOrEqual(844);
-    expect(controls?.y ?? 0).toBeGreaterThanOrEqual((canvas?.y ?? 0) + (canvas?.height ?? 0));
+    expect(controls?.y ?? 999).toBeLessThanOrEqual(1);
+    expect(controls?.height ?? 0).toBeGreaterThanOrEqual(840);
+    await expect(page.locator('canvas')).toHaveCSS('pointer-events', 'none');
 
     await settings.click();
-    const requiredSettingActions = [
-      'title-setting-muted',
-      'title-setting-music',
-      'title-setting-ambience',
-      'title-setting-sfx',
-      'title-setting-reduced-motion',
-      'title-setting-high-visibility',
-      'title-setting-fullscreen',
-      'title-settings-done',
-    ] as const;
-    for (const action of requiredSettingActions) {
-      const target = page.locator(`[data-title-action="${action}"]`);
-      await expect(target).toBeVisible();
-      const bounds = await target.boundingBox();
-      expect(bounds).not.toBeNull();
-      expect(bounds?.height ?? 0).toBeGreaterThanOrEqual(54);
-    }
+    await waitForScene(page, 'SettingsScene');
+    await expect(portraitControls).toBeHidden();
+    await expect(page.locator('canvas')).not.toHaveCSS('pointer-events', 'none');
 
-    await page.locator('[data-title-action="title-settings-done"]').click();
+    await page.keyboard.press('Escape');
+    await waitForScene(page, 'TitleScene');
+    await expect(portraitControls).toBeVisible();
+
     await newGame.click();
     await waitForScene(page, 'UnicornCreatorScene');
     await expect(portraitControls).toBeHidden();
