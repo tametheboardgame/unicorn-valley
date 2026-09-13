@@ -204,7 +204,6 @@ export class TitlePortraitControlsManager {
     const artworkTarget = currentArtworkTarget();
     this.game.canvas.style.pointerEvents = artworkTarget.portrait ? 'none' : '';
     this.syncArtwork(scene, artworkTarget);
-    this.removeLegacyTitleVisuals(scene);
     this.syncLogo(scene, artworkTarget.portrait);
     this.root.hidden = false;
     const settingsPanel = scene.children.getByName('title-settings-panel');
@@ -279,27 +278,6 @@ export class TitlePortraitControlsManager {
       .setScale(coverScale)
       .setDepth(target.portrait ? 300 : 8);
     artwork.setData('titleArtworkVariant', target.portrait ? 'portrait' : 'landscape');
-  }
-
-  private removeLegacyTitleVisuals(scene: Phaser.Scene): void {
-    for (const child of [...scene.children.list]) {
-      if (child.name.startsWith('title-art:')) {
-        child.destroy();
-      }
-    }
-
-    scene.children.getByName('title-lockup-panel')?.destroy();
-    scene.children.getByName('title-lockup-name')?.destroy();
-    scene.children.getByName('title-lockup-tagline')?.destroy();
-
-    const legacyShadow = scene.children.list.find(
-      (child) =>
-        child instanceof Phaser.GameObjects.Rectangle &&
-        child.depth === 9 &&
-        Math.abs(child.width - 610) < 1 &&
-        Math.abs(child.height - 178) < 1,
-    );
-    legacyShadow?.destroy();
   }
 
   private syncLogo(scene: Phaser.Scene, portrait: boolean): void {
