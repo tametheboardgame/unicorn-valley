@@ -44,7 +44,12 @@ export function getSettingsAudioControlsManager(game: Phaser.Game): void {
   select.style.height = '34px';
   select.style.borderRadius = '9px';
   for (const track of MUSIC_CATALOGUE) {
-    select.add(new Option(track.path.slice(track.path.lastIndexOf('/') + 1, -4).replaceAll('-', ' '), track.id));
+    select.add(
+      new Option(
+        track.path.slice(track.path.lastIndexOf('/') + 1, -4).replaceAll('-', ' '),
+        track.id,
+      ),
+    );
   }
   select.onchange = () => audio.updateSettings({ selectedMusicTrackId: select.value });
   select.onpointerdown = (event) => event.stopPropagation();
