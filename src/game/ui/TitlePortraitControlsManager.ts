@@ -277,9 +277,18 @@ export class TitlePortraitControlsManager {
   }
 
   private syncLogo(scene: Phaser.Scene, portrait: boolean): void {
-    scene.children.getByName('title-lockup-panel')?.setVisible(false);
-    scene.children.getByName('title-lockup-name')?.setVisible(false);
-    scene.children.getByName('title-lockup-tagline')?.setVisible(false);
+    const legacyPanel = scene.children.getByName('title-lockup-panel');
+    const legacyName = scene.children.getByName('title-lockup-name');
+    const legacyTagline = scene.children.getByName('title-lockup-tagline');
+    if (legacyPanel instanceof Phaser.GameObjects.Rectangle) {
+      legacyPanel.setVisible(false);
+    }
+    if (legacyName instanceof Phaser.GameObjects.Text) {
+      legacyName.setVisible(false);
+    }
+    if (legacyTagline instanceof Phaser.GameObjects.Text) {
+      legacyTagline.setVisible(false);
+    }
 
     const existing = scene.children.getByName(TITLE_LOGO_NAME);
     if (portrait) {
