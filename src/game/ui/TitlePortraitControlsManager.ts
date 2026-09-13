@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { getBrowserAccessibilitySettingsStore } from '../accessibility/AccessibilitySettings';
 import { getVerticalSliceAudio } from '../audio/VerticalSliceAudio';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
@@ -14,6 +15,8 @@ const TITLE_ARTWORK_PORTRAIT_URL = '/assets/title/wp19f-title-portrait.webp';
 const TITLE_LOGO_NAME = 'title-generated-logo';
 const TITLE_LOGO_KEY = 'title-generated-logo';
 const TITLE_LOGO_WIDTH = 600;
+const TITLE_LOGO_X = 380;
+const TITLE_LOGO_Y = 210;
 
 interface ActionDefinition {
   objectName: string;
@@ -100,6 +103,7 @@ function currentArtworkTarget(): TitleArtworkTarget {
 
 export class TitlePortraitControlsManager {
   private readonly syncThrottle = new RefreshThrottle(SYNC_INTERVAL_MS);
+  private readonly accessibility = getBrowserAccessibilitySettingsStore();
   private readonly root: HTMLElement;
   private readonly mainView: HTMLElement;
   private readonly settingsView: HTMLElement;
@@ -200,6 +204,7 @@ export class TitlePortraitControlsManager {
     const artworkTarget = currentArtworkTarget();
     this.game.canvas.style.pointerEvents = artworkTarget.portrait ? 'none' : '';
     this.syncArtwork(scene, artworkTarget);
+    this.removeLegacyTitleVisuals(scene);
     this.syncLogo(scene, artworkTarget.portrait);
     this.root.hidden = false;
     const settingsPanel = scene.children.getByName('title-settings-panel');
@@ -276,20 +281,28 @@ export class TitlePortraitControlsManager {
     artwork.setData('titleArtworkVariant', target.portrait ? 'portrait' : 'landscape');
   }
 
-  private syncLogo(scene: Phaser.Scene, portrait: boolean): void {
-    const legacyPanel = scene.children.getByName('title-lockup-panel');
-    const legacyName = scene.children.getByName('title-lockup-name');
-    const legacyTagline = scene.children.getByName('title-lockup-tagline');
-    if (legacyPanel instanceof Phaser.GameObjects.Rectangle) {
-      legacyPanel.setVisible(false);
-    }
-    if (legacyName instanceof Phaser.GameObjects.Text) {
-      legacyName.setVisible(false);
-    }
-    if (legacyTagline instanceof Phaser.GameObjects.Text) {
-      legacyTagline.setVisible(false);
+  private removeLegacyTitleVisuals(scene: Phaser.Scene): void {
+    for (const child of [...scene.children.list]) {
+      if (child.name.startsWith('title-art:')) {
+        child.destroy();
+      }
     }
 
+    scene.children.getByName('title-lockup-panel')?.destroy();
+    scene.children.getByName('title-lockup-name')?.destroy();
+    scene.children.getByName('title-lockup-tagline')?.destroy();
+
+    const legacyShadow = scene.children.list.find(
+      (child) =>
+        child instanceof Phaser.GameObjects.Rectangle &&
+        child.depth === 9 &&
+        Math.abs(child.width - 610) < 1 &&
+        Math.abs(child.height - 178) < 1,
+    );
+    legacyShadow?.destroy();
+  }
+
+  private syncLogo(scene: Phaser.Scene, portrait: boolean): void {
     const existing = scene.children.getByName(TITLE_LOGO_NAME);
     if (portrait) {
       existing?.destroy();
@@ -300,8 +313,28 @@ export class TitlePortraitControlsManager {
       return;
     }
 
-    const logo = scene.add.image(380, 210, TITLE_LOGO_KEY).setName(TITLE_LOGO_NAME).setDepth(12);
-    logo.setScale(TITLE_LOGO_WIDTH / Math.max(1, logo.width));
+    const logo = scene.add
+      .image(TITLE_LOGO_X, TITLE_LOGO_Y, TITLE_LOGO_KEY)
+      .setName(TITLE_LOGO_NAME)
+      .setDepth(12);
+    const finalScale = TITLE_LOGO_WIDTH / Math.max(1, logo.width);
+    const reducedMotion = this.accessibility.load().reducedMotion;
+
+    if (reducedMotion) {
+      logo.setScale(finalScale);
+      return;
+    }
+
+    logo.setAlpha(0).setScale(finalScale * 0.86).setY(TITLE_LOGO_Y + 24);
+    scene.tweens.add({
+      targets: logo,
+      alpha: 1,
+      y: TITLE_LOGO_Y,
+      scaleX: finalScale,
+      scaleY: finalScale,
+      duration: 720,
+      ease: 'Back.Out',
+    });
   }
 
   private syncActions(scene: Phaser.Scene, actions: DomAction[], settings = false): void {
