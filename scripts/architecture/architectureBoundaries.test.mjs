@@ -1,6 +1,10 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { extractImportSpecifiers, validateDependency } from './architectureBoundaries.mjs';
+import {
+  extractImportSpecifiers,
+  validateDependency,
+  validateRetiredSourcePath,
+} from './architectureBoundaries.mjs';
 
 test('rejects a persistence dependency on a scene implementation', () => {
   const violations = validateDependency(
@@ -27,6 +31,17 @@ test('allows persistence dependencies on lower-level typed event infrastructure'
     validateDependency('src/game/save/SaveService.ts', '../events/GameEventBus'),
     [],
   );
+});
+
+test('rejects reintroduction of an H0J-retired source path', () => {
+  const violations = validateRetiredSourcePath('src/game/scenes/VillageInteriorScene.ts');
+
+  assert.equal(violations.length, 1);
+  assert.equal(violations[0].ruleId, 'retired-source-path-does-not-return');
+});
+
+test('allows the canonical village interior implementation', () => {
+  assert.deepEqual(validateRetiredSourcePath('src/game/scenes/R6VillageInteriorScene.ts'), []);
 });
 
 test('extracts static, re-export and dynamic relative imports', () => {
