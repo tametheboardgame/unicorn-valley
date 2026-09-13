@@ -122,6 +122,7 @@ export class VerticalSliceAudio {
 
   public async unlock(): Promise<void> {
     if (typeof window === 'undefined') return;
+    void this.musicElement?.play().catch(() => undefined);
     let restart = false;
     if (!this.context) {
       this.context = new AudioContext();
@@ -207,9 +208,11 @@ export class VerticalSliceAudio {
       },
       () => {
         if (this.musicElement !== next) return;
-        this.musicElement = previous;
-        this.musicTrackId = previousId;
-        if (previous) previous.volume = this.musicElementTargetVolume();
+        if (previous) {
+          this.musicElement = previous;
+          this.musicTrackId = previousId;
+          previous.volume = this.musicElementTargetVolume();
+        }
       },
     );
   }
@@ -217,6 +220,7 @@ export class VerticalSliceAudio {
   private stopMusic(): void {
     this.musicElement?.pause();
     this.musicElement = null;
+    this.musicTrackId = null;
   }
 
   private musicElementTargetVolume(): number {
