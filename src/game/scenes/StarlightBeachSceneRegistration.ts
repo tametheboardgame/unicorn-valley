@@ -7,10 +7,15 @@ export function ensureStarlightBeachScene(game: Phaser.Game): Promise<void> {
     return Promise.resolve();
   }
 
-  registrationPromise ??= import('./StarlightBeachScene').then(({ StarlightBeachScene }) => {
-    if (!game.scene.keys.StarlightBeachScene) {
-      game.scene.add('StarlightBeachScene', StarlightBeachScene);
-    }
-  });
+  registrationPromise ??= import('./StarlightBeachScene')
+    .then(({ StarlightBeachScene }) => {
+      if (!game.scene.keys.StarlightBeachScene) {
+        game.scene.add('StarlightBeachScene', StarlightBeachScene);
+      }
+    })
+    .catch((error: unknown) => {
+      registrationPromise = null;
+      throw error;
+    });
   return registrationPromise;
 }

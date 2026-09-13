@@ -1,0 +1,1043 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-13T10:42:40.396Z",
+  "sourceCommit": "97167f6b78913c16012f636b5733d04e3e7bff41",
+  "measurement": {
+    "buildCommand": "npm run build -- --manifest",
+    "reportCommand": "BASELINE_SOURCE_COMMIT=97167f6b78913c16012f636b5733d04e3e7bff41 node scripts/architecture/reportWp19h0Bundle.mjs",
+    "gzipMethod": "Node.js zlib.gzipSync over each emitted JavaScript file; sums are per-file gzip bytes",
+    "boundaries": {
+      "entry": "application entry chunk only (legacy 520 KiB metric is raw bytes)",
+      "initial": "entry plus transitive static manifest imports fetched to evaluate the entry; includes Phaser",
+      "title": "same static closure as initial: TitleScene is statically registered through gameConfig",
+      "firstPlayable": "same static closure as title: MoonflowerGladeScene is statically registered through gameConfig; excludes asynchronously scheduled managers",
+      "total": "all emitted JavaScript, including optional, immediately scheduled and diagnostics chunks"
+    }
+  },
+  "counts": {
+    "javascriptChunks": 81,
+    "manifestEntries": 81
+  },
+  "bytes": {
+    "entry": {
+      "raw": 471915,
+      "gzip": 126296
+    },
+    "initial": {
+      "raw": 1976435,
+      "gzip": 523453
+    },
+    "titleGraph": {
+      "raw": 1976435,
+      "gzip": 523453
+    },
+    "firstPlayableGraph": {
+      "raw": 1976435,
+      "gzip": 523453
+    },
+    "totalJavaScript": {
+      "raw": 2363797,
+      "gzip": 666008
+    }
+  },
+  "legacyBudgets": {
+    "entryRawBytes": 532480,
+    "totalJavaScriptGzipBytes": 665600
+  },
+  "entry": {
+    "key": "index.html",
+    "file": "assets/index-BQvDep-X.js"
+  },
+  "initialChunks": [
+    {
+      "key": "index.html",
+      "file": "assets/index-BQvDep-X.js",
+      "rawBytes": 471915,
+      "gzipBytes": 126296
+    },
+    {
+      "key": "_phaser-P1E8uaLi.js",
+      "file": "assets/phaser-P1E8uaLi.js",
+      "rawBytes": 1374829,
+      "gzipBytes": 355968
+    },
+    {
+      "key": "_r6WhisperingWoodsDepthContent-COm8-d69.js",
+      "file": "assets/r6WhisperingWoodsDepthContent-COm8-d69.js",
+      "rawBytes": 27259,
+      "gzipBytes": 8306
+    },
+    {
+      "key": "_r65StarlightBeach-XT0kcnLF.js",
+      "file": "assets/r65StarlightBeach-XT0kcnLF.js",
+      "rawBytes": 5531,
+      "gzipBytes": 1984
+    },
+    {
+      "key": "_r6VillageContent-Dglw4e9B.js",
+      "file": "assets/r6VillageContent-Dglw4e9B.js",
+      "rawBytes": 2798,
+      "gzipBytes": 1145
+    },
+    {
+      "key": "_browserSaveService-BqUszmOP.js",
+      "file": "assets/browserSaveService-BqUszmOP.js",
+      "rawBytes": 11292,
+      "gzipBytes": 3284
+    },
+    {
+      "key": "_WorldArrivalState-Bo1uHpbN.js",
+      "file": "assets/WorldArrivalState-Bo1uHpbN.js",
+      "rawBytes": 274,
+      "gzipBytes": 198
+    },
+    {
+      "key": "_saveLocationCheckpoint-Bi9JBxwO.js",
+      "file": "assets/saveLocationCheckpoint-Bi9JBxwO.js",
+      "rawBytes": 205,
+      "gzipBytes": 164
+    },
+    {
+      "key": "_MoonflowerGladeMap-Dju_Cgu0.js",
+      "file": "assets/MoonflowerGladeMap-Dju_Cgu0.js",
+      "rawBytes": 1398,
+      "gzipBytes": 664
+    },
+    {
+      "key": "_SunbeamVillageMap-ClYEb8WN.js",
+      "file": "assets/SunbeamVillageMap-ClYEb8WN.js",
+      "rawBytes": 3099,
+      "gzipBytes": 1183
+    },
+    {
+      "key": "_VerticalSliceAudio-CSNaEbdV.js",
+      "file": "assets/VerticalSliceAudio-CSNaEbdV.js",
+      "rawBytes": 9492,
+      "gzipBytes": 2843
+    },
+    {
+      "key": "_gameConstants-DYN09lMe.js",
+      "file": "assets/gameConstants-DYN09lMe.js",
+      "rawBytes": 26,
+      "gzipBytes": 46
+    },
+    {
+      "key": "_registries-BEgrj8eN.js",
+      "file": "assets/registries-BEgrj8eN.js",
+      "rawBytes": 43113,
+      "gzipBytes": 11333
+    },
+    {
+      "key": "_r65RaceExpansion-Cw3OiJOo.js",
+      "file": "assets/r65RaceExpansion-Cw3OiJOo.js",
+      "rawBytes": 2981,
+      "gzipBytes": 1026
+    },
+    {
+      "key": "_r5WhisperingWoods-IJAm7V4v.js",
+      "file": "assets/r5WhisperingWoods-IJAm7V4v.js",
+      "rawBytes": 1792,
+      "gzipBytes": 922
+    },
+    {
+      "key": "_r4EggArc-BYiu1PzE.js",
+      "file": "assets/r4EggArc-BYiu1PzE.js",
+      "rawBytes": 1251,
+      "gzipBytes": 569
+    },
+    {
+      "key": "_r65RepeatableActivities-CWMBdWXl.js",
+      "file": "assets/r65RepeatableActivities-CWMBdWXl.js",
+      "rawBytes": 2573,
+      "gzipBytes": 1044
+    },
+    {
+      "key": "_ExplorationGallop-DQraKhY2.js",
+      "file": "assets/ExplorationGallop-DQraKhY2.js",
+      "rawBytes": 955,
+      "gzipBytes": 502
+    },
+    {
+      "key": "_InteractionModalState-D4OiTRjJ.js",
+      "file": "assets/InteractionModalState-D4OiTRjJ.js",
+      "rawBytes": 253,
+      "gzipBytes": 187
+    },
+    {
+      "key": "_AccessibilitySettings-CBRyWhKS.js",
+      "file": "assets/AccessibilitySettings-CBRyWhKS.js",
+      "rawBytes": 1026,
+      "gzipBytes": 473
+    },
+    {
+      "key": "_uiTheme-C4AORBPt.js",
+      "file": "assets/uiTheme-C4AORBPt.js",
+      "rawBytes": 962,
+      "gzipBytes": 559
+    },
+    {
+      "key": "_preload-helper-Czpn1I53.js",
+      "file": "assets/preload-helper-Czpn1I53.js",
+      "rawBytes": 1196,
+      "gzipBytes": 675
+    },
+    {
+      "key": "_r5RaceIds-D_fDFtlO.js",
+      "file": "assets/r5RaceIds-D_fDFtlO.js",
+      "rawBytes": 65,
+      "gzipBytes": 78
+    },
+    {
+      "key": "_ConceptUi-CJTavlxA.js",
+      "file": "assets/ConceptUi-CJTavlxA.js",
+      "rawBytes": 3835,
+      "gzipBytes": 1290
+    },
+    {
+      "key": "_TouchMovementPad-BjU0MXks.js",
+      "file": "assets/TouchMovementPad-BjU0MXks.js",
+      "rawBytes": 7290,
+      "gzipBytes": 2268
+    },
+    {
+      "key": "_ShimmerEconomyService-DkI5-7EB.js",
+      "file": "assets/ShimmerEconomyService-DkI5-7EB.js",
+      "rawBytes": 1025,
+      "gzipBytes": 446
+    }
+  ],
+  "largestJavaScriptChunks": [
+    {
+      "key": "_phaser-P1E8uaLi.js",
+      "file": "assets/phaser-P1E8uaLi.js",
+      "rawBytes": 1374829,
+      "gzipBytes": 355968
+    },
+    {
+      "key": "index.html",
+      "file": "assets/index-BQvDep-X.js",
+      "rawBytes": 471915,
+      "gzipBytes": 126296
+    },
+    {
+      "key": "_registries-BEgrj8eN.js",
+      "file": "assets/registries-BEgrj8eN.js",
+      "rawBytes": 43113,
+      "gzipBytes": 11333
+    },
+    {
+      "key": "_r6WhisperingWoodsDepthContent-COm8-d69.js",
+      "file": "assets/r6WhisperingWoodsDepthContent-COm8-d69.js",
+      "rawBytes": 27259,
+      "gzipBytes": 8306
+    },
+    {
+      "key": "src/game/scenes/WonderbookScene.ts",
+      "file": "assets/WonderbookScene-CJCutJjP.js",
+      "rawBytes": 24074,
+      "gzipBytes": 7998
+    },
+    {
+      "key": "src/game/scenes/R6VillageInteriorScene.ts",
+      "file": "assets/R6VillageInteriorScene-Bsy3pe2e.js",
+      "rawBytes": 21543,
+      "gzipBytes": 7455
+    },
+    {
+      "key": "src/game/scenes/InventoryScene.ts",
+      "file": "assets/InventoryScene-P1KkqZNP.js",
+      "rawBytes": 22414,
+      "gzipBytes": 7343
+    },
+    {
+      "key": "src/game/population/AmbientPopulationWorldManager.ts",
+      "file": "assets/AmbientPopulationWorldManager-Bvun2z7o.js",
+      "rawBytes": 13834,
+      "gzipBytes": 5312
+    },
+    {
+      "key": "src/game/world/ExistingValleyQuestPackWorldManager.ts",
+      "file": "assets/ExistingValleyQuestPackWorldManager-CUpc7QpO.js",
+      "rawBytes": 16041,
+      "gzipBytes": 5196
+    },
+    {
+      "key": "src/game/world/MeadowDepthWorldManager.ts",
+      "file": "assets/MeadowDepthWorldManager-BKG_XQ0U.js",
+      "rawBytes": 11848,
+      "gzipBytes": 4640
+    },
+    {
+      "key": "src/game/racing/R65RaceExpansionWorldManager.ts",
+      "file": "assets/R65RaceExpansionWorldManager-Blu8uuEj.js",
+      "rawBytes": 12526,
+      "gzipBytes": 4513
+    },
+    {
+      "key": "_SupportingResidentArt-CsS7YtFB.js",
+      "file": "assets/SupportingResidentArt-CsS7YtFB.js",
+      "rawBytes": 13254,
+      "gzipBytes": 4310
+    },
+    {
+      "key": "src/game/scenes/SettingsScene.ts",
+      "file": "assets/SettingsScene-DiJXC8Cm.js",
+      "rawBytes": 14380,
+      "gzipBytes": 4240
+    },
+    {
+      "key": "src/game/world/WoodsDepthWorldManager.ts",
+      "file": "assets/WoodsDepthWorldManager-B234yoAj.js",
+      "rawBytes": 9931,
+      "gzipBytes": 3891
+    },
+    {
+      "key": "src/game/world/CrystalBrookDepthWorldManager.ts",
+      "file": "assets/CrystalBrookDepthWorldManager-DdKkxTd1.js",
+      "rawBytes": 8982,
+      "gzipBytes": 3632
+    }
+  ],
+  "entryDynamicImports": [
+    {
+      "key": "src/game/visual/CoreNpcProductionArt.ts",
+      "file": "assets/CoreNpcProductionArt-CYrwr5au.js",
+      "rawBytes": 7549,
+      "gzipBytes": 2481
+    },
+    {
+      "key": "src/game/scenes/StarlightBeachScene.ts",
+      "file": "assets/StarlightBeachScene-DLXCgl6C.js",
+      "rawBytes": 8748,
+      "gzipBytes": 3258
+    },
+    {
+      "key": "src/game/visual/CoreNpcProductionPresentationManager.ts",
+      "file": "assets/CoreNpcProductionPresentationManager-DYMDmRZq.js",
+      "rawBytes": 6490,
+      "gzipBytes": 2209
+    },
+    {
+      "key": "src/game/population/AmbientPopulationWorldManager.ts",
+      "file": "assets/AmbientPopulationWorldManager-Bvun2z7o.js",
+      "rawBytes": 13834,
+      "gzipBytes": 5312
+    },
+    {
+      "key": "src/game/settings/TitleSettingsEnhancementManager.ts",
+      "file": "assets/TitleSettingsEnhancementManager-BA4QzaUk.js",
+      "rawBytes": 5478,
+      "gzipBytes": 1743
+    },
+    {
+      "key": "src/game/visual/UiProductionPresentationManager.ts",
+      "file": "assets/UiProductionPresentationManager-x8omqunx.js",
+      "rawBytes": 2081,
+      "gzipBytes": 1125
+    },
+    {
+      "key": "src/game/visual/CreatorDelightPresentationManager.ts",
+      "file": "assets/CreatorDelightPresentationManager-CVAUKahM.js",
+      "rawBytes": 3055,
+      "gzipBytes": 1489
+    },
+    {
+      "key": "src/game/scenes/SettingsScene.ts",
+      "file": "assets/SettingsScene-DiJXC8Cm.js",
+      "rawBytes": 14380,
+      "gzipBytes": 4240
+    },
+    {
+      "key": "src/game/testing/BrowserDiagnostics.ts",
+      "file": "assets/BrowserDiagnostics-C66D8sk7.js",
+      "rawBytes": 7320,
+      "gzipBytes": 2820
+    },
+    {
+      "key": "src/game/scenes/InventoryScene.ts",
+      "file": "assets/InventoryScene-P1KkqZNP.js",
+      "rawBytes": 22414,
+      "gzipBytes": 7343
+    },
+    {
+      "key": "src/game/scenes/WonderbookScene.ts",
+      "file": "assets/WonderbookScene-CJCutJjP.js",
+      "rawBytes": 24074,
+      "gzipBytes": 7998
+    },
+    {
+      "key": "src/game/scenes/ShopScene.ts",
+      "file": "assets/ShopScene-Du5gWPZW.js",
+      "rawBytes": 6484,
+      "gzipBytes": 2247
+    },
+    {
+      "key": "src/game/ui/ExplorationShellWorldManager.ts",
+      "file": "assets/ExplorationShellWorldManager-C_krEvbj.js",
+      "rawBytes": 7231,
+      "gzipBytes": 2399
+    },
+    {
+      "key": "src/game/ui/ModalConceptPresentationManager.ts",
+      "file": "assets/ModalConceptPresentationManager-D7FyJBKg.js",
+      "rawBytes": 2578,
+      "gzipBytes": 1265
+    },
+    {
+      "key": "src/game/ui/DesktopConceptCleanupManager.ts",
+      "file": "assets/DesktopConceptCleanupManager-DZBkoT-u.js",
+      "rawBytes": 4447,
+      "gzipBytes": 1786
+    },
+    {
+      "key": "src/game/ui/PortraitConceptPresentationManager.ts",
+      "file": "assets/PortraitConceptPresentationManager-8TFkT3qU.js",
+      "rawBytes": 8039,
+      "gzipBytes": 2865
+    },
+    {
+      "key": "src/game/economy/EconomyRewardWorldManager.ts",
+      "file": "assets/EconomyRewardWorldManager-AU-F_v5l.js",
+      "rawBytes": 3854,
+      "gzipBytes": 1679
+    },
+    {
+      "key": "src/game/activities/RepeatableActivityEntryWorldManager.ts",
+      "file": "assets/RepeatableActivityEntryWorldManager-DV2a8TFJ.js",
+      "rawBytes": 4331,
+      "gzipBytes": 1744
+    },
+    {
+      "key": "src/game/scenes/R6VillageInteriorScene.ts",
+      "file": "assets/R6VillageInteriorScene-Bsy3pe2e.js",
+      "rawBytes": 21543,
+      "gzipBytes": 7455
+    },
+    {
+      "key": "src/game/scenes/HollowTreeNookScene.ts",
+      "file": "assets/HollowTreeNookScene-DIUByCXk.js",
+      "rawBytes": 5740,
+      "gzipBytes": 2295
+    },
+    {
+      "key": "src/game/scenes/WindmillLookoutScene.ts",
+      "file": "assets/WindmillLookoutScene-DNcEH9l_.js",
+      "rawBytes": 6183,
+      "gzipBytes": 2443
+    },
+    {
+      "key": "src/game/scenes/CrystalGrottoScene.ts",
+      "file": "assets/CrystalGrottoScene-BNfK1Qrc.js",
+      "rawBytes": 4996,
+      "gzipBytes": 2156
+    },
+    {
+      "key": "src/game/scenes/FireflyGroveScene.ts",
+      "file": "assets/FireflyGroveScene-CA0aJH6Y.js",
+      "rawBytes": 7627,
+      "gzipBytes": 3012
+    },
+    {
+      "key": "src/game/world/VillageLifeWorldManager.ts",
+      "file": "assets/VillageLifeWorldManager-CJv8_tGS.js",
+      "rawBytes": 5730,
+      "gzipBytes": 2376
+    },
+    {
+      "key": "src/game/world/GladeDepthWorldManager.ts",
+      "file": "assets/GladeDepthWorldManager-peIkafpC.js",
+      "rawBytes": 8840,
+      "gzipBytes": 3428
+    },
+    {
+      "key": "src/game/world/CottageDepthWorldManager.ts",
+      "file": "assets/CottageDepthWorldManager-ZfWyoK-M.js",
+      "rawBytes": 3331,
+      "gzipBytes": 1604
+    },
+    {
+      "key": "src/game/world/MeadowDepthWorldManager.ts",
+      "file": "assets/MeadowDepthWorldManager-BKG_XQ0U.js",
+      "rawBytes": 11848,
+      "gzipBytes": 4640
+    },
+    {
+      "key": "src/game/world/CrystalBrookDepthWorldManager.ts",
+      "file": "assets/CrystalBrookDepthWorldManager-DdKkxTd1.js",
+      "rawBytes": 8982,
+      "gzipBytes": 3632
+    },
+    {
+      "key": "src/game/population/ResidentCollisionManager.ts",
+      "file": "assets/ResidentCollisionManager-G9QtIazN.js",
+      "rawBytes": 2425,
+      "gzipBytes": 1188
+    },
+    {
+      "key": "src/game/world/WoodsDepthWorldManager.ts",
+      "file": "assets/WoodsDepthWorldManager-B234yoAj.js",
+      "rawBytes": 9931,
+      "gzipBytes": 3891
+    },
+    {
+      "key": "src/game/world/ExistingValleyQuestPackWorldManager.ts",
+      "file": "assets/ExistingValleyQuestPackWorldManager-CUpc7QpO.js",
+      "rawBytes": 16041,
+      "gzipBytes": 5196
+    },
+    {
+      "key": "src/game/world/CrossRegionFollowUpWorldManager.ts",
+      "file": "assets/CrossRegionFollowUpWorldManager-SVX-opHh.js",
+      "rawBytes": 8437,
+      "gzipBytes": 3262
+    },
+    {
+      "key": "src/game/story/StarlightBeachContentWorldManager.ts",
+      "file": "assets/StarlightBeachContentWorldManager-C7pIfPZ_.js",
+      "rawBytes": 8981,
+      "gzipBytes": 3334
+    },
+    {
+      "key": "src/game/racing/R65RaceExpansionWorldManager.ts",
+      "file": "assets/R65RaceExpansionWorldManager-Blu8uuEj.js",
+      "rawBytes": 12526,
+      "gzipBytes": 4513
+    },
+    {
+      "key": "src/game/player/PlayerManeCoverageWorldManager.ts",
+      "file": "assets/PlayerManeCoverageWorldManager-CwZtesxK.js",
+      "rawBytes": 2653,
+      "gzipBytes": 1260
+    },
+    {
+      "key": "src/game/visual/R65WorldExperiencePresentationManager.ts",
+      "file": "assets/R65WorldExperiencePresentationManager-CgWi5lbe.js",
+      "rawBytes": 5072,
+      "gzipBytes": 2229
+    },
+    {
+      "key": "src/game/world/R6RegionGatewayArtManager.ts",
+      "file": "assets/R6RegionGatewayArtManager-6bguvNoC.js",
+      "rawBytes": 6572,
+      "gzipBytes": 2726
+    },
+    {
+      "key": "src/game/world/R6RegionGatewayArtPerformanceManager.ts",
+      "file": "assets/R6RegionGatewayArtPerformanceManager-BzmKXkwh.js",
+      "rawBytes": 1171,
+      "gzipBytes": 633
+    },
+    {
+      "key": "src/game/world/R6FinalPlaythroughCleanupManager.ts",
+      "file": "assets/R6FinalPlaythroughCleanupManager-B8Mi30o1.js",
+      "rawBytes": 4382,
+      "gzipBytes": 1657
+    },
+    {
+      "key": "src/game/world/FinalGraphicsTighteningManager.ts",
+      "file": "assets/FinalGraphicsTighteningManager-Ca9T8mQV.js",
+      "rawBytes": 2309,
+      "gzipBytes": 1064
+    },
+    {
+      "key": "src/game/ui/CreatorPortraitControlsManager.ts",
+      "file": "assets/CreatorPortraitControlsManager-CIhT7_1T.js",
+      "rawBytes": 8370,
+      "gzipBytes": 2713
+    },
+    {
+      "key": "src/game/ui/RaceMobileControlsManager.ts",
+      "file": "assets/RaceMobileControlsManager-D-jz56xi.js",
+      "rawBytes": 8847,
+      "gzipBytes": 2515
+    }
+  ],
+  "allJavaScriptChunks": [
+    {
+      "key": "_phaser-P1E8uaLi.js",
+      "file": "assets/phaser-P1E8uaLi.js",
+      "rawBytes": 1374829,
+      "gzipBytes": 355968
+    },
+    {
+      "key": "index.html",
+      "file": "assets/index-BQvDep-X.js",
+      "rawBytes": 471915,
+      "gzipBytes": 126296
+    },
+    {
+      "key": "_registries-BEgrj8eN.js",
+      "file": "assets/registries-BEgrj8eN.js",
+      "rawBytes": 43113,
+      "gzipBytes": 11333
+    },
+    {
+      "key": "_r6WhisperingWoodsDepthContent-COm8-d69.js",
+      "file": "assets/r6WhisperingWoodsDepthContent-COm8-d69.js",
+      "rawBytes": 27259,
+      "gzipBytes": 8306
+    },
+    {
+      "key": "src/game/scenes/WonderbookScene.ts",
+      "file": "assets/WonderbookScene-CJCutJjP.js",
+      "rawBytes": 24074,
+      "gzipBytes": 7998
+    },
+    {
+      "key": "src/game/scenes/R6VillageInteriorScene.ts",
+      "file": "assets/R6VillageInteriorScene-Bsy3pe2e.js",
+      "rawBytes": 21543,
+      "gzipBytes": 7455
+    },
+    {
+      "key": "src/game/scenes/InventoryScene.ts",
+      "file": "assets/InventoryScene-P1KkqZNP.js",
+      "rawBytes": 22414,
+      "gzipBytes": 7343
+    },
+    {
+      "key": "src/game/population/AmbientPopulationWorldManager.ts",
+      "file": "assets/AmbientPopulationWorldManager-Bvun2z7o.js",
+      "rawBytes": 13834,
+      "gzipBytes": 5312
+    },
+    {
+      "key": "src/game/world/ExistingValleyQuestPackWorldManager.ts",
+      "file": "assets/ExistingValleyQuestPackWorldManager-CUpc7QpO.js",
+      "rawBytes": 16041,
+      "gzipBytes": 5196
+    },
+    {
+      "key": "src/game/world/MeadowDepthWorldManager.ts",
+      "file": "assets/MeadowDepthWorldManager-BKG_XQ0U.js",
+      "rawBytes": 11848,
+      "gzipBytes": 4640
+    },
+    {
+      "key": "src/game/racing/R65RaceExpansionWorldManager.ts",
+      "file": "assets/R65RaceExpansionWorldManager-Blu8uuEj.js",
+      "rawBytes": 12526,
+      "gzipBytes": 4513
+    },
+    {
+      "key": "_SupportingResidentArt-CsS7YtFB.js",
+      "file": "assets/SupportingResidentArt-CsS7YtFB.js",
+      "rawBytes": 13254,
+      "gzipBytes": 4310
+    },
+    {
+      "key": "src/game/scenes/SettingsScene.ts",
+      "file": "assets/SettingsScene-DiJXC8Cm.js",
+      "rawBytes": 14380,
+      "gzipBytes": 4240
+    },
+    {
+      "key": "src/game/world/WoodsDepthWorldManager.ts",
+      "file": "assets/WoodsDepthWorldManager-B234yoAj.js",
+      "rawBytes": 9931,
+      "gzipBytes": 3891
+    },
+    {
+      "key": "src/game/world/CrystalBrookDepthWorldManager.ts",
+      "file": "assets/CrystalBrookDepthWorldManager-DdKkxTd1.js",
+      "rawBytes": 8982,
+      "gzipBytes": 3632
+    },
+    {
+      "key": "src/game/world/GladeDepthWorldManager.ts",
+      "file": "assets/GladeDepthWorldManager-peIkafpC.js",
+      "rawBytes": 8840,
+      "gzipBytes": 3428
+    },
+    {
+      "key": "src/game/story/StarlightBeachContentWorldManager.ts",
+      "file": "assets/StarlightBeachContentWorldManager-C7pIfPZ_.js",
+      "rawBytes": 8981,
+      "gzipBytes": 3334
+    },
+    {
+      "key": "_browserSaveService-BqUszmOP.js",
+      "file": "assets/browserSaveService-BqUszmOP.js",
+      "rawBytes": 11292,
+      "gzipBytes": 3284
+    },
+    {
+      "key": "src/game/world/CrossRegionFollowUpWorldManager.ts",
+      "file": "assets/CrossRegionFollowUpWorldManager-SVX-opHh.js",
+      "rawBytes": 8437,
+      "gzipBytes": 3262
+    },
+    {
+      "key": "src/game/scenes/StarlightBeachScene.ts",
+      "file": "assets/StarlightBeachScene-DLXCgl6C.js",
+      "rawBytes": 8748,
+      "gzipBytes": 3258
+    },
+    {
+      "key": "src/game/activities/CoralBeachcombingActivityScene.ts",
+      "file": "assets/CoralBeachcombingActivityScene-d3mFihyS.js",
+      "rawBytes": 8539,
+      "gzipBytes": 3084
+    },
+    {
+      "key": "src/game/scenes/FireflyGroveScene.ts",
+      "file": "assets/FireflyGroveScene-CA0aJH6Y.js",
+      "rawBytes": 7627,
+      "gzipBytes": 3012
+    },
+    {
+      "key": "src/game/ui/PortraitConceptPresentationManager.ts",
+      "file": "assets/PortraitConceptPresentationManager-8TFkT3qU.js",
+      "rawBytes": 8039,
+      "gzipBytes": 2865
+    },
+    {
+      "key": "_VerticalSliceAudio-CSNaEbdV.js",
+      "file": "assets/VerticalSliceAudio-CSNaEbdV.js",
+      "rawBytes": 9492,
+      "gzipBytes": 2843
+    },
+    {
+      "key": "src/game/testing/BrowserDiagnostics.ts",
+      "file": "assets/BrowserDiagnostics-C66D8sk7.js",
+      "rawBytes": 7320,
+      "gzipBytes": 2820
+    },
+    {
+      "key": "src/game/world/R6RegionGatewayArtManager.ts",
+      "file": "assets/R6RegionGatewayArtManager-6bguvNoC.js",
+      "rawBytes": 6572,
+      "gzipBytes": 2726
+    },
+    {
+      "key": "src/game/ui/CreatorPortraitControlsManager.ts",
+      "file": "assets/CreatorPortraitControlsManager-CIhT7_1T.js",
+      "rawBytes": 8370,
+      "gzipBytes": 2713
+    },
+    {
+      "key": "src/game/activities/MapleBakingActivityScene.ts",
+      "file": "assets/MapleBakingActivityScene-DSeGXxbb.js",
+      "rawBytes": 7306,
+      "gzipBytes": 2612
+    },
+    {
+      "key": "src/game/ui/RaceMobileControlsManager.ts",
+      "file": "assets/RaceMobileControlsManager-D-jz56xi.js",
+      "rawBytes": 8847,
+      "gzipBytes": 2515
+    },
+    {
+      "key": "src/game/visual/CoreNpcProductionArt.ts",
+      "file": "assets/CoreNpcProductionArt-CYrwr5au.js",
+      "rawBytes": 7549,
+      "gzipBytes": 2481
+    },
+    {
+      "key": "src/game/scenes/WindmillLookoutScene.ts",
+      "file": "assets/WindmillLookoutScene-DNcEH9l_.js",
+      "rawBytes": 6183,
+      "gzipBytes": 2443
+    },
+    {
+      "key": "src/game/ui/ExplorationShellWorldManager.ts",
+      "file": "assets/ExplorationShellWorldManager-C_krEvbj.js",
+      "rawBytes": 7231,
+      "gzipBytes": 2399
+    },
+    {
+      "key": "src/game/world/VillageLifeWorldManager.ts",
+      "file": "assets/VillageLifeWorldManager-CJv8_tGS.js",
+      "rawBytes": 5730,
+      "gzipBytes": 2376
+    },
+    {
+      "key": "src/game/scenes/HollowTreeNookScene.ts",
+      "file": "assets/HollowTreeNookScene-DIUByCXk.js",
+      "rawBytes": 5740,
+      "gzipBytes": 2295
+    },
+    {
+      "key": "_TouchMovementPad-BjU0MXks.js",
+      "file": "assets/TouchMovementPad-BjU0MXks.js",
+      "rawBytes": 7290,
+      "gzipBytes": 2268
+    },
+    {
+      "key": "src/game/scenes/ShopScene.ts",
+      "file": "assets/ShopScene-Du5gWPZW.js",
+      "rawBytes": 6484,
+      "gzipBytes": 2247
+    },
+    {
+      "key": "src/game/visual/R65WorldExperiencePresentationManager.ts",
+      "file": "assets/R65WorldExperiencePresentationManager-CgWi5lbe.js",
+      "rawBytes": 5072,
+      "gzipBytes": 2229
+    },
+    {
+      "key": "src/game/visual/CoreNpcProductionPresentationManager.ts",
+      "file": "assets/CoreNpcProductionPresentationManager-DYMDmRZq.js",
+      "rawBytes": 6490,
+      "gzipBytes": 2209
+    },
+    {
+      "key": "src/game/scenes/CrystalGrottoScene.ts",
+      "file": "assets/CrystalGrottoScene-BNfK1Qrc.js",
+      "rawBytes": 4996,
+      "gzipBytes": 2156
+    },
+    {
+      "key": "_r65StarlightBeach-XT0kcnLF.js",
+      "file": "assets/r65StarlightBeach-XT0kcnLF.js",
+      "rawBytes": 5531,
+      "gzipBytes": 1984
+    },
+    {
+      "key": "src/game/ui/DesktopConceptCleanupManager.ts",
+      "file": "assets/DesktopConceptCleanupManager-DZBkoT-u.js",
+      "rawBytes": 4447,
+      "gzipBytes": 1786
+    },
+    {
+      "key": "src/game/activities/RepeatableActivityEntryWorldManager.ts",
+      "file": "assets/RepeatableActivityEntryWorldManager-DV2a8TFJ.js",
+      "rawBytes": 4331,
+      "gzipBytes": 1744
+    },
+    {
+      "key": "src/game/settings/TitleSettingsEnhancementManager.ts",
+      "file": "assets/TitleSettingsEnhancementManager-BA4QzaUk.js",
+      "rawBytes": 5478,
+      "gzipBytes": 1743
+    },
+    {
+      "key": "src/game/economy/EconomyRewardWorldManager.ts",
+      "file": "assets/EconomyRewardWorldManager-AU-F_v5l.js",
+      "rawBytes": 3854,
+      "gzipBytes": 1679
+    },
+    {
+      "key": "src/game/world/R6FinalPlaythroughCleanupManager.ts",
+      "file": "assets/R6FinalPlaythroughCleanupManager-B8Mi30o1.js",
+      "rawBytes": 4382,
+      "gzipBytes": 1657
+    },
+    {
+      "key": "src/game/world/CottageDepthWorldManager.ts",
+      "file": "assets/CottageDepthWorldManager-ZfWyoK-M.js",
+      "rawBytes": 3331,
+      "gzipBytes": 1604
+    },
+    {
+      "key": "_ShopService-Cax5UFPJ.js",
+      "file": "assets/ShopService-Cax5UFPJ.js",
+      "rawBytes": 3840,
+      "gzipBytes": 1524
+    },
+    {
+      "key": "src/game/visual/CreatorDelightPresentationManager.ts",
+      "file": "assets/CreatorDelightPresentationManager-CVAUKahM.js",
+      "rawBytes": 3055,
+      "gzipBytes": 1489
+    },
+    {
+      "key": "_InteractiveMicroLocationScene-DptppueQ.js",
+      "file": "assets/InteractiveMicroLocationScene-DptppueQ.js",
+      "rawBytes": 3144,
+      "gzipBytes": 1359
+    },
+    {
+      "key": "_ConceptUi-CJTavlxA.js",
+      "file": "assets/ConceptUi-CJTavlxA.js",
+      "rawBytes": 3835,
+      "gzipBytes": 1290
+    },
+    {
+      "key": "src/game/ui/ModalConceptPresentationManager.ts",
+      "file": "assets/ModalConceptPresentationManager-D7FyJBKg.js",
+      "rawBytes": 2578,
+      "gzipBytes": 1265
+    },
+    {
+      "key": "src/game/player/PlayerManeCoverageWorldManager.ts",
+      "file": "assets/PlayerManeCoverageWorldManager-CwZtesxK.js",
+      "rawBytes": 2653,
+      "gzipBytes": 1260
+    },
+    {
+      "key": "_WoodsDepthStoryService-DeSrsNJ3.js",
+      "file": "assets/WoodsDepthStoryService-DeSrsNJ3.js",
+      "rawBytes": 3031,
+      "gzipBytes": 1208
+    },
+    {
+      "key": "src/game/population/ResidentCollisionManager.ts",
+      "file": "assets/ResidentCollisionManager-G9QtIazN.js",
+      "rawBytes": 2425,
+      "gzipBytes": 1188
+    },
+    {
+      "key": "_SunbeamVillageMap-ClYEb8WN.js",
+      "file": "assets/SunbeamVillageMap-ClYEb8WN.js",
+      "rawBytes": 3099,
+      "gzipBytes": 1183
+    },
+    {
+      "key": "_r6VillageContent-Dglw4e9B.js",
+      "file": "assets/r6VillageContent-Dglw4e9B.js",
+      "rawBytes": 2798,
+      "gzipBytes": 1145
+    },
+    {
+      "key": "src/game/visual/UiProductionPresentationManager.ts",
+      "file": "assets/UiProductionPresentationManager-x8omqunx.js",
+      "rawBytes": 2081,
+      "gzipBytes": 1125
+    },
+    {
+      "key": "_HollowTreeStoryService-BmKXM49e.js",
+      "file": "assets/HollowTreeStoryService-BmKXM49e.js",
+      "rawBytes": 3019,
+      "gzipBytes": 1123
+    },
+    {
+      "key": "src/game/world/FinalGraphicsTighteningManager.ts",
+      "file": "assets/FinalGraphicsTighteningManager-Ca9T8mQV.js",
+      "rawBytes": 2309,
+      "gzipBytes": 1064
+    },
+    {
+      "key": "_MeadowWindmillStoryService-BUiaSHGy.js",
+      "file": "assets/MeadowWindmillStoryService-BUiaSHGy.js",
+      "rawBytes": 2507,
+      "gzipBytes": 1047
+    },
+    {
+      "key": "_r65RepeatableActivities-CWMBdWXl.js",
+      "file": "assets/r65RepeatableActivities-CWMBdWXl.js",
+      "rawBytes": 2573,
+      "gzipBytes": 1044
+    },
+    {
+      "key": "_r65RaceExpansion-Cw3OiJOo.js",
+      "file": "assets/r65RaceExpansion-Cw3OiJOo.js",
+      "rawBytes": 2981,
+      "gzipBytes": 1026
+    },
+    {
+      "key": "_CrystalGrottoStoryService-DYfje8Im.js",
+      "file": "assets/CrystalGrottoStoryService-DYfje8Im.js",
+      "rawBytes": 2207,
+      "gzipBytes": 1020
+    },
+    {
+      "key": "_r5WhisperingWoods-IJAm7V4v.js",
+      "file": "assets/r5WhisperingWoods-IJAm7V4v.js",
+      "rawBytes": 1792,
+      "gzipBytes": 922
+    },
+    {
+      "key": "_PortraitModalCompanion-CFpkO_WJ.js",
+      "file": "assets/PortraitModalCompanion-CFpkO_WJ.js",
+      "rawBytes": 2678,
+      "gzipBytes": 888
+    },
+    {
+      "key": "_preload-helper-Czpn1I53.js",
+      "file": "assets/preload-helper-Czpn1I53.js",
+      "rawBytes": 1196,
+      "gzipBytes": 675
+    },
+    {
+      "key": "_MoonflowerGladeMap-Dju_Cgu0.js",
+      "file": "assets/MoonflowerGladeMap-Dju_Cgu0.js",
+      "rawBytes": 1398,
+      "gzipBytes": 664
+    },
+    {
+      "key": "src/game/world/R6RegionGatewayArtPerformanceManager.ts",
+      "file": "assets/R6RegionGatewayArtPerformanceManager-BzmKXkwh.js",
+      "rawBytes": 1171,
+      "gzipBytes": 633
+    },
+    {
+      "key": "_r4EggArc-BYiu1PzE.js",
+      "file": "assets/r4EggArc-BYiu1PzE.js",
+      "rawBytes": 1251,
+      "gzipBytes": 569
+    },
+    {
+      "key": "_uiTheme-C4AORBPt.js",
+      "file": "assets/uiTheme-C4AORBPt.js",
+      "rawBytes": 962,
+      "gzipBytes": 559
+    },
+    {
+      "key": "_ExplorationGallop-DQraKhY2.js",
+      "file": "assets/ExplorationGallop-DQraKhY2.js",
+      "rawBytes": 955,
+      "gzipBytes": 502
+    },
+    {
+      "key": "_RepeatableActivityProgress-Clh9yi0x.js",
+      "file": "assets/RepeatableActivityProgress-Clh9yi0x.js",
+      "rawBytes": 1360,
+      "gzipBytes": 477
+    },
+    {
+      "key": "_AccessibilitySettings-CBRyWhKS.js",
+      "file": "assets/AccessibilitySettings-CBRyWhKS.js",
+      "rawBytes": 1026,
+      "gzipBytes": 473
+    },
+    {
+      "key": "_ShimmerEconomyService-DkI5-7EB.js",
+      "file": "assets/ShimmerEconomyService-DkI5-7EB.js",
+      "rawBytes": 1025,
+      "gzipBytes": 446
+    },
+    {
+      "key": "_GameSettingsModel-Bl5LfuD6.js",
+      "file": "assets/GameSettingsModel-Bl5LfuD6.js",
+      "rawBytes": 1084,
+      "gzipBytes": 422
+    },
+    {
+      "key": "_LandscapeTabletPresentation-DHR85SI5.js",
+      "file": "assets/LandscapeTabletPresentation-DHR85SI5.js",
+      "rawBytes": 469,
+      "gzipBytes": 256
+    },
+    {
+      "key": "_WorldArrivalState-Bo1uHpbN.js",
+      "file": "assets/WorldArrivalState-Bo1uHpbN.js",
+      "rawBytes": 274,
+      "gzipBytes": 198
+    },
+    {
+      "key": "_InteractionModalState-D4OiTRjJ.js",
+      "file": "assets/InteractionModalState-D4OiTRjJ.js",
+      "rawBytes": 253,
+      "gzipBytes": 187
+    },
+    {
+      "key": "_saveLocationCheckpoint-Bi9JBxwO.js",
+      "file": "assets/saveLocationCheckpoint-Bi9JBxwO.js",
+      "rawBytes": 205,
+      "gzipBytes": 164
+    },
+    {
+      "key": "_r5RaceIds-D_fDFtlO.js",
+      "file": "assets/r5RaceIds-D_fDFtlO.js",
+      "rawBytes": 65,
+      "gzipBytes": 78
+    },
+    {
+      "key": "_gameConstants-DYN09lMe.js",
+      "file": "assets/gameConstants-DYN09lMe.js",
+      "rawBytes": 26,
+      "gzipBytes": 46
+    }
+  ]
+}

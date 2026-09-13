@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { clickNamedObject } from '../support/browserDiagnostics';
 
 interface DiagnosticObjectSnapshot {
   name: string;
@@ -57,13 +58,7 @@ async function openSettings(page: Page): Promise<void> {
     ).__UNICORN_VALLEY_DIAGNOSTICS__;
     return api?.snapshot().activeScenes.includes('MoonflowerGladeScene') === true;
   });
-  const scene = await sceneSnapshot(page, 'MoonflowerGladeScene');
-  const button = scene.objects.find(
-    ({ name, visible, interactive }) =>
-      name === 'exploration-shell-settings-nav-button' && visible && interactive,
-  );
-  if (!button) throw new Error('Missing Settings navigation button.');
-  await page.mouse.click(button.x, button.y);
+  await clickNamedObject(page, 'MoonflowerGladeScene', 'exploration-shell-settings-nav-button');
   await page.waitForFunction(() => {
     const api = (
       window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
@@ -129,9 +124,15 @@ test.describe('R6.5-WP19G MP3 audio foundation', () => {
 
     settings = await sceneSnapshot(page, 'SettingsScene');
     const mode = findObject(settings, 'settings-row-music');
-    await page.mouse.click(mode.x, mode.y);
-    await expect(trackPicker).toBeVisible();
-    expect((await trackPicker.boundingBox())?.height ?? 0).toBeGreaterThanOrEqual(44);
+    await clickNamedObject(page, 'SettingsScene', 'settings-row-music');
+    await expect
+      .poll(() =>
+        page.evaluate((key) => {
+          const raw = localStorage.getItem(key);
+          return raw ? (JSON.parse(raw) as { musicEnabled?: boolean }).musicEnabled : null;
+        }, AUDIO_STORAGE_KEY),
+      )
+      .toBe(false);
 
     settings = await sceneSnapshot(page, 'SettingsScene');
     const trackRow = findObject(settings, 'settings-row-music-track');
@@ -139,7 +140,17 @@ test.describe('R6.5-WP19G MP3 audio foundation', () => {
     expect(trackRow.displayHeight).toBeGreaterThan(mode.displayHeight);
     expect(findObject(settings, 'settings-row-music-track-label').text).toBe('Chosen track');
 
+    // The native picker is deliberately hidden while its canvas row is clipped.
+    // Scroll until the expanded row is fully usable instead of assuming one
+    // fixed post-toggle viewport position.
     await page.mouse.move(640, 360);
+    for (let attempt = 0; attempt < 6 && !(await trackPicker.isVisible()); attempt += 1) {
+      await page.mouse.wheel(0, 120);
+      await page.waitForTimeout(80);
+    }
+    await expect(trackPicker).toBeVisible();
+    expect((await trackPicker.boundingBox())?.height ?? 0).toBeGreaterThanOrEqual(44);
+
     await page.mouse.wheel(0, 550);
     await page.waitForTimeout(150);
     await expect(page.locator('input[aria-label="Music volume"]')).toBeVisible();

@@ -254,7 +254,7 @@ test('the landscape exploration Map action opens a distinct Map surface rather t
   await startScene(page, 'MoonflowerGladeScene');
   await waitForObject(page, 'MoonflowerGladeScene', 'exploration-shell-map-button');
 
-  await clickCanvasLogical(page, 80, 46);
+  await clickNamedObject(page, 'MoonflowerGladeScene', 'exploration-shell-map-button');
   await waitForObject(page, 'InventoryScene', 'bag-map-current-location');
   expect(await objectVisible(page, 'InventoryScene', 'bag-pocket:food')).toBe(false);
   expect(await objectVisible(page, 'InventoryScene', 'bag-map-guidance')).toBe(true);

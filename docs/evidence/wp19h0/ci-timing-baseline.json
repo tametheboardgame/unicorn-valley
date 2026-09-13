@@ -1,0 +1,1208 @@
+{
+  "schemaVersion": 1,
+  "collectedAt": "2026-09-13",
+  "method": "GitHub REST GET /repos/tametheboardgame/unicorn-valley/actions/runs/{run_id}/jobs; durations are timestamp differences and include runner/job overhead. Queue and execution are separate.",
+  "runs": [
+    {
+      "runId": 34752197513,
+      "commit": "97167f6b78913c16012f636b5733d04e3e7bff41",
+      "event": "pull_request",
+      "workflow": "CI",
+      "conclusion": "failure",
+      "url": "https://github.com/tametheboardgame/unicorn-valley/actions/runs/34752197513",
+      "jobs": [
+        {
+          "name": "Validate",
+          "conclusion": "failure",
+          "queuedAt": "2026-09-13T10:34:15Z",
+          "startedAt": "2026-09-13T10:34:17Z",
+          "completedAt": "2026-09-13T10:34:43Z",
+          "queueSeconds": 2.0,
+          "executionSeconds": 26.0,
+          "url": "https://github.com/tametheboardgame/unicorn-valley/actions/runs/34752197513/job/103710501784",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Check out repository",
+              "conclusion": "success",
+              "executionSeconds": 2.0
+            },
+            {
+              "name": "Set up Node.js",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            },
+            {
+              "name": "Install dependencies",
+              "conclusion": "success",
+              "executionSeconds": 6.0
+            },
+            {
+              "name": "Check formatting",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Lint",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            },
+            {
+              "name": "Type-check",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            },
+            {
+              "name": "Run unit tests",
+              "conclusion": "success",
+              "executionSeconds": 10.0
+            },
+            {
+              "name": "Build production bundle",
+              "conclusion": "success",
+              "executionSeconds": 2.0
+            },
+            {
+              "name": "Check performance budget",
+              "conclusion": "failure",
+              "executionSeconds": 1.0
+            },
+            {
+              "name": "Smoke-test static output",
+              "conclusion": "skipped",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Post Set up Node.js",
+              "conclusion": "skipped",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Post Check out repository",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            }
+          ]
+        },
+        {
+          "name": "Browser compatibility",
+          "conclusion": "skipped",
+          "queuedAt": "2026-09-13T10:34:44Z",
+          "startedAt": "2026-09-13T10:34:44Z",
+          "completedAt": "2026-09-13T10:34:43Z",
+          "queueSeconds": null,
+          "executionSeconds": null,
+          "url": "https://github.com/tametheboardgame/unicorn-valley/actions/runs/34752197513/job/103710554099",
+          "steps": []
+        },
+        {
+          "name": "Browser playtest (${{ matrix.shard }}/3)",
+          "conclusion": "skipped",
+          "queuedAt": "2026-09-13T10:34:44Z",
+          "startedAt": "2026-09-13T10:34:44Z",
+          "completedAt": "2026-09-13T10:34:43Z",
+          "queueSeconds": null,
+          "executionSeconds": null,
+          "url": "https://github.com/tametheboardgame/unicorn-valley/actions/runs/34752197513/job/103710554180",
+          "steps": []
+        }
+      ]
+    },
+    {
+      "runId": 34752197585,
+      "commit": "97167f6b78913c16012f636b5733d04e3e7bff41",
+      "event": "pull_request",
+      "workflow": "Validate AI Project Contract",
+      "conclusion": "success",
+      "url": "https://github.com/tametheboardgame/unicorn-valley/actions/runs/34752197585",
+      "jobs": [
+        {
+          "name": "validate",
+          "conclusion": "success",
+          "queuedAt": "2026-09-13T10:34:15Z",
+          "startedAt": "2026-09-13T10:34:18Z",
+          "completedAt": "2026-09-13T10:34:26Z",
+          "queueSeconds": 3.0,
+          "executionSeconds": 8.0,
+          "url": "https://github.com/tametheboardgame/unicorn-valley/actions/runs/34752197585/job/103710501738",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            },
+            {
+              "name": "Check out repository",
+              "conclusion": "success",
+              "executionSeconds": 2.0
+            },
+            {
+              "name": "Set up Python",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            },
+            {
+              "name": "Validate operating contract",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Post Set up Python",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Post Check out repository",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "runId": 34752197603,
+      "commit": "97167f6b78913c16012f636b5733d04e3e7bff41",
+      "event": "pull_request",
+      "workflow": "Immutable deployment smoke",
+      "conclusion": "success",
+      "url": "https://github.com/tametheboardgame/unicorn-valley/actions/runs/34752197603",
+      "jobs": [
+        {
+          "name": "Startup, save, reload and Continue",
+          "conclusion": "success",
+          "queuedAt": "2026-09-13T10:34:15Z",
+          "startedAt": "2026-09-13T10:34:18Z",
+          "completedAt": "2026-09-13T10:35:19Z",
+          "queueSeconds": 3.0,
+          "executionSeconds": 61.0,
+          "url": "https://github.com/tametheboardgame/unicorn-valley/actions/runs/34752197603/job/103710501677",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Check out qualification metadata",
+              "conclusion": "success",
+              "executionSeconds": 3.0
+            },
+            {
+              "name": "Resolve immutable candidate",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Check out candidate",
+              "conclusion": "success",
+              "executionSeconds": 2.0
+            },
+            {
+              "name": "Validate Pages deployment URL",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Set up Node.js",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Install dependencies",
+              "conclusion": "success",
+              "executionSeconds": 6.0
+            },
+            {
+              "name": "Install Chromium",
+              "conclusion": "success",
+              "executionSeconds": 20.0
+            },
+            {
+              "name": "Exercise deployed startup and persistence",
+              "conclusion": "success",
+              "executionSeconds": 24.0
+            },
+            {
+              "name": "Upload deployed smoke evidence",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            },
+            {
+              "name": "Post Set up Node.js",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            },
+            {
+              "name": "Post Check out candidate",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Post Check out qualification metadata",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "runId": 34751746051,
+      "commit": "ba60ede9ba8697f6015bfb3d79e98152a972403d",
+      "event": "push",
+      "workflow": "CI",
+      "conclusion": "failure",
+      "url": "https://github.com/tametheboardgame/unicorn-valley/actions/runs/34751746051",
+      "jobs": [
+        {
+          "name": "Validate",
+          "conclusion": "failure",
+          "queuedAt": "2026-09-13T10:24:00Z",
+          "startedAt": "2026-09-13T10:24:02Z",
+          "completedAt": "2026-09-13T10:24:31Z",
+          "queueSeconds": 2.0,
+          "executionSeconds": 29.0,
+          "url": "https://github.com/tametheboardgame/unicorn-valley/actions/runs/34751746051/job/103709358344",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            },
+            {
+              "name": "Check out repository",
+              "conclusion": "success",
+              "executionSeconds": 2.0
+            },
+            {
+              "name": "Set up Node.js",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            },
+            {
+              "name": "Install dependencies",
+              "conclusion": "success",
+              "executionSeconds": 6.0
+            },
+            {
+              "name": "Check formatting",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Lint",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            },
+            {
+              "name": "Type-check",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            },
+            {
+              "name": "Run unit tests",
+              "conclusion": "success",
+              "executionSeconds": 11.0
+            },
+            {
+              "name": "Build production bundle",
+              "conclusion": "success",
+              "executionSeconds": 2.0
+            },
+            {
+              "name": "Check performance budget",
+              "conclusion": "failure",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Smoke-test static output",
+              "conclusion": "skipped",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Post Set up Node.js",
+              "conclusion": "skipped",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Post Check out repository",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            }
+          ]
+        },
+        {
+          "name": "Browser compatibility",
+          "conclusion": "skipped",
+          "queuedAt": "2026-09-13T10:24:31Z",
+          "startedAt": "2026-09-13T10:24:31Z",
+          "completedAt": "2026-09-13T10:24:31Z",
+          "queueSeconds": null,
+          "executionSeconds": null,
+          "url": "https://github.com/tametheboardgame/unicorn-valley/actions/runs/34751746051/job/103709419594",
+          "steps": []
+        },
+        {
+          "name": "Browser playtest (${{ matrix.shard }}/3)",
+          "conclusion": "skipped",
+          "queuedAt": "2026-09-13T10:24:31Z",
+          "startedAt": "2026-09-13T10:24:31Z",
+          "completedAt": "2026-09-13T10:24:31Z",
+          "queueSeconds": null,
+          "executionSeconds": null,
+          "url": "https://github.com/tametheboardgame/unicorn-valley/actions/runs/34751746051/job/103709419752",
+          "steps": []
+        }
+      ]
+    },
+    {
+      "runId": 34750494708,
+      "commit": "b38820675e37e3e98d00fd163c185a3f3cc4ecd1",
+      "event": "push",
+      "workflow": "CI",
+      "conclusion": "failure",
+      "url": "https://github.com/tametheboardgame/unicorn-valley/actions/runs/34750494708",
+      "jobs": [
+        {
+          "name": "Validate",
+          "conclusion": "failure",
+          "queuedAt": "2026-09-13T09:54:03Z",
+          "startedAt": "2026-09-13T09:54:04Z",
+          "completedAt": "2026-09-13T09:54:31Z",
+          "queueSeconds": 1.0,
+          "executionSeconds": 27.0,
+          "url": "https://github.com/tametheboardgame/unicorn-valley/actions/runs/34750494708/job/103706070668",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            },
+            {
+              "name": "Check out repository",
+              "conclusion": "success",
+              "executionSeconds": 2.0
+            },
+            {
+              "name": "Set up Node.js",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Install dependencies",
+              "conclusion": "success",
+              "executionSeconds": 6.0
+            },
+            {
+              "name": "Check formatting",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            },
+            {
+              "name": "Lint",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            },
+            {
+              "name": "Type-check",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            },
+            {
+              "name": "Run unit tests",
+              "conclusion": "success",
+              "executionSeconds": 10.0
+            },
+            {
+              "name": "Build production bundle",
+              "conclusion": "success",
+              "executionSeconds": 2.0
+            },
+            {
+              "name": "Check performance budget",
+              "conclusion": "failure",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Smoke-test static output",
+              "conclusion": "skipped",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Post Set up Node.js",
+              "conclusion": "skipped",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Post Check out repository",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            }
+          ]
+        },
+        {
+          "name": "Browser playtest (${{ matrix.shard }}/3)",
+          "conclusion": "skipped",
+          "queuedAt": "2026-09-13T09:54:32Z",
+          "startedAt": "2026-09-13T09:54:32Z",
+          "completedAt": "2026-09-13T09:54:32Z",
+          "queueSeconds": null,
+          "executionSeconds": null,
+          "url": "https://github.com/tametheboardgame/unicorn-valley/actions/runs/34750494708/job/103706128352",
+          "steps": []
+        },
+        {
+          "name": "Browser compatibility",
+          "conclusion": "skipped",
+          "queuedAt": "2026-09-13T09:54:32Z",
+          "startedAt": "2026-09-13T09:54:32Z",
+          "completedAt": "2026-09-13T09:54:32Z",
+          "queueSeconds": null,
+          "executionSeconds": null,
+          "url": "https://github.com/tametheboardgame/unicorn-valley/actions/runs/34750494708/job/103706128456",
+          "steps": []
+        }
+      ]
+    },
+    {
+      "runId": 34744288460,
+      "commit": "12eae16b735cd2ce400577a77e6f9bf9d314edda",
+      "event": "pull_request",
+      "workflow": "CI",
+      "conclusion": "success",
+      "url": "https://github.com/tametheboardgame/unicorn-valley/actions/runs/34744288460",
+      "jobs": [
+        {
+          "name": "Validate",
+          "conclusion": "success",
+          "queuedAt": "2026-09-13T07:03:40Z",
+          "startedAt": "2026-09-13T07:03:43Z",
+          "completedAt": "2026-09-13T07:04:11Z",
+          "queueSeconds": 3.0,
+          "executionSeconds": 28.0,
+          "url": "https://github.com/tametheboardgame/unicorn-valley/actions/runs/34744288460/job/103689191899",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Check out repository",
+              "conclusion": "success",
+              "executionSeconds": 2.0
+            },
+            {
+              "name": "Set up Node.js",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            },
+            {
+              "name": "Install dependencies",
+              "conclusion": "success",
+              "executionSeconds": 6.0
+            },
+            {
+              "name": "Check formatting",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Lint",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            },
+            {
+              "name": "Type-check",
+              "conclusion": "success",
+              "executionSeconds": 2.0
+            },
+            {
+              "name": "Run unit tests",
+              "conclusion": "success",
+              "executionSeconds": 10.0
+            },
+            {
+              "name": "Build production bundle",
+              "conclusion": "success",
+              "executionSeconds": 3.0
+            },
+            {
+              "name": "Check performance budget",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Smoke-test static output",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Post Set up Node.js",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Post Check out repository",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            }
+          ]
+        },
+        {
+          "name": "Browser playtest (3/3)",
+          "conclusion": "success",
+          "queuedAt": "2026-09-13T07:04:12Z",
+          "startedAt": "2026-09-13T07:04:14Z",
+          "completedAt": "2026-09-13T07:20:32Z",
+          "queueSeconds": 2.0,
+          "executionSeconds": 978.0,
+          "url": "https://github.com/tametheboardgame/unicorn-valley/actions/runs/34744288460/job/103689255980",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            },
+            {
+              "name": "Check out repository",
+              "conclusion": "success",
+              "executionSeconds": 2.0
+            },
+            {
+              "name": "Set up Node.js",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            },
+            {
+              "name": "Install dependencies",
+              "conclusion": "success",
+              "executionSeconds": 5.0
+            },
+            {
+              "name": "Install Chromium",
+              "conclusion": "success",
+              "executionSeconds": 22.0
+            },
+            {
+              "name": "Run automated browser playtest",
+              "conclusion": "success",
+              "executionSeconds": 941.0
+            },
+            {
+              "name": "Summarise automated findings",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Upload playtest report and screenshots",
+              "conclusion": "success",
+              "executionSeconds": 2.0
+            },
+            {
+              "name": "Post Set up Node.js",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            },
+            {
+              "name": "Post Check out repository",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            }
+          ]
+        },
+        {
+          "name": "Browser playtest (1/3)",
+          "conclusion": "success",
+          "queuedAt": "2026-09-13T07:04:12Z",
+          "startedAt": "2026-09-13T07:04:14Z",
+          "completedAt": "2026-09-13T07:12:55Z",
+          "queueSeconds": 2.0,
+          "executionSeconds": 521.0,
+          "url": "https://github.com/tametheboardgame/unicorn-valley/actions/runs/34744288460/job/103689255982",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Check out repository",
+              "conclusion": "success",
+              "executionSeconds": 3.0
+            },
+            {
+              "name": "Set up Node.js",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Install dependencies",
+              "conclusion": "success",
+              "executionSeconds": 5.0
+            },
+            {
+              "name": "Install Chromium",
+              "conclusion": "success",
+              "executionSeconds": 17.0
+            },
+            {
+              "name": "Run automated browser playtest",
+              "conclusion": "success",
+              "executionSeconds": 491.0
+            },
+            {
+              "name": "Summarise automated findings",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Upload playtest report and screenshots",
+              "conclusion": "success",
+              "executionSeconds": 2.0
+            },
+            {
+              "name": "Post Set up Node.js",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Post Check out repository",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            }
+          ]
+        },
+        {
+          "name": "Browser playtest (2/3)",
+          "conclusion": "success",
+          "queuedAt": "2026-09-13T07:04:12Z",
+          "startedAt": "2026-09-13T07:04:14Z",
+          "completedAt": "2026-09-13T07:19:58Z",
+          "queueSeconds": 2.0,
+          "executionSeconds": 944.0,
+          "url": "https://github.com/tametheboardgame/unicorn-valley/actions/runs/34744288460/job/103689256006",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success",
+              "executionSeconds": 2.0
+            },
+            {
+              "name": "Check out repository",
+              "conclusion": "success",
+              "executionSeconds": 3.0
+            },
+            {
+              "name": "Set up Node.js",
+              "conclusion": "success",
+              "executionSeconds": 2.0
+            },
+            {
+              "name": "Install dependencies",
+              "conclusion": "success",
+              "executionSeconds": 6.0
+            },
+            {
+              "name": "Install Chromium",
+              "conclusion": "success",
+              "executionSeconds": 27.0
+            },
+            {
+              "name": "Run automated browser playtest",
+              "conclusion": "success",
+              "executionSeconds": 899.0
+            },
+            {
+              "name": "Summarise automated findings",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            },
+            {
+              "name": "Upload playtest report and screenshots",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            },
+            {
+              "name": "Post Set up Node.js",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Post Check out repository",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            }
+          ]
+        },
+        {
+          "name": "Browser compatibility",
+          "conclusion": "success",
+          "queuedAt": "2026-09-13T07:04:12Z",
+          "startedAt": "2026-09-13T07:04:14Z",
+          "completedAt": "2026-09-13T07:12:19Z",
+          "queueSeconds": 2.0,
+          "executionSeconds": 485.0,
+          "url": "https://github.com/tametheboardgame/unicorn-valley/actions/runs/34744288460/job/103689256009",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            },
+            {
+              "name": "Check out repository",
+              "conclusion": "success",
+              "executionSeconds": 2.0
+            },
+            {
+              "name": "Set up Node.js",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            },
+            {
+              "name": "Install dependencies",
+              "conclusion": "success",
+              "executionSeconds": 5.0
+            },
+            {
+              "name": "Install Chromium, Firefox and WebKit",
+              "conclusion": "success",
+              "executionSeconds": 46.0
+            },
+            {
+              "name": "Run browser compatibility smoke matrix",
+              "conclusion": "success",
+              "executionSeconds": 420.0
+            },
+            {
+              "name": "Upload browser compatibility report",
+              "conclusion": "success",
+              "executionSeconds": 5.0
+            },
+            {
+              "name": "Post Set up Node.js",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Post Check out repository",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "runId": 34718929375,
+      "commit": "71dcbd57a76e8db355be4b5451c53ed27eebd762",
+      "event": "pull_request",
+      "workflow": "CI",
+      "conclusion": "success",
+      "url": "https://github.com/tametheboardgame/unicorn-valley/actions/runs/34718929375",
+      "jobs": [
+        {
+          "name": "Validate",
+          "conclusion": "success",
+          "queuedAt": "2026-09-12T21:05:01Z",
+          "startedAt": "2026-09-12T21:05:03Z",
+          "completedAt": "2026-09-12T21:05:30Z",
+          "queueSeconds": 2.0,
+          "executionSeconds": 27.0,
+          "url": "https://github.com/tametheboardgame/unicorn-valley/actions/runs/34718929375/job/103621067247",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Check out repository",
+              "conclusion": "success",
+              "executionSeconds": 3.0
+            },
+            {
+              "name": "Set up Node.js",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Install dependencies",
+              "conclusion": "success",
+              "executionSeconds": 5.0
+            },
+            {
+              "name": "Check formatting",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            },
+            {
+              "name": "Lint",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            },
+            {
+              "name": "Type-check",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            },
+            {
+              "name": "Run unit tests",
+              "conclusion": "success",
+              "executionSeconds": 10.0
+            },
+            {
+              "name": "Build production bundle",
+              "conclusion": "success",
+              "executionSeconds": 2.0
+            },
+            {
+              "name": "Check performance budget",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Smoke-test static output",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            },
+            {
+              "name": "Post Set up Node.js",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Post Check out repository",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            }
+          ]
+        },
+        {
+          "name": "Browser playtest (3/3)",
+          "conclusion": "success",
+          "queuedAt": "2026-09-12T21:05:30Z",
+          "startedAt": "2026-09-12T21:05:32Z",
+          "completedAt": "2026-09-12T21:22:15Z",
+          "queueSeconds": 2.0,
+          "executionSeconds": 1003.0,
+          "url": "https://github.com/tametheboardgame/unicorn-valley/actions/runs/34718929375/job/103621137219",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            },
+            {
+              "name": "Check out repository",
+              "conclusion": "success",
+              "executionSeconds": 3.0
+            },
+            {
+              "name": "Set up Node.js",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            },
+            {
+              "name": "Install dependencies",
+              "conclusion": "success",
+              "executionSeconds": 5.0
+            },
+            {
+              "name": "Install Chromium",
+              "conclusion": "success",
+              "executionSeconds": 27.0
+            },
+            {
+              "name": "Run automated browser playtest",
+              "conclusion": "success",
+              "executionSeconds": 961.0
+            },
+            {
+              "name": "Summarise automated findings",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Upload playtest report and screenshots",
+              "conclusion": "success",
+              "executionSeconds": 2.0
+            },
+            {
+              "name": "Post Set up Node.js",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Post Check out repository",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            }
+          ]
+        },
+        {
+          "name": "Browser compatibility",
+          "conclusion": "success",
+          "queuedAt": "2026-09-12T21:05:30Z",
+          "startedAt": "2026-09-12T21:05:32Z",
+          "completedAt": "2026-09-12T21:12:23Z",
+          "queueSeconds": 2.0,
+          "executionSeconds": 411.0,
+          "url": "https://github.com/tametheboardgame/unicorn-valley/actions/runs/34718929375/job/103621137234",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            },
+            {
+              "name": "Check out repository",
+              "conclusion": "success",
+              "executionSeconds": 3.0
+            },
+            {
+              "name": "Set up Node.js",
+              "conclusion": "success",
+              "executionSeconds": 2.0
+            },
+            {
+              "name": "Install dependencies",
+              "conclusion": "success",
+              "executionSeconds": 5.0
+            },
+            {
+              "name": "Install Chromium, Firefox and WebKit",
+              "conclusion": "success",
+              "executionSeconds": 46.0
+            },
+            {
+              "name": "Run browser compatibility smoke matrix",
+              "conclusion": "success",
+              "executionSeconds": 344.0
+            },
+            {
+              "name": "Upload browser compatibility report",
+              "conclusion": "success",
+              "executionSeconds": 6.0
+            },
+            {
+              "name": "Post Set up Node.js",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Post Check out repository",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            }
+          ]
+        },
+        {
+          "name": "Browser playtest (1/3)",
+          "conclusion": "success",
+          "queuedAt": "2026-09-12T21:05:30Z",
+          "startedAt": "2026-09-12T21:05:32Z",
+          "completedAt": "2026-09-12T21:15:42Z",
+          "queueSeconds": 2.0,
+          "executionSeconds": 610.0,
+          "url": "https://github.com/tametheboardgame/unicorn-valley/actions/runs/34718929375/job/103621137274",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            },
+            {
+              "name": "Check out repository",
+              "conclusion": "success",
+              "executionSeconds": 2.0
+            },
+            {
+              "name": "Set up Node.js",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Install dependencies",
+              "conclusion": "success",
+              "executionSeconds": 6.0
+            },
+            {
+              "name": "Install Chromium",
+              "conclusion": "success",
+              "executionSeconds": 19.0
+            },
+            {
+              "name": "Run automated browser playtest",
+              "conclusion": "success",
+              "executionSeconds": 578.0
+            },
+            {
+              "name": "Summarise automated findings",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Upload playtest report and screenshots",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            },
+            {
+              "name": "Post Set up Node.js",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Post Check out repository",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            }
+          ]
+        },
+        {
+          "name": "Browser playtest (2/3)",
+          "conclusion": "success",
+          "queuedAt": "2026-09-12T21:05:30Z",
+          "startedAt": "2026-09-12T21:05:33Z",
+          "completedAt": "2026-09-12T21:21:42Z",
+          "queueSeconds": 3.0,
+          "executionSeconds": 969.0,
+          "url": "https://github.com/tametheboardgame/unicorn-valley/actions/runs/34718929375/job/103621137329",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            },
+            {
+              "name": "Check out repository",
+              "conclusion": "success",
+              "executionSeconds": 2.0
+            },
+            {
+              "name": "Set up Node.js",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            },
+            {
+              "name": "Install dependencies",
+              "conclusion": "success",
+              "executionSeconds": 6.0
+            },
+            {
+              "name": "Install Chromium",
+              "conclusion": "success",
+              "executionSeconds": 20.0
+            },
+            {
+              "name": "Run automated browser playtest",
+              "conclusion": "success",
+              "executionSeconds": 933.0
+            },
+            {
+              "name": "Summarise automated findings",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Upload playtest report and screenshots",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            },
+            {
+              "name": "Post Set up Node.js",
+              "conclusion": "success",
+              "executionSeconds": 1.0
+            },
+            {
+              "name": "Post Check out repository",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success",
+              "executionSeconds": 0.0
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

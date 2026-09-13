@@ -2,7 +2,9 @@
 
 ## Purpose
 
-This file is the working agreement for human and agent-led implementation runs. The repository is the source of truth: a new development conversation should be able to inspect the current work package, follow these commands and continue without relying on earlier chat history.
+This file is the working agreement for human and agent-led implementation runs. The repository is the source of truth: a fresh development conversation should be able to inspect the active work package, discover the canonical architecture and continue without relying on earlier chat history.
+
+Read `docs/architecture/ENGINEERING-STANDARDS.md` before introducing or materially changing scenes, UI, overlays, navigation, interaction/dialogue, audio or test infrastructure.
 
 ## Supported development baseline
 
@@ -12,9 +14,8 @@ This file is the working agreement for human and agent-led implementation runs. 
 - TypeScript runs in strict mode.
 - Biome owns formatting and linting.
 - Vitest owns unit tests.
-- GitHub Actions runs the required quality gate.
-
-The `package.json` engine remains compatible with Node.js versions supported by the current Vite toolchain, but new automated work should target the Node.js version used by CI unless a work package intentionally changes it.
+- Playwright owns browser qualification.
+- GitHub Actions owns deterministic tier selection and the required quality gate.
 
 ## First-time setup
 
@@ -35,13 +36,20 @@ npm run format
 npm run format:check
 npm run lint
 npm run typecheck
+npm run architecture:validate
+npm run verification:policy:test
+npm run performance:policy:test
 npm run test
 npm run test:watch
 npm run build
+npm run perf:budget
+npm run smoke:static
 npm run validate
+npm run test:play
+npm run test:browser-compat
 ```
 
-`npm run validate` is the local definition of done for code changes. It checks formatting, linting, TypeScript, tests and the production build.
+`npm run validate` is the local static/unit/build definition of done. Browser qualification is selected separately by CI according to changed-file ownership and escalation rules.
 
 ## Formatting and linting policy
 
@@ -51,20 +59,54 @@ Biome configuration in `biome.json` is authoritative.
 - Use single quotes in JavaScript and TypeScript.
 - Keep semicolons enabled.
 - Keep trailing commas where the formatter permits them.
-- Keep lines at or below the configured formatter target where practical.
+- Do not hand-format around Biome; run `npm run format` and commit the formatter output.
 - Do not suppress lint rules merely to make CI green. Fix the underlying code unless there is a documented architectural reason for an exception.
-- Run `npm run format` before final validation when files have been edited substantially.
 
 Generated output, dependencies, local environment files and coverage output must not be committed.
 
+## Architecture path
+
+The implemented standards are in `docs/architecture/ENGINEERING-STANDARDS.md`. The most important canonical files are:
+
+- `src/game/scenes/SceneCompositionContract.ts`;
+- `src/game/scenes/SceneManifest.ts`;
+- `src/game/scenes/SceneLifecycleScope.ts`;
+- `src/game/ui/UiDesignSystem.ts`;
+- `src/game/ui/UiPrimitives.ts`;
+- `src/game/ui/CanvasDomOverlayBridge.ts`;
+- `src/game/interaction/**` and `src/game/dialogue/**`;
+- `src/content/audioBindings.ts` and `src/game/audio/**`;
+- `scripts/verification/verificationOwnership.mjs`;
+- `scripts/performance/performancePolicy.mjs`.
+
+Do not introduce competing registries, token systems, overlay geometry, dialogue stacks or verification rules when these paths already own the concern.
+
 ## Tests
 
-- Unit tests use Vitest.
-- Keep focused unit tests next to the code they exercise using `*.test.ts` naming.
-- Tests must be deterministic and must not depend on network access.
-- Prefer testing domain/state logic without starting Phaser when a system can be tested independently.
-- Gameplay work packages should add tests for durable rules and state transitions where practical.
-- A bug fix should include a regression test when the behaviour can be isolated reasonably.
+- Unit tests use Vitest and normally live next to the code using `*.test.ts`.
+- Browser tests live under `tests/play/**`.
+- Keep tests deterministic and network-independent where practical.
+- Prefer testing domain/state logic without starting Phaser when a system can be isolated.
+- Test semantic/user-visible contracts, not historical coordinates or implementation order.
+- A reproducible bug fix should include a regression test when practical.
+- Changes to saves/navigation/scene identity must preserve compatibility coverage.
+- Touch/mobile behaviour is a first-class validation surface.
+
+`scripts/verification/verificationOwnership.mjs` maps runtime areas to unit/browser groups. New runtime areas must be mapped or CI will deliberately fail safe to full qualification.
+
+## Performance and loading
+
+Production builds emit a Vite manifest. `npm run perf:budget` uses it to enforce the loading architecture rather than a single total-bundle number.
+
+Current hard guards cover entry size, first-playable static graph, largest lazy chunk, JavaScript chunk count, diagnostics isolation and material duplicate chunks. Total JavaScript remains a trend metric.
+
+When adding optional scenes/features:
+
+- use the `SceneManifest` load boundary;
+- avoid bootstrap registration unless necessary;
+- keep rejected lazy imports retryable;
+- preserve `vite:preloadError` stale-chunk recovery;
+- preserve no-cache HTML and immutable hashed assets.
 
 ## Type safety
 
@@ -73,7 +115,6 @@ TypeScript strict mode is part of the quality gate.
 - Avoid `any` unless an external API makes it genuinely unavoidable.
 - Prefer explicit domain types at system boundaries.
 - Do not bypass compiler errors with broad casts merely to satisfy a work package.
-- Intentionally broken TypeScript must fail `npm run typecheck` and therefore fail `npm run validate` and CI.
 
 ## Branch and work-package discipline
 
@@ -83,37 +124,37 @@ TypeScript strict mode is part of the quality gate.
 - Leave the branch buildable and validated.
 - Update repository documentation when a work package changes architecture, conventions or project status.
 - Open work as a draft pull request until its acceptance criteria and CI checks are satisfied.
-
-When a package depends on an unmerged package, branch from the dependency and target the dependency branch with the stacked pull request. Retarget to `main` after the dependency is merged.
+- Do not merge or deploy across a declared human gate without explicit acceptance.
 
 ## Continuous integration
 
-`.github/workflows/ci.yml` runs on pushes and pull requests. The validation job performs:
+`.github/workflows/ci.yml` uses the verification planner rather than a fixed all-or-nothing sequence.
 
-1. repository checkout;
-2. Node.js setup;
-3. dependency installation;
-4. formatting check;
-5. linting;
-6. TypeScript type-checking;
-7. unit tests;
-8. production Vite build.
+- Tier 0: static quality, architecture and policy checks.
+- Tier 1: selected/full unit contracts.
+- Tier 2: mapped targeted Chromium browser smoke.
+- Tier 3: authoritative full Chromium suite in three shards.
+- Tier 4: Chromium/Firefox/WebKit compatibility.
+- Build/performance: manifest build, static smoke and loading budgets.
 
-A work package is not complete while this workflow is failing because of its changes.
+Cross-cutting paths such as app bootstrap, persistence, scene architecture and CI/test infrastructure escalate to full qualification. Unmapped runtime/test paths also escalate rather than reducing coverage.
+
+For release qualification, `.github/workflows/deployment-smoke.yml` verifies startup, save, reload and Continue against the exact immutable Cloudflare Pages preview candidate SHA. This is not authority to deploy production.
 
 ## Agent completion checklist
 
 Before reporting a work package complete:
 
-1. Re-read the work package acceptance criteria in `docs/07-WORK-PACKAGES.md`.
-2. Check that changes remain inside the intended package scope.
-3. Run or otherwise exercise the repository validation gate.
-4. Confirm unit tests pass.
-5. Confirm the production build passes.
-6. Confirm CI passes on the final branch head.
-7. Update the README project status and identify the next work package when appropriate.
-8. Summarise what changed, the validation performed and any known limitation in the pull request description.
+1. Re-read the active work package acceptance criteria.
+2. Confirm the changes remain in scope and use the canonical engineering paths.
+3. Run the required local/static checks.
+4. Confirm final branch-head CI and required browser tiers pass.
+5. Confirm performance/build checks pass when relevant.
+6. Run the immutable-preview smoke if the package requires release qualification.
+7. Update `STATUS.md`, `PROJECT_STATE.json` and package evidence at the meaningful checkpoint.
+8. Record known limitations and any retirement/deprecation items that remain.
+9. Honour the package's human gate before merge/deployment/dependent work.
 
 ## Quality-gate ownership
 
-R0-WP0.3 establishes these rules. Later work packages may strengthen them, but should not silently remove a gate. If a future toolchain change replaces Biome, Vitest, TypeScript or the CI structure, the replacement must preserve equivalent or stronger automated validation.
+Later work packages may strengthen these rules, but should not silently remove a gate. Any toolchain replacement must preserve equivalent or stronger deterministic validation and update the canonical standards/ownership maps in the same change.

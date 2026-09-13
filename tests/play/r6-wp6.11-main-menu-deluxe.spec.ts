@@ -172,9 +172,6 @@ test.describe('phone portrait title controls', () => {
   test('essential menu and settings actions stay physically readable and touch-sized', async ({
     page,
   }) => {
-    // Preserve the complete settings geometry and navigation journey on slow
-    // software renderers rather than allowing the default total timeout to
-    // expire after the creator has already opened.
     test.setTimeout(120_000);
     await page.goto('/?diagnostics=1');
     await waitForScene(page, 'TitleScene');
@@ -201,13 +198,20 @@ test.describe('phone portrait title controls', () => {
     expect(controls?.y ?? 0).toBeGreaterThanOrEqual((canvas?.y ?? 0) + (canvas?.height ?? 0));
 
     await settings.click();
-    const settingTargets = page.locator('.title-portrait-settings [data-title-action]');
-    await expect(page.locator('[data-title-action="title-setting-fullscreen"]')).toBeVisible();
-    await expect(settingTargets.first()).toBeVisible();
-    const settingCount = await settingTargets.count();
-    expect(settingCount).toBe(8);
-    for (let index = 0; index < settingCount; index += 1) {
-      const bounds = await settingTargets.nth(index).boundingBox();
+    const requiredSettingActions = [
+      'title-setting-muted',
+      'title-setting-music',
+      'title-setting-ambience',
+      'title-setting-sfx',
+      'title-setting-reduced-motion',
+      'title-setting-high-visibility',
+      'title-setting-fullscreen',
+      'title-settings-done',
+    ] as const;
+    for (const action of requiredSettingActions) {
+      const target = page.locator(`[data-title-action="${action}"]`);
+      await expect(target).toBeVisible();
+      const bounds = await target.boundingBox();
       expect(bounds).not.toBeNull();
       expect(bounds?.height ?? 0).toBeGreaterThanOrEqual(54);
     }

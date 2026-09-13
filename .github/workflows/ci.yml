@@ -5,124 +5,249 @@ on:
     branches:
       - main
   pull_request:
+  workflow_dispatch:
+    inputs:
+      full_ci:
+        description: Force authoritative Tier 0-4 qualification
+        required: true
+        default: true
+        type: boolean
+  schedule:
+    - cron: '17 4 * * 0'
 
 permissions:
   contents: read
 
 jobs:
-  validate:
-    name: Validate
+  plan:
+    name: Verification plan
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-
+    outputs:
+      change_class: ${{ steps.plan.outputs.change_class }}
+      tiers: ${{ steps.plan.outputs.tiers }}
+      owners: ${{ steps.plan.outputs.owners }}
+      unit_mode: ${{ steps.plan.outputs.unit_mode }}
+      unit_groups: ${{ steps.plan.outputs.unit_groups }}
+      unit_filters: ${{ steps.plan.outputs.unit_filters }}
+      unit_related_files: ${{ steps.plan.outputs.unit_related_files }}
+      unit_tests: ${{ steps.plan.outputs.unit_tests }}
+      browser_group: ${{ steps.plan.outputs.browser_group }}
+      browser_groups: ${{ steps.plan.outputs.browser_groups }}
+      browser_tests: ${{ steps.plan.outputs.browser_tests }}
+      run_typecheck: ${{ steps.plan.outputs.run_typecheck }}
+      run_unit: ${{ steps.plan.outputs.run_unit }}
+      run_build: ${{ steps.plan.outputs.run_build }}
+      run_performance: ${{ steps.plan.outputs.run_performance }}
+      run_tier2: ${{ steps.plan.outputs.run_tier2 }}
+      run_tier3: ${{ steps.plan.outputs.run_tier3 }}
+      run_tier4: ${{ steps.plan.outputs.run_tier4 }}
+      run_project_contract: ${{ steps.plan.outputs.run_project_contract }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
-
+        with:
+          fetch-depth: 0
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
           node-version: 22.23.2
           package-manager-cache: false
+      - name: Classify change and select verification tiers
+        id: plan
+        env:
+          VERIFY_EVENT_NAME: ${{ github.event_name }}
+          VERIFY_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          VERIFY_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          VERIFY_FORCE_FULL: ${{ inputs.full_ci || false }}
+        run: node scripts/verification/planVerification.mjs
+      - name: Upload verification plan
+        uses: actions/upload-artifact@v4
+        with:
+          name: verification-plan
+          path: verification-plan.json
+          retention-days: 14
 
-      - name: Install dependencies
-        run: npm ci --no-audit --no-fund
-
+  tier0:
+    name: Tier 0 - static and architecture
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22.23.2
+          package-manager-cache: false
+      - run: npm ci --no-audit --no-fund
       - name: Check formatting
-        run: npm run format:check
-
+        id: format
+        run: |
+          if ! npm run format:check; then
+            npm run format
+            git diff -- . > formatting.patch
+            exit 1
+          fi
+      - name: Upload formatter remediation
+        if: failure() && steps.format.conclusion == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: formatter-remediation
+          path: formatting.patch
+          if-no-files-found: warn
+          retention-days: 7
       - name: Lint
         run: npm run lint
-
-      - name: Type-check
+      - name: Check architecture boundaries
+        run: npm run architecture:validate
+      - name: Check verification policy
+        run: npm run verification:policy:test
+      - name: Check performance policy
+        run: npm run performance:policy:test
+      - name: Type-check runtime changes
+        if: needs.plan.outputs.run_typecheck == 'true'
         run: npm run typecheck
+      - name: Set up Python for project contract
+        if: needs.plan.outputs.run_project_contract == 'true'
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Validate AI project contract
+        if: needs.plan.outputs.run_project_contract == 'true'
+        run: python scripts/ai/validate-project-state.py
 
-      - name: Run unit tests
-        run: npm run test
+  tier1:
+    name: Tier 1 - unit contracts
+    needs: [plan, tier0]
+    if: needs.plan.outputs.run_unit == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22.23.2
+          package-manager-cache: false
+      - run: npm ci --no-audit --no-fund
+      - name: Run selected unit contracts
+        env:
+          UNIT_MODE: ${{ needs.plan.outputs.unit_mode }}
+          UNIT_FILTERS: ${{ needs.plan.outputs.unit_filters }}
+          UNIT_RELATED_FILES: ${{ needs.plan.outputs.unit_related_files }}
+          UNIT_TESTS: ${{ needs.plan.outputs.unit_tests }}
+        run: npm run test:unit:selected
 
-      - name: Build production bundle
+  build-performance:
+    name: Build, static smoke and performance architecture
+    needs: [plan, tier0]
+    if: needs.plan.outputs.run_build == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22.23.2
+          package-manager-cache: false
+      - run: npm ci --no-audit --no-fund
+      - name: Build production bundle with manifest
         run: npm run build
-
-      - name: Check performance budget
-        run: npm run perf:budget
-
       - name: Smoke-test static output
         run: npm run smoke:static
+      - name: Check performance architecture budget
+        if: needs.plan.outputs.run_performance == 'true'
+        run: npm run perf:budget
+      - name: Upload performance report
+        if: always() && needs.plan.outputs.run_performance == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: performance-report
+          path: performance-report.json
+          if-no-files-found: warn
+          retention-days: 30
 
-  browser-playtest:
-    name: Browser playtest (${{ matrix.shard }}/3)
-    needs: validate
+  tier2:
+    name: Tier 2 - targeted browser smoke
+    needs: [plan, tier0]
+    if: needs.plan.outputs.run_tier2 == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22.23.2
+          package-manager-cache: false
+      - run: npm ci --no-audit --no-fund
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run selected browser contracts
+        env:
+          BROWSER_TESTS: ${{ needs.plan.outputs.browser_tests }}
+        run: npm run test:browser:selected
+      - name: Upload targeted browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tier2-${{ needs.plan.outputs.browser_group }}
+          path: playtest-artifacts
+          if-no-files-found: warn
+          retention-days: 14
+
+  tier3:
+    name: Tier 3 - full Chromium (${{ matrix.shard }}/3)
+    needs: [plan, tier0, tier1]
+    if: needs.plan.outputs.run_tier3 == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 25
     strategy:
       fail-fast: false
       matrix:
         shard: [1, 2, 3]
-
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v6
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v6
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 22.23.2
           package-manager-cache: false
-
-      - name: Install dependencies
-        run: npm ci --no-audit --no-fund
-
+      - run: npm ci --no-audit --no-fund
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
-
-      - name: Run automated browser playtest
+      - name: Run full Chromium playtest shard
         run: npm run test:play -- --shard=${{ matrix.shard }}/3
-
       - name: Summarise automated findings
         if: always()
         run: node scripts/summarisePlaytest.mjs
-
       - name: Upload playtest report and screenshots
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: automated-playtest-${{ matrix.shard }}-of-3
-          path: |
-            playtest-artifacts
-            package-lock.json
+          name: tier3-chromium-${{ matrix.shard }}-of-3
+          path: playtest-artifacts
           if-no-files-found: warn
           retention-days: 14
 
-  browser-compatibility:
-    name: Browser compatibility
-    needs: validate
+  tier4:
+    name: Tier 4 - cross-browser compatibility
+    needs: [plan, tier0, tier1]
+    if: needs.plan.outputs.run_tier4 == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 20
-
+    timeout-minutes: 25
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v6
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v6
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 22.23.2
           package-manager-cache: false
-
-      - name: Install dependencies
-        run: npm ci --no-audit --no-fund
-
+      - run: npm ci --no-audit --no-fund
       - name: Install Chromium, Firefox and WebKit
         run: npx playwright install --with-deps chromium firefox webkit
-
-      - name: Run browser compatibility smoke matrix
+      - name: Run compatibility matrix
         run: npm run test:browser-compat
-
-      - name: Upload browser compatibility report
+      - name: Upload compatibility evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: browser-compatibility
+          name: tier4-browser-compatibility
           path: browser-compat-artifacts
           if-no-files-found: warn
           retention-days: 14
