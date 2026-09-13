@@ -10,12 +10,13 @@
     "architecture:test": "node --test scripts/architecture/architectureBoundaries.test.mjs",
     "architecture:validate": "npm run architecture:test && npm run architecture:check",
     "verification:policy:test": "node --test scripts/verification/verificationPolicy.test.mjs scripts/verification/verificationSelection.test.mjs",
+    "performance:policy:test": "node --test scripts/performance/performancePolicy.test.mjs",
     "test:unit:selected": "node scripts/verification/runSelectedUnitTests.mjs",
     "test:browser:selected": "node scripts/verification/runSelectedBrowserTests.mjs",
     "predev": "npm run audio:catalogue",
     "dev": "vite",
     "prebuild": "npm run audio:catalogue",
-    "build": "tsc --noEmit && vite build",
+    "build": "tsc --noEmit && vite build --manifest",
     "preview": "vite preview",
     "format": "biome format --write .",
     "format:check": "biome format .",
@@ -27,9 +28,9 @@
     "test:browser-compat": "playwright test --config=playwright.compat.config.ts",
     "test:play:update": "playwright test --update-snapshots",
     "perf:budget": "node scripts/checkPerformanceBudget.mjs",
-    "evidence:wp19h0:bundle": "vite build --manifest && BASELINE_SOURCE_COMMIT=${BASELINE_SOURCE_COMMIT:?set BASELINE_SOURCE_COMMIT} node scripts/architecture/reportWp19h0Bundle.mjs",
+    "evidence:wp19h0:bundle": "npm run build && BASELINE_SOURCE_COMMIT=${BASELINE_SOURCE_COMMIT:?set BASELINE_SOURCE_COMMIT} node scripts/architecture/reportWp19h0Bundle.mjs",
     "smoke:static": "node scripts/staticSmoke.mjs",
-    "validate": "npm run audio:catalogue:check && npm run format:check && npm run lint && npm run architecture:validate && npm run typecheck && npm run test && npm run build && npm run perf:budget && npm run smoke:static"
+    "validate": "npm run audio:catalogue:check && npm run format:check && npm run lint && npm run architecture:validate && npm run verification:policy:test && npm run performance:policy:test && npm run typecheck && npm run test && npm run build && npm run perf:budget && npm run smoke:static"
   },
   "dependencies": {
     "phaser": "4.2.1"
