@@ -13,8 +13,8 @@ David authorised H0A-H0K in strict order on one long-lived delivery branch. Code
 
 - H0A: complete and accepted.
 - H0B: complete and accepted.
-- H0C: active.
-- H0D: not started.
+- H0C: complete and accepted.
+- H0D: active.
 - H0E: not started.
 - H0F: not started.
 - H0G: not started.
@@ -56,16 +56,38 @@ H0B checkpoint `e0b588c49cea3fa7eec748a79892b6f8bbdc1ed1` qualification:
 
 H0B therefore satisfies all acceptance criteria and is closed.
 
-## H0C active scope
+## H0C acceptance evidence
 
-H0C begins with the smallest representative proof that exercises both required halves of the phase:
+H0C established `UiDesignSystem.ts` as the canonical visual token source, converged existing canvas/CSS consumers onto it, added reusable canvas primitives and introduced `CanvasDomOverlayBridge` as the supported native-control overlay path. Settings audio range/select controls now use the bridge for coordinate conversion, scaling, minimum sizing, containment/visibility, z-order, pointer propagation and lifecycle rather than bespoke canvas-to-DOM maths.
 
-- make one token contract canonical instead of repeating palette/type/radius/shadow/control values across `uiTheme.ts`, `ConceptUi.ts` and DOM CSS;
-- expose canonical tokens to DOM controls without creating another independent styling source;
-- establish a reusable Phaser-canvas-to-DOM overlay contract for coordinate conversion, resize, clipping/visibility, z-order, pointer/focus semantics, lifecycle and selectors;
-- migrate the Settings audio range/select controls away from bespoke per-frame positioning;
-- migrate at least one recurring canvas-only primitive to consume the canonical token/primitives contract;
-- prove desktop/tablet/phone parity and accessibility/touch/focus behaviour before broad migration.
+The recurring concept panel/shadow path was migrated to the reusable primitive contract as the canvas-only proof. Accessibility names and native range/select semantics were retained.
+
+Current-head H0C qualification on `0423dc7215506b7c0768f6c9ac73abe75a300b60`:
+
+- format, lint, architecture checks, type-check, unit tests and production build pass before the inherited performance gate;
+- 121 Vitest files / 469 tests pass;
+- project-contract validation passes;
+- immutable startup/save/reload/Continue smoke passes;
+- targeted Settings/UI browser regression passes;
+- cross-browser compatibility rerun passes with 48 passed / 15 intentional skips across Chromium, Firefox and WebKit desktop/tablet/mobile configurations;
+- one prior WebKit-tablet attempt timed out before canvas visibility, then passed in 1.4 seconds on the clean rerun with no code change, so it is recorded for H0E as environmental/flaky evidence rather than hidden or waived;
+- total JS remains above the unchanged inherited 650 KiB ceiling at approximately 651.8 KiB gzip. The budget was not raised.
+
+H0C therefore satisfies its UI, DOM-bridge, responsive and accessibility acceptance criteria and is closed.
+
+## H0D active scope
+
+H0D is implementing the smallest composition-first proof:
+
+- one canonical scene manifest covering current startup and live runtime/on-demand scene identities without changing loading policy;
+- a typed scene-composition declaration for new scenes;
+- a reusable scene lifecycle scope with idempotent teardown and owned listener cleanup;
+- a reusable keyboard/pointer input runtime composed through that lifecycle scope;
+- migration of low-risk `DoorwayStubScene` without changing visual, navigation or input behaviour;
+- regression coverage for stable manifest keys/startup ordering plus re-entry/listener cleanup;
+- a durable scene composition contract and new-scene recipe.
+
+The live `VillageInteriorScene` manifest owner is `R6VillageInteriorScene.ts`. The older duplicate remains untouched until H0J retirement evidence.
 
 ## Preservation and gates
 

@@ -1,25 +1,5 @@
 import Phaser from 'phaser';
-import { BootScene } from '../scenes/BootScene';
-import { CottageDecorateScene } from '../scenes/CottageDecorateScene';
-import { CottageInteriorScene } from '../scenes/CottageInteriorScene';
-import { CrystalBrookScene } from '../scenes/CrystalBrookScene';
-import { DialogueTestScene } from '../scenes/DialogueTestScene';
-import { DoorwayStubScene } from '../scenes/DoorwayStubScene';
-import { FireflyLanternScene } from '../scenes/FireflyLanternScene';
-import { MoonflowerGladeScene } from '../scenes/MoonflowerGladeScene';
-import { MoonflowerPatchScene } from '../scenes/MoonflowerPatchScene';
-import { MovementTestScene } from '../scenes/MovementTestScene';
-import { NovaTutorialRaceScene } from '../scenes/NovaTutorialRaceScene';
-import { PipEggHatchScene } from '../scenes/PipEggHatchScene';
-import { PreloadScene } from '../scenes/PreloadScene';
-import { RaceScene } from '../scenes/RaceScene';
-import { RainbowMeadowScene } from '../scenes/RainbowMeadowScene';
-import { RainbowRunEntryScene } from '../scenes/RainbowRunEntryScene';
-import { ResizeTestScene } from '../scenes/ResizeTestScene';
-import { SunbeamVillageScene } from '../scenes/SunbeamVillageScene';
-import { TitleScene } from '../scenes/TitleScene';
-import { UnicornCreatorScene } from '../scenes/UnicornCreatorScene';
-import { WhisperingWoodsScene } from '../scenes/WhisperingWoodsScene';
+import { getStartupSceneConstructors } from '../scenes/SceneManifest';
 import { GAME_HEIGHT, GAME_WIDTH } from './gameConstants';
 
 export const gameConfig: Phaser.Types.Core.GameConfig = {
@@ -50,27 +30,5 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
     width: GAME_WIDTH,
     height: GAME_HEIGHT,
   },
-  scene: [
-    BootScene,
-    PreloadScene,
-    TitleScene,
-    ResizeTestScene,
-    MovementTestScene,
-    MoonflowerGladeScene,
-    CottageInteriorScene,
-    CottageDecorateScene,
-    MoonflowerPatchScene,
-    SunbeamVillageScene,
-    RainbowMeadowScene,
-    CrystalBrookScene,
-    WhisperingWoodsScene,
-    FireflyLanternScene,
-    RainbowRunEntryScene,
-    NovaTutorialRaceScene,
-    RaceScene,
-    PipEggHatchScene,
-    DoorwayStubScene,
-    DialogueTestScene,
-    UnicornCreatorScene,
-  ],
+  scene: getStartupSceneConstructors(),
 };

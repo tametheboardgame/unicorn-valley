@@ -1,8 +1,8 @@
 import Phaser from 'phaser';
 import { GAME_WIDTH } from '../config/gameConstants';
-import { InputController } from '../input/InputController';
-import { KeyboardInputAdapter } from '../input/KeyboardInputAdapter';
-import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
+import { defineSceneContract } from './SceneCompositionContract';
+import { SceneInputRuntime } from './SceneInputRuntime';
+import { bindSceneLifecycle, type SceneLifecycleScope } from './SceneLifecycleScope';
 
 interface DoorwayStubData {
   title?: string;
@@ -10,16 +10,38 @@ interface DoorwayStubData {
   returnScene?: string;
 }
 
+export const DOORWAY_STUB_SCENE_CONTRACT = defineSceneContract({
+  key: 'DoorwayStubScene',
+  category: 'utility',
+  loadBoundary: 'startup',
+  audioContext: 'inherit',
+  persistence: 'return-payload',
+  spawnReturn: 'return-payload',
+  shell: 'none',
+  interaction: 'scene-owned',
+  responsive: 'canvas-fit',
+  teardown: 'scene-lifecycle-scope',
+  testTags: ['navigation', 'input', 'scene-lifecycle'],
+});
+
 export class DoorwayStubScene extends Phaser.Scene {
-  private inputController: InputController | null = null;
-  private pointerInput: PointerTouchInputAdapter | null = null;
+  private lifecycle: SceneLifecycleScope | null = null;
+  private sceneInput: SceneInputRuntime | null = null;
   private returnScene = 'MoonflowerGladeScene';
 
   public constructor() {
-    super('DoorwayStubScene');
+    super(DOORWAY_STUB_SCENE_CONTRACT.key);
   }
 
   public create(data: DoorwayStubData): void {
+    this.lifecycle?.close();
+    const lifecycle = bindSceneLifecycle(this.events);
+    this.lifecycle = lifecycle;
+    lifecycle.own(() => {
+      this.sceneInput = null;
+      this.lifecycle = null;
+    });
+
     this.returnScene = data.returnScene ?? 'MoonflowerGladeScene';
     this.cameras.main.setBackgroundColor('#5f4778');
 
@@ -66,27 +88,14 @@ export class DoorwayStubScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
 
-    this.pointerInput = new PointerTouchInputAdapter();
-    this.inputController = new InputController([new KeyboardInputAdapter(this), this.pointerInput]);
-
-    button.on('pointerdown', () => this.pointerInput?.setButton('INTERACT', true));
-    button.on('pointerup', () => this.pointerInput?.setButton('INTERACT', false));
-    button.on('pointerout', () => this.pointerInput?.setButton('INTERACT', false));
-
-    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-      this.inputController?.destroy();
-      this.inputController = null;
-      this.pointerInput = null;
-    });
+    this.sceneInput = new SceneInputRuntime(this, lifecycle);
+    this.sceneInput.bindActionTarget(button, 'INTERACT');
   }
 
   public update(): void {
-    this.inputController?.update();
+    this.sceneInput?.update();
 
-    if (
-      this.inputController?.justPressed('INTERACT') ||
-      this.inputController?.justPressed('BACK')
-    ) {
+    if (this.sceneInput?.justPressed('INTERACT') || this.sceneInput?.justPressed('BACK')) {
       this.scene.start(this.returnScene);
     }
   }
