@@ -55,7 +55,7 @@ export function drawRoundedPanel(
   radius: number,
   fill: number,
   stroke: number = CONCEPT_UI.lavenderLine,
-  lineWidth = UI_DESIGN_TOKENS.border.strongPx,
+  lineWidth: number = UI_DESIGN_TOKENS.border.strongPx,
   alpha = 0.98,
 ): void {
   drawUiPanel(graphics, x, y, width, height, { radius, fill, stroke, lineWidth, alpha });
@@ -68,8 +68,8 @@ export function drawPanelShadow(
   width: number,
   height: number,
   radius: number,
-  offsetX = UI_DESIGN_TOKENS.shadow.offsetXPx,
-  offsetY = UI_DESIGN_TOKENS.shadow.offsetYPx,
+  offsetX: number = UI_DESIGN_TOKENS.shadow.offsetXPx,
+  offsetY: number = UI_DESIGN_TOKENS.shadow.offsetYPx,
   alpha = 0.2,
 ): void {
   drawUiPanelShadow(graphics, x, y, width, height, radius, {
