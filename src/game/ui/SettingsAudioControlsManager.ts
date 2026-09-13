@@ -16,16 +16,20 @@ export function getSettingsAudioControlsManager(game: Phaser.Game): void {
   const sliders = VOLUMES.map(([kind, key, label]) => {
     const input = document.createElement('input');
     input.type = 'range';
+    input.min = '0';
     input.max = '1';
     input.step = '.01';
     input.ariaLabel = label;
+    input.className = 'settings-audio-control settings-audio-slider';
     input.oninput = () => audio.updateSettings({ [key]: +input.value });
+    input.onpointerdown = (event) => event.stopPropagation();
     host.append(input);
     return [kind, key, input] as const;
   });
 
   const select = document.createElement('select');
   select.ariaLabel = 'Chosen music track';
+  select.className = 'settings-audio-control settings-audio-select';
   for (const track of MUSIC_CATALOGUE) {
     select.add(new Option(track.path.slice(track.path.lastIndexOf('/') + 1, -4), track.id));
   }
@@ -40,30 +44,36 @@ export function getSettingsAudioControlsManager(game: Phaser.Game): void {
       for (const [, , input] of sliders) input.hidden = true;
       return;
     }
+
     const settings = audio.getSettings();
     const canvas = game.canvas;
     const sx = canvas.clientWidth / 1280;
     const sy = canvas.clientHeight / 720;
+    const width = Math.max(260, 490 * sx);
+    const height = Math.max(44, 44 * sy);
+    const left = canvas.offsetLeft + (640 - 245) * sx;
     const row = (kind: string) =>
       scene.children.getByName(`settings-row-${kind}`) as Phaser.GameObjects.Rectangle | null;
     const place = (target: Phaser.GameObjects.Rectangle, control: HTMLElement) => {
-      control.style.width = `${470 * sx}px`;
-      control.style.left = `${canvas.offsetLeft + 405 * sx}px`;
-      control.style.top = `${canvas.offsetTop + (target.y + 13) * sy}px`;
+      control.style.width = `${width}px`;
+      control.style.height = `${height}px`;
+      control.style.left = `${left}px`;
+      control.style.top = `${canvas.offsetTop + (target.y + 1) * sy}px`;
     };
 
     for (const [kind, key, input] of sliders) {
       const target = row(`${kind}-volume`);
       input.value = String(settings[key]);
+      input.style.setProperty('--settings-audio-progress', `${settings[key] * 100}%`);
       input.hidden = !target?.visible;
       if (!input.hidden) place(target!, input);
     }
 
-    const mode = row('music');
-    select.hidden = settings.musicEnabled || !mode?.visible;
+    const trackRow = row('music-track');
+    select.hidden = settings.musicEnabled || !trackRow?.visible;
     if (!select.hidden) {
       select.value = settings.selectedMusicTrackId ?? MUSIC_CATALOGUE[0]?.id ?? '';
-      place(mode!, select);
+      place(trackRow!, select);
     }
   });
 }
