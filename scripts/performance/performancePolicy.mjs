@@ -1,7 +1,9 @@
+import { createHash } from 'node:crypto';
 import { readFile, stat } from 'node:fs/promises';
 import { gzipSync } from 'node:zlib';
 
 export const KiB = 1024;
+const MATERIAL_DUPLICATE_GZIP_BYTES = 2 * KiB;
 
 export const PERFORMANCE_BUDGETS = Object.freeze({
   entryRawBytes: 520 * KiB,
@@ -32,6 +34,24 @@ export function staticClosure(manifest, rootKey) {
 
 function sum(chunks, field) {
   return chunks.reduce((total, chunk) => total + chunk[field], 0);
+}
+
+export function findMaterialDuplicateGroups(chunks) {
+  const byHash = new Map();
+  for (const chunk of chunks) {
+    if (chunk.gzipBytes < MATERIAL_DUPLICATE_GZIP_BYTES) continue;
+    const matches = byHash.get(chunk.contentHash) ?? [];
+    matches.push(chunk);
+    byHash.set(chunk.contentHash, matches);
+  }
+
+  return [...byHash.values()]
+    .filter((matches) => matches.length > 1)
+    .map((matches) => ({
+      contentHash: matches[0].contentHash,
+      gzipBytes: matches[0].gzipBytes,
+      files: matches.map((chunk) => chunk.file).sort(),
+    }));
 }
 
 export function evaluatePerformanceMetrics(metrics, budgets = PERFORMANCE_BUDGETS) {
@@ -65,6 +85,12 @@ export function evaluatePerformanceMetrics(metrics, budgets = PERFORMANCE_BUDGET
     failures.push('BrowserDiagnostics is part of the initial/title/first-playable graph');
   }
 
+  for (const duplicate of metrics.duplicateJavaScriptGroups ?? []) {
+    failures.push(
+      `material duplicate JavaScript payload ${(duplicate.gzipBytes / KiB).toFixed(1)} KiB gzip: ${duplicate.files.join(', ')}`,
+    );
+  }
+
   return failures;
 }
 
@@ -85,6 +111,7 @@ export async function measurePerformance({ manifestUrl, distDirectory }) {
       file: value.file,
       rawBytes: (await stat(url)).size,
       gzipBytes: gzipSync(body).byteLength,
+      contentHash: createHash('sha256').update(body).digest('hex'),
     });
   }
 
@@ -105,9 +132,10 @@ export async function measurePerformance({ manifestUrl, distDirectory }) {
     chunk.gzipBytes > largest.gzipBytes ? chunk : largest,
   );
   const diagnosticsChunk = javascript.find((chunk) => chunk.file.includes('BrowserDiagnostics-'));
+  const duplicateJavaScriptGroups = findMaterialDuplicateGroups(javascript);
 
   return {
-    schemaVersion: 2,
+    schemaVersion: 3,
     budgets: PERFORMANCE_BUDGETS,
     legacyMetrics: LEGACY_METRICS,
     entry: {
@@ -121,14 +149,27 @@ export async function measurePerformance({ manifestUrl, distDirectory }) {
       gzipBytes: sum(initialChunks, 'gzipBytes'),
       chunkCount: initialChunks.length,
     },
-    largestLazyChunk,
+    largestLazyChunk: {
+      key: largestLazyChunk.key,
+      file: largestLazyChunk.file,
+      rawBytes: largestLazyChunk.rawBytes,
+      gzipBytes: largestLazyChunk.gzipBytes,
+    },
     totalJavaScript: {
       rawBytes: sum(javascript, 'rawBytes'),
       gzipBytes: sum(javascript, 'gzipBytes'),
     },
     javascriptChunkCount: javascript.length,
+    duplicateJavaScriptGroups,
     diagnosticsInInitialGraph: diagnosticsChunk ? initialKeys.has(diagnosticsChunk.key) : false,
-    diagnosticsChunk: diagnosticsChunk ?? null,
+    diagnosticsChunk: diagnosticsChunk
+      ? {
+          key: diagnosticsChunk.key,
+          file: diagnosticsChunk.file,
+          rawBytes: diagnosticsChunk.rawBytes,
+          gzipBytes: diagnosticsChunk.gzipBytes,
+        }
+      : null,
     initialChunks: initialChunks
       .sort((left, right) => right.gzipBytes - left.gzipBytes)
       .map(({ key, file, rawBytes, gzipBytes }) => ({ key, file, rawBytes, gzipBytes })),
