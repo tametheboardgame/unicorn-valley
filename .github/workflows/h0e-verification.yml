@@ -1,0 +1,41 @@
+name: H0E Test Contract Verification
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  brittle-contract-regression:
+    name: H0E semantic contract regression
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22.23.2
+          package-manager-cache: false
+      - run: npm ci --no-audit --no-fund
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run audited browser contracts
+        run: >-
+          npx playwright test
+          tests/play/r6-wp6.11-main-menu-deluxe.spec.ts
+          tests/play/r6.5-wp14-repeatable-activities.spec.ts
+          tests/play/r6.5-wp15-wonderbook-progress.spec.ts
+          tests/play/r6.5-wp16-portrait-modal-readability.spec.ts
+          tests/play/r6.5-wp18e-bag-map-food.spec.ts
+          tests/play/r6.5-wp18g-device-hardening.spec.ts
+      - name: Upload H0E evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: h0e-semantic-contract-regression
+          path: playtest-artifacts
+          if-no-files-found: warn
+          retention-days: 14

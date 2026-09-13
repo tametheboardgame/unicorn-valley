@@ -1,23 +1,12 @@
 import { expect, type Page, test } from '@playwright/test';
-
-interface DiagnosticObject {
-  name: string;
-  visible: boolean;
-}
-
-interface DiagnosticScene {
-  key: string;
-  objects: DiagnosticObject[];
-}
-
-interface BrowserDiagnosticsApi {
-  snapshot(): {
-    activeScenes: string[];
-    scenes: DiagnosticScene[];
-  };
-  startScene(sceneKey: string, data?: object): void;
-  setArcadeSpritePosition(sceneKey: string, objectName: string, x: number, y: number): void;
-}
+import {
+  clickNamedObject,
+  openDiagnostics,
+  setArcadeSpritePosition,
+  startScene,
+  waitForNamedObject,
+  waitForScene,
+} from '../support/browserDiagnostics';
 
 test.use({ viewport: { width: 412, height: 915 }, hasTouch: true });
 
@@ -87,83 +76,6 @@ async function seedActivityPrerequisites(page: Page): Promise<void> {
   });
 }
 
-async function diagnostics(page: Page): Promise<void> {
-  await page.goto('/?diagnostics=1');
-  await page.waitForFunction(() =>
-    Boolean(
-      (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi })
-        .__UNICORN_VALLEY_DIAGNOSTICS__,
-    ),
-  );
-}
-
-async function waitForScene(page: Page, sceneKey: string): Promise<void> {
-  await page.waitForFunction((key) => {
-    const api = (
-      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
-    ).__UNICORN_VALLEY_DIAGNOSTICS__;
-    return api?.snapshot().activeScenes.includes(key) ?? false;
-  }, sceneKey);
-}
-
-async function startScene(page: Page, sceneKey: string, data?: object): Promise<void> {
-  await page.evaluate(
-    ({ key, sceneData }) => {
-      const api = (
-        window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
-      ).__UNICORN_VALLEY_DIAGNOSTICS__;
-      if (!api) {
-        throw new Error('Browser diagnostics are not installed.');
-      }
-      api.startScene(key, sceneData);
-    },
-    { key: sceneKey, sceneData: data },
-  );
-  await waitForScene(page, sceneKey);
-}
-
-async function waitForObject(page: Page, sceneKey: string, objectName: string): Promise<void> {
-  await page.waitForFunction(
-    ({ key, name }) => {
-      const api = (
-        window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
-      ).__UNICORN_VALLEY_DIAGNOSTICS__;
-      const scene = api?.snapshot().scenes.find((candidate) => candidate.key === key);
-      return scene?.objects.some((object) => object.name === name && object.visible) ?? false;
-    },
-    { key: sceneKey, name: objectName },
-  );
-}
-
-async function movePlayer(page: Page, sceneKey: string, x: number, y: number): Promise<void> {
-  await page.evaluate(
-    ({ key, nextX, nextY }) => {
-      const api = (
-        window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
-      ).__UNICORN_VALLEY_DIAGNOSTICS__;
-      if (!api) {
-        throw new Error('Browser diagnostics are not installed.');
-      }
-      api.setArcadeSpritePosition(key, 'world-player-unicorn', nextX, nextY);
-    },
-    { key: sceneKey, nextX: x, nextY: y },
-  );
-}
-
-async function clickCanvasLogical(page: Page, x: number, y: number): Promise<void> {
-  const canvas = page.locator('canvas');
-  const box = await canvas.boundingBox();
-  if (!box) {
-    throw new Error('Game canvas is not visible.');
-  }
-  await canvas.click({
-    position: {
-      x: (box.width * x) / 1280,
-      y: (box.height * y) / 720,
-    },
-  });
-}
-
 async function expectReadableCompanion(page: Page, id: string): Promise<void> {
   const root = page.locator(`[data-mobile-modal-companion="${id}"]`);
   await expect(root).toBeVisible();
@@ -191,13 +103,13 @@ test('portrait phone can read and complete Maple baking through large companion 
   page,
 }) => {
   await seedActivityPrerequisites(page);
-  await diagnostics(page);
+  await openDiagnostics(page);
   await startScene(page, 'VillageInteriorScene', {
     interiorId: 'bakery',
     returnScene: 'SunbeamVillageScene',
   });
-  await waitForObject(page, 'VillageInteriorScene', 'wp14-activity-entry:maple-baking');
-  await clickCanvasLogical(page, 1010, 548);
+  await waitForNamedObject(page, 'VillageInteriorScene', 'wp14-activity-entry:maple-baking');
+  await clickNamedObject(page, 'VillageInteriorScene', 'wp14-activity-entry:maple-baking');
   await waitForScene(page, 'MapleBakingActivityScene');
   await expectReadableCompanion(page, 'maple-baking');
 
@@ -217,12 +129,12 @@ test('portrait phone can read and complete Coral beachcombing through large comp
   page,
 }) => {
   await seedActivityPrerequisites(page);
-  await diagnostics(page);
+  await openDiagnostics(page);
   await startScene(page, 'WhisperingWoodsScene');
-  await movePlayer(page, 'WhisperingWoodsScene', 3180, 1690);
+  await setArcadeSpritePosition(page, 'WhisperingWoodsScene', 'world-player-unicorn', 3180, 1690);
   await waitForScene(page, 'StarlightBeachScene');
-  await waitForObject(page, 'StarlightBeachScene', 'wp14-activity-entry:coral-beachcombing');
-  await movePlayer(page, 'StarlightBeachScene', 1210, 1490);
+  await waitForNamedObject(page, 'StarlightBeachScene', 'wp14-activity-entry:coral-beachcombing');
+  await setArcadeSpritePosition(page, 'StarlightBeachScene', 'world-player-unicorn', 1210, 1490);
   await page.waitForTimeout(120);
   await page.keyboard.press('e');
   await waitForScene(page, 'CoralBeachcombingActivityScene');
@@ -241,11 +153,8 @@ test('portrait phone can read and complete Coral beachcombing through large comp
 test('portrait phone can read and navigate the expanded Wonderbook without tiny canvas tabs', async ({
   page,
 }) => {
-  // The complete companion check scrolls every offscreen action into view and
-  // measures it. Software rendering can exhaust the default total while those
-  // real layout operations remain responsive individually.
   test.setTimeout(75_000);
-  await diagnostics(page);
+  await openDiagnostics(page);
   await startScene(page, 'WonderbookScene', { returnScene: 'TitleScene' });
   await expectReadableCompanion(page, 'wonderbook');
 

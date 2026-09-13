@@ -14,8 +14,8 @@ David authorised H0A-H0K in strict order on one long-lived delivery branch. Code
 - H0A: complete and accepted.
 - H0B: complete and accepted.
 - H0C: complete and accepted.
-- H0D: active.
-- H0E: not started.
+- H0D: complete and accepted.
+- H0E: active.
 - H0F: not started.
 - H0G: not started.
 - H0H: not started.
@@ -75,19 +75,35 @@ Current-head H0C qualification on `0423dc7215506b7c0768f6c9ac73abe75a300b60`:
 
 H0C therefore satisfies its UI, DOM-bridge, responsive and accessibility acceptance criteria and is closed.
 
-## H0D active scope
+## H0D acceptance evidence
 
-H0D is implementing the smallest composition-first proof:
+H0D established a composition-first scene contract without introducing a giant base class. It added a side-effect-free scene manifest for stable identity/loading metadata, a browser constructor registry, typed scene composition declarations, `SceneLifecycleScope` with idempotent owned cleanup, and reusable scene input ownership. `DoorwayStubScene` is the low-risk proof migration and the new-scene recipe documents required identity, load boundary, audio, persistence, spawn/return, shell/HUD, interaction, responsive, teardown and test ownership declarations.
 
-- one canonical scene manifest covering current startup and live runtime/on-demand scene identities without changing loading policy;
-- a typed scene-composition declaration for new scenes;
-- a reusable scene lifecycle scope with idempotent teardown and owned listener cleanup;
-- a reusable keyboard/pointer input runtime composed through that lifecycle scope;
-- migration of low-risk `DoorwayStubScene` without changing visual, navigation or input behaviour;
-- regression coverage for stable manifest keys/startup ordering plus re-entry/listener cleanup;
-- a durable scene composition contract and new-scene recipe.
+The live `VillageInteriorScene` manifest owner remains `R6VillageInteriorScene.ts`; the older duplicate is preserved for H0J retirement proof rather than deleted opportunistically.
 
-The live `VillageInteriorScene` manifest owner is `R6VillageInteriorScene.ts`. The older duplicate remains untouched until H0J retirement evidence.
+Final H0D qualification on `2f792fc46364287b9cae147b0874473c3057c8e8`:
+
+- formatting, lint, architecture boundaries and type-check pass;
+- 123 Vitest files / 476 tests pass;
+- production build passes;
+- AI project contract passes;
+- immutable deployed startup/save/reload/Continue smoke passes;
+- targeted Settings/UI regression passes;
+- full compatibility matrix passes with 48 applicable tests and 15 intentional skips across Chromium, Firefox and WebKit desktop/tablet/mobile projects in 7.1 minutes;
+- total JS is 653.9 KiB gzip against the unchanged 650 KiB envelope. The budget remains unchanged and this is the only core CI failure before downstream jobs.
+
+H0D therefore satisfies scene identity, composition/scaffolding, proof migration and lifecycle/input-cleanup acceptance and is closed.
+
+## H0E active scope
+
+H0E is auditing the existing H0A test inventory against stable player/product contracts. The first implementation checkpoint:
+
+- introduces a shared browser diagnostics helper for semantic scene/object interaction;
+- rewrites flagged raw coordinate and collection-count assertions where stable semantic IDs already exist;
+- narrows duplicate browser proof when the same pure reward rule already has authoritative unit coverage;
+- deliberately retains coordinate/geometry assertions when spatial geometry is the actual product contract;
+- records a critical safety-floor matrix, rewrite/removal ledger and measured runtime/flake baseline in `test-contract-audit.md`;
+- adds a bounded Chromium verification workflow for the audited brittle-test set while the inherited performance ceiling continues to prevent normal downstream browser shards.
 
 ## Preservation and gates
 
