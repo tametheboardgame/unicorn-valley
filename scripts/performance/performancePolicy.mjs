@@ -104,9 +104,7 @@ export async function measurePerformance({ manifestUrl, distDirectory }) {
   const largestLazyChunk = lazyChunks.reduce((largest, chunk) =>
     chunk.gzipBytes > largest.gzipBytes ? chunk : largest,
   );
-  const diagnosticsChunk = javascript.find((chunk) =>
-    chunk.file.includes('BrowserDiagnostics-'),
-  );
+  const diagnosticsChunk = javascript.find((chunk) => chunk.file.includes('BrowserDiagnostics-'));
 
   return {
     schemaVersion: 2,
@@ -129,9 +127,7 @@ export async function measurePerformance({ manifestUrl, distDirectory }) {
       gzipBytes: sum(javascript, 'gzipBytes'),
     },
     javascriptChunkCount: javascript.length,
-    diagnosticsInInitialGraph: diagnosticsChunk
-      ? initialKeys.has(diagnosticsChunk.key)
-      : false,
+    diagnosticsInInitialGraph: diagnosticsChunk ? initialKeys.has(diagnosticsChunk.key) : false,
     diagnosticsChunk: diagnosticsChunk ?? null,
     initialChunks: initialChunks
       .sort((left, right) => right.gzipBytes - left.gzipBytes)
