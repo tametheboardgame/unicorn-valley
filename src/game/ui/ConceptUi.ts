@@ -1,4 +1,6 @@
 import Phaser from 'phaser';
+import { cssColourToPhaser, UI_DESIGN_TOKENS } from './UiDesignSystem';
+import { drawUiPanel, drawUiPanelShadow } from './UiPrimitives';
 import { UI_COLOURS } from './uiTheme';
 
 export type ConceptIcon =
@@ -21,19 +23,19 @@ export type ConceptIcon =
 export const CONCEPT_UI = {
   cream: UI_COLOURS.cream,
   creamHighlight: 0xfffffa,
-  purple: 0xb96ae8,
-  purpleLight: 0xd89af4,
-  purpleStrong: 0x8a48bd,
-  purpleDeep: 0x5c2d82,
-  lavenderLine: 0xc99be0,
-  gold: 0xffc85c,
-  goldLight: 0xffe69e,
-  goldStrong: 0xc98527,
-  goldDeep: 0x7d4f20,
-  ink: 0x4b2b66,
-  softInk: 0x6b4a78,
-  shadow: 0x2f1d43,
-  white: 0xffffff,
+  purple: cssColourToPhaser(UI_DESIGN_TOKENS.colour.conceptPurple),
+  purpleLight: cssColourToPhaser(UI_DESIGN_TOKENS.colour.conceptPurpleLight),
+  purpleStrong: cssColourToPhaser(UI_DESIGN_TOKENS.colour.conceptPurpleStrong),
+  purpleDeep: cssColourToPhaser(UI_DESIGN_TOKENS.colour.conceptPurpleDeep),
+  lavenderLine: cssColourToPhaser(UI_DESIGN_TOKENS.colour.conceptLavenderLine),
+  gold: cssColourToPhaser(UI_DESIGN_TOKENS.colour.conceptGold),
+  goldLight: cssColourToPhaser(UI_DESIGN_TOKENS.colour.conceptGoldLight),
+  goldStrong: cssColourToPhaser(UI_DESIGN_TOKENS.colour.conceptGoldStrong),
+  goldDeep: cssColourToPhaser(UI_DESIGN_TOKENS.colour.conceptGoldDeep),
+  ink: cssColourToPhaser(UI_DESIGN_TOKENS.colour.conceptInk),
+  softInk: cssColourToPhaser(UI_DESIGN_TOKENS.colour.conceptSoftInk),
+  shadow: cssColourToPhaser(UI_DESIGN_TOKENS.colour.conceptShadow),
+  white: cssColourToPhaser(UI_DESIGN_TOKENS.colour.white),
 } as const;
 
 export function createFixedGraphics(
@@ -53,13 +55,10 @@ export function drawRoundedPanel(
   radius: number,
   fill: number,
   stroke: number = CONCEPT_UI.lavenderLine,
-  lineWidth = 4,
+  lineWidth = UI_DESIGN_TOKENS.border.strongPx,
   alpha = 0.98,
 ): void {
-  graphics.fillStyle(fill, alpha);
-  graphics.fillRoundedRect(x - width / 2, y - height / 2, width, height, radius);
-  graphics.lineStyle(lineWidth, stroke, 1);
-  graphics.strokeRoundedRect(x - width / 2, y - height / 2, width, height, radius);
+  drawUiPanel(graphics, x, y, width, height, { radius, fill, stroke, lineWidth, alpha });
 }
 
 export function drawPanelShadow(
@@ -69,18 +68,16 @@ export function drawPanelShadow(
   width: number,
   height: number,
   radius: number,
-  offsetX = 6,
-  offsetY = 7,
+  offsetX = UI_DESIGN_TOKENS.shadow.offsetXPx,
+  offsetY = UI_DESIGN_TOKENS.shadow.offsetYPx,
   alpha = 0.2,
 ): void {
-  graphics.fillStyle(CONCEPT_UI.shadow, alpha);
-  graphics.fillRoundedRect(
-    x - width / 2 + offsetX,
-    y - height / 2 + offsetY,
-    width,
-    height,
-    radius,
-  );
+  drawUiPanelShadow(graphics, x, y, width, height, radius, {
+    colour: CONCEPT_UI.shadow,
+    offsetX,
+    offsetY,
+    alpha,
+  });
 }
 
 export function drawGlossyCircle(
