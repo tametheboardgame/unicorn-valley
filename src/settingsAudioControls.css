@@ -93,7 +93,9 @@
   background-position:
     calc(100% - 22px) 50%,
     calc(100% - 15px) 50%;
-  background-size: 7px 7px, 7px 7px;
+  background-size:
+    7px 7px,
+    7px 7px;
   background-repeat: no-repeat;
   box-shadow:
     0 4px 0 rgb(75 54 88 / 12%),
