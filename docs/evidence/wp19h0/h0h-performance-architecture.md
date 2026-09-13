@@ -26,24 +26,38 @@ The implemented policy in `scripts/performance/performancePolicy.mjs` distinguis
 3. Largest lazy JavaScript chunk: hard limit 32 KiB gzip. H0A optional feature chunks were roughly 8 KiB gzip, so this allows sensible feature growth while preventing an accidentally monolithic lazy feature.
 4. JavaScript chunk count: hard limit 112. H0A emitted 81 chunks, leaving expansion headroom while guarding against tiny-chunk request storms.
 5. Browser diagnostics: hard rule that the diagnostics chunk must not enter the initial static graph.
-6. Total emitted JavaScript: reported in raw/gzip form and compared with the historical 650 KiB metric, but no longer an arbitrary permanent maximum for game breadth.
+6. Material duplicate JavaScript payloads: reported and guarded so code splitting cannot quietly duplicate meaningful payload across chunks.
+7. Total emitted JavaScript: reported in raw/gzip form and compared with the historical 650 KiB metric, but no longer an arbitrary permanent maximum for game breadth.
 
 These thresholds are intentionally rounded and above the measured healthy baseline rather than tuned to the exact current output.
 
-## Build and CI contract
+## Build, cache and recovery contract
 
-- Production builds now always emit the Vite manifest required for deterministic graph measurement.
+- Production builds always emit the Vite manifest required for deterministic graph measurement.
 - `npm run performance:policy:test` protects policy semantics with synthetic tests.
 - `npm run perf:budget` writes `performance-report.json` and fails only on the player-visible/architecture guardrails above.
 - CI uploads the performance report for 30 days.
 - H0G's fail-safe classifier treats performance/build policy files as full-qualification changes.
+- Deployment policy serves HTML with revalidation and hashed assets as immutable resources.
+- `vite:preloadError` recovery performs a bounded reload when an old page references a lazy chunk removed by a newer immutable deployment, preventing a stale session from being stranded after release.
 
 ## Loading policy
 
-The H0D scene manifest remains the canonical loading-policy source. It already separates startup scenes from runtime-eager and on-demand scenes, including on-demand Settings, Starlight Beach, optional activity scenes and the exploration HUD. H0H therefore does not introduce a second loader or mechanically split every scene.
+The H0D scene manifest is the canonical loading-policy source. It separates startup scenes from runtime-eager and on-demand scenes, including on-demand Settings, Starlight Beach, optional activity scenes and the exploration HUD. H0H therefore does not introduce a second loader or mechanically split every scene.
 
-Further scene splitting is justified only when the manifest report shows a material first-playable benefit without creating transition stalls, duplicated shared payload or fragile registration paths. H0J can retire obsolete startup/runtime owners where evidence proves they are no longer needed.
+Further scene splitting is justified only when the manifest report shows a material first-playable benefit without creating transition stalls, duplicated shared payload or fragile registration paths. H0J retained runtime-eager owners where no measured benefit justified a risky migration.
 
-## Current qualification state
+## Current qualification evidence
 
-The H0H implementation is awaiting current-head CI measurement. Acceptance requires Tier 0, unit/build/static checks, the new performance policy and the authoritative browser qualification selected for this cross-cutting change to pass. The generated `performance-report.json` will provide the exact H0H current-head entry, initial graph, lazy-chunk, total breadth and chunk-count values.
+On H0J checkpoint `69c75662572d9bf38406ed8b393d5c9b914f04b2`, CI run `34767743173` passed production build, static smoke and the H0H performance architecture budget with:
+
+- entry: 469.5 KiB raw / 126.0 KiB gzip, against 520 KiB raw;
+- initial/title/first-playable graph: 514.6 KiB gzip across 26 chunks, against 560 KiB;
+- largest lazy chunk: 7.8 KiB gzip, against 32 KiB;
+- JavaScript chunks: 82, against 112;
+- total JavaScript breadth: 654.1 KiB gzip, trend only;
+- diagnostics: 2.8 KiB gzip and not initial.
+
+The H0H hard performance contract therefore passes with deliberate headroom. No calibrated device/network title-to-first-playable runtime trace existed at the H0A baseline, so H0 does not invent a before/after runtime-millisecond claim. Bundle graph evidence and functional deployed smoke remain separate measurements.
+
+H0H is complete and accepted. Final H0K qualification must rerun the same policy on the final candidate SHA.
