@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { clickNamedObject } from '../support/browserDiagnostics';
 
 interface DiagnosticObjectSnapshot {
   name: string;
@@ -57,13 +58,7 @@ async function openSettings(page: Page): Promise<void> {
     ).__UNICORN_VALLEY_DIAGNOSTICS__;
     return api?.snapshot().activeScenes.includes('MoonflowerGladeScene') === true;
   });
-  const scene = await sceneSnapshot(page, 'MoonflowerGladeScene');
-  const button = scene.objects.find(
-    ({ name, visible, interactive }) =>
-      name === 'exploration-shell-settings-nav-button' && visible && interactive,
-  );
-  if (!button) throw new Error('Missing Settings navigation button.');
-  await page.mouse.click(button.x, button.y);
+  await clickNamedObject(page, 'MoonflowerGladeScene', 'exploration-shell-settings-nav-button');
   await page.waitForFunction(() => {
     const api = (
       window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
@@ -129,7 +124,7 @@ test.describe('R6.5-WP19G MP3 audio foundation', () => {
 
     settings = await sceneSnapshot(page, 'SettingsScene');
     const mode = findObject(settings, 'settings-row-music');
-    await page.mouse.click(mode.x, mode.y);
+    await clickNamedObject(page, 'SettingsScene', 'settings-row-music');
     await expect(trackPicker).toBeVisible();
     expect((await trackPicker.boundingBox())?.height ?? 0).toBeGreaterThanOrEqual(44);
 
