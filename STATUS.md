@@ -14,7 +14,7 @@ The durable audio authoring workflow is `docs/AUDIO-UPLOAD-GUIDE.md`.
 
 ## Planning now completed
 
-`R6.5-WP19H0 - Architecture, UI, Test and Performance Consolidation` has been expanded into the detailed H0A-H0K execution programme requested on 13 September 2026.
+`R6.5-WP19H0 - Architecture, UI, Test and Performance Consolidation` has been expanded into the detailed H0A-H0K execution programme requested on 13 September 2026 and committed to the repository.
 
 Path: `docs/work-packages/R6.5-WP19H0-PERFORMANCE-ARCHITECTURE-CODEBASE-CONSOLIDATION.md`
 
@@ -31,7 +31,7 @@ H0 now explicitly owns:
 - migration/deletion of proven-obsolete legacy/duplicate paths;
 - final before/after engineering evidence and full qualification.
 
-Implementation has **not** started. This planning branch changes durable documentation only.
+Implementation has **not** started. The current known CI failure is the inherited WP19H total-JavaScript performance envelope pressure that H0 is explicitly designed to analyse and replace with a measured startup/first-playable/lazy-chunk contract; it is not a new planning-doc regression.
 
 ## Next work
 

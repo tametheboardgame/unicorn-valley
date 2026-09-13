@@ -9,9 +9,9 @@
   "status": "idle",
   "autonomy_state": "green",
   "agent_state": "idle",
-  "branch": "agent/r6.5-wp19h0-expanded-plan",
-  "latest_commit": "b388206",
-  "ci_state": "unknown",
+  "branch": "main",
+  "latest_commit": "b50c8dd",
+  "ci_state": "failing",
   "technical_validation_state": "pending",
   "human_acceptance_state": "not_required",
   "next_work_package": "R6.5-WP19H0",
@@ -21,6 +21,6 @@
   "night_shift_state": "not_configured",
   "chat_disposition": "keep",
   "delivery_mode": "pr_required",
-  "last_activity_at": "2026-09-13T10:00:00+01:00",
-  "updated_at": "2026-09-13T10:00:00+01:00"
+  "last_activity_at": "2026-09-13T10:25:00+01:00",
+  "updated_at": "2026-09-13T10:25:00+01:00"
 }
