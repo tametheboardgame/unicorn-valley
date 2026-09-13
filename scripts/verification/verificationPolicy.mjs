@@ -96,9 +96,7 @@ export function classifyVerification(files, options = {}) {
     };
   }
 
-  const crossCuttingFiles = changedFiles.filter((path) =>
-    matchesAny(path, CROSS_CUTTING_PATTERNS),
-  );
+  const crossCuttingFiles = changedFiles.filter((path) => matchesAny(path, CROSS_CUTTING_PATTERNS));
   if (crossCuttingFiles.length > 0) {
     return fullPlan(
       changedFiles,
@@ -107,8 +105,7 @@ export function classifyVerification(files, options = {}) {
   }
 
   const allBounded = changedFiles.every(
-    (path) =>
-      matchesAny(path, DOC_OR_STATE_PATTERNS) || matchesAny(path, BOUNDED_RUNTIME_PATTERNS),
+    (path) => matchesAny(path, DOC_OR_STATE_PATTERNS) || matchesAny(path, BOUNDED_RUNTIME_PATTERNS),
   );
   if (allBounded) {
     return {

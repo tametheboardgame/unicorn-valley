@@ -6,7 +6,8 @@ const eventName = process.env.VERIFY_EVENT_NAME ?? process.env.GITHUB_EVENT_NAME
 const baseSha = process.env.VERIFY_BASE_SHA ?? '';
 const headSha = process.env.VERIFY_HEAD_SHA ?? 'HEAD';
 const manualFull = (process.env.VERIFY_FORCE_FULL ?? '').toLowerCase() === 'true';
-const authoritativeEvent = eventName === 'push' || eventName === 'schedule' || eventName === 'workflow_dispatch';
+const authoritativeEvent =
+  eventName === 'push' || eventName === 'schedule' || eventName === 'workflow_dispatch';
 const forceFull = manualFull || authoritativeEvent;
 
 let changedFiles = [];
@@ -60,7 +61,12 @@ if (outputPath) {
     run_tier4: String(plan.runTier4),
     run_project_contract: String(plan.runProjectContract),
   };
-  appendFileSync(outputPath, `${Object.entries(outputs).map(([key, value]) => `${key}=${value}`).join('\n')}\n`);
+  appendFileSync(
+    outputPath,
+    `${Object.entries(outputs)
+      .map(([key, value]) => `${key}=${value}`)
+      .join('\n')}\n`,
+  );
 }
 
 const summaryPath = process.env.GITHUB_STEP_SUMMARY;
