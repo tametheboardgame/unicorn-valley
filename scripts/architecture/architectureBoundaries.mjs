@@ -10,7 +10,9 @@ function resolveRelativeImport(sourcePath, importSpecifier) {
   }
 
   return normaliseRepoPath(
-    path.posix.normalize(path.posix.join(path.posix.dirname(normaliseRepoPath(sourcePath)), importSpecifier)),
+    path.posix.normalize(
+      path.posix.join(path.posix.dirname(normaliseRepoPath(sourcePath)), importSpecifier),
+    ),
   ).replace(/\.(?:[cm]?js|tsx?)$/, '');
 }
 
@@ -36,7 +38,9 @@ export function validateDependency(sourcePath, importSpecifier) {
       return [];
     }
 
-    const forbiddenPrefix = rule.forbiddenTargetPrefixes.find((prefix) => target.startsWith(prefix));
+    const forbiddenPrefix = rule.forbiddenTargetPrefixes.find((prefix) =>
+      target.startsWith(prefix),
+    );
     if (!forbiddenPrefix) {
       return [];
     }
@@ -55,7 +59,8 @@ export function validateDependency(sourcePath, importSpecifier) {
 
 export function extractImportSpecifiers(sourceText) {
   const specifiers = new Set();
-  const staticImportPattern = /(?:import|export)\s+(?:type\s+)?(?:[\s\S]*?\s+from\s+)?['"]([^'"]+)['"]/g;
+  const staticImportPattern =
+    /(?:import|export)\s+(?:type\s+)?(?:[\s\S]*?\s+from\s+)?['"]([^'"]+)['"]/g;
   const dynamicImportPattern = /import\(\s*['"]([^'"]+)['"]\s*\)/g;
 
   for (const match of sourceText.matchAll(staticImportPattern)) {
