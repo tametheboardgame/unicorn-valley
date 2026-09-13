@@ -4,7 +4,14 @@ Last updated: 2026-09-13
 
 ## Current work
 
-No implementation package is currently active.
+`R6.5-WP19H0 - Architecture, UI, Test and Performance Consolidation` is active on
+draft PR #172 / branch `agent/r6.5-wp19h0-consolidation`.
+
+H0A evidence is implemented and locally validated, pending Work inspection before
+H0B may be dispatched. It inventories scene/service/UI/state/test ownership, records
+reproducible bundle and Actions timing baselines, and identifies evidence-led
+retirement candidates. No production behaviour, registration/loading, budget, test
+or CI policy changed in H0A.
 
 `R6.5-WP19H - Audio Integration and Authoring Guide` is **complete, human-approved, merged and production released** through PR #169.
 
@@ -31,14 +38,15 @@ H0 now explicitly owns:
 - migration/deletion of proven-obsolete legacy/duplicate paths;
 - final before/after engineering evidence and full qualification.
 
-Implementation has **not** started. The current known CI failure is the inherited WP19H total-JavaScript performance envelope pressure that H0 is explicitly designed to analyse and replace with a measured startup/first-playable/lazy-chunk contract; it is not a new planning-doc regression.
+The current known CI failure remains inherited WP19H total-JavaScript performance
+envelope pressure: H0A reproduced 666,008 gzip bytes (650.398 KiB) against the
+unchanged 665,600-byte/650 KiB limit. Entry remains 471,915 raw bytes (460.9 KiB)
+against the visible 520 KiB metric. This is not an H0A regression or a pass.
 
 ## Next work
 
-The next implementation command is:
-
-`Start R6.5-WP19H0`
-
-The intended execution environment is a fresh Work chat using Work as package orchestrator and Codex for bounded H0A-H0K repo tasks. The Work chat must read the H0 spec before editing code and begin with H0A evidence/baseline rather than jumping directly into refactoring.
+The next action is Work inspection of the committed H0A evidence and acceptance.
+Only after that separate gate may Work dispatch bounded H0B. H0B-H0K have not
+started.
 
 H0 remains behaviour-preserving and must stop after H0K technical qualification for David's explicit approval before merge/production or `R6.5-WP19H1`.
