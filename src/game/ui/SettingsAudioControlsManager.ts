@@ -42,16 +42,15 @@ export function getSettingsAudioControlsManager(game: Phaser.Game): void {
       return;
     }
     const settings = audio.getSettings();
-    const canvas = game.canvas.getBoundingClientRect();
-    const box = host.getBoundingClientRect();
-    const sx = canvas.width / 1280;
-    const sy = canvas.height / 720;
+    const canvas = game.canvas;
+    const sx = canvas.clientWidth / 1280;
+    const sy = canvas.clientHeight / 720;
     const row = (kind: string) =>
       scene.children.getByName(`settings-row-${kind}`) as Phaser.GameObjects.Rectangle | null;
     const place = (target: Phaser.GameObjects.Rectangle, control: HTMLElement) => {
       control.style.width = `${470 * sx}px`;
-      control.style.left = `${canvas.left - box.left + 405 * sx}px`;
-      control.style.top = `${canvas.top - box.top + (target.y + 4) * sy}px`;
+      control.style.left = `${canvas.offsetLeft + 405 * sx}px`;
+      control.style.top = `${canvas.offsetTop + (target.y + 4) * sy}px`;
     };
 
     for (const [kind, key, input] of sliders) {
