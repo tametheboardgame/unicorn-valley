@@ -280,12 +280,7 @@ export class SettingsScene extends Phaser.Scene {
     this.sectionHeadings.push({ label, contentY });
   }
 
-  private createRow(
-    kind: SettingsRowKind,
-    index: number,
-    contentY: number,
-    height: number,
-  ): void {
+  private createRow(kind: SettingsRowKind, index: number, contentY: number, height: number): void {
     const y = VIEWPORT_TOP + contentY;
     const surface = this.add
       .graphics()
@@ -297,12 +292,17 @@ export class SettingsScene extends Phaser.Scene {
       .setName(`settings-row-${kind}`)
       .setDepth(LIST_CONTROL_DEPTH);
     const label = this.add
-      .text(ROW_X, y + (height === AUDIO_CONTROL_ROW_HEIGHT ? AUDIO_CONTROL_LABEL_OFFSET_Y : 0), '', {
-        color: UI_COLOURS.ink,
-        fontFamily: UI_FONT,
-        fontSize: '18px',
-        fontStyle: 'bold',
-      })
+      .text(
+        ROW_X,
+        y + (height === AUDIO_CONTROL_ROW_HEIGHT ? AUDIO_CONTROL_LABEL_OFFSET_Y : 0),
+        '',
+        {
+          color: UI_COLOURS.ink,
+          fontFamily: UI_FONT,
+          fontSize: '18px',
+          fontStyle: 'bold',
+        },
+      )
       .setName(`settings-row-${kind}-label`)
       .setOrigin(0.5)
       .setDepth(LIST_LABEL_DEPTH);
