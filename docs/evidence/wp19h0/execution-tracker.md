@@ -16,8 +16,8 @@ David authorised H0A-H0K in strict order on one long-lived delivery branch. Code
 - H0C: complete and accepted.
 - H0D: complete and accepted.
 - H0E: complete and accepted.
-- H0F: active.
-- H0G: not started.
+- H0F: complete and accepted.
+- H0G: active.
 - H0H: not started.
 - H0I: not started.
 - H0J: not started.
@@ -113,9 +113,34 @@ Final H0E qualification on `c1bcb8102a22dc04dae928b14d7eb053da40ab7a`:
 
 H0E therefore satisfies test classification, critical-contract ownership, brittle-assertion redesign, removal/rewrite evidence and measured runtime/flake acceptance and is closed.
 
-## H0F active scope
+## H0F acceptance evidence
 
-H0F now owns the tiered verification model. It must separate fast feedback from authoritative final qualification while preserving the complete H0K safety floor. The implementation must provide Tier 0 static/architecture checks, Tier 1 affected/full unit verification as appropriate, Tier 2 targeted subsystem browser smoke, Tier 3 full Chromium qualification and Tier 4 cross-browser/deployed qualification. It must classify docs-only, micro-fix, bounded-feature, cross-cutting and full-WP/release changes, emit the selected class/groups, automatically escalate shared/core changes, expose a manual full-CI escape hatch and schedule periodic full qualification. H0G will subsequently make source-to-test selection deterministic through the version-controlled ownership map and merge-base classifier.
+H0F established the tiered verification model in the canonical `CI` workflow and documented it in `docs/evidence/wp19h0/h0f-tiered-verification.md`. `scripts/verification/verificationPolicy.mjs` classifies docs-only, micro-fix, bounded-feature and full-qualification changes, fails safe on shared/core/build/test-infrastructure or unknown changes, and `scripts/verification/planVerification.mjs` emits both `verification-plan.json` and a human-readable GitHub job summary. Manual full-CI and scheduled full qualification are retained.
+
+The implemented tiers are:
+
+- Tier 0: formatting, lint, architecture boundaries, verification-policy self-tests, conditional type-check and project-contract validation;
+- Tier 1: unit contracts, conservatively full until H0G introduces safe deterministic related selection;
+- Tier 2: targeted Chromium smoke for bounded feedback;
+- Tier 3: authoritative full Chromium playtest in three shards;
+- Tier 4: Chromium/Firefox/WebKit compatibility, with immutable deployed smoke kept as a separate exact-candidate qualification workflow.
+
+Qualification exposed two brittle browser-test assumptions rather than product regressions. `183ae2d02567d5d6171dfdd4ed946c4a1a7b5bed` replaced a fixed Settings scroll distance with semantic scrolling to the named accessibility controls. `e9ef0adcace4d88d0d1b73b2382069b56df83041` made the WP19G audio contract first prove `musicEnabled: false`, then scroll until the expanded native track picker is fully inside the H0C containment viewport before asserting it. The supporting-resident timing failure did not reproduce and passed unchanged, so no runtime weakening was made.
+
+Final H0F qualification on `e9ef0adcace4d88d0d1b73b2382069b56df83041`, CI run `34760769833`:
+
+- Tier 0 passes, including formatting, lint, architecture boundaries, verification-policy self-tests, type-check and AI project contract;
+- Tier 1 passes 123 Vitest files / 476 tests in 10.18 seconds;
+- production build and static smoke pass;
+- all three Tier 3 Chromium shards pass;
+- Tier 4 cross-browser compatibility passes;
+- the inherited performance gate remains the only red check at 653.9 KiB total-JavaScript gzip against the unchanged 650 KiB envelope. The budget was not raised.
+
+H0F therefore satisfies tier separation, automatic escalation, manual/full qualification, scheduled qualification, machine/human selection reporting and preservation of the authoritative final safety floor. Deterministic subsystem ownership and related-test selection now pass to H0G as specified.
+
+## H0G active scope
+
+H0G now owns deterministic affected-test selection. It must add a merge-base changed-file classifier, a version-controlled source/config-to-test ownership map, stable subsystem/product-contract Playwright groups, safe Vitest related/changed selection, explicit escalation globs, machine-readable and human-readable selection evidence, and classifier unit tests. Unknown or unmapped runtime files must fail safe to full qualification, while main/full-WP/release qualification must ignore selective shortcuts and run the complete authoritative suite. H0G should extend the H0F planner and CI topology rather than introduce a second competing verification system.
 
 ## Preservation and gates
 
