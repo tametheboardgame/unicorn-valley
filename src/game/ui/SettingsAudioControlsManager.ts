@@ -3,6 +3,7 @@ import type Phaser from 'phaser';
 import { MUSIC_CATALOGUE } from '../../generated/audioCatalogue';
 import { getVerticalSliceAudio } from '../audio/VerticalSliceAudio';
 import { CanvasDomOverlayBridge, type CanvasDomOverlayPlacement } from './CanvasDomOverlayBridge';
+import { UI_DESIGN_TOKENS } from './UiDesignSystem';
 
 const VOLUMES = [
   ['master', 'masterVolume', 'All sound'],
@@ -13,17 +14,34 @@ const VOLUMES = [
 
 const CONTROL_X = 640 - 245;
 const CONTROL_WIDTH = 490;
-const CONTROL_HEIGHT = 44;
+const CONTROL_HEIGHT = UI_DESIGN_TOKENS.control.nativeHeightPx;
 const CONTROL_MIN_CSS_WIDTH = 260;
 const VIEWPORT_TOP = 145;
 const VIEWPORT_BOTTOM = 565;
 const INSTALLED = new WeakSet<Phaser.Game>();
+
+function applyDesignTokens(host: HTMLElement): void {
+  host.style.setProperty('--uv-ui-ink', UI_DESIGN_TOKENS.colour.ink);
+  host.style.setProperty('--uv-ui-cream-text', UI_DESIGN_TOKENS.colour.creamText);
+  host.style.setProperty('--uv-ui-parchment', UI_DESIGN_TOKENS.colour.parchment);
+  host.style.setProperty('--uv-ui-lavender-strong', UI_DESIGN_TOKENS.colour.lavenderStrong);
+  host.style.setProperty('--uv-ui-ribbon', UI_DESIGN_TOKENS.colour.ribbon);
+  host.style.setProperty('--uv-ui-ribbon-strong', UI_DESIGN_TOKENS.colour.ribbonStrong);
+  host.style.setProperty('--uv-ui-gold', UI_DESIGN_TOKENS.colour.gold);
+  host.style.setProperty('--uv-ui-focus', UI_DESIGN_TOKENS.colour.focus);
+  host.style.setProperty('--uv-ui-shadow', UI_DESIGN_TOKENS.colour.shadow);
+  host.style.setProperty('--uv-ui-font', UI_DESIGN_TOKENS.typography.family);
+  host.style.setProperty('--uv-ui-control-radius', `${UI_DESIGN_TOKENS.radius.controlPx}px`);
+  host.style.setProperty('--uv-ui-pill-radius', `${UI_DESIGN_TOKENS.radius.pillPx}px`);
+  host.style.setProperty('--uv-ui-dom-depth', String(UI_DESIGN_TOKENS.depth.domOverlay));
+}
 
 export function getSettingsAudioControlsManager(game: Phaser.Game): void {
   if (INSTALLED.has(game)) return;
   INSTALLED.add(game);
 
   const host = document.getElementById('game-container')!;
+  applyDesignTokens(host);
   const audio = getVerticalSliceAudio();
   const bridge = new CanvasDomOverlayBridge(game, host);
   const row = (kind: string) => {
