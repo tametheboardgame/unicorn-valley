@@ -70,7 +70,11 @@ export function getSettingsAudioControlsManager(game: Phaser.Game): void {
     }
 
     const trackRow = row('music-track');
-    select.hidden = settings.musicEnabled || !trackRow?.visible;
+    const trackVisible =
+      trackRow?.visible &&
+      trackRow.y - trackRow.height / 2 >= 145 &&
+      trackRow.y + trackRow.height / 2 + 6 <= 565;
+    select.hidden = settings.musicEnabled || !trackVisible;
     if (!select.hidden) {
       select.value = settings.selectedMusicTrackId ?? MUSIC_CATALOGUE[0]?.id ?? '';
       place(trackRow!, select);
