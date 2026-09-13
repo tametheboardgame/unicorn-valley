@@ -9,6 +9,7 @@ import { InputController } from '../input/InputController';
 import { KeyboardInputAdapter } from '../input/KeyboardInputAdapter';
 import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 import { getBrowserSaveService } from '../save/browserSaveService';
+import { resolveContinueDestination } from '../save/ContinueLocation';
 import {
   UI_COLOURS,
   UI_FONT,
@@ -16,7 +17,6 @@ import {
   createUiShadow,
   setButtonEnabled,
 } from '../ui/uiTheme';
-import { resolveContinueDestination } from '../save/ContinueLocation';
 import { resetMoonflowerGladePlayerSpawn } from '../world/MoonflowerGladeMap';
 
 const BUILD_LABEL = 'v0.1.0 • R6-WP6.11';
@@ -54,7 +54,6 @@ export class TitleScene extends Phaser.Scene {
   private settingsRows: SettingRow[] = [];
   private settingsOpen = false;
   private unsubscribeAccessibility: (() => void) | null = null;
-  private ambientTargets: Phaser.GameObjects.GameObject[] = [];
   private starting = false;
   private hasCreatedUnicorn = false;
   private unsupportedSaveVersion = false;
@@ -74,7 +73,6 @@ export class TitleScene extends Phaser.Scene {
     this.menuButtons = [];
     this.settingsObjects = [];
     this.settingsRows = [];
-    this.ambientTargets = [];
 
     const saveService = getBrowserSaveService();
     const loadResult = saveService.loadWithResult();
@@ -86,9 +84,8 @@ export class TitleScene extends Phaser.Scene {
     this.continueScene = continueDestination.sceneKey;
     this.continueStatus = continueDestination.status;
 
-    this.cameras.main.setBackgroundColor('#7ac4df');
-    this.createValleyArtwork();
-    this.createTitleLockup();
+    this.cameras.main.setBackgroundColor('#49376f');
+    this.createBuildInfo();
     this.createMenu();
     this.createSettingsOverlay();
 
@@ -101,9 +98,7 @@ export class TitleScene extends Phaser.Scene {
 
     this.unsubscribeAccessibility = this.accessibility.subscribe(() => {
       this.refreshSettingsRows();
-      this.applyMotionPreference();
     });
-    this.applyMotionPreference();
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.unsubscribeAccessibility?.();
@@ -118,7 +113,6 @@ export class TitleScene extends Phaser.Scene {
       this.menuButtons = [];
       this.settingsObjects = [];
       this.settingsRows = [];
-      this.ambientTargets = [];
     });
   }
 
@@ -134,212 +128,7 @@ export class TitleScene extends Phaser.Scene {
     }
   }
 
-  private createValleyArtwork(): void {
-    this.add
-      .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x79c7df, 1)
-      .setName('title-art:sky');
-    this.add
-      .rectangle(GAME_WIDTH / 2, 190, GAME_WIDTH, 380, 0xb8e5ef, 0.58)
-      .setName('title-art:sky-glow');
-
-    const sunGlow = this.add
-      .circle(180, 126, 88, 0xfff0ae, 0.24)
-      .setName('title-art:sun-glow')
-      .setDepth(1);
-    const sun = this.add.circle(180, 126, 52, 0xfff3b7, 0.94).setName('title-art:sun').setDepth(2);
-    this.ambientTargets.push(sunGlow, sun);
-
-    const rainbow = this.add.graphics().setName('title-art:rainbow').setDepth(2);
-    const rainbowBands = [
-      { colour: 0xf4a9c7, radius: 190 },
-      { colour: 0xf7cf8c, radius: 176 },
-      { colour: 0xf3e8a0, radius: 162 },
-      { colour: 0xaedcb4, radius: 148 },
-      { colour: 0xaed7ed, radius: 134 },
-      { colour: 0xc4b8e8, radius: 120 },
-    ];
-    for (const band of rainbowBands) {
-      rainbow.lineStyle(12, band.colour, 0.72);
-      rainbow.beginPath();
-      rainbow.arc(500, 365, band.radius, Math.PI, Math.PI * 2, false);
-      rainbow.strokePath();
-    }
-
-    const distant = this.add.graphics().setName('title-art:distant-hills').setDepth(3);
-    distant.fillStyle(0x80b9a5, 1);
-    distant.fillEllipse(300, 510, 620, 330);
-    distant.fillEllipse(730, 500, 720, 350);
-    distant.fillEllipse(1120, 525, 460, 250);
-    distant.fillStyle(0xa0cfaa, 1);
-    distant.fillEllipse(120, 570, 540, 300);
-    distant.fillEllipse(560, 570, 760, 330);
-    distant.fillEllipse(1010, 585, 700, 310);
-
-    const meadow = this.add.graphics().setName('title-art:meadow').setDepth(4);
-    meadow.fillStyle(0x77b982, 1);
-    meadow.fillRect(0, 510, GAME_WIDTH, 210);
-    meadow.fillStyle(0x92ca8d, 1);
-    meadow.fillEllipse(430, 620, 950, 280);
-    meadow.fillEllipse(1050, 635, 720, 250);
-
-    const path = this.add.graphics().setName('title-art:path').setDepth(5);
-    path.fillStyle(0xf4ddb0, 0.94);
-    path.beginPath();
-    path.moveTo(420, 720);
-    path.lineTo(700, 720);
-    path.lineTo(608, 505);
-    path.lineTo(550, 505);
-    path.closePath();
-    path.fillPath();
-
-    this.createCloud(340, 128, 0.9, 0.76, 0);
-    this.createCloud(720, 105, 1.12, 0.68, 1);
-    this.createCloud(1060, 195, 0.76, 0.62, 2);
-    this.createCottage(575, 470);
-    this.createFlowerCluster(92, 598, 0);
-    this.createFlowerCluster(245, 640, 1);
-    this.createFlowerCluster(735, 603, 2);
-    this.createFlowerCluster(820, 665, 3);
-
-    const sparklePositions = [
-      [286, 246],
-      [356, 314],
-      [656, 232],
-      [770, 304],
-      [126, 330],
-      [845, 186],
-    ] as const;
-    sparklePositions.forEach(([x, y], index) => {
-      const sparkle = this.add
-        .text(x, y, index % 2 === 0 ? '✦' : '✧', {
-          color: index % 3 === 0 ? '#fff5bd' : '#fff7ff',
-          fontFamily: UI_FONT,
-          fontSize: index % 2 === 0 ? '24px' : '18px',
-          stroke: '#8d6ab0',
-          strokeThickness: 2,
-        })
-        .setName(`title-art:sparkle-${index}`)
-        .setOrigin(0.5)
-        .setDepth(7);
-      this.ambientTargets.push(sparkle);
-      this.tweens.add({
-        targets: sparkle,
-        alpha: 0.3,
-        scale: 1.18,
-        y: y - 7,
-        duration: 1000 + index * 160,
-        yoyo: true,
-        repeat: -1,
-        ease: 'Sine.InOut',
-      });
-    });
-
-    this.tweens.add({
-      targets: [sunGlow, sun],
-      scale: 1.05,
-      duration: 2400,
-      yoyo: true,
-      repeat: -1,
-      ease: 'Sine.InOut',
-    });
-  }
-
-  private createCloud(x: number, y: number, scale: number, alpha: number, index: number): void {
-    const cloud = this.add.container(x, y).setName(`title-art:cloud-${index}`).setDepth(2);
-    const pieces = [
-      this.add.circle(-44, 10, 31, 0xffffff, alpha),
-      this.add.circle(-8, -7, 42, 0xffffff, alpha),
-      this.add.circle(34, 6, 34, 0xffffff, alpha),
-      this.add.rectangle(0, 20, 120, 38, 0xffffff, alpha),
-    ];
-    cloud.add(pieces).setScale(scale);
-    this.ambientTargets.push(cloud);
-    this.tweens.add({
-      targets: cloud,
-      x: x + 18 + index * 4,
-      duration: 5200 + index * 900,
-      yoyo: true,
-      repeat: -1,
-      ease: 'Sine.InOut',
-    });
-  }
-
-  private createCottage(x: number, y: number): void {
-    const cottage = this.add.graphics().setName('title-art:cottage').setDepth(6);
-    cottage.fillStyle(0xf6e8cf, 1);
-    cottage.fillRoundedRect(x - 62, y - 48, 124, 92, 18);
-    cottage.lineStyle(4, 0x8b6b70, 0.78);
-    cottage.strokeRoundedRect(x - 62, y - 48, 124, 92, 18);
-    cottage.fillStyle(0xa86f8e, 1);
-    cottage.beginPath();
-    cottage.moveTo(x - 78, y - 43);
-    cottage.lineTo(x, y - 105);
-    cottage.lineTo(x + 78, y - 43);
-    cottage.closePath();
-    cottage.fillPath();
-    cottage.fillStyle(0x7f5c70, 1);
-    cottage.fillRoundedRect(x - 17, y - 5, 34, 49, 10);
-    cottage.fillStyle(0xbce4e9, 1);
-    cottage.fillRoundedRect(x - 49, y - 22, 26, 27, 7);
-    cottage.fillRoundedRect(x + 23, y - 22, 26, 27, 7);
-    cottage.lineStyle(3, 0xffffff, 0.75);
-    cottage.lineBetween(x - 36, y - 20, x - 36, y + 3);
-    cottage.lineBetween(x + 36, y - 20, x + 36, y + 3);
-  }
-
-  private createFlowerCluster(x: number, y: number, index: number): void {
-    const colours = [0xffd2e5, 0xffefad, 0xdac9f5, 0xc8eff2];
-    for (let offset = 0; offset < 4; offset += 1) {
-      const flower = this.add
-        .circle(
-          x + offset * 18,
-          y + (offset % 2) * 8,
-          7,
-          colours[(index + offset) % colours.length],
-          1,
-        )
-        .setName(`title-art:flower-${index}-${offset}`)
-        .setDepth(6);
-      this.add.circle(flower.x, flower.y, 2.5, 0xfff7cd, 1).setDepth(7);
-    }
-  }
-
-  private createTitleLockup(): void {
-    const titleX = 380;
-    const titleY = 210;
-    createUiShadow(this, titleX, titleY + 14, 610, 178, 9, 0.2);
-    this.add
-      .rectangle(titleX, titleY, 610, 178, 0x664a8c, 0.66)
-      .setName('title-lockup-panel')
-      .setStrokeStyle(4, 0xf2dff5, 0.62)
-      .setDepth(10);
-
-    this.add
-      .text(titleX, titleY - 22, 'Unicorn Valley', {
-        color: '#fffaff',
-        fontFamily: UI_FONT,
-        fontSize: '68px',
-        fontStyle: 'bold',
-        stroke: '#4b356f',
-        strokeThickness: 9,
-        align: 'center',
-      })
-      .setName('title-lockup-name')
-      .setOrigin(0.5)
-      .setDepth(11);
-
-    this.add
-      .text(titleX, titleY + 50, 'A little valley. A lot of magic.', {
-        color: '#fff0c6',
-        fontFamily: UI_FONT,
-        fontSize: '24px',
-        fontStyle: 'bold',
-        align: 'center',
-      })
-      .setName('title-lockup-tagline')
-      .setOrigin(0.5)
-      .setDepth(11);
-
+  private createBuildInfo(): void {
     this.add
       .text(34, GAME_HEIGHT - 24, BUILD_LABEL, {
         color: '#ecf8ed',
@@ -700,15 +489,6 @@ export class TitleScene extends Phaser.Scene {
     }
     if (doneLabel instanceof Phaser.GameObjects.Text) {
       visible ? doneLabel.setInteractive({ useHandCursor: true }) : doneLabel.disableInteractive();
-    }
-  }
-
-  private applyMotionPreference(): void {
-    const reducedMotion = this.accessibility.load().reducedMotion;
-    for (const target of this.ambientTargets) {
-      for (const tween of this.tweens.getTweensOf(target)) {
-        tween.timeScale = reducedMotion ? 0 : 1;
-      }
     }
   }
 
