@@ -25,8 +25,21 @@ const game = new Phaser.Game(gameConfig);
 const diagnosticsEnabled =
   new URLSearchParams(globalThis.location.search).get('diagnostics') === '1';
 
+let explorationShellManagerReady: Promise<void> | null = null;
+function ensureExplorationShellManagerInstalled(): Promise<void> {
+  explorationShellManagerReady ??= import('./game/ui/ExplorationShellWorldManager').then(
+    ({ getExplorationShellWorldManager }) => {
+      getExplorationShellWorldManager(game);
+    },
+  );
+  return explorationShellManagerReady;
+}
+
 if (diagnosticsEnabled) {
-  void import('./game/testing/BrowserDiagnostics').then(({ installBrowserDiagnostics }) => {
+  void Promise.all([
+    import('./game/testing/BrowserDiagnostics'),
+    ensureExplorationShellManagerInstalled(),
+  ]).then(([{ installBrowserDiagnostics }]) => {
     installBrowserDiagnostics(game);
   });
 }
@@ -60,11 +73,7 @@ void Promise.all([
   }
 });
 
-void import('./game/ui/ExplorationShellWorldManager').then(
-  ({ getExplorationShellWorldManager }) => {
-    getExplorationShellWorldManager(game);
-  },
-);
+void ensureExplorationShellManagerInstalled();
 
 void import('./game/ui/ModalConceptPresentationManager').then(
   ({ getModalConceptPresentationManager }) => {
