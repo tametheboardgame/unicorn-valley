@@ -22,7 +22,8 @@ export function buildVerificationSelection(files, options = {}) {
   if (tierPlan.runTier2 && !runTier2) {
     tierPlan = classifyVerification(changedFiles, {
       forceFull: true,
-      reason: 'Tier 2 requested but deterministic browser ownership resolved no tests; fail-safe escalation',
+      reason:
+        'Tier 2 requested but deterministic browser ownership resolved no tests; fail-safe escalation',
     });
     ownership = selectVerificationOwnership(changedFiles, { forceFull: true });
   }
