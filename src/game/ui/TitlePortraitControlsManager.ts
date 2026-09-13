@@ -6,7 +6,8 @@ import { RefreshThrottle } from '../performance/RefreshThrottle';
 
 const TITLE_SCENE_KEY = 'TitleScene';
 const SYNC_INTERVAL_MS = 100;
-const PORTRAIT_MEDIA_QUERY = '(pointer: coarse) and (max-width: 900px) and (orientation: portrait)';
+const TOUCH_OVERLAY_MEDIA_QUERY = '(pointer: coarse) and (max-width: 900px)';
+const PORTRAIT_MEDIA_QUERY = `${TOUCH_OVERLAY_MEDIA_QUERY} and (orientation: portrait)`;
 const TITLE_ARTWORK_NAME = 'title-generated-artwork';
 const TITLE_ARTWORK_LANDSCAPE_KEY = 'title-generated-landscape';
 const TITLE_ARTWORK_PORTRAIT_KEY = 'title-generated-portrait';
@@ -196,11 +197,12 @@ export class TitlePortraitControlsManager {
     }
 
     const artworkTarget = currentArtworkTarget();
-    this.game.canvas.style.pointerEvents = artworkTarget.portrait ? 'none' : '';
+    const touchOverlay = globalThis.matchMedia?.(TOUCH_OVERLAY_MEDIA_QUERY).matches === true;
+    this.game.canvas.style.pointerEvents = touchOverlay ? 'none' : '';
     this.syncArtwork(scene, artworkTarget);
-    this.syncSparkles(scene, artworkTarget.portrait);
-    this.syncLogo(scene, artworkTarget.portrait);
-    this.root.hidden = false;
+    this.syncSparkles(scene, touchOverlay);
+    this.syncLogo(scene, touchOverlay);
+    this.root.hidden = !touchOverlay;
 
     const heading = scene.children.getByName('title-menu-heading');
     if (heading instanceof Phaser.GameObjects.Text) {
@@ -272,9 +274,9 @@ export class TitlePortraitControlsManager {
     artwork.setData('titleArtworkVariant', target.portrait ? 'portrait' : 'landscape');
   }
 
-  private syncSparkles(scene: Phaser.Scene, portrait: boolean): void {
+  private syncSparkles(scene: Phaser.Scene, touchOverlay: boolean): void {
     const existing = scene.children.getByName(TITLE_SPARKLE_NAME);
-    if (portrait) {
+    if (touchOverlay) {
       existing?.destroy();
       return;
     }
@@ -337,9 +339,9 @@ export class TitlePortraitControlsManager {
     });
   }
 
-  private syncLogo(scene: Phaser.Scene, portrait: boolean): void {
+  private syncLogo(scene: Phaser.Scene, touchOverlay: boolean): void {
     const existing = scene.children.getByName(TITLE_LOGO_NAME);
-    if (portrait) {
+    if (touchOverlay) {
       existing?.destroy();
       return;
     }
