@@ -34,6 +34,9 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Check architecture boundaries
+        run: npm run architecture:validate
+
       - name: Type-check
         run: npm run typecheck
 

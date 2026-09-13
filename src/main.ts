@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import './style.css';
 import './portraitConceptControls.css';
 import './titlePortraitControls.css';
+import { getContinueRestoreManager } from './game/application/ContinueRestoreManager';
 import { gameConfig } from './game/config/gameConfig';
 import {
   getCoreSceneInteractionBridge,
@@ -9,7 +10,6 @@ import {
 } from './game/interaction/CoreSceneInteractionBridge';
 import { getWorldInteractionCoordinator } from './game/interaction/WorldInteractionCoordinator';
 import { getClickToMoveManager } from './game/input/ClickToMoveManager';
-import { getContinueRestoreManager } from './game/save/ContinueRestoreManager';
 import { getVillageInteriorContractManager } from './game/scenes/VillageInteriorContractManager';
 import { getLandscapeCreatorProgressiveWorldManager } from './game/ui/LandscapeCreatorProgressiveManager';
 import { getLegacyWorldFeedbackMigrationManager } from './game/ui/LegacyWorldFeedbackMigrationManager';

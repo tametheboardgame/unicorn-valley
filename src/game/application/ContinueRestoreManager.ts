@@ -1,10 +1,10 @@
 import Phaser from 'phaser';
 import { ensureStarlightBeachScene } from '../scenes/StarlightBeachSceneRegistration';
-import { getBrowserSaveService } from './browserSaveService';
+import { getBrowserSaveService } from '../save/browserSaveService';
 import {
   resolveContinueDestination,
   STARLIGHT_BEACH_CONTINUE_LOCATION_ID,
-} from './ContinueLocation';
+} from '../save/ContinueLocation';
 
 interface MutableTitleScene extends Phaser.Scene {
   continueScene: string;
