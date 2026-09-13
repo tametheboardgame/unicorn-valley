@@ -125,8 +125,14 @@ test.describe('R6.5-WP19G MP3 audio foundation', () => {
     settings = await sceneSnapshot(page, 'SettingsScene');
     const mode = findObject(settings, 'settings-row-music');
     await clickNamedObject(page, 'SettingsScene', 'settings-row-music');
-    await expect(trackPicker).toBeVisible();
-    expect((await trackPicker.boundingBox())?.height ?? 0).toBeGreaterThanOrEqual(44);
+    await expect
+      .poll(() =>
+        page.evaluate((key) => {
+          const raw = localStorage.getItem(key);
+          return raw ? (JSON.parse(raw) as { musicEnabled?: boolean }).musicEnabled : null;
+        }, AUDIO_STORAGE_KEY),
+      )
+      .toBe(false);
 
     settings = await sceneSnapshot(page, 'SettingsScene');
     const trackRow = findObject(settings, 'settings-row-music-track');
@@ -134,7 +140,17 @@ test.describe('R6.5-WP19G MP3 audio foundation', () => {
     expect(trackRow.displayHeight).toBeGreaterThan(mode.displayHeight);
     expect(findObject(settings, 'settings-row-music-track-label').text).toBe('Chosen track');
 
+    // The native picker is deliberately hidden while its canvas row is clipped.
+    // Scroll until the expanded row is fully usable instead of assuming one
+    // fixed post-toggle viewport position.
     await page.mouse.move(640, 360);
+    for (let attempt = 0; attempt < 6 && !(await trackPicker.isVisible()); attempt += 1) {
+      await page.mouse.wheel(0, 120);
+      await page.waitForTimeout(80);
+    }
+    await expect(trackPicker).toBeVisible();
+    expect((await trackPicker.boundingBox())?.height ?? 0).toBeGreaterThanOrEqual(44);
+
     await page.mouse.wheel(0, 550);
     await page.waitForTimeout(150);
     await expect(page.locator('input[aria-label="Music volume"]')).toBeVisible();
