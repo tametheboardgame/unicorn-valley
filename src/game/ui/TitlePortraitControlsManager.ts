@@ -300,10 +300,7 @@ export class TitlePortraitControlsManager {
       return;
     }
 
-    const logo = scene.add
-      .image(380, 210, TITLE_LOGO_KEY)
-      .setName(TITLE_LOGO_NAME)
-      .setDepth(12);
+    const logo = scene.add.image(380, 210, TITLE_LOGO_KEY).setName(TITLE_LOGO_NAME).setDepth(12);
     logo.setScale(TITLE_LOGO_WIDTH / Math.max(1, logo.width));
   }
 
