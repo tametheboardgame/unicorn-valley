@@ -50,27 +50,18 @@ export function getSettingsAudioControlsManager(game: Phaser.Game): void {
     const place = (target: Phaser.GameObjects.Rectangle, control: HTMLElement) => {
       control.style.width = `${470 * sx}px`;
       control.style.left = `${canvas.offsetLeft + 405 * sx}px`;
-      control.style.top = `${canvas.offsetTop + (target.y + 4) * sy}px`;
+      control.style.top = `${canvas.offsetTop + (target.y + 13) * sy}px`;
     };
 
     for (const [kind, key, input] of sliders) {
       const target = row(kind);
       input.value = String(settings[key]);
       input.hidden = !target?.visible;
-      if (!target || input.hidden) continue;
-      const label = scene.children.getByName(
-        `settings-row-${kind}-label`,
-      ) as Phaser.GameObjects.Text | null;
-      label?.setY(target.y - 13);
-      place(target, input);
+      if (target && !input.hidden) place(target, input);
     }
 
     const mode = row('music');
-    const modeLabel = scene.children.getByName(
-      'settings-row-music-label',
-    ) as Phaser.GameObjects.Text | null;
     select.hidden = settings.musicEnabled || !mode?.visible;
-    if (mode) modeLabel?.setY(mode.y - (select.hidden ? 0 : 13));
     if (!select.hidden && mode) {
       select.value = settings.selectedMusicTrackId ?? MUSIC_CATALOGUE[0]?.id ?? '';
       place(mode, select);
