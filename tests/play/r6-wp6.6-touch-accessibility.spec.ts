@@ -210,7 +210,7 @@ test('target-tablet touch completes creator, exploration, Book and accessibility
   await page.goto('/?diagnostics=1');
   await waitForScene(page, 'TitleScene');
 
-  await logicalTap(page, 955, 238);
+  await logicalTapNamedObject(page, 'TitleScene', 'title-menu-new-game');
   await waitForScene(page, 'UnicornCreatorScene');
 
   let snapshot = await getSnapshot(page);
