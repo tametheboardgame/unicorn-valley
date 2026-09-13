@@ -10,6 +10,7 @@ import {
 } from './game/interaction/CoreSceneInteractionBridge';
 import { getWorldInteractionCoordinator } from './game/interaction/WorldInteractionCoordinator';
 import { getClickToMoveManager } from './game/input/ClickToMoveManager';
+import { installDynamicImportRecovery } from './game/runtime/DynamicImportRecovery';
 import { getVillageInteriorContractManager } from './game/scenes/VillageInteriorContractManager';
 import { getLandscapeCreatorProgressiveWorldManager } from './game/ui/LandscapeCreatorProgressiveManager';
 import { getLegacyWorldFeedbackMigrationManager } from './game/ui/LegacyWorldFeedbackMigrationManager';
@@ -20,6 +21,7 @@ import { getExplorationGeometryPresentationManager } from './game/world/Explorat
 import { getExplorationPathPolishManager } from './game/world/ExplorationPathPolishManager';
 import { getWorldLayerAlignmentManager } from './game/world/WorldLayerAlignmentManager';
 
+installDynamicImportRecovery();
 patchCoreSceneInteractionHandlers();
 const game = new Phaser.Game(gameConfig);
 const diagnosticsEnabled =
