@@ -8,6 +8,7 @@ export class PreloadScene extends Phaser.Scene {
 
   public preload(): void {
     this.cameras.main.setBackgroundColor('#49376f');
+    this.load.image('title-generated-logo', '/assets/title/unicorn-valley-logo.webp');
 
     const title = this.add
       .text(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 70, 'Unicorn Valley', {
