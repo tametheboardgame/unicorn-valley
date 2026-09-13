@@ -1,6 +1,13 @@
 import type Phaser from 'phaser';
 import { UI_DESIGN_TOKENS } from './UiDesignSystem';
 
+export interface CanvasDomOverlayBounds {
+  left: number;
+  top: number;
+  right: number;
+  bottom: number;
+}
+
 export interface CanvasDomOverlayPlacement {
   x: number;
   y: number;
@@ -9,12 +16,8 @@ export interface CanvasDomOverlayPlacement {
   visible?: boolean;
   minCssWidth?: number;
   minCssHeight?: number;
-  clip?: {
-    left: number;
-    top: number;
-    right: number;
-    bottom: number;
-  };
+  visibilityBounds?: CanvasDomOverlayBounds;
+  visibilityMode?: 'intersect' | 'contain';
 }
 
 export interface OverlayRect {
@@ -36,15 +39,20 @@ interface OverlayRegistration {
   resolve: () => CanvasDomOverlayPlacement | null;
 }
 
-function intersectsClip(
+function satisfiesVisibilityBounds(
   placement: CanvasDomOverlayPlacement,
-  clip: NonNullable<CanvasDomOverlayPlacement['clip']>,
+  bounds: CanvasDomOverlayBounds,
 ): boolean {
   const left = placement.x;
   const top = placement.y;
   const right = placement.x + placement.width;
   const bottom = placement.y + placement.height;
-  return right > clip.left && left < clip.right && bottom > clip.top && top < clip.bottom;
+
+  if (placement.visibilityMode === 'contain') {
+    return left >= bounds.left && top >= bounds.top && right <= bounds.right && bottom <= bounds.bottom;
+  }
+
+  return right > bounds.left && left < bounds.right && bottom > bounds.top && top < bounds.bottom;
 }
 
 export function calculateCanvasDomOverlayStyle(
@@ -54,7 +62,8 @@ export function calculateCanvasDomOverlayStyle(
 ): CanvasDomOverlayStyle | null {
   if (
     placement.visible === false ||
-    (placement.clip && !intersectsClip(placement, placement.clip))
+    (placement.visibilityBounds &&
+      !satisfiesVisibilityBounds(placement, placement.visibilityBounds))
   ) {
     return null;
   }
