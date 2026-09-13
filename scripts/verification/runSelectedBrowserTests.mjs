@@ -1,11 +1,13 @@
 import { spawnSync } from 'node:child_process';
 
-const tests = [...new Set(
-  (process.env.BROWSER_TESTS ?? '')
-    .split(/\s+/)
-    .map((value) => value.trim())
-    .filter(Boolean),
-)].sort();
+const tests = [
+  ...new Set(
+    (process.env.BROWSER_TESTS ?? '')
+      .split(/\s+/)
+      .map((value) => value.trim())
+      .filter(Boolean),
+  ),
+].sort();
 
 if (tests.length === 0) {
   console.error('Tier 2 was requested but no deterministic browser tests were selected.');
