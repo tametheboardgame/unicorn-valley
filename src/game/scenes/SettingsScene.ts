@@ -675,7 +675,9 @@ export class SettingsScene extends Phaser.Scene {
       row.surface.setY(y).setVisible(intersectsViewport);
       row.button.setY(y).setVisible(intersectsViewport);
       row.label.setY(y + rowLabelOffsetY(row.kind)).setVisible(intersectsViewport);
-      if (row.button.input) row.button.input.enabled = fullyInsideViewport && rowSelectable(row.kind);
+      if (row.button.input) {
+        row.button.input.enabled = fullyInsideViewport && rowSelectable(row.kind);
+      }
     }
 
     this.updateScrollbar();
