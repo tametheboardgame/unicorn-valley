@@ -11,6 +11,9 @@ const TITLE_ARTWORK_LANDSCAPE_KEY = 'title-generated-landscape';
 const TITLE_ARTWORK_PORTRAIT_KEY = 'title-generated-portrait';
 const TITLE_ARTWORK_LANDSCAPE_URL = '/assets/title/wp19f-title-landscape.webp';
 const TITLE_ARTWORK_PORTRAIT_URL = '/assets/title/wp19f-title-portrait.webp';
+const TITLE_LOGO_NAME = 'title-generated-logo';
+const TITLE_LOGO_KEY = 'title-generated-logo';
+const TITLE_LOGO_WIDTH = 600;
 
 interface ActionDefinition {
   objectName: string;
@@ -197,6 +200,7 @@ export class TitlePortraitControlsManager {
     const artworkTarget = currentArtworkTarget();
     this.game.canvas.style.pointerEvents = artworkTarget.portrait ? 'none' : '';
     this.syncArtwork(scene, artworkTarget);
+    this.syncLogo(scene, artworkTarget.portrait);
     this.root.hidden = false;
     const settingsPanel = scene.children.getByName('title-settings-panel');
     const settingsOpen = isVisible(settingsPanel);
@@ -270,6 +274,28 @@ export class TitlePortraitControlsManager {
       .setScale(coverScale)
       .setDepth(target.portrait ? 300 : 8);
     artwork.setData('titleArtworkVariant', target.portrait ? 'portrait' : 'landscape');
+  }
+
+  private syncLogo(scene: Phaser.Scene, portrait: boolean): void {
+    scene.children.getByName('title-lockup-panel')?.setVisible(false);
+    scene.children.getByName('title-lockup-name')?.setVisible(false);
+    scene.children.getByName('title-lockup-tagline')?.setVisible(false);
+
+    const existing = scene.children.getByName(TITLE_LOGO_NAME);
+    if (portrait) {
+      existing?.destroy();
+      return;
+    }
+
+    if (existing instanceof Phaser.GameObjects.Image || !scene.textures.exists(TITLE_LOGO_KEY)) {
+      return;
+    }
+
+    const logo = scene.add
+      .image(380, 210, TITLE_LOGO_KEY)
+      .setName(TITLE_LOGO_NAME)
+      .setDepth(12);
+    logo.setScale(TITLE_LOGO_WIDTH / Math.max(1, logo.width));
   }
 
   private syncActions(scene: Phaser.Scene, actions: DomAction[], settings = false): void {
