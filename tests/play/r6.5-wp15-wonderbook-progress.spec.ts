@@ -162,7 +162,9 @@ test('WP15 keeps the discovery secret filter and mystery presentation', async ({
     const scene = diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__
       ?.snapshot()
       .scenes.find((candidate) => candidate.key === 'WonderbookScene');
-    return scene?.objects.some((object) => object.visible && object.text === 'A mystery...') ?? false;
+    return (
+      scene?.objects.some((object) => object.visible && object.text === 'A mystery...') ?? false
+    );
   });
 
   const texts = await visibleTexts(page);
