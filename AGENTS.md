@@ -13,8 +13,9 @@ Before substantive work:
 5. Read relevant accepted entries in `DECISIONS.md`.
 6. Read `ROADMAP.md` and the detailed canonical phase docs it links.
 7. Read `TESTING.md` and `ACCEPTANCE.md`.
-8. Inspect the current branch, open PRs, recent commits and CI.
-9. Confirm autonomy, dependencies, invariants, technical validation and any human gate.
+8. For code work, read `docs/architecture/ENGINEERING-STANDARDS.md` and inspect the canonical implementation paths it names.
+9. Inspect the current branch, open PRs, recent commits and CI.
+10. Confirm autonomy, dependencies, invariants, technical validation and any human gate.
 
 Do not reconstruct essential state from old chat when the repository already records it.
 
@@ -41,6 +42,20 @@ If sources materially contradict each other, resolve durable state or surface th
 - Keep durable state concise and current at meaningful checkpoints.
 - Preserve traceability between work package, implementation, validation and PR.
 - Prefer reusable systems over bespoke scene hacks where project architecture already supports them.
+
+## Canonical engineering paths
+
+`docs/architecture/ENGINEERING-STANDARDS.md` is the implemented architecture guide. In particular:
+
+- scenes use `SceneCompositionContract`, `SceneManifest` and `SceneLifecycleScope`;
+- shared UI uses `UiDesignSystem`, `UiPrimitives` and the established concept/exploration components;
+- native controls over canvas use `CanvasDomOverlayBridge`;
+- interaction/dialogue/feedback reuse their existing subsystem coordinators and presenters;
+- audio uses `src/content/audioBindings.ts` plus `src/game/audio/**`;
+- test scope is selected by `scripts/verification/verificationOwnership.mjs` and fails safe to full qualification for unmapped/cross-cutting changes;
+- loading/performance changes preserve `scripts/performance/performancePolicy.mjs` and stale dynamic-import recovery.
+
+Do not create a competing scene registry, UI token set, overlay positioning system, dialogue stack, audio binding mechanism or ad hoc verification rule without an explicit architectural reason recorded in the active work package.
 
 ## Project-specific invariants
 
