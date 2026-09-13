@@ -22,7 +22,7 @@ type LayoutScene = Phaser.Scene & {
 export function getSettingsAudioControlsManager(game: Phaser.Game): void {
   const host = document.getElementById('game-container')!;
   const audio = getVerticalSliceAudio();
-  const arranged = new WeakMap<Phaser.Scene, object>();
+  let arrangedRows: object | undefined;
   const sliders = VOLUMES.map(([kind, key, label]) => {
     const input = document.createElement('input');
     input.type = 'range';
@@ -30,8 +30,6 @@ export function getSettingsAudioControlsManager(game: Phaser.Game): void {
     input.step = '.01';
     input.ariaLabel = label;
     input.style.position = 'absolute';
-    input.style.zIndex = '50';
-    input.style.accentColor = '#7b4ea3';
     input.oninput = () => audio.updateSettings({ [key]: +input.value });
     host.append(input);
     return [kind, key, input] as const;
@@ -40,16 +38,8 @@ export function getSettingsAudioControlsManager(game: Phaser.Game): void {
   const select = document.createElement('select');
   select.ariaLabel = 'Chosen music track';
   select.style.position = 'absolute';
-  select.style.zIndex = '51';
-  select.style.height = '34px';
-  select.style.borderRadius = '9px';
   for (const track of MUSIC_CATALOGUE) {
-    select.add(
-      new Option(
-        track.path.slice(track.path.lastIndexOf('/') + 1, -4).replaceAll('-', ' '),
-        track.id,
-      ),
-    );
+    select.add(new Option(track.path.slice(track.path.lastIndexOf('/') + 1, -4), track.id));
   }
   select.onchange = () => audio.updateSettings({ selectedMusicTrackId: select.value });
   select.onpointerdown = (event) => event.stopPropagation();
@@ -57,7 +47,7 @@ export function getSettingsAudioControlsManager(game: Phaser.Game): void {
 
   const reserveTrackSpace = (scene: LayoutScene) => {
     const rows = scene.rows;
-    if (!rows?.length || arranged.get(scene) === rows) return;
+    if (!rows?.length || arrangedRows === rows) return;
     const musicY = rows.find((row) => row.kind === 'music')?.contentY;
     if (musicY === undefined) return;
     for (const row of rows) if (row.contentY > musicY) row.contentY += TRACK_GAP;
@@ -67,7 +57,7 @@ export function getSettingsAudioControlsManager(game: Phaser.Game): void {
     scene.contentHeight = (scene.contentHeight ?? 0) + TRACK_GAP;
     scene.maxScroll = (scene.maxScroll ?? 0) + TRACK_GAP;
     scene.setScrollOffset?.(scene.scrollOffset ?? 0);
-    arranged.set(scene, rows);
+    arrangedRows = rows;
   };
 
   game.events.on('poststep', () => {
