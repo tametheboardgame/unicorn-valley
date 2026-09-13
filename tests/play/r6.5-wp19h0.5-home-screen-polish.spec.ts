@@ -8,6 +8,8 @@ interface DiagnosticObject {
   visible: boolean;
   effectiveVisible: boolean;
   interactive: boolean;
+  x: number;
+  y: number;
   displayWidth: number;
   displayHeight: number;
 }
@@ -82,6 +84,12 @@ function titleObject(current: DiagnosticSnapshot, name: string): DiagnosticObjec
     ?.objects.find((object) => object.name === name);
 }
 
+function actionSpan(current: DiagnosticSnapshot, names: readonly string[]): number {
+  const actionYs = names.map((name) => titleObject(current, name)?.y ?? Number.NaN);
+  expect(actionYs.every(Number.isFinite)).toBe(true);
+  return Math.max(...actionYs) - Math.min(...actionYs);
+}
+
 async function seedReturningSave(page: Page): Promise<void> {
   const save = createStoredSave();
   await page.addInitScript(
@@ -111,10 +119,13 @@ test.describe('R6.5-WP19H0.5 home screen polish', () => {
     });
 
     const current = await snapshot(page);
-    const panel = titleObject(current, 'title-menu-panel');
-    expect(panel?.displayHeight ?? 999).toBeLessThan(400);
+    expect(titleObject(current, 'title-menu-panel')).toBeDefined();
     expect(titleObject(current, 'title-menu-new-game')?.interactive).toBe(true);
     expect(titleObject(current, 'title-menu-settings')?.interactive).toBe(true);
+    expect(
+      actionSpan(current, ['title-menu-new-game', 'title-menu-settings']),
+    ).toBeGreaterThanOrEqual(70);
+    expect(actionSpan(current, ['title-menu-new-game', 'title-menu-settings'])).toBeLessThan(100);
     expect(titleObject(current, 'title-menu-continue')).toBeUndefined();
     expect(titleObject(current, 'title-menu-my-unicorn')).toBeUndefined();
     expect(titleObject(current, 'title-settings-panel')).toBeUndefined();
@@ -138,16 +149,22 @@ test.describe('R6.5-WP19H0.5 home screen polish', () => {
     await openTitle(page);
 
     const current = await snapshot(page);
-    const panel = titleObject(current, 'title-menu-panel');
-    expect(panel?.displayHeight ?? 0).toBeGreaterThan(450);
-    for (const name of [
+    expect(titleObject(current, 'title-menu-panel')).toBeDefined();
+    const actionNames = [
       'title-menu-continue',
       'title-menu-new-game',
       'title-menu-my-unicorn',
       'title-menu-settings',
-    ]) {
+    ] as const;
+    expect(actionSpan(current, actionNames)).toBeGreaterThanOrEqual(210);
+    expect(actionSpan(current, actionNames)).toBeLessThan(230);
+    for (const name of actionNames) {
       expect(titleObject(current, name)?.interactive, `${name} interactive`).toBe(true);
     }
+
+    const status = titleObject(current, 'title-menu-status');
+    const lastAction = titleObject(current, 'title-menu-settings');
+    expect((status?.y ?? 0) - (lastAction?.y ?? 0)).toBeGreaterThan(50);
 
     await page.screenshot({
       path: test.info().outputPath('wp19h0.5-home-desktop-returning.png'),
