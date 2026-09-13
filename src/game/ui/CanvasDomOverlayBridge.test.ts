@@ -29,7 +29,7 @@ describe('calculateCanvasDomOverlayStyle', () => {
     ).toEqual({ left: 98.75, top: 62.5, width: 260, height: 44 });
   });
 
-  it('hides placements outside their logical clipping region', () => {
+  it('hides placements outside their logical viewport', () => {
     expect(
       calculateCanvasDomOverlayStyle(
         { left: 0, top: 0, width: 1280, height: 720 },
@@ -39,9 +39,37 @@ describe('calculateCanvasDomOverlayStyle', () => {
           y: 600,
           width: 200,
           height: 44,
-          clip: { left: 0, top: 145, right: 1280, bottom: 565 },
+          visibilityBounds: { left: 0, top: 145, right: 1280, bottom: 565 },
         },
       ),
     ).toBeNull();
+  });
+
+  it('can require full containment for scrolling native controls', () => {
+    const canvas = { left: 0, top: 0, width: 1280, height: 720 };
+    const host = { left: 0, top: 0, width: 1280, height: 720 };
+    const bounds = { left: 395, top: 145, right: 885, bottom: 565 };
+
+    expect(
+      calculateCanvasDomOverlayStyle(canvas, host, {
+        x: 395,
+        y: 140,
+        width: 490,
+        height: 44,
+        visibilityBounds: bounds,
+        visibilityMode: 'contain',
+      }),
+    ).toBeNull();
+
+    expect(
+      calculateCanvasDomOverlayStyle(canvas, host, {
+        x: 395,
+        y: 200,
+        width: 490,
+        height: 44,
+        visibilityBounds: bounds,
+        visibilityMode: 'contain',
+      }),
+    ).toEqual({ left: 395, top: 200, width: 490, height: 44 });
   });
 });
