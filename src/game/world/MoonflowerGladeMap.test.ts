@@ -79,4 +79,24 @@ describe('Moonflower Glade prototype map', () => {
     expect(eastEntrance).toBeDefined();
     expect(isPointBlocked(eastEntrance!.approach, MOONFLOWER_GLADE_MAP.colliders, 42)).toBe(false);
   });
+
+  it('matches the lower trunk bases of the original top trees and Hollow Tree', () => {
+    for (const point of [
+      { x: 430, y: 260 },
+      { x: 820, y: 280 },
+      { x: 1180, y: 260 },
+      { x: 1640, y: 260 },
+      { x: 1980, y: 260 },
+      { x: 2520, y: 280 },
+      { x: 2200, y: 680 },
+    ]) {
+      expect(isPointBlocked(point, MOONFLOWER_GLADE_MAP.colliders, 0)).toBe(true);
+    }
+
+    const hollowTree = MOONFLOWER_GLADE_MAP.landmarks.find(
+      (landmark) => landmark.id === 'hollow-tree',
+    );
+    expect(hollowTree).toBeDefined();
+    expect(isPointBlocked(hollowTree!.approach, MOONFLOWER_GLADE_MAP.colliders, 42)).toBe(false);
+  });
 });
