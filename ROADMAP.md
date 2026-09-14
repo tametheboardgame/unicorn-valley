@@ -222,6 +222,27 @@ H1 will turn Moonflower Glade into a finished, expandable home region while usin
 
 Explicitly deferred from H1 are the western-gate unlock quest/new region, full farming, fishing gameplay, full exterior cottage customisation UI/catalogue, seasonal Glade systems and broad cross-region Pip companion scripting. H1 may establish clean hooks for these but must not expand into them without separate approval.
 
+#### H1 incremental delivery and review cadence
+
+H1 remains one work package, but Stage 4 is deliberately split into small human-reviewable checkpoints. The default loop is **implement one bounded slice → run the cheap relevant checks → deploy a preview → David reviews the URL → correct/approve that slice → move to the next checkpoint**. Do not wait until the entire H1 package is implemented before visual review.
+
+Checkpoint order:
+
+1. **H1.1 - Glade layout and paths:** reroute the main road past the cottage and westwards, add the cottage branch path, western hedge/gate, correct Moonflower Field branch termination and sign placement. Preview and approve the geometry before major decoration work.
+2. **H1.2 - Cottage exterior:** substantial cottage visual redesign, proper front garden/flowerbeds, foreground layering and future-compatible exterior-home configuration foundation. Preview and approve the cottage independently.
+3. **H1.3 - Home Meadow and Wonderbook:** remove the outdoor display stump/Wonderbook, establish the physical Wonderbook inside the cottage and build the calm meadow/open-garden replacement. Preview and approve.
+4. **H1.4 - Boundaries and environmental density:** strengthen tree/hedge boundaries and collision, add ground/grass/environment variation and bounded Hollow Tree polish. Preview and traversal-check.
+5. **H1.5 - Moonflower Field:** dense mixed-colour flower threshold, foreground/background depth, entry glow and preserved Moonflower Patch transition. Preview and approve.
+6. **H1.6 - Stream:** irregular water/ripple treatment, ambient fish/surfacing and restrained stream polish without implementing fishing. Preview and approve.
+7. **H1.7 - Pip:** give Pip a defined production identity/body/species presentation and repair/clarify the Mysterious Trail state flow. Preview and approve Pip separately because the character is visually/story-important.
+8. **H1.8 - Shared interaction presentation:** introduce the reusable blue magical interaction pinprick, retire literal floating object icons in the Glade and polish physical gateway/sign presentation. Validate representative non-Glade use where the shared system changes.
+9. **H1.9 - Dialogue and NPC polish:** polish the shared dialogue-card family and fix Juniper's tail clipping at the correct owner. Run broader targeted regression because these changes can affect multiple scenes.
+10. **H1.10 - Click/tap approach repair:** fix shared approach-to-interact navigation so NPC/interactable clicks stop cleanly in valid interaction range rather than shuddering against collision. Exercise several NPCs/Pip/interactables across representative areas and run the broader targeted navigation regression suite.
+
+**CI/validation policy during H1:** ordinary visual checkpoints should use only the cheap static/build/owned checks necessary to make the preview trustworthy. Do not run the complete Chromium/Firefox/WebKit/full-game matrix after every small path, flower, cottage or scenery iteration. Broader targeted tests are appropriate when a checkpoint changes a genuinely shared system, especially H1.8-H1.10. Run the authoritative full static/unit/build/performance, Chromium, Firefox/WebKit, responsive and deployed-smoke qualification once the substantial H1 implementation is assembled and again only if later changes materially invalidate that evidence.
+
+Human preview approval is a design gate, not formal H1 completion. Individual checkpoint approval allows the next checkpoint to build on the accepted result; H1 closes only after integrated qualification and David's final Moonflower Glade review.
+
 ### R6.5-WP19I - Integrated Qualification
 
 State: **approved, but blocked until David has completed and accepted the full open-ended H1+ area-polish programme**.
