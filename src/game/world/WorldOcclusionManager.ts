@@ -21,6 +21,8 @@ const SUPPORTED_SCENES = new Set([
   'CottageInteriorScene',
 ]);
 
+const COTTAGE_EXTERIOR_PREFIX = 'cottage-exterior:';
+
 const GLade_BOUNDARY_TREES = [
   [170, 220],
   [430, 150],
@@ -92,11 +94,7 @@ export class WorldOcclusionManager {
 
     const state: SceneState = { overlays: [] };
     if (scene.scene.key === 'MoonflowerGladeScene') {
-      state.overlays.push(
-        this.createCottageOccluder(scene),
-        this.createHollowTreeOccluder(scene),
-        this.createClosedWonderbook(scene),
-      );
+      state.overlays.push(this.createHollowTreeOccluder(scene), this.createClosedWonderbook(scene));
     } else if (scene.scene.key === 'SunbeamVillageScene') {
       state.overlays.push(this.createVillageBuntingOccluder(scene));
     }
@@ -128,6 +126,8 @@ export class WorldOcclusionManager {
   }
 
   private applyGladeDepths(scene: Phaser.Scene): void {
+    this.applyCottageExteriorDepths(scene);
+
     for (const [x, y] of GLade_BOUNDARY_TREES) {
       this.setDepthInBox(scene, x - 105, y - 105, x + 125, y + 135, worldDepthForY(y + 115));
     }
@@ -171,6 +171,45 @@ export class WorldOcclusionManager {
         entrance.position.y + 115,
         worldDepthForY(entrance.position.y + 90),
       );
+    }
+  }
+
+  private applyCottageExteriorDepths(scene: Phaser.Scene): void {
+    const cottageDepth = worldDepthForY(650);
+    const foregroundDepth = worldDepthForY(670, 0.6);
+
+    for (const object of scene.children.list) {
+      if (!isPositionedDepthObject(object) || !object.name.startsWith(COTTAGE_EXTERIOR_PREFIX)) {
+        continue;
+      }
+
+      if (object.name === `${COTTAGE_EXTERIOR_PREFIX}detail:shadow`) {
+        object.setDepth(worldDepthForY(620, -0.5));
+        continue;
+      }
+
+      if (object.name.startsWith(`${COTTAGE_EXTERIOR_PREFIX}flowerbeds:`)) {
+        object.setDepth(foregroundDepth);
+        continue;
+      }
+
+      let offset = 0;
+      if (object.name.startsWith(`${COTTAGE_EXTERIOR_PREFIX}wall-finish:`)) {
+        offset = -0.2;
+      } else if (object.name.startsWith(`${COTTAGE_EXTERIOR_PREFIX}windows:`)) {
+        offset = 0.1;
+      } else if (object.name.startsWith(`${COTTAGE_EXTERIOR_PREFIX}window-boxes:`)) {
+        offset = 0.15;
+      } else if (object.name.startsWith(`${COTTAGE_EXTERIOR_PREFIX}door:`)) {
+        offset = 0.16;
+      } else if (object.name.startsWith(`${COTTAGE_EXTERIOR_PREFIX}porch:`)) {
+        offset = 0.17;
+      } else if (object.name.startsWith(`${COTTAGE_EXTERIOR_PREFIX}detail:`)) {
+        offset = 0.18;
+      } else if (object.name.startsWith(`${COTTAGE_EXTERIOR_PREFIX}plaque:`)) {
+        offset = 0.2;
+      }
+      object.setDepth(cottageDepth + offset);
     }
   }
 
@@ -248,24 +287,6 @@ export class WorldOcclusionManager {
       }
       object.setDepth(depth);
     }
-  }
-
-  private createCottageOccluder(scene: Phaser.Scene): Phaser.GameObjects.Graphics {
-    const cottage = scene.add.graphics().setDepth(worldDepthForY(650));
-    cottage.fillStyle(0xfff0cf, 1);
-    cottage.fillRoundedRect(350, 350, 420, 300, 72);
-    cottage.fillStyle(0xb791d4, 1);
-    cottage.fillEllipse(560, 355, 470, 260);
-    cottage.fillStyle(0x8d68b2, 1);
-    cottage.fillTriangle(350, 390, 560, 185, 770, 390);
-    cottage.fillStyle(0x8d6548, 1);
-    cottage.fillRoundedRect(520, 515, 82, 135, 28);
-    cottage.fillStyle(0xb8e7ef, 1);
-    cottage.fillRoundedRect(405, 440, 78, 72, 18);
-    cottage.fillRoundedRect(640, 440, 78, 72, 18);
-    cottage.fillStyle(0xffffff, 0.7);
-    cottage.fillCircle(576, 575, 6);
-    return cottage;
   }
 
   private createHollowTreeOccluder(scene: Phaser.Scene): Phaser.GameObjects.Graphics {
