@@ -1,5 +1,7 @@
 import Phaser from 'phaser';
 import { WILLOW_MOONFLOWERS_QUEST_ID } from '../../content/r2Quests';
+import { isReducedMotionEnabled } from '../accessibility/AccessibilitySettings';
+import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { InventoryService } from '../inventory/InventoryService';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
@@ -12,6 +14,7 @@ import {
 
 const COLLECTION_RADIUS = 82;
 const LEGACY_THRESHOLD_GLIMMER_NAME = 'moonflower-field-threshold-glimmer';
+const FEEDBACK_Y = GAME_HEIGHT - 205;
 
 const COLLECTIBLE_POSITIONS = [
   { x: 2020, y: 1190 },
@@ -47,6 +50,7 @@ export class WillowMoonflowerGladeWorldManager {
   private readonly inventory = new InventoryService(this.saveService);
   private readonly quests = getBrowserQuestEngine();
   private state: GladeCollectionState | null = null;
+  private feedbackTimer: Phaser.Time.TimerEvent | null = null;
 
   public constructor(private readonly game: Phaser.Game) {
     this.game.events.on(Phaser.Core.Events.POST_STEP, this.update, this);
@@ -79,19 +83,20 @@ export class WillowMoonflowerGladeWorldManager {
       scene,
       flowers: [],
       feedback: scene.add
-        .text(640, 165, '', {
-          color: '#574a61',
+        .text(GAME_WIDTH / 2, FEEDBACK_Y, '', {
+          color: '#244f5c',
           fontFamily: 'system-ui, sans-serif',
-          fontSize: '19px',
+          fontSize: '18px',
           fontStyle: 'bold',
           align: 'center',
-          backgroundColor: '#fff9eaf2',
-          padding: { x: 18, y: 10 },
-          wordWrap: { width: 720 },
+          backgroundColor: '#e9fff8fa',
+          padding: { x: 22, y: 13 },
+          wordWrap: { width: 456 },
         })
+        .setName('willow-moonflower-feedback')
         .setOrigin(0.5)
         .setScrollFactor(0)
-        .setDepth(188)
+        .setDepth(20_162)
         .setVisible(false),
       signature: '',
     };
@@ -126,60 +131,70 @@ export class WillowMoonflowerGladeWorldManager {
   }
 
   private createCollectible(scene: Phaser.Scene, x: number, y: number): CollectibleMoonflower {
-    const outerGlow = scene.add.circle(0, 0, 46, 0x9ddfff, 0.16);
-    const innerGlow = scene.add.circle(0, -4, 29, 0xffefb0, 0.2);
-    const stem = scene.add.rectangle(0, 26, 7, 58, 0x5f9b68, 0.96);
-    const leafLeft = scene.add.ellipse(-10, 25, 17, 8, 0x79b879, 0.95).setAngle(-28);
-    const leafRight = scene.add.ellipse(10, 34, 17, 8, 0x79b879, 0.95).setAngle(28);
+    const halo = scene.add.circle(0, 0, 38, 0xd8c8ff, 0.12);
+    const stem = scene.add.rectangle(0, 28, 7, 60, 0x589566, 1);
+    const leafLeft = scene.add.ellipse(-11, 27, 20, 9, 0x78b979, 1).setAngle(-30);
+    const leafRight = scene.add.ellipse(11, 37, 20, 9, 0x78b979, 1).setAngle(30);
     const petals = [
-      scene.add.ellipse(0, -18, 24, 34, 0xf3d8ff, 0.98),
-      scene.add.ellipse(17, -5, 24, 34, 0xd8c8ff, 0.98).setAngle(65),
-      scene.add.ellipse(11, 13, 24, 34, 0xbfe5ff, 0.98).setAngle(140),
-      scene.add.ellipse(-11, 13, 24, 34, 0xd8c8ff, 0.98).setAngle(-140),
-      scene.add.ellipse(-17, -5, 24, 34, 0xbfe5ff, 0.98).setAngle(-65),
+      scene.add.ellipse(0, -20, 28, 40, 0xf4ddff, 1),
+      scene.add.ellipse(20, -5, 28, 40, 0xd9c6ff, 1).setAngle(65),
+      scene.add.ellipse(12, 17, 28, 40, 0xc4ddff, 1).setAngle(140),
+      scene.add.ellipse(-12, 17, 28, 40, 0xd9c6ff, 1).setAngle(-140),
+      scene.add.ellipse(-20, -5, 28, 40, 0xc4ddff, 1).setAngle(-65),
     ];
-    const centre = scene.add.circle(0, 0, 11, 0xffe39e, 1);
-    const sparkle = scene.add
-      .text(25, -30, '✦', {
-        color: '#d8f5ff',
+    const centre = scene.add.circle(0, 1, 12, 0xffe49b, 1);
+    const glintA = scene.add
+      .text(29, -32, '✦', {
+        color: '#ffffff',
         fontFamily: 'system-ui, sans-serif',
-        fontSize: '20px',
+        fontSize: '17px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5);
+    const glintB = scene.add
+      .text(-28, -12, '✧', {
+        color: '#efe4ff',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '13px',
         fontStyle: 'bold',
       })
       .setOrigin(0.5);
 
+    const flowerParts = [stem, leafLeft, leafRight, ...petals, centre];
     const container = scene.add
-      .container(x, y, [
-        outerGlow,
-        innerGlow,
-        stem,
-        leafLeft,
-        leafRight,
-        ...petals,
-        centre,
-        sparkle,
-      ])
+      .container(x, y, [halo, ...flowerParts, glintA, glintB])
       .setName(`willow-moonflower:${x}:${y}`)
-      .setDepth(worldDepthForY(y + 55, 0.3));
+      .setDepth(worldDepthForY(y + 58, 0.3));
 
-    scene.tweens.add({
-      targets: [outerGlow, innerGlow],
-      alpha: { from: 0.1, to: 0.3 },
-      scale: { from: 0.92, to: 1.08 },
-      duration: 900,
-      yoyo: true,
-      repeat: -1,
-      ease: 'Sine.InOut',
-    });
-    scene.tweens.add({
-      targets: sparkle,
-      alpha: { from: 0.35, to: 1 },
-      y: { from: -34, to: -26 },
-      duration: 720,
-      yoyo: true,
-      repeat: -1,
-      ease: 'Sine.InOut',
-    });
+    if (!isReducedMotionEnabled()) {
+      scene.tweens.add({
+        targets: flowerParts,
+        scaleX: { from: 0.95, to: 1.06 },
+        scaleY: { from: 0.95, to: 1.06 },
+        duration: 920,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.InOut',
+      });
+      scene.tweens.add({
+        targets: halo,
+        alpha: { from: 0.08, to: 0.2 },
+        scale: { from: 0.92, to: 1.08 },
+        duration: 1100,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.InOut',
+      });
+      scene.tweens.add({
+        targets: [glintA, glintB],
+        alpha: { from: 0.2, to: 1 },
+        scale: { from: 0.8, to: 1.15 },
+        duration: 720,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.InOut',
+      });
+    }
 
     return { container, x, y };
   }
@@ -200,27 +215,49 @@ export class WillowMoonflowerGladeWorldManager {
 
     const [flower] = state.flowers.splice(index, 1);
     flower.container.destroy(true);
-    const quantity = this.inventory.addItem(WILLOW_MOONFLOWER_ITEM_ID);
+    const quantity = this.inventory.addItem(WILLOW_MOONFLOWER_ITEM_ID, 1, {
+      suppressRewardFeedback: true,
+    });
     state.scene.cameras.main.flash(140, 220, 245, 255, false);
 
-    const progress = this.quests.getProgress(WILLOW_MOONFLOWERS_QUEST_ID);
-    const phase = getWillowStoryPhase(progress);
-    const message =
-      quantity >= WILLOW_MOONFLOWER_REQUIRED_QUANTITY
-        ? phase === 'collecting' || phase === 'return-to-willow'
-          ? 'You found all three Moonflowers! Take them back to Willow in Sunbeam Village.'
-          : 'You found all three Moonflowers! Someone in Sunbeam Village may know what they are for.'
-        : `Moonflower collected! ${quantity} / ${WILLOW_MOONFLOWER_REQUIRED_QUANTITY}`;
-    this.showFeedback(state, message);
+    if (quantity >= WILLOW_MOONFLOWER_REQUIRED_QUANTITY) {
+      const progress = this.quests.getProgress(WILLOW_MOONFLOWERS_QUEST_ID);
+      const phase = getWillowStoryPhase(progress);
+      const hint =
+        phase === 'collecting' || phase === 'return-to-willow' || phase === 'resolving'
+          ? 'You have all three Moonflowers. Take them back to Willow in Sunbeam Village.'
+          : 'You have all three Moonflowers. Someone in Sunbeam Village might want these.';
+      this.showFeedback(
+        state,
+        `Moonflower collected! ${quantity} / ${WILLOW_MOONFLOWER_REQUIRED_QUANTITY}`,
+        1350,
+        () => this.showFeedback(state, hint, 3200),
+      );
+    } else {
+      this.showFeedback(
+        state,
+        `Moonflower collected! ${quantity} / ${WILLOW_MOONFLOWER_REQUIRED_QUANTITY}`,
+        2300,
+      );
+    }
     this.syncFlowers(state, true);
   }
 
-  private showFeedback(state: GladeCollectionState, message: string): void {
+  private showFeedback(
+    state: GladeCollectionState,
+    message: string,
+    durationMs: number,
+    onComplete?: () => void,
+  ): void {
+    this.feedbackTimer?.destroy();
+    this.feedbackTimer = null;
     state.feedback.setText(message).setVisible(true);
-    state.scene.time.delayedCall(2600, () => {
+    this.feedbackTimer = state.scene.time.delayedCall(durationMs, () => {
+      this.feedbackTimer = null;
       if (state.feedback.active) {
         state.feedback.setVisible(false);
       }
+      onComplete?.();
     });
   }
 
@@ -229,6 +266,8 @@ export class WillowMoonflowerGladeWorldManager {
   }
 
   private destroyState(): void {
+    this.feedbackTimer?.destroy();
+    this.feedbackTimer = null;
     if (!this.state) {
       return;
     }
