@@ -28,6 +28,7 @@ import { getBrowserSaveService } from '../save/browserSaveService';
 import { InteractionPrompt } from '../ui/InteractionPrompt';
 import { renderHomeMeadow } from '../world/HomeMeadowPresentation';
 import { MOONFLOWER_GLADE_MAP } from '../world/MoonflowerGladeMap';
+import { worldDepthForY } from '../world/WorldDepth';
 
 const COLLISION_TEXTURE_KEY = 'glade-collision-pixel';
 const SAVED_PLAYER_TEXTURE_KEY = 'player-unicorn-saved';
@@ -522,33 +523,95 @@ export class MoonflowerGladeScene extends Phaser.Scene {
   }
 
   private createMoonflowerField(): void {
-    const positions = [
-      [1920, 1110, 1],
-      [2020, 1080, 1.2],
-      [2120, 1140, 0.9],
-      [2210, 1070, 1.1],
-      [1900, 1260, 1.05],
-      [2020, 1300, 1.25],
-      [2160, 1260, 1.1],
-      [2260, 1360, 0.95],
-      [2050, 1420, 1.05],
+    const lavender = 0xe0b3ff;
+    const blush = 0xffb4d6;
+    const sky = 0xb9d9ff;
+    const pearl = 0xffefd1;
+    const violet = 0xc8b0ff;
+
+    const fieldGround = this.add.graphics().setDepth(2.28);
+    fieldGround.fillStyle(0x76b77d, 0.13);
+    fieldGround.fillEllipse(2240, 1320, 760, 520);
+    fieldGround.fillStyle(0x8fc88f, 0.1);
+    fieldGround.fillEllipse(2390, 1370, 490, 390);
+
+    const flowers = [
+      [1985, 1095, 0.88, pearl],
+      [2075, 1080, 1.08, lavender],
+      [2170, 1120, 0.94, blush],
+      [2285, 1088, 1.12, sky],
+      [2400, 1110, 0.9, violet],
+      [2495, 1145, 1.02, lavender],
+      [1960, 1195, 1.04, blush],
+      [2055, 1170, 0.86, sky],
+      [2145, 1210, 1.18, violet],
+      [2245, 1180, 0.98, pearl],
+      [2350, 1220, 1.08, lavender],
+      [2440, 1190, 0.9, blush],
+      [2520, 1245, 1.0, sky],
+      [1995, 1285, 0.92, violet],
+      [2085, 1320, 1.12, pearl],
+      [2185, 1275, 0.84, blush],
+      [2280, 1325, 1.2, lavender],
+      [2385, 1288, 0.96, sky],
+      [2475, 1340, 1.08, violet],
+      [1950, 1390, 1.06, sky],
+      [2050, 1370, 0.9, lavender],
+      [2140, 1425, 1.16, blush],
+      [2240, 1385, 0.88, pearl],
+      [2345, 1435, 1.06, violet],
+      [2450, 1400, 0.96, lavender],
+      [2525, 1460, 0.86, blush],
+      [2030, 1490, 0.9, pearl],
+      [2125, 1515, 1.08, sky],
+      [2225, 1480, 0.96, lavender],
+      [2325, 1525, 1.12, blush],
+      [2425, 1495, 0.9, violet],
+      [2490, 1535, 0.82, pearl],
     ] as const;
 
-    for (const [x, y, scale] of positions) {
-      this.addMoonflower(x, y, scale);
+    for (const [x, y, scale, colour] of flowers) {
+      this.addMoonflower(x, y, scale, colour);
     }
 
-    this.add
-      .text(2055, 1015, 'Moonflower Field', {
-        color: '#5c416e',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '19px',
-        fontStyle: 'bold',
-        backgroundColor: '#fff8eccc',
-        padding: { x: 10, y: 6 },
-      })
-      .setOrigin(0.5)
-      .setDepth(12);
+    const threshold = MOONFLOWER_GLADE_MAP.landmarks.find(
+      (landmark) => landmark.id === 'moonflower-field',
+    )?.approach;
+    if (threshold) {
+      const glow = this.add.circle(0, 6, 34, 0x72cfff, 0.12);
+      const star = this.add
+        .text(0, -4, '✦', {
+          color: '#bfeaff',
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '22px',
+          fontStyle: 'bold',
+        })
+        .setOrigin(0.5)
+        .setAlpha(0.88);
+      const moteLeft = this.add.circle(-18, 7, 4, 0x8ddcff, 0.82);
+      const moteRight = this.add.circle(18, 12, 3, 0xc9f1ff, 0.72);
+      const marker = this.add
+        .container(threshold.x, threshold.y, [glow, star, moteLeft, moteRight])
+        .setName('moonflower-field-threshold-glow')
+        .setDepth(worldDepthForY(threshold.y, 0.28));
+
+      this.tweens.add({
+        targets: [glow, star, moteLeft, moteRight],
+        alpha: { from: 0.45, to: 0.95 },
+        duration: 1150,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.InOut',
+      });
+      this.tweens.add({
+        targets: marker,
+        y: threshold.y - 5,
+        duration: 1450,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.InOut',
+      });
+    }
   }
 
   private createEntranceMarkers(): void {
@@ -646,8 +709,23 @@ export class MoonflowerGladeScene extends Phaser.Scene {
     this.add.circle(1110, 1045, 18, 0xffe5a2, 1).setDepth(33);
   }
 
-  private addMoonflower(x: number, y: number, scale: number): void {
-    this.add.rectangle(x, y + 24 * scale, 7 * scale, 54 * scale, 0x5f9b67, 0.95).setDepth(6);
+  private addMoonflower(x: number, y: number, scale: number, petalColour: number): void {
+    const baseDepth = worldDepthForY(y + 52 * scale, 0.08);
+
+    this.add
+      .ellipse(x, y + 51 * scale, 54 * scale, 14 * scale, 0x4d8358, 0.16)
+      .setDepth(baseDepth - 0.34);
+    this.add
+      .rectangle(x, y + 25 * scale, 7 * scale, 58 * scale, 0x5f9b67, 0.95)
+      .setDepth(baseDepth - 0.22);
+    this.add
+      .ellipse(x - 10 * scale, y + 31 * scale, 20 * scale, 9 * scale, 0x72a970, 0.84)
+      .setAngle(-28)
+      .setDepth(baseDepth - 0.18);
+    this.add
+      .ellipse(x + 10 * scale, y + 38 * scale, 18 * scale, 8 * scale, 0x6ca56d, 0.8)
+      .setAngle(28)
+      .setDepth(baseDepth - 0.17);
 
     const petalOffsets = [
       [0, -18],
@@ -659,11 +737,18 @@ export class MoonflowerGladeScene extends Phaser.Scene {
 
     for (const [offsetX, offsetY] of petalOffsets) {
       this.add
-        .ellipse(x + offsetX * scale, y + offsetY * scale, 28 * scale, 38 * scale, 0xe0b3ff, 0.94)
-        .setDepth(7);
+        .ellipse(
+          x + offsetX * scale,
+          y + offsetY * scale,
+          28 * scale,
+          38 * scale,
+          petalColour,
+          0.94,
+        )
+        .setDepth(baseDepth);
     }
 
-    this.add.circle(x, y, 12 * scale, 0xffdca1, 1).setDepth(8);
+    this.add.circle(x, y, 12 * scale, 0xffdca1, 1).setDepth(baseDepth + 0.04);
   }
 
   private createCollisionMap(): Phaser.Physics.Arcade.StaticGroup {
