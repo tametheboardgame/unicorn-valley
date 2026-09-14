@@ -1,19 +1,22 @@
 import Phaser from 'phaser';
 import { isReducedMotionEnabled } from '../accessibility/AccessibilitySettings';
-import { worldDepthForY } from '../world/WorldDepth';
 import {
   AMBIENT_STREAM_FISH_NAME_PREFIX,
+  MOONFLOWER_STREAM_FISH_BEHAVIOURS,
   MOONFLOWER_STREAM_FISHING_HOOK,
   MOONFLOWER_STREAM_REED_BEDS,
   MOONFLOWER_STREAM_SURFACE_MARKS,
+  resolveAmbientFishLateralOffset,
   resolveAmbientFishRun,
 } from './MoonflowerStreamLifeModel';
 
 export {
   AMBIENT_STREAM_FISH_NAME_PREFIX,
+  MOONFLOWER_STREAM_FISH_BEHAVIOURS,
   MOONFLOWER_STREAM_FISHING_HOOK,
   MOONFLOWER_STREAM_REED_BEDS,
   MOONFLOWER_STREAM_SURFACE_MARKS,
+  resolveAmbientFishLateralOffset,
   resolveAmbientFishRun,
 } from './MoonflowerStreamLifeModel';
 
@@ -25,6 +28,7 @@ const STREAM_WIDTH = 220;
 const STREAM_HEIGHT = 1800;
 const FISH_START_Y = -90;
 const FISH_END_Y = 1890;
+const REED_BANK_DEPTH = 5.2;
 
 const FISH_STYLES = [
   { body: 0xb9e1e8, accent: 0x82b9c8, detail: 0xe7f8f6, scale: 0.92 },
@@ -45,6 +49,7 @@ interface FishRuntime {
   index: number;
   timer: Phaser.Time.TimerEvent | null;
   surfaceTimer: Phaser.Time.TimerEvent | null;
+  travelTween: Phaser.Tweens.Tween | null;
 }
 
 interface StreamRuntime {
@@ -154,10 +159,12 @@ function createReedBed(
     }
   });
 
+  // Reed beds are background bank vegetation. Keep them below the older flower-detail layer so
+  // nearby flowers remain visibly in front instead of being cut through by reed stalks.
   return scene.add
     .container(x, y, parts)
     .setName(`${REED_ROOT_NAME}:${id}`)
-    .setDepth(worldDepthForY(y + 10, -0.16));
+    .setDepth(REED_BANK_DEPTH + variant * 0.01);
 }
 
 function ensureReedBeds(scene: Phaser.Scene): void {
@@ -233,7 +240,13 @@ function createFish(
   fish.setData('ambientFishId', `moonflower-fish-${index + 1}`);
   root.add(fish);
 
-  return { container: fish, index, timer: null, surfaceTimer: null };
+  return {
+    container: fish,
+    index,
+    timer: null,
+    surfaceTimer: null,
+    travelTween: null,
+  };
 }
 
 function createSurfaceRipple(
@@ -268,6 +281,8 @@ function scheduleFishRun(
 ): void {
   fish.timer?.destroy();
   fish.surfaceTimer?.destroy();
+  fish.travelTween?.stop();
+  fish.travelTween = null;
 
   fish.timer = scene.time.delayedCall(initialDelay, () => {
     if (!fish.container.active || !scene.scene.isActive()) {
@@ -275,25 +290,47 @@ function scheduleFishRun(
     }
 
     const run = resolveAmbientFishRun(Math.random(), Math.random(), Math.random());
-    const lateralDrift = Phaser.Math.Between(-12, 12);
-    fish.container.setPosition(run.x - STREAM_X, FISH_START_Y - STREAM_Y);
+    const behaviour = MOONFLOWER_STREAM_FISH_BEHAVIOURS[fish.index % MOONFLOWER_STREAM_FISH_BEHAVIOURS.length];
+    const durationMs = Math.round(run.durationMs * behaviour.durationScale);
+    const baseX = run.x - STREAM_X;
+    const startY = FISH_START_Y - STREAM_Y;
+    const endY = FISH_END_Y - STREAM_Y;
+    const motion = { progress: 0 };
+
+    fish.container.setPosition(baseX, startY);
     fish.container.setAlpha(0.5 + fish.index * 0.07);
-    fish.container.setAngle(Phaser.Math.Clamp(lateralDrift * 0.38, -5, 5));
+    fish.container.setAngle(0);
+    fish.container.setData('movementProfile', behaviour.profile);
 
     const travel = scene.tweens.add({
-      targets: fish.container,
-      y: FISH_END_Y - STREAM_Y,
-      x: fish.container.x + lateralDrift,
-      duration: run.durationMs,
+      targets: motion,
+      progress: 1,
+      duration: durationMs,
       ease: 'Linear',
+      onUpdate: () => {
+        const progress = motion.progress;
+        const offset = resolveAmbientFishLateralOffset(behaviour, progress);
+        const aheadProgress = Math.min(1, progress + 0.008);
+        const aheadOffset = resolveAmbientFishLateralOffset(behaviour, aheadProgress);
+        const currentY = Phaser.Math.Linear(startY, endY, progress);
+        const aheadY = Phaser.Math.Linear(startY, endY, aheadProgress);
+        const headingRadians = Math.atan2(aheadOffset - offset, aheadY - currentY);
+
+        fish.container.setPosition(baseX + offset, currentY);
+        fish.container.setAngle(
+          Phaser.Math.Clamp(Phaser.Math.RadToDeg(headingRadians), -11, 11),
+        );
+      },
       onComplete: () => {
+        fish.travelTween = null;
         const pause = Phaser.Math.Between(900, 3200);
         scheduleFishRun(scene, root, fish, pause);
       },
     });
+    fish.travelTween = travel;
 
     if (run.shouldSurface) {
-      fish.surfaceTimer = scene.time.delayedCall(Math.round(run.durationMs * 0.55), () => {
+      fish.surfaceTimer = scene.time.delayedCall(Math.round(durationMs * 0.55), () => {
         if (travel.isPlaying()) {
           createSurfaceRipple(scene, root, fish);
         }
@@ -348,6 +385,8 @@ export function ensureMoonflowerStreamLife(scene: Phaser.Scene): void {
     for (const entry of fish) {
       entry.timer?.destroy();
       entry.surfaceTimer?.destroy();
+      entry.travelTween?.stop();
+      entry.travelTween = null;
       scene.tweens.killTweensOf(entry.container);
     }
     runtime.root.destroy(true);
