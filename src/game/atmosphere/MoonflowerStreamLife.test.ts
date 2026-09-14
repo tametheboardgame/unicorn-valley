@@ -4,7 +4,7 @@ import {
   MOONFLOWER_STREAM_FISHING_HOOK,
   MOONFLOWER_STREAM_SURFACE_MARKS,
   resolveAmbientFishRun,
-} from './MoonflowerStreamLife';
+} from './MoonflowerStreamLifeModel';
 
 describe('MoonflowerStreamLife', () => {
   it('keeps ambient fish runs inside the stream and varies travel timing', () => {
