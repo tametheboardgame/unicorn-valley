@@ -179,6 +179,18 @@ async function tapTitleText(page: Page, text: string): Promise<void> {
   );
 }
 
+async function revealSettingsObject(page: Page, objectName: string): Promise<DiagnosticObject> {
+  for (let attempt = 0; attempt < 20; attempt += 1) {
+    const target = (await snapshot(page)).scenes
+      .find((scene) => scene.key === 'SettingsScene')
+      ?.objects.find((object) => object.name === objectName);
+    if (target?.visible) return target;
+    await page.keyboard.press('ArrowDown');
+  }
+
+  throw new Error(`Settings object did not become visible: ${objectName}`);
+}
+
 function sceneText(current: DiagnosticSnapshot, sceneKey: string): string[] {
   return (
     current.scenes
@@ -257,7 +269,8 @@ test('malformed settings and optional cosmetics cannot block Settings, Redesign 
   await waitForScene(page, 'SettingsScene');
   const settingsText = sceneText(await snapshot(page), 'SettingsScene');
   expect(settingsText).toContain('Music: Scene music');
-  expect(settingsText).toContain('Reduced motion: Off');
+  const reducedMotion = await revealSettingsObject(page, 'settings-row-reduced-motion-label');
+  expect(reducedMotion.text).toBe('Reduced motion: Off');
   await tapObject(page, 'SettingsScene', 'settings-done');
   await waitForScene(page, 'TitleScene');
 
