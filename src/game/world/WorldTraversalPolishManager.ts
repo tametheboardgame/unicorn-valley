@@ -210,40 +210,9 @@ function addGateway(scene: Phaser.Scene, gateway: GatewayDefinition): void {
 }
 
 function decorateGlade(scene: Phaser.Scene): void {
-  drawPathNetwork(scene, [
-    {
-      points: [
-        { x: 560, y: 720 },
-        { x: 830, y: 820 },
-        { x: 1100, y: 870 },
-        { x: 1400, y: 900 },
-        { x: 1750, y: 900 },
-        { x: 2150, y: 900 },
-        { x: 2690, y: 900 },
-      ],
-      outerWidth: 128,
-      innerWidth: 108,
-    },
-    {
-      points: [
-        { x: 1770, y: 930 },
-        { x: 1840, y: 1160 },
-        { x: 1940, y: 1420 },
-        { x: 1980, y: 1720 },
-      ],
-      outerWidth: 104,
-      innerWidth: 84,
-    },
-    {
-      points: [
-        { x: 760, y: 850 },
-        { x: 840, y: 1070 },
-      ],
-      outerWidth: 70,
-      innerWidth: 54,
-    },
-  ]);
-
+  // Moonflower Glade paths are owned by ExplorationPathPolishManager. Keep this manager
+  // responsible only for the existing east gateway and traversal behaviour so there is one
+  // visible path source of truth for the Glade.
   addGateway(scene, { x: 2680, y: 900, label: 'Sunbeam Village', direction: 'east' });
 }
 
