@@ -269,7 +269,7 @@ export class PipEggArcService {
     }
 
     const saved = this.saveService.save(save);
-    if (currentStage !== 'hatch-ready' && saved.world.flags[PIP_EGG_HATCH_READY_FLAG] === true) {
+    if (saved.world.flags[PIP_EGG_HATCH_READY_FLAG] === true) {
       this.events.emit('WORLD_FLAG_CHANGED', { flagId: PIP_EGG_HATCH_READY_FLAG, value: true });
     }
     return getPipEggStage(saved);
