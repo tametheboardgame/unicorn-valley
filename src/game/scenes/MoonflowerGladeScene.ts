@@ -5,6 +5,7 @@ import { GAME_WIDTH } from '../config/gameConstants';
 import { DialogueCard } from '../dialogue/DialogueCard';
 import { DialogueSession } from '../dialogue/DialogueSession';
 import { DiscoveryService } from '../discovery/DiscoveryService';
+import { renderCottageExterior } from '../home/CottageExteriorPresentation';
 import {
   createPipInteraction,
   FIRST_DISCOVERY_FLAG,
@@ -483,35 +484,13 @@ export class MoonflowerGladeScene extends Phaser.Scene {
   }
 
   private createCottage(): void {
-    const cottage = this.add.graphics().setDepth(10);
-    cottage.fillStyle(0xfff0cf, 1);
-    cottage.fillRoundedRect(350, 350, 420, 300, 72);
-    cottage.fillStyle(0xb791d4, 1);
-    cottage.fillEllipse(560, 355, 470, 260);
-    cottage.fillStyle(0x8d68b2, 1);
-    cottage.fillTriangle(350, 390, 560, 185, 770, 390);
-    cottage.fillStyle(0x8d6548, 1);
-    cottage.fillRoundedRect(520, 515, 82, 135, 28);
-    cottage.fillStyle(0xb8e7ef, 1);
-    cottage.fillRoundedRect(405, 440, 78, 72, 18);
-    cottage.fillRoundedRect(640, 440, 78, 72, 18);
-    cottage.fillStyle(0xffffff, 0.7);
-    cottage.fillCircle(576, 575, 6);
-
-    this.add
-      .text(560, 690, 'Moonflower Cottage', {
-        color: '#5c416e',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '21px',
-        fontStyle: 'bold',
-        backgroundColor: '#fff8eccc',
-        padding: { x: 10, y: 6 },
-      })
-      .setOrigin(0.5)
-      .setDepth(12);
-
-    this.addMoonflower(350, 650, 1.15);
-    this.addMoonflower(760, 650, 1.05);
+    const cottage = MOONFLOWER_GLADE_MAP.landmarks.find(
+      (landmark) => landmark.id === 'moonflower-cottage',
+    );
+    if (!cottage) {
+      return;
+    }
+    renderCottageExterior(this, cottage.position);
   }
 
   private createGarden(): void {
@@ -529,6 +508,7 @@ export class MoonflowerGladeScene extends Phaser.Scene {
       this.add.circle(x + 8, 583 + ((x / 10) % 2) * 55, 8, 0xe6c1ff, 0.9).setDepth(8);
     }
   }
+
   private createDisplayStump(): void {
     this.add.ellipse(850, 1130, 118, 70, 0x8a6248, 1).setDepth(9);
     this.add.ellipse(850, 1100, 118, 54, 0xc79b70, 1).setDepth(10);
