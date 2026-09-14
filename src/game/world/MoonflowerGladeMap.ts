@@ -54,13 +54,19 @@ export const MOONFLOWER_GLADE_MAP = {
       id: 'moonflower-cottage',
       label: 'Moonflower Cottage',
       position: { x: 560, y: 470 },
-      approach: { x: 560, y: 720 },
+      approach: { x: 560, y: 705 },
     },
     {
       id: 'garden-plot',
       label: 'Garden Plot',
       position: { x: 890, y: 620 },
       approach: { x: 890, y: 790 },
+    },
+    {
+      id: 'western-gate',
+      label: 'Old Garden Gate',
+      position: { x: 125, y: 815 },
+      approach: { x: 315, y: 815 },
     },
     {
       id: 'little-bridge',
@@ -84,7 +90,7 @@ export const MOONFLOWER_GLADE_MAP = {
       id: 'moonflower-field',
       label: 'Moonflower Field',
       position: { x: 2080, y: 1230 },
-      approach: { x: 1900, y: 1230 },
+      approach: { x: 1890, y: 1185 },
     },
   ] satisfies readonly GladeLandmark[],
   entrances: [
@@ -98,6 +104,7 @@ export const MOONFLOWER_GLADE_MAP = {
   ] satisfies readonly GladeEntrance[],
   colliders: [
     { id: 'collision:cottage', x: 560, y: 470, width: 460, height: 360 },
+    { id: 'collision:western-gate', x: 125, y: 815, width: 90, height: 180 },
     {
       id: 'collision:stream-north',
       x: 1400,
