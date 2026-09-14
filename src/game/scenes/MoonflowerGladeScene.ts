@@ -26,6 +26,7 @@ import { createUnicornAppearanceTexture } from '../player/UnicornAppearanceRende
 import { DEFAULT_PLAYER_SPEED, resolvePlayerMovement } from '../player/PlayerMovement';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { InteractionPrompt } from '../ui/InteractionPrompt';
+import { renderHomeMeadow } from '../world/HomeMeadowPresentation';
 import { MOONFLOWER_GLADE_MAP } from '../world/MoonflowerGladeMap';
 
 const COLLISION_TEXTURE_KEY = 'glade-collision-pixel';
@@ -375,7 +376,7 @@ export class MoonflowerGladeScene extends Phaser.Scene {
     this.createStreamAndBridge();
     this.createCottage();
     this.createGarden();
-    this.createDisplayStump();
+    renderHomeMeadow(this);
     this.createHollowTree();
     this.createMoonflowerField();
     this.createEntranceMarkers();
@@ -404,12 +405,6 @@ export class MoonflowerGladeScene extends Phaser.Scene {
     path.moveTo(1770, 900);
     path.lineTo(1818, 1045);
     path.lineTo(1890, 1185);
-    path.strokePath();
-
-    path.lineStyle(56, 0xf1e3bd, 0.75);
-    path.beginPath();
-    path.moveTo(790, 900);
-    path.lineTo(840, 1070);
     path.strokePath();
   }
 
@@ -507,13 +502,6 @@ export class MoonflowerGladeScene extends Phaser.Scene {
       this.add.circle(x, 575 + ((x / 10) % 2) * 55, 13, 0xffd3f1, 0.9).setDepth(8);
       this.add.circle(x + 8, 583 + ((x / 10) % 2) * 55, 8, 0xe6c1ff, 0.9).setDepth(8);
     }
-  }
-
-  private createDisplayStump(): void {
-    this.add.ellipse(850, 1130, 118, 70, 0x8a6248, 1).setDepth(9);
-    this.add.ellipse(850, 1100, 118, 54, 0xc79b70, 1).setDepth(10);
-    this.add.circle(850, 1098, 17, 0xf4d79f, 0.72).setDepth(11);
-    this.add.circle(850, 1098, 6, 0xfff7cb, 0.9).setDepth(12);
   }
 
   private createHollowTree(): void {
