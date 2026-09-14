@@ -219,11 +219,15 @@ function createFishLife(scene: Phaser.Scene, root: Phaser.GameObjects.Container)
       { x: -18, y: 380 },
       { x: 38, y: 690 },
     ];
-    fish.forEach((entry, index) => entry.container.setPosition(resting[index].x, resting[index].y));
+    fish.forEach((entry, index) => {
+      entry.container.setPosition(resting[index].x, resting[index].y);
+    });
     return fish;
   }
 
-  fish.forEach((entry, index) => scheduleFishRun(scene, root, entry, 650 + index * 1900));
+  fish.forEach((entry, index) => {
+    scheduleFishRun(scene, root, entry, 650 + index * 1900);
+  });
   return fish;
 }
 
