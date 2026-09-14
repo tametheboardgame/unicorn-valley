@@ -24,14 +24,14 @@ describe('MoonflowerStreamLife', () => {
     );
 
     expect(new Set(gaps).size).toBeGreaterThan(3);
-    expect(new Set(MOONFLOWER_STREAM_SURFACE_MARKS.map((mark) => mark.width)).size).toBeGreaterThan(4);
+    expect(new Set(MOONFLOWER_STREAM_SURFACE_MARKS.map((mark) => mark.width)).size).toBeGreaterThan(
+      4,
+    );
   });
 
   it('exposes a stable future fishing hook without implementing fishing', () => {
     expect(MOONFLOWER_STREAM_FISHING_HOOK.id).toBe('stream:moonflower-glade');
-    expect(MOONFLOWER_STREAM_FISHING_HOOK.fishNamePrefix).toBe(
-      AMBIENT_STREAM_FISH_NAME_PREFIX,
-    );
+    expect(MOONFLOWER_STREAM_FISHING_HOOK.fishNamePrefix).toBe(AMBIENT_STREAM_FISH_NAME_PREFIX);
     expect(MOONFLOWER_STREAM_FISHING_HOOK.bounds.bottom).toBeGreaterThan(
       MOONFLOWER_STREAM_FISHING_HOOK.bounds.top,
     );
