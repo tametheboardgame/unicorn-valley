@@ -94,7 +94,7 @@ function decorateVillage(scene: Phaser.Scene): void {
     markDetail(
       scene.add
         .ellipse(1500, 1050, radius * 2, radius * 0.55, 0xe9ffff, 0.28)
-        .setStrokeStyle(4, 0xffffff, alpha + 0.08)
+        .setStrokeStyle(4, 0xffffff, 0.3)
         .setDepth(9.2),
     );
   }
