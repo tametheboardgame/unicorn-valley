@@ -10,7 +10,7 @@ const PLAYER_CLEARANCE = 42;
 const EXIT_INTERACTION_RADIUS = 155;
 
 describe('Moonflower Cottage interior map', () => {
-  it('keeps the spawn, exit, treasure shelf and decoration interactions reachable', () => {
+  it('keeps the spawn, exit, Wonderbook, treasure shelf and decoration interactions reachable', () => {
     expect(
       isPointInsideWalkableBounds(
         COTTAGE_INTERIOR_MAP,
@@ -28,6 +28,7 @@ describe('Moonflower Cottage interior map', () => {
 
     const targets = [
       { id: 'exit', position: COTTAGE_INTERIOR_MAP.exit.approach },
+      { id: 'wonderbook-display', position: COTTAGE_INTERIOR_MAP.wonderbookDisplay.approach },
       { id: 'treasure-display', position: COTTAGE_INTERIOR_MAP.treasureDisplay.approach },
       ...COTTAGE_INTERIOR_MAP.decorationSlots.map((slot) => ({
         id: slot.id,
@@ -84,7 +85,7 @@ describe('Moonflower Cottage interior map', () => {
   });
 
   it('uses unique stable decoration slot IDs', () => {
-    const ids = COTTAGE_INTERIOR_MAP.decorationSlots.map((slot) => slot.id);
+    const ids = COTTAGE_INTERIOR_MAP.decorationSlots.map(({ id }) => id);
     expect(new Set(ids).size).toBe(ids.length);
     expect(ids.every((id) => id.startsWith('cottage-slot:'))).toBe(true);
   });
