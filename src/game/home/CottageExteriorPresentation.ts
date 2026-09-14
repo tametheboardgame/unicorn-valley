@@ -1,4 +1,4 @@
-import Phaser from 'phaser';
+import type Phaser from 'phaser';
 
 export const COTTAGE_EXTERIOR_SLOT_IDS = [
   'roof',
@@ -248,29 +248,13 @@ export function renderCottageExterior(
   // Asymmetric shingled roof with a broad eave, chimney and visible layered bands.
   const roof = name(scene.add.graphics().setDepth(10.15), 'roof', 'main');
   roof.fillStyle(0x75548f, 1);
-  roof.fillPoints(
-    [
-      { x: x - 226, y: y - 72 },
-      { x: x - 154, y: y - 170 },
-      { x: x + 26, y: y - 214 },
-      { x: x + 224, y: y - 88 },
-      { x: x + 204, y: y - 45 },
-      { x: x - 210, y: y - 42 },
-    ],
-    true,
-  );
+  roof.fillTriangle(x - 226, y - 72, x + 26, y - 214, x + 224, y - 88);
+  roof.fillTriangle(x - 226, y - 72, x + 224, y - 88, x + 204, y - 45);
+  roof.fillTriangle(x - 226, y - 72, x + 204, y - 45, x - 210, y - 42);
   roof.fillStyle(0x956cac, 1);
-  roof.fillPoints(
-    [
-      { x: x - 204, y: y - 76 },
-      { x: x - 140, y: y - 154 },
-      { x: x + 20, y: y - 194 },
-      { x: x + 198, y: y - 84 },
-      { x: x + 181, y: y - 62 },
-      { x: x - 190, y: y - 58 },
-    ],
-    true,
-  );
+  roof.fillTriangle(x - 204, y - 76, x + 20, y - 194, x + 198, y - 84);
+  roof.fillTriangle(x - 204, y - 76, x + 198, y - 84, x + 181, y - 62);
+  roof.fillTriangle(x - 204, y - 76, x + 181, y - 62, x - 190, y - 58);
   for (const [bandY, halfWidth] of [
     [y - 68, 192],
     [y - 98, 176],
