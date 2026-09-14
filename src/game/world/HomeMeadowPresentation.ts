@@ -46,12 +46,20 @@ function addWildflower(scene: Phaser.Scene, flower: MeadowFlower): void {
     [-4, 6],
     [-7, -1],
   ] as const) {
-    scene.add.ellipse(x + dx * scale, y + dy * scale, 11 * scale, 14 * scale, colour, 0.92).setDepth(5.45);
+    scene.add
+      .ellipse(x + dx * scale, y + dy * scale, 11 * scale, 14 * scale, colour, 0.92)
+      .setDepth(5.45);
   }
   scene.add.circle(x, y, 4.5 * scale, 0xffdfa0, 0.98).setDepth(5.5);
 }
 
-function addButterfly(scene: Phaser.Scene, x: number, y: number, colour: number, delay: number): void {
+function addButterfly(
+  scene: Phaser.Scene,
+  x: number,
+  y: number,
+  colour: number,
+  delay: number,
+): void {
   const leftWing = scene.add.ellipse(-6, 0, 11, 8, colour, 0.78).setAngle(-20);
   const rightWing = scene.add.ellipse(6, 0, 11, 8, colour, 0.78).setAngle(20);
   const body = scene.add.ellipse(0, 1, 3, 9, 0x6f5b62, 0.85);
