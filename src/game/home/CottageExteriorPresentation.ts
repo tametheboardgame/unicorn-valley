@@ -135,7 +135,13 @@ function addWindow(
   );
 }
 
-function addWindowBox(scene: Phaser.Scene, x: number, y: number, width: number, depth: number): void {
+function addWindowBox(
+  scene: Phaser.Scene,
+  x: number,
+  y: number,
+  width: number,
+  depth: number,
+): void {
   name(
     scene.add
       .rectangle(x, y, width, 18, 0x8a6049, 1)
@@ -224,7 +230,11 @@ export function renderCottageExterior(
     'wall-finish',
     'plaster-body',
   );
-  name(scene.add.rectangle(x, y + 139, 404, 42, 0xc5a982, 1).setDepth(9.9), 'wall-finish', 'stone-base');
+  name(
+    scene.add.rectangle(x, y + 139, 404, 42, 0xc5a982, 1).setDepth(9.9),
+    'wall-finish',
+    'stone-base',
+  );
   for (let offset = -170; offset <= 170; offset += 56) {
     name(
       scene.add
@@ -288,7 +298,11 @@ export function renderCottageExterior(
     'roof',
     'chimney',
   );
-  name(scene.add.rectangle(x - 122, y - 223, 66, 18, 0xb98867, 1).setDepth(10.06), 'roof', 'chimney-cap');
+  name(
+    scene.add.rectangle(x - 122, y - 223, 66, 18, 0xb98867, 1).setDepth(10.06),
+    'roof',
+    'chimney-cap',
+  );
 
   // Deliberately asymmetrical windows break the previous pair-of-eyes composition.
   addWindow(scene, x - 122, y + 31, 70, 66, 10.35);
@@ -308,7 +322,11 @@ export function renderCottageExterior(
   name(scene.add.ellipse(x + 18, y + 21, 84, 52, 0x82533f, 1).setDepth(10.51), 'door', 'door-arch');
   name(scene.add.circle(x + 45, y + 98, 7, 0xe6c276, 1).setDepth(10.65), 'door', 'knob');
   name(scene.add.rectangle(x + 18, y + 4, 130, 18, 0x8e694f, 1).setDepth(10.7), 'porch', 'canopy');
-  name(scene.add.triangle(x + 18, y - 12, -68, 22, 0, -28, 68, 22, 0xa87991, 1).setDepth(10.68), 'porch', 'canopy-roof');
+  name(
+    scene.add.triangle(x + 18, y - 12, -68, 22, 0, -28, 68, 22, 0xa87991, 1).setDepth(10.68),
+    'porch',
+    'canopy-roof',
+  );
 
   // Small house plaque replaces the oversized floating scene label.
   name(
@@ -359,14 +377,22 @@ export function renderCottageExterior(
     [x + 194, y + 24, 0x88ae73],
     [x + 179, y - 2, 0x6e945f],
   ] as const) {
-    name(scene.add.ellipse(leafX, leafY, 25, 15, colour, 0.95).setAngle(-24).setDepth(10.77), 'detail', `vine-leaf-${leafX}-${leafY}`);
+    name(
+      scene.add.ellipse(leafX, leafY, 25, 15, colour, 0.95).setAngle(-24).setDepth(10.77),
+      'detail',
+      `vine-leaf-${leafX}-${leafY}`,
+    );
   }
   for (const [bloomX, bloomY] of [
     [x + 195, y + 73],
     [x + 178, y + 35],
     [x + 193, y + 4],
   ] as const) {
-    name(scene.add.circle(bloomX, bloomY, 7, 0xd9a6f3, 1).setDepth(10.8), 'detail', `vine-bloom-${bloomX}-${bloomY}`);
+    name(
+      scene.add.circle(bloomX, bloomY, 7, 0xd9a6f3, 1).setDepth(10.8),
+      'detail',
+      `vine-bloom-${bloomX}-${bloomY}`,
+    );
   }
 
   // Two proper beds sit in front of the façade, replacing the two oversized corner flowers.
