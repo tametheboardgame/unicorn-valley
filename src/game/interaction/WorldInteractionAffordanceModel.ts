@@ -1,4 +1,8 @@
-import type { InteractionActionKind, InteractionCondition, InteractionTarget } from './InteractionTarget';
+import type {
+  InteractionActionKind,
+  InteractionCondition,
+  InteractionTarget,
+} from './InteractionTarget';
 
 export const WORLD_INTERACTION_AFFORDANCE_NAME_PREFIX = 'world-interaction-affordance:';
 
