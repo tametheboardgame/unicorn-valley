@@ -13,6 +13,11 @@ interface Stroke {
   depth: number;
 }
 
+const MOONFLOWER_WESTERN_GATE_THRESHOLD = [
+  { x: 125, y: 900 },
+  { x: 315, y: 900 },
+] as const;
+
 const MOONFLOWER_COTTAGE_BRANCH = [
   { x: 620, y: 900 },
   { x: 600, y: 805 },
@@ -33,6 +38,20 @@ const MOONFLOWER_WONDERBOOK_BRANCH = [
 
 const PATHS: Readonly<Partial<Record<string, readonly Stroke[]>>> = {
   MoonflowerGladeScene: [
+    {
+      points: MOONFLOWER_WESTERN_GATE_THRESHOLD,
+      width: 128,
+      colour: 0xd7c18f,
+      alpha: 1,
+      depth: 2.42,
+    },
+    {
+      points: MOONFLOWER_WESTERN_GATE_THRESHOLD,
+      width: 108,
+      colour: 0xf0dfb2,
+      alpha: 1,
+      depth: 2.43,
+    },
     {
       points: EXPLORATION_MAIN_ROUTES.MoonflowerGladeScene,
       width: 128,
