@@ -22,7 +22,7 @@ interface FixedGladeInteractionDefinition {
   actionKind: InteractionActionKind;
   position: { x: number; y: number };
   radius: number;
-  icon: string;
+  worldAffordance: boolean;
 }
 
 interface InteractionRuntime {
@@ -32,6 +32,7 @@ interface InteractionRuntime {
   actionKind: InteractionActionKind;
   position: { x: number; y: number };
   radius: number;
+  worldAffordance: boolean;
   container: Phaser.GameObjects.Container;
   activate: () => void;
 }
@@ -56,7 +57,7 @@ const FIXED_INTERACTIONS: readonly FixedGladeInteractionDefinition[] = [
     actionKind: 'inspect',
     position: { x: 2140, y: 710 },
     radius: 170,
-    icon: '🌳',
+    worldAffordance: false,
   },
   {
     id: 'moonflower-bridge',
@@ -65,7 +66,7 @@ const FIXED_INTERACTIONS: readonly FixedGladeInteractionDefinition[] = [
     actionKind: 'interact',
     position: { x: 1400, y: 900 },
     radius: 145,
-    icon: '🌉',
+    worldAffordance: true,
   },
   {
     id: 'stream-bank',
@@ -74,7 +75,7 @@ const FIXED_INTERACTIONS: readonly FixedGladeInteractionDefinition[] = [
     actionKind: 'interact',
     position: { x: 1240, y: 1180 },
     radius: 135,
-    icon: '💧',
+    worldAffordance: true,
   },
   {
     id: 'garden-corner',
@@ -83,16 +84,7 @@ const FIXED_INTERACTIONS: readonly FixedGladeInteractionDefinition[] = [
     actionKind: 'inspect',
     position: { x: 1080, y: 540 },
     radius: 100,
-    icon: '🌸',
-  },
-  {
-    id: 'cottage-step',
-    label: 'Cottage step',
-    actionLabel: 'Sit',
-    actionKind: 'interact',
-    position: { x: 760, y: 720 },
-    radius: 115,
-    icon: '🏡',
+    worldAffordance: true,
   },
   {
     id: 'home-fireflies',
@@ -101,7 +93,7 @@ const FIXED_INTERACTIONS: readonly FixedGladeInteractionDefinition[] = [
     actionKind: 'inspect',
     position: { x: 2320, y: 1480 },
     radius: 145,
-    icon: '✨',
+    worldAffordance: true,
   },
 ];
 
@@ -187,27 +179,13 @@ export class GladeDepthWorldManager {
     state: GladeDepthState,
     definition: FixedGladeInteractionDefinition,
   ): InteractionRuntime {
-    const icon = state.scene.add
-      .text(0, 0, definition.icon, {
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: definition.id === 'hollow-tree' ? '28px' : '22px',
-      })
-      .setOrigin(0.5)
-      .setAlpha(definition.id === 'hollow-tree' ? 0.5 : 0.7);
+    // Interaction presentation is shared. This invisible anchor keeps runtime ownership and
+    // visibility semantics without drawing the old house/tree/bridge/etc emoji marker layer.
     const container = state.scene.add
-      .container(definition.position.x, definition.position.y, [icon])
+      .container(definition.position.x, definition.position.y)
       .setName(`glade-depth:${definition.id}`)
-      .setDepth(worldDepthForY(definition.position.y + 20, 0.42));
+      .setVisible(false);
     const activate = () => this.activateFixed(state, definition);
-    state.scene.tweens.add({
-      targets: icon,
-      alpha: { from: 0.38, to: 0.85 },
-      y: { from: -2, to: 2 },
-      duration: 1200,
-      yoyo: true,
-      repeat: -1,
-      ease: 'Sine.InOut',
-    });
     return {
       id: definition.id,
       label: definition.label,
@@ -215,6 +193,7 @@ export class GladeDepthWorldManager {
       actionKind: definition.actionKind,
       position: definition.position,
       radius: definition.radius,
+      worldAffordance: definition.worldAffordance,
       container,
       activate,
     };
@@ -266,14 +245,6 @@ export class GladeDepthWorldManager {
       return;
     }
 
-    if (definition.id === 'cottage-step') {
-      this.showFeedback(
-        state,
-        'You sit on the warm cottage step for a moment. From here the bridge, garden and path to the wider valley all fit into one view. 🏡',
-      );
-      return;
-    }
-
     this.showFeedback(
       state,
       'The little fireflies gather into a loose star, orbit your horn once, then drift back towards the Moonflower Field. ✨',
@@ -312,28 +283,11 @@ export class GladeDepthWorldManager {
     state: GladeDepthState,
     definition: SecretDiscoveryDefinition,
   ): InteractionRuntime {
-    const icon = state.scene.add
-      .text(0, 0, definition.pattern === 'hidden-path' ? '🌸' : '🦋', {
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: definition.pattern === 'hidden-path' ? '27px' : '24px',
-      })
-      .setOrigin(0.5)
-      .setAlpha(0.72);
     const container = state.scene.add
-      .container(definition.position.x, definition.position.y, [icon])
-      .setName(`glade-butterfly-secret:${definition.id}`)
-      .setDepth(worldDepthForY(definition.position.y + 18, 0.48));
+      .container(definition.position.x, definition.position.y)
+      .setName(`glade-depth:secret:${definition.id}`)
+      .setVisible(false);
     const activate = () => this.activateSecret(state, definition);
-    state.scene.tweens.add({
-      targets: icon,
-      x: { from: -5, to: 5 },
-      y: { from: -4, to: 4 },
-      angle: { from: -6, to: 6 },
-      duration: 780,
-      yoyo: true,
-      repeat: -1,
-      ease: 'Sine.InOut',
-    });
     return {
       id: definition.id,
       label: definition.label,
@@ -341,6 +295,7 @@ export class GladeDepthWorldManager {
       actionKind: 'inspect',
       position: definition.position,
       radius: definition.interactionRadius,
+      worldAffordance: true,
       container,
       activate,
     };
@@ -353,6 +308,7 @@ export class GladeDepthWorldManager {
       label: runtime.label,
       actionLabel: runtime.actionLabel,
       actionKind: runtime.actionKind,
+      worldAffordance: runtime.worldAffordance,
       position: runtime.position,
       interactionRadius: runtime.radius,
       priority: 15,
