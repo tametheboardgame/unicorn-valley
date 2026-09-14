@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   AMBIENT_STREAM_FISH_NAME_PREFIX,
   MOONFLOWER_STREAM_FISHING_HOOK,
+  MOONFLOWER_STREAM_REED_BEDS,
   MOONFLOWER_STREAM_SURFACE_MARKS,
   resolveAmbientFishRun,
 } from './MoonflowerStreamLifeModel';
@@ -27,6 +28,16 @@ describe('MoonflowerStreamLife', () => {
     expect(new Set(MOONFLOWER_STREAM_SURFACE_MARKS.map((mark) => mark.width)).size).toBeGreaterThan(
       4,
     );
+  });
+
+  it('keeps every reed-bed footprint rooted on land instead of under the stream', () => {
+    const { left, right } = MOONFLOWER_STREAM_FISHING_HOOK.bounds;
+
+    for (const bed of MOONFLOWER_STREAM_REED_BEDS) {
+      const bedLeft = bed.x - bed.width / 2;
+      const bedRight = bed.x + bed.width / 2;
+      expect(bedRight <= left || bedLeft >= right).toBe(true);
+    }
   });
 
   it('exposes a stable future fishing hook without implementing fishing', () => {
