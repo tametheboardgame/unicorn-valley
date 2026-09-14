@@ -371,6 +371,7 @@ export class MoonflowerGladeScene extends Phaser.Scene {
     this.add.circle(2060, 420, 360, 0x9bd3ac, 0.5).setDepth(1);
 
     this.createPaths();
+    this.createWesternGate();
     this.createStreamAndBridge();
     this.createCottage();
     this.createGarden();
@@ -387,8 +388,10 @@ export class MoonflowerGladeScene extends Phaser.Scene {
     const path = this.add.graphics().setDepth(2);
     path.lineStyle(112, 0xead7aa, 0.92);
     path.beginPath();
-    path.moveTo(560, 720);
-    path.lineTo(830, 820);
+    path.moveTo(145, 815);
+    path.lineTo(340, 810);
+    path.lineTo(600, 790);
+    path.lineTo(850, 825);
     path.lineTo(1100, 870);
     path.lineTo(1400, 900);
     path.lineTo(1750, 900);
@@ -396,19 +399,66 @@ export class MoonflowerGladeScene extends Phaser.Scene {
     path.lineTo(2690, 900);
     path.strokePath();
 
-    path.lineStyle(92, 0xe4cf9f, 0.9);
+    path.lineStyle(68, 0xe8d5a9, 0.9);
     path.beginPath();
-    path.moveTo(1770, 930);
-    path.lineTo(1840, 1160);
-    path.lineTo(1940, 1420);
-    path.lineTo(1980, 1720);
+    path.moveTo(620, 795);
+    path.lineTo(585, 748);
+    path.lineTo(560, 705);
+    path.strokePath();
+
+    path.lineStyle(82, 0xe4cf9f, 0.9);
+    path.beginPath();
+    path.moveTo(1770, 920);
+    path.lineTo(1818, 1045);
+    path.lineTo(1890, 1185);
     path.strokePath();
 
     path.lineStyle(56, 0xf1e3bd, 0.75);
     path.beginPath();
-    path.moveTo(760, 850);
+    path.moveTo(790, 820);
     path.lineTo(840, 1070);
     path.strokePath();
+  }
+
+  private createWesternGate(): void {
+    const gate = MOONFLOWER_GLADE_MAP.landmarks.find((landmark) => landmark.id === 'western-gate');
+    if (!gate) {
+      return;
+    }
+
+    const x = gate.position.x;
+    const y = gate.position.y;
+
+    const hedge = this.add.graphics().setDepth(7);
+    hedge.fillStyle(0x4f8b61, 0.98);
+    hedge.fillRoundedRect(82, 110, 92, y - 205, 36);
+    hedge.fillRoundedRect(82, y + 95, 92, 1800 - (y + 185), 36);
+    hedge.fillStyle(0x6fa878, 0.9);
+    for (let leafY = 160; leafY < y - 105; leafY += 92) {
+      hedge.fillCircle(128, leafY, 58);
+    }
+    for (let leafY = y + 170; leafY < 1710; leafY += 92) {
+      hedge.fillCircle(128, leafY, 58);
+    }
+
+    this.add.rectangle(x - 30, y, 24, 196, 0x8b6549, 1).setDepth(9);
+    this.add.rectangle(x + 30, y, 24, 196, 0x8b6549, 1).setDepth(9);
+    for (const gateY of [y - 60, y, y + 60]) {
+      this.add.rectangle(x, gateY, 72, 16, 0xb98b5e, 1).setDepth(9);
+    }
+    this.add.circle(x + 18, y, 7, 0xd7dce4, 1).setDepth(10);
+
+    this.add
+      .text(235, y - 118, 'Old Garden Gate', {
+        color: '#5d4358',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '17px',
+        fontStyle: 'bold',
+        backgroundColor: '#fff4d9e8',
+        padding: { x: 9, y: 5 },
+      })
+      .setOrigin(0.5)
+      .setDepth(11);
   }
 
   private createStreamAndBridge(): void {
@@ -528,6 +578,18 @@ export class MoonflowerGladeScene extends Phaser.Scene {
     for (const [x, y, scale] of positions) {
       this.addMoonflower(x, y, scale);
     }
+
+    this.add
+      .text(2055, 1015, 'Moonflower Field', {
+        color: '#5c416e',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '19px',
+        fontStyle: 'bold',
+        backgroundColor: '#fff8eccc',
+        padding: { x: 10, y: 6 },
+      })
+      .setOrigin(0.5)
+      .setDepth(12);
   }
 
   private createEntranceMarkers(): void {
