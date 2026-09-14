@@ -397,27 +397,27 @@ export class WorldOcclusionManager {
       overlays.push(tree);
     }
 
-    overlays.push(this.createEnhancedHollowTreeOccluder(scene));
+    overlays.push(this.createRefinedHollowTreeOccluder(scene));
     return overlays;
   }
 
-  private createEnhancedHollowTreeOccluder(scene: Phaser.Scene): Phaser.GameObjects.Graphics {
+  private createRefinedHollowTreeOccluder(scene: Phaser.Scene): Phaser.GameObjects.Graphics {
     const tree = scene.add.graphics().setDepth(worldDepthForY(695));
 
-    tree.fillStyle(0x7f5943, 1);
-    tree.fillRoundedRect(2115, 395, 170, 300, 58);
-    tree.fillStyle(0x6d4c3c, 1);
-    tree.fillTriangle(2140, 650, 2080, 705, 2185, 665);
-    tree.fillTriangle(2260, 650, 2320, 704, 2212, 666);
-    tree.fillTriangle(2190, 655, 2155, 720, 2215, 665);
+    // Keep the clean original silhouette as the occluding copy so it aligns with the
+    // scene-level tree underneath instead of creating a competing second shape.
+    tree.fillStyle(0x8c6349, 1);
+    tree.fillRoundedRect(2115, 395, 170, 300, 60);
 
-    tree.lineStyle(7, 0xa57a59, 0.48);
+    // Restrained bark texture only. No long pointed roots.
+    tree.lineStyle(6, 0xa87959, 0.42);
     for (const [startX, startY, endX, endY] of [
-      [2160, 420, 2145, 520],
-      [2200, 410, 2188, 500],
-      [2240, 430, 2252, 520],
-      [2162, 570, 2148, 630],
-      [2240, 560, 2250, 635],
+      [2150, 430, 2138, 515],
+      [2182, 415, 2173, 485],
+      [2220, 420, 2213, 495],
+      [2250, 445, 2260, 530],
+      [2153, 565, 2145, 628],
+      [2248, 570, 2256, 632],
     ] as const) {
       tree.beginPath();
       tree.moveTo(startX, startY);
@@ -425,9 +425,9 @@ export class WorldOcclusionManager {
       tree.strokePath();
     }
 
-    tree.fillStyle(0x3d302d, 0.98);
+    tree.fillStyle(0x3b2f30, 0.98);
     tree.fillEllipse(2200, 555, 82, 118);
-    tree.lineStyle(5, 0xc3986b, 0.34);
+    tree.lineStyle(6, 0xb98a61, 0.42);
     tree.strokeEllipse(2200, 555, 94, 132);
 
     tree.fillStyle(0x477a58, 1);
@@ -436,18 +436,19 @@ export class WorldOcclusionManager {
     tree.fillStyle(0x5f966a, 1);
     tree.fillCircle(2190, 280, 180);
     tree.fillCircle(2290, 420, 130);
-    tree.fillStyle(0x79ad72, 0.72);
-    tree.fillCircle(2105, 292, 62);
-    tree.fillCircle(2268, 258, 70);
+    tree.fillStyle(0x76aa72, 0.62);
+    tree.fillCircle(2105, 292, 58);
+    tree.fillCircle(2268, 258, 64);
 
-    tree.fillStyle(0x7aa56c, 0.82);
-    tree.fillEllipse(2140, 622, 52, 20);
-    tree.fillEllipse(2270, 616, 46, 18);
-    tree.fillEllipse(2180, 678, 62, 16);
+    // Soft moss at the base gives it age without changing the collision silhouette.
+    tree.fillStyle(0x7aa56c, 0.8);
+    tree.fillEllipse(2146, 656, 58, 18);
+    tree.fillEllipse(2258, 650, 52, 17);
+    tree.fillEllipse(2196, 679, 70, 16);
 
-    tree.fillStyle(0xb98ce8, 0.26);
+    tree.fillStyle(0xb98ce8, 0.28);
     tree.fillCircle(2200, 555, 18);
-    tree.fillStyle(0xe2c9ff, 0.26);
+    tree.fillStyle(0xe2c9ff, 0.3);
     tree.fillCircle(2196, 549, 7);
 
     return tree;
