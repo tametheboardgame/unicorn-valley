@@ -13,6 +13,24 @@ interface Stroke {
   depth: number;
 }
 
+const MOONFLOWER_COTTAGE_BRANCH = [
+  { x: 620, y: 900 },
+  { x: 600, y: 805 },
+  { x: 560, y: 705 },
+] as const;
+
+const MOONFLOWER_FIELD_BRANCH = [
+  { x: 1770, y: 900 },
+  { x: 1818, y: 1045 },
+  { x: 1890, y: 1185 },
+] as const;
+
+const MOONFLOWER_WONDERBOOK_BRANCH = [
+  { x: 790, y: 900 },
+  { x: 815, y: 990 },
+  { x: 840, y: 1070 },
+] as const;
+
 const PATHS: Readonly<Partial<Record<string, readonly Stroke[]>>> = {
   MoonflowerGladeScene: [
     {
@@ -30,13 +48,43 @@ const PATHS: Readonly<Partial<Record<string, readonly Stroke[]>>> = {
       depth: 2.43,
     },
     {
-      points: [
-        { x: 1770, y: 930 },
-        { x: 1840, y: 1160 },
-        { x: 1940, y: 1420 },
-        { x: 1980, y: 1720 },
-      ],
-      width: 84,
+      points: MOONFLOWER_COTTAGE_BRANCH,
+      width: 82,
+      colour: 0xd7c18f,
+      alpha: 1,
+      depth: 2.42,
+    },
+    {
+      points: MOONFLOWER_COTTAGE_BRANCH,
+      width: 64,
+      colour: 0xf0dfb2,
+      alpha: 1,
+      depth: 2.43,
+    },
+    {
+      points: MOONFLOWER_FIELD_BRANCH,
+      width: 92,
+      colour: 0xd7c18f,
+      alpha: 1,
+      depth: 2.42,
+    },
+    {
+      points: MOONFLOWER_FIELD_BRANCH,
+      width: 72,
+      colour: 0xf0dfb2,
+      alpha: 0.98,
+      depth: 2.43,
+    },
+    {
+      points: MOONFLOWER_WONDERBOOK_BRANCH,
+      width: 64,
+      colour: 0xd7c18f,
+      alpha: 0.96,
+      depth: 2.42,
+    },
+    {
+      points: MOONFLOWER_WONDERBOOK_BRANCH,
+      width: 48,
       colour: 0xf0dfb2,
       alpha: 0.96,
       depth: 2.43,
@@ -170,6 +218,24 @@ const PATHS: Readonly<Partial<Record<string, readonly Stroke[]>>> = {
   ],
 };
 
+function removeMoonflowerLegacyPresentation(scene: Phaser.Scene): void {
+  for (const object of [...scene.children.list]) {
+    if (
+      object instanceof Phaser.GameObjects.Graphics &&
+      object.name !== PATH_POLISH_NAME &&
+      object.depth === 2
+    ) {
+      object.destroy();
+    }
+  }
+
+  const duplicateFieldLabel = scene.children.list.find(
+    (object): object is Phaser.GameObjects.Text =>
+      object instanceof Phaser.GameObjects.Text && object.text === 'Moonflower Field',
+  );
+  duplicateFieldLabel?.destroy();
+}
+
 function drawRoundedStroke(scene: Phaser.Scene, stroke: Stroke): void {
   if (stroke.points.length < 2) {
     return;
@@ -207,6 +273,11 @@ export class ExplorationPathPolishManager {
       if (!strokes || scene.children.getByName(PATH_POLISH_ANCHOR)) {
         continue;
       }
+
+      if (scene.scene.key === 'MoonflowerGladeScene') {
+        removeMoonflowerLegacyPresentation(scene);
+      }
+
       scene.add.zone(-64, -64, 2, 2).setName(PATH_POLISH_ANCHOR).setVisible(false);
       for (const stroke of strokes) {
         drawRoundedStroke(scene, stroke);
