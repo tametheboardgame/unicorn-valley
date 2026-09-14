@@ -52,21 +52,6 @@ export const MOONFLOWER_GLADE_INTERACTIONS = [
     },
   },
   {
-    id: 'interaction:display-stump',
-    label: 'Wonderbook',
-    actionLabel: 'Open book',
-    actionKind: 'inspect',
-    position: landmarkApproach('display-stump'),
-    interactionRadius: 145,
-    result: {
-      type: 'scene-transition',
-      sceneKey: 'WonderbookScene',
-      payload: {
-        returnScene: 'MoonflowerGladeScene',
-      },
-    },
-  },
-  {
     id: 'interaction:moonflower-patch',
     label: 'Moonflower Field',
     actionLabel: 'Visit flower patch',
