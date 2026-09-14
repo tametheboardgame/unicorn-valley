@@ -132,7 +132,7 @@ function createReedBed(
   offsets.forEach((normalised, index) => {
     const localX = normalised * width;
     const height = heights[(index + variant) % heights.length];
-    const lean = ((index + variant) % 3 - 1) * 5;
+    const lean = (((index + variant) % 3) - 1) * 5;
     const colour = greens[(index + variant) % greens.length];
     const stalk = scene.add
       .rectangle(localX, -height / 2 + 5, 4 + ((index + variant) % 2), height, colour, 0.94)
@@ -166,9 +166,9 @@ function ensureReedBeds(scene: Phaser.Scene): void {
     return;
   }
 
-  const root = scene.add.container(0, 0).setName(REED_ROOT_NAME);
+  scene.add.container(0, 0).setName(REED_ROOT_NAME).setVisible(false);
   MOONFLOWER_STREAM_REED_BEDS.forEach((bed, index) => {
-    root.add(createReedBed(scene, bed.id, bed.x, bed.y, bed.width, index));
+    createReedBed(scene, bed.id, bed.x, bed.y, bed.width, index);
   });
 }
 
