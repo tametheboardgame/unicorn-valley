@@ -52,19 +52,6 @@ export const MOONFLOWER_GLADE_INTERACTIONS = [
     },
   },
   {
-    id: 'interaction:moonflower-patch',
-    label: 'Moonflower Field',
-    actionLabel: 'Visit flower patch',
-    actionKind: 'enter',
-    position: landmarkApproach('moonflower-field'),
-    interactionRadius: 180,
-    priority: 12,
-    result: {
-      type: 'scene-transition',
-      sceneKey: 'MoonflowerPatchScene',
-    },
-  },
-  {
     id: 'interaction:sunbeam-village-gate',
     label: 'Sunbeam Village',
     actionLabel: 'Go towards Rainbow Meadow',
