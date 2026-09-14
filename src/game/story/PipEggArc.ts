@@ -77,8 +77,7 @@ export const PIP_EGG_CLUE_SPOTS = [
     label: 'Strange egg',
     actionLabel: 'Pick up the egg',
     position: { x: 2075, y: 1260 },
-    feedback:
-      'You found a strange egg!\nTake it back to Pip. He will know how to keep it safe.',
+    feedback: 'You found a strange egg!\nTake it back to Pip. He will know how to keep it safe.',
   },
 ] as const satisfies readonly PipEggClueSpot[];
 
@@ -270,10 +269,7 @@ export class PipEggArcService {
     }
 
     const saved = this.saveService.save(save);
-    if (
-      currentStage !== 'hatch-ready' &&
-      saved.world.flags[PIP_EGG_HATCH_READY_FLAG] === true
-    ) {
+    if (currentStage !== 'hatch-ready' && saved.world.flags[PIP_EGG_HATCH_READY_FLAG] === true) {
       this.events.emit('WORLD_FLAG_CHANGED', { flagId: PIP_EGG_HATCH_READY_FLAG, value: true });
     }
     return getPipEggStage(saved);
