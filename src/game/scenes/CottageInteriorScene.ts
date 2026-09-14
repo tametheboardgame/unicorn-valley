@@ -22,6 +22,7 @@ import {
   saveLocationCheckpoint,
 } from '../save/saveLocationCheckpoint';
 import { InteractionPrompt } from '../ui/InteractionPrompt';
+import { renderWonderbookWorldProp } from '../wonderbook/WonderbookWorldProp';
 import { COTTAGE_INTERIOR_LOCATION_ID, COTTAGE_INTERIOR_MAP } from '../world/CottageInteriorMap';
 import { MOONFLOWER_GLADE_MAP, setMoonflowerGladePlayerSpawn } from '../world/MoonflowerGladeMap';
 
@@ -216,6 +217,22 @@ export class CottageInteriorScene extends Phaser.Scene {
           sceneKey: 'MoonflowerGladeScene',
         },
       },
+      {
+        id: 'interaction:cottage-wonderbook',
+        label: 'Wonderbook',
+        actionLabel: 'Open book',
+        actionKind: 'inspect',
+        position: COTTAGE_INTERIOR_MAP.wonderbookDisplay.approach,
+        interactionRadius: 150,
+        priority: 28,
+        result: {
+          type: 'scene-transition',
+          sceneKey: 'WonderbookScene',
+          payload: {
+            returnScene: 'CottageInteriorScene',
+          },
+        },
+      },
       ...decorationInteractions,
       {
         id: 'interaction:cottage-treasure-display',
@@ -247,6 +264,12 @@ export class CottageInteriorScene extends Phaser.Scene {
     }
 
     if (target.result.type === 'scene-transition') {
+      if (target.result.sceneKey === 'WonderbookScene') {
+        this.scene.launch(target.result.sceneKey, target.result.payload);
+        this.scene.pause();
+        return;
+      }
+
       if (target.result.sceneKey === 'MoonflowerGladeScene') {
         const cottage = MOONFLOWER_GLADE_MAP.landmarks.find(
           (landmark) => landmark.id === 'moonflower-cottage',
@@ -298,6 +321,7 @@ export class CottageInteriorScene extends Phaser.Scene {
     this.createTeaTable();
     this.createSofa();
     this.createTreasureShelf();
+    renderWonderbookWorldProp(this, map.wonderbookDisplay.position);
     this.createDoor();
     this.createMoonflowerDetails();
   }
