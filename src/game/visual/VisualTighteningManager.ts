@@ -65,9 +65,6 @@ function decorateGlade(scene: Phaser.Scene): void {
     }
     markDetail(scene.add.ellipse(x, y + 7, 68, 20, 0xbda986, 0.48).setDepth(4.5));
   }
-
-  markDetail(scene.add.ellipse(850, 1099, 76, 28, 0x9f7757, 0.5).setDepth(11));
-  markDetail(scene.add.ellipse(850, 1099, 43, 16, 0xe0bb86, 0.46).setDepth(11.1));
 }
 
 function decorateVillage(scene: Phaser.Scene): void {
@@ -97,7 +94,7 @@ function decorateVillage(scene: Phaser.Scene): void {
     markDetail(
       scene.add
         .ellipse(1500, 1050, radius * 2, radius * 0.55, 0xe9ffff, 0.28)
-        .setStrokeStyle(3, 0xffffff, 0.3)
+        .setStrokeStyle(4, 0xffffff, alpha + 0.08)
         .setDepth(9.2),
     );
   }
