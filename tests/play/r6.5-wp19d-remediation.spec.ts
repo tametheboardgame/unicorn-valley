@@ -224,7 +224,7 @@ test.describe('R6.5-WP19D interaction remediation', () => {
     );
     await waitForTalkTarget(page, 'MoonflowerGladeScene', 'Juniper');
 
-    await page.keyboard.press('KeyE');
+    await page.keyboard.press('KeyE', { delay: 120 });
     await expect
       .poll(async () => {
         const current = await getScene(page, 'MoonflowerGladeScene');
@@ -252,7 +252,7 @@ test.describe('R6.5-WP19D interaction remediation', () => {
       ),
     ).toBeLessThan(1);
 
-    await page.keyboard.press('KeyE');
+    await page.keyboard.press('KeyE', { delay: 120 });
     await page.waitForTimeout(250);
     scene = await getScene(page, 'MoonflowerGladeScene');
     expect(
