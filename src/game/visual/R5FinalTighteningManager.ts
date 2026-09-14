@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { ensureMoonflowerStreamLife } from '../atmosphere/MoonflowerStreamLife';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
 
 const FIREFLY_BUTTON_WIDTH = 244;
@@ -130,7 +131,9 @@ export class R5FinalTighteningManager {
       tightenSuggestionCard(scene);
       strengthenRain(scene);
 
-      if (scene.scene.key === 'FireflyLanternScene') {
+      if (scene.scene.key === 'MoonflowerGladeScene') {
+        ensureMoonflowerStreamLife(scene);
+      } else if (scene.scene.key === 'FireflyLanternScene') {
         tightenFireflySelector(scene);
       } else if (scene.scene.key === 'CottageInteriorScene') {
         tightenCottageInterior(scene);
