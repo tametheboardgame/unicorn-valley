@@ -75,15 +75,7 @@ function drawRoundedPanelShadow(
   alpha: number,
 ): void {
   graphics.clear();
-  drawUiPanelShadow(
-    graphics,
-    x,
-    y,
-    width,
-    height,
-    UI_DESIGN_TOKENS.radius.panelPx,
-    { alpha },
-  );
+  drawUiPanelShadow(graphics, x, y, width, height, UI_DESIGN_TOKENS.radius.panelPx, { alpha });
 }
 
 function drawRoundedRibbon(
@@ -130,15 +122,7 @@ function drawRoundedControlShadow(
   alpha: number,
 ): void {
   graphics.clear();
-  drawUiPanelShadow(
-    graphics,
-    x,
-    y,
-    width,
-    height,
-    UI_DESIGN_TOKENS.radius.controlPx,
-    { alpha },
-  );
+  drawUiPanelShadow(graphics, x, y, width, height, UI_DESIGN_TOKENS.radius.controlPx, { alpha });
 }
 
 export class DialogueCard {
@@ -454,13 +438,7 @@ export class DialogueCard {
       spec.panel.height,
       0.28,
     );
-    drawRoundedPanel(
-      this.panel,
-      spec.panel.x,
-      spec.panel.y,
-      spec.panel.width,
-      spec.panel.height,
-    );
+    drawRoundedPanel(this.panel, spec.panel.x, spec.panel.y, spec.panel.width, spec.panel.height);
     drawRoundedRibbon(
       this.speakerRibbon,
       spec.ribbon.x,
