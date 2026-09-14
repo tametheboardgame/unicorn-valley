@@ -87,7 +87,7 @@ export const MOONFLOWER_GLADE_MAP = {
       id: 'hollow-tree',
       label: 'Hollow Tree',
       position: { x: 2200, y: 490 },
-      approach: { x: 2140, y: 710 },
+      approach: { x: 2050, y: 700 },
     },
     {
       id: 'moonflower-field',
@@ -132,6 +132,14 @@ export const MOONFLOWER_GLADE_MAP = {
     { id: 'collision:woodland-bottom', x: 1400, y: 1655, width: 2520, height: 170 },
     { id: 'collision:woodland-right-north', x: 2640, y: 430, width: 190, height: 650 },
     { id: 'collision:woodland-right-south', x: 2640, y: 1370, width: 190, height: 650 },
+    // The original top-row trees extend below the shared woodland band. These narrow
+    // trunk/root blockers match the visible bases without turning their canopies solid.
+    { id: 'collision:top-tree-430', x: 430, y: 225, width: 58, height: 120 },
+    { id: 'collision:top-tree-820', x: 820, y: 245, width: 58, height: 120 },
+    { id: 'collision:top-tree-1180', x: 1180, y: 225, width: 58, height: 120 },
+    { id: 'collision:top-tree-1640', x: 1640, y: 225, width: 58, height: 120 },
+    { id: 'collision:top-tree-1980', x: 1980, y: 225, width: 58, height: 120 },
+    { id: 'collision:top-tree-2520', x: 2520, y: 245, width: 58, height: 120 },
     {
       id: 'collision:stream-north',
       x: 1400,
@@ -146,7 +154,9 @@ export const MOONFLOWER_GLADE_MAP = {
       width: 220,
       height: SOUTH_STREAM_HEIGHT,
     },
-    { id: 'collision:hollow-tree', x: 2200, y: 520, width: 170, height: 220 },
+    // The Hollow Tree trunk and rounded root flare extend substantially below the old
+    // prototype blocker. Match that visible footprint so the player cannot stand under it.
+    { id: 'collision:hollow-tree', x: 2200, y: 550, width: 190, height: 280 },
   ] satisfies readonly CollisionRectangle[],
 } as const;
 
