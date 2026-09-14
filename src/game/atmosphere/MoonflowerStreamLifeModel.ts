@@ -126,10 +126,6 @@ export function resolveAmbientFishLateralOffset(
         Math.sin(angle * 0.52 + 1.1) * behaviour.lateralAmplitude * 0.28
       );
     case 'zigzag':
-      return (
-        Math.asin(Math.sin(angle)) *
-        (2 / Math.PI) *
-        behaviour.lateralAmplitude
-      );
+      return Math.asin(Math.sin(angle)) * (2 / Math.PI) * behaviour.lateralAmplitude;
   }
 }
