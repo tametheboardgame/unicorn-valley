@@ -145,7 +145,11 @@ function createFish(
   return { container: fish, index, timer: null, surfaceTimer: null };
 }
 
-function createSurfaceRipple(scene: Phaser.Scene, root: Phaser.GameObjects.Container, fish: FishRuntime): void {
+function createSurfaceRipple(
+  scene: Phaser.Scene,
+  root: Phaser.GameObjects.Container,
+  fish: FishRuntime,
+): void {
   if (!fish.container.active || isReducedMotionEnabled()) {
     return;
   }
@@ -229,16 +233,16 @@ export function ensureMoonflowerStreamLife(scene: Phaser.Scene): void {
   }
 
   retireLegacyStreamArt(scene);
-  const root = scene.add
-    .container(STREAM_X, STREAM_Y)
-    .setName(ROOT_NAME)
-    .setDepth(5.08);
+  const root = scene.add.container(STREAM_X, STREAM_Y).setName(ROOT_NAME).setDepth(5.08);
   createSurface(scene, root);
   const fish = createFishLife(scene, root);
   const runtime: StreamRuntime = { root, fish, timers: [] };
   runtimes.set(scene, runtime);
 
   const destroy = () => {
+    if (runtimes.get(scene) !== runtime) {
+      return;
+    }
     for (const entry of fish) {
       entry.timer?.destroy();
       entry.surfaceTimer?.destroy();
