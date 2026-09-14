@@ -36,7 +36,7 @@ export const COTTAGE_INTERIOR_MAP = {
     { id: 'tea-table', x: 900, y: 500, width: 230, height: 165 },
     { id: 'sofa', x: 1245, y: 735, width: 300, height: 145 },
     { id: 'treasure-shelf', x: 1515, y: 345, width: 220, height: 95 },
-    { id: 'wonderbook-lectern', x: 1490, y: 930, width: 130, height: 105 },
+    { id: 'wonderbook-lectern', x: 1490, y: 930, width: 110, height: 105 },
   ] satisfies readonly CollisionRectangle[],
   exit: {
     id: 'cottage-exit',
