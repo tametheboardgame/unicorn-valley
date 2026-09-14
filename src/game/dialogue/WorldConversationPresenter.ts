@@ -33,7 +33,9 @@ interface ActiveConversation {
   supportingPortraitRequestId: number;
 }
 
-function latestVisibleNamedObject<T extends Phaser.GameObjects.GameObject>(
+function latestVisibleNamedObject<
+  T extends Phaser.GameObjects.GameObject & { visible: boolean },
+>(
   scene: Phaser.Scene,
   name: string,
   matchesType: (object: Phaser.GameObjects.GameObject) => object is T,
