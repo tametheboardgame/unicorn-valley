@@ -3,12 +3,12 @@ import { WILLOW_MOONFLOWERS_QUEST_ID } from '../../content/r2Quests';
 import { InventoryService } from '../inventory/InventoryService';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
+import { worldDepthForY } from '../world/WorldDepth';
 import {
   WILLOW_MOONFLOWER_ITEM_ID,
   WILLOW_MOONFLOWER_REQUIRED_QUANTITY,
   getWillowStoryPhase,
 } from './WillowMoonflowersStory';
-import { worldDepthForY } from '../world/WorldDepth';
 
 const COLLECTION_RADIUS = 82;
 const LEGACY_THRESHOLD_GLIMMER_NAME = 'moonflower-field-threshold-glimmer';
@@ -149,7 +149,16 @@ export class WillowMoonflowerGladeWorldManager {
       .setOrigin(0.5);
 
     const container = scene.add
-      .container(x, y, [outerGlow, innerGlow, stem, leafLeft, leafRight, ...petals, centre, sparkle])
+      .container(x, y, [
+        outerGlow,
+        innerGlow,
+        stem,
+        leafLeft,
+        leafRight,
+        ...petals,
+        centre,
+        sparkle,
+      ])
       .setName(`willow-moonflower:${x}:${y}`)
       .setDepth(worldDepthForY(y + 55, 0.3));
 
@@ -182,7 +191,8 @@ export class WillowMoonflowerGladeWorldManager {
     }
 
     const index = state.flowers.findIndex(
-      (flower) => Phaser.Math.Distance.Between(player.x, player.y, flower.x, flower.y) <= COLLECTION_RADIUS,
+      (flower) =>
+        Phaser.Math.Distance.Between(player.x, player.y, flower.x, flower.y) <= COLLECTION_RADIUS,
     );
     if (index < 0) {
       return;
