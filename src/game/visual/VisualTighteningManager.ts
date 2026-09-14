@@ -45,43 +45,10 @@ function addWindow(
   }
 }
 
-function addForegroundMoonflower(scene: Phaser.Scene, x: number, y: number, scale: number): void {
-  markDetail(
-    scene.add.rectangle(x, y + 24 * scale, 7 * scale, 54 * scale, 0x5f9b67, 0.95).setDepth(13),
-  );
-  for (const [offsetX, offsetY] of [
-    [0, -18],
-    [18, -5],
-    [12, 14],
-    [-12, 14],
-    [-18, -5],
-  ] as const) {
-    markDetail(
-      scene.add
-        .ellipse(x + offsetX * scale, y + offsetY * scale, 28 * scale, 38 * scale, 0xe0b3ff, 0.94)
-        .setDepth(13.2),
-    );
-  }
-  markDetail(scene.add.circle(x, y, 12 * scale, 0xffdca1, 1).setDepth(13.4));
-}
-
 function decorateGlade(scene: Phaser.Scene): void {
-  markDetail(scene.add.rectangle(688, 302, 54, 105, 0x8b6658, 1).setDepth(9));
-  markDetail(scene.add.rectangle(688, 250, 68, 18, 0x735249, 1).setDepth(10));
-
-  for (const x of [405, 640]) {
-    markDetail(scene.add.rectangle(x, 440, 5, 60, 0xffffff, 0.56).setDepth(11));
-    markDetail(scene.add.rectangle(x, 440, 66, 5, 0xffffff, 0.56).setDepth(11));
-    markDetail(scene.add.rectangle(x, 486, 94, 18, 0x8f654f, 0.92).setDepth(11));
-    for (const offset of [-24, 0, 24]) {
-      markDetail(scene.add.circle(x + offset, 478, 8, 0xffb5d3, 0.95).setDepth(11.2));
-    }
-  }
-
-  for (const x of [432, 506, 580, 654]) {
-    markDetail(scene.add.ellipse(x, 326, 58, 14, 0xd6b5e8, 0.36).setDepth(11));
-  }
-
+  // Moonflower Cottage now owns its complete H1.2 exterior presentation. The old
+  // cottage-specific tightening overlays (chimney, window accents, roof marks and
+  // giant corner flowers) deliberately do not render here anymore.
   for (const [x, y] of [
     [1288, 590],
     [1512, 690],
@@ -101,10 +68,6 @@ function decorateGlade(scene: Phaser.Scene): void {
 
   markDetail(scene.add.ellipse(850, 1099, 76, 28, 0x9f7757, 0.5).setDepth(11));
   markDetail(scene.add.ellipse(850, 1099, 43, 16, 0xe0bb86, 0.46).setDepth(11.1));
-
-  // The two cottage flowers were originally painted below the cottage body. Repaint them in front.
-  addForegroundMoonflower(scene, 350, 650, 1.15);
-  addForegroundMoonflower(scene, 760, 650, 1.05);
 }
 
 function decorateVillage(scene: Phaser.Scene): void {
