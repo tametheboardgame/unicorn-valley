@@ -22,7 +22,9 @@ describe('MoonflowerStreamLife', () => {
   });
 
   it('gives the ambient fish visibly different speeds and movement profiles', () => {
-    const profiles = new Set(MOONFLOWER_STREAM_FISH_BEHAVIOURS.map((behaviour) => behaviour.profile));
+    const profiles = new Set(
+      MOONFLOWER_STREAM_FISH_BEHAVIOURS.map((behaviour) => behaviour.profile),
+    );
     const durationScales = MOONFLOWER_STREAM_FISH_BEHAVIOURS.map(
       (behaviour) => behaviour.durationScale,
     );
