@@ -25,7 +25,9 @@ describe('WorldInteractionAffordanceModel', () => {
   });
 
   it('does not mark automatic, hidden or disabled interactions', () => {
-    expect(shouldShowWorldInteractionAffordance(target({ activationMode: 'automatic' }))).toBe(false);
+    expect(shouldShowWorldInteractionAffordance(target({ activationMode: 'automatic' }))).toBe(
+      false,
+    );
     expect(shouldShowWorldInteractionAffordance(target({ visible: false }))).toBe(false);
     expect(shouldShowWorldInteractionAffordance(target({ enabled: () => false }))).toBe(false);
   });
