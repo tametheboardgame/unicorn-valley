@@ -220,11 +220,11 @@ export function renderCottageExterior(
 
   name(scene.add.ellipse(x, y + 184, 440, 72, 0x78956c, 0.18).setDepth(5.8), 'detail', 'shadow');
 
-  // Warm plaster body and stone plinth. The restrained corner radius prevents the façade
-  // reading as a giant face while preserving the soft shape language used elsewhere.
+  // Keep the wall body entirely below the roof eaves so no square plaster corner peeks
+  // through the asymmetric roof silhouette.
   name(
     scene.add
-      .rectangle(x, y + 28, 410, 246, 0xffedc8, 1)
+      .rectangle(x, y + 55, 410, 192, 0xffedc8, 1)
       .setStrokeStyle(6, 0xd8b88e, 0.95)
       .setDepth(9.8),
     'wall-finish',
@@ -245,7 +245,23 @@ export function renderCottageExterior(
     );
   }
 
-  // Asymmetric shingled roof with a broad eave, chimney and visible layered bands.
+  // The chimney is deliberately behind the roof. Only its upper stack and cap should
+  // emerge above the shingles instead of reading as a block pasted onto the roof face.
+  name(
+    scene.add
+      .rectangle(x - 122, y - 183, 46, 70, 0x9d735a, 1)
+      .setStrokeStyle(4, 0x75523f, 0.92)
+      .setDepth(9.72),
+    'roof',
+    'chimney',
+  );
+  name(
+    scene.add.rectangle(x - 122, y - 223, 60, 18, 0xb98867, 1).setDepth(9.73),
+    'roof',
+    'chimney-cap',
+  );
+
+  // Asymmetric shingled roof with a broad eave and visible layered bands.
   const roof = name(scene.add.graphics().setDepth(10.15), 'roof', 'main');
   roof.fillStyle(0x75548f, 1);
   roof.fillTriangle(x - 226, y - 72, x + 26, y - 214, x + 224, y - 88);
@@ -274,20 +290,6 @@ export function renderCottageExterior(
     roof.strokePath();
   }
 
-  name(
-    scene.add
-      .rectangle(x - 122, y - 170, 52, 102, 0x9d735a, 1)
-      .setStrokeStyle(4, 0x75523f, 0.92)
-      .setDepth(10.05),
-    'roof',
-    'chimney',
-  );
-  name(
-    scene.add.rectangle(x - 122, y - 223, 66, 18, 0xb98867, 1).setDepth(10.06),
-    'roof',
-    'chimney-cap',
-  );
-
   // Deliberately asymmetrical windows break the previous pair-of-eyes composition.
   addWindow(scene, x - 122, y + 31, 70, 66, 10.35);
   addWindow(scene, x + 130, y + 49, 56, 52, 10.35);
@@ -312,19 +314,27 @@ export function renderCottageExterior(
     'canopy-roof',
   );
 
-  // Small house plaque replaces the oversized floating scene label.
+  // Decorative mounted nameplate, integrated into the cottage rather than floating as UI copy.
   name(
     scene.add
-      .text(x - 6, y - 22, 'Moonflower Cottage', {
-        color: '#60465f',
+      .rectangle(x + 18, y - 32, 188, 36, 0x7b5848, 1)
+      .setStrokeStyle(4, 0xe0bd85, 0.98)
+      .setDepth(10.84),
+    'plaque',
+    'board',
+  );
+  name(scene.add.circle(x - 70, y - 32, 7, 0xd6a7ec, 1).setDepth(10.86), 'plaque', 'left-bloom');
+  name(scene.add.circle(x + 106, y - 32, 7, 0xd6a7ec, 1).setDepth(10.86), 'plaque', 'right-bloom');
+  name(
+    scene.add
+      .text(x + 18, y - 32, 'Moonflower Cottage', {
+        color: '#fff0cd',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '14px',
         fontStyle: 'bold',
-        backgroundColor: '#f5dfbbee',
-        padding: { x: 9, y: 4 },
       })
       .setOrigin(0.5)
-      .setDepth(10.82),
+      .setDepth(10.88),
     'plaque',
     'name',
   );
