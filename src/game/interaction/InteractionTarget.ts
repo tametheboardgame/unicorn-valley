@@ -50,8 +50,9 @@ export type InteractionResult =
  * actionKind directly and never infers behaviour from rendered text. directArea is optional
  * presentation geometry for targets that need a larger touch affordance; activation still routes
  * through the shared coordinator and the target remains range-gated by interactionRadius.
- * worldAffordance defaults to true and may be disabled only when a target deliberately owns a
- * distinct story-specific presentation, such as Pip's trail, rather than the universal blue marker.
+ * worldAffordance is an explicit opt-in for subtle, silent interactions whose action is not obvious
+ * from the world art alone. Doors, NPCs, gateways and obvious landmarks should normally leave it
+ * undefined and rely on the physical object plus the contextual action prompt when in range.
  */
 export interface InteractionTarget {
   id: string;
