@@ -33,6 +33,18 @@ interface ActiveConversation {
   supportingPortraitRequestId: number;
 }
 
+function latestVisibleNamedObject<T extends Phaser.GameObjects.GameObject>(
+  scene: Phaser.Scene,
+  name: string,
+  matchesType: (object: Phaser.GameObjects.GameObject) => object is T,
+): T | null {
+  const matches = scene.children.list.filter(
+    (object): object is T =>
+      object.name === name && object.active && matchesType(object) && object.visible,
+  );
+  return matches.at(-1) ?? null;
+}
+
 /** Canonical, scene-independent owner for ordinary in-world conversations. */
 export class WorldConversationPresenter {
   private active: ActiveConversation | null = null;
@@ -171,13 +183,21 @@ export class WorldConversationPresenter {
           return;
         }
 
-        const frame = active.scene.children.getByName(
+        // MoonflowerGladeScene keeps a dormant scene-owned DialogueCard for its old local
+        // conversation route, while WorldConversationPresenter creates the active card. Selecting
+        // the first object by name could therefore attach resident art to the hidden card and leave
+        // the visible card showing its initial. Always resolve the newest visible frame/fallback.
+        const frame = latestVisibleNamedObject(
+          active.scene,
           'dialogue-production-portrait-frame',
-        ) as Phaser.GameObjects.Arc | null;
-        const fallback = active.scene.children.getByName(
+          (object): object is Phaser.GameObjects.Arc => object instanceof Phaser.GameObjects.Arc,
+        );
+        const fallback = latestVisibleNamedObject(
+          active.scene,
           'dialogue-production-portrait-fallback',
-        ) as Phaser.GameObjects.Text | null;
-        if (!frame?.active) {
+          (object): object is Phaser.GameObjects.Text => object instanceof Phaser.GameObjects.Text,
+        );
+        if (!frame) {
           return;
         }
 
@@ -192,7 +212,8 @@ export class WorldConversationPresenter {
         const scale = Math.min(maxWidth / sprite.width, maxHeight / sprite.height);
         sprite
           .setPosition(frame.x, frame.y)
-          .setDisplaySize(sprite.width * scale, sprite.height * scale);
+          .setDisplaySize(sprite.width * scale, sprite.height * scale)
+          .setVisible(true);
         active.supportingPortrait = sprite;
       })
       .catch(() => {
