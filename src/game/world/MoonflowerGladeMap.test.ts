@@ -62,4 +62,21 @@ describe('Moonflower Glade prototype map', () => {
       false,
     );
   });
+
+  it('backs the visible woodland edges with collision while preserving the east gateway', () => {
+    for (const point of [
+      { x: 900, y: 145 },
+      { x: 900, y: 1655 },
+      { x: 2640, y: 430 },
+      { x: 2640, y: 1370 },
+    ]) {
+      expect(isPointBlocked(point, MOONFLOWER_GLADE_MAP.colliders, 0)).toBe(true);
+    }
+
+    const eastEntrance = MOONFLOWER_GLADE_MAP.entrances.find(
+      (entrance) => entrance.id === 'sunbeam-village',
+    );
+    expect(eastEntrance).toBeDefined();
+    expect(isPointBlocked(eastEntrance!.approach, MOONFLOWER_GLADE_MAP.colliders, 42)).toBe(false);
+  });
 });
