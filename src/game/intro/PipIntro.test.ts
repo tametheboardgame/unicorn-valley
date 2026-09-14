@@ -1,8 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  PIP_STRANGE_EGG_FOUND_FLAG,
-  PIP_STRANGE_EGG_QUEST_ID,
-} from '../../content/r4EggArc';
+import { PIP_STRANGE_EGG_FOUND_FLAG, PIP_STRANGE_EGG_QUEST_ID } from '../../content/r4EggArc';
 import { getQuestStepId } from '../quests/QuestEngine';
 import type { QuestProgress, SaveGame } from '../save/saveSchema';
 import { resolvePipInteractionDialogueId } from './PipIntro';
