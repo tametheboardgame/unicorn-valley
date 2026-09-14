@@ -122,13 +122,17 @@ export class WillowMoonflowerGladeWorldManager {
     }
 
     // Compatibility for saves created by the first H1.5a preview, which tracked quantity but not
-    // physical flower identity. Only use this fallback when no identity flags exist at all.
-    if (collected.size === 0) {
-      const owned = Math.min(
-        WILLOW_MOONFLOWER_REQUIRED_QUANTITY,
-        this.inventory.getQuantity(WILLOW_MOONFLOWER_ITEM_ID),
-      );
-      for (const collectible of COLLECTIBLES.slice(0, owned)) {
+    // physical flower identity. Preserve enough inferred identities to match the saved quantity,
+    // while explicit identity flags remain authoritative for all newly collected flowers.
+    const owned = Math.min(
+      WILLOW_MOONFLOWER_REQUIRED_QUANTITY,
+      this.inventory.getQuantity(WILLOW_MOONFLOWER_ITEM_ID),
+    );
+    if (collected.size < owned) {
+      for (const collectible of COLLECTIBLES) {
+        if (collected.size >= owned) {
+          break;
+        }
         collected.add(collectible.id);
       }
     }
