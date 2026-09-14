@@ -177,7 +177,6 @@ export class MoonflowerGladeScene extends Phaser.Scene {
       motionState: 'idle',
     });
     this.player.updatePresentation(time);
-
     if (this.inputController.justPressed('BACK')) {
       this.closeDialogue();
       return;
@@ -388,34 +387,27 @@ export class MoonflowerGladeScene extends Phaser.Scene {
     const path = this.add.graphics().setDepth(2);
     path.lineStyle(112, 0xead7aa, 0.92);
     path.beginPath();
-    path.moveTo(145, 815);
-    path.lineTo(340, 810);
-    path.lineTo(600, 790);
-    path.lineTo(850, 825);
-    path.lineTo(1100, 870);
-    path.lineTo(1400, 900);
-    path.lineTo(1750, 900);
-    path.lineTo(2150, 900);
+    path.moveTo(145, 900);
     path.lineTo(2690, 900);
     path.strokePath();
 
-    path.lineStyle(68, 0xe8d5a9, 0.9);
+    path.lineStyle(64, 0xead7aa, 0.92);
     path.beginPath();
-    path.moveTo(620, 795);
-    path.lineTo(585, 748);
+    path.moveTo(620, 900);
+    path.lineTo(585, 790);
     path.lineTo(560, 705);
     path.strokePath();
 
     path.lineStyle(82, 0xe4cf9f, 0.9);
     path.beginPath();
-    path.moveTo(1770, 920);
+    path.moveTo(1770, 900);
     path.lineTo(1818, 1045);
     path.lineTo(1890, 1185);
     path.strokePath();
 
     path.lineStyle(56, 0xf1e3bd, 0.75);
     path.beginPath();
-    path.moveTo(790, 820);
+    path.moveTo(790, 900);
     path.lineTo(840, 1070);
     path.strokePath();
   }
@@ -449,7 +441,7 @@ export class MoonflowerGladeScene extends Phaser.Scene {
     this.add.circle(x + 18, y, 7, 0xd7dce4, 1).setDepth(10);
 
     this.add
-      .text(235, y - 118, 'Old Garden Gate', {
+      .text(300, y - 125, 'Old Garden Gate', {
         color: '#5d4358',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '17px',
@@ -537,7 +529,6 @@ export class MoonflowerGladeScene extends Phaser.Scene {
       this.add.circle(x + 8, 583 + ((x / 10) % 2) * 55, 8, 0xe6c1ff, 0.9).setDepth(8);
     }
   }
-
   private createDisplayStump(): void {
     this.add.ellipse(850, 1130, 118, 70, 0x8a6248, 1).setDepth(9);
     this.add.ellipse(850, 1100, 118, 54, 0xc79b70, 1).setDepth(10);
@@ -620,7 +611,6 @@ export class MoonflowerGladeScene extends Phaser.Scene {
 
   private createBoundaryFoliage(): void {
     const treePositions = [
-      [170, 220],
       [430, 150],
       [820, 170],
       [1180, 150],
@@ -633,9 +623,6 @@ export class MoonflowerGladeScene extends Phaser.Scene {
       [1570, 1670],
       [1120, 1650],
       [620, 1630],
-      [250, 1510],
-      [150, 1160],
-      [160, 620],
     ] as const;
 
     for (const [x, y] of treePositions) {
