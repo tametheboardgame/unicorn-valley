@@ -15,6 +15,7 @@ function conditionIsTrue(condition: InteractionCondition | undefined): boolean {
 
 export function shouldShowWorldInteractionAffordance(target: InteractionTarget): boolean {
   return (
+    target.worldAffordance !== false &&
     target.activationMode !== 'automatic' &&
     conditionIsTrue(target.visible) &&
     conditionIsTrue(target.enabled)
