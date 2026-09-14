@@ -23,6 +23,13 @@ export const MOONFLOWER_STREAM_SURFACE_MARKS = [
   { x: 1440, y: 1694, width: 69, height: 14, drift: -12, duration: 3100 },
 ] as const;
 
+export const MOONFLOWER_STREAM_REED_BEDS = [
+  { id: 'north-west', x: 1225, y: 565, width: 110 },
+  { id: 'north-east', x: 1570, y: 720, width: 105 },
+  { id: 'south-west', x: 1220, y: 1265, width: 122 },
+  { id: 'south-east', x: 1580, y: 1460, width: 120 },
+] as const;
+
 export interface AmbientFishRun {
   x: number;
   durationMs: number;
