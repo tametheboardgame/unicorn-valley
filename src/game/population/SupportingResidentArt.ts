@@ -3,6 +3,9 @@ import type { UnicornProductionPose } from '../player/UnicornProductionArt';
 import { drawUnicornAppearance } from '../player/UnicornAppearanceRenderer';
 import type { SupportingResidentDefinition } from './AmbientPopulationTypes';
 
+// Shared by every ambient/moving supporting resident. Keep this canvas wide enough for the
+// widest production tail in every walk pose. Juniper exposed the clipping defect, but the
+// safe bounds intentionally protect all supporting residents rather than special-casing her.
 export const SUPPORTING_RESIDENT_ART_LAYOUT = {
   textureWidth: 288,
   textureHeight: 190,
