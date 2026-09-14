@@ -332,11 +332,6 @@ export function renderCottageExterior(
   name(scene.add.ellipse(x + 18, y + 21, 84, 52, 0x82533f, 1).setDepth(10.51), 'door', 'door-arch');
   name(scene.add.circle(x + 45, y + 98, 7, 0xe6c276, 1).setDepth(10.65), 'door', 'knob');
   name(scene.add.rectangle(x + 18, y + 4, 130, 18, 0x8e694f, 1).setDepth(10.7), 'porch', 'canopy');
-  name(
-    scene.add.triangle(x + 18, y - 12, -68, 22, 0, -28, 68, 22, 0xa87991, 1).setDepth(10.68),
-    'porch',
-    'canopy-roof',
-  );
 
   // One container keeps board, decoration and text locked to exactly the same world transform.
   addMountedNameplate(scene, x + 18, y - 32);
