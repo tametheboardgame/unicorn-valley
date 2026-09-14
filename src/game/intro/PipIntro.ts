@@ -53,7 +53,9 @@ export function createPipInteraction(hasFirstDiscovery: boolean): InteractionTar
     priority: 20,
     result: {
       type: 'dialogue',
-      dialogueId: hasFirstDiscovery ? 'dialogue:pip-first-discovery' : 'dialogue:pip-welcome',
+      get dialogueId(): DialogueId {
+        return getCurrentPipInteractionDialogueId(hasFirstDiscovery);
+      },
     },
   };
 }
