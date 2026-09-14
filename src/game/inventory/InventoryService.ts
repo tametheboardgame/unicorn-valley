@@ -14,6 +14,10 @@ export interface InventoryItemPresentation {
   description: string;
 }
 
+export interface AddItemOptions {
+  suppressRewardFeedback?: boolean;
+}
+
 export interface RemoveItemOptions {
   allowQuestCritical?: boolean;
 }
@@ -49,7 +53,7 @@ export class InventoryService {
     return this.getQuantity(itemId) >= quantity;
   }
 
-  public addItem(itemId: ItemId, quantity = 1): number {
+  public addItem(itemId: ItemId, quantity = 1, options: AddItemOptions = {}): number {
     itemRegistry.get(itemId);
     assertQuantity(quantity);
 
@@ -65,7 +69,11 @@ export class InventoryService {
         },
       },
     });
-    this.events.emit('ITEM_COLLECTED', { itemId, quantity });
+    this.events.emit('ITEM_COLLECTED', {
+      itemId,
+      quantity,
+      suppressRewardFeedback: options.suppressRewardFeedback,
+    });
 
     return nextQuantity;
   }
