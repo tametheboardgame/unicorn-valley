@@ -23,23 +23,80 @@ const SUPPORTED_SCENES = new Set([
 
 const COTTAGE_EXTERIOR_PREFIX = 'cottage-exterior:';
 
-const GLade_BOUNDARY_TREES = [
+const GLADE_BOUNDARY_TREE_POINTS = [
   [170, 220],
+  [260, 135],
   [430, 150],
+  [620, 125],
   [820, 170],
+  [1000, 135],
   [1180, 150],
   [1640, 150],
+  [1810, 130],
   [1980, 150],
+  [2180, 135],
+  [2380, 125],
   [2520, 170],
   [2660, 330],
+  [2650, 520],
+  [2620, 690],
+  [2620, 1110],
+  [2650, 1290],
+  [2600, 1470],
+  [2660, 1660],
   [2500, 1560],
+  [2380, 1680],
   [2280, 1650],
+  [2100, 1660],
+  [1850, 1680],
   [1570, 1670],
+  [1280, 1680],
   [1120, 1650],
+  [800, 1680],
   [620, 1630],
+  [360, 1670],
   [250, 1510],
   [150, 1160],
   [160, 620],
+] as const;
+
+const GLADE_EXTRA_BOUNDARY_TREES = [
+  [260, 135, 0.9],
+  [620, 125, 0.94],
+  [1000, 135, 0.9],
+  [1810, 130, 0.92],
+  [2180, 135, 0.96],
+  [2380, 125, 0.9],
+  [2650, 520, 0.96],
+  [2620, 690, 0.9],
+  [2620, 1110, 0.92],
+  [2650, 1290, 0.98],
+  [2600, 1470, 0.92],
+  [2660, 1660, 0.96],
+  [2380, 1680, 0.94],
+  [2100, 1660, 0.9],
+  [1850, 1680, 0.96],
+  [1280, 1680, 0.92],
+  [800, 1680, 0.94],
+  [360, 1670, 0.9],
+] as const;
+
+const GLADE_GROUND_DETAILS = [
+  [330, 380, 1],
+  [520, 760, 0.85],
+  [760, 350, 0.9],
+  [1040, 430, 0.8],
+  [1160, 720, 1],
+  [1660, 350, 0.9],
+  [1810, 560, 0.8],
+  [2360, 620, 0.95],
+  [2470, 760, 0.82],
+  [320, 1220, 0.9],
+  [470, 1400, 1],
+  [1090, 1450, 0.9],
+  [1630, 1220, 0.86],
+  [1740, 1390, 0.92],
+  [2380, 1450, 0.88],
 ] as const;
 
 function isPlayerSprite(
@@ -94,7 +151,7 @@ export class WorldOcclusionManager {
 
     const state: SceneState = { overlays: [] };
     if (scene.scene.key === 'MoonflowerGladeScene') {
-      state.overlays.push(this.createHollowTreeOccluder(scene));
+      state.overlays.push(...this.createGladeEnvironmentOverlays(scene));
     } else if (scene.scene.key === 'SunbeamVillageScene') {
       state.overlays.push(this.createVillageBuntingOccluder(scene));
     }
@@ -128,7 +185,7 @@ export class WorldOcclusionManager {
   private applyGladeDepths(scene: Phaser.Scene): void {
     this.applyCottageExteriorDepths(scene);
 
-    for (const [x, y] of GLade_BOUNDARY_TREES) {
+    for (const [x, y] of GLADE_BOUNDARY_TREE_POINTS) {
       this.setDepthInBox(scene, x - 105, y - 105, x + 125, y + 135, worldDepthForY(y + 115));
     }
 
@@ -288,22 +345,111 @@ export class WorldOcclusionManager {
     }
   }
 
-  private createHollowTreeOccluder(scene: Phaser.Scene): Phaser.GameObjects.Graphics {
+  private createGladeEnvironmentOverlays(scene: Phaser.Scene): Phaser.GameObjects.GameObject[] {
+    const overlays: Phaser.GameObjects.GameObject[] = [];
+
+    const ground = scene.add.graphics().setDepth(1.75);
+    for (const [x, y, scale] of GLADE_GROUND_DETAILS) {
+      ground.fillStyle(0x77b982, 0.1);
+      ground.fillEllipse(x, y + 8, 118 * scale, 44 * scale);
+      ground.lineStyle(Math.max(2, 3 * scale), 0x5f9d6b, 0.34);
+      for (const offset of [-14, 0, 14]) {
+        ground.beginPath();
+        ground.moveTo(x + offset * scale, y + 14 * scale);
+        ground.lineTo(x + (offset - 5) * scale, y - (10 + Math.abs(offset) * 0.18) * scale);
+        ground.strokePath();
+      }
+      ground.fillStyle(0xd9efbf, 0.22);
+      ground.fillCircle(x + 28 * scale, y + 4 * scale, 4 * scale);
+      ground.fillCircle(x + 34 * scale, y + 1 * scale, 3 * scale);
+    }
+    overlays.push(ground);
+
+    for (const [x, y, scale] of GLADE_EXTRA_BOUNDARY_TREES) {
+      const tree = scene.add.graphics().setDepth(worldDepthForY(y + 115));
+      tree.fillStyle(0x765a44, 0.95);
+      tree.fillRoundedRect(x - 18 * scale, y + 28 * scale, 38 * scale, 112 * scale, 14 * scale);
+      tree.fillStyle(0x694f3d, 0.72);
+      tree.fillTriangle(
+        x - 18 * scale,
+        y + 124 * scale,
+        x - 54 * scale,
+        y + 146 * scale,
+        x + 1 * scale,
+        y + 117 * scale,
+      );
+      tree.fillTriangle(
+        x + 18 * scale,
+        y + 124 * scale,
+        x + 58 * scale,
+        y + 144 * scale,
+        x - 1 * scale,
+        y + 117 * scale,
+      );
+      tree.fillStyle(0x4f8f63, 0.96);
+      tree.fillCircle(x - 34 * scale, y + 2 * scale, 68 * scale);
+      tree.fillCircle(x + 30 * scale, y - 8 * scale, 76 * scale);
+      tree.fillStyle(0x69a974, 0.9);
+      tree.fillCircle(x + 4 * scale, y - 56 * scale, 70 * scale);
+      tree.fillCircle(x + 54 * scale, y + 34 * scale, 52 * scale);
+      tree.fillStyle(0x86ba7d, 0.55);
+      tree.fillCircle(x - 42 * scale, y - 28 * scale, 28 * scale);
+      overlays.push(tree);
+    }
+
+    overlays.push(this.createEnhancedHollowTreeOccluder(scene));
+    return overlays;
+  }
+
+  private createEnhancedHollowTreeOccluder(scene: Phaser.Scene): Phaser.GameObjects.Graphics {
     const tree = scene.add.graphics().setDepth(worldDepthForY(695));
-    tree.fillStyle(0x8c6349, 1);
-    tree.fillRoundedRect(2115, 395, 170, 300, 60);
-    tree.fillStyle(0x5b413a, 1);
-    tree.fillEllipse(2200, 555, 76, 112);
+
+    tree.fillStyle(0x7f5943, 1);
+    tree.fillRoundedRect(2115, 395, 170, 300, 58);
+    tree.fillStyle(0x6d4c3c, 1);
+    tree.fillTriangle(2140, 650, 2080, 705, 2185, 665);
+    tree.fillTriangle(2260, 650, 2320, 704, 2212, 666);
+    tree.fillTriangle(2190, 655, 2155, 720, 2215, 665);
+
+    tree.lineStyle(7, 0xa57a59, 0.48);
+    for (const [startX, startY, endX, endY] of [
+      [2160, 420, 2145, 520],
+      [2200, 410, 2188, 500],
+      [2240, 430, 2252, 520],
+      [2162, 570, 2148, 630],
+      [2240, 560, 2250, 635],
+    ] as const) {
+      tree.beginPath();
+      tree.moveTo(startX, startY);
+      tree.lineTo(endX, endY);
+      tree.strokePath();
+    }
+
+    tree.fillStyle(0x3d302d, 0.98);
+    tree.fillEllipse(2200, 555, 82, 118);
+    tree.lineStyle(5, 0xc3986b, 0.34);
+    tree.strokeEllipse(2200, 555, 94, 132);
+
     tree.fillStyle(0x477a58, 1);
     tree.fillCircle(2120, 350, 150);
     tree.fillCircle(2250, 330, 180);
     tree.fillStyle(0x5f966a, 1);
     tree.fillCircle(2190, 280, 180);
     tree.fillCircle(2290, 420, 130);
-    tree.fillStyle(0x2f2638, 0.92);
-    tree.fillCircle(2200, 555, 22);
-    tree.fillStyle(0xb98ce8, 0.28);
-    tree.fillCircle(2200, 555, 8);
+    tree.fillStyle(0x79ad72, 0.72);
+    tree.fillCircle(2105, 292, 62);
+    tree.fillCircle(2268, 258, 70);
+
+    tree.fillStyle(0x7aa56c, 0.82);
+    tree.fillEllipse(2140, 622, 52, 20);
+    tree.fillEllipse(2270, 616, 46, 18);
+    tree.fillEllipse(2180, 678, 62, 16);
+
+    tree.fillStyle(0xb98ce8, 0.26);
+    tree.fillCircle(2200, 555, 18);
+    tree.fillStyle(0xe2c9ff, 0.26);
+    tree.fillCircle(2196, 549, 7);
+
     return tree;
   }
 
