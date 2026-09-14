@@ -107,8 +107,16 @@ function addWindow(
     'windows',
     `glass-${x}-${y}`,
   );
-  name(scene.add.rectangle(x, y, 5, height, 0xf8f0da, 0.96).setDepth(depth + 0.1), 'windows', `mullion-v-${x}-${y}`);
-  name(scene.add.rectangle(x, y, width, 5, 0xf8f0da, 0.96).setDepth(depth + 0.1), 'windows', `mullion-h-${x}-${y}`);
+  name(
+    scene.add.rectangle(x, y, 5, height, 0xf8f0da, 0.96).setDepth(depth + 0.1),
+    'windows',
+    `mullion-v-${x}-${y}`,
+  );
+  name(
+    scene.add.rectangle(x, y, width, 5, 0xf8f0da, 0.96).setDepth(depth + 0.1),
+    'windows',
+    `mullion-h-${x}-${y}`,
+  );
   name(
     scene.add
       .rectangle(x - width / 2 - 13, y, 18, height + 16, 0x8ea26d, 1)
@@ -127,7 +135,13 @@ function addWindow(
   );
 }
 
-function addWindowBox(scene: Phaser.Scene, x: number, y: number, width: number, depth: number): void {
+function addWindowBox(
+  scene: Phaser.Scene,
+  x: number,
+  y: number,
+  width: number,
+  depth: number,
+): void {
   name(
     scene.add
       .rectangle(x, y, width, 18, 0x8a6049, 1)
@@ -162,7 +176,11 @@ function addFlowerbed(
   depth: number,
   seed: number,
 ): void {
-  name(scene.add.ellipse(x, y + 8, width, 54, 0x7d5d49, 0.9).setDepth(depth), 'flowerbeds', `soil-${seed}`);
+  name(
+    scene.add.ellipse(x, y + 8, width, 54, 0x7d5d49, 0.9).setDepth(depth),
+    'flowerbeds',
+    `soil-${seed}`,
+  );
   name(
     scene.add
       .ellipse(x, y + 16, width + 12, 34, 0xb69372, 0.74)
@@ -190,9 +208,7 @@ function addFlowerbed(
 
 function addMountedNameplate(scene: Phaser.Scene, x: number, y: number): void {
   const shadow = scene.add.rectangle(3, 4, 194, 40, 0x5c443c, 0.22);
-  const board = scene.add
-    .rectangle(0, 0, 188, 36, 0x7b5848, 1)
-    .setStrokeStyle(4, 0xe0bd85, 0.98);
+  const board = scene.add.rectangle(0, 0, 188, 36, 0x7b5848, 1).setStrokeStyle(4, 0xe0bd85, 0.98);
   const innerLine = scene.add
     .rectangle(0, 0, 174, 25, 0xffffff, 0)
     .setStrokeStyle(1.5, 0xb88e64, 0.72);
@@ -239,7 +255,11 @@ export function renderCottageExterior(
     'wall-finish',
     'plaster-body',
   );
-  name(scene.add.rectangle(x, y + 139, 404, 42, 0xc5a982, 1).setDepth(9.9), 'wall-finish', 'stone-base');
+  name(
+    scene.add.rectangle(x, y + 139, 404, 42, 0xc5a982, 1).setDepth(9.9),
+    'wall-finish',
+    'stone-base',
+  );
   for (let offset = -170; offset <= 170; offset += 56) {
     name(
       scene.add
@@ -362,7 +382,11 @@ export function renderCottageExterior(
     [x + 178, y + 35],
     [x + 193, y + 4],
   ] as const) {
-    name(scene.add.circle(bloomX, bloomY, 7, 0xd9a6f3, 1).setDepth(10.8), 'detail', `vine-bloom-${bloomX}-${bloomY}`);
+    name(
+      scene.add.circle(bloomX, bloomY, 7, 0xd9a6f3, 1).setDepth(10.8),
+      'detail',
+      `vine-bloom-${bloomX}-${bloomY}`,
+    );
   }
 
   addFlowerbed(scene, x - 125, y + 166, 154, 12.4, 1);
