@@ -39,10 +39,7 @@ describe('InventoryService', () => {
     const events = new TypedEventBus<GameEventMap>();
     const payloads: GameEventMap['ITEM_COLLECTED'][] = [];
     events.on('ITEM_COLLECTED', (payload) => payloads.push(payload));
-    const inventory = new InventoryService(
-      new SaveService(new MemorySaveRepository()),
-      events,
-    );
+    const inventory = new InventoryService(new SaveService(new MemorySaveRepository()), events);
 
     inventory.addItem('item:willow-moonflower', 1, { suppressRewardFeedback: true });
 
