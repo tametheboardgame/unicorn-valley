@@ -39,9 +39,7 @@ describe('WorldInteractionAffordanceModel', () => {
       shouldShowWorldInteractionAffordance(target({ worldAffordance: true, visible: false })),
     ).toBe(false);
     expect(
-      shouldShowWorldInteractionAffordance(
-        target({ worldAffordance: true, enabled: () => false }),
-      ),
+      shouldShowWorldInteractionAffordance(target({ worldAffordance: true, enabled: () => false })),
     ).toBe(false);
   });
 
