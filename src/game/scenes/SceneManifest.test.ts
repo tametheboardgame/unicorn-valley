@@ -10,7 +10,6 @@ const EXPECTED_STARTUP_KEYS = [
   'MoonflowerGladeScene',
   'CottageInteriorScene',
   'CottageDecorateScene',
-  'MoonflowerPatchScene',
   'SunbeamVillageScene',
   'RainbowMeadowScene',
   'CrystalBrookScene',
