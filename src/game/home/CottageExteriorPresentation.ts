@@ -250,24 +250,24 @@ export function renderCottageExterior(
   roof.fillStyle(0x75548f, 1);
   roof.fillPoints(
     [
-      new Phaser.Geom.Point(x - 226, y - 72),
-      new Phaser.Geom.Point(x - 154, y - 170),
-      new Phaser.Geom.Point(x + 26, y - 214),
-      new Phaser.Geom.Point(x + 224, y - 88),
-      new Phaser.Geom.Point(x + 204, y - 45),
-      new Phaser.Geom.Point(x - 210, y - 42),
+      { x: x - 226, y: y - 72 },
+      { x: x - 154, y: y - 170 },
+      { x: x + 26, y: y - 214 },
+      { x: x + 224, y: y - 88 },
+      { x: x + 204, y: y - 45 },
+      { x: x - 210, y: y - 42 },
     ],
     true,
   );
   roof.fillStyle(0x956cac, 1);
   roof.fillPoints(
     [
-      new Phaser.Geom.Point(x - 204, y - 76),
-      new Phaser.Geom.Point(x - 140, y - 154),
-      new Phaser.Geom.Point(x + 20, y - 194),
-      new Phaser.Geom.Point(x + 198, y - 84),
-      new Phaser.Geom.Point(x + 181, y - 62),
-      new Phaser.Geom.Point(x - 190, y - 58),
+      { x: x - 204, y: y - 76 },
+      { x: x - 140, y: y - 154 },
+      { x: x + 20, y: y - 194 },
+      { x: x + 198, y: y - 84 },
+      { x: x + 181, y: y - 62 },
+      { x: x - 190, y: y - 58 },
     ],
     true,
   );
