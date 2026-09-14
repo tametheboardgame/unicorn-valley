@@ -198,7 +198,7 @@ test.describe('R6.5-WP19F UI consistency', () => {
     });
   });
 
-  test('landscape title preloads only the landscape artwork and keeps the live menu usable on image failure', async ({
+  test('landscape title has no retired procedural fallback and keeps the live menu usable on image failure', async ({
     page,
   }) => {
     await page.setViewportSize({ width: 1280, height: 720 });
@@ -218,9 +218,7 @@ test.describe('R6.5-WP19F UI consistency', () => {
     ).toHaveCount(0);
 
     const title = sceneFrom(await snapshot(page), 'TitleScene');
-    expect(
-      title.objects.some((object) => object.name === 'title-art:sky' && object.effectiveVisible),
-    ).toBe(true);
+    expect(title.objects.some((object) => object.name.startsWith('title-art:'))).toBe(false);
     expect(
       title.objects.some((object) => object.name === 'title-menu-new-game' && object.interactive),
     ).toBe(true);

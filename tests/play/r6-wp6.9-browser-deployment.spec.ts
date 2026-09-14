@@ -77,32 +77,36 @@ test('production build boots cleanly, uses fingerprinted local assets and surviv
 
   expect(firstLoadAssets.length).toBeGreaterThan(1);
   expect(firstLoadAssets.every((asset) => asset.sameOrigin)).toBe(true);
+
+  const firstLoadBundles = firstLoadAssets.filter((asset) =>
+    /\.(?:js|css)$/.test(new URL(asset.url).pathname),
+  );
+  expect(firstLoadBundles.length).toBeGreaterThan(0);
   expect(
-    firstLoadAssets.every((asset) =>
+    firstLoadBundles.every((asset) =>
       /\/assets\/[^/?]+-[A-Za-z0-9_-]{6,}\.(?:js|css)$/.test(new URL(asset.url).pathname),
     ),
   ).toBe(true);
 
-  const firstAssetPaths = firstLoadAssets.map((asset) => new URL(asset.url).pathname).sort();
+  const firstBundlePaths = firstLoadBundles.map((asset) => new URL(asset.url).pathname).sort();
 
   if (browserName !== 'webkit') {
     // Chromium and Firefox exercise a literal reload and verify the same fingerprinted
-    // production bundle is reused. Playwright/WebKit 26 on Linux hangs before navigation
-    // commit on both reload() and a second same-page goto() for this media-enabled page,
-    // while the initial production boot and all dedicated WebKit gameplay/UI smokes pass.
+    // production bundle is reused. Authored static media can be satisfied from cache and
+    // does not need to reappear in the resource timing list on every navigation.
     await page.reload({ waitUntil: 'commit', timeout: 20_000 });
     await expect(page).toHaveTitle('Unicorn Valley');
     await waitForGlade(page);
     await expectResponsiveCanvas(page);
 
-    const reloadAssetPaths = await page.evaluate(() =>
+    const reloadBundlePaths = await page.evaluate(() =>
       performance
         .getEntriesByType('resource')
         .map((entry) => new URL(entry.name).pathname)
-        .filter((path) => path.startsWith('/assets/'))
+        .filter((path) => /\/assets\/[^/?]+-[A-Za-z0-9_-]{6,}\.(?:js|css)$/.test(path))
         .sort(),
     );
-    expect(reloadAssetPaths).toEqual(firstAssetPaths);
+    expect(reloadBundlePaths).toEqual(firstBundlePaths);
   }
 
   expect(consoleErrors, 'browser console errors').toEqual([]);

@@ -179,6 +179,18 @@ async function tapTitleText(page: Page, text: string): Promise<void> {
   );
 }
 
+async function revealSettingsObject(page: Page, objectName: string): Promise<DiagnosticObject> {
+  for (let attempt = 0; attempt < 20; attempt += 1) {
+    const target = (await snapshot(page)).scenes
+      .find((scene) => scene.key === 'SettingsScene')
+      ?.objects.find((object) => object.name === objectName);
+    if (target?.visible) return target;
+    await page.keyboard.press('ArrowDown');
+  }
+
+  throw new Error(`Settings object did not become visible: ${objectName}`);
+}
+
 function sceneText(current: DiagnosticSnapshot, sceneKey: string): string[] {
   return (
     current.scenes
@@ -254,10 +266,13 @@ test('malformed settings and optional cosmetics cannot block Settings, Redesign 
   expect(titleText).toEqual(expect.arrayContaining(['Continue', 'My Unicorn', 'Settings']));
 
   await tapTitleText(page, 'Settings');
-  const settingsText = sceneText(await snapshot(page), 'TitleScene');
-  expect(settingsText).toContain('Music: On');
-  expect(settingsText).toContain('Reduced motion: Off');
-  await tapTitleText(page, 'Done');
+  await waitForScene(page, 'SettingsScene');
+  const settingsText = sceneText(await snapshot(page), 'SettingsScene');
+  expect(settingsText).toContain('Music: Scene music');
+  const reducedMotion = await revealSettingsObject(page, 'settings-row-reduced-motion-label');
+  expect(reducedMotion.text).toBe('Reduced motion: Off');
+  await tapObject(page, 'SettingsScene', 'settings-done');
+  await waitForScene(page, 'TitleScene');
 
   await tapTitleText(page, 'My Unicorn');
   await waitForScene(page, 'UnicornCreatorScene');
@@ -289,8 +304,10 @@ test('a new player can visit Settings and still route through New Game into the 
   await waitForScene(page, 'TitleScene');
 
   await tapTitleText(page, 'Settings');
-  expect(sceneText(await snapshot(page), 'TitleScene')).toContain('Done');
-  await tapTitleText(page, 'Done');
+  await waitForScene(page, 'SettingsScene');
+  expect(sceneText(await snapshot(page), 'SettingsScene')).toContain('Done');
+  await tapObject(page, 'SettingsScene', 'settings-done');
+  await waitForScene(page, 'TitleScene');
 
   await tapTitleText(page, 'New Game');
   await waitForScene(page, 'UnicornCreatorScene');

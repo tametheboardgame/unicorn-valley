@@ -1,16 +1,25 @@
 import Phaser from 'phaser';
+import { getBrowserAccessibilitySettingsStore } from '../accessibility/AccessibilitySettings';
 import { getVerticalSliceAudio } from '../audio/VerticalSliceAudio';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
 
 const TITLE_SCENE_KEY = 'TitleScene';
 const SYNC_INTERVAL_MS = 100;
-const PORTRAIT_MEDIA_QUERY = '(pointer: coarse) and (max-width: 700px) and (orientation: portrait)';
+const TOUCH_OVERLAY_MEDIA_QUERY = '(pointer: coarse) and (max-width: 900px)';
+const PORTRAIT_MEDIA_QUERY = `${TOUCH_OVERLAY_MEDIA_QUERY} and (orientation: portrait)`;
 const TITLE_ARTWORK_NAME = 'title-generated-artwork';
 const TITLE_ARTWORK_LANDSCAPE_KEY = 'title-generated-landscape';
 const TITLE_ARTWORK_PORTRAIT_KEY = 'title-generated-portrait';
 const TITLE_ARTWORK_LANDSCAPE_URL = '/assets/title/wp19f-title-landscape.webp';
 const TITLE_ARTWORK_PORTRAIT_URL = '/assets/title/wp19f-title-portrait.webp';
+const TITLE_LOGO_NAME = 'title-generated-logo';
+const TITLE_LOGO_KEY = 'title-generated-logo';
+const TITLE_LOGO_URL = '/assets/title/unicorn-valley-logo.webp';
+const TITLE_LOGO_WIDTH = 600;
+const TITLE_LOGO_X = 380;
+const TITLE_LOGO_Y = 210;
+const TITLE_SPARKLE_NAME = 'title-generated-sparkles';
 
 interface ActionDefinition {
   objectName: string;
@@ -19,6 +28,11 @@ interface ActionDefinition {
 }
 
 const MAIN_ACTIONS: readonly ActionDefinition[] = [
+  {
+    objectName: 'title-menu-retry-save',
+    labelName: 'title-menu-retry-save-label',
+    className: 'title-portrait-primary',
+  },
   {
     objectName: 'title-menu-refresh',
     labelName: 'title-menu-refresh-label',
@@ -30,24 +44,16 @@ const MAIN_ACTIONS: readonly ActionDefinition[] = [
     className: 'title-portrait-primary',
   },
   { objectName: 'title-menu-new-game', labelName: 'title-menu-new-game-label' },
-  { objectName: 'title-menu-my-unicorn', labelName: 'title-menu-my-unicorn-label' },
-  { objectName: 'title-menu-settings', labelName: 'title-menu-settings-label' },
-];
-
-const SETTING_ACTIONS: readonly ActionDefinition[] = [
-  { objectName: 'title-setting-muted', labelName: 'title-setting-muted-label' },
-  { objectName: 'title-setting-music', labelName: 'title-setting-music-label' },
-  { objectName: 'title-setting-ambience', labelName: 'title-setting-ambience-label' },
-  { objectName: 'title-setting-sfx', labelName: 'title-setting-sfx-label' },
   {
-    objectName: 'title-setting-reduced-motion',
-    labelName: 'title-setting-reduced-motion-label',
+    objectName: 'title-menu-my-unicorn',
+    labelName: 'title-menu-my-unicorn-label',
+    className: 'title-portrait-blush',
   },
   {
-    objectName: 'title-setting-high-visibility',
-    labelName: 'title-setting-high-visibility-label',
+    objectName: 'title-menu-settings',
+    labelName: 'title-menu-settings-label',
+    className: 'title-portrait-mint',
   },
-  { objectName: 'title-setting-fullscreen', labelName: 'title-setting-fullscreen-label' },
 ];
 
 interface DomAction {
@@ -97,15 +103,12 @@ function currentArtworkTarget(): TitleArtworkTarget {
 
 export class TitlePortraitControlsManager {
   private readonly syncThrottle = new RefreshThrottle(SYNC_INTERVAL_MS);
+  private readonly accessibility = getBrowserAccessibilitySettingsStore();
   private readonly root: HTMLElement;
-  private readonly mainView: HTMLElement;
-  private readonly settingsView: HTMLElement;
-  private readonly brand: HTMLElement;
   private readonly heading: HTMLElement;
+  private readonly subtitle: HTMLElement;
   private readonly status: HTMLElement;
   private readonly mainActions: DomAction[];
-  private readonly settingActions: DomAction[];
-  private readonly doneButton: HTMLButtonElement;
   private readonly requestedArtwork = new Set<string>();
   private readonly preloadedArtwork = new Set<string>();
 
@@ -116,63 +119,62 @@ export class TitlePortraitControlsManager {
     this.root.setAttribute('aria-label', 'Unicorn Valley menu');
     this.root.hidden = true;
 
-    this.mainView = document.createElement('div');
-    this.mainView.className = 'title-portrait-view title-portrait-main';
+    const sparkles = document.createElement('div');
+    sparkles.className = 'title-portrait-sparkles';
+    sparkles.setAttribute('aria-hidden', 'true');
+    for (let index = 0; index < 12; index += 1) {
+      const sparkle = document.createElement('span');
+      sparkle.className = 'title-portrait-sparkle';
+      sparkle.textContent = index % 3 === 0 ? '✦' : '✧';
+      sparkle.style.setProperty('--sparkle-x', `${6 + ((index * 17) % 88)}%`);
+      sparkle.style.setProperty('--sparkle-rest-y', `${8 + ((index * 13) % 78)}%`);
+      sparkle.style.setProperty('--sparkle-delay', `${-0.7 * index}s`);
+      sparkle.style.setProperty('--sparkle-duration', `${8 + (index % 5) * 1.4}s`);
+      sparkle.style.setProperty('--sparkle-size', `${13 + (index % 4) * 4}px`);
+      sparkles.append(sparkle);
+    }
 
-    this.brand = document.createElement('h1');
-    this.brand.className = 'title-portrait-brand';
-    this.brand.dataset.titlePortraitBrand = 'true';
-    this.brand.textContent = 'Unicorn Valley';
-    this.mainView.append(this.brand);
+    const mainView = document.createElement('div');
+    mainView.className = 'title-portrait-view title-portrait-main';
 
-    this.heading = document.createElement('h2');
+    const brand = document.createElement('img');
+    brand.className = 'title-portrait-logo';
+    brand.dataset.titlePortraitBrand = 'true';
+    brand.src = TITLE_LOGO_URL;
+    brand.alt = 'Unicorn Valley. A little valley. A lot of magic.';
+    brand.decoding = 'async';
+    brand.fetchPriority = 'high';
+    mainView.append(brand);
+
+    const card = document.createElement('div');
+    card.className = 'title-portrait-card';
+
+    this.heading = document.createElement('h1');
     this.heading.className = 'title-portrait-heading';
-    this.heading.textContent = 'Welcome!';
-    this.mainView.append(this.heading);
+    this.heading.textContent = 'Welcome to Unicorn Valley';
+    card.append(this.heading);
 
-    const mainActions = document.createElement('div');
-    mainActions.className = 'title-portrait-actions';
+    this.subtitle = document.createElement('p');
+    this.subtitle.className = 'title-portrait-subtitle';
+    card.append(this.subtitle);
+
+    const actions = document.createElement('div');
+    actions.className = 'title-portrait-actions';
     this.mainActions = MAIN_ACTIONS.map((definition) => {
       const button = makeButton(definition);
       button.addEventListener('click', () => this.activate(definition.objectName));
-      mainActions.append(button);
+      actions.append(button);
       return { definition, button };
     });
-    this.mainView.append(mainActions);
+    card.append(actions);
 
     this.status = document.createElement('p');
     this.status.className = 'title-portrait-status';
     this.status.setAttribute('aria-live', 'polite');
-    this.mainView.append(this.status);
+    card.append(this.status);
 
-    this.settingsView = document.createElement('div');
-    this.settingsView.className = 'title-portrait-view title-portrait-settings';
-    this.settingsView.hidden = true;
-
-    const settingsHeading = document.createElement('h2');
-    settingsHeading.className = 'title-portrait-heading';
-    settingsHeading.textContent = 'Settings';
-    this.settingsView.append(settingsHeading);
-
-    const settingActions = document.createElement('div');
-    settingActions.className = 'title-portrait-actions title-portrait-settings-actions';
-    this.settingActions = SETTING_ACTIONS.map((definition) => {
-      const button = makeButton(definition);
-      button.addEventListener('click', () => this.activate(definition.objectName));
-      settingActions.append(button);
-      return { definition, button };
-    });
-    this.settingsView.append(settingActions);
-
-    this.doneButton = document.createElement('button');
-    this.doneButton.type = 'button';
-    this.doneButton.className = 'title-portrait-button title-portrait-primary';
-    this.doneButton.dataset.titleAction = 'title-settings-done';
-    this.doneButton.textContent = 'Done';
-    this.doneButton.addEventListener('click', () => this.activate('title-settings-done'));
-    this.settingsView.append(this.doneButton);
-
-    this.root.append(this.mainView, this.settingsView);
+    mainView.append(card);
+    this.root.append(sparkles, mainView);
     document.body.append(this.root);
     this.game.events.on(Phaser.Core.Events.POST_STEP, this.update, this);
   }
@@ -195,17 +197,21 @@ export class TitlePortraitControlsManager {
     }
 
     const artworkTarget = currentArtworkTarget();
-    this.game.canvas.style.pointerEvents = artworkTarget.portrait ? 'none' : '';
+    const touchOverlay = globalThis.matchMedia?.(TOUCH_OVERLAY_MEDIA_QUERY).matches === true;
+    this.game.canvas.style.pointerEvents = touchOverlay ? 'none' : '';
     this.syncArtwork(scene, artworkTarget);
-    this.root.hidden = false;
-    const settingsPanel = scene.children.getByName('title-settings-panel');
-    const settingsOpen = isVisible(settingsPanel);
-    this.mainView.hidden = settingsOpen;
-    this.settingsView.hidden = !settingsOpen;
+    this.syncSparkles(scene, touchOverlay);
+    this.syncLogo(scene, touchOverlay);
+    this.root.hidden = !touchOverlay;
 
     const heading = scene.children.getByName('title-menu-heading');
     if (heading instanceof Phaser.GameObjects.Text) {
       this.heading.textContent = heading.text;
+    }
+
+    const subtitle = scene.children.getByName('title-menu-subtitle');
+    if (subtitle instanceof Phaser.GameObjects.Text) {
+      this.subtitle.textContent = subtitle.text;
     }
 
     const status = scene.children.getByName('title-menu-status');
@@ -213,11 +219,7 @@ export class TitlePortraitControlsManager {
       this.status.textContent = status.text;
     }
 
-    this.syncActions(scene, this.mainActions);
-    this.syncActions(scene, this.settingActions, true);
-
-    const done = scene.children.getByName('title-settings-done');
-    this.doneButton.disabled = !isEnabled(done);
+    this.syncActions(scene);
   }
 
   private preloadArtwork(target: TitleArtworkTarget): void {
@@ -265,15 +267,118 @@ export class TitlePortraitControlsManager {
     const sourceHeight = Math.max(1, frame.realHeight);
     const coverScale = Math.max(GAME_WIDTH / sourceWidth, GAME_HEIGHT / sourceHeight);
     const artwork = scene.add
-      .image(GAME_WIDTH / 2, target.portrait ? 850 : GAME_HEIGHT / 2, target.key)
+      .image(GAME_WIDTH / 2, GAME_HEIGHT / 2, target.key)
       .setName(TITLE_ARTWORK_NAME)
       .setScale(coverScale)
-      .setDepth(target.portrait ? 300 : 8);
+      .setDepth(8);
     artwork.setData('titleArtworkVariant', target.portrait ? 'portrait' : 'landscape');
   }
 
-  private syncActions(scene: Phaser.Scene, actions: DomAction[], settings = false): void {
-    for (const { definition, button } of actions) {
+  private syncSparkles(scene: Phaser.Scene, touchOverlay: boolean): void {
+    const existing = scene.children.getByName(TITLE_SPARKLE_NAME);
+    if (touchOverlay) {
+      existing?.destroy();
+      return;
+    }
+
+    if (existing instanceof Phaser.GameObjects.Container) {
+      const reducedMotion = this.accessibility.load().reducedMotion;
+      for (const child of existing.list) {
+        for (const tween of scene.tweens.getTweensOf(child)) {
+          tween.timeScale = reducedMotion ? 0 : 1;
+        }
+      }
+      return;
+    }
+
+    const positions = [
+      [72, 90],
+      [170, 286],
+      [286, 112],
+      [448, 332],
+      [566, 86],
+      [690, 244],
+      [808, 122],
+      [914, 294],
+      [1040, 92],
+      [1164, 212],
+      [1224, 404],
+      [760, 506],
+      [432, 548],
+      [214, 470],
+    ] as const;
+    const container = scene.add.container(0, 0).setName(TITLE_SPARKLE_NAME).setDepth(9);
+    const reducedMotion = this.accessibility.load().reducedMotion;
+
+    positions.forEach(([x, y], index) => {
+      const sparkle = scene.add
+        .text(x, y, index % 3 === 0 ? '✦' : '✧', {
+          color: index % 4 === 0 ? '#fff0a8' : '#fff8ff',
+          fontFamily: 'Georgia, serif',
+          fontSize: `${14 + (index % 4) * 4}px`,
+          stroke: '#76518a',
+          strokeThickness: 1,
+        })
+        .setOrigin(0.5)
+        .setAlpha(0.42 + (index % 3) * 0.12);
+      container.add(sparkle);
+
+      if (!reducedMotion) {
+        scene.tweens.add({
+          targets: sparkle,
+          y: y + 22 + (index % 4) * 7,
+          alpha: 0.14,
+          angle: index % 2 === 0 ? 24 : -20,
+          duration: 2600 + (index % 5) * 520,
+          delay: index * 170,
+          yoyo: true,
+          repeat: -1,
+          ease: 'Sine.InOut',
+        });
+      }
+    });
+  }
+
+  private syncLogo(scene: Phaser.Scene, touchOverlay: boolean): void {
+    const existing = scene.children.getByName(TITLE_LOGO_NAME);
+    if (touchOverlay) {
+      existing?.destroy();
+      return;
+    }
+
+    if (existing instanceof Phaser.GameObjects.Image || !scene.textures.exists(TITLE_LOGO_KEY)) {
+      return;
+    }
+
+    const logo = scene.add
+      .image(TITLE_LOGO_X, TITLE_LOGO_Y, TITLE_LOGO_KEY)
+      .setName(TITLE_LOGO_NAME)
+      .setDepth(12);
+    const finalScale = TITLE_LOGO_WIDTH / Math.max(1, logo.width);
+    const reducedMotion = this.accessibility.load().reducedMotion;
+
+    if (reducedMotion) {
+      logo.setScale(finalScale);
+      return;
+    }
+
+    logo
+      .setAlpha(0)
+      .setScale(finalScale * 0.86)
+      .setY(TITLE_LOGO_Y + 24);
+    scene.tweens.add({
+      targets: logo,
+      alpha: 1,
+      y: TITLE_LOGO_Y,
+      scaleX: finalScale,
+      scaleY: finalScale,
+      duration: 720,
+      ease: 'Back.Out',
+    });
+  }
+
+  private syncActions(scene: Phaser.Scene): void {
+    for (const { definition, button } of this.mainActions) {
       const target = scene.children.getByName(definition.objectName);
       const label = scene.children.getByName(definition.labelName);
       button.hidden = !isVisible(target);
@@ -281,13 +386,27 @@ export class TitlePortraitControlsManager {
 
       if (label instanceof Phaser.GameObjects.Text) {
         button.textContent = label.text;
-        if (settings) {
-          const enabled = label.text.endsWith(': On');
-          button.setAttribute('aria-pressed', String(enabled));
-          button.classList.toggle('is-on', enabled);
-        }
       }
     }
+
+    const retry = this.actionButton('title-menu-retry-save');
+    const refresh = this.actionButton('title-menu-refresh');
+    const continueButton = this.actionButton('title-menu-continue');
+    const newGame = this.actionButton('title-menu-new-game');
+    const priorPrimaryVisible = [retry, refresh, continueButton].some(
+      (button) => button && !button.hidden,
+    );
+    if (newGame) {
+      newGame.classList.toggle('title-portrait-primary', !priorPrimaryVisible && !newGame.hidden);
+      newGame.classList.toggle(
+        'title-portrait-warning',
+        !newGame.hidden && newGame.textContent !== 'New Game',
+      );
+    }
+  }
+
+  private actionButton(objectName: string): HTMLButtonElement | undefined {
+    return this.mainActions.find(({ definition }) => definition.objectName === objectName)?.button;
   }
 
   private activate(objectName: string): void {
