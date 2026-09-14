@@ -15,14 +15,18 @@ import {
 const COLLECTION_RADIUS = 82;
 const LEGACY_THRESHOLD_GLIMMER_NAME = 'moonflower-field-threshold-glimmer';
 const FEEDBACK_Y = GAME_HEIGHT - 205;
+const COLLECTION_FLAG_PREFIX = 'h1:willow-moonflower-collected:';
 
-const COLLECTIBLE_POSITIONS = [
-  { x: 2020, y: 1190 },
-  { x: 2240, y: 1335 },
-  { x: 2440, y: 1450 },
+const COLLECTIBLES = [
+  { id: 'west', x: 2020, y: 1190 },
+  { id: 'middle', x: 2240, y: 1335 },
+  { id: 'east', x: 2440, y: 1450 },
 ] as const;
 
+type CollectibleId = (typeof COLLECTIBLES)[number]['id'];
+
 interface CollectibleMoonflower {
+  id: CollectibleId;
   container: Phaser.GameObjects.Container;
   x: number;
   y: number;
@@ -33,6 +37,10 @@ interface GladeCollectionState {
   flowers: CollectibleMoonflower[];
   feedback: Phaser.GameObjects.Text;
   signature: string;
+}
+
+function collectionFlag(id: CollectibleId): string {
+  return `${COLLECTION_FLAG_PREFIX}${id}`;
 }
 
 function findPlayer(scene: Phaser.Scene): Phaser.Physics.Arcade.Sprite | null {
@@ -104,13 +112,52 @@ export class WillowMoonflowerGladeWorldManager {
     return this.state;
   }
 
+  private getCollectedIds(): Set<CollectibleId> {
+    const save = this.saveService.load() ?? this.saveService.createNewGame();
+    const collected = new Set<CollectibleId>();
+    for (const collectible of COLLECTIBLES) {
+      if (save.world.flags[collectionFlag(collectible.id)] === true) {
+        collected.add(collectible.id);
+      }
+    }
+
+    // Compatibility for saves created by the first H1.5a preview, which tracked quantity but not
+    // physical flower identity. Only use this fallback when no identity flags exist at all.
+    if (collected.size === 0) {
+      const owned = Math.min(
+        WILLOW_MOONFLOWER_REQUIRED_QUANTITY,
+        this.inventory.getQuantity(WILLOW_MOONFLOWER_ITEM_ID),
+      );
+      for (const collectible of COLLECTIBLES.slice(0, owned)) {
+        collected.add(collectible.id);
+      }
+    }
+
+    return collected;
+  }
+
+  private markCollected(id: CollectibleId): void {
+    const save = this.saveService.load() ?? this.saveService.createNewGame();
+    this.saveService.save({
+      ...save,
+      world: {
+        ...save.world,
+        flags: {
+          ...save.world.flags,
+          [collectionFlag(id)]: true,
+        },
+      },
+    });
+  }
+
   private syncFlowers(state: GladeCollectionState, force = false): void {
     const progress = this.quests.getProgress(WILLOW_MOONFLOWERS_QUEST_ID);
+    const collected = this.getCollectedIds();
     const owned = Math.min(
       WILLOW_MOONFLOWER_REQUIRED_QUANTITY,
       this.inventory.getQuantity(WILLOW_MOONFLOWER_ITEM_ID),
     );
-    const signature = `${progress.status}:${owned}`;
+    const signature = `${progress.status}:${owned}:${[...collected].sort().join(',')}`;
     if (!force && signature === state.signature) {
       return;
     }
@@ -125,26 +172,40 @@ export class WillowMoonflowerGladeWorldManager {
       return;
     }
 
-    for (const position of COLLECTIBLE_POSITIONS.slice(owned)) {
-      state.flowers.push(this.createCollectible(state.scene, position.x, position.y));
+    for (const collectible of COLLECTIBLES) {
+      if (!collected.has(collectible.id)) {
+        state.flowers.push(
+          this.createCollectible(state.scene, collectible.id, collectible.x, collectible.y),
+        );
+      }
     }
   }
 
-  private createCollectible(scene: Phaser.Scene, x: number, y: number): CollectibleMoonflower {
-    const halo = scene.add.circle(0, 0, 38, 0xd8c8ff, 0.12);
-    const stem = scene.add.rectangle(0, 28, 7, 60, 0x589566, 1);
-    const leafLeft = scene.add.ellipse(-11, 27, 20, 9, 0x78b979, 1).setAngle(-30);
-    const leafRight = scene.add.ellipse(11, 37, 20, 9, 0x78b979, 1).setAngle(30);
-    const petals = [
-      scene.add.ellipse(0, -20, 28, 40, 0xf4ddff, 1),
-      scene.add.ellipse(20, -5, 28, 40, 0xd9c6ff, 1).setAngle(65),
-      scene.add.ellipse(12, 17, 28, 40, 0xc4ddff, 1).setAngle(140),
-      scene.add.ellipse(-12, 17, 28, 40, 0xd9c6ff, 1).setAngle(-140),
-      scene.add.ellipse(-20, -5, 28, 40, 0xc4ddff, 1).setAngle(-65),
-    ];
-    const centre = scene.add.circle(0, 1, 12, 0xffe49b, 1);
+  private createCollectible(
+    scene: Phaser.Scene,
+    id: CollectibleId,
+    x: number,
+    y: number,
+  ): CollectibleMoonflower {
+    const halo = scene.add.circle(0, -4, 40, 0xe8dcff, 0.1);
+    const stem = scene.add.rectangle(0, 31, 7, 62, 0x589566, 1);
+    const leafLeft = scene.add.ellipse(-12, 30, 21, 9, 0x78b979, 1).setAngle(-30);
+    const leafRight = scene.add.ellipse(12, 40, 21, 9, 0x78b979, 1).setAngle(30);
+
+    // The blossom is deliberately a crescent moon rather than an ordinary petalled flower.
+    const crescent = scene.add
+      .text(0, -10, '☾', {
+        color: '#eee2ff',
+        fontFamily: 'Georgia, serif',
+        fontSize: '64px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5);
+    const moonHeart = scene.add.circle(5, -9, 6, 0xffecae, 0.95);
+    const lowerPetalLeft = scene.add.ellipse(-10, 13, 14, 24, 0xd8c9ff, 0.95).setAngle(-30);
+    const lowerPetalRight = scene.add.ellipse(10, 13, 14, 24, 0xc8dcff, 0.95).setAngle(30);
     const glintA = scene.add
-      .text(29, -32, '✦', {
+      .text(28, -38, '✦', {
         color: '#ffffff',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '17px',
@@ -152,7 +213,7 @@ export class WillowMoonflowerGladeWorldManager {
       })
       .setOrigin(0.5);
     const glintB = scene.add
-      .text(-28, -12, '✧', {
+      .text(-30, -15, '✧', {
         color: '#efe4ff',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '13px',
@@ -160,17 +221,25 @@ export class WillowMoonflowerGladeWorldManager {
       })
       .setOrigin(0.5);
 
-    const flowerParts = [stem, leafLeft, leafRight, ...petals, centre];
+    const flowerParts = [
+      stem,
+      leafLeft,
+      leafRight,
+      lowerPetalLeft,
+      lowerPetalRight,
+      crescent,
+      moonHeart,
+    ];
     const container = scene.add
       .container(x, y, [halo, ...flowerParts, glintA, glintB])
-      .setName(`willow-moonflower:${x}:${y}`)
-      .setDepth(worldDepthForY(y + 58, 0.3));
+      .setName(`willow-moonflower:${id}`)
+      .setDepth(worldDepthForY(y + 60, 0.3));
 
     if (!isReducedMotionEnabled()) {
       scene.tweens.add({
-        targets: flowerParts,
-        scaleX: { from: 0.95, to: 1.06 },
-        scaleY: { from: 0.95, to: 1.06 },
+        targets: [crescent, moonHeart, lowerPetalLeft, lowerPetalRight],
+        scaleX: { from: 0.94, to: 1.07 },
+        scaleY: { from: 0.94, to: 1.07 },
         duration: 920,
         yoyo: true,
         repeat: -1,
@@ -178,7 +247,7 @@ export class WillowMoonflowerGladeWorldManager {
       });
       scene.tweens.add({
         targets: halo,
-        alpha: { from: 0.08, to: 0.2 },
+        alpha: { from: 0.06, to: 0.18 },
         scale: { from: 0.92, to: 1.08 },
         duration: 1100,
         yoyo: true,
@@ -196,7 +265,7 @@ export class WillowMoonflowerGladeWorldManager {
       });
     }
 
-    return { container, x, y };
+    return { id, container, x, y };
   }
 
   private tryCollect(state: GladeCollectionState): void {
@@ -215,6 +284,7 @@ export class WillowMoonflowerGladeWorldManager {
 
     const [flower] = state.flowers.splice(index, 1);
     flower.container.destroy(true);
+    this.markCollected(flower.id);
     const quantity = this.inventory.addItem(WILLOW_MOONFLOWER_ITEM_ID, 1, {
       suppressRewardFeedback: true,
     });
