@@ -1,39 +1,26 @@
 import Phaser from 'phaser';
 import { isReducedMotionEnabled } from '../accessibility/AccessibilitySettings';
+import {
+  AMBIENT_STREAM_FISH_NAME_PREFIX,
+  MOONFLOWER_STREAM_FISHING_HOOK,
+  MOONFLOWER_STREAM_SURFACE_MARKS,
+  resolveAmbientFishRun,
+} from './MoonflowerStreamLifeModel';
+
+export {
+  AMBIENT_STREAM_FISH_NAME_PREFIX,
+  MOONFLOWER_STREAM_FISHING_HOOK,
+  MOONFLOWER_STREAM_SURFACE_MARKS,
+  resolveAmbientFishRun,
+} from './MoonflowerStreamLifeModel';
 
 const ROOT_NAME = 'h1.6:moonflower-stream-life';
-export const AMBIENT_STREAM_FISH_NAME_PREFIX = 'ambient-stream-fish:moonflower:';
-
 const STREAM_X = 1400;
 const STREAM_Y = 900;
 const STREAM_WIDTH = 220;
 const STREAM_HEIGHT = 1800;
 const FISH_START_Y = -90;
 const FISH_END_Y = 1890;
-
-export const MOONFLOWER_STREAM_FISHING_HOOK = {
-  id: 'stream:moonflower-glade',
-  sceneKey: 'MoonflowerGladeScene',
-  bounds: {
-    left: STREAM_X - STREAM_WIDTH / 2,
-    right: STREAM_X + STREAM_WIDTH / 2,
-    top: 0,
-    bottom: STREAM_HEIGHT,
-  },
-  fishNamePrefix: AMBIENT_STREAM_FISH_NAME_PREFIX,
-} as const;
-
-export const MOONFLOWER_STREAM_SURFACE_MARKS = [
-  { x: 1370, y: 145, width: 70, height: 14, drift: 13, duration: 2300 },
-  { x: 1437, y: 318, width: 48, height: 11, drift: -10, duration: 2800 },
-  { x: 1361, y: 514, width: 82, height: 16, drift: 16, duration: 3200 },
-  { x: 1442, y: 733, width: 62, height: 13, drift: -14, duration: 2500 },
-  { x: 1368, y: 1068, width: 54, height: 12, drift: 11, duration: 3000 },
-  { x: 1430, y: 1263, width: 78, height: 15, drift: -16, duration: 3350 },
-  { x: 1378, y: 1518, width: 58, height: 12, drift: 15, duration: 2650 },
-  { x: 1440, y: 1694, width: 69, height: 14, drift: -12, duration: 3100 },
-] as const;
-
 const FISH_COLOURS = [0xb7e8ee, 0xd9f3ed, 0xaed9ef, 0xcce8d7] as const;
 
 interface FishRuntime {
@@ -46,27 +33,6 @@ interface FishRuntime {
 interface StreamRuntime {
   root: Phaser.GameObjects.Container;
   fish: FishRuntime[];
-  timers: Phaser.Time.TimerEvent[];
-}
-
-export interface AmbientFishRun {
-  x: number;
-  durationMs: number;
-  shouldSurface: boolean;
-}
-
-export function resolveAmbientFishRun(
-  laneSample: number,
-  speedSample: number,
-  surfaceSample: number,
-): AmbientFishRun {
-  const lane = Phaser.Math.Clamp(laneSample, 0, 1);
-  const speed = Phaser.Math.Clamp(speedSample, 0, 1);
-  return {
-    x: Phaser.Math.Linear(1348, 1452, lane),
-    durationMs: Math.round(Phaser.Math.Linear(9_200, 15_400, speed)),
-    shouldSurface: Phaser.Math.Clamp(surfaceSample, 0, 1) < 0.32,
-  };
 }
 
 const runtimes = new WeakMap<Phaser.Scene, StreamRuntime>();
@@ -240,7 +206,7 @@ export function ensureMoonflowerStreamLife(scene: Phaser.Scene): void {
   const root = scene.add.container(STREAM_X, STREAM_Y).setName(ROOT_NAME).setDepth(5.08);
   createSurface(scene, root);
   const fish = createFishLife(scene, root);
-  const runtime: StreamRuntime = { root, fish, timers: [] };
+  const runtime: StreamRuntime = { root, fish };
   runtimes.set(scene, runtime);
 
   const destroy = () => {
@@ -251,9 +217,6 @@ export function ensureMoonflowerStreamLife(scene: Phaser.Scene): void {
       entry.timer?.destroy();
       entry.surfaceTimer?.destroy();
       scene.tweens.killTweensOf(entry.container);
-    }
-    for (const timer of runtime.timers) {
-      timer.destroy();
     }
     runtime.root.destroy(true);
     runtimes.delete(scene);
