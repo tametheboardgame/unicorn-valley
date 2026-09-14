@@ -126,6 +126,12 @@ export const MOONFLOWER_GLADE_MAP = {
       width: WESTERN_HEDGE_WIDTH,
       height: SOUTH_HEDGE_HEIGHT,
     },
+    // H1.4: visible woodland is now a real hard boundary. The right side deliberately
+    // leaves a generous opening around the Sunbeam Village gateway at y=900.
+    { id: 'collision:woodland-top', x: 1400, y: 145, width: 2520, height: 150 },
+    { id: 'collision:woodland-bottom', x: 1400, y: 1655, width: 2520, height: 170 },
+    { id: 'collision:woodland-right-north', x: 2640, y: 430, width: 190, height: 650 },
+    { id: 'collision:woodland-right-south', x: 2640, y: 1370, width: 190, height: 650 },
     {
       id: 'collision:stream-north',
       x: 1400,
