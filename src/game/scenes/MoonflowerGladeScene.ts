@@ -578,7 +578,7 @@ export class MoonflowerGladeScene extends Phaser.Scene {
       (landmark) => landmark.id === 'moonflower-field',
     )?.approach;
     if (threshold) {
-      const glow = this.add.circle(0, 6, 34, 0x72cfff, 0.12);
+      const glow = this.add.circle(0, 6, 31, 0x72cfff, 0.14);
       const star = this.add
         .text(0, -4, '✦', {
           color: '#bfeaff',
@@ -605,7 +605,7 @@ export class MoonflowerGladeScene extends Phaser.Scene {
       });
       this.tweens.add({
         targets: marker,
-        y: threshold.y - 5,
+        y: threshold.y - 4,
         duration: 1450,
         yoyo: true,
         repeat: -1,
