@@ -37,6 +37,20 @@ export const MOONFLOWER_GLADE_INTERACTIONS = [
     },
   },
   {
+    id: 'interaction:western-gate',
+    label: 'Old Garden Gate',
+    actionLabel: 'Check gate',
+    actionKind: 'inspect',
+    position: landmarkApproach('western-gate'),
+    interactionRadius: 165,
+    priority: 9,
+    result: {
+      type: 'message',
+      title: 'Old Garden Gate',
+      message: 'A small silver lock holds the gate shut. It looks like it might open with the right key.',
+    },
+  },
+  {
     id: 'interaction:display-stump',
     label: 'Wonderbook',
     actionLabel: 'Open book',
