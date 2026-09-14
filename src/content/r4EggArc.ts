@@ -39,7 +39,8 @@ export const R4_EGG_DISCOVERIES = [
   {
     id: PIP_STRANGE_EGG_DISCOVERY_ID,
     name: "Pip's Strange Egg",
-    description: 'A mysterious speckled egg nestled amongst the Moonflowers at the end of the trail.',
+    description:
+      'A mysterious speckled egg nestled amongst the Moonflowers at the end of the trail.',
   },
 ] as const satisfies readonly DiscoveryDefinition[];
 
