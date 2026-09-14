@@ -94,7 +94,7 @@ export class WorldOcclusionManager {
 
     const state: SceneState = { overlays: [] };
     if (scene.scene.key === 'MoonflowerGladeScene') {
-      state.overlays.push(this.createHollowTreeOccluder(scene), this.createClosedWonderbook(scene));
+      state.overlays.push(this.createHollowTreeOccluder(scene));
     } else if (scene.scene.key === 'SunbeamVillageScene') {
       state.overlays.push(this.createVillageBuntingOccluder(scene));
     }
@@ -141,7 +141,6 @@ export class WorldOcclusionManager {
       worldDepthForY(PIP_POSITION.y + 55, 0.2),
     );
 
-    this.setDepthInBox(scene, 780, 1060, 920, 1180, worldDepthForY(1135));
     this.setDepthInBox(scene, 1060, 990, 1160, 1140, worldDepthForY(1092));
 
     const bridge = MOONFLOWER_GLADE_MAP.bridge;
@@ -306,42 +305,6 @@ export class WorldOcclusionManager {
     tree.fillStyle(0xb98ce8, 0.28);
     tree.fillCircle(2200, 555, 8);
     return tree;
-  }
-
-  private createClosedWonderbook(scene: Phaser.Scene): Phaser.GameObjects.Container {
-    const pageBlock = scene.add
-      .rectangle(0, 4, 112, 62, 0xfff2cf, 1)
-      .setStrokeStyle(3, 0xc89b66, 0.95);
-    const pageLines = scene.add.graphics();
-    pageLines.lineStyle(2, 0xd9bf91, 0.7);
-    for (const y of [-14, -5, 4, 13, 22]) {
-      pageLines.lineBetween(-45, y, 45, y);
-    }
-
-    const cover = scene.add.rectangle(0, -5, 120, 64, 0x7d5aa6, 1).setStrokeStyle(4, 0x513867, 1);
-    const spine = scene.add.rectangle(-53, -5, 11, 62, 0x5e407e, 1);
-    const clasp = scene.add.rectangle(54, -5, 12, 22, 0xe5bd63, 1);
-    const title = scene.add
-      .text(4, -8, '✦', {
-        color: '#ffe7a1',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '28px',
-        fontStyle: 'bold',
-      })
-      .setOrigin(0.5);
-    const moon = scene.add
-      .text(4, 14, '☾', {
-        color: '#f7dbff',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '19px',
-        fontStyle: 'bold',
-      })
-      .setOrigin(0.5);
-
-    return scene.add
-      .container(850, 1062, [pageBlock, pageLines, cover, spine, clasp, title, moon])
-      .setAngle(-7)
-      .setDepth(worldDepthForY(1135, 0.35));
   }
 
   private createVillageBuntingOccluder(scene: Phaser.Scene): Phaser.GameObjects.Graphics {
