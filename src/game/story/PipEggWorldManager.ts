@@ -74,9 +74,7 @@ function findFirstSparkle(scene: Phaser.Scene): Phaser.GameObjects.Container | n
         object instanceof Phaser.GameObjects.Container &&
         Math.abs(object.x - FIRST_SPARKLE_POSITION.x) <= 1 &&
         Math.abs(object.y - FIRST_SPARKLE_POSITION.y) <= 1 &&
-        object.list.some(
-          (child) => child instanceof Phaser.GameObjects.Text && child.text === '✦',
-        ),
+        object.list.some((child) => child instanceof Phaser.GameObjects.Text && child.text === '✦'),
     ) ?? null
   );
 }
@@ -174,10 +172,7 @@ export class PipEggWorldManager {
     }
   }
 
-  private syncInitialPipEncounter(
-    scene: Phaser.Scene,
-    player: Phaser.Physics.Arcade.Sprite,
-  ): void {
+  private syncInitialPipEncounter(scene: Phaser.Scene, player: Phaser.Physics.Arcade.Sprite): void {
     const save = getBrowserSaveService().load();
     const introduced = isPipIntroduced(save);
     const welcomeComplete = save?.world.flags[PIP_WELCOME_COMPLETE_FLAG] === true;
@@ -343,12 +338,13 @@ export class PipEggWorldManager {
       if (!nearPip) {
         continue;
       }
-      const legacyShape =
+      if (
         object instanceof Phaser.GameObjects.Arc ||
         object instanceof Phaser.GameObjects.Ellipse ||
-        object instanceof Phaser.GameObjects.Triangle;
-      const legacyLabel = object instanceof Phaser.GameObjects.Text && object.text === 'Pip';
-      if (legacyShape || legacyLabel) {
+        object instanceof Phaser.GameObjects.Triangle
+      ) {
+        object.setVisible(false);
+      } else if (object instanceof Phaser.GameObjects.Text && object.text === 'Pip') {
         object.setVisible(false);
       }
     }
@@ -408,9 +404,7 @@ export class PipEggWorldManager {
         this.drawStarTrack(trackLead, x, y, 6);
       }
       const nestBack = scene.add.ellipse(0, 24, 108, 48, 0x9b7456, 0.8);
-      const egg = scene.add
-        .ellipse(0, -9, 64, 82, 0xf6edda, 1)
-        .setStrokeStyle(4, 0xb99bc7, 0.92);
+      const egg = scene.add.ellipse(0, -9, 64, 82, 0xf6edda, 1).setStrokeStyle(4, 0xb99bc7, 0.92);
       const spotA = scene.add.circle(-12, -19, 7, 0xc8afe3, 0.72);
       const spotB = scene.add.circle(14, 2, 5, 0x9fd7d0, 0.72);
       const spotC = scene.add.circle(3, -34, 4, 0xe4b9d8, 0.78);
