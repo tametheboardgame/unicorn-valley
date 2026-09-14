@@ -5,7 +5,7 @@ export interface ExplorationPathPoint {
 
 export const EXPLORATION_MAIN_ROUTES: Readonly<Record<string, readonly ExplorationPathPoint[]>> = {
   MoonflowerGladeScene: [
-    { x: 125, y: 900 },
+    { x: 315, y: 900 },
     { x: 560, y: 900 },
     { x: 980, y: 900 },
     { x: 1400, y: 900 },
