@@ -18,19 +18,31 @@ const target = (overrides: Partial<InteractionTarget> = {}): InteractionTarget =
 });
 
 describe('WorldInteractionAffordanceModel', () => {
-  it('shows one persistent affordance for visible explicit targets', () => {
-    expect(shouldShowWorldInteractionAffordance(target())).toBe(true);
-    expect(shouldShowWorldInteractionAffordance(target({ visible: () => true }))).toBe(true);
-    expect(shouldShowWorldInteractionAffordance(target({ enabled: true }))).toBe(true);
+  it('shows a blue affordance only when a quiet interaction explicitly opts in', () => {
+    expect(shouldShowWorldInteractionAffordance(target())).toBe(false);
+    expect(shouldShowWorldInteractionAffordance(target({ worldAffordance: false }))).toBe(false);
+    expect(shouldShowWorldInteractionAffordance(target({ worldAffordance: true }))).toBe(true);
+    expect(
+      shouldShowWorldInteractionAffordance(
+        target({ worldAffordance: true, visible: () => true, enabled: true }),
+      ),
+    ).toBe(true);
   });
 
-  it('does not mark automatic, hidden, disabled or deliberately bespoke interactions', () => {
-    expect(shouldShowWorldInteractionAffordance(target({ activationMode: 'automatic' }))).toBe(
-      false,
-    );
-    expect(shouldShowWorldInteractionAffordance(target({ visible: false }))).toBe(false);
-    expect(shouldShowWorldInteractionAffordance(target({ enabled: () => false }))).toBe(false);
-    expect(shouldShowWorldInteractionAffordance(target({ worldAffordance: false }))).toBe(false);
+  it('does not mark automatic, hidden or disabled interactions even when opted in', () => {
+    expect(
+      shouldShowWorldInteractionAffordance(
+        target({ worldAffordance: true, activationMode: 'automatic' }),
+      ),
+    ).toBe(false);
+    expect(
+      shouldShowWorldInteractionAffordance(target({ worldAffordance: true, visible: false })),
+    ).toBe(false);
+    expect(
+      shouldShowWorldInteractionAffordance(
+        target({ worldAffordance: true, enabled: () => false }),
+      ),
+    ).toBe(false);
   });
 
   it('places talk affordances higher than ordinary object affordances', () => {
