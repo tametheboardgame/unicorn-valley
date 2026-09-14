@@ -107,16 +107,8 @@ function addWindow(
     'windows',
     `glass-${x}-${y}`,
   );
-  name(
-    scene.add.rectangle(x, y, 5, height, 0xf8f0da, 0.96).setDepth(depth + 0.1),
-    'windows',
-    `mullion-v-${x}-${y}`,
-  );
-  name(
-    scene.add.rectangle(x, y, width, 5, 0xf8f0da, 0.96).setDepth(depth + 0.1),
-    'windows',
-    `mullion-h-${x}-${y}`,
-  );
+  name(scene.add.rectangle(x, y, 5, height, 0xf8f0da, 0.96).setDepth(depth + 0.1), 'windows', `mullion-v-${x}-${y}`);
+  name(scene.add.rectangle(x, y, width, 5, 0xf8f0da, 0.96).setDepth(depth + 0.1), 'windows', `mullion-h-${x}-${y}`);
   name(
     scene.add
       .rectangle(x - width / 2 - 13, y, 18, height + 16, 0x8ea26d, 1)
@@ -135,13 +127,7 @@ function addWindow(
   );
 }
 
-function addWindowBox(
-  scene: Phaser.Scene,
-  x: number,
-  y: number,
-  width: number,
-  depth: number,
-): void {
+function addWindowBox(scene: Phaser.Scene, x: number, y: number, width: number, depth: number): void {
   name(
     scene.add
       .rectangle(x, y, width, 18, 0x8a6049, 1)
@@ -176,11 +162,7 @@ function addFlowerbed(
   depth: number,
   seed: number,
 ): void {
-  name(
-    scene.add.ellipse(x, y + 8, width, 54, 0x7d5d49, 0.9).setDepth(depth),
-    'flowerbeds',
-    `soil-${seed}`,
-  );
+  name(scene.add.ellipse(x, y + 8, width, 54, 0x7d5d49, 0.9).setDepth(depth), 'flowerbeds', `soil-${seed}`);
   name(
     scene.add
       .ellipse(x, y + 16, width + 12, 34, 0xb69372, 0.74)
@@ -206,6 +188,34 @@ function addFlowerbed(
   }
 }
 
+function addMountedNameplate(scene: Phaser.Scene, x: number, y: number): void {
+  const shadow = scene.add.rectangle(3, 4, 194, 40, 0x5c443c, 0.22);
+  const board = scene.add
+    .rectangle(0, 0, 188, 36, 0x7b5848, 1)
+    .setStrokeStyle(4, 0xe0bd85, 0.98);
+  const innerLine = scene.add
+    .rectangle(0, 0, 174, 25, 0xffffff, 0)
+    .setStrokeStyle(1.5, 0xb88e64, 0.72);
+  const leftBloom = scene.add.circle(-88, 0, 7, 0xd6a7ec, 1);
+  const rightBloom = scene.add.circle(88, 0, 7, 0xd6a7ec, 1);
+  const label = scene.add
+    .text(0, 0, 'Moonflower Cottage', {
+      color: '#fff0cd',
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '14px',
+      fontStyle: 'bold',
+    })
+    .setOrigin(0.5);
+
+  name(
+    scene.add
+      .container(x, y, [shadow, board, innerLine, leftBloom, rightBloom, label])
+      .setDepth(10.84),
+    'plaque',
+    'mounted-sign',
+  );
+}
+
 /**
  * Draws the default exterior without persisting a separate exterior save model.
  * H1.2 establishes stable exterior categories so a later home-customisation pass can
@@ -220,8 +230,7 @@ export function renderCottageExterior(
 
   name(scene.add.ellipse(x, y + 184, 440, 72, 0x78956c, 0.18).setDepth(5.8), 'detail', 'shadow');
 
-  // Keep the wall body entirely below the roof eaves so no square plaster corner peeks
-  // through the asymmetric roof silhouette.
+  // Keep the wall body entirely below the roof eaves so no square plaster corner peeks through.
   name(
     scene.add
       .rectangle(x, y + 55, 410, 192, 0xffedc8, 1)
@@ -230,11 +239,7 @@ export function renderCottageExterior(
     'wall-finish',
     'plaster-body',
   );
-  name(
-    scene.add.rectangle(x, y + 139, 404, 42, 0xc5a982, 1).setDepth(9.9),
-    'wall-finish',
-    'stone-base',
-  );
+  name(scene.add.rectangle(x, y + 139, 404, 42, 0xc5a982, 1).setDepth(9.9), 'wall-finish', 'stone-base');
   for (let offset = -170; offset <= 170; offset += 56) {
     name(
       scene.add
@@ -245,18 +250,18 @@ export function renderCottageExterior(
     );
   }
 
-  // The chimney is deliberately behind the roof. Only its upper stack and cap should
-  // emerge above the shingles instead of reading as a block pasted onto the roof face.
+  // Draw the chimney before the roof so the roof masks the lower stack. Its base now extends
+  // into the left roof slope, making it read as a chimney emerging through the shingles.
   name(
     scene.add
-      .rectangle(x - 122, y - 183, 46, 70, 0x9d735a, 1)
+      .rectangle(x - 122, y - 157, 46, 82, 0x9d735a, 1)
       .setStrokeStyle(4, 0x75523f, 0.92)
       .setDepth(9.72),
     'roof',
     'chimney',
   );
   name(
-    scene.add.rectangle(x - 122, y - 223, 60, 18, 0xb98867, 1).setDepth(9.73),
+    scene.add.rectangle(x - 122, y - 202, 60, 16, 0xb98867, 1).setDepth(9.73),
     'roof',
     'chimney-cap',
   );
@@ -274,7 +279,8 @@ export function renderCottageExterior(
   for (const [bandY, halfWidth] of [
     [y - 68, 192],
     [y - 98, 176],
-    [y - 128, 150],
+    // The highest highlight is deliberately shorter so its left end stays within the roof slope.
+    [y - 128, 118],
   ] as const) {
     roof.lineStyle(5, 0xb990c5, 0.68);
     roof.beginPath();
@@ -290,13 +296,11 @@ export function renderCottageExterior(
     roof.strokePath();
   }
 
-  // Deliberately asymmetrical windows break the previous pair-of-eyes composition.
   addWindow(scene, x - 122, y + 31, 70, 66, 10.35);
   addWindow(scene, x + 130, y + 49, 56, 52, 10.35);
   addWindowBox(scene, x - 122, y + 75, 102, 10.55);
   addWindowBox(scene, x + 130, y + 84, 84, 10.55);
 
-  // Arched-looking door, frame and tiny porch canopy stay centred on the established approach point.
   name(
     scene.add
       .rectangle(x + 18, y + 91, 84, 142, 0x82533f, 1)
@@ -314,32 +318,9 @@ export function renderCottageExterior(
     'canopy-roof',
   );
 
-  // Decorative mounted nameplate, integrated into the cottage rather than floating as UI copy.
-  name(
-    scene.add
-      .rectangle(x + 18, y - 32, 188, 36, 0x7b5848, 1)
-      .setStrokeStyle(4, 0xe0bd85, 0.98)
-      .setDepth(10.84),
-    'plaque',
-    'board',
-  );
-  name(scene.add.circle(x - 70, y - 32, 7, 0xd6a7ec, 1).setDepth(10.86), 'plaque', 'left-bloom');
-  name(scene.add.circle(x + 106, y - 32, 7, 0xd6a7ec, 1).setDepth(10.86), 'plaque', 'right-bloom');
-  name(
-    scene.add
-      .text(x + 18, y - 32, 'Moonflower Cottage', {
-        color: '#fff0cd',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '14px',
-        fontStyle: 'bold',
-      })
-      .setOrigin(0.5)
-      .setDepth(10.88),
-    'plaque',
-    'name',
-  );
+  // One container keeps board, decoration and text locked to exactly the same world transform.
+  addMountedNameplate(scene, x + 18, y - 32);
 
-  // Porch stones visually connect the H1.1 cottage spur to the door without changing collision.
   for (const [stepY, stepWidth] of [
     [y + 173, 104],
     [y + 193, 126],
@@ -355,7 +336,6 @@ export function renderCottageExterior(
     );
   }
 
-  // A climbing vine gives one side of the house a lived-in, organic silhouette.
   const vine = name(scene.add.graphics().setDepth(10.75), 'detail', 'vine');
   vine.lineStyle(5, 0x68845a, 0.86);
   vine.beginPath();
@@ -382,14 +362,9 @@ export function renderCottageExterior(
     [x + 178, y + 35],
     [x + 193, y + 4],
   ] as const) {
-    name(
-      scene.add.circle(bloomX, bloomY, 7, 0xd9a6f3, 1).setDepth(10.8),
-      'detail',
-      `vine-bloom-${bloomX}-${bloomY}`,
-    );
+    name(scene.add.circle(bloomX, bloomY, 7, 0xd9a6f3, 1).setDepth(10.8), 'detail', `vine-bloom-${bloomX}-${bloomY}`);
   }
 
-  // Two proper beds sit in front of the façade, replacing the two oversized corner flowers.
   addFlowerbed(scene, x - 125, y + 166, 154, 12.4, 1);
   addFlowerbed(scene, x + 133, y + 166, 142, 12.4, 2);
 }
