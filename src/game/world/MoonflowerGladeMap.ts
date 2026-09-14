@@ -113,6 +113,10 @@ export const MOONFLOWER_GLADE_MAP = {
   ] satisfies readonly GladeEntrance[],
   colliders: [
     { id: 'collision:cottage', x: 560, y: 470, width: 460, height: 360 },
+    // The flowerbeds project below the cottage footprint. Give each bed its own compact
+    // blocker while preserving the central route up the porch steps to the door.
+    { id: 'collision:cottage-flowerbed-left', x: 435, y: 650, width: 154, height: 70 },
+    { id: 'collision:cottage-flowerbed-right', x: 693, y: 650, width: 142, height: 70 },
     {
       id: 'collision:western-hedge-north',
       x: WESTERN_HEDGE_X,
