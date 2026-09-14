@@ -30,6 +30,56 @@ export const MOONFLOWER_STREAM_REED_BEDS = [
   { id: 'south-east', x: 1580, y: 1460, width: 120 },
 ] as const;
 
+export type AmbientFishMovementProfile = 'straight' | 'meander' | 'weave' | 'zigzag';
+
+export interface AmbientFishBehaviour {
+  id: string;
+  profile: AmbientFishMovementProfile;
+  durationScale: number;
+  lateralAmplitude: number;
+  cycles: number;
+  phase: number;
+}
+
+/**
+ * H1.6b gives the four ambient fish distinct movement personalities. The speed multipliers are
+ * intentionally broad enough to be visible in play while all fish still travel generally downstream.
+ */
+export const MOONFLOWER_STREAM_FISH_BEHAVIOURS: readonly AmbientFishBehaviour[] = [
+  {
+    id: 'silver-drifter',
+    profile: 'meander',
+    durationScale: 1.3,
+    lateralAmplitude: 18,
+    cycles: 1.35,
+    phase: 0.12,
+  },
+  {
+    id: 'lilac-dart',
+    profile: 'straight',
+    durationScale: 0.72,
+    lateralAmplitude: 5,
+    cycles: 0.8,
+    phase: 0.42,
+  },
+  {
+    id: 'gold-weaver',
+    profile: 'weave',
+    durationScale: 0.96,
+    lateralAmplitude: 14,
+    cycles: 2.55,
+    phase: 0.68,
+  },
+  {
+    id: 'green-zigzag',
+    profile: 'zigzag',
+    durationScale: 1.08,
+    lateralAmplitude: 16,
+    cycles: 3.1,
+    phase: 0.24,
+  },
+] as const;
+
 export interface AmbientFishRun {
   x: number;
   durationMs: number;
@@ -56,4 +106,30 @@ export function resolveAmbientFishRun(
     durationMs: Math.round(lerp(9_200, 15_400, speed)),
     shouldSurface: clamp01(surfaceSample) < 0.32,
   };
+}
+
+export function resolveAmbientFishLateralOffset(
+  behaviour: AmbientFishBehaviour,
+  progress: number,
+): number {
+  const p = clamp01(progress);
+  const angle = (p * behaviour.cycles + behaviour.phase) * Math.PI * 2;
+
+  switch (behaviour.profile) {
+    case 'straight':
+      return Math.sin(angle) * behaviour.lateralAmplitude * 0.22;
+    case 'meander':
+      return Math.sin(angle) * behaviour.lateralAmplitude;
+    case 'weave':
+      return (
+        Math.sin(angle) * behaviour.lateralAmplitude * 0.72 +
+        Math.sin(angle * 0.52 + 1.1) * behaviour.lateralAmplitude * 0.28
+      );
+    case 'zigzag':
+      return (
+        Math.asin(Math.sin(angle)) *
+        (2 / Math.PI) *
+        behaviour.lateralAmplitude
+      );
+  }
 }
