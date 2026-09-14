@@ -23,7 +23,7 @@ export const CHARACTERS = [
   {
     id: 'character:pip',
     name: 'Pip',
-    role: 'First valley friend',
+    role: "A tiny glimmerling explorer and the player's first friend in the valley.",
   },
 ] as const satisfies readonly CharacterDefinition[];
 
@@ -90,7 +90,7 @@ export const DIALOGUES = [
         id: 'dialogue-node:pip-welcome-hello',
         type: 'line',
         speakerId: 'character:pip',
-        text: "Hi! I'm Pip. I was hoping you'd arrive!",
+        text: "Hi! I'm Pip. I'm a glimmerling, and I was hoping you'd arrive!",
         nextNodeId: 'dialogue-node:pip-welcome-explore',
       },
       {
