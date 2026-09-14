@@ -30,12 +30,6 @@ const MOONFLOWER_FIELD_BRANCH = [
   { x: 1890, y: 1185 },
 ] as const;
 
-const MOONFLOWER_WONDERBOOK_BRANCH = [
-  { x: 790, y: 900 },
-  { x: 815, y: 990 },
-  { x: 840, y: 1070 },
-] as const;
-
 const PATHS: Readonly<Partial<Record<string, readonly Stroke[]>>> = {
   MoonflowerGladeScene: [
     {
@@ -92,20 +86,6 @@ const PATHS: Readonly<Partial<Record<string, readonly Stroke[]>>> = {
       width: 72,
       colour: 0xf0dfb2,
       alpha: 0.98,
-      depth: 2.43,
-    },
-    {
-      points: MOONFLOWER_WONDERBOOK_BRANCH,
-      width: 64,
-      colour: 0xd7c18f,
-      alpha: 0.96,
-      depth: 2.42,
-    },
-    {
-      points: MOONFLOWER_WONDERBOOK_BRANCH,
-      width: 48,
-      colour: 0xf0dfb2,
-      alpha: 0.96,
       depth: 2.43,
     },
   ],
