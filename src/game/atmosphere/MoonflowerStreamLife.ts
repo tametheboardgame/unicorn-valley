@@ -290,7 +290,8 @@ function scheduleFishRun(
     }
 
     const run = resolveAmbientFishRun(Math.random(), Math.random(), Math.random());
-    const behaviour = MOONFLOWER_STREAM_FISH_BEHAVIOURS[fish.index % MOONFLOWER_STREAM_FISH_BEHAVIOURS.length];
+    const behaviour =
+      MOONFLOWER_STREAM_FISH_BEHAVIOURS[fish.index % MOONFLOWER_STREAM_FISH_BEHAVIOURS.length];
     const durationMs = Math.round(run.durationMs * behaviour.durationScale);
     const baseX = run.x - STREAM_X;
     const startY = FISH_START_Y - STREAM_Y;
@@ -317,9 +318,7 @@ function scheduleFishRun(
         const headingRadians = Math.atan2(aheadOffset - offset, aheadY - currentY);
 
         fish.container.setPosition(baseX + offset, currentY);
-        fish.container.setAngle(
-          Phaser.Math.Clamp(Phaser.Math.RadToDeg(headingRadians), -11, 11),
-        );
+        fish.container.setAngle(Phaser.Math.Clamp(Phaser.Math.RadToDeg(headingRadians), -11, 11));
       },
       onComplete: () => {
         fish.travelTween = null;
