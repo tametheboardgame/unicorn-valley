@@ -20,9 +20,11 @@ export class RewardFeedback {
 
   public constructor(private readonly scene: Phaser.Scene) {
     this.unsubscriptions.push(
-      gameEventBus.on('ITEM_COLLECTED', () => {
+      gameEventBus.on('ITEM_COLLECTED', ({ suppressRewardFeedback }) => {
         getVerticalSliceAudio().playSfx('collect');
-        this.show('Treasure added to your bag!', '🎁', UI_COLOURS.gold);
+        if (!suppressRewardFeedback) {
+          this.show('Treasure added to your bag!', '🎁', UI_COLOURS.gold);
+        }
       }),
       gameEventBus.on('DISCOVERY_UNLOCKED', () => {
         getVerticalSliceAudio().playSfx('discovery');
