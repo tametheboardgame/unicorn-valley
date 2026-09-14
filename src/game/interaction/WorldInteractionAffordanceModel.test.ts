@@ -24,12 +24,13 @@ describe('WorldInteractionAffordanceModel', () => {
     expect(shouldShowWorldInteractionAffordance(target({ enabled: true }))).toBe(true);
   });
 
-  it('does not mark automatic, hidden or disabled interactions', () => {
+  it('does not mark automatic, hidden, disabled or deliberately bespoke interactions', () => {
     expect(shouldShowWorldInteractionAffordance(target({ activationMode: 'automatic' }))).toBe(
       false,
     );
     expect(shouldShowWorldInteractionAffordance(target({ visible: false }))).toBe(false);
     expect(shouldShowWorldInteractionAffordance(target({ enabled: () => false }))).toBe(false);
+    expect(shouldShowWorldInteractionAffordance(target({ worldAffordance: false }))).toBe(false);
   });
 
   it('places talk affordances higher than ordinary object affordances', () => {
