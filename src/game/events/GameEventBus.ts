@@ -2,7 +2,7 @@ import type { FriendshipTier } from '../../content/contentTypes';
 import type { InteractionActionKind, InteractionResult } from '../interaction/InteractionTarget';
 
 export interface GameEventMap {
-  ITEM_COLLECTED: { itemId: string; quantity: number };
+  ITEM_COLLECTED: { itemId: string; quantity: number; suppressRewardFeedback?: boolean };
   CHARACTER_TALKED: { characterId: string };
   QUEST_STARTED: { questId: string; stepId: string | null };
   QUEST_STEP_CHANGED: { questId: string; stepId: string };
