@@ -78,9 +78,7 @@ export class WorldInteractionAffordanceLayer {
 
   private createEntry(targetId: string): AffordanceEntry {
     const glow = this.scene.add.circle(0, 0, 16, 0x69d5ff, 0.18);
-    const ring = this.scene.add
-      .circle(0, 0, 8, 0x9de7ff, 0.07)
-      .setStrokeStyle(2, 0x8bdcff, 0.7);
+    const ring = this.scene.add.circle(0, 0, 8, 0x9de7ff, 0.07).setStrokeStyle(2, 0x8bdcff, 0.7);
     const core = this.scene.add.circle(0, 0, 4, 0xc9f4ff, 1);
     const moteLeft = this.scene.add.circle(-9, 5, 2.1, 0x75dcff, 0.8);
     const moteRight = this.scene.add.circle(9, -4, 1.7, 0xd7f8ff, 0.86);
