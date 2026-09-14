@@ -80,23 +80,26 @@ describe('Moonflower Glade prototype map', () => {
     expect(isPointBlocked(eastEntrance!.approach, MOONFLOWER_GLADE_MAP.colliders, 42)).toBe(false);
   });
 
-  it('matches the lower trunk bases of the original top trees and Hollow Tree', () => {
+  it('blocks the visible lower trunk/base areas called out in H1.4 review', () => {
     for (const point of [
-      { x: 430, y: 260 },
-      { x: 820, y: 280 },
-      { x: 1180, y: 260 },
-      { x: 1640, y: 260 },
-      { x: 1980, y: 260 },
-      { x: 2520, y: 280 },
-      { x: 2200, y: 680 },
+      { x: 430, y: 250 },
+      { x: 820, y: 270 },
+      { x: 1180, y: 250 },
+      { x: 1640, y: 250 },
+      { x: 1980, y: 250 },
+      { x: 2520, y: 270 },
+      { x: 2200, y: 650 },
     ]) {
       expect(isPointBlocked(point, MOONFLOWER_GLADE_MAP.colliders, 0)).toBe(true);
     }
+  });
 
-    const hollowTree = MOONFLOWER_GLADE_MAP.landmarks.find(
-      (landmark) => landmark.id === 'hollow-tree',
+  it('keeps the Moonflower Field threshold reachable and aligned to the interaction approach', () => {
+    const field = MOONFLOWER_GLADE_MAP.landmarks.find(
+      (landmark) => landmark.id === 'moonflower-field',
     );
-    expect(hollowTree).toBeDefined();
-    expect(isPointBlocked(hollowTree!.approach, MOONFLOWER_GLADE_MAP.colliders, 42)).toBe(false);
+    expect(field).toBeDefined();
+    expect(field?.approach).toEqual({ x: 1890, y: 1185 });
+    expect(isPointBlocked(field!.approach, MOONFLOWER_GLADE_MAP.colliders, 42)).toBe(false);
   });
 });
