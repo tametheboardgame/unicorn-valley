@@ -16,6 +16,7 @@ import {
   selectInteractionTarget,
 } from './InteractionTargeting';
 import { getSceneInteractionRegistry } from './SceneInteractionRegistry';
+import { WorldInteractionAffordanceLayer } from './WorldInteractionAffordance';
 
 interface Point {
   x: number;
@@ -27,6 +28,7 @@ interface SceneCoordinatorState {
   pointer: PointerTouchInputAdapter;
   input: InputController;
   prompt: InteractionPrompt;
+  affordances: WorldInteractionAffordanceLayer;
   retainedTargetId: string | null;
   preferredTargetId: string | null;
   directZones: Map<string, Phaser.GameObjects.Zone>;
@@ -167,6 +169,7 @@ export class WorldInteractionCoordinator {
       pointer,
       input: new InputController([pointer]),
       prompt: null as unknown as InteractionPrompt,
+      affordances: new WorldInteractionAffordanceLayer(scene),
       retainedTargetId: null,
       preferredTargetId: null,
       directZones: new Map(),
@@ -190,6 +193,7 @@ export class WorldInteractionCoordinator {
     if (!player || dialogueBlocking) {
       state.wasDialogueBlocking = dialogueBlocking;
       state.prompt.setTarget(null);
+      state.affordances.sync(targets, null, true);
       state.retainedTargetId = null;
       state.preferredTargetId = null;
       state.pointer.setButton('INTERACT', false);
@@ -208,6 +212,7 @@ export class WorldInteractionCoordinator {
     state.preferredTargetId = null;
     state.retainedTargetId = selected?.id ?? null;
     state.prompt.setTarget(selected);
+    state.affordances.sync(targets, selected?.id ?? null, false);
     this.syncDirectZones(state, targets, player);
 
     if (suppressActivationAfterDialogue || isInteractionActivationSuppressed()) {
@@ -324,6 +329,7 @@ export class WorldInteractionCoordinator {
       zone.destroy();
     }
     state.directZones.clear();
+    state.affordances.destroy();
     state.prompt.destroy();
     state.input.destroy();
   }
