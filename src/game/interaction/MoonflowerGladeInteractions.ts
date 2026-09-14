@@ -47,7 +47,8 @@ export const MOONFLOWER_GLADE_INTERACTIONS = [
     result: {
       type: 'message',
       title: 'Old Garden Gate',
-      message: 'A small silver lock holds the gate shut. It looks like it might open with the right key.',
+      message:
+        'A small silver lock holds the gate shut. It looks like it might open with the right key.',
     },
   },
   {
