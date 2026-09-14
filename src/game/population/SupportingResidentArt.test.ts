@@ -14,9 +14,7 @@ describe('SupportingResidentArt layout', () => {
   it('keeps the generated texture and displayed sprite at the same aspect ratio', () => {
     const textureRatio =
       SUPPORTING_RESIDENT_ART_LAYOUT.textureWidth / SUPPORTING_RESIDENT_ART_LAYOUT.textureHeight;
-    const displayWidth = Math.round(
-      textureRatio * SUPPORTING_RESIDENT_ART_LAYOUT.displayHeight,
-    );
+    const displayWidth = Math.round(textureRatio * SUPPORTING_RESIDENT_ART_LAYOUT.displayHeight);
 
     expect(displayWidth / SUPPORTING_RESIDENT_ART_LAYOUT.displayHeight).toBeCloseTo(
       textureRatio,
