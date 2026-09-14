@@ -84,12 +84,6 @@ export const MOONFLOWER_GLADE_MAP = {
       approach: { x: 1400, y: 900 },
     },
     {
-      id: 'display-stump',
-      label: 'Discovery Display',
-      position: { x: 850, y: 1120 },
-      approach: { x: 940, y: 1120 },
-    },
-    {
       id: 'hollow-tree',
       label: 'Hollow Tree',
       position: { x: 2200, y: 490 },
@@ -147,7 +141,6 @@ export const MOONFLOWER_GLADE_MAP = {
       height: SOUTH_STREAM_HEIGHT,
     },
     { id: 'collision:hollow-tree', x: 2200, y: 520, width: 170, height: 220 },
-    { id: 'collision:display-stump', x: 850, y: 1120, width: 84, height: 72 },
   ] satisfies readonly CollisionRectangle[],
 } as const;
 
