@@ -188,7 +188,7 @@ Every H-number area package follows the same mandatory **four-stage contract**:
 Operating rules for H1+:
 
 - **H numbers are assigned sequentially only when David chooses the next review area.** Do not pre-assign future H numbers to locations.
-- **Current package: R6.5-WP19H1 - Moonflower Glade.** It is presently at **Stage 1: Feedback / human analysis**.
+- **Current package: R6.5-WP19H1 - Moonflower Glade.** Stages 1-3 are complete: David's review is recorded, the relevant systems have been analysed, and the second-pass H1 plan is now committed. **Stage 4: Action has not started.**
 - **H2 is deliberately undefined.** After H1 is complete, David names the next area and that area becomes H2; the same rule applies for H3, H4 and onward.
 - There is **no H13 cap**. Continue H numbering until David decides the playable world, meaningful subareas and relevant interiors have received the required final passes.
 - An area is a review lens, not an excuse to duplicate shared code. Any broadly applicable improvement discovered during an H package should be made at the correct shared owner and then validated against affected areas.
@@ -196,6 +196,31 @@ Operating rules for H1+:
 - Known graphical observations such as apparently duplicated path layers are owned by the H package for the area in which they are observed, but root causes should still be fixed globally if shared.
 - Each package should consider desktop/laptop, tablet landscape, phone landscape and phone portrait where the affected system/area supports those presentations.
 - Do not move from one of the four stages to the next merely because time has passed or an agent believes the answer is obvious. David’s feedback defines Stage 1; analysis and planning precede implementation unless he explicitly directs otherwise.
+
+### R6.5-WP19H1 - Moonflower Glade Final Polish
+
+State: **Stages 1-3 complete / scope and plan approved 2026-09-14 / Stage 4 action not started**.
+
+Path: `docs/work-packages/R6.5-WP19H1-MOONFLOWER-GLADE.md`
+
+H1 will turn Moonflower Glade into a finished, expandable home region while using the area to correct only the genuinely shared systems exposed by the review. The committed scope includes:
+
+- rerouting the main path past Moonflower Cottage and establishing a locked western hedge/gate as a future expansion hook;
+- substantially redesigning the cottage exterior and front garden while extending the existing home architecture with a future-compatible exterior configuration foundation;
+- preserving the vegetable/growing plot as a future gameplay location without implementing farming yet;
+- removing the outdoor Wonderbook/display stump, relocating its physical presence inside the cottage and turning the vacated space into a calm Home Meadow;
+- strengthening tree/hedge boundaries, matching visible hard boundaries with believable collision and adding restrained ground/vegetation texture;
+- polishing the stream with less regular water detail and lightweight ambient fish while deferring actual fishing mechanics;
+- giving Pip a proper production identity and making Pip's Mysterious Trail progression/feedback unambiguous;
+- replacing literal floating object icons with one reusable subtle blue world-interaction pinprick, distinct from click/tap destination markers and story effects;
+- rebuilding the Moonflower Field approach as a dense multicoloured flower threshold with correct foreground/under-character depth and preserving its separate scene transition;
+- integrating Sunbeam Village signage into a physical gateway and applying bounded Hollow Tree texture/environment polish;
+- diagnosing and fixing Juniper's clipped tail at the correct NPC art/presentation owner;
+- polishing the shared dialogue-card family to the approved rounded R6.5 design language with corrected portrait/button/shadow layout;
+- repairing global click/tap approach-to-interact behaviour so NPC/interactable clicks navigate to valid stand-off range rather than repeatedly colliding and shuddering;
+- validating local Glade work plus representative cross-scene regressions for every shared system changed.
+
+Explicitly deferred from H1 are the western-gate unlock quest/new region, full farming, fishing gameplay, full exterior cottage customisation UI/catalogue, seasonal Glade systems and broad cross-region Pip companion scripting. H1 may establish clean hooks for these but must not expand into them without separate approval.
 
 ### R6.5-WP19I - Integrated Qualification
 
