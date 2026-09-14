@@ -23,6 +23,15 @@ const BRIDGE_WALKABLE_HEIGHT = 142;
 const NORTH_STREAM_HEIGHT = BRIDGE_Y - BRIDGE_WALKABLE_HEIGHT / 2;
 const SOUTH_STREAM_START = BRIDGE_Y + BRIDGE_WALKABLE_HEIGHT / 2;
 const SOUTH_STREAM_HEIGHT = 1800 - SOUTH_STREAM_START;
+const WESTERN_GATE_Y = BRIDGE_Y;
+const WESTERN_HEDGE_X = 128;
+const WESTERN_HEDGE_WIDTH = 92;
+const WESTERN_HEDGE_TOP = 110;
+const WESTERN_HEDGE_BOTTOM = 1710;
+const WESTERN_GATE_HALF_GAP = 95;
+const NORTH_HEDGE_HEIGHT = WESTERN_GATE_Y - WESTERN_GATE_HALF_GAP - WESTERN_HEDGE_TOP;
+const SOUTH_HEDGE_TOP = WESTERN_GATE_Y + WESTERN_GATE_HALF_GAP;
+const SOUTH_HEDGE_HEIGHT = WESTERN_HEDGE_BOTTOM - SOUTH_HEDGE_TOP;
 
 export function setMoonflowerGladePlayerSpawn(point: MapPoint): void {
   playerSpawn.x = point.x;
@@ -65,8 +74,8 @@ export const MOONFLOWER_GLADE_MAP = {
     {
       id: 'western-gate',
       label: 'Old Garden Gate',
-      position: { x: 125, y: 815 },
-      approach: { x: 315, y: 815 },
+      position: { x: 125, y: WESTERN_GATE_Y },
+      approach: { x: 315, y: WESTERN_GATE_Y },
     },
     {
       id: 'little-bridge',
@@ -104,7 +113,21 @@ export const MOONFLOWER_GLADE_MAP = {
   ] satisfies readonly GladeEntrance[],
   colliders: [
     { id: 'collision:cottage', x: 560, y: 470, width: 460, height: 360 },
-    { id: 'collision:western-gate', x: 125, y: 815, width: 90, height: 180 },
+    {
+      id: 'collision:western-hedge-north',
+      x: WESTERN_HEDGE_X,
+      y: WESTERN_HEDGE_TOP + NORTH_HEDGE_HEIGHT / 2,
+      width: WESTERN_HEDGE_WIDTH,
+      height: NORTH_HEDGE_HEIGHT,
+    },
+    { id: 'collision:western-gate', x: 125, y: WESTERN_GATE_Y, width: 90, height: 196 },
+    {
+      id: 'collision:western-hedge-south',
+      x: WESTERN_HEDGE_X,
+      y: SOUTH_HEDGE_TOP + SOUTH_HEDGE_HEIGHT / 2,
+      width: WESTERN_HEDGE_WIDTH,
+      height: SOUTH_HEDGE_HEIGHT,
+    },
     {
       id: 'collision:stream-north',
       x: 1400,
