@@ -48,7 +48,7 @@ export const PIP_EGG_CLUE_SPOTS = [
     id: 'interaction:pip-egg-clue-feather',
     discoveryId: PIP_EGG_CLUE_DISCOVERY_IDS[0],
     label: 'Silver feather',
-    actionLabel: 'Pick up feather',
+    actionLabel: 'Pick up',
     position: { x: 1230, y: 590 },
     feedback:
       'Silver feather found!\nIt points across the stream. Cross the bridge and check the reeds on the far bank.',
@@ -57,7 +57,7 @@ export const PIP_EGG_CLUE_SPOTS = [
     id: 'interaction:pip-egg-clue-moss',
     discoveryId: PIP_EGG_CLUE_DISCOVERY_IDS[1],
     label: 'Warm moon-moss',
-    actionLabel: 'Feel the moss',
+    actionLabel: 'Pick up',
     position: { x: 1590, y: 760 },
     feedback:
       'Warm moon-moss!\nTiny star-shaped tracks leave the moss and head south-east towards Moonflower Field.',
@@ -66,7 +66,7 @@ export const PIP_EGG_CLUE_SPOTS = [
     id: 'interaction:pip-egg-clue-star',
     discoveryId: PIP_EGG_CLUE_DISCOVERY_IDS[2],
     label: 'Starry tracks',
-    actionLabel: 'Follow the tracks',
+    actionLabel: 'Inspect',
     position: { x: 1745, y: 990 },
     feedback:
       'Starry tracks!\nFollow the little prints into Moonflower Field. Something is hiding at the end.',
@@ -75,7 +75,7 @@ export const PIP_EGG_CLUE_SPOTS = [
     id: 'interaction:pip-strange-egg',
     discoveryId: PIP_STRANGE_EGG_DISCOVERY_ID,
     label: 'Strange egg',
-    actionLabel: 'Pick up the egg',
+    actionLabel: 'Pick up',
     position: { x: 2075, y: 1260 },
     feedback: 'You found a strange egg!\nTake it back to Pip. He will know how to keep it safe.',
   },
