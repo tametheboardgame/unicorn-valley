@@ -199,7 +199,8 @@ export class WorldConversationPresenter {
           const fallback = latestVisibleNamedObject(
             active.scene,
             'dialogue-production-portrait-fallback',
-            (object): object is Phaser.GameObjects.Text => object instanceof Phaser.GameObjects.Text,
+            (object): object is Phaser.GameObjects.Text =>
+              object instanceof Phaser.GameObjects.Text,
           );
           if (!frame) {
             return;
