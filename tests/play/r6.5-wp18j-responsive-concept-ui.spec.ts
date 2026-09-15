@@ -66,23 +66,31 @@ async function dragGamePoint(
   await page.mouse.up();
 }
 
-async function expectCanonicalLandscapeShell(page: Page): Promise<void> {
+async function expectCanonicalLandscapeShell(
+  page: Page,
+  { movementPadVisible = true }: { movementPadVisible?: boolean } = {},
+): Promise<void> {
   await expect
     .poll(async () => {
       const objects = await sceneObjects(page, 'MoonflowerGladeScene');
-      return objects.filter(
-        ({ name, visible, interactive }) =>
-          visible &&
-          interactive &&
-          [
-            'exploration-shell-map-button',
-            'exploration-shell-bag-button',
-            'exploration-shell-book-button',
-            'exploration-shell-settings-nav-button',
-          ].includes(name),
-      ).length;
+      return {
+        navigationButtons: objects.filter(
+          ({ name, visible, interactive }) =>
+            visible &&
+            interactive &&
+            [
+              'exploration-shell-map-button',
+              'exploration-shell-bag-button',
+              'exploration-shell-book-button',
+              'exploration-shell-settings-nav-button',
+            ].includes(name),
+        ).length,
+        movementPadVisible: objects.some(
+          ({ name, visible }) => name === 'tablet-movement-pad' && visible,
+        ),
+      };
     })
-    .toBe(4);
+    .toEqual({ navigationButtons: 4, movementPadVisible });
 
   const objects = await sceneObjects(page, 'MoonflowerGladeScene');
   expect(
@@ -94,7 +102,6 @@ async function expectCanonicalLandscapeShell(page: Page): Promise<void> {
   expect(
     objects.some(({ name, visible }) => name === 'exploration-location-title-panel' && visible),
   ).toBe(true);
-  expect(objects.some(({ name, visible }) => name === 'tablet-movement-pad' && visible)).toBe(true);
 
   expect(objects.some(({ name }) => name === 'exploration-shell-sound-button')).toBe(false);
   expect(objects.some(({ name }) => name === 'exploration-controls-button')).toBe(false);
@@ -173,7 +180,7 @@ test.describe('WP18J shared responsive concept UI', () => {
     await page.setViewportSize({ width: 1180, height: 664 });
     await page.goto('/?scene=glade&diagnostics=1', { waitUntil: 'domcontentloaded' });
     await waitForScene(page, 'MoonflowerGladeScene');
-    await expectCanonicalLandscapeShell(page);
+    await expectCanonicalLandscapeShell(page, { movementPadVisible: false });
 
     const before = navigationGeometry(await sceneObjects(page, 'MoonflowerGladeScene'));
     expect(before).toHaveLength(8);
@@ -206,7 +213,7 @@ test.describe('WP18J shared responsive concept UI', () => {
 
     await clickGamePoint(page, 1172, 76);
     await waitForScene(page, 'MoonflowerGladeScene');
-    await expectCanonicalLandscapeShell(page);
+    await expectCanonicalLandscapeShell(page, { movementPadVisible: false });
 
     await expect
       .poll(async () => navigationGeometry(await sceneObjects(page, 'MoonflowerGladeScene')))
