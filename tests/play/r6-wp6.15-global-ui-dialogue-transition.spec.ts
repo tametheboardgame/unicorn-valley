@@ -43,60 +43,63 @@ interface DiagnosticsApi {
 }
 
 async function seedPipReady(page: Page, reducedMotion = false): Promise<void> {
-  await page.addInitScript(({ useReducedMotion }) => {
-    localStorage.clear();
-    const timestamp = new Date().toISOString();
-    const save = {
-      schemaVersion: 2,
-      createdAt: timestamp,
-      lastSavedAt: timestamp,
-      profile: {
-        name: null,
-        appearance: {},
-        currentLocationId: 'location:moonflower-glade',
-        unlockedAbilityIds: [],
-      },
-      inventory: {
-        itemQuantities: {},
-        ownedCosmeticIds: [],
-        ownedDecorationIds: [],
-        specialItemIds: [],
-      },
-      relationships: { byCharacterId: {} },
-      quests: { byQuestId: {} },
-      world: {
-        flags: {
-          'flag:pip-intro-appeared': true,
-          'flag:pip-welcome-complete': true,
+  await page.addInitScript(
+    ({ useReducedMotion }) => {
+      localStorage.clear();
+      const timestamp = new Date().toISOString();
+      const save = {
+        schemaVersion: 2,
+        createdAt: timestamp,
+        lastSavedAt: timestamp,
+        profile: {
+          name: null,
+          appearance: {},
+          currentLocationId: 'location:moonflower-glade',
+          unlockedAbilityIds: [],
         },
-        discoveredZoneIds: [],
-        changedObjectIds: [],
-        uniqueDiscoveryIds: [],
-      },
-      home: {
-        ownedFurnitureIds: [],
-        furnitureBySlot: {},
-        gardenFlags: {},
-      },
-      activities: {
-        racesById: {},
-        miniGameRecords: {},
-      },
-      collections: {
-        discoveryIds: [],
-        memoryIds: [],
-      },
-    };
-    const serialisedSave = JSON.stringify(save);
-    localStorage.setItem('unicorn-valley.save', serialisedSave);
-    localStorage.setItem('unicorn-valley.save.schema.2', serialisedSave);
-    if (useReducedMotion) {
-      localStorage.setItem(
-        'unicorn-valley:accessibility-settings:v1',
-        JSON.stringify({ reducedMotion: true, highVisibilityInteractions: false }),
-      );
-    }
-  }, { useReducedMotion: reducedMotion });
+        inventory: {
+          itemQuantities: {},
+          ownedCosmeticIds: [],
+          ownedDecorationIds: [],
+          specialItemIds: [],
+        },
+        relationships: { byCharacterId: {} },
+        quests: { byQuestId: {} },
+        world: {
+          flags: {
+            'flag:pip-intro-appeared': true,
+            'flag:pip-welcome-complete': true,
+          },
+          discoveredZoneIds: [],
+          changedObjectIds: [],
+          uniqueDiscoveryIds: [],
+        },
+        home: {
+          ownedFurnitureIds: [],
+          furnitureBySlot: {},
+          gardenFlags: {},
+        },
+        activities: {
+          racesById: {},
+          miniGameRecords: {},
+        },
+        collections: {
+          discoveryIds: [],
+          memoryIds: [],
+        },
+      };
+      const serialisedSave = JSON.stringify(save);
+      localStorage.setItem('unicorn-valley.save', serialisedSave);
+      localStorage.setItem('unicorn-valley.save.schema.2', serialisedSave);
+      if (useReducedMotion) {
+        localStorage.setItem(
+          'unicorn-valley:accessibility-settings:v1',
+          JSON.stringify({ reducedMotion: true, highVisibilityInteractions: false }),
+        );
+      }
+    },
+    { useReducedMotion: reducedMotion },
+  );
 }
 
 async function waitForDiagnostics(page: Page): Promise<void> {
