@@ -1,5 +1,24 @@
 # Unicorn Valley - Development Roadmap
 
+## 2026-09-15 R6.5-WP19H1.9 remediation checkpoint
+
+David's tablet review of the active Moonflower Glade H1.9 preview approved the revised first-Pip flow direction but identified a final shared interaction/feedback/dialogue remediation pass before H1 can be accepted. The authoritative brief is `docs/work-packages/R6.5-WP19H1.9-INTERACTION-FEEDBACK-DIALOGUE-REMEDIATION.md`.
+
+H1.9 is now explicitly gated on the following corrections:
+
+- replace the first green-sparkle generic Wonderbook toast with one blue `go back and talk to Pip` guidance card;
+- standardise physical world collectables on an explicit shared `Pick up` interaction with a forgiving radius rather than proximity auto-collection;
+- apply that interaction language to Pip trail objects, Willow's special Moonflowers and representative physical Wonderbook collectables;
+- remove persistent collectable-name labels such as `Silver Feather` and `Warm moon-moss` once the shared pickup prompt owns the action;
+- establish a global transient-notification owner/priority so blue guidance, Wonderbook/discovery toasts, rewards and quest completion cannot overlap each other or dialogue;
+- remove `You helped and the valley remembers`-style feedback from Pip's closing conversation and show a concise centred `Quest Complete` presentation only after dialogue has closed;
+- make ordinary DialogueCard geometry fixed/stable per supported gameplay mode so Pip's panel does not change size between lines, Continue and Done states;
+- fix Juniper's off-centre speaker portrait at the shared portrait presentation owner and regression-check representative characters;
+- retain the already accepted tablet behaviour where movement controls disappear while modal dialogue owns the lower screen;
+- update stale automated browser contracts separately where they encode intentionally superseded H1 behaviour rather than bending production code back to obsolete expectations.
+
+H1.9 remains on the existing draft H1 branch/PR and requires another deployed tablet/visual human gate before merge. The next review must explicitly cover pickup radius/button behaviour, notification sequencing, Pip quest completion timing, stable dialogue sizing and Juniper portrait centring.
+
 ## 2026-09-08 approved remediation plan
 
 WP19B was human-approved and merged as `c2d98ae` on 9 September 2026; its merge-SHA-bound production smoke passed in Actions `34356744951`. WP19C is now active on its draft branch and remains behind its separate visual gate. David’s mild observation that some places appear to have two path layers is deferred unchanged to the final graphics-specific pass, not WP19C.
