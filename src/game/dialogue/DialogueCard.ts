@@ -15,8 +15,6 @@ type CoreNpcId = 'nova' | 'willow' | 'pip' | 'pebble' | 'lumi' | 'marigold';
 type DialogueLayout = 'compact' | 'expanded';
 
 const CORE_NPC_IDS = new Set<CoreNpcId>(['nova', 'willow', 'pip', 'pebble', 'lumi', 'marigold']);
-const COMPACT_CHOICE_PROMPT_CHARACTER_LIMIT = 70;
-const COMPACT_CHOICE_LABEL_CHARACTER_LIMIT = 24;
 
 const COMPACT_LAYOUT = {
   panel: { x: GAME_WIDTH / 2, y: GAME_HEIGHT - 112, width: 900, height: 190 },
@@ -28,9 +26,6 @@ const COMPACT_LAYOUT = {
   action: { x: 985, y: GAME_HEIGHT - 62, width: 180, height: 48 },
   indicatorX: 1047,
 } as const;
-
-const COMPACT_BODY_MAX_HEIGHT =
-  COMPACT_LAYOUT.action.y - COMPACT_LAYOUT.action.height / 2 - COMPACT_LAYOUT.body.y - 8;
 
 const EXPANDED_LAYOUT = {
   panel: { x: GAME_WIDTH / 2, y: GAME_HEIGHT - 164, width: 1120, height: 286 },
@@ -350,12 +345,12 @@ export class DialogueCard {
     this.speakerName.setText(speakerName);
     getVerticalSliceAudio().playNpcReaction(node.speakerId, 'talk');
 
+    // Ordinary conversations now keep one stable geometry from first line to final Done state.
+    // Short copy intentionally leaves breathing room instead of shrinking the panel mid-conversation.
+    this.applyLayout('expanded');
+
     if (node.type === 'line') {
-      this.applyLayout('compact');
       this.body.setText(node.text);
-      if (this.body.height > COMPACT_BODY_MAX_HEIGHT) {
-        this.applyLayout('expanded');
-      }
       this.updatePortrait(node.speakerId, speakerName);
       const finalLine = node.nextNodeId === undefined;
       this.modeHint.setText(finalLine ? 'Enter / tap when done' : 'Enter / tap to continue');
@@ -370,11 +365,6 @@ export class DialogueCard {
       return;
     }
 
-    const useCompactChoiceLayout =
-      node.prompt.length <= COMPACT_CHOICE_PROMPT_CHARACTER_LIMIT &&
-      node.choices.length <= 3 &&
-      node.choices.every((choice) => choice.label.length <= COMPACT_CHOICE_LABEL_CHARACTER_LIMIT);
-    this.applyLayout(useCompactChoiceLayout ? 'compact' : 'expanded');
     this.updatePortrait(node.speakerId, speakerName);
     this.stopAdvanceMotion();
     this.body.setText(node.prompt);
