@@ -21,15 +21,11 @@ function retireLegacySignLabels(scene: Phaser.Scene): void {
 function scheduleLegacySignCleanup(scene: Phaser.Scene): void {
   // A couple of older world-presentation managers initialise just after the base scene. Recheck
   // twice during initialisation rather than scanning every scene object every 100 ms forever.
-  // The same bounded pass removes the small decorative flower that is also created late behind
-  // the Old Garden Gate sign. Nothing here remains active after initial scene setup.
   retireLegacySignLabels(scene);
-  clearOldGateSignBackdrop(scene);
   for (const delayMs of LEGACY_SIGN_RECHECK_MS) {
     scene.time.delayedCall(delayMs, () => {
       if (scene.scene.isActive()) {
         retireLegacySignLabels(scene);
-        clearOldGateSignBackdrop(scene);
       }
     });
   }
@@ -71,34 +67,6 @@ function retireFlowerPrimitives(
       !(child instanceof Phaser.GameObjects.Arc) &&
       !(child instanceof Phaser.GameObjects.Ellipse) &&
       !(child instanceof Phaser.GameObjects.Rectangle)
-    ) {
-      continue;
-    }
-    if (
-      child.x >= bounds.left &&
-      child.x <= bounds.right &&
-      child.y >= bounds.top &&
-      child.y <= bounds.bottom
-    ) {
-      child.destroy();
-    }
-  }
-}
-
-function clearOldGateSignBackdrop(scene: Phaser.Scene): void {
-  // The remaining flower behind the gate sign is owned by a later decorative presentation layer.
-  // Clear only the compact footprint directly behind the sign board/post. The physical H1.10 sign
-  // itself is excluded explicitly, and the real gate at x=125 plus the road at y=900 sit outside it.
-  const bounds = { left: 215, right: 390, top: 665, bottom: 825 } as const;
-  for (const child of [...scene.children.list]) {
-    if (child.name === 'h1.10:old-garden-gate-sign') {
-      continue;
-    }
-    if (
-      !(child instanceof Phaser.GameObjects.Arc) &&
-      !(child instanceof Phaser.GameObjects.Ellipse) &&
-      !(child instanceof Phaser.GameObjects.Rectangle) &&
-      !(child instanceof Phaser.GameObjects.Container)
     ) {
       continue;
     }
