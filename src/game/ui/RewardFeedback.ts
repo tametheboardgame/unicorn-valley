@@ -9,7 +9,10 @@ interface PendingFeedback {
   message: string;
   icon: string;
   accent: number;
+  kind: 'standard' | 'quest-complete';
 }
+
+const WORLD_GUIDANCE_NAME = 'world-feedback-guidance';
 
 export class RewardFeedback {
   private readonly unsubscriptions: (() => void)[] = [];
@@ -26,13 +29,15 @@ export class RewardFeedback {
           this.show('Treasure added to your bag!', '🎁', UI_COLOURS.gold);
         }
       }),
-      gameEventBus.on('DISCOVERY_UNLOCKED', () => {
+      gameEventBus.on('DISCOVERY_UNLOCKED', ({ suppressRewardFeedback }) => {
         getVerticalSliceAudio().playSfx('discovery');
-        this.show('New discovery for your Wonderbook!', '✨', UI_COLOURS.blush);
+        if (!suppressRewardFeedback) {
+          this.show('New discovery for your Wonderbook!', '✨', UI_COLOURS.blush);
+        }
       }),
       gameEventBus.on('QUEST_COMPLETED', () => {
         getVerticalSliceAudio().playSfx('quest-complete');
-        this.show('You helped! The valley remembers.', '🌟', UI_COLOURS.mint);
+        this.show('Quest Complete', '✦', UI_COLOURS.mint, 'quest-complete');
       }),
       gameEventBus.on('SHIMMER_REWARDED', ({ amount, balance }) => {
         getVerticalSliceAudio().playSfx('collect');
@@ -54,11 +59,16 @@ export class RewardFeedback {
     this.clearActiveObjects();
   }
 
-  private show(message: string, icon: string, accent: number): void {
-    if (isInteractionModalActive(this.scene)) {
-      // Conversation owns the lower safe area. Coalesce non-essential feedback until speech closes
-      // instead of stacking it behind/over the conversation surface.
-      this.pendingFeedback = { message, icon, accent };
+  private show(
+    message: string,
+    icon: string,
+    accent: number,
+    kind: PendingFeedback['kind'] = 'standard',
+  ): void {
+    if (this.isHigherPrioritySurfaceActive()) {
+      // Dialogue and explicit blue guidance own the player's attention. Coalesce lower-priority
+      // reward/discovery feedback until that surface has gone instead of stacking UI layers.
+      this.pendingFeedback = { message, icon, accent, kind };
       this.schedulePendingFeedback();
       return;
     }
@@ -66,7 +76,14 @@ export class RewardFeedback {
     this.pendingFeedback = null;
     this.pendingTimer?.destroy();
     this.pendingTimer = null;
-    this.showNow(message, icon, accent);
+    this.showNow(message, icon, accent, kind);
+  }
+
+  private isHigherPrioritySurfaceActive(): boolean {
+    const guidance = this.scene.children.getByName(WORLD_GUIDANCE_NAME) as
+      | (Phaser.GameObjects.GameObject & { visible?: boolean })
+      | null;
+    return isInteractionModalActive(this.scene) || guidance?.visible === true;
   }
 
   private schedulePendingFeedback(): void {
@@ -79,62 +96,74 @@ export class RewardFeedback {
       if (!pending) {
         return;
       }
-      if (isInteractionModalActive(this.scene)) {
+      if (this.isHigherPrioritySurfaceActive()) {
         this.schedulePendingFeedback();
         return;
       }
       this.pendingFeedback = null;
-      this.showNow(pending.message, pending.icon, pending.accent);
+      this.showNow(pending.message, pending.icon, pending.accent, pending.kind);
     });
   }
 
-  private showNow(message: string, icon: string, accent: number): void {
+  private showNow(
+    message: string,
+    icon: string,
+    accent: number,
+    kind: PendingFeedback['kind'],
+  ): void {
     this.activeTimer?.destroy();
     this.activeTimer = null;
     this.clearActiveObjects();
 
+    const questComplete = kind === 'quest-complete';
     const x = GAME_WIDTH / 2;
-    const y = GAME_HEIGHT - 164;
-    const width = 430;
-    const height = 62;
-    const shadow = createUiShadow(this.scene, x, y, width, height, 150, 0.2);
+    const y = questComplete ? GAME_HEIGHT / 2 : GAME_HEIGHT - 164;
+    const width = questComplete ? 500 : 430;
+    const height = questComplete ? 92 : 62;
+    const shadow = createUiShadow(this.scene, x, y, width, height, 150, 0.2).setName(
+      'reward-feedback-shadow',
+    );
     const panel = this.scene.add
       .rectangle(x, y, width, height, UI_COLOURS.cream, 0.99)
-      .setStrokeStyle(4, accent, 1)
+      .setName('reward-feedback-panel')
+      .setStrokeStyle(questComplete ? 6 : 4, accent, 1)
       .setScrollFactor(0)
       .setDepth(151);
     const iconText = this.scene.add
-      .text(x - 178, y, icon, {
+      .text(x - (questComplete ? 194 : 178), y, icon, {
         fontFamily: UI_FONT,
-        fontSize: '25px',
+        fontSize: questComplete ? '34px' : '25px',
       })
+      .setName('reward-feedback-icon')
       .setOrigin(0.5)
       .setScrollFactor(0)
       .setDepth(152);
     const label = this.scene.add
-      .text(x + 14, y, message, {
+      .text(x + (questComplete ? 18 : 14), y, message, {
         color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
-        fontSize: '17px',
+        fontSize: questComplete ? '25px' : '17px',
         fontStyle: 'bold',
         align: 'center',
-        wordWrap: { width: 330 },
+        wordWrap: { width: questComplete ? 360 : 330 },
       })
+      .setName('reward-feedback-label')
       .setOrigin(0.5)
       .setScrollFactor(0)
       .setDepth(152);
 
     this.activeObjects.push(shadow, panel, iconText, label);
 
-    const sparkleOffsets = [-140, 132];
+    const sparkleOffsets = questComplete ? [-178, 172] : [-140, 132];
     for (const [index, offset] of sparkleOffsets.entries()) {
       const sparkle = this.scene.add
         .text(x + offset, y + (index === 0 ? -37 : 37), index === 0 ? '✦' : '✧', {
           color: index === 0 ? '#fff2a6' : '#f0c9ff',
           fontFamily: UI_FONT,
-          fontSize: '20px',
+          fontSize: questComplete ? '24px' : '20px',
           fontStyle: 'bold',
         })
+        .setName(`reward-feedback-sparkle-${index}`)
         .setOrigin(0.5)
         .setScrollFactor(0)
         .setDepth(153);
@@ -167,7 +196,7 @@ export class RewardFeedback {
       ease: 'Sine.Out',
     });
 
-    this.activeTimer = this.scene.time.delayedCall(2100, () => {
+    this.activeTimer = this.scene.time.delayedCall(questComplete ? 1800 : 2100, () => {
       const fading = [...this.activeObjects];
       this.scene.tweens.add({
         targets: fading,
