@@ -114,7 +114,7 @@ test.describe('R6.5-WP18I desktop concept HUD cleanup', () => {
       diagnostics?.setArcadeSpritePosition(
         'MoonflowerGladeScene',
         'world-player-unicorn',
-        840,
+        970,
         825,
       );
     });
