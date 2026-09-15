@@ -1,8 +1,23 @@
 # H1 consolidation audit - 15 September 2026
 
-Scope: R6.5-WP19H1.1 through H1.10 on the active Moonflower Glade delivery branch.
+Scope: R6.5-WP19H1.1 through H1.10 on the Moonflower Glade delivery branch.
 
 Purpose: identify approved H1 behaviour that was still implemented through duplicate ownership, legacy suppression, coordinate-based cleanup or unnecessary high-frequency reconciliation, then consolidate it without redesigning the approved player experience.
+
+## Final state
+
+**Audit complete and accepted on 15 September 2026.** All identified H1-specific consolidation work described below was completed before merge approval. The final qualified head before documentation-only completion commits was `8dff0c5f9bd1c49212b5cb9d14d177d32483587f`.
+
+Qualification on that head was fully green:
+
+- formatting, lint, architecture, verification-policy and performance-policy checks passed;
+- TypeScript type-check and project contract validation passed;
+- selected unit contracts passed;
+- production build, static smoke and performance architecture passed;
+- all three full Chromium shards passed;
+- Firefox/WebKit/Chromium compatibility passed.
+
+David then explicitly authorised final documentation updates, merge and deployment. No unresolved H1.11 blocker remains.
 
 ## Executive findings
 
@@ -101,6 +116,17 @@ Consequently:
 - `CoreNpcProductionPresentationManager` no longer scans around Pip's coordinates to hide a placeholder before creating canonical Pip;
 - the core NPC manager now unregisters its `POST_STEP` listener on game destruction.
 
+### Qualification regressions resolved
+
+The consolidation exposed several real or stale qualification failures which were resolved without restoring superseded Glade architecture:
+
+- interaction presentation no longer initialises movement infrastructure with the wrong pointer adapter;
+- automatic Glade/Sunbeam Village gateways use the shared registry/coordinator path and preserve destination spawn behaviour;
+- interaction priority prevents Cottage Garden from stealing Pip's Talk action;
+- browser tests now distinguish first-time Pip onboarding from later explicit Talk behaviour;
+- Juniper/supporting-resident dialogue tests assert the shared production portrait behaviour rather than retired fallback geometry;
+- touch/tablet tests exercise the complete authored welcome sequence and current canonical movement controls.
+
 ## Source fix that motivated the audit
 
 The stubborn pink flower behind the Old Garden Gate sign was traced to:
@@ -136,12 +162,6 @@ This audit is not a speculative whole-game rewrite. The following older patterns
 
 These are now documented debt rather than hidden H1 dependencies. Future region passes should remove their own compatibility layer at source using the same pattern established here.
 
-## Qualification still required
+## Qualification result
 
-Before H1.11 can be called complete:
-
-- formatter/lint/type/build/unit/static/performance gates must pass on the consolidated head;
-- stale H1 browser expectations must be updated truthfully if they still encode retired production behaviour;
-- full relevant Chromium/WebKit qualification must complete;
-- the deployed Glade must receive a parity review, including normal movement for several minutes to check the previously reported freeze/stall behaviour has not returned;
-- no merge occurs until David explicitly approves final H1.
+H1.11 qualification is complete. The consolidated head passed the full engineering and browser matrix, and David explicitly approved merge/deployment. The remaining work after this audit is only repository merge/deployment bookkeeping; no further H1 runtime remediation is required.
