@@ -1,4 +1,4 @@
-import Phaser from 'phaser';
+import type Phaser from 'phaser';
 import { MOONFLOWER_GLADE_MAP, type GladeGardenPlot } from './MoonflowerGladeMap';
 import { worldDepthForY } from './WorldDepth';
 
@@ -152,7 +152,9 @@ function createGardens(scene: Phaser.Scene): void {
     return;
   }
   createMainGardenPlot(scene, main);
-  futurePlots.forEach((plot, index) => createFutureGardenPlot(scene, plot, index));
+  futurePlots.forEach((plot, index) => {
+    createFutureGardenPlot(scene, plot, index);
+  });
 }
 
 /**
