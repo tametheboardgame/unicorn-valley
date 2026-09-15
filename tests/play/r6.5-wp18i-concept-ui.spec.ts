@@ -30,6 +30,57 @@ interface BrowserDiagnosticsApi {
   setArcadeSpritePosition(sceneKey: string, objectName: string, x: number, y: number): void;
 }
 
+async function seedIntroducedPip(page: Page): Promise<void> {
+  await page.addInitScript(() => {
+    localStorage.clear();
+    const timestamp = new Date().toISOString();
+    const save = {
+      schemaVersion: 2,
+      createdAt: timestamp,
+      lastSavedAt: timestamp,
+      profile: {
+        name: null,
+        appearance: {},
+        currentLocationId: 'location:moonflower-glade',
+        unlockedAbilityIds: [],
+      },
+      inventory: {
+        itemQuantities: {},
+        ownedCosmeticIds: [],
+        ownedDecorationIds: [],
+        specialItemIds: [],
+      },
+      relationships: { byCharacterId: {} },
+      quests: { byQuestId: {} },
+      world: {
+        flags: {
+          'flag:pip-intro-appeared': true,
+          'flag:pip-welcome-complete': true,
+        },
+        discoveredZoneIds: [],
+        changedObjectIds: [],
+        uniqueDiscoveryIds: [],
+      },
+      home: {
+        ownedFurnitureIds: [],
+        furnitureBySlot: {},
+        gardenFlags: {},
+      },
+      activities: {
+        racesById: {},
+        miniGameRecords: {},
+      },
+      collections: {
+        discoveryIds: [],
+        memoryIds: [],
+      },
+    };
+    const serialised = JSON.stringify(save);
+    localStorage.setItem('unicorn-valley.save', serialised);
+    localStorage.setItem('unicorn-valley.save.schema.2', serialised);
+  });
+}
+
 async function waitForDiagnostics(page: Page): Promise<void> {
   await page.waitForFunction(() => '__UNICORN_VALLEY_DIAGNOSTICS__' in window);
 }
@@ -189,18 +240,19 @@ test.describe('R6.5-WP18I concept-grade tablet HUD', () => {
   test('renders explicit Talk and Enter actions from real Moonflower Glade interaction targets', async ({
     page,
   }) => {
+    await seedIntroducedPip(page);
     await page.goto('/?diagnostics=1');
     await waitForDiagnostics(page);
     await startScene(page, 'MoonflowerGladeScene');
 
-    await positionPlayer(page, 'MoonflowerGladeScene', 970, 825);
+    await positionPlayer(page, 'MoonflowerGladeScene', 1110, 825);
     await waitForActionLabel(page, 'Talk');
     let scene = await getScene(page, 'MoonflowerGladeScene');
     expect(objectByName(scene, 'exploration-interaction-prompt').visible).toBe(true);
     expect(objectByName(scene, 'exploration-tablet-hint').text).toBe('Pip');
     await captureEvidence(page, 'wp18i-talk.png');
 
-    await positionPlayer(page, 'MoonflowerGladeScene', 560, 720);
+    await positionPlayer(page, 'MoonflowerGladeScene', 560, 790);
     await waitForActionLabel(page, 'Enter');
     scene = await getScene(page, 'MoonflowerGladeScene');
     expect(objectByName(scene, 'exploration-interaction-prompt').visible).toBe(true);
