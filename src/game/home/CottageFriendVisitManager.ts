@@ -7,6 +7,7 @@ import type { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter
 import type { InteractionTarget } from '../interaction/InteractionTarget';
 import type { SaveService } from '../save/SaveService';
 import type { CoreNpcId } from '../visual/CoreNpcProductionArt';
+import { resolveCottageSemanticAnchor } from '../world/CottageSemanticAnchors';
 import type { CottageHomeView } from './CottageHomeView';
 import { FriendVisitService, type ResolvedFriendVisit } from './FriendVisitService';
 
@@ -58,11 +59,12 @@ export class CottageFriendVisitManager {
     }
 
     const character = characterRegistry.get(this.visit.definition.characterId);
+    const anchor = resolveCottageSemanticAnchor(this.visit.definition.anchorId);
     return {
       id: COTTAGE_FRIEND_VISIT_INTERACTION_ID,
       label: `${character.name} is visiting`,
       actionLabel: 'Say hello',
-      position: this.visit.definition.position,
+      position: anchor.interactionPosition ?? anchor.position,
       interactionRadius: 155,
       priority: 45,
       result: {
@@ -151,7 +153,7 @@ export class CottageFriendVisitManager {
 
   private renderVisitor(visit: ResolvedFriendVisit): void {
     const generation = ++this.visitorGeneration;
-    const { x, y } = visit.definition.position;
+    const { x, y } = resolveCottageSemanticAnchor(visit.definition.anchorId).position;
     const character = characterRegistry.get(visit.definition.characterId);
     const coreNpcId = coreNpcIdForCharacter(visit.definition.characterId);
 
