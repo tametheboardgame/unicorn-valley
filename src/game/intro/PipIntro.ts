@@ -28,6 +28,13 @@ export function shouldTriggerPipArrival(playerX: number, save: SaveGame | null):
   return !isPipIntroduced(save) && playerX >= PIP_ARRIVAL_TRIGGER_X;
 }
 
+function hasFirstDiscoveryInSave(save: SaveGame | null): boolean {
+  return Boolean(
+    save?.collections.discoveryIds.includes(FIRST_DISCOVERY_ID) ||
+      save?.world.uniqueDiscoveryIds.includes(FIRST_DISCOVERY_ID),
+  );
+}
+
 export function resolvePipInteractionDialogueId(
   hasFirstDiscovery: boolean,
   progress: QuestProgress,
@@ -51,9 +58,13 @@ export function resolvePipInteractionDialogueId(
  * Resolve Pip's direct-talk response at the moment Talk is activated. The two talk gates in the
  * Mysterious Trail are deliberately acknowledged here so Pip himself starts and concludes the
  * trail instead of remote world markers doing it behind the player's back.
+ *
+ * `hasFirstDiscovery` is only a scene snapshot. Shared interaction registries can outlive that
+ * snapshot, so activation always rechecks the save before deciding which conversation Pip uses.
  */
 export function getCurrentPipInteractionDialogueId(hasFirstDiscovery: boolean): DialogueId {
-  if (!hasFirstDiscovery) {
+  const save = getBrowserSaveService().load();
+  if (!hasFirstDiscovery && !hasFirstDiscoveryInSave(save)) {
     return 'dialogue:pip-welcome';
   }
 
@@ -77,7 +88,7 @@ export function getCurrentPipInteractionDialogueId(hasFirstDiscovery: boolean): 
     return 'dialogue:pip-strange-egg-return';
   }
 
-  return getPipEggDialogueId(getBrowserSaveService().load(), progress);
+  return getPipEggDialogueId(save, progress);
 }
 
 export function createPipInteraction(hasFirstDiscovery: boolean): InteractionTarget {
