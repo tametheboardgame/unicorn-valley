@@ -55,12 +55,16 @@ describe('Moonflower Glade prototype map', () => {
     const main = MOONFLOWER_GLADE_MAP.gardenPlots[0];
     const upper = MOONFLOWER_GLADE_MAP.gardenPlots[1];
     const stream = MOONFLOWER_GLADE_MAP.gardenPlots[2];
+    const northStream = MOONFLOWER_GLADE_MAP.colliders.find(
+      (collider) => collider.id === 'collision:stream-north',
+    );
     expect(main.width).toBe(upper.width);
     expect(main.height).toBe(upper.height);
     expect(upper.position.y + upper.height / 2).toBeLessThan(main.position.y - main.height / 2);
     expect(stream.orientation).toBe('vertical');
+    expect(northStream).toBeDefined();
     expect(stream.position.x + stream.width / 2).toBeLessThan(
-      MOONFLOWER_GLADE_MAP.bridge.x - MOONFLOWER_GLADE_MAP.bridge.width / 2 + 10,
+      northStream!.x - northStream!.width / 2,
     );
   });
 
