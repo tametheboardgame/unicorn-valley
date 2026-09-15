@@ -1,23 +1,36 @@
 # Unicorn Valley - Development Roadmap
 
+## 2026-09-15 R6.5-WP19H1.10 final Glade polish checkpoint
+
+H1.9 is human-approved. David's final Moonflower Glade review identified one small bounded follow-up before H1 qualification/acceptance: `R6.5-WP19H1.10 - Cottage Garden, Signage and Final Field Polish`. The authoritative brief is `docs/work-packages/R6.5-WP19H1.10-COTTAGE-GARDEN-SIGNAGE-FIELD-POLISH.md`.
+
+H1.10 owns only the following remaining Glade work:
+
+- diagnose and fix the slight player-unicorn tail clipping at the canonical player-art/presentation owner, regression-checking representative tail styles;
+- replace remaining label-like Glade destination/gate markers with varied physical world signs, including a proper sign beside the Old Garden Gate and an arrowed Sunbeam Village direction sign;
+- give physical sign posts/bases believable collision without obstructing required routes;
+- preserve the existing cottage vegetable patch, add a same-sized upper patch with a walkable path between them, and add a longer plot down the cottage-side edge of the stream;
+- remove the reeds that conflict with the new stream-edge plot;
+- give each of the three growing plots a stable semantic id and one shared interaction point so later planting/harvesting gameplay can attach cleanly without implementing that system now;
+- fix the incorrectly assembled blue flower at the right edge of Moonflower Field and remove the pink flower below it that overlaps the right-side tree.
+
+H1.10 remains on the existing draft H1 branch/PR and requires a fresh deployed visual/traversal human gate before H1 can be accepted or merged.
+
 ## 2026-09-15 R6.5-WP19H1.9 remediation checkpoint
 
-David's tablet review of the active Moonflower Glade H1.9 preview approved the revised first-Pip flow direction but identified a final shared interaction/feedback/dialogue remediation pass before H1 can be accepted. The authoritative brief is `docs/work-packages/R6.5-WP19H1.9-INTERACTION-FEEDBACK-DIALOGUE-REMEDIATION.md`.
+H1.9 is human-approved following David's deployed tablet review. The authoritative brief is `docs/work-packages/R6.5-WP19H1.9-INTERACTION-FEEDBACK-DIALOGUE-REMEDIATION.md`.
 
-H1.9 is now explicitly gated on the following corrections:
+Delivered outcomes include:
 
-- replace the first green-sparkle generic Wonderbook toast with one blue `go back and talk to Pip` guidance card;
-- standardise physical world collectables on an explicit shared `Pick up` interaction with a forgiving radius rather than proximity auto-collection;
-- apply that interaction language to Pip trail objects, Willow's special Moonflowers and representative physical Wonderbook collectables;
-- remove persistent collectable-name labels such as `Silver Feather` and `Warm moon-moss` once the shared pickup prompt owns the action;
-- establish a global transient-notification owner/priority so blue guidance, Wonderbook/discovery toasts, rewards and quest completion cannot overlap each other or dialogue;
-- remove `You helped and the valley remembers`-style feedback from Pip's closing conversation and show a concise centred `Quest Complete` presentation only after dialogue has closed;
-- make ordinary DialogueCard geometry fixed/stable per supported gameplay mode so Pip's panel does not change size between lines, Continue and Done states;
-- fix Juniper's off-centre speaker portrait at the shared portrait presentation owner and regression-check representative characters;
-- retain the already accepted tablet behaviour where movement controls disappear while modal dialogue owns the lower screen;
-- update stale automated browser contracts separately where they encode intentionally superseded H1 behaviour rather than bending production code back to obsolete expectations.
+- the first green sparkle now uses the shared explicit `Pick up` interaction and hands off to one blue return-to-Pip guidance card;
+- physical H1 collectables use the shared explicit pickup language rather than proximity auto-collection, with persistent object labels removed;
+- shared transient-notification ownership prevents guidance, Wonderbook/reward feedback and dialogue from stacking over one another;
+- Pip's closing trail conversation now completes first and the centred `Quest Complete` presentation appears only after dialogue closes;
+- ordinary dialogue geometry is stable through Continue/Done progression and supporting-resident portrait framing was corrected at the shared owner;
+- the blue guidance star has a dedicated gutter and no longer overlaps leading message text;
+- shared camera/presentation jitter mitigations were applied without snapping deliberately smooth NPC/fish/world animation.
 
-H1.9 remains on the existing draft H1 branch/PR and requires another deployed tablet/visual human gate before merge. The next review must explicitly cover pickup radius/button behaviour, notification sequencing, Pip quest completion timing, stable dialogue sizing and Juniper portrait centring.
+The H1.9 visual gate is closed. Any remaining H1 qualification/browser-matrix failures are handled as qualification work unless they expose a genuinely new product defect.
 
 ## 2026-09-08 approved remediation plan
 
