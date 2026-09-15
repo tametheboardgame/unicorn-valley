@@ -3,13 +3,14 @@ import { WILLOW_GARDEN_PLANTED_FLAG, WILLOW_MOONFLOWERS_QUEST_ID } from './r2Que
 import { NOVA_FIRST_RACE_QUEST_ID, SUNRISE_SPRINT_UNLOCKED_FLAG } from './r3Quests';
 
 export type FriendVisitId = `friend-visit:${string}`;
+export type CottageVisitorAnchorId = `cottage.visitor.${string}`;
 
 export interface FriendVisitDefinition {
   id: FriendVisitId;
   characterId: CharacterId;
   priority: number;
   seenFlag: string;
-  position: { x: number; y: number };
+  anchorId: CottageVisitorAnchorId;
   icon: string;
   conditions: readonly DialogueCondition[];
   dialogueIds: {
@@ -27,7 +28,7 @@ export const R4_FRIEND_VISITS = [
     characterId: 'character:willow',
     priority: 200,
     seenFlag: WILLOW_COTTAGE_VISIT_SEEN_FLAG,
-    position: { x: 650, y: 470 },
+    anchorId: 'cottage.visitor.willow',
     icon: '🌿',
     conditions: [
       {
@@ -58,7 +59,7 @@ export const R4_FRIEND_VISITS = [
     characterId: 'character:nova',
     priority: 100,
     seenFlag: NOVA_COTTAGE_VISIT_SEEN_FLAG,
-    position: { x: 1180, y: 470 },
+    anchorId: 'cottage.visitor.nova',
     icon: '🏁',
     conditions: [
       {

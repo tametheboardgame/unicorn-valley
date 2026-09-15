@@ -24,6 +24,10 @@ import {
 import { InteractionPrompt } from '../ui/InteractionPrompt';
 import { renderWonderbookWorldProp } from '../wonderbook/WonderbookWorldProp';
 import { COTTAGE_INTERIOR_LOCATION_ID, COTTAGE_INTERIOR_MAP } from '../world/CottageInteriorMap';
+import {
+  COTTAGE_SEMANTIC_ANCHOR_IDS,
+  resolveCottageSemanticAnchor,
+} from '../world/CottageSemanticAnchors';
 import { MOONFLOWER_GLADE_MAP, setMoonflowerGladePlayerSpawn } from '../world/MoonflowerGladeMap';
 
 const COLLISION_TEXTURE_KEY = 'cottage-collision-pixel';
@@ -184,6 +188,8 @@ export class CottageInteriorScene extends Phaser.Scene {
       treasureNames.length > 0
         ? `${treasureNames.join(' and ')} ${treasureVerb} glowing here. Your adventure is home too.`
         : 'A tiny shelf waits for special treasures from your adventures.';
+    const doorAnchor = resolveCottageSemanticAnchor(COTTAGE_SEMANTIC_ANCHOR_IDS.door);
+    const wonderbookAnchor = resolveCottageSemanticAnchor(COTTAGE_SEMANTIC_ANCHOR_IDS.wonderbook);
     const placementBySlotId = new Map(
       homeView.placements.map((placement) => [placement.slotId, placement] as const),
     );
@@ -209,7 +215,7 @@ export class CottageInteriorScene extends Phaser.Scene {
         id: 'interaction:cottage-exit',
         label: 'Moonflower Glade',
         actionLabel: 'Go outside',
-        position: COTTAGE_INTERIOR_MAP.exit.approach,
+        position: doorAnchor.interactionPosition ?? doorAnchor.position,
         interactionRadius: 150,
         priority: 30,
         result: {
@@ -222,7 +228,7 @@ export class CottageInteriorScene extends Phaser.Scene {
         label: 'Wonderbook',
         actionLabel: 'Open book',
         actionKind: 'inspect',
-        position: COTTAGE_INTERIOR_MAP.wonderbookDisplay.approach,
+        position: wonderbookAnchor.interactionPosition ?? wonderbookAnchor.position,
         interactionRadius: 150,
         priority: 28,
         result: {
@@ -308,6 +314,7 @@ export class CottageInteriorScene extends Phaser.Scene {
 
   private createEnvironment(): void {
     const map = COTTAGE_INTERIOR_MAP;
+    const wonderbookAnchor = resolveCottageSemanticAnchor(COTTAGE_SEMANTIC_ANCHOR_IDS.wonderbook);
     this.add.rectangle(map.width / 2, map.height / 2, map.width, map.height, 0xf4ddc7).setDepth(0);
     this.add
       .rectangle(map.width / 2, map.height / 2 + 35, map.width - 160, map.height - 170, 0xf7e8d6)
@@ -321,9 +328,8 @@ export class CottageInteriorScene extends Phaser.Scene {
     this.createTeaTable();
     this.createSofa();
     this.createTreasureShelf();
-    renderWonderbookWorldProp(this, map.wonderbookDisplay.position);
+    renderWonderbookWorldProp(this, wonderbookAnchor.position);
     this.createDoor();
-    this.createMoonflowerDetails();
   }
 
   private createFloorboards(): void {
@@ -437,33 +443,6 @@ export class CottageInteriorScene extends Phaser.Scene {
       .setStrokeStyle(10, 0x6d4d43, 1)
       .setDepth(6);
     this.add.circle(957, 1080, 9, 0xffe5a5, 1).setDepth(7);
-    this.add
-      .text(900, 1000, 'Moonflower Glade', {
-        color: '#6f5361',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '18px',
-        fontStyle: 'bold',
-        backgroundColor: '#fff7e6dd',
-        padding: { x: 9, y: 5 },
-      })
-      .setOrigin(0.5)
-      .setDepth(8);
-  }
-
-  private createMoonflowerDetails(): void {
-    const positions = [
-      [170, 860],
-      [1600, 840],
-      [1580, 590],
-      [620, 900],
-    ] as const;
-    for (const [x, y] of positions) {
-      this.add.circle(x, y, 25, 0xffefad, 0.16).setDepth(4);
-      this.add
-        .text(x, y, '🌙', { fontFamily: 'system-ui, sans-serif', fontSize: '28px' })
-        .setOrigin(0.5)
-        .setDepth(5);
-    }
   }
 
   private renderHomeState(homeView: CottageHomeView): void {
