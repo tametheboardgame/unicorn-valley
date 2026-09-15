@@ -13,7 +13,6 @@ import {
   drawRoundedPanel,
   type ConceptIcon,
 } from './ConceptUi';
-import { ExplorationShell } from './ExplorationShell';
 import { UI_FONT } from './uiTheme';
 
 interface PrimaryActionPresentation {
@@ -72,7 +71,6 @@ export class InteractionPrompt {
   private readonly hintIcon: Phaser.GameObjects.Graphics;
   private readonly hintText: Phaser.GameObjects.Text;
   private readonly directTargetZone: Phaser.GameObjects.Zone;
-  private readonly shell: ExplorationShell;
   private readonly unsubscribeAccessibility: () => void;
   private domRoot: HTMLElement | null = null;
   private domButton: HTMLButtonElement | null = null;
@@ -168,7 +166,6 @@ export class InteractionPrompt {
       .setDepth(116);
     this.bindDirectTargetZone();
 
-    this.shell = ExplorationShell.ensure(scene, pointerInput);
     this.panel.on('pointerdown', this.pressCurrentTarget);
     this.panel.on('pointerup', this.releaseInteraction);
     this.panel.on('pointerout', this.releaseInteraction);
@@ -188,7 +185,6 @@ export class InteractionPrompt {
   }
 
   public setTarget(target: InteractionTarget | null): void {
-    const previousTargetId = this.currentTarget?.id ?? null;
     this.currentTarget = target;
     const visible = target !== null && !isAutomaticInteraction(target);
     if (target && visible) {
@@ -222,9 +218,6 @@ export class InteractionPrompt {
       }
     }
     this.refreshPresentation();
-    if (previousTargetId !== (target?.id ?? null)) {
-      this.shell.refresh();
-    }
   }
 
   public destroy(): void {
