@@ -17,6 +17,62 @@ function retireLegacySignLabels(scene: Phaser.Scene): void {
   }
 }
 
+function raiseGardenEdgeTrees(scene: Phaser.Scene): void {
+  const moves = [
+    { x: 820, fromY: 230, toY: 140 },
+    { x: 820, fromY: 170, toY: 80 },
+    { x: 868, fromY: 188, toY: 98 },
+    { x: 1180, fromY: 210, toY: 140 },
+    { x: 1180, fromY: 150, toY: 80 },
+    { x: 1228, fromY: 168, toY: 98 },
+  ] as const;
+
+  for (const child of scene.children.list) {
+    if (
+      !(child instanceof Phaser.GameObjects.Rectangle) &&
+      !(child instanceof Phaser.GameObjects.Arc)
+    ) {
+      continue;
+    }
+    const move = moves.find(
+      (candidate) =>
+        Math.abs(child.x - candidate.x) < 0.5 && Math.abs(child.y - candidate.fromY) < 0.5,
+    );
+    if (move) {
+      child.setY(move.toY);
+    }
+  }
+}
+
+function retireFlowerPrimitives(
+  scene: Phaser.Scene,
+  bounds: { left: number; right: number; top: number; bottom: number },
+): void {
+  for (const child of [...scene.children.list]) {
+    if (
+      !(child instanceof Phaser.GameObjects.Arc) &&
+      !(child instanceof Phaser.GameObjects.Ellipse) &&
+      !(child instanceof Phaser.GameObjects.Rectangle)
+    ) {
+      continue;
+    }
+    if (
+      child.x >= bounds.left &&
+      child.x <= bounds.right &&
+      child.y >= bounds.top &&
+      child.y <= bounds.bottom
+    ) {
+      child.destroy();
+    }
+  }
+}
+
+function clearOldGateSignBackdrop(scene: Phaser.Scene): void {
+  // The old decorative flower sits directly behind the H1.10 physical sign. Clear only that tiny
+  // prop footprint before the new sign is created so the gate/path/hedge remain untouched.
+  retireFlowerPrimitives(scene, { left: 245, right: 350, top: 760, bottom: 860 });
+}
+
 function createOldGardenGateSign(scene: Phaser.Scene): void {
   const parts: Phaser.GameObjects.GameObject[] = [];
   const post = scene.add.rectangle(0, -42, 24, 84, 0x775039, 1);
@@ -133,29 +189,6 @@ function createGardenPlot(scene: Phaser.Scene, plot: GladeGardenPlot, variant: n
   }
 }
 
-function retireFlowerPrimitives(
-  scene: Phaser.Scene,
-  bounds: { left: number; right: number; top: number; bottom: number },
-): void {
-  for (const child of [...scene.children.list]) {
-    if (
-      !(child instanceof Phaser.GameObjects.Arc) &&
-      !(child instanceof Phaser.GameObjects.Ellipse) &&
-      !(child instanceof Phaser.GameObjects.Rectangle)
-    ) {
-      continue;
-    }
-    if (
-      child.x >= bounds.left &&
-      child.x <= bounds.right &&
-      child.y >= bounds.top &&
-      child.y <= bounds.bottom
-    ) {
-      child.destroy();
-    }
-  }
-}
-
 function createCorrectedRightBlueFlower(scene: Phaser.Scene): void {
   const x = 2520;
   const y = 1245;
@@ -216,6 +249,8 @@ export function ensureMoonflowerGladeH110Presentation(scene: Phaser.Scene): void
   }
 
   scene.add.container(0, 0).setName(ROOT_NAME).setVisible(false);
+  raiseGardenEdgeTrees(scene);
+  clearOldGateSignBackdrop(scene);
   createOldGardenGateSign(scene);
   createSunbeamDirectionSign(scene);
   createGardenPath(scene);
