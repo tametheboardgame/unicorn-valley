@@ -10,6 +10,7 @@ import {
   getActivePipEggClue,
   getPipEggDialogueId,
   getPipEggStage,
+  shouldAdvancePipEggQuestAfterConversation,
 } from './PipEggArc';
 
 class MemorySaveRepository implements SaveRepository {
@@ -80,6 +81,26 @@ describe("Pip's Mysterious Trail and Strange Egg arc", () => {
         }),
       ).toBe(dialogueId);
     });
+  });
+
+  it('advances talk-to-Pip quest steps only after the intro and return conversations', () => {
+    const progressAt = (index: number) => ({
+      status: 'active' as const,
+      currentStepId: getQuestStepId(PIP_STRANGE_EGG_QUEST_ID, index),
+      completedAt: null,
+    });
+
+    expect(shouldAdvancePipEggQuestAfterConversation(progressAt(0))).toBe(true);
+    expect(shouldAdvancePipEggQuestAfterConversation(progressAt(1))).toBe(false);
+    expect(shouldAdvancePipEggQuestAfterConversation(progressAt(4))).toBe(false);
+    expect(shouldAdvancePipEggQuestAfterConversation(progressAt(5))).toBe(true);
+    expect(
+      shouldAdvancePipEggQuestAfterConversation({
+        status: 'completed',
+        currentStepId: null,
+        completedAt: '2026-09-15T10:00:00.000Z',
+      }),
+    ).toBe(false);
   });
 
   it('queues one growth change after an adventure but does not consume it at a session boundary', () => {
