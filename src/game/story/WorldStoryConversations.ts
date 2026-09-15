@@ -221,10 +221,17 @@ export function startPipEggConversation(scene: Phaser.Scene): void {
     progress.status === 'not-started' ||
     progress.currentStepId === getQuestStepId(PIP_STRANGE_EGG_QUEST_ID, 0);
   if (progress.status === 'not-started') progress = quests.startQuest(PIP_STRANGE_EGG_QUEST_ID);
+
+  const returningWithEgg =
+    progress.status === 'active' &&
+    progress.currentStepId === getQuestStepId(PIP_STRANGE_EGG_QUEST_ID, 5);
+  const complete =
+    intro || returningWithEgg ? () => quests.notifyCharacterTalked('character:pip') : undefined;
+
   start(scene, {
     dialogueId: intro
       ? 'dialogue:pip-strange-egg-intro'
       : getPipEggDialogueId(getBrowserSaveService().load(), progress),
-    complete: intro ? () => quests.notifyCharacterTalked('character:pip') : undefined,
+    complete,
   });
 }
