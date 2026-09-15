@@ -11,7 +11,7 @@ function retireLegacySignLabels(scene: Phaser.Scene): void {
     if (!(child instanceof Phaser.GameObjects.Text)) {
       continue;
     }
-    if (child.text === 'Old Garden Gate' || child.text === 'Sunbeam Village → Rainbow Meadow') {
+    if (child.text.includes('Old Garden Gate') || child.text.includes('Sunbeam Village')) {
       child.destroy();
     }
   }
@@ -43,6 +43,7 @@ function createOldGardenGateSign(scene: Phaser.Scene): void {
   scene.add
     .container(300, 832, parts)
     .setName('h1.10:old-garden-gate-sign')
+    .setScale(0.82)
     .setDepth(worldDepthForY(832, 0.42));
 }
 
@@ -71,8 +72,9 @@ function createSunbeamDirectionSign(scene: Phaser.Scene): void {
   parts.push(foot, post, board, sun, label);
 
   scene.add
-    .container(2560, 832, parts)
+    .container(2460, 832, parts)
     .setName('h1.10:sunbeam-direction-sign')
+    .setScale(0.78)
     .setDepth(worldDepthForY(832, 0.42));
 }
 
