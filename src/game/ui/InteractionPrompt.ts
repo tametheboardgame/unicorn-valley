@@ -28,6 +28,7 @@ const ACTION_PRESENTATION: Record<InteractionActionKind, PrimaryActionPresentati
   inspect: { label: 'Inspect', icon: 'inspect' },
   buy: { label: 'Buy', icon: 'buy' },
   use: { label: 'Use', icon: 'use' },
+  'pick-up': { label: 'Pick up', icon: 'interact' },
   interact: { label: 'Interact', icon: 'interact' },
 };
 
