@@ -33,7 +33,7 @@ import {
 } from './NovaFirstRaceStory';
 import { openNovaRaceDecision } from './NovaRaceDecision';
 import { getPebbleStoryPhase } from './PebbleCollectionStory';
-import { getPipEggDialogueId } from './PipEggArc';
+import { getPipEggDialogueId, shouldAdvancePipEggQuestAfterConversation } from './PipEggArc';
 import {
   getWillowStoryPhase,
   WILLOW_CHARACTER_ID,
@@ -222,11 +222,9 @@ export function startPipEggConversation(scene: Phaser.Scene): void {
     progress.currentStepId === getQuestStepId(PIP_STRANGE_EGG_QUEST_ID, 0);
   if (progress.status === 'not-started') progress = quests.startQuest(PIP_STRANGE_EGG_QUEST_ID);
 
-  const returningWithEgg =
-    progress.status === 'active' &&
-    progress.currentStepId === getQuestStepId(PIP_STRANGE_EGG_QUEST_ID, 5);
-  const complete =
-    intro || returningWithEgg ? () => quests.notifyCharacterTalked('character:pip') : undefined;
+  const complete = shouldAdvancePipEggQuestAfterConversation(progress)
+    ? () => quests.notifyCharacterTalked('character:pip')
+    : undefined;
 
   start(scene, {
     dialogueId: intro
