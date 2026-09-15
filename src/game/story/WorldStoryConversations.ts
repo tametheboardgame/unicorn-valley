@@ -33,8 +33,13 @@ import {
 } from './NovaFirstRaceStory';
 import { openNovaRaceDecision } from './NovaRaceDecision';
 import { getPebbleStoryPhase } from './PebbleCollectionStory';
-import { getPipEggDialogueId } from './PipEggArc';
-import { getWillowStoryPhase, WILLOW_CHARACTER_ID } from './WillowMoonflowersStory';
+import { getPipEggDialogueId, shouldAdvancePipEggQuestAfterConversation } from './PipEggArc';
+import {
+  getWillowStoryPhase,
+  WILLOW_CHARACTER_ID,
+  WILLOW_MOONFLOWER_ITEM_ID,
+  WILLOW_MOONFLOWER_REQUIRED_QUANTITY,
+} from './WillowMoonflowersStory';
 
 type ConversationPlan = { dialogueId: DialogueId; complete?: () => void };
 
@@ -47,14 +52,29 @@ export function startWillowConversation(scene: Phaser.Scene): void {
   const relationships = new RelationshipService(save);
   relationships.markMet(WILLOW_CHARACTER_ID);
   const quests = getBrowserQuestEngine();
+  const inventory = new InventoryService(save);
+  const alreadyPrepared = inventory.hasItem(
+    WILLOW_MOONFLOWER_ITEM_ID,
+    WILLOW_MOONFLOWER_REQUIRED_QUANTITY,
+  );
   let progress = quests.getProgress(WILLOW_MOONFLOWERS_QUEST_ID);
   if (progress.status === 'not-started') progress = quests.startQuest(WILLOW_MOONFLOWERS_QUEST_ID);
   const phase = getWillowStoryPhase(progress);
   let dialogueId: DialogueId;
   let complete: (() => void) | undefined;
   if (phase === 'introduction') {
-    dialogueId = 'dialogue:willow-moonflowers-intro';
-    complete = () => quests.notifyCharacterTalked(WILLOW_CHARACTER_ID);
+    dialogueId = alreadyPrepared
+      ? 'dialogue:willow-moonflowers-prepared'
+      : 'dialogue:willow-moonflowers-intro';
+    complete = () => {
+      quests.notifyCharacterTalked(WILLOW_CHARACTER_ID);
+      if (
+        alreadyPrepared &&
+        getWillowStoryPhase(quests.getProgress(WILLOW_MOONFLOWERS_QUEST_ID)) === 'return-to-willow'
+      ) {
+        quests.notifyCharacterTalked(WILLOW_CHARACTER_ID);
+      }
+    };
   } else if (phase === 'collecting') dialogueId = 'dialogue:willow-moonflowers-reminder';
   else if (phase === 'return-to-willow' || phase === 'resolving') {
     dialogueId = 'dialogue:willow-moonflowers-return';
@@ -201,10 +221,15 @@ export function startPipEggConversation(scene: Phaser.Scene): void {
     progress.status === 'not-started' ||
     progress.currentStepId === getQuestStepId(PIP_STRANGE_EGG_QUEST_ID, 0);
   if (progress.status === 'not-started') progress = quests.startQuest(PIP_STRANGE_EGG_QUEST_ID);
+
+  const complete = shouldAdvancePipEggQuestAfterConversation(progress)
+    ? () => quests.notifyCharacterTalked('character:pip')
+    : undefined;
+
   start(scene, {
     dialogueId: intro
       ? 'dialogue:pip-strange-egg-intro'
       : getPipEggDialogueId(getBrowserSaveService().load(), progress),
-    complete: intro ? () => quests.notifyCharacterTalked('character:pip') : undefined,
+    complete,
   });
 }

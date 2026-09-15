@@ -5,6 +5,7 @@ export const CORE_NPC_IDS = ['nova', 'willow', 'pip', 'pebble', 'lumi', 'marigol
 export type CoreNpcId = (typeof CORE_NPC_IDS)[number];
 export type CoreNpcExpression = 'neutral' | 'happy';
 export type CoreNpcPresentation = 'world' | 'portrait';
+export const PIP_SPECIES_NAME = 'Glimmerling' as const;
 
 export interface CoreNpcVisualSpec {
   label: string;
@@ -16,7 +17,7 @@ export interface CoreNpcVisualSpec {
   outline: number;
   frame: number;
   motif: 'star' | 'moonflower' | 'explorer' | 'pebbles' | 'firefly' | 'marigold';
-  silhouette: 'racer' | 'gardener' | 'small-explorer' | 'maker' | 'storykeeper' | 'baker';
+  silhouette: 'racer' | 'gardener' | 'glimmerling' | 'maker' | 'storykeeper' | 'baker';
 }
 
 export const CORE_NPC_VISUALS: Readonly<Record<CoreNpcId, CoreNpcVisualSpec>> = {
@@ -46,15 +47,15 @@ export const CORE_NPC_VISUALS: Readonly<Record<CoreNpcId, CoreNpcVisualSpec>> = 
   },
   pip: {
     label: 'Pip',
-    body: 0xf3a4c8,
-    bodyShadow: 0xde77a9,
-    mane: 0xffd7e8,
-    maneAccent: 0xf8c75f,
-    accent: 0x6ea9c9,
-    outline: 0x563b66,
+    body: 0xe7b5df,
+    bodyShadow: 0xc98ac2,
+    mane: 0xffe8f3,
+    maneAccent: 0xf3c866,
+    accent: 0x82d7cf,
+    outline: 0x4f3c66,
     frame: 0xfff1dc,
     motif: 'explorer',
-    silhouette: 'small-explorer',
+    silhouette: 'glimmerling',
   },
   pebble: {
     label: 'Pebble',
@@ -433,61 +434,112 @@ function drawUnicornNpc(
 function drawPip(graphics: Phaser.GameObjects.Graphics, expression: CoreNpcExpression): void {
   const spec = CORE_NPC_VISUALS.pip;
 
+  // Luminous comet tail first: Pip should read as a magical glimmerling before any accessories.
+  graphics.fillStyle(spec.bodyShadow, 0.96);
+  graphics.lineStyle(3.5, spec.outline, 0.82);
+  graphics.fillEllipse(134, 88, 34, 18);
+  graphics.strokeEllipse(134, 88, 34, 18);
+  graphics.fillEllipse(149, 78, 27, 16);
+  graphics.strokeEllipse(149, 78, 27, 16);
+  graphics.fillStyle(spec.accent, 0.22);
+  graphics.fillCircle(160, 69, 16);
+  graphics.fillStyle(spec.accent, 0.72);
+  graphics.fillCircle(160, 69, 10);
+  graphics.fillStyle(spec.maneAccent, 0.98);
+  graphics.fillCircle(160, 69, 4.5);
+
+  // Leaf-like ears create a silhouette unlike every unicorn in the game.
   graphics.fillStyle(spec.bodyShadow, 1);
   graphics.lineStyle(4, spec.outline, 0.9);
-  graphics.fillTriangle(58, 48, 68, 8, 82, 51);
-  graphics.strokeTriangle(58, 48, 68, 8, 82, 51);
-  graphics.fillTriangle(101, 48, 116, 8, 126, 53);
-  graphics.strokeTriangle(101, 48, 116, 8, 126, 53);
-  graphics.fillStyle(spec.mane, 0.82);
-  graphics.fillTriangle(65, 42, 69, 18, 76, 44);
-  graphics.fillTriangle(106, 43, 115, 18, 120, 46);
+  graphics.fillTriangle(58, 49, 67, 7, 82, 50);
+  graphics.strokeTriangle(58, 49, 67, 7, 82, 50);
+  graphics.fillTriangle(101, 49, 119, 9, 126, 55);
+  graphics.strokeTriangle(101, 49, 119, 9, 126, 55);
+  graphics.fillStyle(0xb98bd0, 0.96);
+  graphics.fillTriangle(65, 43, 68, 18, 76, 44);
+  graphics.fillTriangle(108, 44, 118, 20, 120, 47);
+  graphics.fillStyle(spec.maneAccent, 0.84);
+  graphics.fillCircle(68, 14, 3.5);
+  graphics.fillCircle(118, 16, 3.2);
 
-  drawOutlinedCircle(graphics, 91, 70, 45, spec.body, spec.outline, 4.5);
-  graphics.fillStyle(spec.mane, 0.96);
-  graphics.fillEllipse(91, 84, 55, 42);
-
+  // Small pear-shaped floating body, moonlit belly and tucked paws.
+  drawOutlinedEllipse(graphics, 91, 92, 58, 61, spec.body, spec.outline, 4.2);
+  graphics.fillStyle(spec.mane, 0.92);
+  graphics.fillEllipse(91, 98, 33, 38);
   graphics.fillStyle(spec.bodyShadow, 1);
-  graphics.lineStyle(3.5, spec.outline, 0.86);
-  graphics.fillEllipse(48, 82, 31, 24);
-  graphics.strokeEllipse(48, 82, 31, 24);
+  graphics.fillRoundedRect(70, 115, 15, 17, 7);
+  graphics.fillRoundedRect(98, 115, 15, 17, 7);
+  graphics.lineStyle(2.5, spec.outline, 0.72);
+  graphics.strokeRoundedRect(70, 115, 15, 17, 7);
+  graphics.strokeRoundedRect(98, 115, 15, 17, 7);
+  graphics.fillStyle(spec.mane, 0.96);
+  graphics.fillRoundedRect(72, 124, 12, 6, 3);
+  graphics.fillRoundedRect(100, 124, 12, 6, 3);
 
+  // Separate head and cheek tufts remove the old single-ball / pig-like reading.
+  drawOutlinedEllipse(graphics, 91, 62, 70, 56, spec.body, spec.outline, 4.4);
+  graphics.fillStyle(spec.bodyShadow, 1);
+  graphics.lineStyle(3, spec.outline, 0.78);
+  graphics.fillTriangle(61, 64, 48, 73, 64, 78);
+  graphics.strokeTriangle(61, 64, 48, 73, 64, 78);
+  graphics.fillTriangle(121, 63, 135, 72, 119, 79);
+  graphics.strokeTriangle(121, 63, 135, 72, 119, 79);
+
+  // Moon-crest and glow tie Pip to discovery magic rather than unicorn horns.
+  graphics.fillStyle(spec.accent, 0.22);
+  graphics.fillCircle(91, 35, 10);
+  graphics.fillStyle(spec.maneAccent, 0.95);
+  graphics.fillCircle(91, 35, 5);
+  graphics.fillStyle(spec.body, 1);
+  graphics.fillCircle(94, 33, 4.5);
+
+  // Big eyes and cheeks support clear neutral/happy expressions at world and portrait scale.
   if (expression === 'happy') {
     graphics.fillStyle(spec.outline, 1);
-    graphics.fillEllipse(78, 63, 8, 5);
-    graphics.fillEllipse(106, 63, 8, 5);
-    graphics.fillStyle(0xf6a6b8, 0.52);
-    graphics.fillCircle(68, 77, 5);
-    graphics.fillCircle(116, 77, 5);
+    graphics.fillEllipse(78, 59, 10, 5.5);
+    graphics.fillEllipse(105, 59, 10, 5.5);
+    graphics.fillStyle(0xf6a6b8, 0.54);
+    graphics.fillCircle(66, 73, 5);
+    graphics.fillCircle(116, 73, 5);
   } else {
-    drawHappyFace(graphics, 78, 63, spec.outline, 'neutral');
-    drawHappyFace(graphics, 106, 63, spec.outline, 'neutral');
+    graphics.fillStyle(0xffffff, 0.98);
+    graphics.fillEllipse(78, 59, 16, 19);
+    graphics.fillEllipse(105, 59, 16, 19);
+    graphics.fillStyle(spec.outline, 1);
+    graphics.fillEllipse(79, 61, 8, 11);
+    graphics.fillEllipse(104, 61, 8, 11);
+    graphics.fillStyle(0xffffff, 0.96);
+    graphics.fillCircle(81, 58, 2.2);
+    graphics.fillCircle(106, 58, 2.2);
   }
 
+  // Small muzzle and smile keep Pip creature-like without resembling a pig snout.
+  graphics.fillStyle(spec.mane, 0.98);
+  graphics.fillEllipse(91, 75, 25, 16);
   graphics.fillStyle(spec.outline, 1);
-  graphics.fillTriangle(87, 75, 95, 75, 91, 81);
-  graphics.lineStyle(2.2, spec.outline, 0.85);
-  graphics.lineBetween(91, 82, 91, 88);
-  graphics.lineBetween(91, 88, 84, expression === 'happy' ? 91 : 88);
-  graphics.lineBetween(91, 88, 98, expression === 'happy' ? 91 : 88);
+  graphics.fillCircle(91, 72, 2.6);
+  graphics.lineStyle(2.1, spec.outline, 0.84);
+  graphics.lineBetween(91, 75, 91, 79);
+  graphics.lineBetween(91, 79, 86, expression === 'happy' ? 83 : 81);
+  graphics.lineBetween(91, 79, 97, expression === 'happy' ? 83 : 81);
 
-  // Explorer scarf and satchel make Pip readable even at small world scale.
+  // Glimmer freckles reinforce Pip's magical role without becoming a generic interaction marker.
+  graphics.fillStyle(spec.maneAccent, 0.78);
+  graphics.fillCircle(63, 79, 2);
+  graphics.fillCircle(68, 82, 1.4);
+  graphics.fillCircle(119, 79, 2);
+  graphics.fillCircle(114, 83, 1.4);
+
+  // Keep the established explorer identity, but reduce it to a readable scarf and compass charm.
   graphics.fillStyle(spec.maneAccent, 1);
-  graphics.fillRoundedRect(56, 95, 70, 10, 5);
-  graphics.fillTriangle(66, 102, 79, 126, 87, 102);
-  graphics.fillStyle(0xa66b4d, 1);
-  graphics.fillRoundedRect(116, 91, 24, 26, 5);
-  graphics.lineStyle(3, 0x6f4938, 0.9);
-  graphics.strokeRoundedRect(116, 91, 24, 26, 5);
-  graphics.lineBetween(112, 84, 126, 98);
-
-  // Tiny blue compass badge.
+  graphics.fillRoundedRect(68, 91, 48, 8, 4);
+  graphics.fillTriangle(75, 97, 83, 113, 90, 97);
   graphics.fillStyle(spec.accent, 1);
-  graphics.fillCircle(48, 106, 10);
-  graphics.lineStyle(2, 0xffffff, 0.9);
-  graphics.strokeCircle(48, 106, 7);
-  graphics.fillStyle(0xffffff, 0.9);
-  drawStar(graphics, 48, 106, 5);
+  graphics.fillCircle(64, 101, 8);
+  graphics.lineStyle(1.8, 0xffffff, 0.9);
+  graphics.strokeCircle(64, 101, 5.5);
+  graphics.fillStyle(0xffffff, 0.92);
+  drawStar(graphics, 64, 101, 4);
 }
 
 export function getCoreNpcTextureKey(

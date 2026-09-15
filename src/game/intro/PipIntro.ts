@@ -1,10 +1,90 @@
+import type { DialogueId } from '../../content/contentTypes';
+import { PIP_STRANGE_EGG_QUEST_ID } from '../../content/r4EggArc';
 import type { InteractionTarget } from '../interaction/InteractionTarget';
+import { getQuestStepId } from '../quests/QuestEngine';
+import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
+import { getBrowserSaveService } from '../save/browserSaveService';
+import type { QuestProgress, SaveGame } from '../save/saveSchema';
+import { getPipEggDialogueId, shouldAdvancePipEggQuestAfterConversation } from '../story/PipEggArc';
 
 export const FIRST_DISCOVERY_ID = 'discovery:moonflower-sparkle' as const;
 export const FIRST_DISCOVERY_FLAG = 'flag:first-sparkle-found';
+export const PIP_INTRO_APPEARED_FLAG = 'flag:pip-intro-appeared';
+export const PIP_WELCOME_COMPLETE_FLAG = 'flag:pip-welcome-complete';
 export const PIP_POSITION = { x: 970, y: 825 } as const;
 export const FIRST_SPARKLE_POSITION = { x: 1120, y: 1030 } as const;
 export const FIRST_SPARKLE_COLLECTION_RADIUS = 78;
+export const PIP_ARRIVAL_TRIGGER_X = 790;
+
+export function isPipIntroduced(save: SaveGame | null): boolean {
+  return Boolean(
+    save?.world.flags[PIP_INTRO_APPEARED_FLAG] === true ||
+      save?.collections.discoveryIds.includes(FIRST_DISCOVERY_ID) ||
+      save?.world.uniqueDiscoveryIds.includes(FIRST_DISCOVERY_ID),
+  );
+}
+
+export function shouldTriggerPipArrival(playerX: number, save: SaveGame | null): boolean {
+  return !isPipIntroduced(save) && playerX >= PIP_ARRIVAL_TRIGGER_X;
+}
+
+function hasFirstDiscoveryInSave(save: SaveGame | null): boolean {
+  return Boolean(
+    save?.collections.discoveryIds.includes(FIRST_DISCOVERY_ID) ||
+      save?.world.uniqueDiscoveryIds.includes(FIRST_DISCOVERY_ID),
+  );
+}
+
+export function resolvePipInteractionDialogueId(
+  hasFirstDiscovery: boolean,
+  progress: QuestProgress,
+  save: SaveGame | null,
+): DialogueId {
+  if (!hasFirstDiscovery) {
+    return 'dialogue:pip-welcome';
+  }
+
+  const awaitingTrailStart =
+    progress.status === 'not-started' ||
+    progress.currentStepId === getQuestStepId(PIP_STRANGE_EGG_QUEST_ID, 0);
+  if (awaitingTrailStart) {
+    return 'dialogue:pip-strange-egg-intro';
+  }
+
+  return getPipEggDialogueId(save, progress);
+}
+
+/**
+ * Resolve Pip's direct-talk response at the moment Talk is activated.
+ *
+ * Starting the trail is safe here because startQuest is idempotent, but completing a talk step is
+ * deliberately not a side effect of resolving a dialogue id. Completion now happens through the
+ * dialogue result's onComplete callback, after the shared conversation presenter has removed the
+ * modal card. That guarantees quest-complete feedback cannot be emitted and immediately pre-empted
+ * by the conversation it belongs to.
+ */
+export function getCurrentPipInteractionDialogueId(hasFirstDiscovery: boolean): DialogueId {
+  const save = getBrowserSaveService().load();
+  if (!hasFirstDiscovery && !hasFirstDiscoveryInSave(save)) {
+    return 'dialogue:pip-welcome';
+  }
+
+  const quests = getBrowserQuestEngine();
+  let progress = quests.getProgress(PIP_STRANGE_EGG_QUEST_ID);
+  if (progress.status === 'not-started') {
+    progress = quests.startQuest(PIP_STRANGE_EGG_QUEST_ID);
+  }
+
+  return resolvePipInteractionDialogueId(true, progress, save);
+}
+
+function completeCurrentPipTalkStep(): void {
+  const quests = getBrowserQuestEngine();
+  const progress = quests.getProgress(PIP_STRANGE_EGG_QUEST_ID);
+  if (shouldAdvancePipEggQuestAfterConversation(progress)) {
+    quests.notifyCharacterTalked('character:pip');
+  }
+}
 
 export function createPipInteraction(hasFirstDiscovery: boolean): InteractionTarget {
   return {
@@ -15,9 +95,14 @@ export function createPipInteraction(hasFirstDiscovery: boolean): InteractionTar
     position: PIP_POSITION,
     interactionRadius: 185,
     priority: 20,
+    visible: () => isPipIntroduced(getBrowserSaveService().load()),
+    enabled: () => isPipIntroduced(getBrowserSaveService().load()),
     result: {
       type: 'dialogue',
-      dialogueId: hasFirstDiscovery ? 'dialogue:pip-first-discovery' : 'dialogue:pip-welcome',
+      get dialogueId(): DialogueId {
+        return getCurrentPipInteractionDialogueId(hasFirstDiscovery);
+      },
+      onComplete: completeCurrentPipTalkStep,
     },
   };
 }

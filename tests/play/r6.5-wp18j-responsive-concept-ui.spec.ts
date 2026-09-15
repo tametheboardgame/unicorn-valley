@@ -66,23 +66,31 @@ async function dragGamePoint(
   await page.mouse.up();
 }
 
-async function expectCanonicalLandscapeShell(page: Page): Promise<void> {
+async function expectCanonicalLandscapeShell(
+  page: Page,
+  { movementPadVisible = true }: { movementPadVisible?: boolean } = {},
+): Promise<void> {
   await expect
     .poll(async () => {
       const objects = await sceneObjects(page, 'MoonflowerGladeScene');
-      return objects.filter(
-        ({ name, visible, interactive }) =>
-          visible &&
-          interactive &&
-          [
-            'exploration-shell-map-button',
-            'exploration-shell-bag-button',
-            'exploration-shell-book-button',
-            'exploration-shell-settings-nav-button',
-          ].includes(name),
-      ).length;
+      return {
+        navigationButtons: objects.filter(
+          ({ name, visible, interactive }) =>
+            visible &&
+            interactive &&
+            [
+              'exploration-shell-map-button',
+              'exploration-shell-bag-button',
+              'exploration-shell-book-button',
+              'exploration-shell-settings-nav-button',
+            ].includes(name),
+        ).length,
+        movementPadVisible: objects.some(
+          ({ name, visible }) => name === 'tablet-movement-pad' && visible,
+        ),
+      };
     })
-    .toBe(4);
+    .toEqual({ navigationButtons: 4, movementPadVisible });
 
   const objects = await sceneObjects(page, 'MoonflowerGladeScene');
   expect(
@@ -94,7 +102,6 @@ async function expectCanonicalLandscapeShell(page: Page): Promise<void> {
   expect(
     objects.some(({ name, visible }) => name === 'exploration-location-title-panel' && visible),
   ).toBe(true);
-  expect(objects.some(({ name, visible }) => name === 'tablet-movement-pad' && visible)).toBe(true);
 
   expect(objects.some(({ name }) => name === 'exploration-shell-sound-button')).toBe(false);
   expect(objects.some(({ name }) => name === 'exploration-controls-button')).toBe(false);

@@ -143,6 +143,57 @@ async function waitForVisibleObject(
   );
 }
 
+async function seedIntroducedPip(page: Page): Promise<void> {
+  await page.addInitScript(() => {
+    localStorage.clear();
+    const timestamp = new Date().toISOString();
+    const save = {
+      schemaVersion: 2,
+      createdAt: timestamp,
+      lastSavedAt: timestamp,
+      profile: {
+        name: null,
+        appearance: {},
+        currentLocationId: 'location:moonflower-glade',
+        unlockedAbilityIds: [],
+      },
+      inventory: {
+        itemQuantities: {},
+        ownedCosmeticIds: [],
+        ownedDecorationIds: [],
+        specialItemIds: [],
+      },
+      relationships: { byCharacterId: {} },
+      quests: { byQuestId: {} },
+      world: {
+        flags: {
+          'flag:pip-intro-appeared': true,
+          'flag:pip-welcome-complete': true,
+        },
+        discoveredZoneIds: [],
+        changedObjectIds: [],
+        uniqueDiscoveryIds: [],
+      },
+      home: {
+        ownedFurnitureIds: [],
+        furnitureBySlot: {},
+        gardenFlags: {},
+      },
+      activities: {
+        racesById: {},
+        miniGameRecords: {},
+      },
+      collections: {
+        discoveryIds: [],
+        memoryIds: [],
+      },
+    };
+    const serialised = JSON.stringify(save);
+    localStorage.setItem('unicorn-valley.save', serialised);
+    localStorage.setItem('unicorn-valley.save.schema.2', serialised);
+  });
+}
+
 test('exploration chrome uses the canonical static HUD and a centred canvas', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/?scene=glade&diagnostics=1');
@@ -199,6 +250,9 @@ test('clicking open ground moves the unicorn again', async ({ page }) => {
 test('held movement carries through an automatic world transition on the first pass', async ({
   page,
 }) => {
+  // The first-run Pip welcome correctly pauses world movement. This contract isolates held-input
+  // hand-off across the gateway by starting from the post-welcome exploration state.
+  await seedIntroducedPip(page);
   await page.goto('/?scene=glade&diagnostics=1');
   await waitForScene(page, 'MoonflowerGladeScene');
 

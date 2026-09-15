@@ -138,6 +138,57 @@ async function waitForTalkTarget(page: Page, sceneKey: string, label: string): P
     .toBe(`Talk|${label}`);
 }
 
+async function seedIntroducedPip(page: Page): Promise<void> {
+  await page.addInitScript(() => {
+    localStorage.clear();
+    const timestamp = new Date().toISOString();
+    const save = {
+      schemaVersion: 2,
+      createdAt: timestamp,
+      lastSavedAt: timestamp,
+      profile: {
+        name: null,
+        appearance: {},
+        currentLocationId: 'location:moonflower-glade',
+        unlockedAbilityIds: [],
+      },
+      inventory: {
+        itemQuantities: {},
+        ownedCosmeticIds: [],
+        ownedDecorationIds: [],
+        specialItemIds: [],
+      },
+      relationships: { byCharacterId: {} },
+      quests: { byQuestId: {} },
+      world: {
+        flags: {
+          'flag:pip-intro-appeared': true,
+          'flag:pip-welcome-complete': true,
+        },
+        discoveredZoneIds: [],
+        changedObjectIds: [],
+        uniqueDiscoveryIds: [],
+      },
+      home: {
+        ownedFurnitureIds: [],
+        furnitureBySlot: {},
+        gardenFlags: {},
+      },
+      activities: {
+        racesById: {},
+        miniGameRecords: {},
+      },
+      collections: {
+        discoveryIds: [],
+        memoryIds: [],
+      },
+    };
+    const serialised = JSON.stringify(save);
+    localStorage.setItem('unicorn-valley.save', serialised);
+    localStorage.setItem('unicorn-valley.save.schema.2', serialised);
+  });
+}
+
 function installFinePrimaryPointerOverride(): void {
   const nativeMatchMedia = window.matchMedia.bind(window);
   const finePrimaryPointer: MediaQueryList = {
@@ -194,6 +245,9 @@ test.describe('R6.5-WP19D interaction remediation', () => {
   test('supporting resident has physical separation and owns the lower speech area while engaged', async ({
     page,
   }) => {
+    // This contract is about Juniper interaction/collision. Complete the first-run Pip welcome in
+    // seeded state so its intentional modal cannot take ownership of the lower dialogue surface.
+    await seedIntroducedPip(page);
     await page.goto('/?diagnostics=1');
     await waitForDiagnostics(page);
     await startScene(page, 'MoonflowerGladeScene');
@@ -235,8 +289,8 @@ test.describe('R6.5-WP19D interaction remediation', () => {
       .toBe(true);
 
     scene = await getScene(page, 'MoonflowerGladeScene');
-    const conversation = objectByName(scene, 'dialogue-production-panel');
-    expect(conversation.y).toBeGreaterThan(500);
+    expect(objectByName(scene, 'dialogue-production-portrait-frame').y).toBeGreaterThan(500);
+    expect(objectByName(scene, 'dialogue-production-body').y).toBeGreaterThan(450);
     expect(objectByName(scene, 'exploration-location-title-panel').visible).toBe(true);
     expect(objectByName(scene, 'exploration-interaction-prompt').visible).toBe(false);
     expect(objectByName(scene, 'exploration-tablet-hint-panel').visible).toBe(false);
@@ -253,11 +307,14 @@ test.describe('R6.5-WP19D interaction remediation', () => {
     ).toBeLessThan(1);
 
     await page.keyboard.press('KeyE', { delay: 120 });
-    await page.waitForTimeout(250);
-    scene = await getScene(page, 'MoonflowerGladeScene');
-    expect(
-      scene.objects.some((object) => object.name === 'dialogue-production-panel' && object.visible),
-    ).toBe(false);
+    await expect
+      .poll(async () => {
+        const current = await getScene(page, 'MoonflowerGladeScene');
+        return current.objects.some(
+          (object) => object.name === 'dialogue-production-panel' && object.visible,
+        );
+      })
+      .toBe(false);
   });
 
   test('Starlight Beach keeps the canonical HUD and discovery feedback out of the top chrome', async ({

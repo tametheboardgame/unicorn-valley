@@ -23,7 +23,7 @@ export const CHARACTERS = [
   {
     id: 'character:pip',
     name: 'Pip',
-    role: 'First valley friend',
+    role: "A tiny glimmerling explorer and the player's first friend in the valley.",
   },
 ] as const satisfies readonly CharacterDefinition[];
 
@@ -36,7 +36,7 @@ export const DISCOVERIES = [
   {
     id: 'discovery:moonflower-sparkle',
     name: 'Moonflower Sparkle',
-    description: 'A tiny warm sparkle found beside the moonflowers near home.',
+    description: 'A bright green sparkle found beside the moonflowers near home.',
   },
 ] as const satisfies readonly DiscoveryDefinition[];
 
@@ -90,14 +90,21 @@ export const DIALOGUES = [
         id: 'dialogue-node:pip-welcome-hello',
         type: 'line',
         speakerId: 'character:pip',
-        text: "Hi! I'm Pip. I was hoping you'd arrive!",
+        text: "Poof! Oh! Hello! I'm Pip. I'm a glimmerling. Sorry about the smoke. I was practising a dramatic entrance!",
+        nextNodeId: 'dialogue-node:pip-welcome-home',
+      },
+      {
+        id: 'dialogue-node:pip-welcome-home',
+        type: 'line',
+        speakerId: 'character:pip',
+        text: 'Welcome to Moonflower Glade. That cosy cottage is your new home, and I can show you around.',
         nextNodeId: 'dialogue-node:pip-welcome-explore',
       },
       {
         id: 'dialogue-node:pip-welcome-explore',
         type: 'line',
         speakerId: 'character:pip',
-        text: 'Try a little exploring. I saw something sparkling beside the path. No rush!',
+        text: 'First, I spotted a bright green sparkle beside the path. Go and take a look. I will wait right here!',
       },
     ],
   },
@@ -111,13 +118,13 @@ export const DIALOGUES = [
         type: 'line',
         speakerId: 'character:pip',
         text: 'You found the Moonflower Sparkle! I knew it would like you.',
-        nextNodeId: 'dialogue-node:pip-wonderbook-hint',
+        nextNodeId: 'dialogue-node:pip-next-mystery',
       },
       {
-        id: 'dialogue-node:pip-wonderbook-hint',
+        id: 'dialogue-node:pip-next-mystery',
         type: 'line',
         speakerId: 'character:pip',
-        text: 'Discoveries like that belong in your Wonderbook. We should look at it soon!',
+        text: 'Come and talk to me. I noticed something else strange near the stream, and I think we have a mystery to solve.',
       },
     ],
   },

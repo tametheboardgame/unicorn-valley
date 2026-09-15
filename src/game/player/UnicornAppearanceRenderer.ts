@@ -93,6 +93,8 @@ const POSES: Readonly<Record<UnicornProductionPose, PoseMetrics>> = {
   },
 };
 
+export const UNICORN_WORLD_TAIL_SAFE_INSET = 10;
+
 function clampChannel(value: number): number {
   return Math.max(0, Math.min(255, Math.round(value)));
 }
@@ -828,7 +830,19 @@ export function drawUnicornAppearance(
 
   graphics.fillStyle(0x4b3658, 0.12);
   graphics.fillEllipse(x - 4 * scale, y + 67 * scale, 154 * scale, 24 * scale);
-  drawTail(graphics, x, bodyY, scale, appearance, tail, tailOutline, metrics);
+  // The widest player-tail silhouettes previously crossed the left edge of the generated texture
+  // by a few pixels. Keep the entire tail at its canonical art owner and inset it slightly under
+  // the body instead of widening the texture, which would distort callers that use setDisplaySize.
+  drawTail(
+    graphics,
+    x + UNICORN_WORLD_TAIL_SAFE_INSET * scale,
+    bodyY,
+    scale,
+    appearance,
+    tail,
+    tailOutline,
+    metrics,
+  );
 
   for (const leg of [
     { x: -43, offset: metrics.rearA },

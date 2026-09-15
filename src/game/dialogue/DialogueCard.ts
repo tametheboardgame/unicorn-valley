@@ -7,37 +7,34 @@ import {
 import { getVerticalSliceAudio } from '../audio/VerticalSliceAudio';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import type { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
-import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from '../ui/uiTheme';
+import { UI_DESIGN_TOKENS } from '../ui/UiDesignSystem';
+import { drawUiPanel, drawUiPanelShadow } from '../ui/UiPrimitives';
+import { UI_COLOURS, UI_FONT } from '../ui/uiTheme';
 
 type CoreNpcId = 'nova' | 'willow' | 'pip' | 'pebble' | 'lumi' | 'marigold';
 type DialogueLayout = 'compact' | 'expanded';
 
 const CORE_NPC_IDS = new Set<CoreNpcId>(['nova', 'willow', 'pip', 'pebble', 'lumi', 'marigold']);
-const COMPACT_CHOICE_PROMPT_CHARACTER_LIMIT = 70;
-const COMPACT_CHOICE_LABEL_CHARACTER_LIMIT = 24;
 
 const COMPACT_LAYOUT = {
   panel: { x: GAME_WIDTH / 2, y: GAME_HEIGHT - 112, width: 900, height: 190 },
   ribbon: { x: 445, y: GAME_HEIGHT - 194, width: 300, height: 48 },
-  portrait: { x: 250, y: GAME_HEIGHT - 108, haloSize: 136, frameSize: 118 },
+  portrait: { x: 220, y: GAME_HEIGHT - 108, haloSize: 142, frameSize: 118 },
   speaker: { x: 330, y: GAME_HEIGHT - 194, fontSize: 24 },
   hint: { x: 1050, y: GAME_HEIGHT - 194, fontSize: 14 },
   body: { x: 330, y: GAME_HEIGHT - 164, width: 620, fontSize: 23 },
-  action: { x: 985, y: GAME_HEIGHT - 44, width: 180, height: 48 },
+  action: { x: 985, y: GAME_HEIGHT - 62, width: 180, height: 48 },
   indicatorX: 1047,
 } as const;
-
-const COMPACT_BODY_MAX_HEIGHT =
-  COMPACT_LAYOUT.action.y - COMPACT_LAYOUT.action.height / 2 - COMPACT_LAYOUT.body.y - 8;
 
 const EXPANDED_LAYOUT = {
   panel: { x: GAME_WIDTH / 2, y: GAME_HEIGHT - 164, width: 1120, height: 286 },
   ribbon: { x: 420, y: GAME_HEIGHT - 286, width: 360, height: 52 },
-  portrait: { x: 162, y: GAME_HEIGHT - 170, haloSize: 166, frameSize: 144 },
+  portrait: { x: 124, y: GAME_HEIGHT - 170, haloSize: 172, frameSize: 144 },
   speaker: { x: 265, y: GAME_HEIGHT - 286, fontSize: 27 },
   hint: { x: GAME_WIDTH - 106, y: GAME_HEIGHT - 286, fontSize: 15 },
   body: { x: 265, y: GAME_HEIGHT - 235, width: 760, fontSize: 24 },
-  action: { x: GAME_WIDTH - 200, y: GAME_HEIGHT - 70, width: 210, height: 58 },
+  action: { x: GAME_WIDTH - 200, y: GAME_HEIGHT - 84, width: 210, height: 58 },
   indicatorX: GAME_WIDTH - 126,
 } as const;
 
@@ -47,18 +44,95 @@ function resolveCoreNpcId(speakerId: string): CoreNpcId | null {
   return CORE_NPC_IDS.has(candidate as CoreNpcId) ? (candidate as CoreNpcId) : null;
 }
 
+function drawRoundedPanel(
+  graphics: Phaser.GameObjects.Graphics,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+): void {
+  graphics.clear();
+  drawUiPanel(graphics, x, y, width, height, {
+    fill: UI_COLOURS.cream,
+    stroke: UI_COLOURS.ribbonStrong,
+    lineWidth: UI_DESIGN_TOKENS.border.panelPx,
+    radius: UI_DESIGN_TOKENS.radius.panelPx,
+    alpha: 0.99,
+  });
+}
+
+function drawRoundedPanelShadow(
+  graphics: Phaser.GameObjects.Graphics,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  alpha: number,
+): void {
+  graphics.clear();
+  drawUiPanelShadow(graphics, x, y, width, height, UI_DESIGN_TOKENS.radius.panelPx, { alpha });
+}
+
+function drawRoundedRibbon(
+  graphics: Phaser.GameObjects.Graphics,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+): void {
+  graphics.clear();
+  drawUiPanel(graphics, x, y, width, height, {
+    fill: UI_COLOURS.ribbon,
+    stroke: UI_COLOURS.ribbonStrong,
+    lineWidth: UI_DESIGN_TOKENS.border.controlPx,
+    radius: UI_DESIGN_TOKENS.radius.rowPx,
+    alpha: 1,
+  });
+}
+
+function drawRoundedControl(
+  graphics: Phaser.GameObjects.Graphics,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  fill: number,
+): void {
+  graphics.clear();
+  drawUiPanel(graphics, x, y, width, height, {
+    fill,
+    stroke: UI_COLOURS.lavenderStrong,
+    lineWidth: UI_DESIGN_TOKENS.border.strongPx,
+    radius: UI_DESIGN_TOKENS.radius.controlPx,
+    alpha: 1,
+  });
+}
+
+function drawRoundedControlShadow(
+  graphics: Phaser.GameObjects.Graphics,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  alpha: number,
+): void {
+  graphics.clear();
+  drawUiPanelShadow(graphics, x, y, width, height, UI_DESIGN_TOKENS.radius.controlPx, { alpha });
+}
+
 export class DialogueCard {
   private readonly dimmer: Phaser.GameObjects.Rectangle;
-  private readonly panelShadow: Phaser.GameObjects.Rectangle;
-  private readonly panel: Phaser.GameObjects.Rectangle;
-  private readonly speakerRibbon: Phaser.GameObjects.Rectangle;
+  private readonly panelShadow: Phaser.GameObjects.Graphics;
+  private readonly panel: Phaser.GameObjects.Graphics;
+  private readonly speakerRibbon: Phaser.GameObjects.Graphics;
   private readonly portraitHalo: Phaser.GameObjects.Arc;
   private readonly portrait: Phaser.GameObjects.Arc;
   private readonly portraitLetter: Phaser.GameObjects.Text;
   private readonly speakerName: Phaser.GameObjects.Text;
   private readonly modeHint: Phaser.GameObjects.Text;
   private readonly body: Phaser.GameObjects.Text;
-  private readonly continueShadow: Phaser.GameObjects.Rectangle;
+  private readonly continueShadow: Phaser.GameObjects.Graphics;
+  private readonly continueSurface: Phaser.GameObjects.Graphics;
   private readonly continueButton: Phaser.GameObjects.Rectangle;
   private readonly continueLabel: Phaser.GameObjects.Text;
   private readonly advanceIndicator: Phaser.GameObjects.Text;
@@ -83,40 +157,15 @@ export class DialogueCard {
       .setScrollFactor(0)
       .setDepth(125);
 
-    this.panelShadow = createUiShadow(
-      scene,
-      EXPANDED_LAYOUT.panel.x,
-      EXPANDED_LAYOUT.panel.y,
-      EXPANDED_LAYOUT.panel.width,
-      EXPANDED_LAYOUT.panel.height,
-      125,
-      0.28,
-    );
+    this.panelShadow = scene.add.graphics().setScrollFactor(0).setDepth(125);
     this.panel = scene.add
-      .rectangle(
-        EXPANDED_LAYOUT.panel.x,
-        EXPANDED_LAYOUT.panel.y,
-        EXPANDED_LAYOUT.panel.width,
-        EXPANDED_LAYOUT.panel.height,
-        UI_COLOURS.cream,
-        0.99,
-      )
+      .graphics()
       .setName('dialogue-production-panel')
-      .setStrokeStyle(7, UI_COLOURS.ribbonStrong, 1)
       .setScrollFactor(0)
       .setDepth(126);
-
     this.speakerRibbon = scene.add
-      .rectangle(
-        EXPANDED_LAYOUT.ribbon.x,
-        EXPANDED_LAYOUT.ribbon.y,
-        EXPANDED_LAYOUT.ribbon.width,
-        EXPANDED_LAYOUT.ribbon.height,
-        UI_COLOURS.ribbon,
-        1,
-      )
+      .graphics()
       .setName('dialogue-production-speaker-ribbon')
-      .setStrokeStyle(3, UI_COLOURS.ribbonStrong, 1)
       .setScrollFactor(0)
       .setDepth(127);
 
@@ -192,28 +241,24 @@ export class DialogueCard {
       .setScrollFactor(0)
       .setDepth(128);
 
-    this.continueShadow = createUiShadow(
-      scene,
-      EXPANDED_LAYOUT.action.x,
-      EXPANDED_LAYOUT.action.y,
-      EXPANDED_LAYOUT.action.width,
-      EXPANDED_LAYOUT.action.height,
-      128,
-      0.16,
-    );
+    this.continueShadow = scene.add.graphics().setScrollFactor(0).setDepth(128);
+    this.continueSurface = scene.add
+      .graphics()
+      .setName('dialogue-production-continue-surface')
+      .setScrollFactor(0)
+      .setDepth(129);
     this.continueButton = scene.add
       .rectangle(
         EXPANDED_LAYOUT.action.x,
         EXPANDED_LAYOUT.action.y,
         EXPANDED_LAYOUT.action.width,
         EXPANDED_LAYOUT.action.height,
-        UI_COLOURS.lavender,
-        1,
+        0xffffff,
+        0.001,
       )
       .setName('dialogue-production-continue')
-      .setStrokeStyle(4, UI_COLOURS.lavenderStrong, 1)
       .setScrollFactor(0)
-      .setDepth(129)
+      .setDepth(130)
       .setInteractive({ useHandCursor: true });
 
     this.continueLabel = scene.add
@@ -226,7 +271,7 @@ export class DialogueCard {
       .setName('dialogue-production-continue-label')
       .setOrigin(0.5)
       .setScrollFactor(0)
-      .setDepth(130);
+      .setDepth(131);
 
     this.advanceIndicator = scene.add
       .text(EXPANDED_LAYOUT.indicatorX, EXPANDED_LAYOUT.action.y, '›', {
@@ -238,16 +283,41 @@ export class DialogueCard {
       .setName('dialogue-production-advance-indicator')
       .setOrigin(0.5)
       .setScrollFactor(0)
-      .setDepth(130);
+      .setDepth(131);
 
-    applyButtonHover(this.continueButton, UI_COLOURS.lavender, UI_COLOURS.gold);
-
-    this.continueButton.on('pointerdown', () => pointerInput.setButton('INTERACT', true));
+    this.continueButton.on('pointerover', () => {
+      const spec = this.layout === 'compact' ? COMPACT_LAYOUT : EXPANDED_LAYOUT;
+      drawRoundedControl(
+        this.continueSurface,
+        spec.action.x,
+        spec.action.y,
+        spec.action.width,
+        spec.action.height,
+        UI_COLOURS.gold,
+      );
+    });
+    this.continueButton.on('pointerout', () => {
+      pointerInput.setButton('INTERACT', false);
+      this.continueSurface.setAlpha(1);
+      const spec = this.layout === 'compact' ? COMPACT_LAYOUT : EXPANDED_LAYOUT;
+      drawRoundedControl(
+        this.continueSurface,
+        spec.action.x,
+        spec.action.y,
+        spec.action.width,
+        spec.action.height,
+        UI_COLOURS.lavender,
+      );
+    });
+    this.continueButton.on('pointerdown', () => {
+      this.continueSurface.setAlpha(0.86);
+      pointerInput.setButton('INTERACT', true);
+    });
     this.continueButton.on('pointerup', () => {
+      this.continueSurface.setAlpha(1);
       pointerInput.setButton('INTERACT', false);
       onAdvance?.();
     });
-    this.continueButton.on('pointerout', () => pointerInput.setButton('INTERACT', false));
 
     this.unsubscribeAccessibility = getBrowserAccessibilitySettingsStore().subscribe(
       ({ reducedMotion }) => {
@@ -261,6 +331,7 @@ export class DialogueCard {
       },
     );
 
+    this.applyLayout('expanded');
     this.hide();
   }
 
@@ -274,17 +345,18 @@ export class DialogueCard {
     this.speakerName.setText(speakerName);
     getVerticalSliceAudio().playNpcReaction(node.speakerId, 'talk');
 
+    // Ordinary conversations now keep one stable geometry from first line to final Done state.
+    // Short copy intentionally leaves breathing room instead of shrinking the panel mid-conversation.
+    this.applyLayout('expanded');
+
     if (node.type === 'line') {
-      this.applyLayout('compact');
       this.body.setText(node.text);
-      if (this.body.height > COMPACT_BODY_MAX_HEIGHT) {
-        this.applyLayout('expanded');
-      }
       this.updatePortrait(node.speakerId, speakerName);
       const finalLine = node.nextNodeId === undefined;
       this.modeHint.setText(finalLine ? 'Enter / tap when done' : 'Enter / tap to continue');
       this.continueLabel.setText(finalLine ? 'Done' : 'Continue');
       this.continueShadow.setVisible(true);
+      this.continueSurface.setVisible(true);
       this.continueButton.setVisible(true);
       this.continueLabel.setVisible(true);
       this.advanceIndicator.setVisible(true);
@@ -293,16 +365,12 @@ export class DialogueCard {
       return;
     }
 
-    const useCompactChoiceLayout =
-      node.prompt.length <= COMPACT_CHOICE_PROMPT_CHARACTER_LIMIT &&
-      node.choices.length <= 3 &&
-      node.choices.every((choice) => choice.label.length <= COMPACT_CHOICE_LABEL_CHARACTER_LIMIT);
-    this.applyLayout(useCompactChoiceLayout ? 'compact' : 'expanded');
     this.updatePortrait(node.speakerId, speakerName);
     this.stopAdvanceMotion();
     this.body.setText(node.prompt);
     this.modeHint.setText('Choose an answer • Enter selects the first choice');
     this.continueShadow.setVisible(false);
+    this.continueSurface.setVisible(false);
     this.continueButton.setVisible(false);
     this.continueLabel.setVisible(false);
     this.advanceIndicator.setVisible(false);
@@ -341,6 +409,7 @@ export class DialogueCard {
     this.modeHint.destroy();
     this.body.destroy();
     this.continueShadow.destroy();
+    this.continueSurface.destroy();
     this.continueButton.destroy();
     this.continueLabel.destroy();
     this.advanceIndicator.destroy();
@@ -351,15 +420,22 @@ export class DialogueCard {
     const spec = layout === 'compact' ? COMPACT_LAYOUT : EXPANDED_LAYOUT;
     this.advanceBaseX = spec.indicatorX;
 
-    this.panelShadow
-      .setPosition(spec.panel.x, spec.panel.y)
-      .setDisplaySize(spec.panel.width, spec.panel.height);
-    this.panel
-      .setPosition(spec.panel.x, spec.panel.y)
-      .setDisplaySize(spec.panel.width, spec.panel.height);
-    this.speakerRibbon
-      .setPosition(spec.ribbon.x, spec.ribbon.y)
-      .setDisplaySize(spec.ribbon.width, spec.ribbon.height);
+    drawRoundedPanelShadow(
+      this.panelShadow,
+      spec.panel.x,
+      spec.panel.y,
+      spec.panel.width,
+      spec.panel.height,
+      0.28,
+    );
+    drawRoundedPanel(this.panel, spec.panel.x, spec.panel.y, spec.panel.width, spec.panel.height);
+    drawRoundedRibbon(
+      this.speakerRibbon,
+      spec.ribbon.x,
+      spec.ribbon.y,
+      spec.ribbon.width,
+      spec.ribbon.height,
+    );
 
     this.portraitHalo
       .setPosition(spec.portrait.x, spec.portrait.y)
@@ -378,9 +454,22 @@ export class DialogueCard {
       .setFontSize(spec.body.fontSize)
       .setWordWrapWidth(spec.body.width, true);
 
-    this.continueShadow
-      .setPosition(spec.action.x, spec.action.y)
-      .setDisplaySize(spec.action.width, spec.action.height);
+    drawRoundedControlShadow(
+      this.continueShadow,
+      spec.action.x,
+      spec.action.y,
+      spec.action.width,
+      spec.action.height,
+      0.16,
+    );
+    drawRoundedControl(
+      this.continueSurface,
+      spec.action.x,
+      spec.action.y,
+      spec.action.width,
+      spec.action.height,
+      UI_COLOURS.lavender,
+    );
     this.continueButton
       .setPosition(spec.action.x, spec.action.y)
       .setDisplaySize(spec.action.width, spec.action.height);
@@ -521,18 +610,21 @@ export class DialogueCard {
       (totalWidth - Math.max(0, choices.length - 1) * gap) / choices.length,
     );
     const startX = layoutSpec.body.x + buttonWidth / 2;
-    const buttonY = compact ? COMPACT_LAYOUT.action.y : GAME_HEIGHT - 82;
-    const buttonHeight = compact ? COMPACT_LAYOUT.action.height : 64;
+    const buttonY = layoutSpec.action.y;
+    const buttonHeight = layoutSpec.action.height;
 
     choices.forEach((choice, index) => {
       const x = startX + index * (buttonWidth + gap);
-      const shadow = createUiShadow(scene, x, buttonY, buttonWidth, buttonHeight, 128, 0.14);
+      const shadow = scene.add.graphics().setScrollFactor(0).setDepth(128);
+      const surface = scene.add.graphics().setScrollFactor(0).setDepth(129);
+      drawRoundedControlShadow(shadow, x, buttonY, buttonWidth, buttonHeight, 0.14);
+      drawRoundedControl(surface, x, buttonY, buttonWidth, buttonHeight, UI_COLOURS.lavender);
+
       const button = scene.add
-        .rectangle(x, buttonY, buttonWidth, buttonHeight, UI_COLOURS.lavender, 1)
+        .rectangle(x, buttonY, buttonWidth, buttonHeight, 0xffffff, 0.001)
         .setName(`dialogue-production-choice-${index + 1}`)
-        .setStrokeStyle(4, UI_COLOURS.lavenderStrong, 1)
         .setScrollFactor(0)
-        .setDepth(129)
+        .setDepth(130)
         .setInteractive({ useHandCursor: true });
       const label = scene.add
         .text(x, buttonY, choice.label, {
@@ -545,11 +637,21 @@ export class DialogueCard {
         })
         .setOrigin(0.5)
         .setScrollFactor(0)
-        .setDepth(130);
+        .setDepth(131);
 
-      applyButtonHover(button, UI_COLOURS.lavender, UI_COLOURS.gold);
-      button.on('pointerdown', () => onChoice(choice));
-      this.choiceObjects.push(shadow, button, label);
+      button.on('pointerover', () =>
+        drawRoundedControl(surface, x, buttonY, buttonWidth, buttonHeight, UI_COLOURS.gold),
+      );
+      button.on('pointerout', () => {
+        surface.setAlpha(1);
+        drawRoundedControl(surface, x, buttonY, buttonWidth, buttonHeight, UI_COLOURS.lavender);
+      });
+      button.on('pointerdown', () => {
+        surface.setAlpha(0.86);
+        onChoice(choice);
+      });
+      button.on('pointerup', () => surface.setAlpha(1));
+      this.choiceObjects.push(shadow, surface, button, label);
     });
   }
 
@@ -573,6 +675,7 @@ export class DialogueCard {
     this.modeHint.setVisible(visible);
     this.body.setVisible(visible);
     this.continueShadow.setVisible(visible);
+    this.continueSurface.setVisible(visible);
     this.continueButton.setVisible(visible);
     this.continueLabel.setVisible(visible);
     this.advanceIndicator.setVisible(visible);

@@ -1,4 +1,5 @@
 import type Phaser from 'phaser';
+import { isInteractionModalActive } from '../interaction/InteractionModalState';
 import { CONCEPT_UI, createFixedGraphics, drawConceptIcon } from '../ui/ConceptUi';
 import type { PointerTouchInputAdapter } from './PointerTouchInputAdapter';
 
@@ -68,7 +69,8 @@ function shouldRenderPortraitDomControls(): boolean {
  *
  * Portrait phone uses the DOM controls below the gameplay window. Every canvas presentation uses
  * the same concept-grade movement pad and Gallop button. Desktop keeps that canvas presentation
- * hidden by default unless touch controls are explicitly enabled.
+ * hidden by default unless touch controls are explicitly enabled. Any modal world conversation
+ * temporarily owns the lower screen on touch devices, so movement controls disappear until it ends.
  */
 export class TouchMovementPad {
   private readonly objects: Array<
@@ -122,6 +124,10 @@ export class TouchMovementPad {
       const shouldAutoShow = shouldDefaultTouchMovementPadVisible() || portraitMode;
       if (preferredTouchControlsVisible === null && this.visible !== shouldAutoShow) {
         this.setVisible(shouldAutoShow, false);
+      } else {
+        // Modal state can change without a viewport/layout change. Re-apply presentation every
+        // refresh so dialogue hides/restores touch controls immediately without changing preference.
+        this.applyVisibility();
       }
       return;
     }
@@ -205,7 +211,11 @@ export class TouchMovementPad {
   }
 
   private applyVisibility(): void {
-    const renderedVisible = this.visible && !this.scenePaused;
+    const modalActive = isInteractionModalActive(this.scene);
+    const renderedVisible = this.visible && !this.scenePaused && !modalActive;
+    if (modalActive) {
+      this.releaseInput();
+    }
     if (this.domRoot) {
       this.domRoot.hidden = !renderedVisible;
     }

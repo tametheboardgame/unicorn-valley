@@ -8,9 +8,9 @@ import {
   PIP_STRANGE_EGG_QUEST_ID,
 } from '../../content/r4EggArc';
 import { type GameEventMap, type TypedEventBus, gameEventBus } from '../events/GameEventBus';
+import { getQuestStepId } from '../quests/QuestEngine';
 import type { SaveService } from '../save/SaveService';
 import type { QuestProgress, SaveGame } from '../save/saveSchema';
-import { getQuestStepId } from '../quests/QuestEngine';
 
 export type PipEggStage =
   | 'none'
@@ -39,38 +39,45 @@ export interface PipEggClueSpot {
   feedback: string;
 }
 
+/**
+ * One geographically readable trail through Moonflower Glade:
+ * stream reeds -> far bank moss -> tracks towards Moonflower Field -> egg.
+ */
 export const PIP_EGG_CLUE_SPOTS = [
   {
     id: 'interaction:pip-egg-clue-feather',
     discoveryId: PIP_EGG_CLUE_DISCOVERY_IDS[0],
-    label: 'Silver shimmer',
-    actionLabel: 'Investigate',
-    position: { x: 1250, y: 720 },
-    feedback: 'Clue found!\nA silver feather glitters beside the stream. ✨',
+    label: 'Silver feather',
+    actionLabel: 'Pick up',
+    position: { x: 1230, y: 590 },
+    feedback:
+      'Silver feather found!\nIt points across the stream. Cross the bridge and check the reeds on the far bank.',
   },
   {
     id: 'interaction:pip-egg-clue-moss',
     discoveryId: PIP_EGG_CLUE_DISCOVERY_IDS[1],
     label: 'Warm moon-moss',
-    actionLabel: 'Investigate',
-    position: { x: 2250, y: 520 },
-    feedback: 'Clue found!\nThe moon-moss is warm, as if something tiny rested here. 🌙',
+    actionLabel: 'Pick up',
+    position: { x: 1590, y: 760 },
+    feedback:
+      'Warm moon-moss!\nTiny star-shaped tracks leave the moss and head south-east towards Moonflower Field.',
   },
   {
     id: 'interaction:pip-egg-clue-star',
     discoveryId: PIP_EGG_CLUE_DISCOVERY_IDS[2],
-    label: 'Tiny star marks',
-    actionLabel: 'Investigate',
-    position: { x: 1980, y: 1420 },
-    feedback: 'Clue found!\nLittle star-shaped prints lead towards the moonflowers. ⭐',
+    label: 'Starry tracks',
+    actionLabel: 'Inspect',
+    position: { x: 1745, y: 990 },
+    feedback:
+      'Starry tracks!\nFollow the little prints into Moonflower Field. Something is hiding at the end.',
   },
   {
     id: 'interaction:pip-strange-egg',
     discoveryId: PIP_STRANGE_EGG_DISCOVERY_ID,
-    label: 'Something glowing',
-    actionLabel: 'Look closer',
-    position: { x: 1790, y: 1560 },
-    feedback: 'Mystery found!\nA softly glowing speckled egg is tucked beneath the flowers. 🥚✨',
+    label: 'Strange egg',
+    actionLabel: 'Pick up',
+    position: { x: 2075, y: 1260 },
+    feedback: 'You found a strange egg!\nTake it back to Pip. He will know how to keep it safe.',
   },
 ] as const satisfies readonly PipEggClueSpot[];
 
@@ -124,9 +131,43 @@ export function getPipEggStage(save: SaveGame | null): PipEggStage {
   return 'found';
 }
 
+export function shouldAdvancePipEggQuestAfterConversation(progress: QuestProgress): boolean {
+  if (progress.status !== 'active') {
+    return false;
+  }
+
+  return (
+    progress.currentStepId === getQuestStepId(PIP_STRANGE_EGG_QUEST_ID, 0) ||
+    progress.currentStepId === getQuestStepId(PIP_STRANGE_EGG_QUEST_ID, 5)
+  );
+}
+
+function activeTrailDialogue(progress: QuestProgress): DialogueId | null {
+  if (progress.status !== 'active') {
+    return null;
+  }
+
+  const dialogueByStep = new Map<string, DialogueId>([
+    [getQuestStepId(PIP_STRANGE_EGG_QUEST_ID, 1), 'dialogue:pip-strange-egg-feather'],
+    [getQuestStepId(PIP_STRANGE_EGG_QUEST_ID, 2), 'dialogue:pip-strange-egg-moss'],
+    [getQuestStepId(PIP_STRANGE_EGG_QUEST_ID, 3), 'dialogue:pip-strange-egg-tracks'],
+    [getQuestStepId(PIP_STRANGE_EGG_QUEST_ID, 4), 'dialogue:pip-strange-egg-egg'],
+    [getQuestStepId(PIP_STRANGE_EGG_QUEST_ID, 5), 'dialogue:pip-strange-egg-return'],
+  ]);
+  return progress.currentStepId ? (dialogueByStep.get(progress.currentStepId) ?? null) : null;
+}
+
 export function getPipEggDialogueId(save: SaveGame | null, progress: QuestProgress): DialogueId {
-  if (progress.status === 'not-started') {
+  if (
+    progress.status === 'not-started' ||
+    progress.currentStepId === getQuestStepId(PIP_STRANGE_EGG_QUEST_ID, 0)
+  ) {
     return 'dialogue:pip-strange-egg-intro';
+  }
+
+  const trailDialogue = activeTrailDialogue(progress);
+  if (trailDialogue) {
+    return trailDialogue;
   }
 
   const stage = getPipEggStage(save);
@@ -197,14 +238,26 @@ export class PipEggArcService {
     return true;
   }
 
+  /**
+   * Session boundaries no longer advance the egg. H1.9 makes growth player-readable: an adventure
+   * marks the egg ready, and the next deliberate inspection in the cottage advances one stage.
+   */
   public beginSession(): PipEggStage {
-    const loadResult = this.saveService.loadWithResult();
-    let save = loadResult.status === 'loaded' ? loadResult.save : null;
-    if (!save?.collections.memoryIds.includes(PIP_EGG_PENDING_GROWTH_MEMORY)) {
-      return getPipEggStage(save);
+    return this.getStage();
+  }
+
+  public inspectEgg(): PipEggStage {
+    let save = this.saveService.load() ?? this.saveService.createNewGame();
+    const currentStage = getPipEggStage(save);
+    if (
+      !save.collections.memoryIds.includes(PIP_EGG_PENDING_GROWTH_MEMORY) ||
+      currentStage === 'none' ||
+      currentStage === 'hatch-ready' ||
+      currentStage === 'hatched'
+    ) {
+      return currentStage;
     }
 
-    const currentStage = getPipEggStage(save);
     save = withoutMemory(save, PIP_EGG_PENDING_GROWTH_MEMORY);
 
     if (currentStage === 'found') {
@@ -226,9 +279,8 @@ export class PipEggArcService {
       };
     }
 
-    const beforeReady = currentStage === 'hatch-ready';
     const saved = this.saveService.save(save);
-    if (!beforeReady && saved.world.flags[PIP_EGG_HATCH_READY_FLAG] === true) {
+    if (saved.world.flags[PIP_EGG_HATCH_READY_FLAG] === true) {
       this.events.emit('WORLD_FLAG_CHANGED', { flagId: PIP_EGG_HATCH_READY_FLAG, value: true });
     }
     return getPipEggStage(saved);

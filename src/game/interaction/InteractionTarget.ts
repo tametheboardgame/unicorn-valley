@@ -8,6 +8,7 @@ export type InteractionActionKind =
   | 'inspect'
   | 'buy'
   | 'use'
+  | 'pick-up'
   | 'interact';
 
 export type InteractionActivationMode = 'explicit' | 'automatic';
@@ -36,6 +37,8 @@ export type InteractionResult =
   | {
       type: 'dialogue';
       dialogueId: DialogueId;
+      onComplete?: () => void;
+      onClose?: () => void;
     }
   | {
       type: 'callback';
@@ -50,6 +53,9 @@ export type InteractionResult =
  * actionKind directly and never infers behaviour from rendered text. directArea is optional
  * presentation geometry for targets that need a larger touch affordance; activation still routes
  * through the shared coordinator and the target remains range-gated by interactionRadius.
+ * worldAffordance is an explicit opt-in for subtle, silent interactions whose action is not obvious
+ * from the world art alone. Doors, NPCs, gateways and obvious landmarks should normally leave it
+ * undefined and rely on the physical object plus the contextual action prompt when in range.
  */
 export interface InteractionTarget {
   id: string;
@@ -57,6 +63,7 @@ export interface InteractionTarget {
   actionLabel: string;
   actionKind?: InteractionActionKind;
   activationMode?: InteractionActivationMode;
+  worldAffordance?: boolean;
   position: InteractionPosition;
   interactionRadius: number;
   priority?: number;

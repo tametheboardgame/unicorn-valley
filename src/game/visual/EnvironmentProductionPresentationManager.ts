@@ -175,7 +175,6 @@ function createMoonflowerGladeProduction(scene: Phaser.Scene): void {
     const centre = scene.add.circle(x, y - 38 * scale, 8 * scale, 0xffed9e, 0.96);
     signature.add([stem, glow, ...petals, centre]);
   }
-  addStorybookFlower(scene, signature, 270, 760, 0.92, [0xd9a8f4, 0xf4b7df]);
   addStorybookFlower(scene, signature, 1180, 1285, 1.05, [0xcfa1ef, 0xf2b8df]);
   addStorybookFlower(scene, signature, 1090, 1320, 0.72, [0xddaaf4, 0xf3c4e7]);
   signature.setDepth(8.4);

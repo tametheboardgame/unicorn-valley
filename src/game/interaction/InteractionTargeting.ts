@@ -38,13 +38,7 @@ export function getInteractionApproachPosition(target: InteractionTarget): MapPo
     : target.approachPosition;
 }
 
-export function isInteractionTargetEligible(
-  playerPosition: MapPoint,
-  target: InteractionTarget,
-): boolean {
-  if (target.activationMode === 'automatic') {
-    return false;
-  }
+function isInteractionTargetInRange(playerPosition: MapPoint, target: InteractionTarget): boolean {
   if (!conditionIsTrue(target.visible) || !conditionIsTrue(target.enabled)) {
     return false;
   }
@@ -62,13 +56,32 @@ export function isInteractionTargetEligible(
   return distanceSquared(playerPosition, targetPosition) <= target.interactionRadius ** 2;
 }
 
+export function isInteractionTargetEligible(
+  playerPosition: MapPoint,
+  target: InteractionTarget,
+): boolean {
+  return (
+    target.activationMode !== 'automatic' && isInteractionTargetInRange(playerPosition, target)
+  );
+}
+
+export function isAutomaticInteractionTargetEligible(
+  playerPosition: MapPoint,
+  target: InteractionTarget,
+): boolean {
+  return (
+    target.activationMode === 'automatic' && isInteractionTargetInRange(playerPosition, target)
+  );
+}
+
 function scoreEligibleTargets(
   playerPosition: MapPoint,
   targets: readonly InteractionTarget[],
+  isEligible: (playerPosition: MapPoint, target: InteractionTarget) => boolean,
 ): ScoredTarget[] {
   const candidates: ScoredTarget[] = [];
   for (const target of targets) {
-    if (!isInteractionTargetEligible(playerPosition, target)) {
+    if (!isEligible(playerPosition, target)) {
       continue;
     }
     candidates.push({
@@ -100,7 +113,7 @@ export function selectInteractionTarget(
   targets: readonly InteractionTarget[],
   options: InteractionSelectionOptions = {},
 ): InteractionTarget | null {
-  const candidates = scoreEligibleTargets(playerPosition, targets);
+  const candidates = scoreEligibleTargets(playerPosition, targets, isInteractionTargetEligible);
   if (candidates.length === 0) {
     return null;
   }
@@ -126,4 +139,19 @@ export function selectInteractionTarget(
   const bestDistance = Math.sqrt(best.distanceSquared);
   const retainedDistance = Math.sqrt(retained.distanceSquared);
   return retainedDistance <= bestDistance + retentionMargin ? retained.target : best.target;
+}
+
+/**
+ * Selects the nearest automatic crossing/trigger independently from explicit actions. Automatic
+ * targets never enter the prompt/direct-tap route, but use the same visibility, reachability and
+ * distance contracts as ordinary interactions.
+ */
+export function selectAutomaticInteractionTarget(
+  playerPosition: MapPoint,
+  targets: readonly InteractionTarget[],
+): InteractionTarget | null {
+  return (
+    scoreEligibleTargets(playerPosition, targets, isAutomaticInteractionTargetEligible)[0]
+      ?.target ?? null
+  );
 }

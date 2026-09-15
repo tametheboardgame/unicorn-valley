@@ -7,7 +7,6 @@ import { DialogueTestScene } from './DialogueTestScene';
 import { DoorwayStubScene } from './DoorwayStubScene';
 import { FireflyLanternScene } from './FireflyLanternScene';
 import { MoonflowerGladeScene } from './MoonflowerGladeScene';
-import { MoonflowerPatchScene } from './MoonflowerPatchScene';
 import { MovementTestScene } from './MovementTestScene';
 import { NovaTutorialRaceScene } from './NovaTutorialRaceScene';
 import { PipEggHatchScene } from './PipEggHatchScene';
@@ -33,7 +32,6 @@ const STARTUP_SCENE_CONSTRUCTORS: Record<StartupSceneKey, SceneConstructor> = {
   MoonflowerGladeScene,
   CottageInteriorScene,
   CottageDecorateScene,
-  MoonflowerPatchScene,
   SunbeamVillageScene,
   RainbowMeadowScene,
   CrystalBrookScene,

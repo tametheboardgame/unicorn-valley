@@ -1,21 +1,13 @@
 import Phaser from 'phaser';
-import type { DialogueChoice, DialogueEffect, DialogueId } from '../../content/contentTypes';
-import { characterRegistry, dialogueRegistry } from '../../content/registries';
-import { GAME_WIDTH } from '../config/gameConstants';
-import { DialogueCard } from '../dialogue/DialogueCard';
-import { DialogueSession } from '../dialogue/DialogueSession';
+import { ensureMoonflowerStreamLife } from '../atmosphere/MoonflowerStreamLife';
 import { DiscoveryService } from '../discovery/DiscoveryService';
+import { renderCottageExterior } from '../home/CottageExteriorPresentation';
 import {
-  createPipInteraction,
   FIRST_DISCOVERY_FLAG,
   FIRST_DISCOVERY_ID,
-  FIRST_SPARKLE_COLLECTION_RADIUS,
   FIRST_SPARKLE_POSITION,
-  PIP_POSITION,
 } from '../intro/PipIntro';
 import type { InteractionTarget } from '../interaction/InteractionTarget';
-import { selectInteractionTarget } from '../interaction/InteractionTargeting';
-import { MOONFLOWER_GLADE_INTERACTIONS } from '../interaction/MoonflowerGladeInteractions';
 import { InputController } from '../input/InputController';
 import { KeyboardInputAdapter } from '../input/KeyboardInputAdapter';
 import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
@@ -24,27 +16,24 @@ import { parseUnicornAppearance } from '../player/UnicornAppearance';
 import { createUnicornAppearanceTexture } from '../player/UnicornAppearanceRenderer';
 import { DEFAULT_PLAYER_SPEED, resolvePlayerMovement } from '../player/PlayerMovement';
 import { getBrowserSaveService } from '../save/browserSaveService';
-import { InteractionPrompt } from '../ui/InteractionPrompt';
+import { getWorldFeedbackPresenter } from '../ui/WorldFeedbackPresenter';
+import { renderHomeMeadow } from '../world/HomeMeadowPresentation';
+import { ensureMoonflowerGladeFinalPresentation } from '../world/MoonflowerGladeFinalPresentation';
 import { MOONFLOWER_GLADE_MAP } from '../world/MoonflowerGladeMap';
+import { worldDepthForY } from '../world/WorldDepth';
 
 const COLLISION_TEXTURE_KEY = 'glade-collision-pixel';
 const SAVED_PLAYER_TEXTURE_KEY = 'player-unicorn-saved';
+const FIRST_SPARKLE_INTERACTION_RADIUS = 132;
 
 export class MoonflowerGladeScene extends Phaser.Scene {
   private inputController: InputController | null = null;
   private pointerInput: PointerTouchInputAdapter | null = null;
   private player: PlayerEntity | null = null;
   private collisionGroup: Phaser.Physics.Arcade.StaticGroup | null = null;
-  private interactionPrompt: InteractionPrompt | null = null;
-  private activeInteraction: InteractionTarget | null = null;
-  private feedbackText: Phaser.GameObjects.Text | null = null;
-  private feedbackTimer: Phaser.Time.TimerEvent | null = null;
-  private guideText: Phaser.GameObjects.Text | null = null;
   private discoveryService: DiscoveryService | null = null;
-  private hasFirstDiscovery = false;
+  public hasFirstDiscovery = false;
   private sparkleContainer: Phaser.GameObjects.Container | null = null;
-  private dialogueCard: DialogueCard | null = null;
-  private dialogueSession: DialogueSession | null = null;
 
   public constructor() {
     super('MoonflowerGladeScene');
@@ -52,6 +41,8 @@ export class MoonflowerGladeScene extends Phaser.Scene {
 
   public create(): void {
     this.createEnvironment();
+    ensureMoonflowerStreamLife(this);
+    ensureMoonflowerGladeFinalPresentation(this);
     this.ensureCollisionTexture();
 
     const saveService = getBrowserSaveService();
@@ -80,12 +71,11 @@ export class MoonflowerGladeScene extends Phaser.Scene {
     this.player.sprite.setDisplaySize(112, 92);
     this.physics.add.collider(this.player.sprite, this.collisionGroup);
 
+    // Movement remains scene-owned. Explicit interactions are owned by the shared world
+    // interaction coordinator/registry rather than a second scene-local prompt/activator.
     this.pointerInput = new PointerTouchInputAdapter();
     this.inputController = new InputController([new KeyboardInputAdapter(this), this.pointerInput]);
-    this.interactionPrompt = new InteractionPrompt(this, this.pointerInput);
-    this.dialogueCard = new DialogueCard(this, this.pointerInput);
 
-    this.createPip();
     if (!this.hasFirstDiscovery) {
       this.createFirstSparkle();
     }
@@ -96,28 +86,16 @@ export class MoonflowerGladeScene extends Phaser.Scene {
     camera.startFollow(this.player.sprite, true, 0.11, 0.11);
     camera.setDeadzone(260, 150);
 
-    this.createHud();
-
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-      this.feedbackTimer?.destroy();
-      this.feedbackTimer = null;
       this.inputController?.destroy();
       this.inputController = null;
       this.pointerInput = null;
-      this.interactionPrompt?.destroy();
-      this.interactionPrompt = null;
-      this.dialogueCard?.destroy();
-      this.dialogueCard = null;
-      this.dialogueSession = null;
       this.sparkleContainer?.destroy(true);
       this.sparkleContainer = null;
       this.discoveryService = null;
       this.player?.destroy();
       this.player = null;
       this.collisionGroup = null;
-      this.activeInteraction = null;
-      this.feedbackText = null;
-      this.guideText = null;
     });
   }
 
@@ -127,11 +105,6 @@ export class MoonflowerGladeScene extends Phaser.Scene {
     }
 
     this.inputController.update();
-
-    if (this.dialogueSession) {
-      this.updateDialogue(time);
-      return;
-    }
 
     if (this.inputController.justPressed('BACK')) {
       this.scene.start('TitleScene');
@@ -147,218 +120,73 @@ export class MoonflowerGladeScene extends Phaser.Scene {
 
     this.player.applyMovement(movement);
     this.player.updatePresentation(time);
-    this.tryCollectFirstSparkle();
-
-    const targets = [
-      ...MOONFLOWER_GLADE_INTERACTIONS,
-      createPipInteraction(this.hasFirstDiscovery),
-    ];
-    this.activeInteraction = selectInteractionTarget(
-      { x: this.player.sprite.x, y: this.player.sprite.y },
-      targets,
-    );
-    this.interactionPrompt?.setTarget(this.activeInteraction);
-
-    if (this.inputController.justPressed('INTERACT') && this.activeInteraction) {
-      this.activateInteraction(this.activeInteraction);
-    }
   }
 
-  private updateDialogue(time: number): void {
-    if (!this.inputController || !this.player || !this.dialogueSession) {
+  public createFirstSparkleInteraction(): InteractionTarget | null {
+    if (this.hasFirstDiscovery || !this.sparkleContainer) {
+      return null;
+    }
+
+    return {
+      id: 'interaction:first-moonflower-sparkle',
+      label: 'Moonflower Sparkle',
+      actionLabel: 'Pick up',
+      actionKind: 'pick-up',
+      worldAffordance: true,
+      position: FIRST_SPARKLE_POSITION,
+      interactionRadius: FIRST_SPARKLE_INTERACTION_RADIUS,
+      priority: 30,
+      directArea: {
+        width: 180,
+        height: 180,
+        name: 'first-moonflower-sparkle-direct',
+      },
+      result: {
+        type: 'callback',
+        activate: () => this.collectFirstSparkle(),
+      },
+    };
+  }
+
+  private collectFirstSparkle(): void {
+    if (this.hasFirstDiscovery || !this.sparkleContainer) {
       return;
     }
 
-    this.interactionPrompt?.setTarget(null);
-    this.player.applyMovement({
-      velocityX: 0,
-      velocityY: 0,
-      facing: this.player.getFacing(),
-      motionState: 'idle',
+    this.discoveryService?.unlockDiscovery(FIRST_DISCOVERY_ID, FIRST_DISCOVERY_FLAG, {
+      suppressRewardFeedback: true,
     });
-    this.player.updatePresentation(time);
-
-    if (this.inputController.justPressed('BACK')) {
-      this.closeDialogue();
-      return;
-    }
-
-    if (!this.inputController.justPressed('INTERACT')) {
-      return;
-    }
-
-    const node = this.dialogueSession.getCurrentNode();
-    if (node?.type === 'line') {
-      this.dialogueSession.advanceLine();
-      this.refreshDialogue();
-      return;
-    }
-
-    const defaultChoice = this.dialogueSession.getDefaultChoice();
-    if (defaultChoice) {
-      this.selectDialogueChoice(defaultChoice);
-    }
-  }
-
-  private activateInteraction(target: InteractionTarget): void {
-    if (target.result.type === 'scene-transition') {
-      if (target.result.sceneKey === 'WonderbookScene') {
-        this.scene.launch(target.result.sceneKey, target.result.payload);
-        this.scene.pause();
-      } else {
-        this.scene.start(target.result.sceneKey, target.result.payload);
-      }
-      return;
-    }
-
-    if (target.result.type === 'dialogue') {
-      this.startDialogue(target.result.dialogueId);
-      return;
-    }
-
-    if (target.result.type === 'callback') {
-      target.result.activate();
-      return;
-    }
-
-    this.showFeedback(`${target.result.title}\n${target.result.message}`);
-  }
-
-  private startDialogue(dialogueId: DialogueId): void {
-    this.dialogueSession = new DialogueSession(dialogueRegistry.get(dialogueId));
-    this.refreshDialogue();
-  }
-
-  private refreshDialogue(): void {
-    if (!this.dialogueSession || this.dialogueSession.isComplete()) {
-      this.closeDialogue();
-      return;
-    }
-
-    const node = this.dialogueSession.getCurrentNode();
-    if (!node) {
-      this.closeDialogue();
-      return;
-    }
-
-    const speaker = characterRegistry.get(node.speakerId);
-    this.dialogueCard?.show(node, speaker.name, (choice) => this.selectDialogueChoice(choice));
-  }
-
-  private selectDialogueChoice(choice: DialogueChoice): void {
-    if (!this.dialogueSession) {
-      return;
-    }
-
-    const effects = this.dialogueSession.choose(choice.id);
-    this.applyDialogueEffects(effects);
-    this.refreshDialogue();
-  }
-
-  private applyDialogueEffects(effects: readonly DialogueEffect[]): void {
-    for (const effect of effects) {
-      if (effect.type === 'set-flag') {
-        this.registry.set(effect.flagId, effect.value);
-      }
-    }
-  }
-
-  private closeDialogue(): void {
-    this.dialogueSession?.close();
-    this.dialogueSession = null;
-    this.dialogueCard?.hide();
-  }
-
-  private tryCollectFirstSparkle(): void {
-    if (this.hasFirstDiscovery || !this.player || !this.sparkleContainer) {
-      return;
-    }
-
-    const distance = Phaser.Math.Distance.Between(
-      this.player.sprite.x,
-      this.player.sprite.y,
-      FIRST_SPARKLE_POSITION.x,
-      FIRST_SPARKLE_POSITION.y,
-    );
-    if (distance > FIRST_SPARKLE_COLLECTION_RADIUS) {
-      return;
-    }
-
-    this.discoveryService?.unlockDiscovery(FIRST_DISCOVERY_ID, FIRST_DISCOVERY_FLAG);
     this.hasFirstDiscovery = true;
     this.sparkleContainer.destroy(true);
     this.sparkleContainer = null;
-    this.cameras.main.flash(180, 255, 239, 177, false);
-    this.showFeedback('New discovery!\nMoonflower Sparkle ✨');
-    this.guideText?.setText('Pip noticed! Go and tell your new friend what you found.');
-  }
-
-  private createPip(): void {
-    const body = this.add.circle(PIP_POSITION.x, PIP_POSITION.y, 38, 0xf3a4c8, 1).setDepth(17);
-    const belly = this.add.ellipse(PIP_POSITION.x, PIP_POSITION.y + 12, 48, 38, 0xffd7e8, 0.95);
-    belly.setDepth(18);
-    this.add
-      .triangle(PIP_POSITION.x - 19, PIP_POSITION.y - 42, 0, 30, 15, 0, 28, 32, 0xe683b2, 1)
-      .setDepth(16);
-    this.add
-      .triangle(PIP_POSITION.x + 18, PIP_POSITION.y - 42, 0, 32, 14, 0, 29, 30, 0xe683b2, 1)
-      .setDepth(16);
-    this.add.circle(PIP_POSITION.x - 13, PIP_POSITION.y - 7, 4, 0x563b66, 1).setDepth(19);
-    this.add.circle(PIP_POSITION.x + 13, PIP_POSITION.y - 7, 4, 0x563b66, 1).setDepth(19);
-    this.add
-      .text(PIP_POSITION.x, PIP_POSITION.y + 64, 'Pip', {
-        color: '#543965',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '18px',
-        fontStyle: 'bold',
-        backgroundColor: '#fff9eddd',
-        padding: { x: 8, y: 4 },
-      })
-      .setOrigin(0.5)
-      .setDepth(19);
-
-    this.tweens.add({
-      targets: [body, belly],
-      y: '-=5',
-      duration: 900,
-      yoyo: true,
-      repeat: -1,
-      ease: 'Sine.InOut',
-    });
+    this.cameras.main.flash(180, 213, 255, 221, false);
+    getWorldFeedbackPresenter(this).showGuidance('Now go back and talk to Pip.', 4400);
   }
 
   private createFirstSparkle(): void {
-    const glow = this.add.circle(0, 0, 34, 0xfff4a8, 0.2);
-    const ring = this.add.circle(0, 0, 18, 0xfff8c7, 0.42).setStrokeStyle(3, 0xffffff, 0.85);
+    const glow = this.add.circle(0, 0, 38, 0x63e59a, 0.24);
+    const ring = this.add.circle(0, 0, 20, 0xb9ffd2, 0.52).setStrokeStyle(4, 0xeffff4, 0.94);
     const star = this.add
       .text(0, 0, '✦', {
-        color: '#fff9cf',
+        color: '#7dffad',
         fontFamily: 'system-ui, sans-serif',
-        fontSize: '34px',
+        fontSize: '38px',
         fontStyle: 'bold',
       })
       .setOrigin(0.5);
 
     this.sparkleContainer = this.add
       .container(FIRST_SPARKLE_POSITION.x, FIRST_SPARKLE_POSITION.y, [glow, ring, star])
+      .setName('pip-first-green-sparkle')
       .setDepth(18);
     this.tweens.add({
       targets: this.sparkleContainer,
-      scale: 1.2,
+      scale: 1.24,
       angle: 8,
       duration: 720,
       yoyo: true,
       repeat: -1,
       ease: 'Sine.InOut',
-    });
-  }
-
-  private showFeedback(message: string): void {
-    this.feedbackTimer?.destroy();
-    this.feedbackText?.setText(message).setVisible(true);
-    this.feedbackTimer = this.time.delayedCall(3600, () => {
-      this.feedbackText?.setVisible(false);
-      this.feedbackTimer = null;
     });
   }
 
@@ -370,57 +198,51 @@ export class MoonflowerGladeScene extends Phaser.Scene {
     this.add.circle(2210, 1180, 500, 0xb6e5bd, 0.48).setDepth(1);
     this.add.circle(2060, 420, 360, 0x9bd3ac, 0.5).setDepth(1);
 
-    this.createPaths();
-    this.createStreamAndBridge();
+    // Final paths, signs, gardens and stream surface/life have canonical shared owners.
+    // The base scene only creates terrain/landmarks which are not subsequently suppressed.
+    this.createWesternGate();
+    this.createBridge();
     this.createCottage();
-    this.createGarden();
-    this.createDisplayStump();
+    renderHomeMeadow(this);
     this.createHollowTree();
     this.createMoonflowerField();
-    this.createEntranceMarkers();
+    this.createEntranceStructures();
     this.createBoundaryFoliage();
     this.createFireflies();
     this.createForegroundLayeringTest();
   }
 
-  private createPaths(): void {
-    const path = this.add.graphics().setDepth(2);
-    path.lineStyle(112, 0xead7aa, 0.92);
-    path.beginPath();
-    path.moveTo(560, 720);
-    path.lineTo(830, 820);
-    path.lineTo(1100, 870);
-    path.lineTo(1400, 900);
-    path.lineTo(1750, 900);
-    path.lineTo(2150, 900);
-    path.lineTo(2690, 900);
-    path.strokePath();
+  private createWesternGate(): void {
+    const gate = MOONFLOWER_GLADE_MAP.landmarks.find((landmark) => landmark.id === 'western-gate');
+    if (!gate) {
+      return;
+    }
 
-    path.lineStyle(92, 0xe4cf9f, 0.9);
-    path.beginPath();
-    path.moveTo(1770, 930);
-    path.lineTo(1840, 1160);
-    path.lineTo(1940, 1420);
-    path.lineTo(1980, 1720);
-    path.strokePath();
+    const x = gate.position.x;
+    const y = gate.position.y;
 
-    path.lineStyle(56, 0xf1e3bd, 0.75);
-    path.beginPath();
-    path.moveTo(760, 850);
-    path.lineTo(840, 1070);
-    path.strokePath();
+    const hedge = this.add.graphics().setDepth(7);
+    hedge.fillStyle(0x4f8b61, 0.98);
+    hedge.fillRoundedRect(82, 110, 92, y - 205, 36);
+    hedge.fillRoundedRect(82, y + 95, 92, 1800 - (y + 185), 36);
+    hedge.fillStyle(0x6fa878, 0.9);
+    for (let leafY = 160; leafY < y - 105; leafY += 92) {
+      hedge.fillCircle(128, leafY, 58);
+    }
+    for (let leafY = y + 170; leafY < 1710; leafY += 92) {
+      hedge.fillCircle(128, leafY, 58);
+    }
+
+    this.add.rectangle(x - 30, y, 24, 196, 0x8b6549, 1).setDepth(9);
+    this.add.rectangle(x + 30, y, 24, 196, 0x8b6549, 1).setDepth(9);
+    for (const gateY of [y - 60, y, y + 60]) {
+      this.add.rectangle(x, gateY, 72, 16, 0xb98b5e, 1).setDepth(9);
+    }
+    this.add.circle(x + 18, y, 7, 0xd7dce4, 1).setDepth(10);
   }
 
-  private createStreamAndBridge(): void {
+  private createBridge(): void {
     const bridge = MOONFLOWER_GLADE_MAP.bridge;
-
-    this.add.rectangle(1400, 900, 220, 1800, 0x72c8df, 0.96).setDepth(3);
-    this.add.rectangle(1400, 900, 92, 1800, 0xb9ecf0, 0.33).setDepth(4);
-
-    for (let y = 150; y < 1750; y += 210) {
-      this.add.ellipse(1375, y, 72, 18, 0xe8ffff, 0.28).setDepth(5);
-      this.add.ellipse(1440, y + 85, 58, 14, 0xe8ffff, 0.22).setDepth(5);
-    }
 
     this.add
       .rectangle(bridge.x, bridge.y, bridge.width, bridge.height, 0xd7b47b, 1)
@@ -441,58 +263,13 @@ export class MoonflowerGladeScene extends Phaser.Scene {
   }
 
   private createCottage(): void {
-    const cottage = this.add.graphics().setDepth(10);
-    cottage.fillStyle(0xfff0cf, 1);
-    cottage.fillRoundedRect(350, 350, 420, 300, 72);
-    cottage.fillStyle(0xb791d4, 1);
-    cottage.fillEllipse(560, 355, 470, 260);
-    cottage.fillStyle(0x8d68b2, 1);
-    cottage.fillTriangle(350, 390, 560, 185, 770, 390);
-    cottage.fillStyle(0x8d6548, 1);
-    cottage.fillRoundedRect(520, 515, 82, 135, 28);
-    cottage.fillStyle(0xb8e7ef, 1);
-    cottage.fillRoundedRect(405, 440, 78, 72, 18);
-    cottage.fillRoundedRect(640, 440, 78, 72, 18);
-    cottage.fillStyle(0xffffff, 0.7);
-    cottage.fillCircle(576, 575, 6);
-
-    this.add
-      .text(560, 690, 'Moonflower Cottage', {
-        color: '#5c416e',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '21px',
-        fontStyle: 'bold',
-        backgroundColor: '#fff8eccc',
-        padding: { x: 10, y: 6 },
-      })
-      .setOrigin(0.5)
-      .setDepth(12);
-
-    this.addMoonflower(350, 650, 1.15);
-    this.addMoonflower(760, 650, 1.05);
-  }
-
-  private createGarden(): void {
-    this.add
-      .rectangle(890, 620, 280, 190, 0x9e7656, 0.75)
-      .setStrokeStyle(8, 0xd7b77f, 0.95)
-      .setDepth(6);
-
-    for (const y of [565, 620, 675]) {
-      this.add.rectangle(890, y, 230, 18, 0x6f543f, 0.6).setDepth(7);
+    const cottage = MOONFLOWER_GLADE_MAP.landmarks.find(
+      (landmark) => landmark.id === 'moonflower-cottage',
+    );
+    if (!cottage) {
+      return;
     }
-
-    for (const x of [810, 860, 920, 970]) {
-      this.add.circle(x, 575 + ((x / 10) % 2) * 55, 13, 0xffd3f1, 0.9).setDepth(8);
-      this.add.circle(x + 8, 583 + ((x / 10) % 2) * 55, 8, 0xe6c1ff, 0.9).setDepth(8);
-    }
-  }
-
-  private createDisplayStump(): void {
-    this.add.ellipse(850, 1130, 118, 70, 0x8a6248, 1).setDepth(9);
-    this.add.ellipse(850, 1100, 118, 54, 0xc79b70, 1).setDepth(10);
-    this.add.circle(850, 1098, 17, 0xf4d79f, 0.72).setDepth(11);
-    this.add.circle(850, 1098, 6, 0xfff7cb, 0.9).setDepth(12);
+    renderCottageExterior(this, cottage.position);
   }
 
   private createHollowTree(): void {
@@ -513,27 +290,63 @@ export class MoonflowerGladeScene extends Phaser.Scene {
   }
 
   private createMoonflowerField(): void {
-    const positions = [
-      [1920, 1110, 1],
-      [2020, 1080, 1.2],
-      [2120, 1140, 0.9],
-      [2210, 1070, 1.1],
-      [1900, 1260, 1.05],
-      [2020, 1300, 1.25],
-      [2160, 1260, 1.1],
-      [2260, 1360, 0.95],
-      [2050, 1420, 1.05],
+    const lavender = 0xe0b3ff;
+    const blush = 0xffb4d6;
+    const sky = 0xb9d9ff;
+    const pearl = 0xffefd1;
+    const violet = 0xc8b0ff;
+
+    const fieldGround = this.add.graphics().setDepth(2.28);
+    fieldGround.fillStyle(0x76b77d, 0.13);
+    fieldGround.fillEllipse(2240, 1320, 760, 520);
+    fieldGround.fillStyle(0x8fc88f, 0.1);
+    fieldGround.fillEllipse(2390, 1370, 490, 390);
+
+    const flowers = [
+      [1985, 1095, 0.88, pearl],
+      [2075, 1080, 1.08, lavender],
+      [2170, 1120, 0.94, blush],
+      [2285, 1088, 1.12, sky],
+      [2400, 1110, 0.9, violet],
+      [2495, 1145, 1.02, lavender],
+      [1960, 1195, 1.04, blush],
+      [2055, 1170, 0.86, sky],
+      [2145, 1210, 1.18, violet],
+      [2245, 1180, 0.98, pearl],
+      [2350, 1220, 1.08, lavender],
+      [2440, 1190, 0.9, blush],
+      [1995, 1285, 0.92, violet],
+      [2085, 1320, 1.12, pearl],
+      [2185, 1275, 0.84, blush],
+      [2280, 1325, 1.2, lavender],
+      [2385, 1288, 0.96, sky],
+      [2475, 1340, 1.08, violet],
+      [1950, 1390, 1.06, sky],
+      [2050, 1370, 0.9, lavender],
+      [2140, 1425, 1.16, blush],
+      [2240, 1385, 0.88, pearl],
+      [2345, 1435, 1.06, violet],
+      [2450, 1400, 0.96, lavender],
+      [2030, 1490, 0.9, pearl],
+      [2125, 1515, 1.08, sky],
+      [2225, 1480, 0.96, lavender],
+      [2325, 1525, 1.12, blush],
+      [2425, 1495, 0.9, violet],
+      [2490, 1535, 0.82, pearl],
     ] as const;
 
-    for (const [x, y, scale] of positions) {
-      this.addMoonflower(x, y, scale);
+    for (const [x, y, scale, colour] of flowers) {
+      this.addMoonflower(x, y, scale, colour);
     }
+
+    // The reviewed far-right blue bloom is drawn as one ordered blossom so its centre can never
+    // sort beneath a petal. The overlapping lower-right pink bloom is intentionally absent.
+    this.addOrderedMoonflower(2520, 1245, 1, sky);
   }
 
-  private createEntranceMarkers(): void {
+  private createEntranceStructures(): void {
     for (const entrance of MOONFLOWER_GLADE_MAP.entrances) {
-      const isEast = entrance.direction === 'east';
-      const archWidth = isEast ? 150 : 190;
+      const archWidth = entrance.direction === 'east' ? 150 : 190;
       const archHeight = 170;
       const x = entrance.position.x;
       const y = entrance.position.y;
@@ -541,27 +354,14 @@ export class MoonflowerGladeScene extends Phaser.Scene {
       this.add.rectangle(x - archWidth / 2, y, 26, archHeight, 0xb69a78, 0.95).setDepth(8);
       this.add.rectangle(x + archWidth / 2, y, 26, archHeight, 0xb69a78, 0.95).setDepth(8);
       this.add.ellipse(x, y - archHeight / 2, archWidth + 28, 64, 0xc9b08c, 0.95).setDepth(8);
-
-      this.add
-        .text(x, y - 132, entrance.label, {
-          color: '#54415f',
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '18px',
-          fontStyle: 'bold',
-          backgroundColor: '#fff9edcc',
-          padding: { x: 9, y: 5 },
-        })
-        .setOrigin(0.5)
-        .setDepth(11);
     }
   }
 
   private createBoundaryFoliage(): void {
     const treePositions = [
-      [170, 220],
       [430, 150],
-      [820, 170],
-      [1180, 150],
+      [820, 80],
+      [1180, 80],
       [1640, 150],
       [1980, 150],
       [2520, 170],
@@ -571,9 +371,6 @@ export class MoonflowerGladeScene extends Phaser.Scene {
       [1570, 1670],
       [1120, 1650],
       [620, 1630],
-      [250, 1510],
-      [150, 1160],
-      [160, 620],
     ] as const;
 
     for (const [x, y] of treePositions) {
@@ -629,8 +426,23 @@ export class MoonflowerGladeScene extends Phaser.Scene {
     this.add.circle(1110, 1045, 18, 0xffe5a2, 1).setDepth(33);
   }
 
-  private addMoonflower(x: number, y: number, scale: number): void {
-    this.add.rectangle(x, y + 24 * scale, 7 * scale, 54 * scale, 0x5f9b67, 0.95).setDepth(6);
+  private addMoonflower(x: number, y: number, scale: number, petalColour: number): void {
+    const baseDepth = worldDepthForY(y + 52 * scale, 0.08);
+
+    this.add
+      .ellipse(x, y + 51 * scale, 54 * scale, 14 * scale, 0x4d8358, 0.16)
+      .setDepth(baseDepth - 0.34);
+    this.add
+      .rectangle(x, y + 25 * scale, 7 * scale, 58 * scale, 0x5f9b67, 0.95)
+      .setDepth(baseDepth - 0.22);
+    this.add
+      .ellipse(x - 10 * scale, y + 31 * scale, 20 * scale, 9 * scale, 0x72a970, 0.84)
+      .setAngle(-28)
+      .setDepth(baseDepth - 0.18);
+    this.add
+      .ellipse(x + 10 * scale, y + 38 * scale, 18 * scale, 8 * scale, 0x6ca56d, 0.8)
+      .setAngle(28)
+      .setDepth(baseDepth - 0.17);
 
     const petalOffsets = [
       [0, -18],
@@ -642,11 +454,46 @@ export class MoonflowerGladeScene extends Phaser.Scene {
 
     for (const [offsetX, offsetY] of petalOffsets) {
       this.add
-        .ellipse(x + offsetX * scale, y + offsetY * scale, 28 * scale, 38 * scale, 0xe0b3ff, 0.94)
-        .setDepth(7);
+        .ellipse(
+          x + offsetX * scale,
+          y + offsetY * scale,
+          28 * scale,
+          38 * scale,
+          petalColour,
+          0.94,
+        )
+        .setDepth(baseDepth);
     }
 
-    this.add.circle(x, y, 12 * scale, 0xffdca1, 1).setDepth(8);
+    this.add.circle(x, y, 12 * scale, 0xffdca1, 1).setDepth(baseDepth + 0.04);
+  }
+
+  private addOrderedMoonflower(x: number, y: number, scale: number, petalColour: number): void {
+    const baseDepth = worldDepthForY(y + 52 * scale, 0.08);
+    const groundParts: Phaser.GameObjects.GameObject[] = [
+      this.add.ellipse(0, 51 * scale, 54 * scale, 14 * scale, 0x4d8358, 0.16),
+      this.add.rectangle(0, 25 * scale, 7 * scale, 58 * scale, 0x5f9b67, 0.95),
+      this.add
+        .ellipse(-10 * scale, 31 * scale, 20 * scale, 9 * scale, 0x72a970, 0.84)
+        .setAngle(-28),
+      this.add.ellipse(10 * scale, 38 * scale, 18 * scale, 8 * scale, 0x6ca56d, 0.8).setAngle(28),
+    ];
+    this.add.container(x, y, groundParts).setDepth(baseDepth - 0.2);
+
+    const blossom = this.add.graphics();
+    blossom.fillStyle(petalColour, 0.96);
+    for (const [offsetX, offsetY] of [
+      [0, -18],
+      [18, -5],
+      [12, 14],
+      [-12, 14],
+      [-18, -5],
+    ] as const) {
+      blossom.fillEllipse(offsetX * scale, offsetY * scale, 28 * scale, 38 * scale);
+    }
+    blossom.fillStyle(0xffdca1, 1);
+    blossom.fillCircle(0, 0, 12 * scale);
+    this.add.container(x, y, [blossom]).setDepth(baseDepth + 0.16);
   }
 
   private createCollisionMap(): Phaser.Physics.Arcade.StaticGroup {
@@ -674,64 +521,5 @@ export class MoonflowerGladeScene extends Phaser.Scene {
     graphics.fillRect(0, 0, 2, 2);
     graphics.generateTexture(COLLISION_TEXTURE_KEY, 2, 2);
     graphics.destroy();
-  }
-
-  private createHud(): void {
-    this.add
-      .text(28, 22, 'Moonflower Glade', {
-        color: '#49355e',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '24px',
-        fontStyle: 'bold',
-        backgroundColor: '#fff9e8f2',
-        padding: { x: 14, y: 8 },
-      })
-      .setScrollFactor(0)
-      .setDepth(100);
-
-    this.add
-      .text(28, 72, 'Move: WASD / arrows  •  Interact: E / Enter / Space  •  Esc: title', {
-        color: '#5a4869',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '15px',
-        backgroundColor: '#fff9e8ee',
-        padding: { x: 10, y: 6 },
-      })
-      .setScrollFactor(0)
-      .setDepth(100);
-
-    this.guideText = this.add
-      .text(
-        28,
-        112,
-        this.hasFirstDiscovery
-          ? 'Your Moonflower Sparkle is safely remembered. Pip would love to see you.'
-          : 'Pip is nearby. Explore whenever you are ready.',
-        {
-          color: '#5b4568',
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '14px',
-          backgroundColor: '#fff9e8e8',
-          padding: { x: 10, y: 6 },
-        },
-      )
-      .setScrollFactor(0)
-      .setDepth(100);
-
-    this.feedbackText = this.add
-      .text(GAME_WIDTH - 32, 108, '', {
-        color: '#4b365c',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '20px',
-        backgroundColor: '#fff9edee',
-        padding: { x: 15, y: 12 },
-        align: 'left',
-        wordWrap: { width: 420 },
-        lineSpacing: 5,
-      })
-      .setOrigin(1, 0)
-      .setScrollFactor(0)
-      .setDepth(122)
-      .setVisible(false);
   }
 }

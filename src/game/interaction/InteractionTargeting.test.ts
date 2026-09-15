@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import type { InteractionTarget } from './InteractionTarget';
-import { getInteractionTargetPosition, selectInteractionTarget } from './InteractionTargeting';
+import {
+  getInteractionTargetPosition,
+  selectAutomaticInteractionTarget,
+  selectInteractionTarget,
+} from './InteractionTargeting';
 
 function target(
   id: string,
@@ -118,6 +122,30 @@ describe('interaction target selection', () => {
     expect(
       selectInteractionTarget({ x: 0, y: 0 }, [automatic, target('explicit', 40, 0)])?.id,
     ).toBe('explicit');
+  });
+
+  it('selects automatic crossings independently from explicit actions', () => {
+    const automatic = target('automatic', 45, 0);
+    automatic.activationMode = 'automatic';
+    const explicit = target('explicit', 10, 0);
+
+    expect(selectInteractionTarget({ x: 0, y: 0 }, [automatic, explicit])?.id).toBe('explicit');
+    expect(selectAutomaticInteractionTarget({ x: 0, y: 0 }, [automatic, explicit])?.id).toBe(
+      'automatic',
+    );
+  });
+
+  it('requires automatic crossings to remain visible, enabled and in range', () => {
+    const hidden = target('hidden-auto', 10, 0);
+    hidden.activationMode = 'automatic';
+    hidden.visible = false;
+    const disabled = target('disabled-auto', 20, 0);
+    disabled.activationMode = 'automatic';
+    disabled.enabled = false;
+    const far = target('far-auto', 400, 0);
+    far.activationMode = 'automatic';
+
+    expect(selectAutomaticInteractionTarget({ x: 0, y: 0 }, [hidden, disabled, far])).toBeNull();
   });
 
   it('breaks otherwise identical ties deterministically by stable ID', () => {

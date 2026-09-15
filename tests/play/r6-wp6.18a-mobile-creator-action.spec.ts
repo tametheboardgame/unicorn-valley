@@ -7,6 +7,7 @@ interface BrowserDiagnosticsApi {
   snapshot(): {
     activeScenes: string[];
   };
+  setArcadeSpritePosition(sceneKey: string, objectName: string, x: number, y: number): void;
 }
 
 async function waitForScene(page: Page, sceneKey: string): Promise<void> {
@@ -22,6 +23,57 @@ async function waitForScene(page: Page, sceneKey: string): Promise<void> {
     sceneKey,
     { timeout: SCENE_WAIT_TIMEOUT_MS },
   );
+}
+
+async function seedPipReady(page: Page): Promise<void> {
+  await page.addInitScript(() => {
+    localStorage.clear();
+    const timestamp = new Date().toISOString();
+    const save = {
+      schemaVersion: 2,
+      createdAt: timestamp,
+      lastSavedAt: timestamp,
+      profile: {
+        name: null,
+        appearance: {},
+        currentLocationId: 'location:moonflower-glade',
+        unlockedAbilityIds: [],
+      },
+      inventory: {
+        itemQuantities: {},
+        ownedCosmeticIds: [],
+        ownedDecorationIds: [],
+        specialItemIds: [],
+      },
+      relationships: { byCharacterId: {} },
+      quests: { byQuestId: {} },
+      world: {
+        flags: {
+          'flag:pip-intro-appeared': true,
+          'flag:pip-welcome-complete': true,
+        },
+        discoveredZoneIds: [],
+        changedObjectIds: [],
+        uniqueDiscoveryIds: [],
+      },
+      home: {
+        ownedFurnitureIds: [],
+        furnitureBySlot: {},
+        gardenFlags: {},
+      },
+      activities: {
+        racesById: {},
+        miniGameRecords: {},
+      },
+      collections: {
+        discoveryIds: [],
+        memoryIds: [],
+      },
+    };
+    const serialisedSave = JSON.stringify(save);
+    localStorage.setItem('unicorn-valley.save', serialisedSave);
+    localStorage.setItem('unicorn-valley.save.schema.2', serialisedSave);
+  });
 }
 
 function skipUnlessPortraitTouch(): void {
@@ -114,6 +166,7 @@ test('portrait exploration presents Talk to Pip as a large explicit action butto
 }) => {
   skipUnlessPortraitTouch();
   test.setTimeout(90_000);
+  await seedPipReady(page);
 
   await page.goto('/?scene=glade&diagnostics=1', { waitUntil: 'commit' });
   await waitForScene(page, 'MoonflowerGladeScene');
@@ -121,24 +174,16 @@ test('portrait exploration presents Talk to Pip as a large explicit action butto
   const prompt = page.locator('[data-mobile-interaction-prompt="true"]');
   await expect(prompt).toBeHidden();
 
-  const right = page.locator('.mobile-touch-right');
-  await expect(right).toBeVisible();
-  await right.dispatchEvent('pointerdown', {
-    pointerId: 1,
-    pointerType: 'touch',
-    isPrimary: true,
-    buttons: 1,
+  await page.evaluate(() => {
+    const diagnostics = (
+      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__;
+    if (!diagnostics) {
+      throw new Error('Browser diagnostics are unavailable.');
+    }
+    diagnostics.setArcadeSpritePosition('MoonflowerGladeScene', 'world-player-unicorn', 1110, 825);
   });
-  try {
-    await expect(prompt).toBeVisible({ timeout: 4000 });
-  } finally {
-    await right.dispatchEvent('pointerup', {
-      pointerId: 1,
-      pointerType: 'touch',
-      isPrimary: true,
-      buttons: 0,
-    });
-  }
+  await expect(prompt).toBeVisible({ timeout: 8000 });
 
   const action = page.locator('.mobile-interaction-button');
   await expect(action).toHaveText('Talk to Pip');

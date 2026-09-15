@@ -13,9 +13,11 @@ import type { InteractionTarget } from './InteractionTarget';
 import {
   getInteractionTargetPosition,
   isInteractionTargetEligible,
+  selectAutomaticInteractionTarget,
   selectInteractionTarget,
 } from './InteractionTargeting';
 import { getSceneInteractionRegistry } from './SceneInteractionRegistry';
+import { WorldInteractionAffordanceLayer } from './WorldInteractionAffordance';
 
 interface Point {
   x: number;
@@ -27,8 +29,10 @@ interface SceneCoordinatorState {
   pointer: PointerTouchInputAdapter;
   input: InputController;
   prompt: InteractionPrompt;
+  affordances: WorldInteractionAffordanceLayer;
   retainedTargetId: string | null;
   preferredTargetId: string | null;
+  automaticTargetId: string | null;
   directZones: Map<string, Phaser.GameObjects.Zone>;
   wasDialogueBlocking: boolean;
 }
@@ -167,8 +171,10 @@ export class WorldInteractionCoordinator {
       pointer,
       input: new InputController([pointer]),
       prompt: null as unknown as InteractionPrompt,
+      affordances: new WorldInteractionAffordanceLayer(scene),
       retainedTargetId: null,
       preferredTargetId: null,
+      automaticTargetId: null,
       directZones: new Map(),
       wasDialogueBlocking: false,
     };
@@ -190,8 +196,10 @@ export class WorldInteractionCoordinator {
     if (!player || dialogueBlocking) {
       state.wasDialogueBlocking = dialogueBlocking;
       state.prompt.setTarget(null);
+      state.affordances.sync(targets, null, true);
       state.retainedTargetId = null;
       state.preferredTargetId = null;
+      state.automaticTargetId = null;
       state.pointer.setButton('INTERACT', false);
       this.syncDirectZones(state, targets, null);
       return keyboardInteractionRequested;
@@ -205,15 +213,36 @@ export class WorldInteractionCoordinator {
       retainedTargetId: state.retainedTargetId,
       retentionMargin: 18,
     });
+    const automatic = selectAutomaticInteractionTarget(player, targets);
     state.preferredTargetId = null;
     state.retainedTargetId = selected?.id ?? null;
     state.prompt.setTarget(selected);
+    state.affordances.sync(targets, selected?.id ?? null, false);
     this.syncDirectZones(state, targets, player);
 
     if (suppressActivationAfterDialogue || isInteractionActivationSuppressed()) {
+      state.automaticTargetId = null;
       state.pointer.setButton('INTERACT', false);
       return keyboardInteractionRequested;
     }
+
+    if (automatic) {
+      if (state.automaticTargetId === automatic.id) {
+        return false;
+      }
+
+      const registryTargets = getSceneInteractionRegistry(state.scene).getTargets();
+      const revalidated = selectAutomaticInteractionTarget(player, registryTargets);
+      if (!revalidated || revalidated.id !== automatic.id) {
+        state.automaticTargetId = null;
+        return keyboardInteractionRequested;
+      }
+
+      state.automaticTargetId = automatic.id;
+      this.activate(state.scene, revalidated);
+      return false;
+    }
+    state.automaticTargetId = null;
 
     const pointerInteractionRequested = state.input.justPressed('INTERACT');
     if (!selected || (!pointerInteractionRequested && !keyboardInteractionRequested)) {
@@ -243,7 +272,11 @@ export class WorldInteractionCoordinator {
   ): void {
     const wanted = new Set<string>();
     for (const target of targets) {
-      if (!player || !isInteractionTargetEligible(player, target)) {
+      if (
+        target.activationMode === 'automatic' ||
+        !player ||
+        !isInteractionTargetEligible(player, target)
+      ) {
         continue;
       }
       wanted.add(target.id);
@@ -314,7 +347,10 @@ export class WorldInteractionCoordinator {
         return;
       }
       case 'dialogue':
-        getWorldConversationPresenter().start(scene, target.result.dialogueId);
+        getWorldConversationPresenter().start(scene, target.result.dialogueId, {
+          onComplete: target.result.onComplete,
+          onClose: target.result.onClose,
+        });
         return;
     }
   }
@@ -324,6 +360,7 @@ export class WorldInteractionCoordinator {
       zone.destroy();
     }
     state.directZones.clear();
+    state.affordances.destroy();
     state.prompt.destroy();
     state.input.destroy();
   }

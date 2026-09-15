@@ -147,6 +147,12 @@ void import('./game/world/GladeDepthWorldManager').then(({ getGladeDepthWorldMan
   getGladeDepthWorldManager(game);
 });
 
+void import('./game/story/WillowMoonflowerGladeWorldManager').then(
+  ({ getWillowMoonflowerGladeWorldManager }) => {
+    getWillowMoonflowerGladeWorldManager(game);
+  },
+);
+
 void import('./game/world/CottageDepthWorldManager').then(({ getCottageDepthWorldManager }) => {
   getCottageDepthWorldManager(game);
 });

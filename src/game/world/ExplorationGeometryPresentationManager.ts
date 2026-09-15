@@ -44,8 +44,8 @@ const BRANCH_CUES: Readonly<Partial<Record<string, readonly BranchCueDefinition[
     {
       id: 'moonflower-field',
       text: '🌺 Moonflower Field ↓',
-      x: 1810,
-      y: 1060,
+      x: 2050,
+      y: 1015,
     },
   ],
   RainbowMeadowScene: [

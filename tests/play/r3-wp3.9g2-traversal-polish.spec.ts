@@ -20,6 +20,57 @@ interface BrowserDiagnosticSnapshot {
   scenes: DiagnosticSceneSnapshot[];
 }
 
+async function seedIntroducedPip(page: Page): Promise<void> {
+  await page.addInitScript(() => {
+    localStorage.clear();
+    const timestamp = new Date().toISOString();
+    const save = {
+      schemaVersion: 2,
+      createdAt: timestamp,
+      lastSavedAt: timestamp,
+      profile: {
+        name: null,
+        appearance: {},
+        currentLocationId: 'location:moonflower-glade',
+        unlockedAbilityIds: [],
+      },
+      inventory: {
+        itemQuantities: {},
+        ownedCosmeticIds: [],
+        ownedDecorationIds: [],
+        specialItemIds: [],
+      },
+      relationships: { byCharacterId: {} },
+      quests: { byQuestId: {} },
+      world: {
+        flags: {
+          'flag:pip-intro-appeared': true,
+          'flag:pip-welcome-complete': true,
+        },
+        discoveredZoneIds: [],
+        changedObjectIds: [],
+        uniqueDiscoveryIds: [],
+      },
+      home: {
+        ownedFurnitureIds: [],
+        furnitureBySlot: {},
+        gardenFlags: {},
+      },
+      activities: {
+        racesById: {},
+        miniGameRecords: {},
+      },
+      collections: {
+        discoveryIds: [],
+        memoryIds: [],
+      },
+    };
+    const serialised = JSON.stringify(save);
+    localStorage.setItem('unicorn-valley.save', serialised);
+    localStorage.setItem('unicorn-valley.save.schema.2', serialised);
+  });
+}
+
 async function getSnapshot(page: Page): Promise<BrowserDiagnosticSnapshot> {
   return page.evaluate(() => {
     const diagnosticWindow = window as typeof window & {
@@ -88,6 +139,10 @@ for (const [alias, sceneKey, minimumDetails] of [
 test('walking through the Village west gateway travels to the Glade and back without interact', async ({
   page,
 }) => {
+  // This test isolates traversal. Fresh-save Pip onboarding intentionally owns movement once the
+  // player reaches the Glade, so seed the completed welcome rather than treating that modal as a
+  // gateway failure.
+  await seedIntroducedPip(page);
   await page.goto('/?scene=village&diagnostics=1');
   await waitForScene(page, 'SunbeamVillageScene');
 

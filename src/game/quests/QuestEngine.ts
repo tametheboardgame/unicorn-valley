@@ -253,6 +253,14 @@ export class QuestEngine {
         return;
       }
 
+      if (step.type === 'collect-item') {
+        if (!this.inventory.hasItem(step.itemId, step.quantity)) {
+          return;
+        }
+        this.advanceQuest(quest);
+        continue;
+      }
+
       if (step.type === 'award-item') {
         this.inventory.addItem(step.itemId, step.quantity);
         this.advanceQuest(quest);

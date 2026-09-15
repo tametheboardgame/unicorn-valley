@@ -116,7 +116,11 @@ async function seedRevealedStarwell(page: Page): Promise<void> {
       relationships: { byCharacterId: {} },
       quests: { byQuestId: {} },
       world: {
-        flags: { 'flag:r5-woods-starwell-revealed': true },
+        flags: {
+          'flag:r5-woods-starwell-revealed': true,
+          'flag:pip-intro-appeared': true,
+          'flag:pip-welcome-complete': true,
+        },
         discoveredZoneIds: [],
         changedObjectIds: [],
         uniqueDiscoveryIds: [],
@@ -163,6 +167,7 @@ test.describe('R6-WP6.2 core NPC production art', () => {
   });
 
   test('production identities replace the main overworld placeholders', async ({ page }) => {
+    await seedRevealedStarwell(page);
     await page.goto('/?scene=glade&diagnostics=1');
     await waitForScene(page, 'MoonflowerGladeScene');
     await page.waitForTimeout(300);

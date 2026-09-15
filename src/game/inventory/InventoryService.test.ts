@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { ItemId } from '../../content/contentTypes';
+import { type GameEventMap, TypedEventBus } from '../events/GameEventBus';
 import type { SaveRepository } from '../save/SaveRepository';
 import { SaveService } from '../save/SaveService';
 import { InventoryService, getItemPresentation } from './InventoryService';
@@ -32,6 +33,23 @@ describe('InventoryService', () => {
     const reloaded = new InventoryService(new SaveService(repository));
     expect(reloaded.getQuantity('item:berry-bun')).toBe(3);
     expect(reloaded.hasItem('item:berry-bun', 3)).toBe(true);
+  });
+
+  it('can suppress generic reward presentation without suppressing the collection event', () => {
+    const events = new TypedEventBus<GameEventMap>();
+    const payloads: GameEventMap['ITEM_COLLECTED'][] = [];
+    events.on('ITEM_COLLECTED', (payload) => payloads.push(payload));
+    const inventory = new InventoryService(new SaveService(new MemorySaveRepository()), events);
+
+    inventory.addItem('item:willow-moonflower', 1, { suppressRewardFeedback: true });
+
+    expect(payloads).toEqual([
+      {
+        itemId: 'item:willow-moonflower',
+        quantity: 1,
+        suppressRewardFeedback: true,
+      },
+    ]);
   });
 
   it('removes quantities and deletes empty stacks', () => {

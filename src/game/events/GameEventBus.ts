@@ -2,7 +2,7 @@ import type { FriendshipTier } from '../../content/contentTypes';
 import type { InteractionActionKind, InteractionResult } from '../interaction/InteractionTarget';
 
 export interface GameEventMap {
-  ITEM_COLLECTED: { itemId: string; quantity: number };
+  ITEM_COLLECTED: { itemId: string; quantity: number; suppressRewardFeedback?: boolean };
   CHARACTER_TALKED: { characterId: string };
   QUEST_STARTED: { questId: string; stepId: string | null };
   QUEST_STEP_CHANGED: { questId: string; stepId: string };
@@ -14,7 +14,7 @@ export interface GameEventMap {
   };
   WORLD_FLAG_CHANGED: { flagId: string; value: boolean };
   RACE_FINISHED: { raceId: string; finishTimeMs: number };
-  DISCOVERY_UNLOCKED: { discoveryId: string };
+  DISCOVERY_UNLOCKED: { discoveryId: string; suppressRewardFeedback?: boolean };
   SHIMMER_REWARDED: { amount: number; balance: number; labels: readonly string[] };
   SAVE_COMPLETED: { schemaVersion: number; savedAt: string };
   INTERACTION_ACTIVATED: {

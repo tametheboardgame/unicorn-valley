@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { isReducedMotionEnabled } from '../accessibility/AccessibilitySettings';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { isInteractionModalActive } from '../interaction/InteractionModalState';
+import { claimTransientFeedback } from './TransientFeedbackCoordinator';
 import { UI_FONT } from './uiTheme';
 
 export interface WorldFeedbackAnchor {
@@ -21,7 +22,10 @@ const GUIDANCE_NAME = 'world-feedback-guidance';
 const REACTION_NAME = 'world-feedback-reaction';
 const GUIDANCE_Y = GAME_HEIGHT - 150;
 const GUIDANCE_WIDTH = 660;
-const GUIDANCE_MAX_TEXT_WIDTH = GUIDANCE_WIDTH - 58;
+const GUIDANCE_ICON_GUTTER = 64;
+const GUIDANCE_SIDE_PADDING = 24;
+const GUIDANCE_TEXT_CENTER_OFFSET = GUIDANCE_ICON_GUTTER / 2;
+const GUIDANCE_MAX_TEXT_WIDTH = GUIDANCE_WIDTH - GUIDANCE_ICON_GUTTER - GUIDANCE_SIDE_PADDING * 2;
 const GUIDANCE_DURATION_MS = 5200;
 const REACTION_DURATION_MS = 2800;
 const REACTION_MAX_TEXT_WIDTH = 360;
@@ -32,9 +36,10 @@ const BOTTOM_SAFE_MARGIN = 92;
 /**
  * Owns ordinary non-dialogue world feedback introduced by WP19E1.
  *
- * Guidance is a small non-modal lower-screen card. Environmental reactions stay attached to
- * their world source and are clamped inside the camera's safe viewport. Dialogue, reward and
- * Wonderbook discovery presenters remain separate semantic owners.
+ * Guidance is a small non-modal lower-screen card centred in the playable viewport. Environmental
+ * reactions stay attached to their world source and are clamped inside the camera's safe viewport.
+ * Both participate in the shared transient-feedback slot so they cannot overlap dialogue, reward,
+ * Wonderbook or quest-completion surfaces.
  */
 export class WorldFeedbackPresenter {
   private guidanceObjects: FeedbackObject[] = [];
@@ -47,6 +52,8 @@ export class WorldFeedbackPresenter {
   private reactionAnchor: WorldFeedbackAnchor | null = null;
   private reactionPanel: Phaser.GameObjects.Graphics | null = null;
   private reactionText: Phaser.GameObjects.Text | null = null;
+  private releaseGuidanceClaim: (() => void) | null = null;
+  private releaseReactionClaim: (() => void) | null = null;
 
   public constructor(private readonly scene: Phaser.Scene) {
     this.scene.events.on(Phaser.Scenes.Events.POST_UPDATE, this.refreshReactionPosition, this);
@@ -63,9 +70,19 @@ export class WorldFeedbackPresenter {
 
     this.pendingGuidance = null;
     this.clearGuidance();
+    const releaseClaim = claimTransientFeedback(this.scene, 'guidance', () => {
+      this.clearGuidance();
+    });
+    if (!releaseClaim) {
+      this.pendingGuidance = { message, durationMs };
+      this.schedulePending();
+      return;
+    }
+    this.releaseGuidanceClaim = releaseClaim;
 
+    const centerX = GAME_WIDTH / 2;
     const text = this.scene.add
-      .text(GAME_WIDTH / 2 - 70, GUIDANCE_Y, message, {
+      .text(centerX + GUIDANCE_TEXT_CENTER_OFFSET, GUIDANCE_Y, message, {
         color: '#244f5c',
         fontFamily: UI_FONT,
         fontSize: '18px',
@@ -87,7 +104,7 @@ export class WorldFeedbackPresenter {
       .setDepth(20_160);
     shadow.fillStyle(0x263948, 0.2);
     shadow.fillRoundedRect(
-      GAME_WIDTH / 2 - 70 - GUIDANCE_WIDTH / 2 + 6,
+      centerX - GUIDANCE_WIDTH / 2 + 6,
       GUIDANCE_Y - height / 2 + 7,
       GUIDANCE_WIDTH,
       height,
@@ -102,14 +119,14 @@ export class WorldFeedbackPresenter {
     panel.fillStyle(0xe9fff8, 0.98);
     panel.lineStyle(4, 0x55aebb, 1);
     panel.fillRoundedRect(
-      GAME_WIDTH / 2 - 70 - GUIDANCE_WIDTH / 2,
+      centerX - GUIDANCE_WIDTH / 2,
       GUIDANCE_Y - height / 2,
       GUIDANCE_WIDTH,
       height,
       22,
     );
     panel.strokeRoundedRect(
-      GAME_WIDTH / 2 - 70 - GUIDANCE_WIDTH / 2,
+      centerX - GUIDANCE_WIDTH / 2,
       GUIDANCE_Y - height / 2,
       GUIDANCE_WIDTH,
       height,
@@ -117,7 +134,7 @@ export class WorldFeedbackPresenter {
     );
 
     const marker = this.scene.add
-      .text(GAME_WIDTH / 2 - 70 - GUIDANCE_WIDTH / 2 + 30, GUIDANCE_Y, '✦', {
+      .text(centerX - GUIDANCE_WIDTH / 2 + GUIDANCE_ICON_GUTTER / 2, GUIDANCE_Y, '✦', {
         color: '#297f8e',
         fontFamily: UI_FONT,
         fontSize: '24px',
@@ -159,6 +176,15 @@ export class WorldFeedbackPresenter {
 
     this.pendingReaction = null;
     this.clearReaction();
+    const releaseClaim = claimTransientFeedback(this.scene, 'reaction', () => {
+      this.clearReaction();
+    });
+    if (!releaseClaim) {
+      this.pendingReaction = { message, anchor, durationMs };
+      this.schedulePending();
+      return;
+    }
+    this.releaseReactionClaim = releaseClaim;
     this.reactionAnchor = { ...anchor };
 
     const text = this.scene.add
@@ -229,16 +255,20 @@ export class WorldFeedbackPresenter {
     const view = camera.worldView;
     const width = this.reactionText.width + 42;
     const height = this.reactionText.height + 30;
-    const x = Phaser.Math.Clamp(
-      this.reactionAnchor.x,
-      view.left + SIDE_SAFE_MARGIN + width / 2,
-      view.right - SIDE_SAFE_MARGIN - width / 2,
+    const x = Math.round(
+      Phaser.Math.Clamp(
+        this.reactionAnchor.x,
+        view.left + SIDE_SAFE_MARGIN + width / 2,
+        view.right - SIDE_SAFE_MARGIN - width / 2,
+      ),
     );
     const preferredY = this.reactionAnchor.y - Math.max(76, height / 2 + 42);
-    const y = Phaser.Math.Clamp(
-      preferredY,
-      view.top + TOP_SAFE_MARGIN + height / 2,
-      view.bottom - BOTTOM_SAFE_MARGIN - height / 2,
+    const y = Math.round(
+      Phaser.Math.Clamp(
+        preferredY,
+        view.top + TOP_SAFE_MARGIN + height / 2,
+        view.bottom - BOTTOM_SAFE_MARGIN - height / 2,
+      ),
     );
 
     this.reactionPanel.setPosition(x, y);
@@ -272,6 +302,7 @@ export class WorldFeedbackPresenter {
     this.guidanceTimer?.destroy();
     this.guidanceTimer = null;
     if (this.guidanceObjects.length === 0) {
+      this.releaseGuidanceSlot();
       return;
     }
     if (isReducedMotionEnabled()) {
@@ -289,6 +320,7 @@ export class WorldFeedbackPresenter {
         objects.forEach((object) => {
           object.destroy();
         });
+        this.releaseGuidanceSlot();
       },
     });
   }
@@ -297,6 +329,7 @@ export class WorldFeedbackPresenter {
     this.reactionTimer?.destroy();
     this.reactionTimer = null;
     if (this.reactionObjects.length === 0) {
+      this.releaseReactionSlot();
       return;
     }
     if (isReducedMotionEnabled()) {
@@ -318,6 +351,7 @@ export class WorldFeedbackPresenter {
         objects.forEach((object) => {
           object.destroy();
         });
+        this.releaseReactionSlot();
       },
     });
   }
@@ -329,6 +363,7 @@ export class WorldFeedbackPresenter {
       object.destroy();
     }
     this.guidanceObjects = [];
+    this.releaseGuidanceSlot();
   }
 
   private clearReaction(): void {
@@ -341,6 +376,17 @@ export class WorldFeedbackPresenter {
     this.reactionPanel = null;
     this.reactionText = null;
     this.reactionAnchor = null;
+    this.releaseReactionSlot();
+  }
+
+  private releaseGuidanceSlot(): void {
+    this.releaseGuidanceClaim?.();
+    this.releaseGuidanceClaim = null;
+  }
+
+  private releaseReactionSlot(): void {
+    this.releaseReactionClaim?.();
+    this.releaseReactionClaim = null;
   }
 }
 

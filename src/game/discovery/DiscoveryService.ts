@@ -3,6 +3,10 @@ import { type GameEventMap, type TypedEventBus, gameEventBus } from '../events/G
 import type { SaveService } from '../save/SaveService';
 import type { SaveGame } from '../save/saveSchema';
 
+export interface UnlockDiscoveryOptions {
+  suppressRewardFeedback?: boolean;
+}
+
 export class DiscoveryService {
   public constructor(
     private readonly saveService: SaveService,
@@ -17,7 +21,11 @@ export class DiscoveryService {
     );
   }
 
-  public unlockDiscovery(discoveryId: DiscoveryId, worldFlagId?: string): SaveGame {
+  public unlockDiscovery(
+    discoveryId: DiscoveryId,
+    worldFlagId?: string,
+    options: UnlockDiscoveryOptions = {},
+  ): SaveGame {
     const current = this.saveService.load() ?? this.saveService.createNewGame();
     const alreadyUnlocked =
       current.collections.discoveryIds.includes(discoveryId) ||
@@ -48,7 +56,10 @@ export class DiscoveryService {
     });
 
     if (!alreadyUnlocked) {
-      this.events.emit('DISCOVERY_UNLOCKED', { discoveryId });
+      this.events.emit('DISCOVERY_UNLOCKED', {
+        discoveryId,
+        suppressRewardFeedback: options.suppressRewardFeedback,
+      });
     }
     if (worldFlagId && current.world.flags[worldFlagId] !== true) {
       this.events.emit('WORLD_FLAG_CHANGED', { flagId: worldFlagId, value: true });

@@ -300,6 +300,53 @@ test('target-tablet touch completes creator, exploration, Book and accessibility
     },
     { startX: before.x },
   );
+
+  // A fresh player now meets Pip through the authored automatic welcome before Pip becomes an
+  // ordinary explicit Talk target. Exercise that real first-time sequence instead of waiting for a
+  // prompt which is intentionally suppressed while dialogue owns the screen.
+  await page.waitForFunction(() => {
+    const diagnosticWindow = window as typeof window & {
+      __UNICORN_VALLEY_DIAGNOSTICS__?: { snapshot(): BrowserDiagnosticSnapshot };
+    };
+    const scene = diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__
+      ?.snapshot()
+      .scenes.find((candidate) => candidate.key === 'MoonflowerGladeScene');
+    return scene?.objects.some(
+      (object) => object.name === 'dialogue-production-panel' && object.visible,
+    );
+  });
+  await logicalTapNamedObject(page, 'MoonflowerGladeScene', 'dialogue-production-continue');
+  await page.waitForTimeout(180);
+  await logicalTapNamedObject(page, 'MoonflowerGladeScene', 'dialogue-production-continue');
+  await page.waitForTimeout(180);
+  await logicalTapNamedObject(page, 'MoonflowerGladeScene', 'dialogue-production-continue');
+  await page.waitForFunction(() => {
+    const diagnosticWindow = window as typeof window & {
+      __UNICORN_VALLEY_DIAGNOSTICS__?: { snapshot(): BrowserDiagnosticSnapshot };
+    };
+    const scene = diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__
+      ?.snapshot()
+      .scenes.find((candidate) => candidate.key === 'MoonflowerGladeScene');
+    return !scene?.objects.some(
+      (object) => object.name === 'dialogue-production-panel' && object.visible,
+    );
+  });
+
+  // Touch movement above remains the input regression. Positioning here isolates the following
+  // assertion to the shared post-intro interaction presentation rather than camera/pathfinding.
+  await page.evaluate(() => {
+    const diagnosticWindow = window as typeof window & {
+      __UNICORN_VALLEY_DIAGNOSTICS__?: {
+        setArcadeSpritePosition(sceneKey: string, objectName: string, x: number, y: number): void;
+      };
+    };
+    diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__?.setArcadeSpritePosition(
+      'MoonflowerGladeScene',
+      'world-player-unicorn',
+      1110,
+      825,
+    );
+  });
   await page.waitForFunction(() => {
     const diagnosticWindow = window as typeof window & {
       __UNICORN_VALLEY_DIAGNOSTICS__?: { snapshot(): BrowserDiagnosticSnapshot };

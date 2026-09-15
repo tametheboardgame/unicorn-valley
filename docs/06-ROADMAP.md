@@ -1,5 +1,76 @@
 # Unicorn Valley - Development Roadmap
 
+## 2026-09-15 R6.5-WP19H1 complete - Moonflower Glade final polish and hardening
+
+`R6.5-WP19H1 - Moonflower Glade Final Polish` is complete and human-approved. H1.1-H1.10 delivered the intended visual, interaction and world-authorship result through iterative review; H1.11 then consolidated the implementation, removed legacy suppression/workarounds and established reusable conventions before final qualification.
+
+Final H1 outcomes include:
+
+- Moonflower Glade spatial composition, cottage/front garden, Home Meadow, environmental boundaries and Moonflower Field were rebuilt/polished into a coherent home region;
+- Moonflower Field is integrated directly into the Glade and its special Moonflowers use the canonical explicit `Pick up` interaction;
+- stream/reeds/fish, physical signage, garden plots, Pip presentation, dialogue, feedback and interaction ownership were consolidated behind canonical systems;
+- player/supporting-resident clipping and portrait issues were corrected at shared art/presentation owners;
+- transient guidance/reward/dialogue ownership and quest-completion sequencing were standardised;
+- automatic Glade/Sunbeam Village traversal, interaction priority and movement-input ownership regressions exposed during consolidation were fixed without restoring retired Glade-local systems;
+- obsolete Moonflower Patch/runtime entry paths, prototype Pip/local interaction/dialogue ownership and create-then-hide Glade presentation were retired where safe;
+- `docs/audits/2026-09-15-H1-CONSOLIDATION-AUDIT.md` records the final ownership audit;
+- `docs/engineering/H1-WORLD-IMPLEMENTATION-CONVENTIONS.md` records the reusable world implementation rules for later areas.
+
+The final qualified runtime head before documentation-only completion commits was `8dff0c5f9bd1c49212b5cb9d14d177d32483587f`. Formatting, lint, architecture, verification/performance policy, type-check, unit contracts, production build, static smoke, performance architecture, all three full Chromium shards and the Firefox/WebKit/Chromium compatibility matrix passed. David explicitly authorised final documentation, merge and deployment on 15 September 2026. Documentation-only completion commits are separately verified before merge.
+
+H1 is closed. The next area review, if started, becomes `R6.5-WP19H2`; it must not be treated as unfinished H1 work.
+
+## 2026-09-15 R6.5-WP19H1.11 consolidation, cleanup and hardening
+
+H1.11 is **complete and human-approved**. The authoritative record is `docs/work-packages/R6.5-WP19H1.11-CONSOLIDATION-CLEANUP-HARDENING.md` and the detailed findings are in `docs/audits/2026-09-15-H1-CONSOLIDATION-AUDIT.md`.
+
+Completed outcomes:
+
+- audited H1.1-H1.10 for legacy presentation created and later hidden/destroyed/repositioned;
+- traced suppression/workaround code back to source owners and removed obsolete source behaviour instead of maintaining cleanup hacks;
+- established canonical ownership for Glade paths, signs, gardens, field/stream presentation, NPC art, interaction presentation, dialogue and transient feedback;
+- retired superseded Glade/Moonflower Patch/scene-local interaction remnants where they were no longer production dependencies;
+- standardised reusable patterns for later regions, including explicit pickups, interaction registry/coordinator ownership, dialogue/feedback ownership, semantic map geometry and lifecycle cleanup;
+- reduced avoidable high-frequency scene scans and tightened manager teardown/lifecycle behaviour;
+- sanity-checked H1 save/discovery/inventory/quest progression and sequencing;
+- updated stale browser expectations to protect final approved behaviour rather than intermediate implementations;
+- documented H1 implementation conventions for future region work;
+- passed full Chromium and cross-browser qualification.
+
+The Old Garden Gate flower issue became the reference failure mode for this pass: the final fix removed the exact source decoration from `EnvironmentProductionPresentationManager`, after which the compensating spatial cleanup was removed.
+
+## 2026-09-15 R6.5-WP19H1.10 final Glade polish checkpoint
+
+H1.10 is **complete and human-approved**. The authoritative brief/result is `docs/work-packages/R6.5-WP19H1.10-COTTAGE-GARDEN-SIGNAGE-FIELD-POLISH.md`.
+
+Delivered outcomes:
+
+- player-unicorn tail clipping corrected at the shared player-art/presentation owner;
+- Old Garden Gate and Sunbeam Village labels replaced with physical world signs and aligned post/base collision;
+- three stable future-ready garden plots established with one shared interaction point each;
+- the stream-bank plot aligned with the upper/main garden envelope and conflicting reeds removed;
+- garden-edge tree positions authored correctly at source;
+- the right-edge blue flower layering corrected and the tree-overlapping pink field flower removed;
+- the separate Old Garden Gate background flower traced to its production decoration source and removed there rather than suppressed later.
+
+The accepted H1.10 appearance/gameplay became the parity baseline for H1.11 consolidation.
+
+## 2026-09-15 R6.5-WP19H1.9 remediation checkpoint
+
+H1.9 is **complete and human-approved** following David's deployed tablet review. The authoritative record is `docs/work-packages/R6.5-WP19H1.9-INTERACTION-FEEDBACK-DIALOGUE-REMEDIATION.md`.
+
+Delivered outcomes include:
+
+- the first green sparkle now uses the shared explicit `Pick up` interaction and hands off to one blue return-to-Pip guidance card;
+- physical H1 collectables use the shared explicit pickup language rather than proximity auto-collection, with persistent object labels removed;
+- shared transient-notification ownership prevents guidance, Wonderbook/reward feedback and dialogue from stacking over one another;
+- Pip's closing trail conversation now completes first and the centred `Quest Complete` presentation appears only after dialogue closes;
+- ordinary dialogue geometry is stable through Continue/Done progression and supporting-resident portrait framing was corrected at the shared owner;
+- the blue guidance star has a dedicated gutter and no longer overlaps leading message text;
+- shared camera/presentation jitter mitigations were applied without snapping deliberately smooth NPC/fish/world animation.
+
+The H1.9 visual gate is closed and its approved behaviour is now part of the completed H1 baseline.
+
 ## 2026-09-08 approved remediation plan
 
 WP19B was human-approved and merged as `c2d98ae` on 9 September 2026; its merge-SHA-bound production smoke passed in Actions `34356744951`. WP19C is now active on its draft branch and remains behind its separate visual gate. David’s mild observation that some places appear to have two path layers is deferred unchanged to the final graphics-specific pass, not WP19C.

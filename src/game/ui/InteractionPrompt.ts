@@ -13,7 +13,6 @@ import {
   drawRoundedPanel,
   type ConceptIcon,
 } from './ConceptUi';
-import { ExplorationShell } from './ExplorationShell';
 import { UI_FONT } from './uiTheme';
 
 interface PrimaryActionPresentation {
@@ -28,6 +27,7 @@ const ACTION_PRESENTATION: Record<InteractionActionKind, PrimaryActionPresentati
   inspect: { label: 'Inspect', icon: 'inspect' },
   buy: { label: 'Buy', icon: 'buy' },
   use: { label: 'Use', icon: 'use' },
+  'pick-up': { label: 'Pick up', icon: 'interact' },
   interact: { label: 'Interact', icon: 'interact' },
 };
 
@@ -71,12 +71,13 @@ export class InteractionPrompt {
   private readonly hintIcon: Phaser.GameObjects.Graphics;
   private readonly hintText: Phaser.GameObjects.Text;
   private readonly directTargetZone: Phaser.GameObjects.Zone;
-  private readonly shell: ExplorationShell;
   private readonly unsubscribeAccessibility: () => void;
   private domRoot: HTMLElement | null = null;
   private domButton: HTMLButtonElement | null = null;
   private domHint: HTMLElement | null = null;
   private currentTarget: InteractionTarget | null = null;
+  private renderedActionIcon: ConceptIcon | null = null;
+  private renderedHighVisibility: boolean | null = null;
 
   public constructor(
     private readonly scene: Phaser.Scene,
@@ -165,7 +166,6 @@ export class InteractionPrompt {
       .setDepth(116);
     this.bindDirectTargetZone();
 
-    this.shell = ExplorationShell.ensure(scene, pointerInput);
     this.panel.on('pointerdown', this.pressCurrentTarget);
     this.panel.on('pointerup', this.releaseInteraction);
     this.panel.on('pointerout', this.releaseInteraction);
@@ -190,26 +190,34 @@ export class InteractionPrompt {
     if (target && visible) {
       const fullActionLabel = formatInteractionLabel(target);
       const primaryAction = getPrimaryActionPresentation(target);
-      this.label.setText(primaryAction.label);
-      drawConceptIcon(this.actionIcon, primaryAction.icon, 1040, 548, 1.05, CONCEPT_UI.white);
-      this.hintText.setText(target.label);
+      if (this.label.text !== primaryAction.label) {
+        this.label.setText(primaryAction.label);
+      }
+      if (this.renderedActionIcon !== primaryAction.icon) {
+        drawConceptIcon(this.actionIcon, primaryAction.icon, 1040, 548, 1.05, CONCEPT_UI.white);
+        this.renderedActionIcon = primaryAction.icon;
+      }
+      if (this.hintText.text !== target.label) {
+        this.hintText.setText(target.label);
+      }
       this.domButton?.setAttribute('aria-label', fullActionLabel);
-      if (this.domButton) {
+      if (this.domButton && this.domButton.textContent !== fullActionLabel) {
         this.domButton.textContent = fullActionLabel;
       }
-      if (this.domHint) {
+      if (this.domHint && this.domHint.textContent !== target.label) {
         this.domHint.textContent = target.label;
       }
       const position = getInteractionTargetPosition(target);
-      this.directTargetZone.setPosition(position.x, position.y);
+      this.directTargetZone.setPosition(Math.round(position.x), Math.round(position.y));
     } else {
-      this.hintText.setText('');
-      if (this.domHint) {
+      if (this.hintText.text !== '') {
+        this.hintText.setText('');
+      }
+      if (this.domHint && this.domHint.textContent !== '') {
         this.domHint.textContent = '';
       }
     }
     this.refreshPresentation();
-    this.shell.refresh();
   }
 
   public destroy(): void {
@@ -332,7 +340,7 @@ export class InteractionPrompt {
 
     if (this.currentTarget && canvasActionVisible) {
       const position = getInteractionTargetPosition(this.currentTarget);
-      this.directTargetZone.setPosition(position.x, position.y);
+      this.directTargetZone.setPosition(Math.round(position.x), Math.round(position.y));
       if (this.directTargetZone.input?.enabled !== true) {
         this.directTargetZone.setInteractive({ useHandCursor: true });
       }
@@ -345,21 +353,27 @@ export class InteractionPrompt {
       this.domRoot.classList.toggle('is-high-visibility', highVisibility);
     }
 
-    this.panel.setFillStyle(highVisibility ? 0xffef9f : CONCEPT_UI.purple, 1);
-    this.panel.setStrokeStyle(
-      highVisibility ? 8 : 6,
-      highVisibility ? 0x513161 : CONCEPT_UI.purpleStrong,
-      1,
-    );
-    this.label.setColor(highVisibility ? '#321d3b' : '#fffaf1');
-    this.label.setFontSize(highVisibility ? 24 : 22);
+    if (this.renderedHighVisibility !== highVisibility) {
+      this.panel.setFillStyle(highVisibility ? 0xffef9f : CONCEPT_UI.purple, 1);
+      this.panel.setStrokeStyle(
+        highVisibility ? 8 : 6,
+        highVisibility ? 0x513161 : CONCEPT_UI.purpleStrong,
+        1,
+      );
+      this.label.setColor(highVisibility ? '#321d3b' : '#fffaf1');
+      this.label.setFontSize(highVisibility ? 24 : 22);
+      this.renderedHighVisibility = highVisibility;
+    }
 
     if (this.currentTarget && targetVisible) {
       const primaryAction = getPrimaryActionPresentation(this.currentTarget);
-      this.label.setText(primaryAction.label);
+      if (this.label.text !== primaryAction.label) {
+        this.label.setText(primaryAction.label);
+      }
       const actionLabel = formatInteractionLabel(this.currentTarget);
-      if (this.domButton) {
-        this.domButton.textContent = `${highVisibility ? '★ ' : ''}${actionLabel}${highVisibility ? ' ★' : ''}`;
+      const domLabel = `${highVisibility ? '★ ' : ''}${actionLabel}${highVisibility ? ' ★' : ''}`;
+      if (this.domButton && this.domButton.textContent !== domLabel) {
+        this.domButton.textContent = domLabel;
       }
     }
   }

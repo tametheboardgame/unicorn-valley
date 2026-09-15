@@ -57,7 +57,6 @@ export const SCENE_MANIFEST = [
   startup('MoonflowerGladeScene', 'exploration'),
   startup('CottageInteriorScene', 'interior'),
   startup('CottageDecorateScene', 'interior'),
-  startup('MoonflowerPatchScene', 'exploration'),
   startup('SunbeamVillageScene', 'exploration'),
   startup('RainbowMeadowScene', 'exploration'),
   startup('CrystalBrookScene', 'exploration'),
