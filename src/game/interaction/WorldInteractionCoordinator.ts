@@ -13,6 +13,7 @@ import type { InteractionTarget } from './InteractionTarget';
 import {
   getInteractionTargetPosition,
   isInteractionTargetEligible,
+  selectAutomaticInteractionTarget,
   selectInteractionTarget,
 } from './InteractionTargeting';
 import { getSceneInteractionRegistry } from './SceneInteractionRegistry';
@@ -212,6 +213,7 @@ export class WorldInteractionCoordinator {
       retainedTargetId: state.retainedTargetId,
       retentionMargin: 18,
     });
+    const automatic = selectAutomaticInteractionTarget(player, targets);
     state.preferredTargetId = null;
     state.retainedTargetId = selected?.id ?? null;
     state.prompt.setTarget(selected);
@@ -224,29 +226,19 @@ export class WorldInteractionCoordinator {
       return keyboardInteractionRequested;
     }
 
-    if (selected?.activationMode === 'automatic') {
-      if (state.automaticTargetId === selected.id) {
+    if (automatic) {
+      if (state.automaticTargetId === automatic.id) {
         return false;
       }
 
       const registryTargets = getSceneInteractionRegistry(state.scene).getTargets();
-      const revalidated = selectInteractionTarget(player, registryTargets, {
-        preferredTargetId: selected.id,
-        retainedTargetId: selected.id,
-        retentionMargin: 0,
-      });
-      if (
-        !revalidated ||
-        revalidated.id !== selected.id ||
-        revalidated.activationMode !== 'automatic'
-      ) {
-        state.retainedTargetId = null;
+      const revalidated = selectAutomaticInteractionTarget(player, registryTargets);
+      if (!revalidated || revalidated.id !== automatic.id) {
         state.automaticTargetId = null;
-        state.prompt.setTarget(null);
         return keyboardInteractionRequested;
       }
 
-      state.automaticTargetId = selected.id;
+      state.automaticTargetId = automatic.id;
       this.activate(state.scene, revalidated);
       return false;
     }
