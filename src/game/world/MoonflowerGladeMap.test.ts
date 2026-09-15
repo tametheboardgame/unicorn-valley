@@ -12,6 +12,10 @@ const navigationTargets: TraversalTarget[] = [
     id: landmark.id,
     position: landmark.approach,
   })),
+  ...MOONFLOWER_GLADE_MAP.gardenPlots.map((plot) => ({
+    id: plot.id,
+    position: plot.approach,
+  })),
   ...MOONFLOWER_GLADE_MAP.entrances.map((entrance) => ({
     id: entrance.id,
     position: entrance.approach,
@@ -19,7 +23,7 @@ const navigationTargets: TraversalTarget[] = [
 ];
 
 describe('Moonflower Glade prototype map', () => {
-  it('keeps every landmark and reserved entrance reachable from the player spawn', () => {
+  it('keeps every landmark, garden interaction point and reserved entrance reachable from the player spawn', () => {
     expect(findUnreachableTargets(MOONFLOWER_GLADE_MAP, navigationTargets)).toEqual([]);
   });
 
@@ -30,14 +34,56 @@ describe('Moonflower Glade prototype map', () => {
     }
   });
 
-  it('uses unique stable IDs for landmarks, entrances and collision regions', () => {
+  it('uses unique stable IDs for landmarks, garden plots, entrances and collision regions', () => {
     const ids = [
       ...MOONFLOWER_GLADE_MAP.landmarks.map((landmark) => landmark.id),
+      ...MOONFLOWER_GLADE_MAP.gardenPlots.map((plot) => plot.id),
       ...MOONFLOWER_GLADE_MAP.entrances.map((entrance) => entrance.id),
       ...MOONFLOWER_GLADE_MAP.colliders.map((collider) => collider.id),
     ];
 
     expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  it('uses three stable future-ready growing plots around the cottage', () => {
+    expect(MOONFLOWER_GLADE_MAP.gardenPlots.map((plot) => plot.id)).toEqual([
+      'garden:main',
+      'garden:upper',
+      'garden:stream-bank',
+    ]);
+
+    const main = MOONFLOWER_GLADE_MAP.gardenPlots[0];
+    const upper = MOONFLOWER_GLADE_MAP.gardenPlots[1];
+    const stream = MOONFLOWER_GLADE_MAP.gardenPlots[2];
+    expect(main.width).toBe(upper.width);
+    expect(main.height).toBe(upper.height);
+    expect(upper.position.y + upper.height / 2).toBeLessThan(main.position.y - main.height / 2);
+    expect(stream.orientation).toBe('vertical');
+    expect(stream.position.x + stream.width / 2).toBeLessThan(
+      MOONFLOWER_GLADE_MAP.bridge.x - MOONFLOWER_GLADE_MAP.bridge.width / 2 + 10,
+    );
+  });
+
+  it('gives physical gate signs compact post collision while keeping their approaches clear', () => {
+    const westernSign = MOONFLOWER_GLADE_MAP.colliders.find(
+      (collider) => collider.id === 'collision:western-gate-sign',
+    );
+    const sunbeamSign = MOONFLOWER_GLADE_MAP.colliders.find(
+      (collider) => collider.id === 'collision:sunbeam-direction-sign',
+    );
+    expect(westernSign).toBeDefined();
+    expect(sunbeamSign).toBeDefined();
+    expect(westernSign!.width).toBeLessThan(40);
+    expect(sunbeamSign!.width).toBeLessThan(40);
+
+    const westernGate = MOONFLOWER_GLADE_MAP.landmarks.find(
+      (landmark) => landmark.id === 'western-gate',
+    );
+    const sunbeam = MOONFLOWER_GLADE_MAP.entrances.find(
+      (entrance) => entrance.id === 'sunbeam-village',
+    );
+    expect(isPointBlocked(westernGate!.approach, MOONFLOWER_GLADE_MAP.colliders, 42)).toBe(false);
+    expect(isPointBlocked(sunbeam!.approach, MOONFLOWER_GLADE_MAP.colliders, 42)).toBe(false);
   });
 
   it('keeps the player crossing centred on the visible bridge deck', () => {
