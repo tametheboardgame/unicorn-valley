@@ -1,6 +1,6 @@
 # H1 world implementation conventions
 
-These conventions capture the reusable engineering patterns established by the Moonflower Glade H1.1-H1.11 work. They are intended for later R6.5 region/content work, not as a reason to rewrite unrelated stable systems immediately.
+These conventions capture the reusable engineering patterns established by the completed Moonflower Glade H1.1-H1.11 work. They are intended for later R6.5 region/content work, not as a reason to rewrite unrelated stable systems immediately.
 
 ## 1. One owner for one visible thing
 
@@ -157,3 +157,7 @@ Before adding a workaround, investigate the source if code does any of the follo
 - keeps two interaction/dialogue/feedback systems alive in the same migrated scene.
 
 Those are investigation triggers, not automatic proof of a bug, but H1 showed that they are common sources of duplicate presentation, performance regressions and hard-to-find visual artefacts.
+
+## Completion record
+
+These conventions were finalised as part of the completed H1.11 consolidation pass. They are the default starting point for R6.5-WP19H2 and later area-specific polish work unless a future package explicitly supersedes them.
