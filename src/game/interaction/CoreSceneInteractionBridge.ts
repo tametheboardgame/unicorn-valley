@@ -1,18 +1,17 @@
 import Phaser from 'phaser';
 import { createPipInteraction } from '../intro/PipIntro';
-import { MoonflowerGladeScene } from '../scenes/MoonflowerGladeScene';
 import { RainbowMeadowScene } from '../scenes/RainbowMeadowScene';
 import { SunbeamVillageScene } from '../scenes/SunbeamVillageScene';
-import type { InteractionActionKind, InteractionTarget } from './InteractionTarget';
-import { MOONFLOWER_GLADE_INTERACTIONS } from './MoonflowerGladeInteractions';
-import { getSceneInteractionRegistry } from './SceneInteractionRegistry';
-import { RAINBOW_MEADOW_MAP } from '../world/RainbowMeadowMap';
-import { SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
 import {
   startMarigoldConversation,
   startNovaConversation,
   startWillowConversation,
 } from '../story/WorldStoryConversations';
+import { RAINBOW_MEADOW_MAP } from '../world/RainbowMeadowMap';
+import { SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
+import type { InteractionActionKind, InteractionTarget } from './InteractionTarget';
+import { MOONFLOWER_GLADE_INTERACTIONS } from './MoonflowerGladeInteractions';
+import { getSceneInteractionRegistry } from './SceneInteractionRegistry';
 
 const OWNER_KEY = 'wp19d-core-scene-interactions';
 
@@ -30,7 +29,6 @@ type ScenePrototype = {
 };
 
 let patched = false;
-let moonflowerActivate: LegacyActivator | null = null;
 let villageActivate: LegacyActivator | null = null;
 let meadowActivate: LegacyActivator | null = null;
 
@@ -76,19 +74,15 @@ function captureAndDisable(prototype: ScenePrototype, sceneName: string): Legacy
 }
 
 /**
- * Core exploration scenes predate the registry and still perform their own target selection.
- * Patch only their activation method so movement/discovery/save behaviour remains scene-owned,
- * while the coordinator becomes the sole explicit interaction activator.
+ * Sunbeam Village and Rainbow Meadow still predate the shared registry. Capture their legacy
+ * activators once while their migration is completed elsewhere. Moonflower Glade is now fully
+ * registry-owned and deliberately has no legacy activator to patch or suppress.
  */
 export function patchCoreSceneInteractionHandlers(): void {
   if (patched) {
     return;
   }
 
-  moonflowerActivate = captureAndDisable(
-    MoonflowerGladeScene.prototype as unknown as ScenePrototype,
-    'MoonflowerGladeScene',
-  );
   villageActivate = captureAndDisable(
     SunbeamVillageScene.prototype as unknown as ScenePrototype,
     'SunbeamVillageScene',
@@ -285,49 +279,34 @@ function meadowTargets(scene: Phaser.Scene): InteractionTarget[] {
 }
 
 function moonflowerTargets(scene: CoreSceneRuntime): InteractionTarget[] {
-  if (!moonflowerActivate) {
-    return [];
-  }
-
-  const actionKinds: Record<string, InteractionActionKind> = {
-    'interaction:moonflower-cottage-door': 'enter',
-    'interaction:display-stump': 'use',
-    'interaction:moonflower-patch': 'inspect',
-    'interaction:sunbeam-village-gate': 'enter',
-  };
-
-  const targets = MOONFLOWER_GLADE_INTERACTIONS.map((target) =>
-    callbackTarget(target, actionKinds[target.id] ?? 'interact', () =>
-      moonflowerActivate?.call(scene, target),
-    ),
-  );
+  const targets = MOONFLOWER_GLADE_INTERACTIONS.map((target) => ({
+    ...target,
+    activationMode: 'explicit' as const,
+  }));
 
   const sparkle = scene.createFirstSparkleInteraction?.();
   if (sparkle) {
     targets.push({
       ...sparkle,
-      actionKind: 'pick-up',
       activationMode: 'explicit',
-      result: {
-        type: 'callback',
-        activate: () => {
-          moonflowerActivate?.call(scene, sparkle);
-          getSceneInteractionRegistry(scene).replaceOwnerTargets(
-            OWNER_KEY,
-            moonflowerTargets(scene),
-          );
-        },
-      },
+      result:
+        sparkle.result.type === 'callback'
+          ? {
+              type: 'callback',
+              activate: () => {
+                sparkle.result.type === 'callback' && sparkle.result.activate();
+                getSceneInteractionRegistry(scene).replaceOwnerTargets(
+                  OWNER_KEY,
+                  moonflowerTargets(scene),
+                );
+              },
+            }
+          : sparkle.result,
     });
   }
 
   const pip = createPipInteraction(Boolean(scene.hasFirstDiscovery));
-  targets.push(
-    callbackTarget(pip, 'talk', () => {
-      const current = createPipInteraction(Boolean(scene.hasFirstDiscovery));
-      moonflowerActivate?.call(scene, current);
-    }),
-  );
+  targets.push({ ...pip, activationMode: 'explicit' });
   return targets;
 }
 
@@ -335,7 +314,6 @@ export class CoreSceneInteractionBridge {
   private readonly activeScenes = new Map<string, Phaser.Scene>();
 
   public constructor(private readonly game: Phaser.Game) {
-    patchCoreSceneInteractionHandlers();
     this.game.events.on(Phaser.Core.Events.POST_STEP, this.update, this);
     this.game.events.once(Phaser.Core.Events.DESTROY, () => {
       this.game.events.off(Phaser.Core.Events.POST_STEP, this.update, this);
@@ -347,7 +325,7 @@ export class CoreSceneInteractionBridge {
   }
 
   private update(): void {
-    this.syncScene('MoonflowerGladeScene', (scene) => moonflowerTargets(scene));
+    this.syncScene('MoonflowerGladeScene', moonflowerTargets);
     this.syncScene('SunbeamVillageScene', villageTargets);
     this.syncScene('RainbowMeadowScene', meadowTargets);
   }
@@ -366,33 +344,29 @@ export class CoreSceneInteractionBridge {
       return;
     }
 
-    this.disableLegacyPresentation(scene);
     const previous = this.activeScenes.get(sceneKey);
-    if (previous !== scene) {
-      if (previous) {
-        getSceneInteractionRegistry(previous).clearOwner(OWNER_KEY);
-      }
-      this.activeScenes.set(sceneKey, scene);
-      getSceneInteractionRegistry(scene).replaceOwnerTargets(OWNER_KEY, createTargets(scene));
+    if (previous === scene) {
+      return;
     }
+
+    if (previous) {
+      getSceneInteractionRegistry(previous).clearOwner(OWNER_KEY);
+    }
+    this.activeScenes.set(sceneKey, scene);
+    this.disableLegacyPresentationOnce(scene);
+    getSceneInteractionRegistry(scene).replaceOwnerTargets(OWNER_KEY, createTargets(scene));
   }
 
-  private disableLegacyPresentation(scene: CoreSceneRuntime): void {
+  private disableLegacyPresentationOnce(scene: CoreSceneRuntime): void {
+    // Moonflower Glade no longer creates a scene-local interaction prompt. Village/Meadow still do,
+    // so retire those prompt instances once per scene instance while their source migrations remain
+    // outside H1. This is intentionally not a per-frame suppression scan.
+    if (scene.scene.key === 'MoonflowerGladeScene') {
+      return;
+    }
     scene.interactionPrompt?.destroy();
     scene.interactionPrompt = null;
     scene.activeInteraction = null;
-
-    if (scene.scene.key !== 'MoonflowerGladeScene') {
-      return;
-    }
-    for (const child of [...scene.children.list]) {
-      if (
-        child instanceof Phaser.GameObjects.Text &&
-        child.text.includes('Interact: E / Enter / Space')
-      ) {
-        child.destroy();
-      }
-    }
   }
 }
 
