@@ -333,9 +333,7 @@ export class MoonflowerGladeScene extends Phaser.Scene {
     // Tutorial discoveries deliberately use green, not the Glade's ambient gold firefly/sparkle
     // palette. A child should be able to distinguish "the thing Pip asked me to find" instantly.
     const glow = this.add.circle(0, 0, 38, 0x63e59a, 0.24);
-    const ring = this.add
-      .circle(0, 0, 20, 0xb9ffd2, 0.52)
-      .setStrokeStyle(4, 0xeffff4, 0.94);
+    const ring = this.add.circle(0, 0, 20, 0xb9ffd2, 0.52).setStrokeStyle(4, 0xeffff4, 0.94);
     const star = this.add
       .text(0, 0, '✦', {
         color: '#7dffad',
