@@ -1,4 +1,8 @@
 import type { CollisionRectangle, MapPoint, TraversalMapDefinition } from './MapTraversal';
+import {
+  COTTAGE_SEMANTIC_ANCHOR_IDS,
+  resolveCottageSemanticAnchor,
+} from './CottageSemanticAnchors';
 
 export const COTTAGE_INTERIOR_LOCATION_ID = 'location:moonflower-cottage-interior';
 
@@ -18,6 +22,9 @@ export interface CottageInteractionPoint {
   position: MapPoint;
   approach: MapPoint;
 }
+
+const doorAnchor = resolveCottageSemanticAnchor(COTTAGE_SEMANTIC_ANCHOR_IDS.door);
+const wonderbookAnchor = resolveCottageSemanticAnchor(COTTAGE_SEMANTIC_ANCHOR_IDS.wonderbook);
 
 export const COTTAGE_INTERIOR_MAP = {
   width: 1800,
@@ -41,8 +48,8 @@ export const COTTAGE_INTERIOR_MAP = {
   exit: {
     id: 'cottage-exit',
     label: 'Moonflower Glade',
-    position: { x: 900, y: 1110 },
-    approach: { x: 900, y: 1010 },
+    position: doorAnchor.position,
+    approach: doorAnchor.interactionPosition ?? doorAnchor.position,
   },
   treasureDisplay: {
     id: 'treasure-display',
@@ -53,8 +60,8 @@ export const COTTAGE_INTERIOR_MAP = {
   wonderbookDisplay: {
     id: 'wonderbook-display',
     label: 'Wonderbook',
-    position: { x: 1490, y: 910 },
-    approach: { x: 1335, y: 910 },
+    position: wonderbookAnchor.position,
+    approach: wonderbookAnchor.interactionPosition ?? wonderbookAnchor.position,
   },
   decorationSlots: [
     {
