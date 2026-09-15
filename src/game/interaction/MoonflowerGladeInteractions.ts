@@ -49,7 +49,8 @@ function gardenInteraction(
     result: {
       type: 'message',
       title: label,
-      message: 'Fresh soil, ready for seeds. This growing patch will be useful for gardening later.',
+      message:
+        'Fresh soil, ready for seeds. This growing patch will be useful for gardening later.',
     },
   };
 }
