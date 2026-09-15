@@ -37,13 +37,6 @@ const FISH_STYLES = [
   { body: 0xb9dcc0, accent: 0x7fae8b, detail: 0xe8f6e7, scale: 1 },
 ] as const;
 
-const LEGACY_REED_CENTRES = [
-  { x: 1288, y: 590 },
-  { x: 1512, y: 690 },
-  { x: 1296, y: 1220 },
-  { x: 1502, y: 1330 },
-] as const;
-
 interface FishRuntime {
   container: Phaser.GameObjects.Container;
   index: number;
@@ -58,65 +51,6 @@ interface StreamRuntime {
 }
 
 const runtimes = new WeakMap<Phaser.Scene, StreamRuntime>();
-
-function retireLegacyStreamArt(scene: Phaser.Scene): void {
-  for (const child of [...scene.children.list]) {
-    if (child instanceof Phaser.GameObjects.Rectangle) {
-      const isLegacyWater =
-        Math.abs(child.x - STREAM_X) < 1 &&
-        Math.abs(child.y - STREAM_Y) < 1 &&
-        Math.abs(child.displayHeight - STREAM_HEIGHT) < 2 &&
-        (Math.abs(child.displayWidth - STREAM_WIDTH) < 2 || Math.abs(child.displayWidth - 92) < 2);
-      if (isLegacyWater) {
-        child.destroy();
-      }
-      continue;
-    }
-
-    if (
-      child instanceof Phaser.GameObjects.Ellipse &&
-      child.x >= STREAM_X - STREAM_WIDTH / 2 &&
-      child.x <= STREAM_X + STREAM_WIDTH / 2 &&
-      child.y >= 0 &&
-      child.y <= STREAM_HEIGHT &&
-      child.fillColor === 0xe8ffff
-    ) {
-      child.destroy();
-    }
-  }
-}
-
-function retireLegacyReeds(scene: Phaser.Scene): void {
-  for (const child of [...scene.children.list]) {
-    if (child.name !== 'visual-tightening-detail') {
-      continue;
-    }
-
-    for (const centre of LEGACY_REED_CENTRES) {
-      if (
-        child instanceof Phaser.GameObjects.Rectangle &&
-        Math.abs(child.x - centre.x) <= 18 &&
-        Math.abs(child.y - (centre.y - 16)) <= 22 &&
-        child.displayWidth <= 8 &&
-        child.displayHeight <= 58
-      ) {
-        child.destroy();
-        break;
-      }
-
-      if (
-        child instanceof Phaser.GameObjects.Ellipse &&
-        Math.abs(child.x - centre.x) <= 2 &&
-        Math.abs(child.y - (centre.y + 7)) <= 2 &&
-        Math.abs(child.displayWidth - 68) <= 2 &&
-        Math.abs(child.displayHeight - 20) <= 2
-      ) {
-        child.destroy();
-        break;
-      }
-    }
-  }
-}
 
 function createReedBed(
   scene: Phaser.Scene,
@@ -159,8 +93,6 @@ function createReedBed(
     }
   });
 
-  // Reed beds are background bank vegetation. Keep them below the older flower-detail layer so
-  // nearby flowers remain visibly in front instead of being cut through by reed stalks.
   return scene.add
     .container(x, y, parts)
     .setName(`${REED_ROOT_NAME}:${id}`)
@@ -168,7 +100,6 @@ function createReedBed(
 }
 
 function ensureReedBeds(scene: Phaser.Scene): void {
-  retireLegacyReeds(scene);
   if (scene.children.getByName(REED_ROOT_NAME)) {
     return;
   }
@@ -370,7 +301,6 @@ export function ensureMoonflowerStreamLife(scene: Phaser.Scene): void {
     return;
   }
 
-  retireLegacyStreamArt(scene);
   const root = scene.add.container(STREAM_X, STREAM_Y).setName(ROOT_NAME).setDepth(5.08);
   createSurface(scene, root);
   const fish = createFishLife(scene, root);
