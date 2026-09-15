@@ -10,7 +10,6 @@ import {
   createPipInteraction,
   FIRST_DISCOVERY_FLAG,
   FIRST_DISCOVERY_ID,
-  FIRST_SPARKLE_COLLECTION_RADIUS,
   FIRST_SPARKLE_POSITION,
   PIP_POSITION,
 } from '../intro/PipIntro';
@@ -26,12 +25,14 @@ import { createUnicornAppearanceTexture } from '../player/UnicornAppearanceRende
 import { DEFAULT_PLAYER_SPEED, resolvePlayerMovement } from '../player/PlayerMovement';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { InteractionPrompt } from '../ui/InteractionPrompt';
+import { getWorldFeedbackPresenter } from '../ui/WorldFeedbackPresenter';
 import { renderHomeMeadow } from '../world/HomeMeadowPresentation';
 import { MOONFLOWER_GLADE_MAP } from '../world/MoonflowerGladeMap';
 import { worldDepthForY } from '../world/WorldDepth';
 
 const COLLISION_TEXTURE_KEY = 'glade-collision-pixel';
 const SAVED_PLAYER_TEXTURE_KEY = 'player-unicorn-saved';
+const FIRST_SPARKLE_INTERACTION_RADIUS = 132;
 
 export class MoonflowerGladeScene extends Phaser.Scene {
   private inputController: InputController | null = null;
@@ -150,10 +151,11 @@ export class MoonflowerGladeScene extends Phaser.Scene {
 
     this.player.applyMovement(movement);
     this.player.updatePresentation(time);
-    this.tryCollectFirstSparkle();
 
+    const sparkleInteraction = this.createFirstSparkleInteraction();
     const targets = [
       ...MOONFLOWER_GLADE_INTERACTIONS,
+      ...(sparkleInteraction ? [sparkleInteraction] : []),
       createPipInteraction(this.hasFirstDiscovery),
     ];
     this.activeInteraction = selectInteractionTarget(
@@ -271,27 +273,45 @@ export class MoonflowerGladeScene extends Phaser.Scene {
     this.dialogueCard?.hide();
   }
 
-  private tryCollectFirstSparkle(): void {
-    if (this.hasFirstDiscovery || !this.player || !this.sparkleContainer) {
+  private createFirstSparkleInteraction(): InteractionTarget | null {
+    if (this.hasFirstDiscovery || !this.sparkleContainer) {
+      return null;
+    }
+
+    return {
+      id: 'interaction:first-moonflower-sparkle',
+      label: 'Moonflower Sparkle',
+      actionLabel: 'Pick up',
+      actionKind: 'pick-up',
+      worldAffordance: true,
+      position: FIRST_SPARKLE_POSITION,
+      interactionRadius: FIRST_SPARKLE_INTERACTION_RADIUS,
+      priority: 30,
+      directArea: {
+        width: 180,
+        height: 180,
+        name: 'first-moonflower-sparkle-direct',
+      },
+      result: {
+        type: 'callback',
+        activate: () => this.collectFirstSparkle(),
+      },
+    };
+  }
+
+  private collectFirstSparkle(): void {
+    if (this.hasFirstDiscovery || !this.sparkleContainer) {
       return;
     }
 
-    const distance = Phaser.Math.Distance.Between(
-      this.player.sprite.x,
-      this.player.sprite.y,
-      FIRST_SPARKLE_POSITION.x,
-      FIRST_SPARKLE_POSITION.y,
-    );
-    if (distance > FIRST_SPARKLE_COLLECTION_RADIUS) {
-      return;
-    }
-
-    this.discoveryService?.unlockDiscovery(FIRST_DISCOVERY_ID, FIRST_DISCOVERY_FLAG);
+    this.discoveryService?.unlockDiscovery(FIRST_DISCOVERY_ID, FIRST_DISCOVERY_FLAG, {
+      suppressRewardFeedback: true,
+    });
     this.hasFirstDiscovery = true;
     this.sparkleContainer.destroy(true);
     this.sparkleContainer = null;
     this.cameras.main.flash(180, 213, 255, 221, false);
-    this.showFeedback('New discovery!\nGreen Moonflower Sparkle ✦');
+    getWorldFeedbackPresenter(this).showGuidance('Now go back and talk to Pip.', 4400);
     this.guideText?.setText('Pip noticed! Go and tell your new friend what you found.');
   }
 
