@@ -5,6 +5,7 @@ import { NOVA_FIRST_RACE_QUEST_ID, SUNRISE_SPRINT_UNLOCKED_FLAG } from '../../co
 import type { SaveRepository } from '../save/SaveRepository';
 import { SaveService } from '../save/SaveService';
 import { COTTAGE_INTERIOR_MAP } from '../world/CottageInteriorMap';
+import { resolveCottageSemanticAnchor } from '../world/CottageSemanticAnchors';
 import type { CottageHomeView } from './CottageHomeView';
 import { FriendVisitService } from './FriendVisitService';
 
@@ -159,7 +160,7 @@ describe('FriendVisitService', () => {
     const visitorRadius = 58;
 
     for (const visit of R4_FRIEND_VISITS) {
-      const { x, y } = visit.position;
+      const { x, y } = resolveCottageSemanticAnchor(visit.anchorId).position;
       expect(x).toBeGreaterThanOrEqual(COTTAGE_INTERIOR_MAP.margin + visitorRadius);
       expect(x).toBeLessThanOrEqual(
         COTTAGE_INTERIOR_MAP.width - COTTAGE_INTERIOR_MAP.margin - visitorRadius,
