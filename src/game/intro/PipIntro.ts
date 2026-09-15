@@ -5,10 +5,7 @@ import { getQuestStepId } from '../quests/QuestEngine';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import type { QuestProgress, SaveGame } from '../save/saveSchema';
-import {
-  getPipEggDialogueId,
-  shouldAdvancePipEggQuestAfterConversation,
-} from '../story/PipEggArc';
+import { getPipEggDialogueId, shouldAdvancePipEggQuestAfterConversation } from '../story/PipEggArc';
 
 export const FIRST_DISCOVERY_ID = 'discovery:moonflower-sparkle' as const;
 export const FIRST_DISCOVERY_FLAG = 'flag:first-sparkle-found';
