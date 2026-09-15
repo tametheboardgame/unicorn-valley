@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
 const PLAYER_NAME = 'world-player-unicorn';
-const PIP_APPROACH = { x: 840, y: 825 } as const;
+const PIP_APPROACH = { x: 1110, y: 825 } as const;
 const WILLOW_APPROACH = { x: 940, y: 1160 } as const;
 const MARIGOLD_APPROACH = { x: 600, y: 860 } as const;
 const NOVA_APPROACH = { x: 2370, y: 930 } as const;
@@ -40,6 +40,63 @@ interface DiagnosticsApi {
   snapshot(): DiagnosticSnapshot;
   startScene(sceneKey: string, data?: object): void;
   setArcadeSpritePosition(sceneKey: string, objectName: string, x: number, y: number): void;
+}
+
+async function seedPipReady(page: Page, reducedMotion = false): Promise<void> {
+  await page.addInitScript(({ useReducedMotion }) => {
+    localStorage.clear();
+    const timestamp = new Date().toISOString();
+    const save = {
+      schemaVersion: 2,
+      createdAt: timestamp,
+      lastSavedAt: timestamp,
+      profile: {
+        name: null,
+        appearance: {},
+        currentLocationId: 'location:moonflower-glade',
+        unlockedAbilityIds: [],
+      },
+      inventory: {
+        itemQuantities: {},
+        ownedCosmeticIds: [],
+        ownedDecorationIds: [],
+        specialItemIds: [],
+      },
+      relationships: { byCharacterId: {} },
+      quests: { byQuestId: {} },
+      world: {
+        flags: {
+          'flag:pip-intro-appeared': true,
+          'flag:pip-welcome-complete': true,
+        },
+        discoveredZoneIds: [],
+        changedObjectIds: [],
+        uniqueDiscoveryIds: [],
+      },
+      home: {
+        ownedFurnitureIds: [],
+        furnitureBySlot: {},
+        gardenFlags: {},
+      },
+      activities: {
+        racesById: {},
+        miniGameRecords: {},
+      },
+      collections: {
+        discoveryIds: [],
+        memoryIds: [],
+      },
+    };
+    const serialisedSave = JSON.stringify(save);
+    localStorage.setItem('unicorn-valley.save', serialisedSave);
+    localStorage.setItem('unicorn-valley.save.schema.2', serialisedSave);
+    if (useReducedMotion) {
+      localStorage.setItem(
+        'unicorn-valley:accessibility-settings:v1',
+        JSON.stringify({ reducedMotion: true, highVisibilityInteractions: false }),
+      );
+    }
+  }, { useReducedMotion: reducedMotion });
 }
 
 async function waitForDiagnostics(page: Page): Promise<void> {
@@ -175,16 +232,16 @@ async function assertMigratedConversationStarts(
   await waitForHiddenObject(page, sceneKey, 'dialogue-production-panel');
 }
 
-test('ordinary Pip conversation stays in-world, compact and explicitly paced', async ({ page }) => {
-  await page.addInitScript(() => window.localStorage.clear());
+test('ordinary Pip conversation stays in-world, stable and explicitly paced', async ({ page }) => {
+  await seedPipReady(page);
   await page.goto('/?diagnostics=1');
   await waitForDiagnostics(page);
   await openPipConversation(page);
 
   let scene = await sceneSnapshot(page, 'MoonflowerGladeScene');
   const positionAtOpen = namedObject(scene, PLAYER_NAME);
-  const panel = namedObject(scene, 'dialogue-production-panel');
-  expect(panel.y).toBeGreaterThan(590);
+  expect(namedObject(scene, 'dialogue-production-portrait-frame').y).toBeGreaterThan(500);
+  expect(namedObject(scene, 'dialogue-production-body').y).toBeGreaterThan(450);
   expect(namedObject(scene, 'dialogue-production-speaker-name').text).toBe('Pip');
   expect(namedObject(scene, 'dialogue-production-body').text).toBe(
     "Hi! I'm Pip. I was hoping you'd arrive!",
@@ -211,7 +268,7 @@ test('ordinary Pip conversation stays in-world, compact and explicitly paced', a
   expect(positionDuringConversation.x).toBeCloseTo(positionAtOpen.x, 1);
   expect(positionDuringConversation.y).toBeCloseTo(positionAtOpen.y, 1);
 
-  await page.screenshot({ path: 'playtest-artifacts/screenshots/wp19e-pip-compact-desktop.png' });
+  await page.screenshot({ path: 'playtest-artifacts/screenshots/wp19e-pip-dialogue-desktop.png' });
 
   await page.keyboard.press('KeyE');
   await expect
@@ -228,7 +285,7 @@ test('ordinary Pip conversation stays in-world, compact and explicitly paced', a
   await waitForHiddenObject(page, 'MoonflowerGladeScene', 'dialogue-production-panel');
 });
 
-test('supporting resident uses the same compact family with readable fallback identity', async ({
+test('supporting resident uses the shared dialogue family with readable fallback identity', async ({
   page,
 }) => {
   await page.addInitScript(() => window.localStorage.clear());
@@ -250,12 +307,13 @@ test('supporting resident uses the same compact family with readable fallback id
   await waitForVisibleObject(page, 'MoonflowerGladeScene', 'dialogue-production-panel');
 
   scene = await sceneSnapshot(page, 'MoonflowerGladeScene');
-  expect(namedObject(scene, 'dialogue-production-panel').y).toBeGreaterThan(590);
+  expect(namedObject(scene, 'dialogue-production-portrait-frame').y).toBeGreaterThan(500);
+  expect(namedObject(scene, 'dialogue-production-body').y).toBeGreaterThan(450);
   expect(namedObject(scene, 'dialogue-production-speaker-name').text).toBe('Juniper');
   expect(namedObject(scene, 'dialogue-production-portrait-fallback').visible).toBe(true);
   expect(namedObject(scene, 'dialogue-production-continue-label').text).toBe('Done');
   await page.screenshot({
-    path: 'playtest-artifacts/screenshots/wp19e-juniper-compact-desktop.png',
+    path: 'playtest-artifacts/screenshots/wp19e-juniper-dialogue-desktop.png',
   });
 });
 
@@ -278,15 +336,8 @@ test('Willow, Marigold and Nova migrated conversations activate from the shared 
 });
 
 test('Reduced Motion keeps conversation reveal and advance decoration static', async ({ page }) => {
+  await seedPipReady(page, true);
   await page.goto('/?diagnostics=1');
-  await page.evaluate(() => {
-    localStorage.clear();
-    localStorage.setItem(
-      'unicorn-valley:accessibility-settings:v1',
-      JSON.stringify({ reducedMotion: true, highVisibilityInteractions: false }),
-    );
-  });
-  await page.reload();
   await waitForDiagnostics(page);
   await openPipConversation(page);
 
@@ -303,7 +354,8 @@ test('Reduced Motion keeps conversation reveal and advance decoration static', a
   expect(secondIndicator.x).toBeCloseTo(firstIndicator.x, 4);
 });
 
-test('compact Pip card renders across all four supported display classes', async ({ page }) => {
+test('Pip dialogue card renders across all four supported display classes', async ({ page }) => {
+  await seedPipReady(page);
   const viewports = [
     ['desktop', { width: 1280, height: 720 }],
     ['tablet-landscape', { width: 1180, height: 820 }],
@@ -314,8 +366,6 @@ test('compact Pip card renders across all four supported display classes', async
   for (const [label, viewport] of viewports) {
     await page.setViewportSize(viewport);
     await page.goto('/?diagnostics=1');
-    await page.evaluate(() => localStorage.clear());
-    await page.reload();
     await waitForDiagnostics(page);
     await openPipConversation(page);
 
@@ -324,7 +374,7 @@ test('compact Pip card renders across all four supported display classes', async
     expect(namedObject(scene, 'dialogue-production-speaker-name').text).toBe('Pip');
     expect(namedObject(scene, 'dialogue-production-continue').interactive).toBe(true);
     await page.screenshot({
-      path: `playtest-artifacts/screenshots/wp19e-pip-compact-${label}.png`,
+      path: `playtest-artifacts/screenshots/wp19e-pip-dialogue-${label}.png`,
     });
   }
 });
