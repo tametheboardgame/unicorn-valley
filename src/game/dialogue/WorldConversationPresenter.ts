@@ -12,6 +12,7 @@ import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 import { setInteractionModalActive } from '../interaction/InteractionModalState';
 import type { SupportingResidentDefinition } from '../population/AmbientPopulationTypes';
 import { getBrowserSaveService } from '../save/browserSaveService';
+import { preemptTransientFeedbackForDialogue } from '../ui/TransientFeedbackCoordinator';
 import { DialogueCard } from './DialogueCard';
 import { DialogueSession } from './DialogueSession';
 import { applyDialogueEffects } from './applyDialogueEffects';
@@ -115,6 +116,7 @@ export class WorldConversationPresenter {
       if (this.active === active) this.close(false);
     });
     this.active = active;
+    preemptTransientFeedbackForDialogue(scene);
     setInteractionModalActive(scene, true);
     this.refresh(speakerNameOverride);
   }
