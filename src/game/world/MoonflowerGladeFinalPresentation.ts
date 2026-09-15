@@ -88,8 +88,12 @@ function createMainGardenPlot(scene: Phaser.Scene, plot: GladeGardenPlot): void 
     root.add(scene.add.rectangle(0, rowY, 230, 18, 0x6f543f, 0.6));
   }
 
-  for (const localX of [-80, -30, 30, 80]) {
-    const rowOffset = ((localX + 80) / 50) % 2 === 0 ? -45 : 10;
+  for (const [localX, rowOffset] of [
+    [-80, 10],
+    [-30, -45],
+    [30, -45],
+    [80, 10],
+  ] as const) {
     root.add([
       scene.add.circle(localX, rowOffset, 13, 0xffd3f1, 0.9),
       scene.add.circle(localX + 8, rowOffset + 8, 8, 0xe6c1ff, 0.9),
