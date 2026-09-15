@@ -6,7 +6,7 @@ Purpose: identify approved H1 behaviour that was still implemented through dupli
 
 ## Final state
 
-**Audit complete and accepted on 15 September 2026.** All identified H1-specific consolidation work described below was completed before merge approval. The final qualified head before documentation-only completion commits was `8dff0c5f9bd1c49212b5cb9d14d177d32483587f`.
+**Audit complete and accepted on 15 September 2026.** All identified H1-specific consolidation work described below was completed before merge approval. The final qualified runtime head before documentation-only completion commits was `8dff0c5f9bd1c49212b5cb9d14d177d32483587f`.
 
 Qualification on that head was fully green:
 
@@ -17,7 +17,7 @@ Qualification on that head was fully green:
 - all three full Chromium shards passed;
 - Firefox/WebKit/Chromium compatibility passed.
 
-David then explicitly authorised final documentation updates, merge and deployment. No unresolved H1.11 blocker remains.
+David then explicitly authorised final documentation updates, merge and deployment. No unresolved H1.11 blocker remains. The documentation-only completion commits do not alter runtime behaviour; their own selected verification must still pass before merge.
 
 ## Executive findings
 
@@ -164,4 +164,4 @@ These are now documented debt rather than hidden H1 dependencies. Future region 
 
 ## Qualification result
 
-H1.11 qualification is complete. The consolidated head passed the full engineering and browser matrix, and David explicitly approved merge/deployment. The remaining work after this audit is only repository merge/deployment bookkeeping; no further H1 runtime remediation is required.
+H1.11 runtime qualification is complete. The consolidated runtime head passed the full engineering and browser matrix, and David explicitly approved merge/deployment. The remaining pre-merge work is repository bookkeeping plus selected verification of the documentation-only completion commits; no further H1 runtime remediation is required.
