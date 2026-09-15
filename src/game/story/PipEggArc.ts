@@ -131,6 +131,17 @@ export function getPipEggStage(save: SaveGame | null): PipEggStage {
   return 'found';
 }
 
+export function shouldAdvancePipEggQuestAfterConversation(progress: QuestProgress): boolean {
+  if (progress.status !== 'active') {
+    return false;
+  }
+
+  return (
+    progress.currentStepId === getQuestStepId(PIP_STRANGE_EGG_QUEST_ID, 0) ||
+    progress.currentStepId === getQuestStepId(PIP_STRANGE_EGG_QUEST_ID, 5)
+  );
+}
+
 function activeTrailDialogue(progress: QuestProgress): DialogueId | null {
   if (progress.status !== 'active') {
     return null;
