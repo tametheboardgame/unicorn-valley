@@ -25,9 +25,7 @@ function createOldGardenGateSign(scene: Phaser.Scene): void {
     .rectangle(0, -112, 202, 68, 0x9a6b47, 1)
     .setStrokeStyle(5, 0x68442f, 1)
     .setAngle(-2);
-  const innerBoard = scene.add
-    .rectangle(0, -112, 184, 50, 0xb88256, 0.7)
-    .setAngle(-2);
+  const innerBoard = scene.add.rectangle(0, -112, 184, 50, 0xb88256, 0.7).setAngle(-2);
   const nailLeft = scene.add.circle(-82, -112, 4, 0x5c5360, 0.88);
   const nailRight = scene.add.circle(82, -112, 4, 0x5c5360, 0.88);
   const label = scene.add
