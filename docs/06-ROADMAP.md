@@ -1,5 +1,26 @@
 # Unicorn Valley - Development Roadmap
 
+## 2026-09-15 R6.5-WP19H1.11 consolidation, cleanup and hardening
+
+H1.1-H1.10 have now reached the intended Moonflower Glade visual and interaction result through iterative human review. Before final H1 qualification/merge, David approved `R6.5-WP19H1.11 - Consolidation, Cleanup and Hardening` as the final engineering checkpoint. The authoritative brief is `docs/work-packages/R6.5-WP19H1.11-CONSOLIDATION-CLEANUP-HARDENING.md`.
+
+H1.11 preserves the approved game appearance/behaviour while hardening the implementation. It will:
+
+- audit H1.1-H1.10 for legacy presentation that is still created and later hidden/destroyed/repositioned;
+- trace suppression/workaround code back to source owners and remove obsolete source behaviour rather than maintaining cleanup hacks;
+- establish one canonical owner for Glade paths, signs, gardens, field/stream presentation, NPC art, interaction presentation, dialogue and transient feedback;
+- retire superseded Glade/Moonflower Patch/scene-local interaction remnants where they are genuinely no longer active;
+- standardise reusable patterns for later regions, especially physical pickups, interaction registry/coordinator ownership, dialogue/feedback ownership, semantic map geometry and lifecycle cleanup;
+- audit high-frequency managers for avoidable scene scans, duplicate tweens/listeners, repeated redraw/rasterisation and lifecycle leaks;
+- sanity-check H1 save/discovery/inventory/quest progression for idempotence and sequencing;
+- update stale tests/comments/imports so they protect the final approved behaviour rather than intermediate H1 checkpoints;
+- add a concise H1 implementation-conventions note for future region work;
+- finish with full relevant browser qualification and a fresh deployed parity preview before H1 merge consideration.
+
+The Old Garden Gate flower issue is the reference failure mode for this pass: the final fix removed the exact source decoration from `EnvironmentProductionPresentationManager`; H1.11 should remove equivalent compensating cleanup wherever the underlying source can safely be corrected instead.
+
+H1.11 remains on the existing draft H1 branch/PR. It must not merge automatically and must preserve the approved H1.10 appearance and gameplay.
+
 ## 2026-09-15 R6.5-WP19H1.10 final Glade polish checkpoint
 
 H1.9 is human-approved. David's final Moonflower Glade review identified one small bounded follow-up before H1 qualification/acceptance: `R6.5-WP19H1.10 - Cottage Garden, Signage and Final Field Polish`. The authoritative brief is `docs/work-packages/R6.5-WP19H1.10-COTTAGE-GARDEN-SIGNAGE-FIELD-POLISH.md`.
