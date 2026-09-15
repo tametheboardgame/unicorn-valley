@@ -165,9 +165,9 @@ export const MOONFLOWER_GLADE_MAP = {
       width: WESTERN_HEDGE_WIDTH,
       height: SOUTH_HEDGE_HEIGHT,
     },
-    // H1.10 signs are physical props. Only the post/base blocks movement, not the full board.
-    { id: 'collision:western-gate-sign', x: 300, y: 790, width: 28, height: 84 },
-    { id: 'collision:sunbeam-direction-sign', x: 2560, y: 790, width: 28, height: 84 },
+    // H1.10 signs are physical props. Only the scaled post/base blocks movement, not the board.
+    { id: 'collision:western-gate-sign', x: 300, y: 798, width: 22, height: 70 },
+    { id: 'collision:sunbeam-direction-sign', x: 2460, y: 799, width: 22, height: 68 },
     // H1.4: visible woodland is now a real hard boundary. The right side deliberately
     // leaves a generous opening around the Sunbeam Village gateway at y=900.
     { id: 'collision:woodland-top', x: 1400, y: 145, width: 2520, height: 150 },
