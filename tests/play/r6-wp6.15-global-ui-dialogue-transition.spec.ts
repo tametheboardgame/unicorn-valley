@@ -284,8 +284,10 @@ test('ordinary Pip conversation stays in-world, stable and explicitly paced', as
       'Welcome to Moonflower Glade. That cosy cottage is your new home, and I can show you around.',
     );
   expect(
-    namedObject(await sceneSnapshot(page, 'MoonflowerGladeScene'), 'dialogue-production-continue-label')
-      .text,
+    namedObject(
+      await sceneSnapshot(page, 'MoonflowerGladeScene'),
+      'dialogue-production-continue-label',
+    ).text,
   ).toBe('Continue');
 
   await page.keyboard.press('KeyE');
