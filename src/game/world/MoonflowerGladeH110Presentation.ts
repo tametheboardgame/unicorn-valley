@@ -5,6 +5,7 @@ import { worldDepthForY } from './WorldDepth';
 const ROOT_NAME = 'h1.10:moonflower-glade-final-polish';
 const GARDEN_PATH_NAME = 'h1.10:garden-path';
 const CORRECTED_BLUE_FLOWER_NAME = 'h1.10:corrected-right-blue-moonflower';
+const LEGACY_SIGN_RECHECK_MS = [240, 900] as const;
 
 function retireLegacySignLabels(scene: Phaser.Scene): void {
   for (const child of [...scene.children.list]) {
@@ -14,6 +15,20 @@ function retireLegacySignLabels(scene: Phaser.Scene): void {
     if (child.text.includes('Old Garden Gate') || child.text.includes('Sunbeam Village')) {
       child.destroy();
     }
+  }
+}
+
+function scheduleLegacySignCleanup(scene: Phaser.Scene): void {
+  // A couple of older world-presentation managers initialise just after the base scene. Recheck
+  // twice during initialisation rather than scanning every scene object every 100 ms forever.
+  // This keeps the H1.10 signs authoritative without adding permanent tablet-frame overhead.
+  retireLegacySignLabels(scene);
+  for (const delayMs of LEGACY_SIGN_RECHECK_MS) {
+    scene.time.delayedCall(delayMs, () => {
+      if (scene.scene.isActive()) {
+        retireLegacySignLabels(scene);
+      }
+    });
   }
 }
 
@@ -68,9 +83,29 @@ function retireFlowerPrimitives(
 }
 
 function clearOldGateSignBackdrop(scene: Phaser.Scene): void {
-  // The old decorative flower sits directly behind the H1.10 physical sign. Clear only that tiny
-  // prop footprint before the new sign is created so the gate/path/hedge remain untouched.
-  retireFlowerPrimitives(scene, { left: 245, right: 350, top: 760, bottom: 860 });
+  // The remaining flower behind the gate sign is owned by an older decorative presentation layer
+  // and may be a grouped container rather than one of the scene's primitive flower pieces. Clear
+  // the small sign-board footprint before the new physical sign is created. The real gate is at
+  // x=125 and the road is below this region, so neither is touched.
+  const bounds = { left: 215, right: 390, top: 665, bottom: 825 } as const;
+  for (const child of [...scene.children.list]) {
+    if (
+      !(child instanceof Phaser.GameObjects.Arc) &&
+      !(child instanceof Phaser.GameObjects.Ellipse) &&
+      !(child instanceof Phaser.GameObjects.Rectangle) &&
+      !(child instanceof Phaser.GameObjects.Container)
+    ) {
+      continue;
+    }
+    if (
+      child.x >= bounds.left &&
+      child.x <= bounds.right &&
+      child.y >= bounds.top &&
+      child.y <= bounds.bottom
+    ) {
+      child.destroy();
+    }
+  }
 }
 
 function createOldGardenGateSign(scene: Phaser.Scene): void {
@@ -235,20 +270,15 @@ function correctMoonflowerFieldEdge(scene: Phaser.Scene): void {
 }
 
 export function ensureMoonflowerGladeH110Presentation(scene: Phaser.Scene): void {
-  if (scene.scene.key !== 'MoonflowerGladeScene') {
-    return;
-  }
-
-  // Older traversal presentation can add its gateway label on a later POST_STEP than this H1.10
-  // pass. Retire matching top-level labels on every sync so the new physical signs remain the only
-  // sign authority regardless of manager registration order.
-  retireLegacySignLabels(scene);
-
-  if (scene.children.getByName(ROOT_NAME)) {
+  if (
+    scene.scene.key !== 'MoonflowerGladeScene' ||
+    scene.children.getByName(ROOT_NAME)
+  ) {
     return;
   }
 
   scene.add.container(0, 0).setName(ROOT_NAME).setVisible(false);
+  scheduleLegacySignCleanup(scene);
   raiseGardenEdgeTrees(scene);
   clearOldGateSignBackdrop(scene);
   createOldGardenGateSign(scene);
