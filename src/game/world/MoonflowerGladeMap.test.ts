@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { PIP_POSITION } from '../intro/PipIntro';
 import { MOONFLOWER_GLADE_MAP } from './MoonflowerGladeMap';
 import {
   findUnreachableTargets,
@@ -70,6 +71,19 @@ describe('Moonflower Glade prototype map', () => {
     }
     expect(stream.position.x + stream.width / 2).toBeLessThan(
       northStream.x - northStream.width / 2,
+    );
+  });
+
+  it('keeps the Cottage Garden action clear of Pip conversation space', () => {
+    const main = MOONFLOWER_GLADE_MAP.gardenPlots.find((plot) => plot.id === 'garden:main');
+    expect(main).toBeDefined();
+    if (!main) {
+      throw new Error('Main cottage garden is required.');
+    }
+
+    expect(main.approach).toEqual({ x: 750, y: 730 });
+    expect(Math.hypot(main.approach.x - PIP_POSITION.x, main.approach.y - PIP_POSITION.y)).toBeGreaterThan(
+      200,
     );
   });
 
