@@ -247,7 +247,7 @@ test('ordinary Pip conversation stays in-world, stable and explicitly paced', as
   expect(namedObject(scene, 'dialogue-production-body').y).toBeGreaterThan(450);
   expect(namedObject(scene, 'dialogue-production-speaker-name').text).toBe('Pip');
   expect(namedObject(scene, 'dialogue-production-body').text).toBe(
-    "Hi! I'm Pip. I was hoping you'd arrive!",
+    "Poof! Oh! Hello! I'm Pip. I'm a glimmerling. Sorry about the smoke. I was practising a dramatic entrance!",
   );
   expect(namedObject(scene, 'dialogue-production-continue-label').text).toBe('Continue');
   expect(hasVisibleNamedObject(scene, 'exploration-interaction-prompt')).toBe(false);
@@ -280,7 +280,24 @@ test('ordinary Pip conversation stays in-world, stable and explicitly paced', as
         namedObject(await sceneSnapshot(page, 'MoonflowerGladeScene'), 'dialogue-production-body')
           .text,
     )
-    .toBe('Try a little exploring. I saw something sparkling beside the path. No rush!');
+    .toBe(
+      'Welcome to Moonflower Glade. That cosy cottage is your new home, and I can show you around.',
+    );
+  expect(
+    namedObject(await sceneSnapshot(page, 'MoonflowerGladeScene'), 'dialogue-production-continue-label')
+      .text,
+  ).toBe('Continue');
+
+  await page.keyboard.press('KeyE');
+  await expect
+    .poll(
+      async () =>
+        namedObject(await sceneSnapshot(page, 'MoonflowerGladeScene'), 'dialogue-production-body')
+          .text,
+    )
+    .toBe(
+      'First, I spotted a bright green sparkle beside the path. Go and take a look. I will wait right here!',
+    );
   scene = await sceneSnapshot(page, 'MoonflowerGladeScene');
   expect(namedObject(scene, 'dialogue-production-continue-label').text).toBe('Done');
 
@@ -288,7 +305,7 @@ test('ordinary Pip conversation stays in-world, stable and explicitly paced', as
   await waitForHiddenObject(page, 'MoonflowerGladeScene', 'dialogue-production-panel');
 });
 
-test('supporting resident uses the shared dialogue family with readable fallback identity', async ({
+test('supporting resident uses the shared dialogue family with production portrait identity', async ({
   page,
 }) => {
   await page.addInitScript(() => window.localStorage.clear());
@@ -308,12 +325,18 @@ test('supporting resident uses the shared dialogue family with readable fallback
   await waitForTalkTarget(page, 'MoonflowerGladeScene', 'Juniper');
   await page.keyboard.press('KeyE');
   await waitForVisibleObject(page, 'MoonflowerGladeScene', 'dialogue-production-panel');
+  await waitForVisibleObject(
+    page,
+    'MoonflowerGladeScene',
+    'dialogue-production-portrait-resident:juniper',
+  );
 
   scene = await sceneSnapshot(page, 'MoonflowerGladeScene');
   expect(namedObject(scene, 'dialogue-production-portrait-frame').y).toBeGreaterThan(500);
   expect(namedObject(scene, 'dialogue-production-body').y).toBeGreaterThan(450);
   expect(namedObject(scene, 'dialogue-production-speaker-name').text).toBe('Juniper');
-  expect(namedObject(scene, 'dialogue-production-portrait-fallback').visible).toBe(true);
+  expect(namedObject(scene, 'dialogue-production-portrait-resident:juniper').visible).toBe(true);
+  expect(namedObject(scene, 'dialogue-production-portrait-fallback').visible).toBe(false);
   expect(namedObject(scene, 'dialogue-production-continue-label').text).toBe('Done');
   await page.screenshot({
     path: 'playtest-artifacts/screenshots/wp19e-juniper-dialogue-desktop.png',
