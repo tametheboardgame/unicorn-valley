@@ -89,10 +89,9 @@ function createGardenPath(scene: Phaser.Scene): void {
 function createGardenPlot(scene: Phaser.Scene, plot: GladeGardenPlot, variant: number): void {
   const x = plot.position.x;
   const y = plot.position.y;
-  const root = scene.add
-    .container(x, y)
-    .setName(`h1.10:${plot.id}`)
-    .setDepth(worldDepthForY(y + plot.height / 2, -0.38));
+  // Soil/furrows are ground art. Keep the whole bed below characters rather than Y-sorting the
+  // rectangle as if it were a standing prop; the interactive target is owned separately.
+  const root = scene.add.container(x, y).setName(`h1.10:${plot.id}`).setDepth(6);
 
   const soil = scene.add
     .rectangle(0, 0, plot.width, plot.height, variant % 2 === 0 ? 0x9b7453 : 0x936d4f, 0.82)
@@ -119,7 +118,14 @@ function createGardenPlot(scene: Phaser.Scene, plot: GladeGardenPlot, variant: n
       root.add(furrow);
       for (const offset of [-0.34, -0.1, 0.14, 0.36]) {
         const sprout = scene.add.circle(rowX, offset * rowSpan, 8, 0x6fa468, 0.94);
-        const leaf = scene.add.ellipse(rowX + (index % 2 === 0 ? 7 : -7), offset * rowSpan - 7, 15, 7, 0x83b978, 0.92);
+        const leaf = scene.add.ellipse(
+          rowX + (index % 2 === 0 ? 7 : -7),
+          offset * rowSpan - 7,
+          15,
+          7,
+          0x83b978,
+          0.92,
+        );
         leaf.setAngle(index % 2 === 0 ? -28 : 28);
         root.add([sprout, leaf]);
       }
