@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { ensureMoonflowerStreamLife } from '../atmosphere/MoonflowerStreamLife';
 import { DiscoveryService } from '../discovery/DiscoveryService';
 import { renderCottageExterior } from '../home/CottageExteriorPresentation';
 import {
@@ -17,6 +18,7 @@ import { DEFAULT_PLAYER_SPEED, resolvePlayerMovement } from '../player/PlayerMov
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { getWorldFeedbackPresenter } from '../ui/WorldFeedbackPresenter';
 import { renderHomeMeadow } from '../world/HomeMeadowPresentation';
+import { ensureMoonflowerGladeFinalPresentation } from '../world/MoonflowerGladeFinalPresentation';
 import { MOONFLOWER_GLADE_MAP } from '../world/MoonflowerGladeMap';
 import { worldDepthForY } from '../world/WorldDepth';
 
@@ -39,6 +41,8 @@ export class MoonflowerGladeScene extends Phaser.Scene {
 
   public create(): void {
     this.createEnvironment();
+    ensureMoonflowerStreamLife(this);
+    ensureMoonflowerGladeFinalPresentation(this);
     this.ensureCollisionTexture();
 
     const saveService = getBrowserSaveService();
@@ -469,7 +473,9 @@ export class MoonflowerGladeScene extends Phaser.Scene {
     const groundParts: Phaser.GameObjects.GameObject[] = [
       this.add.ellipse(0, 51 * scale, 54 * scale, 14 * scale, 0x4d8358, 0.16),
       this.add.rectangle(0, 25 * scale, 7 * scale, 58 * scale, 0x5f9b67, 0.95),
-      this.add.ellipse(-10 * scale, 31 * scale, 20 * scale, 9 * scale, 0x72a970, 0.84).setAngle(-28),
+      this.add
+        .ellipse(-10 * scale, 31 * scale, 20 * scale, 9 * scale, 0x72a970, 0.84)
+        .setAngle(-28),
       this.add.ellipse(10 * scale, 38 * scale, 18 * scale, 8 * scale, 0x6ca56d, 0.8).setAngle(28),
     ];
     this.add.container(x, y, groundParts).setDepth(baseDepth - 0.2);
