@@ -270,10 +270,7 @@ function correctMoonflowerFieldEdge(scene: Phaser.Scene): void {
 }
 
 export function ensureMoonflowerGladeH110Presentation(scene: Phaser.Scene): void {
-  if (
-    scene.scene.key !== 'MoonflowerGladeScene' ||
-    scene.children.getByName(ROOT_NAME)
-  ) {
+  if (scene.scene.key !== 'MoonflowerGladeScene' || scene.children.getByName(ROOT_NAME)) {
     return;
   }
 
