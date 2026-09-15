@@ -22,7 +22,11 @@ const GUIDANCE_NAME = 'world-feedback-guidance';
 const REACTION_NAME = 'world-feedback-reaction';
 const GUIDANCE_Y = GAME_HEIGHT - 150;
 const GUIDANCE_WIDTH = 660;
-const GUIDANCE_MAX_TEXT_WIDTH = GUIDANCE_WIDTH - 58;
+const GUIDANCE_ICON_GUTTER = 64;
+const GUIDANCE_SIDE_PADDING = 24;
+const GUIDANCE_TEXT_CENTER_OFFSET = GUIDANCE_ICON_GUTTER / 2;
+const GUIDANCE_MAX_TEXT_WIDTH =
+  GUIDANCE_WIDTH - GUIDANCE_ICON_GUTTER - GUIDANCE_SIDE_PADDING * 2;
 const GUIDANCE_DURATION_MS = 5200;
 const REACTION_DURATION_MS = 2800;
 const REACTION_MAX_TEXT_WIDTH = 360;
@@ -79,7 +83,7 @@ export class WorldFeedbackPresenter {
 
     const centerX = GAME_WIDTH / 2;
     const text = this.scene.add
-      .text(centerX, GUIDANCE_Y, message, {
+      .text(centerX + GUIDANCE_TEXT_CENTER_OFFSET, GUIDANCE_Y, message, {
         color: '#244f5c',
         fontFamily: UI_FONT,
         fontSize: '18px',
@@ -131,7 +135,7 @@ export class WorldFeedbackPresenter {
     );
 
     const marker = this.scene.add
-      .text(centerX - GUIDANCE_WIDTH / 2 + 30, GUIDANCE_Y, '✦', {
+      .text(centerX - GUIDANCE_WIDTH / 2 + GUIDANCE_ICON_GUTTER / 2, GUIDANCE_Y, '✦', {
         color: '#297f8e',
         fontFamily: UI_FONT,
         fontSize: '24px',
@@ -252,16 +256,20 @@ export class WorldFeedbackPresenter {
     const view = camera.worldView;
     const width = this.reactionText.width + 42;
     const height = this.reactionText.height + 30;
-    const x = Phaser.Math.Clamp(
-      this.reactionAnchor.x,
-      view.left + SIDE_SAFE_MARGIN + width / 2,
-      view.right - SIDE_SAFE_MARGIN - width / 2,
+    const x = Math.round(
+      Phaser.Math.Clamp(
+        this.reactionAnchor.x,
+        view.left + SIDE_SAFE_MARGIN + width / 2,
+        view.right - SIDE_SAFE_MARGIN - width / 2,
+      ),
     );
     const preferredY = this.reactionAnchor.y - Math.max(76, height / 2 + 42);
-    const y = Phaser.Math.Clamp(
-      preferredY,
-      view.top + TOP_SAFE_MARGIN + height / 2,
-      view.bottom - BOTTOM_SAFE_MARGIN - height / 2,
+    const y = Math.round(
+      Phaser.Math.Clamp(
+        preferredY,
+        view.top + TOP_SAFE_MARGIN + height / 2,
+        view.bottom - BOTTOM_SAFE_MARGIN - height / 2,
+      ),
     );
 
     this.reactionPanel.setPosition(x, y);
