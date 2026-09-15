@@ -62,6 +62,8 @@ describe('Moonflower Glade prototype map', () => {
     expect(main.height).toBe(upper.height);
     expect(upper.position.y + upper.height / 2).toBeLessThan(main.position.y - main.height / 2);
     expect(stream.orientation).toBe('vertical');
+    expect(stream.position.y - stream.height / 2).toBe(upper.position.y - upper.height / 2);
+    expect(stream.position.y + stream.height / 2).toBe(main.position.y + main.height / 2);
     expect(northStream).toBeDefined();
     if (!northStream) {
       throw new Error('North stream collider is required for the garden clearance contract.');
@@ -153,8 +155,8 @@ describe('Moonflower Glade prototype map', () => {
   it('blocks the visible lower trunk/base areas called out in H1.4 review', () => {
     for (const point of [
       { x: 430, y: 250 },
-      { x: 820, y: 270 },
-      { x: 1180, y: 250 },
+      { x: 820, y: 175 },
+      { x: 1180, y: 175 },
       { x: 1640, y: 250 },
       { x: 1980, y: 250 },
       { x: 2520, y: 270 },
