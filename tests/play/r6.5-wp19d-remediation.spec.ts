@@ -235,8 +235,8 @@ test.describe('R6.5-WP19D interaction remediation', () => {
       .toBe(true);
 
     scene = await getScene(page, 'MoonflowerGladeScene');
-    const conversation = objectByName(scene, 'dialogue-production-panel');
-    expect(conversation.y).toBeGreaterThan(500);
+    expect(objectByName(scene, 'dialogue-production-portrait-frame').y).toBeGreaterThan(500);
+    expect(objectByName(scene, 'dialogue-production-body').y).toBeGreaterThan(450);
     expect(objectByName(scene, 'exploration-location-title-panel').visible).toBe(true);
     expect(objectByName(scene, 'exploration-interaction-prompt').visible).toBe(false);
     expect(objectByName(scene, 'exploration-tablet-hint-panel').visible).toBe(false);
