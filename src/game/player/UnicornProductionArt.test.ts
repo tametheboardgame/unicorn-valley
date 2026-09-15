@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { UNICORN_WORLD_TAIL_SAFE_INSET } from './UnicornAppearanceRenderer';
 import {
   getUnicornProductionTextureKey,
   selectUnicornProductionPose,
@@ -21,5 +22,11 @@ describe('UnicornProductionArt', () => {
     expect(selectUnicornProductionPose('moving', 280, 0, false)).toBe('gallop-a');
     expect(selectUnicornProductionPose('moving', 280, 110, false)).toBe('gallop-b');
     expect(selectUnicornProductionPose('moving', 150, 110, true)).toBe('gallop-b');
+  });
+
+  it('keeps wide world-tail silhouettes inside the generated texture safe edge', () => {
+    // World textures draw around x=118. The widest plume/default tail, including its outline,
+    // reaches roughly 126.5px left of its tail anchor. Keep a positive rendered margin.
+    expect(118 + UNICORN_WORLD_TAIL_SAFE_INSET - 126.5).toBeGreaterThan(0);
   });
 });
