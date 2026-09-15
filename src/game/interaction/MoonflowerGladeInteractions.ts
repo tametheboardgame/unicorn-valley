@@ -40,8 +40,8 @@ function gardenInteraction(
   return {
     id: interactionId,
     label,
-    actionLabel: 'Inspect',
-    actionKind: 'inspect',
+    actionLabel: 'Interact',
+    actionKind: 'interact',
     position: gardenApproach(plotId),
     interactionRadius: 150,
     // H1.10 plot interactions deliberately outrank the older generic garden-corner affordance.
