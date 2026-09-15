@@ -166,56 +166,68 @@ export class WorldConversationPresenter {
       import('../population/R6SupportingResidentContent'),
       import('../population/SupportingResidentArt'),
     ])
-      .then(([{ R6_SUPPORTING_RESIDENTS }, { createSupportingResidentSprite }]) => {
-        if (
-          this.active !== active ||
-          active.closing ||
-          requestId !== active.supportingPortraitRequestId
-        ) {
-          return;
-        }
+      .then(
+        ([
+          { R6_SUPPORTING_RESIDENTS },
+          { createSupportingResidentSprite, SUPPORTING_RESIDENT_ART_LAYOUT },
+        ]) => {
+          if (
+            this.active !== active ||
+            active.closing ||
+            requestId !== active.supportingPortraitRequestId
+          ) {
+            return;
+          }
 
-        const residents: readonly SupportingResidentDefinition[] = R6_SUPPORTING_RESIDENTS;
-        const resident = residents.find(
-          (candidate) => candidate.id === speakerId || candidate.characterId === speakerId,
-        );
-        if (!resident) {
-          return;
-        }
+          const residents: readonly SupportingResidentDefinition[] = R6_SUPPORTING_RESIDENTS;
+          const resident = residents.find(
+            (candidate) => candidate.id === speakerId || candidate.characterId === speakerId,
+          );
+          if (!resident) {
+            return;
+          }
 
-        // MoonflowerGladeScene keeps a dormant scene-owned DialogueCard for its old local
-        // conversation route, while WorldConversationPresenter creates the active card. Selecting
-        // the first object by name could therefore attach resident art to the hidden card and leave
-        // the visible card showing its initial. Always resolve the newest visible frame/fallback.
-        const frame = latestVisibleNamedObject(
-          active.scene,
-          'dialogue-production-portrait-frame',
-          (object): object is Phaser.GameObjects.Arc => object instanceof Phaser.GameObjects.Arc,
-        );
-        const fallback = latestVisibleNamedObject(
-          active.scene,
-          'dialogue-production-portrait-fallback',
-          (object): object is Phaser.GameObjects.Text => object instanceof Phaser.GameObjects.Text,
-        );
-        if (!frame) {
-          return;
-        }
+          // MoonflowerGladeScene keeps a dormant scene-owned DialogueCard for its old local
+          // conversation route, while WorldConversationPresenter creates the active card. Selecting
+          // the first object by name could therefore attach resident art to the hidden card and leave
+          // the visible card showing its initial. Always resolve the newest visible frame/fallback.
+          const frame = latestVisibleNamedObject(
+            active.scene,
+            'dialogue-production-portrait-frame',
+            (object): object is Phaser.GameObjects.Arc => object instanceof Phaser.GameObjects.Arc,
+          );
+          const fallback = latestVisibleNamedObject(
+            active.scene,
+            'dialogue-production-portrait-fallback',
+            (object): object is Phaser.GameObjects.Text => object instanceof Phaser.GameObjects.Text,
+          );
+          if (!frame) {
+            return;
+          }
 
-        fallback?.setVisible(false);
-        const sprite = createSupportingResidentSprite(active.scene, resident)
-          .setName(`dialogue-production-portrait-${resident.id}`)
-          .setOrigin(0.5)
-          .setScrollFactor(0)
-          .setDepth(130);
-        const maxWidth = frame.displayWidth * 0.92;
-        const maxHeight = frame.displayHeight * 0.82;
-        const scale = Math.min(maxWidth / sprite.width, maxHeight / sprite.height);
-        sprite
-          .setPosition(frame.x, frame.y)
-          .setDisplaySize(sprite.width * scale, sprite.height * scale)
-          .setVisible(true);
-        active.supportingPortrait = sprite;
-      })
+          fallback?.setVisible(false);
+          const sprite = createSupportingResidentSprite(active.scene, resident)
+            .setName(`dialogue-production-portrait-${resident.id}`)
+            // Supporting-resident textures deliberately include generous transparent tail/head
+            // safety margins for world animation. Centre the portrait on the authored unicorn draw
+            // anchor rather than the texture rectangle, so Juniper and every other silhouette sit
+            // visually in the frame without per-character magic offsets.
+            .setOrigin(
+              SUPPORTING_RESIDENT_ART_LAYOUT.drawX / SUPPORTING_RESIDENT_ART_LAYOUT.textureWidth,
+              SUPPORTING_RESIDENT_ART_LAYOUT.drawY / SUPPORTING_RESIDENT_ART_LAYOUT.textureHeight,
+            )
+            .setScrollFactor(0)
+            .setDepth(130);
+          const maxWidth = frame.displayWidth * 0.92;
+          const maxHeight = frame.displayHeight * 0.82;
+          const scale = Math.min(maxWidth / sprite.width, maxHeight / sprite.height);
+          sprite
+            .setPosition(frame.x, frame.y)
+            .setDisplaySize(sprite.width * scale, sprite.height * scale)
+            .setVisible(true);
+          active.supportingPortrait = sprite;
+        },
+      )
       .catch(() => {
         // DialogueCard's readable initial fallback remains if optional resident art cannot load.
       });
