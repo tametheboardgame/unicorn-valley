@@ -32,9 +32,9 @@ const BOTTOM_SAFE_MARGIN = 92;
 /**
  * Owns ordinary non-dialogue world feedback introduced by WP19E1.
  *
- * Guidance is a small non-modal lower-screen card. Environmental reactions stay attached to
- * their world source and are clamped inside the camera's safe viewport. Dialogue, reward and
- * Wonderbook discovery presenters remain separate semantic owners.
+ * Guidance is a small non-modal lower-screen card centred in the playable viewport. Environmental
+ * reactions stay attached to their world source and are clamped inside the camera's safe viewport.
+ * Dialogue, reward and Wonderbook discovery presenters remain separate semantic owners.
  */
 export class WorldFeedbackPresenter {
   private guidanceObjects: FeedbackObject[] = [];
@@ -64,8 +64,9 @@ export class WorldFeedbackPresenter {
     this.pendingGuidance = null;
     this.clearGuidance();
 
+    const centerX = GAME_WIDTH / 2;
     const text = this.scene.add
-      .text(GAME_WIDTH / 2 - 70, GUIDANCE_Y, message, {
+      .text(centerX, GUIDANCE_Y, message, {
         color: '#244f5c',
         fontFamily: UI_FONT,
         fontSize: '18px',
@@ -87,7 +88,7 @@ export class WorldFeedbackPresenter {
       .setDepth(20_160);
     shadow.fillStyle(0x263948, 0.2);
     shadow.fillRoundedRect(
-      GAME_WIDTH / 2 - 70 - GUIDANCE_WIDTH / 2 + 6,
+      centerX - GUIDANCE_WIDTH / 2 + 6,
       GUIDANCE_Y - height / 2 + 7,
       GUIDANCE_WIDTH,
       height,
@@ -102,14 +103,14 @@ export class WorldFeedbackPresenter {
     panel.fillStyle(0xe9fff8, 0.98);
     panel.lineStyle(4, 0x55aebb, 1);
     panel.fillRoundedRect(
-      GAME_WIDTH / 2 - 70 - GUIDANCE_WIDTH / 2,
+      centerX - GUIDANCE_WIDTH / 2,
       GUIDANCE_Y - height / 2,
       GUIDANCE_WIDTH,
       height,
       22,
     );
     panel.strokeRoundedRect(
-      GAME_WIDTH / 2 - 70 - GUIDANCE_WIDTH / 2,
+      centerX - GUIDANCE_WIDTH / 2,
       GUIDANCE_Y - height / 2,
       GUIDANCE_WIDTH,
       height,
@@ -117,7 +118,7 @@ export class WorldFeedbackPresenter {
     );
 
     const marker = this.scene.add
-      .text(GAME_WIDTH / 2 - 70 - GUIDANCE_WIDTH / 2 + 30, GUIDANCE_Y, '✦', {
+      .text(centerX - GUIDANCE_WIDTH / 2 + 30, GUIDANCE_Y, '✦', {
         color: '#297f8e',
         fontFamily: UI_FONT,
         fontSize: '24px',
