@@ -180,7 +180,7 @@ test.describe('WP18J shared responsive concept UI', () => {
     await page.setViewportSize({ width: 1180, height: 664 });
     await page.goto('/?scene=glade&diagnostics=1', { waitUntil: 'domcontentloaded' });
     await waitForScene(page, 'MoonflowerGladeScene');
-    await expectCanonicalLandscapeShell(page, { movementPadVisible: false });
+    await expectCanonicalLandscapeShell(page);
 
     const before = navigationGeometry(await sceneObjects(page, 'MoonflowerGladeScene'));
     expect(before).toHaveLength(8);
@@ -213,7 +213,7 @@ test.describe('WP18J shared responsive concept UI', () => {
 
     await clickGamePoint(page, 1172, 76);
     await waitForScene(page, 'MoonflowerGladeScene');
-    await expectCanonicalLandscapeShell(page, { movementPadVisible: false });
+    await expectCanonicalLandscapeShell(page);
 
     await expect
       .poll(async () => navigationGeometry(await sceneObjects(page, 'MoonflowerGladeScene')))
