@@ -14,13 +14,13 @@ function landmarkApproach(id: GladeLandmarkId): { x: number; y: number } {
   return landmark.approach;
 }
 
-function entranceApproach(id: GladeEntranceId): { x: number; y: number } {
+function entrancePosition(id: GladeEntranceId): { x: number; y: number } {
   const entrance = MOONFLOWER_GLADE_MAP.entrances.find((candidate) => candidate.id === id);
   if (!entrance) {
     throw new Error(`Moonflower Glade interaction references missing entrance: ${id}`);
   }
 
-  return entrance.approach;
+  return entrance.position;
 }
 
 function gardenApproach(id: GladeGardenPlotId): { x: number; y: number } {
@@ -92,8 +92,9 @@ export const MOONFLOWER_GLADE_INTERACTIONS = [
     label: 'Sunbeam Village',
     actionLabel: 'Go towards Rainbow Meadow',
     actionKind: 'enter',
-    position: entranceApproach('sunbeam-village'),
-    interactionRadius: 180,
+    activationMode: 'automatic',
+    position: entrancePosition('sunbeam-village'),
+    interactionRadius: 120,
     priority: 20,
     result: {
       type: 'scene-transition',
