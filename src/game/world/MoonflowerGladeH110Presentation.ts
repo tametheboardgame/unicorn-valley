@@ -21,12 +21,15 @@ function retireLegacySignLabels(scene: Phaser.Scene): void {
 function scheduleLegacySignCleanup(scene: Phaser.Scene): void {
   // A couple of older world-presentation managers initialise just after the base scene. Recheck
   // twice during initialisation rather than scanning every scene object every 100 ms forever.
-  // This keeps the H1.10 signs authoritative without adding permanent tablet-frame overhead.
+  // The same bounded pass removes the small decorative flower that is also created late behind
+  // the Old Garden Gate sign. Nothing here remains active after initial scene setup.
   retireLegacySignLabels(scene);
+  clearOldGateSignBackdrop(scene);
   for (const delayMs of LEGACY_SIGN_RECHECK_MS) {
     scene.time.delayedCall(delayMs, () => {
       if (scene.scene.isActive()) {
         retireLegacySignLabels(scene);
+        clearOldGateSignBackdrop(scene);
       }
     });
   }
@@ -83,12 +86,14 @@ function retireFlowerPrimitives(
 }
 
 function clearOldGateSignBackdrop(scene: Phaser.Scene): void {
-  // The remaining flower behind the gate sign is owned by an older decorative presentation layer
-  // and may be a grouped container rather than one of the scene's primitive flower pieces. Clear
-  // the small sign-board footprint before the new physical sign is created. The real gate is at
-  // x=125 and the road is below this region, so neither is touched.
+  // The remaining flower behind the gate sign is owned by a later decorative presentation layer.
+  // Clear only the compact footprint directly behind the sign board/post. The physical H1.10 sign
+  // itself is excluded explicitly, and the real gate at x=125 plus the road at y=900 sit outside it.
   const bounds = { left: 215, right: 390, top: 665, bottom: 825 } as const;
   for (const child of [...scene.children.list]) {
+    if (child.name === 'h1.10:old-garden-gate-sign') {
+      continue;
+    }
     if (
       !(child instanceof Phaser.GameObjects.Arc) &&
       !(child instanceof Phaser.GameObjects.Ellipse) &&
@@ -277,7 +282,6 @@ export function ensureMoonflowerGladeH110Presentation(scene: Phaser.Scene): void
   scene.add.container(0, 0).setName(ROOT_NAME).setVisible(false);
   scheduleLegacySignCleanup(scene);
   raiseGardenEdgeTrees(scene);
-  clearOldGateSignBackdrop(scene);
   createOldGardenGateSign(scene);
   createSunbeamDirectionSign(scene);
   createGardenPath(scene);
