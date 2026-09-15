@@ -1,10 +1,11 @@
 import Phaser from 'phaser';
 import { WILLOW_MOONFLOWERS_QUEST_ID } from '../../content/r2Quests';
 import { isReducedMotionEnabled } from '../accessibility/AccessibilitySettings';
-import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
+import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { InventoryService } from '../inventory/InventoryService';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
+import { getWorldFeedbackPresenter } from '../ui/WorldFeedbackPresenter';
 import { worldDepthForY } from '../world/WorldDepth';
 import {
   WILLOW_MOONFLOWER_ITEM_ID,
@@ -12,10 +13,10 @@ import {
   getWillowStoryPhase,
 } from './WillowMoonflowersStory';
 
-const COLLECTION_RADIUS = 82;
+const COLLECTION_RADIUS = 132;
 const LEGACY_THRESHOLD_GLIMMER_NAME = 'moonflower-field-threshold-glimmer';
-const FEEDBACK_Y = GAME_HEIGHT - 205;
 const COLLECTION_FLAG_PREFIX = 'h1:willow-moonflower-collected:';
+const INTERACTION_OWNER = 'h1:willow-moonflower-collectibles';
 
 const COLLECTIBLES = [
   { id: 'west', x: 2020, y: 1190 },
@@ -35,7 +36,6 @@ interface CollectibleMoonflower {
 interface GladeCollectionState {
   scene: Phaser.Scene;
   flowers: CollectibleMoonflower[];
-  feedback: Phaser.GameObjects.Text;
   signature: string;
 }
 
@@ -43,22 +43,11 @@ function collectionFlag(id: CollectibleId): string {
   return `${COLLECTION_FLAG_PREFIX}${id}`;
 }
 
-function findPlayer(scene: Phaser.Scene): Phaser.Physics.Arcade.Sprite | null {
-  return (
-    scene.children.list.find(
-      (object): object is Phaser.Physics.Arcade.Sprite =>
-        object instanceof Phaser.Physics.Arcade.Sprite &&
-        object.texture.key.startsWith('player-unicorn-'),
-    ) ?? null
-  );
-}
-
 export class WillowMoonflowerGladeWorldManager {
   private readonly saveService = getBrowserSaveService();
   private readonly inventory = new InventoryService(this.saveService);
   private readonly quests = getBrowserQuestEngine();
   private state: GladeCollectionState | null = null;
-  private feedbackTimer: Phaser.Time.TimerEvent | null = null;
 
   public constructor(private readonly game: Phaser.Game) {
     this.game.events.on(Phaser.Core.Events.POST_STEP, this.update, this);
@@ -78,7 +67,6 @@ export class WillowMoonflowerGladeWorldManager {
     const state = this.ensureState(scene);
     this.removeLegacyThresholdGlimmer(scene);
     this.syncFlowers(state);
-    this.tryCollect(state);
   }
 
   private ensureState(scene: Phaser.Scene): GladeCollectionState {
@@ -90,22 +78,6 @@ export class WillowMoonflowerGladeWorldManager {
     this.state = {
       scene,
       flowers: [],
-      feedback: scene.add
-        .text(GAME_WIDTH / 2, FEEDBACK_Y, '', {
-          color: '#244f5c',
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '18px',
-          fontStyle: 'bold',
-          align: 'center',
-          backgroundColor: '#e9fff8fa',
-          padding: { x: 22, y: 13 },
-          wordWrap: { width: 456 },
-        })
-        .setName('willow-moonflower-feedback')
-        .setOrigin(0.5)
-        .setScrollFactor(0)
-        .setDepth(20_162)
-        .setVisible(false),
       signature: '',
     };
     this.syncFlowers(this.state, true);
@@ -172,17 +144,17 @@ export class WillowMoonflowerGladeWorldManager {
     }
     state.flowers.length = 0;
 
-    if (progress.status === 'completed' || owned >= WILLOW_MOONFLOWER_REQUIRED_QUANTITY) {
-      return;
-    }
-
-    for (const collectible of COLLECTIBLES) {
-      if (!collected.has(collectible.id)) {
-        state.flowers.push(
-          this.createCollectible(state.scene, collectible.id, collectible.x, collectible.y),
-        );
+    if (progress.status !== 'completed' && owned < WILLOW_MOONFLOWER_REQUIRED_QUANTITY) {
+      for (const collectible of COLLECTIBLES) {
+        if (!collected.has(collectible.id)) {
+          state.flowers.push(
+            this.createCollectible(state.scene, collectible.id, collectible.x, collectible.y),
+          );
+        }
       }
     }
+
+    this.syncInteractions(state);
   }
 
   private createCollectible(
@@ -272,17 +244,36 @@ export class WillowMoonflowerGladeWorldManager {
     return { id, container, x, y };
   }
 
-  private tryCollect(state: GladeCollectionState): void {
-    const player = findPlayer(state.scene);
-    if (!player || state.flowers.length === 0) {
+  private syncInteractions(state: GladeCollectionState): void {
+    const targets = state.flowers.map((flower) => ({
+      id: `interaction:willow-moonflower:${flower.id}`,
+      label: 'Moonflower',
+      actionLabel: 'Pick up',
+      actionKind: 'pick-up' as const,
+      position: { x: flower.x, y: flower.y },
+      interactionRadius: COLLECTION_RADIUS,
+      priority: 15,
+      directArea: {
+        width: COLLECTION_RADIUS * 1.6,
+        height: COLLECTION_RADIUS * 1.6,
+        name: `willow-moonflower-direct:${flower.id}`,
+      },
+      result: {
+        type: 'callback' as const,
+        activate: () => this.collectFlower(state, flower.id),
+      },
+    }));
+
+    getSceneInteractionRegistry(state.scene).replaceOwnerTargets(INTERACTION_OWNER, targets);
+  }
+
+  private collectFlower(state: GladeCollectionState, id: CollectibleId): void {
+    if (this.state !== state || !state.scene.scene.isActive()) {
       return;
     }
 
-    const index = state.flowers.findIndex(
-      (flower) =>
-        Phaser.Math.Distance.Between(player.x, player.y, flower.x, flower.y) <= COLLECTION_RADIUS,
-    );
-    if (index < 0) {
+    const index = state.flowers.findIndex((flower) => flower.id === id);
+    if (index < 0 || this.getCollectedIds().has(id)) {
       return;
     }
 
@@ -294,45 +285,23 @@ export class WillowMoonflowerGladeWorldManager {
     });
     state.scene.cameras.main.flash(140, 220, 245, 255, false);
 
+    const progress = this.quests.getProgress(WILLOW_MOONFLOWERS_QUEST_ID);
+    const phase = getWillowStoryPhase(progress);
+    const feedback = getWorldFeedbackPresenter(state.scene);
     if (quantity >= WILLOW_MOONFLOWER_REQUIRED_QUANTITY) {
-      const progress = this.quests.getProgress(WILLOW_MOONFLOWERS_QUEST_ID);
-      const phase = getWillowStoryPhase(progress);
       const hint =
         phase === 'collecting' || phase === 'return-to-willow' || phase === 'resolving'
           ? 'You have all three Moonflowers. Take them back to Willow in Sunbeam Village.'
           : 'You have all three Moonflowers. Someone in Sunbeam Village might want these.';
-      this.showFeedback(
-        state,
-        `Moonflower collected! ${quantity} / ${WILLOW_MOONFLOWER_REQUIRED_QUANTITY}`,
-        1350,
-        () => this.showFeedback(state, hint, 3200),
-      );
+      feedback.showGuidance(`Moonflower collected! 3 / 3\n${hint}`, 5200);
     } else {
-      this.showFeedback(
-        state,
+      feedback.showGuidance(
         `Moonflower collected! ${quantity} / ${WILLOW_MOONFLOWER_REQUIRED_QUANTITY}`,
-        2300,
+        2600,
       );
     }
-    this.syncFlowers(state, true);
-  }
 
-  private showFeedback(
-    state: GladeCollectionState,
-    message: string,
-    durationMs: number,
-    onComplete?: () => void,
-  ): void {
-    this.feedbackTimer?.destroy();
-    this.feedbackTimer = null;
-    state.feedback.setText(message).setVisible(true);
-    this.feedbackTimer = state.scene.time.delayedCall(durationMs, () => {
-      this.feedbackTimer = null;
-      if (state.feedback.active) {
-        state.feedback.setVisible(false);
-      }
-      onComplete?.();
-    });
+    this.syncFlowers(state, true);
   }
 
   private removeLegacyThresholdGlimmer(scene: Phaser.Scene): void {
@@ -340,16 +309,14 @@ export class WillowMoonflowerGladeWorldManager {
   }
 
   private destroyState(): void {
-    this.feedbackTimer?.destroy();
-    this.feedbackTimer = null;
     if (!this.state) {
       return;
     }
+    getSceneInteractionRegistry(this.state.scene).clearOwner(INTERACTION_OWNER);
     for (const flower of this.state.flowers) {
       flower.container.destroy(true);
     }
     this.state.flowers.length = 0;
-    this.state.feedback.destroy();
     this.state = null;
   }
 }
