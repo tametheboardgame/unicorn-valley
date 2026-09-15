@@ -152,23 +152,6 @@ function hidePicnicNovaPlaceholder(scene: Phaser.Scene): void {
   }
 }
 
-function hidePipPlaceholder(scene: Phaser.Scene): void {
-  for (const object of scene.children.list) {
-    if (
-      !(object instanceof Phaser.GameObjects.Arc) &&
-      !(object instanceof Phaser.GameObjects.Ellipse) &&
-      !(object instanceof Phaser.GameObjects.Triangle)
-    ) {
-      continue;
-    }
-    const nearPip =
-      Math.abs(object.x - PIP_POSITION.x) <= 72 && Math.abs(object.y - PIP_POSITION.y) <= 82;
-    if (nearPip) {
-      object.setVisible(false);
-    }
-  }
-}
-
 function hidePebblePlaceholder(scene: Phaser.Scene): void {
   const marker = SUNBEAM_VILLAGE_MAP.npcMarkers.find((candidate) => candidate.id === 'pebble');
   if (!marker) {
@@ -222,6 +205,9 @@ export class CoreNpcProductionPresentationManager {
 
   public constructor(private readonly game: Phaser.Game) {
     this.game.events.on(Phaser.Core.Events.POST_STEP, this.update, this);
+    this.game.events.once(Phaser.Core.Events.DESTROY, () => {
+      this.game.events.off(Phaser.Core.Events.POST_STEP, this.update, this);
+    });
   }
 
   private update(): void {
@@ -244,7 +230,6 @@ export class CoreNpcProductionPresentationManager {
     if (!scene || scene.children.getByName('core-npc:pip:world')) {
       return;
     }
-    hidePipPlaceholder(scene);
     const pip = createCoreNpcSprite(scene, 'pip', PIP_POSITION.x, PIP_POSITION.y + 8, 'world')
       .setDisplaySize(92, 74)
       .setDepth(worldDepthForY(PIP_POSITION.y + 44, 0.35));
