@@ -8,10 +8,7 @@ import {
   startWillowConversation,
 } from '../story/WorldStoryConversations';
 import { RAINBOW_MEADOW_MAP } from '../world/RainbowMeadowMap';
-import {
-  setSunbeamVillagePlayerSpawn,
-  SUNBEAM_VILLAGE_MAP,
-} from '../world/SunbeamVillageMap';
+import { setSunbeamVillagePlayerSpawn, SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
 import type { InteractionActionKind, InteractionTarget } from './InteractionTarget';
 import { MOONFLOWER_GLADE_INTERACTIONS } from './MoonflowerGladeInteractions';
 import { getSceneInteractionRegistry } from './SceneInteractionRegistry';
@@ -104,10 +101,8 @@ function villageTargets(scene: Phaser.Scene): InteractionTarget[] {
   }
 
   const landmark = (id: string) => requiredPoint(SUNBEAM_VILLAGE_MAP.landmarks, id, true);
-  const entranceApproach = (id: string) =>
-    requiredPoint(SUNBEAM_VILLAGE_MAP.entrances, id, true);
-  const entrancePosition = (id: string) =>
-    requiredPoint(SUNBEAM_VILLAGE_MAP.entrances, id, false);
+  const entranceApproach = (id: string) => requiredPoint(SUNBEAM_VILLAGE_MAP.entrances, id, true);
+  const entrancePosition = (id: string) => requiredPoint(SUNBEAM_VILLAGE_MAP.entrances, id, false);
   const npc = (id: string) => requiredPoint(SUNBEAM_VILLAGE_MAP.npcMarkers, id, false);
 
   const definitions: Array<[InteractionTarget, InteractionActionKind]> = [
