@@ -37,6 +37,8 @@ export type InteractionResult =
   | {
       type: 'dialogue';
       dialogueId: DialogueId;
+      onComplete?: () => void;
+      onClose?: () => void;
     }
   | {
       type: 'callback';
