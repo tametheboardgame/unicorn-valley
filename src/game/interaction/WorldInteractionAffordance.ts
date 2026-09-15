@@ -44,8 +44,14 @@ export class WorldInteractionAffordanceLayer {
       const entry = this.entries.get(target.id) ?? this.createEntry(target.id);
       const selected = selectedTargetId === target.id;
 
+      // Semantic target positions may legitimately be fractional while an NPC is tweening. The
+      // affordance itself is presentation-only, so keep it on rendered pixel boundaries. This
+      // prevents a one-pixel shimmer against a smoothly easing camera without quantising NPC/world
+      // movement or changing interaction distance calculations.
+      const renderedX = Math.round(position.x);
+      const renderedY = Math.round(position.y + yOffset);
       entry.container
-        .setPosition(position.x, position.y + yOffset)
+        .setPosition(renderedX, renderedY)
         .setDepth(worldDepthForY(position.y, 0.95))
         .setVisible(!hidden)
         .setAlpha(selected ? 1 : settings.highVisibilityInteractions ? 0.96 : 0.8)
