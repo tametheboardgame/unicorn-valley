@@ -211,6 +211,8 @@ export function ensureMoonflowerGladeH110Presentation(scene: Phaser.Scene): void
   createGardenPath(scene);
   MOONFLOWER_GLADE_MAP.gardenPlots
     .filter((plot) => plot.id !== 'garden:main')
-    .forEach((plot, index) => createGardenPlot(scene, plot, index));
+    .forEach((plot, index) => {
+      createGardenPlot(scene, plot, index);
+    });
   correctMoonflowerFieldEdge(scene);
 }
