@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { ensureMoonflowerStreamLife } from '../atmosphere/MoonflowerStreamLife';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
+import { ensureMoonflowerGladeH110Presentation } from '../world/MoonflowerGladeH110Presentation';
 
 const FIREFLY_BUTTON_WIDTH = 244;
 const FIREFLY_BUTTON_HEIGHT = 80;
@@ -133,6 +134,7 @@ export class R5FinalTighteningManager {
 
       if (scene.scene.key === 'MoonflowerGladeScene') {
         ensureMoonflowerStreamLife(scene);
+        ensureMoonflowerGladeH110Presentation(scene);
       } else if (scene.scene.key === 'FireflyLanternScene') {
         tightenFireflySelector(scene);
       } else if (scene.scene.key === 'CottageInteriorScene') {
