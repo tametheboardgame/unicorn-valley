@@ -22,6 +22,7 @@ type CoreSceneRuntime = Phaser.Scene & {
   interactionPrompt?: { destroy(): void } | null;
   activeInteraction?: InteractionTarget | null;
   hasFirstDiscovery?: boolean;
+  createFirstSparkleInteraction?: () => InteractionTarget | null;
 };
 
 type ScenePrototype = {
@@ -300,6 +301,22 @@ function moonflowerTargets(scene: CoreSceneRuntime): InteractionTarget[] {
       moonflowerActivate?.call(scene, target),
     ),
   );
+
+  const sparkle = scene.createFirstSparkleInteraction?.();
+  if (sparkle) {
+    targets.push({
+      ...sparkle,
+      actionKind: 'pick-up',
+      activationMode: 'explicit',
+      result: {
+        type: 'callback',
+        activate: () => {
+          moonflowerActivate?.call(scene, sparkle);
+          getSceneInteractionRegistry(scene).replaceOwnerTargets(OWNER_KEY, moonflowerTargets(scene));
+        },
+      },
+    });
+  }
 
   const pip = createPipInteraction(Boolean(scene.hasFirstDiscovery));
   targets.push(
