@@ -6,7 +6,6 @@ import { DiscoveryService } from '../discovery/DiscoveryService';
 import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import {
   FIRST_DISCOVERY_ID,
-  FIRST_SPARKLE_POSITION,
   isPipIntroduced,
   PIP_INTRO_APPEARED_FLAG,
   PIP_POSITION,
@@ -30,6 +29,7 @@ const COTTAGE_NEST_POSITION = { x: 1225, y: 970 } as const;
 const CLUE_INTERACTION_RADIUS = 155;
 const PIP_PRODUCTION_NAME = 'core-npc:pip:world';
 const PIP_TRAIL_INTERACTION_OWNER = 'h1:pip-egg-trail';
+const FIRST_SPARKLE_NAME = 'pip-first-green-sparkle';
 
 interface WorldMarker {
   id: string;
@@ -71,15 +71,8 @@ function setWorldFlag(flagId: string, value: boolean): void {
 }
 
 function findFirstSparkle(scene: Phaser.Scene): Phaser.GameObjects.Container | null {
-  return (
-    scene.children.list.find(
-      (object): object is Phaser.GameObjects.Container =>
-        object instanceof Phaser.GameObjects.Container &&
-        Math.abs(object.x - FIRST_SPARKLE_POSITION.x) <= 1 &&
-        Math.abs(object.y - FIRST_SPARKLE_POSITION.y) <= 1 &&
-        object.list.some((child) => child instanceof Phaser.GameObjects.Text && child.text === '✦'),
-    ) ?? null
-  );
+  const sparkle = scene.children.getByName(FIRST_SPARKLE_NAME);
+  return sparkle instanceof Phaser.GameObjects.Container ? sparkle : null;
 }
 
 function setNamedVisibility(scene: Phaser.Scene, name: string, visible: boolean): void {
@@ -185,8 +178,6 @@ export class PipEggWorldManager {
     const welcomeComplete = save?.world.flags[PIP_WELCOME_COMPLETE_FLAG] === true;
     const firstDiscoveryComplete = isFirstDiscoveryComplete();
     const sparkle = findFirstSparkle(scene);
-
-    this.hideLegacyPip(scene);
 
     if (!introduced) {
       setNamedVisibility(scene, PIP_PRODUCTION_NAME, false);
@@ -327,33 +318,6 @@ export class PipEggWorldManager {
       });
     }
     return puff;
-  }
-
-  private hideLegacyPip(scene: Phaser.Scene): void {
-    for (const object of scene.children.list) {
-      if (object.name === PIP_PRODUCTION_NAME) {
-        continue;
-      }
-      const positioned = object as Phaser.GameObjects.GameObject & { x?: number; y?: number };
-      if (typeof positioned.x !== 'number' || typeof positioned.y !== 'number') {
-        continue;
-      }
-      const nearPip =
-        Math.abs(positioned.x - PIP_POSITION.x) <= 75 &&
-        Math.abs(positioned.y - PIP_POSITION.y) <= 90;
-      if (!nearPip) {
-        continue;
-      }
-      if (
-        object instanceof Phaser.GameObjects.Arc ||
-        object instanceof Phaser.GameObjects.Ellipse ||
-        object instanceof Phaser.GameObjects.Triangle
-      ) {
-        object.setVisible(false);
-      } else if (object instanceof Phaser.GameObjects.Text && object.text === 'Pip') {
-        object.setVisible(false);
-      }
-    }
   }
 
   private createGladeClue(scene: Phaser.Scene, target: PipEggClueSpot): WorldMarker {
