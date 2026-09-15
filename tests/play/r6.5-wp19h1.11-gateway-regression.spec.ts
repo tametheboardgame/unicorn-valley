@@ -95,16 +95,16 @@ async function setPlayerPosition(
   y: number,
 ): Promise<void> {
   await page.evaluate(
-    ({ key, targetX, targetY }) => {
+    ({ key, playerName, targetX, targetY }) => {
       const diagnostics = (
         window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi }
       ).__UNICORN_VALLEY_DIAGNOSTICS__;
       if (!diagnostics) {
         throw new Error('Browser diagnostics are unavailable.');
       }
-      diagnostics.setArcadeSpritePosition(key, PLAYER_NAME, targetX, targetY);
+      diagnostics.setArcadeSpritePosition(key, playerName, targetX, targetY);
     },
-    { key: sceneKey, targetX: x, targetY: y },
+    { key: sceneKey, playerName: PLAYER_NAME, targetX: x, targetY: y },
   );
 }
 
