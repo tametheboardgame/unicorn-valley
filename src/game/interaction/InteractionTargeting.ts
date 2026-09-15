@@ -151,7 +151,7 @@ export function selectAutomaticInteractionTarget(
   targets: readonly InteractionTarget[],
 ): InteractionTarget | null {
   return (
-    scoreEligibleTargets(playerPosition, targets, isAutomaticInteractionTargetEligible)[0]?.target ??
-    null
+    scoreEligibleTargets(playerPosition, targets, isAutomaticInteractionTargetEligible)[0]
+      ?.target ?? null
   );
 }
