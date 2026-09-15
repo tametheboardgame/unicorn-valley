@@ -52,12 +52,66 @@ async function sceneSnapshot(
   }, sceneKey);
 }
 
+async function seedIntroducedPip(page: import('@playwright/test').Page): Promise<void> {
+  await page.addInitScript(() => {
+    localStorage.clear();
+    const timestamp = new Date().toISOString();
+    const save = {
+      schemaVersion: 2,
+      createdAt: timestamp,
+      lastSavedAt: timestamp,
+      profile: {
+        name: null,
+        appearance: {},
+        currentLocationId: 'location:moonflower-glade',
+        unlockedAbilityIds: [],
+      },
+      inventory: {
+        itemQuantities: {},
+        ownedCosmeticIds: [],
+        ownedDecorationIds: [],
+        specialItemIds: [],
+      },
+      relationships: { byCharacterId: {} },
+      quests: { byQuestId: {} },
+      world: {
+        flags: {
+          'flag:pip-intro-appeared': true,
+          'flag:pip-welcome-complete': true,
+        },
+        discoveredZoneIds: [],
+        changedObjectIds: [],
+        uniqueDiscoveryIds: [],
+      },
+      home: {
+        ownedFurnitureIds: [],
+        furnitureBySlot: {},
+        gardenFlags: {},
+      },
+      activities: {
+        racesById: {},
+        miniGameRecords: {},
+      },
+      collections: {
+        discoveryIds: [],
+        memoryIds: [],
+      },
+    };
+    const serialised = JSON.stringify(save);
+    localStorage.setItem('unicorn-valley.save', serialised);
+    localStorage.setItem('unicorn-valley.save.schema.2', serialised);
+  });
+}
+
 test.describe('R6.5-WP18I desktop concept HUD cleanup', () => {
   test.use({ viewport: { width: 1280, height: 720 }, hasTouch: false });
 
   test('uses the concept HUD without legacy controls and keeps atmosphere choices in Settings', async ({
     page,
   }) => {
+    // This contract checks the ordinary explicit Talk affordance, not the first-run Pip welcome
+    // modal. Seed the completed welcome so the two interaction states are tested independently.
+    await seedIntroducedPip(page);
     await page.goto('/?scene=glade&diagnostics=1');
     await waitForDiagnostics(page);
     await page.waitForFunction(() => {
