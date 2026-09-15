@@ -3,6 +3,7 @@ import { getVerticalSliceAudio } from '../audio/VerticalSliceAudio';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { gameEventBus } from '../events/GameEventBus';
 import { isInteractionModalActive } from '../interaction/InteractionModalState';
+import { claimTransientFeedback } from './TransientFeedbackCoordinator';
 import { UI_COLOURS, UI_FONT, createUiShadow } from './uiTheme';
 
 interface PendingFeedback {
@@ -12,14 +13,13 @@ interface PendingFeedback {
   kind: 'standard' | 'quest-complete';
 }
 
-const WORLD_GUIDANCE_NAME = 'world-feedback-guidance';
-
 export class RewardFeedback {
   private readonly unsubscriptions: (() => void)[] = [];
   private readonly activeObjects: Phaser.GameObjects.GameObject[] = [];
   private activeTimer: Phaser.Time.TimerEvent | null = null;
   private pendingTimer: Phaser.Time.TimerEvent | null = null;
   private pendingFeedback: PendingFeedback | null = null;
+  private releaseActiveClaim: (() => void) | null = null;
 
   public constructor(private readonly scene: Phaser.Scene) {
     this.unsubscriptions.push(
@@ -65,25 +65,26 @@ export class RewardFeedback {
     accent: number,
     kind: PendingFeedback['kind'] = 'standard',
   ): void {
-    if (this.isHigherPrioritySurfaceActive()) {
-      // Dialogue and explicit blue guidance own the player's attention. Coalesce lower-priority
-      // reward/discovery feedback until that surface has gone instead of stacking UI layers.
-      this.pendingFeedback = { message, icon, accent, kind };
-      this.schedulePendingFeedback();
+    const next = { message, icon, accent, kind } satisfies PendingFeedback;
+    if (isInteractionModalActive(this.scene)) {
+      this.queueFeedback(next);
       return;
     }
 
     this.pendingFeedback = null;
     this.pendingTimer?.destroy();
     this.pendingTimer = null;
-    this.showNow(message, icon, accent, kind);
+    this.showNow(next);
   }
 
-  private isHigherPrioritySurfaceActive(): boolean {
-    const guidance = this.scene.children.getByName(WORLD_GUIDANCE_NAME) as
-      | (Phaser.GameObjects.GameObject & { visible?: boolean })
-      | null;
-    return isInteractionModalActive(this.scene) || guidance?.visible === true;
+  private queueFeedback(feedback: PendingFeedback): void {
+    // Preserve a queued quest-complete moment if a lower-priority reward happens afterwards.
+    if (this.pendingFeedback?.kind === 'quest-complete' && feedback.kind === 'standard') {
+      this.schedulePendingFeedback();
+      return;
+    }
+    this.pendingFeedback = feedback;
+    this.schedulePendingFeedback();
   }
 
   private schedulePendingFeedback(): void {
@@ -96,26 +97,33 @@ export class RewardFeedback {
       if (!pending) {
         return;
       }
-      if (this.isHigherPrioritySurfaceActive()) {
+      if (isInteractionModalActive(this.scene)) {
         this.schedulePendingFeedback();
         return;
       }
       this.pendingFeedback = null;
-      this.showNow(pending.message, pending.icon, pending.accent, pending.kind);
+      this.showNow(pending);
     });
   }
 
-  private showNow(
-    message: string,
-    icon: string,
-    accent: number,
-    kind: PendingFeedback['kind'],
-  ): void {
+  private showNow(feedback: PendingFeedback): void {
     this.activeTimer?.destroy();
     this.activeTimer = null;
     this.clearActiveObjects();
 
-    const questComplete = kind === 'quest-complete';
+    const transientKind = feedback.kind === 'quest-complete' ? 'quest-complete' : 'reward';
+    const releaseClaim = claimTransientFeedback(this.scene, transientKind, () => {
+      this.activeTimer?.destroy();
+      this.activeTimer = null;
+      this.clearActiveObjects();
+    });
+    if (!releaseClaim) {
+      this.queueFeedback(feedback);
+      return;
+    }
+    this.releaseActiveClaim = releaseClaim;
+
+    const questComplete = feedback.kind === 'quest-complete';
     const x = GAME_WIDTH / 2;
     const y = questComplete ? GAME_HEIGHT / 2 : GAME_HEIGHT - 164;
     const width = questComplete ? 500 : 430;
@@ -126,11 +134,11 @@ export class RewardFeedback {
     const panel = this.scene.add
       .rectangle(x, y, width, height, UI_COLOURS.cream, 0.99)
       .setName('reward-feedback-panel')
-      .setStrokeStyle(questComplete ? 6 : 4, accent, 1)
+      .setStrokeStyle(questComplete ? 6 : 4, feedback.accent, 1)
       .setScrollFactor(0)
       .setDepth(151);
     const iconText = this.scene.add
-      .text(x - (questComplete ? 194 : 178), y, icon, {
+      .text(x - (questComplete ? 194 : 178), y, feedback.icon, {
         fontFamily: UI_FONT,
         fontSize: questComplete ? '34px' : '25px',
       })
@@ -139,7 +147,7 @@ export class RewardFeedback {
       .setScrollFactor(0)
       .setDepth(152);
     const label = this.scene.add
-      .text(x + (questComplete ? 18 : 14), y, message, {
+      .text(x + (questComplete ? 18 : 14), y, feedback.message, {
         color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
         fontSize: questComplete ? '25px' : '17px',
@@ -215,5 +223,7 @@ export class RewardFeedback {
       object.destroy();
     }
     this.activeObjects.length = 0;
+    this.releaseActiveClaim?.();
+    this.releaseActiveClaim = null;
   }
 }
