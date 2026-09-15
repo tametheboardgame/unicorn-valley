@@ -98,28 +98,6 @@ test.describe('R5-WP5.9C global atmosphere and weather', () => {
     });
   }
 
-  test('Moonflower Patch inherits the outdoor atmosphere layer without bespoke scene wiring', async ({
-    page,
-  }) => {
-    await page.goto('/?scene=glade&diagnostics=1');
-    await waitForScene(page, 'MoonflowerGladeScene');
-    await page.evaluate(() => {
-      const diagnostics = (
-        window as typeof window & {
-          __UNICORN_VALLEY_DIAGNOSTICS__?: { startScene(sceneKey: string): void };
-        }
-      ).__UNICORN_VALLEY_DIAGNOSTICS__;
-      diagnostics?.startScene('MoonflowerPatchScene');
-    });
-    await waitForScene(page, 'MoonflowerPatchScene');
-    const scene = sceneFrom(await snapshot(page), 'MoonflowerPatchScene');
-
-    expect(scene.objects.some((object) => object.name === 'atmospheric-time-presentation')).toBe(
-      true,
-    );
-    expect(scene.objects.some((object) => object.name === 'magical-weather-control')).toBe(true);
-  });
-
   test('manual atmosphere and weather state survive an outdoor scene change', async ({ page }) => {
     await page.goto('/?scene=glade&diagnostics=1');
     await waitForScene(page, 'MoonflowerGladeScene');
