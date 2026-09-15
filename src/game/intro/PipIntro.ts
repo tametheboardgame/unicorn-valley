@@ -5,7 +5,10 @@ import { getQuestStepId } from '../quests/QuestEngine';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import type { QuestProgress, SaveGame } from '../save/saveSchema';
-import { getPipEggDialogueId } from '../story/PipEggArc';
+import {
+  getPipEggDialogueId,
+  shouldAdvancePipEggQuestAfterConversation,
+} from '../story/PipEggArc';
 
 export const FIRST_DISCOVERY_ID = 'discovery:moonflower-sparkle' as const;
 export const FIRST_DISCOVERY_FLAG = 'flag:first-sparkle-found';
@@ -55,12 +58,13 @@ export function resolvePipInteractionDialogueId(
 }
 
 /**
- * Resolve Pip's direct-talk response at the moment Talk is activated. The two talk gates in the
- * Mysterious Trail are deliberately acknowledged here so Pip himself starts and concludes the
- * trail instead of remote world markers doing it behind the player's back.
+ * Resolve Pip's direct-talk response at the moment Talk is activated.
  *
- * `hasFirstDiscovery` is only a scene snapshot. Shared interaction registries can outlive that
- * snapshot, so activation always rechecks the save before deciding which conversation Pip uses.
+ * Starting the trail is safe here because startQuest is idempotent, but completing a talk step is
+ * deliberately not a side effect of resolving a dialogue id. Completion now happens through the
+ * dialogue result's onComplete callback, after the shared conversation presenter has removed the
+ * modal card. That guarantees quest-complete feedback cannot be emitted and immediately pre-empted
+ * by the conversation it belongs to.
  */
 export function getCurrentPipInteractionDialogueId(hasFirstDiscovery: boolean): DialogueId {
   const save = getBrowserSaveService().load();
@@ -70,25 +74,19 @@ export function getCurrentPipInteractionDialogueId(hasFirstDiscovery: boolean): 
 
   const quests = getBrowserQuestEngine();
   let progress = quests.getProgress(PIP_STRANGE_EGG_QUEST_ID);
-  const awaitingTrailStart =
-    progress.status === 'not-started' ||
-    progress.currentStepId === getQuestStepId(PIP_STRANGE_EGG_QUEST_ID, 0);
-  if (awaitingTrailStart) {
-    if (progress.status === 'not-started') {
-      progress = quests.startQuest(PIP_STRANGE_EGG_QUEST_ID);
-    }
-    if (progress.currentStepId === getQuestStepId(PIP_STRANGE_EGG_QUEST_ID, 0)) {
-      quests.notifyCharacterTalked('character:pip');
-    }
-    return 'dialogue:pip-strange-egg-intro';
+  if (progress.status === 'not-started') {
+    progress = quests.startQuest(PIP_STRANGE_EGG_QUEST_ID);
   }
 
-  if (progress.currentStepId === getQuestStepId(PIP_STRANGE_EGG_QUEST_ID, 5)) {
+  return resolvePipInteractionDialogueId(true, progress, save);
+}
+
+function completeCurrentPipTalkStep(): void {
+  const quests = getBrowserQuestEngine();
+  const progress = quests.getProgress(PIP_STRANGE_EGG_QUEST_ID);
+  if (shouldAdvancePipEggQuestAfterConversation(progress)) {
     quests.notifyCharacterTalked('character:pip');
-    return 'dialogue:pip-strange-egg-return';
   }
-
-  return getPipEggDialogueId(save, progress);
 }
 
 export function createPipInteraction(hasFirstDiscovery: boolean): InteractionTarget {
@@ -107,6 +105,7 @@ export function createPipInteraction(hasFirstDiscovery: boolean): InteractionTar
       get dialogueId(): DialogueId {
         return getCurrentPipInteractionDialogueId(hasFirstDiscovery);
       },
+      onComplete: completeCurrentPipTalkStep,
     },
   };
 }
