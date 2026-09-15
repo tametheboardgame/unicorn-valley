@@ -31,6 +31,7 @@ interface SceneCoordinatorState {
   affordances: WorldInteractionAffordanceLayer;
   retainedTargetId: string | null;
   preferredTargetId: string | null;
+  automaticTargetId: string | null;
   directZones: Map<string, Phaser.GameObjects.Zone>;
   wasDialogueBlocking: boolean;
 }
@@ -172,6 +173,7 @@ export class WorldInteractionCoordinator {
       affordances: new WorldInteractionAffordanceLayer(scene),
       retainedTargetId: null,
       preferredTargetId: null,
+      automaticTargetId: null,
       directZones: new Map(),
       wasDialogueBlocking: false,
     };
@@ -196,6 +198,7 @@ export class WorldInteractionCoordinator {
       state.affordances.sync(targets, null, true);
       state.retainedTargetId = null;
       state.preferredTargetId = null;
+      state.automaticTargetId = null;
       state.pointer.setButton('INTERACT', false);
       this.syncDirectZones(state, targets, null);
       return keyboardInteractionRequested;
@@ -216,9 +219,34 @@ export class WorldInteractionCoordinator {
     this.syncDirectZones(state, targets, player);
 
     if (suppressActivationAfterDialogue || isInteractionActivationSuppressed()) {
+      state.automaticTargetId = null;
       state.pointer.setButton('INTERACT', false);
       return keyboardInteractionRequested;
     }
+
+    if (selected?.activationMode === 'automatic') {
+      if (state.automaticTargetId === selected.id) {
+        return false;
+      }
+
+      const registryTargets = getSceneInteractionRegistry(state.scene).getTargets();
+      const revalidated = selectInteractionTarget(player, registryTargets, {
+        preferredTargetId: selected.id,
+        retainedTargetId: selected.id,
+        retentionMargin: 0,
+      });
+      if (!revalidated || revalidated.id !== selected.id || revalidated.activationMode !== 'automatic') {
+        state.retainedTargetId = null;
+        state.automaticTargetId = null;
+        state.prompt.setTarget(null);
+        return keyboardInteractionRequested;
+      }
+
+      state.automaticTargetId = selected.id;
+      this.activate(state.scene, revalidated);
+      return false;
+    }
+    state.automaticTargetId = null;
 
     const pointerInteractionRequested = state.input.justPressed('INTERACT');
     if (!selected || (!pointerInteractionRequested && !keyboardInteractionRequested)) {
@@ -248,7 +276,11 @@ export class WorldInteractionCoordinator {
   ): void {
     const wanted = new Set<string>();
     for (const target of targets) {
-      if (!player || !isInteractionTargetEligible(player, target)) {
+      if (
+        target.activationMode === 'automatic' ||
+        !player ||
+        !isInteractionTargetEligible(player, target)
+      ) {
         continue;
       }
       wanted.add(target.id);
