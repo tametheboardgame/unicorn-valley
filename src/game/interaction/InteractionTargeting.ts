@@ -38,10 +38,7 @@ export function getInteractionApproachPosition(target: InteractionTarget): MapPo
     : target.approachPosition;
 }
 
-function isInteractionTargetInRange(
-  playerPosition: MapPoint,
-  target: InteractionTarget,
-): boolean {
+function isInteractionTargetInRange(playerPosition: MapPoint, target: InteractionTarget): boolean {
   if (!conditionIsTrue(target.visible) || !conditionIsTrue(target.enabled)) {
     return false;
   }
@@ -63,14 +60,18 @@ export function isInteractionTargetEligible(
   playerPosition: MapPoint,
   target: InteractionTarget,
 ): boolean {
-  return target.activationMode !== 'automatic' && isInteractionTargetInRange(playerPosition, target);
+  return (
+    target.activationMode !== 'automatic' && isInteractionTargetInRange(playerPosition, target)
+  );
 }
 
 export function isAutomaticInteractionTargetEligible(
   playerPosition: MapPoint,
   target: InteractionTarget,
 ): boolean {
-  return target.activationMode === 'automatic' && isInteractionTargetInRange(playerPosition, target);
+  return (
+    target.activationMode === 'automatic' && isInteractionTargetInRange(playerPosition, target)
+  );
 }
 
 function scoreEligibleTargets(
