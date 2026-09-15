@@ -319,7 +319,10 @@ export class WorldInteractionCoordinator {
         return;
       }
       case 'dialogue':
-        getWorldConversationPresenter().start(scene, target.result.dialogueId);
+        getWorldConversationPresenter().start(scene, target.result.dialogueId, {
+          onComplete: target.result.onComplete,
+          onClose: target.result.onClose,
+        });
         return;
     }
   }
