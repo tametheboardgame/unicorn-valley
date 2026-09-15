@@ -16,6 +16,16 @@ export interface GladeEntrance {
   direction: 'east' | 'south';
 }
 
+export interface GladeGardenPlot {
+  id: string;
+  label: string;
+  position: MapPoint;
+  approach: MapPoint;
+  width: number;
+  height: number;
+  orientation: 'horizontal' | 'vertical';
+}
+
 const DEFAULT_PLAYER_SPAWN = { x: 690, y: 900 } as const;
 const playerSpawn: MapPoint = { ...DEFAULT_PLAYER_SPAWN };
 const BRIDGE_Y = 900;
@@ -96,6 +106,35 @@ export const MOONFLOWER_GLADE_MAP = {
       approach: { x: 1890, y: 1185 },
     },
   ] satisfies readonly GladeLandmark[],
+  gardenPlots: [
+    {
+      id: 'garden:main',
+      label: 'Cottage Garden',
+      position: { x: 890, y: 620 },
+      approach: { x: 890, y: 790 },
+      width: 280,
+      height: 190,
+      orientation: 'horizontal',
+    },
+    {
+      id: 'garden:upper',
+      label: 'Upper Garden',
+      position: { x: 910, y: 335 },
+      approach: { x: 1080, y: 335 },
+      width: 280,
+      height: 190,
+      orientation: 'horizontal',
+    },
+    {
+      id: 'garden:stream-bank',
+      label: 'Stream Garden',
+      position: { x: 1160, y: 590 },
+      approach: { x: 1045, y: 590 },
+      width: 160,
+      height: 420,
+      orientation: 'vertical',
+    },
+  ] satisfies readonly GladeGardenPlot[],
   entrances: [
     {
       id: 'sunbeam-village',
@@ -126,6 +165,9 @@ export const MOONFLOWER_GLADE_MAP = {
       width: WESTERN_HEDGE_WIDTH,
       height: SOUTH_HEDGE_HEIGHT,
     },
+    // H1.10 signs are physical props. Only the post/base blocks movement, not the full board.
+    { id: 'collision:western-gate-sign', x: 300, y: 790, width: 28, height: 84 },
+    { id: 'collision:sunbeam-direction-sign', x: 2560, y: 790, width: 28, height: 84 },
     // H1.4: visible woodland is now a real hard boundary. The right side deliberately
     // leaves a generous opening around the Sunbeam Village gateway at y=900.
     { id: 'collision:woodland-top', x: 1400, y: 145, width: 2520, height: 150 },
