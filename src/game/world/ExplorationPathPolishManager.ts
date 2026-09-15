@@ -217,24 +217,6 @@ const PATHS: Readonly<Partial<Record<string, readonly Stroke[]>>> = {
   ],
 };
 
-function removeMoonflowerLegacyPresentation(scene: Phaser.Scene): void {
-  for (const object of [...scene.children.list]) {
-    if (
-      object instanceof Phaser.GameObjects.Graphics &&
-      object.name !== PATH_POLISH_NAME &&
-      object.depth === 2
-    ) {
-      object.destroy();
-    }
-  }
-
-  const duplicateFieldLabel = scene.children.list.find(
-    (object): object is Phaser.GameObjects.Text =>
-      object instanceof Phaser.GameObjects.Text && object.text === 'Moonflower Field',
-  );
-  duplicateFieldLabel?.destroy();
-}
-
 function drawRoundedStroke(scene: Phaser.Scene, stroke: Stroke): void {
   if (stroke.points.length < 2) {
     return;
@@ -271,10 +253,6 @@ export class ExplorationPathPolishManager {
       const strokes = PATHS[scene.scene.key];
       if (!strokes || scene.children.getByName(PATH_POLISH_ANCHOR)) {
         continue;
-      }
-
-      if (scene.scene.key === 'MoonflowerGladeScene') {
-        removeMoonflowerLegacyPresentation(scene);
       }
 
       scene.add.zone(-64, -64, 2, 2).setName(PATH_POLISH_ANCHOR).setVisible(false);
