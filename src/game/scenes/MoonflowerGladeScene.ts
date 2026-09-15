@@ -290,8 +290,8 @@ export class MoonflowerGladeScene extends Phaser.Scene {
     this.hasFirstDiscovery = true;
     this.sparkleContainer.destroy(true);
     this.sparkleContainer = null;
-    this.cameras.main.flash(180, 255, 239, 177, false);
-    this.showFeedback('New discovery!\nMoonflower Sparkle ✨');
+    this.cameras.main.flash(180, 213, 255, 221, false);
+    this.showFeedback('New discovery!\nGreen Moonflower Sparkle ✦');
     this.guideText?.setText('Pip noticed! Go and tell your new friend what you found.');
   }
 
@@ -330,23 +330,28 @@ export class MoonflowerGladeScene extends Phaser.Scene {
   }
 
   private createFirstSparkle(): void {
-    const glow = this.add.circle(0, 0, 34, 0xfff4a8, 0.2);
-    const ring = this.add.circle(0, 0, 18, 0xfff8c7, 0.42).setStrokeStyle(3, 0xffffff, 0.85);
+    // Tutorial discoveries deliberately use green, not the Glade's ambient gold firefly/sparkle
+    // palette. A child should be able to distinguish "the thing Pip asked me to find" instantly.
+    const glow = this.add.circle(0, 0, 38, 0x63e59a, 0.24);
+    const ring = this.add
+      .circle(0, 0, 20, 0xb9ffd2, 0.52)
+      .setStrokeStyle(4, 0xeffff4, 0.94);
     const star = this.add
       .text(0, 0, '✦', {
-        color: '#fff9cf',
+        color: '#7dffad',
         fontFamily: 'system-ui, sans-serif',
-        fontSize: '34px',
+        fontSize: '38px',
         fontStyle: 'bold',
       })
       .setOrigin(0.5);
 
     this.sparkleContainer = this.add
       .container(FIRST_SPARKLE_POSITION.x, FIRST_SPARKLE_POSITION.y, [glow, ring, star])
+      .setName('pip-first-green-sparkle')
       .setDepth(18);
     this.tweens.add({
       targets: this.sparkleContainer,
-      scale: 1.2,
+      scale: 1.24,
       angle: 8,
       duration: 720,
       yoyo: true,
