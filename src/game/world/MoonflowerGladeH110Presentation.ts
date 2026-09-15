@@ -202,12 +202,20 @@ function correctMoonflowerFieldEdge(scene: Phaser.Scene): void {
 }
 
 export function ensureMoonflowerGladeH110Presentation(scene: Phaser.Scene): void {
-  if (scene.scene.key !== 'MoonflowerGladeScene' || scene.children.getByName(ROOT_NAME)) {
+  if (scene.scene.key !== 'MoonflowerGladeScene') {
+    return;
+  }
+
+  // Older traversal presentation can add its gateway label on a later POST_STEP than this H1.10
+  // pass. Retire matching top-level labels on every sync so the new physical signs remain the only
+  // sign authority regardless of manager registration order.
+  retireLegacySignLabels(scene);
+
+  if (scene.children.getByName(ROOT_NAME)) {
     return;
   }
 
   scene.add.container(0, 0).setName(ROOT_NAME).setVisible(false);
-  retireLegacySignLabels(scene);
   createOldGardenGateSign(scene);
   createSunbeamDirectionSign(scene);
   createGardenPath(scene);
