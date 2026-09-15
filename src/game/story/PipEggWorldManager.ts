@@ -79,6 +79,13 @@ function findFirstSparkle(scene: Phaser.Scene): Phaser.GameObjects.Container | n
   );
 }
 
+function setNamedVisibility(scene: Phaser.Scene, name: string, visible: boolean): void {
+  const object = scene.children.getByName(name) as
+    | (Phaser.GameObjects.GameObject & { setVisible?: (value: boolean) => unknown })
+    | null;
+  object?.setVisible?.(visible);
+}
+
 export class PipEggWorldManager {
   private readonly discoveryService = new DiscoveryService(getBrowserSaveService());
   private readonly eggArc = getBrowserPipEggArcService();
@@ -182,7 +189,7 @@ export class PipEggWorldManager {
     this.hideLegacyPip(scene);
 
     if (!introduced) {
-      scene.children.getByName(PIP_PRODUCTION_NAME)?.setVisible(false);
+      setNamedVisibility(scene, PIP_PRODUCTION_NAME, false);
       sparkle?.setVisible(false);
       if (!this.introSequenceRunning && shouldTriggerPipArrival(player.x, save)) {
         this.startPipArrival(scene);
@@ -190,8 +197,7 @@ export class PipEggWorldManager {
       return;
     }
 
-    const productionPip = scene.children.getByName(PIP_PRODUCTION_NAME);
-    productionPip?.setVisible(true);
+    setNamedVisibility(scene, PIP_PRODUCTION_NAME, true);
 
     if (!welcomeComplete && !firstDiscoveryComplete && !this.introSequenceRunning) {
       sparkle?.setVisible(false);
@@ -216,7 +222,7 @@ export class PipEggWorldManager {
         return;
       }
       setWorldFlag(PIP_INTRO_APPEARED_FLAG, true);
-      scene.children.getByName(PIP_PRODUCTION_NAME)?.setVisible(true);
+      setNamedVisibility(scene, PIP_PRODUCTION_NAME, true);
     });
 
     scene.time.delayedCall(conversationDelay, () => {
@@ -226,7 +232,7 @@ export class PipEggWorldManager {
         this.introScene = null;
         return;
       }
-      scene.children.getByName(PIP_PRODUCTION_NAME)?.setVisible(true);
+      setNamedVisibility(scene, PIP_PRODUCTION_NAME, true);
       this.startWelcomeConversation(scene);
     });
 
