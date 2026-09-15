@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { isReducedMotionEnabled } from '../accessibility/AccessibilitySettings';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { isInteractionModalActive } from '../interaction/InteractionModalState';
+import { claimTransientFeedback } from './TransientFeedbackCoordinator';
 import { UI_FONT } from './uiTheme';
 
 export interface WorldFeedbackAnchor {
@@ -34,7 +35,8 @@ const BOTTOM_SAFE_MARGIN = 92;
  *
  * Guidance is a small non-modal lower-screen card centred in the playable viewport. Environmental
  * reactions stay attached to their world source and are clamped inside the camera's safe viewport.
- * Dialogue, reward and Wonderbook discovery presenters remain separate semantic owners.
+ * Both participate in the shared transient-feedback slot so they cannot overlap dialogue, reward,
+ * Wonderbook or quest-completion surfaces.
  */
 export class WorldFeedbackPresenter {
   private guidanceObjects: FeedbackObject[] = [];
@@ -47,6 +49,8 @@ export class WorldFeedbackPresenter {
   private reactionAnchor: WorldFeedbackAnchor | null = null;
   private reactionPanel: Phaser.GameObjects.Graphics | null = null;
   private reactionText: Phaser.GameObjects.Text | null = null;
+  private releaseGuidanceClaim: (() => void) | null = null;
+  private releaseReactionClaim: (() => void) | null = null;
 
   public constructor(private readonly scene: Phaser.Scene) {
     this.scene.events.on(Phaser.Scenes.Events.POST_UPDATE, this.refreshReactionPosition, this);
@@ -63,6 +67,15 @@ export class WorldFeedbackPresenter {
 
     this.pendingGuidance = null;
     this.clearGuidance();
+    const releaseClaim = claimTransientFeedback(this.scene, 'guidance', () => {
+      this.clearGuidance();
+    });
+    if (!releaseClaim) {
+      this.pendingGuidance = { message, durationMs };
+      this.schedulePending();
+      return;
+    }
+    this.releaseGuidanceClaim = releaseClaim;
 
     const centerX = GAME_WIDTH / 2;
     const text = this.scene.add
@@ -160,6 +173,15 @@ export class WorldFeedbackPresenter {
 
     this.pendingReaction = null;
     this.clearReaction();
+    const releaseClaim = claimTransientFeedback(this.scene, 'reaction', () => {
+      this.clearReaction();
+    });
+    if (!releaseClaim) {
+      this.pendingReaction = { message, anchor, durationMs };
+      this.schedulePending();
+      return;
+    }
+    this.releaseReactionClaim = releaseClaim;
     this.reactionAnchor = { ...anchor };
 
     const text = this.scene.add
@@ -273,6 +295,7 @@ export class WorldFeedbackPresenter {
     this.guidanceTimer?.destroy();
     this.guidanceTimer = null;
     if (this.guidanceObjects.length === 0) {
+      this.releaseGuidanceSlot();
       return;
     }
     if (isReducedMotionEnabled()) {
@@ -290,6 +313,7 @@ export class WorldFeedbackPresenter {
         objects.forEach((object) => {
           object.destroy();
         });
+        this.releaseGuidanceSlot();
       },
     });
   }
@@ -298,6 +322,7 @@ export class WorldFeedbackPresenter {
     this.reactionTimer?.destroy();
     this.reactionTimer = null;
     if (this.reactionObjects.length === 0) {
+      this.releaseReactionSlot();
       return;
     }
     if (isReducedMotionEnabled()) {
@@ -319,6 +344,7 @@ export class WorldFeedbackPresenter {
         objects.forEach((object) => {
           object.destroy();
         });
+        this.releaseReactionSlot();
       },
     });
   }
@@ -330,6 +356,7 @@ export class WorldFeedbackPresenter {
       object.destroy();
     }
     this.guidanceObjects = [];
+    this.releaseGuidanceSlot();
   }
 
   private clearReaction(): void {
@@ -342,6 +369,17 @@ export class WorldFeedbackPresenter {
     this.reactionPanel = null;
     this.reactionText = null;
     this.reactionAnchor = null;
+    this.releaseReactionSlot();
+  }
+
+  private releaseGuidanceSlot(): void {
+    this.releaseGuidanceClaim?.();
+    this.releaseGuidanceClaim = null;
+  }
+
+  private releaseReactionSlot(): void {
+    this.releaseReactionClaim?.();
+    this.releaseReactionClaim = null;
   }
 }
 
