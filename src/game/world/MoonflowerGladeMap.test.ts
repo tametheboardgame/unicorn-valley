@@ -63,8 +63,11 @@ describe('Moonflower Glade prototype map', () => {
     expect(upper.position.y + upper.height / 2).toBeLessThan(main.position.y - main.height / 2);
     expect(stream.orientation).toBe('vertical');
     expect(northStream).toBeDefined();
+    if (!northStream) {
+      throw new Error('North stream collider is required for the garden clearance contract.');
+    }
     expect(stream.position.x + stream.width / 2).toBeLessThan(
-      northStream!.x - northStream!.width / 2,
+      northStream.x - northStream.width / 2,
     );
   });
 
@@ -77,8 +80,14 @@ describe('Moonflower Glade prototype map', () => {
     );
     expect(westernSign).toBeDefined();
     expect(sunbeamSign).toBeDefined();
-    expect(westernSign!.width).toBeLessThan(40);
-    expect(sunbeamSign!.width).toBeLessThan(40);
+    if (!westernSign) {
+      throw new Error('Western gate sign collider is required.');
+    }
+    if (!sunbeamSign) {
+      throw new Error('Sunbeam direction sign collider is required.');
+    }
+    expect(westernSign.width).toBeLessThan(40);
+    expect(sunbeamSign.width).toBeLessThan(40);
 
     const westernGate = MOONFLOWER_GLADE_MAP.landmarks.find(
       (landmark) => landmark.id === 'western-gate',
@@ -86,8 +95,16 @@ describe('Moonflower Glade prototype map', () => {
     const sunbeam = MOONFLOWER_GLADE_MAP.entrances.find(
       (entrance) => entrance.id === 'sunbeam-village',
     );
-    expect(isPointBlocked(westernGate!.approach, MOONFLOWER_GLADE_MAP.colliders, 42)).toBe(false);
-    expect(isPointBlocked(sunbeam!.approach, MOONFLOWER_GLADE_MAP.colliders, 42)).toBe(false);
+    expect(westernGate).toBeDefined();
+    expect(sunbeam).toBeDefined();
+    if (!westernGate) {
+      throw new Error('Western gate landmark is required.');
+    }
+    if (!sunbeam) {
+      throw new Error('Sunbeam entrance is required.');
+    }
+    expect(isPointBlocked(westernGate.approach, MOONFLOWER_GLADE_MAP.colliders, 42)).toBe(false);
+    expect(isPointBlocked(sunbeam.approach, MOONFLOWER_GLADE_MAP.colliders, 42)).toBe(false);
   });
 
   it('keeps the player crossing centred on the visible bridge deck', () => {
@@ -127,7 +144,10 @@ describe('Moonflower Glade prototype map', () => {
       (entrance) => entrance.id === 'sunbeam-village',
     );
     expect(eastEntrance).toBeDefined();
-    expect(isPointBlocked(eastEntrance!.approach, MOONFLOWER_GLADE_MAP.colliders, 42)).toBe(false);
+    if (!eastEntrance) {
+      throw new Error('Sunbeam east entrance is required.');
+    }
+    expect(isPointBlocked(eastEntrance.approach, MOONFLOWER_GLADE_MAP.colliders, 42)).toBe(false);
   });
 
   it('blocks the visible lower trunk/base areas called out in H1.4 review', () => {
@@ -150,6 +170,9 @@ describe('Moonflower Glade prototype map', () => {
     );
     expect(field).toBeDefined();
     expect(field?.approach).toEqual({ x: 1890, y: 1185 });
-    expect(isPointBlocked(field!.approach, MOONFLOWER_GLADE_MAP.colliders, 42)).toBe(false);
+    if (!field) {
+      throw new Error('Moonflower Field landmark is required.');
+    }
+    expect(isPointBlocked(field.approach, MOONFLOWER_GLADE_MAP.colliders, 42)).toBe(false);
   });
 });
