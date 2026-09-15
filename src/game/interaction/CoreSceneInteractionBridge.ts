@@ -8,7 +8,10 @@ import {
   startWillowConversation,
 } from '../story/WorldStoryConversations';
 import { RAINBOW_MEADOW_MAP } from '../world/RainbowMeadowMap';
-import { SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
+import {
+  setSunbeamVillagePlayerSpawn,
+  SUNBEAM_VILLAGE_MAP,
+} from '../world/SunbeamVillageMap';
 import type { InteractionActionKind, InteractionTarget } from './InteractionTarget';
 import { MOONFLOWER_GLADE_INTERACTIONS } from './MoonflowerGladeInteractions';
 import { getSceneInteractionRegistry } from './SceneInteractionRegistry';
@@ -53,13 +56,14 @@ function callbackTarget(
   actionKind: InteractionActionKind,
   activate: () => void,
 ): InteractionTarget {
+  const activationMode = target.activationMode ?? 'explicit';
   if (target.result.type === 'dialogue' || target.result.type === 'callback') {
-    return { ...target, actionKind, activationMode: 'explicit' };
+    return { ...target, actionKind, activationMode };
   }
   return {
     ...target,
     actionKind,
-    activationMode: 'explicit',
+    activationMode,
     result: { type: 'callback', activate },
   };
 }
@@ -100,7 +104,10 @@ function villageTargets(scene: Phaser.Scene): InteractionTarget[] {
   }
 
   const landmark = (id: string) => requiredPoint(SUNBEAM_VILLAGE_MAP.landmarks, id, true);
-  const entrance = (id: string) => requiredPoint(SUNBEAM_VILLAGE_MAP.entrances, id, true);
+  const entranceApproach = (id: string) =>
+    requiredPoint(SUNBEAM_VILLAGE_MAP.entrances, id, true);
+  const entrancePosition = (id: string) =>
+    requiredPoint(SUNBEAM_VILLAGE_MAP.entrances, id, false);
   const npc = (id: string) => requiredPoint(SUNBEAM_VILLAGE_MAP.npcMarkers, id, false);
 
   const definitions: Array<[InteractionTarget, InteractionActionKind]> = [
@@ -194,8 +201,10 @@ function villageTargets(scene: Phaser.Scene): InteractionTarget[] {
         id: 'interaction:village-glade-gate',
         label: 'Moonflower Glade',
         actionLabel: 'Go home',
-        position: entrance('moonflower-glade'),
-        interactionRadius: 170,
+        actionKind: 'enter',
+        activationMode: 'automatic',
+        position: entrancePosition('moonflower-glade'),
+        interactionRadius: 130,
         priority: 20,
         result: { type: 'scene-transition', sceneKey: 'MoonflowerGladeScene' },
       },
@@ -206,7 +215,7 @@ function villageTargets(scene: Phaser.Scene): InteractionTarget[] {
         id: 'interaction:village-meadow-gate',
         label: 'Rainbow Meadow',
         actionLabel: 'Visit meadow',
-        position: entrance('rainbow-meadow'),
+        position: entranceApproach('rainbow-meadow'),
         interactionRadius: 175,
         priority: 20,
         result: { type: 'scene-transition', sceneKey: 'RainbowMeadowScene' },
@@ -279,10 +288,26 @@ function meadowTargets(scene: Phaser.Scene): InteractionTarget[] {
 }
 
 function moonflowerTargets(scene: CoreSceneRuntime): InteractionTarget[] {
-  const targets = MOONFLOWER_GLADE_INTERACTIONS.map((target) => ({
-    ...target,
-    activationMode: target.activationMode ?? ('explicit' as const),
-  }));
+  const targets: InteractionTarget[] = MOONFLOWER_GLADE_INTERACTIONS.map((target) => {
+    const activationMode = target.activationMode ?? ('explicit' as const);
+    if (target.id !== 'interaction:sunbeam-village-gate') {
+      return { ...target, activationMode };
+    }
+
+    return {
+      ...target,
+      activationMode,
+      result: {
+        type: 'callback',
+        activate: () => {
+          setSunbeamVillagePlayerSpawn(
+            requiredPoint(SUNBEAM_VILLAGE_MAP.entrances, 'moonflower-glade', true),
+          );
+          scene.scene.start('SunbeamVillageScene');
+        },
+      },
+    };
+  });
 
   const sparkle = scene.createFirstSparkleInteraction?.();
   if (sparkle) {
