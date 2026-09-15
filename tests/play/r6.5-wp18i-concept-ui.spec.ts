@@ -193,7 +193,7 @@ test.describe('R6.5-WP18I concept-grade tablet HUD', () => {
     await waitForDiagnostics(page);
     await startScene(page, 'MoonflowerGladeScene');
 
-    await positionPlayer(page, 'MoonflowerGladeScene', 840, 825);
+    await positionPlayer(page, 'MoonflowerGladeScene', 970, 825);
     await waitForActionLabel(page, 'Talk');
     let scene = await getScene(page, 'MoonflowerGladeScene');
     expect(objectByName(scene, 'exploration-interaction-prompt').visible).toBe(true);
