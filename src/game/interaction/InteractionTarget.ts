@@ -8,6 +8,7 @@ export type InteractionActionKind =
   | 'inspect'
   | 'buy'
   | 'use'
+  | 'pick-up'
   | 'interact';
 
 export type InteractionActivationMode = 'explicit' | 'automatic';
