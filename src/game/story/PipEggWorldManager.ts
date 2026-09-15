@@ -267,7 +267,7 @@ export class PipEggWorldManager {
       this.introScene = null;
       this.showFeedback(
         scene,
-        'Pip spotted a little golden sparkle beside the path. Go and have a look!',
+        'Pip spotted a bright green sparkle beside the path. Go and have a look!',
       );
     };
 
