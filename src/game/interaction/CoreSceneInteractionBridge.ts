@@ -312,7 +312,10 @@ function moonflowerTargets(scene: CoreSceneRuntime): InteractionTarget[] {
         type: 'callback',
         activate: () => {
           moonflowerActivate?.call(scene, sparkle);
-          getSceneInteractionRegistry(scene).replaceOwnerTargets(OWNER_KEY, moonflowerTargets(scene));
+          getSceneInteractionRegistry(scene).replaceOwnerTargets(
+            OWNER_KEY,
+            moonflowerTargets(scene),
+          );
         },
       },
     });
