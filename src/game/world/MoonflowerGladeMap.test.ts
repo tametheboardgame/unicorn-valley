@@ -82,9 +82,9 @@ describe('Moonflower Glade prototype map', () => {
     }
 
     expect(main.approach).toEqual({ x: 750, y: 730 });
-    expect(Math.hypot(main.approach.x - PIP_POSITION.x, main.approach.y - PIP_POSITION.y)).toBeGreaterThan(
-      200,
-    );
+    expect(
+      Math.hypot(main.approach.x - PIP_POSITION.x, main.approach.y - PIP_POSITION.y),
+    ).toBeGreaterThan(200);
   });
 
   it('gives physical gate signs compact post collision while keeping their approaches clear', () => {
