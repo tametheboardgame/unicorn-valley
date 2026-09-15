@@ -11,7 +11,6 @@ export const VISUAL_TIGHTENING_DETAIL_NAME = 'visual-tightening-detail';
 const VISUAL_TIGHTENING_ANCHOR_NAME = 'visual-tightening-anchor';
 
 const SUPPORTED_SCENES = new Set([
-  'MoonflowerGladeScene',
   'SunbeamVillageScene',
   'RainbowMeadowScene',
   'CottageInteriorScene',
@@ -42,28 +41,6 @@ function addWindow(
   markDetail(scene.add.rectangle(x, y + 46, 98, 18, boxColour, 0.95).setDepth(8.3));
   for (const offset of [-24, 0, 24]) {
     markDetail(scene.add.circle(x + offset, y + 39, 8, 0xffb7d2, 0.96).setDepth(8.4));
-  }
-}
-
-function decorateGlade(scene: Phaser.Scene): void {
-  // Moonflower Cottage now owns its complete H1.2 exterior presentation. The old
-  // cottage-specific tightening overlays (chimney, window accents, roof marks and
-  // giant corner flowers) deliberately do not render here anymore.
-  for (const [x, y] of [
-    [1288, 590],
-    [1512, 690],
-    [1296, 1220],
-    [1502, 1330],
-  ] as const) {
-    for (const offset of [-12, 0, 12]) {
-      markDetail(
-        scene.add
-          .rectangle(x + offset, y - 16 - Math.abs(offset) * 0.35, 5, 42, 0x5d9b68, 0.9)
-          .setAngle(offset * 0.45)
-          .setDepth(5),
-      );
-    }
-    markDetail(scene.add.ellipse(x, y + 7, 68, 20, 0xbda986, 0.48).setDepth(4.5));
   }
 }
 
@@ -273,9 +250,6 @@ function decorateRace(scene: Phaser.Scene): void {
 
 function applyVisualTightening(scene: Phaser.Scene): void {
   switch (scene.scene.key) {
-    case 'MoonflowerGladeScene':
-      decorateGlade(scene);
-      break;
     case 'SunbeamVillageScene':
       decorateVillage(scene);
       break;
@@ -295,6 +269,9 @@ function applyVisualTightening(scene: Phaser.Scene): void {
 export class VisualTighteningManager {
   public constructor(private readonly game: Phaser.Game) {
     this.game.events.on(Phaser.Core.Events.POST_STEP, this.update, this);
+    this.game.events.once(Phaser.Core.Events.DESTROY, () => {
+      this.game.events.off(Phaser.Core.Events.POST_STEP, this.update, this);
+    });
   }
 
   private update(): void {
