@@ -16,7 +16,7 @@ Final H1 outcomes include:
 - `docs/audits/2026-09-15-H1-CONSOLIDATION-AUDIT.md` records the final ownership audit;
 - `docs/engineering/H1-WORLD-IMPLEMENTATION-CONVENTIONS.md` records the reusable world implementation rules for later areas.
 
-The final qualified runtime head before documentation-only completion commits was `8dff0c5f9bd1c49212b5cb9d14d177d32483587f`. Formatting, lint, architecture, verification/performance policy, type-check, unit contracts, production build, static smoke, performance architecture, all three full Chromium shards and the Firefox/WebKit/Chromium compatibility matrix passed. David explicitly authorised final documentation, merge and deployment on 15 September 2026.
+The final qualified runtime head before documentation-only completion commits was `8dff0c5f9bd1c49212b5cb9d14d177d32483587f`. Formatting, lint, architecture, verification/performance policy, type-check, unit contracts, production build, static smoke, performance architecture, all three full Chromium shards and the Firefox/WebKit/Chromium compatibility matrix passed. David explicitly authorised final documentation, merge and deployment on 15 September 2026. Documentation-only completion commits are separately verified before merge.
 
 H1 is closed. The next area review, if started, becomes `R6.5-WP19H2`; it must not be treated as unfinished H1 work.
 
