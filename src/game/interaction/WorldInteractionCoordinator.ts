@@ -235,7 +235,11 @@ export class WorldInteractionCoordinator {
         retainedTargetId: selected.id,
         retentionMargin: 0,
       });
-      if (!revalidated || revalidated.id !== selected.id || revalidated.activationMode !== 'automatic') {
+      if (
+        !revalidated ||
+        revalidated.id !== selected.id ||
+        revalidated.activationMode !== 'automatic'
+      ) {
         state.retainedTargetId = null;
         state.automaticTargetId = null;
         state.prompt.setTarget(null);
