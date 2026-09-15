@@ -3,6 +3,7 @@ import { PIP_STRANGE_EGG_QUEST_ID } from '../../content/r4EggArc';
 import { isReducedMotionEnabled } from '../accessibility/AccessibilitySettings';
 import { getWorldConversationPresenter } from '../dialogue/WorldConversationPresenter';
 import { DiscoveryService } from '../discovery/DiscoveryService';
+import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import {
   FIRST_DISCOVERY_ID,
   FIRST_SPARKLE_POSITION,
@@ -14,6 +15,7 @@ import {
 } from '../intro/PipIntro';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
+import { getWorldFeedbackPresenter } from '../ui/WorldFeedbackPresenter';
 import { worldDepthForY } from '../world/WorldDepth';
 import {
   PIP_EGG_CLUE_SPOTS,
@@ -27,6 +29,7 @@ import { getBrowserPipEggArcService } from './browserPipEggArc';
 const COTTAGE_NEST_POSITION = { x: 1225, y: 970 } as const;
 const CLUE_INTERACTION_RADIUS = 155;
 const PIP_PRODUCTION_NAME = 'core-npc:pip:world';
+const PIP_TRAIL_INTERACTION_OWNER = 'h1:pip-egg-trail';
 
 interface WorldMarker {
   id: string;
@@ -86,6 +89,10 @@ function setNamedVisibility(scene: Phaser.Scene, name: string, visible: boolean)
   object?.setVisible?.(visible);
 }
 
+function isPickupClue(target: PipEggClueSpot): boolean {
+  return target.id !== 'interaction:pip-egg-clue-star';
+}
+
 export class PipEggWorldManager {
   private readonly discoveryService = new DiscoveryService(getBrowserSaveService());
   private readonly eggArc = getBrowserPipEggArcService();
@@ -112,6 +119,9 @@ export class PipEggWorldManager {
   private updateGlade(): void {
     const scene = this.game.scene.getScene('MoonflowerGladeScene');
     if (!scene?.scene.isActive()) {
+      if (scene) {
+        getSceneInteractionRegistry(scene).clearOwner(PIP_TRAIL_INTERACTION_OWNER);
+      }
       this.destroyMarker(this.gladeMarker);
       this.gladeMarker = null;
       this.gladeLuma?.destroy(true);
@@ -133,6 +143,7 @@ export class PipEggWorldManager {
     const save = getBrowserSaveService().load();
     const stage = getPipEggStage(save);
     if (stage === 'hatched') {
+      getSceneInteractionRegistry(scene).clearOwner(PIP_TRAIL_INTERACTION_OWNER);
       this.destroyMarker(this.gladeMarker);
       this.gladeMarker = null;
       this.gladeLuma = this.updateLumaFollower(scene, player, this.gladeLuma);
@@ -142,6 +153,7 @@ export class PipEggWorldManager {
     this.gladeLuma = null;
 
     if (!isFirstDiscoveryComplete()) {
+      getSceneInteractionRegistry(scene).clearOwner(PIP_TRAIL_INTERACTION_OWNER);
       this.destroyMarker(this.gladeMarker);
       this.gladeMarker = null;
       return;
@@ -150,6 +162,7 @@ export class PipEggWorldManager {
     const progress = getBrowserQuestEngine().getProgress(PIP_STRANGE_EGG_QUEST_ID);
     const activeClue = getActivePipEggClue(progress);
     if (!activeClue) {
+      getSceneInteractionRegistry(scene).clearOwner(PIP_TRAIL_INTERACTION_OWNER);
       this.destroyMarker(this.gladeMarker);
       this.gladeMarker = null;
       return;
@@ -162,20 +175,7 @@ export class PipEggWorldManager {
     ) {
       this.destroyMarker(this.gladeMarker);
       this.gladeMarker = this.createGladeClue(scene, activeClue);
-    }
-
-    const distance = Phaser.Math.Distance.Between(
-      player.x,
-      player.y,
-      activeClue.position.x,
-      activeClue.position.y,
-    );
-    if (
-      distance <= CLUE_INTERACTION_RADIUS &&
-      this.gladeMarker.key &&
-      Phaser.Input.Keyboard.JustDown(this.gladeMarker.key)
-    ) {
-      this.activateGladeTarget(scene, activeClue);
+      this.syncGladeInteraction(scene, activeClue);
     }
   }
 
@@ -265,9 +265,9 @@ export class PipEggWorldManager {
       scene.physics.resume();
       this.introSequenceRunning = false;
       this.introScene = null;
-      this.showFeedback(
-        scene,
+      getWorldFeedbackPresenter(scene).showGuidance(
         'Pip spotted a bright green sparkle beside the path. Go and have a look!',
+        4200,
       );
     };
 
@@ -420,27 +420,13 @@ export class PipEggWorldManager {
 
     const moteLeft = scene.add.circle(-27, -28, 3.5, 0xa9efff, 0.88);
     const moteRight = scene.add.circle(30, -18, 2.5, 0xe4fbff, 0.88);
-    const label = scene.add
-      .text(0, 62, target.label, {
-        color: '#5b4870',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '15px',
-        fontStyle: 'bold',
-        backgroundColor: '#fff9edee',
-        padding: { x: 8, y: 4 },
-      })
-      .setOrigin(0.5);
-    const zone = scene.add
-      .zone(0, 0, CLUE_INTERACTION_RADIUS, CLUE_INTERACTION_RADIUS)
-      .setInteractive({ useHandCursor: true });
-    parts.push(moteLeft, moteRight, label, zone);
+    parts.push(moteLeft, moteRight);
 
     const container = scene.add
       .container(target.position.x, target.position.y, parts)
       .setName(`pip-trail:${target.id}`)
       .setDepth(worldDepthForY(target.position.y, 0.78));
 
-    zone.on('pointerdown', () => this.activateGladeTarget(scene, target));
     if (!isReducedMotionEnabled()) {
       scene.tweens.add({
         targets: [glow, moteLeft, moteRight],
@@ -452,8 +438,32 @@ export class PipEggWorldManager {
         ease: 'Sine.InOut',
       });
     }
-    const key = scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.E) ?? null;
-    return { id: target.id, container, key };
+    return { id: target.id, container, key: null };
+  }
+
+  private syncGladeInteraction(scene: Phaser.Scene, target: PipEggClueSpot): void {
+    const pickup = isPickupClue(target);
+    getSceneInteractionRegistry(scene).replaceOwnerTargets(PIP_TRAIL_INTERACTION_OWNER, [
+      {
+        id: target.id,
+        label: target.label,
+        actionLabel: pickup ? 'Pick up' : 'Inspect',
+        actionKind: pickup ? 'pick-up' : 'inspect',
+        worldAffordance: true,
+        position: target.position,
+        interactionRadius: CLUE_INTERACTION_RADIUS,
+        priority: 18,
+        directArea: {
+          width: 190,
+          height: 190,
+          name: `pip-trail-direct:${target.id}`,
+        },
+        result: {
+          type: 'callback',
+          activate: () => this.activateGladeTarget(scene, target),
+        },
+      },
+    ]);
   }
 
   private drawStarTrack(
@@ -476,9 +486,11 @@ export class PipEggWorldManager {
       return;
     }
 
-    this.discoveryService.unlockDiscovery(target.discoveryId);
+    this.discoveryService.unlockDiscovery(target.discoveryId, undefined, {
+      suppressRewardFeedback: true,
+    });
     scene.cameras.main.flash(180, 220, 246, 255, false);
-    this.showFeedback(scene, target.feedback);
+    getWorldFeedbackPresenter(scene).showGuidance(target.feedback, 4400);
   }
 
   private updateCottage(): void {
