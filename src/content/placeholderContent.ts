@@ -36,7 +36,7 @@ export const DISCOVERIES = [
   {
     id: 'discovery:moonflower-sparkle',
     name: 'Moonflower Sparkle',
-    description: 'A tiny warm sparkle found beside the moonflowers near home.',
+    description: 'A bright green sparkle found beside the moonflowers near home.',
   },
 ] as const satisfies readonly DiscoveryDefinition[];
 
@@ -104,7 +104,7 @@ export const DIALOGUES = [
         id: 'dialogue-node:pip-welcome-explore',
         type: 'line',
         speakerId: 'character:pip',
-        text: 'First, I spotted a little golden sparkle beside the path. Go and take a look. I will wait right here!',
+        text: 'First, I spotted a bright green sparkle beside the path. Go and take a look. I will wait right here!',
       },
     ],
   },
