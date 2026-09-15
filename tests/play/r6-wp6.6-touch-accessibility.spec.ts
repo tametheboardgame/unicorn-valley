@@ -318,6 +318,8 @@ test('target-tablet touch completes creator, exploration, Book and accessibility
   await logicalTapNamedObject(page, 'MoonflowerGladeScene', 'dialogue-production-continue');
   await page.waitForTimeout(180);
   await logicalTapNamedObject(page, 'MoonflowerGladeScene', 'dialogue-production-continue');
+  await page.waitForTimeout(180);
+  await logicalTapNamedObject(page, 'MoonflowerGladeScene', 'dialogue-production-continue');
   await page.waitForFunction(() => {
     const diagnosticWindow = window as typeof window & {
       __UNICORN_VALLEY_DIAGNOSTICS__?: { snapshot(): BrowserDiagnosticSnapshot };
