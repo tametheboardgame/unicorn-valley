@@ -111,7 +111,10 @@ export const MOONFLOWER_GLADE_MAP = {
       id: 'garden:main',
       label: 'Cottage Garden',
       position: { x: 890, y: 620 },
-      approach: { x: 890, y: 790 },
+      // Keep the garden interaction beside the visible lower-left corner rather than directly
+      // underneath Pip's conversation radius. This prevents an optional future-gardening affordance
+      // from stealing the primary Talk action while preserving the approved garden art.
+      approach: { x: 750, y: 730 },
       width: 280,
       height: 190,
       orientation: 'horizontal',
