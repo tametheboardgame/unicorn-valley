@@ -128,10 +128,10 @@ export const MOONFLOWER_GLADE_MAP = {
     {
       id: 'garden:stream-bank',
       label: 'Stream Garden',
-      position: { x: 1160, y: 590 },
-      approach: { x: 1045, y: 590 },
+      position: { x: 1160, y: 477.5 },
+      approach: { x: 1045, y: 477.5 },
       width: 160,
-      height: 420,
+      height: 475,
       orientation: 'vertical',
     },
   ] satisfies readonly GladeGardenPlot[],
@@ -174,11 +174,11 @@ export const MOONFLOWER_GLADE_MAP = {
     { id: 'collision:woodland-bottom', x: 1400, y: 1655, width: 2520, height: 170 },
     { id: 'collision:woodland-right-north', x: 2640, y: 430, width: 190, height: 650 },
     { id: 'collision:woodland-right-south', x: 2640, y: 1370, width: 190, height: 650 },
-    // The original top-row trees extend below the shared woodland band. These narrow
-    // trunk/root blockers match the visible bases without turning their canopies solid.
+    // The two top trees beside the new upper/stream gardens are lifted into the woodland edge so
+    // their visible trunks and collision no longer overlap the growing beds.
     { id: 'collision:top-tree-430', x: 430, y: 225, width: 58, height: 120 },
-    { id: 'collision:top-tree-820', x: 820, y: 245, width: 58, height: 120 },
-    { id: 'collision:top-tree-1180', x: 1180, y: 225, width: 58, height: 120 },
+    { id: 'collision:top-tree-820', x: 820, y: 155, width: 58, height: 120 },
+    { id: 'collision:top-tree-1180', x: 1180, y: 155, width: 58, height: 120 },
     { id: 'collision:top-tree-1640', x: 1640, y: 225, width: 58, height: 120 },
     { id: 'collision:top-tree-1980', x: 1980, y: 225, width: 58, height: 120 },
     { id: 'collision:top-tree-2520', x: 2520, y: 245, width: 58, height: 120 },
