@@ -3,6 +3,7 @@ import type { InteractionTarget } from './InteractionTarget';
 
 type GladeLandmarkId = (typeof MOONFLOWER_GLADE_MAP.landmarks)[number]['id'];
 type GladeEntranceId = (typeof MOONFLOWER_GLADE_MAP.entrances)[number]['id'];
+type GladeGardenPlotId = (typeof MOONFLOWER_GLADE_MAP.gardenPlots)[number]['id'];
 
 function landmarkApproach(id: GladeLandmarkId): { x: number; y: number } {
   const landmark = MOONFLOWER_GLADE_MAP.landmarks.find((candidate) => candidate.id === id);
@@ -20,6 +21,36 @@ function entranceApproach(id: GladeEntranceId): { x: number; y: number } {
   }
 
   return entrance.approach;
+}
+
+function gardenApproach(id: GladeGardenPlotId): { x: number; y: number } {
+  const plot = MOONFLOWER_GLADE_MAP.gardenPlots.find((candidate) => candidate.id === id);
+  if (!plot) {
+    throw new Error(`Moonflower Glade interaction references missing garden plot: ${id}`);
+  }
+
+  return plot.approach;
+}
+
+function gardenInteraction(
+  plotId: GladeGardenPlotId,
+  interactionId: string,
+  label: string,
+): InteractionTarget {
+  return {
+    id: interactionId,
+    label,
+    actionLabel: 'Inspect',
+    actionKind: 'inspect',
+    position: gardenApproach(plotId),
+    interactionRadius: 150,
+    priority: 8,
+    result: {
+      type: 'message',
+      title: label,
+      message: 'Fresh soil, ready for seeds. This growing patch will be useful for gardening later.',
+    },
+  };
 }
 
 export const MOONFLOWER_GLADE_INTERACTIONS = [
@@ -51,6 +82,9 @@ export const MOONFLOWER_GLADE_INTERACTIONS = [
         'A small silver lock holds the gate shut. It looks like it might open with the right key.',
     },
   },
+  gardenInteraction('garden:main', 'interaction:garden-main', 'Cottage Garden'),
+  gardenInteraction('garden:upper', 'interaction:garden-upper', 'Upper Garden'),
+  gardenInteraction('garden:stream-bank', 'interaction:garden-stream-bank', 'Stream Garden'),
   {
     id: 'interaction:sunbeam-village-gate',
     label: 'Sunbeam Village',
