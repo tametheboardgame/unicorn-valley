@@ -281,7 +281,7 @@ function meadowTargets(scene: Phaser.Scene): InteractionTarget[] {
 function moonflowerTargets(scene: CoreSceneRuntime): InteractionTarget[] {
   const targets = MOONFLOWER_GLADE_INTERACTIONS.map((target) => ({
     ...target,
-    activationMode: 'explicit' as const,
+    activationMode: target.activationMode ?? ('explicit' as const),
   }));
 
   const sparkle = scene.createFirstSparkleInteraction?.();
