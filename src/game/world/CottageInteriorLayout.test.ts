@@ -6,6 +6,7 @@ import {
   COTTAGE_INTERIOR_MAP,
   COTTAGE_RESERVED_ZONES,
   COTTAGE_ROOM_SHELL,
+  COTTAGE_SLEEP_LAYOUT,
   type CottageRectLayout,
 } from './CottageInteriorMap';
 import { COTTAGE_SEMANTIC_ANCHORS } from './CottageSemanticAnchors';
@@ -38,25 +39,23 @@ describe('H2 cottage room layout and physicality', () => {
     expect(COTTAGE_INTERIOR_MAP.height).toBeLessThan(1200);
   });
 
-  it('uses H2.3 floor footprints instead of the old full visual rectangles', () => {
+  it('uses floor footprints instead of the old full visual rectangles', () => {
     const colliders = new Map(
       COTTAGE_FURNITURE_COLLIDERS.map((collider) => [collider.id, collider]),
     );
 
     expect(colliders.has('fireplace-front')).toBe(true);
-    expect(colliders.has('bed-frame')).toBe(true);
+    expect(colliders.has('bed-headboard')).toBe(true);
+    expect(colliders.has('bed-left-rail')).toBe(true);
+    expect(colliders.has('bed-right-rail')).toBe(true);
     expect(colliders.has('tea-chair-left')).toBe(true);
     expect(colliders.has('tea-chair-right')).toBe(true);
     expect(colliders.has('sofa-base')).toBe(true);
     expect(colliders.has('treasure-shelf-front')).toBe(true);
     expect(colliders.has('wonderbook-lectern')).toBe(true);
 
-    const bed = colliders.get('bed-frame');
     const table = colliders.get('tea-table');
     const sofa = colliders.get('sofa-base');
-    expect((bed?.width ?? Infinity) * (bed?.height ?? Infinity)).toBeLessThan(
-      COTTAGE_FURNITURE_LAYOUT.bed.width * COTTAGE_FURNITURE_LAYOUT.bed.height,
-    );
     expect((table?.width ?? Infinity) * (table?.height ?? Infinity)).toBeLessThan(
       COTTAGE_FURNITURE_LAYOUT.teaTable.width * COTTAGE_FURNITURE_LAYOUT.teaTable.height,
     );
@@ -65,12 +64,30 @@ describe('H2 cottage room layout and physicality', () => {
     );
   });
 
-  it('protects the visible unicorn from clipping through the bed side rails', () => {
-    const bed = COTTAGE_FURNITURE_COLLIDERS.find(({ id }) => id === 'bed-frame');
+  it('leaves a clear foot-entry lane to the semantic sleep trigger', () => {
+    const bedColliders = COTTAGE_FURNITURE_COLLIDERS.filter(({ id }) => id.startsWith('bed-'));
 
-    expect(bed).toBeDefined();
-    expect(bed?.width).toBeGreaterThan(COTTAGE_FURNITURE_LAYOUT.bed.width);
-    expect(bed?.height).toBeLessThan(COTTAGE_FURNITURE_LAYOUT.bed.height);
+    expect(bedColliders).toHaveLength(3);
+    expect(bedColliders.some((collider) => containsPoint(collider, COTTAGE_SLEEP_LAYOUT.trigger))).toBe(
+      false,
+    );
+    expect(
+      bedColliders.some((collider) =>
+        containsPoint(collider, {
+          x: COTTAGE_SLEEP_LAYOUT.trigger.x,
+          y: COTTAGE_FURNITURE_LAYOUT.bed.y + 110,
+        }),
+      ),
+    ).toBe(false);
+  });
+
+  it('protects the visible unicorn from clipping through the bed side rails', () => {
+    const leftRail = COTTAGE_FURNITURE_COLLIDERS.find(({ id }) => id === 'bed-left-rail');
+    const rightRail = COTTAGE_FURNITURE_COLLIDERS.find(({ id }) => id === 'bed-right-rail');
+
+    expect(leftRail?.width).toBeGreaterThanOrEqual(50);
+    expect(rightRail?.width).toBeGreaterThanOrEqual(50);
+    expect((rightRail?.x ?? 0) - (leftRail?.x ?? 0)).toBeGreaterThan(200);
   });
 
   it('keeps the open exit physically open while protecting its frame', () => {
@@ -97,7 +114,7 @@ describe('H2 cottage room layout and physicality', () => {
     }
   });
 
-  it('keeps entrance, interaction approaches and visitor anchors out of physical blockers', () => {
+  it('keeps entrance, interaction approaches, sleep trigger and visitors out of blockers', () => {
     const furnitureColliders = COTTAGE_INTERIOR_MAP.colliders.filter(
       (collider) => !collider.id.startsWith('wall-') && !collider.id.startsWith('exit-'),
     );
@@ -106,6 +123,8 @@ describe('H2 cottage room layout and physicality', () => {
       COTTAGE_INTERIOR_MAP.exit.approach,
       COTTAGE_INTERIOR_MAP.wonderbookDisplay.approach,
       COTTAGE_INTERIOR_MAP.treasureDisplay.approach,
+      COTTAGE_SLEEP_LAYOUT.trigger,
+      COTTAGE_SLEEP_LAYOUT.wake,
       ...Object.values(COTTAGE_SEMANTIC_ANCHORS)
         .filter((anchor) => anchor.purpose === 'visitor')
         .map((anchor) => anchor.position),
