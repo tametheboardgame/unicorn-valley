@@ -27,9 +27,8 @@ export interface CottageSemanticAnchor {
 /**
  * Canonical authored world points for systems that need stable cottage locations.
  *
- * H2.1 moves these anchors with the approved room shell. Consumers bind by semantic id,
- * so later furniture-art and physicality passes can evolve presentation without copying
- * room coordinates into story, visitor or navigation systems.
+ * H2.3 keeps consumers bound by semantic id while nudging visitor positions clear of the
+ * newly authored chair footprints. Story, navigation and future-capacity anchors stay stable.
  */
 export const COTTAGE_SEMANTIC_ANCHORS = {
   [COTTAGE_SEMANTIC_ANCHOR_IDS.door]: {
@@ -52,12 +51,12 @@ export const COTTAGE_SEMANTIC_ANCHORS = {
   },
   [COTTAGE_SEMANTIC_ANCHOR_IDS.visitorWillow]: {
     id: COTTAGE_SEMANTIC_ANCHOR_IDS.visitorWillow,
-    position: { x: 560, y: 600 },
+    position: { x: 530, y: 600 },
     purpose: 'visitor',
   },
   [COTTAGE_SEMANTIC_ANCHOR_IDS.visitorNova]: {
     id: COTTAGE_SEMANTIC_ANCHOR_IDS.visitorNova,
-    position: { x: 970, y: 570 },
+    position: { x: 990, y: 570 },
     purpose: 'visitor',
   },
   [COTTAGE_SEMANTIC_ANCHOR_IDS.storyDisplayOne]: {
