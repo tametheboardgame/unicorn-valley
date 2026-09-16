@@ -337,12 +337,19 @@ function renderTreasureShelf(scene: Phaser.Scene): void {
   drawCrescent(graphics, shelf.x + width * 0.31, top + 24, 11, PALETTE.goldLight, 0x795647);
 }
 
-function renderWonderbookNook(scene: Phaser.Scene, position: MapPoint, scale: number, yOffset: number): void {
+function renderWonderbookNook(
+  scene: Phaser.Scene,
+  position: MapPoint,
+  scale: number,
+  yOffset: number,
+): void {
   const x = position.x;
   const y = position.y + yOffset;
 
   scene.add.ellipse(x, y + 19 * scale, 176 * scale, 92 * scale, PALETTE.lavender, 0.13).setDepth(3);
-  scene.add.ellipse(x, y + 16 * scale, 120 * scale, 61 * scale, PALETTE.goldLight, 0.07).setDepth(4);
+  scene.add
+    .ellipse(x, y + 16 * scale, 120 * scale, 61 * scale, PALETTE.goldLight, 0.07)
+    .setDepth(4);
 
   const graphics = scene.add.graphics().setDepth(5);
   graphics.fillStyle(PALETTE.timberDark, 1);
