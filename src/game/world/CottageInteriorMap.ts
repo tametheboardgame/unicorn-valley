@@ -43,6 +43,17 @@ export interface CottageReservedZone extends CottageRectLayout {
   purpose: 'future-story' | 'future-portal';
 }
 
+export type CottageFurnitureDepthId =
+  | 'fireplace'
+  | 'bed'
+  | 'tea-table'
+  | 'tea-chair-left'
+  | 'tea-chair-right'
+  | 'sofa'
+  | 'treasure-shelf'
+  | 'wonderbook'
+  | 'exit';
+
 /**
  * Canonical H2.1 shell dimensions. The room is intentionally more compact than the
  * prototype so a 112×92 production unicorn reads at home scale rather than in a hall.
@@ -56,9 +67,8 @@ export const COTTAGE_ROOM_SHELL = {
 } as const satisfies CottageRoomShell;
 
 /**
- * Permanent-furniture geometry is shared by presentation and collision. H2.2 may redraw
- * these objects, but it should continue to treat these positions as the H2 room plan
- * unless a later human-approved layout change explicitly replaces them.
+ * Permanent-furniture presentation bounds. H2.3 intentionally keeps these visual positions
+ * stable while replacing the old one-rectangle-per-item collision model with physical footprints.
  */
 export const COTTAGE_FURNITURE_LAYOUT = {
   fireplace: { x: 270, y: 335, width: 240, height: 150 },
@@ -69,6 +79,41 @@ export const COTTAGE_FURNITURE_LAYOUT = {
   wonderbook: { x: 1260, y: 870, width: 110, height: 105 },
   door: { x: 750, y: 955, width: 185, height: 180 },
 } as const satisfies Record<string, CottageRectLayout>;
+
+/**
+ * H2.3 physical footprints. These describe the parts of each furnishing that occupy floor
+ * space, not the full presentation silhouette. That distinction allows the unicorn to pass
+ * behind furniture where the artwork implies depth without walking through its physical base.
+ */
+export const COTTAGE_FURNITURE_COLLIDERS = [
+  { id: 'fireplace-front', x: 270, y: 394, width: 252, height: 48 },
+  { id: 'bed-frame', x: 315, y: 717, width: 270, height: 185 },
+  { id: 'tea-table', x: 760, y: 577, width: 178, height: 96 },
+  { id: 'tea-chair-left', x: 637, y: 575, width: 60, height: 76 },
+  { id: 'tea-chair-right', x: 883, y: 575, width: 60, height: 76 },
+  { id: 'sofa-base', x: 1075, y: 744, width: 246, height: 115 },
+  { id: 'treasure-shelf-front', x: 1280, y: 390, width: 212, height: 40 },
+  { id: 'wonderbook-lectern', x: 1260, y: 910, width: 82, height: 64 },
+  { id: 'exit-left-post', x: 638, y: 986, width: 22, height: 46 },
+  { id: 'exit-right-post', x: 862, y: 986, width: 22, height: 46 },
+] as const satisfies readonly CollisionRectangle[];
+
+/**
+ * Sort lines for permanent furnishings. A player whose feet are above a line is rendered
+ * behind the furnishing; once their feet move below it they render in front. H2.4 will split
+ * the bed into dedicated front/rear layers for sleeping, but ordinary walkaround uses this map.
+ */
+export const COTTAGE_FURNITURE_DEPTH_ANCHORS = {
+  fireplace: 420,
+  bed: 810,
+  'tea-table': 640,
+  'tea-chair-left': 615,
+  'tea-chair-right': 615,
+  sofa: 805,
+  'treasure-shelf': 410,
+  wonderbook: 942,
+  exit: 1005,
+} as const satisfies Record<CottageFurnitureDepthId, number>;
 
 export const COTTAGE_WINDOW_LAYOUT = [
   { x: 650, y: 200, width: 200, height: 120 },
@@ -87,6 +132,11 @@ export const COTTAGE_RESERVED_ZONES = [
 
 const doorAnchor = resolveCottageSemanticAnchor(COTTAGE_SEMANTIC_ANCHOR_IDS.door);
 const wonderbookAnchor = resolveCottageSemanticAnchor(COTTAGE_SEMANTIC_ANCHOR_IDS.wonderbook);
+const exitCollisionGapWidth = COTTAGE_FURNITURE_LAYOUT.door.width + 40;
+const bottomWallSegmentWidth =
+  (COTTAGE_ROOM_SHELL.right - COTTAGE_ROOM_SHELL.left - exitCollisionGapWidth) / 2;
+const bottomWallLeftCentre = COTTAGE_ROOM_SHELL.left + bottomWallSegmentWidth / 2;
+const bottomWallRightCentre = COTTAGE_ROOM_SHELL.right - bottomWallSegmentWidth / 2;
 
 export const COTTAGE_INTERIOR_MAP = {
   width: 1500,
@@ -95,11 +145,10 @@ export const COTTAGE_INTERIOR_MAP = {
   playerSpawn: { x: 750, y: 700 },
   roomShell: COTTAGE_ROOM_SHELL,
   furnitureLayout: COTTAGE_FURNITURE_LAYOUT,
+  furnitureDepthAnchors: COTTAGE_FURNITURE_DEPTH_ANCHORS,
   windowLayout: COTTAGE_WINDOW_LAYOUT,
   reservedZones: COTTAGE_RESERVED_ZONES,
   colliders: [
-    // The wall/floor seam is the physical top edge of the walkable room. Furniture
-    // against that wall may extend visually into the floor and receives its own blocker.
     {
       id: 'wall-top',
       x: 750,
@@ -122,18 +171,20 @@ export const COTTAGE_INTERIOR_MAP = {
       height: COTTAGE_ROOM_SHELL.bottom - COTTAGE_ROOM_SHELL.top,
     },
     {
-      id: 'wall-bottom',
-      x: 750,
+      id: 'wall-bottom-left',
+      x: bottomWallLeftCentre,
       y: 1032,
-      width: COTTAGE_ROOM_SHELL.right - COTTAGE_ROOM_SHELL.left,
+      width: bottomWallSegmentWidth,
       height: 64,
     },
-    { id: 'fireplace', ...COTTAGE_FURNITURE_LAYOUT.fireplace },
-    { id: 'bed', ...COTTAGE_FURNITURE_LAYOUT.bed },
-    { id: 'tea-table', ...COTTAGE_FURNITURE_LAYOUT.teaTable },
-    { id: 'sofa', ...COTTAGE_FURNITURE_LAYOUT.sofa },
-    { id: 'treasure-shelf', ...COTTAGE_FURNITURE_LAYOUT.treasureShelf },
-    { id: 'wonderbook-lectern', ...COTTAGE_FURNITURE_LAYOUT.wonderbook },
+    {
+      id: 'wall-bottom-right',
+      x: bottomWallRightCentre,
+      y: 1032,
+      width: bottomWallSegmentWidth,
+      height: 64,
+    },
+    ...COTTAGE_FURNITURE_COLLIDERS,
   ] satisfies readonly CollisionRectangle[],
   exit: {
     id: 'cottage-exit',
@@ -221,6 +272,7 @@ export const COTTAGE_INTERIOR_MAP = {
 } satisfies TraversalMapDefinition & {
   roomShell: CottageRoomShell;
   furnitureLayout: typeof COTTAGE_FURNITURE_LAYOUT;
+  furnitureDepthAnchors: typeof COTTAGE_FURNITURE_DEPTH_ANCHORS;
   windowLayout: typeof COTTAGE_WINDOW_LAYOUT;
   reservedZones: readonly CottageReservedZone[];
   exit: CottageInteractionPoint;
