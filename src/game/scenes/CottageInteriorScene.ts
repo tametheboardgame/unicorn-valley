@@ -383,7 +383,14 @@ export class CottageInteriorScene extends Phaser.Scene {
       .setStrokeStyle(10, 0x815e54, 0.95)
       .setDepth(6);
     this.add
-      .rectangle(fireplace.x, fireplace.y + 25, fireplace.width * 0.5, fireplace.height * 0.63, 0x55404a, 1)
+      .rectangle(
+        fireplace.x,
+        fireplace.y + 25,
+        fireplace.width * 0.5,
+        fireplace.height * 0.63,
+        0x55404a,
+        1,
+      )
       .setDepth(7);
     this.add.ellipse(fireplace.x, fireplace.y + 40, 72, 60, 0xf8a958, 0.78).setDepth(8);
     this.add.ellipse(fireplace.x, fireplace.y + 48, 42, 42, 0xffdd75, 0.9).setDepth(9);
