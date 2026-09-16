@@ -92,7 +92,7 @@ export const COTTAGE_INTERIOR_MAP = {
   width: 1500,
   height: 1080,
   margin: 64,
-  playerSpawn: { x: 750, y: 845 },
+  playerSpawn: { x: 750, y: 700 },
   roomShell: COTTAGE_ROOM_SHELL,
   furnitureLayout: COTTAGE_FURNITURE_LAYOUT,
   windowLayout: COTTAGE_WINDOW_LAYOUT,
