@@ -3,6 +3,7 @@ import type { MapPoint } from './MapTraversal';
 export const COTTAGE_SEMANTIC_ANCHOR_IDS = {
   door: 'cottage.door',
   wonderbook: 'cottage.wonderbook',
+  sleep: 'cottage.sleep',
   eggNest: 'cottage.egg-nest',
   visitorWillow: 'cottage.visitor.willow',
   visitorNova: 'cottage.visitor.nova',
@@ -27,9 +28,8 @@ export interface CottageSemanticAnchor {
 /**
  * Canonical authored world points for systems that need stable cottage locations.
  *
- * H2.3 keeps consumers bound by semantic id while nudging visitor positions clear of the
- * newly authored furniture footprints and whole-unicorn side clearance. Story, navigation
- * and future-capacity anchors stay stable.
+ * H2.4 adds the bed-centre sleep trigger as semantic room geometry. Consumers continue to bind
+ * by id so sleep, story, visitors and future systems do not need coordinate hunting.
  */
 export const COTTAGE_SEMANTIC_ANCHORS = {
   [COTTAGE_SEMANTIC_ANCHOR_IDS.door]: {
@@ -42,6 +42,11 @@ export const COTTAGE_SEMANTIC_ANCHORS = {
     id: COTTAGE_SEMANTIC_ANCHOR_IDS.wonderbook,
     position: { x: 1260, y: 870 },
     interactionPosition: { x: 1125, y: 870 },
+    purpose: 'system',
+  },
+  [COTTAGE_SEMANTIC_ANCHOR_IDS.sleep]: {
+    id: COTTAGE_SEMANTIC_ANCHOR_IDS.sleep,
+    position: { x: 315, y: 700 },
     purpose: 'system',
   },
   [COTTAGE_SEMANTIC_ANCHOR_IDS.eggNest]: {
