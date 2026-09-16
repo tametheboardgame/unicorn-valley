@@ -33,6 +33,7 @@ import {
   resolveCottageSemanticAnchor,
 } from '../world/CottageSemanticAnchors';
 import { MOONFLOWER_GLADE_MAP, setMoonflowerGladePlayerSpawn } from '../world/MoonflowerGladeMap';
+import { worldDepthForY } from '../world/WorldDepth';
 
 const COLLISION_TEXTURE_KEY = 'cottage-collision-pixel';
 const SAVED_PLAYER_TEXTURE_KEY = 'player-unicorn-cottage';
@@ -50,7 +51,6 @@ export class CottageInteriorScene extends Phaser.Scene {
   private feedbackTimer: Phaser.Time.TimerEvent | null = null;
   private decorationService: HomeDecorationService | null = null;
   private friendVisitManager: CottageFriendVisitManager | null = null;
-  private homeView: CottageHomeView | null = null;
   private homeStateObjects: Phaser.GameObjects.GameObject[] = [];
   private interactions: readonly InteractionTarget[] = [];
 
@@ -66,7 +66,6 @@ export class CottageInteriorScene extends Phaser.Scene {
     const save = saveLocationCheckpoint(saveService, COTTAGE_INTERIOR_LOCATION_ID);
     this.decorationService = new HomeDecorationService(saveService);
     const homeView = buildCottageHomeView(save);
-    this.homeView = homeView;
     this.renderHomeState(homeView);
     this.interactions = this.createInteractions(homeView);
 
@@ -90,6 +89,7 @@ export class CottageInteriorScene extends Phaser.Scene {
     );
     this.player.sprite.setDisplaySize(112, 92);
     this.physics.add.collider(this.player.sprite, this.collisionGroup);
+    this.updatePlayerDepth();
 
     this.pointerInput = new PointerTouchInputAdapter();
     this.inputController = new InputController([new KeyboardInputAdapter(this), this.pointerInput]);
@@ -135,7 +135,6 @@ export class CottageInteriorScene extends Phaser.Scene {
       this.activeInteraction = null;
       this.feedbackText = null;
       this.decorationService = null;
-      this.homeView = null;
       this.homeStateObjects = [];
       this.interactions = [];
     });
@@ -151,6 +150,7 @@ export class CottageInteriorScene extends Phaser.Scene {
     if (this.friendVisitManager?.update(this.inputController)) {
       this.player.sprite.setVelocity(0, 0);
       this.player.updatePresentation(time);
+      this.updatePlayerDepth();
       this.activeInteraction = null;
       this.interactionPrompt?.setTarget(null);
       return;
@@ -169,6 +169,7 @@ export class CottageInteriorScene extends Phaser.Scene {
     );
     this.player.applyMovement(movement);
     this.player.updatePresentation(time);
+    this.updatePlayerDepth();
 
     const friendInteraction = this.friendVisitManager?.getInteraction();
     const availableInteractions = friendInteraction
@@ -183,6 +184,16 @@ export class CottageInteriorScene extends Phaser.Scene {
     if (this.inputController.justPressed('INTERACT') && this.activeInteraction) {
       this.activateInteraction(this.activeInteraction);
     }
+  }
+
+  private updatePlayerDepth(): void {
+    if (!this.player) {
+      return;
+    }
+
+    const body = this.player.sprite.body as Phaser.Physics.Arcade.Body | null;
+    const feetY = body?.bottom ?? this.player.sprite.y + 22;
+    this.player.sprite.setDepth(worldDepthForY(feetY, 0.12));
   }
 
   private createInteractions(homeView: CottageHomeView): readonly InteractionTarget[] {
@@ -349,7 +360,7 @@ export class CottageInteriorScene extends Phaser.Scene {
     this.add
       .rectangle(roomCentreX, shell.backWallBottom, roomWidth, 18, 0xa77b65, 0.82)
       .setName('cottage-floor-seam')
-      .setDepth(21);
+      .setDepth(2.25);
 
     for (let y = shell.backWallBottom + 44; y <= shell.bottom - 32; y += 72) {
       this.add.rectangle(roomCentreX, y, roomWidth, 3, 0xcda889, 0.28).setDepth(2);
