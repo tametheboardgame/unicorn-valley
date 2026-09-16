@@ -48,22 +48,40 @@ describe('Moonflower Cottage interior map', () => {
     expect(distanceFromExit).toBeGreaterThan(EXIT_INTERACTION_RADIUS);
   });
 
-  it('blocks every room edge, including the lower boundary behind the exit', () => {
+  it('blocks the room edges while leaving the approved lower exit opening clear', () => {
     const colliderIds = COTTAGE_INTERIOR_MAP.colliders.map(({ id }) => id);
     expect(colliderIds).toEqual(
-      expect.arrayContaining(['wall-top', 'wall-left', 'wall-right', 'wall-bottom']),
+      expect.arrayContaining([
+        'wall-top',
+        'wall-left',
+        'wall-right',
+        'wall-bottom-left',
+        'wall-bottom-right',
+      ]),
     );
 
+    const lowerBoundaryY = COTTAGE_INTERIOR_MAP.roomShell.bottom + 32;
     expect(
       isPointBlocked(
-        {
-          x: COTTAGE_INTERIOR_MAP.exit.position.x,
-          y: COTTAGE_INTERIOR_MAP.roomShell.bottom + 32,
-        },
+        { x: COTTAGE_INTERIOR_MAP.roomShell.left + 120, y: lowerBoundaryY },
         COTTAGE_INTERIOR_MAP.colliders,
         0,
       ),
     ).toBe(true);
+    expect(
+      isPointBlocked(
+        { x: COTTAGE_INTERIOR_MAP.roomShell.right - 120, y: lowerBoundaryY },
+        COTTAGE_INTERIOR_MAP.colliders,
+        0,
+      ),
+    ).toBe(true);
+    expect(
+      isPointBlocked(
+        { x: COTTAGE_INTERIOR_MAP.exit.position.x, y: lowerBoundaryY },
+        COTTAGE_INTERIOR_MAP.colliders,
+        0,
+      ),
+    ).toBe(false);
     expect(
       isPointBlocked(
         COTTAGE_INTERIOR_MAP.exit.approach,
