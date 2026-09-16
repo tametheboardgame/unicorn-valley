@@ -4,6 +4,10 @@ import {
   COTTAGE_FRIEND_VISIT_INTERACTION_ID,
   CottageFriendVisitManager,
 } from '../home/CottageFriendVisitManager';
+import {
+  renderCottagePermanentFurnishings,
+  renderCottageWonderbookNook,
+} from '../home/CottageFurnitureRenderer';
 import { buildCottageHomeView, type CottageHomeView } from '../home/CottageHomeView';
 import { HomeDecorationService } from '../home/HomeDecorationService';
 import { InputController } from '../input/InputController';
@@ -328,14 +332,9 @@ export class CottageInteriorScene extends Phaser.Scene {
       .setDepth(1);
 
     this.createFloorboards();
-    this.createWindows();
-    this.createFireplace();
-    this.createBed();
-    this.createTeaTable();
-    this.createSofa();
-    this.createTreasureShelf();
+    renderCottagePermanentFurnishings(this);
+    renderCottageWonderbookNook(this, wonderbookAnchor.position);
     renderWonderbookWorldProp(this, wonderbookAnchor.position);
-    this.createExitGap();
   }
 
   private createFloorboards(): void {
@@ -362,133 +361,6 @@ export class CottageInteriorScene extends Phaser.Scene {
       .ellipse(rugPosition.x, rugPosition.y, 440, 250, 0xc9a2d6, 0.26)
       .setStrokeStyle(6, 0xa77bb8, 0.24)
       .setDepth(3);
-  }
-
-  private createWindows(): void {
-    for (const window of COTTAGE_INTERIOR_MAP.windowLayout) {
-      this.add
-        .rectangle(window.x, window.y, window.width, window.height, 0xbcebf1, 0.92)
-        .setStrokeStyle(12, 0x9b785f, 0.95)
-        .setDepth(5);
-      this.add.rectangle(window.x, window.y, 8, window.height - 13, 0xffffff, 0.55).setDepth(6);
-      this.add.rectangle(window.x, window.y, window.width - 15, 8, 0xffffff, 0.55).setDepth(6);
-      this.add.circle(window.x + 40, window.y - 24, 20, 0xfff3a8, 0.5).setDepth(6);
-    }
-  }
-
-  private createFireplace(): void {
-    const fireplace = COTTAGE_INTERIOR_MAP.furnitureLayout.fireplace;
-    this.add
-      .rectangle(fireplace.x, fireplace.y, fireplace.width, fireplace.height, 0xa87967, 1)
-      .setStrokeStyle(10, 0x815e54, 0.95)
-      .setDepth(6);
-    this.add
-      .rectangle(
-        fireplace.x,
-        fireplace.y + 25,
-        fireplace.width * 0.5,
-        fireplace.height * 0.63,
-        0x55404a,
-        1,
-      )
-      .setDepth(7);
-    this.add.ellipse(fireplace.x, fireplace.y + 40, 72, 60, 0xf8a958, 0.78).setDepth(8);
-    this.add.ellipse(fireplace.x, fireplace.y + 48, 42, 42, 0xffdd75, 0.9).setDepth(9);
-    const mantelY = fireplace.y - fireplace.height * 0.6;
-    this.add.rectangle(fireplace.x, mantelY, fireplace.width + 35, 30, 0x8f6858, 1).setDepth(7);
-    this.add
-      .text(fireplace.x, mantelY - 10, '🌙', {
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '36px',
-      })
-      .setOrigin(0.5)
-      .setDepth(8);
-  }
-
-  private createBed(): void {
-    const bed = COTTAGE_INTERIOR_MAP.furnitureLayout.bed;
-    this.add
-      .rectangle(bed.x, bed.y, bed.width, bed.height, 0xecc9dc, 1)
-      .setStrokeStyle(8, 0x9a705f, 0.9)
-      .setDepth(6);
-    this.add.rectangle(bed.x, bed.y - 85, bed.width - 28, 62, 0xfff4e5, 1).setDepth(7);
-    this.add.rectangle(bed.x, bed.y + 36, bed.width - 28, 115, 0xc9a5d8, 0.9).setDepth(7);
-    this.add
-      .text(bed.x, bed.y + 18, '☾  ✦  ☾', {
-        color: '#fff4cb',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '28px',
-      })
-      .setOrigin(0.5)
-      .setDepth(8);
-  }
-
-  private createTeaTable(): void {
-    const table = COTTAGE_INTERIOR_MAP.furnitureLayout.teaTable;
-    this.add
-      .ellipse(table.x, table.y, table.width, table.height, 0xc4936f, 1)
-      .setStrokeStyle(7, 0x8c644f, 0.9)
-      .setDepth(6);
-    this.add
-      .text(table.x, table.y - 6, '🫖', { fontFamily: 'system-ui, sans-serif', fontSize: '40px' })
-      .setOrigin(0.5)
-      .setDepth(8);
-
-    const chairOffset = table.width / 2 + 20;
-    for (const x of [table.x - chairOffset, table.x + chairOffset]) {
-      this.add.circle(x, table.y + 10, 48, 0xe3bd91, 1).setDepth(5);
-      this.add.circle(x, table.y + 10, 29, 0xf8e7d1, 0.9).setDepth(6);
-    }
-  }
-
-  private createSofa(): void {
-    const sofa = COTTAGE_INTERIOR_MAP.furnitureLayout.sofa;
-    this.add
-      .rectangle(sofa.x, sofa.y, sofa.width, sofa.height, 0x93bfac, 1)
-      .setStrokeStyle(8, 0x648e7e, 0.95)
-      .setDepth(6);
-    this.add.rectangle(sofa.x, sofa.y - 53, sofa.width - 24, 58, 0xa9cfbe, 1).setDepth(7);
-    this.add.circle(sofa.x - 70, sofa.y - 5, 32, 0xffd995, 1).setDepth(8);
-    this.add.circle(sofa.x + 70, sofa.y - 5, 32, 0xdcb9eb, 1).setDepth(8);
-  }
-
-  private createTreasureShelf(): void {
-    const shelf = COTTAGE_INTERIOR_MAP.furnitureLayout.treasureShelf;
-    this.add
-      .rectangle(shelf.x, shelf.y, shelf.width, shelf.height, 0xb17c5f, 1)
-      .setStrokeStyle(7, 0x805848, 0.95)
-      .setDepth(6);
-    this.add.rectangle(shelf.x, shelf.y - 45, shelf.width + 30, 18, 0x8e624e, 1).setDepth(7);
-    this.add
-      .text(shelf.x, shelf.y + 70, 'Treasure Shelf', {
-        color: '#70515f',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '17px',
-        fontStyle: 'bold',
-        backgroundColor: '#fff7e6dd',
-        padding: { x: 8, y: 5 },
-      })
-      .setOrigin(0.5)
-      .setDepth(8);
-  }
-
-  private createExitGap(): void {
-    const door = COTTAGE_INTERIOR_MAP.furnitureLayout.door;
-    const shell = COTTAGE_INTERIOR_MAP.roomShell;
-    const openingWidth = door.width + 18;
-
-    // Cut through the room outline instead of placing a door object on the floor.
-    // The exit remains spatially obvious from the broken wall line and soft threshold shadow.
-    this.add
-      .rectangle(door.x, shell.bottom, openingWidth, 28, 0xf4ddc7, 1)
-      .setName('cottage-exit-gap')
-      .setDepth(6);
-    this.add
-      .rectangle(door.x, shell.bottom - 12, door.width - 18, 5, 0xb98b72, 0.38)
-      .setDepth(7);
-    this.add
-      .ellipse(door.x, shell.bottom + 18, door.width - 28, 30, 0x6e5064, 0.08)
-      .setDepth(5);
   }
 
   private renderHomeState(homeView: CottageHomeView): void {
