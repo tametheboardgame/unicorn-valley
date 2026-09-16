@@ -12,6 +12,7 @@ describe('CottageSemanticAnchors', () => {
       expect.arrayContaining([
         COTTAGE_SEMANTIC_ANCHOR_IDS.door,
         COTTAGE_SEMANTIC_ANCHOR_IDS.wonderbook,
+        COTTAGE_SEMANTIC_ANCHOR_IDS.sleep,
         COTTAGE_SEMANTIC_ANCHOR_IDS.eggNest,
         COTTAGE_SEMANTIC_ANCHOR_IDS.visitorWillow,
         COTTAGE_SEMANTIC_ANCHOR_IDS.visitorNova,
@@ -31,6 +32,12 @@ describe('CottageSemanticAnchors', () => {
         COTTAGE_INTERIOR_MAP.height - COTTAGE_INTERIOR_MAP.margin,
       );
     }
+  });
+
+  it('binds sleep to the canonical bed-centre trigger', () => {
+    expect(resolveCottageSemanticAnchor(COTTAGE_SEMANTIC_ANCHOR_IDS.sleep).position).toEqual(
+      COTTAGE_INTERIOR_MAP.sleepLayout.trigger,
+    );
   });
 
   it('fails loudly when a system asks for an unknown cottage anchor', () => {
