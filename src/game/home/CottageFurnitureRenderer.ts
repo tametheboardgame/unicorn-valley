@@ -89,7 +89,9 @@ function renderFireplace(scene: Phaser.Scene): void {
   const left = fireplace.x - fireplace.width / 2;
   const top = fireplace.y - fireplace.height / 2;
 
-  scene.add.ellipse(fireplace.x, fireplace.y + 62, fireplace.width + 90, 86, PALETTE.gold, 0.09).setDepth(4);
+  scene.add
+    .ellipse(fireplace.x, fireplace.y + 62, fireplace.width + 90, 86, PALETTE.gold, 0.09)
+    .setDepth(4);
 
   const graphics = scene.add.graphics().setDepth(6);
   graphics.fillStyle(PALETTE.stone, 1);
@@ -134,14 +136,7 @@ function renderFireplace(scene: Phaser.Scene): void {
   graphics.fillStyle(0xfff0a7, 0.92);
   graphics.fillEllipse(fireplace.x, fireplace.y + 49, 18, 40);
 
-  drawCrescent(
-    graphics,
-    fireplace.x,
-    top - 24,
-    16,
-    PALETTE.goldLight,
-    PALETTE.timberDark,
-  );
+  drawCrescent(graphics, fireplace.x, top - 24, 16, PALETTE.goldLight, PALETTE.timberDark);
   graphics.fillStyle(PALETTE.goldLight, 0.95);
   for (const [dx, dy] of [
     [-38, -21],
@@ -312,14 +307,7 @@ function renderTreasureShelf(scene: Phaser.Scene): void {
   graphics.fillStyle(PALETTE.sage, 0.9);
   graphics.fillRoundedRect(left + 79, top - 11, 25, 38, 5);
 
-  drawCrescent(
-    graphics,
-    shelf.x + 65,
-    top + 25,
-    12,
-    PALETTE.goldLight,
-    0x795647,
-  );
+  drawCrescent(graphics, shelf.x + 65, top + 25, 12, PALETTE.goldLight, 0x795647);
 }
 
 function renderWonderbookNook(scene: Phaser.Scene, position: MapPoint): void {
@@ -345,7 +333,9 @@ function renderExitGap(scene: Phaser.Scene): void {
     .rectangle(door.x, shell.bottom, openingWidth, 28, PALETTE.roomOutside, 1)
     .setName('cottage-exit-gap')
     .setDepth(6);
-  scene.add.ellipse(door.x, shell.bottom + 20, door.width + 10, 44, PALETTE.skyLight, 0.22).setDepth(4);
+  scene.add
+    .ellipse(door.x, shell.bottom + 20, door.width + 10, 44, PALETTE.skyLight, 0.22)
+    .setDepth(4);
 
   const graphics = scene.add.graphics().setDepth(7);
   graphics.fillStyle(PALETTE.timberDark, 0.9);
