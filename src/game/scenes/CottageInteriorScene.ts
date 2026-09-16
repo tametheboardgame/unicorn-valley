@@ -314,10 +314,16 @@ export class CottageInteriorScene extends Phaser.Scene {
 
   private createEnvironment(): void {
     const map = COTTAGE_INTERIOR_MAP;
+    const shell = map.roomShell;
+    const shellWidth = shell.right - shell.left;
+    const shellHeight = shell.bottom - shell.top;
+    const shellCentreX = (shell.left + shell.right) / 2;
+    const shellCentreY = (shell.top + shell.bottom) / 2;
     const wonderbookAnchor = resolveCottageSemanticAnchor(COTTAGE_SEMANTIC_ANCHOR_IDS.wonderbook);
+
     this.add.rectangle(map.width / 2, map.height / 2, map.width, map.height, 0xf4ddc7).setDepth(0);
     this.add
-      .rectangle(map.width / 2, map.height / 2 + 35, map.width - 160, map.height - 170, 0xf7e8d6)
+      .rectangle(shellCentreX, shellCentreY, shellWidth, shellHeight, 0xf7e8d6)
       .setStrokeStyle(18, 0xb98b72, 0.9)
       .setDepth(1);
 
@@ -333,58 +339,75 @@ export class CottageInteriorScene extends Phaser.Scene {
   }
 
   private createFloorboards(): void {
-    this.add.rectangle(900, 230, 1610, 320, 0xe8cdb6, 0.72).setDepth(2);
+    const map = COTTAGE_INTERIOR_MAP;
+    const shell = map.roomShell;
+    const roomWidth = shell.right - shell.left;
+    const roomCentreX = (shell.left + shell.right) / 2;
+    const wallHeight = shell.backWallBottom - shell.top;
+    const wallCentreY = shell.top + wallHeight / 2;
+
+    this.add.rectangle(roomCentreX, wallCentreY, roomWidth, wallHeight, 0xe8cdb6, 0.78).setDepth(2);
     this.add
-      .rectangle(900, 390, 1610, 18, 0xa77b65, 0.82)
+      .rectangle(roomCentreX, shell.backWallBottom, roomWidth, 18, 0xa77b65, 0.82)
       .setName('cottage-floor-seam')
       .setDepth(21);
 
-    for (let y = 414; y <= 1040; y += 72) {
-      this.add.rectangle(900, y, 1610, 3, 0xcda889, 0.28).setDepth(2);
+    for (let y = shell.backWallBottom + 44; y <= shell.bottom - 32; y += 72) {
+      this.add.rectangle(roomCentreX, y, roomWidth, 3, 0xcda889, 0.28).setDepth(2);
     }
 
+    const rugSlot = map.decorationSlots.find((slot) => slot.id === 'cottage-slot:centre-rug');
+    const rugPosition = rugSlot?.position ?? { x: roomCentreX, y: 790 };
     this.add
-      .ellipse(900, 815, 470, 285, 0xc9a2d6, 0.26)
+      .ellipse(rugPosition.x, rugPosition.y, 440, 250, 0xc9a2d6, 0.26)
       .setStrokeStyle(6, 0xa77bb8, 0.24)
       .setDepth(3);
   }
 
   private createWindows(): void {
-    for (const x of [670, 1130]) {
+    for (const window of COTTAGE_INTERIOR_MAP.windowLayout) {
       this.add
-        .rectangle(x, 150, 210, 125, 0xbcebf1, 0.92)
+        .rectangle(window.x, window.y, window.width, window.height, 0xbcebf1, 0.92)
         .setStrokeStyle(12, 0x9b785f, 0.95)
         .setDepth(5);
-      this.add.rectangle(x, 150, 8, 112, 0xffffff, 0.55).setDepth(6);
-      this.add.rectangle(x, 150, 195, 8, 0xffffff, 0.55).setDepth(6);
-      this.add.circle(x + 42, 126, 20, 0xfff3a8, 0.5).setDepth(6);
+      this.add.rectangle(window.x, window.y, 8, window.height - 13, 0xffffff, 0.55).setDepth(6);
+      this.add.rectangle(window.x, window.y, window.width - 15, 8, 0xffffff, 0.55).setDepth(6);
+      this.add.circle(window.x + 40, window.y - 24, 20, 0xfff3a8, 0.5).setDepth(6);
     }
   }
 
   private createFireplace(): void {
+    const fireplace = COTTAGE_INTERIOR_MAP.furnitureLayout.fireplace;
     this.add
-      .rectangle(285, 305, 250, 150, 0xa87967, 1)
+      .rectangle(fireplace.x, fireplace.y, fireplace.width, fireplace.height, 0xa87967, 1)
       .setStrokeStyle(10, 0x815e54, 0.95)
       .setDepth(6);
-    this.add.rectangle(285, 330, 125, 95, 0x55404a, 1).setDepth(7);
-    this.add.ellipse(285, 345, 72, 60, 0xf8a958, 0.78).setDepth(8);
-    this.add.ellipse(285, 353, 42, 42, 0xffdd75, 0.9).setDepth(9);
-    this.add.rectangle(285, 215, 285, 30, 0x8f6858, 1).setDepth(7);
     this.add
-      .text(285, 205, '🌙', { fontFamily: 'system-ui, sans-serif', fontSize: '36px' })
+      .rectangle(fireplace.x, fireplace.y + 25, fireplace.width * 0.5, fireplace.height * 0.63, 0x55404a, 1)
+      .setDepth(7);
+    this.add.ellipse(fireplace.x, fireplace.y + 40, 72, 60, 0xf8a958, 0.78).setDepth(8);
+    this.add.ellipse(fireplace.x, fireplace.y + 48, 42, 42, 0xffdd75, 0.9).setDepth(9);
+    const mantelY = fireplace.y - fireplace.height * 0.6;
+    this.add.rectangle(fireplace.x, mantelY, fireplace.width + 35, 30, 0x8f6858, 1).setDepth(7);
+    this.add
+      .text(fireplace.x, mantelY - 10, '🌙', {
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '36px',
+      })
       .setOrigin(0.5)
       .setDepth(8);
   }
 
   private createBed(): void {
+    const bed = COTTAGE_INTERIOR_MAP.furnitureLayout.bed;
     this.add
-      .rectangle(390, 670, 300, 230, 0xecc9dc, 1)
+      .rectangle(bed.x, bed.y, bed.width, bed.height, 0xecc9dc, 1)
       .setStrokeStyle(8, 0x9a705f, 0.9)
       .setDepth(6);
-    this.add.rectangle(390, 585, 272, 62, 0xfff4e5, 1).setDepth(7);
-    this.add.rectangle(390, 706, 272, 115, 0xc9a5d8, 0.9).setDepth(7);
+    this.add.rectangle(bed.x, bed.y - 85, bed.width - 28, 62, 0xfff4e5, 1).setDepth(7);
+    this.add.rectangle(bed.x, bed.y + 36, bed.width - 28, 115, 0xc9a5d8, 0.9).setDepth(7);
     this.add
-      .text(390, 688, '☾  ✦  ☾', {
+      .text(bed.x, bed.y + 18, '☾  ✦  ☾', {
         color: '#fff4cb',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '28px',
@@ -394,38 +417,43 @@ export class CottageInteriorScene extends Phaser.Scene {
   }
 
   private createTeaTable(): void {
-    this.add.ellipse(900, 500, 230, 165, 0xc4936f, 1).setStrokeStyle(7, 0x8c644f, 0.9).setDepth(6);
+    const table = COTTAGE_INTERIOR_MAP.furnitureLayout.teaTable;
     this.add
-      .text(900, 494, '🫖', { fontFamily: 'system-ui, sans-serif', fontSize: '40px' })
+      .ellipse(table.x, table.y, table.width, table.height, 0xc4936f, 1)
+      .setStrokeStyle(7, 0x8c644f, 0.9)
+      .setDepth(6);
+    this.add
+      .text(table.x, table.y - 6, '🫖', { fontFamily: 'system-ui, sans-serif', fontSize: '40px' })
       .setOrigin(0.5)
       .setDepth(8);
-    for (const [x, y] of [
-      [770, 510],
-      [1030, 510],
-    ] as const) {
-      this.add.circle(x, y, 48, 0xe3bd91, 1).setDepth(5);
-      this.add.circle(x, y, 29, 0xf8e7d1, 0.9).setDepth(6);
+
+    const chairOffset = table.width / 2 + 20;
+    for (const x of [table.x - chairOffset, table.x + chairOffset]) {
+      this.add.circle(x, table.y + 10, 48, 0xe3bd91, 1).setDepth(5);
+      this.add.circle(x, table.y + 10, 29, 0xf8e7d1, 0.9).setDepth(6);
     }
   }
 
   private createSofa(): void {
+    const sofa = COTTAGE_INTERIOR_MAP.furnitureLayout.sofa;
     this.add
-      .rectangle(1245, 735, 300, 145, 0x93bfac, 1)
+      .rectangle(sofa.x, sofa.y, sofa.width, sofa.height, 0x93bfac, 1)
       .setStrokeStyle(8, 0x648e7e, 0.95)
       .setDepth(6);
-    this.add.rectangle(1245, 682, 276, 58, 0xa9cfbe, 1).setDepth(7);
-    this.add.circle(1175, 730, 32, 0xffd995, 1).setDepth(8);
-    this.add.circle(1315, 730, 32, 0xdcb9eb, 1).setDepth(8);
+    this.add.rectangle(sofa.x, sofa.y - 53, sofa.width - 24, 58, 0xa9cfbe, 1).setDepth(7);
+    this.add.circle(sofa.x - 70, sofa.y - 5, 32, 0xffd995, 1).setDepth(8);
+    this.add.circle(sofa.x + 70, sofa.y - 5, 32, 0xdcb9eb, 1).setDepth(8);
   }
 
   private createTreasureShelf(): void {
+    const shelf = COTTAGE_INTERIOR_MAP.furnitureLayout.treasureShelf;
     this.add
-      .rectangle(1515, 345, 220, 95, 0xb17c5f, 1)
+      .rectangle(shelf.x, shelf.y, shelf.width, shelf.height, 0xb17c5f, 1)
       .setStrokeStyle(7, 0x805848, 0.95)
       .setDepth(6);
-    this.add.rectangle(1515, 300, 250, 18, 0x8e624e, 1).setDepth(7);
+    this.add.rectangle(shelf.x, shelf.y - 45, shelf.width + 30, 18, 0x8e624e, 1).setDepth(7);
     this.add
-      .text(1515, 415, 'Treasure Shelf', {
+      .text(shelf.x, shelf.y + 70, 'Treasure Shelf', {
         color: '#70515f',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '17px',
@@ -438,11 +466,12 @@ export class CottageInteriorScene extends Phaser.Scene {
   }
 
   private createDoor(): void {
+    const door = COTTAGE_INTERIOR_MAP.furnitureLayout.door;
     this.add
-      .rectangle(COTTAGE_INTERIOR_MAP.exit.position.x, 1080, 185, 180, 0x8d654f, 1)
+      .rectangle(door.x, door.y, door.width, door.height, 0x8d654f, 1)
       .setStrokeStyle(10, 0x6d4d43, 1)
       .setDepth(6);
-    this.add.circle(957, 1080, 9, 0xffe5a5, 1).setDepth(7);
+    this.add.circle(door.x + door.width * 0.31, door.y, 9, 0xffe5a5, 1).setDepth(7);
   }
 
   private renderHomeState(homeView: CottageHomeView): void {
