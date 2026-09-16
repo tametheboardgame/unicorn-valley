@@ -80,8 +80,12 @@ export class CottageSleepController {
   public destroy(): void {
     this.holdTimer?.destroy();
     this.holdTimer = null;
-    this.scene.tweens.killTweensOf(this.overlay);
-    this.scene.tweens.killTweensOf(this.message);
+    if (this.overlay) {
+      this.scene.tweens.killTweensOf(this.overlay);
+    }
+    if (this.message) {
+      this.scene.tweens.killTweensOf(this.message);
+    }
     this.overlay?.destroy();
     this.message?.destroy();
     this.overlay = null;
@@ -92,7 +96,14 @@ export class CottageSleepController {
   private fadeToSleep(fadeDuration: number, messageDuration: number): void {
     const camera = this.scene.cameras.main;
     this.overlay = this.scene.add
-      .rectangle(camera.width / 2, camera.height / 2, camera.width + 8, camera.height + 8, 0x120f1c, 1)
+      .rectangle(
+        camera.width / 2,
+        camera.height / 2,
+        camera.width + 8,
+        camera.height + 8,
+        0x120f1c,
+        1,
+      )
       .setName('cottage-sleep-overlay')
       .setScrollFactor(0)
       .setDepth(OVERLAY_DEPTH)
