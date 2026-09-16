@@ -100,7 +100,9 @@ test('Cottage back-wall boundary blocks whole-unicorn overlap while approaches a
   let value = await snapshot(page);
   const atWall = player(value, 'CottageInteriorScene');
   expect(atWall.bodyY).toBeGreaterThanOrEqual(369);
-  expect(atWall.y - atWall.displayHeight / 2).toBeGreaterThanOrEqual(367);
+  // The generated unicorn texture includes transparent padding, so its display rectangle is not
+  // an opaque-art bound. Protect the authored wall stop using the physics body plus sprite centre.
+  expect(atWall.y).toBeGreaterThanOrEqual(379);
   expect(atWall.y).toBeLessThan(440);
   expect(
     scene(value, 'CottageInteriorScene').objects.some(({ name }) => name === 'cottage-floor-seam'),
