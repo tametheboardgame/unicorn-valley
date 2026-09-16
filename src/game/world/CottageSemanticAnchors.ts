@@ -28,7 +28,8 @@ export interface CottageSemanticAnchor {
  * Canonical authored world points for systems that need stable cottage locations.
  *
  * H2.3 keeps consumers bound by semantic id while nudging visitor positions clear of the
- * newly authored chair footprints. Story, navigation and future-capacity anchors stay stable.
+ * newly authored furniture footprints and whole-unicorn side clearance. Story, navigation
+ * and future-capacity anchors stay stable.
  */
 export const COTTAGE_SEMANTIC_ANCHORS = {
   [COTTAGE_SEMANTIC_ANCHOR_IDS.door]: {
@@ -51,7 +52,7 @@ export const COTTAGE_SEMANTIC_ANCHORS = {
   },
   [COTTAGE_SEMANTIC_ANCHOR_IDS.visitorWillow]: {
     id: COTTAGE_SEMANTIC_ANCHOR_IDS.visitorWillow,
-    position: { x: 530, y: 600 },
+    position: { x: 545, y: 600 },
     purpose: 'visitor',
   },
   [COTTAGE_SEMANTIC_ANCHOR_IDS.visitorNova]: {
