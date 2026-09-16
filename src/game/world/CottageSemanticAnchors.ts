@@ -27,67 +27,67 @@ export interface CottageSemanticAnchor {
 /**
  * Canonical authored world points for systems that need stable cottage locations.
  *
- * H2.0 intentionally preserves the current room layout. H2.1 may move these points as
- * the room shell is rebuilt, but consumers should continue to bind by anchor id rather
- * than copying coordinates into content or presentation code.
+ * H2.1 moves these anchors with the approved room shell. Consumers bind by semantic id,
+ * so later furniture-art and physicality passes can evolve presentation without copying
+ * room coordinates into story, visitor or navigation systems.
  */
 export const COTTAGE_SEMANTIC_ANCHORS = {
   [COTTAGE_SEMANTIC_ANCHOR_IDS.door]: {
     id: COTTAGE_SEMANTIC_ANCHOR_IDS.door,
-    position: { x: 900, y: 1110 },
-    interactionPosition: { x: 900, y: 1010 },
+    position: { x: 750, y: 955 },
+    interactionPosition: { x: 750, y: 875 },
     purpose: 'navigation',
   },
   [COTTAGE_SEMANTIC_ANCHOR_IDS.wonderbook]: {
     id: COTTAGE_SEMANTIC_ANCHOR_IDS.wonderbook,
-    position: { x: 1490, y: 910 },
-    interactionPosition: { x: 1335, y: 910 },
+    position: { x: 1260, y: 870 },
+    interactionPosition: { x: 1125, y: 870 },
     purpose: 'system',
   },
   [COTTAGE_SEMANTIC_ANCHOR_IDS.eggNest]: {
     id: COTTAGE_SEMANTIC_ANCHOR_IDS.eggNest,
-    position: { x: 620, y: 930 },
-    interactionPosition: { x: 720, y: 910 },
+    position: { x: 420, y: 900 },
+    interactionPosition: { x: 520, y: 885 },
     purpose: 'story',
   },
   [COTTAGE_SEMANTIC_ANCHOR_IDS.visitorWillow]: {
     id: COTTAGE_SEMANTIC_ANCHOR_IDS.visitorWillow,
-    position: { x: 650, y: 470 },
+    position: { x: 560, y: 600 },
     purpose: 'visitor',
   },
   [COTTAGE_SEMANTIC_ANCHOR_IDS.visitorNova]: {
     id: COTTAGE_SEMANTIC_ANCHOR_IDS.visitorNova,
-    position: { x: 1180, y: 470 },
+    position: { x: 970, y: 570 },
     purpose: 'visitor',
   },
   [COTTAGE_SEMANTIC_ANCHOR_IDS.storyDisplayOne]: {
     id: COTTAGE_SEMANTIC_ANCHOR_IDS.storyDisplayOne,
-    position: { x: 760, y: 930 },
+    position: { x: 560, y: 895 },
     purpose: 'future-story',
   },
   [COTTAGE_SEMANTIC_ANCHOR_IDS.storyDisplayTwo]: {
     id: COTTAGE_SEMANTIC_ANCHOR_IDS.storyDisplayTwo,
-    position: { x: 900, y: 930 },
+    position: { x: 930, y: 895 },
     purpose: 'future-story',
   },
   [COTTAGE_SEMANTIC_ANCHOR_IDS.storyDisplayThree]: {
     id: COTTAGE_SEMANTIC_ANCHOR_IDS.storyDisplayThree,
-    position: { x: 1060, y: 930 },
+    position: { x: 1090, y: 875 },
     purpose: 'future-story',
   },
   [COTTAGE_SEMANTIC_ANCHOR_IDS.storyDisplayFour]: {
     id: COTTAGE_SEMANTIC_ANCHOR_IDS.storyDisplayFour,
-    position: { x: 1380, y: 560 },
+    position: { x: 1030, y: 455 },
     purpose: 'future-story',
   },
   [COTTAGE_SEMANTIC_ANCHOR_IDS.storyDisplayFive]: {
     id: COTTAGE_SEMANTIC_ANCHOR_IDS.storyDisplayFive,
-    position: { x: 560, y: 500 },
+    position: { x: 500, y: 455 },
     purpose: 'future-story',
   },
   [COTTAGE_SEMANTIC_ANCHOR_IDS.portalBay]: {
     id: COTTAGE_SEMANTIC_ANCHOR_IDS.portalBay,
-    position: { x: 1510, y: 720 },
+    position: { x: 1280, y: 530 },
     purpose: 'future-portal',
   },
 } as const satisfies Record<CottageSemanticAnchorId, CottageSemanticAnchor>;
