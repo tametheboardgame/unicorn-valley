@@ -19,8 +19,7 @@ function containsPoint(rect: CottageRectLayout, point: { x: number; y: number })
 
 function overlaps(a: CottageRectLayout, b: CottageRectLayout): boolean {
   return (
-    Math.abs(a.x - b.x) * 2 < a.width + b.width &&
-    Math.abs(a.y - b.y) * 2 < a.height + b.height
+    Math.abs(a.x - b.x) * 2 < a.width + b.width && Math.abs(a.y - b.y) * 2 < a.height + b.height
   );
 }
 
@@ -38,7 +37,9 @@ describe('H2.1 cottage room layout', () => {
   });
 
   it('drives permanent-furniture colliders from the same authored layout', () => {
-    const colliders = new Map(COTTAGE_INTERIOR_MAP.colliders.map((collider) => [collider.id, collider]));
+    const colliders = new Map(
+      COTTAGE_INTERIOR_MAP.colliders.map((collider) => [collider.id, collider]),
+    );
     const expected = [
       ['fireplace', COTTAGE_FURNITURE_LAYOUT.fireplace],
       ['bed', COTTAGE_FURNITURE_LAYOUT.bed],
