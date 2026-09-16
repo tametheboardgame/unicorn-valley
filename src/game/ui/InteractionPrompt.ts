@@ -58,8 +58,8 @@ function shouldRenderPortraitDomPrompt(): boolean {
   );
 }
 
-function shouldShowContextHint(scene: Phaser.Scene): boolean {
-  return scene.scene.key !== 'CottageInteriorScene';
+function shouldShowContextHint(target: InteractionTarget | null): boolean {
+  return target !== null && target.id !== 'interaction:cottage-sleep';
 }
 
 /** One semantic contextual action presentation for every exploration layout. */
@@ -319,7 +319,7 @@ export class InteractionPrompt {
     const portrait = shouldRenderPortraitDomPrompt();
     const targetVisible =
       this.currentTarget !== null && !isAutomaticInteraction(this.currentTarget);
-    const showContextHint = shouldShowContextHint(this.scene);
+    const showContextHint = shouldShowContextHint(this.currentTarget);
     const canvasActionVisible = targetVisible && !portrait;
     const canvasHintVisible = targetVisible && !portrait && showContextHint;
     const highVisibility = this.accessibility.load().highVisibilityInteractions;
