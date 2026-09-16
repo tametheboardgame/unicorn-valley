@@ -58,6 +58,10 @@ function shouldRenderPortraitDomPrompt(): boolean {
   );
 }
 
+function shouldShowContextHint(scene: Phaser.Scene): boolean {
+  return scene.scene.key !== 'CottageInteriorScene';
+}
+
 /** One semantic contextual action presentation for every exploration layout. */
 export class InteractionPrompt {
   private readonly accessibility = getBrowserAccessibilitySettingsStore();
@@ -315,8 +319,9 @@ export class InteractionPrompt {
     const portrait = shouldRenderPortraitDomPrompt();
     const targetVisible =
       this.currentTarget !== null && !isAutomaticInteraction(this.currentTarget);
+    const showContextHint = shouldShowContextHint(this.scene);
     const canvasActionVisible = targetVisible && !portrait;
-    const canvasHintVisible = targetVisible && !portrait;
+    const canvasHintVisible = targetVisible && !portrait && showContextHint;
     const highVisibility = this.accessibility.load().highVisibilityInteractions;
 
     this.panelShadow.setVisible(canvasActionVisible);
@@ -351,6 +356,9 @@ export class InteractionPrompt {
     if (this.domRoot) {
       this.domRoot.hidden = !(targetVisible && portrait);
       this.domRoot.classList.toggle('is-high-visibility', highVisibility);
+    }
+    if (this.domHint) {
+      this.domHint.hidden = !showContextHint;
     }
 
     if (this.renderedHighVisibility !== highVisibility) {
