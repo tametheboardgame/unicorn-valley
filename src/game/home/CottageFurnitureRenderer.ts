@@ -315,9 +315,21 @@ function renderSofa(scene: Phaser.Scene): void {
   const pillowWidth = Math.min(48, seatWidth * 0.58);
   const pillowXOffset = innerWidth * 0.25;
   graphics.fillStyle(PALETTE.goldLight, 1);
-  graphics.fillRoundedRect(sofa.x - pillowXOffset - pillowWidth / 2, sofa.y - 17, pillowWidth, 42, 14);
+  graphics.fillRoundedRect(
+    sofa.x - pillowXOffset - pillowWidth / 2,
+    sofa.y - 17,
+    pillowWidth,
+    42,
+    14,
+  );
   graphics.fillStyle(PALETTE.lavender, 1);
-  graphics.fillRoundedRect(sofa.x + pillowXOffset - pillowWidth / 2, sofa.y - 17, pillowWidth, 42, 14);
+  graphics.fillRoundedRect(
+    sofa.x + pillowXOffset - pillowWidth / 2,
+    sofa.y - 17,
+    pillowWidth,
+    42,
+    14,
+  );
   graphics.lineStyle(2, PALETTE.cream, 0.62);
   graphics.lineBetween(
     sofa.x - pillowXOffset - pillowWidth * 0.33,
