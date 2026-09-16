@@ -8,6 +8,7 @@ import type { InteractionTarget } from '../interaction/InteractionTarget';
 import type { SaveService } from '../save/SaveService';
 import type { CoreNpcId } from '../visual/CoreNpcProductionArt';
 import { resolveCottageSemanticAnchor } from '../world/CottageSemanticAnchors';
+import { worldDepthForY } from '../world/WorldDepth';
 import type { CottageHomeView } from './CottageHomeView';
 import { FriendVisitService, type ResolvedFriendVisit } from './FriendVisitService';
 
@@ -156,9 +157,10 @@ export class CottageFriendVisitManager {
     const { x, y } = resolveCottageSemanticAnchor(visit.definition.anchorId).position;
     const character = characterRegistry.get(visit.definition.characterId);
     const coreNpcId = coreNpcIdForCharacter(visit.definition.characterId);
+    const visitorDepth = worldDepthForY(y + 46, 0.18);
 
-    const glow = this.scene.add.circle(x, y, 72, 0xffe8a3, 0.18).setDepth(12);
-    const fallbackVisitor = coreNpcId ? [] : this.renderFallbackVisitor(visit, x, y);
+    const glow = this.scene.add.circle(x, y, 72, 0xffe8a3, 0.18).setDepth(visitorDepth - 1);
+    const fallbackVisitor = coreNpcId ? [] : this.renderFallbackVisitor(visit, x, y, visitorDepth);
     const label = this.scene.add
       .text(x, y + 78, `${character.name} is visiting`, {
         color: '#654f63',
@@ -169,11 +171,11 @@ export class CottageFriendVisitManager {
         padding: { x: 9, y: 5 },
       })
       .setOrigin(0.5)
-      .setDepth(14);
+      .setDepth(visitorDepth + 0.5);
 
     this.visitorObjects = [glow, ...fallbackVisitor, label];
     if (coreNpcId) {
-      void this.renderProductionVisitor(coreNpcId, x, y, generation);
+      void this.renderProductionVisitor(coreNpcId, x, y, generation, visitorDepth);
     }
     this.scene.tweens.add({
       targets: glow,
@@ -191,6 +193,7 @@ export class CottageFriendVisitManager {
     x: number,
     y: number,
     generation: number,
+    visitorDepth: number,
   ): Promise<void> {
     const { addCoreNpcIdleTween, createCoreNpcSprite } = await import(
       '../visual/CoreNpcProductionArt'
@@ -201,7 +204,7 @@ export class CottageFriendVisitManager {
 
     const sprite = createCoreNpcSprite(this.scene, coreNpcId, x, y + 7, 'world')
       .setDisplaySize(coreNpcId === 'pip' ? 96 : 112, coreNpcId === 'pip' ? 78 : 92)
-      .setDepth(14);
+      .setDepth(visitorDepth);
     addCoreNpcIdleTween(this.scene, sprite, coreNpcId, 4);
     this.visitorObjects.push(sprite);
   }
@@ -210,18 +213,19 @@ export class CottageFriendVisitManager {
     visit: ResolvedFriendVisit,
     x: number,
     y: number,
+    visitorDepth: number,
   ): Phaser.GameObjects.GameObject[] {
     const body = this.scene.add
       .circle(x, y, 54, 0xfff4df, 0.98)
       .setStrokeStyle(6, 0xb78bc4, 0.9)
-      .setDepth(13);
+      .setDepth(visitorDepth - 0.1);
     const icon = this.scene.add
       .text(x, y - 3, visit.definition.icon, {
         fontFamily: 'system-ui, sans-serif',
         fontSize: '48px',
       })
       .setOrigin(0.5)
-      .setDepth(14);
+      .setDepth(visitorDepth);
     return [body, icon];
   }
 
