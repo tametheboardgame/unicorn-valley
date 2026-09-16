@@ -43,6 +43,11 @@ export interface CottageReservedZone extends CottageRectLayout {
   purpose: 'future-story' | 'future-portal';
 }
 
+export interface CottageSleepLayout {
+  trigger: MapPoint;
+  wake: MapPoint;
+}
+
 export type CottageFurnitureDepthId =
   | 'fireplace'
   | 'bed'
@@ -66,10 +71,7 @@ export const COTTAGE_ROOM_SHELL = {
   backWallBottom: 370,
 } as const satisfies CottageRoomShell;
 
-/**
- * Permanent-furniture presentation bounds. H2.3 intentionally keeps these visual positions
- * stable while replacing the old one-rectangle-per-item collision model with physical footprints.
- */
+/** Permanent-furniture presentation bounds approved through H2.2/H2.3. */
 export const COTTAGE_FURNITURE_LAYOUT = {
   fireplace: { x: 270, y: 335, width: 240, height: 150 },
   bed: { x: 315, y: 700, width: 300, height: 230 },
@@ -80,18 +82,27 @@ export const COTTAGE_FURNITURE_LAYOUT = {
   door: { x: 750, y: 955, width: 185, height: 180 },
 } as const satisfies Record<string, CottageRectLayout>;
 
+const sleepAnchor = resolveCottageSemanticAnchor(COTTAGE_SEMANTIC_ANCHOR_IDS.sleep);
+
 /**
- * H2.3 physical footprints. These describe the parts of each furnishing that occupy floor
- * space, not the full presentation silhouette. That distinction allows the unicorn to pass
- * behind furniture where the artwork implies depth without walking through its physical base.
- *
- * The bed is deliberately wider than its nominal authored width because the player physics
- * body is narrower than the visible unicorn sprite. The extra side clearance keeps the visible
- * head and tail from clipping through the bed rails while preserving front/back walkaround.
+ * H2.4 bed geometry. The side rails and headboard stay solid, while the foot remains open so the
+ * unicorn can walk naturally into the bed and reach the semantic centre trigger.
+ */
+export const COTTAGE_SLEEP_LAYOUT = {
+  trigger: sleepAnchor.position,
+  wake: { x: COTTAGE_FURNITURE_LAYOUT.bed.x, y: 850 },
+} as const satisfies CottageSleepLayout;
+
+/**
+ * H2.3/H2.4 physical footprints. These describe floor occupancy rather than full visual
+ * silhouettes. The bed is now a U-shaped set of blockers: two whole-unicorn-safe side rails plus
+ * the headboard, deliberately leaving the foot open for H2.4 sleep entry.
  */
 export const COTTAGE_FURNITURE_COLLIDERS = [
   { id: 'fireplace-front', x: 270, y: 394, width: 252, height: 48 },
-  { id: 'bed-frame', x: 315, y: 717, width: 326, height: 185 },
+  { id: 'bed-headboard', x: 315, y: 623, width: 286, height: 52 },
+  { id: 'bed-left-rail', x: 197, y: 708, width: 50, height: 170 },
+  { id: 'bed-right-rail', x: 433, y: 708, width: 50, height: 170 },
   { id: 'tea-table', x: 760, y: 577, width: 178, height: 96 },
   { id: 'tea-chair-left', x: 637, y: 575, width: 60, height: 76 },
   { id: 'tea-chair-right', x: 883, y: 575, width: 60, height: 76 },
@@ -102,11 +113,7 @@ export const COTTAGE_FURNITURE_COLLIDERS = [
   { id: 'exit-right-post', x: 862, y: 986, width: 22, height: 46 },
 ] as const satisfies readonly CollisionRectangle[];
 
-/**
- * Sort lines for permanent furnishings. A player whose feet are above a line is rendered
- * behind the furnishing; once their feet move below it they render in front. H2.4 will split
- * the bed into dedicated front/rear layers for sleeping, but ordinary walkaround uses this map.
- */
+/** Sort lines for permanent furnishings. Bed foreground/rear split is rendered in H2.4. */
 export const COTTAGE_FURNITURE_DEPTH_ANCHORS = {
   fireplace: 420,
   bed: 810,
@@ -153,6 +160,7 @@ export const COTTAGE_INTERIOR_MAP = {
   roomShell: COTTAGE_ROOM_SHELL,
   furnitureLayout: COTTAGE_FURNITURE_LAYOUT,
   furnitureDepthAnchors: COTTAGE_FURNITURE_DEPTH_ANCHORS,
+  sleepLayout: COTTAGE_SLEEP_LAYOUT,
   windowLayout: COTTAGE_WINDOW_LAYOUT,
   reservedZones: COTTAGE_RESERVED_ZONES,
   colliders: [
@@ -280,6 +288,7 @@ export const COTTAGE_INTERIOR_MAP = {
   roomShell: CottageRoomShell;
   furnitureLayout: typeof COTTAGE_FURNITURE_LAYOUT;
   furnitureDepthAnchors: typeof COTTAGE_FURNITURE_DEPTH_ANCHORS;
+  sleepLayout: CottageSleepLayout;
   windowLayout: typeof COTTAGE_WINDOW_LAYOUT;
   reservedZones: readonly CottageReservedZone[];
   exit: CottageInteractionPoint;
