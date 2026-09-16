@@ -20,9 +20,9 @@ export function renderWonderbookWorldProp(
   position: WonderbookWorldPropPosition,
   options: WonderbookWorldPropOptions = {},
 ): void {
-  const scale = options.scale ?? 1;
+  const scale = options.scale ?? 0.64;
   const x = position.x;
-  const y = position.y + (options.yOffset ?? 0);
+  const y = position.y + (options.yOffset ?? 12);
   const scaled = (value: number): number => value * scale;
   const baseDepth = worldDepthForY(y + scaled(92));
 
