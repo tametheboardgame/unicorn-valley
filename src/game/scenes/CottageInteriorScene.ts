@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { getBrowserAtmosphericTimeService } from '../atmosphere/AtmosphericTimeService';
 import { GAME_WIDTH } from '../config/gameConstants';
 import {
   COTTAGE_FRIEND_VISIT_INTERACTION_ID,
@@ -10,6 +11,7 @@ import {
 } from '../home/CottageFurnitureRenderer';
 import { buildCottageHomeView, type CottageHomeView } from '../home/CottageHomeView';
 import { HomeDecorationService } from '../home/HomeDecorationService';
+import { CottageSleepController } from '../home/CottageSleepController';
 import { InputController } from '../input/InputController';
 import { KeyboardInputAdapter } from '../input/KeyboardInputAdapter';
 import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
@@ -51,6 +53,7 @@ export class CottageInteriorScene extends Phaser.Scene {
   private feedbackTimer: Phaser.Time.TimerEvent | null = null;
   private decorationService: HomeDecorationService | null = null;
   private friendVisitManager: CottageFriendVisitManager | null = null;
+  private sleepController: CottageSleepController | null = null;
   private homeStateObjects: Phaser.GameObjects.GameObject[] = [];
   private interactions: readonly InteractionTarget[] = [];
 
@@ -90,6 +93,12 @@ export class CottageInteriorScene extends Phaser.Scene {
     this.player.sprite.setDisplaySize(112, 92);
     this.physics.add.collider(this.player.sprite, this.collisionGroup);
     this.updatePlayerDepth();
+    this.sleepController = new CottageSleepController(
+      this,
+      this.player,
+      getBrowserAtmosphericTimeService(saveService),
+      () => this.updatePlayerDepth(),
+    );
 
     this.pointerInput = new PointerTouchInputAdapter();
     this.inputController = new InputController([new KeyboardInputAdapter(this), this.pointerInput]);
@@ -120,6 +129,8 @@ export class CottageInteriorScene extends Phaser.Scene {
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.feedbackTimer?.destroy();
       this.feedbackTimer = null;
+      this.sleepController?.destroy();
+      this.sleepController = null;
       this.friendVisitManager?.destroy();
       this.friendVisitManager = null;
       this.touchMovementPad?.destroy();
@@ -146,6 +157,13 @@ export class CottageInteriorScene extends Phaser.Scene {
     }
 
     this.inputController.update();
+
+    if (this.sleepController?.isActive()) {
+      this.player.sprite.setVelocity(0, 0);
+      this.activeInteraction = null;
+      this.interactionPrompt?.setTarget(null);
+      return;
+    }
 
     if (this.friendVisitManager?.update(this.inputController)) {
       this.player.sprite.setVelocity(0, 0);
@@ -187,7 +205,7 @@ export class CottageInteriorScene extends Phaser.Scene {
   }
 
   private updatePlayerDepth(): void {
-    if (!this.player) {
+    if (!this.player || this.sleepController?.isActive()) {
       return;
     }
 
@@ -205,6 +223,7 @@ export class CottageInteriorScene extends Phaser.Scene {
         : 'A tiny shelf waits for special treasures from your adventures.';
     const doorAnchor = resolveCottageSemanticAnchor(COTTAGE_SEMANTIC_ANCHOR_IDS.door);
     const wonderbookAnchor = resolveCottageSemanticAnchor(COTTAGE_SEMANTIC_ANCHOR_IDS.wonderbook);
+    const sleepAnchor = resolveCottageSemanticAnchor(COTTAGE_SEMANTIC_ANCHOR_IDS.sleep);
     const placementBySlotId = new Map(
       homeView.placements.map((placement) => [placement.slotId, placement] as const),
     );
@@ -226,6 +245,19 @@ export class CottageInteriorScene extends Phaser.Scene {
     });
 
     return [
+      {
+        id: 'interaction:cottage-sleep',
+        label: 'Bed',
+        actionLabel: 'Sleep',
+        actionKind: 'use',
+        position: sleepAnchor.position,
+        interactionRadius: 82,
+        priority: 40,
+        result: {
+          type: 'callback',
+          activate: () => this.startSleep(),
+        },
+      },
       {
         id: 'interaction:cottage-exit',
         label: 'Moonflower Glade',
@@ -284,6 +316,11 @@ export class CottageInteriorScene extends Phaser.Scene {
       return;
     }
 
+    if (target.result.type === 'callback') {
+      target.result.activate();
+      return;
+    }
+
     if (target.result.type === 'scene-transition') {
       if (target.result.sceneKey === 'WonderbookScene') {
         this.scene.launch(target.result.sceneKey, target.result.payload);
@@ -308,6 +345,14 @@ export class CottageInteriorScene extends Phaser.Scene {
     if (target.result.type === 'message') {
       this.showFeedback(`${target.result.title}\n${target.result.message}`);
     }
+  }
+
+  private startSleep(): void {
+    if (!this.sleepController?.start()) {
+      return;
+    }
+    this.activeInteraction = null;
+    this.interactionPrompt?.setTarget(null);
   }
 
   private cycleDecoration(slotId: string): void {
