@@ -65,6 +65,14 @@ describe('H2 cottage room layout and physicality', () => {
     );
   });
 
+  it('protects the visible unicorn from clipping through the bed side rails', () => {
+    const bed = COTTAGE_FURNITURE_COLLIDERS.find(({ id }) => id === 'bed-frame');
+
+    expect(bed).toBeDefined();
+    expect(bed?.width).toBeGreaterThan(COTTAGE_FURNITURE_LAYOUT.bed.width);
+    expect(bed?.height).toBeLessThan(COTTAGE_FURNITURE_LAYOUT.bed.height);
+  });
+
   it('keeps the open exit physically open while protecting its frame', () => {
     const bottomColliders = COTTAGE_INTERIOR_MAP.colliders.filter(
       ({ id }) => id.startsWith('wall-bottom') || id.startsWith('exit-'),
@@ -75,6 +83,18 @@ describe('H2 cottage room layout and physicality', () => {
     );
     expect(COTTAGE_FURNITURE_COLLIDERS.some(({ id }) => id === 'exit-left-post')).toBe(true);
     expect(COTTAGE_FURNITURE_COLLIDERS.some(({ id }) => id === 'exit-right-post')).toBe(true);
+  });
+
+  it('stops the player before the visible bottom wall rather than on top of it', () => {
+    const bottomWallSegments = COTTAGE_INTERIOR_MAP.colliders.filter(({ id }) =>
+      id.startsWith('wall-bottom'),
+    );
+
+    expect(bottomWallSegments).toHaveLength(2);
+    for (const collider of bottomWallSegments) {
+      const topEdge = collider.y - collider.height / 2;
+      expect(topEdge).toBeLessThanOrEqual(COTTAGE_ROOM_SHELL.bottom - 20);
+    }
   });
 
   it('keeps entrance, interaction approaches and visitor anchors out of physical blockers', () => {
