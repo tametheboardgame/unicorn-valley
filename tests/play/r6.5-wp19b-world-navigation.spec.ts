@@ -77,6 +77,16 @@ async function tapWorld(page: Page, sceneKey: string, x: number, y: number): Pro
   );
 }
 
+async function tapScreen(page: Page, x: number, y: number): Promise<void> {
+  const value = await snapshot(page);
+  const canvas = await page.locator('canvas').boundingBox();
+  if (!canvas) throw new Error('Canvas unavailable');
+  await page.touchscreen.tap(
+    canvas.x + (x / value.width) * canvas.width,
+    canvas.y + (y / value.height) * canvas.height,
+  );
+}
+
 test.use({ hasTouch: true, viewport: { width: 1024, height: 768 } });
 
 test('Cottage back-wall boundary blocks whole-unicorn overlap while approaches and Gallop remain usable', async ({
@@ -123,7 +133,7 @@ test('Cottage back-wall boundary blocks whole-unicorn overlap while approaches a
     .toBeGreaterThan(35);
 });
 
-test('Cottage bed sleep sequence enters the bed, shows the sleep message and wakes at the foot', async ({
+test('Cottage bed sleep sequence uses the touch action directly, shows the sleep message and wakes at the foot', async ({
   page,
 }) => {
   await page.goto('/?diagnostics=1');
@@ -157,7 +167,20 @@ test('Cottage bed sleep sequence enters the bed, shows the sleep message and wak
   );
 
   await page.waitForTimeout(120);
-  await page.keyboard.press('KeyE');
+
+  const beforeSleep = await snapshot(page);
+  const cottageObjects = scene(beforeSleep, 'CottageInteriorScene').objects;
+  expect(
+    cottageObjects.find(({ name }) => name === 'exploration-interaction-prompt')?.visible,
+  ).toBe(true);
+  expect(cottageObjects.find(({ name }) => name === 'exploration-tablet-hint-panel')?.visible).toBe(
+    false,
+  );
+
+  // Reproduce the actual landscape-tablet path: tap the fixed purple contextual action rather
+  // than using keyboard E. The sleep target must invoke its callback synchronously and must not
+  // route through the legacy shared INTERACT pulse.
+  await tapScreen(page, 1040, 578);
 
   await expect
     .poll(
