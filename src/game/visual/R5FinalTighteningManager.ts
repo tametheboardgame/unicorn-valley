@@ -4,7 +4,6 @@ import { RefreshThrottle } from '../performance/RefreshThrottle';
 const FIREFLY_BUTTON_WIDTH = 244;
 const FIREFLY_BUTTON_HEIGHT = 80;
 const FIREFLY_BUTTON_XS = [354, 640, 926] as const;
-const COTTAGE_WALL_ANCHOR = 'r5-final-cottage-wall-anchor';
 const RAIN_CONTAINER_NAME = 'magical-weather-rain-screen';
 const SUGGESTION_CARD_NAME = 'activity-suggestion-card';
 
@@ -92,25 +91,6 @@ function strengthenRain(scene: Phaser.Scene): void {
   }
 }
 
-function tightenCottageInterior(scene: Phaser.Scene): void {
-  if (scene.children.getByName(COTTAGE_WALL_ANCHOR)) {
-    return;
-  }
-
-  scene.add.rectangle(900, 210, 1610, 260, 0xf7e8d6, 1).setName(COTTAGE_WALL_ANCHOR).setDepth(2.4);
-  scene.add
-    .rectangle(900, 340, 1610, 12, 0xb98b72, 0.42)
-    .setName('r5-final-cottage-baseboard')
-    .setDepth(4.4);
-
-  for (const x of [670, 1130]) {
-    scene.add
-      .rectangle(x, 218, 224, 14, 0x9b785f, 0.96)
-      .setName('r5-final-cottage-window-sill')
-      .setDepth(6.2);
-  }
-}
-
 export class R5FinalTighteningManager {
   private readonly syncThrottle = new RefreshThrottle(100);
 
@@ -132,8 +112,6 @@ export class R5FinalTighteningManager {
 
       if (scene.scene.key === 'FireflyLanternScene') {
         tightenFireflySelector(scene);
-      } else if (scene.scene.key === 'CottageInteriorScene') {
-        tightenCottageInterior(scene);
       }
     }
   }
