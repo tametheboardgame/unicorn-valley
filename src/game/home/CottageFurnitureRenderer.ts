@@ -26,6 +26,13 @@ const PALETTE = {
   roomOutside: 0xf4ddc7,
 } as const;
 
+const FURNITURE_SCALE = {
+  bed: 0.9,
+  teaTable: 0.9,
+  sofa: 0.88,
+  treasureShelf: 0.94,
+} as const;
+
 function addFloorShadow(
   scene: Phaser.Scene,
   x: number,
@@ -150,178 +157,201 @@ function renderFireplace(scene: Phaser.Scene): void {
 
 function renderBed(scene: Phaser.Scene): void {
   const bed = COTTAGE_INTERIOR_MAP.furnitureLayout.bed;
-  const left = bed.x - bed.width / 2;
-  const top = bed.y - bed.height / 2;
+  const width = bed.width * FURNITURE_SCALE.bed;
+  const height = bed.height * FURNITURE_SCALE.bed;
+  const left = bed.x - width / 2;
+  const top = bed.y - height / 2;
 
-  addFloorShadow(scene, bed.x + 8, bed.y + bed.height * 0.39, bed.width + 46, 92, 0.13);
+  addFloorShadow(scene, bed.x + 5, bed.y + height * 0.41, width + 30, 76, 0.11);
 
   const graphics = scene.add.graphics().setDepth(6);
+
   graphics.fillStyle(PALETTE.timberDark, 1);
-  graphics.fillRoundedRect(left - 8, top - 15, bed.width + 16, bed.height + 28, 18);
+  graphics.fillRoundedRect(left - 8, top - 10, width + 16, height + 22, 17);
   graphics.fillStyle(PALETTE.timber, 1);
-  graphics.fillRoundedRect(left + 7, top - 27, bed.width - 14, 76, 22);
-  graphics.fillStyle(PALETTE.cream, 1);
-  graphics.fillRoundedRect(left + 13, top + 42, bed.width - 26, bed.height - 62, 18);
+  graphics.fillRoundedRect(left + 8, top - 19, width - 16, 62, 19);
 
+  graphics.fillStyle(PALETTE.cream, 1);
+  graphics.fillRoundedRect(left + 14, top + 38, width - 28, height - 54, 17);
   graphics.fillStyle(PALETTE.rose, 1);
-  graphics.fillRoundedRect(left + 18, top + 100, bed.width - 36, bed.height - 118, 16);
+  graphics.fillRoundedRect(left + 18, top + 91, width - 36, height - 105, 14);
   graphics.fillStyle(PALETTE.lavender, 0.96);
-  graphics.fillRoundedRect(left + 18, bed.y + 7, bed.width - 36, bed.height * 0.47, 15);
-  graphics.fillStyle(PALETTE.lavenderDark, 0.34);
-  graphics.fillRoundedRect(left + 24, bed.y + 19, bed.width - 48, 13, 7);
+  graphics.fillRoundedRect(left + 18, bed.y + 9, width - 36, height * 0.42, 14);
+  graphics.fillStyle(PALETTE.lavenderDark, 0.3);
+  graphics.fillRoundedRect(left + 27, bed.y + 21, width - 54, 10, 6);
 
+  const pillowGap = 10;
+  const pillowWidth = (width - 66 - pillowGap) / 2;
+  const pillowY = top + 50;
   graphics.fillStyle(PALETTE.cream, 1);
-  graphics.fillRoundedRect(left + 31, top + 57, bed.width * 0.38, 55, 18);
-  graphics.fillRoundedRect(bed.x + 4, top + 57, bed.width * 0.38, 55, 18);
-  graphics.lineStyle(3, PALETTE.creamShade, 0.72);
-  graphics.strokeRoundedRect(left + 31, top + 57, bed.width * 0.38, 55, 18);
-  graphics.strokeRoundedRect(bed.x + 4, top + 57, bed.width * 0.38, 55, 18);
+  graphics.fillRoundedRect(left + 28, pillowY, pillowWidth, 43, 15);
+  graphics.fillRoundedRect(left + 28 + pillowWidth + pillowGap, pillowY, pillowWidth, 43, 15);
+  graphics.lineStyle(2, PALETTE.creamShade, 0.7);
+  graphics.strokeRoundedRect(left + 28, pillowY, pillowWidth, 43, 15);
+  graphics.strokeRoundedRect(left + 28 + pillowWidth + pillowGap, pillowY, pillowWidth, 43, 15);
 
   graphics.fillStyle(PALETTE.timber, 1);
-  graphics.fillRoundedRect(left - 12, bed.y + bed.height / 2 - 21, bed.width + 24, 39, 11);
+  graphics.fillRoundedRect(left - 10, bed.y + height / 2 - 20, width + 20, 34, 10);
   graphics.fillStyle(PALETTE.gold, 0.82);
-  graphics.fillCircle(bed.x - 92, bed.y + bed.height / 2 - 2, 5);
-  graphics.fillCircle(bed.x + 92, bed.y + bed.height / 2 - 2, 5);
+  graphics.fillCircle(bed.x - width * 0.31, bed.y + height / 2 - 4, 4);
+  graphics.fillCircle(bed.x + width * 0.31, bed.y + height / 2 - 4, 4);
 
-  drawCrescent(graphics, bed.x, top + 8, 15, PALETTE.goldLight, PALETTE.timber);
+  drawCrescent(graphics, bed.x, top + 7, 13, PALETTE.goldLight, PALETTE.timber);
   graphics.fillStyle(PALETTE.goldLight, 0.9);
-  graphics.fillCircle(bed.x - 44, top + 10, 3);
-  graphics.fillCircle(bed.x + 45, top + 11, 3);
+  graphics.fillCircle(bed.x - 39, top + 9, 3);
+  graphics.fillCircle(bed.x + 40, top + 10, 3);
 }
 
 function renderChair(scene: Phaser.Scene, x: number, y: number, facing: -1 | 1): void {
   const graphics = scene.add.graphics().setDepth(5);
   graphics.fillStyle(PALETTE.timberDark, 1);
-  graphics.fillRoundedRect(x - 39, y - 48, 78, 86, 22);
+  graphics.fillRoundedRect(x - 33, y - 42, 66, 76, 19);
   graphics.fillStyle(PALETTE.timberLight, 1);
-  graphics.fillRoundedRect(x - 32, y - 39, 64, 61, 18);
+  graphics.fillRoundedRect(x - 27, y - 34, 54, 53, 16);
   graphics.fillStyle(PALETTE.cream, 0.95);
-  graphics.fillEllipse(x, y + 8, 58, 39);
+  graphics.fillEllipse(x, y + 7, 48, 32);
   graphics.fillStyle(PALETTE.timberDark, 1);
-  graphics.fillRect(x - 28 + facing * 4, y + 22, 9, 34);
-  graphics.fillRect(x + 19 + facing * 4, y + 22, 9, 34);
+  graphics.fillRect(x - 24 + facing * 3, y + 19, 8, 30);
+  graphics.fillRect(x + 16 + facing * 3, y + 19, 8, 30);
 }
 
 function renderTeaTable(scene: Phaser.Scene): void {
   const table = COTTAGE_INTERIOR_MAP.furnitureLayout.teaTable;
-  const chairOffset = table.width / 2 + 28;
+  const width = table.width * FURNITURE_SCALE.teaTable;
+  const height = table.height * FURNITURE_SCALE.teaTable;
+  const chairOffset = width / 2 + 24;
 
-  addFloorShadow(scene, table.x, table.y + 40, table.width + 80, table.height * 0.7, 0.12);
+  addFloorShadow(scene, table.x, table.y + 34, width + 66, height * 0.68, 0.1);
   renderChair(scene, table.x - chairOffset, table.y + 8, 1);
   renderChair(scene, table.x + chairOffset, table.y + 8, -1);
 
   const graphics = scene.add.graphics().setDepth(6);
   graphics.fillStyle(PALETTE.timberDark, 1);
-  graphics.fillEllipse(table.x, table.y + 16, table.width + 12, table.height + 4);
+  graphics.fillEllipse(table.x, table.y + 13, width + 10, height + 3);
   graphics.fillStyle(PALETTE.timberLight, 1);
-  graphics.fillEllipse(table.x, table.y, table.width, table.height);
-  graphics.lineStyle(4, PALETTE.timber, 0.78);
-  graphics.strokeEllipse(table.x, table.y, table.width - 18, table.height - 16);
-  graphics.fillStyle(PALETTE.timberDark, 1);
-  graphics.fillRoundedRect(table.x - 13, table.y + 54, 26, 86, 10);
-  graphics.fillEllipse(table.x, table.y + 114, 92, 26);
+  graphics.fillEllipse(table.x, table.y, width, height);
+  graphics.lineStyle(3, PALETTE.timber, 0.74);
+  graphics.strokeEllipse(table.x, table.y, width - 16, height - 14);
 
-  graphics.fillStyle(PALETTE.cream, 1);
-  graphics.fillEllipse(table.x, table.y - 7, 68, 49);
-  graphics.fillCircle(table.x + 22, table.y - 30, 7);
-  graphics.fillStyle(PALETTE.roseDark, 1);
-  graphics.fillEllipse(table.x, table.y - 8, 48, 35);
-  graphics.lineStyle(6, PALETTE.roseDark, 1);
-  graphics.strokeCircle(table.x + 35, table.y - 5, 15);
+  graphics.fillStyle(PALETTE.timberDark, 1);
+  graphics.fillRoundedRect(table.x - 11, table.y + 47, 22, 73, 9);
+  graphics.fillEllipse(table.x, table.y + 98, 78, 22);
+
+  // Small, clean tea set designed to read at the same scale as the unicorn.
+  graphics.fillStyle(PALETTE.lavender, 1);
+  graphics.fillEllipse(table.x, table.y - 10, 43, 30);
+  graphics.fillRoundedRect(table.x - 9, table.y - 29, 18, 8, 4);
+  graphics.fillStyle(PALETTE.goldLight, 1);
+  graphics.fillCircle(table.x, table.y - 30, 4);
   graphics.fillStyle(PALETTE.roseDark, 1);
   graphics.fillTriangle(
-    table.x - 26,
-    table.y - 12,
-    table.x - 52,
-    table.y - 3,
-    table.x - 26,
-    table.y + 2,
+    table.x - 20,
+    table.y - 15,
+    table.x - 39,
+    table.y - 8,
+    table.x - 20,
+    table.y - 4,
   );
-  graphics.fillStyle(PALETTE.goldLight, 1);
-  graphics.fillCircle(table.x, table.y - 32, 7);
+  graphics.lineStyle(4, PALETTE.roseDark, 1);
+  graphics.strokeCircle(table.x + 22, table.y - 10, 10);
 
-  for (const dx of [-58, 58]) {
+  for (const dx of [-48, 48]) {
     graphics.fillStyle(PALETTE.cream, 1);
-    graphics.fillEllipse(table.x + dx, table.y + 17, 32, 24);
-    graphics.lineStyle(4, PALETTE.roseDark, 0.9);
-    graphics.strokeCircle(table.x + dx + Math.sign(dx) * 14, table.y + 17, 8);
+    graphics.fillEllipse(table.x + dx, table.y + 14, 22, 16);
+    graphics.lineStyle(3, PALETTE.roseDark, 0.9);
+    graphics.strokeCircle(table.x + dx + Math.sign(dx) * 10, table.y + 14, 5);
+    graphics.lineStyle(2, PALETTE.creamShade, 0.8);
+    graphics.strokeEllipse(table.x + dx, table.y + 20, 28, 8);
   }
 }
 
 function renderSofa(scene: Phaser.Scene): void {
   const sofa = COTTAGE_INTERIOR_MAP.furnitureLayout.sofa;
-  const left = sofa.x - sofa.width / 2;
-  const top = sofa.y - sofa.height / 2;
+  const width = sofa.width * FURNITURE_SCALE.sofa;
+  const height = sofa.height * FURNITURE_SCALE.sofa;
+  const left = sofa.x - width / 2;
+  const top = sofa.y - height / 2;
 
-  addFloorShadow(scene, sofa.x, sofa.y + 62, sofa.width + 45, 72, 0.12);
+  addFloorShadow(scene, sofa.x, sofa.y + 53, width + 35, 62, 0.1);
 
   const graphics = scene.add.graphics().setDepth(6);
   graphics.fillStyle(PALETTE.sageDark, 1);
-  graphics.fillRoundedRect(left - 7, top - 30, sofa.width + 14, sofa.height + 42, 32);
+  graphics.fillRoundedRect(left - 6, top - 24, width + 12, height + 34, 28);
   graphics.fillStyle(PALETTE.sage, 1);
-  graphics.fillRoundedRect(left + 10, top - 20, sofa.width - 20, 92, 28);
+  graphics.fillRoundedRect(left + 10, top - 16, width - 20, 80, 24);
+
+  const seatLeft = left + 24;
+  const seatWidth = width - 48;
+  const cushionGap = 8;
+  const cushionWidth = (seatWidth - cushionGap) / 2;
+  const cushionY = sofa.y - 3;
   graphics.fillStyle(0xa8cbbb, 1);
-  graphics.fillRoundedRect(left + 29, sofa.y - 8, sofa.width - 58, 74, 24);
+  graphics.fillRoundedRect(seatLeft, cushionY, cushionWidth, 61, 18);
+  graphics.fillRoundedRect(seatLeft + cushionWidth + cushionGap, cushionY, cushionWidth, 61, 18);
 
-  graphics.lineStyle(3, PALETTE.sageDark, 0.42);
-  graphics.lineBetween(sofa.x, sofa.y - 3, sofa.x, sofa.y + 52);
   graphics.fillStyle(PALETTE.sageDark, 1);
-  graphics.fillRoundedRect(left - 20, sofa.y - 25, 46, 96, 20);
-  graphics.fillRoundedRect(left + sofa.width - 26, sofa.y - 25, 46, 96, 20);
-  graphics.fillRect(left + 16, sofa.y + 57, 12, 37);
-  graphics.fillRect(left + sofa.width - 28, sofa.y + 57, 12, 37);
+  graphics.fillRoundedRect(left - 16, sofa.y - 20, 39, 84, 18);
+  graphics.fillRoundedRect(left + width - 23, sofa.y - 20, 39, 84, 18);
+  graphics.fillRect(left + 15, sofa.y + 50, 10, 32);
+  graphics.fillRect(left + width - 25, sofa.y + 50, 10, 32);
 
+  // Balanced decorative cushions: equal visual weight on both halves.
   graphics.fillStyle(PALETTE.goldLight, 1);
-  graphics.fillRoundedRect(sofa.x - 104, sofa.y - 24, 67, 54, 16);
+  graphics.fillRoundedRect(sofa.x - 91, sofa.y - 21, 55, 48, 15);
   graphics.fillStyle(PALETTE.lavender, 1);
-  graphics.fillRoundedRect(sofa.x + 37, sofa.y - 25, 69, 56, 17);
-  graphics.lineStyle(2, PALETTE.cream, 0.7);
-  graphics.lineBetween(sofa.x - 94, sofa.y + 1, sofa.x - 47, sofa.y - 15);
-  graphics.lineBetween(sofa.x + 50, sofa.y - 12, sofa.x + 93, sofa.y + 2);
+  graphics.fillRoundedRect(sofa.x + 36, sofa.y - 21, 55, 48, 15);
+  graphics.lineStyle(2, PALETTE.cream, 0.66);
+  graphics.lineBetween(sofa.x - 82, sofa.y + 1, sofa.x - 45, sofa.y - 12);
+  graphics.lineBetween(sofa.x + 44, sofa.y - 11, sofa.x + 82, sofa.y + 1);
 }
 
 function renderTreasureShelf(scene: Phaser.Scene): void {
   const shelf = COTTAGE_INTERIOR_MAP.furnitureLayout.treasureShelf;
-  const left = shelf.x - shelf.width / 2;
-  const top = shelf.y - shelf.height / 2;
+  const width = shelf.width * FURNITURE_SCALE.treasureShelf;
+  const height = shelf.height * FURNITURE_SCALE.treasureShelf;
+  const left = shelf.x - width / 2;
+  const top = shelf.y - height / 2;
   const graphics = scene.add.graphics().setDepth(6);
 
   graphics.fillStyle(PALETTE.timberDark, 1);
-  graphics.fillRoundedRect(left - 13, top - 52, shelf.width + 26, shelf.height + 70, 16);
+  graphics.fillRoundedRect(left - 12, top - 48, width + 24, height + 65, 15);
   graphics.fillStyle(PALETTE.timber, 1);
-  graphics.fillRoundedRect(left, top - 40, shelf.width, shelf.height + 44, 12);
+  graphics.fillRoundedRect(left, top - 37, width, height + 40, 11);
   graphics.fillStyle(0x795647, 0.72);
-  graphics.fillRoundedRect(left + 13, top - 27, shelf.width - 26, shelf.height + 18, 9);
+  graphics.fillRoundedRect(left + 12, top - 25, width - 24, height + 16, 8);
 
   graphics.fillStyle(PALETTE.timberLight, 1);
-  graphics.fillRoundedRect(left - 18, top + 3, shelf.width + 36, 17, 7);
-  graphics.fillRoundedRect(left - 18, top + 43, shelf.width + 36, 17, 7);
+  graphics.fillRoundedRect(left - 16, top + 3, width + 32, 15, 7);
+  graphics.fillRoundedRect(left - 16, top + 40, width + 32, 15, 7);
   graphics.fillStyle(PALETTE.gold, 0.85);
-  graphics.fillCircle(left + 18, top + 70, 6);
-  graphics.fillCircle(left + shelf.width - 18, top + 70, 6);
+  graphics.fillCircle(left + 17, top + 65, 5);
+  graphics.fillCircle(left + width - 17, top + 65, 5);
 
   graphics.fillStyle(PALETTE.cream, 0.88);
-  graphics.fillRoundedRect(left + 22, top - 15, 27, 42, 5);
+  graphics.fillRoundedRect(left + 20, top - 13, 24, 37, 5);
   graphics.fillStyle(PALETTE.rose, 0.9);
-  graphics.fillRoundedRect(left + 53, top - 7, 22, 34, 5);
+  graphics.fillRoundedRect(left + 49, top - 6, 20, 30, 5);
   graphics.fillStyle(PALETTE.sage, 0.9);
-  graphics.fillRoundedRect(left + 79, top - 11, 25, 38, 5);
+  graphics.fillRoundedRect(left + 73, top - 10, 22, 34, 5);
 
-  drawCrescent(graphics, shelf.x + 65, top + 25, 12, PALETTE.goldLight, 0x795647);
+  drawCrescent(graphics, shelf.x + width * 0.31, top + 24, 11, PALETTE.goldLight, 0x795647);
 }
 
-function renderWonderbookNook(scene: Phaser.Scene, position: MapPoint): void {
-  scene.add.ellipse(position.x, position.y + 30, 210, 118, PALETTE.lavender, 0.16).setDepth(3);
-  scene.add.ellipse(position.x, position.y + 26, 154, 82, PALETTE.goldLight, 0.08).setDepth(4);
+function renderWonderbookNook(scene: Phaser.Scene, position: MapPoint, scale: number, yOffset: number): void {
+  const x = position.x;
+  const y = position.y + yOffset;
+
+  scene.add.ellipse(x, y + 19 * scale, 176 * scale, 92 * scale, PALETTE.lavender, 0.13).setDepth(3);
+  scene.add.ellipse(x, y + 16 * scale, 120 * scale, 61 * scale, PALETTE.goldLight, 0.07).setDepth(4);
 
   const graphics = scene.add.graphics().setDepth(5);
   graphics.fillStyle(PALETTE.timberDark, 1);
-  graphics.fillRoundedRect(position.x - 61, position.y + 28, 122, 36, 13);
+  graphics.fillRoundedRect(x - 45 * scale, y + 20 * scale, 90 * scale, 27 * scale, 10 * scale);
   graphics.fillStyle(PALETTE.timber, 1);
-  graphics.fillRoundedRect(position.x - 50, position.y + 18, 100, 31, 11);
+  graphics.fillRoundedRect(x - 37 * scale, y + 13 * scale, 74 * scale, 23 * scale, 8 * scale);
   graphics.fillStyle(PALETTE.gold, 0.72);
-  graphics.fillCircle(position.x - 37, position.y + 33, 4);
-  graphics.fillCircle(position.x + 37, position.y + 33, 4);
+  graphics.fillCircle(x - 27 * scale, y + 24 * scale, 3 * scale);
+  graphics.fillCircle(x + 27 * scale, y + 24 * scale, 3 * scale);
 }
 
 function renderExitGap(scene: Phaser.Scene): void {
@@ -360,6 +390,11 @@ export function renderCottagePermanentFurnishings(scene: Phaser.Scene): void {
   renderExitGap(scene);
 }
 
-export function renderCottageWonderbookNook(scene: Phaser.Scene, position: MapPoint): void {
-  renderWonderbookNook(scene, position);
+export function renderCottageWonderbookNook(
+  scene: Phaser.Scene,
+  position: MapPoint,
+  scale = 0.64,
+  yOffset = 12,
+): void {
+  renderWonderbookNook(scene, position, scale, yOffset);
 }
