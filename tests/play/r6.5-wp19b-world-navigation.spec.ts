@@ -100,7 +100,7 @@ test('Cottage back-wall boundary blocks whole-unicorn overlap while approaches a
   let value = await snapshot(page);
   const atWall = player(value, 'CottageInteriorScene');
   expect(atWall.bodyY).toBeGreaterThanOrEqual(369);
-  expect((atWall.bodyY ?? 0) + (atWall.bodyHeight ?? 0)).toBeGreaterThan(409);
+  expect(atWall.y - atWall.displayHeight / 2).toBeGreaterThanOrEqual(367);
   expect(atWall.y).toBeLessThan(440);
   expect(
     scene(value, 'CottageInteriorScene').objects.some(({ name }) => name === 'cottage-floor-seam'),
@@ -126,6 +126,23 @@ test('Cottage bed sleep sequence enters the bed, shows the sleep message and wak
 }) => {
   await page.goto('/?diagnostics=1');
   await startScene(page, 'CottageInteriorScene');
+
+  // H2.4 owns the bed area. The retired bedside-decoration hotspot must not open Decorate mode.
+  await page.evaluate(() =>
+    (
+      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__?.setArcadeSpritePosition(
+      'CottageInteriorScene',
+      'world-player-unicorn',
+      520,
+      710,
+    ),
+  );
+  await page.waitForTimeout(120);
+  await page.keyboard.press('KeyE');
+  await page.waitForTimeout(120);
+  expect((await snapshot(page)).activeScenes).not.toContain('CottageDecorateScene');
+
   await page.evaluate(() =>
     (
       window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics }
