@@ -29,8 +29,13 @@ export type DecorationCycleResult =
       slot: CottageDecorationSlot;
     };
 
+const COTTAGE_DECORATION_SLOTS: readonly CottageDecorationSlot[] = [
+  ...COTTAGE_INTERIOR_MAP.decorationSlots,
+  ...COTTAGE_INTERIOR_MAP.deferredDecorationSlots,
+];
+
 function requireSlot(slotId: string): CottageDecorationSlot {
-  const slot = COTTAGE_INTERIOR_MAP.decorationSlots.find((candidate) => candidate.id === slotId);
+  const slot = COTTAGE_DECORATION_SLOTS.find((candidate) => candidate.id === slotId);
   if (!slot) {
     throw new Error(`Unknown cottage decoration slot: ${slotId}`);
   }
@@ -66,7 +71,7 @@ function normaliseDecorationPlacements(save: SaveGame): SaveGame {
   const placementsByItem = new Map<ItemId, string[]>();
   let changed = false;
 
-  for (const slot of COTTAGE_INTERIOR_MAP.decorationSlots) {
+  for (const slot of COTTAGE_DECORATION_SLOTS) {
     const item = resolveDecoration(furnitureBySlot[slot.id]);
     if (!item) {
       continue;
@@ -119,7 +124,7 @@ export class HomeDecorationService {
           return [];
         }
 
-        const placedQuantity = COTTAGE_INTERIOR_MAP.decorationSlots.filter(
+        const placedQuantity = COTTAGE_DECORATION_SLOTS.filter(
           (slot) => save.home.furnitureBySlot[slot.id] === definition.id,
         ).length;
 
@@ -160,7 +165,7 @@ export class HomeDecorationService {
 
     const furnitureBySlot = { ...save.home.furnitureBySlot };
     const alreadyHere = furnitureBySlot[slot.id] === itemId;
-    const otherPlacements = COTTAGE_INTERIOR_MAP.decorationSlots.filter(
+    const otherPlacements = COTTAGE_DECORATION_SLOTS.filter(
       (candidate) => candidate.id !== slot.id && furnitureBySlot[candidate.id] === itemId,
     );
 
