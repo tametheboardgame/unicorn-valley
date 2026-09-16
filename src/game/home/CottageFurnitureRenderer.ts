@@ -29,7 +29,7 @@ const PALETTE = {
 const FURNITURE_SCALE = {
   bed: 0.9,
   teaTable: 0.9,
-  sofa: 0.88,
+  sofa: 0.82,
   treasureShelf: 0.94,
 } as const;
 
@@ -68,13 +68,15 @@ function renderWindow(scene: Phaser.Scene, window: CottageRectLayout): void {
   graphics.fillStyle(PALETTE.sky, 1);
   graphics.fillRoundedRect(left, top, window.width, window.height, 10);
 
+  // Keep the exterior scenery entirely inside the glass aperture. The old hills extended
+  // below the window and their circular bottoms visibly leaked over the cottage wall.
   graphics.fillStyle(PALETTE.skyLight, 0.7);
   graphics.fillCircle(window.x - 54, window.y - 25, 18);
   graphics.fillCircle(window.x - 34, window.y - 28, 24);
   graphics.fillCircle(window.x - 9, window.y - 23, 17);
   graphics.fillStyle(PALETTE.outsideGreen, 0.58);
-  graphics.fillEllipse(window.x - 42, window.y + 53, 160, 62);
-  graphics.fillEllipse(window.x + 62, window.y + 57, 155, 72);
+  graphics.fillEllipse(window.x - 42, window.y + 34, 150, 36);
+  graphics.fillEllipse(window.x + 58, window.y + 38, 140, 34);
 
   graphics.fillStyle(PALETTE.cream, 0.94);
   graphics.fillRect(window.x - 4, top + 3, 8, window.height - 6);
@@ -237,7 +239,6 @@ function renderTeaTable(scene: Phaser.Scene): void {
   graphics.fillRoundedRect(table.x - 11, table.y + 47, 22, 73, 9);
   graphics.fillEllipse(table.x, table.y + 98, 78, 22);
 
-  // Small, clean tea set designed to read at the same scale as the unicorn.
   graphics.fillStyle(PALETTE.lavender, 1);
   graphics.fillEllipse(table.x, table.y - 10, 43, 30);
   graphics.fillRoundedRect(table.x - 9, table.y - 29, 18, 8, 4);
@@ -272,37 +273,54 @@ function renderSofa(scene: Phaser.Scene): void {
   const left = sofa.x - width / 2;
   const top = sofa.y - height / 2;
 
-  addFloorShadow(scene, sofa.x, sofa.y + 53, width + 35, 62, 0.1);
+  addFloorShadow(scene, sofa.x, sofa.y + 48, width + 30, 56, 0.1);
 
   const graphics = scene.add.graphics().setDepth(6);
+  const armWidth = 36;
+  const innerLeft = left + armWidth;
+  const innerWidth = width - armWidth * 2;
+  const seatGap = 8;
+  const seatWidth = (innerWidth - seatGap) / 2;
+
+  // Symmetrical outer frame and back. Nothing here relies on asymmetric historical offsets.
   graphics.fillStyle(PALETTE.sageDark, 1);
-  graphics.fillRoundedRect(left - 6, top - 24, width + 12, height + 34, 28);
+  graphics.fillRoundedRect(left - 5, top - 20, width + 10, height + 28, 27);
   graphics.fillStyle(PALETTE.sage, 1);
-  graphics.fillRoundedRect(left + 10, top - 16, width - 20, 80, 24);
+  graphics.fillRoundedRect(innerLeft - 3, top - 12, innerWidth + 6, 72, 22);
 
-  const seatLeft = left + 24;
-  const seatWidth = width - 48;
-  const cushionGap = 8;
-  const cushionWidth = (seatWidth - cushionGap) / 2;
-  const cushionY = sofa.y - 3;
+  // Two equal seat cushions with the division exactly on the sofa centre line.
   graphics.fillStyle(0xa8cbbb, 1);
-  graphics.fillRoundedRect(seatLeft, cushionY, cushionWidth, 61, 18);
-  graphics.fillRoundedRect(seatLeft + cushionWidth + cushionGap, cushionY, cushionWidth, 61, 18);
+  graphics.fillRoundedRect(innerLeft, sofa.y - 1, seatWidth, 57, 16);
+  graphics.fillRoundedRect(innerLeft + seatWidth + seatGap, sofa.y - 1, seatWidth, 57, 16);
+  graphics.lineStyle(2, PALETTE.sageDark, 0.38);
+  graphics.lineBetween(sofa.x, sofa.y + 3, sofa.x, sofa.y + 50);
 
   graphics.fillStyle(PALETTE.sageDark, 1);
-  graphics.fillRoundedRect(left - 16, sofa.y - 20, 39, 84, 18);
-  graphics.fillRoundedRect(left + width - 23, sofa.y - 20, 39, 84, 18);
-  graphics.fillRect(left + 15, sofa.y + 50, 10, 32);
-  graphics.fillRect(left + width - 25, sofa.y + 50, 10, 32);
+  graphics.fillRoundedRect(left - 13, sofa.y - 17, armWidth, 77, 17);
+  graphics.fillRoundedRect(left + width - armWidth + 13, sofa.y - 17, armWidth, 77, 17);
+  graphics.fillRect(left + 16, sofa.y + 45, 9, 29);
+  graphics.fillRect(left + width - 25, sofa.y + 45, 9, 29);
 
-  // Balanced decorative cushions: equal visual weight on both halves.
+  // Matching decorative pillows sit inside each half rather than squashing one cushion.
+  const pillowWidth = Math.min(48, seatWidth * 0.58);
+  const pillowXOffset = innerWidth * 0.25;
   graphics.fillStyle(PALETTE.goldLight, 1);
-  graphics.fillRoundedRect(sofa.x - 91, sofa.y - 21, 55, 48, 15);
+  graphics.fillRoundedRect(sofa.x - pillowXOffset - pillowWidth / 2, sofa.y - 17, pillowWidth, 42, 14);
   graphics.fillStyle(PALETTE.lavender, 1);
-  graphics.fillRoundedRect(sofa.x + 36, sofa.y - 21, 55, 48, 15);
-  graphics.lineStyle(2, PALETTE.cream, 0.66);
-  graphics.lineBetween(sofa.x - 82, sofa.y + 1, sofa.x - 45, sofa.y - 12);
-  graphics.lineBetween(sofa.x + 44, sofa.y - 11, sofa.x + 82, sofa.y + 1);
+  graphics.fillRoundedRect(sofa.x + pillowXOffset - pillowWidth / 2, sofa.y - 17, pillowWidth, 42, 14);
+  graphics.lineStyle(2, PALETTE.cream, 0.62);
+  graphics.lineBetween(
+    sofa.x - pillowXOffset - pillowWidth * 0.33,
+    sofa.y + 2,
+    sofa.x - pillowXOffset + pillowWidth * 0.33,
+    sofa.y - 10,
+  );
+  graphics.lineBetween(
+    sofa.x + pillowXOffset - pillowWidth * 0.33,
+    sofa.y - 10,
+    sofa.x + pillowXOffset + pillowWidth * 0.33,
+    sofa.y + 2,
+  );
 }
 
 function renderTreasureShelf(scene: Phaser.Scene): void {
