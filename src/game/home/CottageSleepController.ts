@@ -18,7 +18,7 @@ export class CottageSleepController {
   private active = false;
   private overlay: Phaser.GameObjects.Rectangle | null = null;
   private message: Phaser.GameObjects.Text | null = null;
-  private holdTimer: Phaser.Time.TimerEvent | null = null;
+  private holdTween: Phaser.Tweens.Tween | null = null;
 
   public constructor(
     private readonly scene: Phaser.Scene,
@@ -78,8 +78,8 @@ export class CottageSleepController {
   }
 
   public destroy(): void {
-    this.holdTimer?.destroy();
-    this.holdTimer = null;
+    this.holdTween?.stop();
+    this.holdTween = null;
     if (this.overlay) {
       this.scene.tweens.killTweensOf(this.overlay);
     }
@@ -126,9 +126,14 @@ export class CottageSleepController {
       this.timeService.resetToMorning();
       this.scene.game.events.emit(COTTAGE_SLEEP_AUDIO_EVENTS.asleep);
       this.message?.setAlpha(1);
-      this.holdTimer = this.scene.time.delayedCall(messageDuration, () => {
-        this.holdTimer = null;
-        this.wake(fadeDuration);
+      this.holdTween = this.scene.tweens.addCounter({
+        from: 0,
+        to: 1,
+        duration: messageDuration,
+        onComplete: () => {
+          this.holdTween = null;
+          this.wake(fadeDuration);
+        },
       });
     };
 
