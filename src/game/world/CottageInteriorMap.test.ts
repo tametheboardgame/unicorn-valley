@@ -56,7 +56,10 @@ describe('Moonflower Cottage interior map', () => {
 
     expect(
       isPointBlocked(
-        { x: COTTAGE_INTERIOR_MAP.exit.position.x, y: 1160 },
+        {
+          x: COTTAGE_INTERIOR_MAP.exit.position.x,
+          y: COTTAGE_INTERIOR_MAP.roomShell.bottom + 32,
+        },
         COTTAGE_INTERIOR_MAP.colliders,
         0,
       ),
@@ -71,8 +74,9 @@ describe('Moonflower Cottage interior map', () => {
   });
 
   it('aligns the back-wall blocker to the visible floor seam and keeps approaches below it', () => {
+    const floorSeam = COTTAGE_INTERIOR_MAP.roomShell.backWallBottom;
     const wall = COTTAGE_INTERIOR_MAP.colliders.find(({ id }) => id === 'wall-top');
-    expect(wall && wall.y + wall.height / 2).toBe(390);
+    expect(wall && wall.y + wall.height / 2).toBe(floorSeam);
 
     for (const id of [
       'cottage-slot:window-nook',
@@ -80,7 +84,7 @@ describe('Moonflower Cottage interior map', () => {
       'cottage-slot:right-wall',
     ]) {
       const slot = COTTAGE_INTERIOR_MAP.decorationSlots.find((candidate) => candidate.id === id);
-      expect(slot?.interactionPosition?.y).toBeGreaterThan(390 + PLAYER_CLEARANCE);
+      expect(slot?.interactionPosition?.y).toBeGreaterThan(floorSeam + PLAYER_CLEARANCE);
     }
   });
 
