@@ -68,9 +68,9 @@ describe('H2 cottage room layout and physicality', () => {
     const bedColliders = COTTAGE_FURNITURE_COLLIDERS.filter(({ id }) => id.startsWith('bed-'));
 
     expect(bedColliders).toHaveLength(3);
-    expect(bedColliders.some((collider) => containsPoint(collider, COTTAGE_SLEEP_LAYOUT.trigger))).toBe(
-      false,
-    );
+    expect(
+      bedColliders.some((collider) => containsPoint(collider, COTTAGE_SLEEP_LAYOUT.trigger)),
+    ).toBe(false);
     expect(
       bedColliders.some((collider) =>
         containsPoint(collider, {
