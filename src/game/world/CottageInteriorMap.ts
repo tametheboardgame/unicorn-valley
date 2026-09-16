@@ -141,6 +141,19 @@ export const COTTAGE_RESERVED_ZONES = [
   { id: 'portal-bay', purpose: 'future-portal', x: 1280, y: 530, width: 200, height: 190 },
 ] as const satisfies readonly CottageReservedZone[];
 
+/**
+ * Retired from normal H2.4 play because the bed now owns this physical area. Keep the authored
+ * slot data available for H2.5 Decorate mode without leaving a competing interaction hotspot.
+ */
+export const COTTAGE_DEFERRED_DECORATION_SLOTS = [
+  {
+    id: 'cottage-slot:bedside',
+    label: 'Bedside table',
+    category: 'table',
+    position: { x: 520, y: 710 },
+  },
+] as const satisfies readonly CottageDecorationSlot[];
+
 const doorAnchor = resolveCottageSemanticAnchor(COTTAGE_SEMANTIC_ANCHOR_IDS.door);
 const wonderbookAnchor = resolveCottageSemanticAnchor(COTTAGE_SEMANTIC_ANCHOR_IDS.wonderbook);
 const exitCollisionGapWidth = COTTAGE_FURNITURE_LAYOUT.door.width + 40;
@@ -163,6 +176,7 @@ export const COTTAGE_INTERIOR_MAP = {
   sleepLayout: COTTAGE_SLEEP_LAYOUT,
   windowLayout: COTTAGE_WINDOW_LAYOUT,
   reservedZones: COTTAGE_RESERVED_ZONES,
+  deferredDecorationSlots: COTTAGE_DEFERRED_DECORATION_SLOTS,
   colliders: [
     {
       id: 'wall-top',
@@ -243,12 +257,6 @@ export const COTTAGE_INTERIOR_MAP = {
       position: { x: 1040, y: 835 },
     },
     {
-      id: 'cottage-slot:bedside',
-      label: 'Bedside table',
-      category: 'table',
-      position: { x: 520, y: 710 },
-    },
-    {
       id: 'cottage-slot:left-wall',
       label: 'Left wall',
       category: 'wall',
@@ -291,6 +299,7 @@ export const COTTAGE_INTERIOR_MAP = {
   sleepLayout: CottageSleepLayout;
   windowLayout: typeof COTTAGE_WINDOW_LAYOUT;
   reservedZones: readonly CottageReservedZone[];
+  deferredDecorationSlots: readonly CottageDecorationSlot[];
   exit: CottageInteractionPoint;
   treasureDisplay: CottageInteractionPoint;
   wonderbookDisplay: CottageInteractionPoint;
