@@ -58,9 +58,17 @@ function drawCrescent(
   graphics.fillCircle(x + radius * 0.42, y - radius * 0.16, radius * 0.82);
 }
 
+function lowerFloorSeamBehindFurniture(scene: Phaser.Scene): void {
+  const seam = scene.children.getByName('cottage-floor-seam');
+  if (seam instanceof Phaser.GameObjects.Rectangle) {
+    seam.setDepth(2.25);
+  }
+}
+
 function renderWindow(scene: Phaser.Scene, window: CottageRectLayout): void {
   const left = window.x - window.width / 2;
   const top = window.y - window.height / 2;
+  const bottom = top + window.height;
   const graphics = scene.add.graphics().setDepth(5);
 
   graphics.fillStyle(PALETTE.timberDark, 1);
@@ -68,15 +76,18 @@ function renderWindow(scene: Phaser.Scene, window: CottageRectLayout): void {
   graphics.fillStyle(PALETTE.sky, 1);
   graphics.fillRoundedRect(left, top, window.width, window.height, 10);
 
-  // Keep the exterior scenery entirely inside the glass aperture. The old hills extended
-  // below the window and their circular bottoms visibly leaked over the cottage wall.
   graphics.fillStyle(PALETTE.skyLight, 0.7);
   graphics.fillCircle(window.x - 54, window.y - 25, 18);
   graphics.fillCircle(window.x - 34, window.y - 28, 24);
   graphics.fillCircle(window.x - 9, window.y - 23, 17);
+
+  // The landscape owns the whole lower portion of the glass so there can never be a strip
+  // of sky beneath the hills. All geometry remains inside the window aperture.
+  const landscapeTop = window.y + 27;
   graphics.fillStyle(PALETTE.outsideGreen, 0.58);
-  graphics.fillEllipse(window.x - 42, window.y + 34, 150, 36);
-  graphics.fillEllipse(window.x + 58, window.y + 38, 140, 34);
+  graphics.fillRect(left, landscapeTop, window.width, bottom - landscapeTop);
+  graphics.fillEllipse(window.x - 42, landscapeTop + 4, 150, 40);
+  graphics.fillEllipse(window.x + 58, landscapeTop + 8, 140, 42);
 
   graphics.fillStyle(PALETTE.cream, 0.94);
   graphics.fillRect(window.x - 4, top + 3, 8, window.height - 6);
@@ -227,25 +238,27 @@ function renderTeaTable(scene: Phaser.Scene): void {
   renderChair(scene, table.x - chairOffset, table.y + 8, 1);
   renderChair(scene, table.x + chairOffset, table.y + 8, -1);
 
-  const graphics = scene.add.graphics().setDepth(6);
-  graphics.fillStyle(PALETTE.timberDark, 1);
-  graphics.fillEllipse(table.x, table.y + 13, width + 10, height + 3);
-  graphics.fillStyle(PALETTE.timberLight, 1);
-  graphics.fillEllipse(table.x, table.y, width, height);
-  graphics.lineStyle(3, PALETTE.timber, 0.74);
-  graphics.strokeEllipse(table.x, table.y, width - 16, height - 14);
+  // Draw the pedestal first so the tabletop naturally occludes its upper section.
+  const pedestal = scene.add.graphics().setDepth(5.5);
+  pedestal.fillStyle(PALETTE.timberDark, 1);
+  pedestal.fillRoundedRect(table.x - 11, table.y + 40, 22, 78, 9);
+  pedestal.fillEllipse(table.x, table.y + 98, 78, 22);
 
-  graphics.fillStyle(PALETTE.timberDark, 1);
-  graphics.fillRoundedRect(table.x - 11, table.y + 47, 22, 73, 9);
-  graphics.fillEllipse(table.x, table.y + 98, 78, 22);
+  const tabletop = scene.add.graphics().setDepth(6);
+  tabletop.fillStyle(PALETTE.timberDark, 1);
+  tabletop.fillEllipse(table.x, table.y + 13, width + 10, height + 3);
+  tabletop.fillStyle(PALETTE.timberLight, 1);
+  tabletop.fillEllipse(table.x, table.y, width, height);
+  tabletop.lineStyle(3, PALETTE.timber, 0.74);
+  tabletop.strokeEllipse(table.x, table.y, width - 16, height - 14);
 
-  graphics.fillStyle(PALETTE.lavender, 1);
-  graphics.fillEllipse(table.x, table.y - 10, 43, 30);
-  graphics.fillRoundedRect(table.x - 9, table.y - 29, 18, 8, 4);
-  graphics.fillStyle(PALETTE.goldLight, 1);
-  graphics.fillCircle(table.x, table.y - 30, 4);
-  graphics.fillStyle(PALETTE.roseDark, 1);
-  graphics.fillTriangle(
+  tabletop.fillStyle(PALETTE.lavender, 1);
+  tabletop.fillEllipse(table.x, table.y - 10, 43, 30);
+  tabletop.fillRoundedRect(table.x - 9, table.y - 29, 18, 8, 4);
+  tabletop.fillStyle(PALETTE.goldLight, 1);
+  tabletop.fillCircle(table.x, table.y - 30, 4);
+  tabletop.fillStyle(PALETTE.roseDark, 1);
+  tabletop.fillTriangle(
     table.x - 20,
     table.y - 15,
     table.x - 39,
@@ -253,16 +266,16 @@ function renderTeaTable(scene: Phaser.Scene): void {
     table.x - 20,
     table.y - 4,
   );
-  graphics.lineStyle(4, PALETTE.roseDark, 1);
-  graphics.strokeCircle(table.x + 22, table.y - 10, 10);
+  tabletop.lineStyle(4, PALETTE.roseDark, 1);
+  tabletop.strokeCircle(table.x + 22, table.y - 10, 10);
 
   for (const dx of [-48, 48]) {
-    graphics.fillStyle(PALETTE.cream, 1);
-    graphics.fillEllipse(table.x + dx, table.y + 14, 22, 16);
-    graphics.lineStyle(3, PALETTE.roseDark, 0.9);
-    graphics.strokeCircle(table.x + dx + Math.sign(dx) * 10, table.y + 14, 5);
-    graphics.lineStyle(2, PALETTE.creamShade, 0.8);
-    graphics.strokeEllipse(table.x + dx, table.y + 20, 28, 8);
+    tabletop.fillStyle(PALETTE.cream, 1);
+    tabletop.fillEllipse(table.x + dx, table.y + 14, 22, 16);
+    tabletop.lineStyle(3, PALETTE.roseDark, 0.9);
+    tabletop.strokeCircle(table.x + dx + Math.sign(dx) * 10, table.y + 14, 5);
+    tabletop.lineStyle(2, PALETTE.creamShade, 0.8);
+    tabletop.strokeEllipse(table.x + dx, table.y + 20, 28, 8);
   }
 }
 
@@ -282,13 +295,11 @@ function renderSofa(scene: Phaser.Scene): void {
   const seatGap = 8;
   const seatWidth = (innerWidth - seatGap) / 2;
 
-  // Symmetrical outer frame and back. Nothing here relies on asymmetric historical offsets.
   graphics.fillStyle(PALETTE.sageDark, 1);
   graphics.fillRoundedRect(left - 5, top - 20, width + 10, height + 28, 27);
   graphics.fillStyle(PALETTE.sage, 1);
   graphics.fillRoundedRect(innerLeft - 3, top - 12, innerWidth + 6, 72, 22);
 
-  // Two equal seat cushions with the division exactly on the sofa centre line.
   graphics.fillStyle(0xa8cbbb, 1);
   graphics.fillRoundedRect(innerLeft, sofa.y - 1, seatWidth, 57, 16);
   graphics.fillRoundedRect(innerLeft + seatWidth + seatGap, sofa.y - 1, seatWidth, 57, 16);
@@ -301,7 +312,6 @@ function renderSofa(scene: Phaser.Scene): void {
   graphics.fillRect(left + 16, sofa.y + 45, 9, 29);
   graphics.fillRect(left + width - 25, sofa.y + 45, 9, 29);
 
-  // Matching decorative pillows sit inside each half rather than squashing one cushion.
   const pillowWidth = Math.min(48, seatWidth * 0.58);
   const pillowXOffset = innerWidth * 0.25;
   graphics.fillStyle(PALETTE.goldLight, 1);
@@ -404,6 +414,7 @@ function renderExitGap(scene: Phaser.Scene): void {
 }
 
 export function renderCottagePermanentFurnishings(scene: Phaser.Scene): void {
+  lowerFloorSeamBehindFurniture(scene);
   for (const window of COTTAGE_INTERIOR_MAP.windowLayout) {
     renderWindow(scene, window);
   }
