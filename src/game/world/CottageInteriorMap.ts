@@ -84,10 +84,14 @@ export const COTTAGE_FURNITURE_LAYOUT = {
  * H2.3 physical footprints. These describe the parts of each furnishing that occupy floor
  * space, not the full presentation silhouette. That distinction allows the unicorn to pass
  * behind furniture where the artwork implies depth without walking through its physical base.
+ *
+ * The bed is deliberately wider than its nominal authored width because the player physics
+ * body is narrower than the visible unicorn sprite. The extra side clearance keeps the visible
+ * head and tail from clipping through the bed rails while preserving front/back walkaround.
  */
 export const COTTAGE_FURNITURE_COLLIDERS = [
   { id: 'fireplace-front', x: 270, y: 394, width: 252, height: 48 },
-  { id: 'bed-frame', x: 315, y: 717, width: 270, height: 185 },
+  { id: 'bed-frame', x: 315, y: 717, width: 326, height: 185 },
   { id: 'tea-table', x: 760, y: 577, width: 178, height: 96 },
   { id: 'tea-chair-left', x: 637, y: 575, width: 60, height: 76 },
   { id: 'tea-chair-right', x: 883, y: 575, width: 60, height: 76 },
@@ -137,6 +141,9 @@ const bottomWallSegmentWidth =
   (COTTAGE_ROOM_SHELL.right - COTTAGE_ROOM_SHELL.left - exitCollisionGapWidth) / 2;
 const bottomWallLeftCentre = COTTAGE_ROOM_SHELL.left + bottomWallSegmentWidth / 2;
 const bottomWallRightCentre = COTTAGE_ROOM_SHELL.right - bottomWallSegmentWidth / 2;
+const bottomWallCollisionHeight = 64;
+const bottomWallCollisionTop = COTTAGE_ROOM_SHELL.bottom - 24;
+const bottomWallCollisionCentre = bottomWallCollisionTop + bottomWallCollisionHeight / 2;
 
 export const COTTAGE_INTERIOR_MAP = {
   width: 1500,
@@ -173,16 +180,16 @@ export const COTTAGE_INTERIOR_MAP = {
     {
       id: 'wall-bottom-left',
       x: bottomWallLeftCentre,
-      y: 1032,
+      y: bottomWallCollisionCentre,
       width: bottomWallSegmentWidth,
-      height: 64,
+      height: bottomWallCollisionHeight,
     },
     {
       id: 'wall-bottom-right',
       x: bottomWallRightCentre,
-      y: 1032,
+      y: bottomWallCollisionCentre,
       width: bottomWallSegmentWidth,
-      height: 64,
+      height: bottomWallCollisionHeight,
     },
     ...COTTAGE_FURNITURE_COLLIDERS,
   ] satisfies readonly CollisionRectangle[],
