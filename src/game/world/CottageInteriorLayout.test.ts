@@ -39,7 +39,9 @@ describe('H2 cottage room layout and physicality', () => {
   });
 
   it('uses H2.3 floor footprints instead of the old full visual rectangles', () => {
-    const colliders = new Map(COTTAGE_FURNITURE_COLLIDERS.map((collider) => [collider.id, collider]));
+    const colliders = new Map(
+      COTTAGE_FURNITURE_COLLIDERS.map((collider) => [collider.id, collider]),
+    );
 
     expect(colliders.has('fireplace-front')).toBe(true);
     expect(colliders.has('bed-frame')).toBe(true);
