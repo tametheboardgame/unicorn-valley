@@ -63,10 +63,7 @@ function shouldShowContextHint(target: InteractionTarget | null): boolean {
 }
 
 function isDirectSleepTarget(target: InteractionTarget | null): target is InteractionTarget {
-  return (
-    target?.id === 'interaction:cottage-sleep' &&
-    target.result.type === 'callback'
-  );
+  return target?.id === 'interaction:cottage-sleep' && target.result.type === 'callback';
 }
 
 /** One semantic contextual action presentation for every exploration layout. */
