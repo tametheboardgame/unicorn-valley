@@ -1,6 +1,12 @@
 import Phaser from 'phaser';
-import { COTTAGE_INTERIOR_MAP, type CottageRectLayout } from '../world/CottageInteriorMap';
+import {
+  COTTAGE_FURNITURE_DEPTH_ANCHORS,
+  COTTAGE_INTERIOR_MAP,
+  type CottageFurnitureDepthId,
+  type CottageRectLayout,
+} from '../world/CottageInteriorMap';
 import type { MapPoint } from '../world/MapTraversal';
+import { worldDepthForY } from '../world/WorldDepth';
 
 const PALETTE = {
   timberDark: 0x6e4f45,
@@ -33,6 +39,10 @@ const FURNITURE_SCALE = {
   treasureShelf: 0.94,
 } as const;
 
+function furnitureDepth(id: CottageFurnitureDepthId, offset = 0): number {
+  return worldDepthForY(COTTAGE_FURNITURE_DEPTH_ANCHORS[id], offset);
+}
+
 function addFloorShadow(
   scene: Phaser.Scene,
   x: number,
@@ -58,13 +68,6 @@ function drawCrescent(
   graphics.fillCircle(x + radius * 0.42, y - radius * 0.16, radius * 0.82);
 }
 
-function lowerFloorSeamBehindFurniture(scene: Phaser.Scene): void {
-  const seam = scene.children.getByName('cottage-floor-seam');
-  if (seam instanceof Phaser.GameObjects.Rectangle) {
-    seam.setDepth(2.25);
-  }
-}
-
 function renderWindow(scene: Phaser.Scene, window: CottageRectLayout): void {
   const left = window.x - window.width / 2;
   const top = window.y - window.height / 2;
@@ -81,8 +84,6 @@ function renderWindow(scene: Phaser.Scene, window: CottageRectLayout): void {
   graphics.fillCircle(window.x - 34, window.y - 28, 24);
   graphics.fillCircle(window.x - 9, window.y - 23, 17);
 
-  // The landscape owns the whole lower portion of the glass so there can never be a strip
-  // of sky beneath the hills. All geometry remains inside the window aperture.
   const landscapeTop = window.y + 27;
   graphics.fillStyle(PALETTE.outsideGreen, 0.58);
   graphics.fillRect(left, landscapeTop, window.width, bottom - landscapeTop);
@@ -113,7 +114,10 @@ function renderFireplace(scene: Phaser.Scene): void {
     .ellipse(fireplace.x, fireplace.y + 62, fireplace.width + 90, 86, PALETTE.gold, 0.09)
     .setDepth(4);
 
-  const graphics = scene.add.graphics().setDepth(6);
+  const graphics = scene.add
+    .graphics()
+    .setName('cottage-furniture:fireplace')
+    .setDepth(furnitureDepth('fireplace'));
   graphics.fillStyle(PALETTE.stone, 1);
   graphics.fillRoundedRect(left - 18, top - 6, fireplace.width + 36, fireplace.height + 25, 18);
   graphics.fillStyle(PALETTE.stoneLight, 1);
@@ -177,7 +181,10 @@ function renderBed(scene: Phaser.Scene): void {
 
   addFloorShadow(scene, bed.x + 5, bed.y + height * 0.41, width + 30, 76, 0.11);
 
-  const graphics = scene.add.graphics().setDepth(6);
+  const graphics = scene.add
+    .graphics()
+    .setName('cottage-furniture:bed')
+    .setDepth(furnitureDepth('bed'));
 
   graphics.fillStyle(PALETTE.timberDark, 1);
   graphics.fillRoundedRect(left - 8, top - 10, width + 16, height + 22, 17);
@@ -215,8 +222,17 @@ function renderBed(scene: Phaser.Scene): void {
   graphics.fillCircle(bed.x + 40, top + 10, 3);
 }
 
-function renderChair(scene: Phaser.Scene, x: number, y: number, facing: -1 | 1): void {
-  const graphics = scene.add.graphics().setDepth(5);
+function renderChair(
+  scene: Phaser.Scene,
+  x: number,
+  y: number,
+  facing: -1 | 1,
+  depthId: 'tea-chair-left' | 'tea-chair-right',
+): void {
+  const graphics = scene.add
+    .graphics()
+    .setName(`cottage-furniture:${depthId}`)
+    .setDepth(furnitureDepth(depthId));
   graphics.fillStyle(PALETTE.timberDark, 1);
   graphics.fillRoundedRect(x - 33, y - 42, 66, 76, 19);
   graphics.fillStyle(PALETTE.timberLight, 1);
@@ -235,16 +251,21 @@ function renderTeaTable(scene: Phaser.Scene): void {
   const chairOffset = width / 2 + 24;
 
   addFloorShadow(scene, table.x, table.y + 34, width + 66, height * 0.68, 0.1);
-  renderChair(scene, table.x - chairOffset, table.y + 8, 1);
-  renderChair(scene, table.x + chairOffset, table.y + 8, -1);
+  renderChair(scene, table.x - chairOffset, table.y + 8, 1, 'tea-chair-left');
+  renderChair(scene, table.x + chairOffset, table.y + 8, -1, 'tea-chair-right');
 
-  // Draw the pedestal first so the tabletop naturally occludes its upper section.
-  const pedestal = scene.add.graphics().setDepth(5.5);
+  const pedestal = scene.add
+    .graphics()
+    .setName('cottage-furniture:tea-table-pedestal')
+    .setDepth(furnitureDepth('tea-table', -0.18));
   pedestal.fillStyle(PALETTE.timberDark, 1);
   pedestal.fillRoundedRect(table.x - 11, table.y + 40, 22, 78, 9);
   pedestal.fillEllipse(table.x, table.y + 98, 78, 22);
 
-  const tabletop = scene.add.graphics().setDepth(6);
+  const tabletop = scene.add
+    .graphics()
+    .setName('cottage-furniture:tea-table')
+    .setDepth(furnitureDepth('tea-table'));
   tabletop.fillStyle(PALETTE.timberDark, 1);
   tabletop.fillEllipse(table.x, table.y + 13, width + 10, height + 3);
   tabletop.fillStyle(PALETTE.timberLight, 1);
@@ -288,7 +309,10 @@ function renderSofa(scene: Phaser.Scene): void {
 
   addFloorShadow(scene, sofa.x, sofa.y + 48, width + 30, 56, 0.1);
 
-  const graphics = scene.add.graphics().setDepth(6);
+  const graphics = scene.add
+    .graphics()
+    .setName('cottage-furniture:sofa')
+    .setDepth(furnitureDepth('sofa'));
   const armWidth = 36;
   const innerLeft = left + armWidth;
   const innerWidth = width - armWidth * 2;
@@ -351,7 +375,10 @@ function renderTreasureShelf(scene: Phaser.Scene): void {
   const height = shelf.height * FURNITURE_SCALE.treasureShelf;
   const left = shelf.x - width / 2;
   const top = shelf.y - height / 2;
-  const graphics = scene.add.graphics().setDepth(6);
+  const graphics = scene.add
+    .graphics()
+    .setName('cottage-furniture:treasure-shelf')
+    .setDepth(furnitureDepth('treasure-shelf'));
 
   graphics.fillStyle(PALETTE.timberDark, 1);
   graphics.fillRoundedRect(left - 12, top - 48, width + 24, height + 65, 15);
@@ -391,7 +418,10 @@ function renderWonderbookNook(
     .ellipse(x, y + 16 * scale, 120 * scale, 61 * scale, PALETTE.goldLight, 0.07)
     .setDepth(4);
 
-  const graphics = scene.add.graphics().setDepth(5);
+  const graphics = scene.add
+    .graphics()
+    .setName('cottage-furniture:wonderbook-nook')
+    .setDepth(furnitureDepth('wonderbook', -0.2));
   graphics.fillStyle(PALETTE.timberDark, 1);
   graphics.fillRoundedRect(x - 45 * scale, y + 20 * scale, 90 * scale, 27 * scale, 10 * scale);
   graphics.fillStyle(PALETTE.timber, 1);
@@ -414,7 +444,10 @@ function renderExitGap(scene: Phaser.Scene): void {
     .ellipse(door.x, shell.bottom + 20, door.width + 10, 44, PALETTE.skyLight, 0.22)
     .setDepth(4);
 
-  const graphics = scene.add.graphics().setDepth(7);
+  const graphics = scene.add
+    .graphics()
+    .setName('cottage-furniture:exit-frame')
+    .setDepth(furnitureDepth('exit'));
   graphics.fillStyle(PALETTE.timberDark, 0.9);
   graphics.fillRoundedRect(door.x - openingWidth / 2 - 13, shell.bottom - 31, 20, 45, 8);
   graphics.fillRoundedRect(door.x + openingWidth / 2 - 7, shell.bottom - 31, 20, 45, 8);
@@ -426,7 +459,6 @@ function renderExitGap(scene: Phaser.Scene): void {
 }
 
 export function renderCottagePermanentFurnishings(scene: Phaser.Scene): void {
-  lowerFloorSeamBehindFurniture(scene);
   for (const window of COTTAGE_INTERIOR_MAP.windowLayout) {
     renderWindow(scene, window);
   }
