@@ -121,6 +121,61 @@ test('Cottage back-wall boundary blocks whole-unicorn overlap while approaches a
     .toBeGreaterThan(35);
 });
 
+test('Cottage bed sleep sequence enters the bed, shows the sleep message and wakes at the foot', async ({
+  page,
+}) => {
+  await page.goto('/?diagnostics=1');
+  await startScene(page, 'CottageInteriorScene');
+  await page.evaluate(() =>
+    (
+      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__?.setArcadeSpritePosition(
+      'CottageInteriorScene',
+      'world-player-unicorn',
+      315,
+      700,
+    ),
+  );
+
+  await page.waitForTimeout(120);
+  await page.keyboard.press('KeyE');
+
+  await expect
+    .poll(
+      async () =>
+        scene(await snapshot(page), 'CottageInteriorScene').objects.some(
+          ({ name }) => name === 'cottage-sleep-message',
+        ),
+      { timeout: 2_500 },
+    )
+    .toBe(true);
+
+  const duringSleep = await snapshot(page);
+  expect(
+    scene(duringSleep, 'CottageInteriorScene').objects.some(
+      ({ name }) => name === 'cottage-furniture:bed-rear',
+    ),
+  ).toBe(true);
+  expect(
+    scene(duringSleep, 'CottageInteriorScene').objects.some(
+      ({ name }) => name === 'cottage-furniture:bed-foreground',
+    ),
+  ).toBe(true);
+
+  await expect
+    .poll(async () => player(await snapshot(page), 'CottageInteriorScene').y, { timeout: 5_000 })
+    .toBeCloseTo(850, 0);
+  await expect
+    .poll(
+      async () =>
+        scene(await snapshot(page), 'CottageInteriorScene').objects.some(
+          ({ name }) => name === 'cottage-sleep-overlay',
+        ),
+      { timeout: 5_000 },
+    )
+    .toBe(false);
+});
+
 for (const [key, blocked, open] of [
   ['CrystalGrottoScene', { x: 640, y: 470 }, { x: 1080, y: 300 }],
   ['FireflyGroveScene', { x: 620, y: 470 }, { x: 1080, y: 300 }],
