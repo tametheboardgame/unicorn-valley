@@ -62,6 +62,13 @@ function shouldShowContextHint(target: InteractionTarget | null): boolean {
   return target !== null && target.id !== 'interaction:cottage-sleep';
 }
 
+function isDirectSleepTarget(target: InteractionTarget | null): target is InteractionTarget {
+  return (
+    target?.id === 'interaction:cottage-sleep' &&
+    target.result.type === 'callback'
+  );
+}
+
 /** One semantic contextual action presentation for every exploration layout. */
 export class InteractionPrompt {
   private readonly accessibility = getBrowserAccessibilitySettingsStore();
@@ -249,6 +256,10 @@ export class InteractionPrompt {
   }
 
   private readonly pressCurrentTarget = (): void => {
+    if (isDirectSleepTarget(this.currentTarget)) {
+      this.currentTarget.result.activate();
+      return;
+    }
     if (this.currentTarget) {
       this.onDirectTarget?.(this.currentTarget.id);
     }
