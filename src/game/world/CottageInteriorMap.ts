@@ -144,7 +144,10 @@ export const COTTAGE_INTERIOR_MAP = {
   treasureDisplay: {
     id: 'treasure-display',
     label: 'Treasure Shelf',
-    position: { x: COTTAGE_FURNITURE_LAYOUT.treasureShelf.x, y: COTTAGE_FURNITURE_LAYOUT.treasureShelf.y },
+    position: {
+      x: COTTAGE_FURNITURE_LAYOUT.treasureShelf.x,
+      y: COTTAGE_FURNITURE_LAYOUT.treasureShelf.y,
+    },
     approach: { x: 1120, y: 455 },
   },
   wonderbookDisplay: {
