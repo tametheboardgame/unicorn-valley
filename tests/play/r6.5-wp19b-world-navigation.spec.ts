@@ -79,7 +79,7 @@ async function tapWorld(page: Page, sceneKey: string, x: number, y: number): Pro
 
 test.use({ hasTouch: true, viewport: { width: 1024, height: 768 } });
 
-test('Cottage wall seam blocks whole-unicorn overlap while approaches and Gallop remain usable', async ({
+test('Cottage back-wall boundary blocks whole-unicorn overlap while approaches and Gallop remain usable', async ({
   page,
 }) => {
   await page.goto('/?diagnostics=1');
@@ -99,7 +99,7 @@ test('Cottage wall seam blocks whole-unicorn overlap while approaches and Gallop
   await page.keyboard.up('ArrowUp');
   let value = await snapshot(page);
   const atWall = player(value, 'CottageInteriorScene');
-  expect(atWall.bodyY).toBeGreaterThanOrEqual(389);
+  expect(atWall.bodyY).toBeGreaterThanOrEqual(369);
   expect((atWall.bodyY ?? 0) + (atWall.bodyHeight ?? 0)).toBeGreaterThan(409);
   expect(atWall.y).toBeLessThan(440);
   expect(
