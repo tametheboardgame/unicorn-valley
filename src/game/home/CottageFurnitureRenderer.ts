@@ -181,45 +181,51 @@ function renderBed(scene: Phaser.Scene): void {
 
   addFloorShadow(scene, bed.x + 5, bed.y + height * 0.41, width + 30, 76, 0.11);
 
-  const graphics = scene.add
+  const rear = scene.add
     .graphics()
-    .setName('cottage-furniture:bed')
-    .setDepth(furnitureDepth('bed'));
+    .setName('cottage-furniture:bed-rear')
+    .setDepth(worldDepthForY(bed.y - 42));
 
-  graphics.fillStyle(PALETTE.timberDark, 1);
-  graphics.fillRoundedRect(left - 8, top - 10, width + 16, height + 22, 17);
-  graphics.fillStyle(PALETTE.timber, 1);
-  graphics.fillRoundedRect(left + 8, top - 19, width - 16, 62, 19);
+  rear.fillStyle(PALETTE.timberDark, 1);
+  rear.fillRoundedRect(left - 8, top - 10, width + 16, height + 22, 17);
+  rear.fillStyle(PALETTE.timber, 1);
+  rear.fillRoundedRect(left + 8, top - 19, width - 16, 62, 19);
 
-  graphics.fillStyle(PALETTE.cream, 1);
-  graphics.fillRoundedRect(left + 14, top + 38, width - 28, height - 54, 17);
-  graphics.fillStyle(PALETTE.rose, 1);
-  graphics.fillRoundedRect(left + 18, top + 91, width - 36, height - 105, 14);
-  graphics.fillStyle(PALETTE.lavender, 0.96);
-  graphics.fillRoundedRect(left + 18, bed.y + 9, width - 36, height * 0.42, 14);
-  graphics.fillStyle(PALETTE.lavenderDark, 0.3);
-  graphics.fillRoundedRect(left + 27, bed.y + 21, width - 54, 10, 6);
+  rear.fillStyle(PALETTE.cream, 1);
+  rear.fillRoundedRect(left + 14, top + 38, width - 28, height - 54, 17);
+  rear.fillStyle(PALETTE.rose, 1);
+  rear.fillRoundedRect(left + 18, top + 91, width - 36, height - 105, 14);
 
   const pillowGap = 10;
   const pillowWidth = (width - 66 - pillowGap) / 2;
   const pillowY = top + 50;
-  graphics.fillStyle(PALETTE.cream, 1);
-  graphics.fillRoundedRect(left + 28, pillowY, pillowWidth, 43, 15);
-  graphics.fillRoundedRect(left + 28 + pillowWidth + pillowGap, pillowY, pillowWidth, 43, 15);
-  graphics.lineStyle(2, PALETTE.creamShade, 0.7);
-  graphics.strokeRoundedRect(left + 28, pillowY, pillowWidth, 43, 15);
-  graphics.strokeRoundedRect(left + 28 + pillowWidth + pillowGap, pillowY, pillowWidth, 43, 15);
+  rear.fillStyle(PALETTE.cream, 1);
+  rear.fillRoundedRect(left + 28, pillowY, pillowWidth, 43, 15);
+  rear.fillRoundedRect(left + 28 + pillowWidth + pillowGap, pillowY, pillowWidth, 43, 15);
+  rear.lineStyle(2, PALETTE.creamShade, 0.7);
+  rear.strokeRoundedRect(left + 28, pillowY, pillowWidth, 43, 15);
+  rear.strokeRoundedRect(left + 28 + pillowWidth + pillowGap, pillowY, pillowWidth, 43, 15);
 
-  graphics.fillStyle(PALETTE.timber, 1);
-  graphics.fillRoundedRect(left - 10, bed.y + height / 2 - 20, width + 20, 34, 10);
-  graphics.fillStyle(PALETTE.gold, 0.82);
-  graphics.fillCircle(bed.x - width * 0.31, bed.y + height / 2 - 4, 4);
-  graphics.fillCircle(bed.x + width * 0.31, bed.y + height / 2 - 4, 4);
+  drawCrescent(rear, bed.x, top + 7, 13, PALETTE.goldLight, PALETTE.timber);
+  rear.fillStyle(PALETTE.goldLight, 0.9);
+  rear.fillCircle(bed.x - 39, top + 9, 3);
+  rear.fillCircle(bed.x + 40, top + 10, 3);
 
-  drawCrescent(graphics, bed.x, top + 7, 13, PALETTE.goldLight, PALETTE.timber);
-  graphics.fillStyle(PALETTE.goldLight, 0.9);
-  graphics.fillCircle(bed.x - 39, top + 9, 3);
-  graphics.fillCircle(bed.x + 40, top + 10, 3);
+  const foreground = scene.add
+    .graphics()
+    .setName('cottage-furniture:bed-foreground')
+    .setDepth(furnitureDepth('bed'));
+
+  foreground.fillStyle(PALETTE.lavender, 0.96);
+  foreground.fillRoundedRect(left + 18, bed.y + 9, width - 36, height * 0.42, 14);
+  foreground.fillStyle(PALETTE.lavenderDark, 0.3);
+  foreground.fillRoundedRect(left + 27, bed.y + 21, width - 54, 10, 6);
+
+  foreground.fillStyle(PALETTE.timber, 1);
+  foreground.fillRoundedRect(left - 10, bed.y + height / 2 - 20, width + 20, 34, 10);
+  foreground.fillStyle(PALETTE.gold, 0.82);
+  foreground.fillCircle(bed.x - width * 0.31, bed.y + height / 2 - 4, 4);
+  foreground.fillCircle(bed.x + width * 0.31, bed.y + height / 2 - 4, 4);
 }
 
 function renderChair(
