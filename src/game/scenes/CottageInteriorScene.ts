@@ -335,7 +335,7 @@ export class CottageInteriorScene extends Phaser.Scene {
     this.createSofa();
     this.createTreasureShelf();
     renderWonderbookWorldProp(this, wonderbookAnchor.position);
-    this.createDoor();
+    this.createExitGap();
   }
 
   private createFloorboards(): void {
@@ -472,13 +472,23 @@ export class CottageInteriorScene extends Phaser.Scene {
       .setDepth(8);
   }
 
-  private createDoor(): void {
+  private createExitGap(): void {
     const door = COTTAGE_INTERIOR_MAP.furnitureLayout.door;
+    const shell = COTTAGE_INTERIOR_MAP.roomShell;
+    const openingWidth = door.width + 18;
+
+    // Cut through the room outline instead of placing a door object on the floor.
+    // The exit remains spatially obvious from the broken wall line and soft threshold shadow.
     this.add
-      .rectangle(door.x, door.y, door.width, door.height, 0x8d654f, 1)
-      .setStrokeStyle(10, 0x6d4d43, 1)
+      .rectangle(door.x, shell.bottom, openingWidth, 28, 0xf4ddc7, 1)
+      .setName('cottage-exit-gap')
       .setDepth(6);
-    this.add.circle(door.x + door.width * 0.31, door.y, 9, 0xffe5a5, 1).setDepth(7);
+    this.add
+      .rectangle(door.x, shell.bottom - 12, door.width - 18, 5, 0xb98b72, 0.38)
+      .setDepth(7);
+    this.add
+      .ellipse(door.x, shell.bottom + 18, door.width - 28, 30, 0x6e5064, 0.08)
+      .setDepth(5);
   }
 
   private renderHomeState(homeView: CottageHomeView): void {
