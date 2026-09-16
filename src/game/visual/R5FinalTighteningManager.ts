@@ -91,10 +91,6 @@ function strengthenRain(scene: Phaser.Scene): void {
   }
 }
 
-function keepCottageFloorSeamBehindFurnishings(scene: Phaser.Scene): void {
-  scene.children.getByName('cottage-floor-seam')?.setDepth(2.2);
-}
-
 export class R5FinalTighteningManager {
   private readonly syncThrottle = new RefreshThrottle(100);
 
@@ -116,8 +112,6 @@ export class R5FinalTighteningManager {
 
       if (scene.scene.key === 'FireflyLanternScene') {
         tightenFireflySelector(scene);
-      } else if (scene.scene.key === 'CottageInteriorScene') {
-        keepCottageFloorSeamBehindFurnishings(scene);
       }
     }
   }
