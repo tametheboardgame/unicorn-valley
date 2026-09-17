@@ -74,17 +74,10 @@ export class CottageDepthWorldManager {
         .setVisible(false),
     };
 
+    // H2.4 makes the bed a canonical scene-owned sleep interaction. Do not publish the old
+    // tactile "Flop" target here as a second interaction owner, otherwise the shared coordinator
+    // can select it above the semantic cottage.sleep target and bypass the sleep sequence.
     const points: readonly CottageTouchPoint[] = [
-      {
-        id: 'bed',
-        label: 'Moonflower bed',
-        actionLabel: 'Flop',
-        actionKind: 'interact',
-        position: { x: 325, y: 700 },
-        radius: 100,
-        message: () =>
-          'You flop onto the Moonflower blanket for exactly one cosy moment. The little moon shapes crinkle, then puff back up. 🌙',
-      },
       {
         id: 'sofa',
         label: 'Cosy sofa',
