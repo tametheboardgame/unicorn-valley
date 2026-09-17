@@ -81,7 +81,11 @@ function placementForSlot(
 
 export function buildCottageHomeView(save: SaveGame): CottageHomeView {
   const remainingByItemId = new Map<ItemId, number>();
-  const placements = COTTAGE_INTERIOR_MAP.decorationSlots
+  const slots = [
+    ...COTTAGE_INTERIOR_MAP.decorationSlots,
+    ...COTTAGE_INTERIOR_MAP.deferredDecorationSlots,
+  ];
+  const placements = slots
     .map((slot) => placementForSlot(save, slot, remainingByItemId))
     .filter((placement): placement is CottageDecorationView => placement !== null);
   const placedQuantityByItemId = new Map<ItemId, number>();
