@@ -12,6 +12,7 @@ import type { CottageDecorationSlot } from '../world/CottageInteriorMap';
 
 interface CottageDecorateSceneData {
   slotId?: string;
+  returnToDecorateMode?: boolean;
 }
 
 export class CottageDecorateScene extends Phaser.Scene {
@@ -19,6 +20,7 @@ export class CottageDecorateScene extends Phaser.Scene {
   private slot: CottageDecorationSlot | null = null;
   private options: readonly (ItemDefinition | null)[] = [];
   private selectedIndex = 0;
+  private returnToDecorateMode = false;
   private previewObjects: Phaser.GameObjects.GameObject[] = [];
   private nameText: Phaser.GameObjects.Text | null = null;
   private descriptionText: Phaser.GameObjects.Text | null = null;
@@ -37,11 +39,12 @@ export class CottageDecorateScene extends Phaser.Scene {
   public create(data: CottageDecorateSceneData): void {
     this.cameras.main.setBackgroundColor('#49376f');
     this.decorating = new HomeDecorationService(getBrowserSaveService());
+    this.returnToDecorateMode = data.returnToDecorateMode === true;
 
     try {
       this.slot = this.decorating.getSlot(data.slotId ?? '');
     } catch {
-      this.scene.start('CottageInteriorScene');
+      this.scene.start('CottageInteriorScene', { decorateMode: this.returnToDecorateMode });
       return;
     }
 
@@ -167,6 +170,7 @@ export class CottageDecorateScene extends Phaser.Scene {
       this.decorating = null;
       this.slot = null;
       this.options = [];
+      this.returnToDecorateMode = false;
       this.nameText = null;
       this.descriptionText = null;
       this.themeText = null;
@@ -338,11 +342,11 @@ export class CottageDecorateScene extends Phaser.Scene {
     } else {
       this.decorating.removeDecoration(this.slot.id);
     }
-    this.scene.start('CottageInteriorScene');
+    this.backToRoom();
   }
 
   private backToRoom(): void {
-    this.scene.start('CottageInteriorScene');
+    this.scene.start('CottageInteriorScene', { decorateMode: this.returnToDecorateMode });
   }
 
   private createButton(
