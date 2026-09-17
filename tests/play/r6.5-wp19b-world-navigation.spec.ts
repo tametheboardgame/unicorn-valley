@@ -38,18 +38,32 @@ async function snapshot(page: Page): Promise<Snapshot> {
 }
 
 async function startScene(page: Page, key: string): Promise<void> {
+  // Let the normal boot finish before replacing the title scene. Starting a diagnostic scene
+  // earlier can race the delayed TitleScene launch, leaving both scenes active and allowing
+  // keyboard/touch input intended for the test scene to trigger title actions underneath it.
+  await page.waitForFunction(
+    () =>
+      (
+        window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics }
+      ).__UNICORN_VALLEY_DIAGNOSTICS__
+        ?.snapshot()
+        .activeScenes.includes('TitleScene'),
+    undefined,
+    { timeout: 10_000 },
+  );
+
   await page.evaluate((sceneKey) => {
     (
       window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics }
     ).__UNICORN_VALLEY_DIAGNOSTICS__?.startScene(sceneKey);
   }, key);
   await page.waitForFunction(
-    (sceneKey) =>
-      (
+    (sceneKey) => {
+      const activeScenes = (
         window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics }
-      ).__UNICORN_VALLEY_DIAGNOSTICS__
-        ?.snapshot()
-        .activeScenes.includes(sceneKey),
+      ).__UNICORN_VALLEY_DIAGNOSTICS__?.snapshot().activeScenes;
+      return activeScenes?.length === 1 && activeScenes[0] === sceneKey;
+    },
     key,
   );
 }
