@@ -430,10 +430,7 @@ export class CottageInteriorScene extends Phaser.Scene {
     this.clearDecorateModePresentation();
 
     this.decorateButtonLabel?.setText(this.decorateModeActive ? 'Done' : 'Decorate');
-    this.decorateButtonSurface?.setFillStyle(
-      this.decorateModeActive ? 0xbfe8f5 : 0xfff5e7,
-      0.98,
-    );
+    this.decorateButtonSurface?.setFillStyle(this.decorateModeActive ? 0xbfe8f5 : 0xfff5e7, 0.98);
     this.decorateButtonSurface?.setStrokeStyle(
       3,
       this.decorateModeActive ? DECORATE_MARKER_STROKE : 0xa77bb8,
