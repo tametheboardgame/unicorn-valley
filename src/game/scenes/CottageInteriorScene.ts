@@ -30,7 +30,11 @@ import {
 } from '../save/saveLocationCheckpoint';
 import { InteractionPrompt } from '../ui/InteractionPrompt';
 import { renderWonderbookWorldProp } from '../wonderbook/WonderbookWorldProp';
-import { COTTAGE_INTERIOR_LOCATION_ID, COTTAGE_INTERIOR_MAP } from '../world/CottageInteriorMap';
+import {
+  COTTAGE_INTERIOR_LOCATION_ID,
+  COTTAGE_INTERIOR_MAP,
+  type CottageDecorationSlot,
+} from '../world/CottageInteriorMap';
 import {
   COTTAGE_SEMANTIC_ANCHOR_IDS,
   resolveCottageSemanticAnchor,
@@ -61,7 +65,6 @@ export class CottageInteriorScene extends Phaser.Scene {
   private decorationService: HomeDecorationService | null = null;
   private friendVisitManager: CottageFriendVisitManager | null = null;
   private sleepController: CottageSleepController | null = null;
-  private homeView: CottageHomeView | null = null;
   private homeStateObjects: Phaser.GameObjects.GameObject[] = [];
   private decorateModeObjects: Phaser.GameObjects.GameObject[] = [];
   private decorateButtonSurface: Phaser.GameObjects.Rectangle | null = null;
@@ -86,7 +89,6 @@ export class CottageInteriorScene extends Phaser.Scene {
     const save = saveLocationCheckpoint(saveService, COTTAGE_INTERIOR_LOCATION_ID);
     this.decorationService = new HomeDecorationService(saveService);
     const homeView = buildCottageHomeView(save);
-    this.homeView = homeView;
     this.renderHomeState(homeView);
     this.normalInteractions = this.createNormalInteractions(homeView);
     this.decorationInteractions = this.createDecorationInteractions(homeView);
@@ -170,7 +172,6 @@ export class CottageInteriorScene extends Phaser.Scene {
       this.activeInteraction = null;
       this.feedbackText = null;
       this.decorationService = null;
-      this.homeView = null;
       this.homeStateObjects = [];
       this.decorateButtonSurface = null;
       this.decorateButtonLabel = null;
@@ -324,7 +325,7 @@ export class CottageInteriorScene extends Phaser.Scene {
     const placementBySlotId = new Map(
       homeView.placements.map((placement) => [placement.slotId, placement] as const),
     );
-    const slots = [
+    const slots: readonly CottageDecorationSlot[] = [
       ...COTTAGE_INTERIOR_MAP.decorationSlots,
       ...COTTAGE_INTERIOR_MAP.deferredDecorationSlots,
     ];
@@ -441,7 +442,7 @@ export class CottageInteriorScene extends Phaser.Scene {
       return;
     }
 
-    const slots = [
+    const slots: readonly CottageDecorationSlot[] = [
       ...COTTAGE_INTERIOR_MAP.decorationSlots,
       ...COTTAGE_INTERIOR_MAP.deferredDecorationSlots,
     ];
