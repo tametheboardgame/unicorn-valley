@@ -57,15 +57,12 @@ async function startScene(page: Page, key: string): Promise<void> {
       window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics }
     ).__UNICORN_VALLEY_DIAGNOSTICS__?.startScene(sceneKey);
   }, key);
-  await page.waitForFunction(
-    (sceneKey) => {
-      const activeScenes = (
-        window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics }
-      ).__UNICORN_VALLEY_DIAGNOSTICS__?.snapshot().activeScenes;
-      return activeScenes?.length === 1 && activeScenes[0] === sceneKey;
-    },
-    key,
-  );
+  await page.waitForFunction((sceneKey) => {
+    const activeScenes = (
+      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__?.snapshot().activeScenes;
+    return activeScenes?.length === 1 && activeScenes[0] === sceneKey;
+  }, key);
 }
 
 function scene(value: Snapshot, key: string): SceneSnapshot {
