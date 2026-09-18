@@ -37,9 +37,9 @@ const migrateV2ToV3: SaveMigration = (save) => {
     typeof save.createdAt === 'string' ? save.createdAt : '1970-01-01T00:00:00.000Z';
   const defaults = createDefaultSave(timestamp);
   const home = mergeRecord(defaults.home, save.home);
-  const sourceStyle = isRecord(home.style) ? home.style : {};
-  const sourceWalls = isRecord(sourceStyle.walls) ? sourceStyle.walls : {};
-  const sourceBackWall = isRecord(sourceWalls.back) ? sourceWalls.back : {};
+  const sourceStyle: SaveRecord = isRecord(home.style) ? home.style : {};
+  const sourceWalls: SaveRecord = isRecord(sourceStyle.walls) ? sourceStyle.walls : {};
+  const sourceBackWall: SaveRecord = isRecord(sourceWalls.back) ? sourceWalls.back : {};
 
   return {
     ...save,
@@ -73,7 +73,7 @@ const migrateV3ToV4: SaveMigration = (save) => {
     typeof save.createdAt === 'string' ? save.createdAt : '1970-01-01T00:00:00.000Z';
   const defaults = createDefaultSave(timestamp);
   const home = mergeRecord(defaults.home, save.home);
-  const sourceStyle = isRecord(home.style) ? home.style : {};
+  const sourceStyle: SaveRecord = isRecord(home.style) ? home.style : {};
   const sourceColour =
     typeof sourceStyle.wallColourId === 'string'
       ? sourceStyle.wallColourId
