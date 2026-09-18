@@ -150,7 +150,25 @@ test('H2.5 keeps normal play clean, replaces Gallop with Decorate, and confirms 
       'CottageInteriorScene',
       'world-player-unicorn',
       750,
-      875,
+      850,
+    ),
+  );
+  await page.waitForTimeout(180);
+  value = await snapshot(page);
+  expect(
+    scene(value, 'CottageInteriorScene').objects.some(
+      ({ name, visible }) => name === 'cottage-finish-decorating-dialog' && visible,
+    ),
+  ).toBe(false);
+
+  await page.evaluate(() =>
+    (
+      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__?.setArcadeSpritePosition(
+      'CottageInteriorScene',
+      'world-player-unicorn',
+      750,
+      930,
     ),
   );
   await expect
