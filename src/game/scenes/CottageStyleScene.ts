@@ -8,6 +8,7 @@ import {
   getCottageWallpaper,
   getCottageWallColour,
 } from '../home/CottageStyleCatalogue';
+import { getCottageStyleDescription } from '../home/CottageStyleCopy';
 import { CottageStyleService } from '../home/CottageStyleService';
 import { drawCottageStylePreview } from '../home/CottageStylePreviewRenderer';
 import { getBrowserSaveService } from '../save/browserSaveService';
@@ -296,7 +297,7 @@ export class CottageStyleScene extends Phaser.Scene {
       this.category === 'wall' ? wall : this.category === 'wallpaper' ? wallpaper : floor;
 
     this.selectionName?.setText(selected.name);
-    this.selectionDescription?.setText(selected.description);
+    this.selectionDescription?.setText(getCottageStyleDescription(selected.id));
     this.categorySummary?.setText(
       `WALL  ${wall.name}    •    WALLPAPER  ${wallpaper.name}    •    FLOOR  ${floor.name}`,
     );
