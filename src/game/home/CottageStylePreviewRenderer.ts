@@ -55,12 +55,7 @@ function drawWall(
   const colour = getCottageWallColour(wallStyle.wallColourId);
   for (const part of bounds) {
     graphics.fillStyle(colour.fill, 1);
-    graphics.fillRect(
-      part.x - part.width / 2,
-      part.y - part.height / 2,
-      part.width,
-      part.height,
-    );
+    graphics.fillRect(part.x - part.width / 2, part.y - part.height / 2, part.width, part.height);
     drawWallpaper(graphics, wallStyle, part);
     if (selected) {
       graphics.lineStyle(4, 0xd3a84d, 0.96);
