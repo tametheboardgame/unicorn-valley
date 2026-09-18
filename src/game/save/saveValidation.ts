@@ -83,6 +83,15 @@ function isWorldState(value: unknown): boolean {
   );
 }
 
+function isHomeStyleState(value: unknown): boolean {
+  return (
+    isRecord(value) &&
+    typeof value.wallColourId === 'string' &&
+    typeof value.wallpaperId === 'string' &&
+    typeof value.floorStyleId === 'string'
+  );
+}
+
 function isHomeState(value: unknown): boolean {
   if (!isRecord(value)) {
     return false;
@@ -91,7 +100,8 @@ function isHomeState(value: unknown): boolean {
   return (
     isStringArray(value.ownedFurnitureIds) &&
     isRecordOf(value.furnitureBySlot, (entry) => typeof entry === 'string') &&
-    isRecordOf(value.gardenFlags, (entry) => typeof entry === 'boolean')
+    isRecordOf(value.gardenFlags, (entry) => typeof entry === 'boolean') &&
+    isHomeStyleState(value.style)
   );
 }
 
