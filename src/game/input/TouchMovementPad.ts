@@ -387,9 +387,6 @@ export class TouchMovementPad {
       dpad.append(button);
     }
 
-    const actionStack = globalThis.document.createElement('div');
-    actionStack.className = 'mobile-touch-action-stack';
-
     const action = globalThis.document.createElement('button');
     action.type = 'button';
     action.className = this.isCottageDecorateAction()
@@ -404,7 +401,7 @@ export class TouchMovementPad {
       this.bindDomTap(styleButton, () => {
         this.scene.events.emit(COTTAGE_STYLE_OPEN_EVENT);
       });
-      actionStack.append(styleButton);
+      root.append(styleButton);
       this.domStyleButton = styleButton;
 
       action.textContent = '✦\nDecorate';
@@ -423,8 +420,7 @@ export class TouchMovementPad {
       );
     }
 
-    actionStack.append(action);
-    root.append(dpad, actionStack);
+    root.append(dpad, action);
     (globalThis.document.querySelector('#game-shell') ?? globalThis.document.body).append(root);
     this.domRoot = root;
     this.domDpad = dpad;
