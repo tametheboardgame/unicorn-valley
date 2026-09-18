@@ -284,6 +284,7 @@ export class CottageStyleScene extends Phaser.Scene {
       this.previewStyle,
       { x: LEFT_PANEL_X, y: 345, width: 478, height: 348 },
       selectedWall,
+      this.category === 'furniture' ? this.selectedFurniture : null,
     );
 
     const activeWall = this.previewStyle.walls[this.selectedWall];
