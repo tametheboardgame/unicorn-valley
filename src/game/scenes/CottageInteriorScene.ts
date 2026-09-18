@@ -1,7 +1,10 @@
 import Phaser from 'phaser';
 import { getBrowserAtmosphericTimeService } from '../atmosphere/AtmosphericTimeService';
-import { GAME_WIDTH } from '../config/gameConstants';
-import { COTTAGE_DECORATE_MODE_DATA_KEY } from '../home/CottageDecorateModeState';
+import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
+import {
+  COTTAGE_DECORATE_MODE_DATA_KEY,
+  COTTAGE_DECORATE_TOGGLE_EVENT,
+} from '../home/CottageDecorateModeState';
 import {
   COTTAGE_FRIEND_VISIT_INTERACTION_ID,
   CottageFriendVisitManager,
@@ -17,6 +20,7 @@ import { InputController } from '../input/InputController';
 import { KeyboardInputAdapter } from '../input/KeyboardInputAdapter';
 import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 import { shouldShowTouchMovementPad, TouchMovementPad } from '../input/TouchMovementPad';
+import { setInteractionModalActive } from '../interaction/InteractionModalState';
 import type { InteractionTarget } from '../interaction/InteractionTarget';
 import { selectInteractionTarget } from '../interaction/InteractionTargeting';
 import { PlayerEntity } from '../player/PlayerEntity';
@@ -67,8 +71,9 @@ export class CottageInteriorScene extends Phaser.Scene {
   private sleepController: CottageSleepController | null = null;
   private homeStateObjects: Phaser.GameObjects.GameObject[] = [];
   private decorateModeObjects: Phaser.GameObjects.GameObject[] = [];
-  private decorateButtonSurface: Phaser.GameObjects.Rectangle | null = null;
-  private decorateButtonLabel: Phaser.GameObjects.Text | null = null;
+  private finishDecoratingObjects: Phaser.GameObjects.GameObject[] = [];
+  private finishDecoratingPromptActive = false;
+  private finishDecoratingDoorLatch = false;
   private normalInteractions: readonly InteractionTarget[] = [];
   private decorationInteractions: readonly InteractionTarget[] = [];
   private interactions: readonly InteractionTarget[] = [];
@@ -81,6 +86,7 @@ export class CottageInteriorScene extends Phaser.Scene {
   public create(data: CottageInteriorSceneData = {}): void {
     this.decorateModeActive = data.decorateMode === true;
     this.data.set(COTTAGE_DECORATE_MODE_DATA_KEY, this.decorateModeActive);
+    this.events.on(COTTAGE_DECORATE_TOGGLE_EVENT, this.toggleDecorateMode, this);
 
     this.createEnvironment();
     this.ensureCollisionTexture();
@@ -152,6 +158,8 @@ export class CottageInteriorScene extends Phaser.Scene {
     this.refreshDecorateModePresentation();
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.events.off(COTTAGE_DECORATE_TOGGLE_EVENT, this.toggleDecorateMode, this);
+      this.closeFinishDecoratingPrompt();
       this.feedbackTimer?.destroy();
       this.feedbackTimer = null;
       this.clearDecorateModePresentation();
@@ -173,8 +181,9 @@ export class CottageInteriorScene extends Phaser.Scene {
       this.feedbackText = null;
       this.decorationService = null;
       this.homeStateObjects = [];
-      this.decorateButtonSurface = null;
-      this.decorateButtonLabel = null;
+      this.finishDecoratingObjects = [];
+      this.finishDecoratingPromptActive = false;
+      this.finishDecoratingDoorLatch = false;
       this.normalInteractions = [];
       this.decorationInteractions = [];
       this.interactions = [];
@@ -189,6 +198,13 @@ export class CottageInteriorScene extends Phaser.Scene {
     }
 
     this.inputController.update();
+
+    if (this.finishDecoratingPromptActive) {
+      this.player.sprite.setVelocity(0, 0);
+      this.activeInteraction = null;
+      this.interactionPrompt?.setTarget(null);
+      return;
+    }
 
     if (this.sleepController?.isActive()) {
       this.player.sprite.setVelocity(0, 0);
@@ -224,6 +240,16 @@ export class CottageInteriorScene extends Phaser.Scene {
     this.player.applyMovement(movement);
     this.player.updatePresentation(time);
     this.updatePlayerDepth();
+
+    if (this.decorateModeActive) {
+      this.updateDecorateDoorwayPrompt();
+      if (this.finishDecoratingPromptActive) {
+        this.player.sprite.setVelocity(0, 0);
+        this.activeInteraction = null;
+        this.interactionPrompt?.setTarget(null);
+        return;
+      }
+    }
 
     const friendInteraction = this.decorateModeActive
       ? null
@@ -411,9 +437,18 @@ export class CottageInteriorScene extends Phaser.Scene {
     });
   }
 
+  private readonly toggleDecorateMode = (): void => {
+    this.setDecorateMode(!this.decorateModeActive);
+  };
+
   private setDecorateMode(active: boolean): void {
     if (this.decorateModeActive === active) {
       return;
+    }
+
+    if (!active) {
+      this.closeFinishDecoratingPrompt();
+      this.finishDecoratingDoorLatch = false;
     }
 
     this.decorateModeActive = active;
@@ -427,16 +462,155 @@ export class CottageInteriorScene extends Phaser.Scene {
     this.refreshDecorateModePresentation();
   }
 
+  private updateDecorateDoorwayPrompt(): void {
+    if (!this.player || !this.decorateModeActive || this.finishDecoratingPromptActive) {
+      return;
+    }
+
+    const doorway = COTTAGE_INTERIOR_MAP.exit.approach;
+    const distance = Phaser.Math.Distance.Between(
+      this.player.sprite.x,
+      this.player.sprite.y,
+      doorway.x,
+      doorway.y,
+    );
+    const insideDoorway = distance <= 135;
+
+    if (!insideDoorway) {
+      if (distance >= 185) {
+        this.finishDecoratingDoorLatch = false;
+      }
+      return;
+    }
+
+    if (this.finishDecoratingDoorLatch) {
+      return;
+    }
+
+    this.finishDecoratingDoorLatch = true;
+    this.openFinishDecoratingPrompt();
+  }
+
+  private openFinishDecoratingPrompt(): void {
+    if (this.finishDecoratingPromptActive) {
+      return;
+    }
+
+    this.finishDecoratingPromptActive = true;
+    this.activeInteraction = null;
+    this.interactionPrompt?.setTarget(null);
+    this.player?.sprite.setVelocity(0, 0);
+    setInteractionModalActive(this, true);
+
+    const centreX = GAME_WIDTH / 2;
+    const centreY = GAME_HEIGHT / 2;
+    const backdrop = this.add
+      .rectangle(centreX, centreY, GAME_WIDTH, GAME_HEIGHT, 0x241a3d, 0.38)
+      .setName('cottage-finish-decorating-backdrop')
+      .setScrollFactor(0)
+      .setDepth(20_300)
+      .setInteractive();
+    const panel = this.add
+      .rectangle(centreX, centreY, 520, 240, 0xfffbef, 0.99)
+      .setName('cottage-finish-decorating-dialog')
+      .setStrokeStyle(5, 0x4f9fc4, 1)
+      .setScrollFactor(0)
+      .setDepth(20_301);
+    const title = this.add
+      .text(centreX, centreY - 58, 'Are you finished decorating?', {
+        color: '#244f5c',
+        fontFamily: 'Trebuchet MS, Segoe UI, system-ui, sans-serif',
+        fontSize: '25px',
+        fontStyle: 'bold',
+        align: 'center',
+      })
+      .setName('cottage-finish-decorating-title')
+      .setOrigin(0.5)
+      .setScrollFactor(0)
+      .setDepth(20_302);
+    const hint = this.add
+      .text(centreX, centreY - 14, 'Choose Yes to finish decorating, then you can leave the cottage.', {
+        color: '#5b6670',
+        fontFamily: 'Trebuchet MS, Segoe UI, system-ui, sans-serif',
+        fontSize: '15px',
+        align: 'center',
+        wordWrap: { width: 430 },
+      })
+      .setName('cottage-finish-decorating-hint')
+      .setOrigin(0.5)
+      .setScrollFactor(0)
+      .setDepth(20_302);
+
+    const noButton = this.createFinishDecoratingButton(
+      centreX - 112,
+      centreY + 67,
+      'No',
+      0xf3e7f8,
+      0xa77bb8,
+      () => this.closeFinishDecoratingPrompt(),
+    );
+    const yesButton = this.createFinishDecoratingButton(
+      centreX + 112,
+      centreY + 67,
+      'Yes',
+      0x8dd5ec,
+      0x4f9fc4,
+      () => {
+        this.closeFinishDecoratingPrompt();
+        this.setDecorateMode(false);
+      },
+    );
+    yesButton[0].setName('cottage-finish-decorating-yes');
+    noButton[0].setName('cottage-finish-decorating-no');
+
+    this.finishDecoratingObjects.push(backdrop, panel, title, hint, ...noButton, ...yesButton);
+  }
+
+  private createFinishDecoratingButton(
+    x: number,
+    y: number,
+    label: string,
+    fill: number,
+    stroke: number,
+    action: () => void,
+  ): [Phaser.GameObjects.Rectangle, Phaser.GameObjects.Text] {
+    const button = this.add
+      .rectangle(x, y, 170, 56, fill, 1)
+      .setStrokeStyle(4, stroke, 1)
+      .setScrollFactor(0)
+      .setDepth(20_302)
+      .setInteractive({ useHandCursor: true });
+    const text = this.add
+      .text(x, y, label, {
+        color: '#244f5c',
+        fontFamily: 'Trebuchet MS, Segoe UI, system-ui, sans-serif',
+        fontSize: '19px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5)
+      .setScrollFactor(0)
+      .setDepth(20_303)
+      .setInteractive({ useHandCursor: true });
+    button.on('pointerdown', action);
+    text.on('pointerdown', action);
+    return [button, text];
+  }
+
+  private closeFinishDecoratingPrompt(): void {
+    if (!this.finishDecoratingPromptActive && this.finishDecoratingObjects.length === 0) {
+      return;
+    }
+
+    for (const object of this.finishDecoratingObjects) {
+      object.destroy();
+    }
+    this.finishDecoratingObjects = [];
+    this.finishDecoratingPromptActive = false;
+    setInteractionModalActive(this, false);
+  }
+
   private refreshDecorateModePresentation(): void {
     this.clearDecorateModePresentation();
-
-    this.decorateButtonLabel?.setText(this.decorateModeActive ? 'Done' : 'Decorate');
-    this.decorateButtonSurface?.setFillStyle(this.decorateModeActive ? 0xbfe8f5 : 0xfff5e7, 0.98);
-    this.decorateButtonSurface?.setStrokeStyle(
-      3,
-      this.decorateModeActive ? DECORATE_MARKER_STROKE : 0xa77bb8,
-      0.95,
-    );
 
     if (!this.decorateModeActive) {
       return;
@@ -666,30 +840,6 @@ export class CottageInteriorScene extends Phaser.Scene {
       .setOrigin(0.5, 0)
       .setScrollFactor(0)
       .setDepth(115);
-
-    this.decorateButtonSurface = this.add
-      .rectangle(GAME_WIDTH - 112, 104, 168, 48, 0xfff5e7, 0.98)
-      .setName('cottage-decorate-toggle-surface')
-      .setStrokeStyle(3, 0xa77bb8, 0.95)
-      .setScrollFactor(0)
-      .setDepth(116)
-      .setInteractive({ useHandCursor: true });
-    this.decorateButtonLabel = this.add
-      .text(GAME_WIDTH - 112, 104, 'Decorate', {
-        color: '#5e4669',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '18px',
-        fontStyle: 'bold',
-      })
-      .setName('cottage-decorate-toggle-label')
-      .setOrigin(0.5)
-      .setScrollFactor(0)
-      .setDepth(117)
-      .setInteractive({ useHandCursor: true });
-
-    const toggleDecorateMode = () => this.setDecorateMode(!this.decorateModeActive);
-    this.decorateButtonSurface.on('pointerdown', toggleDecorateMode);
-    this.decorateButtonLabel.on('pointerdown', toggleDecorateMode);
 
     this.feedbackText = this.add
       .text(GAME_WIDTH / 2, 120, '', {
