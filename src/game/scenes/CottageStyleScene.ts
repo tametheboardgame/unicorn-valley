@@ -12,7 +12,11 @@ import {
   type CottageWallpaperDefinition,
   type CottageWallColourDefinition,
 } from '../home/CottageStyleCatalogue';
-import { COTTAGE_WALL_LABELS, getCottageStyleDescription } from '../home/CottageStyleCopy';
+import {
+  COTTAGE_WALL_LABELS,
+  getCottageStyleDescription,
+  getCottageStyleName,
+} from '../home/CottageStyleCopy';
 import { CottageStyleService } from '../home/CottageStyleService';
 import { drawCottageStylePreview } from '../home/CottageStylePreviewRenderer';
 import { getBrowserSaveService } from '../save/browserSaveService';
@@ -270,9 +274,9 @@ export class CottageStyleScene extends Phaser.Scene {
     const floor = getCottageFloorStyle(this.previewStyle.floorStyleId);
     const lines = COTTAGE_WALL_KEYS.map((wallKey) => {
       const wallStyle = this.previewStyle!.walls[wallKey];
-      return `${COTTAGE_WALL_LABELS[wallKey]}: ${getCottageWallColour(wallStyle.wallColourId).name} / ${getCottageWallpaper(wallStyle.wallpaperId).name}`;
+      return `${COTTAGE_WALL_LABELS[wallKey]}: ${getCottageStyleName(wallStyle.wallColourId)} / ${getCottageStyleName(wallStyle.wallpaperId)}`;
     });
-    this.categorySummary?.setText(`${lines.join('\n')}\nFloor: ${floor.name}`);
+    this.categorySummary?.setText(`${lines.join('\n')}\nFloor: ${getCottageStyleName(floor.id)}`);
 
     const selected =
       this.category === 'wall'
@@ -282,8 +286,8 @@ export class CottageStyleScene extends Phaser.Scene {
           : floor;
     this.selectionName?.setText(
       this.category === 'floor'
-        ? selected.name
-        : `${COTTAGE_WALL_LABELS[this.selectedWall]} wall · ${selected.name}`,
+        ? getCottageStyleName(selected.id)
+        : `${COTTAGE_WALL_LABELS[this.selectedWall]} wall · ${getCottageStyleName(selected.id)}`,
     );
     this.selectionDescription?.setText(getCottageStyleDescription(selected.id));
   }
@@ -415,7 +419,7 @@ export class CottageStyleScene extends Phaser.Scene {
       this.trackChoice(this.add.circle(x, y, 24, choice.fill, 1).setDepth(8));
       this.trackChoice(
         this.add
-          .text(x, y + 48, choice.name, {
+          .text(x, y + 48, getCottageStyleName(choice.id), {
             color: UI_COLOURS.ink,
             fontFamily: UI_FONT,
             fontSize: '12px',
@@ -455,7 +459,7 @@ export class CottageStyleScene extends Phaser.Scene {
       this.drawWallpaperCard(choice, x, y - 11);
       this.trackChoice(
         this.add
-          .text(x, y + 34, choice.name, {
+          .text(x, y + 34, getCottageStyleName(choice.id), {
             color: UI_COLOURS.ink,
             fontFamily: UI_FONT,
             fontSize: '12px',
@@ -494,7 +498,7 @@ export class CottageStyleScene extends Phaser.Scene {
       this.drawFloorCard(choice, x, y - 11);
       this.trackChoice(
         this.add
-          .text(x, y + 34, choice.name, {
+          .text(x, y + 34, getCottageStyleName(choice.id), {
             color: UI_COLOURS.ink,
             fontFamily: UI_FONT,
             fontSize: '12px',
