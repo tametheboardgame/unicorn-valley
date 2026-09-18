@@ -1,5 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
-import { CURRENT_SAVE_SCHEMA_VERSION } from '../../src/game/save/saveSchema';\nimport { INTERACTIVE_GATEWAY_RADIUS } from '../../src/game/world/RegionGatewayRules';
+import { CURRENT_SAVE_SCHEMA_VERSION } from '../../src/game/save/saveSchema';
+import { INTERACTIVE_GATEWAY_RADIUS } from '../../src/game/world/RegionGatewayRules';
 
 const WORLD_PLAYER_NAME = 'world-player-unicorn';
 const CASCADE_TAP_TARGET = 'r6-wp6.18ij:crystal-cascade-tap-target';
