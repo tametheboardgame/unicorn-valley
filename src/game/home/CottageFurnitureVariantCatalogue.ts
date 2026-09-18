@@ -64,10 +64,7 @@ export function isKnownCottageFurnitureVariant(
   variantId: string,
 ): boolean {
   const prefix = `cottage-furniture:${PATH[furnitureKey]}:`;
-  return (
-    variantId.startsWith(prefix) &&
-    TOKENS[furnitureKey].includes(tokenFromId(variantId))
-  );
+  return variantId.startsWith(prefix) && TOKENS[furnitureKey].includes(tokenFromId(variantId));
 }
 
 export function resolveCottageFurnitureVariant(
