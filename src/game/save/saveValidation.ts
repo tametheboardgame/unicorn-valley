@@ -101,7 +101,12 @@ function isHomeStyleState(value: unknown): boolean {
     isHomeWallStyleState(value.walls.left) &&
     isHomeWallStyleState(value.walls.right) &&
     isHomeWallStyleState(value.walls.front) &&
-    typeof value.floorStyleId === 'string'
+    typeof value.floorStyleId === 'string' &&
+    isRecord(value.furnitureVariants) &&
+    typeof value.furnitureVariants.bed === 'string' &&
+    typeof value.furnitureVariants.sofa === 'string' &&
+    typeof value.furnitureVariants.teaSet === 'string' &&
+    typeof value.furnitureVariants.fireplace === 'string'
   );
 }
 
