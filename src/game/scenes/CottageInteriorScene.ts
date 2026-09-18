@@ -4,6 +4,7 @@ import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import {
   COTTAGE_DECORATE_MODE_DATA_KEY,
   COTTAGE_DECORATE_TOGGLE_EVENT,
+  COTTAGE_STYLE_OPEN_EVENT,
 } from '../home/CottageDecorateModeState';
 import {
   COTTAGE_FRIEND_VISIT_INTERACTION_ID,
@@ -58,11 +59,6 @@ interface CottageInteriorSceneData {
 const COLLISION_TEXTURE_KEY = 'cottage-collision-pixel';
 const SAVED_PLAYER_TEXTURE_KEY = 'player-unicorn-cottage';
 const DECORATION_INTERACTION_PREFIX = 'interaction:cottage-decoration:';
-const COTTAGE_STYLE_INTERACTION_ID = 'interaction:cottage-style:room';
-const COTTAGE_STYLE_MARKER = {
-  position: { x: 545, y: 405 },
-  interactionPosition: { x: 545, y: 445 },
-} as const;
 const DECORATE_MARKER_FILL = 0x8dd5ec;
 const DECORATE_MARKER_STROKE = 0x4f9fc4;
 
@@ -86,7 +82,6 @@ export class CottageInteriorScene extends Phaser.Scene {
   private finishDecoratingDoorLatch = false;
   private normalInteractions: readonly InteractionTarget[] = [];
   private decorationInteractions: readonly InteractionTarget[] = [];
-  private styleInteractions: readonly InteractionTarget[] = [];
   private interactions: readonly InteractionTarget[] = [];
   private decorateModeActive = false;
 
@@ -98,6 +93,7 @@ export class CottageInteriorScene extends Phaser.Scene {
     this.decorateModeActive = data.decorateMode === true;
     this.data.set(COTTAGE_DECORATE_MODE_DATA_KEY, this.decorateModeActive);
     this.events.on(COTTAGE_DECORATE_TOGGLE_EVENT, this.toggleDecorateMode, this);
+    this.events.on(COTTAGE_STYLE_OPEN_EVENT, this.openStyleEditor, this);
 
     const saveService = getBrowserSaveService();
     const save = saveLocationCheckpoint(saveService, COTTAGE_INTERIOR_LOCATION_ID);
@@ -110,10 +106,7 @@ export class CottageInteriorScene extends Phaser.Scene {
     this.renderHomeState(homeView);
     this.normalInteractions = this.createNormalInteractions(homeView);
     this.decorationInteractions = this.createDecorationInteractions(homeView);
-    this.styleInteractions = this.createStyleInteractions();
-    this.interactions = this.decorateModeActive
-      ? [...this.decorationInteractions, ...this.styleInteractions]
-      : this.normalInteractions;
+    this.interactions = this.decorateModeActive ? this.decorationInteractions : this.normalInteractions;
 
     const appearance = parseUnicornAppearance(save.profile.appearance);
     createUnicornAppearanceTexture(this, SAVED_PLAYER_TEXTURE_KEY, appearance);
@@ -172,6 +165,7 @@ export class CottageInteriorScene extends Phaser.Scene {
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.events.off(COTTAGE_DECORATE_TOGGLE_EVENT, this.toggleDecorateMode, this);
+      this.events.off(COTTAGE_STYLE_OPEN_EVENT, this.openStyleEditor, this);
       this.closeFinishDecoratingPrompt();
       this.feedbackTimer?.destroy();
       this.feedbackTimer = null;
@@ -199,7 +193,6 @@ export class CottageInteriorScene extends Phaser.Scene {
       this.finishDecoratingDoorLatch = false;
       this.normalInteractions = [];
       this.decorationInteractions = [];
-      this.styleInteractions = [];
       this.interactions = [];
       this.decorateModeActive = false;
       this.data.set(COTTAGE_DECORATE_MODE_DATA_KEY, false);
@@ -388,26 +381,6 @@ export class CottageInteriorScene extends Phaser.Scene {
     });
   }
 
-  private createStyleInteractions(): readonly InteractionTarget[] {
-    return [
-      {
-        id: COTTAGE_STYLE_INTERACTION_ID,
-        label: 'Walls, wallpaper & floor',
-        actionLabel: 'Style room',
-        actionKind: 'interact',
-        position: COTTAGE_STYLE_MARKER.interactionPosition,
-        interactionRadius: 150,
-        priority: 80,
-        result: {
-          type: 'callback',
-          activate: () => {
-            void this.openStyleEditor();
-          },
-        },
-      },
-    ] satisfies readonly InteractionTarget[];
-  }
-
   private activateInteraction(target: InteractionTarget): void {
     if (target.id === COTTAGE_FRIEND_VISIT_INTERACTION_ID) {
       this.friendVisitManager?.activate();
@@ -504,9 +477,7 @@ export class CottageInteriorScene extends Phaser.Scene {
 
     this.decorateModeActive = active;
     this.data.set(COTTAGE_DECORATE_MODE_DATA_KEY, active);
-    this.interactions = active
-      ? [...this.decorationInteractions, ...this.styleInteractions]
-      : this.normalInteractions;
+    this.interactions = active ? this.decorationInteractions : this.normalInteractions;
     this.activeInteraction = null;
     this.interactionPrompt?.setTarget(null);
     this.feedbackText?.setVisible(false);
@@ -693,39 +664,6 @@ export class CottageInteriorScene extends Phaser.Scene {
         ease: 'Sine.InOut',
       });
     }
-    const styleHalo = this.add
-      .circle(
-        COTTAGE_STYLE_MARKER.position.x,
-        COTTAGE_STYLE_MARKER.position.y,
-        36,
-        DECORATE_MARKER_FILL,
-        0.13,
-      )
-      .setName('cottage-style-marker:room')
-      .setStrokeStyle(3, DECORATE_MARKER_STROKE, 0.76)
-      .setDepth(12);
-    const styleSparkle = this.add
-      .text(COTTAGE_STYLE_MARKER.position.x, COTTAGE_STYLE_MARKER.position.y, '✦', {
-        color: '#3d8fb5',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '22px',
-        fontStyle: 'bold',
-      })
-      .setName('cottage-style-sparkle:room')
-      .setOrigin(0.5)
-      .setAlpha(0.88)
-      .setDepth(13);
-    this.decorateModeObjects.push(styleHalo, styleSparkle);
-    this.tweens.add({
-      targets: styleHalo,
-      alpha: 0.3,
-      scaleX: 1.12,
-      scaleY: 1.12,
-      duration: 1200,
-      yoyo: true,
-      repeat: -1,
-      ease: 'Sine.InOut',
-    });
   }
 
   private clearDecorateModePresentation(): void {
