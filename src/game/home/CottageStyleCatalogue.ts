@@ -48,7 +48,12 @@ export interface CottageFloorStyleDefinition {
   starter: true;
 }
 
-export const COTTAGE_WALL_KEYS = ['back', 'left', 'right', 'front'] as const satisfies readonly CottageWallKey[];
+export const COTTAGE_WALL_KEYS = [
+  'back',
+  'left',
+  'right',
+  'front',
+] as const satisfies readonly CottageWallKey[];
 
 export const COTTAGE_WALL_LABELS: Readonly<Record<CottageWallKey, string>> = {
   back: 'Back',
