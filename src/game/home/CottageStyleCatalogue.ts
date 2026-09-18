@@ -130,7 +130,9 @@ export const COTTAGE_FLOOR_STYLES: readonly CottageFloorStyleDefinition[] = [
 ];
 
 export function getCottageWallColour(id: string): CottageWallColourDefinition {
-  return COTTAGE_WALL_COLOURS.find((definition) => definition.id === id) ?? COTTAGE_WALL_COLOURS[0]!;
+  return (
+    COTTAGE_WALL_COLOURS.find((definition) => definition.id === id) ?? COTTAGE_WALL_COLOURS[0]!
+  );
 }
 
 export function getCottageWallpaper(id: string): CottageWallpaperDefinition {
@@ -138,7 +140,9 @@ export function getCottageWallpaper(id: string): CottageWallpaperDefinition {
 }
 
 export function getCottageFloorStyle(id: string): CottageFloorStyleDefinition {
-  return COTTAGE_FLOOR_STYLES.find((definition) => definition.id === id) ?? COTTAGE_FLOOR_STYLES[0]!;
+  return (
+    COTTAGE_FLOOR_STYLES.find((definition) => definition.id === id) ?? COTTAGE_FLOOR_STYLES[0]!
+  );
 }
 
 export function resolveCottageWallStyle(style: HomeWallStyleState): HomeWallStyleState {
