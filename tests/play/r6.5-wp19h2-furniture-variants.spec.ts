@@ -89,11 +89,7 @@ test('H2.7 furniture variants preview and persist without replacing canonical fu
   await tapScreen(page, 1164, 176);
   await expect
     .poll(async () =>
-      hasObject(
-        await snapshot(page),
-        'CottageStyleScene',
-        'cottage-style-furniture-selector-bed',
-      ),
+      hasObject(await snapshot(page), 'CottageStyleScene', 'cottage-style-furniture-selector-bed'),
     )
     .toBe(true);
 
@@ -116,19 +112,23 @@ test('H2.7 furniture variants preview and persist without replacing canonical fu
     .poll(async () =>
       (await snapshot(page)).scenes
         .find(({ key }) => key === 'CottageStyleScene')
-        ?.objects.some(({ name }) =>
-          name.startsWith('cottage-style-preview:back:') &&
-          name.endsWith('|cottage-furniture:fireplace:moonstone'),
+        ?.objects.some(
+          ({ name }) =>
+            name.startsWith('cottage-style-preview:back:') &&
+            name.endsWith('|cottage-furniture:fireplace:moonstone'),
         ),
     )
     .toBe(true);
 
   await tapScreen(page, 1080, 652);
-  await expect.poll(async () => (await snapshot(page)).activeScenes).toEqual([
-    'CottageInteriorScene',
-  ]);
+  await expect
+    .poll(async () => (await snapshot(page)).activeScenes)
+    .toEqual(['CottageInteriorScene']);
 
-  let stored = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? '{}'), SAVE_KEY);
+  let stored = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SAVE_KEY,
+  );
   expect(stored.home.style.furnitureVariants).toEqual({
     bed: 'cottage-furniture:bed:rose-dream',
     sofa: 'cottage-furniture:sofa:starlight',
