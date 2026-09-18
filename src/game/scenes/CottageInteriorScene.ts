@@ -693,8 +693,6 @@ export class CottageInteriorScene extends Phaser.Scene {
         ease: 'Sine.InOut',
       });
     }
-  }
-
     const styleHalo = this.add
       .circle(
         COTTAGE_STYLE_MARKER.position.x,
@@ -728,6 +726,8 @@ export class CottageInteriorScene extends Phaser.Scene {
       repeat: -1,
       ease: 'Sine.InOut',
     });
+
+  }
 
   private clearDecorateModePresentation(): void {
     for (const object of this.decorateModeObjects) {
