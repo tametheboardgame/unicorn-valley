@@ -129,14 +129,39 @@ canvas {
   grid-row: 3;
 }
 
+.mobile-touch-action-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  margin-bottom: clamp(18px, 7vh, 56px);
+  pointer-events: none;
+}
+
 .mobile-touch-gallop {
   width: clamp(88px, 26vw, 112px);
   height: clamp(88px, 26vw, 112px);
-  margin-bottom: clamp(18px, 7vh, 56px);
+  margin-bottom: 0;
   border-color: rgb(177 123 189 / 96%);
   white-space: pre-line;
   font-size: clamp(17px, 4.7vw, 22px);
   line-height: 1.12;
+}
+
+.mobile-touch-style {
+  min-width: clamp(116px, 32vw, 148px);
+  min-height: 52px;
+  padding: 8px 14px;
+  border-radius: 18px;
+  border-color: rgb(137 88 160 / 92%);
+  background: linear-gradient(180deg, #fffdf7, #ead9ee);
+  color: #5c4568;
+  font-size: clamp(15px, 4vw, 18px);
+  line-height: 1.1;
+}
+
+.mobile-touch-style[hidden] {
+  display: none;
 }
 
 .mobile-touch-decorate {
