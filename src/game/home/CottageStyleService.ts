@@ -1,6 +1,10 @@
 import type { SaveService } from '../save/SaveService';
 import type { HomeStyleState } from '../save/saveSchema';
-import { DEFAULT_COTTAGE_STYLE, isKnownCottageStyle, resolveCottageStyle } from './CottageStyleCatalogue';
+import {
+  DEFAULT_COTTAGE_STYLE,
+  isKnownCottageStyle,
+  resolveCottageStyle,
+} from './CottageStyleCatalogue';
 
 export class CottageStyleService {
   public constructor(private readonly saveService: SaveService) {}
