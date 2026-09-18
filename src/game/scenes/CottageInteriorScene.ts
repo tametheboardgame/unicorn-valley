@@ -15,6 +15,8 @@ import {
 } from '../home/CottageFurnitureRenderer';
 import { buildCottageHomeView, type CottageHomeView } from '../home/CottageHomeView';
 import { HomeDecorationService } from '../home/HomeDecorationService';
+import { CottageStyleService } from '../home/CottageStyleService';
+import { renderCottageRoomSurfaces } from '../home/CottageSurfaceRenderer';
 import { CottageSleepController } from '../home/CottageSleepController';
 import { InputController } from '../input/InputController';
 import { KeyboardInputAdapter } from '../input/KeyboardInputAdapter';
@@ -28,6 +30,7 @@ import { parseUnicornAppearance } from '../player/UnicornAppearance';
 import { createUnicornAppearanceTexture } from '../player/UnicornAppearanceRenderer';
 import { DEFAULT_PLAYER_SPEED, resolvePlayerMovement } from '../player/PlayerMovement';
 import { getBrowserSaveService } from '../save/browserSaveService';
+import type { HomeStyleState } from '../save/saveSchema';
 import {
   MOONFLOWER_GLADE_LOCATION_ID,
   saveLocationCheckpoint,
@@ -55,6 +58,11 @@ interface CottageInteriorSceneData {
 const COLLISION_TEXTURE_KEY = 'cottage-collision-pixel';
 const SAVED_PLAYER_TEXTURE_KEY = 'player-unicorn-cottage';
 const DECORATION_INTERACTION_PREFIX = 'interaction:cottage-decoration:';
+const COTTAGE_STYLE_INTERACTION_ID = 'interaction:cottage-style:room';
+const COTTAGE_STYLE_MARKER = {
+  position: { x: 545, y: 405 },
+  interactionPosition: { x: 545, y: 445 },
+} as const;
 const DECORATE_MARKER_FILL = 0x8dd5ec;
 const DECORATE_MARKER_STROKE = 0x4f9fc4;
 
@@ -78,6 +86,7 @@ export class CottageInteriorScene extends Phaser.Scene {
   private finishDecoratingDoorLatch = false;
   private normalInteractions: readonly InteractionTarget[] = [];
   private decorationInteractions: readonly InteractionTarget[] = [];
+  private styleInteractions: readonly InteractionTarget[] = [];
   private interactions: readonly InteractionTarget[] = [];
   private decorateModeActive = false;
 
@@ -90,18 +99,20 @@ export class CottageInteriorScene extends Phaser.Scene {
     this.data.set(COTTAGE_DECORATE_MODE_DATA_KEY, this.decorateModeActive);
     this.events.on(COTTAGE_DECORATE_TOGGLE_EVENT, this.toggleDecorateMode, this);
 
-    this.createEnvironment();
-    this.ensureCollisionTexture();
-
     const saveService = getBrowserSaveService();
     const save = saveLocationCheckpoint(saveService, COTTAGE_INTERIOR_LOCATION_ID);
+    const cottageStyle = new CottageStyleService(saveService).getResolvedStyle();
+
+    this.createEnvironment(cottageStyle);
+    this.ensureCollisionTexture();
     this.decorationService = new HomeDecorationService(saveService);
     const homeView = buildCottageHomeView(save);
     this.renderHomeState(homeView);
     this.normalInteractions = this.createNormalInteractions(homeView);
     this.decorationInteractions = this.createDecorationInteractions(homeView);
+    this.styleInteractions = this.createStyleInteractions();
     this.interactions = this.decorateModeActive
-      ? this.decorationInteractions
+      ? [...this.decorationInteractions, ...this.styleInteractions]
       : this.normalInteractions;
 
     const appearance = parseUnicornAppearance(save.profile.appearance);
@@ -188,6 +199,7 @@ export class CottageInteriorScene extends Phaser.Scene {
       this.finishDecoratingDoorLatch = false;
       this.normalInteractions = [];
       this.decorationInteractions = [];
+      this.styleInteractions = [];
       this.interactions = [];
       this.decorateModeActive = false;
       this.data.set(COTTAGE_DECORATE_MODE_DATA_KEY, false);
@@ -376,6 +388,26 @@ export class CottageInteriorScene extends Phaser.Scene {
     });
   }
 
+  private createStyleInteractions(): readonly InteractionTarget[] {
+    return [
+      {
+        id: COTTAGE_STYLE_INTERACTION_ID,
+        label: 'Walls, wallpaper & floor',
+        actionLabel: 'Style room',
+        actionKind: 'interact',
+        position: COTTAGE_STYLE_MARKER.interactionPosition,
+        interactionRadius: 150,
+        priority: 80,
+        result: {
+          type: 'callback',
+          activate: () => {
+            void this.openStyleEditor();
+          },
+        },
+      },
+    ] satisfies readonly InteractionTarget[];
+  }
+
   private activateInteraction(target: InteractionTarget): void {
     if (target.id === COTTAGE_FRIEND_VISIT_INTERACTION_ID) {
       this.friendVisitManager?.activate();
@@ -439,6 +471,23 @@ export class CottageInteriorScene extends Phaser.Scene {
     });
   }
 
+  private async openStyleEditor(): Promise<void> {
+    if (!this.decorateModeActive || !this.scene.isActive()) {
+      return;
+    }
+
+    if (!this.game.scene.keys.CottageStyleScene) {
+      const { CottageStyleScene } = await import('./CottageStyleScene');
+      this.scene.add('CottageStyleScene', CottageStyleScene, false);
+    }
+
+    if (!this.scene.isActive()) {
+      return;
+    }
+
+    this.scene.start('CottageStyleScene', { returnToDecorateMode: true });
+  }
+
   private readonly toggleDecorateMode = (): void => {
     this.setDecorateMode(!this.decorateModeActive);
   };
@@ -455,7 +504,9 @@ export class CottageInteriorScene extends Phaser.Scene {
 
     this.decorateModeActive = active;
     this.data.set(COTTAGE_DECORATE_MODE_DATA_KEY, active);
-    this.interactions = active ? this.decorationInteractions : this.normalInteractions;
+    this.interactions = active
+      ? [...this.decorationInteractions, ...this.styleInteractions]
+      : this.normalInteractions;
     this.activeInteraction = null;
     this.interactionPrompt?.setTarget(null);
     this.feedbackText?.setVisible(false);
@@ -644,6 +695,40 @@ export class CottageInteriorScene extends Phaser.Scene {
     }
   }
 
+    const styleHalo = this.add
+      .circle(
+        COTTAGE_STYLE_MARKER.position.x,
+        COTTAGE_STYLE_MARKER.position.y,
+        36,
+        DECORATE_MARKER_FILL,
+        0.13,
+      )
+      .setName('cottage-style-marker:room')
+      .setStrokeStyle(3, DECORATE_MARKER_STROKE, 0.76)
+      .setDepth(12);
+    const styleSparkle = this.add
+      .text(COTTAGE_STYLE_MARKER.position.x, COTTAGE_STYLE_MARKER.position.y, '✦', {
+        color: '#3d8fb5',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '22px',
+        fontStyle: 'bold',
+      })
+      .setName('cottage-style-sparkle:room')
+      .setOrigin(0.5)
+      .setAlpha(0.88)
+      .setDepth(13);
+    this.decorateModeObjects.push(styleHalo, styleSparkle);
+    this.tweens.add({
+      targets: styleHalo,
+      alpha: 0.3,
+      scaleX: 1.12,
+      scaleY: 1.12,
+      duration: 1200,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.InOut',
+    });
+
   private clearDecorateModePresentation(): void {
     for (const object of this.decorateModeObjects) {
       this.tweens.killTweensOf(object);
@@ -661,51 +746,13 @@ export class CottageInteriorScene extends Phaser.Scene {
     });
   }
 
-  private createEnvironment(): void {
-    const map = COTTAGE_INTERIOR_MAP;
-    const shell = map.roomShell;
-    const shellWidth = shell.right - shell.left;
-    const shellHeight = shell.bottom - shell.top;
-    const shellCentreX = (shell.left + shell.right) / 2;
-    const shellCentreY = (shell.top + shell.bottom) / 2;
+  private createEnvironment(style: HomeStyleState): void {
     const wonderbookAnchor = resolveCottageSemanticAnchor(COTTAGE_SEMANTIC_ANCHOR_IDS.wonderbook);
 
-    this.add.rectangle(map.width / 2, map.height / 2, map.width, map.height, 0xf4ddc7).setDepth(0);
-    this.add
-      .rectangle(shellCentreX, shellCentreY, shellWidth, shellHeight, 0xf7e8d6)
-      .setStrokeStyle(18, 0xb98b72, 0.9)
-      .setDepth(1);
-
-    this.createFloorboards();
+    renderCottageRoomSurfaces(this, style);
     renderCottagePermanentFurnishings(this);
     renderCottageWonderbookNook(this, wonderbookAnchor.position);
     renderWonderbookWorldProp(this, wonderbookAnchor.position);
-  }
-
-  private createFloorboards(): void {
-    const map = COTTAGE_INTERIOR_MAP;
-    const shell = map.roomShell;
-    const roomWidth = shell.right - shell.left;
-    const roomCentreX = (shell.left + shell.right) / 2;
-    const wallHeight = shell.backWallBottom - shell.top;
-    const wallCentreY = shell.top + wallHeight / 2;
-
-    this.add.rectangle(roomCentreX, wallCentreY, roomWidth, wallHeight, 0xe8cdb6, 0.78).setDepth(2);
-    this.add
-      .rectangle(roomCentreX, shell.backWallBottom, roomWidth, 18, 0xa77b65, 0.82)
-      .setName('cottage-floor-seam')
-      .setDepth(2.25);
-
-    for (let y = shell.backWallBottom + 44; y <= shell.bottom - 32; y += 72) {
-      this.add.rectangle(roomCentreX, y, roomWidth, 3, 0xcda889, 0.28).setDepth(2);
-    }
-
-    const rugSlot = map.decorationSlots.find((slot) => slot.id === 'cottage-slot:centre-rug');
-    const rugPosition = rugSlot?.position ?? { x: roomCentreX, y: 790 };
-    this.add
-      .ellipse(rugPosition.x, rugPosition.y, 440, 250, 0xc9a2d6, 0.26)
-      .setStrokeStyle(6, 0xa77bb8, 0.24)
-      .setDepth(3);
   }
 
   private renderHomeState(homeView: CottageHomeView): void {
