@@ -23,7 +23,7 @@ interface DiagnosticSnapshot {
   }>;
 }
 
-function createStoredSave(name: string, schemaVersion = 2): Record<string, unknown> {
+function createStoredSave(\n  name: string,\n  schemaVersion = CURRENT_SAVE_SCHEMA_VERSION,\n): Record<string, unknown> {
   const timestamp = '2026-08-21T08:00:00.000Z';
   return {
     schemaVersion,
@@ -49,7 +49,41 @@ function createStoredSave(name: string, schemaVersion = 2): Record<string, unkno
       changedObjectIds: [],
       uniqueDiscoveryIds: [],
     },
-    home: { ownedFurnitureIds: [], furnitureBySlot: {}, gardenFlags: {} },
+    home:
+      schemaVersion >= CURRENT_SAVE_SCHEMA_VERSION
+        ? {
+            ownedFurnitureIds: [],
+            furnitureBySlot: {},
+            gardenFlags: {},
+            style: {
+              walls: {
+                back: {
+                  wallColourId: 'cottage-wall:moon-cream',
+                  wallpaperId: 'cottage-wallpaper:plain',
+                },
+                left: {
+                  wallColourId: 'cottage-wall:moon-cream',
+                  wallpaperId: 'cottage-wallpaper:plain',
+                },
+                right: {
+                  wallColourId: 'cottage-wall:moon-cream',
+                  wallpaperId: 'cottage-wallpaper:plain',
+                },
+                front: {
+                  wallColourId: 'cottage-wall:moon-cream',
+                  wallpaperId: 'cottage-wallpaper:plain',
+                },
+              },
+              floorStyleId: 'cottage-floor:honey-oak',
+              furnitureVariants: {
+                bed: 'cottage-furniture:bed:moonflower',
+                sofa: 'cottage-furniture:sofa:sage',
+                teaSet: 'cottage-furniture:tea-set:honey-oak',
+                fireplace: 'cottage-furniture:fireplace:warm-stone',
+              },
+            },
+          }
+        : { ownedFurnitureIds: [], furnitureBySlot: {}, gardenFlags: {} },
     activities: { racesById: {}, miniGameRecords: {} },
     collections: { discoveryIds: [], memoryIds: [] },
   };
@@ -230,7 +264,7 @@ test('New Game requires confirmation and clears both save copies only after the 
 test('a newer-version save is protected and the title asks the player to refresh', async ({
   page,
 }) => {
-  const futureVersion = 3;
+  const futureVersion = CURRENT_SAVE_SCHEMA_VERSION + 1;
   const futureSave = createStoredSave('Future Star', futureVersion);
   const serialisedFuture = JSON.stringify(futureSave);
   await page.addInitScript(
