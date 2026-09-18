@@ -38,20 +38,25 @@ async function waitForScene(page: Page, sceneKey: string): Promise<void> {
 async function openMapFromHud(page: Page): Promise<void> {
   await page.goto('/?scene=glade&diagnostics=1');
   await waitForScene(page, 'ExplorationHudOverlayScene');
+  await expect
+    .poll(async () =>
+      (await snapshotObjects(page, 'ExplorationHudOverlayScene')).some(
+        ({ name, visible, interactive }) =>
+          name === 'exploration-hud-overlay-map-button' && visible && interactive,
+      ),
+    )
+    .toBe(true);
   const button = (await snapshotObjects(page, 'ExplorationHudOverlayScene')).find(
     ({ name, visible, interactive }) =>
       name === 'exploration-hud-overlay-map-button' && visible && interactive,
   );
-  if (button) {
-    const canvas = await page.locator('canvas').boundingBox();
-    if (!canvas) throw new Error('Game canvas is unavailable.');
-    await page.mouse.click(
-      canvas.x + (button.x / 1280) * canvas.width,
-      canvas.y + (button.y / 720) * canvas.height,
-    );
-  } else {
-    await page.getByRole('button', { name: 'Map', exact: true }).click();
-  }
+  if (!button) throw new Error('Map HUD button is unavailable.');
+  const canvas = await page.locator('canvas').boundingBox();
+  if (!canvas) throw new Error('Game canvas is unavailable.');
+  await page.mouse.click(
+    canvas.x + (button.x / 1280) * canvas.width,
+    canvas.y + (button.y / 720) * canvas.height,
+  );
   await waitForScene(page, 'InventoryScene');
   await expect
     .poll(async () =>
