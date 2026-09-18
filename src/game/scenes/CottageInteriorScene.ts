@@ -16,7 +16,7 @@ import {
 } from '../home/CottageFurnitureRenderer';
 import { buildCottageHomeView, type CottageHomeView } from '../home/CottageHomeView';
 import { HomeDecorationService } from '../home/HomeDecorationService';
-import { CottageStyleService } from '../home/CottageStyleService';
+import { resolveCottageStyle } from '../home/CottageStyleCatalogue';
 import { renderCottageRoomSurfaces } from '../home/CottageSurfaceRenderer';
 import { CottageSleepController } from '../home/CottageSleepController';
 import { InputController } from '../input/InputController';
@@ -100,7 +100,7 @@ export class CottageInteriorScene extends Phaser.Scene {
 
     const saveService = getBrowserSaveService();
     const save = saveLocationCheckpoint(saveService, COTTAGE_INTERIOR_LOCATION_ID);
-    const cottageStyle = new CottageStyleService(saveService).getResolvedStyle();
+    const cottageStyle = resolveCottageStyle(save.home.style);
 
     this.createEnvironment(cottageStyle);
     this.ensureCollisionTexture();
