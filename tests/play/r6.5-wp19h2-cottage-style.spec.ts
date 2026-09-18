@@ -18,7 +18,6 @@ interface Snapshot {
 interface Diagnostics {
   snapshot(): Snapshot;
   startScene(key: string, data?: object): void;
-  setArcadeSpritePosition(key: string, objectName: string, x: number, y: number): void;
 }
 
 async function snapshot(page: Page): Promise<Snapshot> {
@@ -73,22 +72,6 @@ async function tapScreen(page: Page, x: number, y: number): Promise<void> {
   );
 }
 
-async function movePlayer(page: Page, x: number, y: number): Promise<void> {
-  await page.evaluate(
-    ({ playerX, playerY }) =>
-      (
-        window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics }
-      ).__UNICORN_VALLEY_DIAGNOSTICS__?.setArcadeSpritePosition(
-        'CottageInteriorScene',
-        'world-player-unicorn',
-        playerX,
-        playerY,
-      ),
-    { playerX: x, playerY: y },
-  );
-  await page.waitForTimeout(180);
-}
-
 function hasObject(value: Snapshot, sceneKey: string, objectName: string): boolean {
   return scene(value, sceneKey).objects.some(
     ({ name, visible, effectiveVisible }) =>
@@ -104,6 +87,7 @@ test('H2.6 previews and persists named wall, wallpaper and floor styles', async 
 
   let value = await snapshot(page);
   expect(hasObject(value, 'CottageInteriorScene', 'cottage-style-marker:room')).toBe(false);
+  expect(hasObject(value, 'CottageInteriorScene', 'touch-cottage-room-style')).toBe(false);
   expect(
     hasObject(value, 'CottageInteriorScene', 'cottage-style-wall:cottage-wall:moon-cream'),
   ).toBe(true);
@@ -114,19 +98,16 @@ test('H2.6 previews and persists named wall, wallpaper and floor styles', async 
   await tapScreen(page, 1200, 600);
   await expect
     .poll(async () =>
-      hasObject(await snapshot(page), 'CottageInteriorScene', 'cottage-style-marker:room'),
+      hasObject(await snapshot(page), 'CottageInteriorScene', 'touch-cottage-room-style'),
     )
     .toBe(true);
+  expect(
+    scene(await snapshot(page), 'CottageInteriorScene').objects.some(
+      ({ name }) => name === 'cottage-style-marker:room',
+    ),
+  ).toBe(false);
 
-  await movePlayer(page, 545, 445);
-  await expect
-    .poll(async () => {
-      const current = await snapshot(page);
-      return hasObject(current, 'CottageInteriorScene', 'exploration-interaction-prompt');
-    })
-    .toBe(true);
-
-  await tapScreen(page, 1040, 578);
+  await tapScreen(page, 1110, 480);
   await expect.poll(async () => (await snapshot(page)).activeScenes).toEqual(['CottageStyleScene']);
 
   value = await snapshot(page);
@@ -137,12 +118,19 @@ test('H2.6 previews and persists named wall, wallpaper and floor styles', async 
       ),
     ),
   ).toBe(true);
+  expect(
+    hasObject(
+      value,
+      'CottageStyleScene',
+      'cottage-style-wall-swatch-cottage-wall:moon-cream',
+    ),
+  ).toBe(true);
 
-  await tapScreen(page, 980, 668);
-  await tapScreen(page, 640, 500);
-  await tapScreen(page, 980, 668);
-  await tapScreen(page, 920, 500);
-  await tapScreen(page, 980, 668);
+  await tapScreen(page, 843, 310);
+  await tapScreen(page, 948, 176);
+  await tapScreen(page, 1090, 292);
+  await tapScreen(page, 1136, 176);
+  await tapScreen(page, 1090, 292);
 
   await expect
     .poll(async () =>
@@ -154,7 +142,7 @@ test('H2.6 previews and persists named wall, wallpaper and floor styles', async 
     )
     .toBe(true);
 
-  await tapScreen(page, 640, 668);
+  await tapScreen(page, 1080, 652);
   await expect
     .poll(async () => (await snapshot(page)).activeScenes)
     .toEqual(['CottageInteriorScene']);
