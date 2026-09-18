@@ -90,10 +90,7 @@ export class CottageStyleScene extends Phaser.Scene {
       .setStrokeStyle(4, UI_COLOURS.lavender, 1)
       .setDepth(3);
 
-    this.previewGraphics = this.add
-      .graphics()
-      .setName('cottage-style-preview')
-      .setDepth(5);
+    this.previewGraphics = this.add.graphics().setName('cottage-style-preview').setDepth(5);
 
     this.wallCategoryLabel = this.createButton(
       360,
@@ -154,21 +151,11 @@ export class CottageStyleScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setDepth(6);
 
-    this.createButton(
-      300,
-      668,
-      210,
-      '◀ Previous',
-      'cottage-style-previous-button',
-      () => this.selectOffset(-1),
+    this.createButton(300, 668, 210, '◀ Previous', 'cottage-style-previous-button', () =>
+      this.selectOffset(-1),
     );
-    this.createButton(
-      980,
-      668,
-      210,
-      'Next ▶',
-      'cottage-style-next-button',
-      () => this.selectOffset(1),
+    this.createButton(980, 668, 210, 'Next ▶', 'cottage-style-next-button', () =>
+      this.selectOffset(1),
     );
     this.createButton(
       GAME_WIDTH / 2,
@@ -257,27 +244,30 @@ export class CottageStyleScene extends Phaser.Scene {
       const current = COTTAGE_WALL_COLOURS.findIndex(
         ({ id }) => id === this.previewStyle?.wallColourId,
       );
-      const next = COTTAGE_WALL_COLOURS[
-        (Math.max(0, current) + offset + COTTAGE_WALL_COLOURS.length) %
-          COTTAGE_WALL_COLOURS.length
-      ]!;
+      const next =
+        COTTAGE_WALL_COLOURS[
+          (Math.max(0, current) + offset + COTTAGE_WALL_COLOURS.length) %
+            COTTAGE_WALL_COLOURS.length
+        ]!;
       this.previewStyle = { ...this.previewStyle, wallColourId: next.id };
     } else if (this.category === 'wallpaper') {
       const current = COTTAGE_WALLPAPERS.findIndex(
         ({ id }) => id === this.previewStyle?.wallpaperId,
       );
-      const next = COTTAGE_WALLPAPERS[
-        (Math.max(0, current) + offset + COTTAGE_WALLPAPERS.length) % COTTAGE_WALLPAPERS.length
-      ]!;
+      const next =
+        COTTAGE_WALLPAPERS[
+          (Math.max(0, current) + offset + COTTAGE_WALLPAPERS.length) % COTTAGE_WALLPAPERS.length
+        ]!;
       this.previewStyle = { ...this.previewStyle, wallpaperId: next.id };
     } else {
       const current = COTTAGE_FLOOR_STYLES.findIndex(
         ({ id }) => id === this.previewStyle?.floorStyleId,
       );
-      const next = COTTAGE_FLOOR_STYLES[
-        (Math.max(0, current) + offset + COTTAGE_FLOOR_STYLES.length) %
-          COTTAGE_FLOOR_STYLES.length
-      ]!;
+      const next =
+        COTTAGE_FLOOR_STYLES[
+          (Math.max(0, current) + offset + COTTAGE_FLOOR_STYLES.length) %
+            COTTAGE_FLOOR_STYLES.length
+        ]!;
       this.previewStyle = { ...this.previewStyle, floorStyleId: next.id };
     }
 
