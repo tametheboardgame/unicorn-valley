@@ -8,6 +8,7 @@ const MODAL_SCENE_KEYS = new Set([
   'UnicornCreatorScene',
   'ShopScene',
   'CottageDecorateScene',
+  'CottageStyleScene',
 ]);
 
 const SURFACE_NAME_PATTERN =
