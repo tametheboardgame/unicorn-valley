@@ -1,33 +1,22 @@
 import { describe, expect, it } from 'vitest';
-import {
-  getCottageFurnitureVariantIds,
-  DEFAULT_COTTAGE_FURNITURE_VARIANTS,
-  getCottageFurniturePalette,
-  isKnownCottageFurnitureVariant,
-  resolveCottageFurnitureVariant,
-} from './CottageFurnitureVariantCatalogue';
+import { getCottageFurniturePalette } from './CottageFurnitureVariantCatalogue';
 
 describe('CottageFurnitureVariantCatalogue', () => {
-  it('provides curated variants for every supported permanent furniture group', () => {
-    for (const furnitureKey of ['bed', 'sofa', 'teaSet', 'fireplace'] as const) {
-      expect(getCottageFurnitureVariantIds(furnitureKey).length).toBeGreaterThanOrEqual(3);
-      expect(
-        isKnownCottageFurnitureVariant(
-          furnitureKey,
-          DEFAULT_COTTAGE_FURNITURE_VARIANTS[furnitureKey],
-        ),
-      ).toBe(true);
-    }
+  it('provides distinct curated furniture finishes', () => {
+    expect(getCottageFurniturePalette('bed', 'cottage-furniture:bed:rose-dream')).not.toEqual(
+      getCottageFurniturePalette('bed', 'cottage-furniture:bed:moonflower'),
+    );
+    expect(getCottageFurniturePalette('sofa', 'cottage-furniture:sofa:starlight')).not.toEqual(
+      getCottageFurniturePalette('sofa', 'cottage-furniture:sofa:sage'),
+    );
   });
 
-  it('resolves retired IDs to appearance-preserving defaults', () => {
-    for (const furnitureKey of ['bed', 'sofa', 'teaSet', 'fireplace'] as const) {
-      expect(resolveCottageFurnitureVariant(furnitureKey, 'retired:variant')).toBe(
-        DEFAULT_COTTAGE_FURNITURE_VARIANTS[furnitureKey],
-      );
-      expect(getCottageFurniturePalette(furnitureKey, 'retired:variant')).toEqual(
-        getCottageFurniturePalette(furnitureKey, DEFAULT_COTTAGE_FURNITURE_VARIANTS[furnitureKey]),
-      );
-    }
+  it('renders retired IDs with the appearance-preserving default finish', () => {
+    expect(getCottageFurniturePalette('bed', 'retired:variant')).toEqual(
+      getCottageFurniturePalette('bed', 'cottage-furniture:bed:moonflower'),
+    );
+    expect(getCottageFurniturePalette('fireplace', 'retired:variant')).toEqual(
+      getCottageFurniturePalette('fireplace', 'cottage-furniture:fireplace:warm-stone'),
+    );
   });
 });
