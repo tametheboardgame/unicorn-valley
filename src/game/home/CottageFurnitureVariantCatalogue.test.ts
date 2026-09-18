@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  COTTAGE_FURNITURE_VARIANT_IDS,
+  getCottageFurnitureVariantIds,
   DEFAULT_COTTAGE_FURNITURE_VARIANTS,
   getCottageFurniturePalette,
   isKnownCottageFurnitureVariant,
@@ -10,7 +10,7 @@ import {
 describe('CottageFurnitureVariantCatalogue', () => {
   it('provides curated variants for every supported permanent furniture group', () => {
     for (const furnitureKey of ['bed', 'sofa', 'teaSet', 'fireplace'] as const) {
-      expect(COTTAGE_FURNITURE_VARIANT_IDS[furnitureKey].length).toBeGreaterThanOrEqual(3);
+      expect(getCottageFurnitureVariantIds(furnitureKey).length).toBeGreaterThanOrEqual(3);
       expect(
         isKnownCottageFurnitureVariant(
           furnitureKey,
