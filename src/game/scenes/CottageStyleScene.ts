@@ -603,9 +603,9 @@ export class CottageStyleScene extends Phaser.Scene {
       const swatch = this.trackChoice(this.add.graphics().setDepth(8));
       swatch.fillStyle(palette[0], 1);
       swatch.fillRoundedRect(x - 46, y - 25, 92, 50, 9);
-      swatch.fillStyle(palette[2], 1);
+      swatch.fillStyle(0xfff4e5, 1);
       swatch.fillRoundedRect(x - 37, y - 16, 34, 32, 7);
-      swatch.fillStyle(palette[3], 1);
+      swatch.fillStyle(palette[1], 1);
       swatch.fillRoundedRect(x + 4, y - 16, 33, 32, 7);
       this.trackChoice(
         this.add
