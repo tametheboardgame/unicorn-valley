@@ -55,13 +55,6 @@ export const COTTAGE_WALL_KEYS = [
   'front',
 ] as const satisfies readonly CottageWallKey[];
 
-export const COTTAGE_WALL_LABELS: Readonly<Record<CottageWallKey, string>> = {
-  back: 'Back',
-  left: 'Left',
-  right: 'Right',
-  front: 'Front / Door',
-};
-
 export const DEFAULT_COTTAGE_WALL_STYLE: Readonly<HomeWallStyleState> = {
   wallColourId: 'cottage-wall:moon-cream',
   wallpaperId: 'cottage-wallpaper:plain',
