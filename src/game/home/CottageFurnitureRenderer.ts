@@ -182,8 +182,13 @@ function renderFireplace(scene: Phaser.Scene, variantId: string): void {
 
 function renderBed(scene: Phaser.Scene, variantId: string): void {
   const [timberDark, blanket] = getCottageFurniturePalette('bed', variantId);
-  const { timber, cream: linen, rose: quilt, lavenderDark: blanketDark, goldLight: highlight } =
-    PALETTE;
+  const {
+    timber,
+    cream: linen,
+    rose: quilt,
+    lavenderDark: blanketDark,
+    goldLight: highlight,
+  } = PALETTE;
   const bed = COTTAGE_INTERIOR_MAP.furnitureLayout.bed;
   const width = bed.width * FURNITURE_SCALE.bed;
   const height = bed.height * FURNITURE_SCALE.bed;
