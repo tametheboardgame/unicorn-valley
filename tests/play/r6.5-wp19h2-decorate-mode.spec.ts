@@ -168,7 +168,7 @@ test('H2.5 keeps normal play clean, replaces Gallop with Decorate, and confirms 
       'CottageInteriorScene',
       'world-player-unicorn',
       750,
-      930,
+      970,
     ),
   );
   await expect
