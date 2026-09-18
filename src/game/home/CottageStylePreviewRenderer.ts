@@ -1,5 +1,11 @@
 import type Phaser from 'phaser';
-import type { CottageWallKey, HomeStyleState, HomeWallStyleState } from '../save/saveSchema';
+import type {
+  CottageFurnitureStyleKey,
+  CottageWallKey,
+  HomeStyleState,
+  HomeWallStyleState,
+} from '../save/saveSchema';
+import { getCottageFurniturePalette } from './CottageFurnitureVariantCatalogue';
 import {
   COTTAGE_WALL_KEYS,
   getCottageFloorStyle,
@@ -74,6 +80,7 @@ export function drawCottageStylePreview(
   persistedStyle: HomeStyleState,
   bounds: PreviewBounds,
   selectedWall: CottageWallKey | null = null,
+  selectedFurniture: CottageFurnitureStyleKey | null = null,
 ): void {
   const style = resolveCottageStyle(persistedStyle);
   const floor = getCottageFloorStyle(style.floorStyleId);
@@ -146,16 +153,70 @@ export function drawCottageStylePreview(
   graphics.lineStyle(5, 0xb98b72, 0.88);
   graphics.strokeRoundedRect(left, top, bounds.width, bounds.height, 20);
 
+  const sofaPalette = getCottageFurniturePalette('sofa', style.furnitureVariants.sofa);
+  const sofaX = bounds.x + bounds.width * 0.25;
   const sofaY = bounds.y + bounds.height * 0.2;
-  graphics.fillStyle(0x6fa08e, 0.95);
-  graphics.fillRoundedRect(bounds.x + bounds.width * 0.16, sofaY - 28, bounds.width * 0.2, 58, 14);
-  graphics.fillStyle(0xc59ad6, 0.94);
-  graphics.fillRoundedRect(bounds.x + bounds.width * 0.185, sofaY - 17, 32, 28, 7);
-  graphics.fillStyle(0xf0cf74, 0.94);
-  graphics.fillRoundedRect(bounds.x + bounds.width * 0.245, sofaY - 17, 32, 28, 7);
+  graphics.fillStyle(sofaPalette[0], 0.98);
+  graphics.fillRoundedRect(sofaX - 65, sofaY - 31, 130, 65, 16);
+  graphics.fillStyle(sofaPalette[1], 1);
+  graphics.fillRoundedRect(sofaX - 52, sofaY - 22, 104, 43, 12);
+  graphics.fillStyle(sofaPalette[3], 1);
+  graphics.fillRoundedRect(sofaX - 35, sofaY - 16, 25, 25, 6);
+  graphics.fillStyle(sofaPalette[4], 1);
+  graphics.fillRoundedRect(sofaX + 10, sofaY - 16, 25, 25, 6);
+  if (selectedFurniture === 'sofa') {
+    graphics.lineStyle(4, 0xd3a84d, 0.96);
+    graphics.strokeRoundedRect(sofaX - 70, sofaY - 36, 140, 75, 18);
+  }
 
+  const teaPalette = getCottageFurniturePalette('teaSet', style.furnitureVariants.teaSet);
+  const tableX = bounds.x - bounds.width * 0.04;
   const tableY = bounds.y + bounds.height * 0.1;
-  graphics.fillStyle(0xa77758, 0.95);
-  graphics.fillEllipse(bounds.x - bounds.width * 0.14, tableY, 108, 48);
-  graphics.fillRect(bounds.x - bounds.width * 0.14 - 8, tableY + 18, 16, 36);
+  graphics.fillStyle(teaPalette[0], 1);
+  graphics.fillEllipse(tableX, tableY + 5, 112, 50);
+  graphics.fillStyle(teaPalette[2], 1);
+  graphics.fillEllipse(tableX, tableY, 104, 43);
+  graphics.fillStyle(teaPalette[3], 1);
+  graphics.fillCircle(tableX, tableY - 6, 10);
+  graphics.fillStyle(teaPalette[0], 1);
+  graphics.fillRect(tableX - 7, tableY + 20, 14, 35);
+  if (selectedFurniture === 'teaSet') {
+    graphics.lineStyle(4, 0xd3a84d, 0.96);
+    graphics.strokeRoundedRect(tableX - 64, tableY - 34, 128, 96, 15);
+  }
+
+  const bedPalette = getCottageFurniturePalette('bed', style.furnitureVariants.bed);
+  const bedX = bounds.x - bounds.width * 0.29;
+  const bedY = bounds.y + bounds.height * 0.22;
+  graphics.fillStyle(bedPalette[0], 1);
+  graphics.fillRoundedRect(bedX - 70, bedY - 48, 140, 96, 14);
+  graphics.fillStyle(bedPalette[2], 1);
+  graphics.fillRoundedRect(bedX - 59, bedY - 38, 118, 70, 11);
+  graphics.fillStyle(bedPalette[3], 1);
+  graphics.fillRoundedRect(bedX - 55, bedY + 2, 110, 30, 9);
+  graphics.fillStyle(bedPalette[5], 0.98);
+  graphics.fillRoundedRect(bedX - 52, bedY + 17, 104, 24, 8);
+  if (selectedFurniture === 'bed') {
+    graphics.lineStyle(4, 0xd3a84d, 0.96);
+    graphics.strokeRoundedRect(bedX - 76, bedY - 54, 152, 108, 17);
+  }
+
+  const fireplacePalette = getCottageFurniturePalette(
+    'fireplace',
+    style.furnitureVariants.fireplace,
+  );
+  const fireX = bounds.x - bounds.width * 0.29;
+  const fireY = top + backHeight * 0.62;
+  graphics.fillStyle(fireplacePalette[0], 1);
+  graphics.fillRoundedRect(fireX - 48, fireY - 34, 96, 72, 12);
+  graphics.fillStyle(fireplacePalette[1], 1);
+  graphics.fillRoundedRect(fireX - 40, fireY - 27, 80, 58, 10);
+  graphics.fillStyle(fireplacePalette[2], 1);
+  graphics.fillRoundedRect(fireX - 22, fireY - 3, 44, 36, 13);
+  graphics.fillStyle(0xffb45a, 0.96);
+  graphics.fillEllipse(fireX, fireY + 13, 21, 34);
+  if (selectedFurniture === 'fireplace') {
+    graphics.lineStyle(4, 0xd3a84d, 0.96);
+    graphics.strokeRoundedRect(fireX - 55, fireY - 41, 110, 86, 15);
+  }
 }
