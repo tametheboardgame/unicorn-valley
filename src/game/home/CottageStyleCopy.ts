@@ -62,7 +62,8 @@ export const COTTAGE_STYLE_DESCRIPTIONS: Readonly<Record<string, string>> = {
   'cottage-floor:whitewashed-oak': 'Pale boards that make the cottage feel airy and bright.',
   'cottage-floor:lavender-boards': 'A muted lavender finish with enough warmth to stay cosy.',
   'cottage-furniture:bed:moonflower': 'The original cosy Moonflower bed finish.',
-  'cottage-furniture:bed:rose-dream': 'Rosy timber and soft berry bedding for a warmer bedtime look.',
+  'cottage-furniture:bed:rose-dream':
+    'Rosy timber and soft berry bedding for a warmer bedtime look.',
   'cottage-furniture:bed:sea-glass': 'Cool sea-glass greens with pale fresh bedding.',
   'cottage-furniture:sofa:sage': 'The original soft sage sofa with mixed cottage cushions.',
   'cottage-furniture:sofa:berry': 'A richer berry upholstery with warm contrasting cushions.',
