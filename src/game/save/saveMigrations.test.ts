@@ -29,6 +29,36 @@ describe('migrateSaveRecord', () => {
     expect(migrated.quests.byQuestId['quest:pip-strange-egg']?.status).toBe('completed');
     expect(migrated.activities.racesById['race:rainbow-run']?.bestTimeMs).toBe(48200);
     expect(migrated.collections.memoryIds).toContain('memory:marigold-picnic');
+    expect(migrated.home.style).toEqual({
+      wallColourId: 'cottage-wall:moon-cream',
+      wallpaperId: 'cottage-wallpaper:plain',
+      floorStyleId: 'cottage-floor:honey-oak',
+    });
+  });
+
+  it('adds explicit cottage style state when migrating a schema-v2 save', () => {
+    const currentFixture = createR4LongRunningSaveFixture();
+    const historicalV2 = {
+      ...currentFixture,
+      schemaVersion: 2,
+      home: {
+        ownedFurnitureIds: currentFixture.home.ownedFurnitureIds,
+        furnitureBySlot: currentFixture.home.furnitureBySlot,
+        gardenFlags: currentFixture.home.gardenFlags,
+      },
+    };
+
+    const migrated = migrateSaveRecord(historicalV2);
+    expect(migrated && isSaveGame(migrated)).toBe(true);
+    if (!migrated || !isSaveGame(migrated)) {
+      throw new Error('Expected the schema-v2 fixture to migrate to a valid current save.');
+    }
+
+    expect(migrated.home.style).toEqual({
+      wallColourId: 'cottage-wall:moon-cream',
+      wallpaperId: 'cottage-wallpaper:plain',
+      floorStyleId: 'cottage-floor:honey-oak',
+    });
   });
 
   it('applies migrations sequentially', () => {
@@ -42,15 +72,22 @@ describe('migrateSaveRecord', () => {
       schemaVersion: 2,
       secondMigration: true,
     });
+    const toVersionThree: SaveMigration = (save) => ({
+      ...save,
+      schemaVersion: 3,
+      thirdMigration: true,
+    });
     const migrations = new Map([
       [0, toVersionOne],
       [1, toVersionTwo],
+      [2, toVersionThree],
     ]);
 
     expect(migrateSaveRecord({ schemaVersion: 0 }, migrations)).toEqual({
       schemaVersion: CURRENT_SAVE_SCHEMA_VERSION,
       firstMigration: true,
       secondMigration: true,
+      thirdMigration: true,
     });
   });
 
