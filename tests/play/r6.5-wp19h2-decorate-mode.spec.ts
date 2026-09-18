@@ -157,7 +157,7 @@ test('H2.5 keeps normal play clean, replaces Gallop with Decorate, and confirms 
   value = await snapshot(page);
   expect(
     scene(value, 'CottageInteriorScene').objects.some(
-      ({ name, visible }) => name === 'cottage-finish-decorating-dialog' && visible,
+      ({ name, visible }) => name === 'cottage-finish-decorating-title' && visible,
     ),
   ).toBe(false);
 
@@ -175,7 +175,7 @@ test('H2.5 keeps normal play clean, replaces Gallop with Decorate, and confirms 
     .poll(async () => {
       const current = await snapshot(page);
       return scene(current, 'CottageInteriorScene').objects.some(
-        ({ name, visible }) => name === 'cottage-finish-decorating-dialog' && visible,
+        ({ name, visible }) => name === 'cottage-finish-decorating-title' && visible,
       );
     })
     .toBe(true);
@@ -192,7 +192,7 @@ test('H2.5 keeps normal play clean, replaces Gallop with Decorate, and confirms 
   value = await snapshot(page);
   expect(
     scene(value, 'CottageInteriorScene').objects.some(
-      ({ name, visible }) => name === 'cottage-finish-decorating-dialog' && visible,
+      ({ name, visible }) => name === 'cottage-finish-decorating-title' && visible,
     ),
   ).toBe(false);
 });
