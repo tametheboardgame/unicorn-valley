@@ -23,7 +23,10 @@ interface DiagnosticSnapshot {
   }>;
 }
 
-function createStoredSave(\n  name: string,\n  schemaVersion = CURRENT_SAVE_SCHEMA_VERSION,\n): Record<string, unknown> {
+function createStoredSave(
+  name: string,
+  schemaVersion = CURRENT_SAVE_SCHEMA_VERSION,
+): Record<string, unknown> {
   const timestamp = '2026-08-21T08:00:00.000Z';
   return {
     schemaVersion,
