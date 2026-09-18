@@ -160,9 +160,9 @@ export function drawCottageStylePreview(
   graphics.fillRoundedRect(sofaX - 65, sofaY - 31, 130, 65, 16);
   graphics.fillStyle(sofaPalette[1], 1);
   graphics.fillRoundedRect(sofaX - 52, sofaY - 22, 104, 43, 12);
-  graphics.fillStyle(sofaPalette[3], 1);
+  graphics.fillStyle(0xffe7a3, 1);
   graphics.fillRoundedRect(sofaX - 35, sofaY - 16, 25, 25, 6);
-  graphics.fillStyle(sofaPalette[4], 1);
+  graphics.fillStyle(0xc8a4d9, 1);
   graphics.fillRoundedRect(sofaX + 10, sofaY - 16, 25, 25, 6);
   if (selectedFurniture === 'sofa') {
     graphics.lineStyle(4, 0xd3a84d, 0.96);
@@ -174,9 +174,9 @@ export function drawCottageStylePreview(
   const tableY = bounds.y + bounds.height * 0.1;
   graphics.fillStyle(teaPalette[0], 1);
   graphics.fillEllipse(tableX, tableY + 5, 112, 50);
-  graphics.fillStyle(teaPalette[2], 1);
+  graphics.fillStyle(teaPalette[1], 1);
   graphics.fillEllipse(tableX, tableY, 104, 43);
-  graphics.fillStyle(teaPalette[3], 1);
+  graphics.fillStyle(0xc8a4d9, 1);
   graphics.fillCircle(tableX, tableY - 6, 10);
   graphics.fillStyle(teaPalette[0], 1);
   graphics.fillRect(tableX - 7, tableY + 20, 14, 35);
@@ -190,11 +190,11 @@ export function drawCottageStylePreview(
   const bedY = bounds.y + bounds.height * 0.22;
   graphics.fillStyle(bedPalette[0], 1);
   graphics.fillRoundedRect(bedX - 70, bedY - 48, 140, 96, 14);
-  graphics.fillStyle(bedPalette[2], 1);
+  graphics.fillStyle(0xfff4e5, 1);
   graphics.fillRoundedRect(bedX - 59, bedY - 38, 118, 70, 11);
-  graphics.fillStyle(bedPalette[3], 1);
+  graphics.fillStyle(0xe9bfd4, 1);
   graphics.fillRoundedRect(bedX - 55, bedY + 2, 110, 30, 9);
-  graphics.fillStyle(bedPalette[5], 0.98);
+  graphics.fillStyle(bedPalette[1], 0.98);
   graphics.fillRoundedRect(bedX - 52, bedY + 17, 104, 24, 8);
   if (selectedFurniture === 'bed') {
     graphics.lineStyle(4, 0xd3a84d, 0.96);
@@ -211,7 +211,7 @@ export function drawCottageStylePreview(
   graphics.fillRoundedRect(fireX - 48, fireY - 34, 96, 72, 12);
   graphics.fillStyle(fireplacePalette[1], 1);
   graphics.fillRoundedRect(fireX - 40, fireY - 27, 80, 58, 10);
-  graphics.fillStyle(fireplacePalette[2], 1);
+  graphics.fillStyle(0x4d3940, 1);
   graphics.fillRoundedRect(fireX - 22, fireY - 3, 44, 36, 13);
   graphics.fillStyle(0xffb45a, 0.96);
   graphics.fillEllipse(fireX, fireY + 13, 21, 34);
