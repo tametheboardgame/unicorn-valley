@@ -94,10 +94,6 @@ export class TouchMovementPad {
   private readonly contextActionButtons: Array<
     Phaser.GameObjects.Arc | Phaser.GameObjects.Rectangle
   > = [];
-  private readonly styleActionObjects: Array<
-    Phaser.GameObjects.Rectangle | Phaser.GameObjects.Text
-  > = [];
-  private readonly styleActionButtons: Phaser.GameObjects.Rectangle[] = [];
   private portraitMode = shouldRenderPortraitDomControls();
   private domRoot: HTMLDivElement | null = null;
   private domDpad: HTMLDivElement | null = null;
@@ -105,6 +101,8 @@ export class TouchMovementPad {
   private domStyleButton: HTMLButtonElement | null = null;
   private decorateCanvasButton: Phaser.GameObjects.Arc | null = null;
   private decorateCanvasLabel: Phaser.GameObjects.Text | null = null;
+  private styleCanvasButton: Phaser.GameObjects.Rectangle | null = null;
+  private styleCanvasLabel: Phaser.GameObjects.Text | null = null;
   private visible = true;
   private scenePaused = false;
   private destroyed = false;
@@ -235,6 +233,8 @@ export class TouchMovementPad {
     this.domStyleButton = null;
     this.decorateCanvasButton = null;
     this.decorateCanvasLabel = null;
+    this.styleCanvasButton = null;
+    this.styleCanvasLabel = null;
     for (const object of this.objects) {
       object.destroy();
     }
@@ -242,8 +242,6 @@ export class TouchMovementPad {
     this.buttons.length = 0;
     this.contextActionObjects.length = 0;
     this.contextActionButtons.length = 0;
-    this.styleActionObjects.length = 0;
-    this.styleActionButtons.length = 0;
   }
 
   private applyVisibility(): void {
@@ -292,14 +290,13 @@ export class TouchMovementPad {
         button.disableInteractive();
       }
     }
-    for (const object of this.styleActionObjects) {
-      object.setVisible(styleActionVisible);
-    }
-    for (const button of this.styleActionButtons) {
+    this.styleCanvasButton?.setVisible(styleActionVisible);
+    this.styleCanvasLabel?.setVisible(styleActionVisible);
+    if (this.styleCanvasButton) {
       if (styleActionVisible) {
-        button.setInteractive({ useHandCursor: true });
+        this.styleCanvasButton.setInteractive({ useHandCursor: true });
       } else {
-        button.disableInteractive();
+        this.styleCanvasButton.disableInteractive();
       }
     }
   }
@@ -403,7 +400,7 @@ export class TouchMovementPad {
       styleButton.type = 'button';
       styleButton.className = 'mobile-touch-button mobile-touch-style';
       styleButton.textContent = 'Room Style';
-      styleButton.setAttribute('aria-label', 'Change cottage walls, wallpaper and floor');
+      styleButton.setAttribute('aria-label', 'Room style');
       this.bindDomTap(styleButton, () => {
         this.scene.events.emit(COTTAGE_STYLE_OPEN_EVENT);
       });
@@ -553,15 +550,8 @@ export class TouchMovementPad {
   }
 
   private createRoomStyleButton(x: number, y: number): void {
-    const width = 176;
-    const height = 58;
-    const shadow = this.scene.add
-      .rectangle(x + 5, y + 6, width + 8, height + 8, CONCEPT_UI.shadow, 0.22)
-      .setName('touch-cottage-room-style-shadow')
-      .setScrollFactor(0)
-      .setDepth(116);
     const button = this.scene.add
-      .rectangle(x, y, width, height, CONCEPT_UI.creamHighlight, 0.98)
+      .rectangle(x, y, 176, 58, CONCEPT_UI.creamHighlight, 0.98)
       .setName('touch-cottage-room-style')
       .setStrokeStyle(4, CONCEPT_UI.purpleStrong, 0.88)
       .setScrollFactor(0)
@@ -574,32 +564,16 @@ export class TouchMovementPad {
         fontSize: '17px',
         fontStyle: 'bold',
       })
-      .setName('touch-cottage-room-style-label')
       .setOrigin(0.5)
       .setScrollFactor(0)
       .setDepth(118);
 
-    const press = (): void => {
-      button.setScale(0.97);
-      label.setScale(0.97);
-    };
-    const release = (): void => {
-      button.setScale(1);
-      label.setScale(1);
-    };
-    button.on('pointerdown', press);
-    button.on('pointerup', () => {
-      release();
-      this.scene.events.emit(COTTAGE_STYLE_OPEN_EVENT);
-    });
-    button.on('pointerout', release);
-    button.on('pointerupoutside', release);
-
+    button.on('pointerdown', () => this.scene.events.emit(COTTAGE_STYLE_OPEN_EVENT));
+    this.styleCanvasButton = button;
+    this.styleCanvasLabel = label;
     this.contextActionButtons.push(button);
-    this.contextActionObjects.push(shadow, button, label);
-    this.styleActionButtons.push(button);
-    this.styleActionObjects.push(shadow, button, label);
-    this.objects.push(shadow, button, label);
+    this.contextActionObjects.push(button, label);
+    this.objects.push(button, label);
     this.applyVisibility();
   }
 
