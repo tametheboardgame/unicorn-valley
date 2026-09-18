@@ -1,4 +1,9 @@
 import Phaser from 'phaser';
+import type { HomeStyleState } from '../save/saveSchema';
+import {
+  getCottageFurniturePalette,
+  type CottageFurniturePalette,
+} from './CottageFurnitureVariantCatalogue';
 import {
   COTTAGE_FURNITURE_DEPTH_ANCHORS,
   COTTAGE_INTERIOR_MAP,
@@ -105,25 +110,27 @@ function renderWindow(scene: Phaser.Scene, window: CottageRectLayout): void {
   graphics.fillCircle(left + window.width + 16, window.y + 16, 5);
 }
 
-function renderFireplace(scene: Phaser.Scene): void {
+function renderFireplace(scene: Phaser.Scene, variantId: string): void {
+  const [stone, stoneLight, hearthDark, timberDark, timber, goldLight, gold] =
+    getCottageFurniturePalette('fireplace', variantId);
   const fireplace = COTTAGE_INTERIOR_MAP.furnitureLayout.fireplace;
   const left = fireplace.x - fireplace.width / 2;
   const top = fireplace.y - fireplace.height / 2;
 
   scene.add
-    .ellipse(fireplace.x, fireplace.y + 62, fireplace.width + 90, 86, PALETTE.gold, 0.09)
+    .ellipse(fireplace.x, fireplace.y + 62, fireplace.width + 90, 86, gold, 0.09)
     .setDepth(4);
 
   const graphics = scene.add
     .graphics()
-    .setName('cottage-furniture:fireplace')
+    .setName('cottage-furniture:fireplace').setData('cottage-furniture-variant', variantId)
     .setDepth(furnitureDepth('fireplace'));
-  graphics.fillStyle(PALETTE.stone, 1);
+  graphics.fillStyle(stone, 1);
   graphics.fillRoundedRect(left - 18, top - 6, fireplace.width + 36, fireplace.height + 25, 18);
-  graphics.fillStyle(PALETTE.stoneLight, 1);
+  graphics.fillStyle(stoneLight, 1);
   graphics.fillRoundedRect(left - 5, top + 7, fireplace.width + 10, fireplace.height - 5, 14);
 
-  graphics.lineStyle(3, PALETTE.stone, 0.55);
+  graphics.lineStyle(3, stone, 0.55);
   for (const xOffset of [0.25, 0.5, 0.75]) {
     const x = left + fireplace.width * xOffset;
     graphics.lineBetween(x, top + 10, x, top + 42);
@@ -132,7 +139,7 @@ function renderFireplace(scene: Phaser.Scene): void {
 
   const openingWidth = fireplace.width * 0.52;
   const openingHeight = fireplace.height * 0.63;
-  graphics.fillStyle(PALETTE.hearthDark, 1);
+  graphics.fillStyle(hearthDark, 1);
   graphics.fillRoundedRect(
     fireplace.x - openingWidth / 2,
     fireplace.y - openingHeight / 2 + 26,
@@ -143,12 +150,12 @@ function renderFireplace(scene: Phaser.Scene): void {
   graphics.fillStyle(0x2f252d, 0.9);
   graphics.fillRect(fireplace.x - openingWidth / 2 + 13, fireplace.y + 42, openingWidth - 26, 17);
 
-  graphics.fillStyle(PALETTE.timberDark, 1);
+  graphics.fillStyle(timberDark, 1);
   graphics.fillRoundedRect(left - 30, top - 35, fireplace.width + 60, 34, 11);
-  graphics.fillStyle(PALETTE.timber, 1);
+  graphics.fillStyle(timber, 1);
   graphics.fillRoundedRect(left - 19, top - 42, fireplace.width + 38, 16, 8);
 
-  graphics.lineStyle(10, PALETTE.timber, 1);
+  graphics.lineStyle(10, timber, 1);
   graphics.lineBetween(fireplace.x - 42, fireplace.y + 50, fireplace.x + 36, fireplace.y + 35);
   graphics.lineBetween(fireplace.x + 42, fireplace.y + 50, fireplace.x - 34, fireplace.y + 34);
 
@@ -160,8 +167,8 @@ function renderFireplace(scene: Phaser.Scene): void {
   graphics.fillStyle(0xfff0a7, 0.92);
   graphics.fillEllipse(fireplace.x, fireplace.y + 49, 18, 40);
 
-  drawCrescent(graphics, fireplace.x, top - 24, 16, PALETTE.goldLight, PALETTE.timberDark);
-  graphics.fillStyle(PALETTE.goldLight, 0.95);
+  drawCrescent(graphics, fireplace.x, top - 24, 16, goldLight, timberDark);
+  graphics.fillStyle(goldLight, 0.95);
   for (const [dx, dy] of [
     [-38, -21],
     [39, -18],
@@ -172,7 +179,9 @@ function renderFireplace(scene: Phaser.Scene): void {
   }
 }
 
-function renderBed(scene: Phaser.Scene): void {
+function renderBed(scene: Phaser.Scene, variantId: string): void {
+  const [timberDark, timber, linen, quilt, blanketDark, blanket, highlight] =
+    getCottageFurniturePalette('bed', variantId);
   const bed = COTTAGE_INTERIOR_MAP.furnitureLayout.bed;
   const width = bed.width * FURNITURE_SCALE.bed;
   const height = bed.height * FURNITURE_SCALE.bed;
@@ -183,47 +192,47 @@ function renderBed(scene: Phaser.Scene): void {
 
   const rear = scene.add
     .graphics()
-    .setName('cottage-furniture:bed-rear')
+    .setName('cottage-furniture:bed-rear').setData('cottage-furniture-variant', variantId)
     .setDepth(worldDepthForY(bed.y - 42));
 
-  rear.fillStyle(PALETTE.timberDark, 1);
+  rear.fillStyle(timberDark, 1);
   rear.fillRoundedRect(left - 8, top - 10, width + 16, height + 22, 17);
-  rear.fillStyle(PALETTE.timber, 1);
+  rear.fillStyle(timber, 1);
   rear.fillRoundedRect(left + 8, top - 19, width - 16, 62, 19);
 
-  rear.fillStyle(PALETTE.cream, 1);
+  rear.fillStyle(linen, 1);
   rear.fillRoundedRect(left + 14, top + 38, width - 28, height - 54, 17);
-  rear.fillStyle(PALETTE.rose, 1);
+  rear.fillStyle(quilt, 1);
   rear.fillRoundedRect(left + 18, top + 91, width - 36, height - 105, 14);
 
   const pillowGap = 10;
   const pillowWidth = (width - 66 - pillowGap) / 2;
   const pillowY = top + 50;
-  rear.fillStyle(PALETTE.cream, 1);
+  rear.fillStyle(linen, 1);
   rear.fillRoundedRect(left + 28, pillowY, pillowWidth, 43, 15);
   rear.fillRoundedRect(left + 28 + pillowWidth + pillowGap, pillowY, pillowWidth, 43, 15);
-  rear.lineStyle(2, PALETTE.creamShade, 0.7);
+  rear.lineStyle(2, blanketDark, 0.7);
   rear.strokeRoundedRect(left + 28, pillowY, pillowWidth, 43, 15);
   rear.strokeRoundedRect(left + 28 + pillowWidth + pillowGap, pillowY, pillowWidth, 43, 15);
 
-  drawCrescent(rear, bed.x, top + 7, 13, PALETTE.goldLight, PALETTE.timber);
-  rear.fillStyle(PALETTE.goldLight, 0.9);
+  drawCrescent(rear, bed.x, top + 7, 13, highlight, timber);
+  rear.fillStyle(highlight, 0.9);
   rear.fillCircle(bed.x - 39, top + 9, 3);
   rear.fillCircle(bed.x + 40, top + 10, 3);
 
   const foreground = scene.add
     .graphics()
-    .setName('cottage-furniture:bed-foreground')
+    .setName('cottage-furniture:bed-foreground').setData('cottage-furniture-variant', variantId)
     .setDepth(furnitureDepth('bed'));
 
-  foreground.fillStyle(PALETTE.lavender, 0.96);
+  foreground.fillStyle(blanket, 0.96);
   foreground.fillRoundedRect(left + 18, bed.y + 9, width - 36, height * 0.42, 14);
-  foreground.fillStyle(PALETTE.lavenderDark, 0.3);
+  foreground.fillStyle(blanketDark, 0.3);
   foreground.fillRoundedRect(left + 27, bed.y + 21, width - 54, 10, 6);
 
-  foreground.fillStyle(PALETTE.timber, 1);
+  foreground.fillStyle(timber, 1);
   foreground.fillRoundedRect(left - 10, bed.y + height / 2 - 20, width + 20, 34, 10);
-  foreground.fillStyle(PALETTE.gold, 0.82);
+  foreground.fillStyle(highlight, 0.82);
   foreground.fillCircle(bed.x - width * 0.31, bed.y + height / 2 - 4, 4);
   foreground.fillCircle(bed.x + width * 0.31, bed.y + height / 2 - 4, 4);
 }
@@ -234,57 +243,61 @@ function renderChair(
   y: number,
   facing: -1 | 1,
   depthId: 'tea-chair-left' | 'tea-chair-right',
+  palette: CottageFurniturePalette,
 ): void {
+  const [timberDark, , timberLight, , , crockery] = palette;
   const graphics = scene.add
     .graphics()
     .setName(`cottage-furniture:${depthId}`)
     .setDepth(furnitureDepth(depthId));
-  graphics.fillStyle(PALETTE.timberDark, 1);
+  graphics.fillStyle(timberDark, 1);
   graphics.fillRoundedRect(x - 33, y - 42, 66, 76, 19);
-  graphics.fillStyle(PALETTE.timberLight, 1);
+  graphics.fillStyle(timberLight, 1);
   graphics.fillRoundedRect(x - 27, y - 34, 54, 53, 16);
-  graphics.fillStyle(PALETTE.cream, 0.95);
+  graphics.fillStyle(crockery, 0.95);
   graphics.fillEllipse(x, y + 7, 48, 32);
-  graphics.fillStyle(PALETTE.timberDark, 1);
+  graphics.fillStyle(timberDark, 1);
   graphics.fillRect(x - 24 + facing * 3, y + 19, 8, 30);
   graphics.fillRect(x + 16 + facing * 3, y + 19, 8, 30);
 }
 
-function renderTeaTable(scene: Phaser.Scene): void {
+function renderTeaTable(scene: Phaser.Scene, variantId: string): void {
+  const palette = getCottageFurniturePalette('teaSet', variantId);
+  const [timberDark, timber, timberLight, teapot, accent, crockery, highlight] = palette;
   const table = COTTAGE_INTERIOR_MAP.furnitureLayout.teaTable;
   const width = table.width * FURNITURE_SCALE.teaTable;
   const height = table.height * FURNITURE_SCALE.teaTable;
   const chairOffset = width / 2 + 24;
 
   addFloorShadow(scene, table.x, table.y + 34, width + 66, height * 0.68, 0.1);
-  renderChair(scene, table.x - chairOffset, table.y + 8, 1, 'tea-chair-left');
-  renderChair(scene, table.x + chairOffset, table.y + 8, -1, 'tea-chair-right');
+  renderChair(scene, table.x - chairOffset, table.y + 8, 1, 'tea-chair-left', palette);
+  renderChair(scene, table.x + chairOffset, table.y + 8, -1, 'tea-chair-right', palette);
 
   const pedestal = scene.add
     .graphics()
     .setName('cottage-furniture:tea-table-pedestal')
     .setDepth(furnitureDepth('tea-table', -0.18));
-  pedestal.fillStyle(PALETTE.timberDark, 1);
+  pedestal.fillStyle(timberDark, 1);
   pedestal.fillRoundedRect(table.x - 11, table.y + 40, 22, 78, 9);
   pedestal.fillEllipse(table.x, table.y + 98, 78, 22);
 
   const tabletop = scene.add
     .graphics()
-    .setName('cottage-furniture:tea-table')
+    .setName('cottage-furniture:tea-table').setData('cottage-furniture-variant', variantId)
     .setDepth(furnitureDepth('tea-table'));
-  tabletop.fillStyle(PALETTE.timberDark, 1);
+  tabletop.fillStyle(timberDark, 1);
   tabletop.fillEllipse(table.x, table.y + 13, width + 10, height + 3);
-  tabletop.fillStyle(PALETTE.timberLight, 1);
+  tabletop.fillStyle(timberLight, 1);
   tabletop.fillEllipse(table.x, table.y, width, height);
-  tabletop.lineStyle(3, PALETTE.timber, 0.74);
+  tabletop.lineStyle(3, timber, 0.74);
   tabletop.strokeEllipse(table.x, table.y, width - 16, height - 14);
 
-  tabletop.fillStyle(PALETTE.lavender, 1);
+  tabletop.fillStyle(teapot, 1);
   tabletop.fillEllipse(table.x, table.y - 10, 43, 30);
   tabletop.fillRoundedRect(table.x - 9, table.y - 29, 18, 8, 4);
-  tabletop.fillStyle(PALETTE.goldLight, 1);
+  tabletop.fillStyle(highlight, 1);
   tabletop.fillCircle(table.x, table.y - 30, 4);
-  tabletop.fillStyle(PALETTE.roseDark, 1);
+  tabletop.fillStyle(accent, 1);
   tabletop.fillTriangle(
     table.x - 20,
     table.y - 15,
@@ -293,20 +306,22 @@ function renderTeaTable(scene: Phaser.Scene): void {
     table.x - 20,
     table.y - 4,
   );
-  tabletop.lineStyle(4, PALETTE.roseDark, 1);
+  tabletop.lineStyle(4, accent, 1);
   tabletop.strokeCircle(table.x + 22, table.y - 10, 10);
 
   for (const dx of [-48, 48]) {
-    tabletop.fillStyle(PALETTE.cream, 1);
+    tabletop.fillStyle(crockery, 1);
     tabletop.fillEllipse(table.x + dx, table.y + 14, 22, 16);
-    tabletop.lineStyle(3, PALETTE.roseDark, 0.9);
+    tabletop.lineStyle(3, accent, 0.9);
     tabletop.strokeCircle(table.x + dx + Math.sign(dx) * 10, table.y + 14, 5);
-    tabletop.lineStyle(2, PALETTE.creamShade, 0.8);
+    tabletop.lineStyle(2, timberLight, 0.8);
     tabletop.strokeEllipse(table.x + dx, table.y + 20, 28, 8);
   }
 }
 
-function renderSofa(scene: Phaser.Scene): void {
+function renderSofa(scene: Phaser.Scene, variantId: string): void {
+  const [dark, base, seat, pillowLeft, pillowRight, stitch] =
+    getCottageFurniturePalette('sofa', variantId);
   const sofa = COTTAGE_INTERIOR_MAP.furnitureLayout.sofa;
   const width = sofa.width * FURNITURE_SCALE.sofa;
   const height = sofa.height * FURNITURE_SCALE.sofa;
@@ -317,7 +332,7 @@ function renderSofa(scene: Phaser.Scene): void {
 
   const graphics = scene.add
     .graphics()
-    .setName('cottage-furniture:sofa')
+    .setName('cottage-furniture:sofa').setData('cottage-furniture-variant', variantId)
     .setDepth(furnitureDepth('sofa'));
   const armWidth = 36;
   const innerLeft = left + armWidth;
@@ -325,18 +340,18 @@ function renderSofa(scene: Phaser.Scene): void {
   const seatGap = 8;
   const seatWidth = (innerWidth - seatGap) / 2;
 
-  graphics.fillStyle(PALETTE.sageDark, 1);
+  graphics.fillStyle(dark, 1);
   graphics.fillRoundedRect(left - 5, top - 20, width + 10, height + 28, 27);
-  graphics.fillStyle(PALETTE.sage, 1);
+  graphics.fillStyle(base, 1);
   graphics.fillRoundedRect(innerLeft - 3, top - 12, innerWidth + 6, 72, 22);
 
-  graphics.fillStyle(0xa8cbbb, 1);
+  graphics.fillStyle(seat, 1);
   graphics.fillRoundedRect(innerLeft, sofa.y - 1, seatWidth, 57, 16);
   graphics.fillRoundedRect(innerLeft + seatWidth + seatGap, sofa.y - 1, seatWidth, 57, 16);
-  graphics.lineStyle(2, PALETTE.sageDark, 0.38);
+  graphics.lineStyle(2, dark, 0.38);
   graphics.lineBetween(sofa.x, sofa.y + 3, sofa.x, sofa.y + 50);
 
-  graphics.fillStyle(PALETTE.sageDark, 1);
+  graphics.fillStyle(dark, 1);
   graphics.fillRoundedRect(left - 13, sofa.y - 17, armWidth, 77, 17);
   graphics.fillRoundedRect(left + width - armWidth + 13, sofa.y - 17, armWidth, 77, 17);
   graphics.fillRect(left + 16, sofa.y + 45, 9, 29);
@@ -344,7 +359,7 @@ function renderSofa(scene: Phaser.Scene): void {
 
   const pillowWidth = Math.min(48, seatWidth * 0.58);
   const pillowXOffset = innerWidth * 0.25;
-  graphics.fillStyle(PALETTE.goldLight, 1);
+  graphics.fillStyle(pillowLeft, 1);
   graphics.fillRoundedRect(
     sofa.x - pillowXOffset - pillowWidth / 2,
     sofa.y - 17,
@@ -352,7 +367,7 @@ function renderSofa(scene: Phaser.Scene): void {
     42,
     14,
   );
-  graphics.fillStyle(PALETTE.lavender, 1);
+  graphics.fillStyle(pillowRight, 1);
   graphics.fillRoundedRect(
     sofa.x + pillowXOffset - pillowWidth / 2,
     sofa.y - 17,
@@ -360,7 +375,7 @@ function renderSofa(scene: Phaser.Scene): void {
     42,
     14,
   );
-  graphics.lineStyle(2, PALETTE.cream, 0.62);
+  graphics.lineStyle(2, stitch, 0.62);
   graphics.lineBetween(
     sofa.x - pillowXOffset - pillowWidth * 0.33,
     sofa.y + 2,
@@ -464,14 +479,17 @@ function renderExitGap(scene: Phaser.Scene): void {
   graphics.fillCircle(door.x + openingWidth / 2 + 3, shell.bottom - 22, 4);
 }
 
-export function renderCottagePermanentFurnishings(scene: Phaser.Scene): void {
+export function renderCottagePermanentFurnishings(
+  scene: Phaser.Scene,
+  style: HomeStyleState,
+): void {
   for (const window of COTTAGE_INTERIOR_MAP.windowLayout) {
     renderWindow(scene, window);
   }
-  renderFireplace(scene);
-  renderBed(scene);
-  renderTeaTable(scene);
-  renderSofa(scene);
+  renderFireplace(scene, style.furnitureVariants.fireplace);
+  renderBed(scene, style.furnitureVariants.bed);
+  renderTeaTable(scene, style.furnitureVariants.teaSet);
+  renderSofa(scene, style.furnitureVariants.sofa);
   renderTreasureShelf(scene);
   renderExitGap(scene);
 }
