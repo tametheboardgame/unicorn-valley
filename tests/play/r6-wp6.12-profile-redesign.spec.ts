@@ -1,3 +1,4 @@
+import { CURRENT_SAVE_SCHEMA_VERSION } from '../../src/game/save/saveSchema';
 import { expect, test, type Page } from '@playwright/test';
 
 const SAVE_KEY = 'unicorn-valley.save';
@@ -24,7 +25,7 @@ interface DiagnosticSnapshot {
 function createRichSave(appearance: Record<string, string> = {}): Record<string, unknown> {
   const timestamp = '2026-08-27T08:00:00.000Z';
   return {
-    schemaVersion: 2,
+    schemaVersion: CURRENT_SAVE_SCHEMA_VERSION,
     createdAt: timestamp,
     lastSavedAt: timestamp,
     profile: {
@@ -70,6 +71,27 @@ function createRichSave(appearance: Record<string, string> = {}): Record<string,
       ownedFurnitureIds: ['furniture:moon-lamp'],
       furnitureBySlot: { shelf: 'furniture:moon-lamp' },
       gardenFlags: { watered: true },
+      style: {
+        walls: {
+          back: {
+            wallColourId: 'cottage-wall:moon-cream',
+            wallpaperId: 'cottage-wallpaper:plain',
+          },
+          left: {
+            wallColourId: 'cottage-wall:moon-cream',
+            wallpaperId: 'cottage-wallpaper:plain',
+          },
+          right: {
+            wallColourId: 'cottage-wall:moon-cream',
+            wallpaperId: 'cottage-wallpaper:plain',
+          },
+          front: {
+            wallColourId: 'cottage-wall:moon-cream',
+            wallpaperId: 'cottage-wallpaper:plain',
+          },
+        },
+        floorStyleId: 'cottage-floor:honey-oak',
+      },
     },
     activities: {
       racesById: {
