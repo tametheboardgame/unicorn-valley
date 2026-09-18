@@ -215,4 +215,3 @@ export function renderCottageRoomSurfaces(
 
   return objects;
 }
-
