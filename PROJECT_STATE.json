@@ -11,8 +11,8 @@
   "agent_state": "active",
   "branch": "agent/r6.5-wp19h2-moonflower-cottage",
   "latest_commit": "06b70233e40b264d28acd297233f5f9fef9c8da4",
-  "ci_state": "pending",
-  "technical_validation_state": "pending",
+  "ci_state": "running",
+  "technical_validation_state": "running",
   "human_acceptance_state": "pending",
   "next_work_package": "R6.5-WP19H2.6",
   "next_work_package_path": "docs/work-packages/R6.5-WP19H2.6-WALLS-FLOOR-WALLPAPER.md",
@@ -21,6 +21,6 @@
   "night_shift_state": "not_configured",
   "chat_disposition": "keep",
   "delivery_mode": "pr_required",
-  "last_activity_at": "2026-09-18T07:06:00+01:00",
-  "updated_at": "2026-09-18T07:06:00+01:00"
+  "last_activity_at": "2026-09-18T07:22:00+01:00",
+  "updated_at": "2026-09-18T07:22:00+01:00"
 }
