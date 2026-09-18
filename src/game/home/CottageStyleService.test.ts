@@ -104,7 +104,7 @@ describe('CottageStyleService', () => {
         floorStyleId: DEFAULT_COTTAGE_STYLE.floorStyleId,
         furnitureVariants: { ...DEFAULT_COTTAGE_STYLE.furnitureVariants },
       }),
-    ).toThrow('unknown wall, wallpaper or floor ID');
+    ).toThrow('unknown wall, wallpaper, floor or furniture variant ID');
 
     expect(
       resolveCottageStyle({
