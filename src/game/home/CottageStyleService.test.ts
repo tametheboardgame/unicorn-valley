@@ -50,6 +50,12 @@ describe('CottageStyleService', () => {
         },
       },
       floorStyleId: 'cottage-floor:lavender-boards',
+      furnitureVariants: {
+        bed: 'cottage-furniture:bed:rose-dream',
+        sofa: 'cottage-furniture:sofa:starlight',
+        teaSet: 'cottage-furniture:tea-set:rosewood',
+        fireplace: 'cottage-furniture:fireplace:moonstone',
+      },
     });
 
     const reloaded = new CottageStyleService(new SaveService(repository));
@@ -73,10 +79,16 @@ describe('CottageStyleService', () => {
         },
       },
       floorStyleId: 'cottage-floor:lavender-boards',
+      furnitureVariants: {
+        bed: 'cottage-furniture:bed:rose-dream',
+        sofa: 'cottage-furniture:sofa:starlight',
+        teaSet: 'cottage-furniture:tea-set:rosewood',
+        fireplace: 'cottage-furniture:fireplace:moonstone',
+      },
     });
   });
 
-  it('rejects unknown IDs and resolves retired IDs safely per wall', () => {
+  it('rejects unknown IDs and resolves retired IDs safely per wall and furniture', () => {
     const repository = new MemorySaveRepository();
     const styles = new CottageStyleService(new SaveService(repository));
 
@@ -90,6 +102,7 @@ describe('CottageStyleService', () => {
           },
         },
         floorStyleId: DEFAULT_COTTAGE_STYLE.floorStyleId,
+        furnitureVariants: { ...DEFAULT_COTTAGE_STYLE.furnitureVariants },
       }),
     ).toThrow('unknown wall, wallpaper or floor ID');
 
@@ -105,6 +118,10 @@ describe('CottageStyleService', () => {
           front: { ...DEFAULT_COTTAGE_STYLE.walls.front },
         },
         floorStyleId: 'cottage-floor:retired',
+        furnitureVariants: {
+          ...DEFAULT_COTTAGE_STYLE.furnitureVariants,
+          sofa: 'cottage-furniture:sofa:retired',
+        },
       }),
     ).toEqual(DEFAULT_COTTAGE_STYLE);
   });
