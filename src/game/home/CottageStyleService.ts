@@ -1,10 +1,6 @@
 import type { SaveService } from '../save/SaveService';
 import type { HomeStyleState } from '../save/saveSchema';
-import {
-  DEFAULT_COTTAGE_STYLE,
-  isKnownCottageStyle,
-  resolveCottageStyle,
-} from './CottageStyleCatalogue';
+import { isKnownCottageStyle, resolveCottageStyle } from './CottageStyleCatalogue';
 
 export class CottageStyleService {
   public constructor(private readonly saveService: SaveService) {}
@@ -35,7 +31,4 @@ export class CottageStyleService {
     return nextStyle;
   }
 
-  public resetToDefault(): HomeStyleState {
-    return this.applyStyle(structuredClone(DEFAULT_COTTAGE_STYLE));
-  }
 }
