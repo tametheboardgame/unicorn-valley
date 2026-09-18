@@ -726,7 +726,6 @@ export class CottageInteriorScene extends Phaser.Scene {
       repeat: -1,
       ease: 'Sine.InOut',
     });
-
   }
 
   private clearDecorateModePresentation(): void {
