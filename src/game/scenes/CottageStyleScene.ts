@@ -1,9 +1,6 @@
 import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
-import {
-  getCottageFurniturePalette,
-  getCottageFurnitureVariantIds,
-} from '../home/CottageFurnitureVariantCatalogue';
+import { getCottageFurniturePalette } from '../home/CottageFurnitureVariantCatalogue';
 import {
   COTTAGE_FLOOR_STYLES,
   COTTAGE_WALLPAPERS,
@@ -18,6 +15,7 @@ import {
 } from '../home/CottageStyleCatalogue';
 import {
   COTTAGE_FURNITURE_LABELS,
+  COTTAGE_FURNITURE_VARIANT_IDS,
   COTTAGE_WALL_LABELS,
   getCottageStyleDescription,
   getCottageStyleName,
@@ -582,7 +580,7 @@ export class CottageStyleScene extends Phaser.Scene {
 
   private renderFurnitureChoices(): void {
     if (!this.previewStyle) return;
-    const ids = this.currentPage(getCottageFurnitureVariantIds(this.selectedFurniture));
+    const ids = this.currentPage(COTTAGE_FURNITURE_VARIANT_IDS[this.selectedFurniture]);
 
     ids.forEach((variantId, index) => {
       const { x, y } = this.choicePosition(index, true);
@@ -623,7 +621,7 @@ export class CottageStyleScene extends Phaser.Scene {
       if (selected) this.renderCheck(x + 45, y - 34);
       card.on('pointerdown', () => this.selectFurnitureVariant(variantId));
     });
-    this.renderPageControls(getCottageFurnitureVariantIds(this.selectedFurniture).length);
+    this.renderPageControls(COTTAGE_FURNITURE_VARIANT_IDS[this.selectedFurniture].length);
   }
 
   private drawWallpaperCard(choice: CottageWallpaperDefinition, x: number, y: number): void {
