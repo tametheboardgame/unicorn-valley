@@ -224,8 +224,14 @@ test('H2.6 styles four walls independently and persists every surface', async ({
     hasObject(value, 'CottageInteriorScene', 'cottage-style-floor:cottage-floor:rosewood'),
   ).toBe(true);
 
-  // Exact regression: editor return resumes Decorate mode once, Done clears it, and a later
+  // Exact regression: an editor return resumes Decorate mode once, Done clears it, and a later
   // ordinary leave/re-entry must not resurrect that transient editor-return state.
+  await switchScene(page, 'CottageInteriorScene', { decorateMode: true });
+  await expect
+    .poll(async () =>
+      hasObject(await snapshot(page), 'CottageInteriorScene', 'touch-cottage-room-style'),
+    )
+    .toBe(true);
   await tapScreen(page, 1200, 600);
   await expect
     .poll(async () =>
