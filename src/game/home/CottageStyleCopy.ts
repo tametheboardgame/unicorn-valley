@@ -7,6 +7,26 @@ export const COTTAGE_WALL_LABELS: Readonly<Record<CottageWallKey, string>> = {
   front: 'Front / Door',
 };
 
+export const COTTAGE_STYLE_NAMES: Readonly<Record<string, string>> = {
+  'cottage-wall:moon-cream': 'Moon Cream',
+  'cottage-wall:blush-dawn': 'Blush Dawn',
+  'cottage-wall:misty-lilac': 'Misty Lilac',
+  'cottage-wall:sea-glass': 'Sea Glass',
+  'cottage-wall:buttercup': 'Buttercup',
+  'cottage-wallpaper:plain': 'Plain',
+  'cottage-wallpaper:moon-sprigs': 'Moon Sprigs',
+  'cottage-wallpaper:star-scatter': 'Star Scatter',
+  'cottage-wallpaper:meadow-vines': 'Meadow Vines',
+  'cottage-floor:honey-oak': 'Honey Oak',
+  'cottage-floor:rosewood': 'Rosewood',
+  'cottage-floor:whitewashed-oak': 'Whitewashed Oak',
+  'cottage-floor:lavender-boards': 'Lavender Boards',
+};
+
+export function getCottageStyleName(id: string): string {
+  return COTTAGE_STYLE_NAMES[id] ?? 'Cottage Style';
+}
+
 export const COTTAGE_STYLE_DESCRIPTIONS: Readonly<Record<string, string>> = {
   'cottage-wall:moon-cream': 'Warm cream walls with the cosy look Moonflower Cottage started with.',
   'cottage-wall:blush-dawn': 'A soft rosy wall colour, warm without becoming too bright.',
