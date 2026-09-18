@@ -1,6 +1,10 @@
 import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import {
+  COTTAGE_FURNITURE_VARIANT_IDS,
+  getCottageFurniturePalette,
+} from '../home/CottageFurnitureVariantCatalogue';
+import {
   COTTAGE_FLOOR_STYLES,
   COTTAGE_WALLPAPERS,
   COTTAGE_WALL_COLOURS,
@@ -13,6 +17,7 @@ import {
   type CottageWallColourDefinition,
 } from '../home/CottageStyleCatalogue';
 import {
+  COTTAGE_FURNITURE_LABELS,
   COTTAGE_WALL_LABELS,
   getCottageStyleDescription,
   getCottageStyleName,
@@ -20,10 +25,14 @@ import {
 import { CottageStyleService } from '../home/CottageStyleService';
 import { drawCottageStylePreview } from '../home/CottageStylePreviewRenderer';
 import { getBrowserSaveService } from '../save/browserSaveService';
-import type { CottageWallKey, HomeStyleState } from '../save/saveSchema';
+import type {
+  CottageFurnitureStyleKey,
+  CottageWallKey,
+  HomeStyleState,
+} from '../save/saveSchema';
 import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from '../ui/uiTheme';
 
-type CottageStyleCategory = 'wall' | 'wallpaper' | 'floor';
+type CottageStyleCategory = 'wall' | 'wallpaper' | 'floor' | 'furniture';
 
 interface CottageStyleSceneData {
   returnToDecorateMode?: boolean;
@@ -43,6 +52,7 @@ export class CottageStyleScene extends Phaser.Scene {
   private previewStyle: HomeStyleState | null = null;
   private category: CottageStyleCategory = 'wall';
   private selectedWall: CottageWallKey = 'back';
+  private selectedFurniture: CottageFurnitureStyleKey = 'bed';
   private choicePage = 0;
   private returnToDecorateMode = true;
   private previewGraphics: Phaser.GameObjects.Graphics | null = null;
@@ -63,6 +73,7 @@ export class CottageStyleScene extends Phaser.Scene {
     this.returnToDecorateMode = data.returnToDecorateMode !== false;
     this.category = data.category ?? 'wall';
     this.selectedWall = 'back';
+    this.selectedFurniture = 'bed';
     this.choicePage = 0;
     this.styles = new CottageStyleService(getBrowserSaveService());
     this.previewStyle = this.styles.getResolvedStyle();
@@ -86,7 +97,7 @@ export class CottageStyleScene extends Phaser.Scene {
       .text(
         GAME_WIDTH / 2,
         82,
-        'Choose a wall, tap a swatch, and make every side of the cottage your own.',
+        'Choose a surface or furnishing, tap a swatch, and make the cottage your own.',
         {
           color: '#efe6fa',
           fontFamily: UI_FONT,
@@ -137,9 +148,10 @@ export class CottageStyleScene extends Phaser.Scene {
       .setStrokeStyle(6, UI_COLOURS.lavenderStrong, 1)
       .setDepth(2);
 
-    this.createCategoryTab(760, 'wall', 'Walls');
-    this.createCategoryTab(948, 'wallpaper', 'Wallpaper');
-    this.createCategoryTab(1136, 'floor', 'Floor');
+    this.createCategoryTab(735, 'wall', 'Walls');
+    this.createCategoryTab(878, 'wallpaper', 'Wallpaper');
+    this.createCategoryTab(1021, 'floor', 'Floor');
+    this.createCategoryTab(1164, 'furniture', 'Furniture');
 
     this.selectionName = this.add
       .text(RIGHT_PANEL_X, 536, '', {
@@ -212,7 +224,7 @@ export class CottageStyleScene extends Phaser.Scene {
 
   private createCategoryTab(x: number, category: CottageStyleCategory, label: string): void {
     const button = this.add
-      .rectangle(x, TAB_Y, 166, 54, UI_COLOURS.lavender, 1)
+      .rectangle(x, TAB_Y, 128, 54, UI_COLOURS.lavender, 1)
       .setName(`cottage-style-tab-${category}`)
       .setStrokeStyle(4, UI_COLOURS.lavenderStrong, 1)
       .setInteractive({ useHandCursor: true })
@@ -249,6 +261,13 @@ export class CottageStyleScene extends Phaser.Scene {
     this.renderAll();
   }
 
+  private setSelectedFurniture(furnitureKey: CottageFurnitureStyleKey): void {
+    if (this.selectedFurniture === furnitureKey) return;
+    this.selectedFurniture = furnitureKey;
+    this.choicePage = 0;
+    this.renderAll();
+  }
+
   private renderAll(): void {
     this.renderPreview();
     this.renderTabs();
@@ -258,7 +277,8 @@ export class CottageStyleScene extends Phaser.Scene {
   private renderPreview(): void {
     if (!this.previewStyle || !this.previewGraphics) return;
 
-    const selectedWall = this.category === 'floor' ? null : this.selectedWall;
+    const selectedWall =
+      this.category === 'wall' || this.category === 'wallpaper' ? this.selectedWall : null;
     drawCottageStylePreview(
       this.previewGraphics,
       this.previewStyle,
@@ -268,7 +288,7 @@ export class CottageStyleScene extends Phaser.Scene {
 
     const activeWall = this.previewStyle.walls[this.selectedWall];
     this.previewGraphics.setName(
-      `cottage-style-preview:${this.selectedWall}:${activeWall.wallColourId}|${activeWall.wallpaperId}|${this.previewStyle.floorStyleId}`,
+      `cottage-style-preview:${this.selectedWall}:${activeWall.wallColourId}|${activeWall.wallpaperId}|${this.previewStyle.floorStyleId}|${this.previewStyle.furnitureVariants[this.selectedFurniture]}`,
     );
 
     const floor = getCottageFloorStyle(this.previewStyle.floorStyleId);
@@ -276,20 +296,26 @@ export class CottageStyleScene extends Phaser.Scene {
       const wallStyle = this.previewStyle!.walls[wallKey];
       return `${COTTAGE_WALL_LABELS[wallKey]}: ${getCottageStyleName(wallStyle.wallColourId)} / ${getCottageStyleName(wallStyle.wallpaperId)}`;
     });
-    this.categorySummary?.setText(`${lines.join('\n')}\nFloor: ${getCottageStyleName(floor.id)}`);
-
-    const selected =
-      this.category === 'wall'
-        ? getCottageWallColour(activeWall.wallColourId)
-        : this.category === 'wallpaper'
-          ? getCottageWallpaper(activeWall.wallpaperId)
-          : floor;
-    this.selectionName?.setText(
-      this.category === 'floor'
-        ? getCottageStyleName(selected.id)
-        : `${COTTAGE_WALL_LABELS[this.selectedWall]} wall · ${getCottageStyleName(selected.id)}`,
+    this.categorySummary?.setText(
+      `${lines.join('\n')}\nFloor: ${getCottageStyleName(floor.id)} · Furniture: ${getCottageStyleName(this.previewStyle.furnitureVariants[this.selectedFurniture])}`,
     );
-    this.selectionDescription?.setText(getCottageStyleDescription(selected.id));
+
+    const selectedId =
+      this.category === 'wall'
+        ? activeWall.wallColourId
+        : this.category === 'wallpaper'
+          ? activeWall.wallpaperId
+          : this.category === 'floor'
+            ? floor.id
+            : this.previewStyle.furnitureVariants[this.selectedFurniture];
+    this.selectionName?.setText(
+      this.category === 'wall' || this.category === 'wallpaper'
+        ? `${COTTAGE_WALL_LABELS[this.selectedWall]} wall · ${getCottageStyleName(selectedId)}`
+        : this.category === 'furniture'
+          ? `${COTTAGE_FURNITURE_LABELS[this.selectedFurniture]} · ${getCottageStyleName(selectedId)}`
+          : getCottageStyleName(selectedId),
+    );
+    this.selectionDescription?.setText(getCottageStyleDescription(selectedId));
   }
 
   private renderTabs(): void {
@@ -305,12 +331,15 @@ export class CottageStyleScene extends Phaser.Scene {
     this.clearChoiceObjects();
     if (!this.previewStyle) return;
 
-    if (this.category !== 'floor') this.renderWallSelector();
+    if (this.category === 'wall' || this.category === 'wallpaper') this.renderWallSelector();
+    if (this.category === 'furniture') this.renderFurnitureSelector();
 
     if (this.category === 'wall') {
       this.renderWallChoices();
     } else if (this.category === 'wallpaper') {
       this.renderWallpaperChoices();
+    } else if (this.category === 'furniture') {
+      this.renderFurnitureChoices();
     } else {
       this.renderFloorChoices();
     }
@@ -351,6 +380,45 @@ export class CottageStyleScene extends Phaser.Scene {
       const select = (): void => this.setSelectedWall(wallKey);
       button.on('pointerdown', select);
       text.on('pointerdown', select);
+    });
+  }
+
+  private renderFurnitureSelector(): void {
+    const keys: readonly CottageFurnitureStyleKey[] = ['bed', 'sofa', 'teaSet', 'fireplace'];
+    const y = 238;
+    const startX = 760;
+    const gap = 126;
+
+    keys.forEach((furnitureKey, index) => {
+      const x = startX + index * gap;
+      const selected = furnitureKey === this.selectedFurniture;
+      const button = this.trackChoice(
+        this.add
+          .rectangle(x, y, 112, 42, selected ? UI_COLOURS.gold : UI_COLOURS.parchment, 1)
+          .setName(`cottage-style-furniture-selector-${furnitureKey}`)
+          .setStrokeStyle(
+            selected ? 4 : 3,
+            selected ? UI_COLOURS.goldStrong : UI_COLOURS.lavenderStrong,
+            1,
+          )
+          .setInteractive({ useHandCursor: true })
+          .setDepth(7),
+      );
+      const label = this.trackChoice(
+        this.add
+          .text(x, y, COTTAGE_FURNITURE_LABELS[furnitureKey], {
+            color: UI_COLOURS.ink,
+            fontFamily: UI_FONT,
+            fontSize: '13px',
+            fontStyle: 'bold',
+          })
+          .setOrigin(0.5)
+          .setInteractive({ useHandCursor: true })
+          .setDepth(8),
+      );
+      const select = (): void => this.setSelectedFurniture(furnitureKey);
+      button.on('pointerdown', select);
+      label.on('pointerdown', select);
     });
   }
 
@@ -515,6 +583,52 @@ export class CottageStyleScene extends Phaser.Scene {
     this.renderPageControls(COTTAGE_FLOOR_STYLES.length);
   }
 
+  private renderFurnitureChoices(): void {
+    if (!this.previewStyle) return;
+    const ids = this.currentPage(COTTAGE_FURNITURE_VARIANT_IDS[this.selectedFurniture]);
+
+    ids.forEach((variantId, index) => {
+      const { x, y } = this.choicePosition(index, true);
+      const selected = this.previewStyle?.furnitureVariants[this.selectedFurniture] === variantId;
+      const palette = getCottageFurniturePalette(this.selectedFurniture, variantId);
+      const card = this.trackChoice(
+        this.add
+          .rectangle(x, y, 120, 94, selected ? UI_COLOURS.gold : UI_COLOURS.parchment, 1)
+          .setName(`cottage-style-furniture-swatch-${variantId}`)
+          .setStrokeStyle(
+            selected ? 5 : 3,
+            selected ? UI_COLOURS.goldStrong : UI_COLOURS.lavenderStrong,
+            1,
+          )
+          .setInteractive({ useHandCursor: true })
+          .setDepth(7),
+      );
+      const swatch = this.trackChoice(this.add.graphics().setDepth(8));
+      swatch.fillStyle(palette[0], 1);
+      swatch.fillRoundedRect(x - 46, y - 25, 92, 50, 9);
+      swatch.fillStyle(palette[2], 1);
+      swatch.fillRoundedRect(x - 37, y - 16, 34, 32, 7);
+      swatch.fillStyle(palette[3], 1);
+      swatch.fillRoundedRect(x + 4, y - 16, 33, 32, 7);
+      this.trackChoice(
+        this.add
+          .text(x, y + 34, getCottageStyleName(variantId), {
+            color: UI_COLOURS.ink,
+            fontFamily: UI_FONT,
+            fontSize: '12px',
+            fontStyle: 'bold',
+            align: 'center',
+            wordWrap: { width: 108 },
+          })
+          .setOrigin(0.5)
+          .setDepth(9),
+      );
+      if (selected) this.renderCheck(x + 45, y - 34);
+      card.on('pointerdown', () => this.selectFurnitureVariant(variantId));
+    });
+    this.renderPageControls(COTTAGE_FURNITURE_VARIANT_IDS[this.selectedFurniture].length);
+  }
+
   private drawWallpaperCard(choice: CottageWallpaperDefinition, x: number, y: number): void {
     const graphics = this.trackChoice(this.add.graphics().setDepth(8));
     graphics.fillStyle(0xf2e6d8, 1);
@@ -601,6 +715,18 @@ export class CottageStyleScene extends Phaser.Scene {
   private selectFloor(choice: CottageFloorStyleDefinition): void {
     if (!this.previewStyle) return;
     this.previewStyle = { ...this.previewStyle, floorStyleId: choice.id };
+    this.renderAll();
+  }
+
+  private selectFurnitureVariant(variantId: string): void {
+    if (!this.previewStyle) return;
+    this.previewStyle = {
+      ...this.previewStyle,
+      furnitureVariants: {
+        ...this.previewStyle.furnitureVariants,
+        [this.selectedFurniture]: variantId,
+      },
+    };
     this.renderAll();
   }
 
