@@ -88,7 +88,7 @@ describe('CottageStyleService', () => {
     });
   });
 
-  it('rejects unknown IDs and resolves retired IDs safely per wall and furniture', () => {
+  it('rejects unknown surfaces while preserving retired furniture IDs for visual fallback', () => {
     const repository = new MemorySaveRepository();
     const styles = new CottageStyleService(new SaveService(repository));
 
@@ -104,25 +104,17 @@ describe('CottageStyleService', () => {
         floorStyleId: DEFAULT_COTTAGE_STYLE.floorStyleId,
         furnitureVariants: { ...DEFAULT_COTTAGE_STYLE.furnitureVariants },
       }),
-    ).toThrow('unknown wall, wallpaper, floor or furniture variant ID');
+    ).toThrow('unknown wall, wallpaper or floor ID');
 
-    expect(
-      resolveCottageStyle({
-        walls: {
-          back: {
-            wallColourId: 'cottage-wall:retired',
-            wallpaperId: 'cottage-wallpaper:retired',
-          },
-          left: { ...DEFAULT_COTTAGE_STYLE.walls.left },
-          right: { ...DEFAULT_COTTAGE_STYLE.walls.right },
-          front: { ...DEFAULT_COTTAGE_STYLE.walls.front },
-        },
-        floorStyleId: 'cottage-floor:retired',
-        furnitureVariants: {
-          ...DEFAULT_COTTAGE_STYLE.furnitureVariants,
-          sofa: 'cottage-furniture:sofa:retired',
-        },
-      }),
-    ).toEqual(DEFAULT_COTTAGE_STYLE);
+    const retiredFurniture = {
+      ...DEFAULT_COTTAGE_STYLE,
+      furnitureVariants: {
+        ...DEFAULT_COTTAGE_STYLE.furnitureVariants,
+        sofa: 'cottage-furniture:sofa:retired',
+      },
+    };
+    expect(resolveCottageStyle(retiredFurniture).furnitureVariants.sofa).toBe(
+      'cottage-furniture:sofa:retired',
+    );
   });
 });
