@@ -32,10 +32,7 @@ import {
   MOONFLOWER_GLADE_LOCATION_ID,
   saveLocationCheckpoint,
 } from '../save/saveLocationCheckpoint';
-import {
-  createConfirmationButton,
-  createConfirmationPanel,
-} from '../ui/ConfirmationModalStyle';
+import { createConfirmationButton, createConfirmationPanel } from '../ui/ConfirmationModalStyle';
 import { InteractionPrompt } from '../ui/InteractionPrompt';
 import { UI_DESIGN_TOKENS } from '../ui/UiDesignSystem';
 import { renderWonderbookWorldProp } from '../wonderbook/WonderbookWorldProp';
@@ -478,8 +475,7 @@ export class CottageInteriorScene extends Phaser.Scene {
     const horizontalDistance = Math.abs(this.player.sprite.x - door.x);
     const triggerHalfWidth = door.width / 2 - 16;
     const triggerFeetY = COTTAGE_INTERIOR_MAP.roomShell.bottom - 52;
-    const insideDoorway =
-      horizontalDistance <= triggerHalfWidth && feetY >= triggerFeetY;
+    const insideDoorway = horizontalDistance <= triggerHalfWidth && feetY >= triggerFeetY;
 
     if (!insideDoorway) {
       const clearlyAwayFromDoor =
