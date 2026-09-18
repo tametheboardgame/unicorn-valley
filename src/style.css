@@ -129,19 +129,10 @@ canvas {
   grid-row: 3;
 }
 
-.mobile-touch-action-stack {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 10px;
-  margin-bottom: clamp(18px, 7vh, 56px);
-  pointer-events: none;
-}
-
 .mobile-touch-gallop {
   width: clamp(88px, 26vw, 112px);
   height: clamp(88px, 26vw, 112px);
-  margin-bottom: 0;
+  margin-bottom: clamp(18px, 7vh, 56px);
   border-color: rgb(177 123 189 / 96%);
   white-space: pre-line;
   font-size: clamp(17px, 4.7vw, 22px);
@@ -149,6 +140,9 @@ canvas {
 }
 
 .mobile-touch-style {
+  position: absolute;
+  right: clamp(52px, 12vw, 76px);
+  bottom: calc(clamp(18px, 7vh, 56px) + clamp(98px, 28vw, 122px));
   min-width: clamp(116px, 32vw, 148px);
   min-height: 52px;
   padding: 8px 14px;
