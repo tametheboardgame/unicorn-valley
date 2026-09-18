@@ -108,10 +108,31 @@ const migrateV3ToV4: SaveMigration = (save) => {
   };
 };
 
+const migrateV4ToV5: SaveMigration = (save) => {
+  const timestamp =
+    typeof save.createdAt === 'string' ? save.createdAt : '1970-01-01T00:00:00.000Z';
+  const defaults = createDefaultSave(timestamp);
+  const home = mergeRecord(defaults.home, save.home);
+  const sourceStyle: SaveRecord = isRecord(home.style) ? home.style : {};
+
+  return {
+    ...save,
+    schemaVersion: 5,
+    home: {
+      ...home,
+      style: {
+        ...sourceStyle,
+        furnitureVariants: { ...defaults.home.style.furnitureVariants },
+      },
+    },
+  };
+};
+
 export const SAVE_MIGRATIONS: ReadonlyMap<number, SaveMigration> = new Map([
   [1, migrateV1ToV2],
   [2, migrateV2ToV3],
   [3, migrateV3ToV4],
+  [4, migrateV4ToV5],
 ]);
 
 export function migrateSaveRecord(
