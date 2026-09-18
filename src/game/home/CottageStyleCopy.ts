@@ -1,3 +1,12 @@
+import type { CottageWallKey } from '../save/saveSchema';
+
+export const COTTAGE_WALL_LABELS: Readonly<Record<CottageWallKey, string>> = {
+  back: 'Back',
+  left: 'Left',
+  right: 'Right',
+  front: 'Front / Door',
+};
+
 export const COTTAGE_STYLE_DESCRIPTIONS: Readonly<Record<string, string>> = {
   'cottage-wall:moon-cream': 'Warm cream walls with the cosy look Moonflower Cottage started with.',
   'cottage-wall:blush-dawn': 'A soft rosy wall colour, warm without becoming too bright.',
