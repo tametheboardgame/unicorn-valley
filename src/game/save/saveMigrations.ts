@@ -38,6 +38,8 @@ const migrateV2ToV3: SaveMigration = (save) => {
   const defaults = createDefaultSave(timestamp);
   const home = mergeRecord(defaults.home, save.home);
   const sourceStyle = isRecord(home.style) ? home.style : {};
+  const sourceWalls = isRecord(sourceStyle.walls) ? sourceStyle.walls : {};
+  const sourceBackWall = isRecord(sourceWalls.back) ? sourceWalls.back : {};
 
   return {
     ...save,
@@ -45,8 +47,62 @@ const migrateV2ToV3: SaveMigration = (save) => {
     home: {
       ...home,
       style: {
-        ...defaults.home.style,
-        ...sourceStyle,
+        wallColourId:
+          typeof sourceStyle.wallColourId === 'string'
+            ? sourceStyle.wallColourId
+            : typeof sourceBackWall.wallColourId === 'string'
+              ? sourceBackWall.wallColourId
+              : defaults.home.style.walls.back.wallColourId,
+        wallpaperId:
+          typeof sourceStyle.wallpaperId === 'string'
+            ? sourceStyle.wallpaperId
+            : typeof sourceBackWall.wallpaperId === 'string'
+              ? sourceBackWall.wallpaperId
+              : defaults.home.style.walls.back.wallpaperId,
+        floorStyleId:
+          typeof sourceStyle.floorStyleId === 'string'
+            ? sourceStyle.floorStyleId
+            : defaults.home.style.floorStyleId,
+      },
+    },
+  };
+};
+
+const migrateV3ToV4: SaveMigration = (save) => {
+  const timestamp =
+    typeof save.createdAt === 'string' ? save.createdAt : '1970-01-01T00:00:00.000Z';
+  const defaults = createDefaultSave(timestamp);
+  const home = mergeRecord(defaults.home, save.home);
+  const sourceStyle = isRecord(home.style) ? home.style : {};
+  const sourceColour =
+    typeof sourceStyle.wallColourId === 'string'
+      ? sourceStyle.wallColourId
+      : defaults.home.style.walls.back.wallColourId;
+  const sourceWallpaper =
+    typeof sourceStyle.wallpaperId === 'string'
+      ? sourceStyle.wallpaperId
+      : defaults.home.style.walls.back.wallpaperId;
+  const wall = {
+    wallColourId: sourceColour,
+    wallpaperId: sourceWallpaper,
+  };
+
+  return {
+    ...save,
+    schemaVersion: 4,
+    home: {
+      ...home,
+      style: {
+        walls: {
+          back: { ...wall },
+          left: { ...wall },
+          right: { ...wall },
+          front: { ...wall },
+        },
+        floorStyleId:
+          typeof sourceStyle.floorStyleId === 'string'
+            ? sourceStyle.floorStyleId
+            : defaults.home.style.floorStyleId,
       },
     },
   };
@@ -55,6 +111,7 @@ const migrateV2ToV3: SaveMigration = (save) => {
 export const SAVE_MIGRATIONS: ReadonlyMap<number, SaveMigration> = new Map([
   [1, migrateV1ToV2],
   [2, migrateV2ToV3],
+  [3, migrateV3ToV4],
 ]);
 
 export function migrateSaveRecord(
