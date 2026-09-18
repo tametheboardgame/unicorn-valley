@@ -1,4 +1,4 @@
-export const CURRENT_SAVE_SCHEMA_VERSION = 4;
+export const CURRENT_SAVE_SCHEMA_VERSION = 5;
 export const SAVE_STORAGE_KEY = 'unicorn-valley.save';
 export const DEFAULT_START_LOCATION_ID = 'moonflower-cottage';
 export const NEW_GAME_START_LOCATION_ID = 'location:moonflower-glade';
@@ -46,6 +46,7 @@ export interface WorldState {
 }
 
 export type CottageWallKey = 'back' | 'left' | 'right' | 'front';
+export type CottageFurnitureStyleKey = 'bed' | 'sofa' | 'teaSet' | 'fireplace';
 
 export interface HomeWallStyleState {
   wallColourId: string;
@@ -55,6 +56,7 @@ export interface HomeWallStyleState {
 export interface HomeStyleState {
   walls: Record<CottageWallKey, HomeWallStyleState>;
   floorStyleId: string;
+  furnitureVariants: Record<CottageFurnitureStyleKey, string>;
 }
 
 export interface HomeState {
