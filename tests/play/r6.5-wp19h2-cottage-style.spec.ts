@@ -105,18 +105,10 @@ test('H2.6 previews and persists named wall, wallpaper and floor styles', async 
   let value = await snapshot(page);
   expect(hasObject(value, 'CottageInteriorScene', 'cottage-style-marker:room')).toBe(false);
   expect(
-    hasObject(
-      value,
-      'CottageInteriorScene',
-      'cottage-style-wall:cottage-wall:moon-cream',
-    ),
+    hasObject(value, 'CottageInteriorScene', 'cottage-style-wall:cottage-wall:moon-cream'),
   ).toBe(true);
   expect(
-    hasObject(
-      value,
-      'CottageInteriorScene',
-      'cottage-style-floor:cottage-floor:honey-oak',
-    ),
+    hasObject(value, 'CottageInteriorScene', 'cottage-style-floor:cottage-floor:honey-oak'),
   ).toBe(true);
 
   await tapScreen(page, 1200, 600);
@@ -169,11 +161,7 @@ test('H2.6 previews and persists named wall, wallpaper and floor styles', async 
 
   value = await snapshot(page);
   expect(
-    hasObject(
-      value,
-      'CottageInteriorScene',
-      'cottage-style-wall:cottage-wall:blush-dawn',
-    ),
+    hasObject(value, 'CottageInteriorScene', 'cottage-style-wall:cottage-wall:blush-dawn'),
   ).toBe(true);
   expect(
     hasObject(
@@ -183,11 +171,7 @@ test('H2.6 previews and persists named wall, wallpaper and floor styles', async 
     ),
   ).toBe(true);
   expect(
-    hasObject(
-      value,
-      'CottageInteriorScene',
-      'cottage-style-floor:cottage-floor:rosewood',
-    ),
+    hasObject(value, 'CottageInteriorScene', 'cottage-style-floor:cottage-floor:rosewood'),
   ).toBe(true);
 
   await page.reload();
@@ -195,11 +179,7 @@ test('H2.6 previews and persists named wall, wallpaper and floor styles', async 
 
   value = await snapshot(page);
   expect(
-    hasObject(
-      value,
-      'CottageInteriorScene',
-      'cottage-style-wall:cottage-wall:blush-dawn',
-    ),
+    hasObject(value, 'CottageInteriorScene', 'cottage-style-wall:cottage-wall:blush-dawn'),
   ).toBe(true);
   expect(
     hasObject(
@@ -209,10 +189,6 @@ test('H2.6 previews and persists named wall, wallpaper and floor styles', async 
     ),
   ).toBe(true);
   expect(
-    hasObject(
-      value,
-      'CottageInteriorScene',
-      'cottage-style-floor:cottage-floor:rosewood',
-    ),
+    hasObject(value, 'CottageInteriorScene', 'cottage-style-floor:cottage-floor:rosewood'),
   ).toBe(true);
 });
