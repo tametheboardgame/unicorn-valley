@@ -30,8 +30,24 @@ describe('migrateSaveRecord', () => {
     expect(migrated.activities.racesById['race:rainbow-run']?.bestTimeMs).toBe(48200);
     expect(migrated.collections.memoryIds).toContain('memory:marigold-picnic');
     expect(migrated.home.style).toEqual({
-      wallColourId: 'cottage-wall:moon-cream',
-      wallpaperId: 'cottage-wallpaper:plain',
+      walls: {
+        back: {
+          wallColourId: 'cottage-wall:moon-cream',
+          wallpaperId: 'cottage-wallpaper:plain',
+        },
+        left: {
+          wallColourId: 'cottage-wall:moon-cream',
+          wallpaperId: 'cottage-wallpaper:plain',
+        },
+        right: {
+          wallColourId: 'cottage-wall:moon-cream',
+          wallpaperId: 'cottage-wallpaper:plain',
+        },
+        front: {
+          wallColourId: 'cottage-wall:moon-cream',
+          wallpaperId: 'cottage-wallpaper:plain',
+        },
+      },
       floorStyleId: 'cottage-floor:honey-oak',
     });
   });
@@ -55,10 +71,56 @@ describe('migrateSaveRecord', () => {
     }
 
     expect(migrated.home.style).toEqual({
-      wallColourId: 'cottage-wall:moon-cream',
-      wallpaperId: 'cottage-wallpaper:plain',
+      walls: {
+        back: {
+          wallColourId: 'cottage-wall:moon-cream',
+          wallpaperId: 'cottage-wallpaper:plain',
+        },
+        left: {
+          wallColourId: 'cottage-wall:moon-cream',
+          wallpaperId: 'cottage-wallpaper:plain',
+        },
+        right: {
+          wallColourId: 'cottage-wall:moon-cream',
+          wallpaperId: 'cottage-wallpaper:plain',
+        },
+        front: {
+          wallColourId: 'cottage-wall:moon-cream',
+          wallpaperId: 'cottage-wallpaper:plain',
+        },
+      },
       floorStyleId: 'cottage-floor:honey-oak',
     });
+  });
+
+  it('copies a schema-v3 room-wide wall style onto all four walls', () => {
+    const currentFixture = createR4LongRunningSaveFixture();
+    const historicalV3 = {
+      ...currentFixture,
+      schemaVersion: 3,
+      home: {
+        ...currentFixture.home,
+        style: {
+          wallColourId: 'cottage-wall:misty-lilac',
+          wallpaperId: 'cottage-wallpaper:moon-sprigs',
+          floorStyleId: 'cottage-floor:rosewood',
+        },
+      },
+    };
+
+    const migrated = migrateSaveRecord(historicalV3);
+    expect(migrated && isSaveGame(migrated)).toBe(true);
+    if (!migrated || !isSaveGame(migrated)) {
+      throw new Error('Expected the schema-v3 fixture to migrate to a valid current save.');
+    }
+
+    expect(new Set(Object.values(migrated.home.style.walls).map((wall) => wall.wallColourId))).toEqual(
+      new Set(['cottage-wall:misty-lilac']),
+    );
+    expect(new Set(Object.values(migrated.home.style.walls).map((wall) => wall.wallpaperId))).toEqual(
+      new Set(['cottage-wallpaper:moon-sprigs']),
+    );
+    expect(migrated.home.style.floorStyleId).toBe('cottage-floor:rosewood');
   });
 
   it('applies migrations sequentially', () => {
