@@ -692,7 +692,7 @@ export class CottageInteriorScene extends Phaser.Scene {
     const wonderbookAnchor = resolveCottageSemanticAnchor(COTTAGE_SEMANTIC_ANCHOR_IDS.wonderbook);
 
     renderCottageRoomSurfaces(this, style);
-    renderCottagePermanentFurnishings(this);
+    renderCottagePermanentFurnishings(this, style);
     renderCottageWonderbookNook(this, wonderbookAnchor.position);
     renderWonderbookWorldProp(this, wonderbookAnchor.position);
   }
