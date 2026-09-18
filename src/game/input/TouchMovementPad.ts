@@ -350,7 +350,7 @@ export class TouchMovementPad {
     this.createButton(originX + spacing, originY, '▶', 'MOVE_X', 1, 'right');
     if (this.isCottageDecorateAction()) {
       this.createDecorateButton(1200, 600);
-      this.createRoomStyleButton(1110, 480);
+      this.createRoomStyleButton(1200, 462);
     } else {
       this.createGallopButton(1200, 600);
     }
@@ -546,30 +546,72 @@ export class TouchMovementPad {
   }
 
   private createRoomStyleButton(x: number, y: number): void {
+    const radius = 47;
+    const shadow = this.scene.add
+      .circle(x + 4, y + 6, radius + 4, CONCEPT_UI.shadow, 0.22)
+      .setName('touch-cottage-room-style-shadow')
+      .setScrollFactor(0)
+      .setDepth(116);
+    const halo = this.scene.add
+      .circle(x, y, radius + 4, 0xe9fff8, 0.92)
+      .setName('touch-cottage-room-style-halo')
+      .setStrokeStyle(3, 0x4f9fc4, 0.78)
+      .setScrollFactor(0)
+      .setDepth(116);
     const button = this.scene.add
-      .rectangle(x, y, 176, 58, CONCEPT_UI.creamHighlight, 0.98)
+      .circle(x, y, radius, 0xa8dff0, 1)
       .setName('touch-cottage-room-style')
-      .setStrokeStyle(4, CONCEPT_UI.purpleStrong, 0.88)
+      .setStrokeStyle(5, 0x4f9fc4, 0.98)
       .setScrollFactor(0)
       .setDepth(117)
       .setInteractive({ useHandCursor: true });
-    const label = this.scene.add
-      .text(x, y, 'Room Style', {
-        color: '#5c4568',
+    const icon = this.scene.add
+      .text(x, y - 15, '✦', {
+        color: '#245d72',
         fontFamily: 'Trebuchet MS, Segoe UI, system-ui, sans-serif',
-        fontSize: '17px',
+        fontSize: '18px',
         fontStyle: 'bold',
       })
+      .setName('touch-cottage-room-style-icon')
       .setOrigin(0.5)
       .setScrollFactor(0)
-      .setDepth(118);
+      .setDepth(119);
+    const label = this.scene.add
+      .text(x, y + 15, 'Room\nStyle', {
+        color: '#244f5c',
+        fontFamily: 'Trebuchet MS, Segoe UI, system-ui, sans-serif',
+        fontSize: '13px',
+        fontStyle: 'bold',
+        align: 'center',
+        lineSpacing: -2,
+      })
+      .setName('touch-cottage-room-style-label')
+      .setOrigin(0.5)
+      .setScrollFactor(0)
+      .setDepth(120);
 
-    button.on('pointerdown', () => this.scene.events.emit(COTTAGE_STYLE_OPEN_EVENT));
+    const release = (): void => {
+      button.setScale(1);
+      icon.setScale(1);
+      label.setScale(1);
+    };
+    button.on('pointerdown', () => {
+      button.setScale(0.95);
+      icon.setScale(0.96);
+      label.setScale(0.96);
+    });
+    button.on('pointerup', () => {
+      release();
+      this.scene.events.emit(COTTAGE_STYLE_OPEN_EVENT);
+    });
+    button.on('pointerout', release);
+    button.on('pointerupoutside', release);
+
     this.styleCanvasButton = button;
     this.styleCanvasLabel = label;
     this.contextActionButtons.push(button);
-    this.contextActionObjects.push(button, label);
-    this.objects.push(button, label);
+    this.contextActionObjects.push(shadow, halo, button, icon, label);
+    this.objects.push(shadow, halo, button, icon, label);
     this.applyVisibility();
   }
 
