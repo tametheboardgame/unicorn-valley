@@ -139,10 +139,16 @@ describe('migrateSaveRecord', () => {
       schemaVersion: 3,
       thirdMigration: true,
     });
+    const toVersionFour: SaveMigration = (save) => ({
+      ...save,
+      schemaVersion: 4,
+      fourthMigration: true,
+    });
     const migrations = new Map([
       [0, toVersionOne],
       [1, toVersionTwo],
       [2, toVersionThree],
+      [3, toVersionFour],
     ]);
 
     expect(migrateSaveRecord({ schemaVersion: 0 }, migrations)).toEqual({
@@ -150,6 +156,7 @@ describe('migrateSaveRecord', () => {
       firstMigration: true,
       secondMigration: true,
       thirdMigration: true,
+      fourthMigration: true,
     });
   });
 
