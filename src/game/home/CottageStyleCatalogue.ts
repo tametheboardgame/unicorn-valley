@@ -23,7 +23,6 @@ export interface CottageWallColourDefinition {
   id: CottageWallColourId;
   name: string;
   fill: number;
-  patternContrast: number;
   starter: true;
 }
 
@@ -75,35 +74,30 @@ export const COTTAGE_WALL_COLOURS: readonly CottageWallColourDefinition[] = [
     id: 'cottage-wall:moon-cream',
     name: 'Moon Cream',
     fill: 0xe8cdb6,
-    patternContrast: 0xb98b72,
     starter: true,
   },
   {
     id: 'cottage-wall:blush-dawn',
     name: 'Blush Dawn',
     fill: 0xf2cfd3,
-    patternContrast: 0xb97786,
     starter: true,
   },
   {
     id: 'cottage-wall:misty-lilac',
     name: 'Misty Lilac',
     fill: 0xddd0e8,
-    patternContrast: 0x9273aa,
     starter: true,
   },
   {
     id: 'cottage-wall:sea-glass',
     name: 'Sea Glass',
     fill: 0xcbe3dd,
-    patternContrast: 0x6d9e98,
     starter: true,
   },
   {
     id: 'cottage-wall:buttercup',
     name: 'Buttercup',
     fill: 0xf2dfad,
-    patternContrast: 0xb39754,
     starter: true,
   },
 ];
