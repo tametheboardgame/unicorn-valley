@@ -87,11 +87,16 @@ test('H2.5 keeps normal cottage clean and makes decoration slots exclusive to De
   ).toHaveLength(0);
   expect(
     scene(value, 'CottageInteriorScene').objects.some(
-      ({ name, visible }) => name === 'cottage-decorate-toggle-surface' && visible,
+      ({ name, visible }) => name === 'touch-movement-decorate' && visible,
     ),
   ).toBe(true);
+  expect(
+    scene(value, 'CottageInteriorScene').objects.some(
+      ({ name }) => name === 'touch-movement-gallop',
+    ),
+  ).toBe(false);
 
-  await tapScreen(page, 1168, 104);
+  await tapScreen(page, 1200, 600);
   await expect
     .poll(async () => {
       const current = await snapshot(page);
@@ -138,7 +143,26 @@ test('H2.5 keeps normal cottage clean and makes decoration slots exclusive to De
     })
     .toBe(9);
 
-  await tapScreen(page, 1168, 104);
+  await page.evaluate(() =>
+    (
+      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__?.setArcadeSpritePosition(
+      'CottageInteriorScene',
+      'world-player-unicorn',
+      750,
+      875,
+    ),
+  );
+  await expect
+    .poll(async () => {
+      const current = await snapshot(page);
+      return scene(current, 'CottageInteriorScene').objects.some(
+        ({ name, visible }) => name === 'cottage-finish-decorating-dialog' && visible,
+      );
+    })
+    .toBe(true);
+
+  await tapScreen(page, 752, 427);
   await expect
     .poll(async () => {
       const current = await snapshot(page);
@@ -147,4 +171,10 @@ test('H2.5 keeps normal cottage clean and makes decoration slots exclusive to De
       ).length;
     })
     .toBe(0);
+  value = await snapshot(page);
+  expect(
+    scene(value, 'CottageInteriorScene').objects.some(
+      ({ name, visible }) => name === 'cottage-finish-decorating-dialog' && visible,
+    ),
+  ).toBe(false);
 });
