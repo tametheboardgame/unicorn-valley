@@ -98,7 +98,7 @@ function hasObject(value: Snapshot, sceneKey: string, objectName: string): boole
 
 test.use({ hasTouch: true, viewport: { width: 1024, height: 768 } });
 
-test('H2.6 previews and persists named wall, wallpaper and floor styles', async ({ page }) => {
+test('H2.6 styles four walls independently and persists every surface', async ({ page }) => {
   await page.goto('/?diagnostics=1');
   await startScene(page, 'CottageInteriorScene');
 
@@ -106,7 +106,7 @@ test('H2.6 previews and persists named wall, wallpaper and floor styles', async 
   expect(hasObject(value, 'CottageInteriorScene', 'cottage-style-marker:room')).toBe(false);
   expect(hasObject(value, 'CottageInteriorScene', 'touch-cottage-room-style')).toBe(false);
   expect(
-    hasObject(value, 'CottageInteriorScene', 'cottage-style-wall:cottage-wall:moon-cream'),
+    hasObject(value, 'CottageInteriorScene', 'cottage-style-wall:back:cottage-wall:moon-cream'),
   ).toBe(true);
   expect(
     hasObject(value, 'CottageInteriorScene', 'cottage-style-floor:cottage-floor:honey-oak'),
@@ -131,7 +131,7 @@ test('H2.6 previews and persists named wall, wallpaper and floor styles', async 
   expect(
     scene(value, 'CottageStyleScene').objects.some(({ name }) =>
       name.startsWith(
-        'cottage-style-preview:cottage-wall:moon-cream|cottage-wallpaper:plain|cottage-floor:honey-oak',
+        'cottage-style-preview:back:cottage-wall:moon-cream|cottage-wallpaper:plain|cottage-floor:honey-oak',
       ),
     ),
   ).toBe(true);
@@ -139,17 +139,28 @@ test('H2.6 previews and persists named wall, wallpaper and floor styles', async 
     hasObject(value, 'CottageStyleScene', 'cottage-style-wall-swatch-cottage-wall:moon-cream'),
   ).toBe(true);
 
-  await tapScreen(page, 843, 310);
+  // Back wall: Blush Dawn.
+  await tapScreen(page, 882, 326);
+
+  // Left wall: Sea Glass + Moon Sprigs.
+  await tapScreen(page, 886, 238);
+  await tapScreen(page, 1150, 326);
   await tapScreen(page, 948, 176);
-  await tapScreen(page, 1090, 292);
+  await tapScreen(page, 882, 326);
+
+  // Front / door wall: Star Scatter.
+  await tapScreen(page, 1138, 238);
+  await tapScreen(page, 1016, 326);
+
+  // Floor: Rosewood.
   await tapScreen(page, 1136, 176);
-  await tapScreen(page, 1090, 292);
+  await tapScreen(page, 882, 292);
 
   await expect
     .poll(async () =>
       scene(await snapshot(page), 'CottageStyleScene').objects.some(({ name }) =>
         name.startsWith(
-          'cottage-style-preview:cottage-wall:blush-dawn|cottage-wallpaper:moon-sprigs|cottage-floor:rosewood',
+          'cottage-style-preview:front:cottage-wall:moon-cream|cottage-wallpaper:star-scatter|cottage-floor:rosewood',
         ),
       ),
     )
@@ -162,13 +173,23 @@ test('H2.6 previews and persists named wall, wallpaper and floor styles', async 
 
   value = await snapshot(page);
   expect(
-    hasObject(value, 'CottageInteriorScene', 'cottage-style-wall:cottage-wall:blush-dawn'),
+    hasObject(value, 'CottageInteriorScene', 'cottage-style-wall:back:cottage-wall:blush-dawn'),
   ).toBe(true);
   expect(
     hasObject(
       value,
       'CottageInteriorScene',
-      'cottage-style-wallpaper:cottage-wallpaper:moon-sprigs',
+      'cottage-style-wallpaper:left:cottage-wallpaper:moon-sprigs',
+    ),
+  ).toBe(true);
+  expect(
+    hasObject(value, 'CottageInteriorScene', 'cottage-style-wall:left:cottage-wall:sea-glass'),
+  ).toBe(true);
+  expect(
+    hasObject(
+      value,
+      'CottageInteriorScene',
+      'cottage-style-wallpaper:front:cottage-wallpaper:star-scatter',
     ),
   ).toBe(true);
   expect(
@@ -180,13 +201,23 @@ test('H2.6 previews and persists named wall, wallpaper and floor styles', async 
 
   value = await snapshot(page);
   expect(
-    hasObject(value, 'CottageInteriorScene', 'cottage-style-wall:cottage-wall:blush-dawn'),
+    hasObject(value, 'CottageInteriorScene', 'cottage-style-wall:back:cottage-wall:blush-dawn'),
   ).toBe(true);
   expect(
     hasObject(
       value,
       'CottageInteriorScene',
-      'cottage-style-wallpaper:cottage-wallpaper:moon-sprigs',
+      'cottage-style-wallpaper:left:cottage-wallpaper:moon-sprigs',
+    ),
+  ).toBe(true);
+  expect(
+    hasObject(value, 'CottageInteriorScene', 'cottage-style-wall:left:cottage-wall:sea-glass'),
+  ).toBe(true);
+  expect(
+    hasObject(
+      value,
+      'CottageInteriorScene',
+      'cottage-style-wallpaper:front:cottage-wallpaper:star-scatter',
     ),
   ).toBe(true);
   expect(
