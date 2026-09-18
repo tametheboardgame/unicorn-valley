@@ -145,7 +145,7 @@ test('H2.6 styles four walls independently and persists every surface', async ({
   // Left wall: Sea Glass + Moon Sprigs.
   await tapScreen(page, 886, 238);
   await tapScreen(page, 1150, 326);
-  await tapScreen(page, 948, 176);
+  await tapScreen(page, 878, 176);
   await tapScreen(page, 882, 326);
 
   // Front / door wall: Star Scatter.
@@ -153,7 +153,7 @@ test('H2.6 styles four walls independently and persists every surface', async ({
   await tapScreen(page, 1016, 326);
 
   // Floor: Rosewood.
-  await tapScreen(page, 1136, 176);
+  await tapScreen(page, 1021, 176);
   await tapScreen(page, 882, 292);
 
   await expect
