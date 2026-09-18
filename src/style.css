@@ -141,17 +141,17 @@ canvas {
 
 .mobile-touch-style {
   position: absolute;
-  right: clamp(52px, 12vw, 76px);
-  bottom: calc(clamp(18px, 7vh, 56px) + clamp(98px, 28vw, 122px));
-  min-width: clamp(116px, 32vw, 148px);
-  min-height: 52px;
-  padding: 8px 14px;
-  border-radius: 18px;
-  border-color: rgb(137 88 160 / 92%);
-  background: linear-gradient(180deg, #fffdf7, #ead9ee);
-  color: #5c4568;
-  font-size: clamp(15px, 4vw, 18px);
-  line-height: 1.1;
+  right: 0;
+  bottom: calc(clamp(18px, 7vh, 56px) + clamp(100px, 29vw, 126px));
+  width: clamp(76px, 21vw, 92px);
+  height: clamp(76px, 21vw, 92px);
+  padding: 8px;
+  border-radius: 999px;
+  border-color: rgb(79 159 196 / 98%);
+  background: rgb(168 223 240 / 97%);
+  color: #244f5c;
+  font-size: clamp(13px, 3.6vw, 16px);
+  line-height: 1.05;
 }
 
 .mobile-touch-style[hidden] {
