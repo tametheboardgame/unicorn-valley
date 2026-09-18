@@ -32,7 +32,12 @@ import {
   MOONFLOWER_GLADE_LOCATION_ID,
   saveLocationCheckpoint,
 } from '../save/saveLocationCheckpoint';
+import {
+  createConfirmationButton,
+  createConfirmationPanel,
+} from '../ui/ConfirmationModalStyle';
 import { InteractionPrompt } from '../ui/InteractionPrompt';
+import { UI_DESIGN_TOKENS } from '../ui/UiDesignSystem';
 import { renderWonderbookWorldProp } from '../wonderbook/WonderbookWorldProp';
 import {
   COTTAGE_INTERIOR_LOCATION_ID,
@@ -467,17 +472,19 @@ export class CottageInteriorScene extends Phaser.Scene {
       return;
     }
 
-    const doorway = COTTAGE_INTERIOR_MAP.exit.approach;
-    const distance = Phaser.Math.Distance.Between(
-      this.player.sprite.x,
-      this.player.sprite.y,
-      doorway.x,
-      doorway.y,
-    );
-    const insideDoorway = distance <= 135;
+    const door = COTTAGE_INTERIOR_MAP.furnitureLayout.door;
+    const body = this.player.sprite.body as Phaser.Physics.Arcade.Body | null;
+    const feetY = body?.bottom ?? this.player.sprite.y + 22;
+    const horizontalDistance = Math.abs(this.player.sprite.x - door.x);
+    const triggerHalfWidth = door.width / 2 - 16;
+    const triggerFeetY = COTTAGE_INTERIOR_MAP.roomShell.bottom - 52;
+    const insideDoorway =
+      horizontalDistance <= triggerHalfWidth && feetY >= triggerFeetY;
 
     if (!insideDoorway) {
-      if (distance >= 185) {
+      const clearlyAwayFromDoor =
+        horizontalDistance > triggerHalfWidth + 54 || feetY < triggerFeetY - 92;
+      if (clearlyAwayFromDoor) {
         this.finishDecoratingDoorLatch = false;
       }
       return;
@@ -510,17 +517,19 @@ export class CottageInteriorScene extends Phaser.Scene {
       .setScrollFactor(0)
       .setDepth(20_300)
       .setInteractive();
-    const panel = this.add
-      .rectangle(centreX, centreY, 520, 240, 0xfffbef, 0.99)
-      .setName('cottage-finish-decorating-dialog')
-      .setStrokeStyle(5, 0x4f9fc4, 1)
-      .setScrollFactor(0)
-      .setDepth(20_301);
+    const panelObjects = createConfirmationPanel(this, {
+      name: 'cottage-finish-decorating-dialog',
+      x: centreX,
+      y: centreY,
+      width: 548,
+      height: 250,
+      depth: 20_301,
+    });
     const title = this.add
-      .text(centreX, centreY - 58, 'Are you finished decorating?', {
-        color: '#244f5c',
-        fontFamily: 'Trebuchet MS, Segoe UI, system-ui, sans-serif',
-        fontSize: '25px',
+      .text(centreX, centreY - 62, 'Are you finished decorating?', {
+        color: UI_DESIGN_TOKENS.colour.conceptBlueDeep,
+        fontFamily: UI_DESIGN_TOKENS.typography.family,
+        fontSize: '26px',
         fontStyle: 'bold',
         align: 'center',
       })
@@ -531,12 +540,12 @@ export class CottageInteriorScene extends Phaser.Scene {
     const hint = this.add
       .text(
         centreX,
-        centreY - 14,
+        centreY - 16,
         'Choose Yes to finish decorating, then you can leave the cottage.',
         {
-          color: '#5b6670',
-          fontFamily: 'Trebuchet MS, Segoe UI, system-ui, sans-serif',
-          fontSize: '15px',
+          color: UI_DESIGN_TOKENS.colour.softInk,
+          fontFamily: UI_DESIGN_TOKENS.typography.family,
+          fontSize: '16px',
           align: 'center',
           wordWrap: { width: 430 },
         },
@@ -546,59 +555,40 @@ export class CottageInteriorScene extends Phaser.Scene {
       .setScrollFactor(0)
       .setDepth(20_302);
 
-    const noButton = this.createFinishDecoratingButton(
-      centreX - 112,
-      centreY + 67,
-      'No',
-      0xf3e7f8,
-      0xa77bb8,
-      () => this.closeFinishDecoratingPrompt(),
-    );
-    const yesButton = this.createFinishDecoratingButton(
-      centreX + 112,
-      centreY + 67,
-      'Yes',
-      0x8dd5ec,
-      0x4f9fc4,
-      () => {
+    const noButton = createConfirmationButton(this, {
+      name: 'cottage-finish-decorating-no',
+      x: centreX - 112,
+      y: centreY + 70,
+      width: 176,
+      height: 58,
+      depth: 20_302,
+      label: 'No',
+      variant: 'secondary',
+      onActivate: () => this.closeFinishDecoratingPrompt(),
+    });
+    const yesButton = createConfirmationButton(this, {
+      name: 'cottage-finish-decorating-yes',
+      x: centreX + 112,
+      y: centreY + 70,
+      width: 176,
+      height: 58,
+      depth: 20_302,
+      label: 'Yes',
+      variant: 'primary',
+      onActivate: () => {
         this.closeFinishDecoratingPrompt();
         this.setDecorateMode(false);
       },
+    });
+
+    this.finishDecoratingObjects.push(
+      backdrop,
+      ...panelObjects,
+      title,
+      hint,
+      ...noButton.objects,
+      ...yesButton.objects,
     );
-    yesButton[0].setName('cottage-finish-decorating-yes');
-    noButton[0].setName('cottage-finish-decorating-no');
-
-    this.finishDecoratingObjects.push(backdrop, panel, title, hint, ...noButton, ...yesButton);
-  }
-
-  private createFinishDecoratingButton(
-    x: number,
-    y: number,
-    label: string,
-    fill: number,
-    stroke: number,
-    action: () => void,
-  ): [Phaser.GameObjects.Rectangle, Phaser.GameObjects.Text] {
-    const button = this.add
-      .rectangle(x, y, 170, 56, fill, 1)
-      .setStrokeStyle(4, stroke, 1)
-      .setScrollFactor(0)
-      .setDepth(20_302)
-      .setInteractive({ useHandCursor: true });
-    const text = this.add
-      .text(x, y, label, {
-        color: '#244f5c',
-        fontFamily: 'Trebuchet MS, Segoe UI, system-ui, sans-serif',
-        fontSize: '19px',
-        fontStyle: 'bold',
-      })
-      .setOrigin(0.5)
-      .setScrollFactor(0)
-      .setDepth(20_303)
-      .setInteractive({ useHandCursor: true });
-    button.on('pointerdown', action);
-    text.on('pointerdown', action);
-    return [button, text];
   }
 
   private closeFinishDecoratingPrompt(): void {
