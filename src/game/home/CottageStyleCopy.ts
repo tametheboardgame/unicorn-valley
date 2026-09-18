@@ -14,6 +14,31 @@ export const COTTAGE_FURNITURE_LABELS: Readonly<Record<CottageFurnitureStyleKey,
   fireplace: 'Fireplace',
 };
 
+export const COTTAGE_FURNITURE_VARIANT_IDS: Readonly<
+  Record<CottageFurnitureStyleKey, readonly string[]>
+> = {
+  bed: [
+    'cottage-furniture:bed:moonflower',
+    'cottage-furniture:bed:rose-dream',
+    'cottage-furniture:bed:sea-glass',
+  ],
+  sofa: [
+    'cottage-furniture:sofa:sage',
+    'cottage-furniture:sofa:berry',
+    'cottage-furniture:sofa:starlight',
+  ],
+  teaSet: [
+    'cottage-furniture:tea-set:honey-oak',
+    'cottage-furniture:tea-set:rosewood',
+    'cottage-furniture:tea-set:whitewashed',
+  ],
+  fireplace: [
+    'cottage-furniture:fireplace:warm-stone',
+    'cottage-furniture:fireplace:moonstone',
+    'cottage-furniture:fireplace:rose-stone',
+  ],
+};
+
 export const COTTAGE_STYLE_NAMES: Readonly<Record<string, string>> = {
   'cottage-wall:moon-cream': 'Moon Cream',
   'cottage-wall:blush-dawn': 'Blush Dawn',
