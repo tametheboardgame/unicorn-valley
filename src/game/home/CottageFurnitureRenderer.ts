@@ -111,8 +111,8 @@ function renderWindow(scene: Phaser.Scene, window: CottageRectLayout): void {
 }
 
 function renderFireplace(scene: Phaser.Scene, variantId: string): void {
-  const [stone, stoneLight, hearthDark, timberDark, timber, goldLight, gold] =
-    getCottageFurniturePalette('fireplace', variantId);
+  const [stone, stoneLight] = getCottageFurniturePalette('fireplace', variantId);
+  const { hearthDark, timberDark, timber, goldLight, gold } = PALETTE;
   const fireplace = COTTAGE_INTERIOR_MAP.furnitureLayout.fireplace;
   const left = fireplace.x - fireplace.width / 2;
   const top = fireplace.y - fireplace.height / 2;
@@ -181,8 +181,9 @@ function renderFireplace(scene: Phaser.Scene, variantId: string): void {
 }
 
 function renderBed(scene: Phaser.Scene, variantId: string): void {
-  const [timberDark, timber, linen, quilt, blanketDark, blanket, highlight] =
-    getCottageFurniturePalette('bed', variantId);
+  const [timberDark, blanket] = getCottageFurniturePalette('bed', variantId);
+  const { timber, cream: linen, rose: quilt, lavenderDark: blanketDark, goldLight: highlight } =
+    PALETTE;
   const bed = COTTAGE_INTERIOR_MAP.furnitureLayout.bed;
   const width = bed.width * FURNITURE_SCALE.bed;
   const height = bed.height * FURNITURE_SCALE.bed;
@@ -248,7 +249,8 @@ function renderChair(
   depthId: 'tea-chair-left' | 'tea-chair-right',
   palette: CottageFurniturePalette,
 ): void {
-  const [timberDark, , timberLight, , , crockery] = palette;
+  const [timberDark, timberLight] = palette;
+  const crockery = PALETTE.cream;
   const graphics = scene.add
     .graphics()
     .setName(`cottage-furniture:${depthId}`)
@@ -266,7 +268,14 @@ function renderChair(
 
 function renderTeaTable(scene: Phaser.Scene, variantId: string): void {
   const palette = getCottageFurniturePalette('teaSet', variantId);
-  const [timberDark, timber, timberLight, teapot, accent, crockery, highlight] = palette;
+  const [timberDark, timberLight] = palette;
+  const {
+    timber,
+    lavender: teapot,
+    roseDark: accent,
+    cream: crockery,
+    goldLight: highlight,
+  } = PALETTE;
   const table = COTTAGE_INTERIOR_MAP.furnitureLayout.teaTable;
   const width = table.width * FURNITURE_SCALE.teaTable;
   const height = table.height * FURNITURE_SCALE.teaTable;
@@ -324,10 +333,9 @@ function renderTeaTable(scene: Phaser.Scene, variantId: string): void {
 }
 
 function renderSofa(scene: Phaser.Scene, variantId: string): void {
-  const [dark, base, seat, pillowLeft, pillowRight, stitch] = getCottageFurniturePalette(
-    'sofa',
-    variantId,
-  );
+  const [dark, base] = getCottageFurniturePalette('sofa', variantId);
+  const seat = 0xa8cbbb;
+  const { goldLight: pillowLeft, lavender: pillowRight, cream: stitch } = PALETTE;
   const sofa = COTTAGE_INTERIOR_MAP.furnitureLayout.sofa;
   const width = sofa.width * FURNITURE_SCALE.sofa;
   const height = sofa.height * FURNITURE_SCALE.sofa;
