@@ -196,7 +196,9 @@ test.describe('R5-WP5.10 final tightening', () => {
     const cottage = sceneFrom(await snapshot(page), 'CottageInteriorScene');
     const wall = cottage.objects.find(({ name }) => name.startsWith('cottage-style-wall:back:'));
     const baseboard = cottage.objects.find(({ name }) => name === 'cottage-floor-seam');
-    const windows = cottage.objects.filter(({ name }) => name.startsWith('cottage-furniture:window:'));
+    const windows = cottage.objects.filter(({ name }) =>
+      name.startsWith('cottage-furniture:window:'),
+    );
 
     expect(wall?.visible).toBe(true);
     expect(baseboard?.visible).toBe(true);
