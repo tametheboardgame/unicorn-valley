@@ -26,10 +26,7 @@ describe('CottageFurnitureVariantCatalogue', () => {
         DEFAULT_COTTAGE_FURNITURE_VARIANTS[furnitureKey],
       );
       expect(getCottageFurniturePalette(furnitureKey, 'retired:variant')).toEqual(
-        getCottageFurniturePalette(
-          furnitureKey,
-          DEFAULT_COTTAGE_FURNITURE_VARIANTS[furnitureKey],
-        ),
+        getCottageFurniturePalette(furnitureKey, DEFAULT_COTTAGE_FURNITURE_VARIANTS[furnitureKey]),
       );
     }
   });
