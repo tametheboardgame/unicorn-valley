@@ -153,7 +153,9 @@ test('denied browser storage renders a recoverable title state', async ({ page }
   expect(visibleText).not.toContain('New Game');
 });
 
-test('schema-v1 browser save is backed up before automatic migration to current schema', async ({ page }) => {
+test('schema-v1 browser save is backed up before automatic migration to current schema', async ({
+  page,
+}) => {
   const historical = createStoredSave('Moonbeam', 1);
   await page.addInitScript(
     ({ saveKey, backupKey, historicalSave }) => {
