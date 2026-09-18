@@ -4,6 +4,8 @@ import {
   COTTAGE_FLOOR_STYLES,
   COTTAGE_WALLPAPERS,
   COTTAGE_WALL_COLOURS,
+  COTTAGE_WALL_KEYS,
+  COTTAGE_WALL_LABELS,
   getCottageFloorStyle,
   getCottageWallpaper,
   getCottageWallColour,
@@ -15,7 +17,7 @@ import { getCottageStyleDescription } from '../home/CottageStyleCopy';
 import { CottageStyleService } from '../home/CottageStyleService';
 import { drawCottageStylePreview } from '../home/CottageStylePreviewRenderer';
 import { getBrowserSaveService } from '../save/browserSaveService';
-import type { HomeStyleState } from '../save/saveSchema';
+import type { CottageWallKey, HomeStyleState } from '../save/saveSchema';
 import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from '../ui/uiTheme';
 
 type CottageStyleCategory = 'wall' | 'wallpaper' | 'floor';
@@ -30,11 +32,15 @@ const RIGHT_PANEL_X = 948;
 const PANEL_Y = 382;
 const PANEL_HEIGHT = 536;
 const TAB_Y = 176;
+const CHOICES_PER_PAGE = 8;
+const CHOICE_COLUMNS = 4;
 
 export class CottageStyleScene extends Phaser.Scene {
   private styles: CottageStyleService | null = null;
   private previewStyle: HomeStyleState | null = null;
   private category: CottageStyleCategory = 'wall';
+  private selectedWall: CottageWallKey = 'back';
+  private choicePage = 0;
   private returnToDecorateMode = true;
   private previewGraphics: Phaser.GameObjects.Graphics | null = null;
   private selectionName: Phaser.GameObjects.Text | null = null;
@@ -53,8 +59,10 @@ export class CottageStyleScene extends Phaser.Scene {
     this.cameras.main.setBackgroundColor('#7558a0');
     this.returnToDecorateMode = data.returnToDecorateMode !== false;
     this.category = data.category ?? 'wall';
+    this.selectedWall = 'back';
+    this.choicePage = 0;
     this.styles = new CottageStyleService(getBrowserSaveService());
-    this.previewStyle = { ...this.styles.getResolvedStyle() };
+    this.previewStyle = this.styles.getResolvedStyle();
 
     this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x7558a0, 1);
     this.add.circle(170, 130, 170, 0xf2c9ed, 0.1);
@@ -75,7 +83,7 @@ export class CottageStyleScene extends Phaser.Scene {
       .text(
         GAME_WIDTH / 2,
         82,
-        'Pick a section, tap a swatch, then apply when the room feels right.',
+        'Choose a wall, tap a swatch, and make every side of the cottage your own.',
         {
           color: '#efe6fa',
           fontFamily: UI_FONT,
@@ -106,12 +114,13 @@ export class CottageStyleScene extends Phaser.Scene {
     this.previewGraphics = this.add.graphics().setName('cottage-style-preview').setDepth(5);
 
     this.categorySummary = this.add
-      .text(LEFT_PANEL_X, 568, '', {
+      .text(LEFT_PANEL_X, 555, '', {
         color: UI_COLOURS.softInk,
         fontFamily: UI_FONT,
-        fontSize: '14px',
+        fontSize: '13px',
         fontStyle: 'bold',
         align: 'center',
+        lineSpacing: 3,
         wordWrap: { width: 470 },
       })
       .setName('cottage-style-summary')
@@ -130,10 +139,10 @@ export class CottageStyleScene extends Phaser.Scene {
     this.createCategoryTab(1136, 'floor', 'Floor');
 
     this.selectionName = this.add
-      .text(RIGHT_PANEL_X, 540, '', {
+      .text(RIGHT_PANEL_X, 536, '', {
         color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
-        fontSize: '23px',
+        fontSize: '22px',
         fontStyle: 'bold',
       })
       .setName('cottage-style-selection-name')
@@ -141,10 +150,10 @@ export class CottageStyleScene extends Phaser.Scene {
       .setDepth(7);
 
     this.selectionDescription = this.add
-      .text(RIGHT_PANEL_X, 575, '', {
+      .text(RIGHT_PANEL_X, 566, '', {
         color: UI_COLOURS.softInk,
         fontFamily: UI_FONT,
-        fontSize: '15px',
+        fontSize: '14px',
         align: 'center',
         wordWrap: { width: 500 },
       })
@@ -194,12 +203,8 @@ export class CottageStyleScene extends Phaser.Scene {
   }
 
   public update(): void {
-    if (this.enterKey && Phaser.Input.Keyboard.JustDown(this.enterKey)) {
-      this.applyStyle();
-    }
-    if (this.escapeKey && Phaser.Input.Keyboard.JustDown(this.escapeKey)) {
-      this.backToRoom();
-    }
+    if (this.enterKey && Phaser.Input.Keyboard.JustDown(this.enterKey)) this.applyStyle();
+    if (this.escapeKey && Phaser.Input.Keyboard.JustDown(this.escapeKey)) this.backToRoom();
   }
 
   private createCategoryTab(x: number, category: CottageStyleCategory, label: string): void {
@@ -228,10 +233,16 @@ export class CottageStyleScene extends Phaser.Scene {
   }
 
   private setCategory(category: CottageStyleCategory): void {
-    if (this.category === category) {
-      return;
-    }
+    if (this.category === category) return;
     this.category = category;
+    this.choicePage = 0;
+    this.renderAll();
+  }
+
+  private setSelectedWall(wallKey: CottageWallKey): void {
+    if (this.selectedWall === wallKey) return;
+    this.selectedWall = wallKey;
+    this.choicePage = 0;
     this.renderAll();
   }
 
@@ -242,31 +253,39 @@ export class CottageStyleScene extends Phaser.Scene {
   }
 
   private renderPreview(): void {
-    if (!this.previewStyle || !this.previewGraphics) {
-      return;
-    }
+    if (!this.previewStyle || !this.previewGraphics) return;
 
-    drawCottageStylePreview(this.previewGraphics, this.previewStyle, {
-      x: LEFT_PANEL_X,
-      y: 345,
-      width: 478,
-      height: 348,
-    });
+    const selectedWall = this.category === 'floor' ? null : this.selectedWall;
+    drawCottageStylePreview(
+      this.previewGraphics,
+      this.previewStyle,
+      { x: LEFT_PANEL_X, y: 345, width: 478, height: 348 },
+      selectedWall,
+    );
+
+    const activeWall = this.previewStyle.walls[this.selectedWall];
     this.previewGraphics.setName(
-      `cottage-style-preview:${this.previewStyle.wallColourId}|${this.previewStyle.wallpaperId}|${this.previewStyle.floorStyleId}`,
+      `cottage-style-preview:${this.selectedWall}:${activeWall.wallColourId}|${activeWall.wallpaperId}|${this.previewStyle.floorStyleId}`,
     );
 
-    const wall = getCottageWallColour(this.previewStyle.wallColourId);
-    const wallpaper = getCottageWallpaper(this.previewStyle.wallpaperId);
     const floor = getCottageFloorStyle(this.previewStyle.floorStyleId);
-
-    this.categorySummary?.setText(
-      `Walls: ${wall.name}   •   Wallpaper: ${wallpaper.name}\nFloor: ${floor.name}`,
-    );
+    const lines = COTTAGE_WALL_KEYS.map((wallKey) => {
+      const wallStyle = this.previewStyle!.walls[wallKey];
+      return `${COTTAGE_WALL_LABELS[wallKey]}: ${getCottageWallColour(wallStyle.wallColourId).name} / ${getCottageWallpaper(wallStyle.wallpaperId).name}`;
+    });
+    this.categorySummary?.setText(`${lines.join('\n')}\nFloor: ${floor.name}`);
 
     const selected =
-      this.category === 'wall' ? wall : this.category === 'wallpaper' ? wallpaper : floor;
-    this.selectionName?.setText(selected.name);
+      this.category === 'wall'
+        ? getCottageWallColour(activeWall.wallColourId)
+        : this.category === 'wallpaper'
+          ? getCottageWallpaper(activeWall.wallpaperId)
+          : floor;
+    this.selectionName?.setText(
+      this.category === 'floor'
+        ? selected.name
+        : `${COTTAGE_WALL_LABELS[this.selectedWall]} wall · ${selected.name}`,
+    );
     this.selectionDescription?.setText(getCottageStyleDescription(selected.id));
   }
 
@@ -281,9 +300,9 @@ export class CottageStyleScene extends Phaser.Scene {
 
   private renderChoices(): void {
     this.clearChoiceObjects();
-    if (!this.previewStyle) {
-      return;
-    }
+    if (!this.previewStyle) return;
+
+    if (this.category !== 'floor') this.renderWallSelector();
 
     if (this.category === 'wall') {
       this.renderWallChoices();
@@ -294,20 +313,97 @@ export class CottageStyleScene extends Phaser.Scene {
     }
   }
 
-  private renderWallChoices(): void {
-    if (!this.previewStyle) {
-      return;
-    }
+  private renderWallSelector(): void {
+    const y = 238;
+    const startX = 760;
+    const gap = 126;
 
-    const startX = 738;
-    const gap = 105;
-    const y = 310;
-    COTTAGE_WALL_COLOURS.forEach((choice, index) => {
+    COTTAGE_WALL_KEYS.forEach((wallKey, index) => {
       const x = startX + index * gap;
-      const selected = this.previewStyle?.wallColourId === choice.id;
+      const selected = wallKey === this.selectedWall;
+      const button = this.trackChoice(
+        this.add
+          .rectangle(x, y, 112, 42, selected ? UI_COLOURS.gold : UI_COLOURS.parchment, 1)
+          .setName(`cottage-style-wall-selector-${wallKey}`)
+          .setStrokeStyle(
+            selected ? 4 : 3,
+            selected ? UI_COLOURS.goldStrong : UI_COLOURS.lavenderStrong,
+            1,
+          )
+          .setInteractive({ useHandCursor: true })
+          .setDepth(7),
+      );
+      const text = this.trackChoice(
+        this.add
+          .text(x, y, COTTAGE_WALL_LABELS[wallKey], {
+            color: UI_COLOURS.ink,
+            fontFamily: UI_FONT,
+            fontSize: '13px',
+            fontStyle: 'bold',
+          })
+          .setOrigin(0.5)
+          .setInteractive({ useHandCursor: true })
+          .setDepth(8),
+      );
+      const select = (): void => this.setSelectedWall(wallKey);
+      button.on('pointerdown', select);
+      text.on('pointerdown', select);
+    });
+  }
+
+  private currentPage<T>(choices: readonly T[]): readonly T[] {
+    const pageCount = Math.max(1, Math.ceil(choices.length / CHOICES_PER_PAGE));
+    this.choicePage = Math.min(this.choicePage, pageCount - 1);
+    const start = this.choicePage * CHOICES_PER_PAGE;
+    return choices.slice(start, start + CHOICES_PER_PAGE);
+  }
+
+  private renderPageControls(totalChoices: number): void {
+    const pageCount = Math.ceil(totalChoices / CHOICES_PER_PAGE);
+    if (pageCount <= 1) return;
+
+    const y = 492;
+    this.createTransientButton(800, y, 92, '‹', 'cottage-style-page-previous', () => {
+      this.choicePage = (this.choicePage - 1 + pageCount) % pageCount;
+      this.renderChoices();
+    });
+    this.trackChoice(
+      this.add
+        .text(RIGHT_PANEL_X, y, `${this.choicePage + 1} / ${pageCount}`, {
+          color: UI_COLOURS.mutedInk,
+          fontFamily: UI_FONT,
+          fontSize: '14px',
+          fontStyle: 'bold',
+        })
+        .setOrigin(0.5)
+        .setDepth(8),
+    );
+    this.createTransientButton(1096, y, 92, '›', 'cottage-style-page-next', () => {
+      this.choicePage = (this.choicePage + 1) % pageCount;
+      this.renderChoices();
+    });
+  }
+
+  private choicePosition(index: number, hasWallSelector: boolean): { x: number; y: number } {
+    const column = index % CHOICE_COLUMNS;
+    const row = Math.floor(index / CHOICE_COLUMNS);
+    return {
+      x: 748 + column * 134,
+      y: (hasWallSelector ? 326 : 292) + row * 126,
+    };
+  }
+
+  private renderWallChoices(): void {
+    if (!this.previewStyle) return;
+    const activeWall = this.previewStyle.walls[this.selectedWall];
+    const choices = this.currentPage(COTTAGE_WALL_COLOURS);
+
+    choices.forEach((choice, index) => {
+      const { x, y } = this.choicePosition(index, true);
+      const selected = activeWall.wallColourId === choice.id;
       const outline = this.trackChoice(
         this.add
-          .circle(x, y, 35, selected ? UI_COLOURS.gold : UI_COLOURS.lavender, 0.94)
+          .circle(x, y, 34, selected ? UI_COLOURS.gold : UI_COLOURS.lavender, 0.94)
           .setName(`cottage-style-wall-swatch-${choice.id}`)
           .setStrokeStyle(
             selected ? 6 : 4,
@@ -317,186 +413,127 @@ export class CottageStyleScene extends Phaser.Scene {
           .setInteractive({ useHandCursor: true })
           .setDepth(7),
       );
-      this.trackChoice(this.add.circle(x, y, 25, choice.fill, 1).setDepth(8));
+      this.trackChoice(this.add.circle(x, y, 24, choice.fill, 1).setDepth(8));
       this.trackChoice(
         this.add
-          .text(x, y + 54, choice.name, {
+          .text(x, y + 48, choice.name, {
             color: UI_COLOURS.ink,
             fontFamily: UI_FONT,
-            fontSize: '13px',
+            fontSize: '12px',
             fontStyle: 'bold',
             align: 'center',
-            wordWrap: { width: 92 },
+            wordWrap: { width: 110 },
           })
           .setOrigin(0.5, 0)
           .setDepth(8),
       );
-      if (selected) {
-        this.trackChoice(
-          this.add
-            .text(x + 27, y - 28, '✓', {
-              color: '#6a421f',
-              fontFamily: UI_FONT,
-              fontSize: '18px',
-              fontStyle: 'bold',
-            })
-            .setOrigin(0.5)
-            .setDepth(9),
-        );
-      }
-      outline.on('pointerdown', () => this.selectWall(choice));
+      if (selected) this.renderCheck(x + 26, y - 26);
+      outline.on('pointerdown', () => this.selectWallColour(choice));
     });
+    this.renderPageControls(COTTAGE_WALL_COLOURS.length);
   }
 
   private renderWallpaperChoices(): void {
-    if (!this.previewStyle) {
-      return;
-    }
+    if (!this.previewStyle) return;
+    const activeWall = this.previewStyle.walls[this.selectedWall];
+    const choices = this.currentPage(COTTAGE_WALLPAPERS);
 
-    const positions = [
-      { x: 800, y: 292 },
-      { x: 1090, y: 292 },
-      { x: 800, y: 422 },
-      { x: 1090, y: 422 },
-    ];
-    COTTAGE_WALLPAPERS.forEach((choice, index) => {
-      const position = positions[index]!;
-      const selected = this.previewStyle?.wallpaperId === choice.id;
+    choices.forEach((choice, index) => {
+      const { x, y } = this.choicePosition(index, true);
+      const selected = activeWall.wallpaperId === choice.id;
       const card = this.trackChoice(
         this.add
-          .rectangle(
-            position.x,
-            position.y,
-            238,
-            104,
-            selected ? UI_COLOURS.gold : UI_COLOURS.parchment,
-            1,
-          )
+          .rectangle(x, y, 120, 94, selected ? UI_COLOURS.gold : UI_COLOURS.parchment, 1)
           .setName(`cottage-style-wallpaper-swatch-${choice.id}`)
           .setStrokeStyle(
-            selected ? 6 : 4,
+            selected ? 5 : 3,
             selected ? UI_COLOURS.goldStrong : UI_COLOURS.lavenderStrong,
             1,
           )
           .setInteractive({ useHandCursor: true })
           .setDepth(7),
       );
-      this.drawWallpaperCard(choice, position.x, position.y - 11);
+      this.drawWallpaperCard(choice, x, y - 11);
       this.trackChoice(
         this.add
-          .text(position.x, position.y + 34, choice.name, {
+          .text(x, y + 34, choice.name, {
             color: UI_COLOURS.ink,
             fontFamily: UI_FONT,
-            fontSize: '14px',
+            fontSize: '12px',
             fontStyle: 'bold',
+            align: 'center',
+            wordWrap: { width: 108 },
           })
           .setOrigin(0.5)
           .setDepth(9),
       );
-      if (selected) {
-        this.trackChoice(
-          this.add
-            .text(position.x + 96, position.y - 37, '✓', {
-              color: '#6a421f',
-              fontFamily: UI_FONT,
-              fontSize: '18px',
-              fontStyle: 'bold',
-            })
-            .setOrigin(0.5)
-            .setDepth(10),
-        );
-      }
+      if (selected) this.renderCheck(x + 45, y - 34);
       card.on('pointerdown', () => this.selectWallpaper(choice));
     });
+    this.renderPageControls(COTTAGE_WALLPAPERS.length);
   }
 
   private renderFloorChoices(): void {
-    if (!this.previewStyle) {
-      return;
-    }
+    if (!this.previewStyle) return;
+    const choices = this.currentPage(COTTAGE_FLOOR_STYLES);
 
-    const positions = [
-      { x: 800, y: 292 },
-      { x: 1090, y: 292 },
-      { x: 800, y: 422 },
-      { x: 1090, y: 422 },
-    ];
-    COTTAGE_FLOOR_STYLES.forEach((choice, index) => {
-      const position = positions[index]!;
+    choices.forEach((choice, index) => {
+      const { x, y } = this.choicePosition(index, false);
       const selected = this.previewStyle?.floorStyleId === choice.id;
       const card = this.trackChoice(
         this.add
-          .rectangle(
-            position.x,
-            position.y,
-            238,
-            104,
-            selected ? UI_COLOURS.gold : UI_COLOURS.parchment,
-            1,
-          )
+          .rectangle(x, y, 120, 94, selected ? UI_COLOURS.gold : UI_COLOURS.parchment, 1)
           .setName(`cottage-style-floor-swatch-${choice.id}`)
           .setStrokeStyle(
-            selected ? 6 : 4,
+            selected ? 5 : 3,
             selected ? UI_COLOURS.goldStrong : UI_COLOURS.lavenderStrong,
             1,
           )
           .setInteractive({ useHandCursor: true })
           .setDepth(7),
       );
-      this.drawFloorCard(choice, position.x, position.y - 11);
+      this.drawFloorCard(choice, x, y - 11);
       this.trackChoice(
         this.add
-          .text(position.x, position.y + 34, choice.name, {
+          .text(x, y + 34, choice.name, {
             color: UI_COLOURS.ink,
             fontFamily: UI_FONT,
-            fontSize: '14px',
+            fontSize: '12px',
             fontStyle: 'bold',
+            align: 'center',
+            wordWrap: { width: 108 },
           })
           .setOrigin(0.5)
           .setDepth(9),
       );
-      if (selected) {
-        this.trackChoice(
-          this.add
-            .text(position.x + 96, position.y - 37, '✓', {
-              color: '#6a421f',
-              fontFamily: UI_FONT,
-              fontSize: '18px',
-              fontStyle: 'bold',
-            })
-            .setOrigin(0.5)
-            .setDepth(10),
-        );
-      }
+      if (selected) this.renderCheck(x + 45, y - 34);
       card.on('pointerdown', () => this.selectFloor(choice));
     });
+    this.renderPageControls(COTTAGE_FLOOR_STYLES.length);
   }
 
   private drawWallpaperCard(choice: CottageWallpaperDefinition, x: number, y: number): void {
     const graphics = this.trackChoice(this.add.graphics().setDepth(8));
     graphics.fillStyle(0xf2e6d8, 1);
-    graphics.fillRoundedRect(x - 94, y - 27, 188, 54, 10);
+    graphics.fillRoundedRect(x - 48, y - 24, 96, 48, 8);
+    if (choice.pattern === 'none') return;
 
-    if (choice.pattern === 'none') {
-      return;
-    }
-
-    graphics.lineStyle(2, choice.ink, 0.55);
+    graphics.lineStyle(1.5, choice.ink, 0.58);
     for (let row = 0; row < 2; row += 1) {
-      for (let col = 0; col < 5; col += 1) {
-        const px = x - 72 + col * 36 + (row % 2) * 10;
-        const py = y - 12 + row * 25;
+      for (let col = 0; col < 4; col += 1) {
+        const px = x - 35 + col * 24 + (row % 2) * 7;
+        const py = y - 10 + row * 20;
         if (choice.pattern === 'star-scatter') {
-          graphics.lineBetween(px - 5, py, px + 5, py);
-          graphics.lineBetween(px, py - 5, px, py + 5);
+          graphics.lineBetween(px - 4, py, px + 4, py);
+          graphics.lineBetween(px, py - 4, px, py + 4);
         } else if (choice.pattern === 'moon-sprigs') {
-          graphics.strokeCircle(px, py, 5);
-          graphics.lineStyle(2, choice.accent, 0.5);
-          graphics.lineBetween(px + 7, py + 4, px + 16, py + 10);
-          graphics.lineStyle(2, choice.ink, 0.55);
+          graphics.strokeCircle(px, py, 4);
+          graphics.lineStyle(1.5, choice.accent, 0.5);
+          graphics.lineBetween(px + 5, py + 3, px + 11, py + 7);
+          graphics.lineStyle(1.5, choice.ink, 0.58);
         } else {
-          graphics.lineBetween(px - 7, py + 7, px, py);
-          graphics.lineBetween(px, py, px + 7, py - 7);
+          graphics.lineBetween(px - 5, py + 5, px, py);
+          graphics.lineBetween(px, py, px + 5, py - 5);
         }
       }
     }
@@ -505,43 +542,67 @@ export class CottageStyleScene extends Phaser.Scene {
   private drawFloorCard(choice: CottageFloorStyleDefinition, x: number, y: number): void {
     const graphics = this.trackChoice(this.add.graphics().setDepth(8));
     graphics.fillStyle(choice.fill, 1);
-    graphics.fillRoundedRect(x - 94, y - 27, 188, 54, 10);
-    graphics.lineStyle(2, choice.seam, 0.7);
-    graphics.lineBetween(x - 94, y - 9, x + 94, y - 9);
-    graphics.lineBetween(x - 94, y + 9, x + 94, y + 9);
-    graphics.lineBetween(x - 32, y - 27, x - 32, y - 9);
-    graphics.lineBetween(x + 48, y - 9, x + 48, y + 9);
-    graphics.lineBetween(x - 58, y + 9, x - 58, y + 27);
+    graphics.fillRoundedRect(x - 48, y - 24, 96, 48, 8);
+    graphics.lineStyle(1.5, choice.seam, 0.72);
+    graphics.lineBetween(x - 48, y - 8, x + 48, y - 8);
+    graphics.lineBetween(x - 48, y + 8, x + 48, y + 8);
+    graphics.lineBetween(x - 16, y - 24, x - 16, y - 8);
+    graphics.lineBetween(x + 22, y - 8, x + 22, y + 8);
+    graphics.lineBetween(x - 28, y + 8, x - 28, y + 24);
   }
 
-  private selectWall(choice: CottageWallColourDefinition): void {
-    if (!this.previewStyle) {
-      return;
-    }
-    this.previewStyle = { ...this.previewStyle, wallColourId: choice.id };
+  private renderCheck(x: number, y: number): void {
+    this.trackChoice(
+      this.add
+        .text(x, y, '✓', {
+          color: '#6a421f',
+          fontFamily: UI_FONT,
+          fontSize: '17px',
+          fontStyle: 'bold',
+        })
+        .setOrigin(0.5)
+        .setDepth(10),
+    );
+  }
+
+  private selectWallColour(choice: CottageWallColourDefinition): void {
+    if (!this.previewStyle) return;
+    this.previewStyle = {
+      ...this.previewStyle,
+      walls: {
+        ...this.previewStyle.walls,
+        [this.selectedWall]: {
+          ...this.previewStyle.walls[this.selectedWall],
+          wallColourId: choice.id,
+        },
+      },
+    };
     this.renderAll();
   }
 
   private selectWallpaper(choice: CottageWallpaperDefinition): void {
-    if (!this.previewStyle) {
-      return;
-    }
-    this.previewStyle = { ...this.previewStyle, wallpaperId: choice.id };
+    if (!this.previewStyle) return;
+    this.previewStyle = {
+      ...this.previewStyle,
+      walls: {
+        ...this.previewStyle.walls,
+        [this.selectedWall]: {
+          ...this.previewStyle.walls[this.selectedWall],
+          wallpaperId: choice.id,
+        },
+      },
+    };
     this.renderAll();
   }
 
   private selectFloor(choice: CottageFloorStyleDefinition): void {
-    if (!this.previewStyle) {
-      return;
-    }
+    if (!this.previewStyle) return;
     this.previewStyle = { ...this.previewStyle, floorStyleId: choice.id };
     this.renderAll();
   }
 
   private applyStyle(): void {
-    if (!this.styles || !this.previewStyle) {
-      return;
-    }
+    if (!this.styles || !this.previewStyle) return;
     this.styles.applyStyle(this.previewStyle);
     this.backToRoom();
   }
@@ -583,15 +644,45 @@ export class CottageStyleScene extends Phaser.Scene {
     text.on('pointerdown', action);
   }
 
+  private createTransientButton(
+    x: number,
+    y: number,
+    width: number,
+    label: string,
+    name: string,
+    action: () => void,
+  ): void {
+    const button = this.trackChoice(
+      this.add
+        .rectangle(x, y, width, 38, UI_COLOURS.parchment, 1)
+        .setName(name)
+        .setStrokeStyle(3, UI_COLOURS.lavenderStrong, 1)
+        .setInteractive({ useHandCursor: true })
+        .setDepth(7),
+    );
+    const text = this.trackChoice(
+      this.add
+        .text(x, y, label, {
+          color: UI_COLOURS.ink,
+          fontFamily: UI_FONT,
+          fontSize: '19px',
+          fontStyle: 'bold',
+        })
+        .setOrigin(0.5)
+        .setInteractive({ useHandCursor: true })
+        .setDepth(8),
+    );
+    button.on('pointerdown', action);
+    text.on('pointerdown', action);
+  }
+
   private trackChoice<T extends Phaser.GameObjects.GameObject>(object: T): T {
     this.choiceObjects.push(object);
     return object;
   }
 
   private clearChoiceObjects(): void {
-    for (const object of this.choiceObjects) {
-      object.destroy();
-    }
+    for (const object of this.choiceObjects) object.destroy();
     this.choiceObjects = [];
   }
 }
