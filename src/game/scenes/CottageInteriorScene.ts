@@ -91,6 +91,9 @@ export class CottageInteriorScene extends Phaser.Scene {
 
   public create(data: CottageInteriorSceneData = {}): void {
     this.decorateModeActive = data.decorateMode === true;
+    // Scene start data is transient. Phaser retains scene settings between starts, so consume the
+    // editor-return flag immediately or a later ordinary cottage entry can resurrect Decorate mode.
+    this.sys.settings.data = {};
     this.data.set(COTTAGE_DECORATE_MODE_DATA_KEY, this.decorateModeActive);
     this.events.on(COTTAGE_DECORATE_TOGGLE_EVENT, this.toggleDecorateMode, this);
     this.events.on(COTTAGE_STYLE_OPEN_EVENT, this.openStyleEditor, this);
