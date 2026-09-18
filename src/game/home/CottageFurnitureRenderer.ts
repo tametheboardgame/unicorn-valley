@@ -77,10 +77,7 @@ function renderWindow(scene: Phaser.Scene, window: CottageRectLayout): void {
   const left = window.x - window.width / 2;
   const top = window.y - window.height / 2;
   const bottom = top + window.height;
-  const graphics = scene.add
-    .graphics()
-    .setName(`cottage-furniture:window:${window.x}`)
-    .setDepth(5);
+  const graphics = scene.add.graphics().setName(`cottage-furniture:window:${window.x}`).setDepth(5);
 
   graphics.fillStyle(PALETTE.timberDark, 1);
   graphics.fillRoundedRect(left - 13, top - 13, window.width + 26, window.height + 26, 18);
