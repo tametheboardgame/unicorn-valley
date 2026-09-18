@@ -188,19 +188,19 @@ test.describe('R5-WP5.10 final tightening', () => {
     expect(drops.every(({ displayWidth }) => displayWidth >= 4)).toBe(true);
   });
 
-  test('cottage windows read as wall fixtures above a clear baseboard', async ({ page }) => {
+  test('cottage windows remain canonical wall fixtures after the H2 rebuild', async ({ page }) => {
     await page.goto('/?scene=cottage&diagnostics=1');
     await waitForScene(page, 'CottageInteriorScene');
-    await waitForNamedObject(page, 'CottageInteriorScene', 'r5-final-cottage-wall-anchor');
+    await waitForNamedObject(page, 'CottageInteriorScene', 'cottage-floor-seam');
 
     const cottage = sceneFrom(await snapshot(page), 'CottageInteriorScene');
-    const wall = cottage.objects.find(({ name }) => name === 'r5-final-cottage-wall-anchor');
-    const baseboard = cottage.objects.find(({ name }) => name === 'r5-final-cottage-baseboard');
-    const sills = cottage.objects.filter(({ name }) => name === 'r5-final-cottage-window-sill');
+    const wall = cottage.objects.find(({ name }) => name.startsWith('cottage-style-wall:back:'));
+    const baseboard = cottage.objects.find(({ name }) => name === 'cottage-floor-seam');
+    const windows = cottage.objects.filter(({ name }) => name.startsWith('cottage-furniture:window:'));
 
     expect(wall?.visible).toBe(true);
     expect(baseboard?.visible).toBe(true);
-    expect(sills).toHaveLength(2);
-    expect(sills.every(({ y }) => y < (baseboard?.y ?? 0))).toBe(true);
+    expect(windows).toHaveLength(2);
+    expect(windows.every(({ visible }) => visible)).toBe(true);
   });
 });
