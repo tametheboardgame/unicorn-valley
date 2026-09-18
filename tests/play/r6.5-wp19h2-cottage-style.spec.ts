@@ -107,7 +107,7 @@ test('H2.6 previews and persists named wall, wallpaper and floor styles', async 
     ),
   ).toBe(false);
 
-  await tapScreen(page, 1110, 480);
+  await tapScreen(page, 1200, 462);
   await expect.poll(async () => (await snapshot(page)).activeScenes).toEqual(['CottageStyleScene']);
 
   value = await snapshot(page);
