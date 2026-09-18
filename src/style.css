@@ -139,6 +139,18 @@ canvas {
   line-height: 1.12;
 }
 
+.mobile-touch-decorate {
+  border-color: rgb(79 159 196 / 98%);
+  background: rgb(141 213 236 / 97%);
+  color: #244f5c;
+}
+
+.mobile-touch-decorate.is-active,
+.mobile-touch-decorate.is-decorating {
+  background: rgb(117 198 223 / 98%);
+  color: #173f4c;
+}
+
 .mobile-interaction-prompt {
   display: none;
 }
