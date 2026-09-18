@@ -114,12 +114,12 @@ describe('migrateSaveRecord', () => {
       throw new Error('Expected the schema-v3 fixture to migrate to a valid current save.');
     }
 
-    expect(new Set(Object.values(migrated.home.style.walls).map((wall) => wall.wallColourId))).toEqual(
-      new Set(['cottage-wall:misty-lilac']),
-    );
-    expect(new Set(Object.values(migrated.home.style.walls).map((wall) => wall.wallpaperId))).toEqual(
-      new Set(['cottage-wallpaper:moon-sprigs']),
-    );
+    expect(
+      new Set(Object.values(migrated.home.style.walls).map((wall) => wall.wallColourId)),
+    ).toEqual(new Set(['cottage-wall:misty-lilac']));
+    expect(
+      new Set(Object.values(migrated.home.style.walls).map((wall) => wall.wallpaperId)),
+    ).toEqual(new Set(['cottage-wallpaper:moon-sprigs']));
     expect(migrated.home.style.floorStyleId).toBe('cottage-floor:rosewood');
   });
 
