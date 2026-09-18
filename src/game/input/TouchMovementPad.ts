@@ -2,6 +2,7 @@ import type Phaser from 'phaser';
 import {
   COTTAGE_DECORATE_MODE_DATA_KEY,
   COTTAGE_DECORATE_TOGGLE_EVENT,
+  COTTAGE_STYLE_OPEN_EVENT,
 } from '../home/CottageDecorateModeState';
 import { isInteractionModalActive } from '../interaction/InteractionModalState';
 import { CONCEPT_UI, createFixedGraphics, drawConceptIcon } from '../ui/ConceptUi';
@@ -78,19 +79,34 @@ function shouldRenderPortraitDomControls(): boolean {
  */
 export class TouchMovementPad {
   private readonly objects: Array<
-    Phaser.GameObjects.Arc | Phaser.GameObjects.Text | Phaser.GameObjects.Graphics
+    | Phaser.GameObjects.Arc
+    | Phaser.GameObjects.Rectangle
+    | Phaser.GameObjects.Text
+    | Phaser.GameObjects.Graphics
   > = [];
-  private readonly buttons: Phaser.GameObjects.Arc[] = [];
+  private readonly buttons: Array<Phaser.GameObjects.Arc | Phaser.GameObjects.Rectangle> = [];
   private readonly contextActionObjects: Array<
-    Phaser.GameObjects.Arc | Phaser.GameObjects.Text | Phaser.GameObjects.Graphics
+    | Phaser.GameObjects.Arc
+    | Phaser.GameObjects.Rectangle
+    | Phaser.GameObjects.Text
+    | Phaser.GameObjects.Graphics
   > = [];
-  private readonly contextActionButtons: Phaser.GameObjects.Arc[] = [];
+  private readonly contextActionButtons: Array<
+    Phaser.GameObjects.Arc | Phaser.GameObjects.Rectangle
+  > = [];
+  private readonly styleActionObjects: Array<
+    Phaser.GameObjects.Rectangle | Phaser.GameObjects.Text
+  > = [];
+  private readonly styleActionButtons: Phaser.GameObjects.Rectangle[] = [];
   private portraitMode = shouldRenderPortraitDomControls();
   private domRoot: HTMLDivElement | null = null;
   private domDpad: HTMLDivElement | null = null;
+  private domActionStack: HTMLDivElement | null = null;
   private domActionButton: HTMLButtonElement | null = null;
+  private domStyleButton: HTMLButtonElement | null = null;
   private decorateCanvasButton: Phaser.GameObjects.Arc | null = null;
   private decorateCanvasLabel: Phaser.GameObjects.Text | null = null;
+  private styleCanvasButton: Phaser.GameObjects.Rectangle | null = null;
   private visible = true;
   private scenePaused = false;
   private destroyed = false;
@@ -217,9 +233,12 @@ export class TouchMovementPad {
     this.domRoot?.remove();
     this.domRoot = null;
     this.domDpad = null;
+    this.domActionStack = null;
     this.domActionButton = null;
+    this.domStyleButton = null;
     this.decorateCanvasButton = null;
     this.decorateCanvasLabel = null;
+    this.styleCanvasButton = null;
     for (const object of this.objects) {
       object.destroy();
     }
@@ -227,6 +246,8 @@ export class TouchMovementPad {
     this.buttons.length = 0;
     this.contextActionObjects.length = 0;
     this.contextActionButtons.length = 0;
+    this.styleActionObjects.length = 0;
+    this.styleActionButtons.length = 0;
   }
 
   private applyVisibility(): void {
@@ -235,6 +256,10 @@ export class TouchMovementPad {
     const contextActionVisible = this.isCottageDecorateAction()
       ? !this.scenePaused && !modalActive
       : renderedVisible;
+    const styleActionVisible =
+      contextActionVisible &&
+      this.isCottageDecorateAction() &&
+      this.scene.data.get(COTTAGE_DECORATE_MODE_DATA_KEY) === true;
     if (modalActive) {
       this.releaseInput();
     }
@@ -246,6 +271,9 @@ export class TouchMovementPad {
     }
     if (this.domActionButton) {
       this.domActionButton.hidden = !contextActionVisible;
+    }
+    if (this.domStyleButton) {
+      this.domStyleButton.hidden = !styleActionVisible;
     }
 
     for (const object of this.objects) {
@@ -263,6 +291,16 @@ export class TouchMovementPad {
     }
     for (const button of this.contextActionButtons) {
       if (contextActionVisible) {
+        button.setInteractive({ useHandCursor: true });
+      } else {
+        button.disableInteractive();
+      }
+    }
+    for (const object of this.styleActionObjects) {
+      object.setVisible(styleActionVisible);
+    }
+    for (const button of this.styleActionButtons) {
+      if (styleActionVisible) {
         button.setInteractive({ useHandCursor: true });
       } else {
         button.disableInteractive();
@@ -319,6 +357,7 @@ export class TouchMovementPad {
     this.createButton(originX + spacing, originY, '▶', 'MOVE_X', 1, 'right');
     if (this.isCottageDecorateAction()) {
       this.createDecorateButton(1200, 600);
+      this.createRoomStyleButton(1110, 480);
     } else {
       this.createGallopButton(1200, 600);
     }
@@ -355,12 +394,26 @@ export class TouchMovementPad {
       dpad.append(button);
     }
 
+    const actionStack = globalThis.document.createElement('div');
+    actionStack.className = 'mobile-touch-action-stack';
+
     const action = globalThis.document.createElement('button');
     action.type = 'button';
     action.className = this.isCottageDecorateAction()
       ? 'mobile-touch-button mobile-touch-gallop mobile-touch-decorate'
       : 'mobile-touch-button mobile-touch-gallop';
     if (this.isCottageDecorateAction()) {
+      const styleButton = globalThis.document.createElement('button');
+      styleButton.type = 'button';
+      styleButton.className = 'mobile-touch-button mobile-touch-style';
+      styleButton.textContent = 'Room Style';
+      styleButton.setAttribute('aria-label', 'Change cottage walls, wallpaper and floor');
+      this.bindDomTap(styleButton, () => {
+        this.scene.events.emit(COTTAGE_STYLE_OPEN_EVENT);
+      });
+      actionStack.append(styleButton);
+      this.domStyleButton = styleButton;
+
       action.textContent = '✦\nDecorate';
       action.setAttribute('aria-label', 'Decorate cottage');
       this.bindDomTap(action, () => {
@@ -377,10 +430,12 @@ export class TouchMovementPad {
       );
     }
 
-    root.append(dpad, action);
+    actionStack.append(action);
+    root.append(dpad, actionStack);
     (globalThis.document.querySelector('#game-shell') ?? globalThis.document.body).append(root);
     this.domRoot = root;
     this.domDpad = dpad;
+    this.domActionStack = actionStack;
     this.domActionButton = action;
     this.refreshContextActionPresentation();
   }
@@ -499,6 +554,59 @@ export class TouchMovementPad {
       );
       this.domActionButton.classList.toggle('is-decorating', active);
     }
+    this.applyVisibility();
+  }
+
+  private createRoomStyleButton(x: number, y: number): void {
+    const width = 176;
+    const height = 58;
+    const shadow = this.scene.add
+      .rectangle(x + 5, y + 6, width + 8, height + 8, CONCEPT_UI.shadow, 0.22)
+      .setName('touch-cottage-room-style-shadow')
+      .setScrollFactor(0)
+      .setDepth(116);
+    const button = this.scene.add
+      .rectangle(x, y, width, height, CONCEPT_UI.creamHighlight, 0.98)
+      .setName('touch-cottage-room-style')
+      .setStrokeStyle(4, CONCEPT_UI.purpleStrong, 0.88)
+      .setScrollFactor(0)
+      .setDepth(117)
+      .setInteractive({ useHandCursor: true });
+    const label = this.scene.add
+      .text(x, y, 'Room Style', {
+        color: '#5c4568',
+        fontFamily: 'Trebuchet MS, Segoe UI, system-ui, sans-serif',
+        fontSize: '17px',
+        fontStyle: 'bold',
+      })
+      .setName('touch-cottage-room-style-label')
+      .setOrigin(0.5)
+      .setScrollFactor(0)
+      .setDepth(118);
+
+    const press = (): void => {
+      button.setScale(0.97);
+      label.setScale(0.97);
+    };
+    const release = (): void => {
+      button.setScale(1);
+      label.setScale(1);
+    };
+    button.on('pointerdown', press);
+    button.on('pointerup', () => {
+      release();
+      this.scene.events.emit(COTTAGE_STYLE_OPEN_EVENT);
+    });
+    button.on('pointerout', release);
+    button.on('pointerupoutside', release);
+
+    this.styleCanvasButton = button;
+    this.contextActionButtons.push(button);
+    this.contextActionObjects.push(shadow, button, label);
+    this.styleActionButtons.push(button);
+    this.styleActionObjects.push(shadow, button, label);
+    this.objects.push(shadow, button, label);
+    this.applyVisibility();
   }
 
   private createDecorateButton(x: number, y: number): void {
