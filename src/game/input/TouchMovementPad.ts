@@ -101,7 +101,7 @@ export class TouchMovementPad {
   private domStyleButton: HTMLButtonElement | null = null;
   private decorateCanvasButton: Phaser.GameObjects.Arc | null = null;
   private decorateCanvasLabel: Phaser.GameObjects.Text | null = null;
-  private styleCanvasButton: Phaser.GameObjects.Rectangle | null = null;
+  private styleCanvasButton: Phaser.GameObjects.Arc | null = null;
   private styleCanvasLabel: Phaser.GameObjects.Text | null = null;
   private visible = true;
   private scenePaused = false;
