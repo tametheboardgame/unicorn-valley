@@ -6,7 +6,8 @@ export const COTTAGE_STYLE_DESCRIPTIONS: Readonly<Record<string, string>> = {
   'cottage-wall:buttercup': 'A light sunny yellow that makes the cottage feel bright and cheerful.',
   'cottage-wallpaper:plain': 'Just the chosen wall colour, simple and cosy.',
   'cottage-wallpaper:moon-sprigs': 'Tiny moons and leafy sprigs scattered gently across the wall.',
-  'cottage-wallpaper:star-scatter': 'A quiet dusting of little stars, like bedtime light across the room.',
+  'cottage-wallpaper:star-scatter':
+    'A quiet dusting of little stars, like bedtime light across the room.',
   'cottage-wallpaper:meadow-vines': 'Soft curling vines and leaves inspired by the meadow outside.',
   'cottage-floor:honey-oak': 'Warm honey-coloured boards that preserve the original cottage feel.',
   'cottage-floor:rosewood': 'Soft rosy timber with deeper seams for a snug evening feel.',
