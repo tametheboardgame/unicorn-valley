@@ -83,11 +83,24 @@ function isWorldState(value: unknown): boolean {
   );
 }
 
-function isHomeStyleState(value: unknown): boolean {
+function isHomeWallStyleState(value: unknown): boolean {
   return (
     isRecord(value) &&
     typeof value.wallColourId === 'string' &&
-    typeof value.wallpaperId === 'string' &&
+    typeof value.wallpaperId === 'string'
+  );
+}
+
+function isHomeStyleState(value: unknown): boolean {
+  if (!isRecord(value) || !isRecord(value.walls)) {
+    return false;
+  }
+
+  return (
+    isHomeWallStyleState(value.walls.back) &&
+    isHomeWallStyleState(value.walls.left) &&
+    isHomeWallStyleState(value.walls.right) &&
+    isHomeWallStyleState(value.walls.front) &&
     typeof value.floorStyleId === 'string'
   );
 }
