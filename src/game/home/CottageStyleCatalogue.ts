@@ -1,9 +1,4 @@
 import type { CottageWallKey, HomeStyleState, HomeWallStyleState } from '../save/saveSchema';
-import {
-  DEFAULT_COTTAGE_FURNITURE_VARIANTS,
-  isKnownCottageFurnitureVariant,
-  resolveCottageFurnitureVariant,
-} from './CottageFurnitureVariantCatalogue';
 
 export type CottageWallColourId =
   | 'cottage-wall:moon-cream'
@@ -66,7 +61,12 @@ export const DEFAULT_COTTAGE_STYLE: Readonly<HomeStyleState> = {
     front: { ...DEFAULT_COTTAGE_WALL_STYLE },
   },
   floorStyleId: 'cottage-floor:honey-oak',
-  furnitureVariants: { ...DEFAULT_COTTAGE_FURNITURE_VARIANTS },
+  furnitureVariants: {
+    bed: 'cottage-furniture:bed:moonflower',
+    sofa: 'cottage-furniture:sofa:sage',
+    teaSet: 'cottage-furniture:tea-set:honey-oak',
+    fireplace: 'cottage-furniture:fireplace:warm-stone',
+  },
 };
 
 export const COTTAGE_WALL_COLOURS: readonly CottageWallColourDefinition[] = [
@@ -193,12 +193,7 @@ export function resolveCottageStyle(style: HomeStyleState): HomeStyleState {
       front: resolveCottageWallStyle(style.walls.front),
     },
     floorStyleId: getCottageFloorStyle(style.floorStyleId).id,
-    furnitureVariants: {
-      bed: resolveCottageFurnitureVariant('bed', style.furnitureVariants.bed),
-      sofa: resolveCottageFurnitureVariant('sofa', style.furnitureVariants.sofa),
-      teaSet: resolveCottageFurnitureVariant('teaSet', style.furnitureVariants.teaSet),
-      fireplace: resolveCottageFurnitureVariant('fireplace', style.furnitureVariants.fireplace),
-    },
+    furnitureVariants: { ...style.furnitureVariants },
   };
 }
 
@@ -210,11 +205,6 @@ export function isKnownCottageStyle(style: HomeStyleState): boolean {
         WALL_BY_ID.has(wall.wallColourId as CottageWallColourId) &&
         WALLPAPER_BY_ID.has(wall.wallpaperId as CottageWallpaperId)
       );
-    }) &&
-    FLOOR_BY_ID.has(style.floorStyleId as CottageFloorStyleId) &&
-    isKnownCottageFurnitureVariant('bed', style.furnitureVariants.bed) &&
-    isKnownCottageFurnitureVariant('sofa', style.furnitureVariants.sofa) &&
-    isKnownCottageFurnitureVariant('teaSet', style.furnitureVariants.teaSet) &&
-    isKnownCottageFurnitureVariant('fireplace', style.furnitureVariants.fireplace)
+    }) && FLOOR_BY_ID.has(style.floorStyleId as CottageFloorStyleId)
   );
 }
