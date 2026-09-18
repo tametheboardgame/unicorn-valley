@@ -124,7 +124,6 @@ function renderFireplace(scene: Phaser.Scene, variantId: string): void {
   const graphics = scene.add
     .graphics()
     .setName('cottage-furniture:fireplace')
-    .setData('cottage-furniture-variant', variantId)
     .setDepth(furnitureDepth('fireplace'));
   graphics.fillStyle(stone, 1);
   graphics.fillRoundedRect(left - 18, top - 6, fireplace.width + 36, fireplace.height + 25, 18);
@@ -200,7 +199,6 @@ function renderBed(scene: Phaser.Scene, variantId: string): void {
   const rear = scene.add
     .graphics()
     .setName('cottage-furniture:bed-rear')
-    .setData('cottage-furniture-variant', variantId)
     .setDepth(worldDepthForY(bed.y - 42));
 
   rear.fillStyle(timberDark, 1);
@@ -231,7 +229,6 @@ function renderBed(scene: Phaser.Scene, variantId: string): void {
   const foreground = scene.add
     .graphics()
     .setName('cottage-furniture:bed-foreground')
-    .setData('cottage-furniture-variant', variantId)
     .setDepth(furnitureDepth('bed'));
 
   foreground.fillStyle(blanket, 0.96);
@@ -301,7 +298,6 @@ function renderTeaTable(scene: Phaser.Scene, variantId: string): void {
   const tabletop = scene.add
     .graphics()
     .setName('cottage-furniture:tea-table')
-    .setData('cottage-furniture-variant', variantId)
     .setDepth(furnitureDepth('tea-table'));
   tabletop.fillStyle(timberDark, 1);
   tabletop.fillEllipse(table.x, table.y + 13, width + 10, height + 3);
@@ -352,7 +348,6 @@ function renderSofa(scene: Phaser.Scene, variantId: string): void {
   const graphics = scene.add
     .graphics()
     .setName('cottage-furniture:sofa')
-    .setData('cottage-furniture-variant', variantId)
     .setDepth(furnitureDepth('sofa'));
   const armWidth = 36;
   const innerLeft = left + armWidth;
