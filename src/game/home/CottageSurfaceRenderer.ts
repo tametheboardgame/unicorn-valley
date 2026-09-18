@@ -8,7 +8,7 @@ import {
 } from './CottageStyleCatalogue';
 import { COTTAGE_INTERIOR_MAP } from '../world/CottageInteriorMap';
 
-export interface CottageSurfacePreviewBounds {
+interface CottageSurfaceBounds {
   x: number;
   y: number;
   width: number;
@@ -33,7 +33,7 @@ function drawStar(
 function drawWallpaperPattern(
   graphics: Phaser.GameObjects.Graphics,
   style: HomeStyleState,
-  bounds: CottageSurfacePreviewBounds,
+  bounds: CottageSurfaceBounds,
   scale = 1,
 ): void {
   const wallpaper = getCottageWallpaper(style.wallpaperId);
@@ -92,7 +92,7 @@ function drawWallpaperPattern(
 function drawFloorBoards(
   graphics: Phaser.GameObjects.Graphics,
   style: HomeStyleState,
-  bounds: CottageSurfacePreviewBounds,
+  bounds: CottageSurfaceBounds,
   scale = 1,
 ): void {
   const floor = getCottageFloorStyle(style.floorStyleId);
@@ -216,69 +216,3 @@ export function renderCottageRoomSurfaces(
   return objects;
 }
 
-export function drawCottageStylePreview(
-  graphics: Phaser.GameObjects.Graphics,
-  persistedStyle: HomeStyleState,
-  bounds: CottageSurfacePreviewBounds,
-): void {
-  const style = resolveCottageStyle(persistedStyle);
-  const wall = getCottageWallColour(style.wallColourId);
-  const floor = getCottageFloorStyle(style.floorStyleId);
-  const wallHeight = bounds.height * 0.48;
-  const floorHeight = bounds.height - wallHeight;
-  const wallBounds = {
-    x: bounds.x,
-    y: bounds.y - bounds.height / 2 + wallHeight / 2,
-    width: bounds.width,
-    height: wallHeight,
-  };
-  const floorBounds = {
-    x: bounds.x,
-    y: bounds.y + bounds.height / 2 - floorHeight / 2,
-    width: bounds.width,
-    height: floorHeight,
-  };
-  const scale = Math.max(0.34, Math.min(0.62, bounds.width / 900));
-
-  graphics.clear();
-  graphics.fillStyle(0x3b284d, 0.18);
-  graphics.fillRoundedRect(
-    bounds.x - bounds.width / 2 + 7,
-    bounds.y - bounds.height / 2 + 9,
-    bounds.width,
-    bounds.height,
-    24,
-  );
-  graphics.fillStyle(wall.fill, 1);
-  graphics.fillRoundedRect(
-    wallBounds.x - wallBounds.width / 2,
-    wallBounds.y - wallBounds.height / 2,
-    wallBounds.width,
-    wallBounds.height + 18,
-    20,
-  );
-  drawWallpaperPattern(graphics, style, wallBounds, scale);
-  drawFloorBoards(graphics, style, floorBounds, scale);
-
-  graphics.lineStyle(5, 0xb98b72, 0.88);
-  graphics.strokeRoundedRect(
-    bounds.x - bounds.width / 2,
-    bounds.y - bounds.height / 2,
-    bounds.width,
-    bounds.height,
-    20,
-  );
-
-  const sofaY = bounds.y + bounds.height * 0.21;
-  graphics.fillStyle(0x6fa08e, 0.95);
-  graphics.fillRoundedRect(bounds.x + bounds.width * 0.16, sofaY - 32, bounds.width * 0.2, 64, 16);
-  graphics.fillStyle(0xc59ad6, 0.94);
-  graphics.fillRoundedRect(bounds.x + bounds.width * 0.185, sofaY - 20, 36, 32, 8);
-  graphics.fillStyle(0xf0cf74, 0.94);
-  graphics.fillRoundedRect(bounds.x + bounds.width * 0.245, sofaY - 20, 36, 32, 8);
-
-  const tableY = bounds.y + bounds.height * 0.12;
-  graphics.fillStyle(0xa77758, 0.95);
-  graphics.fillEllipse(bounds.x - bounds.width * 0.14, tableY, 118, 52);
-  graphics.fillRect(bounds.x - bounds.width * 0.14 - 9, tableY + 20, 18, 42);
-}
