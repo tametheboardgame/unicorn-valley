@@ -216,7 +216,7 @@ function renderBed(scene: Phaser.Scene, variantId: string): void {
   rear.fillStyle(linen, 1);
   rear.fillRoundedRect(left + 28, pillowY, pillowWidth, 43, 15);
   rear.fillRoundedRect(left + 28 + pillowWidth + pillowGap, pillowY, pillowWidth, 43, 15);
-  rear.lineStyle(2, blanketDark, 0.7);
+  rear.lineStyle(2, PALETTE.creamShade, 0.7);
   rear.strokeRoundedRect(left + 28, pillowY, pillowWidth, 43, 15);
   rear.strokeRoundedRect(left + 28 + pillowWidth + pillowGap, pillowY, pillowWidth, 43, 15);
 
@@ -321,7 +321,7 @@ function renderTeaTable(scene: Phaser.Scene, variantId: string): void {
     tabletop.fillEllipse(table.x + dx, table.y + 14, 22, 16);
     tabletop.lineStyle(3, accent, 0.9);
     tabletop.strokeCircle(table.x + dx + Math.sign(dx) * 10, table.y + 14, 5);
-    tabletop.lineStyle(2, timberLight, 0.8);
+    tabletop.lineStyle(2, PALETTE.creamShade, 0.8);
     tabletop.strokeEllipse(table.x + dx, table.y + 20, 28, 8);
   }
 }
