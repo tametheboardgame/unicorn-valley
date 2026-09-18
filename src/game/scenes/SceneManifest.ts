@@ -126,6 +126,13 @@ export const SCENE_MANIFEST = [
     async () => (await import('./FireflyGroveScene')).FireflyGroveScene,
   ),
   runtime(
+    'CottageStyleScene',
+    'modal',
+    'on-demand',
+    'feature',
+    async () => (await import('./CottageStyleScene')).CottageStyleScene,
+  ),
+  runtime(
     'SettingsScene',
     'modal',
     'on-demand',
