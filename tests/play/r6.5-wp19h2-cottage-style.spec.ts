@@ -56,6 +56,23 @@ async function startScene(page: Page, key: string, data?: object): Promise<void>
   }, key);
 }
 
+async function switchScene(page: Page, key: string, data?: object): Promise<void> {
+  await page.evaluate(
+    ({ sceneKey, sceneData }) => {
+      (
+        window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics }
+      ).__UNICORN_VALLEY_DIAGNOSTICS__?.startScene(sceneKey, sceneData);
+    },
+    { sceneKey: key, sceneData: data },
+  );
+  await page.waitForFunction((sceneKey) => {
+    const activeScenes = (
+      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__?.snapshot().activeScenes;
+    return activeScenes?.length === 1 && activeScenes[0] === sceneKey;
+  }, key);
+}
+
 function scene(value: Snapshot, key: string): SceneSnapshot {
   const found = value.scenes.find((candidate) => candidate.key === key);
   if (!found) throw new Error(`Missing ${key}`);
@@ -175,4 +192,24 @@ test('H2.6 previews and persists named wall, wallpaper and floor styles', async 
   expect(
     hasObject(value, 'CottageInteriorScene', 'cottage-style-floor:cottage-floor:rosewood'),
   ).toBe(true);
+
+  // Exact regression: editor return resumes Decorate mode once, Done clears it, and a later
+  // ordinary leave/re-entry must not resurrect that transient editor-return state.
+  await tapScreen(page, 1200, 600);
+  await expect
+    .poll(async () =>
+      hasObject(await snapshot(page), 'CottageInteriorScene', 'touch-cottage-room-style'),
+    )
+    .toBe(false);
+
+  await switchScene(page, 'MoonflowerGladeScene');
+  await switchScene(page, 'CottageInteriorScene');
+
+  value = await snapshot(page);
+  expect(hasObject(value, 'CottageInteriorScene', 'touch-cottage-room-style')).toBe(false);
+  expect(
+    scene(value, 'CottageInteriorScene').objects.filter(({ name }) =>
+      name.startsWith('cottage-decorate-marker:'),
+    ),
+  ).toHaveLength(0);
 });
