@@ -38,8 +38,24 @@ export function createDefaultSave(timestamp: string = new Date().toISOString()):
       furnitureBySlot: {},
       gardenFlags: {},
       style: {
-        wallColourId: 'cottage-wall:moon-cream',
-        wallpaperId: 'cottage-wallpaper:plain',
+        walls: {
+          back: {
+            wallColourId: 'cottage-wall:moon-cream',
+            wallpaperId: 'cottage-wallpaper:plain',
+          },
+          left: {
+            wallColourId: 'cottage-wall:moon-cream',
+            wallpaperId: 'cottage-wallpaper:plain',
+          },
+          right: {
+            wallColourId: 'cottage-wall:moon-cream',
+            wallpaperId: 'cottage-wallpaper:plain',
+          },
+          front: {
+            wallColourId: 'cottage-wall:moon-cream',
+            wallpaperId: 'cottage-wallpaper:plain',
+          },
+        },
         floorStyleId: 'cottage-floor:honey-oak',
       },
     },
