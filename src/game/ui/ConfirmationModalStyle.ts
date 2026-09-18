@@ -1,10 +1,5 @@
 import Phaser from 'phaser';
-import {
-  CONCEPT_UI,
-  createFixedGraphics,
-  drawPanelShadow,
-  drawRoundedPanel,
-} from './ConceptUi';
+import { CONCEPT_UI, createFixedGraphics, drawPanelShadow, drawRoundedPanel } from './ConceptUi';
 import { UI_DESIGN_TOKENS } from './UiDesignSystem';
 import { createUiActionHitTarget } from './UiPrimitives';
 
