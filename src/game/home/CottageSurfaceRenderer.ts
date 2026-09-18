@@ -138,7 +138,13 @@ export function renderCottageRoomSurfaces(
 
   objects.push(
     scene.add
-      .rectangle(COTTAGE_INTERIOR_MAP.width / 2, COTTAGE_INTERIOR_MAP.height / 2, COTTAGE_INTERIOR_MAP.width, COTTAGE_INTERIOR_MAP.height, 0xf4ddc7)
+      .rectangle(
+        COTTAGE_INTERIOR_MAP.width / 2,
+        COTTAGE_INTERIOR_MAP.height / 2,
+        COTTAGE_INTERIOR_MAP.width,
+        COTTAGE_INTERIOR_MAP.height,
+        0xf4ddc7,
+      )
       .setName('cottage-style-outside-room')
       .setDepth(0),
   );
