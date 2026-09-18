@@ -37,6 +37,11 @@ export function createDefaultSave(timestamp: string = new Date().toISOString()):
       ownedFurnitureIds: [],
       furnitureBySlot: {},
       gardenFlags: {},
+      style: {
+        wallColourId: 'cottage-wall:moon-cream',
+        wallpaperId: 'cottage-wallpaper:plain',
+        floorStyleId: 'cottage-floor:honey-oak',
+      },
     },
     activities: {
       racesById: {},
