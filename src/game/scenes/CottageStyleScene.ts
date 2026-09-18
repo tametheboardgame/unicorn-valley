@@ -275,11 +275,7 @@ export class CottageStyleScene extends Phaser.Scene {
       const selected = category === this.category;
       button
         .setFillStyle(selected ? UI_COLOURS.gold : UI_COLOURS.lavender, 1)
-        .setStrokeStyle(
-          4,
-          selected ? UI_COLOURS.goldStrong : UI_COLOURS.lavenderStrong,
-          1,
-        );
+        .setStrokeStyle(4, selected ? UI_COLOURS.goldStrong : UI_COLOURS.lavenderStrong, 1);
     }
   }
 
