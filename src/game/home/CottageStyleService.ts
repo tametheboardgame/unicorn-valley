@@ -17,7 +17,7 @@ export class CottageStyleService {
   public applyStyle(style: HomeStyleState): HomeStyleState {
     if (!isKnownCottageStyle(style)) {
       throw new Error(
-        'Cottage style contains an unknown wall, wallpaper, floor or furniture variant ID.',
+        'Cottage style contains an unknown wall, wallpaper or floor ID.',
       );
     }
 
