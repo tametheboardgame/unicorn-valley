@@ -1,4 +1,4 @@
-import type { HomeStyleState } from '../save/saveSchema';
+import type { CottageWallKey, HomeStyleState, HomeWallStyleState } from '../save/saveSchema';
 
 export type CottageWallColourId =
   | 'cottage-wall:moon-cream'
@@ -48,9 +48,27 @@ export interface CottageFloorStyleDefinition {
   starter: true;
 }
 
-export const DEFAULT_COTTAGE_STYLE: Readonly<HomeStyleState> = {
+export const COTTAGE_WALL_KEYS = ['back', 'left', 'right', 'front'] as const satisfies readonly CottageWallKey[];
+
+export const COTTAGE_WALL_LABELS: Readonly<Record<CottageWallKey, string>> = {
+  back: 'Back',
+  left: 'Left',
+  right: 'Right',
+  front: 'Front / Door',
+};
+
+export const DEFAULT_COTTAGE_WALL_STYLE: Readonly<HomeWallStyleState> = {
   wallColourId: 'cottage-wall:moon-cream',
   wallpaperId: 'cottage-wallpaper:plain',
+};
+
+export const DEFAULT_COTTAGE_STYLE: Readonly<HomeStyleState> = {
+  walls: {
+    back: { ...DEFAULT_COTTAGE_WALL_STYLE },
+    left: { ...DEFAULT_COTTAGE_WALL_STYLE },
+    right: { ...DEFAULT_COTTAGE_WALL_STYLE },
+    front: { ...DEFAULT_COTTAGE_WALL_STYLE },
+  },
   floorStyleId: 'cottage-floor:honey-oak',
 };
 
@@ -175,14 +193,14 @@ const FLOOR_BY_ID = new Map(COTTAGE_FLOOR_STYLES.map((definition) => [definition
 export function getCottageWallColour(id: string): CottageWallColourDefinition {
   return (
     WALL_BY_ID.get(id as CottageWallColourId) ??
-    WALL_BY_ID.get(DEFAULT_COTTAGE_STYLE.wallColourId as CottageWallColourId)!
+    WALL_BY_ID.get(DEFAULT_COTTAGE_WALL_STYLE.wallColourId as CottageWallColourId)!
   );
 }
 
 export function getCottageWallpaper(id: string): CottageWallpaperDefinition {
   return (
     WALLPAPER_BY_ID.get(id as CottageWallpaperId) ??
-    WALLPAPER_BY_ID.get(DEFAULT_COTTAGE_STYLE.wallpaperId as CottageWallpaperId)!
+    WALLPAPER_BY_ID.get(DEFAULT_COTTAGE_WALL_STYLE.wallpaperId as CottageWallpaperId)!
   );
 }
 
@@ -193,18 +211,33 @@ export function getCottageFloorStyle(id: string): CottageFloorStyleDefinition {
   );
 }
 
-export function resolveCottageStyle(style: HomeStyleState): HomeStyleState {
+export function resolveCottageWallStyle(style: HomeWallStyleState): HomeWallStyleState {
   return {
     wallColourId: getCottageWallColour(style.wallColourId).id,
     wallpaperId: getCottageWallpaper(style.wallpaperId).id,
+  };
+}
+
+export function resolveCottageStyle(style: HomeStyleState): HomeStyleState {
+  return {
+    walls: {
+      back: resolveCottageWallStyle(style.walls.back),
+      left: resolveCottageWallStyle(style.walls.left),
+      right: resolveCottageWallStyle(style.walls.right),
+      front: resolveCottageWallStyle(style.walls.front),
+    },
     floorStyleId: getCottageFloorStyle(style.floorStyleId).id,
   };
 }
 
 export function isKnownCottageStyle(style: HomeStyleState): boolean {
   return (
-    WALL_BY_ID.has(style.wallColourId as CottageWallColourId) &&
-    WALLPAPER_BY_ID.has(style.wallpaperId as CottageWallpaperId) &&
-    FLOOR_BY_ID.has(style.floorStyleId as CottageFloorStyleId)
+    COTTAGE_WALL_KEYS.every((wallKey) => {
+      const wall = style.walls[wallKey];
+      return (
+        WALL_BY_ID.has(wall.wallColourId as CottageWallColourId) &&
+        WALLPAPER_BY_ID.has(wall.wallpaperId as CottageWallpaperId)
+      );
+    }) && FLOOR_BY_ID.has(style.floorStyleId as CottageFloorStyleId)
   );
 }
