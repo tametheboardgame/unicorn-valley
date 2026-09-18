@@ -106,7 +106,9 @@ export class CottageInteriorScene extends Phaser.Scene {
     this.renderHomeState(homeView);
     this.normalInteractions = this.createNormalInteractions(homeView);
     this.decorationInteractions = this.createDecorationInteractions(homeView);
-    this.interactions = this.decorateModeActive ? this.decorationInteractions : this.normalInteractions;
+    this.interactions = this.decorateModeActive
+      ? this.decorationInteractions
+      : this.normalInteractions;
 
     const appearance = parseUnicornAppearance(save.profile.appearance);
     createUnicornAppearanceTexture(this, SAVED_PLAYER_TEXTURE_KEY, appearance);
