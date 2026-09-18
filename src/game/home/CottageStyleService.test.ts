@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import type { SaveRepository } from '../save/SaveRepository';
 import { SaveService } from '../save/SaveService';
-import { DEFAULT_COTTAGE_STYLE, resolveCottageStyle } from './CottageStyleCatalogue';
+import { createDefaultSave } from '../save/createDefaultSave';
+import { resolveCottageStyle } from './CottageStyleCatalogue';
+
+const DEFAULT_COTTAGE_STYLE = createDefaultSave('2026-01-01T00:00:00.000Z').home.style;
 import { CottageStyleService } from './CottageStyleService';
 
 class MemorySaveRepository implements SaveRepository {
