@@ -57,6 +57,12 @@ export function createDefaultSave(timestamp: string = new Date().toISOString()):
           },
         },
         floorStyleId: 'cottage-floor:honey-oak',
+        furnitureVariants: {
+          bed: 'cottage-furniture:bed:moonflower',
+          sofa: 'cottage-furniture:sofa:sage',
+          teaSet: 'cottage-furniture:tea-set:honey-oak',
+          fireplace: 'cottage-furniture:fireplace:warm-stone',
+        },
       },
     },
     activities: {
