@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { INTERACTIVE_GATEWAY_RADIUS } from '../../src/game/world/RegionGatewayRules';
+import { CURRENT_SAVE_SCHEMA_VERSION } from '../../src/game/save/saveSchema';\nimport { INTERACTIVE_GATEWAY_RADIUS } from '../../src/game/world/RegionGatewayRules';
 
 const WORLD_PLAYER_NAME = 'world-player-unicorn';
 const CASCADE_TAP_TARGET = 'r6-wp6.18ij:crystal-cascade-tap-target';
@@ -93,7 +93,7 @@ function named(scene: DiagnosticScene, name: string): DiagnosticObject {
 async function unlockCrystalCascade(page: Page): Promise<void> {
   await page.evaluate((raceId) => {
     const primaryKey = 'unicorn-valley.save';
-    const checkpointKey = `${primaryKey}.schema.2`;
+    const checkpointKey = `${primaryKey}.schema.${CURRENT_SAVE_SCHEMA_VERSION}`;
     const raw = localStorage.getItem(checkpointKey) ?? localStorage.getItem(primaryKey);
     if (!raw) {
       throw new Error('Expected Crystal Brook to create a save before unlocking the race.');
