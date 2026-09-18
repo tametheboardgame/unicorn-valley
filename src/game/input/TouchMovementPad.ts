@@ -101,12 +101,10 @@ export class TouchMovementPad {
   private portraitMode = shouldRenderPortraitDomControls();
   private domRoot: HTMLDivElement | null = null;
   private domDpad: HTMLDivElement | null = null;
-  private domActionStack: HTMLDivElement | null = null;
   private domActionButton: HTMLButtonElement | null = null;
   private domStyleButton: HTMLButtonElement | null = null;
   private decorateCanvasButton: Phaser.GameObjects.Arc | null = null;
   private decorateCanvasLabel: Phaser.GameObjects.Text | null = null;
-  private styleCanvasButton: Phaser.GameObjects.Rectangle | null = null;
   private visible = true;
   private scenePaused = false;
   private destroyed = false;
@@ -233,12 +231,10 @@ export class TouchMovementPad {
     this.domRoot?.remove();
     this.domRoot = null;
     this.domDpad = null;
-    this.domActionStack = null;
     this.domActionButton = null;
     this.domStyleButton = null;
     this.decorateCanvasButton = null;
     this.decorateCanvasLabel = null;
-    this.styleCanvasButton = null;
     for (const object of this.objects) {
       object.destroy();
     }
@@ -435,7 +431,6 @@ export class TouchMovementPad {
     (globalThis.document.querySelector('#game-shell') ?? globalThis.document.body).append(root);
     this.domRoot = root;
     this.domDpad = dpad;
-    this.domActionStack = actionStack;
     this.domActionButton = action;
     this.refreshContextActionPresentation();
   }
@@ -600,7 +595,6 @@ export class TouchMovementPad {
     button.on('pointerout', release);
     button.on('pointerupoutside', release);
 
-    this.styleCanvasButton = button;
     this.contextActionButtons.push(button);
     this.contextActionObjects.push(shadow, button, label);
     this.styleActionButtons.push(button);
