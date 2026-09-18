@@ -121,6 +121,7 @@ const migrateV4ToV5: SaveMigration = (save) => {
     home: {
       ...home,
       style: {
+        ...defaults.home.style,
         ...sourceStyle,
         furnitureVariants: { ...defaults.home.style.furnitureVariants },
       },
