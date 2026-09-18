@@ -1,3 +1,4 @@
+import { CURRENT_SAVE_SCHEMA_VERSION } from '../../src/game/save/saveSchema';
 import { expect, test, type Page } from '@playwright/test';
 
 const SAVE_KEY = 'unicorn-valley.save';
@@ -124,7 +125,7 @@ test('corrupt primary save recovers from the last-known-good browser backup', as
     SAVE_KEY,
   );
   expect(repaired.profile.name).toBe('Starlight');
-  expect(repaired.schemaVersion).toBe(2);
+  expect(repaired.schemaVersion).toBe(CURRENT_SAVE_SCHEMA_VERSION);
 });
 
 test('denied browser storage renders a recoverable title state', async ({ page }) => {
@@ -152,7 +153,7 @@ test('denied browser storage renders a recoverable title state', async ({ page }
   expect(visibleText).not.toContain('New Game');
 });
 
-test('schema-v1 browser save is backed up before automatic migration to v2', async ({ page }) => {
+test('schema-v1 browser save is backed up before automatic migration to current schema', async ({ page }) => {
   const historical = createStoredSave('Moonbeam', 1);
   await page.addInitScript(
     ({ saveKey, backupKey, historicalSave }) => {
@@ -173,7 +174,7 @@ test('schema-v1 browser save is backed up before automatic migration to v2', asy
     { saveKey: SAVE_KEY, backupKey: BACKUP_KEY },
   );
 
-  expect(stored.primary.schemaVersion).toBe(2);
+  expect(stored.primary.schemaVersion).toBe(CURRENT_SAVE_SCHEMA_VERSION);
   expect(stored.primary.profile.name).toBe('Moonbeam');
   expect(stored.backup.schemaVersion).toBe(1);
   expect(stored.backup.profile.name).toBe('Moonbeam');
