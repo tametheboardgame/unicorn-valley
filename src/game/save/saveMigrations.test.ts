@@ -49,6 +49,12 @@ describe('migrateSaveRecord', () => {
         },
       },
       floorStyleId: 'cottage-floor:honey-oak',
+      furnitureVariants: {
+        bed: 'cottage-furniture:bed:moonflower',
+        sofa: 'cottage-furniture:sofa:sage',
+        teaSet: 'cottage-furniture:tea-set:honey-oak',
+        fireplace: 'cottage-furniture:fireplace:warm-stone',
+      },
     });
   });
 
@@ -90,6 +96,12 @@ describe('migrateSaveRecord', () => {
         },
       },
       floorStyleId: 'cottage-floor:honey-oak',
+      furnitureVariants: {
+        bed: 'cottage-furniture:bed:moonflower',
+        sofa: 'cottage-furniture:sofa:sage',
+        teaSet: 'cottage-furniture:tea-set:honey-oak',
+        fireplace: 'cottage-furniture:fireplace:warm-stone',
+      },
     });
   });
 
@@ -123,6 +135,34 @@ describe('migrateSaveRecord', () => {
     expect(migrated.home.style.floorStyleId).toBe('cottage-floor:rosewood');
   });
 
+  it('adds appearance-preserving furniture variants when migrating schema v4', () => {
+    const currentFixture = createR4LongRunningSaveFixture();
+    const historicalV4 = {
+      ...currentFixture,
+      schemaVersion: 4,
+      home: {
+        ...currentFixture.home,
+        style: {
+          walls: currentFixture.home.style.walls,
+          floorStyleId: currentFixture.home.style.floorStyleId,
+        },
+      },
+    };
+
+    const migrated = migrateSaveRecord(historicalV4);
+    expect(migrated && isSaveGame(migrated)).toBe(true);
+    if (!migrated || !isSaveGame(migrated)) {
+      throw new Error('Expected the schema-v4 fixture to migrate to a valid current save.');
+    }
+
+    expect(migrated.home.style.furnitureVariants).toEqual({
+      bed: 'cottage-furniture:bed:moonflower',
+      sofa: 'cottage-furniture:sofa:sage',
+      teaSet: 'cottage-furniture:tea-set:honey-oak',
+      fireplace: 'cottage-furniture:fireplace:warm-stone',
+    });
+  });
+
   it('applies migrations sequentially', () => {
     const toVersionOne: SaveMigration = (save) => ({
       ...save,
@@ -144,11 +184,17 @@ describe('migrateSaveRecord', () => {
       schemaVersion: 4,
       fourthMigration: true,
     });
+    const toVersionFive: SaveMigration = (save) => ({
+      ...save,
+      schemaVersion: 5,
+      fifthMigration: true,
+    });
     const migrations = new Map([
       [0, toVersionOne],
       [1, toVersionTwo],
       [2, toVersionThree],
       [3, toVersionFour],
+      [4, toVersionFive],
     ]);
 
     expect(migrateSaveRecord({ schemaVersion: 0 }, migrations)).toEqual({
@@ -157,6 +203,7 @@ describe('migrateSaveRecord', () => {
       secondMigration: true,
       thirdMigration: true,
       fourthMigration: true,
+      fifthMigration: true,
     });
   });
 
