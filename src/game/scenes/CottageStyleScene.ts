@@ -5,7 +5,6 @@ import {
   COTTAGE_WALLPAPERS,
   COTTAGE_WALL_COLOURS,
   COTTAGE_WALL_KEYS,
-  COTTAGE_WALL_LABELS,
   getCottageFloorStyle,
   getCottageWallpaper,
   getCottageWallColour,
@@ -13,7 +12,7 @@ import {
   type CottageWallpaperDefinition,
   type CottageWallColourDefinition,
 } from '../home/CottageStyleCatalogue';
-import { getCottageStyleDescription } from '../home/CottageStyleCopy';
+import { COTTAGE_WALL_LABELS, getCottageStyleDescription } from '../home/CottageStyleCopy';
 import { CottageStyleService } from '../home/CottageStyleService';
 import { drawCottageStylePreview } from '../home/CottageStylePreviewRenderer';
 import { getBrowserSaveService } from '../save/browserSaveService';
