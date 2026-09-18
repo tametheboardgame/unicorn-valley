@@ -2,13 +2,6 @@ import type { CottageFurnitureStyleKey } from '../save/saveSchema';
 
 export type CottageFurniturePalette = readonly [primary: number, secondary: number];
 
-const PATH: Readonly<Record<CottageFurnitureStyleKey, string>> = {
-  bed: 'bed',
-  sofa: 'sofa',
-  teaSet: 'tea-set',
-  fireplace: 'fireplace',
-};
-
 const PALETTES: Readonly<
   Record<CottageFurnitureStyleKey, Readonly<Record<string, CottageFurniturePalette>>>
 > = {
@@ -34,47 +27,18 @@ const PALETTES: Readonly<
   },
 };
 
-export const DEFAULT_COTTAGE_FURNITURE_VARIANTS: Readonly<
-  Record<CottageFurnitureStyleKey, string>
-> = {
-  bed: 'cottage-furniture:bed:moonflower',
-  sofa: 'cottage-furniture:sofa:sage',
-  teaSet: 'cottage-furniture:tea-set:honey-oak',
-  fireplace: 'cottage-furniture:fireplace:warm-stone',
+const FALLBACK: Readonly<Record<CottageFurnitureStyleKey, string>> = {
+  bed: 'moonflower',
+  sofa: 'sage',
+  teaSet: 'honey-oak',
+  fireplace: 'warm-stone',
 };
-
-function tokenFromId(variantId: string): string {
-  return variantId.slice(variantId.lastIndexOf(':') + 1);
-}
-
-export function getCottageFurnitureVariantIds(
-  furnitureKey: CottageFurnitureStyleKey,
-): readonly string[] {
-  const prefix = `cottage-furniture:${PATH[furnitureKey]}:`;
-  return Object.keys(PALETTES[furnitureKey]).map((token) => `${prefix}${token}`);
-}
-
-export function isKnownCottageFurnitureVariant(
-  furnitureKey: CottageFurnitureStyleKey,
-  variantId: string,
-): boolean {
-  const prefix = `cottage-furniture:${PATH[furnitureKey]}:`;
-  return variantId.startsWith(prefix) && tokenFromId(variantId) in PALETTES[furnitureKey];
-}
-
-export function resolveCottageFurnitureVariant(
-  furnitureKey: CottageFurnitureStyleKey,
-  variantId: string,
-): string {
-  return isKnownCottageFurnitureVariant(furnitureKey, variantId)
-    ? variantId
-    : DEFAULT_COTTAGE_FURNITURE_VARIANTS[furnitureKey];
-}
 
 export function getCottageFurniturePalette(
   furnitureKey: CottageFurnitureStyleKey,
   variantId: string,
 ): CottageFurniturePalette {
-  const resolved = resolveCottageFurnitureVariant(furnitureKey, variantId);
-  return PALETTES[furnitureKey][tokenFromId(resolved)]!;
+  const variants = PALETTES[furnitureKey];
+  const token = variantId.slice(variantId.lastIndexOf(':') + 1);
+  return variants[token] ?? variants[FALLBACK[furnitureKey]]!;
 }
