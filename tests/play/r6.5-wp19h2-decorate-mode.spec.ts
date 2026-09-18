@@ -73,7 +73,7 @@ async function tapScreen(page: Page, x: number, y: number): Promise<void> {
 
 test.use({ hasTouch: true, viewport: { width: 1024, height: 768 } });
 
-test('H2.5 keeps normal cottage clean and makes decoration slots exclusive to Decorate mode', async ({
+test('H2.5 keeps normal play clean, replaces Gallop with Decorate, and confirms doorway exit', async ({
   page,
 }) => {
   await page.goto('/?diagnostics=1');
