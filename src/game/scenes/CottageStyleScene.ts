@@ -9,7 +9,7 @@ import {
   getCottageWallColour,
 } from '../home/CottageStyleCatalogue';
 import { CottageStyleService } from '../home/CottageStyleService';
-import { drawCottageStylePreview } from '../home/CottageSurfaceRenderer';
+import { drawCottageStylePreview } from '../home/CottageStylePreviewRenderer';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import type { HomeStyleState } from '../save/saveSchema';
 import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from '../ui/uiTheme';
