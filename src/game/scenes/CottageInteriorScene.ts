@@ -529,13 +529,18 @@ export class CottageInteriorScene extends Phaser.Scene {
       .setScrollFactor(0)
       .setDepth(20_302);
     const hint = this.add
-      .text(centreX, centreY - 14, 'Choose Yes to finish decorating, then you can leave the cottage.', {
-        color: '#5b6670',
-        fontFamily: 'Trebuchet MS, Segoe UI, system-ui, sans-serif',
-        fontSize: '15px',
-        align: 'center',
-        wordWrap: { width: 430 },
-      })
+      .text(
+        centreX,
+        centreY - 14,
+        'Choose Yes to finish decorating, then you can leave the cottage.',
+        {
+          color: '#5b6670',
+          fontFamily: 'Trebuchet MS, Segoe UI, system-ui, sans-serif',
+          fontSize: '15px',
+          align: 'center',
+          wordWrap: { width: 430 },
+        },
+      )
       .setName('cottage-finish-decorating-hint')
       .setOrigin(0.5)
       .setScrollFactor(0)
