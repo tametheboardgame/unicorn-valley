@@ -119,11 +119,7 @@ test('H2.6 previews and persists named wall, wallpaper and floor styles', async 
     ),
   ).toBe(true);
   expect(
-    hasObject(
-      value,
-      'CottageStyleScene',
-      'cottage-style-wall-swatch-cottage-wall:moon-cream',
-    ),
+    hasObject(value, 'CottageStyleScene', 'cottage-style-wall-swatch-cottage-wall:moon-cream'),
   ).toBe(true);
 
   await tapScreen(page, 843, 310);
