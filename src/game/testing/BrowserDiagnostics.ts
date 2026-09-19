@@ -5,6 +5,7 @@ import {
 } from '../performance/FramePerformance';
 import { getPlayerEntityFacing } from '../player/PlayerEntity';
 import { selectRaceCourse } from '../racing/RaceCourse';
+import { SCENE_MANIFEST } from '../scenes/SceneManifest';
 
 const MAX_EVENTS = 240;
 const MAX_FRAME_SAMPLES = 180;
@@ -549,9 +550,16 @@ export function installBrowserDiagnostics(game: Phaser.Game): BrowserDiagnostics
       lastError = null;
       sampleSceneStates();
     },
-    startScene: (sceneKey, data) => {
+    startScene: async (sceneKey, data) => {
       if (!game.scene.keys[sceneKey]) {
-        throw new Error(`Cannot start diagnostic scene ${sceneKey}: scene is not registered.`);
+        const entry = SCENE_MANIFEST.find((candidate) => candidate.key === sceneKey);
+        if (!entry || entry.loadBoundary === 'startup') {
+          throw new Error(`Cannot start diagnostic scene ${sceneKey}: scene is not registered.`);
+        }
+        const SceneConstructor = await entry.load();
+        if (!game.scene.keys[sceneKey]) {
+          game.scene.add(sceneKey, SceneConstructor, false);
+        }
       }
       for (const activeScene of game.scene.getScenes(true)) {
         if (activeScene.scene.key !== sceneKey) {
