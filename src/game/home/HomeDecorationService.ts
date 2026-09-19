@@ -3,7 +3,11 @@ import { itemRegistry } from '../../content/registries';
 import { type GameEventMap, type TypedEventBus, gameEventBus } from '../events/GameEventBus';
 import type { SaveService } from '../save/SaveService';
 import type { SaveGame } from '../save/saveSchema';
-import { COTTAGE_INTERIOR_MAP, type CottageDecorationSlot } from '../world/CottageInteriorMap';
+import {
+  COTTAGE_INTERIOR_MAP,
+  isCottagePointInsideReservedZone,
+  type CottageDecorationSlot,
+} from '../world/CottageInteriorMap';
 import { canPlaceDecorationInCategory } from './CottageDecorationCatalogue';
 
 export interface OwnedDecoration {
@@ -47,6 +51,13 @@ function requireSlot(slotId: string): CottageDecorationSlot {
   const slot = COTTAGE_DECORATION_SLOTS.find((candidate) => candidate.id === slotId);
   if (!slot) {
     throw new Error(`Unknown cottage decoration slot: ${slotId}`);
+  }
+
+  const protectedZone = isCottagePointInsideReservedZone(slot.position, 46);
+  if (protectedZone) {
+    throw new Error(
+      `Cottage decoration slot overlaps protected story capacity: ${slot.id} / ${protectedZone.anchorId}`,
+    );
   }
 
   return slot;
