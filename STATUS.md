@@ -28,7 +28,7 @@ A later documentation/status-only head triggered a full Chromium run in which on
 
 ## Current gate
 
-H2.8 implementation is complete at `8f5a65b043cf1e934101e6790874a240f5e1863e` and local technical qualification passes. Exact-head CI is pending after publication. The package is waiting for David’s place/replace/move/remove playtest; it is not human-approved.
+H2.8 implementation is complete at `8f5a65b043cf1e934101e6790874a240f5e1863e` and local technical qualification passes. Exact-head CI run `35426875922` exposed invalid project-state enum values only; the values are corrected and replacement exact-head CI is pending. The package is waiting for David’s place/replace/move/remove playtest; it is not human-approved.
 
 The next human gate is the H2.8 place/replace/move/remove playtest. Do not start H2.9, merge PR #175 or deploy production until H2.8 has passed technical qualification and David has explicitly accepted the H2.8 result.
 

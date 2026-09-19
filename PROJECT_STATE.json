@@ -11,8 +11,8 @@
   "agent_state": "waiting_human",
   "branch": "agent/r6.5-wp19h2-moonflower-cottage",
   "latest_commit": "8f5a65b043cf1e934101e6790874a240f5e1863e",
-  "ci_state": "pending_exact_head",
-  "technical_validation_state": "passed_local",
+  "ci_state": "running",
+  "technical_validation_state": "passing",
   "human_acceptance_state": "pending",
   "next_work_package": "R6.5-WP19H2.8",
   "next_work_package_path": "docs/work-packages/R6.5-WP19H2.8-PLACEABLE-DECORATION-UPGRADE.md",
@@ -22,5 +22,5 @@
   "chat_disposition": "keep",
   "delivery_mode": "pr_required",
   "last_activity_at": "2026-09-19T07:35:00+01:00",
-  "updated_at": "2026-09-19T07:35:00+01:00"
+  "updated_at": "2026-09-19T07:38:00+01:00"
 }
