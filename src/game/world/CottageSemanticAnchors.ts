@@ -39,10 +39,14 @@ export const COTTAGE_FUTURE_STORY_ANCHOR_IDS = [
   COTTAGE_SEMANTIC_ANCHOR_IDS.storyDisplayFive,
 ] as const satisfies readonly CottageSemanticAnchorId[];
 
-export const COTTAGE_DECORATION_PROTECTED_ANCHOR_IDS = [
-  COTTAGE_SEMANTIC_ANCHOR_IDS.eggNest,
+export const COTTAGE_FUTURE_EXPANSION_ANCHOR_IDS = [
   ...COTTAGE_FUTURE_STORY_ANCHOR_IDS,
   COTTAGE_SEMANTIC_ANCHOR_IDS.portalBay,
+] as const satisfies readonly CottageSemanticAnchorId[];
+
+export const COTTAGE_DECORATION_PROTECTED_ANCHOR_IDS = [
+  COTTAGE_SEMANTIC_ANCHOR_IDS.eggNest,
+  ...COTTAGE_FUTURE_EXPANSION_ANCHOR_IDS,
 ] as const satisfies readonly CottageSemanticAnchorId[];
 
 /**
