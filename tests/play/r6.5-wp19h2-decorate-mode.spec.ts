@@ -150,11 +150,7 @@ test('H2.5 keeps normal play clean, replaces Gallop with Decorate, and confirms 
     })
     .toBe(9);
 
-  await tapNamedObject(
-    page,
-    'CottageInteriorScene',
-    'cottage-decorate-hit:cottage-slot:left-wall',
-  );
+  await tapNamedObject(page, 'CottageInteriorScene', 'cottage-decorate-hit:cottage-slot:left-wall');
   await expect
     .poll(async () => (await snapshot(page)).activeScenes)
     .toEqual(['CottageDecorateScene']);
@@ -339,14 +335,10 @@ test('H2.8 fresh-game starters support place, replace, move, remove and persiste
   const playerArt = roomObjects.find(({ name }) => name === 'world-player-unicorn');
   expect(rugArt?.depth).toBeLessThan(playerArt?.depth ?? Number.POSITIVE_INFINITY);
   expect(
-    roomObjects.some(
-      ({ name }) => name === 'cottage-decoration-collider:cottage-slot:centre-rug',
-    ),
+    roomObjects.some(({ name }) => name === 'cottage-decoration-collider:cottage-slot:centre-rug'),
   ).toBe(false);
   expect(
-    roomObjects.some(
-      ({ name }) => name === 'cottage-decoration-collider:cottage-slot:cosy-corner',
-    ),
+    roomObjects.some(({ name }) => name === 'cottage-decoration-collider:cottage-slot:cosy-corner'),
   ).toBe(true);
 
   await startSceneWithData(page, 'CottageDecorateScene', {
