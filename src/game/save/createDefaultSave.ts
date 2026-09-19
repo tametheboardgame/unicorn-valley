@@ -39,6 +39,7 @@ export function createDefaultSave(timestamp: string = new Date().toISOString()):
       ownedFurnitureIds: [],
       furnitureBySlot: {},
       gardenFlags: {},
+      unlockedStyleIds: [...COTTAGE_STARTER_HOME_STYLE_IDS],
       style: {
         walls: {
           back: {
@@ -78,3 +79,4 @@ export function createDefaultSave(timestamp: string = new Date().toISOString()):
   };
 }
 import { COTTAGE_STARTER_DECORATION_IDS } from '../../content/cottageStarterDecorations';
+import { COTTAGE_STARTER_HOME_STYLE_IDS } from '../../content/cottageHomeStyleEntitlements';
