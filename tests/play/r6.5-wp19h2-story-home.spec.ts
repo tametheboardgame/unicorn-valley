@@ -84,7 +84,9 @@ test('H2.9 binds the strange egg and its hatch flow to the canonical cottage nes
     save.collections.memoryIds = Array.from(
       new Set([...(save.collections.memoryIds ?? []), 'memory:pip-egg:pending-growth']),
     );
-    localStorage.setItem('unicorn-valley.save', JSON.stringify(save));
+    const serialised = JSON.stringify(save);
+    localStorage.setItem('unicorn-valley.save', serialised);
+    localStorage.setItem(`unicorn-valley.save.schema.${save.schemaVersion}`, serialised);
   });
 
   await expect
@@ -119,7 +121,9 @@ test('H2.9 binds the strange egg and its hatch flow to the canonical cottage nes
         'memory:pip-egg:pending-growth',
       ]),
     );
-    localStorage.setItem('unicorn-valley.save', JSON.stringify(save));
+    const serialised = JSON.stringify(save);
+    localStorage.setItem('unicorn-valley.save', serialised);
+    localStorage.setItem(`unicorn-valley.save.schema.${save.schemaVersion}`, serialised);
   });
 
   await expect
