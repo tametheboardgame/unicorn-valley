@@ -115,4 +115,22 @@ describe('AtmosphericTimeService', () => {
     expect(reloaded.getMode()).toBe('night');
     expect(reloaded.getState()).toBe('night');
   });
+
+  it('resets sleep to a fresh automatic morning and clears manual night overrides', () => {
+    const saveService = createService();
+    const service = new AtmosphericTimeService(saveService, saveService.load());
+
+    service.setMode('night');
+    service.advanceAutomatic(AUTO_TIME_STATE_DURATION_MS * 2);
+    expect(service.getState()).toBe('night');
+    expect(service.getAutomaticState()).toBe('sunset');
+
+    expect(service.resetToMorning()).toBe('morning');
+    expect(service.getMode()).toBe('auto');
+    expect(service.getAutomaticState()).toBe('morning');
+    expect(readManualAtmosphericTime(saveService.load())).toBeNull();
+
+    service.advanceAutomatic(AUTO_TIME_STATE_DURATION_MS);
+    expect(service.getState()).toBe('afternoon');
+  });
 });

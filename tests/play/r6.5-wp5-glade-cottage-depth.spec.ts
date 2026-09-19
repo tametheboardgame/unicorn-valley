@@ -104,10 +104,10 @@ test('Hollow Tree Nook is a real usable micro-location and Cottage has tactile h
     ).__UNICORN_VALLEY_DIAGNOSTICS__
       ?.snapshot()
       .scenes.find(({ key }) => key === 'CottageInteriorScene')
-      ?.objects.some(({ name }) => name === 'cottage-depth:bed'),
+      ?.objects.some(({ name }) => name === 'cottage-furniture:bed-rear'),
   );
   current = sceneFrom(await snapshot(page), 'CottageInteriorScene');
-  expect(current.objects.some(({ name }) => name === 'cottage-depth:bed')).toBe(true);
-  expect(current.objects.some(({ name }) => name === 'cottage-depth:sofa')).toBe(true);
-  expect(current.objects.some(({ name }) => name === 'cottage-depth:companion-corner')).toBe(true);
+  expect(current.objects.some(({ name }) => name === 'cottage-furniture:bed-rear')).toBe(true);
+  expect(current.objects.some(({ name }) => name === 'cottage-furniture:sofa')).toBe(true);
+  expect(current.objects.some(({ name }) => name === 'cottage-furniture:tea-table')).toBe(true);
 });

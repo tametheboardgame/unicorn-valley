@@ -13,7 +13,6 @@ const VISUAL_TIGHTENING_ANCHOR_NAME = 'visual-tightening-anchor';
 const SUPPORTED_SCENES = new Set([
   'SunbeamVillageScene',
   'RainbowMeadowScene',
-  'CottageInteriorScene',
   'NovaTutorialRaceScene',
   'RaceScene',
 ]);
@@ -167,39 +166,6 @@ function decorateMeadow(scene: Phaser.Scene): void {
   replaceMeadowNova(scene);
 }
 
-function decorateCottage(scene: Phaser.Scene): void {
-  for (const y of [260, 300, 380]) {
-    markDetail(scene.add.rectangle(285, y, 225, 4, 0xe3b29d, 0.34).setDepth(7.1));
-  }
-  for (const x of [220, 285, 350]) {
-    markDetail(scene.add.rectangle(x, 285, 4, 48, 0xe3b29d, 0.25).setDepth(7.1));
-  }
-  for (const x of [235, 335]) {
-    markDetail(scene.add.rectangle(x, 183, 7, 32, 0xf7e5bb, 0.96).setDepth(8.1));
-    markDetail(scene.add.circle(x, 163, 8, 0xffcf72, 0.72).setDepth(8.2));
-  }
-
-  markDetail(scene.add.rectangle(335, 590, 95, 48, 0xfffaf0, 0.96).setDepth(8.2));
-  markDetail(scene.add.rectangle(445, 590, 95, 48, 0xfffaf0, 0.96).setDepth(8.2));
-  markDetail(scene.add.rectangle(390, 645, 250, 7, 0xf1d7e7, 0.42).setDepth(8.2));
-
-  markDetail(scene.add.rectangle(1245, 706, 6, 118, 0xe4f1ea, 0.25).setDepth(8.2));
-  markDetail(scene.add.rectangle(1110, 735, 28, 122, 0x648e7e, 0.88).setDepth(7.5));
-  markDetail(scene.add.rectangle(1380, 735, 28, 122, 0x648e7e, 0.88).setDepth(7.5));
-
-  markDetail(
-    scene.add.circle(845, 493, 18, 0xfff6e5, 0.96).setStrokeStyle(3, 0xb88267, 0.8).setDepth(8.2),
-  );
-  markDetail(
-    scene.add.circle(955, 493, 18, 0xfff6e5, 0.96).setStrokeStyle(3, 0xb88267, 0.8).setDepth(8.2),
-  );
-  markDetail(scene.add.ellipse(900, 500, 150, 102, 0xfff4dd, 0.12).setDepth(7.2));
-
-  for (const x of [1460, 1515, 1570]) {
-    markDetail(scene.add.circle(x, 330, 7, 0xf4d79f, 0.92).setDepth(8.2));
-  }
-}
-
 function applyCanonicalNovaToRace(scene: Phaser.Scene): void {
   ensureNovaIdentityTexture(scene);
   const nova = scene.children.list.find(
@@ -255,9 +221,6 @@ function applyVisualTightening(scene: Phaser.Scene): void {
       break;
     case 'RainbowMeadowScene':
       decorateMeadow(scene);
-      break;
-    case 'CottageInteriorScene':
-      decorateCottage(scene);
       break;
     case 'NovaTutorialRaceScene':
     case 'RaceScene':

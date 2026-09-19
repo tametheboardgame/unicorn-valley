@@ -9,7 +9,6 @@ const EXPECTED_STARTUP_KEYS = [
   'MovementTestScene',
   'MoonflowerGladeScene',
   'CottageInteriorScene',
-  'CottageDecorateScene',
   'SunbeamVillageScene',
   'RainbowMeadowScene',
   'CrystalBrookScene',
@@ -40,6 +39,14 @@ describe('SCENE_MANIFEST', () => {
     for (const entry of runtimeEntries) {
       expect('load' in entry && typeof entry.load === 'function').toBe(true);
     }
+  });
+
+  it('keeps the cottage decoration editor behind the feature boundary', () => {
+    const cottageDecorate = SCENE_MANIFEST.find((entry) => entry.key === 'CottageDecorateScene');
+    expect(cottageDecorate).toMatchObject({
+      loadBoundary: 'on-demand',
+      registrationOwner: 'feature',
+    });
   });
 
   it('records the R6 village interior as the live owner of the stable scene key', () => {

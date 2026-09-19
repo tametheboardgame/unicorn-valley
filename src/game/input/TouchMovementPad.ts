@@ -1,4 +1,9 @@
 import type Phaser from 'phaser';
+import {
+  COTTAGE_DECORATE_MODE_DATA_KEY,
+  COTTAGE_DECORATE_TOGGLE_EVENT,
+  COTTAGE_STYLE_OPEN_EVENT,
+} from '../home/CottageDecorateModeState';
 import { isInteractionModalActive } from '../interaction/InteractionModalState';
 import { CONCEPT_UI, createFixedGraphics, drawConceptIcon } from '../ui/ConceptUi';
 import type { PointerTouchInputAdapter } from './PointerTouchInputAdapter';
@@ -74,11 +79,30 @@ function shouldRenderPortraitDomControls(): boolean {
  */
 export class TouchMovementPad {
   private readonly objects: Array<
-    Phaser.GameObjects.Arc | Phaser.GameObjects.Text | Phaser.GameObjects.Graphics
+    | Phaser.GameObjects.Arc
+    | Phaser.GameObjects.Rectangle
+    | Phaser.GameObjects.Text
+    | Phaser.GameObjects.Graphics
   > = [];
-  private readonly buttons: Phaser.GameObjects.Arc[] = [];
+  private readonly buttons: Array<Phaser.GameObjects.Arc | Phaser.GameObjects.Rectangle> = [];
+  private readonly contextActionObjects: Array<
+    | Phaser.GameObjects.Arc
+    | Phaser.GameObjects.Rectangle
+    | Phaser.GameObjects.Text
+    | Phaser.GameObjects.Graphics
+  > = [];
+  private readonly contextActionButtons: Array<
+    Phaser.GameObjects.Arc | Phaser.GameObjects.Rectangle
+  > = [];
   private portraitMode = shouldRenderPortraitDomControls();
   private domRoot: HTMLDivElement | null = null;
+  private domDpad: HTMLDivElement | null = null;
+  private domActionButton: HTMLButtonElement | null = null;
+  private domStyleButton: HTMLButtonElement | null = null;
+  private decorateCanvasButton: Phaser.GameObjects.Arc | null = null;
+  private decorateCanvasLabel: Phaser.GameObjects.Text | null = null;
+  private styleCanvasButton: Phaser.GameObjects.Arc | null = null;
+  private styleCanvasLabel: Phaser.GameObjects.Text | null = null;
   private visible = true;
   private scenePaused = false;
   private destroyed = false;
@@ -119,6 +143,7 @@ export class TouchMovementPad {
   }
 
   public refresh(): void {
+    this.refreshContextActionPresentation();
     const portraitMode = shouldRenderPortraitDomControls();
     if (portraitMode === this.portraitMode) {
       const shouldAutoShow = shouldDefaultTouchMovementPadVisible() || portraitMode;
@@ -203,31 +228,75 @@ export class TouchMovementPad {
   private clearPresentation(): void {
     this.domRoot?.remove();
     this.domRoot = null;
+    this.domDpad = null;
+    this.domActionButton = null;
+    this.domStyleButton = null;
+    this.decorateCanvasButton = null;
+    this.decorateCanvasLabel = null;
+    this.styleCanvasButton = null;
+    this.styleCanvasLabel = null;
     for (const object of this.objects) {
       object.destroy();
     }
     this.objects.length = 0;
     this.buttons.length = 0;
+    this.contextActionObjects.length = 0;
+    this.contextActionButtons.length = 0;
   }
 
   private applyVisibility(): void {
     const modalActive = isInteractionModalActive(this.scene);
     const renderedVisible = this.visible && !this.scenePaused && !modalActive;
+    const contextActionVisible = this.isCottageDecorateAction()
+      ? !this.scenePaused && !modalActive
+      : renderedVisible;
+    const styleActionVisible =
+      contextActionVisible &&
+      this.isCottageDecorateAction() &&
+      this.scene.data.get(COTTAGE_DECORATE_MODE_DATA_KEY) === true;
     if (modalActive) {
       this.releaseInput();
     }
     if (this.domRoot) {
-      this.domRoot.hidden = !renderedVisible;
+      this.domRoot.hidden = !(renderedVisible || contextActionVisible);
+    }
+    if (this.domDpad) {
+      this.domDpad.hidden = !renderedVisible;
+    }
+    if (this.domActionButton) {
+      this.domActionButton.hidden = !contextActionVisible;
+    }
+    if (this.domStyleButton) {
+      this.domStyleButton.hidden = !styleActionVisible;
     }
 
     for (const object of this.objects) {
       object.setVisible(renderedVisible);
+    }
+    for (const object of this.contextActionObjects) {
+      object.setVisible(contextActionVisible);
     }
     for (const button of this.buttons) {
       if (renderedVisible) {
         button.setInteractive({ useHandCursor: true });
       } else {
         button.disableInteractive();
+      }
+    }
+    for (const button of this.contextActionButtons) {
+      if (contextActionVisible) {
+        button.setInteractive({ useHandCursor: true });
+      } else {
+        button.disableInteractive();
+      }
+    }
+    this.styleCanvasButton?.setVisible(styleActionVisible);
+    this.styleCanvasLabel?.setVisible(styleActionVisible);
+    if (this.styleCanvasButton) {
+      if (styleActionVisible) {
+        this.styleCanvasButton.setInteractive({ useHandCursor: true });
+      } else {
+        this.styleCanvasButton.disableInteractive();
       }
     }
   }
@@ -279,7 +348,12 @@ export class TouchMovementPad {
     this.createButton(originX, originY + spacing, '▼', 'MOVE_Y', 1, 'down');
     this.createButton(originX - spacing, originY, '◀', 'MOVE_X', -1, 'left');
     this.createButton(originX + spacing, originY, '▶', 'MOVE_X', 1, 'right');
-    this.createGallopButton(1200, 600);
+    if (this.isCottageDecorateAction()) {
+      this.createDecorateButton(1200, 600);
+      this.createRoomStyleButton(1200, 462);
+    } else {
+      this.createGallopButton(1200, 600);
+    }
   }
 
   private createPortraitDomControls(): void {
@@ -313,20 +387,66 @@ export class TouchMovementPad {
       dpad.append(button);
     }
 
-    const gallop = globalThis.document.createElement('button');
-    gallop.type = 'button';
-    gallop.className = 'mobile-touch-button mobile-touch-gallop';
-    gallop.textContent = '✦\nGallop';
-    gallop.setAttribute('aria-label', 'Gallop');
-    this.bindDomHold(
-      gallop,
-      () => this.input.setButton('GALLOP', true),
-      () => this.input.setButton('GALLOP', false),
-    );
+    const action = globalThis.document.createElement('button');
+    action.type = 'button';
+    action.className = this.isCottageDecorateAction()
+      ? 'mobile-touch-button mobile-touch-gallop mobile-touch-decorate'
+      : 'mobile-touch-button mobile-touch-gallop';
+    if (this.isCottageDecorateAction()) {
+      const styleButton = globalThis.document.createElement('button');
+      styleButton.type = 'button';
+      styleButton.className = 'mobile-touch-button mobile-touch-style';
+      styleButton.textContent = 'Room Style';
+      styleButton.setAttribute('aria-label', 'Room style');
+      this.bindDomTap(styleButton, () => {
+        this.scene.events.emit(COTTAGE_STYLE_OPEN_EVENT);
+      });
+      root.append(styleButton);
+      this.domStyleButton = styleButton;
 
-    root.append(dpad, gallop);
+      action.textContent = '✦\nDecorate';
+      action.setAttribute('aria-label', 'Decorate cottage');
+      this.bindDomTap(action, () => {
+        this.scene.events.emit(COTTAGE_DECORATE_TOGGLE_EVENT);
+        this.refreshContextActionPresentation();
+      });
+    } else {
+      action.textContent = '✦\nGallop';
+      action.setAttribute('aria-label', 'Gallop');
+      this.bindDomHold(
+        action,
+        () => this.input.setButton('GALLOP', true),
+        () => this.input.setButton('GALLOP', false),
+      );
+    }
+
+    root.append(dpad, action);
     (globalThis.document.querySelector('#game-shell') ?? globalThis.document.body).append(root);
     this.domRoot = root;
+    this.domDpad = dpad;
+    this.domActionButton = action;
+    this.refreshContextActionPresentation();
+  }
+
+  private bindDomTap(button: HTMLButtonElement, action: () => void): void {
+    const start = (event: PointerEvent): void => {
+      event.preventDefault();
+      button.classList.add('is-active');
+    };
+    const cancel = (event: PointerEvent): void => {
+      event.preventDefault();
+      button.classList.remove('is-active');
+    };
+    const finish = (event: PointerEvent): void => {
+      event.preventDefault();
+      button.classList.remove('is-active');
+      action();
+    };
+
+    button.addEventListener('pointerdown', start);
+    button.addEventListener('pointerup', finish);
+    button.addEventListener('pointercancel', cancel);
+    button.addEventListener('pointerleave', cancel);
   }
 
   private bindDomHold(button: HTMLButtonElement, press: () => void, release: () => void): void {
@@ -401,6 +521,129 @@ export class TouchMovementPad {
 
     this.buttons.push(button);
     this.objects.push(shadow, halo, button, text);
+  }
+
+  private isCottageDecorateAction(): boolean {
+    return this.scene.scene.key === 'CottageInteriorScene';
+  }
+
+  private refreshContextActionPresentation(): void {
+    if (!this.isCottageDecorateAction()) {
+      return;
+    }
+    const active = this.scene.data.get(COTTAGE_DECORATE_MODE_DATA_KEY) === true;
+    this.decorateCanvasLabel?.setText(active ? 'Done' : 'Decorate');
+    this.decorateCanvasButton?.setFillStyle(active ? 0x75c6df : 0x8dd5ec, 1);
+    if (this.domActionButton) {
+      this.domActionButton.textContent = active ? '✓\nDone' : '✦\nDecorate';
+      this.domActionButton.setAttribute(
+        'aria-label',
+        active ? 'Finish decorating cottage' : 'Decorate cottage',
+      );
+      this.domActionButton.classList.toggle('is-decorating', active);
+    }
+    this.applyVisibility();
+  }
+
+  private createRoomStyleButton(x: number, y: number): void {
+    const button = this.scene.add
+      .circle(x, y, 47, 0xa8dff0, 1)
+      .setName('touch-cottage-room-style')
+      .setStrokeStyle(5, 0x4f9fc4, 0.98)
+      .setScrollFactor(0)
+      .setDepth(117)
+      .setInteractive({ useHandCursor: true });
+    const label = this.scene.add
+      .text(x, y, '✦\nRoom Style', {
+        color: '#244f5c',
+        fontFamily: 'Trebuchet MS, Segoe UI, system-ui, sans-serif',
+        fontSize: '13px',
+        fontStyle: 'bold',
+        align: 'center',
+        lineSpacing: 2,
+      })
+      .setOrigin(0.5)
+      .setScrollFactor(0)
+      .setDepth(118);
+
+    button.on('pointerdown', () => this.scene.events.emit(COTTAGE_STYLE_OPEN_EVENT));
+    this.styleCanvasButton = button;
+    this.styleCanvasLabel = label;
+    this.contextActionButtons.push(button);
+    this.contextActionObjects.push(button, label);
+    this.objects.push(button, label);
+    this.applyVisibility();
+  }
+
+  private createDecorateButton(x: number, y: number): void {
+    const radius = 55;
+    const shadow = this.scene.add
+      .circle(x + 5, y + 7, radius + 5, CONCEPT_UI.shadow, 0.24)
+      .setName('touch-movement-decorate-shadow')
+      .setScrollFactor(0)
+      .setDepth(116);
+    const halo = this.scene.add
+      .circle(x, y, radius + 5, 0xe9fff8, 0.94)
+      .setName('touch-movement-decorate-halo')
+      .setStrokeStyle(3, 0x4f9fc4, 0.8)
+      .setScrollFactor(0)
+      .setDepth(116);
+    const icon = this.scene.add
+      .text(x, y - 18, '✦', {
+        color: '#245d72',
+        fontFamily: 'Trebuchet MS, Segoe UI, system-ui, sans-serif',
+        fontSize: '22px',
+        fontStyle: 'bold',
+      })
+      .setName('touch-movement-decorate-icon')
+      .setOrigin(0.5)
+      .setScrollFactor(0)
+      .setDepth(119);
+    const button = this.scene.add
+      .circle(x, y, radius, 0x8dd5ec, 1)
+      .setName('touch-movement-decorate')
+      .setStrokeStyle(5, 0x4f9fc4, 0.98)
+      .setScrollFactor(0)
+      .setDepth(117)
+      .setInteractive({ useHandCursor: true });
+    const text = this.scene.add
+      .text(x, y + 20, 'Decorate', {
+        color: '#244f5c',
+        fontFamily: 'Trebuchet MS, Segoe UI, system-ui, sans-serif',
+        fontSize: '15px',
+        fontStyle: 'bold',
+        align: 'center',
+      })
+      .setName('touch-movement-decorate-label')
+      .setOrigin(0.5)
+      .setScrollFactor(0)
+      .setDepth(120);
+
+    const press = (): void => {
+      button.setScale(0.95);
+      text.setScale(0.96);
+      icon.setScale(0.96);
+    };
+    const release = (): void => {
+      button.setScale(1);
+      text.setScale(1);
+      icon.setScale(1);
+    };
+    button.on('pointerdown', press);
+    button.on('pointerup', () => {
+      release();
+      this.scene.events.emit(COTTAGE_DECORATE_TOGGLE_EVENT);
+      this.refreshContextActionPresentation();
+    });
+    button.on('pointerout', release);
+    button.on('pointerupoutside', release);
+
+    this.decorateCanvasButton = button;
+    this.decorateCanvasLabel = text;
+    this.contextActionButtons.push(button);
+    this.contextActionObjects.push(shadow, halo, icon, button, text);
+    this.objects.push(shadow, halo, icon, button, text);
+    this.refreshContextActionPresentation();
   }
 
   private createGallopButton(x: number, y: number): void {

@@ -1,3 +1,4 @@
+import { CURRENT_SAVE_SCHEMA_VERSION } from '../../src/game/save/saveSchema';
 import { expect, test, type Page } from '@playwright/test';
 
 const SAVE_KEY = 'unicorn-valley.save';
@@ -22,7 +23,10 @@ interface DiagnosticSnapshot {
   }>;
 }
 
-function createStoredSave(name: string, schemaVersion = 2): Record<string, unknown> {
+function createStoredSave(
+  name: string,
+  schemaVersion = CURRENT_SAVE_SCHEMA_VERSION,
+): Record<string, unknown> {
   const timestamp = '2026-08-21T08:00:00.000Z';
   return {
     schemaVersion,
@@ -48,7 +52,41 @@ function createStoredSave(name: string, schemaVersion = 2): Record<string, unkno
       changedObjectIds: [],
       uniqueDiscoveryIds: [],
     },
-    home: { ownedFurnitureIds: [], furnitureBySlot: {}, gardenFlags: {} },
+    home:
+      schemaVersion >= CURRENT_SAVE_SCHEMA_VERSION
+        ? {
+            ownedFurnitureIds: [],
+            furnitureBySlot: {},
+            gardenFlags: {},
+            style: {
+              walls: {
+                back: {
+                  wallColourId: 'cottage-wall:moon-cream',
+                  wallpaperId: 'cottage-wallpaper:plain',
+                },
+                left: {
+                  wallColourId: 'cottage-wall:moon-cream',
+                  wallpaperId: 'cottage-wallpaper:plain',
+                },
+                right: {
+                  wallColourId: 'cottage-wall:moon-cream',
+                  wallpaperId: 'cottage-wallpaper:plain',
+                },
+                front: {
+                  wallColourId: 'cottage-wall:moon-cream',
+                  wallpaperId: 'cottage-wallpaper:plain',
+                },
+              },
+              floorStyleId: 'cottage-floor:honey-oak',
+              furnitureVariants: {
+                bed: 'cottage-furniture:bed:moonflower',
+                sofa: 'cottage-furniture:sofa:sage',
+                teaSet: 'cottage-furniture:tea-set:honey-oak',
+                fireplace: 'cottage-furniture:fireplace:warm-stone',
+              },
+            },
+          }
+        : { ownedFurnitureIds: [], furnitureBySlot: {}, gardenFlags: {} },
     activities: { racesById: {}, miniGameRecords: {} },
     collections: { discoveryIds: [], memoryIds: [] },
   };
@@ -124,7 +162,7 @@ test('corrupt primary save recovers from the last-known-good browser backup', as
     SAVE_KEY,
   );
   expect(repaired.profile.name).toBe('Starlight');
-  expect(repaired.schemaVersion).toBe(2);
+  expect(repaired.schemaVersion).toBe(CURRENT_SAVE_SCHEMA_VERSION);
 });
 
 test('denied browser storage renders a recoverable title state', async ({ page }) => {
@@ -152,7 +190,9 @@ test('denied browser storage renders a recoverable title state', async ({ page }
   expect(visibleText).not.toContain('New Game');
 });
 
-test('schema-v1 browser save is backed up before automatic migration to v2', async ({ page }) => {
+test('schema-v1 browser save is backed up before automatic migration to current schema', async ({
+  page,
+}) => {
   const historical = createStoredSave('Moonbeam', 1);
   await page.addInitScript(
     ({ saveKey, backupKey, historicalSave }) => {
@@ -173,7 +213,7 @@ test('schema-v1 browser save is backed up before automatic migration to v2', asy
     { saveKey: SAVE_KEY, backupKey: BACKUP_KEY },
   );
 
-  expect(stored.primary.schemaVersion).toBe(2);
+  expect(stored.primary.schemaVersion).toBe(CURRENT_SAVE_SCHEMA_VERSION);
   expect(stored.primary.profile.name).toBe('Moonbeam');
   expect(stored.backup.schemaVersion).toBe(1);
   expect(stored.backup.profile.name).toBe('Moonbeam');
@@ -227,7 +267,7 @@ test('New Game requires confirmation and clears both save copies only after the 
 test('a newer-version save is protected and the title asks the player to refresh', async ({
   page,
 }) => {
-  const futureVersion = 3;
+  const futureVersion = CURRENT_SAVE_SCHEMA_VERSION + 1;
   const futureSave = createStoredSave('Future Star', futureVersion);
   const serialisedFuture = JSON.stringify(futureSave);
   await page.addInitScript(

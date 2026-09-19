@@ -1,6 +1,5 @@
 import type Phaser from 'phaser';
 import { BootScene } from './BootScene';
-import { CottageDecorateScene } from './CottageDecorateScene';
 import { CottageInteriorScene } from './CottageInteriorScene';
 import { CrystalBrookScene } from './CrystalBrookScene';
 import { DialogueTestScene } from './DialogueTestScene';
@@ -31,7 +30,6 @@ const STARTUP_SCENE_CONSTRUCTORS: Record<StartupSceneKey, SceneConstructor> = {
   MovementTestScene,
   MoonflowerGladeScene,
   CottageInteriorScene,
-  CottageDecorateScene,
   SunbeamVillageScene,
   RainbowMeadowScene,
   CrystalBrookScene,

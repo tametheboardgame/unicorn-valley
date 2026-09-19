@@ -56,7 +56,13 @@ export const SCENE_MANIFEST = [
   startup('MovementTestScene', 'diagnostic'),
   startup('MoonflowerGladeScene', 'exploration'),
   startup('CottageInteriorScene', 'interior'),
-  startup('CottageDecorateScene', 'interior'),
+  runtime(
+    'CottageDecorateScene',
+    'interior',
+    'on-demand',
+    'feature',
+    async () => (await import('./CottageDecorateScene')).CottageDecorateScene,
+  ),
   startup('SunbeamVillageScene', 'exploration'),
   startup('RainbowMeadowScene', 'exploration'),
   startup('CrystalBrookScene', 'exploration'),
@@ -124,6 +130,13 @@ export const SCENE_MANIFEST = [
     'runtime-eager',
     'bootstrap',
     async () => (await import('./FireflyGroveScene')).FireflyGroveScene,
+  ),
+  runtime(
+    'CottageStyleScene',
+    'modal',
+    'on-demand',
+    'feature',
+    async () => (await import('./CottageStyleScene')).CottageStyleScene,
   ),
   runtime(
     'SettingsScene',

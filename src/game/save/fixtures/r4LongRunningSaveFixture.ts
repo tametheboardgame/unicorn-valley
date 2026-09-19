@@ -59,6 +59,7 @@ export function createR4LongRunningSaveFixture(): SaveGame {
       uniqueDiscoveryIds: ['discovery:first-sparkle', 'discovery:picnic-memory'],
     },
     home: {
+      ...save.home,
       ownedFurnitureIds: ['item:starter-rug', 'item:moonflower-lantern'],
       furnitureBySlot: {
         'cottage-slot:window-nook': 'item:moonflower-lantern',

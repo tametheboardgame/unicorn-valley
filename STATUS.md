@@ -1,40 +1,48 @@
 # Project Status
 
-Last updated: 2026-09-13
+Last updated: 2026-09-19
 
 ## Current work
 
-`R6.5-WP19H0.5 - Home Screen Final Polish` is active on draft PR #173 / branch `agent/r6.5-wp19h0.5-home-polish`.
+`R6.5-WP19H2.10 - Unlock & Reward Framework` is active on draft PR #175 / branch
+`agent/r6.5-wp19h2-moonflower-cottage`.
 
-`R6.5-WP19H0 - Architecture, UI, Test and Performance Consolidation` completed technical qualification, was explicitly approved, merged and incorporated into `main` before H0.5 began.
+H2.0 through H2.9 are human-approved. David explicitly approved H2.9 on 19 September 2026 after
+checking the deployed smaller detailed egg, collision, story-home behaviour and reserved expansion
+architecture.
 
-David's H0.5 home-screen review is recorded in `docs/work-packages/R6.5-WP19H0.5-HOME-SCREEN-FINAL-POLISH.md`. The approved remediation is implementation-complete on the branch and is now in technical qualification.
+## H2.10 implementation
 
-Current H0.5 implementation includes:
+The current H2.10 candidate introduces:
 
-- the approved generated Unicorn Valley logo and restrained entrance animation;
-- complete removal of the retired procedural title background and old title lock-up;
-- preloaded generated title artwork to prevent the retired-background startup flash;
-- an intrinsic rounded desktop options card which contracts to New Game + Settings for first-run players and expands to Continue/New Game/My Unicorn/Settings for returning players;
-- canonical rounded UI primitives, layered shadows, restrained surface detail, stronger action hierarchy and keyboard selection/focus treatment;
-- Home Settings routed through the same `AudioSettingsPanel` / `SettingsScene` flow used by the rest of the game, with the duplicate title-specific Settings implementation removed;
-- full-viewport touch title compositions for phone/tablet portrait and small-screen landscape, with safe-area-aware layouts and child-sized controls;
-- a restrained ambient sparkle layer behind the logo/options UI, with reduced-motion handling;
-- targeted responsive and regression evidence for fresh/returning desktop, tablet portrait, phone landscape, canonical Settings and reduced motion.
-
-The latest implementation checkpoint before state-only documentation updates is `2106a8b69f9105f809a7581cf1d024dad8049743`. Its authoritative qualification selected Tier 0, the complete unit suite, production build/performance checks, full three-shard Chromium and Chromium/Firefox/WebKit compatibility. Tier 0, unit and build/performance checks are green; the full browser matrix is running.
+- save schema v7 with canonical `home.unlockedStyleIds` entitlement persistence;
+- a curated starter home-style set plus visible locked progression options;
+- migration grandfathering for any known style already selected by an existing schema-v6 save;
+- `CottageStyleEntitlementService` as the reusable grant/check owner for quest, reward, shop, system
+  and diagnostic callers;
+- `HOME_STYLE_UNLOCKED` as the reusable unlock event;
+- entitlement enforcement in `CottageStyleService` so locked options cannot be newly persisted;
+- locked-state presentation in `CottageStyleScene` without embedding quest/shop rules in the UI;
+- a diagnostics-only H2.10 simulation hook using the same production grant service;
+- unit/browser coverage for starter-vs-unlockable state, persistent grants and locked-to-unlocked
+  application.
 
 ## Current gate
 
-H0.5 remains open and draft. It is not accepted, merged or production deployed.
+H2.10 is implemented on the isolated staging branch and is being advanced to the continuing H2 PR
+branch for exact-head static, unit, build/performance, Chromium and cross-browser qualification.
 
-The remaining gates are:
-
-1. complete exact-head technical qualification;
-2. confirm the updated Cloudflare branch preview;
-3. David reviews the finished home screen across the relevant layouts;
-4. David explicitly accepts or rejects H0.5.
+The required human gate is to verify that a locked style is clear, simulate the Sea Glass unlock,
+apply it and confirm persistence across reload/Continue.
 
 ## Next work
 
-Do not start `R6.5-WP19H1` until H0.5 is technically qualified and David has explicitly accepted the finished home screen. Do not merge PR #173 or production deploy H0.5 without that approval.
+1. Complete exact-head H2.10 CI and deployed-preview qualification.
+2. Fix only H2.10-owned regressions if exposed by qualification.
+3. David performs the H2.10 locked → unlocked → apply → reload human gate.
+4. Do not start H2.11 until H2.10 is explicitly approved.
+
+## Merge gate
+
+PR #175 remains draft and unmerged. Production is unchanged. The complete H2 package must still reach
+H2.11 and pass David's final whole-cottage playtest before merge.

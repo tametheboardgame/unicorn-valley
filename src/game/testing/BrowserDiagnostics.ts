@@ -5,6 +5,7 @@ import {
 } from '../performance/FramePerformance';
 import { getPlayerEntityFacing } from '../player/PlayerEntity';
 import { selectRaceCourse } from '../racing/RaceCourse';
+import { SCENE_MANIFEST } from '../scenes/SceneManifest';
 
 const MAX_EVENTS = 240;
 const MAX_FRAME_SAMPLES = 180;
@@ -201,8 +202,10 @@ function snapshotObject(
   const authoritativeFacing =
     gameObject instanceof Phaser.Physics.Arcade.Sprite ? getPlayerEntityFacing(gameObject) : null;
   const arcadeBody =
-    gameObject instanceof Phaser.Physics.Arcade.Sprite &&
-    gameObject.body instanceof Phaser.Physics.Arcade.Body
+    (gameObject instanceof Phaser.Physics.Arcade.Sprite ||
+      gameObject instanceof Phaser.Physics.Arcade.Image) &&
+    (gameObject.body instanceof Phaser.Physics.Arcade.Body ||
+      gameObject.body instanceof Phaser.Physics.Arcade.StaticBody)
       ? gameObject.body
       : null;
   const nativeBounds =
@@ -549,9 +552,16 @@ export function installBrowserDiagnostics(game: Phaser.Game): BrowserDiagnostics
       lastError = null;
       sampleSceneStates();
     },
-    startScene: (sceneKey, data) => {
+    startScene: async (sceneKey, data) => {
       if (!game.scene.keys[sceneKey]) {
-        throw new Error(`Cannot start diagnostic scene ${sceneKey}: scene is not registered.`);
+        const entry = SCENE_MANIFEST.find((candidate) => candidate.key === sceneKey);
+        if (!entry || entry.loadBoundary === 'startup') {
+          throw new Error(`Cannot start diagnostic scene ${sceneKey}: scene is not registered.`);
+        }
+        const SceneConstructor = await entry.load();
+        if (!game.scene.keys[sceneKey]) {
+          game.scene.add(sceneKey, SceneConstructor, false);
+        }
       }
       for (const activeScene of game.scene.getScenes(true)) {
         if (activeScene.scene.key !== sceneKey) {

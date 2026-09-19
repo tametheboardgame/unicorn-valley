@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { LUMA_COMPANION_HATCHED_FLAG } from '../../content/r4EggArc';
+import { COTTAGE_DECORATE_MODE_DATA_KEY } from '../home/CottageDecorateModeState';
 import type { InteractionActionKind, InteractionTarget } from '../interaction/InteractionTarget';
 import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { getBrowserSaveService } from '../save/browserSaveService';
@@ -23,6 +24,7 @@ interface CottageDepthState {
   scene: Phaser.Scene;
   points: RuntimePoint[];
   feedback: Phaser.GameObjects.Text;
+  targetsPublished: boolean;
 }
 
 const REGISTRY_OWNER = 'cottage-depth';
@@ -45,7 +47,8 @@ export class CottageDepthWorldManager {
       this.destroyState();
       return;
     }
-    this.ensureState(scene);
+    const state = this.ensureState(scene);
+    this.syncTargets(state);
   }
 
   private ensureState(scene: Phaser.Scene): CottageDepthState {
@@ -72,19 +75,13 @@ export class CottageDepthWorldManager {
         .setScrollFactor(0)
         .setDepth(180)
         .setVisible(false),
+      targetsPublished: false,
     };
 
+    // H2.4 makes the bed a canonical scene-owned sleep interaction. Do not publish the old
+    // tactile "Flop" target here as a second interaction owner, otherwise the shared coordinator
+    // can select it above the semantic cottage.sleep target and bypass the sleep sequence.
     const points: readonly CottageTouchPoint[] = [
-      {
-        id: 'bed',
-        label: 'Moonflower bed',
-        actionLabel: 'Flop',
-        actionKind: 'interact',
-        position: { x: 325, y: 700 },
-        radius: 100,
-        message: () =>
-          'You flop onto the Moonflower blanket for exactly one cosy moment. The little moon shapes crinkle, then puff back up. 🌙',
-      },
       {
         id: 'sofa',
         label: 'Cosy sofa',
@@ -140,8 +137,24 @@ export class CottageDepthWorldManager {
         .setName(`cottage-depth:${definition.id}`),
     }));
     this.state = state;
-    this.publishTargets(state);
     return state;
+  }
+
+  private syncTargets(state: CottageDepthState): void {
+    const shouldPublish = state.scene.data.get(COTTAGE_DECORATE_MODE_DATA_KEY) !== true;
+    if (shouldPublish === state.targetsPublished) {
+      return;
+    }
+
+    if (!shouldPublish) {
+      getSceneInteractionRegistry(state.scene).clearOwner(REGISTRY_OWNER);
+      state.feedback.setVisible(false);
+      state.targetsPublished = false;
+      return;
+    }
+
+    this.publishTargets(state);
+    state.targetsPublished = true;
   }
 
   private publishTargets(state: CottageDepthState): void {

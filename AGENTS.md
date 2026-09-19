@@ -109,6 +109,14 @@ Before an execution window ends or whenever context-loss risk is material:
 - record durable decisions in `DECISIONS.md`;
 - leave the repository resumable by a fresh agent without the old conversation.
 
+### CI wait and chat hand-off
+
+- Treat CI polling as bounded work. Never keep a turn open on a non-terminal CI run until the execution window expires.
+- Poll in short intervals while useful work or safe remediation remains, but preserve enough time to produce a normal user-facing final response.
+- If CI is still running at the hand-off point, stop polling, persist the exact head SHA and known job state in `STATUS.md` / `PROJECT_STATE.json`, and return a concise checkpoint that says which checks passed, failed or remain pending.
+- If CI fails, inspect and record the failing job and actionable cause before retrying. Do not leave the conversation suspended on an unreported wait or an open tool call.
+- A pending CI result is a valid explicit hand-off state. It must never prevent the current chat from returning control to the user.
+
 ## Night Shift
 
 Night Shift is bounded autonomous execution of already approved work only. It must respect dependencies, PR delivery, CI, Amber/Red gates and human acceptance. It must not invent new roadmap scope simply to remain busy.

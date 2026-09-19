@@ -48,7 +48,6 @@ async function waitForScene(page: Page, sceneKey: string): Promise<void> {
 for (const [alias, sceneKey, minimumDetails] of [
   ['village', 'SunbeamVillageScene', 24],
   ['meadow', 'RainbowMeadowScene', 18],
-  ['cottage', 'CottageInteriorScene', 18],
   ['nova-race', 'NovaTutorialRaceScene', 18],
   ['race', 'RaceScene', 18],
 ] as const) {
