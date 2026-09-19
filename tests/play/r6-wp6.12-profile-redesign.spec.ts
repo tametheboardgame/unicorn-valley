@@ -1,3 +1,4 @@
+import { COTTAGE_STARTER_HOME_STYLE_IDS } from '../../src/content/cottageHomeStyleEntitlements';
 import { CURRENT_SAVE_SCHEMA_VERSION } from '../../src/game/save/saveSchema';
 import { expect, test, type Page } from '@playwright/test';
 
@@ -71,6 +72,7 @@ function createRichSave(appearance: Record<string, string> = {}): Record<string,
       ownedFurnitureIds: ['furniture:moon-lamp'],
       furnitureBySlot: { shelf: 'furniture:moon-lamp' },
       gardenFlags: { watered: true },
+      unlockedStyleIds: [...COTTAGE_STARTER_HOME_STYLE_IDS],
       style: {
         walls: {
           back: {
