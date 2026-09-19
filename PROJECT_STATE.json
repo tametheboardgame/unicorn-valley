@@ -10,7 +10,7 @@
   "autonomy_state": "amber",
   "agent_state": "active",
   "branch": "agent/r6.5-wp19h2-moonflower-cottage",
-  "latest_commit": "pending-final-h2.10-head",
+  "latest_commit": "8d0dbd4b607fe4d26320b3797b15d8db84b35ab3",
   "ci_state": "pending",
   "technical_validation_state": "pending",
   "human_acceptance_state": "pending",
