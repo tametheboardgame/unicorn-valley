@@ -28,16 +28,28 @@ A later documentation/status-only head triggered a full Chromium run in which on
 
 ## Current gate
 
-H2.8 implementation is complete at `8f5a65b043cf1e934101e6790874a240f5e1863e` and local technical qualification passes. Exact-head CI run `35426875922` exposed invalid project-state enum values only; the values are corrected and replacement exact-head CI is pending. The package is waiting for David’s place/replace/move/remove playtest; it is not human-approved.
+David's live check found that a fresh New Game owned no placeable decorations. The bounded H2.8
+remediation now gives fresh games four dedicated, unplaced starter decorations and upgrades schema-v5
+saves through an idempotent v6 migration. Existing reward/shop items are not granted, larger quantities
+and unrelated inventory are preserved, and placements remain untouched. `npm run validate` passes
+(539 unit tests), and the focused H2.8 browser file passes both contracts. Exact-head CI/deployment are
+the remaining technical gates.
+The package remains waiting for David's place/replace/move/remove playtest and is not human-approved.
 
 The next human gate is the H2.8 place/replace/move/remove playtest. Do not start H2.9, merge PR #175 or deploy production until H2.8 has passed technical qualification and David has explicitly accepted the H2.8 result.
 
 ## Next work
 
-1. Publish the qualified H2.8 checkpoint and confirm exact-head CI and the branch preview.
+1. Publish the starter-set remediation checkpoint and confirm full validation, exact-head CI and both previews.
 2. David playtests explicit place, replace, move and remove flows across slot categories, then reloads/Continues and checks that normal play has no floating decoration names.
 3. Record David’s decision; do not start H2.9 without explicit approval.
 
 ## H2.8 technical checkpoint
 
-The visible-choice picker, explicit Place/Replace/Move/Remove copy, canonical quantity-aware service result contract, item-coloured cottage presentation and no-floating-name normal-play treatment are implemented. `npm run validate` passes (536 unit tests), and `npx playwright test tests/play/r6.5-wp19h2-decorate-mode.spec.ts` passes both H2.5 regression and H2.8 placement/persistence/removal coverage. Existing lint warnings remain non-failing and unrelated.
+The visible-choice picker, explicit Place/Replace/Move/Remove copy, canonical quantity-aware service
+result contract, item-coloured cottage presentation and no-floating-name normal-play treatment are
+implemented. The fresh-game starter collection is Moonflower Hoop, Star Bunting, Meadow Rug and Daisy
+Vase, covering wall/floor/table/shelf/display compatibility without pre-placement.
+Focused unit contracts pass (including migration idempotence/preservation), and the genuinely fresh-game
+H2.8 browser contract passes Place, Replace, Move, Remove and reload persistence. Existing lint warnings
+remain non-failing and unrelated.
