@@ -20,6 +20,7 @@ import {
   getCottageStyleDescription,
   getCottageStyleName,
 } from '../home/CottageStyleCopy';
+import { CottageStyleEntitlementService } from '../home/CottageStyleEntitlementService';
 import { CottageStyleService } from '../home/CottageStyleService';
 import { drawCottageStylePreview } from '../home/CottageStylePreviewRenderer';
 import { getBrowserSaveService } from '../save/browserSaveService';
@@ -45,6 +46,7 @@ const CHOICE_COLUMNS = 4;
 
 export class CottageStyleScene extends Phaser.Scene {
   private styles: CottageStyleService | null = null;
+  private entitlements: CottageStyleEntitlementService | null = null;
   private previewStyle: HomeStyleState | null = null;
   private category: CottageStyleCategory = 'wall';
   private selectedWall: CottageWallKey = 'back';
@@ -73,7 +75,10 @@ export class CottageStyleScene extends Phaser.Scene {
     this.selectedWall = 'back';
     this.selectedFurniture = 'bed';
     this.choicePage = 0;
-    this.styles = new CottageStyleService(getBrowserSaveService());
+    const saveService = getBrowserSaveService();
+    this.entitlements = new CottageStyleEntitlementService(saveService);
+    this.applyDiagnosticUnlock();
+    this.styles = new CottageStyleService(saveService);
     this.previewStyle = this.styles.getResolvedStyle();
 
     this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x7558a0, 1);
@@ -472,6 +477,7 @@ export class CottageStyleScene extends Phaser.Scene {
     choices.forEach((choice, index) => {
       const { x, y } = this.choicePosition(index, true);
       const selected = activeWall.wallColourId === choice.id;
+      const unlocked = this.isStyleUnlocked(choice.id);
       const outline = this.trackChoice(
         this.add
           .circle(x, y, 34, selected ? UI_COLOURS.gold : UI_COLOURS.lavender, 0.94)
@@ -499,7 +505,12 @@ export class CottageStyleScene extends Phaser.Scene {
           .setDepth(8),
       );
       if (selected) this.renderCheck(x + 26, y - 26);
-      outline.on('pointerdown', () => this.selectWallColour(choice));
+      if (unlocked) {
+        outline.on('pointerdown', () => this.selectWallColour(choice));
+      } else {
+        outline.disableInteractive().setAlpha(0.52);
+        this.renderLockBadge(choice.id, x, y);
+      }
     });
     this.renderPageControls(COTTAGE_WALL_COLOURS.length);
   }
@@ -512,6 +523,7 @@ export class CottageStyleScene extends Phaser.Scene {
     choices.forEach((choice, index) => {
       const { x, y } = this.choicePosition(index, true);
       const selected = activeWall.wallpaperId === choice.id;
+      const unlocked = this.isStyleUnlocked(choice.id);
       const card = this.trackChoice(
         this.add
           .rectangle(x, y, 120, 94, selected ? UI_COLOURS.gold : UI_COLOURS.parchment, 1)
@@ -539,7 +551,12 @@ export class CottageStyleScene extends Phaser.Scene {
           .setDepth(9),
       );
       if (selected) this.renderCheck(x + 45, y - 34);
-      card.on('pointerdown', () => this.selectWallpaper(choice));
+      if (unlocked) {
+        card.on('pointerdown', () => this.selectWallpaper(choice));
+      } else {
+        card.disableInteractive().setAlpha(0.52);
+        this.renderLockBadge(choice.id, x, y);
+      }
     });
     this.renderPageControls(COTTAGE_WALLPAPERS.length);
   }
@@ -551,6 +568,7 @@ export class CottageStyleScene extends Phaser.Scene {
     choices.forEach((choice, index) => {
       const { x, y } = this.choicePosition(index, false);
       const selected = this.previewStyle?.floorStyleId === choice.id;
+      const unlocked = this.isStyleUnlocked(choice.id);
       const card = this.trackChoice(
         this.add
           .rectangle(x, y, 120, 94, selected ? UI_COLOURS.gold : UI_COLOURS.parchment, 1)
@@ -578,7 +596,12 @@ export class CottageStyleScene extends Phaser.Scene {
           .setDepth(9),
       );
       if (selected) this.renderCheck(x + 45, y - 34);
-      card.on('pointerdown', () => this.selectFloor(choice));
+      if (unlocked) {
+        card.on('pointerdown', () => this.selectFloor(choice));
+      } else {
+        card.disableInteractive().setAlpha(0.52);
+        this.renderLockBadge(choice.id, x, y);
+      }
     });
     this.renderPageControls(COTTAGE_FLOOR_STYLES.length);
   }
@@ -590,6 +613,7 @@ export class CottageStyleScene extends Phaser.Scene {
     ids.forEach((variantId, index) => {
       const { x, y } = this.choicePosition(index, true);
       const selected = this.previewStyle?.furnitureVariants[this.selectedFurniture] === variantId;
+      const unlocked = this.isStyleUnlocked(variantId);
       const palette = getCottageFurniturePalette(this.selectedFurniture, variantId);
       const card = this.trackChoice(
         this.add
@@ -624,7 +648,12 @@ export class CottageStyleScene extends Phaser.Scene {
           .setDepth(9),
       );
       if (selected) this.renderCheck(x + 45, y - 34);
-      card.on('pointerdown', () => this.selectFurnitureVariant(variantId));
+      if (unlocked) {
+        card.on('pointerdown', () => this.selectFurnitureVariant(variantId));
+      } else {
+        card.disableInteractive().setAlpha(0.52);
+        this.renderLockBadge(variantId, x, y);
+      }
     });
     this.renderPageControls(COTTAGE_FURNITURE_VARIANT_IDS[this.selectedFurniture].length);
   }
@@ -668,6 +697,41 @@ export class CottageStyleScene extends Phaser.Scene {
     graphics.lineBetween(x - 28, y + 8, x - 28, y + 24);
   }
 
+  private isStyleUnlocked(styleId: string): boolean {
+    return this.entitlements?.isUnlocked(styleId) ?? false;
+  }
+
+  private renderLockBadge(styleId: string, x: number, y: number): void {
+    this.trackChoice(
+      this.add
+        .text(x, y - 3, 'LOCKED', {
+          color: '#4f3f5b',
+          fontFamily: UI_FONT,
+          fontSize: '11px',
+          fontStyle: 'bold',
+          backgroundColor: '#fff8e8e8',
+          padding: { x: 7, y: 4 },
+        })
+        .setName(`cottage-style-locked:${styleId}`)
+        .setOrigin(0.5)
+        .setDepth(11),
+    );
+  }
+
+  private applyDiagnosticUnlock(): void {
+    if (!this.entitlements || typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('diagnostics') !== '1') return;
+    const styleId = params.get('homeStyleUnlock');
+    if (!styleId) return;
+
+    try {
+      this.entitlements.grantStyle(styleId, 'diagnostic');
+    } catch {
+      // Diagnostics must never make the production scene fail to load.
+    }
+  }
+
   private renderCheck(x: number, y: number): void {
     this.trackChoice(
       this.add
@@ -683,7 +747,7 @@ export class CottageStyleScene extends Phaser.Scene {
   }
 
   private selectWallColour(choice: CottageWallColourDefinition): void {
-    if (!this.previewStyle) return;
+    if (!this.previewStyle || !this.isStyleUnlocked(choice.id)) return;
     this.previewStyle = {
       ...this.previewStyle,
       walls: {
@@ -698,7 +762,7 @@ export class CottageStyleScene extends Phaser.Scene {
   }
 
   private selectWallpaper(choice: CottageWallpaperDefinition): void {
-    if (!this.previewStyle) return;
+    if (!this.previewStyle || !this.isStyleUnlocked(choice.id)) return;
     this.previewStyle = {
       ...this.previewStyle,
       walls: {
@@ -713,13 +777,13 @@ export class CottageStyleScene extends Phaser.Scene {
   }
 
   private selectFloor(choice: CottageFloorStyleDefinition): void {
-    if (!this.previewStyle) return;
+    if (!this.previewStyle || !this.isStyleUnlocked(choice.id)) return;
     this.previewStyle = { ...this.previewStyle, floorStyleId: choice.id };
     this.renderAll();
   }
 
   private selectFurnitureVariant(variantId: string): void {
-    if (!this.previewStyle) return;
+    if (!this.previewStyle || !this.isStyleUnlocked(variantId)) return;
     this.previewStyle = {
       ...this.previewStyle,
       furnitureVariants: {
