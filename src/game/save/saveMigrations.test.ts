@@ -238,6 +238,37 @@ describe('migrateSaveRecord', () => {
     ]);
   });
 
+  it('grandfathers selected schema-v6 styles while keeping other unlockables locked', () => {
+    const currentFixture = createR4LongRunningSaveFixture();
+    const { unlockedStyleIds: _unlockedStyleIds, ...legacyHome } = currentFixture.home;
+    const historicalV6 = {
+      ...currentFixture,
+      schemaVersion: 6,
+      home: {
+        ...legacyHome,
+        style: {
+          ...currentFixture.home.style,
+          walls: {
+            ...currentFixture.home.style.walls,
+            left: {
+              ...currentFixture.home.style.walls.left,
+              wallColourId: 'cottage-wall:sea-glass',
+            },
+          },
+        },
+      },
+    };
+
+    const migrated = migrateSaveRecord(historicalV6);
+    expect(migrated && isSaveGame(migrated)).toBe(true);
+    if (!migrated || !isSaveGame(migrated)) {
+      throw new Error('Expected the schema-v6 fixture to migrate to a valid current save.');
+    }
+
+    expect(migrated.home.unlockedStyleIds).toContain('cottage-wall:sea-glass');
+    expect(migrated.home.unlockedStyleIds).not.toContain('cottage-wall:buttercup');
+  });
+
   it('applies migrations sequentially', () => {
     const toVersionOne: SaveMigration = (save) => ({
       ...save,
@@ -269,6 +300,11 @@ describe('migrateSaveRecord', () => {
       schemaVersion: 6,
       sixthMigration: true,
     });
+    const toVersionSeven: SaveMigration = (save) => ({
+      ...save,
+      schemaVersion: 7,
+      seventhMigration: true,
+    });
     const migrations = new Map([
       [0, toVersionOne],
       [1, toVersionTwo],
@@ -276,6 +312,7 @@ describe('migrateSaveRecord', () => {
       [3, toVersionFour],
       [4, toVersionFive],
       [5, toVersionSix],
+      [6, toVersionSeven],
     ]);
 
     expect(migrateSaveRecord({ schemaVersion: 0 }, migrations)).toEqual({
@@ -286,6 +323,7 @@ describe('migrateSaveRecord', () => {
       fourthMigration: true,
       fifthMigration: true,
       sixthMigration: true,
+      seventhMigration: true,
     });
   });
 
