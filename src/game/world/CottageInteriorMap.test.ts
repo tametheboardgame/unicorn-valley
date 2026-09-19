@@ -4,7 +4,14 @@ import {
   isPointBlocked,
   isPointInsideWalkableBounds,
 } from './MapTraversal';
-import { COTTAGE_INTERIOR_MAP } from './CottageInteriorMap';
+import {
+  COTTAGE_INTERIOR_MAP,
+  isCottagePointInsideReservedZone,
+} from './CottageInteriorMap';
+import {
+  COTTAGE_DECORATION_PROTECTED_ANCHOR_IDS,
+  resolveCottageSemanticAnchor,
+} from './CottageSemanticAnchors';
 
 const PLAYER_CLEARANCE = 42;
 const EXIT_INTERACTION_RADIUS = 155;
@@ -103,6 +110,42 @@ describe('Moonflower Cottage interior map', () => {
     ]) {
       const slot = COTTAGE_INTERIOR_MAP.decorationSlots.find((candidate) => candidate.id === id);
       expect(slot?.interactionPosition?.y).toBeGreaterThan(floorSeam + PLAYER_CLEARANCE);
+    }
+  });
+
+  it('derives protected story capacity from semantic anchors', () => {
+    expect(COTTAGE_INTERIOR_MAP.reservedZones).toHaveLength(
+      COTTAGE_DECORATION_PROTECTED_ANCHOR_IDS.length,
+    );
+
+    for (const zone of COTTAGE_INTERIOR_MAP.reservedZones) {
+      const anchor = resolveCottageSemanticAnchor(zone.anchorId);
+      expect({ x: zone.x, y: zone.y }, zone.anchorId).toEqual(anchor.position);
+      expect(zone.width, zone.anchorId).toBe(anchor.reservation?.width);
+      expect(zone.height, zone.anchorId).toBe(anchor.reservation?.height);
+    }
+  });
+
+  it('keeps ordinary decoration slots clear of protected story and portal capacity', () => {
+    const slots = [
+      ...COTTAGE_INTERIOR_MAP.decorationSlots,
+      ...COTTAGE_INTERIOR_MAP.deferredDecorationSlots,
+    ];
+
+    for (const slot of slots) {
+      expect(isCottagePointInsideReservedZone(slot.position, 46), slot.id).toBeNull();
+    }
+  });
+
+  it('keeps protected story capacity clear of permanent collision footprints', () => {
+    for (const zone of COTTAGE_INTERIOR_MAP.reservedZones) {
+      for (const collider of COTTAGE_INTERIOR_MAP.colliders) {
+        const overlapsX =
+          Math.abs(zone.x - collider.x) < zone.width / 2 + collider.width / 2;
+        const overlapsY =
+          Math.abs(zone.y - collider.y) < zone.height / 2 + collider.height / 2;
+        expect(overlapsX && overlapsY, `${zone.anchorId} overlaps ${collider.id}`).toBe(false);
+      }
     }
   });
 
