@@ -28,28 +28,45 @@ A later documentation/status-only head triggered a full Chromium run in which on
 
 ## Current gate
 
-David's live check found that a fresh New Game owned no placeable decorations. The bounded H2.8
-remediation now gives fresh games four dedicated, unplaced starter decorations and upgrades schema-v5
-saves through an idempotent v6 migration. Existing reward/shop items are not granted, larger quantities
-and unrelated inventory are preserved, and placements remain untouched. `npm run validate` passes
-(539 unit tests), and the focused H2.8 browser file passes both contracts. Exact-head CI/deployment are
-the remaining technical gates.
-The package remains waiting for David's place/replace/move/remove playtest and is not human-approved.
+David has already live-verified the core H2.8 Place / Replace / Move / Remove and save/reload
+persistence behaviour. A second visual review rejected the first rounded picker and generic decoration
+presentation, so H2.8 remains open for a bounded interaction, physicality and presentation redesign.
 
-The next human gate is the H2.8 place/replace/move/remove playtest. Do not start H2.9, merge PR #175 or deploy production until H2.8 has passed technical qualification and David has explicitly accepted the H2.8 result.
+Runtime candidate `885fa9941f65678a058febed2f62c4103339496d` now provides the redesigned collection browser,
+player-facing decoration categories, direct tap/click placement markers, the semantic `Decorate here`
+action, item-aware depth/collision rules and recognisable vector decoration art. Rich placed-decoration
+art is lazy-loaded so the hard startup performance budget remains intact.
+
+Exact-head CI run `35444709042` has passed verification planning, formatting, lint, architecture,
+type-check, project contract, unit contracts, production build, static smoke and the performance budget.
+The full Chromium shards and Chromium/Firefox/WebKit compatibility matrix are still running at this
+checkpoint. Cloudflare has deployed the exact runtime candidate.
+
+The package remains waiting for David's visual/physicality recheck and is not human-approved. Do not
+start H2.9, merge PR #175 or deploy production until H2.8 is explicitly accepted.
 
 ## Next work
 
-1. Publish the starter-set remediation checkpoint and confirm full validation, exact-head CI and both previews.
-2. David playtests explicit place, replace, move and remove flows across slot categories, then reloads/Continues and checks that normal play has no floating decoration names.
-3. Record David’s decision; do not start H2.9 without explicit approval.
+1. Allow exact-head run `35444709042` to finish its already-running full Chromium and cross-browser gates.
+2. David checks the redesigned collection browser, category filtering, direct placement-point interaction,
+   `Decorate here` prompt, return position, recognisable decoration art, rug layering and solid floor
+   collision in the deployed preview.
+3. Record David's decision; do not start H2.9 without explicit approval.
 
 ## H2.8 technical checkpoint
 
-The visible-choice picker, explicit Place/Replace/Move/Remove copy, canonical quantity-aware service
-result contract, item-coloured cottage presentation and no-floating-name normal-play treatment are
-implemented. The fresh-game starter collection is Moonflower Hoop, Star Bunting, Meadow Rug and Daisy
-Vase, covering wall/floor/table/shelf/display compatibility without pre-placement.
-Focused unit contracts pass (including migration idempotence/preservation), and the genuinely fresh-game
-H2.8 browser contract passes Place, Replace, Move, Remove and reload persistence. Existing lint warnings
-remain non-failing and unrelated.
+The underlying quantity-aware placement service remains unchanged and previously passed David's live
+place/replace/move/remove/persistence check. The current redesign adds a Room-Style-like selected-item
+preview and paged collection grid, dynamic player-facing item groups, direct room placement targets,
+semantic decorate interaction copy, item/slot-aware physical behaviour and recognisable vector artwork.
+
+Rugs are deliberately below actors with no collider. Wall-mounted and furniture-supported decorations
+avoid inappropriate extra blockers. Freestanding floor decorations use Y-aware world depth and authored
+static collision footprints. Browser coverage now guards direct marker activation, `Decorate here`,
+category filters, rug depth and freestanding decoration collision in addition to the existing persistence
+contracts.
+
+Runtime candidate: `885fa9941f65678a058febed2f62c4103339496d`.
+Exact-head CI: `35444709042`, full browser matrix still running at this checkpoint.
+Immutable preview: https://f5cf2956.unicorn-valley.pages.dev
+Stable branch preview: https://agent-r6-5-wp19h2-moonflower.unicorn-valley.pages.dev
