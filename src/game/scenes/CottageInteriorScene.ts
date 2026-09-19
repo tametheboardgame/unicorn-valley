@@ -128,12 +128,7 @@ export class CottageInteriorScene extends Phaser.Scene {
 
     this.collisionGroup = this.createCollisionMap();
     const playerSpawn = data.playerPosition ?? map.playerSpawn;
-    this.player = new PlayerEntity(
-      this,
-      playerSpawn.x,
-      playerSpawn.y,
-      SAVED_PLAYER_TEXTURE_KEY,
-    );
+    this.player = new PlayerEntity(this, playerSpawn.x, playerSpawn.y, SAVED_PLAYER_TEXTURE_KEY);
     this.player.sprite.setDisplaySize(112, 92);
     this.physics.add.collider(this.player.sprite, this.collisionGroup);
     this.updatePlayerDepth();
