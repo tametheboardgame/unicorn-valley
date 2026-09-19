@@ -8,10 +8,53 @@ export type CottageDecorationTheme =
   | 'sunbeam'
   | 'adventure';
 
+export type CottageDecorationGroup =
+  | 'lighting'
+  | 'flowers-plants'
+  | 'rugs-cushions'
+  | 'trophies-ribbons'
+  | 'keepsakes'
+  | 'ornaments'
+  | 'hangings';
+
+export type CottageDecorationVisualKind =
+  | 'hoop'
+  | 'bunting'
+  | 'rug'
+  | 'vase'
+  | 'cushion'
+  | 'lantern'
+  | 'ribbon'
+  | 'rosette'
+  | 'pennant'
+  | 'basket'
+  | 'jar'
+  | 'mobile'
+  | 'charm'
+  | 'chime'
+  | 'bookend'
+  | 'keepsake'
+  | 'ornament';
+
+export type CottageDecorationPlacementMode =
+  | 'flat-floor'
+  | 'wall-mounted'
+  | 'supported'
+  | 'freestanding';
+
+export interface CottageDecorationPlacementBehaviour {
+  mode: CottageDecorationPlacementMode;
+  collisionWidth?: number;
+  collisionHeight?: number;
+  collisionOffsetY?: number;
+}
+
 export interface CottageDecorationProfile {
   categories: readonly CottageDecorationCategory[];
   theme: CottageDecorationTheme;
   previewColour: number;
+  group?: CottageDecorationGroup;
+  visualKind?: CottageDecorationVisualKind;
 }
 
 function profile(
@@ -23,14 +66,34 @@ function profile(
 }
 
 const COTTAGE_DECORATION_PROFILES: Partial<Record<ItemId, CottageDecorationProfile>> = {
-  ...(Object.fromEntries(
-    [
-      ['item:starter-moonflower-hoop', ['wall', 'display'], 'moonflower', 0xd9a8d8],
-      ['item:starter-star-bunting', ['wall', 'display'], 'starlight', 0xf2cf6b],
-      ['item:starter-meadow-rug', ['floor'], 'sunbeam', 0x9fcf91],
-      ['item:starter-daisy-vase', ['table', 'shelf', 'display'], 'sunbeam', 0x8fc9df],
-    ].map(([id, categories, theme, previewColour]) => [id, { categories, theme, previewColour }]),
-  ) as Partial<Record<ItemId, CottageDecorationProfile>>),
+  'item:starter-moonflower-hoop': {
+    categories: ['wall', 'display'],
+    theme: 'moonflower',
+    previewColour: 0xd9a8d8,
+    group: 'hangings',
+    visualKind: 'hoop',
+  },
+  'item:starter-star-bunting': {
+    categories: ['wall', 'display'],
+    theme: 'starlight',
+    previewColour: 0xf2cf6b,
+    group: 'hangings',
+    visualKind: 'bunting',
+  },
+  'item:starter-meadow-rug': {
+    categories: ['floor'],
+    theme: 'sunbeam',
+    previewColour: 0x9fcf91,
+    group: 'rugs-cushions',
+    visualKind: 'rug',
+  },
+  'item:starter-daisy-vase': {
+    categories: ['table', 'shelf', 'display'],
+    theme: 'sunbeam',
+    previewColour: 0x8fc9df,
+    group: 'flowers-plants',
+    visualKind: 'vase',
+  },
   'item:sunbeam-cushion': profile(['floor'], 'sunbeam', 0xffd982),
   'item:moonflower-lantern': profile(['wall', 'table', 'shelf', 'display'], 'moonflower', 0xc8a6dc),
   'item:rainbow-run-finisher-ribbon': profile(['wall', 'shelf', 'display'], 'rainbow', 0xf6a9cf),
@@ -117,4 +180,95 @@ export function getCottageDecorationThemeLabel(theme: CottageDecorationTheme): s
     case 'adventure':
       return 'Adventure';
   }
+}
+
+
+function inferDecorationGroup(itemId: ItemId): CottageDecorationGroup {
+  const id = itemId.toLowerCase();
+  if (id.includes('lantern') || id.includes('lamp') || id.includes('star-jar')) return 'lighting';
+  if (id.includes('rug') || id.includes('cushion')) return 'rugs-cushions';
+  if (id.includes('ribbon') || id.includes('rosette') || id.includes('cup')) return 'trophies-ribbons';
+  if (
+    id.includes('pennant') ||
+    id.includes('bunting') ||
+    id.includes('mobile') ||
+    id.includes('charm') ||
+    id.includes('chime') ||
+    id.includes('hoop')
+  ) {
+    return 'hangings';
+  }
+  if (id.includes('basket') || id.includes('bookend') || id.includes('display')) return 'ornaments';
+  return 'keepsakes';
+}
+
+function inferVisualKind(itemId: ItemId): CottageDecorationVisualKind {
+  const id = itemId.toLowerCase();
+  if (id.includes('hoop')) return 'hoop';
+  if (id.includes('bunting')) return 'bunting';
+  if (id.includes('rug')) return 'rug';
+  if (id.includes('vase')) return 'vase';
+  if (id.includes('cushion')) return 'cushion';
+  if (id.includes('lantern') || id.includes('lamp')) return 'lantern';
+  if (id.includes('ribbon')) return 'ribbon';
+  if (id.includes('rosette')) return 'rosette';
+  if (id.includes('pennant')) return 'pennant';
+  if (id.includes('basket')) return 'basket';
+  if (id.includes('jar')) return 'jar';
+  if (id.includes('mobile')) return 'mobile';
+  if (id.includes('charm')) return 'charm';
+  if (id.includes('chime')) return 'chime';
+  if (id.includes('bookend')) return 'bookend';
+  if (id.includes('display')) return 'ornament';
+  return 'keepsake';
+}
+
+export function getCottageDecorationGroup(itemId: ItemId): CottageDecorationGroup {
+  return getCottageDecorationProfile(itemId)?.group ?? inferDecorationGroup(itemId);
+}
+
+export function getCottageDecorationVisualKind(itemId: ItemId): CottageDecorationVisualKind {
+  return getCottageDecorationProfile(itemId)?.visualKind ?? inferVisualKind(itemId);
+}
+
+export function getCottageDecorationGroupLabel(group: CottageDecorationGroup): string {
+  switch (group) {
+    case 'lighting':
+      return 'Lighting';
+    case 'flowers-plants':
+      return 'Flowers & Plants';
+    case 'rugs-cushions':
+      return 'Rugs & Cushions';
+    case 'trophies-ribbons':
+      return 'Trophies & Ribbons';
+    case 'keepsakes':
+      return 'Keepsakes';
+    case 'ornaments':
+      return 'Ornaments';
+    case 'hangings':
+      return 'Hangings';
+  }
+}
+
+export function resolveCottageDecorationPlacementBehaviour(
+  itemId: ItemId,
+  category: CottageDecorationCategory,
+): CottageDecorationPlacementBehaviour {
+  if (category === 'wall') {
+    return { mode: 'wall-mounted' };
+  }
+  if (category === 'table' || category === 'shelf' || category === 'display') {
+    return { mode: 'supported' };
+  }
+
+  const kind = getCottageDecorationVisualKind(itemId);
+  if (kind === 'rug') {
+    return { mode: 'flat-floor' };
+  }
+
+  if (kind === 'cushion') {
+    return { mode: 'freestanding', collisionWidth: 54, collisionHeight: 30, collisionOffsetY: 8 };
+  }
+
+  return { mode: 'freestanding', collisionWidth: 68, collisionHeight: 42, collisionOffsetY: 12 };
 }
