@@ -79,17 +79,20 @@ test('H2.10 unlocks a previously unavailable cottage style and persists the enti
   await startScene(page, 'CottageStyleScene');
 
   let value = await snapshot(page);
-  expect(
-    hasObject(value, 'CottageStyleScene', 'cottage-style-locked:cottage-wall:sea-glass'),
-  ).toBe(true);
+  expect(hasObject(value, 'CottageStyleScene', 'cottage-style-locked:cottage-wall:sea-glass')).toBe(
+    true,
+  );
 
   await tapScreen(page, 1150, 326);
   await tapScreen(page, 1080, 652);
-  await expect.poll(async () => (await snapshot(page)).activeScenes).toEqual([
-    'CottageInteriorScene',
-  ]);
+  await expect
+    .poll(async () => (await snapshot(page)).activeScenes)
+    .toEqual(['CottageInteriorScene']);
 
-  let stored = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? '{}'), SAVE_KEY);
+  let stored = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SAVE_KEY,
+  );
   expect(stored.home.style.walls.back.wallColourId).toBe('cottage-wall:moon-cream');
   expect(stored.home.unlockedStyleIds).not.toContain('cottage-wall:sea-glass');
 
@@ -97,15 +100,15 @@ test('H2.10 unlocks a previously unavailable cottage style and persists the enti
   await startScene(page, 'CottageStyleScene');
 
   value = await snapshot(page);
-  expect(
-    hasObject(value, 'CottageStyleScene', 'cottage-style-locked:cottage-wall:sea-glass'),
-  ).toBe(false);
+  expect(hasObject(value, 'CottageStyleScene', 'cottage-style-locked:cottage-wall:sea-glass')).toBe(
+    false,
+  );
 
   await tapScreen(page, 1150, 326);
   await tapScreen(page, 1080, 652);
-  await expect.poll(async () => (await snapshot(page)).activeScenes).toEqual([
-    'CottageInteriorScene',
-  ]);
+  await expect
+    .poll(async () => (await snapshot(page)).activeScenes)
+    .toEqual(['CottageInteriorScene']);
 
   stored = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? '{}'), SAVE_KEY);
   expect(stored.home.style.walls.back.wallColourId).toBe('cottage-wall:sea-glass');
