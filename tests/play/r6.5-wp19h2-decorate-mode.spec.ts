@@ -302,9 +302,7 @@ test('H2.8 fresh-game starters support place, replace, move, remove and persiste
   expect(editor.objects.some(({ name }) => name === 'cottage-decorate-main-panel')).toBe(true);
   expect(editor.objects.some(({ name }) => name === 'cottage-decorate-preview-panel')).toBe(true);
   expect(
-    editor.objects.some(
-      ({ name }) => name === 'cottage-decoration-choice:item:starter-daisy-vase',
-    ),
+    editor.objects.some(({ name }) => name === 'cottage-decoration-choice:item:starter-daisy-vase'),
   ).toBe(true);
   await page.keyboard.press('Escape');
 
