@@ -7,7 +7,6 @@ const MODAL_SCENE_KEYS = new Set([
   'SettingsScene',
   'UnicornCreatorScene',
   'ShopScene',
-  'CottageDecorateScene',
   'CottageStyleScene',
 ]);
 
