@@ -16,10 +16,7 @@ import {
 } from '../home/CottageFurnitureRenderer';
 import { buildCottageHomeView, type CottageHomeView } from '../home/CottageHomeView';
 import { HomeDecorationService } from '../home/HomeDecorationService';
-import {
-  getCottageDecorationProfile,
-  resolveCottageDecorationPlacementBehaviour,
-} from '../home/CottageDecorationCatalogue';
+import { resolveCottageDecorationPlacementBehaviour } from '../home/CottageDecorationCatalogue';
 import { renderCottageDecoration } from '../home/CottageDecorationPresentation';
 import { resolveCottageStyle } from '../home/CottageStyleCatalogue';
 import { renderCottageRoomSurfaces } from '../home/CottageSurfaceRenderer';
