@@ -8,8 +8,6 @@ import {
 import { HomeDecorationService } from '../home/HomeDecorationService';
 import { renderCottageDecoration } from '../home/CottageDecorationPresentation';
 import { getBrowserSaveService } from '../save/browserSaveService';
-import { createConfirmationButton } from '../ui/ConfirmationModalStyle';
-import { UI_DESIGN_TOKENS } from '../ui/UiDesignSystem';
 import { UI_COLOURS, UI_FONT } from '../ui/uiTheme';
 import type { CottageDecorationSlot } from '../world/CottageInteriorMap';
 import type { MapPoint } from '../world/MapTraversal';
@@ -74,7 +72,7 @@ export class CottageDecorateScene extends Phaser.Scene {
       UI_COLOURS.cream,
       UI_COLOURS.lavenderStrong,
       2,
-      UI_DESIGN_TOKENS.radius.panelPx,
+      30,
     ).setName('cottage-decorate-main-panel');
 
     this.add
@@ -130,7 +128,7 @@ export class CottageDecorateScene extends Phaser.Scene {
       0xf3e7f8,
       UI_COLOURS.lavender,
       5,
-      UI_DESIGN_TOKENS.radius.controlPx,
+      16,
       1,
       false,
     ).setName('cottage-decorate-theme-pill');
@@ -315,7 +313,7 @@ export class CottageDecorateScene extends Phaser.Scene {
         selected ? 0xfff7dc : 0xffffff,
         selected ? UI_COLOURS.goldStrong : UI_COLOURS.lavender,
         7,
-        UI_DESIGN_TOKENS.radius.controlPx,
+        16,
         1,
         false,
       );
@@ -400,19 +398,31 @@ export class CottageDecorateScene extends Phaser.Scene {
     fill: number,
     action: () => void,
   ): Phaser.GameObjects.Text {
-    const primary = fill === UI_COLOURS.gold;
-    const presentation = createConfirmationButton(this, {
-      name: `cottage-decorate-action-${label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
+    this.createRoundedPanel(
       x,
       y,
       width,
-      height: 52,
-      depth: 7,
-      label,
-      variant: primary ? 'primary' : 'secondary',
-      onActivate: action,
-    });
-    return presentation.label;
+      52,
+      fill,
+      fill === UI_COLOURS.gold ? UI_COLOURS.goldStrong : UI_COLOURS.lavenderStrong,
+      7,
+      16,
+    );
+    this.add
+      .rectangle(x, y, width, 52, 0xffffff, 0.001)
+      .setName(`cottage-decorate-action-${label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`)
+      .setInteractive({ useHandCursor: true })
+      .setDepth(9)
+      .on('pointerdown', action);
+    return this.add
+      .text(x, y, label, {
+        color: UI_COLOURS.ink,
+        fontFamily: UI_FONT,
+        fontSize: '17px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5)
+      .setDepth(8);
   }
 
   private createRoundedPanel(
