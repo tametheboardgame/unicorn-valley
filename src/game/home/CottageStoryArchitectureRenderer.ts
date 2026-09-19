@@ -1,4 +1,4 @@
-import Phaser from 'phaser';
+import type Phaser from 'phaser';
 import {
   COTTAGE_SEMANTIC_ANCHOR_IDS,
   resolveCottageSemanticAnchor,
