@@ -235,8 +235,22 @@ function drawRosette(
   graphics.fillCircle(x, y - 10 * scale, 24 * scale);
   drawStar(graphics, x, y - 10 * scale, 15 * scale, 7 * scale, GOLD);
   graphics.fillStyle(colour, 1);
-  graphics.fillTriangle(x - 17 * scale, y + 9 * scale, x - 5 * scale, y + 47 * scale, x + 1 * scale, y + 10 * scale);
-  graphics.fillTriangle(x + 17 * scale, y + 9 * scale, x + 5 * scale, y + 47 * scale, x - 1 * scale, y + 10 * scale);
+  graphics.fillTriangle(
+    x - 17 * scale,
+    y + 9 * scale,
+    x - 5 * scale,
+    y + 47 * scale,
+    x + 1 * scale,
+    y + 10 * scale,
+  );
+  graphics.fillTriangle(
+    x + 17 * scale,
+    y + 9 * scale,
+    x + 5 * scale,
+    y + 47 * scale,
+    x - 1 * scale,
+    y + 10 * scale,
+  );
 }
 
 function drawPennant(
@@ -289,7 +303,12 @@ function drawJar(
   graphics.strokeRoundedRect(x - 32 * scale, y - 35 * scale, 64 * scale, 78 * scale, 17 * scale);
   graphics.fillStyle(TIMBER_DARK, 1);
   graphics.fillRoundedRect(x - 27 * scale, y - 42 * scale, 54 * scale, 13 * scale, 5 * scale);
-  for (const [dx, dy] of [[-14, -11], [10, 2], [-3, 21], [17, -20]] as const) {
+  for (const [dx, dy] of [
+    [-14, -11],
+    [10, 2],
+    [-3, 21],
+    [17, -20],
+  ] as const) {
     drawStar(graphics, x + dx * scale, y + dy * scale, 8 * scale, 3.5 * scale, colour);
   }
 }
