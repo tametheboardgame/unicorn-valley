@@ -182,12 +182,12 @@ export function getCottageDecorationThemeLabel(theme: CottageDecorationTheme): s
   }
 }
 
-
 function inferDecorationGroup(itemId: ItemId): CottageDecorationGroup {
   const id = itemId.toLowerCase();
   if (id.includes('lantern') || id.includes('lamp') || id.includes('star-jar')) return 'lighting';
   if (id.includes('rug') || id.includes('cushion')) return 'rugs-cushions';
-  if (id.includes('ribbon') || id.includes('rosette') || id.includes('cup')) return 'trophies-ribbons';
+  if (id.includes('ribbon') || id.includes('rosette') || id.includes('cup'))
+    return 'trophies-ribbons';
   if (
     id.includes('pennant') ||
     id.includes('bunting') ||
