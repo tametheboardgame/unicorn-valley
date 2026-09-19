@@ -18,18 +18,38 @@ export const COTTAGE_SEMANTIC_ANCHOR_IDS = {
 export type CottageSemanticAnchorId =
   (typeof COTTAGE_SEMANTIC_ANCHOR_IDS)[keyof typeof COTTAGE_SEMANTIC_ANCHOR_IDS];
 
+export interface CottageAnchorReservation {
+  width: number;
+  height: number;
+}
+
 export interface CottageSemanticAnchor {
   id: CottageSemanticAnchorId;
   position: MapPoint;
   interactionPosition?: MapPoint;
   purpose: 'navigation' | 'system' | 'visitor' | 'story' | 'future-story' | 'future-portal';
+  reservation?: CottageAnchorReservation;
 }
+
+export const COTTAGE_FUTURE_STORY_ANCHOR_IDS = [
+  COTTAGE_SEMANTIC_ANCHOR_IDS.storyDisplayOne,
+  COTTAGE_SEMANTIC_ANCHOR_IDS.storyDisplayTwo,
+  COTTAGE_SEMANTIC_ANCHOR_IDS.storyDisplayThree,
+  COTTAGE_SEMANTIC_ANCHOR_IDS.storyDisplayFour,
+  COTTAGE_SEMANTIC_ANCHOR_IDS.storyDisplayFive,
+] as const satisfies readonly CottageSemanticAnchorId[];
+
+export const COTTAGE_DECORATION_PROTECTED_ANCHOR_IDS = [
+  COTTAGE_SEMANTIC_ANCHOR_IDS.eggNest,
+  ...COTTAGE_FUTURE_STORY_ANCHOR_IDS,
+  COTTAGE_SEMANTIC_ANCHOR_IDS.portalBay,
+] as const satisfies readonly CottageSemanticAnchorId[];
 
 /**
  * Canonical authored world points for systems that need stable cottage locations.
  *
- * H2.4 adds the bed-centre sleep trigger as semantic room geometry. Consumers continue to bind
- * by id so sleep, story, visitors and future systems do not need coordinate hunting.
+ * H2.9 keeps story ownership here as the one coordinate source. The reservation attached to story
+ * anchors describes floor capacity that ordinary player-decoration slots must not consume.
  */
 export const COTTAGE_SEMANTIC_ANCHORS = {
   [COTTAGE_SEMANTIC_ANCHOR_IDS.door]: {
@@ -54,6 +74,7 @@ export const COTTAGE_SEMANTIC_ANCHORS = {
     position: { x: 420, y: 900 },
     interactionPosition: { x: 520, y: 885 },
     purpose: 'story',
+    reservation: { width: 200, height: 180 },
   },
   [COTTAGE_SEMANTIC_ANCHOR_IDS.visitorWillow]: {
     id: COTTAGE_SEMANTIC_ANCHOR_IDS.visitorWillow,
@@ -67,33 +88,39 @@ export const COTTAGE_SEMANTIC_ANCHORS = {
   },
   [COTTAGE_SEMANTIC_ANCHOR_IDS.storyDisplayOne]: {
     id: COTTAGE_SEMANTIC_ANCHOR_IDS.storyDisplayOne,
-    position: { x: 560, y: 895 },
+    position: { x: 590, y: 890 },
     purpose: 'future-story',
+    reservation: { width: 120, height: 120 },
   },
   [COTTAGE_SEMANTIC_ANCHOR_IDS.storyDisplayTwo]: {
     id: COTTAGE_SEMANTIC_ANCHOR_IDS.storyDisplayTwo,
-    position: { x: 930, y: 895 },
+    position: { x: 900, y: 900 },
     purpose: 'future-story',
+    reservation: { width: 120, height: 120 },
   },
   [COTTAGE_SEMANTIC_ANCHOR_IDS.storyDisplayThree]: {
     id: COTTAGE_SEMANTIC_ANCHOR_IDS.storyDisplayThree,
-    position: { x: 1090, y: 875 },
+    position: { x: 380, y: 500 },
     purpose: 'future-story',
+    reservation: { width: 120, height: 120 },
   },
   [COTTAGE_SEMANTIC_ANCHOR_IDS.storyDisplayFour]: {
     id: COTTAGE_SEMANTIC_ANCHOR_IDS.storyDisplayFour,
-    position: { x: 1030, y: 455 },
+    position: { x: 540, y: 470 },
     purpose: 'future-story',
+    reservation: { width: 120, height: 120 },
   },
   [COTTAGE_SEMANTIC_ANCHOR_IDS.storyDisplayFive]: {
     id: COTTAGE_SEMANTIC_ANCHOR_IDS.storyDisplayFive,
-    position: { x: 500, y: 455 },
+    position: { x: 970, y: 450 },
     purpose: 'future-story',
+    reservation: { width: 120, height: 120 },
   },
   [COTTAGE_SEMANTIC_ANCHOR_IDS.portalBay]: {
     id: COTTAGE_SEMANTIC_ANCHOR_IDS.portalBay,
     position: { x: 1280, y: 530 },
     purpose: 'future-portal',
+    reservation: { width: 200, height: 190 },
   },
 } as const satisfies Record<CottageSemanticAnchorId, CottageSemanticAnchor>;
 
