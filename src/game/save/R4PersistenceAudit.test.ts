@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { COTTAGE_STARTER_DECORATION_IDS } from '../../content/cottageStarterDecorations';
 import type { SaveRepository } from './SaveRepository';
 import { SaveService } from './SaveService';
 import { createR4LongRunningSaveFixture } from './fixtures/r4LongRunningSaveFixture';
@@ -43,7 +44,7 @@ describe('R4 persistence audit', () => {
 
     expect(migrated?.schemaVersion).toBe(CURRENT_SAVE_SCHEMA_VERSION);
     expect(migrated?.profile.name).toBe('Moonbeam');
-    expect(migrated?.inventory.ownedDecorationIds).toEqual([]);
+    expect(migrated?.inventory.ownedDecorationIds).toEqual(COTTAGE_STARTER_DECORATION_IDS);
     expect(migrated?.relationships.byCharacterId).toEqual({});
     expect(migrated?.home.furnitureBySlot).toEqual({});
     expect(migrated?.collections.memoryIds).toEqual([]);

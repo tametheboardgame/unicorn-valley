@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { createR4LongRunningSaveFixture } from './fixtures/r4LongRunningSaveFixture';
-import { migrateSaveRecord, type SaveMigration } from './saveMigrations';
+import {
+  grantCottageStarterDecorations,
+  migrateSaveRecord,
+  type SaveMigration,
+} from './saveMigrations';
 import { CURRENT_SAVE_SCHEMA_VERSION } from './saveSchema';
 import { isSaveGame } from './saveValidation';
 
@@ -163,6 +167,77 @@ describe('migrateSaveRecord', () => {
     });
   });
 
+  it('grants the starter collection to an existing save without disturbing its contents', () => {
+    const currentFixture = createR4LongRunningSaveFixture();
+    const historicalV5 = {
+      ...currentFixture,
+      schemaVersion: 5,
+      inventory: {
+        ...currentFixture.inventory,
+        itemQuantities: {
+          ...currentFixture.inventory.itemQuantities,
+          'item:starter-moonflower-hoop': 3,
+          'item:cloud-cushion': 2,
+        },
+        ownedDecorationIds: ['item:cloud-cushion'],
+      },
+      home: {
+        ...currentFixture.home,
+        furnitureBySlot: {
+          'cottage-slot:cosy-corner': 'item:cloud-cushion',
+        },
+      },
+    };
+
+    const migrated = migrateSaveRecord(historicalV5);
+    expect(migrated && isSaveGame(migrated)).toBe(true);
+    if (!migrated || !isSaveGame(migrated)) {
+      throw new Error('Expected the schema-v5 fixture to migrate to a valid current save.');
+    }
+
+    expect(migrated.inventory.itemQuantities).toMatchObject({
+      'item:starter-moonflower-hoop': 3,
+      'item:starter-star-bunting': 1,
+      'item:starter-meadow-rug': 1,
+      'item:starter-daisy-vase': 1,
+      'item:cloud-cushion': 2,
+    });
+    expect(migrated.inventory.ownedDecorationIds).toEqual(
+      expect.arrayContaining([
+        'item:cloud-cushion',
+        'item:starter-moonflower-hoop',
+        'item:starter-star-bunting',
+      ]),
+    );
+    expect(migrated.home.furnitureBySlot).toEqual(historicalV5.home.furnitureBySlot);
+  });
+
+  it('applies the starter grant idempotently while preserving larger and unrelated quantities', () => {
+    const save = {
+      schemaVersion: 5,
+      inventory: {
+        itemQuantities: {
+          'item:starter-daisy-vase': 4,
+          'item:berry-bun': 7,
+        },
+        ownedDecorationIds: ['item:starter-daisy-vase'],
+        specialItemIds: ['item:storybook-key'],
+      },
+    };
+
+    const once = grantCottageStarterDecorations(save);
+    const twice = grantCottageStarterDecorations(once);
+
+    expect(twice).toEqual(once);
+    expect((twice.inventory as Record<string, unknown>).itemQuantities).toMatchObject({
+      'item:starter-daisy-vase': 4,
+      'item:berry-bun': 7,
+    });
+    expect((twice.inventory as Record<string, unknown>).specialItemIds).toEqual([
+      'item:storybook-key',
+    ]);
+  });
+
   it('applies migrations sequentially', () => {
     const toVersionOne: SaveMigration = (save) => ({
       ...save,
@@ -189,12 +264,18 @@ describe('migrateSaveRecord', () => {
       schemaVersion: 5,
       fifthMigration: true,
     });
+    const toVersionSix: SaveMigration = (save) => ({
+      ...save,
+      schemaVersion: 6,
+      sixthMigration: true,
+    });
     const migrations = new Map([
       [0, toVersionOne],
       [1, toVersionTwo],
       [2, toVersionThree],
       [3, toVersionFour],
       [4, toVersionFive],
+      [5, toVersionSix],
     ]);
 
     expect(migrateSaveRecord({ schemaVersion: 0 }, migrations)).toEqual({
@@ -204,6 +285,7 @@ describe('migrateSaveRecord', () => {
       thirdMigration: true,
       fourthMigration: true,
       fifthMigration: true,
+      sixthMigration: true,
     });
   });
 

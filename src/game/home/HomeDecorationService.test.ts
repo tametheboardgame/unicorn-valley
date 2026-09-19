@@ -35,6 +35,40 @@ function createServices(): {
 }
 
 describe('HomeDecorationService', () => {
+  it('gives a fresh game an unplaced, compatible starter collection', () => {
+    const { saveService, decorating } = createServices();
+    const fresh = saveService.createNewGame();
+    saveService.save(fresh);
+
+    expect(fresh.home.furnitureBySlot).toEqual({});
+    expect(
+      decorating.listOwnedDecorations().map(({ definition, quantity, placedQuantity }) => ({
+        id: definition.id,
+        quantity,
+        placedQuantity,
+      })),
+    ).toEqual(
+      expect.arrayContaining([
+        { id: 'item:starter-moonflower-hoop', quantity: 1, placedQuantity: 0 },
+        { id: 'item:starter-star-bunting', quantity: 1, placedQuantity: 0 },
+        { id: 'item:starter-meadow-rug', quantity: 1, placedQuantity: 0 },
+        { id: 'item:starter-daisy-vase', quantity: 1, placedQuantity: 0 },
+      ]),
+    );
+    expect(
+      decorating
+        .listCompatibleDecorations('cottage-slot:left-wall')
+        .map(({ definition }) => definition.id),
+    ).toEqual(
+      expect.arrayContaining(['item:starter-moonflower-hoop', 'item:starter-star-bunting']),
+    );
+    expect(
+      decorating
+        .listCompatibleDecorations('cottage-slot:treasure-shelf')
+        .map(({ definition }) => definition.id),
+    ).toEqual(expect.arrayContaining(['item:starter-daisy-vase']));
+  });
+
   it('lists decoration ownership directly from persistent inventory', () => {
     const { inventory, decorating } = createServices();
     inventory.addItem('item:berry-bun');
@@ -47,10 +81,12 @@ describe('HomeDecorationService', () => {
         quantity,
         placedQuantity,
       })),
-    ).toEqual([
-      { id: 'item:moonflower-lantern', quantity: 1, placedQuantity: 0 },
-      { id: 'item:sunbeam-cushion', quantity: 2, placedQuantity: 0 },
-    ]);
+    ).toEqual(
+      expect.arrayContaining([
+        { id: 'item:moonflower-lantern', quantity: 1, placedQuantity: 0 },
+        { id: 'item:sunbeam-cushion', quantity: 2, placedQuantity: 0 },
+      ]),
+    );
   });
 
   it('filters owned decorations to the selected slot category', () => {
@@ -63,12 +99,19 @@ describe('HomeDecorationService', () => {
       decorating
         .listCompatibleDecorations('cottage-slot:centre-rug')
         .map(({ definition }) => definition.id),
-    ).toEqual(['item:sunbeam-cushion']);
+    ).toEqual(expect.arrayContaining(['item:starter-meadow-rug', 'item:sunbeam-cushion']));
     expect(
       decorating
         .listCompatibleDecorations('cottage-slot:left-wall')
         .map(({ definition }) => definition.id),
-    ).toEqual(['item:moonflower-lantern', 'item:rainbow-run-finisher-ribbon']);
+    ).toEqual(
+      expect.arrayContaining([
+        'item:starter-moonflower-hoop',
+        'item:moonflower-lantern',
+        'item:rainbow-run-finisher-ribbon',
+        'item:starter-star-bunting',
+      ]),
+    );
   });
 
   it('places, removes and persists decorations by stable slot ID without consuming ownership', () => {
@@ -212,6 +255,10 @@ describe('HomeDecorationService', () => {
     expect(decorating.cycleDecoration('cottage-slot:centre-rug')).toMatchObject({
       type: 'placed',
       item: { id: 'item:cloud-cushion' },
+    });
+    expect(decorating.cycleDecoration('cottage-slot:centre-rug')).toMatchObject({
+      type: 'placed',
+      item: { id: 'item:starter-meadow-rug' },
     });
     expect(decorating.cycleDecoration('cottage-slot:centre-rug')).toMatchObject({
       type: 'placed',

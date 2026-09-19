@@ -98,10 +98,12 @@ describe('InventoryService', () => {
 
     expect(
       inventory.listOwnedItems().map(({ definition, quantity }) => [definition.id, quantity]),
-    ).toEqual([
-      ['item:berry-bun', 1],
-      ['item:sparkle-berry', 2],
-    ]);
+    ).toEqual(
+      expect.arrayContaining([
+        ['item:berry-bun', 1],
+        ['item:sparkle-berry', 2],
+      ]),
+    );
     expect(
       getItemPresentation({
         id: 'item:legacy-test',
@@ -133,6 +135,9 @@ describe('InventoryService', () => {
     const inventory = new InventoryService(saveService);
     expect(
       inventory.listOwnedItems().map(({ definition, quantity }) => [definition.id, quantity]),
-    ).toEqual([['item:berry-bun', 2]]);
+    ).toEqual(expect.arrayContaining([['item:berry-bun', 2]]));
+    expect(
+      inventory.listOwnedItems().some(({ definition }) => definition.id.includes('retired')),
+    ).toBe(false);
   });
 });

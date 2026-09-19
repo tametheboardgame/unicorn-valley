@@ -1,4 +1,5 @@
 import { ContentRegistry } from './ContentRegistry';
+import { COTTAGE_STARTER_DECORATIONS } from './cottageStarterDecorations';
 import {
   CHARACTERS,
   DIALOGUES,
@@ -109,6 +110,7 @@ import { assertValidContent } from './validateContent';
 
 const ALL_ITEMS = [
   ...ITEMS,
+  ...COTTAGE_STARTER_DECORATIONS,
   ...R2_ITEMS,
   ...R3_ITEMS,
   ...R4_SHOP_ITEMS,

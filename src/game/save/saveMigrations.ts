@@ -129,11 +129,38 @@ const migrateV4ToV5: SaveMigration = (save) => {
   };
 };
 
+/** Grants only the dedicated starter collection and never changes placements or larger holdings. */
+export const grantCottageStarterDecorations = (save: SaveRecord): SaveRecord => {
+  const inventory = save.inventory as SaveRecord;
+  const itemQuantities = { ...(inventory.itemQuantities as Record<string, number>) };
+  const ownedDecorationIds = [...(inventory.ownedDecorationIds as string[])];
+  for (const itemId of COTTAGE_STARTER_DECORATION_IDS) {
+    itemQuantities[itemId] = Math.max(1, itemQuantities[itemId] ?? 0);
+    if (!ownedDecorationIds.includes(itemId)) ownedDecorationIds.push(itemId);
+  }
+
+  return {
+    ...save,
+    inventory: {
+      ...inventory,
+      itemQuantities,
+      // Retained as the legacy ownership mirror required by the current save contract.
+      ownedDecorationIds,
+    },
+  };
+};
+
+const migrateV5ToV6: SaveMigration = (save) => ({
+  ...grantCottageStarterDecorations(save),
+  schemaVersion: 6,
+});
+
 export const SAVE_MIGRATIONS: ReadonlyMap<number, SaveMigration> = new Map([
   [1, migrateV1ToV2],
   [2, migrateV2ToV3],
   [3, migrateV3ToV4],
   [4, migrateV4ToV5],
+  [5, migrateV5ToV6],
 ]);
 
 export function migrateSaveRecord(
@@ -172,3 +199,4 @@ export function migrateSaveRecord(
 
   return current;
 }
+import { COTTAGE_STARTER_DECORATION_IDS } from '../../content/cottageStarterDecorations';

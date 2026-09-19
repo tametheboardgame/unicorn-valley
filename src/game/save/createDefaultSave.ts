@@ -16,9 +16,11 @@ export function createDefaultSave(timestamp: string = new Date().toISOString()):
       unlockedAbilityIds: [],
     },
     inventory: {
-      itemQuantities: {},
+      itemQuantities: Object.fromEntries(
+        COTTAGE_STARTER_DECORATION_IDS.map((itemId) => [itemId, 1]),
+      ),
       ownedCosmeticIds: [],
-      ownedDecorationIds: [],
+      ownedDecorationIds: [...COTTAGE_STARTER_DECORATION_IDS],
       specialItemIds: [],
     },
     relationships: {
@@ -75,3 +77,4 @@ export function createDefaultSave(timestamp: string = new Date().toISOString()):
     },
   };
 }
+import { COTTAGE_STARTER_DECORATION_IDS } from '../../content/cottageStarterDecorations';
