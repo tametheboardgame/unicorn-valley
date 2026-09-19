@@ -142,13 +142,13 @@ test('H2.6 styles four walls independently and persists every surface', async ({
   // Back wall: Blush Dawn.
   await tapScreen(page, 882, 326);
 
-  // Left wall: Sea Glass + Moon Sprigs.
+  // Left wall: Misty Lilac + Moon Sprigs.
   await tapScreen(page, 886, 238);
-  await tapScreen(page, 1150, 326);
+  await tapScreen(page, 882, 326);
   await tapScreen(page, 878, 176);
   await tapScreen(page, 882, 326);
 
-  // Front / door wall: Star Scatter.
+  // Front / door wall: Moon Sprigs.
   await tapScreen(page, 1138, 238);
   await tapScreen(page, 1016, 326);
 
@@ -160,7 +160,7 @@ test('H2.6 styles four walls independently and persists every surface', async ({
     .poll(async () =>
       scene(await snapshot(page), 'CottageStyleScene').objects.some(({ name }) =>
         name.startsWith(
-          'cottage-style-preview:front:cottage-wall:moon-cream|cottage-wallpaper:star-scatter|cottage-floor:rosewood',
+          'cottage-style-preview:front:cottage-wall:moon-cream|cottage-wallpaper:moon-sprigs|cottage-floor:rosewood',
         ),
       ),
     )
@@ -183,7 +183,7 @@ test('H2.6 styles four walls independently and persists every surface', async ({
     ),
   ).toBe(true);
   expect(
-    hasObject(value, 'CottageInteriorScene', 'cottage-style-wall:left:cottage-wall:sea-glass'),
+    hasObject(value, 'CottageInteriorScene', 'cottage-style-wall:left:cottage-wall:misty-lilac'),
   ).toBe(true);
   expect(
     hasObject(
@@ -211,7 +211,7 @@ test('H2.6 styles four walls independently and persists every surface', async ({
     ),
   ).toBe(true);
   expect(
-    hasObject(value, 'CottageInteriorScene', 'cottage-style-wall:left:cottage-wall:sea-glass'),
+    hasObject(value, 'CottageInteriorScene', 'cottage-style-wall:left:cottage-wall:misty-lilac'),
   ).toBe(true);
   expect(
     hasObject(
