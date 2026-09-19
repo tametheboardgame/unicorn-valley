@@ -8,12 +8,16 @@ import {
 import { HomeDecorationService } from '../home/HomeDecorationService';
 import { renderCottageDecoration } from '../home/CottageDecorationPresentation';
 import { getBrowserSaveService } from '../save/browserSaveService';
-import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from '../ui/uiTheme';
+import { createConfirmationButton } from '../ui/ConfirmationModalStyle';
+import { UI_DESIGN_TOKENS } from '../ui/UiDesignSystem';
+import { UI_COLOURS, UI_FONT } from '../ui/uiTheme';
 import type { CottageDecorationSlot } from '../world/CottageInteriorMap';
+import type { MapPoint } from '../world/MapTraversal';
 
 interface CottageDecorateSceneData {
   slotId?: string;
   returnToDecorateMode?: boolean;
+  returnPosition?: MapPoint;
 }
 
 export class CottageDecorateScene extends Phaser.Scene {
@@ -23,6 +27,7 @@ export class CottageDecorateScene extends Phaser.Scene {
   private selectedIndex = 0;
   private optionCardObjects: Phaser.GameObjects.GameObject[] = [];
   private returnToDecorateMode = false;
+  private returnPosition: MapPoint | null = null;
   private previewObjects: Phaser.GameObjects.GameObject[] = [];
   private nameText: Phaser.GameObjects.Text | null = null;
   private descriptionText: Phaser.GameObjects.Text | null = null;
@@ -47,6 +52,9 @@ export class CottageDecorateScene extends Phaser.Scene {
       return;
     }
 
+    this.returnPosition =
+      data.returnPosition ?? this.slot.interactionPosition ?? this.slot.position;
+
     const compatible = this.decorating.listCompatibleDecorations(this.slot.id);
     this.options = compatible.map(({ definition }) => definition);
     const current = this.decorating.getPlacement(this.slot.id);
@@ -55,11 +63,19 @@ export class CottageDecorateScene extends Phaser.Scene {
       : -1;
     this.selectedIndex = currentIndex >= 0 ? currentIndex : 0;
 
-    createUiShadow(this, GAME_WIDTH / 2, GAME_HEIGHT / 2, 1120, 680, 1, 0.3);
-    this.add
-      .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, 1120, 680, UI_COLOURS.cream, 1)
-      .setStrokeStyle(7, UI_COLOURS.lavenderStrong, 1)
-      .setDepth(2);
+    this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x7558a0, 1);
+    this.add.circle(150, 120, 180, 0xf2c9ed, 0.1);
+    this.add.circle(1130, 610, 250, 0xffecb6, 0.07);
+    this.createRoundedPanel(
+      GAME_WIDTH / 2,
+      GAME_HEIGHT / 2,
+      1120,
+      680,
+      UI_COLOURS.cream,
+      UI_COLOURS.lavenderStrong,
+      2,
+      UI_DESIGN_TOKENS.radius.panelPx,
+    );
 
     this.add
       .text(GAME_WIDTH / 2, 54, `Decorate · ${this.slot.label}`, {
@@ -95,10 +111,29 @@ export class CottageDecorateScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setDepth(3);
 
-    this.add
-      .rectangle(GAME_WIDTH / 2, 375, 610, 235, 0xffffff, 0.92)
-      .setStrokeStyle(4, UI_COLOURS.lavender, 1)
-      .setDepth(3);
+    this.createRoundedPanel(
+      GAME_WIDTH / 2,
+      375,
+      610,
+      235,
+      0xffffff,
+      UI_COLOURS.lavender,
+      3,
+      24,
+      0.92,
+    );
+    this.createRoundedPanel(
+      GAME_WIDTH / 2,
+      535,
+      210,
+      32,
+      0xf3e7f8,
+      UI_COLOURS.lavender,
+      5,
+      UI_DESIGN_TOKENS.radius.pillPx,
+      1,
+      false,
+    );
 
     this.nameText = this.add
       .text(GAME_WIDTH / 2, 500, '', {
@@ -115,8 +150,7 @@ export class CottageDecorateScene extends Phaser.Scene {
         fontFamily: UI_FONT,
         fontSize: '15px',
         fontStyle: 'bold',
-        backgroundColor: '#f3e7f8',
-        padding: { x: 10, y: 5 },
+
       })
       .setOrigin(0.5)
       .setDepth(6);
@@ -166,6 +200,7 @@ export class CottageDecorateScene extends Phaser.Scene {
       this.options = [];
       this.clearChoiceCards();
       this.returnToDecorateMode = false;
+      this.returnPosition = null;
       this.nameText = null;
       this.descriptionText = null;
       this.themeText = null;
@@ -272,12 +307,24 @@ export class CottageDecorateScene extends Phaser.Scene {
     pageOptions.forEach((item, pageIndex) => {
       const index = page * pageSize + pageIndex;
       const cardX = startX + pageIndex * width;
+      const selected = index === this.selectedIndex;
+      const cardSurface = this.createRoundedPanel(
+        cardX,
+        205,
+        width - 12,
+        112,
+        selected ? 0xfff7dc : 0xffffff,
+        selected ? UI_COLOURS.goldStrong : UI_COLOURS.lavender,
+        7,
+        UI_DESIGN_TOKENS.radius.controlPx,
+        1,
+        false,
+      );
       const card = this.add
-        .rectangle(cardX, 205, width - 12, 112, 0xffffff)
-        .setStrokeStyle(4, index === this.selectedIndex ? UI_COLOURS.gold : UI_COLOURS.lavender)
+        .rectangle(cardX, 205, width - 12, 112, 0xffffff, 0.001)
         .setInteractive({ useHandCursor: true })
         .setName(`cottage-decoration-choice:${item.id}`)
-        .setDepth(7);
+        .setDepth(10);
       const art = renderCottageDecoration(this, item.id, cardX, 190, 0.48);
       const label = this.add
         .text(cardX, 246, item.name, {
@@ -299,7 +346,7 @@ export class CottageDecorateScene extends Phaser.Scene {
       label
         .setInteractive({ useHandCursor: true })
         .on('pointerdown', () => this.selectChoice(index));
-      this.optionCardObjects.push(card, ...art, label);
+      this.optionCardObjects.push(cardSurface, card, ...art, label);
     });
     if (page > 0)
       this.createChoicePageButton(108, '◀', () => this.selectChoice((page - 1) * pageSize));
@@ -340,7 +387,10 @@ export class CottageDecorateScene extends Phaser.Scene {
   }
 
   private backToRoom(): void {
-    this.scene.start('CottageInteriorScene', { decorateMode: this.returnToDecorateMode });
+    this.scene.start('CottageInteriorScene', {
+      decorateMode: this.returnToDecorateMode,
+      playerPosition: this.returnPosition ?? undefined,
+    });
   }
 
   private createButton(
@@ -351,26 +401,47 @@ export class CottageDecorateScene extends Phaser.Scene {
     fill: number,
     action: () => void,
   ): Phaser.GameObjects.Text {
-    const button = this.add
-      .rectangle(x, y, width, 52, fill, 1)
-      .setStrokeStyle(3, UI_COLOURS.lavenderStrong, 1)
-      .setInteractive({ useHandCursor: true })
-      .setDepth(7);
-    const text = this.add
-      .text(x, y, label, {
-        color: UI_COLOURS.ink,
-        fontFamily: UI_FONT,
-        fontSize: '17px',
-        fontStyle: 'bold',
-      })
-      .setOrigin(0.5)
-      .setInteractive({ useHandCursor: true })
-      .setDepth(8);
+    const primary = fill === UI_COLOURS.gold;
+    const presentation = createConfirmationButton(this, {
+      name: `cottage-decorate-action-${label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
+      x,
+      y,
+      width,
+      height: 52,
+      depth: 7,
+      label,
+      variant: primary ? 'primary' : 'secondary',
+      onActivate: action,
+    });
+    return presentation.label;
+  }
 
-    applyButtonHover(button, fill, UI_COLOURS.blush);
-    button.on('pointerdown', action);
-    text.on('pointerdown', action);
-    return text;
+  private createRoundedPanel(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    fill: number,
+    stroke: number,
+    depth: number,
+    radius: number,
+    alpha = 1,
+    shadow = true,
+  ): Phaser.GameObjects.Graphics {
+    const graphics = this.add.graphics().setDepth(depth);
+    const left = x - width / 2;
+    const top = y - height / 2;
+
+    if (shadow) {
+      graphics.fillStyle(0x4b3658, 0.2);
+      graphics.fillRoundedRect(left + 6, top + 7, width, height, radius);
+    }
+
+    graphics.fillStyle(fill, alpha);
+    graphics.fillRoundedRect(left, top, width, height, radius);
+    graphics.lineStyle(4, stroke, 1);
+    graphics.strokeRoundedRect(left, top, width, height, radius);
+    return graphics;
   }
 
   private categoryLabel(slot: CottageDecorationSlot): string {
