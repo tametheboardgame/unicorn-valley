@@ -197,7 +197,9 @@ test('H2.9 uses the smaller detailed strange egg with collision in Moonflower Gl
       window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics }
     ).__UNICORN_VALLEY_DIAGNOSTICS__?.startScene('MoonflowerGladeScene');
   });
-  await expect.poll(async () => (await snapshot(page)).activeScenes).toEqual(['MoonflowerGladeScene']);
+  await expect
+    .poll(async () => (await snapshot(page)).activeScenes)
+    .toEqual(['MoonflowerGladeScene']);
 
   await expect
     .poll(async () => {
