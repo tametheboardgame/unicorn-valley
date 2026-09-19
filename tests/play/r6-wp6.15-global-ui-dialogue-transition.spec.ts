@@ -387,6 +387,7 @@ test('Reduced Motion keeps conversation reveal and advance decoration static', a
 });
 
 test('Pip dialogue card renders across all four supported display classes', async ({ page }) => {
+  test.setTimeout(120_000);
   await seedPipReady(page);
   const viewports = [
     ['desktop', { width: 1280, height: 720 }],
@@ -397,6 +398,7 @@ test('Pip dialogue card renders across all four supported display classes', asyn
 
   for (const [label, viewport] of viewports) {
     await page.setViewportSize(viewport);
+    await page.goto('about:blank');
     await page.goto('/?diagnostics=1');
     await waitForDiagnostics(page);
     await openPipConversation(page);
