@@ -1,6 +1,7 @@
 import type { CollisionRectangle, MapPoint, TraversalMapDefinition } from './MapTraversal';
 import {
   COTTAGE_DECORATION_PROTECTED_ANCHOR_IDS,
+  COTTAGE_FUTURE_EXPANSION_ANCHOR_IDS,
   COTTAGE_SEMANTIC_ANCHOR_IDS,
   type CottageSemanticAnchorId,
   resolveCottageSemanticAnchor,
@@ -162,21 +163,40 @@ function reservedZoneForAnchor(anchorId: CottageSemanticAnchorId): CottageReserv
  * Story and future-expansion capacity is derived from the semantic-anchor registry rather than
  * duplicated raw coordinates. Ordinary decorating must remain outside these reservations.
  */
-export const COTTAGE_RESERVED_ZONES = COTTAGE_DECORATION_PROTECTED_ANCHOR_IDS.map(
+export const COTTAGE_RESERVED_ZONES = COTTAGE_FUTURE_EXPANSION_ANCHOR_IDS.map(
   reservedZoneForAnchor,
 ) satisfies readonly CottageReservedZone[];
 
-export function isCottagePointInsideReservedZone(
+export const COTTAGE_DECORATION_PROTECTED_ZONES = COTTAGE_DECORATION_PROTECTED_ANCHOR_IDS.map(
+  reservedZoneForAnchor,
+) satisfies readonly CottageReservedZone[];
+
+function findContainingReservedZone(
+  zones: readonly CottageReservedZone[],
   point: MapPoint,
-  clearance = 0,
+  clearance: number,
 ): CottageReservedZone | null {
   return (
-    COTTAGE_RESERVED_ZONES.find(
+    zones.find(
       (zone) =>
         Math.abs(point.x - zone.x) <= zone.width / 2 + clearance &&
         Math.abs(point.y - zone.y) <= zone.height / 2 + clearance,
     ) ?? null
   );
+}
+
+export function isCottagePointInsideReservedZone(
+  point: MapPoint,
+  clearance = 0,
+): CottageReservedZone | null {
+  return findContainingReservedZone(COTTAGE_RESERVED_ZONES, point, clearance);
+}
+
+export function isCottagePointInsideDecorationProtectedZone(
+  point: MapPoint,
+  clearance = 0,
+): CottageReservedZone | null {
+  return findContainingReservedZone(COTTAGE_DECORATION_PROTECTED_ZONES, point, clearance);
 }
 
 /**
