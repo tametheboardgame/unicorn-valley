@@ -358,13 +358,11 @@ test('H2.8 fresh-game starters support place, replace, move, remove and persiste
   expect(
     editor.objects.some(({ name }) => name === 'cottage-decoration-choice:item:starter-daisy-vase'),
   ).toBe(true);
-  expect(editor.objects.some(({ name }) => name.startsWith('ui-production:CottageDecorateScene'))).toBe(
-    false,
-  );
   expect(
-    editor.objects.some(({ name }) =>
-      name.startsWith('concept-modal-surface:cottage-decoration'),
-    ),
+    editor.objects.some(({ name }) => name.startsWith('ui-production:CottageDecorateScene')),
+  ).toBe(false);
+  expect(
+    editor.objects.some(({ name }) => name.startsWith('concept-modal-surface:cottage-decoration')),
   ).toBe(false);
 
   await tapNamedObject(page, 'CottageDecorateScene', 'cottage-decoration-filter:hangings');
