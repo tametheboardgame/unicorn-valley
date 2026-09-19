@@ -17,7 +17,6 @@ import {
 import { buildCottageHomeView, type CottageHomeView } from '../home/CottageHomeView';
 import { HomeDecorationService } from '../home/HomeDecorationService';
 import { resolveCottageDecorationPlacementBehaviour } from '../home/CottageDecorationCatalogue';
-import { renderCottageDecoration } from '../home/CottageDecorationPresentation';
 import { resolveCottageStyle } from '../home/CottageStyleCatalogue';
 import { renderCottageRoomSurfaces } from '../home/CottageSurfaceRenderer';
 import { CottageSleepController } from '../home/CottageSleepController';
@@ -111,6 +110,7 @@ export class CottageInteriorScene extends Phaser.Scene {
     this.decorationService = new HomeDecorationService(saveService);
     const homeView = buildCottageHomeView(save);
     this.renderHomeState(homeView);
+    void this.renderPlacedDecorations(homeView);
     this.normalInteractions = this.createNormalInteractions(homeView);
     this.decorationInteractions = this.createDecorationInteractions(homeView);
     this.interactions = this.decorateModeActive
@@ -733,6 +733,50 @@ export class CottageInteriorScene extends Phaser.Scene {
   private renderHomeState(homeView: CottageHomeView): void {
     this.clearHomeStatePresentation();
 
+    const shelf = COTTAGE_INTERIOR_MAP.treasureDisplay.position;
+    homeView.treasureRewards.forEach((reward, index) => {
+      const x = shelf.x + (index - (homeView.treasureRewards.length - 1) / 2) * 70;
+      this.trackHomeStateObject(this.add.circle(x, shelf.y - 18, 36, 0xffe9a0, 0.2).setDepth(8));
+      const icon = this.trackHomeStateObject(
+        this.add
+          .text(x, shelf.y - 24, reward.icon, {
+            fontFamily: 'system-ui, sans-serif',
+            fontSize: '44px',
+          })
+          .setOrigin(0.5)
+          .setDepth(9),
+      );
+      this.tweens.add({
+        targets: icon,
+        y: '-=5',
+        duration: 1000,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.InOut',
+      });
+    });
+
+    if (homeView.treasureRewards.length === 0) {
+      this.trackHomeStateObject(
+        this.add
+          .text(shelf.x, shelf.y - 20, '✦', {
+            color: '#f5d98c',
+            fontFamily: 'system-ui, sans-serif',
+            fontSize: '32px',
+          })
+          .setOrigin(0.5)
+          .setAlpha(0.55)
+          .setDepth(8),
+      );
+    }
+  }
+
+  private async renderPlacedDecorations(homeView: CottageHomeView): Promise<void> {
+    if (homeView.placements.length === 0) return;
+
+    const { renderCottageDecoration } = await import('../home/CottageDecorationPresentation');
+    if (!this.scene.isActive()) return;
+
     const allSlots: readonly CottageDecorationSlot[] = [
       ...COTTAGE_INTERIOR_MAP.decorationSlots,
       ...COTTAGE_INTERIOR_MAP.deferredDecorationSlots,
@@ -771,43 +815,6 @@ export class CottageInteriorScene extends Phaser.Scene {
       for (const object of art) {
         this.trackHomeStateObject(object.setDepth(depth));
       }
-    }
-
-    const shelf = COTTAGE_INTERIOR_MAP.treasureDisplay.position;
-    homeView.treasureRewards.forEach((reward, index) => {
-      const x = shelf.x + (index - (homeView.treasureRewards.length - 1) / 2) * 70;
-      this.trackHomeStateObject(this.add.circle(x, shelf.y - 18, 36, 0xffe9a0, 0.2).setDepth(8));
-      const icon = this.trackHomeStateObject(
-        this.add
-          .text(x, shelf.y - 24, reward.icon, {
-            fontFamily: 'system-ui, sans-serif',
-            fontSize: '44px',
-          })
-          .setOrigin(0.5)
-          .setDepth(9),
-      );
-      this.tweens.add({
-        targets: icon,
-        y: '-=5',
-        duration: 1000,
-        yoyo: true,
-        repeat: -1,
-        ease: 'Sine.InOut',
-      });
-    });
-
-    if (homeView.treasureRewards.length === 0) {
-      this.trackHomeStateObject(
-        this.add
-          .text(shelf.x, shelf.y - 20, '✦', {
-            color: '#f5d98c',
-            fontFamily: 'system-ui, sans-serif',
-            fontSize: '32px',
-          })
-          .setOrigin(0.5)
-          .setAlpha(0.55)
-          .setDepth(8),
-      );
     }
   }
 
