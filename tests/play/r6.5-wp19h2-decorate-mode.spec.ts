@@ -92,16 +92,28 @@ async function tapNamedObject(page: Page, sceneKey: string, objectName: string):
   await tapScreen(page, object.x, object.y);
 }
 
+async function clickNamedObject(page: Page, sceneKey: string, objectName: string): Promise<void> {
+  const value = await snapshot(page);
+  const object = scene(value, sceneKey).objects.find(({ name }) => name === objectName);
+  if (!object) throw new Error(`Missing ${objectName} in ${sceneKey}`);
+  const canvas = await page.locator('canvas').boundingBox();
+  if (!canvas) throw new Error('Canvas unavailable');
+  await page.mouse.click(
+    canvas.x + (object.x / value.width) * canvas.width,
+    canvas.y + (object.y / value.height) * canvas.height,
+  );
+}
+
 async function editSlot(page: Page, slotId: string, itemId?: string): Promise<void> {
   await startSceneWithData(page, 'CottageDecorateScene', {
     slotId,
     returnToDecorateMode: true,
   });
   if (itemId) {
-    await tapNamedObject(page, 'CottageDecorateScene', `cottage-decoration-choice:${itemId}`);
-    await tapNamedObject(page, 'CottageDecorateScene', 'cottage-decorate-action-primary');
+    await clickNamedObject(page, 'CottageDecorateScene', `cottage-decoration-choice:${itemId}`);
+    await clickNamedObject(page, 'CottageDecorateScene', 'cottage-decorate-action-primary');
   } else {
-    await tapNamedObject(page, 'CottageDecorateScene', 'cottage-decorate-action-remove');
+    await clickNamedObject(page, 'CottageDecorateScene', 'cottage-decorate-action-remove');
   }
   await expect
     .poll(async () => (await snapshot(page)).activeScenes)
@@ -154,7 +166,7 @@ test('H2.5 keeps normal play clean, replaces Gallop with Decorate, and confirms 
   await expect
     .poll(async () => (await snapshot(page)).activeScenes)
     .toEqual(['CottageDecorateScene']);
-  await tapNamedObject(page, 'CottageDecorateScene', 'cottage-decorate-back');
+  await clickNamedObject(page, 'CottageDecorateScene', 'cottage-decorate-back');
   await expect
     .poll(async () => (await snapshot(page)).activeScenes)
     .toEqual(['CottageInteriorScene']);
@@ -365,7 +377,7 @@ test('H2.8 fresh-game starters support place, replace, move, remove and persiste
     editor.objects.some(({ name }) => name.startsWith('concept-modal-surface:cottage-decoration')),
   ).toBe(false);
 
-  await tapNamedObject(page, 'CottageDecorateScene', 'cottage-decoration-filter:hangings');
+  await clickNamedObject(page, 'CottageDecorateScene', 'cottage-decoration-filter:hangings');
   let filteredEditor = scene(await snapshot(page), 'CottageDecorateScene');
   expect(
     filteredEditor.objects.some(
@@ -378,7 +390,7 @@ test('H2.8 fresh-game starters support place, replace, move, remove and persiste
     ),
   ).toBe(false);
 
-  await tapNamedObject(page, 'CottageDecorateScene', 'cottage-decoration-filter:all');
+  await clickNamedObject(page, 'CottageDecorateScene', 'cottage-decoration-filter:all');
   filteredEditor = scene(await snapshot(page), 'CottageDecorateScene');
   expect(
     filteredEditor.objects.some(
