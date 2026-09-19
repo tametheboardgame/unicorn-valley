@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { COTTAGE_INTERIOR_MAP } from './CottageInteriorMap';
 import {
+  COTTAGE_DECORATION_PROTECTED_ANCHOR_IDS,
+  COTTAGE_FUTURE_STORY_ANCHOR_IDS,
   COTTAGE_SEMANTIC_ANCHORS,
   COTTAGE_SEMANTIC_ANCHOR_IDS,
   resolveCottageSemanticAnchor,
@@ -18,6 +20,30 @@ describe('CottageSemanticAnchors', () => {
         COTTAGE_SEMANTIC_ANCHOR_IDS.visitorNova,
         COTTAGE_SEMANTIC_ANCHOR_IDS.portalBay,
       ]),
+    );
+  });
+
+  it('reserves five future story sockets plus the egg nest and future portal', () => {
+    expect(COTTAGE_FUTURE_STORY_ANCHOR_IDS).toHaveLength(5);
+    expect(COTTAGE_DECORATION_PROTECTED_ANCHOR_IDS).toEqual([
+      COTTAGE_SEMANTIC_ANCHOR_IDS.eggNest,
+      ...COTTAGE_FUTURE_STORY_ANCHOR_IDS,
+      COTTAGE_SEMANTIC_ANCHOR_IDS.portalBay,
+    ]);
+
+    for (const anchorId of COTTAGE_DECORATION_PROTECTED_ANCHOR_IDS) {
+      const anchor = resolveCottageSemanticAnchor(anchorId);
+      expect(anchor.reservation?.width, anchorId).toBeGreaterThan(0);
+      expect(anchor.reservation?.height, anchorId).toBeGreaterThan(0);
+    }
+  });
+
+  it('keeps visitor definitions on visitor-purpose semantic anchors', () => {
+    expect(resolveCottageSemanticAnchor(COTTAGE_SEMANTIC_ANCHOR_IDS.visitorWillow).purpose).toBe(
+      'visitor',
+    );
+    expect(resolveCottageSemanticAnchor(COTTAGE_SEMANTIC_ANCHOR_IDS.visitorNova).purpose).toBe(
+      'visitor',
     );
   });
 
