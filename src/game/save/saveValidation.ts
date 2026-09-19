@@ -119,6 +119,7 @@ function isHomeState(value: unknown): boolean {
     isStringArray(value.ownedFurnitureIds) &&
     isRecordOf(value.furnitureBySlot, (entry) => typeof entry === 'string') &&
     isRecordOf(value.gardenFlags, (entry) => typeof entry === 'boolean') &&
+    isStringArray(value.unlockedStyleIds) &&
     isHomeStyleState(value.style)
   );
 }
