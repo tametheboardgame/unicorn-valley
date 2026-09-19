@@ -15,6 +15,10 @@ import {
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { getWorldFeedbackPresenter } from '../ui/WorldFeedbackPresenter';
+import {
+  COTTAGE_SEMANTIC_ANCHOR_IDS,
+  resolveCottageSemanticAnchor,
+} from '../world/CottageSemanticAnchors';
 import { worldDepthForY } from '../world/WorldDepth';
 import {
   PIP_EGG_CLUE_SPOTS,
@@ -25,7 +29,6 @@ import {
 } from './PipEggArc';
 import { getBrowserPipEggArcService } from './browserPipEggArc';
 
-const COTTAGE_NEST_POSITION = { x: 1225, y: 970 } as const;
 const CLUE_INTERACTION_RADIUS = 155;
 const PIP_PRODUCTION_NAME = 'core-npc:pip:world';
 const PIP_TRAIL_INTERACTION_OWNER = 'h1:pip-egg-trail';
@@ -513,11 +516,13 @@ export class PipEggWorldManager {
     }
 
     if (player && this.cottageMarker.key) {
+      const nestAnchor = resolveCottageSemanticAnchor(COTTAGE_SEMANTIC_ANCHOR_IDS.eggNest);
+      const inspectionPoint = nestAnchor.interactionPosition ?? nestAnchor.position;
       const distance = Phaser.Math.Distance.Between(
         player.x,
         player.y,
-        COTTAGE_NEST_POSITION.x,
-        COTTAGE_NEST_POSITION.y,
+        inspectionPoint.x,
+        inspectionPoint.y,
       );
       if (distance <= 150 && Phaser.Input.Keyboard.JustDown(this.cottageMarker.key)) {
         this.inspectCottageEgg(scene);
@@ -553,9 +558,13 @@ export class PipEggWorldManager {
         padding: { x: 8, y: 4 },
       })
       .setOrigin(0.5);
-    const zone = scene.add.zone(0, -18, 180, 190).setInteractive({ useHandCursor: true });
+    const zone = scene.add
+      .zone(0, -18, 180, 190)
+      .setName('cottage-story:egg-inspect')
+      .setInteractive({ useHandCursor: true });
+    const nestAnchor = resolveCottageSemanticAnchor(COTTAGE_SEMANTIC_ANCHOR_IDS.eggNest);
     const container = scene.add
-      .container(COTTAGE_NEST_POSITION.x, COTTAGE_NEST_POSITION.y, [
+      .container(nestAnchor.position.x, nestAnchor.position.y, [
         glow,
         nestBack,
         egg,
@@ -564,7 +573,8 @@ export class PipEggWorldManager {
         label,
         zone,
       ])
-      .setDepth(15);
+      .setName(`cottage-story:egg-nest:${stage}`)
+      .setDepth(worldDepthForY(nestAnchor.position.y + 44, 0.24));
     zone.on('pointerdown', () => this.inspectCottageEgg(scene));
     if (!isReducedMotionEnabled()) {
       scene.tweens.add({
