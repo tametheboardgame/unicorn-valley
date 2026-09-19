@@ -96,9 +96,9 @@ test('H2.7 furniture variants preview and persist without replacing canonical fu
   // Bed: Rose Dream.
   await tapScreen(page, 882, 326);
 
-  // Sofa: Starlight.
+  // Sofa: Berry.
   await tapScreen(page, 886, 238);
-  await tapScreen(page, 1016, 326);
+  await tapScreen(page, 882, 326);
 
   // Tea set: Rosewood.
   await tapScreen(page, 1012, 238);
@@ -131,7 +131,7 @@ test('H2.7 furniture variants preview and persist without replacing canonical fu
   );
   expect(stored.home.style.furnitureVariants).toEqual({
     bed: 'cottage-furniture:bed:rose-dream',
-    sofa: 'cottage-furniture:sofa:starlight',
+    sofa: 'cottage-furniture:sofa:berry',
     teaSet: 'cottage-furniture:tea-set:rosewood',
     fireplace: 'cottage-furniture:fireplace:moonstone',
   });
@@ -148,7 +148,7 @@ test('H2.7 furniture variants preview and persist without replacing canonical fu
   stored = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? '{}'), SAVE_KEY);
   expect(stored.home.style.furnitureVariants).toEqual({
     bed: 'cottage-furniture:bed:rose-dream',
-    sofa: 'cottage-furniture:sofa:starlight',
+    sofa: 'cottage-furniture:sofa:berry',
     teaSet: 'cottage-furniture:tea-set:rosewood',
     fireplace: 'cottage-furniture:fireplace:moonstone',
   });
