@@ -4,10 +4,7 @@ import {
   isPointBlocked,
   isPointInsideWalkableBounds,
 } from './MapTraversal';
-import {
-  COTTAGE_INTERIOR_MAP,
-  isCottagePointInsideReservedZone,
-} from './CottageInteriorMap';
+import { COTTAGE_INTERIOR_MAP, isCottagePointInsideReservedZone } from './CottageInteriorMap';
 import {
   COTTAGE_DECORATION_PROTECTED_ANCHOR_IDS,
   resolveCottageSemanticAnchor,
@@ -142,10 +139,8 @@ describe('Moonflower Cottage interior map', () => {
       ({ purpose }) => purpose !== 'story',
     )) {
       for (const collider of COTTAGE_INTERIOR_MAP.colliders) {
-        const overlapsX =
-          Math.abs(zone.x - collider.x) < zone.width / 2 + collider.width / 2;
-        const overlapsY =
-          Math.abs(zone.y - collider.y) < zone.height / 2 + collider.height / 2;
+        const overlapsX = Math.abs(zone.x - collider.x) < zone.width / 2 + collider.width / 2;
+        const overlapsY = Math.abs(zone.y - collider.y) < zone.height / 2 + collider.height / 2;
         expect(overlapsX && overlapsY, `${zone.anchorId} overlaps ${collider.id}`).toBe(false);
       }
     }
