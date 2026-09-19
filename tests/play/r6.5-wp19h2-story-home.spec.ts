@@ -12,9 +12,15 @@ interface ObjectSnapshot {
 }
 interface SceneSnapshot {
   key: string;
+  camera: {
+    scrollX: number;
+    scrollY: number;
+  };
   objects: ObjectSnapshot[];
 }
 interface Snapshot {
+  width: number;
+  height: number;
   activeScenes: string[];
   scenes: SceneSnapshot[];
 }
@@ -73,6 +79,22 @@ async function setPlayerPosition(page: Page, x: number, y: number): Promise<void
   );
 }
 
+async function clickWorldPoint(
+  page: Page,
+  sceneKey: string,
+  worldX: number,
+  worldY: number,
+): Promise<void> {
+  const value = await snapshot(page);
+  const sceneSnapshot = scene(value, sceneKey);
+  const canvas = await page.locator('canvas').boundingBox();
+  if (!canvas) throw new Error('Canvas unavailable');
+  await page.mouse.click(
+    canvas.x + ((worldX - sceneSnapshot.camera.scrollX) / value.width) * canvas.width,
+    canvas.y + ((worldY - sceneSnapshot.camera.scrollY) / value.height) * canvas.height,
+  );
+}
+
 test('H2.9 binds the strange egg and its hatch flow to the canonical cottage nest', async ({
   page,
 }) => {
@@ -110,7 +132,7 @@ test('H2.9 binds the strange egg and its hatch flow to the canonical cottage nes
 
   await setPlayerPosition(page, 520, 885);
   await page.waitForTimeout(100);
-  await page.keyboard.press('e');
+  await clickWorldPoint(page, 'CottageInteriorScene', 420, 888);
 
   await expect
     .poll(async () =>
@@ -146,7 +168,7 @@ test('H2.9 binds the strange egg and its hatch flow to the canonical cottage nes
 
   await setPlayerPosition(page, 520, 885);
   await page.waitForTimeout(100);
-  await page.keyboard.press('e');
+  await clickWorldPoint(page, 'CottageInteriorScene', 420, 888);
 
   await expect.poll(async () => (await snapshot(page)).activeScenes).toEqual(['PipEggHatchScene']);
 
