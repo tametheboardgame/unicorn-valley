@@ -25,12 +25,14 @@ import { drawCottageStylePreview } from '../home/CottageStylePreviewRenderer';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import type { CottageFurnitureStyleKey, CottageWallKey, HomeStyleState } from '../save/saveSchema';
 import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from '../ui/uiTheme';
+import type { MapPoint } from '../world/MapTraversal';
 
 type CottageStyleCategory = 'wall' | 'wallpaper' | 'floor' | 'furniture';
 
 interface CottageStyleSceneData {
   returnToDecorateMode?: boolean;
   category?: CottageStyleCategory;
+  returnPosition?: MapPoint;
 }
 
 const LEFT_PANEL_X = 348;
@@ -49,6 +51,7 @@ export class CottageStyleScene extends Phaser.Scene {
   private selectedFurniture: CottageFurnitureStyleKey = 'bed';
   private choicePage = 0;
   private returnToDecorateMode = true;
+  private returnPosition: MapPoint | null = null;
   private previewGraphics: Phaser.GameObjects.Graphics | null = null;
   private selectionName: Phaser.GameObjects.Text | null = null;
   private selectionDescription: Phaser.GameObjects.Text | null = null;
@@ -65,6 +68,7 @@ export class CottageStyleScene extends Phaser.Scene {
   public create(data: CottageStyleSceneData = {}): void {
     this.cameras.main.setBackgroundColor('#7558a0');
     this.returnToDecorateMode = data.returnToDecorateMode !== false;
+    this.returnPosition = data.returnPosition ?? null;
     this.category = data.category ?? 'wall';
     this.selectedWall = 'back';
     this.selectedFurniture = 'bed';
@@ -208,6 +212,7 @@ export class CottageStyleScene extends Phaser.Scene {
       this.tabButtons.clear();
       this.enterKey = null;
       this.escapeKey = null;
+      this.returnPosition = null;
     });
   }
 
@@ -732,7 +737,10 @@ export class CottageStyleScene extends Phaser.Scene {
   }
 
   private backToRoom(): void {
-    this.scene.start('CottageInteriorScene', { decorateMode: this.returnToDecorateMode });
+    this.scene.start('CottageInteriorScene', {
+      decorateMode: this.returnToDecorateMode,
+      playerPosition: this.returnPosition ?? undefined,
+    });
   }
 
   private createActionButton(
