@@ -11,16 +11,16 @@
   "agent_state": "active",
   "branch": "agent/r6.5-wp19h2-moonflower-cottage",
   "latest_commit": "8d0dbd4b607fe4d26320b3797b15d8db84b35ab3",
-  "ci_state": "pending",
-  "technical_validation_state": "pending",
+  "ci_state": "running",
+  "technical_validation_state": "running",
   "human_acceptance_state": "pending",
   "next_work_package": "R6.5-WP19H2.10",
   "next_work_package_path": "docs/work-packages/R6.5-WP19H2.10-UNLOCK-REWARD-FRAMEWORK.md",
   "human_input_required": false,
-  "blocker_reason": "No current human blocker. H2.9 is human-approved. H2.10 implementation is assembled and awaiting exact-head CI/deployed-preview qualification before the human unlock gate.",
+  "blocker_reason": "No current human blocker. H2.9 is human-approved. H2.10 implementation is on PR #175 and exact-head CI/deployed-preview qualification is running before the human unlock gate.",
   "night_shift_state": "not_configured",
   "chat_disposition": "keep",
   "delivery_mode": "pr_required",
   "last_activity_at": "2026-09-19T18:16:00+01:00",
-  "updated_at": "2026-09-19T18:16:00+01:00"
+  "updated_at": "2026-09-19T18:27:00+01:00"
 }
