@@ -4,6 +4,9 @@ interface ObjectSnapshot {
   name: string;
   visible: boolean;
   effectiveVisible?: boolean;
+  interactive?: boolean;
+  x?: number;
+  y?: number;
 }
 interface SceneSnapshot {
   key: string;
@@ -89,6 +92,23 @@ async function tapScreen(page: Page, x: number, y: number): Promise<void> {
   );
 }
 
+async function tapNamedObject(page: Page, sceneKey: string, objectName: string): Promise<void> {
+  const value = await snapshot(page);
+  const target = scene(value, sceneKey).objects.find(
+    ({ name, visible, interactive, x, y }) =>
+      name === objectName &&
+      visible &&
+      interactive !== false &&
+      typeof x === 'number' &&
+      typeof y === 'number',
+  );
+  if (!target || typeof target.x !== 'number' || typeof target.y !== 'number') {
+    throw new Error(`Missing interactive ${sceneKey} object: ${objectName}`);
+  }
+
+  await tapScreen(page, target.x, target.y);
+}
+
 function hasObject(value: Snapshot, sceneKey: string, objectName: string): boolean {
   return scene(value, sceneKey).objects.some(
     ({ name, visible, effectiveVisible }) =>
@@ -149,8 +169,12 @@ test('H2.6 styles four walls independently and persists every surface', async ({
   await tapScreen(page, 882, 326);
 
   // Front / door wall: Moon Sprigs.
-  await tapScreen(page, 1138, 238);
-  await tapScreen(page, 882, 326);
+  await tapNamedObject(page, 'CottageStyleScene', 'cottage-style-wall-selector-front');
+  await tapNamedObject(
+    page,
+    'CottageStyleScene',
+    'cottage-style-wallpaper-swatch-cottage-wallpaper:moon-sprigs',
+  );
 
   // Floor: Rosewood.
   await tapScreen(page, 1021, 176);
