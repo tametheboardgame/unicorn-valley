@@ -172,7 +172,14 @@ test('H2.9 binds the strange egg and its hatch flow to the canonical cottage nes
 
   await expect.poll(async () => (await snapshot(page)).activeScenes).toEqual(['PipEggHatchScene']);
 
-  await page.waitForTimeout(1_400);
+  await expect
+    .poll(async () =>
+      scene(await snapshot(page), 'PipEggHatchScene').objects.some(
+        ({ text, visible }) => text === 'Hello, Luma!' && visible,
+      ),
+    )
+    .toBe(true);
+
   const canvas = await page.locator('canvas').boundingBox();
   if (!canvas) throw new Error('Canvas unavailable');
   await page.mouse.click(canvas.x + canvas.width / 2, canvas.y + canvas.height / 2);
