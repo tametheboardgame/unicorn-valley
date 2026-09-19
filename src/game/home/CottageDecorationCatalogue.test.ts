@@ -32,21 +32,19 @@ describe('CottageDecorationCatalogue', () => {
     expect(getCottageDecorationGroup('item:starter-daisy-vase')).toBe('flowers-plants');
     expect(getCottageDecorationGroup('item:starter-meadow-rug')).toBe('rugs-cushions');
     expect(getCottageDecorationGroup('item:starter-moonflower-hoop')).toBe('hangings');
-    expect(getCottageDecorationGroup('item:rainbow-run-podium-rosette')).toBe(
-      'trophies-ribbons',
-    );
+    expect(getCottageDecorationGroup('item:rainbow-run-podium-rosette')).toBe('trophies-ribbons');
   });
 
   it('distinguishes flat rugs, wall/support items and solid floor decorations', () => {
-    expect(
-      resolveCottageDecorationPlacementBehaviour('item:starter-meadow-rug', 'floor'),
-    ).toEqual({ mode: 'flat-floor' });
+    expect(resolveCottageDecorationPlacementBehaviour('item:starter-meadow-rug', 'floor')).toEqual({
+      mode: 'flat-floor',
+    });
     expect(
       resolveCottageDecorationPlacementBehaviour('item:starter-moonflower-hoop', 'wall'),
     ).toEqual({ mode: 'wall-mounted' });
-    expect(
-      resolveCottageDecorationPlacementBehaviour('item:starter-daisy-vase', 'table'),
-    ).toEqual({ mode: 'supported' });
+    expect(resolveCottageDecorationPlacementBehaviour('item:starter-daisy-vase', 'table')).toEqual({
+      mode: 'supported',
+    });
     expect(
       resolveCottageDecorationPlacementBehaviour('item:sunbeam-cushion', 'floor'),
     ).toMatchObject({ mode: 'freestanding', collisionWidth: 54, collisionHeight: 30 });
