@@ -173,7 +173,15 @@ export class CottageDecorateScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setDepth(5);
 
-    this.createButton(1165, 64, 142, 'Back', UI_COLOURS.blush, () => this.backToRoom());
+    this.createButton(
+      1165,
+      64,
+      142,
+      'Back',
+      UI_COLOURS.blush,
+      'cottage-decorate-back',
+      () => this.backToRoom(),
+    );
   }
 
   private applyFilter(filter: DecorationFilter): void {
@@ -238,7 +246,7 @@ export class CottageDecorateScene extends Phaser.Scene {
         false,
       );
       const hit = this.add
-        .rectangle(x, 192, width, 42, 0xffffff, 0.001)
+        .zone(x, 192, width, 42)
         .setName(`cottage-decoration-filter:${filter}`)
         .setInteractive({ useHandCursor: true })
         .setDepth(8)
@@ -306,7 +314,7 @@ export class CottageDecorateScene extends Phaser.Scene {
         false,
       );
       const hit = this.add
-        .rectangle(x, y, 170, 146, 0xffffff, 0.001)
+        .zone(x, y, 170, 146)
         .setName(`cottage-decoration-choice:${owned.definition.id}`)
         .setInteractive({ useHandCursor: true })
         .setDepth(10)
@@ -314,8 +322,7 @@ export class CottageDecorateScene extends Phaser.Scene {
 
       const art = renderCottageDecoration(this, owned.definition.id, x, y - 24, 0.53);
       for (const object of art) {
-        object.setDepth(8).setInteractive({ useHandCursor: true });
-        object.on('pointerdown', () => this.selectItem(owned.definition.id));
+        object.setDepth(8);
       }
 
       const label = this.add
@@ -466,7 +473,7 @@ export class CottageDecorateScene extends Phaser.Scene {
     const ownership = this.add
       .text(
         LEFT_X,
-        586,
+        574,
         moving
           ? `${selected.quantity} owned · all placed · this will move the existing one`
           : `${selected.quantity} owned · ${selected.placedQuantity} placed · ${available} available`,
@@ -501,8 +508,14 @@ export class CottageDecorateScene extends Phaser.Scene {
 
     if (currentItemId) {
       objects.push(
-        ...this.createActionButton(LEFT_X - 118, 633, 190, 'Remove', UI_COLOURS.blush, () =>
-          this.removePlacement(),
+        ...this.createActionButton(
+          LEFT_X - 118,
+          620,
+          190,
+          'Remove',
+          UI_COLOURS.blush,
+          'cottage-decorate-action-remove',
+          () => this.removePlacement(),
         ),
       );
     }
@@ -522,10 +535,11 @@ export class CottageDecorateScene extends Phaser.Scene {
       objects.push(
         ...this.createActionButton(
           currentItemId ? LEFT_X + 118 : LEFT_X,
-          633,
+          620,
           currentItemId ? 190 : 250,
           label,
           UI_COLOURS.gold,
+          'cottage-decorate-action-primary',
           () => this.placeSelection(),
         ),
       );
@@ -564,6 +578,7 @@ export class CottageDecorateScene extends Phaser.Scene {
     width: number,
     label: string,
     fill: number,
+    actionName: string,
     action: () => void,
   ): Phaser.GameObjects.Text {
     this.createRoundedPanel(
@@ -577,7 +592,8 @@ export class CottageDecorateScene extends Phaser.Scene {
       16,
     );
     this.add
-      .rectangle(x, y, width, 54, 0xffffff, 0.001)
+      .zone(x, y, width, 54)
+      .setName(actionName)
       .setInteractive({ useHandCursor: true })
       .setDepth(22)
       .on('pointerdown', action);
@@ -598,6 +614,7 @@ export class CottageDecorateScene extends Phaser.Scene {
     width: number,
     label: string,
     fill: number,
+    actionName: string,
     action: () => void,
   ): Phaser.GameObjects.GameObject[] {
     const surface = this.createRoundedPanel(
@@ -611,14 +628,14 @@ export class CottageDecorateScene extends Phaser.Scene {
       17,
     );
     const hit = this.add
-      .rectangle(x, y, width, 58, 0xffffff, 0.001)
-      .setName(`cottage-decorate-action-${label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`)
+      .zone(x, y, width, 58)
+      .setName(actionName)
       .setInteractive({ useHandCursor: true })
       .setDepth(11)
       .on('pointerdown', action);
     const text = this.add
       .text(x, y, label, {
-        color: UI_COLOURS.ink,
+        color: '#4b2b66',
         fontFamily: UI_FONT,
         fontSize: '16px',
         fontStyle: 'bold',
@@ -647,7 +664,7 @@ export class CottageDecorateScene extends Phaser.Scene {
       false,
     );
     const hit = this.add
-      .rectangle(x, y, 58, 48, 0xffffff, 0.001)
+      .zone(x, y, 58, 48)
       .setInteractive({ useHandCursor: true })
       .setDepth(10)
       .on('pointerdown', action);
