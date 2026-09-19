@@ -173,14 +173,8 @@ export class CottageDecorateScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setDepth(5);
 
-    this.createButton(
-      1165,
-      64,
-      142,
-      'Back',
-      UI_COLOURS.blush,
-      'cottage-decorate-back',
-      () => this.backToRoom(),
+    this.createButton(1165, 64, 142, 'Back', UI_COLOURS.blush, 'cottage-decorate-back', () =>
+      this.backToRoom(),
     );
   }
 
