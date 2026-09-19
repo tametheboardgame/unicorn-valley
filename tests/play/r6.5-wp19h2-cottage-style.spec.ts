@@ -144,13 +144,13 @@ test('H2.6 styles four walls independently and persists every surface', async ({
 
   // Left wall: Misty Lilac + Moon Sprigs.
   await tapScreen(page, 886, 238);
-  await tapScreen(page, 882, 326);
+  await tapScreen(page, 1016, 326);
   await tapScreen(page, 878, 176);
   await tapScreen(page, 882, 326);
 
   // Front / door wall: Moon Sprigs.
   await tapScreen(page, 1138, 238);
-  await tapScreen(page, 1016, 326);
+  await tapScreen(page, 882, 326);
 
   // Floor: Rosewood.
   await tapScreen(page, 1021, 176);
