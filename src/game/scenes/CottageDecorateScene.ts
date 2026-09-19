@@ -150,7 +150,6 @@ export class CottageDecorateScene extends Phaser.Scene {
         fontFamily: UI_FONT,
         fontSize: '15px',
         fontStyle: 'bold',
-
       })
       .setOrigin(0.5)
       .setDepth(6);
