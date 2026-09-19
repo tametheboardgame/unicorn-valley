@@ -170,7 +170,11 @@ test('H2.5 keeps normal play clean, replaces Gallop with Decorate, and confirms 
     })
     .toBe(9);
 
-  await tapNamedObject(page, 'CottageInteriorScene', 'cottage-decorate-hit:cottage-slot:left-wall');
+  await tapNamedObject(
+    page,
+    'CottageInteriorScene',
+    'cottage-decorate-hit:cottage-slot:centre-rug',
+  );
   await expect
     .poll(async () => (await snapshot(page)).activeScenes)
     .toEqual(['CottageDecorateScene']);
@@ -311,11 +315,17 @@ test('H2.8 fresh-game starters support place, replace, move, remove and persiste
     const save = JSON.parse(localStorage.getItem('unicorn-valley.save') ?? '{}');
     save.inventory ??= { itemQuantities: {} };
     save.inventory.itemQuantities ??= {};
-    save.inventory.itemQuantities['item:sunbeam-picnic-basket'] = 1;
+    save.inventory.itemQuantities['item:sunbeam-cushion'] = 1;
     localStorage.setItem('unicorn-valley.save', JSON.stringify(save));
   });
-  await page.reload();
-  await startScene(page, 'CottageInteriorScene');
+  await expect
+    .poll(async () =>
+      page.evaluate(() => {
+        const save = JSON.parse(localStorage.getItem('unicorn-valley.save') ?? '{}');
+        return save.inventory?.itemQuantities?.['item:sunbeam-cushion'] ?? 0;
+      }),
+    )
+    .toBe(1);
 
   await editSlot(page, 'cottage-slot:left-wall', 'item:starter-star-bunting');
   expect(await savedPlacements(page)).toMatchObject({
@@ -339,11 +349,11 @@ test('H2.8 fresh-game starters support place, replace, move, remove and persiste
   await editSlot(page, 'cottage-slot:tea-table', 'item:starter-daisy-vase');
   await editSlot(page, 'cottage-slot:treasure-shelf', 'item:starter-daisy-vase');
   await editSlot(page, 'cottage-slot:centre-rug', 'item:starter-meadow-rug');
-  await editSlot(page, 'cottage-slot:cosy-corner', 'item:sunbeam-picnic-basket');
+  await editSlot(page, 'cottage-slot:cosy-corner', 'item:sunbeam-cushion');
   expect(await savedPlacements(page)).toMatchObject({
     'cottage-slot:treasure-shelf': 'item:starter-daisy-vase',
     'cottage-slot:centre-rug': 'item:starter-meadow-rug',
-    'cottage-slot:cosy-corner': 'item:sunbeam-picnic-basket',
+    'cottage-slot:cosy-corner': 'item:sunbeam-cushion',
   });
   expect(await savedPlacements(page)).not.toHaveProperty('cottage-slot:tea-table');
 
