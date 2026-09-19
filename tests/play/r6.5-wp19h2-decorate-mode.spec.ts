@@ -18,8 +18,19 @@ interface Snapshot {
 }
 interface Diagnostics {
   snapshot(): Snapshot;
-  startScene(key: string): void;
+  startScene(key: string, data?: object): void;
   setArcadeSpritePosition(key: string, objectName: string, x: number, y: number): void;
+}
+
+async function startSceneWithData(page: Page, key: string, data: object): Promise<void> {
+  await page.evaluate(
+    ({ sceneKey, sceneData }) =>
+      (
+        window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics }
+      ).__UNICORN_VALLEY_DIAGNOSTICS__?.startScene(sceneKey, sceneData),
+    { sceneKey: key, sceneData: data },
+  );
+  await expect.poll(async () => (await snapshot(page)).activeScenes).toEqual([key]);
 }
 
 async function snapshot(page: Page): Promise<Snapshot> {
@@ -195,4 +206,74 @@ test('H2.5 keeps normal play clean, replaces Gallop with Decorate, and confirms 
       ({ name, visible }) => name === 'cottage-finish-decorating-title' && visible,
     ),
   ).toBe(false);
+});
+
+test('H2.8 visibly places, persists and explicitly removes a decoration', async ({ page }) => {
+  await page.goto('/?diagnostics=1');
+  await startScene(page, 'CottageInteriorScene');
+  await page.evaluate(() => {
+    for (let index = 0; index < localStorage.length; index += 1) {
+      const key = localStorage.key(index);
+      if (key !== 'unicorn-valley.save' && !key?.startsWith('unicorn-valley.save.schema.'))
+        continue;
+      const raw = localStorage.getItem(key);
+      if (!raw) continue;
+      const save = JSON.parse(raw);
+      save.inventory.itemQuantities['item:moonflower-lantern'] = 1;
+      localStorage.setItem(key, JSON.stringify(save));
+    }
+  });
+
+  await startSceneWithData(page, 'CottageDecorateScene', {
+    slotId: 'cottage-slot:window-nook',
+    returnToDecorateMode: true,
+  });
+  let value = await snapshot(page);
+  expect(
+    scene(value, 'CottageDecorateScene').objects.some(
+      ({ name }) => name === 'cottage-decoration-choice:item:moonflower-lantern',
+    ),
+  ).toBe(true);
+  await tapScreen(page, 640, 664);
+  await expect
+    .poll(async () => (await snapshot(page)).activeScenes)
+    .toEqual(['CottageInteriorScene']);
+  value = await snapshot(page);
+  expect(
+    scene(value, 'CottageInteriorScene').objects.some(
+      ({ name }) => name === 'cottage-decoration-art:item:moonflower-lantern',
+    ),
+  ).toBe(true);
+  expect(
+    scene(value, 'CottageInteriorScene').objects.some(({ name }) => name === 'Moonflower Lantern'),
+  ).toBe(false);
+
+  await page.reload();
+  await startScene(page, 'CottageInteriorScene');
+  value = await snapshot(page);
+  expect(
+    scene(value, 'CottageInteriorScene').objects.some(
+      ({ name }) => name === 'cottage-decoration-art:item:moonflower-lantern',
+    ),
+  ).toBe(true);
+
+  await startSceneWithData(page, 'CottageDecorateScene', {
+    slotId: 'cottage-slot:window-nook',
+    returnToDecorateMode: true,
+  });
+  await tapScreen(page, 260, 664);
+  await expect
+    .poll(async () => (await snapshot(page)).activeScenes)
+    .toEqual(['CottageInteriorScene']);
+  expect(
+    await page.evaluate(() => {
+      const save = JSON.parse(localStorage.getItem('unicorn-valley.save') ?? '{}');
+      return save.home.furnitureBySlot['cottage-slot:window-nook'];
+    }),
+  ).toBeUndefined();
+  expect(
+    scene(await snapshot(page), 'CottageInteriorScene').objects.filter(({ name }) =>
+      name.startsWith('cottage-decorate-marker:'),
+    ),
+  ).toHaveLength(9);
 });

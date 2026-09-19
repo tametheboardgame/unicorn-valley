@@ -12,6 +12,15 @@ export interface OwnedDecoration {
   placedQuantity: number;
 }
 
+export type DecorationPlacementAction = 'unchanged' | 'placed' | 'replaced' | 'moved';
+
+export interface DecorationPlacementResult {
+  action: DecorationPlacementAction;
+  item: ItemDefinition;
+  replacedItem: ItemDefinition | null;
+  movedFromSlot: CottageDecorationSlot | null;
+}
+
 export type DecorationCycleResult =
   | {
       type: 'placed';
@@ -146,10 +155,7 @@ export class HomeDecorationService {
     return resolveDecoration(save.home.furnitureBySlot[slotId]);
   }
 
-  public placeDecoration(
-    slotId: string,
-    itemId: ItemId,
-  ): { item: ItemDefinition; movedFromSlot: CottageDecorationSlot | null } {
+  public placeDecoration(slotId: string, itemId: ItemId): DecorationPlacementResult {
     const slot = requireSlot(slotId);
     const item = requireDecoration(itemId);
     if (!canPlaceDecorationInCategory(itemId, slot.category)) {
@@ -165,6 +171,7 @@ export class HomeDecorationService {
 
     const furnitureBySlot = { ...save.home.furnitureBySlot };
     const alreadyHere = furnitureBySlot[slot.id] === itemId;
+    const replacedItem = alreadyHere ? null : resolveDecoration(furnitureBySlot[slot.id]);
     const otherPlacements = COTTAGE_DECORATION_SLOTS.filter(
       (candidate) => candidate.id !== slot.id && furnitureBySlot[candidate.id] === itemId,
     );
@@ -191,7 +198,18 @@ export class HomeDecorationService {
       change: 'placed',
     });
 
-    return { item, movedFromSlot };
+    return {
+      action: alreadyHere
+        ? 'unchanged'
+        : movedFromSlot
+          ? 'moved'
+          : replacedItem
+            ? 'replaced'
+            : 'placed',
+      item,
+      replacedItem,
+      movedFromSlot,
+    };
   }
 
   public removeDecoration(slotId: string): ItemDefinition | null {

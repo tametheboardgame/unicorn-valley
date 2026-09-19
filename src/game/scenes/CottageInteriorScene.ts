@@ -16,6 +16,7 @@ import {
 } from '../home/CottageFurnitureRenderer';
 import { buildCottageHomeView, type CottageHomeView } from '../home/CottageHomeView';
 import { HomeDecorationService } from '../home/HomeDecorationService';
+import { getCottageDecorationProfile } from '../home/CottageDecorationCatalogue';
 import { resolveCottageStyle } from '../home/CottageStyleCatalogue';
 import { renderCottageRoomSurfaces } from '../home/CottageSurfaceRenderer';
 import { CottageSleepController } from '../home/CottageSleepController';
@@ -701,30 +702,13 @@ export class CottageInteriorScene extends Phaser.Scene {
     this.clearHomeStatePresentation();
 
     for (const placement of homeView.placements) {
-      this.trackHomeStateObject(
-        this.add.circle(placement.position.x, placement.position.y, 52, 0xfff0b8, 0.22).setDepth(8),
-      );
+      const colour = getCottageDecorationProfile(placement.itemId)?.previewColour ?? 0xb99ad2;
       this.trackHomeStateObject(
         this.add
-          .text(placement.position.x, placement.position.y - 4, placement.icon, {
-            fontFamily: 'system-ui, sans-serif',
-            fontSize: '48px',
-          })
-          .setOrigin(0.5)
+          .ellipse(placement.position.x, placement.position.y, 76, 58, colour)
+          .setStrokeStyle(4, 0xffffff, 0.75)
+          .setName(`cottage-decoration-art:${placement.itemId}`)
           .setDepth(9),
-      );
-      this.trackHomeStateObject(
-        this.add
-          .text(placement.position.x, placement.position.y + 60, placement.name, {
-            color: '#6c5268',
-            fontFamily: 'system-ui, sans-serif',
-            fontSize: '15px',
-            fontStyle: 'bold',
-            backgroundColor: '#fff8e8cc',
-            padding: { x: 7, y: 4 },
-          })
-          .setOrigin(0.5)
-          .setDepth(10),
       );
     }
 

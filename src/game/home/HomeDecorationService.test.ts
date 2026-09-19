@@ -109,8 +109,51 @@ describe('HomeDecorationService', () => {
     const result = decorating.placeDecoration('cottage-slot:bedside', 'item:moonflower-lantern');
 
     expect(result.movedFromSlot?.id).toBe('cottage-slot:window-nook');
+    expect(result.action).toBe('moved');
     expect(decorating.getPlacement('cottage-slot:window-nook')).toBeNull();
     expect(decorating.getPlacement('cottage-slot:bedside')?.id).toBe('item:moonflower-lantern');
+  });
+
+  it('reports place and replace explicitly while returning the replaced copy to availability', () => {
+    const { inventory, decorating } = createServices();
+    inventory.addItem('item:moonflower-lantern');
+    inventory.addItem('item:hollow-tree-star-jar');
+
+    expect(
+      decorating.placeDecoration('cottage-slot:window-nook', 'item:moonflower-lantern'),
+    ).toMatchObject({ action: 'placed', replacedItem: null, movedFromSlot: null });
+    expect(
+      decorating.placeDecoration('cottage-slot:window-nook', 'item:hollow-tree-star-jar'),
+    ).toMatchObject({
+      action: 'replaced',
+      replacedItem: { id: 'item:moonflower-lantern' },
+      movedFromSlot: null,
+    });
+    expect(
+      decorating
+        .listOwnedDecorations()
+        .find(({ definition }) => definition.id === 'item:moonflower-lantern'),
+    ).toMatchObject({ quantity: 1, placedQuantity: 0 });
+  });
+
+  it('preserves unknown retired placement IDs so a future catalogue can recover them', () => {
+    const { saveService, decorating } = createServices();
+    const save = saveService.createNewGame();
+    saveService.save({
+      ...save,
+      home: {
+        ...save.home,
+        furnitureBySlot: {
+          ...save.home.furnitureBySlot,
+          'cottage-slot:window-nook': 'item:retired-keepsake',
+        },
+      },
+    });
+
+    expect(decorating.getPlacement('cottage-slot:window-nook')).toBeNull();
+    expect(saveService.load()?.home.furnitureBySlot['cottage-slot:window-nook']).toBe(
+      'item:retired-keepsake',
+    );
   });
 
   it('allows two placements when two copies are owned', () => {

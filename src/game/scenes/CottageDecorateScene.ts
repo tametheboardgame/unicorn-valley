@@ -6,6 +6,7 @@ import {
   getCottageDecorationThemeLabel,
 } from '../home/CottageDecorationCatalogue';
 import { HomeDecorationService } from '../home/HomeDecorationService';
+import { renderCottageDecoration } from '../home/CottageDecorationPresentation';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from '../ui/uiTheme';
 import type { CottageDecorationSlot } from '../world/CottageInteriorMap';
@@ -18,8 +19,9 @@ interface CottageDecorateSceneData {
 export class CottageDecorateScene extends Phaser.Scene {
   private decorating: HomeDecorationService | null = null;
   private slot: CottageDecorationSlot | null = null;
-  private options: readonly (ItemDefinition | null)[] = [];
+  private options: readonly ItemDefinition[] = [];
   private selectedIndex = 0;
+  private optionCardObjects: Phaser.GameObjects.GameObject[] = [];
   private returnToDecorateMode = false;
   private previewObjects: Phaser.GameObjects.GameObject[] = [];
   private nameText: Phaser.GameObjects.Text | null = null;
@@ -27,9 +29,6 @@ export class CottageDecorateScene extends Phaser.Scene {
   private themeText: Phaser.GameObjects.Text | null = null;
   private countText: Phaser.GameObjects.Text | null = null;
   private placeLabel: Phaser.GameObjects.Text | null = null;
-  private cursors: Phaser.Types.Input.Keyboard.CursorKeys | null = null;
-  private enterKey: Phaser.Input.Keyboard.Key | null = null;
-  private spaceKey: Phaser.Input.Keyboard.Key | null = null;
   private escapeKey: Phaser.Input.Keyboard.Key | null = null;
 
   public constructor() {
@@ -49,11 +48,11 @@ export class CottageDecorateScene extends Phaser.Scene {
     }
 
     const compatible = this.decorating.listCompatibleDecorations(this.slot.id);
-    this.options = [null, ...compatible.map(({ definition }) => definition)];
+    this.options = compatible.map(({ definition }) => definition);
     const current = this.decorating.getPlacement(this.slot.id);
     const currentIndex = current
       ? this.options.findIndex((option) => option?.id === current.id)
-      : 0;
+      : -1;
     this.selectedIndex = currentIndex >= 0 ? currentIndex : 0;
 
     createUiShadow(this, GAME_WIDTH / 2, GAME_HEIGHT / 2, 1120, 680, 1, 0.3);
@@ -88,7 +87,7 @@ export class CottageDecorateScene extends Phaser.Scene {
       .setDepth(3);
 
     this.add
-      .text(GAME_WIDTH / 2, 126, 'Preview first. Nothing changes until you choose Place.', {
+      .text(GAME_WIDTH / 2, 126, 'Tap a choice, then use the clear action you mean.', {
         color: UI_COLOURS.mutedInk,
         fontFamily: UI_FONT,
         fontSize: '14px',
@@ -97,12 +96,12 @@ export class CottageDecorateScene extends Phaser.Scene {
       .setDepth(3);
 
     this.add
-      .rectangle(GAME_WIDTH / 2, 310, 610, 300, 0xffffff, 0.92)
+      .rectangle(GAME_WIDTH / 2, 375, 610, 235, 0xffffff, 0.92)
       .setStrokeStyle(4, UI_COLOURS.lavender, 1)
       .setDepth(3);
 
     this.nameText = this.add
-      .text(GAME_WIDTH / 2, 474, '', {
+      .text(GAME_WIDTH / 2, 500, '', {
         color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
         fontSize: '24px',
@@ -111,7 +110,7 @@ export class CottageDecorateScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setDepth(6);
     this.themeText = this.add
-      .text(GAME_WIDTH / 2, 510, '', {
+      .text(GAME_WIDTH / 2, 535, '', {
         color: '#76518a',
         fontFamily: UI_FONT,
         fontSize: '15px',
@@ -122,7 +121,7 @@ export class CottageDecorateScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setDepth(6);
     this.descriptionText = this.add
-      .text(GAME_WIDTH / 2, 548, '', {
+      .text(GAME_WIDTH / 2, 570, '', {
         color: UI_COLOURS.softInk,
         fontFamily: UI_FONT,
         fontSize: '15px',
@@ -132,7 +131,7 @@ export class CottageDecorateScene extends Phaser.Scene {
       .setOrigin(0.5, 0)
       .setDepth(6);
     this.countText = this.add
-      .text(GAME_WIDTH / 2, 618, '', {
+      .text(GAME_WIDTH / 2, 620, '', {
         color: UI_COLOURS.mutedInk,
         fontFamily: UI_FONT,
         fontSize: '14px',
@@ -141,10 +140,7 @@ export class CottageDecorateScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setDepth(6);
 
-    this.createButton(260, 664, 210, '◀ Previous', UI_COLOURS.lavender, () =>
-      this.selectPrevious(),
-    );
-    this.createButton(1020, 664, 210, 'Next ▶', UI_COLOURS.lavender, () => this.selectNext());
+    this.createButton(260, 664, 210, 'Remove', UI_COLOURS.blush, () => this.removePlacement());
     this.placeLabel = this.createButton(
       GAME_WIDTH / 2,
       664,
@@ -157,12 +153,10 @@ export class CottageDecorateScene extends Phaser.Scene {
 
     const keyboard = this.input.keyboard;
     if (keyboard) {
-      this.cursors = keyboard.createCursorKeys();
-      this.enterKey = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
-      this.spaceKey = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
       this.escapeKey = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
     }
 
+    this.renderChoiceCards();
     this.renderSelection();
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
@@ -170,51 +164,21 @@ export class CottageDecorateScene extends Phaser.Scene {
       this.decorating = null;
       this.slot = null;
       this.options = [];
+      this.clearChoiceCards();
       this.returnToDecorateMode = false;
       this.nameText = null;
       this.descriptionText = null;
       this.themeText = null;
       this.countText = null;
       this.placeLabel = null;
-      this.cursors = null;
-      this.enterKey = null;
-      this.spaceKey = null;
       this.escapeKey = null;
     });
   }
 
   public update(): void {
-    if (this.cursors?.left && Phaser.Input.Keyboard.JustDown(this.cursors.left)) {
-      this.selectPrevious();
-    }
-    if (this.cursors?.right && Phaser.Input.Keyboard.JustDown(this.cursors.right)) {
-      this.selectNext();
-    }
-    if (
-      (this.enterKey && Phaser.Input.Keyboard.JustDown(this.enterKey)) ||
-      (this.spaceKey && Phaser.Input.Keyboard.JustDown(this.spaceKey))
-    ) {
-      this.placeSelection();
-    }
     if (this.escapeKey && Phaser.Input.Keyboard.JustDown(this.escapeKey)) {
       this.backToRoom();
     }
-  }
-
-  private selectPrevious(): void {
-    if (this.options.length === 0) {
-      return;
-    }
-    this.selectedIndex = (this.selectedIndex - 1 + this.options.length) % this.options.length;
-    this.renderSelection();
-  }
-
-  private selectNext(): void {
-    if (this.options.length === 0) {
-      return;
-    }
-    this.selectedIndex = (this.selectedIndex + 1) % this.options.length;
-    this.renderSelection();
   }
 
   private renderSelection(): void {
@@ -224,17 +188,15 @@ export class CottageDecorateScene extends Phaser.Scene {
 
     this.clearPreview();
     const selected = this.options[this.selectedIndex] ?? null;
-    this.countText?.setText(`${this.selectedIndex + 1} of ${this.options.length}`);
 
     if (!selected) {
-      this.nameText?.setText('Leave this spot empty');
-      this.themeText?.setText('EMPTY SPACE');
+      this.nameText?.setText('No decorations for this spot yet');
+      this.themeText?.setText(this.categoryLabel(this.slot).toUpperCase());
       this.descriptionText?.setText(
-        this.options.length === 1
-          ? `You do not own a ${this.categoryLabel(this.slot).toLowerCase()} decoration yet. Explore, race or visit Twinkle & Thread to find one.`
-          : 'Keep this part of the cottage clear. You can change it again whenever you like.',
+        `Explore, race or visit Twinkle & Thread to find a ${this.categoryLabel(this.slot).toLowerCase()} decoration.`,
       );
-      this.placeLabel?.setText('Clear this spot');
+      this.countText?.setText('Remove is still available if this spot is filled.');
+      this.placeLabel?.setText('Nothing to place');
       this.previewObjects.push(
         this.add
           .circle(GAME_WIDTH / 2, 300, 75, UI_COLOURS.lavender, 0.18)
@@ -261,74 +223,25 @@ export class CottageDecorateScene extends Phaser.Scene {
         : 'COTTAGE STYLE',
     );
     this.descriptionText?.setText(selected.description ?? 'A lovely cottage decoration.');
-    this.placeLabel?.setText('Place this');
+    const ownership = this.decorating
+      ?.listCompatibleDecorations(this.slot.id)
+      .find(({ definition }) => definition.id === selected.id);
+    const current = this.decorating?.getPlacement(this.slot.id);
+    const available = Math.max(0, (ownership?.quantity ?? 0) - (ownership?.placedQuantity ?? 0));
+    const moving = current?.id !== selected.id && available === 0;
+    this.countText?.setText(
+      `${ownership?.quantity ?? 0} owned · ${ownership?.placedQuantity ?? 0} placed${moving ? ' · Move the placed copy here' : ''}`,
+    );
+    this.placeLabel?.setText(
+      current ? (moving ? 'Move here' : 'Replace') : moving ? 'Move here' : 'Place',
+    );
     this.renderPlacementPreview(selected, profile?.previewColour ?? UI_COLOURS.lavenderStrong);
   }
 
-  private renderPlacementPreview(item: ItemDefinition, colour: number): void {
-    if (!this.slot) {
-      return;
-    }
-
-    const centreX = GAME_WIDTH / 2;
-    const centreY = 300;
-    const icon = item.icon ?? '✦';
-
-    if (this.slot.category === 'wall') {
-      this.previewObjects.push(
-        this.add
-          .rectangle(centreX, centreY, 250, 180, 0xf7e8d6, 1)
-          .setStrokeStyle(8, 0xb98b72, 0.9)
-          .setDepth(4),
-        this.add
-          .rectangle(centreX, centreY, 132, 112, colour, 0.28)
-          .setStrokeStyle(5, colour, 0.8)
-          .setDepth(5),
-      );
-    } else if (this.slot.category === 'floor') {
-      this.previewObjects.push(
-        this.add.ellipse(centreX, centreY + 35, 300, 135, colour, 0.35).setDepth(4),
-        this.add.ellipse(centreX, centreY + 35, 260, 105, 0xffffff, 0.24).setDepth(5),
-      );
-    } else if (this.slot.category === 'table') {
-      this.previewObjects.push(
-        this.add.ellipse(centreX, centreY + 58, 270, 95, 0xc4936f, 1).setDepth(4),
-        this.add.rectangle(centreX, centreY + 100, 28, 95, 0x9c7055, 1).setDepth(4),
-        this.add.circle(centreX, centreY - 4, 68, colour, 0.24).setDepth(5),
-      );
-    } else if (this.slot.category === 'shelf') {
-      this.previewObjects.push(
-        this.add.rectangle(centreX, centreY + 65, 300, 30, 0x9c7055, 1).setDepth(4),
-        this.add.rectangle(centreX, centreY - 5, 190, 135, colour, 0.18).setDepth(4),
-      );
-    } else {
-      this.previewObjects.push(
-        this.add
-          .rectangle(centreX, centreY + 45, 330, 125, 0xb17c5f, 1)
-          .setStrokeStyle(5, 0x805848, 0.95)
-          .setDepth(4),
-        this.add.circle(centreX, centreY - 20, 76, colour, 0.28).setDepth(5),
-        this.add
-          .text(centreX, centreY + 92, 'Adventure Display', {
-            color: UI_COLOURS.ink,
-            fontFamily: UI_FONT,
-            fontSize: '14px',
-            fontStyle: 'bold',
-          })
-          .setOrigin(0.5)
-          .setDepth(5),
-      );
-    }
-
-    this.previewObjects.push(
-      this.add
-        .text(centreX, centreY - 15, icon, {
-          fontFamily: UI_FONT,
-          fontSize: '76px',
-        })
-        .setOrigin(0.5)
-        .setDepth(6),
-    );
+  private renderPlacementPreview(item: ItemDefinition, _colour: number): void {
+    const art = renderCottageDecoration(this, item.id, GAME_WIDTH / 2, 375, 1.15);
+    for (const object of art) object.setDepth(6);
+    this.previewObjects.push(...art);
   }
 
   private placeSelection(): void {
@@ -336,13 +249,94 @@ export class CottageDecorateScene extends Phaser.Scene {
       return;
     }
 
-    const selected = this.options[this.selectedIndex] ?? null;
-    if (selected) {
-      this.decorating.placeDecoration(this.slot.id, selected.id);
-    } else {
-      this.decorating.removeDecoration(this.slot.id);
-    }
+    const selected = this.options[this.selectedIndex];
+    if (!selected) return;
+    this.decorating.placeDecoration(this.slot.id, selected.id);
     this.backToRoom();
+  }
+
+  private removePlacement(): void {
+    if (!this.decorating || !this.slot) return;
+    this.decorating.removeDecoration(this.slot.id);
+    this.backToRoom();
+  }
+
+  private renderChoiceCards(): void {
+    this.clearChoiceCards();
+    const pageSize = 5;
+    const page = Math.floor(this.selectedIndex / pageSize);
+    const pageOptions = this.options.slice(page * pageSize, page * pageSize + pageSize);
+    const count = Math.max(1, pageOptions.length);
+    const width = Math.min(172, 860 / count);
+    const startX = GAME_WIDTH / 2 - ((count - 1) * width) / 2;
+    pageOptions.forEach((item, pageIndex) => {
+      const index = page * pageSize + pageIndex;
+      const cardX = startX + pageIndex * width;
+      const card = this.add
+        .rectangle(cardX, 205, width - 12, 112, 0xffffff)
+        .setStrokeStyle(4, index === this.selectedIndex ? UI_COLOURS.gold : UI_COLOURS.lavender)
+        .setInteractive({ useHandCursor: true })
+        .setName(`cottage-decoration-choice:${item.id}`)
+        .setDepth(7);
+      const art = renderCottageDecoration(this, item.id, cardX, 190, 0.48);
+      const label = this.add
+        .text(cardX, 246, item.name, {
+          color: UI_COLOURS.ink,
+          fontFamily: UI_FONT,
+          fontSize: '12px',
+          fontStyle: 'bold',
+          align: 'center',
+          wordWrap: { width: width - 24 },
+        })
+        .setOrigin(0.5)
+        .setDepth(9);
+      for (const object of art)
+        object
+          .setDepth(8)
+          .setInteractive({ useHandCursor: true })
+          .on('pointerdown', () => this.selectChoice(index));
+      card.on('pointerdown', () => this.selectChoice(index));
+      label
+        .setInteractive({ useHandCursor: true })
+        .on('pointerdown', () => this.selectChoice(index));
+      this.optionCardObjects.push(card, ...art, label);
+    });
+    if (page > 0)
+      this.createChoicePageButton(108, '◀', () => this.selectChoice((page - 1) * pageSize));
+    if ((page + 1) * pageSize < this.options.length)
+      this.createChoicePageButton(1172, '▶', () => this.selectChoice((page + 1) * pageSize));
+  }
+
+  private createChoicePageButton(x: number, label: string, action: () => void): void {
+    const button = this.add
+      .circle(x, 205, 28, UI_COLOURS.lavender)
+      .setStrokeStyle(3, UI_COLOURS.lavenderStrong)
+      .setInteractive({ useHandCursor: true })
+      .setDepth(8);
+    const text = this.add
+      .text(x, 205, label, {
+        color: UI_COLOURS.ink,
+        fontFamily: UI_FONT,
+        fontSize: '20px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5)
+      .setInteractive({ useHandCursor: true })
+      .setDepth(9);
+    button.on('pointerdown', action);
+    text.on('pointerdown', action);
+    this.optionCardObjects.push(button, text);
+  }
+
+  private selectChoice(index: number): void {
+    this.selectedIndex = index;
+    this.renderChoiceCards();
+    this.renderSelection();
+  }
+
+  private clearChoiceCards(): void {
+    for (const object of this.optionCardObjects) object.destroy();
+    this.optionCardObjects = [];
   }
 
   private backToRoom(): void {
