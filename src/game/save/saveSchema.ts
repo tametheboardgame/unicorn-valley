@@ -1,4 +1,4 @@
-export const CURRENT_SAVE_SCHEMA_VERSION = 6;
+export const CURRENT_SAVE_SCHEMA_VERSION = 7;
 export const SAVE_STORAGE_KEY = 'unicorn-valley.save';
 export const DEFAULT_START_LOCATION_ID = 'moonflower-cottage';
 export const NEW_GAME_START_LOCATION_ID = 'location:moonflower-glade';
@@ -63,6 +63,7 @@ export interface HomeState {
   ownedFurnitureIds: string[];
   furnitureBySlot: Record<string, string>;
   gardenFlags: Record<string, boolean>;
+  unlockedStyleIds: string[];
   style: HomeStyleState;
 }
 
