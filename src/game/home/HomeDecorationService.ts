@@ -5,7 +5,7 @@ import type { SaveService } from '../save/SaveService';
 import type { SaveGame } from '../save/saveSchema';
 import {
   COTTAGE_INTERIOR_MAP,
-  isCottagePointInsideReservedZone,
+  isCottagePointInsideDecorationProtectedZone,
   type CottageDecorationSlot,
 } from '../world/CottageInteriorMap';
 import { canPlaceDecorationInCategory } from './CottageDecorationCatalogue';
@@ -53,7 +53,7 @@ function requireSlot(slotId: string): CottageDecorationSlot {
     throw new Error(`Unknown cottage decoration slot: ${slotId}`);
   }
 
-  const protectedZone = isCottagePointInsideReservedZone(slot.position, 46);
+  const protectedZone = isCottagePointInsideDecorationProtectedZone(slot.position, 46);
   if (protectedZone) {
     throw new Error(
       `Cottage decoration slot overlaps protected story capacity: ${slot.id} / ${protectedZone.anchorId}`,
