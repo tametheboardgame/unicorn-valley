@@ -160,9 +160,11 @@ const migrateV6ToV7: SaveMigration = (save) => {
     typeof save.createdAt === 'string' ? save.createdAt : '1970-01-01T00:00:00.000Z';
   const defaults = createDefaultSave(timestamp);
   const home = mergeRecord(defaults.home, save.home);
-  const style = isRecord(home.style) ? home.style : {};
-  const walls = isRecord(style.walls) ? style.walls : {};
-  const furnitureVariants = isRecord(style.furnitureVariants) ? style.furnitureVariants : {};
+  const style: SaveRecord = isRecord(home.style) ? home.style : {};
+  const walls: SaveRecord = isRecord(style.walls) ? style.walls : {};
+  const furnitureVariants: SaveRecord = isRecord(style.furnitureVariants)
+    ? style.furnitureVariants
+    : {};
   const selectedStyleIds = [
     ...Object.values(walls).flatMap((wall) =>
       isRecord(wall)
