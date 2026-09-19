@@ -178,6 +178,14 @@ test('H2.5 keeps normal play clean, replaces Gallop with Decorate, and confirms 
     .toEqual(['CottageInteriorScene']);
   await expect
     .poll(async () => {
+      const player = scene(await snapshot(page), 'CottageInteriorScene').objects.find(
+        ({ name }) => name === 'world-player-unicorn',
+      );
+      return player ? { x: Math.round(player.x), y: Math.round(player.y) } : null;
+    })
+    .toEqual({ x: 750, y: 790 });
+  await expect
+    .poll(async () => {
       const current = await snapshot(page);
       return scene(current, 'CottageInteriorScene').objects.filter(({ name }) =>
         name.startsWith('cottage-decorate-marker:'),
@@ -290,8 +298,11 @@ test('H2.8 fresh-game starters support place, replace, move, remove and persiste
     slotId: 'cottage-slot:ribbon-display',
     returnToDecorateMode: true,
   });
+  const editor = scene(await snapshot(page), 'CottageDecorateScene');
+  expect(editor.objects.some(({ name }) => name === 'cottage-decorate-main-panel')).toBe(true);
+  expect(editor.objects.some(({ name }) => name === 'cottage-decorate-preview-panel')).toBe(true);
   expect(
-    scene(await snapshot(page), 'CottageDecorateScene').objects.some(
+    editor.objects.some(
       ({ name }) => name === 'cottage-decoration-choice:item:starter-daisy-vase',
     ),
   ).toBe(true);
