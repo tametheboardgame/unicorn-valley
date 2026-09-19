@@ -28,14 +28,16 @@ A later documentation/status-only head triggered a full Chromium run in which on
 
 ## Current gate
 
-H2.8 implementation and technical qualification may proceed autonomously within its approved scope.
+H2.8 implementation is complete at `8f5a65b043cf1e934101e6790874a240f5e1863e` and local technical qualification passes. Exact-head CI is pending after publication. The package is waiting for David’s place/replace/move/remove playtest; it is not human-approved.
 
 The next human gate is the H2.8 place/replace/move/remove playtest. Do not start H2.9, merge PR #175 or deploy production until H2.8 has passed technical qualification and David has explicitly accepted the H2.8 result.
 
 ## Next work
 
-1. Implement the H2.8 editing-flow upgrade on the existing H2 branch.
-2. Replace generic placed-decoration presentation with item-specific cottage presentation where feasible and remove permanent floating names.
-3. Add/update unit and browser coverage for quantity correctness, compatibility and place/replace/move/remove.
-4. Run bounded technical validation and exact-head CI.
-5. Provide the deployed branch preview for David's H2.8 human gate.
+1. Publish the qualified H2.8 checkpoint and confirm exact-head CI and the branch preview.
+2. David playtests explicit place, replace, move and remove flows across slot categories, then reloads/Continues and checks that normal play has no floating decoration names.
+3. Record David’s decision; do not start H2.9 without explicit approval.
+
+## H2.8 technical checkpoint
+
+The visible-choice picker, explicit Place/Replace/Move/Remove copy, canonical quantity-aware service result contract, item-coloured cottage presentation and no-floating-name normal-play treatment are implemented. `npm run validate` passes (536 unit tests), and `npx playwright test tests/play/r6.5-wp19h2-decorate-mode.spec.ts` passes both H2.5 regression and H2.8 placement/persistence/removal coverage. Existing lint warnings remain non-failing and unrelated.
