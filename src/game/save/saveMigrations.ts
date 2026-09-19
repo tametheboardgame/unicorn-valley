@@ -155,12 +155,51 @@ const migrateV5ToV6: SaveMigration = (save) => ({
   schemaVersion: 6,
 });
 
+const migrateV6ToV7: SaveMigration = (save) => {
+  const timestamp =
+    typeof save.createdAt === 'string' ? save.createdAt : '1970-01-01T00:00:00.000Z';
+  const defaults = createDefaultSave(timestamp);
+  const home = mergeRecord(defaults.home, save.home);
+  const style = isRecord(home.style) ? home.style : {};
+  const walls = isRecord(style.walls) ? style.walls : {};
+  const furnitureVariants = isRecord(style.furnitureVariants) ? style.furnitureVariants : {};
+  const selectedStyleIds = [
+    ...Object.values(walls).flatMap((wall) =>
+      isRecord(wall)
+        ? [wall.wallColourId, wall.wallpaperId].filter(
+            (value): value is string => typeof value === 'string',
+          )
+        : [],
+    ),
+    ...(typeof style.floorStyleId === 'string' ? [style.floorStyleId] : []),
+    ...Object.values(furnitureVariants).filter(
+      (value): value is string => typeof value === 'string',
+    ),
+  ];
+  const unlockedStyleIds = Array.from(
+    new Set([
+      ...COTTAGE_STARTER_HOME_STYLE_IDS,
+      ...selectedStyleIds.filter(isCottageHomeStyleEntitlementId),
+    ]),
+  );
+
+  return {
+    ...save,
+    schemaVersion: 7,
+    home: {
+      ...home,
+      unlockedStyleIds,
+    },
+  };
+};
+
 export const SAVE_MIGRATIONS: ReadonlyMap<number, SaveMigration> = new Map([
   [1, migrateV1ToV2],
   [2, migrateV2ToV3],
   [3, migrateV3ToV4],
   [4, migrateV4ToV5],
   [5, migrateV5ToV6],
+  [6, migrateV6ToV7],
 ]);
 
 export function migrateSaveRecord(
@@ -200,3 +239,7 @@ export function migrateSaveRecord(
   return current;
 }
 import { COTTAGE_STARTER_DECORATION_IDS } from '../../content/cottageStarterDecorations';
+import {
+  COTTAGE_STARTER_HOME_STYLE_IDS,
+  isCottageHomeStyleEntitlementId,
+} from '../../content/cottageHomeStyleEntitlements';
