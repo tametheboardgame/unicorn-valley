@@ -348,6 +348,7 @@ test('supporting resident uses the shared dialogue family with production portra
 test('Willow, Marigold and Nova migrated conversations activate from the shared Talk action', async ({
   page,
 }) => {
+  test.setTimeout(90_000);
   await page.addInitScript(() => window.localStorage.clear());
 
   const cases = [
@@ -357,6 +358,9 @@ test('Willow, Marigold and Nova migrated conversations activate from the shared 
   ] as const;
 
   for (const [sceneKey, speaker, position] of cases) {
+    // Fully unload Phaser between cases. Re-navigating directly from a live
+    // dialogue scene can leave the prior document servicing the next wait.
+    await page.goto('about:blank');
     await page.goto('/?diagnostics=1');
     await waitForDiagnostics(page);
     await assertMigratedConversationStarts(page, sceneKey, speaker, position);
