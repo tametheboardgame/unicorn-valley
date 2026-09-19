@@ -5,6 +5,8 @@ interface ObjectSnapshot {
   text: string | null;
   x: number;
   y: number;
+  bodyWidth: number | null;
+  bodyHeight: number | null;
   interactive: boolean;
   visible: boolean;
 }
@@ -91,12 +93,20 @@ test('H2.9 binds the strange egg and its hatch flow to the canonical cottage nes
 
   await expect
     .poll(async () => {
-      const egg = scene(await snapshot(page), 'CottageInteriorScene').objects.find(
-        ({ name }) => name === 'cottage-story:egg-nest:found',
-      );
-      return egg ? { x: egg.x, y: egg.y } : null;
+      const cottage = scene(await snapshot(page), 'CottageInteriorScene');
+      const egg = cottage.objects.find(({ name }) => name === 'cottage-story:egg-nest:found');
+      const blocker = cottage.objects.find(({ name }) => name === 'pip-egg-collider:cottage');
+      return egg && blocker
+        ? {
+            egg: { x: egg.x, y: egg.y },
+            blocker: { width: blocker.bodyWidth, height: blocker.bodyHeight },
+          }
+        : null;
     })
-    .toEqual({ x: 420, y: 900 });
+    .toEqual({
+      egg: { x: 420, y: 900 },
+      blocker: { width: 70, height: 36 },
+    });
 
   await setPlayerPosition(page, 520, 885);
   await page.waitForTimeout(100);
@@ -154,6 +164,62 @@ test('H2.9 binds the strange egg and its hatch flow to the canonical cottage nes
   });
   expect(flags['flag:pip-strange-egg-hatch-ready']).toBe(false);
   expect(flags['flag:companion-luma-hatched']).toBe(true);
+});
+
+test('H2.9 uses the smaller detailed strange egg with collision in Moonflower Glade', async ({
+  page,
+}) => {
+  await page.goto('/?diagnostics=1');
+  await startScene(page, 'CottageInteriorScene');
+
+  await page.evaluate(() => {
+    const save = JSON.parse(localStorage.getItem('unicorn-valley.save') ?? '{}');
+    save.collections.discoveryIds = Array.from(
+      new Set([...(save.collections.discoveryIds ?? []), 'discovery:moonflower-sparkle']),
+    );
+    save.world.uniqueDiscoveryIds = Array.from(
+      new Set([...(save.world.uniqueDiscoveryIds ?? []), 'discovery:moonflower-sparkle']),
+    );
+    save.world.flags['flag:pip-intro-appeared'] = true;
+    save.world.flags['flag:pip-welcome-complete'] = true;
+    save.quests.byQuestId['quest:pips-strange-egg'] = {
+      status: 'active',
+      currentStepId: 'quest-step:pips-strange-egg:4',
+      completedAt: null,
+    };
+    const serialised = JSON.stringify(save);
+    localStorage.setItem('unicorn-valley.save', serialised);
+    localStorage.setItem(`unicorn-valley.save.schema.${save.schemaVersion}`, serialised);
+  });
+
+  await page.evaluate(() => {
+    (
+      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__?.startScene('MoonflowerGladeScene');
+  });
+  await expect.poll(async () => (await snapshot(page)).activeScenes).toEqual(['MoonflowerGladeScene']);
+
+  await expect
+    .poll(async () => {
+      const glade = scene(await snapshot(page), 'MoonflowerGladeScene');
+      const egg = glade.objects.find(
+        ({ name }) => name === 'pip-trail:interaction:pip-strange-egg',
+      );
+      const art = glade.objects.find(({ name }) => name === 'pip-egg-art:found');
+      const blocker = glade.objects.find(({ name }) => name === 'pip-egg-collider:glade');
+      return egg && art && blocker
+        ? {
+            egg: { x: egg.x, y: egg.y },
+            artVisible: art.visible,
+            blocker: { width: blocker.bodyWidth, height: blocker.bodyHeight },
+          }
+        : null;
+    })
+    .toEqual({
+      egg: { x: 2075, y: 1260 },
+      artVisible: true,
+      blocker: { width: 66, height: 34 },
+    });
 });
 
 test('H2.9 reserves an inert architectural bay for future portal content', async ({ page }) => {
