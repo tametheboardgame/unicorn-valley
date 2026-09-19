@@ -46,11 +46,11 @@ function drawStar(
   inner: number,
   colour: number,
 ): void {
-  const points: Phaser.Geom.Point[] = [];
+  const points: Array<{ x: number; y: number }> = [];
   for (let index = 0; index < 10; index += 1) {
     const angle = -Math.PI / 2 + (Math.PI * index) / 5;
     const radius = index % 2 === 0 ? outer : inner;
-    points.push(new Phaser.Geom.Point(x + Math.cos(angle) * radius, y + Math.sin(angle) * radius));
+    points.push({ x: x + Math.cos(angle) * radius, y: y + Math.sin(angle) * radius });
   }
   graphics.fillStyle(colour, 1);
   graphics.fillPoints(points, true);
