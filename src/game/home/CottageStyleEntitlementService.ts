@@ -25,15 +25,10 @@ export class CottageStyleEntitlementService {
   }
 
   public isUnlocked(styleId: string): boolean {
-    return (
-      isCottageHomeStyleEntitlementId(styleId) && this.getUnlockedStyleIds().includes(styleId)
-    );
+    return isCottageHomeStyleEntitlementId(styleId) && this.getUnlockedStyleIds().includes(styleId);
   }
 
-  public grantStyle(
-    styleId: string,
-    source: CottageStyleUnlockSource = 'reward',
-  ): boolean {
+  public grantStyle(styleId: string, source: CottageStyleUnlockSource = 'reward'): boolean {
     if (!isCottageHomeStyleEntitlementId(styleId)) {
       throw new Error(`Unknown cottage style entitlement: ${styleId}`);
     }
@@ -81,6 +76,8 @@ export class CottageStyleEntitlementService {
       ...Object.values(currentStyle.furnitureVariants),
     ]);
 
-    return nextIds.every((styleId) => this.canUseStyle(styleId, currentIds.has(styleId) ? styleId : undefined));
+    return nextIds.every((styleId) =>
+      this.canUseStyle(styleId, currentIds.has(styleId) ? styleId : undefined),
+    );
   }
 }
