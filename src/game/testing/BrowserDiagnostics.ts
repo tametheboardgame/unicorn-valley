@@ -202,8 +202,10 @@ function snapshotObject(
   const authoritativeFacing =
     gameObject instanceof Phaser.Physics.Arcade.Sprite ? getPlayerEntityFacing(gameObject) : null;
   const arcadeBody =
-    gameObject instanceof Phaser.Physics.Arcade.Sprite &&
-    gameObject.body instanceof Phaser.Physics.Arcade.Body
+    (gameObject instanceof Phaser.Physics.Arcade.Sprite ||
+      gameObject instanceof Phaser.Physics.Arcade.Image) &&
+    (gameObject.body instanceof Phaser.Physics.Arcade.Body ||
+      gameObject.body instanceof Phaser.Physics.Arcade.StaticBody)
       ? gameObject.body
       : null;
   const nativeBounds =
