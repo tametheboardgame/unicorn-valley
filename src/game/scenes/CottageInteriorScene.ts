@@ -16,7 +16,11 @@ import {
 } from '../home/CottageFurnitureRenderer';
 import { buildCottageHomeView, type CottageHomeView } from '../home/CottageHomeView';
 import { HomeDecorationService } from '../home/HomeDecorationService';
-import { getCottageDecorationProfile } from '../home/CottageDecorationCatalogue';
+import {
+  getCottageDecorationProfile,
+  resolveCottageDecorationPlacementBehaviour,
+} from '../home/CottageDecorationCatalogue';
+import { renderCottageDecoration } from '../home/CottageDecorationPresentation';
 import { resolveCottageStyle } from '../home/CottageStyleCatalogue';
 import { renderCottageRoomSurfaces } from '../home/CottageSurfaceRenderer';
 import { CottageSleepController } from '../home/CottageSleepController';
@@ -128,6 +132,7 @@ export class CottageInteriorScene extends Phaser.Scene {
     );
 
     this.collisionGroup = this.createCollisionMap();
+    this.addDecorationColliders(homeView);
     const playerSpawn = data.playerPosition ?? map.playerSpawn;
     this.player = new PlayerEntity(this, playerSpawn.x, playerSpawn.y, SAVED_PLAYER_TEXTURE_KEY);
     this.player.sprite.setDisplaySize(112, 92);
@@ -372,8 +377,8 @@ export class CottageInteriorScene extends Phaser.Scene {
       return {
         id: `${DECORATION_INTERACTION_PREFIX}${slot.id}`,
         label: placement ? `${slot.label} · ${placement.name}` : slot.label,
-        actionLabel: placement ? 'Change decoration' : 'Decorate',
-        actionKind: 'interact',
+        actionLabel: 'Decorate here',
+        actionKind: 'decorate',
         position: slot.interactionPosition ?? slot.position,
         interactionRadius: 135,
         priority: 60,
@@ -672,8 +677,23 @@ export class CottageInteriorScene extends Phaser.Scene {
         .setOrigin(0.5)
         .setAlpha(0.78)
         .setDepth(13);
+      const hitZone = this.add
+        .zone(slot.position.x, slot.position.y, 86, 86)
+        .setName(`cottage-decorate-hit:${slot.id}`)
+        .setInteractive({ useHandCursor: true })
+        .setDepth(14)
+        .on('pointerdown', () => {
+          void this.openDecorationSlot(slot.id);
+        });
 
-      this.decorateModeObjects.push(halo, sparkle);
+      halo.setInteractive({ useHandCursor: true }).on('pointerdown', () => {
+        void this.openDecorationSlot(slot.id);
+      });
+      sparkle.setInteractive({ useHandCursor: true }).on('pointerdown', () => {
+        void this.openDecorationSlot(slot.id);
+      });
+
+      this.decorateModeObjects.push(halo, sparkle, hitZone);
       this.tweens.add({
         targets: halo,
         alpha: 0.28,
@@ -716,15 +736,44 @@ export class CottageInteriorScene extends Phaser.Scene {
   private renderHomeState(homeView: CottageHomeView): void {
     this.clearHomeStatePresentation();
 
+    const allSlots: readonly CottageDecorationSlot[] = [
+      ...COTTAGE_INTERIOR_MAP.decorationSlots,
+      ...COTTAGE_INTERIOR_MAP.deferredDecorationSlots,
+    ];
+
     for (const placement of homeView.placements) {
-      const colour = getCottageDecorationProfile(placement.itemId)?.previewColour ?? 0xb99ad2;
-      this.trackHomeStateObject(
-        this.add
-          .ellipse(placement.position.x, placement.position.y, 76, 58, colour)
-          .setStrokeStyle(4, 0xffffff, 0.75)
-          .setName(`cottage-decoration-art:${placement.itemId}`)
-          .setDepth(9),
+      const slot = allSlots.find((candidate) => candidate.id === placement.slotId);
+      if (!slot) continue;
+
+      const behaviour = resolveCottageDecorationPlacementBehaviour(placement.itemId, slot.category);
+      const scale =
+        slot.category === 'wall'
+          ? 0.8
+          : slot.category === 'floor'
+            ? 0.9
+            : slot.category === 'table'
+              ? 0.62
+              : 0.58;
+      const art = renderCottageDecoration(
+        this,
+        placement.itemId,
+        placement.position.x,
+        placement.position.y,
+        scale,
       );
+      const depth =
+        behaviour.mode === 'flat-floor'
+          ? 6
+          : behaviour.mode === 'wall-mounted'
+            ? 9
+            : worldDepthForY(
+                placement.position.y + (behaviour.mode === 'supported' ? 80 : 26),
+                0.24,
+              );
+
+      for (const object of art) {
+        this.trackHomeStateObject(object.setDepth(depth));
+      }
     }
 
     const shelf = COTTAGE_INTERIOR_MAP.treasureDisplay.position;
@@ -792,6 +841,40 @@ export class CottageInteriorScene extends Phaser.Scene {
     }
 
     return collisionGroup;
+  }
+
+  private addDecorationColliders(homeView: CottageHomeView): void {
+    if (!this.collisionGroup) return;
+
+    const allSlots: readonly CottageDecorationSlot[] = [
+      ...COTTAGE_INTERIOR_MAP.decorationSlots,
+      ...COTTAGE_INTERIOR_MAP.deferredDecorationSlots,
+    ];
+
+    for (const placement of homeView.placements) {
+      const slot = allSlots.find((candidate) => candidate.id === placement.slotId);
+      if (!slot) continue;
+
+      const behaviour = resolveCottageDecorationPlacementBehaviour(placement.itemId, slot.category);
+      if (
+        behaviour.mode !== 'freestanding' ||
+        !behaviour.collisionWidth ||
+        !behaviour.collisionHeight
+      ) {
+        continue;
+      }
+
+      const blocker = this.collisionGroup.create(
+        placement.position.x,
+        placement.position.y + (behaviour.collisionOffsetY ?? 0),
+        COLLISION_TEXTURE_KEY,
+      ) as Phaser.Physics.Arcade.Image;
+      blocker
+        .setDisplaySize(behaviour.collisionWidth, behaviour.collisionHeight)
+        .setVisible(false)
+        .refreshBody();
+      blocker.setName(`cottage-decoration-collider:${placement.slotId}`);
+    }
   }
 
   private ensureCollisionTexture(): void {
