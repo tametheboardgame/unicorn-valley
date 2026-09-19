@@ -189,7 +189,7 @@ test('H2.6 styles four walls independently and persists every surface', async ({
     hasObject(
       value,
       'CottageInteriorScene',
-      'cottage-style-wallpaper:front:cottage-wallpaper:star-scatter',
+      'cottage-style-wallpaper:front:cottage-wallpaper:moon-sprigs',
     ),
   ).toBe(true);
   expect(
@@ -217,7 +217,7 @@ test('H2.6 styles four walls independently and persists every surface', async ({
     hasObject(
       value,
       'CottageInteriorScene',
-      'cottage-style-wallpaper:front:cottage-wallpaper:star-scatter',
+      'cottage-style-wallpaper:front:cottage-wallpaper:moon-sprigs',
     ),
   ).toBe(true);
   expect(
