@@ -97,6 +97,7 @@ test('H2.9 binds the strange egg and its hatch flow to the canonical cottage nes
     .toEqual({ x: 420, y: 900 });
 
   await setPlayerPosition(page, 520, 885);
+  await page.waitForTimeout(100);
   await page.keyboard.press('e');
 
   await expect
@@ -130,6 +131,7 @@ test('H2.9 binds the strange egg and its hatch flow to the canonical cottage nes
     .toBe(true);
 
   await setPlayerPosition(page, 520, 885);
+  await page.waitForTimeout(100);
   await page.keyboard.press('e');
 
   await expect
