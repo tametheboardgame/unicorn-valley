@@ -728,6 +728,17 @@ export class CottageInteriorScene extends Phaser.Scene {
     renderCottagePermanentFurnishings(this, style);
     renderCottageWonderbookNook(this, wonderbookAnchor.position);
     renderWonderbookWorldProp(this, wonderbookAnchor.position);
+    void this.renderStoryArchitecture();
+  }
+
+  private async renderStoryArchitecture(): Promise<void> {
+    const { renderCottageFuturePortalBay } = await import(
+      '../home/CottageStoryArchitectureRenderer'
+    );
+    if (!this.scene.isActive()) {
+      return;
+    }
+    renderCottageFuturePortalBay(this);
   }
 
   private renderHomeState(homeView: CottageHomeView): void {
