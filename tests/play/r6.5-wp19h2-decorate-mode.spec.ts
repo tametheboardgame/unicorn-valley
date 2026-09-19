@@ -10,6 +10,10 @@ interface ObjectSnapshot {
 }
 interface SceneSnapshot {
   key: string;
+  camera: {
+    scrollX: number;
+    scrollY: number;
+  };
   objects: ObjectSnapshot[];
 }
 interface Snapshot {
@@ -85,11 +89,15 @@ async function tapScreen(page: Page, x: number, y: number): Promise<void> {
 }
 
 async function tapNamedObject(page: Page, sceneKey: string, objectName: string): Promise<void> {
-  const object = scene(await snapshot(page), sceneKey).objects.find(
-    ({ name }) => name === objectName,
-  );
+  const value = await snapshot(page);
+  const sceneSnapshot = scene(value, sceneKey);
+  const object = sceneSnapshot.objects.find(({ name }) => name === objectName);
   if (!object) throw new Error(`Missing ${objectName} in ${sceneKey}`);
-  await tapScreen(page, object.x, object.y);
+  await tapScreen(
+    page,
+    object.x - sceneSnapshot.camera.scrollX,
+    object.y - sceneSnapshot.camera.scrollY,
+  );
 }
 
 async function clickNamedObject(page: Page, sceneKey: string, objectName: string): Promise<void> {
@@ -303,7 +311,7 @@ test('H2.8 fresh-game starters support place, replace, move, remove and persiste
     const save = JSON.parse(localStorage.getItem('unicorn-valley.save') ?? '{}');
     save.inventory ??= { itemQuantities: {} };
     save.inventory.itemQuantities ??= {};
-    save.inventory.itemQuantities['item:sunbeam-cushion'] = 1;
+    save.inventory.itemQuantities['item:sunbeam-picnic-basket'] = 1;
     localStorage.setItem('unicorn-valley.save', JSON.stringify(save));
   });
   await page.reload();
@@ -331,11 +339,11 @@ test('H2.8 fresh-game starters support place, replace, move, remove and persiste
   await editSlot(page, 'cottage-slot:tea-table', 'item:starter-daisy-vase');
   await editSlot(page, 'cottage-slot:treasure-shelf', 'item:starter-daisy-vase');
   await editSlot(page, 'cottage-slot:centre-rug', 'item:starter-meadow-rug');
-  await editSlot(page, 'cottage-slot:cosy-corner', 'item:sunbeam-cushion');
+  await editSlot(page, 'cottage-slot:cosy-corner', 'item:sunbeam-picnic-basket');
   expect(await savedPlacements(page)).toMatchObject({
     'cottage-slot:treasure-shelf': 'item:starter-daisy-vase',
     'cottage-slot:centre-rug': 'item:starter-meadow-rug',
-    'cottage-slot:cosy-corner': 'item:sunbeam-cushion',
+    'cottage-slot:cosy-corner': 'item:sunbeam-picnic-basket',
   });
   expect(await savedPlacements(page)).not.toHaveProperty('cottage-slot:tea-table');
 
