@@ -99,9 +99,9 @@ async function editSlot(page: Page, slotId: string, itemId?: string): Promise<vo
   });
   if (itemId) {
     await tapNamedObject(page, 'CottageDecorateScene', `cottage-decoration-choice:${itemId}`);
-    await tapScreen(page, 640, 664);
+    await tapNamedObject(page, 'CottageDecorateScene', 'cottage-decorate-action-primary');
   } else {
-    await tapScreen(page, 260, 664);
+    await tapNamedObject(page, 'CottageDecorateScene', 'cottage-decorate-action-remove');
   }
   await expect
     .poll(async () => (await snapshot(page)).activeScenes)
@@ -154,7 +154,7 @@ test('H2.5 keeps normal play clean, replaces Gallop with Decorate, and confirms 
   await expect
     .poll(async () => (await snapshot(page)).activeScenes)
     .toEqual(['CottageDecorateScene']);
-  await page.keyboard.press('Escape');
+  await tapNamedObject(page, 'CottageDecorateScene', 'cottage-decorate-back');
   await expect
     .poll(async () => (await snapshot(page)).activeScenes)
     .toEqual(['CottageInteriorScene']);
@@ -193,7 +193,7 @@ test('H2.5 keeps normal play clean, replaces Gallop with Decorate, and confirms 
     .poll(async () => (await snapshot(page)).activeScenes)
     .toEqual(['CottageDecorateScene']);
 
-  await page.keyboard.press('Escape');
+  await tapNamedObject(page, 'CottageDecorateScene', 'cottage-decorate-back');
   await expect
     .poll(async () => (await snapshot(page)).activeScenes)
     .toEqual(['CottageInteriorScene']);
@@ -358,7 +358,36 @@ test('H2.8 fresh-game starters support place, replace, move, remove and persiste
   expect(
     editor.objects.some(({ name }) => name === 'cottage-decoration-choice:item:starter-daisy-vase'),
   ).toBe(true);
-  await page.keyboard.press('Escape');
+  expect(editor.objects.some(({ name }) => name.startsWith('ui-production:CottageDecorateScene'))).toBe(
+    false,
+  );
+  expect(
+    editor.objects.some(({ name }) =>
+      name.startsWith('concept-modal-surface:cottage-decoration'),
+    ),
+  ).toBe(false);
+
+  await tapNamedObject(page, 'CottageDecorateScene', 'cottage-decoration-filter:hangings');
+  let filteredEditor = scene(await snapshot(page), 'CottageDecorateScene');
+  expect(
+    filteredEditor.objects.some(
+      ({ name }) => name === 'cottage-decoration-choice:item:starter-star-bunting',
+    ),
+  ).toBe(true);
+  expect(
+    filteredEditor.objects.some(
+      ({ name }) => name === 'cottage-decoration-choice:item:starter-daisy-vase',
+    ),
+  ).toBe(false);
+
+  await tapNamedObject(page, 'CottageDecorateScene', 'cottage-decoration-filter:all');
+  filteredEditor = scene(await snapshot(page), 'CottageDecorateScene');
+  expect(
+    filteredEditor.objects.some(
+      ({ name }) => name === 'cottage-decoration-choice:item:starter-daisy-vase',
+    ),
+  ).toBe(true);
+  await tapNamedObject(page, 'CottageDecorateScene', 'cottage-decorate-back');
 
   await page.reload();
   await startScene(page, 'CottageInteriorScene');
