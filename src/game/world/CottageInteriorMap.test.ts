@@ -4,9 +4,12 @@ import {
   isPointBlocked,
   isPointInsideWalkableBounds,
 } from './MapTraversal';
-import { COTTAGE_INTERIOR_MAP, isCottagePointInsideReservedZone } from './CottageInteriorMap';
 import {
-  COTTAGE_DECORATION_PROTECTED_ANCHOR_IDS,
+  COTTAGE_INTERIOR_MAP,
+  isCottagePointInsideDecorationProtectedZone,
+} from './CottageInteriorMap';
+import {
+  COTTAGE_FUTURE_EXPANSION_ANCHOR_IDS,
   resolveCottageSemanticAnchor,
 } from './CottageSemanticAnchors';
 
@@ -112,7 +115,7 @@ describe('Moonflower Cottage interior map', () => {
 
   it('derives protected story capacity from semantic anchors', () => {
     expect(COTTAGE_INTERIOR_MAP.reservedZones).toHaveLength(
-      COTTAGE_DECORATION_PROTECTED_ANCHOR_IDS.length,
+      COTTAGE_FUTURE_EXPANSION_ANCHOR_IDS.length,
     );
 
     for (const zone of COTTAGE_INTERIOR_MAP.reservedZones) {
@@ -130,14 +133,12 @@ describe('Moonflower Cottage interior map', () => {
     ];
 
     for (const slot of slots) {
-      expect(isCottagePointInsideReservedZone(slot.position, 46), slot.id).toBeNull();
+      expect(isCottagePointInsideDecorationProtectedZone(slot.position, 46), slot.id).toBeNull();
     }
   });
 
   it('keeps future expansion capacity clear of permanent collision footprints', () => {
-    for (const zone of COTTAGE_INTERIOR_MAP.reservedZones.filter(
-      ({ purpose }) => purpose !== 'story',
-    )) {
+    for (const zone of COTTAGE_INTERIOR_MAP.reservedZones) {
       for (const collider of COTTAGE_INTERIOR_MAP.colliders) {
         const overlapsX = Math.abs(zone.x - collider.x) < zone.width / 2 + collider.width / 2;
         const overlapsY = Math.abs(zone.y - collider.y) < zone.height / 2 + collider.height / 2;
