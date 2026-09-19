@@ -316,7 +316,9 @@ test('H2.8 fresh-game starters support place, replace, move, remove and persiste
     save.inventory ??= { itemQuantities: {} };
     save.inventory.itemQuantities ??= {};
     save.inventory.itemQuantities['item:sunbeam-cushion'] = 1;
-    localStorage.setItem('unicorn-valley.save', JSON.stringify(save));
+    const serialised = JSON.stringify(save);
+    localStorage.setItem('unicorn-valley.save', serialised);
+    localStorage.setItem(`unicorn-valley.save.schema.${save.schemaVersion}`, serialised);
   });
   await expect
     .poll(async () =>
