@@ -1,6 +1,8 @@
 import type { CollisionRectangle, MapPoint, TraversalMapDefinition } from './MapTraversal';
 import {
+  COTTAGE_DECORATION_PROTECTED_ANCHOR_IDS,
   COTTAGE_SEMANTIC_ANCHOR_IDS,
+  type CottageSemanticAnchorId,
   resolveCottageSemanticAnchor,
 } from './CottageSemanticAnchors';
 
@@ -40,7 +42,8 @@ export interface CottageRoomShell {
 
 export interface CottageReservedZone extends CottageRectLayout {
   id: string;
-  purpose: 'future-story' | 'future-portal';
+  anchorId: CottageSemanticAnchorId;
+  purpose: 'story' | 'future-story' | 'future-portal';
 }
 
 export interface CottageSleepLayout {
@@ -131,15 +134,50 @@ export const COTTAGE_WINDOW_LAYOUT = [
   { x: 1015, y: 200, width: 200, height: 120 },
 ] as const satisfies readonly CottageRectLayout[];
 
-/** Protected floor/wall capacity that ordinary permanent furniture must not consume. */
-export const COTTAGE_RESERVED_ZONES = [
-  { id: 'future-story-1', purpose: 'future-story', x: 560, y: 895, width: 120, height: 120 },
-  { id: 'future-story-2', purpose: 'future-story', x: 930, y: 895, width: 120, height: 120 },
-  { id: 'future-story-3', purpose: 'future-story', x: 1090, y: 875, width: 120, height: 120 },
-  { id: 'future-story-4', purpose: 'future-story', x: 1030, y: 455, width: 120, height: 120 },
-  { id: 'future-story-5', purpose: 'future-story', x: 500, y: 455, width: 120, height: 120 },
-  { id: 'portal-bay', purpose: 'future-portal', x: 1280, y: 530, width: 200, height: 190 },
-] as const satisfies readonly CottageReservedZone[];
+function reservedZoneForAnchor(anchorId: CottageSemanticAnchorId): CottageReservedZone {
+  const anchor = resolveCottageSemanticAnchor(anchorId);
+  if (!anchor.reservation) {
+    throw new Error(`Cottage protected anchor is missing a reservation: ${anchorId}`);
+  }
+  if (
+    anchor.purpose !== 'story' &&
+    anchor.purpose !== 'future-story' &&
+    anchor.purpose !== 'future-portal'
+  ) {
+    throw new Error(`Cottage protected anchor has unsupported purpose: ${anchorId}`);
+  }
+
+  return {
+    id: `reserved:${anchor.id}`,
+    anchorId: anchor.id,
+    purpose: anchor.purpose,
+    x: anchor.position.x,
+    y: anchor.position.y,
+    width: anchor.reservation.width,
+    height: anchor.reservation.height,
+  };
+}
+
+/**
+ * Story and future-expansion capacity is derived from the semantic-anchor registry rather than
+ * duplicated raw coordinates. Ordinary decorating must remain outside these reservations.
+ */
+export const COTTAGE_RESERVED_ZONES = COTTAGE_DECORATION_PROTECTED_ANCHOR_IDS.map(
+  reservedZoneForAnchor,
+) satisfies readonly CottageReservedZone[];
+
+export function isCottagePointInsideReservedZone(
+  point: MapPoint,
+  clearance = 0,
+): CottageReservedZone | null {
+  return (
+    COTTAGE_RESERVED_ZONES.find(
+      (zone) =>
+        Math.abs(point.x - zone.x) <= zone.width / 2 + clearance &&
+        Math.abs(point.y - zone.y) <= zone.height / 2 + clearance,
+    ) ?? null
+  );
+}
 
 /**
  * Retired from normal H2.4 play because the bed now owns this physical area. Keep the authored
