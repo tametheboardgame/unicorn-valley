@@ -9,6 +9,7 @@ export type InteractionActionKind =
   | 'buy'
   | 'use'
   | 'pick-up'
+  | 'decorate'
   | 'interact';
 
 export type InteractionActivationMode = 'explicit' | 'automatic';
