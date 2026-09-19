@@ -3,7 +3,7 @@ import { isReducedMotionEnabled } from '../accessibility/AccessibilitySettings';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
 import { UI_COLOURS, UI_FONT } from '../ui/uiTheme';
 
-const UI_SCENES = new Set(['ShopScene', 'CottageDecorateScene']);
+const UI_SCENES = new Set(['ShopScene']);
 
 interface FrameSpec {
   x: number;
@@ -23,14 +23,6 @@ const FRAME_SPECS: Readonly<Record<string, FrameSpec>> = {
     height: 676,
     depth: 20,
     label: 'TWINKLE & THREAD',
-  },
-  CottageDecorateScene: {
-    x: 72,
-    y: 12,
-    width: 1136,
-    height: 696,
-    depth: 20,
-    label: 'COTTAGE DECORATING',
   },
 };
 
