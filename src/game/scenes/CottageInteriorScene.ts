@@ -437,8 +437,17 @@ export class CottageInteriorScene extends Phaser.Scene {
     this.interactionPrompt?.setTarget(null);
   }
 
-  private openDecorationSlot(slotId: string): void {
-    if (!this.decorateModeActive || !this.decorationService) {
+  private async openDecorationSlot(slotId: string): Promise<void> {
+    if (!this.decorateModeActive || !this.decorationService || !this.scene.isActive()) {
+      return;
+    }
+
+    if (!this.game.scene.keys.CottageDecorateScene) {
+      const { CottageDecorateScene } = await import('./CottageDecorateScene');
+      this.scene.add('CottageDecorateScene', CottageDecorateScene, false);
+    }
+
+    if (!this.scene.isActive()) {
       return;
     }
 
