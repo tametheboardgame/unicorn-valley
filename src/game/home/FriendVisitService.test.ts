@@ -156,6 +156,13 @@ describe('FriendVisitService', () => {
     );
   });
 
+  it('binds every cottage visitor to a semantic visitor anchor', () => {
+    for (const visit of R4_FRIEND_VISITS) {
+      const anchor = resolveCottageSemanticAnchor(visit.anchorId);
+      expect(anchor.purpose, visit.id).toBe('visitor');
+    }
+  });
+
   it('keeps every visitor spawn clear of furniture and cottage boundaries', () => {
     const visitorRadius = 58;
 
