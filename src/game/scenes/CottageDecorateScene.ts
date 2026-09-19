@@ -8,10 +8,7 @@ import {
   getCottageDecorationProfile,
   type CottageDecorationGroup,
 } from '../home/CottageDecorationCatalogue';
-import {
-  HomeDecorationService,
-  type OwnedDecoration,
-} from '../home/HomeDecorationService';
+import { HomeDecorationService, type OwnedDecoration } from '../home/HomeDecorationService';
 import { renderCottageDecoration } from '../home/CottageDecorationPresentation';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { UI_COLOURS, UI_FONT } from '../ui/uiTheme';
@@ -381,9 +378,7 @@ export class CottageDecorateScene extends Phaser.Scene {
     this.clearPreview();
     if (!this.slot || !this.decorating) return;
 
-    const selected = this.options.find(
-      ({ definition }) => definition.id === this.selectedItemId,
-    );
+    const selected = this.options.find(({ definition }) => definition.id === this.selectedItemId);
     const current = this.decorating.getPlacement(this.slot.id);
 
     if (!selected) {
@@ -405,9 +400,7 @@ export class CottageDecorateScene extends Phaser.Scene {
         .setDepth(6);
       this.previewObjects.push(message);
       if (current) {
-        this.previewObjects.push(
-          ...this.createPreviewActionButtons(null, current.id),
-        );
+        this.previewObjects.push(...this.createPreviewActionButtons(null, current.id));
       }
       return;
     }
@@ -508,13 +501,8 @@ export class CottageDecorateScene extends Phaser.Scene {
 
     if (currentItemId) {
       objects.push(
-        ...this.createActionButton(
-          LEFT_X - 118,
-          633,
-          190,
-          'Remove',
-          UI_COLOURS.blush,
-          () => this.removePlacement(),
+        ...this.createActionButton(LEFT_X - 118, 633, 190, 'Remove', UI_COLOURS.blush, () =>
+          this.removePlacement(),
         ),
       );
     }
