@@ -156,7 +156,7 @@ test('H2.9 reserves an inert architectural bay for future portal content', async
       );
       return bay ? { x: bay.x, y: bay.y, interactive: bay.interactive } : null;
     })
-    .toEqual({ x: 0, y: 0, interactive: false });
+    .toEqual({ x: 1280, y: 530, interactive: false });
 
   const cottage = scene(await snapshot(page), 'CottageInteriorScene');
   expect(
