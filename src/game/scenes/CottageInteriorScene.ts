@@ -50,6 +50,7 @@ import {
   COTTAGE_SEMANTIC_ANCHOR_IDS,
   resolveCottageSemanticAnchor,
 } from '../world/CottageSemanticAnchors';
+import type { MapPoint } from '../world/MapTraversal';
 import { MOONFLOWER_GLADE_MAP, setMoonflowerGladePlayerSpawn } from '../world/MoonflowerGladeMap';
 import { worldDepthForY } from '../world/WorldDepth';
 
