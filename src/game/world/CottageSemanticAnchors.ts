@@ -98,7 +98,7 @@ export const COTTAGE_SEMANTIC_ANCHORS = {
   },
   [COTTAGE_SEMANTIC_ANCHOR_IDS.storyDisplayTwo]: {
     id: COTTAGE_SEMANTIC_ANCHOR_IDS.storyDisplayTwo,
-    position: { x: 900, y: 900 },
+    position: { x: 905, y: 900 },
     purpose: 'future-story',
     reservation: { width: 120, height: 120 },
   },
