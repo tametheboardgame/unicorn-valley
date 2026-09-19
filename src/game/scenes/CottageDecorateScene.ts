@@ -75,7 +75,7 @@ export class CottageDecorateScene extends Phaser.Scene {
       UI_COLOURS.lavenderStrong,
       2,
       UI_DESIGN_TOKENS.radius.panelPx,
-    );
+    ).setName('cottage-decorate-main-panel');
 
     this.add
       .text(GAME_WIDTH / 2, 54, `Decorate · ${this.slot.label}`, {
@@ -121,7 +121,7 @@ export class CottageDecorateScene extends Phaser.Scene {
       3,
       24,
       0.92,
-    );
+    ).setName('cottage-decorate-preview-panel');
     this.createRoundedPanel(
       GAME_WIDTH / 2,
       535,
@@ -130,10 +130,10 @@ export class CottageDecorateScene extends Phaser.Scene {
       0xf3e7f8,
       UI_COLOURS.lavender,
       5,
-      UI_DESIGN_TOKENS.radius.pillPx,
+      UI_DESIGN_TOKENS.radius.controlPx,
       1,
       false,
-    );
+    ).setName('cottage-decorate-theme-pill');
 
     this.nameText = this.add
       .text(GAME_WIDTH / 2, 500, '', {
