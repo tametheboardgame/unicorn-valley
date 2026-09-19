@@ -4,69 +4,80 @@ Last updated: 2026-09-19
 
 ## Current work
 
-`R6.5-WP19H2.8 - Placeable Decoration Upgrade` is active on draft PR #175 / branch `agent/r6.5-wp19h2-moonflower-cottage`.
+`R6.5-WP19H2.9 - Story Home & Future Expansion` is active on draft PR #175 / branch
+`agent/r6.5-wp19h2-moonflower-cottage`.
 
-H2.0 through H2.7 are human-approved. H2.7 Furniture Colours & Variants was explicitly approved by David on 19 September 2026 after the furniture-variant gate passed on all fronts.
+H2.0 through H2.8 are human-approved. H2.10 has not started.
 
-H2.8 now owns the earned/placeable decoration layer. The accepted baseline is:
+## H2.8 acceptance record
 
-- `HomeDecorationService` remains the canonical owner of decoration ownership, compatibility, placement and quantity reconciliation;
-- H2.5 Decorate mode remains the canonical owner of when decoration slots and editing affordances exist;
-- `CottageDecorateScene` is the existing slot editor and is to be evolved rather than duplicated;
-- permanent furniture styling from H2.6/H2.7 is out of scope for H2.8;
-- the current generic placed-decoration glow/icon/floating-name presentation is prototype presentation and may be replaced at source;
-- wall/floor/table/shelf/display compatibility must remain explicit and testable;
-- place, replace, move and remove must preserve owned-vs-placed quantity correctness.
+David explicitly approved H2.8 on 19 September 2026 after the final decoration-editor input and legacy
+overlay cleanup.
 
-## H2.7 acceptance record
+The accepted H2.8 result includes:
 
-H2.7 implementation completed at `95127260e9c0df4fc452a9f96ab354de81ecb79c` and its authoritative exact-head CI run `35402961969` passed the full selected qualification, including all three Chromium shards and the Chromium/Firefox/WebKit compatibility matrix.
+- four dedicated unplaced starter decorations on fresh and migrated saves;
+- the two-panel collection browser with player-facing item groups;
+- direct mouse/touch decoration-point activation plus the `Decorate here` contextual action;
+- Place / Replace / Move / Remove with correct ownership and persistence;
+- exact return position after decoration/style editing;
+- item-specific decoration presentation rather than generic coloured blobs;
+- rugs below actors without collision and solid freestanding floor items with Y-aware collision;
+- removal of the obsolete modal reskin and `COTTAGE DECORATING` overlay that had blocked the rebuilt
+  editor's controls.
 
-David completed the H2.7 furniture walkaround/persistence gate on 19 September 2026 and confirmed it passed on all fronts. H2.7 is therefore complete and human-approved.
+Two final browser-fixture issues found after human approval were test-contract problems rather than
+player-facing regressions. The continuing H2.9 branch now accounts for cottage camera scroll when
+activating world markers and seeds test inventory through the active schema checkpoint.
 
-A later documentation/status-only head triggered a full Chromium run in which one older supporting-resident dialogue/portrait test timed out while 71 tests in that shard passed. This does not revoke the exact-head H2.7 technical qualification, but H2.8 qualification must still finish with a known clean CI state before its human gate.
+## H2.9 implementation
+
+Runtime candidate: `289c0723e2530f0c0c67524d6c4469fe13bc43f7`.
+
+H2.9 now provides:
+
+- the strange egg bound to the canonical `cottage.egg-nest` semantic anchor instead of a private raw
+  cottage coordinate;
+- unchanged existing egg growth, inspection and Luma hatch services;
+- five explicit future story/display semantic sockets with reservation footprints;
+- a protected future portal bay derived from the same semantic-anchor model;
+- separate future-expansion reservations and decoration-protection zones so the current egg nest is
+  protected from decorating without being incorrectly treated as unused future floor capacity;
+- authored decoration-slot validation against protected story/portal capacity;
+- Willow and Nova visitor contracts that verify their definitions resolve to semantic visitor anchors;
+- an inert architectural treatment for the future portal bay, with no input, destination or fast-travel
+  behaviour;
+- browser coverage for semantic egg placement/growth/hatching and the non-interactive portal bay.
 
 ## Current gate
 
-David has already live-verified the core H2.8 Place / Replace / Move / Remove and save/reload
-persistence behaviour. A second visual review rejected the first rounded picker and generic decoration
-presentation, so H2.8 remains open for a bounded interaction, physicality and presentation redesign.
+Exact-head CI run `35448257904` for runtime candidate `289c0723` has passed:
 
-Runtime candidate `885fa9941f65678a058febed2f62c4103339496d` now provides the redesigned collection browser,
-player-facing decoration categories, direct tap/click placement markers, the semantic `Decorate here`
-action, item-aware depth/collision rules and recognisable vector decoration art. Rich placed-decoration
-art is lazy-loaded so the hard startup performance budget remains intact.
+- verification planning;
+- formatting, lint, architecture, verification policy and TypeScript;
+- project-state contract;
+- unit contracts;
+- production build;
+- static smoke;
+- hard performance architecture budget.
 
-Exact-head CI run `35444709042` has passed verification planning, formatting, lint, architecture,
-type-check, project contract, unit contracts, production build, static smoke and the performance budget.
-The full Chromium shards and Chromium/Firefox/WebKit compatibility matrix are still running at this
-checkpoint. Cloudflare has deployed the exact runtime candidate.
+All three full Chromium shards and the Chromium/Firefox/WebKit compatibility matrix are currently running.
+Cloudflare has deployed the exact runtime candidate successfully.
 
-The package remains waiting for David's visual/physicality recheck and is not human-approved. Do not
-start H2.9, merge PR #175 or deploy production until H2.8 is explicitly accepted.
+Immutable preview: https://80fe4e07.unicorn-valley.pages.dev
+
+Stable branch preview: https://agent-r6-5-wp19h2-moonflower.unicorn-valley.pages.dev
 
 ## Next work
 
-1. Allow exact-head run `35444709042` to finish its already-running full Chromium and cross-browser gates.
-2. David checks the redesigned collection browser, category filtering, direct placement-point interaction,
-   `Decorate here` prompt, return position, recognisable decoration art, rug layering and solid floor
-   collision in the deployed preview.
-3. Record David's decision; do not start H2.9 without explicit approval.
+1. Allow exact-head browser qualification for `289c0723` to finish.
+2. Fix only H2.9-owned failures if that matrix exposes any.
+3. David performs the H2.9 human gate: check the egg nest/growth/hatch flow, a visitor if available,
+   the deliberately inert portal-bay architecture, and that Decorate mode does not expose protected
+   story/portal capacity.
+4. Do not start H2.10 until H2.9 is explicitly approved.
 
-## H2.8 technical checkpoint
+## Merge gate
 
-The underlying quantity-aware placement service remains unchanged and previously passed David's live
-place/replace/move/remove/persistence check. The current redesign adds a Room-Style-like selected-item
-preview and paged collection grid, dynamic player-facing item groups, direct room placement targets,
-semantic decorate interaction copy, item/slot-aware physical behaviour and recognisable vector artwork.
-
-Rugs are deliberately below actors with no collider. Wall-mounted and furniture-supported decorations
-avoid inappropriate extra blockers. Freestanding floor decorations use Y-aware world depth and authored
-static collision footprints. Browser coverage now guards direct marker activation, `Decorate here`,
-category filters, rug depth and freestanding decoration collision in addition to the existing persistence
-contracts.
-
-Runtime candidate: `885fa9941f65678a058febed2f62c4103339496d`.
-Exact-head CI: `35444709042`, full browser matrix still running at this checkpoint.
-Immutable preview: https://f5cf2956.unicorn-valley.pages.dev
-Stable branch preview: https://agent-r6-5-wp19h2-moonflower.unicorn-valley.pages.dev
+PR #175 remains draft and unmerged. Production is unchanged. The complete H2 package must still reach
+H2.11 and pass David's final whole-cottage playtest before merge.
