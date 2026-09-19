@@ -159,6 +159,16 @@ async function tapObject(page: Page, sceneKey: string, objectName: string): Prom
 }
 
 async function tapTitleText(page: Page, text: string): Promise<void> {
+  await expect
+    .poll(async () => {
+      const snapshot = await getSnapshot(page);
+      const title = snapshot.scenes.find((scene) => scene.key === 'TitleScene');
+      return title?.objects.some(
+        (object) => object.visible && object.interactive && object.text === text,
+      );
+    })
+    .toBe(true);
+
   const snapshot = await getSnapshot(page);
   const title = snapshot.scenes.find((scene) => scene.key === 'TitleScene');
   const target = title?.objects.find(
