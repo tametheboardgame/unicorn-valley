@@ -4,6 +4,7 @@ interface ObjectSnapshot {
   name: string;
   x: number;
   y: number;
+  depth: number;
   visible: boolean;
 }
 interface SceneSnapshot {
@@ -148,6 +149,19 @@ test('H2.5 keeps normal play clean, replaces Gallop with Decorate, and confirms 
     })
     .toBe(9);
 
+  await tapNamedObject(
+    page,
+    'CottageInteriorScene',
+    'cottage-decorate-hit:cottage-slot:left-wall',
+  );
+  await expect
+    .poll(async () => (await snapshot(page)).activeScenes)
+    .toEqual(['CottageDecorateScene']);
+  await page.keyboard.press('Escape');
+  await expect
+    .poll(async () => (await snapshot(page)).activeScenes)
+    .toEqual(['CottageInteriorScene']);
+
   await page.evaluate(() =>
     (
       window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics }
@@ -165,6 +179,16 @@ test('H2.5 keeps normal play clean, replaces Gallop with Decorate, and confirms 
     scene(value, 'CottageInteriorScene').objects.find(
       ({ name }) => name === 'exploration-interaction-prompt',
     )?.visible,
+  ).toBe(true);
+  expect(
+    scene(value, 'CottageInteriorScene').objects.find(
+      ({ name }) => name === 'exploration-interaction-prompt-label',
+    )?.name,
+  ).toBe('exploration-interaction-prompt-label');
+  expect(
+    scene(value, 'CottageInteriorScene').objects.some(
+      ({ name }) => name === 'cottage-decorate-hit:cottage-slot:centre-rug',
+    ),
   ).toBe(true);
 
   await tapScreen(page, 1040, 578);
@@ -266,6 +290,16 @@ test('H2.8 fresh-game starters support place, replace, move, remove and persiste
     'item:starter-daisy-vase': 1,
   });
 
+  await page.evaluate(() => {
+    const save = JSON.parse(localStorage.getItem('unicorn-valley.save') ?? '{}');
+    save.inventory ??= { itemQuantities: {} };
+    save.inventory.itemQuantities ??= {};
+    save.inventory.itemQuantities['item:sunbeam-cushion'] = 1;
+    localStorage.setItem('unicorn-valley.save', JSON.stringify(save));
+  });
+  await page.reload();
+  await startScene(page, 'CottageInteriorScene');
+
   await editSlot(page, 'cottage-slot:left-wall', 'item:starter-star-bunting');
   expect(await savedPlacements(page)).toMatchObject({
     'cottage-slot:left-wall': 'item:starter-star-bunting',
@@ -288,11 +322,31 @@ test('H2.8 fresh-game starters support place, replace, move, remove and persiste
   await editSlot(page, 'cottage-slot:tea-table', 'item:starter-daisy-vase');
   await editSlot(page, 'cottage-slot:treasure-shelf', 'item:starter-daisy-vase');
   await editSlot(page, 'cottage-slot:centre-rug', 'item:starter-meadow-rug');
+  await editSlot(page, 'cottage-slot:cosy-corner', 'item:sunbeam-cushion');
   expect(await savedPlacements(page)).toMatchObject({
     'cottage-slot:treasure-shelf': 'item:starter-daisy-vase',
     'cottage-slot:centre-rug': 'item:starter-meadow-rug',
+    'cottage-slot:cosy-corner': 'item:sunbeam-cushion',
   });
   expect(await savedPlacements(page)).not.toHaveProperty('cottage-slot:tea-table');
+
+  let physicalSnapshot = await snapshot(page);
+  const roomObjects = scene(physicalSnapshot, 'CottageInteriorScene').objects;
+  const rugArt = roomObjects.find(
+    ({ name }) => name === 'cottage-decoration-art:item:starter-meadow-rug',
+  );
+  const playerArt = roomObjects.find(({ name }) => name === 'world-player-unicorn');
+  expect(rugArt?.depth).toBeLessThan(playerArt?.depth ?? Number.POSITIVE_INFINITY);
+  expect(
+    roomObjects.some(
+      ({ name }) => name === 'cottage-decoration-collider:cottage-slot:centre-rug',
+    ),
+  ).toBe(false);
+  expect(
+    roomObjects.some(
+      ({ name }) => name === 'cottage-decoration-collider:cottage-slot:cosy-corner',
+    ),
+  ).toBe(true);
 
   await startSceneWithData(page, 'CottageDecorateScene', {
     slotId: 'cottage-slot:ribbon-display',
