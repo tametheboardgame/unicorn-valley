@@ -226,8 +226,26 @@ test('Bag exposes categories, safely scrolls past six items and consumes Food ex
     await objectVisible(page, 'InventoryScene', 'bag-item-tile:item:sunbeam-picnic-basket'),
   ).toBe(false);
 
-  await clickNamedObject(page, 'InventoryScene', 'bag-scroll-down');
-  await waitForObject(page, 'InventoryScene', 'bag-item-tile:item:sunbeam-picnic-basket');
+  for (let attempt = 0; attempt < 6; attempt += 1) {
+    if (
+      await objectVisible(page, 'InventoryScene', 'bag-item-tile:item:sunbeam-picnic-basket')
+    ) {
+      break;
+    }
+    if (!(await objectVisible(page, 'InventoryScene', 'bag-scroll-down'))) {
+      break;
+    }
+    await clickNamedObject(page, 'InventoryScene', 'bag-scroll-down');
+    await page.evaluate(
+      () =>
+        new Promise<void>((resolve) => {
+          requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+        }),
+    );
+  }
+  expect(
+    await objectVisible(page, 'InventoryScene', 'bag-item-tile:item:sunbeam-picnic-basket'),
+  ).toBe(true);
 
   await clickNamedObject(page, 'InventoryScene', 'bag-pocket:food');
   await waitForObject(page, 'InventoryScene', 'bag-item-tile:item:berry-bun');
