@@ -5,6 +5,7 @@ interface ObjectSnapshot {
   x: number;
   y: number;
   depth: number;
+  text: string | null;
   visible: boolean;
 }
 interface SceneSnapshot {
@@ -183,8 +184,8 @@ test('H2.5 keeps normal play clean, replaces Gallop with Decorate, and confirms 
   expect(
     scene(value, 'CottageInteriorScene').objects.find(
       ({ name }) => name === 'exploration-interaction-prompt-label',
-    )?.name,
-  ).toBe('exploration-interaction-prompt-label');
+    )?.text,
+  ).toBe('Decorate here');
   expect(
     scene(value, 'CottageInteriorScene').objects.some(
       ({ name }) => name === 'cottage-decorate-hit:cottage-slot:centre-rug',
@@ -330,7 +331,7 @@ test('H2.8 fresh-game starters support place, replace, move, remove and persiste
   });
   expect(await savedPlacements(page)).not.toHaveProperty('cottage-slot:tea-table');
 
-  let physicalSnapshot = await snapshot(page);
+  const physicalSnapshot = await snapshot(page);
   const roomObjects = scene(physicalSnapshot, 'CottageInteriorScene').objects;
   const rugArt = roomObjects.find(
     ({ name }) => name === 'cottage-decoration-art:item:starter-meadow-rug',
