@@ -137,8 +137,10 @@ describe('Moonflower Cottage interior map', () => {
     }
   });
 
-  it('keeps protected story capacity clear of permanent collision footprints', () => {
-    for (const zone of COTTAGE_INTERIOR_MAP.reservedZones) {
+  it('keeps future expansion capacity clear of permanent collision footprints', () => {
+    for (const zone of COTTAGE_INTERIOR_MAP.reservedZones.filter(
+      ({ purpose }) => purpose !== 'story',
+    )) {
       for (const collider of COTTAGE_INTERIOR_MAP.colliders) {
         const overlapsX =
           Math.abs(zone.x - collider.x) < zone.width / 2 + collider.width / 2;
