@@ -132,7 +132,9 @@ test('H2.9 binds the strange egg and its hatch flow to the canonical cottage nes
     .toEqual(['PipEggHatchScene']);
 
   await page.waitForTimeout(1_400);
-  await page.mouse.click(640, 450);
+  const canvas = await page.locator('canvas').boundingBox();
+  if (!canvas) throw new Error('Canvas unavailable');
+  await page.mouse.click(canvas.x + canvas.width / 2, canvas.y + canvas.height / 2);
   await expect
     .poll(async () => (await snapshot(page)).activeScenes)
     .toEqual(['CottageInteriorScene']);
