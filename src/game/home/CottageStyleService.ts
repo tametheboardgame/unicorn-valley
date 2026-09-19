@@ -1,9 +1,14 @@
 import type { SaveService } from '../save/SaveService';
 import type { HomeStyleState } from '../save/saveSchema';
 import { isKnownCottageStyle, resolveCottageStyle } from './CottageStyleCatalogue';
+import { CottageStyleEntitlementService } from './CottageStyleEntitlementService';
 
 export class CottageStyleService {
-  public constructor(private readonly saveService: SaveService) {}
+  private readonly entitlements: CottageStyleEntitlementService;
+
+  public constructor(private readonly saveService: SaveService) {
+    this.entitlements = new CottageStyleEntitlementService(saveService);
+  }
 
   public getPersistedStyle(): HomeStyleState {
     const save = this.saveService.load() ?? this.saveService.createNewGame();
@@ -20,6 +25,10 @@ export class CottageStyleService {
     }
 
     const save = this.saveService.load() ?? this.saveService.createNewGame();
+    if (!this.entitlements.canApplyStyle(style, save.home.style)) {
+      throw new Error('Cottage style contains a locked home option.');
+    }
+
     const nextStyle = structuredClone(style);
     this.saveService.save({
       ...save,
