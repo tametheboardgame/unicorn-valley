@@ -86,8 +86,6 @@ test('H2.9 binds the strange egg and its hatch flow to the canonical cottage nes
     );
     localStorage.setItem('unicorn-valley.save', JSON.stringify(save));
   });
-  await page.reload();
-  await startScene(page, 'CottageInteriorScene');
 
   await expect
     .poll(async () => {
@@ -122,8 +120,15 @@ test('H2.9 binds the strange egg and its hatch flow to the canonical cottage nes
     );
     localStorage.setItem('unicorn-valley.save', JSON.stringify(save));
   });
-  await page.reload();
-  await startScene(page, 'CottageInteriorScene');
+
+  await expect
+    .poll(async () =>
+      scene(await snapshot(page), 'CottageInteriorScene').objects.some(
+        ({ name }) => name === 'cottage-story:egg-nest:cracking',
+      ),
+    )
+    .toBe(true);
+
   await setPlayerPosition(page, 520, 885);
   await page.keyboard.press('e');
 
