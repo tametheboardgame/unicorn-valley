@@ -227,9 +227,7 @@ test('Bag exposes categories, safely scrolls past six items and consumes Food ex
   ).toBe(false);
 
   for (let attempt = 0; attempt < 6; attempt += 1) {
-    if (
-      await objectVisible(page, 'InventoryScene', 'bag-item-tile:item:sunbeam-picnic-basket')
-    ) {
+    if (await objectVisible(page, 'InventoryScene', 'bag-item-tile:item:sunbeam-picnic-basket')) {
       break;
     }
     if (!(await objectVisible(page, 'InventoryScene', 'bag-scroll-down'))) {
