@@ -45,35 +45,42 @@ function scene(value: Snapshot, key: string): SceneSnapshot {
 
 async function startScene(page: Page, sceneKey: string, data?: object): Promise<void> {
   await page.waitForFunction(() =>
-    (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics })
-      .__UNICORN_VALLEY_DIAGNOSTICS__?.snapshot().activeScenes.includes('TitleScene'),
+    (
+      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__
+      ?.snapshot()
+      .activeScenes.includes('TitleScene'),
   );
   await page.evaluate(
     ({ key, payload }) =>
-      (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics })
-        .__UNICORN_VALLEY_DIAGNOSTICS__?.startScene(key, payload),
+      (
+        window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics }
+      ).__UNICORN_VALLEY_DIAGNOSTICS__?.startScene(key, payload),
     { key: sceneKey, payload: data },
   );
-  await expect
-    .poll(async () => (await snapshot(page)).activeScenes)
-    .toEqual([sceneKey]);
+  await expect.poll(async () => (await snapshot(page)).activeScenes).toEqual([sceneKey]);
 }
 
 async function setPlayerPosition(page: Page, x: number, y: number): Promise<void> {
   await page.evaluate(
     ({ nextX, nextY }) =>
-      (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics })
-        .__UNICORN_VALLEY_DIAGNOSTICS__?.setArcadeSpritePosition(
-          'CottageInteriorScene',
-          'world-player-unicorn',
-          nextX,
-          nextY,
-        ),
+      (
+        window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics }
+      ).__UNICORN_VALLEY_DIAGNOSTICS__?.setArcadeSpritePosition(
+        'CottageInteriorScene',
+        'world-player-unicorn',
+        nextX,
+        nextY,
+      ),
     { nextX: x, nextY: y },
   );
 }
 
-async function tapNamedCanvasObject(page: Page, sceneKey: string, objectName: string): Promise<void> {
+async function tapNamedCanvasObject(
+  page: Page,
+  sceneKey: string,
+  objectName: string,
+): Promise<void> {
   const value = await snapshot(page);
   const object = scene(value, sceneKey).objects.find(
     (candidate) => candidate.name === objectName && candidate.visible && candidate.interactive,
@@ -95,24 +102,28 @@ test('H2.11 retires the legacy cottage depth owner and uses the shared interacti
   await setPlayerPosition(page, 1075, 735);
 
   await expect
-    .poll(async () =>
-      scene(await snapshot(page), 'CottageInteriorScene').objects.find(
-        ({ name }) => name === 'exploration-interaction-prompt-label',
-      )?.text,
+    .poll(
+      async () =>
+        scene(await snapshot(page), 'CottageInteriorScene').objects.find(
+          ({ name }) => name === 'exploration-interaction-prompt-label',
+        )?.text,
     )
     .toBe('Sit');
 
   const value = await snapshot(page);
   expect(
-    scene(value, 'CottageInteriorScene').objects.some(({ name }) => name.startsWith('cottage-depth:')),
+    scene(value, 'CottageInteriorScene').objects.some(({ name }) =>
+      name.startsWith('cottage-depth:'),
+    ),
   ).toBe(false);
 
   await page.keyboard.press('e');
   await expect
-    .poll(async () =>
-      scene(await snapshot(page), 'CottageInteriorScene').objects.find(
-        ({ name, visible }) => name === 'wp19d-interaction-feedback' && visible,
-      )?.text,
+    .poll(
+      async () =>
+        scene(await snapshot(page), 'CottageInteriorScene').objects.find(
+          ({ name, visible }) => name === 'wp19d-interaction-feedback' && visible,
+        )?.text,
     )
     .toContain('Cosy sofa');
 });
@@ -167,10 +178,11 @@ test.describe('H2.11 portrait cottage editors', () => {
     await startScene(page, 'CottageInteriorScene', { decorateMode: true });
     await setPlayerPosition(page, 750, 790);
     await expect
-      .poll(async () =>
-        scene(await snapshot(page), 'CottageInteriorScene').objects.find(
-          ({ name }) => name === 'exploration-interaction-prompt-label',
-        )?.text,
+      .poll(
+        async () =>
+          scene(await snapshot(page), 'CottageInteriorScene').objects.find(
+            ({ name }) => name === 'exploration-interaction-prompt-label',
+          )?.text,
       )
       .toBe('Decorate here');
     await page.keyboard.press('e');

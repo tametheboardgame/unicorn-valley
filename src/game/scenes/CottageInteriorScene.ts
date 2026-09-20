@@ -915,5 +915,4 @@ export class CottageInteriorScene extends Phaser.Scene {
       .setScrollFactor(0)
       .setDepth(115);
   }
-
 }

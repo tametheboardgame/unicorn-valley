@@ -368,7 +368,12 @@ export class CottageStyleScene extends Phaser.Scene {
         })),
       });
     } else if (this.category === 'furniture') {
-      const furnitureKeys: readonly CottageFurnitureStyleKey[] = ['bed', 'sofa', 'teaSet', 'fireplace'];
+      const furnitureKeys: readonly CottageFurnitureStyleKey[] = [
+        'bed',
+        'sofa',
+        'teaSet',
+        'fireplace',
+      ];
       groups.push({
         id: 'furniture',
         label: 'Furniture',

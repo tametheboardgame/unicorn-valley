@@ -374,7 +374,6 @@ test('target-tablet touch completes creator, exploration and Book flow', async (
   // lands on inert page content, so waiting for the Glade could never succeed.
   await logicalTapNamedObject(page, 'WonderbookScene', 'wonderbook-close-button');
   await waitForScene(page, 'MoonflowerGladeScene');
-
 });
 
 test('target-tablet accessibility settings persist and Reduced Motion freezes ambient NPC motion', async ({
