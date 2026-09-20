@@ -418,11 +418,7 @@ export class CottageInteriorScene extends Phaser.Scene {
 
   private syncInteractionRegistry(): void {
     const registry = getSceneInteractionRegistry(this);
-    if (
-      !this.scene.isActive() ||
-      this.finishDecoratingPromptActive ||
-      this.sleepController?.isActive()
-    ) {
+    if (this.finishDecoratingPromptActive || this.sleepController?.isActive()) {
       registry.clearOwner(COTTAGE_INTERACTION_OWNER);
       return;
     }
