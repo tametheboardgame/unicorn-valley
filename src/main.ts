@@ -153,10 +153,6 @@ void import('./game/story/WillowMoonflowerGladeWorldManager').then(
   },
 );
 
-void import('./game/world/CottageDepthWorldManager').then(({ getCottageDepthWorldManager }) => {
-  getCottageDepthWorldManager(game);
-});
-
 void import('./game/world/MeadowDepthWorldManager').then(({ getMeadowDepthWorldManager }) => {
   getMeadowDepthWorldManager(game);
 });

@@ -1,4 +1,5 @@
 import type Phaser from 'phaser';
+import { isReducedMotionEnabled } from '../accessibility/AccessibilitySettings';
 import { characterRegistry, dialogueRegistry } from '../../content/registries';
 import { DialogueCard } from '../dialogue/DialogueCard';
 import { DialogueSession } from '../dialogue/DialogueSession';
@@ -69,8 +70,8 @@ export class CottageFriendVisitManager {
       interactionRadius: 155,
       priority: 45,
       result: {
-        type: 'dialogue',
-        dialogueId: this.visit.dialogueId,
+        type: 'callback',
+        activate: () => this.activate(),
       },
     };
   }
@@ -177,15 +178,17 @@ export class CottageFriendVisitManager {
     if (coreNpcId) {
       void this.renderProductionVisitor(coreNpcId, x, y, generation, visitorDepth);
     }
-    this.scene.tweens.add({
-      targets: glow,
-      scale: 1.12,
-      alpha: 0.3,
-      duration: 1050,
-      yoyo: true,
-      repeat: -1,
-      ease: 'Sine.InOut',
-    });
+    if (!isReducedMotionEnabled()) {
+      this.scene.tweens.add({
+        targets: glow,
+        scale: 1.12,
+        alpha: 0.3,
+        duration: 1050,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.InOut',
+      });
+    }
   }
 
   private async renderProductionVisitor(
@@ -205,7 +208,9 @@ export class CottageFriendVisitManager {
     const sprite = createCoreNpcSprite(this.scene, coreNpcId, x, y + 7, 'world')
       .setDisplaySize(coreNpcId === 'pip' ? 96 : 112, coreNpcId === 'pip' ? 78 : 92)
       .setDepth(visitorDepth);
-    addCoreNpcIdleTween(this.scene, sprite, coreNpcId, 4);
+    if (!isReducedMotionEnabled()) {
+      addCoreNpcIdleTween(this.scene, sprite, coreNpcId, 4);
+    }
     this.visitorObjects.push(sprite);
   }
 

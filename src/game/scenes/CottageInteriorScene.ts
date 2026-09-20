@@ -1,4 +1,6 @@
 import Phaser from 'phaser';
+import { LUMA_COMPANION_HATCHED_FLAG } from '../../content/r4EggArc';
+import { isReducedMotionEnabled } from '../accessibility/AccessibilitySettings';
 import { getBrowserAtmosphericTimeService } from '../atmosphere/AtmosphericTimeService';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import {
@@ -6,10 +8,7 @@ import {
   COTTAGE_DECORATE_TOGGLE_EVENT,
   COTTAGE_STYLE_OPEN_EVENT,
 } from '../home/CottageDecorateModeState';
-import {
-  COTTAGE_FRIEND_VISIT_INTERACTION_ID,
-  CottageFriendVisitManager,
-} from '../home/CottageFriendVisitManager';
+import { CottageFriendVisitManager } from '../home/CottageFriendVisitManager';
 import {
   renderCottagePermanentFurnishings,
   renderCottageWonderbookNook,
@@ -25,8 +24,8 @@ import { KeyboardInputAdapter } from '../input/KeyboardInputAdapter';
 import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 import { shouldShowTouchMovementPad, TouchMovementPad } from '../input/TouchMovementPad';
 import { setInteractionModalActive } from '../interaction/InteractionModalState';
+import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import type { InteractionTarget } from '../interaction/InteractionTarget';
-import { selectInteractionTarget } from '../interaction/InteractionTargeting';
 import { PlayerEntity } from '../player/PlayerEntity';
 import { parseUnicornAppearance } from '../player/UnicornAppearance';
 import { createUnicornAppearanceTexture } from '../player/UnicornAppearanceRenderer';
@@ -38,7 +37,6 @@ import {
   saveLocationCheckpoint,
 } from '../save/saveLocationCheckpoint';
 import { createConfirmationButton, createConfirmationPanel } from '../ui/ConfirmationModalStyle';
-import { InteractionPrompt } from '../ui/InteractionPrompt';
 import { UI_DESIGN_TOKENS } from '../ui/UiDesignSystem';
 import { renderWonderbookWorldProp } from '../wonderbook/WonderbookWorldProp';
 import {
@@ -53,6 +51,7 @@ import {
 import type { MapPoint } from '../world/MapTraversal';
 import { MOONFLOWER_GLADE_MAP, setMoonflowerGladePlayerSpawn } from '../world/MoonflowerGladeMap';
 import { worldDepthForY } from '../world/WorldDepth';
+import { bindSceneLifecycle, type SceneLifecycleScope } from './SceneLifecycleScope';
 
 interface CottageInteriorSceneData {
   decorateMode?: boolean;
@@ -61,6 +60,7 @@ interface CottageInteriorSceneData {
 
 const COLLISION_TEXTURE_KEY = 'cottage-collision-pixel';
 const SAVED_PLAYER_TEXTURE_KEY = 'player-unicorn-cottage';
+const COTTAGE_INTERACTION_OWNER = 'cottage-interior';
 const DECORATION_INTERACTION_PREFIX = 'interaction:cottage-decoration:';
 const DECORATE_MARKER_FILL = 0x8dd5ec;
 const DECORATE_MARKER_STROKE = 0x4f9fc4;
@@ -71,10 +71,7 @@ export class CottageInteriorScene extends Phaser.Scene {
   private touchMovementPad: TouchMovementPad | null = null;
   private player: PlayerEntity | null = null;
   private collisionGroup: Phaser.Physics.Arcade.StaticGroup | null = null;
-  private interactionPrompt: InteractionPrompt | null = null;
-  private activeInteraction: InteractionTarget | null = null;
-  private feedbackText: Phaser.GameObjects.Text | null = null;
-  private feedbackTimer: Phaser.Time.TimerEvent | null = null;
+  private lifecycle: SceneLifecycleScope | null = null;
   private decorationService: HomeDecorationService | null = null;
   private friendVisitManager: CottageFriendVisitManager | null = null;
   private sleepController: CottageSleepController | null = null;
@@ -85,7 +82,6 @@ export class CottageInteriorScene extends Phaser.Scene {
   private finishDecoratingDoorLatch = false;
   private normalInteractions: readonly InteractionTarget[] = [];
   private decorationInteractions: readonly InteractionTarget[] = [];
-  private interactions: readonly InteractionTarget[] = [];
   private decorateModeActive = false;
 
   public constructor() {
@@ -98,8 +94,14 @@ export class CottageInteriorScene extends Phaser.Scene {
     // editor-return flag immediately or a later ordinary cottage entry can resurrect Decorate mode.
     this.sys.settings.data = {};
     this.data.set(COTTAGE_DECORATE_MODE_DATA_KEY, this.decorateModeActive);
+    this.lifecycle?.close();
+    this.lifecycle = bindSceneLifecycle(this.events);
     this.events.on(COTTAGE_DECORATE_TOGGLE_EVENT, this.toggleDecorateMode, this);
+    this.lifecycle.own(() =>
+      this.events.off(COTTAGE_DECORATE_TOGGLE_EVENT, this.toggleDecorateMode, this),
+    );
     this.events.on(COTTAGE_STYLE_OPEN_EVENT, this.openStyleEditor, this);
+    this.lifecycle.own(() => this.events.off(COTTAGE_STYLE_OPEN_EVENT, this.openStyleEditor, this));
 
     const saveService = getBrowserSaveService();
     const save = saveLocationCheckpoint(saveService, COTTAGE_INTERIOR_LOCATION_ID);
@@ -113,9 +115,6 @@ export class CottageInteriorScene extends Phaser.Scene {
     void this.renderPlacedDecorations(homeView);
     this.normalInteractions = this.createNormalInteractions(homeView);
     this.decorationInteractions = this.createDecorationInteractions(homeView);
-    this.interactions = this.decorateModeActive
-      ? this.decorationInteractions
-      : this.normalInteractions;
 
     const appearance = parseUnicornAppearance(save.profile.appearance);
     createUnicornAppearanceTexture(this, SAVED_PLAYER_TEXTURE_KEY, appearance);
@@ -139,7 +138,10 @@ export class CottageInteriorScene extends Phaser.Scene {
       this,
       this.player,
       getBrowserAtmosphericTimeService(saveService),
-      () => this.updatePlayerDepth(),
+      () => {
+        this.updatePlayerDepth();
+        this.syncInteractionRegistry();
+      },
     );
 
     this.pointerInput = new PointerTouchInputAdapter();
@@ -152,7 +154,6 @@ export class CottageInteriorScene extends Phaser.Scene {
     ) {
       this.touchMovementPad = new TouchMovementPad(this, this.pointerInput);
     }
-    this.interactionPrompt = new InteractionPrompt(this, this.pointerInput);
     this.friendVisitManager = new CottageFriendVisitManager(
       this,
       saveService,
@@ -168,13 +169,10 @@ export class CottageInteriorScene extends Phaser.Scene {
 
     this.createHud();
     this.refreshDecorateModePresentation();
+    this.syncInteractionRegistry();
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-      this.events.off(COTTAGE_DECORATE_TOGGLE_EVENT, this.toggleDecorateMode, this);
-      this.events.off(COTTAGE_STYLE_OPEN_EVENT, this.openStyleEditor, this);
       this.closeFinishDecoratingPrompt();
-      this.feedbackTimer?.destroy();
-      this.feedbackTimer = null;
       this.clearDecorateModePresentation();
       this.sleepController?.destroy();
       this.sleepController = null;
@@ -185,13 +183,9 @@ export class CottageInteriorScene extends Phaser.Scene {
       this.inputController?.destroy();
       this.inputController = null;
       this.pointerInput = null;
-      this.interactionPrompt?.destroy();
-      this.interactionPrompt = null;
       this.player?.destroy();
       this.player = null;
       this.collisionGroup = null;
-      this.activeInteraction = null;
-      this.feedbackText = null;
       this.decorationService = null;
       this.homeStateObjects = [];
       this.finishDecoratingObjects = [];
@@ -199,7 +193,8 @@ export class CottageInteriorScene extends Phaser.Scene {
       this.finishDecoratingDoorLatch = false;
       this.normalInteractions = [];
       this.decorationInteractions = [];
-      this.interactions = [];
+      getSceneInteractionRegistry(this).clearOwner(COTTAGE_INTERACTION_OWNER);
+      this.lifecycle = null;
       this.decorateModeActive = false;
       this.data.set(COTTAGE_DECORATE_MODE_DATA_KEY, false);
     });
@@ -212,17 +207,8 @@ export class CottageInteriorScene extends Phaser.Scene {
 
     this.inputController.update();
 
-    if (this.finishDecoratingPromptActive) {
+    if (this.finishDecoratingPromptActive || this.sleepController?.isActive()) {
       this.player.sprite.setVelocity(0, 0);
-      this.activeInteraction = null;
-      this.interactionPrompt?.setTarget(null);
-      return;
-    }
-
-    if (this.sleepController?.isActive()) {
-      this.player.sprite.setVelocity(0, 0);
-      this.activeInteraction = null;
-      this.interactionPrompt?.setTarget(null);
       return;
     }
 
@@ -230,8 +216,7 @@ export class CottageInteriorScene extends Phaser.Scene {
       this.player.sprite.setVelocity(0, 0);
       this.player.updatePresentation(time);
       this.updatePlayerDepth();
-      this.activeInteraction = null;
-      this.interactionPrompt?.setTarget(null);
+      this.syncInteractionRegistry();
       return;
     }
 
@@ -258,26 +243,7 @@ export class CottageInteriorScene extends Phaser.Scene {
       this.updateDecorateDoorwayPrompt();
       if (this.finishDecoratingPromptActive) {
         this.player.sprite.setVelocity(0, 0);
-        this.activeInteraction = null;
-        this.interactionPrompt?.setTarget(null);
-        return;
       }
-    }
-
-    const friendInteraction = this.decorateModeActive
-      ? null
-      : this.friendVisitManager?.getInteraction();
-    const availableInteractions = friendInteraction
-      ? [...this.interactions, friendInteraction]
-      : this.interactions;
-    this.activeInteraction = selectInteractionTarget(
-      { x: this.player.sprite.x, y: this.player.sprite.y },
-      availableInteractions,
-    );
-    this.interactionPrompt?.setTarget(this.activeInteraction);
-
-    if (this.inputController.justPressed('INTERACT') && this.activeInteraction) {
-      this.activateInteraction(this.activeInteraction);
     }
   }
 
@@ -301,6 +267,14 @@ export class CottageInteriorScene extends Phaser.Scene {
     const doorAnchor = resolveCottageSemanticAnchor(COTTAGE_SEMANTIC_ANCHOR_IDS.door);
     const wonderbookAnchor = resolveCottageSemanticAnchor(COTTAGE_SEMANTIC_ANCHOR_IDS.wonderbook);
     const sleepAnchor = resolveCottageSemanticAnchor(COTTAGE_SEMANTIC_ANCHOR_IDS.sleep);
+    const sofa = COTTAGE_INTERIOR_MAP.furnitureLayout.sofa;
+    const fireplace = COTTAGE_INTERIOR_MAP.furnitureLayout.fireplace;
+    const window = COTTAGE_INTERIOR_MAP.windowLayout[1] ?? COTTAGE_INTERIOR_MAP.windowLayout[0];
+    const bed = COTTAGE_INTERIOR_MAP.furnitureLayout.bed;
+    const companionCorner = {
+      x: bed.x - bed.width / 2 + 34,
+      y: bed.y + bed.height / 2 + 22,
+    };
 
     return [
       {
@@ -311,22 +285,17 @@ export class CottageInteriorScene extends Phaser.Scene {
         position: sleepAnchor.position,
         interactionRadius: 82,
         priority: 40,
-        result: {
-          type: 'callback',
-          activate: () => this.startSleep(),
-        },
+        result: { type: 'callback', activate: () => this.startSleep() },
       },
       {
         id: 'interaction:cottage-exit',
         label: 'Moonflower Glade',
         actionLabel: 'Go outside',
+        actionKind: 'enter',
         position: doorAnchor.interactionPosition ?? doorAnchor.position,
         interactionRadius: 150,
         priority: 30,
-        result: {
-          type: 'scene-transition',
-          sceneKey: 'MoonflowerGladeScene',
-        },
+        result: { type: 'callback', activate: () => this.goOutside() },
       },
       {
         id: 'interaction:cottage-wonderbook',
@@ -336,18 +305,13 @@ export class CottageInteriorScene extends Phaser.Scene {
         position: wonderbookAnchor.interactionPosition ?? wonderbookAnchor.position,
         interactionRadius: 150,
         priority: 28,
-        result: {
-          type: 'scene-transition',
-          sceneKey: 'WonderbookScene',
-          payload: {
-            returnScene: 'CottageInteriorScene',
-          },
-        },
+        result: { type: 'callback', activate: () => this.openWonderbook() },
       },
       {
         id: 'interaction:cottage-treasure-display',
         label: 'Treasure Shelf',
         actionLabel: 'Look',
+        actionKind: 'inspect',
         position: COTTAGE_INTERIOR_MAP.treasureDisplay.approach,
         interactionRadius: 155,
         priority: 20,
@@ -355,6 +319,64 @@ export class CottageInteriorScene extends Phaser.Scene {
           type: 'message',
           title: 'Your Treasure Shelf',
           message: treasureMessage,
+        },
+      },
+      {
+        id: 'interaction:cottage:sofa',
+        label: 'Cosy sofa',
+        actionLabel: 'Sit',
+        position: { x: sofa.x, y: sofa.y },
+        interactionRadius: 125,
+        priority: 10,
+        result: {
+          type: 'message',
+          title: 'Cosy sofa',
+          message:
+            'The sofa gives a very serious little poof when you sit down. It is clearly proud of being the comfiest seat in the Cottage.',
+        },
+      },
+      {
+        id: 'interaction:cottage:fireplace',
+        label: 'Cottage fire',
+        actionLabel: 'Warm hooves',
+        position: { x: fireplace.x, y: fireplace.y + fireplace.height / 2 },
+        interactionRadius: 125,
+        priority: 10,
+        result: {
+          type: 'message',
+          title: 'Cottage fire',
+          message: 'The fire pops softly and turns one ember bright gold. Warm hooves achieved. 🔥',
+        },
+      },
+      {
+        id: 'interaction:cottage:window',
+        label: 'Moonflower window',
+        actionLabel: 'Look outside',
+        actionKind: 'inspect',
+        position: { x: window.x, y: window.y + window.height / 2 },
+        interactionRadius: 125,
+        priority: 10,
+        result: {
+          type: 'message',
+          title: 'Moonflower window',
+          message:
+            'Through the window you can see the Glade path and a sliver of the stream. Home looks different after every adventure.',
+        },
+      },
+      {
+        id: 'interaction:cottage:companion-corner',
+        label: 'Companion corner',
+        actionLabel: 'Check',
+        actionKind: 'inspect',
+        position: companionCorner,
+        interactionRadius: 125,
+        priority: 10,
+        result: {
+          type: 'message',
+          title: 'Companion corner',
+          message: getBrowserSaveService().load()?.world.flags[LUMA_COMPANION_HATCHED_FLAG]
+            ? 'Luma’s corner has tiny hoofprints, a warm blanket and one suspiciously sparkly feather. Somebody has definitely been cosy here. ✨'
+            : 'A soft little corner near the bed is ready for somebody special to call home one day.',
         },
       },
     ] satisfies readonly InteractionTarget[];
@@ -377,8 +399,15 @@ export class CottageInteriorScene extends Phaser.Scene {
         actionLabel: 'Decorate here',
         actionKind: 'decorate',
         position: slot.interactionPosition ?? slot.position,
-        interactionRadius: 135,
+        interactionRadius: 5000,
         priority: 60,
+        directArea: {
+          width: 86,
+          height: 86,
+          offsetX: slot.position.x - (slot.interactionPosition?.x ?? slot.position.x),
+          offsetY: slot.position.y - (slot.interactionPosition?.y ?? slot.position.y),
+          name: `cottage-decorate-hit:${slot.id}`,
+        },
         result: {
           type: 'callback' as const,
           activate: () => this.openDecorationSlot(slot.id),
@@ -387,56 +416,48 @@ export class CottageInteriorScene extends Phaser.Scene {
     });
   }
 
-  private activateInteraction(target: InteractionTarget): void {
-    if (target.id === COTTAGE_FRIEND_VISIT_INTERACTION_ID) {
-      this.friendVisitManager?.activate();
-      this.activeInteraction = null;
-      this.interactionPrompt?.setTarget(null);
+  private syncInteractionRegistry(): void {
+    const registry = getSceneInteractionRegistry(this);
+    if (
+      !this.scene.isActive() ||
+      this.finishDecoratingPromptActive ||
+      this.sleepController?.isActive()
+    ) {
+      registry.clearOwner(COTTAGE_INTERACTION_OWNER);
       return;
     }
 
-    if (target.id.startsWith(DECORATION_INTERACTION_PREFIX)) {
-      this.openDecorationSlot(target.id.slice(DECORATION_INTERACTION_PREFIX.length));
-      return;
+    const targets = this.decorateModeActive
+      ? [...this.decorationInteractions]
+      : [...this.normalInteractions];
+    if (!this.decorateModeActive) {
+      const friendInteraction = this.friendVisitManager?.getInteraction();
+      if (friendInteraction) targets.push(friendInteraction);
     }
+    registry.replaceOwnerTargets(COTTAGE_INTERACTION_OWNER, targets);
+  }
 
-    if (target.result.type === 'callback') {
-      target.result.activate();
-      return;
+  private goOutside(): void {
+    const cottage = MOONFLOWER_GLADE_MAP.landmarks.find(
+      (landmark) => landmark.id === 'moonflower-cottage',
+    );
+    if (cottage) {
+      setMoonflowerGladePlayerSpawn(cottage.approach);
     }
+    saveLocationCheckpoint(getBrowserSaveService(), MOONFLOWER_GLADE_LOCATION_ID);
+    this.scene.start('MoonflowerGladeScene');
+  }
 
-    if (target.result.type === 'scene-transition') {
-      if (target.result.sceneKey === 'WonderbookScene') {
-        this.scene.launch(target.result.sceneKey, target.result.payload);
-        this.scene.pause();
-        return;
-      }
-
-      if (target.result.sceneKey === 'MoonflowerGladeScene') {
-        const cottage = MOONFLOWER_GLADE_MAP.landmarks.find(
-          (landmark) => landmark.id === 'moonflower-cottage',
-        );
-        if (cottage) {
-          setMoonflowerGladePlayerSpawn(cottage.approach);
-        }
-        saveLocationCheckpoint(getBrowserSaveService(), MOONFLOWER_GLADE_LOCATION_ID);
-      }
-
-      this.scene.start(target.result.sceneKey, target.result.payload);
-      return;
-    }
-
-    if (target.result.type === 'message') {
-      this.showFeedback(`${target.result.title}\n${target.result.message}`);
-    }
+  private openWonderbook(): void {
+    this.scene.launch('WonderbookScene', { returnScene: 'CottageInteriorScene' });
+    this.scene.pause();
   }
 
   private startSleep(): void {
     if (!this.sleepController?.start()) {
       return;
     }
-    this.activeInteraction = null;
-    this.interactionPrompt?.setTarget(null);
+    this.syncInteractionRegistry();
   }
 
   private async openDecorationSlot(slotId: string): Promise<void> {
@@ -500,13 +521,8 @@ export class CottageInteriorScene extends Phaser.Scene {
 
     this.decorateModeActive = active;
     this.data.set(COTTAGE_DECORATE_MODE_DATA_KEY, active);
-    this.interactions = active ? this.decorationInteractions : this.normalInteractions;
-    this.activeInteraction = null;
-    this.interactionPrompt?.setTarget(null);
-    this.feedbackText?.setVisible(false);
-    this.feedbackTimer?.destroy();
-    this.feedbackTimer = null;
     this.refreshDecorateModePresentation();
+    this.syncInteractionRegistry();
   }
 
   private updateDecorateDoorwayPrompt(): void {
@@ -545,10 +561,9 @@ export class CottageInteriorScene extends Phaser.Scene {
     }
 
     this.finishDecoratingPromptActive = true;
-    this.activeInteraction = null;
-    this.interactionPrompt?.setTarget(null);
     this.player?.sprite.setVelocity(0, 0);
     setInteractionModalActive(this, true);
+    this.syncInteractionRegistry();
 
     const centreX = GAME_WIDTH / 2;
     const centreY = GAME_HEIGHT / 2;
@@ -643,6 +658,7 @@ export class CottageInteriorScene extends Phaser.Scene {
     this.finishDecoratingObjects = [];
     this.finishDecoratingPromptActive = false;
     setInteractionModalActive(this, false);
+    this.syncInteractionRegistry();
   }
 
   private refreshDecorateModePresentation(): void {
@@ -656,6 +672,7 @@ export class CottageInteriorScene extends Phaser.Scene {
       ...COTTAGE_INTERIOR_MAP.decorationSlots,
       ...COTTAGE_INTERIOR_MAP.deferredDecorationSlots,
     ];
+    const reducedMotion = isReducedMotionEnabled();
 
     for (const slot of slots) {
       const halo = this.add
@@ -674,33 +691,20 @@ export class CottageInteriorScene extends Phaser.Scene {
         .setOrigin(0.5)
         .setAlpha(0.78)
         .setDepth(13);
-      const hitZone = this.add
-        .zone(slot.position.x, slot.position.y, 86, 86)
-        .setName(`cottage-decorate-hit:${slot.id}`)
-        .setInteractive({ useHandCursor: true })
-        .setDepth(14)
-        .on('pointerdown', () => {
-          void this.openDecorationSlot(slot.id);
+
+      this.decorateModeObjects.push(halo, sparkle);
+      if (!reducedMotion) {
+        this.tweens.add({
+          targets: halo,
+          alpha: 0.28,
+          scaleX: 1.1,
+          scaleY: 1.1,
+          duration: 1100,
+          yoyo: true,
+          repeat: -1,
+          ease: 'Sine.InOut',
         });
-
-      halo.setInteractive({ useHandCursor: true }).on('pointerdown', () => {
-        void this.openDecorationSlot(slot.id);
-      });
-      sparkle.setInteractive({ useHandCursor: true }).on('pointerdown', () => {
-        void this.openDecorationSlot(slot.id);
-      });
-
-      this.decorateModeObjects.push(halo, sparkle, hitZone);
-      this.tweens.add({
-        targets: halo,
-        alpha: 0.28,
-        scaleX: 1.1,
-        scaleY: 1.1,
-        duration: 1100,
-        yoyo: true,
-        repeat: -1,
-        ease: 'Sine.InOut',
-      });
+      }
     }
   }
 
@@ -710,15 +714,6 @@ export class CottageInteriorScene extends Phaser.Scene {
       object.destroy();
     }
     this.decorateModeObjects = [];
-  }
-
-  private showFeedback(message: string): void {
-    this.feedbackTimer?.destroy();
-    this.feedbackText?.setText(message).setVisible(true);
-    this.feedbackTimer = this.time.delayedCall(4000, () => {
-      this.feedbackText?.setVisible(false);
-      this.feedbackTimer = null;
-    });
   }
 
   private createEnvironment(style: HomeStyleState): void {
@@ -757,14 +752,16 @@ export class CottageInteriorScene extends Phaser.Scene {
           .setOrigin(0.5)
           .setDepth(9),
       );
-      this.tweens.add({
-        targets: icon,
-        y: '-=5',
-        duration: 1000,
-        yoyo: true,
-        repeat: -1,
-        ease: 'Sine.InOut',
-      });
+      if (!isReducedMotionEnabled()) {
+        this.tweens.add({
+          targets: icon,
+          y: '-=5',
+          duration: 1000,
+          yoyo: true,
+          repeat: -1,
+          ease: 'Sine.InOut',
+        });
+      }
     });
 
     if (homeView.treasureRewards.length === 0) {
@@ -917,21 +914,6 @@ export class CottageInteriorScene extends Phaser.Scene {
       .setOrigin(0.5, 0)
       .setScrollFactor(0)
       .setDepth(115);
-
-    this.feedbackText = this.add
-      .text(GAME_WIDTH / 2, 120, '', {
-        color: '#664c5f',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '20px',
-        fontStyle: 'bold',
-        align: 'center',
-        wordWrap: { width: 760 },
-        backgroundColor: '#fff8ecee',
-        padding: { x: 18, y: 12 },
-      })
-      .setOrigin(0.5, 0)
-      .setScrollFactor(0)
-      .setDepth(122)
-      .setVisible(false);
   }
+
 }

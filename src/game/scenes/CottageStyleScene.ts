@@ -25,6 +25,10 @@ import { CottageStyleService } from '../home/CottageStyleService';
 import { drawCottageStylePreview } from '../home/CottageStylePreviewRenderer';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import type { CottageFurnitureStyleKey, CottageWallKey, HomeStyleState } from '../save/saveSchema';
+import {
+  PortraitModalCompanion,
+  type PortraitModalActionGroup,
+} from '../ui/PortraitModalCompanion';
 import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from '../ui/uiTheme';
 import type { MapPoint } from '../world/MapTraversal';
 
@@ -62,6 +66,7 @@ export class CottageStyleScene extends Phaser.Scene {
   private readonly tabButtons = new Map<CottageStyleCategory, Phaser.GameObjects.Rectangle>();
   private enterKey: Phaser.Input.Keyboard.Key | null = null;
   private escapeKey: Phaser.Input.Keyboard.Key | null = null;
+  private portraitCompanion: PortraitModalCompanion | null = null;
 
   public constructor() {
     super('CottageStyleScene');
@@ -80,6 +85,10 @@ export class CottageStyleScene extends Phaser.Scene {
     this.applyDiagnosticUnlock();
     this.styles = new CottageStyleService(saveService);
     this.previewStyle = this.styles.getResolvedStyle();
+    this.portraitCompanion = PortraitModalCompanion.create(
+      'cottage-style',
+      'Style Moonflower Cottage',
+    );
 
     this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x7558a0, 1);
     this.add.circle(170, 130, 170, 0xf2c9ed, 0.1);
@@ -218,6 +227,8 @@ export class CottageStyleScene extends Phaser.Scene {
       this.enterKey = null;
       this.escapeKey = null;
       this.returnPosition = null;
+      this.portraitCompanion?.destroy();
+      this.portraitCompanion = null;
     });
   }
 
@@ -276,6 +287,160 @@ export class CottageStyleScene extends Phaser.Scene {
     this.renderPreview();
     this.renderTabs();
     this.renderChoices();
+    this.refreshPortraitCompanion();
+  }
+
+  private refreshPortraitCompanion(): void {
+    if (!this.portraitCompanion || !this.previewStyle) {
+      return;
+    }
+
+    const categories: readonly { id: CottageStyleCategory; label: string }[] = [
+      { id: 'wall', label: 'Walls' },
+      { id: 'wallpaper', label: 'Wallpaper' },
+      { id: 'floor', label: 'Floor' },
+      { id: 'furniture', label: 'Furniture' },
+    ];
+    const activeWall = this.previewStyle.walls[this.selectedWall];
+    const allChoices:
+      | readonly CottageWallColourDefinition[]
+      | readonly CottageWallpaperDefinition[]
+      | readonly CottageFloorStyleDefinition[]
+      | readonly string[] =
+      this.category === 'wall'
+        ? COTTAGE_WALL_COLOURS
+        : this.category === 'wallpaper'
+          ? COTTAGE_WALLPAPERS
+          : this.category === 'floor'
+            ? COTTAGE_FLOOR_STYLES
+            : COTTAGE_FURNITURE_VARIANT_IDS[this.selectedFurniture];
+    const pageCount = Math.max(1, Math.ceil(allChoices.length / CHOICES_PER_PAGE));
+    const pageStart = this.choicePage * CHOICES_PER_PAGE;
+    const pageChoices = allChoices.slice(pageStart, pageStart + CHOICES_PER_PAGE);
+
+    const selectedId =
+      this.category === 'wall'
+        ? activeWall.wallColourId
+        : this.category === 'wallpaper'
+          ? activeWall.wallpaperId
+          : this.category === 'floor'
+            ? this.previewStyle.floorStyleId
+            : this.previewStyle.furnitureVariants[this.selectedFurniture];
+
+    this.portraitCompanion.setHeader(
+      'Style Your Cottage',
+      'Choose an area, pick an unlocked style, then apply it when you are happy.',
+    );
+    this.portraitCompanion.setCards(
+      pageChoices.map((choice) => {
+        const id = typeof choice === 'string' ? choice : choice.id;
+        return {
+          id,
+          title: getCottageStyleName(id),
+          description: getCottageStyleDescription(id),
+          badge: this.isStyleUnlocked(id) ? (selectedId === id ? 'Selected' : undefined) : 'LOCKED',
+        };
+      }),
+    );
+
+    const groups: PortraitModalActionGroup[] = [
+      {
+        id: 'categories',
+        label: 'Style',
+        actions: categories.map(({ id, label }) => ({
+          id: `category-${id}`,
+          label,
+          selected: this.category === id,
+          onPress: () => this.setCategory(id),
+        })),
+      },
+    ];
+
+    if (this.category === 'wall' || this.category === 'wallpaper') {
+      groups.push({
+        id: 'walls',
+        label: 'Wall',
+        actions: COTTAGE_WALL_KEYS.map((wallKey) => ({
+          id: `wall-${wallKey}`,
+          label: COTTAGE_WALL_LABELS[wallKey],
+          selected: this.selectedWall === wallKey,
+          onPress: () => this.setSelectedWall(wallKey),
+        })),
+      });
+    } else if (this.category === 'furniture') {
+      const furnitureKeys: readonly CottageFurnitureStyleKey[] = ['bed', 'sofa', 'teaSet', 'fireplace'];
+      groups.push({
+        id: 'furniture',
+        label: 'Furniture',
+        actions: furnitureKeys.map((furnitureKey) => ({
+          id: `furniture-${furnitureKey}`,
+          label: COTTAGE_FURNITURE_LABELS[furnitureKey],
+          selected: this.selectedFurniture === furnitureKey,
+          onPress: () => this.setSelectedFurniture(furnitureKey),
+        })),
+      });
+    }
+
+    groups.push({
+      id: 'choices',
+      label: 'Choose a style',
+      actions: pageChoices.map((choice) => {
+        const id = typeof choice === 'string' ? choice : choice.id;
+        return {
+          id: `choice-${id}`,
+          label: getCottageStyleName(id),
+          selected: selectedId === id,
+          disabled: !this.isStyleUnlocked(id),
+          onPress: () => {
+            if (this.category === 'wall') {
+              this.selectWallColour(choice as CottageWallColourDefinition);
+            } else if (this.category === 'wallpaper') {
+              this.selectWallpaper(choice as CottageWallpaperDefinition);
+            } else if (this.category === 'floor') {
+              this.selectFloor(choice as CottageFloorStyleDefinition);
+            } else {
+              this.selectFurnitureVariant(id);
+            }
+          },
+        };
+      }),
+    });
+
+    if (pageCount > 1) {
+      groups.push({
+        id: 'pages',
+        label: `Page ${this.choicePage + 1} of ${pageCount}`,
+        actions: [
+          {
+            id: 'previous',
+            label: '◀ Previous',
+            disabled: this.choicePage === 0,
+            onPress: () => {
+              this.choicePage = Math.max(0, this.choicePage - 1);
+              this.renderAll();
+            },
+          },
+          {
+            id: 'next',
+            label: 'Next ▶',
+            disabled: this.choicePage >= pageCount - 1,
+            onPress: () => {
+              this.choicePage = Math.min(pageCount - 1, this.choicePage + 1);
+              this.renderAll();
+            },
+          },
+        ],
+      });
+    }
+
+    groups.push({
+      id: 'finish',
+      actions: [
+        { id: 'back', label: 'Back', onPress: () => this.backToRoom() },
+        { id: 'apply', label: 'Apply Style ✨', onPress: () => this.applyStyle() },
+      ],
+    });
+    this.portraitCompanion.setActionGroups(groups);
   }
 
   private renderPreview(): void {

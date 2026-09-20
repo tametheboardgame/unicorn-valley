@@ -11,6 +11,10 @@ import {
 import { HomeDecorationService, type OwnedDecoration } from '../home/HomeDecorationService';
 import { renderCottageDecoration } from '../home/CottageDecorationPresentation';
 import { getBrowserSaveService } from '../save/browserSaveService';
+import {
+  PortraitModalCompanion,
+  type PortraitModalActionGroup,
+} from '../ui/PortraitModalCompanion';
 import { UI_COLOURS, UI_FONT } from '../ui/uiTheme';
 import type { CottageDecorationSlot } from '../world/CottageInteriorMap';
 import type { MapPoint } from '../world/MapTraversal';
@@ -56,6 +60,7 @@ export class CottageDecorateScene extends Phaser.Scene {
   private returnToDecorateMode = false;
   private returnPosition: MapPoint | null = null;
   private escapeKey: Phaser.Input.Keyboard.Key | null = null;
+  private portraitCompanion: PortraitModalCompanion | null = null;
 
   public constructor() {
     super('CottageDecorateScene');
@@ -80,6 +85,10 @@ export class CottageDecorateScene extends Phaser.Scene {
     this.selectedItemId = current?.id ?? this.options[0]?.definition.id ?? null;
 
     this.drawShell();
+    this.portraitCompanion = PortraitModalCompanion.create(
+      'cottage-decorate',
+      'Decorate Moonflower Cottage',
+    );
     this.applyFilter('all');
 
     const keyboard = this.input.keyboard;
@@ -100,6 +109,8 @@ export class CottageDecorateScene extends Phaser.Scene {
       this.returnToDecorateMode = false;
       this.returnPosition = null;
       this.escapeKey = null;
+      this.portraitCompanion?.destroy();
+      this.portraitCompanion = null;
     });
   }
 
@@ -206,6 +217,7 @@ export class CottageDecorateScene extends Phaser.Scene {
     this.renderFilterTabs();
     this.renderGrid();
     this.renderSelection();
+    this.refreshPortraitCompanion();
   }
 
   private renderFilterTabs(): void {
@@ -492,6 +504,126 @@ export class CottageDecorateScene extends Phaser.Scene {
       ownership,
       ...this.createPreviewActionButtons(item.id, current?.id ?? null),
     );
+  }
+
+  private refreshPortraitCompanion(): void {
+    if (!this.portraitCompanion || !this.slot || !this.decorating) {
+      return;
+    }
+
+    const pageCount = Math.max(1, Math.ceil(this.filteredOptions.length / PAGE_SIZE));
+    const pageStart = this.page * PAGE_SIZE;
+    const pageOptions = this.filteredOptions.slice(pageStart, pageStart + PAGE_SIZE);
+    const current = this.decorating.getPlacement(this.slot.id);
+    const selected = this.options.find(({ definition }) => definition.id === this.selectedItemId);
+    const groups = GROUP_ORDER.filter((group) =>
+      this.options.some(({ definition }) => getCottageDecorationGroup(definition.id) === group),
+    );
+    const filters: DecorationFilter[] = groups.length > 1 ? ['all', ...groups] : groups;
+
+    this.portraitCompanion.setHeader(
+      `Decorate · ${this.slot.label}`,
+      `${this.categoryLabel(this.slot)} spot. Choose something you own, then place it here.`,
+    );
+    this.portraitCompanion.setCards(
+      pageOptions.map(({ definition, quantity, placedQuantity }) => ({
+        id: definition.id,
+        title: definition.name,
+        description: definition.description ?? 'A lovely cottage decoration.',
+        badge: `${quantity} owned · ${placedQuantity} placed`,
+      })),
+    );
+
+    const actionGroups: PortraitModalActionGroup[] = [];
+    if (filters.length > 1) {
+      actionGroups.push({
+        id: 'filters',
+        label: 'Show',
+        actions: filters.map((filter) => ({
+          id: `filter-${filter}`,
+          label: filter === 'all' ? 'All' : getCottageDecorationGroupLabel(filter),
+          selected: this.activeFilter === filter,
+          onPress: () => this.applyFilter(filter),
+        })),
+      });
+    }
+
+    if (pageOptions.length > 0) {
+      actionGroups.push({
+        id: 'decorations',
+        label: 'Choose a decoration',
+        actions: pageOptions.map(({ definition }) => ({
+          id: `item-${definition.id}`,
+          label: definition.name,
+          selected: this.selectedItemId === definition.id,
+          onPress: () => this.selectItem(definition.id),
+        })),
+      });
+    }
+
+    if (pageCount > 1) {
+      actionGroups.push({
+        id: 'pages',
+        label: `Page ${this.page + 1} of ${pageCount}`,
+        actions: [
+          {
+            id: 'previous',
+            label: '◀ Previous',
+            disabled: this.page === 0,
+            onPress: () => {
+              this.page = Math.max(0, this.page - 1);
+              this.renderDynamicUi();
+            },
+          },
+          {
+            id: 'next',
+            label: 'Next ▶',
+            disabled: this.page >= pageCount - 1,
+            onPress: () => {
+              this.page = Math.min(pageCount - 1, this.page + 1);
+              this.renderDynamicUi();
+            },
+          },
+        ],
+      });
+    }
+
+    const placementActions: PortraitModalActionGroup['actions'][number][] = [];
+    if (current) {
+      placementActions.push({
+        id: 'remove',
+        label: 'Remove',
+        onPress: () => this.removePlacement(),
+      });
+    }
+    if (selected) {
+      const available = Math.max(0, selected.quantity - selected.placedQuantity);
+      const moving = current?.id !== selected.definition.id && available === 0;
+      placementActions.push({
+        id: 'place',
+        label:
+          current?.id === selected.definition.id
+            ? 'Keep this'
+            : moving
+              ? 'Move here'
+              : current
+                ? 'Replace'
+                : 'Place',
+        onPress: () => this.placeSelection(),
+      });
+    }
+    if (placementActions.length > 0) {
+      actionGroups.push({
+        id: 'placement',
+        label: 'This spot',
+        actions: placementActions,
+      });
+    }
+    actionGroups.push({
+      id: 'close',
+      actions: [{ id: 'back', label: 'Back to cottage', onPress: () => this.backToRoom() }],
+    });
+    this.portraitCompanion.setActionGroups(actionGroups);
   }
 
   private createPreviewActionButtons(
