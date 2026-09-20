@@ -237,7 +237,7 @@ test.describe('R6.5-WP18I concept-grade tablet HUD', () => {
     await captureEvidence(page, 'wp18i-exploration-idle.png');
   });
 
-  test('renders explicit Talk and Enter actions from real Moonflower Glade interaction targets', async ({
+  test('renders explicit Talk and cottage-entry actions from real Moonflower Glade interaction targets', async ({
     page,
   }) => {
     await seedIntroducedPip(page);
@@ -253,7 +253,7 @@ test.describe('R6.5-WP18I concept-grade tablet HUD', () => {
     await captureEvidence(page, 'wp18i-talk.png');
 
     await positionPlayer(page, 'MoonflowerGladeScene', 560, 790);
-    await waitForActionLabel(page, 'Enter');
+    await waitForActionLabel(page, 'Go inside');
     scene = await getScene(page, 'MoonflowerGladeScene');
     expect(objectByName(scene, 'exploration-interaction-prompt').visible).toBe(true);
     expect(objectByName(scene, 'exploration-tablet-hint').text).toBe('Moonflower Cottage');
