@@ -172,7 +172,7 @@ H0.5 cleared the final technical and visual gate for H1.
 
 ### R6.5-WP19H1+ - Open-Ended Area-by-Area Final Polish Programme
 
-State: **active from 2026-09-14; H1 = Moonflower Glade; H2 onward intentionally undefined until David selects each next area**.
+State: **active; H1 = Moonflower Glade complete, H2 = Moonflower Cottage complete, H3 = Sunbeam Village selected for Stage 1 feedback on 20 September 2026**.
 
 The earlier fixed `H1-H13` area inventory is superseded by this section. There is **no predetermined upper H number**. The programme continues for as many independently useful area, subarea or interior passes as David chooses before integrated qualification. Interiors may receive their own H number when they warrant an independent review rather than being forced into a parent-area package.
 
@@ -188,8 +188,10 @@ Every H-number area package follows the same mandatory **four-stage contract**:
 Operating rules for H1+:
 
 - **H numbers are assigned sequentially only when David chooses the next review area.** Do not pre-assign future H numbers to locations.
-- **Current package: R6.5-WP19H1 - Moonflower Glade.** Stages 1-3 are complete: David's review is recorded, the relevant systems have been analysed, and the second-pass H1 plan is now committed. **Stage 4: Action has not started.**
-- **H2 is deliberately undefined.** After H1 is complete, David names the next area and that area becomes H2; the same rule applies for H3, H4 and onward.
+- **R6.5-WP19H1 - Moonflower Glade is complete and human-approved.**
+- **R6.5-WP19H2 - Moonflower Cottage & Home Customisation is complete, fully qualified and deployed to production.**
+- **Current package: R6.5-WP19H3 - Sunbeam Village Final Polish.** David selected Sunbeam Village on 20 September 2026. H3 is currently **Stage 1: Feedback / human analysis only**. Record feedback faithfully; do not begin implementation, assistant analysis or planning until David indicates the feedback pass is ready to move on.
+- Future H numbers remain deliberately unassigned until David selects each next review area.
 - There is **no H13 cap**. Continue H numbering until David decides the playable world, meaningful subareas and relevant interiors have received the required final passes.
 - An area is a review lens, not an excuse to duplicate shared code. Any broadly applicable improvement discovered during an H package should be made at the correct shared owner and then validated against affected areas.
 - Positive existing visuals, behaviours and progression are preservation requirements unless David explicitly asks to change them.
@@ -242,6 +244,22 @@ Checkpoint order:
 **CI/validation policy during H1:** ordinary visual checkpoints should use only the cheap static/build/owned checks necessary to make the preview trustworthy. Do not run the complete Chromium/Firefox/WebKit/full-game matrix after every small path, flower, cottage or scenery iteration. Broader targeted tests are appropriate when a checkpoint changes a genuinely shared system, especially H1.8-H1.10. Run the authoritative full static/unit/build/performance, Chromium, Firefox/WebKit, responsive and deployed-smoke qualification once the substantial H1 implementation is assembled and again only if later changes materially invalidate that evidence.
 
 Human preview approval is a design gate, not formal H1 completion. Individual checkpoint approval allows the next checkpoint to build on the accepted result; H1 closes only after integrated qualification and David's final Moonflower Glade review.
+
+### R6.5-WP19H2 - Moonflower Cottage & Home Customisation
+
+State: **complete / human-approved / fully qualified / merged and production released 2026-09-20**.
+
+Path: `docs/work-packages/R6.5-WP19H2-MOONFLOWER-COTTAGE-HOME-CUSTOMISATION.md`
+
+H2 rebuilt Moonflower Cottage as a finished home and customisation space, including production room layout/furniture, collision/layering, sleeping, Decorate mode, persistent room/furniture styling, decoration placement, home-style entitlements, semantic story/visitor capacity, responsive controls and final consolidation/hardening. H2.0-H2.11 are closed.
+
+### R6.5-WP19H3 - Sunbeam Village Final Polish
+
+State: **Stage 1 active - awaiting David's Sunbeam Village feedback**.
+
+Path: `docs/work-packages/R6.5-WP19H3-SUNBEAM-VILLAGE.md`
+
+Sunbeam Village is the third selected review area in the open-ended H1+ programme. The current task is observation only: capture everything David thinks is broken, weak, unclear, visually unfinished, missing or worth improving. Screenshots and spontaneous ideas are valid feedback. No implementation or remediation plan should begin until David explicitly says the feedback pass is ready for analysis.
 
 ### R6.5-WP19I - Integrated Qualification
 
