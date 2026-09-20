@@ -250,6 +250,7 @@ test('H2.6 styles four walls independently and persists every surface', async ({
 
   // Exact regression: an editor return resumes Decorate mode once, Done clears it, and a later
   // ordinary leave/re-entry must not resurrect that transient editor-return state.
+  await switchScene(page, 'MoonflowerGladeScene');
   await switchScene(page, 'CottageInteriorScene', { decorateMode: true });
   await expect
     .poll(async () =>
