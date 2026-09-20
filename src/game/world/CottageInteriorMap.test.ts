@@ -4,7 +4,14 @@ import {
   isPointBlocked,
   isPointInsideWalkableBounds,
 } from './MapTraversal';
-import { COTTAGE_INTERIOR_MAP } from './CottageInteriorMap';
+import {
+  COTTAGE_INTERIOR_MAP,
+  isCottagePointInsideDecorationProtectedZone,
+} from './CottageInteriorMap';
+import {
+  COTTAGE_FUTURE_EXPANSION_ANCHOR_IDS,
+  resolveCottageSemanticAnchor,
+} from './CottageSemanticAnchors';
 
 const PLAYER_CLEARANCE = 42;
 const EXIT_INTERACTION_RADIUS = 155;
@@ -48,19 +55,40 @@ describe('Moonflower Cottage interior map', () => {
     expect(distanceFromExit).toBeGreaterThan(EXIT_INTERACTION_RADIUS);
   });
 
-  it('blocks every room edge, including the lower boundary behind the exit', () => {
+  it('blocks the room edges while leaving the approved lower exit opening clear', () => {
     const colliderIds = COTTAGE_INTERIOR_MAP.colliders.map(({ id }) => id);
     expect(colliderIds).toEqual(
-      expect.arrayContaining(['wall-top', 'wall-left', 'wall-right', 'wall-bottom']),
+      expect.arrayContaining([
+        'wall-top',
+        'wall-left',
+        'wall-right',
+        'wall-bottom-left',
+        'wall-bottom-right',
+      ]),
     );
 
+    const lowerBoundaryY = COTTAGE_INTERIOR_MAP.roomShell.bottom + 32;
     expect(
       isPointBlocked(
-        { x: COTTAGE_INTERIOR_MAP.exit.position.x, y: 1160 },
+        { x: COTTAGE_INTERIOR_MAP.roomShell.left + 120, y: lowerBoundaryY },
         COTTAGE_INTERIOR_MAP.colliders,
         0,
       ),
     ).toBe(true);
+    expect(
+      isPointBlocked(
+        { x: COTTAGE_INTERIOR_MAP.roomShell.right - 120, y: lowerBoundaryY },
+        COTTAGE_INTERIOR_MAP.colliders,
+        0,
+      ),
+    ).toBe(true);
+    expect(
+      isPointBlocked(
+        { x: COTTAGE_INTERIOR_MAP.exit.position.x, y: lowerBoundaryY },
+        COTTAGE_INTERIOR_MAP.colliders,
+        0,
+      ),
+    ).toBe(false);
     expect(
       isPointBlocked(
         COTTAGE_INTERIOR_MAP.exit.approach,
@@ -71,8 +99,9 @@ describe('Moonflower Cottage interior map', () => {
   });
 
   it('aligns the back-wall blocker to the visible floor seam and keeps approaches below it', () => {
+    const floorSeam = COTTAGE_INTERIOR_MAP.roomShell.backWallBottom;
     const wall = COTTAGE_INTERIOR_MAP.colliders.find(({ id }) => id === 'wall-top');
-    expect(wall && wall.y + wall.height / 2).toBe(390);
+    expect(wall && wall.y + wall.height / 2).toBe(floorSeam);
 
     for (const id of [
       'cottage-slot:window-nook',
@@ -80,7 +109,41 @@ describe('Moonflower Cottage interior map', () => {
       'cottage-slot:right-wall',
     ]) {
       const slot = COTTAGE_INTERIOR_MAP.decorationSlots.find((candidate) => candidate.id === id);
-      expect(slot?.interactionPosition?.y).toBeGreaterThan(390 + PLAYER_CLEARANCE);
+      expect(slot?.interactionPosition?.y).toBeGreaterThan(floorSeam + PLAYER_CLEARANCE);
+    }
+  });
+
+  it('derives protected story capacity from semantic anchors', () => {
+    expect(COTTAGE_INTERIOR_MAP.reservedZones).toHaveLength(
+      COTTAGE_FUTURE_EXPANSION_ANCHOR_IDS.length,
+    );
+
+    for (const zone of COTTAGE_INTERIOR_MAP.reservedZones) {
+      const anchor = resolveCottageSemanticAnchor(zone.anchorId);
+      expect({ x: zone.x, y: zone.y }, zone.anchorId).toEqual(anchor.position);
+      expect(zone.width, zone.anchorId).toBe(anchor.reservation?.width);
+      expect(zone.height, zone.anchorId).toBe(anchor.reservation?.height);
+    }
+  });
+
+  it('keeps ordinary decoration slots clear of protected story and portal capacity', () => {
+    const slots = [
+      ...COTTAGE_INTERIOR_MAP.decorationSlots,
+      ...COTTAGE_INTERIOR_MAP.deferredDecorationSlots,
+    ];
+
+    for (const slot of slots) {
+      expect(isCottagePointInsideDecorationProtectedZone(slot.position, 46), slot.id).toBeNull();
+    }
+  });
+
+  it('keeps future expansion capacity clear of permanent collision footprints', () => {
+    for (const zone of COTTAGE_INTERIOR_MAP.reservedZones) {
+      for (const collider of COTTAGE_INTERIOR_MAP.colliders) {
+        const overlapsX = Math.abs(zone.x - collider.x) < zone.width / 2 + collider.width / 2;
+        const overlapsY = Math.abs(zone.y - collider.y) < zone.height / 2 + collider.height / 2;
+        expect(overlapsX && overlapsY, `${zone.anchorId} overlaps ${collider.id}`).toBe(false);
+      }
     }
   });
 

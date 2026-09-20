@@ -202,10 +202,8 @@ async function waitForForwardControl(page: Page, running: boolean): Promise<void
   }, running);
 }
 
-test('target-tablet touch completes creator, exploration, Book and accessibility flow', async ({
-  page,
-}) => {
-  test.setTimeout(240_000);
+test('target-tablet touch completes creator, exploration and Book flow', async ({ page }) => {
+  test.setTimeout(180_000);
   await page.addInitScript(() => window.localStorage.clear());
   await page.goto('/?diagnostics=1');
   await waitForScene(page, 'TitleScene');
@@ -376,12 +374,28 @@ test('target-tablet touch completes creator, exploration, Book and accessibility
   // lands on inert page content, so waiting for the Glade could never succeed.
   await logicalTapNamedObject(page, 'WonderbookScene', 'wonderbook-close-button');
   await waitForScene(page, 'MoonflowerGladeScene');
+});
 
-  await logicalTap(page, 486, 46);
+test('target-tablet accessibility settings persist and Reduced Motion freezes ambient NPC motion', async ({
+  page,
+}) => {
+  test.setTimeout(90_000);
+  await page.addInitScript(() => window.localStorage.clear());
+  await page.goto('/?diagnostics=1');
+  await waitForScene(page, 'TitleScene');
+
+  await page.evaluate(() => {
+    const diagnosticWindow = window as typeof window & {
+      __UNICORN_VALLEY_DIAGNOSTICS__?: {
+        startScene(sceneKey: string, data?: object): void;
+      };
+    };
+    diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__?.startScene('SettingsScene', {
+      returnScene: 'MoonflowerGladeScene',
+    });
+  });
   await waitForScene(page, 'SettingsScene');
-  // WP19G adds several real audio rows ahead of Accessibility. Follow the
-  // semantic rows instead of assuming one fixed wheel distance maps to the
-  // current Settings content height.
+
   await scrollUntilNamedObjectVisible(page, 'SettingsScene', 'settings-row-reduced-motion');
   await logicalTapNamedObject(page, 'SettingsScene', 'settings-row-reduced-motion');
   await scrollUntilNamedObjectVisible(page, 'SettingsScene', 'settings-row-high-visibility');
@@ -393,11 +407,22 @@ test('target-tablet touch completes creator, exploration, Book and accessibility
   );
   expect(stored).toEqual({ reducedMotion: true, highVisibilityInteractions: true });
 
-  await logicalTap(page, 640, 666);
+  // This contract launches Settings directly through diagnostics, so there is no paused
+  // return scene for SettingsScene to resume. Start the Glade explicitly here: navigation
+  // back from normally launched Settings is covered separately, while this bounded contract
+  // owns persistence plus the Reduced Motion world behaviour.
+  await page.evaluate(() => {
+    const diagnosticWindow = window as typeof window & {
+      __UNICORN_VALLEY_DIAGNOSTICS__?: {
+        startScene(sceneKey: string, data?: object): void;
+      };
+    };
+    diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__?.startScene('MoonflowerGladeScene');
+  });
   await waitForScene(page, 'MoonflowerGladeScene');
 
-  snapshot = await getSnapshot(page);
-  glade = getScene(snapshot, 'MoonflowerGladeScene');
+  let snapshot = await getSnapshot(page);
+  let glade = getScene(snapshot, 'MoonflowerGladeScene');
   const npcBefore = glade.objects.find((object) => object.name.startsWith('core-npc:'));
   expect(npcBefore).toBeDefined();
   await page.waitForTimeout(650);

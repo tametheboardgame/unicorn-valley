@@ -83,6 +83,33 @@ function isWorldState(value: unknown): boolean {
   );
 }
 
+function isHomeWallStyleState(value: unknown): boolean {
+  return (
+    isRecord(value) &&
+    typeof value.wallColourId === 'string' &&
+    typeof value.wallpaperId === 'string'
+  );
+}
+
+function isHomeStyleState(value: unknown): boolean {
+  if (!isRecord(value) || !isRecord(value.walls)) {
+    return false;
+  }
+
+  return (
+    isHomeWallStyleState(value.walls.back) &&
+    isHomeWallStyleState(value.walls.left) &&
+    isHomeWallStyleState(value.walls.right) &&
+    isHomeWallStyleState(value.walls.front) &&
+    typeof value.floorStyleId === 'string' &&
+    isRecord(value.furnitureVariants) &&
+    typeof value.furnitureVariants.bed === 'string' &&
+    typeof value.furnitureVariants.sofa === 'string' &&
+    typeof value.furnitureVariants.teaSet === 'string' &&
+    typeof value.furnitureVariants.fireplace === 'string'
+  );
+}
+
 function isHomeState(value: unknown): boolean {
   if (!isRecord(value)) {
     return false;
@@ -91,7 +118,9 @@ function isHomeState(value: unknown): boolean {
   return (
     isStringArray(value.ownedFurnitureIds) &&
     isRecordOf(value.furnitureBySlot, (entry) => typeof entry === 'string') &&
-    isRecordOf(value.gardenFlags, (entry) => typeof entry === 'boolean')
+    isRecordOf(value.gardenFlags, (entry) => typeof entry === 'boolean') &&
+    isStringArray(value.unlockedStyleIds) &&
+    isHomeStyleState(value.style)
   );
 }
 

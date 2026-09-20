@@ -1,348 +1,701 @@
 import Phaser from 'phaser';
-import type { ItemDefinition } from '../../content/contentTypes';
+import type { ItemId } from '../../content/contentTypes';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import {
-  getCottageDecorationProfile,
+  getCottageDecorationGroup,
+  getCottageDecorationGroupLabel,
   getCottageDecorationThemeLabel,
+  getCottageDecorationProfile,
+  type CottageDecorationGroup,
 } from '../home/CottageDecorationCatalogue';
-import { HomeDecorationService } from '../home/HomeDecorationService';
+import { HomeDecorationService, type OwnedDecoration } from '../home/HomeDecorationService';
+import { renderCottageDecoration } from '../home/CottageDecorationPresentation';
 import { getBrowserSaveService } from '../save/browserSaveService';
-import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from '../ui/uiTheme';
+import {
+  PortraitModalCompanion,
+  type PortraitModalActionGroup,
+} from '../ui/PortraitModalCompanion';
+import { UI_COLOURS, UI_FONT } from '../ui/uiTheme';
 import type { CottageDecorationSlot } from '../world/CottageInteriorMap';
+import type { MapPoint } from '../world/MapTraversal';
 
 interface CottageDecorateSceneData {
   slotId?: string;
+  returnToDecorateMode?: boolean;
+  returnPosition?: MapPoint;
 }
+
+type DecorationFilter = 'all' | CottageDecorationGroup;
+
+const LEFT_X = 315;
+const RIGHT_X = 925;
+const PANEL_Y = 390;
+const LEFT_WIDTH = 500;
+const RIGHT_WIDTH = 620;
+const PANEL_HEIGHT = 530;
+const GRID_COLUMNS = 3;
+const GRID_ROWS = 2;
+const PAGE_SIZE = GRID_COLUMNS * GRID_ROWS;
+
+const GROUP_ORDER: readonly CottageDecorationGroup[] = [
+  'lighting',
+  'flowers-plants',
+  'rugs-cushions',
+  'trophies-ribbons',
+  'keepsakes',
+  'ornaments',
+  'hangings',
+];
 
 export class CottageDecorateScene extends Phaser.Scene {
   private decorating: HomeDecorationService | null = null;
   private slot: CottageDecorationSlot | null = null;
-  private options: readonly (ItemDefinition | null)[] = [];
-  private selectedIndex = 0;
+  private options: readonly OwnedDecoration[] = [];
+  private filteredOptions: readonly OwnedDecoration[] = [];
+  private activeFilter: DecorationFilter = 'all';
+  private selectedItemId: ItemId | null = null;
+  private page = 0;
+  private dynamicObjects: Phaser.GameObjects.GameObject[] = [];
   private previewObjects: Phaser.GameObjects.GameObject[] = [];
-  private nameText: Phaser.GameObjects.Text | null = null;
-  private descriptionText: Phaser.GameObjects.Text | null = null;
-  private themeText: Phaser.GameObjects.Text | null = null;
-  private countText: Phaser.GameObjects.Text | null = null;
-  private placeLabel: Phaser.GameObjects.Text | null = null;
-  private cursors: Phaser.Types.Input.Keyboard.CursorKeys | null = null;
-  private enterKey: Phaser.Input.Keyboard.Key | null = null;
-  private spaceKey: Phaser.Input.Keyboard.Key | null = null;
+  private returnToDecorateMode = false;
+  private returnPosition: MapPoint | null = null;
   private escapeKey: Phaser.Input.Keyboard.Key | null = null;
+  private portraitCompanion: PortraitModalCompanion | null = null;
 
   public constructor() {
     super('CottageDecorateScene');
   }
 
   public create(data: CottageDecorateSceneData): void {
-    this.cameras.main.setBackgroundColor('#49376f');
+    this.cameras.main.setBackgroundColor('#7558a0');
     this.decorating = new HomeDecorationService(getBrowserSaveService());
+    this.returnToDecorateMode = data.returnToDecorateMode === true;
 
     try {
       this.slot = this.decorating.getSlot(data.slotId ?? '');
     } catch {
-      this.scene.start('CottageInteriorScene');
+      this.backToRoom();
       return;
     }
 
-    const compatible = this.decorating.listCompatibleDecorations(this.slot.id);
-    this.options = [null, ...compatible.map(({ definition }) => definition)];
+    this.returnPosition =
+      data.returnPosition ?? this.slot.interactionPosition ?? this.slot.position;
+    this.options = this.decorating.listCompatibleDecorations(this.slot.id);
     const current = this.decorating.getPlacement(this.slot.id);
-    const currentIndex = current
-      ? this.options.findIndex((option) => option?.id === current.id)
-      : 0;
-    this.selectedIndex = currentIndex >= 0 ? currentIndex : 0;
+    this.selectedItemId = current?.id ?? this.options[0]?.definition.id ?? null;
 
-    createUiShadow(this, GAME_WIDTH / 2, GAME_HEIGHT / 2, 1120, 680, 1, 0.3);
-    this.add
-      .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, 1120, 680, UI_COLOURS.cream, 1)
-      .setStrokeStyle(7, UI_COLOURS.lavenderStrong, 1)
-      .setDepth(2);
-
-    this.add
-      .text(GAME_WIDTH / 2, 54, `Decorate · ${this.slot.label}`, {
-        color: UI_COLOURS.ink,
-        fontFamily: UI_FONT,
-        fontSize: '35px',
-        fontStyle: 'bold',
-      })
-      .setOrigin(0.5)
-      .setDepth(3);
-
-    this.add
-      .text(
-        GAME_WIDTH / 2,
-        96,
-        `${this.categoryLabel(this.slot)} spot · choose what you want to see here`,
-        {
-          color: UI_COLOURS.softInk,
-          fontFamily: UI_FONT,
-          fontSize: '17px',
-          fontStyle: 'bold',
-        },
-      )
-      .setOrigin(0.5)
-      .setDepth(3);
-
-    this.add
-      .text(GAME_WIDTH / 2, 126, 'Preview first. Nothing changes until you choose Place.', {
-        color: UI_COLOURS.mutedInk,
-        fontFamily: UI_FONT,
-        fontSize: '14px',
-      })
-      .setOrigin(0.5)
-      .setDepth(3);
-
-    this.add
-      .rectangle(GAME_WIDTH / 2, 310, 610, 300, 0xffffff, 0.92)
-      .setStrokeStyle(4, UI_COLOURS.lavender, 1)
-      .setDepth(3);
-
-    this.nameText = this.add
-      .text(GAME_WIDTH / 2, 474, '', {
-        color: UI_COLOURS.ink,
-        fontFamily: UI_FONT,
-        fontSize: '24px',
-        fontStyle: 'bold',
-      })
-      .setOrigin(0.5)
-      .setDepth(6);
-    this.themeText = this.add
-      .text(GAME_WIDTH / 2, 510, '', {
-        color: '#76518a',
-        fontFamily: UI_FONT,
-        fontSize: '15px',
-        fontStyle: 'bold',
-        backgroundColor: '#f3e7f8',
-        padding: { x: 10, y: 5 },
-      })
-      .setOrigin(0.5)
-      .setDepth(6);
-    this.descriptionText = this.add
-      .text(GAME_WIDTH / 2, 548, '', {
-        color: UI_COLOURS.softInk,
-        fontFamily: UI_FONT,
-        fontSize: '15px',
-        align: 'center',
-        wordWrap: { width: 670 },
-      })
-      .setOrigin(0.5, 0)
-      .setDepth(6);
-    this.countText = this.add
-      .text(GAME_WIDTH / 2, 618, '', {
-        color: UI_COLOURS.mutedInk,
-        fontFamily: UI_FONT,
-        fontSize: '14px',
-        fontStyle: 'bold',
-      })
-      .setOrigin(0.5)
-      .setDepth(6);
-
-    this.createButton(260, 664, 210, '◀ Previous', UI_COLOURS.lavender, () =>
-      this.selectPrevious(),
+    this.drawShell();
+    this.portraitCompanion = PortraitModalCompanion.create(
+      'cottage-decorate',
+      'Decorate Moonflower Cottage',
     );
-    this.createButton(1020, 664, 210, 'Next ▶', UI_COLOURS.lavender, () => this.selectNext());
-    this.placeLabel = this.createButton(
-      GAME_WIDTH / 2,
-      664,
-      270,
-      'Place this',
-      UI_COLOURS.gold,
-      () => this.placeSelection(),
-    );
-    this.createButton(1120, 80, 130, 'Back', UI_COLOURS.blush, () => this.backToRoom());
+    this.applyFilter('all');
 
     const keyboard = this.input.keyboard;
     if (keyboard) {
-      this.cursors = keyboard.createCursorKeys();
-      this.enterKey = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
-      this.spaceKey = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
       this.escapeKey = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
     }
 
-    this.renderSelection();
-
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.clearDynamicObjects();
       this.clearPreview();
       this.decorating = null;
       this.slot = null;
       this.options = [];
-      this.nameText = null;
-      this.descriptionText = null;
-      this.themeText = null;
-      this.countText = null;
-      this.placeLabel = null;
-      this.cursors = null;
-      this.enterKey = null;
-      this.spaceKey = null;
+      this.filteredOptions = [];
+      this.selectedItemId = null;
+      this.page = 0;
+      this.activeFilter = 'all';
+      this.returnToDecorateMode = false;
+      this.returnPosition = null;
       this.escapeKey = null;
+      this.portraitCompanion?.destroy();
+      this.portraitCompanion = null;
     });
   }
 
   public update(): void {
-    if (this.cursors?.left && Phaser.Input.Keyboard.JustDown(this.cursors.left)) {
-      this.selectPrevious();
-    }
-    if (this.cursors?.right && Phaser.Input.Keyboard.JustDown(this.cursors.right)) {
-      this.selectNext();
-    }
-    if (
-      (this.enterKey && Phaser.Input.Keyboard.JustDown(this.enterKey)) ||
-      (this.spaceKey && Phaser.Input.Keyboard.JustDown(this.spaceKey))
-    ) {
-      this.placeSelection();
-    }
     if (this.escapeKey && Phaser.Input.Keyboard.JustDown(this.escapeKey)) {
       this.backToRoom();
     }
   }
 
-  private selectPrevious(): void {
-    if (this.options.length === 0) {
-      return;
-    }
-    this.selectedIndex = (this.selectedIndex - 1 + this.options.length) % this.options.length;
-    this.renderSelection();
+  private drawShell(): void {
+    if (!this.slot) return;
+
+    this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x7558a0, 1);
+    this.add.circle(160, 110, 185, 0xf2c9ed, 0.1);
+    this.add.circle(1120, 610, 245, 0xffecb6, 0.07);
+
+    this.add
+      .text(62, 32, `Decorate · ${this.slot.label}`, {
+        color: '#fff8ff',
+        fontFamily: UI_FONT,
+        fontSize: '36px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0, 0)
+      .setDepth(20);
+
+    this.add
+      .text(
+        64,
+        82,
+        `${this.categoryLabel(this.slot)} spot · choose something you own for this space`,
+        {
+          color: '#efe6fa',
+          fontFamily: UI_FONT,
+          fontSize: '17px',
+          fontStyle: 'bold',
+        },
+      )
+      .setOrigin(0, 0)
+      .setDepth(20);
+
+    this.createRoundedPanel(
+      LEFT_X,
+      PANEL_Y,
+      LEFT_WIDTH,
+      PANEL_HEIGHT,
+      UI_COLOURS.cream,
+      UI_COLOURS.lavenderStrong,
+      2,
+      30,
+    ).setName('cottage-decorate-preview-panel');
+
+    this.createRoundedPanel(
+      RIGHT_X,
+      PANEL_Y,
+      RIGHT_WIDTH,
+      PANEL_HEIGHT,
+      UI_COLOURS.cream,
+      UI_COLOURS.lavenderStrong,
+      2,
+      30,
+    ).setName('cottage-decorate-main-panel');
+
+    this.add
+      .text(RIGHT_X, 148, 'Your decorations', {
+        color: UI_COLOURS.ink,
+        fontFamily: UI_FONT,
+        fontSize: '25px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5)
+      .setDepth(5);
+
+    this.createButton(1165, 64, 142, 'Back', UI_COLOURS.blush, 'cottage-decorate-back', () =>
+      this.backToRoom(),
+    );
   }
 
-  private selectNext(): void {
-    if (this.options.length === 0) {
+  private applyFilter(filter: DecorationFilter): void {
+    this.activeFilter = filter;
+    this.page = 0;
+    this.filteredOptions =
+      filter === 'all'
+        ? this.options
+        : this.options.filter(
+            ({ definition }) => getCottageDecorationGroup(definition.id) === filter,
+          );
+
+    if (
+      this.selectedItemId &&
+      !this.filteredOptions.some(({ definition }) => definition.id === this.selectedItemId)
+    ) {
+      this.selectedItemId = this.filteredOptions[0]?.definition.id ?? null;
+    }
+    if (!this.selectedItemId) {
+      this.selectedItemId = this.filteredOptions[0]?.definition.id ?? null;
+    }
+
+    this.renderDynamicUi();
+  }
+
+  private renderDynamicUi(): void {
+    this.clearDynamicObjects();
+    this.renderFilterTabs();
+    this.renderGrid();
+    this.renderSelection();
+    this.refreshPortraitCompanion();
+  }
+
+  private renderFilterTabs(): void {
+    const groups = GROUP_ORDER.filter((group) =>
+      this.options.some(({ definition }) => getCottageDecorationGroup(definition.id) === group),
+    );
+    const filters: DecorationFilter[] = groups.length > 1 ? ['all', ...groups] : groups;
+
+    if (filters.length <= 1) {
       return;
     }
-    this.selectedIndex = (this.selectedIndex + 1) % this.options.length;
-    this.renderSelection();
+
+    const availableWidth = RIGHT_WIDTH - 64;
+    const gap = 8;
+    const width = Math.min(132, (availableWidth - gap * (filters.length - 1)) / filters.length);
+    const totalWidth = width * filters.length + gap * (filters.length - 1);
+    const startX = RIGHT_X - totalWidth / 2 + width / 2;
+
+    filters.forEach((filter, index) => {
+      const x = startX + index * (width + gap);
+      const selected = filter === this.activeFilter;
+      const surface = this.createRoundedPanel(
+        x,
+        192,
+        width,
+        38,
+        selected ? UI_COLOURS.gold : 0xf5ebfa,
+        selected ? UI_COLOURS.goldStrong : UI_COLOURS.lavender,
+        5,
+        16,
+        1,
+        false,
+      );
+      const hit = this.add
+        .zone(x, 192, width, 42)
+        .setName(`cottage-decoration-filter:${filter}`)
+        .setInteractive({ useHandCursor: true })
+        .setDepth(8)
+        .on('pointerdown', () => this.applyFilter(filter));
+      const label = this.add
+        .text(x, 192, filter === 'all' ? 'All' : getCottageDecorationGroupLabel(filter), {
+          color: selected ? '#694c2c' : UI_COLOURS.softInk,
+          fontFamily: UI_FONT,
+          fontSize: filters.length > 4 ? '12px' : '13px',
+          fontStyle: 'bold',
+          align: 'center',
+          wordWrap: { width: width - 12 },
+        })
+        .setOrigin(0.5)
+        .setDepth(7);
+      this.dynamicObjects.push(surface, hit, label);
+    });
+  }
+
+  private renderGrid(): void {
+    const pageStart = this.page * PAGE_SIZE;
+    const pageOptions = this.filteredOptions.slice(pageStart, pageStart + PAGE_SIZE);
+    const startX = RIGHT_X - 192;
+    const startY = 300;
+    const columnGap = 192;
+    const rowGap = 172;
+
+    if (pageOptions.length === 0) {
+      const empty = this.add
+        .text(
+          RIGHT_X,
+          380,
+          'Nothing from this category can go here yet.\nTry another category or find more decorations.',
+          {
+            color: UI_COLOURS.softInk,
+            fontFamily: UI_FONT,
+            fontSize: '17px',
+            align: 'center',
+            wordWrap: { width: 430 },
+          },
+        )
+        .setOrigin(0.5)
+        .setDepth(6);
+      this.dynamicObjects.push(empty);
+      return;
+    }
+
+    pageOptions.forEach((owned, pageIndex) => {
+      const row = Math.floor(pageIndex / GRID_COLUMNS);
+      const column = pageIndex % GRID_COLUMNS;
+      const x = startX + column * columnGap;
+      const y = startY + row * rowGap;
+      const selected = owned.definition.id === this.selectedItemId;
+
+      const surface = this.createRoundedPanel(
+        x,
+        y,
+        166,
+        142,
+        selected ? 0xfff7dc : 0xffffff,
+        selected ? UI_COLOURS.goldStrong : UI_COLOURS.lavender,
+        6,
+        18,
+        1,
+        false,
+      );
+      const hit = this.add
+        .zone(x, y, 170, 146)
+        .setName(`cottage-decoration-choice:${owned.definition.id}`)
+        .setInteractive({ useHandCursor: true })
+        .setDepth(10)
+        .on('pointerdown', () => this.selectItem(owned.definition.id));
+
+      const art = renderCottageDecoration(this, owned.definition.id, x, y - 24, 0.53);
+      for (const object of art) {
+        object.setDepth(8);
+      }
+
+      const label = this.add
+        .text(x, y + 37, owned.definition.name, {
+          color: UI_COLOURS.ink,
+          fontFamily: UI_FONT,
+          fontSize: '12px',
+          fontStyle: 'bold',
+          align: 'center',
+          wordWrap: { width: 140 },
+        })
+        .setOrigin(0.5)
+        .setDepth(9);
+      const count = this.add
+        .text(x, y + 59, `${owned.quantity} owned · ${owned.placedQuantity} placed`, {
+          color: UI_COLOURS.mutedInk,
+          fontFamily: UI_FONT,
+          fontSize: '10px',
+          fontStyle: 'bold',
+        })
+        .setOrigin(0.5)
+        .setDepth(9);
+
+      this.dynamicObjects.push(surface, hit, ...art, label, count);
+    });
+
+    const pageCount = Math.ceil(this.filteredOptions.length / PAGE_SIZE);
+    if (pageCount > 1) {
+      const pageText = this.add
+        .text(RIGHT_X, 582, `${this.page + 1} / ${pageCount}`, {
+          color: UI_COLOURS.mutedInk,
+          fontFamily: UI_FONT,
+          fontSize: '13px',
+          fontStyle: 'bold',
+        })
+        .setOrigin(0.5)
+        .setDepth(7);
+      this.dynamicObjects.push(pageText);
+
+      if (this.page > 0) {
+        this.dynamicObjects.push(
+          ...this.createSmallButton(RIGHT_X - 82, 582, '‹', () => {
+            this.page -= 1;
+            this.renderDynamicUi();
+          }),
+        );
+      }
+      if (this.page + 1 < pageCount) {
+        this.dynamicObjects.push(
+          ...this.createSmallButton(RIGHT_X + 82, 582, '›', () => {
+            this.page += 1;
+            this.renderDynamicUi();
+          }),
+        );
+      }
+    }
   }
 
   private renderSelection(): void {
-    if (!this.slot) {
-      return;
-    }
-
     this.clearPreview();
-    const selected = this.options[this.selectedIndex] ?? null;
-    this.countText?.setText(`${this.selectedIndex + 1} of ${this.options.length}`);
+    if (!this.slot || !this.decorating) return;
+
+    const selected = this.options.find(({ definition }) => definition.id === this.selectedItemId);
+    const current = this.decorating.getPlacement(this.slot.id);
 
     if (!selected) {
-      this.nameText?.setText('Leave this spot empty');
-      this.themeText?.setText('EMPTY SPACE');
-      this.descriptionText?.setText(
-        this.options.length === 1
-          ? `You do not own a ${this.categoryLabel(this.slot).toLowerCase()} decoration yet. Explore, race or visit Twinkle & Thread to find one.`
-          : 'Keep this part of the cottage clear. You can change it again whenever you like.',
-      );
-      this.placeLabel?.setText('Clear this spot');
-      this.previewObjects.push(
-        this.add
-          .circle(GAME_WIDTH / 2, 300, 75, UI_COLOURS.lavender, 0.18)
-          .setStrokeStyle(4, UI_COLOURS.lavenderStrong, 0.45)
-          .setDepth(4),
-        this.add
-          .text(GAME_WIDTH / 2, 300, '✦', {
-            color: '#b98ac9',
+      const message = this.add
+        .text(
+          LEFT_X,
+          365,
+          'No compatible decorations yet\n\nExplore the valley, race and visit shops to find more.',
+          {
+            color: UI_COLOURS.softInk,
             fontFamily: UI_FONT,
-            fontSize: '58px',
-          })
-          .setOrigin(0.5)
-          .setAlpha(0.55)
-          .setDepth(5),
-      );
-      return;
-    }
-
-    const profile = getCottageDecorationProfile(selected.id);
-    this.nameText?.setText(`${selected.icon ?? '✦'} ${selected.name}`);
-    this.themeText?.setText(
-      profile
-        ? `${getCottageDecorationThemeLabel(profile.theme).toUpperCase()} STYLE`
-        : 'COTTAGE STYLE',
-    );
-    this.descriptionText?.setText(selected.description ?? 'A lovely cottage decoration.');
-    this.placeLabel?.setText('Place this');
-    this.renderPlacementPreview(selected, profile?.previewColour ?? UI_COLOURS.lavenderStrong);
-  }
-
-  private renderPlacementPreview(item: ItemDefinition, colour: number): void {
-    if (!this.slot) {
-      return;
-    }
-
-    const centreX = GAME_WIDTH / 2;
-    const centreY = 300;
-    const icon = item.icon ?? '✦';
-
-    if (this.slot.category === 'wall') {
-      this.previewObjects.push(
-        this.add
-          .rectangle(centreX, centreY, 250, 180, 0xf7e8d6, 1)
-          .setStrokeStyle(8, 0xb98b72, 0.9)
-          .setDepth(4),
-        this.add
-          .rectangle(centreX, centreY, 132, 112, colour, 0.28)
-          .setStrokeStyle(5, colour, 0.8)
-          .setDepth(5),
-      );
-    } else if (this.slot.category === 'floor') {
-      this.previewObjects.push(
-        this.add.ellipse(centreX, centreY + 35, 300, 135, colour, 0.35).setDepth(4),
-        this.add.ellipse(centreX, centreY + 35, 260, 105, 0xffffff, 0.24).setDepth(5),
-      );
-    } else if (this.slot.category === 'table') {
-      this.previewObjects.push(
-        this.add.ellipse(centreX, centreY + 58, 270, 95, 0xc4936f, 1).setDepth(4),
-        this.add.rectangle(centreX, centreY + 100, 28, 95, 0x9c7055, 1).setDepth(4),
-        this.add.circle(centreX, centreY - 4, 68, colour, 0.24).setDepth(5),
-      );
-    } else if (this.slot.category === 'shelf') {
-      this.previewObjects.push(
-        this.add.rectangle(centreX, centreY + 65, 300, 30, 0x9c7055, 1).setDepth(4),
-        this.add.rectangle(centreX, centreY - 5, 190, 135, colour, 0.18).setDepth(4),
-      );
-    } else {
-      this.previewObjects.push(
-        this.add
-          .rectangle(centreX, centreY + 45, 330, 125, 0xb17c5f, 1)
-          .setStrokeStyle(5, 0x805848, 0.95)
-          .setDepth(4),
-        this.add.circle(centreX, centreY - 20, 76, colour, 0.28).setDepth(5),
-        this.add
-          .text(centreX, centreY + 92, 'Adventure Display', {
-            color: UI_COLOURS.ink,
-            fontFamily: UI_FONT,
-            fontSize: '14px',
+            fontSize: '19px',
             fontStyle: 'bold',
-          })
-          .setOrigin(0.5)
-          .setDepth(5),
-      );
+            align: 'center',
+            wordWrap: { width: 370 },
+          },
+        )
+        .setOrigin(0.5)
+        .setDepth(6);
+      this.previewObjects.push(message);
+      if (current) {
+        this.previewObjects.push(...this.createPreviewActionButtons(null, current.id));
+      }
+      return;
     }
+
+    const item = selected.definition;
+    const profile = getCottageDecorationProfile(item.id);
+    const art = renderCottageDecoration(this, item.id, LEFT_X, 325, 1.28);
+    for (const object of art) object.setDepth(6);
+
+    const name = this.add
+      .text(LEFT_X, 448, item.name, {
+        color: UI_COLOURS.ink,
+        fontFamily: UI_FONT,
+        fontSize: '27px',
+        fontStyle: 'bold',
+        align: 'center',
+        wordWrap: { width: 410 },
+      })
+      .setOrigin(0.5)
+      .setDepth(6);
+
+    const group = getCottageDecorationGroup(item.id);
+    const pill = this.createRoundedPanel(
+      LEFT_X,
+      492,
+      260,
+      34,
+      0xf3e7f8,
+      UI_COLOURS.lavender,
+      5,
+      16,
+      1,
+      false,
+    );
+    const meta = this.add
+      .text(
+        LEFT_X,
+        492,
+        `${getCottageDecorationGroupLabel(group)} · ${profile ? getCottageDecorationThemeLabel(profile.theme) : 'Cottage'}`,
+        {
+          color: '#76518a',
+          fontFamily: UI_FONT,
+          fontSize: '13px',
+          fontStyle: 'bold',
+        },
+      )
+      .setOrigin(0.5)
+      .setDepth(6);
+
+    const description = this.add
+      .text(LEFT_X, 535, item.description ?? 'A lovely cottage decoration.', {
+        color: UI_COLOURS.softInk,
+        fontFamily: UI_FONT,
+        fontSize: '14px',
+        align: 'center',
+        wordWrap: { width: 390 },
+      })
+      .setOrigin(0.5, 0)
+      .setDepth(6);
+
+    const available = Math.max(0, selected.quantity - selected.placedQuantity);
+    const moving = current?.id !== item.id && available === 0;
+    const ownership = this.add
+      .text(
+        LEFT_X,
+        574,
+        moving
+          ? `${selected.quantity} owned · all placed · this will move the existing one`
+          : `${selected.quantity} owned · ${selected.placedQuantity} placed · ${available} available`,
+        {
+          color: moving ? '#8a5a2d' : UI_COLOURS.mutedInk,
+          fontFamily: UI_FONT,
+          fontSize: '13px',
+          fontStyle: 'bold',
+          align: 'center',
+          wordWrap: { width: 390 },
+        },
+      )
+      .setOrigin(0.5)
+      .setDepth(6);
 
     this.previewObjects.push(
-      this.add
-        .text(centreX, centreY - 15, icon, {
-          fontFamily: UI_FONT,
-          fontSize: '76px',
-        })
-        .setOrigin(0.5)
-        .setDepth(6),
+      ...art,
+      name,
+      pill,
+      meta,
+      description,
+      ownership,
+      ...this.createPreviewActionButtons(item.id, current?.id ?? null),
     );
+  }
+
+  private refreshPortraitCompanion(): void {
+    if (!this.portraitCompanion || !this.slot || !this.decorating) {
+      return;
+    }
+
+    const pageCount = Math.max(1, Math.ceil(this.filteredOptions.length / PAGE_SIZE));
+    const pageStart = this.page * PAGE_SIZE;
+    const pageOptions = this.filteredOptions.slice(pageStart, pageStart + PAGE_SIZE);
+    const current = this.decorating.getPlacement(this.slot.id);
+    const selected = this.options.find(({ definition }) => definition.id === this.selectedItemId);
+    const groups = GROUP_ORDER.filter((group) =>
+      this.options.some(({ definition }) => getCottageDecorationGroup(definition.id) === group),
+    );
+    const filters: DecorationFilter[] = groups.length > 1 ? ['all', ...groups] : groups;
+
+    this.portraitCompanion.setHeader(
+      `Decorate · ${this.slot.label}`,
+      `${this.categoryLabel(this.slot)} spot. Choose something you own, then place it here.`,
+    );
+    this.portraitCompanion.setCards(
+      pageOptions.map(({ definition, quantity, placedQuantity }) => ({
+        id: definition.id,
+        title: definition.name,
+        description: definition.description ?? 'A lovely cottage decoration.',
+        badge: `${quantity} owned · ${placedQuantity} placed`,
+      })),
+    );
+
+    const actionGroups: PortraitModalActionGroup[] = [];
+    if (filters.length > 1) {
+      actionGroups.push({
+        id: 'filters',
+        label: 'Show',
+        actions: filters.map((filter) => ({
+          id: `filter-${filter}`,
+          label: filter === 'all' ? 'All' : getCottageDecorationGroupLabel(filter),
+          selected: this.activeFilter === filter,
+          onPress: () => this.applyFilter(filter),
+        })),
+      });
+    }
+
+    if (pageOptions.length > 0) {
+      actionGroups.push({
+        id: 'decorations',
+        label: 'Choose a decoration',
+        actions: pageOptions.map(({ definition }) => ({
+          id: `item-${definition.id}`,
+          label: definition.name,
+          selected: this.selectedItemId === definition.id,
+          onPress: () => this.selectItem(definition.id),
+        })),
+      });
+    }
+
+    if (pageCount > 1) {
+      actionGroups.push({
+        id: 'pages',
+        label: `Page ${this.page + 1} of ${pageCount}`,
+        actions: [
+          {
+            id: 'previous',
+            label: '◀ Previous',
+            disabled: this.page === 0,
+            onPress: () => {
+              this.page = Math.max(0, this.page - 1);
+              this.renderDynamicUi();
+            },
+          },
+          {
+            id: 'next',
+            label: 'Next ▶',
+            disabled: this.page >= pageCount - 1,
+            onPress: () => {
+              this.page = Math.min(pageCount - 1, this.page + 1);
+              this.renderDynamicUi();
+            },
+          },
+        ],
+      });
+    }
+
+    const placementActions: PortraitModalActionGroup['actions'][number][] = [];
+    if (current) {
+      placementActions.push({
+        id: 'remove',
+        label: 'Remove',
+        onPress: () => this.removePlacement(),
+      });
+    }
+    if (selected) {
+      const available = Math.max(0, selected.quantity - selected.placedQuantity);
+      const moving = current?.id !== selected.definition.id && available === 0;
+      placementActions.push({
+        id: 'place',
+        label:
+          current?.id === selected.definition.id
+            ? 'Keep this'
+            : moving
+              ? 'Move here'
+              : current
+                ? 'Replace'
+                : 'Place',
+        onPress: () => this.placeSelection(),
+      });
+    }
+    if (placementActions.length > 0) {
+      actionGroups.push({
+        id: 'placement',
+        label: 'This spot',
+        actions: placementActions,
+      });
+    }
+    actionGroups.push({
+      id: 'close',
+      actions: [{ id: 'back', label: 'Back to cottage', onPress: () => this.backToRoom() }],
+    });
+    this.portraitCompanion.setActionGroups(actionGroups);
+  }
+
+  private createPreviewActionButtons(
+    selectedItemId: ItemId | null,
+    currentItemId: ItemId | null,
+  ): Phaser.GameObjects.GameObject[] {
+    const objects: Phaser.GameObjects.GameObject[] = [];
+
+    if (currentItemId) {
+      objects.push(
+        ...this.createActionButton(
+          LEFT_X - 118,
+          620,
+          190,
+          'Remove',
+          UI_COLOURS.blush,
+          'cottage-decorate-action-remove',
+          () => this.removePlacement(),
+        ),
+      );
+    }
+
+    if (selectedItemId && this.slot && this.decorating) {
+      const owned = this.options.find(({ definition }) => definition.id === selectedItemId);
+      const available = Math.max(0, (owned?.quantity ?? 0) - (owned?.placedQuantity ?? 0));
+      const moving = currentItemId !== selectedItemId && available === 0;
+      const label =
+        currentItemId === selectedItemId
+          ? 'Keep this'
+          : moving
+            ? 'Move here'
+            : currentItemId
+              ? 'Replace'
+              : 'Place';
+      objects.push(
+        ...this.createActionButton(
+          currentItemId ? LEFT_X + 118 : LEFT_X,
+          620,
+          currentItemId ? 190 : 250,
+          label,
+          UI_COLOURS.gold,
+          'cottage-decorate-action-primary',
+          () => this.placeSelection(),
+        ),
+      );
+    }
+
+    return objects;
+  }
+
+  private selectItem(itemId: ItemId): void {
+    this.selectedItemId = itemId;
+    this.renderDynamicUi();
   }
 
   private placeSelection(): void {
-    if (!this.decorating || !this.slot) {
-      return;
-    }
+    if (!this.decorating || !this.slot || !this.selectedItemId) return;
+    this.decorating.placeDecoration(this.slot.id, this.selectedItemId);
+    this.backToRoom();
+  }
 
-    const selected = this.options[this.selectedIndex] ?? null;
-    if (selected) {
-      this.decorating.placeDecoration(this.slot.id, selected.id);
-    } else {
-      this.decorating.removeDecoration(this.slot.id);
-    }
-    this.scene.start('CottageInteriorScene');
+  private removePlacement(): void {
+    if (!this.decorating || !this.slot) return;
+    this.decorating.removeDecoration(this.slot.id);
+    this.backToRoom();
   }
 
   private backToRoom(): void {
-    this.scene.start('CottageInteriorScene');
+    this.scene.start('CottageInteriorScene', {
+      decorateMode: this.returnToDecorateMode,
+      playerPosition: this.returnPosition ?? undefined,
+    });
   }
 
   private createButton(
@@ -351,14 +704,26 @@ export class CottageDecorateScene extends Phaser.Scene {
     width: number,
     label: string,
     fill: number,
+    actionName: string,
     action: () => void,
   ): Phaser.GameObjects.Text {
-    const button = this.add
-      .rectangle(x, y, width, 52, fill, 1)
-      .setStrokeStyle(3, UI_COLOURS.lavenderStrong, 1)
+    this.createRoundedPanel(
+      x,
+      y,
+      width,
+      50,
+      fill,
+      fill === UI_COLOURS.gold ? UI_COLOURS.goldStrong : UI_COLOURS.lavenderStrong,
+      20,
+      16,
+    );
+    this.add
+      .zone(x, y, width, 54)
+      .setName(actionName)
       .setInteractive({ useHandCursor: true })
-      .setDepth(7);
-    const text = this.add
+      .setDepth(22)
+      .on('pointerdown', action);
+    return this.add
       .text(x, y, label, {
         color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
@@ -366,13 +731,106 @@ export class CottageDecorateScene extends Phaser.Scene {
         fontStyle: 'bold',
       })
       .setOrigin(0.5)
-      .setInteractive({ useHandCursor: true })
-      .setDepth(8);
+      .setDepth(21);
+  }
 
-    applyButtonHover(button, fill, UI_COLOURS.blush);
-    button.on('pointerdown', action);
-    text.on('pointerdown', action);
-    return text;
+  private createActionButton(
+    x: number,
+    y: number,
+    width: number,
+    label: string,
+    fill: number,
+    actionName: string,
+    action: () => void,
+  ): Phaser.GameObjects.GameObject[] {
+    const surface = this.createRoundedPanel(
+      x,
+      y,
+      width,
+      54,
+      fill,
+      fill === UI_COLOURS.gold ? UI_COLOURS.goldStrong : UI_COLOURS.lavenderStrong,
+      8,
+      17,
+    );
+    const hit = this.add
+      .zone(x, y, width, 58)
+      .setName(actionName)
+      .setInteractive({ useHandCursor: true })
+      .setDepth(11)
+      .on('pointerdown', action);
+    const text = this.add
+      .text(x, y, label, {
+        color: '#4b2b66',
+        fontFamily: UI_FONT,
+        fontSize: '16px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5)
+      .setDepth(10);
+    return [surface, hit, text];
+  }
+
+  private createSmallButton(
+    x: number,
+    y: number,
+    label: string,
+    action: () => void,
+  ): Phaser.GameObjects.GameObject[] {
+    const surface = this.createRoundedPanel(
+      x,
+      y,
+      52,
+      42,
+      0xf3e7f8,
+      UI_COLOURS.lavenderStrong,
+      7,
+      16,
+      1,
+      false,
+    );
+    const hit = this.add
+      .zone(x, y, 58, 48)
+      .setInteractive({ useHandCursor: true })
+      .setDepth(10)
+      .on('pointerdown', action);
+    const text = this.add
+      .text(x, y - 1, label, {
+        color: UI_COLOURS.ink,
+        fontFamily: UI_FONT,
+        fontSize: '26px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5)
+      .setDepth(9);
+    return [surface, hit, text];
+  }
+
+  private createRoundedPanel(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    fill: number,
+    stroke: number,
+    depth: number,
+    radius: number,
+    alpha = 1,
+    shadow = true,
+  ): Phaser.GameObjects.Graphics {
+    const graphics = this.add.graphics().setDepth(depth);
+    const left = x - width / 2;
+    const top = y - height / 2;
+
+    if (shadow) {
+      graphics.fillStyle(0x4b3658, 0.2);
+      graphics.fillRoundedRect(left + 6, top + 7, width, height, radius);
+    }
+    graphics.fillStyle(fill, alpha);
+    graphics.fillRoundedRect(left, top, width, height, radius);
+    graphics.lineStyle(4, stroke, 1);
+    graphics.strokeRoundedRect(left, top, width, height, radius);
+    return graphics;
   }
 
   private categoryLabel(slot: CottageDecorationSlot): string {
@@ -386,14 +844,17 @@ export class CottageDecorateScene extends Phaser.Scene {
       case 'shelf':
         return 'Shelf';
       case 'display':
-        return 'Ribbon & treasure display';
+        return 'Display';
     }
   }
 
+  private clearDynamicObjects(): void {
+    for (const object of this.dynamicObjects) object.destroy();
+    this.dynamicObjects = [];
+  }
+
   private clearPreview(): void {
-    for (const object of this.previewObjects) {
-      object.destroy();
-    }
+    for (const object of this.previewObjects) object.destroy();
     this.previewObjects = [];
   }
 }

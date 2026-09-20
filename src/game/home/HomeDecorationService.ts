@@ -3,13 +3,26 @@ import { itemRegistry } from '../../content/registries';
 import { type GameEventMap, type TypedEventBus, gameEventBus } from '../events/GameEventBus';
 import type { SaveService } from '../save/SaveService';
 import type { SaveGame } from '../save/saveSchema';
-import { COTTAGE_INTERIOR_MAP, type CottageDecorationSlot } from '../world/CottageInteriorMap';
+import {
+  COTTAGE_INTERIOR_MAP,
+  isCottagePointInsideDecorationProtectedZone,
+  type CottageDecorationSlot,
+} from '../world/CottageInteriorMap';
 import { canPlaceDecorationInCategory } from './CottageDecorationCatalogue';
 
 export interface OwnedDecoration {
   definition: ItemDefinition;
   quantity: number;
   placedQuantity: number;
+}
+
+export type DecorationPlacementAction = 'unchanged' | 'placed' | 'replaced' | 'moved';
+
+export interface DecorationPlacementResult {
+  action: DecorationPlacementAction;
+  item: ItemDefinition;
+  replacedItem: ItemDefinition | null;
+  movedFromSlot: CottageDecorationSlot | null;
 }
 
 export type DecorationCycleResult =
@@ -29,10 +42,22 @@ export type DecorationCycleResult =
       slot: CottageDecorationSlot;
     };
 
+const COTTAGE_DECORATION_SLOTS: readonly CottageDecorationSlot[] = [
+  ...COTTAGE_INTERIOR_MAP.decorationSlots,
+  ...COTTAGE_INTERIOR_MAP.deferredDecorationSlots,
+];
+
 function requireSlot(slotId: string): CottageDecorationSlot {
-  const slot = COTTAGE_INTERIOR_MAP.decorationSlots.find((candidate) => candidate.id === slotId);
+  const slot = COTTAGE_DECORATION_SLOTS.find((candidate) => candidate.id === slotId);
   if (!slot) {
     throw new Error(`Unknown cottage decoration slot: ${slotId}`);
+  }
+
+  const protectedZone = isCottagePointInsideDecorationProtectedZone(slot.position, 46);
+  if (protectedZone) {
+    throw new Error(
+      `Cottage decoration slot overlaps protected story capacity: ${slot.id} / ${protectedZone.anchorId}`,
+    );
   }
 
   return slot;
@@ -66,7 +91,7 @@ function normaliseDecorationPlacements(save: SaveGame): SaveGame {
   const placementsByItem = new Map<ItemId, string[]>();
   let changed = false;
 
-  for (const slot of COTTAGE_INTERIOR_MAP.decorationSlots) {
+  for (const slot of COTTAGE_DECORATION_SLOTS) {
     const item = resolveDecoration(furnitureBySlot[slot.id]);
     if (!item) {
       continue;
@@ -119,7 +144,7 @@ export class HomeDecorationService {
           return [];
         }
 
-        const placedQuantity = COTTAGE_INTERIOR_MAP.decorationSlots.filter(
+        const placedQuantity = COTTAGE_DECORATION_SLOTS.filter(
           (slot) => save.home.furnitureBySlot[slot.id] === definition.id,
         ).length;
 
@@ -141,10 +166,7 @@ export class HomeDecorationService {
     return resolveDecoration(save.home.furnitureBySlot[slotId]);
   }
 
-  public placeDecoration(
-    slotId: string,
-    itemId: ItemId,
-  ): { item: ItemDefinition; movedFromSlot: CottageDecorationSlot | null } {
+  public placeDecoration(slotId: string, itemId: ItemId): DecorationPlacementResult {
     const slot = requireSlot(slotId);
     const item = requireDecoration(itemId);
     if (!canPlaceDecorationInCategory(itemId, slot.category)) {
@@ -160,7 +182,8 @@ export class HomeDecorationService {
 
     const furnitureBySlot = { ...save.home.furnitureBySlot };
     const alreadyHere = furnitureBySlot[slot.id] === itemId;
-    const otherPlacements = COTTAGE_INTERIOR_MAP.decorationSlots.filter(
+    const replacedItem = alreadyHere ? null : resolveDecoration(furnitureBySlot[slot.id]);
+    const otherPlacements = COTTAGE_DECORATION_SLOTS.filter(
       (candidate) => candidate.id !== slot.id && furnitureBySlot[candidate.id] === itemId,
     );
 
@@ -186,7 +209,18 @@ export class HomeDecorationService {
       change: 'placed',
     });
 
-    return { item, movedFromSlot };
+    return {
+      action: alreadyHere
+        ? 'unchanged'
+        : movedFromSlot
+          ? 'moved'
+          : replacedItem
+            ? 'replaced'
+            : 'placed',
+      item,
+      replacedItem,
+      movedFromSlot,
+    };
   }
 
   public removeDecoration(slotId: string): ItemDefinition | null {

@@ -4,6 +4,7 @@ import { gameEventBus } from '../events/GameEventBus';
 import { InputController } from '../input/InputController';
 import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 import { InteractionPrompt } from '../ui/InteractionPrompt';
+import { getWorldFeedbackPresenter } from '../ui/WorldFeedbackPresenter';
 import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
 import {
   isInteractionActivationSuppressed,
@@ -289,7 +290,9 @@ export class WorldInteractionCoordinator {
         zone = state.scene.add
           .zone(zoneX, zoneY, area?.width ?? 126, area?.height ?? 126)
           .setName(area?.name ?? `interaction-direct-zone:${target.id}`)
-          .setDepth(117)
+          // World hit zones must remain below fixed HUD controls. Equal-depth zones are created
+          // after the HUD and can otherwise steal taps from controls such as Cottage Done.
+          .setDepth(108)
           .setInteractive({ useHandCursor: true });
         zone.on('pointerdown', () => {
           state.preferredTargetId = target.id;
@@ -327,23 +330,11 @@ export class WorldInteractionCoordinator {
         scene.scene.start(target.result.sceneKey, target.result.payload);
         return;
       case 'message': {
-        scene.children.getByName('wp19d-interaction-feedback')?.destroy();
-        const message = scene.add
-          .text(640, 112, `${target.result.title}\n${target.result.message}`, {
-            color: '#594c68',
-            fontFamily: 'system-ui, sans-serif',
-            fontSize: '18px',
-            fontStyle: 'bold',
-            align: 'center',
-            backgroundColor: '#fff8ecf2',
-            padding: { x: 18, y: 10 },
-            wordWrap: { width: 760 },
-          })
-          .setName('wp19d-interaction-feedback')
-          .setOrigin(0.5)
-          .setScrollFactor(0)
-          .setDepth(20_150);
-        scene.time.delayedCall(3500, () => message.destroy());
+        getWorldFeedbackPresenter(scene).showReaction(
+          `${target.result.title}\n${target.result.message}`,
+          getInteractionTargetPosition(target),
+          3500,
+        );
         return;
       }
       case 'dialogue':

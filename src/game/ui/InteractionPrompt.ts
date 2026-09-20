@@ -28,6 +28,7 @@ const ACTION_PRESENTATION: Record<InteractionActionKind, PrimaryActionPresentati
   buy: { label: 'Buy', icon: 'buy' },
   use: { label: 'Use', icon: 'use' },
   'pick-up': { label: 'Pick up', icon: 'interact' },
+  decorate: { label: 'Decorate here', icon: 'interact' },
   interact: { label: 'Interact', icon: 'interact' },
 };
 
@@ -36,7 +37,8 @@ function isAutomaticInteraction(target: InteractionTarget): boolean {
 }
 
 function getPrimaryActionPresentation(target: InteractionTarget): PrimaryActionPresentation {
-  return ACTION_PRESENTATION[target.actionKind ?? 'interact'];
+  const presentation = ACTION_PRESENTATION[target.actionKind ?? 'interact'];
+  return { ...presentation, label: target.actionLabel || presentation.label };
 }
 
 function formatInteractionLabel(target: InteractionTarget): string {
@@ -56,6 +58,10 @@ function shouldRenderPortraitDomPrompt(): boolean {
     globalThis.navigator?.maxTouchPoints ?? 0,
     'ontouchstart' in globalThis,
   );
+}
+
+function shouldShowContextHint(target: InteractionTarget | null): boolean {
+  return target !== null && target.id !== 'interaction:cottage-sleep';
 }
 
 /** One semantic contextual action presentation for every exploration layout. */
@@ -245,8 +251,13 @@ export class InteractionPrompt {
   }
 
   private readonly pressCurrentTarget = (): void => {
-    if (this.currentTarget) {
-      this.onDirectTarget?.(this.currentTarget.id);
+    const target = this.currentTarget;
+    if (target?.id === 'interaction:cottage-sleep' && target.result.type === 'callback') {
+      target.result.activate();
+      return;
+    }
+    if (target) {
+      this.onDirectTarget?.(target.id);
     }
     this.pointerInput.setButton('INTERACT', true);
   };
@@ -315,8 +326,9 @@ export class InteractionPrompt {
     const portrait = shouldRenderPortraitDomPrompt();
     const targetVisible =
       this.currentTarget !== null && !isAutomaticInteraction(this.currentTarget);
+    const showContextHint = shouldShowContextHint(this.currentTarget);
     const canvasActionVisible = targetVisible && !portrait;
-    const canvasHintVisible = targetVisible && !portrait;
+    const canvasHintVisible = targetVisible && !portrait && showContextHint;
     const highVisibility = this.accessibility.load().highVisibilityInteractions;
 
     this.panelShadow.setVisible(canvasActionVisible);
@@ -351,6 +363,9 @@ export class InteractionPrompt {
     if (this.domRoot) {
       this.domRoot.hidden = !(targetVisible && portrait);
       this.domRoot.classList.toggle('is-high-visibility', highVisibility);
+    }
+    if (this.domHint) {
+      this.domHint.hidden = !showContextHint;
     }
 
     if (this.renderedHighVisibility !== highVisibility) {

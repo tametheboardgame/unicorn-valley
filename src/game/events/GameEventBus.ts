@@ -27,6 +27,10 @@ export interface GameEventMap {
     itemId: string | null;
     change: 'placed' | 'removed';
   };
+  HOME_STYLE_UNLOCKED: {
+    styleId: string;
+    source: 'quest' | 'reward' | 'shop' | 'system' | 'diagnostic';
+  };
 }
 
 export type EventListener<TPayload> = (payload: TPayload) => void;

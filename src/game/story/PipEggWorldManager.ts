@@ -15,6 +15,10 @@ import {
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { getWorldFeedbackPresenter } from '../ui/WorldFeedbackPresenter';
+import {
+  COTTAGE_SEMANTIC_ANCHOR_IDS,
+  resolveCottageSemanticAnchor,
+} from '../world/CottageSemanticAnchors';
 import { worldDepthForY } from '../world/WorldDepth';
 import {
   PIP_EGG_CLUE_SPOTS,
@@ -25,16 +29,18 @@ import {
 } from './PipEggArc';
 import { getBrowserPipEggArcService } from './browserPipEggArc';
 
-const COTTAGE_NEST_POSITION = { x: 1225, y: 970 } as const;
 const CLUE_INTERACTION_RADIUS = 155;
 const PIP_PRODUCTION_NAME = 'core-npc:pip:world';
 const PIP_TRAIL_INTERACTION_OWNER = 'h1:pip-egg-trail';
 const FIRST_SPARKLE_NAME = 'pip-first-green-sparkle';
+const EGG_COLLISION_TEXTURE_KEY = 'pip-egg-collision-pixel';
 
 interface WorldMarker {
   id: string;
   container: Phaser.GameObjects.Container;
   key: Phaser.Input.Keyboard.Key | null;
+  blocker?: Phaser.Physics.Arcade.Image;
+  collider?: Phaser.Physics.Arcade.Collider;
 }
 
 function findPlayer(scene: Phaser.Scene): Phaser.Physics.Arcade.Sprite | null {
@@ -320,6 +326,145 @@ export class PipEggWorldManager {
     return puff;
   }
 
+  private createEggArtwork(
+    scene: Phaser.Scene,
+    stage: Exclude<PipEggStage, 'none' | 'hatch-ready' | 'hatched'>,
+    scale = 1,
+  ): Phaser.GameObjects.Container {
+    const glowAlpha =
+      stage === 'found' ? 0.08 : stage === 'warm' ? 0.14 : stage === 'glowing' ? 0.25 : 0.32;
+    const shellColour =
+      stage === 'found'
+        ? 0xf8efe0
+        : stage === 'warm'
+          ? 0xf8ead8
+          : stage === 'glowing'
+            ? 0xfff0cf
+            : 0xffedc8;
+
+    const glow = scene.add.circle(0, -24 * scale, 46 * scale, 0xffe989, glowAlpha);
+    const shadow = scene.add.ellipse(2 * scale, 23 * scale, 82 * scale, 24 * scale, 0x5e4a4d, 0.16);
+    const nestBack = scene.add.ellipse(0, 16 * scale, 104 * scale, 42 * scale, 0x9e7758, 0.82);
+
+    const strawBack = scene.add.graphics();
+    strawBack.lineStyle(Math.max(1.5, 2.2 * scale), 0xd6aa73, 0.9);
+    for (const [x1, y1, x2, y2] of [
+      [-45, 10, -18, 25],
+      [-31, 5, 3, 25],
+      [-7, 4, 27, 24],
+      [18, 5, 46, 20],
+      [-40, 22, -8, 8],
+      [4, 24, 35, 8],
+    ] as const) {
+      strawBack.lineBetween(x1 * scale, y1 * scale, x2 * scale, y2 * scale);
+    }
+
+    const shellShadow = scene.add.ellipse(
+      3 * scale,
+      -17 * scale,
+      57 * scale,
+      75 * scale,
+      0xbca8b7,
+      0.34,
+    );
+    const egg = scene.add
+      .ellipse(0, -21 * scale, 54 * scale, 72 * scale, shellColour, 1)
+      .setStrokeStyle(Math.max(2, 3 * scale), 0xae90be, 0.96);
+    const lowerTint = scene.add.ellipse(
+      2 * scale,
+      -4 * scale,
+      43 * scale,
+      28 * scale,
+      0xe4c8dd,
+      stage === 'glowing' || stage === 'cracking' ? 0.18 : 0.1,
+    );
+    const highlight = scene.add.ellipse(
+      -11 * scale,
+      -40 * scale,
+      11 * scale,
+      22 * scale,
+      0xffffff,
+      0.58,
+    );
+
+    const shellDetails = scene.add.graphics();
+    shellDetails.fillStyle(0xc7ace0, 0.72);
+    shellDetails.fillCircle(-12 * scale, -28 * scale, 4.2 * scale);
+    shellDetails.fillCircle(14 * scale, -12 * scale, 3.5 * scale);
+    shellDetails.fillStyle(0x8fd4c9, 0.74);
+    shellDetails.fillCircle(10 * scale, -35 * scale, 2.8 * scale);
+    shellDetails.fillCircle(-7 * scale, -7 * scale, 2.4 * scale);
+    shellDetails.lineStyle(Math.max(1.4, 1.8 * scale), 0xa986bf, 0.8);
+    shellDetails.strokeCircle(5 * scale, -22 * scale, 7 * scale);
+    shellDetails.fillStyle(shellColour, 1);
+    shellDetails.fillCircle(8 * scale, -24 * scale, 6.2 * scale);
+
+    if (stage === 'cracking') {
+      shellDetails.lineStyle(Math.max(1.8, 2.2 * scale), 0x87679d, 0.95);
+      shellDetails.beginPath();
+      shellDetails.moveTo(-3 * scale, -51 * scale);
+      shellDetails.lineTo(4 * scale, -42 * scale);
+      shellDetails.lineTo(-2 * scale, -34 * scale);
+      shellDetails.lineTo(7 * scale, -26 * scale);
+      shellDetails.strokePath();
+    }
+
+    const nestFront = scene.add.ellipse(0, 24 * scale, 92 * scale, 25 * scale, 0xc99a68, 0.96);
+    const strawFront = scene.add.graphics();
+    strawFront.lineStyle(Math.max(1.5, 2 * scale), 0xedc58a, 0.9);
+    for (const [x1, y1, x2, y2] of [
+      [-37, 19, -11, 29],
+      [-18, 18, 10, 29],
+      [4, 18, 30, 28],
+      [22, 18, 42, 25],
+    ] as const) {
+      strawFront.lineBetween(x1 * scale, y1 * scale, x2 * scale, y2 * scale);
+    }
+
+    return scene.add
+      .container(0, 0, [
+        glow,
+        shadow,
+        nestBack,
+        strawBack,
+        shellShadow,
+        egg,
+        lowerTint,
+        highlight,
+        shellDetails,
+        nestFront,
+        strawFront,
+      ])
+      .setName(`pip-egg-art:${stage}`);
+  }
+
+  private attachEggCollision(
+    scene: Phaser.Scene,
+    player: Phaser.Physics.Arcade.Sprite,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    name: string,
+  ): Pick<WorldMarker, 'blocker' | 'collider'> {
+    if (!scene.textures.exists(EGG_COLLISION_TEXTURE_KEY)) {
+      const pixel = scene.add.graphics();
+      pixel.fillStyle(0xffffff, 1);
+      pixel.fillRect(0, 0, 2, 2);
+      pixel.generateTexture(EGG_COLLISION_TEXTURE_KEY, 2, 2);
+      pixel.destroy();
+    }
+
+    const blocker = scene.physics.add
+      .staticImage(x, y, EGG_COLLISION_TEXTURE_KEY)
+      .setName(name)
+      .setDisplaySize(width, height)
+      .setVisible(false)
+      .refreshBody();
+    const collider = scene.physics.add.collider(player, blocker);
+    return { blocker, collider };
+  }
+
   private createGladeClue(scene: Phaser.Scene, target: PipEggClueSpot): WorldMarker {
     const parts: Phaser.GameObjects.GameObject[] = [];
     const glow = scene.add.circle(0, 0, 36, 0x7edcff, 0.1);
@@ -373,13 +518,8 @@ export class PipEggWorldManager {
       ] as const) {
         this.drawStarTrack(trackLead, x, y, 6);
       }
-      const nestBack = scene.add.ellipse(0, 24, 108, 48, 0x9b7456, 0.8);
-      const egg = scene.add.ellipse(0, -9, 64, 82, 0xf6edda, 1).setStrokeStyle(4, 0xb99bc7, 0.92);
-      const spotA = scene.add.circle(-12, -19, 7, 0xc8afe3, 0.72);
-      const spotB = scene.add.circle(14, 2, 5, 0x9fd7d0, 0.72);
-      const spotC = scene.add.circle(3, -34, 4, 0xe4b9d8, 0.78);
-      const nestFront = scene.add.ellipse(0, 29, 92, 28, 0xc39768, 0.94);
-      parts.push(trackLead, nestBack, egg, spotA, spotB, spotC, nestFront);
+      const eggArt = this.createEggArtwork(scene, 'found', 0.86);
+      parts.push(trackLead, eggArt);
     }
 
     const moteLeft = scene.add.circle(-27, -28, 3.5, 0xa9efff, 0.88);
@@ -402,6 +542,26 @@ export class PipEggWorldManager {
         ease: 'Sine.InOut',
       });
     }
+    if (target.id === 'interaction:pip-strange-egg') {
+      const player = findPlayer(scene);
+      if (player) {
+        return {
+          id: target.id,
+          container,
+          key: null,
+          ...this.attachEggCollision(
+            scene,
+            player,
+            target.position.x,
+            target.position.y + 11,
+            66,
+            34,
+            'pip-egg-collider:glade',
+          ),
+        };
+      }
+    }
+
     return { id: target.id, container, key: null };
   }
 
@@ -418,8 +578,8 @@ export class PipEggWorldManager {
         interactionRadius: CLUE_INTERACTION_RADIUS,
         priority: 18,
         directArea: {
-          width: 190,
-          height: 190,
+          width: target.id === 'interaction:pip-strange-egg' ? 128 : 190,
+          height: target.id === 'interaction:pip-strange-egg' ? 128 : 190,
           name: `pip-trail-direct:${target.id}`,
         },
         result: {
@@ -513,11 +673,13 @@ export class PipEggWorldManager {
     }
 
     if (player && this.cottageMarker.key) {
+      const nestAnchor = resolveCottageSemanticAnchor(COTTAGE_SEMANTIC_ANCHOR_IDS.eggNest);
+      const inspectionPoint = nestAnchor.interactionPosition ?? nestAnchor.position;
       const distance = Phaser.Math.Distance.Between(
         player.x,
         player.y,
-        COTTAGE_NEST_POSITION.x,
-        COTTAGE_NEST_POSITION.y,
+        inspectionPoint.x,
+        inspectionPoint.y,
       );
       if (distance <= 150 && Phaser.Input.Keyboard.JustDown(this.cottageMarker.key)) {
         this.inspectCottageEgg(scene);
@@ -529,55 +691,56 @@ export class PipEggWorldManager {
     scene: Phaser.Scene,
     stage: Exclude<PipEggStage, 'none' | 'hatch-ready' | 'hatched'>,
   ): WorldMarker {
-    const nestBack = scene.add.ellipse(0, 18, 180, 78, 0xb88758, 0.72);
-    const nestFront = scene.add.ellipse(0, 34, 150, 52, 0xd1a06b, 0.94);
-    const glowAlpha =
-      stage === 'found' ? 0.08 : stage === 'warm' ? 0.2 : stage === 'glowing' ? 0.38 : 0.48;
-    const glow = scene.add.circle(0, -42, stage === 'cracking' ? 90 : 72, 0xffe989, glowAlpha);
-    const egg = scene.add.ellipse(0, -30, 96, 126, 0xf3e7d0, 1).setStrokeStyle(5, 0xb899c8, 1);
-    const marks = scene.add
-      .text(0, -30, stage === 'cracking' ? '✦ ϟ' : '✦ ☾', {
-        color: stage === 'glowing' || stage === 'cracking' ? '#9c77c0' : '#b58bc7',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '23px',
-        fontStyle: 'bold',
-      })
-      .setOrigin(0.5);
+    const eggArt = this.createEggArtwork(scene, stage, 0.96);
     const label = scene.add
-      .text(0, 92, stage === 'cracking' ? 'The egg is cracking!' : 'Strange egg', {
+      .text(0, 66, stage === 'cracking' ? 'The egg is cracking!' : 'Strange egg', {
         color: '#604b6d',
         fontFamily: 'system-ui, sans-serif',
-        fontSize: '16px',
+        fontSize: '13px',
         fontStyle: 'bold',
         backgroundColor: '#fff9eddd',
-        padding: { x: 8, y: 4 },
+        padding: { x: 7, y: 3 },
       })
       .setOrigin(0.5);
-    const zone = scene.add.zone(0, -18, 180, 190).setInteractive({ useHandCursor: true });
+    const zone = scene.add
+      .zone(0, -12, 124, 124)
+      .setName('cottage-story:egg-inspect')
+      .setInteractive({ useHandCursor: true });
+    const nestAnchor = resolveCottageSemanticAnchor(COTTAGE_SEMANTIC_ANCHOR_IDS.eggNest);
     const container = scene.add
-      .container(COTTAGE_NEST_POSITION.x, COTTAGE_NEST_POSITION.y, [
-        glow,
-        nestBack,
-        egg,
-        marks,
-        nestFront,
-        label,
-        zone,
-      ])
-      .setDepth(15);
+      .container(nestAnchor.position.x, nestAnchor.position.y, [eggArt, label, zone])
+      .setName(`cottage-story:egg-nest:${stage}`)
+      .setDepth(worldDepthForY(nestAnchor.position.y + 28, 0.24));
     zone.on('pointerdown', () => this.inspectCottageEgg(scene));
     if (!isReducedMotionEnabled()) {
       scene.tweens.add({
-        targets: [egg, marks, glow],
-        scale: stage === 'cracking' ? 1.07 : 1.03,
-        angle: stage === 'cracking' ? 2 : 0,
-        duration: stage === 'cracking' ? 420 : 900,
+        targets: eggArt,
+        scale: stage === 'cracking' ? 1.035 : 1.015,
+        angle: stage === 'cracking' ? 1.4 : 0,
+        duration: stage === 'cracking' ? 420 : 1050,
         yoyo: true,
         repeat: -1,
         ease: 'Sine.InOut',
       });
     }
     const key = scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.E) ?? null;
+    const player = findPlayer(scene);
+    if (player) {
+      return {
+        id: `cottage-egg-${stage}`,
+        container,
+        key,
+        ...this.attachEggCollision(
+          scene,
+          player,
+          nestAnchor.position.x,
+          nestAnchor.position.y + 11,
+          70,
+          36,
+          'pip-egg-collider:cottage',
+        ),
+      };
+    }
     return { id: `cottage-egg-${stage}`, container, key };
   }
 
@@ -684,6 +847,8 @@ export class PipEggWorldManager {
   }
 
   private destroyMarker(marker: WorldMarker | null): void {
+    marker?.collider?.destroy();
+    marker?.blocker?.destroy();
     marker?.container.destroy(true);
   }
 }

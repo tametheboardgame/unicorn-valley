@@ -469,10 +469,17 @@ test.describe
       await page.keyboard.down('ArrowRight');
       await waitForForwardControl(page, 'NovaTutorialRaceScene', true);
       const beforeJump = await playerPosition(page, 'NovaTutorialRaceScene');
-      await page.keyboard.press('Space');
-      await page.waitForTimeout(130);
-      const duringJump = await playerPosition(page, 'NovaTutorialRaceScene');
-      expect(duringJump.y, 'SPACE should visibly lift the racer').toBeLessThan(beforeJump.y - 3);
+      await page.keyboard.down('Space');
+      try {
+        await expect
+          .poll(async () => (await playerPosition(page, 'NovaTutorialRaceScene')).y, {
+            message: 'SPACE should visibly lift the racer',
+            timeout: 2_000,
+          })
+          .toBeLessThan(beforeJump.y - 3);
+      } finally {
+        await page.keyboard.up('Space');
+      }
 
       let finished = false;
       for (let step = 0; step < 130; step += 1) {

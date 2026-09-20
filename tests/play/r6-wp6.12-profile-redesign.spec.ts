@@ -1,3 +1,5 @@
+import { COTTAGE_STARTER_HOME_STYLE_IDS } from '../../src/content/cottageHomeStyleEntitlements';
+import { CURRENT_SAVE_SCHEMA_VERSION } from '../../src/game/save/saveSchema';
 import { expect, test, type Page } from '@playwright/test';
 
 const SAVE_KEY = 'unicorn-valley.save';
@@ -24,7 +26,7 @@ interface DiagnosticSnapshot {
 function createRichSave(appearance: Record<string, string> = {}): Record<string, unknown> {
   const timestamp = '2026-08-27T08:00:00.000Z';
   return {
-    schemaVersion: 2,
+    schemaVersion: CURRENT_SAVE_SCHEMA_VERSION,
     createdAt: timestamp,
     lastSavedAt: timestamp,
     profile: {
@@ -70,6 +72,34 @@ function createRichSave(appearance: Record<string, string> = {}): Record<string,
       ownedFurnitureIds: ['furniture:moon-lamp'],
       furnitureBySlot: { shelf: 'furniture:moon-lamp' },
       gardenFlags: { watered: true },
+      unlockedStyleIds: [...COTTAGE_STARTER_HOME_STYLE_IDS],
+      style: {
+        walls: {
+          back: {
+            wallColourId: 'cottage-wall:moon-cream',
+            wallpaperId: 'cottage-wallpaper:plain',
+          },
+          left: {
+            wallColourId: 'cottage-wall:moon-cream',
+            wallpaperId: 'cottage-wallpaper:plain',
+          },
+          right: {
+            wallColourId: 'cottage-wall:moon-cream',
+            wallpaperId: 'cottage-wallpaper:plain',
+          },
+          front: {
+            wallColourId: 'cottage-wall:moon-cream',
+            wallpaperId: 'cottage-wallpaper:plain',
+          },
+        },
+        floorStyleId: 'cottage-floor:honey-oak',
+        furnitureVariants: {
+          bed: 'cottage-furniture:bed:moonflower',
+          sofa: 'cottage-furniture:sofa:sage',
+          teaSet: 'cottage-furniture:tea-set:honey-oak',
+          fireplace: 'cottage-furniture:fireplace:warm-stone',
+        },
+      },
     },
     activities: {
       racesById: {
@@ -129,6 +159,16 @@ async function tapObject(page: Page, sceneKey: string, objectName: string): Prom
 }
 
 async function tapTitleText(page: Page, text: string): Promise<void> {
+  await expect
+    .poll(async () => {
+      const snapshot = await getSnapshot(page);
+      const title = snapshot.scenes.find((scene) => scene.key === 'TitleScene');
+      return title?.objects.some(
+        (object) => object.visible && object.interactive && object.text === text,
+      );
+    })
+    .toBe(true);
+
   const snapshot = await getSnapshot(page);
   const title = snapshot.scenes.find((scene) => scene.key === 'TitleScene');
   const target = title?.objects.find(

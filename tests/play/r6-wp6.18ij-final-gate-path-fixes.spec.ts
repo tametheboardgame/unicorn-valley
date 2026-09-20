@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { CURRENT_SAVE_SCHEMA_VERSION } from '../../src/game/save/saveSchema';
 import { INTERACTIVE_GATEWAY_RADIUS } from '../../src/game/world/RegionGatewayRules';
 
 const WORLD_PLAYER_NAME = 'world-player-unicorn';
@@ -91,21 +92,26 @@ function named(scene: DiagnosticScene, name: string): DiagnosticObject {
 }
 
 async function unlockCrystalCascade(page: Page): Promise<void> {
-  await page.evaluate((raceId) => {
-    const primaryKey = 'unicorn-valley.save';
-    const checkpointKey = `${primaryKey}.schema.2`;
-    const raw = localStorage.getItem(checkpointKey) ?? localStorage.getItem(primaryKey);
-    if (!raw) {
-      throw new Error('Expected Crystal Brook to create a save before unlocking the race.');
-    }
-    const save = JSON.parse(raw) as {
-      activities: { racesById: Record<string, { bestTimeMs: number | null; ribbonIds: string[] }> };
-    };
-    save.activities.racesById[raceId] = { bestTimeMs: 12_345, ribbonIds: [] };
-    const serialised = JSON.stringify(save);
-    localStorage.setItem(primaryKey, serialised);
-    localStorage.setItem(checkpointKey, serialised);
-  }, SUNRISE_SPRINT_RACE_ID);
+  await page.evaluate(
+    ({ raceId, schemaVersion }) => {
+      const primaryKey = 'unicorn-valley.save';
+      const checkpointKey = `${primaryKey}.schema.${schemaVersion}`;
+      const raw = localStorage.getItem(checkpointKey) ?? localStorage.getItem(primaryKey);
+      if (!raw) {
+        throw new Error('Expected Crystal Brook to create a save before unlocking the race.');
+      }
+      const save = JSON.parse(raw) as {
+        activities: {
+          racesById: Record<string, { bestTimeMs: number | null; ribbonIds: string[] }>;
+        };
+      };
+      save.activities.racesById[raceId] = { bestTimeMs: 12_345, ribbonIds: [] };
+      const serialised = JSON.stringify(save);
+      localStorage.setItem(primaryKey, serialised);
+      localStorage.setItem(checkpointKey, serialised);
+    },
+    { raceId: SUNRISE_SPRINT_RACE_ID, schemaVersion: CURRENT_SAVE_SCHEMA_VERSION },
+  );
 }
 
 async function positionPlayerAtCascadeGate(page: Page): Promise<void> {

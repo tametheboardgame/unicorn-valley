@@ -40,6 +40,8 @@ export function getWorldInteractionAffordanceOffsetY(
       return -30;
     case 'pick-up':
       return -36;
+    case 'decorate':
+      return -30;
     case 'interact':
       return -30;
   }

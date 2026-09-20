@@ -120,6 +120,21 @@ export class AtmosphericTimeService {
     return this.state;
   }
 
+  /**
+   * Canonical sleep/wake operation. Sleeping always starts a fresh automatic morning rather than
+   * maintaining a second cottage clock or leaving a manual night override active.
+   */
+  public resetToMorning(): AtmosphericTimeState {
+    this.automaticElapsedMs = 0;
+    this.automaticState = 'morning';
+    this.mode = 'auto';
+    if (this.saveService) {
+      saveManualAtmosphericTime(this.saveService, null);
+    }
+    this.setState('morning');
+    return this.state;
+  }
+
   public cycleMode(): AtmosphericTimeMode {
     const modes: readonly AtmosphericTimeMode[] = [
       'auto',

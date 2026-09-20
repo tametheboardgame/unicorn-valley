@@ -16,6 +16,7 @@ describe('ActivitySuggestionModel', () => {
     expect(getAvailableActivitySuggestions(save).map((suggestion) => suggestion.id)).toEqual([
       'suggestion:first-sparkle',
       'suggestion:willow-moonflowers',
+      'suggestion:decorate-cottage',
     ]);
   });
 
@@ -71,7 +72,9 @@ describe('ActivitySuggestionModel', () => {
       ),
     ).toBe(true);
 
-    save.home.furnitureBySlot['home-slot:window'] = 'item:moonflower-lantern';
+    for (const [index, itemId] of save.inventory.ownedDecorationIds.entries()) {
+      save.home.furnitureBySlot[`home-slot:${index}`] = itemId;
+    }
 
     expect(
       getAvailableActivitySuggestions(save).some(
@@ -92,7 +95,7 @@ describe('ActivitySuggestionModel', () => {
     expect(session.getVisible(save)[0]?.id).toBe('suggestion:willow-moonflowers');
 
     session.dismissCurrent(save);
-    expect(session.getVisible(save)[0]?.id).toBe('suggestion:first-sparkle');
+    expect(session.getVisible(save)[0]?.id).toBe('suggestion:decorate-cottage');
     expect(JSON.stringify(save)).toBe(before);
   });
 });

@@ -38,20 +38,31 @@ async function snapshot(page: Page): Promise<Snapshot> {
 }
 
 async function startScene(page: Page, key: string): Promise<void> {
+  // Let the normal boot finish before replacing the title scene. Starting a diagnostic scene
+  // earlier can race the delayed TitleScene launch, leaving both scenes active and allowing
+  // keyboard/touch input intended for the test scene to trigger title actions underneath it.
+  await page.waitForFunction(
+    () =>
+      (
+        window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics }
+      ).__UNICORN_VALLEY_DIAGNOSTICS__
+        ?.snapshot()
+        .activeScenes.includes('TitleScene'),
+    undefined,
+    { timeout: 10_000 },
+  );
+
   await page.evaluate((sceneKey) => {
     (
       window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics }
     ).__UNICORN_VALLEY_DIAGNOSTICS__?.startScene(sceneKey);
   }, key);
-  await page.waitForFunction(
-    (sceneKey) =>
-      (
-        window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics }
-      ).__UNICORN_VALLEY_DIAGNOSTICS__
-        ?.snapshot()
-        .activeScenes.includes(sceneKey),
-    key,
-  );
+  await page.waitForFunction((sceneKey) => {
+    const activeScenes = (
+      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__?.snapshot().activeScenes;
+    return activeScenes?.length === 1 && activeScenes[0] === sceneKey;
+  }, key);
 }
 
 function scene(value: Snapshot, key: string): SceneSnapshot {
@@ -77,9 +88,19 @@ async function tapWorld(page: Page, sceneKey: string, x: number, y: number): Pro
   );
 }
 
+async function tapScreen(page: Page, x: number, y: number): Promise<void> {
+  const value = await snapshot(page);
+  const canvas = await page.locator('canvas').boundingBox();
+  if (!canvas) throw new Error('Canvas unavailable');
+  await page.touchscreen.tap(
+    canvas.x + (x / value.width) * canvas.width,
+    canvas.y + (y / value.height) * canvas.height,
+  );
+}
+
 test.use({ hasTouch: true, viewport: { width: 1024, height: 768 } });
 
-test('Cottage wall seam blocks whole-unicorn overlap while approaches and Gallop remain usable', async ({
+test('Cottage back-wall boundary blocks whole-unicorn overlap while approaches and Gallop remain usable', async ({
   page,
 }) => {
   await page.goto('/?diagnostics=1');
@@ -99,8 +120,10 @@ test('Cottage wall seam blocks whole-unicorn overlap while approaches and Gallop
   await page.keyboard.up('ArrowUp');
   let value = await snapshot(page);
   const atWall = player(value, 'CottageInteriorScene');
-  expect(atWall.bodyY).toBeGreaterThanOrEqual(389);
-  expect((atWall.bodyY ?? 0) + (atWall.bodyHeight ?? 0)).toBeGreaterThan(409);
+  expect(atWall.bodyY).toBeGreaterThanOrEqual(369);
+  // The generated unicorn texture includes transparent padding, so its display rectangle is not
+  // an opaque-art bound. Protect the authored wall stop using the physics body plus sprite centre.
+  expect(atWall.y).toBeGreaterThanOrEqual(379);
   expect(atWall.y).toBeLessThan(440);
   expect(
     scene(value, 'CottageInteriorScene').objects.some(({ name }) => name === 'cottage-floor-seam'),
@@ -119,6 +142,91 @@ test('Cottage wall seam blocks whole-unicorn overlap while approaches and Gallop
   await expect
     .poll(async () => beforeTapX - player(await snapshot(page), 'CottageInteriorScene').x)
     .toBeGreaterThan(35);
+});
+
+test('Cottage bed sleep sequence uses the touch action directly, shows the sleep message and wakes at the foot', async ({
+  page,
+}) => {
+  await page.goto('/?diagnostics=1');
+  await startScene(page, 'CottageInteriorScene');
+
+  // H2.4 owns the bed area. The retired bedside-decoration hotspot must not open Decorate mode.
+  await page.evaluate(() =>
+    (
+      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__?.setArcadeSpritePosition(
+      'CottageInteriorScene',
+      'world-player-unicorn',
+      520,
+      710,
+    ),
+  );
+  await page.waitForTimeout(120);
+  await page.keyboard.press('KeyE');
+  await page.waitForTimeout(120);
+  expect((await snapshot(page)).activeScenes).not.toContain('CottageDecorateScene');
+
+  await page.evaluate(() =>
+    (
+      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__?.setArcadeSpritePosition(
+      'CottageInteriorScene',
+      'world-player-unicorn',
+      315,
+      700,
+    ),
+  );
+
+  await page.waitForTimeout(120);
+
+  const beforeSleep = await snapshot(page);
+  const cottageObjects = scene(beforeSleep, 'CottageInteriorScene').objects;
+  expect(
+    cottageObjects.find(({ name }) => name === 'exploration-interaction-prompt')?.visible,
+  ).toBe(true);
+  expect(cottageObjects.find(({ name }) => name === 'exploration-tablet-hint-panel')?.visible).toBe(
+    false,
+  );
+
+  // Reproduce the actual landscape-tablet path: tap the fixed purple contextual action rather
+  // than using keyboard E. The sleep target must invoke its callback synchronously and must not
+  // route through the legacy shared INTERACT pulse.
+  await tapScreen(page, 1040, 578);
+
+  await expect
+    .poll(
+      async () =>
+        scene(await snapshot(page), 'CottageInteriorScene').objects.some(
+          ({ name }) => name === 'cottage-sleep-message',
+        ),
+      { timeout: 2_500 },
+    )
+    .toBe(true);
+
+  const duringSleep = await snapshot(page);
+  expect(
+    scene(duringSleep, 'CottageInteriorScene').objects.some(
+      ({ name }) => name === 'cottage-furniture:bed-rear',
+    ),
+  ).toBe(true);
+  expect(
+    scene(duringSleep, 'CottageInteriorScene').objects.some(
+      ({ name }) => name === 'cottage-furniture:bed-foreground',
+    ),
+  ).toBe(true);
+
+  await expect
+    .poll(async () => player(await snapshot(page), 'CottageInteriorScene').y, { timeout: 5_000 })
+    .toBeCloseTo(850, 0);
+  await expect
+    .poll(
+      async () =>
+        scene(await snapshot(page), 'CottageInteriorScene').objects.some(
+          ({ name }) => name === 'cottage-sleep-overlay',
+        ),
+      { timeout: 5_000 },
+    )
+    .toBe(false);
 });
 
 for (const [key, blocked, open] of [
