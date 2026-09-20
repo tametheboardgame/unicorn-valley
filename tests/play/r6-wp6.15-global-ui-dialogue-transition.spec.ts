@@ -185,6 +185,7 @@ async function waitForVisibleObject(
   await expect
     .poll(async () => hasVisibleNamedObject(await sceneSnapshot(page, sceneKey), name), {
       timeout,
+      intervals: [250, 500, 1_000],
     })
     .toBe(true);
 }
