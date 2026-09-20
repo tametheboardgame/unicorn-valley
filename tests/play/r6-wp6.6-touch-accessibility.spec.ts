@@ -407,7 +407,7 @@ test('target-tablet accessibility settings persist and Reduced Motion freezes am
   );
   expect(stored).toEqual({ reducedMotion: true, highVisibilityInteractions: true });
 
-  await logicalTap(page, 640, 666);
+  await logicalTapNamedObject(page, 'SettingsScene', 'settings-done');
   await waitForScene(page, 'MoonflowerGladeScene');
 
   let snapshot = await getSnapshot(page);
