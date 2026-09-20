@@ -315,10 +315,10 @@ test('ordinary Pip conversation stays in-world, stable and explicitly paced', as
   await waitForHiddenObject(page, 'MoonflowerGladeScene', 'dialogue-production-panel');
 });
 
-test('supporting resident uses the shared dialogue family with fallback portrait identity', async ({
+test('supporting resident uses the shared dialogue family with production portrait identity', async ({
   page,
 }) => {
-  await page.addInitScript(() => window.localStorage.clear());
+  await seedPipReady(page);
   await page.goto('/?diagnostics=1');
   await waitForDiagnostics(page);
   await startScene(page, 'MoonflowerGladeScene');
@@ -335,13 +335,19 @@ test('supporting resident uses the shared dialogue family with fallback portrait
   await waitForTalkTarget(page, 'MoonflowerGladeScene', 'Juniper');
   await page.keyboard.press('KeyE');
   await waitForVisibleObject(page, 'MoonflowerGladeScene', 'dialogue-production-panel');
+  await waitForVisibleObject(
+    page,
+    'MoonflowerGladeScene',
+    'dialogue-production-portrait-resident:juniper',
+    20_000,
+  );
 
   scene = await sceneSnapshot(page, 'MoonflowerGladeScene');
   expect(namedObject(scene, 'dialogue-production-portrait-frame').y).toBeGreaterThan(500);
   expect(namedObject(scene, 'dialogue-production-body').y).toBeGreaterThan(450);
   expect(namedObject(scene, 'dialogue-production-speaker-name').text).toBe('Juniper');
-  expect(namedObject(scene, 'dialogue-production-portrait-fallback').visible).toBe(true);
-  expect(namedObject(scene, 'dialogue-production-portrait-fallback').text).toBe('J');
+  expect(namedObject(scene, 'dialogue-production-portrait-resident:juniper').visible).toBe(true);
+  expect(namedObject(scene, 'dialogue-production-portrait-fallback').visible).toBe(false);
   expect(namedObject(scene, 'dialogue-production-continue-label').text).toBe('Done');
   await page.screenshot({
     path: 'playtest-artifacts/screenshots/wp19e-juniper-dialogue-desktop.png',
