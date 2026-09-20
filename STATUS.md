@@ -2,92 +2,36 @@
 
 Last updated: 2026-09-20
 
-## Current work
+## Current state
 
-`R6.5-WP19H2.11 - Responsive Polish, Consolidation & Hardening` is active on draft PR #175 /
-branch `agent/r6.5-wp19h2-moonflower-cottage`.
+R6.5-WP19H2 – Moonflower Cottage & Home Customisation is complete and deployed to production.
 
-H2.0 through H2.10 are human-approved. David explicitly started H2.11 on 20 September 2026 and
-authorised PR #175 to merge and deploy to `main` without a further approval stop once the complete
-H2.11 technical gate is green.
+H2.0 through H2.11 are complete. The final H2.11 exact-head candidate `35a0d60e0b05a80520e3105456f72434253abc47` passed the complete qualification matrix in CI run `35513888198`, including static/architecture policy, unit contracts, production build/static smoke/performance, all three full Chromium shards and Chromium/Firefox/WebKit compatibility.
 
-## H2.11 candidate
+PR #175 was merged to `main` as `e63be2f14290dbce394baf4c8e0a98f078f4e1bf` after that green gate. Cloudflare successfully deployed the merged H2 production build on 20 September 2026.
 
-Implementation candidate `cc8e30620a3fe51d85d254b5d983d88ab71a1c18` consolidates the finished cottage:
+## Post-merge verification
 
-- removes the retired `CottageDepthWorldManager` and its duplicate global polling/interaction path;
-- publishes cottage sleep, exit, Wonderbook, treasure, tactile home objects, visitors and decoration
-  targets through the shared interaction registry/coordinator;
-- preserves direct tap/click decoration spots with one canonical hit surface per slot;
-- makes cottage decoration markers, treasure presentation and visiting-friend idles respect Reduced Motion;
-- adds portrait touch companion controls to Decorate and Room Style using the established responsive UI;
-- splits the historically long tablet creator/exploration/Book/accessibility browser journey into bounded
-  regression contracts;
-- adds focused H2.11 browser coverage for the consolidated interaction route, Reduced Motion and portrait
-  cottage editing.
+A subsequent main-branch browser run exposed a stale supporting-resident dialogue contract unrelated to H2 runtime behaviour. The test was corrected to isolate Juniper from Pip's first-arrival flow and activate Juniper through the visible shared interaction prompt. The targeted verification for that fix passed and PR #177 was merged as `902f1447ecd82cc5f70e7ea8e9288b547215f683`.
 
-No save-schema, progression, race-balance, quest, reward or story-authority changes are intended.
+No unfinished H2 gameplay, persistence, responsive, accessibility or cottage-integration scope remains.
 
-## H2.11 CI remediation
+## H2 delivered state
 
-Checkpoint `643eb4eb09fb2c0c077e77c9c1226bc5a030f2bb` repairs the exact-head browser failures from run
-`35506640200` without restoring a cottage-specific interaction owner:
+The production cottage now preserves the approved H2 architecture and behaviour:
 
-- cottage targets are published during scene creation and shared prompts now render each target’s
-  canonical action label;
-- ordinary cottage reactions route directly through `WorldFeedbackPresenter` rather than a transient
-  legacy banner that diagnostics could miss;
-- the portrait contract uses the established DOM Room Style control;
-- a directly opened Settings scene now starts its requested return scene when Done is selected;
-- focused H2.11, sleep and Reduced Motion/accessibility contracts pass locally. The H2.5 flow reaches
-  its final accepted state locally but exceeds its historical 45-second limit under this container’s
-  software-rendered browser; exact-head CI remains authoritative for that timing contract.
+- canonical semantic room/story/visitor anchors;
+- production room shell, furniture, collision and Y-aware layering;
+- bed/sleep flow integrated with the shared atmospheric time service;
+- clean normal play plus dedicated Decorate mode;
+- persistent wall, wallpaper, floor and furniture styling;
+- starter and unlockable home-style entitlements;
+- place / replace / move / remove decoration flows with persistence;
+- strange egg and future story/portal capacity bound to semantic anchors;
+- consolidated shared interaction ownership with obsolete cottage-specific paths removed;
+- responsive desktop/tablet/phone controls and Reduced Motion behaviour;
+- final automated browser, cross-browser and performance qualification.
 
-`npm run validate` passes (552 unit tests, build, static smoke and hard performance budget). Run `35508803762` against `ee565ad4d2d029e1e7fd5ac5e8bc98e8c881fe05` passed verification,
-static/architecture, unit, build/smoke/performance, Chromium shard 2/3, cross-browser compatibility
-and Cloudflare deployment. Its remaining failures were three browser-contract regressions: the WP18I
-cottage-entry expectation retained the superseded `Enter` wording; the H2.6 editor-return regression
-used a stale coordinate for Done; and the supporting-resident portrait occasionally exceeded its
-six-second visibility wait under shard load.
+## Next work
 
-Checkpoint `90e161c8795cab5b6496989d3edf9cd0db57e5d3` preserves the accepted runtime and repairs only those
-contracts: WP18I now expects the canonical `Go inside` wording, the H2.6 flow uses the named
-Decorate/Done control, and the resident portrait retains its exact identity assertions with a bounded
-12-second presentation wait. The entry contract passed locally, and the portrait contract passed five
-consecutive runs. The full H2.6 journey reaches the remediated assertion locally but remains slower than
-its historical timeout under this container's software renderer; exact-head CI remains authoritative.
-`npm run validate` passes with 552 unit tests and the hard performance budget. Runs `35510317417`
-and `35510411086` then passed every gate except Chromium shard 3/3. Local reproduction showed that the
-named Done control itself is correct, but restarting `CottageInteriorScene` directly from itself leaves
-the diagnostic pointer journey in a synthetic lifecycle that real editor return never uses. Checkpoint
-`bd6770d37d8d73f5167ebc354159425e019b2349` routes that regression through `MoonflowerGladeScene`
-before the editor-return start, preserving the exact contract while exercising a genuine scene
-shutdown/start. The complete H2.6 contract passes locally with the container timing override; exact-head
-CI and Cloudflare deployment are pending publication of this checkpoint.
-
-## Current gate
-
-Run `35511897395` passed the complete H2.11 gate at
-`0a8a1d631a4501e0ed81c897830984b912beea18`. The following status-only exact-head run `35512995118`
-again passed static, unit, build/performance, cross-browser and Chromium shard 3/3, but shard 1/3
-reproduced the supporting-resident portrait readiness timeout under aggregate load. Checkpoint
-`5475ce9a819d8d2d6339fc6212b79fbda9cb0759` keeps the exact portrait/fallback identity assertions and
-applies a bounded 20-second wait only to that async portrait presentation. Exact-head qualification is
-running; H2.11 remains unmerged until every gate passes together. The required gate is:
-
-1. verification plan and static/architecture policy;
-2. complete unit suite;
-3. production build, static smoke and performance budget;
-4. focused H2.11 browser contracts;
-5. all full Chromium shards;
-6. Chromium/Firefox/WebKit compatibility;
-7. exact-head Cloudflare branch deployment.
-
-A genuine H2.11-owned regression must be repaired before merge. Pre-existing or flaky failures must be
-reproduced and diagnosed rather than hidden by weakening coverage.
-
-## Merge and deployment
-
-PR #175 remains draft and unmerged until the full H2.11 gate is green. Once green, David has already
-authorised marking the PR ready, merging to `main`, monitoring the production deployment and verifying
-the deployed main build without another approval checkpoint.
+There is no active work package recorded after H2. Start the next package only when explicitly selected.
