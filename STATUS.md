@@ -1,47 +1,50 @@
 # Project Status
 
-Last updated: 2026-09-19
+Last updated: 2026-09-20
 
 ## Current work
 
-`R6.5-WP19H2.10 - Unlock & Reward Framework` is implemented on draft PR #175 / branch
-`agent/r6.5-wp19h2-moonflower-cottage`.
+`R6.5-WP19H2.11 - Responsive Polish, Consolidation & Hardening` is active on draft PR #175 /
+branch `agent/r6.5-wp19h2-moonflower-cottage`.
 
-H2.0 through H2.10 are now human-approved. David explicitly approved H2.10 on 19 September 2026 after
-confirming the locked Room Style options were working and the Sea Glass diagnostic unlock became
-available and persisted correctly.
+H2.0 through H2.10 are human-approved. David explicitly started H2.11 on 20 September 2026 and
+authorised PR #175 to merge and deploy to `main` without a further approval stop once the complete
+H2.11 technical gate is green.
 
-## H2.10 implementation
+## H2.11 candidate
 
-H2.10 provides:
+Implementation candidate `cc8e30620a3fe51d85d254b5d983d88ab71a1c18` consolidates the finished cottage:
 
-- save schema v7 with canonical `home.unlockedStyleIds` entitlement persistence;
-- a curated starter home-style set plus visible locked progression options;
-- migration grandfathering for any known style already selected by an existing schema-v6 save;
-- `CottageStyleEntitlementService` as the reusable grant/check owner for quest, reward, shop, system
-  and diagnostic callers;
-- `HOME_STYLE_UNLOCKED` as the reusable unlock event;
-- entitlement enforcement in `CottageStyleService` so locked options cannot be newly persisted;
-- locked-state presentation in the Room Style flow without embedding quest/shop rules in the UI;
-- a diagnostics-only H2.10 simulation hook using the same production grant service;
-- unit/browser coverage for starter-vs-unlockable state, persistent grants and locked-to-unlocked
-  application.
+- removes the retired `CottageDepthWorldManager` and its duplicate global polling/interaction path;
+- publishes cottage sleep, exit, Wonderbook, treasure, tactile home objects, visitors and decoration
+  targets through the shared interaction registry/coordinator;
+- preserves direct tap/click decoration spots with one canonical hit surface per slot;
+- makes cottage decoration markers, treasure presentation and visiting-friend idles respect Reduced Motion;
+- adds portrait touch companion controls to Decorate and Room Style using the established responsive UI;
+- splits the historically long tablet creator/exploration/Book/accessibility browser journey into bounded
+  regression contracts;
+- adds focused H2.11 browser coverage for the consolidated interaction route, Reduced Motion and portrait
+  cottage editing.
+
+No save-schema, progression, race-balance, quest, reward or story-authority changes are intended.
 
 ## Current gate
 
-The H2.10 human gate is complete and approved.
+Exact-head H2.11 qualification is pending on the branch update. The required gate is:
 
-Exact-head CI qualification is still allowed to finish independently; any remaining failures should be
-treated as technical qualification work and must not erase the recorded human approval unless they
-expose an H2.10 product regression.
+1. verification plan and static/architecture policy;
+2. complete unit suite;
+3. production build, static smoke and performance budget;
+4. focused H2.11 browser contracts;
+5. all full Chromium shards;
+6. Chromium/Firefox/WebKit compatibility;
+7. exact-head Cloudflare branch deployment.
 
-## Next work
+A genuine H2.11-owned regression must be repaired before merge. Pre-existing or flaky failures must be
+reproduced and diagnosed rather than hidden by weakening coverage.
 
-1. Finish exact-head H2.10 technical qualification and repair only genuine regressions.
-2. Do not start H2.11 until David explicitly requests it.
-3. When requested, begin `R6.5-WP19H2.11 - Responsive Polish, Consolidation & Hardening`.
+## Merge and deployment
 
-## Merge gate
-
-PR #175 remains draft and unmerged. Production is unchanged. The complete H2 package must still reach
-H2.11 and pass David's final whole-cottage playtest before merge.
+PR #175 remains draft and unmerged until the full H2.11 gate is green. Once green, David has already
+authorised marking the PR ready, merging to `main`, monitoring the production deployment and verifying
+the deployed main build without another approval checkpoint.
