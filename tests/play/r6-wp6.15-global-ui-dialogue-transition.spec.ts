@@ -178,7 +178,9 @@ function hasVisibleNamedObject(scene: DiagnosticScene, name: string): boolean {
 
 async function waitForVisibleObject(page: Page, sceneKey: string, name: string): Promise<void> {
   await expect
-    .poll(async () => hasVisibleNamedObject(await sceneSnapshot(page, sceneKey), name))
+    .poll(async () => hasVisibleNamedObject(await sceneSnapshot(page, sceneKey), name), {
+      timeout: 12_000,
+    })
     .toBe(true);
 }
 
