@@ -2,36 +2,27 @@
 
 Last updated: 2026-09-20
 
-## Current state
+## Current work
 
-R6.5-WP19H2 – Moonflower Cottage & Home Customisation is complete and deployed to production.
+`R6.5-WP19H3 - Sunbeam Village Final Polish` is selected and is currently at **Stage 1: Feedback / human analysis**.
 
-H2.0 through H2.11 are complete. The final H2.11 exact-head candidate `35a0d60e0b05a80520e3105456f72434253abc47` passed the complete qualification matrix in CI run `35513888198`, including static/architecture policy, unit contracts, production build/static smoke/performance, all three full Chromium shards and Chromium/Firefox/WebKit compatibility.
+David selected Sunbeam Village as the next area after completion of H2 on 20 September 2026. The current activity is intentionally human-led review only: record observations, screenshots, bugs, visual issues, missing content, ideas and improvement requests faithfully.
 
-PR #175 was merged to `main` as `e63be2f14290dbce394baf4c8e0a98f078f4e1bf` after that green gate. Cloudflare successfully deployed the merged H2 production build on 20 September 2026.
+Do **not** begin implementation, assistant analysis or the H3 remediation plan until David explicitly indicates that the Sunbeam Village feedback pass is ready to move on.
 
-## Post-merge verification
+## Completed area-polish packages
 
-A subsequent main-branch browser run exposed a stale supporting-resident dialogue contract unrelated to H2 runtime behaviour. The test was corrected to isolate Juniper from Pip's first-arrival flow and activate Juniper through the visible shared interaction prompt. The targeted verification for that fix passed and PR #177 was merged as `902f1447ecd82cc5f70e7ea8e9288b547215f683`.
+- H1 - Moonflower Glade Final Polish: complete and human-approved.
+- H2 - Moonflower Cottage & Home Customisation: complete, fully qualified, merged and deployed to production.
+- H3 - Sunbeam Village Final Polish: Stage 1 feedback active.
 
-No unfinished H2 gameplay, persistence, responsive, accessibility or cottage-integration scope remains.
+## H3 process
 
-## H2 delivered state
+H3 follows the established four-stage area-polish contract:
 
-The production cottage now preserves the approved H2 architecture and behaviour:
+1. Feedback / human analysis.
+2. Assistant analysis of the complete feedback and relevant systems.
+3. Reviewed remediation/expansion plan.
+4. Implementation in bounded reviewable checkpoints, followed by integrated qualification and final human acceptance.
 
-- canonical semantic room/story/visitor anchors;
-- production room shell, furniture, collision and Y-aware layering;
-- bed/sleep flow integrated with the shared atmospheric time service;
-- clean normal play plus dedicated Decorate mode;
-- persistent wall, wallpaper, floor and furniture styling;
-- starter and unlockable home-style entitlements;
-- place / replace / move / remove decoration flows with persistence;
-- strange egg and future story/portal capacity bound to semantic anchors;
-- consolidated shared interaction ownership with obsolete cottage-specific paths removed;
-- responsive desktop/tablet/phone controls and Reduced Motion behaviour;
-- final automated browser, cross-browser and performance qualification.
-
-## Next work
-
-There is no active work package recorded after H2. Start the next package only when explicitly selected.
+Sunbeam Village is the review lens, not a technical boundary. Shared issues discovered during review must later be fixed at their canonical shared owner rather than through village-specific workarounds.
