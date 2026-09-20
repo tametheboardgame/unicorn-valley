@@ -53,11 +53,17 @@ six-second visibility wait under shard load.
 Checkpoint `90e161c8795cab5b6496989d3edf9cd0db57e5d3` preserves the accepted runtime and repairs only those
 contracts: WP18I now expects the canonical `Go inside` wording, the H2.6 flow uses the named
 Decorate/Done control, and the resident portrait retains its exact identity assertions with a bounded
-15-second presentation wait. The entry contract passed locally, and the portrait contract passed five
+12-second presentation wait. The entry contract passed locally, and the portrait contract passed five
 consecutive runs. The full H2.6 journey reaches the remediated assertion locally but remains slower than
 its historical timeout under this container's software renderer; exact-head CI remains authoritative.
-`npm run validate` passes with 552 unit tests and the hard performance budget. Exact-head CI and
-Cloudflare deployment are pending publication of the durable checkpoint.
+`npm run validate` passes with 552 unit tests and the hard performance budget. Runs `35510317417`
+and `35510411086` then passed every gate except Chromium shard 3/3. Local reproduction showed that the
+named Done control itself is correct, but restarting `CottageInteriorScene` directly from itself leaves
+the diagnostic pointer journey in a synthetic lifecycle that real editor return never uses. Checkpoint
+`bd6770d37d8d73f5167ebc354159425e019b2349` routes that regression through `MoonflowerGladeScene`
+before the editor-return start, preserving the exact contract while exercising a genuine scene
+shutdown/start. The complete H2.6 contract passes locally with the container timing override; exact-head
+CI and Cloudflare deployment are pending publication of this checkpoint.
 
 ## Current gate
 
