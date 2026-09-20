@@ -9,7 +9,7 @@ export const PIP_EGG_CLUE_DISCOVERY_IDS = [
 export const PIP_STRANGE_EGG_DISCOVERY_ID = 'discovery:pip-strange-egg' as const;
 export const PIP_STRANGE_EGG_FOUND_FLAG = 'flag:pip-strange-egg-found' as const;
 export const PIP_EGG_HATCH_READY_FLAG = 'flag:pip-strange-egg-hatch-ready' as const;
-export const LUMA_COMPANION_HATCHED_FLAG = 'flag:companion-luma-hatched' as const;
+export { LUMA_COMPANION_HATCHED_FLAG } from '../game/home/CottageStoryFlags';
 export const LUMA_CHARACTER_ID = 'character:luma' as const;
 
 export const R4_EGG_CHARACTERS = [

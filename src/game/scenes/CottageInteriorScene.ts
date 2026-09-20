@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { LUMA_COMPANION_HATCHED_FLAG } from '../../content/r4EggArc';
+import { LUMA_COMPANION_HATCHED_FLAG } from '../home/CottageStoryFlags';
 import { isReducedMotionEnabled } from '../accessibility/AccessibilitySettings';
 import { getBrowserAtmosphericTimeService } from '../atmosphere/AtmosphericTimeService';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
