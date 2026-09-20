@@ -407,7 +407,18 @@ test('target-tablet accessibility settings persist and Reduced Motion freezes am
   );
   expect(stored).toEqual({ reducedMotion: true, highVisibilityInteractions: true });
 
-  await logicalTapNamedObject(page, 'SettingsScene', 'settings-done');
+  // This contract launches Settings directly through diagnostics, so there is no paused
+  // return scene for SettingsScene to resume. Start the Glade explicitly here: navigation
+  // back from normally launched Settings is covered separately, while this bounded contract
+  // owns persistence plus the Reduced Motion world behaviour.
+  await page.evaluate(() => {
+    const diagnosticWindow = window as typeof window & {
+      __UNICORN_VALLEY_DIAGNOSTICS__?: {
+        startScene(sceneKey: string, data?: object): void;
+      };
+    };
+    diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__?.startScene('MoonflowerGladeScene');
+  });
   await waitForScene(page, 'MoonflowerGladeScene');
 
   let snapshot = await getSnapshot(page);
