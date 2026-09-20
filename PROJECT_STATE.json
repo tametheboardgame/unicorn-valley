@@ -10,9 +10,9 @@
   "autonomy_state": "amber",
   "agent_state": "active",
   "branch": "agent/r6.5-wp19h2-moonflower-cottage",
-  "latest_commit": "bd6770d37d8d73f5167ebc354159425e019b2349",
-  "ci_state": "running",
-  "technical_validation_state": "running",
+  "latest_commit": "0a8a1d631a4501e0ed81c897830984b912beea18",
+  "ci_state": "passing",
+  "technical_validation_state": "passing",
   "human_acceptance_state": "accepted",
   "next_work_package": null,
   "next_work_package_path": null,
@@ -21,6 +21,6 @@
   "night_shift_state": "not_configured",
   "chat_disposition": "keep",
   "delivery_mode": "pr_required",
-  "last_activity_at": "2026-09-20T13:55:00+01:00",
-  "updated_at": "2026-09-20T13:55:00+01:00"
+  "last_activity_at": "2026-09-20T14:20:00+01:00",
+  "updated_at": "2026-09-20T14:20:00+01:00"
 }
