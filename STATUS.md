@@ -88,6 +88,10 @@ reproduced and diagnosed rather than hidden by weakening coverage.
 
 ## Merge and deployment
 
-PR #175 remains draft and unmerged until the full H2.11 gate is green. Once green, David has already
-authorised marking the PR ready, merging to `main`, monitoring the production deployment and verifying
-the deployed main build without another approval checkpoint.
+PR #175 merged as main `e63be2f14290dbce394baf4c8e0a98f078f4e1bf` after exact-head run `35513888198`
+passed every required gate at `35a0d60e0b05a80520e3105456f72434253abc47`. Cloudflare Pages reports the
+merge SHA deployed successfully to production. The supported startup/save/reload/Continue smoke could
+not be dispatched because the available GitHub token lacks workflow-dispatch permission, and direct
+browser verification from this container is blocked by its outbound proxy (`ERR_TUNNEL_CONNECTION_FAILED`).
+Production verification therefore remains explicit and incomplete rather than being inferred from the
+successful deployment check.
