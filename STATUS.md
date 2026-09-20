@@ -67,11 +67,13 @@ CI and Cloudflare deployment are pending publication of this checkpoint.
 
 ## Current gate
 
-Exact-head run `35511897395` passed the complete H2.11 gate at
-`0a8a1d631a4501e0ed81c897830984b912beea18`: verification planning, static/architecture, all 552 unit
-contracts, production build, static smoke, hard performance budget, Chromium shards 1/3–3/3,
-Chromium/Firefox/WebKit compatibility and Cloudflare branch deployment are green. H2.11 is technically
-complete and its human acceptance is already authorised. The required gate is:
+Run `35511897395` passed the complete H2.11 gate at
+`0a8a1d631a4501e0ed81c897830984b912beea18`. The following status-only exact-head run `35512995118`
+again passed static, unit, build/performance, cross-browser and Chromium shard 3/3, but shard 1/3
+reproduced the supporting-resident portrait readiness timeout under aggregate load. Checkpoint
+`5475ce9a819d8d2d6339fc6212b79fbda9cb0759` keeps the exact portrait/fallback identity assertions and
+applies a bounded 20-second wait only to that async portrait presentation. Exact-head qualification is
+running; H2.11 remains unmerged until every gate passes together. The required gate is:
 
 1. verification plan and static/architecture policy;
 2. complete unit suite;
