@@ -43,8 +43,21 @@ Checkpoint `643eb4eb09fb2c0c077e77c9c1226bc5a030f2bb` repairs the exact-head bro
   its final accepted state locally but exceeds its historical 45-second limit under this container’s
   software-rendered browser; exact-head CI remains authoritative for that timing contract.
 
-`npm run validate` passes (552 unit tests, build, static smoke and hard performance budget). Exact-head
-CI and Cloudflare deployment are pending after publication of this checkpoint.
+`npm run validate` passes (552 unit tests, build, static smoke and hard performance budget). Run `35508803762` against `ee565ad4d2d029e1e7fd5ac5e8bc98e8c881fe05` passed verification,
+static/architecture, unit, build/smoke/performance, Chromium shard 2/3, cross-browser compatibility
+and Cloudflare deployment. Its remaining failures were three browser-contract regressions: the WP18I
+cottage-entry expectation retained the superseded `Enter` wording; the H2.6 editor-return regression
+used a stale coordinate for Done; and the supporting-resident portrait occasionally exceeded its
+six-second visibility wait under shard load.
+
+Checkpoint `90e161c8795cab5b6496989d3edf9cd0db57e5d3` preserves the accepted runtime and repairs only those
+contracts: WP18I now expects the canonical `Go inside` wording, the H2.6 flow uses the named
+Decorate/Done control, and the resident portrait retains its exact identity assertions with a bounded
+15-second presentation wait. The entry contract passed locally, and the portrait contract passed five
+consecutive runs. The full H2.6 journey reaches the remediated assertion locally but remains slower than
+its historical timeout under this container's software renderer; exact-head CI remains authoritative.
+`npm run validate` passes with 552 unit tests and the hard performance budget. Exact-head CI and
+Cloudflare deployment are pending publication of the durable checkpoint.
 
 ## Current gate
 
