@@ -256,7 +256,7 @@ test('H2.6 styles four walls independently and persists every surface', async ({
       hasObject(await snapshot(page), 'CottageInteriorScene', 'touch-cottage-room-style'),
     )
     .toBe(true);
-  await tapScreen(page, 1200, 600);
+  await tapNamedObject(page, 'CottageInteriorScene', 'touch-movement-decorate');
   await expect
     .poll(async () =>
       hasObject(await snapshot(page), 'CottageInteriorScene', 'touch-cottage-room-style'),
