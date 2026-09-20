@@ -38,7 +38,7 @@ function isAutomaticInteraction(target: InteractionTarget): boolean {
 
 function getPrimaryActionPresentation(target: InteractionTarget): PrimaryActionPresentation {
   const presentation = ACTION_PRESENTATION[target.actionKind ?? 'interact'];
-  return target.actionLabel ? { ...presentation, label: target.actionLabel } : presentation;
+  return { ...presentation, label: target.actionLabel || presentation.label };
 }
 
 function formatInteractionLabel(target: InteractionTarget): string {

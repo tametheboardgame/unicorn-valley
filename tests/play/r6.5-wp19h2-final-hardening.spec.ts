@@ -76,24 +76,6 @@ async function setPlayerPosition(page: Page, x: number, y: number): Promise<void
   );
 }
 
-async function tapNamedCanvasObject(
-  page: Page,
-  sceneKey: string,
-  objectName: string,
-): Promise<void> {
-  const value = await snapshot(page);
-  const object = scene(value, sceneKey).objects.find(
-    (candidate) => candidate.name === objectName && candidate.visible && candidate.interactive,
-  );
-  if (!object) throw new Error(`Missing interactive ${objectName}`);
-  const canvas = await page.locator('canvas').boundingBox();
-  if (!canvas) throw new Error('Canvas bounds unavailable');
-  await page.touchscreen.tap(
-    canvas.x + (object.x / value.width) * canvas.width,
-    canvas.y + (object.y / value.height) * canvas.height,
-  );
-}
-
 test('H2.11 retires the legacy cottage depth owner and uses the shared interaction route', async ({
   page,
 }) => {
@@ -122,7 +104,7 @@ test('H2.11 retires the legacy cottage depth owner and uses the shared interacti
     .poll(
       async () =>
         scene(await snapshot(page), 'CottageInteriorScene').objects.find(
-          ({ name, visible }) => name === 'wp19d-interaction-feedback' && visible,
+          ({ name, visible }) => name === 'world-feedback-reaction-text' && visible,
         )?.text,
     )
     .toContain('Cosy sofa');
@@ -199,9 +181,9 @@ test.describe('H2.11 portrait cottage editors', () => {
       .poll(async () => (await snapshot(page)).activeScenes)
       .toEqual(['CottageInteriorScene']);
 
-    const roomStyleButton = page.locator('.mobile-touch-style');
-    await expect(roomStyleButton).toBeVisible();
-    await roomStyleButton.click();
+    const roomStyle = page.getByRole('button', { name: 'Room style' });
+    await expect(roomStyle).toBeVisible();
+    await roomStyle.click();
 
     const style = page.locator('[data-mobile-modal-companion="cottage-style"]');
     await expect(style).toBeVisible();

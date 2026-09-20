@@ -808,7 +808,11 @@ export class SettingsScene extends Phaser.Scene {
     if (this.closing) return;
     this.closing = true;
     this.audio.playSfx('ui-back');
-    if (this.scene.isPaused(this.returnScene)) this.scene.resume(this.returnScene);
+    if (this.scene.isPaused(this.returnScene)) {
+      this.scene.resume(this.returnScene);
+    } else if (!this.scene.isActive(this.returnScene)) {
+      this.scene.start(this.returnScene);
+    }
     this.scene.stop();
   }
 }
