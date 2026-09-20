@@ -199,15 +199,9 @@ test.describe('H2.11 portrait cottage editors', () => {
       .poll(async () => (await snapshot(page)).activeScenes)
       .toEqual(['CottageInteriorScene']);
 
-    await expect
-      .poll(async () =>
-        scene(await snapshot(page), 'CottageInteriorScene').objects.some(
-          ({ name, visible, interactive }) =>
-            name === 'touch-cottage-room-style' && visible && interactive,
-        ),
-      )
-      .toBe(true);
-    await tapNamedCanvasObject(page, 'CottageInteriorScene', 'touch-cottage-room-style');
+    const roomStyleButton = page.locator('.mobile-touch-style');
+    await expect(roomStyleButton).toBeVisible();
+    await roomStyleButton.click();
 
     const style = page.locator('[data-mobile-modal-companion="cottage-style"]');
     await expect(style).toBeVisible();
