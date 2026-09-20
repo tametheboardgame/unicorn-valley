@@ -28,6 +28,24 @@ Implementation candidate `cc8e30620a3fe51d85d254b5d983d88ab71a1c18` consolidates
 
 No save-schema, progression, race-balance, quest, reward or story-authority changes are intended.
 
+## H2.11 CI remediation
+
+Checkpoint `643eb4eb09fb2c0c077e77c9c1226bc5a030f2bb` repairs the exact-head browser failures from run
+`35506640200` without restoring a cottage-specific interaction owner:
+
+- cottage targets are published during scene creation and shared prompts now render each target’s
+  canonical action label;
+- ordinary cottage reactions route directly through `WorldFeedbackPresenter` rather than a transient
+  legacy banner that diagnostics could miss;
+- the portrait contract uses the established DOM Room Style control;
+- a directly opened Settings scene now starts its requested return scene when Done is selected;
+- focused H2.11, sleep and Reduced Motion/accessibility contracts pass locally. The H2.5 flow reaches
+  its final accepted state locally but exceeds its historical 45-second limit under this container’s
+  software-rendered browser; exact-head CI remains authoritative for that timing contract.
+
+`npm run validate` passes (552 unit tests, build, static smoke and hard performance budget). Exact-head
+CI and Cloudflare deployment are pending after publication of this checkpoint.
+
 ## Current gate
 
 Exact-head H2.11 qualification is pending on the branch update. The required gate is:
