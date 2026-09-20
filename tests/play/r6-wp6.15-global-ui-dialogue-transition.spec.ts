@@ -318,7 +318,7 @@ test('ordinary Pip conversation stays in-world, stable and explicitly paced', as
 test('supporting resident uses the shared dialogue family with production portrait identity', async ({
   page,
 }) => {
-  await page.addInitScript(() => window.localStorage.clear());
+  await seedPipReady(page);
   await page.goto('/?diagnostics=1');
   await waitForDiagnostics(page);
   await startScene(page, 'MoonflowerGladeScene');
@@ -333,7 +333,12 @@ test('supporting resident uses the shared dialogue family with production portra
   const resident = namedObject(scene, 'supporting-resident:resident:juniper');
   await positionPlayer(page, 'MoonflowerGladeScene', resident.x + 84, resident.y);
   await waitForTalkTarget(page, 'MoonflowerGladeScene', 'Juniper');
-  await page.keyboard.press('KeyE');
+  const talkPrompt = namedObject(
+    await sceneSnapshot(page, 'MoonflowerGladeScene'),
+    'exploration-interaction-prompt',
+  );
+  expect(talkPrompt.interactive).toBe(true);
+  await page.mouse.click(talkPrompt.x, talkPrompt.y);
   await waitForVisibleObject(page, 'MoonflowerGladeScene', 'dialogue-production-panel');
   await waitForVisibleObject(
     page,
