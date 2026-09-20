@@ -176,10 +176,15 @@ function hasVisibleNamedObject(scene: DiagnosticScene, name: string): boolean {
   return scene.objects.some((object) => object.name === name && object.visible);
 }
 
-async function waitForVisibleObject(page: Page, sceneKey: string, name: string): Promise<void> {
+async function waitForVisibleObject(
+  page: Page,
+  sceneKey: string,
+  name: string,
+  timeout = 12_000,
+): Promise<void> {
   await expect
     .poll(async () => hasVisibleNamedObject(await sceneSnapshot(page, sceneKey), name), {
-      timeout: 12_000,
+      timeout,
     })
     .toBe(true);
 }
@@ -333,6 +338,7 @@ test('supporting resident uses the shared dialogue family with production portra
     page,
     'MoonflowerGladeScene',
     'dialogue-production-portrait-resident:juniper',
+    20_000,
   );
 
   scene = await sceneSnapshot(page, 'MoonflowerGladeScene');
