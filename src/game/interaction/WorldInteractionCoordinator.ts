@@ -290,7 +290,9 @@ export class WorldInteractionCoordinator {
         zone = state.scene.add
           .zone(zoneX, zoneY, area?.width ?? 126, area?.height ?? 126)
           .setName(area?.name ?? `interaction-direct-zone:${target.id}`)
-          .setDepth(117)
+          // World hit zones must remain below fixed HUD controls. Equal-depth zones are created
+          // after the HUD and can otherwise steal taps from controls such as Cottage Done.
+          .setDepth(108)
           .setInteractive({ useHandCursor: true });
         zone.on('pointerdown', () => {
           state.preferredTargetId = target.id;
