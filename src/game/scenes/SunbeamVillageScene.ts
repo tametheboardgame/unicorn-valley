@@ -327,10 +327,9 @@ export class SunbeamVillageScene extends Phaser.Scene {
       .rectangle(map.width / 2, map.height / 2 + 120, map.width, 1220, 0xa9da92, 0.92)
       .setName('sunbeam-composition:grass');
 
-    // H3.2 establishes the village's district-scale composition. A single scene-owned path
-    // scaffold keeps the layout legible; H3.3 will replace its geometry and finish, not its owner.
     this.createDistrictGrounding();
-    this.createPathScaffold();
+    this.createPlaza();
+    this.createPathNetwork();
 
     const bakery = layout.buildings.bakery;
     this.createBuilding(
@@ -404,11 +403,43 @@ export class SunbeamVillageScene extends Phaser.Scene {
     }
   }
 
-  private createPathScaffold(): void {
+  private createPlaza(): void {
+    const { centre, width, height } = SUNBEAM_VILLAGE_LAYOUT.plaza;
+    const graphics = this.add
+      .graphics()
+      .setName('sunbeam-composition:plaza')
+      .setDepth(SUNBEAM_VILLAGE_LAYERS.plaza);
+
+    graphics.fillStyle(0xe4cc96, 0.92);
+    graphics.fillEllipse(centre.x, centre.y, width, height);
+    graphics.fillStyle(0xecd8aa, 0.74);
+    graphics.fillEllipse(centre.x - 105, centre.y + 18, width * 0.64, height * 0.72);
+    graphics.fillEllipse(centre.x + 118, centre.y - 14, width * 0.58, height * 0.68);
+
+    graphics.lineStyle(18, 0xf2e3be, 0.88);
+    graphics.strokeEllipse(centre.x, centre.y, 360, 270);
+
+    graphics.fillStyle(0xd2b980, 0.68);
+    for (const [x, y, stoneWidth, stoneHeight] of [
+      [centre.x - 250, centre.y - 44, 54, 28],
+      [centre.x - 205, centre.y + 126, 62, 30],
+      [centre.x - 78, centre.y + 184, 48, 26],
+      [centre.x + 92, centre.y + 178, 58, 28],
+      [centre.x + 226, centre.y + 112, 50, 26],
+      [centre.x + 270, centre.y - 32, 58, 28],
+      [centre.x + 188, centre.y - 154, 54, 26],
+      [centre.x - 176, centre.y - 148, 52, 28],
+    ] as const) {
+      graphics.fillEllipse(x, y, stoneWidth, stoneHeight);
+    }
+  }
+
+  private createPathNetwork(): void {
     const graphics = this.add
       .graphics()
       .setName('sunbeam-composition:path')
       .setDepth(SUNBEAM_VILLAGE_LAYERS.path);
+
     const drawStroke = (
       points: readonly { x: number; y: number }[],
       width: number,
@@ -419,6 +450,7 @@ export class SunbeamVillageScene extends Phaser.Scene {
       if (!first) {
         return;
       }
+
       graphics.lineStyle(width, colour, alpha);
       graphics.beginPath();
       graphics.moveTo(first.x, first.y);
@@ -426,20 +458,35 @@ export class SunbeamVillageScene extends Phaser.Scene {
         graphics.lineTo(point.x, point.y);
       }
       graphics.strokePath();
+
       graphics.fillStyle(colour, alpha);
       for (const point of points) {
         graphics.fillCircle(point.x, point.y, width / 2);
       }
     };
 
-    const { main, shopBranches } = SUNBEAM_VILLAGE_LAYOUT.pathScaffold;
-    drawStroke(main, 126, 0xd8bd86, 0.98);
-    for (const branch of shopBranches) {
-      drawStroke(branch, 78, 0xd8bd86, 0.98);
+    const {
+      mainRoute,
+      shopBranches,
+      fountainBranch,
+      willowBranch,
+      residentialBranch,
+    } = SUNBEAM_VILLAGE_LAYOUT.pathNetwork;
+    const branches = [
+      ...shopBranches,
+      fountainBranch,
+      willowBranch,
+      residentialBranch,
+    ] as const;
+
+    drawStroke(mainRoute, 126, 0xd2b680, 0.98);
+    for (const branch of branches) {
+      drawStroke(branch, 76, 0xd2b680, 0.98);
     }
-    drawStroke(main, 96, 0xf5e6bd, 1);
-    for (const branch of shopBranches) {
-      drawStroke(branch, 58, 0xf5e6bd, 1);
+
+    drawStroke(mainRoute, 94, 0xf4e4ba, 1);
+    for (const branch of branches) {
+      drawStroke(branch, 54, 0xf4e4ba, 1);
     }
   }
 
