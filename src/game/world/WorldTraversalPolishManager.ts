@@ -97,7 +97,6 @@ function hideLegacyGatewayObjects(scene: Phaser.Scene): void {
       continue;
     }
 
-
     if (key === 'RainbowMeadowScene' && object instanceof Phaser.GameObjects.Rectangle) {
       const gateRectangle =
         Math.abs(object.x - 125) < 3 &&
