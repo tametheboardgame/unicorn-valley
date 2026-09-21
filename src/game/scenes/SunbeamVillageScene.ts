@@ -405,19 +405,23 @@ export class SunbeamVillageScene extends Phaser.Scene {
   }
 
   private createPathScaffold(): void {
+    const graphics = this.add
+      .graphics()
+      .setName('sunbeam-composition:path')
+      .setDepth(SUNBEAM_VILLAGE_LAYERS.path);
     const drawStroke = (
       points: readonly { x: number; y: number }[],
       width: number,
       colour: number,
       alpha: number,
     ): void => {
-      const graphics = this.add
-        .graphics()
-        .setName('sunbeam-composition:path')
-        .setDepth(SUNBEAM_VILLAGE_LAYERS.path);
+      const first = points[0];
+      if (!first) {
+        return;
+      }
       graphics.lineStyle(width, colour, alpha);
       graphics.beginPath();
-      graphics.moveTo(points[0].x, points[0].y);
+      graphics.moveTo(first.x, first.y);
       for (const point of points.slice(1)) {
         graphics.lineTo(point.x, point.y);
       }
@@ -430,9 +434,11 @@ export class SunbeamVillageScene extends Phaser.Scene {
 
     const { main, shopBranches } = SUNBEAM_VILLAGE_LAYOUT.pathScaffold;
     drawStroke(main, 126, 0xd8bd86, 0.98);
-    drawStroke(main, 96, 0xf5e6bd, 1);
     for (const branch of shopBranches) {
       drawStroke(branch, 78, 0xd8bd86, 0.98);
+    }
+    drawStroke(main, 96, 0xf5e6bd, 1);
+    for (const branch of shopBranches) {
       drawStroke(branch, 58, 0xf5e6bd, 1);
     }
   }
@@ -566,21 +572,23 @@ export class SunbeamVillageScene extends Phaser.Scene {
 
   private createFountain(): void {
     const { x, y } = SUNBEAM_VILLAGE_LAYOUT.fountain;
+    const objects: Phaser.GameObjects.GameObject[] = [
+      this.add.circle(0, 0, 110, 0x8fb9c5, 1),
+      this.add.circle(0, 0, 86, 0x9fe6ed, 1),
+      this.add.circle(0, 0, 38, 0xffdc77, 1),
+      this.add
+        .text(0, 0, '☀', {
+          color: '#fff5c4',
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '38px',
+          fontStyle: 'bold',
+        })
+        .setOrigin(0.5),
+    ];
     this.add
-      .circle(x, y, 110, 0x8fb9c5, 1)
+      .container(x, y, objects)
       .setName('sunbeam-fountain:basin')
-      .setDepth(7);
-    this.add.circle(x, y, 86, 0x9fe6ed, 1).setDepth(8);
-    this.add.circle(x, y, 38, 0xffdc77, 1).setDepth(9);
-    this.add
-      .text(x, y, '☀', {
-        color: '#fff5c4',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '38px',
-        fontStyle: 'bold',
-      })
-      .setOrigin(0.5)
-      .setDepth(SUNBEAM_VILLAGE_LAYERS.gateway);
+      .setDepth(SUNBEAM_VILLAGE_LAYERS.structureDetail);
   }
 
   private createNpcLabels(): void {
@@ -603,69 +611,85 @@ export class SunbeamVillageScene extends Phaser.Scene {
   private createWillowGarden(): void {
     const planted = isWillowGardenPlanted(getBrowserSaveService().load());
     const { x, y } = SUNBEAM_VILLAGE_LAYOUT.willowGarden;
-    this.add
-      .ellipse(x, y, 310, 145, planted ? 0x8a694d : 0x9b7758, 0.95)
-      .setStrokeStyle(5, 0x6e8e57, 0.75)
-      .setDepth(SUNBEAM_VILLAGE_LAYERS.groundDetail);
+    const objects: Phaser.GameObjects.GameObject[] = [
+      this.add
+        .ellipse(0, 0, 310, 145, planted ? 0x8a694d : 0x9b7758, 0.95)
+        .setStrokeStyle(5, 0x6e8e57, 0.75),
+    ];
 
     if (planted) {
-      const positions = [-105, -52, 0, 52, 105];
-      for (const offset of positions) {
-        this.add.circle(x + offset, y - 18, 28, 0xffefab, 0.18).setDepth(6);
-        this.add
-          .text(x + offset, y - 20, '🌙', {
-            fontFamily: 'system-ui, sans-serif',
-            fontSize: '34px',
-          })
-          .setOrigin(0.5)
-          .setDepth(7);
+      for (const offset of [-105, -52, 0, 52, 105]) {
+        objects.push(
+          this.add.circle(offset, -18, 28, 0xffefab, 0.18),
+          this.add
+            .text(offset, -20, '🌙', {
+              fontFamily: 'system-ui, sans-serif',
+              fontSize: '34px',
+            })
+            .setOrigin(0.5),
+        );
       }
     } else {
       for (const offset of [-75, 0, 75]) {
-        this.add.rectangle(x + offset, y - 9, 5, 30, 0x6d985f, 0.85).setDepth(6);
-        this.add.circle(x + offset, y - 27, 8, 0x94b971, 0.9).setDepth(7);
+        objects.push(
+          this.add.rectangle(offset, -9, 5, 30, 0x6d985f, 0.85),
+          this.add.circle(offset, -27, 8, 0x94b971, 0.9),
+        );
       }
     }
 
+    objects.push(
+      this.add
+        .text(0, 92, planted ? "Willow's Moonflowers" : "Willow's garden", {
+          color: '#5d4c5e',
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '17px',
+          fontStyle: 'bold',
+          backgroundColor: '#fff8dfcc',
+          padding: { x: 8, y: 5 },
+        })
+        .setOrigin(0.5),
+    );
+
     this.add
-      .text(x, y + 92, planted ? "Willow's Moonflowers" : "Willow's garden", {
-        color: '#5d4c5e',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '17px',
-        fontStyle: 'bold',
-        backgroundColor: '#fff8dfcc',
-        padding: { x: 8, y: 5 },
-      })
-      .setOrigin(0.5)
-      .setDepth(8);
+      .container(x, y, objects)
+      .setName('sunbeam-composition:willow-garden')
+      .setDepth(SUNBEAM_VILLAGE_LAYERS.groundDetail);
   }
 
   private createEntrances(): void {
     const west = SUNBEAM_VILLAGE_LAYOUT.entrances.moonflowerGlade.position;
     const east = SUNBEAM_VILLAGE_LAYOUT.entrances.rainbowMeadow.position;
-    this.add.rectangle(west.x + 5, west.y, 110, 370, 0x74a56d, 0.9).setDepth(5);
-    this.add.rectangle(east.x - 5, east.y, 110, 370, 0x74a56d, 0.9).setDepth(5);
-    this.add
-      .text(205, 805, '← Moonflower Glade', {
-        color: '#59485f',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '20px',
-        fontStyle: 'bold',
-        backgroundColor: '#fff7dedd',
-        padding: { x: 10, y: 6 },
-      })
-      .setDepth(10);
-    this.add
-      .text(2740, 805, 'Rainbow Meadow →', {
-        color: '#59485f',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '20px',
-        fontStyle: 'bold',
-        backgroundColor: '#fff7dedd',
-        padding: { x: 10, y: 6 },
-      })
-      .setOrigin(1, 0)
-      .setDepth(10);
+
+    const createGate = (
+      id: string,
+      x: number,
+      y: number,
+      label: string,
+      labelX: number,
+      labelOriginX: number,
+    ): void => {
+      const gate = this.add
+        .rectangle(0, 0, 110, 370, 0x74a56d, 0.9)
+        .setStrokeStyle(4, 0x5f8f5c, 0.72);
+      const sign = this.add
+        .text(labelX, -145, label, {
+          color: '#59485f',
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '20px',
+          fontStyle: 'bold',
+          backgroundColor: '#fff7dedd',
+          padding: { x: 10, y: 6 },
+        })
+        .setOrigin(labelOriginX, 0);
+      this.add
+        .container(x, y, [gate, sign])
+        .setName(`sunbeam-composition:gateway:${id}`)
+        .setDepth(SUNBEAM_VILLAGE_LAYERS.gateway);
+    };
+
+    createGate('moonflower-glade', west.x + 5, west.y, '← Moonflower Glade', 80, 0);
+    createGate('rainbow-meadow', east.x - 5, east.y, 'Rainbow Meadow →', -135, 1);
   }
 
   private createFlowers(): void {
