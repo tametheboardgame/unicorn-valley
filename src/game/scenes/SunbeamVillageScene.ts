@@ -965,3 +965,82 @@ export class SunbeamVillageScene extends Phaser.Scene {
     createGate('moonflower-glade', west.x + 5, west.y, 'MOONFLOWER GLADE', 'west');
     createGate('rainbow-meadow', east.x - 5, east.y, 'RAINBOW MEADOW', 'east');
   }
+
+  private createFlowers(): void {
+    // Keep the H3.2 movement corridors and shop approaches clear. These are edge accents only;
+    // H3.8 will own the final authored flower-box and village-prop composition.
+    const flowerPositions = [
+      [420, 1160],
+      [890, 1120],
+      [2510, 1110],
+      [2640, 1260],
+      [390, 1580],
+      [950, 1660],
+      [2020, 1630],
+      [2530, 1540],
+    ] as const;
+    for (const [x, y] of flowerPositions) {
+      this.add.circle(x, y, 18, 0xffa6c8, 0.95).setDepth(4);
+      this.add.circle(x + 18, y + 5, 12, 0xffe47f, 0.95).setDepth(4);
+      this.add.circle(x - 15, y + 7, 11, 0xc8a7e8, 0.95).setDepth(4);
+    }
+  }
+
+  private createCollisionMap(): Phaser.Physics.Arcade.StaticGroup {
+    const collisionGroup = this.physics.add.staticGroup();
+
+    for (const collider of SUNBEAM_VILLAGE_MAP.colliders) {
+      const blocker = collisionGroup.create(
+        collider.x,
+        collider.y,
+        COLLISION_TEXTURE_KEY,
+      ) as Phaser.Physics.Arcade.Image;
+      blocker.setDisplaySize(collider.width, collider.height).setVisible(false).refreshBody();
+    }
+
+    return collisionGroup;
+  }
+
+  private ensureCollisionTexture(): void {
+    if (this.textures.exists(COLLISION_TEXTURE_KEY)) {
+      return;
+    }
+
+    const graphics = this.add.graphics();
+    graphics.fillStyle(0xffffff, 1);
+    graphics.fillRect(0, 0, 2, 2);
+    graphics.generateTexture(COLLISION_TEXTURE_KEY, 2, 2);
+    graphics.destroy();
+  }
+
+  private createHud(): void {
+    this.add
+      .text(GAME_WIDTH / 2, 24, 'Sunbeam Village', {
+        color: '#5f4756',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '27px',
+        fontStyle: 'bold',
+        backgroundColor: '#fff7dff2',
+        padding: { x: 18, y: 9 },
+      })
+      .setOrigin(0.5, 0)
+      .setScrollFactor(0)
+      .setDepth(SUNBEAM_VILLAGE_LAYERS.ui);
+
+    this.feedbackText = this.add
+      .text(GAME_WIDTH / 2, 120, '', {
+        color: '#5b455f',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '20px',
+        fontStyle: 'bold',
+        align: 'center',
+        wordWrap: { width: 760 },
+        backgroundColor: '#fff9e8ee',
+        padding: { x: 18, y: 12 },
+      })
+      .setOrigin(0.5, 0)
+      .setScrollFactor(0)
+      .setDepth(122)
+      .setVisible(false);
+  }
+}
