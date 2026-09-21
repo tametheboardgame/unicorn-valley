@@ -93,6 +93,10 @@ test('H3.2 composes Sunbeam around the canonical district layout', async ({ page
     expect(rightWindow?.y).toBeCloseTo(4, 0);
   }
 
-  expect(objects.some(({ name }) => name.startsWith('wp18f-world-experience:') && name.includes('village'))).toBe(false);
+  expect(
+    objects.some(
+      ({ name }) => name.startsWith('wp18f-world-experience:') && name.includes('village'),
+    ),
+  ).toBe(false);
   at('village-life:thread-window', 1305, 770);
 });
