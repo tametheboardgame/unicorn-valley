@@ -909,7 +909,9 @@ export class SunbeamVillageScene extends Phaser.Scene {
       .container(x, y, objects)
       .setName('sunbeam-composition:willow-garden')
       .setDepth(SUNBEAM_VILLAGE_LAYERS.groundDetail);
-  }  private createEntrances(): void {
+  }
+
+  private createEntrances(): void {
     const west = SUNBEAM_VILLAGE_LAYOUT.entrances.moonflowerGlade.position;
     const east = SUNBEAM_VILLAGE_LAYOUT.entrances.rainbowMeadow.position;
 
