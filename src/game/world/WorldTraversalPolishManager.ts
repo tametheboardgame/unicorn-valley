@@ -91,7 +91,7 @@ function hideLegacyGatewayObjects(scene: Phaser.Scene): void {
         object.text === '← Moonflower Glade' ||
         object.text === 'Rainbow Meadow →' ||
         object.text === '← Sunbeam Village';
-      if (isLegacyLabel) {
+      if (key !== 'SunbeamVillageScene' && isLegacyLabel) {
         object.setVisible(false);
       }
       continue;
