@@ -221,44 +221,8 @@ function decorateGlade(scene: Phaser.Scene): void {
 }
 
 function decorateVillage(scene: Phaser.Scene): void {
-  drawPathNetwork(scene, [
-    {
-      points: [
-        { x: 120, y: 950 },
-        { x: 760, y: 950 },
-        { x: 1500, y: 1050 },
-        { x: 2240, y: 950 },
-        { x: 2880, y: 950 },
-      ],
-      outerWidth: 140,
-      innerWidth: 116,
-    },
-    {
-      points: [
-        { x: 900, y: 710 },
-        { x: 900, y: 625 },
-      ],
-      outerWidth: 102,
-      innerWidth: 78,
-    },
-    {
-      points: [
-        { x: 1500, y: 690 },
-        { x: 1500, y: 585 },
-      ],
-      outerWidth: 102,
-      innerWidth: 78,
-    },
-    {
-      points: [
-        { x: 2110, y: 720 },
-        { x: 2110, y: 635 },
-      ],
-      outerWidth: 102,
-      innerWidth: 78,
-    },
-  ]);
-
+  // H3.1 retires the legacy village path network completely. H3.3 owns its replacement,
+  // so traversal polish must retain only the functional gateway presentation here.
   addGateway(scene, { x: 120, y: 950, label: 'Moonflower Glade', direction: 'west' });
   addGateway(scene, { x: 2880, y: 950, label: 'Rainbow Meadow', direction: 'east' });
 }
