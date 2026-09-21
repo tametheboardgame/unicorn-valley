@@ -97,16 +97,6 @@ function hideLegacyGatewayObjects(scene: Phaser.Scene): void {
       continue;
     }
 
-    if (key === 'SunbeamVillageScene' && object instanceof Phaser.GameObjects.Rectangle) {
-      const gateRectangle =
-        Math.abs(object.y - 950) < 3 &&
-        Math.abs(object.displayWidth - 110) < 3 &&
-        Math.abs(object.displayHeight - 370) < 3;
-      if (gateRectangle && (Math.abs(object.x - 125) < 3 || Math.abs(object.x - 2875) < 3)) {
-        object.setVisible(false);
-      }
-      continue;
-    }
 
     if (key === 'RainbowMeadowScene' && object instanceof Phaser.GameObjects.Rectangle) {
       const gateRectangle =
@@ -220,11 +210,9 @@ function decorateGlade(scene: Phaser.Scene): void {
   addGateway(scene, { x: 2680, y: 900, direction: 'east' });
 }
 
-function decorateVillage(scene: Phaser.Scene): void {
-  // H3.1 retires the legacy village path network completely. H3.3 owns its replacement,
-  // so traversal polish must retain only the functional gateway presentation here.
-  addGateway(scene, { x: 120, y: 950, label: 'Moonflower Glade', direction: 'west' });
-  addGateway(scene, { x: 2880, y: 950, label: 'Rainbow Meadow', direction: 'east' });
+function decorateVillage(_scene: Phaser.Scene): void {
+  // H3 owns all Sunbeam Village structural presentation, including gates and paths.
+  // This manager remains responsible only for functional transition detection.
 }
 
 function decorateMeadow(scene: Phaser.Scene): void {
