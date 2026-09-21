@@ -94,6 +94,14 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
     marigold: { x: 1080, y: 920 },
     pebble: { x: 2140, y: 1300 },
   },
+  villageLife: {
+    noticeBoard: { x: 1030, y: 1170 },
+    sundial: { x: 1260, y: 1370 },
+    bench: { x: 1850, y: 1080 },
+    storyMapSign: { x: 2520, y: 820 },
+    threadWindow: { x: 1260, y: 620 },
+    fountainSplash: { x: 1690, y: 1060 },
+  },
   entrances: {
     moonflowerGlade: {
       position: { x: 120, y: 950 },
