@@ -69,4 +69,16 @@ test('H3.2 composes Sunbeam around the canonical district layout', async ({ page
   at('village-shopfront:accessory-shop:wall', 1450, 430);
   at('village-shopfront:library:wall', 2260, 540);
   at('sunbeam-fountain:basin', 1500, 1060);
+
+  expect(objects.some(({ name }) => name === 'exploration-path-polish')).toBe(false);
+
+  const legacyBakeryWindows = objects.filter(
+    ({ type, x, y }) =>
+      type === 'Rectangle' &&
+      Math.abs(y - 474) <= 2 &&
+      (Math.abs(x - 774) <= 2 || Math.abs(x - 1026) <= 2),
+  );
+  expect(legacyBakeryWindows).toEqual([]);
+
+  at('village-life:thread-window', 1305, 770);
 });
