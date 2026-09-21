@@ -117,6 +117,17 @@ describe('Sunbeam Village map', () => {
     }
   });
 
+  it('keeps the H3.2 path scaffold tied to canonical entrances and shop approaches', () => {
+    const { main, shopBranches } = SUNBEAM_VILLAGE_LAYOUT.pathScaffold;
+    expect(main[0]).toEqual(SUNBEAM_VILLAGE_LAYOUT.entrances.moonflowerGlade.position);
+    expect(main.at(-1)).toEqual(SUNBEAM_VILLAGE_LAYOUT.entrances.rainbowMeadow.position);
+    expect(shopBranches.map((branch) => branch.at(-1))).toEqual([
+      SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.approach,
+      SUNBEAM_VILLAGE_LAYOUT.buildings.accessoryShop.approach,
+      SUNBEAM_VILLAGE_LAYOUT.buildings.library.approach,
+    ]);
+  });
+
   it('has unique stable IDs for landmarks, entrances and NPC markers', () => {
     const ids = [
       ...SUNBEAM_VILLAGE_MAP.landmarks.map((landmark) => landmark.id),
