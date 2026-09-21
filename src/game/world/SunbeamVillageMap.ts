@@ -1,4 +1,5 @@
 import type { CollisionRectangle, MapPoint } from './MapTraversal';
+import { SUNBEAM_VILLAGE_LAYOUT } from './SunbeamVillageLayout';
 import { setWorldArrivalFacing } from './WorldArrivalState';
 
 export const SUNBEAM_VILLAGE_LOCATION_ID = 'location:sunbeam-village';
@@ -47,66 +48,90 @@ export function resetSunbeamVillagePlayerSpawn(): void {
 }
 
 export const SUNBEAM_VILLAGE_MAP = {
-  width: 3000,
-  height: 1900,
-  margin: 90,
+  width: SUNBEAM_VILLAGE_LAYOUT.map.width,
+  height: SUNBEAM_VILLAGE_LAYOUT.map.height,
+  margin: SUNBEAM_VILLAGE_LAYOUT.map.margin,
   playerSpawn,
   landmarks: [
     {
       id: 'bakery',
       label: 'Sunbeam Bakery',
       icon: '🥐',
-      position: { x: 900, y: 470 },
-      approach: { x: 900, y: 710 },
+      position: { x: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.x, y: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.y },
+      approach: { ...SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.approach },
     },
     {
       id: 'accessory-shop',
       label: 'Twinkle & Thread',
       icon: '🎀',
-      position: { x: 1500, y: 430 },
-      approach: { x: 1500, y: 690 },
+      position: { x: SUNBEAM_VILLAGE_LAYOUT.buildings.accessoryShop.x, y: SUNBEAM_VILLAGE_LAYOUT.buildings.accessoryShop.y },
+      approach: { ...SUNBEAM_VILLAGE_LAYOUT.buildings.accessoryShop.approach },
     },
     {
       id: 'library',
       label: 'Story House',
       icon: '📚',
-      position: { x: 2110, y: 480 },
-      approach: { x: 2110, y: 720 },
+      position: { x: SUNBEAM_VILLAGE_LAYOUT.buildings.library.x, y: SUNBEAM_VILLAGE_LAYOUT.buildings.library.y },
+      approach: { ...SUNBEAM_VILLAGE_LAYOUT.buildings.library.approach },
     },
     {
       id: 'sunbeam-fountain',
       label: 'Sunbeam Fountain',
       icon: '✨',
-      position: { x: 1500, y: 1050 },
-      approach: { x: 1310, y: 1050 },
+      position: { x: SUNBEAM_VILLAGE_LAYOUT.fountain.x, y: SUNBEAM_VILLAGE_LAYOUT.fountain.y },
+      approach: { ...SUNBEAM_VILLAGE_LAYOUT.fountain.approach },
     },
   ] satisfies readonly VillageLandmark[],
   entrances: [
     {
       id: 'moonflower-glade',
       label: 'Moonflower Glade',
-      position: { x: 120, y: 950 },
-      approach: { x: 330, y: 950 },
+      position: { ...SUNBEAM_VILLAGE_LAYOUT.entrances.moonflowerGlade.position },
+      approach: { ...SUNBEAM_VILLAGE_LAYOUT.entrances.moonflowerGlade.approach },
       direction: 'west',
     },
     {
       id: 'rainbow-meadow',
       label: 'Rainbow Meadow',
-      position: { x: 2880, y: 950 },
-      approach: { x: 2640, y: 950 },
+      position: { ...SUNBEAM_VILLAGE_LAYOUT.entrances.rainbowMeadow.position },
+      approach: { ...SUNBEAM_VILLAGE_LAYOUT.entrances.rainbowMeadow.approach },
       direction: 'east',
     },
   ] satisfies readonly VillageEntrance[],
   npcMarkers: [
-    { id: 'willow', label: 'Willow', position: { x: 1040, y: 1160 } },
-    { id: 'marigold', label: 'Marigold', position: { x: 700, y: 860 } },
-    { id: 'pebble', label: 'Pebble', position: { x: 1900, y: 1210 } },
+    { id: 'willow', label: 'Willow', position: { ...SUNBEAM_VILLAGE_LAYOUT.npcPositions.willow } },
+    { id: 'marigold', label: 'Marigold', position: { ...SUNBEAM_VILLAGE_LAYOUT.npcPositions.marigold } },
+    { id: 'pebble', label: 'Pebble', position: { ...SUNBEAM_VILLAGE_LAYOUT.npcPositions.pebble } },
   ] satisfies readonly VillageNpcMarker[],
   colliders: [
-    { id: 'collision:bakery', x: 900, y: 470, width: 450, height: 320 },
-    { id: 'collision:accessory-shop', x: 1500, y: 430, width: 430, height: 320 },
-    { id: 'collision:library', x: 2110, y: 480, width: 490, height: 330 },
-    { id: 'collision:fountain', x: 1500, y: 1050, width: 220, height: 220 },
+    {
+      id: 'collision:bakery',
+      x: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.x,
+      y: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.y,
+      width: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.width,
+      height: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.height,
+    },
+    {
+      id: 'collision:accessory-shop',
+      x: SUNBEAM_VILLAGE_LAYOUT.buildings.accessoryShop.x,
+      y: SUNBEAM_VILLAGE_LAYOUT.buildings.accessoryShop.y,
+      width: SUNBEAM_VILLAGE_LAYOUT.buildings.accessoryShop.width,
+      height: SUNBEAM_VILLAGE_LAYOUT.buildings.accessoryShop.height,
+    },
+    {
+      id: 'collision:library',
+      x: SUNBEAM_VILLAGE_LAYOUT.buildings.library.x,
+      y: SUNBEAM_VILLAGE_LAYOUT.buildings.library.y,
+      width: SUNBEAM_VILLAGE_LAYOUT.buildings.library.width,
+      height: SUNBEAM_VILLAGE_LAYOUT.buildings.library.height,
+    },
+    {
+      id: 'collision:fountain',
+      x: SUNBEAM_VILLAGE_LAYOUT.fountain.x,
+      y: SUNBEAM_VILLAGE_LAYOUT.fountain.y,
+      width: SUNBEAM_VILLAGE_LAYOUT.fountain.collisionWidth,
+      height: SUNBEAM_VILLAGE_LAYOUT.fountain.collisionHeight,
+    },
   ] satisfies readonly CollisionRectangle[],
 } as const;
 
