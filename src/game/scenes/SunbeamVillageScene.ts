@@ -16,7 +16,9 @@ import {
   saveLocationCheckpoint,
 } from '../save/saveLocationCheckpoint';
 import { isWillowGardenPlanted } from '../story/WillowMoonflowersStory';
-import { createSunbeamVillageProductionPresentation } from '../visual/EnvironmentProductionPresentationManager';
+import {
+  createSunbeamVillageProductionPresentation,
+} from '../visual/EnvironmentProductionPresentationManager';
 import { InteractionPrompt } from '../ui/InteractionPrompt';
 import { MOONFLOWER_GLADE_MAP, setMoonflowerGladePlayerSpawn } from '../world/MoonflowerGladeMap';
 import {

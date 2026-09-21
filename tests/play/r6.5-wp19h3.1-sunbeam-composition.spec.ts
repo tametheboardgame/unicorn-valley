@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 interface DiagnosticObject {
   type: string;
@@ -25,7 +25,7 @@ interface BrowserDiagnosticsApi {
   snapshot(): DiagnosticSnapshot;
 }
 
-async function villageSnapshot(page: import('@playwright/test').Page): Promise<DiagnosticScene> {
+async function villageSnapshot(page: Page): Promise<DiagnosticScene> {
   const value = await page.evaluate(() => {
     const api = (
       window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
