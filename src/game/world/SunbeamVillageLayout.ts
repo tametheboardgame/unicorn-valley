@@ -36,6 +36,12 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
     width: 610,
     height: 430,
     fountainClearance: 170,
+    northShopApron: {
+      x: 1450,
+      y: 865,
+      width: 190,
+      height: 130,
+    },
   },
   pathNetwork: {
     mainApproaches: [
@@ -166,7 +172,7 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
   villageLife: {
     noticeBoard: { x: 1030, y: 1170 },
     sundial: { x: 1260, y: 1370 },
-    bench: { x: 1850, y: 1080 },
+    bench: { x: 1840, y: 1330 },
     storyMapSign: { x: 2520, y: 820 },
     threadWindow: { x: 1305, y: 770 },
     fountainSplash: { x: 1690, y: 1060 },
