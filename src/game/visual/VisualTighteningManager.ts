@@ -10,77 +10,11 @@ import {
 export const VISUAL_TIGHTENING_DETAIL_NAME = 'visual-tightening-detail';
 const VISUAL_TIGHTENING_ANCHOR_NAME = 'visual-tightening-anchor';
 
-const SUPPORTED_SCENES = new Set([
-  'SunbeamVillageScene',
-  'RainbowMeadowScene',
-  'NovaTutorialRaceScene',
-  'RaceScene',
-]);
+const SUPPORTED_SCENES = new Set(['RainbowMeadowScene', 'NovaTutorialRaceScene', 'RaceScene']);
 
 function markDetail<T extends Phaser.GameObjects.GameObject>(object: T): T {
   object.setName(VISUAL_TIGHTENING_DETAIL_NAME);
   return object;
-}
-
-function addWindow(
-  scene: Phaser.Scene,
-  x: number,
-  y: number,
-  frameColour: number,
-  boxColour: number,
-): void {
-  markDetail(
-    scene.add
-      .rectangle(x, y, 84, 72, 0xbcebf1, 0.88)
-      .setStrokeStyle(7, frameColour, 0.95)
-      .setDepth(8),
-  );
-  markDetail(scene.add.rectangle(x, y, 5, 62, 0xffffff, 0.6).setDepth(8.2));
-  markDetail(scene.add.rectangle(x, y, 72, 5, 0xffffff, 0.6).setDepth(8.2));
-  markDetail(scene.add.rectangle(x, y + 46, 98, 18, boxColour, 0.95).setDepth(8.3));
-  for (const offset of [-24, 0, 24]) {
-    markDetail(scene.add.circle(x + offset, y + 39, 8, 0xffb7d2, 0.96).setDepth(8.4));
-  }
-}
-
-function decorateVillage(scene: Phaser.Scene): void {
-  const buildings = [
-    { x: 900, y: 470, width: 450, frame: 0x99614f, box: 0xb97355 },
-    { x: 1500, y: 430, width: 430, frame: 0x8e6489, box: 0xb77cae },
-    { x: 2110, y: 480, width: 490, frame: 0x527a93, box: 0x668da7 },
-  ] as const;
-
-  for (const building of buildings) {
-    const windowOffset = building.width * 0.29;
-    addWindow(scene, building.x - windowOffset, building.y + 34, building.frame, building.box);
-    addWindow(scene, building.x + windowOffset, building.y + 34, building.frame, building.box);
-    markDetail(
-      scene.add
-        .rectangle(building.x, building.y - 126, building.width - 58, 9, 0xffffff, 0.28)
-        .setDepth(8.1),
-    );
-    markDetail(
-      scene.add
-        .rectangle(building.x, building.y + 151, building.width - 34, 16, building.frame, 0.32)
-        .setDepth(8.1),
-    );
-  }
-
-  for (const radius of [54, 70]) {
-    markDetail(
-      scene.add
-        .ellipse(1500, 1050, radius * 2, radius * 0.55, 0xe9ffff, 0.28)
-        .setStrokeStyle(4, 0xffffff, 0.3)
-        .setDepth(9.2),
-    );
-  }
-  for (const [x, y, size] of [
-    [1474, 1017, 8],
-    [1528, 1024, 7],
-    [1503, 1002, 6],
-  ] as const) {
-    markDetail(scene.add.circle(x, y, size, 0xe9ffff, 0.55).setDepth(9.3));
-  }
 }
 
 function replaceMeadowNova(scene: Phaser.Scene): void {
@@ -216,9 +150,6 @@ function decorateRace(scene: Phaser.Scene): void {
 
 function applyVisualTightening(scene: Phaser.Scene): void {
   switch (scene.scene.key) {
-    case 'SunbeamVillageScene':
-      decorateVillage(scene);
-      break;
     case 'RainbowMeadowScene':
       decorateMeadow(scene);
       break;
