@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
+import { SUNBEAM_VILLAGE_LAYOUT } from '../world/SunbeamVillageLayout';
 import { worldDepthForY } from '../world/WorldDepth';
 
 const ROOT_NAME = 'wp18f-world-experience';
@@ -161,14 +162,58 @@ function enhanceVillageShops(scene: Phaser.Scene): void {
   }
   scene.add.container(0, 0).setName(`${ROOT_NAME}:village-shops`).setVisible(false);
 
-  addShopPropCard(scene, `${ROOT_NAME}:bakery-basket`, 720, 690, '🥖 🥐', 0xe8aa65);
-  addShopPropCard(scene, `${ROOT_NAME}:bakery-menu`, 1080, 690, '🧁', 0xf2c27b);
+  const { bakery, accessoryShop, library } = SUNBEAM_VILLAGE_LAYOUT.buildings;
 
-  addShopPropCard(scene, `${ROOT_NAME}:thread-display`, 1325, 675, '🧵 🎀', 0xd796cc);
-  addShopPropCard(scene, `${ROOT_NAME}:mirror-display`, 1675, 675, '🪞', 0xb894d3);
+  addShopPropCard(
+    scene,
+    `${ROOT_NAME}:bakery-basket`,
+    bakery.x - 145,
+    bakery.approach.y + 25,
+    '🥖 🥐',
+    0xe8aa65,
+  );
+  addShopPropCard(
+    scene,
+    `${ROOT_NAME}:bakery-menu`,
+    bakery.x + 145,
+    bakery.approach.y + 25,
+    '🧁',
+    0xf2c27b,
+  );
 
-  addShopPropCard(scene, `${ROOT_NAME}:story-cart`, 1910, 705, '📚', 0x7ba9c8);
-  addShopPropCard(scene, `${ROOT_NAME}:story-lamp`, 2310, 705, '🏮', 0x9cc9d9);
+  addShopPropCard(
+    scene,
+    `${ROOT_NAME}:thread-display`,
+    accessoryShop.x - 145,
+    accessoryShop.approach.y + 25,
+    '🧵 🎀',
+    0xd796cc,
+  );
+  addShopPropCard(
+    scene,
+    `${ROOT_NAME}:mirror-display`,
+    accessoryShop.x + 145,
+    accessoryShop.approach.y + 25,
+    '🪞',
+    0xb894d3,
+  );
+
+  addShopPropCard(
+    scene,
+    `${ROOT_NAME}:story-cart`,
+    library.x - 155,
+    library.approach.y + 25,
+    '📚',
+    0x7ba9c8,
+  );
+  addShopPropCard(
+    scene,
+    `${ROOT_NAME}:story-lamp`,
+    library.x + 155,
+    library.approach.y + 25,
+    '🏮',
+    0x9cc9d9,
+  );
 }
 
 function enhanceWhisperingWoods(scene: Phaser.Scene): void {
