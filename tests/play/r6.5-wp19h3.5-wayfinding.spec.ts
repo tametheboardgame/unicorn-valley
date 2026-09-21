@@ -32,9 +32,7 @@ test('H3.5 uses physical village signs and gateway objects for wayfinding', asyn
         village.objects.some(
           ({ name }) => name === 'sunbeam-composition:gateway:rainbow-meadow:sign',
         ) &&
-        village.objects.some(
-          ({ name }) => name === 'sunbeam-composition:willow-garden:sign',
-        ),
+        village.objects.some(({ name }) => name === 'sunbeam-composition:willow-garden:sign'),
     );
   });
 
@@ -61,9 +59,7 @@ test('H3.5 uses physical village signs and gateway objects for wayfinding', asyn
   at('sunbeam-composition:gateway:rainbow-meadow', 2875, 950);
 
   for (const id of ['moonflower-glade', 'rainbow-meadow'] as const) {
-    const sign = objects.find(
-      ({ name }) => name === `sunbeam-composition:gateway:${id}:sign`,
-    );
+    const sign = objects.find(({ name }) => name === `sunbeam-composition:gateway:${id}:sign`);
     const signText = objects.find(
       ({ name }) => name === `sunbeam-composition:gateway:${id}:sign:text`,
     );
@@ -82,9 +78,7 @@ test('H3.5 uses physical village signs and gateway objects for wayfinding', asyn
     expect(southPost?.y).toBeGreaterThan(0);
   }
 
-  const gardenSign = objects.find(
-    ({ name }) => name === 'sunbeam-composition:willow-garden:sign',
-  );
+  const gardenSign = objects.find(({ name }) => name === 'sunbeam-composition:willow-garden:sign');
   const gardenSignText = objects.find(
     ({ name }) => name === 'sunbeam-composition:willow-garden:sign:text',
   );
