@@ -10,8 +10,8 @@
   "autonomy_state": "amber",
   "agent_state": "waiting_human",
   "branch": "agent/r6.5-wp19h3-sunbeam-village",
-  "latest_commit": "874bf6191ee8841c9d63dc76727df71aad611f58",
-  "ci_state": "not_run_docs_only",
+  "latest_commit": "15ccb47bb5324d0774ac55563259fcb070053c82",
+  "ci_state": "unknown",
   "technical_validation_state": "pending",
   "human_acceptance_state": "pending",
   "next_work_package": null,
@@ -22,5 +22,5 @@
   "chat_disposition": "keep",
   "delivery_mode": "pr_required",
   "last_activity_at": "2026-09-21T05:58:00+01:00",
-  "updated_at": "2026-09-21T05:58:00+01:00"
+  "updated_at": "2026-09-21T06:02:00+01:00"
 }
