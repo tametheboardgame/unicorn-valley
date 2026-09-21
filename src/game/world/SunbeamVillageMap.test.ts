@@ -141,6 +141,35 @@ describe('Sunbeam Village map', () => {
     expect(residentialBranch.at(-1)?.y).toBeGreaterThan(1300);
   });
 
+  it('blends the Twinkle & Thread branch through a plaza-owned north apron', () => {
+    const { northShopApron, centre, height } = SUNBEAM_VILLAGE_LAYOUT.plaza;
+    const accessoryBranch = SUNBEAM_VILLAGE_LAYOUT.pathNetwork.shopBranches[1];
+    const branchPlazaEnd = accessoryBranch[0];
+    const apronTop = northShopApron.y - northShopApron.height / 2;
+    const apronBottom = northShopApron.y + northShopApron.height / 2;
+    const plazaTop = centre.y - height / 2;
+
+    expect(northShopApron.x).toBe(SUNBEAM_VILLAGE_LAYOUT.buildings.accessoryShop.x);
+    expect(branchPlazaEnd.x).toBe(northShopApron.x);
+    expect(branchPlazaEnd.y).toBeGreaterThanOrEqual(apronTop);
+    expect(branchPlazaEnd.y).toBeLessThanOrEqual(apronBottom);
+    expect(apronBottom).toBeGreaterThan(plazaTop);
+  });
+
+  it('places the village bench below and to the right of the plaza circulation', () => {
+    const { bench } = SUNBEAM_VILLAGE_LAYOUT.villageLife;
+    const { centre, height } = SUNBEAM_VILLAGE_LAYOUT.plaza;
+
+    expect(bench.x).toBeGreaterThan(centre.x);
+    expect(bench.y).toBeGreaterThan(centre.y + height / 2);
+    expect(
+      Math.hypot(
+        bench.x - SUNBEAM_VILLAGE_LAYOUT.fountain.x,
+        bench.y - SUNBEAM_VILLAGE_LAYOUT.fountain.y,
+      ),
+    ).toBeGreaterThan(300);
+  });
+
   it('uses the plaza as the main-road connection instead of crossing the fountain', () => {
     const { x, y } = SUNBEAM_VILLAGE_LAYOUT.fountain;
     const minimumDistance = SUNBEAM_VILLAGE_LAYOUT.plaza.fountainClearance;
