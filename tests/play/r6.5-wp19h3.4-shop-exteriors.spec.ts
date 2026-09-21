@@ -60,9 +60,23 @@ test('H3.4 gives each village shop a distinct atomic exterior identity', async (
   for (const feature of [
     'village-shopfront:bakery:feature:chimney',
     'village-shopfront:accessory-shop:feature:turret',
+    'village-shopfront:library:feature:chimney',
     'village-shopfront:library:feature:attic-window',
   ]) {
     expect(objects.some(({ name }) => name === feature)).toBe(true);
+  }
+
+  for (const [shopId, featureName] of [
+    ['bakery', 'village-shopfront:bakery:feature:chimney'],
+    ['accessory-shop', 'village-shopfront:accessory-shop:feature:turret'],
+    ['library', 'village-shopfront:library:feature:chimney'],
+  ] as const) {
+    const featureIndex = objects.findIndex(({ name }) => name === featureName);
+    const structureIndex = objects.findIndex(
+      ({ name }) => name === `village-shopfront:${shopId}:structure`,
+    );
+    expect(featureIndex).toBeGreaterThanOrEqual(0);
+    expect(structureIndex).toBeGreaterThan(featureIndex);
   }
 
   for (const shopId of ['bakery', 'accessory-shop', 'library'] as const) {
@@ -101,4 +115,28 @@ test('H3.4 gives each village shop a distinct atomic exterior identity', async (
   expect(bakeryDoor?.x).toBeCloseTo(0, 0);
   expect(accessoryDoor?.x).toBeCloseTo(18, 0);
   expect(storyDoor?.x).toBeCloseTo(0, 0);
+
+  const bakeryWindowArch = objects.findIndex(
+    ({ name }) => name === 'village-shopfront:bakery:window:left:arch',
+  );
+  const bakeryWindowIndex = objects.findIndex(
+    ({ name }) => name === 'village-shopfront:bakery:window:left',
+  );
+  expect(bakeryWindowArch).toBeGreaterThanOrEqual(0);
+  expect(bakeryWindowIndex).toBeGreaterThan(bakeryWindowArch);
+
+  const bakerySign = objects.find(({ name }) => name === 'village-shopfront:bakery:sign');
+  const accessorySign = objects.find(
+    ({ name }) => name === 'village-shopfront:accessory-shop:sign',
+  );
+  const storySign = objects.find(({ name }) => name === 'village-shopfront:library:sign');
+  const accessoryRightWindow = objects.find(
+    ({ name }) => name === 'village-shopfront:accessory-shop:window:right',
+  );
+
+  expect(bakerySign?.y).toBeCloseTo(-116, 0);
+  expect(accessorySign?.x).toBeCloseTo(24, 0);
+  expect(accessorySign?.y).toBeCloseTo(-102, 0);
+  expect(storySign?.y).toBeCloseTo(-102, 0);
+  expect(accessoryRightWindow?.x).toBeCloseTo(132, 0);
 });
