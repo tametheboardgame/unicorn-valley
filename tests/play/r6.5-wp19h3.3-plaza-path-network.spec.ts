@@ -28,7 +28,8 @@ test('H3.3 renders one scene-owned plaza and routed village path network', async
       village?.objects.some(({ name }) => name === 'sunbeam-composition:plaza') &&
         village.objects.some(({ name }) => name === 'sunbeam-composition:path-network') &&
         village.objects.filter(({ name }) => name === 'sunbeam-composition:plaza-marker').length ===
-          4,
+          4 &&
+        village.objects.some(({ name }) => name === 'village-life:bench'),
     );
   });
 
@@ -61,4 +62,8 @@ test('H3.3 renders one scene-owned plaza and routed village path network', async
   const fountain = objects.find(({ name }) => name === 'sunbeam-fountain:basin');
   expect(fountain?.x).toBeCloseTo(1500, 0);
   expect(fountain?.y).toBeCloseTo(1060, 0);
+
+  const bench = objects.find(({ name }) => name === 'village-life:bench');
+  expect(bench?.x).toBeCloseTo(1840, 0);
+  expect(bench?.y).toBeCloseTo(1330, 0);
 });
