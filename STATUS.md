@@ -4,11 +4,11 @@ Last updated: 2026-09-21
 
 ## Current work
 
-`R6.5-WP19H3 - Sunbeam Village Final Polish` has completed **feedback block 1 Stages 1-3**.
+`R6.5-WP19H3 - Sunbeam Village Final Polish` is in **Stage 4 implementation**. H3.1 has been implemented and is awaiting technical validation before David's visual review.
 
-David supplied the first detailed Sunbeam Village feedback block, requested code/system analysis, approved the resulting first-pass plan, and asked for it to be committed durably. The approved implementation sequence is H3.1-H3.8 and is recorded in `ROADMAP.md` plus the H3 work-package file.
+H3.1 implementation head `7adf20bbb3088c7f3772cbf816f9d014d76a7f27` removes the legacy rectangular village-square surface, retires the old path geometry that crossed the fountain, removes the fake `shopkeeper-marker`, removes superseded prototype NPC circles/icons and makes the Sunbeam scene the lifecycle authority for its retained production-environment detail. Interactions, colliders, production NPCs, shops and Village Life behaviour remain preserved.
 
-Stage 4 implementation has **not** started. Await David's next explicit instruction before beginning H3.1.
+Technical validation is pending. H3.2 has **not** started and must not begin until H3.1 has a trustworthy preview and David approves the visual checkpoint.
 
 ## H3 feedback-block-1 sequence
 
@@ -31,6 +31,6 @@ Do not reserve a hardening/cleanup number now. The final consolidation, responsi
 
 - H1 - Moonflower Glade Final Polish: complete and human-approved.
 - H2 - Moonflower Cottage & Home Customisation: complete, fully qualified, merged and deployed to production.
-- H3 - Sunbeam Village Final Polish: feedback block 1 plan approved; implementation pending.
+- H3 - Sunbeam Village Final Polish: H3.1 implemented; technical validation and human visual review pending.
 
 Sunbeam Village remains a review lens, not a technical boundary. Shared defects discovered during implementation must be fixed at their canonical shared owner rather than through village-specific workarounds.
