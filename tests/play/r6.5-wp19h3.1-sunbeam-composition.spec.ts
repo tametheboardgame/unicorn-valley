@@ -75,6 +75,11 @@ test('H3.1 removes legacy square, through-path residue and fake shopkeeper prese
   );
   expect(legacySquare).toBeUndefined();
   expect(village.objects.some(({ text }) => text === 'Shopkeeper')).toBe(false);
+  expect(
+    village.objects.some(
+      ({ type, name }) => type === 'Graphics' && name === 'world-traversal-polish-detail',
+    ),
+  ).toBe(false);
 
   for (const layer of ['anchor', 'background', 'signature', 'foreground', 'ambient']) {
     expect(
