@@ -887,25 +887,29 @@ export class SunbeamVillageScene extends Phaser.Scene {
     }
 
     objects.push(
+      this.add.rectangle(-76, 120, 10, 54, 0x775844, 1),
+      this.add.rectangle(76, 120, 10, 54, 0x775844, 1),
       this.add
-        .text(0, 92, planted ? "Willow's Moonflowers" : "Willow's garden", {
-          color: '#5d4c5e',
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '17px',
+        .rectangle(0, 94, 198, 50, 0xf2dfad, 1)
+        .setName('sunbeam-composition:willow-garden:sign')
+        .setStrokeStyle(5, 0x775844, 0.95),
+      this.add
+        .text(0, 94, planted ? "WILLOW'S MOONFLOWERS" : "WILLOW'S GARDEN", {
+          color: '#5d4c4d',
+          fontFamily: 'Georgia, serif',
+          fontSize: '15px',
           fontStyle: 'bold',
-          backgroundColor: '#fff8dfcc',
-          padding: { x: 8, y: 5 },
         })
         .setOrigin(0.5),
+      this.add.circle(-86, 94, 8, 0xffe48b, 0.96),
+      this.add.circle(86, 94, 8, 0xffe48b, 0.96),
     );
 
     this.add
       .container(x, y, objects)
       .setName('sunbeam-composition:willow-garden')
       .setDepth(SUNBEAM_VILLAGE_LAYERS.groundDetail);
-  }
-
-  private createEntrances(): void {
+  }  private createEntrances(): void {
     const west = SUNBEAM_VILLAGE_LAYOUT.entrances.moonflowerGlade.position;
     const east = SUNBEAM_VILLAGE_LAYOUT.entrances.rainbowMeadow.position;
 
@@ -914,107 +918,46 @@ export class SunbeamVillageScene extends Phaser.Scene {
       x: number,
       y: number,
       label: string,
-      labelX: number,
-      labelOriginX: number,
+      direction: 'west' | 'east',
     ): void => {
-      const gate = this.add
-        .rectangle(0, 0, 110, 370, 0x74a56d, 0.9)
-        .setStrokeStyle(4, 0x5f8f5c, 0.72);
-      const sign = this.add
-        .text(labelX, -145, label, {
-          color: '#59485f',
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '20px',
-          fontStyle: 'bold',
-          backgroundColor: '#fff7dedd',
-          padding: { x: 10, y: 6 },
-        })
-        .setOrigin(labelOriginX, 0);
+      const boardX = direction === 'west' ? 86 : -86;
+      const arrow = direction === 'west' ? '←' : '→';
+      const accent = direction === 'west' ? 0xa999dc : 0xf3bd72;
+      const objects: Phaser.GameObjects.GameObject[] = [
+        this.add.ellipse(0, -96, 64, 30, 0x5b554e, 0.18),
+        this.add.ellipse(0, 96, 64, 30, 0x5b554e, 0.18),
+        this.add
+          .rectangle(0, -98, 30, 92, 0x7b674f, 1)
+          .setName(`sunbeam-composition:gateway:${id}:post:north`)
+          .setStrokeStyle(4, 0x5f503f, 0.92),
+        this.add
+          .rectangle(0, 98, 30, 92, 0x7b674f, 1)
+          .setName(`sunbeam-composition:gateway:${id}:post:south`)
+          .setStrokeStyle(4, 0x5f503f, 0.92),
+        this.add.circle(0, -150, 22, accent, 1).setStrokeStyle(4, 0xfff3cf, 0.9),
+        this.add.circle(0, 150, 22, accent, 1).setStrokeStyle(4, 0xfff3cf, 0.9),
+        this.add.rectangle(boardX - 88, -132, 9, 60, 0x755640, 1),
+        this.add.rectangle(boardX + 88, -132, 9, 60, 0x755640, 1),
+        this.add
+          .rectangle(boardX, -160, 220, 58, 0xf2dfad, 1)
+          .setName(`sunbeam-composition:gateway:${id}:sign`)
+          .setStrokeStyle(5, 0x755640, 0.96),
+        this.add
+          .text(boardX, -161, `${arrow} ${label}`, {
+            color: '#5d4b4c',
+            fontFamily: 'Georgia, serif',
+            fontSize: '17px',
+            fontStyle: 'bold',
+          })
+          .setOrigin(0.5),
+      ];
+
       this.add
-        .container(x, y, [gate, sign])
+        .container(x, y, objects)
         .setName(`sunbeam-composition:gateway:${id}`)
         .setDepth(SUNBEAM_VILLAGE_LAYERS.gateway);
     };
 
-    createGate('moonflower-glade', west.x + 5, west.y, '← Moonflower Glade', 80, 0);
-    createGate('rainbow-meadow', east.x - 5, east.y, 'Rainbow Meadow →', -135, 1);
+    createGate('moonflower-glade', west.x + 5, west.y, 'MOONFLOWER GLADE', 'west');
+    createGate('rainbow-meadow', east.x - 5, east.y, 'RAINBOW MEADOW', 'east');
   }
-
-  private createFlowers(): void {
-    // Keep the H3.2 movement corridors and shop approaches clear. These are edge accents only;
-    // H3.8 will own the final authored flower-box and village-prop composition.
-    const flowerPositions = [
-      [420, 1160],
-      [890, 1120],
-      [2510, 1110],
-      [2640, 1260],
-      [390, 1580],
-      [950, 1660],
-      [2020, 1630],
-      [2530, 1540],
-    ] as const;
-    for (const [x, y] of flowerPositions) {
-      this.add.circle(x, y, 18, 0xffa6c8, 0.95).setDepth(4);
-      this.add.circle(x + 18, y + 5, 12, 0xffe47f, 0.95).setDepth(4);
-      this.add.circle(x - 15, y + 7, 11, 0xc8a7e8, 0.95).setDepth(4);
-    }
-  }
-
-  private createCollisionMap(): Phaser.Physics.Arcade.StaticGroup {
-    const collisionGroup = this.physics.add.staticGroup();
-
-    for (const collider of SUNBEAM_VILLAGE_MAP.colliders) {
-      const blocker = collisionGroup.create(
-        collider.x,
-        collider.y,
-        COLLISION_TEXTURE_KEY,
-      ) as Phaser.Physics.Arcade.Image;
-      blocker.setDisplaySize(collider.width, collider.height).setVisible(false).refreshBody();
-    }
-
-    return collisionGroup;
-  }
-
-  private ensureCollisionTexture(): void {
-    if (this.textures.exists(COLLISION_TEXTURE_KEY)) {
-      return;
-    }
-
-    const graphics = this.add.graphics();
-    graphics.fillStyle(0xffffff, 1);
-    graphics.fillRect(0, 0, 2, 2);
-    graphics.generateTexture(COLLISION_TEXTURE_KEY, 2, 2);
-    graphics.destroy();
-  }
-
-  private createHud(): void {
-    this.add
-      .text(GAME_WIDTH / 2, 24, 'Sunbeam Village', {
-        color: '#5f4756',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '27px',
-        fontStyle: 'bold',
-        backgroundColor: '#fff7dff2',
-        padding: { x: 18, y: 9 },
-      })
-      .setOrigin(0.5, 0)
-      .setScrollFactor(0)
-      .setDepth(SUNBEAM_VILLAGE_LAYERS.ui);
-
-    this.feedbackText = this.add
-      .text(GAME_WIDTH / 2, 120, '', {
-        color: '#5b455f',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '20px',
-        fontStyle: 'bold',
-        align: 'center',
-        wordWrap: { width: 760 },
-        backgroundColor: '#fff9e8ee',
-        padding: { x: 18, y: 12 },
-      })
-      .setOrigin(0.5, 0)
-      .setScrollFactor(0)
-      .setDepth(122)
-      .setVisible(false);
-  }
-}
