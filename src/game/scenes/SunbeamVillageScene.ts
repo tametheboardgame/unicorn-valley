@@ -571,7 +571,10 @@ export class SunbeamVillageScene extends Phaser.Scene {
       }
     }
 
-    const doorArch = this.add.circle(0, 20, 54, 0x7f5847, 1).setStrokeStyle(8, 0xffeed0, 0.96);
+    const doorArch = this.add
+      .circle(0, 20, 54, 0x7f5847, 1)
+      .setName('village-shopfront:bakery:door-arch')
+      .setStrokeStyle(8, 0xffeed0, 0.96);
     const door = this.add
       .rectangle(0, 88, 112, 140, 0x7f5847, 1)
       .setName('village-shopfront:bakery:door')
@@ -660,6 +663,7 @@ export class SunbeamVillageScene extends Phaser.Scene {
 
     const doorArch = this.add
       .ellipse(18, 31, 104, 58, 0x765064, 1)
+      .setName('village-shopfront:accessory-shop:door-arch')
       .setStrokeStyle(7, 0xffedf9, 0.95);
     const door = this.add
       .rectangle(18, 98, 104, 140, 0x765064, 1)
@@ -763,7 +767,10 @@ export class SunbeamVillageScene extends Phaser.Scene {
       );
     }
 
-    const doorArch = this.add.circle(0, 37, 54, 0x604c4b, 1).setStrokeStyle(8, 0xffefd3, 0.94);
+    const doorArch = this.add
+      .circle(0, 37, 54, 0x604c4b, 1)
+      .setName('village-shopfront:library:door-arch')
+      .setStrokeStyle(8, 0xffefd3, 0.94);
     const door = this.add
       .rectangle(0, 112, 108, 154, 0x604c4b, 1)
       .setName('village-shopfront:library:door')
