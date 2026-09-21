@@ -111,8 +111,8 @@ const VILLAGE_POINTS: readonly VillageLifePoint[] = [
     label: 'Twinkle & Thread window',
     actionLabel: 'Look',
     actionKind: 'inspect',
-    x: SUNBEAM_VILLAGE_LAYOUT.buildings.accessoryShop.x - 145,
-    y: SUNBEAM_VILLAGE_LAYOUT.buildings.accessoryShop.approach.y + 70,
+    x: SUNBEAM_VILLAGE_LAYOUT.villageLife.threadWindow.x,
+    y: SUNBEAM_VILLAGE_LAYOUT.villageLife.threadWindow.y,
     radius: 116,
     createProp: (scene) => [
       scene.add.ellipse(0, 15, 128, 36, 0xd796cc, 0.2).setStrokeStyle(3, 0xffffff, 0.24),
