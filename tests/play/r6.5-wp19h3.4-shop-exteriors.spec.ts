@@ -65,6 +65,19 @@ test('H3.4 gives each village shop a distinct atomic exterior identity', async (
     expect(objects.some(({ name }) => name === feature)).toBe(true);
   }
 
+  for (const shopId of ['bakery', 'accessory-shop', 'library'] as const) {
+    expect(objects.some(({ name }) => name === `village-shopfront:${shopId}:sign`)).toBe(true);
+    expect(objects.some(({ name }) => name === `village-shopfront:${shopId}:entry-cue`)).toBe(
+      false,
+    );
+    const archIndex = objects.findIndex(
+      ({ name }) => name === `village-shopfront:${shopId}:door-arch`,
+    );
+    const doorIndex = objects.findIndex(({ name }) => name === `village-shopfront:${shopId}:door`);
+    expect(archIndex).toBeGreaterThanOrEqual(0);
+    expect(doorIndex).toBeGreaterThan(archIndex);
+  }
+
   const bakeryWindow = objects.find(
     ({ name }) => name === 'village-shopfront:bakery:window:left',
   );
