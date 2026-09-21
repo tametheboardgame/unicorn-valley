@@ -27,9 +27,7 @@ test('H3.4 gives each village shop a distinct atomic exterior identity', async (
     const village = api?.snapshot().scenes.find(({ key }) => key === 'SunbeamVillageScene');
     return Boolean(
       village?.objects.some(({ name }) => name === 'village-shopfront:bakery:identity') &&
-        village.objects.some(
-          ({ name }) => name === 'village-shopfront:accessory-shop:identity',
-        ) &&
+        village.objects.some(({ name }) => name === 'village-shopfront:accessory-shop:identity') &&
         village.objects.some(({ name }) => name === 'village-shopfront:library:identity'),
     );
   });
@@ -92,15 +90,11 @@ test('H3.4 gives each village shop a distinct atomic exterior identity', async (
     expect(doorIndex).toBeGreaterThan(archIndex);
   }
 
-  const bakeryWindow = objects.find(
-    ({ name }) => name === 'village-shopfront:bakery:window:left',
-  );
+  const bakeryWindow = objects.find(({ name }) => name === 'village-shopfront:bakery:window:left');
   const accessoryWindow = objects.find(
     ({ name }) => name === 'village-shopfront:accessory-shop:window:left',
   );
-  const storyWindow = objects.find(
-    ({ name }) => name === 'village-shopfront:library:window:left',
-  );
+  const storyWindow = objects.find(({ name }) => name === 'village-shopfront:library:window:left');
 
   expect(bakeryWindow?.type).toBe('Rectangle');
   expect(accessoryWindow?.type).toBe('Ellipse');
