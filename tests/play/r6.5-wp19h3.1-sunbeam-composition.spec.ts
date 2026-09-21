@@ -85,8 +85,8 @@ test('H3.1 removes legacy square, through-path residue and fake shopkeeper prese
   }
 
   for (const shopId of ['bakery', 'accessory-shop', 'library']) {
-    expect(
-      village.objects.some(({ name }) => name === `village-shopfront:${shopId}:wall`),
-    ).toBe(true);
+    expect(village.objects.some(({ name }) => name === `village-shopfront:${shopId}:wall`)).toBe(
+      true,
+    );
   }
 });
