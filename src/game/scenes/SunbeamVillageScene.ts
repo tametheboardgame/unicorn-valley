@@ -368,7 +368,6 @@ export class SunbeamVillageScene extends Phaser.Scene {
     this.createNpcLabels();
     this.createWillowGarden();
     this.createEntrances();
-    this.createBunting();
     this.createFlowers();
 
     // Sunbeam's production detail is now composed by the scene itself instead of being injected
@@ -610,28 +609,18 @@ export class SunbeamVillageScene extends Phaser.Scene {
       .setDepth(10);
   }
 
-  private createBunting(): void {
-    const graphics = this.add.graphics().setDepth(11);
-    graphics.lineStyle(6, 0x8f6a75, 0.75);
-    graphics.lineBetween(800, 745, 2200, 745);
-    const colours = [0xf28aa5, 0xf5c968, 0x7cc6d8, 0x9bc477, 0xc99ed5];
-    for (let x = 830, index = 0; x <= 2170; x += 85, index += 1) {
-      this.add
-        .triangle(x, 766, 0, 0, 30, 0, 15, 38, colours[index % colours.length], 0.95)
-        .setDepth(12);
-    }
-  }
-
   private createFlowers(): void {
+    // Keep the H3.2 movement corridors and shop approaches clear. These are edge accents only;
+    // H3.8 will own the final authored flower-box and village-prop composition.
     const flowerPositions = [
-      [620, 760],
-      [700, 690],
-      [2350, 720],
-      [2420, 800],
-      [790, 1420],
-      [980, 1510],
-      [2050, 1490],
-      [2250, 1390],
+      [420, 1160],
+      [890, 1120],
+      [2510, 1110],
+      [2640, 1260],
+      [390, 1580],
+      [950, 1660],
+      [2020, 1630],
+      [2530, 1540],
     ] as const;
     for (const [x, y] of flowerPositions) {
       this.add.circle(x, y, 18, 0xffa6c8, 0.95).setDepth(4);
