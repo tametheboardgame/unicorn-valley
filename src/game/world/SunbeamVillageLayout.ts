@@ -14,6 +14,7 @@ export interface SunbeamVillageDistrict {
 export const SUNBEAM_VILLAGE_LAYERS = {
   base: 0,
   districtGround: 1.2,
+  plaza: 2.7,
   path: 3.2,
   groundDetail: 4,
   structureShadow: 5.6,
@@ -30,32 +31,62 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
     height: 1900,
     margin: 90,
   },
-  pathScaffold: {
-    main: [
+  plaza: {
+    centre: { x: 1500, y: 1060 },
+    width: 610,
+    height: 430,
+    fountainClearance: 170,
+  },
+  pathNetwork: {
+    mainRoute: [
       { x: 120, y: 950 },
-      { x: 620, y: 950 },
-      { x: 1050, y: 960 },
-      { x: 1230, y: 900 },
-      { x: 1340, y: 840 },
-      { x: 1660, y: 840 },
-      { x: 1770, y: 900 },
-      { x: 1960, y: 960 },
-      { x: 2380, y: 950 },
+      { x: 420, y: 950 },
+      { x: 760, y: 970 },
+      { x: 1050, y: 990 },
+      { x: 1210, y: 965 },
+      { x: 1320, y: 900 },
+      { x: 1400, y: 840 },
+      { x: 1500, y: 810 },
+      { x: 1600, y: 840 },
+      { x: 1680, y: 900 },
+      { x: 1790, y: 965 },
+      { x: 2050, y: 990 },
+      { x: 2380, y: 970 },
+      { x: 2640, y: 950 },
       { x: 2880, y: 950 },
     ],
     shopBranches: [
       [
-        { x: 700, y: 950 },
+        { x: 700, y: 965 },
+        { x: 700, y: 850 },
         { x: 700, y: 760 },
       ],
       [
-        { x: 1450, y: 840 },
+        { x: 1450, y: 825 },
         { x: 1450, y: 700 },
       ],
       [
-        { x: 2260, y: 950 },
+        { x: 2260, y: 980 },
+        { x: 2260, y: 890 },
         { x: 2260, y: 800 },
       ],
+    ],
+    fountainBranch: [
+      { x: 1320, y: 900 },
+      { x: 1260, y: 970 },
+      { x: 1300, y: 1060 },
+    ],
+    willowBranch: [
+      { x: 1050, y: 990 },
+      { x: 960, y: 1110 },
+      { x: 835, y: 1235 },
+      { x: 700, y: 1360 },
+    ],
+    residentialBranch: [
+      { x: 1960, y: 985 },
+      { x: 1980, y: 1110 },
+      { x: 2070, y: 1230 },
+      { x: 2200, y: 1360 },
     ],
   },
   districts: [
