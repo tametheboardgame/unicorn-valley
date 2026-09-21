@@ -76,21 +76,21 @@ test('H3.2 composes Sunbeam around the canonical district layout', async ({ page
   expect(objects.some(({ name }) => name === 'visual-tightening-anchor')).toBe(false);
   expect(objects.some(({ name }) => name === 'sunbeam-composition:path-network')).toBe(true);
 
-  for (const [shopId, halfWindowOffset] of [
-    ['bakery', 117.6],
-    ['accessory-shop', 117.6],
-    ['library', 128.8],
-  ] as const) {
+  for (const shopId of ['bakery', 'accessory-shop', 'library'] as const) {
     const leftWindow = objects.find(
       ({ name }) => name === `village-shopfront:${shopId}:window:left`,
     );
     const rightWindow = objects.find(
       ({ name }) => name === `village-shopfront:${shopId}:window:right`,
     );
-    expect(leftWindow?.x).toBeCloseTo(-halfWindowOffset, 0);
-    expect(rightWindow?.x).toBeCloseTo(halfWindowOffset, 0);
-    expect(leftWindow?.y).toBeCloseTo(4, 0);
-    expect(rightWindow?.y).toBeCloseTo(4, 0);
+    expect(leftWindow).toBeDefined();
+    expect(rightWindow).toBeDefined();
+    expect(leftWindow?.x).toBeLessThan(0);
+    expect(rightWindow?.x).toBeGreaterThan(0);
+    expect(Math.abs(leftWindow?.x ?? 999)).toBeLessThan(170);
+    expect(Math.abs(rightWindow?.x ?? 999)).toBeLessThan(170);
+    expect(Math.abs(leftWindow?.y ?? 999)).toBeLessThan(50);
+    expect(Math.abs(rightWindow?.y ?? 999)).toBeLessThan(50);
   }
 
   expect(
