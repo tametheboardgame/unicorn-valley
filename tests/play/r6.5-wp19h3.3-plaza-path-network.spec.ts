@@ -26,9 +26,9 @@ test('H3.3 renders one scene-owned plaza and routed village path network', async
     const village = api?.snapshot().scenes.find(({ key }) => key === 'SunbeamVillageScene');
     return Boolean(
       village?.objects.some(({ name }) => name === 'sunbeam-composition:plaza') &&
-        village.objects.some(({ name }) => name === 'sunbeam-composition:path:main') &&
-        village.objects.some(({ name }) => name === 'sunbeam-composition:path:willow') &&
-        village.objects.some(({ name }) => name === 'sunbeam-composition:path:residential'),
+        village.objects.some(({ name }) => name === 'sunbeam-composition:path-network') &&
+        village.objects.filter(({ name }) => name === 'sunbeam-composition:plaza-marker').length ===
+          4,
     );
   });
 
@@ -43,20 +43,16 @@ test('H3.3 renders one scene-owned plaza and routed village path network', async
     return village.objects;
   });
 
-  for (const name of [
-    'sunbeam-composition:plaza',
-    'sunbeam-composition:path:main',
-    'sunbeam-composition:path:shop-1',
-    'sunbeam-composition:path:shop-2',
-    'sunbeam-composition:path:shop-3',
-    'sunbeam-composition:path:fountain',
-    'sunbeam-composition:path:willow',
-    'sunbeam-composition:path:residential',
-  ]) {
+  for (const name of ['sunbeam-composition:plaza', 'sunbeam-composition:path-network']) {
     const object = objects.find((candidate) => candidate.name === name);
     expect(object).toBeDefined();
     expect(object?.visible).toBe(true);
   }
+
+  expect(
+    objects.filter(({ name }) => name === 'sunbeam-composition:plaza-marker'),
+  ).toHaveLength(4);
+  expect(objects.some(({ name }) => name === 'sunbeam-composition:path:fountain')).toBe(false);
 
   expect(objects.some(({ name }) => name === 'exploration-path-polish')).toBe(false);
   expect(objects.some(({ name }) => name === 'world-traversal-polish-detail')).toBe(false);
