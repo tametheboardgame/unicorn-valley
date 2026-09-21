@@ -407,9 +407,9 @@ export class SunbeamVillageScene extends Phaser.Scene {
       .setName('sunbeam-composition:plaza')
       .setDepth(SUNBEAM_VILLAGE_LAYERS.plaza);
 
-    graphics.fillStyle(0xe4cc96, 0.92);
+    graphics.fillStyle(0xe4cc96, 0.94);
     graphics.fillEllipse(centre.x, centre.y, width, height);
-    graphics.fillStyle(0xecd8aa, 0.74);
+    graphics.fillStyle(0xecd8aa, 0.76);
     graphics.fillEllipse(centre.x - 105, centre.y + 18, width * 0.64, height * 0.72);
     graphics.fillEllipse(centre.x + 118, centre.y - 14, width * 0.58, height * 0.68);
 
@@ -429,58 +429,85 @@ export class SunbeamVillageScene extends Phaser.Scene {
     ] as const) {
       graphics.fillEllipse(x, y, stoneWidth, stoneHeight);
     }
+
+    for (const [x, y] of [
+      [centre.x - 255, centre.y - 118],
+      [centre.x - 255, centre.y + 118],
+      [centre.x + 255, centre.y - 118],
+      [centre.x + 255, centre.y + 118],
+    ] as const) {
+      const marker = this.add
+        .container(x, y, [
+          this.add.ellipse(0, 18, 48, 22, 0x806b58, 0.18),
+          this.add.rectangle(0, 0, 22, 34, 0xc7b08b, 1).setStrokeStyle(3, 0x9b8268, 0.9),
+          this.add.circle(0, -22, 16, 0xe8cf84, 1).setStrokeStyle(3, 0xb99755, 0.9),
+          this.add
+            .text(0, -23, '✦', {
+              color: '#fff5cf',
+              fontFamily: 'system-ui, sans-serif',
+              fontSize: '14px',
+              fontStyle: 'bold',
+            })
+            .setOrigin(0.5),
+        ])
+        .setName('sunbeam-composition:plaza-marker')
+        .setDepth(SUNBEAM_VILLAGE_LAYERS.plaza + 0.1);
+      marker.setAlpha(0.94);
+    }
   }
 
   private createPathNetwork(): void {
-    const drawRoute = (
-      name: string,
+    const graphics = this.add
+      .graphics()
+      .setName('sunbeam-composition:path-network')
+      .setDepth(SUNBEAM_VILLAGE_LAYERS.path);
+    const {
+      mainApproaches,
+      shopBranches,
+      willowBranch,
+      residentialBranch,
+    } = SUNBEAM_VILLAGE_LAYOUT.pathNetwork;
+    const routes = [
+      ...mainApproaches.map((points) => ({ points, outerWidth: 126, innerWidth: 94 })),
+      ...shopBranches.map((points) => ({ points, outerWidth: 76, innerWidth: 54 })),
+      { points: willowBranch, outerWidth: 76, innerWidth: 54 },
+      { points: residentialBranch, outerWidth: 76, innerWidth: 54 },
+    ] as const;
+
+    const drawStroke = (
       points: readonly { x: number; y: number }[],
-      outerWidth: number,
-      innerWidth: number,
+      width: number,
+      colour: number,
+      alpha: number,
     ): void => {
       const first = points[0];
       if (!first) {
         return;
       }
 
-      const graphics = this.add
-        .graphics()
-        .setName(name)
-        .setDepth(SUNBEAM_VILLAGE_LAYERS.path);
-      const drawStroke = (width: number, colour: number, alpha: number): void => {
-        graphics.lineStyle(width, colour, alpha);
-        graphics.beginPath();
-        graphics.moveTo(first.x, first.y);
-        for (const point of points.slice(1)) {
-          graphics.lineTo(point.x, point.y);
-        }
-        graphics.strokePath();
+      graphics.lineStyle(width, colour, alpha);
+      graphics.beginPath();
+      graphics.moveTo(first.x, first.y);
+      for (const point of points.slice(1)) {
+        graphics.lineTo(point.x, point.y);
+      }
+      graphics.strokePath();
 
-        graphics.fillStyle(colour, alpha);
-        for (const point of points) {
-          graphics.fillCircle(point.x, point.y, width / 2);
-        }
-      };
-
-      drawStroke(outerWidth, 0xd2b680, 0.98);
-      drawStroke(innerWidth, 0xf4e4ba, 1);
+      graphics.fillStyle(colour, alpha);
+      for (const point of points) {
+        graphics.fillCircle(point.x, point.y, width / 2);
+      }
     };
 
-    const {
-      mainRoute,
-      shopBranches,
-      fountainBranch,
-      willowBranch,
-      residentialBranch,
-    } = SUNBEAM_VILLAGE_LAYOUT.pathNetwork;
-
-    drawRoute('sunbeam-composition:path:main', mainRoute, 126, 94);
-    shopBranches.forEach((branch, index) => {
-      drawRoute(`sunbeam-composition:path:shop-${index + 1}`, branch, 76, 54);
-    });
-    drawRoute('sunbeam-composition:path:fountain', fountainBranch, 72, 50);
-    drawRoute('sunbeam-composition:path:willow', willowBranch, 76, 54);
-    drawRoute('sunbeam-composition:path:residential', residentialBranch, 76, 54);
+    // Draw every route's edging first, then every route's walking surface. This merges branch
+    // junctions into one continuous road network instead of painting branch borders over the
+    // centre of the main road.
+    for (const route of routes) {
+      drawStroke(route.points, route.outerWidth, 0xd2b680, 0.98);
+    }
+    for (const route of routes) {
+      drawStroke(route.points, route.innerWidth, 0xf4e4ba, 1);
+    }
   }
 
   private createBuilding(
