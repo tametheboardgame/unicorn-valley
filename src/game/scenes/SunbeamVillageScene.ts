@@ -29,7 +29,10 @@ import {
   SUNBEAM_VILLAGE_LOCATION_ID,
   SUNBEAM_VILLAGE_MAP,
 } from '../world/SunbeamVillageMap';
-import { SUNBEAM_VILLAGE_LAYOUT } from '../world/SunbeamVillageLayout';
+import {
+  SUNBEAM_VILLAGE_LAYERS,
+  SUNBEAM_VILLAGE_LAYOUT,
+} from '../world/SunbeamVillageLayout';
 
 const COLLISION_TEXTURE_KEY = 'village-collision-pixel';
 const SAVED_PLAYER_TEXTURE_KEY = 'player-unicorn-village';
@@ -324,9 +327,10 @@ export class SunbeamVillageScene extends Phaser.Scene {
       .rectangle(map.width / 2, map.height / 2 + 120, map.width, 1220, 0xa9da92, 0.92)
       .setName('sunbeam-composition:grass');
 
-    // H3.2 establishes the village's district-scale composition. H3.3 owns the authored path
-    // and plaza network, so this layer deliberately uses soft ground masses rather than paving.
+    // H3.2 establishes the village's district-scale composition. A single scene-owned path
+    // scaffold keeps the layout legible; H3.3 will replace its geometry and finish, not its owner.
     this.createDistrictGrounding();
+    this.createPathScaffold();
 
     const bakery = layout.buildings.bakery;
     this.createBuilding(
@@ -396,7 +400,40 @@ export class SunbeamVillageScene extends Phaser.Scene {
           district.id === 'central-plaza' ? 0.1 : 0.14,
         )
         .setName(`sunbeam-district:${district.id}`)
-        .setDepth(1.2);
+        .setDepth(SUNBEAM_VILLAGE_LAYERS.districtGround);
+    }
+  }
+
+  private createPathScaffold(): void {
+    const drawStroke = (
+      points: readonly { x: number; y: number }[],
+      width: number,
+      colour: number,
+      alpha: number,
+    ): void => {
+      const graphics = this.add
+        .graphics()
+        .setName('sunbeam-composition:path')
+        .setDepth(SUNBEAM_VILLAGE_LAYERS.path);
+      graphics.lineStyle(width, colour, alpha);
+      graphics.beginPath();
+      graphics.moveTo(points[0].x, points[0].y);
+      for (const point of points.slice(1)) {
+        graphics.lineTo(point.x, point.y);
+      }
+      graphics.strokePath();
+      graphics.fillStyle(colour, alpha);
+      for (const point of points) {
+        graphics.fillCircle(point.x, point.y, width / 2);
+      }
+    };
+
+    const { main, shopBranches } = SUNBEAM_VILLAGE_LAYOUT.pathScaffold;
+    drawStroke(main, 126, 0xd8bd86, 0.98);
+    drawStroke(main, 96, 0xf5e6bd, 1);
+    for (const branch of shopBranches) {
+      drawStroke(branch, 78, 0xd8bd86, 0.98);
+      drawStroke(branch, 58, 0xf5e6bd, 1);
     }
   }
 
@@ -411,98 +448,120 @@ export class SunbeamVillageScene extends Phaser.Scene {
     icon: string,
     label: string,
   ): void {
-    const baseY = y + height / 2;
+    const baseY = height / 2;
     const doorY = baseY - 64;
-    const windowY = y + 4;
+    const windowY = 4;
+    const objects: Phaser.GameObjects.GameObject[] = [];
 
-    this.add.ellipse(x + 8, baseY + 38, width + 80, 78, 0x604c55, 0.18).setDepth(5.6);
-    this.add
-      .rectangle(x, y, width, height, wallColour, 1)
-      .setStrokeStyle(7, 0x8c6b6b, 0.72)
-      .setDepth(6)
-      .setName(`village-shopfront:${id}:wall`);
-    this.add
-      .triangle(x, y - height / 2 - 96, 0, 154, width / 2 + 48, 0, width + 96, 154, roofColour, 1)
-      .setStrokeStyle(6, 0x8a6e72, 0.72)
-      .setDepth(7)
-      .setName(`village-shopfront:${id}:roof`);
-    this.add.rectangle(x, y - height / 2 + 4, width + 34, 24, 0xffffff, 0.42).setDepth(7.2);
+    objects.push(
+      this.add.ellipse(8, baseY + 38, width + 80, 78, 0x604c55, 0.18),
+      this.add.rectangle(0, 0, width, height, wallColour, 1).setStrokeStyle(7, 0x8c6b6b, 0.72),
+      this.add
+        .triangle(
+          0,
+          -height / 2 - 96,
+          0,
+          154,
+          width / 2 + 48,
+          0,
+          width + 96,
+          154,
+          roofColour,
+          1,
+        )
+        .setStrokeStyle(6, 0x8a6e72, 0.72),
+      this.add.rectangle(0, -height / 2 + 4, width + 34, 24, 0xffffff, 0.42),
+    );
 
     for (const side of [-1, 1]) {
-      const windowX = x + side * (width * 0.28);
-      this.add
+      const windowX = side * (width * 0.28);
+      const window = this.add
         .rectangle(windowX, windowY, 112, 98, 0xbde9f0, 1)
-        .setStrokeStyle(8, 0xfff5dc, 0.95)
-        .setDepth(8);
-      this.add.rectangle(windowX, windowY, 8, 92, 0xffffff, 0.6).setDepth(8.2);
-      this.add.rectangle(windowX, windowY, 106, 8, 0xffffff, 0.6).setDepth(8.2);
-      this.add.rectangle(windowX, windowY + 67, 128, 22, 0x8a624e, 1).setDepth(8.3);
+        .setName(`village-shopfront:${id}:window:${side < 0 ? 'left' : 'right'}`)
+        .setStrokeStyle(8, 0xfff5dc, 0.95);
+      objects.push(
+        window,
+        this.add.rectangle(windowX, windowY, 8, 92, 0xffffff, 0.6),
+        this.add.rectangle(windowX, windowY, 106, 8, 0xffffff, 0.6),
+        this.add.rectangle(windowX, windowY + 67, 128, 22, 0x8a624e, 1),
+      );
       for (const offset of [-38, 0, 38]) {
-        this.add
-          .circle(windowX + offset, windowY + 54, 11, side < 0 ? 0xffa8c8 : 0xffdd78, 0.96)
-          .setDepth(8.5);
+        objects.push(
+          this.add.circle(
+            windowX + offset,
+            windowY + 54,
+            11,
+            side < 0 ? 0xffa8c8 : 0xffdd78,
+            0.96,
+          ),
+        );
       }
     }
 
-    this.add
-      .rectangle(x, doorY, 106, 142, 0x7a584b, 1)
-      .setStrokeStyle(7, 0xffefd3, 0.92)
-      .setDepth(8.5)
-      .setName(`village-shopfront:${id}:door`);
-    this.add.rectangle(x, doorY - 20, 68, 72, 0xbfe8ed, 0.94).setDepth(8.7);
-    this.add.circle(x + 34, doorY + 27, 7, 0xffd56e, 1).setDepth(9);
-    this.add.ellipse(x, baseY + 12, 144, 42, 0xfff1b0, 0.34).setDepth(7.8);
-    this.add.rectangle(x, baseY + 20, 152, 28, 0xd0a877, 1).setDepth(8.2);
+    const door = this.add
+      .rectangle(0, doorY, 106, 142, 0x7a584b, 1)
+      .setName(`village-shopfront:${id}:door`)
+      .setStrokeStyle(7, 0xffefd3, 0.92);
+    objects.push(
+      door,
+      this.add.rectangle(0, doorY - 20, 68, 72, 0xbfe8ed, 0.94),
+      this.add.circle(34, doorY + 27, 7, 0xffd56e, 1),
+      this.add.ellipse(0, baseY + 12, 144, 42, 0xfff1b0, 0.34),
+      this.add.rectangle(0, baseY + 20, 152, 28, 0xd0a877, 1),
+    );
 
-    const awningY = y + height / 2 - 154;
-    this.add.rectangle(x, awningY, width - 46, 38, 0xfff5dd, 1).setDepth(8.4);
+    const awningY = height / 2 - 154;
+    objects.push(this.add.rectangle(0, awningY, width - 46, 38, 0xfff5dd, 1));
     for (let stripe = -2; stripe <= 2; stripe += 1) {
-      this.add
-        .rectangle(
-          x + stripe * 62,
+      objects.push(
+        this.add.rectangle(
+          stripe * 62,
           awningY,
           34,
           38,
           stripe % 2 === 0 ? wallColour : roofColour,
           0.88,
-        )
-        .setDepth(8.5);
+        ),
+      );
     }
 
+    objects.push(
+      this.add.rectangle(0, -78, 164, 84, 0xfff6df, 0.98).setStrokeStyle(6, 0x9d757b, 0.88),
+      this.add
+        .text(0, -80, icon, {
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '43px',
+        })
+        .setOrigin(0.5),
+      this.add
+        .text(0, baseY + 62, label, {
+          color: '#684c52',
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '18px',
+          fontStyle: 'bold',
+          backgroundColor: '#fff8dff0',
+          padding: { x: 12, y: 7 },
+        })
+        .setOrigin(0.5),
+      this.add
+        .text(0, baseY + 95, 'DOOR OPEN • COME IN', {
+          color: '#745b62',
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '12px',
+          fontStyle: 'bold',
+          backgroundColor: '#fff4c9dc',
+          padding: { x: 8, y: 4 },
+        })
+        .setName(`village-shopfront:${id}:entry-cue`)
+        .setOrigin(0.5),
+    );
+
+    // One container owns the whole storefront. Any later presentation adjustment can move the
+    // building root without leaving windows, awnings or labels behind at stale world coordinates.
     this.add
-      .rectangle(x, y - 78, 164, 84, 0xfff6df, 0.98)
-      .setStrokeStyle(6, 0x9d757b, 0.88)
-      .setDepth(8.8);
-    this.add
-      .text(x, y - 80, icon, {
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '43px',
-      })
-      .setOrigin(0.5)
-      .setDepth(9);
-    this.add
-      .text(x, baseY + 62, label, {
-        color: '#684c52',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '18px',
-        fontStyle: 'bold',
-        backgroundColor: '#fff8dff0',
-        padding: { x: 12, y: 7 },
-      })
-      .setOrigin(0.5)
-      .setDepth(9.2);
-    this.add
-      .text(x, baseY + 95, 'DOOR OPEN • COME IN', {
-        color: '#745b62',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '12px',
-        fontStyle: 'bold',
-        backgroundColor: '#fff4c9dc',
-        padding: { x: 8, y: 4 },
-      })
-      .setOrigin(0.5)
-      .setDepth(9.1)
-      .setName(`village-shopfront:${id}:entry-cue`);
+      .container(x, y, objects)
+      .setName(`village-shopfront:${id}:wall`)
+      .setDepth(SUNBEAM_VILLAGE_LAYERS.structure);
   }
 
   private createFountain(): void {
@@ -521,7 +580,7 @@ export class SunbeamVillageScene extends Phaser.Scene {
         fontStyle: 'bold',
       })
       .setOrigin(0.5)
-      .setDepth(10);
+      .setDepth(SUNBEAM_VILLAGE_LAYERS.gateway);
   }
 
   private createNpcLabels(): void {
@@ -547,7 +606,7 @@ export class SunbeamVillageScene extends Phaser.Scene {
     this.add
       .ellipse(x, y, 310, 145, planted ? 0x8a694d : 0x9b7758, 0.95)
       .setStrokeStyle(5, 0x6e8e57, 0.75)
-      .setDepth(5);
+      .setDepth(SUNBEAM_VILLAGE_LAYERS.groundDetail);
 
     if (planted) {
       const positions = [-105, -52, 0, 52, 105];
@@ -668,7 +727,7 @@ export class SunbeamVillageScene extends Phaser.Scene {
       })
       .setOrigin(0.5, 0)
       .setScrollFactor(0)
-      .setDepth(115);
+      .setDepth(SUNBEAM_VILLAGE_LAYERS.ui);
 
     this.feedbackText = this.add
       .text(GAME_WIDTH / 2, 120, '', {
