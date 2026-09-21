@@ -123,31 +123,37 @@ describe('Sunbeam Village map', () => {
   });
 
   it('keeps the H3.3 path network tied to canonical destinations', () => {
-    const {
-      mainRoute,
-      shopBranches,
-      fountainBranch,
-      willowBranch,
-      residentialBranch,
-    } = SUNBEAM_VILLAGE_LAYOUT.pathNetwork;
+    const { mainApproaches, shopBranches, willowBranch, residentialBranch } =
+      SUNBEAM_VILLAGE_LAYOUT.pathNetwork;
 
-    expect(mainRoute[0]).toEqual(SUNBEAM_VILLAGE_LAYOUT.entrances.moonflowerGlade.position);
-    expect(mainRoute.at(-1)).toEqual(SUNBEAM_VILLAGE_LAYOUT.entrances.rainbowMeadow.position);
+    expect(mainApproaches[0][0]).toEqual(
+      SUNBEAM_VILLAGE_LAYOUT.entrances.moonflowerGlade.position,
+    );
+    expect(mainApproaches[1].at(-1)).toEqual(
+      SUNBEAM_VILLAGE_LAYOUT.entrances.rainbowMeadow.position,
+    );
     expect(shopBranches.map((branch) => branch.at(-1))).toEqual([
       SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.approach,
       SUNBEAM_VILLAGE_LAYOUT.buildings.accessoryShop.approach,
       SUNBEAM_VILLAGE_LAYOUT.buildings.library.approach,
     ]);
-    expect(fountainBranch.at(-1)).toEqual(SUNBEAM_VILLAGE_LAYOUT.fountain.approach);
     expect(willowBranch.at(-1)?.y).toBeGreaterThan(1300);
     expect(residentialBranch.at(-1)?.y).toBeGreaterThan(1300);
   });
 
-  it('routes the principal path clear of the fountain collision area', () => {
+  it('uses the plaza as the main-road connection instead of crossing the fountain', () => {
     const { x, y } = SUNBEAM_VILLAGE_LAYOUT.fountain;
     const minimumDistance = SUNBEAM_VILLAGE_LAYOUT.plaza.fountainClearance;
+    const [westApproach, eastApproach] = SUNBEAM_VILLAGE_LAYOUT.pathNetwork.mainApproaches;
+    const westPlazaEnd = westApproach.at(-1);
+    const eastPlazaStart = eastApproach[0];
 
-    for (const point of SUNBEAM_VILLAGE_LAYOUT.pathNetwork.mainRoute) {
+    expect(westPlazaEnd?.x).toBeLessThan(x);
+    expect(eastPlazaStart?.x).toBeGreaterThan(x);
+    expect(westPlazaEnd?.y).toBeCloseTo(y, -1);
+    expect(eastPlazaStart?.y).toBeCloseTo(y, -1);
+
+    for (const point of [...westApproach, ...eastApproach]) {
       expect(Math.hypot(point.x - x, point.y - y)).toBeGreaterThanOrEqual(minimumDistance);
     }
   });
