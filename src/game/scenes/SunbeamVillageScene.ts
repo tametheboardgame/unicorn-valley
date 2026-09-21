@@ -528,9 +528,14 @@ export class SunbeamVillageScene extends Phaser.Scene {
     const objects: Phaser.GameObjects.GameObject[] = [
       this.add.zone(0, 0, 2, 2).setName('village-shopfront:bakery:identity'),
       this.add.ellipse(10, 188, building.width + 92, 82, 0x604c55, 0.18),
+      this.add
+        .rectangle(-148, -188, 50, 112, 0xb87857, 1)
+        .setName('village-shopfront:bakery:feature:chimney')
+        .setStrokeStyle(5, 0x8c604e, 0.9),
+      this.add.rectangle(-148, -250, 64, 20, 0x8c604e, 1),
     ];
 
-    const cottage = this.add.graphics();
+    const cottage = this.add.graphics().setName('village-shopfront:bakery:structure');
     cottage.fillStyle(0xf6b071, 1);
     cottage.fillRoundedRect(-building.width / 2, -138, building.width, 286, 38);
     cottage.lineStyle(7, 0x9a6a55, 0.74);
@@ -543,25 +548,21 @@ export class SunbeamVillageScene extends Phaser.Scene {
     cottage.fillRoundedRect(-184, -128, 368, 20, 10);
     objects.push(cottage);
 
-    objects.push(
-      this.add
-        .rectangle(-148, -188, 50, 112, 0xb87857, 1)
-        .setName('village-shopfront:bakery:feature:chimney')
-        .setStrokeStyle(5, 0x8c604e, 0.9),
-      this.add.rectangle(-148, -250, 64, 20, 0x8c604e, 1),
-    );
-
     for (const [side, x] of [
       ['left', -118],
       ['right', 118],
     ] as const) {
+      const windowArch = this.add
+        .circle(x, -34, 43, 0xbde9f0, 1)
+        .setName(`village-shopfront:bakery:window:${side}:arch`)
+        .setStrokeStyle(8, 0xfff0cf, 1);
       const window = this.add
         .rectangle(x, 8, 94, 86, 0xbde9f0, 1)
         .setName(`village-shopfront:bakery:window:${side}`)
         .setStrokeStyle(8, 0xfff0cf, 1);
       objects.push(
+        windowArch,
         window,
-        this.add.circle(x, -34, 43, 0xbde9f0, 1).setStrokeStyle(8, 0xfff0cf, 1),
         this.add.rectangle(x, 5, 7, 78, 0xffffff, 0.58),
         this.add.rectangle(x, 5, 82, 7, 0xffffff, 0.58),
         this.add.rectangle(x, 70, 118, 22, 0xa96a4f, 1),
@@ -593,19 +594,19 @@ export class SunbeamVillageScene extends Phaser.Scene {
 
     objects.push(
       this.add
-        .rectangle(0, -86, 252, 58, 0xffedc4, 1)
+        .rectangle(0, -116, 320, 56, 0xffedc4, 1)
         .setName('village-shopfront:bakery:sign')
         .setStrokeStyle(6, 0xa86f50, 0.96),
       this.add
-        .text(0, -87, 'SUNBEAM BAKERY', {
+        .text(0, -117, 'SUNBEAM BAKERY', {
           color: '#70493d',
           fontFamily: 'Georgia, serif',
           fontSize: '20px',
           fontStyle: 'bold',
         })
         .setOrigin(0.5),
-      this.add.circle(-106, -86, 8, 0xf5b269, 0.96),
-      this.add.circle(106, -86, 8, 0xf5b269, 0.96),
+      this.add.circle(-142, -116, 8, 0xf5b269, 0.96),
+      this.add.circle(142, -116, 8, 0xf5b269, 0.96),
     );
 
     this.add
@@ -619,9 +620,14 @@ export class SunbeamVillageScene extends Phaser.Scene {
     const objects: Phaser.GameObjects.GameObject[] = [
       this.add.zone(0, 0, 2, 2).setName('village-shopfront:accessory-shop:identity'),
       this.add.ellipse(6, 198, building.width + 82, 80, 0x604c55, 0.18),
+      this.add
+        .rectangle(-148, -215, 42, 110, 0xbe75b9, 1)
+        .setName('village-shopfront:accessory-shop:feature:turret')
+        .setStrokeStyle(5, 0x865e82, 0.86),
+      this.add.circle(-148, -279, 31, 0xf6c4ee, 1).setStrokeStyle(5, 0x865e82, 0.86),
     ];
 
-    const facade = this.add.graphics();
+    const facade = this.add.graphics().setName('village-shopfront:accessory-shop:structure');
     facade.fillStyle(0xd89ad5, 1);
     facade.fillRoundedRect(-188, -150, 376, 310, 24);
     facade.lineStyle(7, 0x8f668b, 0.78);
@@ -630,35 +636,36 @@ export class SunbeamVillageScene extends Phaser.Scene {
     facade.fillTriangle(-226, -132, -42, -282, 22, -132);
     facade.fillTriangle(-34, -132, 98, -244, 224, -132);
     facade.lineStyle(6, 0x8f668b, 0.76);
-    facade.strokeTriangle(-226, -132, -42, -282, 22, -132);
-    facade.strokeTriangle(-34, -132, 98, -244, 224, -132);
+    facade.beginPath();
+    facade.moveTo(-226, -132);
+    facade.lineTo(-42, -282);
+    facade.lineTo(12, -160);
+    facade.lineTo(98, -244);
+    facade.lineTo(224, -132);
+    facade.strokePath();
+    facade.beginPath();
+    facade.moveTo(-226, -132);
+    facade.lineTo(224, -132);
+    facade.strokePath();
     facade.fillStyle(0xffe2f4, 0.55);
     facade.fillRoundedRect(-166, -139, 332, 18, 9);
     objects.push(facade);
-
-    objects.push(
-      this.add
-        .rectangle(-148, -105, 42, 118, 0xbe75b9, 1)
-        .setName('village-shopfront:accessory-shop:feature:turret')
-        .setStrokeStyle(5, 0x865e82, 0.86),
-      this.add.circle(-148, -172, 32, 0xf6c4ee, 1).setStrokeStyle(5, 0x865e82, 0.86),
-    );
 
     const leftWindow = this.add
       .ellipse(-105, 12, 104, 126, 0xc7edf0, 1)
       .setName('village-shopfront:accessory-shop:window:left')
       .setStrokeStyle(8, 0xffedf9, 0.96);
     const rightWindow = this.add
-      .ellipse(118, 22, 92, 112, 0xc7edf0, 1)
+      .ellipse(132, 18, 88, 108, 0xc7edf0, 1)
       .setName('village-shopfront:accessory-shop:window:right')
       .setStrokeStyle(8, 0xffedf9, 0.96);
     objects.push(
       leftWindow,
       rightWindow,
       this.add.rectangle(-105, 14, 7, 104, 0xffffff, 0.52),
-      this.add.rectangle(118, 22, 7, 92, 0xffffff, 0.52),
+      this.add.rectangle(132, 18, 7, 88, 0xffffff, 0.52),
       this.add.ellipse(-105, 82, 126, 28, 0xb879aa, 1),
-      this.add.ellipse(118, 82, 112, 26, 0xb879aa, 1),
+      this.add.ellipse(132, 78, 108, 26, 0xb879aa, 1),
     );
 
     const doorArch = this.add
@@ -675,18 +682,18 @@ export class SunbeamVillageScene extends Phaser.Scene {
       this.add.ellipse(18, 72, 64, 58, 0xc9edf0, 0.94),
       this.add.circle(53, 106, 7, 0xffd56e, 1),
       this.add.rectangle(18, 168, 146, 26, 0xc79a75, 1),
-      this.add.ellipse(-12, -74, 238, 54, 0xffeef8, 1),
-      this.add.ellipse(-96, -75, 72, 42, 0xf6a6d8, 0.96),
-      this.add.ellipse(72, -75, 72, 42, 0xd9a7ef, 0.96),
+      this.add.ellipse(24, -102, 246, 54, 0xffeef8, 1),
+      this.add.ellipse(-92, -103, 70, 40, 0xf6a6d8, 0.96),
+      this.add.ellipse(140, -103, 70, 40, 0xd9a7ef, 0.96),
     );
 
     objects.push(
       this.add
-        .rectangle(-12, -74, 214, 46, 0xfff4fb, 0.96)
+        .rectangle(24, -102, 218, 44, 0xfff4fb, 0.96)
         .setName('village-shopfront:accessory-shop:sign')
         .setStrokeStyle(4, 0xb573ad, 0.9),
       this.add
-        .text(-12, -75, 'TWINKLE & THREAD', {
+        .text(24, -103, 'TWINKLE & THREAD', {
           color: '#704f70',
           fontFamily: 'Georgia, serif',
           fontSize: '17px',
@@ -694,7 +701,7 @@ export class SunbeamVillageScene extends Phaser.Scene {
         })
         .setOrigin(0.5),
       this.add
-        .text(-126, -76, '✦', {
+        .text(-100, -104, '✦', {
           color: '#fff2b2',
           fontFamily: 'system-ui, sans-serif',
           fontSize: '18px',
@@ -702,7 +709,7 @@ export class SunbeamVillageScene extends Phaser.Scene {
         })
         .setOrigin(0.5),
       this.add
-        .text(102, -76, '✦', {
+        .text(148, -104, '✦', {
           color: '#fff2b2',
           fontFamily: 'system-ui, sans-serif',
           fontSize: '18px',
@@ -722,9 +729,14 @@ export class SunbeamVillageScene extends Phaser.Scene {
     const objects: Phaser.GameObjects.GameObject[] = [
       this.add.zone(0, 0, 2, 2).setName('village-shopfront:library:identity'),
       this.add.ellipse(12, 214, building.width + 86, 84, 0x604c55, 0.18),
+      this.add
+        .rectangle(142, -228, 54, 148, 0x6d7783, 1)
+        .setName('village-shopfront:library:feature:chimney')
+        .setStrokeStyle(5, 0x4f5f70, 0.9),
+      this.add.rectangle(142, -308, 68, 22, 0x4f5f70, 1),
     ];
 
-    const storyHouse = this.add.graphics();
+    const storyHouse = this.add.graphics().setName('village-shopfront:library:structure');
     storyHouse.fillStyle(0x80b0d2, 1);
     storyHouse.fillRect(-205, -176, 410, 350);
     storyHouse.lineStyle(8, 0x53758d, 0.82);
@@ -741,8 +753,6 @@ export class SunbeamVillageScene extends Phaser.Scene {
     objects.push(storyHouse);
 
     objects.push(
-      this.add.rectangle(142, -228, 54, 148, 0x6d7783, 1).setStrokeStyle(5, 0x4f5f70, 0.9),
-      this.add.rectangle(142, -308, 68, 22, 0x4f5f70, 1),
       this.add
         .circle(0, -178, 46, 0xc3e8f2, 1)
         .setName('village-shopfront:library:feature:attic-window')
@@ -787,13 +797,13 @@ export class SunbeamVillageScene extends Phaser.Scene {
 
     objects.push(
       this.add
-        .rectangle(0, -82, 228, 56, 0xf7e7c4, 1)
+        .rectangle(0, -102, 236, 48, 0xf7e7c4, 1)
         .setName('village-shopfront:library:sign')
         .setStrokeStyle(6, 0x5b6f82, 0.94),
-      this.add.rectangle(-103, -82, 12, 62, 0x6f94ad, 0.92),
-      this.add.rectangle(103, -82, 12, 62, 0x6f94ad, 0.92),
+      this.add.rectangle(-107, -102, 12, 54, 0x6f94ad, 0.92),
+      this.add.rectangle(107, -102, 12, 54, 0x6f94ad, 0.92),
       this.add
-        .text(0, -83, 'STORY HOUSE', {
+        .text(0, -103, 'STORY HOUSE', {
           color: '#4f5d6c',
           fontFamily: 'Georgia, serif',
           fontSize: '20px',
