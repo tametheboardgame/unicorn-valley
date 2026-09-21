@@ -43,6 +43,15 @@ describe('Sunbeam Village map', () => {
     expect(findUnreachableTargets(SUNBEAM_VILLAGE_MAP, targets)).toEqual([]);
   });
 
+  it('contains only authoritative production NPC markers and no legacy square topology', () => {
+    expect(SUNBEAM_VILLAGE_MAP.npcMarkers.map((marker) => marker.id)).toEqual([
+      'willow',
+      'marigold',
+      'pebble',
+    ]);
+    expect('square' in SUNBEAM_VILLAGE_MAP).toBe(false);
+  });
+
   it('only blocks visible physical landmarks', () => {
     expect(SUNBEAM_VILLAGE_MAP.colliders.map((collider) => collider.id)).toEqual([
       'collision:bakery',

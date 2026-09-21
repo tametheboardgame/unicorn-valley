@@ -51,12 +51,6 @@ export const SUNBEAM_VILLAGE_MAP = {
   height: 1900,
   margin: 90,
   playerSpawn,
-  square: {
-    x: 1500,
-    y: 1050,
-    width: 1220,
-    height: 690,
-  },
   landmarks: [
     {
       id: 'bakery',
@@ -107,7 +101,6 @@ export const SUNBEAM_VILLAGE_MAP = {
     { id: 'willow', label: 'Willow', position: { x: 1040, y: 1160 } },
     { id: 'marigold', label: 'Marigold', position: { x: 700, y: 860 } },
     { id: 'pebble', label: 'Pebble', position: { x: 1900, y: 1210 } },
-    { id: 'shopkeeper-marker', label: 'Shopkeeper', position: { x: 1730, y: 770 } },
   ] satisfies readonly VillageNpcMarker[],
   colliders: [
     { id: 'collision:bakery', x: 900, y: 470, width: 450, height: 320 },

@@ -66,39 +66,6 @@ function syncNovaInteractionTarget(area: CoreNpcPresenceArea): void {
   mutablePosition.y = target.y;
 }
 
-function hideVillagePrototypeMarker(
-  scene: Phaser.Scene,
-  id: 'willow' | 'marigold' | 'pebble',
-  prototypeIcon: string,
-): void {
-  const marker = SUNBEAM_VILLAGE_MAP.npcMarkers.find((candidate) => candidate.id === id);
-  if (!marker) {
-    return;
-  }
-
-  for (const object of scene.children.list) {
-    if (!hasWorldPosition(object)) {
-      continue;
-    }
-    const atMarker =
-      Math.abs(object.x - marker.position.x) <= 1 && Math.abs(object.y - marker.position.y) <= 1;
-    if (!atMarker) {
-      continue;
-    }
-
-    const prototypeCircle =
-      object instanceof Phaser.GameObjects.Arc &&
-      object.displayWidth <= 90 &&
-      object.displayHeight <= 90;
-    const prototypeText =
-      object instanceof Phaser.GameObjects.Text &&
-      (object.text === prototypeIcon || object.text === '✦');
-    if (prototypeCircle || prototypeText) {
-      object.setVisible(false);
-    }
-  }
-}
-
 function hideNovaPlaceholder(scene: Phaser.Scene, hideRaceLabel: boolean): void {
   if (!NOVA_RACE_POSITION) {
     return;
@@ -242,8 +209,8 @@ export class CoreNpcProductionPresentationManager {
       return;
     }
 
-    this.ensureVillageNpc(scene, 'willow', '🌿', 100, 83);
-    this.ensureVillageNpc(scene, 'marigold', '🥐', 102, 84);
+    this.ensureVillageNpc(scene, 'willow', 100, 83);
+    this.ensureVillageNpc(scene, 'marigold', 102, 84);
 
     const pebbleMarker = SUNBEAM_VILLAGE_MAP.npcMarkers.find(
       (candidate) => candidate.id === 'pebble',
@@ -251,7 +218,6 @@ export class CoreNpcProductionPresentationManager {
     if (!pebbleMarker || scene.children.getByName('core-npc:pebble:world')) {
       return;
     }
-    hideVillagePrototypeMarker(scene, 'pebble', '✦');
     hidePebblePlaceholder(scene);
     const pebble = createCoreNpcSprite(
       scene,
@@ -268,7 +234,6 @@ export class CoreNpcProductionPresentationManager {
   private ensureVillageNpc(
     scene: Phaser.Scene,
     id: 'willow' | 'marigold',
-    emoji: string,
     width: number,
     height: number,
   ): void {
@@ -279,7 +244,6 @@ export class CoreNpcProductionPresentationManager {
     if (!marker) {
       return;
     }
-    hideVillagePrototypeMarker(scene, id, emoji);
     const sprite = createCoreNpcSprite(scene, id, marker.position.x, marker.position.y + 4, 'world')
       .setDisplaySize(width, height)
       .setDepth(worldDepthForY(marker.position.y + 47, 0.32));

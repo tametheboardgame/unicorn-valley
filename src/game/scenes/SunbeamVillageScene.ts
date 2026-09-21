@@ -16,6 +16,7 @@ import {
   saveLocationCheckpoint,
 } from '../save/saveLocationCheckpoint';
 import { isWillowGardenPlanted } from '../story/WillowMoonflowersStory';
+import { createSunbeamVillageProductionPresentation } from '../visual/EnvironmentProductionPresentationManager';
 import { InteractionPrompt } from '../ui/InteractionPrompt';
 import { MOONFLOWER_GLADE_MAP, setMoonflowerGladePlayerSpawn } from '../world/MoonflowerGladeMap';
 import {
@@ -314,30 +315,15 @@ export class SunbeamVillageScene extends Phaser.Scene {
 
   private createEnvironment(): void {
     const map = SUNBEAM_VILLAGE_MAP;
-    this.add.rectangle(map.width / 2, map.height / 2, map.width, map.height, 0xf2d986);
-    this.add.rectangle(map.width / 2, map.height / 2 + 120, map.width, 1220, 0xa9da92, 0.92);
-
-    const paths = this.add.graphics().setDepth(2);
-    paths.lineStyle(125, 0xf3dfad, 1);
-    paths.beginPath();
-    paths.moveTo(120, 950);
-    paths.lineTo(760, 950);
-    paths.lineTo(1500, 1050);
-    paths.lineTo(2240, 950);
-    paths.lineTo(2880, 950);
-    paths.strokePath();
-    paths.lineStyle(92, 0xf7e9c5, 0.95);
-    for (const landmark of map.landmarks.slice(0, 3)) {
-      paths.beginPath();
-      paths.moveTo(landmark.approach.x, landmark.approach.y);
-      paths.lineTo(landmark.position.x, landmark.position.y + 155);
-      paths.strokePath();
-    }
-
     this.add
-      .rectangle(map.square.x, map.square.y, map.square.width, map.square.height, 0xe9c88f, 0.7)
-      .setStrokeStyle(10, 0xd5aa72, 0.6)
-      .setDepth(3);
+      .rectangle(map.width / 2, map.height / 2, map.width, map.height, 0xf2d986)
+      .setName('sunbeam-composition:base');
+    this.add
+      .rectangle(map.width / 2, map.height / 2 + 120, map.width, 1220, 0xa9da92, 0.92)
+      .setName('sunbeam-composition:grass');
+
+    // H3.1 deliberately leaves the old through-fountain road and rectangular square retired.
+    // H3.3 owns the replacement plaza/path network; do not layer new geometry over this residue.
 
     this.createBuilding('bakery', 900, 470, 450, 320, 0xf7a96f, 0xffdf9c, '🥐', 'SUNBEAM BAKERY');
     this.createBuilding(
@@ -353,11 +339,15 @@ export class SunbeamVillageScene extends Phaser.Scene {
     );
     this.createBuilding('library', 2110, 480, 490, 330, 0x87b8d8, 0xd9f1ff, '📚', 'STORY HOUSE');
     this.createFountain();
-    this.createNpcMarkers();
+    this.createNpcLabels();
     this.createWillowGarden();
     this.createEntrances();
     this.createBunting();
     this.createFlowers();
+
+    // Sunbeam's production detail is now composed by the scene itself instead of being injected
+    // later by the global environment manager. This keeps one lifecycle authority for H3 work.
+    createSunbeamVillageProductionPresentation(this);
   }
 
   private createBuilding(
@@ -480,23 +470,8 @@ export class SunbeamVillageScene extends Phaser.Scene {
       .setDepth(10);
   }
 
-  private createNpcMarkers(): void {
+  private createNpcLabels(): void {
     for (const marker of SUNBEAM_VILLAGE_MAP.npcMarkers) {
-      const isWillow = marker.id === 'willow';
-      const isMarigold = marker.id === 'marigold';
-      this.add
-        .circle(marker.position.x, marker.position.y, 42, 0xfff3c6, 0.9)
-        .setStrokeStyle(4, isWillow ? 0x6ba271 : isMarigold ? 0xe49b55 : 0xb28ab9, 0.95)
-        .setDepth(8);
-      this.add
-        .text(marker.position.x, marker.position.y, isWillow ? '🌿' : isMarigold ? '🥐' : '✦', {
-          color: '#6c5272',
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '28px',
-          fontStyle: 'bold',
-        })
-        .setOrigin(0.5)
-        .setDepth(9);
       this.add
         .text(marker.position.x, marker.position.y + 61, marker.label, {
           color: '#5c4961',
@@ -506,6 +481,7 @@ export class SunbeamVillageScene extends Phaser.Scene {
           backgroundColor: '#fff8dfcc',
           padding: { x: 7, y: 4 },
         })
+        .setName(`village-npc-label:${marker.id}`)
         .setOrigin(0.5)
         .setDepth(9);
     }

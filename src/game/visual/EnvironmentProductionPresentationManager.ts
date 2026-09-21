@@ -19,7 +19,6 @@ interface AmbientPoint {
 
 const SCENE_ENVIRONMENTS: Readonly<Record<string, ProductionEnvironmentId>> = {
   MoonflowerGladeScene: 'moonflower-glade',
-  SunbeamVillageScene: 'sunbeam-village',
   RainbowMeadowScene: 'rainbow-meadow',
   CrystalBrookScene: 'crystal-brook',
   WhisperingWoodsScene: 'whispering-woods',
@@ -199,7 +198,13 @@ function createMoonflowerGladeProduction(scene: Phaser.Scene): void {
   );
 }
 
-function createSunbeamVillageProduction(scene: Phaser.Scene): void {
+export function createSunbeamVillageProductionPresentation(scene: Phaser.Scene): void {
+  const anchorName = environmentProductionName('sunbeam-village', 'anchor');
+  if (scene.children.getByName(anchorName)) {
+    return;
+  }
+
+  nameObject(scene.add.zone(-64, -64, 2, 2).setVisible(false), 'sunbeam-village', 'anchor');
   const environment = 'sunbeam-village';
   const background = nameObject(scene.add.graphics().setDepth(1.55), environment, 'background');
   background.fillStyle(0xffefb3, 0.25);
@@ -482,9 +487,6 @@ function decorateScene(scene: Phaser.Scene, environment: ProductionEnvironmentId
   switch (environment) {
     case 'moonflower-glade':
       createMoonflowerGladeProduction(scene);
-      break;
-    case 'sunbeam-village':
-      createSunbeamVillageProduction(scene);
       break;
     case 'rainbow-meadow':
       createRainbowMeadowProduction(scene);
