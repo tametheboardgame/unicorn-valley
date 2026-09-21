@@ -586,10 +586,10 @@ export class SunbeamVillageScene extends Phaser.Scene {
       this.add.rectangle(0, 62, 70, 70, 0xc6edf0, 0.94),
       this.add.circle(38, 100, 7, 0xffd56e, 1),
       this.add.rectangle(0, 156, 158, 28, 0xd2aa77, 1),
-      this.add.rectangle(0, -48, 286, 32, 0xfff4d9, 1),
+      this.add.rectangle(0, -66, 286, 32, 0xfff4d9, 1),
     );
     for (const x of [-110, -55, 0, 55, 110]) {
-      objects.push(this.add.circle(x, -31, 18, x % 110 === 0 ? 0xffd079 : 0xf29b72, 1));
+      objects.push(this.add.circle(x, -49, 18, x % 110 === 0 ? 0xffd079 : 0xf29b72, 1));
     }
 
     objects.push(
