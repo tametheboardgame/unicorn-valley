@@ -900,6 +900,7 @@ export class SunbeamVillageScene extends Phaser.Scene {
           fontSize: '15px',
           fontStyle: 'bold',
         })
+        .setName('sunbeam-composition:willow-garden:sign:text')
         .setOrigin(0.5),
       this.add.circle(-86, 94, 8, 0xffe48b, 0.96),
       this.add.circle(86, 94, 8, 0xffe48b, 0.96),
@@ -951,6 +952,7 @@ export class SunbeamVillageScene extends Phaser.Scene {
             fontSize: '17px',
             fontStyle: 'bold',
           })
+          .setName(`sunbeam-composition:gateway:${id}:sign:text`)
           .setOrigin(0.5),
       ];
 
