@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { SUNBEAM_VILLAGE_LAYOUT } from '../world/SunbeamVillageLayout';
 import { worldDepthForY } from '../world/WorldDepth';
 
 export type ProductionEnvironmentId =
@@ -206,23 +207,49 @@ export function createSunbeamVillageProductionPresentation(scene: Phaser.Scene):
 
   nameObject(scene.add.zone(-64, -64, 2, 2).setVisible(false), 'sunbeam-village', 'anchor');
   const environment = 'sunbeam-village';
+  const layout = SUNBEAM_VILLAGE_LAYOUT;
   const background = nameObject(scene.add.graphics().setDepth(1.55), environment, 'background');
-  background.fillStyle(0xffefb3, 0.25);
-  background.fillEllipse(730, 520, 1180, 710);
-  background.fillStyle(0xc8eba2, 0.2);
-  background.fillEllipse(2250, 1390, 1500, 720);
-  background.fillStyle(0xffd9b1, 0.2);
-  background.fillEllipse(2420, 460, 980, 580);
 
+  const highStreet = layout.districts.find(({ id }) => id === 'high-street');
+  const residential = layout.districts.find(({ id }) => id === 'residential');
+  const willowGarden = layout.districts.find(({ id }) => id === 'willow-garden');
+  if (highStreet) {
+    background.fillStyle(0xffefb3, 0.18);
+    background.fillEllipse(
+      highStreet.centre.x,
+      highStreet.centre.y,
+      highStreet.radiusX * 2,
+      highStreet.radiusY * 2,
+    );
+  }
+  if (residential) {
+    background.fillStyle(0xc8eba2, 0.14);
+    background.fillEllipse(
+      residential.centre.x,
+      residential.centre.y,
+      residential.radiusX * 2,
+      residential.radiusY * 2,
+    );
+  }
+  if (willowGarden) {
+    background.fillStyle(0xffd9b1, 0.11);
+    background.fillEllipse(
+      willowGarden.centre.x,
+      willowGarden.centre.y,
+      willowGarden.radiusX * 2,
+      willowGarden.radiusY * 2,
+    );
+  }
+
+  // H3.2 keeps production decoration away from the moved shopfronts. H3.8 will
+  // deliberately integrate flower boxes and micro-props back into authored building pockets.
   const signature = nameObject(scene.add.container(0, 0), environment, 'signature');
   const flowerColours = [0xef8fa9, 0xf5c968, 0x7cc6d8, 0x9fca7a, 0xc89cda];
   for (const [x, y, width] of [
-    [260, 760, 112],
-    [720, 760, 104],
-    [1080, 1280, 118],
-    [1650, 760, 118],
-    [2100, 1280, 102],
-    [2460, 760, 112],
+    [390, 1280, 112],
+    [820, 1630, 104],
+    [1940, 1630, 118],
+    [2530, 1450, 112],
   ] as const) {
     const basket = scene.add
       .rectangle(x, y, width, 20, 0xb07855, 0.76)
@@ -242,9 +269,10 @@ export function createSunbeamVillageProductionPresentation(scene: Phaser.Scene):
   }
   signature.setDepth(15.5);
 
-  const wisps = [900, 2110].map((x, index) => {
+  const wispAnchors = [layout.buildings.bakery, layout.buildings.library] as const;
+  const wisps = wispAnchors.map((building, index) => {
     const wisp = scene.add
-      .ellipse(x + 55, 700 + index * 18, 34, 88, 0xfff8e6, 0.18)
+      .ellipse(building.x + (index === 0 ? 225 : -225), building.approach.y - 80, 34, 88, 0xfff8e6, 0.18)
       .setAngle(index === 0 ? 18 : -12);
     scene.tweens.add({
       targets: wisp,
