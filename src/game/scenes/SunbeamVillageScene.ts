@@ -432,34 +432,38 @@ export class SunbeamVillageScene extends Phaser.Scene {
   }
 
   private createPathNetwork(): void {
-    const graphics = this.add
-      .graphics()
-      .setName('sunbeam-composition:path')
-      .setDepth(SUNBEAM_VILLAGE_LAYERS.path);
-
-    const drawStroke = (
+    const drawRoute = (
+      name: string,
       points: readonly { x: number; y: number }[],
-      width: number,
-      colour: number,
-      alpha: number,
+      outerWidth: number,
+      innerWidth: number,
     ): void => {
       const first = points[0];
       if (!first) {
         return;
       }
 
-      graphics.lineStyle(width, colour, alpha);
-      graphics.beginPath();
-      graphics.moveTo(first.x, first.y);
-      for (const point of points.slice(1)) {
-        graphics.lineTo(point.x, point.y);
-      }
-      graphics.strokePath();
+      const graphics = this.add
+        .graphics()
+        .setName(name)
+        .setDepth(SUNBEAM_VILLAGE_LAYERS.path);
+      const drawStroke = (width: number, colour: number, alpha: number): void => {
+        graphics.lineStyle(width, colour, alpha);
+        graphics.beginPath();
+        graphics.moveTo(first.x, first.y);
+        for (const point of points.slice(1)) {
+          graphics.lineTo(point.x, point.y);
+        }
+        graphics.strokePath();
 
-      graphics.fillStyle(colour, alpha);
-      for (const point of points) {
-        graphics.fillCircle(point.x, point.y, width / 2);
-      }
+        graphics.fillStyle(colour, alpha);
+        for (const point of points) {
+          graphics.fillCircle(point.x, point.y, width / 2);
+        }
+      };
+
+      drawStroke(outerWidth, 0xd2b680, 0.98);
+      drawStroke(innerWidth, 0xf4e4ba, 1);
     };
 
     const {
@@ -469,22 +473,14 @@ export class SunbeamVillageScene extends Phaser.Scene {
       willowBranch,
       residentialBranch,
     } = SUNBEAM_VILLAGE_LAYOUT.pathNetwork;
-    const branches = [
-      ...shopBranches,
-      fountainBranch,
-      willowBranch,
-      residentialBranch,
-    ] as const;
 
-    drawStroke(mainRoute, 126, 0xd2b680, 0.98);
-    for (const branch of branches) {
-      drawStroke(branch, 76, 0xd2b680, 0.98);
-    }
-
-    drawStroke(mainRoute, 94, 0xf4e4ba, 1);
-    for (const branch of branches) {
-      drawStroke(branch, 54, 0xf4e4ba, 1);
-    }
+    drawRoute('sunbeam-composition:path:main', mainRoute, 126, 94);
+    shopBranches.forEach((branch, index) => {
+      drawRoute(`sunbeam-composition:path:shop-${index + 1}`, branch, 76, 54);
+    });
+    drawRoute('sunbeam-composition:path:fountain', fountainBranch, 72, 50);
+    drawRoute('sunbeam-composition:path:willow', willowBranch, 76, 54);
+    drawRoute('sunbeam-composition:path:residential', residentialBranch, 76, 54);
   }
 
   private createBuilding(
