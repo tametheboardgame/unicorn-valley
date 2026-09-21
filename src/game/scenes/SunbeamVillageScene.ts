@@ -316,7 +316,6 @@ export class SunbeamVillageScene extends Phaser.Scene {
 
   private createEnvironment(): void {
     const map = SUNBEAM_VILLAGE_MAP;
-    const layout = SUNBEAM_VILLAGE_LAYOUT;
     this.add
       .rectangle(map.width / 2, map.height / 2, map.width, map.height, 0xf2d986)
       .setName('sunbeam-composition:base');
@@ -545,7 +544,10 @@ export class SunbeamVillageScene extends Phaser.Scene {
     objects.push(cottage);
 
     objects.push(
-      this.add.rectangle(-148, -188, 50, 112, 0xb87857, 1).setStrokeStyle(5, 0x8c604e, 0.9),
+      this.add
+        .rectangle(-148, -188, 50, 112, 0xb87857, 1)
+        .setName('village-shopfront:bakery:feature:chimney')
+        .setStrokeStyle(5, 0x8c604e, 0.9),
       this.add.rectangle(-148, -250, 64, 20, 0x8c604e, 1),
     );
 
@@ -641,7 +643,10 @@ export class SunbeamVillageScene extends Phaser.Scene {
     objects.push(facade);
 
     objects.push(
-      this.add.rectangle(-148, -105, 42, 118, 0xbe75b9, 1).setStrokeStyle(5, 0x865e82, 0.86),
+      this.add
+        .rectangle(-148, -105, 42, 118, 0xbe75b9, 1)
+        .setName('village-shopfront:accessory-shop:feature:turret')
+        .setStrokeStyle(5, 0x865e82, 0.86),
       this.add.circle(-148, -172, 32, 0xf6c4ee, 1).setStrokeStyle(5, 0x865e82, 0.86),
     );
 
@@ -736,7 +741,10 @@ export class SunbeamVillageScene extends Phaser.Scene {
     objects.push(
       this.add.rectangle(142, -228, 54, 148, 0x6d7783, 1).setStrokeStyle(5, 0x4f5f70, 0.9),
       this.add.rectangle(142, -308, 68, 22, 0x4f5f70, 1),
-      this.add.circle(0, -178, 46, 0xc3e8f2, 1).setStrokeStyle(8, 0xfff1d7, 0.94),
+      this.add
+        .circle(0, -178, 46, 0xc3e8f2, 1)
+        .setName('village-shopfront:library:feature:attic-window')
+        .setStrokeStyle(8, 0xfff1d7, 0.94),
       this.add
         .text(0, -180, '📖', { fontFamily: 'system-ui, sans-serif', fontSize: '27px' })
         .setOrigin(0.5),
