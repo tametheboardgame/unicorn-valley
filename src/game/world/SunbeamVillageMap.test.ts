@@ -113,10 +113,7 @@ describe('Sunbeam Village map', () => {
     for (let left = 0; left < anchors.length; left += 1) {
       for (let right = left + 1; right < anchors.length; right += 1) {
         expect(
-          Math.hypot(
-            anchors[left].x - anchors[right].x,
-            anchors[left].y - anchors[right].y,
-          ),
+          Math.hypot(anchors[left].x - anchors[right].x, anchors[left].y - anchors[right].y),
         ).toBeGreaterThanOrEqual(180);
       }
     }
@@ -126,9 +123,7 @@ describe('Sunbeam Village map', () => {
     const { mainApproaches, shopBranches, willowBranch, residentialBranch } =
       SUNBEAM_VILLAGE_LAYOUT.pathNetwork;
 
-    expect(mainApproaches[0][0]).toEqual(
-      SUNBEAM_VILLAGE_LAYOUT.entrances.moonflowerGlade.position,
-    );
+    expect(mainApproaches[0][0]).toEqual(SUNBEAM_VILLAGE_LAYOUT.entrances.moonflowerGlade.position);
     expect(mainApproaches[1].at(-1)).toEqual(
       SUNBEAM_VILLAGE_LAYOUT.entrances.rainbowMeadow.position,
     );
