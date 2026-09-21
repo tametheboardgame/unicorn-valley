@@ -4,6 +4,7 @@ import {
   isPointBlocked,
   isPointInsideWalkableBounds,
 } from './MapTraversal';
+import { SUNBEAM_VILLAGE_LAYOUT } from './SunbeamVillageLayout';
 import { SUNBEAM_VILLAGE_MAP } from './SunbeamVillageMap';
 
 const PLAYER_CLEARANCE = 42;
@@ -71,6 +72,47 @@ describe('Sunbeam Village map', () => {
           markers[left].position.y - markers[right].position.y,
         );
         expect(distance).toBeGreaterThanOrEqual(220);
+      }
+    }
+  });
+
+  it('defines six distinct districts and spreads major activity across the map', () => {
+    expect(SUNBEAM_VILLAGE_LAYOUT.districts.map(({ id }) => id)).toEqual([
+      'west-approach',
+      'high-street',
+      'central-plaza',
+      'willow-garden',
+      'residential',
+      'east-approach',
+    ]);
+
+    const shops = [
+      SUNBEAM_VILLAGE_LAYOUT.buildings.bakery,
+      SUNBEAM_VILLAGE_LAYOUT.buildings.accessoryShop,
+      SUNBEAM_VILLAGE_LAYOUT.buildings.library,
+    ];
+    expect(shops[1].x - shops[0].x).toBeGreaterThanOrEqual(650);
+    expect(shops[2].x - shops[1].x).toBeGreaterThanOrEqual(700);
+
+    expect(SUNBEAM_VILLAGE_LAYOUT.willowGarden.x).toBeLessThan(900);
+    expect(SUNBEAM_VILLAGE_LAYOUT.willowGarden.y).toBeGreaterThan(1300);
+    expect(SUNBEAM_VILLAGE_LAYOUT.npcPositions.pebble.y).toBeGreaterThan(1200);
+    expect(SUNBEAM_VILLAGE_LAYOUT.fountain.y).toBeGreaterThan(950);
+  });
+
+  it('keeps master-layout interaction anchors deliberately separated', () => {
+    const anchors = [
+      ...Object.values(SUNBEAM_VILLAGE_LAYOUT.npcPositions),
+      SUNBEAM_VILLAGE_LAYOUT.villageLife.noticeBoard,
+      SUNBEAM_VILLAGE_LAYOUT.villageLife.sundial,
+      SUNBEAM_VILLAGE_LAYOUT.villageLife.bench,
+      SUNBEAM_VILLAGE_LAYOUT.villageLife.storyMapSign,
+      SUNBEAM_VILLAGE_LAYOUT.villageLife.threadWindow,
+    ];
+
+    for (let left = 0; left < anchors.length; left += 1) {
+      for (let right = left + 1; right < anchors.length; right += 1) {
+        expect(Math.hypot(anchors[left].x - anchors[right].x, anchors[left].y - anchors[right].y)).toBeGreaterThanOrEqual(180);
       }
     }
   });
