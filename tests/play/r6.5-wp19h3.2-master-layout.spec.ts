@@ -72,6 +72,8 @@ test('H3.2 composes Sunbeam around the canonical district layout', async ({ page
 
   expect(objects.some(({ name }) => name === 'exploration-path-polish')).toBe(false);
   expect(objects.some(({ name }) => name === 'world-traversal-polish-detail')).toBe(false);
+  expect(objects.some(({ name }) => name === 'visual-tightening-detail')).toBe(false);
+  expect(objects.some(({ name }) => name === 'visual-tightening-anchor')).toBe(false);
   expect(objects.some(({ name }) => name === 'sunbeam-composition:path')).toBe(true);
 
   for (const [shopId, halfWindowOffset] of [
