@@ -40,7 +40,7 @@ interface PathStroke {
 interface GatewayDefinition {
   x: number;
   y: number;
-  label: string;
+  label?: string;
   direction: 'west' | 'east';
 }
 
@@ -193,27 +193,31 @@ function addGateway(scene: Phaser.Scene, gateway: GatewayDefinition): void {
     });
   }
 
-  const sign = markDetail(
-    scene.add
-      .text(signX, y - 154, `${arrow} ${label}`, {
-        color: '#5b465d',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '17px',
-        fontStyle: 'bold',
-        backgroundColor: '#fff4d9f2',
-        padding: { x: 12, y: 7 },
-      })
-      .setOrigin(direction === 'east' ? 1 : 0, 0.5)
-      .setDepth(10.2),
-  );
-  sign.setStroke('#ffffff', 1);
+  if (label) {
+    const sign = markDetail(
+      scene.add
+        .text(signX, y - 154, `${arrow} ${label}`, {
+          color: '#5b465d',
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '17px',
+          fontStyle: 'bold',
+          backgroundColor: '#fff4d9f2',
+          padding: { x: 12, y: 7 },
+        })
+        .setOrigin(direction === 'east' ? 1 : 0, 0.5)
+        .setDepth(10.2),
+    );
+    sign.setStroke('#ffffff', 1);
+  }
 }
 
 function decorateGlade(scene: Phaser.Scene): void {
   // Moonflower Glade paths are owned by ExplorationPathPolishManager. Keep this manager
   // responsible only for the existing east gateway and traversal behaviour so there is one
   // visible path source of truth for the Glade.
-  addGateway(scene, { x: 2680, y: 900, label: 'Sunbeam Village', direction: 'east' });
+  // H1 owns the Glade's destination wording on the physical wooden direction sign.
+  // Deliberately omit a generic gateway label here so the retired floating sign cannot return.
+  addGateway(scene, { x: 2680, y: 900, direction: 'east' });
 }
 
 function decorateVillage(scene: Phaser.Scene): void {
