@@ -172,7 +172,7 @@ H0.5 cleared the final technical and visual gate for H1.
 
 ### R6.5-WP19H1+ - Open-Ended Area-by-Area Final Polish Programme
 
-State: **active; H1 = Moonflower Glade complete, H2 = Moonflower Cottage complete, H3 = Sunbeam Village selected for Stage 1 feedback on 20 September 2026**.
+State: **active; H1 = Moonflower Glade complete, H2 = Moonflower Cottage complete, H3 = Sunbeam Village first-pass plan approved on 21 September 2026, implementation not yet started**.
 
 The earlier fixed `H1-H13` area inventory is superseded by this section. There is **no predetermined upper H number**. The programme continues for as many independently useful area, subarea or interior passes as David chooses before integrated qualification. Interiors may receive their own H number when they warrant an independent review rather than being forced into a parent-area package.
 
@@ -190,7 +190,7 @@ Operating rules for H1+:
 - **H numbers are assigned sequentially only when David chooses the next review area.** Do not pre-assign future H numbers to locations.
 - **R6.5-WP19H1 - Moonflower Glade is complete and human-approved.**
 - **R6.5-WP19H2 - Moonflower Cottage & Home Customisation is complete, fully qualified and deployed to production.**
-- **Current package: R6.5-WP19H3 - Sunbeam Village Final Polish.** David selected Sunbeam Village on 20 September 2026. H3 is currently **Stage 1: Feedback / human analysis only**. Record feedback faithfully; do not begin implementation, assistant analysis or planning until David indicates the feedback pass is ready to move on.
+- **Current package: R6.5-WP19H3 - Sunbeam Village Final Polish.** David supplied feedback block 1 on 21 September 2026, explicitly requested analysis/planning, and approved the resulting H3.1-H3.8 first-pass plan for durable roadmap recording. Stage 3 is complete for feedback block 1; Stage 4 implementation has not yet started. H3 remains deliberately open-ended: H3.9 and later numbers are reserved for additional feedback blocks before any final hardening/consolidation slice is numbered.
 - Future H numbers remain deliberately unassigned until David selects each next review area.
 - There is **no H13 cap**. Continue H numbering until David decides the playable world, meaningful subareas and relevant interiors have received the required final passes.
 - An area is a review lens, not an excuse to duplicate shared code. Any broadly applicable improvement discovered during an H package should be made at the correct shared owner and then validated against affected areas.
@@ -255,11 +255,28 @@ H2 rebuilt Moonflower Cottage as a finished home and customisation space, includ
 
 ### R6.5-WP19H3 - Sunbeam Village Final Polish
 
-State: **Stage 1 active - awaiting David's Sunbeam Village feedback**.
+State: **feedback block 1 analysed / H3.1-H3.8 first-pass plan approved 2026-09-21 / implementation not started / further H3 numbers explicitly expected**.
 
 Path: `docs/work-packages/R6.5-WP19H3-SUNBEAM-VILLAGE.md`
 
-Sunbeam Village is the third selected review area in the open-ended H1+ programme. The current task is observation only: capture everything David thinks is broken, weak, unclear, visually unfinished, missing or worth improving. Screenshots and spontaneous ideas are valid feedback. No implementation or remediation plan should begin until David explicitly says the feedback pass is ready for analysis.
+Sunbeam Village is the third selected review area in the open-ended H1+ programme. Feedback block 1 identified that the village is not simply under-polished: its current visual clutter comes from several generations of independently composed presentation overlapping in one space. The base scene owns the large rectangular village-square surface, broad road geometry, shop shells, bunting, labels and prototype markers; later systems add production NPCs, environment decoration, roaming residents and village-life props on top. The approved first pass therefore rebuilds the village composition while preserving its gameplay, quests, shop access, resident systems and region transitions.
+
+The concrete first-pass findings include the 1,220 × 690 semi-transparent rectangular square layer, the old main road running through the fountain, the surviving generic `shopkeeper-marker`, floating/text-box environmental labels and several independently positioned props/resident routes competing around the northern shop row.
+
+#### H3 feedback block 1 delivery sequence
+
+1. **H3.1 - Legacy residue and composition ownership cleanup:** remove the rectangular square treatment, obsolete path residue and surviving `shopkeeper-marker`; identify other superseded prototype presentation; reduce duplicated Sunbeam-specific scenery ownership so later work builds on one deliberate composition rather than another overlay.
+2. **H3.2 - Village master layout rebuild:** redesign the full village spatial composition around clear districts for the western Glade approach, northern/high-street shops, central fountain/plaza, south-west Willow/garden area, southern/eastern residential village and eastern Meadow approach. Rebalance the top-heavy density and preserve readable circulation/tap-navigation space.
+3. **H3.3 - Proper plaza and path network:** replace the geometric brown square with an organic storybook plaza treatment; give the fountain a clear focal paved area; route the west-east path around rather than through the fountain; add deliberate branches to shops, Willow and residential areas while keeping movement/navigation readable.
+4. **H3.4 - Shop exterior rebuild:** retain Sunbeam Bakery, Twinkle & Thread and Story House but replace the dominant repeated rectangle-plus-triangle template with distinct storybook silhouettes, façades, rooflines, windows, signs, trim, doors and landscaping. Preserve their existing interiors/economy/entry behaviour; interior review is outside this H3 first pass.
+5. **H3.5 - Integrated signs and wayfinding:** retire floating shop/garden/gateway labels and cues such as `DOOR OPEN • COME IN` in favour of environmental signs, hanging boards, carved posts, plaques and visually legible gateways. Preserve the canonical global location HUD.
+6. **H3.6 - Willow's garden district:** move Willow and her garden towards the south-west/left edge of the commercial centre, connect them with a curved spur path, expand the garden into a believable bounded place and preserve the planted/unplanted Moonflower story state.
+7. **H3.7 - Southern residential expansion:** add a restrained set of additional homes/village buildings around the southern edges so Sunbeam reads as a real village rather than three shops beside a fountain. Buildings may offer lightweight inspect/knock flavour but do not imply a new set of interiors. Maintain generous green/path space between structures.
+8. **H3.8 - Props, bunting, residents and village-life recomposition:** deliberately reposition the notice board, map sign/chime, sundial, bench, fountain interaction, shop-window display, bunting, flower detail and roaming resident routes into designed micro-areas. Keep the village lively, but protect uncluttered circulation around the fountain and shop entrances.
+
+**Numbering contract:** H3.1-H3.8 are only **feedback block 1**. They are not the complete H3 package and must not be followed automatically by a final hardening/qualification slice. David will review the first-pass result and provide feedback block 2; that work continues at **H3.9, H3.10, H3.11 and onward for as many slices as required**. The final consolidation, responsive regression, hardening, documentation and integrated H3 qualification slice receives the next available H3 number **only after David says Sunbeam Village itself is complete**.
+
+The shop interiors remain explicitly outside this exterior/world-composition pass. They may receive a later independent H-number review if David selects them, consistent with the open-ended H1+ programme.
 
 ### R6.5-WP19I - Integrated Qualification
 
