@@ -11,11 +11,52 @@ export interface SunbeamVillageDistrict {
   radiusY: number;
 }
 
+export const SUNBEAM_VILLAGE_LAYERS = {
+  base: 0,
+  districtGround: 1.2,
+  path: 3.2,
+  groundDetail: 4,
+  structureShadow: 5.6,
+  structure: 6,
+  structureDetail: 8,
+  structureLabel: 9.2,
+  gateway: 10,
+  ui: 115,
+} as const;
+
 export const SUNBEAM_VILLAGE_LAYOUT = {
   map: {
     width: 3000,
     height: 1900,
     margin: 90,
+  },
+  pathScaffold: {
+    main: [
+      { x: 120, y: 950 },
+      { x: 620, y: 950 },
+      { x: 1050, y: 960 },
+      { x: 1230, y: 900 },
+      { x: 1340, y: 840 },
+      { x: 1660, y: 840 },
+      { x: 1770, y: 900 },
+      { x: 1960, y: 960 },
+      { x: 2380, y: 950 },
+      { x: 2880, y: 950 },
+    ],
+    shopBranches: [
+      [
+        { x: 700, y: 950 },
+        { x: 700, y: 760 },
+      ],
+      [
+        { x: 1450, y: 840 },
+        { x: 1450, y: 700 },
+      ],
+      [
+        { x: 2260, y: 950 },
+        { x: 2260, y: 800 },
+      ],
+    ],
   },
   districts: [
     {
