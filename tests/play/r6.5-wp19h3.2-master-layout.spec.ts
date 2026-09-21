@@ -71,14 +71,26 @@ test('H3.2 composes Sunbeam around the canonical district layout', async ({ page
   at('sunbeam-fountain:basin', 1500, 1060);
 
   expect(objects.some(({ name }) => name === 'exploration-path-polish')).toBe(false);
+  expect(objects.some(({ name }) => name === 'world-traversal-polish-detail')).toBe(false);
+  expect(objects.some(({ name }) => name === 'sunbeam-composition:path')).toBe(true);
 
-  const legacyBakeryWindows = objects.filter(
-    ({ type, x, y }) =>
-      type === 'Rectangle' &&
-      Math.abs(y - 474) <= 2 &&
-      (Math.abs(x - 774) <= 2 || Math.abs(x - 1026) <= 2),
-  );
-  expect(legacyBakeryWindows).toEqual([]);
+  for (const [shopId, halfWindowOffset] of [
+    ['bakery', 117.6],
+    ['accessory-shop', 117.6],
+    ['library', 128.8],
+  ] as const) {
+    const leftWindow = objects.find(
+      ({ name }) => name === `village-shopfront:${shopId}:window:left`,
+    );
+    const rightWindow = objects.find(
+      ({ name }) => name === `village-shopfront:${shopId}:window:right`,
+    );
+    expect(leftWindow?.x).toBeCloseTo(-halfWindowOffset, 0);
+    expect(rightWindow?.x).toBeCloseTo(halfWindowOffset, 0);
+    expect(leftWindow?.y).toBeCloseTo(4, 0);
+    expect(rightWindow?.y).toBeCloseTo(4, 0);
+  }
 
+  expect(objects.some(({ name }) => name.startsWith('wp18f-world-experience:') && name.includes('village'))).toBe(false);
   at('village-life:thread-window', 1305, 770);
 });
