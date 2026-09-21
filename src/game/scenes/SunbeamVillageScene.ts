@@ -401,7 +401,7 @@ export class SunbeamVillageScene extends Phaser.Scene {
   }
 
   private createPlaza(): void {
-    const { centre, width, height } = SUNBEAM_VILLAGE_LAYOUT.plaza;
+    const { centre, width, height, northShopApron } = SUNBEAM_VILLAGE_LAYOUT.plaza;
     const graphics = this.add
       .graphics()
       .setName('sunbeam-composition:plaza')
@@ -412,6 +412,62 @@ export class SunbeamVillageScene extends Phaser.Scene {
     graphics.fillStyle(0xecd8aa, 0.76);
     graphics.fillEllipse(centre.x - 105, centre.y + 18, width * 0.64, height * 0.72);
     graphics.fillEllipse(centre.x + 118, centre.y - 14, width * 0.58, height * 0.68);
+
+    const apronTop = northShopApron.y - northShopApron.height / 2;
+    const apronBottom = northShopApron.y + northShopApron.height / 2;
+    const outerTopHalf = 40;
+    const outerBottomHalf = northShopApron.width / 2;
+    graphics.fillStyle(0xd9bf87, 0.98);
+    graphics.fillTriangle(
+      northShopApron.x - outerTopHalf,
+      apronTop,
+      northShopApron.x + outerTopHalf,
+      apronTop,
+      northShopApron.x + outerBottomHalf,
+      apronBottom,
+    );
+    graphics.fillTriangle(
+      northShopApron.x - outerTopHalf,
+      apronTop,
+      northShopApron.x + outerBottomHalf,
+      apronBottom,
+      northShopApron.x - outerBottomHalf,
+      apronBottom,
+    );
+
+    const innerTop = apronTop + 4;
+    const innerBottom = northShopApron.y + 34;
+    graphics.fillStyle(0xf2e3bd, 0.96);
+    graphics.fillTriangle(
+      northShopApron.x - 28,
+      innerTop,
+      northShopApron.x + 28,
+      innerTop,
+      northShopApron.x + 62,
+      innerBottom,
+    );
+    graphics.fillTriangle(
+      northShopApron.x - 28,
+      innerTop,
+      northShopApron.x + 62,
+      innerBottom,
+      northShopApron.x - 62,
+      innerBottom,
+    );
+
+    graphics.fillStyle(0xd2b980, 0.58);
+    for (const [offsetX, offsetY, stoneWidth] of [
+      [-52, 48, 42],
+      [0, 62, 48],
+      [54, 46, 40],
+    ] as const) {
+      graphics.fillEllipse(
+        northShopApron.x + offsetX,
+        northShopApron.y + offsetY,
+        stoneWidth,
+        22,
+      );
+    }
 
     graphics.lineStyle(18, 0xf2e3be, 0.88);
     graphics.strokeEllipse(centre.x, centre.y, 360, 270);
