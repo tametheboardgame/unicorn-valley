@@ -29,6 +29,7 @@ import {
   SUNBEAM_VILLAGE_LOCATION_ID,
   SUNBEAM_VILLAGE_MAP,
 } from '../world/SunbeamVillageMap';
+import { SUNBEAM_VILLAGE_LAYOUT } from '../world/SunbeamVillageLayout';
 
 const COLLISION_TEXTURE_KEY = 'village-collision-pixel';
 const SAVED_PLAYER_TEXTURE_KEY = 'player-unicorn-village';
@@ -315,6 +316,7 @@ export class SunbeamVillageScene extends Phaser.Scene {
 
   private createEnvironment(): void {
     const map = SUNBEAM_VILLAGE_MAP;
+    const layout = SUNBEAM_VILLAGE_LAYOUT;
     this.add
       .rectangle(map.width / 2, map.height / 2, map.width, map.height, 0xf2d986)
       .setName('sunbeam-composition:base');
@@ -322,22 +324,46 @@ export class SunbeamVillageScene extends Phaser.Scene {
       .rectangle(map.width / 2, map.height / 2 + 120, map.width, 1220, 0xa9da92, 0.92)
       .setName('sunbeam-composition:grass');
 
-    // H3.1 deliberately leaves the old through-fountain road and rectangular square retired.
-    // H3.3 owns the replacement plaza/path network; do not layer new geometry over this residue.
+    // H3.2 establishes the village's district-scale composition. H3.3 owns the authored path
+    // and plaza network, so this layer deliberately uses soft ground masses rather than paving.
+    this.createDistrictGrounding();
 
-    this.createBuilding('bakery', 900, 470, 450, 320, 0xf7a96f, 0xffdf9c, '🥐', 'SUNBEAM BAKERY');
+    const bakery = layout.buildings.bakery;
+    this.createBuilding(
+      'bakery',
+      bakery.x,
+      bakery.y,
+      bakery.width,
+      bakery.height,
+      0xf7a96f,
+      0xffdf9c,
+      '🥐',
+      'SUNBEAM BAKERY',
+    );
+    const accessoryShop = layout.buildings.accessoryShop;
     this.createBuilding(
       'accessory-shop',
-      1500,
-      430,
-      430,
-      320,
+      accessoryShop.x,
+      accessoryShop.y,
+      accessoryShop.width,
+      accessoryShop.height,
       0xd99bd4,
       0xffd9ef,
       '🎀',
       'TWINKLE & THREAD',
     );
-    this.createBuilding('library', 2110, 480, 490, 330, 0x87b8d8, 0xd9f1ff, '📚', 'STORY HOUSE');
+    const library = layout.buildings.library;
+    this.createBuilding(
+      'library',
+      library.x,
+      library.y,
+      library.width,
+      library.height,
+      0x87b8d8,
+      0xd9f1ff,
+      '📚',
+      'STORY HOUSE',
+    );
     this.createFountain();
     this.createNpcLabels();
     this.createWillowGarden();
@@ -348,6 +374,31 @@ export class SunbeamVillageScene extends Phaser.Scene {
     // Sunbeam's production detail is now composed by the scene itself instead of being injected
     // later by the global environment manager. This keeps one lifecycle authority for H3 work.
     createSunbeamVillageProductionPresentation(this);
+  }
+
+  private createDistrictGrounding(): void {
+    const districtColours: Record<string, number> = {
+      'west-approach': 0xb9df9e,
+      'high-street': 0xd8e8a8,
+      'central-plaza': 0xcde6a7,
+      'willow-garden': 0x8fc984,
+      residential: 0xb8dc96,
+      'east-approach': 0xb9df9e,
+    };
+
+    for (const district of SUNBEAM_VILLAGE_LAYOUT.districts) {
+      this.add
+        .ellipse(
+          district.centre.x,
+          district.centre.y,
+          district.radiusX * 2,
+          district.radiusY * 2,
+          districtColours[district.id],
+          district.id === 'central-plaza' ? 0.1 : 0.14,
+        )
+        .setName(`sunbeam-district:${district.id}`)
+        .setDepth(1.2);
+    }
   }
 
   private createBuilding(
@@ -456,11 +507,15 @@ export class SunbeamVillageScene extends Phaser.Scene {
   }
 
   private createFountain(): void {
-    this.add.circle(1500, 1050, 110, 0x8fb9c5, 1).setDepth(7);
-    this.add.circle(1500, 1050, 86, 0x9fe6ed, 1).setDepth(8);
-    this.add.circle(1500, 1050, 38, 0xffdc77, 1).setDepth(9);
+    const { x, y } = SUNBEAM_VILLAGE_LAYOUT.fountain;
     this.add
-      .text(1500, 1050, '☀', {
+      .circle(x, y, 110, 0x8fb9c5, 1)
+      .setName('sunbeam-fountain:basin')
+      .setDepth(7);
+    this.add.circle(x, y, 86, 0x9fe6ed, 1).setDepth(8);
+    this.add.circle(x, y, 38, 0xffdc77, 1).setDepth(9);
+    this.add
+      .text(x, y, '☀', {
         color: '#fff5c4',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '38px',
@@ -489,8 +544,7 @@ export class SunbeamVillageScene extends Phaser.Scene {
 
   private createWillowGarden(): void {
     const planted = isWillowGardenPlanted(getBrowserSaveService().load());
-    const x = 980;
-    const y = 1390;
+    const { x, y } = SUNBEAM_VILLAGE_LAYOUT.willowGarden;
     this.add
       .ellipse(x, y, 310, 145, planted ? 0x8a694d : 0x9b7758, 0.95)
       .setStrokeStyle(5, 0x6e8e57, 0.75)
@@ -529,8 +583,10 @@ export class SunbeamVillageScene extends Phaser.Scene {
   }
 
   private createEntrances(): void {
-    this.add.rectangle(125, 950, 110, 370, 0x74a56d, 0.9).setDepth(5);
-    this.add.rectangle(2875, 950, 110, 370, 0x74a56d, 0.9).setDepth(5);
+    const west = SUNBEAM_VILLAGE_LAYOUT.entrances.moonflowerGlade.position;
+    const east = SUNBEAM_VILLAGE_LAYOUT.entrances.rainbowMeadow.position;
+    this.add.rectangle(west.x + 5, west.y, 110, 370, 0x74a56d, 0.9).setDepth(5);
+    this.add.rectangle(east.x - 5, east.y, 110, 370, 0x74a56d, 0.9).setDepth(5);
     this.add
       .text(205, 805, '← Moonflower Glade', {
         color: '#59485f',
