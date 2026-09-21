@@ -29,10 +29,7 @@ import {
   SUNBEAM_VILLAGE_LOCATION_ID,
   SUNBEAM_VILLAGE_MAP,
 } from '../world/SunbeamVillageMap';
-import {
-  SUNBEAM_VILLAGE_LAYERS,
-  SUNBEAM_VILLAGE_LAYOUT,
-} from '../world/SunbeamVillageLayout';
+import { SUNBEAM_VILLAGE_LAYERS, SUNBEAM_VILLAGE_LAYOUT } from '../world/SunbeamVillageLayout';
 
 const COLLISION_TEXTURE_KEY = 'village-collision-pixel';
 const SAVED_PLAYER_TEXTURE_KEY = 'player-unicorn-village';
@@ -510,18 +507,7 @@ export class SunbeamVillageScene extends Phaser.Scene {
       this.add.ellipse(8, baseY + 38, width + 80, 78, 0x604c55, 0.18),
       this.add.rectangle(0, 0, width, height, wallColour, 1).setStrokeStyle(7, 0x8c6b6b, 0.72),
       this.add
-        .triangle(
-          0,
-          -height / 2 - 96,
-          0,
-          154,
-          width / 2 + 48,
-          0,
-          width + 96,
-          154,
-          roofColour,
-          1,
-        )
+        .triangle(0, -height / 2 - 96, 0, 154, width / 2 + 48, 0, width + 96, 154, roofColour, 1)
         .setStrokeStyle(6, 0x8a6e72, 0.72),
       this.add.rectangle(0, -height / 2 + 4, width + 34, 24, 0xffffff, 0.42),
     );
@@ -540,13 +526,7 @@ export class SunbeamVillageScene extends Phaser.Scene {
       );
       for (const offset of [-38, 0, 38]) {
         objects.push(
-          this.add.circle(
-            windowX + offset,
-            windowY + 54,
-            11,
-            side < 0 ? 0xffa8c8 : 0xffdd78,
-            0.96,
-          ),
+          this.add.circle(windowX + offset, windowY + 54, 11, side < 0 ? 0xffa8c8 : 0xffdd78, 0.96),
         );
       }
     }
