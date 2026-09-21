@@ -9,6 +9,7 @@ import { DiscoveryService } from '../discovery/DiscoveryService';
 import type { InteractionActionKind, InteractionTarget } from '../interaction/InteractionTarget';
 import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { getBrowserSaveService } from '../save/browserSaveService';
+import { SUNBEAM_VILLAGE_LAYOUT } from './SunbeamVillageLayout';
 import { worldDepthForY } from './WorldDepth';
 
 interface VillageLifePoint {
@@ -40,8 +41,8 @@ const VILLAGE_POINTS: readonly VillageLifePoint[] = [
     label: 'Village notice board',
     actionLabel: 'Read',
     actionKind: 'inspect',
-    x: 1180,
-    y: 830,
+    x: SUNBEAM_VILLAGE_LAYOUT.villageLife.noticeBoard.x,
+    y: SUNBEAM_VILLAGE_LAYOUT.villageLife.noticeBoard.y,
     radius: 122,
     createProp: (scene) => [
       scene.add.rectangle(0, 0, 126, 96, 0x9a684c, 1).setStrokeStyle(5, 0x6e4939, 0.95),
@@ -56,8 +57,8 @@ const VILLAGE_POINTS: readonly VillageLifePoint[] = [
     label: 'Sunny little sundial',
     actionLabel: 'Inspect',
     actionKind: 'inspect',
-    x: 1320,
-    y: 1320,
+    x: SUNBEAM_VILLAGE_LAYOUT.villageLife.sundial.x,
+    y: SUNBEAM_VILLAGE_LAYOUT.villageLife.sundial.y,
     radius: 118,
     createProp: (scene) => [
       scene.add.ellipse(0, 5, 116, 58, 0xe0b15e, 1).setStrokeStyle(4, 0xb17d43, 0.9),
@@ -72,8 +73,8 @@ const VILLAGE_POINTS: readonly VillageLifePoint[] = [
     label: 'Village bench',
     actionLabel: 'Sit',
     actionKind: 'interact',
-    x: 1880,
-    y: 920,
+    x: SUNBEAM_VILLAGE_LAYOUT.villageLife.bench.x,
+    y: SUNBEAM_VILLAGE_LAYOUT.villageLife.bench.y,
     radius: 118,
     createProp: (scene) => [
       scene.add.rectangle(0, 8, 150, 28, 0xb97855, 1).setStrokeStyle(3, 0x80503e, 0.9),
@@ -87,8 +88,8 @@ const VILLAGE_POINTS: readonly VillageLifePoint[] = [
     label: 'Story House map sign',
     actionLabel: 'Peek',
     actionKind: 'inspect',
-    x: 2470,
-    y: 770,
+    x: SUNBEAM_VILLAGE_LAYOUT.villageLife.storyMapSign.x,
+    y: SUNBEAM_VILLAGE_LAYOUT.villageLife.storyMapSign.y,
     radius: 120,
     createProp: (scene) => [
       scene.add.rectangle(0, 0, 112, 80, 0x7aa5bd, 1).setStrokeStyle(4, 0x50758d, 0.95),
@@ -110,8 +111,8 @@ const VILLAGE_POINTS: readonly VillageLifePoint[] = [
     label: 'Twinkle & Thread window',
     actionLabel: 'Look',
     actionKind: 'inspect',
-    x: 1260,
-    y: 760,
+    x: SUNBEAM_VILLAGE_LAYOUT.villageLife.threadWindow.x,
+    y: SUNBEAM_VILLAGE_LAYOUT.villageLife.threadWindow.y,
     radius: 116,
     createProp: (scene) => [
       scene.add.rectangle(0, 0, 112, 76, 0xf8d8ef, 1).setStrokeStyle(4, 0xb86da6, 0.9),
@@ -125,8 +126,8 @@ const VILLAGE_POINTS: readonly VillageLifePoint[] = [
     label: 'Sunbeam Fountain water',
     actionLabel: 'Splash',
     actionKind: 'interact',
-    x: 1690,
-    y: 1050,
+    x: SUNBEAM_VILLAGE_LAYOUT.villageLife.fountainSplash.x,
+    y: SUNBEAM_VILLAGE_LAYOUT.villageLife.fountainSplash.y,
     radius: 116,
     createProp: (scene) => [
       scene.add
