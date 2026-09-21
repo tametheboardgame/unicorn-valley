@@ -57,21 +57,30 @@ export const SUNBEAM_VILLAGE_MAP = {
       id: 'bakery',
       label: 'Sunbeam Bakery',
       icon: '🥐',
-      position: { x: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.x, y: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.y },
+      position: {
+        x: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.x,
+        y: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.y,
+      },
       approach: { ...SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.approach },
     },
     {
       id: 'accessory-shop',
       label: 'Twinkle & Thread',
       icon: '🎀',
-      position: { x: SUNBEAM_VILLAGE_LAYOUT.buildings.accessoryShop.x, y: SUNBEAM_VILLAGE_LAYOUT.buildings.accessoryShop.y },
+      position: {
+        x: SUNBEAM_VILLAGE_LAYOUT.buildings.accessoryShop.x,
+        y: SUNBEAM_VILLAGE_LAYOUT.buildings.accessoryShop.y,
+      },
       approach: { ...SUNBEAM_VILLAGE_LAYOUT.buildings.accessoryShop.approach },
     },
     {
       id: 'library',
       label: 'Story House',
       icon: '📚',
-      position: { x: SUNBEAM_VILLAGE_LAYOUT.buildings.library.x, y: SUNBEAM_VILLAGE_LAYOUT.buildings.library.y },
+      position: {
+        x: SUNBEAM_VILLAGE_LAYOUT.buildings.library.x,
+        y: SUNBEAM_VILLAGE_LAYOUT.buildings.library.y,
+      },
       approach: { ...SUNBEAM_VILLAGE_LAYOUT.buildings.library.approach },
     },
     {
@@ -100,7 +109,11 @@ export const SUNBEAM_VILLAGE_MAP = {
   ] satisfies readonly VillageEntrance[],
   npcMarkers: [
     { id: 'willow', label: 'Willow', position: { ...SUNBEAM_VILLAGE_LAYOUT.npcPositions.willow } },
-    { id: 'marigold', label: 'Marigold', position: { ...SUNBEAM_VILLAGE_LAYOUT.npcPositions.marigold } },
+    {
+      id: 'marigold',
+      label: 'Marigold',
+      position: { ...SUNBEAM_VILLAGE_LAYOUT.npcPositions.marigold },
+    },
     { id: 'pebble', label: 'Pebble', position: { ...SUNBEAM_VILLAGE_LAYOUT.npcPositions.pebble } },
   ] satisfies readonly VillageNpcMarker[],
   colliders: [
