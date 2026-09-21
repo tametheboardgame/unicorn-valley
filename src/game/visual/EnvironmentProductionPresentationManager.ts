@@ -272,7 +272,14 @@ export function createSunbeamVillageProductionPresentation(scene: Phaser.Scene):
   const wispAnchors = [layout.buildings.bakery, layout.buildings.library] as const;
   const wisps = wispAnchors.map((building, index) => {
     const wisp = scene.add
-      .ellipse(building.x + (index === 0 ? 225 : -225), building.approach.y - 80, 34, 88, 0xfff8e6, 0.18)
+      .ellipse(
+        building.x + (index === 0 ? 225 : -225),
+        building.approach.y - 80,
+        34,
+        88,
+        0xfff8e6,
+        0.18,
+      )
       .setAngle(index === 0 ? 18 : -12);
     scene.tweens.add({
       targets: wisp,
