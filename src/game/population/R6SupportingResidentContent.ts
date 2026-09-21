@@ -2,6 +2,7 @@ import { CRYSTAL_BROOK_MAP } from '../world/CrystalBrookMap';
 import { MOONFLOWER_GLADE_MAP } from '../world/MoonflowerGladeMap';
 import { RAINBOW_MEADOW_MAP } from '../world/RainbowMeadowMap';
 import { STARLIGHT_BEACH_MAP } from '../world/StarlightBeachMap';
+import { SUNBEAM_VILLAGE_LAYOUT } from '../world/SunbeamVillageLayout';
 import { SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
 import { WHISPERING_WOODS_MAP } from '../world/WhisperingWoodsMap';
 import type {
@@ -264,8 +265,18 @@ export const R6_AMBIENT_RESIDENT_PLACEMENTS = [
     priority: 20,
     activeWhen: { timeStates: ['morning', 'afternoon'] },
     waypoints: [
-      { id: 'tansy-village-a', x: 2180, y: 860, pauseMs: 2600 },
-      { id: 'tansy-village-b', x: 2300, y: 940, pauseMs: 3200 },
+      {
+        id: 'tansy-village-a',
+        x: SUNBEAM_VILLAGE_LAYOUT.buildings.library.x - 120,
+        y: SUNBEAM_VILLAGE_LAYOUT.buildings.library.approach.y + 100,
+        pauseMs: 2600,
+      },
+      {
+        id: 'tansy-village-b',
+        x: SUNBEAM_VILLAGE_LAYOUT.buildings.library.x + 120,
+        y: SUNBEAM_VILLAGE_LAYOUT.buildings.library.approach.y + 120,
+        pauseMs: 3200,
+      },
     ],
   },
   {
@@ -293,9 +304,24 @@ export const R6_AMBIENT_RESIDENT_PLACEMENTS = [
     interactionRadius: 136,
     priority: 60,
     waypoints: [
-      { id: 'maple-village-a', x: 900, y: 760, pauseMs: 2600 },
-      { id: 'maple-village-b', x: 1120, y: 800, pauseMs: 1500 },
-      { id: 'maple-village-c', x: 1210, y: 920, pauseMs: 2100 },
+      {
+        id: 'maple-village-a',
+        x: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.x,
+        y: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.approach.y + 70,
+        pauseMs: 2600,
+      },
+      {
+        id: 'maple-village-b',
+        x: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.x + 190,
+        y: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.approach.y + 90,
+        pauseMs: 1500,
+      },
+      {
+        id: 'maple-village-c',
+        x: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.x + 300,
+        y: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.approach.y + 210,
+        pauseMs: 2100,
+      },
     ],
   },
   {
@@ -366,7 +392,10 @@ export const R6_SMALL_WORLD_INTERACTIONS = [
     kind: 'ring',
     label: 'Sunbeam chime',
     actionLabel: 'Ring',
-    position: { x: 2440, y: 790 },
+    position: {
+      x: SUNBEAM_VILLAGE_LAYOUT.entrances.rainbowMeadow.approach.x - 110,
+      y: SUNBEAM_VILLAGE_LAYOUT.entrances.rainbowMeadow.approach.y - 100,
+    },
     interactionRadius: 116,
     feedback: 'Ting! A bright little chime skips across the village square.',
   },
