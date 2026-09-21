@@ -112,20 +112,44 @@ describe('Sunbeam Village map', () => {
 
     for (let left = 0; left < anchors.length; left += 1) {
       for (let right = left + 1; right < anchors.length; right += 1) {
-        expect(Math.hypot(anchors[left].x - anchors[right].x, anchors[left].y - anchors[right].y)).toBeGreaterThanOrEqual(180);
+        expect(
+          Math.hypot(
+            anchors[left].x - anchors[right].x,
+            anchors[left].y - anchors[right].y,
+          ),
+        ).toBeGreaterThanOrEqual(180);
       }
     }
   });
 
-  it('keeps the H3.2 path scaffold tied to canonical entrances and shop approaches', () => {
-    const { main, shopBranches } = SUNBEAM_VILLAGE_LAYOUT.pathScaffold;
-    expect(main[0]).toEqual(SUNBEAM_VILLAGE_LAYOUT.entrances.moonflowerGlade.position);
-    expect(main.at(-1)).toEqual(SUNBEAM_VILLAGE_LAYOUT.entrances.rainbowMeadow.position);
+  it('keeps the H3.3 path network tied to canonical destinations', () => {
+    const {
+      mainRoute,
+      shopBranches,
+      fountainBranch,
+      willowBranch,
+      residentialBranch,
+    } = SUNBEAM_VILLAGE_LAYOUT.pathNetwork;
+
+    expect(mainRoute[0]).toEqual(SUNBEAM_VILLAGE_LAYOUT.entrances.moonflowerGlade.position);
+    expect(mainRoute.at(-1)).toEqual(SUNBEAM_VILLAGE_LAYOUT.entrances.rainbowMeadow.position);
     expect(shopBranches.map((branch) => branch.at(-1))).toEqual([
       SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.approach,
       SUNBEAM_VILLAGE_LAYOUT.buildings.accessoryShop.approach,
       SUNBEAM_VILLAGE_LAYOUT.buildings.library.approach,
     ]);
+    expect(fountainBranch.at(-1)).toEqual(SUNBEAM_VILLAGE_LAYOUT.fountain.approach);
+    expect(willowBranch.at(-1)?.y).toBeGreaterThan(1300);
+    expect(residentialBranch.at(-1)?.y).toBeGreaterThan(1300);
+  });
+
+  it('routes the principal path clear of the fountain collision area', () => {
+    const { x, y } = SUNBEAM_VILLAGE_LAYOUT.fountain;
+    const minimumDistance = SUNBEAM_VILLAGE_LAYOUT.plaza.fountainClearance;
+
+    for (const point of SUNBEAM_VILLAGE_LAYOUT.pathNetwork.mainRoute) {
+      expect(Math.hypot(point.x - x, point.y - y)).toBeGreaterThanOrEqual(minimumDistance);
+    }
   });
 
   it('has unique stable IDs for landmarks, entrances and NPC markers', () => {
