@@ -50,9 +50,7 @@ test('H3.3 renders one scene-owned plaza and routed village path network', async
     expect(object?.visible).toBe(true);
   }
 
-  expect(
-    objects.filter(({ name }) => name === 'sunbeam-composition:plaza-marker'),
-  ).toHaveLength(4);
+  expect(objects.filter(({ name }) => name === 'sunbeam-composition:plaza-marker')).toHaveLength(4);
   expect(objects.some(({ name }) => name === 'sunbeam-composition:path:fountain')).toBe(false);
 
   expect(objects.some(({ name }) => name === 'exploration-path-polish')).toBe(false);
