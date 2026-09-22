@@ -109,7 +109,7 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
       [
         { x: 2200, y: 1360 },
         { x: 2320, y: 1410 },
-        { x: 2435, y: 1470 },
+        { x: 2395, y: 1470 },
       ],
     ],
   },
@@ -196,10 +196,10 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
     {
       id: 'sunpetal-cottage',
       x: 2620,
-      y: 1515,
+      y: 1450,
       width: 300,
       height: 240,
-      approach: { x: 2435, y: 1470 },
+      approach: { x: 2395, y: 1470 },
       facing: 'west',
     },
   ],
