@@ -43,6 +43,10 @@ describe('Sunbeam Village map', () => {
         id: 'district:willow-garden',
         position: SUNBEAM_VILLAGE_LAYOUT.willowGarden.approach,
       },
+      ...SUNBEAM_VILLAGE_LAYOUT.residences.map((residence) => ({
+        id: `residence:${residence.id}`,
+        position: residence.approach,
+      })),
     ];
 
     expect(findUnreachableTargets(SUNBEAM_VILLAGE_MAP, targets)).toEqual([]);
@@ -62,6 +66,9 @@ describe('Sunbeam Village map', () => {
       'collision:bakery',
       'collision:accessory-shop',
       'collision:library',
+      'collision:residence:rosehip-cottage',
+      'collision:residence:bluebell-cottage',
+      'collision:residence:sunpetal-cottage',
       'collision:fountain',
       'collision:willow-garden:west',
       'collision:willow-garden:south',
@@ -134,7 +141,7 @@ describe('Sunbeam Village map', () => {
   });
 
   it('keeps the H3.3 path network tied to canonical destinations', () => {
-    const { mainApproaches, shopBranches, willowBranch, residentialBranch } =
+    const { mainApproaches, shopBranches, willowBranch, residentialBranch, residentialSpurs } =
       SUNBEAM_VILLAGE_LAYOUT.pathNetwork;
 
     expect(mainApproaches[0][0]).toEqual(SUNBEAM_VILLAGE_LAYOUT.entrances.moonflowerGlade.position);
@@ -149,6 +156,9 @@ describe('Sunbeam Village map', () => {
     expect(willowBranch.at(-1)).toEqual(SUNBEAM_VILLAGE_LAYOUT.willowGarden.approach);
     expect(willowBranch).toHaveLength(7);
     expect(residentialBranch.at(-1)?.y).toBeGreaterThan(1300);
+    expect(residentialSpurs.map((spur) => spur.at(-1))).toEqual(
+      SUNBEAM_VILLAGE_LAYOUT.residences.map((residence) => residence.approach),
+    );
   });
 
   it('blends the Twinkle & Thread branch through a plaza-owned north apron', () => {
@@ -313,6 +323,50 @@ describe('Sunbeam Village map', () => {
         isPointBlocked(entrance.position, SUNBEAM_VILLAGE_MAP.colliders, PLAYER_CLEARANCE),
       ).toBe(false);
     }
+  });
+
+  it('builds a restrained southern residential arc with inward approaches', () => {
+    const residences = SUNBEAM_VILLAGE_LAYOUT.residences;
+
+    expect(residences.map(({ id }) => id)).toEqual([
+      'rosehip-cottage',
+      'bluebell-cottage',
+      'sunpetal-cottage',
+    ]);
+    expect(residences).toHaveLength(3);
+
+    for (const residence of residences) {
+      expect(residence.y).toBeGreaterThan(1400);
+      expect(residence.approach.y).toBeLessThan(residence.y);
+      expect(
+        isPointBlocked(residence.approach, SUNBEAM_VILLAGE_MAP.colliders, PLAYER_CLEARANCE),
+      ).toBe(false);
+      expect(
+        SUNBEAM_VILLAGE_MAP.colliders.find(
+          ({ id }) => id === `collision:residence:${residence.id}`,
+        ),
+      ).toEqual({
+        id: `collision:residence:${residence.id}`,
+        x: residence.x,
+        y: residence.y,
+        width: residence.width,
+        height: residence.height,
+      });
+    }
+
+    for (let left = 0; left < residences.length; left += 1) {
+      for (let right = left + 1; right < residences.length; right += 1) {
+        expect(
+          Math.hypot(
+            residences[left].x - residences[right].x,
+            residences[left].y - residences[right].y,
+          ),
+        ).toBeGreaterThan(400);
+      }
+    }
+
+    expect(residences[2].facing).toBe('west');
+    expect(residences[2].approach.x).toBeLessThan(residences[2].x);
   });
 
   it('has unique stable IDs for landmarks, entrances and NPC markers', () => {
