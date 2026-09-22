@@ -145,26 +145,38 @@ export const SUNBEAM_VILLAGE_MAP = {
       width: SUNBEAM_VILLAGE_LAYOUT.fountain.collisionWidth,
       height: SUNBEAM_VILLAGE_LAYOUT.fountain.collisionHeight,
     },
-    ...SUNBEAM_VILLAGE_LAYOUT.willowGarden.fenceSegments.map((segment) => ({
-      id: `collision:willow-garden:${segment.id}`,
-      x: SUNBEAM_VILLAGE_LAYOUT.willowGarden.x + segment.x,
-      y: SUNBEAM_VILLAGE_LAYOUT.willowGarden.y + segment.y,
-      width: segment.width,
-      height: segment.height,
-    })),
-    ...SUNBEAM_VILLAGE_LAYOUT.boundaryFence.segments.map((segment) => ({
-      id: `collision:village-boundary:${segment.id}`,
-      x: segment.x,
-      y: segment.y,
-      width:
-        segment.orientation === 'horizontal'
-          ? segment.length
-          : SUNBEAM_VILLAGE_LAYOUT.boundaryFence.thickness,
-      height:
-        segment.orientation === 'vertical'
-          ? segment.length
-          : SUNBEAM_VILLAGE_LAYOUT.boundaryFence.thickness,
-    })),
+    ...SUNBEAM_VILLAGE_LAYOUT.willowGarden.fenceSegments.map((segment) => {
+      const collision = 'collision' in segment ? segment.collision : segment;
+      return {
+        id: `collision:willow-garden:${segment.id}`,
+        x: SUNBEAM_VILLAGE_LAYOUT.willowGarden.x + collision.x,
+        y: SUNBEAM_VILLAGE_LAYOUT.willowGarden.y + collision.y,
+        width: collision.width,
+        height: collision.height,
+      };
+    }),
+    ...SUNBEAM_VILLAGE_LAYOUT.boundaryFence.segments.map((segment) => {
+      if ('collision' in segment) {
+        return {
+          id: `collision:village-boundary:${segment.id}`,
+          ...segment.collision,
+        };
+      }
+
+      return {
+        id: `collision:village-boundary:${segment.id}`,
+        x: segment.x,
+        y: segment.y,
+        width:
+          segment.orientation === 'horizontal'
+            ? segment.length
+            : SUNBEAM_VILLAGE_LAYOUT.boundaryFence.thickness,
+        height:
+          segment.orientation === 'vertical'
+            ? segment.length
+            : SUNBEAM_VILLAGE_LAYOUT.boundaryFence.thickness,
+      };
+    }),
   ] satisfies readonly CollisionRectangle[],
 } as const;
 
