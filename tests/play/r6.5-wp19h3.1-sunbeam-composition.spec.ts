@@ -63,7 +63,7 @@ test('H3.1 removes legacy square, through-path residue and fake shopkeeper prese
   const village = await villageSnapshot(page);
 
   expect(village.objects.some(({ name }) => name === 'sunbeam-composition:base')).toBe(true);
-  expect(village.objects.some(({ name }) => name === 'sunbeam-composition:grass')).toBe(true);
+  expect(village.objects.some(({ name }) => name === 'sunbeam-composition:grass')).toBe(false);
 
   const legacySquare = village.objects.find(
     (object) =>
