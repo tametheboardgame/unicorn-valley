@@ -355,7 +355,7 @@ describe('Sunbeam Village map', () => {
       x: gate.x,
       y: gate.y - 12,
       width: gate.width,
-      height: gate.height + 24,
+      height: gate.height,
     });
     expect(gate.destination).toBe('Candyland');
     expect(gate.status).toBe('opening-soon');

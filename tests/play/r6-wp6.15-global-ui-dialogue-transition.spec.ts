@@ -338,7 +338,7 @@ test('supporting resident uses the shared dialogue family with production portra
     'exploration-interaction-prompt',
   );
   expect(talkPrompt.interactive).toBe(true);
-  await page.mouse.click(talkPrompt.x, talkPrompt.y);
+  await page.keyboard.press('KeyE');
   await waitForVisibleObject(page, 'MoonflowerGladeScene', 'dialogue-production-panel');
   await waitForVisibleObject(
     page,
