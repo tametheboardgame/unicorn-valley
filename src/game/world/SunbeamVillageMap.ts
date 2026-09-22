@@ -152,6 +152,19 @@ export const SUNBEAM_VILLAGE_MAP = {
       width: segment.width,
       height: segment.height,
     })),
+    ...SUNBEAM_VILLAGE_LAYOUT.boundaryFence.segments.map((segment) => ({
+      id: `collision:village-boundary:${segment.id}`,
+      x: segment.x,
+      y: segment.y,
+      width:
+        segment.orientation === 'horizontal'
+          ? segment.length
+          : SUNBEAM_VILLAGE_LAYOUT.boundaryFence.thickness,
+      height:
+        segment.orientation === 'vertical'
+          ? segment.length
+          : SUNBEAM_VILLAGE_LAYOUT.boundaryFence.thickness,
+    })),
   ] satisfies readonly CollisionRectangle[],
 } as const;
 
