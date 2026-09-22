@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { SUNBEAM_VILLAGE_LAYOUT } from '../world/SunbeamVillageLayout';
+import { SUNBEAM_VILLAGE_LAYERS, SUNBEAM_VILLAGE_LAYOUT } from '../world/SunbeamVillageLayout';
 import { worldDepthForY } from '../world/WorldDepth';
 
 export type ProductionEnvironmentId =
@@ -107,21 +107,27 @@ function createStorybookTree(
   x: number,
   y: number,
   id: string,
-): Phaser.GameObjects.Container {
+): void {
   const shadow = scene.add.ellipse(0, 54, 126, 36, 0x5f6650, 0.18);
   const trunk = scene.add
     .rectangle(0, 14, 32, 112, 0x7a5a42, 1)
     .setStrokeStyle(4, 0x5e4637, 0.82);
+
+  scene.add
+    .container(x, y, [shadow, trunk])
+    .setName(`environment-production:${environment}:${id}`)
+    .setDepth(SUNBEAM_VILLAGE_LAYERS.structureShadow - 0.1);
+
   const lowerLeft = scene.add.circle(-38, -42, 47, 0x6aa96f, 1);
   const lowerRight = scene.add.circle(38, -42, 50, 0x75b478, 1);
   const crown = scene.add.circle(0, -82, 62, 0x7dbb78, 1).setStrokeStyle(4, 0x5f9562, 0.58);
   const front = scene.add.ellipse(0, -42, 132, 78, 0x72ae70, 0.98);
   const highlight = scene.add.ellipse(-23, -88, 43, 23, 0xb7d894, 0.32);
 
-  return scene.add
-    .container(x, y, [shadow, trunk, lowerLeft, lowerRight, crown, front, highlight])
-    .setName(`environment-production:${environment}:${id}`)
-    .setDepth(worldDepthForY(y + 58, 0.7));
+  scene.add
+    .container(x, y, [lowerLeft, lowerRight, crown, front, highlight])
+    .setName(`environment-production:${environment}:${id}:canopy`)
+    .setDepth(SUNBEAM_VILLAGE_LAYERS.structureShadow + 0.8);
 }
 
 function addStorybookFlower(
@@ -318,7 +324,7 @@ export function createSunbeamVillageProductionPresentation(scene: Phaser.Scene):
   });
   nameObject(scene.add.container(0, 0, wisps).setDepth(11), environment, 'ambient');
 
-  createStorybookTree(scene, environment, 230, 1815, 'south-west-tree');
+  createStorybookTree(scene, environment, 185, 1835, 'south-west-tree');
   createLeafCluster(scene, environment, 2750, 1705, [0x68a56c, 0x8fc178, 0x806348], true);
 }
 
