@@ -67,6 +67,7 @@ describe('Sunbeam Village map', () => {
       'collision:willow-garden:south',
       'collision:willow-garden:east-lower',
       'collision:willow-garden:north-left',
+      'collision:willow-garden:sign',
       'collision:village-boundary:north',
       'collision:village-boundary:south',
       'collision:village-boundary:west-north',
@@ -240,6 +241,22 @@ describe('Sunbeam Village map', () => {
         ({ id }) => id === 'collision:willow-garden:north-left',
       ),
     ).toMatchObject({ height: 66 });
+  });
+
+  it('gives Willow garden sign visual-clearance collision', () => {
+    const { willowGarden } = SUNBEAM_VILLAGE_LAYOUT;
+    expect(
+      SUNBEAM_VILLAGE_MAP.colliders.find(({ id }) => id === 'collision:willow-garden:sign'),
+    ).toEqual({
+      id: 'collision:willow-garden:sign',
+      x: willowGarden.x + willowGarden.sign.collision.x,
+      y: willowGarden.y + willowGarden.sign.collision.y,
+      width: willowGarden.sign.collision.width,
+      height: willowGarden.sign.collision.height,
+    });
+
+    expect(willowGarden.sign.collision.width).toBeGreaterThan(willowGarden.sign.width);
+    expect(willowGarden.sign.collision.height).toBeGreaterThan(willowGarden.sign.height);
   });
 
   it('derives the village perimeter collision from canonical visible or clearance geometry', () => {
