@@ -67,6 +67,12 @@ describe('Sunbeam Village map', () => {
       'collision:willow-garden:south',
       'collision:willow-garden:east-lower',
       'collision:willow-garden:north-left',
+      'collision:village-boundary:north',
+      'collision:village-boundary:south',
+      'collision:village-boundary:west-north',
+      'collision:village-boundary:west-south',
+      'collision:village-boundary:east-north',
+      'collision:village-boundary:east-south',
     ]);
   });
 
@@ -204,6 +210,7 @@ describe('Sunbeam Village map', () => {
     expect(willowGarden.height).toBeGreaterThanOrEqual(300);
     expect(willowGarden.beds).toHaveLength(4);
     expect(willowGarden.fenceSegments).toHaveLength(4);
+    expect(willowGarden.fencePosts).toHaveLength(5);
 
     expect(
       Math.hypot(
@@ -225,6 +232,34 @@ describe('Sunbeam Village map', () => {
         width: segment.width,
         height: segment.height,
       });
+    }
+  });
+
+  it('derives the village perimeter collision from its visible boundary fence', () => {
+    const { boundaryFence } = SUNBEAM_VILLAGE_LAYOUT;
+
+    expect(boundaryFence.segments).toHaveLength(6);
+    expect(boundaryFence.posts).toHaveLength(8);
+
+    for (const segment of boundaryFence.segments) {
+      const collider = SUNBEAM_VILLAGE_MAP.colliders.find(
+        ({ id }) => id === `collision:village-boundary:${segment.id}`,
+      );
+      expect(collider).toEqual({
+        id: `collision:village-boundary:${segment.id}`,
+        x: segment.x,
+        y: segment.y,
+        width: segment.orientation === 'horizontal' ? segment.length : boundaryFence.thickness,
+        height: segment.orientation === 'vertical' ? segment.length : boundaryFence.thickness,
+      });
+    }
+  });
+
+  it('leaves deliberate west and east openings through the perimeter fence', () => {
+    for (const entrance of SUNBEAM_VILLAGE_MAP.entrances) {
+      expect(
+        isPointBlocked(entrance.position, SUNBEAM_VILLAGE_MAP.colliders, PLAYER_CLEARANCE),
+      ).toBe(false);
     }
   });
 
