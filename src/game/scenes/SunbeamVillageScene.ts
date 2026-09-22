@@ -1526,7 +1526,6 @@ export class SunbeamVillageScene extends Phaser.Scene {
       [2780, 1280],
       [950, 1660],
       [1900, 1760],
-      [2750, 1710],
     ] as const;
     for (const [x, y] of flowerPositions) {
       this.add.circle(x, y, 18, 0xffa6c8, 0.95).setDepth(4);
