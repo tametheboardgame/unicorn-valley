@@ -89,14 +89,10 @@ test('H3.7 composes a main residential road with frontage side roads', async ({ 
   expect(visibleResidenceText).toEqual([]);
 
   expect(
-    objects.some(
-      ({ name, visible }) => name === 'sunbeam-composition:path-network' && visible,
-    ),
+    objects.some(({ name, visible }) => name === 'sunbeam-composition:path-network' && visible),
   ).toBe(true);
 
-  const willowGarden = objects.find(
-    ({ name }) => name === 'sunbeam-composition:willow-garden',
-  );
+  const willowGarden = objects.find(({ name }) => name === 'sunbeam-composition:willow-garden');
   const southLeft = objects.find(
     ({ name }) => name === 'sunbeam-composition:village-boundary:fence:south-left',
   );
@@ -111,9 +107,7 @@ test('H3.7 composes a main residential road with frontage side roads', async ({ 
   );
   expect(willowGarden?.x).toBeCloseTo(430, 0);
   expect(willowGarden?.y).toBeCloseTo(1540, 0);
-  const playground = objects.find(
-    ({ name }) => name === 'sunbeam-composition:unicorn-playground',
-  );
+  const playground = objects.find(({ name }) => name === 'sunbeam-composition:unicorn-playground');
   const playgroundChildren = objects.filter(({ name }) =>
     name.startsWith('sunbeam-playground:child:'),
   );
@@ -135,13 +129,11 @@ test('H3.7 composes a main residential road with frontage side roads', async ({ 
     expect(child.visible).toBe(true);
     expect(child.displayWidth).toBeLessThan(80);
   }
+  expect(objects.some(({ name, visible }) => name === 'sunbeam-playground:slide' && visible)).toBe(
+    true,
+  );
   expect(
-    objects.some(({ name, visible }) => name === 'sunbeam-playground:slide' && visible),
-  ).toBe(true);
-  expect(
-    objects.some(
-      ({ name, visible }) => name === 'sunbeam-playground:climbing-frame' && visible,
-    ),
+    objects.some(({ name, visible }) => name === 'sunbeam-playground:climbing-frame' && visible),
   ).toBe(true);
   expect(
     objects.filter(({ name, visible }) => name === 'sunbeam-playground:shrub' && visible).length,

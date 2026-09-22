@@ -196,7 +196,13 @@ export class CoreNpcProductionPresentationManager {
     if (!pebbleMarker || scene.children.getByName('core-npc:pebble:world')) {
       return;
     }
-    createCoreNpcSprite(scene, 'pebble', pebbleMarker.position.x, pebbleMarker.position.y + 5, 'world')
+    createCoreNpcSprite(
+      scene,
+      'pebble',
+      pebbleMarker.position.x,
+      pebbleMarker.position.y + 5,
+      'world',
+    )
       .setDisplaySize(102, 84)
       .setDepth(worldDepthForY(pebbleMarker.position.y + 48, 0.32));
     // Village core residents are intentionally grounded. Their previous vertical idle tween

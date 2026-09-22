@@ -182,7 +182,8 @@ const VILLAGE_INTERACTIONS = [
     result: {
       type: 'message',
       title: 'Sunpetal Cottage',
-      message: "Tiny boots and a watering can rest by the step. This is someone's home, not a shop.",
+      message:
+        "Tiny boots and a watering can rest by the step. This is someone's home, not a shop.",
     },
   },
   {
@@ -539,13 +540,8 @@ export class SunbeamVillageScene extends Phaser.Scene {
       .graphics()
       .setName('sunbeam-composition:path-network')
       .setDepth(SUNBEAM_VILLAGE_LAYERS.path);
-    const {
-      mainApproaches,
-      shopBranches,
-      willowBranch,
-      southernRoad,
-      residentialSideRoads,
-    } = SUNBEAM_VILLAGE_LAYOUT.pathNetwork;
+    const { mainApproaches, shopBranches, willowBranch, southernRoad, residentialSideRoads } =
+      SUNBEAM_VILLAGE_LAYOUT.pathNetwork;
     const routes = [
       ...mainApproaches.map((points) => ({ points, outerWidth: 126, innerWidth: 94 })),
       ...shopBranches.map((points) => ({ points, outerWidth: 76, innerWidth: 54 })),
@@ -1273,25 +1269,11 @@ export class SunbeamVillageScene extends Phaser.Scene {
         );
       }
 
-      const cottage = this.add
-        .graphics()
-        .setName(`sunbeam-residence:${residence.id}:structure`);
+      const cottage = this.add.graphics().setName(`sunbeam-residence:${residence.id}:structure`);
       cottage.fillStyle(palette.wall, 1);
-      cottage.fillRoundedRect(
-        -bodyWidth / 2,
-        bodyTop,
-        bodyWidth,
-        bodyHeight,
-        style.cornerRadius,
-      );
+      cottage.fillRoundedRect(-bodyWidth / 2, bodyTop, bodyWidth, bodyHeight, style.cornerRadius);
       cottage.lineStyle(6, 0x7c6654, 0.72);
-      cottage.strokeRoundedRect(
-        -bodyWidth / 2,
-        bodyTop,
-        bodyWidth,
-        bodyHeight,
-        style.cornerRadius,
-      );
+      cottage.strokeRoundedRect(-bodyWidth / 2, bodyTop, bodyWidth, bodyHeight, style.cornerRadius);
       cottage.fillStyle(palette.roof, 1);
       cottage.fillTriangle(
         -residence.width / 2 - 18,
@@ -1339,8 +1321,22 @@ export class SunbeamVillageScene extends Phaser.Scene {
             .rectangle(style.doorX, doorY - 60, style.porchWidth + 18, 16, palette.roof, 1)
             .setName(`sunbeam-residence:${residence.id}:porch-canopy`)
             .setStrokeStyle(3, 0x76584d, 0.7),
-          this.add.rectangle(style.doorX - style.porchWidth / 2 + 10, doorY - 18, 8, 70, palette.trim, 0.92),
-          this.add.rectangle(style.doorX + style.porchWidth / 2 - 10, doorY - 18, 8, 70, palette.trim, 0.92),
+          this.add.rectangle(
+            style.doorX - style.porchWidth / 2 + 10,
+            doorY - 18,
+            8,
+            70,
+            palette.trim,
+            0.92,
+          ),
+          this.add.rectangle(
+            style.doorX + style.porchWidth / 2 - 10,
+            doorY - 18,
+            8,
+            70,
+            palette.trim,
+            0.92,
+          ),
         );
       }
 
@@ -1357,8 +1353,20 @@ export class SunbeamVillageScene extends Phaser.Scene {
       }
 
       objects.push(
-        this.add.circle(-residence.width / 2 + 30, residence.height / 2 - 22, 13, palette.accent, 0.92),
-        this.add.circle(residence.width / 2 - 26, residence.height / 2 - 26, 11, palette.accent, 0.9),
+        this.add.circle(
+          -residence.width / 2 + 30,
+          residence.height / 2 - 22,
+          13,
+          palette.accent,
+          0.92,
+        ),
+        this.add.circle(
+          residence.width / 2 - 26,
+          residence.height / 2 - 26,
+          11,
+          palette.accent,
+          0.9,
+        ),
       );
 
       this.add
@@ -1370,9 +1378,7 @@ export class SunbeamVillageScene extends Phaser.Scene {
 
   private createUnicornPlayground(): void {
     const playground = SUNBEAM_VILLAGE_LAYOUT.playground;
-    const ground = this.add
-      .graphics()
-      .setName('sunbeam-playground:ground');
+    const ground = this.add.graphics().setName('sunbeam-playground:ground');
 
     ground.fillStyle(0xc9e3a2, 0.62);
     ground.lineStyle(5, 0x8ebc7c, 0.46);
@@ -1421,9 +1427,7 @@ export class SunbeamVillageScene extends Phaser.Scene {
     slide.lineBetween(42, -20, 64, -20);
     playObjects.push(slide);
 
-    const climbingFrame = this.add
-      .graphics()
-      .setName('sunbeam-playground:climbing-frame');
+    const climbingFrame = this.add.graphics().setName('sunbeam-playground:climbing-frame');
     climbingFrame.lineStyle(7, 0xb57998, 0.95);
     climbingFrame.strokeRoundedRect(-184, -116, 106, 92, 22);
     climbingFrame.lineStyle(5, 0xf0c36a, 0.94);

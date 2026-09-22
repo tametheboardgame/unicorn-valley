@@ -109,9 +109,7 @@ function createStorybookTree(
   id: string,
 ): void {
   const shadow = scene.add.ellipse(0, 54, 126, 36, 0x5f6650, 0.18);
-  const trunk = scene.add
-    .rectangle(0, 14, 32, 112, 0x7a5a42, 1)
-    .setStrokeStyle(4, 0x5e4637, 0.82);
+  const trunk = scene.add.rectangle(0, 14, 32, 112, 0x7a5a42, 1).setStrokeStyle(4, 0x5e4637, 0.82);
 
   scene.add
     .container(x, y, [shadow, trunk])

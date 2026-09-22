@@ -149,13 +149,8 @@ describe('Sunbeam Village map', () => {
   });
 
   it('keeps the H3.3 path network tied to canonical destinations', () => {
-    const {
-      mainApproaches,
-      shopBranches,
-      willowBranch,
-      southernRoad,
-      residentialSideRoads,
-    } = SUNBEAM_VILLAGE_LAYOUT.pathNetwork;
+    const { mainApproaches, shopBranches, willowBranch, southernRoad, residentialSideRoads } =
+      SUNBEAM_VILLAGE_LAYOUT.pathNetwork;
 
     expect(mainApproaches[0][0]).toEqual(SUNBEAM_VILLAGE_LAYOUT.entrances.moonflowerGlade.position);
     expect(mainApproaches[1].at(-1)).toEqual(
@@ -208,9 +203,9 @@ describe('Sunbeam Village map', () => {
     }
 
     expect(villageLife.threadWindow.y).toBe(buildings.accessoryShop.approach.y);
-    expect(Math.abs(villageLife.threadWindow.x - buildings.accessoryShop.approach.x)).toBeGreaterThan(
-      90,
-    );
+    expect(
+      Math.abs(villageLife.threadWindow.x - buildings.accessoryShop.approach.x),
+    ).toBeGreaterThan(90);
   });
 
   it('places the village bench in a quiet south-west lawn pocket away from residential circulation', () => {
@@ -287,9 +282,7 @@ describe('Sunbeam Village map', () => {
     }
 
     expect(
-      SUNBEAM_VILLAGE_MAP.colliders.find(
-        ({ id }) => id === 'collision:willow-garden:north-left',
-      ),
+      SUNBEAM_VILLAGE_MAP.colliders.find(({ id }) => id === 'collision:willow-garden:north-left'),
     ).toMatchObject({ height: 66 });
   });
 
@@ -327,8 +320,7 @@ describe('Sunbeam Village map', () => {
               y: segment.y,
               width:
                 segment.orientation === 'horizontal' ? segment.length : boundaryFence.thickness,
-              height:
-                segment.orientation === 'vertical' ? segment.length : boundaryFence.thickness,
+              height: segment.orientation === 'vertical' ? segment.length : boundaryFence.thickness,
             };
       expect(collider).toEqual({
         id: `collision:village-boundary:${segment.id}`,
@@ -426,9 +418,9 @@ describe('Sunbeam Village map', () => {
     const bluebellBend = SUNBEAM_VILLAGE_LAYOUT.pathNetwork.southernRoad.filter(
       ({ y }) => y >= 1400 && y <= 1600,
     );
-    expect(
-      Math.min(...bluebellBend.map(({ x }) => x)) - bluebellRightEdge,
-    ).toBeGreaterThanOrEqual(100);
+    expect(Math.min(...bluebellBend.map(({ x }) => x)) - bluebellRightEdge).toBeGreaterThanOrEqual(
+      100,
+    );
 
     for (let left = 0; left < residences.length; left += 1) {
       for (let right = left + 1; right < residences.length; right += 1) {
@@ -452,9 +444,10 @@ describe('Sunbeam Village map', () => {
     const bottom = playground.y + playground.height / 2;
 
     expect(left).toBeGreaterThanOrEqual(2450);
-    expect(right).toBeLessThan(SUNBEAM_VILLAGE_LAYOUT.boundaryFence.segments.find(
-      ({ id }) => id === 'east-south',
-    )?.x ?? SUNBEAM_VILLAGE_LAYOUT.map.width);
+    expect(right).toBeLessThan(
+      SUNBEAM_VILLAGE_LAYOUT.boundaryFence.segments.find(({ id }) => id === 'east-south')?.x ??
+        SUNBEAM_VILLAGE_LAYOUT.map.width,
+    );
     expect(bottom).toBeLessThan(SUNBEAM_VILLAGE_LAYOUT.boundaryFence.southEdgeY);
     expect(playground.children).toHaveLength(4);
     for (const child of playground.children) {
