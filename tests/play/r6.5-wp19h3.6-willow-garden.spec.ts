@@ -35,7 +35,9 @@ test('H3.6 makes Willow garden a physical south-west village district', async ({
         ) &&
         village.objects.some(
           ({ name }) => name === 'sunbeam-composition:willow-garden:bed:north-west',
-        ),
+        ) &&
+        village.objects.some(({ name }) => name === 'sunbeam-composition:village-boundary') &&
+        village.objects.some(({ name }) => name === 'sunbeam-composition:base-green'),
     );
   });
 
@@ -84,6 +86,43 @@ test('H3.6 makes Willow garden a physical south-west village district', async ({
     expect(fence).toBeDefined();
     expect(fence?.visible).toBe(true);
     expect(fence?.type).toBe('Rectangle');
+  }
+
+  const gardenPostIds = [
+    'north-west',
+    'south-west',
+    'south-east',
+    'gate-north',
+    'gate-east',
+  ] as const;
+  for (const id of gardenPostIds) {
+    const post = objects.find(
+      ({ name }) => name === `sunbeam-composition:willow-garden:post:${id}`,
+    );
+    expect(post).toBeDefined();
+    expect(post?.visible).toBe(true);
+    expect(post?.type).toBe('Rectangle');
+  }
+
+  expect(objects.some(({ name }) => name === 'sunbeam-composition:base')).toBe(false);
+  expect(objects.some(({ name }) => name === 'sunbeam-composition:grass')).toBe(false);
+  expect(objects.some(({ name }) => name === 'sunbeam-composition:base-green')).toBe(true);
+
+  const boundaryFenceIds = [
+    'north',
+    'south',
+    'west-north',
+    'west-south',
+    'east-north',
+    'east-south',
+  ] as const;
+  for (const id of boundaryFenceIds) {
+    expect(
+      objects.some(
+        ({ name, visible }) =>
+          name === `sunbeam-composition:village-boundary:fence:${id}` && visible,
+      ),
+    ).toBe(true);
   }
 
   const sign = objects.find(({ name }) => name === 'sunbeam-composition:willow-garden:sign');
