@@ -119,32 +119,6 @@ function hidePicnicNovaPlaceholder(scene: Phaser.Scene): void {
   }
 }
 
-function hidePebblePlaceholder(scene: Phaser.Scene): void {
-  const marker = SUNBEAM_VILLAGE_MAP.npcMarkers.find((candidate) => candidate.id === 'pebble');
-  if (!marker) {
-    return;
-  }
-  const container = scene.children.list.find(
-    (object): object is Phaser.GameObjects.Container =>
-      object instanceof Phaser.GameObjects.Container &&
-      object.name === 'pebble-world-presentation' &&
-      Math.abs(object.x - marker.position.x) <= 1 &&
-      Math.abs(object.y - marker.position.y) <= 1,
-  );
-  if (!container) {
-    return;
-  }
-  for (const child of container.list) {
-    if (child instanceof Phaser.GameObjects.Text) {
-      child.setVisible(false);
-      continue;
-    }
-    if (child instanceof Phaser.GameObjects.Zone) {
-      child.disableInteractive();
-    }
-  }
-}
-
 function hideLumiPlaceholder(scene: Phaser.Scene): void {
   const container = scene.children.list.find(
     (object): object is Phaser.GameObjects.Container =>
@@ -222,7 +196,6 @@ export class CoreNpcProductionPresentationManager {
     if (!pebbleMarker || scene.children.getByName('core-npc:pebble:world')) {
       return;
     }
-    hidePebblePlaceholder(scene);
     const pebble = createCoreNpcSprite(
       scene,
       'pebble',
