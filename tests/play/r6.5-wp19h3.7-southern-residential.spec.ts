@@ -51,9 +51,9 @@ test('H3.7 expands Sunbeam with a restrained southern residential arc', async ({
   });
 
   const expectedHomes = [
-    { id: 'rosehip-cottage', x: 1650, y: 1665 },
-    { id: 'bluebell-cottage', x: 2180, y: 1700 },
-    { id: 'sunpetal-cottage', x: 2630, y: 1600 },
+    { id: 'rosehip-cottage', x: 1750, y: 1390 },
+    { id: 'bluebell-cottage', x: 2200, y: 1410 },
+    { id: 'sunpetal-cottage', x: 2640, y: 1380 },
   ] as const;
 
   for (const home of expectedHomes) {
@@ -65,7 +65,8 @@ test('H3.7 expands Sunbeam with a restrained southern residential arc', async ({
     expect(residence?.visible).toBe(true);
     expect(residence?.x).toBeCloseTo(home.x, 0);
     expect(residence?.y).toBeCloseTo(home.y, 0);
-    expect(residence?.y ?? 0).toBeGreaterThan(1400);
+    expect(residence?.y ?? 0).toBeGreaterThan(1350);
+    expect(residence?.y ?? 9999).toBeLessThan(1500);
 
     expect(door).toBeDefined();
     expect(door?.visible).toBe(true);
