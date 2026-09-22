@@ -323,7 +323,7 @@ describe('Sunbeam Village map', () => {
     }
   });
 
-  it('places the southern village perimeter on the canvas edge with a locked future gate', () => {
+  it('places the southern village perimeter on the canvas edge with the closed Candyland gate', () => {
     const { boundaryFence, map } = SUNBEAM_VILLAGE_LAYOUT;
     const southLeft = boundaryFence.segments.find(({ id }) => id === 'south-left');
     const southRight = boundaryFence.segments.find(({ id }) => id === 'south-right');
@@ -351,6 +351,8 @@ describe('Sunbeam Village map', () => {
       width: gate.width,
       height: gate.height + 24,
     });
+    expect(gate.destination).toBe('Candyland');
+    expect(gate.status).toBe('closed');
   });
 
   it('leaves deliberate west and east openings through the perimeter fence', () => {
@@ -402,8 +404,9 @@ describe('Sunbeam Village map', () => {
     );
     const sunpetalSpur = SUNBEAM_VILLAGE_LAYOUT.pathNetwork.residentialSideRoads[1];
     expect(sunpetalSpur).toContainEqual(sunpetal.approach);
-    expect(sunpetalSpur[1].y).toBe(sunpetalSpur[0].y);
-    expect(sunpetalSpur[2].x).toBe(sunpetalSpur[1].x);
+    expect(sunpetalSpur).toHaveLength(3);
+    expect(sunpetalSpur.every(({ y }) => y === sunpetal.approach.y)).toBe(true);
+    expect(SUNBEAM_VILLAGE_LAYOUT.pathNetwork.southernRoad).toContainEqual(sunpetalSpur[0]);
 
     const bluebellRightEdge = bluebell.x + bluebell.width / 2;
     const bluebellBend = SUNBEAM_VILLAGE_LAYOUT.pathNetwork.southernRoad.filter(
@@ -434,18 +437,22 @@ describe('Sunbeam Village map', () => {
     const top = playground.y - playground.height / 2;
     const bottom = playground.y + playground.height / 2;
 
-    expect(left).toBeGreaterThan(2450);
+    expect(left).toBeGreaterThanOrEqual(2450);
     expect(right).toBeLessThan(SUNBEAM_VILLAGE_LAYOUT.boundaryFence.segments.find(
       ({ id }) => id === 'east-south',
     )?.x ?? SUNBEAM_VILLAGE_LAYOUT.map.width);
     expect(bottom).toBeLessThan(SUNBEAM_VILLAGE_LAYOUT.boundaryFence.southEdgeY);
-    expect(playground.children).toHaveLength(3);
+    expect(playground.children).toHaveLength(4);
     for (const child of playground.children) {
       expect(child.x).toBeGreaterThan(left);
       expect(child.x).toBeLessThan(right);
       expect(child.y).toBeGreaterThan(top);
       expect(child.y).toBeLessThan(bottom);
+      expect(Math.abs(child.roamX)).toBeGreaterThan(30);
+      expect(Math.abs(child.roamY)).toBeGreaterThan(20);
     }
+    expect(playground.width).toBeGreaterThanOrEqual(400);
+    expect(playground.height).toBeGreaterThanOrEqual(320);
   });
 
   it('has unique stable IDs for landmarks, entrances and NPC markers', () => {
