@@ -527,14 +527,14 @@ export class SunbeamVillageScene extends Phaser.Scene {
       shopBranches,
       willowBranch,
       residentialBranch,
-      residentialLoop,
+      residentialSideRoads,
     } = SUNBEAM_VILLAGE_LAYOUT.pathNetwork;
     const routes = [
       ...mainApproaches.map((points) => ({ points, outerWidth: 126, innerWidth: 94 })),
       ...shopBranches.map((points) => ({ points, outerWidth: 76, innerWidth: 54 })),
       { points: willowBranch, outerWidth: 76, innerWidth: 54 },
-      { points: residentialBranch, outerWidth: 76, innerWidth: 54 },
-      { points: residentialLoop, outerWidth: 70, innerWidth: 50 },
+      { points: residentialBranch, outerWidth: 82, innerWidth: 58 },
+      ...residentialSideRoads.map((points) => ({ points, outerWidth: 68, innerWidth: 48 })),
     ] as const;
 
     const drawStroke = (
@@ -1289,8 +1289,8 @@ export class SunbeamVillageScene extends Phaser.Scene {
     const flowerPositions = [
       [420, 1160],
       [890, 1120],
-      [2510, 1110],
-      [2640, 1260],
+      [2450, 1045],
+      [2780, 1280],
       [950, 1660],
       [1900, 1760],
       [2750, 1710],
