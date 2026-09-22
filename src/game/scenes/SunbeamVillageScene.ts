@@ -31,6 +31,7 @@ import {
   SUNBEAM_VILLAGE_MAP,
 } from '../world/SunbeamVillageMap';
 import { SUNBEAM_VILLAGE_LAYERS, SUNBEAM_VILLAGE_LAYOUT } from '../world/SunbeamVillageLayout';
+import { worldDepthForY } from '../world/WorldDepth';
 
 const COLLISION_TEXTURE_KEY = 'village-collision-pixel';
 const SAVED_PLAYER_TEXTURE_KEY = 'player-unicorn-village';
@@ -194,7 +195,7 @@ const VILLAGE_INTERACTIONS = [
       type: 'message',
       title: 'Candyland',
       message:
-        'Candyland is not currently open. The colourful gates are locked until the unicorn theme park welcomes visitors again.',
+        'Candyland is opening soon! The unicorn theme park is still getting its rides, treats and sparkles ready for visitors.',
     },
   },
   {
@@ -647,31 +648,56 @@ export class SunbeamVillageScene extends Phaser.Scene {
         )
         .setName('sunbeam-composition:village-boundary:locked-south-gate:rail:upper')
         .setStrokeStyle(3, 0x684e3b, 0.94),
-      this.add
-        .rectangle(lockedSouthGate.x, lockedSouthGate.y - 86, 178, 58, 0xffe7a8, 1)
-        .setName('sunbeam-composition:village-boundary:locked-south-gate:sign')
-        .setStrokeStyle(5, 0xb36f70, 0.96),
-      this.add
-        .circle(lockedSouthGate.x - 74, lockedSouthGate.y - 86, 9, 0xf08eaf, 1),
-      this.add
-        .circle(lockedSouthGate.x + 74, lockedSouthGate.y - 86, 9, 0x86c9dc, 1),
-      this.add
-        .text(lockedSouthGate.x, lockedSouthGate.y - 86, 'CANDYLAND\nCLOSED', {
-          color: '#70465f',
-          fontFamily: 'Georgia, serif',
-          fontSize: '13px',
-          fontStyle: 'bold',
-          align: 'center',
-          lineSpacing: -2,
-        })
-        .setName('sunbeam-composition:village-boundary:locked-south-gate:sign:text')
-        .setOrigin(0.5),
     );
 
     this.add
       .container(0, 0, objects)
       .setName('sunbeam-composition:village-boundary')
       .setDepth(SUNBEAM_VILLAGE_LAYERS.structureShadow);
+
+    const candySignX = lockedSouthGate.x;
+    const candySignY = lockedSouthGate.y - 92;
+    const candySignObjects: Phaser.GameObjects.GameObject[] = [
+      this.add
+        .rectangle(candySignX, candySignY, 210, 68, 0xffefbf, 1)
+        .setName('sunbeam-composition:village-boundary:locked-south-gate:sign')
+        .setStrokeStyle(6, 0xe878a6, 0.98),
+      this.add.rectangle(candySignX, candySignY - 27, 196, 8, 0x8ed0dd, 0.96),
+      this.add.circle(candySignX - 88, candySignY - 5, 14, 0xf18aaf, 1),
+      this.add.circle(candySignX + 88, candySignY - 5, 14, 0x86c9dc, 1),
+      this.add.circle(candySignX - 72, candySignY + 21, 9, 0xf6ca67, 1),
+      this.add.circle(candySignX + 72, candySignY + 21, 9, 0xc39ddd, 1),
+      this.add
+        .text(candySignX, candySignY - 2, 'CANDYLAND\nOPENING SOON', {
+          color: '#7b4767',
+          fontFamily: 'Georgia, serif',
+          fontSize: '14px',
+          fontStyle: 'bold',
+          align: 'center',
+          lineSpacing: -1,
+        })
+        .setName('sunbeam-composition:village-boundary:locked-south-gate:sign:text')
+        .setOrigin(0.5),
+      this.add
+        .text(candySignX - 110, candySignY - 2, '🍭', {
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '26px',
+        })
+        .setName('sunbeam-composition:village-boundary:locked-south-gate:lollipop:left')
+        .setOrigin(0.5),
+      this.add
+        .text(candySignX + 110, candySignY - 2, '🍬', {
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '25px',
+        })
+        .setName('sunbeam-composition:village-boundary:locked-south-gate:candy:right')
+        .setOrigin(0.5),
+    ];
+
+    this.add
+      .container(0, 0, candySignObjects)
+      .setName('sunbeam-composition:village-boundary:locked-south-gate:sign-layer')
+      .setDepth(worldDepthForY(lockedSouthGate.y, 1.4));
   }
 
   private createBakeryExterior(): void {
@@ -1377,6 +1403,31 @@ export class SunbeamVillageScene extends Phaser.Scene {
           })
           .setOrigin(0.5),
       );
+    }
+
+    for (const [x, y, width, height, leafA, leafB] of [
+      [-150, -190, 88, 46, 0x6fa66f, 0x8cc27b],
+      [-70, -202, 96, 50, 0x5f9a68, 0x86bc76],
+      [20, -195, 90, 48, 0x72aa70, 0x98ca81],
+      [106, -202, 98, 52, 0x639c67, 0x88bd74],
+      [174, -184, 76, 42, 0x79ad73, 0x9aca82],
+    ] as const) {
+      playObjects.push(
+        this.add
+          .ellipse(x, y, width, height, leafA, 1)
+          .setName('sunbeam-playground:shrub')
+          .setStrokeStyle(3, 0x527b57, 0.6),
+        this.add.ellipse(x - width * 0.2, y - 10, width * 0.56, height * 0.72, leafB, 0.94),
+        this.add.ellipse(x + width * 0.2, y - 8, width * 0.52, height * 0.68, leafB, 0.88),
+      );
+    }
+    for (const [x, y, colour] of [
+      [-108, -209, 0xf1a0bc],
+      [-20, -209, 0xf4cd68],
+      [73, -211, 0xc39edd],
+      [151, -198, 0x88ccdb],
+    ] as const) {
+      playObjects.push(this.add.circle(x, y, 7, colour, 0.96));
     }
 
     this.add
