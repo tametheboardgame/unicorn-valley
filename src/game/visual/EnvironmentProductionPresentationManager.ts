@@ -277,8 +277,6 @@ export function createSunbeamVillageProductionPresentation(scene: Phaser.Scene):
   for (const [x, y, width] of [
     [390, 1280, 112],
     [820, 1630, 104],
-    [1940, 1630, 118],
-    [2530, 1450, 112],
   ] as const) {
     const basket = scene.add
       .rectangle(x, y, width, 20, 0xb07855, 0.76)
