@@ -318,7 +318,7 @@ export class SunbeamVillageScene extends Phaser.Scene {
     const map = SUNBEAM_VILLAGE_MAP;
     this.add
       .rectangle(map.width / 2, map.height / 2, map.width, map.height, 0xa9da92, 1)
-      .setName('sunbeam-composition:base-green');
+      .setName('sunbeam-composition:base');
 
     this.createDistrictGrounding();
     this.createPlaza();
