@@ -45,7 +45,6 @@ function findPlayer(scene: Phaser.Scene): Phaser.Physics.Arcade.Sprite | null {
   );
 }
 
-
 export class PebbleCollectionWorldManager {
   private readonly saveService = getBrowserSaveService();
   private readonly secretService = new SecretDiscoveryService(this.saveService);
