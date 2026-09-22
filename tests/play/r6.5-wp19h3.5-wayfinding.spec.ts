@@ -80,6 +80,8 @@ test('H3.5 uses physical village signs and gateway objects for wayfinding', asyn
     expect(signText?.x).toBeCloseTo(id === 'moonflower-glade' ? 180 : -180, 0);
     expect(northPost?.type).toBe('Rectangle');
     expect(southPost?.type).toBe('Rectangle');
+    expect(northPost?.x).toBeCloseTo(id === 'moonflower-glade' ? 55 : -55, 0);
+    expect(southPost?.x).toBeCloseTo(id === 'moonflower-glade' ? 55 : -55, 0);
     expect(northPost?.y).toBeLessThan(0);
     expect(southPost?.y).toBeGreaterThan(0);
   }
