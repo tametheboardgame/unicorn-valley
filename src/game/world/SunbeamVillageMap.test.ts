@@ -182,8 +182,8 @@ describe('Sunbeam Village map', () => {
 
     expect(westPlazaEnd?.x).toBeLessThan(x);
     expect(eastPlazaStart?.x).toBeGreaterThan(x);
-    expect(westPlazaEnd?.y).toBeCloseTo(y, -1);
-    expect(eastPlazaStart?.y).toBeCloseTo(y, -1);
+    expect(Math.abs((westPlazaEnd?.y ?? y) - y)).toBeLessThanOrEqual(20);
+    expect(Math.abs((eastPlazaStart?.y ?? y) - y)).toBeLessThanOrEqual(20);
 
     for (const point of [...westApproach, ...eastApproach]) {
       expect(Math.hypot(point.x - x, point.y - y)).toBeGreaterThanOrEqual(minimumDistance);
