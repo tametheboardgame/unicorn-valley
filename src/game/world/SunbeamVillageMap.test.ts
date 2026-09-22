@@ -155,7 +155,7 @@ describe('Sunbeam Village map', () => {
     ]);
     expect(willowBranch.at(-1)).toEqual(SUNBEAM_VILLAGE_LAYOUT.willowGarden.approach);
     expect(willowBranch).toHaveLength(7);
-    expect(residentialBranch.at(-1)?.y).toBeGreaterThan(1300);
+    expect(residentialBranch.at(-1)).toEqual(residentialLoop[0]);
     expect(residentialLoop[0]).toEqual(residentialLoop.at(-1));
     for (const residence of SUNBEAM_VILLAGE_LAYOUT.residences) {
       expect(residentialLoop).toContainEqual(residence.approach);
@@ -339,10 +339,23 @@ describe('Sunbeam Village map', () => {
     ]);
     expect(residences).toHaveLength(3);
 
+    const loopXs = SUNBEAM_VILLAGE_LAYOUT.pathNetwork.residentialLoop.map(({ x }) => x);
+    const loopYs = SUNBEAM_VILLAGE_LAYOUT.pathNetwork.residentialLoop.map(({ y }) => y);
+    const loopBounds = {
+      left: Math.min(...loopXs),
+      right: Math.max(...loopXs),
+      top: Math.min(...loopYs),
+      bottom: Math.max(...loopYs),
+    };
+
     for (const residence of residences) {
-      expect(residence.y).toBeGreaterThanOrEqual(1400);
-      expect(residence.facing).toBe('north');
-      expect(residence.approach.y).toBeLessThan(residence.y);
+      expect(residence.y).toBeGreaterThanOrEqual(1350);
+      expect(residence.facing).toBe('south');
+      expect(residence.approach.y).toBeGreaterThan(residence.y);
+      expect(residence.x).toBeGreaterThan(loopBounds.left);
+      expect(residence.x).toBeLessThan(loopBounds.right);
+      expect(residence.y).toBeGreaterThan(loopBounds.top);
+      expect(residence.y).toBeLessThan(loopBounds.bottom);
       expect(
         isPointBlocked(residence.approach, SUNBEAM_VILLAGE_MAP.colliders, PLAYER_CLEARANCE),
       ).toBe(false);
