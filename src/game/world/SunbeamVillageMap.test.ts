@@ -39,6 +39,10 @@ describe('Sunbeam Village map', () => {
         id: `npc:${marker.id}`,
         position: marker.position,
       })),
+      {
+        id: 'district:willow-garden',
+        position: SUNBEAM_VILLAGE_LAYOUT.willowGarden.approach,
+      },
     ];
 
     expect(findUnreachableTargets(SUNBEAM_VILLAGE_MAP, targets)).toEqual([]);
@@ -59,6 +63,10 @@ describe('Sunbeam Village map', () => {
       'collision:accessory-shop',
       'collision:library',
       'collision:fountain',
+      'collision:willow-garden:west',
+      'collision:willow-garden:south',
+      'collision:willow-garden:east-lower',
+      'collision:willow-garden:north-left',
     ]);
   });
 
@@ -131,7 +139,8 @@ describe('Sunbeam Village map', () => {
       SUNBEAM_VILLAGE_LAYOUT.buildings.accessoryShop.approach,
       SUNBEAM_VILLAGE_LAYOUT.buildings.library.approach,
     ]);
-    expect(willowBranch.at(-1)?.y).toBeGreaterThan(1300);
+    expect(willowBranch.at(-1)).toEqual(SUNBEAM_VILLAGE_LAYOUT.willowGarden.approach);
+    expect(willowBranch).toHaveLength(7);
     expect(residentialBranch.at(-1)?.y).toBeGreaterThan(1300);
   });
 
@@ -178,6 +187,45 @@ describe('Sunbeam Village map', () => {
 
     for (const point of [...westApproach, ...eastApproach]) {
       expect(Math.hypot(point.x - x, point.y - y)).toBeGreaterThanOrEqual(minimumDistance);
+    }
+  });
+
+
+  it('composes Willow and her garden as a south-west village-edge district', () => {
+    const { willowGarden, npcPositions } = SUNBEAM_VILLAGE_LAYOUT;
+    const oldGarden = { x: 650, y: 1470 };
+    const oldWillow = { x: 680, y: 1290 };
+
+    expect(willowGarden.x).toBeLessThan(oldGarden.x);
+    expect(willowGarden.y).toBeGreaterThan(oldGarden.y);
+    expect(npcPositions.willow.x).toBeLessThan(oldWillow.x);
+    expect(npcPositions.willow.y).toBeGreaterThan(oldWillow.y);
+
+    expect(willowGarden.width).toBeGreaterThanOrEqual(520);
+    expect(willowGarden.height).toBeGreaterThanOrEqual(300);
+    expect(willowGarden.beds).toHaveLength(4);
+    expect(willowGarden.fenceSegments).toHaveLength(4);
+
+    expect(
+      Math.hypot(
+        npcPositions.willow.x - willowGarden.approach.x,
+        npcPositions.willow.y - willowGarden.approach.y,
+      ),
+    ).toBeLessThan(150);
+  });
+
+  it('derives Willow garden fence collision from the visible canonical fence segments', () => {
+    for (const segment of SUNBEAM_VILLAGE_LAYOUT.willowGarden.fenceSegments) {
+      const collider = SUNBEAM_VILLAGE_MAP.colliders.find(
+        ({ id }) => id === `collision:willow-garden:${segment.id}`,
+      );
+      expect(collider).toEqual({
+        id: `collision:willow-garden:${segment.id}`,
+        x: SUNBEAM_VILLAGE_LAYOUT.willowGarden.x + segment.x,
+        y: SUNBEAM_VILLAGE_LAYOUT.willowGarden.y + segment.y,
+        width: segment.width,
+        height: segment.height,
+      });
     }
   });
 
