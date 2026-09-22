@@ -451,7 +451,6 @@ export class WorldOcclusionManager {
 
     return tree;
   }
-
 }
 
 let browserWorldOcclusionManager: WorldOcclusionManager | null = null;
