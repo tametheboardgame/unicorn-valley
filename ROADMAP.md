@@ -172,7 +172,7 @@ H0.5 cleared the final technical and visual gate for H1.
 
 ### R6.5-WP19H1+ - Open-Ended Area-by-Area Final Polish Programme
 
-State: **active; H1 = Moonflower Glade complete, H2 = Moonflower Cottage complete, H3 = Sunbeam Village first-pass plan approved on 21 September 2026, implementation not yet started**.
+State: **active; H1 = Moonflower Glade complete, H2 = Moonflower Cottage complete, H3 = Sunbeam Village H3.1-H3.6 approved and H3.7 implemented for visual review on 22 September 2026**.
 
 The earlier fixed `H1-H13` area inventory is superseded by this section. There is **no predetermined upper H number**. The programme continues for as many independently useful area, subarea or interior passes as David chooses before integrated qualification. Interiors may receive their own H number when they warrant an independent review rather than being forced into a parent-area package.
 
@@ -190,7 +190,7 @@ Operating rules for H1+:
 - **H numbers are assigned sequentially only when David chooses the next review area.** Do not pre-assign future H numbers to locations.
 - **R6.5-WP19H1 - Moonflower Glade is complete and human-approved.**
 - **R6.5-WP19H2 - Moonflower Cottage & Home Customisation is complete, fully qualified and deployed to production.**
-- **Current package: R6.5-WP19H3 - Sunbeam Village Final Polish.** David supplied feedback block 1 on 21 September 2026, explicitly requested analysis/planning, and approved the resulting H3.1-H3.8 first-pass plan for durable roadmap recording. Stage 3 is complete for feedback block 1; Stage 4 implementation has not yet started. H3 remains deliberately open-ended: H3.9 and later numbers are reserved for additional feedback blocks before any final hardening/consolidation slice is numbered.
+- **Current package: R6.5-WP19H3 - Sunbeam Village Final Polish.** David supplied feedback block 1 on 21 September 2026 and approved the H3.1-H3.8 first-pass plan. H3.1-H3.6 are now human-approved; H3.7 Southern Residential Expansion is implemented and awaiting visual review. H3.8 remains blocked on H3.7 acceptance. H3 remains deliberately open-ended: H3.9 and later numbers are reserved for additional feedback blocks before any final hardening/consolidation slice is numbered.
 - Future H numbers remain deliberately unassigned until David selects each next review area.
 - There is **no H13 cap**. Continue H numbering until David decides the playable world, meaningful subareas and relevant interiors have received the required final passes.
 - An area is a review lens, not an excuse to duplicate shared code. Any broadly applicable improvement discovered during an H package should be made at the correct shared owner and then validated against affected areas.
