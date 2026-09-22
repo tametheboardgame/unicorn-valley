@@ -103,7 +103,7 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
     ],
     residentialSideRoads: [
       [
-        { x: 2350, y: 1690 },
+        { x: 2355, y: 1700 },
         { x: 2290, y: 1690 },
         { x: 2220, y: 1685 },
         { x: 2140, y: 1680 },
