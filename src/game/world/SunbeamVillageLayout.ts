@@ -195,6 +195,13 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
       { id: 'gate-north', x: 20, y: -151 },
       { id: 'gate-east', x: 270, y: 3 },
     ],
+    sign: {
+      x: 0,
+      y: 194,
+      width: 286,
+      height: 50,
+      collision: { x: 0, y: 194, width: 330, height: 98 },
+    },
   },
   boundaryFence: {
     thickness: 18,
