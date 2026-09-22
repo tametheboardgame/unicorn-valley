@@ -53,7 +53,7 @@ test('H3.7 expands Sunbeam with a restrained southern residential arc', async ({
   const expectedHomes = [
     { id: 'rosehip-cottage', x: 1650, y: 1650 },
     { id: 'bluebell-cottage', x: 2225, y: 1690 },
-    { id: 'sunpetal-cottage', x: 2620, y: 1515 },
+    { id: 'sunpetal-cottage', x: 2620, y: 1450 },
   ] as const;
 
   for (const home of expectedHomes) {
