@@ -7,8 +7,9 @@ import { shouldShowTouchMovementPad, TouchMovementPad } from '../input/TouchMove
 import type { InteractionTarget } from '../interaction/InteractionTarget';
 import { selectInteractionTarget } from '../interaction/InteractionTargeting';
 import { PlayerEntity } from '../player/PlayerEntity';
-import { parseUnicornAppearance } from '../player/UnicornAppearance';
+import { parseUnicornAppearance, type UnicornAppearance } from '../player/UnicornAppearance';
 import { createUnicornAppearanceTexture } from '../player/UnicornAppearanceRenderer';
+import { getUnicornProductionTextureKey } from '../player/UnicornProductionArt';
 import { DEFAULT_PLAYER_SPEED, resolvePlayerMovement } from '../player/PlayerMovement';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import {
@@ -389,6 +390,7 @@ export class SunbeamVillageScene extends Phaser.Scene {
     this.createFountain();
     this.createWillowGarden();
     this.createResidentialExpansion();
+    this.createUnicornPlayground();
     this.createEntrances();
     this.createFlowers();
 
@@ -1273,6 +1275,110 @@ export class SunbeamVillageScene extends Phaser.Scene {
         .setName(`sunbeam-residence:${residence.id}`)
         .setDepth(SUNBEAM_VILLAGE_LAYERS.structure);
     }
+  }
+
+  private createUnicornPlayground(): void {
+    const playground = SUNBEAM_VILLAGE_LAYOUT.playground;
+    const playObjects: Phaser.GameObjects.GameObject[] = [
+      this.add
+        .ellipse(0, 6, playground.width, playground.height, 0xc9e3a2, 0.58)
+        .setName('sunbeam-playground:ground')
+        .setStrokeStyle(5, 0x8ebc7c, 0.42),
+      this.add.ellipse(-12, 72, 184, 42, 0x5f6650, 0.12),
+      this.add
+        .rectangle(-18, 28, 162, 18, 0xc88a62, 1)
+        .setAngle(-7)
+        .setName('sunbeam-playground:seesaw')
+        .setStrokeStyle(3, 0x8b604a, 0.88),
+      this.add
+        .triangle(-18, 49, 0, 30, 22, 0, 44, 30, 0xe4b567, 1)
+        .setOrigin(0.5, 1)
+        .setStrokeStyle(3, 0xa97748, 0.86),
+      this.add.circle(94, 46, 24, 0xf2a3c1, 1).setStrokeStyle(4, 0xc67899, 0.74),
+      this.add.circle(88, -62, 18, 0xf4d56f, 0.92),
+      this.add.circle(126, -42, 16, 0x8fc8db, 0.92),
+      this.add.circle(150, -74, 14, 0xc4a2df, 0.92),
+    ];
+
+    for (const [x, y, colour] of [
+      [-132, -58, 0xf3c66c],
+      [-96, -78, 0x8dc9d8],
+      [-58, -62, 0xd59bd9],
+    ] as const) {
+      playObjects.push(
+        this.add
+          .text(x, y, '✦', {
+            color: `#${colour.toString(16).padStart(6, '0')}`,
+            fontFamily: 'system-ui, sans-serif',
+            fontSize: '24px',
+            fontStyle: 'bold',
+          })
+          .setOrigin(0.5),
+      );
+    }
+
+    this.add
+      .container(playground.x, playground.y, playObjects)
+      .setName('sunbeam-composition:unicorn-playground')
+      .setDepth(SUNBEAM_VILLAGE_LAYERS.groundDetail + 0.2);
+
+    const childAppearances: Record<string, UnicornAppearance> = {
+      poppy: {
+        bodyColour: 'pink',
+        eyeColour: 'violet',
+        maneStyle: 'fluffy',
+        maneColour: 'rose',
+        tailStyle: 'puff',
+        tailColour: 'rose',
+        hornStyle: 'short',
+        marking: 'heart',
+        accessory: 'bow',
+      },
+      milo: {
+        bodyColour: 'mint',
+        eyeColour: 'green',
+        maneStyle: 'swept',
+        maneColour: 'gold',
+        tailStyle: 'swish',
+        tailColour: 'gold',
+        hornStyle: 'short',
+        marking: 'star',
+        accessory: 'none',
+      },
+      lulu: {
+        bodyColour: 'lavender',
+        eyeColour: 'blue',
+        maneStyle: 'soft',
+        maneColour: 'aqua',
+        tailStyle: 'curl',
+        tailColour: 'aqua',
+        hornStyle: 'short',
+        marking: 'sparkles',
+        accessory: 'flower',
+      },
+    };
+
+    playground.children.forEach((child, index) => {
+      const textureKey = `sunbeam-playground-child-${child.id}`;
+      createUnicornAppearanceTexture(this, textureKey, childAppearances[child.id]);
+      const sprite = this.add
+        .sprite(child.x, child.y, getUnicornProductionTextureKey(textureKey, 'idle'))
+        .setName(`sunbeam-playground:child:${child.id}`)
+        .setDisplaySize(76, 63)
+        .setFlipX(child.facing === 'left')
+        .setDepth(SUNBEAM_VILLAGE_LAYERS.structureDetail + 0.5 + index * 0.02);
+
+      this.tweens.add({
+        targets: sprite,
+        y: child.y - (index === 1 ? 5 : 9),
+        angle: index === 1 ? -2 : 2,
+        duration: 700 + index * 140,
+        delay: index * 130,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.InOut',
+      });
+    });
   }
 
   private createEntrances(): void {
