@@ -879,7 +879,7 @@ export class SunbeamVillageScene extends Phaser.Scene {
 
   private createWillowGarden(): void {
     const planted = isWillowGardenPlanted(getBrowserSaveService().load());
-    const { x, y, width, height, beds, fenceSegments, fencePosts } =
+    const { x, y, width, height, beds, fenceSegments, fencePosts, sign } =
       SUNBEAM_VILLAGE_LAYOUT.willowGarden;
     const objects: Phaser.GameObjects.GameObject[] = [
       this.add
@@ -953,16 +953,15 @@ export class SunbeamVillageScene extends Phaser.Scene {
     );
 
     // Keep the H3.5 physical plaque, now integrated on the front edge of the expanded garden.
-    const signY = height / 2 + 34;
     objects.push(
-      this.add.rectangle(-110, signY + 26, 10, 54, 0x775844, 1),
-      this.add.rectangle(110, signY + 26, 10, 54, 0x775844, 1),
+      this.add.rectangle(sign.x - 110, sign.y + 26, 10, 54, 0x775844, 1),
+      this.add.rectangle(sign.x + 110, sign.y + 26, 10, 54, 0x775844, 1),
       this.add
-        .rectangle(0, signY, 286, 50, 0xf2dfad, 1)
+        .rectangle(sign.x, sign.y, sign.width, sign.height, 0xf2dfad, 1)
         .setName('sunbeam-composition:willow-garden:sign')
         .setStrokeStyle(5, 0x775844, 0.95),
       this.add
-        .text(0, signY, planted ? "WILLOW'S MOONFLOWERS" : "WILLOW'S GARDEN", {
+        .text(sign.x, sign.y, planted ? "WILLOW'S MOONFLOWERS" : "WILLOW'S GARDEN", {
           color: '#5d4c4d',
           fontFamily: 'Georgia, serif',
           fontSize: '15px',
@@ -970,8 +969,8 @@ export class SunbeamVillageScene extends Phaser.Scene {
         })
         .setName('sunbeam-composition:willow-garden:sign:text')
         .setOrigin(0.5),
-      this.add.circle(-126, signY, 8, 0xffe48b, 0.96),
-      this.add.circle(126, signY, 8, 0xffe48b, 0.96),
+      this.add.circle(sign.x - 126, sign.y, 8, 0xffe48b, 0.96),
+      this.add.circle(sign.x + 126, sign.y, 8, 0xffe48b, 0.96),
     );
 
     this.add
