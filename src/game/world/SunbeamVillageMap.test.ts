@@ -323,7 +323,7 @@ describe('Sunbeam Village map', () => {
     }
   });
 
-  it('places the southern village perimeter on the canvas edge with the closed Candyland gate', () => {
+  it('places the southern village perimeter on the canvas edge with the Candyland opening-soon gate', () => {
     const { boundaryFence, map } = SUNBEAM_VILLAGE_LAYOUT;
     const southLeft = boundaryFence.segments.find(({ id }) => id === 'south-left');
     const southRight = boundaryFence.segments.find(({ id }) => id === 'south-right');
@@ -352,7 +352,7 @@ describe('Sunbeam Village map', () => {
       height: gate.height + 24,
     });
     expect(gate.destination).toBe('Candyland');
-    expect(gate.status).toBe('closed');
+    expect(gate.status).toBe('opening-soon');
   });
 
   it('leaves deliberate west and east openings through the perimeter fence', () => {
