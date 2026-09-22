@@ -112,9 +112,9 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
         { x: 1630, y: 1630 },
       ],
       [
-        { x: 2220, y: 1200 },
-        { x: 2360, y: 1270 },
-        { x: 2460, y: 1370 },
+        { x: 2280, y: 1320 },
+        { x: 2380, y: 1320 },
+        { x: 2380, y: 1400 },
         { x: 2580, y: 1400 },
       ],
     ],
@@ -209,6 +209,17 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
       facing: 'south',
     },
   ],
+  playground: {
+    x: 2680,
+    y: 1705,
+    width: 360,
+    height: 250,
+    children: [
+      { id: 'poppy', x: 2585, y: 1655, facing: 'right' },
+      { id: 'milo', x: 2700, y: 1760, facing: 'left' },
+      { id: 'lulu', x: 2790, y: 1665, facing: 'left' },
+    ],
+  },
   fountain: {
     x: 1500,
     y: 1060,
