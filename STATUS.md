@@ -1,14 +1,14 @@
 # Project Status
 
-Last updated: 2026-09-21
+Last updated: 2026-09-22
 
 ## Current work
 
-`R6.5-WP19H3 - Sunbeam Village Final Polish` is in **Stage 4 implementation**. H3.1 has been implemented and is awaiting technical validation before David's visual review.
+`R6.5-WP19H3 - Sunbeam Village Final Polish` is in **H3.7 visual-review checkpoint**. H3.1-H3.6 are human-approved.
 
-H3.1 implementation head `7adf20bbb3088c7f3772cbf816f9d014d76a7f27` removes the legacy rectangular village-square surface, retires the old path geometry that crossed the fountain, removes the fake `shopkeeper-marker`, removes superseded prototype NPC circles/icons and makes the Sunbeam scene the lifecycle authority for its retained production-environment detail. Interactions, colliders, production NPCs, shops and Village Life behaviour remain preserved.
+H3.7 implementation head `fb1b32a57171ab2bad5871bc4890c04cbe8dbe57` adds a restrained southern/eastern residential arc of Rosehip Cottage, Bluebell Cottage and Sunpetal Cottage, with canonical physical collision, inward-facing path spurs, lightweight private-home Knock interactions and focused regression coverage. The approved H3.6 Willow garden and southern perimeter geometry remain unchanged.
 
-Technical validation is pending. H3.2 has **not** started and must not begin until H3.1 has a trustworthy preview and David approves the visual checkpoint.
+Automated branch status is pending the final one-off check. H3.7 requires David's visual approval before H3.8 begins.
 
 ## H3 feedback-block-1 sequence
 
@@ -31,6 +31,6 @@ Do not reserve a hardening/cleanup number now. The final consolidation, responsi
 
 - H1 - Moonflower Glade Final Polish: complete and human-approved.
 - H2 - Moonflower Cottage & Home Customisation: complete, fully qualified, merged and deployed to production.
-- H3 - Sunbeam Village Final Polish: H3.1 implemented; technical validation and human visual review pending.
+- H3 - Sunbeam Village Final Polish: H3.1-H3.6 human-approved; H3.7 implemented and awaiting visual review.
 
 Sunbeam Village remains a review lens, not a technical boundary. Shared defects discovered during implementation must be fixed at their canonical shared owner rather than through village-specific workarounds.
