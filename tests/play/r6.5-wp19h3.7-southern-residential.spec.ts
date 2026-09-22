@@ -125,7 +125,7 @@ test('H3.7 composes a main residential road with frontage side roads', async ({ 
   expect(southRight?.y).toBeCloseTo(1891, 0);
   expect(lockedGate?.visible).toBe(true);
   expect(lockedGate?.x).toBeCloseTo(2340, 0);
-  expect(lockedGateText?.text).toBe('CANDYLAND\nCLOSED');
+  expect(lockedGateText?.text).toBe('CANDYLAND\nOPENING SOON');
 
   expect(playground?.visible).toBe(true);
   expect(playground?.x).toBeCloseTo(2660, 0);
@@ -141,6 +141,15 @@ test('H3.7 composes a main residential road with frontage side roads', async ({ 
   expect(
     objects.some(
       ({ name, visible }) => name === 'sunbeam-playground:climbing-frame' && visible,
+    ),
+  ).toBe(true);
+  expect(
+    objects.filter(({ name, visible }) => name === 'sunbeam-playground:shrub' && visible).length,
+  ).toBeGreaterThanOrEqual(5);
+  expect(
+    objects.some(
+      ({ name, visible }) =>
+        name === 'sunbeam-composition:village-boundary:locked-south-gate:sign-layer' && visible,
     ),
   ).toBe(true);
   expect(removedCornerTree).toBeUndefined();
