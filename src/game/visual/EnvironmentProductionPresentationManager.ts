@@ -323,7 +323,6 @@ export function createSunbeamVillageProductionPresentation(scene: Phaser.Scene):
   nameObject(scene.add.container(0, 0, wisps).setDepth(11), environment, 'ambient');
 
   createStorybookTree(scene, environment, 185, 1835, 'south-west-tree');
-  createLeafCluster(scene, environment, 2750, 1705, [0x68a56c, 0x8fc178, 0x806348], true);
 }
 
 function createRainbowMeadowProduction(scene: Phaser.Scene): void {
