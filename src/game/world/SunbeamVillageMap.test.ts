@@ -118,7 +118,9 @@ describe('Sunbeam Village map', () => {
 
     expect(SUNBEAM_VILLAGE_LAYOUT.willowGarden.x).toBeLessThan(900);
     expect(SUNBEAM_VILLAGE_LAYOUT.willowGarden.y).toBeGreaterThan(1300);
-    expect(SUNBEAM_VILLAGE_LAYOUT.npcPositions.pebble.y).toBeGreaterThan(1200);
+    expect(SUNBEAM_VILLAGE_LAYOUT.npcPositions.pebble).toEqual(
+      SUNBEAM_VILLAGE_LAYOUT.pathNetwork.residentialBranch.at(-1),
+    );
     expect(SUNBEAM_VILLAGE_LAYOUT.fountain.y).toBeGreaterThan(950);
   });
 
@@ -141,8 +143,13 @@ describe('Sunbeam Village map', () => {
   });
 
   it('keeps the H3.3 path network tied to canonical destinations', () => {
-    const { mainApproaches, shopBranches, willowBranch, residentialBranch, residentialLoop } =
-      SUNBEAM_VILLAGE_LAYOUT.pathNetwork;
+    const {
+      mainApproaches,
+      shopBranches,
+      willowBranch,
+      residentialBranch,
+      residentialSideRoads,
+    } = SUNBEAM_VILLAGE_LAYOUT.pathNetwork;
 
     expect(mainApproaches[0][0]).toEqual(SUNBEAM_VILLAGE_LAYOUT.entrances.moonflowerGlade.position);
     expect(mainApproaches[1].at(-1)).toEqual(
@@ -155,11 +162,17 @@ describe('Sunbeam Village map', () => {
     ]);
     expect(willowBranch.at(-1)).toEqual(SUNBEAM_VILLAGE_LAYOUT.willowGarden.approach);
     expect(willowBranch).toHaveLength(7);
-    expect(residentialBranch.at(-1)).toEqual(residentialLoop[0]);
-    expect(residentialLoop[0]).toEqual(residentialLoop.at(-1));
-    for (const residence of SUNBEAM_VILLAGE_LAYOUT.residences) {
-      expect(residentialLoop).toContainEqual(residence.approach);
-    }
+
+    const junction = residentialBranch.at(-1);
+    expect(junction).toEqual(SUNBEAM_VILLAGE_LAYOUT.npcPositions.pebble);
+    expect(residentialSideRoads.every((road) => road[0] === junction || (
+      road[0]?.x === junction?.x && road[0]?.y === junction?.y
+    ))).toBe(true);
+
+    const [rosehip, bluebell, sunpetal] = SUNBEAM_VILLAGE_LAYOUT.residences;
+    expect(residentialSideRoads[0]).toContainEqual(rosehip.approach);
+    expect(residentialSideRoads[0]).toContainEqual(bluebell.approach);
+    expect(residentialSideRoads[1]).toContainEqual(sunpetal.approach);
   });
 
   it('blends the Twinkle & Thread branch through a plaza-owned north apron', () => {
@@ -329,7 +342,7 @@ describe('Sunbeam Village map', () => {
     }
   });
 
-  it('builds a restrained southern residential arc with inward approaches', () => {
+  it('builds residential side roads around the cottage frontages', () => {
     const residences = SUNBEAM_VILLAGE_LAYOUT.residences;
 
     expect(residences.map(({ id }) => id)).toEqual([
@@ -339,23 +352,9 @@ describe('Sunbeam Village map', () => {
     ]);
     expect(residences).toHaveLength(3);
 
-    const loopXs = SUNBEAM_VILLAGE_LAYOUT.pathNetwork.residentialLoop.map(({ x }) => x);
-    const loopYs = SUNBEAM_VILLAGE_LAYOUT.pathNetwork.residentialLoop.map(({ y }) => y);
-    const loopBounds = {
-      left: Math.min(...loopXs),
-      right: Math.max(...loopXs),
-      top: Math.min(...loopYs),
-      bottom: Math.max(...loopYs),
-    };
-
     for (const residence of residences) {
-      expect(residence.y).toBeGreaterThanOrEqual(1350);
       expect(residence.facing).toBe('south');
       expect(residence.approach.y).toBeGreaterThan(residence.y);
-      expect(residence.x).toBeGreaterThan(loopBounds.left);
-      expect(residence.x).toBeLessThan(loopBounds.right);
-      expect(residence.y).toBeGreaterThan(loopBounds.top);
-      expect(residence.y).toBeLessThan(loopBounds.bottom);
       expect(
         isPointBlocked(residence.approach, SUNBEAM_VILLAGE_MAP.colliders, PLAYER_CLEARANCE),
       ).toBe(false);
@@ -371,6 +370,20 @@ describe('Sunbeam Village map', () => {
         height: residence.height,
       });
     }
+
+    const [rosehip, bluebell, sunpetal] = residences;
+    expect(bluebell.x).toBeLessThan(2200);
+    expect(sunpetal.y).toBeLessThan(1380);
+    expect(rosehip.approach.y).toBeCloseTo(bluebell.approach.y, -1);
+    expect(SUNBEAM_VILLAGE_LAYOUT.pathNetwork.residentialSideRoads[0]).toContainEqual(
+      rosehip.approach,
+    );
+    expect(SUNBEAM_VILLAGE_LAYOUT.pathNetwork.residentialSideRoads[0]).toContainEqual(
+      bluebell.approach,
+    );
+    expect(SUNBEAM_VILLAGE_LAYOUT.pathNetwork.residentialSideRoads[1]).toContainEqual(
+      sunpetal.approach,
+    );
 
     for (let left = 0; left < residences.length; left += 1) {
       for (let right = left + 1; right < residences.length; right += 1) {
