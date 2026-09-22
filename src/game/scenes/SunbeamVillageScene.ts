@@ -317,15 +317,13 @@ export class SunbeamVillageScene extends Phaser.Scene {
   private createEnvironment(): void {
     const map = SUNBEAM_VILLAGE_MAP;
     this.add
-      .rectangle(map.width / 2, map.height / 2, map.width, map.height, 0xf2d986)
-      .setName('sunbeam-composition:base');
-    this.add
-      .rectangle(map.width / 2, map.height / 2 + 120, map.width, 1220, 0xa9da92, 0.92)
-      .setName('sunbeam-composition:grass');
+      .rectangle(map.width / 2, map.height / 2, map.width, map.height, 0xa9da92, 1)
+      .setName('sunbeam-composition:base-green');
 
     this.createDistrictGrounding();
     this.createPlaza();
     this.createPathNetwork();
+    this.createVillageBoundaryFence();
 
     this.createBakeryExterior();
     this.createAccessoryShopExterior();
@@ -520,6 +518,47 @@ export class SunbeamVillageScene extends Phaser.Scene {
     for (const route of routes) {
       drawStroke(route.points, route.innerWidth, 0xf4e4ba, 1);
     }
+  }
+
+  private createVillageBoundaryFence(): void {
+    const { segments, posts, thickness, postSize } = SUNBEAM_VILLAGE_LAYOUT.boundaryFence;
+    const objects: Phaser.GameObjects.GameObject[] = [];
+
+    for (const segment of segments) {
+      const horizontal = segment.orientation === 'horizontal';
+      const width = horizontal ? segment.length : thickness;
+      const height = horizontal ? thickness : segment.length;
+
+      objects.push(
+        this.add
+          .rectangle(segment.x, segment.y, width, height, 0xa9865d, 1)
+          .setName(`sunbeam-composition:village-boundary:fence:${segment.id}`)
+          .setStrokeStyle(3, 0x6f573f, 0.92),
+        this.add.rectangle(
+          segment.x,
+          segment.y - (horizontal ? 2 : 0),
+          horizontal ? segment.length - 10 : 5,
+          horizontal ? 5 : segment.length - 10,
+          0xd5b27f,
+          0.74,
+        ),
+      );
+    }
+
+    for (const post of posts) {
+      objects.push(
+        this.add
+          .rectangle(post.x, post.y, postSize, postSize, 0x8b694d, 1)
+          .setName(`sunbeam-composition:village-boundary:post:${post.id}`)
+          .setStrokeStyle(4, 0x684e3b, 0.94),
+        this.add.circle(post.x, post.y - 2, 7, 0xd4aa70, 0.9),
+      );
+    }
+
+    this.add
+      .container(0, 0, objects)
+      .setName('sunbeam-composition:village-boundary')
+      .setDepth(SUNBEAM_VILLAGE_LAYERS.structureShadow);
   }
 
   private createBakeryExterior(): void {
@@ -840,7 +879,8 @@ export class SunbeamVillageScene extends Phaser.Scene {
 
   private createWillowGarden(): void {
     const planted = isWillowGardenPlanted(getBrowserSaveService().load());
-    const { x, y, width, height, beds, fenceSegments } = SUNBEAM_VILLAGE_LAYOUT.willowGarden;
+    const { x, y, width, height, beds, fenceSegments, fencePosts } =
+      SUNBEAM_VILLAGE_LAYOUT.willowGarden;
     const objects: Phaser.GameObjects.GameObject[] = [
       this.add
         .ellipse(0, 12, width + 34, height + 34, 0x98c98b, 0.34)
@@ -889,6 +929,16 @@ export class SunbeamVillageScene extends Phaser.Scene {
           .rectangle(segment.x, segment.y, segment.width, segment.height, 0xb79262, 1)
           .setName(`sunbeam-composition:willow-garden:fence:${segment.id}`)
           .setStrokeStyle(3, 0x765943, 0.9),
+      );
+    }
+
+    for (const post of fencePosts) {
+      objects.push(
+        this.add
+          .rectangle(post.x, post.y, 30, 30, 0x8b694d, 1)
+          .setName(`sunbeam-composition:willow-garden:post:${post.id}`)
+          .setStrokeStyle(4, 0x684e3b, 0.96),
+        this.add.circle(post.x, post.y - 2, 6, 0xd7b276, 0.92),
       );
     }
 
