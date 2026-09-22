@@ -996,21 +996,22 @@ export class SunbeamVillageScene extends Phaser.Scene {
       const boardWidth = 300;
       const supportY = -170;
       const supportOffset = 118;
+      const gatePostX = direction === 'west' ? 55 : -55;
       const arrow = direction === 'west' ? '←' : '→';
       const accent = direction === 'west' ? 0xa999dc : 0xf3bd72;
       const objects: Phaser.GameObjects.GameObject[] = [
-        this.add.ellipse(0, -96, 64, 30, 0x5b554e, 0.18),
-        this.add.ellipse(0, 96, 64, 30, 0x5b554e, 0.18),
+        this.add.ellipse(gatePostX, -96, 64, 30, 0x5b554e, 0.18),
+        this.add.ellipse(gatePostX, 96, 64, 30, 0x5b554e, 0.18),
         this.add
-          .rectangle(0, -98, 30, 92, 0x7b674f, 1)
+          .rectangle(gatePostX, -98, 30, 92, 0x7b674f, 1)
           .setName(`sunbeam-composition:gateway:${id}:post:north`)
           .setStrokeStyle(4, 0x5f503f, 0.92),
         this.add
-          .rectangle(0, 98, 30, 92, 0x7b674f, 1)
+          .rectangle(gatePostX, 98, 30, 92, 0x7b674f, 1)
           .setName(`sunbeam-composition:gateway:${id}:post:south`)
           .setStrokeStyle(4, 0x5f503f, 0.92),
-        this.add.circle(0, -150, 22, accent, 1).setStrokeStyle(4, 0xfff3cf, 0.9),
-        this.add.circle(0, 150, 22, accent, 1).setStrokeStyle(4, 0xfff3cf, 0.9),
+        this.add.circle(gatePostX, -150, 22, accent, 1).setStrokeStyle(4, 0xfff3cf, 0.9),
+        this.add.circle(gatePostX, 150, 22, accent, 1).setStrokeStyle(4, 0xfff3cf, 0.9),
         this.add.rectangle(boardX - supportOffset, supportY, 9, 58, 0x755640, 1),
         this.add.rectangle(boardX + supportOffset, supportY, 9, 58, 0x755640, 1),
         this.add
