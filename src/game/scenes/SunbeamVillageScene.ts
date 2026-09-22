@@ -991,10 +991,10 @@ export class SunbeamVillageScene extends Phaser.Scene {
       label: string,
       direction: 'west' | 'east',
     ): void => {
-      const boardX = direction === 'west' ? 180 : -180;
-      const boardY = -225;
+      const boardX = direction === 'west' ? 285 : -285;
+      const boardY = -145;
       const boardWidth = 300;
-      const supportY = -170;
+      const supportY = -94;
       const supportOffset = 118;
       const gatePostX = direction === 'west' ? 55 : -55;
       const arrow = direction === 'west' ? '←' : '→';
