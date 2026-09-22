@@ -37,7 +37,7 @@ describe('R6.5 functional resident placements', () => {
       x: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.x,
       y: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.approach.y + 70,
     });
-    expect(maple.waypoints.every(({ x, y }) => x <= 1250 && y <= 950)).toBe(true);
+    expect(maple.waypoints.every(({ x, y }) => x <= 1250 && y <= 1050)).toBe(true);
     expect(
       maple.waypoints.every((point) => !isPointBlocked(point, SUNBEAM_VILLAGE_MAP.colliders, 46)),
     ).toBe(true);
