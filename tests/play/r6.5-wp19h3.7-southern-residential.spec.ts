@@ -34,6 +34,10 @@ test('H3.7 composes a main residential road with frontage side roads', async ({ 
       names.has('sunbeam-residence:bluebell-cottage') &&
       names.has('sunbeam-residence:sunpetal-cottage') &&
       names.has('sunbeam-composition:village-boundary:locked-south-gate:sign') &&
+      names.has('sunbeam-composition:unicorn-playground') &&
+      names.has('sunbeam-playground:child:poppy') &&
+      names.has('sunbeam-playground:child:milo') &&
+      names.has('sunbeam-playground:child:lulu') &&
       names.has('sunbeam-residence:rosehip-cottage:door') &&
       names.has('sunbeam-residence:bluebell-cottage:door') &&
       names.has('sunbeam-residence:sunpetal-cottage:door')
@@ -104,9 +108,29 @@ test('H3.7 composes a main residential road with frontage side roads', async ({ 
   );
   expect(willowGarden?.x).toBeCloseTo(430, 0);
   expect(willowGarden?.y).toBeCloseTo(1540, 0);
+  const playground = objects.find(
+    ({ name }) => name === 'sunbeam-composition:unicorn-playground',
+  );
+  const playgroundChildren = objects.filter(({ name }) =>
+    name.startsWith('sunbeam-playground:child:'),
+  );
+  const removedCornerTree = objects.find(
+    ({ name }) => name === 'environment-production:sunbeam-village:foreground',
+  );
+
   expect(southLeft?.y).toBeCloseTo(1891, 0);
   expect(southRight?.y).toBeCloseTo(1891, 0);
   expect(lockedGate?.visible).toBe(true);
   expect(lockedGate?.x).toBeCloseTo(2340, 0);
   expect(lockedGateText?.text).toBe('LOCKED');
+
+  expect(playground?.visible).toBe(true);
+  expect(playground?.x).toBeCloseTo(2680, 0);
+  expect(playground?.y).toBeCloseTo(1705, 0);
+  expect(playgroundChildren).toHaveLength(3);
+  for (const child of playgroundChildren) {
+    expect(child.visible).toBe(true);
+    expect(child.displayWidth).toBeLessThan(80);
+  }
+  expect(removedCornerTree).toBeUndefined();
 });
