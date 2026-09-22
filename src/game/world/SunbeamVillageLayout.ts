@@ -81,9 +81,12 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
     ],
     willowBranch: [
       { x: 1030, y: 990 },
-      { x: 940, y: 1110 },
-      { x: 825, y: 1235 },
-      { x: 700, y: 1360 },
+      { x: 970, y: 1065 },
+      { x: 915, y: 1145 },
+      { x: 830, y: 1220 },
+      { x: 750, y: 1285 },
+      { x: 685, y: 1340 },
+      { x: 625, y: 1420 },
     ],
     residentialBranch: [
       { x: 1970, y: 990 },
@@ -113,8 +116,8 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
     },
     {
       id: 'willow-garden',
-      centre: { x: 650, y: 1450 },
-      radiusX: 430,
+      centre: { x: 430, y: 1540 },
+      radiusX: 390,
       radiusY: 300,
     },
     {
@@ -161,11 +164,26 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
     collisionHeight: 220,
   },
   willowGarden: {
-    x: 650,
-    y: 1470,
+    x: 430,
+    y: 1540,
+    width: 560,
+    height: 320,
+    approach: { x: 625, y: 1420 },
+    beds: [
+      { id: 'north-west', x: -145, y: -62, width: 150, height: 82 },
+      { id: 'north-east', x: 45, y: -62, width: 150, height: 82 },
+      { id: 'south-west', x: -145, y: 54, width: 150, height: 82 },
+      { id: 'south-east', x: 45, y: 54, width: 150, height: 82 },
+    ],
+    fenceSegments: [
+      { id: 'west', x: -270, y: 0, width: 18, height: 300 },
+      { id: 'south', x: 0, y: 151, width: 540, height: 18 },
+      { id: 'east-lower', x: 270, y: 78, width: 18, height: 150 },
+      { id: 'north-left', x: -125, y: -151, width: 290, height: 18 },
+    ],
   },
   npcPositions: {
-    willow: { x: 680, y: 1290 },
+    willow: { x: 535, y: 1345 },
     marigold: { x: 1080, y: 920 },
     pebble: { x: 2140, y: 1300 },
   },
