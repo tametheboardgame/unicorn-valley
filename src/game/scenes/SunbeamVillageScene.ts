@@ -192,7 +192,7 @@ export class SunbeamVillageScene extends Phaser.Scene {
       map.margin,
       map.margin,
       map.width - map.margin * 2,
-      map.height - map.margin * 2,
+      map.height - map.margin,
     );
 
     this.collisionGroup = this.createCollisionMap();
