@@ -28,4 +28,14 @@ describe('WP19D unified interaction ownership', () => {
 
     expect(offenders, `Legacy input owners: ${offenders.join(', ')}`).toEqual([]);
   });
+
+  it('routes Pebble through the unified Talk target and retires the legacy prompt surface', () => {
+    const bridge = productionSources['../interaction/CoreSceneInteractionBridge.ts'];
+    const presentation = productionSources['../visual/CoreNpcProductionPresentationManager.ts'];
+
+    expect(bridge).toContain("id: 'interaction:village-pebble'");
+    expect(bridge).toContain('startPebbleConversation(scene)');
+    expect(presentation).toContain('child instanceof Phaser.GameObjects.Text');
+    expect(presentation).toContain('child.disableInteractive()');
+  });
 });
