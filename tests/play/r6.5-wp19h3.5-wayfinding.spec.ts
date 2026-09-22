@@ -6,6 +6,8 @@ interface DiagnosticObject {
   visible: boolean;
   x: number;
   y: number;
+  displayWidth: number;
+  text: string | null;
 }
 
 interface DiagnosticScene {
@@ -90,7 +92,17 @@ test('H3.5 uses physical village signs and gateway objects for wayfinding', asyn
   );
   expect(gardenSign?.type).toBe('Rectangle');
   expect(gardenSign?.y).toBeCloseTo(94, 0);
+  expect(gardenSign?.displayWidth).toBeCloseTo(286, 0);
   expect(gardenSignText?.type).toBe('Text');
+
+  for (const npcId of ['willow', 'marigold', 'pebble'] as const) {
+    expect(
+      objects.some(({ name, visible }) => name === `village-npc-label:${npcId}` && visible),
+    ).toBe(false);
+  }
+  expect(
+    objects.some(({ text, visible }) => visible && (text ?? '').toLowerCase().includes('pebble talk')),
+  ).toBe(false);
 
   for (const shopId of ['bakery', 'accessory-shop', 'library'] as const) {
     expect(objects.some(({ name }) => name === `village-shopfront:${shopId}:sign`)).toBe(true);
