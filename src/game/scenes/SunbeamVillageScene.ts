@@ -923,7 +923,11 @@ export class SunbeamVillageScene extends Phaser.Scene {
       label: string,
       direction: 'west' | 'east',
     ): void => {
-      const boardX = direction === 'west' ? 86 : -86;
+      const boardX = direction === 'west' ? 100 : -100;
+      const boardY = -225;
+      const boardWidth = 300;
+      const supportY = -170;
+      const supportOffset = 118;
       const arrow = direction === 'west' ? '←' : '→';
       const accent = direction === 'west' ? 0xa999dc : 0xf3bd72;
       const objects: Phaser.GameObjects.GameObject[] = [
@@ -939,14 +943,14 @@ export class SunbeamVillageScene extends Phaser.Scene {
           .setStrokeStyle(4, 0x5f503f, 0.92),
         this.add.circle(0, -150, 22, accent, 1).setStrokeStyle(4, 0xfff3cf, 0.9),
         this.add.circle(0, 150, 22, accent, 1).setStrokeStyle(4, 0xfff3cf, 0.9),
-        this.add.rectangle(boardX - 88, -132, 9, 60, 0x755640, 1),
-        this.add.rectangle(boardX + 88, -132, 9, 60, 0x755640, 1),
+        this.add.rectangle(boardX - supportOffset, supportY, 9, 58, 0x755640, 1),
+        this.add.rectangle(boardX + supportOffset, supportY, 9, 58, 0x755640, 1),
         this.add
-          .rectangle(boardX, -160, 220, 58, 0xf2dfad, 1)
+          .rectangle(boardX, boardY, boardWidth, 58, 0xf2dfad, 1)
           .setName(`sunbeam-composition:gateway:${id}:sign`)
           .setStrokeStyle(5, 0x755640, 0.96),
         this.add
-          .text(boardX, -161, `${arrow} ${label}`, {
+          .text(boardX, boardY - 1, `${arrow} ${label}`, {
             color: '#5d4b4c',
             fontFamily: 'Georgia, serif',
             fontSize: '17px',
