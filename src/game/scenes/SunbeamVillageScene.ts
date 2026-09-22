@@ -331,7 +331,6 @@ export class SunbeamVillageScene extends Phaser.Scene {
     this.createAccessoryShopExterior();
     this.createStoryHouseExterior();
     this.createFountain();
-    this.createNpcLabels();
     this.createWillowGarden();
     this.createEntrances();
     this.createFlowers();
@@ -839,23 +838,6 @@ export class SunbeamVillageScene extends Phaser.Scene {
       .setDepth(SUNBEAM_VILLAGE_LAYERS.structureDetail);
   }
 
-  private createNpcLabels(): void {
-    for (const marker of SUNBEAM_VILLAGE_MAP.npcMarkers) {
-      this.add
-        .text(marker.position.x, marker.position.y + 61, marker.label, {
-          color: '#5c4961',
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '16px',
-          fontStyle: 'bold',
-          backgroundColor: '#fff8dfcc',
-          padding: { x: 7, y: 4 },
-        })
-        .setName(`village-npc-label:${marker.id}`)
-        .setOrigin(0.5)
-        .setDepth(9);
-    }
-  }
-
   private createWillowGarden(): void {
     const planted = isWillowGardenPlanted(getBrowserSaveService().load());
     const { x, y } = SUNBEAM_VILLAGE_LAYOUT.willowGarden;
@@ -887,10 +869,10 @@ export class SunbeamVillageScene extends Phaser.Scene {
     }
 
     objects.push(
-      this.add.rectangle(-76, 120, 10, 54, 0x775844, 1),
-      this.add.rectangle(76, 120, 10, 54, 0x775844, 1),
+      this.add.rectangle(-110, 120, 10, 54, 0x775844, 1),
+      this.add.rectangle(110, 120, 10, 54, 0x775844, 1),
       this.add
-        .rectangle(0, 94, 198, 50, 0xf2dfad, 1)
+        .rectangle(0, 94, 286, 50, 0xf2dfad, 1)
         .setName('sunbeam-composition:willow-garden:sign')
         .setStrokeStyle(5, 0x775844, 0.95),
       this.add
@@ -902,8 +884,8 @@ export class SunbeamVillageScene extends Phaser.Scene {
         })
         .setName('sunbeam-composition:willow-garden:sign:text')
         .setOrigin(0.5),
-      this.add.circle(-86, 94, 8, 0xffe48b, 0.96),
-      this.add.circle(86, 94, 8, 0xffe48b, 0.96),
+      this.add.circle(-126, 94, 8, 0xffe48b, 0.96),
+      this.add.circle(126, 94, 8, 0xffe48b, 0.96),
     );
 
     this.add
