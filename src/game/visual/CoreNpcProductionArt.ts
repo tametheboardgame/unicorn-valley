@@ -97,6 +97,8 @@ export const CORE_NPC_VISUALS: Readonly<Record<CoreNpcId, CoreNpcVisualSpec>> = 
 
 const TEXTURE_WIDTH = 184;
 const TEXTURE_HEIGHT = 148;
+export const CORE_NPC_UNICORN_LEG_COUNT = 4;
+export const CORE_NPC_WORLD_ORIGIN_Y = 130 / TEXTURE_HEIGHT;
 
 export const CORE_NPC_MANE_NECK_COVERAGE = {
   x: 101,
@@ -368,11 +370,16 @@ function drawUnicornNpc(
 ): void {
   const spec = CORE_NPC_VISUALS[id];
 
+  graphics.fillStyle(spec.outline, 0.1);
+  graphics.fillEllipse(82, 130, 104, 15);
+
   drawUnicornTail(graphics, id, spec);
 
-  drawLeg(graphics, 62, 92, spec.bodyShadow, spec.outline, id === 'nova' ? -3 : 0);
-  drawLeg(graphics, 83, 92, spec.bodyShadow, spec.outline, id === 'nova' ? 3 : 0);
-  drawLeg(graphics, 103, 91, spec.bodyShadow, spec.outline, id === 'nova' ? -2 : 0);
+  // Rear legs sit behind the barrel, then the two near-side legs are redrawn in front.
+  // This keeps all four legs readable at world scale instead of collapsing the silhouette
+  // into the old three-legged production pose.
+  drawLeg(graphics, 55, 92, spec.bodyShadow, spec.outline, id === 'nova' ? -3 : 0);
+  drawLeg(graphics, 82, 94, spec.bodyShadow, spec.outline, id === 'nova' ? 2 : 0);
 
   drawOutlinedEllipse(
     graphics,
@@ -385,6 +392,9 @@ function drawUnicornNpc(
   );
   graphics.fillStyle(0xffffff, 0.17);
   graphics.fillEllipse(73, 66, 48, 14);
+
+  drawLeg(graphics, 68, 91, spec.body, spec.outline, id === 'nova' ? 2 : 0);
+  drawLeg(graphics, 105, 92, spec.body, spec.outline, id === 'nova' ? -2 : 0);
 
   drawUnicornMane(graphics, id, spec);
 
@@ -401,7 +411,14 @@ function drawUnicornNpc(
   graphics.fillTriangle(128, hornBaseY, 137, hornBaseY - hornHeight, 143, hornBaseY + 5);
   graphics.strokeTriangle(128, hornBaseY, 137, hornBaseY - hornHeight, 143, hornBaseY + 5);
 
-  drawHappyFace(graphics, 136, 48, spec.outline, expression);
+  // Give the side-profile head a proper equine muzzle so the face reads as a unicorn,
+  // rather than an eye and smile floating on a round head.
+  drawOutlinedEllipse(graphics, 146, 62, 31, 20, spec.body, spec.outline, 2.6);
+  graphics.fillStyle(spec.outline, 0.7);
+  graphics.fillCircle(153, 60, 2.2);
+  graphics.lineStyle(2, spec.outline, 0.78);
+  graphics.lineBetween(145, 68, 153, expression === 'happy' ? 70 : 68);
+  drawHappyFace(graphics, 130, 45, spec.outline, expression);
   drawMotif(graphics, id, spec);
 
   if (id === 'willow') {
@@ -581,7 +598,7 @@ export function createCoreNpcSprite(
   return scene.add
     .sprite(x, y, ensureCoreNpcTexture(scene, id, expression))
     .setName(`core-npc:${id}:${presentation}`)
-    .setOrigin(0.5, 0.82);
+    .setOrigin(0.5, presentation === 'world' && id !== 'pip' ? CORE_NPC_WORLD_ORIGIN_Y : 0.82);
 }
 
 export function addCoreNpcIdleTween(

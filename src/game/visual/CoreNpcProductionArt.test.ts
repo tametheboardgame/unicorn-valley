@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import {
   CORE_NPC_IDS,
+  CORE_NPC_UNICORN_LEG_COUNT,
   CORE_NPC_VISUALS,
+  CORE_NPC_WORLD_ORIGIN_Y,
   getCoreNpcTextureKey,
   PIP_SPECIES_NAME,
 } from './CoreNpcProductionArt';
@@ -12,6 +14,12 @@ describe('CoreNpcProductionArt', () => {
     expect(new Set(CORE_NPC_IDS.map((id) => CORE_NPC_VISUALS[id].silhouette)).size).toBe(6);
     expect(new Set(CORE_NPC_IDS.map((id) => CORE_NPC_VISUALS[id].motif)).size).toBe(6);
     expect(new Set(CORE_NPC_IDS.map((id) => CORE_NPC_VISUALS[id].body)).size).toBe(6);
+  });
+
+  it('keeps world unicorn NPCs four-legged and hoof-grounded', () => {
+    expect(CORE_NPC_UNICORN_LEG_COUNT).toBe(4);
+    expect(CORE_NPC_WORLD_ORIGIN_Y).toBeGreaterThan(0.87);
+    expect(CORE_NPC_WORLD_ORIGIN_Y).toBeLessThan(0.89);
   });
 
   it('defines Pip as a glimmerling rather than a unicorn silhouette', () => {

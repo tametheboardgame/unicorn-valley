@@ -205,7 +205,8 @@ export class CoreNpcProductionPresentationManager {
     )
       .setDisplaySize(102, 84)
       .setDepth(worldDepthForY(pebbleMarker.position.y + 48, 0.32));
-    addCoreNpcIdleTween(scene, pebble, 'pebble', 3);
+    // Village core residents are intentionally grounded. Their previous vertical idle tween
+    // made static NPCs read as hovering beside the authored paths.
   }
 
   private ensureVillageNpc(
@@ -224,7 +225,8 @@ export class CoreNpcProductionPresentationManager {
     const sprite = createCoreNpcSprite(scene, id, marker.position.x, marker.position.y + 4, 'world')
       .setDisplaySize(width, height)
       .setDepth(worldDepthForY(marker.position.y + 47, 0.32));
-    addCoreNpcIdleTween(scene, sprite, id, 3);
+    // Willow and Marigold are static village residents. Keep their hooves planted instead of
+    // applying the shared vertical bob used by animated/off-scene core characters.
   }
 
   private refreshNovaWorld(): void {
