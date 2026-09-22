@@ -527,14 +527,14 @@ export class SunbeamVillageScene extends Phaser.Scene {
       shopBranches,
       willowBranch,
       residentialBranch,
-      residentialSpurs,
+      residentialLoop,
     } = SUNBEAM_VILLAGE_LAYOUT.pathNetwork;
     const routes = [
       ...mainApproaches.map((points) => ({ points, outerWidth: 126, innerWidth: 94 })),
       ...shopBranches.map((points) => ({ points, outerWidth: 76, innerWidth: 54 })),
       { points: willowBranch, outerWidth: 76, innerWidth: 54 },
       { points: residentialBranch, outerWidth: 76, innerWidth: 54 },
-      ...residentialSpurs.map((points) => ({ points, outerWidth: 68, innerWidth: 48 })),
+      { points: residentialLoop, outerWidth: 70, innerWidth: 50 },
     ] as const;
 
     const drawStroke = (
@@ -1057,96 +1057,158 @@ export class SunbeamVillageScene extends Phaser.Scene {
       },
     } as const;
 
+    const styles = {
+      'rosehip-cottage': {
+        bodyInset: 0,
+        cornerRadius: 30,
+        roofPeakX: -42,
+        roofLift: 94,
+        doorX: -36,
+        doorWidth: 64,
+        windowXs: [-112, 82],
+        porchWidth: 116,
+        chimneyX: 102,
+        atticWindow: false,
+        porchCanopy: false,
+      },
+      'bluebell-cottage': {
+        bodyInset: 18,
+        cornerRadius: 18,
+        roofPeakX: 22,
+        roofLift: 116,
+        doorX: 48,
+        doorWidth: 60,
+        windowXs: [-62],
+        porchWidth: 100,
+        chimneyX: null,
+        atticWindow: true,
+        porchCanopy: false,
+      },
+      'sunpetal-cottage': {
+        bodyInset: 4,
+        cornerRadius: 26,
+        roofPeakX: 64,
+        roofLift: 82,
+        doorX: -72,
+        doorWidth: 68,
+        windowXs: [26, 112],
+        porchWidth: 126,
+        chimneyX: null,
+        atticWindow: false,
+        porchCanopy: true,
+      },
+    } as const;
+
     for (const residence of SUNBEAM_VILLAGE_LAYOUT.residences) {
       const palette = palettes[residence.id];
+      const style = styles[residence.id];
+      const bodyWidth = residence.width - style.bodyInset * 2;
+      const bodyTop = -residence.height / 2 + 66;
+      const bodyBottom = residence.height / 2 - 10;
+      const bodyHeight = bodyBottom - bodyTop;
+      const roofBaseY = bodyTop + 10;
+      const roofPeakY = roofBaseY - style.roofLift;
+      const doorHeight = 88;
+      const doorY = bodyBottom - doorHeight / 2 - 8;
+      const stepY = bodyBottom + 8;
+      const windowY = bodyBottom - 72;
+
       const objects: Phaser.GameObjects.GameObject[] = [
-        this.add.ellipse(0, residence.height / 2 - 6, residence.width + 74, 68, 0x5f554b, 0.16),
+        this.add.ellipse(0, residence.height / 2 - 4, residence.width + 72, 66, 0x5f554b, 0.16),
         this.add
-          .ellipse(0, 18, residence.width + 92, residence.height + 62, 0x9dce8d, 0.2)
+          .ellipse(0, 20, residence.width + 96, residence.height + 58, 0x9dce8d, 0.2)
           .setName(`sunbeam-residence:${residence.id}:garden`),
       ];
+
+      if (style.chimneyX !== null) {
+        objects.push(
+          this.add
+            .rectangle(style.chimneyX, roofPeakY + 44, 30, 76, 0x9b6855, 1)
+            .setName(`sunbeam-residence:${residence.id}:chimney`)
+            .setStrokeStyle(4, 0x76584d, 0.76),
+        );
+      }
 
       const cottage = this.add
         .graphics()
         .setName(`sunbeam-residence:${residence.id}:structure`);
       cottage.fillStyle(palette.wall, 1);
       cottage.fillRoundedRect(
-        -residence.width / 2,
-        -residence.height / 2 + 72,
-        residence.width,
-        residence.height - 82,
-        24,
+        -bodyWidth / 2,
+        bodyTop,
+        bodyWidth,
+        bodyHeight,
+        style.cornerRadius,
       );
       cottage.lineStyle(6, 0x7c6654, 0.72);
       cottage.strokeRoundedRect(
-        -residence.width / 2,
-        -residence.height / 2 + 72,
-        residence.width,
-        residence.height - 82,
-        24,
+        -bodyWidth / 2,
+        bodyTop,
+        bodyWidth,
+        bodyHeight,
+        style.cornerRadius,
       );
       cottage.fillStyle(palette.roof, 1);
       cottage.fillTriangle(
         -residence.width / 2 - 18,
-        -residence.height / 2 + 84,
-        0,
-        -residence.height / 2 + 8,
+        roofBaseY,
+        style.roofPeakX,
+        roofPeakY,
         residence.width / 2 + 18,
-        -residence.height / 2 + 84,
+        roofBaseY,
       );
       cottage.lineStyle(6, 0x76584d, 0.74);
       cottage.strokeTriangle(
         -residence.width / 2 - 18,
-        -residence.height / 2 + 84,
-        0,
-        -residence.height / 2 + 8,
+        roofBaseY,
+        style.roofPeakX,
+        roofPeakY,
         residence.width / 2 + 18,
-        -residence.height / 2 + 84,
+        roofBaseY,
       );
       objects.push(cottage);
 
-      const isWestFacing = residence.facing === 'west';
-      const doorX = isWestFacing ? -residence.width / 2 + 42 : 0;
-      const doorY = isWestFacing ? 32 : -6;
-      const stepX = isWestFacing ? -residence.width / 2 - 8 : 0;
-      const stepY = isWestFacing ? 34 : -residence.height / 2 + 62;
+      if (style.atticWindow) {
+        objects.push(
+          this.add
+            .circle(style.roofPeakX, roofPeakY + 48, 22, 0xc7edf0, 1)
+            .setName(`sunbeam-residence:${residence.id}:attic-window`)
+            .setStrokeStyle(5, palette.trim, 0.96),
+        );
+      }
 
       objects.push(
         this.add
-          .rectangle(doorX, doorY, isWestFacing ? 58 : 66, 94, palette.door, 1)
+          .rectangle(style.doorX, doorY, style.doorWidth, doorHeight, palette.door, 1)
           .setName(`sunbeam-residence:${residence.id}:door`)
           .setStrokeStyle(5, palette.trim, 0.95),
-        this.add.circle(
-          doorX + (isWestFacing ? 16 : 20),
-          doorY + 12,
-          5,
-          0xffd873,
-          1,
-        ),
+        this.add.circle(style.doorX + style.doorWidth * 0.3, doorY + 10, 5, 0xffd873, 1),
         this.add
-          .rectangle(stepX, stepY, isWestFacing ? 34 : 104, isWestFacing ? 100 : 28, 0xc7ab7b, 1)
+          .rectangle(style.doorX, stepY, style.porchWidth, 26, 0xc7ab7b, 1)
           .setName(`sunbeam-residence:${residence.id}:step`)
           .setStrokeStyle(3, 0x907154, 0.76),
       );
 
-      const windowPositions = isWestFacing
-        ? [
-            { x: 36, y: -4 },
-            { x: 105, y: -4 },
-          ]
-        : [
-            { x: -86, y: 2 },
-            { x: 86, y: 2 },
-          ];
-      for (const [index, window] of windowPositions.entries()) {
+      if (style.porchCanopy) {
         objects.push(
           this.add
-            .rectangle(window.x, window.y, 58, 58, 0xc7edf0, 1)
+            .rectangle(style.doorX, doorY - 60, style.porchWidth + 18, 16, palette.roof, 1)
+            .setName(`sunbeam-residence:${residence.id}:porch-canopy`)
+            .setStrokeStyle(3, 0x76584d, 0.7),
+          this.add.rectangle(style.doorX - style.porchWidth / 2 + 10, doorY - 18, 8, 70, palette.trim, 0.92),
+          this.add.rectangle(style.doorX + style.porchWidth / 2 - 10, doorY - 18, 8, 70, palette.trim, 0.92),
+        );
+      }
+
+      for (const [index, windowX] of style.windowXs.entries()) {
+        objects.push(
+          this.add
+            .rectangle(windowX, windowY, 58, 58, 0xc7edf0, 1)
             .setName(`sunbeam-residence:${residence.id}:window:${index + 1}`)
             .setStrokeStyle(5, palette.trim, 0.96),
-          this.add.rectangle(window.x, window.y, 5, 48, 0xffffff, 0.5),
-          this.add.rectangle(window.x, window.y, 48, 5, 0xffffff, 0.5),
-          this.add.rectangle(window.x, window.y + 38, 70, 14, palette.accent, 0.94),
+          this.add.rectangle(windowX, windowY, 5, 48, 0xffffff, 0.5),
+          this.add.rectangle(windowX, windowY, 48, 5, 0xffffff, 0.5),
+          this.add.rectangle(windowX, windowY + 38, 70, 14, palette.accent, 0.94),
         );
       }
 
