@@ -138,6 +138,13 @@ export const SUNBEAM_VILLAGE_MAP = {
       width: SUNBEAM_VILLAGE_LAYOUT.buildings.library.width,
       height: SUNBEAM_VILLAGE_LAYOUT.buildings.library.height,
     },
+    ...SUNBEAM_VILLAGE_LAYOUT.residences.map((residence) => ({
+      id: `collision:residence:${residence.id}`,
+      x: residence.x,
+      y: residence.y,
+      width: residence.width,
+      height: residence.height,
+    })),
     {
       id: 'collision:fountain',
       x: SUNBEAM_VILLAGE_LAYOUT.fountain.x,
