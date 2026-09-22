@@ -135,8 +135,12 @@ function hidePebblePlaceholder(scene: Phaser.Scene): void {
     return;
   }
   for (const child of container.list) {
-    if (child instanceof Phaser.GameObjects.Text && child.text === '🪨') {
+    if (child instanceof Phaser.GameObjects.Text) {
       child.setVisible(false);
+      continue;
+    }
+    if (child instanceof Phaser.GameObjects.Zone) {
+      child.disableInteractive();
     }
   }
 }
