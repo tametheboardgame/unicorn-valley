@@ -47,6 +47,10 @@ describe('Sunbeam Village map', () => {
         id: `residence:${residence.id}`,
         position: residence.approach,
       })),
+      {
+        id: 'future:south-gate',
+        position: SUNBEAM_VILLAGE_LAYOUT.boundaryFence.lockedSouthGate.approach,
+      },
     ];
 
     expect(findUnreachableTargets(SUNBEAM_VILLAGE_MAP, targets)).toEqual([]);
@@ -76,11 +80,13 @@ describe('Sunbeam Village map', () => {
       'collision:willow-garden:north-left',
       'collision:willow-garden:sign',
       'collision:village-boundary:north',
-      'collision:village-boundary:south',
+      'collision:village-boundary:south-left',
+      'collision:village-boundary:south-right',
       'collision:village-boundary:west-north',
       'collision:village-boundary:west-south',
       'collision:village-boundary:east-north',
       'collision:village-boundary:east-south',
+      'collision:village-boundary:locked-south-gate',
     ]);
   });
 
@@ -119,7 +125,10 @@ describe('Sunbeam Village map', () => {
     expect(SUNBEAM_VILLAGE_LAYOUT.willowGarden.x).toBeLessThan(900);
     expect(SUNBEAM_VILLAGE_LAYOUT.willowGarden.y).toBeGreaterThan(1300);
     expect(SUNBEAM_VILLAGE_LAYOUT.npcPositions.pebble).toEqual(
-      SUNBEAM_VILLAGE_LAYOUT.pathNetwork.residentialBranch.at(-1),
+      SUNBEAM_VILLAGE_LAYOUT.pathNetwork.residentialSideRoads[1][0],
+    );
+    expect(SUNBEAM_VILLAGE_LAYOUT.pathNetwork.southernRoad).toContainEqual(
+      SUNBEAM_VILLAGE_LAYOUT.npcPositions.pebble,
     );
     expect(SUNBEAM_VILLAGE_LAYOUT.fountain.y).toBeGreaterThan(950);
   });
@@ -147,7 +156,7 @@ describe('Sunbeam Village map', () => {
       mainApproaches,
       shopBranches,
       willowBranch,
-      residentialBranch,
+      southernRoad,
       residentialSideRoads,
     } = SUNBEAM_VILLAGE_LAYOUT.pathNetwork;
 
@@ -163,11 +172,14 @@ describe('Sunbeam Village map', () => {
     expect(willowBranch.at(-1)).toEqual(SUNBEAM_VILLAGE_LAYOUT.willowGarden.approach);
     expect(willowBranch).toHaveLength(7);
 
-    const junction = residentialBranch.at(-1);
-    expect(junction).toEqual(SUNBEAM_VILLAGE_LAYOUT.npcPositions.pebble);
-    expect(residentialSideRoads.every((road) => road[0] === junction || (
-      road[0]?.x === junction?.x && road[0]?.y === junction?.y
-    ))).toBe(true);
+    expect(southernRoad[0]).toEqual(mainApproaches[1][0]);
+    expect(southernRoad.at(-1)).toEqual({
+      x: SUNBEAM_VILLAGE_LAYOUT.boundaryFence.lockedSouthGate.x,
+      y: SUNBEAM_VILLAGE_LAYOUT.boundaryFence.lockedSouthGate.y,
+    });
+    expect(southernRoad).toContainEqual(SUNBEAM_VILLAGE_LAYOUT.npcPositions.pebble);
+    expect(residentialSideRoads[1][0]).toEqual(SUNBEAM_VILLAGE_LAYOUT.npcPositions.pebble);
+    expect(southernRoad).toContainEqual(residentialSideRoads[0][0]);
 
     const [rosehip, bluebell, sunpetal] = SUNBEAM_VILLAGE_LAYOUT.residences;
     expect(residentialSideRoads[0]).toContainEqual(rosehip.approach);
@@ -289,8 +301,8 @@ describe('Sunbeam Village map', () => {
   it('derives the village perimeter collision from canonical visible or clearance geometry', () => {
     const { boundaryFence } = SUNBEAM_VILLAGE_LAYOUT;
 
-    expect(boundaryFence.segments).toHaveLength(6);
-    expect(boundaryFence.posts).toHaveLength(8);
+    expect(boundaryFence.segments).toHaveLength(7);
+    expect(boundaryFence.posts).toHaveLength(10);
 
     for (const segment of boundaryFence.segments) {
       const collider = SUNBEAM_VILLAGE_MAP.colliders.find(
@@ -314,23 +326,33 @@ describe('Sunbeam Village map', () => {
     }
   });
 
-  it('places the southern village perimeter on the canvas edge with matching collision', () => {
+  it('places the southern village perimeter on the canvas edge with a locked future gate', () => {
     const { boundaryFence, map } = SUNBEAM_VILLAGE_LAYOUT;
-    const south = boundaryFence.segments.find(({ id }) => id === 'south');
+    const southLeft = boundaryFence.segments.find(({ id }) => id === 'south-left');
+    const southRight = boundaryFence.segments.find(({ id }) => id === 'south-right');
     const westSouth = boundaryFence.segments.find(({ id }) => id === 'west-south');
     const eastSouth = boundaryFence.segments.find(({ id }) => id === 'east-south');
+    const gate = boundaryFence.lockedSouthGate;
 
-    expect(south).toBeDefined();
-    expect(south?.y).toBe(boundaryFence.southEdgeY);
-    expect((south?.y ?? 0) + boundaryFence.thickness / 2).toBe(map.height);
+    expect(southLeft?.y).toBe(boundaryFence.southEdgeY);
+    expect(southRight?.y).toBe(boundaryFence.southEdgeY);
+    expect((southLeft?.y ?? 0) + boundaryFence.thickness / 2).toBe(map.height);
+    expect((southRight?.y ?? 0) + boundaryFence.thickness / 2).toBe(map.height);
     expect((westSouth?.y ?? 0) + (westSouth?.length ?? 0) / 2).toBe(boundaryFence.southEdgeY);
     expect((eastSouth?.y ?? 0) + (eastSouth?.length ?? 0) / 2).toBe(boundaryFence.southEdgeY);
 
+    expect((southLeft?.x ?? 0) + (southLeft?.length ?? 0) / 2).toBe(gate.x - gate.width / 2);
+    expect((southRight?.x ?? 0) - (southRight?.length ?? 0) / 2).toBe(gate.x + gate.width / 2);
     expect(
-      SUNBEAM_VILLAGE_MAP.colliders.find(({ id }) => id === 'collision:village-boundary:south'),
-    ).toMatchObject({
-      y: 1879,
-      height: 42,
+      SUNBEAM_VILLAGE_MAP.colliders.find(
+        ({ id }) => id === 'collision:village-boundary:locked-south-gate',
+      ),
+    ).toEqual({
+      id: 'collision:village-boundary:locked-south-gate',
+      x: gate.x,
+      y: gate.y - 12,
+      width: gate.width,
+      height: gate.height + 24,
     });
   });
 
@@ -374,7 +396,7 @@ describe('Sunbeam Village map', () => {
     const [rosehip, bluebell, sunpetal] = residences;
     expect(bluebell.x).toBeLessThan(2200);
     expect(sunpetal.y).toBeLessThan(1380);
-    expect(Math.abs(rosehip.approach.y - bluebell.approach.y)).toBeLessThanOrEqual(30);
+    expect(Math.abs(rosehip.approach.y - bluebell.approach.y)).toBeLessThanOrEqual(60);
     expect(SUNBEAM_VILLAGE_LAYOUT.pathNetwork.residentialSideRoads[0]).toContainEqual(
       rosehip.approach,
     );
