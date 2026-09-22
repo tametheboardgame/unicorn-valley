@@ -145,6 +145,13 @@ export const SUNBEAM_VILLAGE_MAP = {
       width: SUNBEAM_VILLAGE_LAYOUT.fountain.collisionWidth,
       height: SUNBEAM_VILLAGE_LAYOUT.fountain.collisionHeight,
     },
+    ...SUNBEAM_VILLAGE_LAYOUT.willowGarden.fenceSegments.map((segment) => ({
+      id: `collision:willow-garden:${segment.id}`,
+      x: SUNBEAM_VILLAGE_LAYOUT.willowGarden.x + segment.x,
+      y: SUNBEAM_VILLAGE_LAYOUT.willowGarden.y + segment.y,
+      width: segment.width,
+      height: segment.height,
+    })),
   ] satisfies readonly CollisionRectangle[],
 } as const;
 
