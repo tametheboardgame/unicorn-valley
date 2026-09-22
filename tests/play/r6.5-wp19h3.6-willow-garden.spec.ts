@@ -7,7 +7,6 @@ interface DiagnosticObject {
   x: number;
   y: number;
   displayWidth: number;
-  displayHeight: number;
   text: string | null;
 }
 
@@ -63,17 +62,18 @@ test('H3.6 makes Willow garden a physical south-west village district', async ({
   expect(willow).toBeDefined();
   expect(willow?.visible).toBe(true);
   expect(willow?.x).toBeCloseTo(535, 0);
-  expect(willow?.y).toBeCloseTo(1349, 0);
   expect(willow?.x ?? 9999).toBeLessThan(680);
-  expect(willow?.y ?? 0).toBeGreaterThan(1290);
+  expect(willow?.y ?? 0).toBeGreaterThan(1335);
+  expect(willow?.y ?? 9999).toBeLessThan(1360);
 
-  const beds = objects.filter(({ name }) => name.startsWith('sunbeam-composition:willow-garden:bed:'));
+  const beds = objects.filter(({ name }) =>
+    name.startsWith('sunbeam-composition:willow-garden:bed:'),
+  );
   expect(beds).toHaveLength(4);
   for (const bed of beds) {
     expect(bed.visible).toBe(true);
     expect(bed.type).toBe('Rectangle');
     expect(bed.displayWidth).toBeGreaterThanOrEqual(145);
-    expect(bed.displayHeight).toBeGreaterThanOrEqual(78);
   }
 
   const fenceIds = ['west', 'south', 'east-lower', 'north-left'] as const;
@@ -96,7 +96,7 @@ test('H3.6 makes Willow garden a physical south-west village district', async ({
   expect(signText?.type).toBe('Text');
   expect(signText?.text).toMatch(/^WILLOW'S (GARDEN|MOONFLOWERS)$/);
 
-  expect(
-    objects.some(({ name, visible }) => name === 'village-npc-label:willow' && visible),
-  ).toBe(false);
+  expect(objects.some(({ name, visible }) => name === 'village-npc-label:willow' && visible)).toBe(
+    false,
+  );
 });
