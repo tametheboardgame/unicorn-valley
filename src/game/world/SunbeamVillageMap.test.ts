@@ -220,22 +220,29 @@ describe('Sunbeam Village map', () => {
     ).toBeLessThan(150);
   });
 
-  it('derives Willow garden fence collision from the visible canonical fence segments', () => {
+  it('derives Willow garden fence collision from canonical visible or clearance geometry', () => {
     for (const segment of SUNBEAM_VILLAGE_LAYOUT.willowGarden.fenceSegments) {
+      const geometry = 'collision' in segment ? segment.collision : segment;
       const collider = SUNBEAM_VILLAGE_MAP.colliders.find(
         ({ id }) => id === `collision:willow-garden:${segment.id}`,
       );
       expect(collider).toEqual({
         id: `collision:willow-garden:${segment.id}`,
-        x: SUNBEAM_VILLAGE_LAYOUT.willowGarden.x + segment.x,
-        y: SUNBEAM_VILLAGE_LAYOUT.willowGarden.y + segment.y,
-        width: segment.width,
-        height: segment.height,
+        x: SUNBEAM_VILLAGE_LAYOUT.willowGarden.x + geometry.x,
+        y: SUNBEAM_VILLAGE_LAYOUT.willowGarden.y + geometry.y,
+        width: geometry.width,
+        height: geometry.height,
       });
     }
+
+    expect(
+      SUNBEAM_VILLAGE_MAP.colliders.find(
+        ({ id }) => id === 'collision:willow-garden:north-left',
+      ),
+    ).toMatchObject({ height: 66 });
   });
 
-  it('derives the village perimeter collision from its visible boundary fence', () => {
+  it('derives the village perimeter collision from canonical visible or clearance geometry', () => {
     const { boundaryFence } = SUNBEAM_VILLAGE_LAYOUT;
 
     expect(boundaryFence.segments).toHaveLength(6);
@@ -245,12 +252,20 @@ describe('Sunbeam Village map', () => {
       const collider = SUNBEAM_VILLAGE_MAP.colliders.find(
         ({ id }) => id === `collision:village-boundary:${segment.id}`,
       );
+      const expected =
+        'collision' in segment
+          ? segment.collision
+          : {
+              x: segment.x,
+              y: segment.y,
+              width:
+                segment.orientation === 'horizontal' ? segment.length : boundaryFence.thickness,
+              height:
+                segment.orientation === 'vertical' ? segment.length : boundaryFence.thickness,
+            };
       expect(collider).toEqual({
         id: `collision:village-boundary:${segment.id}`,
-        x: segment.x,
-        y: segment.y,
-        width: segment.orientation === 'horizontal' ? segment.length : boundaryFence.thickness,
-        height: segment.orientation === 'vertical' ? segment.length : boundaryFence.thickness,
+        ...expected,
       });
     }
   });
@@ -270,8 +285,8 @@ describe('Sunbeam Village map', () => {
     expect(
       SUNBEAM_VILLAGE_MAP.colliders.find(({ id }) => id === 'collision:village-boundary:south'),
     ).toMatchObject({
-      y: boundaryFence.southEdgeY,
-      height: boundaryFence.thickness,
+      y: 1879,
+      height: 42,
     });
   });
 
