@@ -186,14 +186,15 @@ const VILLAGE_INTERACTIONS = [
   },
   {
     id: 'interaction:village-south-gate',
-    label: 'Southern Gate',
+    label: 'Candyland Gate',
     actionLabel: 'Inspect',
     position: SUNBEAM_VILLAGE_LAYOUT.boundaryFence.lockedSouthGate.approach,
     interactionRadius: 150,
     result: {
       type: 'message',
-      title: 'Southern Gate',
-      message: 'The gate is locked for now. The road continues beyond Sunbeam Village.',
+      title: 'Candyland',
+      message:
+        'Candyland is not currently open. The colourful gates are locked until the unicorn theme park welcomes visitors again.',
     },
   },
   {
@@ -647,15 +648,21 @@ export class SunbeamVillageScene extends Phaser.Scene {
         .setName('sunbeam-composition:village-boundary:locked-south-gate:rail:upper')
         .setStrokeStyle(3, 0x684e3b, 0.94),
       this.add
-        .rectangle(lockedSouthGate.x, lockedSouthGate.y - 78, 98, 34, 0xf2dfad, 1)
+        .rectangle(lockedSouthGate.x, lockedSouthGate.y - 86, 178, 58, 0xffe7a8, 1)
         .setName('sunbeam-composition:village-boundary:locked-south-gate:sign')
-        .setStrokeStyle(4, 0x755640, 0.96),
+        .setStrokeStyle(5, 0xb36f70, 0.96),
       this.add
-        .text(lockedSouthGate.x, lockedSouthGate.y - 79, 'LOCKED', {
-          color: '#5d4b4c',
+        .circle(lockedSouthGate.x - 74, lockedSouthGate.y - 86, 9, 0xf08eaf, 1),
+      this.add
+        .circle(lockedSouthGate.x + 74, lockedSouthGate.y - 86, 9, 0x86c9dc, 1),
+      this.add
+        .text(lockedSouthGate.x, lockedSouthGate.y - 86, 'CANDYLAND\nCLOSED', {
+          color: '#70465f',
           fontFamily: 'Georgia, serif',
-          fontSize: '14px',
+          fontSize: '13px',
           fontStyle: 'bold',
+          align: 'center',
+          lineSpacing: -2,
         })
         .setName('sunbeam-composition:village-boundary:locked-south-gate:sign:text')
         .setOrigin(0.5),
@@ -1279,31 +1286,86 @@ export class SunbeamVillageScene extends Phaser.Scene {
 
   private createUnicornPlayground(): void {
     const playground = SUNBEAM_VILLAGE_LAYOUT.playground;
+    const ground = this.add
+      .graphics()
+      .setName('sunbeam-playground:ground');
+
+    ground.fillStyle(0xc9e3a2, 0.62);
+    ground.lineStyle(5, 0x8ebc7c, 0.46);
+    ground.beginPath();
+    ground.moveTo(-playground.width / 2 + 24, -48);
+    ground.lineTo(-playground.width / 2 + 70, -playground.height / 2 + 28);
+    ground.lineTo(-65, -playground.height / 2 + 8);
+    ground.lineTo(84, -playground.height / 2 + 20);
+    ground.lineTo(playground.width / 2 - 18, -86);
+    ground.lineTo(playground.width / 2 - 4, 34);
+    ground.lineTo(playground.width / 2 - 48, playground.height / 2 - 22);
+    ground.lineTo(44, playground.height / 2 - 4);
+    ground.lineTo(-100, playground.height / 2 - 18);
+    ground.lineTo(-playground.width / 2 + 18, 74);
+    ground.closePath();
+    ground.fillPath();
+    ground.strokePath();
+
     const playObjects: Phaser.GameObjects.GameObject[] = [
+      ground,
+      this.add.ellipse(-44, 104, 220, 52, 0x5f6650, 0.1),
       this.add
-        .ellipse(0, 6, playground.width, playground.height, 0xc9e3a2, 0.58)
-        .setName('sunbeam-playground:ground')
-        .setStrokeStyle(5, 0x8ebc7c, 0.42),
-      this.add.ellipse(-12, 72, 184, 42, 0x5f6650, 0.12),
-      this.add
-        .rectangle(-18, 28, 162, 18, 0xc88a62, 1)
+        .rectangle(-58, 46, 170, 18, 0xc88a62, 1)
         .setAngle(-7)
         .setName('sunbeam-playground:seesaw')
         .setStrokeStyle(3, 0x8b604a, 0.88),
       this.add
-        .triangle(-18, 49, 0, 30, 22, 0, 44, 30, 0xe4b567, 1)
+        .triangle(-58, 68, 0, 30, 22, 0, 44, 30, 0xe4b567, 1)
         .setOrigin(0.5, 1)
         .setStrokeStyle(3, 0xa97748, 0.86),
-      this.add.circle(94, 46, 24, 0xf2a3c1, 1).setStrokeStyle(4, 0xc67899, 0.74),
-      this.add.circle(88, -62, 18, 0xf4d56f, 0.92),
-      this.add.circle(126, -42, 16, 0x8fc8db, 0.92),
-      this.add.circle(150, -74, 14, 0xc4a2df, 0.92),
     ];
 
+    const slide = this.add.graphics().setName('sunbeam-playground:slide');
+    slide.fillStyle(0x86c9dc, 1);
+    slide.lineStyle(4, 0x5f8fa3, 0.88);
+    slide.fillRoundedRect(62, -92, 26, 102, 10);
+    slide.strokeRoundedRect(62, -92, 26, 102, 10);
+    slide.fillStyle(0xf2bd67, 1);
+    slide.fillTriangle(75, -80, 75, 8, 144, 52);
+    slide.lineStyle(4, 0x9f7045, 0.88);
+    slide.strokeTriangle(75, -80, 75, 8, 144, 52);
+    slide.lineStyle(5, 0x8b6f57, 0.9);
+    slide.lineBetween(48, -84, 48, 8);
+    slide.lineBetween(42, -68, 64, -68);
+    slide.lineBetween(42, -44, 64, -44);
+    slide.lineBetween(42, -20, 64, -20);
+    playObjects.push(slide);
+
+    const climbingFrame = this.add
+      .graphics()
+      .setName('sunbeam-playground:climbing-frame');
+    climbingFrame.lineStyle(7, 0xb57998, 0.95);
+    climbingFrame.strokeRoundedRect(-184, -116, 106, 92, 22);
+    climbingFrame.lineStyle(5, 0xf0c36a, 0.94);
+    climbingFrame.lineBetween(-158, -110, -158, -28);
+    climbingFrame.lineBetween(-132, -110, -132, -28);
+    climbingFrame.lineBetween(-106, -110, -106, -28);
+    climbingFrame.lineBetween(-180, -84, -82, -84);
+    climbingFrame.lineBetween(-180, -56, -82, -56);
+    playObjects.push(climbingFrame);
+
+    for (const [x, y, radius, colour] of [
+      [144, 94, 25, 0xf2a3c1],
+      [174, 55, 17, 0xf4d56f],
+      [126, 130, 15, 0xc4a2df],
+      [-12, -126, 15, 0x8fc8db],
+    ] as const) {
+      playObjects.push(
+        this.add.circle(x, y, radius, colour, 0.96).setStrokeStyle(3, 0xffffff, 0.4),
+      );
+    }
+
     for (const [x, y, colour] of [
-      [-132, -58, 0xf3c66c],
-      [-96, -78, 0x8dc9d8],
-      [-58, -62, 0xd59bd9],
+      [-18, 118, 0xf3c66c],
+      [18, 132, 0x8dc9d8],
+      [52, 116, 0xd59bd9],
+      [86, 132, 0xf09ab4],
     ] as const) {
       playObjects.push(
         this.add
@@ -1356,6 +1418,17 @@ export class SunbeamVillageScene extends Phaser.Scene {
         marking: 'sparkles',
         accessory: 'flower',
       },
+      bean: {
+        bodyColour: 'buttercup',
+        eyeColour: 'amber',
+        maneStyle: 'crest',
+        maneColour: 'coral',
+        tailStyle: 'ribbon',
+        tailColour: 'coral',
+        hornStyle: 'short',
+        marking: 'freckles',
+        accessory: 'ribbon',
+      },
     };
 
     playground.children.forEach((child, index) => {
@@ -1364,19 +1437,22 @@ export class SunbeamVillageScene extends Phaser.Scene {
       const sprite = this.add
         .sprite(child.x, child.y, getUnicornProductionTextureKey(textureKey, 'idle'))
         .setName(`sunbeam-playground:child:${child.id}`)
-        .setDisplaySize(76, 63)
+        .setDisplaySize(74, 61)
         .setFlipX(child.facing === 'left')
         .setDepth(SUNBEAM_VILLAGE_LAYERS.structureDetail + 0.5 + index * 0.02);
 
       this.tweens.add({
         targets: sprite,
-        y: child.y - (index === 1 ? 5 : 9),
-        angle: index === 1 ? -2 : 2,
-        duration: 700 + index * 140,
-        delay: index * 130,
+        x: child.x + child.roamX,
+        y: child.y + child.roamY,
+        angle: index % 2 === 0 ? 2 : -2,
+        duration: 1150 + index * 180,
+        delay: index * 170,
         yoyo: true,
         repeat: -1,
         ease: 'Sine.InOut',
+        onYoyo: () => sprite.setFlipX(!sprite.flipX),
+        onRepeat: () => sprite.setFlipX(!sprite.flipX),
       });
     });
   }
