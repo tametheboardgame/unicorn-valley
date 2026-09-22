@@ -47,12 +47,14 @@ function villageFrom(value: DiagnosticSnapshot): DiagnosticScene {
 }
 
 const productionNpcs = [
-  { id: 'willow', label: 'Willow', x: 680, y: 1290, prototypeIcon: '🌿' },
+  { id: 'willow', label: 'Willow', x: 535, y: 1345, prototypeIcon: '🌿' },
   { id: 'marigold', label: 'Marigold', x: 1080, y: 920, prototypeIcon: '🥐' },
   { id: 'pebble', label: 'Pebble', x: 2140, y: 1300, prototypeIcon: '✦' },
 ] as const;
 
-test('production NPC art no longer carries legacy village marker fixtures or name labels', async ({ page }) => {
+test('production NPC art no longer carries legacy village marker fixtures or name labels', async ({
+  page,
+}) => {
   await page.goto('/?scene=village&diagnostics=1');
 
   await page.waitForFunction(() => {
