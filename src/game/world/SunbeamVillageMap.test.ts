@@ -255,6 +255,26 @@ describe('Sunbeam Village map', () => {
     }
   });
 
+  it('places the southern village perimeter on the canvas edge with matching collision', () => {
+    const { boundaryFence, map } = SUNBEAM_VILLAGE_LAYOUT;
+    const south = boundaryFence.segments.find(({ id }) => id === 'south');
+    const westSouth = boundaryFence.segments.find(({ id }) => id === 'west-south');
+    const eastSouth = boundaryFence.segments.find(({ id }) => id === 'east-south');
+
+    expect(south).toBeDefined();
+    expect(south?.y).toBe(boundaryFence.southEdgeY);
+    expect((south?.y ?? 0) + boundaryFence.thickness / 2).toBe(map.height);
+    expect((westSouth?.y ?? 0) + (westSouth?.length ?? 0) / 2).toBe(boundaryFence.southEdgeY);
+    expect((eastSouth?.y ?? 0) + (eastSouth?.length ?? 0) / 2).toBe(boundaryFence.southEdgeY);
+
+    expect(
+      SUNBEAM_VILLAGE_MAP.colliders.find(({ id }) => id === 'collision:village-boundary:south'),
+    ).toMatchObject({
+      y: boundaryFence.southEdgeY,
+      height: boundaryFence.thickness,
+    });
+  });
+
   it('leaves deliberate west and east openings through the perimeter fence', () => {
     for (const entrance of SUNBEAM_VILLAGE_MAP.entrances) {
       expect(
