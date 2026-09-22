@@ -313,7 +313,7 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
       height: 42,
       approach: { x: 2340, y: 1785 },
       destination: 'Candyland',
-      status: 'closed',
+      status: 'opening-soon',
     },
   },
   npcPositions: {
