@@ -84,29 +84,6 @@ const VILLAGE_POINTS: readonly VillageLifePoint[] = [
     ],
   },
   {
-    id: 'story-map-sign',
-    label: 'Story House map sign',
-    actionLabel: 'Peek',
-    actionKind: 'inspect',
-    x: SUNBEAM_VILLAGE_LAYOUT.villageLife.storyMapSign.x,
-    y: SUNBEAM_VILLAGE_LAYOUT.villageLife.storyMapSign.y,
-    radius: 120,
-    createProp: (scene) => [
-      scene.add.rectangle(0, 0, 112, 80, 0x7aa5bd, 1).setStrokeStyle(4, 0x50758d, 0.95),
-      scene.add
-        .text(0, -5, '🗺️', { fontFamily: 'system-ui, sans-serif', fontSize: '32px' })
-        .setOrigin(0.5),
-      scene.add
-        .text(0, 27, 'MAP', {
-          color: '#f7fbff',
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '12px',
-          fontStyle: 'bold',
-        })
-        .setOrigin(0.5),
-    ],
-  },
-  {
     id: 'thread-window',
     label: 'Twinkle & Thread window',
     actionLabel: 'Look',
@@ -254,15 +231,6 @@ export class VillageLifeWorldManager {
       this.showFeedback(
         state,
         '🪑 You sit for a moment. From here you can see the Bakery, the fountain and unicorns crossing the square.',
-      );
-      return;
-    }
-    if (definition.id === 'story-map-sign') {
-      this.showFeedback(
-        state,
-        hunting
-          ? '🗺️ Tansy has added three tiny question marks to the Village map. The Story House might know more.'
-          : '🗺️ The sign shows the Village in the middle, with little paths curling towards the Glade and Meadow.',
       );
       return;
     }
