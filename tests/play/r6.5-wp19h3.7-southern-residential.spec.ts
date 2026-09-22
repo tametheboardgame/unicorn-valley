@@ -33,6 +33,7 @@ test('H3.7 composes a main residential road with frontage side roads', async ({ 
       names.has('sunbeam-residence:rosehip-cottage') &&
       names.has('sunbeam-residence:bluebell-cottage') &&
       names.has('sunbeam-residence:sunpetal-cottage') &&
+      names.has('sunbeam-composition:village-boundary:locked-south-gate:sign') &&
       names.has('sunbeam-residence:rosehip-cottage:door') &&
       names.has('sunbeam-residence:bluebell-cottage:door') &&
       names.has('sunbeam-residence:sunpetal-cottage:door')
@@ -89,10 +90,23 @@ test('H3.7 composes a main residential road with frontage side roads', async ({ 
   const willowGarden = objects.find(
     ({ name }) => name === 'sunbeam-composition:willow-garden',
   );
-  const southBoundary = objects.find(
-    ({ name }) => name === 'sunbeam-composition:village-boundary:fence:south',
+  const southLeft = objects.find(
+    ({ name }) => name === 'sunbeam-composition:village-boundary:fence:south-left',
+  );
+  const southRight = objects.find(
+    ({ name }) => name === 'sunbeam-composition:village-boundary:fence:south-right',
+  );
+  const lockedGate = objects.find(
+    ({ name }) => name === 'sunbeam-composition:village-boundary:locked-south-gate:sign',
+  );
+  const lockedGateText = objects.find(
+    ({ name }) => name === 'sunbeam-composition:village-boundary:locked-south-gate:sign:text',
   );
   expect(willowGarden?.x).toBeCloseTo(430, 0);
   expect(willowGarden?.y).toBeCloseTo(1540, 0);
-  expect(southBoundary?.y).toBeCloseTo(1891, 0);
+  expect(southLeft?.y).toBeCloseTo(1891, 0);
+  expect(southRight?.y).toBeCloseTo(1891, 0);
+  expect(lockedGate?.visible).toBe(true);
+  expect(lockedGate?.x).toBeCloseTo(2340, 0);
+  expect(lockedGateText?.text).toBe('LOCKED');
 });
