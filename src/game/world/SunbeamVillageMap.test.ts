@@ -141,7 +141,7 @@ describe('Sunbeam Village map', () => {
   });
 
   it('keeps the H3.3 path network tied to canonical destinations', () => {
-    const { mainApproaches, shopBranches, willowBranch, residentialBranch, residentialSpurs } =
+    const { mainApproaches, shopBranches, willowBranch, residentialBranch, residentialLoop } =
       SUNBEAM_VILLAGE_LAYOUT.pathNetwork;
 
     expect(mainApproaches[0][0]).toEqual(SUNBEAM_VILLAGE_LAYOUT.entrances.moonflowerGlade.position);
@@ -156,9 +156,10 @@ describe('Sunbeam Village map', () => {
     expect(willowBranch.at(-1)).toEqual(SUNBEAM_VILLAGE_LAYOUT.willowGarden.approach);
     expect(willowBranch).toHaveLength(7);
     expect(residentialBranch.at(-1)?.y).toBeGreaterThan(1300);
-    expect(residentialSpurs.map((spur) => spur.at(-1))).toEqual(
-      SUNBEAM_VILLAGE_LAYOUT.residences.map((residence) => residence.approach),
-    );
+    expect(residentialLoop[0]).toEqual(residentialLoop.at(-1));
+    for (const residence of SUNBEAM_VILLAGE_LAYOUT.residences) {
+      expect(residentialLoop).toContainEqual(residence.approach);
+    }
   });
 
   it('blends the Twinkle & Thread branch through a plaza-owned north apron', () => {
@@ -176,11 +177,11 @@ describe('Sunbeam Village map', () => {
     expect(apronBottom).toBeGreaterThan(plazaTop);
   });
 
-  it('places the village bench below and to the right of the plaza circulation', () => {
+  it('places the village bench in a quiet south-west lawn pocket away from residential circulation', () => {
     const { bench } = SUNBEAM_VILLAGE_LAYOUT.villageLife;
     const { centre, height } = SUNBEAM_VILLAGE_LAYOUT.plaza;
 
-    expect(bench.x).toBeGreaterThan(centre.x);
+    expect(bench.x).toBeLessThan(centre.x);
     expect(bench.y).toBeGreaterThan(centre.y + height / 2);
     expect(
       Math.hypot(
@@ -188,6 +189,9 @@ describe('Sunbeam Village map', () => {
         bench.y - SUNBEAM_VILLAGE_LAYOUT.fountain.y,
       ),
     ).toBeGreaterThan(300);
+    for (const residence of SUNBEAM_VILLAGE_LAYOUT.residences) {
+      expect(Math.hypot(bench.x - residence.x, bench.y - residence.y)).toBeGreaterThan(400);
+    }
   });
 
   it('uses the plaza as the main-road connection instead of crossing the fountain', () => {
@@ -337,11 +341,8 @@ describe('Sunbeam Village map', () => {
 
     for (const residence of residences) {
       expect(residence.y).toBeGreaterThanOrEqual(1400);
-      if (residence.facing === 'west') {
-        expect(residence.approach.x).toBeLessThan(residence.x);
-      } else {
-        expect(residence.approach.y).toBeLessThan(residence.y);
-      }
+      expect(residence.facing).toBe('north');
+      expect(residence.approach.y).toBeLessThan(residence.y);
       expect(
         isPointBlocked(residence.approach, SUNBEAM_VILLAGE_MAP.colliders, PLAYER_CLEARANCE),
       ).toBe(false);
@@ -369,8 +370,7 @@ describe('Sunbeam Village map', () => {
       }
     }
 
-    expect(residences[2].facing).toBe('west');
-    expect(residences[2].approach.x).toBeLessThan(residences[2].x);
+    expect(new Set(residences.map(({ width, height }) => `${width}x${height}`)).size).toBe(3);
   });
 
   it('has unique stable IDs for landmarks, entrances and NPC markers', () => {
