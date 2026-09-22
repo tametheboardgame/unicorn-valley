@@ -100,7 +100,9 @@ test('H3.5 uses physical village signs and gateway objects for wayfinding', asyn
     ).toBe(false);
   }
   expect(
-    objects.some(({ text, visible }) => visible && (text ?? '').toLowerCase().includes('pebble talk')),
+    objects.some(
+      ({ text, visible }) => visible && (text ?? '').toLowerCase().includes('pebble talk'),
+    ),
   ).toBe(false);
 
   for (const shopId of ['bakery', 'accessory-shop', 'library'] as const) {
