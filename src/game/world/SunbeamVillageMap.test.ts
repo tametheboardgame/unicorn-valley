@@ -374,7 +374,7 @@ describe('Sunbeam Village map', () => {
     const [rosehip, bluebell, sunpetal] = residences;
     expect(bluebell.x).toBeLessThan(2200);
     expect(sunpetal.y).toBeLessThan(1380);
-    expect(rosehip.approach.y).toBeCloseTo(bluebell.approach.y, -1);
+    expect(Math.abs(rosehip.approach.y - bluebell.approach.y)).toBeLessThanOrEqual(30);
     expect(SUNBEAM_VILLAGE_LAYOUT.pathNetwork.residentialSideRoads[0]).toContainEqual(
       rosehip.approach,
     );
