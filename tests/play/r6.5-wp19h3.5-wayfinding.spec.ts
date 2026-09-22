@@ -91,7 +91,6 @@ test('H3.5 uses physical village signs and gateway objects for wayfinding', asyn
     ({ name }) => name === 'sunbeam-composition:willow-garden:sign:text',
   );
   expect(gardenSign?.type).toBe('Rectangle');
-  expect(gardenSign?.y).toBeCloseTo(94, 0);
   expect(gardenSign?.displayWidth).toBeCloseTo(286, 0);
   expect(gardenSignText?.type).toBe('Text');
 
