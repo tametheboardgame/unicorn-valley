@@ -179,7 +179,14 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
       { id: 'west', x: -270, y: 0, width: 18, height: 300 },
       { id: 'south', x: 0, y: 151, width: 540, height: 18 },
       { id: 'east-lower', x: 270, y: 78, width: 18, height: 150 },
-      { id: 'north-left', x: -125, y: -151, width: 290, height: 18 },
+      {
+        id: 'north-left',
+        x: -125,
+        y: -151,
+        width: 290,
+        height: 18,
+        collision: { x: -125, y: -151, width: 290, height: 66 },
+      },
     ],
     fencePosts: [
       { id: 'north-west', x: -270, y: -151 },
@@ -195,7 +202,14 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
     southEdgeY: 1891,
     segments: [
       { id: 'north', orientation: 'horizontal', x: 1500, y: 115, length: 2760 },
-      { id: 'south', orientation: 'horizontal', x: 1500, y: 1891, length: 2760 },
+      {
+        id: 'south',
+        orientation: 'horizontal',
+        x: 1500,
+        y: 1891,
+        length: 2760,
+        collision: { x: 1500, y: 1879, width: 2760, height: 42 },
+      },
       { id: 'west-north', orientation: 'vertical', x: 120, y: 435, length: 640 },
       { id: 'west-south', orientation: 'vertical', x: 120, y: 1503, length: 776 },
       { id: 'east-north', orientation: 'vertical', x: 2880, y: 435, length: 640 },
