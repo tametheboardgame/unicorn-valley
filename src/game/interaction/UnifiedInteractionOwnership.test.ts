@@ -30,9 +30,15 @@ describe('WP19D unified interaction ownership', () => {
   });
 
   it('routes Pebble through the unified Talk target with no legacy Pebble prompt owner', () => {
-    const bridge = productionSources['../interaction/CoreSceneInteractionBridge.ts'];
-    const pebbleWorld = productionSources['../story/PebbleCollectionWorldManager.ts'];
+    const bridge = Object.entries(productionSources).find(([path]) =>
+      path.endsWith('/CoreSceneInteractionBridge.ts'),
+    )?.[1];
+    const pebbleWorld = Object.entries(productionSources).find(([path]) =>
+      path.endsWith('/PebbleCollectionWorldManager.ts'),
+    )?.[1];
 
+    expect(bridge).toBeDefined();
+    expect(pebbleWorld).toBeDefined();
     expect(bridge).toContain("id: 'interaction:village-pebble'");
     expect(bridge).toContain('startPebbleConversation(scene)');
     expect(pebbleWorld).not.toContain('Talk: Pebble');
