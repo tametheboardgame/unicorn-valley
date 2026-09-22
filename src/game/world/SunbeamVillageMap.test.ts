@@ -124,9 +124,6 @@ describe('Sunbeam Village map', () => {
 
     expect(SUNBEAM_VILLAGE_LAYOUT.willowGarden.x).toBeLessThan(900);
     expect(SUNBEAM_VILLAGE_LAYOUT.willowGarden.y).toBeGreaterThan(1300);
-    expect(SUNBEAM_VILLAGE_LAYOUT.npcPositions.pebble).toEqual(
-      SUNBEAM_VILLAGE_LAYOUT.pathNetwork.residentialSideRoads[1][0],
-    );
     expect(SUNBEAM_VILLAGE_LAYOUT.pathNetwork.southernRoad).toContainEqual(
       SUNBEAM_VILLAGE_LAYOUT.npcPositions.pebble,
     );
@@ -178,8 +175,8 @@ describe('Sunbeam Village map', () => {
       y: SUNBEAM_VILLAGE_LAYOUT.boundaryFence.lockedSouthGate.y,
     });
     expect(southernRoad).toContainEqual(SUNBEAM_VILLAGE_LAYOUT.npcPositions.pebble);
-    expect(residentialSideRoads[1][0]).toEqual(SUNBEAM_VILLAGE_LAYOUT.npcPositions.pebble);
     expect(southernRoad).toContainEqual(residentialSideRoads[0][0]);
+    expect(southernRoad).toContainEqual(residentialSideRoads[1][0]);
 
     const [rosehip, bluebell, sunpetal] = SUNBEAM_VILLAGE_LAYOUT.residences;
     expect(residentialSideRoads[0]).toContainEqual(rosehip.approach);
@@ -403,9 +400,18 @@ describe('Sunbeam Village map', () => {
     expect(SUNBEAM_VILLAGE_LAYOUT.pathNetwork.residentialSideRoads[0]).toContainEqual(
       bluebell.approach,
     );
-    expect(SUNBEAM_VILLAGE_LAYOUT.pathNetwork.residentialSideRoads[1]).toContainEqual(
-      sunpetal.approach,
+    const sunpetalSpur = SUNBEAM_VILLAGE_LAYOUT.pathNetwork.residentialSideRoads[1];
+    expect(sunpetalSpur).toContainEqual(sunpetal.approach);
+    expect(sunpetalSpur[1].y).toBe(sunpetalSpur[0].y);
+    expect(sunpetalSpur[2].x).toBe(sunpetalSpur[1].x);
+
+    const bluebellRightEdge = bluebell.x + bluebell.width / 2;
+    const bluebellBend = SUNBEAM_VILLAGE_LAYOUT.pathNetwork.southernRoad.filter(
+      ({ y }) => y >= 1400 && y <= 1600,
     );
+    expect(
+      Math.min(...bluebellBend.map(({ x }) => x)) - bluebellRightEdge,
+    ).toBeGreaterThanOrEqual(100);
 
     for (let left = 0; left < residences.length; left += 1) {
       for (let right = left + 1; right < residences.length; right += 1) {
@@ -419,6 +425,27 @@ describe('Sunbeam Village map', () => {
     }
 
     expect(new Set(residences.map(({ width, height }) => `${width}x${height}`)).size).toBe(3);
+  });
+
+  it('keeps the unicorn playground in the open south-east corner', () => {
+    const { playground } = SUNBEAM_VILLAGE_LAYOUT;
+    const left = playground.x - playground.width / 2;
+    const right = playground.x + playground.width / 2;
+    const top = playground.y - playground.height / 2;
+    const bottom = playground.y + playground.height / 2;
+
+    expect(left).toBeGreaterThan(2450);
+    expect(right).toBeLessThan(SUNBEAM_VILLAGE_LAYOUT.boundaryFence.segments.find(
+      ({ id }) => id === 'east-south',
+    )?.x ?? SUNBEAM_VILLAGE_LAYOUT.map.width);
+    expect(bottom).toBeLessThan(SUNBEAM_VILLAGE_LAYOUT.boundaryFence.southEdgeY);
+    expect(playground.children).toHaveLength(3);
+    for (const child of playground.children) {
+      expect(child.x).toBeGreaterThan(left);
+      expect(child.x).toBeLessThan(right);
+      expect(child.y).toBeGreaterThan(top);
+      expect(child.y).toBeLessThan(bottom);
+    }
   });
 
   it('has unique stable IDs for landmarks, entrances and NPC markers', () => {
