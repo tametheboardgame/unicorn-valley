@@ -94,6 +94,24 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
       { x: 2080, y: 1230 },
       { x: 2200, y: 1360 },
     ],
+    residentialSpurs: [
+      [
+        { x: 1990, y: 1110 },
+        { x: 1880, y: 1240 },
+        { x: 1760, y: 1360 },
+        { x: 1700, y: 1450 },
+      ],
+      [
+        { x: 2200, y: 1360 },
+        { x: 2225, y: 1430 },
+        { x: 2225, y: 1505 },
+      ],
+      [
+        { x: 2200, y: 1360 },
+        { x: 2320, y: 1410 },
+        { x: 2435, y: 1470 },
+      ],
+    ],
   },
   districts: [
     {
@@ -156,6 +174,35 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
       approach: { x: 2260, y: 800 },
     },
   },
+  residences: [
+    {
+      id: 'rosehip-cottage',
+      x: 1650,
+      y: 1650,
+      width: 300,
+      height: 240,
+      approach: { x: 1700, y: 1450 },
+      facing: 'north',
+    },
+    {
+      id: 'bluebell-cottage',
+      x: 2225,
+      y: 1690,
+      width: 320,
+      height: 240,
+      approach: { x: 2225, y: 1505 },
+      facing: 'north',
+    },
+    {
+      id: 'sunpetal-cottage',
+      x: 2620,
+      y: 1515,
+      width: 300,
+      height: 240,
+      approach: { x: 2435, y: 1470 },
+      facing: 'west',
+    },
+  ],
   fountain: {
     x: 1500,
     y: 1060,
