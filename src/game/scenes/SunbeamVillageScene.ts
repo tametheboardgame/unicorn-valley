@@ -840,43 +840,79 @@ export class SunbeamVillageScene extends Phaser.Scene {
 
   private createWillowGarden(): void {
     const planted = isWillowGardenPlanted(getBrowserSaveService().load());
-    const { x, y } = SUNBEAM_VILLAGE_LAYOUT.willowGarden;
+    const { x, y, width, height, beds, fenceSegments } = SUNBEAM_VILLAGE_LAYOUT.willowGarden;
     const objects: Phaser.GameObjects.GameObject[] = [
       this.add
-        .ellipse(0, 0, 310, 145, planted ? 0x8a694d : 0x9b7758, 0.95)
-        .setStrokeStyle(5, 0x6e8e57, 0.75),
+        .ellipse(0, 12, width + 34, height + 34, 0x98c98b, 0.34)
+        .setName('sunbeam-composition:willow-garden:ground'),
+      this.add
+        .ellipse(0, 18, width - 24, height - 34, 0xb9d99f, 0.3)
+        .setStrokeStyle(4, 0x7da06a, 0.38),
     ];
 
-    if (planted) {
-      for (const offset of [-105, -52, 0, 52, 105]) {
-        objects.push(
-          this.add.circle(offset, -18, 28, 0xffefab, 0.18),
-          this.add
-            .text(offset, -20, '🌙', {
-              fontFamily: 'system-ui, sans-serif',
-              fontSize: '34px',
-            })
-            .setOrigin(0.5),
-        );
-      }
-    } else {
-      for (const offset of [-75, 0, 75]) {
-        objects.push(
-          this.add.rectangle(offset, -9, 5, 30, 0x6d985f, 0.85),
-          this.add.circle(offset, -27, 8, 0x94b971, 0.9),
-        );
+    for (const bed of beds) {
+      objects.push(
+        this.add
+          .rectangle(bed.x, bed.y, bed.width, bed.height, planted ? 0x7e5e45 : 0x8d6d50, 0.98)
+          .setName(`sunbeam-composition:willow-garden:bed:${bed.id}`)
+          .setStrokeStyle(6, 0x6f8f58, 0.96),
+        this.add.rectangle(bed.x, bed.y + bed.height / 2 - 7, bed.width - 16, 8, 0xb58d62, 0.8),
+      );
+
+      for (const offsetX of [-42, 0, 42]) {
+        if (planted) {
+          objects.push(
+            this.add.circle(bed.x + offsetX, bed.y + 4, 20, 0xffefab, 0.15),
+            this.add
+              .text(bed.x + offsetX, bed.y, '☾', {
+                color: '#fff1a8',
+                fontFamily: 'Georgia, serif',
+                fontSize: '30px',
+                fontStyle: 'bold',
+              })
+              .setOrigin(0.5),
+            this.add.rectangle(bed.x + offsetX, bed.y + 23, 4, 24, 0x6d985f, 0.88),
+          );
+        } else {
+          objects.push(
+            this.add.rectangle(bed.x + offsetX, bed.y + 10, 4, 26, 0x6d985f, 0.88),
+            this.add.circle(bed.x + offsetX - 6, bed.y - 4, 7, 0x91b96f, 0.96),
+            this.add.circle(bed.x + offsetX + 6, bed.y - 1, 7, 0xa2c77b, 0.96),
+          );
+        }
       }
     }
 
+    for (const segment of fenceSegments) {
+      objects.push(
+        this.add
+          .rectangle(segment.x, segment.y, segment.width, segment.height, 0xb79262, 1)
+          .setName(`sunbeam-composition:willow-garden:fence:${segment.id}`)
+          .setStrokeStyle(3, 0x765943, 0.9),
+      );
+    }
+
+    // A small potting bench adds working-garden character without turning the district into
+    // another dense prop cluster. H3.8 remains responsible for wider village-life dressing.
     objects.push(
-      this.add.rectangle(-110, 120, 10, 54, 0x775844, 1),
-      this.add.rectangle(110, 120, 10, 54, 0x775844, 1),
+      this.add.rectangle(188, 58, 86, 16, 0x9d7354, 1).setStrokeStyle(3, 0x72533f, 0.92),
+      this.add.rectangle(160, 88, 10, 52, 0x7e5b45, 1),
+      this.add.rectangle(216, 88, 10, 52, 0x7e5b45, 1),
+      this.add.circle(168, 42, 14, 0xd59d6f, 1).setStrokeStyle(3, 0x8c664d, 0.9),
+      this.add.circle(205, 42, 12, 0xc98772, 1).setStrokeStyle(3, 0x8c664d, 0.9),
+    );
+
+    // Keep the H3.5 physical plaque, now integrated on the front edge of the expanded garden.
+    const signY = height / 2 + 34;
+    objects.push(
+      this.add.rectangle(-110, signY + 26, 10, 54, 0x775844, 1),
+      this.add.rectangle(110, signY + 26, 10, 54, 0x775844, 1),
       this.add
-        .rectangle(0, 94, 286, 50, 0xf2dfad, 1)
+        .rectangle(0, signY, 286, 50, 0xf2dfad, 1)
         .setName('sunbeam-composition:willow-garden:sign')
         .setStrokeStyle(5, 0x775844, 0.95),
       this.add
-        .text(0, 94, planted ? "WILLOW'S MOONFLOWERS" : "WILLOW'S GARDEN", {
+        .text(0, signY, planted ? "WILLOW'S MOONFLOWERS" : "WILLOW'S GARDEN", {
           color: '#5d4c4d',
           fontFamily: 'Georgia, serif',
           fontSize: '15px',
@@ -884,8 +920,8 @@ export class SunbeamVillageScene extends Phaser.Scene {
         })
         .setName('sunbeam-composition:willow-garden:sign:text')
         .setOrigin(0.5),
-      this.add.circle(-126, 94, 8, 0xffe48b, 0.96),
-      this.add.circle(126, 94, 8, 0xffe48b, 0.96),
+      this.add.circle(-126, signY, 8, 0xffe48b, 0.96),
+      this.add.circle(126, signY, 8, 0xffe48b, 0.96),
     );
 
     this.add
@@ -960,7 +996,6 @@ export class SunbeamVillageScene extends Phaser.Scene {
       [890, 1120],
       [2510, 1110],
       [2640, 1260],
-      [390, 1580],
       [950, 1660],
       [2020, 1630],
       [2530, 1540],
