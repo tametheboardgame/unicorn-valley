@@ -184,6 +184,18 @@ const VILLAGE_INTERACTIONS = [
     },
   },
   {
+    id: 'interaction:village-south-gate',
+    label: 'Southern Gate',
+    actionLabel: 'Inspect',
+    position: SUNBEAM_VILLAGE_LAYOUT.boundaryFence.lockedSouthGate.approach,
+    interactionRadius: 150,
+    result: {
+      type: 'message',
+      title: 'Southern Gate',
+      message: 'The gate is locked for now. The road continues beyond Sunbeam Village.',
+    },
+  },
+  {
     id: 'interaction:village-glade-gate',
     label: 'Moonflower Glade',
     actionLabel: 'Go home',
@@ -526,14 +538,14 @@ export class SunbeamVillageScene extends Phaser.Scene {
       mainApproaches,
       shopBranches,
       willowBranch,
-      residentialBranch,
+      southernRoad,
       residentialSideRoads,
     } = SUNBEAM_VILLAGE_LAYOUT.pathNetwork;
     const routes = [
       ...mainApproaches.map((points) => ({ points, outerWidth: 126, innerWidth: 94 })),
       ...shopBranches.map((points) => ({ points, outerWidth: 76, innerWidth: 54 })),
       { points: willowBranch, outerWidth: 76, innerWidth: 54 },
-      { points: residentialBranch, outerWidth: 82, innerWidth: 58 },
+      { points: southernRoad, outerWidth: 84, innerWidth: 60 },
       ...residentialSideRoads.map((points) => ({ points, outerWidth: 68, innerWidth: 48 })),
     ] as const;
 
@@ -574,7 +586,8 @@ export class SunbeamVillageScene extends Phaser.Scene {
   }
 
   private createVillageBoundaryFence(): void {
-    const { segments, posts, thickness, postSize } = SUNBEAM_VILLAGE_LAYOUT.boundaryFence;
+    const { segments, posts, thickness, postSize, lockedSouthGate } =
+      SUNBEAM_VILLAGE_LAYOUT.boundaryFence;
     const objects: Phaser.GameObjects.GameObject[] = [];
 
     for (const segment of segments) {
@@ -607,6 +620,44 @@ export class SunbeamVillageScene extends Phaser.Scene {
         this.add.circle(post.x, post.y - 2, 7, 0xd4aa70, 0.9),
       );
     }
+
+    objects.push(
+      this.add
+        .rectangle(
+          lockedSouthGate.x,
+          lockedSouthGate.y - 30,
+          lockedSouthGate.width - 24,
+          16,
+          0x9b744f,
+          1,
+        )
+        .setName('sunbeam-composition:village-boundary:locked-south-gate:rail:lower')
+        .setStrokeStyle(3, 0x684e3b, 0.94),
+      this.add
+        .rectangle(
+          lockedSouthGate.x,
+          lockedSouthGate.y - 62,
+          lockedSouthGate.width - 24,
+          16,
+          0xa9845b,
+          1,
+        )
+        .setName('sunbeam-composition:village-boundary:locked-south-gate:rail:upper')
+        .setStrokeStyle(3, 0x684e3b, 0.94),
+      this.add
+        .rectangle(lockedSouthGate.x, lockedSouthGate.y - 78, 98, 34, 0xf2dfad, 1)
+        .setName('sunbeam-composition:village-boundary:locked-south-gate:sign')
+        .setStrokeStyle(4, 0x755640, 0.96),
+      this.add
+        .text(lockedSouthGate.x, lockedSouthGate.y - 79, 'LOCKED', {
+          color: '#5d4b4c',
+          fontFamily: 'Georgia, serif',
+          fontSize: '14px',
+          fontStyle: 'bold',
+        })
+        .setName('sunbeam-composition:village-boundary:locked-south-gate:sign:text')
+        .setOrigin(0.5),
+    );
 
     this.add
       .container(0, 0, objects)
