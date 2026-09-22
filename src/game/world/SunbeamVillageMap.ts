@@ -195,6 +195,13 @@ export const SUNBEAM_VILLAGE_MAP = {
             : SUNBEAM_VILLAGE_LAYOUT.boundaryFence.thickness,
       };
     }),
+    {
+      id: 'collision:village-boundary:locked-south-gate',
+      x: SUNBEAM_VILLAGE_LAYOUT.boundaryFence.lockedSouthGate.x,
+      y: SUNBEAM_VILLAGE_LAYOUT.boundaryFence.lockedSouthGate.y - 12,
+      width: SUNBEAM_VILLAGE_LAYOUT.boundaryFence.lockedSouthGate.width,
+      height: SUNBEAM_VILLAGE_LAYOUT.boundaryFence.lockedSouthGate.height + 24,
+    },
   ] satisfies readonly CollisionRectangle[],
 } as const;
 
