@@ -7,6 +7,12 @@ interface DiagnosticObject {
   x: number;
   y: number;
   displayWidth: number;
+  displayHeight: number;
+  boundsX: number;
+  boundsY: number;
+  boundsWidth: number;
+  boundsHeight: number;
+  depth: number;
   text: string | null;
 }
 
@@ -58,6 +64,37 @@ test('H3.8 recomposes village-life detail and grounds static core residents', as
   );
   expect(bunting?.visible).toBe(true);
   expect(windowDisplay?.visible).toBe(true);
+
+  // The pre-H3 straight bunting crossed the whole top of the plaza from x=800 to x=2200
+  // at y=745, with pennants at y=766. Keep only the newer authored H3.8 high-street spans.
+  expect(
+    objects.some(
+      (object) =>
+        object.visible &&
+        object.name === '' &&
+        object.type === 'Triangle' &&
+        Math.abs(object.depth - 12) < 0.01 &&
+        Math.abs(object.y - 766) <= 1 &&
+        object.x >= 830 &&
+        object.x <= 2170,
+    ),
+  ).toBe(false);
+  expect(
+    objects.some(
+      (object) =>
+        object.visible &&
+        object.name === '' &&
+        object.type === 'Graphics' &&
+        Math.abs(object.depth - 11) < 0.01 &&
+        object.boundsX >= 795 &&
+        object.boundsX <= 805 &&
+        object.boundsWidth >= 1390 &&
+        object.boundsWidth <= 1410 &&
+        object.boundsY >= 735 &&
+        object.boundsY <= 750 &&
+        object.boundsHeight <= 20,
+    ),
+  ).toBe(false);
 
   for (const expected of [
     { name: 'village-life:notice-board', x: 1110, y: 1200 },

@@ -143,6 +143,43 @@ function cleanBrookGatewayPaths(scene: Phaser.Scene): void {
   );
 }
 
+function cleanLegacyVillageBunting(scene: Phaser.Scene): void {
+  for (const object of [...scene.children.list]) {
+    if (
+      object instanceof Phaser.GameObjects.Triangle &&
+      object.name === '' &&
+      Math.abs(object.depth - 12) < 0.01 &&
+      Math.abs(object.y - 766) <= 1 &&
+      object.x >= 830 &&
+      object.x <= 2170 &&
+      Math.abs(object.displayWidth - 30) <= 1 &&
+      Math.abs(object.displayHeight - 38) <= 1
+    ) {
+      object.destroy();
+      continue;
+    }
+
+    if (!(object instanceof Phaser.GameObjects.Graphics) || object.name !== '') {
+      continue;
+    }
+
+    const bounds = object.getBounds();
+    const isLegacyPlazaBuntingLine =
+      Math.abs(object.depth - 11) < 0.01 &&
+      bounds.x >= 795 &&
+      bounds.x <= 805 &&
+      bounds.width >= 1390 &&
+      bounds.width <= 1410 &&
+      bounds.y >= 735 &&
+      bounds.y <= 750 &&
+      bounds.height <= 20;
+
+    if (isLegacyPlazaBuntingLine) {
+      object.destroy();
+    }
+  }
+}
+
 function cleanPebblePresentation(scene: Phaser.Scene): void {
   const marker = SUNBEAM_VILLAGE_MAP.npcMarkers.find((candidate) => candidate.id === 'pebble');
   if (!marker) {
@@ -287,6 +324,7 @@ export class R6FinalPlaythroughCleanupManager {
 
     for (const scene of this.game.scene.getScenes(true)) {
       if (scene.scene.key === 'SunbeamVillageScene') {
+        cleanLegacyVillageBunting(scene);
         cleanPebblePresentation(scene);
       } else if (scene.scene.key === 'RainbowMeadowScene') {
         cleanMeadowCrystalBrookPath(scene);
