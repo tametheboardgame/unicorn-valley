@@ -85,14 +85,7 @@ test('H3.8 recomposes village-life detail and grounds static core residents', as
         object.visible &&
         object.name === '' &&
         object.type === 'Graphics' &&
-        Math.abs(object.depth - 11) < 0.01 &&
-        object.boundsX >= 795 &&
-        object.boundsX <= 805 &&
-        object.boundsWidth >= 1390 &&
-        object.boundsWidth <= 1410 &&
-        object.boundsY >= 735 &&
-        object.boundsY <= 750 &&
-        object.boundsHeight <= 20,
+        Math.abs(object.depth - 11) < 0.01,
     ),
   ).toBe(false);
 

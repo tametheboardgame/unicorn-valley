@@ -159,22 +159,14 @@ function cleanLegacyVillageBunting(scene: Phaser.Scene): void {
       continue;
     }
 
-    if (!(object instanceof Phaser.GameObjects.Graphics) || object.name !== '') {
-      continue;
-    }
-
-    const bounds = object.getBounds();
-    const isLegacyPlazaBuntingLine =
-      Math.abs(object.depth - 11) < 0.01 &&
-      bounds.x >= 795 &&
-      bounds.x <= 805 &&
-      bounds.width >= 1390 &&
-      bounds.width <= 1410 &&
-      bounds.y >= 735 &&
-      bounds.y <= 750 &&
-      bounds.height <= 20;
-
-    if (isLegacyPlazaBuntingLine) {
+    // The original village's plaza-spanning bunting line was an unnamed Graphics object
+    // at depth 11. H3.8's replacement bunting is explicitly named, so this signature is
+    // narrow enough to retire the old layer without touching the new authored spans.
+    if (
+      object instanceof Phaser.GameObjects.Graphics &&
+      object.name === '' &&
+      Math.abs(object.depth - 11) < 0.01
+    ) {
       object.destroy();
     }
   }
