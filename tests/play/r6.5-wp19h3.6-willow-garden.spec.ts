@@ -40,6 +40,9 @@ test('H3.6 makes Willow garden a physical south-west village district', async ({
         village.objects.some(({ name }) => name === 'sunbeam-composition:base') &&
         village.objects.some(
           ({ name }) => name === 'environment-production:sunbeam-village:south-west-tree',
+        ) &&
+        village.objects.some(
+          ({ name }) => name === 'environment-production:sunbeam-village:south-west-tree:canopy',
         ),
     );
   });
@@ -137,10 +140,17 @@ test('H3.6 makes Willow garden a physical south-west village district', async ({
   const southWestTree = objects.find(
     ({ name }) => name === 'environment-production:sunbeam-village:south-west-tree',
   );
+  const southWestTreeCanopy = objects.find(
+    ({ name }) => name === 'environment-production:sunbeam-village:south-west-tree:canopy',
+  );
   expect(southWestTree).toBeDefined();
   expect(southWestTree?.visible).toBe(true);
-  expect(southWestTree?.x).toBeCloseTo(230, 0);
-  expect(southWestTree?.y).toBeCloseTo(1815, 0);
+  expect(southWestTree?.x).toBeCloseTo(185, 0);
+  expect(southWestTree?.y).toBeCloseTo(1835, 0);
+  expect(southWestTreeCanopy).toBeDefined();
+  expect(southWestTreeCanopy?.visible).toBe(true);
+  expect(southWestTreeCanopy?.x).toBeCloseTo(185, 0);
+  expect(southWestTreeCanopy?.y).toBeCloseTo(1835, 0);
 
   const sign = objects.find(({ name }) => name === 'sunbeam-composition:willow-garden:sign');
   const signText = objects.find(
