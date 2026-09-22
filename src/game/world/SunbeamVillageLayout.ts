@@ -322,11 +322,12 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
     pebble: { x: 2220, y: 1200 },
   },
   villageLife: {
-    noticeBoard: { x: 1030, y: 1170 },
-    sundial: { x: 1260, y: 1370 },
+    // H3.8 keeps interactive village-life detail in authored pockets around the circulation ring.
+    noticeBoard: { x: 1110, y: 1200 },
+    sundial: { x: 1830, y: 1320 },
     bench: { x: 1180, y: 1560 },
-    threadWindow: { x: 1305, y: 770 },
-    fountainSplash: { x: 1690, y: 1060 },
+    threadWindow: { x: 1345, y: 700 },
+    fountainSplash: { x: 1660, y: 1120 },
   },
   entrances: {
     moonflowerGlade: {

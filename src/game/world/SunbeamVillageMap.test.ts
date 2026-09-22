@@ -199,6 +199,20 @@ describe('Sunbeam Village map', () => {
     expect(apronBottom).toBeGreaterThan(plazaTop);
   });
 
+  it('keeps H3.8 village-life pockets outside the fountain circulation ring', () => {
+    const { villageLife, fountain, plaza, buildings } = SUNBEAM_VILLAGE_LAYOUT;
+    for (const point of [villageLife.noticeBoard, villageLife.sundial, villageLife.bench]) {
+      expect(Math.hypot(point.x - fountain.x, point.y - fountain.y)).toBeGreaterThan(
+        plaza.fountainClearance + 80,
+      );
+    }
+
+    expect(villageLife.threadWindow.y).toBe(buildings.accessoryShop.approach.y);
+    expect(Math.abs(villageLife.threadWindow.x - buildings.accessoryShop.approach.x)).toBeGreaterThan(
+      90,
+    );
+  });
+
   it('places the village bench in a quiet south-west lawn pocket away from residential circulation', () => {
     const { bench } = SUNBEAM_VILLAGE_LAYOUT.villageLife;
     const { centre, height } = SUNBEAM_VILLAGE_LAYOUT.plaza;

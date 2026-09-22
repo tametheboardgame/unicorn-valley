@@ -34,12 +34,25 @@ describe('R6.5 functional resident placements', () => {
     const maple = requirePlacement('resident:maple', 'SunbeamVillageScene');
 
     expect(maple.waypoints[0]).toMatchObject({
-      x: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.x,
-      y: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.approach.y + 70,
+      x: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.x - 180,
+      y: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.approach.y + 75,
     });
     expect(maple.waypoints.every(({ x, y }) => x <= 1250 && y <= 1050)).toBe(true);
     expect(
       maple.waypoints.every((point) => !isPointBlocked(point, SUNBEAM_VILLAGE_MAP.colliders, 46)),
+    ).toBe(true);
+  });
+
+  it('routes Tansy from the Story House edge into a readable east-plaza gathering pocket', () => {
+    const tansy = requirePlacement('resident:tansy', 'SunbeamVillageScene');
+
+    expect(tansy.waypoints).toHaveLength(3);
+    expect(tansy.waypoints[0]).toMatchObject({
+      x: SUNBEAM_VILLAGE_LAYOUT.buildings.library.x - 210,
+      y: SUNBEAM_VILLAGE_LAYOUT.buildings.library.approach.y + 40,
+    });
+    expect(
+      tansy.waypoints.every((point) => !isPointBlocked(point, SUNBEAM_VILLAGE_MAP.colliders, 46)),
     ).toBe(true);
   });
 });

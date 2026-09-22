@@ -267,15 +267,21 @@ export const R6_AMBIENT_RESIDENT_PLACEMENTS = [
     waypoints: [
       {
         id: 'tansy-village-a',
-        x: SUNBEAM_VILLAGE_LAYOUT.buildings.library.x - 120,
-        y: SUNBEAM_VILLAGE_LAYOUT.buildings.library.approach.y + 100,
+        x: SUNBEAM_VILLAGE_LAYOUT.buildings.library.x - 210,
+        y: SUNBEAM_VILLAGE_LAYOUT.buildings.library.approach.y + 40,
         pauseMs: 2600,
       },
       {
         id: 'tansy-village-b',
-        x: SUNBEAM_VILLAGE_LAYOUT.buildings.library.x + 120,
-        y: SUNBEAM_VILLAGE_LAYOUT.buildings.library.approach.y + 120,
-        pauseMs: 3200,
+        x: 1960,
+        y: 1030,
+        pauseMs: 2100,
+      },
+      {
+        id: 'tansy-village-c',
+        x: 1840,
+        y: 1160,
+        pauseMs: 3000,
       },
     ],
   },
@@ -306,20 +312,20 @@ export const R6_AMBIENT_RESIDENT_PLACEMENTS = [
     waypoints: [
       {
         id: 'maple-village-a',
-        x: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.x,
-        y: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.approach.y + 70,
+        x: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.x - 180,
+        y: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.approach.y + 75,
         pauseMs: 2600,
       },
       {
         id: 'maple-village-b',
-        x: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.x + 190,
-        y: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.approach.y + 90,
+        x: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.x + 175,
+        y: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.approach.y + 75,
         pauseMs: 1500,
       },
       {
         id: 'maple-village-c',
-        x: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.x + 300,
-        y: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.approach.y + 210,
+        x: 990,
+        y: 900,
         pauseMs: 2100,
       },
     ],

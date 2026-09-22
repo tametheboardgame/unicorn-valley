@@ -389,6 +389,7 @@ export class SunbeamVillageScene extends Phaser.Scene {
     this.createBakeryExterior();
     this.createAccessoryShopExterior();
     this.createStoryHouseExterior();
+    this.createVillageBunting();
     this.createFountain();
     this.createWillowGarden();
     this.createResidentialExpansion();
@@ -836,6 +837,17 @@ export class SunbeamVillageScene extends Phaser.Scene {
       .ellipse(132, 18, 88, 108, 0xc7edf0, 1)
       .setName('village-shopfront:accessory-shop:window:right')
       .setStrokeStyle(8, 0xffedf9, 0.96);
+    const windowDisplay = this.add
+      .container(0, 0, [
+        this.add.rectangle(-128, 43, 7, 45, 0x9b6f87, 0.92),
+        this.add.rectangle(-82, 43, 7, 45, 0x9b6f87, 0.92),
+        this.add.ellipse(-128, 15, 28, 18, 0xf3a5d4, 0.96).setAngle(-18),
+        this.add.ellipse(-82, 15, 28, 18, 0xc9a6ef, 0.96).setAngle(18),
+        this.add.circle(-105, 18, 7, 0xffe3a2, 0.98),
+        this.add.circle(-105, 50, 5, 0xffffff, 0.72),
+      ])
+      .setName('village-shopfront:accessory-shop:window-display');
+
     objects.push(
       leftWindow,
       rightWindow,
@@ -843,6 +855,7 @@ export class SunbeamVillageScene extends Phaser.Scene {
       this.add.rectangle(132, 18, 7, 88, 0xffffff, 0.52),
       this.add.ellipse(-105, 82, 126, 28, 0xb879aa, 1),
       this.add.ellipse(132, 78, 108, 26, 0xb879aa, 1),
+      windowDisplay,
     );
 
     const doorArch = this.add
@@ -993,6 +1006,51 @@ export class SunbeamVillageScene extends Phaser.Scene {
       .container(building.x, building.y, objects)
       .setName('village-shopfront:library:wall')
       .setDepth(SUNBEAM_VILLAGE_LAYERS.structure);
+  }
+
+  private createVillageBunting(): void {
+    const graphics = this.add
+      .graphics()
+      .setName('sunbeam-composition:bunting')
+      .setDepth(SUNBEAM_VILLAGE_LAYERS.structureDetail + 0.35);
+    const colours = [0xf39bb5, 0xf3c96f, 0x86c9dd, 0x9dcc7d, 0xc9a2df];
+
+    const drawSpan = (
+      start: { x: number; y: number },
+      end: { x: number; y: number },
+      flagCount: number,
+    ): void => {
+      graphics.lineStyle(4, 0x7b654f, 0.58);
+      graphics.beginPath();
+      for (let index = 0; index <= 18; index += 1) {
+        const t = index / 18;
+        const x = Phaser.Math.Linear(start.x, end.x, t);
+        const y = Phaser.Math.Linear(start.y, end.y, t) + Math.sin(Math.PI * t) * 22;
+        if (index === 0) {
+          graphics.moveTo(x, y);
+        } else {
+          graphics.lineTo(x, y);
+        }
+      }
+      graphics.strokePath();
+
+      for (let index = 1; index <= flagCount; index += 1) {
+        const t = index / (flagCount + 1);
+        const x = Phaser.Math.Linear(start.x, end.x, t);
+        const y = Phaser.Math.Linear(start.y, end.y, t) + Math.sin(Math.PI * t) * 22;
+        graphics.fillStyle(colours[(index - 1) % colours.length], 0.92);
+        graphics.fillTriangle(x - 13, y + 2, x + 13, y + 2, x, y + 28);
+      }
+
+      graphics.fillStyle(0xffe7a3, 0.9);
+      graphics.fillCircle(start.x, start.y, 6);
+      graphics.fillCircle(end.x, end.y, 6);
+    };
+
+    // Two short eave-to-eave strings keep celebration detail in the high-street gaps without
+    // crossing doors, facade signs, the fountain ring or resident gathering routes.
+    drawSpan({ x: 930, y: 306 }, { x: 1215, y: 286 }, 6);
+    drawSpan({ x: 1690, y: 286 }, { x: 2015, y: 338 }, 7);
   }
 
   private createFountain(): void {

@@ -270,30 +270,9 @@ export function createSunbeamVillageProductionPresentation(scene: Phaser.Scene):
     );
   }
 
-  // H3.2 keeps production decoration away from the moved shopfronts. H3.8 will
-  // deliberately integrate flower boxes and micro-props back into authored building pockets.
+  // H3.8 removes the old free-floating flower baskets. Shopfront micro-detail now belongs to
+  // each authored facade, while this production layer keeps only broader environmental accents.
   const signature = nameObject(scene.add.container(0, 0), environment, 'signature');
-  const flowerColours = [0xef8fa9, 0xf5c968, 0x7cc6d8, 0x9fca7a, 0xc89cda];
-  for (const [x, y, width] of [
-    [390, 1280, 112],
-    [820, 1630, 104],
-  ] as const) {
-    const basket = scene.add
-      .rectangle(x, y, width, 20, 0xb07855, 0.76)
-      .setStrokeStyle(3, 0x8b5f49, 0.42);
-    signature.add(basket);
-    for (let index = 0; index < 4; index += 1) {
-      signature.add(
-        scene.add.circle(
-          x - width * 0.32 + index * (width * 0.21),
-          y - 13 - (index % 2) * 6,
-          11,
-          flowerColours[(index + Math.floor(x / 100)) % flowerColours.length],
-          0.84,
-        ),
-      );
-    }
-  }
   signature.setDepth(15.5);
 
   const wispAnchors = [layout.buildings.bakery, layout.buildings.library] as const;
