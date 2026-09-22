@@ -19,7 +19,7 @@ interface BrowserDiagnosticsApi {
   snapshot(): { scenes: DiagnosticScene[] };
 }
 
-test('H3.7 expands Sunbeam with a restrained southern residential arc', async ({ page }) => {
+test('H3.7 composes a main residential road with frontage side roads', async ({ page }) => {
   await page.goto('/?scene=village&diagnostics=1');
 
   await page.waitForFunction(() => {
@@ -51,9 +51,9 @@ test('H3.7 expands Sunbeam with a restrained southern residential arc', async ({
   });
 
   const expectedHomes = [
-    { id: 'rosehip-cottage', x: 1750, y: 1390 },
-    { id: 'bluebell-cottage', x: 2200, y: 1410 },
-    { id: 'sunpetal-cottage', x: 2640, y: 1380 },
+    { id: 'rosehip-cottage', x: 1630, y: 1450 },
+    { id: 'bluebell-cottage', x: 2045, y: 1470 },
+    { id: 'sunpetal-cottage', x: 2580, y: 1220 },
   ] as const;
 
   for (const home of expectedHomes) {
@@ -65,8 +65,6 @@ test('H3.7 expands Sunbeam with a restrained southern residential arc', async ({
     expect(residence?.visible).toBe(true);
     expect(residence?.x).toBeCloseTo(home.x, 0);
     expect(residence?.y).toBeCloseTo(home.y, 0);
-    expect(residence?.y ?? 0).toBeGreaterThan(1350);
-    expect(residence?.y ?? 9999).toBeLessThan(1500);
 
     expect(door).toBeDefined();
     expect(door?.visible).toBe(true);
