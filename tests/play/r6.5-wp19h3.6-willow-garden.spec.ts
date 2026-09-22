@@ -37,7 +37,7 @@ test('H3.6 makes Willow garden a physical south-west village district', async ({
           ({ name }) => name === 'sunbeam-composition:willow-garden:bed:north-west',
         ) &&
         village.objects.some(({ name }) => name === 'sunbeam-composition:village-boundary') &&
-        village.objects.some(({ name }) => name === 'sunbeam-composition:base-green'),
+        village.objects.some(({ name }) => name === 'sunbeam-composition:base'),
     );
   });
 
@@ -104,9 +104,8 @@ test('H3.6 makes Willow garden a physical south-west village district', async ({
     expect(post?.type).toBe('Rectangle');
   }
 
-  expect(objects.some(({ name }) => name === 'sunbeam-composition:base')).toBe(false);
+  expect(objects.some(({ name }) => name === 'sunbeam-composition:base')).toBe(true);
   expect(objects.some(({ name }) => name === 'sunbeam-composition:grass')).toBe(false);
-  expect(objects.some(({ name }) => name === 'sunbeam-composition:base-green')).toBe(true);
 
   const boundaryFenceIds = [
     'north',
