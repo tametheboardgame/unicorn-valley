@@ -5,6 +5,7 @@ import { SunbeamVillageScene } from '../scenes/SunbeamVillageScene';
 import {
   startMarigoldConversation,
   startNovaConversation,
+  startPebbleConversation,
   startWillowConversation,
 } from '../story/WorldStoryConversations';
 import { RAINBOW_MEADOW_MAP } from '../world/RainbowMeadowMap';
@@ -188,6 +189,19 @@ function villageTargets(scene: Phaser.Scene): InteractionTarget[] {
         interactionRadius: 150,
         priority: 30,
         result: { type: 'callback', activate: () => startMarigoldConversation(scene) },
+      },
+      'talk',
+    ],
+    [
+      {
+        id: 'interaction:village-pebble',
+        label: 'Pebble',
+        actionLabel: 'Talk',
+        actionKind: 'talk',
+        position: npc('pebble'),
+        interactionRadius: 150,
+        priority: 30,
+        result: { type: 'callback', activate: () => startPebbleConversation(scene) },
       },
       'talk',
     ],
