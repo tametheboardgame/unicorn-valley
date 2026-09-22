@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { isPointBlocked } from '../world/MapTraversal';
+import { SUNBEAM_VILLAGE_LAYOUT } from '../world/SunbeamVillageLayout';
 import { SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
 import { R6_AMBIENT_RESIDENT_PLACEMENTS } from './R6SupportingResidentContent';
 
@@ -32,7 +33,10 @@ describe('R6.5 functional resident placements', () => {
   it('puts Maple on the bakery approach rather than the remote south-east village route', () => {
     const maple = requirePlacement('resident:maple', 'SunbeamVillageScene');
 
-    expect(maple.waypoints[0]).toMatchObject({ x: 900, y: 760 });
+    expect(maple.waypoints[0]).toMatchObject({
+      x: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.x,
+      y: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.approach.y + 70,
+    });
     expect(maple.waypoints.every(({ x, y }) => x <= 1250 && y <= 950)).toBe(true);
     expect(
       maple.waypoints.every((point) => !isPointBlocked(point, SUNBEAM_VILLAGE_MAP.colliders, 46)),
