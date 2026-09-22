@@ -190,7 +190,6 @@ describe('Sunbeam Village map', () => {
     }
   });
 
-
   it('composes Willow and her garden as a south-west village-edge district', () => {
     const { willowGarden, npcPositions } = SUNBEAM_VILLAGE_LAYOUT;
     const oldGarden = { x: 650, y: 1470 };
