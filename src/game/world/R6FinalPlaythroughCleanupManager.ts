@@ -143,35 +143,6 @@ function cleanBrookGatewayPaths(scene: Phaser.Scene): void {
   );
 }
 
-function cleanLegacyVillageBunting(scene: Phaser.Scene): void {
-  for (const object of [...scene.children.list]) {
-    if (
-      object instanceof Phaser.GameObjects.Triangle &&
-      object.name === '' &&
-      Math.abs(object.depth - 12) < 0.01 &&
-      Math.abs(object.y - 766) <= 1 &&
-      object.x >= 830 &&
-      object.x <= 2170 &&
-      Math.abs(object.displayWidth - 30) <= 1 &&
-      Math.abs(object.displayHeight - 38) <= 1
-    ) {
-      object.destroy();
-      continue;
-    }
-
-    // The original village's plaza-spanning bunting line was an unnamed Graphics object
-    // at depth 11. H3.8's replacement bunting is explicitly named, so this signature is
-    // narrow enough to retire the old layer without touching the new authored spans.
-    if (
-      object instanceof Phaser.GameObjects.Graphics &&
-      object.name === '' &&
-      Math.abs(object.depth - 11) < 0.01
-    ) {
-      object.destroy();
-    }
-  }
-}
-
 function cleanPebblePresentation(scene: Phaser.Scene): void {
   const marker = SUNBEAM_VILLAGE_MAP.npcMarkers.find((candidate) => candidate.id === 'pebble');
   if (!marker) {
@@ -316,7 +287,6 @@ export class R6FinalPlaythroughCleanupManager {
 
     for (const scene of this.game.scene.getScenes(true)) {
       if (scene.scene.key === 'SunbeamVillageScene') {
-        cleanLegacyVillageBunting(scene);
         cleanPebblePresentation(scene);
       } else if (scene.scene.key === 'RainbowMeadowScene') {
         cleanMeadowCrystalBrookPath(scene);

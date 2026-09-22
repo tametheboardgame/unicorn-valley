@@ -152,8 +152,6 @@ export class WorldOcclusionManager {
     const state: SceneState = { overlays: [] };
     if (scene.scene.key === 'MoonflowerGladeScene') {
       state.overlays.push(...this.createGladeEnvironmentOverlays(scene));
-    } else if (scene.scene.key === 'SunbeamVillageScene') {
-      state.overlays.push(this.createVillageBuntingOccluder(scene));
     }
 
     scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
@@ -454,17 +452,6 @@ export class WorldOcclusionManager {
     return tree;
   }
 
-  private createVillageBuntingOccluder(scene: Phaser.Scene): Phaser.GameObjects.Graphics {
-    const graphics = scene.add.graphics().setDepth(90);
-    graphics.lineStyle(6, 0x8f6a75, 0.75);
-    graphics.lineBetween(800, 745, 2200, 745);
-    const colours = [0xf28aa5, 0xf5c968, 0x7cc6d8, 0x9bc477, 0xc99ed5];
-    for (let x = 830, index = 0; x <= 2170; x += 85, index += 1) {
-      graphics.fillStyle(colours[index % colours.length], 0.95);
-      graphics.fillTriangle(x, 766, x + 30, 766, x + 15, 804);
-    }
-    return graphics;
-  }
 }
 
 let browserWorldOcclusionManager: WorldOcclusionManager | null = null;
