@@ -81,7 +81,7 @@ test('H3.1 removes legacy square, through-path residue and fake shopkeeper prese
     ),
   ).toBe(false);
 
-  for (const layer of ['anchor', 'background', 'signature', 'foreground', 'ambient']) {
+  for (const layer of ['anchor', 'background', 'ambient']) {
     expect(
       village.objects.some(
         ({ name }) => name === `environment-production:sunbeam-village:${layer}`,

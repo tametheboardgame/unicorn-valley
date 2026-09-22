@@ -200,7 +200,7 @@ export const SUNBEAM_VILLAGE_MAP = {
       x: SUNBEAM_VILLAGE_LAYOUT.boundaryFence.lockedSouthGate.x,
       y: SUNBEAM_VILLAGE_LAYOUT.boundaryFence.lockedSouthGate.y - 12,
       width: SUNBEAM_VILLAGE_LAYOUT.boundaryFence.lockedSouthGate.width,
-      height: SUNBEAM_VILLAGE_LAYOUT.boundaryFence.lockedSouthGate.height + 24,
+      height: SUNBEAM_VILLAGE_LAYOUT.boundaryFence.lockedSouthGate.height,
     },
   ] satisfies readonly CollisionRectangle[],
 } as const;

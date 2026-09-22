@@ -2,8 +2,8 @@ import { expect, test, type Page } from '@playwright/test';
 
 const PLAYER_NAME = 'world-player-unicorn';
 const PIP_APPROACH = { x: 1110, y: 825 } as const;
-const WILLOW_APPROACH = { x: 940, y: 1160 } as const;
-const MARIGOLD_APPROACH = { x: 600, y: 860 } as const;
+const WILLOW_APPROACH = { x: 620, y: 1345 } as const;
+const MARIGOLD_APPROACH = { x: 1165, y: 920 } as const;
 const NOVA_APPROACH = { x: 2370, y: 930 } as const;
 const RETIRED_CONVERSATION_SCENES = [
   'WillowStoryScene',
@@ -331,7 +331,7 @@ test('supporting resident uses the shared dialogue family with production portra
     .toBe(true);
   let scene = await sceneSnapshot(page, 'MoonflowerGladeScene');
   const resident = namedObject(scene, 'supporting-resident:resident:juniper');
-  await positionPlayer(page, 'MoonflowerGladeScene', resident.x + 84, resident.y);
+  await positionPlayer(page, 'MoonflowerGladeScene', resident.x, resident.y);
   await waitForTalkTarget(page, 'MoonflowerGladeScene', 'Juniper');
   const talkPrompt = namedObject(
     await sceneSnapshot(page, 'MoonflowerGladeScene'),

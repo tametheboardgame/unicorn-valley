@@ -115,7 +115,8 @@ test('H3.6 makes Willow garden a physical south-west village district', async ({
 
   const boundaryFenceIds = [
     'north',
-    'south',
+    'south-left',
+    'south-right',
     'west-north',
     'west-south',
     'east-north',
@@ -130,12 +131,14 @@ test('H3.6 makes Willow garden a physical south-west village district', async ({
     ).toBe(true);
   }
 
-  const southBoundary = objects.find(
-    ({ name }) => name === 'sunbeam-composition:village-boundary:fence:south',
-  );
-  expect(southBoundary).toBeDefined();
-  expect(southBoundary?.visible).toBe(true);
-  expect(southBoundary?.y).toBeCloseTo(1891, 0);
+  for (const id of ['south-left', 'south-right'] as const) {
+    const southBoundary = objects.find(
+      ({ name }) => name === `sunbeam-composition:village-boundary:fence:${id}`,
+    );
+    expect(southBoundary).toBeDefined();
+    expect(southBoundary?.visible).toBe(true);
+    expect(southBoundary?.y).toBeCloseTo(1891, 0);
+  }
 
   const southWestTree = objects.find(
     ({ name }) => name === 'environment-production:sunbeam-village:south-west-tree',
