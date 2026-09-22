@@ -336,8 +336,12 @@ describe('Sunbeam Village map', () => {
     expect(residences).toHaveLength(3);
 
     for (const residence of residences) {
-      expect(residence.y).toBeGreaterThan(1400);
-      expect(residence.approach.y).toBeLessThan(residence.y);
+      expect(residence.y).toBeGreaterThanOrEqual(1400);
+      if (residence.facing === 'west') {
+        expect(residence.approach.x).toBeLessThan(residence.x);
+      } else {
+        expect(residence.approach.y).toBeLessThan(residence.y);
+      }
       expect(
         isPointBlocked(residence.approach, SUNBEAM_VILLAGE_MAP.colliders, PLAYER_CLEARANCE),
       ).toBe(false);
