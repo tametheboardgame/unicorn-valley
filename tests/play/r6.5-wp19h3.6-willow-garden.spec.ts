@@ -1,0 +1,102 @@
+import { expect, test } from '@playwright/test';
+
+interface DiagnosticObject {
+  type: string;
+  name: string;
+  visible: boolean;
+  x: number;
+  y: number;
+  displayWidth: number;
+  displayHeight: number;
+  text: string | null;
+}
+
+interface DiagnosticScene {
+  key: string;
+  objects: DiagnosticObject[];
+}
+
+interface BrowserDiagnosticsApi {
+  snapshot(): { scenes: DiagnosticScene[] };
+}
+
+test('H3.6 makes Willow garden a physical south-west village district', async ({ page }) => {
+  await page.goto('/?scene=village&diagnostics=1');
+
+  await page.waitForFunction(() => {
+    const api = (
+      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__;
+    const village = api?.snapshot().scenes.find(({ key }) => key === 'SunbeamVillageScene');
+    return Boolean(
+      village?.objects.some(({ name }) => name === 'sunbeam-composition:willow-garden') &&
+        village.objects.some(({ name }) => name === 'core-npc:willow:world') &&
+        village.objects.some(
+          ({ name }) => name === 'sunbeam-composition:willow-garden:fence:west',
+        ) &&
+        village.objects.some(
+          ({ name }) => name === 'sunbeam-composition:willow-garden:bed:north-west',
+        ),
+    );
+  });
+
+  const objects = await page.evaluate(() => {
+    const api = (
+      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__;
+    const village = api?.snapshot().scenes.find(({ key }) => key === 'SunbeamVillageScene');
+    if (!village) {
+      throw new Error('Missing Sunbeam Village diagnostics.');
+    }
+    return village.objects;
+  });
+
+  const garden = objects.find(({ name }) => name === 'sunbeam-composition:willow-garden');
+  expect(garden).toBeDefined();
+  expect(garden?.visible).toBe(true);
+  expect(garden?.x).toBeCloseTo(430, 0);
+  expect(garden?.y).toBeCloseTo(1540, 0);
+  expect(garden?.x ?? 9999).toBeLessThan(650);
+  expect(garden?.y ?? 0).toBeGreaterThan(1470);
+
+  const willow = objects.find(({ name }) => name === 'core-npc:willow:world');
+  expect(willow).toBeDefined();
+  expect(willow?.visible).toBe(true);
+  expect(willow?.x).toBeCloseTo(535, 0);
+  expect(willow?.y).toBeCloseTo(1349, 0);
+  expect(willow?.x ?? 9999).toBeLessThan(680);
+  expect(willow?.y ?? 0).toBeGreaterThan(1290);
+
+  const beds = objects.filter(({ name }) => name.startsWith('sunbeam-composition:willow-garden:bed:'));
+  expect(beds).toHaveLength(4);
+  for (const bed of beds) {
+    expect(bed.visible).toBe(true);
+    expect(bed.type).toBe('Rectangle');
+    expect(bed.displayWidth).toBeGreaterThanOrEqual(145);
+    expect(bed.displayHeight).toBeGreaterThanOrEqual(78);
+  }
+
+  const fenceIds = ['west', 'south', 'east-lower', 'north-left'] as const;
+  for (const id of fenceIds) {
+    const fence = objects.find(
+      ({ name }) => name === `sunbeam-composition:willow-garden:fence:${id}`,
+    );
+    expect(fence).toBeDefined();
+    expect(fence?.visible).toBe(true);
+    expect(fence?.type).toBe('Rectangle');
+  }
+
+  const sign = objects.find(({ name }) => name === 'sunbeam-composition:willow-garden:sign');
+  const signText = objects.find(
+    ({ name }) => name === 'sunbeam-composition:willow-garden:sign:text',
+  );
+  expect(sign?.type).toBe('Rectangle');
+  expect(sign?.displayWidth).toBeCloseTo(286, 0);
+  expect(sign?.y).toBeGreaterThan(150);
+  expect(signText?.type).toBe('Text');
+  expect(signText?.text).toMatch(/^WILLOW'S (GARDEN|MOONFLOWERS)$/);
+
+  expect(
+    objects.some(({ name, visible }) => name === 'village-npc-label:willow' && visible),
+  ).toBe(false);
+});
