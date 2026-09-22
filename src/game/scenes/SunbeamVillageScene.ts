@@ -61,6 +61,15 @@ function npcPosition(id: string): { x: number; y: number } {
   return marker.position;
 }
 
+function residenceApproach(id: string): { x: number; y: number } {
+  const residence = SUNBEAM_VILLAGE_LAYOUT.residences.find((candidate) => candidate.id === id);
+  if (!residence) {
+    throw new Error(`Sunbeam Village interaction references missing residence: ${id}`);
+  }
+
+  return residence.approach;
+}
+
 const VILLAGE_INTERACTIONS = [
   {
     id: 'interaction:village-bakery',
@@ -136,6 +145,43 @@ const VILLAGE_INTERACTIONS = [
     interactionRadius: 150,
     priority: 30,
     result: { type: 'message', title: 'Marigold', message: 'Talk with Marigold.' },
+  },
+  {
+    id: 'interaction:village-residence-rosehip',
+    label: 'Rosehip Cottage',
+    actionLabel: 'Knock',
+    position: residenceApproach('rosehip-cottage'),
+    interactionRadius: 135,
+    result: {
+      type: 'message',
+      title: 'Rosehip Cottage',
+      message: "A handwritten card by the door says, 'Out in the valley. Tea another day!'",
+    },
+  },
+  {
+    id: 'interaction:village-residence-bluebell',
+    label: 'Bluebell Cottage',
+    actionLabel: 'Knock',
+    position: residenceApproach('bluebell-cottage'),
+    interactionRadius: 135,
+    result: {
+      type: 'message',
+      title: 'Bluebell Cottage',
+      message:
+        'Warm light glows behind the curtains. A little note asks visitors to wait for an invitation before coming in.',
+    },
+  },
+  {
+    id: 'interaction:village-residence-sunpetal',
+    label: 'Sunpetal Cottage',
+    actionLabel: 'Knock',
+    position: residenceApproach('sunpetal-cottage'),
+    interactionRadius: 135,
+    result: {
+      type: 'message',
+      title: 'Sunpetal Cottage',
+      message: "Tiny boots and a watering can rest by the step. This is someone's home, not a shop.",
+    },
   },
   {
     id: 'interaction:village-glade-gate',
@@ -330,6 +376,7 @@ export class SunbeamVillageScene extends Phaser.Scene {
     this.createStoryHouseExterior();
     this.createFountain();
     this.createWillowGarden();
+    this.createResidentialExpansion();
     this.createEntrances();
     this.createFlowers();
 
@@ -475,13 +522,19 @@ export class SunbeamVillageScene extends Phaser.Scene {
       .graphics()
       .setName('sunbeam-composition:path-network')
       .setDepth(SUNBEAM_VILLAGE_LAYERS.path);
-    const { mainApproaches, shopBranches, willowBranch, residentialBranch } =
-      SUNBEAM_VILLAGE_LAYOUT.pathNetwork;
+    const {
+      mainApproaches,
+      shopBranches,
+      willowBranch,
+      residentialBranch,
+      residentialSpurs,
+    } = SUNBEAM_VILLAGE_LAYOUT.pathNetwork;
     const routes = [
       ...mainApproaches.map((points) => ({ points, outerWidth: 126, innerWidth: 94 })),
       ...shopBranches.map((points) => ({ points, outerWidth: 76, innerWidth: 54 })),
       { points: willowBranch, outerWidth: 76, innerWidth: 54 },
       { points: residentialBranch, outerWidth: 76, innerWidth: 54 },
+      ...residentialSpurs.map((points) => ({ points, outerWidth: 68, innerWidth: 48 })),
     ] as const;
 
     const drawStroke = (
@@ -979,6 +1032,136 @@ export class SunbeamVillageScene extends Phaser.Scene {
       .setDepth(SUNBEAM_VILLAGE_LAYERS.groundDetail);
   }
 
+  private createResidentialExpansion(): void {
+    const palettes = {
+      'rosehip-cottage': {
+        wall: 0xf2c08e,
+        roof: 0xb96f69,
+        trim: 0xffedcf,
+        door: 0x7f5c50,
+        accent: 0xd98ca0,
+      },
+      'bluebell-cottage': {
+        wall: 0xb9d4df,
+        roof: 0x7189a7,
+        trim: 0xf6efdc,
+        door: 0x5f6880,
+        accent: 0x8fa9d6,
+      },
+      'sunpetal-cottage': {
+        wall: 0xf2d98e,
+        roof: 0xc4875f,
+        trim: 0xfff0ca,
+        door: 0x8b674b,
+        accent: 0xe0a65d,
+      },
+    } as const;
+
+    for (const residence of SUNBEAM_VILLAGE_LAYOUT.residences) {
+      const palette = palettes[residence.id];
+      const objects: Phaser.GameObjects.GameObject[] = [
+        this.add.ellipse(0, residence.height / 2 - 6, residence.width + 74, 68, 0x5f554b, 0.16),
+        this.add
+          .ellipse(0, 18, residence.width + 92, residence.height + 62, 0x9dce8d, 0.2)
+          .setName(`sunbeam-residence:${residence.id}:garden`),
+      ];
+
+      const cottage = this.add
+        .graphics()
+        .setName(`sunbeam-residence:${residence.id}:structure`);
+      cottage.fillStyle(palette.wall, 1);
+      cottage.fillRoundedRect(
+        -residence.width / 2,
+        -residence.height / 2 + 72,
+        residence.width,
+        residence.height - 82,
+        24,
+      );
+      cottage.lineStyle(6, 0x7c6654, 0.72);
+      cottage.strokeRoundedRect(
+        -residence.width / 2,
+        -residence.height / 2 + 72,
+        residence.width,
+        residence.height - 82,
+        24,
+      );
+      cottage.fillStyle(palette.roof, 1);
+      cottage.fillTriangle(
+        -residence.width / 2 - 18,
+        -residence.height / 2 + 84,
+        0,
+        -residence.height / 2 + 8,
+        residence.width / 2 + 18,
+        -residence.height / 2 + 84,
+      );
+      cottage.lineStyle(6, 0x76584d, 0.74);
+      cottage.strokeTriangle(
+        -residence.width / 2 - 18,
+        -residence.height / 2 + 84,
+        0,
+        -residence.height / 2 + 8,
+        residence.width / 2 + 18,
+        -residence.height / 2 + 84,
+      );
+      objects.push(cottage);
+
+      const isWestFacing = residence.facing === 'west';
+      const doorX = isWestFacing ? -residence.width / 2 + 42 : 0;
+      const doorY = isWestFacing ? 32 : -6;
+      const stepX = isWestFacing ? -residence.width / 2 - 8 : 0;
+      const stepY = isWestFacing ? 34 : -residence.height / 2 + 62;
+
+      objects.push(
+        this.add
+          .rectangle(doorX, doorY, isWestFacing ? 58 : 66, 94, palette.door, 1)
+          .setName(`sunbeam-residence:${residence.id}:door`)
+          .setStrokeStyle(5, palette.trim, 0.95),
+        this.add.circle(
+          doorX + (isWestFacing ? 16 : 20),
+          doorY + 12,
+          5,
+          0xffd873,
+          1,
+        ),
+        this.add
+          .rectangle(stepX, stepY, isWestFacing ? 34 : 104, isWestFacing ? 100 : 28, 0xc7ab7b, 1)
+          .setName(`sunbeam-residence:${residence.id}:step`)
+          .setStrokeStyle(3, 0x907154, 0.76),
+      );
+
+      const windowPositions = isWestFacing
+        ? [
+            { x: 36, y: -4 },
+            { x: 105, y: -4 },
+          ]
+        : [
+            { x: -86, y: 2 },
+            { x: 86, y: 2 },
+          ];
+      for (const [index, window] of windowPositions.entries()) {
+        objects.push(
+          this.add
+            .rectangle(window.x, window.y, 58, 58, 0xc7edf0, 1)
+            .setName(`sunbeam-residence:${residence.id}:window:${index + 1}`)
+            .setStrokeStyle(5, palette.trim, 0.96),
+          this.add.rectangle(window.x, window.y, 5, 48, 0xffffff, 0.5),
+          this.add.rectangle(window.x, window.y, 48, 5, 0xffffff, 0.5),
+          this.add.rectangle(window.x, window.y + 38, 70, 14, palette.accent, 0.94),
+        );
+      }
+
+      objects.push(
+        this.add.circle(-residence.width / 2 + 30, residence.height / 2 - 22, 13, palette.accent, 0.92),
+        this.add.circle(residence.width / 2 - 26, residence.height / 2 - 26, 11, palette.accent, 0.9),
+      );
+
+      this.add
+        .container(residence.x, residence.y, objects)
+        .setName(`sunbeam-residence:${residence.id}`)
+        .setDepth(SUNBEAM_VILLAGE_LAYERS.structure);
+    }
+  }
+
   private createEntrances(): void {
     const west = SUNBEAM_VILLAGE_LAYOUT.entrances.moonflowerGlade.position;
     const east = SUNBEAM_VILLAGE_LAYOUT.entrances.rainbowMeadow.position;
@@ -1047,8 +1230,8 @@ export class SunbeamVillageScene extends Phaser.Scene {
       [2510, 1110],
       [2640, 1260],
       [950, 1660],
-      [2020, 1630],
-      [2530, 1540],
+      [1900, 1760],
+      [2750, 1710],
     ] as const;
     for (const [x, y] of flowerPositions) {
       this.add.circle(x, y, 18, 0xffa6c8, 0.95).setDepth(4);
