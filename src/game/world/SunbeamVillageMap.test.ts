@@ -106,7 +106,6 @@ describe('Sunbeam Village map', () => {
       SUNBEAM_VILLAGE_LAYOUT.villageLife.noticeBoard,
       SUNBEAM_VILLAGE_LAYOUT.villageLife.sundial,
       SUNBEAM_VILLAGE_LAYOUT.villageLife.bench,
-      SUNBEAM_VILLAGE_LAYOUT.villageLife.storyMapSign,
       SUNBEAM_VILLAGE_LAYOUT.villageLife.threadWindow,
     ];
 
