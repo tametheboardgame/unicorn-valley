@@ -173,7 +173,6 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
     noticeBoard: { x: 1030, y: 1170 },
     sundial: { x: 1260, y: 1370 },
     bench: { x: 1840, y: 1330 },
-    storyMapSign: { x: 2520, y: 820 },
     threadWindow: { x: 1305, y: 770 },
     fountainSplash: { x: 1690, y: 1060 },
   },
