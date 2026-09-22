@@ -155,6 +155,17 @@ export const SUNBEAM_VILLAGE_MAP = {
         height: collision.height,
       };
     }),
+    {
+      id: 'collision:willow-garden:sign',
+      x:
+        SUNBEAM_VILLAGE_LAYOUT.willowGarden.x +
+        SUNBEAM_VILLAGE_LAYOUT.willowGarden.sign.collision.x,
+      y:
+        SUNBEAM_VILLAGE_LAYOUT.willowGarden.y +
+        SUNBEAM_VILLAGE_LAYOUT.willowGarden.sign.collision.y,
+      width: SUNBEAM_VILLAGE_LAYOUT.willowGarden.sign.collision.width,
+      height: SUNBEAM_VILLAGE_LAYOUT.willowGarden.sign.collision.height,
+    },
     ...SUNBEAM_VILLAGE_LAYOUT.boundaryFence.segments.map((segment) => {
       if ('collision' in segment) {
         return {
