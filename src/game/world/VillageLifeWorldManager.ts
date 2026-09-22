@@ -71,7 +71,11 @@ const VILLAGE_POINTS: readonly VillageLifePoint[] = [
       scene.add.ellipse(0, -8, 108, 48, 0xe0b15e, 1).setStrokeStyle(4, 0xb17d43, 0.9),
       scene.add.triangle(0, -42, 0, 48, 18, 0, 36, 48, 0x8d6845, 1).setOrigin(0.5, 1),
       scene.add
-        .text(0, -7, '☀', { color: '#fff0aa', fontFamily: 'system-ui, sans-serif', fontSize: '20px' })
+        .text(0, -7, '☀', {
+          color: '#fff0aa',
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '20px',
+        })
         .setOrigin(0.5),
     ],
   },

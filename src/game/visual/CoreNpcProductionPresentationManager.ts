@@ -196,13 +196,7 @@ export class CoreNpcProductionPresentationManager {
     if (!pebbleMarker || scene.children.getByName('core-npc:pebble:world')) {
       return;
     }
-    const pebble = createCoreNpcSprite(
-      scene,
-      'pebble',
-      pebbleMarker.position.x,
-      pebbleMarker.position.y + 5,
-      'world',
-    )
+    createCoreNpcSprite(scene, 'pebble', pebbleMarker.position.x, pebbleMarker.position.y + 5, 'world')
       .setDisplaySize(102, 84)
       .setDepth(worldDepthForY(pebbleMarker.position.y + 48, 0.32));
     // Village core residents are intentionally grounded. Their previous vertical idle tween
@@ -222,7 +216,7 @@ export class CoreNpcProductionPresentationManager {
     if (!marker) {
       return;
     }
-    const sprite = createCoreNpcSprite(scene, id, marker.position.x, marker.position.y + 4, 'world')
+    createCoreNpcSprite(scene, id, marker.position.x, marker.position.y + 4, 'world')
       .setDisplaySize(width, height)
       .setDepth(worldDepthForY(marker.position.y + 47, 0.32));
     // Willow and Marigold are static village residents. Keep their hooves planted instead of
