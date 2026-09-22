@@ -72,6 +72,10 @@ test('H3.5 uses physical village signs and gateway objects for wayfinding', asyn
 
     expect(sign?.type).toBe('Rectangle');
     expect(signText?.type).toBe('Text');
+    expect(sign?.y).toBeCloseTo(-225, 0);
+    expect(signText?.y).toBeCloseTo(-226, 0);
+    expect(sign?.x).toBeCloseTo(id === 'moonflower-glade' ? 100 : -100, 0);
+    expect(signText?.x).toBeCloseTo(id === 'moonflower-glade' ? 100 : -100, 0);
     expect(northPost?.type).toBe('Rectangle');
     expect(southPost?.type).toBe('Rectangle');
     expect(northPost?.y).toBeLessThan(0);
