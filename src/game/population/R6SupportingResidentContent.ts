@@ -238,7 +238,11 @@ export const R6_SUPPORTING_RESIDENTS = [
       accessory: 'bow',
     },
     talk: {
-      lines: ['I can get all the way across the climbing frame without touching the grass!'],
+      lines: [
+        'I can get all the way across the climbing frame without touching the grass!',
+        'The climbing frame is a castle today. Tomorrow it might be a cloud.',
+        'I am trying to invent a route that uses every single bar.',
+      ],
     },
   },
   {
@@ -256,7 +260,13 @@ export const R6_SUPPORTING_RESIDENTS = [
       marking: 'star',
       accessory: 'none',
     },
-    talk: { lines: ['The best seesaw bounce is the one where both unicorns start laughing.'] },
+    talk: {
+      lines: [
+        'The best seesaw bounce is the one where both unicorns start laughing.',
+        'I can almost make the seesaw land perfectly level.',
+        'Bean says faster is better. I think higher is better.',
+      ],
+    },
   },
   {
     id: 'resident:lulu',
@@ -274,7 +284,11 @@ export const R6_SUPPORTING_RESIDENTS = [
       accessory: 'flower',
     },
     talk: {
-      lines: ['I am practising my fastest slide. I think the whoosh is the important part.'],
+      lines: [
+        'I am practising my fastest slide. I think the whoosh is the important part.',
+        'I counted three different ways to say whoosh on the slide.',
+        'The top of the slide is the best lookout in the playground.',
+      ],
     },
   },
   {
@@ -293,7 +307,11 @@ export const R6_SUPPORTING_RESIDENTS = [
       accessory: 'ribbon',
     },
     talk: {
-      lines: ['We invented a game where every pink flower is lava. The rules keep changing.'],
+      lines: [
+        'We invented a game where every pink flower is lava. The rules keep changing.',
+        'The yellow flowers are safe today. Probably.',
+        'I make the games and everyone else keeps adding better rules.',
+      ],
     },
   },
 ] as const satisfies readonly SupportingResidentDefinition[];
@@ -417,8 +435,8 @@ export const R6_AMBIENT_RESIDENT_PLACEMENTS = [
     priority: 24,
     presentationScale: 0.56,
     waypoints: [
-      { id: 'poppy-playground-a', x: 2535, y: 1615, pauseMs: 2100 },
-      { id: 'poppy-playground-b', x: 2589, y: 1641, pauseMs: 1500 },
+      { id: 'poppy-playground-a', x: 2620, y: 1605, pauseMs: 2100 },
+      { id: 'poppy-playground-b', x: 2650, y: 1650, pauseMs: 1500 },
     ],
   },
   {
@@ -432,8 +450,8 @@ export const R6_AMBIENT_RESIDENT_PLACEMENTS = [
     priority: 24,
     presentationScale: 0.56,
     waypoints: [
-      { id: 'milo-playground-a', x: 2635, y: 1770, pauseMs: 1800 },
-      { id: 'milo-playground-b', x: 2589, y: 1738, pauseMs: 2300 },
+      { id: 'milo-playground-a', x: 2570, y: 1810, pauseMs: 1800 },
+      { id: 'milo-playground-b', x: 2670, y: 1810, pauseMs: 2300 },
     ],
   },
   {
@@ -447,8 +465,8 @@ export const R6_AMBIENT_RESIDENT_PLACEMENTS = [
     priority: 24,
     presentationScale: 0.56,
     waypoints: [
-      { id: 'lulu-playground-a', x: 2765, y: 1605, pauseMs: 1700 },
-      { id: 'lulu-playground-b', x: 2709, y: 1639, pauseMs: 2200 },
+      { id: 'lulu-playground-a', x: 2720, y: 1565, pauseMs: 1700 },
+      { id: 'lulu-playground-b', x: 2835, y: 1575, pauseMs: 2200 },
     ],
   },
   {
@@ -462,8 +480,8 @@ export const R6_AMBIENT_RESIDENT_PLACEMENTS = [
     priority: 24,
     presentationScale: 0.56,
     waypoints: [
-      { id: 'bean-playground-a', x: 2800, y: 1775, pauseMs: 2400 },
-      { id: 'bean-playground-b', x: 2762, y: 1727, pauseMs: 1700 },
+      { id: 'bean-playground-a', x: 2820, y: 1795, pauseMs: 2400 },
+      { id: 'bean-playground-b', x: 2740, y: 1815, pauseMs: 1700 },
     ],
   },
   {
