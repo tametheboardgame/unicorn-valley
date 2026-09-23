@@ -61,7 +61,6 @@ describe('R6.5 functional resident placements', () => {
   });
 });
 
-
 describe('R6.5 H3.10 playground life', () => {
   it('promotes all four playground children into the shared resident runtime at child scale', () => {
     for (const id of ['poppy', 'milo', 'lulu', 'bean'] as const) {
