@@ -1149,11 +1149,11 @@ export class VillageInteriorScene extends Phaser.Scene {
 
       const card = this.add.graphics().setScrollFactor(0);
       card.fillStyle(0x4b3045, 0.1);
-      card.fillRoundedRect(x - 140 + 5, y - 61 + 6, 280, 122, 18);
+      card.fillRoundedRect(x - 140 + 5, y - 68 + 6, 280, 136, 18);
       card.fillStyle(item.isSoldOut ? 0xf2ece9 : 0xfffbef, 1);
       card.lineStyle(3, item.isUnlocked ? 0xd3a0ae : 0xbfa8c7, 0.9);
-      card.fillRoundedRect(x - 140, y - 61, 280, 122, 18);
-      card.strokeRoundedRect(x - 140, y - 61, 280, 122, 18);
+      card.fillRoundedRect(x - 140, y - 68, 280, 136, 18);
+      card.strokeRoundedRect(x - 140, y - 68, 280, 136, 18);
 
       const iconWell = this.add
         .circle(x - 104, y - 18, 27, item.isUnlocked ? 0xf1d7cf : 0xe6dfea, 1)
@@ -1197,7 +1197,7 @@ export class VillageInteriorScene extends Phaser.Scene {
       this.overlay?.add([card, iconWell, icon, name, detail]);
       this.createOverlayButton(
         x,
-        y + 38,
+        y + 33,
         item.isOwned
           ? 'Yours'
           : !item.isUnlocked
@@ -1208,7 +1208,7 @@ export class VillageInteriorScene extends Phaser.Scene {
         () => this.buyBakeryItem(item.definition.id),
         item.isUnlocked && !item.isOwned && !item.isSoldOut,
         220,
-        40,
+        36,
       );
     });
 
