@@ -74,6 +74,9 @@ describe('Sunbeam Village map', () => {
       'collision:residence:bluebell-cottage',
       'collision:residence:sunpetal-cottage',
       'collision:fountain',
+      'collision:playground:seesaw',
+      'collision:playground:slide',
+      'collision:playground:climbingFrame',
       'collision:willow-garden:west',
       'collision:willow-garden:south',
       'collision:willow-garden:east-lower',
@@ -88,6 +91,15 @@ describe('Sunbeam Village map', () => {
       'collision:village-boundary:east-south',
       'collision:village-boundary:locked-south-gate',
     ]);
+  });
+
+  it('keeps the fountain interaction reachable outside its physical collider', () => {
+    expect(SUNBEAM_VILLAGE_LAYOUT.fountain.interactionRadius).toBeGreaterThan(
+      SUNBEAM_VILLAGE_LAYOUT.fountain.collisionWidth / 2 + PLAYER_CLEARANCE,
+    );
+    expect(SUNBEAM_VILLAGE_LAYOUT.fountain.interactionRadius).toBeGreaterThan(
+      SUNBEAM_VILLAGE_LAYOUT.fountain.collisionHeight / 2 + PLAYER_CLEARANCE,
+    );
   });
 
   it('reserves enough space between NPC markers for separate interactions', () => {
