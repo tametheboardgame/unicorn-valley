@@ -237,7 +237,9 @@ export const R6_SUPPORTING_RESIDENTS = [
       marking: 'heart',
       accessory: 'bow',
     },
-    talk: { lines: ['I can get all the way across the climbing frame without touching the grass!'] },
+    talk: {
+      lines: ['I can get all the way across the climbing frame without touching the grass!'],
+    },
   },
   {
     id: 'resident:milo',
@@ -271,7 +273,9 @@ export const R6_SUPPORTING_RESIDENTS = [
       marking: 'sparkles',
       accessory: 'flower',
     },
-    talk: { lines: ['I am practising my fastest slide. I think the whoosh is the important part.'] },
+    talk: {
+      lines: ['I am practising my fastest slide. I think the whoosh is the important part.'],
+    },
   },
   {
     id: 'resident:bean',
@@ -288,7 +292,9 @@ export const R6_SUPPORTING_RESIDENTS = [
       marking: 'freckles',
       accessory: 'ribbon',
     },
-    talk: { lines: ['We invented a game where every pink flower is lava. The rules keep changing.'] },
+    talk: {
+      lines: ['We invented a game where every pink flower is lava. The rules keep changing.'],
+    },
   },
 ] as const satisfies readonly SupportingResidentDefinition[];
 
