@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { SUPPORTING_RESIDENT_ART_LAYOUT } from './SupportingResidentArt';
+import {
+  resolveSupportingResidentDisplaySize,
+  SUPPORTING_RESIDENT_ART_LAYOUT,
+  SUPPORTING_RESIDENT_DISPLAY_WIDTH,
+} from './SupportingResidentArt';
 
 describe('SupportingResidentArt layout', () => {
   it('leaves enough left-side texture space for the widest production tails', () => {
@@ -20,5 +24,16 @@ describe('SupportingResidentArt layout', () => {
       textureRatio,
       2,
     );
+  });
+
+  it('preserves the authored adult display size and scales children from that baseline', () => {
+    expect(resolveSupportingResidentDisplaySize()).toEqual({
+      width: SUPPORTING_RESIDENT_DISPLAY_WIDTH,
+      height: SUPPORTING_RESIDENT_ART_LAYOUT.displayHeight,
+    });
+    expect(resolveSupportingResidentDisplaySize(0.56)).toEqual({
+      width: SUPPORTING_RESIDENT_DISPLAY_WIDTH * 0.56,
+      height: SUPPORTING_RESIDENT_ART_LAYOUT.displayHeight * 0.56,
+    });
   });
 });
