@@ -190,7 +190,7 @@ Operating rules for H1+:
 - **H numbers are assigned sequentially only when David chooses the next review area.** Do not pre-assign future H numbers to locations.
 - **R6.5-WP19H1 - Moonflower Glade is complete and human-approved.**
 - **R6.5-WP19H2 - Moonflower Cottage & Home Customisation is complete, fully qualified and deployed to production.**
-- **Current package: R6.5-WP19H3 - Sunbeam Village Final Polish.** H3.1-H3.8 are human-approved. A 23 September code/interaction review established feedback block 2 as H3.9-H3.12: interaction ownership/completeness, playground and reactive Village Life, interior/content maturity, and recurring-character presence coherence. David's next play pass may amend those slices or add H3.13+. Final hardening/consolidation remains unnumbered until substantive Sunbeam review is explicitly complete.
+- **Current package: R6.5-WP19H3 - Sunbeam Village Final Polish.** H3.1-H3.10 are human-approved. H3.11 has now been expanded into a dedicated walkable-interiors programme with H3.11.1-H3.11.10 and per-slice human review; H3.11.1 is next. H3.12 remains planned for wider cross-region recurring-character presence coherence. David's next play pass may amend those slices or add H3.13+. Final hardening/consolidation remains unnumbered until substantive Sunbeam review is explicitly complete.
 - Future H numbers remain deliberately unassigned until David selects each next review area.
 - There is **no H13 cap**. Continue H numbering until David decides the playable world, meaningful subareas and relevant interiors have received the required final passes.
 - An area is a review lens, not an excuse to duplicate shared code. Any broadly applicable improvement discovered during an H package should be made at the correct shared owner and then validated against affected areas.
@@ -255,7 +255,7 @@ H2 rebuilt Moonflower Cottage as a finished home and customisation space, includ
 
 ### R6.5-WP19H3 - Sunbeam Village Final Polish
 
-State: **feedback block 1 complete / H3.1-H3.8 human-approved 2026-09-23 / feedback block 2 H3.9-H3.12 planned from code-interaction review / human play pass pending**.
+State: **feedback block 1 complete / H3.1-H3.10 human-approved / H3.11 walkable-interiors programme approved with H3.11.1 next / H3.12 wider presence-coherence pass planned / human play pass ongoing**.
 
 Path: `docs/work-packages/R6.5-WP19H3-SUNBEAM-VILLAGE.md`
 
@@ -276,12 +276,22 @@ The concrete first-pass findings include the 1,220 × 690 semi-transparent recta
 
 #### H3 feedback block 2 planned sequence
 
-9. **H3.9 - Unified interaction ownership and interaction completeness:** remove Sunbeam's duplicated legacy scene-local interaction/prompt/activation path; make the shared registry/coordinator authoritative; restore/verify shop, NPC, cottage, Candyland, fountain and exit targets; normalise the two exit conventions deliberately; migrate Pebble hidden-object pickups onto the unified interaction route; and add activation-based browser regression coverage.
-10. **H3.10 - Playground and reactive Village Life:** turn the approved playground into a lightweight social/play pocket using reusable resident presentation for the child unicorns where practical; add a few equipment Play actions; make fountain/sundial/notice-board/bench behaviour react credibly to state; consolidate feedback presentation; and add restrained interaction SFX using existing assets.
-11. **H3.11 - Village interiors and local content maturity:** preserve the current Bakery, Story House and Twinkle & Thread structures while removing player-visible development wording; add a small repeatable Bakery stock expansion with a Maple-story payoff; expand Story House cards to current adventures; polish Twinkle & Thread in-world progression copy; and replace brittle presentation-inferred diagnostic naming with semantic scene-owned hooks.
-12. **H3.12 - Character presence and cross-region coherence:** extend authoritative presence handling where stories genuinely move recurring characters; resolve Marigold's Picnic Hill state and Tansy's scheduled world/interior presence; keep visuals and Talk targets under the same authority; and add cross-scene duplicate-presence regression coverage.
+9. **H3.9 - Unified interaction ownership and interaction completeness:** complete and human-approved. The shared registry/coordinator is authoritative for Sunbeam interactions, Pebble hidden-object pickups are unified and the accepted interaction baseline is a preservation requirement.
+10. **H3.10 - Playground and reactive Village Life:** complete and human-approved. Playground children/equipment, fountain, sundial, notice board, bench and shared feedback behaviour form the accepted reactive-village baseline.
+11. **H3.11 - Village interiors and local content maturity:** umbrella programme. Rebuild Sunbeam interiors as proper playable world spaces using the same broad physicality philosophy as Moonflower Cottage: the player enters as their unicorn, moves around, collides with walls/furniture/counters, layers correctly around props, approaches NPCs/interactables through the shared interaction system and exits through a physical door. The same NPC must not independently exist outside and inside at once. Role-specific presentation is encouraged, and the Bakery baker must have an unmistakable baker/chef identity including a proper hat and workwear.
+    - **H3.11.1 - Shared interior framework and NPC occupancy:** reusable movement, camera, collision, layering, entry/exit, semantic anchors, interaction ownership and interior occupancy/presence contract.
+    - **H3.11.2 - Sunbeam Bakery rebuild:** fully walkable bakery with counter, displays, oven/preparation space, bakery clutter, repeatable stock/content and a baker wearing a proper baker/chef hat plus apron/workwear.
+    - **H3.11.3 - Twinkle & Thread rebuild:** walkable fashion/accessory shop with racks/displays/counter, physicalised stock and preserved progression-gated economy.
+    - **H3.11.4 - Story House rebuild:** walkable library/storytelling interior with shelves, reading areas, interactable story material and expanded cards covering current adventures.
+    - **H3.11.5 - Rosehip Cottage interior:** distinct walkable home with its own floor plan, furniture, resident logic and lightweight environmental storytelling.
+    - **H3.11.6 - Bluebell Cottage interior:** separate residential identity, layout, props, interactions and coherent resident presence rather than a recoloured copy.
+    - **H3.11.7 - Sunpetal Cottage interior:** third distinct walkable home with its own arrangement, personal detail and local interaction flavour.
+    - **H3.11.8 - Candyland / southern interior-content treatment:** preserve Candyland as `OPENING SOON`; do not open the theme park, but make any accessible southern/pre-opening space intentional and diegetic.
+    - **H3.11.9 - Interior population and local-life pass:** remove remaining outside/inside NPC cloning, assign believable work/home/leisure positions and keep visuals plus Talk targets under the same occupancy decision.
+    - **H3.11.10 - Interior content, interaction and final cohesion pass:** remove remaining development wording/placeholders, confirm repeat-use value and environmental storytelling, standardise entry/exit behaviour and run integrated exterior → interior → interaction → exterior validation.
+12. **H3.12 - Character presence and cross-region coherence:** retain as the wider story-location pass beyond local interior occupancy. Extend authoritative presence handling where stories genuinely move recurring characters; resolve Marigold's Picnic Hill state and Tansy's scheduled world/interior presence; keep visuals and Talk targets under the same authority; and add cross-scene duplicate-presence regression coverage.
 
-**Feedback-block-2 contract:** H3.9-H3.12 are the currently approved plan from the 23 September code/interaction review. David's upcoming play pass may amend those slices or add H3.13+ for new substantive findings. The accepted H3.1-H3.8 visual composition is a preservation requirement.
+**Feedback-block-2 contract:** H3.9 and H3.10 are complete and human-approved. H3.11 is the approved interior umbrella and is delivered sequentially as H3.11.1-H3.11.10 with human review between substantial locations; H3.11.1 is next. H3.12 remains planned for wider cross-region presence coherence. David's ongoing play pass may amend these slices or add H3.13+ for genuinely separate findings. The accepted H3.1-H3.10 behaviour and visual composition are preservation requirements.
 
 **Numbering contract:** the final consolidation, responsive regression, hardening, documentation and integrated H3 qualification slice remains deliberately unnumbered. It receives the next unused H3 number only after David explicitly confirms that substantive Sunbeam Village work is complete.
 
