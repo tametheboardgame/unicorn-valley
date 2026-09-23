@@ -1,12 +1,7 @@
 import Phaser from 'phaser';
 import { PIP_POSITION } from '../intro/PipIntro';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
-import type { UnicornAppearance } from '../player/UnicornAppearance';
-import type { UnicornAppearancePalette } from '../player/UnicornAppearanceRenderer';
-import {
-  createResidentAppearanceSprite,
-  SUPPORTING_RESIDENT_ART_LAYOUT,
-} from '../population/SupportingResidentArt';
+import { SUPPORTING_RESIDENT_ART_LAYOUT } from '../population/SupportingResidentArt';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import {
   CoreNpcPresenceService,
@@ -16,7 +11,11 @@ import {
 import { RAINBOW_MEADOW_MAP } from '../world/RainbowMeadowMap';
 import { SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
 import { worldDepthForY } from '../world/WorldDepth';
-import { addCoreNpcIdleTween, CORE_NPC_VISUALS, createCoreNpcSprite } from './CoreNpcProductionArt';
+import { addCoreNpcIdleTween, createCoreNpcSprite } from './CoreNpcProductionArt';
+import {
+  createVillageCoreResidentSprite,
+  type VillageCoreResidentId,
+} from './VillageCoreResidentArt';
 
 const LUMI_WORLD_POSITION = { x: 2980, y: 1530 } as const;
 const NOVA_PICNIC_POSITION = { x: 2045, y: 1400 } as const;
@@ -26,75 +25,6 @@ const novaRaceMarker = RAINBOW_MEADOW_MAP.npcMarkers.find((candidate) => candida
 const NOVA_RACE_POSITION = novaRaceMarker
   ? { x: novaRaceMarker.position.x, y: novaRaceMarker.position.y }
   : null;
-
-type VillageCoreResidentId = 'willow' | 'marigold' | 'pebble';
-
-interface VillageCoreResidentPresentation {
-  appearance: UnicornAppearance;
-  palette: UnicornAppearancePalette;
-}
-
-const VILLAGE_CORE_RESIDENT_PRESENTATIONS: Readonly<
-  Record<VillageCoreResidentId, VillageCoreResidentPresentation>
-> = {
-  willow: {
-    appearance: {
-      bodyColour: 'mint',
-      eyeColour: 'green',
-      maneStyle: 'soft',
-      maneColour: 'midnight',
-      tailStyle: 'plume',
-      tailColour: 'aqua',
-      hornStyle: 'moon',
-      marking: 'moon',
-      accessory: 'flower',
-    },
-    palette: {
-      body: CORE_NPC_VISUALS.willow.body,
-      eye: 0x4f8967,
-      mane: CORE_NPC_VISUALS.willow.mane,
-      tail: CORE_NPC_VISUALS.willow.maneAccent,
-    },
-  },
-  marigold: {
-    appearance: {
-      bodyColour: 'peach',
-      eyeColour: 'amber',
-      maneStyle: 'fluffy',
-      maneColour: 'gold',
-      tailStyle: 'curl',
-      tailColour: 'coral',
-      hornStyle: 'short',
-      marking: 'heart',
-      accessory: 'flower',
-    },
-    palette: {
-      body: CORE_NPC_VISUALS.marigold.body,
-      eye: 0x9a713d,
-      mane: CORE_NPC_VISUALS.marigold.mane,
-      tail: CORE_NPC_VISUALS.marigold.maneAccent,
-    },
-  },
-  pebble: {
-    appearance: {
-      bodyColour: 'pearl',
-      eyeColour: 'green',
-      maneStyle: 'swept',
-      maneColour: 'midnight',
-      tailStyle: 'puff',
-      tailColour: 'gold',
-      hornStyle: 'short',
-      marking: 'freckles',
-      accessory: 'bell',
-    },
-    palette: {
-      body: CORE_NPC_VISUALS.pebble.body,
-      eye: 0x4f8967,
-      mane: CORE_NPC_VISUALS.pebble.mane,
-      tail: CORE_NPC_VISUALS.pebble.maneAccent,
-    },
-  },
-};
 
 interface PositionedGameObject {
   x: number;
@@ -277,14 +207,7 @@ export class CoreNpcProductionPresentationManager {
       return;
     }
 
-    const presentation = VILLAGE_CORE_RESIDENT_PRESENTATIONS[id];
-    createResidentAppearanceSprite(
-      scene,
-      `village-core-resident:${id}:idle`,
-      objectName,
-      presentation.appearance,
-      presentation.palette,
-    )
+    createVillageCoreResidentSprite(scene, id, objectName)
       .setPosition(marker.position.x, marker.position.y + yOffset)
       .setDepth(
         worldDepthForY(
