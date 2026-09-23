@@ -157,8 +157,8 @@ const ACCESSORY_SHOP: VillageInteriorDefinition = {
   playerSpawn: PLAYER_SPAWN,
   roomShell: ROOM_SHELL,
   anchors: sharedAnchors(
-    anchor('counter', 'Stylist counter', { x: 1080, y: 470 }, { x: 1080, y: 590 }),
-    anchor('npc-work', 'Velvet work position', { x: 1120, y: 385 }, { x: 1010, y: 555 }),
+    anchor('counter', 'Stylist counter', { x: 1080, y: 470 }, { x: 930, y: 590 }),
+    anchor('npc-work', 'Velvet work position', { x: 1120, y: 385 }, { x: 1120, y: 590 }),
     anchor('primary-feature', 'Accessory gallery', { x: 485, y: 635 }, { x: 485, y: 770 }),
     anchor('secondary-feature', 'Dressing mirror', { x: 1190, y: 690 }, { x: 1080, y: 790 }),
   ),

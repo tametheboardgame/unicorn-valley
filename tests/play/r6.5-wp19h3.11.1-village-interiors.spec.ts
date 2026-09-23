@@ -260,10 +260,25 @@ test('H3.11.3 gives Twinkle & Thread a dedicated walkable boutique and shopkeepe
     ).__UNICORN_VALLEY_DIAGNOSTICS__?.setArcadeSpritePosition(
       'VillageInteriorScene',
       'world-player-unicorn',
-      1010,
-      555,
+      1120,
+      590,
     );
   });
+  await expect
+    .poll(async () => {
+      const current = (await snapshot(page)).scenes.find(
+        ({ key }) => key === 'VillageInteriorScene',
+      );
+      return (
+        current?.objects.some(
+          ({ name }) =>
+            name ===
+            'interaction-direct-zone:interaction:village-interior:accessory-shop:shopkeeper',
+        ) ?? false
+      );
+    })
+    .toBe(true);
+
   await page.keyboard.press('Enter');
 
   await expect

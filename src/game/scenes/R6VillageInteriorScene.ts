@@ -1225,8 +1225,13 @@ export class VillageInteriorScene extends Phaser.Scene {
         actionLabel: 'Talk',
         actionKind: 'talk',
         position: worker.approach,
-        interactionRadius: 160,
+        interactionRadius: 185,
         priority: 35,
+        directArea: {
+          width: 150,
+          height: 150,
+          name: 'interaction-direct-zone:interaction:village-interior:accessory-shop:shopkeeper',
+        },
         result: { type: 'callback', activate: () => this.openThreadShopkeeperConversation() },
       },
       {
