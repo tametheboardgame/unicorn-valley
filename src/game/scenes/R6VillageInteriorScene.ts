@@ -263,27 +263,58 @@ export class VillageInteriorScene extends Phaser.Scene {
     // Recipe board moves towards the front-left wall, away from the service line.
     this.createBakeryRecipeBoard(recipeBoard.position.x, recipeBoard.position.y);
 
-    // Small café nook remains optional supporting detail at the front-right edge.
+    // Round doughnut display bridges the bread counter and café nook without blocking the aisle.
+    this.createBakeryDoughnutDisplay(1080, 640);
+
+    // Café nook moves lower and gets richer table detail.
     const cafe = this.add.graphics().setName('village-interior:bakery:cafe-table');
     cafe.fillStyle(0xf2d6bd, 1);
     cafe.lineStyle(4, 0xc99d89, 0.74);
-    cafe.fillEllipse(1190, 760, 150, 94);
-    cafe.strokeEllipse(1190, 760, 150, 94);
-    cafe.fillStyle(0xf7c9d6, 1);
-    cafe.fillCircle(1168, 747, 15);
+    cafe.fillEllipse(1210, 835, 170, 106);
+    cafe.strokeEllipse(1210, 835, 170, 106);
     cafe.fillStyle(0xfff7e8, 1);
-    cafe.fillCircle(1212, 746, 17);
-    cafe.lineStyle(3, 0xb88aa0, 0.72);
-    cafe.strokeCircle(1212, 746, 17);
-    cafe.setDepth(worldDepthForY(805, 0.2));
+    cafe.fillEllipse(1210, 823, 134, 70);
+    cafe.lineStyle(2, 0xe8b9c4, 0.75);
+    cafe.strokeEllipse(1210, 823, 134, 70);
 
-    for (const x of [1108, 1272]) {
+    // Two cups, a shared pastry plate and a tiny flower vase.
+    cafe.fillStyle(0xd9b5df, 1);
+    cafe.fillCircle(1173, 813, 17);
+    cafe.lineStyle(3, 0xa77fae, 0.8);
+    cafe.strokeCircle(1173, 813, 17);
+    cafe.lineBetween(1187, 812, 1197, 812);
+    cafe.fillStyle(0xfff0c7, 1);
+    cafe.fillCircle(1245, 813, 18);
+    cafe.lineStyle(3, 0xc99d89, 0.78);
+    cafe.strokeCircle(1245, 813, 18);
+    cafe.lineBetween(1260, 812, 1271, 812);
+
+    cafe.fillStyle(0xf7d7a5, 1);
+    cafe.fillEllipse(1208, 840, 56, 24);
+    cafe.lineStyle(2, 0xc99d89, 0.72);
+    cafe.strokeEllipse(1208, 840, 56, 24);
+    cafe.fillStyle(0xe8aa70, 1);
+    cafe.fillRoundedRect(1191, 832, 16, 11, 5);
+    cafe.fillRoundedRect(1210, 831, 17, 12, 5);
+
+    cafe.fillStyle(0xa5c99e, 1);
+    cafe.fillRoundedRect(1204, 790, 12, 25, 5);
+    cafe.fillStyle(0xf0a8bf, 1);
+    cafe.fillCircle(1205, 787, 7);
+    cafe.fillStyle(0xf5d174, 1);
+    cafe.fillCircle(1216, 785, 6);
+    cafe.setDepth(worldDepthForY(890, 0.2));
+
+    for (const [x, y] of [
+      [1118, 875],
+      [1302, 870],
+    ] as const) {
       const chair = this.add.graphics();
       chair.fillStyle(0xb98b9f, 1);
       chair.lineStyle(3, 0x8c657c, 0.75);
-      chair.fillCircle(x, 798, 25);
-      chair.strokeCircle(x, 798, 25);
-      chair.setDepth(worldDepthForY(825, 0.18));
+      chair.fillCircle(x, y, 27);
+      chair.strokeCircle(x, y, 27);
+      chair.setDepth(worldDepthForY(y + 28, 0.18));
     }
 
     for (const sparkle of [
@@ -370,19 +401,23 @@ export class VillageInteriorScene extends Phaser.Scene {
 
     const boards = this.add.graphics();
     boards.fillStyle(0xc99567, 0.9);
-    boards.fillRoundedRect(x - 162, y - 46, 138, 12, 5);
-    boards.fillRoundedRect(x + 6, y - 46, 150, 12, 5);
+    boards.fillRoundedRect(x - 163, y - 50, 132, 11, 5);
+    boards.fillRoundedRect(x - 10, y - 50, 94, 11, 5);
+    boards.fillRoundedRect(x + 96, y - 72, 72, 11, 5);
     boards.fillStyle(0xc78e67, 0.78);
-    boards.fillEllipse(x - 123, y - 18, 102, 24);
+    boards.fillEllipse(x - 122, y - 14, 108, 24);
+    boards.fillEllipse(x + 64, y - 14, 126, 24);
     boards.lineStyle(3, 0x9e6d51, 0.72);
-    boards.strokeEllipse(x - 123, y - 18, 102, 24);
+    boards.strokeEllipse(x - 122, y - 14, 108, 24);
+    boards.strokeEllipse(x + 64, y - 14, 126, 24);
     boards.setDepth(worldDepthForY(y + 70, 0.455));
 
-    this.createBakeryBreadLoaf(x - 140, y - 58, 'seeded');
-    this.createBakeryBreadLoaf(x - 69, y - 57, 'plait');
-    this.createBakeryBreadLoaf(x + 25, y - 58, 'baguette');
-    this.createBakeryBreadLoaf(x + 105, y - 58, 'round');
-    this.createBakeryBreadLoaf(x - 123, y - 20, 'rolls');
+    this.createBakeryBreadLoaf(x - 139, y - 62, 'seeded');
+    this.createBakeryBreadLoaf(x - 70, y - 61, 'plait');
+    this.createBakeryBreadLoaf(x + 38, y - 63, 'round');
+    this.createBakeryBreadLoaf(x + 131, y - 83, 'baguette');
+    this.createBakeryBreadLoaf(x - 122, y - 17, 'rolls');
+    this.createBakeryBreadLoaf(x + 64, y - 16, 'plait');
 
     this.add
       .text(x, y + 41, 'FRESH BREAD', {
@@ -460,6 +495,61 @@ export class VillageInteriorScene extends Phaser.Scene {
     }
 
     bread.setDepth(worldDepthForY(y + 70, 0.47));
+  }
+
+  private createBakeryDoughnutDisplay(x: number, y: number): void {
+    const stand = this.add.graphics().setName('village-interior:bakery:doughnut-display');
+    stand.fillStyle(0xf3d7bd, 1);
+    stand.lineStyle(4, 0xc99d89, 0.78);
+    stand.fillEllipse(x, y + 42, 138, 54);
+    stand.strokeEllipse(x, y + 42, 138, 54);
+    stand.fillStyle(0xf8ecd9, 1);
+    stand.fillRoundedRect(x - 13, y + 38, 26, 56, 10);
+    stand.fillEllipse(x, y + 94, 72, 22);
+    stand.setDepth(worldDepthForY(y + 100, 0.2));
+
+    const ring = this.add.graphics();
+    ring.fillStyle(0xe9b3bf, 1);
+    ring.lineStyle(4, 0xb97b8b, 0.82);
+    ring.fillCircle(x, y - 8, 62);
+    ring.strokeCircle(x, y - 8, 62);
+    ring.fillStyle(0xfff8ec, 1);
+    ring.fillCircle(x, y - 8, 36);
+    ring.lineStyle(3, 0xf6d3dc, 0.8);
+    ring.strokeCircle(x, y - 8, 36);
+
+    for (const [angle, icing] of [
+      [0, 0xf3a8c0],
+      [60, 0xd8b9f2],
+      [120, 0xaee7e0],
+      [180, 0xffdfa0],
+      [240, 0xf49aaa],
+      [300, 0xc9e4aa],
+    ] as const) {
+      const radians = Phaser.Math.DegToRad(angle);
+      const dx = Math.cos(radians) * 47;
+      const dy = Math.sin(radians) * 47;
+      ring.fillStyle(0xe6ad69, 1);
+      ring.fillCircle(x + dx, y - 8 + dy, 18);
+      ring.fillStyle(icing, 1);
+      ring.fillCircle(x + dx, y - 11 + dy, 14);
+      ring.fillStyle(0xfff8ec, 1);
+      ring.fillCircle(x + dx, y - 11 + dy, 5);
+      ring.fillStyle(0xffffff, 0.75);
+      ring.fillCircle(x + dx - 5, y - 16 + dy, 2);
+    }
+    ring.setDepth(worldDepthForY(y + 101, 0.32));
+
+    this.add
+      .text(x, y + 71, 'DOUGHNUTS', {
+        color: '#76566d',
+        fontFamily: UI_FONT,
+        fontSize: '11px',
+        fontStyle: 'bold',
+        letterSpacing: 0.8,
+      })
+      .setOrigin(0.5)
+      .setDepth(worldDepthForY(y + 102, 0.4));
   }
 
   private createBakeryDisplayCake(
