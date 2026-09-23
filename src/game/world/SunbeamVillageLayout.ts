@@ -219,6 +219,26 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
       { id: 'lulu', x: 2765, y: 1605, facing: 'left', roamX: -56, roamY: 34 },
       { id: 'bean', x: 2800, y: 1775, facing: 'left', roamX: -38, roamY: -48 },
     ],
+    equipment: {
+      seesaw: {
+        x: 2602,
+        y: 1744,
+        interaction: { x: 2602, y: 1744 },
+        collision: { x: 2602, y: 1748, width: 166, height: 34 },
+      },
+      slide: {
+        x: 2764,
+        y: 1662,
+        interaction: { x: 2784, y: 1682 },
+        collision: { x: 2765, y: 1672, width: 92, height: 116 },
+      },
+      climbingFrame: {
+        x: 2529,
+        y: 1628,
+        interaction: { x: 2529, y: 1628 },
+        collision: { x: 2529, y: 1633, width: 104, height: 82 },
+      },
+    },
   },
   fountain: {
     x: 1500,
