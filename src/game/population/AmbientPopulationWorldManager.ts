@@ -595,10 +595,7 @@ export class AmbientPopulationWorldManager {
     }
   }
 
-  private showFeedback(
-    scene: Phaser.Scene,
-    definition: SmallWorldInteractionDefinition,
-  ): void {
+  private showFeedback(scene: Phaser.Scene, definition: SmallWorldInteractionDefinition): void {
     getWorldFeedbackPresenter(scene).showReaction(
       `${feedbackIcon(definition.kind)}  ${definition.label}\n${definition.feedback}`,
       definition.position,
