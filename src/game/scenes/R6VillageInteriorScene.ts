@@ -362,20 +362,27 @@ export class VillageInteriorScene extends Phaser.Scene {
     const glass = this.add.graphics().setName('village-interior:bakery:bread-case');
     glass.fillStyle(0xe7f8f8, 0.23);
     glass.lineStyle(4, 0xb8d7d3, 0.8);
-    glass.fillRoundedRect(x - 180, y - 88, 360, 82, 16);
-    glass.strokeRoundedRect(x - 180, y - 88, 360, 82, 16);
+    glass.fillRoundedRect(x - 180, y - 94, 360, 88, 16);
+    glass.strokeRoundedRect(x - 180, y - 94, 360, 88, 16);
     glass.lineStyle(2, 0xffffff, 0.68);
-    glass.lineBetween(x - 148, y - 73, x + 140, y - 73);
+    glass.lineBetween(x - 148, y - 78, x + 140, y - 78);
     glass.setDepth(worldDepthForY(y + 70, 0.45));
 
-    for (const [offset, kind] of [
-      [-105, 'round'],
-      [-35, 'baguette'],
-      [45, 'round'],
-      [112, 'baguette'],
-    ] as const) {
-      this.createBakeryBreadLoaf(x + offset, y - 40, kind);
-    }
+    const boards = this.add.graphics();
+    boards.fillStyle(0xc99567, 0.9);
+    boards.fillRoundedRect(x - 162, y - 46, 138, 12, 5);
+    boards.fillRoundedRect(x + 6, y - 46, 150, 12, 5);
+    boards.fillStyle(0xc78e67, 0.78);
+    boards.fillEllipse(x - 123, y - 18, 102, 24);
+    boards.lineStyle(3, 0x9e6d51, 0.72);
+    boards.strokeEllipse(x - 123, y - 18, 102, 24);
+    boards.setDepth(worldDepthForY(y + 70, 0.455));
+
+    this.createBakeryBreadLoaf(x - 140, y - 58, 'seeded');
+    this.createBakeryBreadLoaf(x - 69, y - 57, 'plait');
+    this.createBakeryBreadLoaf(x + 25, y - 58, 'baguette');
+    this.createBakeryBreadLoaf(x + 105, y - 58, 'round');
+    this.createBakeryBreadLoaf(x - 123, y - 20, 'rolls');
 
     this.add
       .text(x, y + 41, 'FRESH BREAD', {
@@ -392,25 +399,66 @@ export class VillageInteriorScene extends Phaser.Scene {
   private createBakeryBreadLoaf(
     x: number,
     y: number,
-    kind: 'round' | 'baguette',
+    kind: 'round' | 'baguette' | 'seeded' | 'plait' | 'rolls',
   ): void {
     const bread = this.add.graphics();
-    bread.fillStyle(0xeeb66f, 1);
-    bread.lineStyle(2, 0xc6814f, 0.85);
+    bread.lineStyle(2, 0xbd7647, 0.86);
+
     if (kind === 'round') {
-      bread.fillEllipse(x, y, 62, 36);
-      bread.strokeEllipse(x, y, 62, 36);
+      bread.fillStyle(0xeeb66f, 1);
+      bread.fillEllipse(x, y, 64, 38);
+      bread.strokeEllipse(x, y, 64, 38);
       bread.lineStyle(2, 0xffd99a, 0.9);
-      bread.lineBetween(x - 14, y - 9, x - 2, y + 6);
-      bread.lineBetween(x + 2, y - 9, x + 14, y + 6);
+      for (const slash of [-13, 0, 13]) {
+        bread.lineBetween(x + slash - 5, y - 11, x + slash + 4, y + 8);
+      }
+    } else if (kind === 'baguette') {
+      bread.fillStyle(0xe7a95c, 1);
+      bread.fillRoundedRect(x - 42, y - 13, 84, 26, 13);
+      bread.strokeRoundedRect(x - 42, y - 13, 84, 26, 13);
+      bread.lineStyle(2, 0xffd38f, 0.92);
+      for (const slash of [-24, -8, 8, 24]) {
+        bread.lineBetween(x + slash - 5, y - 9, x + slash + 4, y + 7);
+      }
+    } else if (kind === 'seeded') {
+      bread.fillStyle(0xd99b56, 1);
+      bread.fillRoundedRect(x - 34, y - 18, 68, 36, 16);
+      bread.strokeRoundedRect(x - 34, y - 18, 68, 36, 16);
+      bread.fillStyle(0xf4d197, 0.96);
+      for (const [dx, dy] of [
+        [-20, -7],
+        [-9, 5],
+        [2, -8],
+        [14, 4],
+        [23, -5],
+      ] as const) {
+        bread.fillEllipse(x + dx, y + dy, 5, 3);
+      }
+    } else if (kind === 'plait') {
+      bread.fillStyle(0xf0bd72, 1);
+      for (const offset of [-22, -8, 8, 22]) {
+        bread.fillEllipse(x + offset, y, 30, 27);
+        bread.strokeEllipse(x + offset, y, 30, 27);
+      }
+      bread.lineStyle(2, 0xffdfa0, 0.88);
+      bread.lineBetween(x - 28, y - 8, x + 28, y + 7);
     } else {
-      bread.fillRoundedRect(x - 38, y - 14, 76, 28, 14);
-      bread.strokeRoundedRect(x - 38, y - 14, 76, 28, 14);
-      bread.lineStyle(2, 0xffd99a, 0.9);
-      for (const slash of [-18, 0, 18]) {
-        bread.lineBetween(x + slash - 7, y - 9, x + slash + 3, y + 7);
+      bread.fillStyle(0xedb46b, 1);
+      for (const [dx, dy, radius] of [
+        [-24, 1, 12],
+        [-8, -3, 13],
+        [10, 1, 12],
+        [25, -2, 11],
+      ] as const) {
+        bread.fillCircle(x + dx, y + dy, radius);
+        bread.strokeCircle(x + dx, y + dy, radius);
+      }
+      bread.fillStyle(0xffdb98, 0.82);
+      for (const dx of [-24, -8, 10, 25]) {
+        bread.fillCircle(x + dx - 2, y - 6, 3);
       }
     }
+
     bread.setDepth(worldDepthForY(y + 70, 0.47));
   }
 

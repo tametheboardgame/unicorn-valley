@@ -1,6 +1,9 @@
 import Phaser from 'phaser';
 import type { SupportingResidentDefinition } from '../population/AmbientPopulationTypes';
-import { createSupportingResidentSprite } from '../population/SupportingResidentArt';
+import {
+  createSupportingResidentRoleSprite,
+  createSupportingResidentSprite,
+} from '../population/SupportingResidentArt';
 import { worldDepthForY } from '../world/WorldDepth';
 
 export type VillageInteriorRoleAccessory = 'chef-hat' | 'apron' | 'satchel';
@@ -26,12 +29,22 @@ export function createVillageInteriorResidentPresentation(
   resident: SupportingResidentDefinition,
   options: VillageInteriorResidentPresentationOptions,
 ): VillageInteriorResidentPresentation {
-  const sprite = createSupportingResidentSprite(scene, resident).setPosition(0, 0);
+  const accessories = options.accessories ?? [];
+  const usesIntegratedBakerVisual =
+    accessories.includes('chef-hat') && accessories.includes('apron');
+  const sprite = (
+    usesIntegratedBakerVisual
+      ? createSupportingResidentRoleSprite(scene, resident, 'baker')
+      : createSupportingResidentSprite(scene, resident)
+  ).setPosition(0, 0);
   const size = options.displaySize ?? { width: 152, height: 128 };
   sprite.setDisplaySize(size.width, size.height);
 
   const objects: Phaser.GameObjects.GameObject[] = [sprite];
-  for (const accessory of options.accessories ?? []) {
+  for (const accessory of accessories) {
+    if (accessory === 'chef-hat' || accessory === 'apron') {
+      continue;
+    }
     objects.push(...createRoleAccessory(scene, accessory));
   }
 
@@ -48,29 +61,8 @@ function createRoleAccessory(
   scene: Phaser.Scene,
   accessory: VillageInteriorRoleAccessory,
 ): Phaser.GameObjects.GameObject[] {
-  if (accessory === 'chef-hat') {
-    const crown = scene.add.graphics().setName('village-interior-role:chef-hat');
-    crown.fillStyle(0xfffbef, 1);
-    crown.lineStyle(2, 0xd8c7ae, 0.9);
-    crown.fillRoundedRect(-10, -61, 34, 11, 5);
-    crown.strokeRoundedRect(-10, -61, 34, 11, 5);
-    crown.fillCircle(-4, -63, 8);
-    crown.fillCircle(7, -68, 10);
-    crown.fillCircle(18, -63, 8);
-    return [crown];
-  }
-
-  if (accessory === 'apron') {
-    const apron = scene.add.graphics().setName('village-interior-role:apron');
-    apron.fillStyle(0xfff6dc, 0.98);
-    apron.lineStyle(2, 0xd9b783, 0.9);
-    apron.lineBetween(-39, -22, -26, -10);
-    apron.lineBetween(-26, -10, -13, -21);
-    apron.fillRoundedRect(-44, -13, 36, 38, 8);
-    apron.strokeRoundedRect(-44, -13, 36, 38, 8);
-    apron.fillStyle(0xe7a4b2, 0.9);
-    apron.fillRoundedRect(-35, 5, 17, 9, 4);
-    return [apron];
+  if (accessory !== 'satchel') {
+    return [];
   }
 
   const satchel = scene.add.graphics().setName('village-interior-role:satchel');
