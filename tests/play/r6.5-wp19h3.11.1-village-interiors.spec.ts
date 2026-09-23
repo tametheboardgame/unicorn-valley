@@ -101,6 +101,12 @@ test('H3.11.1 makes VillageInteriorScene a walkable semantic interior with physi
   expect(
     interior.objects.some(({ name }) => name === 'village-interior:bakery:doughnut-display'),
   ).toBe(true);
+  expect(
+    interior.objects.some(({ name }) => name === 'village-interior:bakery:cupcake-display'),
+  ).toBe(true);
+  expect(
+    interior.objects.filter(({ name }) => name === 'village-interior:bakery:cafe-chair').length,
+  ).toBe(2);
 
   await page.keyboard.down('ArrowLeft');
   await page.waitForTimeout(180);

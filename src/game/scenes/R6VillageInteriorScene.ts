@@ -263,7 +263,8 @@ export class VillageInteriorScene extends Phaser.Scene {
     // Recipe board moves towards the front-left wall, away from the service line.
     this.createBakeryRecipeBoard(recipeBoard.position.x, recipeBoard.position.y);
 
-    // Round doughnut display bridges the bread counter and café nook without blocking the aisle.
+    // Matching side displays keep the room balanced around the central hero cake.
+    this.createBakeryCupcakeDisplay(420, 640);
     this.createBakeryDoughnutDisplay(1080, 640);
 
     // Café nook moves lower and gets richer table detail.
@@ -272,10 +273,15 @@ export class VillageInteriorScene extends Phaser.Scene {
     cafe.lineStyle(4, 0xc99d89, 0.74);
     cafe.fillEllipse(1210, 835, 170, 106);
     cafe.strokeEllipse(1210, 835, 170, 106);
+    cafe.fillStyle(0xe8b79f, 1);
+    cafe.fillRoundedRect(1197, 835, 26, 56, 10);
+    cafe.fillEllipse(1210, 891, 82, 24);
     cafe.fillStyle(0xfff7e8, 1);
     cafe.fillEllipse(1210, 823, 134, 70);
     cafe.lineStyle(2, 0xe8b9c4, 0.75);
     cafe.strokeEllipse(1210, 823, 134, 70);
+    cafe.lineStyle(2, 0xffffff, 0.7);
+    cafe.strokeEllipse(1210, 820, 112, 52);
 
     // Two cups, a shared pastry plate and a tiny flower vase.
     cafe.fillStyle(0xd9b5df, 1);
@@ -305,17 +311,8 @@ export class VillageInteriorScene extends Phaser.Scene {
     cafe.fillCircle(1216, 785, 6);
     cafe.setDepth(worldDepthForY(890, 0.2));
 
-    for (const [x, y] of [
-      [1118, 875],
-      [1302, 870],
-    ] as const) {
-      const chair = this.add.graphics();
-      chair.fillStyle(0xb98b9f, 1);
-      chair.lineStyle(3, 0x8c657c, 0.75);
-      chair.fillCircle(x, y, 27);
-      chair.strokeCircle(x, y, 27);
-      chair.setDepth(worldDepthForY(y + 28, 0.18));
-    }
+    this.createBakeryCafeChair(1118, 875, -8);
+    this.createBakeryCafeChair(1302, 870, 8);
 
     for (const sparkle of [
       { x: 615, y: 454, r: 4 },
@@ -495,6 +492,87 @@ export class VillageInteriorScene extends Phaser.Scene {
     }
 
     bread.setDepth(worldDepthForY(y + 70, 0.47));
+  }
+
+  private createBakeryCupcakeDisplay(x: number, y: number): void {
+    const stand = this.add.graphics().setName('village-interior:bakery:cupcake-display');
+    stand.fillStyle(0xf3d7bd, 1);
+    stand.lineStyle(4, 0xc99d89, 0.78);
+    stand.fillEllipse(x, y + 42, 138, 54);
+    stand.strokeEllipse(x, y + 42, 138, 54);
+    stand.fillStyle(0xf8ecd9, 1);
+    stand.fillRoundedRect(x - 13, y + 38, 26, 56, 10);
+    stand.fillEllipse(x, y + 94, 72, 22);
+    stand.setDepth(worldDepthForY(y + 100, 0.2));
+
+    const tower = this.add.graphics();
+    tower.lineStyle(4, 0xb97b8b, 0.82);
+    tower.fillStyle(0xf7c9d6, 1);
+    tower.fillEllipse(x, y + 10, 126, 32);
+    tower.strokeEllipse(x, y + 10, 126, 32);
+    tower.fillStyle(0xf8e7cd, 1);
+    tower.fillRoundedRect(x - 8, y - 48, 16, 58, 8);
+    tower.fillStyle(0xe8b3bd, 1);
+    tower.fillEllipse(x, y - 42, 92, 26);
+    tower.strokeEllipse(x, y - 42, 92, 26);
+    tower.fillStyle(0xfff3df, 1);
+    tower.fillRoundedRect(x - 6, y - 83, 12, 42, 6);
+    tower.fillStyle(0xd7b6ef, 1);
+    tower.fillEllipse(x, y - 78, 58, 20);
+    tower.strokeEllipse(x, y - 78, 58, 20);
+
+    const cupcakes = [
+      { dx: -40, dy: 0, icing: 0xf3a8c0 },
+      { dx: 0, dy: 2, icing: 0xaee7e0 },
+      { dx: 40, dy: 0, icing: 0xffdfa0 },
+      { dx: -24, dy: -48, icing: 0xd8b9f2 },
+      { dx: 24, dy: -48, icing: 0xf49aaa },
+      { dx: 0, dy: -84, icing: 0xc9e4aa },
+    ] as const;
+    for (const cupcake of cupcakes) {
+      tower.fillStyle(0xd99365, 1);
+      tower.fillRoundedRect(
+        x + cupcake.dx - 10,
+        y + cupcake.dy - 2,
+        20,
+        18,
+        4,
+      );
+      tower.fillStyle(cupcake.icing, 1);
+      tower.fillCircle(x + cupcake.dx, y + cupcake.dy - 7, 13);
+      tower.fillStyle(0xfff4d5, 0.9);
+      tower.fillCircle(x + cupcake.dx - 4, y + cupcake.dy - 12, 3);
+    }
+    tower.setDepth(worldDepthForY(y + 101, 0.32));
+
+    this.add
+      .text(x, y + 71, 'CUPCAKES', {
+        color: '#76566d',
+        fontFamily: UI_FONT,
+        fontSize: '11px',
+        fontStyle: 'bold',
+        letterSpacing: 0.8,
+      })
+      .setOrigin(0.5)
+      .setDepth(worldDepthForY(y + 102, 0.4));
+  }
+
+  private createBakeryCafeChair(x: number, y: number, angle: number): void {
+    const chair = this.add.graphics().setName('village-interior:bakery:cafe-chair');
+    chair.fillStyle(0x9f748c, 1);
+    chair.lineStyle(3, 0x7c586d, 0.82);
+    chair.fillRoundedRect(x - 27, y - 23, 54, 46, 14);
+    chair.strokeRoundedRect(x - 27, y - 23, 54, 46, 14);
+    chair.fillStyle(0xc49bb1, 1);
+    chair.fillRoundedRect(x - 22, y - 18, 44, 30, 10);
+    chair.lineStyle(3, 0x7c586d, 0.8);
+    chair.lineBetween(x - 22, y + 22, x - 17, y + 46);
+    chair.lineBetween(x + 22, y + 22, x + 17, y + 46);
+    chair.lineBetween(x - 23, y - 20, x - 23, y - 48);
+    chair.lineBetween(x + 23, y - 20, x + 23, y - 48);
+    chair.lineBetween(x - 23, y - 48, x + 23, y - 48);
+    chair.setAngle(angle);
+    chair.setDepth(worldDepthForY(y + 48, 0.18));
   }
 
   private createBakeryDoughnutDisplay(x: number, y: number): void {

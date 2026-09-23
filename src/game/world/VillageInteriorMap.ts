@@ -142,6 +142,7 @@ const BAKERY: VillageInteriorDefinition = {
     { id: 'bread-counter', x: 1090, y: 462, width: 390, height: 86 },
     { id: 'recipe-shelf', x: 175, y: 720, width: 92, height: 180 },
     { id: 'cake-table', x: 750, y: 715, width: 290, height: 135 },
+    { id: 'cupcake-display', x: 420, y: 660, width: 135, height: 125 },
     { id: 'doughnut-display', x: 1080, y: 660, width: 135, height: 125 },
     { id: 'cafe-table', x: 1210, y: 845, width: 170, height: 110 },
   ],
