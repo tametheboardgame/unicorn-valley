@@ -45,6 +45,14 @@ describe('Sunbeam Bakery service', () => {
     expect(stock.get('item:sunbeam-swirl')).toMatchObject({ price: 2, isUnlocked: true });
     expect(stock.get(SUNBEAM_PICNIC_BASKET_ITEM_ID)?.isUnlocked).toBe(false);
     expect(stock.get(WOBBLY_CAKE_SLICE_ITEM_ID)?.isUnlocked).toBe(false);
+    expect(stock.get('item:honey-oat-loaf')).toMatchObject({
+      section: 'bread',
+      maxDailyStock: 4,
+      remainingStock: 4,
+      temporaryEffect: null,
+    });
+    expect(stock.get('item:strawberry-star-doughnut')?.section).toBe('doughnuts');
+    expect(stock.get('item:berry-cloud-cupcake')?.section).toBe('cupcakes');
   });
 
   it('supports repeat bun purchases with persistent visible ownership and clear Shimmer spend', () => {
@@ -94,6 +102,33 @@ describe('Sunbeam Bakery service', () => {
       ownedQuantity: 2,
     });
     expect(economy.getBalance()).toBe(1);
+  });
+
+  it('enforces daily stock and refreshes it when a new morning serial begins', () => {
+    const saveService = new SaveService(new MemorySaveRepository());
+    saveService.save(createDefaultSave());
+    const economy = new ShimmerEconomyService(saveService);
+    economy.earn(20);
+    const bakery = new BakeryService(saveService);
+
+    for (let index = 0; index < 5; index += 1) {
+      expect(bakery.purchase('item:berry-bun').type).toBe('purchased');
+    }
+    expect(bakery.purchase('item:berry-bun').type).toBe('sold-out');
+    expect(
+      bakery.listStock().find(({ definition }) => definition.id === 'item:berry-bun'),
+    ).toMatchObject({ remainingStock: 0, isSoldOut: true });
+
+    const save = saveService.load();
+    if (!save) throw new Error('Expected persisted save');
+    saveService.save({
+      ...save,
+      shops: { ...save.shops, morningSerial: save.shops.morningSerial + 1 },
+    });
+
+    expect(
+      bakery.listStock().find(({ definition }) => definition.id === 'item:berry-bun'),
+    ).toMatchObject({ remainingStock: 5, isSoldOut: false });
   });
 
   it('never charges when the player cannot afford an item', () => {

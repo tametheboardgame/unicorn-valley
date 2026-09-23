@@ -125,6 +125,7 @@ export class AtmosphericTimeService {
    * maintaining a second cottage clock or leaving a manual night override active.
    */
   public resetToMorning(): AtmosphericTimeState {
+    this.recordFreshMorning();
     this.automaticElapsedMs = 0;
     this.automaticState = 'morning';
     this.mode = 'auto';
@@ -157,7 +158,11 @@ export class AtmosphericTimeService {
     this.automaticElapsedMs += elapsedMs;
     while (this.automaticElapsedMs >= AUTO_TIME_STATE_DURATION_MS) {
       this.automaticElapsedMs -= AUTO_TIME_STATE_DURATION_MS;
+      const previous = this.automaticState;
       this.automaticState = nextAtmosphericTimeState(this.automaticState);
+      if (previous === 'night' && this.automaticState === 'morning') {
+        this.recordFreshMorning();
+      }
     }
 
     if (this.mode === 'auto') {
@@ -180,6 +185,20 @@ export class AtmosphericTimeService {
   public subscribe(listener: (state: AtmosphericTimeState) => void): () => void {
     this.listeners.add(listener);
     return () => this.listeners.delete(listener);
+  }
+
+  private recordFreshMorning(): void {
+    if (!this.saveService) {
+      return;
+    }
+    const save = this.saveService.load() ?? this.saveService.createNewGame();
+    this.saveService.save({
+      ...save,
+      shops: {
+        ...save.shops,
+        morningSerial: save.shops.morningSerial + 1,
+      },
+    });
   }
 
   private setState(state: AtmosphericTimeState): void {

@@ -143,6 +143,28 @@ function isActivityState(value: unknown): boolean {
   );
 }
 
+function isShopState(value: unknown): boolean {
+  if (
+    !isRecord(value) ||
+    !Number.isInteger(value.morningSerial) ||
+    Number(value.morningSerial) < 0 ||
+    !isRecord(value.byShopId)
+  ) {
+    return false;
+  }
+
+  return Object.values(value.byShopId).every(
+    (entry) =>
+      isRecord(entry) &&
+      Number.isInteger(entry.restockSerial) &&
+      Number(entry.restockSerial) >= 0 &&
+      isRecordOf(
+        entry.remainingByItemId,
+        (remaining) => Number.isInteger(remaining) && Number(remaining) >= 0,
+      ),
+  );
+}
+
 function isCollectionState(value: unknown): boolean {
   if (!isRecord(value)) {
     return false;
@@ -167,6 +189,7 @@ export function isSaveGame(value: unknown): value is SaveGame {
     isWorldState(value.world) &&
     isHomeState(value.home) &&
     isActivityState(value.activities) &&
-    isCollectionState(value.collections)
+    isCollectionState(value.collections) &&
+    isShopState(value.shops)
   );
 }

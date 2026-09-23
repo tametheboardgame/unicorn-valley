@@ -5,9 +5,16 @@ import { type GameEventMap, type TypedEventBus, gameEventBus } from '../events/G
 import type { SaveService } from '../save/SaveService';
 import { applyShimmerSpendToSave, getShimmerBalanceFromSave } from './ShimmerEconomyService';
 
+const BAKERY_SHOP_ID = 'shop:sunbeam-bakery';
+
 export interface BakeryStockView {
   definition: ItemDefinition;
   price: number;
+  section: BakeryStockEntry['section'];
+  maxDailyStock: number;
+  remainingStock: number;
+  isSoldOut: boolean;
+  temporaryEffect: BakeryStockEntry['temporaryEffect'];
   ownedQuantity: number;
   unique: boolean;
   isOwned: boolean;
@@ -40,6 +47,11 @@ export type BakeryPurchaseResult =
       item: ItemDefinition;
       balance: number;
       unlockHint: string;
+    }
+  | {
+      type: 'sold-out';
+      item: ItemDefinition;
+      balance: number;
     }
   | {
       type: 'persistence-failed';
@@ -89,6 +101,10 @@ function withVisibleRepeatOwnership(
   };
 }
 
+function fullDailyStock(): Record<string, number> {
+  return Object.fromEntries(R6_BAKERY_STOCK.map((stock) => [stock.itemId, stock.maxDailyStock]));
+}
+
 export class BakeryService {
   public constructor(
     private readonly saveService: SaveService,
@@ -96,7 +112,8 @@ export class BakeryService {
   ) {}
 
   public listStock(): readonly BakeryStockView[] {
-    const save = this.saveService.load() ?? this.saveService.createNewGame();
+    const save = this.ensureDailyStock(this.saveService.load() ?? this.saveService.createNewGame());
+    const shop = save.shops.byShopId[BAKERY_SHOP_ID];
     return R6_BAKERY_STOCK.map((stock) => {
       const ownedQuantity = save.inventory.itemQuantities[stock.itemId] ?? 0;
       const definition = withVisibleRepeatOwnership(
@@ -105,9 +122,18 @@ export class BakeryService {
         ownedQuantity,
       );
       const unlock = unlockFor(save, stock);
+      const remainingStock = Math.max(
+        0,
+        shop?.remainingByItemId[stock.itemId] ?? stock.maxDailyStock,
+      );
       return {
         definition,
         price: stock.price,
+        section: stock.section,
+        maxDailyStock: stock.maxDailyStock,
+        remainingStock,
+        isSoldOut: remainingStock <= 0,
+        temporaryEffect: stock.temporaryEffect,
         ownedQuantity,
         unique: stock.unique,
         isOwned: stock.unique && ownedQuantity > 0,
@@ -120,7 +146,9 @@ export class BakeryService {
   public purchase(itemId: ItemId): BakeryPurchaseResult {
     const stock = requireStock(itemId);
     const item = itemRegistry.get(itemId);
-    const save = this.saveService.load() ?? this.saveService.createNewGame();
+    const save = this.ensureDailyStock(
+      this.saveService.load() ?? this.saveService.createNewGame(),
+    );
     const balance = getShimmerBalanceFromSave(save);
     const ownedQuantity = save.inventory.itemQuantities[itemId] ?? 0;
     const unlock = unlockFor(save, stock);
@@ -135,6 +163,15 @@ export class BakeryService {
     }
     if (stock.unique && ownedQuantity > 0) {
       return { type: 'already-owned', item, balance };
+    }
+
+    const shop = save.shops.byShopId[BAKERY_SHOP_ID];
+    const remainingStock = Math.max(
+      0,
+      shop?.remainingByItemId[itemId] ?? stock.maxDailyStock,
+    );
+    if (remainingStock <= 0) {
+      return { type: 'sold-out', item, balance };
     }
 
     const spent = applyShimmerSpendToSave(save, stock.price);
@@ -168,6 +205,20 @@ export class BakeryService {
           ? appendUnique(spent.home.ownedFurnitureIds, itemId)
           : [...spent.home.ownedFurnitureIds],
       },
+      shops: {
+        ...spent.shops,
+        byShopId: {
+          ...spent.shops.byShopId,
+          [BAKERY_SHOP_ID]: {
+            restockSerial: spent.shops.morningSerial,
+            remainingByItemId: {
+              ...fullDailyStock(),
+              ...(shop?.remainingByItemId ?? {}),
+              [itemId]: remainingStock - 1,
+            },
+          },
+        },
+      },
     });
     if (result.status !== 'saved') {
       return { type: 'persistence-failed', item, balance };
@@ -182,5 +233,30 @@ export class BakeryService {
       balance: getShimmerBalanceFromSave(saved),
       ownedQuantity: nextQuantity,
     };
+  }
+
+  private ensureDailyStock(
+    save: ReturnType<SaveService['createNewGame']>,
+  ): ReturnType<SaveService['createNewGame']> {
+    const current = save.shops.byShopId[BAKERY_SHOP_ID];
+    if (current?.restockSerial === save.shops.morningSerial) {
+      return save;
+    }
+
+    const next = {
+      ...save,
+      shops: {
+        ...save.shops,
+        byShopId: {
+          ...save.shops.byShopId,
+          [BAKERY_SHOP_ID]: {
+            restockSerial: save.shops.morningSerial,
+            remainingByItemId: fullDailyStock(),
+          },
+        },
+      },
+    };
+    const result = this.saveService.saveWithResult(next);
+    return result.status === 'saved' ? result.save : next;
   }
 }

@@ -65,5 +65,22 @@ export function reconcileSaveGame(save: SaveGame): SaveGame {
       discoveryIds: uniqueStrings(save.collections.discoveryIds),
       memoryIds: uniqueStrings(save.collections.memoryIds),
     },
+    shops: {
+      morningSerial: Math.max(0, Math.floor(save.shops.morningSerial)),
+      byShopId: Object.fromEntries(
+        Object.entries(save.shops.byShopId).map(([shopId, stock]) => [
+          shopId,
+          {
+            restockSerial: Math.max(0, Math.floor(stock.restockSerial)),
+            remainingByItemId: Object.fromEntries(
+              Object.entries(stock.remainingByItemId).map(([itemId, remaining]) => [
+                itemId,
+                Math.max(0, Math.floor(remaining)),
+              ]),
+            ),
+          },
+        ]),
+      ),
+    },
   };
 }

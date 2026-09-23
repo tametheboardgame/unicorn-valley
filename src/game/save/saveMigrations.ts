@@ -195,6 +195,18 @@ const migrateV6ToV7: SaveMigration = (save) => {
   };
 };
 
+const migrateV7ToV8: SaveMigration = (save) => {
+  const timestamp =
+    typeof save.createdAt === 'string' ? save.createdAt : '1970-01-01T00:00:00.000Z';
+  const defaults = createDefaultSave(timestamp);
+
+  return {
+    ...save,
+    schemaVersion: 8,
+    shops: mergeRecord(defaults.shops, save.shops),
+  };
+};
+
 export const SAVE_MIGRATIONS: ReadonlyMap<number, SaveMigration> = new Map([
   [1, migrateV1ToV2],
   [2, migrateV2ToV3],
@@ -202,6 +214,7 @@ export const SAVE_MIGRATIONS: ReadonlyMap<number, SaveMigration> = new Map([
   [4, migrateV4ToV5],
   [5, migrateV5ToV6],
   [6, migrateV6ToV7],
+  [7, migrateV7ToV8],
 ]);
 
 export function migrateSaveRecord(

@@ -12,6 +12,8 @@ import {
   TANSY_NOTICE_MAP_CORNER_DISCOVERY_ID,
   TANSY_CHARACTER_ID,
   WOBBLY_CAKE_ITEM_ID,
+  BAKERY_SECTIONS,
+  type BakerySectionId,
   type MapleCakeTheme,
 } from '../../content/r6VillageContent';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
@@ -117,6 +119,8 @@ export class VillageInteriorScene extends Phaser.Scene {
   private overlay: Phaser.GameObjects.Container | null = null;
   private readonly purchaseGuard = new ShopPurchaseTapGuard();
   private storyCardCursor = 0;
+  private bakerySection: BakerySectionId = 'pastries';
+  private bakeryShopFeedback = '';
 
   public constructor() {
     super('VillageInteriorScene');
@@ -127,6 +131,8 @@ export class VillageInteriorScene extends Phaser.Scene {
     this.returnScene = data.returnScene ?? 'SunbeamVillageScene';
     this.closing = false;
     this.storyCardCursor = 0;
+    this.bakerySection = 'pastries';
+    this.bakeryShopFeedback = '';
     this.purchaseGuard.reset();
     this.data.set(VILLAGE_INTERIOR_SCENE_DATA_KEY, this.interiorId);
 
@@ -919,7 +925,7 @@ export class VillageInteriorScene extends Phaser.Scene {
         position: counter.approach,
         interactionRadius: 155,
         priority: 28,
-        result: { type: 'callback', activate: () => this.openBakeryCounter() },
+        result: { type: 'callback', activate: () => this.openBakeryCounter('pastries') },
       },
       {
         id: 'interaction:village-interior:bakery:bread-counter',
@@ -929,7 +935,27 @@ export class VillageInteriorScene extends Phaser.Scene {
         position: { x: 1090, y: 565 },
         interactionRadius: 155,
         priority: 28,
-        result: { type: 'callback', activate: () => this.openBakeryCounter() },
+        result: { type: 'callback', activate: () => this.openBakeryCounter('bread') },
+      },
+      {
+        id: 'interaction:village-interior:bakery:doughnuts',
+        label: 'Doughnut display',
+        actionLabel: 'Browse',
+        actionKind: 'buy',
+        position: { x: 1080, y: 755 },
+        interactionRadius: 145,
+        priority: 27,
+        result: { type: 'callback', activate: () => this.openBakeryCounter('doughnuts') },
+      },
+      {
+        id: 'interaction:village-interior:bakery:cupcakes',
+        label: 'Cupcake tower',
+        actionLabel: 'Browse',
+        actionKind: 'buy',
+        position: { x: 420, y: 755 },
+        interactionRadius: 145,
+        priority: 27,
+        result: { type: 'callback', activate: () => this.openBakeryCounter('cupcakes') },
       },
       {
         id: 'interaction:village-interior:bakery:cake-table',
@@ -1056,109 +1082,182 @@ export class VillageInteriorScene extends Phaser.Scene {
     ];
   }
 
-  private openBakeryCounter(): void {
+  private openBakeryCounter(section: BakerySectionId = this.bakerySection): void {
+    this.bakerySection = section;
     const bakery = new BakeryService(getBrowserSaveService());
     const stock = bakery.listStock();
+    const visibleStock = stock.filter((item) => item.section === section);
     this.openOverlay();
     if (!this.overlay) {
       return;
     }
 
     const title = this.add
-      .text(GAME_WIDTH / 2, 138, 'Cinnamon’s Bakery counter', {
-        color: UI_COLOURS.ink,
+      .text(GAME_WIDTH / 2, 126, 'Cinnamon’s Bakery', {
+        color: '#563f63',
         fontFamily: UI_FONT,
-        fontSize: '27px',
+        fontSize: '28px',
         fontStyle: 'bold',
       })
       .setOrigin(0.5)
       .setScrollFactor(0);
     const note = this.add
-      .text(
-        GAME_WIDTH / 2,
-        174,
-        'Fresh treats can be bought again whenever you have enough Shimmer.',
-        {
-          color: UI_COLOURS.softInk,
-          fontFamily: UI_FONT,
-          fontSize: '13px',
-          fontStyle: 'bold',
-        },
-      )
+      .text(GAME_WIDTH / 2, 158, 'Small batches are baked each morning — when they’re gone, they’re gone for the day.', {
+        color: '#806985',
+        fontFamily: UI_FONT,
+        fontSize: '12px',
+        fontStyle: 'bold',
+      })
       .setOrigin(0.5)
       .setScrollFactor(0);
     this.overlay.add([title, note]);
 
-    stock.forEach((item, index) => {
+    BAKERY_SECTIONS.forEach((tab, index) => {
+      const x = 280 + index * 240;
+      const selected = tab.id === section;
+      const surface = this.add.graphics().setScrollFactor(0);
+      surface.fillStyle(0x4b3045, 0.12);
+      surface.fillRoundedRect(x - 92 + 4, 188 + 4, 184, 52, 18);
+      surface.fillStyle(selected ? 0xf3d9a4 : 0xead4ee, 1);
+      surface.lineStyle(3, selected ? 0xb7834e : 0xb486a8, 0.95);
+      surface.fillRoundedRect(x - 92, 188, 184, 52, 18);
+      surface.strokeRoundedRect(x - 92, 188, 184, 52, 18);
+      const hit = this.add
+        .rectangle(x, 214, 196, 64, 0xffffff, 0.001)
+        .setAlpha(0.001)
+        .setInteractive({ useHandCursor: true })
+        .setScrollFactor(0);
+      const count = stock.filter((item) => item.section === tab.id).length;
+      const label = this.add
+        .text(x, 214, `${tab.icon} ${tab.label}  ${count}`, {
+          color: selected ? '#664631' : '#5d4360',
+          fontFamily: UI_FONT,
+          fontSize: '14px',
+          fontStyle: 'bold',
+        })
+        .setOrigin(0.5)
+        .setScrollFactor(0);
+      hit.on('pointerdown', () => this.openBakeryCounter(tab.id));
+      this.overlay?.add([surface, hit, label]);
+    });
+
+    visibleStock.forEach((item, index) => {
       const column = index % 3;
       const row = Math.floor(index / 3);
-      const x = 330 + column * 310;
-      const y = 285 + row * 185;
-      const card = this.add
-        .rectangle(x, y, 280, 154, 0xfffbf3, 0.98)
-        .setStrokeStyle(4, 0xd88b62, 0.9)
+      const x = 320 + column * 320;
+      const y = 345 + row * 155;
+
+      const card = this.add.graphics().setScrollFactor(0);
+      card.fillStyle(0x4b3045, 0.1);
+      card.fillRoundedRect(x - 140 + 5, y - 61 + 6, 280, 122, 18);
+      card.fillStyle(item.isSoldOut ? 0xf2ece9 : 0xfffbef, 1);
+      card.lineStyle(3, item.isUnlocked ? 0xd3a0ae : 0xbfa8c7, 0.9);
+      card.fillRoundedRect(x - 140, y - 61, 280, 122, 18);
+      card.strokeRoundedRect(x - 140, y - 61, 280, 122, 18);
+
+      const iconWell = this.add
+        .circle(x - 104, y - 18, 27, item.isUnlocked ? 0xf1d7cf : 0xe6dfea, 1)
+        .setStrokeStyle(2, item.isUnlocked ? 0xc995a4 : 0xb7a4c1, 0.85)
         .setScrollFactor(0);
       const icon = this.add
-        .text(x - 92, y - 35, item.definition.icon ?? '🥐', {
+        .text(x - 104, y - 18, item.definition.icon ?? '🥐', {
           fontFamily: UI_FONT,
-          fontSize: '38px',
+          fontSize: '29px',
         })
         .setOrigin(0.5)
         .setScrollFactor(0);
       const name = this.add
-        .text(x + 10, y - 42, item.definition.name, {
-          color: UI_COLOURS.ink,
+        .text(x - 67, y - 34, item.definition.name, {
+          color: '#5b4662',
           fontFamily: UI_FONT,
-          fontSize: '16px',
+          fontSize: '14px',
           fontStyle: 'bold',
-          wordWrap: { width: 175 },
+          wordWrap: { width: 180 },
         })
-        .setOrigin(0.5)
+        .setOrigin(0, 0.5)
         .setScrollFactor(0);
+
+      const status = !item.isUnlocked
+        ? (item.unlockHint ?? 'Locked')
+        : item.isOwned
+          ? 'Owned ✓'
+          : item.isSoldOut
+            ? 'Sold out • back tomorrow'
+            : `${item.price} Shimmer • ${item.remainingStock}/${item.maxDailyStock} left`;
       const detail = this.add
-        .text(
-          x + 10,
-          y - 8,
-          item.isUnlocked
-            ? item.isOwned
-              ? 'Owned ✓'
-              : `${item.price} Shimmer`
-            : (item.unlockHint ?? 'Locked'),
-          {
-            color: UI_COLOURS.softInk,
-            fontFamily: UI_FONT,
-            fontSize: '12px',
-            align: 'center',
-            wordWrap: { width: 180 },
-          },
-        )
-        .setOrigin(0.5)
+        .text(x - 67, y, status, {
+          color: item.isSoldOut ? '#8d6f7b' : '#806985',
+          fontFamily: UI_FONT,
+          fontSize: '10px',
+          wordWrap: { width: 182 },
+        })
+        .setOrigin(0, 0.5)
         .setScrollFactor(0);
-      this.overlay?.add([card, icon, name, detail]);
+
+      this.overlay?.add([card, iconWell, icon, name, detail]);
       this.createOverlayButton(
         x,
-        y + 49,
-        item.isOwned ? 'Yours!' : item.isUnlocked ? `Buy • ${item.price} ✨` : 'Locked',
+        y + 38,
+        item.isOwned
+          ? 'Yours'
+          : !item.isUnlocked
+            ? 'Locked'
+            : item.isSoldOut
+              ? 'Sold out'
+              : `Buy • ${item.price} ✨`,
         () => this.buyBakeryItem(item.definition.id),
-        item.isUnlocked && !item.isOwned,
+        item.isUnlocked && !item.isOwned && !item.isSoldOut,
+        220,
+        40,
       );
     });
 
-    this.createOverlayButton(GAME_WIDTH / 2, 590, 'Back to the bakery', () => this.closeOverlay());
+    if (this.bakeryShopFeedback) {
+      const feedback = this.add
+        .text(GAME_WIDTH / 2, 610, this.bakeryShopFeedback, {
+          color: '#704d61',
+          fontFamily: UI_FONT,
+          fontSize: '13px',
+          fontStyle: 'bold',
+          align: 'center',
+          wordWrap: { width: 700 },
+        })
+        .setOrigin(0.5)
+        .setScrollFactor(0);
+      this.overlay.add(feedback);
+    }
+
+    this.createOverlayButton(
+      GAME_WIDTH / 2,
+      660,
+      'Back to the bakery',
+      () => this.closeOverlay(),
+      true,
+      250,
+      46,
+    );
   }
 
   private openOverlay(): void {
     this.closeOverlay();
     setInteractionModalActive(this, true);
     this.overlay = this.add.container(0, 0).setDepth(20_500).setScrollFactor(0);
+
     const shade = this.add
       .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x493c50, 0.68)
       .setInteractive()
       .setScrollFactor(0);
-    const panel = this.add
-      .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, 980, 520, 0xfffbef, 1)
-      .setStrokeStyle(6, 0xe29b68, 1)
-      .setScrollFactor(0);
+
+    const panel = this.add.graphics().setScrollFactor(0);
+    panel.fillStyle(0x24192b, 0.2);
+    panel.fillRoundedRect(91, 82, 1110, 618, 30);
+    panel.fillStyle(0xfff7e7, 1);
+    panel.lineStyle(5, 0xc98eb7, 0.95);
+    panel.fillRoundedRect(80, 70, 1110, 618, 30);
+    panel.strokeRoundedRect(80, 70, 1110, 618, 30);
+    panel.fillStyle(0xead4ee, 0.22);
+    panel.fillRoundedRect(98, 88, 1074, 94, 22);
+
     this.overlay.add([shade, panel]);
   }
 
@@ -1168,33 +1267,50 @@ export class VillageInteriorScene extends Phaser.Scene {
     labelText: string,
     onPress: () => void,
     enabled = true,
+    width = 260,
+    height = 58,
   ): void {
     if (!this.overlay) {
       return;
     }
+
     const fill = enabled ? UI_COLOURS.gold : UI_COLOURS.lavender;
-    const button = this.add
-      .rectangle(x, y, 260, 58, fill, enabled ? 1 : 0.62)
-      .setStrokeStyle(3, enabled ? UI_COLOURS.goldStrong : UI_COLOURS.lavenderStrong, 0.95)
+    const stroke = enabled ? UI_COLOURS.goldStrong : UI_COLOURS.lavenderStrong;
+    const surface = this.add.graphics().setScrollFactor(0);
+    surface.fillStyle(0x4b3045, 0.12);
+    surface.fillRoundedRect(x - width / 2 + 4, y - height / 2 + 5, width, height, 16);
+    surface.fillStyle(fill, enabled ? 1 : 0.62);
+    surface.lineStyle(3, stroke, 0.95);
+    surface.fillRoundedRect(x - width / 2, y - height / 2, width, height, 16);
+    surface.strokeRoundedRect(x - width / 2, y - height / 2, width, height, 16);
+
+    const hit = this.add
+      .rectangle(x, y, width + 8, height + 8, 0xffffff, 0.001)
+      .setAlpha(0.001)
       .setScrollFactor(0);
     const label = this.add
       .text(x, y, labelText, {
         color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
-        fontSize: '15px',
+        fontSize: height <= 42 ? '12px' : '15px',
         fontStyle: 'bold',
         align: 'center',
       })
       .setOrigin(0.5)
       .setScrollFactor(0);
+
     if (enabled) {
-      button.setInteractive({ useHandCursor: true });
-      label.setInteractive({ useHandCursor: true });
-      applyButtonHover(button, fill, UI_COLOURS.blush);
-      button.on('pointerdown', onPress);
-      label.on('pointerdown', onPress);
+      hit.setInteractive({ useHandCursor: true });
+      hit.on('pointerdown', onPress);
+      hit.on('pointerover', () => {
+        surface.setAlpha(0.9);
+      });
+      hit.on('pointerout', () => {
+        surface.setAlpha(1);
+      });
     }
-    this.overlay.add([button, label]);
+
+    this.overlay.add([surface, hit, label]);
   }
 
   private closeOverlay(): void {
@@ -1210,28 +1326,27 @@ export class VillageInteriorScene extends Phaser.Scene {
     if (!this.purchaseGuard.tryBegin(itemId, this.time.now)) {
       return;
     }
+
     const result = new BakeryService(getBrowserSaveService()).purchase(itemId);
-    this.closeOverlay();
-    const anchor = getVillageInteriorAnchor('bakery', 'counter').approach;
     if (result.type === 'purchased') {
-      this.showFeedback(`✨ ${result.item.name} is yours! ${result.balance} Shimmer left.`, anchor);
-      this.cameras.main.flash(100, 255, 236, 178, false);
+      this.bakeryShopFeedback =
+        `✨ ${result.item.name} added to your bag. ${result.balance} Shimmer left.`;
+      this.cameras.main.flash(90, 255, 236, 178, false);
     } else if (result.type === 'insufficient-funds') {
-      this.showFeedback(
-        `Almost! You need ${result.shortfall} more Shimmer for ${result.item.name}.`,
-        anchor,
-      );
+      this.bakeryShopFeedback =
+        `You need ${result.shortfall} more Shimmer for ${result.item.name}.`;
     } else if (result.type === 'locked') {
-      this.showFeedback(result.unlockHint, anchor);
+      this.bakeryShopFeedback = result.unlockHint;
+    } else if (result.type === 'sold-out') {
+      this.bakeryShopFeedback = `${result.item.name} is sold out until the next morning.`;
     } else if (result.type === 'persistence-failed') {
-      this.showFeedback('That did not save, so no Shimmer was spent. Please try again.', anchor);
+      this.bakeryShopFeedback = 'That did not save, so no Shimmer was spent. Please try again.';
     } else {
-      this.showFeedback(
-        `${result.item.name} is already tucked safely into your collection.`,
-        anchor,
-      );
+      this.bakeryShopFeedback = `${result.item.name} is already safely in your collection.`;
     }
+
     this.refreshBalance();
+    this.openBakeryCounter(this.bakerySection);
   }
 
   private talkToBakeryBaker(): void {

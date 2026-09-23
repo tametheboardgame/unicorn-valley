@@ -105,6 +105,18 @@ test('H3.11.1 makes VillageInteriorScene a walkable semantic interior with physi
     interior.objects.some(({ name }) => name === 'village-interior:bakery:cupcake-display'),
   ).toBe(true);
   expect(
+    interior.objects.some(
+      ({ name }) =>
+        name === 'interaction-direct-zone:interaction:village-interior:bakery:doughnuts',
+    ),
+  ).toBe(true);
+  expect(
+    interior.objects.some(
+      ({ name }) =>
+        name === 'interaction-direct-zone:interaction:village-interior:bakery:cupcakes',
+    ),
+  ).toBe(true);
+  expect(
     interior.objects.filter(({ name }) => name === 'village-interior:bakery:cafe-stool').length,
   ).toBe(2);
 

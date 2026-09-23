@@ -76,6 +76,10 @@ export function createDefaultSave(timestamp: string = new Date().toISOString()):
       discoveryIds: [],
       memoryIds: [],
     },
+    shops: {
+      morningSerial: 0,
+      byShopId: {},
+    },
   };
 }
 import { COTTAGE_STARTER_DECORATION_IDS } from '../../content/cottageStarterDecorations';
