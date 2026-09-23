@@ -205,10 +205,7 @@ export class VillageInteriorScene extends Phaser.Scene {
   }
 
   private createWindow(x: number, y: number, accent: number): void {
-    this.add
-      .rectangle(x, y, 210, 132, 0xbce9f4, 1)
-      .setStrokeStyle(8, accent, 0.82)
-      .setDepth(5);
+    this.add.rectangle(x, y, 210, 132, 0xbce9f4, 1).setStrokeStyle(8, accent, 0.82).setDepth(5);
     this.add.rectangle(x, y, 9, 120, 0xffffff, 0.62).setDepth(6);
     this.add.rectangle(x, y, 198, 9, 0xffffff, 0.62).setDepth(6);
     this.add.circle(x - 52, y - 34, 20, 0xffef9d, 0.82).setDepth(5.5);
@@ -681,12 +678,7 @@ export class VillageInteriorScene extends Phaser.Scene {
       );
     });
 
-    this.createOverlayButton(
-      GAME_WIDTH / 2,
-      570,
-      'Back to the bakery',
-      () => this.closeOverlay(),
-    );
+    this.createOverlayButton(GAME_WIDTH / 2, 570, 'Back to the bakery', () => this.closeOverlay());
   }
 
   private openOverlay(): void {
@@ -717,11 +709,7 @@ export class VillageInteriorScene extends Phaser.Scene {
     const fill = enabled ? UI_COLOURS.gold : UI_COLOURS.lavender;
     const button = this.add
       .rectangle(x, y, 260, 58, fill, enabled ? 1 : 0.62)
-      .setStrokeStyle(
-        3,
-        enabled ? UI_COLOURS.goldStrong : UI_COLOURS.lavenderStrong,
-        0.95,
-      )
+      .setStrokeStyle(3, enabled ? UI_COLOURS.goldStrong : UI_COLOURS.lavenderStrong, 0.95)
       .setScrollFactor(0);
     const label = this.add
       .text(x, y, labelText, {
@@ -772,7 +760,10 @@ export class VillageInteriorScene extends Phaser.Scene {
     } else if (result.type === 'persistence-failed') {
       this.showFeedback('That did not save, so no Shimmer was spent. Please try again.', anchor);
     } else {
-      this.showFeedback(`${result.item.name} is already tucked safely into your collection.`, anchor);
+      this.showFeedback(
+        `${result.item.name} is already tucked safely into your collection.`,
+        anchor,
+      );
     }
     this.refreshBalance();
   }

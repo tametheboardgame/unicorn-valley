@@ -25,9 +25,8 @@ interface Diagnostics {
 
 async function snapshot(page: Page): Promise<Snapshot> {
   return page.evaluate(() => {
-    const diagnostics = (
-      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics }
-    ).__UNICORN_VALLEY_DIAGNOSTICS__;
+    const diagnostics = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics })
+      .__UNICORN_VALLEY_DIAGNOSTICS__;
     if (!diagnostics) {
       throw new Error('Diagnostics unavailable');
     }
@@ -38,8 +37,9 @@ async function snapshot(page: Page): Promise<Snapshot> {
 async function startInterior(page: Page, interiorId: string): Promise<void> {
   await page.waitForFunction(() =>
     Boolean(
-      (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics })
-        .__UNICORN_VALLEY_DIAGNOSTICS__
+      (
+        window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics }
+      ).__UNICORN_VALLEY_DIAGNOSTICS__
         ?.snapshot()
         .activeScenes.includes('TitleScene'),
     ),
@@ -60,20 +60,14 @@ test('H3.11.1 makes VillageInteriorScene a walkable semantic interior with physi
   await page.goto('/?diagnostics=1');
   await startInterior(page, 'bakery');
 
-  const interior = (await snapshot(page)).scenes.find(
-    ({ key }) => key === 'VillageInteriorScene',
-  );
+  const interior = (await snapshot(page)).scenes.find(({ key }) => key === 'VillageInteriorScene');
   if (!interior) {
     throw new Error('Missing VillageInteriorScene');
   }
 
   const player = interior.objects.find(({ name }) => name === 'world-player-unicorn');
-  const shell = interior.objects.find(
-    ({ name }) => name === 'village-interior:bakery:room-shell',
-  );
-  const counter = interior.objects.find(
-    ({ name }) => name === 'village-interior:bakery:counter',
-  );
+  const shell = interior.objects.find(({ name }) => name === 'village-interior:bakery:room-shell');
+  const counter = interior.objects.find(({ name }) => name === 'village-interior:bakery:counter');
   const counterCollider = interior.objects.find(
     ({ name }) => name === 'village-interior-collider:bakery:counter',
   );
