@@ -4,9 +4,11 @@ Last updated: 2026-09-22
 
 ## Current work
 
-`R6.5-WP19H3 - Sunbeam Village Final Polish` is ready for **H3.8 - Props, bunting, residents and village-life recomposition**. H3.1-H3.7 are human-approved.
+`R6.5-WP19H3 - Sunbeam Village Final Polish` is at **H3.11.1 - Shared interior framework and NPC occupancy**.
 
-H3.7 is visually approved on the accepted residential/Candyland/playground baseline at branch head `fbc185ec8537393bcea9d2d036951b65a44e2e53`. H3.8 can now begin.
+H3.1-H3.10 are human-approved. The H3.11.1 implementation checkpoint is committed at `966301ed62570c1612fb4dfbeb592af47510db05`; GitHub CI and the Cloudflare preview are running for that exact code checkpoint. H3.11.1 still requires technical validation to finish and then human visual/play approval before H3.11.2 begins.
+
+The checkpoint replaces the old fixed-screen village-interior/menu contract with a reusable walkable-interior foundation, semantic anchors/collision, shared H3.9 interaction ownership, click navigation, world feedback and authoritative Maple/Tansy interior occupancy. The Bakery-specific full art/content rebuild remains H3.11.2.
 
 ## H3 feedback-block-1 sequence
 
@@ -29,6 +31,6 @@ Do not reserve a hardening/cleanup number now. The final consolidation, responsi
 
 - H1 - Moonflower Glade Final Polish: complete and human-approved.
 - H2 - Moonflower Cottage & Home Customisation: complete, fully qualified, merged and deployed to production.
-- H3 - Sunbeam Village Final Polish: H3.1-H3.7 human-approved; H3.8 ready to start.
+- H3 - Sunbeam Village Final Polish: H3.1-H3.10 human-approved; H3.11.1 implementation committed and under validation.
 
 Sunbeam Village remains a review lens, not a technical boundary. Shared defects discovered during implementation must be fixed at their canonical shared owner rather than through village-specific workarounds.
