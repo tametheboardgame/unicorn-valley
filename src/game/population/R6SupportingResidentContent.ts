@@ -481,7 +481,7 @@ export const R6_AMBIENT_RESIDENT_PLACEMENTS = [
     presentationScale: 0.56,
     waypoints: [
       { id: 'bean-playground-a', x: 2820, y: 1795, pauseMs: 2400 },
-      { id: 'bean-playground-b', x: 2740, y: 1815, pauseMs: 1700 },
+      { id: 'bean-playground-b', x: 2740, y: 1795, pauseMs: 1700 },
     ],
   },
   {
