@@ -4,226 +4,22 @@ import { InputController } from '../input/InputController';
 import { KeyboardInputAdapter } from '../input/KeyboardInputAdapter';
 import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 import { shouldShowTouchMovementPad, TouchMovementPad } from '../input/TouchMovementPad';
-import type { InteractionTarget } from '../interaction/InteractionTarget';
-import { selectInteractionTarget } from '../interaction/InteractionTargeting';
+import { registerSunbeamVillageInteractions } from '../interaction/SunbeamVillageInteractions';
 import { PlayerEntity } from '../player/PlayerEntity';
 import { parseUnicornAppearance, type UnicornAppearance } from '../player/UnicornAppearance';
 import { createUnicornAppearanceTexture } from '../player/UnicornAppearanceRenderer';
 import { getUnicornProductionTextureKey } from '../player/UnicornProductionArt';
 import { DEFAULT_PLAYER_SPEED, resolvePlayerMovement } from '../player/PlayerMovement';
 import { getBrowserSaveService } from '../save/browserSaveService';
-import {
-  MOONFLOWER_GLADE_LOCATION_ID,
-  saveLocationCheckpoint,
-} from '../save/saveLocationCheckpoint';
+import { saveLocationCheckpoint } from '../save/saveLocationCheckpoint';
 import { isWillowGardenPlanted } from '../story/WillowMoonflowersStory';
 import { createSunbeamVillageProductionPresentation } from '../visual/EnvironmentProductionPresentationManager';
-import { InteractionPrompt } from '../ui/InteractionPrompt';
-import { MOONFLOWER_GLADE_MAP, setMoonflowerGladePlayerSpawn } from '../world/MoonflowerGladeMap';
-import {
-  RAINBOW_MEADOW_LOCATION_ID,
-  RAINBOW_MEADOW_MAP,
-  setRainbowMeadowPlayerSpawn,
-} from '../world/RainbowMeadowMap';
-import {
-  setSunbeamVillagePlayerSpawn,
-  SUNBEAM_VILLAGE_LOCATION_ID,
-  SUNBEAM_VILLAGE_MAP,
-} from '../world/SunbeamVillageMap';
+import { SUNBEAM_VILLAGE_LOCATION_ID, SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
 import { SUNBEAM_VILLAGE_LAYERS, SUNBEAM_VILLAGE_LAYOUT } from '../world/SunbeamVillageLayout';
 import { worldDepthForY } from '../world/WorldDepth';
 
 const COLLISION_TEXTURE_KEY = 'village-collision-pixel';
 const SAVED_PLAYER_TEXTURE_KEY = 'player-unicorn-village';
-
-function landmarkApproach(id: string): { x: number; y: number } {
-  const landmark = SUNBEAM_VILLAGE_MAP.landmarks.find((candidate) => candidate.id === id);
-  if (!landmark) {
-    throw new Error(`Sunbeam Village interaction references missing landmark: ${id}`);
-  }
-
-  return landmark.approach;
-}
-
-function entranceApproach(id: string): { x: number; y: number } {
-  const entrance = SUNBEAM_VILLAGE_MAP.entrances.find((candidate) => candidate.id === id);
-  if (!entrance) {
-    throw new Error(`Sunbeam Village interaction references missing entrance: ${id}`);
-  }
-
-  return entrance.approach;
-}
-
-function npcPosition(id: string): { x: number; y: number } {
-  const marker = SUNBEAM_VILLAGE_MAP.npcMarkers.find((candidate) => candidate.id === id);
-  if (!marker) {
-    throw new Error(`Sunbeam Village interaction references missing NPC marker: ${id}`);
-  }
-
-  return marker.position;
-}
-
-function residenceApproach(id: string): { x: number; y: number } {
-  const residence = SUNBEAM_VILLAGE_LAYOUT.residences.find((candidate) => candidate.id === id);
-  if (!residence) {
-    throw new Error(`Sunbeam Village interaction references missing residence: ${id}`);
-  }
-
-  return residence.approach;
-}
-
-const VILLAGE_INTERACTIONS = [
-  {
-    id: 'interaction:village-bakery',
-    label: 'Sunbeam Bakery',
-    actionLabel: 'Enter',
-    position: landmarkApproach('bakery'),
-    interactionRadius: 155,
-    result: {
-      type: 'scene-transition',
-      sceneKey: 'VillageInteriorScene',
-      payload: {
-        interiorId: 'bakery',
-        returnScene: 'SunbeamVillageScene',
-      },
-    },
-  },
-  {
-    id: 'interaction:village-accessory-shop',
-    label: 'Twinkle & Thread',
-    actionLabel: 'Enter',
-    position: landmarkApproach('accessory-shop'),
-    interactionRadius: 155,
-    result: {
-      type: 'scene-transition',
-      sceneKey: 'VillageInteriorScene',
-      payload: {
-        interiorId: 'accessory-shop',
-        returnScene: 'SunbeamVillageScene',
-      },
-    },
-  },
-  {
-    id: 'interaction:village-library',
-    label: 'Story House',
-    actionLabel: 'Enter',
-    position: landmarkApproach('library'),
-    interactionRadius: 160,
-    result: {
-      type: 'scene-transition',
-      sceneKey: 'VillageInteriorScene',
-      payload: {
-        interiorId: 'library',
-        returnScene: 'SunbeamVillageScene',
-      },
-    },
-  },
-  {
-    id: 'interaction:village-fountain',
-    label: 'Sunbeam Fountain',
-    actionLabel: 'Make a wish',
-    position: landmarkApproach('sunbeam-fountain'),
-    interactionRadius: 145,
-    result: {
-      type: 'message',
-      title: 'Sunbeam Fountain',
-      message: 'The water catches a tiny rainbow when you get close. Maybe wishes linger here.',
-    },
-  },
-  {
-    id: 'interaction:village-willow',
-    label: 'Willow',
-    actionLabel: 'Talk',
-    position: npcPosition('willow'),
-    interactionRadius: 150,
-    priority: 30,
-    result: { type: 'message', title: 'Willow', message: 'Talk with Willow.' },
-  },
-  {
-    id: 'interaction:village-marigold',
-    label: 'Marigold',
-    actionLabel: 'Talk',
-    position: npcPosition('marigold'),
-    interactionRadius: 150,
-    priority: 30,
-    result: { type: 'message', title: 'Marigold', message: 'Talk with Marigold.' },
-  },
-  {
-    id: 'interaction:village-residence-rosehip',
-    label: 'Rosehip Cottage',
-    actionLabel: 'Knock',
-    position: residenceApproach('rosehip-cottage'),
-    interactionRadius: 135,
-    result: {
-      type: 'message',
-      title: 'Rosehip Cottage',
-      message: "A handwritten card by the door says, 'Out in the valley. Tea another day!'",
-    },
-  },
-  {
-    id: 'interaction:village-residence-bluebell',
-    label: 'Bluebell Cottage',
-    actionLabel: 'Knock',
-    position: residenceApproach('bluebell-cottage'),
-    interactionRadius: 135,
-    result: {
-      type: 'message',
-      title: 'Bluebell Cottage',
-      message:
-        'Warm light glows behind the curtains. A little note asks visitors to wait for an invitation before coming in.',
-    },
-  },
-  {
-    id: 'interaction:village-residence-sunpetal',
-    label: 'Sunpetal Cottage',
-    actionLabel: 'Knock',
-    position: residenceApproach('sunpetal-cottage'),
-    interactionRadius: 135,
-    result: {
-      type: 'message',
-      title: 'Sunpetal Cottage',
-      message:
-        "Tiny boots and a watering can rest by the step. This is someone's home, not a shop.",
-    },
-  },
-  {
-    id: 'interaction:village-south-gate',
-    label: 'Candyland Gate',
-    actionLabel: 'Inspect',
-    position: SUNBEAM_VILLAGE_LAYOUT.boundaryFence.lockedSouthGate.approach,
-    interactionRadius: 150,
-    result: {
-      type: 'message',
-      title: 'Candyland',
-      message:
-        'Candyland is opening soon! The unicorn theme park is still getting its rides, treats and sparkles ready for visitors.',
-    },
-  },
-  {
-    id: 'interaction:village-glade-gate',
-    label: 'Moonflower Glade',
-    actionLabel: 'Go home',
-    position: entranceApproach('moonflower-glade'),
-    interactionRadius: 170,
-    priority: 20,
-    result: {
-      type: 'scene-transition',
-      sceneKey: 'MoonflowerGladeScene',
-    },
-  },
-  {
-    id: 'interaction:village-meadow-gate',
-    label: 'Rainbow Meadow',
-    actionLabel: 'Visit meadow',
-    position: entranceApproach('rainbow-meadow'),
-    interactionRadius: 175,
-    priority: 20,
-    result: {
-      type: 'scene-transition',
-      sceneKey: 'RainbowMeadowScene',
-    },
-  },
-] satisfies readonly InteractionTarget[];
 
 export class SunbeamVillageScene extends Phaser.Scene {
   private inputController: InputController | null = null;
@@ -231,10 +27,6 @@ export class SunbeamVillageScene extends Phaser.Scene {
   private touchMovementPad: TouchMovementPad | null = null;
   private player: PlayerEntity | null = null;
   private collisionGroup: Phaser.Physics.Arcade.StaticGroup | null = null;
-  private interactionPrompt: InteractionPrompt | null = null;
-  private activeInteraction: InteractionTarget | null = null;
-  private feedbackText: Phaser.GameObjects.Text | null = null;
-  private feedbackTimer: Phaser.Time.TimerEvent | null = null;
 
   public constructor() {
     super('SunbeamVillageScene');
@@ -277,8 +69,6 @@ export class SunbeamVillageScene extends Phaser.Scene {
     ) {
       this.touchMovementPad = new TouchMovementPad(this, this.pointerInput);
     }
-    this.interactionPrompt = new InteractionPrompt(this, this.pointerInput);
-
     const camera = this.cameras.main;
     camera.setBackgroundColor('#f3d98e');
     camera.setBounds(0, 0, map.width, map.height);
@@ -286,22 +76,17 @@ export class SunbeamVillageScene extends Phaser.Scene {
     camera.setDeadzone(260, 150);
 
     this.createHud();
+    registerSunbeamVillageInteractions(this);
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-      this.feedbackTimer?.destroy();
-      this.feedbackTimer = null;
       this.touchMovementPad?.destroy();
       this.touchMovementPad = null;
       this.inputController?.destroy();
       this.inputController = null;
       this.pointerInput = null;
-      this.interactionPrompt?.destroy();
-      this.interactionPrompt = null;
       this.player?.destroy();
       this.player = null;
       this.collisionGroup = null;
-      this.activeInteraction = null;
-      this.feedbackText = null;
     });
   }
 
@@ -326,54 +111,6 @@ export class SunbeamVillageScene extends Phaser.Scene {
     this.player.applyMovement(movement);
     this.player.updatePresentation(time);
 
-    this.activeInteraction = selectInteractionTarget(
-      { x: this.player.sprite.x, y: this.player.sprite.y },
-      VILLAGE_INTERACTIONS,
-    );
-    this.interactionPrompt?.setTarget(this.activeInteraction);
-
-    if (this.inputController.justPressed('INTERACT') && this.activeInteraction) {
-      this.activateInteraction(this.activeInteraction);
-    }
-  }
-
-  private activateInteraction(target: InteractionTarget): void {
-    if (target.result.type === 'scene-transition') {
-      if (target.result.sceneKey === 'MoonflowerGladeScene') {
-        const villageEntrance = MOONFLOWER_GLADE_MAP.entrances.find(
-          (entrance) => entrance.id === 'sunbeam-village',
-        );
-        if (villageEntrance) {
-          setMoonflowerGladePlayerSpawn(villageEntrance.approach);
-        }
-        saveLocationCheckpoint(getBrowserSaveService(), MOONFLOWER_GLADE_LOCATION_ID);
-      } else if (target.result.sceneKey === 'RainbowMeadowScene') {
-        const villageEntrance = RAINBOW_MEADOW_MAP.entrances.find(
-          (entrance) => entrance.id === 'sunbeam-village',
-        );
-        if (villageEntrance) {
-          setRainbowMeadowPlayerSpawn(villageEntrance.approach);
-        }
-        saveLocationCheckpoint(getBrowserSaveService(), RAINBOW_MEADOW_LOCATION_ID);
-      } else if (target.result.sceneKey === 'VillageInteriorScene') {
-        setSunbeamVillagePlayerSpawn(target.position);
-      }
-      this.scene.start(target.result.sceneKey, target.result.payload);
-      return;
-    }
-
-    if (target.result.type === 'message') {
-      this.showFeedback(`${target.result.title}\n${target.result.message}`);
-    }
-  }
-
-  private showFeedback(message: string): void {
-    this.feedbackTimer?.destroy();
-    this.feedbackText?.setText(message).setVisible(true);
-    this.feedbackTimer = this.time.delayedCall(4000, () => {
-      this.feedbackText?.setVisible(false);
-      this.feedbackTimer = null;
-    });
   }
 
   private createEnvironment(): void {
@@ -1688,20 +1425,5 @@ export class SunbeamVillageScene extends Phaser.Scene {
       .setScrollFactor(0)
       .setDepth(SUNBEAM_VILLAGE_LAYERS.ui);
 
-    this.feedbackText = this.add
-      .text(GAME_WIDTH / 2, 120, '', {
-        color: '#5b455f',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '20px',
-        fontStyle: 'bold',
-        align: 'center',
-        wordWrap: { width: 760 },
-        backgroundColor: '#fff9e8ee',
-        padding: { x: 18, y: 12 },
-      })
-      .setOrigin(0.5, 0)
-      .setScrollFactor(0)
-      .setDepth(122)
-      .setVisible(false);
   }
 }

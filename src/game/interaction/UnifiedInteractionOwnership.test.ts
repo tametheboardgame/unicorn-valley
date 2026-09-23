@@ -29,20 +29,53 @@ describe('WP19D unified interaction ownership', () => {
     expect(offenders, `Legacy input owners: ${offenders.join(', ')}`).toEqual([]);
   });
 
-  it('routes Pebble through the unified Talk target with no legacy Pebble prompt owner', () => {
+  it('makes Sunbeam registry-owned with no legacy scene, bridge or traversal interaction owner', () => {
+    const scene = Object.entries(productionSources).find(([path]) =>
+      path.endsWith('/SunbeamVillageScene.ts'),
+    )?.[1];
+    const sunbeam = Object.entries(productionSources).find(([path]) =>
+      path.endsWith('/SunbeamVillageInteractions.ts'),
+    )?.[1];
     const bridge = Object.entries(productionSources).find(([path]) =>
       path.endsWith('/CoreSceneInteractionBridge.ts'),
+    )?.[1];
+    const traversal = Object.entries(productionSources).find(([path]) =>
+      path.endsWith('/WorldTraversalPolishManager.ts'),
+    )?.[1];
+
+    expect(scene).toBeDefined();
+    expect(sunbeam).toBeDefined();
+    expect(bridge).toBeDefined();
+    expect(traversal).toBeDefined();
+    expect(scene).toContain('registerSunbeamVillageInteractions(this)');
+    expect(scene).not.toContain('VILLAGE_INTERACTIONS');
+    expect(scene).not.toContain('new InteractionPrompt(');
+    expect(scene).not.toContain('activeInteraction');
+    expect(scene).not.toContain('activateInteraction(');
+    expect(bridge).not.toContain("this.syncScene('SunbeamVillageScene'");
+    expect(bridge).not.toContain('villageTargets(');
+    expect(traversal).not.toContain("key === 'SunbeamVillageScene'");
+    expect(traversal).not.toContain('transitionFromVillage(');
+  });
+
+  it('routes Pebble Talk and hidden-object pickups through the shared interaction owners', () => {
+    const sunbeam = Object.entries(productionSources).find(([path]) =>
+      path.endsWith('/SunbeamVillageInteractions.ts'),
     )?.[1];
     const pebbleWorld = Object.entries(productionSources).find(([path]) =>
       path.endsWith('/PebbleCollectionWorldManager.ts'),
     )?.[1];
 
-    expect(bridge).toBeDefined();
+    expect(sunbeam).toBeDefined();
     expect(pebbleWorld).toBeDefined();
-    expect(bridge).toContain("id: 'interaction:village-pebble'");
-    expect(bridge).toContain('startPebbleConversation(scene)');
+    expect(sunbeam).toContain("id: 'interaction:village-pebble'");
+    expect(sunbeam).toContain('startPebbleConversation(scene)');
+    expect(pebbleWorld).toContain('getSceneInteractionRegistry');
+    expect(pebbleWorld).toContain("actionKind: 'pick-up'");
+    expect(pebbleWorld).not.toContain('addKey(');
+    expect(pebbleWorld).not.toContain('JustDown(');
+    expect(pebbleWorld).not.toContain('.zone(');
     expect(pebbleWorld).not.toContain('Talk: Pebble');
-    expect(pebbleWorld).not.toContain('pebblePrompt');
-    expect(pebbleWorld).not.toContain('startPebbleConversation');
+    expect(pebbleWorld).not.toContain('pebble-discovery-feedback');
   });
 });

@@ -5,8 +5,10 @@ import {
 } from '../../content/r4PebbleStory';
 import type { SecretDiscoveryDefinition } from '../../content/r4Secrets';
 import { SecretDiscoveryService } from '../discovery/SecretDiscoveryService';
+import type { InteractionTarget } from '../interaction/InteractionTarget';
+import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { getBrowserSaveService } from '../save/browserSaveService';
-import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
+import { getWorldFeedbackPresenter } from '../ui/WorldFeedbackPresenter';
 
 const SUPPORTED_SCENES = [
   'MoonflowerGladeScene',
@@ -15,34 +17,17 @@ const SUPPORTED_SCENES = [
 ] as const;
 
 const PEBBLE_WORLD_PRESENTATION_NAME = 'pebble-world-presentation';
-const PEBBLE_DISCOVERY_FEEDBACK_NAME = 'pebble-discovery-feedback';
+const REGISTRY_OWNER = 'pebble-hidden-objects';
 
 interface CuriosityMarker {
   definition: SecretDiscoveryDefinition;
   container: Phaser.GameObjects.Container;
-  prompt: Phaser.GameObjects.Text;
 }
 
 interface PebbleWorldState {
   scene: Phaser.Scene;
-  interactKey: Phaser.Input.Keyboard.Key | null;
   markers: Map<string, CuriosityMarker>;
   fountainRepair: Phaser.GameObjects.Container | null;
-}
-
-function findPlayer(scene: Phaser.Scene): Phaser.Physics.Arcade.Sprite | null {
-  const namedPlayer = scene.children.getByName(WORLD_PLAYER_NAME);
-  if (namedPlayer instanceof Phaser.Physics.Arcade.Sprite) {
-    return namedPlayer;
-  }
-
-  return (
-    (scene.children.list.find(
-      (object) =>
-        object instanceof Phaser.Physics.Arcade.Sprite &&
-        object.texture.key.startsWith('player-unicorn-'),
-    ) as Phaser.Physics.Arcade.Sprite | undefined) ?? null
-  );
 }
 
 export class PebbleCollectionWorldManager {
@@ -62,35 +47,8 @@ export class PebbleCollectionWorldManager {
     }
 
     const state = this.ensureState(scene);
-    const player = findPlayer(scene);
-    if (!player) {
-      return;
-    }
-
     this.refreshCuriosityMarkers(state);
     this.refreshVillagePresentation(state);
-
-    let nearest: CuriosityMarker | null = null;
-    let nearestDistance = Number.POSITIVE_INFINITY;
-    for (const marker of state.markers.values()) {
-      const distance = Phaser.Math.Distance.Between(
-        player.x,
-        player.y,
-        marker.definition.position.x,
-        marker.definition.position.y,
-      );
-      marker.prompt.setVisible(distance <= marker.definition.interactionRadius + 85);
-      if (distance <= marker.definition.interactionRadius && distance < nearestDistance) {
-        nearest = marker;
-        nearestDistance = distance;
-      }
-    }
-
-    if (!state.interactKey || !Phaser.Input.Keyboard.JustDown(state.interactKey) || !nearest) {
-      return;
-    }
-
-    this.activateCuriosity(state, nearest.definition);
   }
 
   private findActiveScene(): Phaser.Scene | null {
@@ -111,7 +69,6 @@ export class PebbleCollectionWorldManager {
     this.clearState();
     this.state = {
       scene,
-      interactKey: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.E) ?? null,
       markers: new Map(),
       fountainRepair: null,
     };
@@ -137,6 +94,8 @@ export class PebbleCollectionWorldManager {
         state.markers.set(definition.id, this.createCuriosityMarker(state.scene, definition));
       }
     }
+
+    this.publishTargets(state);
   }
 
   private createCuriosityMarker(
@@ -153,41 +112,12 @@ export class PebbleCollectionWorldManager {
       })
       .setOrigin(0.5)
       .setAlpha(0.62);
-    const prompt = scene.add
-      .text(0, 48, `${definition.actionLabel}: ${definition.label}  🔎`, {
-        color: '#5e5360',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '15px',
-        fontStyle: 'bold',
-        backgroundColor: '#fff9edea',
-        padding: { x: 8, y: 5 },
-      })
-      .setOrigin(0.5)
-      .setVisible(false);
-    const zone = scene.add
-      .zone(0, 0, definition.interactionRadius * 1.4, definition.interactionRadius * 1.4)
-      .setInteractive({ useHandCursor: true });
 
     const container = scene.add
-      .container(definition.position.x, definition.position.y, [glow, glint, prompt, zone])
+      .container(definition.position.x, definition.position.y, [glow, glint])
       .setName(PEBBLE_WORLD_PRESENTATION_NAME)
       .setDepth(19);
 
-    zone.on('pointerdown', () => {
-      const player = findPlayer(scene);
-      if (!player) {
-        return;
-      }
-      const distance = Phaser.Math.Distance.Between(
-        player.x,
-        player.y,
-        definition.position.x,
-        definition.position.y,
-      );
-      if (distance <= definition.interactionRadius) {
-        this.activateCuriosity(this.state, definition);
-      }
-    });
 
     scene.tweens.add({
       targets: [glow, glint],
@@ -199,7 +129,31 @@ export class PebbleCollectionWorldManager {
       ease: 'Sine.InOut',
     });
 
-    return { definition, container, prompt };
+    return { definition, container };
+  }
+
+  private publishTargets(state: PebbleWorldState): void {
+    const targets: InteractionTarget[] = [...state.markers.values()].map(
+      ({ definition, container }) => ({
+        id: `interaction:${definition.id}`,
+        label: definition.label,
+        actionLabel: definition.actionLabel,
+        actionKind: 'pick-up',
+        position: definition.position,
+        interactionRadius: definition.interactionRadius,
+        priority: 25,
+        visible: () => container.active,
+        directArea: {
+          width: definition.interactionRadius * 1.4,
+          height: definition.interactionRadius * 1.4,
+        },
+        result: {
+          type: 'callback',
+          activate: () => this.activateCuriosity(state, definition),
+        },
+      }),
+    );
+    getSceneInteractionRegistry(state.scene).replaceOwnerTargets(REGISTRY_OWNER, targets);
   }
 
   private activateCuriosity(
@@ -218,7 +172,12 @@ export class PebbleCollectionWorldManager {
     const marker = state.markers.get(definition.id);
     marker?.container.destroy(true);
     state.markers.delete(definition.id);
-    this.showDiscoveryFeedback(state.scene, definition.feedback);
+    this.publishTargets(state);
+    getWorldFeedbackPresenter(state.scene).showReaction(
+      definition.feedback,
+      definition.position,
+      3000,
+    );
   }
 
   private refreshVillagePresentation(state: PebbleWorldState): void {
@@ -289,32 +248,12 @@ export class PebbleCollectionWorldManager {
     return scene.add.container(0, 0, objects).setName(PEBBLE_WORLD_PRESENTATION_NAME).setDepth(12);
   }
 
-  private showDiscoveryFeedback(scene: Phaser.Scene, message: string): void {
-    const panel = scene.add
-      .text(640, 125, message, {
-        color: '#5b5060',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '22px',
-        fontStyle: 'bold',
-        align: 'center',
-        backgroundColor: '#fff8eaf2',
-        padding: { x: 20, y: 13 },
-        wordWrap: { width: 610 },
-      })
-      .setName(PEBBLE_DISCOVERY_FEEDBACK_NAME)
-      .setOrigin(0.5)
-      .setScrollFactor(0)
-      .setDepth(181)
-      .setStroke('#ffffff', 1);
-
-    scene.time.delayedCall(3000, () => panel.destroy());
-  }
-
   private clearState(): void {
     if (!this.state) {
       return;
     }
 
+    getSceneInteractionRegistry(this.state.scene).clearOwner(REGISTRY_OWNER);
     for (const marker of this.state.markers.values()) {
       marker.container.destroy(true);
     }

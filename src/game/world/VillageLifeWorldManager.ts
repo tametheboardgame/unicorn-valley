@@ -9,6 +9,7 @@ import { DiscoveryService } from '../discovery/DiscoveryService';
 import type { InteractionActionKind, InteractionTarget } from '../interaction/InteractionTarget';
 import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { getBrowserSaveService } from '../save/browserSaveService';
+import { getWorldFeedbackPresenter } from '../ui/WorldFeedbackPresenter';
 import { SUNBEAM_VILLAGE_LAYOUT } from './SunbeamVillageLayout';
 import { worldDepthForY } from './WorldDepth';
 
@@ -31,7 +32,6 @@ interface VillageLifeRuntime {
 interface VillageLifeState {
   scene: Phaser.Scene;
   points: VillageLifeRuntime[];
-  feedback: Phaser.GameObjects.Text;
 }
 
 const REGISTRY_OWNER = 'village-life';
@@ -150,22 +150,7 @@ export class VillageLifeWorldManager {
       return this.state;
     }
     this.destroyState();
-    const feedback = scene.add
-      .text(640, 116, '', {
-        color: '#574a61',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '19px',
-        fontStyle: 'bold',
-        align: 'center',
-        backgroundColor: '#fff8eaf2',
-        padding: { x: 18, y: 10 },
-        wordWrap: { width: 700 },
-      })
-      .setOrigin(0.5)
-      .setScrollFactor(0)
-      .setDepth(184)
-      .setVisible(false);
-    const state: VillageLifeState = { scene, points: [], feedback };
+    const state: VillageLifeState = { scene, points: [] };
     for (const definition of VILLAGE_POINTS) {
       const container = scene.add
         .container(definition.x, definition.y, definition.createProp(scene))
@@ -208,12 +193,14 @@ export class VillageLifeWorldManager {
         this.discoveryService.unlockDiscovery(TANSY_NOTICE_MAP_CORNER_DISCOVERY_ID);
         this.showFeedback(
           state,
+          definition,
           '🗺️ Map corner found! It was tucked behind a notice about a missing purple mitten.',
         );
         return;
       }
       this.showFeedback(
         state,
+        definition,
         '📌 Today’s notices: “Picnic weather?”, “Race ribbons wanted for display”, and “Please stop feeding buns to the fountain fish.”',
       );
       return;
@@ -224,12 +211,14 @@ export class VillageLifeWorldManager {
         this.discoveryService.unlockDiscovery(TANSY_SUNDIAL_MAP_CORNER_DISCOVERY_ID);
         this.showFeedback(
           state,
+          definition,
           '🗺️ Final map corner found! It was wedged beneath the sundial where the breeze could not steal it again.',
         );
         return;
       }
       this.showFeedback(
         state,
+        definition,
         '☀️ The little shadow points across the square. The gold marks sparkle differently as the valley light changes.',
       );
       return;
@@ -238,6 +227,7 @@ export class VillageLifeWorldManager {
     if (definition.id === 'bench') {
       this.showFeedback(
         state,
+        definition,
         '🪑 You sit for a moment. From here you can see the Bakery, the fountain and unicorns crossing the square.',
       );
       return;
@@ -245,6 +235,7 @@ export class VillageLifeWorldManager {
     if (definition.id === 'thread-window') {
       this.showFeedback(
         state,
+        definition,
         '🎀 The window has a starter bow beside two empty stands labelled “More treasures appear as your adventures grow.”',
       );
       return;
@@ -252,18 +243,22 @@ export class VillageLifeWorldManager {
 
     this.showFeedback(
       state,
+      definition,
       '💦 Splash! Three tiny rainbow fish-shaped sparkles leap from the fountain and plop back into the water.',
     );
     state.scene.cameras.main.flash(90, 255, 238, 164, false);
   }
 
-  private showFeedback(state: VillageLifeState, message: string): void {
-    state.feedback.setText(message).setVisible(true);
-    state.scene.time.delayedCall(3300, () => {
-      if (state.feedback.active) {
-        state.feedback.setVisible(false);
-      }
-    });
+  private showFeedback(
+    state: VillageLifeState,
+    definition: VillageLifePoint,
+    message: string,
+  ): void {
+    getWorldFeedbackPresenter(state.scene).showReaction(
+      message,
+      { x: definition.x, y: definition.y },
+      3300,
+    );
   }
 
   private destroyState(): void {
@@ -274,7 +269,6 @@ export class VillageLifeWorldManager {
     for (const runtime of this.state.points) {
       runtime.container.destroy(true);
     }
-    this.state.feedback.destroy();
     this.state = null;
   }
 }
