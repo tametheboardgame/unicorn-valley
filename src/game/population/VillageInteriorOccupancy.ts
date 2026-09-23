@@ -17,6 +17,13 @@ export const VILLAGE_INTERIOR_RESIDENT_ASSIGNMENTS = [
     role: 'bakery-worker',
     supportedRoleAccessories: ['chef-hat', 'apron'],
   },
+  {
+    residentId: 'resident:velvet',
+    interiorId: 'accessory-shop',
+    workAnchorId: 'npc-work',
+    role: 'shopkeeper',
+    supportedRoleAccessories: [],
+  },
 ] as const satisfies readonly VillageInteriorResidentAssignment[];
 
 export class VillageInteriorOccupancyService {

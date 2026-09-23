@@ -4,15 +4,11 @@ Last updated: 2026-09-23
 
 ## Current work
 
-`R6.5-WP19H3 - Sunbeam Village Final Polish` is at **H3.11.2 - Sunbeam Bakery rebuild**.
+`R6.5-WP19H3 - Sunbeam Village Final Polish` is at **H3.11.2 - Sunbeam Bakery rebuild is **complete / human-approved 2026-09-23**.
 
-H3.1-H3.11.1 are human-approved. David approved the H3.11.1 walkable-interior concept and refined the population rule: existing outdoor village residents stay outside, while rebuilt interiors use dedicated new staff/resident characters unless a later story state explicitly moves a character.
+David approved the final Bakery interior, dedicated baker Cinnamon, physical displays, doorway, full Shop/Talk interaction and expanded category-based buying experience.
 
-The H3.11.2 implementation checkpoint is committed at `cc6f6f9c9f01ee611d45a6144d4dbcaa4359ce86`. GitHub CI and Cloudflare are running for that code checkpoint. Do not repeatedly poll them.
-
-The Bakery now has a fuller physical shop floor, expanded baking/prep detail, service counter/display, oven, prep bench, recipe shelf, Wobbly Cake table and café seating. Cinnamon is the dedicated baker, rendered through the shared resident system with chef hat and apron role accessories. Maple remains outside, and her Wobbly Cake quest now starts/advances through her exterior resident Talk interaction. Bakery stock now includes repeatable Cloud Biscuits and Sunbeam Swirls, with repeatable Wobbly Cake Slices unlocked after Maple's quest while preserving Berry Bun and Picnic Basket behaviour.
-
-H3.11.2 still requires automated technical validation and human visual/play approval before H3.11.3 begins.
+Current work is **H3.11.3 - Twinkle & Thread rebuild**. The first implementation checkpoint rebuilds the room as a deliberate walkable boutique with an asymmetric layout, dedicated interior shopkeeper Velvet, physical wall/display furniture, dressing mirror and style desk. Existing outdoor residents remain unaffected. The current ShopScene/progression economy is preserved during this first checkpoint; the commerce/customisation UI receives its own later H3.11.3 checkpoint after the physical room is accepted.
 
 ## H3 feedback-block-1 sequence
 
@@ -35,6 +31,6 @@ Do not reserve a hardening/cleanup number now. The final consolidation, responsi
 
 - H1 - Moonflower Glade Final Polish: complete and human-approved.
 - H2 - Moonflower Cottage & Home Customisation: complete, fully qualified, merged and deployed to production.
-- H3 - Sunbeam Village Final Polish: H3.1-H3.11.1 human-approved; H3.11.2 implementation committed and under validation.
+- H3 - Sunbeam Village Final Polish: H3.1-H3.11.2 human-approved; H3.11.3 Twinkle & Thread rebuild active.
 
 Sunbeam Village remains a review lens, not a technical boundary. Shared defects discovered during implementation must be fixed at their canonical shared owner rather than through village-specific workarounds.

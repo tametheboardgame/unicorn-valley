@@ -21,6 +21,18 @@ describe('VillageInteriorOccupancyService', () => {
     expect(service.isResidentAllowedInScene('resident:maple', 'VillageInteriorScene')).toBe(false);
   });
 
+  it('assigns a dedicated Twinkle & Thread shopkeeper who is not an outdoor resident', () => {
+    const service = new VillageInteriorOccupancyService();
+    service.enter('accessory-shop');
+
+    expect(service.getInteriorAssignment('accessory-shop')).toMatchObject({
+      residentId: 'resident:velvet',
+      role: 'shopkeeper',
+    });
+    expect(service.isResidentAllowedInScene('resident:velvet', 'VillageInteriorScene')).toBe(true);
+    expect(service.isResidentAllowedInScene('resident:velvet', 'SunbeamVillageScene')).toBe(false);
+  });
+
   it('does not reuse outdoor Tansy as the Story House interior worker', () => {
     const service = new VillageInteriorOccupancyService();
     service.enter('library');

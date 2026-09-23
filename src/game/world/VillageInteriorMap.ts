@@ -157,16 +157,18 @@ const ACCESSORY_SHOP: VillageInteriorDefinition = {
   playerSpawn: PLAYER_SPAWN,
   roomShell: ROOM_SHELL,
   anchors: sharedAnchors(
-    anchor('counter', 'Twinkle & Thread counter', { x: 760, y: 520 }, { x: 760, y: 650 }),
-    anchor('npc-work', 'Shop work position', { x: 1060, y: 520 }, { x: 1060, y: 665 }),
-    anchor('primary-feature', 'Accessory display', { x: 430, y: 600 }, { x: 430, y: 720 }),
-    anchor('secondary-feature', 'Mirror display', { x: 1110, y: 650 }, { x: 1110, y: 760 }),
+    anchor('counter', 'Stylist counter', { x: 1080, y: 470 }, { x: 1080, y: 590 }),
+    anchor('npc-work', 'Velvet work position', { x: 1120, y: 385 }, { x: 1010, y: 555 }),
+    anchor('primary-feature', 'Accessory gallery', { x: 485, y: 635 }, { x: 485, y: 770 }),
+    anchor('secondary-feature', 'Dressing mirror', { x: 1190, y: 690 }, { x: 1080, y: 790 }),
   ),
   colliders: [
     ...ROOM_COLLIDERS,
-    { id: 'counter', x: 760, y: 535, width: 520, height: 88 },
-    { id: 'display-left', x: 430, y: 600, width: 150, height: 86 },
-    { id: 'display-right', x: 1110, y: 650, width: 150, height: 86 },
+    { id: 'counter', x: 1080, y: 490, width: 390, height: 86 },
+    { id: 'wall-rack', x: 280, y: 515, width: 150, height: 250 },
+    { id: 'display-left', x: 500, y: 650, width: 190, height: 92 },
+    { id: 'display-right', x: 830, y: 715, width: 205, height: 92 },
+    { id: 'mirror', x: 1190, y: 700, width: 110, height: 125 },
   ],
 };
 

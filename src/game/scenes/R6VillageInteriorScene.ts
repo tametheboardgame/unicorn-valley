@@ -874,44 +874,151 @@ export class VillageInteriorScene extends Phaser.Scene {
     const display = getVillageInteriorAnchor('accessory-shop', 'primary-feature');
     const mirror = getVillageInteriorAnchor('accessory-shop', 'secondary-feature');
 
-    this.add
-      .rectangle(counter.position.x, counter.position.y, 540, 122, 0xb77baa, 1)
-      .setName('village-interior:accessory-shop:counter')
-      .setStrokeStyle(5, 0x8e5d86, 0.9)
-      .setDepth(worldDepthForY(counter.position.y + 68, 0.3));
-    for (const [x, icon] of [
-      [610, '🎀'],
-      [705, '🌸'],
-      [800, '✨'],
-      [895, '🌈'],
-    ] as const) {
-      this.add
-        .circle(x, counter.position.y - 38, 38, 0xfff6fb, 0.86)
-        .setStrokeStyle(3, 0xd8a4cf, 0.9)
-        .setDepth(6);
-      this.add
-        .text(x, counter.position.y - 38, icon, { fontFamily: UI_FONT, fontSize: '30px' })
-        .setOrigin(0.5)
-        .setDepth(7);
+    // Boutique wall treatment: lighter than the old magenta block and deliberately distinct from Bakery.
+    for (let y = 390; y <= 930; y += 105) {
+      this.add.rectangle(750, y, 1260, 3, 0xd7b4cf, 0.24).setDepth(3.1);
     }
+    this.add.rectangle(750, 342, 1260, 18, 0xe8c7df, 0.88).setDepth(4.6);
+
+    const rug = this.add.graphics().setName('village-interior:accessory-shop:runway-rug');
+    rug.fillStyle(0xf2dff0, 0.82);
+    rug.lineStyle(4, 0xc99bc5, 0.54);
+    rug.fillRoundedRect(560, 560, 330, 340, 90);
+    rug.strokeRoundedRect(560, 560, 330, 340, 90);
+    rug.lineStyle(2, 0xffffff, 0.55);
+    rug.strokeRoundedRect(586, 586, 278, 288, 70);
+    rug.setDepth(3.2);
+
+    this.createThreadWallRack(280, 500);
+    this.createThreadCounter(counter.position.x, counter.position.y);
+    this.createThreadDisplayIsland(display.position.x, display.position.y, 'ribbons');
+    this.createThreadDisplayIsland(830, 715, 'sparkles');
+    this.createThreadMirror(mirror.position.x, mirror.position.y);
+  }
+
+  private createThreadWallRack(x: number, y: number): void {
+    const rack = this.add.graphics().setName('village-interior:accessory-shop:wall-rack');
+    rack.fillStyle(0xf9edf7, 1);
+    rack.lineStyle(4, 0xa8759d, 0.8);
+    rack.fillRoundedRect(x - 78, y - 125, 156, 250, 22);
+    rack.strokeRoundedRect(x - 78, y - 125, 156, 250, 22);
+    rack.fillStyle(0xd5a9c9, 1);
+    rack.fillRoundedRect(x - 57, y - 92, 114, 12, 6);
+    rack.fillRoundedRect(x - 57, y + 8, 114, 12, 6);
+
+    for (const [dx, colour] of [
+      [-38, 0xf5a9c5],
+      [0, 0xbca8eb],
+      [38, 0x9edbd7],
+    ] as const) {
+      rack.fillStyle(colour, 1);
+      rack.fillCircle(x + dx, y - 52, 16);
+      rack.fillTriangle(x + dx - 13, y - 42, x + dx - 2, y - 7, x + dx + 2, y - 42);
+      rack.fillTriangle(x + dx + 13, y - 42, x + dx + 2, y - 7, x + dx - 2, y - 42);
+    }
+
+    rack.fillStyle(0xfff4d2, 1);
+    rack.fillCircle(x - 36, y + 55, 17);
+    rack.fillStyle(0xe9c0ef, 1);
+    rack.fillCircle(x, y + 55, 17);
+    rack.fillStyle(0xb5e1db, 1);
+    rack.fillCircle(x + 36, y + 55, 17);
+    rack.setDepth(worldDepthForY(y + 126, 0.2));
+  }
+
+  private createThreadCounter(x: number, y: number): void {
+    const counter = this.add.graphics().setName('village-interior:accessory-shop:counter');
+    counter.fillStyle(0xb77baa, 1);
+    counter.lineStyle(5, 0x8e5d86, 0.9);
+    counter.fillRoundedRect(x - 195, y - 18, 390, 96, 22);
+    counter.strokeRoundedRect(x - 195, y - 18, 390, 96, 22);
+    counter.fillStyle(0xfff6fb, 0.95);
+    counter.fillRoundedRect(x - 174, y + 16, 348, 44, 13);
+    counter.lineStyle(3, 0xd8a4cf, 0.88);
+    counter.strokeRoundedRect(x - 174, y + 16, 348, 44, 13);
+
+    counter.fillStyle(0xf3c5d9, 1);
+    counter.fillCircle(x - 105, y - 34, 18);
+    counter.fillStyle(0xbba7ea, 1);
+    counter.fillCircle(x - 35, y - 34, 18);
+    counter.fillStyle(0xa2d8d2, 1);
+    counter.fillCircle(x + 35, y - 34, 18);
+    counter.fillStyle(0xffdea0, 1);
+    counter.fillCircle(x + 105, y - 34, 18);
+    counter.setDepth(worldDepthForY(y + 78, 0.3));
+
     this.add
-      .rectangle(display.position.x, display.position.y, 150, 128, 0xe7b9dc, 1)
-      .setName('village-interior:accessory-shop:display')
-      .setStrokeStyle(4, 0x9c6c95, 0.8)
-      .setDepth(worldDepthForY(display.position.y + 55, 0.22));
-    this.add
-      .text(display.position.x, display.position.y - 4, '🎀\n✨', {
+      .text(x, y + 38, 'STYLE DESK', {
+        color: '#744f67',
         fontFamily: UI_FONT,
-        fontSize: '30px',
-        align: 'center',
+        fontSize: '11px',
+        fontStyle: 'bold',
+        letterSpacing: 1,
       })
       .setOrigin(0.5)
-      .setDepth(worldDepthForY(display.position.y + 58, 0.3));
-    this.add
-      .ellipse(mirror.position.x, mirror.position.y - 38, 120, 180, 0xf8edff, 1)
-      .setName('village-interior:accessory-shop:mirror')
-      .setStrokeStyle(6, 0xc99bc5, 0.9)
-      .setDepth(worldDepthForY(mirror.position.y + 52, 0.2));
+      .setDepth(worldDepthForY(y + 80, 0.42));
+  }
+
+  private createThreadDisplayIsland(
+    x: number,
+    y: number,
+    theme: 'ribbons' | 'sparkles',
+  ): void {
+    const display = this.add
+      .graphics()
+      .setName(`village-interior:accessory-shop:display-${theme}`);
+    display.fillStyle(0x6b4b64, 0.12);
+    display.fillEllipse(x + 4, y + 44, 196, 42);
+    display.fillStyle(theme === 'ribbons' ? 0xe9bfdc : 0xd8c9ef, 1);
+    display.lineStyle(4, theme === 'ribbons' ? 0xa96f98 : 0x8d77ae, 0.78);
+    display.fillRoundedRect(x - 94, y - 34, 188, 72, 22);
+    display.strokeRoundedRect(x - 94, y - 34, 188, 72, 22);
+    display.fillStyle(0xfff8ef, 1);
+    display.fillEllipse(x, y - 20, 148, 38);
+
+    if (theme === 'ribbons') {
+      for (const [dx, colour] of [
+        [-48, 0xf2a8c0],
+        [0, 0xa8d8d4],
+        [48, 0xd5b8ef],
+      ] as const) {
+        display.fillStyle(colour, 1);
+        display.fillCircle(x + dx, y - 23, 14);
+        display.fillTriangle(x + dx - 10, y - 13, x + dx - 2, y + 13, x + dx + 2, y - 13);
+        display.fillTriangle(x + dx + 10, y - 13, x + dx + 2, y + 13, x + dx - 2, y - 13);
+      }
+    } else {
+      for (const [dx, colour] of [
+        [-48, 0xffdda0],
+        [0, 0xc8b3ee],
+        [48, 0x9fddd8],
+      ] as const) {
+        display.fillStyle(colour, 1);
+        display.fillCircle(x + dx, y - 22, 15);
+        display.fillStyle(0xffffff, 0.78);
+        display.fillCircle(x + dx - 5, y - 28, 4);
+      }
+    }
+    display.setDepth(worldDepthForY(y + 48, 0.24));
+  }
+
+  private createThreadMirror(x: number, y: number): void {
+    const mirror = this.add.graphics().setName('village-interior:accessory-shop:mirror');
+    mirror.fillStyle(0x6b4b64, 0.1);
+    mirror.fillEllipse(x + 6, y + 80, 116, 24);
+    mirror.fillStyle(0xd9b6d3, 1);
+    mirror.lineStyle(5, 0xa5739c, 0.84);
+    mirror.fillRoundedRect(x - 58, y - 94, 116, 188, 56);
+    mirror.strokeRoundedRect(x - 58, y - 94, 116, 188, 56);
+    mirror.fillStyle(0xf8f0ff, 1);
+    mirror.fillRoundedRect(x - 44, y - 79, 88, 158, 44);
+    mirror.lineStyle(3, 0xffffff, 0.7);
+    mirror.lineBetween(x - 25, y - 55, x + 18, y - 10);
+    mirror.lineBetween(x - 16, y - 66, x + 28, y - 20);
+    mirror.fillStyle(0xb783a8, 1);
+    mirror.fillRoundedRect(x - 10, y + 88, 20, 46, 8);
+    mirror.fillEllipse(x, y + 134, 78, 22);
+    mirror.setDepth(worldDepthForY(y + 136, 0.2));
   }
 
   private renderInteriorOccupant(): void {
@@ -1105,11 +1212,13 @@ export class VillageInteriorScene extends Phaser.Scene {
 
   private createThreadInteractions(): InteractionTarget[] {
     const counter = getVillageInteriorAnchor('accessory-shop', 'counter');
+    const worker = getVillageInteriorAnchor('accessory-shop', 'npc-work');
     const display = getVillageInteriorAnchor('accessory-shop', 'primary-feature');
+    const mirror = getVillageInteriorAnchor('accessory-shop', 'secondary-feature');
     return [
       {
         id: 'interaction:village-interior:accessory-shop:counter',
-        label: 'Twinkle & Thread counter',
+        label: 'Style desk',
         actionLabel: 'Browse',
         actionKind: 'buy',
         position: counter.approach,
@@ -1118,14 +1227,41 @@ export class VillageInteriorScene extends Phaser.Scene {
         result: { type: 'callback', activate: () => this.openThreadShop() },
       },
       {
+        id: 'interaction:village-interior:accessory-shop:shopkeeper',
+        label: 'Velvet',
+        actionLabel: 'Talk',
+        actionKind: 'talk',
+        position: worker.approach,
+        interactionRadius: 160,
+        priority: 35,
+        result: { type: 'callback', activate: () => this.openThreadShopkeeperConversation() },
+      },
+      {
         id: 'interaction:village-interior:accessory-shop:display',
-        label: 'Accessory display',
-        actionLabel: 'See what unlocked',
+        label: 'Accessory gallery',
+        actionLabel: 'Browse display',
         actionKind: 'inspect',
         position: display.approach,
         interactionRadius: 145,
         priority: 20,
         result: { type: 'callback', activate: () => this.showThreadProgress() },
+      },
+      {
+        id: 'interaction:village-interior:accessory-shop:mirror',
+        label: 'Dressing mirror',
+        actionLabel: 'Admire',
+        actionKind: 'inspect',
+        position: mirror.approach,
+        interactionRadius: 140,
+        priority: 18,
+        result: {
+          type: 'callback',
+          activate: () =>
+            this.showFeedback(
+              'The mirror catches every sparkle. Velvet has angled it so even the shyest accessory gets a dramatic entrance.',
+              mirror.approach,
+            ),
+        },
       },
     ];
   }
@@ -1624,6 +1760,31 @@ export class VillageInteriorScene extends Phaser.Scene {
     }
     service.readCard(card.id);
     this.showFeedback(`${card.icon} ${card.title}\n${card.text}`, anchor);
+  }
+
+  private openThreadShopkeeperConversation(): void {
+    getWorldConversationPresenter().startChoice(
+      this,
+      'resident:velvet',
+      'Velvet',
+      'Velvet gives the nearest display a tiny adjustment. “Looking for something special?”',
+      [
+        { id: 'shop', label: 'Shop' },
+        {
+          id: 'talk',
+          label: 'Talk about something else',
+          followUpMessage:
+            'I change the displays whenever the light changes. A ribbon can look completely different in morning sunshine than it does under evening lanterns.',
+        },
+      ],
+      {
+        onChoice: (choiceId) => {
+          if (choiceId === 'shop') {
+            this.time.delayedCall(0, () => this.openThreadShop());
+          }
+        },
+      },
+    );
   }
 
   private openThreadShop(): void {

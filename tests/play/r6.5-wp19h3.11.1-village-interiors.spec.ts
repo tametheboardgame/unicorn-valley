@@ -230,3 +230,44 @@ test('H3.11.2 Cinnamon uses the production dialogue menu to open the Bakery shop
     })
     .toBe(true);
 });
+
+
+test('H3.11.3 gives Twinkle & Thread a dedicated walkable boutique and shopkeeper', async ({
+  page,
+}) => {
+  await page.goto('/?diagnostics=1');
+  await startInterior(page, 'accessory-shop');
+
+  const interior = (await snapshot(page)).scenes.find(({ key }) => key === 'VillageInteriorScene');
+  if (!interior) throw new Error('Missing VillageInteriorScene');
+
+  const names = new Set(interior.objects.map(({ name }) => name));
+  expect(names.has('village-interior-resident:resident:velvet')).toBe(true);
+  expect(names.has('village-interior:accessory-shop:counter')).toBe(true);
+  expect(names.has('village-interior:accessory-shop:wall-rack')).toBe(true);
+  expect(names.has('village-interior:accessory-shop:display-ribbons')).toBe(true);
+  expect(names.has('village-interior:accessory-shop:display-sparkles')).toBe(true);
+  expect(names.has('village-interior:accessory-shop:mirror')).toBe(true);
+
+  await page.evaluate(() => {
+    (
+      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__?.setArcadeSpritePosition(
+      'VillageInteriorScene',
+      'world-player-unicorn',
+      1010,
+      555,
+    );
+  });
+  await page.keyboard.press('Enter');
+
+  await expect
+    .poll(async () => {
+      const current = (await snapshot(page)).scenes.find(
+        ({ key }) => key === 'VillageInteriorScene',
+      );
+      return current?.objects.filter(({ name }) => name.startsWith('dialogue-production-choice-'))
+        .length;
+    })
+    .toBe(2);
+});

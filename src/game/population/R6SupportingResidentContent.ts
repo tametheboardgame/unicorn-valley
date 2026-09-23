@@ -144,6 +144,29 @@ export const R6_SUPPORTING_RESIDENTS = [
     },
   },
   {
+    id: 'resident:velvet',
+    name: 'Velvet',
+    role: 'Twinkle & Thread stylist and shopkeeper',
+    appearance: {
+      bodyColour: 'pearl',
+      eyeColour: 'violet',
+      maneStyle: 'braid',
+      maneColour: 'plum',
+      tailStyle: 'ribbon',
+      tailColour: 'rose',
+      hornStyle: 'spiral',
+      marking: 'sparkles',
+      accessory: 'bow',
+    },
+    talk: {
+      lines: [
+        'The best accessory is the one that makes you stand a little taller.',
+        'I rearrange the displays whenever inspiration strikes. Inspiration strikes a lot.',
+        'Some treasures only appear after a proper adventure. I think that makes them better.',
+      ],
+    },
+  },
+  {
     id: 'resident:juniper',
     name: 'Juniper',
     role: 'Tiny-nature explorer',
