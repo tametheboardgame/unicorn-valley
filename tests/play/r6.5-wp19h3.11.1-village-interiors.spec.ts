@@ -79,8 +79,14 @@ test('H3.11.1 makes VillageInteriorScene a walkable semantic interior with physi
   expect(player?.textureKey?.startsWith('player-unicorn-village-interior:bakery')).toBe(true);
   expect(shell?.visible).toBe(true);
   expect(counter?.visible).toBe(true);
-  expect(counterCollider).toMatchObject({ bodyWidth: 560, bodyHeight: 100 });
+  expect(counterCollider).toMatchObject({ bodyWidth: 440, bodyHeight: 82 });
   expect(cinnamon?.visible).toBe(true);
+  expect(
+    interior.objects.some(({ name }) => name === 'village-interior:bakery:patisserie-case'),
+  ).toBe(true);
+  expect(
+    interior.objects.some(({ name }) => name === 'village-interior:bakery:magic-cake-dome'),
+  ).toBe(true);
 
   await page.keyboard.down('ArrowLeft');
   await page.waitForTimeout(180);
@@ -100,8 +106,8 @@ test('H3.11.1 makes VillageInteriorScene a walkable semantic interior with physi
     ).__UNICORN_VALLEY_DIAGNOSTICS__?.setArcadeSpritePosition(
       'VillageInteriorScene',
       'world-player-unicorn',
-      760,
-      650,
+      815,
+      625,
     );
   });
   await expect

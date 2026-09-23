@@ -51,21 +51,25 @@ function createRoleAccessory(
   if (accessory === 'chef-hat') {
     const crown = scene.add.graphics().setName('village-interior-role:chef-hat');
     crown.fillStyle(0xfffbef, 1);
-    crown.lineStyle(3, 0xd8c7ae, 0.9);
-    crown.fillRoundedRect(-37, -86, 74, 34, 10);
-    crown.strokeRoundedRect(-37, -86, 74, 34, 10);
-    crown.fillCircle(-20, -88, 22);
-    crown.fillCircle(0, -96, 24);
-    crown.fillCircle(21, -88, 22);
+    crown.lineStyle(2, 0xd8c7ae, 0.9);
+    crown.fillRoundedRect(11, -58, 42, 14, 6);
+    crown.strokeRoundedRect(11, -58, 42, 14, 6);
+    crown.fillCircle(19, -60, 11);
+    crown.fillCircle(31, -66, 13);
+    crown.fillCircle(44, -60, 11);
     return [crown];
   }
 
   if (accessory === 'apron') {
     const apron = scene.add.graphics().setName('village-interior-role:apron');
     apron.fillStyle(0xfff6dc, 0.98);
-    apron.lineStyle(3, 0xd9b783, 0.9);
-    apron.fillRoundedRect(-31, -20, 62, 62, 12);
-    apron.strokeRoundedRect(-31, -20, 62, 62, 12);
+    apron.lineStyle(2, 0xd9b783, 0.9);
+    apron.lineBetween(-11, -23, 4, -10);
+    apron.lineBetween(4, -10, 19, -22);
+    apron.fillRoundedRect(-16, -13, 38, 39, 8);
+    apron.strokeRoundedRect(-16, -13, 38, 39, 8);
+    apron.fillStyle(0xe7a4b2, 0.9);
+    apron.fillRoundedRect(-6, 5, 18, 9, 4);
     return [apron];
   }
 
