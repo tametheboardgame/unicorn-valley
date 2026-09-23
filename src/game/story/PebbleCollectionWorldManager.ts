@@ -1,10 +1,19 @@
 import Phaser from 'phaser';
 import {
+  PEBBLE_COLLECTION_QUEST_ID,
   PEBBLE_FOUNTAIN_REPAIRED_FLAG,
+  PEBBLE_LEGACY_CURIOUS_PIECE_ITEM_ID,
+  PEBBLE_MOON_GLASS_DISCOVERY_ID,
+  PEBBLE_MOON_GLASS_WASHER_ITEM_ID,
+  PEBBLE_RAINBOW_SPRING_DISCOVERY_ID,
+  PEBBLE_RAINBOW_SPRING_ITEM_ID,
+  PEBBLE_STAR_HEADED_SCREW_ITEM_ID,
+  PEBBLE_STORY_SCREW_DISCOVERY_ID,
   R4_PEBBLE_SECRET_DEFINITIONS,
 } from '../../content/r4PebbleStory';
 import type { SecretDiscoveryDefinition } from '../../content/r4Secrets';
 import { SecretDiscoveryService } from '../discovery/SecretDiscoveryService';
+import { InventoryService } from '../inventory/InventoryService';
 import type { InteractionTarget } from '../interaction/InteractionTarget';
 import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { getBrowserSaveService } from '../save/browserSaveService';
@@ -18,6 +27,11 @@ const SUPPORTED_SCENES = [
 
 const PEBBLE_WORLD_PRESENTATION_NAME = 'pebble-world-presentation';
 const REGISTRY_OWNER = 'pebble-hidden-objects';
+const LEGACY_DISCOVERY_ITEM_PAIRS = [
+  [PEBBLE_MOON_GLASS_DISCOVERY_ID, PEBBLE_MOON_GLASS_WASHER_ITEM_ID],
+  [PEBBLE_STORY_SCREW_DISCOVERY_ID, PEBBLE_STAR_HEADED_SCREW_ITEM_ID],
+  [PEBBLE_RAINBOW_SPRING_DISCOVERY_ID, PEBBLE_RAINBOW_SPRING_ITEM_ID],
+] as const;
 
 interface CuriosityMarker {
   definition: SecretDiscoveryDefinition;
@@ -33,6 +47,7 @@ interface PebbleWorldState {
 export class PebbleCollectionWorldManager {
   private readonly saveService = getBrowserSaveService();
   private readonly secretService = new SecretDiscoveryService(this.saveService);
+  private readonly inventory = new InventoryService(this.saveService);
   private state: PebbleWorldState | null = null;
 
   public constructor(private readonly game: Phaser.Game) {
@@ -40,6 +55,7 @@ export class PebbleCollectionWorldManager {
   }
 
   private update(): void {
+    this.migrateLegacyCuriousPieces();
     const scene = this.findActiveScene();
     if (!scene) {
       this.clearState();
@@ -75,6 +91,50 @@ export class PebbleCollectionWorldManager {
     return this.state;
   }
 
+  private migrateLegacyCuriousPieces(): void {
+    const save = this.saveService.load();
+    if (!save) {
+      return;
+    }
+
+    const questIsActive = save.quests.byQuestId[PEBBLE_COLLECTION_QUEST_ID]?.status === 'active';
+    const discovered = new Set([
+      ...save.collections.discoveryIds,
+      ...save.world.uniqueDiscoveryIds,
+    ]);
+    const missingSpecificItems = questIsActive
+      ? LEGACY_DISCOVERY_ITEM_PAIRS.filter(
+          ([discoveryId, itemId]) =>
+            discovered.has(discoveryId) && (save.inventory.itemQuantities[itemId] ?? 0) === 0,
+        )
+      : [];
+    const legacyQuantity =
+      save.inventory.itemQuantities[PEBBLE_LEGACY_CURIOUS_PIECE_ITEM_ID] ?? 0;
+
+    if (missingSpecificItems.length === 0 && legacyQuantity === 0) {
+      return;
+    }
+
+    for (const [, itemId] of missingSpecificItems) {
+      this.inventory.addItem(itemId, 1, { suppressRewardFeedback: true });
+    }
+
+    const migrated = this.saveService.load();
+    if (!migrated || (migrated.inventory.itemQuantities[PEBBLE_LEGACY_CURIOUS_PIECE_ITEM_ID] ?? 0) === 0) {
+      return;
+    }
+
+    const itemQuantities = { ...migrated.inventory.itemQuantities };
+    delete itemQuantities[PEBBLE_LEGACY_CURIOUS_PIECE_ITEM_ID];
+    this.saveService.save({
+      ...migrated,
+      inventory: {
+        ...migrated.inventory,
+        itemQuantities,
+      },
+    });
+  }
+
   private refreshCuriosityMarkers(state: PebbleWorldState): void {
     const available = this.secretService.listAvailable(
       R4_PEBBLE_SECRET_DEFINITIONS,
@@ -102,26 +162,27 @@ export class PebbleCollectionWorldManager {
     scene: Phaser.Scene,
     definition: SecretDiscoveryDefinition,
   ): CuriosityMarker {
-    const glow = scene.add.circle(0, 0, 24, 0xffec9c, 0.1).setStrokeStyle(2, 0xffffff, 0.2);
+    const glow = scene.add.circle(0, 0, 28, 0xffec9c, 0.1).setStrokeStyle(2, 0xffffff, 0.18);
+    const objectArt = this.createCuriosityObjectArt(scene, definition);
     const glint = scene.add
-      .text(0, 0, '✦', {
-        color: '#fff1a8',
+      .text(20, -20, '✦', {
+        color: '#fff7c7',
         fontFamily: 'system-ui, sans-serif',
-        fontSize: '24px',
+        fontSize: '15px',
         fontStyle: 'bold',
       })
       .setOrigin(0.5)
-      .setAlpha(0.62);
+      .setAlpha(0.5);
 
     const container = scene.add
-      .container(definition.position.x, definition.position.y, [glow, glint])
+      .container(definition.position.x, definition.position.y, [glow, ...objectArt, glint])
       .setName(PEBBLE_WORLD_PRESENTATION_NAME)
       .setDepth(19);
 
     scene.tweens.add({
       targets: [glow, glint],
-      alpha: 0.95,
-      scale: 1.16,
+      alpha: 0.9,
+      scale: 1.12,
       duration: 980,
       yoyo: true,
       repeat: -1,
@@ -129,6 +190,45 @@ export class PebbleCollectionWorldManager {
     });
 
     return { definition, container };
+  }
+
+  private createCuriosityObjectArt(
+    scene: Phaser.Scene,
+    definition: SecretDiscoveryDefinition,
+  ): Phaser.GameObjects.GameObject[] {
+    if (definition.discoveryId === PEBBLE_MOON_GLASS_DISCOVERY_ID) {
+      const washer = scene.add
+        .circle(0, 0, 16, 0xb9e8ed, 0.96)
+        .setStrokeStyle(3, 0xf4ffff, 0.95);
+      const centre = scene.add
+        .circle(0, 0, 7, 0x47666d, 0.94)
+        .setStrokeStyle(1, 0x82bdc7, 0.9);
+      return [washer, centre];
+    }
+
+    if (definition.discoveryId === PEBBLE_STORY_SCREW_DISCOVERY_ID) {
+      const shaft = scene.add
+        .rectangle(0, 7, 7, 25, 0xc78d45, 1)
+        .setStrokeStyle(1, 0x73502a, 0.95);
+      const head = scene.add
+        .text(0, -9, '★', {
+          color: '#e6b866',
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '23px',
+          fontStyle: 'bold',
+          stroke: '#73502a',
+          strokeThickness: 2,
+        })
+        .setOrigin(0.5);
+      return [shaft, head];
+    }
+
+    const springColours = [0x7ed7e8, 0xd9a5e8, 0xf4d66f, 0x8ed39c] as const;
+    return springColours.map((colour, index) =>
+      scene.add
+        .ellipse(0, -10 + index * 7, 28, 11, colour, 0.18)
+        .setStrokeStyle(3, colour, 0.98),
+    );
   }
 
   private publishTargets(state: PebbleWorldState): void {

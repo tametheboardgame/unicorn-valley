@@ -59,6 +59,23 @@ function validateQuestStep(
     }
   }
 
+  if (step.type === 'collect-items' || step.type === 'consume-items') {
+    if (step.itemIds.length === 0) {
+      errors.push(`Quest ${questId} has an empty ${step.type} item set.`);
+    }
+
+    const uniqueItemIds = new Set(step.itemIds);
+    if (uniqueItemIds.size !== step.itemIds.length) {
+      errors.push(`Quest ${questId} has duplicate items in its ${step.type} item set.`);
+    }
+
+    for (const itemId of step.itemIds) {
+      if (!itemIds.has(itemId)) {
+        errors.push(`Quest ${questId} references missing item ${itemId}.`);
+      }
+    }
+  }
+
   if (step.type === 'award-friendship' && (!Number.isInteger(step.amount) || step.amount <= 0)) {
     errors.push(`Quest ${questId} has invalid friendship amount ${step.amount}.`);
   }

@@ -118,6 +118,10 @@ export type QuestStep =
       quantity: number;
     }
   | {
+      type: 'collect-items';
+      itemIds: readonly ItemId[];
+    }
+  | {
       type: 'unlock-discovery';
       discoveryId: DiscoveryId;
     }
@@ -135,6 +139,10 @@ export type QuestStep =
       type: 'consume-item';
       itemId: ItemId;
       quantity: number;
+    }
+  | {
+      type: 'consume-items';
+      itemIds: readonly ItemId[];
     }
   | {
       type: 'award-friendship';
