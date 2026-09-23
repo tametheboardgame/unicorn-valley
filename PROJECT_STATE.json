@@ -3,14 +3,14 @@
   "template_initialised": true,
   "project_id": "unicorn-valley",
   "display_name": "Unicorn Valley",
-  "phase": "R6.5 - Sunbeam Village H3.11.3 Twinkle & Thread rebuild",
+  "phase": "R6.5 - Sunbeam Village H3.11.3 Twinkle & Thread commerce/UI",
   "current_work_package": "R6.5-WP19H3",
   "current_work_package_path": "docs/work-packages/R6.5-WP19H3-SUNBEAM-VILLAGE.md",
   "status": "in_progress",
   "autonomy_state": "amber",
   "agent_state": "active",
   "branch": "agent/r6.5-wp19h3-sunbeam-village",
-  "latest_commit": "5af6e80adfed0f981f4342088f8328446874d98d",
+  "latest_commit": "c48018b642984988da6bc25823c2a90e5ac054b0",
   "ci_state": "not_started",
   "technical_validation_state": "pending",
   "human_acceptance_state": "pending",
@@ -21,6 +21,6 @@
   "night_shift_state": "not_configured",
   "chat_disposition": "keep",
   "delivery_mode": "pr_required",
-  "last_activity_at": "2026-09-23T19:48:00+01:00",
-  "updated_at": "2026-09-23T19:48:00+01:00"
+  "last_activity_at": "2026-09-23T20:05:00+01:00",
+  "updated_at": "2026-09-23T20:05:00+01:00"
 }

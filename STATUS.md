@@ -8,7 +8,9 @@ Last updated: 2026-09-23
 
 David approved the final Bakery interior, dedicated baker Cinnamon, physical displays, doorway, full Shop/Talk interaction and expanded category-based buying experience.
 
-Current work is **H3.11.3 - Twinkle & Thread rebuild**. The first implementation checkpoint rebuilds the room as a deliberate walkable boutique with an asymmetric layout, dedicated interior shopkeeper Velvet, physical wall/display furniture, dressing mirror and style desk. Existing outdoor residents remain unaffected. The current ShopScene/progression economy is preserved during this first checkpoint; the commerce/customisation UI receives its own later H3.11.3 checkpoint after the physical room is accepted.
+Current work is **H3.11.3 - Twinkle & Thread rebuild**. The first implementation checkpoint rebuilt the room as a deliberate walkable boutique with an asymmetric layout, dedicated interior shopkeeper Velvet, physical wall/display furniture, dressing mirror and style desk. David accepted the basic layout on 2026-09-23.
+
+The active second checkpoint rebuilds Twinkle & Thread commerce presentation into the approved rounded concept style, separates Wearables from Cottage décor, and makes the physical ribbon/accessory displays open Wearables while the cottage-accents island opens Cottage décor. Existing progression-gated unlocks, prices, ownership and save behaviour remain authoritative.
 
 ## H3 feedback-block-1 sequence
 

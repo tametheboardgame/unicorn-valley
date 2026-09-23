@@ -892,7 +892,7 @@ export class VillageInteriorScene extends Phaser.Scene {
     this.createThreadWallRack(280, 500);
     this.createThreadCounter(counter.position.x, counter.position.y);
     this.createThreadDisplayIsland(display.position.x, display.position.y, 'ribbons');
-    this.createThreadDisplayIsland(830, 715, 'sparkles');
+    this.createThreadDisplayIsland(830, 715, 'home');
     this.createThreadMirror(mirror.position.x, mirror.position.y);
   }
 
@@ -962,7 +962,7 @@ export class VillageInteriorScene extends Phaser.Scene {
   private createThreadDisplayIsland(
     x: number,
     y: number,
-    theme: 'ribbons' | 'sparkles',
+    theme: 'ribbons' | 'home',
   ): void {
     const display = this.add
       .graphics()
@@ -988,16 +988,25 @@ export class VillageInteriorScene extends Phaser.Scene {
         display.fillTriangle(x + dx + 10, y - 13, x + dx + 2, y + 13, x + dx - 2, y - 13);
       }
     } else {
-      for (const [dx, colour] of [
-        [-48, 0xffdda0],
-        [0, 0xc8b3ee],
-        [48, 0x9fddd8],
-      ] as const) {
-        display.fillStyle(colour, 1);
-        display.fillCircle(x + dx, y - 22, 15);
-        display.fillStyle(0xffffff, 0.78);
-        display.fillCircle(x + dx - 5, y - 28, 4);
-      }
+      // Tiny physical samples of the cottage stock: cushion, lamp and rug swatch.
+      display.fillStyle(0xbfe2ef, 1);
+      display.fillRoundedRect(x - 65, y - 38, 42, 32, 12);
+      display.lineStyle(2, 0x89b9ca, 0.78);
+      display.strokeRoundedRect(x - 65, y - 38, 42, 32, 12);
+
+      display.fillStyle(0xffdda0, 1);
+      display.fillCircle(x, y - 30, 17);
+      display.fillStyle(0xb28bb9, 1);
+      display.fillRoundedRect(x - 4, y - 14, 8, 20, 4);
+
+      display.fillStyle(0xf0a8bf, 1);
+      display.fillRoundedRect(x + 26, y - 38, 52, 30, 8);
+      display.lineStyle(3, 0xffd36f, 0.9);
+      display.lineBetween(x + 31, y - 32, x + 70, y - 32);
+      display.lineStyle(3, 0xa8d8d4, 0.9);
+      display.lineBetween(x + 31, y - 23, x + 70, y - 23);
+      display.lineStyle(3, 0xbca8eb, 0.9);
+      display.lineBetween(x + 31, y - 14, x + 70, y - 14);
     }
     display.setDepth(worldDepthForY(y + 48, 0.24));
   }
@@ -1224,7 +1233,7 @@ export class VillageInteriorScene extends Phaser.Scene {
         position: counter.approach,
         interactionRadius: 155,
         priority: 28,
-        result: { type: 'callback', activate: () => this.openThreadShop() },
+        result: { type: 'callback', activate: () => this.openThreadShop('accessories') },
       },
       {
         id: 'interaction:village-interior:accessory-shop:shopkeeper',
@@ -1237,14 +1246,34 @@ export class VillageInteriorScene extends Phaser.Scene {
         result: { type: 'callback', activate: () => this.openThreadShopkeeperConversation() },
       },
       {
+        id: 'interaction:village-interior:accessory-shop:wall-rack',
+        label: 'Ribbon wall',
+        actionLabel: 'Browse wearables',
+        actionKind: 'buy',
+        position: { x: 385, y: 570 },
+        interactionRadius: 145,
+        priority: 23,
+        result: { type: 'callback', activate: () => this.openThreadShop('accessories') },
+      },
+      {
         id: 'interaction:village-interior:accessory-shop:display',
         label: 'Accessory gallery',
-        actionLabel: 'Browse display',
-        actionKind: 'inspect',
+        actionLabel: 'Browse wearables',
+        actionKind: 'buy',
         position: display.approach,
         interactionRadius: 145,
-        priority: 20,
-        result: { type: 'callback', activate: () => this.showThreadProgress() },
+        priority: 22,
+        result: { type: 'callback', activate: () => this.openThreadShop('accessories') },
+      },
+      {
+        id: 'interaction:village-interior:accessory-shop:home-display',
+        label: 'Cottage accents',
+        actionLabel: 'Browse décor',
+        actionKind: 'buy',
+        position: { x: 830, y: 825 },
+        interactionRadius: 150,
+        priority: 22,
+        result: { type: 'callback', activate: () => this.openThreadShop('decorations') },
       },
       {
         id: 'interaction:village-interior:accessory-shop:mirror',
@@ -1787,11 +1816,16 @@ export class VillageInteriorScene extends Phaser.Scene {
     );
   }
 
-  private openThreadShop(): void {
+  private openThreadShop(
+    initialSection: 'accessories' | 'decorations' = 'accessories',
+  ): void {
     if (this.closing) {
       return;
     }
-    this.scene.launch('ShopScene', { returnScene: 'VillageInteriorScene' });
+    this.scene.launch('ShopScene', {
+      returnScene: 'VillageInteriorScene',
+      initialSection,
+    });
     this.scene.pause();
   }
 
