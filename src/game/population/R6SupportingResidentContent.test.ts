@@ -69,7 +69,7 @@ describe('R6.5 H3.10 playground life', () => {
         true,
       );
       const placement = requirePlacement(`resident:${id}`, 'SunbeamVillageScene');
-      expect(placement.presentationScale).toBeLessThan(0.7);
+      expect('presentationScale' in placement ? placement.presentationScale : 1).toBeLessThan(0.7);
       expect(placement.waypoints).toHaveLength(2);
       expect(
         placement.waypoints.every(
