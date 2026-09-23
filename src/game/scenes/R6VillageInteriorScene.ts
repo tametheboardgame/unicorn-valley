@@ -29,6 +29,7 @@ import { setInteractionModalActive } from '../interaction/InteractionModalState'
 import type { InteractionTarget } from '../interaction/InteractionTarget';
 import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { R6_SUPPORTING_RESIDENTS } from '../population/R6SupportingResidentContent';
+import { resolveSupportingResidentDisplaySize } from '../population/SupportingResidentArt';
 import type {
   SupportingResidentDefinition,
   SupportingResidentId,
@@ -1026,7 +1027,10 @@ export class VillageInteriorScene extends Phaser.Scene {
     const presentation = createVillageInteriorResidentPresentation(this, resident, {
       x: work.position.x,
       y: work.position.y,
-      displaySize: { width: 152, height: 128 },
+      displaySize:
+        this.interiorId === 'accessory-shop'
+          ? resolveSupportingResidentDisplaySize(1.1)
+          : { width: 152, height: 128 },
       accessories: assignment.supportedRoleAccessories,
     });
     presentation.container.setData('occupancy-role', assignment.role);
