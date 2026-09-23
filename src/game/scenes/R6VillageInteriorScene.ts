@@ -1228,8 +1228,9 @@ export class VillageInteriorScene extends Phaser.Scene {
         interactionRadius: 185,
         priority: 35,
         directArea: {
-          width: 150,
-          height: 150,
+          width: 170,
+          height: 190,
+          offsetY: -185,
           name: 'interaction-direct-zone:interaction:village-interior:accessory-shop:shopkeeper',
         },
         result: { type: 'callback', activate: () => this.openThreadShopkeeperConversation() },

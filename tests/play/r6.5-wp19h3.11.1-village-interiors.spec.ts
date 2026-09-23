@@ -306,4 +306,38 @@ test('H3.11.3 gives Twinkle & Thread a dedicated walkable boutique and shopkeepe
       activeScenes: ['VillageInteriorScene'],
       hasShop: true,
     });
+
+  // Close the shop overlay, then tap Velvet herself. The direct hit area must be over the
+  // visible shopkeeper, not down at the customer's standing point.
+  await page.keyboard.press('Escape');
+  await expect
+    .poll(async () => {
+      const current = (await snapshot(page)).scenes.find(
+        ({ key }) => key === 'VillageInteriorScene',
+      );
+      return current?.objects.some(({ name }) => name === 'twinkle-shop-title') ?? false;
+    })
+    .toBe(false);
+
+  const velvetZone = (await snapshot(page)).scenes
+    .find(({ key }) => key === 'VillageInteriorScene')
+    ?.objects.find(
+      ({ name }) =>
+        name ===
+        'interaction-direct-zone:interaction:village-interior:accessory-shop:shopkeeper',
+    );
+  expect(velvetZone).toBeDefined();
+  expect(velvetZone?.y).toBeLessThan(450);
+
+  await page.mouse.click(velvetZone?.x ?? 1120, velvetZone?.y ?? 405);
+
+  await expect
+    .poll(async () => {
+      const current = (await snapshot(page)).scenes.find(
+        ({ key }) => key === 'VillageInteriorScene',
+      );
+      return current?.objects.filter(({ name }) => name.startsWith('dialogue-production-choice-'))
+        .length;
+    })
+    .toBe(2);
 });
