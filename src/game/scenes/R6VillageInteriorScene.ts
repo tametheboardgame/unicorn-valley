@@ -250,20 +250,8 @@ export class VillageInteriorScene extends Phaser.Scene {
       .setName(`village-interior:${this.interiorId}:exit-frame`)
       .setDepth(worldDepthForY(shell.bottom + 28, 0.14));
     frame.fillStyle(frameColour, 0.94);
-    frame.fillRoundedRect(
-      exit.position.x - openingWidth / 2 - 12,
-      shell.bottom - 31,
-      20,
-      46,
-      8,
-    );
-    frame.fillRoundedRect(
-      exit.position.x + openingWidth / 2 - 8,
-      shell.bottom - 31,
-      20,
-      46,
-      8,
-    );
+    frame.fillRoundedRect(exit.position.x - openingWidth / 2 - 12, shell.bottom - 31, 20, 46, 8);
+    frame.fillRoundedRect(exit.position.x + openingWidth / 2 - 8, shell.bottom - 31, 20, 46, 8);
     frame.fillStyle(0xffe9dc, 0.76);
     frame.fillRoundedRect(
       exit.position.x - shell.doorWidth / 2 + 8,
@@ -571,16 +559,14 @@ export class VillageInteriorScene extends Phaser.Scene {
     }
     tower.setDepth(worldDepthForY(y + 101, 0.32));
 
-    this.add
-      .text(x, y + 71, 'CUPCAKES', {
-        color: '#76566d',
-        fontFamily: UI_FONT,
-        fontSize: '11px',
-        fontStyle: 'bold',
-        letterSpacing: 0.8,
-      })
-      .setOrigin(0.5)
-      .setDepth(worldDepthForY(y + 102, 0.4));
+    this.createBakeryDisplayPlaque(
+      x,
+      y + 72,
+      'Cupcake Carousel',
+      0xf3bfd0,
+      0xb97b8b,
+      'cupcake',
+    );
   }
 
   private createBakeryCafeStool(x: number, y: number): void {
@@ -655,16 +641,58 @@ export class VillageInteriorScene extends Phaser.Scene {
     }
     ring.setDepth(worldDepthForY(y + 101, 0.32));
 
+    this.createBakeryDisplayPlaque(
+      x,
+      y + 72,
+      'Doughnut Wheel',
+      0xead2f1,
+      0xa879a8,
+      'doughnut',
+    );
+  }
+
+  private createBakeryDisplayPlaque(
+    x: number,
+    y: number,
+    label: string,
+    fill: number,
+    stroke: number,
+    motif: 'cupcake' | 'doughnut',
+  ): void {
+    const plaque = this.add.graphics().setName(`village-interior:bakery:${motif}-plaque`);
+    plaque.fillStyle(stroke, 0.18);
+    plaque.fillEllipse(x + 3, y + 5, 128, 42);
+    plaque.fillStyle(fill, 1);
+    plaque.lineStyle(3, stroke, 0.9);
+    plaque.fillRoundedRect(x - 66, y - 18, 132, 36, 16);
+    plaque.strokeRoundedRect(x - 66, y - 18, 132, 36, 16);
+    plaque.fillTriangle(x - 61, y + 7, x - 82, y + 19, x - 55, y + 18);
+    plaque.fillTriangle(x + 61, y + 7, x + 82, y + 19, x + 55, y + 18);
+    plaque.fillStyle(0xfff7e8, 0.9);
+    plaque.fillCircle(x - 48, y, 8);
+
+    if (motif === 'doughnut') {
+      plaque.fillStyle(0xe6ad69, 1);
+      plaque.fillCircle(x - 48, y, 6);
+      plaque.fillStyle(fill, 1);
+      plaque.fillCircle(x - 48, y, 2.5);
+    } else {
+      plaque.fillStyle(0xd99365, 1);
+      plaque.fillRoundedRect(x - 53, y, 10, 7, 2);
+      plaque.fillStyle(0xffe3ed, 1);
+      plaque.fillCircle(x - 48, y - 3, 6);
+    }
+    plaque.setDepth(worldDepthForY(y + 32, 0.42));
+
     this.add
-      .text(x, y + 71, 'DOUGHNUTS', {
-        color: '#76566d',
+      .text(x + 10, y, label, {
+        color: '#6c4d63',
         fontFamily: UI_FONT,
-        fontSize: '11px',
+        fontSize: '10px',
         fontStyle: 'bold',
-        letterSpacing: 0.8,
       })
       .setOrigin(0.5)
-      .setDepth(worldDepthForY(y + 102, 0.4));
+      .setDepth(worldDepthForY(y + 32, 0.5));
   }
 
   private createBakeryDisplayCake(

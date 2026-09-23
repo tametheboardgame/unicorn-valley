@@ -85,9 +85,9 @@ test('H3.11.1 makes VillageInteriorScene a walkable semantic interior with physi
   expect(counter?.visible).toBe(true);
   expect(counterCollider).toMatchObject({ bodyWidth: 390, bodyHeight: 86 });
   expect(cinnamon?.visible).toBe(true);
-  expect(
-    interior.objects.some(({ name }) => name === 'village-interior:bakery:exit-gap'),
-  ).toBe(true);
+  expect(interior.objects.some(({ name }) => name === 'village-interior:bakery:exit-gap')).toBe(
+    true,
+  );
   expect(shellMapButton?.visible).toBe(true);
   expect(shellLocation?.visible).toBe(true);
   expect(
@@ -104,6 +104,12 @@ test('H3.11.1 makes VillageInteriorScene a walkable semantic interior with physi
   ).toBe(true);
   expect(
     interior.objects.some(({ name }) => name === 'village-interior:bakery:cupcake-display'),
+  ).toBe(true);
+  expect(
+    interior.objects.some(({ name }) => name === 'village-interior:bakery:cupcake-plaque'),
+  ).toBe(true);
+  expect(
+    interior.objects.some(({ name }) => name === 'village-interior:bakery:doughnut-plaque'),
   ).toBe(true);
   expect(
     interior.objects.some(
@@ -184,7 +190,6 @@ test('H3.11.2 does not clone outdoor residents into unfinished interiors', async
   expect(names.has('village-interior-resident:resident:maple')).toBe(false);
   expect(names.has('village-interior:library:story-table')).toBe(true);
 });
-
 
 test('H3.11.2 Cinnamon uses the production dialogue menu to open the Bakery shop', async ({
   page,

@@ -39,6 +39,7 @@ interface ActiveConversation {
   closing: boolean;
   supportingPortrait: Phaser.GameObjects.Sprite | null;
   supportingPortraitRequestId: number;
+  speakerNameOverride?: string;
 }
 
 function latestVisibleNamedObject<T extends Phaser.GameObjects.GameObject & { visible: boolean }>(
@@ -160,6 +161,7 @@ export class WorldConversationPresenter {
       closing: false,
       supportingPortrait: null,
       supportingPortraitRequestId: 0,
+      speakerNameOverride,
     };
     active.keyHandler = (event) => {
       if (event.repeat || !['Escape', 'Enter', 'Space', 'KeyE'].includes(event.code)) return;
@@ -217,7 +219,10 @@ export class WorldConversationPresenter {
       this.close(true);
       return;
     }
-    const speakerName = speakerNameOverride ?? characterRegistry.get(node.speakerId).name;
+    const speakerName =
+      speakerNameOverride ??
+      active.speakerNameOverride ??
+      characterRegistry.get(node.speakerId).name;
     active.card.show(node, speakerName, (choice) => this.choose(choice));
     this.syncSupportingPortrait(active, node.speakerId);
   }

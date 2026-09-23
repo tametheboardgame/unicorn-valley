@@ -51,7 +51,7 @@ export function createVillageInteriorResidentPresentation(
   const container = scene.add
     .container(options.x, options.y, objects)
     .setName(`village-interior-resident:${resident.id}`)
-    .setDepth(worldDepthForY(options.y + 52, 0.4));
+    .setDepth(worldDepthForY(options.y + 12, 0.15));
   container.setData('resident-id', resident.id);
   container.setData('role-accessories', [...(options.accessories ?? [])]);
   return { container, sprite };
