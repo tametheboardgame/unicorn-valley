@@ -22,6 +22,7 @@ import { StoryHouseService } from '../discovery/StoryHouseService';
 import { BakeryService } from '../economy/BakeryService';
 import { ShopPurchaseTapGuard } from '../economy/ShopPurchaseTapGuard';
 import { ShopService } from '../economy/ShopService';
+import { TwinkleWardrobeService } from '../economy/TwinkleWardrobeService';
 import { ShimmerEconomyService } from '../economy/ShimmerEconomyService';
 import { gameEventBus } from '../events/GameEventBus';
 import { InventoryService } from '../inventory/InventoryService';
@@ -125,6 +126,7 @@ export class VillageInteriorScene extends Phaser.Scene {
   private bakeryShopFeedback = '';
   private threadShopSection: 'accessories' | 'decorations' = 'accessories';
   private threadShopFeedback = '';
+  private threadWardrobeFeedback = '';
 
   public constructor() {
     super('VillageInteriorScene');
@@ -139,6 +141,7 @@ export class VillageInteriorScene extends Phaser.Scene {
     this.bakeryShopFeedback = '';
     this.threadShopSection = 'accessories';
     this.threadShopFeedback = '';
+    this.threadWardrobeFeedback = '';
     this.purchaseGuard.reset();
     this.data.set(VILLAGE_INTERIOR_SCENE_DATA_KEY, this.interiorId);
 
@@ -151,9 +154,7 @@ export class VillageInteriorScene extends Phaser.Scene {
       map,
       colliderNamePrefix: `village-interior-collider:${this.interiorId}`,
       onBack: () => this.leaveInterior(),
-      ...(this.interiorId === 'bakery'
-        ? { cameraDeadzone: { width: 220, height: 80 } }
-        : {}),
+      ...(this.interiorId === 'bakery' ? { cameraDeadzone: { width: 220, height: 80 } } : {}),
     });
     this.runtime.create();
     this.renderInteriorOccupant();
@@ -1271,19 +1272,12 @@ export class VillageInteriorScene extends Phaser.Scene {
       {
         id: 'interaction:village-interior:accessory-shop:mirror',
         label: 'Dressing mirror',
-        actionLabel: 'Admire',
-        actionKind: 'inspect',
+        actionLabel: 'Try on',
+        actionKind: 'use',
         position: mirror.approach,
         interactionRadius: 140,
         priority: 18,
-        result: {
-          type: 'callback',
-          activate: () =>
-            this.showFeedback(
-              'The mirror catches every sparkle. Velvet has angled it so even the shyest accessory gets a dramatic entrance.',
-              mirror.approach,
-            ),
-        },
+        result: { type: 'callback', activate: () => this.openThreadWardrobe() },
       },
     ];
   }
@@ -1784,6 +1778,154 @@ export class VillageInteriorScene extends Phaser.Scene {
     this.showFeedback(`${card.icon} ${card.title}\n${card.text}`, anchor);
   }
 
+  private openThreadWardrobe(): void {
+    const wardrobe = new TwinkleWardrobeService(getBrowserSaveService());
+    const options = wardrobe.listOwnedWearables();
+    this.openOverlay();
+    if (!this.overlay) {
+      return;
+    }
+
+    const title = this.add
+      .text(GAME_WIDTH / 2, 126, 'Dressing Mirror', {
+        color: '#563f63',
+        fontFamily: UI_FONT,
+        fontSize: '28px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5)
+      .setName('twinkle-wardrobe-title')
+      .setScrollFactor(0);
+    const note = this.add
+      .text(
+        GAME_WIDTH / 2,
+        160,
+        options.length > 0
+          ? 'Choose one of your Twinkle & Thread wearables and see it on your unicorn straight away.'
+          : 'You do not own a Twinkle & Thread wearable yet. Browse the shop to find one you like.',
+        {
+          color: '#806985',
+          fontFamily: UI_FONT,
+          fontSize: '12px',
+          fontStyle: 'bold',
+          align: 'center',
+          wordWrap: { width: 760 },
+        },
+      )
+      .setOrigin(0.5)
+      .setScrollFactor(0);
+    this.overlay.add([title, note]);
+
+    options.forEach((option, index) => {
+      const column = index % 2;
+      const row = Math.floor(index / 2);
+      const x = 455 + column * 370;
+      const y = 300 + row * 150;
+      const card = this.add.graphics().setScrollFactor(0);
+      card.fillStyle(0x4b3045, 0.1);
+      card.fillRoundedRect(x - 165 + 5, y - 60 + 5, 330, 120, 18);
+      card.fillStyle(option.isEquipped ? 0xfff0cf : 0xfffbef, 1);
+      card.lineStyle(3, option.isEquipped ? 0xb7834e : 0xd3a0ae, 0.9);
+      card.fillRoundedRect(x - 165, y - 60, 330, 120, 18);
+      card.strokeRoundedRect(x - 165, y - 60, 330, 120, 18);
+
+      const icon = this.add
+        .text(x - 125, y - 8, option.icon, {
+          fontFamily: UI_FONT,
+          fontSize: '32px',
+        })
+        .setOrigin(0.5)
+        .setScrollFactor(0);
+      const name = this.add
+        .text(x - 82, y - 28, option.name, {
+          color: '#5b4662',
+          fontFamily: UI_FONT,
+          fontSize: '14px',
+          fontStyle: 'bold',
+          wordWrap: { width: 190 },
+        })
+        .setOrigin(0, 0.5)
+        .setScrollFactor(0);
+      const description = this.add
+        .text(x - 82, y + 6, option.description, {
+          color: '#806985',
+          fontFamily: UI_FONT,
+          fontSize: '10px',
+          wordWrap: { width: 190 },
+        })
+        .setOrigin(0, 0.5)
+        .setScrollFactor(0);
+      this.overlay?.add([card, icon, name, description]);
+      this.createOverlayButton(
+        x + 90,
+        y + 38,
+        option.isEquipped ? 'Wearing ✓' : 'Wear it',
+        () => this.equipThreadWearable(option.itemId),
+        !option.isEquipped,
+        130,
+        34,
+      );
+    });
+
+    if (this.threadWardrobeFeedback) {
+      const feedback = this.add
+        .text(GAME_WIDTH / 2, 565, this.threadWardrobeFeedback, {
+          color: '#704d61',
+          fontFamily: UI_FONT,
+          fontSize: '13px',
+          fontStyle: 'bold',
+          align: 'center',
+          wordWrap: { width: 760 },
+        })
+        .setOrigin(0.5)
+        .setScrollFactor(0);
+      this.overlay.add(feedback);
+    }
+
+    this.createOverlayButton(
+      GAME_WIDTH / 2 - 150,
+      650,
+      'Remove accessory',
+      () => this.removeThreadWearable(),
+      true,
+      250,
+      46,
+    );
+    this.createOverlayButton(
+      GAME_WIDTH / 2 + 150,
+      650,
+      'Back to the boutique',
+      () => this.closeOverlay(),
+      true,
+      250,
+      46,
+    );
+  }
+
+  private equipThreadWearable(itemId: ItemId): void {
+    const result = new TwinkleWardrobeService(getBrowserSaveService()).equip(itemId);
+    if (result.status === 'equipped') {
+      this.threadWardrobeFeedback = `${result.option.name} is now on your unicorn.`;
+      this.runtime?.refreshPlayerAppearance();
+    } else if (result.status === 'persistence-failed') {
+      this.threadWardrobeFeedback = 'That change did not save. Please try again.';
+    } else {
+      this.threadWardrobeFeedback = 'That wearable is not available in your wardrobe yet.';
+    }
+    this.openThreadWardrobe();
+  }
+
+  private removeThreadWearable(): void {
+    const result = new TwinkleWardrobeService(getBrowserSaveService()).removeAccessory();
+    if (result.status === 'removed') {
+      this.threadWardrobeFeedback = 'Accessory removed.';
+      this.runtime?.refreshPlayerAppearance();
+    } else {
+      this.threadWardrobeFeedback = 'That change did not save. Please try again.';
+    }
+    this.openThreadWardrobe();
+  }
+
   private openThreadShopkeeperConversation(): void {
     getWorldConversationPresenter().startChoice(
       this,
@@ -1960,11 +2102,7 @@ export class VillageInteriorScene extends Phaser.Scene {
       this.createOverlayButton(
         x + 69,
         y + 39,
-        !item.isUnlocked
-          ? 'Locked'
-          : item.isUniqueOwned
-            ? 'Yours'
-            : `Buy • ${item.price} ✨`,
+        !item.isUnlocked ? 'Locked' : item.isUniqueOwned ? 'Yours' : `Buy • ${item.price} ✨`,
         () => this.buyThreadItem(item.definition.id),
         item.isUnlocked && !item.isUniqueOwned,
         122,
@@ -2011,8 +2149,7 @@ export class VillageInteriorScene extends Phaser.Scene {
           : `✨ Another ${result.item.name} added. You now own ${result.ownedQuantity}. ${result.balance} Shimmer left.`;
       this.cameras.main.flash(90, 255, 236, 190, false);
     } else if (result.type === 'insufficient-funds') {
-      this.threadShopFeedback =
-        `You need ${result.shortfall} more Shimmer for ${result.item.name}.`;
+      this.threadShopFeedback = `You need ${result.shortfall} more Shimmer for ${result.item.name}.`;
     } else if (result.type === 'locked') {
       this.threadShopFeedback = result.unlockHint;
     } else if (result.type === 'persistence-failed') {

@@ -81,6 +81,20 @@ export class WalkableInteriorRuntime {
     camera.setDeadzone(deadzone.width, deadzone.height);
   }
 
+  public refreshPlayerAppearance(): void {
+    if (!this.player) {
+      return;
+    }
+    const saveService = getBrowserSaveService();
+    const save = saveService.load() ?? saveService.createNewGame();
+    createUnicornAppearanceTexture(
+      this.scene,
+      this.options.playerTextureKey,
+      parseUnicornAppearance(save.profile.appearance),
+    );
+    this.player.refreshTexture();
+  }
+
   public update(time: number): void {
     if (!this.inputController || !this.player) {
       return;

@@ -248,6 +248,9 @@ test('H3.11.3 gives Twinkle & Thread a dedicated walkable boutique and shopkeepe
   expect(names.has('village-interior:accessory-shop:display-home')).toBe(true);
   expect(names.has('village-interior:accessory-shop:mirror')).toBe(true);
   expect(
+    names.has('interaction-direct-zone:interaction:village-interior:accessory-shop:mirror'),
+  ).toBe(true);
+  expect(
     names.has('interaction-direct-zone:interaction:village-interior:accessory-shop:wall-rack'),
   ).toBe(true);
   expect(
