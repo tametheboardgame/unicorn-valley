@@ -26,6 +26,9 @@ export const TANSY_BAKERY_MAP_CORNER_DISCOVERY_ID =
 export const TANSY_SUNDIAL_MAP_CORNER_DISCOVERY_ID = 'discovery:tansy-map-corner-sundial' as const;
 
 export const SUNBEAM_PICNIC_BASKET_ITEM_ID = 'item:sunbeam-picnic-basket' as const;
+export const CLOUD_BISCUIT_ITEM_ID = 'item:cloud-biscuit' as const;
+export const SUNBEAM_SWIRL_ITEM_ID = 'item:sunbeam-swirl' as const;
+export const WOBBLY_CAKE_SLICE_ITEM_ID = 'item:wobbly-cake-slice' as const;
 export const WOBBLY_CAKE_ITEM_ID = 'item:wobbly-cake' as const;
 
 export type MapleCakeTheme = 'sunshine' | 'moonflower' | 'rainbow';
@@ -51,6 +54,27 @@ export const R6_VILLAGE_CHARACTERS = [
 
 export const R6_VILLAGE_ITEMS = [
   {
+    id: CLOUD_BISCUIT_ITEM_ID,
+    name: 'Cloud Biscuit',
+    description: 'A soft vanilla biscuit dusted with enough sugar to look like a tiny cloud.',
+    category: 'food',
+    icon: '🍪',
+  },
+  {
+    id: SUNBEAM_SWIRL_ITEM_ID,
+    name: 'Sunbeam Swirl',
+    description: 'A warm golden pastry twisted into a sunny spiral.',
+    category: 'food',
+    icon: '☀️',
+  },
+  {
+    id: WOBBLY_CAKE_SLICE_ITEM_ID,
+    name: 'Wobbly Cake Slice',
+    description: 'A deliberately wonky celebration slice inspired by Maple’s famous cake plan.',
+    category: 'food',
+    icon: '🍰',
+  },
+  {
     id: SUNBEAM_PICNIC_BASKET_ITEM_ID,
     name: 'Sunbeam Picnic Basket',
     description: 'A sunny little basket for making the cottage feel ready for an adventure picnic.',
@@ -60,7 +84,7 @@ export const R6_VILLAGE_ITEMS = [
   {
     id: WOBBLY_CAKE_ITEM_ID,
     name: 'Wobbly Celebration Cake',
-    description: 'A cheerfully imperfect cake decorated with Maple at Sunbeam Bakery.',
+    description: 'A cheerfully imperfect cake designed with Maple and baked at Sunbeam Bakery.',
     category: 'quest',
     icon: '🎂',
     questCritical: true,
@@ -140,10 +164,27 @@ export const R6_BAKERY_STOCK = [
     unique: false,
   },
   {
+    itemId: CLOUD_BISCUIT_ITEM_ID,
+    price: 2,
+    unique: false,
+  },
+  {
+    itemId: SUNBEAM_SWIRL_ITEM_ID,
+    price: 2,
+    unique: false,
+  },
+  {
     itemId: SUNBEAM_PICNIC_BASKET_ITEM_ID,
     price: 4,
     unique: true,
     unlockAfterQuestId: MAPLE_CAKE_QUEST_ID,
     unlockHint: 'Help Maple with the Wobbly Cake Plan to unlock the picnic basket.',
+  },
+  {
+    itemId: WOBBLY_CAKE_SLICE_ITEM_ID,
+    price: 3,
+    unique: false,
+    unlockAfterQuestId: MAPLE_CAKE_QUEST_ID,
+    unlockHint: 'Finish Maple’s Wobbly Cake Plan to put celebration slices on the counter.',
   },
 ] as const satisfies readonly BakeryStockEntry[];

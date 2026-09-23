@@ -71,16 +71,16 @@ test('H3.11.1 makes VillageInteriorScene a walkable semantic interior with physi
   const counterCollider = interior.objects.find(
     ({ name }) => name === 'village-interior-collider:bakery:counter',
   );
-  const maple = interior.objects.find(
-    ({ name }) => name === 'village-interior-resident:resident:maple',
+  const cinnamon = interior.objects.find(
+    ({ name }) => name === 'village-interior-resident:resident:cinnamon',
   );
 
   expect(player).toMatchObject({ x: 750, y: 870, visible: true });
   expect(player?.textureKey?.startsWith('player-unicorn-village-interior:bakery')).toBe(true);
   expect(shell?.visible).toBe(true);
   expect(counter?.visible).toBe(true);
-  expect(counterCollider).toMatchObject({ bodyWidth: 520, bodyHeight: 88 });
-  expect(maple?.visible).toBe(true);
+  expect(counterCollider).toMatchObject({ bodyWidth: 560, bodyHeight: 100 });
+  expect(cinnamon?.visible).toBe(true);
 
   await page.keyboard.down('ArrowLeft');
   await page.waitForTimeout(180);
@@ -132,7 +132,7 @@ test('H3.11.1 makes VillageInteriorScene a walkable semantic interior with physi
     .toEqual(['SunbeamVillageScene']);
 });
 
-test('H3.11.1 assigns only the interior-appropriate resident', async ({ page }) => {
+test('H3.11.2 does not clone outdoor residents into unfinished interiors', async ({ page }) => {
   await page.goto('/?diagnostics=1');
   await startInterior(page, 'library');
 
@@ -144,7 +144,7 @@ test('H3.11.1 assigns only the interior-appropriate resident', async ({ page }) 
   }
   const names = new Set(interior.objects.map(({ name }) => name));
 
-  expect(names.has('village-interior-resident:resident:tansy')).toBe(true);
+  expect(names.has('village-interior-resident:resident:tansy')).toBe(false);
   expect(names.has('village-interior-resident:resident:maple')).toBe(false);
   expect(names.has('village-interior:library:story-table')).toBe(true);
 });

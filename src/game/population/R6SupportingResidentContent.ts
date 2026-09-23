@@ -1,3 +1,9 @@
+import {
+  MAPLE_CAKE_QUEST_ID,
+  MAPLE_CHARACTER_ID,
+  TANSY_CHARACTER_ID,
+  TANSY_MAP_QUEST_ID,
+} from '../../content/r6VillageContent';
 import { CRYSTAL_BROOK_MAP } from '../world/CrystalBrookMap';
 import { MOONFLOWER_GLADE_MAP } from '../world/MoonflowerGladeMap';
 import { RAINBOW_MEADOW_MAP } from '../world/RainbowMeadowMap';
@@ -64,6 +70,10 @@ export const R6_SUPPORTING_RESIDENTS = [
     id: 'resident:tansy',
     name: 'Tansy',
     role: 'Story House map and clue keeper',
+    characterId: TANSY_CHARACTER_ID,
+    startsQuestId: TANSY_MAP_QUEST_ID,
+    questIntroLine:
+      'Three corners escaped from my favourite map. One likes notices, one smells like baking, and one flew somewhere sunny.',
     appearance: {
       bodyColour: 'lavender',
       eyeColour: 'violet',
@@ -87,6 +97,10 @@ export const R6_SUPPORTING_RESIDENTS = [
     id: 'resident:maple',
     name: 'Maple',
     role: 'Bakery helper and picnic enthusiast',
+    characterId: MAPLE_CHARACTER_ID,
+    startsQuestId: MAPLE_CAKE_QUEST_ID,
+    questIntroLine:
+      'I need a celebration cake with personality. Pick a colour plan in the Bakery, then bring the magnificently wobbly result back to me!',
     appearance: {
       bodyColour: 'peach',
       eyeColour: 'amber',
@@ -103,6 +117,29 @@ export const R6_SUPPORTING_RESIDENTS = [
         'A bun tastes better outside. I am almost sure that is science.',
         'Marigold lets me test the decorations that are too silly for the counter.',
         'I keep finding crumbs in my mane. Very mysterious.',
+      ],
+    },
+  },
+  {
+    id: 'resident:cinnamon',
+    name: 'Cinnamon',
+    role: 'Sunbeam Bakery baker',
+    appearance: {
+      bodyColour: 'buttercup',
+      eyeColour: 'amber',
+      maneStyle: 'soft',
+      maneColour: 'rose',
+      tailStyle: 'curl',
+      tailColour: 'gold',
+      hornStyle: 'classic',
+      marking: 'freckles',
+      accessory: 'none',
+    },
+    talk: {
+      lines: [
+        'The first tray of berry buns is always the one that makes the whole Bakery smell awake.',
+        'Maple is my most enthusiastic cake planner and my least reliable sprinkle counter.',
+        'If you hear a tiny bell, the next batch is ready. If you hear a big crash, that was probably a tray.',
       ],
     },
   },

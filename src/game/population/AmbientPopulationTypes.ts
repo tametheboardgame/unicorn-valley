@@ -8,6 +8,7 @@ export type SupportingResidentId =
   | 'resident:breeze'
   | 'resident:tansy'
   | 'resident:maple'
+  | 'resident:cinnamon'
   | 'resident:juniper'
   | 'resident:fern'
   | 'resident:coral'
@@ -57,6 +58,7 @@ export interface SupportingResidentDefinition {
   talk: ResidentTalkDefinition;
   characterId?: CharacterId;
   startsQuestId?: QuestId;
+  questIntroLine?: string;
 }
 
 export interface ResidentWaypoint extends MapPoint {

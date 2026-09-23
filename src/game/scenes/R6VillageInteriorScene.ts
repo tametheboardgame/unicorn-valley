@@ -27,7 +27,10 @@ import { setInteractionModalActive } from '../interaction/InteractionModalState'
 import type { InteractionTarget } from '../interaction/InteractionTarget';
 import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { R6_SUPPORTING_RESIDENTS } from '../population/R6SupportingResidentContent';
-import type { SupportingResidentDefinition } from '../population/AmbientPopulationTypes';
+import type {
+  SupportingResidentDefinition,
+  SupportingResidentId,
+} from '../population/AmbientPopulationTypes';
 import { getVillageInteriorOccupancyService } from '../population/VillageInteriorOccupancy';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getQuestStepId } from '../quests/QuestEngine';
@@ -65,7 +68,7 @@ const INTERIOR_INTERACTION_OWNER = 'village-interior';
 const PRESENTATION: Readonly<Record<VillageInteriorId, InteriorPresentationDefinition>> = {
   bakery: {
     title: 'Sunbeam Bakery',
-    subtitle: 'Warm buns, picnic treasures and Maple’s extremely wobbly cake ideas.',
+    subtitle: 'Fresh bakes, picnic treasures and Maple’s famously wobbly cake plan.',
     icon: '🥐',
     wallColour: 0xffd6a3,
     floorColour: 0xd99d6b,
@@ -89,7 +92,7 @@ const PRESENTATION: Readonly<Record<VillageInteriorId, InteriorPresentationDefin
   },
 };
 
-function supportingResident(id: 'resident:maple' | 'resident:tansy'): SupportingResidentDefinition {
+function supportingResident(id: SupportingResidentId): SupportingResidentDefinition {
   const resident = R6_SUPPORTING_RESIDENTS.find((candidate) => candidate.id === id);
   if (!resident) {
     throw new Error(`Village interior requires supporting resident ${id}`);
@@ -241,68 +244,143 @@ export class VillageInteriorScene extends Phaser.Scene {
     const recipeShelf = getVillageInteriorAnchor('bakery', 'primary-feature');
     const cakeTable = getVillageInteriorAnchor('bakery', 'secondary-feature');
 
-    this.add
-      .rectangle(counter.position.x, counter.position.y, 540, 122, 0xb77456, 1)
-      .setName('village-interior:bakery:counter')
-      .setStrokeStyle(5, 0x8d553f, 0.9)
-      .setDepth(worldDepthForY(counter.position.y + 68, 0.3));
-    for (const [x, icon] of [
-      [610, '🥐'],
-      [705, '🍓'],
-      [800, '🧁'],
-      [895, '🥖'],
+    this.add.rectangle(750, 334, 1280, 34, 0xfff0cf, 0.9).setDepth(4.6);
+    for (const [x, goods] of [
+      [545, '🥖  🥐'],
+      [690, '🍞  🥨'],
+      [835, '🥖  🥐'],
+      [980, '🍞  🥨'],
     ] as const) {
+      this.add.rectangle(x, 296, 116, 12, 0xb56f4f, 0.92).setDepth(5.2);
       this.add
-        .text(x, counter.position.y - 36, icon, { fontFamily: UI_FONT, fontSize: '38px' })
+        .text(x, 270, goods, { fontFamily: UI_FONT, fontSize: '24px' })
         .setOrigin(0.5)
-        .setDepth(worldDepthForY(counter.position.y + 70, 0.4));
+        .setDepth(5.4);
     }
 
     this.add
-      .rectangle(330, 400, 150, 190, 0x875743, 1)
+      .rectangle(260, 425, 150, 205, 0x7d5547, 1)
       .setName('village-interior:bakery:oven')
-      .setStrokeStyle(5, 0x684232, 0.9)
-      .setDepth(worldDepthForY(492, 0.22));
+      .setStrokeStyle(6, 0x5f4038, 0.95)
+      .setDepth(worldDepthForY(505, 0.22));
     this.add
-      .text(330, 395, '🔥', { fontFamily: UI_FONT, fontSize: '48px' })
+      .rectangle(260, 430, 96, 92, 0x3f3131, 1)
+      .setStrokeStyle(4, 0xc98f63, 0.9)
+      .setDepth(worldDepthForY(506, 0.27));
+    this.add
+      .text(260, 431, '🔥', { fontFamily: UI_FONT, fontSize: '42px' })
       .setOrigin(0.5)
-      .setDepth(worldDepthForY(494, 0.3));
+      .setDepth(worldDepthForY(508, 0.3));
 
     this.add
-      .rectangle(recipeShelf.position.x, recipeShelf.position.y, 175, 210, 0xe8b984, 1)
-      .setName('village-interior:bakery:recipe-shelf')
-      .setStrokeStyle(5, 0xb97a58, 0.8)
-      .setDepth(worldDepthForY(recipeShelf.position.y + 78, 0.18));
+      .rectangle(470, 455, 205, 104, 0xc78b61, 1)
+      .setName('village-interior:bakery:prep-bench')
+      .setStrokeStyle(4, 0x956245, 0.85)
+      .setDepth(worldDepthForY(505, 0.2));
     this.add
-      .text(recipeShelf.position.x, recipeShelf.position.y - 55, 'RECIPES', {
+      .text(470, 433, '🥣   🥄   🥚', { fontFamily: UI_FONT, fontSize: '26px' })
+      .setOrigin(0.5)
+      .setDepth(worldDepthForY(510, 0.28));
+    this.add
+      .text(425, 505, '🌾', { fontFamily: UI_FONT, fontSize: '40px' })
+      .setOrigin(0.5)
+      .setDepth(worldDepthForY(535, 0.3));
+    this.add
+      .text(505, 510, '🧺', { fontFamily: UI_FONT, fontSize: '32px' })
+      .setOrigin(0.5)
+      .setDepth(worldDepthForY(540, 0.3));
+
+    this.add
+      .rectangle(counter.position.x, counter.position.y, 585, 138, 0xb77456, 1)
+      .setName('village-interior:bakery:counter')
+      .setStrokeStyle(6, 0x87513e, 0.95)
+      .setDepth(worldDepthForY(counter.position.y + 74, 0.3));
+    this.add
+      .rectangle(counter.position.x, counter.position.y - 20, 535, 62, 0xffeac8, 0.72)
+      .setStrokeStyle(3, 0xd69c73, 0.8)
+      .setDepth(worldDepthForY(counter.position.y + 76, 0.34));
+    for (const [x, icon] of [
+      [605, '🥐'],
+      [690, '🍪'],
+      [780, '☀️'],
+      [870, '🍰'],
+      [955, '🥖'],
+    ] as const) {
+      this.add
+        .text(x, counter.position.y - 31, icon, { fontFamily: UI_FONT, fontSize: '31px' })
+        .setOrigin(0.5)
+        .setDepth(worldDepthForY(counter.position.y + 78, 0.4));
+    }
+    this.add
+      .text(counter.position.x, counter.position.y + 25, 'FRESH TODAY', {
+        color: '#fff4df',
+        fontFamily: UI_FONT,
+        fontSize: '15px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5)
+      .setDepth(worldDepthForY(counter.position.y + 79, 0.42));
+
+    this.add
+      .rectangle(recipeShelf.position.x, recipeShelf.position.y, 160, 222, 0xe8b984, 1)
+      .setName('village-interior:bakery:recipe-shelf')
+      .setStrokeStyle(5, 0xb97a58, 0.85)
+      .setDepth(worldDepthForY(recipeShelf.position.y + 84, 0.18));
+    this.add
+      .text(recipeShelf.position.x, recipeShelf.position.y - 65, 'RECIPES', {
         color: '#704637',
         fontFamily: UI_FONT,
         fontSize: '14px',
         fontStyle: 'bold',
       })
       .setOrigin(0.5)
-      .setDepth(worldDepthForY(recipeShelf.position.y + 80, 0.25));
+      .setDepth(worldDepthForY(recipeShelf.position.y + 86, 0.25));
     this.add
       .text(recipeShelf.position.x, recipeShelf.position.y + 5, '📜  📖\n📄  🥄', {
         fontFamily: UI_FONT,
-        fontSize: '28px',
+        fontSize: '27px',
         align: 'center',
       })
       .setOrigin(0.5)
-      .setDepth(worldDepthForY(recipeShelf.position.y + 80, 0.3));
+      .setDepth(worldDepthForY(recipeShelf.position.y + 88, 0.3));
 
     this.add
-      .ellipse(cakeTable.position.x, cakeTable.position.y, 230, 120, 0xf4d8aa, 1)
+      .ellipse(cakeTable.position.x, cakeTable.position.y, 235, 128, 0xf4d8aa, 1)
       .setName('village-interior:bakery:cake-table')
-      .setStrokeStyle(4, 0xb97a58, 0.75)
-      .setDepth(worldDepthForY(cakeTable.position.y + 48, 0.24));
+      .setStrokeStyle(5, 0xb97a58, 0.8)
+      .setDepth(worldDepthForY(cakeTable.position.y + 52, 0.24));
     this.add
-      .text(cakeTable.position.x, cakeTable.position.y - 4, '🎂  🥄  ✨', {
+      .text(cakeTable.position.x, cakeTable.position.y - 5, '🎂   🎨   ✨', {
         fontFamily: UI_FONT,
         fontSize: '31px',
       })
       .setOrigin(0.5)
-      .setDepth(worldDepthForY(cakeTable.position.y + 50, 0.32));
+      .setDepth(worldDepthForY(cakeTable.position.y + 54, 0.32));
+
+    this.add
+      .ellipse(1110, 755, 188, 126, 0xd7a16d, 1)
+      .setName('village-interior:bakery:cafe-table')
+      .setStrokeStyle(4, 0x9b684d, 0.82)
+      .setDepth(worldDepthForY(812, 0.22));
+    this.add
+      .text(1110, 748, '☕  🥐', { fontFamily: UI_FONT, fontSize: '29px' })
+      .setOrigin(0.5)
+      .setDepth(worldDepthForY(815, 0.3));
+    for (const x of [1005, 1215]) {
+      this.add
+        .circle(x, 795, 36, 0x8d5c48, 1)
+        .setStrokeStyle(4, 0x6f4638, 0.8)
+        .setDepth(worldDepthForY(828, 0.22));
+    }
+
+    this.add
+      .text(180, 600, '🌾', { fontFamily: UI_FONT, fontSize: '46px' })
+      .setOrigin(0.5)
+      .setDepth(worldDepthForY(635, 0.18));
+    this.add
+      .text(1320, 610, '🧺', { fontFamily: UI_FONT, fontSize: '40px' })
+      .setOrigin(0.5)
+      .setDepth(worldDepthForY(645, 0.18));
   }
 
   private createStoryHouseSet(): void {
@@ -387,14 +465,13 @@ export class VillageInteriorScene extends Phaser.Scene {
       return;
     }
 
-    const resident = supportingResident(
-      assignment.residentId as 'resident:maple' | 'resident:tansy',
-    );
+    const resident = supportingResident(assignment.residentId);
     const work = getVillageInteriorAnchor(this.interiorId, assignment.workAnchorId);
     const presentation = createVillageInteriorResidentPresentation(this, resident, {
       x: work.position.x,
       y: work.position.y,
       displaySize: { width: 152, height: 128 },
+      accessories: assignment.supportedRoleAccessories,
     });
     presentation.container.setData('occupancy-role', assignment.role);
     this.occupant = presentation.container;
@@ -478,14 +555,14 @@ export class VillageInteriorScene extends Phaser.Scene {
 
     if (this.occupant) {
       targets.push({
-        id: 'interaction:village-interior:bakery:maple',
-        label: 'Maple',
+        id: 'interaction:village-interior:bakery:baker',
+        label: 'Cinnamon',
         actionLabel: 'Talk',
         actionKind: 'talk',
         position: worker.approach,
         interactionRadius: 160,
         priority: 35,
-        result: { type: 'callback', activate: () => this.talkToMaple() },
+        result: { type: 'callback', activate: () => this.talkToBakeryBaker() },
       });
     }
     return targets;
@@ -617,42 +694,55 @@ export class VillageInteriorScene extends Phaser.Scene {
     }
 
     const title = this.add
-      .text(GAME_WIDTH / 2, 175, 'Sunbeam Bakery counter', {
+      .text(GAME_WIDTH / 2, 138, 'Cinnamon’s Bakery counter', {
         color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
-        fontSize: '28px',
+        fontSize: '27px',
         fontStyle: 'bold',
       })
       .setOrigin(0.5)
       .setScrollFactor(0);
-    this.overlay.add(title);
+    const note = this.add
+      .text(GAME_WIDTH / 2, 174, 'Fresh treats can be bought again whenever you have enough Shimmer.', {
+        color: UI_COLOURS.softInk,
+        fontFamily: UI_FONT,
+        fontSize: '13px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5)
+      .setScrollFactor(0);
+    this.overlay.add([title, note]);
 
     stock.forEach((item, index) => {
-      const x = 430 + index * 420;
+      const column = index % 3;
+      const row = Math.floor(index / 3);
+      const x = 330 + column * 310;
+      const y = 285 + row * 185;
       const card = this.add
-        .rectangle(x, 365, 360, 280, 0xfffbf3, 0.98)
+        .rectangle(x, y, 280, 154, 0xfffbf3, 0.98)
         .setStrokeStyle(4, 0xd88b62, 0.9)
         .setScrollFactor(0);
       const icon = this.add
-        .text(x, 285, item.definition.icon ?? '🥐', {
+        .text(x - 92, y - 35, item.definition.icon ?? '🥐', {
           fontFamily: UI_FONT,
-          fontSize: '48px',
+          fontSize: '38px',
         })
         .setOrigin(0.5)
         .setScrollFactor(0);
       const name = this.add
-        .text(x, 335, item.definition.name, {
+        .text(x + 10, y - 42, item.definition.name, {
           color: UI_COLOURS.ink,
           fontFamily: UI_FONT,
-          fontSize: '18px',
+          fontSize: '16px',
           fontStyle: 'bold',
+          wordWrap: { width: 175 },
         })
         .setOrigin(0.5)
         .setScrollFactor(0);
       const detail = this.add
         .text(
-          x,
-          385,
+          x + 10,
+          y - 8,
           item.isUnlocked
             ? item.isOwned
               ? 'Owned ✓'
@@ -661,9 +751,9 @@ export class VillageInteriorScene extends Phaser.Scene {
           {
             color: UI_COLOURS.softInk,
             fontFamily: UI_FONT,
-            fontSize: '14px',
+            fontSize: '12px',
             align: 'center',
-            wordWrap: { width: 300 },
+            wordWrap: { width: 180 },
           },
         )
         .setOrigin(0.5)
@@ -671,14 +761,14 @@ export class VillageInteriorScene extends Phaser.Scene {
       this.overlay?.add([card, icon, name, detail]);
       this.createOverlayButton(
         x,
-        455,
+        y + 49,
         item.isOwned ? 'Yours!' : item.isUnlocked ? `Buy • ${item.price} ✨` : 'Locked',
         () => this.buyBakeryItem(item.definition.id),
         item.isUnlocked && !item.isOwned,
       );
     });
 
-    this.createOverlayButton(GAME_WIDTH / 2, 570, 'Back to the bakery', () => this.closeOverlay());
+    this.createOverlayButton(GAME_WIDTH / 2, 590, 'Back to the bakery', () => this.closeOverlay());
   }
 
   private openOverlay(): void {
@@ -768,49 +858,44 @@ export class VillageInteriorScene extends Phaser.Scene {
     this.refreshBalance();
   }
 
-  private talkToMaple(): void {
-    const engine = getBrowserQuestEngine();
-    let progress = engine.getProgress(MAPLE_CAKE_QUEST_ID);
-    if (progress.status === 'not-started') {
-      progress = engine.startQuest(MAPLE_CAKE_QUEST_ID);
-    }
+  private talkToBakeryBaker(): void {
+    const progress = getBrowserQuestEngine().getProgress(MAPLE_CAKE_QUEST_ID);
     let message: string;
-    if (
-      progress.status === 'active' &&
-      progress.currentStepId === getQuestStepId(MAPLE_CAKE_QUEST_ID, 0)
-    ) {
-      engine.notifyCharacterTalked(MAPLE_CHARACTER_ID);
+    if (progress.status === 'not-started') {
       message =
-        'Maple: “I need a celebration cake with personality. Pick a colour plan, then we can wobble it together!”';
-    } else if (
-      progress.status === 'active' &&
-      progress.currentStepId === getQuestStepId(MAPLE_CAKE_QUEST_ID, 4)
-    ) {
-      engine.notifyCharacterTalked(MAPLE_CHARACTER_ID);
+        'Cinnamon: “Maple has been sketching a celebration cake outside. If she recruits you, I have plenty of bowls and absolutely no fear of sprinkles.”';
+    } else if (questIsAt(MAPLE_CAKE_QUEST_ID, 1)) {
       message =
-        'Maple: “It is magnificently wobbly. That makes it ours. I saved a picnic-basket pattern for you too!”';
+        'Cinnamon: “Maple left three colour plans on the cake table. Pick the one you like and I’ll make sure the cake wobbles safely.”';
+    } else if (questIsAt(MAPLE_CAKE_QUEST_ID, 4)) {
+      message =
+        'Cinnamon: “That cake is gloriously uneven. Maple is outside and definitely needs to see what you made.”';
     } else if (progress.status === 'completed') {
       message =
-        'Maple: “The Wobbly Cake Plan is officially a success. I am still voting for extra sprinkles next time.”';
+        'Cinnamon: “Maple’s Wobbly Cake is officially a Bakery favourite now. I keep a few celebration slices on the counter whenever I can.”';
     } else {
-      message = 'Maple: “The cake plan is waiting. Choose a design when you are ready.”';
+      message =
+        'Cinnamon: “Everything on the counter is fresh today. The Berry Buns disappear fastest, but the Cloud Biscuits make the best crumbs.”';
     }
     this.showFeedback(message, getVillageInteriorAnchor('bakery', 'npc-work').approach);
-    this.registerInteractions();
   }
 
   private openCakePlan(): void {
     const engine = getBrowserQuestEngine();
-    let progress = engine.getProgress(MAPLE_CAKE_QUEST_ID);
-    if (progress.status === 'not-started') {
-      progress = engine.startQuest(MAPLE_CAKE_QUEST_ID);
-    }
+    const progress = engine.getProgress(MAPLE_CAKE_QUEST_ID);
     const anchor = getVillageInteriorAnchor('bakery', 'secondary-feature').approach;
+    if (progress.status === 'not-started') {
+      this.showFeedback(
+        'Maple is usually just outside the Bakery. Talk to her about her Wobbly Cake idea first.',
+        anchor,
+      );
+      return;
+    }
     if (!questIsAt(MAPLE_CAKE_QUEST_ID, 1)) {
       this.showFeedback(
         progress.status === 'completed'
           ? 'Maple’s first Wobbly Cake is already part of Village history. The cake table still carries a suspicious amount of sprinkles.'
-          : 'Talk to Maple first so she can explain the Wobbly Cake Plan.',
+          : 'Maple’s cake plan is not ready for decorating yet. Check in with her outside.',
         anchor,
       );
       return;

@@ -5,24 +5,17 @@ export interface VillageInteriorResidentAssignment {
   residentId: SupportingResidentId;
   interiorId: VillageInteriorId;
   workAnchorId: 'npc-work';
-  role: 'bakery-worker' | 'story-keeper';
+  role: 'bakery-worker' | 'shopkeeper' | 'story-keeper';
   supportedRoleAccessories: readonly ('chef-hat' | 'apron' | 'satchel')[];
 }
 
 export const VILLAGE_INTERIOR_RESIDENT_ASSIGNMENTS = [
   {
-    residentId: 'resident:maple',
+    residentId: 'resident:cinnamon',
     interiorId: 'bakery',
     workAnchorId: 'npc-work',
     role: 'bakery-worker',
     supportedRoleAccessories: ['chef-hat', 'apron'],
-  },
-  {
-    residentId: 'resident:tansy',
-    interiorId: 'library',
-    workAnchorId: 'npc-work',
-    role: 'story-keeper',
-    supportedRoleAccessories: ['satchel'],
   },
 ] as const satisfies readonly VillageInteriorResidentAssignment[];
 
@@ -58,7 +51,7 @@ export class VillageInteriorOccupancyService {
       (candidate) => candidate.residentId === residentId,
     );
     if (!assignment) {
-      return true;
+      return sceneKey !== 'VillageInteriorScene';
     }
 
     const assignedInteriorActive = assignment.interiorId === this.activeInteriorId;

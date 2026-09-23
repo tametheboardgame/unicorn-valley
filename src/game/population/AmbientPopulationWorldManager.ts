@@ -5,6 +5,7 @@ import { getWorldFeedbackPresenter } from '../ui/WorldFeedbackPresenter';
 import type { InteractionActionKind, InteractionTarget } from '../interaction/InteractionTarget';
 import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
+import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
 import { worldDepthForY } from '../world/WorldDepth';
@@ -419,13 +420,27 @@ export class AmbientPopulationWorldManager {
       ensureSupportingResidentTexture(runtime.container.scene, runtime.resident, 'idle'),
     );
 
+    let questStartedNow = false;
+    if (runtime.resident.startsQuestId && runtime.resident.characterId) {
+      const questEngine = getBrowserQuestEngine();
+      questStartedNow =
+        questEngine.getProgress(runtime.resident.startsQuestId).status === 'not-started';
+      if (questStartedNow) {
+        questEngine.startQuest(runtime.resident.startsQuestId);
+      }
+      questEngine.notifyCharacterTalked(runtime.resident.characterId);
+    }
+
     const configuredVariants = R6_SUPPORTING_RESIDENT_TALK_VARIANTS[runtime.resident.id];
     const talk: ResidentTalkDefinition = {
       ...runtime.resident.talk,
       variants: configuredVariants ?? runtime.resident.talk.variants,
     };
     const lines = resolveResidentTalkLines(talk, this.getContext());
-    const line = chooseTalkLine(lines, runtime.interactionCount);
+    const line =
+      questStartedNow && runtime.resident.questIntroLine
+        ? runtime.resident.questIntroLine
+        : chooseTalkLine(lines, runtime.interactionCount);
     runtime.interactionCount += 1;
     state.activeResidentId = runtime.resident.id;
     this.showResidentConversation(state, runtime, line);
