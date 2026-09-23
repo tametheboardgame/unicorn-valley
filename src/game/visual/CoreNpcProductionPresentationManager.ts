@@ -1,6 +1,12 @@
 import Phaser from 'phaser';
 import { PIP_POSITION } from '../intro/PipIntro';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
+import type { UnicornAppearance } from '../player/UnicornAppearance';
+import type { UnicornAppearancePalette } from '../player/UnicornAppearanceRenderer';
+import {
+  createResidentAppearanceSprite,
+  SUPPORTING_RESIDENT_ART_LAYOUT,
+} from '../population/SupportingResidentArt';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import {
   CoreNpcPresenceService,
@@ -10,7 +16,11 @@ import {
 import { RAINBOW_MEADOW_MAP } from '../world/RainbowMeadowMap';
 import { SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
 import { worldDepthForY } from '../world/WorldDepth';
-import { addCoreNpcIdleTween, createCoreNpcSprite } from './CoreNpcProductionArt';
+import {
+  addCoreNpcIdleTween,
+  CORE_NPC_VISUALS,
+  createCoreNpcSprite,
+} from './CoreNpcProductionArt';
 
 const LUMI_WORLD_POSITION = { x: 2980, y: 1530 } as const;
 const NOVA_PICNIC_POSITION = { x: 2045, y: 1400 } as const;
@@ -20,6 +30,75 @@ const novaRaceMarker = RAINBOW_MEADOW_MAP.npcMarkers.find((candidate) => candida
 const NOVA_RACE_POSITION = novaRaceMarker
   ? { x: novaRaceMarker.position.x, y: novaRaceMarker.position.y }
   : null;
+
+type VillageCoreResidentId = 'willow' | 'marigold' | 'pebble';
+
+interface VillageCoreResidentPresentation {
+  appearance: UnicornAppearance;
+  palette: UnicornAppearancePalette;
+}
+
+const VILLAGE_CORE_RESIDENT_PRESENTATIONS: Readonly<
+  Record<VillageCoreResidentId, VillageCoreResidentPresentation>
+> = {
+  willow: {
+    appearance: {
+      bodyColour: 'mint',
+      eyeColour: 'green',
+      maneStyle: 'soft',
+      maneColour: 'midnight',
+      tailStyle: 'plume',
+      tailColour: 'aqua',
+      hornStyle: 'moon',
+      marking: 'moon',
+      accessory: 'flower',
+    },
+    palette: {
+      body: CORE_NPC_VISUALS.willow.body,
+      eye: 0x4f8967,
+      mane: CORE_NPC_VISUALS.willow.mane,
+      tail: CORE_NPC_VISUALS.willow.maneAccent,
+    },
+  },
+  marigold: {
+    appearance: {
+      bodyColour: 'peach',
+      eyeColour: 'amber',
+      maneStyle: 'fluffy',
+      maneColour: 'gold',
+      tailStyle: 'curl',
+      tailColour: 'coral',
+      hornStyle: 'short',
+      marking: 'heart',
+      accessory: 'flower',
+    },
+    palette: {
+      body: CORE_NPC_VISUALS.marigold.body,
+      eye: 0x9a713d,
+      mane: CORE_NPC_VISUALS.marigold.mane,
+      tail: CORE_NPC_VISUALS.marigold.maneAccent,
+    },
+  },
+  pebble: {
+    appearance: {
+      bodyColour: 'pearl',
+      eyeColour: 'green',
+      maneStyle: 'swept',
+      maneColour: 'midnight',
+      tailStyle: 'puff',
+      tailColour: 'gold',
+      hornStyle: 'short',
+      marking: 'freckles',
+      accessory: 'bell',
+    },
+    palette: {
+      body: CORE_NPC_VISUALS.pebble.body,
+      eye: 0x4f8967,
+      mane: CORE_NPC_VISUALS.pebble.mane,
+      tail: CORE_NPC_VISUALS.pebble.maneAccent,
+    },
+  },
+};
 
 interface PositionedGameObject {
   x: number;
@@ -187,46 +266,42 @@ export class CoreNpcProductionPresentationManager {
       return;
     }
 
-    this.ensureVillageNpc(scene, 'willow', 100, 83);
-    this.ensureVillageNpc(scene, 'marigold', 102, 84);
-
-    const pebbleMarker = SUNBEAM_VILLAGE_MAP.npcMarkers.find(
-      (candidate) => candidate.id === 'pebble',
-    );
-    if (!pebbleMarker || scene.children.getByName('core-npc:pebble:world')) {
-      return;
-    }
-    createCoreNpcSprite(
-      scene,
-      'pebble',
-      pebbleMarker.position.x,
-      pebbleMarker.position.y + 5,
-      'world',
-    )
-      .setDisplaySize(102, 84)
-      .setDepth(worldDepthForY(pebbleMarker.position.y + 48, 0.32));
-    // Village core residents are intentionally grounded. Their previous vertical idle tween
-    // made static NPCs read as hovering beside the authored paths.
+    this.ensureVillageNpc(scene, 'willow', 4);
+    this.ensureVillageNpc(scene, 'marigold', 4);
+    this.ensureVillageNpc(scene, 'pebble', 5);
   }
 
   private ensureVillageNpc(
     scene: Phaser.Scene,
-    id: 'willow' | 'marigold',
-    width: number,
-    height: number,
+    id: VillageCoreResidentId,
+    yOffset: number,
   ): void {
-    if (scene.children.getByName(`core-npc:${id}:world`)) {
+    const objectName = `core-npc:${id}:world`;
+    if (scene.children.getByName(objectName)) {
       return;
     }
     const marker = SUNBEAM_VILLAGE_MAP.npcMarkers.find((candidate) => candidate.id === id);
     if (!marker) {
       return;
     }
-    createCoreNpcSprite(scene, id, marker.position.x, marker.position.y + 4, 'world')
-      .setDisplaySize(width, height)
-      .setDepth(worldDepthForY(marker.position.y + 47, 0.32));
-    // Willow and Marigold are static village residents. Keep their hooves planted instead of
-    // applying the shared vertical bob used by animated/off-scene core characters.
+
+    const presentation = VILLAGE_CORE_RESIDENT_PRESENTATIONS[id];
+    createResidentAppearanceSprite(
+      scene,
+      `village-core-resident:${id}:idle`,
+      objectName,
+      presentation.appearance,
+      presentation.palette,
+    )
+      .setPosition(marker.position.x, marker.position.y + yOffset)
+      .setDepth(
+        worldDepthForY(
+          marker.position.y + SUPPORTING_RESIDENT_ART_LAYOUT.displayHeight * 0.44,
+          0.32,
+        ),
+      );
+    // Static village core residents deliberately share the exact art geometry used by moving
+    // supporting residents. They remain fixed in place and receive no idle bob/tween.
   }
 
   private refreshNovaWorld(): void {
