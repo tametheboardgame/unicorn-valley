@@ -422,19 +422,19 @@ export class VillageInteriorScene extends Phaser.Scene {
     boards.fillRoundedRect(x - 10, y - 50, 94, 11, 5);
     boards.fillRoundedRect(x + 96, y - 72, 72, 11, 5);
     boards.fillStyle(0xc78e67, 0.78);
-    boards.fillEllipse(x - 122, y - 14, 108, 24);
-    boards.fillEllipse(x + 64, y - 14, 126, 24);
+    boards.fillEllipse(x - 122, y - 25, 108, 24);
+    boards.fillEllipse(x + 64, y - 25, 126, 24);
     boards.lineStyle(3, 0x9e6d51, 0.72);
-    boards.strokeEllipse(x - 122, y - 14, 108, 24);
-    boards.strokeEllipse(x + 64, y - 14, 126, 24);
+    boards.strokeEllipse(x - 122, y - 25, 108, 24);
+    boards.strokeEllipse(x + 64, y - 25, 126, 24);
     boards.setDepth(worldDepthForY(y + 70, 0.455));
 
     this.createBakeryBreadLoaf(x - 139, y - 62, 'seeded');
     this.createBakeryBreadLoaf(x - 70, y - 61, 'plait');
     this.createBakeryBreadLoaf(x + 38, y - 63, 'round');
-    this.createBakeryBreadLoaf(x + 131, y - 83, 'baguette');
-    this.createBakeryBreadLoaf(x - 122, y - 17, 'rolls');
-    this.createBakeryBreadLoaf(x + 64, y - 16, 'plait');
+    this.createBakeryBreadLoaf(x + 131, y - 78, 'baguette');
+    this.createBakeryBreadLoaf(x - 122, y - 30, 'rolls');
+    this.createBakeryBreadLoaf(x + 64, y - 28, 'plait');
 
     this.add
       .text(x, y + 41, 'FRESH BREAD', {
