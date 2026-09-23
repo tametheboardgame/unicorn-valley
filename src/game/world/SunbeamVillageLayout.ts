@@ -246,6 +246,7 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
     approach: { x: 1300, y: 1060 },
     collisionWidth: 220,
     collisionHeight: 220,
+    interactionRadius: 220,
   },
   willowGarden: {
     x: 430,
