@@ -152,6 +152,13 @@ export const SUNBEAM_VILLAGE_MAP = {
       width: SUNBEAM_VILLAGE_LAYOUT.fountain.collisionWidth,
       height: SUNBEAM_VILLAGE_LAYOUT.fountain.collisionHeight,
     },
+    ...Object.entries(SUNBEAM_VILLAGE_LAYOUT.playground.equipment).map(([id, equipment]) => ({
+      id: `collision:playground:${id}`,
+      x: equipment.collision.x,
+      y: equipment.collision.y,
+      width: equipment.collision.width,
+      height: equipment.collision.height,
+    })),
     ...SUNBEAM_VILLAGE_LAYOUT.willowGarden.fenceSegments.map((segment) => {
       const collision = 'collision' in segment ? segment.collision : segment;
       return {
