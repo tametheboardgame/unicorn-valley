@@ -37,6 +37,7 @@ import {
 import {
   createSupportingResidentSprite,
   ensureSupportingResidentTexture,
+  resolveSupportingResidentDisplaySize,
 } from './SupportingResidentArt';
 
 const UPDATE_INTERVAL_MS = 90;
@@ -262,7 +263,8 @@ export class AmbientPopulationWorldManager {
 
     const sprite = createSupportingResidentSprite(state.scene, resident);
     const presentationScale = location.placement?.presentationScale ?? 1;
-    sprite.setScale(presentationScale);
+    const displaySize = resolveSupportingResidentDisplaySize(presentationScale);
+    sprite.setDisplaySize(displaySize.width, displaySize.height);
     const container = state.scene.add
       .container(start.x, start.y, [sprite])
       .setName(`supporting-resident:${resident.id}`)
