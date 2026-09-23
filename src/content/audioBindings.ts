@@ -63,6 +63,12 @@ export const SFX_BINDINGS: Partial<Record<VerticalSliceSfx, string>> = {
 export const INTERACTION_SFX_BINDINGS: Readonly<Record<string, VerticalSliceSfx>> = {
   'interaction:display-stump': 'ui',
   'interaction:meadow-ribbon-board': 'ui',
+  'interaction:village-life:fountain-splash': 'ui',
+  'interaction:village-life:bench': 'ui',
+  'world-interaction:r6-5:village-chime': 'ui',
+  'world-interaction:r6-5:village-playground-slide': 'ui',
+  'world-interaction:r6-5:village-playground-seesaw': 'ui',
+  'world-interaction:r6-5:village-playground-climbing-frame': 'ui',
 };
 
 export const SCENE_MUSIC_CONTEXT: Readonly<Record<string, MusicContextId>> = {
