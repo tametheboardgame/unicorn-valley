@@ -326,8 +326,7 @@ test('H3.11.3 gives Twinkle & Thread a dedicated walkable boutique and shopkeepe
     .find(({ key }) => key === 'VillageInteriorScene')
     ?.objects.find(
       ({ name }) =>
-        name ===
-        'interaction-direct-zone:interaction:village-interior:accessory-shop:shopkeeper',
+        name === 'interaction-direct-zone:interaction:village-interior:accessory-shop:shopkeeper',
     );
   expect(velvetZone).toBeDefined();
   expect(velvetZone).toMatchObject({ x: 760, y: 540 });

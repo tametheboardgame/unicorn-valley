@@ -54,9 +54,9 @@ describe('TwinkleWardrobeService', () => {
       option: { itemId: 'item:starlight-bow', isEquipped: true },
     });
     expect(saveService.load()?.profile.appearance.accessory).toBe('bow');
-    expect(
-      saveService.load()?.profile.appearance[TWINKLE_EQUIPPED_ITEM_APPEARANCE_KEY],
-    ).toBe('item:starlight-bow');
+    expect(saveService.load()?.profile.appearance[TWINKLE_EQUIPPED_ITEM_APPEARANCE_KEY]).toBe(
+      'item:starlight-bow',
+    );
   });
 
   it('remembers which purchased ribbon is equipped even when two products share one art family', () => {
@@ -67,9 +67,9 @@ describe('TwinkleWardrobeService', () => {
 
     expect(wardrobe.equip('item:starlight-shell-ribbon').status).toBe('equipped');
     expect(saveService.load()?.profile.appearance.accessory).toBe('ribbon');
-    expect(
-      saveService.load()?.profile.appearance[TWINKLE_EQUIPPED_ITEM_APPEARANCE_KEY],
-    ).toBe('item:starlight-shell-ribbon');
+    expect(saveService.load()?.profile.appearance[TWINKLE_EQUIPPED_ITEM_APPEARANCE_KEY]).toBe(
+      'item:starlight-shell-ribbon',
+    );
     expect(
       wardrobe.listOwnedWearables().find(({ itemId }) => itemId === 'item:starlight-shell-ribbon')
         ?.isEquipped,
