@@ -190,7 +190,7 @@ Operating rules for H1+:
 - **H numbers are assigned sequentially only when David chooses the next review area.** Do not pre-assign future H numbers to locations.
 - **R6.5-WP19H1 - Moonflower Glade is complete and human-approved.**
 - **R6.5-WP19H2 - Moonflower Cottage & Home Customisation is complete, fully qualified and deployed to production.**
-- **Current package: R6.5-WP19H3 - Sunbeam Village Final Polish.** David supplied feedback block 1 on 21 September 2026 and H3.1-H3.8 are now human-approved. Feedback block 1 is complete. H3 remains deliberately open-ended: H3.9 and later numbers are reserved for additional substantive feedback if required. The final hardening/consolidation slice receives the next unused H3 number only after David explicitly confirms that substantive Sunbeam review is complete.
+- **Current package: R6.5-WP19H3 - Sunbeam Village Final Polish.** H3.1-H3.8 are human-approved. A 23 September code/interaction review established feedback block 2 as H3.9-H3.12: interaction ownership/completeness, playground and reactive Village Life, interior/content maturity, and recurring-character presence coherence. David's next play pass may amend those slices or add H3.13+. Final hardening/consolidation remains unnumbered until substantive Sunbeam review is explicitly complete.
 - Future H numbers remain deliberately unassigned until David selects each next review area.
 - There is **no H13 cap**. Continue H numbering until David decides the playable world, meaningful subareas and relevant interiors have received the required final passes.
 - An area is a review lens, not an excuse to duplicate shared code. Any broadly applicable improvement discovered during an H package should be made at the correct shared owner and then validated against affected areas.
@@ -255,7 +255,7 @@ H2 rebuilt Moonflower Cottage as a finished home and customisation space, includ
 
 ### R6.5-WP19H3 - Sunbeam Village Final Polish
 
-State: **feedback block 1 complete / H3.1-H3.8 human-approved 2026-09-23 / further H3 numbers only if additional Sunbeam feedback is identified**.
+State: **feedback block 1 complete / H3.1-H3.8 human-approved 2026-09-23 / feedback block 2 H3.9-H3.12 planned from code-interaction review / human play pass pending**.
 
 Path: `docs/work-packages/R6.5-WP19H3-SUNBEAM-VILLAGE.md`
 
@@ -274,9 +274,16 @@ The concrete first-pass findings include the 1,220 × 690 semi-transparent recta
 7. **H3.7 - Southern residential expansion:** add a restrained set of additional homes/village buildings around the southern edges so Sunbeam reads as a real village rather than three shops beside a fountain. Buildings may offer lightweight inspect/knock flavour but do not imply a new set of interiors. Maintain generous green/path space between structures.
 8. **H3.8 - Props, bunting, residents and village-life recomposition:** deliberately reposition the notice board, map sign/chime, sundial, bench, fountain interaction, shop-window display, bunting, flower detail and roaming resident routes into designed micro-areas. Keep the village lively, but protect uncluttered circulation around the fountain and shop entrances.
 
-**Numbering contract:** H3.1-H3.8 are only **feedback block 1**. They are not the complete H3 package and must not be followed automatically by a final hardening/qualification slice. David will review the first-pass result and provide feedback block 2; that work continues at **H3.9, H3.10, H3.11 and onward for as many slices as required**. The final consolidation, responsive regression, hardening, documentation and integrated H3 qualification slice receives the next available H3 number **only after David says Sunbeam Village itself is complete**.
+#### H3 feedback block 2 planned sequence
 
-The shop interiors remain explicitly outside this exterior/world-composition pass. They may receive a later independent H-number review if David selects them, consistent with the open-ended H1+ programme.
+9. **H3.9 - Unified interaction ownership and interaction completeness:** remove Sunbeam's duplicated legacy scene-local interaction/prompt/activation path; make the shared registry/coordinator authoritative; restore/verify shop, NPC, cottage, Candyland, fountain and exit targets; normalise the two exit conventions deliberately; migrate Pebble hidden-object pickups onto the unified interaction route; and add activation-based browser regression coverage.
+10. **H3.10 - Playground and reactive Village Life:** turn the approved playground into a lightweight social/play pocket using reusable resident presentation for the child unicorns where practical; add a few equipment Play actions; make fountain/sundial/notice-board/bench behaviour react credibly to state; consolidate feedback presentation; and add restrained interaction SFX using existing assets.
+11. **H3.11 - Village interiors and local content maturity:** preserve the current Bakery, Story House and Twinkle & Thread structures while removing player-visible development wording; add a small repeatable Bakery stock expansion with a Maple-story payoff; expand Story House cards to current adventures; polish Twinkle & Thread in-world progression copy; and replace brittle presentation-inferred diagnostic naming with semantic scene-owned hooks.
+12. **H3.12 - Character presence and cross-region coherence:** extend authoritative presence handling where stories genuinely move recurring characters; resolve Marigold's Picnic Hill state and Tansy's scheduled world/interior presence; keep visuals and Talk targets under the same authority; and add cross-scene duplicate-presence regression coverage.
+
+**Feedback-block-2 contract:** H3.9-H3.12 are the currently approved plan from the 23 September code/interaction review. David's upcoming play pass may amend those slices or add H3.13+ for new substantive findings. The accepted H3.1-H3.8 visual composition is a preservation requirement.
+
+**Numbering contract:** the final consolidation, responsive regression, hardening, documentation and integrated H3 qualification slice remains deliberately unnumbered. It receives the next unused H3 number only after David explicitly confirms that substantive Sunbeam Village work is complete.
 
 ### R6.5-WP19I - Integrated Qualification
 
