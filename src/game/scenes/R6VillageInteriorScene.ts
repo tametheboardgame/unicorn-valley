@@ -311,8 +311,8 @@ export class VillageInteriorScene extends Phaser.Scene {
     cafe.fillCircle(1216, 785, 6);
     cafe.setDepth(worldDepthForY(890, 0.2));
 
-    this.createBakeryCafeChair(1118, 875, -8);
-    this.createBakeryCafeChair(1302, 870, 8);
+    this.createBakeryCafeStool(1118, 875);
+    this.createBakeryCafeStool(1302, 870);
 
     for (const sparkle of [
       { x: 615, y: 454, r: 4 },
@@ -557,22 +557,33 @@ export class VillageInteriorScene extends Phaser.Scene {
       .setDepth(worldDepthForY(y + 102, 0.4));
   }
 
-  private createBakeryCafeChair(x: number, y: number, angle: number): void {
-    const chair = this.add.graphics().setName('village-interior:bakery:cafe-chair');
-    chair.fillStyle(0x9f748c, 1);
-    chair.lineStyle(3, 0x7c586d, 0.82);
-    chair.fillRoundedRect(x - 27, y - 23, 54, 46, 14);
-    chair.strokeRoundedRect(x - 27, y - 23, 54, 46, 14);
-    chair.fillStyle(0xc49bb1, 1);
-    chair.fillRoundedRect(x - 22, y - 18, 44, 30, 10);
-    chair.lineStyle(3, 0x7c586d, 0.8);
-    chair.lineBetween(x - 22, y + 22, x - 17, y + 46);
-    chair.lineBetween(x + 22, y + 22, x + 17, y + 46);
-    chair.lineBetween(x - 23, y - 20, x - 23, y - 48);
-    chair.lineBetween(x + 23, y - 20, x + 23, y - 48);
-    chair.lineBetween(x - 23, y - 48, x + 23, y - 48);
-    chair.setAngle(angle);
-    chair.setDepth(worldDepthForY(y + 48, 0.18));
+  private createBakeryCafeStool(x: number, y: number): void {
+    const stool = this.add.graphics().setName('village-interior:bakery:cafe-stool');
+
+    // Soft shadow under the stool.
+    stool.fillStyle(0x7d5a70, 0.16);
+    stool.fillEllipse(x, y + 24, 62, 18);
+
+    // Two-tone upholstered seat gives the old simple stool more depth.
+    stool.fillStyle(0x9f748c, 1);
+    stool.lineStyle(3, 0x7c586d, 0.82);
+    stool.fillEllipse(x, y, 58, 34);
+    stool.strokeEllipse(x, y, 58, 34);
+
+    stool.fillStyle(0xc79fb4, 1);
+    stool.fillEllipse(x, y - 5, 48, 23);
+    stool.lineStyle(2, 0xe1bfd0, 0.78);
+    stool.strokeEllipse(x, y - 6, 39, 15);
+
+    // Simple tapered legs; deliberately no backrest.
+    stool.fillStyle(0x8f647c, 1);
+    stool.fillRoundedRect(x - 22, y + 11, 9, 32, 4);
+    stool.fillRoundedRect(x + 13, y + 11, 9, 32, 4);
+    stool.fillStyle(0xb889a1, 0.9);
+    stool.fillRoundedRect(x - 19, y + 14, 3, 25, 2);
+    stool.fillRoundedRect(x + 16, y + 14, 3, 25, 2);
+
+    stool.setDepth(worldDepthForY(y + 44, 0.18));
   }
 
   private createBakeryDoughnutDisplay(x: number, y: number): void {
