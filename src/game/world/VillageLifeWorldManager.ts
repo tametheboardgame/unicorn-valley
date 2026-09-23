@@ -118,7 +118,7 @@ const VILLAGE_POINTS: readonly VillageLifePoint[] = [
     actionKind: 'interact',
     x: SUNBEAM_VILLAGE_LAYOUT.fountain.x,
     y: SUNBEAM_VILLAGE_LAYOUT.fountain.y,
-    radius: 145,
+    radius: SUNBEAM_VILLAGE_LAYOUT.fountain.interactionRadius,
     // The fountain already communicates water visually. Keep only the interaction anchor instead
     // of adding a detached droplet marker on top of the plaza.
     createProp: () => [],
