@@ -39,6 +39,7 @@ import {
   ensureSupportingResidentTexture,
   resolveSupportingResidentDisplaySize,
 } from './SupportingResidentArt';
+import { getVillageInteriorOccupancyService } from './VillageInteriorOccupancy';
 
 const UPDATE_INTERVAL_MS = 90;
 const ROUTE_TIMEOUT_GRACE_MS = 1400;
@@ -212,7 +213,11 @@ export class AmbientPopulationWorldManager {
 
   private syncResidents(state: ScenePopulationRuntime, context: AmbientPopulationContext): void {
     const wanted = new Map<SupportingResidentId, ResolvedResidentLocation>();
+    const occupancy = getVillageInteriorOccupancyService();
     for (const resident of R6_SUPPORTING_RESIDENTS) {
+      if (!occupancy.isResidentAllowedInScene(resident.id, state.scene.scene.key)) {
+        continue;
+      }
       const location = resolveResidentLocation(
         resident.id,
         state.scene.scene.key,

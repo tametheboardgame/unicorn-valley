@@ -10,6 +10,11 @@ import { CRYSTAL_GROTTO_MAP, FIREFLY_GROVE_MAP } from '../world/MicroLocationTra
 import { RAINBOW_MEADOW_MAP } from '../world/RainbowMeadowMap';
 import { STARLIGHT_BEACH_MAP } from '../world/StarlightBeachMap';
 import { SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
+import {
+  getVillageInteriorMap,
+  isVillageInteriorId,
+  VILLAGE_INTERIOR_SCENE_DATA_KEY,
+} from '../world/VillageInteriorMap';
 import { WHISPERING_WOODS_MAP } from '../world/WhisperingWoodsMap';
 import { parsePlayerFacing, resolveClickNavigationFacing } from './ClickNavigationFacing';
 import { findClickNavigationPath } from './ClickNavigationPath';
@@ -78,6 +83,14 @@ const NAVIGATION_MAPS: Readonly<Record<string, TraversalMapDefinition>> = {
   CrystalGrottoScene: CRYSTAL_GROTTO_MAP,
   FireflyGroveScene: FIREFLY_GROVE_MAP,
 };
+
+function navigationMapForScene(scene: Phaser.Scene): TraversalMapDefinition | undefined {
+  if (scene.scene.key === 'VillageInteriorScene') {
+    const interiorId = scene.data.get(VILLAGE_INTERIOR_SCENE_DATA_KEY);
+    return isVillageInteriorId(interiorId) ? getVillageInteriorMap(interiorId) : undefined;
+  }
+  return NAVIGATION_MAPS[scene.scene.key];
+}
 
 const WAYPOINT_REACHED_DISTANCE = 22;
 const STUCK_TIMEOUT_MS = 950;
@@ -215,7 +228,7 @@ export class ClickToMoveManager {
       }
 
       const player = scene.children.list.find(isPlayerSprite);
-      const map = NAVIGATION_MAPS[scene.scene.key];
+      const map = navigationMapForScene(scene);
       if (!player || !map) {
         return;
       }

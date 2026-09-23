@@ -7,6 +7,7 @@ describe('click-navigation scene classification', () => {
       expect.arrayContaining([
         'MoonflowerGladeScene',
         'CottageInteriorScene',
+        'VillageInteriorScene',
         'CrystalGrottoScene',
         'FireflyGroveScene',
       ]),

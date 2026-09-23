@@ -10,7 +10,6 @@ import {
   TANSY_MAP_HUNT_ACTIVE_FLAG,
   TANSY_MAP_QUEST_ID,
   TANSY_NOTICE_MAP_CORNER_DISCOVERY_ID,
-  TANSY_SUNDIAL_MAP_CORNER_DISCOVERY_ID,
   TANSY_CHARACTER_ID,
   WOBBLY_CAKE_ITEM_ID,
   type MapleCakeTheme,
@@ -24,22 +23,35 @@ import { ShopService } from '../economy/ShopService';
 import { ShimmerEconomyService } from '../economy/ShimmerEconomyService';
 import { gameEventBus } from '../events/GameEventBus';
 import { InventoryService } from '../inventory/InventoryService';
+import { setInteractionModalActive } from '../interaction/InteractionModalState';
+import type { InteractionTarget } from '../interaction/InteractionTarget';
+import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { R6_SUPPORTING_RESIDENTS } from '../population/R6SupportingResidentContent';
-import { createSupportingResidentSprite } from '../population/SupportingResidentArt';
+import type { SupportingResidentDefinition } from '../population/AmbientPopulationTypes';
+import { getVillageInteriorOccupancyService } from '../population/VillageInteriorOccupancy';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getQuestStepId } from '../quests/QuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
+import { getWorldFeedbackPresenter } from '../ui/WorldFeedbackPresenter';
 import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from '../ui/uiTheme';
-
-export type VillageInteriorId = 'bakery' | 'accessory-shop' | 'library';
+import {
+  getVillageInteriorAnchor,
+  getVillageInteriorMap,
+  isVillageInteriorId,
+  VILLAGE_INTERIOR_SCENE_DATA_KEY,
+  type VillageInteriorDefinition,
+  type VillageInteriorId,
+} from '../world/VillageInteriorMap';
+import { worldDepthForY } from '../world/WorldDepth';
+import { WalkableInteriorRuntime } from './WalkableInteriorRuntime';
+import { createVillageInteriorResidentPresentation } from './VillageInteriorResidentPresentation';
 
 interface VillageInteriorSceneData {
   interiorId?: VillageInteriorId;
   returnScene?: string;
 }
 
-interface InteriorDefinition {
-  id: VillageInteriorId;
+interface InteriorPresentationDefinition {
   title: string;
   subtitle: string;
   icon: string;
@@ -48,19 +60,10 @@ interface InteriorDefinition {
   accentColour: number;
 }
 
-interface ActionButtonOptions {
-  x: number;
-  y: number;
-  width?: number;
-  label: string;
-  fill?: number;
-  onPress: () => void;
-  enabled?: boolean;
-}
+const INTERIOR_INTERACTION_OWNER = 'village-interior';
 
-const INTERIORS: Readonly<Record<VillageInteriorId, InteriorDefinition>> = {
+const PRESENTATION: Readonly<Record<VillageInteriorId, InteriorPresentationDefinition>> = {
   bakery: {
-    id: 'bakery',
     title: 'Sunbeam Bakery',
     subtitle: 'Warm buns, picnic treasures and Maple’s extremely wobbly cake ideas.',
     icon: '🥐',
@@ -69,7 +72,6 @@ const INTERIORS: Readonly<Record<VillageInteriorId, InteriorDefinition>> = {
     accentColour: 0xf28b62,
   },
   'accessory-shop': {
-    id: 'accessory-shop',
     title: 'Twinkle & Thread',
     subtitle: 'Wearable treasures that grow with your adventures, never your chores.',
     icon: '🎀',
@@ -78,9 +80,8 @@ const INTERIORS: Readonly<Record<VillageInteriorId, InteriorDefinition>> = {
     accentColour: 0xc56fb6,
   },
   library: {
-    id: 'library',
     title: 'Story House',
-    subtitle: 'Tansy keeps maps, clue cards and little stories from places you have really found.',
+    subtitle: 'Maps, clue cards and little stories from places you have really found.',
     icon: '📚',
     wallColour: 0xd9edff,
     floorColour: 0x8eb5c8,
@@ -88,11 +89,7 @@ const INTERIORS: Readonly<Record<VillageInteriorId, InteriorDefinition>> = {
   },
 };
 
-function isInteriorId(value: unknown): value is VillageInteriorId {
-  return value === 'bakery' || value === 'accessory-shop' || value === 'library';
-}
-
-function supportingResident(id: 'resident:maple' | 'resident:tansy') {
+function supportingResident(id: 'resident:maple' | 'resident:tansy'): SupportingResidentDefinition {
   const resident = R6_SUPPORTING_RESIDENTS.find((candidate) => candidate.id === id);
   if (!resident) {
     throw new Error(`Village interior requires supporting resident ${id}`);
@@ -111,9 +108,10 @@ export class VillageInteriorScene extends Phaser.Scene {
   private interiorId: VillageInteriorId = 'accessory-shop';
   private returnScene = 'SunbeamVillageScene';
   private closing = false;
-  private body: Phaser.GameObjects.Container | null = null;
-  private feedback: Phaser.GameObjects.Text | null = null;
+  private runtime: WalkableInteriorRuntime | null = null;
   private balanceText: Phaser.GameObjects.Text | null = null;
+  private occupant: Phaser.GameObjects.Container | null = null;
+  private overlay: Phaser.GameObjects.Container | null = null;
   private readonly purchaseGuard = new ShopPurchaseTapGuard();
   private storyCardCursor = 0;
 
@@ -121,485 +119,612 @@ export class VillageInteriorScene extends Phaser.Scene {
     super('VillageInteriorScene');
   }
 
-  public create(data: VillageInteriorSceneData): void {
-    this.interiorId = isInteriorId(data.interiorId) ? data.interiorId : 'accessory-shop';
+  public create(data: VillageInteriorSceneData = {}): void {
+    this.interiorId = isVillageInteriorId(data.interiorId) ? data.interiorId : 'accessory-shop';
     this.returnScene = data.returnScene ?? 'SunbeamVillageScene';
     this.closing = false;
     this.storyCardCursor = 0;
     this.purchaseGuard.reset();
+    this.data.set(VILLAGE_INTERIOR_SCENE_DATA_KEY, this.interiorId);
 
-    const definition = INTERIORS[this.interiorId];
-    this.cameras.main.setBackgroundColor('#5d4964');
-    this.createRoom(definition);
-    this.createPersistentControls();
-    this.refreshBody();
+    const map = getVillageInteriorMap(this.interiorId);
+    getVillageInteriorOccupancyService().enter(this.interiorId);
+    this.createEnvironment(map, PRESENTATION[this.interiorId]);
 
-    this.input.keyboard?.on('keydown-ESC', this.leaveInterior, this);
-    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-      this.input.keyboard?.off('keydown-ESC', this.leaveInterior, this);
-      this.body?.destroy(true);
-      this.body = null;
-      this.feedback = null;
-      this.balanceText = null;
-      this.purchaseGuard.reset();
+    this.runtime = new WalkableInteriorRuntime(this, {
+      playerTextureKey: `player-unicorn-village-interior:${this.interiorId}`,
+      map,
+      colliderNamePrefix: `village-interior-collider:${this.interiorId}`,
+      onBack: () => this.leaveInterior(),
     });
+    this.runtime.create();
+    this.renderInteriorOccupant();
+    this.registerInteractions();
+    this.createHud(PRESENTATION[this.interiorId]);
+
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.shutdownInterior());
   }
 
-  private createRoom(definition: InteriorDefinition): void {
-    this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x5b4662, 1);
-    createUiShadow(this, GAME_WIDTH / 2, GAME_HEIGHT / 2 + 8, 1160, 660, 1, 0.28);
+  public update(time: number): void {
+    this.runtime?.update(time);
+  }
+
+  private createEnvironment(
+    map: VillageInteriorDefinition,
+    definition: InteriorPresentationDefinition,
+  ): void {
+    const shell = map.roomShell;
+    const centreX = (shell.left + shell.right) / 2;
+    const roomWidth = shell.right - shell.left;
+    const roomHeight = shell.bottom - shell.top;
+
+    this.cameras.main.setBackgroundColor('#5d4964');
     this.add
-      .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 8, 1160, 660, definition.wallColour, 1)
-      .setStrokeStyle(8, definition.accentColour, 0.95)
+      .rectangle(map.width / 2, map.height / 2, map.width, map.height, 0x5b4662, 1)
+      .setName(`village-interior:${this.interiorId}:outside`)
+      .setDepth(0);
+    this.add
+      .rectangle(
+        centreX,
+        (shell.top + shell.backWallBottom) / 2,
+        roomWidth,
+        shell.backWallBottom - shell.top,
+        definition.wallColour,
+        1,
+      )
+      .setName(`village-interior:${this.interiorId}:back-wall`)
       .setDepth(2);
-    this.add.rectangle(GAME_WIDTH / 2, 560, 1140, 250, definition.floorColour, 1).setDepth(3);
-    this.add.rectangle(GAME_WIDTH / 2, 438, 1140, 16, 0xffffff, 0.35).setDepth(4);
-
     this.add
-      .text(GAME_WIDTH / 2, 58, `${definition.icon}  ${definition.title}`, {
-        color: UI_COLOURS.ink,
-        fontFamily: UI_FONT,
-        fontSize: '38px',
-        fontStyle: 'bold',
-      })
-      .setOrigin(0.5)
-      .setDepth(8);
+      .rectangle(
+        centreX,
+        (shell.backWallBottom + shell.bottom) / 2,
+        roomWidth,
+        shell.bottom - shell.backWallBottom,
+        definition.floorColour,
+        1,
+      )
+      .setName(`village-interior:${this.interiorId}:floor`)
+      .setDepth(3);
     this.add
-      .text(GAME_WIDTH / 2, 98, definition.subtitle, {
-        color: UI_COLOURS.softInk,
-        fontFamily: UI_FONT,
-        fontSize: '16px',
-        fontStyle: 'bold',
-        align: 'center',
-        wordWrap: { width: 900 },
-      })
-      .setOrigin(0.5)
-      .setDepth(8);
+      .rectangle(centreX, (shell.top + shell.bottom) / 2, roomWidth, roomHeight, 0xffffff, 0)
+      .setName(`village-interior:${this.interiorId}:room-shell`)
+      .setStrokeStyle(10, definition.accentColour, 0.95)
+      .setDepth(4);
 
-    this.createWindow(250, 238, definition.accentColour);
-    this.createWindow(1030, 238, definition.accentColour);
+    this.createWindow(390, 225, definition.accentColour);
+    this.createWindow(1110, 225, definition.accentColour);
+    this.createDoorway(map, definition.accentColour);
 
-    if (definition.id === 'bakery') {
+    if (this.interiorId === 'bakery') {
       this.createBakerySet();
-    } else if (definition.id === 'library') {
+    } else if (this.interiorId === 'library') {
       this.createStoryHouseSet();
     } else {
       this.createThreadSet();
     }
-
-    this.feedback = this.add
-      .text(GAME_WIDTH / 2, 625, '', {
-        color: UI_COLOURS.ink,
-        fontFamily: UI_FONT,
-        fontSize: '16px',
-        fontStyle: 'bold',
-        align: 'center',
-        wordWrap: { width: 820 },
-        backgroundColor: '#fff8e8ee',
-        padding: { x: 14, y: 8 },
-      })
-      .setOrigin(0.5)
-      .setDepth(20)
-      .setVisible(false);
   }
 
   private createWindow(x: number, y: number, accent: number): void {
-    this.add.rectangle(x, y, 190, 126, 0xbce9f4, 1).setStrokeStyle(8, accent, 0.82).setDepth(5);
-    this.add.rectangle(x, y, 9, 116, 0xffffff, 0.62).setDepth(6);
-    this.add.rectangle(x, y, 180, 9, 0xffffff, 0.62).setDepth(6);
-    this.add.circle(x - 48, y - 34, 20, 0xffef9d, 0.82).setDepth(5.5);
+    this.add
+      .rectangle(x, y, 210, 132, 0xbce9f4, 1)
+      .setStrokeStyle(8, accent, 0.82)
+      .setDepth(5);
+    this.add.rectangle(x, y, 9, 120, 0xffffff, 0.62).setDepth(6);
+    this.add.rectangle(x, y, 198, 9, 0xffffff, 0.62).setDepth(6);
+    this.add.circle(x - 52, y - 34, 20, 0xffef9d, 0.82).setDepth(5.5);
+  }
+
+  private createDoorway(map: VillageInteriorDefinition, accent: number): void {
+    const exit = map.anchors.exit;
+    this.add
+      .ellipse(
+        exit.position.x,
+        exit.position.y + 8,
+        map.roomShell.doorWidth + 54,
+        92,
+        0x4b3852,
+        0.72,
+      )
+      .setName(`village-interior:${this.interiorId}:exit`)
+      .setStrokeStyle(5, accent, 0.72)
+      .setDepth(worldDepthForY(exit.position.y + 20, 0.1));
+    this.add
+      .text(exit.position.x, exit.position.y + 4, 'Sunbeam Village', {
+        color: '#fff7df',
+        fontFamily: UI_FONT,
+        fontSize: '15px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5)
+      .setDepth(worldDepthForY(exit.position.y + 20, 0.2));
   }
 
   private createBakerySet(): void {
+    const counter = getVillageInteriorAnchor('bakery', 'counter');
+    const recipeShelf = getVillageInteriorAnchor('bakery', 'primary-feature');
+    const cakeTable = getVillageInteriorAnchor('bakery', 'secondary-feature');
+
     this.add
-      .rectangle(640, 372, 450, 122, 0xb77456, 1)
+      .rectangle(counter.position.x, counter.position.y, 540, 122, 0xb77456, 1)
+      .setName('village-interior:bakery:counter')
       .setStrokeStyle(5, 0x8d553f, 0.9)
-      .setDepth(6);
+      .setDepth(worldDepthForY(counter.position.y + 68, 0.3));
     for (const [x, icon] of [
-      [520, '🥐'],
-      [600, '🍓'],
-      [680, '🧁'],
-      [760, '🥖'],
+      [610, '🥐'],
+      [705, '🍓'],
+      [800, '🧁'],
+      [895, '🥖'],
     ] as const) {
       this.add
-        .text(x, 330, icon, { fontFamily: UI_FONT, fontSize: '38px' })
+        .text(x, counter.position.y - 36, icon, { fontFamily: UI_FONT, fontSize: '38px' })
         .setOrigin(0.5)
-        .setDepth(7);
+        .setDepth(worldDepthForY(counter.position.y + 70, 0.4));
     }
+
     this.add
-      .rectangle(400, 320, 110, 160, 0x875743, 1)
+      .rectangle(330, 400, 150, 190, 0x875743, 1)
+      .setName('village-interior:bakery:oven')
       .setStrokeStyle(5, 0x684232, 0.9)
-      .setDepth(5);
+      .setDepth(worldDepthForY(492, 0.22));
     this.add
-      .text(400, 315, '🔥', { fontFamily: UI_FONT, fontSize: '42px' })
+      .text(330, 395, '🔥', { fontFamily: UI_FONT, fontSize: '48px' })
       .setOrigin(0.5)
-      .setDepth(6);
+      .setDepth(worldDepthForY(494, 0.3));
+
     this.add
-      .rectangle(870, 314, 150, 180, 0xe8b984, 1)
+      .rectangle(recipeShelf.position.x, recipeShelf.position.y, 175, 210, 0xe8b984, 1)
+      .setName('village-interior:bakery:recipe-shelf')
       .setStrokeStyle(5, 0xb97a58, 0.8)
-      .setDepth(5);
+      .setDepth(worldDepthForY(recipeShelf.position.y + 78, 0.18));
     this.add
-      .text(870, 288, 'RECIPES', {
+      .text(recipeShelf.position.x, recipeShelf.position.y - 55, 'RECIPES', {
         color: '#704637',
         fontFamily: UI_FONT,
         fontSize: '14px',
         fontStyle: 'bold',
       })
       .setOrigin(0.5)
-      .setDepth(6);
+      .setDepth(worldDepthForY(recipeShelf.position.y + 80, 0.25));
     this.add
-      .text(870, 335, '📜  📖\n📄  🥄', {
+      .text(recipeShelf.position.x, recipeShelf.position.y + 5, '📜  📖\n📄  🥄', {
         fontFamily: UI_FONT,
         fontSize: '28px',
         align: 'center',
       })
       .setOrigin(0.5)
-      .setDepth(6);
+      .setDepth(worldDepthForY(recipeShelf.position.y + 80, 0.3));
+
+    this.add
+      .ellipse(cakeTable.position.x, cakeTable.position.y, 230, 120, 0xf4d8aa, 1)
+      .setName('village-interior:bakery:cake-table')
+      .setStrokeStyle(4, 0xb97a58, 0.75)
+      .setDepth(worldDepthForY(cakeTable.position.y + 48, 0.24));
+    this.add
+      .text(cakeTable.position.x, cakeTable.position.y - 4, '🎂  🥄  ✨', {
+        fontFamily: UI_FONT,
+        fontSize: '31px',
+      })
+      .setOrigin(0.5)
+      .setDepth(worldDepthForY(cakeTable.position.y + 50, 0.32));
   }
 
   private createStoryHouseSet(): void {
-    for (const x of [430, 640, 850]) {
+    for (const x of [400, 750, 1100]) {
       this.add
-        .rectangle(x, 335, 150, 220, 0x6f8aa0, 1)
+        .rectangle(x, 355, 190, 220, 0x6f8aa0, 1)
+        .setName(`village-interior:library:shelf:${x}`)
         .setStrokeStyle(5, 0x526f86, 0.9)
-        .setDepth(5);
+        .setDepth(worldDepthForY(465, 0.12));
       for (let row = 0; row < 3; row += 1) {
-        this.add.rectangle(x, 282 + row * 62, 126, 8, 0x435d72, 0.9).setDepth(6);
+        this.add.rectangle(x, 302 + row * 62, 166, 8, 0x435d72, 0.9).setDepth(6);
         this.add
-          .text(x, 258 + row * 62, '📕 📗 📘 📙', { fontFamily: UI_FONT, fontSize: '18px' })
+          .text(x, 278 + row * 62, '📕 📗 📘 📙', { fontFamily: UI_FONT, fontSize: '18px' })
           .setOrigin(0.5)
-          .setDepth(6);
+          .setDepth(7);
       }
     }
-    this.add.ellipse(640, 515, 380, 118, 0xf2d7a7, 1).setStrokeStyle(4, 0xb58c60, 0.75).setDepth(5);
+    const table = getVillageInteriorAnchor('library', 'primary-feature');
     this.add
-      .text(640, 505, '🗺️   📖   ✨', { fontFamily: UI_FONT, fontSize: '34px' })
+      .ellipse(table.position.x, table.position.y, 390, 145, 0xf2d7a7, 1)
+      .setName('village-interior:library:story-table')
+      .setStrokeStyle(4, 0xb58c60, 0.75)
+      .setDepth(worldDepthForY(table.position.y + 58, 0.22));
+    this.add
+      .text(table.position.x, table.position.y - 4, '🗺️   📖   ✨', {
+        fontFamily: UI_FONT,
+        fontSize: '36px',
+      })
       .setOrigin(0.5)
-      .setDepth(6);
+      .setDepth(worldDepthForY(table.position.y + 60, 0.3));
   }
 
   private createThreadSet(): void {
+    const counter = getVillageInteriorAnchor('accessory-shop', 'counter');
+    const display = getVillageInteriorAnchor('accessory-shop', 'primary-feature');
+    const mirror = getVillageInteriorAnchor('accessory-shop', 'secondary-feature');
+
     this.add
-      .rectangle(640, 350, 430, 120, 0xb77baa, 1)
+      .rectangle(counter.position.x, counter.position.y, 540, 122, 0xb77baa, 1)
+      .setName('village-interior:accessory-shop:counter')
       .setStrokeStyle(5, 0x8e5d86, 0.9)
-      .setDepth(6);
+      .setDepth(worldDepthForY(counter.position.y + 68, 0.3));
     for (const [x, icon] of [
-      [515, '🎀'],
-      [600, '🌸'],
-      [685, '✨'],
-      [770, '🌈'],
+      [610, '🎀'],
+      [705, '🌸'],
+      [800, '✨'],
+      [895, '🌈'],
     ] as const) {
-      this.add.circle(x, 300, 38, 0xfff6fb, 0.86).setStrokeStyle(3, 0xd8a4cf, 0.9).setDepth(6);
       this.add
-        .text(x, 300, icon, { fontFamily: UI_FONT, fontSize: '30px' })
+        .circle(x, counter.position.y - 38, 38, 0xfff6fb, 0.86)
+        .setStrokeStyle(3, 0xd8a4cf, 0.9)
+        .setDepth(6);
+      this.add
+        .text(x, counter.position.y - 38, icon, { fontFamily: UI_FONT, fontSize: '30px' })
         .setOrigin(0.5)
         .setDepth(7);
     }
     this.add
-      .text(640, 405, 'Adventure stock changes as the valley grows', {
-        color: '#684c67',
+      .rectangle(display.position.x, display.position.y, 150, 128, 0xe7b9dc, 1)
+      .setName('village-interior:accessory-shop:display')
+      .setStrokeStyle(4, 0x9c6c95, 0.8)
+      .setDepth(worldDepthForY(display.position.y + 55, 0.22));
+    this.add
+      .text(display.position.x, display.position.y - 4, '🎀\n✨', {
+        fontFamily: UI_FONT,
+        fontSize: '30px',
+        align: 'center',
+      })
+      .setOrigin(0.5)
+      .setDepth(worldDepthForY(display.position.y + 58, 0.3));
+    this.add
+      .ellipse(mirror.position.x, mirror.position.y - 38, 120, 180, 0xf8edff, 1)
+      .setName('village-interior:accessory-shop:mirror')
+      .setStrokeStyle(6, 0xc99bc5, 0.9)
+      .setDepth(worldDepthForY(mirror.position.y + 52, 0.2));
+  }
+
+  private renderInteriorOccupant(): void {
+    const occupancy = getVillageInteriorOccupancyService();
+    const assignment = occupancy.getInteriorAssignment(this.interiorId);
+    if (!assignment || !occupancy.isResidentAllowedInScene(assignment.residentId, this.scene.key)) {
+      return;
+    }
+
+    const resident = supportingResident(
+      assignment.residentId as 'resident:maple' | 'resident:tansy',
+    );
+    const work = getVillageInteriorAnchor(this.interiorId, assignment.workAnchorId);
+    const presentation = createVillageInteriorResidentPresentation(this, resident, {
+      x: work.position.x,
+      y: work.position.y,
+      displaySize: { width: 152, height: 128 },
+    });
+    presentation.container.setData('occupancy-role', assignment.role);
+    this.occupant = presentation.container;
+  }
+
+  private registerInteractions(): void {
+    const map = getVillageInteriorMap(this.interiorId);
+    const targets: InteractionTarget[] = [
+      {
+        id: `interaction:village-interior:${this.interiorId}:exit`,
+        label: 'Sunbeam Village',
+        actionLabel: 'Go outside',
+        actionKind: 'enter',
+        position: map.anchors.exit.approach,
+        interactionRadius: 145,
+        priority: 40,
+        result: { type: 'callback', activate: () => this.leaveInterior() },
+      },
+    ];
+
+    if (this.interiorId === 'bakery') {
+      targets.push(...this.createBakeryInteractions());
+    } else if (this.interiorId === 'library') {
+      targets.push(...this.createStoryHouseInteractions());
+    } else {
+      targets.push(...this.createThreadInteractions());
+    }
+
+    getSceneInteractionRegistry(this).replaceOwnerTargets(INTERIOR_INTERACTION_OWNER, targets);
+  }
+
+  private createBakeryInteractions(): InteractionTarget[] {
+    const counter = getVillageInteriorAnchor('bakery', 'counter');
+    const worker = getVillageInteriorAnchor('bakery', 'npc-work');
+    const recipes = getVillageInteriorAnchor('bakery', 'primary-feature');
+    const cake = getVillageInteriorAnchor('bakery', 'secondary-feature');
+    const targets: InteractionTarget[] = [
+      {
+        id: 'interaction:village-interior:bakery:counter',
+        label: 'Bakery counter',
+        actionLabel: 'Browse',
+        actionKind: 'buy',
+        position: counter.approach,
+        interactionRadius: 155,
+        priority: 28,
+        result: { type: 'callback', activate: () => this.openBakeryCounter() },
+      },
+      {
+        id: 'interaction:village-interior:bakery:cake-table',
+        label: 'Wobbly Cake table',
+        actionLabel: 'Plan a cake',
+        actionKind: 'use',
+        position: cake.approach,
+        interactionRadius: 145,
+        priority: 22,
+        result: { type: 'callback', activate: () => this.openCakePlan() },
+      },
+      {
+        id: 'interaction:village-interior:bakery:recipes',
+        label: 'Recipe shelf',
+        actionLabel: this.shouldShowBakeryMapCorner() ? 'Search' : 'Browse',
+        actionKind: 'inspect',
+        position: recipes.approach,
+        interactionRadius: 145,
+        priority: 20,
+        result: {
+          type: 'callback',
+          activate: () => {
+            if (this.shouldShowBakeryMapCorner()) {
+              this.findBakeryMapCorner();
+              return;
+            }
+            this.showFeedback(
+              'Maple’s recipe shelf contains berry buns, cloud biscuits and one page simply labelled “TRY MORE SPRINKLES”.',
+              recipes.approach,
+            );
+          },
+        },
+      },
+    ];
+
+    if (this.occupant) {
+      targets.push({
+        id: 'interaction:village-interior:bakery:maple',
+        label: 'Maple',
+        actionLabel: 'Talk',
+        actionKind: 'talk',
+        position: worker.approach,
+        interactionRadius: 160,
+        priority: 35,
+        result: { type: 'callback', activate: () => this.talkToMaple() },
+      });
+    }
+    return targets;
+  }
+
+  private createStoryHouseInteractions(): InteractionTarget[] {
+    const worker = getVillageInteriorAnchor('library', 'npc-work');
+    const storyTable = getVillageInteriorAnchor('library', 'primary-feature');
+    const clueShelf = getVillageInteriorAnchor('library', 'secondary-feature');
+    const targets: InteractionTarget[] = [
+      {
+        id: 'interaction:village-interior:library:story-table',
+        label: 'Story table',
+        actionLabel: 'Read',
+        actionKind: 'inspect',
+        position: storyTable.approach,
+        interactionRadius: 150,
+        priority: 24,
+        result: { type: 'callback', activate: () => this.readStoryCard() },
+      },
+      {
+        id: 'interaction:village-interior:library:clues',
+        label: 'Valley clue shelf',
+        actionLabel: 'Check clues',
+        actionKind: 'inspect',
+        position: clueShelf.approach,
+        interactionRadius: 150,
+        priority: 20,
+        result: {
+          type: 'callback',
+          activate: () =>
+            this.showFeedback(
+              new StoryHouseService(getBrowserSaveService()).getCurrentClue(),
+              clueShelf.approach,
+            ),
+        },
+      },
+    ];
+
+    if (this.occupant) {
+      targets.push({
+        id: 'interaction:village-interior:library:tansy',
+        label: 'Tansy',
+        actionLabel: 'Talk',
+        actionKind: 'talk',
+        position: worker.approach,
+        interactionRadius: 160,
+        priority: 35,
+        result: { type: 'callback', activate: () => this.talkToTansy() },
+      });
+    }
+    return targets;
+  }
+
+  private createThreadInteractions(): InteractionTarget[] {
+    const counter = getVillageInteriorAnchor('accessory-shop', 'counter');
+    const display = getVillageInteriorAnchor('accessory-shop', 'primary-feature');
+    return [
+      {
+        id: 'interaction:village-interior:accessory-shop:counter',
+        label: 'Twinkle & Thread counter',
+        actionLabel: 'Browse',
+        actionKind: 'buy',
+        position: counter.approach,
+        interactionRadius: 155,
+        priority: 28,
+        result: { type: 'callback', activate: () => this.openThreadShop() },
+      },
+      {
+        id: 'interaction:village-interior:accessory-shop:display',
+        label: 'Accessory display',
+        actionLabel: 'See what unlocked',
+        actionKind: 'inspect',
+        position: display.approach,
+        interactionRadius: 145,
+        priority: 20,
+        result: { type: 'callback', activate: () => this.showThreadProgress() },
+      },
+    ];
+  }
+
+  private createHud(definition: InteriorPresentationDefinition): void {
+    createUiShadow(this, GAME_WIDTH / 2, 46, 560, 66, 1, 0.18);
+    this.add
+      .text(GAME_WIDTH / 2, 34, `${definition.icon}  ${definition.title}`, {
+        color: UI_COLOURS.ink,
+        fontFamily: UI_FONT,
+        fontSize: '27px',
+        fontStyle: 'bold',
+        backgroundColor: '#fff8e8ee',
+        padding: { x: 18, y: 9 },
+      })
+      .setOrigin(0.5, 0)
+      .setScrollFactor(0)
+      .setDepth(115);
+    this.add
+      .text(GAME_WIDTH / 2, 84, definition.subtitle, {
+        color: UI_COLOURS.softInk,
+        fontFamily: UI_FONT,
+        fontSize: '13px',
+        fontStyle: 'bold',
+        align: 'center',
+        wordWrap: { width: 760 },
+      })
+      .setOrigin(0.5, 0)
+      .setScrollFactor(0)
+      .setDepth(115);
+    this.balanceText = this.add
+      .text(GAME_WIDTH - 120, 34, '', {
+        color: '#76518a',
         fontFamily: UI_FONT,
         fontSize: '15px',
         fontStyle: 'bold',
-      })
-      .setOrigin(0.5)
-      .setDepth(7);
-  }
-
-  private createPersistentControls(): void {
-    this.createActionButton(
-      {
-        x: 170,
-        y: GAME_HEIGHT - 46,
-        width: 240,
-        label: '← Back to village',
-        fill: UI_COLOURS.lavender,
-        onPress: () => this.leaveInterior(),
-      },
-      null,
-    );
-    this.balanceText = this.add
-      .text(GAME_WIDTH - 155, GAME_HEIGHT - 46, '', {
-        color: '#76518a',
-        fontFamily: UI_FONT,
-        fontSize: '17px',
-        fontStyle: 'bold',
         backgroundColor: '#f3e7f8e8',
-        padding: { x: 12, y: 7 },
+        padding: { x: 10, y: 7 },
       })
-      .setOrigin(0.5)
-      .setDepth(18);
+      .setOrigin(0.5, 0)
+      .setScrollFactor(0)
+      .setDepth(116);
     this.refreshBalance();
   }
 
-  private refreshBody(): void {
-    this.body?.destroy(true);
-    this.body = this.add.container(0, 0).setDepth(10);
-    if (this.interiorId === 'bakery') {
-      this.renderBakery();
-    } else if (this.interiorId === 'library') {
-      this.renderStoryHouse();
-    } else {
-      this.renderThreadShop();
-    }
-    this.refreshBalance();
-  }
-
-  private renderBakery(): void {
-    const maple = supportingResident('resident:maple');
-    const sprite = createSupportingResidentSprite(this, maple)
-      .setPosition(1010, 430)
-      .setDisplaySize(142, 123);
-    const name = this.add
-      .text(1010, 500, 'Maple', {
-        color: '#704637',
-        fontFamily: UI_FONT,
-        fontSize: '16px',
-        fontStyle: 'bold',
-        backgroundColor: '#fff3d7e8',
-        padding: { x: 8, y: 4 },
-      })
-      .setOrigin(0.5);
-    this.body?.add([sprite, name]);
-
+  private openBakeryCounter(): void {
     const bakery = new BakeryService(getBrowserSaveService());
-    bakery.listStock().forEach((stock, index) => {
-      const x = 300 + index * 330;
-      const card = this.add
-        .rectangle(x, 250, 285, 150, 0xfffbf3, 0.97)
-        .setStrokeStyle(3, 0xd88b62, 0.9);
-      const icon = this.add
-        .text(x - 105, 220, stock.definition.icon ?? '🥐', {
-          fontFamily: UI_FONT,
-          fontSize: '34px',
-        })
-        .setOrigin(0.5);
-      const title = this.add.text(x - 70, 205, stock.definition.name, {
+    const stock = bakery.listStock();
+    this.openOverlay();
+    if (!this.overlay) {
+      return;
+    }
+
+    const title = this.add
+      .text(GAME_WIDTH / 2, 175, 'Sunbeam Bakery counter', {
         color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
-        fontSize: '16px',
+        fontSize: '28px',
         fontStyle: 'bold',
-      });
-      const detail = this.add.text(
-        x - 70,
-        232,
-        stock.isUnlocked
-          ? stock.isOwned
-            ? 'Owned ✓'
-            : `${stock.price} Shimmer`
-          : (stock.unlockHint ?? 'Locked'),
-        {
-          color: UI_COLOURS.softInk,
-          fontFamily: UI_FONT,
-          fontSize: '12px',
-          wordWrap: { width: 170 },
-        },
-      );
-      this.body?.add([card, icon, title, detail]);
-      this.createActionButton(
-        {
-          x,
-          y: 294,
-          width: 190,
-          label: stock.isOwned ? 'Yours!' : stock.isUnlocked ? `Buy • ${stock.price} ✨` : 'Locked',
-          enabled: stock.isUnlocked && !stock.isOwned,
-          onPress: () => this.buyBakeryItem(stock.definition.id),
-        },
-        this.body,
-      );
-    });
-
-    this.createActionButton(
-      {
-        x: 310,
-        y: 485,
-        width: 230,
-        label: '💬 Talk to Maple',
-        onPress: () => this.talkToMaple(),
-      },
-      this.body,
-    );
-    this.createActionButton(
-      {
-        x: 570,
-        y: 485,
-        width: 230,
-        label: '🎂 Wobbly Cake Plan',
-        onPress: () => this.openCakePlan(),
-      },
-      this.body,
-    );
-
-    if (this.shouldShowBakeryMapCorner()) {
-      this.createActionButton(
-        {
-          x: 830,
-          y: 485,
-          width: 230,
-          label: '🔎 Check recipe shelf',
-          fill: UI_COLOURS.mint,
-          onPress: () => this.findBakeryMapCorner(),
-        },
-        this.body,
-      );
-    } else {
-      this.createActionButton(
-        {
-          x: 830,
-          y: 485,
-          width: 230,
-          label: '📜 Browse recipes',
-          fill: UI_COLOURS.mint,
-          onPress: () =>
-            this.showFeedback(
-              'Maple’s recipe shelf contains berry buns, cloud biscuits and one page simply labelled “TRY MORE SPRINKLES”.',
-            ),
-        },
-        this.body,
-      );
-    }
-  }
-
-  private renderStoryHouse(): void {
-    const tansy = supportingResident('resident:tansy');
-    const sprite = createSupportingResidentSprite(this, tansy)
-      .setPosition(1015, 430)
-      .setDisplaySize(142, 123);
-    const name = this.add
-      .text(1015, 500, 'Tansy', {
-        color: '#4f6171',
-        fontFamily: UI_FONT,
-        fontSize: '16px',
-        fontStyle: 'bold',
-        backgroundColor: '#eff8ffe8',
-        padding: { x: 8, y: 4 },
       })
-      .setOrigin(0.5);
-    this.body?.add([sprite, name]);
+      .setOrigin(0.5)
+      .setScrollFactor(0);
+    this.overlay.add(title);
 
-    const storyHouse = new StoryHouseService(getBrowserSaveService());
-    const summary = this.add.text(165, 185, storyHouse.getWonderbookSummary(), {
-      color: UI_COLOURS.ink,
-      fontFamily: UI_FONT,
-      fontSize: '15px',
-      fontStyle: 'bold',
-      wordWrap: { width: 520 },
-      backgroundColor: '#f8fcffee',
-      padding: { x: 14, y: 10 },
-    });
-    const clue = this.add.text(165, 282, `🗺️ ${storyHouse.getCurrentClue()}`, {
-      color: UI_COLOURS.softInk,
-      fontFamily: UI_FONT,
-      fontSize: '14px',
-      wordWrap: { width: 520 },
-      backgroundColor: '#fff7dfee',
-      padding: { x: 14, y: 10 },
-    });
-    this.body?.add([summary, clue]);
-
-    this.createActionButton(
-      {
-        x: 300,
-        y: 465,
-        width: 230,
-        label: '💬 Talk to Tansy',
-        onPress: () => this.talkToTansy(),
-      },
-      this.body,
-    );
-    this.createActionButton(
-      {
-        x: 560,
-        y: 465,
-        width: 230,
-        label: '📖 Read story card',
-        onPress: () => this.readStoryCard(),
-      },
-      this.body,
-    );
-    this.createActionButton(
-      {
-        x: 820,
-        y: 465,
-        width: 230,
-        label: '🗺️ Check valley clues',
-        fill: UI_COLOURS.mint,
-        onPress: () => this.showFeedback(storyHouse.getCurrentClue()),
-      },
-      this.body,
-    );
-  }
-
-  private renderThreadShop(): void {
-    const shop = new ShopService(getBrowserSaveService());
-    const stock = shop.listStock();
-    const unlocked = stock.filter(({ isUnlocked }) => isUnlocked).length;
-    const owned = stock.filter(({ isUniqueOwned }) => isUniqueOwned).length;
-    const panel = this.add
-      .text(
-        GAME_WIDTH / 2,
-        235,
-        `${unlocked}/${stock.length} stock lines unlocked  •  ${owned} wearable${owned === 1 ? '' : 's'} owned\nStarter treasures are affordable now; new pieces appear through stories, discoveries and racing.`,
-        {
+    stock.forEach((item, index) => {
+      const x = 430 + index * 420;
+      const card = this.add
+        .rectangle(x, 365, 360, 280, 0xfffbf3, 0.98)
+        .setStrokeStyle(4, 0xd88b62, 0.9)
+        .setScrollFactor(0);
+      const icon = this.add
+        .text(x, 285, item.definition.icon ?? '🥐', {
+          fontFamily: UI_FONT,
+          fontSize: '48px',
+        })
+        .setOrigin(0.5)
+        .setScrollFactor(0);
+      const name = this.add
+        .text(x, 335, item.definition.name, {
           color: UI_COLOURS.ink,
           fontFamily: UI_FONT,
-          fontSize: '17px',
+          fontSize: '18px',
           fontStyle: 'bold',
-          align: 'center',
-          wordWrap: { width: 760 },
-          backgroundColor: '#fff8fcee',
-          padding: { x: 18, y: 14 },
-        },
-      )
-      .setOrigin(0.5);
-    this.body?.add(panel);
+        })
+        .setOrigin(0.5)
+        .setScrollFactor(0);
+      const detail = this.add
+        .text(
+          x,
+          385,
+          item.isUnlocked
+            ? item.isOwned
+              ? 'Owned ✓'
+              : `${item.price} Shimmer`
+            : (item.unlockHint ?? 'Locked'),
+          {
+            color: UI_COLOURS.softInk,
+            fontFamily: UI_FONT,
+            fontSize: '14px',
+            align: 'center',
+            wordWrap: { width: 300 },
+          },
+        )
+        .setOrigin(0.5)
+        .setScrollFactor(0);
+      this.overlay?.add([card, icon, name, detail]);
+      this.createOverlayButton(
+        x,
+        455,
+        item.isOwned ? 'Yours!' : item.isUnlocked ? `Buy • ${item.price} ✨` : 'Locked',
+        () => this.buyBakeryItem(item.definition.id),
+        item.isUnlocked && !item.isOwned,
+      );
+    });
 
-    this.createActionButton(
-      {
-        x: 470,
-        y: 475,
-        width: 300,
-        label: '🎀 Browse Twinkle & Thread',
-        onPress: () => this.openThreadShop(),
-      },
-      this.body,
-    );
-    this.createActionButton(
-      {
-        x: 810,
-        y: 475,
-        width: 300,
-        label: '✨ What unlocked?',
-        fill: UI_COLOURS.mint,
-        onPress: () => this.showThreadProgress(stock),
-      },
-      this.body,
+    this.createOverlayButton(
+      GAME_WIDTH / 2,
+      570,
+      'Back to the bakery',
+      () => this.closeOverlay(),
     );
   }
 
-  private createActionButton(
-    options: ActionButtonOptions,
-    parent: Phaser.GameObjects.Container | null,
+  private openOverlay(): void {
+    this.closeOverlay();
+    setInteractionModalActive(this, true);
+    this.overlay = this.add.container(0, 0).setDepth(20_500).setScrollFactor(0);
+    const shade = this.add
+      .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x493c50, 0.68)
+      .setInteractive()
+      .setScrollFactor(0);
+    const panel = this.add
+      .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, 980, 520, 0xfffbef, 1)
+      .setStrokeStyle(6, 0xe29b68, 1)
+      .setScrollFactor(0);
+    this.overlay.add([shade, panel]);
+  }
+
+  private createOverlayButton(
+    x: number,
+    y: number,
+    labelText: string,
+    onPress: () => void,
+    enabled = true,
   ): void {
-    const fill =
-      options.enabled === false ? UI_COLOURS.lavender : (options.fill ?? UI_COLOURS.gold);
+    if (!this.overlay) {
+      return;
+    }
+    const fill = enabled ? UI_COLOURS.gold : UI_COLOURS.lavender;
     const button = this.add
-      .rectangle(
-        options.x,
-        options.y,
-        options.width ?? 220,
-        54,
-        fill,
-        options.enabled === false ? 0.6 : 1,
-      )
+      .rectangle(x, y, 260, 58, fill, enabled ? 1 : 0.62)
       .setStrokeStyle(
         3,
-        options.enabled === false ? UI_COLOURS.lavenderStrong : UI_COLOURS.goldStrong,
+        enabled ? UI_COLOURS.goldStrong : UI_COLOURS.lavenderStrong,
         0.95,
       )
-      .setDepth(16);
+      .setScrollFactor(0);
     const label = this.add
-      .text(options.x, options.y, options.label, {
+      .text(x, y, labelText, {
         color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
         fontSize: '15px',
@@ -607,15 +732,24 @@ export class VillageInteriorScene extends Phaser.Scene {
         align: 'center',
       })
       .setOrigin(0.5)
-      .setDepth(17);
-    if (options.enabled !== false) {
+      .setScrollFactor(0);
+    if (enabled) {
       button.setInteractive({ useHandCursor: true });
       label.setInteractive({ useHandCursor: true });
       applyButtonHover(button, fill, UI_COLOURS.blush);
-      button.on('pointerdown', options.onPress);
-      label.on('pointerdown', options.onPress);
+      button.on('pointerdown', onPress);
+      label.on('pointerdown', onPress);
     }
-    parent?.add([button, label]);
+    this.overlay.add([button, label]);
+  }
+
+  private closeOverlay(): void {
+    if (!this.overlay) {
+      return;
+    }
+    this.overlay.destroy(true);
+    this.overlay = null;
+    setInteractionModalActive(this, false);
   }
 
   private buyBakeryItem(itemId: ItemId): void {
@@ -623,21 +757,24 @@ export class VillageInteriorScene extends Phaser.Scene {
       return;
     }
     const result = new BakeryService(getBrowserSaveService()).purchase(itemId);
+    this.closeOverlay();
+    const anchor = getVillageInteriorAnchor('bakery', 'counter').approach;
     if (result.type === 'purchased') {
-      this.showFeedback(`✨ ${result.item.name} is yours! ${result.balance} Shimmer left.`);
+      this.showFeedback(`✨ ${result.item.name} is yours! ${result.balance} Shimmer left.`, anchor);
       this.cameras.main.flash(100, 255, 236, 178, false);
     } else if (result.type === 'insufficient-funds') {
       this.showFeedback(
         `Almost! You need ${result.shortfall} more Shimmer for ${result.item.name}.`,
+        anchor,
       );
     } else if (result.type === 'locked') {
-      this.showFeedback(result.unlockHint);
+      this.showFeedback(result.unlockHint, anchor);
     } else if (result.type === 'persistence-failed') {
-      this.showFeedback('That did not save, so no Shimmer was spent. Please try again.');
+      this.showFeedback('That did not save, so no Shimmer was spent. Please try again.', anchor);
     } else {
-      this.showFeedback(`${result.item.name} is already tucked safely into your collection.`);
+      this.showFeedback(`${result.item.name} is already tucked safely into your collection.`, anchor);
     }
-    this.refreshBody();
+    this.refreshBalance();
   }
 
   private talkToMaple(): void {
@@ -646,30 +783,29 @@ export class VillageInteriorScene extends Phaser.Scene {
     if (progress.status === 'not-started') {
       progress = engine.startQuest(MAPLE_CAKE_QUEST_ID);
     }
+    let message: string;
     if (
       progress.status === 'active' &&
       progress.currentStepId === getQuestStepId(MAPLE_CAKE_QUEST_ID, 0)
     ) {
       engine.notifyCharacterTalked(MAPLE_CHARACTER_ID);
-      this.showFeedback(
-        'Maple: “I need a celebration cake with personality. Pick a colour plan, then we can wobble it together!”',
-      );
+      message =
+        'Maple: “I need a celebration cake with personality. Pick a colour plan, then we can wobble it together!”';
     } else if (
       progress.status === 'active' &&
       progress.currentStepId === getQuestStepId(MAPLE_CAKE_QUEST_ID, 4)
     ) {
       engine.notifyCharacterTalked(MAPLE_CHARACTER_ID);
-      this.showFeedback(
-        'Maple: “It is magnificently wobbly. That makes it ours. I saved a picnic-basket pattern for you too!”',
-      );
+      message =
+        'Maple: “It is magnificently wobbly. That makes it ours. I saved a picnic-basket pattern for you too!”';
     } else if (progress.status === 'completed') {
-      this.showFeedback(
-        'Maple: “The Wobbly Cake Plan is officially a success. I am still voting for extra sprinkles next time.”',
-      );
+      message =
+        'Maple: “The Wobbly Cake Plan is officially a success. I am still voting for extra sprinkles next time.”';
     } else {
-      this.showFeedback('Maple: “The cake plan is waiting. Choose a design when you are ready.”');
+      message = 'Maple: “The cake plan is waiting. Choose a design when you are ready.”';
     }
-    this.refreshBody();
+    this.showFeedback(message, getVillageInteriorAnchor('bakery', 'npc-work').approach);
+    this.registerInteractions();
   }
 
   private openCakePlan(): void {
@@ -678,84 +814,59 @@ export class VillageInteriorScene extends Phaser.Scene {
     if (progress.status === 'not-started') {
       progress = engine.startQuest(MAPLE_CAKE_QUEST_ID);
     }
+    const anchor = getVillageInteriorAnchor('bakery', 'secondary-feature').approach;
     if (!questIsAt(MAPLE_CAKE_QUEST_ID, 1)) {
-      if (progress.status === 'completed') {
-        this.showFeedback(
-          'Maple’s first Wobbly Cake is already part of Village history. The repeatable baking table comes later in R6.5.',
-        );
-      } else {
-        this.showFeedback('Talk to Maple first so she can explain the Wobbly Cake Plan.');
-      }
+      this.showFeedback(
+        progress.status === 'completed'
+          ? 'Maple’s first Wobbly Cake is already part of Village history. The cake table still carries a suspicious amount of sprinkles.'
+          : 'Talk to Maple first so she can explain the Wobbly Cake Plan.',
+        anchor,
+      );
       return;
     }
 
-    const overlay = this.add.container(0, 0).setDepth(40);
-    const shade = this.add
-      .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x493c50, 0.62)
-      .setInteractive();
-    const card = this.add
-      .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, 760, 330, 0xfffbef, 1)
-      .setStrokeStyle(6, 0xe29b68, 1);
+    this.openOverlay();
+    if (!this.overlay) {
+      return;
+    }
     const title = this.add
-      .text(GAME_WIDTH / 2, 245, 'Pick a Wobbly Cake design', {
+      .text(GAME_WIDTH / 2, 235, 'Pick a Wobbly Cake design', {
         color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
         fontSize: '28px',
         fontStyle: 'bold',
       })
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setScrollFactor(0);
     const note = this.add
       .text(
         GAME_WIDTH / 2,
         285,
-        'This is the story-sized decorating hook. WP14 can reuse it for the full repeatable baking activity.',
+        'Maple has laid out three gloriously impractical decorating plans.',
         {
           color: UI_COLOURS.softInk,
           fontFamily: UI_FONT,
-          fontSize: '13px',
+          fontSize: '14px',
           align: 'center',
           wordWrap: { width: 620 },
         },
       )
-      .setOrigin(0.5);
-    overlay.add([shade, card, title, note]);
+      .setOrigin(0.5)
+      .setScrollFactor(0);
+    this.overlay.add([title, note]);
+
     const choices: Array<{ theme: MapleCakeTheme; label: string; x: number }> = [
       { theme: 'sunshine', label: '☀️ Sunshine', x: 400 },
       { theme: 'moonflower', label: '🌙 Moonflower', x: 640 },
       { theme: 'rainbow', label: '🌈 Rainbow', x: 880 },
     ];
     for (const choice of choices) {
-      this.createOverlayChoice(overlay, choice.x, 385, choice.label, () => {
+      this.createOverlayButton(choice.x, 395, choice.label, () => {
         this.finishCakeDesign(choice.theme);
-        overlay.destroy(true);
+        this.closeOverlay();
       });
     }
-  }
-
-  private createOverlayChoice(
-    parent: Phaser.GameObjects.Container,
-    x: number,
-    y: number,
-    labelText: string,
-    onPress: () => void,
-  ): void {
-    const button = this.add
-      .rectangle(x, y, 200, 72, UI_COLOURS.gold, 1)
-      .setStrokeStyle(4, UI_COLOURS.goldStrong, 1)
-      .setInteractive({ useHandCursor: true });
-    const label = this.add
-      .text(x, y, labelText, {
-        color: UI_COLOURS.ink,
-        fontFamily: UI_FONT,
-        fontSize: '17px',
-        fontStyle: 'bold',
-      })
-      .setOrigin(0.5)
-      .setInteractive({ useHandCursor: true });
-    applyButtonHover(button, UI_COLOURS.gold, UI_COLOURS.blush);
-    button.on('pointerdown', onPress);
-    label.on('pointerdown', onPress);
-    parent.add([button, label]);
+    this.createOverlayButton(GAME_WIDTH / 2, 510, 'Not yet', () => this.closeOverlay());
   }
 
   private finishCakeDesign(theme: MapleCakeTheme): void {
@@ -781,11 +892,19 @@ export class VillageInteriorScene extends Phaser.Scene {
       value: theme === 'rainbow',
     });
     new InventoryService(saveService).addItem(WOBBLY_CAKE_ITEM_ID, 1);
-    this.showFeedback(
-      `🎂 ${theme === 'sunshine' ? 'Sunny yellow' : theme === 'moonflower' ? 'Moonflower blue' : 'Rainbow bright'} cake complete! Talk to Maple again so she can see your magnificently wobbly design.`,
-    );
     this.cameras.main.flash(120, 255, 232, 172, false);
-    this.refreshBody();
+    this.time.delayedCall(0, () => {
+      this.showFeedback(
+        `🎂 ${
+          theme === 'sunshine'
+            ? 'Sunny yellow'
+            : theme === 'moonflower'
+              ? 'Moonflower blue'
+              : 'Rainbow bright'
+        } cake complete! Talk to Maple again so she can see your magnificently wobbly design.`,
+        getVillageInteriorAnchor('bakery', 'secondary-feature').approach,
+      );
+    });
   }
 
   private shouldShowBakeryMapCorner(): boolean {
@@ -801,16 +920,18 @@ export class VillageInteriorScene extends Phaser.Scene {
 
   private findBakeryMapCorner(): void {
     const service = new DiscoveryService(getBrowserSaveService());
+    const anchor = getVillageInteriorAnchor('bakery', 'primary-feature').approach;
     if (service.hasDiscovery(TANSY_BAKERY_MAP_CORNER_DISCOVERY_ID)) {
-      this.showFeedback('The flour-dusted map corner is already safely with you.');
+      this.showFeedback('The flour-dusted map corner is already safely with you.', anchor);
       return;
     }
     service.unlockDiscovery(TANSY_BAKERY_MAP_CORNER_DISCOVERY_ID);
     this.showFeedback(
       '🗺️ Map corner found! It had been used as a recipe bookmark and now smells faintly of berry buns.',
+      anchor,
     );
     this.cameras.main.flash(100, 255, 239, 186, false);
-    this.refreshBody();
+    this.registerInteractions();
   }
 
   private talkToTansy(): void {
@@ -819,38 +940,38 @@ export class VillageInteriorScene extends Phaser.Scene {
     if (progress.status === 'not-started') {
       progress = engine.startQuest(TANSY_MAP_QUEST_ID);
     }
+    let message: string;
     if (
       progress.status === 'active' &&
       progress.currentStepId === getQuestStepId(TANSY_MAP_QUEST_ID, 0)
     ) {
       engine.notifyCharacterTalked(TANSY_CHARACTER_ID);
-      this.showFeedback(
-        'Tansy: “Three corners escaped from my favourite map. One likes notices, one smells like baking, and one flew somewhere sunny.”',
-      );
+      message =
+        'Tansy: “Three corners escaped from my favourite map. One likes notices, one smells like baking, and one flew somewhere sunny.”';
     } else if (
       progress.status === 'active' &&
       progress.currentStepId === getQuestStepId(TANSY_MAP_QUEST_ID, 5)
     ) {
       engine.notifyCharacterTalked(TANSY_CHARACTER_ID);
-      this.showFeedback(
-        'Tansy: “They fit! The valley has corners again. I am pinning this map down with four bookmarks this time.”',
-      );
+      message =
+        'Tansy: “They fit! The valley has corners again. I am pinning this map down with four bookmarks this time.”';
     } else if (progress.status === 'completed') {
-      this.showFeedback(
-        'Tansy: “The repaired map is staying right here. Unless a very determined breeze learns to read.”',
-      );
+      message =
+        'Tansy: “The repaired map is staying right here. Unless a very determined breeze learns to read.”';
     } else {
-      this.showFeedback(new StoryHouseService(getBrowserSaveService()).getCurrentClue());
+      message = new StoryHouseService(getBrowserSaveService()).getCurrentClue();
     }
-    this.refreshBody();
+    this.showFeedback(message, getVillageInteriorAnchor('library', 'npc-work').approach);
   }
 
   private readStoryCard(): void {
     const service = new StoryHouseService(getBrowserSaveService());
     const cards = service.listCards().filter(({ unlocked }) => unlocked);
+    const anchor = getVillageInteriorAnchor('library', 'primary-feature').approach;
     if (cards.length === 0) {
       this.showFeedback(
         'No story cards have reached the shelves yet. Exploring the valley will change that.',
+        anchor,
       );
       return;
     }
@@ -862,8 +983,7 @@ export class VillageInteriorScene extends Phaser.Scene {
       return;
     }
     service.readCard(card.id);
-    this.showFeedback(`${card.icon} ${card.title}\n${card.text}`);
-    this.refreshBody();
+    this.showFeedback(`${card.icon} ${card.title}\n${card.text}`, anchor);
   }
 
   private openThreadShop(): void {
@@ -874,22 +994,26 @@ export class VillageInteriorScene extends Phaser.Scene {
     this.scene.pause();
   }
 
-  private showThreadProgress(stock: ReturnType<ShopService['listStock']>): void {
+  private showThreadProgress(): void {
+    const stock = new ShopService(getBrowserSaveService()).listStock();
     const nextLocked = stock.find(({ isUnlocked }) => !isUnlocked);
     this.showFeedback(
       nextLocked
-        ? `Next locked treasure: ${nextLocked.definition.name}. ${nextLocked.unlockHint ?? 'Keep exploring to reveal it.'}`
-        : 'Every current Twinkle & Thread stock line is unlocked. More region-themed stock can join later in R6.5.',
+        ? `Next locked treasure: ${nextLocked.definition.name}. ${
+            nextLocked.unlockHint ?? 'Keep exploring to reveal it.'
+          }`
+        : 'Every current Twinkle & Thread treasure is unlocked. The shelves are ready for whatever you discover next.',
+      getVillageInteriorAnchor('accessory-shop', 'primary-feature').approach,
     );
   }
 
   private refreshBalance(): void {
     const balance = new ShimmerEconomyService(getBrowserSaveService()).getBalance();
-    this.balanceText?.setText(`✨ ${balance} Shimmer`);
+    this.balanceText?.setText(`✨ ${balance}`);
   }
 
-  private showFeedback(message: string): void {
-    this.feedback?.setText(message).setVisible(true);
+  private showFeedback(message: string, anchor: { x: number; y: number }): void {
+    getWorldFeedbackPresenter(this).showReaction(message, anchor, 3600);
   }
 
   private leaveInterior(): void {
@@ -897,6 +1021,18 @@ export class VillageInteriorScene extends Phaser.Scene {
       return;
     }
     this.closing = true;
+    this.closeOverlay();
     this.scene.start(this.returnScene);
+  }
+
+  private shutdownInterior(): void {
+    this.closeOverlay();
+    getSceneInteractionRegistry(this).clearOwner(INTERIOR_INTERACTION_OWNER);
+    getVillageInteriorOccupancyService().leave(this.interiorId);
+    this.runtime?.destroy();
+    this.runtime = null;
+    this.occupant = null;
+    this.balanceText = null;
+    this.purchaseGuard.reset();
   }
 }
