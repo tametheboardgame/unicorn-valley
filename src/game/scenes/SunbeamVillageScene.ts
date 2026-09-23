@@ -1256,7 +1256,6 @@ export class SunbeamVillageScene extends Phaser.Scene {
 
     // Playground children are runtime residents owned by AmbientPopulationWorldManager.
     // The scene owns only the approved H3.7 equipment and landscaping.
-
   }
 
   private createEntrances(): void {
