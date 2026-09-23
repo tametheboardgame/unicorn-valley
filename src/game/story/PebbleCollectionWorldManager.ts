@@ -108,8 +108,7 @@ export class PebbleCollectionWorldManager {
             discovered.has(discoveryId) && (save.inventory.itemQuantities[itemId] ?? 0) === 0,
         )
       : [];
-    const legacyQuantity =
-      save.inventory.itemQuantities[PEBBLE_LEGACY_CURIOUS_PIECE_ITEM_ID] ?? 0;
+    const legacyQuantity = save.inventory.itemQuantities[PEBBLE_LEGACY_CURIOUS_PIECE_ITEM_ID] ?? 0;
 
     if (missingSpecificItems.length === 0 && legacyQuantity === 0) {
       return;
@@ -120,7 +119,10 @@ export class PebbleCollectionWorldManager {
     }
 
     const migrated = this.saveService.load();
-    if (!migrated || (migrated.inventory.itemQuantities[PEBBLE_LEGACY_CURIOUS_PIECE_ITEM_ID] ?? 0) === 0) {
+    if (
+      !migrated ||
+      (migrated.inventory.itemQuantities[PEBBLE_LEGACY_CURIOUS_PIECE_ITEM_ID] ?? 0) === 0
+    ) {
       return;
     }
 
@@ -197,19 +199,13 @@ export class PebbleCollectionWorldManager {
     definition: SecretDiscoveryDefinition,
   ): Phaser.GameObjects.GameObject[] {
     if (definition.discoveryId === PEBBLE_MOON_GLASS_DISCOVERY_ID) {
-      const washer = scene.add
-        .circle(0, 0, 16, 0xb9e8ed, 0.96)
-        .setStrokeStyle(3, 0xf4ffff, 0.95);
-      const centre = scene.add
-        .circle(0, 0, 7, 0x47666d, 0.94)
-        .setStrokeStyle(1, 0x82bdc7, 0.9);
+      const washer = scene.add.circle(0, 0, 16, 0xb9e8ed, 0.96).setStrokeStyle(3, 0xf4ffff, 0.95);
+      const centre = scene.add.circle(0, 0, 7, 0x47666d, 0.94).setStrokeStyle(1, 0x82bdc7, 0.9);
       return [washer, centre];
     }
 
     if (definition.discoveryId === PEBBLE_STORY_SCREW_DISCOVERY_ID) {
-      const shaft = scene.add
-        .rectangle(0, 7, 7, 25, 0xc78d45, 1)
-        .setStrokeStyle(1, 0x73502a, 0.95);
+      const shaft = scene.add.rectangle(0, 7, 7, 25, 0xc78d45, 1).setStrokeStyle(1, 0x73502a, 0.95);
       const head = scene.add
         .text(0, -9, '★', {
           color: '#e6b866',
@@ -225,9 +221,7 @@ export class PebbleCollectionWorldManager {
 
     const springColours = [0x7ed7e8, 0xd9a5e8, 0xf4d66f, 0x8ed39c] as const;
     return springColours.map((colour, index) =>
-      scene.add
-        .ellipse(0, -10 + index * 7, 28, 11, colour, 0.18)
-        .setStrokeStyle(3, colour, 0.98),
+      scene.add.ellipse(0, -10 + index * 7, 28, 11, colour, 0.18).setStrokeStyle(3, colour, 0.98),
     );
   }
 
