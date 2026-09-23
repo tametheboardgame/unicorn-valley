@@ -16,11 +16,7 @@ import {
 import { RAINBOW_MEADOW_MAP } from '../world/RainbowMeadowMap';
 import { SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
 import { worldDepthForY } from '../world/WorldDepth';
-import {
-  addCoreNpcIdleTween,
-  CORE_NPC_VISUALS,
-  createCoreNpcSprite,
-} from './CoreNpcProductionArt';
+import { addCoreNpcIdleTween, CORE_NPC_VISUALS, createCoreNpcSprite } from './CoreNpcProductionArt';
 
 const LUMI_WORLD_POSITION = { x: 2980, y: 1530 } as const;
 const NOVA_PICNIC_POSITION = { x: 2045, y: 1400 } as const;
@@ -271,11 +267,7 @@ export class CoreNpcProductionPresentationManager {
     this.ensureVillageNpc(scene, 'pebble', 5);
   }
 
-  private ensureVillageNpc(
-    scene: Phaser.Scene,
-    id: VillageCoreResidentId,
-    yOffset: number,
-  ): void {
+  private ensureVillageNpc(scene: Phaser.Scene, id: VillageCoreResidentId, yOffset: number): void {
     const objectName = `core-npc:${id}:world`;
     if (scene.children.getByName(objectName)) {
       return;
