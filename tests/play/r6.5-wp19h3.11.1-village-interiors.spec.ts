@@ -74,18 +74,29 @@ test('H3.11.1 makes VillageInteriorScene a walkable semantic interior with physi
   const cinnamon = interior.objects.find(
     ({ name }) => name === 'village-interior-resident:resident:cinnamon',
   );
+  const shellMapButton = interior.objects.find(
+    ({ name }) => name === 'exploration-shell-map-button',
+  );
+  const shellLocation = interior.objects.find(
+    ({ name }) => name === 'exploration-location-title',
+  );
 
   expect(player).toMatchObject({ x: 750, y: 870, visible: true });
   expect(player?.textureKey?.startsWith('player-unicorn-village-interior:bakery')).toBe(true);
   expect(shell?.visible).toBe(true);
   expect(counter?.visible).toBe(true);
-  expect(counterCollider).toMatchObject({ bodyWidth: 440, bodyHeight: 82 });
+  expect(counterCollider).toMatchObject({ bodyWidth: 390, bodyHeight: 86 });
   expect(cinnamon?.visible).toBe(true);
+  expect(shellMapButton?.visible).toBe(true);
+  expect(shellLocation?.visible).toBe(true);
   expect(
     interior.objects.some(({ name }) => name === 'village-interior:bakery:patisserie-case'),
   ).toBe(true);
   expect(
     interior.objects.some(({ name }) => name === 'village-interior:bakery:magic-cake-dome'),
+  ).toBe(true);
+  expect(
+    interior.objects.some(({ name }) => name === 'village-interior:bakery:bread-counter'),
   ).toBe(true);
 
   await page.keyboard.down('ArrowLeft');
@@ -106,8 +117,8 @@ test('H3.11.1 makes VillageInteriorScene a walkable semantic interior with physi
     ).__UNICORN_VALLEY_DIAGNOSTICS__?.setArcadeSpritePosition(
       'VillageInteriorScene',
       'world-player-unicorn',
-      815,
-      625,
+      410,
+      565,
     );
   });
   await expect

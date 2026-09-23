@@ -131,19 +131,18 @@ const BAKERY: VillageInteriorDefinition = {
   playerSpawn: PLAYER_SPAWN,
   roomShell: ROOM_SHELL,
   anchors: sharedAnchors(
-    anchor('counter', 'Bakery counter', { x: 815, y: 510 }, { x: 815, y: 625 }),
-    anchor('npc-work', 'Bakery work position', { x: 1010, y: 410 }, { x: 1010, y: 580 }),
-    anchor('primary-feature', 'Recipe shelf', { x: 1280, y: 455 }, { x: 1280, y: 600 }),
-    anchor('secondary-feature', 'Wobbly Cake showcase', { x: 350, y: 690 }, { x: 350, y: 820 }),
+    anchor('counter', 'Patisserie counter', { x: 410, y: 440 }, { x: 410, y: 565 }),
+    anchor('npc-work', 'Bakery work position', { x: 750, y: 420 }, { x: 750, y: 545 }),
+    anchor('primary-feature', 'Recipe board', { x: 175, y: 720 }, { x: 305, y: 720 }),
+    anchor('secondary-feature', 'Wobbly Cake showcase', { x: 750, y: 690 }, { x: 750, y: 835 }),
   ),
   colliders: [
     ...ROOM_COLLIDERS,
-    { id: 'counter', x: 815, y: 525, width: 440, height: 82 },
-    { id: 'oven', x: 230, y: 455, width: 130, height: 116 },
-    { id: 'prep-bench', x: 418, y: 461, width: 175, height: 78 },
-    { id: 'recipe-shelf', x: 1280, y: 455, width: 136, height: 110 },
-    { id: 'cake-table', x: 350, y: 725, width: 230, height: 110 },
-    { id: 'cafe-table', x: 1165, y: 755, width: 160, height: 105 },
+    { id: 'counter', x: 410, y: 462, width: 390, height: 86 },
+    { id: 'bread-counter', x: 1090, y: 462, width: 390, height: 86 },
+    { id: 'recipe-shelf', x: 175, y: 720, width: 92, height: 180 },
+    { id: 'cake-table', x: 750, y: 715, width: 290, height: 135 },
+    { id: 'cafe-table', x: 1190, y: 760, width: 150, height: 100 },
   ],
 };
 

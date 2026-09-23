@@ -26,6 +26,18 @@ const LOCATION_TITLES: Readonly<Record<string, string>> = {
   StarlightBeachScene: 'Starlight Beach',
 };
 
+function resolveLocationTitle(scene: Phaser.Scene): string | null {
+  if (scene.scene.key !== 'VillageInteriorScene') {
+    return LOCATION_TITLES[scene.scene.key] ?? null;
+  }
+
+  const interiorId = scene.data.get('village-interior-id');
+  if (interiorId === 'bakery') return 'Sunbeam Bakery';
+  if (interiorId === 'accessory-shop') return 'Twinkle & Thread';
+  if (interiorId === 'library') return 'Story House';
+  return 'Sunbeam Village';
+}
+
 const LEGACY_STATUS_PREFIXES = [
   'Pip is nearby.',
   'Your Moonflower Sparkle is safely remembered.',
@@ -50,7 +62,7 @@ export class ExplorationChrome {
     touchMovementPad: TouchMovementPad,
   ) {
     void touchMovementPad;
-    const locationTitle = LOCATION_TITLES[scene.scene.key];
+    const locationTitle = resolveLocationTitle(scene);
     if (!locationTitle) {
       this.titleText = null;
       return;
@@ -103,7 +115,7 @@ export class ExplorationChrome {
   }
 
   public refresh(): void {
-    const locationTitle = LOCATION_TITLES[this.scene.scene.key];
+    const locationTitle = resolveLocationTitle(this.scene);
     if (!locationTitle) {
       return;
     }

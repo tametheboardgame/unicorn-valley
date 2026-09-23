@@ -36,7 +36,7 @@ import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getQuestStepId } from '../quests/QuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { getWorldFeedbackPresenter } from '../ui/WorldFeedbackPresenter';
-import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from '../ui/uiTheme';
+import { UI_COLOURS, UI_FONT, applyButtonHover } from '../ui/uiTheme';
 import {
   getVillageInteriorAnchor,
   getVillageInteriorMap,
@@ -139,11 +139,13 @@ export class VillageInteriorScene extends Phaser.Scene {
       map,
       colliderNamePrefix: `village-interior-collider:${this.interiorId}`,
       onBack: () => this.leaveInterior(),
+      ...(this.interiorId === 'bakery'
+        ? { cameraDeadzone: { width: 220, height: 80 } }
+        : {}),
     });
     this.runtime.create();
     this.renderInteriorOccupant();
     this.registerInteractions();
-    this.createHud(PRESENTATION[this.interiorId]);
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.shutdownInterior());
   }
@@ -242,150 +244,174 @@ export class VillageInteriorScene extends Phaser.Scene {
 
   private createBakerySet(): void {
     const counter = getVillageInteriorAnchor('bakery', 'counter');
-    const recipeShelf = getVillageInteriorAnchor('bakery', 'primary-feature');
-    const cakeTable = getVillageInteriorAnchor('bakery', 'secondary-feature');
+    const recipeBoard = getVillageInteriorAnchor('bakery', 'primary-feature');
+    const cakeShowcase = getVillageInteriorAnchor('bakery', 'secondary-feature');
 
-    // Light architectural detail: pale floorboards and a soft dado keep the room bright.
     for (let y = 410; y <= 930; y += 92) {
-      this.add
-        .rectangle(750, y, 1260, 3, 0xd9bfa6, 0.3)
-        .setDepth(3.1);
+      this.add.rectangle(750, y, 1260, 3, 0xd9bfa6, 0.3).setDepth(3.1);
     }
     this.add.rectangle(750, 337, 1280, 24, 0xf2ced4, 0.9).setDepth(4.7);
     this.add.rectangle(750, 350, 1280, 5, 0xffffff, 0.72).setDepth(4.8);
 
-    this.createBakeryWallShelf(505, 284, 300);
-    this.createBakeryWallShelf(855, 284, 260);
+    // Two matching rear service counters leave an open centre gap for Cinnamon.
+    this.createBakeryPatisserieCounter(counter.position.x, counter.position.y);
+    this.createBakeryBreadCounter(1090, counter.position.y);
 
-    // Compact production corner on the left keeps the middle of the shop open.
-    const oven = this.add.graphics().setName('village-interior:bakery:oven');
-    oven.fillStyle(0xf0c7a3, 1);
-    oven.lineStyle(5, 0xc98d77, 0.88);
-    oven.fillRoundedRect(165, 380, 130, 150, 18);
-    oven.strokeRoundedRect(165, 380, 130, 150, 18);
-    oven.fillStyle(0x6e5965, 1);
-    oven.fillRoundedRect(191, 420, 78, 68, 14);
-    oven.fillStyle(0xffc46b, 0.9);
-    oven.fillEllipse(230, 463, 42, 24);
-    oven.fillStyle(0xff8b66, 0.92);
-    oven.fillTriangle(214, 470, 230, 435, 246, 470);
-    oven.setDepth(worldDepthForY(520, 0.2));
+    // Hero cake display now owns the middle of the room.
+    this.createBakeryCakeShowcase(cakeShowcase.position.x, cakeShowcase.position.y);
 
-    const prep = this.add.graphics().setName('village-interior:bakery:prep-bench');
-    prep.fillStyle(0xf2d6bd, 1);
-    prep.lineStyle(4, 0xc99d89, 0.82);
-    prep.fillRoundedRect(330, 423, 175, 76, 15);
-    prep.strokeRoundedRect(330, 423, 175, 76, 15);
-    prep.fillStyle(0xfffbf0, 1);
-    prep.fillEllipse(385, 444, 48, 22);
-    prep.lineStyle(3, 0xc38d9d, 0.85);
-    prep.lineBetween(431, 443, 466, 430);
-    prep.fillStyle(0xe5b765, 1);
-    prep.fillCircle(470, 446, 11);
-    prep.setDepth(worldDepthForY(500, 0.22));
+    // Recipe board moves towards the front-left wall, away from the service line.
+    this.createBakeryRecipeBoard(recipeBoard.position.x, recipeBoard.position.y);
 
-    // The service counter is deliberately narrower; the glass patisserie case is the hero.
-    const display = this.add.graphics().setName('village-interior:bakery:counter');
-    display.fillStyle(0xd99ba6, 1);
-    display.lineStyle(5, 0xb97988, 0.88);
-    display.fillRoundedRect(counter.position.x - 220, counter.position.y - 16, 440, 92, 20);
-    display.strokeRoundedRect(counter.position.x - 220, counter.position.y - 16, 440, 92, 20);
-    display.fillStyle(0xfff7e8, 1);
-    display.fillRoundedRect(counter.position.x - 204, counter.position.y + 16, 408, 42, 12);
-    display.lineStyle(3, 0xe9c1c8, 0.92);
-    display.strokeRoundedRect(counter.position.x - 204, counter.position.y + 16, 408, 42, 12);
-    display.setDepth(worldDepthForY(counter.position.y + 68, 0.3));
+    // Small café nook remains optional supporting detail at the front-right edge.
+    const cafe = this.add.graphics().setName('village-interior:bakery:cafe-table');
+    cafe.fillStyle(0xf2d6bd, 1);
+    cafe.lineStyle(4, 0xc99d89, 0.74);
+    cafe.fillEllipse(1190, 760, 150, 94);
+    cafe.strokeEllipse(1190, 760, 150, 94);
+    cafe.fillStyle(0xf7c9d6, 1);
+    cafe.fillCircle(1168, 747, 15);
+    cafe.fillStyle(0xfff7e8, 1);
+    cafe.fillCircle(1212, 746, 17);
+    cafe.lineStyle(3, 0xb88aa0, 0.72);
+    cafe.strokeCircle(1212, 746, 17);
+    cafe.setDepth(worldDepthForY(805, 0.2));
+
+    for (const x of [1108, 1272]) {
+      const chair = this.add.graphics();
+      chair.fillStyle(0xb98b9f, 1);
+      chair.lineStyle(3, 0x8c657c, 0.75);
+      chair.fillCircle(x, 798, 25);
+      chair.strokeCircle(x, 798, 25);
+      chair.setDepth(worldDepthForY(825, 0.18));
+    }
+
+    for (const sparkle of [
+      { x: 615, y: 454, r: 4 },
+      { x: 885, y: 454, r: 4 },
+      { x: 625, y: 626, r: 4 },
+      { x: 875, y: 626, r: 4 },
+      { x: 750, y: 545, r: 5 },
+      { x: 750, y: 805, r: 4 },
+    ]) {
+      this.createBakerySparkle(sparkle.x, sparkle.y, sparkle.r);
+    }
+  }
+
+  private createBakeryPatisserieCounter(x: number, y: number): void {
+    const base = this.add.graphics().setName('village-interior:bakery:counter');
+    base.fillStyle(0xd99ba6, 1);
+    base.lineStyle(5, 0xb97988, 0.88);
+    base.fillRoundedRect(x - 195, y - 12, 390, 90, 18);
+    base.strokeRoundedRect(x - 195, y - 12, 390, 90, 18);
+    base.fillStyle(0xfff7e8, 1);
+    base.fillRoundedRect(x - 180, y + 20, 360, 40, 11);
+    base.lineStyle(3, 0xe9c1c8, 0.92);
+    base.strokeRoundedRect(x - 180, y + 20, 360, 40, 11);
+    base.setDepth(worldDepthForY(y + 70, 0.3));
 
     const glass = this.add.graphics().setName('village-interior:bakery:patisserie-case');
-    glass.fillStyle(0xdff8fb, 0.28);
+    glass.fillStyle(0xdff8fb, 0.27);
     glass.lineStyle(4, 0xa6d7dd, 0.84);
-    glass.fillRoundedRect(counter.position.x - 205, counter.position.y - 92, 410, 88, 18);
-    glass.strokeRoundedRect(counter.position.x - 205, counter.position.y - 92, 410, 88, 18);
+    glass.fillRoundedRect(x - 180, y - 88, 360, 82, 16);
+    glass.strokeRoundedRect(x - 180, y - 88, 360, 82, 16);
     glass.lineStyle(2, 0xffffff, 0.72);
-    glass.lineBetween(counter.position.x - 170, counter.position.y - 76, counter.position.x + 155, counter.position.y - 76);
-    glass.setDepth(worldDepthForY(counter.position.y + 68, 0.46));
+    glass.lineBetween(x - 148, y - 73, x + 140, y - 73);
+    glass.setDepth(worldDepthForY(y + 70, 0.46));
 
-    this.createBakeryDisplayCake(counter.position.x - 118, counter.position.y - 39, 0.74, {
+    this.createBakeryDisplayCake(x - 102, y - 38, 0.66, {
       sponge: 0xf6c98a,
       icing: 0xf4a9c1,
       accent: 0xfff1a3,
     });
-    this.createBakeryDisplayCake(counter.position.x, counter.position.y - 39, 0.64, {
+    this.createBakeryDisplayCake(x, y - 38, 0.58, {
       sponge: 0xe6c493,
       icing: 0xd7b6ef,
       accent: 0xaee7e0,
     });
-    this.createBakeryDisplayCake(counter.position.x + 118, counter.position.y - 39, 0.7, {
+    this.createBakeryDisplayCake(x + 102, y - 38, 0.63, {
       sponge: 0xf0bd83,
       icing: 0xffe4a3,
       accent: 0xf49aaa,
     });
 
     this.add
-      .text(counter.position.x, counter.position.y + 39, 'SUNBEAM PATISSERIE', {
+      .text(x, y + 41, 'CAKES & PATISSERIE', {
         color: '#744f67',
         fontFamily: UI_FONT,
-        fontSize: '13px',
+        fontSize: '12px',
         fontStyle: 'bold',
-        letterSpacing: 1.2,
+        letterSpacing: 1,
       })
       .setOrigin(0.5)
-      .setDepth(worldDepthForY(counter.position.y + 70, 0.5));
-
-    this.createBakeryRecipeCabinet(recipeShelf.position.x, recipeShelf.position.y);
-    this.createBakeryCakeShowcase(cakeTable.position.x, cakeTable.position.y);
-
-    // Small café nook stays at the edge so the centre aisle remains generous.
-    const cafe = this.add.graphics().setName('village-interior:bakery:cafe-table');
-    cafe.fillStyle(0xf2d6bd, 1);
-    cafe.lineStyle(4, 0xc99d89, 0.78);
-    cafe.fillEllipse(1165, 745, 160, 98);
-    cafe.strokeEllipse(1165, 745, 160, 98);
-    cafe.fillStyle(0xf7c9d6, 1);
-    cafe.fillCircle(1140, 731, 16);
-    cafe.fillStyle(0xfff7e8, 1);
-    cafe.fillCircle(1190, 730, 18);
-    cafe.lineStyle(3, 0xb88aa0, 0.75);
-    cafe.strokeCircle(1190, 730, 18);
-    cafe.setDepth(worldDepthForY(790, 0.2));
-
-    for (const x of [1075, 1255]) {
-      const chair = this.add.graphics();
-      chair.fillStyle(0xb98b9f, 1);
-      chair.lineStyle(3, 0x8c657c, 0.78);
-      chair.fillCircle(x, 785, 28);
-      chair.strokeCircle(x, 785, 28);
-      chair.setDepth(worldDepthForY(815, 0.18));
-    }
-
-    // Restrained magical detail rather than loose emoji clutter.
-    for (const sparkle of [
-      { x: 585, y: 432, r: 5 },
-      { x: 1032, y: 438, r: 4 },
-      { x: 314, y: 632, r: 4 },
-      { x: 442, y: 645, r: 5 },
-      { x: 1242, y: 640, r: 4 },
-    ]) {
-      this.createBakerySparkle(sparkle.x, sparkle.y, sparkle.r);
-    }
+      .setDepth(worldDepthForY(y + 72, 0.5));
   }
 
-  private createBakeryWallShelf(x: number, y: number, width: number): void {
-    const shelf = this.add.graphics();
-    shelf.fillStyle(0xe9b99e, 1);
-    shelf.lineStyle(3, 0xc88f7d, 0.82);
-    shelf.fillRoundedRect(x - width / 2, y, width, 16, 8);
-    shelf.strokeRoundedRect(x - width / 2, y, width, 16, 8);
+  private createBakeryBreadCounter(x: number, y: number): void {
+    const base = this.add.graphics().setName('village-interior:bakery:bread-counter');
+    base.fillStyle(0xe2b78f, 1);
+    base.lineStyle(5, 0xbd8768, 0.86);
+    base.fillRoundedRect(x - 195, y - 12, 390, 90, 18);
+    base.strokeRoundedRect(x - 195, y - 12, 390, 90, 18);
+    base.fillStyle(0xfff8eb, 1);
+    base.fillRoundedRect(x - 180, y + 20, 360, 40, 11);
+    base.lineStyle(3, 0xe7c4a5, 0.92);
+    base.strokeRoundedRect(x - 180, y + 20, 360, 40, 11);
+    base.setDepth(worldDepthForY(y + 70, 0.3));
 
-    for (const offset of [-width * 0.3, 0, width * 0.3]) {
-      shelf.fillStyle(0xf2be78, 1);
-      shelf.lineStyle(2, 0xca8a61, 0.8);
-      shelf.fillEllipse(x + offset, y - 18, 58, 30);
-      shelf.strokeEllipse(x + offset, y - 18, 58, 30);
-      shelf.lineStyle(2, 0xffe0a1, 0.72);
-      shelf.lineBetween(x + offset - 15, y - 24, x + offset + 15, y - 12);
+    const glass = this.add.graphics().setName('village-interior:bakery:bread-case');
+    glass.fillStyle(0xe7f8f8, 0.23);
+    glass.lineStyle(4, 0xb8d7d3, 0.8);
+    glass.fillRoundedRect(x - 180, y - 88, 360, 82, 16);
+    glass.strokeRoundedRect(x - 180, y - 88, 360, 82, 16);
+    glass.lineStyle(2, 0xffffff, 0.68);
+    glass.lineBetween(x - 148, y - 73, x + 140, y - 73);
+    glass.setDepth(worldDepthForY(y + 70, 0.45));
+
+    for (const [offset, kind] of [
+      [-105, 'round'],
+      [-35, 'baguette'],
+      [45, 'round'],
+      [112, 'baguette'],
+    ] as const) {
+      this.createBakeryBreadLoaf(x + offset, y - 40, kind);
     }
-    shelf.setDepth(5.35);
+
+    this.add
+      .text(x, y + 41, 'FRESH BREAD', {
+        color: '#765344',
+        fontFamily: UI_FONT,
+        fontSize: '12px',
+        fontStyle: 'bold',
+        letterSpacing: 1,
+      })
+      .setOrigin(0.5)
+      .setDepth(worldDepthForY(y + 72, 0.5));
+  }
+
+  private createBakeryBreadLoaf(
+    x: number,
+    y: number,
+    kind: 'round' | 'baguette',
+  ): void {
+    const bread = this.add.graphics();
+    bread.fillStyle(0xeeb66f, 1);
+    bread.lineStyle(2, 0xc6814f, 0.85);
+    if (kind === 'round') {
+      bread.fillEllipse(x, y, 62, 36);
+      bread.strokeEllipse(x, y, 62, 36);
+      bread.lineStyle(2, 0xffd99a, 0.9);
+      bread.lineBetween(x - 14, y - 9, x - 2, y + 6);
+      bread.lineBetween(x + 2, y - 9, x + 14, y + 6);
+    } else {
+      bread.fillRoundedRect(x - 38, y - 14, 76, 28, 14);
+      bread.strokeRoundedRect(x - 38, y - 14, 76, 28, 14);
+      bread.lineStyle(2, 0xffd99a, 0.9);
+      for (const slash of [-18, 0, 18]) {
+        bread.lineBetween(x + slash - 7, y - 9, x + slash + 3, y + 7);
+      }
+    }
+    bread.setDepth(worldDepthForY(y + 70, 0.47));
   }
 
   private createBakeryDisplayCake(
@@ -422,82 +448,101 @@ export class VillageInteriorScene extends Phaser.Scene {
     cake.setDepth(worldDepthForY(y + 65, 0.42));
   }
 
-  private createBakeryRecipeCabinet(x: number, y: number): void {
-    const cabinet = this.add.graphics().setName('village-interior:bakery:recipe-shelf');
-    cabinet.fillStyle(0xf4d8bf, 1);
-    cabinet.lineStyle(4, 0xc99d89, 0.78);
-    cabinet.fillRoundedRect(x - 68, y - 88, 136, 176, 16);
-    cabinet.strokeRoundedRect(x - 68, y - 88, 136, 176, 16);
-    cabinet.fillStyle(0xfffbf3, 0.95);
-    cabinet.fillRoundedRect(x - 51, y - 57, 102, 42, 8);
-    cabinet.fillRoundedRect(x - 51, y + 2, 102, 48, 8);
-    cabinet.fillStyle(0xe7a4b2, 1);
-    cabinet.fillRoundedRect(x - 34, y - 46, 18, 26, 4);
-    cabinet.fillStyle(0xb6d9dc, 1);
-    cabinet.fillRoundedRect(x - 8, y - 49, 22, 29, 4);
-    cabinet.fillStyle(0xf3c878, 1);
-    cabinet.fillRoundedRect(x + 22, y - 44, 16, 24, 4);
-    cabinet.fillStyle(0xb98b9f, 1);
-    cabinet.fillRoundedRect(x - 34, y + 12, 68, 6, 3);
-    cabinet.setDepth(worldDepthForY(y + 85, 0.18));
+  private createBakeryRecipeBoard(x: number, y: number): void {
+    const board = this.add.graphics().setName('village-interior:bakery:recipe-shelf');
+    board.fillStyle(0xf4d8bf, 1);
+    board.lineStyle(4, 0xc99d89, 0.78);
+    board.fillRoundedRect(x - 52, y - 92, 104, 184, 16);
+    board.strokeRoundedRect(x - 52, y - 92, 104, 184, 16);
+    board.fillStyle(0xfffbf3, 0.96);
+    board.fillRoundedRect(x - 38, y - 65, 76, 50, 8);
+    board.fillRoundedRect(x - 38, y + 5, 76, 54, 8);
+    board.fillStyle(0xe7a4b2, 1);
+    board.fillRoundedRect(x - 27, y - 52, 15, 28, 4);
+    board.fillStyle(0xb6d9dc, 1);
+    board.fillRoundedRect(x - 5, y - 55, 18, 31, 4);
+    board.fillStyle(0xf3c878, 1);
+    board.fillRoundedRect(x + 20, y - 50, 13, 26, 4);
+    board.lineStyle(3, 0xb98b9f, 0.88);
+    board.lineBetween(x - 25, y + 20, x + 25, y + 20);
+    board.lineBetween(x - 25, y + 34, x + 14, y + 34);
+    board.setDepth(worldDepthForY(y + 95, 0.2));
 
     this.add
-      .text(x, y - 112, 'RECIPES', {
+      .text(x, y - 116, 'RECIPES', {
         color: '#76566d',
         fontFamily: UI_FONT,
         fontSize: '13px',
         fontStyle: 'bold',
       })
       .setOrigin(0.5)
-      .setDepth(worldDepthForY(y + 88, 0.26));
+      .setDepth(worldDepthForY(y + 96, 0.28));
   }
 
   private createBakeryCakeShowcase(x: number, y: number): void {
+    const rug = this.add.graphics();
+    rug.fillStyle(0xf6dbe2, 0.72);
+    rug.lineStyle(4, 0xe5b0be, 0.62);
+    rug.fillEllipse(x, y + 72, 330, 150);
+    rug.strokeEllipse(x, y + 72, 330, 150);
+    rug.setDepth(worldDepthForY(y + 115, 0.08));
+
     const stand = this.add.graphics().setName('village-interior:bakery:cake-table');
     stand.fillStyle(0xe8b3bd, 1);
-    stand.lineStyle(4, 0xb97b8b, 0.8);
-    stand.fillEllipse(x, y + 42, 230, 72);
-    stand.strokeEllipse(x, y + 42, 230, 72);
+    stand.lineStyle(5, 0xb97b8b, 0.82);
+    stand.fillEllipse(x, y + 54, 285, 86);
+    stand.strokeEllipse(x, y + 54, 285, 86);
     stand.fillStyle(0xfaf2df, 1);
-    stand.fillRoundedRect(x - 18, y + 36, 36, 66, 12);
-    stand.fillEllipse(x, y + 99, 96, 28);
-    stand.setDepth(worldDepthForY(y + 103, 0.2));
+    stand.fillRoundedRect(x - 22, y + 38, 44, 86, 14);
+    stand.fillEllipse(x, y + 122, 122, 32);
+    stand.setDepth(worldDepthForY(y + 126, 0.2));
 
     const cake = this.add.graphics();
-    cake.fillStyle(0xf3c884, 1);
-    cake.fillRoundedRect(x - 55, y - 6, 110, 42, 12);
-    cake.fillStyle(0xf3a8c0, 1);
-    cake.fillRoundedRect(x - 58, y - 13, 116, 18, 9);
-    cake.fillCircle(x - 37, y + 2, 12);
-    cake.fillCircle(x - 12, y + 4, 13);
-    cake.fillCircle(x + 15, y + 3, 12);
-    cake.fillCircle(x + 40, y + 2, 11);
-    cake.fillStyle(0xf6d88f, 1);
-    cake.fillRoundedRect(x - 39, y - 44, 78, 35, 10);
-    cake.fillStyle(0xd7b6ef, 1);
-    cake.fillRoundedRect(x - 42, y - 51, 84, 17, 8);
+    cake.fillStyle(0xf4c67d, 1);
+    cake.fillRoundedRect(x - 72, y - 4, 144, 48, 13);
+    cake.fillStyle(0xf2a3bd, 1);
+    cake.fillRoundedRect(x - 76, y - 13, 152, 21, 10);
+    for (const dripX of [-50, -17, 18, 50]) {
+      cake.fillCircle(x + dripX, y + 5, 14);
+    }
+
+    cake.fillStyle(0xf4d68c, 1);
+    cake.fillRoundedRect(x - 53, y - 52, 106, 42, 12);
+    cake.fillStyle(0xd8b9f2, 1);
+    cake.fillRoundedRect(x - 57, y - 61, 114, 20, 10);
+    cake.fillCircle(x - 35, y - 43, 11);
+    cake.fillCircle(x, y - 42, 12);
+    cake.fillCircle(x + 35, y - 43, 11);
+
+    cake.fillStyle(0xf8d899, 1);
+    cake.fillRoundedRect(x - 32, y - 91, 64, 32, 10);
     cake.fillStyle(0xaee7e0, 1);
-    cake.fillCircle(x - 23, y - 57, 7);
+    cake.fillRoundedRect(x - 36, y - 99, 72, 17, 8);
+
     cake.fillStyle(0xffef9e, 1);
-    cake.fillCircle(x, y - 63, 8);
+    cake.fillCircle(x, y - 117, 10);
     cake.fillStyle(0xf49aaa, 1);
-    cake.fillCircle(x + 24, y - 57, 7);
-    cake.setDepth(worldDepthForY(y + 104, 0.31));
+    cake.fillCircle(x - 25, y - 104, 7);
+    cake.fillStyle(0xa9d9ee, 1);
+    cake.fillCircle(x + 26, y - 104, 7);
+    cake.setDepth(worldDepthForY(y + 128, 0.31));
 
     const dome = this.add.graphics().setName('village-interior:bakery:magic-cake-dome');
-    dome.fillStyle(0xdff8fb, 0.17);
-    dome.lineStyle(4, 0xa6d7dd, 0.7);
-    dome.fillEllipse(x, y - 2, 174, 152);
-    dome.strokeEllipse(x, y - 2, 174, 152);
+    dome.fillStyle(0xdff8fb, 0.14);
+    dome.lineStyle(5, 0xa6d7dd, 0.68);
+    dome.fillEllipse(x, y - 4, 250, 238);
+    dome.strokeEllipse(x, y - 4, 250, 238);
     dome.fillStyle(0xf7d98c, 1);
-    dome.fillCircle(x, y - 84, 8);
-    dome.setDepth(worldDepthForY(y + 104, 0.4));
+    dome.fillCircle(x, y - 129, 9);
+    dome.setDepth(worldDepthForY(y + 128, 0.4));
 
     for (const point of [
-      { dx: -68, dy: -48, r: 4 },
-      { dx: 68, dy: -30, r: 4 },
-      { dx: -60, dy: 8, r: 3 },
-      { dx: 55, dy: 18, r: 3 },
+      { dx: -104, dy: -75, r: 5 },
+      { dx: 104, dy: -52, r: 5 },
+      { dx: -108, dy: 15, r: 4 },
+      { dx: 108, dy: 30, r: 4 },
+      { dx: -70, dy: -118, r: 3 },
+      { dx: 72, dy: -112, r: 3 },
     ]) {
       this.createBakerySparkle(x + point.dx, y + point.dy, point.r);
     }
@@ -650,6 +695,16 @@ export class VillageInteriorScene extends Phaser.Scene {
         result: { type: 'callback', activate: () => this.openBakeryCounter() },
       },
       {
+        id: 'interaction:village-interior:bakery:bread-counter',
+        label: 'Fresh bread counter',
+        actionLabel: 'Browse',
+        actionKind: 'buy',
+        position: { x: 1090, y: 565 },
+        interactionRadius: 155,
+        priority: 28,
+        result: { type: 'callback', activate: () => this.openBakeryCounter() },
+      },
+      {
         id: 'interaction:village-interior:bakery:cake-table',
         label: 'Wobbly Cake table',
         actionLabel: 'Plan a cake',
@@ -772,47 +827,6 @@ export class VillageInteriorScene extends Phaser.Scene {
         result: { type: 'callback', activate: () => this.showThreadProgress() },
       },
     ];
-  }
-
-  private createHud(definition: InteriorPresentationDefinition): void {
-    createUiShadow(this, GAME_WIDTH / 2, 46, 560, 66, 1, 0.18);
-    this.add
-      .text(GAME_WIDTH / 2, 34, `${definition.icon}  ${definition.title}`, {
-        color: UI_COLOURS.ink,
-        fontFamily: UI_FONT,
-        fontSize: '27px',
-        fontStyle: 'bold',
-        backgroundColor: '#fff8e8ee',
-        padding: { x: 18, y: 9 },
-      })
-      .setOrigin(0.5, 0)
-      .setScrollFactor(0)
-      .setDepth(115);
-    this.add
-      .text(GAME_WIDTH / 2, 84, definition.subtitle, {
-        color: UI_COLOURS.softInk,
-        fontFamily: UI_FONT,
-        fontSize: '13px',
-        fontStyle: 'bold',
-        align: 'center',
-        wordWrap: { width: 760 },
-      })
-      .setOrigin(0.5, 0)
-      .setScrollFactor(0)
-      .setDepth(115);
-    this.balanceText = this.add
-      .text(GAME_WIDTH - 120, 34, '', {
-        color: '#76518a',
-        fontFamily: UI_FONT,
-        fontSize: '15px',
-        fontStyle: 'bold',
-        backgroundColor: '#f3e7f8e8',
-        padding: { x: 10, y: 7 },
-      })
-      .setOrigin(0.5, 0)
-      .setScrollFactor(0)
-      .setDepth(116);
-    this.refreshBalance();
   }
 
   private openBakeryCounter(): void {
