@@ -15,10 +15,7 @@ import {
   RAINBOW_MEADOW_MAP,
   setRainbowMeadowPlayerSpawn,
 } from '../world/RainbowMeadowMap';
-import {
-  setSunbeamVillagePlayerSpawn,
-  SUNBEAM_VILLAGE_MAP,
-} from '../world/SunbeamVillageMap';
+import { setSunbeamVillagePlayerSpawn, SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
 import { SUNBEAM_VILLAGE_LAYOUT } from '../world/SunbeamVillageLayout';
 import type { InteractionTarget } from './InteractionTarget';
 import { getSceneInteractionRegistry } from './SceneInteractionRegistry';
@@ -118,8 +115,7 @@ export function createSunbeamVillageInteractions(scene: Phaser.Scene): Interacti
       interactionRadius: 155,
       result: {
         type: 'callback',
-        activate: () =>
-          enterInterior(scene, 'accessory-shop', landmarkApproach('accessory-shop')),
+        activate: () => enterInterior(scene, 'accessory-shop', landmarkApproach('accessory-shop')),
       },
     },
     {
@@ -214,7 +210,8 @@ export function createSunbeamVillageInteractions(scene: Phaser.Scene): Interacti
       result: {
         type: 'message',
         title: 'Sunpetal Cottage',
-        message: "Tiny boots and a watering can rest by the step. This is someone's home, not a shop.",
+        message:
+          "Tiny boots and a watering can rest by the step. This is someone's home, not a shop.",
       },
     },
     {

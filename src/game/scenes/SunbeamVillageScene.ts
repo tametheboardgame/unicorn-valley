@@ -110,7 +110,6 @@ export class SunbeamVillageScene extends Phaser.Scene {
     );
     this.player.applyMovement(movement);
     this.player.updatePresentation(time);
-
   }
 
   private createEnvironment(): void {
@@ -1424,6 +1423,5 @@ export class SunbeamVillageScene extends Phaser.Scene {
       .setOrigin(0.5, 0)
       .setScrollFactor(0)
       .setDepth(SUNBEAM_VILLAGE_LAYERS.ui);
-
   }
 }

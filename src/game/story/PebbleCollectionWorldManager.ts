@@ -118,7 +118,6 @@ export class PebbleCollectionWorldManager {
       .setName(PEBBLE_WORLD_PRESENTATION_NAME)
       .setDepth(19);
 
-
     scene.tweens.add({
       targets: [glow, glint],
       alpha: 0.95,

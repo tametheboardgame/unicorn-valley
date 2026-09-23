@@ -20,10 +20,7 @@ export const WORLD_TRAVERSAL_POLISH_DETAIL_NAME = 'world-traversal-polish-detail
 export const WORLD_PLAYER_NAME = 'world-player-unicorn';
 const WORLD_TRAVERSAL_POLISH_ANCHOR_NAME = 'world-traversal-polish-anchor';
 
-const SUPPORTED_SCENES = new Set([
-  'MoonflowerGladeScene',
-  'RainbowMeadowScene',
-]);
+const SUPPORTED_SCENES = new Set(['MoonflowerGladeScene', 'RainbowMeadowScene']);
 
 interface Point {
   x: number;
@@ -207,7 +204,6 @@ function decorateGlade(scene: Phaser.Scene): void {
   // Deliberately omit a generic gateway label here so the retired floating sign cannot return.
   addGateway(scene, { x: 2680, y: 900, direction: 'east' });
 }
-
 
 function decorateMeadow(scene: Phaser.Scene): void {
   drawPathNetwork(scene, [

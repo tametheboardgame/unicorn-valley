@@ -19,9 +19,8 @@ async function expectReaction(page: Page, expected: RegExp): Promise<void> {
       return (
         snapshot.scenes
           .find(({ key }) => key === 'SunbeamVillageScene')
-          ?.objects.find(
-            ({ name, visible }) => name === 'world-feedback-reaction-text' && visible,
-          )?.text ?? ''
+          ?.objects.find(({ name, visible }) => name === 'world-feedback-reaction-text' && visible)
+          ?.text ?? ''
       );
     })
     .toMatch(expected);
