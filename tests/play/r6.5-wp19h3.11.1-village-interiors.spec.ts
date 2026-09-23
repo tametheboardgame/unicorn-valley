@@ -260,8 +260,8 @@ test('H3.11.3 gives Twinkle & Thread a dedicated walkable boutique and shopkeepe
     ).__UNICORN_VALLEY_DIAGNOSTICS__?.setArcadeSpritePosition(
       'VillageInteriorScene',
       'world-player-unicorn',
-      1120,
-      590,
+      760,
+      650,
     );
   });
   await expect
@@ -327,9 +327,9 @@ test('H3.11.3 gives Twinkle & Thread a dedicated walkable boutique and shopkeepe
         'interaction-direct-zone:interaction:village-interior:accessory-shop:shopkeeper',
     );
   expect(velvetZone).toBeDefined();
-  expect(velvetZone?.y).toBeLessThan(450);
+  expect(velvetZone).toMatchObject({ x: 760, y: 540 });
 
-  await page.mouse.click(velvetZone?.x ?? 1120, velvetZone?.y ?? 405);
+  await page.mouse.click(velvetZone?.x ?? 760, velvetZone?.y ?? 540);
 
   await expect
     .poll(async () => {
