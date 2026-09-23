@@ -333,11 +333,8 @@ test('supporting resident uses the shared dialogue family with production portra
   const resident = namedObject(scene, 'supporting-resident:resident:juniper');
   await positionPlayer(page, 'MoonflowerGladeScene', resident.x, resident.y);
   await waitForTalkTarget(page, 'MoonflowerGladeScene', 'Juniper');
-  const talkPrompt = namedObject(
-    await sceneSnapshot(page, 'MoonflowerGladeScene'),
-    'exploration-interaction-prompt',
-  );
-  expect(talkPrompt.interactive).toBe(true);
+  // Juniper follows a live route. Activate immediately once the shared Talk prompt is visible
+  // rather than taking another diagnostic snapshot that can let her move back out of range.
   await page.keyboard.press('KeyE');
   await waitForVisibleObject(page, 'MoonflowerGladeScene', 'dialogue-production-panel');
   await waitForVisibleObject(
