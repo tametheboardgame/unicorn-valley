@@ -230,9 +230,11 @@ export class VillageLifeWorldManager {
       }
       const sundialMessage = {
         morning: '🌤️ The short morning shadow leans west. Sunbeam is only just getting busy.',
-        afternoon: '☀️ The sundial shadow is tucked close to its marker. The square is bright and bustling.',
+        afternoon:
+          '☀️ The sundial shadow is tucked close to its marker. The square is bright and bustling.',
         sunset: '🌅 The long shadow reaches east as warm sunset light washes across the plaza.',
-        night: '🌙 There is no useful shadow now. Tiny moonlit marks around the rim glimmer instead.',
+        night:
+          '🌙 There is no useful shadow now. Tiny moonlit marks around the rim glimmer instead.',
       }[this.timeService.getState()];
       this.showFeedback(state, definition, sundialMessage);
       return;
