@@ -1,10 +1,12 @@
 import Phaser from 'phaser';
+import { PEBBLE_FOUNTAIN_REPAIRED_FLAG } from '../../content/r4PebbleStory';
 import {
   TANSY_BAKERY_MAP_CORNER_DISCOVERY_ID,
   TANSY_MAP_HUNT_ACTIVE_FLAG,
   TANSY_NOTICE_MAP_CORNER_DISCOVERY_ID,
   TANSY_SUNDIAL_MAP_CORNER_DISCOVERY_ID,
 } from '../../content/r6VillageContent';
+import { getBrowserAtmosphericTimeService } from '../atmosphere/AtmosphericTimeService';
 import { DiscoveryService } from '../discovery/DiscoveryService';
 import type { InteractionActionKind, InteractionTarget } from '../interaction/InteractionTarget';
 import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
@@ -114,9 +116,9 @@ const VILLAGE_POINTS: readonly VillageLifePoint[] = [
     label: 'Sunbeam Fountain water',
     actionLabel: 'Splash',
     actionKind: 'interact',
-    x: SUNBEAM_VILLAGE_LAYOUT.villageLife.fountainSplash.x,
-    y: SUNBEAM_VILLAGE_LAYOUT.villageLife.fountainSplash.y,
-    radius: 116,
+    x: SUNBEAM_VILLAGE_LAYOUT.fountain.x,
+    y: SUNBEAM_VILLAGE_LAYOUT.fountain.y,
+    radius: 145,
     // The fountain already communicates water visually. Keep only the interaction anchor instead
     // of adding a detached droplet marker on top of the plaza.
     createProp: () => [],
@@ -126,6 +128,7 @@ const VILLAGE_POINTS: readonly VillageLifePoint[] = [
 export class VillageLifeWorldManager {
   private readonly saveService = getBrowserSaveService();
   private readonly discoveryService = new DiscoveryService(this.saveService);
+  private readonly timeService = getBrowserAtmosphericTimeService(this.saveService);
   private state: VillageLifeState | null = null;
 
   public constructor(private readonly game: Phaser.Game) {
@@ -198,11 +201,20 @@ export class VillageLifeWorldManager {
         );
         return;
       }
-      this.showFeedback(
-        state,
-        definition,
-        '📌 Today’s notices: “Picnic weather?”, “Race ribbons wanted for display”, and “Please stop feeding buns to the fountain fish.”',
-      );
+      const repaired = save.world.flags[PEBBLE_FOUNTAIN_REPAIRED_FLAG] === true;
+      const timeState = this.timeService.getState();
+      const contextualNotice =
+        timeState === 'night'
+          ? 'Lantern reminder: please keep the east path clear after moonrise.'
+          : timeState === 'sunset'
+            ? 'Sunset picnic blankets are available beside the Bakery while supplies last.'
+            : timeState === 'morning'
+              ? 'Morning notice: fresh buns, garden watering and Rainbow Run practice today.'
+              : 'Afternoon notice: playground games and a Story House reading circle are underway.';
+      const fountainNotice = repaired
+        ? 'Pebble reports that the Sunbeam Fountain is happily chiming again.'
+        : 'Pebble is still collecting odd little parts for the quiet Sunbeam Fountain.';
+      this.showFeedback(state, definition, `📌 ${contextualNotice} ${fountainNotice}`);
       return;
     }
 
@@ -216,11 +228,13 @@ export class VillageLifeWorldManager {
         );
         return;
       }
-      this.showFeedback(
-        state,
-        definition,
-        '☀️ The little shadow points across the square. The gold marks sparkle differently as the valley light changes.',
-      );
+      const sundialMessage = {
+        morning: '🌤️ The short morning shadow leans west. Sunbeam is only just getting busy.',
+        afternoon: '☀️ The sundial shadow is tucked close to its marker. The square is bright and bustling.',
+        sunset: '🌅 The long shadow reaches east as warm sunset light washes across the plaza.',
+        night: '🌙 There is no useful shadow now. Tiny moonlit marks around the rim glimmer instead.',
+      }[this.timeService.getState()];
+      this.showFeedback(state, definition, sundialMessage);
       return;
     }
 
@@ -241,11 +255,37 @@ export class VillageLifeWorldManager {
       return;
     }
 
+    const repaired = save.world.flags[PEBBLE_FOUNTAIN_REPAIRED_FLAG] === true;
     this.showFeedback(
       state,
       definition,
-      '💦 Splash! Three tiny rainbow fish-shaped sparkles leap from the fountain and plop back into the water.',
+      repaired
+        ? '✨ Chime! Pebble’s repaired fountain answers with a bright shimmer and a ring of rainbow sparkles.'
+        : '💦 Splash! The quiet fountain sends three tiny rainbow fish-shaped sparkles into the air.',
     );
+    if (repaired) {
+      for (let index = 0; index < 6; index += 1) {
+        const angle = (Math.PI * 2 * index) / 6;
+        const sparkle = state.scene.add
+          .text(definition.x, definition.y, '✦', {
+            color: '#fff0a8',
+            fontFamily: 'system-ui, sans-serif',
+            fontSize: '22px',
+            fontStyle: 'bold',
+          })
+          .setOrigin(0.5)
+          .setDepth(worldDepthForY(definition.y + 36, 0.9));
+        state.scene.tweens.add({
+          targets: sparkle,
+          x: definition.x + Math.cos(angle) * 94,
+          y: definition.y + Math.sin(angle) * 58 - 24,
+          alpha: 0,
+          duration: 620,
+          ease: 'Quad.Out',
+          onComplete: () => sparkle.destroy(),
+        });
+      }
+    }
     state.scene.cameras.main.flash(90, 255, 238, 164, false);
   }
 
