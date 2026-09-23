@@ -181,17 +181,20 @@ const LIBRARY: VillageInteriorDefinition = {
   playerSpawn: PLAYER_SPAWN,
   roomShell: ROOM_SHELL,
   anchors: sharedAnchors(
-    anchor('counter', 'Story desk', { x: 760, y: 690 }, { x: 760, y: 805 }),
-    anchor('npc-work', 'Story keeper position', { x: 1110, y: 560 }, { x: 1110, y: 710 }),
-    anchor('primary-feature', 'Story table', { x: 760, y: 690 }, { x: 760, y: 820 }),
-    anchor('secondary-feature', 'Valley clue shelf', { x: 410, y: 500 }, { x: 410, y: 650 }),
+    anchor('counter', 'Storykeeper desk', { x: 1170, y: 420 }, { x: 1170, y: 555 }),
+    anchor('npc-work', 'Quill storykeeper position', { x: 1040, y: 610 }, { x: 1040, y: 710 }),
+    anchor('primary-feature', 'Round story table', { x: 720, y: 680 }, { x: 720, y: 825 }),
+    anchor('secondary-feature', 'Valley clue cabinet', { x: 195, y: 625 }, { x: 345, y: 625 }),
   ),
   colliders: [
     ...ROOM_COLLIDERS,
-    { id: 'shelf-left', x: 400, y: 430, width: 190, height: 70 },
-    { id: 'shelf-centre', x: 750, y: 430, width: 190, height: 70 },
-    { id: 'shelf-right', x: 1100, y: 430, width: 190, height: 70 },
-    { id: 'story-table', x: 760, y: 700, width: 360, height: 125 },
+    { id: 'bookcase-left', x: 300, y: 475, width: 230, height: 150 },
+    { id: 'bookcase-centre', x: 610, y: 475, width: 230, height: 150 },
+    { id: 'bookcase-right', x: 900, y: 475, width: 210, height: 150 },
+    { id: 'counter', x: 1170, y: 445, width: 300, height: 100 },
+    { id: 'clue-cabinet', x: 195, y: 625, width: 130, height: 220 },
+    { id: 'story-table', x: 720, y: 690, width: 330, height: 125 },
+    { id: 'reading-chair', x: 1175, y: 805, width: 165, height: 130 },
   ],
 };
 

@@ -167,6 +167,29 @@ export const R6_SUPPORTING_RESIDENTS = [
     },
   },
   {
+    id: 'resident:quill',
+    name: 'Quill',
+    role: 'Story House librarian and storykeeper',
+    appearance: {
+      bodyColour: 'sky',
+      eyeColour: 'green',
+      maneStyle: 'swept',
+      maneColour: 'midnight',
+      tailStyle: 'plume',
+      tailColour: 'lilac',
+      hornStyle: 'moon',
+      marking: 'star',
+      accessory: 'glasses',
+    },
+    talk: {
+      lines: [
+        'Every shelf has a story, but the best ones are the stories you bring back with you.',
+        'I keep the newest adventure cards near the round table so nobody has to reach too high.',
+        'A good library should have quiet corners, bright lamps and at least one cushion that is impossible to sit on neatly.',
+      ],
+    },
+  },
+  {
     id: 'resident:juniper',
     name: 'Juniper',
     role: 'Tiny-nature explorer',

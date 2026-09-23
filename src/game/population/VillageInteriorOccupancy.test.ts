@@ -33,11 +33,16 @@ describe('VillageInteriorOccupancyService', () => {
     expect(service.isResidentAllowedInScene('resident:velvet', 'SunbeamVillageScene')).toBe(false);
   });
 
-  it('does not reuse outdoor Tansy as the Story House interior worker', () => {
+  it('assigns a dedicated Story House keeper without moving outdoor Tansy indoors', () => {
     const service = new VillageInteriorOccupancyService();
     service.enter('library');
 
-    expect(service.getInteriorAssignment('library')).toBeNull();
+    expect(service.getInteriorAssignment('library')).toMatchObject({
+      residentId: 'resident:quill',
+      role: 'story-keeper',
+    });
+    expect(service.isResidentAllowedInScene('resident:quill', 'VillageInteriorScene')).toBe(true);
+    expect(service.isResidentAllowedInScene('resident:quill', 'SunbeamVillageScene')).toBe(false);
     expect(service.isResidentAllowedInScene('resident:tansy', 'SunbeamVillageScene')).toBe(true);
     expect(service.isResidentAllowedInScene('resident:tansy', 'VillageInteriorScene')).toBe(false);
   });

@@ -10,7 +10,7 @@ The accepted Twinkle & Thread baseline is a fully walkable boutique with dedicat
 
 Human testing also confirmed the corrected Velvet placement, interaction ownership and canonical supporting-resident proportions. The earlier separate-ShopScene Browse route is retired for this interior.
 
-**Next substantive slice: H3.11.4 - Story House rebuild.**
+**Current substantive slice: H3.11.4 - Story House rebuild.** Checkpoint 1 is rebuilding the physical library/storytelling room and assigning dedicated storykeeper Quill while keeping Tansy outside. Richer story-card presentation/content follows after human review of the room foundation.
 
 ## H3 feedback-block-1 sequence
 
@@ -33,6 +33,6 @@ Do not reserve a hardening/cleanup number now. The final consolidation, responsi
 
 - H1 - Moonflower Glade Final Polish: complete and human-approved.
 - H2 - Moonflower Cottage & Home Customisation: complete, fully qualified, merged and deployed to production.
-- H3 - Sunbeam Village Final Polish: H3.1-H3.11.3 human-approved; H3.11.4 Story House rebuild next.
+- H3 - Sunbeam Village Final Polish: H3.1-H3.11.3 human-approved; H3.11.4 Story House rebuild active.
 
 Sunbeam Village remains a review lens, not a technical boundary. Shared defects discovered during implementation must be fixed at their canonical shared owner rather than through village-specific workarounds.

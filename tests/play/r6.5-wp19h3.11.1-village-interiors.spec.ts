@@ -176,7 +176,9 @@ test('H3.11.1 makes VillageInteriorScene a walkable semantic interior with physi
     .toEqual(['SunbeamVillageScene']);
 });
 
-test('H3.11.2 does not clone outdoor residents into unfinished interiors', async ({ page }) => {
+test('H3.11.4 gives Story House a dedicated storykeeper and physical reading room', async ({
+  page,
+}) => {
   await page.goto('/?diagnostics=1');
   await startInterior(page, 'library');
 
@@ -186,9 +188,21 @@ test('H3.11.2 does not clone outdoor residents into unfinished interiors', async
   }
   const names = new Set(interior.objects.map(({ name }) => name));
 
+  expect(names.has('village-interior-resident:resident:quill')).toBe(true);
   expect(names.has('village-interior-resident:resident:tansy')).toBe(false);
   expect(names.has('village-interior-resident:resident:maple')).toBe(false);
+  expect(names.has('village-interior:library:story-rug')).toBe(true);
   expect(names.has('village-interior:library:story-table')).toBe(true);
+  expect(names.has('village-interior:library:storykeeper-desk')).toBe(true);
+  expect(names.has('village-interior:library:clue-cabinet')).toBe(true);
+  expect(names.has('village-interior:library:reading-chair')).toBe(true);
+  expect(names.has('village-interior:library:reading-lamp')).toBe(true);
+  expect(
+    interior.objects.filter(({ name }) => name === 'village-interior:library:bookcase').length,
+  ).toBe(3);
+  expect(
+    interior.objects.filter(({ name }) => name === 'village-interior:library:reading-cushion').length,
+  ).toBe(4);
 });
 
 test('H3.11.2 Cinnamon uses the production dialogue menu to open the Bakery shop', async ({

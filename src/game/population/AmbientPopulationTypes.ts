@@ -10,6 +10,7 @@ export type SupportingResidentId =
   | 'resident:maple'
   | 'resident:cinnamon'
   | 'resident:velvet'
+  | 'resident:quill'
   | 'resident:juniper'
   | 'resident:fern'
   | 'resident:coral'

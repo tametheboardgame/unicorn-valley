@@ -832,33 +832,208 @@ export class VillageInteriorScene extends Phaser.Scene {
   }
 
   private createStoryHouseSet(): void {
-    for (const x of [400, 750, 1100]) {
-      this.add
-        .rectangle(x, 355, 190, 220, 0x6f8aa0, 1)
-        .setName(`village-interior:library:shelf:${x}`)
-        .setStrokeStyle(5, 0x526f86, 0.9)
-        .setDepth(worldDepthForY(465, 0.12));
-      for (let row = 0; row < 3; row += 1) {
-        this.add.rectangle(x, 302 + row * 62, 166, 8, 0x435d72, 0.9).setDepth(6);
-        this.add
-          .text(x, 278 + row * 62, '📕 📗 📘 📙', { fontFamily: UI_FONT, fontSize: '18px' })
-          .setOrigin(0.5)
-          .setDepth(7);
+    const desk = getVillageInteriorAnchor('library', 'counter');
+    const storyTable = getVillageInteriorAnchor('library', 'primary-feature');
+    const clueCabinet = getVillageInteriorAnchor('library', 'secondary-feature');
+
+    // Story House uses warm timber, blue shelves and pools of lamplight rather than another shop floor.
+    for (let y = 390; y <= 930; y += 76) {
+      this.add.rectangle(750, y, 1260, 2, 0x6d8796, 0.22).setDepth(3.1);
+    }
+    this.add.rectangle(750, 350, 1260, 18, 0x6f91a5, 0.86).setDepth(4.65);
+    this.add.rectangle(750, 360, 1260, 4, 0xf4dfb8, 0.72).setDepth(4.7);
+
+    const rug = this.add.graphics().setName('village-interior:library:story-rug');
+    rug.fillStyle(0x7b678f, 0.18);
+    rug.fillEllipse(storyTable.position.x, storyTable.position.y + 35, 610, 390);
+    rug.fillStyle(0xe7d9b8, 0.94);
+    rug.lineStyle(5, 0x9f7e75, 0.72);
+    rug.fillEllipse(storyTable.position.x, storyTable.position.y + 22, 560, 350);
+    rug.strokeEllipse(storyTable.position.x, storyTable.position.y + 22, 560, 350);
+    rug.lineStyle(3, 0x6e8ca2, 0.5);
+    rug.strokeEllipse(storyTable.position.x, storyTable.position.y + 22, 492, 292);
+    rug.setDepth(3.2);
+
+    this.createStoryBookcase(300, 470, 230, 220);
+    this.createStoryBookcase(610, 470, 230, 220);
+    this.createStoryBookcase(900, 470, 210, 220);
+    this.createStoryDesk(desk.position.x, desk.position.y);
+    this.createStoryClueCabinet(clueCabinet.position.x, clueCabinet.position.y);
+    this.createStoryTable(storyTable.position.x, storyTable.position.y);
+
+    this.createStoryCushion(535, 760, 0xd9a4b7);
+    this.createStoryCushion(885, 770, 0x9bbbc9);
+    this.createStoryCushion(545, 595, 0xd9c58f);
+    this.createStoryCushion(875, 585, 0xb5a4cf);
+
+    this.createStoryReadingChair(1175, 795);
+    this.createStoryLamp(1280, 690);
+  }
+
+  private createStoryBookcase(x: number, y: number, width: number, height: number): void {
+    const shelf = this.add.graphics().setName('village-interior:library:bookcase');
+    shelf.fillStyle(0x52758a, 1);
+    shelf.lineStyle(5, 0x3c586c, 0.92);
+    shelf.fillRoundedRect(x - width / 2, y - height / 2, width, height, 22);
+    shelf.strokeRoundedRect(x - width / 2, y - height / 2, width, height, 22);
+    shelf.fillStyle(0xe6d4b1, 0.95);
+    shelf.fillRoundedRect(x - width / 2 + 13, y - height / 2 + 16, width - 26, height - 32, 12);
+
+    const colours = [0xc77f8e, 0x6f91b3, 0xc2a35e, 0x829b76, 0x9279a9, 0xd59a68] as const;
+    for (let row = 0; row < 3; row += 1) {
+      const shelfY = y - 63 + row * 61;
+      shelf.fillStyle(0x48677a, 1);
+      shelf.fillRoundedRect(x - width / 2 + 18, shelfY + 26, width - 36, 9, 4);
+      for (let book = 0; book < 7; book += 1) {
+        const bookWidth = 15 + ((book + row) % 3) * 3;
+        const bookHeight = 30 + ((book * 5 + row * 7) % 17);
+        const bookX = x - width / 2 + 31 + book * 25;
+        shelf.fillStyle(colours[(book + row * 2) % colours.length] ?? 0x9279a9, 1);
+        shelf.fillRoundedRect(bookX, shelfY + 23 - bookHeight, bookWidth, bookHeight, 3);
+        shelf.fillStyle(0xffffff, 0.2);
+        shelf.fillRect(bookX + 3, shelfY + 26 - bookHeight, 3, Math.max(8, bookHeight - 7));
       }
     }
-    const table = getVillageInteriorAnchor('library', 'primary-feature');
-    this.add
-      .ellipse(table.position.x, table.position.y, 390, 145, 0xf2d7a7, 1)
-      .setName('village-interior:library:story-table')
-      .setStrokeStyle(4, 0xb58c60, 0.75)
-      .setDepth(worldDepthForY(table.position.y + 58, 0.22));
-    this.add
-      .text(table.position.x, table.position.y - 4, '🗺️   📖   ✨', {
-        fontFamily: UI_FONT,
-        fontSize: '36px',
-      })
-      .setOrigin(0.5)
-      .setDepth(worldDepthForY(table.position.y + 60, 0.3));
+    shelf.setDepth(worldDepthForY(y + height / 2, 0.18));
+  }
+
+  private createStoryDesk(x: number, y: number): void {
+    const desk = this.add.graphics().setName('village-interior:library:storykeeper-desk');
+    desk.fillStyle(0x8b6a61, 1);
+    desk.lineStyle(5, 0x694d49, 0.9);
+    desk.fillRoundedRect(x - 150, y - 24, 300, 96, 18);
+    desk.strokeRoundedRect(x - 150, y - 24, 300, 96, 18);
+    desk.fillStyle(0xe8cfaa, 1);
+    desk.fillRoundedRect(x - 138, y - 12, 276, 24, 10);
+    desk.fillStyle(0x765750, 0.9);
+    desk.fillRoundedRect(x - 120, y + 22, 88, 34, 8);
+    desk.fillRoundedRect(x + 30, y + 22, 88, 34, 8);
+
+    // Open ledger and bookmark tray keep this a librarian's work desk rather than a shop counter.
+    desk.fillStyle(0xfff6dc, 1);
+    desk.lineStyle(2, 0xb9a37e, 0.8);
+    desk.fillRoundedRect(x - 52, y - 41, 48, 34, 5);
+    desk.strokeRoundedRect(x - 52, y - 41, 48, 34, 5);
+    desk.fillRoundedRect(x - 2, y - 41, 48, 34, 5);
+    desk.strokeRoundedRect(x - 2, y - 41, 48, 34, 5);
+    desk.lineStyle(2, 0x8d7898, 0.8);
+    desk.lineBetween(x - 43, y - 30, x - 12, y - 30);
+    desk.lineBetween(x + 7, y - 30, x + 38, y - 30);
+
+    desk.fillStyle(0xc9879f, 1);
+    desk.fillRoundedRect(x + 72, y - 38, 15, 31, 4);
+    desk.fillStyle(0x6f91b3, 1);
+    desk.fillRoundedRect(x + 91, y - 32, 14, 25, 4);
+    desk.fillStyle(0xd6b665, 1);
+    desk.fillRoundedRect(x + 109, y - 28, 13, 21, 4);
+    desk.setDepth(worldDepthForY(y + 74, 0.28));
+  }
+
+  private createStoryClueCabinet(x: number, y: number): void {
+    const cabinet = this.add.graphics().setName('village-interior:library:clue-cabinet');
+    cabinet.fillStyle(0x627f91, 1);
+    cabinet.lineStyle(5, 0x466171, 0.9);
+    cabinet.fillRoundedRect(x - 65, y - 110, 130, 220, 20);
+    cabinet.strokeRoundedRect(x - 65, y - 110, 130, 220, 20);
+    for (let row = 0; row < 4; row += 1) {
+      const drawerY = y - 78 + row * 45;
+      cabinet.fillStyle(0xe5d1a9, 1);
+      cabinet.fillRoundedRect(x - 47, drawerY, 94, 34, 8);
+      cabinet.lineStyle(2, 0xa68d6d, 0.72);
+      cabinet.strokeRoundedRect(x - 47, drawerY, 94, 34, 8);
+      cabinet.fillStyle(0x8b6a61, 1);
+      cabinet.fillRoundedRect(x - 12, drawerY + 12, 24, 7, 3);
+    }
+    cabinet.setDepth(worldDepthForY(y + 112, 0.2));
+  }
+
+  private createStoryTable(x: number, y: number): void {
+    const table = this.add.graphics().setName('village-interior:library:story-table');
+    table.fillStyle(0x70576d, 0.14);
+    table.fillEllipse(x + 6, y + 62, 350, 54);
+    table.fillStyle(0xc79b72, 1);
+    table.lineStyle(5, 0x986f58, 0.84);
+    table.fillEllipse(x, y, 330, 125);
+    table.strokeEllipse(x, y, 330, 125);
+    table.fillStyle(0xe8c59a, 1);
+    table.fillRoundedRect(x - 18, y + 36, 36, 72, 12);
+    table.fillEllipse(x, y + 103, 120, 30);
+
+    // A physical open book, map sheet and a few loose story cards.
+    table.fillStyle(0xfff5d8, 1);
+    table.lineStyle(2, 0xba9f78, 0.8);
+    table.fillRoundedRect(x - 66, y - 34, 58, 54, 8);
+    table.strokeRoundedRect(x - 66, y - 34, 58, 54, 8);
+    table.fillRoundedRect(x - 6, y - 34, 58, 54, 8);
+    table.strokeRoundedRect(x - 6, y - 34, 58, 54, 8);
+    table.lineStyle(2, 0x8aa2ad, 0.72);
+    table.lineBetween(x - 54, y - 20, x - 20, y - 20);
+    table.lineBetween(x + 7, y - 20, x + 40, y - 20);
+
+    table.fillStyle(0xd8c394, 1);
+    table.fillRoundedRect(x + 65, y - 30, 72, 50, 7);
+    table.lineStyle(3, 0x7f9a82, 0.8);
+    table.lineBetween(x + 76, y - 16, x + 118, y + 5);
+    table.lineStyle(3, 0x7d8fa7, 0.75);
+    table.lineBetween(x + 82, y + 7, x + 121, y - 12);
+
+    for (const [dx, colour] of [
+      [-122, 0xc9899d],
+      [-97, 0x809bb7],
+      [-72, 0xc5a75f],
+    ] as const) {
+      table.fillStyle(colour, 1);
+      table.fillRoundedRect(x + dx, y + 22, 42, 28, 5);
+      table.fillStyle(0xffffff, 0.36);
+      table.fillRect(x + dx + 7, y + 30, 28, 3);
+    }
+    table.setDepth(worldDepthForY(y + 108, 0.26));
+  }
+
+  private createStoryCushion(x: number, y: number, colour: number): void {
+    const cushion = this.add.graphics().setName('village-interior:library:reading-cushion');
+    cushion.fillStyle(0x4d4057, 0.12);
+    cushion.fillEllipse(x + 3, y + 18, 100, 30);
+    cushion.fillStyle(colour, 1);
+    cushion.lineStyle(4, 0x876e82, 0.58);
+    cushion.fillRoundedRect(x - 47, y - 24, 94, 52, 22);
+    cushion.strokeRoundedRect(x - 47, y - 24, 94, 52, 22);
+    cushion.lineStyle(2, 0xffffff, 0.35);
+    cushion.lineBetween(x - 25, y - 4, x + 25, y + 7);
+    cushion.setDepth(worldDepthForY(y + 30, 0.08));
+  }
+
+  private createStoryReadingChair(x: number, y: number): void {
+    const chair = this.add.graphics().setName('village-interior:library:reading-chair');
+    chair.fillStyle(0x506b7d, 1);
+    chair.lineStyle(5, 0x3d5261, 0.9);
+    chair.fillRoundedRect(x - 70, y - 85, 140, 125, 42);
+    chair.strokeRoundedRect(x - 70, y - 85, 140, 125, 42);
+    chair.fillStyle(0x8ea9b8, 1);
+    chair.fillRoundedRect(x - 57, y - 68, 114, 78, 34);
+    chair.fillStyle(0xc3a0b4, 1);
+    chair.fillRoundedRect(x - 48, y - 50, 96, 50, 22);
+    chair.fillStyle(0x6a4f61, 1);
+    chair.fillRoundedRect(x - 75, y - 5, 26, 62, 12);
+    chair.fillRoundedRect(x + 49, y - 5, 26, 62, 12);
+    chair.setDepth(worldDepthForY(y + 62, 0.2));
+  }
+
+  private createStoryLamp(x: number, y: number): void {
+    const glow = this.add
+      .circle(x, y - 45, 92, 0xffe5a2, 0.12)
+      .setName('village-interior:library:reading-lamp-glow')
+      .setDepth(4.3);
+    const lamp = this.add.graphics().setName('village-interior:library:reading-lamp');
+    lamp.fillStyle(0x78606f, 1);
+    lamp.fillRoundedRect(x - 7, y - 5, 14, 112, 6);
+    lamp.fillEllipse(x, y + 107, 62, 20);
+    lamp.fillStyle(0xf4d78a, 1);
+    lamp.lineStyle(4, 0xa48354, 0.75);
+    lamp.fillTriangle(x - 48, y - 25, x + 48, y - 25, x + 30, y - 79);
+    lamp.strokeTriangle(x - 48, y - 25, x + 48, y - 25, x + 30, y - 79);
+    lamp.setDepth(worldDepthForY(y + 112, 0.22));
+    glow.setData('library-light', true);
   }
 
   private createThreadSet(): void {
@@ -1029,9 +1204,9 @@ export class VillageInteriorScene extends Phaser.Scene {
       x: work.position.x,
       y: work.position.y,
       displaySize:
-        this.interiorId === 'accessory-shop'
-          ? resolveSupportingResidentDisplaySize(1.1)
-          : { width: 152, height: 128 },
+        this.interiorId === 'bakery'
+          ? { width: 152, height: 128 }
+          : resolveSupportingResidentDisplaySize(1.1),
       accessories: assignment.supportedRoleAccessories,
     });
     presentation.container.setData('occupancy-role', assignment.role);
@@ -1166,21 +1341,21 @@ export class VillageInteriorScene extends Phaser.Scene {
     const targets: InteractionTarget[] = [
       {
         id: 'interaction:village-interior:library:story-table',
-        label: 'Story table',
-        actionLabel: 'Read',
+        label: 'Round story table',
+        actionLabel: 'Read a story',
         actionKind: 'inspect',
         position: storyTable.approach,
-        interactionRadius: 150,
+        interactionRadius: 155,
         priority: 24,
         result: { type: 'callback', activate: () => this.readStoryCard() },
       },
       {
         id: 'interaction:village-interior:library:clues',
-        label: 'Valley clue shelf',
+        label: 'Valley clue cabinet',
         actionLabel: 'Check clues',
         actionKind: 'inspect',
         position: clueShelf.approach,
-        interactionRadius: 150,
+        interactionRadius: 155,
         priority: 20,
         result: {
           type: 'callback',
@@ -1195,14 +1370,19 @@ export class VillageInteriorScene extends Phaser.Scene {
 
     if (this.occupant) {
       targets.push({
-        id: 'interaction:village-interior:library:tansy',
-        label: 'Tansy',
+        id: 'interaction:village-interior:library:storykeeper',
+        label: 'Quill',
         actionLabel: 'Talk',
         actionKind: 'talk',
-        position: worker.approach,
-        interactionRadius: 160,
+        position: worker.position,
+        interactionRadius: 190,
         priority: 35,
-        result: { type: 'callback', activate: () => this.talkToTansy() },
+        directArea: {
+          width: 180,
+          height: 190,
+          name: 'interaction-direct-zone:interaction:village-interior:library:storykeeper',
+        },
+        result: { type: 'callback', activate: () => this.openStoryKeeperConversation() },
       });
     }
     return targets;
@@ -1726,34 +1906,29 @@ export class VillageInteriorScene extends Phaser.Scene {
     this.registerInteractions();
   }
 
-  private talkToTansy(): void {
-    const engine = getBrowserQuestEngine();
-    let progress = engine.getProgress(TANSY_MAP_QUEST_ID);
-    if (progress.status === 'not-started') {
-      progress = engine.startQuest(TANSY_MAP_QUEST_ID);
-    }
-    let message: string;
-    if (
-      progress.status === 'active' &&
-      progress.currentStepId === getQuestStepId(TANSY_MAP_QUEST_ID, 0)
-    ) {
-      engine.notifyCharacterTalked(TANSY_CHARACTER_ID);
-      message =
-        'Tansy: “Three corners escaped from my favourite map. One likes notices, one smells like baking, and one flew somewhere sunny.”';
-    } else if (
-      progress.status === 'active' &&
-      progress.currentStepId === getQuestStepId(TANSY_MAP_QUEST_ID, 5)
-    ) {
-      engine.notifyCharacterTalked(TANSY_CHARACTER_ID);
-      message =
-        'Tansy: “They fit! The valley has corners again. I am pinning this map down with four bookmarks this time.”';
-    } else if (progress.status === 'completed') {
-      message =
-        'Tansy: “The repaired map is staying right here. Unless a very determined breeze learns to read.”';
-    } else {
-      message = new StoryHouseService(getBrowserSaveService()).getCurrentClue();
-    }
-    this.showFeedback(message, getVillageInteriorAnchor('library', 'npc-work').approach);
+  private openStoryKeeperConversation(): void {
+    getWorldConversationPresenter().startChoice(
+      this,
+      'resident:quill',
+      'Quill',
+      'Quill closes a little blue book around a silver bookmark. “Looking for a story or just a quiet corner?”',
+      [
+        { id: 'story', label: 'Read a story card' },
+        {
+          id: 'talk',
+          label: 'Talk about something else',
+          followUpMessage:
+            'The newest cards go on the round table. I like watching a shelf slowly fill up with adventures that really happened.',
+        },
+      ],
+      {
+        onChoice: (choiceId) => {
+          if (choiceId === 'story') {
+            this.time.delayedCall(0, () => this.readStoryCard());
+          }
+        },
+      },
+    );
   }
 
   private readStoryCard(): void {
