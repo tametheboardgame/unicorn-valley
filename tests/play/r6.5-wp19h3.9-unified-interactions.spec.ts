@@ -59,7 +59,6 @@ test('H3.9 gives both village exits one automatic shared interaction owner', asy
   await waitForScene(page, 'RainbowMeadowScene');
 });
 
-
 test('H3.9 uses the shared slim village resident art in Willow, Marigold and Pebble dialogue portraits', async ({
   page,
 }) => {
@@ -73,13 +72,7 @@ test('H3.9 uses the shared slim village resident art in Willow, Marigold and Peb
     await page.goto('/?scene=village&diagnostics=1');
     await waitForDiagnostics(page);
     await waitForScene(page, 'SunbeamVillageScene');
-    await setArcadeSpritePosition(
-      page,
-      'SunbeamVillageScene',
-      PLAYER_NAME,
-      resident.x,
-      resident.y,
-    );
+    await setArcadeSpritePosition(page, 'SunbeamVillageScene', PLAYER_NAME, resident.x, resident.y);
     await page.waitForTimeout(120);
     await pressInteraction(page);
 
