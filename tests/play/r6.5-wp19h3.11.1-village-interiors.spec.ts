@@ -77,9 +77,7 @@ test('H3.11.1 makes VillageInteriorScene a walkable semantic interior with physi
   const shellMapButton = interior.objects.find(
     ({ name }) => name === 'exploration-shell-map-button',
   );
-  const shellLocation = interior.objects.find(
-    ({ name }) => name === 'exploration-location-title',
-  );
+  const shellLocation = interior.objects.find(({ name }) => name === 'exploration-location-title');
 
   expect(player).toMatchObject({ x: 750, y: 870, visible: true });
   expect(player?.textureKey?.startsWith('player-unicorn-village-interior:bakery')).toBe(true);
@@ -87,6 +85,9 @@ test('H3.11.1 makes VillageInteriorScene a walkable semantic interior with physi
   expect(counter?.visible).toBe(true);
   expect(counterCollider).toMatchObject({ bodyWidth: 390, bodyHeight: 86 });
   expect(cinnamon?.visible).toBe(true);
+  expect(
+    interior.objects.some(({ name }) => name === 'village-interior:bakery:exit-gap'),
+  ).toBe(true);
   expect(shellMapButton?.visible).toBe(true);
   expect(shellLocation?.visible).toBe(true);
   expect(
@@ -112,8 +113,7 @@ test('H3.11.1 makes VillageInteriorScene a walkable semantic interior with physi
   ).toBe(true);
   expect(
     interior.objects.some(
-      ({ name }) =>
-        name === 'interaction-direct-zone:interaction:village-interior:bakery:cupcakes',
+      ({ name }) => name === 'interaction-direct-zone:interaction:village-interior:bakery:cupcakes',
     ),
   ).toBe(true);
   expect(
@@ -183,4 +183,45 @@ test('H3.11.2 does not clone outdoor residents into unfinished interiors', async
   expect(names.has('village-interior-resident:resident:tansy')).toBe(false);
   expect(names.has('village-interior-resident:resident:maple')).toBe(false);
   expect(names.has('village-interior:library:story-table')).toBe(true);
+});
+
+
+test('H3.11.2 Cinnamon uses the production dialogue menu to open the Bakery shop', async ({
+  page,
+}) => {
+  await page.goto('/?diagnostics=1');
+  await startInterior(page, 'bakery');
+
+  await page.evaluate(() => {
+    (
+      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__?.setArcadeSpritePosition(
+      'VillageInteriorScene',
+      'world-player-unicorn',
+      750,
+      545,
+    );
+  });
+  await page.keyboard.press('Enter');
+
+  await expect
+    .poll(async () => {
+      const interior = (await snapshot(page)).scenes.find(
+        ({ key }) => key === 'VillageInteriorScene',
+      );
+      return interior?.objects.filter(({ name }) => name.startsWith('dialogue-production-choice-'))
+        .length;
+    })
+    .toBe(2);
+
+  await page.keyboard.press('Enter');
+
+  await expect
+    .poll(async () => {
+      const interior = (await snapshot(page)).scenes.find(
+        ({ key }) => key === 'VillageInteriorScene',
+      );
+      return interior?.objects.some(({ name }) => name === 'bakery-shop-title') ?? false;
+    })
+    .toBe(true);
 });

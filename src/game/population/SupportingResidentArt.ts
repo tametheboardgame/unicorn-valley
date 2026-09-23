@@ -85,47 +85,17 @@ function drawBakerRoleVisual(
   graphics.lineBetween(x + 8 * scale, y - 4 * scale, x + 22 * scale, y + 7 * scale);
   graphics.lineBetween(x + 22 * scale, y + 7 * scale, x + 36 * scale, y - 4 * scale);
   graphics.fillStyle(0xfff8e8, 0.98);
-  graphics.fillRoundedRect(
-    x + 4 * scale,
-    y + 2 * scale,
-    46 * scale,
-    48 * scale,
-    10 * scale,
-  );
-  graphics.strokeRoundedRect(
-    x + 4 * scale,
-    y + 2 * scale,
-    46 * scale,
-    48 * scale,
-    10 * scale,
-  );
+  graphics.fillRoundedRect(x + 4 * scale, y + 2 * scale, 46 * scale, 48 * scale, 10 * scale);
+  graphics.strokeRoundedRect(x + 4 * scale, y + 2 * scale, 46 * scale, 48 * scale, 10 * scale);
   graphics.fillStyle(0xe8a8b8, 0.95);
-  graphics.fillRoundedRect(
-    x + 17 * scale,
-    y + 25 * scale,
-    22 * scale,
-    10 * scale,
-    4 * scale,
-  );
+  graphics.fillRoundedRect(x + 17 * scale, y + 25 * scale, 22 * scale, 10 * scale, 4 * scale);
 
   // Small tilted chef hat follows the canonical head geometry and deliberately sits to the
   // rear of the horn rather than covering it.
   graphics.fillStyle(0xfffcf2, 1);
   graphics.lineStyle(2.5 * scale, 0xd8c9b7, 0.92);
-  graphics.fillRoundedRect(
-    x + 37 * scale,
-    y - 70 * scale,
-    39 * scale,
-    13 * scale,
-    6 * scale,
-  );
-  graphics.strokeRoundedRect(
-    x + 37 * scale,
-    y - 70 * scale,
-    39 * scale,
-    13 * scale,
-    6 * scale,
-  );
+  graphics.fillRoundedRect(x + 37 * scale, y - 70 * scale, 39 * scale, 13 * scale, 6 * scale);
+  graphics.strokeRoundedRect(x + 37 * scale, y - 70 * scale, 39 * scale, 13 * scale, 6 * scale);
   for (const [dx, dy, radius] of [
     [43, -72, 10],
     [55, -79, 12],

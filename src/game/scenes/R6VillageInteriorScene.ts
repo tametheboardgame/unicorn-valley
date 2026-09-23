@@ -37,6 +37,7 @@ import { getVillageInteriorOccupancyService } from '../population/VillageInterio
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getQuestStepId } from '../quests/QuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
+import { getWorldConversationPresenter } from '../dialogue/WorldConversationPresenter';
 import { getWorldFeedbackPresenter } from '../ui/WorldFeedbackPresenter';
 import { UI_COLOURS, UI_FONT, applyButtonHover } from '../ui/uiTheme';
 import {
@@ -197,11 +198,17 @@ export class VillageInteriorScene extends Phaser.Scene {
       )
       .setName(`village-interior:${this.interiorId}:floor`)
       .setDepth(3);
-    this.add
-      .rectangle(centreX, (shell.top + shell.bottom) / 2, roomWidth, roomHeight, 0xffffff, 0)
+    const roomOutline = this.add
+      .graphics()
       .setName(`village-interior:${this.interiorId}:room-shell`)
-      .setStrokeStyle(10, definition.accentColour, 0.95)
       .setDepth(4);
+    const doorwayHalfWidth = (shell.doorWidth + 54) / 2;
+    roomOutline.lineStyle(10, definition.accentColour, 0.95);
+    roomOutline.lineBetween(shell.left, shell.top, shell.right, shell.top);
+    roomOutline.lineBetween(shell.left, shell.top, shell.left, shell.bottom);
+    roomOutline.lineBetween(shell.right, shell.top, shell.right, shell.bottom);
+    roomOutline.lineBetween(shell.left, shell.bottom, centreX - doorwayHalfWidth, shell.bottom);
+    roomOutline.lineBetween(centreX + doorwayHalfWidth, shell.bottom, shell.right, shell.bottom);
 
     this.createWindow(390, 225, definition.accentColour);
     this.createWindow(1110, 225, definition.accentColour);
@@ -225,27 +232,46 @@ export class VillageInteriorScene extends Phaser.Scene {
 
   private createDoorway(map: VillageInteriorDefinition, accent: number): void {
     const exit = map.anchors.exit;
+    const shell = map.roomShell;
+    const openingWidth = shell.doorWidth + 54;
+    const outsideColour = this.interiorId === 'bakery' ? 0xeadde7 : 0x5b4662;
+    const frameColour = this.interiorId === 'bakery' ? 0xb77f90 : accent;
+
     this.add
-      .ellipse(
-        exit.position.x,
-        exit.position.y + 8,
-        map.roomShell.doorWidth + 54,
-        92,
-        0x4b3852,
-        0.72,
-      )
-      .setName(`village-interior:${this.interiorId}:exit`)
-      .setStrokeStyle(5, accent, 0.72)
-      .setDepth(worldDepthForY(exit.position.y + 20, 0.1));
+      .rectangle(exit.position.x, shell.bottom + 7, openingWidth, 34, outsideColour, 1)
+      .setName(`village-interior:${this.interiorId}:exit-gap`)
+      .setDepth(6);
     this.add
-      .text(exit.position.x, exit.position.y + 4, 'Sunbeam Village', {
-        color: '#fff7df',
-        fontFamily: UI_FONT,
-        fontSize: '15px',
-        fontStyle: 'bold',
-      })
-      .setOrigin(0.5)
-      .setDepth(worldDepthForY(exit.position.y + 20, 0.2));
+      .ellipse(exit.position.x, shell.bottom + 24, shell.doorWidth + 16, 44, 0xbce9f4, 0.2)
+      .setDepth(4);
+
+    const frame = this.add
+      .graphics()
+      .setName(`village-interior:${this.interiorId}:exit-frame`)
+      .setDepth(worldDepthForY(shell.bottom + 28, 0.14));
+    frame.fillStyle(frameColour, 0.94);
+    frame.fillRoundedRect(
+      exit.position.x - openingWidth / 2 - 12,
+      shell.bottom - 31,
+      20,
+      46,
+      8,
+    );
+    frame.fillRoundedRect(
+      exit.position.x + openingWidth / 2 - 8,
+      shell.bottom - 31,
+      20,
+      46,
+      8,
+    );
+    frame.fillStyle(0xffe9dc, 0.76);
+    frame.fillRoundedRect(
+      exit.position.x - shell.doorWidth / 2 + 8,
+      shell.bottom - 13,
+      shell.doorWidth - 16,
+      6,
+      3,
+    );
   }
 
   private createBakerySet(): void {
@@ -537,13 +563,7 @@ export class VillageInteriorScene extends Phaser.Scene {
     ] as const;
     for (const cupcake of cupcakes) {
       tower.fillStyle(0xd99365, 1);
-      tower.fillRoundedRect(
-        x + cupcake.dx - 10,
-        y + cupcake.dy - 2,
-        20,
-        18,
-        4,
-      );
+      tower.fillRoundedRect(x + cupcake.dx - 10, y + cupcake.dy - 2, 20, 18, 4);
       tower.fillStyle(cupcake.icing, 1);
       tower.fillCircle(x + cupcake.dx, y + cupcake.dy - 7, 13);
       tower.fillStyle(0xfff4d5, 0.9);
@@ -1000,7 +1020,7 @@ export class VillageInteriorScene extends Phaser.Scene {
         position: worker.approach,
         interactionRadius: 160,
         priority: 35,
-        result: { type: 'callback', activate: () => this.talkToBakeryBaker() },
+        result: { type: 'callback', activate: () => this.openBakeryBakerConversation() },
       });
     }
     return targets;
@@ -1100,14 +1120,20 @@ export class VillageInteriorScene extends Phaser.Scene {
         fontStyle: 'bold',
       })
       .setOrigin(0.5)
+      .setName('bakery-shop-title')
       .setScrollFactor(0);
     const note = this.add
-      .text(GAME_WIDTH / 2, 158, 'Small batches are baked each morning — when they’re gone, they’re gone for the day.', {
-        color: '#806985',
-        fontFamily: UI_FONT,
-        fontSize: '12px',
-        fontStyle: 'bold',
-      })
+      .text(
+        GAME_WIDTH / 2,
+        158,
+        'Small batches are baked each morning — when they’re gone, they’re gone for the day.',
+        {
+          color: '#806985',
+          fontFamily: UI_FONT,
+          fontSize: '12px',
+          fontStyle: 'bold',
+        },
+      )
       .setOrigin(0.5)
       .setScrollFactor(0);
     this.overlay.add([title, note]);
@@ -1329,12 +1355,10 @@ export class VillageInteriorScene extends Phaser.Scene {
 
     const result = new BakeryService(getBrowserSaveService()).purchase(itemId);
     if (result.type === 'purchased') {
-      this.bakeryShopFeedback =
-        `✨ ${result.item.name} added to your bag. ${result.balance} Shimmer left.`;
+      this.bakeryShopFeedback = `✨ ${result.item.name} added to your bag. ${result.balance} Shimmer left.`;
       this.cameras.main.flash(90, 255, 236, 178, false);
     } else if (result.type === 'insufficient-funds') {
-      this.bakeryShopFeedback =
-        `You need ${result.shortfall} more Shimmer for ${result.item.name}.`;
+      this.bakeryShopFeedback = `You need ${result.shortfall} more Shimmer for ${result.item.name}.`;
     } else if (result.type === 'locked') {
       this.bakeryShopFeedback = result.unlockHint;
     } else if (result.type === 'sold-out') {
@@ -1349,26 +1373,47 @@ export class VillageInteriorScene extends Phaser.Scene {
     this.openBakeryCounter(this.bakerySection);
   }
 
-  private talkToBakeryBaker(): void {
+  private openBakeryBakerConversation(): void {
+    const presenter = getWorldConversationPresenter();
+    presenter.startChoice(
+      this,
+      'resident:cinnamon',
+      'Cinnamon',
+      'Cinnamon smiles from between the counters. “What can I help you with?”',
+      [
+        { id: 'shop', label: 'Shop' },
+        {
+          id: 'talk',
+          label: 'Talk about something else',
+          followUpMessage: this.getBakeryBakerConversationLine(),
+        },
+      ],
+      {
+        onChoice: (choiceId) => {
+          if (choiceId !== 'shop') {
+            return;
+          }
+          this.time.delayedCall(0, () => this.openBakeryCounter('pastries'));
+        },
+      },
+    );
+  }
+
+  private getBakeryBakerConversationLine(): string {
     const progress = getBrowserQuestEngine().getProgress(MAPLE_CAKE_QUEST_ID);
-    let message: string;
     if (progress.status === 'not-started') {
-      message =
-        'Cinnamon: “Maple has been sketching a celebration cake outside. If she recruits you, I have plenty of bowls and absolutely no fear of sprinkles.”';
-    } else if (questIsAt(MAPLE_CAKE_QUEST_ID, 1)) {
-      message =
-        'Cinnamon: “Maple left three colour plans on the cake table. Pick the one you like and I’ll make sure the cake wobbles safely.”';
-    } else if (questIsAt(MAPLE_CAKE_QUEST_ID, 4)) {
-      message =
-        'Cinnamon: “That cake is gloriously uneven. Maple is outside and definitely needs to see what you made.”';
-    } else if (progress.status === 'completed') {
-      message =
-        'Cinnamon: “Maple’s Wobbly Cake is officially a Bakery favourite now. I keep a few celebration slices on the counter whenever I can.”';
-    } else {
-      message =
-        'Cinnamon: “Everything on the counter is fresh today. The Berry Buns disappear fastest, but the Cloud Biscuits make the best crumbs.”';
+      return 'Maple has been sketching a celebration cake outside. If she recruits you, I have plenty of bowls and absolutely no fear of sprinkles.';
     }
-    this.showFeedback(message, getVillageInteriorAnchor('bakery', 'npc-work').approach);
+    if (questIsAt(MAPLE_CAKE_QUEST_ID, 1)) {
+      return 'Maple left three colour plans on the cake table. Pick the one you like and I’ll make sure the cake wobbles safely.';
+    }
+    if (questIsAt(MAPLE_CAKE_QUEST_ID, 4)) {
+      return 'That cake is gloriously uneven. Maple is outside and definitely needs to see what you made.';
+    }
+    if (progress.status === 'completed') {
+      return 'Maple’s Wobbly Cake is officially a Bakery favourite now. I keep a few celebration slices on the counter whenever I can.';
+    }
+    return 'Everything on the counter is fresh today. The Berry Buns disappear fastest, but the Cloud Biscuits make the best crumbs.';
   }
 
   private openCakePlan(): void {

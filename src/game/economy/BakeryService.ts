@@ -146,9 +146,7 @@ export class BakeryService {
   public purchase(itemId: ItemId): BakeryPurchaseResult {
     const stock = requireStock(itemId);
     const item = itemRegistry.get(itemId);
-    const save = this.ensureDailyStock(
-      this.saveService.load() ?? this.saveService.createNewGame(),
-    );
+    const save = this.ensureDailyStock(this.saveService.load() ?? this.saveService.createNewGame());
     const balance = getShimmerBalanceFromSave(save);
     const ownedQuantity = save.inventory.itemQuantities[itemId] ?? 0;
     const unlock = unlockFor(save, stock);
@@ -166,10 +164,7 @@ export class BakeryService {
     }
 
     const shop = save.shops.byShopId[BAKERY_SHOP_ID];
-    const remainingStock = Math.max(
-      0,
-      shop?.remainingByItemId[itemId] ?? stock.maxDailyStock,
-    );
+    const remainingStock = Math.max(0, shop?.remainingByItemId[itemId] ?? stock.maxDailyStock);
     if (remainingStock <= 0) {
       return { type: 'sold-out', item, balance };
     }
