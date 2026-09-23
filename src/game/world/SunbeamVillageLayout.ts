@@ -223,19 +223,19 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
       seesaw: {
         x: 2602,
         y: 1744,
-        interaction: { x: 2602, y: 1744 },
+        interaction: { x: 2602, y: 1800 },
         collision: { x: 2602, y: 1748, width: 166, height: 34 },
       },
       slide: {
         x: 2764,
         y: 1662,
-        interaction: { x: 2784, y: 1682 },
+        interaction: { x: 2840, y: 1682 },
         collision: { x: 2765, y: 1672, width: 92, height: 116 },
       },
       climbingFrame: {
         x: 2529,
         y: 1628,
-        interaction: { x: 2529, y: 1628 },
+        interaction: { x: 2610, y: 1628 },
         collision: { x: 2529, y: 1633, width: 104, height: 82 },
       },
     },
