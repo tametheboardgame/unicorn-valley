@@ -1,5 +1,11 @@
 import type Phaser from 'phaser';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+vi.mock('../story/WorldStoryConversations', () => ({
+  startMarigoldConversation: vi.fn(),
+  startPebbleConversation: vi.fn(),
+  startWillowConversation: vi.fn(),
+}));
+
 import { createSunbeamVillageInteractions } from './SunbeamVillageInteractions';
 
 describe('Sunbeam Village interaction ownership', () => {
