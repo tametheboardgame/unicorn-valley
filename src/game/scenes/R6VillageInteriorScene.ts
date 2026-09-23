@@ -122,6 +122,8 @@ export class VillageInteriorScene extends Phaser.Scene {
   private storyCardCursor = 0;
   private bakerySection: BakerySectionId = 'pastries';
   private bakeryShopFeedback = '';
+  private threadShopSection: 'accessories' | 'decorations' = 'accessories';
+  private threadShopFeedback = '';
 
   public constructor() {
     super('VillageInteriorScene');
@@ -134,6 +136,8 @@ export class VillageInteriorScene extends Phaser.Scene {
     this.storyCardCursor = 0;
     this.bakerySection = 'pastries';
     this.bakeryShopFeedback = '';
+    this.threadShopSection = 'accessories';
+    this.threadShopFeedback = '';
     this.purchaseGuard.reset();
     this.data.set(VILLAGE_INTERIOR_SCENE_DATA_KEY, this.interiorId);
 
@@ -559,14 +563,7 @@ export class VillageInteriorScene extends Phaser.Scene {
     }
     tower.setDepth(worldDepthForY(y + 101, 0.32));
 
-    this.createBakeryDisplayPlaque(
-      x,
-      y + 72,
-      'Cupcake Carousel',
-      0xf3bfd0,
-      0xb97b8b,
-      'cupcake',
-    );
+    this.createBakeryDisplayPlaque(x, y + 72, 'Cupcake Carousel', 0xf3bfd0, 0xb97b8b, 'cupcake');
   }
 
   private createBakeryCafeStool(x: number, y: number): void {
@@ -641,14 +638,7 @@ export class VillageInteriorScene extends Phaser.Scene {
     }
     ring.setDepth(worldDepthForY(y + 101, 0.32));
 
-    this.createBakeryDisplayPlaque(
-      x,
-      y + 72,
-      'Doughnut Wheel',
-      0xead2f1,
-      0xa879a8,
-      'doughnut',
-    );
+    this.createBakeryDisplayPlaque(x, y + 72, 'Doughnut Wheel', 0xead2f1, 0xa879a8, 'doughnut');
   }
 
   private createBakeryDisplayPlaque(
@@ -959,14 +949,8 @@ export class VillageInteriorScene extends Phaser.Scene {
       .setDepth(worldDepthForY(y + 80, 0.42));
   }
 
-  private createThreadDisplayIsland(
-    x: number,
-    y: number,
-    theme: 'ribbons' | 'home',
-  ): void {
-    const display = this.add
-      .graphics()
-      .setName(`village-interior:accessory-shop:display-${theme}`);
+  private createThreadDisplayIsland(x: number, y: number, theme: 'ribbons' | 'home'): void {
+    const display = this.add.graphics().setName(`village-interior:accessory-shop:display-${theme}`);
     display.fillStyle(0x6b4b64, 0.12);
     display.fillEllipse(x + 4, y + 44, 196, 42);
     display.fillStyle(theme === 'ribbons' ? 0xe9bfdc : 0xd8c9ef, 1);
@@ -1817,16 +1801,219 @@ export class VillageInteriorScene extends Phaser.Scene {
   }
 
   private openThreadShop(
-    initialSection: 'accessories' | 'decorations' = 'accessories',
+    initialSection: 'accessories' | 'decorations' = this.threadShopSection,
   ): void {
-    if (this.closing) {
+    this.threadShopSection = initialSection;
+    const stock = new ShopService(getBrowserSaveService()).listStock();
+    const visibleStock = stock.filter(({ definition }) =>
+      initialSection === 'accessories'
+        ? definition.category === 'accessory'
+        : definition.category === 'decoration',
+    );
+
+    this.openOverlay();
+    if (!this.overlay) {
       return;
     }
-    this.scene.launch('ShopScene', {
-      returnScene: 'VillageInteriorScene',
-      initialSection,
+
+    const title = this.add
+      .text(GAME_WIDTH / 2, 126, 'Velvet’s Twinkle & Thread', {
+        color: '#563f63',
+        fontFamily: UI_FONT,
+        fontSize: '28px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5)
+      .setName('twinkle-shop-title')
+      .setScrollFactor(0);
+    const note = this.add
+      .text(
+        GAME_WIDTH / 2,
+        158,
+        'Wearables stay in your collection. Cottage décor can be bought more than once.',
+        {
+          color: '#806985',
+          fontFamily: UI_FONT,
+          fontSize: '12px',
+          fontStyle: 'bold',
+        },
+      )
+      .setOrigin(0.5)
+      .setScrollFactor(0);
+    this.overlay.add([title, note]);
+
+    const sections = [
+      { id: 'accessories' as const, label: '🎀 Wearables' },
+      { id: 'decorations' as const, label: '✨ Cottage décor' },
+    ];
+    sections.forEach((tab, index) => {
+      const x = 500 + index * 280;
+      const selected = tab.id === initialSection;
+      const surface = this.add.graphics().setScrollFactor(0);
+      surface.fillStyle(0x4b3045, 0.12);
+      surface.fillRoundedRect(x - 112 + 4, 188 + 4, 224, 52, 18);
+      surface.fillStyle(selected ? 0xf3d9a4 : 0xead4ee, 1);
+      surface.lineStyle(3, selected ? 0xb7834e : 0xb486a8, 0.95);
+      surface.fillRoundedRect(x - 112, 188, 224, 52, 18);
+      surface.strokeRoundedRect(x - 112, 188, 224, 52, 18);
+
+      const hit = this.add
+        .rectangle(x, 214, 234, 64, 0xffffff, 0.001)
+        .setAlpha(0.001)
+        .setInteractive({ useHandCursor: true })
+        .setScrollFactor(0);
+      const count = stock.filter(({ definition }) =>
+        tab.id === 'accessories'
+          ? definition.category === 'accessory'
+          : definition.category === 'decoration',
+      ).length;
+      const label = this.add
+        .text(x, 214, `${tab.label}  ${count}`, {
+          color: selected ? '#664631' : '#5d4360',
+          fontFamily: UI_FONT,
+          fontSize: '14px',
+          fontStyle: 'bold',
+        })
+        .setOrigin(0.5)
+        .setScrollFactor(0);
+      hit.on('pointerdown', () => this.openThreadShop(tab.id));
+      this.overlay?.add([surface, hit, label]);
     });
-    this.scene.pause();
+
+    visibleStock.forEach((item, index) => {
+      const column = index % 3;
+      const row = Math.floor(index / 3);
+      const x = 320 + column * 320;
+      const y = 345 + row * 155;
+
+      const card = this.add.graphics().setScrollFactor(0);
+      card.fillStyle(0x4b3045, 0.1);
+      card.fillRoundedRect(x - 140 + 5, y - 68 + 6, 280, 136, 18);
+      card.fillStyle(item.isUnlocked ? 0xfffbef : 0xf1ebf1, 1);
+      card.lineStyle(3, item.isUnlocked ? 0xd3a0ae : 0xbfa8c7, 0.9);
+      card.fillRoundedRect(x - 140, y - 68, 280, 136, 18);
+      card.strokeRoundedRect(x - 140, y - 68, 280, 136, 18);
+
+      const iconWell = this.add
+        .circle(x - 104, y - 18, 27, item.isUnlocked ? 0xf1d7cf : 0xe6dfea, 1)
+        .setStrokeStyle(2, item.isUnlocked ? 0xc995a4 : 0xb7a4c1, 0.85)
+        .setScrollFactor(0);
+      const icon = this.add
+        .text(x - 104, y - 18, item.definition.icon ?? '✨', {
+          fontFamily: UI_FONT,
+          fontSize: '29px',
+        })
+        .setOrigin(0.5)
+        .setScrollFactor(0);
+      const name = this.add
+        .text(x - 67, y - 35, item.definition.name, {
+          color: '#5b4662',
+          fontFamily: UI_FONT,
+          fontSize: '14px',
+          fontStyle: 'bold',
+          wordWrap: { width: 180 },
+        })
+        .setOrigin(0, 0.5)
+        .setScrollFactor(0);
+
+      const detail = this.add
+        .text(x - 67, y - 2, item.definition.description ?? '', {
+          color: '#806985',
+          fontFamily: UI_FONT,
+          fontSize: '10px',
+          wordWrap: { width: 182 },
+          lineSpacing: 1,
+        })
+        .setOrigin(0, 0.5)
+        .setScrollFactor(0);
+
+      const status = !item.isUnlocked
+        ? (item.unlockHint ?? 'Locked')
+        : item.isUniqueOwned
+          ? 'Owned ✓'
+          : item.definition.category === 'decoration' && item.ownedQuantity > 0
+            ? `Owned: ${item.ownedQuantity}`
+            : item.definition.category === 'accessory'
+              ? 'Wearable'
+              : 'Cottage décor';
+      const statusText = this.add
+        .text(x - 112, y + 39, status, {
+          color: '#806985',
+          fontFamily: UI_FONT,
+          fontSize: '10px',
+          fontStyle: 'bold',
+          wordWrap: { width: 112 },
+        })
+        .setOrigin(0, 0.5)
+        .setScrollFactor(0);
+
+      this.overlay?.add([card, iconWell, icon, name, detail, statusText]);
+      this.createOverlayButton(
+        x + 69,
+        y + 39,
+        !item.isUnlocked
+          ? 'Locked'
+          : item.isUniqueOwned
+            ? 'Yours'
+            : `Buy • ${item.price} ✨`,
+        () => this.buyThreadItem(item.definition.id),
+        item.isUnlocked && !item.isUniqueOwned,
+        122,
+        36,
+      );
+    });
+
+    if (this.threadShopFeedback) {
+      const feedback = this.add
+        .text(GAME_WIDTH / 2, 610, this.threadShopFeedback, {
+          color: '#704d61',
+          fontFamily: UI_FONT,
+          fontSize: '13px',
+          fontStyle: 'bold',
+          align: 'center',
+          wordWrap: { width: 760 },
+        })
+        .setOrigin(0.5)
+        .setScrollFactor(0);
+      this.overlay.add(feedback);
+    }
+
+    this.createOverlayButton(
+      GAME_WIDTH / 2,
+      660,
+      'Back to the boutique',
+      () => this.closeOverlay(),
+      true,
+      250,
+      46,
+    );
+  }
+
+  private buyThreadItem(itemId: ItemId): void {
+    if (!this.purchaseGuard.tryBegin(itemId, this.time.now)) {
+      return;
+    }
+
+    const result = new ShopService(getBrowserSaveService()).purchase(itemId);
+    if (result.type === 'purchased') {
+      this.threadShopFeedback =
+        result.ownedQuantity === 1
+          ? `✨ ${result.item.name} added to your collection. ${result.balance} Shimmer left.`
+          : `✨ Another ${result.item.name} added. You now own ${result.ownedQuantity}. ${result.balance} Shimmer left.`;
+      this.cameras.main.flash(90, 255, 236, 190, false);
+    } else if (result.type === 'insufficient-funds') {
+      this.threadShopFeedback =
+        `You need ${result.shortfall} more Shimmer for ${result.item.name}.`;
+    } else if (result.type === 'locked') {
+      this.threadShopFeedback = result.unlockHint;
+    } else if (result.type === 'persistence-failed') {
+      this.threadShopFeedback = 'That did not save, so no Shimmer was spent. Please try again.';
+    } else {
+      this.threadShopFeedback = `${result.item.name} is already yours.`;
+    }
+
+    this.refreshBalance();
+    this.openThreadShop(this.threadShopSection);
   }
 
   private showThreadProgress(): void {

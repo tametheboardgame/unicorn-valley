@@ -12,6 +12,8 @@ Current work is **H3.11.3 - Twinkle & Thread rebuild**. The first implementation
 
 The active second checkpoint rebuilds Twinkle & Thread commerce presentation into the approved rounded concept style, separates Wearables from Cottage décor, and makes the physical ribbon/accessory displays open Wearables while the cottage-accents island opens Cottage décor. Existing progression-gated unlocks, prices, ownership and save behaviour remain authoritative.
 
+Human testing exposed that the first commerce checkpoint routed Browse through the separate legacy ShopScene and could pause the boutique without presenting usable shop UI. That route is being retired for the interior: Twinkle & Thread now owns its shop as an in-room overlay, matching the proven Bakery interaction model.
+
 ## H3 feedback-block-1 sequence
 
 1. H3.1 - Legacy residue and composition ownership cleanup.

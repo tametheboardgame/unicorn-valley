@@ -231,7 +231,6 @@ test('H3.11.2 Cinnamon uses the production dialogue menu to open the Bakery shop
     .toBe(true);
 });
 
-
 test('H3.11.3 gives Twinkle & Thread a dedicated walkable boutique and shopkeeper', async ({
   page,
 }) => {
@@ -276,4 +275,20 @@ test('H3.11.3 gives Twinkle & Thread a dedicated walkable boutique and shopkeepe
         .length;
     })
     .toBe(2);
+
+  await page.keyboard.press('Enter');
+
+  await expect
+    .poll(async () => {
+      const snapshotState = await snapshot(page);
+      const current = snapshotState.scenes.find(({ key }) => key === 'VillageInteriorScene');
+      return {
+        activeScenes: snapshotState.activeScenes,
+        hasShop: current?.objects.some(({ name }) => name === 'twinkle-shop-title') ?? false,
+      };
+    })
+    .toEqual({
+      activeScenes: ['VillageInteriorScene'],
+      hasShop: true,
+    });
 });
