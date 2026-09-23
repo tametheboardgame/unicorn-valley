@@ -24,6 +24,16 @@ export const SUPPORTING_RESIDENT_DISPLAY_WIDTH = Math.round(
     SUPPORTING_RESIDENT_ART_LAYOUT.displayHeight,
 );
 
+export function resolveSupportingResidentDisplaySize(presentationScale = 1): {
+  width: number;
+  height: number;
+} {
+  return {
+    width: SUPPORTING_RESIDENT_DISPLAY_WIDTH * presentationScale,
+    height: SUPPORTING_RESIDENT_ART_LAYOUT.displayHeight * presentationScale,
+  };
+}
+
 export function getSupportingResidentTextureKey(
   resident: SupportingResidentDefinition,
   pose: UnicornProductionPose,
