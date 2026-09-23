@@ -703,12 +703,17 @@ export class VillageInteriorScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setScrollFactor(0);
     const note = this.add
-      .text(GAME_WIDTH / 2, 174, 'Fresh treats can be bought again whenever you have enough Shimmer.', {
-        color: UI_COLOURS.softInk,
-        fontFamily: UI_FONT,
-        fontSize: '13px',
-        fontStyle: 'bold',
-      })
+      .text(
+        GAME_WIDTH / 2,
+        174,
+        'Fresh treats can be bought again whenever you have enough Shimmer.',
+        {
+          color: UI_COLOURS.softInk,
+          fontFamily: UI_FONT,
+          fontSize: '13px',
+          fontStyle: 'bold',
+        },
+      )
       .setOrigin(0.5)
       .setScrollFactor(0);
     this.overlay.add([title, note]);

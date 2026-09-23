@@ -14,7 +14,9 @@ describe('VillageInteriorOccupancyService', () => {
       'chef-hat',
       'apron',
     ]);
-    expect(service.isResidentAllowedInScene('resident:cinnamon', 'VillageInteriorScene')).toBe(true);
+    expect(service.isResidentAllowedInScene('resident:cinnamon', 'VillageInteriorScene')).toBe(
+      true,
+    );
     expect(service.isResidentAllowedInScene('resident:maple', 'SunbeamVillageScene')).toBe(true);
     expect(service.isResidentAllowedInScene('resident:maple', 'VillageInteriorScene')).toBe(false);
   });

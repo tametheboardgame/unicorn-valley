@@ -136,9 +136,7 @@ test('H3.11.2 does not clone outdoor residents into unfinished interiors', async
   await page.goto('/?diagnostics=1');
   await startInterior(page, 'library');
 
-  const interior = (await snapshot(page)).scenes.find(
-    ({ key }) => key === 'VillageInteriorScene',
-  );
+  const interior = (await snapshot(page)).scenes.find(({ key }) => key === 'VillageInteriorScene');
   if (!interior) {
     throw new Error('Missing VillageInteriorScene');
   }
