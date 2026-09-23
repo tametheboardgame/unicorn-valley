@@ -6,12 +6,12 @@ import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 import { shouldShowTouchMovementPad, TouchMovementPad } from '../input/TouchMovementPad';
 import { registerSunbeamVillageInteractions } from '../interaction/SunbeamVillageInteractions';
 import { PlayerEntity } from '../player/PlayerEntity';
-import { parseUnicornAppearance, type UnicornAppearance } from '../player/UnicornAppearance';
+import { parseUnicornAppearance } from '../player/UnicornAppearance';
 import { createUnicornAppearanceTexture } from '../player/UnicornAppearanceRenderer';
-import { getUnicornProductionTextureKey } from '../player/UnicornProductionArt';
 import { DEFAULT_PLAYER_SPEED, resolvePlayerMovement } from '../player/PlayerMovement';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { saveLocationCheckpoint } from '../save/saveLocationCheckpoint';
+import { PEBBLE_FOUNTAIN_REPAIRED_FLAG } from '../../content/r4PebbleStory';
 import { isWillowGardenPlanted } from '../story/WillowMoonflowersStory';
 import { createSunbeamVillageProductionPresentation } from '../visual/EnvironmentProductionPresentationManager';
 import { SUNBEAM_VILLAGE_LOCATION_ID, SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
@@ -787,9 +787,11 @@ export class SunbeamVillageScene extends Phaser.Scene {
 
   private createFountain(): void {
     const { x, y } = SUNBEAM_VILLAGE_LAYOUT.fountain;
+    const repaired =
+      getBrowserSaveService().load()?.world.flags[PEBBLE_FOUNTAIN_REPAIRED_FLAG] === true;
     const objects: Phaser.GameObjects.GameObject[] = [
       this.add.circle(0, 0, 110, 0x8fb9c5, 1),
-      this.add.circle(0, 0, 86, 0x9fe6ed, 1),
+      this.add.circle(0, 0, 86, repaired ? 0xb8f3f4 : 0x9fe6ed, 1),
       this.add.circle(0, 0, 38, 0xffdc77, 1),
       this.add
         .text(0, 0, '☀', {
@@ -800,9 +802,28 @@ export class SunbeamVillageScene extends Phaser.Scene {
         })
         .setOrigin(0.5),
     ];
+    if (repaired) {
+      for (const [sparkleX, sparkleY] of [
+        [-66, -54],
+        [72, -38],
+        [-78, 38],
+        [64, 52],
+      ] as const) {
+        objects.push(
+          this.add
+            .text(sparkleX, sparkleY, '✦', {
+              color: '#fff2a8',
+              fontFamily: 'system-ui, sans-serif',
+              fontSize: '22px',
+              fontStyle: 'bold',
+            })
+            .setOrigin(0.5),
+        );
+      }
+    }
     this.add
       .container(x, y, objects)
-      .setName('sunbeam-fountain:basin')
+      .setName(repaired ? 'sunbeam-fountain:basin:repaired' : 'sunbeam-fountain:basin')
       .setDepth(SUNBEAM_VILLAGE_LAYERS.structureDetail);
   }
 
@@ -1233,77 +1254,9 @@ export class SunbeamVillageScene extends Phaser.Scene {
       .setName('sunbeam-composition:unicorn-playground')
       .setDepth(SUNBEAM_VILLAGE_LAYERS.groundDetail + 0.2);
 
-    const childAppearances: Record<string, UnicornAppearance> = {
-      poppy: {
-        bodyColour: 'pink',
-        eyeColour: 'violet',
-        maneStyle: 'fluffy',
-        maneColour: 'rose',
-        tailStyle: 'puff',
-        tailColour: 'rose',
-        hornStyle: 'short',
-        marking: 'heart',
-        accessory: 'bow',
-      },
-      milo: {
-        bodyColour: 'mint',
-        eyeColour: 'green',
-        maneStyle: 'swept',
-        maneColour: 'gold',
-        tailStyle: 'swish',
-        tailColour: 'gold',
-        hornStyle: 'short',
-        marking: 'star',
-        accessory: 'none',
-      },
-      lulu: {
-        bodyColour: 'lavender',
-        eyeColour: 'blue',
-        maneStyle: 'soft',
-        maneColour: 'aqua',
-        tailStyle: 'curl',
-        tailColour: 'aqua',
-        hornStyle: 'short',
-        marking: 'sparkles',
-        accessory: 'flower',
-      },
-      bean: {
-        bodyColour: 'buttercup',
-        eyeColour: 'amber',
-        maneStyle: 'crest',
-        maneColour: 'coral',
-        tailStyle: 'ribbon',
-        tailColour: 'coral',
-        hornStyle: 'short',
-        marking: 'freckles',
-        accessory: 'ribbon',
-      },
-    };
+    // Playground children are runtime residents owned by AmbientPopulationWorldManager.
+    // The scene owns only the approved H3.7 equipment and landscaping.
 
-    playground.children.forEach((child, index) => {
-      const textureKey = `sunbeam-playground-child-${child.id}`;
-      createUnicornAppearanceTexture(this, textureKey, childAppearances[child.id]);
-      const sprite = this.add
-        .sprite(child.x, child.y, getUnicornProductionTextureKey(textureKey, 'idle'))
-        .setName(`sunbeam-playground:child:${child.id}`)
-        .setDisplaySize(74, 61)
-        .setFlipX(child.facing === 'left')
-        .setDepth(SUNBEAM_VILLAGE_LAYERS.structureDetail + 0.5 + index * 0.02);
-
-      this.tweens.add({
-        targets: sprite,
-        x: child.x + child.roamX,
-        y: child.y + child.roamY,
-        angle: index % 2 === 0 ? 2 : -2,
-        duration: 1150 + index * 180,
-        delay: index * 170,
-        yoyo: true,
-        repeat: -1,
-        ease: 'Sine.InOut',
-        onYoyo: () => sprite.setFlipX(!sprite.flipX),
-        onRepeat: () => sprite.setFlipX(!sprite.flipX),
-      });
-    });
   }
 
   private createEntrances(): void {
