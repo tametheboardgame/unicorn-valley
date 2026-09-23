@@ -12,7 +12,11 @@ export type SupportingResidentId =
   | 'resident:fern'
   | 'resident:coral'
   | 'resident:skipper'
-  | 'resident:echo';
+  | 'resident:echo'
+  | 'resident:poppy'
+  | 'resident:milo'
+  | 'resident:lulu'
+  | 'resident:bean';
 
 export type ResidentBehaviourMode =
   | 'local-wander'
@@ -71,6 +75,7 @@ export interface ResidentPlacementDefinition {
   interactionRadius: number;
   priority?: number;
   activeWhen?: ResidentCondition;
+  presentationScale?: number;
 }
 
 export interface ResidentStoryAnchorDefinition {
