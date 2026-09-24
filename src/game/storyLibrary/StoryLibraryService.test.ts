@@ -49,7 +49,24 @@ function libraryFetch(): StoryLibraryFetch {
         series: null,
         tags: ['story-house', 'sample'],
         publication: { status: 'published' },
-        chapters: [{ id: 'chapter-01', title: 'The First Shelf', path: 'chapters/01.md' }],
+        chapters: [
+          {
+            id: 'chapter-01',
+            title: 'The First Shelf',
+            path: 'chapters/01.md',
+            illustrations: [
+              {
+                id: 'shelf-picture',
+                blockId: 'first-shelf',
+                path: 'illustrations/shelf.webp',
+                alt: 'A painted shelf full of books.',
+                placement: 'full-width',
+                width: 480,
+                height: 480,
+              },
+            ],
+          },
+        ],
       }),
     ],
     [
@@ -77,6 +94,14 @@ describe('Story Library service', () => {
 
     const manifest = await service.loadManifest('story-house-sampler');
     expect(manifest.chapters[0]?.id).toBe('chapter-01');
+    expect(manifest.chapters[0]?.illustrations?.[0]).toMatchObject({
+      id: 'shelf-picture',
+      blockId: 'first-shelf',
+      path: 'illustrations/shelf.webp',
+      placement: 'full-width',
+      width: 480,
+      height: 480,
+    });
     expect(requested).toEqual([
       '/stories/catalogue.json',
       '/stories/story-house-sampler/book.json',
@@ -103,6 +128,7 @@ describe('Story Library service', () => {
       },
     ]);
     expect(requested.at(-1)).toBe('/stories/story-house-sampler/chapters/01.md');
+    expect(requested).not.toContain('/stories/story-house-sampler/illustrations/shelf.webp');
   });
 
   it('rejects chapters without stable block markers', () => {

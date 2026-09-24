@@ -4,7 +4,7 @@ Last updated: 2026-09-24
 
 ## Current work
 
-`R6.5-WP19H3 - Sunbeam Village Final Polish` has **H3.11.4D - Story House reading persistence complete / human-approved**.
+`R6.5-WP19H3 - Sunbeam Village Final Polish` has **H3.11.4E - Story House illustration/media pipeline active**.
 
 H3.11.4A physical Story House is human-approved. H3.11.4B long-form library content architecture is technically accepted: authored stories are separate demand-loaded manifests/Markdown assets with generated catalogue metadata and stable block IDs. The 4B StoryLibraryService tests pass; the wider Tier 1 suite still has two unrelated pre-existing save-system test failures.
 
@@ -12,7 +12,7 @@ H3.11.4C reader engine is human-approved. The accepted reader opens from the phy
 
 H3.11.4D is human-approved. The Story House now preserves independent per-story semantic resume positions, global reader preferences, Continue Reading, catalogue progress/completion state and explicit book completion through canonical schema-v9 save data.
 
-**Next planned phase:** H3.11.4E - Illustration and media pipeline. Not started.
+**Current substantive checkpoint:** H3.11.4E checkpoint 1 is onboarding the real *The Duck Bread Baker* production material supplied by David. The book is decomposed into reflowable stable-block prose plus separate cover/illustration assets; the reader now has generic block-linked responsive illustration figures with WebP/AVIF-compatible manifest validation and browser-native lazy loading. The first checkpoint uses three representative interior illustrations plus the real cover before expanding the same pipeline across the remaining source artwork.
 
 ## H3 feedback-block-1 sequence
 

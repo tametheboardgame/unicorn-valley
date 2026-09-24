@@ -1,4 +1,5 @@
 export type StoryPublicationStatus = 'draft' | 'published' | 'hidden';
+export type StoryIllustrationPlacement = 'inline' | 'full-width';
 
 export interface StoryAssetReference {
   path: string;
@@ -13,6 +14,10 @@ export interface StorySeriesReference {
 
 export interface StoryIllustrationReference extends StoryAssetReference {
   id: string;
+  blockId: string;
+  placement: StoryIllustrationPlacement;
+  width: number;
+  height: number;
   caption?: string;
 }
 

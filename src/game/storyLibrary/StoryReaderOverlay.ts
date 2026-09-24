@@ -4,6 +4,7 @@ import { StoryReadingService } from './StoryReadingService';
 import type {
   StoryChapterContent,
   StoryContentBlock,
+  StoryIllustrationReference,
   StoryLibraryManifest,
 } from './StoryLibraryTypes';
 
@@ -112,6 +113,32 @@ function renderMarkdownBlock(block: StoryContentBlock): HTMLElement {
 
   flushParagraph();
   return section;
+}
+
+function renderStoryIllustration(
+  storyId: string,
+  illustration: StoryIllustrationReference,
+): HTMLElement {
+  const figure = document.createElement('figure');
+  figure.className = `story-reader-illustration is-${illustration.placement}`;
+  figure.dataset.storyIllustrationId = illustration.id;
+
+  const image = document.createElement('img');
+  image.src = `/stories/${storyId}/${illustration.path}`;
+  image.alt = illustration.alt;
+  image.loading = 'lazy';
+  image.decoding = 'async';
+  image.width = illustration.width;
+  image.height = illustration.height;
+  figure.append(image);
+
+  if (illustration.caption) {
+    const caption = document.createElement('figcaption');
+    caption.textContent = illustration.caption;
+    figure.append(caption);
+  }
+
+  return figure;
 }
 
 function chapterLabel(index: number, total: number): string {
@@ -450,8 +477,14 @@ export class StoryReaderOverlay {
     chapterHeading.append(eyebrow, heading);
     paper.append(chapterHeading);
 
+    const chapterManifest = manifest.chapters[index];
     for (const block of chapter.blocks) {
       paper.append(renderMarkdownBlock(block));
+      for (const illustration of chapterManifest?.illustrations ?? []) {
+        if (illustration.blockId === block.id) {
+          paper.append(renderStoryIllustration(manifest.id, illustration));
+        }
+      }
     }
 
     const navigation = document.createElement('nav');

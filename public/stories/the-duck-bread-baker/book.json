@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "id": "the-duck-bread-baker",
+  "title": "The Duck Bread Baker",
+  "description": "Join Duck on his delicious journey as he sets out to satisfy his love for bread. But when all his feathered friends fall ill, he learns that a diet of just bread isn’t the way to go.",
+  "author": "David Fairbairn",
+  "cover": {
+    "path": "covers/cover.webp",
+    "alt": "The Duck Bread Baker cover, showing a yellow duck surrounded by loaves of bread."
+  },
+  "series": null,
+  "tags": ["picture-book", "animals", "food", "health", "illustrated"],
+  "publication": {
+    "status": "published"
+  },
+  "chapters": [
+    {
+      "id": "story",
+      "title": "The Duck Bread Baker",
+      "path": "chapters/01.md",
+      "illustrations": [
+        {
+          "id": "bridge-ducks",
+          "blockId": "duck-loved-bread",
+          "path": "illustrations/page-02.webp",
+          "alt": "Three yellow ducks swim below a footbridge while a person walks overhead.",
+          "placement": "full-width",
+          "width": 480,
+          "height": 480
+        },
+        {
+          "id": "guilty-duck",
+          "blockId": "duck-felt-guilty",
+          "path": "illustrations/page-30.webp",
+          "alt": "A yellow duck looks down sadly after realising he has made a mistake.",
+          "placement": "full-width",
+          "width": 480,
+          "height": 480
+        }
+      ]
+    },
+    {
+      "id": "did-you-know",
+      "title": "Did you know?",
+      "path": "chapters/02.md",
+      "illustrations": [
+        {
+          "id": "leafy-facts",
+          "blockId": "did-you-know",
+          "path": "illustrations/page-42.webp",
+          "alt": "Green leaves frame the page around the book’s nutrition facts.",
+          "placement": "full-width",
+          "width": 480,
+          "height": 480
+        }
+      ]
+    }
+  ]
+}

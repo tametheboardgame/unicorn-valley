@@ -36,6 +36,21 @@ function assertSafeRelativePath(value, label, extension) {
   }
 }
 
+function assertSafeImagePath(value, label) {
+  assertString(value, label);
+  const lowerPath = value.toLowerCase();
+  if (
+    path.isAbsolute(value) ||
+    value.includes('..') ||
+    value.includes('\\') ||
+    (!lowerPath.endsWith('.webp') && !lowerPath.endsWith('.avif'))
+  ) {
+    throw new Error(
+      `Story catalogue rejected ${label}: image path must be a safe WebP or AVIF asset.`,
+    );
+  }
+}
+
 async function readJson(filePath) {
   const raw = await fs.readFile(filePath, 'utf8');
   try {
@@ -98,12 +113,46 @@ async function validateChapter(storyDirectory, storyId, chapter, chapterIds) {
         );
       }
       illustrationIds.add(illustration.id);
-      assertSafeRelativePath(
+      if (!STORY_ID.test(illustration.id)) {
+        throw new Error(
+          `Story catalogue rejected ${storyId}/${chapter.id}: invalid illustration id "${illustration.id}".`,
+        );
+      }
+      assertString(
+        illustration.blockId,
+        `${storyId}/${chapter.id}/${illustration.id} block id`,
+      );
+      if (!blockIds.has(illustration.blockId)) {
+        throw new Error(
+          `Story catalogue rejected ${storyId}/${chapter.id}/${illustration.id}: unknown block id "${illustration.blockId}".`,
+        );
+      }
+      assertSafeImagePath(
         illustration.path,
         `${storyId}/${chapter.id}/${illustration.id} illustration path`,
-        '.webp',
       );
       assertString(illustration.alt, `${storyId}/${chapter.id}/${illustration.id} alt text`);
+      if (!['inline', 'full-width'].includes(illustration.placement)) {
+        throw new Error(
+          `Story catalogue rejected ${storyId}/${chapter.id}/${illustration.id}: placement must be inline or full-width.`,
+        );
+      }
+      if (
+        !Number.isInteger(illustration.width) ||
+        illustration.width <= 0 ||
+        !Number.isInteger(illustration.height) ||
+        illustration.height <= 0
+      ) {
+        throw new Error(
+          `Story catalogue rejected ${storyId}/${chapter.id}/${illustration.id}: width and height must be positive integers.`,
+        );
+      }
+      if (illustration.caption !== undefined) {
+        assertString(
+          illustration.caption,
+          `${storyId}/${chapter.id}/${illustration.id} caption`,
+        );
+      }
       await fs.access(path.join(storyDirectory, illustration.path));
     }
   }
@@ -154,7 +203,7 @@ async function loadStory(directoryEntry) {
   }
 
   if (manifest.cover !== undefined && manifest.cover !== null) {
-    assertSafeRelativePath(manifest.cover.path, `${manifest.id} cover path`, '.webp');
+    assertSafeImagePath(manifest.cover.path, `${manifest.id} cover path`);
     assertString(manifest.cover.alt, `${manifest.id} cover alt text`);
     await fs.access(path.join(storyDirectory, manifest.cover.path));
   }

@@ -1034,3 +1034,43 @@ canvas {
 .story-library-book.is-completed .story-library-meta {
   color: #5d8c75;
 }
+
+.story-reader-illustration {
+  display: grid;
+  place-items: center;
+  margin: 1.55em auto 2em;
+}
+
+.story-reader-illustration img {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  border: 1px solid #d5c6b2;
+  border-radius: 18px;
+  background: #f8f2e7;
+  box-shadow: 0 12px 28px rgb(60 48 55 / 16%);
+}
+
+.story-reader-illustration.is-inline {
+  width: min(72%, 440px);
+}
+
+.story-reader-illustration.is-full-width {
+  width: 100%;
+}
+
+.story-reader-illustration.is-full-width img {
+  max-width: min(100%, 520px);
+}
+
+.story-reader-illustration figcaption {
+  max-width: 560px;
+  margin-top: 10px;
+  color: #81717d;
+  font-family: "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+  font-size: 0.72em;
+  font-style: italic;
+  line-height: 1.4;
+  text-align: center;
+}

@@ -58,6 +58,27 @@ function requireRelativePath(value: unknown, label: string, extension: string): 
   return path;
 }
 
+function requireImagePath(value: unknown, label: string): string {
+  const path = requireString(value, label);
+  const lowerPath = path.toLowerCase();
+  if (
+    path.startsWith('/') ||
+    path.includes('..') ||
+    path.includes('\\') ||
+    (!lowerPath.endsWith('.webp') && !lowerPath.endsWith('.avif'))
+  ) {
+    throw new Error(`Story Library rejected unsafe ${label} "${path}".`);
+  }
+  return path;
+}
+
+function requirePositiveInteger(value: unknown, label: string): number {
+  if (typeof value !== 'number' || !Number.isInteger(value) || value <= 0) {
+    throw new Error(`Story Library expected ${label} to be a positive integer.`);
+  }
+  return value;
+}
+
 function parseSeries(value: unknown): StoryCatalogueEntry['series'] {
   if (value === null || value === undefined) return null;
   if (typeof value !== 'object') throw new Error('Story Library expected series metadata.');
@@ -118,10 +139,18 @@ function parseChapter(value: unknown, storyId: string): StoryChapterManifest {
             throw new Error(`Story Library illustration metadata is invalid for ${storyId}.`);
           }
           const illustration = item as Record<string, unknown>;
+          const placement = illustration.placement;
+          if (placement !== 'inline' && placement !== 'full-width') {
+            throw new Error('Story Library illustration placement is invalid.');
+          }
           return {
             id: requireSafeId(illustration.id, 'illustration id'),
-            path: requireRelativePath(illustration.path, 'illustration path', '.webp'),
+            blockId: requireSafeId(illustration.blockId, 'illustration block id'),
+            path: requireImagePath(illustration.path, 'illustration path'),
             alt: requireString(illustration.alt, 'illustration alt text'),
+            placement,
+            width: requirePositiveInteger(illustration.width, 'illustration width'),
+            height: requirePositiveInteger(illustration.height, 'illustration height'),
             ...(typeof illustration.caption === 'string' ? { caption: illustration.caption } : {}),
           };
         })
@@ -153,7 +182,7 @@ function parseManifest(value: unknown): StoryLibraryManifest {
           }
           const value = source.cover as Record<string, unknown>;
           return {
-            path: requireRelativePath(value.path, 'cover path', '.webp'),
+            path: requireImagePath(value.path, 'cover path'),
             alt: requireString(value.alt, 'cover alt text'),
           };
         })();
