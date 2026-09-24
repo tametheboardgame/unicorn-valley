@@ -845,33 +845,50 @@ export class VillageInteriorScene extends Phaser.Scene {
 
     const rug = this.add.graphics().setName('village-interior:library:story-rug');
     rug.fillStyle(0x7b678f, 0.18);
-    rug.fillEllipse(storyTable.position.x, storyTable.position.y + 35, 610, 390);
+    rug.fillEllipse(storyTable.position.x, storyTable.position.y + 35, 520, 350);
     rug.fillStyle(0xe7d9b8, 0.94);
     rug.lineStyle(5, 0x9f7e75, 0.72);
-    rug.fillEllipse(storyTable.position.x, storyTable.position.y + 22, 560, 350);
-    rug.strokeEllipse(storyTable.position.x, storyTable.position.y + 22, 560, 350);
+    rug.fillEllipse(storyTable.position.x, storyTable.position.y + 22, 475, 315);
+    rug.strokeEllipse(storyTable.position.x, storyTable.position.y + 22, 475, 315);
     rug.lineStyle(3, 0x6e8ca2, 0.5);
-    rug.strokeEllipse(storyTable.position.x, storyTable.position.y + 22, 492, 292);
+    rug.strokeEllipse(storyTable.position.x, storyTable.position.y + 22, 415, 260);
     rug.setDepth(3.2);
 
-    this.createStoryBookcase(300, 470, 230, 220);
-    this.createStoryBookcase(610, 470, 230, 220);
-    this.createStoryBookcase(900, 470, 210, 220);
+    // One continuous wall of books. The named passage section is visually ordinary for now,
+    // but can later slide/disappear without rebuilding the rest of the library.
+    this.createStoryBookcase(285, 390, 310, 220);
+    this.createStoryBookcase(595, 390, 310, 220);
+    this.createStoryBookcase(
+      905,
+      390,
+      310,
+      220,
+      'village-interior:library:secret-passage-bookcase',
+    );
+    this.createStoryBookcase(1215, 390, 310, 220);
+
     this.createStoryDesk(desk.position.x, desk.position.y);
     this.createStoryClueCabinet(clueCabinet.position.x, clueCabinet.position.y);
     this.createStoryTable(storyTable.position.x, storyTable.position.y);
 
-    this.createStoryCushion(535, 760, 0xd9a4b7);
-    this.createStoryCushion(885, 770, 0x9bbbc9);
-    this.createStoryCushion(545, 595, 0xd9c58f);
-    this.createStoryCushion(875, 585, 0xb5a4cf);
+    // The right side is now a deliberate, cosy story corner.
+    this.createStoryCushion(955, 825, 0xd9a4b7);
+    this.createStoryCushion(1245, 645, 0x9bbbc9);
+    this.createStoryCushion(985, 605, 0xd9c58f);
+    this.createStoryCushion(1260, 735, 0xb5a4cf);
 
-    this.createStoryReadingChair(1175, 795);
-    this.createStoryLamp(1280, 690);
+    this.createStoryReadingChair(1240, 825);
+    this.createStoryLamp(1330, 650);
   }
 
-  private createStoryBookcase(x: number, y: number, width: number, height: number): void {
-    const shelf = this.add.graphics().setName('village-interior:library:bookcase');
+  private createStoryBookcase(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    name = 'village-interior:library:bookcase',
+  ): void {
+    const shelf = this.add.graphics().setName(name);
     shelf.fillStyle(0x52758a, 1);
     shelf.lineStyle(5, 0x3c586c, 0.92);
     shelf.fillRoundedRect(x - width / 2, y - height / 2, width, height, 22);
