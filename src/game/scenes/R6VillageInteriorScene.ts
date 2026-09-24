@@ -897,29 +897,42 @@ export class VillageInteriorScene extends Phaser.Scene {
     shelf.fillStyle(0xe6d4b1, 0.95);
     shelf.fillRoundedRect(x - width / 2 + 13, y - height / 2 + 16, width - 26, height - 32, 12);
 
-    const normalColours = [0xc77f8e, 0x6f91b3, 0xc2a35e, 0x829b76, 0x9279a9, 0xd59a68] as const;
-    const wildColours = [0xff5fa2, 0x7d5cff, 0x00b8a9, 0xff9f1c, 0xe85dff, 0x34c759, 0xff4d4d] as const;
-    const colours = variant === 2 ? wildColours : normalColours;
+    const palettes = [
+      [0xc85772, 0x527fbd, 0xd1a43e, 0x5c956c, 0x8c68ad, 0xd77b4f, 0x4b9b9e],
+      [0xe58b53, 0x5f80c7, 0x9d66b7, 0x62a970, 0xd4bb4f, 0xc65d84, 0x6a9fb1],
+      [0xff4fa0, 0x754cff, 0x00bfa6, 0xffa51f, 0xe752ff, 0x3bc95b, 0xff5252, 0x19a7ff],
+      [0x4e8db7, 0xd0617b, 0x7f68b4, 0xe0a64d, 0x4ea178, 0xcf7448, 0x6f8fc9],
+    ] as const;
+    const colours = palettes[variant % palettes.length] ?? palettes[0];
 
     for (let row = 0; row < 3; row += 1) {
       const shelfY = y - 63 + row * 61;
       shelf.fillStyle(0x48677a, 1);
       shelf.fillRoundedRect(x - width / 2 + 18, shelfY + 26, width - 36, 9, 4);
 
-      const bookCount = 6 + ((variant + row) % 3);
-      const startX = x - width / 2 + 26 + ((variant * 11 + row * 7) % 16);
-      let cursorX = startX;
+      const rightEdge = x + width / 2 - 25;
+      let cursorX = x - width / 2 + 24;
+      let book = 0;
 
-      for (let book = 0; book < bookCount; book += 1) {
-        const bookWidth = 13 + ((book * 2 + row + variant) % 4) * 3;
-        const bookHeight = 27 + ((book * 7 + row * 5 + variant * 9) % 23);
-        const lean = ((book + row + variant) % 4 === 0 ? 4 : 0);
-        const colourIndex = (book * 2 + row * 3 + variant) % colours.length;
+      while (cursorX < rightEdge - 10) {
+        const requestedWidth = 13 + ((book * 3 + row + variant * 2) % 5) * 3;
+        const bookWidth = Math.min(requestedWidth, rightEdge - cursorX);
+        const bookHeight = 29 + ((book * 7 + row * 5 + variant * 11) % 24);
+        const lean = (book + row + variant) % 5 === 0 ? 3 : 0;
+        const colourIndex = (book * 3 + row * 2 + variant) % colours.length;
+
         shelf.fillStyle(colours[colourIndex] ?? 0x9279a9, 1);
         shelf.fillRoundedRect(cursorX, shelfY + 23 - bookHeight + lean, bookWidth, bookHeight, 3);
-        shelf.fillStyle(0xffffff, variant === 2 ? 0.28 : 0.2);
-        shelf.fillRect(cursorX + 3, shelfY + 26 - bookHeight + lean, 3, Math.max(8, bookHeight - 7));
-        cursorX += bookWidth + 5 + ((book + variant) % 3);
+        shelf.fillStyle(0xffffff, variant === 2 ? 0.3 : 0.22);
+        shelf.fillRect(
+          cursorX + 3,
+          shelfY + 26 - bookHeight + lean,
+          Math.min(3, Math.max(1, bookWidth - 5)),
+          Math.max(8, bookHeight - 7),
+        );
+
+        cursorX += bookWidth + 2 + ((book + row + variant) % 2);
+        book += 1;
       }
     }
     shelf.setDepth(worldDepthForY(y + height / 2, 0.18));
@@ -977,15 +990,18 @@ export class VillageInteriorScene extends Phaser.Scene {
 
   private createStoryTable(x: number, y: number): void {
     const table = this.add.graphics().setName('village-interior:library:story-table');
+
+    // Draw the shadow and pedestal first so the tabletop correctly sits in front of the leg.
     table.fillStyle(0x70576d, 0.14);
     table.fillEllipse(x + 6, y + 62, 350, 54);
+    table.fillStyle(0xb48562, 1);
+    table.fillRoundedRect(x - 18, y + 36, 36, 72, 12);
+    table.fillEllipse(x, y + 103, 120, 30);
+
     table.fillStyle(0xc79b72, 1);
     table.lineStyle(5, 0x986f58, 0.84);
     table.fillEllipse(x, y, 330, 125);
     table.strokeEllipse(x, y, 330, 125);
-    table.fillStyle(0xe8c59a, 1);
-    table.fillRoundedRect(x - 18, y + 36, 36, 72, 12);
-    table.fillEllipse(x, y + 103, 120, 30);
 
     // A physical open book, map sheet and a few loose story cards.
     table.fillStyle(0xfff5d8, 1);
