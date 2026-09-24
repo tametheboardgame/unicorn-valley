@@ -118,10 +118,7 @@ async function validateChapter(storyDirectory, storyId, chapter, chapterIds) {
           `Story catalogue rejected ${storyId}/${chapter.id}: invalid illustration id "${illustration.id}".`,
         );
       }
-      assertString(
-        illustration.blockId,
-        `${storyId}/${chapter.id}/${illustration.id} block id`,
-      );
+      assertString(illustration.blockId, `${storyId}/${chapter.id}/${illustration.id} block id`);
       if (!blockIds.has(illustration.blockId)) {
         throw new Error(
           `Story catalogue rejected ${storyId}/${chapter.id}/${illustration.id}: unknown block id "${illustration.blockId}".`,
@@ -148,10 +145,7 @@ async function validateChapter(storyDirectory, storyId, chapter, chapterIds) {
         );
       }
       if (illustration.caption !== undefined) {
-        assertString(
-          illustration.caption,
-          `${storyId}/${chapter.id}/${illustration.id} caption`,
-        );
+        assertString(illustration.caption, `${storyId}/${chapter.id}/${illustration.id} caption`);
       }
       await fs.access(path.join(storyDirectory, illustration.path));
     }
