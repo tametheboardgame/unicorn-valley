@@ -112,7 +112,10 @@ export class BakeryService {
   ) {}
 
   public listStock(): readonly BakeryStockView[] {
-    const save = this.ensureDailyStock(this.saveService.load() ?? this.saveService.createNewGame());
+    const save = this.ensureDailyStock(
+      this.saveService.load() ?? this.saveService.createNewGame(),
+      false,
+    );
     const shop = save.shops.byShopId[BAKERY_SHOP_ID];
     return R6_BAKERY_STOCK.map((stock) => {
       const ownedQuantity = save.inventory.itemQuantities[stock.itemId] ?? 0;
@@ -232,6 +235,7 @@ export class BakeryService {
 
   private ensureDailyStock(
     save: ReturnType<SaveService['createNewGame']>,
+    persist = true,
   ): ReturnType<SaveService['createNewGame']> {
     const current = save.shops.byShopId[BAKERY_SHOP_ID];
     if (current?.restockSerial === save.shops.morningSerial) {
@@ -251,6 +255,10 @@ export class BakeryService {
         },
       },
     };
+    if (!persist) {
+      return next;
+    }
+
     const result = this.saveService.saveWithResult(next);
     return result.status === 'saved' ? result.save : next;
   }
