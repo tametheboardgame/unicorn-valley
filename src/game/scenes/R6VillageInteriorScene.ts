@@ -68,6 +68,10 @@ interface InteriorPresentationDefinition {
   accentColour: number;
 }
 
+interface StoryReaderHandle {
+  destroy(): void;
+}
+
 const INTERIOR_INTERACTION_OWNER = 'village-interior';
 
 const PRESENTATION: Readonly<Record<VillageInteriorId, InteriorPresentationDefinition>> = {
@@ -127,6 +131,9 @@ export class VillageInteriorScene extends Phaser.Scene {
   private threadShopSection: 'accessories' | 'decorations' = 'accessories';
   private threadShopFeedback = '';
   private threadWardrobeFeedback = '';
+  private storyReader: StoryReaderHandle | null = null;
+  private storyReaderRequest = 0;
+  private storyReaderLockActive = false;
 
   public constructor() {
     super('VillageInteriorScene');
@@ -1369,12 +1376,12 @@ export class VillageInteriorScene extends Phaser.Scene {
       {
         id: 'interaction:village-interior:library:story-table',
         label: 'Round story table',
-        actionLabel: 'Read a story',
+        actionLabel: 'Browse stories',
         actionKind: 'inspect',
         position: storyTable.approach,
         interactionRadius: 155,
         priority: 24,
-        result: { type: 'callback', activate: () => this.readStoryCard() },
+        result: { type: 'callback', activate: () => this.openStoryLibrary() },
       },
       {
         id: 'interaction:village-interior:library:clues',
@@ -1940,7 +1947,8 @@ export class VillageInteriorScene extends Phaser.Scene {
       'Quill',
       'Quill closes a little blue book around a silver bookmark. “Looking for a story or just a quiet corner?”',
       [
-        { id: 'story', label: 'Read a story card' },
+        { id: 'library', label: 'Browse the library' },
+        { id: 'story-card', label: 'Read a Valley story card' },
         {
           id: 'talk',
           label: 'Talk about something else',
@@ -1950,12 +1958,70 @@ export class VillageInteriorScene extends Phaser.Scene {
       ],
       {
         onChoice: (choiceId) => {
-          if (choiceId === 'story') {
+          if (choiceId === 'library') {
+            this.time.delayedCall(0, () => this.openStoryLibrary());
+          } else if (choiceId === 'story-card') {
             this.time.delayedCall(0, () => this.readStoryCard());
           }
         },
       },
     );
+  }
+
+  private openStoryLibrary(): void {
+    if (this.storyReader || this.storyReaderLockActive) {
+      return;
+    }
+
+    this.closeOverlay();
+    const request = ++this.storyReaderRequest;
+    this.setStoryReaderLock(true);
+
+    void import('../storyLibrary/StoryReaderOverlay')
+      .then(({ StoryReaderOverlay }) => {
+        if (request !== this.storyReaderRequest || !this.sys.isActive()) {
+          this.setStoryReaderLock(false);
+          return;
+        }
+
+        let reader: StoryReaderHandle;
+        reader = new StoryReaderOverlay({
+          onClose: () => {
+            if (this.storyReader === reader) {
+              this.storyReader = null;
+            }
+            this.setStoryReaderLock(false);
+          },
+        });
+        this.storyReader = reader;
+        reader.mount();
+      })
+      .catch(() => {
+        if (request !== this.storyReaderRequest) {
+          return;
+        }
+        this.setStoryReaderLock(false);
+        this.showFeedback(
+          'The library book would not open just now. Quill has kept your place safe.',
+          getVillageInteriorAnchor('library', 'primary-feature').approach,
+        );
+      });
+  }
+
+  private closeStoryLibrary(): void {
+    this.storyReaderRequest += 1;
+    const reader = this.storyReader;
+    this.storyReader = null;
+    reader?.destroy();
+    this.setStoryReaderLock(false);
+  }
+
+  private setStoryReaderLock(active: boolean): void {
+    if (this.storyReaderLockActive === active) {
+      return;
+    }
+    this.storyReaderLockActive = active;
+    setInteractionModalActive(this, active);
   }
 
   private readStoryCard(): void {
@@ -2391,11 +2457,13 @@ export class VillageInteriorScene extends Phaser.Scene {
       return;
     }
     this.closing = true;
+    this.closeStoryLibrary();
     this.closeOverlay();
     this.scene.start(this.returnScene);
   }
 
   private shutdownInterior(): void {
+    this.closeStoryLibrary();
     this.closeOverlay();
     getSceneInteractionRegistry(this).clearOwner(INTERIOR_INTERACTION_OWNER);
     getVillageInteriorOccupancyService().leave(this.interiorId);

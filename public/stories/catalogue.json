@@ -3,16 +3,13 @@
   "stories": [
     {
       "id": "story-house-sampler",
-      "title": "A Shelf Full of Stories",
-      "description": "A tiny Story House sampler used to prove the reusable long-form library content pipeline.",
-      "author": "Unicorn Valley",
+      "title": "The Empty Place on the Shelf",
+      "description": "Quill keeps one space empty for the story that has not arrived yet.",
+      "author": "Quill",
       "coverPath": null,
       "coverAlt": null,
       "series": null,
-      "tags": [
-        "story-house",
-        "sample"
-      ],
+      "tags": ["story-house", "short"],
       "chapterCount": 1,
       "manifestPath": "/stories/story-house-sampler/book.json"
     }

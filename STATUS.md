@@ -1,16 +1,14 @@
 # Project Status
 
-Last updated: 2026-09-23
+Last updated: 2026-09-24
 
 ## Current work
 
-`R6.5-WP19H3 - Sunbeam Village Final Polish` has **H3.11.3 - Twinkle & Thread rebuild complete / human-approved 2026-09-23**.
+`R6.5-WP19H3 - Sunbeam Village Final Polish` has **H3.11.4C - Story House reader engine active**.
 
-The accepted Twinkle & Thread baseline is a fully walkable boutique with dedicated shopkeeper Velvet, the approved asymmetric floor plan, back-wall style desk, physical wearable/cottage displays, correct collision/depth, normal exploration HUD, full Shop/Talk dialogue and an in-room rounded commerce overlay. The dressing mirror now opens a wardrobe for owned shop wearables; equipping/removing an item persists through the canonical unicorn appearance/save pipeline and refreshes the player immediately in the room.
+H3.11.4A physical Story House is human-approved. H3.11.4B long-form library content architecture is technically accepted: authored stories are separate demand-loaded manifests/Markdown assets with generated catalogue metadata and stable block IDs. The 4B StoryLibraryService tests pass; the wider Tier 1 suite still has two unrelated pre-existing save-system test failures.
 
-Human testing also confirmed the corrected Velvet placement, interaction ownership and canonical supporting-resident proportions. The earlier separate-ShopScene Browse route is retired for this interior.
-
-**Current substantive slice: H3.11.4 - Story House rebuild.** Checkpoint 1 is rebuilding the physical library/storytelling room and assigning dedicated storykeeper Quill while keeping Tansy outside. Richer story-card presentation/content follows after human review of the room foundation.
+**Current substantive checkpoint:** H3.11.4C checkpoint 1 connects the physical Story House to a real DOM-based reader. The round story table and Quill open the catalogue; the reader loads a selected story/chapter on demand, keeps the Phaser room underneath, suppresses world movement while reading, and provides responsive long-form layout, chapter navigation, text-size and line-spacing controls.
 
 ## H3 feedback-block-1 sequence
 
