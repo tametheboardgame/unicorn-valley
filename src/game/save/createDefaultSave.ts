@@ -80,6 +80,13 @@ export function createDefaultSave(timestamp: string = new Date().toISOString()):
       morningSerial: 0,
       byShopId: {},
     },
+    storyReading: {
+      preferences: {
+        fontSize: 20,
+        lineHeight: 1.7,
+      },
+      byStoryId: {},
+    },
   };
 }
 import { COTTAGE_STARTER_DECORATION_IDS } from '../../content/cottageStarterDecorations';

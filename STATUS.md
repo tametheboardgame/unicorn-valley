@@ -4,11 +4,13 @@ Last updated: 2026-09-24
 
 ## Current work
 
-`R6.5-WP19H3 - Sunbeam Village Final Polish` has **H3.11.4C - Story House reader engine active**.
+`R6.5-WP19H3 - Sunbeam Village Final Polish` has **H3.11.4D - Story House reading persistence active**.
 
 H3.11.4A physical Story House is human-approved. H3.11.4B long-form library content architecture is technically accepted: authored stories are separate demand-loaded manifests/Markdown assets with generated catalogue metadata and stable block IDs. The 4B StoryLibraryService tests pass; the wider Tier 1 suite still has two unrelated pre-existing save-system test failures.
 
-**Current substantive checkpoint:** H3.11.4C checkpoint 1 connects the physical Story House to a real DOM-based reader. The round story table and Quill open the catalogue; the reader loads a selected story/chapter on demand, keeps the Phaser room underneath, suppresses world movement while reading, and provides responsive long-form layout, chapter navigation, text-size and line-spacing controls.
+H3.11.4C reader engine is human-approved. The accepted reader opens from the physical Story House, uses the 4B demand-loaded catalogue/content boundary, keeps the Phaser room underneath, suppresses world movement, and provides responsive long-form reading, chapter navigation and typography controls.
+
+**Current substantive checkpoint:** H3.11.4D checkpoint 1 adds canonical persistent reading state: schema-v9 migration, independent per-story semantic resume positions, saved global reader preferences, Continue Reading, catalogue progress/completion state and explicit book completion.
 
 ## H3 feedback-block-1 sequence
 

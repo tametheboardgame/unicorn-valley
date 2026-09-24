@@ -1,4 +1,6 @@
+import { getBrowserSaveService } from '../save/browserSaveService';
 import { StoryLibraryService } from './StoryLibraryService';
+import { StoryReadingService } from './StoryReadingService';
 import type {
   StoryChapterContent,
   StoryContentBlock,
@@ -118,14 +120,28 @@ function chapterLabel(index: number, total: number): string {
 
 export class StoryReaderOverlay {
   private readonly library = new StoryLibraryService();
+  private readonly reading = new StoryReadingService(getBrowserSaveService());
   private root: HTMLDivElement | null = null;
   private manifest: StoryLibraryManifest | null = null;
   private requestVersion = 0;
   private fontSize = DEFAULT_FONT_SIZE;
   private lineHeight = DEFAULT_LINE_HEIGHT;
   private closed = false;
+  private progressTimer: number | null = null;
+  private currentChapter:
+    | {
+        manifest: StoryLibraryManifest;
+        chapter: StoryChapterContent;
+        index: number;
+        scroller: HTMLElement;
+      }
+    | null = null;
 
-  public constructor(private readonly options: StoryReaderOverlayOptions) {}
+  public constructor(private readonly options: StoryReaderOverlayOptions) {
+    const preferences = this.reading.getPreferences();
+    this.fontSize = preferences.fontSize;
+    this.lineHeight = preferences.lineHeight;
+  }
 
   public mount(): void {
     if (this.root || this.closed) {
@@ -149,6 +165,8 @@ export class StoryReaderOverlay {
       return;
     }
     this.closed = true;
+    this.persistCurrentPosition();
+    this.clearProgressTimer();
     this.requestVersion += 1;
     globalThis.removeEventListener('keydown', this.onKeyDown, true);
     this.root?.remove();
@@ -169,6 +187,9 @@ export class StoryReaderOverlay {
     const root = this.root;
     if (!root) return;
 
+    this.persistCurrentPosition();
+    this.clearProgressTimer();
+    this.currentChapter = null;
     const request = ++this.requestVersion;
     this.manifest = null;
     root.replaceChildren(this.createLoading('Opening the Story House shelves…'));
@@ -200,6 +221,29 @@ export class StoryReaderOverlay {
       const shelf = document.createElement('main');
       shelf.className = 'story-library-shelf';
       shelf.setAttribute('aria-label', 'Story collection');
+
+      const progressEntries = stories
+        .map((story) => ({ story, progress: this.reading.getProgress(story.id) }))
+        .filter(({ progress }) => progress !== null);
+      const mostRecent = [...progressEntries]
+        .filter(({ progress }) => !progress?.completed)
+        .sort((left, right) =>
+          String(right.progress?.lastReadAt).localeCompare(String(left.progress?.lastReadAt)),
+        )[0];
+      if (mostRecent?.progress) {
+        const continueButton = document.createElement('button');
+        continueButton.type = 'button';
+        continueButton.className = 'story-library-continue';
+        continueButton.addEventListener('click', () => {
+          void this.openStory(mostRecent.story.id);
+        });
+        const continueLabel = document.createElement('strong');
+        continueLabel.textContent = 'Continue Reading';
+        const continueBook = document.createElement('span');
+        continueBook.textContent = `${mostRecent.story.title} · ${Math.round(mostRecent.progress.percentComplete)}%`;
+        continueButton.append(continueLabel, continueBook);
+        shelf.append(continueButton);
+      }
 
       for (const story of stories) {
         const card = document.createElement('button');
@@ -240,7 +284,16 @@ export class StoryReaderOverlay {
         description.textContent = story.description;
         const meta = document.createElement('span');
         meta.className = 'story-library-meta';
-        meta.textContent = `${story.chapterCount} chapter${story.chapterCount === 1 ? '' : 's'} · Read`;
+        const progress = this.reading.getProgress(story.id);
+        if (progress?.completed) {
+          card.classList.add('is-completed');
+          meta.textContent = 'Completed ✓ · Read again';
+        } else if (progress) {
+          card.classList.add('is-in-progress');
+          meta.textContent = `${Math.round(progress.percentComplete)}% · Continue reading`;
+        } else {
+          meta.textContent = `${story.chapterCount} chapter${story.chapterCount === 1 ? '' : 's'} · Read`;
+        }
         copy.append(title, author, description, meta);
 
         card.append(cover, copy);
@@ -256,8 +309,12 @@ export class StoryReaderOverlay {
 
       const footer = document.createElement('footer');
       footer.className = 'story-library-footer';
+      const startedCount = progressEntries.length;
+      const completedCount = progressEntries.filter(({ progress }) => progress?.completed).length;
       footer.textContent =
-        'More shelves can fill up over time without making the Valley slower to open.';
+        startedCount === 0
+          ? 'No books started yet · choose one from the shelf'
+          : `${startedCount} started · ${completedCount} completed · ${stories.length} in the library`;
 
       shell.append(header, shelf, footer);
       this.root.replaceChildren(shell);
@@ -280,7 +337,21 @@ export class StoryReaderOverlay {
       const manifest = await this.library.loadManifest(storyId);
       if (!this.root || request !== this.requestVersion) return;
       this.manifest = manifest;
-      await this.showChapter(0);
+      const progress = this.reading.getProgress(storyId);
+      const savedChapterIndex =
+        progress && !progress.completed
+          ? manifest.chapters.findIndex((chapter) => chapter.id === progress.chapterId)
+          : -1;
+      const chapterIndex =
+        savedChapterIndex >= 0
+          ? savedChapterIndex
+          : progress && !progress.completed
+            ? Math.min(
+                manifest.chapters.length - 1,
+                Math.floor((progress.percentComplete / 100) * manifest.chapters.length),
+              )
+            : 0;
+      await this.showChapter(chapterIndex, progress && !progress.completed ? progress : null);
     } catch {
       if (!this.root || request !== this.requestVersion) return;
       this.root.replaceChildren(
@@ -292,7 +363,10 @@ export class StoryReaderOverlay {
     }
   }
 
-  private async showChapter(index: number): Promise<void> {
+  private async showChapter(
+    index: number,
+    resume: ReturnType<StoryReadingService['getProgress']> = null,
+  ): Promise<void> {
     const root = this.root;
     const manifest = this.manifest;
     const chapter = manifest?.chapters[index];
@@ -304,7 +378,7 @@ export class StoryReaderOverlay {
     try {
       const content = await this.library.loadChapter(manifest.id, chapter.id);
       if (!this.root || request !== this.requestVersion) return;
-      this.renderReader(manifest, content, index);
+      this.renderReader(manifest, content, index, resume);
     } catch {
       if (!this.root || request !== this.requestVersion) return;
       this.root.replaceChildren(
@@ -317,6 +391,7 @@ export class StoryReaderOverlay {
     manifest: StoryLibraryManifest,
     chapter: StoryChapterContent,
     index: number,
+    resume: ReturnType<StoryReadingService['getProgress']>,
   ): void {
     const root = this.root;
     if (!root) return;
@@ -327,7 +402,10 @@ export class StoryReaderOverlay {
 
     const topbar = document.createElement('header');
     topbar.className = 'story-reader-topbar';
-    const back = button('← Library', 'story-reader-back', () => void this.showCatalogue());
+    const back = button('← Library', 'story-reader-back', () => {
+      this.persistCurrentPosition();
+      void this.showCatalogue();
+    });
     const titleWrap = document.createElement('div');
     titleWrap.className = 'story-reader-title-wrap';
     const bookTitle = document.createElement('strong');
@@ -382,28 +460,41 @@ export class StoryReaderOverlay {
     navigation.className = 'story-reader-chapter-nav';
     navigation.setAttribute('aria-label', 'Chapter navigation');
     const previous = button('← Previous chapter', 'story-reader-chapter-button', () => {
+      this.persistCurrentPosition();
       void this.showChapter(index - 1);
     });
     previous.disabled = index === 0;
     const chapterPosition = document.createElement('span');
     chapterPosition.textContent = chapterLabel(index, manifest.chapters.length);
-    const next = button('Next chapter →', 'story-reader-chapter-button', () => {
-      void this.showChapter(index + 1);
-    });
-    next.disabled = index >= manifest.chapters.length - 1;
+    const isLastChapter = index >= manifest.chapters.length - 1;
+    const next = button(
+      isLastChapter ? 'Finish book ✓' : 'Next chapter →',
+      'story-reader-chapter-button',
+      () => {
+        if (isLastChapter) {
+          this.finishBook();
+          return;
+        }
+        this.persistCurrentPosition();
+        void this.showChapter(index + 1);
+      },
+    );
     navigation.append(previous, chapterPosition, next);
     paper.append(navigation);
 
     scroller.append(paper);
     shell.append(topbar, toolbar, scroller);
     root.replaceChildren(shell);
-    scroller.scrollTop = 0;
+    this.currentChapter = { manifest, chapter, index, scroller };
+    scroller.addEventListener('scroll', this.scheduleProgressSave, { passive: true });
+    this.restoreReadingPosition(resume);
   }
 
   private changeFontSize(delta: number): void {
     this.fontSize = Math.max(MIN_FONT_SIZE, Math.min(MAX_FONT_SIZE, this.fontSize + delta));
     const shell = this.root?.querySelector<HTMLElement>('.story-reader-shell');
     if (shell) this.applyReadingPreferences(shell);
+    this.reading.updatePreferences({ fontSize: this.fontSize });
   }
 
   private changeLineHeight(delta: number): void {
@@ -413,11 +504,147 @@ export class StoryReaderOverlay {
     );
     const shell = this.root?.querySelector<HTMLElement>('.story-reader-shell');
     if (shell) this.applyReadingPreferences(shell);
+    this.reading.updatePreferences({ lineHeight: this.lineHeight });
   }
 
   private applyReadingPreferences(shell: HTMLElement): void {
     shell.style.setProperty('--story-reader-font-size', `${this.fontSize}px`);
     shell.style.setProperty('--story-reader-line-height', String(this.lineHeight));
+  }
+
+
+  private readonly scheduleProgressSave = (): void => {
+    this.clearProgressTimer();
+    this.progressTimer = globalThis.setTimeout(() => {
+      this.progressTimer = null;
+      this.persistCurrentPosition();
+    }, 300);
+  };
+
+  private clearProgressTimer(): void {
+    if (this.progressTimer === null) {
+      return;
+    }
+    globalThis.clearTimeout(this.progressTimer);
+    this.progressTimer = null;
+  }
+
+  private persistCurrentPosition(): void {
+    const current = this.currentChapter;
+    if (!current) {
+      return;
+    }
+
+    const blocks = Array.from(
+      current.scroller.querySelectorAll<HTMLElement>('.story-reader-block'),
+    );
+    if (blocks.length === 0) {
+      return;
+    }
+
+    const scrollerRect = current.scroller.getBoundingClientRect();
+    const readingLine = scrollerRect.top + Math.min(current.scroller.clientHeight * 0.36, 240);
+    let selectedIndex = 0;
+    for (let index = 0; index < blocks.length; index += 1) {
+      if (blocks[index].getBoundingClientRect().top <= readingLine) {
+        selectedIndex = index;
+      } else {
+        break;
+      }
+    }
+
+    const selected = blocks[selectedIndex];
+    const blockRect = selected.getBoundingClientRect();
+    const blockProgress =
+      blockRect.height > 0 ? Math.max(0, Math.min(1, (readingLine - blockRect.top) / blockRect.height)) : 0;
+    const chapterFraction = Math.max(
+      0,
+      Math.min(1, (selectedIndex + blockProgress) / blocks.length),
+    );
+    const chapterPercentComplete = chapterFraction * 100;
+    const percentComplete =
+      ((current.index + chapterFraction) / current.manifest.chapters.length) * 100;
+
+    this.reading.savePosition({
+      storyId: current.manifest.id,
+      chapterId: current.chapter.chapterId,
+      blockId: selected.dataset.storyBlockId ?? current.chapter.blocks[0]?.id ?? 'start',
+      blockProgress,
+      chapterPercentComplete,
+      percentComplete,
+    });
+  }
+
+  private restoreReadingPosition(
+    progress: ReturnType<StoryReadingService['getProgress']>,
+  ): void {
+    const current = this.currentChapter;
+    if (!current || !progress || progress.completed) {
+      current?.scroller.scrollTo({ top: 0 });
+      return;
+    }
+
+    globalThis.requestAnimationFrame(() => {
+      if (this.currentChapter !== current) {
+        return;
+      }
+      const blocks = Array.from(
+        current.scroller.querySelectorAll<HTMLElement>('.story-reader-block'),
+      );
+      if (blocks.length === 0) {
+        return;
+      }
+
+      let targetIndex = blocks.findIndex(
+        (block) => block.dataset.storyBlockId === progress.blockId,
+      );
+      let localProgress = progress.blockProgress;
+      if (targetIndex < 0) {
+        const chapterFraction = Math.max(
+          0,
+          Math.min(
+            0.999,
+            (progress.percentComplete / 100) * current.manifest.chapters.length - current.index,
+          ),
+        );
+        const rawIndex = chapterFraction * blocks.length;
+        targetIndex = Math.min(blocks.length - 1, Math.max(0, Math.floor(rawIndex)));
+        localProgress = rawIndex - Math.floor(rawIndex);
+      }
+
+      const target = blocks[targetIndex];
+      const scrollerRect = current.scroller.getBoundingClientRect();
+      const targetRect = target.getBoundingClientRect();
+      const readingOffset = Math.min(current.scroller.clientHeight * 0.36, 240);
+      const targetTop =
+        current.scroller.scrollTop +
+        (targetRect.top - scrollerRect.top) +
+        targetRect.height * Math.max(0, Math.min(1, localProgress)) -
+        readingOffset;
+      current.scroller.scrollTo({ top: Math.max(0, targetTop) });
+    });
+  }
+
+  private finishBook(): void {
+    const current = this.currentChapter;
+    if (!current) {
+      return;
+    }
+    const lastBlock = current.chapter.blocks.at(-1);
+    if (!lastBlock) {
+      return;
+    }
+
+    this.reading.markCompleted({
+      storyId: current.manifest.id,
+      chapterId: current.chapter.chapterId,
+      blockId: lastBlock.id,
+      blockProgress: 1,
+      chapterPercentComplete: 100,
+      percentComplete: 100,
+    });
+    this.currentChapter = null;
+    void this.showCatalogue();
   }
 
   private createLoading(message: string): HTMLElement {

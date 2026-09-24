@@ -165,6 +165,39 @@ function isShopState(value: unknown): boolean {
   );
 }
 
+function isStoryReadingState(value: unknown): boolean {
+  if (!isRecord(value) || !isRecord(value.preferences) || !isRecord(value.byStoryId)) {
+    return false;
+  }
+
+  const preferencesValid =
+    typeof value.preferences.fontSize === 'number' &&
+    Number.isFinite(value.preferences.fontSize) &&
+    typeof value.preferences.lineHeight === 'number' &&
+    Number.isFinite(value.preferences.lineHeight);
+  if (!preferencesValid) {
+    return false;
+  }
+
+  return Object.values(value.byStoryId).every(
+    (entry) =>
+      isRecord(entry) &&
+      typeof entry.chapterId === 'string' &&
+      typeof entry.blockId === 'string' &&
+      typeof entry.blockProgress === 'number' &&
+      entry.blockProgress >= 0 &&
+      entry.blockProgress <= 1 &&
+      typeof entry.chapterPercentComplete === 'number' &&
+      entry.chapterPercentComplete >= 0 &&
+      entry.chapterPercentComplete <= 100 &&
+      typeof entry.percentComplete === 'number' &&
+      entry.percentComplete >= 0 &&
+      entry.percentComplete <= 100 &&
+      typeof entry.completed === 'boolean' &&
+      typeof entry.lastReadAt === 'string',
+  );
+}
+
 function isCollectionState(value: unknown): boolean {
   if (!isRecord(value)) {
     return false;
@@ -190,6 +223,7 @@ export function isSaveGame(value: unknown): value is SaveGame {
     isHomeState(value.home) &&
     isActivityState(value.activities) &&
     isCollectionState(value.collections) &&
-    isShopState(value.shops)
+    isShopState(value.shops) &&
+    isStoryReadingState(value.storyReading)
   );
 }
