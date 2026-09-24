@@ -191,7 +191,8 @@ export class StoryReaderOverlay {
       heading.textContent = 'Story House Library';
       const intro = document.createElement('p');
       intro.className = 'story-library-intro';
-      intro.textContent = 'Choose a book from Quill’s shelves and settle in for as long as you like.';
+      intro.textContent =
+        'Choose a book from Quill’s shelves and settle in for as long as you like.';
       headingWrap.append(eyebrow, heading, intro);
       const close = button('Close ✕', 'story-reader-close', () => this.destroy());
       close.setAttribute('aria-label', 'Close Story House Library');
@@ -256,7 +257,8 @@ export class StoryReaderOverlay {
 
       const footer = document.createElement('footer');
       footer.className = 'story-library-footer';
-      footer.textContent = 'More shelves can fill up over time without making the Valley slower to open.';
+      footer.textContent =
+        'More shelves can fill up over time without making the Valley slower to open.';
 
       shell.append(header, shelf, footer);
       this.root.replaceChildren(shell);
@@ -284,7 +286,10 @@ export class StoryReaderOverlay {
     } catch {
       if (!this.root || request !== this.requestVersion) return;
       this.root.replaceChildren(
-        this.createError('Quill could not open that book just now.', () => void this.showCatalogue()),
+        this.createError(
+          'Quill could not open that book just now.',
+          () => void this.showCatalogue(),
+        ),
       );
     }
   }

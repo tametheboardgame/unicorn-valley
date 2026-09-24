@@ -444,18 +444,14 @@ canvas {
   box-shadow: 0 0 0 3px rgb(255 230 166 / 36%);
 }
 
-
 /* H3.11.4C Story House long-form library reader */
 .story-reader-overlay {
   position: fixed;
   z-index: 4000;
   inset: 0;
   display: grid;
-  padding:
-    max(14px, env(safe-area-inset-top))
-    max(14px, env(safe-area-inset-right))
-    max(14px, env(safe-area-inset-bottom))
-    max(14px, env(safe-area-inset-left));
+  padding: max(14px, env(safe-area-inset-top)) max(14px, env(safe-area-inset-right))
+    max(14px, env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left));
   overflow: hidden;
   background:
     radial-gradient(circle at 18% 10%, rgb(225 244 255 / 35%), transparent 34%),
@@ -494,9 +490,7 @@ canvas {
   justify-content: space-between;
   padding: 22px 26px;
   border-bottom: 2px solid #cbdde4;
-  background:
-    linear-gradient(90deg, rgb(219 239 248 / 94%), rgb(239 224 242 / 92%)),
-    #e9f3f6;
+  background: linear-gradient(90deg, rgb(219 239 248 / 94%), rgb(239 224 242 / 92%)), #e9f3f6;
 }
 
 .story-reader-eyebrow,
@@ -573,8 +567,7 @@ canvas {
   padding: 24px;
   overflow-y: auto;
   background:
-    linear-gradient(90deg, transparent 49%, rgb(122 151 168 / 8%) 50%, transparent 51%),
-    #f8f0df;
+    linear-gradient(90deg, transparent 49%, rgb(122 151 168 / 8%) 50%, transparent 51%), #f8f0df;
   overscroll-behavior: contain;
   touch-action: pan-y;
 }
@@ -764,9 +757,7 @@ canvas {
   padding: clamp(32px, 5vw, 68px) clamp(24px, 7vw, 82px);
   border: 1px solid #d2c6b5;
   border-radius: 4px 15px 15px 4px;
-  background:
-    linear-gradient(90deg, rgb(91 112 126 / 7%) 0 10px, transparent 10px),
-    #fffdf5;
+  background: linear-gradient(90deg, rgb(91 112 126 / 7%) 0 10px, transparent 10px), #fffdf5;
   color: #473f45;
   box-shadow: 0 13px 28px rgb(55 48 57 / 16%);
   font-family: Georgia, "Times New Roman", serif;
