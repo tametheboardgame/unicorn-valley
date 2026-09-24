@@ -526,11 +526,7 @@ export class StoryReaderOverlay {
     chapterPosition.textContent = chapterLabel(manifest, index);
     const isLastChapter = index >= manifest.chapters.length - 1;
     const next = button(
-      isLastChapter
-        ? 'Finish book ✓'
-        : isPictureBook
-          ? 'Next page →'
-          : 'Next chapter →',
+      isLastChapter ? 'Finish book ✓' : isPictureBook ? 'Next page →' : 'Next chapter →',
       'story-reader-chapter-button',
       () => {
         if (isLastChapter) {
