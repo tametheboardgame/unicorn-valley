@@ -141,10 +141,7 @@ function renderStoryIllustration(
   return figure;
 }
 
-function chapterLabel(
-  manifest: StoryLibraryManifest,
-  index: number,
-): string {
+function chapterLabel(manifest: StoryLibraryManifest, index: number): string {
   const noun = manifest.readingMode === 'paged-picture-book' ? 'Page' : 'Chapter';
   return `${noun} ${index + 1} of ${manifest.chapters.length}`;
 }
@@ -520,7 +517,7 @@ export class StoryReaderOverlay {
       isPictureBook ? '← Previous page' : '← Previous chapter',
       'story-reader-chapter-button',
       () => {
-      this.persistCurrentPosition();
+        this.persistCurrentPosition();
         void this.showChapter(index - 1);
       },
     );
