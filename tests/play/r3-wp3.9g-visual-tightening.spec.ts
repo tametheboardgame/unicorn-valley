@@ -60,7 +60,9 @@ for (const [alias, sceneKey, minimumDetails] of [
     expect(scene).toBeTruthy();
 
     if (sceneKey === 'SunbeamVillageScene') {
-      const names = new Set(scene?.objects.filter(({ visible }) => visible).map(({ name }) => name));
+      const names = new Set(
+        scene?.objects.filter(({ visible }) => visible).map(({ name }) => name),
+      );
       for (const requiredName of [
         'sunbeam-composition:base',
         'sunbeam-composition:plaza',

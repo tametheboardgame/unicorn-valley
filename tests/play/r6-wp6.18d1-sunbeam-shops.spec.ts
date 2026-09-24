@@ -122,9 +122,9 @@ test('all three village buildings have distinct usable interiors', async ({ page
   expect(
     interior.objects.some((object) => object.name === 'village-interior:bakery:room-shell'),
   ).toBe(true);
-  expect(
-    interior.objects.some((object) => object.name === 'village-interior:bakery:counter'),
-  ).toBe(true);
+  expect(interior.objects.some((object) => object.name === 'village-interior:bakery:counter')).toBe(
+    true,
+  );
 
   await startScene(page, 'VillageInteriorScene', {
     interiorId: 'library',
@@ -162,9 +162,11 @@ test('Twinkle & Thread opens the real shop and interiors return safely to the vi
   });
 
   await page.evaluate(() => {
-    const diagnostics = (window as typeof window & {
-      __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
-    }).__UNICORN_VALLEY_DIAGNOSTICS__;
+    const diagnostics = (
+      window as typeof window & {
+        __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
+      }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__;
     diagnostics?.setArcadeSpritePosition('VillageInteriorScene', 'world-player-unicorn', 1080, 520);
   });
   await page.keyboard.press('Enter');
@@ -187,9 +189,11 @@ test('Twinkle & Thread opens the real shop and interiors return safely to the vi
     .toBe(false);
 
   await page.evaluate(() => {
-    const diagnostics = (window as typeof window & {
-      __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
-    }).__UNICORN_VALLEY_DIAGNOSTICS__;
+    const diagnostics = (
+      window as typeof window & {
+        __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
+      }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__;
     diagnostics?.setArcadeSpritePosition('VillageInteriorScene', 'world-player-unicorn', 750, 900);
   });
   await page.keyboard.press('Enter');

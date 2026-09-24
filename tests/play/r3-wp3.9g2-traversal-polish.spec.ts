@@ -124,15 +124,18 @@ for (const [alias, sceneKey, minimumDetails] of [
     expect(scene).toBeTruthy();
 
     if (sceneKey === 'SunbeamVillageScene') {
-      const names = new Set(scene?.objects.filter(({ visible }) => visible).map(({ name }) => name));
+      const names = new Set(
+        scene?.objects.filter(({ visible }) => visible).map(({ name }) => name),
+      );
       for (const requiredName of [
         'sunbeam-composition:path-network',
         'sunbeam-composition:gateway:moonflower-glade',
         'sunbeam-composition:gateway:rainbow-meadow',
       ]) {
-        expect(names.has(requiredName), `Expected current H3 traversal object ${requiredName}`).toBe(
-          true,
-        );
+        expect(
+          names.has(requiredName),
+          `Expected current H3 traversal object ${requiredName}`,
+        ).toBe(true);
       }
       return;
     }
