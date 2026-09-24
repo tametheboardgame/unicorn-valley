@@ -1,4 +1,5 @@
 export type StoryPublicationStatus = 'draft' | 'published' | 'hidden';
+export type StoryReadingMode = 'flowing' | 'paged-picture-book';
 export type StoryIllustrationPlacement = 'inline' | 'full-width';
 
 export interface StoryAssetReference {
@@ -34,6 +35,7 @@ export interface StoryLibraryManifest {
   title: string;
   description: string;
   author: string;
+  readingMode: StoryReadingMode;
   cover?: StoryAssetReference | null;
   series?: StorySeriesReference | null;
   tags: readonly string[];
@@ -48,6 +50,7 @@ export interface StoryCatalogueEntry {
   title: string;
   description: string;
   author: string;
+  readingMode: StoryReadingMode;
   coverPath: string | null;
   coverAlt: string | null;
   series: StorySeriesReference | null;

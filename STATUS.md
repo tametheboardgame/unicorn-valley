@@ -12,7 +12,7 @@ H3.11.4C reader engine is human-approved. The accepted reader opens from the phy
 
 H3.11.4D is human-approved. The Story House now preserves independent per-story semantic resume positions, global reader preferences, Continue Reading, catalogue progress/completion state and explicit book completion through canonical schema-v9 save data.
 
-**Current substantive checkpoint:** H3.11.4E checkpoint 1 is onboarding the real *The Duck Bread Baker* production material supplied by David. The book is decomposed into reflowable stable-block prose plus separate cover/illustration assets; the reader now has generic block-linked responsive illustration figures with WebP/AVIF-compatible manifest validation and browser-native lazy loading. The first checkpoint uses three representative interior illustrations plus the real cover before expanding the same pipeline across the remaining source artwork.
+**Current substantive checkpoint:** H3.11.4E checkpoint 2 corrects the first picture-book presentation after David's visual review. The generic flowing reader remains the long-form mode, while a new `paged-picture-book` mode treats *The Duck Bread Baker* as an actual illustrated book: PDF story pages 2-42 are 41 independent demand-loaded pages with the matching clean artwork and source text, Page X of 41 navigation, Previous/Next page controls and exact page resume through the existing save contract.
 
 ## H3 feedback-block-1 sequence
 

@@ -3,14 +3,14 @@
   "template_initialised": true,
   "project_id": "unicorn-valley",
   "display_name": "Unicorn Valley",
-  "phase": "R6.5 - Sunbeam Village H3.11.4E Story House illustration and media pipeline",
+  "phase": "R6.5 - Sunbeam Village H3.11.4E picture-book page mode",
   "current_work_package": "R6.5-WP19H3",
   "current_work_package_path": "docs/work-packages/R6.5-WP19H3-SUNBEAM-VILLAGE.md",
   "status": "in_progress",
   "autonomy_state": "amber",
   "agent_state": "active",
   "branch": "agent/r6.5-wp19h3-sunbeam-village",
-  "latest_commit": "92d135141e13728699fec0c8a7bd1372481471d5",
+  "latest_commit": "925d8c7f4c484105ad851c6f0e827e456c50116c",
   "ci_state": "running",
   "technical_validation_state": "running",
   "human_acceptance_state": "pending",
@@ -21,6 +21,6 @@
   "night_shift_state": "not_configured",
   "chat_disposition": "keep",
   "delivery_mode": "pr_required",
-  "last_activity_at": "2026-09-24T10:35:00+01:00",
-  "updated_at": "2026-09-24T10:35:00+01:00"
+  "last_activity_at": "2026-09-24T12:05:00+01:00",
+  "updated_at": "2026-09-24T12:05:00+01:00"
 }

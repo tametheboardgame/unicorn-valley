@@ -62,7 +62,7 @@ async function readJson(filePath) {
   }
 }
 
-async function validateChapter(storyDirectory, storyId, chapter, chapterIds) {
+async function validateChapter(storyDirectory, storyId, chapter, chapterIds, readingMode) {
   if (!chapter || typeof chapter !== 'object') {
     throw new Error(`Story catalogue rejected ${storyId}: chapter must be an object.`);
   }
@@ -96,6 +96,21 @@ async function validateChapter(storyDirectory, storyId, chapter, chapterIds) {
       );
     }
     blockIds.add(blockId);
+  }
+
+  if (readingMode === 'paged-picture-book' && markers.length !== 1) {
+    throw new Error(
+      `Story catalogue rejected ${storyId}/${chapter.id}: paged picture-book pages need exactly one stable content block.`,
+    );
+  }
+
+  if (
+    readingMode === 'paged-picture-book' &&
+    (!Array.isArray(chapter.illustrations) || chapter.illustrations.length !== 1)
+  ) {
+    throw new Error(
+      `Story catalogue rejected ${storyId}/${chapter.id}: paged picture-book pages need exactly one illustration.`,
+    );
   }
 
   if (chapter.illustrations !== undefined) {
@@ -187,6 +202,13 @@ async function loadStory(directoryEntry) {
   assertString(manifest.author, `${manifest.id} author`);
   assertStringArray(manifest.tags, `${manifest.id} tags`);
 
+  const readingMode = manifest.readingMode ?? 'flowing';
+  if (!['flowing', 'paged-picture-book'].includes(readingMode)) {
+    throw new Error(
+      `Story catalogue rejected ${manifest.id}: readingMode must be flowing or paged-picture-book.`,
+    );
+  }
+
   if (
     !manifest.publication ||
     !['draft', 'published', 'hidden'].includes(manifest.publication.status)
@@ -216,7 +238,7 @@ async function loadStory(directoryEntry) {
 
   const chapterIds = new Set();
   for (const chapter of manifest.chapters) {
-    await validateChapter(storyDirectory, manifest.id, chapter, chapterIds);
+    await validateChapter(storyDirectory, manifest.id, chapter, chapterIds, readingMode);
   }
 
   return manifest;
@@ -228,6 +250,7 @@ function catalogueEntry(manifest) {
     title: manifest.title,
     description: manifest.description,
     author: manifest.author,
+    readingMode: manifest.readingMode ?? 'flowing',
     coverPath: manifest.cover ? `/stories/${manifest.id}/${manifest.cover.path}` : null,
     coverAlt: manifest.cover?.alt ?? null,
     series: manifest.series ?? null,

@@ -141,8 +141,12 @@ function renderStoryIllustration(
   return figure;
 }
 
-function chapterLabel(index: number, total: number): string {
-  return `Chapter ${index + 1} of ${total}`;
+function chapterLabel(
+  manifest: StoryLibraryManifest,
+  index: number,
+): string {
+  const noun = manifest.readingMode === 'paged-picture-book' ? 'Page' : 'Chapter';
+  return `${noun} ${index + 1} of ${manifest.chapters.length}`;
 }
 
 export class StoryReaderOverlay {
@@ -317,7 +321,10 @@ export class StoryReaderOverlay {
           card.classList.add('is-in-progress');
           meta.textContent = `${Math.round(progress.percentComplete)}% · Continue reading`;
         } else {
-          meta.textContent = `${story.chapterCount} chapter${story.chapterCount === 1 ? '' : 's'} · Read`;
+          meta.textContent =
+            story.readingMode === 'paged-picture-book'
+              ? `${story.chapterCount} pages · Read`
+              : `${story.chapterCount} chapter${story.chapterCount === 1 ? '' : 's'} · Read`;
         }
         copy.append(title, author, description, meta);
 
@@ -423,6 +430,10 @@ export class StoryReaderOverlay {
 
     const shell = document.createElement('div');
     shell.className = 'story-reader-shell';
+    const isPictureBook = manifest.readingMode === 'paged-picture-book';
+    if (isPictureBook) {
+      shell.classList.add('is-picture-book');
+    }
     this.applyReadingPreferences(shell);
 
     const topbar = document.createElement('header');
@@ -436,7 +447,7 @@ export class StoryReaderOverlay {
     const bookTitle = document.createElement('strong');
     bookTitle.textContent = manifest.title;
     const chapterProgress = document.createElement('span');
-    chapterProgress.textContent = chapterLabel(index, manifest.chapters.length);
+    chapterProgress.textContent = chapterLabel(manifest, index);
     titleWrap.append(bookTitle, chapterProgress);
     const close = button('Close ✕', 'story-reader-close', () => this.destroy());
     topbar.append(back, titleWrap, close);
@@ -462,44 +473,67 @@ export class StoryReaderOverlay {
     scroller.className = 'story-reader-scroller';
     scroller.dataset.storyReaderScroller = 'true';
     const paper = document.createElement('article');
-    paper.className = 'story-reader-paper';
+    paper.className = isPictureBook
+      ? 'story-reader-paper story-reader-picture-page'
+      : 'story-reader-paper';
     paper.dataset.storyId = manifest.id;
     paper.dataset.chapterId = chapter.chapterId;
 
-    const chapterHeading = document.createElement('header');
-    chapterHeading.className = 'story-reader-chapter-heading';
-    const eyebrow = document.createElement('p');
-    eyebrow.textContent = manifest.series
-      ? `${manifest.series.title} · Book ${manifest.series.order}`
-      : `A Story House book · ${manifest.author}`;
-    const heading = document.createElement('h1');
-    heading.textContent = chapter.title;
-    chapterHeading.append(eyebrow, heading);
-    paper.append(chapterHeading);
-
     const chapterManifest = manifest.chapters[index];
-    for (const block of chapter.blocks) {
-      paper.append(renderMarkdownBlock(block));
+
+    if (isPictureBook) {
       for (const illustration of chapterManifest?.illustrations ?? []) {
-        if (illustration.blockId === block.id) {
-          paper.append(renderStoryIllustration(manifest.id, illustration));
+        paper.append(renderStoryIllustration(manifest.id, illustration));
+      }
+      const pageCopy = document.createElement('div');
+      pageCopy.className = 'story-reader-picture-copy';
+      for (const block of chapter.blocks) {
+        pageCopy.append(renderMarkdownBlock(block));
+      }
+      paper.append(pageCopy);
+    } else {
+      const chapterHeading = document.createElement('header');
+      chapterHeading.className = 'story-reader-chapter-heading';
+      const eyebrow = document.createElement('p');
+      eyebrow.textContent = manifest.series
+        ? `${manifest.series.title} · Book ${manifest.series.order}`
+        : `A Story House book · ${manifest.author}`;
+      const heading = document.createElement('h1');
+      heading.textContent = chapter.title;
+      chapterHeading.append(eyebrow, heading);
+      paper.append(chapterHeading);
+
+      for (const block of chapter.blocks) {
+        paper.append(renderMarkdownBlock(block));
+        for (const illustration of chapterManifest?.illustrations ?? []) {
+          if (illustration.blockId === block.id) {
+            paper.append(renderStoryIllustration(manifest.id, illustration));
+          }
         }
       }
     }
 
     const navigation = document.createElement('nav');
     navigation.className = 'story-reader-chapter-nav';
-    navigation.setAttribute('aria-label', 'Chapter navigation');
-    const previous = button('← Previous chapter', 'story-reader-chapter-button', () => {
+    navigation.setAttribute('aria-label', isPictureBook ? 'Page navigation' : 'Chapter navigation');
+    const previous = button(
+      isPictureBook ? '← Previous page' : '← Previous chapter',
+      'story-reader-chapter-button',
+      () => {
       this.persistCurrentPosition();
-      void this.showChapter(index - 1);
-    });
+        void this.showChapter(index - 1);
+      },
+    );
     previous.disabled = index === 0;
     const chapterPosition = document.createElement('span');
-    chapterPosition.textContent = chapterLabel(index, manifest.chapters.length);
+    chapterPosition.textContent = chapterLabel(manifest, index);
     const isLastChapter = index >= manifest.chapters.length - 1;
     const next = button(
-      isLastChapter ? 'Finish book ✓' : 'Next chapter →',
+      isLastChapter
+        ? 'Finish book ✓'
+        : isPictureBook
+          ? 'Next page →'
+          : 'Next chapter →',
       'story-reader-chapter-button',
       () => {
         if (isLastChapter) {
@@ -565,6 +599,22 @@ export class StoryReaderOverlay {
       return;
     }
 
+    if (current.manifest.readingMode === 'paged-picture-book') {
+      const pageBlock = current.chapter.blocks[0];
+      if (!pageBlock) {
+        return;
+      }
+      this.reading.savePosition({
+        storyId: current.manifest.id,
+        chapterId: current.chapter.chapterId,
+        blockId: pageBlock.id,
+        blockProgress: 0,
+        chapterPercentComplete: 100,
+        percentComplete: ((current.index + 1) / current.manifest.chapters.length) * 100,
+      });
+      return;
+    }
+
     const blocks = Array.from(
       current.scroller.querySelectorAll<HTMLElement>('.story-reader-block'),
     );
@@ -609,7 +659,12 @@ export class StoryReaderOverlay {
 
   private restoreReadingPosition(progress: ReturnType<StoryReadingService['getProgress']>): void {
     const current = this.currentChapter;
-    if (!current || !progress || progress.completed) {
+    if (
+      !current ||
+      !progress ||
+      progress.completed ||
+      current.manifest.readingMode === 'paged-picture-book'
+    ) {
       current?.scroller.scrollTo({ top: 0 });
       return;
     }

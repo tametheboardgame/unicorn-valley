@@ -27,6 +27,7 @@ function libraryFetch(): StoryLibraryFetch {
             title: 'A Shelf Full of Stories',
             description: 'A small library-system sampler.',
             author: 'Unicorn Valley',
+            readingMode: 'flowing',
             coverPath: null,
             coverAlt: null,
             series: null,
@@ -45,6 +46,7 @@ function libraryFetch(): StoryLibraryFetch {
         title: 'A Shelf Full of Stories',
         description: 'A small library-system sampler.',
         author: 'Unicorn Valley',
+        readingMode: 'flowing',
         cover: null,
         series: null,
         tags: ['story-house', 'sample'],
@@ -90,9 +92,11 @@ describe('Story Library service', () => {
 
     const stories = await service.listStories();
     expect(stories.map(({ id }) => id)).toEqual(['story-house-sampler']);
+    expect(stories[0]?.readingMode).toBe('flowing');
     expect(requested).toEqual(['/stories/catalogue.json']);
 
     const manifest = await service.loadManifest('story-house-sampler');
+    expect(manifest.readingMode).toBe('flowing');
     expect(manifest.chapters[0]?.id).toBe('chapter-01');
     expect(manifest.chapters[0]?.illustrations?.[0]).toMatchObject({
       id: 'shelf-picture',

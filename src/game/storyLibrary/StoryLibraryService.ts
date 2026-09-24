@@ -5,6 +5,7 @@ import type {
   StoryChapterManifest,
   StoryContentBlock,
   StoryLibraryManifest,
+  StoryReadingMode,
 } from './StoryLibraryTypes';
 
 const STORY_ID = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -79,6 +80,12 @@ function requirePositiveInteger(value: unknown, label: string): number {
   return value;
 }
 
+function parseReadingMode(value: unknown): StoryReadingMode {
+  if (value === undefined || value === 'flowing') return 'flowing';
+  if (value === 'paged-picture-book') return 'paged-picture-book';
+  throw new Error('Story Library manifest has an invalid reading mode.');
+}
+
 function parseSeries(value: unknown): StoryCatalogueEntry['series'] {
   if (value === null || value === undefined) return null;
   if (typeof value !== 'object') throw new Error('Story Library expected series metadata.');
@@ -114,6 +121,7 @@ function parseCatalogue(value: unknown): StoryCatalogue {
       title: requireString(entry.title, 'story title'),
       description: requireString(entry.description, 'story description'),
       author: requireString(entry.author, 'story author'),
+      readingMode: parseReadingMode(entry.readingMode),
       coverPath: entry.coverPath === null ? null : requireString(entry.coverPath, 'cover path'),
       coverAlt: entry.coverAlt === null ? null : requireString(entry.coverAlt, 'cover alt text'),
       series: parseSeries(entry.series),
@@ -193,6 +201,7 @@ function parseManifest(value: unknown): StoryLibraryManifest {
     title: requireString(source.title, 'story title'),
     description: requireString(source.description, 'story description'),
     author: requireString(source.author, 'story author'),
+    readingMode: parseReadingMode(source.readingMode),
     cover,
     series: parseSeries(source.series),
     tags: requireStringArray(source.tags, 'story tags'),

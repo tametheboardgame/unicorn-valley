@@ -20,3 +20,10 @@ The reader loads the catalogue first, a selected `book.json` only when needed, a
 Illustration metadata uses a stable `blockId`, an `inline` or `full-width` placement, intrinsic `width`/`height` values, alt text and an optional caption. WebP and AVIF assets are accepted. The DOM reader creates image elements only for the selected chapter and marks them `loading="lazy"` plus `decoding="async"`, so entering Story House never downloads a whole illustrated book.
 
 `The Duck Bread Baker` is the first real media-backed reference package. Its initial H3.11.4E checkpoint intentionally uses a representative cover plus early-story, turning-point and back-matter illustrations before the same pipeline is expanded across the remaining source artwork.
+
+
+## Picture-book page mode
+
+Set `readingMode` to `paged-picture-book` when the authored work is page-led rather than continuous prose. Each manifest chapter then represents one reader page and must contain exactly one stable content block plus exactly one illustration. The reader labels these entries as pages, loads only the selected page's Markdown/artwork, and preserves the normal stable chapter/block save contract. Flowing books continue to use the existing long-form reader unchanged.
+
+`The Duck Bread Baker` is the reference implementation: its PDF story pages 2-42 map to 41 demand-loaded reader pages, each with the matching extracted illustration and source text.

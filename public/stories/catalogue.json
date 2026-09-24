@@ -6,6 +6,7 @@
       "title": "The Duck Bread Baker",
       "description": "Join Duck on his delicious journey as he sets out to satisfy his love for bread. But when all his feathered friends fall ill, he learns that a diet of just bread isn’t the way to go.",
       "author": "David Fairbairn",
+      "readingMode": "paged-picture-book",
       "coverPath": "/stories/the-duck-bread-baker/covers/cover.webp",
       "coverAlt": "The Duck Bread Baker cover, showing a yellow duck surrounded by loaves of bread.",
       "series": null,
@@ -16,7 +17,7 @@
         "health",
         "illustrated"
       ],
-      "chapterCount": 2,
+      "chapterCount": 41,
       "manifestPath": "/stories/the-duck-bread-baker/book.json"
     }
   ]
