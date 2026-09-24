@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "story-house-sampler",
+  "title": "A Shelf Full of Stories",
+  "description": "A tiny Story House sampler used to prove the reusable long-form library content pipeline.",
+  "author": "Unicorn Valley",
+  "cover": null,
+  "series": null,
+  "tags": ["story-house", "sample"],
+  "publication": {
+    "status": "published"
+  },
+  "chapters": [
+    {
+      "id": "chapter-01",
+      "title": "The First Shelf",
+      "path": "chapters/01.md"
+    }
+  ]
+}

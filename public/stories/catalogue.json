@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "stories": [
+    {
+      "id": "story-house-sampler",
+      "title": "A Shelf Full of Stories",
+      "description": "A tiny Story House sampler used to prove the reusable long-form library content pipeline.",
+      "author": "Unicorn Valley",
+      "coverPath": null,
+      "coverAlt": null,
+      "series": null,
+      "tags": [
+        "story-house",
+        "sample"
+      ],
+      "chapterCount": 1,
+      "manifestPath": "/stories/story-house-sampler/book.json"
+    }
+  ]
+}
