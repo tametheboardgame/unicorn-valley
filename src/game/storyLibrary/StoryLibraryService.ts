@@ -47,7 +47,12 @@ function requireSafeId(value: unknown, label: string): string {
 
 function requireRelativePath(value: unknown, label: string, extension: string): string {
   const path = requireString(value, label);
-  if (path.startsWith('/') || path.includes('..') || path.includes('\\') || !path.endsWith(extension)) {
+  if (
+    path.startsWith('/') ||
+    path.includes('..') ||
+    path.includes('\\') ||
+    !path.endsWith(extension)
+  ) {
     throw new Error(`Story Library rejected unsafe ${label} "${path}".`);
   }
   return path;
@@ -76,7 +81,8 @@ function parseCatalogue(value: unknown): StoryCatalogue {
   }
 
   const stories = source.stories.map((item): StoryCatalogueEntry => {
-    if (!item || typeof item !== 'object') throw new Error('Story Library catalogue entry is invalid.');
+    if (!item || typeof item !== 'object')
+      throw new Error('Story Library catalogue entry is invalid.');
     const entry = item as Record<string, unknown>;
     const chapterCount = entry.chapterCount;
     if (typeof chapterCount !== 'number' || chapterCount < 1) {
@@ -116,9 +122,7 @@ function parseChapter(value: unknown, storyId: string): StoryChapterManifest {
             id: requireSafeId(illustration.id, 'illustration id'),
             path: requireRelativePath(illustration.path, 'illustration path', '.webp'),
             alt: requireString(illustration.alt, 'illustration alt text'),
-            ...(typeof illustration.caption === 'string'
-              ? { caption: illustration.caption }
-              : {}),
+            ...(typeof illustration.caption === 'string' ? { caption: illustration.caption } : {}),
           };
         })
       : undefined,
@@ -163,7 +167,9 @@ function parseManifest(value: unknown): StoryLibraryManifest {
     cover,
     series: parseSeries(source.series),
     tags: requireStringArray(source.tags, 'story tags'),
-    publication: { status: String(publication.status) as StoryLibraryManifest['publication']['status'] },
+    publication: {
+      status: String(publication.status) as StoryLibraryManifest['publication']['status'],
+    },
     chapters: source.chapters.map((chapter) => parseChapter(chapter, id)),
   };
 }

@@ -202,7 +202,8 @@ test('H3.11.4 gives Story House a dedicated storykeeper and physical reading roo
   ).toBe(3);
   expect(names.has('village-interior:library:secret-passage-bookcase')).toBe(true);
   expect(
-    interior.objects.filter(({ name }) => name === 'village-interior:library:reading-cushion').length,
+    interior.objects.filter(({ name }) => name === 'village-interior:library:reading-cushion')
+      .length,
   ).toBe(4);
 });
 

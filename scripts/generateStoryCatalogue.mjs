@@ -41,7 +41,9 @@ async function readJson(filePath) {
   try {
     return JSON.parse(raw);
   } catch (error) {
-    throw new Error(`Story catalogue could not parse ${toPosix(path.relative(ROOT, filePath))}: ${error}`);
+    throw new Error(
+      `Story catalogue could not parse ${toPosix(path.relative(ROOT, filePath))}: ${error}`,
+    );
   }
 }
 
@@ -142,7 +144,10 @@ async function loadStory(directoryEntry) {
   assertString(manifest.author, `${manifest.id} author`);
   assertStringArray(manifest.tags, `${manifest.id} tags`);
 
-  if (!manifest.publication || !['draft', 'published', 'hidden'].includes(manifest.publication.status)) {
+  if (
+    !manifest.publication ||
+    !['draft', 'published', 'hidden'].includes(manifest.publication.status)
+  ) {
     throw new Error(
       `Story catalogue rejected ${manifest.id}: publication.status must be draft, published or hidden.`,
     );
@@ -221,5 +226,7 @@ if (CHECK_ONLY) {
 } else {
   await fs.mkdir(STORIES_ROOT, { recursive: true });
   await fs.writeFile(OUTPUT, expected, 'utf8');
-  console.log(`Story catalogue generated: ${stories.length} published stor${stories.length === 1 ? 'y' : 'ies'}.`);
+  console.log(
+    `Story catalogue generated: ${stories.length} published stor${stories.length === 1 ? 'y' : 'ies'}.`,
+  );
 }

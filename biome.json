@@ -6,7 +6,7 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": ["**", "!dist", "!src/generated/audioCatalogue.ts"]
+    "includes": ["**", "!dist", "!src/generated/audioCatalogue.ts", "!public/stories/catalogue.json"]
   },
   "formatter": {
     "enabled": true,
