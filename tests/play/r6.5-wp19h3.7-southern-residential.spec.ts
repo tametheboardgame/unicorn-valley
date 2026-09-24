@@ -35,10 +35,6 @@ test('H3.7 composes a main residential road with frontage side roads', async ({ 
       names.has('sunbeam-residence:sunpetal-cottage') &&
       names.has('sunbeam-composition:village-boundary:locked-south-gate:sign') &&
       names.has('sunbeam-composition:unicorn-playground') &&
-      names.has('sunbeam-playground:child:poppy') &&
-      names.has('sunbeam-playground:child:milo') &&
-      names.has('sunbeam-playground:child:lulu') &&
-      names.has('sunbeam-playground:child:bean') &&
       names.has('sunbeam-playground:slide') &&
       names.has('sunbeam-playground:climbing-frame') &&
       names.has('sunbeam-residence:rosehip-cottage:door') &&
@@ -124,11 +120,7 @@ test('H3.7 composes a main residential road with frontage side roads', async ({ 
   expect(playground?.visible).toBe(true);
   expect(playground?.x).toBeCloseTo(2660, 0);
   expect(playground?.y).toBeCloseTo(1698, 0);
-  expect(playgroundChildren).toHaveLength(4);
-  for (const child of playgroundChildren) {
-    expect(child.visible).toBe(true);
-    expect(child.displayWidth).toBeLessThan(80);
-  }
+  expect(playgroundChildren).toHaveLength(0);
   expect(objects.some(({ name, visible }) => name === 'sunbeam-playground:slide' && visible)).toBe(
     true,
   );

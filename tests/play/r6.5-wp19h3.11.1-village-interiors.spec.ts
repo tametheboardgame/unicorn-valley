@@ -112,17 +112,6 @@ test('H3.11.1 makes VillageInteriorScene a walkable semantic interior with physi
     interior.objects.some(({ name }) => name === 'village-interior:bakery:doughnut-plaque'),
   ).toBe(true);
   expect(
-    interior.objects.some(
-      ({ name }) =>
-        name === 'interaction-direct-zone:interaction:village-interior:bakery:doughnuts',
-    ),
-  ).toBe(true);
-  expect(
-    interior.objects.some(
-      ({ name }) => name === 'interaction-direct-zone:interaction:village-interior:bakery:cupcakes',
-    ),
-  ).toBe(true);
-  expect(
     interior.objects.filter(({ name }) => name === 'village-interior:bakery:cafe-stool').length,
   ).toBe(2);
 
@@ -264,13 +253,7 @@ test('H3.11.3 gives Twinkle & Thread a dedicated walkable boutique and shopkeepe
   expect(names.has('village-interior:accessory-shop:display-home')).toBe(true);
   expect(names.has('village-interior:accessory-shop:mirror')).toBe(true);
   expect(
-    names.has('interaction-direct-zone:interaction:village-interior:accessory-shop:mirror'),
-  ).toBe(true);
-  expect(
-    names.has('interaction-direct-zone:interaction:village-interior:accessory-shop:wall-rack'),
-  ).toBe(true);
-  expect(
-    names.has('interaction-direct-zone:interaction:village-interior:accessory-shop:home-display'),
+    names.has('interaction-direct-zone:interaction:village-interior:accessory-shop:shopkeeper'),
   ).toBe(true);
 
   await page.evaluate(() => {

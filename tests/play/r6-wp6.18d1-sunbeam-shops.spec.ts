@@ -23,6 +23,7 @@ interface DiagnosticSnapshot {
 interface BrowserDiagnosticsApi {
   snapshot(): DiagnosticSnapshot;
   startScene(sceneKey: string, data?: object): void;
+  setArcadeSpritePosition(sceneKey: string, objectName: string, x: number, y: number): void;
 }
 
 async function waitForScene(page: Page, sceneKey: string): Promise<void> {
@@ -70,15 +71,15 @@ function sceneFrom(value: DiagnosticSnapshot, sceneKey: string): DiagnosticScene
   return scene;
 }
 
-async function clickLogicalObject(page: Page, objectName: string): Promise<void> {
+async function clickLogicalText(page: Page, text: string): Promise<void> {
   const value = await snapshot(page);
   const scene = value.scenes.find((candidate) =>
-    candidate.objects.some((object) => object.name === objectName),
+    candidate.objects.some((object) => object.text === text),
   );
-  const object = scene?.objects.find((candidate) => candidate.name === objectName);
+  const object = scene?.objects.find((candidate) => candidate.text === text);
   const bounds = await page.locator('canvas').boundingBox();
   if (!object || !bounds) {
-    throw new Error(`Cannot click ${objectName}.`);
+    throw new Error(`Cannot click text ${text}.`);
   }
 
   await page.mouse.click(
@@ -101,7 +102,10 @@ test('Sunbeam Village shops read as authored open storefronts', async ({ page })
       village.objects.some((object) => object.name === `village-shopfront:${shopId}:door`),
     ).toBe(true);
     expect(
-      village.objects.some((object) => object.name === `village-shopfront:${shopId}:entry-cue`),
+      village.objects.some((object) => object.name === `village-shopfront:${shopId}:sign`),
+    ).toBe(true);
+    expect(
+      village.objects.some((object) => object.name === `village-shopfront:${shopId}:identity`),
     ).toBe(true);
   }
 });
@@ -115,19 +119,23 @@ test('all three village buildings have distinct usable interiors', async ({ page
     returnScene: 'SunbeamVillageScene',
   });
   let interior = sceneFrom(await snapshot(page), 'VillageInteriorScene');
-  expect(interior.objects.some((object) => object.name === 'village-interior:bakery')).toBe(true);
-  expect(interior.objects.some((object) => object.name === 'village-interior-bakery-counter')).toBe(
-    true,
-  );
+  expect(
+    interior.objects.some((object) => object.name === 'village-interior:bakery:room-shell'),
+  ).toBe(true);
+  expect(
+    interior.objects.some((object) => object.name === 'village-interior:bakery:counter'),
+  ).toBe(true);
 
   await startScene(page, 'VillageInteriorScene', {
     interiorId: 'library',
     returnScene: 'SunbeamVillageScene',
   });
   interior = sceneFrom(await snapshot(page), 'VillageInteriorScene');
-  expect(interior.objects.some((object) => object.name === 'village-interior:library')).toBe(true);
   expect(
-    interior.objects.some((object) => object.name === 'village-interior-library-shelves'),
+    interior.objects.some((object) => object.name === 'village-interior:library:room-shell'),
+  ).toBe(true);
+  expect(
+    interior.objects.some((object) => object.name === 'village-interior:library:story-table'),
   ).toBe(true);
 
   await startScene(page, 'VillageInteriorScene', {
@@ -135,11 +143,11 @@ test('all three village buildings have distinct usable interiors', async ({ page
     returnScene: 'SunbeamVillageScene',
   });
   interior = sceneFrom(await snapshot(page), 'VillageInteriorScene');
-  expect(interior.objects.some((object) => object.name === 'village-interior:accessory-shop')).toBe(
-    true,
-  );
   expect(
-    interior.objects.some((object) => object.name === 'village-interior-accessory-counter'),
+    interior.objects.some((object) => object.name === 'village-interior:accessory-shop:room-shell'),
+  ).toBe(true);
+  expect(
+    interior.objects.some((object) => object.name === 'village-interior:accessory-shop:counter'),
   ).toBe(true);
 });
 
@@ -153,13 +161,38 @@ test('Twinkle & Thread opens the real shop and interiors return safely to the vi
     returnScene: 'SunbeamVillageScene',
   });
 
-  await clickLogicalObject(page, 'village-interior-action');
-  await waitForScene(page, 'ShopScene');
-  expect((await snapshot(page)).activeScenes).toContain('ShopScene');
+  await page.evaluate(() => {
+    const diagnostics = (window as typeof window & {
+      __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
+    }).__UNICORN_VALLEY_DIAGNOSTICS__;
+    diagnostics?.setArcadeSpritePosition('VillageInteriorScene', 'world-player-unicorn', 1080, 520);
+  });
+  await page.keyboard.press('Enter');
 
-  await page.keyboard.press('Escape');
-  await waitForScene(page, 'VillageInteriorScene');
-  await clickLogicalObject(page, 'village-interior-back');
+  await expect
+    .poll(async () =>
+      sceneFrom(await snapshot(page), 'VillageInteriorScene').objects.some(
+        (object) => object.name === 'twinkle-shop-title',
+      ),
+    )
+    .toBe(true);
+
+  await clickLogicalText(page, 'Back to the boutique');
+  await expect
+    .poll(async () =>
+      sceneFrom(await snapshot(page), 'VillageInteriorScene').objects.some(
+        (object) => object.name === 'twinkle-shop-title',
+      ),
+    )
+    .toBe(false);
+
+  await page.evaluate(() => {
+    const diagnostics = (window as typeof window & {
+      __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
+    }).__UNICORN_VALLEY_DIAGNOSTICS__;
+    diagnostics?.setArcadeSpritePosition('VillageInteriorScene', 'world-player-unicorn', 750, 900);
+  });
+  await page.keyboard.press('Enter');
   await waitForScene(page, 'SunbeamVillageScene');
   expect((await snapshot(page)).activeScenes).toContain('SunbeamVillageScene');
 });
