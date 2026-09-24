@@ -360,6 +360,8 @@ describe('migrateSaveRecord', () => {
       fifthMigration: true,
       sixthMigration: true,
       seventhMigration: true,
+      eighthMigration: true,
+      ninthMigration: true,
     });
   });
 
