@@ -38,3 +38,6 @@ Do not reserve a hardening/cleanup number now. The final consolidation, responsi
 - H3 - Sunbeam Village Final Polish: H3.1-H3.11.3 human-approved; H3.11.4 Story House rebuild active.
 
 Sunbeam Village remains a review lens, not a technical boundary. Shared defects discovered during implementation must be fixed at their canonical shared owner rather than through village-specific workarounds.
+
+
+**H3.11.4F scope expansion (24 September 2026):** add scalable library discovery and curation support: metadata-driven categories, format/genre/audience/length/series/author dimensions, title/author search, filterable/grouped shelves, source/rights provenance for original/public-domain/licensed works, and Quill recommendations driven by the same taxonomy.
