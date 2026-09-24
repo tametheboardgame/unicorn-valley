@@ -197,7 +197,7 @@ const LIBRARY: VillageInteriorDefinition = {
     { id: 'counter', x: 660, y: 590, width: 300, height: 100 },
     { id: 'clue-cabinet', x: 205, y: 705, width: 130, height: 220 },
     { id: 'story-table', x: 1110, y: 715, width: 330, height: 125 },
-    { id: 'reading-chair', x: 1240, y: 835, width: 165, height: 130 },
+    { id: 'reading-chair', x: 390, y: 835, width: 165, height: 130 },
   ],
 };
 

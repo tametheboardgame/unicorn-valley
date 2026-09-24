@@ -196,7 +196,7 @@ test('H3.11.4 gives Story House a dedicated storykeeper and physical reading roo
   expect(names.has('village-interior:library:storykeeper-desk')).toBe(true);
   expect(names.has('village-interior:library:clue-cabinet')).toBe(true);
   expect(names.has('village-interior:library:reading-chair')).toBe(true);
-  expect(names.has('village-interior:library:reading-lamp')).toBe(true);
+  expect(names.has('village-interior:library:reading-lamp')).toBe(false);
   expect(
     interior.objects.filter(({ name }) => name === 'village-interior:library:bookcase').length,
   ).toBe(3);

@@ -856,29 +856,29 @@ export class VillageInteriorScene extends Phaser.Scene {
 
     // One continuous wall of books. The named passage section is visually ordinary for now,
     // but can later slide/disappear without rebuilding the rest of the library.
-    this.createStoryBookcase(285, 390, 310, 220);
-    this.createStoryBookcase(595, 390, 310, 220);
+    this.createStoryBookcase(285, 390, 310, 220, 'village-interior:library:bookcase', 0);
+    this.createStoryBookcase(595, 390, 310, 220, 'village-interior:library:bookcase', 1);
     this.createStoryBookcase(
       905,
       390,
       310,
       220,
       'village-interior:library:secret-passage-bookcase',
+      2,
     );
-    this.createStoryBookcase(1215, 390, 310, 220);
+    this.createStoryBookcase(1215, 390, 310, 220, 'village-interior:library:bookcase', 3);
 
     this.createStoryDesk(desk.position.x, desk.position.y);
     this.createStoryClueCabinet(clueCabinet.position.x, clueCabinet.position.y);
     this.createStoryTable(storyTable.position.x, storyTable.position.y);
 
-    // The right side is now a deliberate, cosy story corner.
+    // The right side remains the cosy story corner; the armchair now balances the clue cabinet on the left.
     this.createStoryCushion(955, 825, 0xd9a4b7);
     this.createStoryCushion(1245, 645, 0x9bbbc9);
     this.createStoryCushion(985, 605, 0xd9c58f);
     this.createStoryCushion(1260, 735, 0xb5a4cf);
 
-    this.createStoryReadingChair(1240, 825);
-    this.createStoryLamp(1330, 650);
+    this.createStoryReadingChair(390, 825);
   }
 
   private createStoryBookcase(
@@ -887,6 +887,7 @@ export class VillageInteriorScene extends Phaser.Scene {
     width: number,
     height: number,
     name = 'village-interior:library:bookcase',
+    variant = 0,
   ): void {
     const shelf = this.add.graphics().setName(name);
     shelf.fillStyle(0x52758a, 1);
@@ -896,19 +897,29 @@ export class VillageInteriorScene extends Phaser.Scene {
     shelf.fillStyle(0xe6d4b1, 0.95);
     shelf.fillRoundedRect(x - width / 2 + 13, y - height / 2 + 16, width - 26, height - 32, 12);
 
-    const colours = [0xc77f8e, 0x6f91b3, 0xc2a35e, 0x829b76, 0x9279a9, 0xd59a68] as const;
+    const normalColours = [0xc77f8e, 0x6f91b3, 0xc2a35e, 0x829b76, 0x9279a9, 0xd59a68] as const;
+    const wildColours = [0xff5fa2, 0x7d5cff, 0x00b8a9, 0xff9f1c, 0xe85dff, 0x34c759, 0xff4d4d] as const;
+    const colours = variant === 2 ? wildColours : normalColours;
+
     for (let row = 0; row < 3; row += 1) {
       const shelfY = y - 63 + row * 61;
       shelf.fillStyle(0x48677a, 1);
       shelf.fillRoundedRect(x - width / 2 + 18, shelfY + 26, width - 36, 9, 4);
-      for (let book = 0; book < 7; book += 1) {
-        const bookWidth = 15 + ((book + row) % 3) * 3;
-        const bookHeight = 30 + ((book * 5 + row * 7) % 17);
-        const bookX = x - width / 2 + 31 + book * 25;
-        shelf.fillStyle(colours[(book + row * 2) % colours.length] ?? 0x9279a9, 1);
-        shelf.fillRoundedRect(bookX, shelfY + 23 - bookHeight, bookWidth, bookHeight, 3);
-        shelf.fillStyle(0xffffff, 0.2);
-        shelf.fillRect(bookX + 3, shelfY + 26 - bookHeight, 3, Math.max(8, bookHeight - 7));
+
+      const bookCount = 6 + ((variant + row) % 3);
+      const startX = x - width / 2 + 26 + ((variant * 11 + row * 7) % 16);
+      let cursorX = startX;
+
+      for (let book = 0; book < bookCount; book += 1) {
+        const bookWidth = 13 + ((book * 2 + row + variant) % 4) * 3;
+        const bookHeight = 27 + ((book * 7 + row * 5 + variant * 9) % 23);
+        const lean = ((book + row + variant) % 4 === 0 ? 4 : 0);
+        const colourIndex = (book * 2 + row * 3 + variant) % colours.length;
+        shelf.fillStyle(colours[colourIndex] ?? 0x9279a9, 1);
+        shelf.fillRoundedRect(cursorX, shelfY + 23 - bookHeight + lean, bookWidth, bookHeight, 3);
+        shelf.fillStyle(0xffffff, variant === 2 ? 0.28 : 0.2);
+        shelf.fillRect(cursorX + 3, shelfY + 26 - bookHeight + lean, 3, Math.max(8, bookHeight - 7));
+        cursorX += bookWidth + 5 + ((book + variant) % 3);
       }
     }
     shelf.setDepth(worldDepthForY(y + height / 2, 0.18));
@@ -1034,23 +1045,6 @@ export class VillageInteriorScene extends Phaser.Scene {
     chair.fillRoundedRect(x - 75, y - 5, 26, 62, 12);
     chair.fillRoundedRect(x + 49, y - 5, 26, 62, 12);
     chair.setDepth(worldDepthForY(y + 62, 0.2));
-  }
-
-  private createStoryLamp(x: number, y: number): void {
-    const glow = this.add
-      .circle(x, y - 45, 92, 0xffe5a2, 0.12)
-      .setName('village-interior:library:reading-lamp-glow')
-      .setDepth(4.3);
-    const lamp = this.add.graphics().setName('village-interior:library:reading-lamp');
-    lamp.fillStyle(0x78606f, 1);
-    lamp.fillRoundedRect(x - 7, y - 5, 14, 112, 6);
-    lamp.fillEllipse(x, y + 107, 62, 20);
-    lamp.fillStyle(0xf4d78a, 1);
-    lamp.lineStyle(4, 0xa48354, 0.75);
-    lamp.fillTriangle(x - 48, y - 25, x + 48, y - 25, x + 30, y - 79);
-    lamp.strokeTriangle(x - 48, y - 25, x + 48, y - 25, x + 30, y - 79);
-    lamp.setDepth(worldDepthForY(y + 112, 0.22));
-    glow.setData('library-light', true);
   }
 
   private createThreadSet(): void {
