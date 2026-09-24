@@ -63,9 +63,7 @@ export function filterStoryCatalogue(
 }
 
 export function storyDiscoveryBadges(story: StoryCatalogueEntry): readonly string[] {
-  return [
-    story.discovery.format,
-    story.discovery.genres[0],
-    story.discovery.length,
-  ].filter((value, index, values): value is string => Boolean(value) && values.indexOf(value) === index);
+  return [story.discovery.format, story.discovery.genres[0], story.discovery.length].filter(
+    (value, index, values): value is string => Boolean(value) && values.indexOf(value) === index,
+  );
 }

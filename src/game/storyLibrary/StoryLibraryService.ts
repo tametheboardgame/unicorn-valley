@@ -169,7 +169,9 @@ function parseRightsSummary(value: unknown): StoryCatalogueEntry['rightsSummary'
   return {
     text: parseRightsStatus(rights.text, 'text'),
     illustrations:
-      rights.illustrations === null ? null : parseRightsStatus(rights.illustrations, 'illustration'),
+      rights.illustrations === null
+        ? null
+        : parseRightsStatus(rights.illustrations, 'illustration'),
     edition: rights.edition === null ? null : parseRightsStatus(rights.edition, 'edition'),
     originalPublicationYear,
   };

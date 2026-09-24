@@ -560,8 +560,6 @@ canvas {
   outline: 4px solid #d9aa58;
   outline-offset: 3px;
 }
-
-
 .story-library-controls {
   display: grid;
   gap: 12px;
