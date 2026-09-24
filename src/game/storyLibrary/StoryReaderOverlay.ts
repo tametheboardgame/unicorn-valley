@@ -120,7 +120,6 @@ export class StoryReaderOverlay {
   private readonly library = new StoryLibraryService();
   private root: HTMLDivElement | null = null;
   private manifest: StoryLibraryManifest | null = null;
-  private chapterIndex = 0;
   private requestVersion = 0;
   private fontSize = DEFAULT_FONT_SIZE;
   private lineHeight = DEFAULT_LINE_HEIGHT;
@@ -281,7 +280,6 @@ export class StoryReaderOverlay {
       const manifest = await this.library.loadManifest(storyId);
       if (!this.root || request !== this.requestVersion) return;
       this.manifest = manifest;
-      this.chapterIndex = 0;
       await this.showChapter(0);
     } catch {
       if (!this.root || request !== this.requestVersion) return;
@@ -306,7 +304,6 @@ export class StoryReaderOverlay {
     try {
       const content = await this.library.loadChapter(manifest.id, chapter.id);
       if (!this.root || request !== this.requestVersion) return;
-      this.chapterIndex = index;
       this.renderReader(manifest, content, index);
     } catch {
       if (!this.root || request !== this.requestVersion) return;

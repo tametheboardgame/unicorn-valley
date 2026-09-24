@@ -69,6 +69,7 @@ interface InteriorPresentationDefinition {
 }
 
 interface StoryReaderHandle {
+  mount(): void;
   destroy(): void;
 }
 
