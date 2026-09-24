@@ -6,10 +6,19 @@ import type {
   StoryContentBlock,
   StoryLibraryManifest,
   StoryReadingMode,
+  StoryRightsMetadata,
+  StoryRightsReference,
+  StoryRightsStatus,
 } from './StoryLibraryTypes';
 
 const STORY_ID = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const BLOCK_MARKER = /<!--\s*block:([a-z0-9]+(?:-[a-z0-9]+)*)\s*-->/g;
+const RIGHTS_STATUSES = new Set<StoryRightsStatus>([
+  'original',
+  'public-domain',
+  'licensed',
+  'unknown',
+]);
 
 interface StoryLibraryResponse {
   readonly ok: boolean;
@@ -80,6 +89,92 @@ function requirePositiveInteger(value: unknown, label: string): number {
   return value;
 }
 
+function parseDiscovery(value: unknown): StoryCatalogueEntry['discovery'] {
+  if (!value || typeof value !== 'object') {
+    throw new Error('Story Library expected discovery metadata.');
+  }
+  const discovery = value as Record<string, unknown>;
+  return {
+    format: requireString(discovery.format, 'story format'),
+    genres: requireStringArray(discovery.genres, 'story genres'),
+    audiences: requireStringArray(discovery.audiences, 'story audiences'),
+    length: requireString(discovery.length, 'story length'),
+  };
+}
+
+function parseRightsStatus(value: unknown, label: string): StoryRightsStatus {
+  if (typeof value !== 'string' || !RIGHTS_STATUSES.has(value as StoryRightsStatus)) {
+    throw new Error(`Story Library has an invalid ${label} rights status.`);
+  }
+  return value as StoryRightsStatus;
+}
+
+function parseRightsReference(value: unknown, label: string): StoryRightsReference {
+  if (!value || typeof value !== 'object') {
+    throw new Error(`Story Library expected ${label} rights metadata.`);
+  }
+  const source = value as Record<string, unknown>;
+  return {
+    status: parseRightsStatus(source.status, label),
+    source: requireString(source.source, `${label} rights source`),
+    ...(typeof source.sourceUrl === 'string' ? { sourceUrl: source.sourceUrl } : {}),
+    ...(typeof source.rightsHolder === 'string' ? { rightsHolder: source.rightsHolder } : {}),
+    ...(typeof source.notes === 'string' ? { notes: source.notes } : {}),
+  };
+}
+
+function parseRights(value: unknown): StoryRightsMetadata {
+  if (!value || typeof value !== 'object') {
+    throw new Error('Story Library expected rights/provenance metadata.');
+  }
+  const rights = value as Record<string, unknown>;
+  const originalPublicationYear = rights.originalPublicationYear;
+  if (
+    originalPublicationYear !== undefined &&
+    originalPublicationYear !== null &&
+    (typeof originalPublicationYear !== 'number' ||
+      !Number.isInteger(originalPublicationYear) ||
+      originalPublicationYear < 0 ||
+      originalPublicationYear > 9999)
+  ) {
+    throw new Error('Story Library has an invalid original publication year.');
+  }
+  return {
+    text: parseRightsReference(rights.text, 'text'),
+    illustrations:
+      rights.illustrations === undefined || rights.illustrations === null
+        ? null
+        : parseRightsReference(rights.illustrations, 'illustration'),
+    edition:
+      rights.edition === undefined || rights.edition === null
+        ? null
+        : parseRightsReference(rights.edition, 'edition'),
+    originalPublicationYear: originalPublicationYear ?? null,
+    ...(typeof rights.curatorNotes === 'string' ? { curatorNotes: rights.curatorNotes } : {}),
+  };
+}
+
+function parseRightsSummary(value: unknown): StoryCatalogueEntry['rightsSummary'] {
+  if (!value || typeof value !== 'object') {
+    throw new Error('Story Library expected rights summary metadata.');
+  }
+  const rights = value as Record<string, unknown>;
+  const originalPublicationYear = rights.originalPublicationYear;
+  if (
+    originalPublicationYear !== null &&
+    (typeof originalPublicationYear !== 'number' || !Number.isInteger(originalPublicationYear))
+  ) {
+    throw new Error('Story Library catalogue has an invalid original publication year.');
+  }
+  return {
+    text: parseRightsStatus(rights.text, 'text'),
+    illustrations:
+      rights.illustrations === null ? null : parseRightsStatus(rights.illustrations, 'illustration'),
+    edition: rights.edition === null ? null : parseRightsStatus(rights.edition, 'edition'),
+    originalPublicationYear,
+  };
+}
+
 function parseReadingMode(value: unknown): StoryReadingMode {
   if (value === undefined || value === 'flowing') return 'flowing';
   if (value === 'paged-picture-book') return 'paged-picture-book';
@@ -126,6 +221,8 @@ function parseCatalogue(value: unknown): StoryCatalogue {
       coverAlt: entry.coverAlt === null ? null : requireString(entry.coverAlt, 'cover alt text'),
       series: parseSeries(entry.series),
       tags: requireStringArray(entry.tags, 'story tags'),
+      discovery: parseDiscovery(entry.discovery),
+      rightsSummary: parseRightsSummary(entry.rightsSummary),
       chapterCount,
       manifestPath: requireString(entry.manifestPath, 'manifest path'),
     };
@@ -205,6 +302,8 @@ function parseManifest(value: unknown): StoryLibraryManifest {
     cover,
     series: parseSeries(source.series),
     tags: requireStringArray(source.tags, 'story tags'),
+    discovery: parseDiscovery(source.discovery),
+    rights: parseRights(source.rights),
     publication: {
       status: String(publication.status) as StoryLibraryManifest['publication']['status'],
     },

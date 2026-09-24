@@ -17,6 +17,24 @@
         "health",
         "illustrated"
       ],
+      "discovery": {
+        "format": "Picture Book",
+        "genres": [
+          "Animals",
+          "Food & Health"
+        ],
+        "audiences": [
+          "Read Together",
+          "Early Reader"
+        ],
+        "length": "Quick Read"
+      },
+      "rightsSummary": {
+        "text": "original",
+        "illustrations": "unknown",
+        "edition": "unknown",
+        "originalPublicationYear": null
+      },
       "chapterCount": 41,
       "manifestPath": "/stories/the-duck-bread-baker/book.json"
     }

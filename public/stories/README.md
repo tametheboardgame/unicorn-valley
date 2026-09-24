@@ -27,3 +27,18 @@ Illustration metadata uses a stable `blockId`, an `inline` or `full-width` place
 Set `readingMode` to `paged-picture-book` when the authored work is page-led rather than continuous prose. Each manifest chapter then represents one reader page and must contain exactly one stable content block plus exactly one illustration. The reader labels these entries as pages, loads only the selected page's Markdown/artwork, and preserves the normal stable chapter/block save contract. Flowing books continue to use the existing long-form reader unchanged.
 
 `The Duck Bread Baker` is the reference implementation: its PDF story pages 2-42 map to 41 demand-loaded reader pages, each with the matching extracted illustration and source text.
+
+
+## Discovery and rights metadata
+
+Every story manifest now carries metadata used by the scalable Story House browser:
+
+- `discovery.format`: a player-readable format such as `Picture Book`, `Short Story` or `Novel`.
+- `discovery.genres`: one or more player-readable categories. New values are content metadata; they do not require reader code.
+- `discovery.audiences`: reading-style labels such as `Read Together`, `Early Reader` or `Independent Reader`.
+- `discovery.length`: a player-readable length band such as `Quick Read` or `Longer Read`.
+- free-form `tags` remain available for secondary search terms.
+
+The catalogue generator copies only lightweight discovery fields and a compact rights-status summary into `catalogue.json`. Full provenance remains in `book.json`.
+
+Rights/provenance uses separate `text`, optional `illustrations` and optional `edition` records. Each has a status of `original`, `public-domain`, `licensed` or `unknown`, plus a source and optional source URL, rights holder and notes. This separation is deliberate: an old public-domain text can still be paired with a modern copyrighted translation, edition or illustration set.

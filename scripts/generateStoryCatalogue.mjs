@@ -7,6 +7,7 @@ const OUTPUT = path.join(STORIES_ROOT, 'catalogue.json');
 const CHECK_ONLY = process.argv.includes('--check');
 const STORY_ID = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const BLOCK_MARKER = /<!--\s*block:([a-z0-9]+(?:-[a-z0-9]+)*)\s*-->/g;
+const RIGHTS_STATUSES = new Set(['original', 'public-domain', 'licensed', 'unknown']);
 
 function toPosix(value) {
   return value.split(path.sep).join('/');
@@ -22,6 +23,62 @@ function assertStringArray(value, label) {
   if (!Array.isArray(value) || value.some((item) => typeof item !== 'string')) {
     throw new Error(`Story catalogue rejected ${label}: expected an array of strings.`);
   }
+}
+
+function assertOptionalString(value, label) {
+  if (value !== undefined && value !== null) {
+    assertString(value, label);
+  }
+}
+
+function assertDiscovery(value, label) {
+  if (!value || typeof value !== 'object') {
+    throw new Error(`Story catalogue rejected ${label}: expected discovery metadata.`);
+  }
+  assertString(value.format, `${label} format`);
+  assertStringArray(value.genres, `${label} genres`);
+  assertStringArray(value.audiences, `${label} audiences`);
+  assertString(value.length, `${label} length`);
+}
+
+function assertRightsReference(value, label) {
+  if (!value || typeof value !== 'object') {
+    throw new Error(`Story catalogue rejected ${label}: expected rights metadata.`);
+  }
+  if (!RIGHTS_STATUSES.has(value.status)) {
+    throw new Error(
+      `Story catalogue rejected ${label}: status must be original, public-domain, licensed or unknown.`,
+    );
+  }
+  assertString(value.source, `${label} source`);
+  assertOptionalString(value.sourceUrl, `${label} source URL`);
+  assertOptionalString(value.rightsHolder, `${label} rights holder`);
+  assertOptionalString(value.notes, `${label} notes`);
+}
+
+function assertRights(value, label) {
+  if (!value || typeof value !== 'object') {
+    throw new Error(`Story catalogue rejected ${label}: expected rights/provenance metadata.`);
+  }
+  assertRightsReference(value.text, `${label} text rights`);
+  if (value.illustrations !== undefined && value.illustrations !== null) {
+    assertRightsReference(value.illustrations, `${label} illustration rights`);
+  }
+  if (value.edition !== undefined && value.edition !== null) {
+    assertRightsReference(value.edition, `${label} edition rights`);
+  }
+  if (
+    value.originalPublicationYear !== undefined &&
+    value.originalPublicationYear !== null &&
+    (!Number.isInteger(value.originalPublicationYear) ||
+      value.originalPublicationYear < 0 ||
+      value.originalPublicationYear > 9999)
+  ) {
+    throw new Error(
+      `Story catalogue rejected ${label}: originalPublicationYear must be a four-digit-compatible year.`,
+    );
+  }
+  assertOptionalString(value.curatorNotes, `${label} curator notes`);
 }
 
 function assertSafeRelativePath(value, label, extension) {
@@ -201,6 +258,8 @@ async function loadStory(directoryEntry) {
   assertString(manifest.description, `${manifest.id} description`);
   assertString(manifest.author, `${manifest.id} author`);
   assertStringArray(manifest.tags, `${manifest.id} tags`);
+  assertDiscovery(manifest.discovery, `${manifest.id} discovery`);
+  assertRights(manifest.rights, `${manifest.id} rights`);
 
   const readingMode = manifest.readingMode ?? 'flowing';
   if (!['flowing', 'paged-picture-book'].includes(readingMode)) {
@@ -255,6 +314,13 @@ function catalogueEntry(manifest) {
     coverAlt: manifest.cover?.alt ?? null,
     series: manifest.series ?? null,
     tags: manifest.tags,
+    discovery: manifest.discovery,
+    rightsSummary: {
+      text: manifest.rights.text.status,
+      illustrations: manifest.rights.illustrations?.status ?? null,
+      edition: manifest.rights.edition?.status ?? null,
+      originalPublicationYear: manifest.rights.originalPublicationYear ?? null,
+    },
     chapterCount: manifest.chapters.length,
     manifestPath: `/stories/${manifest.id}/book.json`,
   };

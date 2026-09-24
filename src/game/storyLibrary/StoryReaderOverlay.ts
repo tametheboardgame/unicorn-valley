@@ -1,4 +1,10 @@
 import { getBrowserSaveService } from '../save/browserSaveService';
+import {
+  collectStoryDiscoveryOptions,
+  filterStoryCatalogue,
+  storyDiscoveryBadges,
+  type StoryLibraryDiscoveryFilters,
+} from './StoryLibraryDiscovery';
 import { StoryLibraryService } from './StoryLibraryService';
 import { StoryReadingService } from './StoryReadingService';
 import type {
@@ -244,9 +250,89 @@ export class StoryReaderOverlay {
       close.setAttribute('aria-label', 'Close Story House Library');
       header.append(headingWrap, close);
 
+      const controls = document.createElement('section');
+      controls.className = 'story-library-controls';
+      controls.setAttribute('aria-label', 'Find a book');
+
+      const searchWrap = document.createElement('label');
+      searchWrap.className = 'story-library-search';
+      const searchLabel = document.createElement('span');
+      searchLabel.textContent = 'Search';
+      const searchInput = document.createElement('input');
+      searchInput.type = 'search';
+      searchInput.placeholder = 'Title, author, series or category…';
+      searchInput.autocomplete = 'off';
+      searchInput.setAttribute('aria-label', 'Search Story House books');
+      searchWrap.append(searchLabel, searchInput);
+
+      const filterWrap = document.createElement('div');
+      filterWrap.className = 'story-library-filters';
+      const options = collectStoryDiscoveryOptions(stories);
+      const filters: StoryLibraryDiscoveryFilters = {
+        query: '',
+        format: null,
+        genre: null,
+        audience: null,
+        length: null,
+      };
+
+      const selects: HTMLSelectElement[] = [];
+      const addFilter = (
+        label: string,
+        key: 'format' | 'genre' | 'audience' | 'length',
+        values: readonly string[],
+      ): void => {
+        if (values.length === 0) return;
+        const control = document.createElement('label');
+        control.className = 'story-library-filter';
+        const caption = document.createElement('span');
+        caption.textContent = label;
+        const select = document.createElement('select');
+        select.setAttribute('aria-label', `Filter books by ${label.toLowerCase()}`);
+        const all = document.createElement('option');
+        all.value = '';
+        all.textContent = `All ${label.toLowerCase()}`;
+        select.append(all);
+        for (const value of values) {
+          const option = document.createElement('option');
+          option.value = value;
+          option.textContent = value;
+          select.append(option);
+        }
+        select.addEventListener('change', () => {
+          filters[key] = select.value || null;
+          renderShelf();
+        });
+        control.append(caption, select);
+        selects.push(select);
+        filterWrap.append(control);
+      };
+
+      addFilter('Formats', 'format', options.formats);
+      addFilter('Genres', 'genre', options.genres);
+      addFilter('Reading', 'audience', options.audiences);
+      addFilter('Lengths', 'length', options.lengths);
+
+      const clearFilters = button('Clear', 'story-library-clear', () => {
+        filters.query = '';
+        filters.format = null;
+        filters.genre = null;
+        filters.audience = null;
+        filters.length = null;
+        searchInput.value = '';
+        for (const select of selects) select.value = '';
+        renderShelf();
+        searchInput.focus();
+      });
+      filterWrap.append(clearFilters);
+      controls.append(searchWrap, filterWrap);
+
       const shelf = document.createElement('main');
       shelf.className = 'story-library-shelf';
       shelf.setAttribute('aria-label', 'Story collection');
+
+      const footer = document.createElement('footer');
+      footer.className = 'story-library-footer';
 
       const progressEntries = stories
         .map((story) => ({ story, progress: this.reading.getProgress(story.id) }))
@@ -256,96 +342,124 @@ export class StoryReaderOverlay {
         .sort((left, right) =>
           String(right.progress?.lastReadAt).localeCompare(String(left.progress?.lastReadAt)),
         )[0];
-      if (mostRecent?.progress) {
-        const continueButton = document.createElement('button');
-        continueButton.type = 'button';
-        continueButton.className = 'story-library-continue';
-        continueButton.addEventListener('click', () => {
-          void this.openStory(mostRecent.story.id);
-        });
-        const continueLabel = document.createElement('strong');
-        continueLabel.textContent = 'Continue Reading';
-        const continueBook = document.createElement('span');
-        continueBook.textContent = `${mostRecent.story.title} · ${Math.round(mostRecent.progress.percentComplete)}%`;
-        continueButton.append(continueLabel, continueBook);
-        shelf.append(continueButton);
-      }
 
-      for (const story of stories) {
-        const card = document.createElement('button');
-        card.type = 'button';
-        card.className = 'story-library-book';
-        card.dataset.storyId = story.id;
-        card.addEventListener('click', () => {
-          void this.openStory(story.id);
-        });
+      const renderShelf = (): void => {
+        const visibleStories = filterStoryCatalogue(stories, filters);
+        shelf.replaceChildren();
 
-        const cover = document.createElement('span');
-        cover.className = 'story-library-cover';
-        if (story.coverPath) {
-          const image = document.createElement('img');
-          image.src = story.coverPath;
-          image.alt = story.coverAlt ?? '';
-          image.loading = 'lazy';
-          cover.append(image);
-        } else {
-          const sparkle = document.createElement('span');
-          sparkle.className = 'story-library-cover-sparkle';
-          sparkle.textContent = '✦';
-          const bookIcon = document.createElement('span');
-          bookIcon.className = 'story-library-cover-icon';
-          bookIcon.textContent = '📖';
-          cover.append(sparkle, bookIcon);
+        const hasActiveFilters =
+          filters.query.trim().length > 0 ||
+          filters.format !== null ||
+          filters.genre !== null ||
+          filters.audience !== null ||
+          filters.length !== null;
+        clearFilters.disabled = !hasActiveFilters;
+
+        if (!hasActiveFilters && mostRecent?.progress) {
+          const continueButton = document.createElement('button');
+          continueButton.type = 'button';
+          continueButton.className = 'story-library-continue';
+          continueButton.addEventListener('click', () => {
+            void this.openStory(mostRecent.story.id);
+          });
+          const continueLabel = document.createElement('strong');
+          continueLabel.textContent = 'Continue Reading';
+          const continueBook = document.createElement('span');
+          continueBook.textContent = `${mostRecent.story.title} · ${Math.round(mostRecent.progress.percentComplete)}%`;
+          continueButton.append(continueLabel, continueBook);
+          shelf.append(continueButton);
         }
 
-        const copy = document.createElement('span');
-        copy.className = 'story-library-book-copy';
-        const title = document.createElement('strong');
-        title.textContent = story.title;
-        const author = document.createElement('span');
-        author.className = 'story-library-author';
-        author.textContent = `by ${story.author}`;
-        const description = document.createElement('span');
-        description.className = 'story-library-description';
-        description.textContent = story.description;
-        const meta = document.createElement('span');
-        meta.className = 'story-library-meta';
-        const progress = this.reading.getProgress(story.id);
-        if (progress?.completed) {
-          card.classList.add('is-completed');
-          meta.textContent = 'Completed ✓ · Read again';
-        } else if (progress) {
-          card.classList.add('is-in-progress');
-          meta.textContent = `${Math.round(progress.percentComplete)}% · Continue reading`;
-        } else {
-          meta.textContent =
-            story.readingMode === 'paged-picture-book'
-              ? `${story.chapterCount} pages · Read`
-              : `${story.chapterCount} chapter${story.chapterCount === 1 ? '' : 's'} · Read`;
+        for (const story of visibleStories) {
+          const card = document.createElement('button');
+          card.type = 'button';
+          card.className = 'story-library-book';
+          card.dataset.storyId = story.id;
+          card.addEventListener('click', () => {
+            void this.openStory(story.id);
+          });
+
+          const cover = document.createElement('span');
+          cover.className = 'story-library-cover';
+          if (story.coverPath) {
+            const image = document.createElement('img');
+            image.src = story.coverPath;
+            image.alt = story.coverAlt ?? '';
+            image.loading = 'lazy';
+            cover.append(image);
+          } else {
+            const sparkle = document.createElement('span');
+            sparkle.className = 'story-library-cover-sparkle';
+            sparkle.textContent = '✦';
+            const bookIcon = document.createElement('span');
+            bookIcon.className = 'story-library-cover-icon';
+            bookIcon.textContent = '📖';
+            cover.append(sparkle, bookIcon);
+          }
+
+          const copy = document.createElement('span');
+          copy.className = 'story-library-book-copy';
+          const title = document.createElement('strong');
+          title.textContent = story.title;
+          const author = document.createElement('span');
+          author.className = 'story-library-author';
+          author.textContent = `by ${story.author}`;
+
+          const badges = document.createElement('span');
+          badges.className = 'story-library-badges';
+          for (const label of storyDiscoveryBadges(story)) {
+            const badge = document.createElement('span');
+            badge.textContent = label;
+            badges.append(badge);
+          }
+
+          const description = document.createElement('span');
+          description.className = 'story-library-description';
+          description.textContent = story.description;
+          const meta = document.createElement('span');
+          meta.className = 'story-library-meta';
+          const progress = this.reading.getProgress(story.id);
+          if (progress?.completed) {
+            card.classList.add('is-completed');
+            meta.textContent = 'Completed ✓ · Read again';
+          } else if (progress) {
+            card.classList.add('is-in-progress');
+            meta.textContent = `${Math.round(progress.percentComplete)}% · Continue reading`;
+          } else {
+            meta.textContent =
+              story.readingMode === 'paged-picture-book'
+                ? `${story.chapterCount} pages · Read`
+                : `${story.chapterCount} chapter${story.chapterCount === 1 ? '' : 's'} · Read`;
+          }
+          copy.append(title, author, badges, description, meta);
+
+          card.append(cover, copy);
+          shelf.append(card);
         }
-        copy.append(title, author, description, meta);
 
-        card.append(cover, copy);
-        shelf.append(card);
-      }
+        if (visibleStories.length === 0) {
+          const empty = document.createElement('div');
+          empty.className = 'story-library-empty';
+          const emptyTitle = document.createElement('strong');
+          emptyTitle.textContent = 'No books on that shelf yet';
+          const emptyCopy = document.createElement('span');
+          emptyCopy.textContent = 'Try another search or clear a filter.';
+          empty.append(emptyTitle, emptyCopy);
+          shelf.append(empty);
+        }
 
-      if (stories.length === 0) {
-        const empty = document.createElement('p');
-        empty.className = 'story-library-empty';
-        empty.textContent = 'Quill has cleared a shelf for the first book.';
-        shelf.append(empty);
-      }
+        const startedCount = progressEntries.length;
+        const completedCount = progressEntries.filter(({ progress }) => progress?.completed).length;
+        footer.textContent = `${visibleStories.length} shown · ${startedCount} started · ${completedCount} completed · ${stories.length} in the library`;
+      };
 
-      const footer = document.createElement('footer');
-      footer.className = 'story-library-footer';
-      const startedCount = progressEntries.length;
-      const completedCount = progressEntries.filter(({ progress }) => progress?.completed).length;
-      footer.textContent =
-        startedCount === 0
-          ? 'No books started yet · choose one from the shelf'
-          : `${startedCount} started · ${completedCount} completed · ${stories.length} in the library`;
+      searchInput.addEventListener('input', () => {
+        filters.query = searchInput.value;
+        renderShelf();
+      });
 
-      shell.append(header, shelf, footer);
+      shell.append(header, controls, shelf, footer);
+      renderShelf();
       this.root.replaceChildren(shell);
       close.focus({ preventScroll: true });
     } catch {

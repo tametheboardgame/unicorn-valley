@@ -10,7 +10,13 @@
     "alt": "The Duck Bread Baker cover, showing a yellow duck surrounded by loaves of bread."
   },
   "series": null,
-  "tags": ["picture-book", "animals", "food", "health", "illustrated"],
+  "tags": [
+    "picture-book",
+    "animals",
+    "food",
+    "health",
+    "illustrated"
+  ],
   "publication": {
     "status": "published"
   },
@@ -671,5 +677,35 @@
         }
       ]
     }
-  ]
+  ],
+  "discovery": {
+    "format": "Picture Book",
+    "genres": [
+      "Animals",
+      "Food & Health"
+    ],
+    "audiences": [
+      "Read Together",
+      "Early Reader"
+    ],
+    "length": "Quick Read"
+  },
+  "rights": {
+    "text": {
+      "status": "original",
+      "source": "Author-supplied production PDF",
+      "rightsHolder": "David Fairbairn"
+    },
+    "illustrations": {
+      "status": "unknown",
+      "source": "Author-supplied production PDF",
+      "notes": "Confirm illustration rights/provenance before reuse outside the supplied edition."
+    },
+    "edition": {
+      "status": "unknown",
+      "source": "Author-supplied production cover and content PDFs"
+    },
+    "originalPublicationYear": null,
+    "curatorNotes": "Imported from the author's supplied production PDFs for Unicorn Valley."
+  }
 }

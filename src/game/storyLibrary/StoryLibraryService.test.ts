@@ -32,6 +32,18 @@ function libraryFetch(): StoryLibraryFetch {
             coverAlt: null,
             series: null,
             tags: ['story-house', 'sample'],
+            discovery: {
+              format: 'Short Story',
+              genres: ['Fantasy'],
+              audiences: ['Read Together'],
+              length: 'Quick Read',
+            },
+            rightsSummary: {
+              text: 'original',
+              illustrations: 'original',
+              edition: 'original',
+              originalPublicationYear: null,
+            },
             chapterCount: 1,
             manifestPath: '/stories/story-house-sampler/book.json',
           },
@@ -50,6 +62,27 @@ function libraryFetch(): StoryLibraryFetch {
         cover: null,
         series: null,
         tags: ['story-house', 'sample'],
+        discovery: {
+          format: 'Short Story',
+          genres: ['Fantasy'],
+          audiences: ['Read Together'],
+          length: 'Quick Read',
+        },
+        rights: {
+          text: {
+            status: 'original',
+            source: 'Unicorn Valley development content',
+          },
+          illustrations: {
+            status: 'original',
+            source: 'Unicorn Valley development content',
+          },
+          edition: {
+            status: 'original',
+            source: 'Unicorn Valley development content',
+          },
+          originalPublicationYear: null,
+        },
         publication: { status: 'published' },
         chapters: [
           {
@@ -93,10 +126,19 @@ describe('Story Library service', () => {
     const stories = await service.listStories();
     expect(stories.map(({ id }) => id)).toEqual(['story-house-sampler']);
     expect(stories[0]?.readingMode).toBe('flowing');
+    expect(stories[0]?.discovery).toEqual({
+      format: 'Short Story',
+      genres: ['Fantasy'],
+      audiences: ['Read Together'],
+      length: 'Quick Read',
+    });
+    expect(stories[0]?.rightsSummary.text).toBe('original');
     expect(requested).toEqual(['/stories/catalogue.json']);
 
     const manifest = await service.loadManifest('story-house-sampler');
     expect(manifest.readingMode).toBe('flowing');
+    expect(manifest.discovery.format).toBe('Short Story');
+    expect(manifest.rights.text.status).toBe('original');
     expect(manifest.chapters[0]?.id).toBe('chapter-01');
     expect(manifest.chapters[0]?.illustrations?.[0]).toMatchObject({
       id: 'shelf-picture',

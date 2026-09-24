@@ -6,7 +6,10 @@
   "author": "Quill",
   "cover": null,
   "series": null,
-  "tags": ["story-house", "short"],
+  "tags": [
+    "story-house",
+    "short"
+  ],
   "publication": {
     "status": "hidden"
   },
@@ -16,5 +19,27 @@
       "title": "The First Shelf",
       "path": "chapters/01.md"
     }
-  ]
+  ],
+  "discovery": {
+    "format": "Short Story",
+    "genres": [
+      "Fantasy"
+    ],
+    "audiences": [
+      "Read Together"
+    ],
+    "length": "Quick Read"
+  },
+  "rights": {
+    "text": {
+      "status": "original",
+      "source": "Unicorn Valley development content"
+    },
+    "illustrations": null,
+    "edition": {
+      "status": "original",
+      "source": "Unicorn Valley development content"
+    },
+    "originalPublicationYear": null
+  }
 }

@@ -1,6 +1,7 @@
 export type StoryPublicationStatus = 'draft' | 'published' | 'hidden';
 export type StoryReadingMode = 'flowing' | 'paged-picture-book';
 export type StoryIllustrationPlacement = 'inline' | 'full-width';
+export type StoryRightsStatus = 'original' | 'public-domain' | 'licensed' | 'unknown';
 
 export interface StoryAssetReference {
   path: string;
@@ -29,6 +30,36 @@ export interface StoryChapterManifest {
   illustrations?: readonly StoryIllustrationReference[];
 }
 
+export interface StoryDiscoveryMetadata {
+  format: string;
+  genres: readonly string[];
+  audiences: readonly string[];
+  length: string;
+}
+
+export interface StoryRightsReference {
+  status: StoryRightsStatus;
+  source: string;
+  sourceUrl?: string;
+  rightsHolder?: string;
+  notes?: string;
+}
+
+export interface StoryRightsMetadata {
+  text: StoryRightsReference;
+  illustrations?: StoryRightsReference | null;
+  edition?: StoryRightsReference | null;
+  originalPublicationYear?: number | null;
+  curatorNotes?: string;
+}
+
+export interface StoryRightsSummary {
+  text: StoryRightsStatus;
+  illustrations: StoryRightsStatus | null;
+  edition: StoryRightsStatus | null;
+  originalPublicationYear: number | null;
+}
+
 export interface StoryLibraryManifest {
   schemaVersion: 1;
   id: string;
@@ -39,6 +70,8 @@ export interface StoryLibraryManifest {
   cover?: StoryAssetReference | null;
   series?: StorySeriesReference | null;
   tags: readonly string[];
+  discovery: StoryDiscoveryMetadata;
+  rights: StoryRightsMetadata;
   publication: {
     status: StoryPublicationStatus;
   };
@@ -55,6 +88,8 @@ export interface StoryCatalogueEntry {
   coverAlt: string | null;
   series: StorySeriesReference | null;
   tags: readonly string[];
+  discovery: StoryDiscoveryMetadata;
+  rightsSummary: StoryRightsSummary;
   chapterCount: number;
   manifestPath: string;
 }

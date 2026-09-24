@@ -41,3 +41,6 @@ Sunbeam Village remains a review lens, not a technical boundary. Shared defects 
 
 
 **H3.11.4F scope expansion (24 September 2026):** add scalable library discovery and curation support: metadata-driven categories, format/genre/audience/length/series/author dimensions, title/author search, filterable/grouped shelves, source/rights provenance for original/public-domain/licensed works, and Quill recommendations driven by the same taxonomy.
+
+
+**H3.11.4F active (24 September 2026):** checkpoint 1 adds the scalable Story House discovery foundation: structured discovery/provenance metadata plus catalogue search, metadata-derived filters and book-card badges. Quill recommendation logic and wider real-content onboarding remain later bounded 4F checkpoints.
