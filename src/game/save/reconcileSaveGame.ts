@@ -96,10 +96,7 @@ export function reconcileSaveGame(save: SaveGame): SaveGame {
           {
             ...progress,
             blockProgress: Math.max(0, Math.min(1, progress.blockProgress)),
-            chapterPercentComplete: Math.max(
-              0,
-              Math.min(100, progress.chapterPercentComplete),
-            ),
+            chapterPercentComplete: Math.max(0, Math.min(100, progress.chapterPercentComplete)),
             percentComplete: progress.completed
               ? 100
               : Math.max(0, Math.min(99.9, progress.percentComplete)),

@@ -128,14 +128,12 @@ export class StoryReaderOverlay {
   private lineHeight = DEFAULT_LINE_HEIGHT;
   private closed = false;
   private progressTimer: number | null = null;
-  private currentChapter:
-    | {
-        manifest: StoryLibraryManifest;
-        chapter: StoryChapterContent;
-        index: number;
-        scroller: HTMLElement;
-      }
-    | null = null;
+  private currentChapter: {
+    manifest: StoryLibraryManifest;
+    chapter: StoryChapterContent;
+    index: number;
+    scroller: HTMLElement;
+  } | null = null;
 
   public constructor(private readonly options: StoryReaderOverlayOptions) {
     const preferences = this.reading.getPreferences();
@@ -512,7 +510,6 @@ export class StoryReaderOverlay {
     shell.style.setProperty('--story-reader-line-height', String(this.lineHeight));
   }
 
-
   private readonly scheduleProgressSave = (): void => {
     this.clearProgressTimer();
     this.progressTimer = globalThis.setTimeout(() => {
@@ -556,7 +553,9 @@ export class StoryReaderOverlay {
     const selected = blocks[selectedIndex];
     const blockRect = selected.getBoundingClientRect();
     const blockProgress =
-      blockRect.height > 0 ? Math.max(0, Math.min(1, (readingLine - blockRect.top) / blockRect.height)) : 0;
+      blockRect.height > 0
+        ? Math.max(0, Math.min(1, (readingLine - blockRect.top) / blockRect.height))
+        : 0;
     const chapterFraction = Math.max(
       0,
       Math.min(1, (selectedIndex + blockProgress) / blocks.length),
@@ -575,9 +574,7 @@ export class StoryReaderOverlay {
     });
   }
 
-  private restoreReadingPosition(
-    progress: ReturnType<StoryReadingService['getProgress']>,
-  ): void {
+  private restoreReadingPosition(progress: ReturnType<StoryReadingService['getProgress']>): void {
     const current = this.currentChapter;
     if (!current || !progress || progress.completed) {
       current?.scroller.scrollTo({ top: 0 });

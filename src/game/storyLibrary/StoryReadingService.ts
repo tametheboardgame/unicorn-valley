@@ -1,8 +1,5 @@
 import type { SaveService } from '../save/SaveService';
-import type {
-  ReaderPreferencesState,
-  StoryReadingProgress,
-} from '../save/saveSchema';
+import type { ReaderPreferencesState, StoryReadingProgress } from '../save/saveSchema';
 
 export type StoryReadingStatus = 'not-started' | 'in-progress' | 'completed';
 
@@ -32,9 +29,7 @@ export class StoryReadingService {
 
   public getPreferences(): ReaderPreferencesState {
     const save = this.saveService.load();
-    return save
-      ? { ...save.storyReading.preferences }
-      : { ...DEFAULT_PREFERENCES };
+    return save ? { ...save.storyReading.preferences } : { ...DEFAULT_PREFERENCES };
   }
 
   public getProgress(storyId: string): StoryReadingProgress | null {
