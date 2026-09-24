@@ -112,10 +112,7 @@ export class BakeryService {
   ) {}
 
   public listStock(): readonly BakeryStockView[] {
-    const save = this.ensureDailyStock(
-      this.saveService.load() ?? this.saveService.createNewGame(),
-      false,
-    );
+    const save = this.ensureDailyStock(this.saveService.load() ?? this.saveService.createNewGame());
     const shop = save.shops.byShopId[BAKERY_SHOP_ID];
     return R6_BAKERY_STOCK.map((stock) => {
       const ownedQuantity = save.inventory.itemQuantities[stock.itemId] ?? 0;
@@ -149,7 +146,10 @@ export class BakeryService {
   public purchase(itemId: ItemId): BakeryPurchaseResult {
     const stock = requireStock(itemId);
     const item = itemRegistry.get(itemId);
-    const save = this.ensureDailyStock(this.saveService.load() ?? this.saveService.createNewGame());
+    const save = this.ensureDailyStock(
+      this.saveService.load() ?? this.saveService.createNewGame(),
+      false,
+    );
     const balance = getShimmerBalanceFromSave(save);
     const ownedQuantity = save.inventory.itemQuantities[itemId] ?? 0;
     const unlock = unlockFor(save, stock);
