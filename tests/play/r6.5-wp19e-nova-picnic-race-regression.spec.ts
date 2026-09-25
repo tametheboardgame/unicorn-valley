@@ -24,7 +24,7 @@ interface DiagnosticSnapshot {
 
 interface DiagnosticsApi {
   snapshot(): DiagnosticSnapshot;
-  startScene(sceneKey: string, data?: object): void;
+  startScene(sceneKey: string, data?: object): void | Promise<void>;
   setArcadeSpritePosition(sceneKey: string, objectName: string, x: number, y: number): void;
 }
 
@@ -58,12 +58,12 @@ async function waitForScene(page: Page, sceneKey: string): Promise<void> {
 }
 
 async function startScene(page: Page, sceneKey: string): Promise<void> {
-  await page.evaluate((key) => {
+  await page.evaluate(async (key) => {
     const diagnostics = (
       window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi }
     ).__UNICORN_VALLEY_DIAGNOSTICS__;
     if (!diagnostics) throw new Error('Browser diagnostics are unavailable.');
-    diagnostics.startScene(key);
+    await diagnostics.startScene(key);
   }, sceneKey);
   await waitForScene(page, sceneKey);
 }
@@ -179,9 +179,9 @@ test('Marigold and Nova dialogue keep accepted sizing and Meet Nova works when N
   await markMapleCakeComplete(page);
   await startScene(page, 'SunbeamVillageScene');
   await positionPlayer(page, 'SunbeamVillageScene', MARIGOLD_APPROACH.x, MARIGOLD_APPROACH.y);
-  // The prompt contract is already covered above and by H3.9. After restarting this scene,
-  // exercise the interaction itself rather than depending on a transient diagnostic snapshot.
-  await page.waitForTimeout(150);
+  // Awaiting diagnostic scene startup above means the restarted interaction owner is now ready
+  // before the player is repositioned. Exercise the actual interaction rather than a duplicate
+  // prompt-text assertion, which is already covered above and by H3.9.
   await page.keyboard.press('KeyE');
   await waitForVisibleObject(page, 'SunbeamVillageScene', 'dialogue-production-panel');
   await page.keyboard.press('KeyE');
