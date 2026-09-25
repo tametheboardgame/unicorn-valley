@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { PICNIC_READY_FLAG } from '../../content/r4PicnicEvent';
 import { getBrowserAtmosphericTimeService } from '../atmosphere/AtmosphericTimeService';
 import { getWorldConversationPresenter } from '../dialogue/WorldConversationPresenter';
 import { getWorldFeedbackPresenter } from '../ui/WorldFeedbackPresenter';
@@ -7,6 +8,7 @@ import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegi
 import { RefreshThrottle } from '../performance/RefreshThrottle';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
+import { isMarigoldPicnicReady } from '../story/MarigoldPicnicStory';
 import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
 import { worldDepthForY } from '../world/WorldDepth';
 import {
@@ -165,9 +167,13 @@ export class AmbientPopulationWorldManager {
   }
 
   private getContext(): AmbientPopulationContext {
+    const save = this.saveService.load();
+    const worldFlags = { ...(save?.world.flags ?? {}) };
+    worldFlags[PICNIC_READY_FLAG] = isMarigoldPicnicReady(save);
+
     return {
       timeState: this.timeService.getState(),
-      worldFlags: this.saveService.load()?.world.flags ?? {},
+      worldFlags,
     };
   }
 
