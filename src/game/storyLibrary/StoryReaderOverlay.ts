@@ -627,9 +627,9 @@ export class StoryReaderOverlay {
                 ? `${story.chapterCount} pages · Read`
                 : `${story.chapterCount} chapter${story.chapterCount === 1 ? '' : 's'} · Read`;
           }
-          copy.append(title, author, badges, description, meta);
+          copy.append(title, author, badges, description);
 
-          card.append(cover, copy);
+          card.append(cover, copy, meta);
           shelf.append(card);
         }
 

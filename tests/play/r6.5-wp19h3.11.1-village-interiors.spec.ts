@@ -174,6 +174,7 @@ test('H3.11.1 makes VillageInteriorScene a walkable semantic interior with physi
 test('H3.11.4 gives Story House a dedicated storykeeper and physical reading room', async ({
   page,
 }) => {
+  await page.setViewportSize({ width: 1600, height: 900 });
   await page.goto('/?diagnostics=1');
   await startInterior(page, 'library');
 
@@ -229,7 +230,7 @@ test('H3.11.4 gives Story House a dedicated storykeeper and physical reading roo
       metaBottom: metaRect.bottom,
     };
   });
-  expect(lanternLayout.metaBottom).toBeLessThanOrEqual(lanternLayout.cardBottom);
+  expect(lanternLayout.metaBottom).toBeLessThanOrEqual(lanternLayout.cardBottom - 10);
 
   const searchToggle = page.getByRole('button', { name: 'Search' });
   const filterToggle = page.getByRole('button', { name: 'Filters' });
