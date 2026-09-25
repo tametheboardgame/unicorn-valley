@@ -159,9 +159,8 @@ test('Marigold and Nova dialogue keep accepted sizing and Meet Nova works when N
   let village = await sceneSnapshot(page, 'SunbeamVillageScene');
   const ordinaryLinePanelY = visiblePanelY(village);
   expect(
-    village.objects.find(
-      (object) => object.name === 'dialogue-production-body' && object.visible,
-    )?.text,
+    village.objects.find((object) => object.name === 'dialogue-production-body' && object.visible)
+      ?.text,
   ).toContain('Wobbly Cake');
   expect(
     village.objects.filter(

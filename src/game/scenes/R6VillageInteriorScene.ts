@@ -1976,12 +1976,7 @@ export class VillageInteriorScene extends Phaser.Scene {
   }
 
   private openStoryLibrary(
-    initialFilters: {
-      format?: string;
-      genre?: string;
-      audience?: string;
-      length?: string;
-    } = {},
+    initialFilters: { format?: string; genre?: string; audience?: string; length?: string } = {},
   ): void {
     if (this.storyReader || this.storyReaderLockActive) {
       return;

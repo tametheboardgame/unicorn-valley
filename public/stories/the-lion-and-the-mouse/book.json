@@ -7,22 +7,11 @@
   "readingMode": "flowing",
   "cover": null,
   "series": null,
-  "tags": [
-    "classic-retelling",
-    "animals",
-    "kindness",
-    "friendship"
-  ],
+  "tags": ["classic-retelling", "animals", "kindness", "friendship"],
   "discovery": {
     "format": "Short Story",
-    "genres": [
-      "Animals",
-      "Classics"
-    ],
-    "audiences": [
-      "Read Together",
-      "Early Reader"
-    ],
+    "genres": ["Animals", "Classics"],
+    "audiences": ["Read Together", "Early Reader"],
     "length": "Quick Read"
   },
   "rights": {
