@@ -89,6 +89,7 @@ async function markMapleCakeComplete(page: Page): Promise<void> {
       throw new Error('Expected a current save before seeding Maple cake completion.');
     }
     const save = JSON.parse(raw) as {
+      schemaVersion: number;
       quests: { byQuestId: Record<string, unknown> };
     };
     save.quests.byQuestId['quest:maple-wobbly-cake-plan'] = {
@@ -96,7 +97,9 @@ async function markMapleCakeComplete(page: Page): Promise<void> {
       currentStepId: null,
       completedAt: '2026-09-25T08:00:00.000Z',
     };
-    window.localStorage.setItem(key, JSON.stringify(save));
+    const serialisedSave = JSON.stringify(save);
+    window.localStorage.setItem(key, serialisedSave);
+    window.localStorage.setItem(`${key}.schema.${save.schemaVersion}`, serialisedSave);
   });
 }
 
