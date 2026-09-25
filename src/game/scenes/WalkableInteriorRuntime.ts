@@ -1,6 +1,10 @@
 import Phaser from 'phaser';
 import { InputController } from '../input/InputController';
 import { KeyboardInputAdapter } from '../input/KeyboardInputAdapter';
+import {
+  isInteractionActivationSuppressed,
+  isInteractionModalActive,
+} from '../interaction/InteractionModalState';
 import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 import { shouldShowTouchMovementPad, TouchMovementPad } from '../input/TouchMovementPad';
 import { PlayerEntity } from '../player/PlayerEntity';
@@ -101,7 +105,20 @@ export class WalkableInteriorRuntime {
     }
 
     this.inputController.update();
-    if (this.inputController.justPressed('BACK')) {
+
+    if (isInteractionModalActive(this.scene)) {
+      this.player.applyMovement(
+        resolvePlayerMovement(0, 0, DEFAULT_PLAYER_SPEED, this.player.getFacing()),
+      );
+      this.player.updatePresentation(time);
+      this.updatePlayerDepth();
+      return;
+    }
+
+    if (
+      this.inputController.justPressed('BACK') &&
+      !isInteractionActivationSuppressed()
+    ) {
       this.options.onBack();
       return;
     }

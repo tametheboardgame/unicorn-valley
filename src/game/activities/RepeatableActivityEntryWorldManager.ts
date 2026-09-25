@@ -77,7 +77,7 @@ export class RepeatableActivityEntryWorldManager {
       .rectangle(1010, 548, 250, 58, UI_COLOURS.mint, 1)
       .setStrokeStyle(3, 0x6aa996, 1)
       .setScrollFactor(0)
-      .setDepth(32)
+      .setDepth(120)
       .setInteractive({ useHandCursor: true })
       .setName('wp14-activity-entry:maple-baking');
     const label = scene.add
@@ -89,7 +89,7 @@ export class RepeatableActivityEntryWorldManager {
       })
       .setOrigin(0.5)
       .setScrollFactor(0)
-      .setDepth(33)
+      .setDepth(121)
       .setInteractive({ useHandCursor: true });
     applyButtonHover(button, UI_COLOURS.mint, UI_COLOURS.blush);
     const launch = () => void this.launchMapleBaking(scene);

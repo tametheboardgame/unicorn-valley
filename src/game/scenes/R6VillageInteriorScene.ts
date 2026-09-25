@@ -167,6 +167,7 @@ export class VillageInteriorScene extends Phaser.Scene {
     this.runtime.create();
     this.renderInteriorOccupant();
     this.registerInteractions();
+    this.input.keyboard?.on('keydown-ESC', this.handleEscape, this);
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.shutdownInterior());
   }
@@ -2453,6 +2454,12 @@ export class VillageInteriorScene extends Phaser.Scene {
     getWorldFeedbackPresenter(this).showReaction(message, anchor, 3600);
   }
 
+  private handleEscape(): void {
+    if (this.overlay) {
+      this.closeOverlay();
+    }
+  }
+
   private leaveInterior(): void {
     if (this.closing) {
       return;
@@ -2464,6 +2471,7 @@ export class VillageInteriorScene extends Phaser.Scene {
   }
 
   private shutdownInterior(): void {
+    this.input.keyboard?.off('keydown-ESC', this.handleEscape, this);
     this.closeStoryLibrary();
     this.closeOverlay();
     getSceneInteractionRegistry(this).clearOwner(INTERIOR_INTERACTION_OWNER);

@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
 const PLAYER_NAME = 'world-player-unicorn';
-const MARIGOLD_APPROACH = { x: 820, y: 860 } as const;
+const MARIGOLD_APPROACH = { x: 1080, y: 920 } as const;
 const RACE_ENTRANCE_APPROACH = { x: 2970, y: 1040 } as const;
 
 interface DiagnosticObject {
