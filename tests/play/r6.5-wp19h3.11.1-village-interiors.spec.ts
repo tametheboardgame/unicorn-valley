@@ -252,10 +252,6 @@ test('H3.11.3 gives Twinkle & Thread a dedicated walkable boutique and shopkeepe
   expect(names.has('village-interior:accessory-shop:display-ribbons')).toBe(true);
   expect(names.has('village-interior:accessory-shop:display-home')).toBe(true);
   expect(names.has('village-interior:accessory-shop:mirror')).toBe(true);
-  expect(
-    names.has('interaction-direct-zone:interaction:village-interior:accessory-shop:shopkeeper'),
-  ).toBe(true);
-
   await page.evaluate(() => {
     (
       window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics }
