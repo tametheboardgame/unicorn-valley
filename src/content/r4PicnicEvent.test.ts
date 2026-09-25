@@ -2,10 +2,12 @@ import { describe, expect, it } from 'vitest';
 import { DialogueSession } from '../game/dialogue/DialogueSession';
 import { applyDialogueEffects } from '../game/dialogue/applyDialogueEffects';
 import { type GameEventMap, TypedEventBus } from '../game/events/GameEventBus';
+import { InventoryService } from '../game/inventory/InventoryService';
 import { QuestEngine } from '../game/quests/QuestEngine';
 import type { SaveRepository } from '../game/save/SaveRepository';
 import { SaveService } from '../game/save/SaveService';
 import { getPicnicTheme, isMarigoldPicnicReady } from '../game/story/MarigoldPicnicStory';
+import { MAPLE_CAKE_QUEST_ID, MAPLE_CHARACTER_ID, WOBBLY_CAKE_ITEM_ID } from './r6VillageContent';
 import { PLACEHOLDER_CONTENT } from './placeholderContent';
 import {
   MARIGOLD_CHARACTER_ID,
@@ -104,10 +106,18 @@ describe("Marigold's Picnic Event content", () => {
     expect(questEngine.getProgress(MARIGOLD_PICNIC_QUEST_ID).status).toBe('completed');
     expect(completed?.world.flags[PICNIC_READY_FLAG]).toBe(true);
     expect(getPicnicTheme(completed)).toBe('rainbow');
-    expect(isMarigoldPicnicReady(completed)).toBe(true);
+    expect(isMarigoldPicnicReady(completed)).toBe(false);
     expect(completed?.relationships.byCharacterId[MARIGOLD_CHARACTER_ID]?.friendshipPoints).toBe(
       15,
     );
+
+    questEngine.startQuest(MAPLE_CAKE_QUEST_ID);
+    questEngine.notifyCharacterTalked(MAPLE_CHARACTER_ID);
+    new InventoryService(saveService, events).addItem(WOBBLY_CAKE_ITEM_ID, 1);
+    questEngine.notifyCharacterTalked(MAPLE_CHARACTER_ID);
+
+    expect(questEngine.getProgress(MAPLE_CAKE_QUEST_ID).status).toBe('completed');
+    expect(isMarigoldPicnicReady(saveService.load())).toBe(true);
 
     questEngine.destroy();
   });
