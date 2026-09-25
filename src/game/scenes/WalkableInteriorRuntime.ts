@@ -115,10 +115,7 @@ export class WalkableInteriorRuntime {
       return;
     }
 
-    if (
-      this.inputController.justPressed('BACK') &&
-      !isInteractionActivationSuppressed()
-    ) {
+    if (this.inputController.justPressed('BACK') && !isInteractionActivationSuppressed()) {
       this.options.onBack();
       return;
     }
