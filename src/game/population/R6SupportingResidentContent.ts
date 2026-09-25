@@ -1,3 +1,4 @@
+import { PICNIC_READY_FLAG } from '../../content/r4PicnicEvent';
 import {
   MAPLE_CAKE_QUEST_ID,
   MAPLE_CHARACTER_ID,
@@ -485,6 +486,7 @@ export const R6_AMBIENT_RESIDENT_PLACEMENTS = [
     speedPxPerSecond: 74,
     interactionRadius: 136,
     priority: 60,
+    activeWhen: { worldFlags: [{ id: PICNIC_READY_FLAG, value: false }] },
     waypoints: [
       {
         id: 'maple-village-a',
