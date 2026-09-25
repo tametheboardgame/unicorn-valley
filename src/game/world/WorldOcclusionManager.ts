@@ -270,10 +270,7 @@ export class WorldOcclusionManager {
 
   private applyVillageDepths(scene: Phaser.Scene): void {
     for (const object of scene.children.list) {
-      if (
-        isPositionedDepthObject(object) &&
-        object.name === PLAYER_MOVEMENT_DETAIL_NAME
-      ) {
+      if (isPositionedDepthObject(object) && object.name === PLAYER_MOVEMENT_DETAIL_NAME) {
         object.setDepth(worldDepthForY(object.y, 0.15));
       }
     }
