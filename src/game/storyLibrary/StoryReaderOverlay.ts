@@ -318,7 +318,7 @@ export class StoryReaderOverlay {
       const controlToggles = document.createElement('div');
       controlToggles.className = 'story-library-control-toggles';
       const searchToggle = button('🔎 Search', 'story-library-control-toggle', () => {
-        const expanded = searchWrap.hidden;
+        const expanded = searchWrap.hidden !== false;
         searchWrap.hidden = !expanded;
         searchToggle.setAttribute('aria-expanded', String(expanded));
         searchToggle.classList.toggle('is-active', expanded);
@@ -330,7 +330,7 @@ export class StoryReaderOverlay {
       searchToggle.setAttribute('aria-expanded', 'false');
 
       const filterToggle = button('☷ Filters', 'story-library-control-toggle', () => {
-        const expanded = filterWrap.hidden;
+        const expanded = filterWrap.hidden !== false;
         filterWrap.hidden = !expanded;
         filterToggle.setAttribute('aria-expanded', String(expanded));
         filterToggle.classList.toggle('is-active', expanded);
