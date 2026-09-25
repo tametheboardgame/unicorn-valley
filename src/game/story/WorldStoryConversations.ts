@@ -16,6 +16,7 @@ import { PEBBLE_CHARACTER_ID, PEBBLE_COLLECTION_QUEST_ID } from '../../content/r
 import { SINGING_SHELL_ITEM_ID } from '../../content/r5CrystalBrook';
 import { RIPPLE_BROOK_QUEST_ID, RIPPLE_CHARACTER_ID } from '../../content/r5CrystalBrookStory';
 import { LUMI_CHARACTER_ID, LUMI_INTRO_RELATIONSHIP_FLAG } from '../../content/r5LumiWoodsStory';
+import { MAPLE_CAKE_QUEST_ID } from '../../content/r6VillageContent';
 import { dialogueVariantSetRegistry } from '../../content/registries';
 import { selectDialogueVariantSet } from '../dialogue/DialogueConditions';
 import { getWorldConversationPresenter } from '../dialogue/WorldConversationPresenter';
@@ -96,6 +97,12 @@ export function startMarigoldConversation(scene: Phaser.Scene): void {
   const relationships = new RelationshipService(save);
   relationships.markMet(MARIGOLD_CHARACTER_ID);
   const quests = getBrowserQuestEngine();
+  const mapleCakeProgress = quests.getProgress(MAPLE_CAKE_QUEST_ID);
+  if (mapleCakeProgress.status !== 'completed') {
+    start(scene, { dialogueId: 'dialogue:marigold-picnic-waiting-for-cake' });
+    return;
+  }
+
   let progress = quests.getProgress(MARIGOLD_PICNIC_QUEST_ID);
   if (progress.status === 'not-started') progress = quests.startQuest(MARIGOLD_PICNIC_QUEST_ID);
   const incomplete = progress.status !== 'completed';
