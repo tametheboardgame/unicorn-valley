@@ -180,10 +180,12 @@ test('Marigold and Nova dialogue keep accepted sizing and Meet Nova works when N
   await page.keyboard.press('KeyE');
   await waitForHiddenObject(page, 'SunbeamVillageScene', 'dialogue-production-panel');
   await markMapleCakeComplete(page);
-  await startScene(page, 'SunbeamVillageScene');
+  // Reload through BootScene so the saved quest state is consumed by a genuine fresh village boot.
+  // This matches player behaviour and avoids the diagnostics-only same-scene restart lifecycle.
+  await page.goto('/?scene=village&diagnostics=1');
+  await waitForDiagnostics(page);
+  await waitForScene(page, 'SunbeamVillageScene');
   await positionPlayer(page, 'SunbeamVillageScene', MARIGOLD_APPROACH.x, MARIGOLD_APPROACH.y);
-  // Wait until the restarted scene has actually presented Marigold's canonical Talk action,
-  // then use the same interaction key as normal play.
   await waitForVisibleObject(page, 'SunbeamVillageScene', 'exploration-interaction-prompt');
   await page.keyboard.press('KeyE');
   await waitForVisibleObject(page, 'SunbeamVillageScene', 'dialogue-production-panel');
