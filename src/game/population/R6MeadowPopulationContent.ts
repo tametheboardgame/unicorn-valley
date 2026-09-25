@@ -3,6 +3,7 @@ import {
   BREEZE_WINDMILL_COMPLETE_FLAG,
   MEADOW_FLOWER_CIRCLE_REVEALED_FLAG,
 } from '../../content/r6MeadowRunContent';
+import { PICNIC_READY_FLAG } from '../../content/r4PicnicEvent';
 import type {
   ResidentPlacementDefinition,
   ResidentTalkVariant,
@@ -34,6 +35,7 @@ export const R6_MEADOW_RESIDENT_PLACEMENTS = [
     speedPxPerSecond: 68,
     interactionRadius: 124,
     priority: 18,
+    activeWhen: { worldFlags: [{ id: PICNIC_READY_FLAG, value: true }] },
     waypoints: [
       { id: 'maple-picnic-a', x: 1430, y: 1320, pauseMs: 2600 },
       { id: 'maple-picnic-b', x: 1510, y: 1380, pauseMs: 3200 },
@@ -118,7 +120,7 @@ export const R6_MEADOW_RESIDENT_TALK_VARIANTS: Partial<
     {
       id: 'resident-talk:maple:meadow-picnic',
       priority: 10,
-      activeWhen: {},
+      activeWhen: { worldFlags: [{ id: PICNIC_READY_FLAG, value: true }] },
       lines: [
         'Picnic Hill has the perfect slope: enough view, not enough slope for buns to escape.',
         'I am testing whether snacks taste more colourful in Rainbow Meadow.',
