@@ -485,10 +485,10 @@ canvas {
 .story-library-header,
 .story-reader-topbar {
   display: flex;
-  gap: 18px;
+  gap: 16px;
   align-items: center;
   justify-content: space-between;
-  padding: 22px 26px;
+  padding: 12px 22px;
   border-bottom: 2px solid #cbdde4;
   background: linear-gradient(90deg, rgb(219 239 248 / 94%), rgb(239 224 242 / 92%)), #e9f3f6;
 }
@@ -506,17 +506,17 @@ canvas {
 .story-library-header h1 {
   margin: 0;
   color: #49677a;
-  font-size: clamp(28px, 4vw, 42px);
+  font-size: clamp(27px, 3.5vw, 36px);
   line-height: 1;
 }
 
 .story-library-intro {
   max-width: 720px;
-  margin: 8px 0 0;
+  margin: 4px 0 0;
   color: #6f6472;
-  font-size: clamp(14px, 1.8vw, 18px);
+  font-size: clamp(13px, 1.55vw, 16px);
   font-weight: 700;
-  line-height: 1.35;
+  line-height: 1.25;
 }
 
 .story-reader-close,
@@ -536,8 +536,8 @@ canvas {
 
 .story-reader-close,
 .story-reader-back {
-  min-height: 46px;
-  padding: 8px 16px;
+  min-height: 40px;
+  padding: 6px 14px;
   white-space: nowrap;
 }
 
@@ -769,13 +769,19 @@ canvas {
 .story-library-book-copy {
   display: flex;
   min-width: 0;
+  min-height: 0;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .story-library-book-copy strong {
+  display: -webkit-box;
+  overflow: hidden;
   color: #526f81;
   font-size: 22px;
   line-height: 1.08;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .story-library-author {
@@ -786,19 +792,28 @@ canvas {
 }
 
 .story-library-description {
-  margin-top: 14px;
+  display: -webkit-box;
+  margin-top: 12px;
+  overflow: hidden;
   color: #695f6b;
   font-size: 15px;
   font-weight: 700;
   line-height: 1.38;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
 }
 
 .story-library-meta {
+  flex: 0 0 auto;
+  min-width: 0;
   margin-top: auto;
-  padding-top: 13px;
+  padding-top: 10px;
+  overflow: hidden;
   color: #728e9e;
   font-size: 13px;
   font-weight: 900;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .story-library-empty {
@@ -839,7 +854,7 @@ canvas {
 }
 
 .story-reader-topbar {
-  padding-block: 13px;
+  padding: 8px 18px;
 }
 
 .story-reader-title-wrap {
@@ -993,8 +1008,13 @@ canvas {
 }
 
 .story-reader-chapter-button {
+  width: min(100%, 180px);
   min-height: 44px;
   padding: 8px 12px;
+}
+
+.story-reader-chapter-button:first-child {
+  justify-self: start;
 }
 
 .story-reader-chapter-button:last-child {
@@ -1046,7 +1066,7 @@ canvas {
   }
 
   .story-library-header {
-    padding: 14px 15px;
+    padding: 10px 13px;
   }
 
   .story-library-header h1 {
@@ -1083,7 +1103,7 @@ canvas {
   }
 
   .story-reader-topbar {
-    padding: max(8px, env(safe-area-inset-top)) 8px 8px;
+    padding: max(6px, env(safe-area-inset-top)) 7px 6px;
   }
 
   .story-reader-title-wrap strong {
@@ -1092,8 +1112,8 @@ canvas {
 
   .story-reader-close,
   .story-reader-back {
-    min-height: 42px;
-    padding: 6px 10px;
+    min-height: 38px;
+    padding: 5px 9px;
     font-size: 13px;
   }
 
@@ -1134,11 +1154,13 @@ canvas {
   .story-reader-chapter-button:first-child {
     grid-column: 1;
     grid-row: 2;
+    width: 100%;
   }
 
   .story-reader-chapter-button:last-child {
     grid-column: 2;
     grid-row: 2;
+    width: 100%;
   }
 }
 
