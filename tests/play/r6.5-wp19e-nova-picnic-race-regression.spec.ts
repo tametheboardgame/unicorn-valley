@@ -121,17 +121,20 @@ async function waitForHiddenObject(page: Page, sceneKey: string, name: string): 
     .toBe(false);
 }
 
-async function waitForTalkTarget(page: Page, sceneKey: string, label: string): Promise<void> {
+async function waitForTalkTarget(page: Page, sceneKey: string, _label: string): Promise<void> {
   await expect
     .poll(async () => {
       const scene = await sceneSnapshot(page, sceneKey);
-      const hasTalkAction = scene.objects.some(
-        (object) => object.visible && object.text === 'Talk',
+      const promptVisible = scene.objects.some(
+        (object) => object.name === 'exploration-interaction-prompt' && object.visible,
       );
-      const hasTargetLabel = scene.objects.some(
-        (object) => object.visible && object.text === label,
+      const promptLabelVisible = scene.objects.some(
+        (object) => object.name === 'exploration-interaction-prompt-label' && object.visible,
       );
-      return hasTalkAction && hasTargetLabel;
+      const targetHintVisible = scene.objects.some(
+        (object) => object.name === 'exploration-tablet-hint-panel' && object.visible,
+      );
+      return promptVisible && promptLabelVisible && targetHintVisible;
     })
     .toBe(true);
 }
