@@ -479,7 +479,7 @@ canvas {
 .story-library-shell {
   display: grid;
   max-height: min(820px, calc(100dvh - 28px));
-  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  grid-template-rows: auto auto auto auto minmax(0, 1fr) auto;
 }
 
 .story-library-header,
@@ -1283,5 +1283,184 @@ canvas {
 
   .story-library-clear {
     grid-column: auto;
+  }
+}
+
+
+/* H3.11.4F scalable Story House discovery and return UX */
+.story-library-shelf-tabs {
+  display: flex;
+  gap: 8px;
+  padding: 10px 18px;
+  overflow-x: auto;
+  border-bottom: 2px solid #d8e3e5;
+  background: #f4eadb;
+  scrollbar-width: thin;
+}
+
+.story-library-shelf-tab {
+  flex: 0 0 auto;
+  min-height: 38px;
+  padding: 7px 12px;
+  border: 2px solid #bdcfd7;
+  border-radius: 999px;
+  background: #fffaf0;
+  color: #6d6573;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.story-library-shelf-tab:hover,
+.story-library-shelf-tab.is-active {
+  border-color: #7f9fb0;
+  background: #e7f2f5;
+  color: #506f81;
+}
+
+.story-library-shelf-tab:focus-visible,
+.story-library-valley-card:focus-visible {
+  outline: 4px solid #d9aa58;
+  outline-offset: 3px;
+}
+
+.story-library-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-bottom: 2px solid #d8e3e5;
+  background: #fffaf0;
+}
+
+.story-library-stats > span {
+  display: grid;
+  gap: 1px;
+  padding: 8px 12px;
+  border-right: 1px solid #d8e3e5;
+  text-align: center;
+}
+
+.story-library-stats > span:last-child {
+  border-right: 0;
+}
+
+.story-library-stats strong {
+  color: #526f81;
+  font-size: 16px;
+}
+
+.story-library-stats small {
+  color: #8b7888;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.story-library-valley-cards {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: 12px;
+  padding: 16px;
+  border: 3px solid #c5b7d8;
+  border-radius: 22px;
+  background: linear-gradient(125deg, #f5effd, #fff9e9);
+  box-shadow: 0 8px 18px rgb(68 56 82 / 10%);
+}
+
+.story-library-valley-heading h2 {
+  margin: 0;
+  color: #66577e;
+  font-size: 20px;
+}
+
+.story-library-valley-heading p {
+  margin: 4px 0 0;
+  color: #776d7c;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.story-library-valley-card-list {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 2px 2px 6px;
+}
+
+.story-library-valley-card {
+  display: grid;
+  min-width: 178px;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 9px;
+  align-items: center;
+  padding: 10px 12px;
+  border: 2px solid #c5b7d8;
+  border-radius: 15px;
+  background: #fffdf8;
+  color: #665b70;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.story-library-valley-card > span:first-child {
+  font-size: 25px;
+}
+
+.story-library-valley-card > span:last-child {
+  display: grid;
+  gap: 2px;
+}
+
+.story-library-valley-card strong {
+  font-size: 13px;
+  line-height: 1.15;
+}
+
+.story-library-valley-card small {
+  color: #8b7888;
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.story-library-valley-card.is-read {
+  border-color: #9db8a9;
+  background: #fbfff8;
+}
+
+.story-library-valley-detail {
+  min-height: 58px;
+  padding: 11px 13px;
+  border-radius: 14px;
+  background: rgb(255 255 255 / 70%);
+  color: #655a69;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.story-library-valley-detail strong {
+  display: block;
+  margin-bottom: 4px;
+  color: #5e5570;
+  font-size: 14px;
+}
+
+.story-library-valley-detail p {
+  margin: 0;
+}
+
+@media (max-width: 700px) {
+  .story-library-shelf-tabs {
+    padding-inline: 10px;
+  }
+
+  .story-library-stats strong {
+    font-size: 14px;
+  }
+
+  .story-library-valley-cards {
+    padding: 12px;
   }
 }

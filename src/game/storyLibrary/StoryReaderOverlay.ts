@@ -1,3 +1,4 @@
+import { StoryHouseService } from '../discovery/StoryHouseService';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import {
   collectStoryDiscoveryOptions,
@@ -5,6 +6,12 @@ import {
   storyDiscoveryBadges,
   type StoryLibraryDiscoveryFilters,
 } from './StoryLibraryDiscovery';
+import {
+  buildStoryLibraryShelves,
+  calculateStoryLibraryStats,
+  storiesForLibraryShelf,
+  type StoryLibraryShelfId,
+} from './StoryLibraryExperience';
 import { StoryLibraryService } from './StoryLibraryService';
 import { StoryReadingService } from './StoryReadingService';
 import type {
@@ -16,6 +23,10 @@ import type {
 
 export interface StoryReaderOverlayOptions {
   onClose: () => void;
+  initialFilters?: Partial<
+    Pick<StoryLibraryDiscoveryFilters, 'format' | 'genre' | 'audience' | 'length'>
+  >;
+  initialShelf?: StoryLibraryShelfId;
 }
 
 const MIN_FONT_SIZE = 16;
@@ -155,6 +166,7 @@ function chapterLabel(manifest: StoryLibraryManifest, index: number): string {
 export class StoryReaderOverlay {
   private readonly library = new StoryLibraryService();
   private readonly reading = new StoryReadingService(getBrowserSaveService());
+  private readonly storyHouse = new StoryHouseService(getBrowserSaveService());
   private root: HTMLDivElement | null = null;
   private manifest: StoryLibraryManifest | null = null;
   private requestVersion = 0;
@@ -268,13 +280,27 @@ export class StoryReaderOverlay {
       const filterWrap = document.createElement('div');
       filterWrap.className = 'story-library-filters';
       const options = collectStoryDiscoveryOptions(stories);
+      const initialFilters = this.options.initialFilters ?? {};
       const filters: StoryLibraryDiscoveryFilters = {
         query: '',
-        format: null,
-        genre: null,
-        audience: null,
-        length: null,
+        format:
+          initialFilters.format && options.formats.includes(initialFilters.format)
+            ? initialFilters.format
+            : null,
+        genre:
+          initialFilters.genre && options.genres.includes(initialFilters.genre)
+            ? initialFilters.genre
+            : null,
+        audience:
+          initialFilters.audience && options.audiences.includes(initialFilters.audience)
+            ? initialFilters.audience
+            : null,
+        length:
+          initialFilters.length && options.lengths.includes(initialFilters.length)
+            ? initialFilters.length
+            : null,
       };
+      let activeShelf: StoryLibraryShelfId = this.options.initialShelf ?? 'all';
 
       const selects: HTMLSelectElement[] = [];
       const addFilter = (
@@ -299,6 +325,7 @@ export class StoryReaderOverlay {
           option.textContent = value;
           select.append(option);
         }
+        select.value = filters[key] ?? '';
         select.addEventListener('change', () => {
           filters[key] = select.value || null;
           renderShelf();
@@ -319,6 +346,7 @@ export class StoryReaderOverlay {
         filters.genre = null;
         filters.audience = null;
         filters.length = null;
+        activeShelf = 'all';
         searchInput.value = '';
         for (const select of selects) select.value = '';
         renderShelf();
@@ -331,11 +359,57 @@ export class StoryReaderOverlay {
       shelf.className = 'story-library-shelf';
       shelf.setAttribute('aria-label', 'Story collection');
 
+      const progressByStoryId = new Map(
+        stories.flatMap((story) => {
+          const progress = this.reading.getProgress(story.id);
+          return progress ? [[story.id, progress] as const] : [];
+        }),
+      );
+      const shelfDefinitions = buildStoryLibraryShelves(stories, progressByStoryId);
+      if (!shelfDefinitions.some(({ id }) => id === activeShelf)) {
+        activeShelf = 'all';
+      }
+      const stats = calculateStoryLibraryStats(stories, progressByStoryId);
+
+      const shelfTabs = document.createElement('nav');
+      shelfTabs.className = 'story-library-shelf-tabs';
+      shelfTabs.setAttribute('aria-label', 'Story House shelves');
+      const shelfButtons = new Map<StoryLibraryShelfId, HTMLButtonElement>();
+      for (const shelfDefinition of shelfDefinitions) {
+        const shelfButton = document.createElement('button');
+        shelfButton.type = 'button';
+        shelfButton.className = 'story-library-shelf-tab';
+        shelfButton.textContent = `${shelfDefinition.label} (${shelfDefinition.count})`;
+        shelfButton.addEventListener('click', () => {
+          activeShelf = shelfDefinition.id;
+          renderShelf();
+        });
+        shelfButtons.set(shelfDefinition.id, shelfButton);
+        shelfTabs.append(shelfButton);
+      }
+
+      const statsPanel = document.createElement('section');
+      statsPanel.className = 'story-library-stats';
+      statsPanel.setAttribute('aria-label', 'Library reading progress');
+      for (const [label, value] of [
+        ['Started', `${stats.started} / ${stories.length}`],
+        ['Completed', String(stats.completed)],
+        ['Collection', `${stats.catalogueCompletionPercent}%`],
+      ] as const) {
+        const stat = document.createElement('span');
+        const statValue = document.createElement('strong');
+        statValue.textContent = value;
+        const statLabel = document.createElement('small');
+        statLabel.textContent = label;
+        stat.append(statValue, statLabel);
+        statsPanel.append(stat);
+      }
+
       const footer = document.createElement('footer');
       footer.className = 'story-library-footer';
 
       const progressEntries = stories
-        .map((story) => ({ story, progress: this.reading.getProgress(story.id) }))
+        .map((story) => ({ story, progress: progressByStoryId.get(story.id) ?? null }))
         .filter(({ progress }) => progress !== null);
       const mostRecent = [...progressEntries]
         .filter(({ progress }) => !progress?.completed)
@@ -344,16 +418,24 @@ export class StoryReaderOverlay {
         )[0];
 
       const renderShelf = (): void => {
-        const visibleStories = filterStoryCatalogue(stories, filters);
+        const shelfStories = storiesForLibraryShelf(stories, activeShelf, progressByStoryId);
+        const visibleStories = filterStoryCatalogue(shelfStories, filters);
         shelf.replaceChildren();
 
-        const hasActiveFilters =
+        const hasFacetFilters =
           filters.query.trim().length > 0 ||
           filters.format !== null ||
           filters.genre !== null ||
           filters.audience !== null ||
           filters.length !== null;
+        const hasActiveFilters = hasFacetFilters || activeShelf !== 'all';
         clearFilters.disabled = !hasActiveFilters;
+
+        for (const [shelfId, shelfButton] of shelfButtons) {
+          const selected = shelfId === activeShelf;
+          shelfButton.classList.toggle('is-active', selected);
+          shelfButton.setAttribute('aria-current', selected ? 'page' : 'false');
+        }
 
         if (!hasActiveFilters && mostRecent?.progress) {
           const continueButton = document.createElement('button');
@@ -368,6 +450,60 @@ export class StoryReaderOverlay {
           continueBook.textContent = `${mostRecent.story.title} · ${Math.round(mostRecent.progress.percentComplete)}%`;
           continueButton.append(continueLabel, continueBook);
           shelf.append(continueButton);
+        }
+
+        if (!hasActiveFilters) {
+          const valleyCards = this.storyHouse.listCards().filter(({ unlocked }) => unlocked);
+          if (valleyCards.length > 0) {
+            const collection = document.createElement('section');
+            collection.className = 'story-library-valley-cards';
+            const collectionHeading = document.createElement('div');
+            collectionHeading.className = 'story-library-valley-heading';
+            const collectionTitle = document.createElement('h2');
+            collectionTitle.textContent = 'Valley Story Cards';
+            const collectionCopy = document.createElement('p');
+            collectionCopy.textContent =
+              'Small memories gathered from adventures you have already had around the valley.';
+            collectionHeading.append(collectionTitle, collectionCopy);
+
+            const cardList = document.createElement('div');
+            cardList.className = 'story-library-valley-card-list';
+            const cardDetail = document.createElement('div');
+            cardDetail.className = 'story-library-valley-detail';
+            cardDetail.textContent = 'Choose a card to read it here on Quill’s table.';
+
+            for (const storyCard of valleyCards) {
+              const cardButton = document.createElement('button');
+              cardButton.type = 'button';
+              cardButton.className = 'story-library-valley-card';
+              cardButton.classList.toggle('is-read', storyCard.read);
+              const icon = document.createElement('span');
+              icon.textContent = storyCard.icon;
+              const cardCopy = document.createElement('span');
+              const cardTitle = document.createElement('strong');
+              cardTitle.textContent = storyCard.title;
+              const cardState = document.createElement('small');
+              cardState.textContent = storyCard.read ? 'Read again' : 'New story';
+              cardCopy.append(cardTitle, cardState);
+              cardButton.append(icon, cardCopy);
+              cardButton.addEventListener('click', () => {
+                const readCard = this.storyHouse.readCard(storyCard.id);
+                if (!readCard) return;
+                cardButton.classList.add('is-read');
+                cardState.textContent = 'Read again';
+                cardDetail.replaceChildren();
+                const detailTitle = document.createElement('strong');
+                detailTitle.textContent = `${readCard.icon} ${readCard.title}`;
+                const detailCopy = document.createElement('p');
+                detailCopy.textContent = readCard.text;
+                cardDetail.append(detailTitle, detailCopy);
+              });
+              cardList.append(cardButton);
+            }
+
+            collection.append(collectionHeading, cardList, cardDetail);
+            shelf.append(collection);
+          }
         }
 
         for (const story of visibleStories) {
@@ -418,7 +554,7 @@ export class StoryReaderOverlay {
           description.textContent = story.description;
           const meta = document.createElement('span');
           meta.className = 'story-library-meta';
-          const progress = this.reading.getProgress(story.id);
+          const progress = progressByStoryId.get(story.id) ?? null;
           if (progress?.completed) {
             card.classList.add('is-completed');
             meta.textContent = 'Completed ✓ · Read again';
@@ -448,9 +584,7 @@ export class StoryReaderOverlay {
           shelf.append(empty);
         }
 
-        const startedCount = progressEntries.length;
-        const completedCount = progressEntries.filter(({ progress }) => progress?.completed).length;
-        footer.textContent = `${visibleStories.length} shown · ${startedCount} started · ${completedCount} completed · ${stories.length} in the library`;
+        footer.textContent = `${visibleStories.length} shown · ${stats.started} started · ${stats.completed} completed · ${stories.length} in the library`;
       };
 
       searchInput.addEventListener('input', () => {
@@ -458,7 +592,7 @@ export class StoryReaderOverlay {
         renderShelf();
       });
 
-      shell.append(header, controls, shelf, footer);
+      shell.append(header, controls, shelfTabs, statsPanel, shelf, footer);
       renderShelf();
       this.root.replaceChildren(shell);
       close.focus({ preventScroll: true });

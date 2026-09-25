@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "id": "the-lantern-at-the-edge-of-the-woods",
+  "title": "The Lantern at the Edge of the Woods",
+  "description": "A young unicorn follows an unlit lantern into the dusk and discovers why some paths only brighten when they are shared.",
+  "author": "Quill",
+  "readingMode": "flowing",
+  "cover": null,
+  "series": {
+    "id": "quills-valley-tales",
+    "title": "Quill's Valley Tales",
+    "order": 1
+  },
+  "tags": [
+    "valley-tale",
+    "woods",
+    "lanterns",
+    "friendship",
+    "adventure"
+  ],
+  "discovery": {
+    "format": "Chapter Book",
+    "genres": [
+      "Fantasy",
+      "Adventure"
+    ],
+    "audiences": [
+      "Independent Reader",
+      "Read Together"
+    ],
+    "length": "Longer Read"
+  },
+  "rights": {
+    "text": {
+      "status": "original",
+      "source": "Unicorn Valley Story House original"
+    },
+    "illustrations": null,
+    "edition": {
+      "status": "original",
+      "source": "Unicorn Valley Story House edition"
+    },
+    "originalPublicationYear": 2026
+  },
+  "publication": {
+    "status": "published"
+  },
+  "chapters": [
+    {
+      "id": "the-last-lantern",
+      "title": "The Last Lantern",
+      "path": "chapters/01.md"
+    },
+    {
+      "id": "the-path-that-moved",
+      "title": "The Path That Moved",
+      "path": "chapters/02.md"
+    },
+    {
+      "id": "the-quiet-clearing",
+      "title": "The Quiet Clearing",
+      "path": "chapters/03.md"
+    },
+    {
+      "id": "the-light-that-came-home",
+      "title": "The Light That Came Home",
+      "path": "chapters/04.md"
+    }
+  ]
+}

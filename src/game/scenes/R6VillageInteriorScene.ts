@@ -1950,27 +1950,39 @@ export class VillageInteriorScene extends Phaser.Scene {
       'Quill closes a little blue book around a silver bookmark. “Looking for a story or just a quiet corner?”',
       [
         { id: 'library', label: 'Browse the library' },
-        { id: 'story-card', label: 'Read a Valley story card' },
+        { id: 'quick-animal', label: 'Something quick with animals' },
+        { id: 'longer-story', label: 'A longer story' },
         {
           id: 'talk',
           label: 'Talk about something else',
           followUpMessage:
-            'The newest cards go on the round table. I like watching a shelf slowly fill up with adventures that really happened.',
+            'The newest Valley story cards live with the rest of the library now. I like watching the shelves fill up with adventures that really happened.',
         },
       ],
       {
         onChoice: (choiceId) => {
           if (choiceId === 'library') {
             this.time.delayedCall(0, () => this.openStoryLibrary());
-          } else if (choiceId === 'story-card') {
-            this.time.delayedCall(0, () => this.readStoryCard());
+          } else if (choiceId === 'quick-animal') {
+            this.time.delayedCall(0, () =>
+              this.openStoryLibrary({ genre: 'Animals', length: 'Quick Read' }),
+            );
+          } else if (choiceId === 'longer-story') {
+            this.time.delayedCall(0, () => this.openStoryLibrary({ length: 'Longer Read' }));
           }
         },
       },
     );
   }
 
-  private openStoryLibrary(): void {
+  private openStoryLibrary(
+    initialFilters: {
+      format?: string;
+      genre?: string;
+      audience?: string;
+      length?: string;
+    } = {},
+  ): void {
     if (this.storyReader || this.storyReaderLockActive) {
       return;
     }
@@ -1988,6 +2000,7 @@ export class VillageInteriorScene extends Phaser.Scene {
 
         let reader: StoryReaderHandle;
         reader = new StoryReaderOverlay({
+          initialFilters,
           onClose: () => {
             if (this.storyReader === reader) {
               this.storyReader = null;

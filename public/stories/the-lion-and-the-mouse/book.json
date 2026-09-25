@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "id": "the-lion-and-the-mouse",
+  "title": "The Lion and the Mouse",
+  "description": "A tiny promise seems impossible until a trapped lion discovers that help can come in every size.",
+  "author": "Aesop, retold by Quill",
+  "readingMode": "flowing",
+  "cover": null,
+  "series": null,
+  "tags": [
+    "classic-retelling",
+    "animals",
+    "kindness",
+    "friendship"
+  ],
+  "discovery": {
+    "format": "Short Story",
+    "genres": [
+      "Animals",
+      "Classics"
+    ],
+    "audiences": [
+      "Read Together",
+      "Early Reader"
+    ],
+    "length": "Quick Read"
+  },
+  "rights": {
+    "text": {
+      "status": "original",
+      "source": "Original Story House retelling based on Aesop's public-domain fable",
+      "sourceUrl": "https://www.gutenberg.org/ebooks/28",
+      "notes": "The underlying fable is public domain; this wording is an original Unicorn Valley retelling."
+    },
+    "illustrations": null,
+    "edition": {
+      "status": "original",
+      "source": "Unicorn Valley Story House edition"
+    },
+    "originalPublicationYear": null
+  },
+  "publication": {
+    "status": "published"
+  },
+  "chapters": [
+    {
+      "id": "the-promise",
+      "title": "The Promise",
+      "path": "chapters/01.md"
+    }
+  ]
+}
