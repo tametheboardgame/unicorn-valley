@@ -326,7 +326,19 @@ test('H3.11.3 gives Twinkle & Thread a dedicated walkable boutique and shopkeepe
   expect(velvetZone).toBeDefined();
   expect(velvetZone).toMatchObject({ x: 760, y: 540 });
 
-  await page.mouse.click(velvetZone?.x ?? 760, velvetZone?.y ?? 540);
+  // Closing a modal deliberately suppresses world activation briefly so the close
+  // click/key cannot fall through into the scene behind it. This is a new intentional
+  // interaction, so wait past that guard before tapping Velvet again.
+  await page.waitForTimeout(200);
+  const canvasBounds = await page.locator('canvas').boundingBox();
+  if (!canvasBounds) {
+    throw new Error('Game canvas has no browser bounds.');
+  }
+  const currentSnapshot = await snapshot(page);
+  await page.mouse.click(
+    canvasBounds.x + ((velvetZone?.x ?? 760) / 1280) * canvasBounds.width,
+    canvasBounds.y + ((velvetZone?.y ?? 540) / 720) * canvasBounds.height,
+  );
 
   await expect
     .poll(async () => {
