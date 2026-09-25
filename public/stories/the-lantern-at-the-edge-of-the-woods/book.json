@@ -12,23 +12,11 @@
     "title": "Quill's Valley Tales",
     "order": 1
   },
-  "tags": [
-    "valley-tale",
-    "woods",
-    "lanterns",
-    "friendship",
-    "adventure"
-  ],
+  "tags": ["valley-tale", "woods", "lanterns", "friendship", "adventure"],
   "discovery": {
     "format": "Chapter Book",
-    "genres": [
-      "Fantasy",
-      "Adventure"
-    ],
-    "audiences": [
-      "Independent Reader",
-      "Read Together"
-    ],
+    "genres": ["Fantasy", "Adventure"],
+    "audiences": ["Independent Reader", "Read Together"],
     "length": "Longer Read"
   },
   "rights": {
