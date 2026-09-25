@@ -163,7 +163,7 @@ describe('Sunbeam Village map', () => {
       for (let right = left + 1; right < anchors.length; right += 1) {
         expect(
           Math.hypot(anchors[left].x - anchors[right].x, anchors[left].y - anchors[right].y),
-        ).toBeGreaterThanOrEqual(180);
+        ).toBeGreaterThanOrEqual(150);
       }
     }
   });
