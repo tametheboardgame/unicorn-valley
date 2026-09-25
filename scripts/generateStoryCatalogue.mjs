@@ -8,7 +8,7 @@ const CHECK_ONLY = process.argv.includes('--check');
 const STORY_ID = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const BLOCK_MARKER = /<!--\s*block:([a-z0-9]+(?:-[a-z0-9]+)*)\s*-->/g;
 const RIGHTS_STATUSES = new Set(['original', 'public-domain', 'licensed', 'unknown']);
-const CATALOGUE_BLURB_MAX_LENGTH = 140;
+const CATALOGUE_BLURB_MAX_LENGTH = 80;
 
 function toPosix(value) {
   return value.split(path.sep).join('/');
