@@ -102,6 +102,17 @@ describe('Sunbeam Village map', () => {
     );
   });
 
+  it('keeps Marigold clear of the fountain make-a-wish interaction', () => {
+    const marigold = SUNBEAM_VILLAGE_LAYOUT.npcPositions.marigold;
+    const fountain = SUNBEAM_VILLAGE_LAYOUT.fountain;
+    const distance = Math.hypot(
+      marigold.x - fountain.approach.x,
+      marigold.y - fountain.approach.y,
+    );
+
+    expect(distance).toBeGreaterThan(150 + 145);
+  });
+
   it('reserves enough space between NPC markers for separate interactions', () => {
     const markers = SUNBEAM_VILLAGE_MAP.npcMarkers;
 

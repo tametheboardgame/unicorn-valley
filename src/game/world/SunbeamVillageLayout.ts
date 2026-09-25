@@ -339,7 +339,7 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
   },
   npcPositions: {
     willow: { x: 535, y: 1345 },
-    marigold: { x: 1320, y: 1220 },
+    marigold: { x: 1700, y: 1240 },
     pebble: { x: 2220, y: 1200 },
   },
   villageLife: {
