@@ -186,7 +186,14 @@ function visiblePanelY(scene: DiagnosticScene): number {
 test('Marigold and Nova dialogue keep accepted sizing and Meet Nova works when Nova is already at the picnic', async ({
   page,
 }) => {
-  await page.addInitScript(() => window.localStorage.clear());
+  await page.addInitScript(() => {
+    const resetMarker = 'uv-marigold-regression-storage-reset';
+    if (window.sessionStorage.getItem(resetMarker) === '1') {
+      return;
+    }
+    window.localStorage.clear();
+    window.sessionStorage.setItem(resetMarker, '1');
+  });
   await page.goto('/?diagnostics=1');
   await waitForDiagnostics(page);
 
