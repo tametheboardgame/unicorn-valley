@@ -227,10 +227,12 @@ test('H3.11.4 gives Story House a dedicated storykeeper and physical reading roo
     const metaRect = meta.getBoundingClientRect();
     return {
       cardBottom: cardRect.bottom,
+      cardHeight: cardRect.height,
       metaBottom: metaRect.bottom,
     };
   });
-  expect(lanternLayout.metaBottom).toBeLessThanOrEqual(lanternLayout.cardBottom - 10);
+  expect(lanternLayout.cardHeight).toBeGreaterThanOrEqual(218);
+  expect(lanternLayout.metaBottom).toBeLessThanOrEqual(lanternLayout.cardBottom - 14);
 
   const searchToggle = page.getByRole('button', { name: 'Search' });
   const filterToggle = page.getByRole('button', { name: 'Filters' });
