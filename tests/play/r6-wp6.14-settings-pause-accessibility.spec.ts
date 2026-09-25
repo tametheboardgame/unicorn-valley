@@ -73,8 +73,7 @@ async function waitForObject(page: Page, sceneKey: string, objectName: string): 
           ?.snapshot()
           .scenes.find(({ key }) => key === expectedScene)
           ?.objects.some(
-            ({ name, visible, interactive }) =>
-              name === expectedName && visible && interactive,
+            ({ name, visible, interactive }) => name === expectedName && visible && interactive,
           ) === true
       );
     },
