@@ -771,17 +771,13 @@ canvas {
   min-width: 0;
   min-height: 0;
   flex-direction: column;
-  overflow: hidden;
 }
 
 .story-library-book-copy strong {
-  display: -webkit-box;
-  overflow: hidden;
   color: #526f81;
   font-size: 22px;
   line-height: 1.08;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+  overflow-wrap: anywhere;
 }
 
 .story-library-author {
