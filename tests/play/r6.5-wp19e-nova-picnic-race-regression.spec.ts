@@ -81,6 +81,25 @@ async function positionPlayer(page: Page, sceneKey: string, x: number, y: number
   );
 }
 
+async function markMapleCakeComplete(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    const key = 'unicorn-valley.save';
+    const raw = window.localStorage.getItem(key);
+    if (!raw) {
+      throw new Error('Expected a current save before seeding Maple cake completion.');
+    }
+    const save = JSON.parse(raw) as {
+      quests: { byQuestId: Record<string, unknown> };
+    };
+    save.quests.byQuestId['quest:maple-wobbly-cake-plan'] = {
+      status: 'completed',
+      currentStepId: null,
+      completedAt: '2026-09-25T08:00:00.000Z',
+    };
+    window.localStorage.setItem(key, JSON.stringify(save));
+  });
+}
+
 async function waitForVisibleObject(page: Page, sceneKey: string, name: string): Promise<void> {
   await expect
     .poll(async () => {
@@ -139,7 +158,25 @@ test('Marigold and Nova dialogue keep accepted sizing and Meet Nova works when N
 
   let village = await sceneSnapshot(page, 'SunbeamVillageScene');
   const ordinaryLinePanelY = visiblePanelY(village);
+  expect(
+    village.objects.find(
+      (object) => object.name === 'dialogue-production-body' && object.visible,
+    )?.text,
+  ).toContain('Wobbly Cake');
+  expect(
+    village.objects.filter(
+      (object) => object.name.startsWith('dialogue-production-choice-') && object.visible,
+    ),
+  ).toHaveLength(0);
 
+  await page.keyboard.press('KeyE');
+  await waitForHiddenObject(page, 'SunbeamVillageScene', 'dialogue-production-panel');
+  await markMapleCakeComplete(page);
+  await startScene(page, 'SunbeamVillageScene');
+  await positionPlayer(page, 'SunbeamVillageScene', MARIGOLD_APPROACH.x, MARIGOLD_APPROACH.y);
+  await waitForTalkTarget(page, 'SunbeamVillageScene', 'Marigold');
+  await page.keyboard.press('KeyE');
+  await waitForVisibleObject(page, 'SunbeamVillageScene', 'dialogue-production-panel');
   await page.keyboard.press('KeyE');
   await waitForVisibleObject(page, 'SunbeamVillageScene', 'dialogue-production-choice-1');
   village = await sceneSnapshot(page, 'SunbeamVillageScene');
