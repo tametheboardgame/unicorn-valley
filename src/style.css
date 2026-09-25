@@ -769,7 +769,7 @@ canvas {
 .story-library-book-copy {
   display: flex;
   min-width: 0;
-  min-height: 0;
+  min-height: 158px;
   flex-direction: column;
 }
 
@@ -1083,6 +1083,10 @@ canvas {
   .story-library-cover {
     width: 88px;
     height: 120px;
+  }
+
+  .story-library-book-copy {
+    min-height: 120px;
   }
 
   .story-library-book-copy strong {

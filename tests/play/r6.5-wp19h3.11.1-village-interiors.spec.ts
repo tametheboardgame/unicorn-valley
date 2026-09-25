@@ -214,6 +214,23 @@ test('H3.11.4 gives Story House a dedicated storykeeper and physical reading roo
   await page.keyboard.press('Enter');
   await expect(page.locator('.story-reader-overlay')).toBeVisible();
 
+  const lanternCard = page.locator(
+    '.story-library-book[data-story-id="the-lantern-at-the-edge-of-the-woods"]',
+  );
+  const lanternLayout = await lanternCard.evaluate((card) => {
+    const meta = card.querySelector<HTMLElement>('.story-library-meta');
+    if (!meta) {
+      throw new Error('Missing Lantern progress footer');
+    }
+    const cardRect = card.getBoundingClientRect();
+    const metaRect = meta.getBoundingClientRect();
+    return {
+      cardBottom: cardRect.bottom,
+      metaBottom: metaRect.bottom,
+    };
+  });
+  expect(lanternLayout.metaBottom).toBeLessThanOrEqual(lanternLayout.cardBottom);
+
   const searchToggle = page.getByRole('button', { name: 'Search' });
   const filterToggle = page.getByRole('button', { name: 'Filters' });
   await expect(searchToggle).toHaveAttribute('aria-expanded', 'false');
