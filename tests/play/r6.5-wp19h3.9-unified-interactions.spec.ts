@@ -64,7 +64,7 @@ test('H3.9 uses the shared slim village resident art in Willow, Marigold and Peb
 }) => {
   const residents = [
     { id: 'willow', x: 535, y: 1345 },
-    { id: 'marigold', x: 1080, y: 920 },
+    { id: 'marigold', x: 1700, y: 1240 },
     { id: 'pebble', x: 2220, y: 1200 },
   ] as const;
 

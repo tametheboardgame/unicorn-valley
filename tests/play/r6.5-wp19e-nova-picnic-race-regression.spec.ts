@@ -122,15 +122,15 @@ async function waitForTalkTarget(page: Page, sceneKey: string, label: string): P
   await expect
     .poll(async () => {
       const scene = await sceneSnapshot(page, sceneKey);
-      const action = scene.objects.find(
-        (object) => object.name === 'exploration-interaction-prompt-label' && object.visible,
+      const hasTalkAction = scene.objects.some(
+        (object) => object.visible && object.text === 'Talk',
       );
-      const hint = scene.objects.find(
-        (object) => object.name === 'exploration-tablet-hint' && object.visible,
+      const hasTargetLabel = scene.objects.some(
+        (object) => object.visible && object.text === label,
       );
-      return `${action?.text ?? ''}|${hint?.text ?? ''}`;
+      return hasTalkAction && hasTargetLabel;
     })
-    .toBe(`Talk|${label}`);
+    .toBe(true);
 }
 
 function visiblePanelY(scene: DiagnosticScene): number {

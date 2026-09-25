@@ -96,7 +96,7 @@ test('H3.8 recomposes village-life detail and grounds static core residents', as
 
   for (const expected of [
     { name: 'core-npc:willow:world', x: 535, y: 1349 },
-    { name: 'core-npc:marigold:world', x: 1080, y: 924 },
+    { name: 'core-npc:marigold:world', x: 1700, y: 1244 },
     { name: 'core-npc:pebble:world', x: 2220, y: 1205 },
   ] as const) {
     const npc = objects.find(({ name }) => name === expected.name);

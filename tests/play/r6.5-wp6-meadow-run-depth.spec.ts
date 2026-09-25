@@ -83,8 +83,9 @@ test('Rainbow Meadow exposes a dense set of non-race reasons to stop', async ({ 
   expect(meadow.objects.some(({ name }) => name === 'supporting-resident:resident:breeze')).toBe(
     true,
   );
+  // R1 gives Maple one authoritative presence at Sunbeam Bakery instead of duplicating her here.
   expect(meadow.objects.some(({ name }) => name === 'supporting-resident:resident:maple')).toBe(
-    true,
+    false,
   );
 });
 

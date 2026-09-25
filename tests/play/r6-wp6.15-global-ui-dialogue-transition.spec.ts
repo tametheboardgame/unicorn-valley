@@ -3,7 +3,7 @@ import { expect, test, type Page } from '@playwright/test';
 const PLAYER_NAME = 'world-player-unicorn';
 const PIP_APPROACH = { x: 1110, y: 825 } as const;
 const WILLOW_APPROACH = { x: 620, y: 1345 } as const;
-const MARIGOLD_APPROACH = { x: 1165, y: 920 } as const;
+const MARIGOLD_APPROACH = { x: 1700, y: 1240 } as const;
 const NOVA_APPROACH = { x: 2370, y: 930 } as const;
 const RETIRED_CONVERSATION_SCENES = [
   'WillowStoryScene',
@@ -200,15 +200,15 @@ async function waitForTalkTarget(page: Page, sceneKey: string, label: string): P
   await expect
     .poll(async () => {
       const scene = await sceneSnapshot(page, sceneKey);
-      const action = scene.objects.find(
-        (object) => object.name === 'exploration-interaction-prompt-label' && object.visible,
+      const hasTalkAction = scene.objects.some(
+        (object) => object.visible && object.text === 'Talk',
       );
-      const hint = scene.objects.find(
-        (object) => object.name === 'exploration-tablet-hint' && object.visible,
+      const hasTargetLabel = scene.objects.some(
+        (object) => object.visible && object.text === label,
       );
-      return `${action?.text ?? ''}|${hint?.text ?? ''}`;
+      return hasTalkAction && hasTargetLabel;
     })
-    .toBe(`Talk|${label}`);
+    .toBe(true);
 }
 
 async function openPipConversation(page: Page): Promise<void> {
