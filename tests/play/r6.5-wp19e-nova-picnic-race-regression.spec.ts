@@ -87,23 +87,54 @@ async function positionPlayer(page: Page, sceneKey: string, x: number, y: number
 async function markMapleCakeComplete(page: Page): Promise<void> {
   await page.evaluate(() => {
     const key = 'unicorn-valley.save';
-    const raw = window.localStorage.getItem(key);
+    const checkpointPrefix = `${key}.schema.`;
+    const checkpointKeys = Array.from({ length: window.localStorage.length }, (_, index) =>
+      window.localStorage.key(index),
+    )
+      .filter((candidate): candidate is string => candidate?.startsWith(checkpointPrefix) === true)
+      .sort((left, right) => {
+        const leftVersion = Number(left.slice(checkpointPrefix.length));
+        const rightVersion = Number(right.slice(checkpointPrefix.length));
+        return rightVersion - leftVersion;
+      });
+    const preferredKey = checkpointKeys[0] ?? key;
+    const raw = window.localStorage.getItem(preferredKey) ?? window.localStorage.getItem(key);
     if (!raw) {
       throw new Error('Expected a current save before seeding Maple cake completion.');
     }
+
     const save = JSON.parse(raw) as {
       schemaVersion: number;
       quests: { byQuestId: Record<string, unknown> };
+      world: { flags: Record<string, boolean> };
     };
     save.quests.byQuestId['quest:maple-wobbly-cake-plan'] = {
       status: 'completed',
       currentStepId: null,
       completedAt: '2026-09-25T08:00:00.000Z',
     };
+    save.world.flags['flag:maple-cake-ready'] = true;
+
     const serialisedSave = JSON.stringify(save);
     window.localStorage.setItem(key, serialisedSave);
     window.localStorage.setItem(`${key}.schema.${save.schemaVersion}`, serialisedSave);
+    window.localStorage.setItem(`${key}.backup`, serialisedSave);
   });
+
+  await expect
+    .poll(async () =>
+      page.evaluate(() => {
+        const raw =
+          window.localStorage.getItem('unicorn-valley.save.schema.9') ??
+          window.localStorage.getItem('unicorn-valley.save');
+        if (!raw) return null;
+        const save = JSON.parse(raw) as {
+          quests?: { byQuestId?: Record<string, { status?: string }> };
+        };
+        return save.quests?.byQuestId?.['quest:maple-wobbly-cake-plan']?.status ?? null;
+      }),
+    )
+    .toBe('completed');
 }
 
 async function waitForVisibleObject(page: Page, sceneKey: string, name: string): Promise<void> {
