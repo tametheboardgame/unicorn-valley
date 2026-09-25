@@ -11,9 +11,15 @@ interface DiagnosticObject {
 }
 interface DiagnosticScene {
   key: string;
+  camera: {
+    scrollX: number;
+    scrollY: number;
+  };
   objects: DiagnosticObject[];
 }
 interface Snapshot {
+  width: number;
+  height: number;
   activeScenes: string[];
   scenes: DiagnosticScene[];
 }
@@ -330,13 +336,25 @@ test('H3.11.3 gives Twinkle & Thread a dedicated walkable boutique and shopkeepe
   // click/key cannot fall through into the scene behind it. This is a new intentional
   // interaction, so wait past that guard before tapping Velvet again.
   await page.waitForTimeout(200);
+  const current = await snapshot(page);
+  const currentInterior = current.scenes.find(({ key }) => key === 'VillageInteriorScene');
+  const currentVelvetZone = currentInterior?.objects.find(
+    ({ name }) =>
+      name === 'interaction-direct-zone:interaction:village-interior:accessory-shop:shopkeeper',
+  );
+  if (!currentInterior || !currentVelvetZone) {
+    throw new Error('Velvet interaction zone disappeared before the direct tap.');
+  }
+
   const canvasBounds = await page.locator('canvas').boundingBox();
   if (!canvasBounds) {
     throw new Error('Game canvas has no browser bounds.');
   }
+  const screenX = currentVelvetZone.x - currentInterior.camera.scrollX;
+  const screenY = currentVelvetZone.y - currentInterior.camera.scrollY;
   await page.mouse.click(
-    canvasBounds.x + ((velvetZone?.x ?? 760) / 1280) * canvasBounds.width,
-    canvasBounds.y + ((velvetZone?.y ?? 540) / 720) * canvasBounds.height,
+    canvasBounds.x + (screenX / current.width) * canvasBounds.width,
+    canvasBounds.y + (screenY / current.height) * canvasBounds.height,
   );
 
   await expect
