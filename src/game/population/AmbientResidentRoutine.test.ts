@@ -1,3 +1,4 @@
+import { PICNIC_READY_FLAG } from '../../content/r4PicnicEvent';
 import { describe, expect, it } from 'vitest';
 import type {
   AmbientPopulationContext,
@@ -131,6 +132,50 @@ describe('ambient resident routine contract', () => {
         night,
       )?.id,
     ).toBe('resident-placement:tansy:meadow-evening');
+  });
+
+  it('moves Maple from the Bakery route to the Meadow only when the picnic is ready', () => {
+    expect(
+      resolveResidentLocation(
+        'resident:maple',
+        'SunbeamVillageScene',
+        R6_AMBIENT_RESIDENT_PLACEMENTS,
+        R6_AMBIENT_RESIDENT_STORY_ANCHORS,
+        morning,
+      )?.id,
+    ).toBe('resident-placement:maple:village-bakery-route');
+    expect(
+      resolveResidentLocation(
+        'resident:maple',
+        'RainbowMeadowScene',
+        R6_AMBIENT_RESIDENT_PLACEMENTS,
+        R6_AMBIENT_RESIDENT_STORY_ANCHORS,
+        morning,
+      ),
+    ).toBeNull();
+
+    const picnicReady: AmbientPopulationContext = {
+      ...morning,
+      worldFlags: { [PICNIC_READY_FLAG]: true },
+    };
+    expect(
+      resolveResidentLocation(
+        'resident:maple',
+        'SunbeamVillageScene',
+        R6_AMBIENT_RESIDENT_PLACEMENTS,
+        R6_AMBIENT_RESIDENT_STORY_ANCHORS,
+        picnicReady,
+      ),
+    ).toBeNull();
+    expect(
+      resolveResidentLocation(
+        'resident:maple',
+        'RainbowMeadowScene',
+        R6_AMBIENT_RESIDENT_PLACEMENTS,
+        R6_AMBIENT_RESIDENT_STORY_ANCHORS,
+        picnicReady,
+      )?.id,
+    ).toBe('resident-placement:maple:meadow-picnic');
   });
 
   it('resolves conditional talk lines from progression while preserving default talk', () => {
