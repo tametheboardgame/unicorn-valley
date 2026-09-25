@@ -22,6 +22,7 @@ const SUPPORTED_SCENES = new Set([
 ]);
 
 const COTTAGE_EXTERIOR_PREFIX = 'cottage-exterior:';
+const PLAYER_MOVEMENT_DETAIL_NAME = 'world-movement-detail';
 
 const GLADE_BOUNDARY_TREE_POINTS = [
   [170, 220],
@@ -268,6 +269,15 @@ export class WorldOcclusionManager {
   }
 
   private applyVillageDepths(scene: Phaser.Scene): void {
+    for (const object of scene.children.list) {
+      if (
+        isPositionedDepthObject(object) &&
+        object.name === PLAYER_MOVEMENT_DETAIL_NAME
+      ) {
+        object.setDepth(worldDepthForY(object.y, 0.15));
+      }
+    }
+
     const buildings = [
       { x: 900, y: 470, width: 450, height: 320 },
       { x: 1500, y: 430, width: 430, height: 320 },
@@ -333,7 +343,11 @@ export class WorldOcclusionManager {
     depth: number,
   ): void {
     for (const object of scene.children.list) {
-      if (!isPositionedDepthObject(object) || !isWorldDepthSortable(object.depth)) {
+      if (
+        !isPositionedDepthObject(object) ||
+        !isWorldDepthSortable(object.depth) ||
+        object.name === PLAYER_MOVEMENT_DETAIL_NAME
+      ) {
         continue;
       }
       if (object.x < minX || object.x > maxX || object.y < minY || object.y > maxY) {

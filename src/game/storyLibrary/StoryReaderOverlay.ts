@@ -213,6 +213,10 @@ export class StoryReaderOverlay {
     this.clearProgressTimer();
     this.requestVersion += 1;
     globalThis.removeEventListener('keydown', this.onKeyDown, true);
+    const activeElement = document.activeElement;
+    if (activeElement instanceof HTMLElement && this.root?.contains(activeElement)) {
+      activeElement.blur();
+    }
     this.root?.remove();
     this.root = null;
     this.options.onClose();
@@ -266,19 +270,6 @@ export class StoryReaderOverlay {
       controls.className = 'story-library-controls';
       controls.setAttribute('aria-label', 'Find a book');
 
-      const searchWrap = document.createElement('label');
-      searchWrap.className = 'story-library-search';
-      const searchLabel = document.createElement('span');
-      searchLabel.textContent = 'Search';
-      const searchInput = document.createElement('input');
-      searchInput.type = 'search';
-      searchInput.placeholder = 'Title, author, series or category…';
-      searchInput.autocomplete = 'off';
-      searchInput.setAttribute('aria-label', 'Search Story House books');
-      searchWrap.append(searchLabel, searchInput);
-
-      const filterWrap = document.createElement('div');
-      filterWrap.className = 'story-library-filters';
       const options = collectStoryDiscoveryOptions(stories);
       const initialFilters = this.options.initialFilters ?? {};
       const filters: StoryLibraryDiscoveryFilters = {
@@ -301,6 +292,53 @@ export class StoryReaderOverlay {
             : null,
       };
       let activeShelf: StoryLibraryShelfId = this.options.initialShelf ?? 'all';
+
+      const searchWrap = document.createElement('label');
+      searchWrap.className = 'story-library-search';
+      searchWrap.id = 'story-library-search-panel';
+      searchWrap.hidden = true;
+      const searchLabel = document.createElement('span');
+      searchLabel.textContent = 'Search';
+      const searchInput = document.createElement('input');
+      searchInput.type = 'search';
+      searchInput.placeholder = 'Title, author, series or category…';
+      searchInput.autocomplete = 'off';
+      searchInput.setAttribute('aria-label', 'Search Story House books');
+      searchWrap.append(searchLabel, searchInput);
+
+      const filterWrap = document.createElement('div');
+      filterWrap.className = 'story-library-filters';
+      filterWrap.id = 'story-library-filter-panel';
+      filterWrap.hidden =
+        filters.format === null &&
+        filters.genre === null &&
+        filters.audience === null &&
+        filters.length === null;
+
+      const controlToggles = document.createElement('div');
+      controlToggles.className = 'story-library-control-toggles';
+      const searchToggle = button('🔎 Search', 'story-library-control-toggle', () => {
+        const expanded = searchWrap.hidden;
+        searchWrap.hidden = !expanded;
+        searchToggle.setAttribute('aria-expanded', String(expanded));
+        searchToggle.classList.toggle('is-active', expanded);
+        if (expanded) {
+          searchInput.focus();
+        }
+      });
+      searchToggle.setAttribute('aria-controls', searchWrap.id);
+      searchToggle.setAttribute('aria-expanded', 'false');
+
+      const filterToggle = button('☷ Filters', 'story-library-control-toggle', () => {
+        const expanded = filterWrap.hidden;
+        filterWrap.hidden = !expanded;
+        filterToggle.setAttribute('aria-expanded', String(expanded));
+        filterToggle.classList.toggle('is-active', expanded);
+      });
+      filterToggle.setAttribute('aria-controls', filterWrap.id);
+      filterToggle.setAttribute('aria-expanded', String(!filterWrap.hidden));
+      filterToggle.classList.toggle('is-active', !filterWrap.hidden);
+      controlToggles.append(searchToggle, filterToggle);
 
       const selects: HTMLSelectElement[] = [];
       const addFilter = (
@@ -350,10 +388,12 @@ export class StoryReaderOverlay {
         searchInput.value = '';
         for (const select of selects) select.value = '';
         renderShelf();
-        searchInput.focus();
+        if (!searchWrap.hidden) {
+          searchInput.focus();
+        }
       });
       filterWrap.append(clearFilters);
-      controls.append(searchWrap, filterWrap);
+      controls.append(controlToggles, searchWrap, filterWrap);
 
       const shelf = document.createElement('main');
       shelf.className = 'story-library-shelf';
@@ -430,6 +470,15 @@ export class StoryReaderOverlay {
           filters.length !== null;
         const hasActiveFilters = hasFacetFilters || activeShelf !== 'all';
         clearFilters.disabled = !hasActiveFilters;
+        const activeFilterCount = [
+          filters.format,
+          filters.genre,
+          filters.audience,
+          filters.length,
+        ].filter((value) => value !== null).length;
+        searchToggle.textContent = filters.query.trim().length > 0 ? '🔎 Search •' : '🔎 Search';
+        filterToggle.textContent =
+          activeFilterCount > 0 ? `☷ Filters (${activeFilterCount})` : '☷ Filters';
 
         for (const [shelfId, shelfButton] of shelfButtons) {
           const selected = shelfId === activeShelf;

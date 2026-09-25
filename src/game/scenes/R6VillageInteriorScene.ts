@@ -2001,6 +2001,16 @@ export class VillageInteriorScene extends Phaser.Scene {
               this.storyReader = null;
             }
             this.setStoryReaderLock(false);
+            this.time.delayedCall(0, () => {
+              if (
+                this.sys.isActive() &&
+                !this.storyReader &&
+                !this.overlay &&
+                !getWorldConversationPresenter().isActive(this)
+              ) {
+                this.setStoryReaderLock(false);
+              }
+            });
           },
         });
         this.storyReader = reader;
@@ -2027,9 +2037,6 @@ export class VillageInteriorScene extends Phaser.Scene {
   }
 
   private setStoryReaderLock(active: boolean): void {
-    if (this.storyReaderLockActive === active) {
-      return;
-    }
     this.storyReaderLockActive = active;
     setInteractionModalActive(this, active);
   }

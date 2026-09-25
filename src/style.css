@@ -555,6 +555,7 @@ canvas {
 .story-reader-chapter-button:focus-visible,
 .story-library-book:focus-visible,
 .story-library-clear:focus-visible,
+.story-library-control-toggle:focus-visible,
 .story-library-search input:focus-visible,
 .story-library-filter select:focus-visible {
   outline: 4px solid #d9aa58;
@@ -562,10 +563,41 @@ canvas {
 }
 .story-library-controls {
   display: grid;
-  gap: 12px;
-  padding: 14px 24px 16px;
+  gap: 9px;
+  padding: 9px 24px 11px;
   border-bottom: 2px solid #d8e3e5;
   background: #fffaf0;
+}
+
+.story-library-control-toggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.story-library-control-toggle {
+  min-height: 38px;
+  padding: 7px 13px;
+  border: 2px solid #b6cbd5;
+  border-radius: 999px;
+  background: #fff;
+  color: #665c70;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.story-library-control-toggle:hover,
+.story-library-control-toggle.is-active {
+  border-color: #7f9fb0;
+  background: #e7f2f5;
+  color: #506f81;
+}
+
+.story-library-search[hidden],
+.story-library-filters[hidden] {
+  display: none !important;
 }
 
 .story-library-search {

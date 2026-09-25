@@ -200,6 +200,49 @@ test('H3.11.4 gives Story House a dedicated storykeeper and physical reading roo
     interior.objects.filter(({ name }) => name === 'village-interior:library:reading-cushion')
       .length,
   ).toBe(4);
+
+  await page.evaluate(() => {
+    (
+      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__?.setArcadeSpritePosition(
+      'VillageInteriorScene',
+      'world-player-unicorn',
+      960,
+      805,
+    );
+  });
+  await page.keyboard.press('Enter');
+  await expect(page.locator('.story-reader-overlay')).toBeVisible();
+
+  const searchToggle = page.getByRole('button', { name: 'Search' });
+  const filterToggle = page.getByRole('button', { name: 'Filters' });
+  await expect(searchToggle).toHaveAttribute('aria-expanded', 'false');
+  await expect(filterToggle).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.locator('#story-library-search-panel')).toBeHidden();
+  await expect(page.locator('#story-library-filter-panel')).toBeHidden();
+
+  await searchToggle.click();
+  await expect(page.locator('#story-library-search-panel')).toBeVisible();
+  await filterToggle.click();
+  await expect(page.locator('#story-library-filter-panel')).toBeVisible();
+
+  await page.getByRole('button', { name: 'Close Story House Library' }).click();
+  await expect(page.locator('.story-reader-overlay')).toHaveCount(0);
+
+  const beforeMove = (await snapshot(page)).scenes
+    .find(({ key }) => key === 'VillageInteriorScene')
+    ?.objects.find(({ name }) => name === 'world-player-unicorn')?.x;
+  await page.keyboard.down('ArrowLeft');
+  await page.waitForTimeout(180);
+  await page.keyboard.up('ArrowLeft');
+  await expect
+    .poll(async () => {
+      const current = (await snapshot(page)).scenes.find(
+        ({ key }) => key === 'VillageInteriorScene',
+      );
+      return current?.objects.find(({ name }) => name === 'world-player-unicorn')?.x ?? beforeMove;
+    })
+    .toBeLessThan(beforeMove ?? 960);
 });
 
 test('H3.11.2 Cinnamon uses the production dialogue menu to open the Bakery shop', async ({
