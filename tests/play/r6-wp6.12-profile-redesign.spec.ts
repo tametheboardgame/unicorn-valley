@@ -111,6 +111,17 @@ function createRichSave(appearance: Record<string, string> = {}): Record<string,
       discoveryIds: ['discovery:test'],
       memoryIds: ['memory:test'],
     },
+    shops: {
+      morningSerial: 0,
+      byShopId: {},
+    },
+    storyReading: {
+      preferences: {
+        fontSize: 20,
+        lineHeight: 1.7,
+      },
+      byStoryId: {},
+    },
   };
 }
 
@@ -238,6 +249,8 @@ test('My Unicorn edits only profile fields and preserves the whole adventure', a
     'home',
     'activities',
     'collections',
+    'shops',
+    'storyReading',
   ]) {
     expect(stored[key], `${key} changed during profile redesign`).toEqual(original[key]);
   }
