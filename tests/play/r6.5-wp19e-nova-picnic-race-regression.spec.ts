@@ -84,44 +84,6 @@ async function positionPlayer(page: Page, sceneKey: string, x: number, y: number
   );
 }
 
-async function tapVisibleInteractiveObject(
-  page: Page,
-  sceneKey: string,
-  objectName: string,
-): Promise<void> {
-  await expect
-    .poll(async () => {
-      const current = await snapshot(page);
-      return (
-        current.scenes
-          .find(({ key }) => key === sceneKey)
-          ?.objects.some(
-            ({ name, visible, interactive }) => name === objectName && visible && interactive,
-          ) === true
-      );
-    })
-    .toBe(true);
-
-  const current = await snapshot(page);
-  const target = current.scenes
-    .find(({ key }) => key === sceneKey)
-    ?.objects.find(
-      ({ name, visible, interactive }) => name === objectName && visible && interactive,
-    );
-  if (!target) {
-    throw new Error(`Missing interactive ${sceneKey} object: ${objectName}`);
-  }
-
-  const bounds = await page.locator('canvas').boundingBox();
-  if (!bounds) {
-    throw new Error('Game canvas has no browser bounds.');
-  }
-  await page.mouse.click(
-    bounds.x + (target.x / current.width) * bounds.width,
-    bounds.y + (target.y / current.height) * bounds.height,
-  );
-}
-
 async function markMapleCakeComplete(page: Page): Promise<void> {
   await page.evaluate(() => {
     const key = 'unicorn-valley.save';
@@ -220,9 +182,10 @@ test('Marigold and Nova dialogue keep accepted sizing and Meet Nova works when N
   await markMapleCakeComplete(page);
   await startScene(page, 'SunbeamVillageScene');
   await positionPlayer(page, 'SunbeamVillageScene', MARIGOLD_APPROACH.x, MARIGOLD_APPROACH.y);
-  // The regression is about the post-cake dialogue route, not keyboard adapter reuse after a
-  // diagnostic scene restart. Activate the canonical visible Talk prompt directly.
-  await tapVisibleInteractiveObject(page, 'SunbeamVillageScene', 'exploration-interaction-prompt');
+  // Wait until the restarted scene has actually presented Marigold's canonical Talk action,
+  // then use the same interaction key as normal play.
+  await waitForVisibleObject(page, 'SunbeamVillageScene', 'exploration-interaction-prompt');
+  await page.keyboard.press('KeyE');
   await waitForVisibleObject(page, 'SunbeamVillageScene', 'dialogue-production-panel');
   await page.keyboard.press('KeyE');
   await waitForVisibleObject(page, 'SunbeamVillageScene', 'dialogue-production-choice-1');
