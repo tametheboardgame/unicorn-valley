@@ -96,8 +96,7 @@ async function waitForInteractiveObject(
           ?.snapshot()
           .scenes.find(({ key }) => key === expectedScene)
           ?.objects.some(
-            ({ name, visible, interactive }) =>
-              name === expectedName && visible && interactive,
+            ({ name, visible, interactive }) => name === expectedName && visible && interactive,
           ) === true
       );
     },

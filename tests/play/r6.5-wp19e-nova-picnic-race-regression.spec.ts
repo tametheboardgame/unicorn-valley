@@ -96,8 +96,7 @@ async function tapVisibleInteractiveObject(
         current.scenes
           .find(({ key }) => key === sceneKey)
           ?.objects.some(
-            ({ name, visible, interactive }) =>
-              name === objectName && visible && interactive,
+            ({ name, visible, interactive }) => name === objectName && visible && interactive,
           ) === true
       );
     })
@@ -223,11 +222,7 @@ test('Marigold and Nova dialogue keep accepted sizing and Meet Nova works when N
   await positionPlayer(page, 'SunbeamVillageScene', MARIGOLD_APPROACH.x, MARIGOLD_APPROACH.y);
   // The regression is about the post-cake dialogue route, not keyboard adapter reuse after a
   // diagnostic scene restart. Activate the canonical visible Talk prompt directly.
-  await tapVisibleInteractiveObject(
-    page,
-    'SunbeamVillageScene',
-    'exploration-interaction-prompt',
-  );
+  await tapVisibleInteractiveObject(page, 'SunbeamVillageScene', 'exploration-interaction-prompt');
   await waitForVisibleObject(page, 'SunbeamVillageScene', 'dialogue-production-panel');
   await page.keyboard.press('KeyE');
   await waitForVisibleObject(page, 'SunbeamVillageScene', 'dialogue-production-choice-1');
