@@ -334,7 +334,6 @@ test('H3.11.3 gives Twinkle & Thread a dedicated walkable boutique and shopkeepe
   if (!canvasBounds) {
     throw new Error('Game canvas has no browser bounds.');
   }
-  const currentSnapshot = await snapshot(page);
   await page.mouse.click(
     canvasBounds.x + ((velvetZone?.x ?? 760) / 1280) * canvasBounds.width,
     canvasBounds.y + ((velvetZone?.y ?? 540) / 720) * canvasBounds.height,
