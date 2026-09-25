@@ -490,19 +490,19 @@ export const R6_AMBIENT_RESIDENT_PLACEMENTS = [
     waypoints: [
       {
         id: 'maple-village-a',
-        x: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.x - 180,
+        x: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.x - 20,
         y: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.approach.y + 75,
         pauseMs: 2600,
       },
       {
         id: 'maple-village-b',
-        x: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.x + 175,
+        x: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.x + 120,
         y: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.approach.y + 75,
         pauseMs: 1500,
       },
       {
         id: 'maple-village-c',
-        x: 990,
+        x: 930,
         y: 900,
         pauseMs: 2100,
       },
