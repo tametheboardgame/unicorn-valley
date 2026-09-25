@@ -3,6 +3,7 @@
   "id": "the-duck-bread-baker",
   "title": "The Duck Bread Baker",
   "description": "Join Duck on his delicious journey as he sets out to satisfy his love for bread. But when all his feathered friends fall ill, he learns that a diet of just bread isn’t the way to go.",
+  "catalogueBlurb": "Duck loves bread, but when his feathered friends fall ill, he learns why a balanced diet matters.",
   "author": "David Fairbairn",
   "readingMode": "paged-picture-book",
   "cover": {
@@ -10,7 +11,13 @@
     "alt": "The Duck Bread Baker cover, showing a yellow duck surrounded by loaves of bread."
   },
   "series": null,
-  "tags": ["picture-book", "animals", "food", "health", "illustrated"],
+  "tags": [
+    "picture-book",
+    "animals",
+    "food",
+    "health",
+    "illustrated"
+  ],
   "publication": {
     "status": "published"
   },
@@ -674,8 +681,14 @@
   ],
   "discovery": {
     "format": "Picture Book",
-    "genres": ["Animals", "Food & Health"],
-    "audiences": ["Read Together", "Early Reader"],
+    "genres": [
+      "Animals",
+      "Food & Health"
+    ],
+    "audiences": [
+      "Read Together",
+      "Early Reader"
+    ],
     "length": "Quick Read"
   },
   "rights": {

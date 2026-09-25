@@ -3,6 +3,7 @@
   "id": "the-lantern-at-the-edge-of-the-woods",
   "title": "The Lantern at the Edge of the Woods",
   "description": "A young unicorn follows an unlit lantern into the dusk and discovers why some paths only brighten when they are shared.",
+  "catalogueBlurb": "A young unicorn follows a mysterious lantern into the dusk and learns why some paths brighten only when shared.",
   "author": "Quill",
   "readingMode": "flowing",
   "cover": null,
@@ -11,11 +12,23 @@
     "title": "Quill's Valley Tales",
     "order": 1
   },
-  "tags": ["valley-tale", "woods", "lanterns", "friendship", "adventure"],
+  "tags": [
+    "valley-tale",
+    "woods",
+    "lanterns",
+    "friendship",
+    "adventure"
+  ],
   "discovery": {
     "format": "Chapter Book",
-    "genres": ["Fantasy", "Adventure"],
-    "audiences": ["Independent Reader", "Read Together"],
+    "genres": [
+      "Fantasy",
+      "Adventure"
+    ],
+    "audiences": [
+      "Independent Reader",
+      "Read Together"
+    ],
     "length": "Longer Read"
   },
   "rights": {

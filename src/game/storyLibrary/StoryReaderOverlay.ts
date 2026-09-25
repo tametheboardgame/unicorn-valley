@@ -457,6 +457,86 @@ export class StoryReaderOverlay {
           String(right.progress?.lastReadAt).localeCompare(String(left.progress?.lastReadAt)),
         )[0];
 
+      if (mostRecent?.progress) {
+        const continueButton = button(
+          `▶ Continue · ${mostRecent.story.title} · ${Math.round(mostRecent.progress.percentComplete)}%`,
+          'story-library-control-toggle story-library-continue-toggle',
+          () => {
+            void this.openStory(mostRecent.story.id);
+          },
+        );
+        controlToggles.append(continueButton);
+      }
+
+      const valleyCards = this.storyHouse.listCards().filter(({ unlocked }) => unlocked);
+      if (valleyCards.length > 0) {
+        const storyCardsPanel = document.createElement('section');
+        storyCardsPanel.className = 'story-library-valley-cards';
+        storyCardsPanel.id = 'story-library-story-cards-panel';
+        storyCardsPanel.hidden = true;
+
+        const storyCardsToggle = button(
+          `✦ Story Cards (${valleyCards.length})`,
+          'story-library-control-toggle',
+          () => {
+            const expanded = storyCardsPanel.hidden !== false;
+            storyCardsPanel.hidden = !expanded;
+            storyCardsToggle.setAttribute('aria-expanded', String(expanded));
+            storyCardsToggle.classList.toggle('is-active', expanded);
+          },
+        );
+        storyCardsToggle.setAttribute('aria-controls', storyCardsPanel.id);
+        storyCardsToggle.setAttribute('aria-expanded', 'false');
+        controlToggles.append(storyCardsToggle);
+
+        const collectionHeading = document.createElement('div');
+        collectionHeading.className = 'story-library-valley-heading';
+        const collectionTitle = document.createElement('h2');
+        collectionTitle.textContent = 'Valley Story Cards';
+        const collectionCopy = document.createElement('p');
+        collectionCopy.textContent =
+          'Small memories gathered from adventures you have already had around the valley.';
+        collectionHeading.append(collectionTitle, collectionCopy);
+
+        const cardList = document.createElement('div');
+        cardList.className = 'story-library-valley-card-list';
+        const cardDetail = document.createElement('div');
+        cardDetail.className = 'story-library-valley-detail';
+        cardDetail.textContent = 'Choose a card to read it here on Quill’s table.';
+
+        for (const storyCard of valleyCards) {
+          const cardButton = document.createElement('button');
+          cardButton.type = 'button';
+          cardButton.className = 'story-library-valley-card';
+          cardButton.classList.toggle('is-read', storyCard.read);
+          const icon = document.createElement('span');
+          icon.textContent = storyCard.icon;
+          const cardCopy = document.createElement('span');
+          const cardTitle = document.createElement('strong');
+          cardTitle.textContent = storyCard.title;
+          const cardState = document.createElement('small');
+          cardState.textContent = storyCard.read ? 'Read again' : 'New story';
+          cardCopy.append(cardTitle, cardState);
+          cardButton.append(icon, cardCopy);
+          cardButton.addEventListener('click', () => {
+            const readCard = this.storyHouse.readCard(storyCard.id);
+            if (!readCard) return;
+            cardButton.classList.add('is-read');
+            cardState.textContent = 'Read again';
+            cardDetail.replaceChildren();
+            const detailTitle = document.createElement('strong');
+            detailTitle.textContent = `${readCard.icon} ${readCard.title}`;
+            const detailCopy = document.createElement('p');
+            detailCopy.textContent = readCard.text;
+            cardDetail.append(detailTitle, detailCopy);
+          });
+          cardList.append(cardButton);
+        }
+
+        storyCardsPanel.append(collectionHeading, cardList, cardDetail);
+        controls.append(storyCardsPanel);
+      }
+
       const renderShelf = (): void => {
         const shelfStories = storiesForLibraryShelf(stories, activeShelf, progressByStoryId);
         const visibleStories = filterStoryCatalogue(shelfStories, filters);
@@ -484,75 +564,6 @@ export class StoryReaderOverlay {
           const selected = shelfId === activeShelf;
           shelfButton.classList.toggle('is-active', selected);
           shelfButton.setAttribute('aria-current', selected ? 'page' : 'false');
-        }
-
-        if (!hasActiveFilters && mostRecent?.progress) {
-          const continueButton = document.createElement('button');
-          continueButton.type = 'button';
-          continueButton.className = 'story-library-continue';
-          continueButton.addEventListener('click', () => {
-            void this.openStory(mostRecent.story.id);
-          });
-          const continueLabel = document.createElement('strong');
-          continueLabel.textContent = 'Continue Reading';
-          const continueBook = document.createElement('span');
-          continueBook.textContent = `${mostRecent.story.title} · ${Math.round(mostRecent.progress.percentComplete)}%`;
-          continueButton.append(continueLabel, continueBook);
-          shelf.append(continueButton);
-        }
-
-        if (!hasActiveFilters) {
-          const valleyCards = this.storyHouse.listCards().filter(({ unlocked }) => unlocked);
-          if (valleyCards.length > 0) {
-            const collection = document.createElement('section');
-            collection.className = 'story-library-valley-cards';
-            const collectionHeading = document.createElement('div');
-            collectionHeading.className = 'story-library-valley-heading';
-            const collectionTitle = document.createElement('h2');
-            collectionTitle.textContent = 'Valley Story Cards';
-            const collectionCopy = document.createElement('p');
-            collectionCopy.textContent =
-              'Small memories gathered from adventures you have already had around the valley.';
-            collectionHeading.append(collectionTitle, collectionCopy);
-
-            const cardList = document.createElement('div');
-            cardList.className = 'story-library-valley-card-list';
-            const cardDetail = document.createElement('div');
-            cardDetail.className = 'story-library-valley-detail';
-            cardDetail.textContent = 'Choose a card to read it here on Quill’s table.';
-
-            for (const storyCard of valleyCards) {
-              const cardButton = document.createElement('button');
-              cardButton.type = 'button';
-              cardButton.className = 'story-library-valley-card';
-              cardButton.classList.toggle('is-read', storyCard.read);
-              const icon = document.createElement('span');
-              icon.textContent = storyCard.icon;
-              const cardCopy = document.createElement('span');
-              const cardTitle = document.createElement('strong');
-              cardTitle.textContent = storyCard.title;
-              const cardState = document.createElement('small');
-              cardState.textContent = storyCard.read ? 'Read again' : 'New story';
-              cardCopy.append(cardTitle, cardState);
-              cardButton.append(icon, cardCopy);
-              cardButton.addEventListener('click', () => {
-                const readCard = this.storyHouse.readCard(storyCard.id);
-                if (!readCard) return;
-                cardButton.classList.add('is-read');
-                cardState.textContent = 'Read again';
-                cardDetail.replaceChildren();
-                const detailTitle = document.createElement('strong');
-                detailTitle.textContent = `${readCard.icon} ${readCard.title}`;
-                const detailCopy = document.createElement('p');
-                detailCopy.textContent = readCard.text;
-                cardDetail.append(detailTitle, detailCopy);
-              });
-              cardList.append(cardButton);
-            }
-
-            collection.append(collectionHeading, cardList, cardDetail);
-            shelf.append(collection);
-          }
         }
 
         for (const story of visibleStories) {
@@ -600,7 +611,7 @@ export class StoryReaderOverlay {
 
           const description = document.createElement('span');
           description.className = 'story-library-description';
-          description.textContent = story.description;
+          description.textContent = story.catalogueBlurb;
           const meta = document.createElement('span');
           meta.className = 'story-library-meta';
           const progress = progressByStoryId.get(story.id) ?? null;

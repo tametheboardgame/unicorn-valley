@@ -38,6 +38,7 @@ Every story manifest now carries metadata used by the scalable Story House brows
 - `discovery.audiences`: reading-style labels such as `Read Together`, `Early Reader` or `Independent Reader`.
 - `discovery.length`: a player-readable length band such as `Quick Read` or `Longer Read`.
 - free-form `tags` remain available for secondary search terms.
+- `catalogueBlurb` is the compact card copy shown in the browse grid. Keep it to **140 characters or fewer**, ideally one short sentence. New stories should provide it explicitly. Older content without it receives a word-boundary fallback derived from `description`, so full descriptions never have to be visually clipped inside cards.
 
 The catalogue generator copies only lightweight discovery fields and a compact rights-status summary into `catalogue.json`. Full provenance remains in `book.json`.
 

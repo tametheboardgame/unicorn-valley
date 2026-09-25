@@ -65,6 +65,7 @@ export interface StoryLibraryManifest {
   id: string;
   title: string;
   description: string;
+  catalogueBlurb?: string;
   author: string;
   readingMode: StoryReadingMode;
   cover?: StoryAssetReference | null;
@@ -82,6 +83,7 @@ export interface StoryCatalogueEntry {
   id: string;
   title: string;
   description: string;
+  catalogueBlurb: string;
   author: string;
   readingMode: StoryReadingMode;
   coverPath: string | null;

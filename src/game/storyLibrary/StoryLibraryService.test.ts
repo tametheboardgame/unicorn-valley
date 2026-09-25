@@ -26,6 +26,7 @@ function libraryFetch(): StoryLibraryFetch {
             id: 'story-house-sampler',
             title: 'A Shelf Full of Stories',
             description: 'A small library-system sampler.',
+            catalogueBlurb: 'A small sampler from Quill’s shelves.',
             author: 'Unicorn Valley',
             readingMode: 'flowing',
             coverPath: null,
@@ -126,6 +127,7 @@ describe('Story Library service', () => {
     const stories = await service.listStories();
     expect(stories.map(({ id }) => id)).toEqual(['story-house-sampler']);
     expect(stories[0]?.readingMode).toBe('flowing');
+    expect(stories[0]?.catalogueBlurb).toBe('A small sampler from Quill’s shelves.');
     expect(stories[0]?.discovery).toEqual({
       format: 'Short Story',
       genres: ['Fantasy'],

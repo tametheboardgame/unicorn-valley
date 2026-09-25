@@ -17,6 +17,7 @@ function story(
     id,
     title: id,
     description: `${id} description`,
+    catalogueBlurb: `${id} blurb`,
     author: 'Quill',
     readingMode: 'flowing',
     coverPath: null,

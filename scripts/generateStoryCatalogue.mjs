@@ -8,6 +8,7 @@ const CHECK_ONLY = process.argv.includes('--check');
 const STORY_ID = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const BLOCK_MARKER = /<!--\s*block:([a-z0-9]+(?:-[a-z0-9]+)*)\s*-->/g;
 const RIGHTS_STATUSES = new Set(['original', 'public-domain', 'licensed', 'unknown']);
+const CATALOGUE_BLURB_MAX_LENGTH = 140;
 
 function toPosix(value) {
   return value.split(path.sep).join('/');
@@ -29,6 +30,27 @@ function assertOptionalString(value, label) {
   if (value !== undefined && value !== null) {
     assertString(value, label);
   }
+}
+
+function catalogueBlurbFor(manifest) {
+  if (manifest.catalogueBlurb !== undefined && manifest.catalogueBlurb !== null) {
+    assertString(manifest.catalogueBlurb, `${manifest.id} catalogue blurb`);
+    const blurb = manifest.catalogueBlurb.trim().replace(/\s+/g, ' ');
+    if (blurb.length > CATALOGUE_BLURB_MAX_LENGTH) {
+      throw new Error(
+        `Story catalogue rejected ${manifest.id}: catalogueBlurb must be ${CATALOGUE_BLURB_MAX_LENGTH} characters or fewer.`,
+      );
+    }
+    return blurb;
+  }
+
+  const description = manifest.description.trim().replace(/\s+/g, ' ');
+  if (description.length <= CATALOGUE_BLURB_MAX_LENGTH) return description;
+
+  const candidate = description.slice(0, CATALOGUE_BLURB_MAX_LENGTH - 1);
+  const lastSpace = candidate.lastIndexOf(' ');
+  const cutAt = lastSpace >= 80 ? lastSpace : candidate.length;
+  return `${candidate.slice(0, cutAt).replace(/[\s,;:.!?-]+$/g, '')}…`;
 }
 
 function assertDiscovery(value, label) {
@@ -256,6 +278,9 @@ async function loadStory(directoryEntry) {
   }
   assertString(manifest.title, `${manifest.id} title`);
   assertString(manifest.description, `${manifest.id} description`);
+  if (manifest.catalogueBlurb !== undefined && manifest.catalogueBlurb !== null) {
+    catalogueBlurbFor(manifest);
+  }
   assertString(manifest.author, `${manifest.id} author`);
   assertStringArray(manifest.tags, `${manifest.id} tags`);
   assertDiscovery(manifest.discovery, `${manifest.id} discovery`);
@@ -308,6 +333,7 @@ function catalogueEntry(manifest) {
     id: manifest.id,
     title: manifest.title,
     description: manifest.description,
+    catalogueBlurb: catalogueBlurbFor(manifest),
     author: manifest.author,
     readingMode: manifest.readingMode ?? 'flowing',
     coverPath: manifest.cover ? `/stories/${manifest.id}/${manifest.cover.path}` : null,

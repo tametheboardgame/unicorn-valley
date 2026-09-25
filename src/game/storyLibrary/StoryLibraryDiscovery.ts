@@ -48,6 +48,7 @@ export function filterStoryCatalogue(
       story.title,
       story.author,
       story.description,
+      story.catalogueBlurb,
       story.series?.title ?? '',
       story.discovery.format,
       story.discovery.length,

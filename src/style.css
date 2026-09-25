@@ -792,15 +792,11 @@ canvas {
 }
 
 .story-library-description {
-  display: -webkit-box;
-  margin-top: 12px;
-  overflow: hidden;
+  margin-top: 10px;
   color: #695f6b;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
-  line-height: 1.38;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
+  line-height: 1.34;
 }
 
 .story-library-meta {
@@ -1164,31 +1160,14 @@ canvas {
   }
 }
 
-.story-library-continue {
-  grid-column: 1 / -1;
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  justify-content: space-between;
-  min-height: 64px;
-  padding: 14px 18px;
-  border: 3px solid #d2a95f;
-  border-radius: 18px;
+.story-library-continue-toggle {
+  max-width: min(100%, 520px);
+  overflow: hidden;
+  border-color: #d2a95f;
   background: linear-gradient(100deg, #fff0b8, #f8e1ef);
-  color: #5b4e61;
-  font: inherit;
-  cursor: pointer;
-  box-shadow: 0 6px 14px rgb(72 58 69 / 12%);
-}
-
-.story-library-continue strong {
-  color: #6a536d;
-  font-size: 17px;
-}
-
-.story-library-continue span {
-  font-size: 14px;
-  font-weight: 900;
+  color: #66536a;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .story-library-book.is-in-progress {
@@ -1412,44 +1391,54 @@ canvas {
 
 .story-library-valley-cards {
   display: grid;
-  grid-column: 1 / -1;
-  gap: 12px;
-  padding: 16px;
-  border: 3px solid #c5b7d8;
-  border-radius: 22px;
+  gap: 8px;
+  padding: 10px;
+  border: 2px solid #c5b7d8;
+  border-radius: 16px;
   background: linear-gradient(125deg, #f5effd, #fff9e9);
-  box-shadow: 0 8px 18px rgb(68 56 82 / 10%);
+  box-shadow: 0 5px 12px rgb(68 56 82 / 9%);
+}
+
+.story-library-valley-cards[hidden] {
+  display: none;
+}
+
+.story-library-valley-heading {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  justify-content: space-between;
 }
 
 .story-library-valley-heading h2 {
   margin: 0;
   color: #66577e;
-  font-size: 20px;
+  font-size: 15px;
 }
 
 .story-library-valley-heading p {
-  margin: 4px 0 0;
+  margin: 0;
   color: #776d7c;
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 700;
 }
 
 .story-library-valley-card-list {
   display: flex;
-  gap: 8px;
+  gap: 7px;
   overflow-x: auto;
-  padding: 2px 2px 6px;
+  padding: 1px 1px 4px;
 }
 
 .story-library-valley-card {
   display: grid;
-  min-width: 178px;
+  min-width: 160px;
   grid-template-columns: auto minmax(0, 1fr);
-  gap: 9px;
+  gap: 8px;
   align-items: center;
-  padding: 10px 12px;
+  padding: 8px 10px;
   border: 2px solid #c5b7d8;
-  border-radius: 15px;
+  border-radius: 13px;
   background: #fffdf8;
   color: #665b70;
   font: inherit;
@@ -1458,22 +1447,22 @@ canvas {
 }
 
 .story-library-valley-card > span:first-child {
-  font-size: 25px;
+  font-size: 22px;
 }
 
 .story-library-valley-card > span:last-child {
   display: grid;
-  gap: 2px;
+  gap: 1px;
 }
 
 .story-library-valley-card strong {
-  font-size: 13px;
+  font-size: 12px;
   line-height: 1.15;
 }
 
 .story-library-valley-card small {
   color: #8b7888;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 900;
 }
 
@@ -1483,21 +1472,21 @@ canvas {
 }
 
 .story-library-valley-detail {
-  min-height: 58px;
-  padding: 11px 13px;
-  border-radius: 14px;
+  min-height: 0;
+  padding: 8px 10px;
+  border-radius: 12px;
   background: rgb(255 255 255 / 70%);
   color: #655a69;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
-  line-height: 1.4;
+  line-height: 1.35;
 }
 
 .story-library-valley-detail strong {
   display: block;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
   color: #5e5570;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .story-library-valley-detail p {

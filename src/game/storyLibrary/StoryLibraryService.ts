@@ -217,6 +217,7 @@ function parseCatalogue(value: unknown): StoryCatalogue {
       id: requireSafeId(entry.id, 'story id'),
       title: requireString(entry.title, 'story title'),
       description: requireString(entry.description, 'story description'),
+      catalogueBlurb: requireString(entry.catalogueBlurb, 'story catalogue blurb'),
       author: requireString(entry.author, 'story author'),
       readingMode: parseReadingMode(entry.readingMode),
       coverPath: entry.coverPath === null ? null : requireString(entry.coverPath, 'cover path'),
@@ -299,6 +300,9 @@ function parseManifest(value: unknown): StoryLibraryManifest {
     id,
     title: requireString(source.title, 'story title'),
     description: requireString(source.description, 'story description'),
+    ...(source.catalogueBlurb === undefined
+      ? {}
+      : { catalogueBlurb: requireString(source.catalogueBlurb, 'story catalogue blurb') }),
     author: requireString(source.author, 'story author'),
     readingMode: parseReadingMode(source.readingMode),
     cover,
