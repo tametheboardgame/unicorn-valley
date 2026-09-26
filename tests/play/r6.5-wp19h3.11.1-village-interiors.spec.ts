@@ -289,10 +289,7 @@ test('H3.11.4 gives Story House a dedicated storykeeper and physical reading roo
       const current = (await snapshot(page)).scenes.find(
         ({ key }) => key === 'VillageInteriorScene',
       );
-      return (
-        current?.objects.some(({ name }) => name === 'world-player-unicorn') ??
-        false
-      );
+      return current?.objects.some(({ name }) => name === 'world-player-unicorn') ?? false;
     })
     .toBe(true);
 
