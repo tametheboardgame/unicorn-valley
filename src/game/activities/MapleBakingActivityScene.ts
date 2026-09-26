@@ -140,19 +140,14 @@ export class MapleBakingActivityScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
     this.add
-      .text(
-        GAME_WIDTH / 2,
-        94,
-        'Mix it, stack it, ice it, decorate it. Wobble is encouraged.',
-        {
-          color: UI_COLOURS.softInk,
-          fontFamily: UI_FONT,
-          fontSize: '16px',
-          fontStyle: 'bold',
-          align: 'center',
-          wordWrap: { width: 820 },
-        },
-      )
+      .text(GAME_WIDTH / 2, 94, 'Mix it, stack it, ice it, decorate it. Wobble is encouraged.', {
+        color: UI_COLOURS.softInk,
+        fontFamily: UI_FONT,
+        fontSize: '16px',
+        fontStyle: 'bold',
+        align: 'center',
+        wordWrap: { width: 820 },
+      })
       .setOrigin(0.5);
     this.createButton(150, GAME_HEIGHT - 46, 230, '← Back to Bakery', () => this.leaveActivity());
   }
@@ -532,7 +527,8 @@ export class MapleBakingActivityScene extends Phaser.Scene {
 
   private renderResult(): void {
     const theme = this.theme ?? 'sunshine';
-    const outcome = BAKERY_OUTCOMES.find((candidate) => candidate.theme === theme) ?? BAKERY_OUTCOMES[0];
+    const outcome =
+      BAKERY_OUTCOMES.find((candidate) => candidate.theme === theme) ?? BAKERY_OUTCOMES[0];
     if (!outcome) {
       return;
     }
@@ -547,11 +543,11 @@ export class MapleBakingActivityScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setName('h3-r2-baking-result');
     const cake = this.drawCakePreview(GAME_WIDTH / 2, 395, true);
-    const summaryText =
-      `${choiceLabel(TOPPINGS, this.topping)} and ${choiceLabel(FINISHES, this.finish)} make it gloriously uneven.`;
+    const summaryText = `${choiceLabel(TOPPINGS, this.topping)} and ${choiceLabel(FINISHES, this.finish)} make it gloriously uneven.`;
     const questCopy =
       'Maple’s first Wobbly Cake is ready. Head outside and show her what you made.';
-    const progress = this.mode === 'repeatable' ? getMapleBakingProgress(getBrowserSaveService()) : null;
+    const progress =
+      this.mode === 'repeatable' ? getMapleBakingProgress(getBrowserSaveService()) : null;
     const detail = this.add
       .text(
         GAME_WIDTH / 2,
@@ -596,7 +592,10 @@ export class MapleBakingActivityScene extends Phaser.Scene {
       ease: 'Sine.easeInOut',
     });
 
-    this.portraitCompanion?.setHeader(`${outcome.icon} ${outcome.name}`, 'Your Wobbly Cake is ready.');
+    this.portraitCompanion?.setHeader(
+      `${outcome.icon} ${outcome.name}`,
+      'Your Wobbly Cake is ready.',
+    );
     this.portraitCompanion?.setCards([
       {
         id: 'result',
@@ -624,9 +623,7 @@ export class MapleBakingActivityScene extends Phaser.Scene {
 
   private drawCakePreview(x: number, y: number, result = false): Phaser.GameObjects.Container {
     const container = this.add.container(x, y).setName('h3-r2-baking-cake');
-    const stand = this.add
-      .ellipse(0, 84, 310, 38, 0xf4d6b9, 1)
-      .setStrokeStyle(4, 0xc89b82, 0.86);
+    const stand = this.add.ellipse(0, 84, 310, 38, 0xf4d6b9, 1).setStrokeStyle(4, 0xc89b82, 0.86);
     container.add(stand);
 
     const layerCount = Math.max(this.placedLayers.size, this.stage === 'mix' ? 0 : 0);
@@ -639,7 +636,14 @@ export class MapleBakingActivityScene extends Phaser.Scene {
       container.add(sponge);
       if (this.theme) {
         const icing = this.add
-          .rectangle(offset + (index % 2 === 0 ? 5 : -5), layerY - 22, 225 - index * 8, 17, themeColour(this.theme), 1)
+          .rectangle(
+            offset + (index % 2 === 0 ? 5 : -5),
+            layerY - 22,
+            225 - index * 8,
+            17,
+            themeColour(this.theme),
+            1,
+          )
           .setStrokeStyle(2, 0xffffff, 0.6);
         container.add(icing);
       }
@@ -685,15 +689,11 @@ export class MapleBakingActivityScene extends Phaser.Scene {
       }
     } else if (this.finish === 'swirl') {
       container.add(
-        this.add
-          .text(0, -98, '🌀', { fontFamily: UI_FONT, fontSize: '34px' })
-          .setOrigin(0.5),
+        this.add.text(0, -98, '🌀', { fontFamily: UI_FONT, fontSize: '34px' }).setOrigin(0.5),
       );
     } else if (this.finish === 'ribbon') {
       container.add(
-        this.add
-          .text(0, 0, '🎀', { fontFamily: UI_FONT, fontSize: '39px' })
-          .setOrigin(0.5),
+        this.add.text(0, 0, '🎀', { fontFamily: UI_FONT, fontSize: '39px' }).setOrigin(0.5),
       );
     }
 
