@@ -927,7 +927,7 @@ export class MapleBakingActivityScene extends Phaser.Scene {
     layer.on('dragend', () => this.placeLayer(index, layer.x, layer.y, targetX, targetY));
     layer.on('pointerup', () => {
       if (!dragged && !this.placedLayers.has(index)) {
-        this.placeLayer(index, targetX + 34, targetY, targetX, targetY);
+        this.placeLayer(index, targetX + 15, targetY, targetX, targetY);
       }
     });
 
@@ -969,7 +969,7 @@ export class MapleBakingActivityScene extends Phaser.Scene {
     const targetOffsets = [-24, 28, -18] as const;
     const targetYs = [520, 456, 392] as const;
     const targetX = GAME_WIDTH / 2 + (targetOffsets[index] ?? 0);
-    this.placeLayer(index, targetX + 30, targetYs[index] ?? 0, targetX, targetYs[index] ?? 0);
+    this.placeLayer(index, targetX + 15, targetYs[index] ?? 0, targetX, targetYs[index] ?? 0);
   }
 
   private renderIcingStage(): void {
