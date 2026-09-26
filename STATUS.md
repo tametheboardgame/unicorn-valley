@@ -14,11 +14,13 @@ The final approved implementation head was `82dec6e91305d9eed962da46c8af52873a0e
 
 H3.11-R1 Bakery/Picnic remediation is also complete and human-approved. It preserves Maple for the Wobbly Cake story until completion, gates Marigold's picnic correctly, fixes village NPC positioning/interaction overlap, and leaves the temporary cake flow usable until the proper mini-game replaces it.
 
-## Next bounded slice
+## Current bounded slice
 
-**H3.11-R2 - Wobbly Cake baking mini-game** is next, before H3.11.5 Rosehip Cottage.
+**H3.11-R2 - Wobbly Cake baking mini-game** is implemented on draft PR **#183** and is awaiting targeted technical validation plus human visual/play review before approval.
 
-R2 must replace the temporary Wobbly Cake menu/choice flow with a forgiving, child-friendly cake-making/decorating activity while preserving the existing Maple quest, rewards, save state and R1 picnic dependency. Repeatability after quest completion is a planning decision, not an assumed economy loop.
+The temporary three-choice quest menu has been replaced with a four-stage, forgiving baking activity using the existing on-demand Maple activity scene: mix the batter, stack three sponge layers, pipe a cake theme, then add topping and finish. There is no timer or failure state.
+
+Quest mode preserves the existing Maple theme flags, quest-critical Wobbly Cake item and QuestEngine progression, so the approved R1 Marigold picnic dependency remains unchanged. Post-quest replay keeps the pre-existing recipe/discovery notebook only; R2 adds no new repeatable economy reward.
 
 After R2 approval, continue with the already-numbered H3.11.5-H3.11.10 interior/content programme. H3.12 remains reserved for wider cross-region recurring-character presence coherence.
 
@@ -30,7 +32,7 @@ After R2 approval, continue with the already-numbered H3.11.5-H3.11.10 interior/
 - H3.11.3 Twinkle & Thread: complete and human-approved.
 - H3.11-R1 Bakery/Picnic remediation: complete and human-approved.
 - H3.11.4 Story House A-F: complete and human-approved; merged through PR #181.
-- H3.11-R2 Wobbly Cake mini-game: next.
+- H3.11-R2 Wobbly Cake mini-game: implementation on draft PR #183; technical and human review pending.
 - H3.11.5-H3.11.10: planned after R2.
 - H3.12: planned wider presence-coherence pass.
 
