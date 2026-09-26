@@ -221,9 +221,8 @@ test('dialogue and sound settings expose explicit production interaction states'
   for (let step = 0; step < 8; step += 1) {
     const glade = (await snapshot(page)).scenes.find(({ key }) => key === 'MoonflowerGladeScene');
     const dialogueOpen =
-      glade?.objects.some(
-        ({ name, visible }) => name === 'dialogue-production-panel' && visible,
-      ) ?? false;
+      glade?.objects.some(({ name, visible }) => name === 'dialogue-production-panel' && visible) ??
+      false;
     if (!dialogueOpen) {
       break;
     }
