@@ -793,7 +793,7 @@ export class MapleBakingActivityScene extends Phaser.Scene {
     this.mixSamples += 1;
     this.drawMixProgress();
 
-    if (this.mixTravel >= MIX_REQUIRED_TRAVEL) {
+    if (this.mixTravel >= MIX_REQUIRED_TRAVEL - 0.0001) {
       this.actionLocked = true;
       this.mixDragging = false;
       this.time.delayedCall(180, () => {
