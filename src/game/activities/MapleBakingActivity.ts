@@ -47,10 +47,7 @@ export function recordMapleBakingCake(
   return recordRepeatableActivityOutcome(saveService, CONFIG, outcome.discoveryId);
 }
 
-export function completeMapleQuestCake(
-  saveService: SaveService,
-  theme: BakeryCakeTheme,
-): void {
+export function completeMapleQuestCake(saveService: SaveService, theme: BakeryCakeTheme): void {
   const save = saveService.load() ?? saveService.createNewGame();
   const flags = {
     ...save.world.flags,
