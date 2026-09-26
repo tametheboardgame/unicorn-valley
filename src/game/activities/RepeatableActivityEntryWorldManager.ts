@@ -3,11 +3,10 @@ import {
   BEACHCOMBING_READY_FLAG,
   CORAL_SHELL_STORIES_QUEST_ID,
 } from '../../content/r65StarlightBeach';
-import { MAPLE_CAKE_QUEST_ID } from '../../content/r6VillageContent';
 import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
-import { UI_COLOURS, UI_FONT, applyButtonHover } from '../ui/uiTheme';
+import { UI_FONT } from '../ui/uiTheme';
 import { worldDepthForY } from '../world/WorldDepth';
 
 interface SceneRuntime {
@@ -17,11 +16,6 @@ interface SceneRuntime {
 
 const BEACH_ENTRY = { x: 1210, y: 1490, radius: 116 } as const;
 const REGISTRY_OWNER = 'repeatable-activity-entry';
-
-function isBakeryScene(scene: Phaser.Scene): boolean {
-  const interior = scene as Phaser.Scene & { interiorId?: string };
-  return scene.scene.key === 'VillageInteriorScene' && interior.interiorId === 'bakery';
-}
 
 export class RepeatableActivityEntryWorldManager {
   private runtime: SceneRuntime | null = null;
@@ -36,14 +30,8 @@ export class RepeatableActivityEntryWorldManager {
   }
 
   private update(): void {
-    const bakery = this.game.scene.getScene('VillageInteriorScene');
     const beach = this.game.scene.getScene('StarlightBeachScene');
-    const target =
-      bakery?.scene.isActive() && isBakeryScene(bakery)
-        ? bakery
-        : beach?.scene.isActive()
-          ? beach
-          : null;
+    const target = beach?.scene.isActive() ? beach : null;
 
     if (!target) {
       this.destroyRuntime();
@@ -58,44 +46,7 @@ export class RepeatableActivityEntryWorldManager {
   private buildRuntime(scene: Phaser.Scene): void {
     this.destroyRuntime();
     this.runtime = { scene, objects: [] };
-
-    if (isBakeryScene(scene)) {
-      this.buildBakeryEntry(scene);
-      return;
-    }
     this.buildBeachEntry(scene);
-  }
-
-  private buildBakeryEntry(scene: Phaser.Scene): void {
-    const completed =
-      getBrowserQuestEngine().getProgress(MAPLE_CAKE_QUEST_ID).status === 'completed';
-    if (!completed) {
-      return;
-    }
-
-    const button = scene.add
-      .rectangle(1010, 548, 250, 58, UI_COLOURS.mint, 1)
-      .setStrokeStyle(3, 0x6aa996, 1)
-      .setScrollFactor(0)
-      .setDepth(120)
-      .setInteractive({ useHandCursor: true })
-      .setName('wp14-activity-entry:maple-baking');
-    const label = scene.add
-      .text(1010, 548, '🎂 Bake with Maple', {
-        color: UI_COLOURS.ink,
-        fontFamily: UI_FONT,
-        fontSize: '16px',
-        fontStyle: 'bold',
-      })
-      .setOrigin(0.5)
-      .setScrollFactor(0)
-      .setDepth(121)
-      .setInteractive({ useHandCursor: true });
-    applyButtonHover(button, UI_COLOURS.mint, UI_COLOURS.blush);
-    const launch = () => void this.launchMapleBaking(scene);
-    button.on('pointerdown', launch);
-    label.on('pointerdown', launch);
-    this.runtime?.objects.push(button, label);
   }
 
   private buildBeachEntry(scene: Phaser.Scene): void {
@@ -133,23 +84,6 @@ export class RepeatableActivityEntryWorldManager {
         },
       },
     ]);
-  }
-
-  private async launchMapleBaking(scene: Phaser.Scene): Promise<void> {
-    if (this.launchPending) {
-      return;
-    }
-    this.launchPending = true;
-    try {
-      if (!this.game.scene.keys.MapleBakingActivityScene) {
-        const { MapleBakingActivityScene } = await import('./MapleBakingActivityScene');
-        this.game.scene.add('MapleBakingActivityScene', MapleBakingActivityScene);
-      }
-      scene.scene.launch('MapleBakingActivityScene', { returnScene: 'VillageInteriorScene' });
-      scene.scene.pause();
-    } finally {
-      this.launchPending = false;
-    }
   }
 
   private async launchBeachcombing(scene: Phaser.Scene): Promise<void> {
