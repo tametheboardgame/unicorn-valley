@@ -100,7 +100,9 @@ async function holdMeasure(page: Page, objectName: string, milliseconds: number)
   await page.keyboard.up('Space');
 }
 
-test('WP14 Maple baking reuses the cake table and rewards a strong repeat bake', async ({ page }) => {
+test('WP14 Maple baking reuses the cake table and rewards a strong repeat bake', async ({
+  page,
+}) => {
   await seedActivityPrerequisites(page);
   await openDiagnostics(page);
   await startScene(page, 'VillageInteriorScene', {
