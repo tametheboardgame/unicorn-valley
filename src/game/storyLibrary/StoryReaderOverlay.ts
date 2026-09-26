@@ -909,16 +909,16 @@ export class StoryReaderOverlay {
       }, 110);
     };
 
-    let pointerStart:
-      | {
-          pointerId: number;
-          x: number;
-          y: number;
-          lastX: number;
-          lastY: number;
-          startedAt: number;
-        }
-      | undefined;
+    type ReaderPointerStart = {
+      pointerId: number;
+      x: number;
+      y: number;
+      lastX: number;
+      lastY: number;
+      startedAt: number;
+    };
+
+    let stopActiveGesture: (() => void) | null = null;
     const isInteractiveTarget = (target: EventTarget | null): boolean =>
       target instanceof Element &&
       target.closest('button, a, input, select, textarea, label') !== null;
@@ -930,7 +930,10 @@ export class StoryReaderOverlay {
       ) {
         return;
       }
-      pointerStart = {
+
+      stopActiveGesture?.();
+
+      const start: ReaderPointerStart = {
         pointerId: event.pointerId,
         x: event.clientX,
         y: event.clientY,
@@ -938,51 +941,59 @@ export class StoryReaderOverlay {
         lastY: event.clientY,
         startedAt: performance.now(),
       };
-      scroller.setPointerCapture(event.pointerId);
-    });
 
-    scroller.addEventListener('pointermove', (event) => {
-      if (!pointerStart || pointerStart.pointerId !== event.pointerId) return;
-      pointerStart.lastX = event.clientX;
-      pointerStart.lastY = event.clientY;
-    });
+      const cleanup = (): void => {
+        window.removeEventListener('pointermove', onPointerMove);
+        window.removeEventListener('pointerup', onPointerUp);
+        window.removeEventListener('pointercancel', onPointerCancel);
+        if (stopActiveGesture === cleanup) stopActiveGesture = null;
+      };
 
-    scroller.addEventListener('pointercancel', (event) => {
-      if (scroller.hasPointerCapture(event.pointerId)) {
-        scroller.releasePointerCapture(event.pointerId);
-      }
-      pointerStart = undefined;
-    });
+      const finishGesture = (endX: number, endY: number): void => {
+        const deltaX = endX - start.x;
+        const deltaY = endY - start.y;
+        const horizontalDistance = Math.abs(deltaX);
+        const verticalDistance = Math.abs(deltaY);
 
-    scroller.addEventListener('pointerup', (event) => {
-      const start = pointerStart;
-      pointerStart = undefined;
-      if (scroller.hasPointerCapture(event.pointerId)) {
-        scroller.releasePointerCapture(event.pointerId);
-      }
-      if (!start || start.pointerId !== event.pointerId) return;
+        if (horizontalDistance >= 56 && horizontalDistance > verticalDistance * 1.25) {
+          requestPageTurn(deltaX < 0 ? 'next' : 'previous');
+          return;
+        }
 
-      const endX = start.lastX === start.x ? event.clientX : start.lastX;
-      const endY = start.lastY === start.y ? event.clientY : start.lastY;
-      const deltaX = endX - start.x;
-      const deltaY = endY - start.y;
-      const horizontalDistance = Math.abs(deltaX);
-      const verticalDistance = Math.abs(deltaY);
+        const elapsed = performance.now() - start.startedAt;
+        if (horizontalDistance > 10 || verticalDistance > 10 || elapsed > 500) return;
 
-      if (horizontalDistance >= 56 && horizontalDistance > verticalDistance * 1.25) {
-        requestPageTurn(deltaX < 0 ? 'next' : 'previous');
-        return;
-      }
+        const paperRect = paper.getBoundingClientRect();
+        if (endX < paperRect.left) {
+          requestPageTurn('previous');
+        } else if (endX > paperRect.right) {
+          requestPageTurn('next');
+        }
+      };
 
-      const elapsed = performance.now() - start.startedAt;
-      if (horizontalDistance > 10 || verticalDistance > 10 || elapsed > 500) return;
+      const onPointerMove = (moveEvent: PointerEvent): void => {
+        if (moveEvent.pointerId !== start.pointerId) return;
+        start.lastX = moveEvent.clientX;
+        start.lastY = moveEvent.clientY;
+      };
 
-      const paperRect = paper.getBoundingClientRect();
-      if (endX < paperRect.left) {
-        requestPageTurn('previous');
-      } else if (endX > paperRect.right) {
-        requestPageTurn('next');
-      }
+      const onPointerUp = (upEvent: PointerEvent): void => {
+        if (upEvent.pointerId !== start.pointerId) return;
+        const endX = start.lastX === start.x ? upEvent.clientX : start.lastX;
+        const endY = start.lastY === start.y ? upEvent.clientY : start.lastY;
+        cleanup();
+        finishGesture(endX, endY);
+      };
+
+      const onPointerCancel = (cancelEvent: PointerEvent): void => {
+        if (cancelEvent.pointerId !== start.pointerId) return;
+        cleanup();
+      };
+
+      window.addEventListener('pointermove', onPointerMove, { passive: true });
+      window.addEventListener('pointerup', onPointerUp);
+      window.addEventListener('pointercancel', onPointerCancel);
+      stopActiveGesture = cleanup;
     });
 
     scroller.append(paper);
