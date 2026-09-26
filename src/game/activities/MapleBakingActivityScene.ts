@@ -125,7 +125,6 @@ export class MapleBakingActivityScene extends Phaser.Scene {
   private ingredientScores: number[] = [];
   private measureFill = 0;
   private measureHolding = false;
-  private measureStartedAt = 0;
   private measureMeterGraphics: Phaser.GameObjects.Graphics | null = null;
   private measureValueText: Phaser.GameObjects.Text | null = null;
 
@@ -230,7 +229,6 @@ export class MapleBakingActivityScene extends Phaser.Scene {
     this.ingredientScores = [];
     this.measureFill = 0;
     this.measureHolding = false;
-    this.measureStartedAt = 0;
     this.mixDragging = false;
     this.mixTravel = 0;
     this.mixQualityTotal = 0;
@@ -560,7 +558,6 @@ export class MapleBakingActivityScene extends Phaser.Scene {
       return;
     }
     this.measureHolding = true;
-    this.measureStartedAt = this.time.now;
   }
 
   private handleGlobalPointerUp(): void {
@@ -1483,7 +1480,7 @@ export class MapleBakingActivityScene extends Phaser.Scene {
     height: number,
     labelText: string,
     onPress: () => void,
-    parent?: Phaser.GameObjects.Container,
+    parent?: Phaser.GameObjects.Container | null,
     depth?: number,
   ): void {
     const shadow = this.add.graphics();
