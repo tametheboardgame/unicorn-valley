@@ -104,14 +104,22 @@ test('WP14 Maple baking completes through semantic controls, persists rewards an
   await waitForNamedObject(page, 'VillageInteriorScene', 'wp14-activity-entry:maple-baking');
   await clickNamedObject(page, 'VillageInteriorScene', 'wp14-activity-entry:maple-baking');
   await waitForScene(page, 'MapleBakingActivityScene');
-  await waitForNamedObject(page, 'MapleBakingActivityScene', 'wp14-baking-stage:theme');
+  await waitForNamedObject(page, 'MapleBakingActivityScene', 'h3-r2-baking-stage:mix');
 
-  await clickNamedObject(page, 'MapleBakingActivityScene', 'wp14-baking-choice:theme:1');
-  await waitForNamedObject(page, 'MapleBakingActivityScene', 'wp14-baking-stage:topping');
-  await clickNamedObject(page, 'MapleBakingActivityScene', 'wp14-baking-choice:topping:2');
-  await waitForNamedObject(page, 'MapleBakingActivityScene', 'wp14-baking-stage:finish');
-  await clickNamedObject(page, 'MapleBakingActivityScene', 'wp14-baking-choice:finish:3');
-  await waitForNamedObject(page, 'MapleBakingActivityScene', 'wp14-baking-result');
+  for (let stir = 0; stir < 5; stir += 1) {
+    await clickNamedObject(page, 'MapleBakingActivityScene', 'h3-r2-baking-mix-bowl');
+  }
+  await waitForNamedObject(page, 'MapleBakingActivityScene', 'h3-r2-baking-stage:stack');
+  for (const layer of [1, 2, 3]) {
+    await clickNamedObject(page, 'MapleBakingActivityScene', `h3-r2-baking-layer:${layer}`);
+  }
+  await waitForNamedObject(page, 'MapleBakingActivityScene', 'h3-r2-baking-stage:icing');
+  await clickNamedObject(page, 'MapleBakingActivityScene', 'h3-r2-baking-icing:sunshine');
+  await waitForNamedObject(page, 'MapleBakingActivityScene', 'h3-r2-baking-topping:clouds');
+  await clickNamedObject(page, 'MapleBakingActivityScene', 'h3-r2-baking-topping:clouds');
+  await waitForNamedObject(page, 'MapleBakingActivityScene', 'h3-r2-baking-finish:ribbon');
+  await clickNamedObject(page, 'MapleBakingActivityScene', 'h3-r2-baking-finish:ribbon');
+  await waitForNamedObject(page, 'MapleBakingActivityScene', 'h3-r2-baking-result');
 
   const saved = await readSave(page);
   expect(saved.activities.miniGameRecords['minigame:maple-baking-table']).toBe(1);
