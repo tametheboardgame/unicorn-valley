@@ -26,7 +26,6 @@ const CONFIG = {
   outcomeDiscoveryIds: BAKERY_OUTCOMES.map(({ discoveryId }) => discoveryId),
 } as const;
 
-
 export const MAPLE_REPEAT_BAKE_COST = 1 as const;
 
 export type MapleCakeRating = 'lovely-wobble' | 'brilliant-wobble' | 'wobble-masterpiece';
