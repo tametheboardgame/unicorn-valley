@@ -37,9 +37,7 @@ async function seedActivityPrerequisites(page: Page): Promise<void> {
           unlockedAbilityIds: [],
         },
         inventory: {
-          itemQuantities: {
-            'item:rainbow-run-sparkle': 2,
-          },
+          itemQuantities: {},
           ownedCosmeticIds: [],
           ownedDecorationIds: [],
           specialItemIds: [],
