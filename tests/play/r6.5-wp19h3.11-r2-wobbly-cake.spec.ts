@@ -104,9 +104,9 @@ async function completeMoonflowerCake(page: Page): Promise<void> {
   }
 
   await waitForNamedObject(page, 'MapleBakingActivityScene', 'h3-r2-baking-stage:icing');
-  for (let trace = 0; trace < 12; trace += 1) {
+  for (let trace = 0; trace < 20; trace += 1) {
     await page.keyboard.press('Space');
-    await page.waitForTimeout(35);
+    await page.waitForTimeout(60);
   }
 
   await waitForNamedObject(page, 'MapleBakingActivityScene', 'h3-r2-baking-topping:berries');
