@@ -253,3 +253,24 @@ this does not approve merge, production deployment or WP19D.
 Status: Accepted implementation decision, 2026-09-11.
 
 David explicitly released WP19E after approving WP19D. Ordinary in-world dialogue is owned by one `WorldConversationPresenter` entered through `WorldInteractionCoordinator`; it retains `DialogueSession`, registered dialogue IDs and domain effect execution, uses `InteractionModalState` for the complete lifetime, and uses the existing close-input suppression boundary. Pip and roaming-resident short speech are the first migrated routes. A transparent input surface may intercept background input, but ordinary speech must not visibly dim the world. Conversation-only story scenes are retirement targets, while races, minigames, creator flows and actual interiors remain genuine-mode exceptions.
+
+## UV-D024 - Story House H3.11.4 accepted; Wobbly Cake is next
+
+Status: Accepted, 2026-09-26.
+
+David completed the final Story House play review, confirmed that the result works, and explicitly authorised the whole approved H3.11.4 implementation for production. H3.11.4 A-F is therefore human-approved. The final branch head `82dec6e91305d9eed962da46c8af52873a0e98a5` passed CI #4010, and PR #181 merged to `main` as `52069b8e36311e14276c2115f3515dfa52f2adb0`.
+
+The accepted Story House baseline includes the walkable room and Quill, the scalable content-driven library, DOM long-form reader, independent multi-book reading persistence and preferences, demand-loaded illustration support, paged picture-book mode for *The Duck Bread Baker*, compact search/filter catalogue UX, Continue Reading and Valley Story Cards surfaces, concise catalogue copy, equal Previous/Next controls, and tap/swipe page turns. The shared interaction/HUD click-through guard introduced during closeout is also part of the accepted baseline.
+
+The next bounded Sunbeam slice is H3.11-R2, the Wobbly Cake baking mini-game. It runs before H3.11.5 Rosehip Cottage and must preserve the H3.11-R1 Maple/Marigold dependency. This decision records acceptance and sequencing; it does not assert a production deployment result that has not been separately verified.
+
+## UV-D025 - Fast-development CI and automatic failed-run remediation
+
+Status: Accepted, 2026-09-26.
+
+David explicitly restored the intended two-speed verification model after the Story House closeout exposed excessive waiting on repeated whole-game CI. Active development uses the smallest trustworthy checks for the current change: Tier 0, ownership-selected unit/browser contracts and build/performance only where relevant. Pull-request synchronisation should classify the delta since the previous PR head when available so an older high-risk change in a long-lived branch does not repeatedly force Tier 3/4 after later tiny edits.
+
+A genuinely high-risk current delta may still escalate. After David human-approves a substantive slice, one authoritative full qualification must run on the exact approved head before merge to `main`/production. That final gate, not every iterative checkpoint, owns the complete Chromium shards and cross-browser matrix.
+
+David also explicitly authorised automatic remediation of failed CI on status checks. When he asks “?”, “now?”, “where are we at?” or equivalent and the active run has failed, the agent must immediately inspect and fix a deterministic in-scope failure, commit/push the correction and make one sensible replacement-run check without waiting for a separate “fix it” instruction. Stop only for ambiguity, product/design choice, material scope expansion, Red/destructive action or a human gate. Repeated polling remains prohibited.
+

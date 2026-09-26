@@ -93,27 +93,30 @@ The verification policy is code, not a judgement call made independently on ever
 - Browser tests live under `tests/play/**` and should use semantic/stable selectors or diagnostics contracts rather than fragile screen coordinates.
 - `scripts/verification/verificationOwnership.mjs` maps source ownership to unit/browser groups.
 - Unmapped runtime/test files fail safe to full verification.
-- Changes to app bootstrap, architecture, scenes/manifest, persistence, CI/build/test infrastructure or other escalation paths run full qualification.
+- A current change to app bootstrap, architecture, scenes/manifest, persistence, CI/build/test infrastructure or another explicit escalation path may run full qualification immediately. Pull-request synchronisation uses the new delta where possible so an older escalation file does not make every subsequent minor edit repeat the full matrix.
 - Never weaken a test solely because a refactor made its implementation-specific assertion inconvenient; replace brittle assertions with the user-visible or architectural contract they were intended to protect.
 
 ## 10. Validation workflow
 
-For a small, mapped fix:
+For a small, mapped fix during active development:
 
 - run formatter/lint/static architecture checks;
 - run the ownership-selected unit/browser contracts;
-- allow CI to escalate if the path is unmapped or cross-cutting.
+- build/static-smoke only where runtime output changes;
+- do not add the full Chromium/cross-browser matrix merely because an earlier commit in the same PR touched a wider subsystem.
 
 For a feature touching one or more owned subsystems:
 
 - run the selected unit groups and targeted browser groups;
-- build/static-smoke when runtime output changes;
-- run the performance policy when loading/bundle-sensitive files change.
+- use representative shared-system regression coverage for the subsystem changed;
+- run the performance policy when loading/bundle-sensitive files change;
+- allow a **current high-risk delta** or unmapped runtime path to escalate when necessary.
 
-For a work package, architecture/persistence/bootstrap change or final qualification:
+For a human-approved substantive slice before merge to `main`:
 
-- run Tier 0-4 authoritative qualification, including the full Chromium shards and Chromium/Firefox/WebKit compatibility matrix;
-- for release qualification, also run the immutable-deployment startup/save/reload/Continue smoke on the exact candidate SHA.
+- manually dispatch Tier 0-4 authoritative qualification against the exact approved head, including the full Chromium shards and Chromium/Firefox/WebKit compatibility matrix;
+- for release qualification, also run the immutable-deployment startup/save/reload/Continue smoke on the exact candidate SHA;
+- do not merge until that final exact-head gate is green.
 
 `TESTING.md` contains the operator-facing command matrix.
 

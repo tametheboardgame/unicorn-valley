@@ -109,13 +109,28 @@ Before an execution window ends or whenever context-loss risk is material:
 - record durable decisions in `DECISIONS.md`;
 - leave the repository resumable by a fresh agent without the old conversation.
 
-### CI wait and chat hand-off
+### Fast-development CI contract
 
-- Treat CI polling as bounded work. Never keep a turn open on a non-terminal CI run until the execution window expires.
-- Poll in short intervals while useful work or safe remediation remains, but preserve enough time to produce a normal user-facing final response.
-- If CI is still running at the hand-off point, stop polling, persist the exact head SHA and known job state in `STATUS.md` / `PROJECT_STATE.json`, and return a concise checkpoint that says which checks passed, failed or remain pending.
-- If CI fails, inspect and record the failing job and actionable cause before retrying. Do not leave the conversation suspended on an unreported wait or an open tool call.
-- A pending CI result is a valid explicit hand-off state. It must never prevent the current chat from returning control to the user.
+The default development loop is **small change -> cheap relevant checks -> preview -> human review**. Full-game qualification is a section/release gate, not the default response to every edit.
+
+- During active implementation, run the smallest deterministic checks that make the current preview trustworthy: Tier 0 plus ownership-selected unit/browser checks and build/performance only where the changed files require them.
+- Pull-request `synchronize` runs should classify the **new delta since the previous PR head** when that SHA is available. This prevents an older high-risk file elsewhere in a long-lived PR from forcing the full browser matrix again after every later tiny edit.
+- A genuinely high-risk **current delta** may still escalate immediately, especially CI/build infrastructure, bootstrap, persistence/schema or other explicit escalation paths.
+- Documentation-only changes must remain documentation/static-contract checks only.
+- Ordinary visual/content/UI iterations must not run Tier 3 full Chromium shards or Tier 4 cross-browser solely because the wider branch previously touched shared code.
+- Shared-system changes should use representative ownership-selected regression coverage during development unless the current delta itself is an explicit high-risk escalation.
+- After a substantive slice is human-approved and **before merge to `main` / production**, dispatch one authoritative full CI run against the exact approved head. That final gate runs the complete required unit/build/performance, Chromium and cross-browser qualification. Merge only after it is green.
+- A full run on `main` after merge is confirmation, not a substitute for the pre-merge exact-head qualification.
+
+### CI status, failure remediation and chat hand-off
+
+- Never sit in repeated CI/deployment polling loops. On a user status query such as `?`, “now?” or “where are we at?”, perform one fresh status check.
+- A status query is also standing authorisation to remediate a **terminal failed CI run** on the active work branch. Do not wait for a separate “fix it” instruction.
+- On failure, inspect the failed job/logs immediately. If the cause is deterministic, safe and within the active package, fix it, commit/push the correction, make one sensible check of the replacement run, and report what changed and what is now pending.
+- If the failure is a stale test, update it only when the accepted product behaviour is clear; do not distort working product behaviour merely to satisfy an obsolete assertion.
+- Stop for user input only when remediation requires a product/design choice, material scope expansion, destructive/Red action, a human acceptance gate, or the failure is genuinely ambiguous.
+- If CI is still running after the single sensible check, return control to the user with the exact run/head state instead of polling.
+- A pending CI result is a valid explicit hand-off state.
 
 ## Night Shift
 
