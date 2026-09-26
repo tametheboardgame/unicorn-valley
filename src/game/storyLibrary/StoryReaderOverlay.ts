@@ -145,6 +145,7 @@ function renderStoryIllustration(
   image.alt = illustration.alt;
   image.loading = 'lazy';
   image.decoding = 'async';
+  image.draggable = false;
   image.width = illustration.width;
   image.height = illustration.height;
   figure.append(image);
@@ -808,6 +809,7 @@ export class StoryReaderOverlay {
       : 'story-reader-paper';
     paper.dataset.storyId = manifest.id;
     paper.dataset.chapterId = chapter.chapterId;
+    paper.addEventListener('dragstart', (event) => event.preventDefault());
 
     const chapterManifest = manifest.chapters[index];
 
