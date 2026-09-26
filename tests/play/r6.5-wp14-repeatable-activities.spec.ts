@@ -37,10 +37,7 @@ async function seedActivityPrerequisites(page: Page, initialShimmer = 0): Promis
           unlockedAbilityIds: [],
         },
         inventory: {
-          itemQuantities:
-            seedShimmer > 0
-              ? { 'item:rainbow-run-sparkle': seedShimmer }
-              : {},
+          itemQuantities: seedShimmer > 0 ? { 'item:rainbow-run-sparkle': seedShimmer } : {},
           ownedCosmeticIds: [],
           ownedDecorationIds: [],
           specialItemIds: [],
