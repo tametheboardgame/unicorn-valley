@@ -236,10 +236,18 @@ test('H3.11.4 gives Story House a dedicated storykeeper and physical reading roo
 
   const searchToggle = page.getByRole('button', { name: 'Search' });
   const filterToggle = page.getByRole('button', { name: 'Filters' });
+  const categoryToggle = page.getByRole('button', { name: /Categories/ });
   await expect(searchToggle).toHaveAttribute('aria-expanded', 'false');
   await expect(filterToggle).toHaveAttribute('aria-expanded', 'false');
+  await expect(categoryToggle).toHaveAttribute('aria-expanded', 'false');
   await expect(page.locator('#story-library-search-panel')).toBeHidden();
   await expect(page.locator('#story-library-filter-panel')).toBeHidden();
+  await expect(page.locator('#story-library-category-panel')).toBeHidden();
+
+  await categoryToggle.click();
+  await expect(page.locator('#story-library-category-panel')).toBeVisible();
+  await categoryToggle.click();
+  await expect(page.locator('#story-library-category-panel')).toBeHidden();
 
   await searchToggle.click();
   await expect(page.locator('#story-library-search-panel')).toBeVisible();

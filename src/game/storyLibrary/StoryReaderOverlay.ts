@@ -413,7 +413,17 @@ export class StoryReaderOverlay {
 
       const shelfTabs = document.createElement('nav');
       shelfTabs.className = 'story-library-shelf-tabs';
-      shelfTabs.setAttribute('aria-label', 'Story House shelves');
+      shelfTabs.id = 'story-library-category-panel';
+      shelfTabs.hidden = true;
+      shelfTabs.setAttribute('aria-label', 'Story House categories');
+
+      let categoryToggle: HTMLButtonElement | null = null;
+      const setCategoriesExpanded = (expanded: boolean): void => {
+        shelfTabs.hidden = !expanded;
+        categoryToggle?.setAttribute('aria-expanded', String(expanded));
+        categoryToggle?.classList.toggle('is-active', expanded);
+      };
+
       const shelfButtons = new Map<StoryLibraryShelfId, HTMLButtonElement>();
       for (const shelfDefinition of shelfDefinitions) {
         const shelfButton = document.createElement('button');
@@ -422,11 +432,20 @@ export class StoryReaderOverlay {
         shelfButton.textContent = `${shelfDefinition.label} (${shelfDefinition.count})`;
         shelfButton.addEventListener('click', () => {
           activeShelf = shelfDefinition.id;
+          setCategoriesExpanded(false);
           renderShelf();
         });
         shelfButtons.set(shelfDefinition.id, shelfButton);
         shelfTabs.append(shelfButton);
       }
+
+      categoryToggle = button('▦ Categories', 'story-library-control-toggle', () => {
+        setCategoriesExpanded(shelfTabs.hidden);
+      });
+      categoryToggle.setAttribute('aria-controls', shelfTabs.id);
+      categoryToggle.setAttribute('aria-expanded', 'false');
+      controlToggles.append(categoryToggle);
+      controls.append(shelfTabs);
 
       const statsPanel = document.createElement('section');
       statsPanel.className = 'story-library-stats';
@@ -565,6 +584,12 @@ export class StoryReaderOverlay {
           shelfButton.classList.toggle('is-active', selected);
           shelfButton.setAttribute('aria-current', selected ? 'page' : 'false');
         }
+        const activeShelfLabel =
+          shelfDefinitions.find(({ id }) => id === activeShelf)?.label ?? 'Categories';
+        if (categoryToggle) {
+          categoryToggle.textContent =
+            activeShelf === 'all' ? '▦ Categories' : `▦ ${activeShelfLabel}`;
+        }
 
         for (const story of visibleStories) {
           const card = document.createElement('button');
@@ -652,7 +677,7 @@ export class StoryReaderOverlay {
         renderShelf();
       });
 
-      shell.append(header, controls, shelfTabs, statsPanel, shelf, footer);
+      shell.append(header, controls, statsPanel, shelf, footer);
       renderShelf();
       this.root.replaceChildren(shell);
       close.focus({ preventScroll: true });

@@ -479,7 +479,7 @@ canvas {
 .story-library-shell {
   display: grid;
   max-height: min(820px, calc(100dvh - 28px));
-  grid-template-rows: auto auto auto auto minmax(0, 1fr) auto;
+  grid-template-rows: auto auto auto minmax(0, 1fr) auto;
 }
 
 .story-library-header,
@@ -1331,12 +1331,15 @@ canvas {
 /* H3.11.4F scalable Story House discovery and return UX */
 .story-library-shelf-tabs {
   display: flex;
-  gap: 8px;
-  padding: 10px 18px;
+  gap: 7px;
+  padding: 2px 0 1px;
   overflow-x: auto;
-  border-bottom: 2px solid #d8e3e5;
-  background: #f4eadb;
+  background: transparent;
   scrollbar-width: thin;
+}
+
+.story-library-shelf-tabs[hidden] {
+  display: none !important;
 }
 
 .story-library-shelf-tab {
@@ -1367,34 +1370,33 @@ canvas {
 }
 
 .story-library-stats {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 14px 5px;
   border-bottom: 2px solid #d8e3e5;
   background: #fffaf0;
 }
 
 .story-library-stats > span {
-  display: grid;
-  gap: 1px;
-  padding: 8px 12px;
-  border-right: 1px solid #d8e3e5;
+  display: inline-flex;
+  gap: 5px;
+  align-items: baseline;
+  padding: 0;
   text-align: center;
-}
-
-.story-library-stats > span:last-child {
-  border-right: 0;
 }
 
 .story-library-stats strong {
   color: #526f81;
-  font-size: 16px;
+  font-size: 13px;
 }
 
 .story-library-stats small {
   color: #8b7888;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 900;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
@@ -1503,12 +1505,17 @@ canvas {
 }
 
 @media (max-width: 700px) {
-  .story-library-shelf-tabs {
-    padding-inline: 10px;
+  .story-library-stats {
+    gap: 9px;
+    padding-inline: 8px;
   }
 
   .story-library-stats strong {
-    font-size: 14px;
+    font-size: 12px;
+  }
+
+  .story-library-stats small {
+    font-size: 8px;
   }
 
   .story-library-valley-cards {
