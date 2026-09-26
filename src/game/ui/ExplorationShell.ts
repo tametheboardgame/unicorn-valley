@@ -325,11 +325,7 @@ export class ExplorationShell {
   }
 
   private openInventory(initialTab: 'items' | 'map'): void {
-    if (
-      this.destroyed ||
-      !this.scene.scene.isActive() ||
-      isInteractionActivationSuppressed()
-    ) {
+    if (this.destroyed || !this.scene.scene.isActive() || isInteractionActivationSuppressed()) {
       return;
     }
     const returnScene = this.scene.scene.key;
@@ -340,11 +336,7 @@ export class ExplorationShell {
   }
 
   private openWonderbook(): void {
-    if (
-      this.destroyed ||
-      !this.scene.scene.isActive() ||
-      isInteractionActivationSuppressed()
-    ) {
+    if (this.destroyed || !this.scene.scene.isActive() || isInteractionActivationSuppressed()) {
       return;
     }
     const returnScene = this.scene.scene.key;
@@ -355,11 +347,7 @@ export class ExplorationShell {
   }
 
   private openSettings(): void {
-    if (
-      this.destroyed ||
-      !this.scene.scene.isActive() ||
-      isInteractionActivationSuppressed()
-    ) {
+    if (this.destroyed || !this.scene.scene.isActive() || isInteractionActivationSuppressed()) {
       return;
     }
     void this.audioSettingsPanel.openSettings();
