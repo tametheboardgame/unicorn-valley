@@ -23,11 +23,13 @@ A young child, with the design primarily tuned around the intended seven-year-ol
 
 ## Current accepted baseline
 
-R0 through R6 and R6.5-WP1 through WP16 are integrated. WP18A-G and human-approved WP18I/J are integrated through PR #158. Accepted gameplay head: `e4d64c0fa258bd91eb29579321e7da6b0968f71e`; audit base main: `d9b765c0293045251619783a4ced4b01068e993a`.
+R0 through R6 and the accepted R6.5 remediation/final-polish work through the approved Sunbeam Village Story House checkpoint are integrated on `main`.
 
-The 2026-09-08 user request commissions a whole-game audit and revised remediation proposal before further implementation. `R6.5-WP19-PLAN` was approved on 2026-09-08. WP19A and its planning PR are accepted, merged and deployed through main `d8f3de6f264fa5fd6e2d77d539a47f288eb50cd4`. WP18K is the active bounded foundation package; WP19B-I follow before the final WP18H/WP17 replay gates. See `docs/2026-09-08-REMEDIATION-PROPOSAL.md`.
+The current accepted gameplay baseline is PR #181's merge commit `52069b8e36311e14276c2115f3515dfa52f2adb0` (26 September 2026). Its approved head `82dec6e91305d9eed962da46c8af52873a0e98a5` passed CI #4010 across static/architecture checks, unit contracts, build/static smoke/performance, all three Chromium shards and cross-browser compatibility before merge.
 
-R7 is deliberately blocked until R6.5-WP17 releases the human readiness gate.
+Within the open-ended area-polish programme, H1 Moonflower Glade and H2 Moonflower Cottage are complete. H3 Sunbeam Village is active: H3.1-H3.10, H3.11.1-H3.11.4 and H3.11-R1 have reached their documented acceptance points. The next bounded slice is H3.11-R2, the Wobbly Cake baking mini-game, before H3.11.5 Rosehip Cottage and the remaining village-interior work.
+
+The approved whole-game remediation sequence and historical decisions remain recorded in `docs/2026-09-08-REMEDIATION-PROPOSAL.md`, `ROADMAP.md` and `DECISIONS.md`. R7 remains deliberately blocked until the R6.5 final qualification, human replay and WP17 readiness gate are complete.
 
 ## Scope
 

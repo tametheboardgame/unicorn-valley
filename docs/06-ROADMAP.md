@@ -1,5 +1,14 @@
 # Unicorn Valley - Development Roadmap
 
+## 2026-09-26 R6.5-WP19H3.11.4 Story House complete
+
+H3.11.4 A-F is **complete and human-approved**. The accepted Story House baseline now includes a polished walkable library with Quill, content-driven long-form story packages, a responsive DOM reader, durable independent reading progress/preferences, demand-loaded illustrations, paged picture-book support, scalable metadata/search/filter discovery, compact catalogue surfaces and direct tap/swipe page turns.
+
+The approved head `82dec6e91305d9eed962da46c8af52873a0e98a5` passed CI #4010 and PR #181 merged to `main` as `52069b8e36311e14276c2115f3515dfa52f2adb0`. H3.11-R1 Bakery/Picnic remediation is also closed. The next bounded slice is **H3.11-R2 - Wobbly Cake baking mini-game**, followed by H3.11.5 Rosehip Cottage.
+
+See `docs/audits/2026-09-26-H3.11.4-STORY-HOUSE-CLOSEOUT.md` and `docs/work-packages/R6.5-WP19H3-SUNBEAM-VILLAGE.md`.
+
+
 ## 2026-09-15 R6.5-WP19H1 complete - Moonflower Glade final polish and hardening
 
 `R6.5-WP19H1 - Moonflower Glade Final Polish` is complete and human-approved. H1.1-H1.10 delivered the intended visual, interaction and world-authorship result through iterative review; H1.11 then consolidated the implementation, removed legacy suppression/workarounds and established reusable conventions before final qualification.

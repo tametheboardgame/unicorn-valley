@@ -172,7 +172,7 @@ H0.5 cleared the final technical and visual gate for H1.
 
 ### R6.5-WP19H1+ - Open-Ended Area-by-Area Final Polish Programme
 
-State: **active; H1 = Moonflower Glade complete, H2 = Moonflower Cottage complete, H3 = Sunbeam Village feedback block 1 (H3.1-H3.8) human-approved on 23 September 2026; awaiting further Sunbeam feedback or substantive-complete decision**.
+State: **active; H1 = Moonflower Glade complete, H2 = Moonflower Cottage complete, H3 = Sunbeam Village active with H3.11.4 Story House human-approved and merged on 26 September 2026; H3.11-R2 Wobbly Cake is the next bounded slice**.
 
 The earlier fixed `H1-H13` area inventory is superseded by this section. There is **no predetermined upper H number**. The programme continues for as many independently useful area, subarea or interior passes as David chooses before integrated qualification. Interiors may receive their own H number when they warrant an independent review rather than being forced into a parent-area package.
 
@@ -190,7 +190,7 @@ Operating rules for H1+:
 - **H numbers are assigned sequentially only when David chooses the next review area.** Do not pre-assign future H numbers to locations.
 - **R6.5-WP19H1 - Moonflower Glade is complete and human-approved.**
 - **R6.5-WP19H2 - Moonflower Cottage & Home Customisation is complete, fully qualified and deployed to production.**
-- **Current package: R6.5-WP19H3 - Sunbeam Village Final Polish.** H3.1-H3.11.3 and H3.11-R1 are human-approved. H3.11 is a dedicated walkable-interiors programme with H3.11.1-H3.11.10 and per-slice human review. The active bounded work is the final **H3.11.4 Story House A-F library/reader polish**, specifically **H3.11.4F-R2 - final Story House UI polish**: compact the library/reader header bars, contain book-card descriptions and progress text inside their cards, and equalise Previous/Next reader navigation. Once Story House is complete and human-approved, run **H3.11-R2 - Wobbly Cake baking mini-game** before continuing to the already-assigned H3.11.5-H3.11.10 interiors/content slices. These R1/R2 inserts deliberately do not renumber H3.11.5-H3.11.10. H3.12 remains planned for wider cross-region recurring-character presence coherence. David's next play pass may amend those slices or add H3.13+. Final hardening/consolidation remains unnumbered until substantive Sunbeam review is explicitly complete.
+- **Current package: R6.5-WP19H3 - Sunbeam Village Final Polish.** H3.1-H3.10, H3.11.1-H3.11.4 and H3.11-R1 have reached their documented acceptance points. H3.11.4 Story House A-F is complete and human-approved, including scalable catalogue discovery, durable reading state, paged picture-book support, final compact library UX and tap/swipe page turns; PR #181 merged it to main as `52069b8e36311e14276c2115f3515dfa52f2adb0` after CI #4010 passed. The next bounded work is **H3.11-R2 - Wobbly Cake baking mini-game**, followed by the already-assigned H3.11.5-H3.11.10 interiors/content slices. These R1/R2 inserts deliberately do not renumber H3.11.5-H3.11.10. H3.12 remains planned for wider cross-region recurring-character presence coherence. Final hardening/consolidation remains unnumbered until substantive Sunbeam review is explicitly complete.
 - Future H numbers remain deliberately unassigned until David selects each next review area.
 - There is **no H13 cap**. Continue H numbering until David decides the playable world, meaningful subareas and relevant interiors have received the required final passes.
 - An area is a review lens, not an excuse to duplicate shared code. Any broadly applicable improvement discovered during an H package should be made at the correct shared owner and then validated against affected areas.
@@ -255,9 +255,11 @@ H2 rebuilt Moonflower Cottage as a finished home and customisation space, includ
 
 ### R6.5-WP19H3 - Sunbeam Village Final Polish
 
-State: **feedback block 1 complete / H3.1-H3.11.3 human-approved / H3.11-R1 human-approved / H3.11.4 Story House active in final H3.11.4F-R2 UI polish / H3.11-R2 Wobbly Cake mini-game follows Story House / H3.12 wider presence-coherence pass planned / human play pass ongoing**.
+State: **H3.1-H3.10 accepted / H3.11.1-H3.11.4 accepted / H3.11-R1 accepted / H3.11-R2 Wobbly Cake next / H3.11.5-H3.11.10 planned after R2 / H3.12 wider presence-coherence planned**.
 
 Path: `docs/work-packages/R6.5-WP19H3-SUNBEAM-VILLAGE.md`
+
+**26 September 2026 closeout:** Story House H3.11.4 A-F is human-approved. The final implementation includes the physical Story House/Quill baseline, content-driven long-form catalogue, DOM reader, schema-v9 independent reading progress/preferences, demand-loaded illustrations, paged-picture-book support for *The Duck Bread Baker*, scalable search/filter metadata, compact library browsing, Continue Reading/Valley Story Cards surfaces, concise card blurbs, equal Previous/Next navigation and tap/swipe page turns. The reader-close/HUD click-through regression was fixed at the shared interaction/shell ownership boundary. Approved head `82dec6e91305d9eed962da46c8af52873a0e98a5` passed CI #4010 and PR #181 merged to main as `52069b8e36311e14276c2115f3515dfa52f2adb0`. See `docs/audits/2026-09-26-H3.11.4-STORY-HOUSE-CLOSEOUT.md`.
 
 Sunbeam Village is the third selected review area in the open-ended H1+ programme. Feedback block 1 identified that the village is not simply under-polished: its current visual clutter comes from several generations of independently composed presentation overlapping in one space. The base scene owns the large rectangular village-square surface, broad road geometry, shop shells, bunting, labels and prototype markers; later systems add production NPCs, environment decoration, roaming residents and village-life props on top. The approved first pass therefore rebuilds the village composition while preserving its gameplay, quests, shop access, resident systems and region transitions.
 

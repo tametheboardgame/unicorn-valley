@@ -253,3 +253,13 @@ this does not approve merge, production deployment or WP19D.
 Status: Accepted implementation decision, 2026-09-11.
 
 David explicitly released WP19E after approving WP19D. Ordinary in-world dialogue is owned by one `WorldConversationPresenter` entered through `WorldInteractionCoordinator`; it retains `DialogueSession`, registered dialogue IDs and domain effect execution, uses `InteractionModalState` for the complete lifetime, and uses the existing close-input suppression boundary. Pip and roaming-resident short speech are the first migrated routes. A transparent input surface may intercept background input, but ordinary speech must not visibly dim the world. Conversation-only story scenes are retirement targets, while races, minigames, creator flows and actual interiors remain genuine-mode exceptions.
+
+## UV-D024 - Story House H3.11.4 accepted; Wobbly Cake is next
+
+Status: Accepted, 2026-09-26.
+
+David completed the final Story House play review, confirmed that the result works, and explicitly authorised the whole approved H3.11.4 implementation for production. H3.11.4 A-F is therefore human-approved. The final branch head `82dec6e91305d9eed962da46c8af52873a0e98a5` passed CI #4010, and PR #181 merged to `main` as `52069b8e36311e14276c2115f3515dfa52f2adb0`.
+
+The accepted Story House baseline includes the walkable room and Quill, the scalable content-driven library, DOM long-form reader, independent multi-book reading persistence and preferences, demand-loaded illustration support, paged picture-book mode for *The Duck Bread Baker*, compact search/filter catalogue UX, Continue Reading and Valley Story Cards surfaces, concise catalogue copy, equal Previous/Next controls, and tap/swipe page turns. The shared interaction/HUD click-through guard introduced during closeout is also part of the accepted baseline.
+
+The next bounded Sunbeam slice is H3.11-R2, the Wobbly Cake baking mini-game. It runs before H3.11.5 Rosehip Cottage and must preserve the H3.11-R1 Maple/Marigold dependency. This decision records acceptance and sequencing; it does not assert a production deployment result that has not been separately verified.
