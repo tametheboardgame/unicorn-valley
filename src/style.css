@@ -851,9 +851,11 @@ canvas {
   --story-reader-font-size: 20px;
   --story-reader-line-height: 1.7;
 
+  position: relative;
   display: grid;
   height: min(880px, calc(100dvh - 28px));
   grid-template-rows: auto auto minmax(0, 1fr);
+  overflow: hidden;
 }
 
 .story-reader-topbar {
@@ -928,6 +930,57 @@ canvas {
   font-family: Georgia, "Times New Roman", serif;
   font-size: var(--story-reader-font-size);
   line-height: var(--story-reader-line-height);
+  transition:
+    transform 110ms ease,
+    opacity 110ms ease;
+}
+
+.story-reader-scroller.is-turning-next .story-reader-paper {
+  transform: translateX(-8px);
+  opacity: 0.94;
+}
+
+.story-reader-scroller.is-turning-previous .story-reader-paper {
+  transform: translateX(8px);
+  opacity: 0.94;
+}
+
+.story-reader-turn-feedback {
+  position: absolute;
+  z-index: 4;
+  top: 54%;
+  display: grid;
+  width: 48px;
+  height: 64px;
+  place-items: center;
+  border: 2px solid rgb(105 130 146 / 26%);
+  border-radius: 999px;
+  background: rgb(255 250 240 / 78%);
+  color: #5f7d8f;
+  font-family: "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+  font-size: 42px;
+  font-weight: 900;
+  line-height: 1;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-50%) scale(0.82);
+  transition:
+    opacity 90ms ease,
+    transform 90ms ease;
+  backdrop-filter: blur(3px);
+}
+
+.story-reader-turn-feedback.is-previous {
+  left: 14px;
+}
+
+.story-reader-turn-feedback.is-next {
+  right: 14px;
+}
+
+.story-reader-turn-feedback.is-visible {
+  opacity: 0.72;
+  transform: translateY(-50%) scale(1);
 }
 
 .story-reader-chapter-heading {

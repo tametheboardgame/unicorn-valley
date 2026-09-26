@@ -873,8 +873,93 @@ export class StoryReaderOverlay {
     navigation.append(previous, chapterPosition, next);
     paper.append(navigation);
 
+    const turnFeedback = document.createElement('span');
+    turnFeedback.className = 'story-reader-turn-feedback';
+    turnFeedback.setAttribute('aria-hidden', 'true');
+
+    let turnPending = false;
+    const requestPageTurn = (direction: 'previous' | 'next'): void => {
+      if (turnPending || (direction === 'previous' && index === 0)) return;
+
+      turnPending = true;
+      const feedbackClass =
+        direction === 'previous'
+          ? 'story-reader-turn-feedback is-previous'
+          : 'story-reader-turn-feedback is-next';
+      turnFeedback.className = feedbackClass;
+      turnFeedback.textContent = direction === 'previous' ? '‹' : '›';
+      scroller.classList.add(direction === 'previous' ? 'is-turning-previous' : 'is-turning-next');
+
+      window.requestAnimationFrame(() => {
+        turnFeedback.classList.add('is-visible');
+      });
+
+      window.setTimeout(() => {
+        if (direction === 'previous') {
+          this.persistCurrentPosition();
+          void this.showChapter(index - 1);
+          return;
+        }
+        if (isLastChapter) {
+          this.finishBook();
+          return;
+        }
+        this.persistCurrentPosition();
+        void this.showChapter(index + 1);
+      }, 110);
+    };
+
+    let pointerStart:
+      | { pointerId: number; x: number; y: number; startedAt: number }
+      | undefined;
+    const isInteractiveTarget = (target: EventTarget | null): boolean =>
+      target instanceof Element &&
+      target.closest('button, a, input, select, textarea, label') !== null;
+
+    scroller.addEventListener('pointerdown', (event) => {
+      if ((event.pointerType === 'mouse' && event.button !== 0) || isInteractiveTarget(event.target)) {
+        return;
+      }
+      pointerStart = {
+        pointerId: event.pointerId,
+        x: event.clientX,
+        y: event.clientY,
+        startedAt: performance.now(),
+      };
+    });
+
+    scroller.addEventListener('pointercancel', () => {
+      pointerStart = undefined;
+    });
+
+    scroller.addEventListener('pointerup', (event) => {
+      const start = pointerStart;
+      pointerStart = undefined;
+      if (!start || start.pointerId !== event.pointerId || isInteractiveTarget(event.target)) return;
+
+      const deltaX = event.clientX - start.x;
+      const deltaY = event.clientY - start.y;
+      const horizontalDistance = Math.abs(deltaX);
+      const verticalDistance = Math.abs(deltaY);
+
+      if (horizontalDistance >= 56 && horizontalDistance > verticalDistance * 1.25) {
+        requestPageTurn(deltaX < 0 ? 'next' : 'previous');
+        return;
+      }
+
+      const elapsed = performance.now() - start.startedAt;
+      if (horizontalDistance > 10 || verticalDistance > 10 || elapsed > 500) return;
+
+      const paperRect = paper.getBoundingClientRect();
+      if (event.clientX < paperRect.left) {
+        requestPageTurn('previous');
+      } else if (event.clientX > paperRect.right) {
+        requestPageTurn('next');
+      }
+    });
+
     scroller.append(paper);
-    shell.append(topbar, toolbar, scroller);
+    shell.append(topbar, toolbar, scroller, turnFeedback);
     root.replaceChildren(shell);
     this.currentChapter = { manifest, chapter, index, scroller };
     scroller.addEventListener('scroll', this.scheduleProgressSave, { passive: true });

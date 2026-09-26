@@ -254,6 +254,32 @@ test('H3.11.4 gives Story House a dedicated storykeeper and physical reading roo
   await filterToggle.click();
   await expect(page.locator('#story-library-filter-panel')).toBeVisible();
 
+  await page.locator('.story-library-book[data-story-id="the-duck-bread-baker"]').click();
+  await expect(page.locator('.story-reader-title-wrap span')).toHaveText('Page 1 of 41');
+
+  const scrollerBox = await page.locator('.story-reader-scroller').boundingBox();
+  const paperBox = await page.locator('.story-reader-paper').boundingBox();
+  if (!scrollerBox || !paperBox) {
+    throw new Error('Missing Story House reader geometry');
+  }
+
+  await page.mouse.click(
+    Math.min(scrollerBox.x + scrollerBox.width - 4, paperBox.x + paperBox.width + 20),
+    paperBox.y + 80,
+  );
+  await expect(page.locator('.story-reader-title-wrap span')).toHaveText('Page 2 of 41');
+
+  const activePaper = page.locator('.story-reader-paper');
+  const swipeBox = await activePaper.boundingBox();
+  if (!swipeBox) throw new Error('Missing Story House page geometry for swipe');
+  const swipeY = swipeBox.y + Math.min(140, swipeBox.height / 2);
+  await page.mouse.move(swipeBox.x + swipeBox.width * 0.72, swipeY);
+  await page.mouse.down();
+  await page.mouse.move(swipeBox.x + swipeBox.width * 0.28, swipeY, { steps: 5 });
+  await page.mouse.up();
+  await expect(page.locator('.story-reader-title-wrap span')).toHaveText('Page 3 of 41');
+
+  await page.getByRole('button', { name: 'Library' }).click();
   await page.getByRole('button', { name: 'Close Story House Library' }).click();
   await expect(page.locator('.story-reader-overlay')).toHaveCount(0);
 
