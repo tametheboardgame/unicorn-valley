@@ -1451,7 +1451,9 @@ export class MapleBakingActivityScene extends Phaser.Scene {
         fontStyle: 'bold',
         align: 'center',
       })
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setInteractive({ useHandCursor: true })
+      .setName(name);
     const detail = this.add
       .text(x, y + height * 0.27, description, {
         color: UI_COLOURS.softInk,
@@ -1465,11 +1467,15 @@ export class MapleBakingActivityScene extends Phaser.Scene {
     const hit = this.add
       .rectangle(x, y, width, height, 0xffffff, 0.001)
       .setAlpha(0.001)
-      .setInteractive({ useHandCursor: true })
-      .setName(name);
-    hit.on('pointerover', () => card.setAlpha(0.86));
-    hit.on('pointerout', () => card.setAlpha(1));
+      .setInteractive({ useHandCursor: true });
+    const hoverIn = () => card.setAlpha(0.86);
+    const hoverOut = () => card.setAlpha(1);
+    hit.on('pointerover', hoverIn);
+    hit.on('pointerout', hoverOut);
     hit.on('pointerdown', onPress);
+    title.on('pointerover', hoverIn);
+    title.on('pointerout', hoverOut);
+    title.on('pointerdown', onPress);
     this.body?.add([card, icon, title, detail, hit]);
   }
 
