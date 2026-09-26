@@ -218,7 +218,7 @@ test('dialogue and sound settings expose explicit production interaction states'
   if (scene) {
     expect(namedObject(scene, 'dialogue-production-continue').interactive).toBe(true);
   }
-  await page.keyboard.press('Enter');
+  await page.keyboard.press('Escape');
   await page.waitForFunction(() => {
     const diagnostics = (
       window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
