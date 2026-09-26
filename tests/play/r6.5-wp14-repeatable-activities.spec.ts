@@ -21,8 +21,8 @@ interface SavedActivityState {
   };
 }
 
-async function seedActivityPrerequisites(page: Page): Promise<void> {
-  await page.addInitScript(() => {
+async function seedActivityPrerequisites(page: Page, initialShimmer = 0): Promise<void> {
+  await page.addInitScript((seedShimmer) => {
     const timestamp = '2026-09-04T20:30:00.000Z';
     localStorage.setItem(
       'unicorn-valley.save',
@@ -37,7 +37,10 @@ async function seedActivityPrerequisites(page: Page): Promise<void> {
           unlockedAbilityIds: [],
         },
         inventory: {
-          itemQuantities: {},
+          itemQuantities:
+            seedShimmer > 0
+              ? { 'item:rainbow-run-sparkle': seedShimmer }
+              : {},
           ownedCosmeticIds: [],
           ownedDecorationIds: [],
           specialItemIds: [],
@@ -84,7 +87,7 @@ async function seedActivityPrerequisites(page: Page): Promise<void> {
         },
       }),
     );
-  });
+  }, initialShimmer);
 }
 
 async function readSave(page: Page): Promise<SavedActivityState> {
@@ -101,20 +104,14 @@ async function holdMeasure(page: Page, objectName: string, milliseconds: number)
 test('WP14 Maple baking reuses the cake table and rewards a strong repeat bake', async ({
   page,
 }) => {
-  await seedActivityPrerequisites(page);
+  await seedActivityPrerequisites(page, 2);
   await openDiagnostics(page);
   await startScene(page, 'VillageInteriorScene', {
     interiorId: 'bakery',
     returnScene: 'SunbeamVillageScene',
   });
-
-  await page.evaluate(() => {
-    const save = JSON.parse(localStorage.getItem('unicorn-valley.save') ?? '{}');
-    save.inventory ??= { itemQuantities: {} };
-    save.inventory.itemQuantities ??= {};
-    save.inventory.itemQuantities['item:rainbow-run-sparkle'] = 2;
-    localStorage.setItem('unicorn-valley.save', JSON.stringify(save));
-  });
+  const startingBalance =
+    (await readSave(page)).inventory.itemQuantities['item:rainbow-run-sparkle'] ?? 0;
 
   await setArcadeSpritePosition(page, 'VillageInteriorScene', 'world-player-unicorn', 750, 835);
   await page.waitForTimeout(120);
@@ -153,7 +150,7 @@ test('WP14 Maple baking reuses the cake table and rewards a strong repeat bake',
   expect(saved.activities.miniGameRecords['minigame:maple-baking-table']).toBe(1);
   expect(saved.collections.discoveryIds).toContain('discovery:sunshine-sprinkle-cake');
   expect(saved.collections.memoryIds).toContain('memory:r65-wp14-maple-baking-first-completion');
-  expect(saved.inventory.itemQuantities['item:rainbow-run-sparkle']).toBe(4);
+  expect(saved.inventory.itemQuantities['item:rainbow-run-sparkle']).toBe(startingBalance + 2);
 
   await page.keyboard.press('Escape');
   await waitForScene(page, 'VillageInteriorScene');
