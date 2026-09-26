@@ -493,10 +493,7 @@ test.describe
         const snapshot = await getSnapshot(page);
         const race = snapshot.scenes.find(({ key }) => key === 'NovaTutorialRaceScene');
         if (!race) {
-          if (
-            snapshot.activeScenes.includes('RainbowMeadowScene') &&
-            furthestProgress >= 3200
-          ) {
+          if (snapshot.activeScenes.includes('RainbowMeadowScene') && furthestProgress >= 3200) {
             finished = true;
             exitedAfterFinish = true;
             break;
