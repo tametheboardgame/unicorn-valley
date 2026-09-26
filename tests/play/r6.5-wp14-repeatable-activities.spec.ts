@@ -108,6 +108,14 @@ test('WP14 Maple baking reuses the cake table and rewards a strong repeat bake',
     returnScene: 'SunbeamVillageScene',
   });
 
+  await page.evaluate(() => {
+    const save = JSON.parse(localStorage.getItem('unicorn-valley.save') ?? '{}');
+    save.inventory ??= { itemQuantities: {} };
+    save.inventory.itemQuantities ??= {};
+    save.inventory.itemQuantities['item:rainbow-run-sparkle'] = 2;
+    localStorage.setItem('unicorn-valley.save', JSON.stringify(save));
+  });
+
   await setArcadeSpritePosition(page, 'VillageInteriorScene', 'world-player-unicorn', 750, 835);
   await page.waitForTimeout(120);
   await page.keyboard.press('e');
