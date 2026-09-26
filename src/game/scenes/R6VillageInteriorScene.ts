@@ -1794,13 +1794,13 @@ export class VillageInteriorScene extends Phaser.Scene {
       return 'Maple has been sketching a celebration cake outside. If she recruits you, I have plenty of bowls and absolutely no fear of sprinkles.';
     }
     if (questIsAt(MAPLE_CAKE_QUEST_ID, 1)) {
-      return 'Maple has the mixing bowl ready on the cake table. Stir, stack, ice and decorate it however you like. Wobble is encouraged.';
+      return 'Maple has left her recipe cards on the Wobbly Cake table. Measure carefully, stir smoothly and build the wobble yourself.';
     }
     if (questIsAt(MAPLE_CAKE_QUEST_ID, 4)) {
       return 'That cake is gloriously uneven. Maple is outside and definitely needs to see what you made.';
     }
     if (progress.status === 'completed') {
-      return 'Maple’s Wobbly Cake is officially a Bakery favourite now. I keep a few celebration slices on the counter whenever I can.';
+      return 'Maple’s Wobbly Cake is officially a Bakery favourite now. The cake table is always open, and I’ll buy a good bake from you for Shimmer.';
     }
     return 'Everything on the counter is fresh today. The Berry Buns disappear fastest, but the Cloud Biscuits make the best crumbs.';
   }
@@ -1816,10 +1816,15 @@ export class VillageInteriorScene extends Phaser.Scene {
       return;
     }
     if (progress.status === 'completed') {
-      this.showFeedback(
-        'Maple’s first Wobbly Cake is already part of Village history. Use Bake with Maple to try more cake styles whenever you like.',
-        anchor,
-      );
+      const balance = new ShimmerEconomyService(getBrowserSaveService()).getBalance();
+      if (balance < 1) {
+        this.showFeedback(
+          'A fresh Wobbly Cake needs 1 Shimmer of ingredients. Come back when you have at least one.',
+          anchor,
+        );
+        return;
+      }
+      void this.launchMapleBakingActivity('repeatable');
       return;
     }
     if (!questIsAt(MAPLE_CAKE_QUEST_ID, 1)) {
@@ -1830,17 +1835,17 @@ export class VillageInteriorScene extends Phaser.Scene {
       return;
     }
 
-    void this.launchMapleBakingActivity();
+    void this.launchMapleBakingActivity('quest');
   }
 
-  private async launchMapleBakingActivity(): Promise<void> {
+  private async launchMapleBakingActivity(mode: 'quest' | 'repeatable'): Promise<void> {
     if (!this.game.scene.keys.MapleBakingActivityScene) {
       const { MapleBakingActivityScene } = await import('../activities/MapleBakingActivityScene');
       this.game.scene.add('MapleBakingActivityScene', MapleBakingActivityScene);
     }
     this.scene.launch('MapleBakingActivityScene', {
       returnScene: 'VillageInteriorScene',
-      mode: 'quest',
+      mode,
     });
     this.scene.pause();
   }
