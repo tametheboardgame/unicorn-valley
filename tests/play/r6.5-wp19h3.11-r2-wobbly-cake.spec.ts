@@ -78,10 +78,24 @@ async function seedMapleReadyToBake(page: Page): Promise<void> {
   });
 }
 
-async function completePhysicalCake(page: Page): Promise<void> {
+async function holdMeasure(page: Page, objectName: string, milliseconds: number): Promise<void> {
+  await waitForNamedObject(page, 'MapleBakingActivityScene', objectName);
+  await page.keyboard.down('Space');
+  await page.waitForTimeout(milliseconds);
+  await page.keyboard.up('Space');
+}
+
+async function completeMoonflowerCake(page: Page): Promise<void> {
+  await waitForNamedObject(page, 'MapleBakingActivityScene', 'h3-r2-baking-stage:recipe');
+  await clickNamedObject(page, 'MapleBakingActivityScene', 'h3-r2-baking-recipe:moonflower');
+
+  await holdMeasure(page, 'h3-r2-baking-measure:flour', 1210);
+  await holdMeasure(page, 'h3-r2-baking-measure:milk', 1510);
+  await holdMeasure(page, 'h3-r2-baking-measure:sparkle', 930);
+
   await waitForNamedObject(page, 'MapleBakingActivityScene', 'h3-r2-baking-stage:mix');
-  for (let stir = 0; stir < 5; stir += 1) {
-    await clickNamedObject(page, 'MapleBakingActivityScene', 'h3-r2-baking-mix-bowl');
+  for (let stir = 0; stir < 24; stir += 1) {
+    await page.keyboard.press('ArrowRight');
   }
 
   await waitForNamedObject(page, 'MapleBakingActivityScene', 'h3-r2-baking-stage:stack');
@@ -90,7 +104,10 @@ async function completePhysicalCake(page: Page): Promise<void> {
   }
 
   await waitForNamedObject(page, 'MapleBakingActivityScene', 'h3-r2-baking-stage:icing');
-  await clickNamedObject(page, 'MapleBakingActivityScene', 'h3-r2-baking-icing:moonflower');
+  for (let trace = 0; trace < 10; trace += 1) {
+    await page.keyboard.press('Space');
+  }
+
   await waitForNamedObject(page, 'MapleBakingActivityScene', 'h3-r2-baking-topping:berries');
   await clickNamedObject(page, 'MapleBakingActivityScene', 'h3-r2-baking-topping:berries');
   await waitForNamedObject(page, 'MapleBakingActivityScene', 'h3-r2-baking-finish:sprinkles');
@@ -98,7 +115,7 @@ async function completePhysicalCake(page: Page): Promise<void> {
   await waitForNamedObject(page, 'MapleBakingActivityScene', 'h3-r2-baking-result');
 }
 
-test('H3.11-R2 Wobbly Cake launches from the Bakery table and preserves Maple quest progression', async ({
+test('H3.11-R2 Wobbly Cake plays as a skill mini-game and preserves Maple quest progression', async ({
   page,
 }) => {
   await seedMapleReadyToBake(page);
@@ -113,7 +130,7 @@ test('H3.11-R2 Wobbly Cake launches from the Bakery table and preserves Maple qu
   await page.keyboard.press('e');
   await waitForScene(page, 'MapleBakingActivityScene');
 
-  await completePhysicalCake(page);
+  await completeMoonflowerCake(page);
 
   const saved = await page.evaluate(
     () => JSON.parse(localStorage.getItem('unicorn-valley.save') ?? '{}') as MapleQuestSave,
