@@ -280,12 +280,29 @@ test('H3.11.4 gives Story House a dedicated storykeeper and physical reading roo
   await expect(page.locator('.story-reader-title-wrap span')).toHaveText('Page 3 of 41');
 
   await page.getByRole('button', { name: 'Library' }).click();
+  await expect(page.getByRole('heading', { name: 'Story House Library' })).toBeVisible();
   await page.getByRole('button', { name: 'Close Story House Library' }).click();
   await expect(page.locator('.story-reader-overlay')).toHaveCount(0);
+
+  await expect
+    .poll(async () => {
+      const current = (await snapshot(page)).scenes.find(
+        ({ key }) => key === 'VillageInteriorScene',
+      );
+      return (
+        current?.objects.some(({ name }) => name === 'world-player-unicorn') ??
+        false
+      );
+    })
+    .toBe(true);
 
   const beforeMove = (await snapshot(page)).scenes
     .find(({ key }) => key === 'VillageInteriorScene')
     ?.objects.find(({ name }) => name === 'world-player-unicorn')?.x;
+  if (typeof beforeMove !== 'number') {
+    throw new Error('Story House close did not restore the player entity');
+  }
+
   await page.keyboard.down('ArrowLeft');
   await page.waitForTimeout(180);
   await page.keyboard.up('ArrowLeft');
@@ -296,7 +313,7 @@ test('H3.11.4 gives Story House a dedicated storykeeper and physical reading roo
       );
       return current?.objects.find(({ name }) => name === 'world-player-unicorn')?.x ?? beforeMove;
     })
-    .toBeLessThan(beforeMove ?? 960);
+    .toBeLessThan(beforeMove);
 });
 
 test('H3.11.2 Cinnamon uses the production dialogue menu to open the Bakery shop', async ({
