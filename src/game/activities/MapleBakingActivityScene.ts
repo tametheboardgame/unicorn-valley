@@ -441,23 +441,25 @@ export class MapleBakingActivityScene extends Phaser.Scene {
       recipe.colour,
     );
     const recipeText = this.add
-      .text(
-        GAME_WIDTH / 2,
-        236,
-        `${recipe.icon} ${recipe.label}   •   ${recipe.recipeLine}`,
-        {
-          color: UI_COLOURS.ink,
-          fontFamily: UI_FONT,
-          fontSize: '14px',
-          fontStyle: 'bold',
-          align: 'center',
-          wordWrap: { width: 600 },
-        },
-      )
+      .text(GAME_WIDTH / 2, 236, `${recipe.icon} ${recipe.label}   •   ${recipe.recipeLine}`, {
+        color: UI_COLOURS.ink,
+        fontFamily: UI_FONT,
+        fontSize: '14px',
+        fontStyle: 'bold',
+        align: 'center',
+        wordWrap: { width: 600 },
+      })
       .setOrigin(0.5);
     this.body?.add([recipeCard, recipeText]);
 
-    const jar = this.createRoundedPanel(GAME_WIDTH / 2 - 210, 420, 190, 190, 0xfffbef, ingredient.colour);
+    const jar = this.createRoundedPanel(
+      GAME_WIDTH / 2 - 210,
+      420,
+      190,
+      190,
+      0xfffbef,
+      ingredient.colour,
+    );
     const jarIcon = this.add
       .text(GAME_WIDTH / 2 - 210, 382, ingredient.icon, {
         fontFamily: UI_FONT,
@@ -504,9 +506,10 @@ export class MapleBakingActivityScene extends Phaser.Scene {
       .text(
         GAME_WIDTH / 2 + 190,
         555,
-        `Gold line = recipe target • previous accuracy: ${this.ingredientScores
-          .map((score) => `${Math.round(score)}%`)
-          .join(' · ') || 'first ingredient'}`,
+        `Gold line = recipe target • previous accuracy: ${
+          this.ingredientScores.map((score) => `${Math.round(score)}%`).join(' · ') ||
+          'first ingredient'
+        }`,
         {
           color: UI_COLOURS.softInk,
           fontFamily: UI_FONT,
@@ -517,7 +520,16 @@ export class MapleBakingActivityScene extends Phaser.Scene {
       .setOrigin(0.5);
     tip.setData('target', target);
 
-    this.body?.add([jar, jarIcon, jarLabel, holdLabel, hit, this.measureMeterGraphics, this.measureValueText, tip]);
+    this.body?.add([
+      jar,
+      jarIcon,
+      jarLabel,
+      holdLabel,
+      hit,
+      this.measureMeterGraphics,
+      this.measureValueText,
+      tip,
+    ]);
 
     this.portraitCompanion?.setHeader(
       `${ingredient.icon} Measure ${ingredient.label}`,
@@ -621,7 +633,13 @@ export class MapleBakingActivityScene extends Phaser.Scene {
     this.measureMeterGraphics.lineStyle(4, 0xb78ed0, 1);
     this.measureMeterGraphics.strokeRoundedRect(x, y, width, height, 24);
     this.measureMeterGraphics.fillStyle(0xf4c98d, 0.94);
-    this.measureMeterGraphics.fillRoundedRect(x + 10, y + height - fillHeight + 8, width - 20, Math.max(0, fillHeight - 16), 16);
+    this.measureMeterGraphics.fillRoundedRect(
+      x + 10,
+      y + height - fillHeight + 8,
+      width - 20,
+      Math.max(0, fillHeight - 16),
+      16,
+    );
     this.measureMeterGraphics.lineStyle(6, 0xd69b35, 1);
     this.measureMeterGraphics.lineBetween(x - 12, targetY, x + width + 12, targetY);
     this.measureMeterGraphics.fillStyle(0xfff7dd, 1);
@@ -686,17 +704,12 @@ export class MapleBakingActivityScene extends Phaser.Scene {
 
     const hint = this.createRoundedPanel(GAME_WIDTH / 2, 575, 520, 54, 0xfffbef, 0xd8b4e5);
     const hintText = this.add
-      .text(
-        GAME_WIDTH / 2,
-        575,
-        'Mouse/touch: trace the ring   •   Keyboard: LEFT / RIGHT',
-        {
-          color: UI_COLOURS.softInk,
-          fontFamily: UI_FONT,
-          fontSize: '13px',
-          fontStyle: 'bold',
-        },
-      )
+      .text(GAME_WIDTH / 2, 575, 'Mouse/touch: trace the ring   •   Keyboard: LEFT / RIGHT', {
+        color: UI_COLOURS.softInk,
+        fontFamily: UI_FONT,
+        fontSize: '13px',
+        fontStyle: 'bold',
+      })
       .setOrigin(0.5);
 
     this.body?.add([bowl, guide, hit, this.mixSpoon, this.mixProgressGraphics, hint, hintText]);
@@ -730,12 +743,7 @@ export class MapleBakingActivityScene extends Phaser.Scene {
       return;
     }
     this.mixDragging = true;
-    this.mixLastAngle = Phaser.Math.Angle.Between(
-      MIX_CENTRE.x,
-      MIX_CENTRE.y,
-      pointer.x,
-      pointer.y,
-    );
+    this.mixLastAngle = Phaser.Math.Angle.Between(MIX_CENTRE.x, MIX_CENTRE.y, pointer.x, pointer.y);
     this.positionMixSpoon(pointer.x, pointer.y);
   }
 
@@ -834,7 +842,11 @@ export class MapleBakingActivityScene extends Phaser.Scene {
 
     targetOffsets.forEach((offset, index) => {
       if (this.placedLayers.has(index)) {
-        this.drawPlacedLayer(index, GAME_WIDTH / 2 + this.layerOffsets[index], targetYs[index] ?? 0);
+        this.drawPlacedLayer(
+          index,
+          GAME_WIDTH / 2 + this.layerOffsets[index],
+          targetYs[index] ?? 0,
+        );
         return;
       }
 
@@ -1010,12 +1022,17 @@ export class MapleBakingActivityScene extends Phaser.Scene {
 
     const hint = this.createRoundedPanel(GAME_WIDTH / 2, 605, 500, 48, 0xfffbef, 0xd8b4e5);
     const hintText = this.add
-      .text(GAME_WIDTH / 2, 605, 'Trace the purple wave • SPACE / ENTER advances an accessible guided trace', {
-        color: UI_COLOURS.softInk,
-        fontFamily: UI_FONT,
-        fontSize: '12px',
-        fontStyle: 'bold',
-      })
+      .text(
+        GAME_WIDTH / 2,
+        605,
+        'Trace the purple wave • SPACE / ENTER advances an accessible guided trace',
+        {
+          color: UI_COLOURS.softInk,
+          fontFamily: UI_FONT,
+          fontSize: '12px',
+          fontStyle: 'bold',
+        },
+      )
       .setOrigin(0.5);
 
     this.body?.add([guide, this.icingGraphics, hit, hint, hintText]);
@@ -1035,7 +1052,9 @@ export class MapleBakingActivityScene extends Phaser.Scene {
     this.portraitCompanion?.setActionGroups([
       {
         id: 'icing',
-        actions: [{ id: 'trace', label: '🧁 Continue guided trace', onPress: () => this.keyboardIcing() }],
+        actions: [
+          { id: 'trace', label: '🧁 Continue guided trace', onPress: () => this.keyboardIcing() },
+        ],
       },
       this.portraitExitGroup(),
     ]);
@@ -1520,10 +1539,7 @@ export class MapleBakingActivityScene extends Phaser.Scene {
         }
       },
     }));
-    this.portraitCompanion.setActionGroups([
-      { id: 'decorate', actions },
-      this.portraitExitGroup(),
-    ]);
+    this.portraitCompanion.setActionGroups([{ id: 'decorate', actions }, this.portraitExitGroup()]);
   }
 
   private portraitExitGroup(): { id: string; actions: PortraitModalAction[] } {
