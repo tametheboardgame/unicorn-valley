@@ -3,6 +3,7 @@ import { ShimmerEconomyService } from '../economy/ShimmerEconomyService';
 import { getExplorationSnackBoostRemainingSeconds } from '../input/ExplorationGallop';
 import type { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 import { TouchMovementPad } from '../input/TouchMovementPad';
+import { isInteractionActivationSuppressed } from '../interaction/InteractionModalState';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { AudioSettingsPanel } from './AudioSettingsPanel';
 import {
@@ -324,7 +325,11 @@ export class ExplorationShell {
   }
 
   private openInventory(initialTab: 'items' | 'map'): void {
-    if (this.destroyed || !this.scene.scene.isActive()) {
+    if (
+      this.destroyed ||
+      !this.scene.scene.isActive() ||
+      isInteractionActivationSuppressed()
+    ) {
       return;
     }
     const returnScene = this.scene.scene.key;
@@ -335,7 +340,11 @@ export class ExplorationShell {
   }
 
   private openWonderbook(): void {
-    if (this.destroyed || !this.scene.scene.isActive()) {
+    if (
+      this.destroyed ||
+      !this.scene.scene.isActive() ||
+      isInteractionActivationSuppressed()
+    ) {
       return;
     }
     const returnScene = this.scene.scene.key;
@@ -346,7 +355,11 @@ export class ExplorationShell {
   }
 
   private openSettings(): void {
-    if (this.destroyed || !this.scene.scene.isActive()) {
+    if (
+      this.destroyed ||
+      !this.scene.scene.isActive() ||
+      isInteractionActivationSuppressed()
+    ) {
       return;
     }
     void this.audioSettingsPanel.openSettings();
