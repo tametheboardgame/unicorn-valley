@@ -263,3 +263,14 @@ David completed the final Story House play review, confirmed that the result wor
 The accepted Story House baseline includes the walkable room and Quill, the scalable content-driven library, DOM long-form reader, independent multi-book reading persistence and preferences, demand-loaded illustration support, paged picture-book mode for *The Duck Bread Baker*, compact search/filter catalogue UX, Continue Reading and Valley Story Cards surfaces, concise catalogue copy, equal Previous/Next controls, and tap/swipe page turns. The shared interaction/HUD click-through guard introduced during closeout is also part of the accepted baseline.
 
 The next bounded Sunbeam slice is H3.11-R2, the Wobbly Cake baking mini-game. It runs before H3.11.5 Rosehip Cottage and must preserve the H3.11-R1 Maple/Marigold dependency. This decision records acceptance and sequencing; it does not assert a production deployment result that has not been separately verified.
+
+## UV-D025 - Fast-development CI and automatic failed-run remediation
+
+Status: Accepted, 2026-09-26.
+
+David explicitly restored the intended two-speed verification model after the Story House closeout exposed excessive waiting on repeated whole-game CI. Active development uses the smallest trustworthy checks for the current change: Tier 0, ownership-selected unit/browser contracts and build/performance only where relevant. Pull-request synchronisation should classify the delta since the previous PR head when available so an older high-risk change in a long-lived branch does not repeatedly force Tier 3/4 after later tiny edits.
+
+A genuinely high-risk current delta may still escalate. After David human-approves a substantive slice, one authoritative full qualification must run on the exact approved head before merge to `main`/production. That final gate, not every iterative checkpoint, owns the complete Chromium shards and cross-browser matrix.
+
+David also explicitly authorised automatic remediation of failed CI on status checks. When he asks “?”, “now?”, “where are we at?” or equivalent and the active run has failed, the agent must immediately inspect and fix a deterministic in-scope failure, commit/push the correction and make one sensible replacement-run check without waiting for a separate “fix it” instruction. Stop only for ambiguity, product/design choice, material scope expansion, Red/destructive action or a human gate. Repeated polling remains prohibited.
+

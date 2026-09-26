@@ -3,28 +3,56 @@ import { appendFileSync, writeFileSync } from 'node:fs';
 import { buildVerificationSelection } from './verificationSelection.mjs';
 
 const eventName = process.env.VERIFY_EVENT_NAME ?? process.env.GITHUB_EVENT_NAME ?? 'unknown';
+const eventAction = process.env.VERIFY_EVENT_ACTION ?? '';
 const baseSha = process.env.VERIFY_BASE_SHA ?? '';
+const previousHeadSha = process.env.VERIFY_PREVIOUS_HEAD_SHA ?? '';
 const headSha = process.env.VERIFY_HEAD_SHA ?? 'HEAD';
 const manualFull = (process.env.VERIFY_FORCE_FULL ?? '').toLowerCase() === 'true';
 const authoritativeEvent =
   eventName === 'push' || eventName === 'schedule' || eventName === 'workflow_dispatch';
 const forceFull = manualFull || authoritativeEvent;
 
+function changedFilesBetween(startSha, endSha) {
+  return execFileSync('git', ['diff', '--name-only', `${startSha}..${endSha}`], {
+    encoding: 'utf8',
+  })
+    .split(/\r?\n/)
+    .map((value) => value.trim())
+    .filter(Boolean);
+}
+
 let mergeBaseSha = null;
+let selectionBaseSha = null;
+let selectionMode = forceFull ? 'authoritative-full' : 'unresolved';
 let changedFiles = [];
-if (!forceFull && eventName === 'pull_request' && baseSha) {
-  try {
-    mergeBaseSha = execFileSync('git', ['merge-base', baseSha, headSha], {
-      encoding: 'utf8',
-    }).trim();
-    changedFiles = execFileSync('git', ['diff', '--name-only', `${mergeBaseSha}..${headSha}`], {
-      encoding: 'utf8',
-    })
-      .split(/\r?\n/)
-      .map((value) => value.trim())
-      .filter(Boolean);
-  } catch (error) {
-    console.warn(`Unable to resolve merge-base changed files: ${error.message}`);
+
+if (!forceFull && eventName === 'pull_request') {
+  let incrementalResolved = false;
+
+  if (eventAction === 'synchronize' && previousHeadSha) {
+    try {
+      changedFiles = changedFilesBetween(previousHeadSha, headSha);
+      selectionBaseSha = previousHeadSha;
+      selectionMode = 'incremental-pr-sync';
+      incrementalResolved = true;
+    } catch (error) {
+      console.warn(
+        `Unable to resolve incremental PR delta from ${previousHeadSha}: ${error.message}`,
+      );
+    }
+  }
+
+  if (!incrementalResolved && baseSha) {
+    try {
+      mergeBaseSha = execFileSync('git', ['merge-base', baseSha, headSha], {
+        encoding: 'utf8',
+      }).trim();
+      changedFiles = changedFilesBetween(mergeBaseSha, headSha);
+      selectionBaseSha = mergeBaseSha;
+      selectionMode = 'cumulative-pr-fallback';
+    } catch (error) {
+      console.warn(`Unable to resolve merge-base changed files: ${error.message}`);
+    }
   }
 }
 
@@ -40,10 +68,14 @@ const plan = buildVerificationSelection(changedFiles, {
 });
 
 const report = {
-  schemaVersion: 2,
+  schemaVersion: 3,
   eventName,
+  eventAction: eventAction || null,
   baseSha: baseSha || null,
+  previousHeadSha: previousHeadSha || null,
   mergeBaseSha,
+  selectionBaseSha,
+  selectionMode,
   headSha,
   ...plan,
 };
@@ -104,6 +136,8 @@ if (summaryPath) {
       `- Unit mode: **${plan.unitMode}**`,
       `- Unit groups: **${plan.unitGroups.join(', ') || 'none'}**`,
       `- Browser groups: **${plan.browserGroups.join(', ') || 'none'}**`,
+      `- Diff mode: **${selectionMode}**`,
+      selectionBaseSha ? `- Diff base: \`${selectionBaseSha}\`` : null,
       `- Reason: ${plan.reason}`,
       plan.ownershipEscalationReason
         ? `- Ownership escalation: ${plan.ownershipEscalationReason}`

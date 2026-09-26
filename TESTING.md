@@ -52,6 +52,35 @@ npm run test:browser:selected
 
 These selected runners are normally driven by CI environment values produced by `scripts/verification/planVerification.mjs`, not hand-curated guesses.
 
+## Development feedback versus final qualification
+
+The project deliberately separates **fast development feedback** from **authoritative section/release qualification**.
+
+### During active development
+
+Use the cheapest checks that protect the current change and make the preview credible.
+
+- Tier 0 always protects formatting/lint/architecture/policy.
+- Ownership-selected unit tests and targeted Chromium contracts run for the subsystems actually changed.
+- Build/static smoke and performance run when runtime output or loading-sensitive code requires them.
+- Documentation-only changes do not run browser matrices.
+- Ordinary UI/content iterations do not automatically run all Chromium shards plus Firefox/WebKit.
+- Shared-system changes use representative targeted regression tests unless the **current delta** hits a documented high-risk escalation path.
+
+For pull-request updates, CI uses the incremental `synchronize` delta since the previous PR head when available. The fallback is the cumulative PR diff. This avoids a long-lived branch repeatedly paying for an earlier high-risk change after each later minor correction.
+
+### At a human-approved section boundary
+
+Before merging an approved substantive slice to `main`, run one **authoritative full qualification on the exact approved head** using the manual full-CI dispatch. That is the point for:
+
+- full unit qualification;
+- production build/static smoke/performance;
+- all full Chromium shards;
+- Chromium/Firefox/WebKit compatibility;
+- any package-specific final/deployment smoke.
+
+Do not merge the section to production until this exact-head full gate is green. A later full run on `main` is post-merge confirmation rather than the first time the whole game is qualified.
+
 ## Verification tiers
 
 `.github/workflows/ci.yml` uses the ownership/policy model under `scripts/verification/**`.
@@ -63,7 +92,7 @@ These selected runners are normally driven by CI environment values produced by 
 - Tier 4: Chromium/Firefox/WebKit compatibility matrix.
 - Build/performance: production manifest build, static smoke and player-visible performance budgets.
 
-Small mapped changes can use focused tiers. Cross-cutting or escalation-path changes run full qualification. Unmapped runtime/test files fail safe to full qualification rather than silently skipping coverage.
+Small mapped changes use focused tiers. A high-risk current delta or unmapped runtime/test path can still fail safe to full qualification, but a previous high-risk change elsewhere in the same long-lived PR must not make every later tiny edit repeat Tier 3/4. Final human-approved section heads always receive one explicit authoritative full qualification before merge.
 
 The ownership map is `scripts/verification/verificationOwnership.mjs`. Update that map when adding a genuinely new subsystem or test ownership path.
 

@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       full_ci:
-        description: Force authoritative Tier 0-4 qualification
+        description: Force authoritative pre-merge/release Tier 0-4 qualification
         required: true
         default: true
         type: boolean
@@ -56,7 +56,9 @@ jobs:
         id: plan
         env:
           VERIFY_EVENT_NAME: ${{ github.event_name }}
+          VERIFY_EVENT_ACTION: ${{ github.event.action }}
           VERIFY_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          VERIFY_PREVIOUS_HEAD_SHA: ${{ github.event.before }}
           VERIFY_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
           VERIFY_FORCE_FULL: ${{ inputs.full_ci || false }}
         run: node scripts/verification/planVerification.mjs
