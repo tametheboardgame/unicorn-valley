@@ -283,6 +283,9 @@ test('H3.11.4 gives Story House a dedicated storykeeper and physical reading roo
   await expect(page.getByRole('heading', { name: 'Story House Library' })).toBeVisible();
   await page.getByRole('button', { name: 'Close Story House Library' }).click();
   await expect(page.locator('.story-reader-overlay')).toHaveCount(0);
+  await expect
+    .poll(async () => (await snapshot(page)).activeScenes)
+    .toEqual(['VillageInteriorScene']);
 
   await expect
     .poll(async () => {
