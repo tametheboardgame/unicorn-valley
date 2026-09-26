@@ -909,15 +909,16 @@ export class StoryReaderOverlay {
       }, 110);
     };
 
-    let pointerStart:
-      | { pointerId: number; x: number; y: number; startedAt: number }
-      | undefined;
+    let pointerStart: { pointerId: number; x: number; y: number; startedAt: number } | undefined;
     const isInteractiveTarget = (target: EventTarget | null): boolean =>
       target instanceof Element &&
       target.closest('button, a, input, select, textarea, label') !== null;
 
     scroller.addEventListener('pointerdown', (event) => {
-      if ((event.pointerType === 'mouse' && event.button !== 0) || isInteractiveTarget(event.target)) {
+      if (
+        (event.pointerType === 'mouse' && event.button !== 0) ||
+        isInteractiveTarget(event.target)
+      ) {
         return;
       }
       pointerStart = {
@@ -935,7 +936,8 @@ export class StoryReaderOverlay {
     scroller.addEventListener('pointerup', (event) => {
       const start = pointerStart;
       pointerStart = undefined;
-      if (!start || start.pointerId !== event.pointerId || isInteractiveTarget(event.target)) return;
+      if (!start || start.pointerId !== event.pointerId || isInteractiveTarget(event.target))
+        return;
 
       const deltaX = event.clientX - start.x;
       const deltaY = event.clientY - start.y;
