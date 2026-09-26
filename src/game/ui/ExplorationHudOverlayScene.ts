@@ -7,6 +7,10 @@ import {
   drawRoundedPanel,
   type ConceptIcon,
 } from './ConceptUi';
+import {
+  isInteractionActivationSuppressed,
+  isInteractionModalActive,
+} from '../interaction/InteractionModalState';
 import { supportsExplorationShell } from './ExplorationShellConfig';
 import { UI_FONT } from './uiTheme';
 
@@ -312,7 +316,7 @@ export class ExplorationHudOverlayScene extends Phaser.Scene {
     }
 
     const world = this.findActiveWorldScene();
-    if (!world) {
+    if (!world || isInteractionModalActive(world)) {
       this.currentWorld = null;
       this.setHudVisible(false);
       return;
@@ -381,7 +385,12 @@ export class ExplorationHudOverlayScene extends Phaser.Scene {
 
   private activateSourceButton(sourceButtonName: string): void {
     const world = this.currentWorld ?? this.findActiveWorldScene();
-    if (!world || !world.scene.isActive()) {
+    if (
+      !world ||
+      !world.scene.isActive() ||
+      isInteractionModalActive(world) ||
+      isInteractionActivationSuppressed()
+    ) {
       return;
     }
     const source = world.children.getByName(sourceButtonName);

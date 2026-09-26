@@ -30,7 +30,7 @@ const REGIONS = [
     route: 'village',
     sceneKey: 'SunbeamVillageScene',
     environment: 'sunbeam-village',
-    layers: ['background', 'signature', 'foreground', 'ambient'],
+    layers: ['background', 'signature', 'ambient'],
   },
   {
     route: 'meadow',

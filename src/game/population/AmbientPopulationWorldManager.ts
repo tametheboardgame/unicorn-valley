@@ -1,11 +1,14 @@
 import Phaser from 'phaser';
+import { PICNIC_READY_FLAG } from '../../content/r4PicnicEvent';
 import { getBrowserAtmosphericTimeService } from '../atmosphere/AtmosphericTimeService';
-import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { getWorldConversationPresenter } from '../dialogue/WorldConversationPresenter';
+import { getWorldFeedbackPresenter } from '../ui/WorldFeedbackPresenter';
 import type { InteractionActionKind, InteractionTarget } from '../interaction/InteractionTarget';
 import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
+import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
+import { isMarigoldPicnicReady } from '../story/MarigoldPicnicStory';
 import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
 import { worldDepthForY } from '../world/WorldDepth';
 import {
@@ -37,7 +40,9 @@ import {
 import {
   createSupportingResidentSprite,
   ensureSupportingResidentTexture,
+  resolveSupportingResidentDisplaySize,
 } from './SupportingResidentArt';
+import { getVillageInteriorOccupancyService } from './VillageInteriorOccupancy';
 
 const UPDATE_INTERVAL_MS = 90;
 const ROUTE_TIMEOUT_GRACE_MS = 1400;
@@ -162,9 +167,13 @@ export class AmbientPopulationWorldManager {
   }
 
   private getContext(): AmbientPopulationContext {
+    const save = this.saveService.load();
+    const worldFlags = { ...(save?.world.flags ?? {}) };
+    worldFlags[PICNIC_READY_FLAG] = isMarigoldPicnicReady(save);
+
     return {
       timeState: this.timeService.getState(),
-      worldFlags: this.saveService.load()?.world.flags ?? {},
+      worldFlags,
     };
   }
 
@@ -211,7 +220,11 @@ export class AmbientPopulationWorldManager {
 
   private syncResidents(state: ScenePopulationRuntime, context: AmbientPopulationContext): void {
     const wanted = new Map<SupportingResidentId, ResolvedResidentLocation>();
+    const occupancy = getVillageInteriorOccupancyService();
     for (const resident of R6_SUPPORTING_RESIDENTS) {
+      if (!occupancy.isResidentAllowedInScene(resident.id, state.scene.scene.key)) {
+        continue;
+      }
       const location = resolveResidentLocation(
         resident.id,
         state.scene.scene.key,
@@ -261,10 +274,13 @@ export class AmbientPopulationWorldManager {
     }
 
     const sprite = createSupportingResidentSprite(state.scene, resident);
+    const presentationScale = location.placement?.presentationScale ?? 1;
+    const displaySize = resolveSupportingResidentDisplaySize(presentationScale);
+    sprite.setDisplaySize(displaySize.width, displaySize.height);
     const container = state.scene.add
       .container(start.x, start.y, [sprite])
       .setName(`supporting-resident:${resident.id}`)
-      .setDepth(worldDepthForY(start.y + 52, 0.36));
+      .setDepth(worldDepthForY(start.y + 52 * presentationScale, 0.36));
 
     const firstPause = location.placement?.waypoints[0]?.pauseMs ?? 1200;
     return {
@@ -291,7 +307,8 @@ export class AmbientPopulationWorldManager {
   }
 
   private updateResident(runtime: ResidentRuntime, player: PositionedObject, now: number): void {
-    runtime.container.setDepth(worldDepthForY(runtime.container.y + 52, 0.36));
+    const presentationScale = runtime.location.placement?.presentationScale ?? 1;
+    runtime.container.setDepth(worldDepthForY(runtime.container.y + 52 * presentationScale, 0.36));
 
     if (runtime.engaged) {
       runtime.sprite.setTexture(
@@ -409,13 +426,27 @@ export class AmbientPopulationWorldManager {
       ensureSupportingResidentTexture(runtime.container.scene, runtime.resident, 'idle'),
     );
 
+    let questStartedNow = false;
+    if (runtime.resident.startsQuestId && runtime.resident.characterId) {
+      const questEngine = getBrowserQuestEngine();
+      questStartedNow =
+        questEngine.getProgress(runtime.resident.startsQuestId).status === 'not-started';
+      if (questStartedNow) {
+        questEngine.startQuest(runtime.resident.startsQuestId);
+      }
+      questEngine.notifyCharacterTalked(runtime.resident.characterId);
+    }
+
     const configuredVariants = R6_SUPPORTING_RESIDENT_TALK_VARIANTS[runtime.resident.id];
     const talk: ResidentTalkDefinition = {
       ...runtime.resident.talk,
       variants: configuredVariants ?? runtime.resident.talk.variants,
     };
     const lines = resolveResidentTalkLines(talk, this.getContext());
-    const line = chooseTalkLine(lines, runtime.interactionCount);
+    const line =
+      questStartedNow && runtime.resident.questIntroLine
+        ? runtime.resident.questIntroLine
+        : chooseTalkLine(lines, runtime.interactionCount);
     runtime.interactionCount += 1;
     state.activeResidentId = runtime.resident.id;
     this.showResidentConversation(state, runtime, line);
@@ -558,7 +589,7 @@ export class AmbientPopulationWorldManager {
     definition: SmallWorldInteractionDefinition,
   ): void {
     this.playInteractionBurst(scene, definition);
-    this.showFeedback(scene, definition.label, definition.feedback, feedbackIcon(definition.kind));
+    this.showFeedback(scene, definition);
   }
 
   private playInteractionBurst(
@@ -592,24 +623,12 @@ export class AmbientPopulationWorldManager {
     }
   }
 
-  private showFeedback(scene: Phaser.Scene, title: string, message: string, icon: string): void {
-    scene.children.getByName('r6-5-ambient-feedback')?.destroy();
-    const panel = scene.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT - 196, `${icon}  ${title}\n${message}`, {
-        color: '#574663',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '18px',
-        fontStyle: 'bold',
-        align: 'center',
-        backgroundColor: '#fff9edf2',
-        padding: { x: 18, y: 11 },
-        wordWrap: { width: 600 },
-      })
-      .setName('r6-5-ambient-feedback')
-      .setOrigin(0.5, 1)
-      .setScrollFactor(0)
-      .setDepth(20_000);
-    scene.time.delayedCall(2600, () => panel.destroy());
+  private showFeedback(scene: Phaser.Scene, definition: SmallWorldInteractionDefinition): void {
+    getWorldFeedbackPresenter(scene).showReaction(
+      `${feedbackIcon(definition.kind)}  ${definition.label}\n${definition.feedback}`,
+      definition.position,
+      2800,
+    );
   }
 
   private destroyResident(runtime: ResidentRuntime): void {

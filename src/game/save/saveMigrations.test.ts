@@ -269,6 +269,28 @@ describe('migrateSaveRecord', () => {
     expect(migrated.home.unlockedStyleIds).not.toContain('cottage-wall:buttercup');
   });
 
+  it('adds durable story reading state when migrating a schema-v8 save', () => {
+    const current = createR4LongRunningSaveFixture();
+    const { storyReading: _storyReading, ...historical } = current;
+    const migrated = migrateSaveRecord({
+      ...historical,
+      schemaVersion: 8,
+    });
+
+    expect(migrated && isSaveGame(migrated)).toBe(true);
+    if (!migrated || !isSaveGame(migrated)) {
+      throw new Error('Expected the schema-v8 fixture to migrate to a valid current save.');
+    }
+
+    expect(migrated.storyReading).toEqual({
+      preferences: {
+        fontSize: 20,
+        lineHeight: 1.7,
+      },
+      byStoryId: {},
+    });
+  });
+
   it('applies migrations sequentially', () => {
     const toVersionOne: SaveMigration = (save) => ({
       ...save,
@@ -304,6 +326,18 @@ describe('migrateSaveRecord', () => {
       ...save,
       schemaVersion: 7,
       seventhMigration: true,
+      eighthMigration: true,
+      ninthMigration: true,
+    });
+    const toVersionEight: SaveMigration = (save) => ({
+      ...save,
+      schemaVersion: 8,
+      eighthMigration: true,
+    });
+    const toVersionNine: SaveMigration = (save) => ({
+      ...save,
+      schemaVersion: 9,
+      ninthMigration: true,
     });
     const migrations = new Map([
       [0, toVersionOne],
@@ -313,6 +347,8 @@ describe('migrateSaveRecord', () => {
       [4, toVersionFive],
       [5, toVersionSix],
       [6, toVersionSeven],
+      [7, toVersionEight],
+      [8, toVersionNine],
     ]);
 
     expect(migrateSaveRecord({ schemaVersion: 0 }, migrations)).toEqual({
@@ -324,6 +360,8 @@ describe('migrateSaveRecord', () => {
       fifthMigration: true,
       sixthMigration: true,
       seventhMigration: true,
+      eighthMigration: true,
+      ninthMigration: true,
     });
   });
 

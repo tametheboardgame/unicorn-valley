@@ -1,12 +1,7 @@
 import Phaser from 'phaser';
 import { createPipInteraction } from '../intro/PipIntro';
 import { RainbowMeadowScene } from '../scenes/RainbowMeadowScene';
-import { SunbeamVillageScene } from '../scenes/SunbeamVillageScene';
-import {
-  startMarigoldConversation,
-  startNovaConversation,
-  startWillowConversation,
-} from '../story/WorldStoryConversations';
+import { startNovaConversation } from '../story/WorldStoryConversations';
 import { RAINBOW_MEADOW_MAP } from '../world/RainbowMeadowMap';
 import { setSunbeamVillagePlayerSpawn, SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
 import type { InteractionActionKind, InteractionTarget } from './InteractionTarget';
@@ -29,7 +24,6 @@ type ScenePrototype = {
 };
 
 let patched = false;
-let villageActivate: LegacyActivator | null = null;
 let meadowActivate: LegacyActivator | null = null;
 
 function requiredPoint(
@@ -75,153 +69,19 @@ function captureAndDisable(prototype: ScenePrototype, sceneName: string): Legacy
 }
 
 /**
- * Sunbeam Village and Rainbow Meadow still predate the shared registry. Capture their legacy
- * activators once while their migration is completed elsewhere. Moonflower Glade is now fully
- * registry-owned and deliberately has no legacy activator to patch or suppress.
+ * Rainbow Meadow still predates the shared registry. Capture its legacy activator once while its
+ * migration is completed elsewhere. Moonflower Glade and Sunbeam Village are registry-owned.
  */
 export function patchCoreSceneInteractionHandlers(): void {
   if (patched) {
     return;
   }
 
-  villageActivate = captureAndDisable(
-    SunbeamVillageScene.prototype as unknown as ScenePrototype,
-    'SunbeamVillageScene',
-  );
   meadowActivate = captureAndDisable(
     RainbowMeadowScene.prototype as unknown as ScenePrototype,
     'RainbowMeadowScene',
   );
   patched = true;
-}
-
-function villageTargets(scene: Phaser.Scene): InteractionTarget[] {
-  if (!villageActivate) {
-    return [];
-  }
-
-  const landmark = (id: string) => requiredPoint(SUNBEAM_VILLAGE_MAP.landmarks, id, true);
-  const entranceApproach = (id: string) => requiredPoint(SUNBEAM_VILLAGE_MAP.entrances, id, true);
-  const entrancePosition = (id: string) => requiredPoint(SUNBEAM_VILLAGE_MAP.entrances, id, false);
-  const npc = (id: string) => requiredPoint(SUNBEAM_VILLAGE_MAP.npcMarkers, id, false);
-
-  const definitions: Array<[InteractionTarget, InteractionActionKind]> = [
-    [
-      {
-        id: 'interaction:village-bakery',
-        label: 'Sunbeam Bakery',
-        actionLabel: 'Enter',
-        position: landmark('bakery'),
-        interactionRadius: 155,
-        result: {
-          type: 'scene-transition',
-          sceneKey: 'VillageInteriorScene',
-          payload: { interiorId: 'bakery', returnScene: 'SunbeamVillageScene' },
-        },
-      },
-      'enter',
-    ],
-    [
-      {
-        id: 'interaction:village-accessory-shop',
-        label: 'Twinkle & Thread',
-        actionLabel: 'Enter',
-        position: landmark('accessory-shop'),
-        interactionRadius: 155,
-        result: {
-          type: 'scene-transition',
-          sceneKey: 'VillageInteriorScene',
-          payload: { interiorId: 'accessory-shop', returnScene: 'SunbeamVillageScene' },
-        },
-      },
-      'enter',
-    ],
-    [
-      {
-        id: 'interaction:village-library',
-        label: 'Story House',
-        actionLabel: 'Enter',
-        position: landmark('library'),
-        interactionRadius: 160,
-        result: {
-          type: 'scene-transition',
-          sceneKey: 'VillageInteriorScene',
-          payload: { interiorId: 'library', returnScene: 'SunbeamVillageScene' },
-        },
-      },
-      'enter',
-    ],
-    [
-      {
-        id: 'interaction:village-fountain',
-        label: 'Sunbeam Fountain',
-        actionLabel: 'Make a wish',
-        position: landmark('sunbeam-fountain'),
-        interactionRadius: 145,
-        result: {
-          type: 'message',
-          title: 'Sunbeam Fountain',
-          message: 'The water catches a tiny rainbow when you get close. Maybe wishes linger here.',
-        },
-      },
-      'inspect',
-    ],
-    [
-      {
-        id: 'interaction:village-willow',
-        label: 'Willow',
-        actionLabel: 'Talk',
-        actionKind: 'talk',
-        position: npc('willow'),
-        interactionRadius: 150,
-        priority: 30,
-        result: { type: 'callback', activate: () => startWillowConversation(scene) },
-      },
-      'talk',
-    ],
-    [
-      {
-        id: 'interaction:village-marigold',
-        label: 'Marigold',
-        actionLabel: 'Talk',
-        position: npc('marigold'),
-        interactionRadius: 150,
-        priority: 30,
-        result: { type: 'callback', activate: () => startMarigoldConversation(scene) },
-      },
-      'talk',
-    ],
-    [
-      {
-        id: 'interaction:village-glade-gate',
-        label: 'Moonflower Glade',
-        actionLabel: 'Go home',
-        actionKind: 'enter',
-        activationMode: 'automatic',
-        position: entrancePosition('moonflower-glade'),
-        interactionRadius: 130,
-        priority: 20,
-        result: { type: 'scene-transition', sceneKey: 'MoonflowerGladeScene' },
-      },
-      'enter',
-    ],
-    [
-      {
-        id: 'interaction:village-meadow-gate',
-        label: 'Rainbow Meadow',
-        actionLabel: 'Visit meadow',
-        position: entranceApproach('rainbow-meadow'),
-        interactionRadius: 175,
-        priority: 20,
-        result: { type: 'scene-transition', sceneKey: 'RainbowMeadowScene' },
-      },
-      'enter',
-    ],
-  ];
-
-  return definitions.map(([target, actionKind]) =>
-    callbackTarget(target, actionKind, () => villageActivate?.call(scene, target)),
-  );
 }
 
 function meadowTargets(scene: Phaser.Scene): InteractionTarget[] {
@@ -346,7 +206,6 @@ export class CoreSceneInteractionBridge {
 
   private update(): void {
     this.syncScene('MoonflowerGladeScene', moonflowerTargets);
-    this.syncScene('SunbeamVillageScene', villageTargets);
     this.syncScene('RainbowMeadowScene', meadowTargets);
   }
 
@@ -378,10 +237,9 @@ export class CoreSceneInteractionBridge {
   }
 
   private disableLegacyPresentationOnce(scene: CoreSceneRuntime): void {
-    // Moonflower Glade no longer creates a scene-local interaction prompt. Village/Meadow still do,
-    // so retire those prompt instances once per scene instance while their source migrations remain
-    // outside H1. This is intentionally not a per-frame suppression scan.
-    if (scene.scene.key === 'MoonflowerGladeScene') {
+    // Rainbow Meadow is the only remaining core scene with a scene-local prompt. Retire that prompt
+    // once per scene instance until its own source migration is completed.
+    if (scene.scene.key !== 'RainbowMeadowScene') {
       return;
     }
     scene.interactionPrompt?.destroy();

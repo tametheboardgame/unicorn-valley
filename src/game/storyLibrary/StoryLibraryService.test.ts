@@ -1,0 +1,187 @@
+import { describe, expect, it } from 'vitest';
+import { StoryLibraryService, parseStoryChapterBlocks } from './StoryLibraryService';
+import type { StoryLibraryFetch } from './StoryLibraryService';
+
+function response(body: unknown, status = 200) {
+  return {
+    ok: status >= 200 && status < 300,
+    status,
+    async json() {
+      return body;
+    },
+    async text() {
+      return String(body);
+    },
+  };
+}
+
+function libraryFetch(): StoryLibraryFetch {
+  const bodies = new Map<string, ReturnType<typeof response>>([
+    [
+      '/stories/catalogue.json',
+      response({
+        schemaVersion: 1,
+        stories: [
+          {
+            id: 'story-house-sampler',
+            title: 'A Shelf Full of Stories',
+            description: 'A small library-system sampler.',
+            catalogueBlurb: 'A small sampler from Quill’s shelves.',
+            author: 'Unicorn Valley',
+            readingMode: 'flowing',
+            coverPath: null,
+            coverAlt: null,
+            series: null,
+            tags: ['story-house', 'sample'],
+            discovery: {
+              format: 'Short Story',
+              genres: ['Fantasy'],
+              audiences: ['Read Together'],
+              length: 'Quick Read',
+            },
+            rightsSummary: {
+              text: 'original',
+              illustrations: 'original',
+              edition: 'original',
+              originalPublicationYear: null,
+            },
+            chapterCount: 1,
+            manifestPath: '/stories/story-house-sampler/book.json',
+          },
+        ],
+      }),
+    ],
+    [
+      '/stories/story-house-sampler/book.json',
+      response({
+        schemaVersion: 1,
+        id: 'story-house-sampler',
+        title: 'A Shelf Full of Stories',
+        description: 'A small library-system sampler.',
+        author: 'Unicorn Valley',
+        readingMode: 'flowing',
+        cover: null,
+        series: null,
+        tags: ['story-house', 'sample'],
+        discovery: {
+          format: 'Short Story',
+          genres: ['Fantasy'],
+          audiences: ['Read Together'],
+          length: 'Quick Read',
+        },
+        rights: {
+          text: {
+            status: 'original',
+            source: 'Unicorn Valley development content',
+          },
+          illustrations: {
+            status: 'original',
+            source: 'Unicorn Valley development content',
+          },
+          edition: {
+            status: 'original',
+            source: 'Unicorn Valley development content',
+          },
+          originalPublicationYear: null,
+        },
+        publication: { status: 'published' },
+        chapters: [
+          {
+            id: 'chapter-01',
+            title: 'The First Shelf',
+            path: 'chapters/01.md',
+            illustrations: [
+              {
+                id: 'shelf-picture',
+                blockId: 'first-shelf',
+                path: 'illustrations/shelf.webp',
+                alt: 'A painted shelf full of books.',
+                placement: 'full-width',
+                width: 480,
+                height: 480,
+              },
+            ],
+          },
+        ],
+      }),
+    ],
+    [
+      '/stories/story-house-sampler/chapters/01.md',
+      response(
+        '<!-- block:first-shelf -->\n# The First Shelf\n\nQuill dusted one blue book.\n\n<!-- block:next-book -->\nAnother story waited beside it.',
+      ),
+    ],
+  ]);
+  return async (path) => bodies.get(path) ?? response('', 404);
+}
+
+describe('Story Library service', () => {
+  it('loads the lightweight catalogue before fetching a selected manifest', async () => {
+    const requested: string[] = [];
+    const fetcher = libraryFetch();
+    const service = new StoryLibraryService(async (path) => {
+      requested.push(path);
+      return fetcher(path);
+    });
+
+    const stories = await service.listStories();
+    expect(stories.map(({ id }) => id)).toEqual(['story-house-sampler']);
+    expect(stories[0]?.readingMode).toBe('flowing');
+    expect(stories[0]?.catalogueBlurb).toBe('A small sampler from Quill’s shelves.');
+    expect(stories[0]?.discovery).toEqual({
+      format: 'Short Story',
+      genres: ['Fantasy'],
+      audiences: ['Read Together'],
+      length: 'Quick Read',
+    });
+    expect(stories[0]?.rightsSummary.text).toBe('original');
+    expect(requested).toEqual(['/stories/catalogue.json']);
+
+    const manifest = await service.loadManifest('story-house-sampler');
+    expect(manifest.readingMode).toBe('flowing');
+    expect(manifest.discovery.format).toBe('Short Story');
+    expect(manifest.rights.text.status).toBe('original');
+    expect(manifest.chapters[0]?.id).toBe('chapter-01');
+    expect(manifest.chapters[0]?.illustrations?.[0]).toMatchObject({
+      id: 'shelf-picture',
+      blockId: 'first-shelf',
+      path: 'illustrations/shelf.webp',
+      placement: 'full-width',
+      width: 480,
+      height: 480,
+    });
+    expect(requested).toEqual([
+      '/stories/catalogue.json',
+      '/stories/story-house-sampler/book.json',
+    ]);
+  });
+
+  it('loads only the requested chapter and exposes stable resume blocks', async () => {
+    const requested: string[] = [];
+    const fetcher = libraryFetch();
+    const service = new StoryLibraryService(async (path) => {
+      requested.push(path);
+      return fetcher(path);
+    });
+
+    const chapter = await service.loadChapter('story-house-sampler', 'chapter-01');
+    expect(chapter.blocks).toEqual([
+      {
+        id: 'first-shelf',
+        markdown: '# The First Shelf\n\nQuill dusted one blue book.',
+      },
+      {
+        id: 'next-book',
+        markdown: 'Another story waited beside it.',
+      },
+    ]);
+    expect(requested.at(-1)).toBe('/stories/story-house-sampler/chapters/01.md');
+    expect(requested).not.toContain('/stories/story-house-sampler/illustrations/shelf.webp');
+  });
+
+  it('rejects chapters without stable block markers', () => {
+    expect(() => parseStoryChapterBlocks('# Unstable chapter')).toThrow(
+      'Story Library chapter has no stable block markers.',
+    );
+  });
+});

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { PICNIC_READY_FLAG, PICNIC_SUNSHINE_FLAG } from '../../content/r4PicnicEvent';
 import { NOVA_FIRST_RACE_QUEST_ID, SUNRISE_SPRINT_UNLOCKED_FLAG } from '../../content/r3Quests';
+import { MAPLE_CAKE_QUEST_ID } from '../../content/r6VillageContent';
 import { buildCottageHomeView } from '../home/CottageHomeView';
 import { FriendVisitService } from '../home/FriendVisitService';
 import type { SaveRepository } from '../save/SaveRepository';
@@ -38,6 +39,17 @@ function makePicnicReady(saveService: SaveService): void {
 
   saveService.save({
     ...save,
+    quests: {
+      ...save.quests,
+      byQuestId: {
+        ...save.quests.byQuestId,
+        [MAPLE_CAKE_QUEST_ID]: {
+          status: 'completed',
+          currentStepId: null,
+          completedAt: '2026-09-20T12:00:00.000Z',
+        },
+      },
+    },
     world: {
       ...save.world,
       flags: {

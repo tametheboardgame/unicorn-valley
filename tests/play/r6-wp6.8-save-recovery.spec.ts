@@ -91,6 +91,15 @@ function createStoredSave(
         : { ownedFurnitureIds: [], furnitureBySlot: {}, gardenFlags: {} },
     activities: { racesById: {}, miniGameRecords: {} },
     collections: { discoveryIds: [], memoryIds: [] },
+    ...(schemaVersion >= CURRENT_SAVE_SCHEMA_VERSION
+      ? {
+          shops: { morningSerial: 0, byShopId: {} },
+          storyReading: {
+            preferences: { fontSize: 20, lineHeight: 1.7 },
+            byStoryId: {},
+          },
+        }
+      : {}),
   };
 }
 

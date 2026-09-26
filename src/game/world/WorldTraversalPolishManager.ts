@@ -20,11 +20,7 @@ export const WORLD_TRAVERSAL_POLISH_DETAIL_NAME = 'world-traversal-polish-detail
 export const WORLD_PLAYER_NAME = 'world-player-unicorn';
 const WORLD_TRAVERSAL_POLISH_ANCHOR_NAME = 'world-traversal-polish-anchor';
 
-const SUPPORTED_SCENES = new Set([
-  'MoonflowerGladeScene',
-  'SunbeamVillageScene',
-  'RainbowMeadowScene',
-]);
+const SUPPORTED_SCENES = new Set(['MoonflowerGladeScene', 'RainbowMeadowScene']);
 
 interface Point {
   x: number;
@@ -91,18 +87,7 @@ function hideLegacyGatewayObjects(scene: Phaser.Scene): void {
         object.text === '← Moonflower Glade' ||
         object.text === 'Rainbow Meadow →' ||
         object.text === '← Sunbeam Village';
-      if (isLegacyLabel) {
-        object.setVisible(false);
-      }
-      continue;
-    }
-
-    if (key === 'SunbeamVillageScene' && object instanceof Phaser.GameObjects.Rectangle) {
-      const gateRectangle =
-        Math.abs(object.y - 950) < 3 &&
-        Math.abs(object.displayWidth - 110) < 3 &&
-        Math.abs(object.displayHeight - 370) < 3;
-      if (gateRectangle && (Math.abs(object.x - 125) < 3 || Math.abs(object.x - 2875) < 3)) {
+      if (key !== 'SunbeamVillageScene' && isLegacyLabel) {
         object.setVisible(false);
       }
       continue;
@@ -220,49 +205,6 @@ function decorateGlade(scene: Phaser.Scene): void {
   addGateway(scene, { x: 2680, y: 900, direction: 'east' });
 }
 
-function decorateVillage(scene: Phaser.Scene): void {
-  drawPathNetwork(scene, [
-    {
-      points: [
-        { x: 120, y: 950 },
-        { x: 760, y: 950 },
-        { x: 1500, y: 1050 },
-        { x: 2240, y: 950 },
-        { x: 2880, y: 950 },
-      ],
-      outerWidth: 140,
-      innerWidth: 116,
-    },
-    {
-      points: [
-        { x: 900, y: 710 },
-        { x: 900, y: 625 },
-      ],
-      outerWidth: 102,
-      innerWidth: 78,
-    },
-    {
-      points: [
-        { x: 1500, y: 690 },
-        { x: 1500, y: 585 },
-      ],
-      outerWidth: 102,
-      innerWidth: 78,
-    },
-    {
-      points: [
-        { x: 2110, y: 720 },
-        { x: 2110, y: 635 },
-      ],
-      outerWidth: 102,
-      innerWidth: 78,
-    },
-  ]);
-
-  addGateway(scene, { x: 120, y: 950, label: 'Moonflower Glade', direction: 'west' });
-  addGateway(scene, { x: 2880, y: 950, label: 'Rainbow Meadow', direction: 'east' });
-}
-
 function decorateMeadow(scene: Phaser.Scene): void {
   drawPathNetwork(scene, [
     {
@@ -312,9 +254,6 @@ function decorateScene(scene: Phaser.Scene): void {
     case 'MoonflowerGladeScene':
       decorateGlade(scene);
       break;
-    case 'SunbeamVillageScene':
-      decorateVillage(scene);
-      break;
     case 'RainbowMeadowScene':
       decorateMeadow(scene);
       break;
@@ -349,40 +288,6 @@ function transitionFromGlade(scene: Phaser.Scene): void {
   }
   saveLocationCheckpoint(getBrowserSaveService(), SUNBEAM_VILLAGE_LOCATION_ID);
   scene.scene.start('SunbeamVillageScene');
-}
-
-function transitionFromVillage(scene: Phaser.Scene, player: Phaser.Physics.Arcade.Sprite): boolean {
-  const gladeEntrance = SUNBEAM_VILLAGE_MAP.entrances.find(
-    (entrance) => entrance.id === 'moonflower-glade',
-  );
-  if (gladeEntrance && isInsideGateway(player, gladeEntrance.position)) {
-    const villageEntrance = MOONFLOWER_GLADE_MAP.entrances.find(
-      (entrance) => entrance.id === 'sunbeam-village',
-    );
-    if (villageEntrance) {
-      setMoonflowerGladePlayerSpawn(villageEntrance.approach);
-    }
-    saveLocationCheckpoint(getBrowserSaveService(), MOONFLOWER_GLADE_LOCATION_ID);
-    scene.scene.start('MoonflowerGladeScene');
-    return true;
-  }
-
-  const meadowEntrance = SUNBEAM_VILLAGE_MAP.entrances.find(
-    (entrance) => entrance.id === 'rainbow-meadow',
-  );
-  if (meadowEntrance && isInsideGateway(player, meadowEntrance.position)) {
-    const villageEntrance = RAINBOW_MEADOW_MAP.entrances.find(
-      (entrance) => entrance.id === 'sunbeam-village',
-    );
-    if (villageEntrance) {
-      setRainbowMeadowPlayerSpawn(villageEntrance.approach);
-    }
-    saveLocationCheckpoint(getBrowserSaveService(), RAINBOW_MEADOW_LOCATION_ID);
-    scene.scene.start('RainbowMeadowScene');
-    return true;
-  }
-
-  return false;
 }
 
 function transitionFromMeadow(scene: Phaser.Scene): void {
@@ -436,14 +341,6 @@ export class WorldTraversalPolishManager {
         if (insideGateway && !this.transitionLocks.get(key)) {
           this.transitionLocks.set(key, true);
           transitionFromGlade(scene);
-        }
-      } else if (key === 'SunbeamVillageScene') {
-        insideGateway = SUNBEAM_VILLAGE_MAP.entrances.some((entrance) =>
-          isInsideGateway(player, entrance.position),
-        );
-        if (insideGateway && !this.transitionLocks.get(key)) {
-          this.transitionLocks.set(key, true);
-          transitionFromVillage(scene, player);
         }
       } else if (key === 'RainbowMeadowScene') {
         const entrance = RAINBOW_MEADOW_MAP.entrances.find(

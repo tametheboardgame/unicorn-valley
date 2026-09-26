@@ -71,12 +71,23 @@ function named(scene: DiagnosticScene, name: string): DiagnosticObject {
 test('Pebble uses production character art without the legacy story circle', async ({ page }) => {
   await page.goto('/?diagnostics=1');
   await waitForScene(page, 'TitleScene');
-  const village = await startScene(page, 'SunbeamVillageScene');
+  await startScene(page, 'SunbeamVillageScene');
+  await expect
+    .poll(async () => {
+      const village = await sceneSnapshot(page, 'SunbeamVillageScene');
+      return village.objects.find((object) => object.name === 'core-npc:pebble:world')?.visible;
+    })
+    .toBe(true);
 
+  const village = await sceneSnapshot(page, 'SunbeamVillageScene');
   expect(named(village, 'core-npc:pebble:world').visible).toBe(true);
-  expect(named(village, 'r6-wp6.18g:pebble-story-cover').visible).toBe(false);
-  expect(named(village, 'r6-wp6.18g:pebble-story-icon').visible).toBe(false);
-  expect(village.objects.some((object) => object.text?.startsWith('Talk: Pebble'))).toBe(true);
+  expect(village.objects.some((object) => object.name === 'r6-wp6.18g:pebble-story-cover')).toBe(
+    false,
+  );
+  expect(village.objects.some((object) => object.name === 'r6-wp6.18g:pebble-story-icon')).toBe(
+    false,
+  );
+  expect(village.objects.some((object) => object.text?.startsWith('Pebble Talk'))).toBe(false);
 });
 
 test('Crystal Brook meadow branch replaces the ribbon-board crossing', async ({ page }) => {

@@ -58,6 +58,13 @@ export const R2_DIALOGUES = [
         id: 'dialogue-node:willow-moonflowers-prepared-4',
         type: 'line',
         speakerId: 'character:willow',
+        text: 'Each flower carries plenty of seeds. Three is enough to start a whole garden full of moonflowers.',
+        nextNodeId: 'dialogue-node:willow-moonflowers-prepared-5',
+      },
+      {
+        id: 'dialogue-node:willow-moonflowers-prepared-5',
+        type: 'line',
+        speakerId: 'character:willow',
         text: 'There. All planted! And I made you a Moonflower Lantern to say thank you.',
       },
     ],
@@ -89,6 +96,13 @@ export const R2_DIALOGUES = [
       },
       {
         id: 'dialogue-node:willow-moonflowers-return-2',
+        type: 'line',
+        speakerId: 'character:willow',
+        text: 'Each flower carries plenty of seeds. Three is enough to start a whole garden full of moonflowers.',
+        nextNodeId: 'dialogue-node:willow-moonflowers-return-3',
+      },
+      {
+        id: 'dialogue-node:willow-moonflowers-return-3',
         type: 'line',
         speakerId: 'character:willow',
         text: 'There. All planted! I made you a Moonflower Lantern to say thank you.',

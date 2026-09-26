@@ -79,6 +79,31 @@ async function waitForObject(page: Page, sceneKey: string, objectName: string): 
   );
 }
 
+async function waitForInteractiveObject(
+  page: Page,
+  sceneKey: string,
+  objectName: string,
+): Promise<void> {
+  await page.waitForFunction(
+    ({ expectedScene, expectedName }) => {
+      const diagnostics = (
+        window as typeof window & {
+          __UNICORN_VALLEY_DIAGNOSTICS__?: { snapshot(): DiagnosticSnapshot };
+        }
+      ).__UNICORN_VALLEY_DIAGNOSTICS__;
+      return (
+        diagnostics
+          ?.snapshot()
+          .scenes.find(({ key }) => key === expectedScene)
+          ?.objects.some(
+            ({ name, visible, interactive }) => name === expectedName && visible && interactive,
+          ) === true
+      );
+    },
+    { expectedScene: sceneKey, expectedName: objectName },
+  );
+}
+
 async function moveSelectionUntilVisible(
   page: Page,
   sceneKey: string,
@@ -196,7 +221,7 @@ test('exploration can pause into the full settings screen and return with persis
   test.setTimeout(90_000);
   await page.goto('/?scene=glade&diagnostics=1');
   await waitForScene(page, 'MoonflowerGladeScene');
-  await waitForObject(
+  await waitForInteractiveObject(
     page,
     'ExplorationHudOverlayScene',
     'exploration-hud-overlay-settings-nav-button',
@@ -266,7 +291,7 @@ test('exploration can pause into the full settings screen and return with persis
   await waitForScene(page, 'MoonflowerGladeScene');
   await page.reload();
   await waitForScene(page, 'MoonflowerGladeScene');
-  await waitForObject(
+  await waitForInteractiveObject(
     page,
     'ExplorationHudOverlayScene',
     'exploration-hud-overlay-settings-nav-button',

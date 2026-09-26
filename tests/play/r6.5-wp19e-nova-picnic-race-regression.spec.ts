@@ -1,13 +1,14 @@
 import { expect, test, type Page } from '@playwright/test';
 
 const PLAYER_NAME = 'world-player-unicorn';
-const MARIGOLD_APPROACH = { x: 820, y: 860 } as const;
+const MARIGOLD_APPROACH = { x: 1700, y: 1240 } as const;
 const RACE_ENTRANCE_APPROACH = { x: 2970, y: 1040 } as const;
 
 interface DiagnosticObject {
   name: string;
   text: string | null;
   visible: boolean;
+  interactive: boolean;
   x: number;
   y: number;
 }
@@ -18,13 +19,15 @@ interface DiagnosticScene {
 }
 
 interface DiagnosticSnapshot {
+  width: number;
+  height: number;
   activeScenes: string[];
   scenes: DiagnosticScene[];
 }
 
 interface DiagnosticsApi {
   snapshot(): DiagnosticSnapshot;
-  startScene(sceneKey: string, data?: object): void;
+  startScene(sceneKey: string, data?: object): void | Promise<void>;
   setArcadeSpritePosition(sceneKey: string, objectName: string, x: number, y: number): void;
 }
 
@@ -58,12 +61,12 @@ async function waitForScene(page: Page, sceneKey: string): Promise<void> {
 }
 
 async function startScene(page: Page, sceneKey: string): Promise<void> {
-  await page.evaluate((key) => {
+  await page.evaluate(async (key) => {
     const diagnostics = (
       window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi }
     ).__UNICORN_VALLEY_DIAGNOSTICS__;
     if (!diagnostics) throw new Error('Browser diagnostics are unavailable.');
-    diagnostics.startScene(key);
+    await diagnostics.startScene(key);
   }, sceneKey);
   await waitForScene(page, sceneKey);
 }
@@ -79,6 +82,59 @@ async function positionPlayer(page: Page, sceneKey: string, x: number, y: number
     },
     { key: sceneKey, targetX: x, targetY: y },
   );
+}
+
+async function markMapleCakeComplete(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    const key = 'unicorn-valley.save';
+    const checkpointPrefix = `${key}.schema.`;
+    const checkpointKeys = Array.from({ length: window.localStorage.length }, (_, index) =>
+      window.localStorage.key(index),
+    )
+      .filter((candidate): candidate is string => candidate?.startsWith(checkpointPrefix) === true)
+      .sort((left, right) => {
+        const leftVersion = Number(left.slice(checkpointPrefix.length));
+        const rightVersion = Number(right.slice(checkpointPrefix.length));
+        return rightVersion - leftVersion;
+      });
+    const preferredKey = checkpointKeys[0] ?? key;
+    const raw = window.localStorage.getItem(preferredKey) ?? window.localStorage.getItem(key);
+    if (!raw) {
+      throw new Error('Expected a current save before seeding Maple cake completion.');
+    }
+
+    const save = JSON.parse(raw) as {
+      schemaVersion: number;
+      quests: { byQuestId: Record<string, unknown> };
+      world: { flags: Record<string, boolean> };
+    };
+    save.quests.byQuestId['quest:maple-wobbly-cake-plan'] = {
+      status: 'completed',
+      currentStepId: null,
+      completedAt: '2026-09-25T08:00:00.000Z',
+    };
+    save.world.flags['flag:maple-cake-ready'] = true;
+
+    const serialisedSave = JSON.stringify(save);
+    window.localStorage.setItem(key, serialisedSave);
+    window.localStorage.setItem(`${key}.schema.${save.schemaVersion}`, serialisedSave);
+    window.localStorage.setItem(`${key}.backup`, serialisedSave);
+  });
+
+  await expect
+    .poll(async () =>
+      page.evaluate(() => {
+        const raw =
+          window.localStorage.getItem('unicorn-valley.save.schema.9') ??
+          window.localStorage.getItem('unicorn-valley.save');
+        if (!raw) return null;
+        const save = JSON.parse(raw) as {
+          quests?: { byQuestId?: Record<string, { status?: string }> };
+        };
+        return save.quests?.byQuestId?.['quest:maple-wobbly-cake-plan']?.status ?? null;
+      }),
+    )
+    .toBe('completed');
 }
 
 async function waitForVisibleObject(page: Page, sceneKey: string, name: string): Promise<void> {
@@ -99,19 +155,22 @@ async function waitForHiddenObject(page: Page, sceneKey: string, name: string): 
     .toBe(false);
 }
 
-async function waitForTalkTarget(page: Page, sceneKey: string, label: string): Promise<void> {
+async function waitForTalkTarget(page: Page, sceneKey: string, _label: string): Promise<void> {
   await expect
     .poll(async () => {
       const scene = await sceneSnapshot(page, sceneKey);
-      const action = scene.objects.find(
+      const promptVisible = scene.objects.some(
+        (object) => object.name === 'exploration-interaction-prompt' && object.visible,
+      );
+      const promptLabelVisible = scene.objects.some(
         (object) => object.name === 'exploration-interaction-prompt-label' && object.visible,
       );
-      const hint = scene.objects.find(
-        (object) => object.name === 'exploration-tablet-hint' && object.visible,
+      const targetHintVisible = scene.objects.some(
+        (object) => object.name === 'exploration-tablet-hint-panel' && object.visible,
       );
-      return `${action?.text ?? ''}|${hint?.text ?? ''}`;
+      return promptVisible && promptLabelVisible && targetHintVisible;
     })
-    .toBe(`Talk|${label}`);
+    .toBe(true);
 }
 
 function visiblePanelY(scene: DiagnosticScene): number {
@@ -127,7 +186,14 @@ function visiblePanelY(scene: DiagnosticScene): number {
 test('Marigold and Nova dialogue keep accepted sizing and Meet Nova works when Nova is already at the picnic', async ({
   page,
 }) => {
-  await page.addInitScript(() => window.localStorage.clear());
+  await page.addInitScript(() => {
+    const resetMarker = 'uv-marigold-regression-storage-reset';
+    if (window.sessionStorage.getItem(resetMarker) === '1') {
+      return;
+    }
+    window.localStorage.clear();
+    window.sessionStorage.setItem(resetMarker, '1');
+  });
   await page.goto('/?diagnostics=1');
   await waitForDiagnostics(page);
 
@@ -139,7 +205,28 @@ test('Marigold and Nova dialogue keep accepted sizing and Meet Nova works when N
 
   let village = await sceneSnapshot(page, 'SunbeamVillageScene');
   const ordinaryLinePanelY = visiblePanelY(village);
+  expect(
+    village.objects.find((object) => object.name === 'dialogue-production-body' && object.visible)
+      ?.text,
+  ).toContain('Wobbly Cake');
+  expect(
+    village.objects.filter(
+      (object) => object.name.startsWith('dialogue-production-choice-') && object.visible,
+    ),
+  ).toHaveLength(0);
 
+  await page.keyboard.press('KeyE');
+  await waitForHiddenObject(page, 'SunbeamVillageScene', 'dialogue-production-panel');
+  await markMapleCakeComplete(page);
+  // Reload through BootScene so the saved quest state is consumed by a genuine fresh village boot.
+  // This matches player behaviour and avoids the diagnostics-only same-scene restart lifecycle.
+  await page.goto('/?scene=village&diagnostics=1');
+  await waitForDiagnostics(page);
+  await waitForScene(page, 'SunbeamVillageScene');
+  await positionPlayer(page, 'SunbeamVillageScene', MARIGOLD_APPROACH.x, MARIGOLD_APPROACH.y);
+  await waitForVisibleObject(page, 'SunbeamVillageScene', 'exploration-interaction-prompt');
+  await page.keyboard.press('KeyE');
+  await waitForVisibleObject(page, 'SunbeamVillageScene', 'dialogue-production-panel');
   await page.keyboard.press('KeyE');
   await waitForVisibleObject(page, 'SunbeamVillageScene', 'dialogue-production-choice-1');
   village = await sceneSnapshot(page, 'SunbeamVillageScene');

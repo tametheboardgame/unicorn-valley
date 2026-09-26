@@ -45,6 +45,19 @@ export const R4_PICNIC_QUESTS = [
 
 export const R4_PICNIC_DIALOGUES = [
   {
+    id: 'dialogue:marigold-picnic-waiting-for-cake',
+    name: "Marigold's Picnic - Waiting for Maple's Cake",
+    startNodeId: 'dialogue-node:marigold-picnic-waiting-for-cake-1',
+    nodes: [
+      {
+        id: 'dialogue-node:marigold-picnic-waiting-for-cake-1',
+        type: 'line',
+        speakerId: MARIGOLD_CHARACTER_ID,
+        text: 'I am planning a picnic, but Maple is still in the middle of her very important Wobbly Cake business. Help her finish that first, then come back and we can make Picnic Hill properly spectacular.',
+      },
+    ],
+  },
+  {
     id: 'dialogue:marigold-picnic-intro',
     name: "Marigold's Picnic Problem - Introduction",
     startNodeId: 'dialogue-node:marigold-picnic-intro-1',

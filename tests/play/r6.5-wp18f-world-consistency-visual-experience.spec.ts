@@ -142,9 +142,12 @@ test.describe('R6.5-WP18F visual evidence', () => {
     await waitForDiagnostics(page);
     await waitForScene(page, 'SunbeamVillageScene');
     await expectObjects(page, 'SunbeamVillageScene', [
-      'wp18f-world-experience:bakery-basket',
-      'wp18f-world-experience:thread-display',
-      'wp18f-world-experience:story-cart',
+      'village-shopfront:bakery:feature:chimney',
+      'village-shopfront:accessory-shop:feature:turret',
+      'village-shopfront:library:feature:attic-window',
+      'village-shopfront:bakery:sign',
+      'village-shopfront:accessory-shop:sign',
+      'village-shopfront:library:sign',
     ]);
     await movePlayer(page, 'SunbeamVillageScene', 1500, 800);
     await page.screenshot({ path: `${ARTIFACT_DIR}/sunbeam-village-shopfronts.png` });

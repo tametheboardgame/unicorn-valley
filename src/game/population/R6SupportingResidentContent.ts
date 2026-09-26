@@ -1,7 +1,15 @@
+import { PICNIC_READY_FLAG } from '../../content/r4PicnicEvent';
+import {
+  MAPLE_CAKE_QUEST_ID,
+  MAPLE_CHARACTER_ID,
+  TANSY_CHARACTER_ID,
+  TANSY_MAP_QUEST_ID,
+} from '../../content/r6VillageContent';
 import { CRYSTAL_BROOK_MAP } from '../world/CrystalBrookMap';
 import { MOONFLOWER_GLADE_MAP } from '../world/MoonflowerGladeMap';
 import { RAINBOW_MEADOW_MAP } from '../world/RainbowMeadowMap';
 import { STARLIGHT_BEACH_MAP } from '../world/StarlightBeachMap';
+import { SUNBEAM_VILLAGE_LAYOUT } from '../world/SunbeamVillageLayout';
 import { SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
 import { WHISPERING_WOODS_MAP } from '../world/WhisperingWoodsMap';
 import type {
@@ -63,6 +71,10 @@ export const R6_SUPPORTING_RESIDENTS = [
     id: 'resident:tansy',
     name: 'Tansy',
     role: 'Story House map and clue keeper',
+    characterId: TANSY_CHARACTER_ID,
+    startsQuestId: TANSY_MAP_QUEST_ID,
+    questIntroLine:
+      'Three corners escaped from my favourite map. One likes notices, one smells like baking, and one flew somewhere sunny.',
     appearance: {
       bodyColour: 'lavender',
       eyeColour: 'violet',
@@ -86,6 +98,10 @@ export const R6_SUPPORTING_RESIDENTS = [
     id: 'resident:maple',
     name: 'Maple',
     role: 'Bakery helper and picnic enthusiast',
+    characterId: MAPLE_CHARACTER_ID,
+    startsQuestId: MAPLE_CAKE_QUEST_ID,
+    questIntroLine:
+      'I need a celebration cake with personality. Pick a colour plan in the Bakery, then bring the magnificently wobbly result back to me!',
     appearance: {
       bodyColour: 'peach',
       eyeColour: 'amber',
@@ -102,6 +118,75 @@ export const R6_SUPPORTING_RESIDENTS = [
         'A bun tastes better outside. I am almost sure that is science.',
         'Marigold lets me test the decorations that are too silly for the counter.',
         'I keep finding crumbs in my mane. Very mysterious.',
+      ],
+    },
+  },
+  {
+    id: 'resident:cinnamon',
+    name: 'Cinnamon',
+    role: 'Sunbeam Bakery baker',
+    appearance: {
+      bodyColour: 'buttercup',
+      eyeColour: 'amber',
+      maneStyle: 'soft',
+      maneColour: 'rose',
+      tailStyle: 'curl',
+      tailColour: 'gold',
+      hornStyle: 'classic',
+      marking: 'freckles',
+      accessory: 'none',
+    },
+    talk: {
+      lines: [
+        'The first tray of berry buns is always the one that makes the whole Bakery smell awake.',
+        'Maple is my most enthusiastic cake planner and my least reliable sprinkle counter.',
+        'If you hear a tiny bell, the next batch is ready. If you hear a big crash, that was probably a tray.',
+      ],
+    },
+  },
+  {
+    id: 'resident:velvet',
+    name: 'Velvet',
+    role: 'Twinkle & Thread stylist and shopkeeper',
+    appearance: {
+      bodyColour: 'pearl',
+      eyeColour: 'violet',
+      maneStyle: 'braid',
+      maneColour: 'plum',
+      tailStyle: 'ribbon',
+      tailColour: 'rose',
+      hornStyle: 'spiral',
+      marking: 'sparkles',
+      accessory: 'bow',
+    },
+    talk: {
+      lines: [
+        'The best accessory is the one that makes you stand a little taller.',
+        'I rearrange the displays whenever inspiration strikes. Inspiration strikes a lot.',
+        'Some treasures only appear after a proper adventure. I think that makes them better.',
+      ],
+    },
+  },
+  {
+    id: 'resident:quill',
+    name: 'Quill',
+    role: 'Story House librarian and storykeeper',
+    appearance: {
+      bodyColour: 'sky',
+      eyeColour: 'green',
+      maneStyle: 'swept',
+      maneColour: 'midnight',
+      tailStyle: 'plume',
+      tailColour: 'lilac',
+      hornStyle: 'moon',
+      marking: 'star',
+      accessory: 'glasses',
+    },
+    talk: {
+      lines: [
+        'Every shelf has a story, but the best ones are the stories you bring back with you.',
+        'I keep the newest adventure cards near the round table so nobody has to reach too high.',
+        'A good library should have quiet corners, bright lamps and at least one cushion that is impossible to sit on neatly.',
       ],
     },
   },
@@ -220,6 +305,99 @@ export const R6_SUPPORTING_RESIDENTS = [
       ],
     },
   },
+
+  {
+    id: 'resident:poppy',
+    name: 'Poppy',
+    role: 'Playground explorer',
+    appearance: {
+      bodyColour: 'pink',
+      eyeColour: 'violet',
+      maneStyle: 'fluffy',
+      maneColour: 'rose',
+      tailStyle: 'puff',
+      tailColour: 'rose',
+      hornStyle: 'short',
+      marking: 'heart',
+      accessory: 'bow',
+    },
+    talk: {
+      lines: [
+        'I can get all the way across the climbing frame without touching the grass!',
+        'The climbing frame is a castle today. Tomorrow it might be a cloud.',
+        'I am trying to invent a route that uses every single bar.',
+      ],
+    },
+  },
+  {
+    id: 'resident:milo',
+    name: 'Milo',
+    role: 'Seesaw champion',
+    appearance: {
+      bodyColour: 'mint',
+      eyeColour: 'green',
+      maneStyle: 'swept',
+      maneColour: 'gold',
+      tailStyle: 'swish',
+      tailColour: 'gold',
+      hornStyle: 'short',
+      marking: 'star',
+      accessory: 'none',
+    },
+    talk: {
+      lines: [
+        'The best seesaw bounce is the one where both unicorns start laughing.',
+        'I can almost make the seesaw land perfectly level.',
+        'Bean says faster is better. I think higher is better.',
+      ],
+    },
+  },
+  {
+    id: 'resident:lulu',
+    name: 'Lulu',
+    role: 'Slide racer',
+    appearance: {
+      bodyColour: 'lavender',
+      eyeColour: 'blue',
+      maneStyle: 'soft',
+      maneColour: 'aqua',
+      tailStyle: 'curl',
+      tailColour: 'aqua',
+      hornStyle: 'short',
+      marking: 'sparkles',
+      accessory: 'flower',
+    },
+    talk: {
+      lines: [
+        'I am practising my fastest slide. I think the whoosh is the important part.',
+        'I counted three different ways to say whoosh on the slide.',
+        'The top of the slide is the best lookout in the playground.',
+      ],
+    },
+  },
+  {
+    id: 'resident:bean',
+    name: 'Bean',
+    role: 'Playground game inventor',
+    appearance: {
+      bodyColour: 'buttercup',
+      eyeColour: 'amber',
+      maneStyle: 'crest',
+      maneColour: 'coral',
+      tailStyle: 'ribbon',
+      tailColour: 'coral',
+      hornStyle: 'short',
+      marking: 'freckles',
+      accessory: 'ribbon',
+    },
+    talk: {
+      lines: [
+        'We invented a game where every pink flower is lava. The rules keep changing.',
+        'The yellow flowers are safe today. Probably.',
+        'I make the games and everyone else keeps adding better rules.',
+      ],
+    },
+  },
 ] as const satisfies readonly SupportingResidentDefinition[];
 
 // WP2 deliberately placed only enough residents to prove the reusable life patterns.
@@ -264,8 +442,24 @@ export const R6_AMBIENT_RESIDENT_PLACEMENTS = [
     priority: 20,
     activeWhen: { timeStates: ['morning', 'afternoon'] },
     waypoints: [
-      { id: 'tansy-village-a', x: 2180, y: 860, pauseMs: 2600 },
-      { id: 'tansy-village-b', x: 2300, y: 940, pauseMs: 3200 },
+      {
+        id: 'tansy-village-a',
+        x: SUNBEAM_VILLAGE_LAYOUT.buildings.library.x - 210,
+        y: SUNBEAM_VILLAGE_LAYOUT.buildings.library.approach.y + 40,
+        pauseMs: 2600,
+      },
+      {
+        id: 'tansy-village-b',
+        x: 1960,
+        y: 1030,
+        pauseMs: 2100,
+      },
+      {
+        id: 'tansy-village-c',
+        x: 1840,
+        y: 1160,
+        pauseMs: 3000,
+      },
     ],
   },
   {
@@ -292,10 +486,87 @@ export const R6_AMBIENT_RESIDENT_PLACEMENTS = [
     speedPxPerSecond: 74,
     interactionRadius: 136,
     priority: 60,
+    activeWhen: { worldFlags: [{ id: PICNIC_READY_FLAG, value: false }] },
     waypoints: [
-      { id: 'maple-village-a', x: 900, y: 760, pauseMs: 2600 },
-      { id: 'maple-village-b', x: 1120, y: 800, pauseMs: 1500 },
-      { id: 'maple-village-c', x: 1210, y: 920, pauseMs: 2100 },
+      {
+        id: 'maple-village-a',
+        x: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.x - 20,
+        y: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.approach.y + 75,
+        pauseMs: 2600,
+      },
+      {
+        id: 'maple-village-b',
+        x: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.x + 120,
+        y: SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.approach.y + 75,
+        pauseMs: 1500,
+      },
+      {
+        id: 'maple-village-c',
+        x: 930,
+        y: 900,
+        pauseMs: 2100,
+      },
+    ],
+  },
+
+  {
+    id: 'resident-placement:poppy:sunbeam-playground',
+    residentId: 'resident:poppy',
+    sceneKey: 'SunbeamVillageScene',
+    behaviour: 'local-wander',
+    routeMode: 'ping-pong',
+    speedPxPerSecond: 52,
+    interactionRadius: 104,
+    priority: 24,
+    presentationScale: 0.56,
+    waypoints: [
+      { id: 'poppy-playground-a', x: 2620, y: 1605, pauseMs: 2100 },
+      { id: 'poppy-playground-b', x: 2650, y: 1650, pauseMs: 1500 },
+    ],
+  },
+  {
+    id: 'resident-placement:milo:sunbeam-playground',
+    residentId: 'resident:milo',
+    sceneKey: 'SunbeamVillageScene',
+    behaviour: 'local-wander',
+    routeMode: 'ping-pong',
+    speedPxPerSecond: 48,
+    interactionRadius: 104,
+    priority: 24,
+    presentationScale: 0.56,
+    waypoints: [
+      { id: 'milo-playground-a', x: 2570, y: 1810, pauseMs: 1800 },
+      { id: 'milo-playground-b', x: 2670, y: 1810, pauseMs: 2300 },
+    ],
+  },
+  {
+    id: 'resident-placement:lulu:sunbeam-playground',
+    residentId: 'resident:lulu',
+    sceneKey: 'SunbeamVillageScene',
+    behaviour: 'local-wander',
+    routeMode: 'ping-pong',
+    speedPxPerSecond: 54,
+    interactionRadius: 104,
+    priority: 24,
+    presentationScale: 0.56,
+    waypoints: [
+      { id: 'lulu-playground-a', x: 2720, y: 1565, pauseMs: 1700 },
+      { id: 'lulu-playground-b', x: 2835, y: 1575, pauseMs: 2200 },
+    ],
+  },
+  {
+    id: 'resident-placement:bean:sunbeam-playground',
+    residentId: 'resident:bean',
+    sceneKey: 'SunbeamVillageScene',
+    behaviour: 'local-wander',
+    routeMode: 'ping-pong',
+    speedPxPerSecond: 50,
+    interactionRadius: 104,
+    priority: 24,
+    presentationScale: 0.56,
+    waypoints: [
+      { id: 'bean-playground-a', x: 2820, y: 1795, pauseMs: 2400 },
+      { id: 'bean-playground-b', x: 2740, y: 1795, pauseMs: 1700 },
     ],
   },
   {
@@ -361,12 +632,45 @@ export const R6_AMBIENT_RESIDENT_PLACEMENTS = [
 
 export const R6_SMALL_WORLD_INTERACTIONS = [
   {
+    id: 'world-interaction:r6-5:village-playground-slide',
+    sceneKey: 'SunbeamVillageScene',
+    kind: 'play',
+    label: 'Playground slide',
+    actionLabel: 'Play',
+    position: { ...SUNBEAM_VILLAGE_LAYOUT.playground.equipment.slide.interaction },
+    interactionRadius: 112,
+    feedback: 'Whoosh! You trot up, slide down and land with a tiny sparkle of dust.',
+  },
+  {
+    id: 'world-interaction:r6-5:village-playground-seesaw',
+    sceneKey: 'SunbeamVillageScene',
+    kind: 'play',
+    label: 'Playground seesaw',
+    actionLabel: 'Play',
+    position: { ...SUNBEAM_VILLAGE_LAYOUT.playground.equipment.seesaw.interaction },
+    interactionRadius: 112,
+    feedback: 'Up, down, up! The seesaw gives a cheerful wooden creak.',
+  },
+  {
+    id: 'world-interaction:r6-5:village-playground-climbing-frame',
+    sceneKey: 'SunbeamVillageScene',
+    kind: 'play',
+    label: 'Climbing frame',
+    actionLabel: 'Play',
+    position: { ...SUNBEAM_VILLAGE_LAYOUT.playground.equipment.climbingFrame.interaction },
+    interactionRadius: 112,
+    feedback: 'You scramble across the frame and hop down with a proud little flourish.',
+  },
+  {
     id: 'world-interaction:r6-5:village-chime',
     sceneKey: 'SunbeamVillageScene',
     kind: 'ring',
     label: 'Sunbeam chime',
     actionLabel: 'Ring',
-    position: { x: 2440, y: 790 },
+    position: {
+      x: SUNBEAM_VILLAGE_LAYOUT.entrances.rainbowMeadow.approach.x - 110,
+      y: SUNBEAM_VILLAGE_LAYOUT.entrances.rainbowMeadow.approach.y - 100,
+    },
     interactionRadius: 116,
     feedback: 'Ting! A bright little chime skips across the village square.',
   },

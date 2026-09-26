@@ -25,6 +25,7 @@ import {
   ExistingValleyQuestPackService,
   type ExistingValleyStoryResult,
 } from '../story/ExistingValleyQuestPackService';
+import { SUNBEAM_VILLAGE_LAYOUT } from './SunbeamVillageLayout';
 import { worldDepthForY } from './WorldDepth';
 
 interface Point {
@@ -269,7 +270,10 @@ export class ExistingValleyQuestPackWorldManager {
         actionLabel: 'Compare patterns',
         actionKind: 'inspect',
         icon: '📜',
-        position: { x: 2665, y: 930 },
+        position: {
+          x: SUNBEAM_VILLAGE_LAYOUT.buildings.library.x + 190,
+          y: SUNBEAM_VILLAGE_LAYOUT.buildings.library.approach.y + 120,
+        },
         radius: 112,
         activate: () => this.story.studyOddStoneAtStoryHouse(),
       },

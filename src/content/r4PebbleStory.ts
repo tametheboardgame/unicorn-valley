@@ -9,7 +9,15 @@ import type { SecretDiscoveryDefinition } from './r4Secrets';
 
 export const PEBBLE_CHARACTER_ID = 'character:pebble' as const;
 export const PEBBLE_COLLECTION_QUEST_ID = 'quest:pebble-curious-pieces' as const;
-export const PEBBLE_CURIOUS_PIECE_ITEM_ID = 'item:pebble-curious-piece' as const;
+export const PEBBLE_LEGACY_CURIOUS_PIECE_ITEM_ID = 'item:pebble-curious-piece' as const;
+export const PEBBLE_MOON_GLASS_WASHER_ITEM_ID = 'item:pebble-moon-glass-washer' as const;
+export const PEBBLE_STAR_HEADED_SCREW_ITEM_ID = 'item:pebble-star-headed-screw' as const;
+export const PEBBLE_RAINBOW_SPRING_ITEM_ID = 'item:pebble-rainbow-spring' as const;
+export const PEBBLE_PIECE_ITEM_IDS = [
+  PEBBLE_MOON_GLASS_WASHER_ITEM_ID,
+  PEBBLE_STAR_HEADED_SCREW_ITEM_ID,
+  PEBBLE_RAINBOW_SPRING_ITEM_ID,
+] as const;
 export const PEBBLE_DISPLAY_REWARD_ITEM_ID = 'item:pebble-curiosity-display' as const;
 export const PEBBLE_FOUNTAIN_REPAIRED_FLAG = 'flag:pebble-sunbeam-fountain-repaired' as const;
 
@@ -19,11 +27,33 @@ export const PEBBLE_RAINBOW_SPRING_DISCOVERY_ID = 'discovery:pebble-rainbow-spri
 
 export const R4_PEBBLE_ITEMS = [
   {
-    id: PEBBLE_CURIOUS_PIECE_ITEM_ID,
-    name: 'Curious Piece',
-    description: 'One of three peculiar little pieces Pebble can use to mend the Sunbeam Fountain.',
+    id: PEBBLE_MOON_GLASS_WASHER_ITEM_ID,
+    name: 'Moon-glass Washer',
+    description:
+      'A cloudy ring of moon-glass found in Moonflower Glade. Pebble thinks it might help repair the Sunbeam Fountain.',
     category: 'quest',
-    icon: '🔎',
+    icon: '🌙',
+    discoveryId: PEBBLE_MOON_GLASS_DISCOVERY_ID,
+    questCritical: true,
+  },
+  {
+    id: PEBBLE_STAR_HEADED_SCREW_ITEM_ID,
+    name: 'Star-headed Screw',
+    description:
+      'A tiny brass screw with a five-pointed head, found beyond the Story House. One of the peculiar pieces Pebble needs.',
+    category: 'quest',
+    icon: '⭐',
+    discoveryId: PEBBLE_STORY_SCREW_DISCOVERY_ID,
+    questCritical: true,
+  },
+  {
+    id: PEBBLE_RAINBOW_SPRING_ITEM_ID,
+    name: 'Rainbow Spring',
+    description:
+      'A springy rainbow-coloured coil found in Rainbow Meadow. Pebble asked for odd little parts just like this.',
+    category: 'quest',
+    icon: '🌈',
+    discoveryId: PEBBLE_RAINBOW_SPRING_DISCOVERY_ID,
     questCritical: true,
   },
   {
@@ -49,9 +79,9 @@ export const R4_PEBBLE_QUESTS = [
     id: PEBBLE_COLLECTION_QUEST_ID,
     name: "Pebble's Peculiar Pieces",
     steps: [
-      { type: 'collect-item', itemId: PEBBLE_CURIOUS_PIECE_ITEM_ID, quantity: 3 },
+      { type: 'collect-items', itemIds: PEBBLE_PIECE_ITEM_IDS },
       { type: 'talk-to-character', characterId: PEBBLE_CHARACTER_ID },
-      { type: 'consume-item', itemId: PEBBLE_CURIOUS_PIECE_ITEM_ID, quantity: 3 },
+      { type: 'consume-items', itemIds: PEBBLE_PIECE_ITEM_IDS },
       { type: 'award-item', itemId: PEBBLE_DISPLAY_REWARD_ITEM_ID, quantity: 1 },
       { type: 'award-friendship', characterId: PEBBLE_CHARACTER_ID, amount: 10 },
       { type: 'set-world-flag', flagId: PEBBLE_FOUNTAIN_REPAIRED_FLAG, value: true },
@@ -93,13 +123,13 @@ export const R4_PEBBLE_SECRET_DEFINITIONS = [
     sceneKey: 'MoonflowerGladeScene',
     pattern: 'hidden-object',
     feedbackTier: 'twinkle',
-    label: 'A cloudy little ring',
+    label: 'Moon-glass Washer',
     actionLabel: 'Pick up',
     position: { x: 1000, y: 1435 },
     interactionRadius: 135,
     feedback: 'Odd thing found!\nA moon-glass washer was hiding in the grass. 🌙',
     conditions: [{ type: 'quest-status', questId: PEBBLE_COLLECTION_QUEST_ID, status: 'active' }],
-    rewardItemId: PEBBLE_CURIOUS_PIECE_ITEM_ID,
+    rewardItemId: PEBBLE_MOON_GLASS_WASHER_ITEM_ID,
   },
   {
     id: 'secret:pebble-story-house-star-screw',
@@ -107,13 +137,13 @@ export const R4_PEBBLE_SECRET_DEFINITIONS = [
     sceneKey: 'SunbeamVillageScene',
     pattern: 'hidden-object',
     feedbackTier: 'secret',
-    label: 'A star-shaped glint',
+    label: 'Star-headed Screw',
     actionLabel: 'Pick up',
     position: { x: 2325, y: 1450 },
     interactionRadius: 140,
     feedback: 'Curious piece found!\nA tiny star-headed screw was sparkling by the path. ⭐',
     conditions: [{ type: 'quest-status', questId: PEBBLE_COLLECTION_QUEST_ID, status: 'active' }],
-    rewardItemId: PEBBLE_CURIOUS_PIECE_ITEM_ID,
+    rewardItemId: PEBBLE_STAR_HEADED_SCREW_ITEM_ID,
   },
   {
     id: 'secret:pebble-rainbow-spring',
@@ -121,13 +151,13 @@ export const R4_PEBBLE_SECRET_DEFINITIONS = [
     sceneKey: 'RainbowMeadowScene',
     pattern: 'hidden-object',
     feedbackTier: 'twinkle',
-    label: 'A bouncing flash',
+    label: 'Rainbow Spring',
     actionLabel: 'Pick up',
     position: { x: 2050, y: 1770 },
     interactionRadius: 145,
     feedback: 'Odd thing found!\nA rainbow spring bounced straight into your collection. 🌈',
     conditions: [{ type: 'quest-status', questId: PEBBLE_COLLECTION_QUEST_ID, status: 'active' }],
-    rewardItemId: PEBBLE_CURIOUS_PIECE_ITEM_ID,
+    rewardItemId: PEBBLE_RAINBOW_SPRING_ITEM_ID,
   },
 ] as const satisfies readonly SecretDiscoveryDefinition[];
 

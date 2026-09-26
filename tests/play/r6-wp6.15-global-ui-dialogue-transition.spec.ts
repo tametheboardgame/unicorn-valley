@@ -2,8 +2,8 @@ import { expect, test, type Page } from '@playwright/test';
 
 const PLAYER_NAME = 'world-player-unicorn';
 const PIP_APPROACH = { x: 1110, y: 825 } as const;
-const WILLOW_APPROACH = { x: 940, y: 1160 } as const;
-const MARIGOLD_APPROACH = { x: 600, y: 860 } as const;
+const WILLOW_APPROACH = { x: 620, y: 1345 } as const;
+const MARIGOLD_APPROACH = { x: 1700, y: 1240 } as const;
 const NOVA_APPROACH = { x: 2370, y: 930 } as const;
 const RETIRED_CONVERSATION_SCENES = [
   'WillowStoryScene',
@@ -200,15 +200,15 @@ async function waitForTalkTarget(page: Page, sceneKey: string, label: string): P
   await expect
     .poll(async () => {
       const scene = await sceneSnapshot(page, sceneKey);
-      const action = scene.objects.find(
-        (object) => object.name === 'exploration-interaction-prompt-label' && object.visible,
+      const hasTalkAction = scene.objects.some(
+        (object) => object.visible && object.text === 'Talk',
       );
-      const hint = scene.objects.find(
-        (object) => object.name === 'exploration-tablet-hint' && object.visible,
+      const hasTargetLabel = scene.objects.some(
+        (object) => object.visible && object.text === label,
       );
-      return `${action?.text ?? ''}|${hint?.text ?? ''}`;
+      return hasTalkAction && hasTargetLabel;
     })
-    .toBe(`Talk|${label}`);
+    .toBe(true);
 }
 
 async function openPipConversation(page: Page): Promise<void> {
@@ -331,14 +331,11 @@ test('supporting resident uses the shared dialogue family with production portra
     .toBe(true);
   let scene = await sceneSnapshot(page, 'MoonflowerGladeScene');
   const resident = namedObject(scene, 'supporting-resident:resident:juniper');
-  await positionPlayer(page, 'MoonflowerGladeScene', resident.x + 84, resident.y);
+  await positionPlayer(page, 'MoonflowerGladeScene', resident.x, resident.y);
   await waitForTalkTarget(page, 'MoonflowerGladeScene', 'Juniper');
-  const talkPrompt = namedObject(
-    await sceneSnapshot(page, 'MoonflowerGladeScene'),
-    'exploration-interaction-prompt',
-  );
-  expect(talkPrompt.interactive).toBe(true);
-  await page.mouse.click(talkPrompt.x, talkPrompt.y);
+  // Juniper follows a live route. Activate immediately once the shared Talk prompt is visible
+  // rather than taking another diagnostic snapshot that can let her move back out of range.
+  await page.keyboard.press('KeyE');
   await waitForVisibleObject(page, 'MoonflowerGladeScene', 'dialogue-production-panel');
   await waitForVisibleObject(
     page,

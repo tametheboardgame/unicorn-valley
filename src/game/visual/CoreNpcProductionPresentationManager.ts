@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { PIP_POSITION } from '../intro/PipIntro';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
+import { SUPPORTING_RESIDENT_ART_LAYOUT } from '../population/SupportingResidentArt';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import {
   CoreNpcPresenceService,
@@ -11,6 +12,10 @@ import { RAINBOW_MEADOW_MAP } from '../world/RainbowMeadowMap';
 import { SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
 import { worldDepthForY } from '../world/WorldDepth';
 import { addCoreNpcIdleTween, createCoreNpcSprite } from './CoreNpcProductionArt';
+import {
+  createVillageCoreResidentSprite,
+  type VillageCoreResidentId,
+} from './VillageCoreResidentArt';
 
 const LUMI_WORLD_POSITION = { x: 2980, y: 1530 } as const;
 const NOVA_PICNIC_POSITION = { x: 2045, y: 1400 } as const;
@@ -66,39 +71,6 @@ function syncNovaInteractionTarget(area: CoreNpcPresenceArea): void {
   mutablePosition.y = target.y;
 }
 
-function hideVillagePrototypeMarker(
-  scene: Phaser.Scene,
-  id: 'willow' | 'marigold' | 'pebble',
-  prototypeIcon: string,
-): void {
-  const marker = SUNBEAM_VILLAGE_MAP.npcMarkers.find((candidate) => candidate.id === id);
-  if (!marker) {
-    return;
-  }
-
-  for (const object of scene.children.list) {
-    if (!hasWorldPosition(object)) {
-      continue;
-    }
-    const atMarker =
-      Math.abs(object.x - marker.position.x) <= 1 && Math.abs(object.y - marker.position.y) <= 1;
-    if (!atMarker) {
-      continue;
-    }
-
-    const prototypeCircle =
-      object instanceof Phaser.GameObjects.Arc &&
-      object.displayWidth <= 90 &&
-      object.displayHeight <= 90;
-    const prototypeText =
-      object instanceof Phaser.GameObjects.Text &&
-      (object.text === prototypeIcon || object.text === '✦');
-    if (prototypeCircle || prototypeText) {
-      object.setVisible(false);
-    }
-  }
-}
-
 function hideNovaPlaceholder(scene: Phaser.Scene, hideRaceLabel: boolean): void {
   if (!NOVA_RACE_POSITION) {
     return;
@@ -148,28 +120,6 @@ function hidePicnicNovaPlaceholder(scene: Phaser.Scene): void {
       object instanceof Phaser.GameObjects.Text && (object.text === '⭐' || object.text === 'Nova');
     if (prototypeCircle || prototypeText) {
       object.setVisible(false);
-    }
-  }
-}
-
-function hidePebblePlaceholder(scene: Phaser.Scene): void {
-  const marker = SUNBEAM_VILLAGE_MAP.npcMarkers.find((candidate) => candidate.id === 'pebble');
-  if (!marker) {
-    return;
-  }
-  const container = scene.children.list.find(
-    (object): object is Phaser.GameObjects.Container =>
-      object instanceof Phaser.GameObjects.Container &&
-      object.name === 'pebble-world-presentation' &&
-      Math.abs(object.x - marker.position.x) <= 1 &&
-      Math.abs(object.y - marker.position.y) <= 1,
-  );
-  if (!container) {
-    return;
-  }
-  for (const child of container.list) {
-    if (child instanceof Phaser.GameObjects.Text && child.text === '🪨') {
-      child.setVisible(false);
     }
   }
 }
@@ -242,48 +192,31 @@ export class CoreNpcProductionPresentationManager {
       return;
     }
 
-    this.ensureVillageNpc(scene, 'willow', '🌿', 100, 83);
-    this.ensureVillageNpc(scene, 'marigold', '🥐', 102, 84);
-
-    const pebbleMarker = SUNBEAM_VILLAGE_MAP.npcMarkers.find(
-      (candidate) => candidate.id === 'pebble',
-    );
-    if (!pebbleMarker || scene.children.getByName('core-npc:pebble:world')) {
-      return;
-    }
-    hideVillagePrototypeMarker(scene, 'pebble', '✦');
-    hidePebblePlaceholder(scene);
-    const pebble = createCoreNpcSprite(
-      scene,
-      'pebble',
-      pebbleMarker.position.x,
-      pebbleMarker.position.y + 5,
-      'world',
-    )
-      .setDisplaySize(102, 84)
-      .setDepth(worldDepthForY(pebbleMarker.position.y + 48, 0.32));
-    addCoreNpcIdleTween(scene, pebble, 'pebble', 3);
+    this.ensureVillageNpc(scene, 'willow', 4);
+    this.ensureVillageNpc(scene, 'marigold', 4);
+    this.ensureVillageNpc(scene, 'pebble', 5);
   }
 
-  private ensureVillageNpc(
-    scene: Phaser.Scene,
-    id: 'willow' | 'marigold',
-    emoji: string,
-    width: number,
-    height: number,
-  ): void {
-    if (scene.children.getByName(`core-npc:${id}:world`)) {
+  private ensureVillageNpc(scene: Phaser.Scene, id: VillageCoreResidentId, yOffset: number): void {
+    const objectName = `core-npc:${id}:world`;
+    if (scene.children.getByName(objectName)) {
       return;
     }
     const marker = SUNBEAM_VILLAGE_MAP.npcMarkers.find((candidate) => candidate.id === id);
     if (!marker) {
       return;
     }
-    hideVillagePrototypeMarker(scene, id, emoji);
-    const sprite = createCoreNpcSprite(scene, id, marker.position.x, marker.position.y + 4, 'world')
-      .setDisplaySize(width, height)
-      .setDepth(worldDepthForY(marker.position.y + 47, 0.32));
-    addCoreNpcIdleTween(scene, sprite, id, 3);
+
+    createVillageCoreResidentSprite(scene, id, objectName)
+      .setPosition(marker.position.x, marker.position.y + yOffset)
+      .setDepth(
+        worldDepthForY(
+          marker.position.y + SUPPORTING_RESIDENT_ART_LAYOUT.displayHeight * 0.44,
+          0.32,
+        ),
+      );
+    // Static village core residents deliberately share the exact art geometry used by moving
+    // supporting residents. They remain fixed in place and receive no idle bob/tween.
   }
 
   private refreshNovaWorld(): void {

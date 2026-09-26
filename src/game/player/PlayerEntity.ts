@@ -94,6 +94,13 @@ export class PlayerEntity {
     this.sprite.setAngle(Math.sin(time * 0.004) * 0.28);
   }
 
+  public refreshTexture(): void {
+    const texture = getUnicornProductionTextureKey(this.textureKey, this.activeProductionPose);
+    if (this.scene.textures.exists(texture)) {
+      this.sprite.setTexture(texture);
+    }
+  }
+
   public getFacing(): PlayerFacing {
     return this.facing;
   }

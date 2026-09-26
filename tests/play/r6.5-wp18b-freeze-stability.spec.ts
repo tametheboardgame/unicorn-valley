@@ -53,6 +53,7 @@ interface BrowserDiagnosticsApi {
   performance(): FramePerformanceSnapshot;
   resetPerformance(): void;
   startScene(sceneKey: string, data?: object): void;
+  setArcadeSpritePosition(sceneKey: string, objectName: string, x: number, y: number): void;
 }
 
 async function snapshot(page: Page): Promise<BrowserDiagnosticSnapshot> {
@@ -387,25 +388,62 @@ test.describe
       });
       await waitForScene(page, 'VillageInteriorScene');
 
-      for (let cycle = 0; cycle < 8; cycle += 1) {
-        await logicalClick(page, 470, 475);
-        await waitForScene(page, 'ShopScene');
+      await page.evaluate(() => {
+        (
+          window as typeof window & {
+            __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
+          }
+        ).__UNICORN_VALLEY_DIAGNOSTICS__?.setArcadeSpritePosition(
+          'VillageInteriorScene',
+          'world-player-unicorn',
+          1080,
+          520,
+        );
+      });
 
-        await logicalClick(page, 495, 684);
+      for (let cycle = 0; cycle < 8; cycle += 1) {
+        await page.keyboard.press('Enter');
+        await page.waitForFunction(() => {
+          const api = (
+            window as typeof window & {
+              __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
+            }
+          ).__UNICORN_VALLEY_DIAGNOSTICS__;
+          return (
+            api
+              ?.snapshot()
+              .scenes.find(({ key }) => key === 'VillageInteriorScene')
+              ?.objects.some(({ name }) => name === 'twinkle-shop-title') === true
+          );
+        });
+
+        await logicalClick(page, 640, 660);
+        await clickNamedObject(page, 'VillageInteriorScene', 'exploration-shell-bag-button');
         await waitForScene(page, 'InventoryScene');
         await clickNamedObject(page, 'InventoryScene', 'bag-close-button');
         await waitForScene(page, 'VillageInteriorScene');
 
         const current = await snapshot(page);
         expect(current.activeScenes).toContain('VillageInteriorScene');
-        expect(current.activeScenes).not.toContain('ShopScene');
         expect(current.activeScenes).not.toContain('InventoryScene');
         healthSamples.push(await sceneHealth(page, 'VillageInteriorScene'));
       }
 
       assertStableCounts(healthSamples, 'VillageInteriorScene');
       await assertHealthyRuntime(page);
-      await logicalClick(page, 170, 674);
+      await page.evaluate(() => {
+        (
+          window as typeof window & {
+            __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
+          }
+        ).__UNICORN_VALLEY_DIAGNOSTICS__?.setArcadeSpritePosition(
+          'VillageInteriorScene',
+          'world-player-unicorn',
+          750,
+          900,
+        );
+      });
+      await page.keyboard.press('Enter');
       await waitForScene(page, 'SunbeamVillageScene');
       expect(
         browserErrors,

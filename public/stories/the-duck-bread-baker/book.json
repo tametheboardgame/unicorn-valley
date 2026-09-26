@@ -1,0 +1,700 @@
+{
+  "schemaVersion": 1,
+  "id": "the-duck-bread-baker",
+  "title": "The Duck Bread Baker",
+  "description": "Join Duck on his delicious journey as he sets out to satisfy his love for bread. But when all his feathered friends fall ill, he learns that a diet of just bread isn’t the way to go.",
+  "catalogueBlurb": "Duck learns why loving bread still means eating a balanced diet.",
+  "author": "David Fairbairn",
+  "readingMode": "paged-picture-book",
+  "cover": {
+    "path": "covers/cover.webp",
+    "alt": "The Duck Bread Baker cover, showing a yellow duck surrounded by loaves of bread."
+  },
+  "series": null,
+  "tags": ["picture-book", "animals", "food", "health", "illustrated"],
+  "publication": {
+    "status": "published"
+  },
+  "chapters": [
+    {
+      "id": "page-02",
+      "title": "Page 1",
+      "path": "chapters/page-02.md",
+      "illustrations": [
+        {
+          "id": "page-02-art",
+          "blockId": "duck-loved-bread",
+          "path": "illustrations/page-02.webp",
+          "alt": "Three yellow ducks swim below a footbridge while a person walks overhead.",
+          "placement": "full-width",
+          "width": 320,
+          "height": 320
+        }
+      ]
+    },
+    {
+      "id": "page-03",
+      "title": "Page 2",
+      "path": "chapters/page-03.md",
+      "illustrations": [
+        {
+          "id": "page-03-art",
+          "blockId": "all-he-was-fed",
+          "path": "illustrations/page-03.webp",
+          "alt": "Story illustration accompanying “So much he wished it was all he was fed.”",
+          "placement": "full-width",
+          "width": 320,
+          "height": 320
+        }
+      ]
+    },
+    {
+      "id": "page-04",
+      "title": "Page 3",
+      "path": "chapters/page-04.md",
+      "illustrations": [
+        {
+          "id": "page-04-art",
+          "blockId": "rainy-cold-dark",
+          "path": "illustrations/page-04.webp",
+          "alt": "Story illustration accompanying “Sometimes it was rainy, or cold, or dark”",
+          "placement": "full-width",
+          "width": 320,
+          "height": 320
+        }
+      ]
+    },
+    {
+      "id": "page-05",
+      "title": "Page 4",
+      "path": "chapters/page-05.md",
+      "illustrations": [
+        {
+          "id": "page-05-art",
+          "blockId": "few-people-came",
+          "path": "illustrations/page-05.webp",
+          "alt": "Story illustration accompanying “So very few people came to the park.”",
+          "placement": "full-width",
+          "width": 320,
+          "height": 320
+        }
+      ]
+    },
+    {
+      "id": "page-06",
+      "title": "Page 5",
+      "path": "chapters/page-06.md",
+      "illustrations": [
+        {
+          "id": "page-06-art",
+          "blockId": "friends-food",
+          "path": "illustrations/page-06.webp",
+          "alt": "Story illustration accompanying “Duck did not want the food that his friends had.”",
+          "placement": "full-width",
+          "width": 320,
+          "height": 320
+        }
+      ]
+    },
+    {
+      "id": "page-07",
+      "title": "Page 6",
+      "path": "chapters/page-07.md",
+      "illustrations": [
+        {
+          "id": "page-07-art",
+          "blockId": "wanted-bread",
+          "path": "illustrations/page-07.webp",
+          "alt": "Story illustration accompanying “He wanted bread, and this made him feel sad.”",
+          "placement": "full-width",
+          "width": 320,
+          "height": 320
+        }
+      ]
+    },
+    {
+      "id": "page-08",
+      "title": "Page 7",
+      "path": "chapters/page-08.md",
+      "illustrations": [
+        {
+          "id": "page-08-art",
+          "blockId": "bugs-and-plants",
+          "path": "illustrations/page-08.webp",
+          "alt": "Story illustration accompanying “He found bugs icky, and plants were no fun!”",
+          "placement": "full-width",
+          "width": 320,
+          "height": 320
+        }
+      ]
+    },
+    {
+      "id": "page-09",
+      "title": "Page 8",
+      "path": "chapters/page-09.md",
+      "illustrations": [
+        {
+          "id": "page-09-art",
+          "blockId": "seeds-and-weeds",
+          "path": "illustrations/page-09.webp",
+          "alt": "Story illustration accompanying “Seeds were so yucky, and weeds made him run!”",
+          "placement": "full-width",
+          "width": 320,
+          "height": 320
+        }
+      ]
+    },
+    {
+      "id": "page-10",
+      "title": "Page 9",
+      "path": "chapters/page-10.md",
+      "illustrations": [
+        {
+          "id": "page-10-art",
+          "blockId": "find-a-way",
+          "path": "illustrations/page-10.webp",
+          "alt": "Story illustration accompanying “So Duck decided that he’d find a way,”",
+          "placement": "full-width",
+          "width": 320,
+          "height": 320
+        }
+      ]
+    },
+    {
+      "id": "page-11",
+      "title": "Page 10",
+      "path": "chapters/page-11.md",
+      "illustrations": [
+        {
+          "id": "page-11-art",
+          "blockId": "bread-every-day",
+          "path": "illustrations/page-11.webp",
+          "alt": "Story illustration accompanying “A way that he could have bread every day…”",
+          "placement": "full-width",
+          "width": 320,
+          "height": 320
+        }
+      ]
+    },
+    {
+      "id": "page-12",
+      "title": "Page 11",
+      "path": "chapters/page-12.md",
+      "illustrations": [
+        {
+          "id": "page-12-art",
+          "blockId": "watching-people-bake",
+          "path": "illustrations/page-12.webp",
+          "alt": "Story illustration accompanying “He went to see how the people made bread.”",
+          "placement": "full-width",
+          "width": 320,
+          "height": 320
+        }
+      ]
+    },
+    {
+      "id": "page-13",
+      "title": "Page 12",
+      "path": "chapters/page-13.md",
+      "illustrations": [
+        {
+          "id": "page-13-art",
+          "blockId": "make-it-himself",
+          "path": "illustrations/page-13.webp",
+          "alt": "Story illustration accompanying “He thought perhaps he could make it instead.”",
+          "placement": "full-width",
+          "width": 320,
+          "height": 320
+        }
+      ]
+    },
+    {
+      "id": "page-14",
+      "title": "Page 13",
+      "path": "chapters/page-14.md",
+      "illustrations": [
+        {
+          "id": "page-14-art",
+          "blockId": "flying-to-town",
+          "path": "illustrations/page-14.webp",
+          "alt": "Story illustration accompanying “Flying to town under cover of night,”",
+          "placement": "full-width",
+          "width": 320,
+          "height": 320
+        }
+      ]
+    },
+    {
+      "id": "page-15",
+      "title": "Page 14",
+      "path": "chapters/page-15.md",
+      "illustrations": [
+        {
+          "id": "page-15-art",
+          "blockId": "staying-out-of-sight",
+          "path": "illustrations/page-15.webp",
+          "alt": "Story illustration accompanying “To see bread baking, and stay out of sight.”",
+          "placement": "full-width",
+          "width": 320,
+          "height": 320
+        }
+      ]
+    },
+    {
+      "id": "page-16",
+      "title": "Page 15",
+      "path": "chapters/page-16.md",
+      "illustrations": [
+        {
+          "id": "page-16-art",
+          "blockId": "learning-to-bake",
+          "path": "illustrations/page-16.webp",
+          "alt": "Story illustration accompanying “Learning the art of kneading and baking,”",
+          "placement": "full-width",
+          "width": 320,
+          "height": 320
+        }
+      ]
+    },
+    {
+      "id": "page-17",
+      "title": "Page 16",
+      "path": "chapters/page-17.md",
+      "illustrations": [
+        {
+          "id": "page-17-art",
+          "blockId": "delicious-bread",
+          "path": "illustrations/page-17.webp",
+          "alt": "Story illustration accompanying “And soon, delicious bread he was making!”",
+          "placement": "full-width",
+          "width": 320,
+          "height": 320
+        }
+      ]
+    },
+    {
+      "id": "page-18",
+      "title": "Page 17",
+      "path": "chapters/page-18.md",
+      "illustrations": [
+        {
+          "id": "page-18-art",
+          "blockId": "shop-in-the-park",
+          "path": "illustrations/page-18.webp",
+          "alt": "Story illustration accompanying “He set up shop in the park with a sign,”",
+          "placement": "full-width",
+          "width": 320,
+          "height": 320
+        }
+      ]
+    },
+    {
+      "id": "page-19",
+      "title": "Page 18",
+      "path": "chapters/page-19.md",
+      "illustrations": [
+        {
+          "id": "page-19-art",
+          "blockId": "perfect-bread-sign",
+          "path": "illustrations/page-19.webp",
+          "alt": "Story illustration accompanying ““Duck’s perfect bread, the best you’ll ever find!””",
+          "placement": "full-width",
+          "width": 320,
+          "height": 320
+        }
+      ]
+    },
+    {
+      "id": "page-20",
+      "title": "Page 19",
+      "path": "chapters/page-20.md",
+      "illustrations": [
+        {
+          "id": "page-20-art",
+          "blockId": "birds-on-the-lake",
+          "path": "illustrations/page-20.webp",
+          "alt": "Story illustration accompanying “All the other ducks and birds on the lake,”",
+          "placement": "full-width",
+          "width": 320,
+          "height": 320
+        }
+      ]
+    },
+    {
+      "id": "page-21",
+      "title": "Page 20",
+      "path": "chapters/page-21.md",
+      "illustrations": [
+        {
+          "id": "page-21-art",
+          "blockId": "buy-all-he-made",
+          "path": "illustrations/page-21.webp",
+          "alt": "Story illustration accompanying “Bought bread from Duck; they’d buy all he could make!”",
+          "placement": "full-width",
+          "width": 320,
+          "height": 320
+        }
+      ]
+    },
+    {
+      "id": "page-22",
+      "title": "Page 21",
+      "path": "chapters/page-22.md",
+      "illustrations": [
+        {
+          "id": "page-22-art",
+          "blockId": "dream-came-true",
+          "path": "illustrations/page-22.webp",
+          "alt": "Story illustration accompanying “Duck was so happy, his one dream came true,”",
+          "placement": "full-width",
+          "width": 320,
+          "height": 320
+        }
+      ]
+    },
+    {
+      "id": "page-23",
+      "title": "Page 22",
+      "path": "chapters/page-23.md",
+      "illustrations": [
+        {
+          "id": "page-23-art",
+          "blockId": "bread-for-the-crew",
+          "path": "illustrations/page-23.webp",
+          "alt": "Story illustration accompanying “Bread every day for him and all his crew.”",
+          "placement": "full-width",
+          "width": 320,
+          "height": 320
+        }
+      ]
+    },
+    {
+      "id": "page-24",
+      "title": "Page 23",
+      "path": "chapters/page-24.md",
+      "illustrations": [
+        {
+          "id": "page-24-art",
+          "blockId": "bellies-full",
+          "path": "illustrations/page-24.webp",
+          "alt": "Story illustration accompanying “All his friends were content, their bellies full.”",
+          "placement": "full-width",
+          "width": 320,
+          "height": 320
+        }
+      ]
+    },
+    {
+      "id": "page-25",
+      "title": "Page 24",
+      "path": "chapters/page-25.md",
+      "illustrations": [
+        {
+          "id": "page-25-art",
+          "blockId": "bread-galore",
+          "path": "illustrations/page-25.webp",
+          "alt": "Story illustration accompanying “They said through full mouths “Bread galore for all!””",
+          "placement": "full-width",
+          "width": 320,
+          "height": 320
+        }
+      ]
+    },
+    {
+      "id": "page-26",
+      "title": "Page 25",
+      "path": "chapters/page-26.md",
+      "illustrations": [
+        {
+          "id": "page-26-art",
+          "blockId": "animals-fell-ill",
+          "path": "illustrations/page-26.webp",
+          "alt": "Story illustration accompanying “But as days went by, animals fell ill.”",
+          "placement": "full-width",
+          "width": 320,
+          "height": 320
+        }
+      ]
+    },
+    {
+      "id": "page-27",
+      "title": "Page 26",
+      "path": "chapters/page-27.md",
+      "illustrations": [
+        {
+          "id": "page-27-art",
+          "blockId": "feathers-fell",
+          "path": "illustrations/page-27.webp",
+          "alt": "Story illustration accompanying “Feathers began to fall and they fell still.”",
+          "placement": "full-width",
+          "width": 320,
+          "height": 320
+        }
+      ]
+    },
+    {
+      "id": "page-28",
+      "title": "Page 27",
+      "path": "chapters/page-28.md",
+      "illustrations": [
+        {
+          "id": "page-28-art",
+          "blockId": "bread-was-not-right",
+          "path": "illustrations/page-28.webp",
+          "alt": "Story illustration accompanying “They soon realised that bread was not right,”",
+          "placement": "full-width",
+          "width": 320,
+          "height": 320
+        }
+      ]
+    },
+    {
+      "id": "page-29",
+      "title": "Page 28",
+      "path": "chapters/page-29.md",
+      "illustrations": [
+        {
+          "id": "page-29-art",
+          "blockId": "all-day-and-night",
+          "path": "illustrations/page-29.webp",
+          "alt": "Story illustration accompanying “For ducks and birds to eat all day and night.”",
+          "placement": "full-width",
+          "width": 320,
+          "height": 320
+        }
+      ]
+    },
+    {
+      "id": "page-30",
+      "title": "Page 29",
+      "path": "chapters/page-30.md",
+      "illustrations": [
+        {
+          "id": "page-30-art",
+          "blockId": "duck-felt-guilty",
+          "path": "illustrations/page-30.webp",
+          "alt": "A yellow duck looks down sadly after realising he has made a mistake.",
+          "placement": "full-width",
+          "width": 320,
+          "height": 320
+        }
+      ]
+    },
+    {
+      "id": "page-31",
+      "title": "Page 30",
+      "path": "chapters/page-31.md",
+      "illustrations": [
+        {
+          "id": "page-31-art",
+          "blockId": "shop-closed",
+          "path": "illustrations/page-31.webp",
+          "alt": "Story illustration accompanying “He closed his shop, no more bread he would bake.”",
+          "placement": "full-width",
+          "width": 320,
+          "height": 320
+        }
+      ]
+    },
+    {
+      "id": "page-32",
+      "title": "Page 31",
+      "path": "chapters/page-32.md",
+      "illustrations": [
+        {
+          "id": "page-32-art",
+          "blockId": "feathered-friends",
+          "path": "illustrations/page-32.webp",
+          "alt": "Story illustration accompanying “All the ducks and the other feathered friends,”",
+          "placement": "full-width",
+          "width": 320,
+          "height": 320
+        }
+      ]
+    },
+    {
+      "id": "page-33",
+      "title": "Page 32",
+      "path": "chapters/page-33.md",
+      "illustrations": [
+        {
+          "id": "page-33-art",
+          "blockId": "diet-made-amends",
+          "path": "illustrations/page-33.webp",
+          "alt": "Story illustration accompanying “Returned to a diet that made amends.”",
+          "placement": "full-width",
+          "width": 320,
+          "height": 320
+        }
+      ]
+    },
+    {
+      "id": "page-34",
+      "title": "Page 33",
+      "path": "chapters/page-34.md",
+      "illustrations": [
+        {
+          "id": "page-34-art",
+          "blockId": "health-restored",
+          "path": "illustrations/page-34.webp",
+          "alt": "Story illustration accompanying “Their health restored, As nature intended.”",
+          "placement": "full-width",
+          "width": 320,
+          "height": 320
+        }
+      ]
+    },
+    {
+      "id": "page-35",
+      "title": "Page 34",
+      "path": "chapters/page-35.md",
+      "illustrations": [
+        {
+          "id": "page-35-art",
+          "blockId": "bugs-and-seeds",
+          "path": "illustrations/page-35.webp",
+          "alt": "Story illustration accompanying “Eating bugs and seeds, their bodies mended.”",
+          "placement": "full-width",
+          "width": 320,
+          "height": 320
+        }
+      ]
+    },
+    {
+      "id": "page-36",
+      "title": "Page 35",
+      "path": "chapters/page-36.md",
+      "illustrations": [
+        {
+          "id": "page-36-art",
+          "blockId": "vital-lesson",
+          "path": "illustrations/page-36.webp",
+          "alt": "Story illustration accompanying “Duck learned a vital lesson that day.”",
+          "placement": "full-width",
+          "width": 320,
+          "height": 320
+        }
+      ]
+    },
+    {
+      "id": "page-37",
+      "title": "Page 36",
+      "path": "chapters/page-37.md",
+      "illustrations": [
+        {
+          "id": "page-37-art",
+          "blockId": "listen-to-bodies",
+          "path": "illustrations/page-37.webp",
+          "alt": "Story illustration accompanying “Always listen to what our bodies say.”",
+          "placement": "full-width",
+          "width": 320,
+          "height": 320
+        }
+      ]
+    },
+    {
+      "id": "page-38",
+      "title": "Page 37",
+      "path": "chapters/page-38.md",
+      "illustrations": [
+        {
+          "id": "page-38-art",
+          "blockId": "natures-plan",
+          "path": "illustrations/page-38.webp",
+          "alt": "Story illustration accompanying “Nature’s plan is pure, so let’s not neglect,”",
+          "placement": "full-width",
+          "width": 320,
+          "height": 320
+        }
+      ]
+    },
+    {
+      "id": "page-39",
+      "title": "Page 38",
+      "path": "chapters/page-39.md",
+      "illustrations": [
+        {
+          "id": "page-39-art",
+          "blockId": "feed-ourselves-right",
+          "path": "illustrations/page-39.webp",
+          "alt": "Story illustration accompanying “To feed ourselves right, Our health to protect.”",
+          "placement": "full-width",
+          "width": 320,
+          "height": 320
+        }
+      ]
+    },
+    {
+      "id": "page-40",
+      "title": "Page 39",
+      "path": "chapters/page-40.md",
+      "illustrations": [
+        {
+          "id": "page-40-art",
+          "blockId": "foods-that-sustain",
+          "path": "illustrations/page-40.webp",
+          "alt": "Story illustration accompanying “With foods that sustain and make us feel whole,”",
+          "placement": "full-width",
+          "width": 320,
+          "height": 320
+        }
+      ]
+    },
+    {
+      "id": "page-41",
+      "title": "Page 40",
+      "path": "chapters/page-41.md",
+      "illustrations": [
+        {
+          "id": "page-41-art",
+          "blockId": "healthy-diet-key",
+          "path": "illustrations/page-41.webp",
+          "alt": "Story illustration accompanying “A healthy diet is key to our goal.”",
+          "placement": "full-width",
+          "width": 320,
+          "height": 320
+        }
+      ]
+    },
+    {
+      "id": "page-42",
+      "title": "Did you know?",
+      "path": "chapters/page-42.md",
+      "illustrations": [
+        {
+          "id": "page-42-art",
+          "blockId": "did-you-know",
+          "path": "illustrations/page-42.webp",
+          "alt": "Green leaves frame the page around the book’s nutrition facts.",
+          "placement": "full-width",
+          "width": 320,
+          "height": 320
+        }
+      ]
+    }
+  ],
+  "discovery": {
+    "format": "Picture Book",
+    "genres": ["Animals", "Food & Health"],
+    "audiences": ["Read Together", "Early Reader"],
+    "length": "Quick Read"
+  },
+  "rights": {
+    "text": {
+      "status": "original",
+      "source": "Author-supplied production PDF",
+      "rightsHolder": "David Fairbairn"
+    },
+    "illustrations": {
+      "status": "unknown",
+      "source": "Author-supplied production PDF",
+      "notes": "Confirm illustration rights/provenance before reuse outside the supplied edition."
+    },
+    "edition": {
+      "status": "unknown",
+      "source": "Author-supplied production cover and content PDFs"
+    },
+    "originalPublicationYear": null,
+    "curatorNotes": "Imported from the author's supplied production PDFs for Unicorn Valley."
+  }
+}

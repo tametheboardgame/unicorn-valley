@@ -500,8 +500,11 @@ export class DialogueCard {
     this.portraitSpeakerId = null;
     this.showFallbackPortrait(speakerName);
 
-    void import('../visual/CoreNpcProductionArt')
-      .then(({ CORE_NPC_VISUALS, createCoreNpcSprite }) => {
+    void Promise.all([
+      import('../visual/CoreNpcProductionArt'),
+      import('../visual/VillageCoreResidentArt'),
+    ])
+      .then(([{ CORE_NPC_VISUALS, createCoreNpcSprite }, villageResidentArt]) => {
         if (
           requestId !== this.portraitRequestId ||
           this.requestedPortraitSpeakerId !== speakerId ||
@@ -516,11 +519,27 @@ export class DialogueCard {
         this.portrait.setFillStyle(spec.frame, 1).setStrokeStyle(6, UI_COLOURS.white, 0.96);
         this.portraitLetter.setVisible(false);
         this.portraitSprite?.destroy();
-        this.portraitSprite = createCoreNpcSprite(this.panel.scene, coreNpcId, 0, 0, 'portrait')
-          .setName(`dialogue-production-portrait-${coreNpcId}`)
-          .setOrigin(0.5)
-          .setScrollFactor(0)
-          .setDepth(129);
+        if (villageResidentArt.isVillageCoreResidentId(coreNpcId)) {
+          const artLayout = villageResidentArt.VILLAGE_CORE_RESIDENT_ART_LAYOUT;
+          this.portraitSprite = villageResidentArt
+            .createVillageCoreResidentSprite(
+              this.panel.scene,
+              coreNpcId,
+              `dialogue-production-portrait-${coreNpcId}`,
+            )
+            .setOrigin(
+              artLayout.drawX / artLayout.textureWidth,
+              artLayout.drawY / artLayout.textureHeight,
+            )
+            .setScrollFactor(0)
+            .setDepth(129);
+        } else {
+          this.portraitSprite = createCoreNpcSprite(this.panel.scene, coreNpcId, 0, 0, 'portrait')
+            .setName(`dialogue-production-portrait-${coreNpcId}`)
+            .setOrigin(0.5)
+            .setScrollFactor(0)
+            .setDepth(129);
+        }
         this.portraitSpeakerId = speakerId;
         this.layoutPortraitSprite(coreNpcId);
       })
@@ -536,13 +555,29 @@ export class DialogueCard {
     const layoutSpec = this.layout === 'compact' ? COMPACT_LAYOUT : EXPANDED_LAYOUT;
     const resolvedId = coreNpcId ?? resolveCoreNpcId(this.portraitSpeakerId ?? '');
     const isPip = resolvedId === 'pip';
+    const isVillageResident =
+      resolvedId === 'willow' || resolvedId === 'marigold' || resolvedId === 'pebble';
     const compact = this.layout === 'compact';
-    this.portraitSprite
-      .setPosition(layoutSpec.portrait.x, layoutSpec.portrait.y)
-      .setDisplaySize(
-        compact ? (isPip ? 100 : 112) : isPip ? 132 : 150,
-        compact ? (isPip ? 80 : 90) : isPip ? 106 : 120,
+    this.portraitSprite.setPosition(layoutSpec.portrait.x, layoutSpec.portrait.y);
+
+    if (isVillageResident) {
+      const maxWidth = layoutSpec.portrait.frameSize * 0.92;
+      const maxHeight = layoutSpec.portrait.frameSize * 0.82;
+      const scale = Math.min(
+        maxWidth / this.portraitSprite.width,
+        maxHeight / this.portraitSprite.height,
       );
+      this.portraitSprite.setDisplaySize(
+        this.portraitSprite.width * scale,
+        this.portraitSprite.height * scale,
+      );
+      return;
+    }
+
+    this.portraitSprite.setDisplaySize(
+      compact ? (isPip ? 100 : 112) : isPip ? 132 : 150,
+      compact ? (isPip ? 80 : 90) : isPip ? 106 : 120,
+    );
   }
 
   private showFallbackPortrait(speakerName: string): void {

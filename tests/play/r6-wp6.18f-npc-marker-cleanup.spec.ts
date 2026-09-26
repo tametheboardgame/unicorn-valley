@@ -47,12 +47,14 @@ function villageFrom(value: DiagnosticSnapshot): DiagnosticScene {
 }
 
 const productionNpcs = [
-  { id: 'willow', label: 'Willow', x: 1040, y: 1160, prototypeIcon: '🌿' },
-  { id: 'marigold', label: 'Marigold', x: 700, y: 860, prototypeIcon: '🥐' },
-  { id: 'pebble', label: 'Pebble', x: 1900, y: 1210, prototypeIcon: '✦' },
+  { id: 'willow', label: 'Willow', x: 535, y: 1345, prototypeIcon: '🌿' },
+  { id: 'marigold', label: 'Marigold', x: 1080, y: 920, prototypeIcon: '🥐' },
+  { id: 'pebble', label: 'Pebble', x: 2140, y: 1300, prototypeIcon: '✦' },
 ] as const;
 
-test('production NPC art does not retain prototype circle markers', async ({ page }) => {
+test('production NPC art no longer carries legacy village marker fixtures or name labels', async ({
+  page,
+}) => {
   await page.goto('/?scene=village&diagnostics=1');
 
   await page.waitForFunction(() => {
@@ -87,8 +89,7 @@ test('production NPC art does not retain prototype circle markers', async ({ pag
         object.displayWidth <= 90 &&
         object.displayHeight <= 90,
     );
-    expect(prototypeCircle, `missing original marker fixture for ${npc.label}`).toBeDefined();
-    expect(prototypeCircle?.visible, `${npc.label} prototype circle should be hidden`).toBe(false);
+    expect(prototypeCircle, `${npc.label} prototype circle should be retired`).toBeUndefined();
 
     const prototypeIcon = village.objects.find(
       (object) =>
@@ -96,14 +97,13 @@ test('production NPC art does not retain prototype circle markers', async ({ pag
         Math.abs(object.x - npc.x) <= 1 &&
         Math.abs(object.y - npc.y) <= 1,
     );
-    expect(prototypeIcon, `missing original icon fixture for ${npc.label}`).toBeDefined();
-    expect(prototypeIcon?.visible, `${npc.label} prototype icon should be hidden`).toBe(false);
+    expect(prototypeIcon, `${npc.label} prototype icon should be retired`).toBeUndefined();
 
     expect(
       village.objects.some(
-        (object) => object.text === npc.label && Math.abs(object.x - npc.x) <= 1 && object.visible,
+        (object) => object.name === `village-npc-label:${npc.id}` && object.visible,
       ),
-      `${npc.label} name label should remain visible`,
-    ).toBe(true);
+      `${npc.label} should not have a persistent world-space name label`,
+    ).toBe(false);
   }
 });

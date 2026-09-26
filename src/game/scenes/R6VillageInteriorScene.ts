@@ -10,9 +10,10 @@ import {
   TANSY_MAP_HUNT_ACTIVE_FLAG,
   TANSY_MAP_QUEST_ID,
   TANSY_NOTICE_MAP_CORNER_DISCOVERY_ID,
-  TANSY_SUNDIAL_MAP_CORNER_DISCOVERY_ID,
   TANSY_CHARACTER_ID,
   WOBBLY_CAKE_ITEM_ID,
+  BAKERY_SECTIONS,
+  type BakerySectionId,
   type MapleCakeTheme,
 } from '../../content/r6VillageContent';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
@@ -21,25 +22,44 @@ import { StoryHouseService } from '../discovery/StoryHouseService';
 import { BakeryService } from '../economy/BakeryService';
 import { ShopPurchaseTapGuard } from '../economy/ShopPurchaseTapGuard';
 import { ShopService } from '../economy/ShopService';
+import { TwinkleWardrobeService } from '../economy/TwinkleWardrobeService';
 import { ShimmerEconomyService } from '../economy/ShimmerEconomyService';
 import { gameEventBus } from '../events/GameEventBus';
 import { InventoryService } from '../inventory/InventoryService';
+import { setInteractionModalActive } from '../interaction/InteractionModalState';
+import type { InteractionTarget } from '../interaction/InteractionTarget';
+import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { R6_SUPPORTING_RESIDENTS } from '../population/R6SupportingResidentContent';
-import { createSupportingResidentSprite } from '../population/SupportingResidentArt';
+import { resolveSupportingResidentDisplaySize } from '../population/SupportingResidentArt';
+import type {
+  SupportingResidentDefinition,
+  SupportingResidentId,
+} from '../population/AmbientPopulationTypes';
+import { getVillageInteriorOccupancyService } from '../population/VillageInteriorOccupancy';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getQuestStepId } from '../quests/QuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
-import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from '../ui/uiTheme';
-
-export type VillageInteriorId = 'bakery' | 'accessory-shop' | 'library';
+import { getWorldConversationPresenter } from '../dialogue/WorldConversationPresenter';
+import { getWorldFeedbackPresenter } from '../ui/WorldFeedbackPresenter';
+import { UI_COLOURS, UI_FONT, applyButtonHover } from '../ui/uiTheme';
+import {
+  getVillageInteriorAnchor,
+  getVillageInteriorMap,
+  isVillageInteriorId,
+  VILLAGE_INTERIOR_SCENE_DATA_KEY,
+  type VillageInteriorDefinition,
+  type VillageInteriorId,
+} from '../world/VillageInteriorMap';
+import { worldDepthForY } from '../world/WorldDepth';
+import { WalkableInteriorRuntime } from './WalkableInteriorRuntime';
+import { createVillageInteriorResidentPresentation } from './VillageInteriorResidentPresentation';
 
 interface VillageInteriorSceneData {
   interiorId?: VillageInteriorId;
   returnScene?: string;
 }
 
-interface InteriorDefinition {
-  id: VillageInteriorId;
+interface InteriorPresentationDefinition {
   title: string;
   subtitle: string;
   icon: string;
@@ -48,28 +68,23 @@ interface InteriorDefinition {
   accentColour: number;
 }
 
-interface ActionButtonOptions {
-  x: number;
-  y: number;
-  width?: number;
-  label: string;
-  fill?: number;
-  onPress: () => void;
-  enabled?: boolean;
+interface StoryReaderHandle {
+  mount(): void;
+  destroy(): void;
 }
 
-const INTERIORS: Readonly<Record<VillageInteriorId, InteriorDefinition>> = {
+const INTERIOR_INTERACTION_OWNER = 'village-interior';
+
+const PRESENTATION: Readonly<Record<VillageInteriorId, InteriorPresentationDefinition>> = {
   bakery: {
-    id: 'bakery',
     title: 'Sunbeam Bakery',
-    subtitle: 'Warm buns, picnic treasures and Maple’s extremely wobbly cake ideas.',
+    subtitle: 'Fresh bakes, picnic treasures and Maple’s famously wobbly cake plan.',
     icon: '🥐',
-    wallColour: 0xffd6a3,
-    floorColour: 0xd99d6b,
-    accentColour: 0xf28b62,
+    wallColour: 0xfff8ec,
+    floorColour: 0xf7e7cf,
+    accentColour: 0xe7a4b2,
   },
   'accessory-shop': {
-    id: 'accessory-shop',
     title: 'Twinkle & Thread',
     subtitle: 'Wearable treasures that grow with your adventures, never your chores.',
     icon: '🎀',
@@ -78,9 +93,8 @@ const INTERIORS: Readonly<Record<VillageInteriorId, InteriorDefinition>> = {
     accentColour: 0xc56fb6,
   },
   library: {
-    id: 'library',
     title: 'Story House',
-    subtitle: 'Tansy keeps maps, clue cards and little stories from places you have really found.',
+    subtitle: 'Maps, clue cards and little stories from places you have really found.',
     icon: '📚',
     wallColour: 0xd9edff,
     floorColour: 0x8eb5c8,
@@ -88,11 +102,7 @@ const INTERIORS: Readonly<Record<VillageInteriorId, InteriorDefinition>> = {
   },
 };
 
-function isInteriorId(value: unknown): value is VillageInteriorId {
-  return value === 'bakery' || value === 'accessory-shop' || value === 'library';
-}
-
-function supportingResident(id: 'resident:maple' | 'resident:tansy') {
+function supportingResident(id: SupportingResidentId): SupportingResidentDefinition {
   const resident = R6_SUPPORTING_RESIDENTS.find((candidate) => candidate.id === id);
   if (!resident) {
     throw new Error(`Village interior requires supporting resident ${id}`);
@@ -111,651 +121,1760 @@ export class VillageInteriorScene extends Phaser.Scene {
   private interiorId: VillageInteriorId = 'accessory-shop';
   private returnScene = 'SunbeamVillageScene';
   private closing = false;
-  private body: Phaser.GameObjects.Container | null = null;
-  private feedback: Phaser.GameObjects.Text | null = null;
+  private runtime: WalkableInteriorRuntime | null = null;
   private balanceText: Phaser.GameObjects.Text | null = null;
+  private occupant: Phaser.GameObjects.Container | null = null;
+  private overlay: Phaser.GameObjects.Container | null = null;
   private readonly purchaseGuard = new ShopPurchaseTapGuard();
   private storyCardCursor = 0;
+  private bakerySection: BakerySectionId = 'pastries';
+  private bakeryShopFeedback = '';
+  private threadShopSection: 'accessories' | 'decorations' = 'accessories';
+  private threadShopFeedback = '';
+  private threadWardrobeFeedback = '';
+  private storyReader: StoryReaderHandle | null = null;
+  private storyReaderRequest = 0;
+  private storyReaderLockActive = false;
 
   public constructor() {
     super('VillageInteriorScene');
   }
 
-  public create(data: VillageInteriorSceneData): void {
-    this.interiorId = isInteriorId(data.interiorId) ? data.interiorId : 'accessory-shop';
+  public create(data: VillageInteriorSceneData = {}): void {
+    this.interiorId = isVillageInteriorId(data.interiorId) ? data.interiorId : 'accessory-shop';
     this.returnScene = data.returnScene ?? 'SunbeamVillageScene';
     this.closing = false;
     this.storyCardCursor = 0;
+    this.bakerySection = 'pastries';
+    this.bakeryShopFeedback = '';
+    this.threadShopSection = 'accessories';
+    this.threadShopFeedback = '';
+    this.threadWardrobeFeedback = '';
     this.purchaseGuard.reset();
+    this.data.set(VILLAGE_INTERIOR_SCENE_DATA_KEY, this.interiorId);
 
-    const definition = INTERIORS[this.interiorId];
-    this.cameras.main.setBackgroundColor('#5d4964');
-    this.createRoom(definition);
-    this.createPersistentControls();
-    this.refreshBody();
+    const map = getVillageInteriorMap(this.interiorId);
+    getVillageInteriorOccupancyService().enter(this.interiorId);
+    this.createEnvironment(map, PRESENTATION[this.interiorId]);
 
-    this.input.keyboard?.on('keydown-ESC', this.leaveInterior, this);
-    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-      this.input.keyboard?.off('keydown-ESC', this.leaveInterior, this);
-      this.body?.destroy(true);
-      this.body = null;
-      this.feedback = null;
-      this.balanceText = null;
-      this.purchaseGuard.reset();
+    this.runtime = new WalkableInteriorRuntime(this, {
+      playerTextureKey: `player-unicorn-village-interior:${this.interiorId}`,
+      map,
+      colliderNamePrefix: `village-interior-collider:${this.interiorId}`,
+      onBack: () => this.leaveInterior(),
+      ...(this.interiorId === 'bakery' ? { cameraDeadzone: { width: 220, height: 80 } } : {}),
     });
+    this.runtime.create();
+    this.renderInteriorOccupant();
+    this.registerInteractions();
+    this.input.keyboard?.on('keydown-ESC', this.handleEscape, this);
+
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.shutdownInterior());
   }
 
-  private createRoom(definition: InteriorDefinition): void {
-    this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x5b4662, 1);
-    createUiShadow(this, GAME_WIDTH / 2, GAME_HEIGHT / 2 + 8, 1160, 660, 1, 0.28);
+  public update(time: number): void {
+    this.runtime?.update(time);
+  }
+
+  private createEnvironment(
+    map: VillageInteriorDefinition,
+    definition: InteriorPresentationDefinition,
+  ): void {
+    const shell = map.roomShell;
+    const centreX = (shell.left + shell.right) / 2;
+    const roomWidth = shell.right - shell.left;
+    const roomHeight = shell.bottom - shell.top;
+
+    const outsideColour = this.interiorId === 'bakery' ? 0xeadde7 : 0x5b4662;
+    this.cameras.main.setBackgroundColor(this.interiorId === 'bakery' ? '#f2e7ed' : '#5d4964');
     this.add
-      .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 8, 1160, 660, definition.wallColour, 1)
-      .setStrokeStyle(8, definition.accentColour, 0.95)
+      .rectangle(map.width / 2, map.height / 2, map.width, map.height, outsideColour, 1)
+      .setName(`village-interior:${this.interiorId}:outside`)
+      .setDepth(0);
+    this.add
+      .rectangle(
+        centreX,
+        (shell.top + shell.backWallBottom) / 2,
+        roomWidth,
+        shell.backWallBottom - shell.top,
+        definition.wallColour,
+        1,
+      )
+      .setName(`village-interior:${this.interiorId}:back-wall`)
       .setDepth(2);
-    this.add.rectangle(GAME_WIDTH / 2, 560, 1140, 250, definition.floorColour, 1).setDepth(3);
-    this.add.rectangle(GAME_WIDTH / 2, 438, 1140, 16, 0xffffff, 0.35).setDepth(4);
-
     this.add
-      .text(GAME_WIDTH / 2, 58, `${definition.icon}  ${definition.title}`, {
-        color: UI_COLOURS.ink,
-        fontFamily: UI_FONT,
-        fontSize: '38px',
-        fontStyle: 'bold',
-      })
-      .setOrigin(0.5)
-      .setDepth(8);
-    this.add
-      .text(GAME_WIDTH / 2, 98, definition.subtitle, {
-        color: UI_COLOURS.softInk,
-        fontFamily: UI_FONT,
-        fontSize: '16px',
-        fontStyle: 'bold',
-        align: 'center',
-        wordWrap: { width: 900 },
-      })
-      .setOrigin(0.5)
-      .setDepth(8);
+      .rectangle(
+        centreX,
+        (shell.backWallBottom + shell.bottom) / 2,
+        roomWidth,
+        shell.bottom - shell.backWallBottom,
+        definition.floorColour,
+        1,
+      )
+      .setName(`village-interior:${this.interiorId}:floor`)
+      .setDepth(3);
+    const roomOutline = this.add
+      .graphics()
+      .setName(`village-interior:${this.interiorId}:room-shell`)
+      .setDepth(4);
+    const doorwayHalfWidth = (shell.doorWidth + 54) / 2;
+    roomOutline.lineStyle(10, definition.accentColour, 0.95);
+    roomOutline.lineBetween(shell.left, shell.top, shell.right, shell.top);
+    roomOutline.lineBetween(shell.left, shell.top, shell.left, shell.bottom);
+    roomOutline.lineBetween(shell.right, shell.top, shell.right, shell.bottom);
+    roomOutline.lineBetween(shell.left, shell.bottom, centreX - doorwayHalfWidth, shell.bottom);
+    roomOutline.lineBetween(centreX + doorwayHalfWidth, shell.bottom, shell.right, shell.bottom);
 
-    this.createWindow(250, 238, definition.accentColour);
-    this.createWindow(1030, 238, definition.accentColour);
+    this.createWindow(390, 225, definition.accentColour);
+    this.createWindow(1110, 225, definition.accentColour);
+    this.createDoorway(map, definition.accentColour);
 
-    if (definition.id === 'bakery') {
+    if (this.interiorId === 'bakery') {
       this.createBakerySet();
-    } else if (definition.id === 'library') {
+    } else if (this.interiorId === 'library') {
       this.createStoryHouseSet();
     } else {
       this.createThreadSet();
     }
-
-    this.feedback = this.add
-      .text(GAME_WIDTH / 2, 625, '', {
-        color: UI_COLOURS.ink,
-        fontFamily: UI_FONT,
-        fontSize: '16px',
-        fontStyle: 'bold',
-        align: 'center',
-        wordWrap: { width: 820 },
-        backgroundColor: '#fff8e8ee',
-        padding: { x: 14, y: 8 },
-      })
-      .setOrigin(0.5)
-      .setDepth(20)
-      .setVisible(false);
   }
 
   private createWindow(x: number, y: number, accent: number): void {
-    this.add.rectangle(x, y, 190, 126, 0xbce9f4, 1).setStrokeStyle(8, accent, 0.82).setDepth(5);
-    this.add.rectangle(x, y, 9, 116, 0xffffff, 0.62).setDepth(6);
-    this.add.rectangle(x, y, 180, 9, 0xffffff, 0.62).setDepth(6);
-    this.add.circle(x - 48, y - 34, 20, 0xffef9d, 0.82).setDepth(5.5);
+    this.add.rectangle(x, y, 210, 132, 0xbce9f4, 1).setStrokeStyle(8, accent, 0.82).setDepth(5);
+    this.add.rectangle(x, y, 9, 120, 0xffffff, 0.62).setDepth(6);
+    this.add.rectangle(x, y, 198, 9, 0xffffff, 0.62).setDepth(6);
+    this.add.circle(x - 52, y - 34, 20, 0xffef9d, 0.82).setDepth(5.5);
+  }
+
+  private createDoorway(map: VillageInteriorDefinition, accent: number): void {
+    const exit = map.anchors.exit;
+    const shell = map.roomShell;
+    const openingWidth = shell.doorWidth + 54;
+    const outsideColour = this.interiorId === 'bakery' ? 0xeadde7 : 0x5b4662;
+    const frameColour = this.interiorId === 'bakery' ? 0xb77f90 : accent;
+
+    this.add
+      .rectangle(exit.position.x, shell.bottom + 7, openingWidth, 34, outsideColour, 1)
+      .setName(`village-interior:${this.interiorId}:exit-gap`)
+      .setDepth(6);
+    this.add
+      .ellipse(exit.position.x, shell.bottom + 24, shell.doorWidth + 16, 44, 0xbce9f4, 0.2)
+      .setDepth(4);
+
+    const frame = this.add
+      .graphics()
+      .setName(`village-interior:${this.interiorId}:exit-frame`)
+      .setDepth(worldDepthForY(shell.bottom + 28, 0.14));
+    frame.fillStyle(frameColour, 0.94);
+    frame.fillRoundedRect(exit.position.x - openingWidth / 2 - 12, shell.bottom - 31, 20, 46, 8);
+    frame.fillRoundedRect(exit.position.x + openingWidth / 2 - 8, shell.bottom - 31, 20, 46, 8);
+    frame.fillStyle(0xffe9dc, 0.76);
+    frame.fillRoundedRect(
+      exit.position.x - shell.doorWidth / 2 + 8,
+      shell.bottom - 13,
+      shell.doorWidth - 16,
+      6,
+      3,
+    );
   }
 
   private createBakerySet(): void {
-    this.add
-      .rectangle(640, 372, 450, 122, 0xb77456, 1)
-      .setStrokeStyle(5, 0x8d553f, 0.9)
-      .setDepth(6);
-    for (const [x, icon] of [
-      [520, '🥐'],
-      [600, '🍓'],
-      [680, '🧁'],
-      [760, '🥖'],
-    ] as const) {
-      this.add
-        .text(x, 330, icon, { fontFamily: UI_FONT, fontSize: '38px' })
-        .setOrigin(0.5)
-        .setDepth(7);
+    const counter = getVillageInteriorAnchor('bakery', 'counter');
+    const recipeBoard = getVillageInteriorAnchor('bakery', 'primary-feature');
+    const cakeShowcase = getVillageInteriorAnchor('bakery', 'secondary-feature');
+
+    for (let y = 410; y <= 930; y += 92) {
+      this.add.rectangle(750, y, 1260, 3, 0xd9bfa6, 0.3).setDepth(3.1);
     }
+    this.add.rectangle(750, 337, 1280, 24, 0xf2ced4, 0.9).setDepth(4.7);
+    this.add.rectangle(750, 350, 1280, 5, 0xffffff, 0.72).setDepth(4.8);
+
+    // Two matching rear service counters leave an open centre gap for Cinnamon.
+    this.createBakeryPatisserieCounter(counter.position.x, counter.position.y);
+    this.createBakeryBreadCounter(1090, counter.position.y);
+
+    // Hero cake display now owns the middle of the room.
+    this.createBakeryCakeShowcase(cakeShowcase.position.x, cakeShowcase.position.y);
+
+    // Recipe board moves towards the front-left wall, away from the service line.
+    this.createBakeryRecipeBoard(recipeBoard.position.x, recipeBoard.position.y);
+
+    // Matching side displays keep the room balanced around the central hero cake.
+    this.createBakeryCupcakeDisplay(420, 640);
+    this.createBakeryDoughnutDisplay(1080, 640);
+
+    // Café nook moves lower and gets richer table detail.
+    const cafe = this.add.graphics().setName('village-interior:bakery:cafe-table');
+    cafe.fillStyle(0xf2d6bd, 1);
+    cafe.lineStyle(4, 0xc99d89, 0.74);
+    cafe.fillEllipse(1210, 835, 170, 106);
+    cafe.strokeEllipse(1210, 835, 170, 106);
+    cafe.fillStyle(0xe8b79f, 1);
+    cafe.fillRoundedRect(1197, 835, 26, 56, 10);
+    cafe.fillEllipse(1210, 891, 82, 24);
+    cafe.fillStyle(0xfff7e8, 1);
+    cafe.fillEllipse(1210, 823, 134, 70);
+    cafe.lineStyle(2, 0xe8b9c4, 0.75);
+    cafe.strokeEllipse(1210, 823, 134, 70);
+    cafe.lineStyle(2, 0xffffff, 0.7);
+    cafe.strokeEllipse(1210, 820, 112, 52);
+
+    // Two cups, a shared pastry plate and a tiny flower vase.
+    cafe.fillStyle(0xd9b5df, 1);
+    cafe.fillCircle(1173, 813, 17);
+    cafe.lineStyle(3, 0xa77fae, 0.8);
+    cafe.strokeCircle(1173, 813, 17);
+    cafe.lineBetween(1187, 812, 1197, 812);
+    cafe.fillStyle(0xfff0c7, 1);
+    cafe.fillCircle(1245, 813, 18);
+    cafe.lineStyle(3, 0xc99d89, 0.78);
+    cafe.strokeCircle(1245, 813, 18);
+    cafe.lineBetween(1260, 812, 1271, 812);
+
+    cafe.fillStyle(0xf7d7a5, 1);
+    cafe.fillEllipse(1208, 840, 56, 24);
+    cafe.lineStyle(2, 0xc99d89, 0.72);
+    cafe.strokeEllipse(1208, 840, 56, 24);
+    cafe.fillStyle(0xe8aa70, 1);
+    cafe.fillRoundedRect(1191, 832, 16, 11, 5);
+    cafe.fillRoundedRect(1210, 831, 17, 12, 5);
+
+    cafe.fillStyle(0xa5c99e, 1);
+    cafe.fillRoundedRect(1204, 790, 12, 25, 5);
+    cafe.fillStyle(0xf0a8bf, 1);
+    cafe.fillCircle(1205, 787, 7);
+    cafe.fillStyle(0xf5d174, 1);
+    cafe.fillCircle(1216, 785, 6);
+    cafe.setDepth(worldDepthForY(890, 0.2));
+
+    this.createBakeryCafeStool(1118, 875);
+    this.createBakeryCafeStool(1302, 870);
+
+    for (const sparkle of [
+      { x: 615, y: 454, r: 4 },
+      { x: 885, y: 454, r: 4 },
+      { x: 625, y: 626, r: 4 },
+      { x: 875, y: 626, r: 4 },
+      { x: 750, y: 545, r: 5 },
+      { x: 750, y: 805, r: 4 },
+    ]) {
+      this.createBakerySparkle(sparkle.x, sparkle.y, sparkle.r);
+    }
+  }
+
+  private createBakeryPatisserieCounter(x: number, y: number): void {
+    const base = this.add.graphics().setName('village-interior:bakery:counter');
+    base.fillStyle(0xd99ba6, 1);
+    base.lineStyle(5, 0xb97988, 0.88);
+    base.fillRoundedRect(x - 195, y - 12, 390, 90, 18);
+    base.strokeRoundedRect(x - 195, y - 12, 390, 90, 18);
+    base.fillStyle(0xfff7e8, 1);
+    base.fillRoundedRect(x - 180, y + 20, 360, 40, 11);
+    base.lineStyle(3, 0xe9c1c8, 0.92);
+    base.strokeRoundedRect(x - 180, y + 20, 360, 40, 11);
+    base.setDepth(worldDepthForY(y + 70, 0.3));
+
+    const glass = this.add.graphics().setName('village-interior:bakery:patisserie-case');
+    glass.fillStyle(0xdff8fb, 0.27);
+    glass.lineStyle(4, 0xa6d7dd, 0.84);
+    glass.fillRoundedRect(x - 180, y - 88, 360, 82, 16);
+    glass.strokeRoundedRect(x - 180, y - 88, 360, 82, 16);
+    glass.lineStyle(2, 0xffffff, 0.72);
+    glass.lineBetween(x - 148, y - 73, x + 140, y - 73);
+    glass.setDepth(worldDepthForY(y + 70, 0.46));
+
+    this.createBakeryDisplayCake(x - 102, y - 38, 0.66, {
+      sponge: 0xf6c98a,
+      icing: 0xf4a9c1,
+      accent: 0xfff1a3,
+    });
+    this.createBakeryDisplayCake(x, y - 38, 0.58, {
+      sponge: 0xe6c493,
+      icing: 0xd7b6ef,
+      accent: 0xaee7e0,
+    });
+    this.createBakeryDisplayCake(x + 102, y - 38, 0.63, {
+      sponge: 0xf0bd83,
+      icing: 0xffe4a3,
+      accent: 0xf49aaa,
+    });
+
     this.add
-      .rectangle(400, 320, 110, 160, 0x875743, 1)
-      .setStrokeStyle(5, 0x684232, 0.9)
-      .setDepth(5);
-    this.add
-      .text(400, 315, '🔥', { fontFamily: UI_FONT, fontSize: '42px' })
-      .setOrigin(0.5)
-      .setDepth(6);
-    this.add
-      .rectangle(870, 314, 150, 180, 0xe8b984, 1)
-      .setStrokeStyle(5, 0xb97a58, 0.8)
-      .setDepth(5);
-    this.add
-      .text(870, 288, 'RECIPES', {
-        color: '#704637',
+      .text(x, y + 41, 'CAKES & PATISSERIE', {
+        color: '#744f67',
         fontFamily: UI_FONT,
-        fontSize: '14px',
+        fontSize: '12px',
+        fontStyle: 'bold',
+        letterSpacing: 1,
+      })
+      .setOrigin(0.5)
+      .setDepth(worldDepthForY(y + 72, 0.5));
+  }
+
+  private createBakeryBreadCounter(x: number, y: number): void {
+    const base = this.add.graphics().setName('village-interior:bakery:bread-counter');
+    base.fillStyle(0xe2b78f, 1);
+    base.lineStyle(5, 0xbd8768, 0.86);
+    base.fillRoundedRect(x - 195, y - 12, 390, 90, 18);
+    base.strokeRoundedRect(x - 195, y - 12, 390, 90, 18);
+    base.fillStyle(0xfff8eb, 1);
+    base.fillRoundedRect(x - 180, y + 20, 360, 40, 11);
+    base.lineStyle(3, 0xe7c4a5, 0.92);
+    base.strokeRoundedRect(x - 180, y + 20, 360, 40, 11);
+    base.setDepth(worldDepthForY(y + 70, 0.3));
+
+    const glass = this.add.graphics().setName('village-interior:bakery:bread-case');
+    glass.fillStyle(0xe7f8f8, 0.23);
+    glass.lineStyle(4, 0xb8d7d3, 0.8);
+    glass.fillRoundedRect(x - 180, y - 94, 360, 88, 16);
+    glass.strokeRoundedRect(x - 180, y - 94, 360, 88, 16);
+    glass.lineStyle(2, 0xffffff, 0.68);
+    glass.lineBetween(x - 148, y - 78, x + 140, y - 78);
+    glass.setDepth(worldDepthForY(y + 70, 0.45));
+
+    const boards = this.add.graphics();
+    boards.fillStyle(0xc99567, 0.9);
+    boards.fillRoundedRect(x - 163, y - 50, 132, 11, 5);
+    boards.fillRoundedRect(x - 10, y - 50, 94, 11, 5);
+    boards.fillRoundedRect(x + 96, y - 72, 72, 11, 5);
+    boards.fillStyle(0xc78e67, 0.78);
+    boards.fillEllipse(x - 122, y - 25, 108, 24);
+    boards.fillEllipse(x + 64, y - 25, 126, 24);
+    boards.lineStyle(3, 0x9e6d51, 0.72);
+    boards.strokeEllipse(x - 122, y - 25, 108, 24);
+    boards.strokeEllipse(x + 64, y - 25, 126, 24);
+    boards.setDepth(worldDepthForY(y + 70, 0.455));
+
+    this.createBakeryBreadLoaf(x - 139, y - 62, 'seeded');
+    this.createBakeryBreadLoaf(x - 70, y - 61, 'plait');
+    this.createBakeryBreadLoaf(x + 38, y - 63, 'round');
+    this.createBakeryBreadLoaf(x + 131, y - 78, 'baguette');
+    this.createBakeryBreadLoaf(x - 122, y - 30, 'rolls');
+    this.createBakeryBreadLoaf(x + 64, y - 28, 'plait');
+
+    this.add
+      .text(x, y + 41, 'FRESH BREAD', {
+        color: '#765344',
+        fontFamily: UI_FONT,
+        fontSize: '12px',
+        fontStyle: 'bold',
+        letterSpacing: 1,
+      })
+      .setOrigin(0.5)
+      .setDepth(worldDepthForY(y + 72, 0.5));
+  }
+
+  private createBakeryBreadLoaf(
+    x: number,
+    y: number,
+    kind: 'round' | 'baguette' | 'seeded' | 'plait' | 'rolls',
+  ): void {
+    const bread = this.add.graphics();
+    bread.lineStyle(2, 0xbd7647, 0.86);
+
+    if (kind === 'round') {
+      bread.fillStyle(0xeeb66f, 1);
+      bread.fillEllipse(x, y, 64, 38);
+      bread.strokeEllipse(x, y, 64, 38);
+      bread.lineStyle(2, 0xffd99a, 0.9);
+      for (const slash of [-13, 0, 13]) {
+        bread.lineBetween(x + slash - 5, y - 11, x + slash + 4, y + 8);
+      }
+    } else if (kind === 'baguette') {
+      bread.fillStyle(0xe7a95c, 1);
+      bread.fillRoundedRect(x - 42, y - 13, 84, 26, 13);
+      bread.strokeRoundedRect(x - 42, y - 13, 84, 26, 13);
+      bread.lineStyle(2, 0xffd38f, 0.92);
+      for (const slash of [-24, -8, 8, 24]) {
+        bread.lineBetween(x + slash - 5, y - 9, x + slash + 4, y + 7);
+      }
+    } else if (kind === 'seeded') {
+      bread.fillStyle(0xd99b56, 1);
+      bread.fillRoundedRect(x - 34, y - 18, 68, 36, 16);
+      bread.strokeRoundedRect(x - 34, y - 18, 68, 36, 16);
+      bread.fillStyle(0xf4d197, 0.96);
+      for (const [dx, dy] of [
+        [-20, -7],
+        [-9, 5],
+        [2, -8],
+        [14, 4],
+        [23, -5],
+      ] as const) {
+        bread.fillEllipse(x + dx, y + dy, 5, 3);
+      }
+    } else if (kind === 'plait') {
+      bread.fillStyle(0xf0bd72, 1);
+      for (const offset of [-22, -8, 8, 22]) {
+        bread.fillEllipse(x + offset, y, 30, 27);
+        bread.strokeEllipse(x + offset, y, 30, 27);
+      }
+      bread.lineStyle(2, 0xffdfa0, 0.88);
+      bread.lineBetween(x - 28, y - 8, x + 28, y + 7);
+    } else {
+      bread.fillStyle(0xedb46b, 1);
+      for (const [dx, dy, radius] of [
+        [-24, 1, 12],
+        [-8, -3, 13],
+        [10, 1, 12],
+        [25, -2, 11],
+      ] as const) {
+        bread.fillCircle(x + dx, y + dy, radius);
+        bread.strokeCircle(x + dx, y + dy, radius);
+      }
+      bread.fillStyle(0xffdb98, 0.82);
+      for (const dx of [-24, -8, 10, 25]) {
+        bread.fillCircle(x + dx - 2, y - 6, 3);
+      }
+    }
+
+    bread.setDepth(worldDepthForY(y + 70, 0.47));
+  }
+
+  private createBakeryCupcakeDisplay(x: number, y: number): void {
+    const stand = this.add.graphics().setName('village-interior:bakery:cupcake-display');
+    stand.fillStyle(0xf3d7bd, 1);
+    stand.lineStyle(4, 0xc99d89, 0.78);
+    stand.fillEllipse(x, y + 42, 138, 54);
+    stand.strokeEllipse(x, y + 42, 138, 54);
+    stand.fillStyle(0xf8ecd9, 1);
+    stand.fillRoundedRect(x - 13, y + 38, 26, 56, 10);
+    stand.fillEllipse(x, y + 94, 72, 22);
+    stand.setDepth(worldDepthForY(y + 100, 0.2));
+
+    const tower = this.add.graphics();
+    tower.lineStyle(4, 0xb97b8b, 0.82);
+    tower.fillStyle(0xf7c9d6, 1);
+    tower.fillEllipse(x, y + 10, 126, 32);
+    tower.strokeEllipse(x, y + 10, 126, 32);
+    tower.fillStyle(0xf8e7cd, 1);
+    tower.fillRoundedRect(x - 8, y - 48, 16, 58, 8);
+    tower.fillStyle(0xe8b3bd, 1);
+    tower.fillEllipse(x, y - 42, 92, 26);
+    tower.strokeEllipse(x, y - 42, 92, 26);
+    tower.fillStyle(0xfff3df, 1);
+    tower.fillRoundedRect(x - 6, y - 83, 12, 42, 6);
+    tower.fillStyle(0xd7b6ef, 1);
+    tower.fillEllipse(x, y - 78, 58, 20);
+    tower.strokeEllipse(x, y - 78, 58, 20);
+
+    const cupcakes = [
+      { dx: -40, dy: 0, icing: 0xf3a8c0 },
+      { dx: 0, dy: 2, icing: 0xaee7e0 },
+      { dx: 40, dy: 0, icing: 0xffdfa0 },
+      { dx: -24, dy: -48, icing: 0xd8b9f2 },
+      { dx: 24, dy: -48, icing: 0xf49aaa },
+      { dx: 0, dy: -84, icing: 0xc9e4aa },
+    ] as const;
+    for (const cupcake of cupcakes) {
+      tower.fillStyle(0xd99365, 1);
+      tower.fillRoundedRect(x + cupcake.dx - 10, y + cupcake.dy - 2, 20, 18, 4);
+      tower.fillStyle(cupcake.icing, 1);
+      tower.fillCircle(x + cupcake.dx, y + cupcake.dy - 7, 13);
+      tower.fillStyle(0xfff4d5, 0.9);
+      tower.fillCircle(x + cupcake.dx - 4, y + cupcake.dy - 12, 3);
+    }
+    tower.setDepth(worldDepthForY(y + 101, 0.32));
+
+    this.createBakeryDisplayPlaque(x, y + 72, 'Cupcake Carousel', 0xf3bfd0, 0xb97b8b, 'cupcake');
+  }
+
+  private createBakeryCafeStool(x: number, y: number): void {
+    const stool = this.add.graphics().setName('village-interior:bakery:cafe-stool');
+
+    // Soft shadow under the stool.
+    stool.fillStyle(0x7d5a70, 0.16);
+    stool.fillEllipse(x, y + 24, 62, 18);
+
+    // Two-tone upholstered seat gives the old simple stool more depth.
+    stool.fillStyle(0x9f748c, 1);
+    stool.lineStyle(3, 0x7c586d, 0.82);
+    stool.fillEllipse(x, y, 58, 34);
+    stool.strokeEllipse(x, y, 58, 34);
+
+    stool.fillStyle(0xc79fb4, 1);
+    stool.fillEllipse(x, y - 5, 48, 23);
+    stool.lineStyle(2, 0xe1bfd0, 0.78);
+    stool.strokeEllipse(x, y - 6, 39, 15);
+
+    // Simple tapered legs; deliberately no backrest.
+    stool.fillStyle(0x8f647c, 1);
+    stool.fillRoundedRect(x - 22, y + 11, 9, 32, 4);
+    stool.fillRoundedRect(x + 13, y + 11, 9, 32, 4);
+    stool.fillStyle(0xb889a1, 0.9);
+    stool.fillRoundedRect(x - 19, y + 14, 3, 25, 2);
+    stool.fillRoundedRect(x + 16, y + 14, 3, 25, 2);
+
+    stool.setDepth(worldDepthForY(y + 44, 0.18));
+  }
+
+  private createBakeryDoughnutDisplay(x: number, y: number): void {
+    const stand = this.add.graphics().setName('village-interior:bakery:doughnut-display');
+    stand.fillStyle(0xf3d7bd, 1);
+    stand.lineStyle(4, 0xc99d89, 0.78);
+    stand.fillEllipse(x, y + 42, 138, 54);
+    stand.strokeEllipse(x, y + 42, 138, 54);
+    stand.fillStyle(0xf8ecd9, 1);
+    stand.fillRoundedRect(x - 13, y + 38, 26, 56, 10);
+    stand.fillEllipse(x, y + 94, 72, 22);
+    stand.setDepth(worldDepthForY(y + 100, 0.2));
+
+    const ring = this.add.graphics();
+    ring.fillStyle(0xe9b3bf, 1);
+    ring.lineStyle(4, 0xb97b8b, 0.82);
+    ring.fillCircle(x, y - 8, 62);
+    ring.strokeCircle(x, y - 8, 62);
+    ring.fillStyle(0xfff8ec, 1);
+    ring.fillCircle(x, y - 8, 36);
+    ring.lineStyle(3, 0xf6d3dc, 0.8);
+    ring.strokeCircle(x, y - 8, 36);
+
+    for (const [angle, icing] of [
+      [0, 0xf3a8c0],
+      [60, 0xd8b9f2],
+      [120, 0xaee7e0],
+      [180, 0xffdfa0],
+      [240, 0xf49aaa],
+      [300, 0xc9e4aa],
+    ] as const) {
+      const radians = Phaser.Math.DegToRad(angle);
+      const dx = Math.cos(radians) * 47;
+      const dy = Math.sin(radians) * 47;
+      ring.fillStyle(0xe6ad69, 1);
+      ring.fillCircle(x + dx, y - 8 + dy, 18);
+      ring.fillStyle(icing, 1);
+      ring.fillCircle(x + dx, y - 11 + dy, 14);
+      ring.fillStyle(0xfff8ec, 1);
+      ring.fillCircle(x + dx, y - 11 + dy, 5);
+      ring.fillStyle(0xffffff, 0.75);
+      ring.fillCircle(x + dx - 5, y - 16 + dy, 2);
+    }
+    ring.setDepth(worldDepthForY(y + 101, 0.32));
+
+    this.createBakeryDisplayPlaque(x, y + 72, 'Doughnut Wheel', 0xead2f1, 0xa879a8, 'doughnut');
+  }
+
+  private createBakeryDisplayPlaque(
+    x: number,
+    y: number,
+    label: string,
+    fill: number,
+    stroke: number,
+    motif: 'cupcake' | 'doughnut',
+  ): void {
+    const plaque = this.add.graphics().setName(`village-interior:bakery:${motif}-plaque`);
+    plaque.fillStyle(stroke, 0.18);
+    plaque.fillEllipse(x + 3, y + 5, 128, 42);
+    plaque.fillStyle(fill, 1);
+    plaque.lineStyle(3, stroke, 0.9);
+    plaque.fillRoundedRect(x - 66, y - 18, 132, 36, 16);
+    plaque.strokeRoundedRect(x - 66, y - 18, 132, 36, 16);
+    plaque.fillTriangle(x - 61, y + 7, x - 82, y + 19, x - 55, y + 18);
+    plaque.fillTriangle(x + 61, y + 7, x + 82, y + 19, x + 55, y + 18);
+    plaque.fillStyle(0xfff7e8, 0.9);
+    plaque.fillCircle(x - 48, y, 8);
+
+    if (motif === 'doughnut') {
+      plaque.fillStyle(0xe6ad69, 1);
+      plaque.fillCircle(x - 48, y, 6);
+      plaque.fillStyle(fill, 1);
+      plaque.fillCircle(x - 48, y, 2.5);
+    } else {
+      plaque.fillStyle(0xd99365, 1);
+      plaque.fillRoundedRect(x - 53, y, 10, 7, 2);
+      plaque.fillStyle(0xffe3ed, 1);
+      plaque.fillCircle(x - 48, y - 3, 6);
+    }
+    plaque.setDepth(worldDepthForY(y + 32, 0.42));
+
+    this.add
+      .text(x + 10, y, label, {
+        color: '#6c4d63',
+        fontFamily: UI_FONT,
+        fontSize: '10px',
         fontStyle: 'bold',
       })
       .setOrigin(0.5)
-      .setDepth(6);
+      .setDepth(worldDepthForY(y + 32, 0.5));
+  }
+
+  private createBakeryDisplayCake(
+    x: number,
+    y: number,
+    scale: number,
+    colours: { sponge: number; icing: number; accent: number },
+  ): void {
+    const cake = this.add.graphics();
+    cake.fillStyle(0xb992a5, 0.32);
+    cake.fillEllipse(x, y + 31 * scale, 88 * scale, 16 * scale);
+    cake.fillStyle(0xfff8ec, 1);
+    cake.lineStyle(2, 0xcaa0b1, 0.78);
+    cake.fillEllipse(x, y + 23 * scale, 84 * scale, 14 * scale);
+    cake.strokeEllipse(x, y + 23 * scale, 84 * scale, 14 * scale);
+
+    cake.fillStyle(colours.sponge, 1);
+    cake.fillRoundedRect(x - 31 * scale, y - 3 * scale, 62 * scale, 28 * scale, 7 * scale);
+    cake.fillStyle(colours.icing, 1);
+    cake.fillRoundedRect(x - 33 * scale, y - 8 * scale, 66 * scale, 13 * scale, 7 * scale);
+    cake.fillCircle(x - 20 * scale, y + 4 * scale, 8 * scale);
+    cake.fillCircle(x, y + 5 * scale, 9 * scale);
+    cake.fillCircle(x + 21 * scale, y + 4 * scale, 8 * scale);
+
+    cake.fillStyle(colours.sponge, 1);
+    cake.fillRoundedRect(x - 21 * scale, y - 27 * scale, 42 * scale, 22 * scale, 6 * scale);
+    cake.fillStyle(colours.icing, 1);
+    cake.fillRoundedRect(x - 23 * scale, y - 31 * scale, 46 * scale, 11 * scale, 6 * scale);
+
+    cake.fillStyle(colours.accent, 1);
+    cake.fillCircle(x, y - 38 * scale, 7 * scale);
+    cake.fillCircle(x - 15 * scale, y - 17 * scale, 3.8 * scale);
+    cake.fillCircle(x + 15 * scale, y - 17 * scale, 3.8 * scale);
+    cake.setDepth(worldDepthForY(y + 65, 0.42));
+  }
+
+  private createBakeryRecipeBoard(x: number, y: number): void {
+    const board = this.add.graphics().setName('village-interior:bakery:recipe-shelf');
+    board.fillStyle(0xf4d8bf, 1);
+    board.lineStyle(4, 0xc99d89, 0.78);
+    board.fillRoundedRect(x - 52, y - 92, 104, 184, 16);
+    board.strokeRoundedRect(x - 52, y - 92, 104, 184, 16);
+    board.fillStyle(0xfffbf3, 0.96);
+    board.fillRoundedRect(x - 38, y - 65, 76, 50, 8);
+    board.fillRoundedRect(x - 38, y + 5, 76, 54, 8);
+    board.fillStyle(0xe7a4b2, 1);
+    board.fillRoundedRect(x - 27, y - 52, 15, 28, 4);
+    board.fillStyle(0xb6d9dc, 1);
+    board.fillRoundedRect(x - 5, y - 55, 18, 31, 4);
+    board.fillStyle(0xf3c878, 1);
+    board.fillRoundedRect(x + 20, y - 50, 13, 26, 4);
+    board.lineStyle(3, 0xb98b9f, 0.88);
+    board.lineBetween(x - 25, y + 20, x + 25, y + 20);
+    board.lineBetween(x - 25, y + 34, x + 14, y + 34);
+    board.setDepth(worldDepthForY(y + 95, 0.2));
+
     this.add
-      .text(870, 335, '📜  📖\n📄  🥄', {
+      .text(x, y - 116, 'RECIPES', {
+        color: '#76566d',
         fontFamily: UI_FONT,
-        fontSize: '28px',
-        align: 'center',
+        fontSize: '13px',
+        fontStyle: 'bold',
       })
       .setOrigin(0.5)
-      .setDepth(6);
+      .setDepth(worldDepthForY(y + 96, 0.28));
+  }
+
+  private createBakeryCakeShowcase(x: number, y: number): void {
+    const rug = this.add.graphics();
+    rug.fillStyle(0xf6dbe2, 0.72);
+    rug.lineStyle(4, 0xe5b0be, 0.62);
+    rug.fillEllipse(x, y + 72, 330, 150);
+    rug.strokeEllipse(x, y + 72, 330, 150);
+    rug.setDepth(worldDepthForY(y + 115, 0.08));
+
+    const stand = this.add.graphics().setName('village-interior:bakery:cake-table');
+    stand.fillStyle(0xe8b3bd, 1);
+    stand.lineStyle(5, 0xb97b8b, 0.82);
+    stand.fillEllipse(x, y + 54, 285, 86);
+    stand.strokeEllipse(x, y + 54, 285, 86);
+    stand.fillStyle(0xfaf2df, 1);
+    stand.fillRoundedRect(x - 22, y + 38, 44, 86, 14);
+    stand.fillEllipse(x, y + 122, 122, 32);
+    stand.setDepth(worldDepthForY(y + 126, 0.2));
+
+    const cake = this.add.graphics();
+    cake.fillStyle(0xf4c67d, 1);
+    cake.fillRoundedRect(x - 72, y - 4, 144, 48, 13);
+    cake.fillStyle(0xf2a3bd, 1);
+    cake.fillRoundedRect(x - 76, y - 13, 152, 21, 10);
+    for (const dripX of [-50, -17, 18, 50]) {
+      cake.fillCircle(x + dripX, y + 5, 14);
+    }
+
+    cake.fillStyle(0xf4d68c, 1);
+    cake.fillRoundedRect(x - 53, y - 52, 106, 42, 12);
+    cake.fillStyle(0xd8b9f2, 1);
+    cake.fillRoundedRect(x - 57, y - 61, 114, 20, 10);
+    cake.fillCircle(x - 35, y - 43, 11);
+    cake.fillCircle(x, y - 42, 12);
+    cake.fillCircle(x + 35, y - 43, 11);
+
+    cake.fillStyle(0xf8d899, 1);
+    cake.fillRoundedRect(x - 32, y - 91, 64, 32, 10);
+    cake.fillStyle(0xaee7e0, 1);
+    cake.fillRoundedRect(x - 36, y - 99, 72, 17, 8);
+
+    cake.fillStyle(0xffef9e, 1);
+    cake.fillCircle(x, y - 117, 10);
+    cake.fillStyle(0xf49aaa, 1);
+    cake.fillCircle(x - 25, y - 104, 7);
+    cake.fillStyle(0xa9d9ee, 1);
+    cake.fillCircle(x + 26, y - 104, 7);
+    cake.setDepth(worldDepthForY(y + 128, 0.31));
+
+    const dome = this.add.graphics().setName('village-interior:bakery:magic-cake-dome');
+    dome.fillStyle(0xdff8fb, 0.14);
+    dome.lineStyle(5, 0xa6d7dd, 0.68);
+    dome.fillEllipse(x, y - 4, 250, 238);
+    dome.strokeEllipse(x, y - 4, 250, 238);
+    dome.fillStyle(0xf7d98c, 1);
+    dome.fillCircle(x, y - 129, 9);
+    dome.setDepth(worldDepthForY(y + 128, 0.4));
+
+    for (const point of [
+      { dx: -104, dy: -75, r: 5 },
+      { dx: 104, dy: -52, r: 5 },
+      { dx: -108, dy: 15, r: 4 },
+      { dx: 108, dy: 30, r: 4 },
+      { dx: -70, dy: -118, r: 3 },
+      { dx: 72, dy: -112, r: 3 },
+    ]) {
+      this.createBakerySparkle(x + point.dx, y + point.dy, point.r);
+    }
+  }
+
+  private createBakerySparkle(x: number, y: number, radius: number): void {
+    const sparkle = this.add.graphics();
+    sparkle.fillStyle(0xffdf82, 0.95);
+    sparkle.fillTriangle(x, y - radius * 2.4, x - radius, y, x + radius, y);
+    sparkle.fillTriangle(x, y + radius * 2.4, x - radius, y, x + radius, y);
+    sparkle.fillTriangle(x - radius * 2.4, y, x, y - radius, x, y + radius);
+    sparkle.fillTriangle(x + radius * 2.4, y, x, y - radius, x, y + radius);
+    sparkle.setDepth(worldDepthForY(y + 40, 0.5));
   }
 
   private createStoryHouseSet(): void {
-    for (const x of [430, 640, 850]) {
-      this.add
-        .rectangle(x, 335, 150, 220, 0x6f8aa0, 1)
-        .setStrokeStyle(5, 0x526f86, 0.9)
-        .setDepth(5);
-      for (let row = 0; row < 3; row += 1) {
-        this.add.rectangle(x, 282 + row * 62, 126, 8, 0x435d72, 0.9).setDepth(6);
-        this.add
-          .text(x, 258 + row * 62, '📕 📗 📘 📙', { fontFamily: UI_FONT, fontSize: '18px' })
-          .setOrigin(0.5)
-          .setDepth(6);
+    const desk = getVillageInteriorAnchor('library', 'counter');
+    const storyTable = getVillageInteriorAnchor('library', 'primary-feature');
+    const clueCabinet = getVillageInteriorAnchor('library', 'secondary-feature');
+
+    // Story House uses warm timber, blue shelves and pools of lamplight rather than another shop floor.
+    for (let y = 390; y <= 930; y += 76) {
+      this.add.rectangle(750, y, 1260, 2, 0x6d8796, 0.22).setDepth(3.1);
+    }
+    this.add.rectangle(750, 350, 1260, 18, 0x6f91a5, 0.86).setDepth(4.65);
+    this.add.rectangle(750, 360, 1260, 4, 0xf4dfb8, 0.72).setDepth(4.7);
+
+    const rug = this.add.graphics().setName('village-interior:library:story-rug');
+    rug.fillStyle(0x7b678f, 0.18);
+    rug.fillEllipse(storyTable.position.x, storyTable.position.y + 35, 520, 350);
+    rug.fillStyle(0xe7d9b8, 0.94);
+    rug.lineStyle(5, 0x9f7e75, 0.72);
+    rug.fillEllipse(storyTable.position.x, storyTable.position.y + 22, 475, 315);
+    rug.strokeEllipse(storyTable.position.x, storyTable.position.y + 22, 475, 315);
+    rug.lineStyle(3, 0x6e8ca2, 0.5);
+    rug.strokeEllipse(storyTable.position.x, storyTable.position.y + 22, 415, 260);
+    rug.setDepth(3.2);
+
+    // One continuous wall of books. The named passage section is visually ordinary for now,
+    // but can later slide/disappear without rebuilding the rest of the library.
+    this.createStoryBookcase(285, 390, 310, 220, 'village-interior:library:bookcase', 0);
+    this.createStoryBookcase(595, 390, 310, 220, 'village-interior:library:bookcase', 1);
+    this.createStoryBookcase(
+      905,
+      390,
+      310,
+      220,
+      'village-interior:library:secret-passage-bookcase',
+      2,
+    );
+    this.createStoryBookcase(1215, 390, 310, 220, 'village-interior:library:bookcase', 3);
+
+    this.createStoryDesk(desk.position.x, desk.position.y);
+    this.createStoryClueCabinet(clueCabinet.position.x, clueCabinet.position.y);
+    this.createStoryTable(storyTable.position.x, storyTable.position.y);
+
+    // The right side remains the cosy story corner; the armchair now balances the clue cabinet on the left.
+    this.createStoryCushion(955, 825, 0xd9a4b7);
+    this.createStoryCushion(1245, 645, 0x9bbbc9);
+    this.createStoryCushion(985, 605, 0xd9c58f);
+    this.createStoryCushion(1260, 735, 0xb5a4cf);
+
+    this.createStoryReadingChair(390, 825);
+  }
+
+  private createStoryBookcase(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    name = 'village-interior:library:bookcase',
+    variant = 0,
+  ): void {
+    const shelf = this.add.graphics().setName(name);
+    shelf.fillStyle(0x52758a, 1);
+    shelf.lineStyle(5, 0x3c586c, 0.92);
+    shelf.fillRoundedRect(x - width / 2, y - height / 2, width, height, 22);
+    shelf.strokeRoundedRect(x - width / 2, y - height / 2, width, height, 22);
+    shelf.fillStyle(0xe6d4b1, 0.95);
+    shelf.fillRoundedRect(x - width / 2 + 13, y - height / 2 + 16, width - 26, height - 32, 12);
+
+    const palettes = [
+      [0xc85772, 0x527fbd, 0xd1a43e, 0x5c956c, 0x8c68ad, 0xd77b4f, 0x4b9b9e],
+      [0xe58b53, 0x5f80c7, 0x9d66b7, 0x62a970, 0xd4bb4f, 0xc65d84, 0x6a9fb1],
+      [0xff4fa0, 0x754cff, 0x00bfa6, 0xffa51f, 0xe752ff, 0x3bc95b, 0xff5252, 0x19a7ff],
+      [0x4e8db7, 0xd0617b, 0x7f68b4, 0xe0a64d, 0x4ea178, 0xcf7448, 0x6f8fc9],
+    ] as const;
+    const colours = palettes[variant % palettes.length] ?? palettes[0];
+
+    for (let row = 0; row < 3; row += 1) {
+      const shelfY = y - 63 + row * 61;
+      shelf.fillStyle(0x48677a, 1);
+      shelf.fillRoundedRect(x - width / 2 + 18, shelfY + 26, width - 36, 9, 4);
+
+      const rightEdge = x + width / 2 - 25;
+      let cursorX = x - width / 2 + 24;
+      let book = 0;
+
+      while (cursorX < rightEdge - 10) {
+        const requestedWidth = 13 + ((book * 3 + row + variant * 2) % 5) * 3;
+        const bookWidth = Math.min(requestedWidth, rightEdge - cursorX);
+        const bookHeight = 29 + ((book * 7 + row * 5 + variant * 11) % 24);
+        const lean = (book + row + variant) % 5 === 0 ? 3 : 0;
+        const colourIndex = (book * 3 + row * 2 + variant) % colours.length;
+
+        shelf.fillStyle(colours[colourIndex] ?? 0x9279a9, 1);
+        shelf.fillRoundedRect(cursorX, shelfY + 23 - bookHeight + lean, bookWidth, bookHeight, 3);
+        shelf.fillStyle(0xffffff, variant === 2 ? 0.3 : 0.22);
+        shelf.fillRect(
+          cursorX + 3,
+          shelfY + 26 - bookHeight + lean,
+          Math.min(3, Math.max(1, bookWidth - 5)),
+          Math.max(8, bookHeight - 7),
+        );
+
+        cursorX += bookWidth + 2 + ((book + row + variant) % 2);
+        book += 1;
       }
     }
-    this.add.ellipse(640, 515, 380, 118, 0xf2d7a7, 1).setStrokeStyle(4, 0xb58c60, 0.75).setDepth(5);
-    this.add
-      .text(640, 505, '🗺️   📖   ✨', { fontFamily: UI_FONT, fontSize: '34px' })
-      .setOrigin(0.5)
-      .setDepth(6);
+    shelf.setDepth(worldDepthForY(y + height / 2, 0.18));
+  }
+
+  private createStoryDesk(x: number, y: number): void {
+    const desk = this.add.graphics().setName('village-interior:library:storykeeper-desk');
+    desk.fillStyle(0x8b6a61, 1);
+    desk.lineStyle(5, 0x694d49, 0.9);
+    desk.fillRoundedRect(x - 150, y - 24, 300, 96, 18);
+    desk.strokeRoundedRect(x - 150, y - 24, 300, 96, 18);
+    desk.fillStyle(0xe8cfaa, 1);
+    desk.fillRoundedRect(x - 138, y - 12, 276, 24, 10);
+    desk.fillStyle(0x765750, 0.9);
+    desk.fillRoundedRect(x - 120, y + 22, 88, 34, 8);
+    desk.fillRoundedRect(x + 30, y + 22, 88, 34, 8);
+
+    // Open ledger and bookmark tray keep this a librarian's work desk rather than a shop counter.
+    desk.fillStyle(0xfff6dc, 1);
+    desk.lineStyle(2, 0xb9a37e, 0.8);
+    desk.fillRoundedRect(x - 52, y - 41, 48, 34, 5);
+    desk.strokeRoundedRect(x - 52, y - 41, 48, 34, 5);
+    desk.fillRoundedRect(x - 2, y - 41, 48, 34, 5);
+    desk.strokeRoundedRect(x - 2, y - 41, 48, 34, 5);
+    desk.lineStyle(2, 0x8d7898, 0.8);
+    desk.lineBetween(x - 43, y - 30, x - 12, y - 30);
+    desk.lineBetween(x + 7, y - 30, x + 38, y - 30);
+
+    desk.fillStyle(0xc9879f, 1);
+    desk.fillRoundedRect(x + 72, y - 38, 15, 31, 4);
+    desk.fillStyle(0x6f91b3, 1);
+    desk.fillRoundedRect(x + 91, y - 32, 14, 25, 4);
+    desk.fillStyle(0xd6b665, 1);
+    desk.fillRoundedRect(x + 109, y - 28, 13, 21, 4);
+    desk.setDepth(worldDepthForY(y + 74, 0.28));
+  }
+
+  private createStoryClueCabinet(x: number, y: number): void {
+    const cabinet = this.add.graphics().setName('village-interior:library:clue-cabinet');
+    cabinet.fillStyle(0x627f91, 1);
+    cabinet.lineStyle(5, 0x466171, 0.9);
+    cabinet.fillRoundedRect(x - 65, y - 110, 130, 220, 20);
+    cabinet.strokeRoundedRect(x - 65, y - 110, 130, 220, 20);
+    for (let row = 0; row < 4; row += 1) {
+      const drawerY = y - 78 + row * 45;
+      cabinet.fillStyle(0xe5d1a9, 1);
+      cabinet.fillRoundedRect(x - 47, drawerY, 94, 34, 8);
+      cabinet.lineStyle(2, 0xa68d6d, 0.72);
+      cabinet.strokeRoundedRect(x - 47, drawerY, 94, 34, 8);
+      cabinet.fillStyle(0x8b6a61, 1);
+      cabinet.fillRoundedRect(x - 12, drawerY + 12, 24, 7, 3);
+    }
+    cabinet.setDepth(worldDepthForY(y + 112, 0.2));
+  }
+
+  private createStoryTable(x: number, y: number): void {
+    const table = this.add.graphics().setName('village-interior:library:story-table');
+
+    // Draw the shadow and pedestal first so the tabletop correctly sits in front of the leg.
+    table.fillStyle(0x70576d, 0.14);
+    table.fillEllipse(x + 6, y + 62, 350, 54);
+    table.fillStyle(0xb48562, 1);
+    table.fillRoundedRect(x - 18, y + 36, 36, 72, 12);
+    table.fillEllipse(x, y + 103, 120, 30);
+
+    table.fillStyle(0xc79b72, 1);
+    table.lineStyle(5, 0x986f58, 0.84);
+    table.fillEllipse(x, y, 330, 125);
+    table.strokeEllipse(x, y, 330, 125);
+
+    // A physical open book, map sheet and a few loose story cards.
+    table.fillStyle(0xfff5d8, 1);
+    table.lineStyle(2, 0xba9f78, 0.8);
+    table.fillRoundedRect(x - 66, y - 34, 58, 54, 8);
+    table.strokeRoundedRect(x - 66, y - 34, 58, 54, 8);
+    table.fillRoundedRect(x - 6, y - 34, 58, 54, 8);
+    table.strokeRoundedRect(x - 6, y - 34, 58, 54, 8);
+    table.lineStyle(2, 0x8aa2ad, 0.72);
+    table.lineBetween(x - 54, y - 20, x - 20, y - 20);
+    table.lineBetween(x + 7, y - 20, x + 40, y - 20);
+
+    table.fillStyle(0xd8c394, 1);
+    table.fillRoundedRect(x + 65, y - 30, 72, 50, 7);
+    table.lineStyle(3, 0x7f9a82, 0.8);
+    table.lineBetween(x + 76, y - 16, x + 118, y + 5);
+    table.lineStyle(3, 0x7d8fa7, 0.75);
+    table.lineBetween(x + 82, y + 7, x + 121, y - 12);
+
+    for (const [dx, colour] of [
+      [-122, 0xc9899d],
+      [-97, 0x809bb7],
+      [-72, 0xc5a75f],
+    ] as const) {
+      table.fillStyle(colour, 1);
+      table.fillRoundedRect(x + dx, y + 22, 42, 28, 5);
+      table.fillStyle(0xffffff, 0.36);
+      table.fillRect(x + dx + 7, y + 30, 28, 3);
+    }
+    table.setDepth(worldDepthForY(y + 108, 0.26));
+  }
+
+  private createStoryCushion(x: number, y: number, colour: number): void {
+    const cushion = this.add.graphics().setName('village-interior:library:reading-cushion');
+    cushion.fillStyle(0x4d4057, 0.12);
+    cushion.fillEllipse(x + 3, y + 18, 100, 30);
+    cushion.fillStyle(colour, 1);
+    cushion.lineStyle(4, 0x876e82, 0.58);
+    cushion.fillRoundedRect(x - 47, y - 24, 94, 52, 22);
+    cushion.strokeRoundedRect(x - 47, y - 24, 94, 52, 22);
+    cushion.lineStyle(2, 0xffffff, 0.35);
+    cushion.lineBetween(x - 25, y - 4, x + 25, y + 7);
+    cushion.setDepth(worldDepthForY(y + 30, 0.08));
+  }
+
+  private createStoryReadingChair(x: number, y: number): void {
+    const chair = this.add.graphics().setName('village-interior:library:reading-chair');
+    chair.fillStyle(0x506b7d, 1);
+    chair.lineStyle(5, 0x3d5261, 0.9);
+    chair.fillRoundedRect(x - 70, y - 85, 140, 125, 42);
+    chair.strokeRoundedRect(x - 70, y - 85, 140, 125, 42);
+    chair.fillStyle(0x8ea9b8, 1);
+    chair.fillRoundedRect(x - 57, y - 68, 114, 78, 34);
+    chair.fillStyle(0xc3a0b4, 1);
+    chair.fillRoundedRect(x - 48, y - 50, 96, 50, 22);
+    chair.fillStyle(0x6a4f61, 1);
+    chair.fillRoundedRect(x - 75, y - 5, 26, 62, 12);
+    chair.fillRoundedRect(x + 49, y - 5, 26, 62, 12);
+    chair.setDepth(worldDepthForY(y + 62, 0.2));
   }
 
   private createThreadSet(): void {
-    this.add
-      .rectangle(640, 350, 430, 120, 0xb77baa, 1)
-      .setStrokeStyle(5, 0x8e5d86, 0.9)
-      .setDepth(6);
-    for (const [x, icon] of [
-      [515, '🎀'],
-      [600, '🌸'],
-      [685, '✨'],
-      [770, '🌈'],
+    const counter = getVillageInteriorAnchor('accessory-shop', 'counter');
+    const display = getVillageInteriorAnchor('accessory-shop', 'primary-feature');
+    const mirror = getVillageInteriorAnchor('accessory-shop', 'secondary-feature');
+
+    // Boutique wall treatment: lighter than the old magenta block and deliberately distinct from Bakery.
+    for (let y = 390; y <= 930; y += 105) {
+      this.add.rectangle(750, y, 1260, 3, 0xd7b4cf, 0.24).setDepth(3.1);
+    }
+    this.add.rectangle(750, 342, 1260, 18, 0xe8c7df, 0.88).setDepth(4.6);
+
+    const rug = this.add.graphics().setName('village-interior:accessory-shop:runway-rug');
+    rug.fillStyle(0xf2dff0, 0.82);
+    rug.lineStyle(4, 0xc99bc5, 0.54);
+    rug.fillRoundedRect(560, 560, 330, 340, 90);
+    rug.strokeRoundedRect(560, 560, 330, 340, 90);
+    rug.lineStyle(2, 0xffffff, 0.55);
+    rug.strokeRoundedRect(586, 586, 278, 288, 70);
+    rug.setDepth(3.2);
+
+    this.createThreadWallRack(280, 500);
+    this.createThreadCounter(counter.position.x, counter.position.y);
+    this.createThreadDisplayIsland(display.position.x, display.position.y, 'ribbons');
+    this.createThreadDisplayIsland(830, 715, 'home');
+    this.createThreadMirror(mirror.position.x, mirror.position.y);
+  }
+
+  private createThreadWallRack(x: number, y: number): void {
+    const rack = this.add.graphics().setName('village-interior:accessory-shop:wall-rack');
+    rack.fillStyle(0xf9edf7, 1);
+    rack.lineStyle(4, 0xa8759d, 0.8);
+    rack.fillRoundedRect(x - 78, y - 125, 156, 250, 22);
+    rack.strokeRoundedRect(x - 78, y - 125, 156, 250, 22);
+    rack.fillStyle(0xd5a9c9, 1);
+    rack.fillRoundedRect(x - 57, y - 92, 114, 12, 6);
+    rack.fillRoundedRect(x - 57, y + 8, 114, 12, 6);
+
+    for (const [dx, colour] of [
+      [-38, 0xf5a9c5],
+      [0, 0xbca8eb],
+      [38, 0x9edbd7],
     ] as const) {
-      this.add.circle(x, 300, 38, 0xfff6fb, 0.86).setStrokeStyle(3, 0xd8a4cf, 0.9).setDepth(6);
-      this.add
-        .text(x, 300, icon, { fontFamily: UI_FONT, fontSize: '30px' })
-        .setOrigin(0.5)
-        .setDepth(7);
+      rack.fillStyle(colour, 1);
+      rack.fillCircle(x + dx, y - 52, 16);
+      rack.fillTriangle(x + dx - 13, y - 42, x + dx - 2, y - 7, x + dx + 2, y - 42);
+      rack.fillTriangle(x + dx + 13, y - 42, x + dx + 2, y - 7, x + dx - 2, y - 42);
     }
+
+    rack.fillStyle(0xfff4d2, 1);
+    rack.fillCircle(x - 36, y + 55, 17);
+    rack.fillStyle(0xe9c0ef, 1);
+    rack.fillCircle(x, y + 55, 17);
+    rack.fillStyle(0xb5e1db, 1);
+    rack.fillCircle(x + 36, y + 55, 17);
+    rack.setDepth(worldDepthForY(y + 126, 0.2));
+  }
+
+  private createThreadCounter(x: number, y: number): void {
+    const counter = this.add.graphics().setName('village-interior:accessory-shop:counter');
+    counter.fillStyle(0xb77baa, 1);
+    counter.lineStyle(5, 0x8e5d86, 0.9);
+    counter.fillRoundedRect(x - 195, y - 18, 390, 96, 22);
+    counter.strokeRoundedRect(x - 195, y - 18, 390, 96, 22);
+    counter.fillStyle(0xfff6fb, 0.95);
+    counter.fillRoundedRect(x - 174, y + 16, 348, 44, 13);
+    counter.lineStyle(3, 0xd8a4cf, 0.88);
+    counter.strokeRoundedRect(x - 174, y + 16, 348, 44, 13);
+
+    counter.fillStyle(0xf3c5d9, 1);
+    counter.fillCircle(x - 105, y - 34, 18);
+    counter.fillStyle(0xbba7ea, 1);
+    counter.fillCircle(x - 35, y - 34, 18);
+    counter.fillStyle(0xa2d8d2, 1);
+    counter.fillCircle(x + 35, y - 34, 18);
+    counter.fillStyle(0xffdea0, 1);
+    counter.fillCircle(x + 105, y - 34, 18);
+    counter.setDepth(worldDepthForY(y + 78, 0.3));
+
     this.add
-      .text(640, 405, 'Adventure stock changes as the valley grows', {
-        color: '#684c67',
+      .text(x, y + 38, 'STYLE DESK', {
+        color: '#744f67',
         fontFamily: UI_FONT,
-        fontSize: '15px',
+        fontSize: '11px',
         fontStyle: 'bold',
+        letterSpacing: 1,
       })
       .setOrigin(0.5)
-      .setDepth(7);
+      .setDepth(worldDepthForY(y + 80, 0.42));
   }
 
-  private createPersistentControls(): void {
-    this.createActionButton(
-      {
-        x: 170,
-        y: GAME_HEIGHT - 46,
-        width: 240,
-        label: '← Back to village',
-        fill: UI_COLOURS.lavender,
-        onPress: () => this.leaveInterior(),
-      },
-      null,
-    );
-    this.balanceText = this.add
-      .text(GAME_WIDTH - 155, GAME_HEIGHT - 46, '', {
-        color: '#76518a',
-        fontFamily: UI_FONT,
-        fontSize: '17px',
-        fontStyle: 'bold',
-        backgroundColor: '#f3e7f8e8',
-        padding: { x: 12, y: 7 },
-      })
-      .setOrigin(0.5)
-      .setDepth(18);
-    this.refreshBalance();
-  }
+  private createThreadDisplayIsland(x: number, y: number, theme: 'ribbons' | 'home'): void {
+    const display = this.add.graphics().setName(`village-interior:accessory-shop:display-${theme}`);
+    display.fillStyle(0x6b4b64, 0.12);
+    display.fillEllipse(x + 4, y + 44, 196, 42);
+    display.fillStyle(theme === 'ribbons' ? 0xe9bfdc : 0xd8c9ef, 1);
+    display.lineStyle(4, theme === 'ribbons' ? 0xa96f98 : 0x8d77ae, 0.78);
+    display.fillRoundedRect(x - 94, y - 34, 188, 72, 22);
+    display.strokeRoundedRect(x - 94, y - 34, 188, 72, 22);
+    display.fillStyle(0xfff8ef, 1);
+    display.fillEllipse(x, y - 20, 148, 38);
 
-  private refreshBody(): void {
-    this.body?.destroy(true);
-    this.body = this.add.container(0, 0).setDepth(10);
-    if (this.interiorId === 'bakery') {
-      this.renderBakery();
-    } else if (this.interiorId === 'library') {
-      this.renderStoryHouse();
+    if (theme === 'ribbons') {
+      for (const [dx, colour] of [
+        [-48, 0xf2a8c0],
+        [0, 0xa8d8d4],
+        [48, 0xd5b8ef],
+      ] as const) {
+        display.fillStyle(colour, 1);
+        display.fillCircle(x + dx, y - 23, 14);
+        display.fillTriangle(x + dx - 10, y - 13, x + dx - 2, y + 13, x + dx + 2, y - 13);
+        display.fillTriangle(x + dx + 10, y - 13, x + dx + 2, y + 13, x + dx - 2, y - 13);
+      }
     } else {
-      this.renderThreadShop();
+      // Tiny physical samples of the cottage stock: cushion, lamp and rug swatch.
+      display.fillStyle(0xbfe2ef, 1);
+      display.fillRoundedRect(x - 65, y - 38, 42, 32, 12);
+      display.lineStyle(2, 0x89b9ca, 0.78);
+      display.strokeRoundedRect(x - 65, y - 38, 42, 32, 12);
+
+      display.fillStyle(0xffdda0, 1);
+      display.fillCircle(x, y - 30, 17);
+      display.fillStyle(0xb28bb9, 1);
+      display.fillRoundedRect(x - 4, y - 14, 8, 20, 4);
+
+      display.fillStyle(0xf0a8bf, 1);
+      display.fillRoundedRect(x + 26, y - 38, 52, 30, 8);
+      display.lineStyle(3, 0xffd36f, 0.9);
+      display.lineBetween(x + 31, y - 32, x + 70, y - 32);
+      display.lineStyle(3, 0xa8d8d4, 0.9);
+      display.lineBetween(x + 31, y - 23, x + 70, y - 23);
+      display.lineStyle(3, 0xbca8eb, 0.9);
+      display.lineBetween(x + 31, y - 14, x + 70, y - 14);
     }
-    this.refreshBalance();
+    display.setDepth(worldDepthForY(y + 48, 0.24));
   }
 
-  private renderBakery(): void {
-    const maple = supportingResident('resident:maple');
-    const sprite = createSupportingResidentSprite(this, maple)
-      .setPosition(1010, 430)
-      .setDisplaySize(142, 123);
-    const name = this.add
-      .text(1010, 500, 'Maple', {
-        color: '#704637',
-        fontFamily: UI_FONT,
-        fontSize: '16px',
-        fontStyle: 'bold',
-        backgroundColor: '#fff3d7e8',
-        padding: { x: 8, y: 4 },
-      })
-      .setOrigin(0.5);
-    this.body?.add([sprite, name]);
+  private createThreadMirror(x: number, y: number): void {
+    const mirror = this.add.graphics().setName('village-interior:accessory-shop:mirror');
+    mirror.fillStyle(0x6b4b64, 0.1);
+    mirror.fillEllipse(x + 6, y + 80, 116, 24);
+    mirror.fillStyle(0xd9b6d3, 1);
+    mirror.lineStyle(5, 0xa5739c, 0.84);
+    mirror.fillRoundedRect(x - 58, y - 94, 116, 188, 56);
+    mirror.strokeRoundedRect(x - 58, y - 94, 116, 188, 56);
+    mirror.fillStyle(0xf8f0ff, 1);
+    mirror.fillRoundedRect(x - 44, y - 79, 88, 158, 44);
+    mirror.lineStyle(3, 0xffffff, 0.7);
+    mirror.lineBetween(x - 25, y - 55, x + 18, y - 10);
+    mirror.lineBetween(x - 16, y - 66, x + 28, y - 20);
+    mirror.fillStyle(0xb783a8, 1);
+    mirror.fillRoundedRect(x - 10, y + 88, 20, 46, 8);
+    mirror.fillEllipse(x, y + 134, 78, 22);
+    mirror.setDepth(worldDepthForY(y + 136, 0.2));
+  }
 
-    const bakery = new BakeryService(getBrowserSaveService());
-    bakery.listStock().forEach((stock, index) => {
-      const x = 300 + index * 330;
-      const card = this.add
-        .rectangle(x, 250, 285, 150, 0xfffbf3, 0.97)
-        .setStrokeStyle(3, 0xd88b62, 0.9);
-      const icon = this.add
-        .text(x - 105, 220, stock.definition.icon ?? '🥐', {
-          fontFamily: UI_FONT,
-          fontSize: '34px',
-        })
-        .setOrigin(0.5);
-      const title = this.add.text(x - 70, 205, stock.definition.name, {
-        color: UI_COLOURS.ink,
-        fontFamily: UI_FONT,
-        fontSize: '16px',
-        fontStyle: 'bold',
-      });
-      const detail = this.add.text(
-        x - 70,
-        232,
-        stock.isUnlocked
-          ? stock.isOwned
-            ? 'Owned ✓'
-            : `${stock.price} Shimmer`
-          : (stock.unlockHint ?? 'Locked'),
-        {
-          color: UI_COLOURS.softInk,
-          fontFamily: UI_FONT,
-          fontSize: '12px',
-          wordWrap: { width: 170 },
-        },
-      );
-      this.body?.add([card, icon, title, detail]);
-      this.createActionButton(
-        {
-          x,
-          y: 294,
-          width: 190,
-          label: stock.isOwned ? 'Yours!' : stock.isUnlocked ? `Buy • ${stock.price} ✨` : 'Locked',
-          enabled: stock.isUnlocked && !stock.isOwned,
-          onPress: () => this.buyBakeryItem(stock.definition.id),
-        },
-        this.body,
-      );
+  private renderInteriorOccupant(): void {
+    const occupancy = getVillageInteriorOccupancyService();
+    const assignment = occupancy.getInteriorAssignment(this.interiorId);
+    if (!assignment || !occupancy.isResidentAllowedInScene(assignment.residentId, this.scene.key)) {
+      return;
+    }
+
+    const resident = supportingResident(assignment.residentId);
+    const work = getVillageInteriorAnchor(this.interiorId, assignment.workAnchorId);
+    const presentation = createVillageInteriorResidentPresentation(this, resident, {
+      x: work.position.x,
+      y: work.position.y,
+      displaySize:
+        this.interiorId === 'bakery'
+          ? { width: 152, height: 128 }
+          : resolveSupportingResidentDisplaySize(1.1),
+      accessories: assignment.supportedRoleAccessories,
     });
+    presentation.container.setData('occupancy-role', assignment.role);
+    this.occupant = presentation.container;
+  }
 
-    this.createActionButton(
+  private registerInteractions(): void {
+    const map = getVillageInteriorMap(this.interiorId);
+    const targets: InteractionTarget[] = [
       {
-        x: 310,
-        y: 485,
-        width: 230,
-        label: '💬 Talk to Maple',
-        onPress: () => this.talkToMaple(),
+        id: `interaction:village-interior:${this.interiorId}:exit`,
+        label: 'Sunbeam Village',
+        actionLabel: 'Go outside',
+        actionKind: 'enter',
+        position: map.anchors.exit.approach,
+        interactionRadius: 145,
+        priority: 40,
+        result: { type: 'callback', activate: () => this.leaveInterior() },
       },
-      this.body,
-    );
-    this.createActionButton(
-      {
-        x: 570,
-        y: 485,
-        width: 230,
-        label: '🎂 Wobbly Cake Plan',
-        onPress: () => this.openCakePlan(),
-      },
-      this.body,
-    );
+    ];
 
-    if (this.shouldShowBakeryMapCorner()) {
-      this.createActionButton(
-        {
-          x: 830,
-          y: 485,
-          width: 230,
-          label: '🔎 Check recipe shelf',
-          fill: UI_COLOURS.mint,
-          onPress: () => this.findBakeryMapCorner(),
-        },
-        this.body,
-      );
+    if (this.interiorId === 'bakery') {
+      targets.push(...this.createBakeryInteractions());
+    } else if (this.interiorId === 'library') {
+      targets.push(...this.createStoryHouseInteractions());
     } else {
-      this.createActionButton(
-        {
-          x: 830,
-          y: 485,
-          width: 230,
-          label: '📜 Browse recipes',
-          fill: UI_COLOURS.mint,
-          onPress: () =>
+      targets.push(...this.createThreadInteractions());
+    }
+
+    getSceneInteractionRegistry(this).replaceOwnerTargets(INTERIOR_INTERACTION_OWNER, targets);
+  }
+
+  private createBakeryInteractions(): InteractionTarget[] {
+    const counter = getVillageInteriorAnchor('bakery', 'counter');
+    const worker = getVillageInteriorAnchor('bakery', 'npc-work');
+    const recipes = getVillageInteriorAnchor('bakery', 'primary-feature');
+    const cake = getVillageInteriorAnchor('bakery', 'secondary-feature');
+    const targets: InteractionTarget[] = [
+      {
+        id: 'interaction:village-interior:bakery:counter',
+        label: 'Bakery counter',
+        actionLabel: 'Browse',
+        actionKind: 'buy',
+        position: counter.approach,
+        interactionRadius: 155,
+        priority: 28,
+        result: { type: 'callback', activate: () => this.openBakeryCounter('pastries') },
+      },
+      {
+        id: 'interaction:village-interior:bakery:bread-counter',
+        label: 'Fresh bread counter',
+        actionLabel: 'Browse',
+        actionKind: 'buy',
+        position: { x: 1090, y: 565 },
+        interactionRadius: 155,
+        priority: 28,
+        result: { type: 'callback', activate: () => this.openBakeryCounter('bread') },
+      },
+      {
+        id: 'interaction:village-interior:bakery:doughnuts',
+        label: 'Doughnut display',
+        actionLabel: 'Browse',
+        actionKind: 'buy',
+        position: { x: 1080, y: 755 },
+        interactionRadius: 145,
+        priority: 27,
+        result: { type: 'callback', activate: () => this.openBakeryCounter('doughnuts') },
+      },
+      {
+        id: 'interaction:village-interior:bakery:cupcakes',
+        label: 'Cupcake tower',
+        actionLabel: 'Browse',
+        actionKind: 'buy',
+        position: { x: 420, y: 755 },
+        interactionRadius: 145,
+        priority: 27,
+        result: { type: 'callback', activate: () => this.openBakeryCounter('cupcakes') },
+      },
+      {
+        id: 'interaction:village-interior:bakery:cake-table',
+        label: 'Wobbly Cake table',
+        actionLabel: 'Plan a cake',
+        actionKind: 'use',
+        position: cake.approach,
+        interactionRadius: 145,
+        priority: 22,
+        result: { type: 'callback', activate: () => this.openCakePlan() },
+      },
+      {
+        id: 'interaction:village-interior:bakery:recipes',
+        label: 'Recipe shelf',
+        actionLabel: this.shouldShowBakeryMapCorner() ? 'Search' : 'Browse',
+        actionKind: 'inspect',
+        position: recipes.approach,
+        interactionRadius: 145,
+        priority: 20,
+        result: {
+          type: 'callback',
+          activate: () => {
+            if (this.shouldShowBakeryMapCorner()) {
+              this.findBakeryMapCorner();
+              return;
+            }
             this.showFeedback(
               'Maple’s recipe shelf contains berry buns, cloud biscuits and one page simply labelled “TRY MORE SPRINKLES”.',
+              recipes.approach,
+            );
+          },
+        },
+      },
+    ];
+
+    if (this.occupant) {
+      targets.push({
+        id: 'interaction:village-interior:bakery:baker',
+        label: 'Cinnamon',
+        actionLabel: 'Talk',
+        actionKind: 'talk',
+        position: worker.approach,
+        interactionRadius: 160,
+        priority: 35,
+        result: { type: 'callback', activate: () => this.openBakeryBakerConversation() },
+      });
+    }
+    return targets;
+  }
+
+  private createStoryHouseInteractions(): InteractionTarget[] {
+    const worker = getVillageInteriorAnchor('library', 'npc-work');
+    const storyTable = getVillageInteriorAnchor('library', 'primary-feature');
+    const clueShelf = getVillageInteriorAnchor('library', 'secondary-feature');
+    const targets: InteractionTarget[] = [
+      {
+        id: 'interaction:village-interior:library:story-table',
+        label: 'Round story table',
+        actionLabel: 'Browse stories',
+        actionKind: 'inspect',
+        position: storyTable.approach,
+        interactionRadius: 155,
+        priority: 24,
+        result: { type: 'callback', activate: () => this.openStoryLibrary() },
+      },
+      {
+        id: 'interaction:village-interior:library:clues',
+        label: 'Valley clue cabinet',
+        actionLabel: 'Check clues',
+        actionKind: 'inspect',
+        position: clueShelf.approach,
+        interactionRadius: 155,
+        priority: 20,
+        result: {
+          type: 'callback',
+          activate: () =>
+            this.showFeedback(
+              new StoryHouseService(getBrowserSaveService()).getCurrentClue(),
+              clueShelf.approach,
             ),
         },
-        this.body,
-      );
+      },
+    ];
+
+    if (this.occupant) {
+      targets.push({
+        id: 'interaction:village-interior:library:storykeeper',
+        label: 'Quill',
+        actionLabel: 'Talk',
+        actionKind: 'talk',
+        position: worker.position,
+        interactionRadius: 190,
+        priority: 35,
+        directArea: {
+          width: 180,
+          height: 190,
+          name: 'interaction-direct-zone:interaction:village-interior:library:storykeeper',
+        },
+        result: { type: 'callback', activate: () => this.openStoryKeeperConversation() },
+      });
     }
+    return targets;
   }
 
-  private renderStoryHouse(): void {
-    const tansy = supportingResident('resident:tansy');
-    const sprite = createSupportingResidentSprite(this, tansy)
-      .setPosition(1015, 430)
-      .setDisplaySize(142, 123);
-    const name = this.add
-      .text(1015, 500, 'Tansy', {
-        color: '#4f6171',
+  private createThreadInteractions(): InteractionTarget[] {
+    const counter = getVillageInteriorAnchor('accessory-shop', 'counter');
+    const worker = getVillageInteriorAnchor('accessory-shop', 'npc-work');
+    const display = getVillageInteriorAnchor('accessory-shop', 'primary-feature');
+    const mirror = getVillageInteriorAnchor('accessory-shop', 'secondary-feature');
+    return [
+      {
+        id: 'interaction:village-interior:accessory-shop:counter',
+        label: 'Style desk',
+        actionLabel: 'Browse',
+        actionKind: 'buy',
+        position: counter.approach,
+        interactionRadius: 155,
+        priority: 28,
+        result: { type: 'callback', activate: () => this.openThreadShop('accessories') },
+      },
+      {
+        id: 'interaction:village-interior:accessory-shop:shopkeeper',
+        label: 'Velvet',
+        actionLabel: 'Talk',
+        actionKind: 'talk',
+        position: worker.position,
+        interactionRadius: 190,
+        priority: 35,
+        directArea: {
+          width: 180,
+          height: 190,
+          name: 'interaction-direct-zone:interaction:village-interior:accessory-shop:shopkeeper',
+        },
+        result: { type: 'callback', activate: () => this.openThreadShopkeeperConversation() },
+      },
+      {
+        id: 'interaction:village-interior:accessory-shop:wall-rack',
+        label: 'Ribbon wall',
+        actionLabel: 'Browse wearables',
+        actionKind: 'buy',
+        position: { x: 385, y: 570 },
+        interactionRadius: 145,
+        priority: 23,
+        result: { type: 'callback', activate: () => this.openThreadShop('accessories') },
+      },
+      {
+        id: 'interaction:village-interior:accessory-shop:display',
+        label: 'Accessory gallery',
+        actionLabel: 'Browse wearables',
+        actionKind: 'buy',
+        position: display.approach,
+        interactionRadius: 145,
+        priority: 22,
+        result: { type: 'callback', activate: () => this.openThreadShop('accessories') },
+      },
+      {
+        id: 'interaction:village-interior:accessory-shop:home-display',
+        label: 'Cottage accents',
+        actionLabel: 'Browse décor',
+        actionKind: 'buy',
+        position: { x: 830, y: 825 },
+        interactionRadius: 150,
+        priority: 22,
+        result: { type: 'callback', activate: () => this.openThreadShop('decorations') },
+      },
+      {
+        id: 'interaction:village-interior:accessory-shop:mirror',
+        label: 'Dressing mirror',
+        actionLabel: 'Try on',
+        actionKind: 'use',
+        position: mirror.approach,
+        interactionRadius: 140,
+        priority: 18,
+        result: { type: 'callback', activate: () => this.openThreadWardrobe() },
+      },
+    ];
+  }
+
+  private openBakeryCounter(section: BakerySectionId = this.bakerySection): void {
+    this.bakerySection = section;
+    const bakery = new BakeryService(getBrowserSaveService());
+    const stock = bakery.listStock();
+    const visibleStock = stock.filter((item) => item.section === section);
+    this.openOverlay();
+    if (!this.overlay) {
+      return;
+    }
+
+    const title = this.add
+      .text(GAME_WIDTH / 2, 126, 'Cinnamon’s Bakery', {
+        color: '#563f63',
         fontFamily: UI_FONT,
-        fontSize: '16px',
+        fontSize: '28px',
         fontStyle: 'bold',
-        backgroundColor: '#eff8ffe8',
-        padding: { x: 8, y: 4 },
       })
-      .setOrigin(0.5);
-    this.body?.add([sprite, name]);
-
-    const storyHouse = new StoryHouseService(getBrowserSaveService());
-    const summary = this.add.text(165, 185, storyHouse.getWonderbookSummary(), {
-      color: UI_COLOURS.ink,
-      fontFamily: UI_FONT,
-      fontSize: '15px',
-      fontStyle: 'bold',
-      wordWrap: { width: 520 },
-      backgroundColor: '#f8fcffee',
-      padding: { x: 14, y: 10 },
-    });
-    const clue = this.add.text(165, 282, `🗺️ ${storyHouse.getCurrentClue()}`, {
-      color: UI_COLOURS.softInk,
-      fontFamily: UI_FONT,
-      fontSize: '14px',
-      wordWrap: { width: 520 },
-      backgroundColor: '#fff7dfee',
-      padding: { x: 14, y: 10 },
-    });
-    this.body?.add([summary, clue]);
-
-    this.createActionButton(
-      {
-        x: 300,
-        y: 465,
-        width: 230,
-        label: '💬 Talk to Tansy',
-        onPress: () => this.talkToTansy(),
-      },
-      this.body,
-    );
-    this.createActionButton(
-      {
-        x: 560,
-        y: 465,
-        width: 230,
-        label: '📖 Read story card',
-        onPress: () => this.readStoryCard(),
-      },
-      this.body,
-    );
-    this.createActionButton(
-      {
-        x: 820,
-        y: 465,
-        width: 230,
-        label: '🗺️ Check valley clues',
-        fill: UI_COLOURS.mint,
-        onPress: () => this.showFeedback(storyHouse.getCurrentClue()),
-      },
-      this.body,
-    );
-  }
-
-  private renderThreadShop(): void {
-    const shop = new ShopService(getBrowserSaveService());
-    const stock = shop.listStock();
-    const unlocked = stock.filter(({ isUnlocked }) => isUnlocked).length;
-    const owned = stock.filter(({ isUniqueOwned }) => isUniqueOwned).length;
-    const panel = this.add
+      .setOrigin(0.5)
+      .setName('bakery-shop-title')
+      .setScrollFactor(0);
+    const note = this.add
       .text(
         GAME_WIDTH / 2,
-        235,
-        `${unlocked}/${stock.length} stock lines unlocked  •  ${owned} wearable${owned === 1 ? '' : 's'} owned\nStarter treasures are affordable now; new pieces appear through stories, discoveries and racing.`,
+        158,
+        'Small batches are baked each morning — when they’re gone, they’re gone for the day.',
         {
-          color: UI_COLOURS.ink,
+          color: '#806985',
           fontFamily: UI_FONT,
-          fontSize: '17px',
+          fontSize: '12px',
           fontStyle: 'bold',
-          align: 'center',
-          wordWrap: { width: 760 },
-          backgroundColor: '#fff8fcee',
-          padding: { x: 18, y: 14 },
         },
       )
-      .setOrigin(0.5);
-    this.body?.add(panel);
+      .setOrigin(0.5)
+      .setScrollFactor(0);
+    this.overlay.add([title, note]);
 
-    this.createActionButton(
-      {
-        x: 470,
-        y: 475,
-        width: 300,
-        label: '🎀 Browse Twinkle & Thread',
-        onPress: () => this.openThreadShop(),
-      },
-      this.body,
-    );
-    this.createActionButton(
-      {
-        x: 810,
-        y: 475,
-        width: 300,
-        label: '✨ What unlocked?',
-        fill: UI_COLOURS.mint,
-        onPress: () => this.showThreadProgress(stock),
-      },
-      this.body,
+    BAKERY_SECTIONS.forEach((tab, index) => {
+      const x = 280 + index * 240;
+      const selected = tab.id === section;
+      const surface = this.add.graphics().setScrollFactor(0);
+      surface.fillStyle(0x4b3045, 0.12);
+      surface.fillRoundedRect(x - 92 + 4, 188 + 4, 184, 52, 18);
+      surface.fillStyle(selected ? 0xf3d9a4 : 0xead4ee, 1);
+      surface.lineStyle(3, selected ? 0xb7834e : 0xb486a8, 0.95);
+      surface.fillRoundedRect(x - 92, 188, 184, 52, 18);
+      surface.strokeRoundedRect(x - 92, 188, 184, 52, 18);
+      const hit = this.add
+        .rectangle(x, 214, 196, 64, 0xffffff, 0.001)
+        .setAlpha(0.001)
+        .setInteractive({ useHandCursor: true })
+        .setScrollFactor(0);
+      const count = stock.filter((item) => item.section === tab.id).length;
+      const label = this.add
+        .text(x, 214, `${tab.icon} ${tab.label}  ${count}`, {
+          color: selected ? '#664631' : '#5d4360',
+          fontFamily: UI_FONT,
+          fontSize: '14px',
+          fontStyle: 'bold',
+        })
+        .setOrigin(0.5)
+        .setScrollFactor(0);
+      hit.on('pointerdown', () => this.openBakeryCounter(tab.id));
+      this.overlay?.add([surface, hit, label]);
+    });
+
+    visibleStock.forEach((item, index) => {
+      const column = index % 3;
+      const row = Math.floor(index / 3);
+      const x = 320 + column * 320;
+      const y = 345 + row * 155;
+
+      const card = this.add.graphics().setScrollFactor(0);
+      card.fillStyle(0x4b3045, 0.1);
+      card.fillRoundedRect(x - 140 + 5, y - 68 + 6, 280, 136, 18);
+      card.fillStyle(item.isSoldOut ? 0xf2ece9 : 0xfffbef, 1);
+      card.lineStyle(3, item.isUnlocked ? 0xd3a0ae : 0xbfa8c7, 0.9);
+      card.fillRoundedRect(x - 140, y - 68, 280, 136, 18);
+      card.strokeRoundedRect(x - 140, y - 68, 280, 136, 18);
+
+      const iconWell = this.add
+        .circle(x - 104, y - 18, 27, item.isUnlocked ? 0xf1d7cf : 0xe6dfea, 1)
+        .setStrokeStyle(2, item.isUnlocked ? 0xc995a4 : 0xb7a4c1, 0.85)
+        .setScrollFactor(0);
+      const icon = this.add
+        .text(x - 104, y - 18, item.definition.icon ?? '🥐', {
+          fontFamily: UI_FONT,
+          fontSize: '29px',
+        })
+        .setOrigin(0.5)
+        .setScrollFactor(0);
+      const name = this.add
+        .text(x - 67, y - 34, item.definition.name, {
+          color: '#5b4662',
+          fontFamily: UI_FONT,
+          fontSize: '14px',
+          fontStyle: 'bold',
+          wordWrap: { width: 180 },
+        })
+        .setOrigin(0, 0.5)
+        .setScrollFactor(0);
+
+      const status = !item.isUnlocked
+        ? (item.unlockHint ?? 'Locked')
+        : item.isOwned
+          ? 'Owned ✓'
+          : item.isSoldOut
+            ? 'Sold out • back tomorrow'
+            : `${item.price} Shimmer • ${item.remainingStock}/${item.maxDailyStock} left`;
+      const detail = this.add
+        .text(x - 67, y, status, {
+          color: item.isSoldOut ? '#8d6f7b' : '#806985',
+          fontFamily: UI_FONT,
+          fontSize: '10px',
+          wordWrap: { width: 182 },
+        })
+        .setOrigin(0, 0.5)
+        .setScrollFactor(0);
+
+      this.overlay?.add([card, iconWell, icon, name, detail]);
+      this.createOverlayButton(
+        x,
+        y + 33,
+        item.isOwned
+          ? 'Yours'
+          : !item.isUnlocked
+            ? 'Locked'
+            : item.isSoldOut
+              ? 'Sold out'
+              : `Buy • ${item.price} ✨`,
+        () => this.buyBakeryItem(item.definition.id),
+        item.isUnlocked && !item.isOwned && !item.isSoldOut,
+        220,
+        36,
+      );
+    });
+
+    if (this.bakeryShopFeedback) {
+      const feedback = this.add
+        .text(GAME_WIDTH / 2, 610, this.bakeryShopFeedback, {
+          color: '#704d61',
+          fontFamily: UI_FONT,
+          fontSize: '13px',
+          fontStyle: 'bold',
+          align: 'center',
+          wordWrap: { width: 700 },
+        })
+        .setOrigin(0.5)
+        .setScrollFactor(0);
+      this.overlay.add(feedback);
+    }
+
+    this.createOverlayButton(
+      GAME_WIDTH / 2,
+      660,
+      'Back to the bakery',
+      () => this.closeOverlay(),
+      true,
+      250,
+      46,
     );
   }
 
-  private createActionButton(
-    options: ActionButtonOptions,
-    parent: Phaser.GameObjects.Container | null,
+  private openOverlay(): void {
+    this.closeOverlay();
+    setInteractionModalActive(this, true);
+    this.overlay = this.add.container(0, 0).setDepth(20_500).setScrollFactor(0);
+
+    const shade = this.add
+      .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x493c50, 0.68)
+      .setInteractive()
+      .setScrollFactor(0);
+
+    const panel = this.add.graphics().setScrollFactor(0);
+    panel.fillStyle(0x24192b, 0.2);
+    panel.fillRoundedRect(91, 82, 1110, 618, 30);
+    panel.fillStyle(0xfff7e7, 1);
+    panel.lineStyle(5, 0xc98eb7, 0.95);
+    panel.fillRoundedRect(80, 70, 1110, 618, 30);
+    panel.strokeRoundedRect(80, 70, 1110, 618, 30);
+    panel.fillStyle(0xead4ee, 0.22);
+    panel.fillRoundedRect(98, 88, 1074, 94, 22);
+
+    this.overlay.add([shade, panel]);
+  }
+
+  private createOverlayButton(
+    x: number,
+    y: number,
+    labelText: string,
+    onPress: () => void,
+    enabled = true,
+    width = 260,
+    height = 58,
   ): void {
-    const fill =
-      options.enabled === false ? UI_COLOURS.lavender : (options.fill ?? UI_COLOURS.gold);
-    const button = this.add
-      .rectangle(
-        options.x,
-        options.y,
-        options.width ?? 220,
-        54,
-        fill,
-        options.enabled === false ? 0.6 : 1,
-      )
-      .setStrokeStyle(
-        3,
-        options.enabled === false ? UI_COLOURS.lavenderStrong : UI_COLOURS.goldStrong,
-        0.95,
-      )
-      .setDepth(16);
+    if (!this.overlay) {
+      return;
+    }
+
+    const fill = enabled ? UI_COLOURS.gold : UI_COLOURS.lavender;
+    const stroke = enabled ? UI_COLOURS.goldStrong : UI_COLOURS.lavenderStrong;
+    const surface = this.add.graphics().setScrollFactor(0);
+    surface.fillStyle(0x4b3045, 0.12);
+    surface.fillRoundedRect(x - width / 2 + 4, y - height / 2 + 5, width, height, 16);
+    surface.fillStyle(fill, enabled ? 1 : 0.62);
+    surface.lineStyle(3, stroke, 0.95);
+    surface.fillRoundedRect(x - width / 2, y - height / 2, width, height, 16);
+    surface.strokeRoundedRect(x - width / 2, y - height / 2, width, height, 16);
+
+    const hit = this.add
+      .rectangle(x, y, width + 8, height + 8, 0xffffff, 0.001)
+      .setAlpha(0.001)
+      .setScrollFactor(0);
     const label = this.add
-      .text(options.x, options.y, options.label, {
+      .text(x, y, labelText, {
         color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
-        fontSize: '15px',
+        fontSize: height <= 42 ? '12px' : '15px',
         fontStyle: 'bold',
         align: 'center',
       })
       .setOrigin(0.5)
-      .setDepth(17);
-    if (options.enabled !== false) {
-      button.setInteractive({ useHandCursor: true });
-      label.setInteractive({ useHandCursor: true });
-      applyButtonHover(button, fill, UI_COLOURS.blush);
-      button.on('pointerdown', options.onPress);
-      label.on('pointerdown', options.onPress);
+      .setScrollFactor(0);
+
+    if (enabled) {
+      hit.setInteractive({ useHandCursor: true });
+      hit.on('pointerdown', onPress);
+      hit.on('pointerover', () => {
+        surface.setAlpha(0.9);
+      });
+      hit.on('pointerout', () => {
+        surface.setAlpha(1);
+      });
     }
-    parent?.add([button, label]);
+
+    this.overlay.add([surface, hit, label]);
+  }
+
+  private closeOverlay(): void {
+    if (!this.overlay) {
+      return;
+    }
+    this.overlay.destroy(true);
+    this.overlay = null;
+    setInteractionModalActive(this, false);
   }
 
   private buyBakeryItem(itemId: ItemId): void {
     if (!this.purchaseGuard.tryBegin(itemId, this.time.now)) {
       return;
     }
+
     const result = new BakeryService(getBrowserSaveService()).purchase(itemId);
     if (result.type === 'purchased') {
-      this.showFeedback(`✨ ${result.item.name} is yours! ${result.balance} Shimmer left.`);
-      this.cameras.main.flash(100, 255, 236, 178, false);
+      this.bakeryShopFeedback = `✨ ${result.item.name} added to your bag. ${result.balance} Shimmer left.`;
+      this.cameras.main.flash(90, 255, 236, 178, false);
     } else if (result.type === 'insufficient-funds') {
-      this.showFeedback(
-        `Almost! You need ${result.shortfall} more Shimmer for ${result.item.name}.`,
-      );
+      this.bakeryShopFeedback = `You need ${result.shortfall} more Shimmer for ${result.item.name}.`;
     } else if (result.type === 'locked') {
-      this.showFeedback(result.unlockHint);
+      this.bakeryShopFeedback = result.unlockHint;
+    } else if (result.type === 'sold-out') {
+      this.bakeryShopFeedback = `${result.item.name} is sold out until the next morning.`;
     } else if (result.type === 'persistence-failed') {
-      this.showFeedback('That did not save, so no Shimmer was spent. Please try again.');
+      this.bakeryShopFeedback = 'That did not save, so no Shimmer was spent. Please try again.';
     } else {
-      this.showFeedback(`${result.item.name} is already tucked safely into your collection.`);
+      this.bakeryShopFeedback = `${result.item.name} is already safely in your collection.`;
     }
-    this.refreshBody();
+
+    this.refreshBalance();
+    this.openBakeryCounter(this.bakerySection);
   }
 
-  private talkToMaple(): void {
-    const engine = getBrowserQuestEngine();
-    let progress = engine.getProgress(MAPLE_CAKE_QUEST_ID);
+  private openBakeryBakerConversation(): void {
+    const presenter = getWorldConversationPresenter();
+    presenter.startChoice(
+      this,
+      'resident:cinnamon',
+      'Cinnamon',
+      'Cinnamon smiles from between the counters. “What can I help you with?”',
+      [
+        { id: 'shop', label: 'Shop' },
+        {
+          id: 'talk',
+          label: 'Talk about something else',
+          followUpMessage: this.getBakeryBakerConversationLine(),
+        },
+      ],
+      {
+        onChoice: (choiceId) => {
+          if (choiceId !== 'shop') {
+            return;
+          }
+          this.time.delayedCall(0, () => this.openBakeryCounter('pastries'));
+        },
+      },
+    );
+  }
+
+  private getBakeryBakerConversationLine(): string {
+    const progress = getBrowserQuestEngine().getProgress(MAPLE_CAKE_QUEST_ID);
     if (progress.status === 'not-started') {
-      progress = engine.startQuest(MAPLE_CAKE_QUEST_ID);
+      return 'Maple has been sketching a celebration cake outside. If she recruits you, I have plenty of bowls and absolutely no fear of sprinkles.';
     }
-    if (
-      progress.status === 'active' &&
-      progress.currentStepId === getQuestStepId(MAPLE_CAKE_QUEST_ID, 0)
-    ) {
-      engine.notifyCharacterTalked(MAPLE_CHARACTER_ID);
-      this.showFeedback(
-        'Maple: “I need a celebration cake with personality. Pick a colour plan, then we can wobble it together!”',
-      );
-    } else if (
-      progress.status === 'active' &&
-      progress.currentStepId === getQuestStepId(MAPLE_CAKE_QUEST_ID, 4)
-    ) {
-      engine.notifyCharacterTalked(MAPLE_CHARACTER_ID);
-      this.showFeedback(
-        'Maple: “It is magnificently wobbly. That makes it ours. I saved a picnic-basket pattern for you too!”',
-      );
-    } else if (progress.status === 'completed') {
-      this.showFeedback(
-        'Maple: “The Wobbly Cake Plan is officially a success. I am still voting for extra sprinkles next time.”',
-      );
-    } else {
-      this.showFeedback('Maple: “The cake plan is waiting. Choose a design when you are ready.”');
+    if (questIsAt(MAPLE_CAKE_QUEST_ID, 1)) {
+      return 'Maple left three colour plans on the cake table. Pick the one you like and I’ll make sure the cake wobbles safely.';
     }
-    this.refreshBody();
+    if (questIsAt(MAPLE_CAKE_QUEST_ID, 4)) {
+      return 'That cake is gloriously uneven. Maple is outside and definitely needs to see what you made.';
+    }
+    if (progress.status === 'completed') {
+      return 'Maple’s Wobbly Cake is officially a Bakery favourite now. I keep a few celebration slices on the counter whenever I can.';
+    }
+    return 'Everything on the counter is fresh today. The Berry Buns disappear fastest, but the Cloud Biscuits make the best crumbs.';
   }
 
   private openCakePlan(): void {
     const engine = getBrowserQuestEngine();
-    let progress = engine.getProgress(MAPLE_CAKE_QUEST_ID);
+    const progress = engine.getProgress(MAPLE_CAKE_QUEST_ID);
+    const anchor = getVillageInteriorAnchor('bakery', 'secondary-feature').approach;
     if (progress.status === 'not-started') {
-      progress = engine.startQuest(MAPLE_CAKE_QUEST_ID);
+      this.showFeedback(
+        'Maple is usually just outside the Bakery. Talk to her about her Wobbly Cake idea first.',
+        anchor,
+      );
+      return;
     }
     if (!questIsAt(MAPLE_CAKE_QUEST_ID, 1)) {
-      if (progress.status === 'completed') {
-        this.showFeedback(
-          'Maple’s first Wobbly Cake is already part of Village history. The repeatable baking table comes later in R6.5.',
-        );
-      } else {
-        this.showFeedback('Talk to Maple first so she can explain the Wobbly Cake Plan.');
-      }
+      this.showFeedback(
+        progress.status === 'completed'
+          ? 'Maple’s first Wobbly Cake is already part of Village history. The cake table still carries a suspicious amount of sprinkles.'
+          : 'Maple’s cake plan is not ready for decorating yet. Check in with her outside.',
+        anchor,
+      );
       return;
     }
 
-    const overlay = this.add.container(0, 0).setDepth(40);
-    const shade = this.add
-      .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x493c50, 0.62)
-      .setInteractive();
-    const card = this.add
-      .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, 760, 330, 0xfffbef, 1)
-      .setStrokeStyle(6, 0xe29b68, 1);
+    this.openOverlay();
+    if (!this.overlay) {
+      return;
+    }
     const title = this.add
-      .text(GAME_WIDTH / 2, 245, 'Pick a Wobbly Cake design', {
+      .text(GAME_WIDTH / 2, 235, 'Pick a Wobbly Cake design', {
         color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
         fontSize: '28px',
         fontStyle: 'bold',
       })
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setScrollFactor(0);
     const note = this.add
       .text(
         GAME_WIDTH / 2,
         285,
-        'This is the story-sized decorating hook. WP14 can reuse it for the full repeatable baking activity.',
+        'Maple has laid out three gloriously impractical decorating plans.',
         {
           color: UI_COLOURS.softInk,
           fontFamily: UI_FONT,
-          fontSize: '13px',
+          fontSize: '14px',
           align: 'center',
           wordWrap: { width: 620 },
         },
       )
-      .setOrigin(0.5);
-    overlay.add([shade, card, title, note]);
+      .setOrigin(0.5)
+      .setScrollFactor(0);
+    this.overlay.add([title, note]);
+
     const choices: Array<{ theme: MapleCakeTheme; label: string; x: number }> = [
       { theme: 'sunshine', label: '☀️ Sunshine', x: 400 },
       { theme: 'moonflower', label: '🌙 Moonflower', x: 640 },
       { theme: 'rainbow', label: '🌈 Rainbow', x: 880 },
     ];
     for (const choice of choices) {
-      this.createOverlayChoice(overlay, choice.x, 385, choice.label, () => {
+      this.createOverlayButton(choice.x, 395, choice.label, () => {
         this.finishCakeDesign(choice.theme);
-        overlay.destroy(true);
+        this.closeOverlay();
       });
     }
-  }
-
-  private createOverlayChoice(
-    parent: Phaser.GameObjects.Container,
-    x: number,
-    y: number,
-    labelText: string,
-    onPress: () => void,
-  ): void {
-    const button = this.add
-      .rectangle(x, y, 200, 72, UI_COLOURS.gold, 1)
-      .setStrokeStyle(4, UI_COLOURS.goldStrong, 1)
-      .setInteractive({ useHandCursor: true });
-    const label = this.add
-      .text(x, y, labelText, {
-        color: UI_COLOURS.ink,
-        fontFamily: UI_FONT,
-        fontSize: '17px',
-        fontStyle: 'bold',
-      })
-      .setOrigin(0.5)
-      .setInteractive({ useHandCursor: true });
-    applyButtonHover(button, UI_COLOURS.gold, UI_COLOURS.blush);
-    button.on('pointerdown', onPress);
-    label.on('pointerdown', onPress);
-    parent.add([button, label]);
+    this.createOverlayButton(GAME_WIDTH / 2, 510, 'Not yet', () => this.closeOverlay());
   }
 
   private finishCakeDesign(theme: MapleCakeTheme): void {
@@ -781,11 +1900,19 @@ export class VillageInteriorScene extends Phaser.Scene {
       value: theme === 'rainbow',
     });
     new InventoryService(saveService).addItem(WOBBLY_CAKE_ITEM_ID, 1);
-    this.showFeedback(
-      `🎂 ${theme === 'sunshine' ? 'Sunny yellow' : theme === 'moonflower' ? 'Moonflower blue' : 'Rainbow bright'} cake complete! Talk to Maple again so she can see your magnificently wobbly design.`,
-    );
     this.cameras.main.flash(120, 255, 232, 172, false);
-    this.refreshBody();
+    this.time.delayedCall(0, () => {
+      this.showFeedback(
+        `🎂 ${
+          theme === 'sunshine'
+            ? 'Sunny yellow'
+            : theme === 'moonflower'
+              ? 'Moonflower blue'
+              : 'Rainbow bright'
+        } cake complete! Talk to Maple again so she can see your magnificently wobbly design.`,
+        getVillageInteriorAnchor('bakery', 'secondary-feature').approach,
+      );
+    });
   }
 
   private shouldShowBakeryMapCorner(): boolean {
@@ -801,56 +1928,127 @@ export class VillageInteriorScene extends Phaser.Scene {
 
   private findBakeryMapCorner(): void {
     const service = new DiscoveryService(getBrowserSaveService());
+    const anchor = getVillageInteriorAnchor('bakery', 'primary-feature').approach;
     if (service.hasDiscovery(TANSY_BAKERY_MAP_CORNER_DISCOVERY_ID)) {
-      this.showFeedback('The flour-dusted map corner is already safely with you.');
+      this.showFeedback('The flour-dusted map corner is already safely with you.', anchor);
       return;
     }
     service.unlockDiscovery(TANSY_BAKERY_MAP_CORNER_DISCOVERY_ID);
     this.showFeedback(
       '🗺️ Map corner found! It had been used as a recipe bookmark and now smells faintly of berry buns.',
+      anchor,
     );
     this.cameras.main.flash(100, 255, 239, 186, false);
-    this.refreshBody();
+    this.registerInteractions();
   }
 
-  private talkToTansy(): void {
-    const engine = getBrowserQuestEngine();
-    let progress = engine.getProgress(TANSY_MAP_QUEST_ID);
-    if (progress.status === 'not-started') {
-      progress = engine.startQuest(TANSY_MAP_QUEST_ID);
+  private openStoryKeeperConversation(): void {
+    getWorldConversationPresenter().startChoice(
+      this,
+      'resident:quill',
+      'Quill',
+      'Quill closes a little blue book around a silver bookmark. “Looking for a story or just a quiet corner?”',
+      [
+        { id: 'library', label: 'Browse the library' },
+        { id: 'quick-animal', label: 'Something quick with animals' },
+        { id: 'longer-story', label: 'A longer story' },
+        {
+          id: 'talk',
+          label: 'Talk about something else',
+          followUpMessage:
+            'The newest Valley story cards live with the rest of the library now. I like watching the shelves fill up with adventures that really happened.',
+        },
+      ],
+      {
+        onChoice: (choiceId) => {
+          if (choiceId === 'library') {
+            this.time.delayedCall(0, () => this.openStoryLibrary());
+          } else if (choiceId === 'quick-animal') {
+            this.time.delayedCall(0, () =>
+              this.openStoryLibrary({ genre: 'Animals', length: 'Quick Read' }),
+            );
+          } else if (choiceId === 'longer-story') {
+            this.time.delayedCall(0, () => this.openStoryLibrary({ length: 'Longer Read' }));
+          }
+        },
+      },
+    );
+  }
+
+  private openStoryLibrary(
+    initialFilters: { format?: string; genre?: string; audience?: string; length?: string } = {},
+  ): void {
+    if (this.storyReader || this.storyReaderLockActive) {
+      return;
     }
-    if (
-      progress.status === 'active' &&
-      progress.currentStepId === getQuestStepId(TANSY_MAP_QUEST_ID, 0)
-    ) {
-      engine.notifyCharacterTalked(TANSY_CHARACTER_ID);
-      this.showFeedback(
-        'Tansy: “Three corners escaped from my favourite map. One likes notices, one smells like baking, and one flew somewhere sunny.”',
-      );
-    } else if (
-      progress.status === 'active' &&
-      progress.currentStepId === getQuestStepId(TANSY_MAP_QUEST_ID, 5)
-    ) {
-      engine.notifyCharacterTalked(TANSY_CHARACTER_ID);
-      this.showFeedback(
-        'Tansy: “They fit! The valley has corners again. I am pinning this map down with four bookmarks this time.”',
-      );
-    } else if (progress.status === 'completed') {
-      this.showFeedback(
-        'Tansy: “The repaired map is staying right here. Unless a very determined breeze learns to read.”',
-      );
-    } else {
-      this.showFeedback(new StoryHouseService(getBrowserSaveService()).getCurrentClue());
-    }
-    this.refreshBody();
+
+    this.closeOverlay();
+    const request = ++this.storyReaderRequest;
+    this.setStoryReaderLock(true);
+
+    void import('../storyLibrary/StoryReaderOverlay')
+      .then(({ StoryReaderOverlay }) => {
+        if (request !== this.storyReaderRequest || !this.sys.isActive()) {
+          this.setStoryReaderLock(false);
+          return;
+        }
+
+        let reader: StoryReaderHandle;
+        reader = new StoryReaderOverlay({
+          initialFilters,
+          onClose: () => {
+            if (this.storyReader === reader) {
+              this.storyReader = null;
+            }
+            this.setStoryReaderLock(false);
+            this.time.delayedCall(0, () => {
+              if (
+                this.sys.isActive() &&
+                !this.storyReader &&
+                !this.overlay &&
+                !getWorldConversationPresenter().isActive(this)
+              ) {
+                this.setStoryReaderLock(false);
+              }
+            });
+          },
+        });
+        this.storyReader = reader;
+        reader.mount();
+      })
+      .catch(() => {
+        if (request !== this.storyReaderRequest) {
+          return;
+        }
+        this.setStoryReaderLock(false);
+        this.showFeedback(
+          'The library book would not open just now. Quill has kept your place safe.',
+          getVillageInteriorAnchor('library', 'primary-feature').approach,
+        );
+      });
+  }
+
+  private closeStoryLibrary(): void {
+    this.storyReaderRequest += 1;
+    const reader = this.storyReader;
+    this.storyReader = null;
+    reader?.destroy();
+    this.setStoryReaderLock(false);
+  }
+
+  private setStoryReaderLock(active: boolean): void {
+    this.storyReaderLockActive = active;
+    setInteractionModalActive(this, active);
   }
 
   private readStoryCard(): void {
     const service = new StoryHouseService(getBrowserSaveService());
     const cards = service.listCards().filter(({ unlocked }) => unlocked);
+    const anchor = getVillageInteriorAnchor('library', 'primary-feature').approach;
     if (cards.length === 0) {
       this.showFeedback(
         'No story cards have reached the shelves yet. Exploring the valley will change that.',
+        anchor,
       );
       return;
     }
@@ -862,34 +2060,419 @@ export class VillageInteriorScene extends Phaser.Scene {
       return;
     }
     service.readCard(card.id);
-    this.showFeedback(`${card.icon} ${card.title}\n${card.text}`);
-    this.refreshBody();
+    this.showFeedback(`${card.icon} ${card.title}\n${card.text}`, anchor);
   }
 
-  private openThreadShop(): void {
-    if (this.closing) {
+  private openThreadWardrobe(): void {
+    const wardrobe = new TwinkleWardrobeService(getBrowserSaveService());
+    const options = wardrobe.listOwnedWearables();
+    this.openOverlay();
+    if (!this.overlay) {
       return;
     }
-    this.scene.launch('ShopScene', { returnScene: 'VillageInteriorScene' });
-    this.scene.pause();
+
+    const title = this.add
+      .text(GAME_WIDTH / 2, 126, 'Dressing Mirror', {
+        color: '#563f63',
+        fontFamily: UI_FONT,
+        fontSize: '28px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5)
+      .setName('twinkle-wardrobe-title')
+      .setScrollFactor(0);
+    const note = this.add
+      .text(
+        GAME_WIDTH / 2,
+        160,
+        options.length > 0
+          ? 'Choose one of your Twinkle & Thread wearables and see it on your unicorn straight away.'
+          : 'You do not own a Twinkle & Thread wearable yet. Browse the shop to find one you like.',
+        {
+          color: '#806985',
+          fontFamily: UI_FONT,
+          fontSize: '12px',
+          fontStyle: 'bold',
+          align: 'center',
+          wordWrap: { width: 760 },
+        },
+      )
+      .setOrigin(0.5)
+      .setScrollFactor(0);
+    this.overlay.add([title, note]);
+
+    options.forEach((option, index) => {
+      const column = index % 2;
+      const row = Math.floor(index / 2);
+      const x = 455 + column * 370;
+      const y = 300 + row * 150;
+      const card = this.add.graphics().setScrollFactor(0);
+      card.fillStyle(0x4b3045, 0.1);
+      card.fillRoundedRect(x - 165 + 5, y - 60 + 5, 330, 120, 18);
+      card.fillStyle(option.isEquipped ? 0xfff0cf : 0xfffbef, 1);
+      card.lineStyle(3, option.isEquipped ? 0xb7834e : 0xd3a0ae, 0.9);
+      card.fillRoundedRect(x - 165, y - 60, 330, 120, 18);
+      card.strokeRoundedRect(x - 165, y - 60, 330, 120, 18);
+
+      const icon = this.add
+        .text(x - 125, y - 8, option.icon, {
+          fontFamily: UI_FONT,
+          fontSize: '32px',
+        })
+        .setOrigin(0.5)
+        .setScrollFactor(0);
+      const name = this.add
+        .text(x - 82, y - 28, option.name, {
+          color: '#5b4662',
+          fontFamily: UI_FONT,
+          fontSize: '14px',
+          fontStyle: 'bold',
+          wordWrap: { width: 190 },
+        })
+        .setOrigin(0, 0.5)
+        .setScrollFactor(0);
+      const description = this.add
+        .text(x - 82, y + 6, option.description, {
+          color: '#806985',
+          fontFamily: UI_FONT,
+          fontSize: '10px',
+          wordWrap: { width: 190 },
+        })
+        .setOrigin(0, 0.5)
+        .setScrollFactor(0);
+      this.overlay?.add([card, icon, name, description]);
+      this.createOverlayButton(
+        x + 90,
+        y + 38,
+        option.isEquipped ? 'Wearing ✓' : 'Wear it',
+        () => this.equipThreadWearable(option.itemId),
+        !option.isEquipped,
+        130,
+        34,
+      );
+    });
+
+    if (this.threadWardrobeFeedback) {
+      const feedback = this.add
+        .text(GAME_WIDTH / 2, 565, this.threadWardrobeFeedback, {
+          color: '#704d61',
+          fontFamily: UI_FONT,
+          fontSize: '13px',
+          fontStyle: 'bold',
+          align: 'center',
+          wordWrap: { width: 760 },
+        })
+        .setOrigin(0.5)
+        .setScrollFactor(0);
+      this.overlay.add(feedback);
+    }
+
+    this.createOverlayButton(
+      GAME_WIDTH / 2 - 150,
+      650,
+      'Remove accessory',
+      () => this.removeThreadWearable(),
+      true,
+      250,
+      46,
+    );
+    this.createOverlayButton(
+      GAME_WIDTH / 2 + 150,
+      650,
+      'Back to the boutique',
+      () => this.closeOverlay(),
+      true,
+      250,
+      46,
+    );
   }
 
-  private showThreadProgress(stock: ReturnType<ShopService['listStock']>): void {
+  private equipThreadWearable(itemId: ItemId): void {
+    const result = new TwinkleWardrobeService(getBrowserSaveService()).equip(itemId);
+    if (result.status === 'equipped') {
+      this.threadWardrobeFeedback = `${result.option.name} is now on your unicorn.`;
+      this.runtime?.refreshPlayerAppearance();
+    } else if (result.status === 'persistence-failed') {
+      this.threadWardrobeFeedback = 'That change did not save. Please try again.';
+    } else {
+      this.threadWardrobeFeedback = 'That wearable is not available in your wardrobe yet.';
+    }
+    this.openThreadWardrobe();
+  }
+
+  private removeThreadWearable(): void {
+    const result = new TwinkleWardrobeService(getBrowserSaveService()).removeAccessory();
+    if (result.status === 'removed') {
+      this.threadWardrobeFeedback = 'Accessory removed.';
+      this.runtime?.refreshPlayerAppearance();
+    } else {
+      this.threadWardrobeFeedback = 'That change did not save. Please try again.';
+    }
+    this.openThreadWardrobe();
+  }
+
+  private openThreadShopkeeperConversation(): void {
+    getWorldConversationPresenter().startChoice(
+      this,
+      'resident:velvet',
+      'Velvet',
+      'Velvet gives the nearest display a tiny adjustment. “Looking for something special?”',
+      [
+        { id: 'shop', label: 'Shop' },
+        {
+          id: 'talk',
+          label: 'Talk about something else',
+          followUpMessage:
+            'I change the displays whenever the light changes. A ribbon can look completely different in morning sunshine than it does under evening lanterns.',
+        },
+      ],
+      {
+        onChoice: (choiceId) => {
+          if (choiceId === 'shop') {
+            this.time.delayedCall(0, () => this.openThreadShop());
+          }
+        },
+      },
+    );
+  }
+
+  private openThreadShop(
+    initialSection: 'accessories' | 'decorations' = this.threadShopSection,
+  ): void {
+    this.threadShopSection = initialSection;
+    const stock = new ShopService(getBrowserSaveService()).listStock();
+    const visibleStock = stock.filter(({ definition }) =>
+      initialSection === 'accessories'
+        ? definition.category === 'accessory'
+        : definition.category === 'decoration',
+    );
+
+    this.openOverlay();
+    if (!this.overlay) {
+      return;
+    }
+
+    const title = this.add
+      .text(GAME_WIDTH / 2, 126, 'Velvet’s Twinkle & Thread', {
+        color: '#563f63',
+        fontFamily: UI_FONT,
+        fontSize: '28px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5)
+      .setName('twinkle-shop-title')
+      .setScrollFactor(0);
+    const note = this.add
+      .text(
+        GAME_WIDTH / 2,
+        158,
+        'Wearables stay in your collection. Cottage décor can be bought more than once.',
+        {
+          color: '#806985',
+          fontFamily: UI_FONT,
+          fontSize: '12px',
+          fontStyle: 'bold',
+        },
+      )
+      .setOrigin(0.5)
+      .setScrollFactor(0);
+    this.overlay.add([title, note]);
+
+    const sections = [
+      { id: 'accessories' as const, label: '🎀 Wearables' },
+      { id: 'decorations' as const, label: '✨ Cottage décor' },
+    ];
+    sections.forEach((tab, index) => {
+      const x = 500 + index * 280;
+      const selected = tab.id === initialSection;
+      const surface = this.add.graphics().setScrollFactor(0);
+      surface.fillStyle(0x4b3045, 0.12);
+      surface.fillRoundedRect(x - 112 + 4, 188 + 4, 224, 52, 18);
+      surface.fillStyle(selected ? 0xf3d9a4 : 0xead4ee, 1);
+      surface.lineStyle(3, selected ? 0xb7834e : 0xb486a8, 0.95);
+      surface.fillRoundedRect(x - 112, 188, 224, 52, 18);
+      surface.strokeRoundedRect(x - 112, 188, 224, 52, 18);
+
+      const hit = this.add
+        .rectangle(x, 214, 234, 64, 0xffffff, 0.001)
+        .setAlpha(0.001)
+        .setInteractive({ useHandCursor: true })
+        .setScrollFactor(0);
+      const count = stock.filter(({ definition }) =>
+        tab.id === 'accessories'
+          ? definition.category === 'accessory'
+          : definition.category === 'decoration',
+      ).length;
+      const label = this.add
+        .text(x, 214, `${tab.label}  ${count}`, {
+          color: selected ? '#664631' : '#5d4360',
+          fontFamily: UI_FONT,
+          fontSize: '14px',
+          fontStyle: 'bold',
+        })
+        .setOrigin(0.5)
+        .setScrollFactor(0);
+      hit.on('pointerdown', () => this.openThreadShop(tab.id));
+      this.overlay?.add([surface, hit, label]);
+    });
+
+    visibleStock.forEach((item, index) => {
+      const column = index % 3;
+      const row = Math.floor(index / 3);
+      const x = 320 + column * 320;
+      const y = 345 + row * 155;
+
+      const card = this.add.graphics().setScrollFactor(0);
+      card.fillStyle(0x4b3045, 0.1);
+      card.fillRoundedRect(x - 140 + 5, y - 68 + 6, 280, 136, 18);
+      card.fillStyle(item.isUnlocked ? 0xfffbef : 0xf1ebf1, 1);
+      card.lineStyle(3, item.isUnlocked ? 0xd3a0ae : 0xbfa8c7, 0.9);
+      card.fillRoundedRect(x - 140, y - 68, 280, 136, 18);
+      card.strokeRoundedRect(x - 140, y - 68, 280, 136, 18);
+
+      const iconWell = this.add
+        .circle(x - 104, y - 18, 27, item.isUnlocked ? 0xf1d7cf : 0xe6dfea, 1)
+        .setStrokeStyle(2, item.isUnlocked ? 0xc995a4 : 0xb7a4c1, 0.85)
+        .setScrollFactor(0);
+      const icon = this.add
+        .text(x - 104, y - 18, item.definition.icon ?? '✨', {
+          fontFamily: UI_FONT,
+          fontSize: '29px',
+        })
+        .setOrigin(0.5)
+        .setScrollFactor(0);
+      const name = this.add
+        .text(x - 67, y - 35, item.definition.name, {
+          color: '#5b4662',
+          fontFamily: UI_FONT,
+          fontSize: '14px',
+          fontStyle: 'bold',
+          wordWrap: { width: 180 },
+        })
+        .setOrigin(0, 0.5)
+        .setScrollFactor(0);
+
+      const detail = this.add
+        .text(x - 67, y - 2, item.definition.description ?? '', {
+          color: '#806985',
+          fontFamily: UI_FONT,
+          fontSize: '10px',
+          wordWrap: { width: 182 },
+          lineSpacing: 1,
+        })
+        .setOrigin(0, 0.5)
+        .setScrollFactor(0);
+
+      const status = !item.isUnlocked
+        ? (item.unlockHint ?? 'Locked')
+        : item.isUniqueOwned
+          ? 'Owned ✓'
+          : item.definition.category === 'decoration' && item.ownedQuantity > 0
+            ? `Owned: ${item.ownedQuantity}`
+            : item.definition.category === 'accessory'
+              ? 'Wearable'
+              : 'Cottage décor';
+      const statusText = this.add
+        .text(x - 112, y + 39, status, {
+          color: '#806985',
+          fontFamily: UI_FONT,
+          fontSize: '10px',
+          fontStyle: 'bold',
+          wordWrap: { width: 112 },
+        })
+        .setOrigin(0, 0.5)
+        .setScrollFactor(0);
+
+      this.overlay?.add([card, iconWell, icon, name, detail, statusText]);
+      this.createOverlayButton(
+        x + 69,
+        y + 39,
+        !item.isUnlocked ? 'Locked' : item.isUniqueOwned ? 'Yours' : `Buy • ${item.price} ✨`,
+        () => this.buyThreadItem(item.definition.id),
+        item.isUnlocked && !item.isUniqueOwned,
+        122,
+        36,
+      );
+    });
+
+    if (this.threadShopFeedback) {
+      const feedback = this.add
+        .text(GAME_WIDTH / 2, 610, this.threadShopFeedback, {
+          color: '#704d61',
+          fontFamily: UI_FONT,
+          fontSize: '13px',
+          fontStyle: 'bold',
+          align: 'center',
+          wordWrap: { width: 760 },
+        })
+        .setOrigin(0.5)
+        .setScrollFactor(0);
+      this.overlay.add(feedback);
+    }
+
+    this.createOverlayButton(
+      GAME_WIDTH / 2,
+      660,
+      'Back to the boutique',
+      () => this.closeOverlay(),
+      true,
+      250,
+      46,
+    );
+  }
+
+  private buyThreadItem(itemId: ItemId): void {
+    if (!this.purchaseGuard.tryBegin(itemId, this.time.now)) {
+      return;
+    }
+
+    const result = new ShopService(getBrowserSaveService()).purchase(itemId);
+    if (result.type === 'purchased') {
+      this.threadShopFeedback =
+        result.ownedQuantity === 1
+          ? `✨ ${result.item.name} added to your collection. ${result.balance} Shimmer left.`
+          : `✨ Another ${result.item.name} added. You now own ${result.ownedQuantity}. ${result.balance} Shimmer left.`;
+      this.cameras.main.flash(90, 255, 236, 190, false);
+    } else if (result.type === 'insufficient-funds') {
+      this.threadShopFeedback = `You need ${result.shortfall} more Shimmer for ${result.item.name}.`;
+    } else if (result.type === 'locked') {
+      this.threadShopFeedback = result.unlockHint;
+    } else if (result.type === 'persistence-failed') {
+      this.threadShopFeedback = 'That did not save, so no Shimmer was spent. Please try again.';
+    } else {
+      this.threadShopFeedback = `${result.item.name} is already yours.`;
+    }
+
+    this.refreshBalance();
+    this.openThreadShop(this.threadShopSection);
+  }
+
+  private showThreadProgress(): void {
+    const stock = new ShopService(getBrowserSaveService()).listStock();
     const nextLocked = stock.find(({ isUnlocked }) => !isUnlocked);
     this.showFeedback(
       nextLocked
-        ? `Next locked treasure: ${nextLocked.definition.name}. ${nextLocked.unlockHint ?? 'Keep exploring to reveal it.'}`
-        : 'Every current Twinkle & Thread stock line is unlocked. More region-themed stock can join later in R6.5.',
+        ? `Next locked treasure: ${nextLocked.definition.name}. ${
+            nextLocked.unlockHint ?? 'Keep exploring to reveal it.'
+          }`
+        : 'Every current Twinkle & Thread treasure is unlocked. The shelves are ready for whatever you discover next.',
+      getVillageInteriorAnchor('accessory-shop', 'primary-feature').approach,
     );
   }
 
   private refreshBalance(): void {
     const balance = new ShimmerEconomyService(getBrowserSaveService()).getBalance();
-    this.balanceText?.setText(`✨ ${balance} Shimmer`);
+    this.balanceText?.setText(`✨ ${balance}`);
   }
 
-  private showFeedback(message: string): void {
-    this.feedback?.setText(message).setVisible(true);
+  private showFeedback(message: string, anchor: { x: number; y: number }): void {
+    getWorldFeedbackPresenter(this).showReaction(message, anchor, 3600);
+  }
+
+  private handleEscape(): void {
+    if (this.overlay) {
+      this.closeOverlay();
+    }
   }
 
   private leaveInterior(): void {
@@ -897,6 +2480,21 @@ export class VillageInteriorScene extends Phaser.Scene {
       return;
     }
     this.closing = true;
+    this.closeStoryLibrary();
+    this.closeOverlay();
     this.scene.start(this.returnScene);
+  }
+
+  private shutdownInterior(): void {
+    this.input.keyboard?.off('keydown-ESC', this.handleEscape, this);
+    this.closeStoryLibrary();
+    this.closeOverlay();
+    getSceneInteractionRegistry(this).clearOwner(INTERIOR_INTERACTION_OWNER);
+    getVillageInteriorOccupancyService().leave(this.interiorId);
+    this.runtime?.destroy();
+    this.runtime = null;
+    this.occupant = null;
+    this.balanceText = null;
+    this.purchaseGuard.reset();
   }
 }

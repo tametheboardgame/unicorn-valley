@@ -89,55 +89,6 @@ const PATHS: Readonly<Partial<Record<string, readonly Stroke[]>>> = {
       depth: 2.43,
     },
   ],
-  SunbeamVillageScene: [
-    {
-      points: EXPLORATION_MAIN_ROUTES.SunbeamVillageScene,
-      width: 122,
-      colour: 0xe0bd82,
-      alpha: 0.95,
-      depth: 3.18,
-    },
-    {
-      points: EXPLORATION_MAIN_ROUTES.SunbeamVillageScene,
-      width: 94,
-      colour: 0xf7e9c5,
-      alpha: 0.98,
-      depth: 3.19,
-    },
-    {
-      points: [
-        { x: 900, y: 950 },
-        { x: 900, y: 710 },
-        { x: 900, y: 625 },
-      ],
-      width: 72,
-      colour: 0xf7e9c5,
-      alpha: 0.96,
-      depth: 3.19,
-    },
-    {
-      points: [
-        { x: 1500, y: 850 },
-        { x: 1500, y: 690 },
-        { x: 1500, y: 585 },
-      ],
-      width: 72,
-      colour: 0xf7e9c5,
-      alpha: 0.96,
-      depth: 3.19,
-    },
-    {
-      points: [
-        { x: 2110, y: 950 },
-        { x: 2110, y: 720 },
-        { x: 2110, y: 635 },
-      ],
-      width: 72,
-      colour: 0xf7e9c5,
-      alpha: 0.96,
-      depth: 3.19,
-    },
-  ],
   RainbowMeadowScene: [
     {
       points: EXPLORATION_MAIN_ROUTES.RainbowMeadowScene,

@@ -5,6 +5,7 @@ import {
   PICNIC_SUNSHINE_FLAG,
   type PicnicTheme,
 } from '../../content/r4PicnicEvent';
+import { MAPLE_CAKE_QUEST_ID } from '../../content/r6VillageContent';
 import type { SaveGame } from '../save/saveSchema';
 
 export function getPicnicTheme(save: SaveGame | null): PicnicTheme | null {
@@ -21,5 +22,9 @@ export function getPicnicTheme(save: SaveGame | null): PicnicTheme | null {
 }
 
 export function isMarigoldPicnicReady(save: SaveGame | null): boolean {
-  return save?.world.flags[PICNIC_READY_FLAG] === true && getPicnicTheme(save) !== null;
+  return (
+    save?.quests.byQuestId[MAPLE_CAKE_QUEST_ID]?.status === 'completed' &&
+    save.world.flags[PICNIC_READY_FLAG] === true &&
+    getPicnicTheme(save) !== null
+  );
 }

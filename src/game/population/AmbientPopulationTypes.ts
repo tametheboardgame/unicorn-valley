@@ -8,11 +8,18 @@ export type SupportingResidentId =
   | 'resident:breeze'
   | 'resident:tansy'
   | 'resident:maple'
+  | 'resident:cinnamon'
+  | 'resident:velvet'
+  | 'resident:quill'
   | 'resident:juniper'
   | 'resident:fern'
   | 'resident:coral'
   | 'resident:skipper'
-  | 'resident:echo';
+  | 'resident:echo'
+  | 'resident:poppy'
+  | 'resident:milo'
+  | 'resident:lulu'
+  | 'resident:bean';
 
 export type ResidentBehaviourMode =
   | 'local-wander'
@@ -53,6 +60,7 @@ export interface SupportingResidentDefinition {
   talk: ResidentTalkDefinition;
   characterId?: CharacterId;
   startsQuestId?: QuestId;
+  questIntroLine?: string;
 }
 
 export interface ResidentWaypoint extends MapPoint {
@@ -71,6 +79,7 @@ export interface ResidentPlacementDefinition {
   interactionRadius: number;
   priority?: number;
   activeWhen?: ResidentCondition;
+  presentationScale?: number;
 }
 
 export interface ResidentStoryAnchorDefinition {

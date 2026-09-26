@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "stories": [
+    {
+      "id": "the-duck-bread-baker",
+      "title": "The Duck Bread Baker",
+      "description": "Join Duck on his delicious journey as he sets out to satisfy his love for bread. But when all his feathered friends fall ill, he learns that a diet of just bread isn’t the way to go.",
+      "catalogueBlurb": "Duck learns why loving bread still means eating a balanced diet.",
+      "author": "David Fairbairn",
+      "readingMode": "paged-picture-book",
+      "coverPath": "/stories/the-duck-bread-baker/covers/cover.webp",
+      "coverAlt": "The Duck Bread Baker cover, showing a yellow duck surrounded by loaves of bread.",
+      "series": null,
+      "tags": [
+        "picture-book",
+        "animals",
+        "food",
+        "health",
+        "illustrated"
+      ],
+      "discovery": {
+        "format": "Picture Book",
+        "genres": [
+          "Animals",
+          "Food & Health"
+        ],
+        "audiences": [
+          "Read Together",
+          "Early Reader"
+        ],
+        "length": "Quick Read"
+      },
+      "rightsSummary": {
+        "text": "original",
+        "illustrations": "unknown",
+        "edition": "unknown",
+        "originalPublicationYear": null
+      },
+      "chapterCount": 41,
+      "manifestPath": "/stories/the-duck-bread-baker/book.json"
+    },
+    {
+      "id": "the-lantern-at-the-edge-of-the-woods",
+      "title": "The Lantern at the Edge of the Woods",
+      "description": "A young unicorn follows an unlit lantern into the dusk and discovers why some paths only brighten when they are shared.",
+      "catalogueBlurb": "A young unicorn follows a mysterious lantern into the dusk with a friend.",
+      "author": "Quill",
+      "readingMode": "flowing",
+      "coverPath": null,
+      "coverAlt": null,
+      "series": {
+        "id": "quills-valley-tales",
+        "title": "Quill's Valley Tales",
+        "order": 1
+      },
+      "tags": [
+        "valley-tale",
+        "woods",
+        "lanterns",
+        "friendship",
+        "adventure"
+      ],
+      "discovery": {
+        "format": "Chapter Book",
+        "genres": [
+          "Fantasy",
+          "Adventure"
+        ],
+        "audiences": [
+          "Independent Reader",
+          "Read Together"
+        ],
+        "length": "Longer Read"
+      },
+      "rightsSummary": {
+        "text": "original",
+        "illustrations": null,
+        "edition": "original",
+        "originalPublicationYear": 2026
+      },
+      "chapterCount": 4,
+      "manifestPath": "/stories/the-lantern-at-the-edge-of-the-woods/book.json"
+    },
+    {
+      "id": "the-lion-and-the-mouse",
+      "title": "The Lion and the Mouse",
+      "description": "A tiny promise seems impossible until a trapped lion discovers that help can come in every size.",
+      "catalogueBlurb": "A tiny mouse proves that even the smallest friend can make a big difference.",
+      "author": "Aesop, retold by Quill",
+      "readingMode": "flowing",
+      "coverPath": null,
+      "coverAlt": null,
+      "series": null,
+      "tags": [
+        "classic-retelling",
+        "animals",
+        "kindness",
+        "friendship"
+      ],
+      "discovery": {
+        "format": "Short Story",
+        "genres": [
+          "Animals",
+          "Classics"
+        ],
+        "audiences": [
+          "Read Together",
+          "Early Reader"
+        ],
+        "length": "Quick Read"
+      },
+      "rightsSummary": {
+        "text": "original",
+        "illustrations": null,
+        "edition": "original",
+        "originalPublicationYear": null
+      },
+      "chapterCount": 1,
+      "manifestPath": "/stories/the-lion-and-the-mouse/book.json"
+    }
+  ]
+}

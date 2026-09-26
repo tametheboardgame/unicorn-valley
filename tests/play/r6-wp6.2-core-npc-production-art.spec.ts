@@ -89,7 +89,13 @@ async function expectWorldIdentity(
   expect(npc, `${id} overworld sprite should exist`).toBeTruthy();
   expect(npc?.visible).toBe(true);
   expect(npc?.active).toBe(true);
-  expect(npc?.textureKey).toMatch(new RegExp(`^core-npc-production:${id}:`));
+  expect(npc?.textureKey).toMatch(
+    new RegExp(
+      id === 'willow' || id === 'marigold' || id === 'pebble'
+        ? `^village-core-resident:${id}:`
+        : `^core-npc-production:${id}:`,
+    ),
+  );
   expect(npc?.displayWidth ?? 0).toBeGreaterThan(70);
   expect(npc?.displayHeight ?? 0).toBeGreaterThan(55);
 }

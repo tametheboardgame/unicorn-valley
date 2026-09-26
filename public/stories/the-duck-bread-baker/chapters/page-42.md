@@ -1,0 +1,2 @@
+<!-- block:did-you-know -->
+# Did you know?\n\nDucks and other animals in nature like to eat things like plants, seeds, and bugs. They don’t need bread to survive, and too much bread can make them sick. If you want to feed ducks, it’s better to give them food like oats, corn, or wheat. Just like ducks, we need to be careful about what we eat, too. We should make sure we eat healthy foods so we can grow big and strong and have energy to play and have fun!

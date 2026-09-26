@@ -12,6 +12,13 @@ import {
   UNICORN_PRODUCTION_POSES,
 } from './UnicornProductionArt';
 
+export interface UnicornAppearancePalette {
+  body: number;
+  eye: number;
+  mane: number;
+  tail: number;
+}
+
 interface PoseMetrics {
   bodyY: number;
   headY: number;
@@ -813,12 +820,13 @@ export function drawUnicornAppearance(
   appearance: UnicornAppearance,
   scale = 1,
   pose: UnicornProductionPose = 'idle',
+  palette?: UnicornAppearancePalette,
 ): void {
   const metrics = POSES[pose];
-  const body = colourValue(BODY_COLOURS, appearance.bodyColour);
-  const eye = colourValue(EYE_COLOURS, appearance.eyeColour);
-  const mane = colourValue(HAIR_COLOURS, appearance.maneColour);
-  const tail = colourValue(HAIR_COLOURS, appearance.tailColour);
+  const body = palette?.body ?? colourValue(BODY_COLOURS, appearance.bodyColour);
+  const eye = palette?.eye ?? colourValue(EYE_COLOURS, appearance.eyeColour);
+  const mane = palette?.mane ?? colourValue(HAIR_COLOURS, appearance.maneColour);
+  const tail = palette?.tail ?? colourValue(HAIR_COLOURS, appearance.tailColour);
   const outline = mixColour(body, 0x554261, 0.48);
   const shade = mixColour(body, 0x705c78, 0.23);
   const highlight = mixColour(body, 0xffffff, 0.4);

@@ -139,38 +139,6 @@ function enhanceCrystalBrook(scene: Phaser.Scene): void {
     .setDepth(grottoDepth + 0.3);
 }
 
-function addShopPropCard(
-  scene: Phaser.Scene,
-  name: string,
-  x: number,
-  y: number,
-  icon: string,
-  fill: number,
-): void {
-  const depth = worldDepthForY(y, 0.22);
-  const mat = scene.add.ellipse(0, 20, 150, 44, fill, 0.28).setStrokeStyle(3, 0xffffff, 0.28);
-  const prop = scene.add
-    .text(0, -3, icon, { fontFamily: 'system-ui, sans-serif', fontSize: '38px' })
-    .setOrigin(0.5);
-  scene.add.container(x, y, [mat, prop]).setName(name).setDepth(depth);
-}
-
-function enhanceVillageShops(scene: Phaser.Scene): void {
-  if (scene.children.getByName(`${ROOT_NAME}:village-shops`)) {
-    return;
-  }
-  scene.add.container(0, 0).setName(`${ROOT_NAME}:village-shops`).setVisible(false);
-
-  addShopPropCard(scene, `${ROOT_NAME}:bakery-basket`, 720, 690, '🥖 🥐', 0xe8aa65);
-  addShopPropCard(scene, `${ROOT_NAME}:bakery-menu`, 1080, 690, '🧁', 0xf2c27b);
-
-  addShopPropCard(scene, `${ROOT_NAME}:thread-display`, 1325, 675, '🧵 🎀', 0xd796cc);
-  addShopPropCard(scene, `${ROOT_NAME}:mirror-display`, 1675, 675, '🪞', 0xb894d3);
-
-  addShopPropCard(scene, `${ROOT_NAME}:story-cart`, 1910, 705, '📚', 0x7ba9c8);
-  addShopPropCard(scene, `${ROOT_NAME}:story-lamp`, 2310, 705, '🏮', 0x9cc9d9);
-}
-
 function enhanceWhisperingWoods(scene: Phaser.Scene): void {
   if (scene.children.getByName(`${ROOT_NAME}:whispering-woods`)) {
     return;
@@ -252,8 +220,6 @@ export class R65WorldExperiencePresentationManager {
         enhanceShellCove(scene);
       } else if (scene.scene.key === 'CrystalBrookScene') {
         enhanceCrystalBrook(scene);
-      } else if (scene.scene.key === 'SunbeamVillageScene') {
-        enhanceVillageShops(scene);
       } else if (scene.scene.key === 'WhisperingWoodsScene') {
         enhanceWhisperingWoods(scene);
       }

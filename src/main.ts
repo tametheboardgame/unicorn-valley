@@ -11,7 +11,6 @@ import {
 import { getWorldInteractionCoordinator } from './game/interaction/WorldInteractionCoordinator';
 import { getClickToMoveManager } from './game/input/ClickToMoveManager';
 import { installDynamicImportRecovery } from './game/runtime/DynamicImportRecovery';
-import { getVillageInteriorContractManager } from './game/scenes/VillageInteriorContractManager';
 import { getLandscapeCreatorProgressiveWorldManager } from './game/ui/LandscapeCreatorProgressiveManager';
 import { getLegacyWorldFeedbackMigrationManager } from './game/ui/LegacyWorldFeedbackMigrationManager';
 import { browserHasRaceTouchCapability } from './game/ui/RaceTouchCapability';
@@ -57,7 +56,6 @@ getExplorationGeometryPresentationManager(game);
 getExplorationPathPolishManager(game);
 getWorldLayerAlignmentManager(game);
 getR5FinalTighteningManager(game);
-getVillageInteriorContractManager(game);
 
 void Promise.all([
   import('./game/scenes/InventoryScene'),

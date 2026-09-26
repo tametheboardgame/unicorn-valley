@@ -20,6 +20,13 @@ import { applyDialogueEffects } from './applyDialogueEffects';
 export interface WorldConversationOptions {
   onComplete?: () => void;
   onClose?: () => void;
+  onChoice?: (choiceId: string) => void;
+}
+
+export interface WorldConversationChoice {
+  id: string;
+  label: string;
+  followUpMessage?: string;
 }
 
 interface ActiveConversation {
@@ -32,6 +39,7 @@ interface ActiveConversation {
   closing: boolean;
   supportingPortrait: Phaser.GameObjects.Sprite | null;
   supportingPortraitRequestId: number;
+  speakerNameOverride?: string;
 }
 
 function latestVisibleNamedObject<T extends Phaser.GameObjects.GameObject & { visible: boolean }>(
@@ -87,6 +95,55 @@ export class WorldConversationPresenter {
     );
   }
 
+  public startChoice(
+    scene: Phaser.Scene,
+    speakerId: string,
+    speakerName: string,
+    prompt: string,
+    choices: readonly WorldConversationChoice[],
+    options: WorldConversationOptions = {},
+  ): void {
+    const choiceNodeId = 'world-conversation:short-choice' as DialogueNodeId;
+    const lineNodes = choices.flatMap((choice, index) =>
+      choice.followUpMessage
+        ? [
+            {
+              id: `world-conversation:short-choice:follow-up:${index}` as DialogueNodeId,
+              type: 'line' as const,
+              speakerId: speakerId as CharacterId,
+              text: choice.followUpMessage,
+            },
+          ]
+        : [],
+    );
+    this.startDefinition(
+      scene,
+      {
+        id: 'dialogue:world-conversation-choice' as DialogueId,
+        name: 'In-world choice conversation',
+        startNodeId: choiceNodeId,
+        nodes: [
+          {
+            id: choiceNodeId,
+            type: 'choice',
+            speakerId: speakerId as CharacterId,
+            prompt,
+            choices: choices.map((choice, index) => ({
+              id: choice.id,
+              label: choice.label,
+              nextNodeId: choice.followUpMessage
+                ? (`world-conversation:short-choice:follow-up:${index}` as DialogueNodeId)
+                : undefined,
+            })),
+          },
+          ...lineNodes,
+        ],
+      },
+      options,
+      speakerName,
+    );
+  }
+
   private startDefinition(
     scene: Phaser.Scene,
     definition: DialogueDefinition,
@@ -104,6 +161,7 @@ export class WorldConversationPresenter {
       closing: false,
       supportingPortrait: null,
       supportingPortraitRequestId: 0,
+      speakerNameOverride,
     };
     active.keyHandler = (event) => {
       if (event.repeat || !['Escape', 'Enter', 'Space', 'KeyE'].includes(event.code)) return;
@@ -143,6 +201,13 @@ export class WorldConversationPresenter {
     if (!active || active.closing) return;
     const effects: readonly DialogueEffect[] = active.session.choose(choice.id);
     applyDialogueEffects(getBrowserSaveService(), effects);
+    const onChoice = active.options.onChoice;
+    if (active.session.isComplete()) {
+      this.close(true);
+      onChoice?.(choice.id);
+      return;
+    }
+    onChoice?.(choice.id);
     this.refresh();
   }
 
@@ -154,7 +219,10 @@ export class WorldConversationPresenter {
       this.close(true);
       return;
     }
-    const speakerName = speakerNameOverride ?? characterRegistry.get(node.speakerId).name;
+    const speakerName =
+      speakerNameOverride ??
+      active.speakerNameOverride ??
+      characterRegistry.get(node.speakerId).name;
     active.card.show(node, speakerName, (choice) => this.choose(choice));
     this.syncSupportingPortrait(active, node.speakerId);
   }
@@ -171,7 +239,11 @@ export class WorldConversationPresenter {
       .then(
         ([
           { R6_SUPPORTING_RESIDENTS },
-          { createSupportingResidentSprite, SUPPORTING_RESIDENT_ART_LAYOUT },
+          {
+            createSupportingResidentRoleSprite,
+            createSupportingResidentSprite,
+            SUPPORTING_RESIDENT_ART_LAYOUT,
+          },
         ]) => {
           if (
             this.active !== active ||
@@ -209,7 +281,11 @@ export class WorldConversationPresenter {
           }
 
           fallback?.setVisible(false);
-          const sprite = createSupportingResidentSprite(active.scene, resident)
+          const sprite = (
+            resident.id === 'resident:cinnamon'
+              ? createSupportingResidentRoleSprite(active.scene, resident, 'baker')
+              : createSupportingResidentSprite(active.scene, resident)
+          )
             .setName(`dialogue-production-portrait-${resident.id}`)
             // Supporting-resident textures deliberately include generous transparent tail/head
             // safety margins for world animation. Centre the portrait on the authored unicorn draw

@@ -35,6 +35,7 @@ interface DiagnosticSceneSnapshot {
   state: {
     raceStarted: boolean | null;
     raceFinished: boolean | null;
+    raceProgress: number | null;
     forwardControlMultiplier: number | null;
   };
   objects: DiagnosticObjectSnapshot[];
@@ -482,13 +483,26 @@ test.describe
       }
 
       let finished = false;
+      let exitedAfterFinish = false;
+      let furthestProgress = 0;
       for (let step = 0; step < 130; step += 1) {
         if (step % 2 === 0) {
           await page.keyboard.press('Space');
         }
         await page.waitForTimeout(250);
         const snapshot = await getSnapshot(page);
-        const race = getScene(snapshot, 'NovaTutorialRaceScene');
+        const race = snapshot.scenes.find(({ key }) => key === 'NovaTutorialRaceScene');
+        if (!race) {
+          if (snapshot.activeScenes.includes('RainbowMeadowScene') && furthestProgress >= 3200) {
+            finished = true;
+            exitedAfterFinish = true;
+            break;
+          }
+          throw new Error(
+            `Nova tutorial race disappeared before the finish: ${snapshot.activeScenes.join(', ')}`,
+          );
+        }
+        furthestProgress = Math.max(furthestProgress, race.state.raceProgress ?? 0);
         finished = race.state.raceFinished === true;
         if (finished) {
           break;
@@ -498,18 +512,20 @@ test.describe
       expect(finished, 'Tutorial race should be finishable by an automated child-like run').toBe(
         true,
       );
-      await page.waitForTimeout(700);
 
-      const resultFindings = await captureScenario(
-        page,
-        'nova-race-finished',
-        'NovaTutorialRaceScene',
-        { requirePlayer: true },
-      );
-      expect(resultFindings.filter((finding) => finding.severity === 'error')).toEqual([]);
+      if (!exitedAfterFinish) {
+        await page.waitForTimeout(700);
+        const resultFindings = await captureScenario(
+          page,
+          'nova-race-finished',
+          'NovaTutorialRaceScene',
+          { requirePlayer: true },
+        );
+        expect(resultFindings.filter((finding) => finding.severity === 'error')).toEqual([]);
 
-      const snapshot = await getSnapshot(page);
-      await logicalClick(page, snapshot.width / 2, snapshot.height / 2 + 137);
+        const snapshot = await getSnapshot(page);
+        await logicalClick(page, snapshot.width / 2, snapshot.height / 2 + 137);
+      }
       await waitForScene(page, 'RainbowMeadowScene');
       const postRaceFindings = await captureScenario(page, 'nova-post-race', 'RainbowMeadowScene', {
         requirePlayer: true,

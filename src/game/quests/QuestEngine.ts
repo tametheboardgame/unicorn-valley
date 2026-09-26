@@ -49,12 +49,20 @@ function objectiveLabel(step: QuestStep): string {
       const item = itemRegistry.get(step.itemId);
       return `Find ${step.quantity} ${item.name}${step.quantity === 1 ? '' : 's'}`;
     }
+    case 'collect-items': {
+      const names = step.itemIds.map((itemId) => itemRegistry.get(itemId).name);
+      if (names.length === 1) {
+        return `Find ${names[0]}`;
+      }
+      return `Find ${names.slice(0, -1).join(', ')} and ${names.at(-1)}`;
+    }
     case 'unlock-discovery':
       return `Discover ${discoveryRegistry.get(step.discoveryId).name}`;
     case 'finish-race':
       return step.label;
     case 'award-item':
     case 'consume-item':
+    case 'consume-items':
     case 'award-friendship':
     case 'set-world-flag':
       return 'A little surprise is happening…';
@@ -170,6 +178,15 @@ export class QuestEngine {
         this.inventory.hasItem(step.itemId, step.quantity)
       ) {
         this.advanceQuest(quest);
+        continue;
+      }
+
+      if (
+        step?.type === 'collect-items' &&
+        step.itemIds.includes(itemId) &&
+        step.itemIds.every((requiredItemId) => this.inventory.hasItem(requiredItemId))
+      ) {
+        this.advanceQuest(quest);
       }
     }
   }
@@ -261,6 +278,14 @@ export class QuestEngine {
         continue;
       }
 
+      if (step.type === 'collect-items') {
+        if (!step.itemIds.every((itemId) => this.inventory.hasItem(itemId))) {
+          return;
+        }
+        this.advanceQuest(quest);
+        continue;
+      }
+
       if (step.type === 'award-item') {
         this.inventory.addItem(step.itemId, step.quantity);
         this.advanceQuest(quest);
@@ -273,6 +298,17 @@ export class QuestEngine {
         });
         if (!removed) {
           return;
+        }
+        this.advanceQuest(quest);
+        continue;
+      }
+
+      if (step.type === 'consume-items') {
+        if (!step.itemIds.every((itemId) => this.inventory.hasItem(itemId))) {
+          return;
+        }
+        for (const itemId of step.itemIds) {
+          this.inventory.removeItem(itemId, 1, { allowQuestCritical: true });
         }
         this.advanceQuest(quest);
         continue;

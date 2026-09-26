@@ -218,7 +218,28 @@ test('dialogue and sound settings expose explicit production interaction states'
   if (scene) {
     expect(namedObject(scene, 'dialogue-production-continue').interactive).toBe(true);
   }
-  await page.keyboard.press('Escape');
+  for (let step = 0; step < 8; step += 1) {
+    const glade = (await snapshot(page)).scenes.find(({ key }) => key === 'MoonflowerGladeScene');
+    const dialogueOpen =
+      glade?.objects.some(({ name, visible }) => name === 'dialogue-production-panel' && visible) ??
+      false;
+    if (!dialogueOpen) {
+      break;
+    }
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(120);
+  }
+  await expect
+    .poll(async () => {
+      const glade = (await snapshot(page)).scenes.find(({ key }) => key === 'MoonflowerGladeScene');
+      return (
+        glade?.objects.some(
+          ({ name, visible }) => name === 'dialogue-production-panel' && visible,
+        ) ?? false
+      );
+    })
+    .toBe(false);
+  await page.waitForTimeout(250);
 
   await waitForObject(page, 'MoonflowerGladeScene', 'exploration-shell-settings-nav-button');
   scene = (await snapshot(page)).scenes.find(({ key }) => key === 'MoonflowerGladeScene');

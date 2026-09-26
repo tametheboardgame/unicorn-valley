@@ -11,8 +11,11 @@ import { PLACEHOLDER_CONTENT } from './placeholderContent';
 import {
   PEBBLE_CHARACTER_ID,
   PEBBLE_COLLECTION_QUEST_ID,
-  PEBBLE_CURIOUS_PIECE_ITEM_ID,
   PEBBLE_DISPLAY_REWARD_ITEM_ID,
+  PEBBLE_MOON_GLASS_WASHER_ITEM_ID,
+  PEBBLE_PIECE_ITEM_IDS,
+  PEBBLE_RAINBOW_SPRING_ITEM_ID,
+  PEBBLE_STAR_HEADED_SCREW_ITEM_ID,
   R4_PEBBLE_CHARACTERS,
   R4_PEBBLE_DIALOGUES,
   R4_PEBBLE_DISCOVERIES,
@@ -79,16 +82,42 @@ describe("Pebble's Peculiar Pieces", () => {
       getQuestStepId(PEBBLE_COLLECTION_QUEST_ID, 0),
     );
 
-    for (const [index, definition] of R4_PEBBLE_SECRET_DEFINITIONS.entries()) {
+    expect(questEngine.getCurrentObjective(PEBBLE_COLLECTION_QUEST_ID)?.label).toBe(
+      'Find Moon-glass Washer, Star-headed Screw and Rainbow Spring',
+    );
+
+    for (const definition of [...R4_PEBBLE_SECRET_DEFINITIONS].reverse()) {
       expect(secrets.discover(definition).status).toBe('discovered');
-      expect(inventory.getQuantity(PEBBLE_CURIOUS_PIECE_ITEM_ID)).toBe(index + 1);
+      expect(inventory.getQuantity(definition.rewardItemId!)).toBe(1);
     }
 
     expect(getPebbleStoryPhase(questEngine.getProgress(PEBBLE_COLLECTION_QUEST_ID))).toBe(
       'return-to-pebble',
     );
     expect(secrets.discover(R4_PEBBLE_SECRET_DEFINITIONS[0]).status).toBe('already-discovered');
-    expect(inventory.getQuantity(PEBBLE_CURIOUS_PIECE_ITEM_ID)).toBe(3);
+    expect(PEBBLE_PIECE_ITEM_IDS.map((itemId) => inventory.getQuantity(itemId))).toEqual([1, 1, 1]);
+    expect(inventory.listOwnedItems()).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          definition: expect.objectContaining({
+            id: PEBBLE_MOON_GLASS_WASHER_ITEM_ID,
+            name: 'Moon-glass Washer',
+          }),
+        }),
+        expect.objectContaining({
+          definition: expect.objectContaining({
+            id: PEBBLE_STAR_HEADED_SCREW_ITEM_ID,
+            name: 'Star-headed Screw',
+          }),
+        }),
+        expect.objectContaining({
+          definition: expect.objectContaining({
+            id: PEBBLE_RAINBOW_SPRING_ITEM_ID,
+            name: 'Rainbow Spring',
+          }),
+        }),
+      ]),
+    );
 
     questEngine.notifyCharacterTalked(PEBBLE_CHARACTER_ID);
 
@@ -97,7 +126,7 @@ describe("Pebble's Peculiar Pieces", () => {
       throw new Error('Expected Pebble completion to persist a save.');
     }
     expect(questEngine.getProgress(PEBBLE_COLLECTION_QUEST_ID).status).toBe('completed');
-    expect(inventory.getQuantity(PEBBLE_CURIOUS_PIECE_ITEM_ID)).toBe(0);
+    expect(PEBBLE_PIECE_ITEM_IDS.map((itemId) => inventory.getQuantity(itemId))).toEqual([0, 0, 0]);
     expect(inventory.getQuantity(PEBBLE_DISPLAY_REWARD_ITEM_ID)).toBe(1);
     expect(save.relationships.byCharacterId[PEBBLE_CHARACTER_ID]?.friendshipPoints).toBe(10);
     expect(isPebbleFountainRepaired(save)).toBe(true);

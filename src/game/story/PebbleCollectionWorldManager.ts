@@ -1,14 +1,23 @@
 import Phaser from 'phaser';
 import {
+  PEBBLE_COLLECTION_QUEST_ID,
   PEBBLE_FOUNTAIN_REPAIRED_FLAG,
+  PEBBLE_LEGACY_CURIOUS_PIECE_ITEM_ID,
+  PEBBLE_MOON_GLASS_DISCOVERY_ID,
+  PEBBLE_MOON_GLASS_WASHER_ITEM_ID,
+  PEBBLE_RAINBOW_SPRING_DISCOVERY_ID,
+  PEBBLE_RAINBOW_SPRING_ITEM_ID,
+  PEBBLE_STAR_HEADED_SCREW_ITEM_ID,
+  PEBBLE_STORY_SCREW_DISCOVERY_ID,
   R4_PEBBLE_SECRET_DEFINITIONS,
 } from '../../content/r4PebbleStory';
 import type { SecretDiscoveryDefinition } from '../../content/r4Secrets';
 import { SecretDiscoveryService } from '../discovery/SecretDiscoveryService';
+import { InventoryService } from '../inventory/InventoryService';
+import type { InteractionTarget } from '../interaction/InteractionTarget';
+import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { getBrowserSaveService } from '../save/browserSaveService';
-import { SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
-import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
-import { startPebbleConversation } from './WorldStoryConversations';
+import { getWorldFeedbackPresenter } from '../ui/WorldFeedbackPresenter';
 
 const SUPPORTED_SCENES = [
   'MoonflowerGladeScene',
@@ -17,49 +26,28 @@ const SUPPORTED_SCENES = [
 ] as const;
 
 const PEBBLE_WORLD_PRESENTATION_NAME = 'pebble-world-presentation';
-const PEBBLE_DISCOVERY_FEEDBACK_NAME = 'pebble-discovery-feedback';
+const REGISTRY_OWNER = 'pebble-hidden-objects';
+const LEGACY_DISCOVERY_ITEM_PAIRS = [
+  [PEBBLE_MOON_GLASS_DISCOVERY_ID, PEBBLE_MOON_GLASS_WASHER_ITEM_ID],
+  [PEBBLE_STORY_SCREW_DISCOVERY_ID, PEBBLE_STAR_HEADED_SCREW_ITEM_ID],
+  [PEBBLE_RAINBOW_SPRING_DISCOVERY_ID, PEBBLE_RAINBOW_SPRING_ITEM_ID],
+] as const;
 
 interface CuriosityMarker {
   definition: SecretDiscoveryDefinition;
   container: Phaser.GameObjects.Container;
-  prompt: Phaser.GameObjects.Text;
 }
 
 interface PebbleWorldState {
   scene: Phaser.Scene;
-  interactKey: Phaser.Input.Keyboard.Key | null;
   markers: Map<string, CuriosityMarker>;
-  pebbleContainer: Phaser.GameObjects.Container | null;
-  pebblePrompt: Phaser.GameObjects.Text | null;
   fountainRepair: Phaser.GameObjects.Container | null;
-}
-
-function findPlayer(scene: Phaser.Scene): Phaser.Physics.Arcade.Sprite | null {
-  const namedPlayer = scene.children.getByName(WORLD_PLAYER_NAME);
-  if (namedPlayer instanceof Phaser.Physics.Arcade.Sprite) {
-    return namedPlayer;
-  }
-
-  return (
-    (scene.children.list.find(
-      (object) =>
-        object instanceof Phaser.Physics.Arcade.Sprite &&
-        object.texture.key.startsWith('player-unicorn-'),
-    ) as Phaser.Physics.Arcade.Sprite | undefined) ?? null
-  );
-}
-
-function pebblePosition(): { x: number; y: number } {
-  const marker = SUNBEAM_VILLAGE_MAP.npcMarkers.find(({ id }) => id === 'pebble');
-  if (!marker) {
-    throw new Error('Pebble requires a Sunbeam Village NPC marker.');
-  }
-  return marker.position;
 }
 
 export class PebbleCollectionWorldManager {
   private readonly saveService = getBrowserSaveService();
   private readonly secretService = new SecretDiscoveryService(this.saveService);
+  private readonly inventory = new InventoryService(this.saveService);
   private state: PebbleWorldState | null = null;
 
   public constructor(private readonly game: Phaser.Game) {
@@ -67,6 +55,7 @@ export class PebbleCollectionWorldManager {
   }
 
   private update(): void {
+    this.migrateLegacyCuriousPieces();
     const scene = this.findActiveScene();
     if (!scene) {
       this.clearState();
@@ -74,48 +63,8 @@ export class PebbleCollectionWorldManager {
     }
 
     const state = this.ensureState(scene);
-    const player = findPlayer(scene);
-    if (!player) {
-      return;
-    }
-
     this.refreshCuriosityMarkers(state);
     this.refreshVillagePresentation(state);
-
-    let nearest: CuriosityMarker | null = null;
-    let nearestDistance = Number.POSITIVE_INFINITY;
-    for (const marker of state.markers.values()) {
-      const distance = Phaser.Math.Distance.Between(
-        player.x,
-        player.y,
-        marker.definition.position.x,
-        marker.definition.position.y,
-      );
-      marker.prompt.setVisible(distance <= marker.definition.interactionRadius + 85);
-      if (distance <= marker.definition.interactionRadius && distance < nearestDistance) {
-        nearest = marker;
-        nearestDistance = distance;
-      }
-    }
-
-    const pebbleDistance =
-      state.scene.scene.key === 'SunbeamVillageScene'
-        ? Phaser.Math.Distance.Between(player.x, player.y, pebblePosition().x, pebblePosition().y)
-        : Number.POSITIVE_INFINITY;
-    state.pebblePrompt?.setVisible(pebbleDistance <= 225);
-
-    if (!state.interactKey || !Phaser.Input.Keyboard.JustDown(state.interactKey)) {
-      return;
-    }
-
-    if (nearest && nearestDistance <= pebbleDistance) {
-      this.activateCuriosity(state, nearest.definition);
-      return;
-    }
-
-    if (pebbleDistance <= 150) {
-      this.openPebbleStory(state.scene);
-    }
   }
 
   private findActiveScene(): Phaser.Scene | null {
@@ -136,13 +85,56 @@ export class PebbleCollectionWorldManager {
     this.clearState();
     this.state = {
       scene,
-      interactKey: scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.E) ?? null,
       markers: new Map(),
-      pebbleContainer: null,
-      pebblePrompt: null,
       fountainRepair: null,
     };
     return this.state;
+  }
+
+  private migrateLegacyCuriousPieces(): void {
+    const save = this.saveService.load();
+    if (!save) {
+      return;
+    }
+
+    const questIsActive = save.quests.byQuestId[PEBBLE_COLLECTION_QUEST_ID]?.status === 'active';
+    const discovered = new Set([
+      ...save.collections.discoveryIds,
+      ...save.world.uniqueDiscoveryIds,
+    ]);
+    const missingSpecificItems = questIsActive
+      ? LEGACY_DISCOVERY_ITEM_PAIRS.filter(
+          ([discoveryId, itemId]) =>
+            discovered.has(discoveryId) && (save.inventory.itemQuantities[itemId] ?? 0) === 0,
+        )
+      : [];
+    const legacyQuantity = save.inventory.itemQuantities[PEBBLE_LEGACY_CURIOUS_PIECE_ITEM_ID] ?? 0;
+
+    if (missingSpecificItems.length === 0 && legacyQuantity === 0) {
+      return;
+    }
+
+    for (const [, itemId] of missingSpecificItems) {
+      this.inventory.addItem(itemId, 1, { suppressRewardFeedback: true });
+    }
+
+    const migrated = this.saveService.load();
+    if (
+      !migrated ||
+      (migrated.inventory.itemQuantities[PEBBLE_LEGACY_CURIOUS_PIECE_ITEM_ID] ?? 0) === 0
+    ) {
+      return;
+    }
+
+    const itemQuantities = { ...migrated.inventory.itemQuantities };
+    delete itemQuantities[PEBBLE_LEGACY_CURIOUS_PIECE_ITEM_ID];
+    this.saveService.save({
+      ...migrated,
+      inventory: {
+        ...migrated.inventory,
+        itemQuantities,
+      },
+    });
   }
 
   private refreshCuriosityMarkers(state: PebbleWorldState): void {
@@ -164,69 +156,97 @@ export class PebbleCollectionWorldManager {
         state.markers.set(definition.id, this.createCuriosityMarker(state.scene, definition));
       }
     }
+
+    this.publishTargets(state);
   }
 
   private createCuriosityMarker(
     scene: Phaser.Scene,
     definition: SecretDiscoveryDefinition,
   ): CuriosityMarker {
-    const glow = scene.add.circle(0, 0, 24, 0xffec9c, 0.1).setStrokeStyle(2, 0xffffff, 0.2);
+    const glow = scene.add.circle(0, 0, 28, 0xffec9c, 0.1).setStrokeStyle(2, 0xffffff, 0.18);
+    const objectArt = this.createCuriosityObjectArt(scene, definition);
     const glint = scene.add
-      .text(0, 0, '✦', {
-        color: '#fff1a8',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '24px',
-        fontStyle: 'bold',
-      })
-      .setOrigin(0.5)
-      .setAlpha(0.62);
-    const prompt = scene.add
-      .text(0, 48, `${definition.actionLabel}: ${definition.label}  🔎`, {
-        color: '#5e5360',
+      .text(20, -20, '✦', {
+        color: '#fff7c7',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '15px',
         fontStyle: 'bold',
-        backgroundColor: '#fff9edea',
-        padding: { x: 8, y: 5 },
       })
       .setOrigin(0.5)
-      .setVisible(false);
-    const zone = scene.add
-      .zone(0, 0, definition.interactionRadius * 1.4, definition.interactionRadius * 1.4)
-      .setInteractive({ useHandCursor: true });
+      .setAlpha(0.5);
 
     const container = scene.add
-      .container(definition.position.x, definition.position.y, [glow, glint, prompt, zone])
+      .container(definition.position.x, definition.position.y, [glow, ...objectArt, glint])
       .setName(PEBBLE_WORLD_PRESENTATION_NAME)
       .setDepth(19);
 
-    zone.on('pointerdown', () => {
-      const player = findPlayer(scene);
-      if (!player) {
-        return;
-      }
-      const distance = Phaser.Math.Distance.Between(
-        player.x,
-        player.y,
-        definition.position.x,
-        definition.position.y,
-      );
-      if (distance <= definition.interactionRadius) {
-        this.activateCuriosity(this.state, definition);
-      }
-    });
-
     scene.tweens.add({
       targets: [glow, glint],
-      alpha: 0.95,
-      scale: 1.16,
+      alpha: 0.9,
+      scale: 1.12,
       duration: 980,
       yoyo: true,
       repeat: -1,
       ease: 'Sine.InOut',
     });
 
-    return { definition, container, prompt };
+    return { definition, container };
+  }
+
+  private createCuriosityObjectArt(
+    scene: Phaser.Scene,
+    definition: SecretDiscoveryDefinition,
+  ): Phaser.GameObjects.GameObject[] {
+    if (definition.discoveryId === PEBBLE_MOON_GLASS_DISCOVERY_ID) {
+      const washer = scene.add.circle(0, 0, 16, 0xb9e8ed, 0.96).setStrokeStyle(3, 0xf4ffff, 0.95);
+      const centre = scene.add.circle(0, 0, 7, 0x47666d, 0.94).setStrokeStyle(1, 0x82bdc7, 0.9);
+      return [washer, centre];
+    }
+
+    if (definition.discoveryId === PEBBLE_STORY_SCREW_DISCOVERY_ID) {
+      const shaft = scene.add.rectangle(0, 7, 7, 25, 0xc78d45, 1).setStrokeStyle(1, 0x73502a, 0.95);
+      const head = scene.add
+        .text(0, -9, '★', {
+          color: '#e6b866',
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '23px',
+          fontStyle: 'bold',
+          stroke: '#73502a',
+          strokeThickness: 2,
+        })
+        .setOrigin(0.5);
+      return [shaft, head];
+    }
+
+    const springColours = [0x7ed7e8, 0xd9a5e8, 0xf4d66f, 0x8ed39c] as const;
+    return springColours.map((colour, index) =>
+      scene.add.ellipse(0, -10 + index * 7, 28, 11, colour, 0.18).setStrokeStyle(3, colour, 0.98),
+    );
+  }
+
+  private publishTargets(state: PebbleWorldState): void {
+    const targets: InteractionTarget[] = [...state.markers.values()].map(
+      ({ definition, container }) => ({
+        id: `interaction:${definition.id}`,
+        label: definition.label,
+        actionLabel: definition.actionLabel,
+        actionKind: 'pick-up',
+        position: definition.position,
+        interactionRadius: definition.interactionRadius,
+        priority: 25,
+        visible: () => container.active,
+        directArea: {
+          width: definition.interactionRadius * 1.4,
+          height: definition.interactionRadius * 1.4,
+        },
+        result: {
+          type: 'callback',
+          activate: () => this.activateCuriosity(state, definition),
+        },
+      }),
+    );
+    getSceneInteractionRegistry(state.scene).replaceOwnerTargets(REGISTRY_OWNER, targets);
   }
 
   private activateCuriosity(
@@ -245,57 +265,19 @@ export class PebbleCollectionWorldManager {
     const marker = state.markers.get(definition.id);
     marker?.container.destroy(true);
     state.markers.delete(definition.id);
-    this.showDiscoveryFeedback(state.scene, definition.feedback);
+    this.publishTargets(state);
+    getWorldFeedbackPresenter(state.scene).showReaction(
+      definition.feedback,
+      definition.position,
+      3000,
+    );
   }
 
   private refreshVillagePresentation(state: PebbleWorldState): void {
     if (state.scene.scene.key !== 'SunbeamVillageScene') {
-      state.pebbleContainer?.destroy(true);
-      state.pebbleContainer = null;
-      state.pebblePrompt = null;
       state.fountainRepair?.destroy(true);
       state.fountainRepair = null;
       return;
-    }
-
-    if (!state.pebbleContainer?.active) {
-      const position = pebblePosition();
-      const cover = state.scene.add.circle(0, 0, 39, 0xfff1d0, 0.98).setStrokeStyle(4, 0x7a806d, 1);
-      const icon = state.scene.add
-        .text(0, -2, '🪨', {
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '30px',
-        })
-        .setOrigin(0.5);
-      const prompt = state.scene.add
-        .text(0, 62, 'Talk: Pebble  💬', {
-          color: '#4f594b',
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '15px',
-          fontStyle: 'bold',
-          backgroundColor: '#fff8dfed',
-          padding: { x: 8, y: 5 },
-        })
-        .setOrigin(0.5)
-        .setVisible(false);
-      const zone = state.scene.add.zone(0, 0, 170, 170).setInteractive({ useHandCursor: true });
-
-      state.pebbleContainer = state.scene.add
-        .container(position.x, position.y, [cover, icon, prompt, zone])
-        .setName(PEBBLE_WORLD_PRESENTATION_NAME)
-        .setDepth(13);
-      state.pebblePrompt = prompt;
-
-      zone.on('pointerdown', () => {
-        const player = findPlayer(state.scene);
-        if (!player) {
-          return;
-        }
-        const distance = Phaser.Math.Distance.Between(player.x, player.y, position.x, position.y);
-        if (distance <= 150) {
-          this.openPebbleStory(state.scene);
-        }
-      });
     }
 
     const repaired = this.saveService.load()?.world.flags[PEBBLE_FOUNTAIN_REPAIRED_FLAG] === true;
@@ -359,43 +341,15 @@ export class PebbleCollectionWorldManager {
     return scene.add.container(0, 0, objects).setName(PEBBLE_WORLD_PRESENTATION_NAME).setDepth(12);
   }
 
-  private openPebbleStory(scene: Phaser.Scene): void {
-    if (!scene.scene.isActive()) {
-      return;
-    }
-    startPebbleConversation(scene);
-  }
-
-  private showDiscoveryFeedback(scene: Phaser.Scene, message: string): void {
-    const panel = scene.add
-      .text(640, 125, message, {
-        color: '#5b5060',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '22px',
-        fontStyle: 'bold',
-        align: 'center',
-        backgroundColor: '#fff8eaf2',
-        padding: { x: 20, y: 13 },
-        wordWrap: { width: 610 },
-      })
-      .setName(PEBBLE_DISCOVERY_FEEDBACK_NAME)
-      .setOrigin(0.5)
-      .setScrollFactor(0)
-      .setDepth(181)
-      .setStroke('#ffffff', 1);
-
-    scene.time.delayedCall(3000, () => panel.destroy());
-  }
-
   private clearState(): void {
     if (!this.state) {
       return;
     }
 
+    getSceneInteractionRegistry(this.state.scene).clearOwner(REGISTRY_OWNER);
     for (const marker of this.state.markers.values()) {
       marker.container.destroy(true);
     }
-    this.state.pebbleContainer?.destroy(true);
     this.state.fountainRepair?.destroy(true);
     this.state = null;
   }

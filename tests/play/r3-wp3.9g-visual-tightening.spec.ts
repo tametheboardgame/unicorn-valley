@@ -59,6 +59,23 @@ for (const [alias, sceneKey, minimumDetails] of [
     const scene = snapshot.scenes.find((candidate) => candidate.key === sceneKey);
     expect(scene).toBeTruthy();
 
+    if (sceneKey === 'SunbeamVillageScene') {
+      const names = new Set(
+        scene?.objects.filter(({ visible }) => visible).map(({ name }) => name),
+      );
+      for (const requiredName of [
+        'sunbeam-composition:base',
+        'sunbeam-composition:plaza',
+        'sunbeam-composition:path-network',
+        'sunbeam-composition:village-boundary',
+        'sunbeam-composition:willow-garden',
+        'sunbeam-composition:unicorn-playground',
+      ]) {
+        expect(names.has(requiredName), `Expected current H3 detail ${requiredName}`).toBe(true);
+      }
+      return;
+    }
+
     const details =
       scene?.objects.filter(
         (object) => object.name === 'visual-tightening-detail' && object.visible,
