@@ -11,8 +11,8 @@
   "agent_state": "active",
   "branch": "agent/r6.5-wp19h3.11-r2-wobbly-cake",
   "latest_commit": "ee19352aaddcf28d2051dff71feb4d7917c2e463",
-  "ci_state": "queued",
-  "technical_validation_state": "running",
+  "ci_state": "passing",
+  "technical_validation_state": "passing",
   "human_acceptance_state": "pending",
   "next_work_package": null,
   "next_work_package_path": null,
@@ -21,6 +21,6 @@
   "night_shift_state": "not_configured",
   "chat_disposition": "keep",
   "delivery_mode": "pr_required",
-  "last_activity_at": "2026-09-26T16:34:00+01:00",
-  "updated_at": "2026-09-26T16:34:00+01:00"
+  "last_activity_at": "2026-09-26T16:39:00+01:00",
+  "updated_at": "2026-09-26T16:39:00+01:00"
 }
