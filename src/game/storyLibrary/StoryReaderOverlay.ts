@@ -440,7 +440,7 @@ export class StoryReaderOverlay {
       }
 
       categoryToggle = button('▦ Categories', 'story-library-control-toggle', () => {
-        setCategoriesExpanded(shelfTabs.hidden);
+        setCategoriesExpanded(shelfTabs.hidden !== false);
       });
       categoryToggle.setAttribute('aria-controls', shelfTabs.id);
       categoryToggle.setAttribute('aria-expanded', 'false');
