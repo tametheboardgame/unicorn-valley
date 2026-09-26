@@ -927,17 +927,23 @@ export class StoryReaderOverlay {
         y: event.clientY,
         startedAt: performance.now(),
       };
+      scroller.setPointerCapture(event.pointerId);
     });
 
-    scroller.addEventListener('pointercancel', () => {
+    scroller.addEventListener('pointercancel', (event) => {
+      if (scroller.hasPointerCapture(event.pointerId)) {
+        scroller.releasePointerCapture(event.pointerId);
+      }
       pointerStart = undefined;
     });
 
     scroller.addEventListener('pointerup', (event) => {
       const start = pointerStart;
       pointerStart = undefined;
-      if (!start || start.pointerId !== event.pointerId || isInteractiveTarget(event.target))
-        return;
+      if (scroller.hasPointerCapture(event.pointerId)) {
+        scroller.releasePointerCapture(event.pointerId);
+      }
+      if (!start || start.pointerId !== event.pointerId) return;
 
       const deltaX = event.clientX - start.x;
       const deltaY = event.clientY - start.y;
