@@ -909,7 +909,16 @@ export class StoryReaderOverlay {
       }, 110);
     };
 
-    let pointerStart: { pointerId: number; x: number; y: number; startedAt: number } | undefined;
+    let pointerStart:
+      | {
+          pointerId: number;
+          x: number;
+          y: number;
+          lastX: number;
+          lastY: number;
+          startedAt: number;
+        }
+      | undefined;
     const isInteractiveTarget = (target: EventTarget | null): boolean =>
       target instanceof Element &&
       target.closest('button, a, input, select, textarea, label') !== null;
@@ -925,9 +934,17 @@ export class StoryReaderOverlay {
         pointerId: event.pointerId,
         x: event.clientX,
         y: event.clientY,
+        lastX: event.clientX,
+        lastY: event.clientY,
         startedAt: performance.now(),
       };
       scroller.setPointerCapture(event.pointerId);
+    });
+
+    scroller.addEventListener('pointermove', (event) => {
+      if (!pointerStart || pointerStart.pointerId !== event.pointerId) return;
+      pointerStart.lastX = event.clientX;
+      pointerStart.lastY = event.clientY;
     });
 
     scroller.addEventListener('pointercancel', (event) => {
@@ -945,8 +962,10 @@ export class StoryReaderOverlay {
       }
       if (!start || start.pointerId !== event.pointerId) return;
 
-      const deltaX = event.clientX - start.x;
-      const deltaY = event.clientY - start.y;
+      const endX = start.lastX === start.x ? event.clientX : start.lastX;
+      const endY = start.lastY === start.y ? event.clientY : start.lastY;
+      const deltaX = endX - start.x;
+      const deltaY = endY - start.y;
       const horizontalDistance = Math.abs(deltaX);
       const verticalDistance = Math.abs(deltaY);
 
@@ -959,9 +978,9 @@ export class StoryReaderOverlay {
       if (horizontalDistance > 10 || verticalDistance > 10 || elapsed > 500) return;
 
       const paperRect = paper.getBoundingClientRect();
-      if (event.clientX < paperRect.left) {
+      if (endX < paperRect.left) {
         requestPageTurn('previous');
-      } else if (event.clientX > paperRect.right) {
+      } else if (endX > paperRect.right) {
         requestPageTurn('next');
       }
     });
