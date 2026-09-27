@@ -24,6 +24,8 @@ import { CLICK_NAVIGATION_SUPPORTED_SCENES } from './ClickNavigationSceneClassif
 
 interface NavigationState {
   path: MapPoint[];
+  arrivalDistance: number;
+  onArrive: (() => void) | null;
   waypointIndex: number;
   target: MapPoint | null;
   marker: Phaser.GameObjects.Container | null;
@@ -157,14 +159,20 @@ export class ClickToMoveManager {
       }
 
       const distance = Phaser.Math.Distance.Between(player.x, player.y, waypoint.x, waypoint.y);
-      if (distance <= WAYPOINT_REACHED_DISTANCE) {
+      const isFinalWaypoint = state.waypointIndex === state.path.length - 1;
+      const reachedDistance = isFinalWaypoint
+        ? Math.max(WAYPOINT_REACHED_DISTANCE, state.arrivalDistance)
+        : WAYPOINT_REACHED_DISTANCE;
+      if (distance <= reachedDistance) {
         state.waypointIndex += 1;
         state.lastDistance = Number.POSITIVE_INFINITY;
         state.lastProgressAt = scene.time.now;
 
         if (!state.path[state.waypointIndex]) {
           body.setVelocity(0, 0);
+          const onArrive = state.onArrive;
           this.cancel(state);
+          onArrive?.();
         }
         continue;
       }
@@ -207,6 +215,8 @@ export class ClickToMoveManager {
 
     const state: NavigationState = {
       path: [],
+      arrivalDistance: WAYPOINT_REACHED_DISTANCE,
+      onArrive: null,
       waypointIndex: 0,
       target: null,
       marker: null,
@@ -244,14 +254,7 @@ export class ClickToMoveManager {
         return;
       }
 
-      state.path = path;
-      state.waypointIndex = 0;
-      state.target = path[path.length - 1] ?? null;
-      state.lastDistance = Number.POSITIVE_INFINITY;
-      state.lastProgressAt = scene.time.now;
-      if (state.target) {
-        this.showTargetMarker(scene, state, state.target);
-      }
+      this.startNavigation(scene, state, path, WAYPOINT_REACHED_DISTANCE, null);
     };
 
     scene.input.on('pointerdown', state.pointerHandler);
@@ -262,6 +265,48 @@ export class ClickToMoveManager {
     });
     this.states.set(scene, state);
     return state;
+  }
+
+  public navigateToInteraction(
+    scene: Phaser.Scene,
+    target: MapPoint,
+    arrivalDistance: number,
+    onArrive: () => void,
+  ): boolean {
+    const state = this.ensureScene(scene);
+    const player = scene.children.list.find(isPlayerSprite);
+    const map = navigationMapForScene(scene);
+    if (!player || !map || isExplorationMovementBlocked(scene)) {
+      return false;
+    }
+
+    const path = findClickNavigationPath(map, { x: player.x, y: player.y }, target);
+    if (path.length === 0) {
+      this.cancel(state);
+      return false;
+    }
+
+    this.startNavigation(scene, state, path, arrivalDistance, onArrive);
+    return true;
+  }
+
+  private startNavigation(
+    scene: Phaser.Scene,
+    state: NavigationState,
+    path: MapPoint[],
+    arrivalDistance: number,
+    onArrive: (() => void) | null,
+  ): void {
+    state.path = path;
+    state.arrivalDistance = Math.max(WAYPOINT_REACHED_DISTANCE, arrivalDistance);
+    state.onArrive = onArrive;
+    state.waypointIndex = 0;
+    state.target = path[path.length - 1] ?? null;
+    state.lastDistance = Number.POSITIVE_INFINITY;
+    state.lastProgressAt = scene.time.now;
+    if (state.target) {
+      this.showTargetMarker(scene, state, state.target);
+    }
   }
 
   private showTargetMarker(scene: Phaser.Scene, state: NavigationState, target: MapPoint): void {
@@ -291,6 +336,8 @@ export class ClickToMoveManager {
 
   private cancel(state: NavigationState, destroyMarker = true): void {
     state.path = [];
+    state.arrivalDistance = WAYPOINT_REACHED_DISTANCE;
+    state.onArrive = null;
     state.waypointIndex = 0;
     state.target = null;
     state.lastDistance = Number.POSITIVE_INFINITY;
