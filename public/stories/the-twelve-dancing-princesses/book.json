@@ -11,7 +11,15 @@
     "alt": "Arthur Rackham's illustration for The Twelve Dancing Princesses."
   },
   "series": null,
-  "tags": ["classic-retelling", "fairy-tale", "princesses", "magic", "mystery", "dancing", "illustrated"],
+  "tags": [
+    "classic-retelling",
+    "fairy-tale",
+    "princesses",
+    "magic",
+    "mystery",
+    "dancing",
+    "illustrated"
+  ],
   "publication": {
     "status": "published"
   },
