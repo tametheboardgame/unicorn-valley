@@ -92,7 +92,8 @@ const FINISHES: readonly Choice<BakeryFinish>[] = [
 ];
 
 const MIX_CENTRE = { x: GAME_WIDTH / 2, y: 388 } as const;
-const MIX_RADIUS = 112;
+const MIX_RADIUS_X = 112;
+const MIX_RADIUS_Y = 56;
 const MIX_REQUIRED_TRAVEL = Math.PI * 4;
 const ICING_LEFT = GAME_WIDTH / 2 - 220;
 const ICING_RIGHT = GAME_WIDTH / 2 + 220;
@@ -136,6 +137,8 @@ export class MapleBakingActivityScene extends Phaser.Scene {
   private mixDirection: number | null = null;
   private mixSpoon: Phaser.GameObjects.Text | null = null;
   private mixProgressGraphics: Phaser.GameObjects.Graphics | null = null;
+  private mixTraceGraphics: Phaser.GameObjects.Graphics | null = null;
+  private mixLastPointer: { x: number; y: number } | null = null;
 
   private layerOffsets = [0, 0, 0];
   private layerScores: number[] = [];
@@ -183,6 +186,7 @@ export class MapleBakingActivityScene extends Phaser.Scene {
     this.renderStage();
 
     this.input.on('pointerup', this.handleGlobalPointerUp, this);
+    this.input.on('pointermove', this.handleGlobalPointerMove, this);
     this.input.keyboard?.on('keydown-ESC', this.handleEscape, this);
     this.input.keyboard?.on('keydown-SPACE', this.handleSpaceDown, this);
     this.input.keyboard?.on('keyup-SPACE', this.handleSpaceUp, this);
@@ -195,6 +199,7 @@ export class MapleBakingActivityScene extends Phaser.Scene {
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.input.off('pointerup', this.handleGlobalPointerUp, this);
+      this.input.off('pointermove', this.handleGlobalPointerMove, this);
       this.input.keyboard?.off('keydown-ESC', this.handleEscape, this);
       this.input.keyboard?.off('keydown-SPACE', this.handleSpaceDown, this);
       this.input.keyboard?.off('keyup-SPACE', this.handleSpaceUp, this);
@@ -235,6 +240,7 @@ export class MapleBakingActivityScene extends Phaser.Scene {
     this.mixSamples = 0;
     this.mixLastAngle = null;
     this.mixDirection = null;
+    this.mixLastPointer = null;
     this.layerOffsets = [0, 0, 0];
     this.layerScores = [];
     this.placedLayers.clear();
@@ -309,6 +315,8 @@ export class MapleBakingActivityScene extends Phaser.Scene {
     this.measureValueText = null;
     this.mixSpoon = null;
     this.mixProgressGraphics = null;
+    this.mixTraceGraphics = null;
+    this.mixLastPointer = null;
     this.icingGraphics = null;
     this.actionLocked = false;
 
@@ -568,6 +576,7 @@ export class MapleBakingActivityScene extends Phaser.Scene {
     if (this.stage === 'mix') {
       this.mixDragging = false;
       this.mixLastAngle = null;
+      this.mixLastPointer = null;
     }
     if (this.stage === 'icing') {
       this.icingTracing = false;
@@ -677,26 +686,36 @@ export class MapleBakingActivityScene extends Phaser.Scene {
     bowl.fillEllipse(MIX_CENTRE.x, MIX_CENTRE.y, 300, 156);
 
     const guide = this.add.graphics();
-    guide.lineStyle(14, 0xd3a8ec, 0.22);
-    guide.strokeCircle(MIX_CENTRE.x, MIX_CENTRE.y, MIX_RADIUS);
+    guide.lineStyle(14, 0xd3a8ec, 0.2);
+    guide.strokeEllipse(
+      MIX_CENTRE.x - MIX_RADIUS_X,
+      MIX_CENTRE.y - MIX_RADIUS_Y,
+      MIX_RADIUS_X * 2,
+      MIX_RADIUS_Y * 2,
+    );
     guide.lineStyle(4, 0xb47bd0, 0.9);
-    guide.strokeCircle(MIX_CENTRE.x, MIX_CENTRE.y, MIX_RADIUS);
+    guide.strokeEllipse(
+      MIX_CENTRE.x - MIX_RADIUS_X,
+      MIX_CENTRE.y - MIX_RADIUS_Y,
+      MIX_RADIUS_X * 2,
+      MIX_RADIUS_Y * 2,
+    );
 
     const hit = this.add
-      .circle(MIX_CENTRE.x, MIX_CENTRE.y, 155, 0xffffff, 0.001)
+      .ellipse(MIX_CENTRE.x, MIX_CENTRE.y, 330, 190, 0xffffff, 0.001)
       .setAlpha(0.001)
       .setInteractive({ useHandCursor: true })
       .setName('h3-r2-baking-mix-bowl');
     hit.on('pointerdown', (pointer: Phaser.Input.Pointer) => this.startMixTrace(pointer));
-    hit.on('pointermove', (pointer: Phaser.Input.Pointer) => this.traceMix(pointer));
 
     this.mixSpoon = this.add
-      .text(MIX_CENTRE.x + MIX_RADIUS, MIX_CENTRE.y, '🥄', {
+      .text(MIX_CENTRE.x + MIX_RADIUS_X, MIX_CENTRE.y, '🥄', {
         fontFamily: UI_FONT,
         fontSize: '48px',
       })
       .setOrigin(0.5);
     this.mixProgressGraphics = this.add.graphics();
+    this.mixTraceGraphics = this.add.graphics();
     this.drawMixProgress();
 
     const hint = this.createRoundedPanel(GAME_WIDTH / 2, 575, 520, 54, 0xfffbef, 0xd8b4e5);
@@ -709,7 +728,16 @@ export class MapleBakingActivityScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
 
-    this.body?.add([bowl, guide, hit, this.mixSpoon, this.mixProgressGraphics, hint, hintText]);
+    this.body?.add([
+      bowl,
+      guide,
+      hit,
+      this.mixTraceGraphics,
+      this.mixSpoon,
+      this.mixProgressGraphics,
+      hint,
+      hintText,
+    ]);
 
     this.portraitCompanion?.setHeader(
       '🥣 Stir the batter',
@@ -740,35 +768,73 @@ export class MapleBakingActivityScene extends Phaser.Scene {
       return;
     }
     this.mixDragging = true;
-    this.mixLastAngle = Phaser.Math.Angle.Between(MIX_CENTRE.x, MIX_CENTRE.y, pointer.x, pointer.y);
+    this.mixLastAngle = this.mixPointerAngle(pointer.x, pointer.y);
+    this.mixLastPointer = { x: pointer.x, y: pointer.y };
+    this.mixTraceGraphics?.clear();
+    this.mixTraceGraphics?.fillStyle(0xf1b6ca, 0.9);
+    this.mixTraceGraphics?.fillCircle(pointer.x, pointer.y, 6);
     this.positionMixSpoon(pointer.x, pointer.y);
+  }
+
+  private handleGlobalPointerMove(pointer: Phaser.Input.Pointer): void {
+    if (this.stage === 'mix' && this.mixDragging) {
+      this.traceMix(pointer);
+    }
   }
 
   private traceMix(pointer: Phaser.Input.Pointer): void {
     if (this.stage !== 'mix' || !this.mixDragging || this.actionLocked) {
       return;
     }
-    const angle = Phaser.Math.Angle.Between(MIX_CENTRE.x, MIX_CENTRE.y, pointer.x, pointer.y);
+
+    this.drawLiveMixTrace(pointer.x, pointer.y);
+    this.positionMixSpoon(pointer.x, pointer.y);
+
+    const angle = this.mixPointerAngle(pointer.x, pointer.y);
     if (this.mixLastAngle === null) {
       this.mixLastAngle = angle;
       return;
     }
+
     const delta = Phaser.Math.Angle.Wrap(angle - this.mixLastAngle);
-    if (Math.abs(delta) > 0.75) {
+    if (Math.abs(delta) > 0.95) {
       this.mixLastAngle = angle;
       return;
     }
-    const radius = Phaser.Math.Distance.Between(MIX_CENTRE.x, MIX_CENTRE.y, pointer.x, pointer.y);
-    const radialQuality = Math.max(0, 1 - Math.abs(radius - MIX_RADIUS) / 62);
+
+    const normalisedRadius = this.mixNormalisedRadius(pointer.x, pointer.y);
+    const radialQuality = Math.max(0, 1 - Math.abs(normalisedRadius - 1) / 0.65);
     const direction = delta === 0 ? 0 : Math.sign(delta);
     if (this.mixDirection === null && direction !== 0) {
       this.mixDirection = direction;
     }
     const directionQuality =
-      direction === 0 || this.mixDirection === null || direction === this.mixDirection ? 1 : 0.55;
+      direction === 0 || this.mixDirection === null || direction === this.mixDirection ? 1 : 0.6;
+
     this.addMixMovement(Math.abs(delta), radialQuality * directionQuality);
     this.mixLastAngle = angle;
-    this.positionMixSpoon(pointer.x, pointer.y);
+  }
+
+  private mixPointerAngle(x: number, y: number): number {
+    return Math.atan2(
+      (y - MIX_CENTRE.y) / MIX_RADIUS_Y,
+      (x - MIX_CENTRE.x) / MIX_RADIUS_X,
+    );
+  }
+
+  private mixNormalisedRadius(x: number, y: number): number {
+    const dx = (x - MIX_CENTRE.x) / MIX_RADIUS_X;
+    const dy = (y - MIX_CENTRE.y) / MIX_RADIUS_Y;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
+  private drawLiveMixTrace(x: number, y: number): void {
+    const previous = this.mixLastPointer;
+    if (previous && this.mixNormalisedRadius(x, y) <= 1.55) {
+      this.mixTraceGraphics?.lineStyle(10, 0xf1b6ca, 0.78);
+      this.mixTraceGraphics?.lineBetween(previous.x, previous.y, x, y);
+    }
+    this.mixLastPointer = { x, y };
   }
 
   private keyboardStir(direction: number): void {
@@ -782,8 +848,8 @@ export class MapleBakingActivityScene extends Phaser.Scene {
     this.addMixMovement(Math.PI / 6, quality);
     const angle = this.mixTravel * direction;
     this.positionMixSpoon(
-      MIX_CENTRE.x + Math.cos(angle) * MIX_RADIUS,
-      MIX_CENTRE.y + Math.sin(angle) * MIX_RADIUS,
+      MIX_CENTRE.x + Math.cos(angle) * MIX_RADIUS_X,
+      MIX_CENTRE.y + Math.sin(angle) * MIX_RADIUS_Y,
     );
   }
 
@@ -813,16 +879,21 @@ export class MapleBakingActivityScene extends Phaser.Scene {
     }
     const progress = Phaser.Math.Clamp(this.mixTravel / MIX_REQUIRED_TRAVEL, 0, 1);
     this.mixProgressGraphics.clear();
-    this.mixProgressGraphics.lineStyle(11, 0xf1b6ca, 1);
+    this.mixProgressGraphics.lineStyle(10, 0xf1b6ca, 0.95);
     this.mixProgressGraphics.beginPath();
-    this.mixProgressGraphics.arc(
-      MIX_CENTRE.x,
-      MIX_CENTRE.y,
-      MIX_RADIUS + 24,
-      -Math.PI / 2,
-      -Math.PI / 2 + Math.PI * 2 * progress,
-      false,
-    );
+    const startAngle = -Math.PI / 2;
+    const endAngle = startAngle + Math.PI * 2 * progress;
+    const steps = Math.max(2, Math.ceil(64 * progress));
+    for (let step = 0; step <= steps; step += 1) {
+      const angle = Phaser.Math.Linear(startAngle, endAngle, step / steps);
+      const x = MIX_CENTRE.x + Math.cos(angle) * (MIX_RADIUS_X + 12);
+      const y = MIX_CENTRE.y + Math.sin(angle) * (MIX_RADIUS_Y + 8);
+      if (step === 0) {
+        this.mixProgressGraphics.moveTo(x, y);
+      } else {
+        this.mixProgressGraphics.lineTo(x, y);
+      }
+    }
     this.mixProgressGraphics.strokePath();
   }
 
