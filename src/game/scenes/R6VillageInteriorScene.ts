@@ -3,6 +3,7 @@ import type { ItemId, QuestId } from '../../content/contentTypes';
 import {
   MAPLE_CAKE_QUEST_ID,
   MAPLE_CHARACTER_ID,
+  MAPLE_REPEAT_BAKE_COST,
   TANSY_BAKERY_MAP_CORNER_DISCOVERY_ID,
   TANSY_MAP_HUNT_ACTIVE_FLAG,
   TANSY_MAP_QUEST_ID,
@@ -12,7 +13,6 @@ import {
   type BakerySectionId,
 } from '../../content/r6VillageContent';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
-import { MAPLE_REPEAT_BAKE_COST } from '../activities/MapleBakingActivity';
 import { DiscoveryService } from '../discovery/DiscoveryService';
 import { StoryHouseService } from '../discovery/StoryHouseService';
 import { BakeryService } from '../economy/BakeryService';
