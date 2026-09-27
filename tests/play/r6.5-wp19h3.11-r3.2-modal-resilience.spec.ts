@@ -32,9 +32,8 @@ test.use({ viewport: { width: 1280, height: 720 }, hasTouch: true });
 
 async function snapshot(page: Page): Promise<Snapshot> {
   return page.evaluate(() => {
-    const api = (
-      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics }
-    ).__UNICORN_VALLEY_DIAGNOSTICS__;
+    const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics })
+      .__UNICORN_VALLEY_DIAGNOSTICS__;
     if (!api) throw new Error('Diagnostics unavailable');
     return api.snapshot();
   });
@@ -51,15 +50,11 @@ async function openDiagnostics(page: Page): Promise<void> {
 }
 
 async function waitForScene(page: Page, sceneKey: string): Promise<void> {
-  await expect
-    .poll(async () => (await snapshot(page)).activeScenes.includes(sceneKey))
-    .toBe(true);
+  await expect.poll(async () => (await snapshot(page)).activeScenes.includes(sceneKey)).toBe(true);
 }
 
 async function waitForSceneClosed(page: Page, sceneKey: string): Promise<void> {
-  await expect
-    .poll(async () => (await snapshot(page)).activeScenes.includes(sceneKey))
-    .toBe(false);
+  await expect.poll(async () => (await snapshot(page)).activeScenes.includes(sceneKey)).toBe(false);
 }
 
 async function startInterior(page: Page, interiorId: InteriorId): Promise<void> {
@@ -201,9 +196,7 @@ test('R3.2 blocks Bag while the boutique overlay owns interaction, then restores
 
   await expect
     .poll(async () => {
-      const scene = (await snapshot(page)).scenes.find(
-        ({ key }) => key === 'VillageInteriorScene',
-      );
+      const scene = (await snapshot(page)).scenes.find(({ key }) => key === 'VillageInteriorScene');
       return (
         scene?.objects.filter(({ name }) => name.startsWith('dialogue-production-choice-'))
           .length ?? 0
