@@ -59,9 +59,8 @@ async function waitForSceneClosed(page: Page, sceneKey: string): Promise<void> {
 
 async function startInterior(page: Page, interiorId: InteriorId): Promise<void> {
   await page.evaluate((id) => {
-    const api = (
-      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics }
-    ).__UNICORN_VALLEY_DIAGNOSTICS__;
+    const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics })
+      .__UNICORN_VALLEY_DIAGNOSTICS__;
     api?.startScene('VillageInteriorScene', {
       interiorId: id,
       returnScene: 'SunbeamVillageScene',
@@ -187,9 +186,8 @@ test('R3.2 blocks Bag while the boutique overlay owns interaction, then restores
   await startInterior(page, 'accessory-shop');
 
   await page.evaluate(() => {
-    const api = (
-      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics }
-    ).__UNICORN_VALLEY_DIAGNOSTICS__;
+    const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics })
+      .__UNICORN_VALLEY_DIAGNOSTICS__;
     api?.setArcadeSpritePosition('VillageInteriorScene', 'world-player-unicorn', 760, 650);
   });
   await page.keyboard.press('Enter');
