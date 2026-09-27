@@ -22,7 +22,7 @@ interface Snapshot {
 
 interface Diagnostics {
   snapshot(): Snapshot;
-  startScene(sceneKey: string, data?: object): void;
+  startScene(sceneKey: string, data?: object, keepExplorationHud?: boolean): void;
   setArcadeSpritePosition(sceneKey: string, objectName: string, x: number, y: number): void;
 }
 
@@ -61,10 +61,14 @@ async function startInterior(page: Page, interiorId: InteriorId): Promise<void> 
   await page.evaluate((id) => {
     const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics })
       .__UNICORN_VALLEY_DIAGNOSTICS__;
-    api?.startScene('VillageInteriorScene', {
-      interiorId: id,
-      returnScene: 'SunbeamVillageScene',
-    });
+    api?.startScene(
+      'VillageInteriorScene',
+      {
+        interiorId: id,
+        returnScene: 'SunbeamVillageScene',
+      },
+      true,
+    );
   }, interiorId);
   await waitForScene(page, 'VillageInteriorScene');
   await waitForObject(page, 'VillageInteriorScene', `village-interior:${interiorId}:room-shell`);
