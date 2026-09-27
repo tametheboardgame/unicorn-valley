@@ -1,5 +1,4 @@
 import Phaser from 'phaser';
-import { getClickToMoveManager } from '../input/ClickToMoveManager';
 import type { InteractionCondition } from '../interaction/InteractionTarget';
 import { getInteractionTargetPosition } from '../interaction/InteractionTargeting';
 import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
@@ -16,6 +15,13 @@ const MOVEMENT_EPSILON = 1;
 interface PausedResidentTweens {
   resident: Phaser.GameObjects.Container;
   tweens: Phaser.Tweens.Tween[];
+}
+
+interface ClickNavigationCollisionController {
+  cancelNavigationForResidentCollision(
+    scene: Phaser.Scene,
+    residentTargetId: string,
+  ): { cancelled: boolean; onArrive: (() => void) | null };
 }
 
 interface PositionedObject {
@@ -206,10 +212,13 @@ export class ResidentCollisionManager {
     // leaves a small release margin beyond the collision threshold so the next click is not
     // cancelled again by floating-point overlap at the boundary. If this is the resident the player
     // deliberately clicked to talk to, the collision itself counts as a safe arrival.
-    const clickCollision = getClickToMoveManager(this.game).cancelNavigationForResidentCollision(
-      scene,
-      target.id,
-    );
+    const clickNavigation = this.game.registry.get(
+      'click-to-move-manager',
+    ) as ClickNavigationCollisionController | undefined;
+    const clickCollision = clickNavigation?.cancelNavigationForResidentCollision(scene, target.id) ?? {
+      cancelled: false,
+      onArrive: null,
+    };
 
     // reset keeps Arcade physics and presentation aligned. Held/manual movement keeps its velocity
     // so the player can naturally slide around the resident. Click navigation stops cleanly instead
