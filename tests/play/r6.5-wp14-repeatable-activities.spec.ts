@@ -1,6 +1,8 @@
 import { expect, test, type Page } from '@playwright/test';
 import {
   clickNamedObject,
+  dragNamedObjectTo,
+  getDiagnosticSnapshot,
   openDiagnostics,
   setArcadeSpritePosition,
   startScene,
@@ -113,6 +115,8 @@ test('WP14 Maple baking reuses the cake table and rewards a strong repeat bake',
   await setArcadeSpritePosition(page, 'VillageInteriorScene', 'world-player-unicorn', 750, 835);
   await page.waitForTimeout(120);
   await page.keyboard.press('e');
+  await waitForNamedObject(page, 'VillageInteriorScene', 'h3-r2-repeat-confirm:yes');
+  await clickNamedObject(page, 'VillageInteriorScene', 'h3-r2-repeat-confirm:yes');
   await waitForScene(page, 'MapleBakingActivityScene');
 
   await waitForNamedObject(page, 'MapleBakingActivityScene', 'h3-r2-baking-stage:recipe');
@@ -128,8 +132,19 @@ test('WP14 Maple baking reuses the cake table and rewards a strong repeat bake',
   }
 
   await waitForNamedObject(page, 'MapleBakingActivityScene', 'h3-r2-baking-stage:stack');
-  for (const layer of [1, 2, 3]) {
-    await clickNamedObject(page, 'MapleBakingActivityScene', `h3-r2-baking-layer:${layer}`);
+  const stackSnapshot = await getDiagnosticSnapshot(page);
+  const initialLayerTwo = stackSnapshot.scenes
+    .find((scene) => scene.key === 'MapleBakingActivityScene')
+    ?.objects.find((object) => object.name === 'h3-r2-baking-layer:2');
+  expect(initialLayerTwo?.interactive).toBe(false);
+
+  for (const [layer, x, y] of [
+    [1, 616, 520],
+    [2, 668, 456],
+    [3, 622, 392],
+  ] as const) {
+    await dragNamedObjectTo(page, 'MapleBakingActivityScene', `h3-r2-baking-layer:${layer}`, x, y);
+    await page.waitForTimeout(220);
   }
 
   await waitForNamedObject(page, 'MapleBakingActivityScene', 'h3-r2-baking-stage:icing');
@@ -152,6 +167,33 @@ test('WP14 Maple baking reuses the cake table and rewards a strong repeat bake',
 
   await page.keyboard.press('Escape');
   await waitForScene(page, 'VillageInteriorScene');
+});
+
+test('WP14 repeat baking shows the 1 Shimmer confirmation and blocks an unaffordable bake', async ({
+  page,
+}) => {
+  await seedActivityPrerequisites(page, 0);
+  await openDiagnostics(page);
+  await startScene(page, 'VillageInteriorScene', {
+    interiorId: 'bakery',
+    returnScene: 'SunbeamVillageScene',
+  });
+
+  await setArcadeSpritePosition(page, 'VillageInteriorScene', 'world-player-unicorn', 750, 835);
+  await page.waitForTimeout(120);
+  await page.keyboard.press('e');
+
+  await waitForNamedObject(page, 'VillageInteriorScene', 'h3-r2-repeat-confirm:title');
+  await waitForNamedObject(page, 'VillageInteriorScene', 'h3-r2-repeat-confirm:yes');
+  const snapshot = await getDiagnosticSnapshot(page);
+  const yesButton = snapshot.scenes
+    .find((scene) => scene.key === 'VillageInteriorScene')
+    ?.objects.find((object) => object.name === 'h3-r2-repeat-confirm:yes');
+  expect(yesButton?.visible).toBe(true);
+  expect(yesButton?.interactive).toBe(false);
+  expect(snapshot.activeScenes).not.toContain('MapleBakingActivityScene');
+
+  await clickNamedObject(page, 'VillageInteriorScene', 'h3-r2-repeat-confirm:no');
 });
 
 test('WP14 Coral beachcombing records a notebook page and returns safely to the Beach', async ({
