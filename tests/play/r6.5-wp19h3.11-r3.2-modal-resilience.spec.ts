@@ -160,11 +160,7 @@ async function cycleSettings(page: Page, interiorId: InteriorId): Promise<void> 
 
 async function cycleWonderbook(page: Page, interiorId: InteriorId): Promise<void> {
   const before = await playerPosition(page);
-  await clickNamedObject(
-    page,
-    'ExplorationHudOverlayScene',
-    'exploration-hud-overlay-book-button',
-  );
+  await clickNamedObject(page, 'ExplorationHudOverlayScene', 'exploration-hud-overlay-book-button');
   await waitForScene(page, 'WonderbookScene');
   await waitForSceneClosed(page, 'VillageInteriorScene');
   await clickNamedObject(page, 'WonderbookScene', 'wonderbook-close-button');
