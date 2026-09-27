@@ -305,7 +305,7 @@ export class WorldInteractionCoordinator {
 
           const currentPlayer = findPlayer(state.scene);
           const currentTarget = getSceneInteractionRegistry(state.scene)
-            .getTargets()
+            .getTargetSnapshot()
             .find((candidate) => candidate.id === target.id);
           if (!currentPlayer || !currentTarget || !isInteractionTargetAvailable(currentTarget)) {
             return;
@@ -333,7 +333,7 @@ export class WorldInteractionCoordinator {
               }
               const arrivedPlayer = findPlayer(state.scene);
               const arrivedTarget = getSceneInteractionRegistry(state.scene)
-                .getTargets()
+                .getTargetSnapshot()
                 .find((candidate) => candidate.id === target.id);
               if (
                 arrivedPlayer &&
