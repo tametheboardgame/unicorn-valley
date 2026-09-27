@@ -285,6 +285,47 @@
       "manifestPath": "/stories/the-princess-and-the-pea/book.json"
     },
     {
+      "id": "the-tale-of-jemima-puddle-duck",
+      "title": "The Tale of Jemima Puddle-Duck",
+      "description": "Jemima wants a quiet place to hatch her eggs, but the charming gentleman who offers her a nest in the woods has plans of his own.",
+      "catalogueBlurb": "Jemima finds a secret nest and a very suspicious new friend.",
+      "author": "Beatrix Potter, retold by Quill",
+      "readingMode": "flowing",
+      "coverPath": "/stories/the-tale-of-jemima-puddle-duck/covers/cover.webp",
+      "coverAlt": "Beatrix Potter's original cover for The Tale of Jemima Puddle-Duck.",
+      "series": null,
+      "tags": [
+        "classic-retelling",
+        "duck",
+        "fox",
+        "farm",
+        "woodland",
+        "mischief",
+        "illustrated"
+      ],
+      "discovery": {
+        "format": "Picture Book",
+        "genres": [
+          "Adventure",
+          "Classics"
+        ],
+        "audiences": [
+          "Read Together",
+          "Early Reader",
+          "Independent Reader"
+        ],
+        "length": "Quick Read"
+      },
+      "rightsSummary": {
+        "text": "original",
+        "illustrations": "public-domain",
+        "edition": "original",
+        "originalPublicationYear": 1908
+      },
+      "chapterCount": 5,
+      "manifestPath": "/stories/the-tale-of-jemima-puddle-duck/book.json"
+    },
+    {
       "id": "the-tale-of-peter-rabbit",
       "title": "The Tale of Peter Rabbit",
       "description": "Peter Rabbit ignores his mother's warning, slips into Mr McGregor's garden and discovers that stealing vegetables is much easier than escaping with them.",
