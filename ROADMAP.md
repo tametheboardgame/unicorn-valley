@@ -172,7 +172,7 @@ H0.5 cleared the final technical and visual gate for H1.
 
 ### R6.5-WP19H1+ - Open-Ended Area-by-Area Final Polish Programme
 
-State: **active; H1 = Moonflower Glade complete, H2 = Moonflower Cottage complete, H3 = Sunbeam Village active with H3.11.4 Story House human-approved and merged on 26 September 2026; H3.11-R2 Wobbly Cake is the next bounded slice**.
+State: **active; H1 = Moonflower Glade complete, H2 = Moonflower Cottage complete, H3 = Sunbeam Village active; H3.11-R2 Wobbly Cake is human-approved and merged on 27 September 2026, and H3.11-R3 pre-Rosehip stability/controls/polish is the next bounded remediation block**.
 
 The earlier fixed `H1-H13` area inventory is superseded by this section. There is **no predetermined upper H number**. The programme continues for as many independently useful area, subarea or interior passes as David chooses before integrated qualification. Interiors may receive their own H number when they warrant an independent review rather than being forced into a parent-area package.
 
@@ -190,7 +190,7 @@ Operating rules for H1+:
 - **H numbers are assigned sequentially only when David chooses the next review area.** Do not pre-assign future H numbers to locations.
 - **R6.5-WP19H1 - Moonflower Glade is complete and human-approved.**
 - **R6.5-WP19H2 - Moonflower Cottage & Home Customisation is complete, fully qualified and deployed to production.**
-- **Current package: R6.5-WP19H3 - Sunbeam Village Final Polish.** H3.1-H3.10, H3.11.1-H3.11.4 and H3.11-R1 have reached their documented acceptance points. H3.11.4 Story House A-F is complete and human-approved, including scalable catalogue discovery, durable reading state, paged picture-book support, final compact library UX and tap/swipe page turns; PR #181 merged it to main as `52069b8e36311e14276c2115f3515dfa52f2adb0` after CI #4010 passed. The next bounded work is **H3.11-R2 - Wobbly Cake baking mini-game**, followed by the already-assigned H3.11.5-H3.11.10 interiors/content slices. These R1/R2 inserts deliberately do not renumber H3.11.5-H3.11.10. H3.12 remains planned for wider cross-region recurring-character presence coherence. Final hardening/consolidation remains unnumbered until substantive Sunbeam review is explicitly complete.
+- **Current package: R6.5-WP19H3 - Sunbeam Village Final Polish.** H3.1-H3.10, H3.11.1-H3.11.4, H3.11-R1 and H3.11-R2 have reached their documented acceptance points. H3.11.4 Story House A-F is complete and human-approved; PR #181 merged it to main as `52069b8e36311e14276c2115f3515dfa52f2adb0`. H3.11-R2 Wobbly Cake is also complete and human-approved; PR #183 merged it to main on 27 September 2026 as `abe3808b76031c67a74811b17c4b6528b0b331df`. Before Rosehip Cottage, insert **H3.11-R3 - Pre-Rosehip stability, controls and polish**, split into five bounded checkpoints: **R3.1 interaction-aware click navigation and dialogue movement lock; R3.2 exploration surface lifecycle hardening; R3.3 Pip startup and music resume continuity; R3.4 mobile performance and movement consistency; R3.5 Glade/Village visual tightening.** Only after R3 is accepted does the sequence resume at the already-assigned H3.11.5-H3.11.10 interiors/content slices. R1/R2/R3 deliberately do not renumber H3.11.5-H3.11.10. H3.12 remains planned for wider cross-region recurring-character presence coherence. Final hardening/consolidation remains unnumbered until substantive Sunbeam review is explicitly complete.
 - Future H numbers remain deliberately unassigned until David selects each next review area.
 - There is **no H13 cap**. Continue H numbering until David decides the playable world, meaningful subareas and relevant interiors have received the required final passes.
 - An area is a review lens, not an excuse to duplicate shared code. Any broadly applicable improvement discovered during an H package should be made at the correct shared owner and then validated against affected areas.
@@ -198,6 +198,18 @@ Operating rules for H1+:
 - Known graphical observations such as apparently duplicated path layers are owned by the H package for the area in which they are observed, but root causes should still be fixed globally if shared.
 - Each package should consider desktop/laptop, tablet landscape, phone landscape and phone portrait where the affected system/area supports those presentations.
 - Do not move from one of the four stages to the next merely because time has passed or an agent believes the answer is obvious. David’s feedback defines Stage 1; analysis and planning precede implementation unless he explicitly directs otherwise.
+
+#### H3.11-R3 - Pre-Rosehip stability, controls and polish
+
+Inserted on 27 September 2026 from the post-R2 human play pass. R3 is a bounded remediation block before H3.11.5 Rosehip Cottage and does not renumber the existing interior programme.
+
+- **R3.1 - Interaction-aware click navigation and dialogue movement lock.** Make distant NPC clicks carry interaction intent: navigate to a valid stand-off range, stop cleanly and begin Talk when still valid; prevent click-navigation from fighting resident personal-space collision; cancel active click paths and suppress new world navigation while a conversation or other interaction modal owns input.
+- **R3.2 - Exploration surface lifecycle hardening.** Give Bag/Map/Book/Settings one reliable open/pause/resume/close ownership contract across outdoor scenes and walkable interiors/shops. Prevent stacked or stale modal ownership and add lifecycle regressions for Bakery, Twinkle & Thread, Story House and representative non-village areas.
+- **R3.3 - Pip startup and music resume continuity.** Remove Pip's initial create-then-hide flash by making saved introduction state authoritative from first render. On browser/tab visibility changes, pause and resume the same music element at its existing playback position instead of discarding it and restarting the track.
+- **R3.4 - Mobile performance and movement consistency.** Measure first, then reduce avoidable high-frequency/global scene scans, ensure desktop-only cleanup does not burden phone/tablet play, make movement response frame-rate aware where needed, and add realistic mobile/tablet movement/performance regressions for walking and Gallop consistency.
+- **R3.5 - Glade/Village visual tightening.** Remove the decorative Moonflower Glade→Sunbeam gateway arch treatment, extend Sunbeam shop paths to their visible doorsteps, and anchor the two high-street bunting spans to canonical roof corners rather than approximate hard-coded world points.
+
+R3.1 and R3.2 are shared-system fixes and must be implemented at canonical owners rather than as Sunbeam-only patches. R3.4 is a measured optimisation pass, not a blanket reduction in effects or arbitrary speed change. Each R3.x checkpoint remains independently reviewable before moving to the next.
 
 ### R6.5-WP19H1 - Moonflower Glade Final Polish
 
