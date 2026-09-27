@@ -8,6 +8,7 @@ import {
   type ConceptIcon,
 } from './ConceptUi';
 import {
+  EXPLORATION_MODAL_SCENE_KEYS,
   isInteractionActivationSuppressed,
   isInteractionModalActive,
 } from '../interaction/InteractionModalState';
@@ -16,7 +17,6 @@ import { UI_FONT } from './uiTheme';
 
 const SCENE_KEY = 'ExplorationHudOverlayScene';
 const SYNC_MS = 90;
-import { EXPLORATION_MODAL_SCENE_KEYS } from './ExplorationModalNavigation';
 
 const SOURCE_TOP_HUD_NAMES = new Set([
   'exploration-shell-nav-shadow',
