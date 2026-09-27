@@ -46,7 +46,6 @@ describe('SceneInteractionRegistry', () => {
     expect(visited).toEqual(['core:one', 'core:two', 'ambient:one']);
   });
 
-
   it('reuses a flattened snapshot until a publisher changes the registry', () => {
     const registry = new SceneInteractionRegistry();
     registry.replaceOwnerTargets('core', [target('core:one')]);
