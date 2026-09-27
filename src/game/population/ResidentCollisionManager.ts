@@ -212,10 +212,13 @@ export class ResidentCollisionManager {
     // leaves a small release margin beyond the collision threshold so the next click is not
     // cancelled again by floating-point overlap at the boundary. If this is the resident the player
     // deliberately clicked to talk to, the collision itself counts as a safe arrival.
-    const clickNavigation = this.game.registry.get(
-      'click-to-move-manager',
-    ) as ClickNavigationCollisionController | undefined;
-    const clickCollision = clickNavigation?.cancelNavigationForResidentCollision(scene, target.id) ?? {
+    const clickNavigation = this.game.registry.get('click-to-move-manager') as
+      | ClickNavigationCollisionController
+      | undefined;
+    const clickCollision = clickNavigation?.cancelNavigationForResidentCollision(
+      scene,
+      target.id,
+    ) ?? {
       cancelled: false,
       onArrive: null,
     };
