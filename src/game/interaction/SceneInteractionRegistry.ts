@@ -13,7 +13,7 @@ export class SceneInteractionRegistry {
 
   public replaceOwnerTargets(ownerId: string, targets: readonly InteractionTarget[]): void {
     if (targets.length === 0) {
-      this.targetsByOwner.delete(ownerId);
+      this.clearOwner(ownerId);
       return;
     }
     this.targetsByOwner.set(ownerId, targets);
