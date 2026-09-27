@@ -1,11 +1,9 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "id": "the-tale-of-peter-rabbit",
   "title": "The Tale of Peter Rabbit",
   "description": "Peter Rabbit ignores his mother's warning, slips into Mr McGregor's garden and discovers that stealing vegetables is much easier than escaping with them.",
   "catalogueBlurb": "Peter Rabbit sneaks into a forbidden garden and has to find his way home.",
-  "author": "Beatrix Potter, retold by Quill",
-  "readingMode": "flowing",
   "cover": {
     "path": "covers/cover.webp",
     "alt": "Beatrix Potter's original 1902 cover illustration for The Tale of Peter Rabbit."
@@ -15,105 +13,209 @@
   "publication": {
     "status": "published"
   },
-  "chapters": [
-    {
-      "id": "mrs-rabbits-warning",
-      "title": "Mrs Rabbit's Warning",
-      "path": "chapters/01.md",
-      "illustrations": [
-        {
-          "id": "potter-rabbit-family",
-          "blockId": "four-little-rabbits",
-          "path": "illustrations/rabbit-family.webp",
-          "alt": "Beatrix Potter's illustration of Peter Rabbit with his family.",
-          "placement": "full-width",
-          "width": 469,
-          "height": 511,
-          "caption": "Illustration by Beatrix Potter, 1902."
-        }
-      ]
-    },
-    {
-      "id": "into-the-garden",
-      "title": "Into the Garden",
-      "path": "chapters/02.md",
-      "illustrations": [
-        {
-          "id": "potter-garden",
-          "blockId": "among-the-vegetables",
-          "path": "illustrations/garden.webp",
-          "alt": "An original Beatrix Potter illustration from The Tale of Peter Rabbit.",
-          "placement": "full-width",
-          "width": 431,
-          "height": 528,
-          "caption": "Illustration by Beatrix Potter, 1902."
-        }
-      ]
-    },
-    {
-      "id": "mr-mcgregor",
-      "title": "Mr McGregor",
-      "path": "chapters/03.md"
-    },
-    {
-      "id": "lost-and-found",
-      "title": "Lost and Found",
-      "path": "chapters/04.md",
-      "illustrations": [
-        {
-          "id": "potter-escape",
-          "blockId": "finding-the-gate",
-          "path": "illustrations/escape.webp",
-          "alt": "An original Beatrix Potter illustration from Peter Rabbit's escape.",
-          "placement": "full-width",
-          "width": 408,
-          "height": 530,
-          "caption": "Illustration by Beatrix Potter, 1902."
-        }
-      ]
-    },
-    {
-      "id": "home-again",
-      "title": "Home Again",
-      "path": "chapters/05.md",
-      "illustrations": [
-        {
-          "id": "potter-home",
-          "blockId": "back-in-the-burrow",
-          "path": "illustrations/home.webp",
-          "alt": "Beatrix Potter's illustration of Mrs Rabbit and the rabbit family.",
-          "placement": "full-width",
-          "width": 446,
-          "height": 505,
-          "caption": "Illustration by Beatrix Potter, 1902."
-        }
-      ]
-    }
-  ],
   "discovery": {
     "format": "Picture Book",
     "genres": ["Adventure", "Classics"],
     "audiences": ["Read Together", "Early Reader", "Independent Reader"],
     "length": "Quick Read"
   },
-  "rights": {
-    "text": {
-      "status": "original",
-      "source": "Original Story House retelling based on Beatrix Potter's public-domain 1902 story",
-      "sourceUrl": "https://en.wikisource.org/wiki/The_Tale_of_Peter_Rabbit",
-      "notes": "The underlying 1902 story is public domain. This wording is an original child-friendly Unicorn Valley retelling."
+  "defaultEditionId": "story-house",
+  "editions": [
+    {
+      "id": "story-house",
+      "label": "Story House Edition",
+      "author": "Beatrix Potter, retold by Quill",
+      "readingMode": "flowing",
+      "rights": {
+        "text": {
+          "status": "original",
+          "source": "Original Story House retelling based on Beatrix Potter's public-domain 1902 story",
+          "sourceUrl": "https://en.wikisource.org/wiki/The_Tale_of_Peter_Rabbit",
+          "notes": "The underlying 1902 story is public domain. This wording is an original child-friendly Unicorn Valley retelling."
+        },
+        "illustrations": {
+          "status": "public-domain",
+          "source": "Original 1902 illustrations by Beatrix Potter",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/Category:The_Tale_of_Peter_Rabbit",
+          "notes": "The selected original Potter illustration files are identified as public domain on Wikimedia Commons."
+        },
+        "edition": {
+          "status": "original",
+          "source": "Unicorn Valley Story House edition"
+        },
+        "originalPublicationYear": 1902,
+        "curatorNotes": "A short classic split into five scene-sized reader sections, retaining Potter's original visual identity."
+      },
+      "chapters": [
+        {
+          "id": "mrs-rabbits-warning",
+          "title": "Mrs Rabbit's Warning",
+          "path": "chapters/01.md",
+          "illustrations": [
+            {
+              "id": "potter-rabbit-family",
+              "blockId": "four-little-rabbits",
+              "path": "illustrations/rabbit-family.webp",
+              "alt": "Beatrix Potter's illustration of Peter Rabbit with his family.",
+              "placement": "full-width",
+              "width": 469,
+              "height": 511,
+              "caption": "Illustration by Beatrix Potter, 1902."
+            }
+          ]
+        },
+        {
+          "id": "into-the-garden",
+          "title": "Into the Garden",
+          "path": "chapters/02.md",
+          "illustrations": [
+            {
+              "id": "potter-garden",
+              "blockId": "among-the-vegetables",
+              "path": "illustrations/garden.webp",
+              "alt": "An original Beatrix Potter illustration from The Tale of Peter Rabbit.",
+              "placement": "full-width",
+              "width": 431,
+              "height": 528,
+              "caption": "Illustration by Beatrix Potter, 1902."
+            }
+          ]
+        },
+        {
+          "id": "mr-mcgregor",
+          "title": "Mr McGregor",
+          "path": "chapters/03.md"
+        },
+        {
+          "id": "lost-and-found",
+          "title": "Lost and Found",
+          "path": "chapters/04.md",
+          "illustrations": [
+            {
+              "id": "potter-escape",
+              "blockId": "finding-the-gate",
+              "path": "illustrations/escape.webp",
+              "alt": "An original Beatrix Potter illustration from Peter Rabbit's escape.",
+              "placement": "full-width",
+              "width": 408,
+              "height": 530,
+              "caption": "Illustration by Beatrix Potter, 1902."
+            }
+          ]
+        },
+        {
+          "id": "home-again",
+          "title": "Home Again",
+          "path": "chapters/05.md",
+          "illustrations": [
+            {
+              "id": "potter-home",
+              "blockId": "back-in-the-burrow",
+              "path": "illustrations/home.webp",
+              "alt": "Beatrix Potter's illustration of Mrs Rabbit and the rabbit family.",
+              "placement": "full-width",
+              "width": 446,
+              "height": 505,
+              "caption": "Illustration by Beatrix Potter, 1902."
+            }
+          ]
+        }
+      ]
     },
-    "illustrations": {
-      "status": "public-domain",
-      "source": "Original 1902 illustrations by Beatrix Potter",
-      "sourceUrl": "https://commons.wikimedia.org/wiki/Category:The_Tale_of_Peter_Rabbit",
-      "notes": "The selected original Potter illustration files are identified as public domain on Wikimedia Commons."
-    },
-    "edition": {
-      "status": "original",
-      "source": "Unicorn Valley Story House edition"
-    },
-    "originalPublicationYear": 1902,
-    "curatorNotes": "A short classic split into five scene-sized reader sections, retaining Potter's original visual identity."
-  }
+    {
+      "id": "full-classic",
+      "label": "Full Classic Text",
+      "author": "Beatrix Potter",
+      "readingMode": "paged-prose",
+      "rights": {
+        "text": {
+          "status": "public-domain",
+          "source": "Beatrix Potter's 1902 text, transcribed in Project Gutenberg eBook #14838",
+          "sourceUrl": "https://www.gutenberg.org/ebooks/14838",
+          "notes": "Complete story text. Project Gutenberg header, footer, licence text and standalone [Illustration] placeholders are excluded; wording is not abridged or modernised."
+        },
+        "illustrations": {
+          "status": "public-domain",
+          "source": "Original 1902 illustrations by Beatrix Potter",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/Category:The_Tale_of_Peter_Rabbit",
+          "notes": "The selected original Potter illustration files are identified as public domain on Wikimedia Commons."
+        },
+        "edition": {
+          "status": "public-domain",
+          "source": "1902 Beatrix Potter text and illustrations",
+          "notes": "Story House pagination is presentation only; the original wording remains unabridged."
+        },
+        "originalPublicationYear": 1902,
+        "curatorNotes": "Complete original text split into 4 reader pages at paragraph boundaries, with original Potter illustrations reused at matching scenes."
+      },
+      "chapters": [
+        {
+          "id": "page-01",
+          "title": "The Tale of Peter Rabbit",
+          "path": "editions/full-classic/pages/page-01.md",
+          "illustrations": [
+            {
+              "id": "full-potter-rabbit-family",
+              "blockId": "p01-b01",
+              "path": "illustrations/rabbit-family.webp",
+              "alt": "Beatrix Potter's illustration of Peter Rabbit with his family.",
+              "placement": "full-width",
+              "width": 469,
+              "height": 511,
+              "caption": "Illustration by Beatrix Potter, 1902."
+            },
+            {
+              "id": "full-potter-garden",
+              "blockId": "p01-b09",
+              "path": "illustrations/garden.webp",
+              "alt": "An original Beatrix Potter illustration from The Tale of Peter Rabbit.",
+              "placement": "full-width",
+              "width": 431,
+              "height": 528,
+              "caption": "Illustration by Beatrix Potter, 1902."
+            }
+          ]
+        },
+        {
+          "id": "page-02",
+          "title": "The Tale of Peter Rabbit (continued)",
+          "path": "editions/full-classic/pages/page-02.md"
+        },
+        {
+          "id": "page-03",
+          "title": "The Tale of Peter Rabbit (continued)",
+          "path": "editions/full-classic/pages/page-03.md",
+          "illustrations": [
+            {
+              "id": "full-potter-escape",
+              "blockId": "p03-b05",
+              "path": "illustrations/escape.webp",
+              "alt": "An original Beatrix Potter illustration from Peter Rabbit's escape.",
+              "placement": "full-width",
+              "width": 408,
+              "height": 530,
+              "caption": "Illustration by Beatrix Potter, 1902."
+            }
+          ]
+        },
+        {
+          "id": "page-04",
+          "title": "The Tale of Peter Rabbit (continued)",
+          "path": "editions/full-classic/pages/page-04.md",
+          "illustrations": [
+            {
+              "id": "full-potter-home",
+              "blockId": "p04-b02",
+              "path": "illustrations/home.webp",
+              "alt": "Beatrix Potter's illustration of Mrs Rabbit and the rabbit family.",
+              "placement": "full-width",
+              "width": 446,
+              "height": 505,
+              "caption": "Illustration by Beatrix Potter, 1902."
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }
