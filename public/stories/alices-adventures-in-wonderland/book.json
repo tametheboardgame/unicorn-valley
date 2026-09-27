@@ -1,0 +1,190 @@
+{
+  "schemaVersion": 1,
+  "id": "alices-adventures-in-wonderland",
+  "title": "Alice's Adventures in Wonderland",
+  "description": "Alice follows a hurried White Rabbit underground and tumbles into a world of impossible size changes, talking animals, curious riddles and a Queen who wants everything her own way.",
+  "catalogueBlurb": "Follow Alice down the rabbit-hole into a world where almost nothing makes sense.",
+  "author": "Lewis Carroll, retold by Quill",
+  "readingMode": "flowing",
+  "cover": {
+    "path": "covers/cover.webp",
+    "alt": "John Tenniel's historic Alice in Wonderland frontispiece."
+  },
+  "series": null,
+  "tags": ["classic-retelling", "fantasy", "wonderland", "adventure", "nonsense", "illustrated"],
+  "publication": {
+    "status": "published"
+  },
+  "chapters": [
+    {
+      "id": "down-the-rabbit-hole",
+      "title": "Down the Rabbit-Hole",
+      "path": "chapters/01.md",
+      "illustrations": [
+        {
+          "id": "tenniel-white-rabbit",
+          "blockId": "a-rabbit-with-a-watch",
+          "path": "illustrations/white-rabbit.webp",
+          "alt": "John Tenniel's illustration of the White Rabbit.",
+          "placement": "full-width",
+          "width": 789,
+          "height": 1207,
+          "caption": "Illustration by John Tenniel."
+        }
+      ]
+    },
+    {
+      "id": "the-pool-of-tears",
+      "title": "The Pool of Tears",
+      "path": "chapters/02.md",
+      "illustrations": [
+        {
+          "id": "tenniel-pool-of-tears",
+          "blockId": "swimming-in-tears",
+          "path": "illustrations/pool-of-tears.webp",
+          "alt": "John Tenniel's illustration of Alice swimming in the pool of tears.",
+          "placement": "full-width",
+          "width": 655,
+          "height": 432,
+          "caption": "Illustration by John Tenniel."
+        }
+      ]
+    },
+    {
+      "id": "a-caucus-race",
+      "title": "A Caucus-Race",
+      "path": "chapters/03.md"
+    },
+    {
+      "id": "the-rabbits-house",
+      "title": "The Rabbit Sends in a Little Bill",
+      "path": "chapters/04.md"
+    },
+    {
+      "id": "advice-from-a-caterpillar",
+      "title": "Advice from a Caterpillar",
+      "path": "chapters/05.md",
+      "illustrations": [
+        {
+          "id": "tenniel-caterpillar",
+          "blockId": "who-are-you",
+          "path": "illustrations/caterpillar.webp",
+          "alt": "John Tenniel's illustration of the Caterpillar on a mushroom.",
+          "placement": "full-width",
+          "width": 1116,
+          "height": 1492,
+          "caption": "Illustration by John Tenniel."
+        }
+      ]
+    },
+    {
+      "id": "pig-and-pepper",
+      "title": "Pig and Pepper",
+      "path": "chapters/06.md",
+      "illustrations": [
+        {
+          "id": "tenniel-cheshire-cat",
+          "blockId": "the-cheshire-cat",
+          "path": "illustrations/cheshire-cat.webp",
+          "alt": "John Tenniel's illustration of the Cheshire Cat.",
+          "placement": "full-width",
+          "width": 427,
+          "height": 427,
+          "caption": "Illustration by John Tenniel."
+        }
+      ]
+    },
+    {
+      "id": "a-mad-tea-party",
+      "title": "A Mad Tea-Party",
+      "path": "chapters/07.md",
+      "illustrations": [
+        {
+          "id": "tenniel-tea-party",
+          "blockId": "no-room",
+          "path": "illustrations/tea-party.webp",
+          "alt": "John Tenniel's illustration of Alice at the Mad Tea-Party.",
+          "placement": "full-width",
+          "width": 521,
+          "height": 387,
+          "caption": "Illustration by John Tenniel."
+        }
+      ]
+    },
+    {
+      "id": "the-queens-croquet-ground",
+      "title": "The Queen's Croquet-Ground",
+      "path": "chapters/08.md",
+      "illustrations": [
+        {
+          "id": "tenniel-queen-croquet",
+          "blockId": "the-queen-arrives",
+          "path": "illustrations/queen-croquet.webp",
+          "alt": "John Tenniel's illustration of Alice meeting the Queen of Hearts.",
+          "placement": "full-width",
+          "width": 983,
+          "height": 1203,
+          "caption": "Illustration by John Tenniel."
+        }
+      ]
+    },
+    {
+      "id": "the-mock-turtles-story",
+      "title": "The Mock Turtle's Story",
+      "path": "chapters/09.md"
+    },
+    {
+      "id": "the-lobster-quadrille",
+      "title": "The Lobster Quadrille",
+      "path": "chapters/10.md"
+    },
+    {
+      "id": "who-stole-the-tarts",
+      "title": "Who Stole the Tarts?",
+      "path": "chapters/11.md",
+      "illustrations": [
+        {
+          "id": "tenniel-court",
+          "blockId": "the-trial",
+          "path": "illustrations/court.webp",
+          "alt": "John Tenniel's illustration of the King and Queen of Hearts at the trial.",
+          "placement": "full-width",
+          "width": 440,
+          "height": 633,
+          "caption": "Illustration by John Tenniel."
+        }
+      ]
+    },
+    {
+      "id": "alices-evidence",
+      "title": "Alice's Evidence",
+      "path": "chapters/12.md"
+    }
+  ],
+  "discovery": {
+    "format": "Chapter Book",
+    "genres": ["Fantasy", "Adventure", "Classics"],
+    "audiences": ["Read Together", "Independent Reader"],
+    "length": "Longer Read"
+  },
+  "rights": {
+    "text": {
+      "status": "original",
+      "source": "Original Story House retelling based on Lewis Carroll's public-domain 1865 novel",
+      "sourceUrl": "https://en.wikisource.org/wiki/Alice%27s_Adventures_in_Wonderland",
+      "notes": "The underlying 1865 novel is public domain. This wording is an original child-friendly Unicorn Valley retelling."
+    },
+    "illustrations": {
+      "status": "public-domain",
+      "source": "Original Alice's Adventures in Wonderland illustrations by John Tenniel",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/Category:John_Tenniel%27s_illustrations_of_Alice%27s_Adventures_in_Wonderland",
+      "notes": "The selected historic Tenniel files are identified as public domain on Wikimedia Commons."
+    },
+    "edition": {
+      "status": "original",
+      "source": "Unicorn Valley Story House edition"
+    },
+    "originalPublicationYear": 1865,
+    "curatorNotes": "Condensed into twelve reader sections matching the original novel's chapter structure, preserving its best-known characters, scenes and nonsense while keeping each section manageable for younger readers."
+  }
+}
