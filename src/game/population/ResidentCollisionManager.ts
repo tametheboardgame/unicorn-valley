@@ -22,6 +22,10 @@ interface PositionedObject {
   y: number;
 }
 
+interface PositionedTalkTarget extends PositionedObject {
+  id: string;
+}
+
 function findPlayer(scene: Phaser.Scene): Phaser.Physics.Arcade.Sprite | null {
   const named = scene.children.getByName(WORLD_PLAYER_NAME);
   if (named instanceof Phaser.Physics.Arcade.Sprite) {
@@ -54,11 +58,14 @@ function conditionIsTrue(condition: InteractionCondition | undefined): boolean {
   return typeof condition === 'function' ? condition() : condition;
 }
 
-function findVisibleTalkPositions(scene: Phaser.Scene): PositionedObject[] {
+function findVisibleTalkTargets(scene: Phaser.Scene): PositionedTalkTarget[] {
   return getSceneInteractionRegistry(scene)
     .getTargets()
     .filter((target) => target.actionKind === 'talk' && conditionIsTrue(target.visible))
-    .map((target) => getInteractionTargetPosition(target));
+    .map((target) => ({
+      id: target.id,
+      ...getInteractionTargetPosition(target),
+    }));
 }
 
 /**
@@ -88,8 +95,8 @@ export class ResidentCollisionManager {
       for (const resident of findResidents(scene)) {
         this.syncResidentRoute(scene, player, resident);
       }
-      for (const targetPosition of findVisibleTalkPositions(scene)) {
-        this.separatePlayer(scene, player, targetPosition);
+      for (const target of findVisibleTalkTargets(scene)) {
+        this.separatePlayer(scene, player, target);
       }
     }
   };
@@ -110,7 +117,7 @@ export class ResidentCollisionManager {
   private separatePlayer(
     scene: Phaser.Scene,
     player: Phaser.Physics.Arcade.Sprite,
-    target: PositionedObject,
+    target: PositionedTalkTarget,
   ): void {
     const dx = player.x - target.x;
     const dy = player.y - target.y;
@@ -194,20 +201,22 @@ export class ResidentCollisionManager {
       bounds.bottom - PLAYER_EDGE_PADDING,
     );
 
-    // Click navigation cannot safely reuse the pre-collision velocity here. Doing so makes its
-    // route controller immediately push back through the resident on the next frame, producing a
-    // visible back-and-forth oscillation. Cancel only ordinary ground click-navigation; explicit
-    // interaction approach movement keeps its own arrival contract.
-    const cancelledGroundClickNavigation =
-      getClickToMoveManager(this.game).cancelGroundNavigationForResidentCollision(scene);
+    // Any click-driven route must yield immediately to resident separation. If this is the
+    // resident the player deliberately clicked to talk to, the collision itself counts as a safe
+    // arrival after the player has been moved back to the personal-space boundary.
+    const clickCollision = getClickToMoveManager(this.game).cancelNavigationForResidentCollision(
+      scene,
+      target.id,
+    );
 
     // reset keeps Arcade physics and presentation aligned. Held/manual movement keeps its velocity
-    // so the player can naturally slide around the resident. Ground click-navigation stops cleanly
-    // at the personal-space boundary and waits for a fresh click instead of fighting the collision.
+    // so the player can naturally slide around the resident. Click navigation stops cleanly instead
+    // of reapplying velocity and fighting the separation correction on the next frame.
     body.reset(nextX, nextY);
-    if (!cancelledGroundClickNavigation && speed > MOVEMENT_EPSILON) {
+    if (!clickCollision.cancelled && speed > MOVEMENT_EPSILON) {
       body.setVelocity(velocityX, velocityY);
     }
+    clickCollision.onArrive?.();
   }
 
   private pauseResidentRoute(scene: Phaser.Scene, resident: Phaser.GameObjects.Container): void {
