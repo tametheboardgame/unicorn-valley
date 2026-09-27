@@ -1,0 +1,205 @@
+{
+  "schemaVersion": 1,
+  "id": "five-children-and-it",
+  "title": "Five Children and It",
+  "description": "Five siblings discover a grumpy ancient sand-fairy that grants one wish each day, and rapidly learn that getting exactly what you ask for can be much more troublesome than getting nothing at all.",
+  "catalogueBlurb": "Five children, one sand-fairy and a new disastrous wish every day.",
+  "author": "E. Nesbit, retold by Quill",
+  "readingMode": "flowing",
+  "cover": {
+    "path": "covers/cover.webp",
+    "alt": "The historic first-edition cover of Five Children and It."
+  },
+  "series": null,
+  "tags": [
+    "classic-retelling",
+    "fantasy",
+    "wishes",
+    "siblings",
+    "psammead",
+    "adventure",
+    "illustrated"
+  ],
+  "publication": {
+    "status": "published"
+  },
+  "chapters": [
+    {
+      "id": "beautiful-as-the-day",
+      "title": "Beautiful as the Day",
+      "path": "chapters/01.md",
+      "illustrations": [
+        {
+          "id": "millar-psammead",
+          "blockId": "the-thing-in-the-sand",
+          "path": "illustrations/psammead.webp",
+          "alt": "H. R. Millar's original illustration of the Psammead.",
+          "placement": "full-width",
+          "width": 830,
+          "height": 968,
+          "caption": "Illustration by H. R. Millar, 1902."
+        }
+      ]
+    },
+    {
+      "id": "golden-guineas",
+      "title": "Golden Guineas",
+      "path": "chapters/02.md",
+      "illustrations": [
+        {
+          "id": "millar-guineas",
+          "blockId": "a-mountain-of-money",
+          "path": "illustrations/golden-guineas.webp",
+          "alt": "An original H. R. Millar illustration from Five Children and It.",
+          "placement": "full-width",
+          "width": 934,
+          "height": 804,
+          "caption": "Illustration by H. R. Millar, 1902."
+        }
+      ]
+    },
+    {
+      "id": "being-wanted",
+      "title": "Being Wanted",
+      "path": "chapters/03.md",
+      "illustrations": [
+        {
+          "id": "millar-being-wanted",
+          "blockId": "everybody-wants-the-lamb",
+          "path": "illustrations/being-wanted.webp",
+          "alt": "An original H. R. Millar illustration from Five Children and It.",
+          "placement": "full-width",
+          "width": 781,
+          "height": 858,
+          "caption": "Illustration by H. R. Millar, 1902."
+        }
+      ]
+    },
+    {
+      "id": "wings",
+      "title": "Wings",
+      "path": "chapters/04.md",
+      "illustrations": [
+        {
+          "id": "millar-wings",
+          "blockId": "into-the-sky",
+          "path": "illustrations/wings.webp",
+          "alt": "An original H. R. Millar illustration from Five Children and It.",
+          "placement": "full-width",
+          "width": 880,
+          "height": 641,
+          "caption": "Illustration by H. R. Millar, 1902."
+        }
+      ]
+    },
+    {
+      "id": "no-wings",
+      "title": "No Wings",
+      "path": "chapters/05.md",
+      "illustrations": [
+        {
+          "id": "millar-tower",
+          "blockId": "sunset-on-the-tower",
+          "path": "illustrations/tower.webp",
+          "alt": "An original H. R. Millar illustration from Five Children and It.",
+          "placement": "full-width",
+          "width": 892,
+          "height": 773,
+          "caption": "Illustration by H. R. Millar, 1902."
+        }
+      ]
+    },
+    {
+      "id": "a-castle-and-no-dinner",
+      "title": "A Castle and No Dinner",
+      "path": "chapters/06.md"
+    },
+    {
+      "id": "a-siege-and-bed",
+      "title": "A Siege and Bed",
+      "path": "chapters/07.md"
+    },
+    {
+      "id": "bigger-than-the-bakers-boy",
+      "title": "Bigger Than the Baker's Boy",
+      "path": "chapters/08.md"
+    },
+    {
+      "id": "grown-up",
+      "title": "Grown Up",
+      "path": "chapters/09.md",
+      "illustrations": [
+        {
+          "id": "millar-grown-up",
+          "blockId": "the-lamb-grows-up",
+          "path": "illustrations/grown-up.webp",
+          "alt": "An original H. R. Millar illustration from Five Children and It.",
+          "placement": "full-width",
+          "width": 1000,
+          "height": 1020,
+          "caption": "Illustration by H. R. Millar, 1902."
+        }
+      ]
+    },
+    {
+      "id": "the-game-comes-to-life",
+      "title": "The Game Comes to Life",
+      "path": "chapters/10.md",
+      "illustrations": [
+        {
+          "id": "millar-game",
+          "blockId": "not-a-game-anymore",
+          "path": "illustrations/game-comes-to-life.webp",
+          "alt": "An original H. R. Millar illustration from Five Children and It.",
+          "placement": "full-width",
+          "width": 812,
+          "height": 1236,
+          "caption": "Illustration by H. R. Millar, 1902."
+        }
+      ]
+    },
+    {
+      "id": "the-last-wish",
+      "title": "The Last Wish",
+      "path": "chapters/11.md",
+      "illustrations": [
+        {
+          "id": "millar-last-wish",
+          "blockId": "one-last-favour",
+          "path": "illustrations/last-wish.webp",
+          "alt": "An original H. R. Millar illustration from Five Children and It.",
+          "placement": "full-width",
+          "width": 836,
+          "height": 1424,
+          "caption": "Illustration by H. R. Millar, 1902."
+        }
+      ]
+    }
+  ],
+  "discovery": {
+    "format": "Chapter Book",
+    "genres": ["Fantasy", "Adventure", "Classics"],
+    "audiences": ["Read Together", "Independent Reader"],
+    "length": "Longer Read"
+  },
+  "rights": {
+    "text": {
+      "status": "original",
+      "source": "Original Story House retelling based on E. Nesbit's public-domain 1902 novel",
+      "sourceUrl": "https://www.gutenberg.org/ebooks/17314",
+      "notes": "The underlying 1902 novel is public domain in the UK and United States. This wording is an original child-friendly Unicorn Valley retelling. Dated racial and imperial stereotypes in the original have been rewritten rather than reproduced."
+    },
+    "illustrations": {
+      "status": "public-domain",
+      "source": "Original 1902 illustrations by H. R. Millar",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/Category:Five_Children_and_It",
+      "notes": "The selected H. R. Millar source files are identified as public domain on Wikimedia Commons."
+    },
+    "edition": {
+      "status": "original",
+      "source": "Unicorn Valley Story House edition"
+    },
+    "originalPublicationYear": 1902,
+    "curatorNotes": "Eleven reader sections follow the original sequence of wishes. The chapter built around outdated racial stereotypes has been recast as a general adventure-game wish while preserving the careless-wish plot function."
+  }
+}

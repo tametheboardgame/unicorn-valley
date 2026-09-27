@@ -42,6 +42,47 @@
       "manifestPath": "/stories/alices-adventures-in-wonderland/book.json"
     },
     {
+      "id": "five-children-and-it",
+      "title": "Five Children and It",
+      "description": "Five siblings discover a grumpy ancient sand-fairy that grants one wish each day, and rapidly learn that getting exactly what you ask for can be much more troublesome than getting nothing at all.",
+      "catalogueBlurb": "Five children, one sand-fairy and a new disastrous wish every day.",
+      "author": "E. Nesbit, retold by Quill",
+      "readingMode": "flowing",
+      "coverPath": "/stories/five-children-and-it/covers/cover.webp",
+      "coverAlt": "The historic first-edition cover of Five Children and It.",
+      "series": null,
+      "tags": [
+        "classic-retelling",
+        "fantasy",
+        "wishes",
+        "siblings",
+        "psammead",
+        "adventure",
+        "illustrated"
+      ],
+      "discovery": {
+        "format": "Chapter Book",
+        "genres": [
+          "Fantasy",
+          "Adventure",
+          "Classics"
+        ],
+        "audiences": [
+          "Read Together",
+          "Independent Reader"
+        ],
+        "length": "Longer Read"
+      },
+      "rightsSummary": {
+        "text": "original",
+        "illustrations": "public-domain",
+        "edition": "original",
+        "originalPublicationYear": 1902
+      },
+      "chapterCount": 11,
+      "manifestPath": "/stories/five-children-and-it/book.json"
+    },
+    {
       "id": "snow-white-and-rose-red",
       "title": "Snow-White and Rose-Red",
       "description": "Two sisters who share everything welcome a gentle bear into their winter home, then discover that their new friend is hiding a magical secret.",
