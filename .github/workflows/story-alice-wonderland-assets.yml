@@ -1,0 +1,74 @@
+name: Materialise Alice in Wonderland art
+
+on:
+  push:
+    branches:
+      - agent/story-house-alice-wonderland
+
+permissions:
+  contents: write
+
+jobs:
+  materialise:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/story-house-alice-wonderland
+
+      - name: Download verified public-domain John Tenniel illustrations
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p public/stories/alices-adventures-in-wonderland/illustrations
+          mkdir -p public/stories/alices-adventures-in-wonderland/covers
+
+          curl -L --fail --retry 3             "https://commons.wikimedia.org/wiki/Special:Redirect/file/Alice_frontispiece-937x1333.jpg"             -o /tmp/cover.jpg
+          curl -L --fail --retry 3             "https://commons.wikimedia.org/wiki/Special:Redirect/file/Alice-white-rabbit.jpg"             -o /tmp/white-rabbit.jpg
+          curl -L --fail --retry 3             "https://commons.wikimedia.org/wiki/Special:Redirect/file/John_Tenniel_-_Alice_in_Wonderland_-_Pool_of_Tears.jpg"             -o /tmp/pool.jpg
+          curl -L --fail --retry 3             "https://commons.wikimedia.org/wiki/Special:Redirect/file/Alice_05a-1116x1492.jpg"             -o /tmp/caterpillar.jpg
+          curl -L --fail --retry 3             "https://commons.wikimedia.org/wiki/Special:Redirect/file/Cheshire_Cat_Tenniel.png"             -o /tmp/cheshire.png
+          curl -L --fail --retry 3             "https://commons.wikimedia.org/wiki/Special:Redirect/file/Teaparty.png"             -o /tmp/tea-party.png
+          curl -L --fail --retry 3             "https://commons.wikimedia.org/wiki/Special:Redirect/file/Alice-queen-hearts.jpg"             -o /tmp/queen-croquet.jpg
+          curl -L --fail --retry 3             "https://commons.wikimedia.org/wiki/Special:Redirect/file/Queen_of_Hearts.jpg"             -o /tmp/court.jpg
+
+      - name: Convert illustrations to Story House WebP assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! command -v convert >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y imagemagick
+          fi
+
+          convert /tmp/white-rabbit.jpg -resize '900x1200>' -strip -quality 90             public/stories/alices-adventures-in-wonderland/illustrations/white-rabbit.webp
+          convert /tmp/pool.jpg -resize '1000x900>' -strip -quality 90             public/stories/alices-adventures-in-wonderland/illustrations/pool-of-tears.webp
+          convert /tmp/caterpillar.jpg -resize '900x1200>' -strip -quality 90             public/stories/alices-adventures-in-wonderland/illustrations/caterpillar.webp
+          convert /tmp/cheshire.png -resize '900x900>' -strip -quality 90             public/stories/alices-adventures-in-wonderland/illustrations/cheshire-cat.webp
+          convert /tmp/tea-party.png -resize '1000x900>' -strip -quality 90             public/stories/alices-adventures-in-wonderland/illustrations/tea-party.webp
+          convert /tmp/queen-croquet.jpg -resize '900x1200>' -strip -quality 90             public/stories/alices-adventures-in-wonderland/illustrations/queen-croquet.webp
+          convert /tmp/court.jpg -resize '900x1200>' -strip -quality 90             public/stories/alices-adventures-in-wonderland/illustrations/court.webp
+
+          convert /tmp/cover.jpg             -resize '420x520>'             -gravity center             -background '#f6f0df'             -extent 480x640             -strip -quality 92             public/stories/alices-adventures-in-wonderland/covers/cover.webp
+
+      - name: Format story manifest and regenerate catalogue
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm ci --no-audit --no-fund
+          npx biome format --write public/stories/alices-adventures-in-wonderland/book.json
+          node scripts/generateStoryCatalogue.mjs
+
+      - name: Commit materialised story assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/stories/alices-adventures-in-wonderland public/stories/catalogue.json
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "Story House: materialise Alice in Wonderland art"
+          git push origin HEAD:agent/story-house-alice-wonderland
