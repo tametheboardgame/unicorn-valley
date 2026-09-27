@@ -1,0 +1,59 @@
+name: Materialise Town Mouse story art
+
+on:
+  push:
+    branches:
+      - agent/story-house-town-country-mouse
+
+permissions:
+  contents: write
+
+jobs:
+  materialise:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/story-house-town-country-mouse
+
+      - name: Download verified public-domain Heighway illustrations
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p public/stories/the-town-mouse-and-the-country-mouse/illustrations
+          mkdir -p public/stories/the-town-mouse-and-the-country-mouse/covers
+
+          curl -L --fail --retry 3             "https://commons.wikimedia.org/wiki/Special:Redirect/file/Page_14_illustration_from_The_Fables_of_%C3%86sop_%28Jacobs%29.png"             -o /tmp/country.png
+          curl -L --fail --retry 3             "https://commons.wikimedia.org/wiki/Special:Redirect/file/Page_16_illustration_from_The_Fables_of_%C3%86sop_%28Jacobs%29.png"             -o /tmp/feast.png
+          curl -L --fail --retry 3             "https://commons.wikimedia.org/wiki/Special:Redirect/file/Page_17_illustration_from_The_Fables_of_%C3%86sop_%28Jacobs%29.png"             -o /tmp/danger.png
+
+      - name: Convert illustrations to Story House WebP assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! command -v convert >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y imagemagick
+          fi
+
+          convert /tmp/country.png -resize '870x1200>' -strip -quality 92             public/stories/the-town-mouse-and-the-country-mouse/illustrations/country.webp
+          convert /tmp/feast.png -resize '1200x260>' -strip -quality 92             public/stories/the-town-mouse-and-the-country-mouse/illustrations/feast.webp
+          convert /tmp/danger.png -resize '1200x280>' -strip -quality 92             public/stories/the-town-mouse-and-the-country-mouse/illustrations/danger.webp
+          convert /tmp/country.png             -resize '420x520>'             -gravity center             -background '#f6f0df'             -extent 480x640             -strip -quality 92             public/stories/the-town-mouse-and-the-country-mouse/covers/cover.webp
+
+      - name: Regenerate Story House catalogue
+        run: node scripts/generateStoryCatalogue.mjs
+
+      - name: Commit materialised story assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/stories/the-town-mouse-and-the-country-mouse public/stories/catalogue.json
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "Story House: materialise Town Mouse public-domain art"
+          git push origin HEAD:agent/story-house-town-country-mouse
