@@ -161,6 +161,51 @@
       },
       "chapterCount": 1,
       "manifestPath": "/stories/the-lion-and-the-mouse/book.json"
+    },
+    {
+      "id": "the-town-mouse-and-the-country-mouse",
+      "title": "The Town Mouse and the Country Mouse",
+      "description": "A country mouse visits his sophisticated cousin in town and discovers that luxury is not much fun when dinner comes with danger.",
+      "catalogueBlurb": "Two cousins discover that a peaceful meal can beat a grand feast.",
+      "author": "Aesop, told anew by Joseph Jacobs",
+      "readingMode": "flowing",
+      "coverPath": "/stories/the-town-mouse-and-the-country-mouse/covers/cover.webp",
+      "coverAlt": "Richard Heighway's illustration for The Town Mouse and the Country Mouse.",
+      "series": {
+        "id": "aesops-fables",
+        "title": "Aesop's Fables",
+        "order": 2
+      },
+      "tags": [
+        "classic",
+        "aesop",
+        "animals",
+        "mice",
+        "contentment",
+        "public-domain",
+        "illustrated"
+      ],
+      "discovery": {
+        "format": "Picture Book",
+        "genres": [
+          "Animals",
+          "Classics"
+        ],
+        "audiences": [
+          "Read Together",
+          "Early Reader",
+          "Independent Reader"
+        ],
+        "length": "Quick Read"
+      },
+      "rightsSummary": {
+        "text": "public-domain",
+        "illustrations": "public-domain",
+        "edition": "public-domain",
+        "originalPublicationYear": 1894
+      },
+      "chapterCount": 1,
+      "manifestPath": "/stories/the-town-mouse-and-the-country-mouse/book.json"
     }
   ]
 }
