@@ -62,6 +62,7 @@ interface ResidentRuntime {
   tween: Phaser.Tweens.Tween | null;
   movementTargetIndex: number | null;
   movementDeadlineMs: number;
+  movementPausedAtMs: number;
   pauseUntilMs: number;
   engaged: boolean;
   interactionCount: number;
@@ -292,6 +293,7 @@ export class AmbientPopulationWorldManager {
       tween: null,
       movementTargetIndex: null,
       movementDeadlineMs: 0,
+      movementPausedAtMs: 0,
       pauseUntilMs: this.game.loop.time + firstPause,
       engaged: false,
       interactionCount: 0,
@@ -310,15 +312,35 @@ export class AmbientPopulationWorldManager {
     const presentationScale = runtime.location.placement?.presentationScale ?? 1;
     runtime.container.setDepth(worldDepthForY(runtime.container.y + 52 * presentationScale, 0.36));
 
+    if (runtime.location.kind === 'story-anchor') {
+      return;
+    }
+
+    if (runtime.tween?.isPaused()) {
+      if (runtime.movementPausedAtMs === 0) {
+        runtime.movementPausedAtMs = now;
+      }
+      runtime.sprite.setTexture(
+        ensureSupportingResidentTexture(runtime.container.scene, runtime.resident, 'idle'),
+      );
+      if (runtime.engaged) {
+        runtime.sprite.setFlipX(player.x < runtime.container.x);
+      }
+      return;
+    }
+
+    if (runtime.movementPausedAtMs > 0) {
+      if (runtime.movementDeadlineMs > 0) {
+        runtime.movementDeadlineMs += now - runtime.movementPausedAtMs;
+      }
+      runtime.movementPausedAtMs = 0;
+    }
+
     if (runtime.engaged) {
       runtime.sprite.setTexture(
         ensureSupportingResidentTexture(runtime.container.scene, runtime.resident, 'idle'),
       );
       runtime.sprite.setFlipX(player.x < runtime.container.x);
-      return;
-    }
-
-    if (runtime.location.kind === 'story-anchor') {
       return;
     }
 
@@ -361,6 +383,7 @@ export class AmbientPopulationWorldManager {
     runtime.movementTargetIndex = next.index;
     const duration = movementDurationMs(runtime.container, target, placement.speedPxPerSecond);
     runtime.movementDeadlineMs = now + duration + ROUTE_TIMEOUT_GRACE_MS;
+    runtime.movementPausedAtMs = 0;
     runtime.sprite.setFlipX(target.x < runtime.container.x);
 
     runtime.tween = runtime.container.scene.tweens.add({
@@ -373,6 +396,7 @@ export class AmbientPopulationWorldManager {
         runtime.tween = null;
         runtime.movementTargetIndex = null;
         runtime.movementDeadlineMs = 0;
+        runtime.movementPausedAtMs = 0;
         runtime.pauseUntilMs =
           this.game.loop.time + (target.pauseMs ?? this.defaultPauseMs(placement.behaviour));
         const playerDx = player.x - runtime.container.x;
@@ -407,6 +431,7 @@ export class AmbientPopulationWorldManager {
     }
     runtime.movementTargetIndex = null;
     runtime.movementDeadlineMs = 0;
+    runtime.movementPausedAtMs = 0;
     runtime.pauseUntilMs = now + 1400;
   }
 
