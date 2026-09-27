@@ -8,6 +8,7 @@ import {
   type ConceptIcon,
 } from './ConceptUi';
 import {
+  EXPLORATION_MODAL_SCENE_KEYS,
   isInteractionActivationSuppressed,
   isInteractionModalActive,
 } from '../interaction/InteractionModalState';
@@ -16,14 +17,6 @@ import { UI_FONT } from './uiTheme';
 
 const SCENE_KEY = 'ExplorationHudOverlayScene';
 const SYNC_MS = 90;
-const MODAL_SCENE_KEYS = new Set([
-  'InventoryScene',
-  'WonderbookScene',
-  'SettingsScene',
-  'ShopScene',
-  'CottageDecorateScene',
-  'UnicornCreatorScene',
-]);
 
 const SOURCE_TOP_HUD_NAMES = new Set([
   'exploration-shell-nav-shadow',
@@ -350,7 +343,7 @@ export class ExplorationHudOverlayScene extends Phaser.Scene {
   }
 
   private modalSceneIsOpen(): boolean {
-    for (const sceneKey of MODAL_SCENE_KEYS) {
+    for (const sceneKey of EXPLORATION_MODAL_SCENE_KEYS) {
       if (this.game.scene.isActive(sceneKey)) {
         return true;
       }
@@ -397,7 +390,8 @@ export class ExplorationHudOverlayScene extends Phaser.Scene {
     if (!(source instanceof Phaser.GameObjects.Rectangle)) {
       return;
     }
-    this.setHudVisible(false);
+    // Keep the HUD visible until sync observes a real modal scene.
+    // If a source action cannot open its modal, navigation must remain usable.
     source.emit('pointerdown');
   }
 }

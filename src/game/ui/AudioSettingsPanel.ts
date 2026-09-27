@@ -1,5 +1,6 @@
 import type Phaser from 'phaser';
 import { getVerticalSliceAudio } from '../audio/VerticalSliceAudio';
+import { openExplorationModal } from '../interaction/InteractionModalState';
 
 const SETTINGS_SCENE_REGISTERED_KEY = 'wp6.14:settings-scene-registered';
 
@@ -38,11 +39,9 @@ export class AudioSettingsPanel {
       }
       if (!this.scene.scene.isActive()) return;
 
-      const audio = getVerticalSliceAudio();
-      audio.playSfx('ui');
-      const returnScene = this.scene.scene.key;
-      this.scene.scene.launch('SettingsScene', { returnScene });
-      this.scene.scene.pause();
+      if (openExplorationModal(this.scene, 'SettingsScene')) {
+        getVerticalSliceAudio().playSfx('ui');
+      }
     } finally {
       this.openingFullSettings = false;
     }

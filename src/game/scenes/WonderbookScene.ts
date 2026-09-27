@@ -6,6 +6,7 @@ import { KeyboardInputAdapter } from '../input/KeyboardInputAdapter';
 import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 import { RelationshipService } from '../relationships/RelationshipService';
 import { getBrowserSaveService } from '../save/browserSaveService';
+import { closeExplorationModal } from '../interaction/InteractionModalState';
 import {
   type PortraitModalActionGroup,
   PortraitModalCompanion,
@@ -883,11 +884,6 @@ export class WonderbookScene extends Phaser.Scene {
     }
 
     this.closing = true;
-    this.scene.stop();
-    if (this.scene.isPaused(this.returnScene)) {
-      this.scene.resume(this.returnScene);
-    } else if (!this.scene.isActive(this.returnScene)) {
-      this.scene.start(this.returnScene);
-    }
+    closeExplorationModal(this, this.returnScene);
   }
 }

@@ -9,6 +9,7 @@ import { getVerticalSliceAudio } from '../audio/VerticalSliceAudio';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { describeGameSetting, type GameSettingKind } from '../settings/GameSettingsModel';
+import { closeExplorationModal } from '../interaction/InteractionModalState';
 import { UI_COLOURS, UI_FONT } from '../ui/uiTheme';
 
 interface SettingsSceneData {
@@ -808,11 +809,6 @@ export class SettingsScene extends Phaser.Scene {
     if (this.closing) return;
     this.closing = true;
     this.audio.playSfx('ui-back');
-    if (this.scene.isPaused(this.returnScene)) {
-      this.scene.resume(this.returnScene);
-    } else if (!this.scene.isActive(this.returnScene)) {
-      this.scene.start(this.returnScene);
-    }
-    this.scene.stop();
+    closeExplorationModal(this, this.returnScene);
   }
 }

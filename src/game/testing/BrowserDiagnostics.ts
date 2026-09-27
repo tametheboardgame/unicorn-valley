@@ -127,7 +127,7 @@ export interface BrowserDiagnosticsApi {
   events(): readonly BrowserDiagnosticEvent[];
   resetPerformance(): void;
   clearEvents(): void;
-  startScene(sceneKey: string, data?: object): void;
+  startScene(sceneKey: string, data?: object, keepExplorationHud?: boolean): void;
   selectRaceCourse(courseId: string): void;
   setArcadeSpritePosition(sceneKey: string, objectName: string, x: number, y: number): void;
 }
@@ -552,7 +552,7 @@ export function installBrowserDiagnostics(game: Phaser.Game): BrowserDiagnostics
       lastError = null;
       sampleSceneStates();
     },
-    startScene: async (sceneKey, data) => {
+    startScene: async (sceneKey, data, keepExplorationHud = false) => {
       if (!game.scene.keys[sceneKey]) {
         const entry = SCENE_MANIFEST.find((candidate) => candidate.key === sceneKey);
         if (!entry || entry.loadBoundary === 'startup') {
@@ -569,6 +569,9 @@ export function installBrowserDiagnostics(game: Phaser.Game): BrowserDiagnostics
         }
       }
       game.scene.start(sceneKey, data);
+      if (keepExplorationHud && game.scene.keys.ExplorationHudOverlayScene) {
+        game.scene.start('ExplorationHudOverlayScene');
+      }
     },
     selectRaceCourse: (courseId) => {
       selectRaceCourse(courseId);
