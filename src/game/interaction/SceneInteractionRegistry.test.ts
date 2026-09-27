@@ -43,4 +43,32 @@ describe('SceneInteractionRegistry', () => {
 
     expect(visited).toEqual(['core:one', 'core:two', 'ambient:one']);
   });
+
+
+  it('reuses a flattened snapshot until a publisher changes the registry', () => {
+    const registry = new SceneInteractionRegistry();
+    registry.replaceOwnerTargets('core', [target('core:one')]);
+
+    const first = registry.getTargetSnapshot();
+    const second = registry.getTargetSnapshot();
+    expect(second).toBe(first);
+
+    registry.replaceOwnerTargets('ambient', [target('ambient:one')]);
+    const afterPublish = registry.getTargetSnapshot();
+    expect(afterPublish).not.toBe(first);
+    expect(afterPublish.map(({ id }) => id)).toEqual(['core:one', 'ambient:one']);
+
+    registry.clearOwner('ambient');
+    expect(registry.getTargetSnapshot()).not.toBe(afterPublish);
+  });
+
+  it('keeps getTargets as a detached mutable copy', () => {
+    const registry = new SceneInteractionRegistry();
+    registry.replaceOwnerTargets('core', [target('core:one')]);
+
+    const detached = registry.getTargets();
+    detached.length = 0;
+
+    expect(registry.getTargetSnapshot().map(({ id }) => id)).toEqual(['core:one']);
+  });
 });
