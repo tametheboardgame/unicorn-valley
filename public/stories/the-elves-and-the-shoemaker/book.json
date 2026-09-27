@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "id": "the-elves-and-the-shoemaker",
+  "title": "The Elves and the Shoemaker",
+  "description": "A kind shoemaker receives mysterious help at night, then finds a way to thank the tiny visitors who changed his fortunes.",
+  "catalogueBlurb": "A grateful shoemaker discovers who has been helping him each night.",
+  "author": "Brothers Grimm, retold by Quill",
+  "readingMode": "flowing",
+  "cover": {
+    "path": "covers/cover.webp",
+    "alt": "Historic illustration of the elves helping the shoemaker."
+  },
+  "series": null,
+  "tags": ["classic-retelling", "fairy-tale", "elves", "kindness", "gratitude", "illustrated"],
+  "publication": {
+    "status": "published"
+  },
+  "chapters": [
+    {
+      "id": "midnight-helpers",
+      "title": "The Elves and the Shoemaker",
+      "path": "chapters/01.md",
+      "illustrations": [
+        {
+          "id": "ubbelohde-elves",
+          "blockId": "mysterious-help",
+          "path": "illustrations/ubbelohde-elves.webp",
+          "alt": "Otto Ubbelohde's 1909 illustration of the elves at the shoemaker's workbench.",
+          "placement": "full-width",
+          "width": 420,
+          "height": 400,
+          "caption": "Illustration by Otto Ubbelohde, 1909."
+        },
+        {
+          "id": "cruikshank-elves",
+          "blockId": "thank-you-gifts",
+          "path": "illustrations/cruikshank-elves.webp",
+          "alt": "George Cruikshank's historic illustration for The Elves and the Shoemaker.",
+          "placement": "full-width",
+          "width": 700,
+          "height": 831,
+          "caption": "Illustration by George Cruikshank, 1876 edition."
+        }
+      ]
+    }
+  ],
+  "discovery": {
+    "format": "Picture Book",
+    "genres": ["Fantasy", "Classics"],
+    "audiences": ["Read Together", "Early Reader", "Independent Reader"],
+    "length": "Quick Read"
+  },
+  "rights": {
+    "text": {
+      "status": "original",
+      "source": "Original Story House retelling based on the Brothers Grimm public-domain tale",
+      "sourceUrl": "https://en.wikisource.org/wiki/Grimm%27s_Household_Tales%2C_Volume_1/The_Elves",
+      "notes": "The underlying Grimm tale is public domain; this wording is an original Unicorn Valley retelling."
+    },
+    "illustrations": {
+      "status": "public-domain",
+      "source": "Otto Ubbelohde (1909) and George Cruikshank (1876) historical illustrations",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/Category:The_Elves_and_the_Shoemaker",
+      "notes": "Both selected source files are marked public domain on Wikimedia Commons."
+    },
+    "edition": {
+      "status": "original",
+      "source": "Unicorn Valley Story House edition"
+    },
+    "originalPublicationYear": 1812,
+    "curatorNotes": "Age-appropriate Story House retelling with verified public-domain historical illustrations."
+  }
+}
