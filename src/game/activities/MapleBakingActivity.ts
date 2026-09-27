@@ -26,7 +26,6 @@ const CONFIG = {
   outcomeDiscoveryIds: BAKERY_OUTCOMES.map(({ discoveryId }) => discoveryId),
 } as const;
 
-
 export type MapleCakeRating = 'lovely-wobble' | 'brilliant-wobble' | 'wobble-masterpiece';
 
 export interface MapleCakeScoreBreakdown {
