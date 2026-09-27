@@ -285,6 +285,45 @@
       "manifestPath": "/stories/the-princess-and-the-pea/book.json"
     },
     {
+      "id": "the-tale-of-peter-rabbit",
+      "title": "The Tale of Peter Rabbit",
+      "description": "Peter Rabbit ignores his mother's warning, slips into Mr McGregor's garden and discovers that stealing vegetables is much easier than escaping with them.",
+      "catalogueBlurb": "Peter Rabbit sneaks into a forbidden garden and has to find his way home.",
+      "author": "Beatrix Potter, retold by Quill",
+      "readingMode": "flowing",
+      "coverPath": "/stories/the-tale-of-peter-rabbit/covers/cover.webp",
+      "coverAlt": "Beatrix Potter's original 1902 cover illustration for The Tale of Peter Rabbit.",
+      "series": null,
+      "tags": [
+        "classic-retelling",
+        "rabbit",
+        "garden",
+        "mischief",
+        "illustrated"
+      ],
+      "discovery": {
+        "format": "Picture Book",
+        "genres": [
+          "Adventure",
+          "Classics"
+        ],
+        "audiences": [
+          "Read Together",
+          "Early Reader",
+          "Independent Reader"
+        ],
+        "length": "Quick Read"
+      },
+      "rightsSummary": {
+        "text": "original",
+        "illustrations": "public-domain",
+        "edition": "original",
+        "originalPublicationYear": 1902
+      },
+      "chapterCount": 5,
+      "manifestPath": "/stories/the-tale-of-peter-rabbit/book.json"
+    },
+    {
       "id": "the-town-mouse-and-the-country-mouse",
       "title": "The Town Mouse and the Country Mouse",
       "description": "A country mouse visits his sophisticated cousin in town and discovers that luxury is not much fun when dinner comes with danger.",
