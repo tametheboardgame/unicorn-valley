@@ -6,7 +6,7 @@ import { KeyboardInputAdapter } from '../input/KeyboardInputAdapter';
 import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 import { RelationshipService } from '../relationships/RelationshipService';
 import { getBrowserSaveService } from '../save/browserSaveService';
-import { closeExplorationModal } from '../ui/ExplorationModalNavigation';
+import { closeExplorationModal } from '../interaction/InteractionModalState';
 import {
   type PortraitModalActionGroup,
   PortraitModalCompanion,
