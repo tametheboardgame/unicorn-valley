@@ -11,6 +11,7 @@ export const MAPLE_CHARACTER_ID = 'character:maple' as const;
 
 export const TANSY_MAP_QUEST_ID = 'quest:tansy-lost-map-corners' as const;
 export const MAPLE_CAKE_QUEST_ID = 'quest:maple-wobbly-cake-plan' as const;
+export const MAPLE_REPEAT_BAKE_COST = 1 as const;
 
 export const TANSY_MAP_HUNT_ACTIVE_FLAG = 'flag:tansy-map-hunt-active' as const;
 export const TANSY_MAP_RESTORED_FLAG = 'flag:tansy-map-restored' as const;

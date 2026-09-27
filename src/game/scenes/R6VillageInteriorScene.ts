@@ -1,20 +1,16 @@
 import Phaser from 'phaser';
 import type { ItemId, QuestId } from '../../content/contentTypes';
 import {
-  MAPLE_CAKE_MOONFLOWER_FLAG,
   MAPLE_CAKE_QUEST_ID,
-  MAPLE_CAKE_RAINBOW_FLAG,
-  MAPLE_CAKE_SUNSHINE_FLAG,
   MAPLE_CHARACTER_ID,
+  MAPLE_REPEAT_BAKE_COST,
   TANSY_BAKERY_MAP_CORNER_DISCOVERY_ID,
   TANSY_MAP_HUNT_ACTIVE_FLAG,
   TANSY_MAP_QUEST_ID,
   TANSY_NOTICE_MAP_CORNER_DISCOVERY_ID,
   TANSY_CHARACTER_ID,
-  WOBBLY_CAKE_ITEM_ID,
   BAKERY_SECTIONS,
   type BakerySectionId,
-  type MapleCakeTheme,
 } from '../../content/r6VillageContent';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { DiscoveryService } from '../discovery/DiscoveryService';
@@ -24,8 +20,6 @@ import { ShopPurchaseTapGuard } from '../economy/ShopPurchaseTapGuard';
 import { ShopService } from '../economy/ShopService';
 import { TwinkleWardrobeService } from '../economy/TwinkleWardrobeService';
 import { ShimmerEconomyService } from '../economy/ShimmerEconomyService';
-import { gameEventBus } from '../events/GameEventBus';
-import { InventoryService } from '../inventory/InventoryService';
 import { setInteractionModalActive } from '../interaction/InteractionModalState';
 import type { InteractionTarget } from '../interaction/InteractionTarget';
 import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
@@ -1324,7 +1318,7 @@ export class VillageInteriorScene extends Phaser.Scene {
       {
         id: 'interaction:village-interior:bakery:cake-table',
         label: 'Wobbly Cake table',
-        actionLabel: 'Plan a cake',
+        actionLabel: 'Bake a cake',
         actionKind: 'use',
         position: cake.approach,
         interactionRadius: 145,
@@ -1691,6 +1685,7 @@ export class VillageInteriorScene extends Phaser.Scene {
     enabled = true,
     width = 260,
     height = 58,
+    objectName?: string,
   ): void {
     if (!this.overlay) {
       return;
@@ -1721,15 +1716,23 @@ export class VillageInteriorScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setScrollFactor(0);
 
+    if (objectName) {
+      label.setName(objectName);
+    }
+
     if (enabled) {
+      const hoverIn = () => surface.setAlpha(0.9);
+      const hoverOut = () => surface.setAlpha(1);
       hit.setInteractive({ useHandCursor: true });
       hit.on('pointerdown', onPress);
-      hit.on('pointerover', () => {
-        surface.setAlpha(0.9);
-      });
-      hit.on('pointerout', () => {
-        surface.setAlpha(1);
-      });
+      hit.on('pointerover', hoverIn);
+      hit.on('pointerout', hoverOut);
+      if (objectName) {
+        label.setInteractive({ useHandCursor: true });
+        label.on('pointerdown', onPress);
+        label.on('pointerover', hoverIn);
+        label.on('pointerout', hoverOut);
+      }
     }
 
     this.overlay.add([surface, hit, label]);
@@ -1801,20 +1804,19 @@ export class VillageInteriorScene extends Phaser.Scene {
       return 'Maple has been sketching a celebration cake outside. If she recruits you, I have plenty of bowls and absolutely no fear of sprinkles.';
     }
     if (questIsAt(MAPLE_CAKE_QUEST_ID, 1)) {
-      return 'Maple left three colour plans on the cake table. Pick the one you like and I’ll make sure the cake wobbles safely.';
+      return 'Maple has left her recipe cards on the Wobbly Cake table. Measure carefully, stir smoothly and build the wobble yourself.';
     }
     if (questIsAt(MAPLE_CAKE_QUEST_ID, 4)) {
       return 'That cake is gloriously uneven. Maple is outside and definitely needs to see what you made.';
     }
     if (progress.status === 'completed') {
-      return 'Maple’s Wobbly Cake is officially a Bakery favourite now. I keep a few celebration slices on the counter whenever I can.';
+      return 'Maple’s Wobbly Cake is officially a Bakery favourite now. The cake table is always open, and I’ll buy a good bake from you for Shimmer.';
     }
     return 'Everything on the counter is fresh today. The Berry Buns disappear fastest, but the Cloud Biscuits make the best crumbs.';
   }
 
   private openCakePlan(): void {
-    const engine = getBrowserQuestEngine();
-    const progress = engine.getProgress(MAPLE_CAKE_QUEST_ID);
+    const progress = getBrowserQuestEngine().getProgress(MAPLE_CAKE_QUEST_ID);
     const anchor = getVillageInteriorAnchor('bakery', 'secondary-feature').approach;
     if (progress.status === 'not-started') {
       this.showFeedback(
@@ -1823,96 +1825,114 @@ export class VillageInteriorScene extends Phaser.Scene {
       );
       return;
     }
+    if (progress.status === 'completed') {
+      this.openRepeatBakeConfirmation();
+      return;
+    }
     if (!questIsAt(MAPLE_CAKE_QUEST_ID, 1)) {
       this.showFeedback(
-        progress.status === 'completed'
-          ? 'Maple’s first Wobbly Cake is already part of Village history. The cake table still carries a suspicious amount of sprinkles.'
-          : 'Maple’s cake plan is not ready for decorating yet. Check in with her outside.',
+        'Maple’s cake is already baked. Head outside so she can see your magnificently wobbly design.',
         anchor,
       );
       return;
     }
 
+    void this.launchMapleBakingActivity('quest');
+  }
+
+  private openRepeatBakeConfirmation(): void {
+    const balance = new ShimmerEconomyService(getBrowserSaveService()).getBalance();
+    const canAfford = balance >= MAPLE_REPEAT_BAKE_COST;
+
     this.openOverlay();
     if (!this.overlay) {
       return;
     }
+
     const title = this.add
-      .text(GAME_WIDTH / 2, 235, 'Pick a Wobbly Cake design', {
+      .text(GAME_WIDTH / 2, 220, '🎂 Bake another Wobbly Cake?', {
         color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
-        fontSize: '28px',
+        fontSize: '30px',
         fontStyle: 'bold',
       })
       .setOrigin(0.5)
-      .setScrollFactor(0);
-    const note = this.add
+      .setScrollFactor(0)
+      .setName('h3-r2-repeat-confirm:title');
+
+    const message = this.add
       .text(
         GAME_WIDTH / 2,
-        285,
-        'Maple has laid out three gloriously impractical decorating plans.',
+        310,
+        `Pay ${MAPLE_REPEAT_BAKE_COST} Shimmer for fresh ingredients?\nThe Bakery will buy your finished cake for 1–3 Shimmer depending on its Wobble Score.`,
         {
           color: UI_COLOURS.softInk,
           fontFamily: UI_FONT,
-          fontSize: '14px',
+          fontSize: '17px',
+          fontStyle: 'bold',
           align: 'center',
-          wordWrap: { width: 620 },
+          lineSpacing: 8,
+          wordWrap: { width: 720 },
         },
       )
       .setOrigin(0.5)
       .setScrollFactor(0);
-    this.overlay.add([title, note]);
 
-    const choices: Array<{ theme: MapleCakeTheme; label: string; x: number }> = [
-      { theme: 'sunshine', label: '☀️ Sunshine', x: 400 },
-      { theme: 'moonflower', label: '🌙 Moonflower', x: 640 },
-      { theme: 'rainbow', label: '🌈 Rainbow', x: 880 },
-    ];
-    for (const choice of choices) {
-      this.createOverlayButton(choice.x, 395, choice.label, () => {
-        this.finishCakeDesign(choice.theme);
+    const balanceText = this.add
+      .text(
+        GAME_WIDTH / 2,
+        405,
+        canAfford
+          ? `You have ${balance} Shimmer ✨`
+          : `You have ${balance} Shimmer ✨ — you need ${MAPLE_REPEAT_BAKE_COST} to bake again.`,
+        {
+          color: canAfford ? UI_COLOURS.ink : '#9a6474',
+          fontFamily: UI_FONT,
+          fontSize: '16px',
+          fontStyle: 'bold',
+          align: 'center',
+        },
+      )
+      .setOrigin(0.5)
+      .setScrollFactor(0);
+
+    this.overlay.add([title, message, balanceText]);
+
+    this.createOverlayButton(
+      GAME_WIDTH / 2 - 165,
+      525,
+      canAfford ? `Yes • Pay ${MAPLE_REPEAT_BAKE_COST} ✨` : 'Not enough Shimmer',
+      () => {
         this.closeOverlay();
-      });
-    }
-    this.createOverlayButton(GAME_WIDTH / 2, 510, 'Not yet', () => this.closeOverlay());
+        void this.launchMapleBakingActivity('repeatable');
+      },
+      canAfford,
+      280,
+      58,
+      'h3-r2-repeat-confirm:yes',
+    );
+    this.createOverlayButton(
+      GAME_WIDTH / 2 + 165,
+      525,
+      'No • Maybe later',
+      () => this.closeOverlay(),
+      true,
+      280,
+      58,
+      'h3-r2-repeat-confirm:no',
+    );
   }
 
-  private finishCakeDesign(theme: MapleCakeTheme): void {
-    const saveService = getBrowserSaveService();
-    const save = saveService.load() ?? saveService.createNewGame();
-    const flags = {
-      ...save.world.flags,
-      [MAPLE_CAKE_SUNSHINE_FLAG]: theme === 'sunshine',
-      [MAPLE_CAKE_MOONFLOWER_FLAG]: theme === 'moonflower',
-      [MAPLE_CAKE_RAINBOW_FLAG]: theme === 'rainbow',
-    };
-    saveService.save({ ...save, world: { ...save.world, flags } });
-    gameEventBus.emit('WORLD_FLAG_CHANGED', {
-      flagId: MAPLE_CAKE_SUNSHINE_FLAG,
-      value: theme === 'sunshine',
+  private async launchMapleBakingActivity(mode: 'quest' | 'repeatable'): Promise<void> {
+    if (!this.game.scene.keys.MapleBakingActivityScene) {
+      const { MapleBakingActivityScene } = await import('../activities/MapleBakingActivityScene');
+      this.game.scene.add('MapleBakingActivityScene', MapleBakingActivityScene);
+    }
+    this.scene.launch('MapleBakingActivityScene', {
+      returnScene: 'VillageInteriorScene',
+      mode,
     });
-    gameEventBus.emit('WORLD_FLAG_CHANGED', {
-      flagId: MAPLE_CAKE_MOONFLOWER_FLAG,
-      value: theme === 'moonflower',
-    });
-    gameEventBus.emit('WORLD_FLAG_CHANGED', {
-      flagId: MAPLE_CAKE_RAINBOW_FLAG,
-      value: theme === 'rainbow',
-    });
-    new InventoryService(saveService).addItem(WOBBLY_CAKE_ITEM_ID, 1);
-    this.cameras.main.flash(120, 255, 232, 172, false);
-    this.time.delayedCall(0, () => {
-      this.showFeedback(
-        `🎂 ${
-          theme === 'sunshine'
-            ? 'Sunny yellow'
-            : theme === 'moonflower'
-              ? 'Moonflower blue'
-              : 'Rainbow bright'
-        } cake complete! Talk to Maple again so she can see your magnificently wobbly design.`,
-        getVillageInteriorAnchor('bakery', 'secondary-feature').approach,
-      );
-    });
+    this.scene.pause();
   }
 
   private shouldShowBakeryMapCorner(): boolean {

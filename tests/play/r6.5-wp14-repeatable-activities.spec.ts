@@ -1,6 +1,8 @@
 import { expect, test, type Page } from '@playwright/test';
 import {
   clickNamedObject,
+  dragNamedObjectTo,
+  getDiagnosticSnapshot,
   openDiagnostics,
   setArcadeSpritePosition,
   startScene,
@@ -21,8 +23,8 @@ interface SavedActivityState {
   };
 }
 
-async function seedActivityPrerequisites(page: Page): Promise<void> {
-  await page.addInitScript(() => {
+async function seedActivityPrerequisites(page: Page, initialShimmer = 0): Promise<void> {
+  await page.addInitScript((seedShimmer) => {
     const timestamp = '2026-09-04T20:30:00.000Z';
     localStorage.setItem(
       'unicorn-valley.save',
@@ -37,7 +39,7 @@ async function seedActivityPrerequisites(page: Page): Promise<void> {
           unlockedAbilityIds: [],
         },
         inventory: {
-          itemQuantities: {},
+          itemQuantities: seedShimmer > 0 ? { 'item:rainbow-run-sparkle': seedShimmer } : {},
           ownedCosmeticIds: [],
           ownedDecorationIds: [],
           specialItemIds: [],
@@ -80,47 +82,122 @@ async function seedActivityPrerequisites(page: Page): Promise<void> {
           memoryIds: [
             'memory:economy-reward:completed:quest:maple-wobbly-cake-plan',
             'memory:economy-reward:completed:quest:coral-shells-with-stories',
+            'memory:economy-reward:activity:maple-baking:first-complete',
           ],
         },
       }),
     );
-  });
+  }, initialShimmer);
 }
 
 async function readSave(page: Page): Promise<SavedActivityState> {
   return page.evaluate(() => JSON.parse(localStorage.getItem('unicorn-valley.save') ?? '{}'));
 }
 
-test('WP14 Maple baking completes through semantic controls, persists rewards and returns safely', async ({
+async function holdMeasure(page: Page, objectName: string, milliseconds: number): Promise<void> {
+  await waitForNamedObject(page, 'MapleBakingActivityScene', objectName);
+  await page.keyboard.down('Space');
+  await page.waitForTimeout(milliseconds);
+  await page.keyboard.up('Space');
+}
+
+test('WP14 Maple baking reuses the cake table and rewards a strong repeat bake', async ({
   page,
 }) => {
-  await seedActivityPrerequisites(page);
+  test.setTimeout(90_000);
+  await seedActivityPrerequisites(page, 2);
+  await openDiagnostics(page);
+  await startScene(page, 'VillageInteriorScene', {
+    interiorId: 'bakery',
+    returnScene: 'SunbeamVillageScene',
+  });
+  const startingBalance =
+    (await readSave(page)).inventory.itemQuantities['item:rainbow-run-sparkle'] ?? 0;
+
+  await setArcadeSpritePosition(page, 'VillageInteriorScene', 'world-player-unicorn', 750, 835);
+  await page.waitForTimeout(120);
+  await page.keyboard.press('e');
+  await waitForNamedObject(page, 'VillageInteriorScene', 'h3-r2-repeat-confirm:yes');
+  await clickNamedObject(page, 'VillageInteriorScene', 'h3-r2-repeat-confirm:yes');
+  await waitForScene(page, 'MapleBakingActivityScene');
+
+  await waitForNamedObject(page, 'MapleBakingActivityScene', 'h3-r2-baking-stage:recipe');
+  await clickNamedObject(page, 'MapleBakingActivityScene', 'h3-r2-baking-recipe:sunshine');
+
+  await holdMeasure(page, 'h3-r2-baking-measure:flour', 1470);
+  await holdMeasure(page, 'h3-r2-baking-measure:milk', 1120);
+  await holdMeasure(page, 'h3-r2-baking-measure:sparkle', 860);
+
+  await waitForNamedObject(page, 'MapleBakingActivityScene', 'h3-r2-baking-stage:mix');
+  for (let stir = 0; stir < 24; stir += 1) {
+    await page.keyboard.press('ArrowRight');
+  }
+
+  await waitForNamedObject(page, 'MapleBakingActivityScene', 'h3-r2-baking-stage:stack');
+  const stackSnapshot = await getDiagnosticSnapshot(page);
+  const initialLayerTwo = stackSnapshot.scenes
+    .find((scene) => scene.key === 'MapleBakingActivityScene')
+    ?.objects.find((object) => object.name === 'h3-r2-baking-layer:2');
+  expect(initialLayerTwo?.interactive).toBe(false);
+
+  for (const [layer, x, y] of [
+    [1, 616, 520],
+    [2, 668, 456],
+    [3, 622, 392],
+  ] as const) {
+    await dragNamedObjectTo(page, 'MapleBakingActivityScene', `h3-r2-baking-layer:${layer}`, x, y);
+    await page.waitForTimeout(220);
+  }
+
+  await waitForNamedObject(page, 'MapleBakingActivityScene', 'h3-r2-baking-stage:icing');
+  for (let trace = 0; trace < 20; trace += 1) {
+    await page.keyboard.press('Space');
+    await page.waitForTimeout(60);
+  }
+
+  await waitForNamedObject(page, 'MapleBakingActivityScene', 'h3-r2-baking-topping:clouds');
+  await clickNamedObject(page, 'MapleBakingActivityScene', 'h3-r2-baking-topping:clouds');
+  await waitForNamedObject(page, 'MapleBakingActivityScene', 'h3-r2-baking-finish:ribbon');
+  await clickNamedObject(page, 'MapleBakingActivityScene', 'h3-r2-baking-finish:ribbon');
+  await waitForNamedObject(page, 'MapleBakingActivityScene', 'h3-r2-baking-result');
+
+  const saved = await readSave(page);
+  expect(saved.activities.miniGameRecords['minigame:maple-baking-table']).toBe(1);
+  expect(saved.collections.discoveryIds).toContain('discovery:sunshine-sprinkle-cake');
+  expect(saved.collections.memoryIds).toContain('memory:r65-wp14-maple-baking-first-completion');
+  const endingBalance = saved.inventory.itemQuantities['item:rainbow-run-sparkle'] ?? 0;
+  expect(endingBalance).toBeGreaterThanOrEqual(startingBalance + 1);
+  expect(endingBalance).toBeLessThanOrEqual(startingBalance + 2);
+
+  await page.keyboard.press('Escape');
+  await waitForScene(page, 'VillageInteriorScene');
+});
+
+test('WP14 repeat baking shows the 1 Shimmer confirmation and blocks an unaffordable bake', async ({
+  page,
+}) => {
+  await seedActivityPrerequisites(page, 0);
   await openDiagnostics(page);
   await startScene(page, 'VillageInteriorScene', {
     interiorId: 'bakery',
     returnScene: 'SunbeamVillageScene',
   });
 
-  await waitForNamedObject(page, 'VillageInteriorScene', 'wp14-activity-entry:maple-baking');
-  await clickNamedObject(page, 'VillageInteriorScene', 'wp14-activity-entry:maple-baking');
-  await waitForScene(page, 'MapleBakingActivityScene');
-  await waitForNamedObject(page, 'MapleBakingActivityScene', 'wp14-baking-stage:theme');
+  await setArcadeSpritePosition(page, 'VillageInteriorScene', 'world-player-unicorn', 750, 835);
+  await page.waitForTimeout(120);
+  await page.keyboard.press('e');
 
-  await clickNamedObject(page, 'MapleBakingActivityScene', 'wp14-baking-choice:theme:1');
-  await waitForNamedObject(page, 'MapleBakingActivityScene', 'wp14-baking-stage:topping');
-  await clickNamedObject(page, 'MapleBakingActivityScene', 'wp14-baking-choice:topping:2');
-  await waitForNamedObject(page, 'MapleBakingActivityScene', 'wp14-baking-stage:finish');
-  await clickNamedObject(page, 'MapleBakingActivityScene', 'wp14-baking-choice:finish:3');
-  await waitForNamedObject(page, 'MapleBakingActivityScene', 'wp14-baking-result');
+  await waitForNamedObject(page, 'VillageInteriorScene', 'h3-r2-repeat-confirm:title');
+  await waitForNamedObject(page, 'VillageInteriorScene', 'h3-r2-repeat-confirm:yes');
+  const snapshot = await getDiagnosticSnapshot(page);
+  const yesButton = snapshot.scenes
+    .find((scene) => scene.key === 'VillageInteriorScene')
+    ?.objects.find((object) => object.name === 'h3-r2-repeat-confirm:yes');
+  expect(yesButton?.visible).toBe(true);
+  expect(yesButton?.interactive).toBe(false);
+  expect(snapshot.activeScenes).not.toContain('MapleBakingActivityScene');
 
-  const saved = await readSave(page);
-  expect(saved.activities.miniGameRecords['minigame:maple-baking-table']).toBe(1);
-  expect(saved.collections.discoveryIds).toContain('discovery:sunshine-sprinkle-cake');
-  expect(saved.collections.memoryIds).toContain('memory:r65-wp14-maple-baking-first-completion');
-  expect(saved.inventory.itemQuantities['item:rainbow-run-sparkle']).toBe(2);
-
-  await page.keyboard.press('Escape');
-  await waitForScene(page, 'VillageInteriorScene');
+  await clickNamedObject(page, 'VillageInteriorScene', 'h3-r2-repeat-confirm:no');
 });
 
 test('WP14 Coral beachcombing records a notebook page and returns safely to the Beach', async ({

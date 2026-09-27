@@ -1,6 +1,7 @@
 import { expect, type Page, test } from '@playwright/test';
 import {
   clickNamedObject,
+  dragNamedObjectTo,
   openDiagnostics,
   setArcadeSpritePosition,
   startScene,
@@ -26,7 +27,7 @@ async function seedActivityPrerequisites(page: Page): Promise<void> {
           unlockedAbilityIds: [],
         },
         inventory: {
-          itemQuantities: {},
+          itemQuantities: { 'item:rainbow-run-sparkle': 3 },
           ownedCosmeticIds: [],
           ownedDecorationIds: [],
           specialItemIds: [],
@@ -99,30 +100,67 @@ async function expectReadableCompanion(page: Page, id: string): Promise<void> {
   }
 }
 
-test('portrait phone can read and complete Maple baking through large companion controls', async ({
+test('portrait phone keeps Maple baking readable through the R2 companion flow', async ({
   page,
 }) => {
+  test.setTimeout(90_000);
+
   await seedActivityPrerequisites(page);
   await openDiagnostics(page);
   await startScene(page, 'VillageInteriorScene', {
     interiorId: 'bakery',
     returnScene: 'SunbeamVillageScene',
   });
-  await waitForNamedObject(page, 'VillageInteriorScene', 'wp14-activity-entry:maple-baking');
-  await clickNamedObject(page, 'VillageInteriorScene', 'wp14-activity-entry:maple-baking');
+
+  await setArcadeSpritePosition(page, 'VillageInteriorScene', 'world-player-unicorn', 750, 835);
+  await page.waitForTimeout(120);
+  await page.keyboard.press('e');
+  await waitForNamedObject(page, 'VillageInteriorScene', 'h3-r2-repeat-confirm:yes');
+  await clickNamedObject(page, 'VillageInteriorScene', 'h3-r2-repeat-confirm:yes');
   await waitForScene(page, 'MapleBakingActivityScene');
   await expectReadableCompanion(page, 'maple-baking');
 
   const root = page.locator('[data-mobile-modal-companion="maple-baking"]');
-  await root.locator('[data-mobile-modal-action="choice-1"]').click();
-  await expect(root.locator('.mobile-modal-heading')).toContainText('Pick a topping');
-  await root.locator('[data-mobile-modal-action="choice-2"]').click();
-  await expect(root.locator('.mobile-modal-heading')).toContainText('finishing touch');
-  await root.locator('[data-mobile-modal-action="choice-3"]').click();
+
+  await root.locator('[data-mobile-modal-action="recipe-moonflower"]').click();
+  await expect(root.locator('.mobile-modal-heading')).toContainText('Measure');
+
+  for (let ingredient = 0; ingredient < 3; ingredient += 1) {
+    await root.locator('[data-mobile-modal-action="pour"]').click();
+    await root.locator('[data-mobile-modal-action="lock"]').click();
+  }
+
+  await expect(root.locator('.mobile-modal-heading')).toContainText('Stir');
+  await root.locator('[data-mobile-modal-action="right"]').click();
+  for (let stir = 1; stir < 24; stir += 1) {
+    await page.keyboard.press('ArrowRight');
+  }
+
+  await waitForNamedObject(page, 'MapleBakingActivityScene', 'h3-r2-baking-stage:stack');
+  for (const [layer, x, y] of [
+    [1, 616, 520],
+    [2, 668, 456],
+    [3, 622, 392],
+  ] as const) {
+    await dragNamedObjectTo(page, 'MapleBakingActivityScene', `h3-r2-baking-layer:${layer}`, x, y);
+    await page.waitForTimeout(220);
+  }
+
+  await expect(root.locator('.mobile-modal-heading')).toContainText('Pipe');
+  await root.locator('[data-mobile-modal-action="trace"]').click();
+  for (let trace = 1; trace < 10; trace += 1) {
+    await page.keyboard.press('Space');
+  }
+
+  await expect(root.locator('.mobile-modal-heading')).toContainText('Choose a topping');
+  await root.locator('[data-mobile-modal-action="topping-clouds"]').click();
+  await expect(root.locator('.mobile-modal-heading')).toContainText('Finish the cake');
+  await expect(root.locator('[data-mobile-modal-action="finish-ribbon"]')).toBeVisible();
+  await page.keyboard.press('Enter');
 
   await expect(root.locator('[data-mobile-modal-card="result"]')).toBeVisible();
-  await expect(root.locator('[data-mobile-modal-action="again"]')).toBeVisible();
   await expect(root.locator('[data-mobile-modal-action="back"]')).toBeVisible();
+  await expect(root.locator('[data-mobile-modal-action="again"]')).toHaveCount(0);
 });
 
 test('portrait phone can read and complete Coral beachcombing through large companion controls', async ({

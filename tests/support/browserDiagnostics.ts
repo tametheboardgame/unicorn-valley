@@ -137,6 +137,43 @@ export async function clickNamedObject(
   );
 }
 
+export async function dragNamedObjectTo(
+  page: Page,
+  sceneKey: string,
+  objectName: string,
+  targetX: number,
+  targetY: number,
+): Promise<void> {
+  const snapshot = await getDiagnosticSnapshot(page);
+  const object = snapshot.scenes
+    .find((scene) => scene.key === sceneKey)
+    ?.objects.find(
+      (candidate) => candidate.name === objectName && candidate.visible && candidate.interactive,
+    );
+  if (!object) {
+    throw new Error(`Interactive ${sceneKey}/${objectName} is not visible for dragging.`);
+  }
+
+  const canvas = page.locator('canvas');
+  const bounds = await canvas.boundingBox();
+  if (!bounds) {
+    throw new Error('Game canvas has no browser bounds.');
+  }
+  if (snapshot.width <= 0 || snapshot.height <= 0) {
+    throw new Error('Browser diagnostics returned invalid logical canvas dimensions.');
+  }
+
+  const startX = bounds.x + (object.x / snapshot.width) * bounds.width;
+  const startY = bounds.y + (object.y / snapshot.height) * bounds.height;
+  const endX = bounds.x + (targetX / snapshot.width) * bounds.width;
+  const endY = bounds.y + (targetY / snapshot.height) * bounds.height;
+
+  await page.mouse.move(startX, startY);
+  await page.mouse.down();
+  await page.mouse.move(endX, endY, { steps: 8 });
+  await page.mouse.up();
+}
+
 export async function setArcadeSpritePosition(
   page: Page,
   sceneKey: string,
