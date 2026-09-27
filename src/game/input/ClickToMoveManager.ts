@@ -263,15 +263,7 @@ export class ClickToMoveManager {
         return;
       }
 
-      this.startNavigation(
-        scene,
-        state,
-        path,
-        WAYPOINT_REACHED_DISTANCE,
-        null,
-        'ground',
-        null,
-      );
+      this.startNavigation(scene, state, path, WAYPOINT_REACHED_DISTANCE, null, 'ground', null);
     };
 
     scene.input.on('pointerdown', state.pointerHandler);
