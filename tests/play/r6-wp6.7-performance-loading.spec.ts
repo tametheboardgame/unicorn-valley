@@ -119,7 +119,6 @@ async function measureSettledPerformance(page: Page): Promise<FramePerformanceSn
   return waitForPerformanceSamples(page);
 }
 
-
 async function measureMovementPerformance(page: Page): Promise<FramePerformanceSnapshot> {
   await page.evaluate(() => {
     const diagnosticWindow = window as typeof window & {
