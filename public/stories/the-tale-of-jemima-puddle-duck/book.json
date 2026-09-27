@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "id": "the-tale-of-jemima-puddle-duck",
+  "title": "The Tale of Jemima Puddle-Duck",
+  "description": "Jemima wants a quiet place to hatch her eggs, but the charming gentleman who offers her a nest in the woods has plans of his own.",
+  "catalogueBlurb": "Jemima finds a secret nest and a very suspicious new friend.",
+  "author": "Beatrix Potter, retold by Quill",
+  "readingMode": "flowing",
+  "cover": {
+    "path": "covers/cover.webp",
+    "alt": "Beatrix Potter's original cover for The Tale of Jemima Puddle-Duck."
+  },
+  "series": null,
+  "tags": ["classic-retelling", "duck", "fox", "farm", "woodland", "mischief", "illustrated"],
+  "publication": {
+    "status": "published"
+  },
+  "chapters": [
+    {
+      "id": "jemimas-plan",
+      "title": "Jemima's Plan",
+      "path": "chapters/01.md",
+      "illustrations": [
+        {
+          "id": "potter-jemima",
+          "blockId": "a-quiet-nest",
+          "path": "illustrations/jemima.webp",
+          "alt": "Beatrix Potter's original illustration of Jemima Puddle-Duck.",
+          "placement": "full-width",
+          "width": 1012,
+          "height": 1200,
+          "caption": "Illustration by Beatrix Potter, 1908."
+        }
+      ]
+    },
+    {
+      "id": "the-gentleman-in-the-wood",
+      "title": "The Gentleman in the Wood",
+      "path": "chapters/02.md",
+      "illustrations": [
+        {
+          "id": "potter-fox",
+          "blockId": "the-sandy-whiskered-gentleman",
+          "path": "illustrations/gentleman.webp",
+          "alt": "An original Beatrix Potter illustration from The Tale of Jemima Puddle-Duck.",
+          "placement": "full-width",
+          "width": 347,
+          "height": 400,
+          "caption": "Illustration by Beatrix Potter, 1908."
+        }
+      ]
+    },
+    {
+      "id": "nine-eggs",
+      "title": "Nine Eggs",
+      "path": "chapters/03.md",
+      "illustrations": [
+        {
+          "id": "potter-woodland",
+          "blockId": "nine-eggs",
+          "path": "illustrations/woodland.webp",
+          "alt": "An original Beatrix Potter illustration from Jemima's woodland nesting adventure.",
+          "placement": "full-width",
+          "width": 904,
+          "height": 844,
+          "caption": "Illustration by Beatrix Potter, 1908."
+        }
+      ]
+    },
+    {
+      "id": "kep-asks-questions",
+      "title": "Kep Asks Questions",
+      "path": "chapters/04.md"
+    },
+    {
+      "id": "home-to-the-farm",
+      "title": "Home to the Farm",
+      "path": "chapters/05.md",
+      "illustrations": [
+        {
+          "id": "potter-rescue",
+          "blockId": "back-to-safety",
+          "path": "illustrations/rescue.webp",
+          "alt": "An original Beatrix Potter illustration from the end of The Tale of Jemima Puddle-Duck.",
+          "placement": "full-width",
+          "width": 400,
+          "height": 380,
+          "caption": "Illustration by Beatrix Potter, 1908."
+        }
+      ]
+    }
+  ],
+  "discovery": {
+    "format": "Picture Book",
+    "genres": ["Adventure", "Classics"],
+    "audiences": ["Read Together", "Early Reader", "Independent Reader"],
+    "length": "Quick Read"
+  },
+  "rights": {
+    "text": {
+      "status": "original",
+      "source": "Original Story House retelling based on Beatrix Potter's public-domain 1908 story",
+      "sourceUrl": "https://en.wikisource.org/wiki/The_Tale_of_Jemima_Puddle-Duck",
+      "notes": "The underlying 1908 story is public domain in the UK and United States. This wording is an original child-friendly Unicorn Valley retelling."
+    },
+    "illustrations": {
+      "status": "public-domain",
+      "source": "Original 1908 illustrations by Beatrix Potter",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/Category:The_Tale_of_Jemima_Puddle-Duck",
+      "notes": "The selected original Potter illustration files are identified as public domain on Wikimedia Commons."
+    },
+    "edition": {
+      "status": "original",
+      "source": "Unicorn Valley Story House edition"
+    },
+    "originalPublicationYear": 1908,
+    "curatorNotes": "Split into five short reader sections, preserving the cautionary shape of Potter's story while softening the harsher ending for the target reader."
+  }
+}
