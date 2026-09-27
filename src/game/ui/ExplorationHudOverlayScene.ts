@@ -390,7 +390,8 @@ export class ExplorationHudOverlayScene extends Phaser.Scene {
     if (!(source instanceof Phaser.GameObjects.Rectangle)) {
       return;
     }
-    this.setHudVisible(false);
+    // Keep the HUD visible until sync observes a real modal scene.
+    // If a source action cannot open its modal, navigation must remain usable.
     source.emit('pointerdown');
   }
 }
