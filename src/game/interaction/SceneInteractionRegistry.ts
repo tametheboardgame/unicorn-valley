@@ -24,10 +24,16 @@ export class SceneInteractionRegistry {
 
   public getTargets(): InteractionTarget[] {
     const targets: InteractionTarget[] = [];
-    for (const ownerTargets of this.targetsByOwner.values()) {
-      targets.push(...ownerTargets);
-    }
+    this.forEachTarget((target) => targets.push(target));
     return targets;
+  }
+
+  public forEachTarget(visitor: (target: InteractionTarget) => void): void {
+    for (const ownerTargets of this.targetsByOwner.values()) {
+      for (const target of ownerTargets) {
+        visitor(target);
+      }
+    }
   }
 
   public clear(): void {
