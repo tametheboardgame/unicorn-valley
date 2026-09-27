@@ -33,7 +33,6 @@ describe('SceneInteractionRegistry', () => {
     expect(registry.getTargets()).toEqual([]);
   });
 
-
   it('visits targets in owner order without requiring a merged snapshot', () => {
     const registry = new SceneInteractionRegistry();
     registry.replaceOwnerTargets('core', [target('core:one'), target('core:two')]);
