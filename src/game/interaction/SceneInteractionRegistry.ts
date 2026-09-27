@@ -9,6 +9,7 @@ import type { InteractionTarget } from './InteractionTarget';
  */
 export class SceneInteractionRegistry {
   private readonly targetsByOwner = new Map<string, readonly InteractionTarget[]>();
+  private targetSnapshot: readonly InteractionTarget[] | null = null;
 
   public replaceOwnerTargets(ownerId: string, targets: readonly InteractionTarget[]): void {
     if (targets.length === 0) {
@@ -16,15 +17,27 @@ export class SceneInteractionRegistry {
       return;
     }
     this.targetsByOwner.set(ownerId, targets);
+    this.targetSnapshot = null;
   }
 
   public clearOwner(ownerId: string): void {
-    this.targetsByOwner.delete(ownerId);
+    if (this.targetsByOwner.delete(ownerId)) {
+      this.targetSnapshot = null;
+    }
   }
 
   public getTargets(): InteractionTarget[] {
+    return [...this.getTargetSnapshot()];
+  }
+
+  public getTargetSnapshot(): readonly InteractionTarget[] {
+    if (this.targetSnapshot) {
+      return this.targetSnapshot;
+    }
+
     const targets: InteractionTarget[] = [];
     this.forEachTarget((target) => targets.push(target));
+    this.targetSnapshot = targets;
     return targets;
   }
 
@@ -37,7 +50,11 @@ export class SceneInteractionRegistry {
   }
 
   public clear(): void {
+    if (this.targetsByOwner.size === 0) {
+      return;
+    }
     this.targetsByOwner.clear();
+    this.targetSnapshot = null;
   }
 }
 
