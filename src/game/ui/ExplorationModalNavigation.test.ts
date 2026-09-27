@@ -122,8 +122,6 @@ describe('ExplorationModalNavigation', () => {
     expect(resolveExplorationReturnRecovery('CottageInteriorScene')).toBe('MoonflowerGladeScene');
     expect(resolveExplorationReturnRecovery('WindmillLookoutScene')).toBe('RainbowMeadowScene');
     expect(resolveExplorationReturnRecovery('CrystalGrottoScene')).toBe('CrystalBrookScene');
-    expect(resolveExplorationReturnRecovery('WhisperingWoodsScene')).toBe(
-      'WhisperingWoodsScene',
-    );
+    expect(resolveExplorationReturnRecovery('WhisperingWoodsScene')).toBe('WhisperingWoodsScene');
   });
 });
