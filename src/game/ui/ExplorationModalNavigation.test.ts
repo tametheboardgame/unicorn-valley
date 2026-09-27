@@ -12,6 +12,14 @@ class FakeScenePlugin {
   public key = 'VillageInteriorScene';
   private readonly active = new Set<string>([this.key]);
   private readonly paused = new Set<string>();
+  public readonly manager = { keys: {} as Record<string, unknown> };
+  public activateLaunchImmediately = true;
+
+  public constructor() {
+    this.manager.keys.InventoryScene = {};
+    this.manager.keys.WonderbookScene = {};
+    this.manager.keys.SettingsScene = {};
+  }
 
   public isActive(key = this.key): boolean {
     return this.active.has(key);
@@ -24,7 +32,9 @@ class FakeScenePlugin {
   public launch(key: string, data?: unknown): void {
     this.calls.push(`launch:${key}`);
     this.launchData.push({ key, data });
-    this.active.add(key);
+    if (this.activateLaunchImmediately) {
+      this.active.add(key);
+    }
   }
 
   public pause(key = this.key): void {
@@ -66,7 +76,10 @@ class FakeScenePlugin {
 }
 
 function fakeScene(plugin: FakeScenePlugin): Phaser.Scene {
-  return { scene: plugin } as unknown as Phaser.Scene;
+  return {
+    scene: plugin,
+    sys: { game: { scene: plugin.manager } },
+  } as unknown as Phaser.Scene;
 }
 
 describe('ExplorationModalNavigation', () => {
@@ -85,6 +98,24 @@ describe('ExplorationModalNavigation', () => {
     ]);
     expect(plugin.calls).toEqual(['launch:InventoryScene', 'pause:VillageInteriorScene']);
     expect(plugin.isPaused('VillageInteriorScene')).toBe(true);
+  });
+
+  it('pauses the source even when Phaser defers modal activation until the next step', () => {
+    const plugin = new FakeScenePlugin();
+    plugin.activateLaunchImmediately = false;
+
+    expect(openExplorationModal(fakeScene(plugin), 'InventoryScene')).toBe(true);
+    expect(plugin.calls).toEqual(['launch:InventoryScene', 'pause:VillageInteriorScene']);
+    expect(plugin.isPaused('VillageInteriorScene')).toBe(true);
+    expect(plugin.isActive('InventoryScene')).toBe(false);
+  });
+
+  it('does not pause the source when the requested modal is not registered', () => {
+    const plugin = new FakeScenePlugin();
+
+    expect(openExplorationModal(fakeScene(plugin), 'MissingScene')).toBe(false);
+    expect(plugin.calls).toEqual([]);
+    expect(plugin.isActive('VillageInteriorScene')).toBe(true);
   });
 
   it('refuses to stack a second exploration modal over an existing one', () => {
