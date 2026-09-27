@@ -68,7 +68,7 @@ async function startInterior(page: Page, interiorId: InteriorId): Promise<void> 
   }, interiorId);
   await waitForScene(page, 'VillageInteriorScene');
   await waitForObject(page, 'VillageInteriorScene', `village-interior:${interiorId}:room-shell`);
-  await waitForObject(page, 'VillageInteriorScene', 'exploration-shell-bag-button');
+  await waitForObject(page, 'ExplorationHudOverlayScene', 'exploration-hud-overlay-bag-button');
 }
 
 async function waitForObject(page: Page, sceneKey: string, objectName: string): Promise<void> {
@@ -128,8 +128,10 @@ async function cycleInventory(
 ): Promise<void> {
   const before = await playerPosition(page);
   const sourceButton =
-    initialTab === 'items' ? 'exploration-shell-bag-button' : 'exploration-shell-map-button';
-  await clickNamedObject(page, 'VillageInteriorScene', sourceButton);
+    initialTab === 'items'
+      ? 'exploration-hud-overlay-bag-button'
+      : 'exploration-hud-overlay-map-button';
+  await clickNamedObject(page, 'ExplorationHudOverlayScene', sourceButton);
   await waitForScene(page, 'InventoryScene');
   await waitForSceneClosed(page, 'VillageInteriorScene');
   await waitForObject(
@@ -144,7 +146,11 @@ async function cycleInventory(
 
 async function cycleSettings(page: Page, interiorId: InteriorId): Promise<void> {
   const before = await playerPosition(page);
-  await clickNamedObject(page, 'VillageInteriorScene', 'exploration-shell-settings-nav-button');
+  await clickNamedObject(
+    page,
+    'ExplorationHudOverlayScene',
+    'exploration-hud-overlay-settings-nav-button',
+  );
   await waitForScene(page, 'SettingsScene');
   await waitForSceneClosed(page, 'VillageInteriorScene');
   await page.keyboard.press('Escape');
@@ -154,7 +160,11 @@ async function cycleSettings(page: Page, interiorId: InteriorId): Promise<void> 
 
 async function cycleWonderbook(page: Page, interiorId: InteriorId): Promise<void> {
   const before = await playerPosition(page);
-  await clickNamedObject(page, 'VillageInteriorScene', 'exploration-shell-book-button');
+  await clickNamedObject(
+    page,
+    'ExplorationHudOverlayScene',
+    'exploration-hud-overlay-book-button',
+  );
   await waitForScene(page, 'WonderbookScene');
   await waitForSceneClosed(page, 'VillageInteriorScene');
   await clickNamedObject(page, 'WonderbookScene', 'wonderbook-close-button');
