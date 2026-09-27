@@ -12,6 +12,7 @@ import {
   type BakerySectionId,
 } from '../../content/r6VillageContent';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
+import { MAPLE_REPEAT_BAKE_COST } from '../activities/MapleBakingActivity';
 import { DiscoveryService } from '../discovery/DiscoveryService';
 import { StoryHouseService } from '../discovery/StoryHouseService';
 import { BakeryService } from '../economy/BakeryService';
@@ -1684,6 +1685,7 @@ export class VillageInteriorScene extends Phaser.Scene {
     enabled = true,
     width = 260,
     height = 58,
+    objectName?: string,
   ): void {
     if (!this.overlay) {
       return;
@@ -1714,15 +1716,23 @@ export class VillageInteriorScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setScrollFactor(0);
 
+    if (objectName) {
+      label.setName(objectName);
+    }
+
     if (enabled) {
+      const hoverIn = () => surface.setAlpha(0.9);
+      const hoverOut = () => surface.setAlpha(1);
       hit.setInteractive({ useHandCursor: true });
       hit.on('pointerdown', onPress);
-      hit.on('pointerover', () => {
-        surface.setAlpha(0.9);
-      });
-      hit.on('pointerout', () => {
-        surface.setAlpha(1);
-      });
+      hit.on('pointerover', hoverIn);
+      hit.on('pointerout', hoverOut);
+      if (objectName) {
+        label.setInteractive({ useHandCursor: true });
+        label.on('pointerdown', onPress);
+        label.on('pointerover', hoverIn);
+        label.on('pointerout', hoverOut);
+      }
     }
 
     this.overlay.add([surface, hit, label]);
@@ -1816,15 +1826,7 @@ export class VillageInteriorScene extends Phaser.Scene {
       return;
     }
     if (progress.status === 'completed') {
-      const balance = new ShimmerEconomyService(getBrowserSaveService()).getBalance();
-      if (balance < 1) {
-        this.showFeedback(
-          'A fresh Wobbly Cake needs 1 Shimmer of ingredients. Come back when you have at least one.',
-          anchor,
-        );
-        return;
-      }
-      void this.launchMapleBakingActivity('repeatable');
+      this.openRepeatBakeConfirmation();
       return;
     }
     if (!questIsAt(MAPLE_CAKE_QUEST_ID, 1)) {
@@ -1836,6 +1838,89 @@ export class VillageInteriorScene extends Phaser.Scene {
     }
 
     void this.launchMapleBakingActivity('quest');
+  }
+
+  private openRepeatBakeConfirmation(): void {
+    const balance = new ShimmerEconomyService(getBrowserSaveService()).getBalance();
+    const canAfford = balance >= MAPLE_REPEAT_BAKE_COST;
+
+    this.openOverlay();
+    if (!this.overlay) {
+      return;
+    }
+
+    const title = this.add
+      .text(GAME_WIDTH / 2, 220, '🎂 Bake another Wobbly Cake?', {
+        color: UI_COLOURS.ink,
+        fontFamily: UI_FONT,
+        fontSize: '30px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5)
+      .setScrollFactor(0)
+      .setName('h3-r2-repeat-confirm:title');
+
+    const message = this.add
+      .text(
+        GAME_WIDTH / 2,
+        310,
+        `Pay ${MAPLE_REPEAT_BAKE_COST} Shimmer for fresh ingredients?\nThe Bakery will buy your finished cake for 1–3 Shimmer depending on its Wobble Score.`,
+        {
+          color: UI_COLOURS.softInk,
+          fontFamily: UI_FONT,
+          fontSize: '17px',
+          fontStyle: 'bold',
+          align: 'center',
+          lineSpacing: 8,
+          wordWrap: { width: 720 },
+        },
+      )
+      .setOrigin(0.5)
+      .setScrollFactor(0);
+
+    const balanceText = this.add
+      .text(
+        GAME_WIDTH / 2,
+        405,
+        canAfford
+          ? `You have ${balance} Shimmer ✨`
+          : `You have ${balance} Shimmer ✨ — you need ${MAPLE_REPEAT_BAKE_COST} to bake again.`,
+        {
+          color: canAfford ? UI_COLOURS.ink : '#9a6474',
+          fontFamily: UI_FONT,
+          fontSize: '16px',
+          fontStyle: 'bold',
+          align: 'center',
+        },
+      )
+      .setOrigin(0.5)
+      .setScrollFactor(0);
+
+    this.overlay.add([title, message, balanceText]);
+
+    this.createOverlayButton(
+      GAME_WIDTH / 2 - 165,
+      525,
+      canAfford ? `Yes • Pay ${MAPLE_REPEAT_BAKE_COST} ✨` : 'Not enough Shimmer',
+      () => {
+        this.closeOverlay();
+        void this.launchMapleBakingActivity('repeatable');
+      },
+      canAfford,
+      280,
+      58,
+      'h3-r2-repeat-confirm:yes',
+    );
+    this.createOverlayButton(
+      GAME_WIDTH / 2 + 165,
+      525,
+      'No • Maybe later',
+      () => this.closeOverlay(),
+      true,
+      280,
+      58,
+      'h3-r2-repeat-confirm:no',
+    );
   }
 
   private async launchMapleBakingActivity(mode: 'quest' | 'repeatable'): Promise<void> {
