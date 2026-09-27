@@ -1,0 +1,67 @@
+name: Materialise Jemima Puddle-Duck art
+
+on:
+  push:
+    branches:
+      - agent/story-house-jemima-puddle-duck
+
+permissions:
+  contents: write
+
+jobs:
+  materialise:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/story-house-jemima-puddle-duck
+
+      - name: Download verified public-domain Beatrix Potter illustrations
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p public/stories/the-tale-of-jemima-puddle-duck/illustrations
+          mkdir -p public/stories/the-tale-of-jemima-puddle-duck/covers
+
+          curl -L --fail --retry 3             "https://commons.wikimedia.org/wiki/Special:Redirect/file/The_Tale_of_Jemima_Puddle-Duck_cover.jpg"             -o /tmp/cover.jpg
+
+          curl -L --fail --retry 3             "https://commons.wikimedia.org/wiki/Special:Redirect/file/Jemima1.jpg"             -o /tmp/jemima.jpg
+
+          curl -L --fail --retry 3             "https://commons.wikimedia.org/wiki/Special:Redirect/file/Jemima4.jpg"             -o /tmp/gentleman.jpg
+
+          curl -L --fail --retry 3             "https://commons.wikimedia.org/wiki/Special:Redirect/file/Jemima11.jpg"             -o /tmp/woodland.jpg
+
+          curl -L --fail --retry 3             "https://commons.wikimedia.org/wiki/Special:Redirect/file/Jemima20.jpg"             -o /tmp/rescue.jpg
+
+      - name: Convert illustrations to Story House WebP assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! command -v convert >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y imagemagick
+          fi
+
+          convert /tmp/jemima.jpg -resize '900x1200>' -strip -quality 92             public/stories/the-tale-of-jemima-puddle-duck/illustrations/jemima.webp
+          convert /tmp/gentleman.jpg -strip -quality 92             public/stories/the-tale-of-jemima-puddle-duck/illustrations/gentleman.webp
+          convert /tmp/woodland.jpg -resize '900x900>' -strip -quality 92             public/stories/the-tale-of-jemima-puddle-duck/illustrations/woodland.webp
+          convert /tmp/rescue.jpg -strip -quality 92             public/stories/the-tale-of-jemima-puddle-duck/illustrations/rescue.webp
+
+          convert /tmp/cover.jpg             -resize '420x520>'             -gravity center             -background '#f6f0df'             -extent 480x640             -strip -quality 92             public/stories/the-tale-of-jemima-puddle-duck/covers/cover.webp
+
+      - name: Regenerate Story House catalogue
+        run: node scripts/generateStoryCatalogue.mjs
+
+      - name: Commit materialised story assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/stories/the-tale-of-jemima-puddle-duck public/stories/catalogue.json
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "Story House: materialise Jemima Puddle-Duck art"
+          git push origin HEAD:agent/story-house-jemima-puddle-duck
