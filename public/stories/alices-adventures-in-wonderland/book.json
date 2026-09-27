@@ -11,14 +11,7 @@
     "alt": "John Tenniel's historic Alice in Wonderland frontispiece."
   },
   "series": null,
-  "tags": [
-    "classic-retelling",
-    "fantasy",
-    "wonderland",
-    "adventure",
-    "nonsense",
-    "illustrated"
-  ],
+  "tags": ["classic-retelling", "fantasy", "wonderland", "adventure", "nonsense", "illustrated"],
   "publication": {
     "status": "published"
   },
