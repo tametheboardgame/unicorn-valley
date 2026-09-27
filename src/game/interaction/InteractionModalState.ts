@@ -81,17 +81,22 @@ export function openExplorationModal(
     return false;
   }
 
-  source.scene.launch(modalSceneKey, {
-    ...data,
-    returnScene: source.scene.key,
-  });
-
-  if (!source.scene.isActive(modalSceneKey)) {
+  if (!source.sys.game.scene.keys[modalSceneKey]) {
     return false;
   }
 
-  source.scene.pause();
-  return true;
+  try {
+    source.scene.launch(modalSceneKey, {
+      ...data,
+      returnScene: source.scene.key,
+    });
+    // Phaser can queue launch activation until the next scene step. Pause the caller
+    // immediately after a valid registered launch instead of requiring isActive() here.
+    source.scene.pause();
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 export function resolveExplorationReturnRecovery(returnScene: string): string {
