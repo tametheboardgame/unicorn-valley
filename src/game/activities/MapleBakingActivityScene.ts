@@ -5,6 +5,7 @@ import {
   type BakeryFinish,
   type BakeryTopping,
 } from '../../content/r65RepeatableActivities';
+import { MAPLE_REPEAT_BAKE_COST } from '../../content/r6VillageContent';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { ShimmerEconomyService } from '../economy/ShimmerEconomyService';
 import { getBrowserSaveService } from '../save/browserSaveService';
@@ -14,7 +15,6 @@ import {
   completeMapleQuestCake,
   getMapleBakingProgress,
   judgeMapleCake,
-  MAPLE_REPEAT_BAKE_COST,
   recordMapleBakingCake,
   type MapleCakeJudgement,
 } from './MapleBakingActivity';
