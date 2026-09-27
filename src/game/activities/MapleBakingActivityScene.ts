@@ -1308,18 +1308,9 @@ export class MapleBakingActivityScene extends Phaser.Scene {
 
     if (this.mode === 'repeatable') {
       this.createRoundedButton(
-        GAME_WIDTH / 2 - 150,
+        GAME_WIDTH / 2,
         640,
         260,
-        48,
-        '🎂 Bake another • 1 ✨',
-        () => this.restartRun(),
-        this.body,
-      );
-      this.createRoundedButton(
-        GAME_WIDTH / 2 + 150,
-        640,
-        230,
         48,
         '✓ Back to Bakery',
         () => this.leaveActivity(false),
@@ -1362,10 +1353,7 @@ export class MapleBakingActivityScene extends Phaser.Scene {
         id: 'result',
         actions:
           this.mode === 'repeatable'
-            ? [
-                { id: 'again', label: '🎂 Bake another • 1 ✨', onPress: () => this.restartRun() },
-                { id: 'back', label: '✓ Back to Bakery', onPress: () => this.leaveActivity(false) },
-              ]
+            ? [{ id: 'back', label: '✓ Back to Bakery', onPress: () => this.leaveActivity(false) }]
             : [{ id: 'back', label: '✓ Show Maple', onPress: () => this.leaveActivity(false) }],
       },
     ]);
@@ -1375,10 +1363,10 @@ export class MapleBakingActivityScene extends Phaser.Scene {
     const stand = this.add.graphics();
     stand.fillStyle(0xf5d5df, 1);
     stand.lineStyle(4, 0xce96aa, 0.8);
-    stand.fillEllipse(x - 150, y - 28, 300, 56);
-    stand.strokeEllipse(x - 150, y - 28, 300, 56);
-    stand.fillRoundedRect(x - 18, y - 6, 36, 48, 12);
-    stand.fillEllipse(x - 65, y + 32, 130, 30);
+    stand.fillEllipse(x, y, 300, 56);
+    stand.strokeEllipse(x, y, 300, 56);
+    stand.fillRoundedRect(x - 18, y + 20, 36, 48, 12);
+    stand.fillEllipse(x, y + 68, 130, 30);
     this.body?.add(stand);
   }
 
@@ -1644,21 +1632,6 @@ export class MapleBakingActivityScene extends Phaser.Scene {
         }
       }
     }
-  }
-
-  private restartRun(): void {
-    if (this.mode !== 'repeatable') {
-      return;
-    }
-    const economy = new ShimmerEconomyService(getBrowserSaveService());
-    if (!economy.spend(MAPLE_REPEAT_BAKE_COST)) {
-      this.leaveActivity(false);
-      return;
-    }
-    this.repeatBakeCharged = true;
-    this.resetRun();
-    this.repeatBakeCharged = true;
-    this.renderStage();
   }
 
   private leaveActivity(refundIncomplete: boolean): void {
