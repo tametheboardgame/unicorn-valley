@@ -288,7 +288,9 @@ describe('Story Library service', () => {
       ],
       [
         '/stories/alice/editions/full-classic/chapters/01.md',
-        response('<!-- block:white-rabbit -->\\n# Down the Rabbit-Hole\\n\\nA White Rabbit ran close by her.'),
+        response(
+          '<!-- block:white-rabbit -->\\n# Down the Rabbit-Hole\\n\\nA White Rabbit ran close by her.',
+        ),
       ],
     ]);
 
@@ -308,5 +310,4 @@ describe('Story Library service', () => {
     expect(chapter.title).toBe('Down the Rabbit-Hole');
     expect(chapter.blocks[0]?.id).toBe('white-rabbit');
   });
-
 });

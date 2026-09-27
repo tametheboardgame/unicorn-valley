@@ -144,11 +144,7 @@ describe('StoryReadingService', () => {
     });
 
     expect(
-      reading.getLatestProgressForStory(
-        'alice',
-        ['story-house', 'full-classic'],
-        'story-house',
-      ),
+      reading.getLatestProgressForStory('alice', ['story-house', 'full-classic'], 'story-house'),
     ).toMatchObject({
       editionId: 'full-classic',
       progress: {
@@ -157,5 +153,4 @@ describe('StoryReadingService', () => {
       },
     });
   });
-
 });

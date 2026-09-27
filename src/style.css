@@ -915,7 +915,7 @@ canvas {
 }
 
 .story-reader-edition-button.is-active,
-.story-reader-edition-button[aria-pressed='true'] {
+.story-reader-edition-button[aria-pressed="true"] {
   border-color: #668fa7;
   background: #e7f2f5;
   color: #506f81;

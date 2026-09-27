@@ -54,7 +54,8 @@ export class StoryReadingService {
     defaultEditionId?: string,
   ): StoryReadingProgress | null {
     const save = this.saveService.load();
-    const progress = save?.storyReading.byStoryId[progressKey(storyId, editionId, defaultEditionId)];
+    const progress =
+      save?.storyReading.byStoryId[progressKey(storyId, editionId, defaultEditionId)];
     return progress ? { ...progress } : null;
   }
 

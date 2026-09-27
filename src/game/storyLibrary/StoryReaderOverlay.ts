@@ -770,11 +770,7 @@ export class StoryReaderOverlay {
     this.persistCurrentPosition();
     this.activeEditionId = edition.id;
 
-    const progress = this.reading.getProgress(
-      manifest.id,
-      edition.id,
-      manifest.defaultEditionId,
-    );
+    const progress = this.reading.getProgress(manifest.id, edition.id, manifest.defaultEditionId);
     const savedChapterIndex =
       progress && !progress.completed
         ? edition.chapters.findIndex((chapter) => chapter.id === progress.chapterId)
