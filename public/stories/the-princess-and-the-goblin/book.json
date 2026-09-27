@@ -1,0 +1,210 @@
+{
+  "schemaVersion": 1,
+  "id": "the-princess-and-the-goblin",
+  "title": "The Princess and the Goblin",
+  "description": "Princess Irene discovers a mysterious great-great-grandmother in a hidden tower while the miner boy Curdie uncovers a goblin plot beneath the mountain.",
+  "catalogueBlurb": "A hidden tower, a silver thread and goblins beneath the mountain.",
+  "author": "George MacDonald, retold by Quill",
+  "readingMode": "flowing",
+  "cover": {
+    "path": "covers/cover.webp",
+    "alt": "Jessie Willcox Smith's illustrated cover for The Princess and the Goblin."
+  },
+  "series": null,
+  "tags": [
+    "classic-retelling",
+    "fantasy",
+    "princess",
+    "goblins",
+    "magic",
+    "adventure",
+    "illustrated"
+  ],
+  "publication": {
+    "status": "published"
+  },
+  "chapters": [
+    {
+      "id": "princess-irene",
+      "title": "Princess Irene",
+      "path": "chapters/01.md",
+      "illustrations": [
+        {
+          "id": "smith-lost-in-the-house",
+          "blockId": "lost-in-the-passages",
+          "path": "illustrations/lost-in-the-house.webp",
+          "alt": "Jessie Willcox Smith's illustration of Princess Irene lost in the old house.",
+          "placement": "full-width",
+          "width": 936,
+          "height": 1375,
+          "caption": "Illustration by Jessie Willcox Smith, 1920."
+        }
+      ]
+    },
+    {
+      "id": "the-old-lady-upstairs",
+      "title": "The Old Lady Upstairs",
+      "path": "chapters/02.md",
+      "illustrations": [
+        {
+          "id": "smith-pigeons",
+          "blockId": "the-pigeons",
+          "path": "illustrations/pigeons.webp",
+          "alt": "Jessie Willcox Smith's illustration of Irene and the white pigeons.",
+          "placement": "full-width",
+          "width": 933,
+          "height": 1378,
+          "caption": "Illustration by Jessie Willcox Smith, 1920."
+        }
+      ]
+    },
+    {
+      "id": "curdie-the-miner",
+      "title": "Curdie the Miner",
+      "path": "chapters/03.md"
+    },
+    {
+      "id": "beneath-the-mountain",
+      "title": "Beneath the Mountain",
+      "path": "chapters/04.md",
+      "illustrations": [
+        {
+          "id": "smith-goblins",
+          "blockId": "goblins-in-the-dark",
+          "path": "illustrations/goblins.webp",
+          "alt": "Jessie Willcox Smith's illustration of goblins beneath the mountain.",
+          "placement": "full-width",
+          "width": 930,
+          "height": 1386,
+          "caption": "Illustration by Jessie Willcox Smith, 1920."
+        }
+      ]
+    },
+    {
+      "id": "king-papa",
+      "title": "King-Papa",
+      "path": "chapters/05.md",
+      "illustrations": [
+        {
+          "id": "smith-king",
+          "blockId": "the-kings-arrival",
+          "path": "illustrations/king-papa.webp",
+          "alt": "Jessie Willcox Smith's illustration of Princess Irene greeting her father the King.",
+          "placement": "full-width",
+          "width": 926,
+          "height": 1381,
+          "caption": "Illustration by Jessie Willcox Smith, 1920."
+        }
+      ]
+    },
+    {
+      "id": "the-silver-thread",
+      "title": "The Silver Thread",
+      "path": "chapters/06.md",
+      "illustrations": [
+        {
+          "id": "smith-grandmother",
+          "blockId": "the-thread",
+          "path": "illustrations/grandmother.webp",
+          "alt": "Jessie Willcox Smith's illustration of Irene with her mysterious great-great-grandmother.",
+          "placement": "full-width",
+          "width": 936,
+          "height": 1378,
+          "caption": "Illustration by Jessie Willcox Smith, 1920."
+        }
+      ]
+    },
+    {
+      "id": "curdies-clue",
+      "title": "Curdie's Clue",
+      "path": "chapters/07.md",
+      "illustrations": [
+        {
+          "id": "smith-curdie-torch",
+          "blockId": "following-the-goblins",
+          "path": "illustrations/curdie-torch.webp",
+          "alt": "Jessie Willcox Smith's illustration of Curdie exploring the goblin tunnels.",
+          "placement": "full-width",
+          "width": 936,
+          "height": 1383,
+          "caption": "Illustration by Jessie Willcox Smith, 1920."
+        }
+      ]
+    },
+    {
+      "id": "the-goblin-plan",
+      "title": "The Goblin Plan",
+      "path": "chapters/08.md"
+    },
+    {
+      "id": "irenes-clue",
+      "title": "Irene's Clue",
+      "path": "chapters/09.md"
+    },
+    {
+      "id": "the-rescue",
+      "title": "The Rescue",
+      "path": "chapters/10.md",
+      "illustrations": [
+        {
+          "id": "smith-curdie-follows",
+          "blockId": "curdie-follows-irene",
+          "path": "illustrations/curdie-follows.webp",
+          "alt": "Jessie Willcox Smith's illustration of Curdie following Irene underground.",
+          "placement": "full-width",
+          "width": 936,
+          "height": 1379,
+          "caption": "Illustration by Jessie Willcox Smith, 1920."
+        }
+      ]
+    },
+    {
+      "id": "the-goblins-attack",
+      "title": "The Goblins Attack",
+      "path": "chapters/11.md",
+      "illustrations": [
+        {
+          "id": "smith-safe-at-home",
+          "blockId": "curdies-guide",
+          "path": "illustrations/safe-at-home.webp",
+          "alt": "Jessie Willcox Smith's illustration of Princess Irene safe with Curdie's mother.",
+          "placement": "full-width",
+          "width": 936,
+          "height": 1382,
+          "caption": "Illustration by Jessie Willcox Smith, 1920."
+        }
+      ]
+    },
+    {
+      "id": "water-under-the-mountain",
+      "title": "Water Under the Mountain",
+      "path": "chapters/12.md"
+    }
+  ],
+  "discovery": {
+    "format": "Chapter Book",
+    "genres": ["Fantasy", "Adventure", "Classics"],
+    "audiences": ["Read Together", "Independent Reader"],
+    "length": "Longer Read"
+  },
+  "rights": {
+    "text": {
+      "status": "original",
+      "source": "Original Story House retelling based on George MacDonald's public-domain 1872 novel",
+      "sourceUrl": "https://www.gutenberg.org/ebooks/708",
+      "notes": "The underlying 1872 novel is public domain. This wording is an original child-friendly Unicorn Valley retelling."
+    },
+    "illustrations": {
+      "status": "public-domain",
+      "source": "Jessie Willcox Smith illustrations from the 1920 David McKay edition",
+      "sourceUrl": "https://www.gutenberg.org/ebooks/34339",
+      "notes": "The illustrated 1920 edition is available through Project Gutenberg. Jessie Willcox Smith died in 1935, so her artwork is also out of copyright in the UK."
+    },
+    "edition": {
+      "status": "original",
+      "source": "Unicorn Valley Story House edition"
+    },
+    "originalPublicationYear": 1872,
+    "curatorNotes": "Twelve reader sections preserve Irene, Curdie, the mysterious grandmother, the silver thread, the goblin plot and the flooding of the underground kingdom while making the Victorian prose more accessible."
+  }
+}
