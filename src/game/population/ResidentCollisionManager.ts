@@ -7,6 +7,7 @@ import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
 
 const RESIDENT_NAME_PREFIX = 'supporting-resident:';
 const MINIMUM_CENTRE_DISTANCE = 76;
+const COLLISION_RELEASE_DISTANCE = 82;
 const PAUSE_DISTANCE = 92;
 const RESUME_DISTANCE = 108;
 const PLAYER_EDGE_PADDING = 34;
@@ -154,8 +155,8 @@ export class ResidentCollisionManager {
       const requiredPerpendicularDistance = Math.sqrt(
         Math.max(
           0,
-          MINIMUM_CENTRE_DISTANCE ** 2 -
-            Math.min(Math.abs(parallelDistance), MINIMUM_CENTRE_DISTANCE) ** 2,
+          COLLISION_RELEASE_DISTANCE ** 2 -
+            Math.min(Math.abs(parallelDistance), COLLISION_RELEASE_DISTANCE) ** 2,
         ),
       );
 
@@ -185,8 +186,8 @@ export class ResidentCollisionManager {
       offsetY = parallelDistance * forwardY + side * requiredPerpendicularDistance * perpendicularY;
     } else {
       const safeDistance = Math.max(distance, 0.001);
-      offsetX = (distance > 0.001 ? dx / safeDistance : 1) * MINIMUM_CENTRE_DISTANCE;
-      offsetY = (distance > 0.001 ? dy / safeDistance : 0) * MINIMUM_CENTRE_DISTANCE;
+      offsetX = (distance > 0.001 ? dx / safeDistance : 1) * COLLISION_RELEASE_DISTANCE;
+      offsetY = (distance > 0.001 ? dy / safeDistance : 0) * COLLISION_RELEASE_DISTANCE;
     }
 
     const bounds = scene.physics.world.bounds;
@@ -201,9 +202,10 @@ export class ResidentCollisionManager {
       bounds.bottom - PLAYER_EDGE_PADDING,
     );
 
-    // Any click-driven route must yield immediately to resident separation. If this is the
-    // resident the player deliberately clicked to talk to, the collision itself counts as a safe
-    // arrival after the player has been moved back to the personal-space boundary.
+    // Any click-driven route must yield immediately to resident separation. Separation deliberately
+    // leaves a small release margin beyond the collision threshold so the next click is not
+    // cancelled again by floating-point overlap at the boundary. If this is the resident the player
+    // deliberately clicked to talk to, the collision itself counts as a safe arrival.
     const clickCollision = getClickToMoveManager(this.game).cancelNavigationForResidentCollision(
       scene,
       target.id,
