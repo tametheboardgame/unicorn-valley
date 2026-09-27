@@ -8,7 +8,7 @@ import { InputController } from '../input/InputController';
 import { KeyboardInputAdapter } from '../input/KeyboardInputAdapter';
 import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 import { getBrowserSaveService } from '../save/browserSaveService';
-import { closeExplorationModal } from '../ui/ExplorationModalNavigation';
+import { closeExplorationModal } from '../interaction/InteractionModalState';
 import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from '../ui/uiTheme';
 
 interface ShopSceneData {
