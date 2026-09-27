@@ -704,11 +704,14 @@ export class StoryReaderOverlay {
     manifest: StoryLibraryManifest,
     editionId: string | null = this.activeEditionId,
   ): StoryEditionManifest {
-    return (
-      manifest.editions.find((edition) => edition.id === editionId) ??
-      manifest.editions.find((edition) => edition.id === manifest.defaultEditionId) ??
-      manifest.editions[0]
-    );
+    const edition =
+      manifest.editions.find((candidate) => candidate.id === editionId) ??
+      manifest.editions.find((candidate) => candidate.id === manifest.defaultEditionId) ??
+      manifest.editions[0];
+    if (!edition) {
+      throw new Error(`Story Library manifest "${manifest.id}" has no readable editions.`);
+    }
+    return edition;
   }
 
   private async openStory(storyId: string): Promise<void> {
