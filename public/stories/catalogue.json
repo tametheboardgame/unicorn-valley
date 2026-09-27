@@ -531,6 +531,47 @@
       "manifestPath": "/stories/the-ugly-duckling/book.json"
     },
     {
+      "id": "the-wonderful-wizard-of-oz",
+      "title": "The Wonderful Wizard of Oz",
+      "description": "A cyclone carries Dorothy and Toto from Kansas to the magical Land of Oz, where they follow the yellow brick road with three unlikely friends in search of courage, wisdom, heart and a way home.",
+      "catalogueBlurb": "Follow Dorothy and Toto along the yellow brick road to the Emerald City.",
+      "author": "L. Frank Baum, retold by Quill",
+      "readingMode": "flowing",
+      "coverPath": "/stories/the-wonderful-wizard-of-oz/covers/cover.webp",
+      "coverAlt": "W. W. Denslow's original 1900 cover for The Wonderful Wizard of Oz.",
+      "series": null,
+      "tags": [
+        "classic-retelling",
+        "fantasy",
+        "adventure",
+        "oz",
+        "friendship",
+        "magic",
+        "illustrated"
+      ],
+      "discovery": {
+        "format": "Chapter Book",
+        "genres": [
+          "Fantasy",
+          "Adventure",
+          "Classics"
+        ],
+        "audiences": [
+          "Read Together",
+          "Independent Reader"
+        ],
+        "length": "Longer Read"
+      },
+      "rightsSummary": {
+        "text": "original",
+        "illustrations": "public-domain",
+        "edition": "original",
+        "originalPublicationYear": 1900
+      },
+      "chapterCount": 10,
+      "manifestPath": "/stories/the-wonderful-wizard-of-oz/book.json"
+    },
+    {
       "id": "thumbelina",
       "title": "Thumbelina",
       "description": "A tiny girl born inside a flower is swept far from home and must find her own way through rivers, forests, winter tunnels and finally a warm land of flowers.",
