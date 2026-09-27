@@ -32,10 +32,6 @@ interface PositionedObject {
   y: number;
 }
 
-interface PositionedTalkTarget extends PositionedObject {
-  id: string;
-}
-
 function findPlayer(scene: Phaser.Scene): Phaser.Physics.Arcade.Sprite | null {
   const named = scene.children.getByName(WORLD_PLAYER_NAME);
   if (named instanceof Phaser.Physics.Arcade.Sprite) {
@@ -103,10 +99,8 @@ export class ResidentCollisionManager {
         if (target.actionKind !== 'talk' || !conditionIsTrue(target.visible)) {
           return;
         }
-        this.separatePlayer(scene, player, {
-          id: target.id,
-          ...getInteractionTargetPosition(target),
-        });
+        const position = getInteractionTargetPosition(target);
+        this.separatePlayer(scene, player, target.id, position.x, position.y);
       });
     }
   };
@@ -129,10 +123,12 @@ export class ResidentCollisionManager {
   private separatePlayer(
     scene: Phaser.Scene,
     player: Phaser.Physics.Arcade.Sprite,
-    target: PositionedTalkTarget,
+    targetId: string,
+    targetX: number,
+    targetY: number,
   ): void {
-    const dx = player.x - target.x;
-    const dy = player.y - target.y;
+    const dx = player.x - targetX;
+    const dy = player.y - targetY;
     const distanceSquared = dx * dx + dy * dy;
     if (distanceSquared >= MINIMUM_CENTRE_DISTANCE_SQUARED) {
       return;
@@ -149,7 +145,7 @@ export class ResidentCollisionManager {
     const speed = Math.hypot(velocityX, velocityY);
     const movingTowardTarget =
       speed > MOVEMENT_EPSILON &&
-      velocityX * (target.x - player.x) + velocityY * (target.y - player.y) > 0;
+      velocityX * (targetX - player.x) + velocityY * (targetY - player.y) > 0;
 
     let offsetX: number;
     let offsetY: number;
@@ -175,10 +171,10 @@ export class ResidentCollisionManager {
       let side = Math.sign(perpendicularDistance);
       if (side === 0) {
         const bounds = scene.physics.world.bounds;
-        const positiveX = target.x + perpendicularX * requiredPerpendicularDistance;
-        const positiveY = target.y + perpendicularY * requiredPerpendicularDistance;
-        const negativeX = target.x - perpendicularX * requiredPerpendicularDistance;
-        const negativeY = target.y - perpendicularY * requiredPerpendicularDistance;
+        const positiveX = targetX + perpendicularX * requiredPerpendicularDistance;
+        const positiveY = targetY + perpendicularY * requiredPerpendicularDistance;
+        const negativeX = targetX - perpendicularX * requiredPerpendicularDistance;
+        const negativeY = targetY - perpendicularY * requiredPerpendicularDistance;
         const positiveClearance = Math.min(
           positiveX - bounds.left,
           bounds.right - positiveX,
@@ -204,12 +200,12 @@ export class ResidentCollisionManager {
 
     const bounds = scene.physics.world.bounds;
     const nextX = Phaser.Math.Clamp(
-      target.x + offsetX,
+      targetX + offsetX,
       bounds.left + PLAYER_EDGE_PADDING,
       bounds.right - PLAYER_EDGE_PADDING,
     );
     const nextY = Phaser.Math.Clamp(
-      target.y + offsetY,
+      targetY + offsetY,
       bounds.top + PLAYER_EDGE_PADDING,
       bounds.bottom - PLAYER_EDGE_PADDING,
     );
@@ -223,7 +219,7 @@ export class ResidentCollisionManager {
       | undefined;
     const clickCollision = clickNavigation?.cancelNavigationForResidentCollision(
       scene,
-      target.id,
+      targetId,
     ) ?? {
       cancelled: false,
       onArrive: null,
