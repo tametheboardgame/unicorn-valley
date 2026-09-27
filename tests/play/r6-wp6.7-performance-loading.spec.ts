@@ -119,6 +119,23 @@ async function measureSettledPerformance(page: Page): Promise<FramePerformanceSn
   return waitForPerformanceSamples(page);
 }
 
+
+async function measureMovementPerformance(page: Page): Promise<FramePerformanceSnapshot> {
+  await page.evaluate(() => {
+    const diagnosticWindow = window as typeof window & {
+      __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
+    };
+    diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__?.resetPerformance();
+  });
+
+  await page.keyboard.down('ArrowRight');
+  try {
+    return await waitForPerformanceSamples(page, 90);
+  } finally {
+    await page.keyboard.up('ArrowRight');
+  }
+}
+
 function settledP95Ceiling(initialP95FrameMs: number): number {
   return Math.min(
     SEVERE_P95_CEILING_MS,
@@ -173,5 +190,18 @@ test('production world transitions stay responsive and avoid severe frame hitche
       `${sceneKey} settled p95 regressed beyond the runner baseline`,
     ).toBeLessThan(p95Ceiling);
     expect(profile.worstFrameMs).toBeLessThan(500);
+
+    if (sceneKey === 'SunbeamVillageScene') {
+      const movingProfile = await measureMovementPerformance(page);
+      expect(movingProfile.sampleCount).toBeGreaterThanOrEqual(90);
+      expect(
+        movingProfile.p95FrameMs,
+        'Sunbeam Village movement p95 regressed beyond the runner baseline',
+      ).toBeLessThan(p95Ceiling);
+      expect(
+        movingProfile.worstFrameMs,
+        'Sunbeam Village movement produced a severe frame hitch',
+      ).toBeLessThan(500);
+    }
   }
 });
