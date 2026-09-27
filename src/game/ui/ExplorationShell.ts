@@ -28,6 +28,38 @@ interface ShellButton {
 
 const shellsByScene = new WeakMap<Phaser.Scene, ExplorationShell>();
 
+type ExplorationMenuSceneKey = 'InventoryScene' | 'WonderbookScene';
+
+let inventorySceneRegistration: Promise<void> | null = null;
+let wonderbookSceneRegistration: Promise<void> | null = null;
+
+function ensureExplorationMenuSceneRegistered(
+  game: Phaser.Game,
+  sceneKey: ExplorationMenuSceneKey,
+): Promise<void> {
+  if (game.scene.keys[sceneKey]) {
+    return Promise.resolve();
+  }
+
+  if (sceneKey === 'InventoryScene') {
+    inventorySceneRegistration ??= import('../scenes/InventoryScene').then(({ InventoryScene }) => {
+      if (!game.scene.keys.InventoryScene) {
+        game.scene.add('InventoryScene', InventoryScene, false);
+      }
+    });
+    return inventorySceneRegistration;
+  }
+
+  wonderbookSceneRegistration ??= import('../scenes/WonderbookScene').then(
+    ({ WonderbookScene }) => {
+      if (!game.scene.keys.WonderbookScene) {
+        game.scene.add('WonderbookScene', WonderbookScene, false);
+      }
+    },
+  );
+  return wonderbookSceneRegistration;
+}
+
 /**
  * Canonical exploration shell.
  *
@@ -56,6 +88,7 @@ export class ExplorationShell {
   private readonly refreshTimer: Phaser.Time.TimerEvent;
   private readonly decorations: Phaser.GameObjects.GameObject[] = [];
   private destroyed = false;
+  private openingNavigationModal = false;
 
   public static ensure(
     scene: Phaser.Scene,
@@ -317,25 +350,35 @@ export class ExplorationShell {
   }
 
   private openBag(): void {
-    this.openInventory('items');
+    void this.openRegisteredNavigationModal('InventoryScene', { initialTab: 'items' });
   }
 
   private openMap(): void {
-    this.openInventory('map');
-  }
-
-  private openInventory(initialTab: 'items' | 'map'): void {
-    if (this.destroyed) {
-      return;
-    }
-    openExplorationModal(this.scene, 'InventoryScene', { initialTab });
+    void this.openRegisteredNavigationModal('InventoryScene', { initialTab: 'map' });
   }
 
   private openWonderbook(): void {
-    if (this.destroyed) {
+    void this.openRegisteredNavigationModal('WonderbookScene');
+  }
+
+  private async openRegisteredNavigationModal(
+    sceneKey: ExplorationMenuSceneKey,
+    data: Record<string, unknown> = {},
+  ): Promise<void> {
+    if (this.destroyed || this.openingNavigationModal) {
       return;
     }
-    openExplorationModal(this.scene, 'WonderbookScene');
+
+    this.openingNavigationModal = true;
+    try {
+      await ensureExplorationMenuSceneRegistered(this.scene.sys.game, sceneKey);
+      if (this.destroyed || !this.scene.scene.isActive()) {
+        return;
+      }
+      openExplorationModal(this.scene, sceneKey, data);
+    } finally {
+      this.openingNavigationModal = false;
+    }
   }
 
   private openSettings(): void {
