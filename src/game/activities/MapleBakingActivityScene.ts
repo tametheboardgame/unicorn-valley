@@ -806,10 +806,7 @@ export class MapleBakingActivityScene extends Phaser.Scene {
   }
 
   private mixPointerAngle(x: number, y: number): number {
-    return Math.atan2(
-      (y - MIX_CENTRE.y) / MIX_RADIUS_Y,
-      (x - MIX_CENTRE.x) / MIX_RADIUS_X,
-    );
+    return Math.atan2((y - MIX_CENTRE.y) / MIX_RADIUS_Y, (x - MIX_CENTRE.x) / MIX_RADIUS_X);
   }
 
   private mixNormalisedRadius(x: number, y: number): number {
