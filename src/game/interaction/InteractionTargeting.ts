@@ -38,8 +38,12 @@ export function getInteractionApproachPosition(target: InteractionTarget): MapPo
     : target.approachPosition;
 }
 
+export function isInteractionTargetAvailable(target: InteractionTarget): boolean {
+  return conditionIsTrue(target.visible) && conditionIsTrue(target.enabled);
+}
+
 function isInteractionTargetInRange(playerPosition: MapPoint, target: InteractionTarget): boolean {
-  if (!conditionIsTrue(target.visible) || !conditionIsTrue(target.enabled)) {
+  if (!isInteractionTargetAvailable(target)) {
     return false;
   }
   if (target.reachable !== undefined) {

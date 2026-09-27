@@ -22,8 +22,14 @@ import { isExplorationMovementBlocked } from './ExplorationMovementBlocker';
 import { hasHeldExplorationMovementInput } from './KeyboardInputAdapter';
 import { CLICK_NAVIGATION_SUPPORTED_SCENES } from './ClickNavigationSceneClassification';
 
+type NavigationMode = 'ground' | 'interaction';
+
 interface NavigationState {
   path: MapPoint[];
+  mode: NavigationMode;
+  arrivalDistance: number;
+  onArrive: (() => void) | null;
+  interactionTargetId: string | null;
   waypointIndex: number;
   target: MapPoint | null;
   marker: Phaser.GameObjects.Container | null;
@@ -95,6 +101,7 @@ function navigationMapForScene(scene: Phaser.Scene): TraversalMapDefinition | un
 const WAYPOINT_REACHED_DISTANCE = 22;
 const STUCK_TIMEOUT_MS = 950;
 const MIN_PROGRESS_DISTANCE = 2;
+export const CLICK_TO_MOVE_MANAGER_REGISTRY_KEY = 'click-to-move-manager';
 
 function isPlayerSprite(
   gameObject: Phaser.GameObjects.GameObject,
@@ -129,6 +136,7 @@ export class ClickToMoveManager {
   private readonly states = new WeakMap<Phaser.Scene, NavigationState>();
 
   public constructor(private readonly game: Phaser.Game) {
+    this.game.registry.set(CLICK_TO_MOVE_MANAGER_REGISTRY_KEY, this);
     this.game.events.on(Phaser.Core.Events.POST_STEP, this.update, this);
   }
 
@@ -157,14 +165,20 @@ export class ClickToMoveManager {
       }
 
       const distance = Phaser.Math.Distance.Between(player.x, player.y, waypoint.x, waypoint.y);
-      if (distance <= WAYPOINT_REACHED_DISTANCE) {
+      const isFinalWaypoint = state.waypointIndex === state.path.length - 1;
+      const reachedDistance = isFinalWaypoint
+        ? Math.max(WAYPOINT_REACHED_DISTANCE, state.arrivalDistance)
+        : WAYPOINT_REACHED_DISTANCE;
+      if (distance <= reachedDistance) {
         state.waypointIndex += 1;
         state.lastDistance = Number.POSITIVE_INFINITY;
         state.lastProgressAt = scene.time.now;
 
         if (!state.path[state.waypointIndex]) {
           body.setVelocity(0, 0);
+          const onArrive = state.onArrive;
           this.cancel(state);
+          onArrive?.();
         }
         continue;
       }
@@ -207,6 +221,10 @@ export class ClickToMoveManager {
 
     const state: NavigationState = {
       path: [],
+      mode: 'ground',
+      arrivalDistance: WAYPOINT_REACHED_DISTANCE,
+      onArrive: null,
+      interactionTargetId: null,
       waypointIndex: 0,
       target: null,
       marker: null,
@@ -220,6 +238,9 @@ export class ClickToMoveManager {
       currentlyOver: Phaser.GameObjects.GameObject[],
     ) => {
       if (pointer.button !== 0 || isExplorationMovementBlocked(scene)) {
+        return;
+      }
+      if (currentlyOver.some((object) => object.getData('interaction-direct-zone') === true)) {
         return;
       }
       if (currentlyOver.length > 0 || hasHeldExplorationMovementInput()) {
@@ -244,14 +265,7 @@ export class ClickToMoveManager {
         return;
       }
 
-      state.path = path;
-      state.waypointIndex = 0;
-      state.target = path[path.length - 1] ?? null;
-      state.lastDistance = Number.POSITIVE_INFINITY;
-      state.lastProgressAt = scene.time.now;
-      if (state.target) {
-        this.showTargetMarker(scene, state, state.target);
-      }
+      this.startNavigation(scene, state, path, WAYPOINT_REACHED_DISTANCE, null, 'ground', null);
     };
 
     scene.input.on('pointerdown', state.pointerHandler);
@@ -262,6 +276,78 @@ export class ClickToMoveManager {
     });
     this.states.set(scene, state);
     return state;
+  }
+
+  public navigateToInteraction(
+    scene: Phaser.Scene,
+    interactionTargetId: string,
+    target: MapPoint,
+    arrivalDistance: number,
+    onArrive: () => void,
+  ): boolean {
+    const state = this.ensureScene(scene);
+    const player = scene.children.list.find(isPlayerSprite);
+    const map = navigationMapForScene(scene);
+    if (!player || !map || isExplorationMovementBlocked(scene)) {
+      return false;
+    }
+
+    const path = findClickNavigationPath(map, { x: player.x, y: player.y }, target);
+    if (path.length === 0) {
+      this.cancel(state);
+      return false;
+    }
+
+    this.startNavigation(
+      scene,
+      state,
+      path,
+      arrivalDistance,
+      onArrive,
+      'interaction',
+      interactionTargetId,
+    );
+    return true;
+  }
+
+  private startNavigation(
+    scene: Phaser.Scene,
+    state: NavigationState,
+    path: MapPoint[],
+    arrivalDistance: number,
+    onArrive: (() => void) | null,
+    mode: NavigationMode,
+    interactionTargetId: string | null,
+  ): void {
+    state.path = path;
+    state.mode = mode;
+    state.interactionTargetId = interactionTargetId;
+    state.arrivalDistance = Math.max(WAYPOINT_REACHED_DISTANCE, arrivalDistance);
+    state.onArrive = onArrive;
+    state.waypointIndex = 0;
+    state.target = path[path.length - 1] ?? null;
+    state.lastDistance = Number.POSITIVE_INFINITY;
+    state.lastProgressAt = scene.time.now;
+    if (state.target) {
+      this.showTargetMarker(scene, state, state.target);
+    }
+  }
+
+  public cancelNavigationForResidentCollision(
+    scene: Phaser.Scene,
+    residentTargetId: string,
+  ): { cancelled: boolean; onArrive: (() => void) | null } {
+    const state = this.states.get(scene);
+    if (!state || state.path.length === 0) {
+      return { cancelled: false, onArrive: null };
+    }
+
+    const onArrive =
+      state.mode === 'interaction' && state.interactionTargetId === residentTargetId
+        ? state.onArrive
+        : null;
+    this.cancel(state);
+    return { cancelled: true, onArrive };
   }
 
   private showTargetMarker(scene: Phaser.Scene, state: NavigationState, target: MapPoint): void {
@@ -291,6 +377,10 @@ export class ClickToMoveManager {
 
   private cancel(state: NavigationState, destroyMarker = true): void {
     state.path = [];
+    state.mode = 'ground';
+    state.arrivalDistance = WAYPOINT_REACHED_DISTANCE;
+    state.onArrive = null;
+    state.interactionTargetId = null;
     state.waypointIndex = 0;
     state.target = null;
     state.lastDistance = Number.POSITIVE_INFINITY;

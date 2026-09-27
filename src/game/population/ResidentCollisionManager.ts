@@ -6,6 +6,7 @@ import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
 
 const RESIDENT_NAME_PREFIX = 'supporting-resident:';
 const MINIMUM_CENTRE_DISTANCE = 76;
+const COLLISION_RELEASE_DISTANCE = 82;
 const PAUSE_DISTANCE = 92;
 const RESUME_DISTANCE = 108;
 const PLAYER_EDGE_PADDING = 34;
@@ -16,9 +17,20 @@ interface PausedResidentTweens {
   tweens: Phaser.Tweens.Tween[];
 }
 
+interface ClickNavigationCollisionController {
+  cancelNavigationForResidentCollision(
+    scene: Phaser.Scene,
+    residentTargetId: string,
+  ): { cancelled: boolean; onArrive: (() => void) | null };
+}
+
 interface PositionedObject {
   x: number;
   y: number;
+}
+
+interface PositionedTalkTarget extends PositionedObject {
+  id: string;
 }
 
 function findPlayer(scene: Phaser.Scene): Phaser.Physics.Arcade.Sprite | null {
@@ -53,11 +65,14 @@ function conditionIsTrue(condition: InteractionCondition | undefined): boolean {
   return typeof condition === 'function' ? condition() : condition;
 }
 
-function findVisibleTalkPositions(scene: Phaser.Scene): PositionedObject[] {
+function findVisibleTalkTargets(scene: Phaser.Scene): PositionedTalkTarget[] {
   return getSceneInteractionRegistry(scene)
     .getTargets()
     .filter((target) => target.actionKind === 'talk' && conditionIsTrue(target.visible))
-    .map((target) => getInteractionTargetPosition(target));
+    .map((target) => ({
+      id: target.id,
+      ...getInteractionTargetPosition(target),
+    }));
 }
 
 /**
@@ -87,8 +102,8 @@ export class ResidentCollisionManager {
       for (const resident of findResidents(scene)) {
         this.syncResidentRoute(scene, player, resident);
       }
-      for (const targetPosition of findVisibleTalkPositions(scene)) {
-        this.separatePlayer(scene, player, targetPosition);
+      for (const target of findVisibleTalkTargets(scene)) {
+        this.separatePlayer(scene, player, target);
       }
     }
   };
@@ -109,7 +124,7 @@ export class ResidentCollisionManager {
   private separatePlayer(
     scene: Phaser.Scene,
     player: Phaser.Physics.Arcade.Sprite,
-    target: PositionedObject,
+    target: PositionedTalkTarget,
   ): void {
     const dx = player.x - target.x;
     const dy = player.y - target.y;
@@ -146,8 +161,8 @@ export class ResidentCollisionManager {
       const requiredPerpendicularDistance = Math.sqrt(
         Math.max(
           0,
-          MINIMUM_CENTRE_DISTANCE ** 2 -
-            Math.min(Math.abs(parallelDistance), MINIMUM_CENTRE_DISTANCE) ** 2,
+          COLLISION_RELEASE_DISTANCE ** 2 -
+            Math.min(Math.abs(parallelDistance), COLLISION_RELEASE_DISTANCE) ** 2,
         ),
       );
 
@@ -177,8 +192,8 @@ export class ResidentCollisionManager {
       offsetY = parallelDistance * forwardY + side * requiredPerpendicularDistance * perpendicularY;
     } else {
       const safeDistance = Math.max(distance, 0.001);
-      offsetX = (distance > 0.001 ? dx / safeDistance : 1) * MINIMUM_CENTRE_DISTANCE;
-      offsetY = (distance > 0.001 ? dy / safeDistance : 0) * MINIMUM_CENTRE_DISTANCE;
+      offsetX = (distance > 0.001 ? dx / safeDistance : 1) * COLLISION_RELEASE_DISTANCE;
+      offsetY = (distance > 0.001 ? dy / safeDistance : 0) * COLLISION_RELEASE_DISTANCE;
     }
 
     const bounds = scene.physics.world.bounds;
@@ -193,13 +208,29 @@ export class ResidentCollisionManager {
       bounds.bottom - PLAYER_EDGE_PADDING,
     );
 
-    // reset keeps Arcade physics and presentation aligned. Restore the active velocity afterwards so
-    // a held movement input naturally carries the player around the NPC instead of pinning them to
-    // the edge until the key or stick is released.
+    // Any click-driven route must yield immediately to resident separation. Separation deliberately
+    // leaves a small release margin beyond the collision threshold so the next click is not
+    // cancelled again by floating-point overlap at the boundary. If this is the resident the player
+    // deliberately clicked to talk to, the collision itself counts as a safe arrival.
+    const clickNavigation = this.game.registry.get('click-to-move-manager') as
+      | ClickNavigationCollisionController
+      | undefined;
+    const clickCollision = clickNavigation?.cancelNavigationForResidentCollision(
+      scene,
+      target.id,
+    ) ?? {
+      cancelled: false,
+      onArrive: null,
+    };
+
+    // reset keeps Arcade physics and presentation aligned. Held/manual movement keeps its velocity
+    // so the player can naturally slide around the resident. Click navigation stops cleanly instead
+    // of reapplying velocity and fighting the separation correction on the next frame.
     body.reset(nextX, nextY);
-    if (speed > MOVEMENT_EPSILON) {
+    if (!clickCollision.cancelled && speed > MOVEMENT_EPSILON) {
       body.setVelocity(velocityX, velocityY);
     }
+    clickCollision.onArrive?.();
   }
 
   private pauseResidentRoute(scene: Phaser.Scene, resident: Phaser.GameObjects.Container): void {
