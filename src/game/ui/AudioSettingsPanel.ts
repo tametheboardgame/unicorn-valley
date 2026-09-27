@@ -1,5 +1,6 @@
 import type Phaser from 'phaser';
 import { getVerticalSliceAudio } from '../audio/VerticalSliceAudio';
+import { openExplorationModal } from './ExplorationModalNavigation';
 
 const SETTINGS_SCENE_REGISTERED_KEY = 'wp6.14:settings-scene-registered';
 
