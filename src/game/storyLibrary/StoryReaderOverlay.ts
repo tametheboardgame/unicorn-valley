@@ -17,6 +17,7 @@ import { StoryReadingService } from './StoryReadingService';
 import type {
   StoryChapterContent,
   StoryContentBlock,
+  StoryEditionManifest,
   StoryIllustrationReference,
   StoryLibraryManifest,
 } from './StoryLibraryTypes';
@@ -159,9 +160,9 @@ function renderStoryIllustration(
   return figure;
 }
 
-function chapterLabel(manifest: StoryLibraryManifest, index: number): string {
-  const noun = manifest.readingMode === 'paged-picture-book' ? 'Page' : 'Chapter';
-  return `${noun} ${index + 1} of ${manifest.chapters.length}`;
+function chapterLabel(edition: StoryEditionManifest, index: number): string {
+  const noun = edition.readingMode === 'paged-picture-book' ? 'Page' : 'Chapter';
+  return `${noun} ${index + 1} of ${edition.chapters.length}`;
 }
 
 export class StoryReaderOverlay {
@@ -170,6 +171,7 @@ export class StoryReaderOverlay {
   private readonly storyHouse = new StoryHouseService(getBrowserSaveService());
   private root: HTMLDivElement | null = null;
   private manifest: StoryLibraryManifest | null = null;
+  private activeEditionId: string | null = null;
   private requestVersion = 0;
   private fontSize = DEFAULT_FONT_SIZE;
   private lineHeight = DEFAULT_LINE_HEIGHT;
@@ -177,6 +179,7 @@ export class StoryReaderOverlay {
   private progressTimer: number | null = null;
   private currentChapter: {
     manifest: StoryLibraryManifest;
+    edition: StoryEditionManifest;
     chapter: StoryChapterContent;
     index: number;
     scroller: HTMLElement;
@@ -241,6 +244,7 @@ export class StoryReaderOverlay {
     this.currentChapter = null;
     const request = ++this.requestVersion;
     this.manifest = null;
+    this.activeEditionId = null;
     root.replaceChildren(this.createLoading('Opening the Story House shelves…'));
 
     try {
@@ -402,8 +406,14 @@ export class StoryReaderOverlay {
 
       const progressByStoryId = new Map(
         stories.flatMap((story) => {
-          const progress = this.reading.getProgress(story.id);
-          return progress ? [[story.id, progress] as const] : [];
+          const editionIds = story.editions?.map(({ id }) => id) ?? ['default'];
+          const defaultEditionId = story.defaultEditionId ?? editionIds[0] ?? 'default';
+          const latest = this.reading.getLatestProgressForStory(
+            story.id,
+            editionIds,
+            defaultEditionId,
+          );
+          return latest ? [[story.id, latest.progress] as const] : [];
         }),
       );
       const shelfDefinitions = buildStoryLibraryShelves(stories, progressByStoryId);
@@ -690,6 +700,20 @@ export class StoryReaderOverlay {
     }
   }
 
+  private editionFor(
+    manifest: StoryLibraryManifest,
+    editionId: string | null = this.activeEditionId,
+  ): StoryEditionManifest {
+    const edition =
+      manifest.editions.find((candidate) => candidate.id === editionId) ??
+      manifest.editions.find((candidate) => candidate.id === manifest.defaultEditionId) ??
+      manifest.editions[0];
+    if (!edition) {
+      throw new Error(`Story Library manifest "${manifest.id}" has no readable editions.`);
+    }
+    return edition;
+  }
+
   private async openStory(storyId: string): Promise<void> {
     const root = this.root;
     if (!root) return;
@@ -700,18 +724,30 @@ export class StoryReaderOverlay {
       const manifest = await this.library.loadManifest(storyId);
       if (!this.root || request !== this.requestVersion) return;
       this.manifest = manifest;
-      const progress = this.reading.getProgress(storyId);
+
+      const latest = this.reading.getLatestProgressForStory(
+        storyId,
+        manifest.editions.map(({ id }) => id),
+        manifest.defaultEditionId,
+      );
+      const edition = this.editionFor(manifest, latest?.editionId ?? manifest.defaultEditionId);
+      this.activeEditionId = edition.id;
+      const progress =
+        latest?.editionId === edition.id
+          ? latest.progress
+          : this.reading.getProgress(storyId, edition.id, manifest.defaultEditionId);
+
       const savedChapterIndex =
         progress && !progress.completed
-          ? manifest.chapters.findIndex((chapter) => chapter.id === progress.chapterId)
+          ? edition.chapters.findIndex((chapter) => chapter.id === progress.chapterId)
           : -1;
       const chapterIndex =
         savedChapterIndex >= 0
           ? savedChapterIndex
           : progress && !progress.completed
             ? Math.min(
-                manifest.chapters.length - 1,
-                Math.floor((progress.percentComplete / 100) * manifest.chapters.length),
+                edition.chapters.length - 1,
+                Math.floor((progress.percentComplete / 100) * edition.chapters.length),
               )
             : 0;
       await this.showChapter(chapterIndex, progress && !progress.completed ? progress : null);
@@ -726,22 +762,51 @@ export class StoryReaderOverlay {
     }
   }
 
+  private async switchEdition(editionId: string): Promise<void> {
+    const manifest = this.manifest;
+    if (!manifest || editionId === this.activeEditionId) return;
+
+    const edition = this.editionFor(manifest, editionId);
+    this.persistCurrentPosition();
+    this.activeEditionId = edition.id;
+
+    const progress = this.reading.getProgress(manifest.id, edition.id, manifest.defaultEditionId);
+    const savedChapterIndex =
+      progress && !progress.completed
+        ? edition.chapters.findIndex((chapter) => chapter.id === progress.chapterId)
+        : -1;
+    const chapterIndex =
+      savedChapterIndex >= 0
+        ? savedChapterIndex
+        : progress && !progress.completed
+          ? Math.min(
+              edition.chapters.length - 1,
+              Math.floor((progress.percentComplete / 100) * edition.chapters.length),
+            )
+          : 0;
+
+    await this.showChapter(chapterIndex, progress && !progress.completed ? progress : null);
+  }
+
   private async showChapter(
     index: number,
     resume: ReturnType<StoryReadingService['getProgress']> = null,
   ): Promise<void> {
     const root = this.root;
     const manifest = this.manifest;
-    const chapter = manifest?.chapters[index];
-    if (!root || !manifest || !chapter) return;
+    if (!root || !manifest) return;
+
+    const edition = this.editionFor(manifest);
+    const chapter = edition.chapters[index];
+    if (!chapter) return;
 
     const request = ++this.requestVersion;
     root.replaceChildren(this.createLoading(`Opening “${chapter.title}”…`));
 
     try {
-      const content = await this.library.loadChapter(manifest.id, chapter.id);
+      const content = await this.library.loadChapter(manifest.id, chapter.id, edition.id);
       if (!this.root || request !== this.requestVersion) return;
-      this.renderReader(manifest, content, index, resume);
+      this.renderReader(manifest, edition, content, index, resume);
     } catch {
       if (!this.root || request !== this.requestVersion) return;
       this.root.replaceChildren(
@@ -752,6 +817,7 @@ export class StoryReaderOverlay {
 
   private renderReader(
     manifest: StoryLibraryManifest,
+    edition: StoryEditionManifest,
     chapter: StoryChapterContent,
     index: number,
     resume: ReturnType<StoryReadingService['getProgress']>,
@@ -761,7 +827,7 @@ export class StoryReaderOverlay {
 
     const shell = document.createElement('div');
     shell.className = 'story-reader-shell';
-    const isPictureBook = manifest.readingMode === 'paged-picture-book';
+    const isPictureBook = edition.readingMode === 'paged-picture-book';
     if (isPictureBook) {
       shell.classList.add('is-picture-book');
     }
@@ -778,10 +844,34 @@ export class StoryReaderOverlay {
     const bookTitle = document.createElement('strong');
     bookTitle.textContent = manifest.title;
     const chapterProgress = document.createElement('span');
-    chapterProgress.textContent = chapterLabel(manifest, index);
+    chapterProgress.textContent =
+      manifest.editions.length > 1
+        ? `${edition.label} · ${chapterLabel(edition, index)}`
+        : chapterLabel(edition, index);
     titleWrap.append(bookTitle, chapterProgress);
     const close = button('Close ✕', 'story-reader-close', () => this.destroy());
     topbar.append(back, titleWrap, close);
+
+    let editionSwitch: HTMLElement | null = null;
+    if (manifest.editions.length > 1) {
+      editionSwitch = document.createElement('nav');
+      editionSwitch.className = 'story-reader-edition-switch';
+      editionSwitch.setAttribute('aria-label', 'Book edition');
+      const editionLabel = document.createElement('span');
+      editionLabel.className = 'story-reader-edition-label';
+      editionLabel.textContent = 'Edition';
+      editionSwitch.append(editionLabel);
+
+      for (const candidate of manifest.editions) {
+        const editionButton = button(candidate.label, 'story-reader-edition-button', () => {
+          void this.switchEdition(candidate.id);
+        });
+        const active = candidate.id === edition.id;
+        editionButton.classList.toggle('is-active', active);
+        editionButton.setAttribute('aria-pressed', String(active));
+        editionSwitch.append(editionButton);
+      }
+    }
 
     const toolbar = document.createElement('nav');
     toolbar.className = 'story-reader-toolbar';
@@ -808,10 +898,11 @@ export class StoryReaderOverlay {
       ? 'story-reader-paper story-reader-picture-page'
       : 'story-reader-paper';
     paper.dataset.storyId = manifest.id;
+    paper.dataset.storyEditionId = edition.id;
     paper.dataset.chapterId = chapter.chapterId;
     paper.addEventListener('dragstart', (event) => event.preventDefault());
 
-    const chapterManifest = manifest.chapters[index];
+    const chapterManifest = edition.chapters[index];
 
     if (isPictureBook) {
       for (const illustration of chapterManifest?.illustrations ?? []) {
@@ -829,7 +920,7 @@ export class StoryReaderOverlay {
       const eyebrow = document.createElement('p');
       eyebrow.textContent = manifest.series
         ? `${manifest.series.title} · Book ${manifest.series.order}`
-        : `A Story House book · ${manifest.author}`;
+        : `A Story House book · ${edition.author}`;
       const heading = document.createElement('h1');
       heading.textContent = chapter.title;
       chapterHeading.append(eyebrow, heading);
@@ -858,8 +949,8 @@ export class StoryReaderOverlay {
     );
     previous.disabled = index === 0;
     const chapterPosition = document.createElement('span');
-    chapterPosition.textContent = chapterLabel(manifest, index);
-    const isLastChapter = index >= manifest.chapters.length - 1;
+    chapterPosition.textContent = chapterLabel(edition, index);
+    const isLastChapter = index >= edition.chapters.length - 1;
     const next = button(
       isLastChapter ? 'Finish book ✓' : isPictureBook ? 'Next page →' : 'Next chapter →',
       'story-reader-chapter-button',
@@ -999,9 +1090,11 @@ export class StoryReaderOverlay {
     });
 
     scroller.append(paper);
-    shell.append(topbar, toolbar, scroller, turnFeedback);
+    shell.append(topbar);
+    if (editionSwitch) shell.append(editionSwitch);
+    shell.append(toolbar, scroller, turnFeedback);
     root.replaceChildren(shell);
-    this.currentChapter = { manifest, chapter, index, scroller };
+    this.currentChapter = { manifest, edition, chapter, index, scroller };
     scroller.addEventListener('scroll', this.scheduleProgressSave, { passive: true });
     this.restoreReadingPosition(resume);
   }
@@ -1050,18 +1143,20 @@ export class StoryReaderOverlay {
       return;
     }
 
-    if (current.manifest.readingMode === 'paged-picture-book') {
+    if (current.edition.readingMode === 'paged-picture-book') {
       const pageBlock = current.chapter.blocks[0];
       if (!pageBlock) {
         return;
       }
       this.reading.savePosition({
         storyId: current.manifest.id,
+        editionId: current.edition.id,
+        defaultEditionId: current.manifest.defaultEditionId,
         chapterId: current.chapter.chapterId,
         blockId: pageBlock.id,
         blockProgress: 0,
         chapterPercentComplete: 100,
-        percentComplete: ((current.index + 1) / current.manifest.chapters.length) * 100,
+        percentComplete: ((current.index + 1) / current.edition.chapters.length) * 100,
       });
       return;
     }
@@ -1096,10 +1191,12 @@ export class StoryReaderOverlay {
     );
     const chapterPercentComplete = chapterFraction * 100;
     const percentComplete =
-      ((current.index + chapterFraction) / current.manifest.chapters.length) * 100;
+      ((current.index + chapterFraction) / current.edition.chapters.length) * 100;
 
     this.reading.savePosition({
       storyId: current.manifest.id,
+      editionId: current.edition.id,
+      defaultEditionId: current.manifest.defaultEditionId,
       chapterId: current.chapter.chapterId,
       blockId: selected.dataset.storyBlockId ?? current.chapter.blocks[0]?.id ?? 'start',
       blockProgress,
@@ -1114,7 +1211,7 @@ export class StoryReaderOverlay {
       !current ||
       !progress ||
       progress.completed ||
-      current.manifest.readingMode === 'paged-picture-book'
+      current.edition.readingMode === 'paged-picture-book'
     ) {
       current?.scroller.scrollTo({ top: 0 });
       return;
@@ -1140,7 +1237,7 @@ export class StoryReaderOverlay {
           0,
           Math.min(
             0.999,
-            (progress.percentComplete / 100) * current.manifest.chapters.length - current.index,
+            (progress.percentComplete / 100) * current.edition.chapters.length - current.index,
           ),
         );
         const rawIndex = chapterFraction * blocks.length;
@@ -1173,6 +1270,8 @@ export class StoryReaderOverlay {
 
     this.reading.markCompleted({
       storyId: current.manifest.id,
+      editionId: current.edition.id,
+      defaultEditionId: current.manifest.defaultEditionId,
       chapterId: current.chapter.chapterId,
       blockId: lastBlock.id,
       blockProgress: 1,

@@ -97,4 +97,60 @@ describe('StoryReadingService', () => {
       lastReadAt: '2026-09-24T09:00:00.000Z',
     });
   });
+  it('keeps default-edition progress backwards compatible and alternate editions independent', () => {
+    const repository = new MemorySaveRepository();
+    const saves = new SaveService(repository);
+    let now = '2026-09-27T17:00:00.000Z';
+    const reading = new StoryReadingService(saves, () => now);
+
+    expect(
+      reading.savePosition({
+        storyId: 'alice',
+        editionId: 'story-house',
+        defaultEditionId: 'story-house',
+        chapterId: 'down-the-rabbit-hole',
+        blockId: 'opening',
+        blockProgress: 0.4,
+        chapterPercentComplete: 40,
+        percentComplete: 12,
+      }),
+    ).toBe(true);
+
+    now = '2026-09-27T17:05:00.000Z';
+    expect(
+      reading.savePosition({
+        storyId: 'alice',
+        editionId: 'full-classic',
+        defaultEditionId: 'story-house',
+        chapterId: 'chapter-01',
+        blockId: 'white-rabbit',
+        blockProgress: 0.2,
+        chapterPercentComplete: 20,
+        percentComplete: 3,
+      }),
+    ).toBe(true);
+
+    expect(reading.getProgress('alice')).toMatchObject({
+      chapterId: 'down-the-rabbit-hole',
+      percentComplete: 12,
+    });
+    expect(reading.getProgress('alice', 'story-house', 'story-house')).toMatchObject({
+      chapterId: 'down-the-rabbit-hole',
+      percentComplete: 12,
+    });
+    expect(reading.getProgress('alice', 'full-classic', 'story-house')).toMatchObject({
+      chapterId: 'chapter-01',
+      percentComplete: 3,
+    });
+
+    expect(
+      reading.getLatestProgressForStory('alice', ['story-house', 'full-classic'], 'story-house'),
+    ).toMatchObject({
+      editionId: 'full-classic',
+      progress: {
+        chapterId: 'chapter-01',
+        lastReadAt: '2026-09-27T17:05:00.000Z',
+      },
+    });
+  });
 });

@@ -259,13 +259,60 @@ async function discoverStoryDirectories() {
     .sort((left, right) => left.name.localeCompare(right.name));
 }
 
+function normaliseLegacyEdition(manifest) {
+  return {
+    id: 'default',
+    label: 'Standard Edition',
+    author: manifest.author,
+    readingMode: manifest.readingMode ?? 'flowing',
+    rights: manifest.rights,
+    chapters: manifest.chapters,
+  };
+}
+
+async function validateEdition(storyDirectory, storyId, edition) {
+  if (!edition || typeof edition !== 'object') {
+    throw new Error(`Story catalogue rejected ${storyId}: edition must be an object.`);
+  }
+  assertString(edition.id, `${storyId} edition id`);
+  if (!STORY_ID.test(edition.id)) {
+    throw new Error(`Story catalogue rejected ${storyId}: invalid edition id "${edition.id}".`);
+  }
+  assertString(edition.label, `${storyId}/${edition.id} edition label`);
+  assertString(edition.author, `${storyId}/${edition.id} author`);
+  assertRights(edition.rights, `${storyId}/${edition.id} rights`);
+
+  const readingMode = edition.readingMode ?? 'flowing';
+  if (!['flowing', 'paged-picture-book'].includes(readingMode)) {
+    throw new Error(
+      `Story catalogue rejected ${storyId}/${edition.id}: readingMode must be flowing or paged-picture-book.`,
+    );
+  }
+
+  if (!Array.isArray(edition.chapters) || edition.chapters.length === 0) {
+    throw new Error(
+      `Story catalogue rejected ${storyId}/${edition.id}: at least one chapter is required.`,
+    );
+  }
+
+  const chapterIds = new Set();
+  for (const chapter of edition.chapters) {
+    await validateChapter(storyDirectory, storyId, chapter, chapterIds, readingMode);
+  }
+
+  return {
+    ...edition,
+    readingMode,
+  };
+}
+
 async function loadStory(directoryEntry) {
   const directoryName = directoryEntry.name;
   const storyDirectory = path.join(STORIES_ROOT, directoryName);
   const manifestPath = path.join(storyDirectory, 'book.json');
   const manifest = await readJson(manifestPath);
 
-  if (manifest.schemaVersion !== 1) {
+  if (manifest.schemaVersion !== 1 && manifest.schemaVersion !== 2) {
     throw new Error(
       `Story catalogue rejected ${directoryName}: unsupported schemaVersion ${String(manifest.schemaVersion)}.`,
     );
@@ -281,17 +328,8 @@ async function loadStory(directoryEntry) {
   if (manifest.catalogueBlurb !== undefined && manifest.catalogueBlurb !== null) {
     catalogueBlurbFor(manifest);
   }
-  assertString(manifest.author, `${manifest.id} author`);
   assertStringArray(manifest.tags, `${manifest.id} tags`);
   assertDiscovery(manifest.discovery, `${manifest.id} discovery`);
-  assertRights(manifest.rights, `${manifest.id} rights`);
-
-  const readingMode = manifest.readingMode ?? 'flowing';
-  if (!['flowing', 'paged-picture-book'].includes(readingMode)) {
-    throw new Error(
-      `Story catalogue rejected ${manifest.id}: readingMode must be flowing or paged-picture-book.`,
-    );
-  }
 
   if (
     !manifest.publication ||
@@ -316,56 +354,96 @@ async function loadStory(directoryEntry) {
     }
   }
 
-  if (!Array.isArray(manifest.chapters) || manifest.chapters.length === 0) {
-    throw new Error(`Story catalogue rejected ${manifest.id}: at least one chapter is required.`);
+  let rawEditions;
+  let defaultEditionId;
+
+  if (manifest.schemaVersion === 1) {
+    assertString(manifest.author, `${manifest.id} author`);
+    assertRights(manifest.rights, `${manifest.id} rights`);
+    if (!Array.isArray(manifest.chapters) || manifest.chapters.length === 0) {
+      throw new Error(`Story catalogue rejected ${manifest.id}: at least one chapter is required.`);
+    }
+    rawEditions = [normaliseLegacyEdition(manifest)];
+    defaultEditionId = 'default';
+  } else {
+    assertString(manifest.defaultEditionId, `${manifest.id} default edition id`);
+    if (!STORY_ID.test(manifest.defaultEditionId)) {
+      throw new Error(
+        `Story catalogue rejected ${manifest.id}: invalid default edition id "${manifest.defaultEditionId}".`,
+      );
+    }
+    if (!Array.isArray(manifest.editions) || manifest.editions.length === 0) {
+      throw new Error(
+        `Story catalogue rejected ${manifest.id}: multi-edition books need at least one edition.`,
+      );
+    }
+    rawEditions = manifest.editions;
+    defaultEditionId = manifest.defaultEditionId;
   }
 
-  const chapterIds = new Set();
-  for (const chapter of manifest.chapters) {
-    await validateChapter(storyDirectory, manifest.id, chapter, chapterIds, readingMode);
+  const editions = [];
+  const editionIds = new Set();
+  for (const edition of rawEditions) {
+    const validated = await validateEdition(storyDirectory, manifest.id, edition);
+    if (editionIds.has(validated.id)) {
+      throw new Error(
+        `Story catalogue rejected ${manifest.id}: duplicate edition id "${validated.id}".`,
+      );
+    }
+    editionIds.add(validated.id);
+    editions.push(validated);
   }
 
-  return manifest;
+  const defaultEdition = editions.find((edition) => edition.id === defaultEditionId);
+  if (!defaultEdition) {
+    throw new Error(
+      `Story catalogue rejected ${manifest.id}: default edition "${defaultEditionId}" is missing.`,
+    );
+  }
+
+  return { manifest, editions, defaultEdition };
 }
 
-function catalogueEntry(manifest) {
+function catalogueEntry({ manifest, editions, defaultEdition }) {
   return {
     id: manifest.id,
     title: manifest.title,
     description: manifest.description,
     catalogueBlurb: catalogueBlurbFor(manifest),
-    author: manifest.author,
-    readingMode: manifest.readingMode ?? 'flowing',
+    author: defaultEdition.author,
+    readingMode: defaultEdition.readingMode,
     coverPath: manifest.cover ? `/stories/${manifest.id}/${manifest.cover.path}` : null,
     coverAlt: manifest.cover?.alt ?? null,
     series: manifest.series ?? null,
     tags: manifest.tags,
     discovery: manifest.discovery,
     rightsSummary: {
-      text: manifest.rights.text.status,
-      illustrations: manifest.rights.illustrations?.status ?? null,
-      edition: manifest.rights.edition?.status ?? null,
-      originalPublicationYear: manifest.rights.originalPublicationYear ?? null,
+      text: defaultEdition.rights.text.status,
+      illustrations: defaultEdition.rights.illustrations?.status ?? null,
+      edition: defaultEdition.rights.edition?.status ?? null,
+      originalPublicationYear: defaultEdition.rights.originalPublicationYear ?? null,
     },
-    chapterCount: manifest.chapters.length,
+    chapterCount: defaultEdition.chapters.length,
     manifestPath: `/stories/${manifest.id}/book.json`,
+    defaultEditionId: defaultEdition.id,
+    editions: editions.map(({ id, label }) => ({ id, label })),
   };
 }
 
 const directories = await discoverStoryDirectories();
-const manifests = [];
+const records = [];
 const storyIds = new Set();
 for (const directory of directories) {
-  const manifest = await loadStory(directory);
-  if (storyIds.has(manifest.id)) {
-    throw new Error(`Duplicate story id: ${manifest.id}`);
+  const record = await loadStory(directory);
+  if (storyIds.has(record.manifest.id)) {
+    throw new Error(`Duplicate story id: ${record.manifest.id}`);
   }
-  storyIds.add(manifest.id);
-  manifests.push(manifest);
+  storyIds.add(record.manifest.id);
+  records.push(record);
 }
 
-const stories = manifests
-  .filter((manifest) => manifest.publication.status === 'published')
+const stories = records
+  .filter(({ manifest }) => manifest.publication.status === 'published')
   .map(catalogueEntry)
   .sort((left, right) => left.title.localeCompare(right.title));
 

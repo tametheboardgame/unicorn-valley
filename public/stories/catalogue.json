@@ -39,7 +39,14 @@
         "originalPublicationYear": 1865
       },
       "chapterCount": 12,
-      "manifestPath": "/stories/alices-adventures-in-wonderland/book.json"
+      "manifestPath": "/stories/alices-adventures-in-wonderland/book.json",
+      "defaultEditionId": "default",
+      "editions": [
+        {
+          "id": "default",
+          "label": "Standard Edition"
+        }
+      ]
     },
     {
       "id": "five-children-and-it",
@@ -80,7 +87,14 @@
         "originalPublicationYear": 1902
       },
       "chapterCount": 11,
-      "manifestPath": "/stories/five-children-and-it/book.json"
+      "manifestPath": "/stories/five-children-and-it/book.json",
+      "defaultEditionId": "default",
+      "editions": [
+        {
+          "id": "default",
+          "label": "Standard Edition"
+        }
+      ]
     },
     {
       "id": "snow-white-and-rose-red",
@@ -121,7 +135,14 @@
         "originalPublicationYear": 1827
       },
       "chapterCount": 5,
-      "manifestPath": "/stories/snow-white-and-rose-red/book.json"
+      "manifestPath": "/stories/snow-white-and-rose-red/book.json",
+      "defaultEditionId": "default",
+      "editions": [
+        {
+          "id": "default",
+          "label": "Standard Edition"
+        }
+      ]
     },
     {
       "id": "the-duck-bread-baker",
@@ -159,7 +180,14 @@
         "originalPublicationYear": null
       },
       "chapterCount": 41,
-      "manifestPath": "/stories/the-duck-bread-baker/book.json"
+      "manifestPath": "/stories/the-duck-bread-baker/book.json",
+      "defaultEditionId": "default",
+      "editions": [
+        {
+          "id": "default",
+          "label": "Standard Edition"
+        }
+      ]
     },
     {
       "id": "the-elves-and-the-shoemaker",
@@ -199,7 +227,14 @@
         "originalPublicationYear": 1812
       },
       "chapterCount": 1,
-      "manifestPath": "/stories/the-elves-and-the-shoemaker/book.json"
+      "manifestPath": "/stories/the-elves-and-the-shoemaker/book.json",
+      "defaultEditionId": "default",
+      "editions": [
+        {
+          "id": "default",
+          "label": "Standard Edition"
+        }
+      ]
     },
     {
       "id": "the-hare-and-the-tortoise",
@@ -243,7 +278,14 @@
         "originalPublicationYear": 1894
       },
       "chapterCount": 1,
-      "manifestPath": "/stories/the-hare-and-the-tortoise/book.json"
+      "manifestPath": "/stories/the-hare-and-the-tortoise/book.json",
+      "defaultEditionId": "default",
+      "editions": [
+        {
+          "id": "default",
+          "label": "Standard Edition"
+        }
+      ]
     },
     {
       "id": "the-lantern-at-the-edge-of-the-woods",
@@ -285,7 +327,14 @@
         "originalPublicationYear": 2026
       },
       "chapterCount": 4,
-      "manifestPath": "/stories/the-lantern-at-the-edge-of-the-woods/book.json"
+      "manifestPath": "/stories/the-lantern-at-the-edge-of-the-woods/book.json",
+      "defaultEditionId": "default",
+      "editions": [
+        {
+          "id": "default",
+          "label": "Standard Edition"
+        }
+      ]
     },
     {
       "id": "the-lion-and-the-mouse",
@@ -322,7 +371,14 @@
         "originalPublicationYear": null
       },
       "chapterCount": 1,
-      "manifestPath": "/stories/the-lion-and-the-mouse/book.json"
+      "manifestPath": "/stories/the-lion-and-the-mouse/book.json",
+      "defaultEditionId": "default",
+      "editions": [
+        {
+          "id": "default",
+          "label": "Standard Edition"
+        }
+      ]
     },
     {
       "id": "the-princess-and-the-goblin",
@@ -363,7 +419,14 @@
         "originalPublicationYear": 1872
       },
       "chapterCount": 12,
-      "manifestPath": "/stories/the-princess-and-the-goblin/book.json"
+      "manifestPath": "/stories/the-princess-and-the-goblin/book.json",
+      "defaultEditionId": "default",
+      "editions": [
+        {
+          "id": "default",
+          "label": "Standard Edition"
+        }
+      ]
     },
     {
       "id": "the-princess-and-the-pea",
@@ -404,7 +467,14 @@
         "originalPublicationYear": 1835
       },
       "chapterCount": 3,
-      "manifestPath": "/stories/the-princess-and-the-pea/book.json"
+      "manifestPath": "/stories/the-princess-and-the-pea/book.json",
+      "defaultEditionId": "default",
+      "editions": [
+        {
+          "id": "default",
+          "label": "Standard Edition"
+        }
+      ]
     },
     {
       "id": "the-tale-of-jemima-puddle-duck",
@@ -445,7 +515,14 @@
         "originalPublicationYear": 1908
       },
       "chapterCount": 5,
-      "manifestPath": "/stories/the-tale-of-jemima-puddle-duck/book.json"
+      "manifestPath": "/stories/the-tale-of-jemima-puddle-duck/book.json",
+      "defaultEditionId": "default",
+      "editions": [
+        {
+          "id": "default",
+          "label": "Standard Edition"
+        }
+      ]
     },
     {
       "id": "the-tale-of-peter-rabbit",
@@ -484,7 +561,14 @@
         "originalPublicationYear": 1902
       },
       "chapterCount": 5,
-      "manifestPath": "/stories/the-tale-of-peter-rabbit/book.json"
+      "manifestPath": "/stories/the-tale-of-peter-rabbit/book.json",
+      "defaultEditionId": "default",
+      "editions": [
+        {
+          "id": "default",
+          "label": "Standard Edition"
+        }
+      ]
     },
     {
       "id": "the-town-mouse-and-the-country-mouse",
@@ -529,7 +613,14 @@
         "originalPublicationYear": 1894
       },
       "chapterCount": 1,
-      "manifestPath": "/stories/the-town-mouse-and-the-country-mouse/book.json"
+      "manifestPath": "/stories/the-town-mouse-and-the-country-mouse/book.json",
+      "defaultEditionId": "default",
+      "editions": [
+        {
+          "id": "default",
+          "label": "Standard Edition"
+        }
+      ]
     },
     {
       "id": "the-twelve-dancing-princesses",
@@ -570,7 +661,14 @@
         "originalPublicationYear": 1815
       },
       "chapterCount": 5,
-      "manifestPath": "/stories/the-twelve-dancing-princesses/book.json"
+      "manifestPath": "/stories/the-twelve-dancing-princesses/book.json",
+      "defaultEditionId": "default",
+      "editions": [
+        {
+          "id": "default",
+          "label": "Standard Edition"
+        }
+      ]
     },
     {
       "id": "the-ugly-duckling",
@@ -610,7 +708,14 @@
         "originalPublicationYear": 1843
       },
       "chapterCount": 6,
-      "manifestPath": "/stories/the-ugly-duckling/book.json"
+      "manifestPath": "/stories/the-ugly-duckling/book.json",
+      "defaultEditionId": "default",
+      "editions": [
+        {
+          "id": "default",
+          "label": "Standard Edition"
+        }
+      ]
     },
     {
       "id": "the-wonderful-wizard-of-oz",
@@ -651,7 +756,14 @@
         "originalPublicationYear": 1900
       },
       "chapterCount": 10,
-      "manifestPath": "/stories/the-wonderful-wizard-of-oz/book.json"
+      "manifestPath": "/stories/the-wonderful-wizard-of-oz/book.json",
+      "defaultEditionId": "default",
+      "editions": [
+        {
+          "id": "default",
+          "label": "Standard Edition"
+        }
+      ]
     },
     {
       "id": "thumbelina",
@@ -693,7 +805,14 @@
         "originalPublicationYear": 1835
       },
       "chapterCount": 6,
-      "manifestPath": "/stories/thumbelina/book.json"
+      "manifestPath": "/stories/thumbelina/book.json",
+      "defaultEditionId": "default",
+      "editions": [
+        {
+          "id": "default",
+          "label": "Standard Edition"
+        }
+      ]
     }
   ]
 }

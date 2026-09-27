@@ -60,23 +60,43 @@ export interface StoryRightsSummary {
   originalPublicationYear: number | null;
 }
 
+export interface StoryEditionSummary {
+  id: string;
+  label: string;
+}
+
+export interface StoryEditionManifest extends StoryEditionSummary {
+  author: string;
+  readingMode: StoryReadingMode;
+  rights: StoryRightsMetadata;
+  chapters: readonly StoryChapterManifest[];
+}
+
 export interface StoryLibraryManifest {
-  schemaVersion: 1;
+  schemaVersion: 1 | 2;
   id: string;
   title: string;
   description: string;
   catalogueBlurb?: string;
-  author: string;
-  readingMode: StoryReadingMode;
   cover?: StoryAssetReference | null;
   series?: StorySeriesReference | null;
   tags: readonly string[];
   discovery: StoryDiscoveryMetadata;
-  rights: StoryRightsMetadata;
   publication: {
     status: StoryPublicationStatus;
   };
+
+  /**
+   * Normalised aliases for the default edition. These preserve the original
+   * single-edition reader contract while edition-aware code uses editions.
+   */
+  author: string;
+  readingMode: StoryReadingMode;
+  rights: StoryRightsMetadata;
   chapters: readonly StoryChapterManifest[];
+
+  defaultEditionId: string;
+  editions: readonly StoryEditionManifest[];
 }
 
 export interface StoryCatalogueEntry {
@@ -94,6 +114,8 @@ export interface StoryCatalogueEntry {
   rightsSummary: StoryRightsSummary;
   chapterCount: number;
   manifestPath: string;
+  defaultEditionId?: string;
+  editions?: readonly StoryEditionSummary[];
 }
 
 export interface StoryCatalogue {
@@ -108,6 +130,7 @@ export interface StoryContentBlock {
 
 export interface StoryChapterContent {
   storyId: string;
+  editionId: string;
   chapterId: string;
   title: string;
   blocks: readonly StoryContentBlock[];

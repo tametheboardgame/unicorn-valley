@@ -184,4 +184,130 @@ describe('Story Library service', () => {
       'Story Library chapter has no stable block markers.',
     );
   });
+  it('normalises a multi-edition manifest and loads chapters from the selected edition', async () => {
+    const bodies = new Map<string, ReturnType<typeof response>>([
+      [
+        '/stories/catalogue.json',
+        response({
+          schemaVersion: 1,
+          stories: [
+            {
+              id: 'alice',
+              title: "Alice's Adventures in Wonderland",
+              description: 'Two editions of a classic.',
+              catalogueBlurb: 'Choose the Story House or full classic text.',
+              author: 'Lewis Carroll, retold by Quill',
+              readingMode: 'flowing',
+              coverPath: null,
+              coverAlt: null,
+              series: null,
+              tags: ['classic-retelling'],
+              discovery: {
+                format: 'Chapter Book',
+                genres: ['Classics'],
+                audiences: ['Read Together'],
+                length: 'Longer Read',
+              },
+              rightsSummary: {
+                text: 'original',
+                illustrations: 'public-domain',
+                edition: 'original',
+                originalPublicationYear: 1865,
+              },
+              chapterCount: 1,
+              manifestPath: '/stories/alice/book.json',
+              defaultEditionId: 'story-house',
+              editions: [
+                { id: 'story-house', label: 'Story House Edition' },
+                { id: 'full-classic', label: 'Full Classic Text' },
+              ],
+            },
+          ],
+        }),
+      ],
+      [
+        '/stories/alice/book.json',
+        response({
+          schemaVersion: 2,
+          id: 'alice',
+          title: "Alice's Adventures in Wonderland",
+          description: 'Two editions of a classic.',
+          catalogueBlurb: 'Choose the Story House or full classic text.',
+          cover: null,
+          series: null,
+          tags: ['classic-retelling'],
+          discovery: {
+            format: 'Chapter Book',
+            genres: ['Classics'],
+            audiences: ['Read Together'],
+            length: 'Longer Read',
+          },
+          publication: { status: 'published' },
+          defaultEditionId: 'story-house',
+          editions: [
+            {
+              id: 'story-house',
+              label: 'Story House Edition',
+              author: 'Lewis Carroll, retold by Quill',
+              readingMode: 'flowing',
+              rights: {
+                text: { status: 'original', source: 'Story House retelling' },
+                illustrations: { status: 'public-domain', source: 'John Tenniel' },
+                edition: { status: 'original', source: 'Story House edition' },
+                originalPublicationYear: 1865,
+              },
+              chapters: [
+                {
+                  id: 'chapter-01',
+                  title: 'Story House opening',
+                  path: 'editions/story-house/chapters/01.md',
+                },
+              ],
+            },
+            {
+              id: 'full-classic',
+              label: 'Full Classic Text',
+              author: 'Lewis Carroll',
+              readingMode: 'flowing',
+              rights: {
+                text: { status: 'public-domain', source: '1865 text' },
+                illustrations: { status: 'public-domain', source: 'John Tenniel' },
+                edition: { status: 'public-domain', source: 'Historic edition' },
+                originalPublicationYear: 1865,
+              },
+              chapters: [
+                {
+                  id: 'chapter-01',
+                  title: 'Down the Rabbit-Hole',
+                  path: 'editions/full-classic/chapters/01.md',
+                },
+              ],
+            },
+          ],
+        }),
+      ],
+      [
+        '/stories/alice/editions/full-classic/chapters/01.md',
+        response(
+          '<!-- block:white-rabbit -->\\n# Down the Rabbit-Hole\\n\\nA White Rabbit ran close by her.',
+        ),
+      ],
+    ]);
+
+    const service = new StoryLibraryService(async (path) => bodies.get(path) ?? response('', 404));
+    const manifest = await service.loadManifest('alice');
+
+    expect(manifest.defaultEditionId).toBe('story-house');
+    expect(manifest.editions.map(({ id, label }) => ({ id, label }))).toEqual([
+      { id: 'story-house', label: 'Story House Edition' },
+      { id: 'full-classic', label: 'Full Classic Text' },
+    ]);
+    expect(manifest.author).toBe('Lewis Carroll, retold by Quill');
+    expect(manifest.chapters[0]?.title).toBe('Story House opening');
+
+    const chapter = await service.loadChapter('alice', 'chapter-01', 'full-classic');
+    expect(chapter.editionId).toBe('full-classic');
+    expect(chapter.title).toBe('Down the Rabbit-Hole');
+    expect(chapter.blocks[0]?.id).toBe('white-rabbit');
+  });
 });
