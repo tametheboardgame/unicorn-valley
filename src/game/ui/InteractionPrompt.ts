@@ -82,6 +82,7 @@ export class InteractionPrompt {
   private domButton: HTMLButtonElement | null = null;
   private domHint: HTMLElement | null = null;
   private currentTarget: InteractionTarget | null = null;
+  private directTargetId: string | null = null;
   private renderedActionIcon: ConceptIcon | null = null;
   private renderedHighVisibility: boolean | null = null;
 
@@ -169,6 +170,7 @@ export class InteractionPrompt {
     this.directTargetZone = scene.add
       .zone(0, 0, 126, 126)
       .setName('exploration-direct-interaction-target')
+      .setData('interaction-direct-zone', true)
       .setDepth(116);
     this.bindDirectTargetZone();
 
@@ -213,9 +215,9 @@ export class InteractionPrompt {
       if (this.domHint && this.domHint.textContent !== target.label) {
         this.domHint.textContent = target.label;
       }
-      const position = getInteractionTargetPosition(target);
-      this.directTargetZone.setPosition(Math.round(position.x), Math.round(position.y));
+      this.syncDirectTargetZone(target);
     } else {
+      this.directTargetId = null;
       if (this.hintText.text !== '') {
         this.hintText.setText('');
       }
@@ -285,6 +287,25 @@ export class InteractionPrompt {
     this.directTargetZone.disableInteractive();
   }
 
+  private syncDirectTargetZone(target: InteractionTarget): void {
+    const position = getInteractionTargetPosition(target);
+    const area = target.directArea;
+    const zoneName = area?.name ?? 'exploration-direct-interaction-target';
+    const zoneWidth = area?.width ?? 126;
+    const zoneHeight = area?.height ?? 126;
+
+    if (this.directTargetId !== target.id) {
+      this.directTargetZone.disableInteractive();
+      this.directTargetZone.setName(zoneName).setSize(zoneWidth, zoneHeight);
+      this.directTargetId = target.id;
+    }
+
+    this.directTargetZone.setPosition(
+      Math.round(position.x + (area?.offsetX ?? 0)),
+      Math.round(position.y + (area?.offsetY ?? 0)),
+    );
+  }
+
   private createResponsiveDomPrompt(): void {
     const root = globalThis.document.createElement('div');
     root.className = 'mobile-interaction-prompt';
@@ -350,9 +371,8 @@ export class InteractionPrompt {
       this.releaseInteraction();
     }
 
-    if (this.currentTarget && canvasActionVisible) {
-      const position = getInteractionTargetPosition(this.currentTarget);
-      this.directTargetZone.setPosition(Math.round(position.x), Math.round(position.y));
+    if (this.currentTarget && targetVisible) {
+      this.syncDirectTargetZone(this.currentTarget);
       if (this.directTargetZone.input?.enabled !== true) {
         this.directTargetZone.setInteractive({ useHandCursor: true });
       }
