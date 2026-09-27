@@ -101,6 +101,7 @@ function navigationMapForScene(scene: Phaser.Scene): TraversalMapDefinition | un
 const WAYPOINT_REACHED_DISTANCE = 22;
 const STUCK_TIMEOUT_MS = 950;
 const MIN_PROGRESS_DISTANCE = 2;
+export const CLICK_TO_MOVE_MANAGER_REGISTRY_KEY = 'click-to-move-manager';
 
 function isPlayerSprite(
   gameObject: Phaser.GameObjects.GameObject,
@@ -135,6 +136,7 @@ export class ClickToMoveManager {
   private readonly states = new WeakMap<Phaser.Scene, NavigationState>();
 
   public constructor(private readonly game: Phaser.Game) {
+    this.game.registry.set(CLICK_TO_MOVE_MANAGER_REGISTRY_KEY, this);
     this.game.events.on(Phaser.Core.Events.POST_STEP, this.update, this);
   }
 
