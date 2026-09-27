@@ -4,7 +4,7 @@ import {
   closeExplorationModal,
   openExplorationModal,
   resolveExplorationReturnRecovery,
-} from './ExplorationModalNavigation';
+} from '../interaction/InteractionModalState';
 
 class FakeScenePlugin {
   public readonly calls: string[] = [];
