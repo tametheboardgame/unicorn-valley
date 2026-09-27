@@ -1,5 +1,19 @@
 # Unicorn Valley - Development Roadmap
 
+## 2026-09-27 R6.5-WP19H3.11-R3 inserted before Rosehip Cottage
+
+H3.11-R2 Wobbly Cake is **complete and human-approved** and PR #183 merged it to `main` on 27 September 2026 as `abe3808b76031c67a74811b17c4b6528b0b331df`.
+
+The post-R2 human play pass identified a cross-cutting remediation block that must be completed before H3.11.5 Rosehip Cottage. The approved order is:
+
+1. **H3.11-R3.1 - Interaction-aware click navigation and dialogue movement lock** — distant NPC click-to-talk intent, collision-safe stand-off navigation, and no click movement while conversation/interaction modals are open.
+2. **H3.11-R3.2 - Exploration surface lifecycle hardening** — one reliable Bag/Map/Book/Settings pause/resume/close ownership contract across outdoor scenes and walkable interiors/shops, with repeated lifecycle regression coverage.
+3. **H3.11-R3.3 - Pip startup and music resume continuity** — no initial Pip flash before introduction state resolves; tab/browser return resumes the same music track from its prior playback position.
+4. **H3.11-R3.4 - Mobile performance and movement consistency** — measure and remove avoidable high-frequency scene work, make movement response robust under lower frame rates, and validate walk/Gallop consistency on smaller-device profiles.
+5. **H3.11-R3.5 - Glade/Village visual tightening** — remove the Moonflower Glade→Sunbeam decorative arch, connect Sunbeam paths to shop doors, and anchor high-street bunting roof-corner to roof-corner.
+
+R3 is a bounded insert and does **not** renumber H3.11.5-H3.11.10. After R3 is accepted, work resumes at **H3.11.5 Rosehip Cottage**.
+
 ## 2026-09-26 R6.5-WP19H3.11.4 Story House complete
 
 H3.11.4 A-F is **complete and human-approved**. The accepted Story House baseline now includes a polished walkable library with Quill, content-driven long-form story packages, a responsive DOM reader, durable independent reading progress/preferences, demand-loaded illustrations, paged picture-book support, scalable metadata/search/filter discovery, compact catalogue surfaces and direct tap/swipe page turns.
