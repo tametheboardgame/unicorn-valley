@@ -1,6 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 import {
   clickNamedObject,
+  dragNamedObjectTo,
   openDiagnostics,
   setArcadeSpritePosition,
   startScene,
@@ -99,8 +100,13 @@ async function completeMoonflowerCake(page: Page): Promise<void> {
   }
 
   await waitForNamedObject(page, 'MapleBakingActivityScene', 'h3-r2-baking-stage:stack');
-  for (const layer of [1, 2, 3]) {
-    await clickNamedObject(page, 'MapleBakingActivityScene', `h3-r2-baking-layer:${layer}`);
+  for (const [layer, x, y] of [
+    [1, 616, 520],
+    [2, 668, 456],
+    [3, 622, 392],
+  ] as const) {
+    await dragNamedObjectTo(page, 'MapleBakingActivityScene', `h3-r2-baking-layer:${layer}`, x, y);
+    await page.waitForTimeout(220);
   }
 
   await waitForNamedObject(page, 'MapleBakingActivityScene', 'h3-r2-baking-stage:icing');
