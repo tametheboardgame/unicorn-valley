@@ -687,19 +687,9 @@ export class MapleBakingActivityScene extends Phaser.Scene {
 
     const guide = this.add.graphics();
     guide.lineStyle(14, 0xd3a8ec, 0.2);
-    guide.strokeEllipse(
-      MIX_CENTRE.x - MIX_RADIUS_X,
-      MIX_CENTRE.y - MIX_RADIUS_Y,
-      MIX_RADIUS_X * 2,
-      MIX_RADIUS_Y * 2,
-    );
+    guide.strokeEllipse(MIX_CENTRE.x, MIX_CENTRE.y, MIX_RADIUS_X * 2, MIX_RADIUS_Y * 2);
     guide.lineStyle(4, 0xb47bd0, 0.9);
-    guide.strokeEllipse(
-      MIX_CENTRE.x - MIX_RADIUS_X,
-      MIX_CENTRE.y - MIX_RADIUS_Y,
-      MIX_RADIUS_X * 2,
-      MIX_RADIUS_Y * 2,
-    );
+    guide.strokeEllipse(MIX_CENTRE.x, MIX_CENTRE.y, MIX_RADIUS_X * 2, MIX_RADIUS_Y * 2);
 
     const hit = this.add
       .ellipse(MIX_CENTRE.x, MIX_CENTRE.y, 330, 190, 0xffffff, 0.001)
