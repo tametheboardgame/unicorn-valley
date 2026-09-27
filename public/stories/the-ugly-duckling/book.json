@@ -1,0 +1,112 @@
+{
+  "schemaVersion": 1,
+  "id": "the-ugly-duckling",
+  "title": "The Ugly Duckling",
+  "description": "A young bird who never seems to fit in leaves the farmyard behind and survives a long winter before discovering what he was becoming all along.",
+  "catalogueBlurb": "A lonely young bird crosses the seasons and discovers who he really is.",
+  "author": "Hans Christian Andersen, retold by Quill",
+  "readingMode": "flowing",
+  "cover": {
+    "path": "covers/cover.webp",
+    "alt": "Vilhelm Pedersen's historic illustration for The Ugly Duckling."
+  },
+  "series": null,
+  "tags": ["classic-retelling", "fairy-tale", "birds", "swans", "belonging", "seasons", "illustrated"],
+  "publication": {
+    "status": "published"
+  },
+  "chapters": [
+    {
+      "id": "the-last-egg",
+      "title": "The Last Egg",
+      "path": "chapters/01.md",
+      "illustrations": [
+        {
+          "id": "pedersen-duckyard",
+          "blockId": "into-the-yard",
+          "path": "illustrations/duckyard.webp",
+          "alt": "Vilhelm Pedersen's illustration of the young duckling among the other birds.",
+          "placement": "full-width",
+          "width": 790,
+          "height": 534,
+          "caption": "Illustration by Vilhelm Pedersen."
+        }
+      ]
+    },
+    {
+      "id": "away-from-the-farm",
+      "title": "Away from the Farm",
+      "path": "chapters/02.md"
+    },
+    {
+      "id": "the-little-house",
+      "title": "The Little House",
+      "path": "chapters/03.md",
+      "illustrations": [
+        {
+          "id": "pedersen-little-house",
+          "blockId": "the-old-womans-house",
+          "path": "illustrations/little-house.webp",
+          "alt": "Vilhelm Pedersen's illustration of the duckling at the old woman's house.",
+          "placement": "full-width",
+          "width": 1262,
+          "height": 1600,
+          "caption": "Illustration by Vilhelm Pedersen."
+        }
+      ]
+    },
+    {
+      "id": "winter",
+      "title": "Winter",
+      "path": "chapters/04.md"
+    },
+    {
+      "id": "the-white-birds",
+      "title": "The White Birds",
+      "path": "chapters/05.md"
+    },
+    {
+      "id": "spring-on-the-lake",
+      "title": "Spring on the Lake",
+      "path": "chapters/06.md",
+      "illustrations": [
+        {
+          "id": "pedersen-swans",
+          "blockId": "his-reflection",
+          "path": "illustrations/swans.webp",
+          "alt": "Vilhelm Pedersen's illustration of the young swan among the other swans.",
+          "placement": "full-width",
+          "width": 677,
+          "height": 439,
+          "caption": "Illustration by Vilhelm Pedersen."
+        }
+      ]
+    }
+  ],
+  "discovery": {
+    "format": "Chapter Book",
+    "genres": ["Fantasy", "Classics"],
+    "audiences": ["Read Together", "Independent Reader"],
+    "length": "Longer Read"
+  },
+  "rights": {
+    "text": {
+      "status": "original",
+      "source": "Original Story House retelling based on Hans Christian Andersen's public-domain 1843 tale",
+      "sourceUrl": "https://en.wikisource.org/wiki/Hans_Andersen%27s_Fairy_Tales/The_Ugly_Duckling",
+      "notes": "Hans Christian Andersen's underlying 1843 story is public domain. This wording is an original child-friendly Unicorn Valley retelling."
+    },
+    "illustrations": {
+      "status": "public-domain",
+      "source": "Historical The Ugly Duckling illustrations by Vilhelm Pedersen",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/Category:The_Ugly_Duckling",
+      "notes": "The selected Vilhelm Pedersen source files are identified as public domain on Wikimedia Commons. Pedersen died in 1859."
+    },
+    "edition": {
+      "status": "original",
+      "source": "Unicorn Valley Story House edition"
+    },
+    "originalPublicationYear": 1843,
+    "curatorNotes": "Split into six short reader sections following the story's natural seasonal and location changes."
+  }
+}
