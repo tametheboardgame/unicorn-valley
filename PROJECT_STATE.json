@@ -10,17 +10,17 @@
   "autonomy_state": "amber",
   "agent_state": "active",
   "branch": "agent/r6.5-wp19h3.11-r2-wobbly-cake",
-  "latest_commit": "719a057f3e56a30c5370dfe1942d7bca029f5185",
-  "ci_state": "failing",
-  "technical_validation_state": "pending",
+  "latest_commit": "6a895fd3c622ff4e0cc44d300fa733c6b49b1f89",
+  "ci_state": "running",
+  "technical_validation_state": "running",
   "human_acceptance_state": "accepted",
   "next_work_package": null,
   "next_work_package_path": null,
   "human_input_required": false,
-  "blocker_reason": "PR #183 requires corrected exact-head full qualification before merge.",
+  "blocker_reason": "PR #183 is in exact-head full qualification after performance chunk remediation.",
   "night_shift_state": "not_configured",
   "chat_disposition": "keep",
   "delivery_mode": "pr_required",
-  "last_activity_at": "2026-09-27T09:10:00+01:00",
-  "updated_at": "2026-09-27T09:10:00+01:00"
+  "last_activity_at": "2026-09-27T09:25:00+01:00",
+  "updated_at": "2026-09-27T09:25:00+01:00"
 }
