@@ -827,6 +827,9 @@ export class StoryReaderOverlay {
 
     const shell = document.createElement('div');
     shell.className = 'story-reader-shell';
+    if (manifest.editions.length > 1) {
+      shell.classList.add('has-multiple-editions');
+    }
     const isPictureBook = edition.readingMode === 'paged-picture-book';
     const isPagedEdition = edition.readingMode !== 'flowing';
     if (isPictureBook) {
