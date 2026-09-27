@@ -861,6 +861,10 @@ canvas {
   overflow: hidden;
 }
 
+.story-reader-shell.has-multiple-editions {
+  grid-template-rows: auto auto auto minmax(0, 1fr);
+}
+
 .story-reader-topbar {
   padding: 8px 18px;
 }

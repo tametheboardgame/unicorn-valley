@@ -1,5 +1,5 @@
 export type StoryPublicationStatus = 'draft' | 'published' | 'hidden';
-export type StoryReadingMode = 'flowing' | 'paged-picture-book';
+export type StoryReadingMode = 'flowing' | 'paged-picture-book' | 'paged-prose';
 export type StoryIllustrationPlacement = 'inline' | 'full-width';
 export type StoryRightsStatus = 'original' | 'public-domain' | 'licensed' | 'unknown';
 

@@ -268,7 +268,7 @@ describe('Story Library service', () => {
               id: 'full-classic',
               label: 'Full Classic Text',
               author: 'Lewis Carroll',
-              readingMode: 'flowing',
+              readingMode: 'paged-prose',
               rights: {
                 text: { status: 'public-domain', source: '1865 text' },
                 illustrations: { status: 'public-domain', source: 'John Tenniel' },
@@ -306,6 +306,7 @@ describe('Story Library service', () => {
     expect(manifest.chapters[0]?.title).toBe('Story House opening');
 
     const chapter = await service.loadChapter('alice', 'chapter-01', 'full-classic');
+    expect(manifest.editions[1]?.readingMode).toBe('paged-prose');
     expect(chapter.editionId).toBe('full-classic');
     expect(chapter.title).toBe('Down the Rabbit-Hole');
     expect(chapter.blocks[0]?.id).toBe('white-rabbit');
