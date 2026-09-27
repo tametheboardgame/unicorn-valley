@@ -17,7 +17,10 @@ export function isExplorationMovementBlocked(scene: Phaser.Scene): boolean {
   }
 
   const dialoguePanel = scene.children.getByName('dialogue-production-panel');
-  if (dialoguePanel?.active && (dialoguePanel as Phaser.GameObjects.GameObject & { visible?: boolean }).visible === true) {
+  if (
+    dialoguePanel?.active &&
+    (dialoguePanel as Phaser.GameObjects.GameObject & { visible?: boolean }).visible === true
+  ) {
     return true;
   }
 
