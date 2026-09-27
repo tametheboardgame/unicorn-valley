@@ -11,7 +11,15 @@
     "alt": "Vilhelm Pedersen's historic illustration for The Ugly Duckling."
   },
   "series": null,
-  "tags": ["classic-retelling", "fairy-tale", "birds", "swans", "belonging", "seasons", "illustrated"],
+  "tags": [
+    "classic-retelling",
+    "fairy-tale",
+    "birds",
+    "swans",
+    "belonging",
+    "seasons",
+    "illustrated"
+  ],
   "publication": {
     "status": "published"
   },
