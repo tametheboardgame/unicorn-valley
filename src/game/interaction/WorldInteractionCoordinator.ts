@@ -324,6 +324,7 @@ export class WorldInteractionCoordinator {
             : Math.max(42, currentTarget.interactionRadius * 0.72);
           getClickToMoveManager(this.game).navigateToInteraction(
             state.scene,
+            currentTarget.id,
             destination,
             arrivalDistance,
             () => {
