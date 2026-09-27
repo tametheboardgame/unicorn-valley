@@ -40,6 +40,50 @@
       "manifestPath": "/stories/the-duck-bread-baker/book.json"
     },
     {
+      "id": "the-hare-and-the-tortoise",
+      "title": "The Hare and the Tortoise",
+      "description": "A speedy hare is certain he cannot lose, until a quiet tortoise shows what steady determination can do.",
+      "catalogueBlurb": "A boastful hare learns that steady determination can win the race.",
+      "author": "Aesop, told anew by Joseph Jacobs",
+      "readingMode": "flowing",
+      "coverPath": "/stories/the-hare-and-the-tortoise/covers/cover.webp",
+      "coverAlt": "Richard Heighway's 1894 illustration for The Hare and the Tortoise.",
+      "series": {
+        "id": "aesops-fables",
+        "title": "Aesop's Fables",
+        "order": 1
+      },
+      "tags": [
+        "classic",
+        "aesop",
+        "animals",
+        "perseverance",
+        "public-domain",
+        "illustrated"
+      ],
+      "discovery": {
+        "format": "Picture Book",
+        "genres": [
+          "Animals",
+          "Classics"
+        ],
+        "audiences": [
+          "Read Together",
+          "Early Reader",
+          "Independent Reader"
+        ],
+        "length": "Quick Read"
+      },
+      "rightsSummary": {
+        "text": "public-domain",
+        "illustrations": "public-domain",
+        "edition": "public-domain",
+        "originalPublicationYear": 1894
+      },
+      "chapterCount": 1,
+      "manifestPath": "/stories/the-hare-and-the-tortoise/book.json"
+    },
+    {
       "id": "the-lantern-at-the-edge-of-the-woods",
       "title": "The Lantern at the Edge of the Woods",
       "description": "A young unicorn follows an unlit lantern into the dusk and discovers why some paths only brighten when they are shared.",
