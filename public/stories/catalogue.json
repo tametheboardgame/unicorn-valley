@@ -325,6 +325,47 @@
       "manifestPath": "/stories/the-lion-and-the-mouse/book.json"
     },
     {
+      "id": "the-princess-and-the-goblin",
+      "title": "The Princess and the Goblin",
+      "description": "Princess Irene discovers a mysterious great-great-grandmother in a hidden tower while the miner boy Curdie uncovers a goblin plot beneath the mountain.",
+      "catalogueBlurb": "A hidden tower, a silver thread and goblins beneath the mountain.",
+      "author": "George MacDonald, retold by Quill",
+      "readingMode": "flowing",
+      "coverPath": "/stories/the-princess-and-the-goblin/covers/cover.webp",
+      "coverAlt": "Jessie Willcox Smith's illustrated cover for The Princess and the Goblin.",
+      "series": null,
+      "tags": [
+        "classic-retelling",
+        "fantasy",
+        "princess",
+        "goblins",
+        "magic",
+        "adventure",
+        "illustrated"
+      ],
+      "discovery": {
+        "format": "Chapter Book",
+        "genres": [
+          "Fantasy",
+          "Adventure",
+          "Classics"
+        ],
+        "audiences": [
+          "Read Together",
+          "Independent Reader"
+        ],
+        "length": "Longer Read"
+      },
+      "rightsSummary": {
+        "text": "original",
+        "illustrations": "public-domain",
+        "edition": "original",
+        "originalPublicationYear": 1872
+      },
+      "chapterCount": 12,
+      "manifestPath": "/stories/the-princess-and-the-goblin/book.json"
+    },
+    {
       "id": "the-princess-and-the-pea",
       "title": "The Princess and the Pea",
       "description": "A rain-soaked visitor arrives at a palace claiming to be a princess, and one tiny pea becomes the centre of a very unusual royal test.",
