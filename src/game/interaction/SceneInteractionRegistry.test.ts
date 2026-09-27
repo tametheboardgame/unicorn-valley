@@ -28,8 +28,10 @@ describe('SceneInteractionRegistry', () => {
   it('removes an owner when replaced with an empty target list', () => {
     const registry = new SceneInteractionRegistry();
     registry.replaceOwnerTargets('core', [target('core:one')]);
+    const populatedSnapshot = registry.getTargetSnapshot();
     registry.replaceOwnerTargets('core', []);
 
+    expect(registry.getTargetSnapshot()).not.toBe(populatedSnapshot);
     expect(registry.getTargets()).toEqual([]);
   });
 
