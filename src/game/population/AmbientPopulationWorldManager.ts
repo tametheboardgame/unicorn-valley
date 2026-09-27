@@ -78,6 +78,7 @@ interface ScenePopulationRuntime {
   residents: Map<SupportingResidentId, ResidentRuntime>;
   interactions: Map<string, SmallInteractionRuntime>;
   activeResidentId: SupportingResidentId | null;
+  targetsDirty: boolean;
 }
 
 function findPlayer(scene: Phaser.Scene): PositionedObject | null {
@@ -199,6 +200,7 @@ export class AmbientPopulationWorldManager {
       residents: new Map(),
       interactions: new Map(),
       activeResidentId: null,
+      targetsDirty: true,
     };
     this.states.set(scene.scene.key, state);
     return state;
@@ -246,6 +248,7 @@ export class AmbientPopulationWorldManager {
         }
         this.destroyResident(runtime);
         state.residents.delete(residentId);
+        state.targetsDirty = true;
       }
     }
 
@@ -258,6 +261,7 @@ export class AmbientPopulationWorldManager {
         continue;
       }
       state.residents.set(residentId, this.createResident(state, resident, location));
+      state.targetsDirty = true;
     }
   }
 
@@ -525,6 +529,7 @@ export class AmbientPopulationWorldManager {
       if (!wantedIds.has(id)) {
         runtime.container.destroy(true);
         state.interactions.delete(id);
+        state.targetsDirty = true;
       }
     }
 
@@ -533,6 +538,7 @@ export class AmbientPopulationWorldManager {
         continue;
       }
       state.interactions.set(definition.id, this.createSmallInteraction(state, definition));
+      state.targetsDirty = true;
     }
   }
 
@@ -568,6 +574,10 @@ export class AmbientPopulationWorldManager {
   }
 
   private publishTargets(state: ScenePopulationRuntime): void {
+    if (!state.targetsDirty) {
+      return;
+    }
+
     const targets: InteractionTarget[] = [];
 
     for (const runtime of state.residents.values()) {
@@ -607,6 +617,7 @@ export class AmbientPopulationWorldManager {
     }
 
     getSceneInteractionRegistry(state.scene).replaceOwnerTargets(REGISTRY_OWNER, targets);
+    state.targetsDirty = false;
   }
 
   private activateSmallInteraction(
