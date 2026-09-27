@@ -22,8 +22,11 @@ import { isExplorationMovementBlocked } from './ExplorationMovementBlocker';
 import { hasHeldExplorationMovementInput } from './KeyboardInputAdapter';
 import { CLICK_NAVIGATION_SUPPORTED_SCENES } from './ClickNavigationSceneClassification';
 
+type NavigationMode = 'ground' | 'interaction';
+
 interface NavigationState {
   path: MapPoint[];
+  mode: NavigationMode;
   arrivalDistance: number;
   onArrive: (() => void) | null;
   waypointIndex: number;
@@ -215,6 +218,7 @@ export class ClickToMoveManager {
 
     const state: NavigationState = {
       path: [],
+      mode: 'ground',
       arrivalDistance: WAYPOINT_REACHED_DISTANCE,
       onArrive: null,
       waypointIndex: 0,
@@ -257,7 +261,7 @@ export class ClickToMoveManager {
         return;
       }
 
-      this.startNavigation(scene, state, path, WAYPOINT_REACHED_DISTANCE, null);
+      this.startNavigation(scene, state, path, WAYPOINT_REACHED_DISTANCE, null, 'ground');
     };
 
     scene.input.on('pointerdown', state.pointerHandler);
@@ -289,7 +293,7 @@ export class ClickToMoveManager {
       return false;
     }
 
-    this.startNavigation(scene, state, path, arrivalDistance, onArrive);
+    this.startNavigation(scene, state, path, arrivalDistance, onArrive, 'interaction');
     return true;
   }
 
@@ -299,8 +303,10 @@ export class ClickToMoveManager {
     path: MapPoint[],
     arrivalDistance: number,
     onArrive: (() => void) | null,
+    mode: NavigationMode,
   ): void {
     state.path = path;
+    state.mode = mode;
     state.arrivalDistance = Math.max(WAYPOINT_REACHED_DISTANCE, arrivalDistance);
     state.onArrive = onArrive;
     state.waypointIndex = 0;
@@ -310,6 +316,16 @@ export class ClickToMoveManager {
     if (state.target) {
       this.showTargetMarker(scene, state, state.target);
     }
+  }
+
+  public cancelGroundNavigationForResidentCollision(scene: Phaser.Scene): boolean {
+    const state = this.states.get(scene);
+    if (!state || state.mode !== 'ground' || state.path.length === 0) {
+      return false;
+    }
+
+    this.cancel(state);
+    return true;
   }
 
   private showTargetMarker(scene: Phaser.Scene, state: NavigationState, target: MapPoint): void {
@@ -339,6 +355,7 @@ export class ClickToMoveManager {
 
   private cancel(state: NavigationState, destroyMarker = true): void {
     state.path = [];
+    state.mode = 'ground';
     state.arrivalDistance = WAYPOINT_REACHED_DISTANCE;
     state.onArrive = null;
     state.waypointIndex = 0;
