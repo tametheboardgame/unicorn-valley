@@ -182,6 +182,7 @@ function parseRightsSummary(value: unknown): StoryCatalogueEntry['rightsSummary'
 function parseReadingMode(value: unknown): StoryReadingMode {
   if (value === undefined || value === 'flowing') return 'flowing';
   if (value === 'paged-picture-book') return 'paged-picture-book';
+  if (value === 'paged-prose') return 'paged-prose';
   throw new Error('Story Library manifest has an invalid reading mode.');
 }
 

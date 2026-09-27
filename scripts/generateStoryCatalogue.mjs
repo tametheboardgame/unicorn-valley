@@ -283,9 +283,9 @@ async function validateEdition(storyDirectory, storyId, edition) {
   assertRights(edition.rights, `${storyId}/${edition.id} rights`);
 
   const readingMode = edition.readingMode ?? 'flowing';
-  if (!['flowing', 'paged-picture-book'].includes(readingMode)) {
+  if (!['flowing', 'paged-picture-book', 'paged-prose'].includes(readingMode)) {
     throw new Error(
-      `Story catalogue rejected ${storyId}/${edition.id}: readingMode must be flowing or paged-picture-book.`,
+      `Story catalogue rejected ${storyId}/${edition.id}: readingMode must be flowing, paged-picture-book or paged-prose.`,
     );
   }
 

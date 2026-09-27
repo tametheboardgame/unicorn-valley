@@ -40,11 +40,15 @@
       },
       "chapterCount": 12,
       "manifestPath": "/stories/alices-adventures-in-wonderland/book.json",
-      "defaultEditionId": "default",
+      "defaultEditionId": "story-house",
       "editions": [
         {
-          "id": "default",
-          "label": "Standard Edition"
+          "id": "story-house",
+          "label": "Story House Edition"
+        },
+        {
+          "id": "full-classic",
+          "label": "Full Classic Text"
         }
       ]
     },
