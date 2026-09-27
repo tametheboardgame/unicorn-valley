@@ -38,7 +38,6 @@ export function isInteractionActivationSuppressed(): boolean {
   return lockCount > 0 || Date.now() < suppressInteractionUntil;
 }
 
-
 export const EXPLORATION_MODAL_SCENE_KEYS = new Set([
   'InventoryScene',
   'WonderbookScene',
