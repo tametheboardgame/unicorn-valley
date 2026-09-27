@@ -1,0 +1,76 @@
+name: Materialise Five Children and It art
+
+on:
+  push:
+    branches:
+      - agent/story-house-five-children-and-it
+
+permissions:
+  contents: write
+
+jobs:
+  materialise:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/story-house-five-children-and-it
+
+      - name: Download verified public-domain H. R. Millar illustrations
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p public/stories/five-children-and-it/illustrations
+          mkdir -p public/stories/five-children-and-it/covers
+
+          curl -L --fail --retry 3             "https://commons.wikimedia.org/wiki/Special:Redirect/file/Five_Children_and_It_(novel)_1st_ed.jpg"             -o /tmp/cover.jpg
+          curl -L --fail --retry 3             "https://commons.wikimedia.org/wiki/Special:Redirect/file/Fivechildren-frontispiece.jpg"             -o /tmp/psammead.jpg
+          curl -L --fail --retry 3             "https://commons.wikimedia.org/wiki/Special:Redirect/file/Fivechildren-55.jpg"             -o /tmp/guineas.jpg
+          curl -L --fail --retry 3             "https://commons.wikimedia.org/wiki/Special:Redirect/file/Fivechildren-83.jpg"             -o /tmp/wanted.jpg
+          curl -L --fail --retry 3             "https://commons.wikimedia.org/wiki/Special:Redirect/file/Fivechildren-119.jpg"             -o /tmp/wings.jpg
+          curl -L --fail --retry 3             "https://commons.wikimedia.org/wiki/Special:Redirect/file/Fivechildren-149.jpg"             -o /tmp/tower.jpg
+          curl -L --fail --retry 3             "https://commons.wikimedia.org/wiki/Special:Redirect/file/Fivechildren-247.jpg"             -o /tmp/grown.jpg
+          curl -L --fail --retry 3             "https://commons.wikimedia.org/wiki/Special:Redirect/file/Fivechildren-347.jpg"             -o /tmp/game.jpg
+          curl -L --fail --retry 3             "https://commons.wikimedia.org/wiki/Special:Redirect/file/Fivechildren-401.jpg"             -o /tmp/last.jpg
+
+      - name: Convert illustrations to Story House WebP assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! command -v convert >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y imagemagick
+          fi
+
+          convert /tmp/psammead.jpg -resize '900x1100>' -strip -quality 90             public/stories/five-children-and-it/illustrations/psammead.webp
+          convert /tmp/guineas.jpg -resize '1000x900>' -strip -quality 90             public/stories/five-children-and-it/illustrations/golden-guineas.webp
+          convert /tmp/wanted.jpg -resize '900x1000>' -strip -quality 90             public/stories/five-children-and-it/illustrations/being-wanted.webp
+          convert /tmp/wings.jpg -resize '1000x900>' -strip -quality 90             public/stories/five-children-and-it/illustrations/wings.webp
+          convert /tmp/tower.jpg -resize '1000x900>' -strip -quality 90             public/stories/five-children-and-it/illustrations/tower.webp
+          convert /tmp/grown.jpg -resize '1000x1100>' -strip -quality 90             public/stories/five-children-and-it/illustrations/grown-up.webp
+          convert /tmp/game.jpg -resize '900x1200>' -strip -quality 90             public/stories/five-children-and-it/illustrations/game-comes-to-life.webp
+          convert /tmp/last.jpg -resize '900x1200>' -strip -quality 90             public/stories/five-children-and-it/illustrations/last-wish.webp
+
+          convert /tmp/cover.jpg             -resize '420x520>'             -gravity center             -background '#f6f0df'             -extent 480x640             -strip -quality 92             public/stories/five-children-and-it/covers/cover.webp
+
+      - name: Format story manifest and regenerate catalogue
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm ci --no-audit --no-fund
+          npx biome format --write public/stories/five-children-and-it/book.json
+          node scripts/generateStoryCatalogue.mjs
+
+      - name: Commit materialised story assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/stories/five-children-and-it public/stories/catalogue.json
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "Story House: materialise Five Children and It art"
+          git push origin HEAD:agent/story-house-five-children-and-it
