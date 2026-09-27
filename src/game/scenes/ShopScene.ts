@@ -8,6 +8,7 @@ import { InputController } from '../input/InputController';
 import { KeyboardInputAdapter } from '../input/KeyboardInputAdapter';
 import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 import { getBrowserSaveService } from '../save/browserSaveService';
+import { closeExplorationModal } from '../ui/ExplorationModalNavigation';
 import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from '../ui/uiTheme';
 
 interface ShopSceneData {
@@ -322,9 +323,6 @@ export class ShopScene extends Phaser.Scene {
       return;
     }
     this.closing = true;
-    if (this.scene.isPaused(this.returnScene)) {
-      this.scene.resume(this.returnScene);
-    }
-    this.scene.stop();
+    closeExplorationModal(this, this.returnScene);
   }
 }

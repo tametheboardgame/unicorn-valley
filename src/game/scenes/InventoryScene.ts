@@ -19,6 +19,7 @@ import {
   type OwnedInventoryItem,
 } from '../inventory/InventoryService';
 import { getBrowserSaveService } from '../save/browserSaveService';
+import { closeExplorationModal } from '../ui/ExplorationModalNavigation';
 import {
   getHomewardNextNode,
   getValleyMapNode,
@@ -980,9 +981,6 @@ export class InventoryScene extends Phaser.Scene {
     }
 
     this.closing = true;
-    if (this.scene.isPaused(this.returnScene)) {
-      this.scene.resume(this.returnScene);
-    }
-    this.scene.stop();
+    closeExplorationModal(this, this.returnScene);
   }
 }
