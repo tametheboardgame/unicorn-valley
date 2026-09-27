@@ -1,0 +1,60 @@
+name: Materialise Twelve Dancing Princesses art
+
+on:
+  push:
+    branches:
+      - agent/story-house-twelve-dancing-princesses
+
+permissions:
+  contents: write
+
+jobs:
+  materialise:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/story-house-twelve-dancing-princesses
+
+      - name: Download verified public-domain Rackham illustrations
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p public/stories/the-twelve-dancing-princesses/illustrations
+          mkdir -p public/stories/the-twelve-dancing-princesses/covers
+
+          curl -L --fail --retry 3             "https://commons.wikimedia.org/wiki/Special:Redirect/file/Hansel_and_Grethal-Rackham-069.jpg"             -o /tmp/secret-path.jpg
+
+          curl -L --fail --retry 3             "https://commons.wikimedia.org/wiki/Special:Redirect/file/Hansel_and_Grethal-Rackham-073.jpg"             -o /tmp/midnight-castle.jpg
+
+      - name: Convert illustrations to Story House WebP assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! command -v convert >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y imagemagick
+          fi
+
+          convert /tmp/secret-path.jpg -resize '1200x900>' -strip -quality 91             public/stories/the-twelve-dancing-princesses/illustrations/secret-path.webp
+
+          convert /tmp/midnight-castle.jpg -resize '900x1260>' -strip -quality 91             public/stories/the-twelve-dancing-princesses/illustrations/midnight-castle.webp
+
+          convert /tmp/midnight-castle.jpg             -resize '420x520>'             -gravity center             -background '#f6f0df'             -extent 480x640             -strip -quality 91             public/stories/the-twelve-dancing-princesses/covers/cover.webp
+
+      - name: Regenerate Story House catalogue
+        run: node scripts/generateStoryCatalogue.mjs
+
+      - name: Commit materialised story assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/stories/the-twelve-dancing-princesses public/stories/catalogue.json
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "Story House: materialise Twelve Dancing Princesses art"
+          git push origin HEAD:agent/story-house-twelve-dancing-princesses
