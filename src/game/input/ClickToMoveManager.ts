@@ -232,6 +232,9 @@ export class ClickToMoveManager {
       if (pointer.button !== 0 || isExplorationMovementBlocked(scene)) {
         return;
       }
+      if (currentlyOver.some((object) => object.getData('interaction-direct-zone') === true)) {
+        return;
+      }
       if (currentlyOver.length > 0 || hasHeldExplorationMovementInput()) {
         this.cancel(state);
         return;
