@@ -3,7 +3,7 @@ import { ShimmerEconomyService } from '../economy/ShimmerEconomyService';
 import { getExplorationSnackBoostRemainingSeconds } from '../input/ExplorationGallop';
 import type { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 import { TouchMovementPad } from '../input/TouchMovementPad';
-import { openExplorationModal } from './ExplorationModalNavigation';
+import { openExplorationModal } from '../interaction/InteractionModalState';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { AudioSettingsPanel } from './AudioSettingsPanel';
 import {
