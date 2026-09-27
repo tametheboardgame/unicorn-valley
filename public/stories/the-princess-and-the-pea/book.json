@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "id": "the-princess-and-the-pea",
+  "title": "The Princess and the Pea",
+  "description": "A rain-soaked visitor arrives at a palace claiming to be a princess, and one tiny pea becomes the centre of a very unusual royal test.",
+  "catalogueBlurb": "One tiny pea, twenty mattresses and a very surprising royal test.",
+  "author": "Hans Christian Andersen, retold by Quill",
+  "readingMode": "flowing",
+  "cover": {
+    "path": "covers/cover.webp",
+    "alt": "Edmund Dulac's illustration for The Princess and the Pea."
+  },
+  "series": null,
+  "tags": ["classic-retelling", "fairy-tale", "princess", "pea", "palace", "humour", "illustrated"],
+  "publication": {
+    "status": "published"
+  },
+  "chapters": [
+    {
+      "id": "a-storm-at-the-palace",
+      "title": "A Storm at the Palace",
+      "path": "chapters/01.md",
+      "illustrations": [
+        {
+          "id": "bayes-doorstep",
+          "blockId": "the-door-opens",
+          "path": "illustrations/doorstep.webp",
+          "alt": "Alfred Walter Bayes' historic illustration for The Princess and the Pea.",
+          "placement": "full-width",
+          "width": 585,
+          "height": 578,
+          "caption": "Illustration by Alfred Walter Bayes, 1895."
+        }
+      ]
+    },
+    {
+      "id": "twenty-mattresses",
+      "title": "Twenty Mattresses",
+      "path": "chapters/02.md",
+      "illustrations": [
+        {
+          "id": "dulac-mattresses",
+          "blockId": "the-tallest-bed",
+          "path": "illustrations/mattresses.webp",
+          "alt": "Edmund Dulac's illustration of the princess high upon the mattresses.",
+          "placement": "full-width",
+          "width": 1760,
+          "height": 2332,
+          "caption": "Illustration by Edmund Dulac."
+        }
+      ]
+    },
+    {
+      "id": "the-tiny-pea",
+      "title": "The Tiny Pea",
+      "path": "chapters/03.md",
+      "illustrations": [
+        {
+          "id": "ford-true-princess",
+          "blockId": "morning-answer",
+          "path": "illustrations/true-princess.webp",
+          "alt": "A. J. Ford's historic illustration for The Princess and the Pea.",
+          "placement": "inline",
+          "width": 267,
+          "height": 500,
+          "caption": "Historic illustration by H. J. Ford."
+        }
+      ]
+    }
+  ],
+  "discovery": {
+    "format": "Picture Book",
+    "genres": ["Fantasy", "Classics"],
+    "audiences": ["Read Together", "Early Reader", "Independent Reader"],
+    "length": "Quick Read"
+  },
+  "rights": {
+    "text": {
+      "status": "original",
+      "source": "Original Story House retelling based on Hans Christian Andersen's public-domain tale",
+      "sourceUrl": "https://en.wikisource.org/wiki/The_Princess_and_the_Pea",
+      "notes": "Hans Christian Andersen's underlying story is public domain. This wording is an original child-friendly Unicorn Valley retelling."
+    },
+    "illustrations": {
+      "status": "public-domain",
+      "source": "Historical illustrations by Alfred Walter Bayes, Edmund Dulac and H. J. Ford",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/Category:The_Princess_and_the_Pea_in_art",
+      "notes": "The selected historical source files are identified as public domain on Wikimedia Commons."
+    },
+    "edition": {
+      "status": "original",
+      "source": "Unicorn Valley Story House edition"
+    },
+    "originalPublicationYear": 1835,
+    "curatorNotes": "A short classic split into three natural reader sections rather than artificially lengthened."
+  }
+}
