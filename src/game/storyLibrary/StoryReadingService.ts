@@ -5,6 +5,8 @@ export type StoryReadingStatus = 'not-started' | 'in-progress' | 'completed';
 
 export interface StoryReadingPosition {
   storyId: string;
+  editionId?: string;
+  defaultEditionId?: string;
   chapterId: string;
   blockId: string;
   blockProgress: number;
@@ -12,13 +14,27 @@ export interface StoryReadingPosition {
   percentComplete: number;
 }
 
+export interface StoryEditionProgress {
+  editionId: string;
+  progress: StoryReadingProgress;
+}
+
 const DEFAULT_PREFERENCES: ReaderPreferencesState = {
   fontSize: 20,
   lineHeight: 1.7,
 };
 
+const EDITION_KEY_SEPARATOR = '::edition::';
+
 function clamp(value: number, minimum: number, maximum: number): number {
   return Math.max(minimum, Math.min(maximum, value));
+}
+
+function progressKey(storyId: string, editionId?: string, defaultEditionId?: string): string {
+  if (!editionId || !defaultEditionId || editionId === defaultEditionId) {
+    return storyId;
+  }
+  return `${storyId}${EDITION_KEY_SEPARATOR}${editionId}`;
 }
 
 export class StoryReadingService {
@@ -32,14 +48,40 @@ export class StoryReadingService {
     return save ? { ...save.storyReading.preferences } : { ...DEFAULT_PREFERENCES };
   }
 
-  public getProgress(storyId: string): StoryReadingProgress | null {
+  public getProgress(
+    storyId: string,
+    editionId?: string,
+    defaultEditionId?: string,
+  ): StoryReadingProgress | null {
     const save = this.saveService.load();
-    const progress = save?.storyReading.byStoryId[storyId];
+    const progress = save?.storyReading.byStoryId[progressKey(storyId, editionId, defaultEditionId)];
     return progress ? { ...progress } : null;
   }
 
-  public getStatus(storyId: string): StoryReadingStatus {
-    const progress = this.getProgress(storyId);
+  public getLatestProgressForStory(
+    storyId: string,
+    editionIds: readonly string[],
+    defaultEditionId: string,
+  ): StoryEditionProgress | null {
+    let latest: StoryEditionProgress | null = null;
+
+    for (const editionId of editionIds) {
+      const progress = this.getProgress(storyId, editionId, defaultEditionId);
+      if (!progress) continue;
+      if (!latest || progress.lastReadAt > latest.progress.lastReadAt) {
+        latest = { editionId, progress };
+      }
+    }
+
+    return latest;
+  }
+
+  public getStatus(
+    storyId: string,
+    editionId?: string,
+    defaultEditionId?: string,
+  ): StoryReadingStatus {
+    const progress = this.getProgress(storyId, editionId, defaultEditionId);
     if (!progress) return 'not-started';
     return progress.completed ? 'completed' : 'in-progress';
   }
@@ -71,7 +113,8 @@ export class StoryReadingService {
 
   public savePosition(position: StoryReadingPosition): boolean {
     const save = this.saveService.load() ?? this.saveService.createNewGame();
-    const previous = save.storyReading.byStoryId[position.storyId];
+    const key = progressKey(position.storyId, position.editionId, position.defaultEditionId);
+    const previous = save.storyReading.byStoryId[key];
     const completed = previous?.completed ?? false;
     const progress: StoryReadingProgress = {
       chapterId: position.chapterId,
@@ -89,7 +132,7 @@ export class StoryReadingService {
         ...save.storyReading,
         byStoryId: {
           ...save.storyReading.byStoryId,
-          [position.storyId]: progress,
+          [key]: progress,
         },
       },
     });
@@ -98,6 +141,7 @@ export class StoryReadingService {
 
   public markCompleted(position: StoryReadingPosition): boolean {
     const save = this.saveService.load() ?? this.saveService.createNewGame();
+    const key = progressKey(position.storyId, position.editionId, position.defaultEditionId);
     const progress: StoryReadingProgress = {
       chapterId: position.chapterId,
       blockId: position.blockId,
@@ -114,7 +158,7 @@ export class StoryReadingService {
         ...save.storyReading,
         byStoryId: {
           ...save.storyReading.byStoryId,
-          [position.storyId]: progress,
+          [key]: progress,
         },
       },
     });
