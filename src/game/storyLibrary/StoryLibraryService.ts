@@ -4,6 +4,8 @@ import type {
   StoryChapterContent,
   StoryChapterManifest,
   StoryContentBlock,
+  StoryEditionManifest,
+  StoryEditionSummary,
   StoryLibraryManifest,
   StoryReadingMode,
   StoryRightsMetadata,
@@ -198,6 +200,17 @@ function parseSeries(value: unknown): StoryCatalogueEntry['series'] {
   };
 }
 
+function parseEditionSummary(value: unknown): StoryEditionSummary {
+  if (!value || typeof value !== 'object') {
+    throw new Error('Story Library catalogue edition summary is invalid.');
+  }
+  const edition = value as Record<string, unknown>;
+  return {
+    id: requireSafeId(edition.id, 'edition id'),
+    label: requireString(edition.label, 'edition label'),
+  };
+}
+
 function parseCatalogue(value: unknown): StoryCatalogue {
   if (!value || typeof value !== 'object') throw new Error('Story Library catalogue is invalid.');
   const source = value as Record<string, unknown>;
@@ -213,6 +226,21 @@ function parseCatalogue(value: unknown): StoryCatalogue {
     if (typeof chapterCount !== 'number' || chapterCount < 1) {
       throw new Error('Story Library expected a positive chapter count.');
     }
+
+    const editions = Array.isArray(entry.editions)
+      ? entry.editions.map(parseEditionSummary)
+      : [{ id: 'default', label: 'Standard Edition' }];
+    if (editions.length === 0) {
+      throw new Error('Story Library catalogue entry needs at least one edition.');
+    }
+    const defaultEditionId =
+      entry.defaultEditionId === undefined
+        ? editions[0].id
+        : requireSafeId(entry.defaultEditionId, 'default edition id');
+    if (!editions.some((edition) => edition.id === defaultEditionId)) {
+      throw new Error('Story Library catalogue default edition is missing.');
+    }
+
     return {
       id: requireSafeId(entry.id, 'story id'),
       title: requireString(entry.title, 'story title'),
@@ -228,6 +256,8 @@ function parseCatalogue(value: unknown): StoryCatalogue {
       rightsSummary: parseRightsSummary(entry.rightsSummary),
       chapterCount,
       manifestPath: requireString(entry.manifestPath, 'manifest path'),
+      defaultEditionId,
+      editions,
     };
   });
 
@@ -266,18 +296,39 @@ function parseChapter(value: unknown, storyId: string): StoryChapterManifest {
   };
 }
 
+function parseEdition(value: unknown, storyId: string): StoryEditionManifest {
+  if (!value || typeof value !== 'object') {
+    throw new Error(`Story Library edition metadata is invalid for ${storyId}.`);
+  }
+  const edition = value as Record<string, unknown>;
+  if (!Array.isArray(edition.chapters) || edition.chapters.length === 0) {
+    throw new Error(`Story Library edition for ${storyId} needs at least one chapter.`);
+  }
+  const id = requireSafeId(edition.id, 'edition id');
+  return {
+    id,
+    label: requireString(edition.label, 'edition label'),
+    author: requireString(edition.author, 'edition author'),
+    readingMode: parseReadingMode(edition.readingMode),
+    rights: parseRights(edition.rights),
+    chapters: edition.chapters.map((chapter) => parseChapter(chapter, storyId)),
+  };
+}
+
 function parseManifest(value: unknown): StoryLibraryManifest {
   if (!value || typeof value !== 'object') throw new Error('Story Library manifest is invalid.');
   const source = value as Record<string, unknown>;
-  if (source.schemaVersion !== 1 || !source.publication || typeof source.publication !== 'object') {
+  if (
+    (source.schemaVersion !== 1 && source.schemaVersion !== 2) ||
+    !source.publication ||
+    typeof source.publication !== 'object'
+  ) {
     throw new Error('Story Library manifest has an unsupported schema.');
   }
+
   const publication = source.publication as Record<string, unknown>;
   if (!['draft', 'published', 'hidden'].includes(String(publication.status))) {
     throw new Error('Story Library manifest has an invalid publication status.');
-  }
-  if (!Array.isArray(source.chapters) || source.chapters.length === 0) {
-    throw new Error('Story Library manifest needs at least one chapter.');
   }
 
   const id = requireSafeId(source.id, 'story id');
@@ -295,25 +346,68 @@ function parseManifest(value: unknown): StoryLibraryManifest {
           };
         })();
 
+  let editions: readonly StoryEditionManifest[];
+  let defaultEditionId: string;
+
+  if (source.schemaVersion === 1) {
+    if (!Array.isArray(source.chapters) || source.chapters.length === 0) {
+      throw new Error('Story Library manifest needs at least one chapter.');
+    }
+    const edition: StoryEditionManifest = {
+      id: 'default',
+      label: 'Standard Edition',
+      author: requireString(source.author, 'story author'),
+      readingMode: parseReadingMode(source.readingMode),
+      rights: parseRights(source.rights),
+      chapters: source.chapters.map((chapter) => parseChapter(chapter, id)),
+    };
+    editions = [edition];
+    defaultEditionId = edition.id;
+  } else {
+    if (!Array.isArray(source.editions) || source.editions.length === 0) {
+      throw new Error('Story Library multi-edition manifest needs at least one edition.');
+    }
+    const parsed = source.editions.map((edition) => parseEdition(edition, id));
+    const editionIds = new Set<string>();
+    for (const edition of parsed) {
+      if (editionIds.has(edition.id)) {
+        throw new Error(`Story Library manifest has duplicate edition id "${edition.id}".`);
+      }
+      editionIds.add(edition.id);
+    }
+    defaultEditionId = requireSafeId(source.defaultEditionId, 'default edition id');
+    if (!editionIds.has(defaultEditionId)) {
+      throw new Error('Story Library manifest default edition is missing.');
+    }
+    editions = parsed;
+  }
+
+  const defaultEdition = editions.find((edition) => edition.id === defaultEditionId);
+  if (!defaultEdition) {
+    throw new Error('Story Library manifest default edition is missing.');
+  }
+
   return {
-    schemaVersion: 1,
+    schemaVersion: source.schemaVersion,
     id,
     title: requireString(source.title, 'story title'),
     description: requireString(source.description, 'story description'),
     ...(source.catalogueBlurb === undefined
       ? {}
       : { catalogueBlurb: requireString(source.catalogueBlurb, 'story catalogue blurb') }),
-    author: requireString(source.author, 'story author'),
-    readingMode: parseReadingMode(source.readingMode),
     cover,
     series: parseSeries(source.series),
     tags: requireStringArray(source.tags, 'story tags'),
     discovery: parseDiscovery(source.discovery),
-    rights: parseRights(source.rights),
     publication: {
       status: String(publication.status) as StoryLibraryManifest['publication']['status'],
     },
-    chapters: source.chapters.map((chapter) => parseChapter(chapter, id)),
+    author: defaultEdition.author,
+    readingMode: defaultEdition.readingMode,
+    rights: defaultEdition.rights,
+    chapters: defaultEdition.chapters,
+    defaultEditionId,
+    editions,
   };
 }
 
@@ -370,12 +464,29 @@ export class StoryLibraryService {
     return manifest;
   }
 
-  public async loadChapter(storyId: string, chapterId: string): Promise<StoryChapterContent> {
+  public async loadChapter(
+    storyId: string,
+    chapterId: string,
+    editionId?: string,
+  ): Promise<StoryChapterContent> {
     requireSafeId(chapterId, 'chapter id');
+    if (editionId !== undefined) requireSafeId(editionId, 'edition id');
+
     const manifest = await this.loadManifest(storyId);
-    const chapter = manifest.chapters.find((candidate) => candidate.id === chapterId);
+    const edition = editionId
+      ? manifest.editions.find((candidate) => candidate.id === editionId)
+      : manifest.editions.find((candidate) => candidate.id === manifest.defaultEditionId);
+    if (!edition) {
+      throw new Error(
+        `Story Library could not find edition "${editionId ?? manifest.defaultEditionId}" in "${storyId}".`,
+      );
+    }
+
+    const chapter = edition.chapters.find((candidate) => candidate.id === chapterId);
     if (!chapter) {
-      throw new Error(`Story Library could not find chapter "${chapterId}" in "${storyId}".`);
+      throw new Error(
+        `Story Library could not find chapter "${chapterId}" in "${storyId}" edition "${edition.id}".`,
+      );
     }
 
     const response = await this.fetcher(`/stories/${manifest.id}/${chapter.path}`);
@@ -385,6 +496,7 @@ export class StoryLibraryService {
 
     return {
       storyId: manifest.id,
+      editionId: edition.id,
       chapterId: chapter.id,
       title: chapter.title,
       blocks: parseStoryChapterBlocks(await response.text()),
