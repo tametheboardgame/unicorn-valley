@@ -328,6 +328,48 @@
       },
       "chapterCount": 5,
       "manifestPath": "/stories/the-twelve-dancing-princesses/book.json"
+    },
+    {
+      "id": "thumbelina",
+      "title": "Thumbelina",
+      "description": "A tiny girl born inside a flower is swept far from home and must find her own way through rivers, forests, winter tunnels and finally a warm land of flowers.",
+      "catalogueBlurb": "A tiny girl crosses a huge world to find a place where she belongs.",
+      "author": "Hans Christian Andersen, retold by Quill",
+      "readingMode": "flowing",
+      "coverPath": "/stories/thumbelina/covers/cover.webp",
+      "coverAlt": "Historic Vilhelm Pedersen illustration of Thumbelina.",
+      "series": null,
+      "tags": [
+        "classic-retelling",
+        "fairy-tale",
+        "tiny-hero",
+        "flowers",
+        "swallow",
+        "adventure",
+        "kindness",
+        "illustrated"
+      ],
+      "discovery": {
+        "format": "Chapter Book",
+        "genres": [
+          "Fantasy",
+          "Classics",
+          "Adventure"
+        ],
+        "audiences": [
+          "Read Together",
+          "Independent Reader"
+        ],
+        "length": "Longer Read"
+      },
+      "rightsSummary": {
+        "text": "original",
+        "illustrations": "public-domain",
+        "edition": "original",
+        "originalPublicationYear": 1835
+      },
+      "chapterCount": 6,
+      "manifestPath": "/stories/thumbelina/book.json"
     }
   ]
 }
