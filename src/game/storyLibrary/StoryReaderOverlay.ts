@@ -161,7 +161,7 @@ function renderStoryIllustration(
 }
 
 function chapterLabel(edition: StoryEditionManifest, index: number): string {
-  const noun = edition.readingMode === 'paged-picture-book' ? 'Page' : 'Chapter';
+  const noun = edition.readingMode === 'flowing' ? 'Chapter' : 'Page';
   return `${noun} ${index + 1} of ${edition.chapters.length}`;
 }
 
@@ -828,6 +828,7 @@ export class StoryReaderOverlay {
     const shell = document.createElement('div');
     shell.className = 'story-reader-shell';
     const isPictureBook = edition.readingMode === 'paged-picture-book';
+    const isPagedEdition = edition.readingMode !== 'flowing';
     if (isPictureBook) {
       shell.classList.add('is-picture-book');
     }
@@ -918,9 +919,12 @@ export class StoryReaderOverlay {
       const chapterHeading = document.createElement('header');
       chapterHeading.className = 'story-reader-chapter-heading';
       const eyebrow = document.createElement('p');
-      eyebrow.textContent = manifest.series
-        ? `${manifest.series.title} · Book ${manifest.series.order}`
-        : `A Story House book · ${edition.author}`;
+      eyebrow.textContent =
+        manifest.editions.length > 1
+          ? `${edition.label} · ${edition.author}`
+          : manifest.series
+            ? `${manifest.series.title} · Book ${manifest.series.order}`
+            : `A Story House book · ${edition.author}`;
       const heading = document.createElement('h1');
       heading.textContent = chapter.title;
       chapterHeading.append(eyebrow, heading);
@@ -938,9 +942,9 @@ export class StoryReaderOverlay {
 
     const navigation = document.createElement('nav');
     navigation.className = 'story-reader-chapter-nav';
-    navigation.setAttribute('aria-label', isPictureBook ? 'Page navigation' : 'Chapter navigation');
+    navigation.setAttribute('aria-label', isPagedEdition ? 'Page navigation' : 'Chapter navigation');
     const previous = button(
-      isPictureBook ? '← Previous page' : '← Previous chapter',
+      isPagedEdition ? '← Previous page' : '← Previous chapter',
       'story-reader-chapter-button',
       () => {
         this.persistCurrentPosition();
@@ -952,7 +956,7 @@ export class StoryReaderOverlay {
     chapterPosition.textContent = chapterLabel(edition, index);
     const isLastChapter = index >= edition.chapters.length - 1;
     const next = button(
-      isLastChapter ? 'Finish book ✓' : isPictureBook ? 'Next page →' : 'Next chapter →',
+      isLastChapter ? 'Finish book ✓' : isPagedEdition ? 'Next page →' : 'Next chapter →',
       'story-reader-chapter-button',
       () => {
         if (isLastChapter) {
