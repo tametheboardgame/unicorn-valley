@@ -38,8 +38,11 @@ export class ExplorationShellWorldManager {
     // without restoring scene order the world can cover the otherwise-correct HUD. Keep the
     // canonical exploration HUD topmost whenever an exploration world is active; the overlay
     // itself still hides while a modal scene is open.
-    if (hasActiveExplorationScene && this.game.scene.isActive('ExplorationHudOverlayScene')) {
-      this.game.scene.bringToTop('ExplorationHudOverlayScene');
+    if (hasActiveExplorationScene) {
+      ensureExplorationHudOverlayScene(this.game);
+      if (this.game.scene.isActive('ExplorationHudOverlayScene')) {
+        this.game.scene.bringToTop('ExplorationHudOverlayScene');
+      }
     }
   }
 
