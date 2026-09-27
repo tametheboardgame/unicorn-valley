@@ -1,0 +1,176 @@
+{
+  "schemaVersion": 1,
+  "id": "the-wonderful-wizard-of-oz",
+  "title": "The Wonderful Wizard of Oz",
+  "description": "A cyclone carries Dorothy and Toto from Kansas to the magical Land of Oz, where they follow the yellow brick road with three unlikely friends in search of courage, wisdom, heart and a way home.",
+  "catalogueBlurb": "Follow Dorothy and Toto along the yellow brick road to the Emerald City.",
+  "author": "L. Frank Baum, retold by Quill",
+  "readingMode": "flowing",
+  "cover": {
+    "path": "covers/cover.webp",
+    "alt": "W. W. Denslow's original 1900 cover for The Wonderful Wizard of Oz."
+  },
+  "series": null,
+  "tags": [
+    "classic-retelling",
+    "fantasy",
+    "adventure",
+    "oz",
+    "friendship",
+    "magic",
+    "illustrated"
+  ],
+  "publication": {
+    "status": "published"
+  },
+  "chapters": [
+    {
+      "id": "the-cyclone",
+      "title": "The Cyclone",
+      "path": "chapters/01.md"
+    },
+    {
+      "id": "the-yellow-brick-road",
+      "title": "The Yellow Brick Road",
+      "path": "chapters/02.md",
+      "illustrations": [
+        {
+          "id": "denslow-scarecrow",
+          "blockId": "meeting-the-scarecrow",
+          "path": "illustrations/scarecrow.webp",
+          "alt": "W. W. Denslow's illustration of Dorothy with the Scarecrow.",
+          "placement": "full-width",
+          "width": 483,
+          "height": 640,
+          "caption": "Illustration by W. W. Denslow, 1900."
+        }
+      ]
+    },
+    {
+      "id": "the-tin-woodman",
+      "title": "The Tin Woodman",
+      "path": "chapters/03.md",
+      "illustrations": [
+        {
+          "id": "denslow-tin-woodman",
+          "blockId": "a-man-made-of-tin",
+          "path": "illustrations/tin-woodman.webp",
+          "alt": "W. W. Denslow's illustration of the Tin Woodman.",
+          "placement": "full-width",
+          "width": 1283,
+          "height": 2937,
+          "caption": "Illustration by W. W. Denslow, 1900."
+        }
+      ]
+    },
+    {
+      "id": "the-cowardly-lion",
+      "title": "The Cowardly Lion",
+      "path": "chapters/04.md",
+      "illustrations": [
+        {
+          "id": "denslow-lion",
+          "blockId": "the-lion-roars",
+          "path": "illustrations/lion.webp",
+          "alt": "W. W. Denslow's illustration of Dorothy meeting the Cowardly Lion.",
+          "placement": "full-width",
+          "width": 2018,
+          "height": 2534,
+          "caption": "Illustration by W. W. Denslow, 1900."
+        }
+      ]
+    },
+    {
+      "id": "the-emerald-city",
+      "title": "The Emerald City",
+      "path": "chapters/05.md",
+      "illustrations": [
+        {
+          "id": "denslow-emerald-city",
+          "blockId": "green-everywhere",
+          "path": "illustrations/emerald-city.webp",
+          "alt": "W. W. Denslow's illustration of the Emerald City.",
+          "placement": "full-width",
+          "width": 534,
+          "height": 332,
+          "caption": "Illustration by W. W. Denslow, 1900."
+        }
+      ]
+    },
+    {
+      "id": "the-wicked-witch",
+      "title": "The Wicked Witch of the West",
+      "path": "chapters/06.md",
+      "illustrations": [
+        {
+          "id": "denslow-wicked-witch",
+          "blockId": "the-witch-watches",
+          "path": "illustrations/wicked-witch.webp",
+          "alt": "W. W. Denslow's illustration of the Wicked Witch of the West.",
+          "placement": "full-width",
+          "width": 298,
+          "height": 358,
+          "caption": "Illustration by W. W. Denslow, 1900."
+        }
+      ]
+    },
+    {
+      "id": "the-wizard-revealed",
+      "title": "The Wizard Revealed",
+      "path": "chapters/07.md"
+    },
+    {
+      "id": "gifts-from-oz",
+      "title": "Gifts from Oz",
+      "path": "chapters/08.md"
+    },
+    {
+      "id": "south-to-glinda",
+      "title": "South to Glinda",
+      "path": "chapters/09.md",
+      "illustrations": [
+        {
+          "id": "denslow-glinda",
+          "blockId": "glinda-the-good",
+          "path": "illustrations/glinda.webp",
+          "alt": "W. W. Denslow's illustration of Glinda the Good Witch.",
+          "placement": "full-width",
+          "width": 561,
+          "height": 804,
+          "caption": "Illustration by W. W. Denslow, 1900."
+        }
+      ]
+    },
+    {
+      "id": "home-to-kansas",
+      "title": "Home to Kansas",
+      "path": "chapters/10.md"
+    }
+  ],
+  "discovery": {
+    "format": "Chapter Book",
+    "genres": ["Fantasy", "Adventure", "Classics"],
+    "audiences": ["Read Together", "Independent Reader"],
+    "length": "Longer Read"
+  },
+  "rights": {
+    "text": {
+      "status": "original",
+      "source": "Original Story House retelling based on L. Frank Baum's public-domain 1900 novel",
+      "sourceUrl": "https://en.wikisource.org/wiki/The_Wonderful_Wizard_of_Oz",
+      "notes": "The underlying 1900 novel is public domain. This wording is an original child-friendly Unicorn Valley retelling."
+    },
+    "illustrations": {
+      "status": "public-domain",
+      "source": "Original 1900 illustrations by W. W. Denslow",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/Category:Illustrations_of_The_Wonderful_Wizard_of_Oz_by_William_Wallace_Denslow",
+      "notes": "The selected Denslow source files are identified as public domain on Wikimedia Commons."
+    },
+    "edition": {
+      "status": "original",
+      "source": "Unicorn Valley Story House edition"
+    },
+    "originalPublicationYear": 1900,
+    "curatorNotes": "Condensed into ten reader sections preserving the full journey and central characters while softening some of the original novel's more graphic violence."
+  }
+}
