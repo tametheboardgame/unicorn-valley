@@ -671,10 +671,10 @@ export class MapleBakingActivityScene extends Phaser.Scene {
     const bowl = this.add.graphics();
     bowl.fillStyle(0xf3c8b6, 1);
     bowl.lineStyle(7, 0xca8979, 1);
-    bowl.fillEllipse(MIX_CENTRE.x - 190, MIX_CENTRE.y - 105, 380, 210);
-    bowl.strokeEllipse(MIX_CENTRE.x - 190, MIX_CENTRE.y - 105, 380, 210);
+    bowl.fillEllipse(MIX_CENTRE.x, MIX_CENTRE.y, 380, 210);
+    bowl.strokeEllipse(MIX_CENTRE.x, MIX_CENTRE.y, 380, 210);
     bowl.fillStyle(0xffdda0, 1);
-    bowl.fillEllipse(MIX_CENTRE.x - 150, MIX_CENTRE.y - 78, 300, 156);
+    bowl.fillEllipse(MIX_CENTRE.x, MIX_CENTRE.y, 300, 156);
 
     const guide = this.add.graphics();
     guide.lineStyle(14, 0xd3a8ec, 0.22);
@@ -827,15 +827,20 @@ export class MapleBakingActivityScene extends Phaser.Scene {
   }
 
   private renderStackStage(): void {
+    const nextLayer = this.placedLayers.size;
     this.renderStageHeader(
       'Build the wobble',
-      'Drag each sponge onto its glowing wobble zone. Slightly off-centre is exactly right.',
+      nextLayer < 3
+        ? `Drag Layer ${nextLayer + 1} onto its glowing wobble zone. Layers must be built from the bottom up.`
+        : 'The wobble is stacked.',
       'STACK',
     );
 
     this.drawCakeStand(GAME_WIDTH / 2, 585);
     const targetOffsets = [-24, 28, -18] as const;
     const targetYs = [520, 456, 392] as const;
+    const trayX = 250;
+    const trayYs = [330, 415, 500] as const;
 
     targetOffsets.forEach((offset, index) => {
       if (this.placedLayers.has(index)) {
@@ -849,53 +854,60 @@ export class MapleBakingActivityScene extends Phaser.Scene {
 
       const targetX = GAME_WIDTH / 2 + offset;
       const targetY = targetYs[index] ?? 0;
-      const zone = this.add.graphics();
-      zone.fillStyle(0xd9b9ed, 0.16);
-      zone.lineStyle(4, 0xb47bd0, 0.7);
-      zone.fillRoundedRect(targetX - 108, targetY - 28, 216, 56, 24);
-      zone.strokeRoundedRect(targetX - 108, targetY - 28, 216, 56, 24);
-      this.body?.add(zone);
+      const isCurrentLayer = index === nextLayer;
 
-      const trayX = index % 2 === 0 ? 250 : 1030;
-      const trayY = 330 + index * 76;
-      this.createDraggableLayer(index, trayX, trayY, targetX, targetY);
+      if (isCurrentLayer) {
+        const zone = this.add.graphics();
+        zone.fillStyle(0xd9b9ed, 0.2);
+        zone.lineStyle(5, 0xb47bd0, 0.9);
+        zone.fillRoundedRect(targetX - 112, targetY - 32, 224, 64, 26);
+        zone.strokeRoundedRect(targetX - 112, targetY - 32, 224, 64, 26);
+        this.body?.add(zone);
+      }
+
+      this.createDraggableLayer(
+        index,
+        trayX,
+        trayYs[index] ?? 330,
+        targetX,
+        targetY,
+        isCurrentLayer,
+      );
     });
 
     const progress = this.add
-      .text(GAME_WIDTH / 2, 625, `${this.placedLayers.size}/3 sponge layers placed`, {
-        color: UI_COLOURS.softInk,
-        fontFamily: UI_FONT,
-        fontSize: '14px',
-        fontStyle: 'bold',
-      })
+      .text(
+        GAME_WIDTH / 2,
+        625,
+        nextLayer < 3
+          ? `${this.placedLayers.size}/3 placed • Layer ${nextLayer + 1} is next`
+          : '3/3 sponge layers placed',
+        {
+          color: UI_COLOURS.softInk,
+          fontFamily: UI_FONT,
+          fontSize: '14px',
+          fontStyle: 'bold',
+        },
+      )
       .setOrigin(0.5);
     this.body?.add(progress);
 
     this.portraitCompanion?.setHeader(
       '🍰 Build the wobble',
-      'Place each layer. The best target is deliberately a little off-centre.',
+      nextLayer < 3
+        ? `Drag Layer ${nextLayer + 1} into the glowing zone. Later layers stay locked until they have support.`
+        : 'The three layers are stacked.',
     );
     this.portraitCompanion?.setCards([
       {
         id: 'stack',
         title: 'Cake stack',
-        description: 'Three layers make the Wobbly Cake.',
+        description:
+          'Drag the sponge layers onto the cake in order. Tapping a layer will not place it.',
         badge: `${this.placedLayers.size}/3`,
       },
     ]);
-    this.portraitCompanion?.setActionGroups([
-      {
-        id: 'stack',
-        actions: [
-          {
-            id: 'place',
-            label: '🍰 Place next layer',
-            onPress: () => this.autoPlaceNextLayer(),
-          },
-        ],
-      },
-      this.portraitExitGroup(),
-    ]);
+    this.portraitCompanion?.setActionGroups([this.portraitExitGroup()]);
   }
 
   private createDraggableLayer(
@@ -904,41 +916,59 @@ export class MapleBakingActivityScene extends Phaser.Scene {
     startY: number,
     targetX: number,
     targetY: number,
+    enabled: boolean,
   ): void {
     const shadow = this.add.graphics();
-    shadow.fillStyle(0x7b5268, 0.18);
+    shadow.fillStyle(0x7b5268, enabled ? 0.18 : 0.08);
     shadow.fillRoundedRect(-106, -22, 212, 52, 22);
+
     const sponge = this.add.graphics();
-    sponge.fillStyle(0xf4c989, 1);
-    sponge.lineStyle(4, 0xd8a565, 1);
+    sponge.fillStyle(enabled ? 0xf4c989 : 0xe8dcc9, 1);
+    sponge.lineStyle(4, enabled ? 0xd8a565 : 0xbfb2a2, 1);
     sponge.fillRoundedRect(-108, -28, 216, 56, 22);
     sponge.strokeRoundedRect(-108, -28, 216, 56, 22);
+
     const icon = this.add
-      .text(0, 0, `Layer ${index + 1}`, {
-        color: UI_COLOURS.ink,
+      .text(0, 0, enabled ? `↔ Drag Layer ${index + 1}` : `🔒 Layer ${index + 1}`, {
+        color: enabled ? UI_COLOURS.ink : UI_COLOURS.mutedInk,
         fontFamily: UI_FONT,
         fontSize: '14px',
         fontStyle: 'bold',
       })
       .setOrigin(0.5);
+
     const layer = this.add
       .container(startX, startY, [shadow, sponge, icon])
       .setSize(216, 64)
-      .setInteractive({ useHandCursor: true })
       .setName(`h3-r2-baking-layer:${index + 1}`);
-    this.input.setDraggable(layer);
 
-    let dragged = false;
-    layer.on('drag', (_pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
-      dragged = true;
-      layer.setPosition(dragX, dragY);
-    });
-    layer.on('dragend', () => this.placeLayer(index, layer.x, layer.y, targetX, targetY));
-    layer.on('pointerup', () => {
-      if (!dragged && !this.placedLayers.has(index)) {
-        this.placeLayer(index, targetX + 15, targetY, targetX, targetY);
-      }
-    });
+    if (enabled) {
+      layer.setInteractive({ useHandCursor: true });
+      this.input.setDraggable(layer);
+      layer.on('drag', (_pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
+        layer.setPosition(dragX, dragY);
+      });
+      layer.on('dragend', () => {
+        const accepted = this.placeLayer(index, layer.x, layer.y, targetX, targetY);
+        if (!accepted && layer.active) {
+          icon.setText(`↩ Try the glowing zone`);
+          this.tweens.add({
+            targets: layer,
+            x: startX,
+            y: startY,
+            duration: 180,
+            ease: 'Sine.easeOut',
+            onComplete: () => {
+              if (layer.active) {
+                icon.setText(`↔ Drag Layer ${index + 1}`);
+              }
+            },
+          });
+        }
+      });
+    } else {
+      layer.setAlpha(0.58);
+    }
 
     this.body?.add(layer);
   }
@@ -946,15 +976,27 @@ export class MapleBakingActivityScene extends Phaser.Scene {
   private placeLayer(
     index: number,
     droppedX: number,
-    _droppedY: number,
+    droppedY: number,
     targetX: number,
-    _targetY: number,
-  ): void {
-    if (this.stage !== 'stack' || this.placedLayers.has(index) || this.actionLocked) {
-      return;
+    targetY: number,
+  ): boolean {
+    if (
+      this.stage !== 'stack' ||
+      this.placedLayers.has(index) ||
+      index !== this.placedLayers.size ||
+      this.actionLocked
+    ) {
+      return false;
     }
-    const xError = Math.abs(droppedX - targetX);
-    const score = Math.max(0, Math.round(100 - xError * 1.6));
+
+    const withinDropZone =
+      Math.abs(droppedX - targetX) <= 132 && Math.abs(droppedY - targetY) <= 68;
+    if (!withinDropZone) {
+      return false;
+    }
+
+    const distance = Phaser.Math.Distance.Between(droppedX, droppedY, targetX, targetY);
+    const score = Math.max(0, Math.round(100 - distance * 0.9));
     this.layerScores[index] = score;
     this.layerOffsets[index] = Phaser.Math.Clamp(droppedX - GAME_WIDTH / 2, -58, 58);
     this.placedLayers.add(index);
@@ -965,20 +1007,11 @@ export class MapleBakingActivityScene extends Phaser.Scene {
         this.stage = 'icing';
         this.renderStage();
       });
-      return;
+      return true;
     }
-    this.renderStage();
-  }
 
-  private autoPlaceNextLayer(): void {
-    const index = [0, 1, 2].find((candidate) => !this.placedLayers.has(candidate));
-    if (index === undefined) {
-      return;
-    }
-    const targetOffsets = [-24, 28, -18] as const;
-    const targetYs = [520, 456, 392] as const;
-    const targetX = GAME_WIDTH / 2 + (targetOffsets[index] ?? 0);
-    this.placeLayer(index, targetX + 15, targetYs[index] ?? 0, targetX, targetYs[index] ?? 0);
+    this.renderStage();
+    return true;
   }
 
   private renderIcingStage(): void {
@@ -1579,8 +1612,6 @@ export class MapleBakingActivityScene extends Phaser.Scene {
       this.nudgeMeasure(0.09);
     } else if (this.stage === 'mix') {
       this.keyboardStir(1);
-    } else if (this.stage === 'stack') {
-      this.autoPlaceNextLayer();
     } else if (this.stage === 'icing') {
       this.keyboardIcing();
     } else if (this.stage === 'decorate') {
