@@ -1,0 +1,64 @@
+name: Materialise Princess and the Pea art
+
+on:
+  push:
+    branches:
+      - agent/story-house-princess-pea
+
+permissions:
+  contents: write
+
+jobs:
+  materialise:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/story-house-princess-pea
+
+      - name: Download verified public-domain historical illustrations
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p public/stories/the-princess-and-the-pea/illustrations
+          mkdir -p public/stories/the-princess-and-the-pea/covers
+
+          curl -L --fail --retry 3             "https://commons.wikimedia.org/wiki/Special:Redirect/file/The_Princess_and_the_Pea.jpg"             -o /tmp/doorstep.jpg
+
+          curl -L --fail --retry 3             "https://commons.wikimedia.org/wiki/Special:Redirect/file/Edmund_Dulac_-_Princess_and_pea.jpg"             -o /tmp/mattresses.jpg
+
+          curl -L --fail --retry 3             "https://commons.wikimedia.org/wiki/Special:Redirect/file/Ford_trueprincess.jpg"             -o /tmp/true-princess.jpg
+
+      - name: Convert illustrations to Story House WebP assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! command -v convert >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y imagemagick
+          fi
+
+          convert /tmp/doorstep.jpg -strip -quality 92             public/stories/the-princess-and-the-pea/illustrations/doorstep.webp
+
+          convert /tmp/mattresses.jpg -resize '900x1200>' -strip -quality 92             public/stories/the-princess-and-the-pea/illustrations/mattresses.webp
+
+          convert /tmp/true-princess.jpg -strip -quality 92             public/stories/the-princess-and-the-pea/illustrations/true-princess.webp
+
+          convert /tmp/mattresses.jpg             -resize '420x520>'             -gravity center             -background '#f6f0df'             -extent 480x640             -strip -quality 92             public/stories/the-princess-and-the-pea/covers/cover.webp
+
+      - name: Regenerate Story House catalogue
+        run: node scripts/generateStoryCatalogue.mjs
+
+      - name: Commit materialised story assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/stories/the-princess-and-the-pea public/stories/catalogue.json
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "Story House: materialise Princess and the Pea art"
+          git push origin HEAD:agent/story-house-princess-pea
