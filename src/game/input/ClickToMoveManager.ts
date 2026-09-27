@@ -29,6 +29,7 @@ interface NavigationState {
   mode: NavigationMode;
   arrivalDistance: number;
   onArrive: (() => void) | null;
+  interactionTargetId: string | null;
   waypointIndex: number;
   target: MapPoint | null;
   marker: Phaser.GameObjects.Container | null;
@@ -221,6 +222,7 @@ export class ClickToMoveManager {
       mode: 'ground',
       arrivalDistance: WAYPOINT_REACHED_DISTANCE,
       onArrive: null,
+      interactionTargetId: null,
       waypointIndex: 0,
       target: null,
       marker: null,
@@ -261,7 +263,15 @@ export class ClickToMoveManager {
         return;
       }
 
-      this.startNavigation(scene, state, path, WAYPOINT_REACHED_DISTANCE, null, 'ground');
+      this.startNavigation(
+        scene,
+        state,
+        path,
+        WAYPOINT_REACHED_DISTANCE,
+        null,
+        'ground',
+        null,
+      );
     };
 
     scene.input.on('pointerdown', state.pointerHandler);
@@ -276,6 +286,7 @@ export class ClickToMoveManager {
 
   public navigateToInteraction(
     scene: Phaser.Scene,
+    interactionTargetId: string,
     target: MapPoint,
     arrivalDistance: number,
     onArrive: () => void,
@@ -293,7 +304,7 @@ export class ClickToMoveManager {
       return false;
     }
 
-    this.startNavigation(scene, state, path, arrivalDistance, onArrive, 'interaction');
+    this.startNavigation(scene, state, path, arrivalDistance, onArrive, 'interaction', interactionTargetId);
     return true;
   }
 
@@ -304,9 +315,11 @@ export class ClickToMoveManager {
     arrivalDistance: number,
     onArrive: (() => void) | null,
     mode: NavigationMode,
+    interactionTargetId: string | null,
   ): void {
     state.path = path;
     state.mode = mode;
+    state.interactionTargetId = interactionTargetId;
     state.arrivalDistance = Math.max(WAYPOINT_REACHED_DISTANCE, arrivalDistance);
     state.onArrive = onArrive;
     state.waypointIndex = 0;
@@ -318,14 +331,21 @@ export class ClickToMoveManager {
     }
   }
 
-  public cancelGroundNavigationForResidentCollision(scene: Phaser.Scene): boolean {
+  public cancelNavigationForResidentCollision(
+    scene: Phaser.Scene,
+    residentTargetId: string,
+  ): { cancelled: boolean; onArrive: (() => void) | null } {
     const state = this.states.get(scene);
-    if (!state || state.mode !== 'ground' || state.path.length === 0) {
-      return false;
+    if (!state || state.path.length === 0) {
+      return { cancelled: false, onArrive: null };
     }
 
+    const onArrive =
+      state.mode === 'interaction' && state.interactionTargetId === residentTargetId
+        ? state.onArrive
+        : null;
     this.cancel(state);
-    return true;
+    return { cancelled: true, onArrive };
   }
 
   private showTargetMarker(scene: Phaser.Scene, state: NavigationState, target: MapPoint): void {
@@ -358,6 +378,7 @@ export class ClickToMoveManager {
     state.mode = 'ground';
     state.arrivalDistance = WAYPOINT_REACHED_DISTANCE;
     state.onArrive = null;
+    state.interactionTargetId = null;
     state.waypointIndex = 0;
     state.target = null;
     state.lastDistance = Number.POSITIVE_INFINITY;
