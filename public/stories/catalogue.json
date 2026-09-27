@@ -246,6 +246,47 @@
       },
       "chapterCount": 1,
       "manifestPath": "/stories/the-town-mouse-and-the-country-mouse/book.json"
+    },
+    {
+      "id": "the-twelve-dancing-princesses",
+      "title": "The Twelve Dancing Princesses",
+      "description": "Every morning twelve princesses wake with their dancing shoes worn through. A curious traveller follows them through a hidden staircase into a glittering midnight world.",
+      "catalogueBlurb": "Twelve worn-out pairs of shoes hide a glittering midnight secret.",
+      "author": "Brothers Grimm, retold by Quill",
+      "readingMode": "flowing",
+      "coverPath": "/stories/the-twelve-dancing-princesses/covers/cover.webp",
+      "coverAlt": "Arthur Rackham's illustration for The Twelve Dancing Princesses.",
+      "series": null,
+      "tags": [
+        "classic-retelling",
+        "fairy-tale",
+        "princesses",
+        "magic",
+        "mystery",
+        "dancing",
+        "illustrated"
+      ],
+      "discovery": {
+        "format": "Chapter Book",
+        "genres": [
+          "Fantasy",
+          "Classics",
+          "Mystery"
+        ],
+        "audiences": [
+          "Read Together",
+          "Independent Reader"
+        ],
+        "length": "Longer Read"
+      },
+      "rightsSummary": {
+        "text": "original",
+        "illustrations": "public-domain",
+        "edition": "original",
+        "originalPublicationYear": 1815
+      },
+      "chapterCount": 5,
+      "manifestPath": "/stories/the-twelve-dancing-princesses/book.json"
     }
   ]
 }
