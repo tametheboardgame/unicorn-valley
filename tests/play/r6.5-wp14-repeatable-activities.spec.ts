@@ -82,6 +82,7 @@ async function seedActivityPrerequisites(page: Page, initialShimmer = 0): Promis
           memoryIds: [
             'memory:economy-reward:completed:quest:maple-wobbly-cake-plan',
             'memory:economy-reward:completed:quest:coral-shells-with-stories',
+            'memory:economy-reward:activity:maple-baking:first-complete',
           ],
         },
       }),
