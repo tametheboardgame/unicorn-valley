@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "id": "the-hare-and-the-tortoise",
+  "title": "The Hare and the Tortoise",
+  "description": "A speedy hare is certain he cannot lose, until a quiet tortoise shows what steady determination can do.",
+  "catalogueBlurb": "A boastful hare learns that steady determination can win the race.",
+  "author": "Aesop, told anew by Joseph Jacobs",
+  "readingMode": "flowing",
+  "cover": {
+    "path": "covers/cover.webp",
+    "alt": "Richard Heighway's 1894 illustration for The Hare and the Tortoise."
+  },
+  "series": {
+    "id": "aesops-fables",
+    "title": "Aesop's Fables",
+    "order": 1
+  },
+  "tags": ["classic", "aesop", "animals", "perseverance", "public-domain", "illustrated"],
+  "publication": {
+    "status": "published"
+  },
+  "chapters": [
+    {
+      "id": "the-race",
+      "title": "The Hare and the Tortoise",
+      "path": "chapters/01.md",
+      "illustrations": [
+        {
+          "id": "hare-and-tortoise-start",
+          "blockId": "the-challenge",
+          "path": "illustrations/start.webp",
+          "alt": "Richard Heighway's 1894 line illustration of the hare and tortoise at the start of their race.",
+          "placement": "inline",
+          "width": 166,
+          "height": 200,
+          "caption": "Illustration by Richard Heighway, 1894."
+        },
+        {
+          "id": "tortoise-finish",
+          "blockId": "plodding-wins",
+          "path": "illustrations/finish.webp",
+          "alt": "Richard Heighway's 1894 line illustration of the tortoise reaching the finish.",
+          "placement": "full-width",
+          "width": 387,
+          "height": 229,
+          "caption": "Illustration by Richard Heighway, 1894."
+        }
+      ]
+    }
+  ],
+  "discovery": {
+    "format": "Picture Book",
+    "genres": ["Animals", "Classics"],
+    "audiences": ["Read Together", "Early Reader", "Independent Reader"],
+    "length": "Quick Read"
+  },
+  "rights": {
+    "text": {
+      "status": "public-domain",
+      "source": "Joseph Jacobs, The Fables of Aesop, Macmillan, 1894",
+      "sourceUrl": "https://www.gutenberg.org/ebooks/28",
+      "notes": "The underlying Aesop fable and Joseph Jacobs' 1894 retelling are public domain. Jacobs died in 1916."
+    },
+    "illustrations": {
+      "status": "public-domain",
+      "source": "Richard Heighway illustrations from the 1894 Jacobs edition",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/Category:The_Fables_of_%C3%86sop_(Jacobs,_Heighway)/The_Hare_and_the_Tortoise",
+      "notes": "Source files are marked public domain on Wikimedia Commons. Heighway died in 1917."
+    },
+    "edition": {
+      "status": "public-domain",
+      "source": "The Fables of Aesop, selected and told anew by Joseph Jacobs, pictures by Richard Heighway, Macmillan, 1894",
+      "sourceUrl": "https://www.gutenberg.org/ebooks/28"
+    },
+    "originalPublicationYear": 1894,
+    "curatorNotes": "Story House edition preserves the Jacobs text and Heighway illustrations while using the existing responsive Story Library reader."
+  }
+}

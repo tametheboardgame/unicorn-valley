@@ -1,0 +1,55 @@
+name: Materialise Hare and Tortoise story art
+
+on:
+  push:
+    branches:
+      - agent/story-house-hare-tortoise
+
+permissions:
+  contents: write
+
+jobs:
+  materialise:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/story-house-hare-tortoise
+
+      - name: Download verified public-domain source illustrations
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p public/stories/the-hare-and-the-tortoise/illustrations
+          mkdir -p public/stories/the-hare-and-the-tortoise/covers
+          curl -L --fail --retry 3             "https://upload.wikimedia.org/wikipedia/commons/1/18/Page_162_illustration_from_The_Fables_of_%C3%86sop_%28Jacobs%29.png"             -o /tmp/hare-tortoise-start.png
+          curl -L --fail --retry 3             "https://upload.wikimedia.org/wikipedia/commons/7/72/Page_163_illustration_from_The_Fables_of_%C3%86sop_%28Jacobs%29.png"             -o /tmp/hare-tortoise-finish.png
+
+      - name: Convert illustrations to Story House WebP assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! command -v convert >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y imagemagick
+          fi
+          convert /tmp/hare-tortoise-start.png -strip -quality 92             public/stories/the-hare-and-the-tortoise/illustrations/start.webp
+          convert /tmp/hare-tortoise-finish.png -strip -quality 92             public/stories/the-hare-and-the-tortoise/illustrations/finish.webp
+          convert /tmp/hare-tortoise-start.png             -resize '420x520>'             -gravity center             -background '#f6f0df'             -extent 480x640             -strip -quality 92             public/stories/the-hare-and-the-tortoise/covers/cover.webp
+
+      - name: Regenerate Story House catalogue
+        run: node scripts/generateStoryCatalogue.mjs
+
+      - name: Commit materialised story assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/stories/the-hare-and-the-tortoise public/stories/catalogue.json
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "Story House: materialise Hare and Tortoise public-domain art"
+          git push origin HEAD:agent/story-house-hare-tortoise
