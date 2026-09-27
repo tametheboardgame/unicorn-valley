@@ -1,0 +1,51 @@
+name: Validate dual-edition Story House architecture
+
+on:
+  push:
+    branches:
+      - agent/story-house-dual-edition-architecture
+
+permissions:
+  contents: write
+
+jobs:
+  validate-and-materialise:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/story-house-dual-edition-architecture
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22.23.2
+          package-manager-cache: false
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Format architecture changes
+        run: npm run format
+
+      - name: Regenerate Story House catalogue
+        run: npm run story:catalogue
+
+      - name: Run focused Story House unit tests
+        run: npx vitest run src/game/storyLibrary/StoryLibraryService.test.ts src/game/storyLibrary/StoryReadingService.test.ts
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Commit formatted architecture and catalogue
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add             src/game/storyLibrary/StoryLibraryTypes.ts             src/game/storyLibrary/StoryLibraryService.ts             src/game/storyLibrary/StoryReadingService.ts             src/game/storyLibrary/StoryReaderOverlay.ts             src/game/storyLibrary/StoryLibraryService.test.ts             src/game/storyLibrary/StoryReadingService.test.ts             src/style.css             scripts/generateStoryCatalogue.mjs             docs/story-library-authoring.md             public/stories/catalogue.json
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "Story House: materialise dual-edition architecture"
+          git push origin HEAD:agent/story-house-dual-edition-architecture
