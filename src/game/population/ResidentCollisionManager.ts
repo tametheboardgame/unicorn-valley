@@ -6,9 +6,12 @@ import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
 
 const RESIDENT_NAME_PREFIX = 'supporting-resident:';
 const MINIMUM_CENTRE_DISTANCE = 76;
+const MINIMUM_CENTRE_DISTANCE_SQUARED = MINIMUM_CENTRE_DISTANCE ** 2;
 const COLLISION_RELEASE_DISTANCE = 82;
 const PAUSE_DISTANCE = 92;
+const PAUSE_DISTANCE_SQUARED = PAUSE_DISTANCE ** 2;
 const RESUME_DISTANCE = 108;
+const RESUME_DISTANCE_SQUARED = RESUME_DISTANCE ** 2;
 const PLAYER_EDGE_PADDING = 34;
 const MOVEMENT_EPSILON = 1;
 
@@ -48,13 +51,14 @@ function findPlayer(scene: Phaser.Scene): Phaser.Physics.Arcade.Sprite | null {
   );
 }
 
-function findResidents(scene: Phaser.Scene): Phaser.GameObjects.Container[] {
-  return scene.children.list.filter(
-    (object): object is Phaser.GameObjects.Container =>
-      object instanceof Phaser.GameObjects.Container &&
-      object.active &&
-      object.visible &&
-      object.name.startsWith(RESIDENT_NAME_PREFIX),
+function isResidentContainer(
+  object: Phaser.GameObjects.GameObject,
+): object is Phaser.GameObjects.Container {
+  return (
+    object instanceof Phaser.GameObjects.Container &&
+    object.active &&
+    object.visible &&
+    object.name.startsWith(RESIDENT_NAME_PREFIX)
   );
 }
 
@@ -63,16 +67,6 @@ function conditionIsTrue(condition: InteractionCondition | undefined): boolean {
     return true;
   }
   return typeof condition === 'function' ? condition() : condition;
-}
-
-function findVisibleTalkTargets(scene: Phaser.Scene): PositionedTalkTarget[] {
-  return getSceneInteractionRegistry(scene)
-    .getTargets()
-    .filter((target) => target.actionKind === 'talk' && conditionIsTrue(target.visible))
-    .map((target) => ({
-      id: target.id,
-      ...getInteractionTargetPosition(target),
-    }));
 }
 
 /**
@@ -99,12 +93,21 @@ export class ResidentCollisionManager {
         continue;
       }
 
-      for (const resident of findResidents(scene)) {
-        this.syncResidentRoute(scene, player, resident);
+      for (const object of scene.children.list) {
+        if (isResidentContainer(object)) {
+          this.syncResidentRoute(scene, player, object);
+        }
       }
-      for (const target of findVisibleTalkTargets(scene)) {
-        this.separatePlayer(scene, player, target);
-      }
+
+      getSceneInteractionRegistry(scene).forEachTarget((target) => {
+        if (target.actionKind !== 'talk' || !conditionIsTrue(target.visible)) {
+          return;
+        }
+        this.separatePlayer(scene, player, {
+          id: target.id,
+          ...getInteractionTargetPosition(target),
+        });
+      });
     }
   };
 
@@ -113,10 +116,12 @@ export class ResidentCollisionManager {
     player: Phaser.Physics.Arcade.Sprite,
     resident: Phaser.GameObjects.Container,
   ): void {
-    const distance = Phaser.Math.Distance.Between(player.x, player.y, resident.x, resident.y);
-    if (distance <= PAUSE_DISTANCE) {
+    const dx = player.x - resident.x;
+    const dy = player.y - resident.y;
+    const distanceSquared = dx * dx + dy * dy;
+    if (distanceSquared <= PAUSE_DISTANCE_SQUARED) {
       this.pauseResidentRoute(scene, resident);
-    } else if (distance >= RESUME_DISTANCE) {
+    } else if (distanceSquared >= RESUME_DISTANCE_SQUARED) {
       this.resumeResidentRoute(resident);
     }
   }
@@ -128,10 +133,11 @@ export class ResidentCollisionManager {
   ): void {
     const dx = player.x - target.x;
     const dy = player.y - target.y;
-    const distance = Math.hypot(dx, dy);
-    if (distance >= MINIMUM_CENTRE_DISTANCE) {
+    const distanceSquared = dx * dx + dy * dy;
+    if (distanceSquared >= MINIMUM_CENTRE_DISTANCE_SQUARED) {
       return;
     }
+    const distance = Math.sqrt(distanceSquared);
 
     const body = player.body;
     if (!(body instanceof Phaser.Physics.Arcade.Body)) {
