@@ -235,7 +235,7 @@ function parseCatalogue(value: unknown): StoryCatalogue {
     }
     const defaultEditionId =
       entry.defaultEditionId === undefined
-        ? editions[0].id
+        ? (editions[0]?.id ?? 'default')
         : requireSafeId(entry.defaultEditionId, 'default edition id');
     if (!editions.some((edition) => edition.id === defaultEditionId)) {
       throw new Error('Story Library catalogue default edition is missing.');
