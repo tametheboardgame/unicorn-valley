@@ -40,6 +40,46 @@
       "manifestPath": "/stories/the-duck-bread-baker/book.json"
     },
     {
+      "id": "the-elves-and-the-shoemaker",
+      "title": "The Elves and the Shoemaker",
+      "description": "A kind shoemaker receives mysterious help at night, then finds a way to thank the tiny visitors who changed his fortunes.",
+      "catalogueBlurb": "A grateful shoemaker discovers who has been helping him each night.",
+      "author": "Brothers Grimm, retold by Quill",
+      "readingMode": "flowing",
+      "coverPath": "/stories/the-elves-and-the-shoemaker/covers/cover.webp",
+      "coverAlt": "Historic illustration of the elves helping the shoemaker.",
+      "series": null,
+      "tags": [
+        "classic-retelling",
+        "fairy-tale",
+        "elves",
+        "kindness",
+        "gratitude",
+        "illustrated"
+      ],
+      "discovery": {
+        "format": "Picture Book",
+        "genres": [
+          "Fantasy",
+          "Classics"
+        ],
+        "audiences": [
+          "Read Together",
+          "Early Reader",
+          "Independent Reader"
+        ],
+        "length": "Quick Read"
+      },
+      "rightsSummary": {
+        "text": "original",
+        "illustrations": "public-domain",
+        "edition": "original",
+        "originalPublicationYear": 1812
+      },
+      "chapterCount": 1,
+      "manifestPath": "/stories/the-elves-and-the-shoemaker/book.json"
+    },
+    {
       "id": "the-hare-and-the-tortoise",
       "title": "The Hare and the Tortoise",
       "description": "A speedy hare is certain he cannot lose, until a quiet tortoise shows what steady determination can do.",
