@@ -126,15 +126,14 @@ test('portrait phone keeps Maple baking readable through the R2 companion flow',
   await expect(root.locator('.mobile-modal-heading')).toContainText('Measure');
 
   for (let ingredient = 0; ingredient < 3; ingredient += 1) {
-    for (let pour = 0; pour < 6; pour += 1) {
-      await root.locator('[data-mobile-modal-action="pour"]').click();
-    }
+    await root.locator('[data-mobile-modal-action="pour"]').click();
     await root.locator('[data-mobile-modal-action="lock"]').click();
   }
 
   await expect(root.locator('.mobile-modal-heading')).toContainText('Stir');
-  for (let stir = 0; stir < 24; stir += 1) {
-    await root.locator('[data-mobile-modal-action="right"]').click();
+  await root.locator('[data-mobile-modal-action="right"]').click();
+  for (let stir = 1; stir < 24; stir += 1) {
+    await page.keyboard.press('ArrowRight');
   }
 
   await waitForNamedObject(page, 'MapleBakingActivityScene', 'h3-r2-baking-stage:stack');
@@ -148,14 +147,16 @@ test('portrait phone keeps Maple baking readable through the R2 companion flow',
   }
 
   await expect(root.locator('.mobile-modal-heading')).toContainText('Pipe');
-  for (let trace = 0; trace < 10; trace += 1) {
-    await root.locator('[data-mobile-modal-action="trace"]').click();
+  await root.locator('[data-mobile-modal-action="trace"]').click();
+  for (let trace = 1; trace < 10; trace += 1) {
+    await page.keyboard.press('Space');
   }
 
   await expect(root.locator('.mobile-modal-heading')).toContainText('Choose a topping');
   await root.locator('[data-mobile-modal-action="topping-clouds"]').click();
   await expect(root.locator('.mobile-modal-heading')).toContainText('Finish the cake');
-  await root.locator('[data-mobile-modal-action="finish-ribbon"]').click();
+  await expect(root.locator('[data-mobile-modal-action="finish-ribbon"]')).toBeVisible();
+  await page.keyboard.press('Enter');
 
   await expect(root.locator('[data-mobile-modal-card="result"]')).toBeVisible();
   await expect(root.locator('[data-mobile-modal-action="back"]')).toBeVisible();
