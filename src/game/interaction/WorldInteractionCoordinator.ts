@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { getWorldConversationPresenter } from '../dialogue/WorldConversationPresenter';
 import { gameEventBus } from '../events/GameEventBus';
+import { getClickToMoveManager } from '../input/ClickToMoveManager';
 import { InputController } from '../input/InputController';
 import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 import { InteractionPrompt } from '../ui/InteractionPrompt';
@@ -12,7 +13,9 @@ import {
 } from './InteractionModalState';
 import type { InteractionTarget } from './InteractionTarget';
 import {
+  getInteractionApproachPosition,
   getInteractionTargetPosition,
+  isInteractionTargetAvailable,
   isInteractionTargetEligible,
   selectAutomaticInteractionTarget,
   selectInteractionTarget,
@@ -276,7 +279,7 @@ export class WorldInteractionCoordinator {
       if (
         target.activationMode === 'automatic' ||
         !player ||
-        !isInteractionTargetEligible(player, target)
+        !isInteractionTargetAvailable(target)
       ) {
         continue;
       }
@@ -295,8 +298,50 @@ export class WorldInteractionCoordinator {
           .setDepth(108)
           .setInteractive({ useHandCursor: true });
         zone.on('pointerdown', () => {
-          state.preferredTargetId = target.id;
-          state.pointer.setButton('INTERACT', true);
+          if (isDialogueBlocking(state.scene)) {
+            return;
+          }
+
+          const currentPlayer = findPlayer(state.scene);
+          const currentTarget = getSceneInteractionRegistry(state.scene)
+            .getTargets()
+            .find((candidate) => candidate.id === target.id);
+          if (!currentPlayer || !currentTarget || !isInteractionTargetAvailable(currentTarget)) {
+            return;
+          }
+
+          if (isInteractionTargetEligible(currentPlayer, currentTarget)) {
+            state.preferredTargetId = target.id;
+            state.pointer.setButton('INTERACT', true);
+            return;
+          }
+
+          const approach = getInteractionApproachPosition(currentTarget);
+          const destination = approach ?? getInteractionTargetPosition(currentTarget);
+          const arrivalDistance = approach
+            ? 22
+            : Math.max(42, currentTarget.interactionRadius * 0.72);
+          getClickToMoveManager(this.game).navigateToInteraction(
+            state.scene,
+            destination,
+            arrivalDistance,
+            () => {
+              if (isDialogueBlocking(state.scene)) {
+                return;
+              }
+              const arrivedPlayer = findPlayer(state.scene);
+              const arrivedTarget = getSceneInteractionRegistry(state.scene)
+                .getTargets()
+                .find((candidate) => candidate.id === target.id);
+              if (
+                arrivedPlayer &&
+                arrivedTarget &&
+                isInteractionTargetEligible(arrivedPlayer, arrivedTarget)
+              ) {
+                this.activate(state.scene, arrivedTarget);
+              }
+            },
+          );
         });
         const release = () => state.pointer.setButton('INTERACT', false);
         zone.on('pointerup', release);
