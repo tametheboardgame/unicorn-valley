@@ -244,6 +244,47 @@
       "manifestPath": "/stories/the-lion-and-the-mouse/book.json"
     },
     {
+      "id": "the-princess-and-the-pea",
+      "title": "The Princess and the Pea",
+      "description": "A rain-soaked visitor arrives at a palace claiming to be a princess, and one tiny pea becomes the centre of a very unusual royal test.",
+      "catalogueBlurb": "One tiny pea, twenty mattresses and a very surprising royal test.",
+      "author": "Hans Christian Andersen, retold by Quill",
+      "readingMode": "flowing",
+      "coverPath": "/stories/the-princess-and-the-pea/covers/cover.webp",
+      "coverAlt": "Edmund Dulac's illustration for The Princess and the Pea.",
+      "series": null,
+      "tags": [
+        "classic-retelling",
+        "fairy-tale",
+        "princess",
+        "pea",
+        "palace",
+        "humour",
+        "illustrated"
+      ],
+      "discovery": {
+        "format": "Picture Book",
+        "genres": [
+          "Fantasy",
+          "Classics"
+        ],
+        "audiences": [
+          "Read Together",
+          "Early Reader",
+          "Independent Reader"
+        ],
+        "length": "Quick Read"
+      },
+      "rightsSummary": {
+        "text": "original",
+        "illustrations": "public-domain",
+        "edition": "original",
+        "originalPublicationYear": 1835
+      },
+      "chapterCount": 3,
+      "manifestPath": "/stories/the-princess-and-the-pea/book.json"
+    },
+    {
       "id": "the-town-mouse-and-the-country-mouse",
       "title": "The Town Mouse and the Country Mouse",
       "description": "A country mouse visits his sophisticated cousin in town and discovers that luxury is not much fun when dinner comes with danger.",
