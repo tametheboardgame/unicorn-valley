@@ -1,0 +1,65 @@
+name: Materialise Thumbelina art
+
+on:
+  push:
+    branches:
+      - agent/story-house-thumbelina
+
+permissions:
+  contents: write
+
+jobs:
+  materialise:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/story-house-thumbelina
+
+      - name: Download verified public-domain historical illustrations
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p public/stories/thumbelina/illustrations
+          mkdir -p public/stories/thumbelina/covers
+
+          curl -L --fail --retry 3             "https://commons.wikimedia.org/wiki/Special:Redirect/file/Calineczka_VP_ubt.jpeg"             -o /tmp/pedersen.jpeg
+
+          curl -L --fail --retry 3             "https://commons.wikimedia.org/wiki/Special:Redirect/file/Tommelise_very_desolate_on_the_water-lily_leaf.jpg"             -o /tmp/water-lily.jpg
+
+          curl -L --fail --retry 3             "https://commons.wikimedia.org/wiki/Special:Redirect/file/Bertall_ill_La_Petite_Poucette2.png"             -o /tmp/beetle.png
+
+          curl -L --fail --retry 3             "https://commons.wikimedia.org/wiki/Special:Redirect/file/Eleanor_Vere_Boyle_Thumbelina.jpg"             -o /tmp/flight-south.jpg
+
+      - name: Convert illustrations to Story House WebP assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! command -v convert >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y imagemagick
+          fi
+
+          convert /tmp/pedersen.jpeg -strip -quality 91             public/stories/thumbelina/illustrations/pedersen-thumbelina.webp
+          convert /tmp/water-lily.jpg -strip -quality 91             public/stories/thumbelina/illustrations/water-lily.webp
+          convert /tmp/beetle.png -strip -quality 91             public/stories/thumbelina/illustrations/beetle.webp
+          convert /tmp/flight-south.jpg -strip -quality 91             public/stories/thumbelina/illustrations/flight-south.webp
+
+          convert /tmp/pedersen.jpeg             -resize '420x520>'             -gravity center             -background '#f6f0df'             -extent 480x640             -strip -quality 91             public/stories/thumbelina/covers/cover.webp
+
+      - name: Regenerate Story House catalogue
+        run: node scripts/generateStoryCatalogue.mjs
+
+      - name: Commit materialised story assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/stories/thumbelina public/stories/catalogue.json
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "Story House: materialise Thumbelina art"
+          git push origin HEAD:agent/story-house-thumbelina
