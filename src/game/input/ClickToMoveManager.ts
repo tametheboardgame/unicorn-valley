@@ -304,7 +304,15 @@ export class ClickToMoveManager {
       return false;
     }
 
-    this.startNavigation(scene, state, path, arrivalDistance, onArrive, 'interaction', interactionTargetId);
+    this.startNavigation(
+      scene,
+      state,
+      path,
+      arrivalDistance,
+      onArrive,
+      'interaction',
+      interactionTargetId,
+    );
     return true;
   }
 
