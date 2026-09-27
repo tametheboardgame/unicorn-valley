@@ -19,7 +19,7 @@ import {
   type OwnedInventoryItem,
 } from '../inventory/InventoryService';
 import { getBrowserSaveService } from '../save/browserSaveService';
-import { closeExplorationModal } from '../ui/ExplorationModalNavigation';
+import { closeExplorationModal } from '../interaction/InteractionModalState';
 import {
   getHomewardNextNode,
   getValleyMapNode,
