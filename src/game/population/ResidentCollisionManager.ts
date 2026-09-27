@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { getClickToMoveManager } from '../input/ClickToMoveManager';
 import type { InteractionCondition } from '../interaction/InteractionTarget';
 import { getInteractionTargetPosition } from '../interaction/InteractionTargeting';
 import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
@@ -193,11 +194,18 @@ export class ResidentCollisionManager {
       bounds.bottom - PLAYER_EDGE_PADDING,
     );
 
-    // reset keeps Arcade physics and presentation aligned. Restore the active velocity afterwards so
-    // a held movement input naturally carries the player around the NPC instead of pinning them to
-    // the edge until the key or stick is released.
+    // Click navigation cannot safely reuse the pre-collision velocity here. Doing so makes its
+    // route controller immediately push back through the resident on the next frame, producing a
+    // visible back-and-forth oscillation. Cancel only ordinary ground click-navigation; explicit
+    // interaction approach movement keeps its own arrival contract.
+    const cancelledGroundClickNavigation =
+      getClickToMoveManager(this.game).cancelGroundNavigationForResidentCollision(scene);
+
+    // reset keeps Arcade physics and presentation aligned. Held/manual movement keeps its velocity
+    // so the player can naturally slide around the resident. Ground click-navigation stops cleanly
+    // at the personal-space boundary and waits for a fresh click instead of fighting the collision.
     body.reset(nextX, nextY);
-    if (speed > MOVEMENT_EPSILON) {
+    if (!cancelledGroundClickNavigation && speed > MOVEMENT_EPSILON) {
       body.setVelocity(velocityX, velocityY);
     }
   }
