@@ -371,6 +371,46 @@
       "manifestPath": "/stories/the-twelve-dancing-princesses/book.json"
     },
     {
+      "id": "the-ugly-duckling",
+      "title": "The Ugly Duckling",
+      "description": "A young bird who never seems to fit in leaves the farmyard behind and survives a long winter before discovering what he was becoming all along.",
+      "catalogueBlurb": "A lonely young bird crosses the seasons and discovers who he really is.",
+      "author": "Hans Christian Andersen, retold by Quill",
+      "readingMode": "flowing",
+      "coverPath": "/stories/the-ugly-duckling/covers/cover.webp",
+      "coverAlt": "Vilhelm Pedersen's historic illustration for The Ugly Duckling.",
+      "series": null,
+      "tags": [
+        "classic-retelling",
+        "fairy-tale",
+        "birds",
+        "swans",
+        "belonging",
+        "seasons",
+        "illustrated"
+      ],
+      "discovery": {
+        "format": "Chapter Book",
+        "genres": [
+          "Fantasy",
+          "Classics"
+        ],
+        "audiences": [
+          "Read Together",
+          "Independent Reader"
+        ],
+        "length": "Longer Read"
+      },
+      "rightsSummary": {
+        "text": "original",
+        "illustrations": "public-domain",
+        "edition": "original",
+        "originalPublicationYear": 1843
+      },
+      "chapterCount": 6,
+      "manifestPath": "/stories/the-ugly-duckling/book.json"
+    },
+    {
       "id": "thumbelina",
       "title": "Thumbelina",
       "description": "A tiny girl born inside a flower is swept far from home and must find her own way through rivers, forests, winter tunnels and finally a warm land of flowers.",
