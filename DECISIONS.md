@@ -274,3 +274,12 @@ A genuinely high-risk current delta may still escalate. After David human-approv
 
 David also explicitly authorised automatic remediation of failed CI on status checks. When he asks “?”, “now?”, “where are we at?” or equivalent and the active run has failed, the agent must immediately inspect and fix a deterministic in-scope failure, commit/push the correction and make one sensible replacement-run check without waiting for a separate “fix it” instruction. Stop only for ambiguity, product/design choice, material scope expansion, Red/destructive action or a human gate. Repeated polling remains prohibited.
 
+
+
+## UV-D026 - Wobbly Cake R2 accepted; Rosehip Cottage follows merge
+
+Status: Accepted, 2026-09-27.
+
+David completed the R2/R2A/R2B play review and explicitly accepted the Wobbly Cake mini-game as the current baseline, while noting that a future tightening/improvement pass may revisit it. The accepted implementation includes recipe measuring, touch/mouse traced stirring inside the batter, strict ordered drag-and-drop cake stacking, icing/decorating, a forgiving Wobble Score, the preserved Maple quest contract, and the explicit 1-Shimmer repeat-bake confirmation/economy loop.
+
+This approval releases PR #183 for merge to `main` only after one exact-head full qualification passes the complete static/architecture, unit, build/performance, Chromium and cross-browser gates required by UV-D025. No dependent H3.11.5 work begins before that merge gate is complete. After merge, the next bounded slice is H3.11.5 Rosehip Cottage.
