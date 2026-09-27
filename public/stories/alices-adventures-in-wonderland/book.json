@@ -1,11 +1,9 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "id": "alices-adventures-in-wonderland",
   "title": "Alice's Adventures in Wonderland",
   "description": "Alice follows a hurried White Rabbit underground and tumbles into a world of impossible size changes, talking animals, curious riddles and a Queen who wants everything her own way.",
   "catalogueBlurb": "Follow Alice down the rabbit-hole into a world where almost nothing makes sense.",
-  "author": "Lewis Carroll, retold by Quill",
-  "readingMode": "flowing",
   "cover": {
     "path": "covers/cover.webp",
     "alt": "John Tenniel's historic Alice in Wonderland frontispiece."
@@ -15,176 +13,653 @@
   "publication": {
     "status": "published"
   },
-  "chapters": [
-    {
-      "id": "down-the-rabbit-hole",
-      "title": "Down the Rabbit-Hole",
-      "path": "chapters/01.md",
-      "illustrations": [
-        {
-          "id": "tenniel-white-rabbit",
-          "blockId": "a-rabbit-with-a-watch",
-          "path": "illustrations/white-rabbit.webp",
-          "alt": "John Tenniel's illustration of the White Rabbit.",
-          "placement": "full-width",
-          "width": 789,
-          "height": 1207,
-          "caption": "Illustration by John Tenniel."
-        }
-      ]
-    },
-    {
-      "id": "the-pool-of-tears",
-      "title": "The Pool of Tears",
-      "path": "chapters/02.md",
-      "illustrations": [
-        {
-          "id": "tenniel-pool-of-tears",
-          "blockId": "swimming-in-tears",
-          "path": "illustrations/pool-of-tears.webp",
-          "alt": "John Tenniel's illustration of Alice swimming in the pool of tears.",
-          "placement": "full-width",
-          "width": 655,
-          "height": 432,
-          "caption": "Illustration by John Tenniel."
-        }
-      ]
-    },
-    {
-      "id": "a-caucus-race",
-      "title": "A Caucus-Race",
-      "path": "chapters/03.md"
-    },
-    {
-      "id": "the-rabbits-house",
-      "title": "The Rabbit Sends in a Little Bill",
-      "path": "chapters/04.md"
-    },
-    {
-      "id": "advice-from-a-caterpillar",
-      "title": "Advice from a Caterpillar",
-      "path": "chapters/05.md",
-      "illustrations": [
-        {
-          "id": "tenniel-caterpillar",
-          "blockId": "who-are-you",
-          "path": "illustrations/caterpillar.webp",
-          "alt": "John Tenniel's illustration of the Caterpillar on a mushroom.",
-          "placement": "full-width",
-          "width": 1116,
-          "height": 1492,
-          "caption": "Illustration by John Tenniel."
-        }
-      ]
-    },
-    {
-      "id": "pig-and-pepper",
-      "title": "Pig and Pepper",
-      "path": "chapters/06.md",
-      "illustrations": [
-        {
-          "id": "tenniel-cheshire-cat",
-          "blockId": "the-cheshire-cat",
-          "path": "illustrations/cheshire-cat.webp",
-          "alt": "John Tenniel's illustration of the Cheshire Cat.",
-          "placement": "full-width",
-          "width": 427,
-          "height": 427,
-          "caption": "Illustration by John Tenniel."
-        }
-      ]
-    },
-    {
-      "id": "a-mad-tea-party",
-      "title": "A Mad Tea-Party",
-      "path": "chapters/07.md",
-      "illustrations": [
-        {
-          "id": "tenniel-tea-party",
-          "blockId": "no-room",
-          "path": "illustrations/tea-party.webp",
-          "alt": "John Tenniel's illustration of Alice at the Mad Tea-Party.",
-          "placement": "full-width",
-          "width": 521,
-          "height": 387,
-          "caption": "Illustration by John Tenniel."
-        }
-      ]
-    },
-    {
-      "id": "the-queens-croquet-ground",
-      "title": "The Queen's Croquet-Ground",
-      "path": "chapters/08.md",
-      "illustrations": [
-        {
-          "id": "tenniel-queen-croquet",
-          "blockId": "the-queen-arrives",
-          "path": "illustrations/queen-croquet.webp",
-          "alt": "John Tenniel's illustration of Alice meeting the Queen of Hearts.",
-          "placement": "full-width",
-          "width": 983,
-          "height": 1203,
-          "caption": "Illustration by John Tenniel."
-        }
-      ]
-    },
-    {
-      "id": "the-mock-turtles-story",
-      "title": "The Mock Turtle's Story",
-      "path": "chapters/09.md"
-    },
-    {
-      "id": "the-lobster-quadrille",
-      "title": "The Lobster Quadrille",
-      "path": "chapters/10.md"
-    },
-    {
-      "id": "who-stole-the-tarts",
-      "title": "Who Stole the Tarts?",
-      "path": "chapters/11.md",
-      "illustrations": [
-        {
-          "id": "tenniel-court",
-          "blockId": "the-trial",
-          "path": "illustrations/court.webp",
-          "alt": "John Tenniel's illustration of the King and Queen of Hearts at the trial.",
-          "placement": "full-width",
-          "width": 440,
-          "height": 633,
-          "caption": "Illustration by John Tenniel."
-        }
-      ]
-    },
-    {
-      "id": "alices-evidence",
-      "title": "Alice's Evidence",
-      "path": "chapters/12.md"
-    }
-  ],
   "discovery": {
     "format": "Chapter Book",
     "genres": ["Fantasy", "Adventure", "Classics"],
     "audiences": ["Read Together", "Independent Reader"],
     "length": "Longer Read"
   },
-  "rights": {
-    "text": {
-      "status": "original",
-      "source": "Original Story House retelling based on Lewis Carroll's public-domain 1865 novel",
-      "sourceUrl": "https://en.wikisource.org/wiki/Alice%27s_Adventures_in_Wonderland",
-      "notes": "The underlying 1865 novel is public domain. This wording is an original child-friendly Unicorn Valley retelling."
+  "defaultEditionId": "story-house",
+  "editions": [
+    {
+      "id": "story-house",
+      "label": "Story House Edition",
+      "author": "Lewis Carroll, retold by Quill",
+      "readingMode": "flowing",
+      "rights": {
+        "text": {
+          "status": "original",
+          "source": "Original Story House retelling based on Lewis Carroll's public-domain 1865 novel",
+          "sourceUrl": "https://en.wikisource.org/wiki/Alice%27s_Adventures_in_Wonderland",
+          "notes": "The underlying 1865 novel is public domain. This wording is an original child-friendly Unicorn Valley retelling."
+        },
+        "illustrations": {
+          "status": "public-domain",
+          "source": "Original Alice's Adventures in Wonderland illustrations by John Tenniel",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/Category:John_Tenniel%27s_illustrations_of_Alice%27s_Adventures_in_Wonderland",
+          "notes": "The selected historic Tenniel files are identified as public domain on Wikimedia Commons."
+        },
+        "edition": {
+          "status": "original",
+          "source": "Unicorn Valley Story House edition"
+        },
+        "originalPublicationYear": 1865,
+        "curatorNotes": "Condensed into twelve reader sections matching the original novel's chapter structure, preserving its best-known characters, scenes and nonsense while keeping each section manageable for younger readers."
+      },
+      "chapters": [
+        {
+          "id": "down-the-rabbit-hole",
+          "title": "Down the Rabbit-Hole",
+          "path": "chapters/01.md",
+          "illustrations": [
+            {
+              "id": "tenniel-white-rabbit",
+              "blockId": "a-rabbit-with-a-watch",
+              "path": "illustrations/white-rabbit.webp",
+              "alt": "John Tenniel's illustration of the White Rabbit.",
+              "placement": "full-width",
+              "width": 789,
+              "height": 1207,
+              "caption": "Illustration by John Tenniel."
+            }
+          ]
+        },
+        {
+          "id": "the-pool-of-tears",
+          "title": "The Pool of Tears",
+          "path": "chapters/02.md",
+          "illustrations": [
+            {
+              "id": "tenniel-pool-of-tears",
+              "blockId": "swimming-in-tears",
+              "path": "illustrations/pool-of-tears.webp",
+              "alt": "John Tenniel's illustration of Alice swimming in the pool of tears.",
+              "placement": "full-width",
+              "width": 655,
+              "height": 432,
+              "caption": "Illustration by John Tenniel."
+            }
+          ]
+        },
+        {
+          "id": "a-caucus-race",
+          "title": "A Caucus-Race",
+          "path": "chapters/03.md"
+        },
+        {
+          "id": "the-rabbits-house",
+          "title": "The Rabbit Sends in a Little Bill",
+          "path": "chapters/04.md"
+        },
+        {
+          "id": "advice-from-a-caterpillar",
+          "title": "Advice from a Caterpillar",
+          "path": "chapters/05.md",
+          "illustrations": [
+            {
+              "id": "tenniel-caterpillar",
+              "blockId": "who-are-you",
+              "path": "illustrations/caterpillar.webp",
+              "alt": "John Tenniel's illustration of the Caterpillar on a mushroom.",
+              "placement": "full-width",
+              "width": 1116,
+              "height": 1492,
+              "caption": "Illustration by John Tenniel."
+            }
+          ]
+        },
+        {
+          "id": "pig-and-pepper",
+          "title": "Pig and Pepper",
+          "path": "chapters/06.md",
+          "illustrations": [
+            {
+              "id": "tenniel-cheshire-cat",
+              "blockId": "the-cheshire-cat",
+              "path": "illustrations/cheshire-cat.webp",
+              "alt": "John Tenniel's illustration of the Cheshire Cat.",
+              "placement": "full-width",
+              "width": 427,
+              "height": 427,
+              "caption": "Illustration by John Tenniel."
+            }
+          ]
+        },
+        {
+          "id": "a-mad-tea-party",
+          "title": "A Mad Tea-Party",
+          "path": "chapters/07.md",
+          "illustrations": [
+            {
+              "id": "tenniel-tea-party",
+              "blockId": "no-room",
+              "path": "illustrations/tea-party.webp",
+              "alt": "John Tenniel's illustration of Alice at the Mad Tea-Party.",
+              "placement": "full-width",
+              "width": 521,
+              "height": 387,
+              "caption": "Illustration by John Tenniel."
+            }
+          ]
+        },
+        {
+          "id": "the-queens-croquet-ground",
+          "title": "The Queen's Croquet-Ground",
+          "path": "chapters/08.md",
+          "illustrations": [
+            {
+              "id": "tenniel-queen-croquet",
+              "blockId": "the-queen-arrives",
+              "path": "illustrations/queen-croquet.webp",
+              "alt": "John Tenniel's illustration of Alice meeting the Queen of Hearts.",
+              "placement": "full-width",
+              "width": 983,
+              "height": 1203,
+              "caption": "Illustration by John Tenniel."
+            }
+          ]
+        },
+        {
+          "id": "the-mock-turtles-story",
+          "title": "The Mock Turtle's Story",
+          "path": "chapters/09.md"
+        },
+        {
+          "id": "the-lobster-quadrille",
+          "title": "The Lobster Quadrille",
+          "path": "chapters/10.md"
+        },
+        {
+          "id": "who-stole-the-tarts",
+          "title": "Who Stole the Tarts?",
+          "path": "chapters/11.md",
+          "illustrations": [
+            {
+              "id": "tenniel-court",
+              "blockId": "the-trial",
+              "path": "illustrations/court.webp",
+              "alt": "John Tenniel's illustration of the King and Queen of Hearts at the trial.",
+              "placement": "full-width",
+              "width": 440,
+              "height": 633,
+              "caption": "Illustration by John Tenniel."
+            }
+          ]
+        },
+        {
+          "id": "alices-evidence",
+          "title": "Alice's Evidence",
+          "path": "chapters/12.md"
+        }
+      ]
     },
-    "illustrations": {
-      "status": "public-domain",
-      "source": "Original Alice's Adventures in Wonderland illustrations by John Tenniel",
-      "sourceUrl": "https://commons.wikimedia.org/wiki/Category:John_Tenniel%27s_illustrations_of_Alice%27s_Adventures_in_Wonderland",
-      "notes": "The selected historic Tenniel files are identified as public domain on Wikimedia Commons."
-    },
-    "edition": {
-      "status": "original",
-      "source": "Unicorn Valley Story House edition"
-    },
-    "originalPublicationYear": 1865,
-    "curatorNotes": "Condensed into twelve reader sections matching the original novel's chapter structure, preserving its best-known characters, scenes and nonsense while keeping each section manageable for younger readers."
-  }
+    {
+      "id": "full-classic",
+      "label": "Full Classic Text",
+      "author": "Lewis Carroll",
+      "readingMode": "paged-prose",
+      "rights": {
+        "text": {
+          "status": "public-domain",
+          "source": "Lewis Carroll's 1865 text, transcribed in Project Gutenberg eBook #11",
+          "sourceUrl": "https://www.gutenberg.org/ebooks/11",
+          "notes": "Complete novel text. Project Gutenberg header, footer, licence text and standalone [Illustration] placeholders are excluded; prose wording is not abridged or modernised."
+        },
+        "illustrations": {
+          "status": "public-domain",
+          "source": "Original Alice's Adventures in Wonderland illustrations by John Tenniel",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/Category:John_Tenniel%27s_illustrations_of_Alice%27s_Adventures_in_Wonderland",
+          "notes": "The selected historic Tenniel files are identified as public domain on Wikimedia Commons."
+        },
+        "edition": {
+          "status": "public-domain",
+          "source": "Historic Lewis Carroll text with John Tenniel illustrations",
+          "notes": "Story House pagination is a presentation layer only. The classic wording remains unabridged."
+        },
+        "originalPublicationYear": 1865,
+        "curatorNotes": "Complete public-domain text split into 71 reader pages at paragraph boundaries. Original twelve chapter divisions are preserved."
+      },
+      "chapters": [
+        {
+          "id": "chapter-01-page-01",
+          "title": "Chapter I. Down the Rabbit-Hole",
+          "path": "editions/full-classic/pages/ch01-p01.md",
+          "illustrations": [
+            {
+              "id": "full-tenniel-white-rabbit",
+              "blockId": "ch01-p01-b01",
+              "path": "illustrations/white-rabbit.webp",
+              "alt": "John Tenniel's illustration of the White Rabbit.",
+              "placement": "full-width",
+              "width": 789,
+              "height": 1207,
+              "caption": "Illustration by John Tenniel."
+            }
+          ]
+        },
+        {
+          "id": "chapter-01-page-02",
+          "title": "Down the Rabbit-Hole (continued)",
+          "path": "editions/full-classic/pages/ch01-p02.md"
+        },
+        {
+          "id": "chapter-01-page-03",
+          "title": "Down the Rabbit-Hole (continued)",
+          "path": "editions/full-classic/pages/ch01-p03.md"
+        },
+        {
+          "id": "chapter-01-page-04",
+          "title": "Down the Rabbit-Hole (continued)",
+          "path": "editions/full-classic/pages/ch01-p04.md"
+        },
+        {
+          "id": "chapter-01-page-05",
+          "title": "Down the Rabbit-Hole (continued)",
+          "path": "editions/full-classic/pages/ch01-p05.md"
+        },
+        {
+          "id": "chapter-02-page-01",
+          "title": "Chapter II. The Pool of Tears",
+          "path": "editions/full-classic/pages/ch02-p01.md",
+          "illustrations": [
+            {
+              "id": "full-tenniel-pool-of-tears",
+              "blockId": "ch02-p01-b01",
+              "path": "illustrations/pool-of-tears.webp",
+              "alt": "John Tenniel's illustration of Alice swimming in the pool of tears.",
+              "placement": "full-width",
+              "width": 655,
+              "height": 432,
+              "caption": "Illustration by John Tenniel."
+            }
+          ]
+        },
+        {
+          "id": "chapter-02-page-02",
+          "title": "The Pool of Tears (continued)",
+          "path": "editions/full-classic/pages/ch02-p02.md"
+        },
+        {
+          "id": "chapter-02-page-03",
+          "title": "The Pool of Tears (continued)",
+          "path": "editions/full-classic/pages/ch02-p03.md"
+        },
+        {
+          "id": "chapter-02-page-04",
+          "title": "The Pool of Tears (continued)",
+          "path": "editions/full-classic/pages/ch02-p04.md"
+        },
+        {
+          "id": "chapter-02-page-05",
+          "title": "The Pool of Tears (continued)",
+          "path": "editions/full-classic/pages/ch02-p05.md"
+        },
+        {
+          "id": "chapter-03-page-01",
+          "title": "Chapter III. A Caucus-Race and a Long Tale",
+          "path": "editions/full-classic/pages/ch03-p01.md"
+        },
+        {
+          "id": "chapter-03-page-02",
+          "title": "A Caucus-Race and a Long Tale (continued)",
+          "path": "editions/full-classic/pages/ch03-p02.md"
+        },
+        {
+          "id": "chapter-03-page-03",
+          "title": "A Caucus-Race and a Long Tale (continued)",
+          "path": "editions/full-classic/pages/ch03-p03.md"
+        },
+        {
+          "id": "chapter-03-page-04",
+          "title": "A Caucus-Race and a Long Tale (continued)",
+          "path": "editions/full-classic/pages/ch03-p04.md"
+        },
+        {
+          "id": "chapter-03-page-05",
+          "title": "A Caucus-Race and a Long Tale (continued)",
+          "path": "editions/full-classic/pages/ch03-p05.md"
+        },
+        {
+          "id": "chapter-04-page-01",
+          "title": "Chapter IV. The Rabbit Sends in a Little Bill",
+          "path": "editions/full-classic/pages/ch04-p01.md"
+        },
+        {
+          "id": "chapter-04-page-02",
+          "title": "The Rabbit Sends in a Little Bill (continued)",
+          "path": "editions/full-classic/pages/ch04-p02.md"
+        },
+        {
+          "id": "chapter-04-page-03",
+          "title": "The Rabbit Sends in a Little Bill (continued)",
+          "path": "editions/full-classic/pages/ch04-p03.md"
+        },
+        {
+          "id": "chapter-04-page-04",
+          "title": "The Rabbit Sends in a Little Bill (continued)",
+          "path": "editions/full-classic/pages/ch04-p04.md"
+        },
+        {
+          "id": "chapter-04-page-05",
+          "title": "The Rabbit Sends in a Little Bill (continued)",
+          "path": "editions/full-classic/pages/ch04-p05.md"
+        },
+        {
+          "id": "chapter-04-page-06",
+          "title": "The Rabbit Sends in a Little Bill (continued)",
+          "path": "editions/full-classic/pages/ch04-p06.md"
+        },
+        {
+          "id": "chapter-04-page-07",
+          "title": "The Rabbit Sends in a Little Bill (continued)",
+          "path": "editions/full-classic/pages/ch04-p07.md"
+        },
+        {
+          "id": "chapter-05-page-01",
+          "title": "Chapter V. Advice from a Caterpillar",
+          "path": "editions/full-classic/pages/ch05-p01.md",
+          "illustrations": [
+            {
+              "id": "full-tenniel-caterpillar",
+              "blockId": "ch05-p01-b01",
+              "path": "illustrations/caterpillar.webp",
+              "alt": "John Tenniel's illustration of the Caterpillar on a mushroom.",
+              "placement": "full-width",
+              "width": 1116,
+              "height": 1492,
+              "caption": "Illustration by John Tenniel."
+            }
+          ]
+        },
+        {
+          "id": "chapter-05-page-02",
+          "title": "Advice from a Caterpillar (continued)",
+          "path": "editions/full-classic/pages/ch05-p02.md"
+        },
+        {
+          "id": "chapter-05-page-03",
+          "title": "Advice from a Caterpillar (continued)",
+          "path": "editions/full-classic/pages/ch05-p03.md"
+        },
+        {
+          "id": "chapter-05-page-04",
+          "title": "Advice from a Caterpillar (continued)",
+          "path": "editions/full-classic/pages/ch05-p04.md"
+        },
+        {
+          "id": "chapter-05-page-05",
+          "title": "Advice from a Caterpillar (continued)",
+          "path": "editions/full-classic/pages/ch05-p05.md"
+        },
+        {
+          "id": "chapter-05-page-06",
+          "title": "Advice from a Caterpillar (continued)",
+          "path": "editions/full-classic/pages/ch05-p06.md"
+        },
+        {
+          "id": "chapter-06-page-01",
+          "title": "Chapter VI. Pig and Pepper",
+          "path": "editions/full-classic/pages/ch06-p01.md",
+          "illustrations": [
+            {
+              "id": "full-tenniel-cheshire-cat",
+              "blockId": "ch06-p01-b01",
+              "path": "illustrations/cheshire-cat.webp",
+              "alt": "John Tenniel's illustration of the Cheshire Cat.",
+              "placement": "full-width",
+              "width": 427,
+              "height": 427,
+              "caption": "Illustration by John Tenniel."
+            }
+          ]
+        },
+        {
+          "id": "chapter-06-page-02",
+          "title": "Pig and Pepper (continued)",
+          "path": "editions/full-classic/pages/ch06-p02.md"
+        },
+        {
+          "id": "chapter-06-page-03",
+          "title": "Pig and Pepper (continued)",
+          "path": "editions/full-classic/pages/ch06-p03.md"
+        },
+        {
+          "id": "chapter-06-page-04",
+          "title": "Pig and Pepper (continued)",
+          "path": "editions/full-classic/pages/ch06-p04.md"
+        },
+        {
+          "id": "chapter-06-page-05",
+          "title": "Pig and Pepper (continued)",
+          "path": "editions/full-classic/pages/ch06-p05.md"
+        },
+        {
+          "id": "chapter-06-page-06",
+          "title": "Pig and Pepper (continued)",
+          "path": "editions/full-classic/pages/ch06-p06.md"
+        },
+        {
+          "id": "chapter-06-page-07",
+          "title": "Pig and Pepper (continued)",
+          "path": "editions/full-classic/pages/ch06-p07.md"
+        },
+        {
+          "id": "chapter-07-page-01",
+          "title": "Chapter VII. A Mad Tea-Party",
+          "path": "editions/full-classic/pages/ch07-p01.md",
+          "illustrations": [
+            {
+              "id": "full-tenniel-tea-party",
+              "blockId": "ch07-p01-b01",
+              "path": "illustrations/tea-party.webp",
+              "alt": "John Tenniel's illustration of Alice at the Mad Tea-Party.",
+              "placement": "full-width",
+              "width": 521,
+              "height": 387,
+              "caption": "Illustration by John Tenniel."
+            }
+          ]
+        },
+        {
+          "id": "chapter-07-page-02",
+          "title": "A Mad Tea-Party (continued)",
+          "path": "editions/full-classic/pages/ch07-p02.md"
+        },
+        {
+          "id": "chapter-07-page-03",
+          "title": "A Mad Tea-Party (continued)",
+          "path": "editions/full-classic/pages/ch07-p03.md"
+        },
+        {
+          "id": "chapter-07-page-04",
+          "title": "A Mad Tea-Party (continued)",
+          "path": "editions/full-classic/pages/ch07-p04.md"
+        },
+        {
+          "id": "chapter-07-page-05",
+          "title": "A Mad Tea-Party (continued)",
+          "path": "editions/full-classic/pages/ch07-p05.md"
+        },
+        {
+          "id": "chapter-07-page-06",
+          "title": "A Mad Tea-Party (continued)",
+          "path": "editions/full-classic/pages/ch07-p06.md"
+        },
+        {
+          "id": "chapter-08-page-01",
+          "title": "Chapter VIII. The Queen’s Croquet-Ground",
+          "path": "editions/full-classic/pages/ch08-p01.md",
+          "illustrations": [
+            {
+              "id": "full-tenniel-queen-croquet",
+              "blockId": "ch08-p01-b01",
+              "path": "illustrations/queen-croquet.webp",
+              "alt": "John Tenniel's illustration of Alice meeting the Queen of Hearts.",
+              "placement": "full-width",
+              "width": 983,
+              "height": 1203,
+              "caption": "Illustration by John Tenniel."
+            }
+          ]
+        },
+        {
+          "id": "chapter-08-page-02",
+          "title": "The Queen’s Croquet-Ground (continued)",
+          "path": "editions/full-classic/pages/ch08-p02.md"
+        },
+        {
+          "id": "chapter-08-page-03",
+          "title": "The Queen’s Croquet-Ground (continued)",
+          "path": "editions/full-classic/pages/ch08-p03.md"
+        },
+        {
+          "id": "chapter-08-page-04",
+          "title": "The Queen’s Croquet-Ground (continued)",
+          "path": "editions/full-classic/pages/ch08-p04.md"
+        },
+        {
+          "id": "chapter-08-page-05",
+          "title": "The Queen’s Croquet-Ground (continued)",
+          "path": "editions/full-classic/pages/ch08-p05.md"
+        },
+        {
+          "id": "chapter-08-page-06",
+          "title": "The Queen’s Croquet-Ground (continued)",
+          "path": "editions/full-classic/pages/ch08-p06.md"
+        },
+        {
+          "id": "chapter-08-page-07",
+          "title": "The Queen’s Croquet-Ground (continued)",
+          "path": "editions/full-classic/pages/ch08-p07.md"
+        },
+        {
+          "id": "chapter-09-page-01",
+          "title": "Chapter IX. The Mock Turtle’s Story",
+          "path": "editions/full-classic/pages/ch09-p01.md"
+        },
+        {
+          "id": "chapter-09-page-02",
+          "title": "The Mock Turtle’s Story (continued)",
+          "path": "editions/full-classic/pages/ch09-p02.md"
+        },
+        {
+          "id": "chapter-09-page-03",
+          "title": "The Mock Turtle’s Story (continued)",
+          "path": "editions/full-classic/pages/ch09-p03.md"
+        },
+        {
+          "id": "chapter-09-page-04",
+          "title": "The Mock Turtle’s Story (continued)",
+          "path": "editions/full-classic/pages/ch09-p04.md"
+        },
+        {
+          "id": "chapter-09-page-05",
+          "title": "The Mock Turtle’s Story (continued)",
+          "path": "editions/full-classic/pages/ch09-p05.md"
+        },
+        {
+          "id": "chapter-09-page-06",
+          "title": "The Mock Turtle’s Story (continued)",
+          "path": "editions/full-classic/pages/ch09-p06.md"
+        },
+        {
+          "id": "chapter-10-page-01",
+          "title": "Chapter X. The Lobster Quadrille",
+          "path": "editions/full-classic/pages/ch10-p01.md"
+        },
+        {
+          "id": "chapter-10-page-02",
+          "title": "The Lobster Quadrille (continued)",
+          "path": "editions/full-classic/pages/ch10-p02.md"
+        },
+        {
+          "id": "chapter-10-page-03",
+          "title": "The Lobster Quadrille (continued)",
+          "path": "editions/full-classic/pages/ch10-p03.md"
+        },
+        {
+          "id": "chapter-10-page-04",
+          "title": "The Lobster Quadrille (continued)",
+          "path": "editions/full-classic/pages/ch10-p04.md"
+        },
+        {
+          "id": "chapter-10-page-05",
+          "title": "The Lobster Quadrille (continued)",
+          "path": "editions/full-classic/pages/ch10-p05.md"
+        },
+        {
+          "id": "chapter-10-page-06",
+          "title": "The Lobster Quadrille (continued)",
+          "path": "editions/full-classic/pages/ch10-p06.md"
+        },
+        {
+          "id": "chapter-11-page-01",
+          "title": "Chapter XI. Who Stole the Tarts?",
+          "path": "editions/full-classic/pages/ch11-p01.md",
+          "illustrations": [
+            {
+              "id": "full-tenniel-court",
+              "blockId": "ch11-p01-b01",
+              "path": "illustrations/court.webp",
+              "alt": "John Tenniel's illustration of the King and Queen of Hearts at the trial.",
+              "placement": "full-width",
+              "width": 440,
+              "height": 633,
+              "caption": "Illustration by John Tenniel."
+            }
+          ]
+        },
+        {
+          "id": "chapter-11-page-02",
+          "title": "Who Stole the Tarts? (continued)",
+          "path": "editions/full-classic/pages/ch11-p02.md"
+        },
+        {
+          "id": "chapter-11-page-03",
+          "title": "Who Stole the Tarts? (continued)",
+          "path": "editions/full-classic/pages/ch11-p03.md"
+        },
+        {
+          "id": "chapter-11-page-04",
+          "title": "Who Stole the Tarts? (continued)",
+          "path": "editions/full-classic/pages/ch11-p04.md"
+        },
+        {
+          "id": "chapter-11-page-05",
+          "title": "Who Stole the Tarts? (continued)",
+          "path": "editions/full-classic/pages/ch11-p05.md"
+        },
+        {
+          "id": "chapter-12-page-01",
+          "title": "Chapter XII. Alice’s Evidence",
+          "path": "editions/full-classic/pages/ch12-p01.md"
+        },
+        {
+          "id": "chapter-12-page-02",
+          "title": "Alice’s Evidence (continued)",
+          "path": "editions/full-classic/pages/ch12-p02.md"
+        },
+        {
+          "id": "chapter-12-page-03",
+          "title": "Alice’s Evidence (continued)",
+          "path": "editions/full-classic/pages/ch12-p03.md"
+        },
+        {
+          "id": "chapter-12-page-04",
+          "title": "Alice’s Evidence (continued)",
+          "path": "editions/full-classic/pages/ch12-p04.md"
+        },
+        {
+          "id": "chapter-12-page-05",
+          "title": "Alice’s Evidence (continued)",
+          "path": "editions/full-classic/pages/ch12-p05.md"
+        },
+        {
+          "id": "chapter-12-page-06",
+          "title": "Alice’s Evidence (continued)",
+          "path": "editions/full-classic/pages/ch12-p06.md"
+        }
+      ]
+    }
+  ]
 }

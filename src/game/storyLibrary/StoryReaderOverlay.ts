@@ -942,7 +942,10 @@ export class StoryReaderOverlay {
 
     const navigation = document.createElement('nav');
     navigation.className = 'story-reader-chapter-nav';
-    navigation.setAttribute('aria-label', isPagedEdition ? 'Page navigation' : 'Chapter navigation');
+    navigation.setAttribute(
+      'aria-label',
+      isPagedEdition ? 'Page navigation' : 'Chapter navigation',
+    );
     const previous = button(
       isPagedEdition ? '← Previous page' : '← Previous chapter',
       'story-reader-chapter-button',
