@@ -296,6 +296,7 @@ export class WorldInteractionCoordinator {
           // World hit zones must remain below fixed HUD controls. Equal-depth zones are created
           // after the HUD and can otherwise steal taps from controls such as Cottage Done.
           .setDepth(108)
+          .setData('interaction-direct-zone', true)
           .setInteractive({ useHandCursor: true });
         zone.on('pointerdown', () => {
           if (isDialogueBlocking(state.scene)) {
