@@ -164,7 +164,6 @@ export class WorldOcclusionManager {
     return state;
   }
 
-
   /**
    * Static scenery used to be reclassified through every occlusion box on every rendered frame.
    * Sunbeam Village alone has enough boxes that this meant repeated full display-list scans even
@@ -217,7 +216,7 @@ export class WorldOcclusionManager {
 
   private refreshPlayerDepth(scene: Phaser.Scene): void {
     const player = scene.children.getByName(WORLD_PLAYER_NAME);
-    if (isPositionedDepthObject(player)) {
+    if (player && isPositionedDepthObject(player)) {
       player.setDepth(worldDepthForY(player.y, 0.5));
     }
   }
