@@ -107,8 +107,6 @@ async function seedIntroducedPip(page: Page): Promise<void> {
 async function installThirtyFpsFrameConstraint(page: Page): Promise<void> {
   await page.addInitScript(() => {
     const nativeRequestAnimationFrame = window.requestAnimationFrame.bind(window);
-    const nativeCancelAnimationFrame = window.cancelAnimationFrame.bind(window);
-    const delayedCallbacks = new Map<number, number>();
     const frameIntervalMs = 1000 / 30;
     let lastCallbackAt = 0;
 
@@ -121,38 +119,13 @@ async function installThirtyFpsFrameConstraint(page: Page): Promise<void> {
           return;
         }
 
-        const timeoutId = window.setTimeout(() => {
-          delayedCallbacks.delete(timeoutId);
+        window.setTimeout(() => {
           const now = performance.now();
           lastCallbackAt = now;
           callback(now);
         }, waitMs);
-        delayedCallbacks.set(timeoutId, timeoutId);
       });
-
-    window.cancelAnimationFrame = (handle: number): void => {
-      nativeCancelAnimationFrame(handle);
-      const timeoutId = delayedCallbacks.get(handle);
-      if (timeoutId !== undefined) {
-        window.clearTimeout(timeoutId);
-        delayedCallbacks.delete(handle);
-      }
-    };
   });
-}
-
-async function diagnostics(page: Page): Promise<BrowserDiagnosticsApi> {
-  return page.evaluateHandle(() => {
-    const api = (
-      window as typeof window & {
-        __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
-      }
-    ).__UNICORN_VALLEY_DIAGNOSTICS__;
-    if (!api) {
-      throw new Error('Browser diagnostics are unavailable.');
-    }
-    return api;
-  }) as unknown as BrowserDiagnosticsApi;
 }
 
 async function getSnapshot(page: Page): Promise<DiagnosticSnapshot> {
@@ -276,29 +249,6 @@ async function movementControlPoints(
     ? await browserPointForDomControl(page, '.mobile-touch-gallop')
     : await browserPointForCanvasObject(page, 'touch-movement-gallop');
   return [right, gallopPoint];
-}
-
-async function holdTouchPoints(
-  cdp: CDPSession,
-  page: Page,
-  points: Point[],
-  durationMs: number,
-): Promise<void> {
-  const touchPoints = points.map((point, index) => ({
-    x: point.x,
-    y: point.y,
-    id: index + 1,
-    radiusX: 2,
-    radiusY: 2,
-    force: 1,
-  }));
-
-  await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints });
-  try {
-    await page.waitForTimeout(durationMs);
-  } finally {
-    await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
-  }
 }
 
 async function measureMovement(
