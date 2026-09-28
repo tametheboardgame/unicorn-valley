@@ -1,17 +1,9 @@
 {
   "schemaVersion": 1,
   "stagingFolderId": "1tAy3sb661zrfVnbQ1VkGFZ_Of3rM6ikA",
-  "allowedDestinationRoots": [
-    "public/assets/generated/"
-  ],
-  "allowedMimeTypes": [
-    "image/png",
-    "image/jpeg",
-    "image/webp"
-  ],
+  "allowedDestinationRoots": ["public/assets/generated/"],
+  "allowedMimeTypes": ["image/png", "image/jpeg", "image/webp"],
   "maxSourceBytes": 12582912,
   "maxOutputBytes": 2097152,
-  "allowedDestinationPatterns": [
-    "public/stories/*/illustrations/generated/*.webp"
-  ]
+  "allowedDestinationPatterns": ["public/stories/*/illustrations/generated/*.webp"]
 }
