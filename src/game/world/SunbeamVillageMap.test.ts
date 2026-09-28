@@ -4,10 +4,7 @@ import {
   isPointBlocked,
   isPointInsideWalkableBounds,
 } from './MapTraversal';
-import {
-  resolveSunbeamShopRoofAnchor,
-  SUNBEAM_VILLAGE_LAYOUT,
-} from './SunbeamVillageLayout';
+import { resolveSunbeamShopRoofAnchor, SUNBEAM_VILLAGE_LAYOUT } from './SunbeamVillageLayout';
 import { SUNBEAM_VILLAGE_MAP } from './SunbeamVillageMap';
 
 const PLAYER_CLEARANCE = 42;
@@ -210,19 +207,27 @@ describe('Sunbeam Village map', () => {
   it('anchors high-street bunting to canonical shop roof corners', () => {
     const [bakeryToThread, threadToStory] = SUNBEAM_VILLAGE_LAYOUT.highStreetBunting;
 
-    expect(resolveSunbeamShopRoofAnchor(bakeryToThread.from.building, bakeryToThread.from.anchor)).toEqual({
+    expect(
+      resolveSunbeamShopRoofAnchor(bakeryToThread.from.building, bakeryToThread.from.anchor),
+    ).toEqual({
       x: 945,
       y: 395,
     });
-    expect(resolveSunbeamShopRoofAnchor(bakeryToThread.to.building, bakeryToThread.to.anchor)).toEqual({
+    expect(
+      resolveSunbeamShopRoofAnchor(bakeryToThread.to.building, bakeryToThread.to.anchor),
+    ).toEqual({
       x: 1224,
       y: 298,
     });
-    expect(resolveSunbeamShopRoofAnchor(threadToStory.from.building, threadToStory.from.anchor)).toEqual({
+    expect(
+      resolveSunbeamShopRoofAnchor(threadToStory.from.building, threadToStory.from.anchor),
+    ).toEqual({
       x: 1674,
       y: 298,
     });
-    expect(resolveSunbeamShopRoofAnchor(threadToStory.to.building, threadToStory.to.anchor)).toEqual({
+    expect(
+      resolveSunbeamShopRoofAnchor(threadToStory.to.building, threadToStory.to.anchor),
+    ).toEqual({
       x: 2008,
       y: 380,
     });
