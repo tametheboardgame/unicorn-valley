@@ -43,3 +43,19 @@ Every story manifest now carries metadata used by the scalable Story House brows
 The catalogue generator copies only lightweight discovery fields and a compact rights-status summary into `catalogue.json`. Full provenance remains in `book.json`.
 
 Rights/provenance uses separate `text`, optional `illustrations` and optional `edition` records. Each has a status of `original`, `public-domain`, `licensed` or `unknown`, plus a source and optional source URL, rights holder and notes. This separation is deliberate: an old public-domain text can still be paired with a modern copyrighted translation, edition or illustration set.
+
+
+## Generated illustration pipeline
+
+New ChatGPT-generated Story House artwork uses the permanent R4 Drive/WIF materialisation path.
+Do not push generated binary image bytes through the GitHub connector and do not create one-off
+download workflows per book.
+
+Read:
+
+- `docs/story-house/GENERATED-ASSET-PIPELINE.md` for architecture, security and provenance rules;
+- `docs/story-house/GENERATED-ASSET-RUNBOOK.md` for the repeatable per-image/per-book workflow.
+
+Generated Story House illustration files belong under
+`public/stories/<story-id>/illustrations/generated/` so they remain visibly separate from
+historic/public-domain source artwork.
