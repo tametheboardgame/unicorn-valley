@@ -1,6 +1,7 @@
 name: Materialise Twelve Dancing Princesses Full Classic Text
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - agent/story-house-twelve-dancing-princesses-full-classic
