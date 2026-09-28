@@ -21,21 +21,3 @@ Flopsy, Mopsy, and Cottontail, who were good little bunnies, went down the lane 
 
 <!-- block:p01-b08 -->
 But Peter, who was very naughty, ran straight away to Mr. McGregor's garden, and squeezed under the gate!
-
-<!-- block:p01-b09 -->
-First he ate some lettuces and some French beans; and then he ate some radishes;
-
-<!-- block:p01-b10 -->
-And then, feeling rather sick, he went to look for some parsley.
-
-<!-- block:p01-b11 -->
-But round the end of a cucumber frame, whom should he meet but Mr. McGregor!
-
-<!-- block:p01-b12 -->
-Mr. McGregor was on his hands and knees planting out young cabbages, but he jumped up and ran after Peter, waving a rake and calling out, 'Stop thief!'
-
-<!-- block:p01-b13 -->
-Peter was most dreadfully frightened; he rushed all over the garden, for he had forgotten the way back to the gate.
-
-<!-- block:p01-b14 -->
-He lost one of his shoes among the cabbages, and the other shoe amongst the potatoes.
