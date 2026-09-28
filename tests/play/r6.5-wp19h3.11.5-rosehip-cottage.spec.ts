@@ -52,7 +52,9 @@ test('H3.11.5 Rosehip Cottage is a distinct walkable lived-in home', async ({ pa
     });
   });
 
-  await expect.poll(async () => (await snapshot(page)).activeScenes).toEqual(['VillageInteriorScene']);
+  await expect
+    .poll(async () => (await snapshot(page)).activeScenes)
+    .toEqual(['VillageInteriorScene']);
 
   const interior = (await snapshot(page)).scenes.find(({ key }) => key === 'VillageInteriorScene');
   if (!interior) throw new Error('Missing VillageInteriorScene');
@@ -88,11 +90,12 @@ test('H3.11.5 Rosehip Cottage is a distinct walkable lived-in home', async ({ pa
   });
   await expect
     .poll(async () => {
-      const current = (await snapshot(page)).scenes.find(({ key }) => key === 'VillageInteriorScene');
+      const current = (await snapshot(page)).scenes.find(
+        ({ key }) => key === 'VillageInteriorScene',
+      );
       return current?.objects.some(
         ({ name }) =>
-          name ===
-          'interaction-direct-zone:interaction:village-interior:rosehip-cottage:journal',
+          name === 'interaction-direct-zone:interaction:village-interior:rosehip-cottage:journal',
       );
     })
     .toBe(true);
@@ -108,5 +111,7 @@ test('H3.11.5 Rosehip Cottage is a distinct walkable lived-in home', async ({ pa
     );
   });
   await page.keyboard.press('Enter');
-  await expect.poll(async () => (await snapshot(page)).activeScenes).toEqual(['SunbeamVillageScene']);
+  await expect
+    .poll(async () => (await snapshot(page)).activeScenes)
+    .toEqual(['SunbeamVillageScene']);
 });
