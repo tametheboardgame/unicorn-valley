@@ -80,6 +80,8 @@ export class PortraitConceptPresentationManager {
   private readonly economy = new ShimmerEconomyService(getBrowserSaveService());
   private readonly suppressed = new Map<Phaser.GameObjects.GameObject, SuppressedState>();
   private dock: PortraitDock | null = null;
+  private suppressedScene: Phaser.Scene | null = null;
+  private suppressedObjectCount = -1;
 
   public constructor(private readonly game: Phaser.Game) {
     this.game.events.on(Phaser.Core.Events.POST_STEP, this.update, this);
@@ -120,7 +122,7 @@ export class PortraitConceptPresentationManager {
       this.dock = this.createDock(scene);
     }
 
-    this.suppressLegacy(scene);
+    this.suppressLegacyIfCompositionChanged(scene);
     this.syncDock(scene);
   }
 
@@ -198,6 +200,16 @@ export class PortraitConceptPresentationManager {
     this.dock.shimmer.textContent = `✦ ${this.economy.getBalance()} Shimmer`;
   }
 
+  private suppressLegacyIfCompositionChanged(scene: Phaser.Scene): void {
+    const objectCount = scene.children.list.length;
+    if (this.suppressedScene === scene && this.suppressedObjectCount === objectCount) {
+      return;
+    }
+    this.suppressedScene = scene;
+    this.suppressedObjectCount = objectCount;
+    this.suppressLegacy(scene);
+  }
+
   private suppressLegacy(scene: Phaser.Scene): void {
     for (const object of scene.children.list) {
       if (!canSuppress(object)) {
@@ -249,6 +261,8 @@ export class PortraitConceptPresentationManager {
       }
     }
     this.suppressed.clear();
+    this.suppressedScene = null;
+    this.suppressedObjectCount = -1;
   }
 
   private clearDock(): void {
