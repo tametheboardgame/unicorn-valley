@@ -1,23 +1,11 @@
 <!-- block:p06-b01 -->
-Mr. McGregor caught sight of him at the corner, but Peter did not care. He slipped underneath the gate, and was safe at last in the wood outside the garden.
+And rushed into the tool-shed, and jumped into a can. It would have been a beautiful thing to hide in, if it had not had so much water in it.
 
 <!-- block:p06-b02 -->
-Mr. McGregor hung up the little jacket and the shoes for a scare-crow to frighten the blackbirds.
+Mr. McGregor was quite sure that Peter was somewhere in the tool-shed, perhaps hidden underneath a flower-pot. He began to turn them over carefully, looking under each.
 
 <!-- block:p06-b03 -->
-Peter never stopped running or looked behind him till he got home to the big fir-tree.
+Presently Peter sneezed--'Kertyschoo!' Mr. McGregor was after him in no time.
 
 <!-- block:p06-b04 -->
-He was so tired that he flopped down upon the nice soft sand on the floor of the rabbit-hole and shut his eyes. His mother was busy cooking; she wondered what he had done with his clothes. It was the second little jacket and pair of shoes that Peter had lost in a fortnight!
-
-<!-- block:p06-b05 -->
-I am sorry to say that Peter was not very well during the evening.
-
-<!-- block:p06-b06 -->
-His mother put him to bed, and made some camomile tea; and she gave a dose of it to Peter!
-
-<!-- block:p06-b07 -->
-'One table-spoonful to be taken at bed-time.'
-
-<!-- block:p06-b08 -->
-But Flopsy, Mopsy, and Cotton-tail had bread and milk and blackberries for supper.
+And tried to put his foot upon Peter, who jumped out of a window, upsetting three plants. The window was too small for Mr. McGregor, and he was tired of running after Peter. He went back to his work.

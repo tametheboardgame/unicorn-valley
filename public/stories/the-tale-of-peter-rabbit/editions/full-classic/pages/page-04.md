@@ -1,11 +1,11 @@
 <!-- block:p04-b01 -->
-Peter sat down to rest; he was out of breath and trembling with fright, and he had not the least idea which way to go. Also he was very damp with sitting in that can.
+But round the end of a cucumber frame, whom should he meet but Mr. McGregor!
 
 <!-- block:p04-b02 -->
-After a time he began to wander about, going lippity--lippity--not very fast, and looking all round.
+Mr. McGregor was on his hands and knees planting out young cabbages, but he jumped up and ran after Peter, waving a rake and calling out, 'Stop thief!'
 
 <!-- block:p04-b03 -->
-He found a door in a wall; but it was locked, and there was no room for a fat little rabbit to squeeze underneath.
+Peter was most dreadfully frightened; he rushed all over the garden, for he had forgotten the way back to the gate.
 
 <!-- block:p04-b04 -->
-An old mouse was running in and out over the stone doorstep, carrying peas and beans to her family in the wood. Peter asked her the way to the gate, but she had such a large pea in her mouth that she could not answer. She only shook her head at him. Peter began to cry.
+He lost one of his shoes among the cabbages, and the other shoe amongst the potatoes.
