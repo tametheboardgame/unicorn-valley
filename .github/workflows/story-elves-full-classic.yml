@@ -27,7 +27,7 @@ jobs:
           python-version: '3.13'
 
       - name: Install image tooling
-        run: python -m pip install --disable-pip-version-check pillow
+        run: python -m pip install --disable-pip-version-check pillow beautifulsoup4
 
       - name: Materialise Lucy Crane full classic edition
         shell: python
@@ -38,7 +38,9 @@ jobs:
           import urllib.request
           from io import BytesIO
           from pathlib import Path
+          from urllib.parse import urljoin
 
+          from bs4 import BeautifulSoup
           from PIL import Image
 
           STORY_DIR = Path("public/stories/the-elves-and-the-shoemaker")
@@ -49,10 +51,8 @@ jobs:
           TEXT_URL = "https://www.gutenberg.org/cache/epub/19068/pg19068.txt"
           BOOK_URL = "https://www.gutenberg.org/ebooks/19068"
           HTML_URL = "https://www.gutenberg.org/cache/epub/19068/pg19068-images.html"
-          HEADPIECE_URL = "https://www.gutenberg.org/cache/epub/19068/images/illus-190-title.jpg"
 
-          HEADING = "THE ELVES"
-          PART_ONE = "(I.)"
+          STORY_ANCHOR = "here was once a shoemaker, who, through no fault of his own"
           PART_TWO = "(II.)"
 
           def fetch(url: str) -> bytes:
@@ -82,23 +82,19 @@ jobs:
               raise RuntimeError("Expected the existing Elves Story House package to be schema v1.")
 
           raw = fetch(TEXT_URL).decode("utf-8-sig", errors="replace").replace("\r\n", "\n")
-          heading = raw.upper().find(HEADING)
-          if heading < 0:
-              raise RuntimeError("Could not find THE ELVES heading in Gutenberg #19068.")
-
-          part_one = raw.find(PART_ONE, heading)
-          if part_one < 0:
-              raise RuntimeError("Could not find Part I marker in THE ELVES.")
-
-          start = raw.find("\n", part_one)
+          lower_raw = raw.lower()
+          start = lower_raw.find(STORY_ANCHOR)
           if start < 0:
-              raise RuntimeError("Could not find the start of Part I text.")
+              raise RuntimeError("Could not find the shoemaker story anchor in Gutenberg #19068.")
 
           end = raw.find(PART_TWO, start)
           if end < 0:
               raise RuntimeError("Could not find Part II marker after the shoemaker story.")
 
           story = raw[start:end].strip()
+          # Gutenberg's plain-text transcription omits the decorative opening drop-cap image.
+          if story.lower().startswith("here was once a shoemaker"):
+              story = "T" + story
           paragraphs = [
               normalise_paragraph(block)
               for block in re.split(r"\n\s*\n", story)
@@ -178,7 +174,17 @@ jobs:
               shutil.rmtree(ASSET_DIR)
           ASSET_DIR.mkdir(parents=True)
 
-          headpiece_bytes = fetch(HEADPIECE_URL)
+          html = fetch(HTML_URL).decode("utf-8", errors="replace")
+          soup = BeautifulSoup(html, "html.parser")
+          title_image = soup.find(
+              "img",
+              alt=lambda value: isinstance(value, str) and value.strip().upper() == "THE ELVES",
+          )
+          if title_image is None or not title_image.get("src"):
+              raise RuntimeError("Could not locate Walter Crane's THE ELVES source image.")
+
+          source_image_url = urljoin(HTML_URL, title_image["src"])
+          headpiece_bytes = fetch(source_image_url)
           headpiece = Image.open(BytesIO(headpiece_bytes)).convert("RGB")
           headpiece_path = ASSET_DIR / "walter-crane-headpiece.webp"
           headpiece.save(headpiece_path, "WEBP", quality=90, method=6)
