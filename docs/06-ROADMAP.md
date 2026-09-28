@@ -15,7 +15,7 @@ The R4 development branch now contains:
 - a small JSON manifest contract with revision-driven replacement support;
 - a disposable Cloudflare smoke page for the two-pass acceptance test.
 
-Remaining acceptance work requires GitHub OIDC Workload Identity Federation for the existing service account, followed by one generated-image materialisation and one replacement of the same Drive file ID.
+The R4 acceptance proof is complete: GitHub OIDC/WIF authentication succeeded, a staged generated image was materialised and deployed, the same Drive file ID was replaced in place, the replacement was materialised and deployed, and the disposable smoke material was cleaned up. Permanent pipeline/runbook documentation is committed on the R4 branch.
 
 ## 2026-09-27 R6.5-WP19H3.11-R3 inserted before Rosehip Cottage
 
