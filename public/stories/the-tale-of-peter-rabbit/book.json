@@ -9,14 +9,27 @@
     "alt": "Beatrix Potter's original 1902 cover illustration for The Tale of Peter Rabbit."
   },
   "series": null,
-  "tags": ["classic-retelling", "rabbit", "garden", "mischief", "illustrated"],
+  "tags": [
+    "classic-retelling",
+    "rabbit",
+    "garden",
+    "mischief",
+    "illustrated"
+  ],
   "publication": {
     "status": "published"
   },
   "discovery": {
     "format": "Picture Book",
-    "genres": ["Adventure", "Classics"],
-    "audiences": ["Read Together", "Early Reader", "Independent Reader"],
+    "genres": [
+      "Adventure",
+      "Classics"
+    ],
+    "audiences": [
+      "Read Together",
+      "Early Reader",
+      "Independent Reader"
+    ],
     "length": "Quick Read"
   },
   "defaultEditionId": "story-house",
@@ -146,7 +159,7 @@
           "notes": "Story House pagination is presentation only; the original wording remains unabridged."
         },
         "originalPublicationYear": 1902,
-        "curatorNotes": "Complete original text split into 4 reader pages at paragraph boundaries, with original Potter illustrations reused at matching scenes."
+        "curatorNotes": "Complete original text split into 6 reader pages at paragraph boundaries, with original Potter illustrations reused at matching scenes."
       },
       "chapters": [
         {
@@ -163,10 +176,17 @@
               "width": 469,
               "height": 511,
               "caption": "Illustration by Beatrix Potter, 1902."
-            },
+            }
+          ]
+        },
+        {
+          "id": "page-02",
+          "title": "The Tale of Peter Rabbit (continued)",
+          "path": "editions/full-classic/pages/page-02.md",
+          "illustrations": [
             {
               "id": "full-potter-garden",
-              "blockId": "p01-b09",
+              "blockId": "p02-b01",
               "path": "illustrations/garden.webp",
               "alt": "An original Beatrix Potter illustration from The Tale of Peter Rabbit.",
               "placement": "full-width",
@@ -177,18 +197,23 @@
           ]
         },
         {
-          "id": "page-02",
-          "title": "The Tale of Peter Rabbit (continued)",
-          "path": "editions/full-classic/pages/page-02.md"
-        },
-        {
           "id": "page-03",
           "title": "The Tale of Peter Rabbit (continued)",
-          "path": "editions/full-classic/pages/page-03.md",
+          "path": "editions/full-classic/pages/page-03.md"
+        },
+        {
+          "id": "page-04",
+          "title": "The Tale of Peter Rabbit (continued)",
+          "path": "editions/full-classic/pages/page-04.md"
+        },
+        {
+          "id": "page-05",
+          "title": "The Tale of Peter Rabbit (continued)",
+          "path": "editions/full-classic/pages/page-05.md",
           "illustrations": [
             {
               "id": "full-potter-escape",
-              "blockId": "p03-b05",
+              "blockId": "p05-b03",
               "path": "illustrations/escape.webp",
               "alt": "An original Beatrix Potter illustration from Peter Rabbit's escape.",
               "placement": "full-width",
@@ -199,13 +224,13 @@
           ]
         },
         {
-          "id": "page-04",
+          "id": "page-06",
           "title": "The Tale of Peter Rabbit (continued)",
-          "path": "editions/full-classic/pages/page-04.md",
+          "path": "editions/full-classic/pages/page-06.md",
           "illustrations": [
             {
               "id": "full-potter-home",
-              "blockId": "p04-b02",
+              "blockId": "p06-b03",
               "path": "illustrations/home.webp",
               "alt": "Beatrix Potter's illustration of Mrs Rabbit and the rabbit family.",
               "placement": "full-width",
