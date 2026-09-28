@@ -15,7 +15,11 @@ import { PEBBLE_FOUNTAIN_REPAIRED_FLAG } from '../../content/r4PebbleStory';
 import { isWillowGardenPlanted } from '../story/WillowMoonflowersStory';
 import { createSunbeamVillageProductionPresentation } from '../visual/EnvironmentProductionPresentationManager';
 import { SUNBEAM_VILLAGE_LOCATION_ID, SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
-import { SUNBEAM_VILLAGE_LAYERS, SUNBEAM_VILLAGE_LAYOUT } from '../world/SunbeamVillageLayout';
+import {
+  resolveSunbeamShopRoofAnchor,
+  SUNBEAM_VILLAGE_LAYERS,
+  SUNBEAM_VILLAGE_LAYOUT,
+} from '../world/SunbeamVillageLayout';
 import { worldDepthForY } from '../world/WorldDepth';
 
 const COLLISION_TEXTURE_KEY = 'village-collision-pixel';
@@ -779,10 +783,15 @@ export class SunbeamVillageScene extends Phaser.Scene {
       graphics.fillCircle(end.x, end.y, 6);
     };
 
-    // Two short eave-to-eave strings keep celebration detail in the high-street gaps without
-    // crossing doors, facade signs, the fountain ring or resident gathering routes.
-    drawSpan({ x: 930, y: 306 }, { x: 1215, y: 286 }, 6);
-    drawSpan({ x: 1690, y: 286 }, { x: 2015, y: 338 }, 7);
+    // Resolve both strings from canonical shop roof anchors so moving or reshaping a shop does
+    // not leave bunting visibly floating away from the eaves.
+    for (const span of SUNBEAM_VILLAGE_LAYOUT.highStreetBunting) {
+      drawSpan(
+        resolveSunbeamShopRoofAnchor(span.from.building, span.from.anchor),
+        resolveSunbeamShopRoofAnchor(span.to.building, span.to.anchor),
+        span.flagCount,
+      );
+    }
   }
 
   private createFountain(): void {
