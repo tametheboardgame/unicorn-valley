@@ -294,9 +294,7 @@ async function measureMovement(
           ?.snapshot()
           .scenes.find((scene) => scene.key === sceneKey)
           ?.objects.find((object) => object.name === objectName);
-        return player
-          ? Math.hypot(player.x - startX, player.y - startY) >= 8
-          : false;
+        return player ? Math.hypot(player.x - startX, player.y - startY) >= 8 : false;
       },
       {
         sceneKey: SCENE_KEY,
