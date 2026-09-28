@@ -1,0 +1,262 @@
+name: Enrich Jemima Full Classic Illustrations
+
+on:
+  push:
+    branches:
+      - agent/story-house-jemima-full-classic
+
+permissions:
+  contents: write
+
+jobs:
+  enrich:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: agent/story-house-jemima-full-classic
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22.23.2
+          package-manager-cache: false
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+
+      - name: Install illustration tooling
+        run: python -m pip install --disable-pip-version-check beautifulsoup4 pillow
+
+      - name: Materialise all Jemima narrative illustrations
+        shell: python
+        run: |
+          import json
+          import re
+          import shutil
+          import urllib.request
+          from difflib import SequenceMatcher
+          from io import BytesIO
+          from pathlib import Path
+          from urllib.parse import urljoin
+
+          from bs4 import BeautifulSoup
+          from PIL import Image
+
+          STORY_ID = "the-tale-of-jemima-puddle-duck"
+          STORY_DIR = Path("public/stories") / STORY_ID
+          MANIFEST_PATH = STORY_DIR / "book.json"
+          HTML_URL = "https://www.gutenberg.org/files/14814/14814-h/14814-h.htm"
+          START_MARKER = "What a funny sight it is to see a brood of ducklings with a hen!"
+
+          def fetch(url: str) -> bytes:
+              request = urllib.request.Request(
+                  url,
+                  headers={"User-Agent": "Unicorn-Valley-Story-House/1.0"},
+              )
+              with urllib.request.urlopen(request, timeout=45) as response:
+                  return response.read()
+
+          def normalise(value: str) -> str:
+              value = value.replace("—", " ").replace("–", " ")
+              value = value.replace("--", " ")
+              value = value.replace("’", "'").replace("‘", "'")
+              value = re.sub(r"[^a-z0-9']+", " ", value.lower())
+              return re.sub(r"\s+", " ", value).strip()
+
+          manifest = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
+          if manifest.get("schemaVersion") != 2:
+              raise RuntimeError("Jemima must already use schema v2.")
+
+          edition = next(
+              (item for item in manifest["editions"] if item["id"] == "full-classic"),
+              None,
+          )
+          if edition is None:
+              raise RuntimeError("Full Classic Text edition not found.")
+
+          ordered_blocks = []
+          for chapter in edition["chapters"]:
+              markdown = (STORY_DIR / chapter["path"]).read_text(encoding="utf-8")
+              matches = list(re.finditer(r"<!--\s*block:([A-Za-z0-9_-]+)\s*-->", markdown))
+              for index, match in enumerate(matches):
+                  end = matches[index + 1].start() if index + 1 < len(matches) else len(markdown)
+                  text = markdown[match.end():end].strip()
+                  ordered_blocks.append(
+                      {
+                          "chapter": chapter,
+                          "id": match.group(1),
+                          "text": text,
+                          "normalised": normalise(text),
+                      }
+                  )
+
+          html = fetch(HTML_URL).decode("utf-8", errors="replace")
+          soup = BeautifulSoup(html, "html.parser")
+          stream = soup.find_all(["p", "img"])
+
+          started = False
+          previous_text = ""
+          image_records = []
+
+          for item in stream:
+              if item.name == "p":
+                  text = " ".join(item.stripped_strings)
+                  if not started and START_MARKER in text:
+                      started = True
+                  if started and text:
+                      previous_text = text
+                  continue
+
+              if not started:
+                  continue
+
+              src = item.get("src")
+              if not src:
+                  continue
+
+              image_records.append(
+                  {
+                      "url": urljoin(HTML_URL, src),
+                      "source_name": Path(src).name,
+                      "preceding_text": previous_text,
+                  }
+              )
+
+          if not (15 <= len(image_records) <= 40):
+              raise RuntimeError(
+                  f"Unexpected Jemima narrative illustration count: {len(image_records)}."
+              )
+
+          def best_block_for(source_text: str):
+              source = normalise(source_text)
+              if not source:
+                  return None, 0.0
+
+              best = None
+              best_score = 0.0
+              for block in ordered_blocks:
+                  target = block["normalised"]
+                  if not target:
+                      continue
+                  if source in target or target in source:
+                      shorter = min(len(source), len(target))
+                      longer = max(len(source), len(target))
+                      score = 0.92 + 0.08 * (shorter / max(1, longer))
+                  else:
+                      score = SequenceMatcher(None, source, target).ratio()
+                  if score > best_score:
+                      best = block
+                      best_score = score
+              return best, best_score
+
+          assets_dir = STORY_DIR / "illustrations/full-classic"
+          if assets_dir.exists():
+              shutil.rmtree(assets_dir)
+          assets_dir.mkdir(parents=True, exist_ok=True)
+
+          by_chapter = {chapter["id"]: [] for chapter in edition["chapters"]}
+          mappings = []
+
+          for index, record in enumerate(image_records, start=1):
+              block, score = best_block_for(record["preceding_text"])
+              if block is None or score < 0.55:
+                  raise RuntimeError(
+                      f"Could not confidently place {record['source_name']} "
+                      f"(score {score:.3f}) after: {record['preceding_text'][:100]!r}"
+                  )
+
+              raw = fetch(record["url"])
+              image = Image.open(BytesIO(raw)).convert("RGB")
+              destination_name = f"original-{index:02d}.webp"
+              destination = assets_dir / destination_name
+              image.save(destination, "WEBP", quality=90, method=6)
+
+              illustration = {
+                  "id": f"full-potter-original-{index:02d}",
+                  "blockId": block["id"],
+                  "path": f"illustrations/full-classic/{destination_name}",
+                  "alt": "Original Beatrix Potter illustration from The Tale of Jemima Puddle-Duck.",
+                  "placement": "full-width",
+                  "width": image.width,
+                  "height": image.height,
+                  "caption": "Illustration by Beatrix Potter, 1908.",
+              }
+              by_chapter[block["chapter"]["id"]].append(illustration)
+              mappings.append(
+                  (
+                      index,
+                      record["source_name"],
+                      block["chapter"]["id"],
+                      block["id"],
+                      score,
+                      record["preceding_text"][:80],
+                  )
+              )
+
+          for chapter in edition["chapters"]:
+              chapter["illustrations"] = by_chapter[chapter["id"]]
+
+          count = sum(len(items) for items in by_chapter.values())
+          if count != len(image_records):
+              raise RuntimeError("Not every narrative illustration was assigned.")
+
+          edition["rights"]["illustrations"] = {
+              "status": "public-domain",
+              "source": "Original 1908 illustrations by Beatrix Potter, Project Gutenberg eBook #14814",
+              "sourceUrl": HTML_URL,
+              "notes": (
+                  f"All {count} narrative illustrations appearing after the opening story text "
+                  "in the Project Gutenberg HTML edition are included in source order. "
+                  "Front-matter emblem/title artwork is excluded."
+              ),
+          }
+          edition["rights"]["curatorNotes"] = (
+              f"Complete original text split into {len(edition['chapters'])} reader pages at "
+              f"paragraph boundaries, with all {count} narrative illustrations from the "
+              "Project Gutenberg 1908 edition restored at their matching passage anchors. "
+              "The original, harsher ending is preserved in Full Classic Text."
+          )
+
+          MANIFEST_PATH.write_text(
+              json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
+              encoding="utf-8",
+          )
+
+          print(f"Materialised {count} Jemima narrative illustrations.")
+          for mapping in mappings:
+              print(
+                  f"{mapping[0]:02d} {mapping[1]} -> {mapping[2]}/{mapping[3]} "
+                  f"score={mapping[4]:.3f} after={mapping[5]!r}"
+              )
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Format manifest
+        run: npx biome format --write public/stories/the-tale-of-jemima-puddle-duck/book.json
+
+      - name: Regenerate Story House catalogue
+        run: npm run story:catalogue
+
+      - name: Run focused Story House tests
+        run: npx vitest run src/game/storyLibrary/StoryLibraryService.test.ts src/game/storyLibrary/StoryReadingService.test.ts
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Commit enriched illustration set
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            public/stories/the-tale-of-jemima-puddle-duck \
+            public/stories/catalogue.json
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "Story House: restore all Jemima classic illustrations"
+          git push origin HEAD:agent/story-house-jemima-full-classic
