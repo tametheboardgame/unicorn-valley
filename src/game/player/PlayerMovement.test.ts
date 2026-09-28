@@ -54,17 +54,14 @@ describe('resolvePlayerMovement', () => {
   });
 });
 
-
 describe('frameRateAdjustedMovementResponse', () => {
   it('preserves the authored response at the 60 FPS reference frame', () => {
-    expect(frameRateAdjustedMovementResponse(0.34, MOVEMENT_RESPONSE_REFERENCE_FRAME_MS)).toBeCloseTo(
-      0.34,
-      8,
-    );
-    expect(frameRateAdjustedMovementResponse(0.56, MOVEMENT_RESPONSE_REFERENCE_FRAME_MS)).toBeCloseTo(
-      0.56,
-      8,
-    );
+    expect(
+      frameRateAdjustedMovementResponse(0.34, MOVEMENT_RESPONSE_REFERENCE_FRAME_MS),
+    ).toBeCloseTo(0.34, 8);
+    expect(
+      frameRateAdjustedMovementResponse(0.56, MOVEMENT_RESPONSE_REFERENCE_FRAME_MS),
+    ).toBeCloseTo(0.56, 8);
   });
 
   it('matches two 60 FPS response steps when one frame takes twice as long', () => {
