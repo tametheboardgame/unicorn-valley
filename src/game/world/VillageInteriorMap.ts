@@ -1,6 +1,6 @@
 import type { CollisionRectangle, MapPoint, TraversalMapDefinition } from './MapTraversal';
 
-export type VillageInteriorId = 'bakery' | 'accessory-shop' | 'library';
+export type VillageInteriorId = 'bakery' | 'accessory-shop' | 'library' | 'rosehip-cottage';
 
 export type VillageInteriorAnchorId =
   | 'entry'
@@ -201,14 +201,40 @@ const LIBRARY: VillageInteriorDefinition = {
   ],
 };
 
+const ROSEHIP_COTTAGE: VillageInteriorDefinition = {
+  id: 'rosehip-cottage',
+  title: 'Rosehip Cottage',
+  width: MAP_WIDTH,
+  height: MAP_HEIGHT,
+  margin: MAP_MARGIN,
+  playerSpawn: PLAYER_SPAWN,
+  roomShell: ROOM_SHELL,
+  anchors: sharedAnchors(
+    anchor('counter', 'Tea dresser', { x: 1115, y: 500 }, { x: 1040, y: 610 }),
+    anchor('npc-work', 'Rosehip reading chair', { x: 390, y: 760 }, { x: 500, y: 790 }),
+    anchor('primary-feature', 'Garden journal', { x: 270, y: 535 }, { x: 390, y: 585 }),
+    anchor('secondary-feature', 'Tea table', { x: 1030, y: 760 }, { x: 900, y: 805 }),
+  ),
+  colliders: [
+    ...ROOM_COLLIDERS,
+    { id: 'rosehip-bed', x: 390, y: 470, width: 360, height: 190 },
+    { id: 'rosehip-bedside', x: 610, y: 465, width: 90, height: 100 },
+    { id: 'rosehip-dresser', x: 1115, y: 485, width: 260, height: 105 },
+    { id: 'rosehip-journal-desk', x: 250, y: 665, width: 170, height: 105 },
+    { id: 'rosehip-tea-table', x: 1030, y: 765, width: 210, height: 145 },
+    { id: 'rosehip-reading-chair', x: 535, y: 805, width: 145, height: 135 },
+  ],
+};
+
 export const VILLAGE_INTERIOR_MAPS = {
   bakery: BAKERY,
   'accessory-shop': ACCESSORY_SHOP,
   library: LIBRARY,
+  'rosehip-cottage': ROSEHIP_COTTAGE,
 } as const satisfies Readonly<Record<VillageInteriorId, VillageInteriorDefinition>>;
 
 export function isVillageInteriorId(value: unknown): value is VillageInteriorId {
-  return value === 'bakery' || value === 'accessory-shop' || value === 'library';
+  return value === 'bakery' || value === 'accessory-shop' || value === 'library' || value === 'rosehip-cottage';
 }
 
 export function getVillageInteriorMap(interiorId: VillageInteriorId): VillageInteriorDefinition {
