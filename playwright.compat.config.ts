@@ -14,6 +14,7 @@ export default defineConfig({
     'r6-wp6.18a-mobile-creator-action.spec.ts',
     'r6.5-wp18g-browser-compat.spec.ts',
     'r6.5-wp18j-responsive-concept-ui.spec.ts',
+    'r6.5-wp19h3.11-r3.4-mobile-movement-performance.spec.ts',
   ],
   fullyParallel: false,
   workers: 1,
