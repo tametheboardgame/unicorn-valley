@@ -216,6 +216,10 @@ export class VerticalSliceAudio {
     );
   }
 
+  private pauseMusicForVisibility(): void {
+    this.musicElement?.pause();
+  }
+
   private stopMusic(): void {
     this.musicElement?.pause();
     this.musicElement = null;
@@ -315,7 +319,7 @@ export class VerticalSliceAudio {
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) {
         this.stopProceduralLoops();
-        this.stopMusic();
+        this.pauseMusicForVisibility();
         if (this.context?.state === 'running') void this.context.suspend().catch(() => undefined);
       } else if (this.currentSceneKey && !this.settings.muted) {
         this.restartSceneLoops();

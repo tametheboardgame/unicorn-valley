@@ -151,7 +151,106 @@ async function seedRevealedStarwell(page: Page): Promise<void> {
   });
 }
 
+async function seedUnintroducedPip(page: Page): Promise<void> {
+  await page.addInitScript(() => {
+    const timestamp = new Date().toISOString();
+    const save = {
+      schemaVersion: 2,
+      createdAt: timestamp,
+      lastSavedAt: timestamp,
+      profile: {
+        name: null,
+        appearance: {},
+        currentLocationId: 'location:moonflower-glade',
+        unlockedAbilityIds: [],
+      },
+      inventory: {
+        itemQuantities: {},
+        ownedCosmeticIds: [],
+        ownedDecorationIds: [],
+        specialItemIds: [],
+      },
+      relationships: { byCharacterId: {} },
+      quests: { byQuestId: {} },
+      world: {
+        flags: {
+          'flag:r5-woods-starwell-revealed': true,
+        },
+        discoveredZoneIds: [],
+        changedObjectIds: [],
+        uniqueDiscoveryIds: [],
+      },
+      home: {
+        ownedFurnitureIds: [],
+        furnitureBySlot: {},
+        gardenFlags: {},
+      },
+      activities: {
+        racesById: {},
+        miniGameRecords: {},
+      },
+      collections: {
+        discoveryIds: [],
+        memoryIds: [],
+      },
+    };
+    const serialisedSave = JSON.stringify(save);
+    window.localStorage.setItem('unicorn-valley.save', serialisedSave);
+    window.localStorage.setItem('unicorn-valley.save.schema.2', serialisedSave);
+  });
+}
 test.describe('R6-WP6.2 core NPC production art', () => {
+  test('Pip stays absent before the authored arrival trigger and appears only after introduction begins', async ({
+    page,
+  }) => {
+    await seedUnintroducedPip(page);
+    await page.goto('/?scene=glade&diagnostics=1');
+    await waitForScene(page, 'MoonflowerGladeScene');
+
+    await page.waitForTimeout(350);
+    expect(await findObject(page, 'MoonflowerGladeScene', 'core-npc:pip:world')).toBeNull();
+
+    await page.evaluate(() => {
+      const diagnostics = (
+        window as typeof window & {
+          __UNICORN_VALLEY_DIAGNOSTICS__?: {
+            snapshot(): DiagnosticSnapshot;
+            setArcadeSpritePosition(
+              sceneKey: string,
+              objectName: string,
+              x: number,
+              y: number,
+            ): void;
+          };
+        }
+      ).__UNICORN_VALLEY_DIAGNOSTICS__;
+      if (!diagnostics) {
+        throw new Error('Browser diagnostics are unavailable.');
+      }
+      const player = diagnostics
+        .snapshot()
+        .scenes.find((scene) => scene.key === 'MoonflowerGladeScene')
+        ?.objects.find((object) => object.name === 'world-player-unicorn');
+      if (!player) {
+        throw new Error('Moonflower Glade player is unavailable.');
+      }
+      diagnostics.setArcadeSpritePosition(
+        'MoonflowerGladeScene',
+        'world-player-unicorn',
+        810,
+        player.y,
+      );
+    });
+
+    await expect
+      .poll(
+        async () =>
+          (await findObject(page, 'MoonflowerGladeScene', 'core-npc:pip:world'))?.visible ?? false,
+        { timeout: 6_000 },
+      )
+      .toBe(true);
+  });
+
   test('all six core characters keep canonical production identities in their active world scenes', async ({
     page,
   }) => {
