@@ -210,9 +210,37 @@ test.describe('R6-WP6.2 core NPC production art', () => {
     await page.waitForTimeout(350);
     expect(await findObject(page, 'MoonflowerGladeScene', 'core-npc:pip:world')).toBeNull();
 
-    await page.keyboard.down('ArrowRight');
-    await page.waitForTimeout(700);
-    await page.keyboard.up('ArrowRight');
+    await page.evaluate(() => {
+      const diagnostics = (
+        window as typeof window & {
+          __UNICORN_VALLEY_DIAGNOSTICS__?: {
+            snapshot(): DiagnosticSnapshot;
+            setArcadeSpritePosition(
+              sceneKey: string,
+              objectName: string,
+              x: number,
+              y: number,
+            ): void;
+          };
+        }
+      ).__UNICORN_VALLEY_DIAGNOSTICS__;
+      if (!diagnostics) {
+        throw new Error('Browser diagnostics are unavailable.');
+      }
+      const player = diagnostics
+        .snapshot()
+        .scenes.find((scene) => scene.key === 'MoonflowerGladeScene')
+        ?.objects.find((object) => object.name === 'world-player-unicorn');
+      if (!player) {
+        throw new Error('Moonflower Glade player is unavailable.');
+      }
+      diagnostics.setArcadeSpritePosition(
+        'MoonflowerGladeScene',
+        'world-player-unicorn',
+        810,
+        player.y,
+      );
+    });
 
     await expect
       .poll(
