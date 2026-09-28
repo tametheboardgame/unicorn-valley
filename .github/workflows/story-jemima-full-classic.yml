@@ -1,0 +1,295 @@
+name: Materialise Jemima Full Classic Text
+
+on:
+  push:
+    branches:
+      - agent/story-house-jemima-full-classic
+
+permissions:
+  contents: write
+
+jobs:
+  materialise:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: agent/story-house-jemima-full-classic
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22.23.2
+          package-manager-cache: false
+
+      - name: Download complete public-domain Jemima text
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -L --fail --retry 3 \
+            "https://www.gutenberg.org/cache/epub/14814/pg14814.txt" \
+            -o /tmp/jemima.txt
+
+      - name: Build paged Full Classic Text edition
+        shell: python
+        run: |
+          import json
+          import re
+          import shutil
+          from pathlib import Path
+
+          story_dir = Path("public/stories/the-tale-of-jemima-puddle-duck")
+          manifest_path = story_dir / "book.json"
+          source_path = Path("/tmp/jemima.txt")
+          pages_dir = story_dir / "editions/full-classic/pages"
+
+          manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+          if manifest.get("schemaVersion") != 1:
+              raise RuntimeError("Jemima materialiser expected the existing schema v1 Story House package.")
+
+          source = source_path.read_text(encoding="utf-8").replace("\r\n", "\n")
+          start_marker = "What a funny sight it is to see a brood of ducklings with a hen!"
+          start = source.find(start_marker)
+          end = source.find("*** END OF THE PROJECT GUTENBERG EBOOK THE TALE OF JEMIMA PUDDLE-DUCK ***", start)
+          if start < 0 or end < 0:
+              raise RuntimeError("Could not isolate the complete Jemima story text.")
+
+          story = source[start:end].strip()
+
+          def clean_block(raw: str):
+              lines = [line.rstrip() for line in raw.splitlines()]
+              lines = [line for line in lines if line.strip() != "[Illustration]"]
+              if not lines:
+                  return None
+              text = " ".join(line.strip() for line in lines if line.strip())
+              text = re.sub(r" {2,}", " ", text).strip()
+              return text or None
+
+          blocks = [
+              block
+              for raw in re.split(r"\n\s*\n", story)
+              if (block := clean_block(raw)) is not None
+          ]
+
+          def wc(value: str) -> int:
+              return len(re.findall(r"[A-Za-z0-9]+(?:['’.-][A-Za-z0-9]+)*", value))
+
+          total_words = sum(wc(block) for block in blocks)
+          if not (1500 <= total_words <= 2300):
+              raise RuntimeError(f"Unexpected Jemima word count: {total_words}")
+
+          target_words = 210
+          max_words = 255
+          pages = []
+          current = []
+          current_words = 0
+
+          for block in blocks:
+              words = wc(block)
+              if current and current_words >= target_words and current_words + words > max_words:
+                  pages.append(current)
+                  current = []
+                  current_words = 0
+
+              current.append(block)
+              current_words += words
+
+              if current_words >= max_words:
+                  pages.append(current)
+                  current = []
+                  current_words = 0
+
+          if current:
+              pages.append(current)
+
+          if len(pages) > 1 and wc(" ".join(pages[-1])) < 110:
+              pages[-2].extend(pages[-1])
+              pages.pop()
+
+          if not (7 <= len(pages) <= 10):
+              raise RuntimeError(f"Expected 7-10 reader pages, generated {len(pages)}.")
+
+          if pages_dir.exists():
+              shutil.rmtree(pages_dir)
+          pages_dir.mkdir(parents=True, exist_ok=True)
+
+          illustration_specs = [
+              {
+                  "id": "potter-jemima",
+                  "marker": "What a funny sight it is to see a brood of ducklings",
+                  "path": "illustrations/jemima.webp",
+                  "alt": "Beatrix Potter's original illustration of Jemima Puddle-Duck.",
+                  "width": 1012,
+                  "height": 1200,
+              },
+              {
+                  "id": "potter-fox",
+                  "marker": "seated upon the stump",
+                  "path": "illustrations/gentleman.webp",
+                  "alt": "An original Beatrix Potter illustration from The Tale of Jemima Puddle-Duck.",
+                  "width": 347,
+                  "height": 400,
+              },
+              {
+                  "id": "potter-woodland",
+                  "marker": "Jemima Puddle-duck came every afternoon",
+                  "path": "illustrations/woodland.webp",
+                  "alt": "An original Beatrix Potter illustration from Jemima's woodland nesting adventure.",
+                  "width": 904,
+                  "height": 844,
+              },
+              {
+                  "id": "potter-rescue",
+                  "marker": "Presently Kep opened the door",
+                  "path": "illustrations/rescue.webp",
+                  "alt": "An original Beatrix Potter illustration from the end of The Tale of Jemima Puddle-Duck.",
+                  "width": 400,
+                  "height": 380,
+              },
+          ]
+
+          full_pages = []
+          used_illustrations = set()
+
+          for page_index, page_blocks in enumerate(pages, start=1):
+              page_id = f"page-{page_index:02d}"
+              page_path = f"editions/full-classic/pages/{page_id}.md"
+              block_ids = []
+              output = []
+
+              for block_index, block in enumerate(page_blocks, start=1):
+                  block_id = f"p{page_index:02d}-b{block_index:02d}"
+                  block_ids.append(block_id)
+                  output.extend([f"<!-- block:{block_id} -->", block, ""])
+
+              (story_dir / page_path).write_text(
+                  "\n".join(output).rstrip() + "\n",
+                  encoding="utf-8",
+              )
+
+              page_manifest = {
+                  "id": page_id,
+                  "title": "The Tale of Jemima Puddle-Duck"
+                  if page_index == 1
+                  else "The Tale of Jemima Puddle-Duck (continued)",
+                  "path": page_path,
+              }
+
+              illustrations = []
+              for spec in illustration_specs:
+                  if spec["id"] in used_illustrations:
+                      continue
+                  for block_index, block in enumerate(page_blocks):
+                      if spec["marker"] in block:
+                          illustrations.append({
+                              "id": f"full-{spec['id']}",
+                              "blockId": block_ids[block_index],
+                              "path": spec["path"],
+                              "alt": spec["alt"],
+                              "placement": "full-width",
+                              "width": spec["width"],
+                              "height": spec["height"],
+                              "caption": "Illustration by Beatrix Potter, 1908.",
+                          })
+                          used_illustrations.add(spec["id"])
+                          break
+
+              if illustrations:
+                  page_manifest["illustrations"] = illustrations
+
+              full_pages.append(page_manifest)
+
+          story_house = {
+              "id": "story-house",
+              "label": "Story House Edition",
+              "author": manifest["author"],
+              "readingMode": manifest.get("readingMode", "flowing"),
+              "rights": manifest["rights"],
+              "chapters": manifest["chapters"],
+          }
+
+          full_classic = {
+              "id": "full-classic",
+              "label": "Full Classic Text",
+              "author": "Beatrix Potter",
+              "readingMode": "paged-prose",
+              "rights": {
+                  "text": {
+                      "status": "public-domain",
+                      "source": "Beatrix Potter's 1908 text, transcribed in Project Gutenberg eBook #14814",
+                      "sourceUrl": "https://www.gutenberg.org/ebooks/14814",
+                      "notes": (
+                          "Complete story text. Project Gutenberg header, footer, licence text and "
+                          "standalone [Illustration] placeholders are excluded; wording is not "
+                          "abridged, softened or modernised."
+                      ),
+                  },
+                  "illustrations": manifest["rights"].get("illustrations"),
+                  "edition": {
+                      "status": "public-domain",
+                      "source": "1908 Beatrix Potter text and illustrations",
+                      "notes": "Story House pagination is presentation only; the original wording remains unabridged.",
+                  },
+                  "originalPublicationYear": 1908,
+                  "curatorNotes": (
+                      f"Complete original text split into {len(pages)} reader pages at paragraph "
+                      "boundaries. The original, harsher ending is preserved in Full Classic Text."
+                  ),
+              },
+              "chapters": full_pages,
+          }
+
+          converted = {
+              "schemaVersion": 2,
+              "id": manifest["id"],
+              "title": manifest["title"],
+              "description": manifest["description"],
+              "catalogueBlurb": manifest.get("catalogueBlurb"),
+              "cover": manifest.get("cover"),
+              "series": manifest.get("series"),
+              "tags": manifest["tags"],
+              "publication": manifest["publication"],
+              "discovery": manifest["discovery"],
+              "defaultEditionId": "story-house",
+              "editions": [story_house, full_classic],
+          }
+
+          manifest_path.write_text(
+              json.dumps(converted, ensure_ascii=False, indent=2) + "\n",
+              encoding="utf-8",
+          )
+
+          print(
+              f"Materialised Jemima Full Classic Text: {total_words} words, "
+              f"{len(pages)} reader pages, {len(used_illustrations)} reused illustrations."
+          )
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Format manifest
+        run: npx biome format --write public/stories/the-tale-of-jemima-puddle-duck/book.json
+
+      - name: Regenerate Story House catalogue
+        run: npm run story:catalogue
+
+      - name: Run focused Story House tests
+        run: npx vitest run src/game/storyLibrary/StoryLibraryService.test.ts src/game/storyLibrary/StoryReadingService.test.ts
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Commit materialised classic edition
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            public/stories/the-tale-of-jemima-puddle-duck \
+            public/stories/catalogue.json
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "Story House: materialise Jemima Full Classic Text"
+          git push origin HEAD:agent/story-house-jemima-full-classic
