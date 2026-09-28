@@ -37,6 +37,10 @@ class FakeScenePlugin {
     }
   }
 
+  public bringToTop(key: string): void {
+    this.calls.push(`bringToTop:${key}`);
+  }
+
   public pause(key = this.key): void {
     this.calls.push(`pause:${key}`);
     this.active.delete(key);
@@ -96,7 +100,11 @@ describe('ExplorationModalNavigation', () => {
         data: { initialTab: 'map', returnScene: 'VillageInteriorScene' },
       },
     ]);
-    expect(plugin.calls).toEqual(['launch:InventoryScene', 'pause:VillageInteriorScene']);
+    expect(plugin.calls).toEqual([
+      'launch:InventoryScene',
+      'bringToTop:InventoryScene',
+      'pause:VillageInteriorScene',
+    ]);
     expect(plugin.isPaused('VillageInteriorScene')).toBe(true);
   });
 
@@ -105,9 +113,22 @@ describe('ExplorationModalNavigation', () => {
     plugin.activateLaunchImmediately = false;
 
     expect(openExplorationModal(fakeScene(plugin), 'InventoryScene')).toBe(true);
-    expect(plugin.calls).toEqual(['launch:InventoryScene', 'pause:VillageInteriorScene']);
+    expect(plugin.calls).toEqual([
+      'launch:InventoryScene',
+      'bringToTop:InventoryScene',
+      'pause:VillageInteriorScene',
+    ]);
     expect(plugin.isPaused('VillageInteriorScene')).toBe(true);
     expect(plugin.isActive('InventoryScene')).toBe(false);
+  });
+
+  it('promotes a previously registered modal above a later-loaded interior before pausing it', () => {
+    const plugin = new FakeScenePlugin();
+
+    expect(openExplorationModal(fakeScene(plugin), 'InventoryScene')).toBe(true);
+    expect(plugin.calls.indexOf('bringToTop:InventoryScene')).toBeLessThan(
+      plugin.calls.indexOf('pause:VillageInteriorScene'),
+    );
   });
 
   it('does not pause the source when the requested modal is not registered', () => {
