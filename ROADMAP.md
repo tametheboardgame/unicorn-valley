@@ -172,7 +172,7 @@ H0.5 cleared the final technical and visual gate for H1.
 
 ### R6.5-WP19H1+ - Open-Ended Area-by-Area Final Polish Programme
 
-State: **active; H1 = Moonflower Glade complete, H2 = Moonflower Cottage complete, H3 = Sunbeam Village active; H3.11-R3.1-R3.5 are complete and human-approved, and H3.11-R4 generated asset staging/materialisation is the active mandatory prerequisite before H3.11.5 Rosehip Cottage**.
+State: **active; H1 = Moonflower Glade complete, H2 = Moonflower Cottage complete, H3 = Sunbeam Village active; H3.11-R3.1-R3.5 are complete and human-approved, and H3.11-R4 has passed its two-pass generated-asset acceptance proof and is awaiting normal PR qualification/merge before H3.11.5 Rosehip Cottage begins**.
 
 The earlier fixed `H1-H13` area inventory is superseded by this section. There is **no predetermined upper H number**. The programme continues for as many independently useful area, subarea or interior passes as David chooses before integrated qualification. Interiors may receive their own H number when they warrant an independent review rather than being forced into a parent-area package.
 
