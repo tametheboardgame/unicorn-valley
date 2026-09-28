@@ -8,7 +8,12 @@ import {
   selectUnicornProductionPose,
   type UnicornProductionPose,
 } from './UnicornProductionArt';
-import type { PlayerFacing, PlayerMotionState, PlayerMovementCommand } from './PlayerMovement';
+import {
+  frameRateAdjustedMovementResponse,
+  type PlayerFacing,
+  type PlayerMotionState,
+  type PlayerMovementCommand,
+} from './PlayerMovement';
 
 const MOVEMENT_DETAIL_NAME = 'world-movement-detail';
 const PLAYER_ENTITIES = new WeakMap<Phaser.Physics.Arcade.Sprite, PlayerEntity>();
@@ -53,7 +58,8 @@ export class PlayerEntity {
     this.setFacing(command.facing);
     this.motionState = command.motionState;
 
-    const response = command.motionState === 'moving' ? 0.34 : 0.56;
+    const baseResponse = command.motionState === 'moving' ? 0.34 : 0.56;
+    const response = frameRateAdjustedMovementResponse(baseResponse, this.scene.game.loop.delta);
     const multiplier = explorationSpeedMultiplier(
       this.scene.scene.key,
       isExplorationGallopHeld(this.scene.scene.key),

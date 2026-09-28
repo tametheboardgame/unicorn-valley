@@ -9,6 +9,20 @@ export interface PlayerMovementCommand {
 }
 
 export const DEFAULT_PLAYER_SPEED = 300;
+export const MOVEMENT_RESPONSE_REFERENCE_FRAME_MS = 1000 / 60;
+const MAX_MOVEMENT_RESPONSE_DELTA_MS = 100;
+
+export function frameRateAdjustedMovementResponse(baseResponse: number, deltaMs: number): number {
+  const response = Math.max(0, Math.min(1, baseResponse));
+  if (response === 0 || response === 1) {
+    return response;
+  }
+
+  const safeDeltaMs = Number.isFinite(deltaMs)
+    ? Math.max(0, Math.min(MAX_MOVEMENT_RESPONSE_DELTA_MS, deltaMs))
+    : MOVEMENT_RESPONSE_REFERENCE_FRAME_MS;
+  return 1 - (1 - response) ** (safeDeltaMs / MOVEMENT_RESPONSE_REFERENCE_FRAME_MS);
+}
 
 function clampAxis(value: number): number {
   return Math.max(-1, Math.min(1, value));

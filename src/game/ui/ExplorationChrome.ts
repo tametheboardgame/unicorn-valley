@@ -38,6 +38,8 @@ function resolveLocationTitle(scene: Phaser.Scene): string | null {
   return 'Sunbeam Village';
 }
 
+const REDUCED_MOTION_DISCOVERY_INTERVAL_MS = 300;
+
 const LEGACY_STATUS_PREFIXES = [
   'Pip is nearby.',
   'Your Moonflower Sparkle is safely remembered.',
@@ -55,6 +57,10 @@ export class ExplorationChrome {
   private readonly accessibility = getBrowserAccessibilitySettingsStore();
   private readonly objects: Phaser.GameObjects.GameObject[] = [];
   private readonly titleText: Phaser.GameObjects.Text | null;
+  private readonly legacyTextObjects: Phaser.GameObjects.Text[] = [];
+  private readonly reducedMotionTargets: Phaser.GameObjects.GameObject[] = [];
+  private lastLegacyDiscoveryAt = Number.NEGATIVE_INFINITY;
+  private lastReducedMotionDiscoveryAt = Number.NEGATIVE_INFINITY;
   private unsubscribeAccessibility: (() => void) | null = null;
 
   public constructor(
@@ -109,7 +115,7 @@ export class ExplorationChrome {
 
     this.objects.push(titleShadow, titleSurface, titlePanel, locationIcon, this.titleText);
     this.unsubscribeAccessibility = this.accessibility.subscribe(() => {
-      this.applyReducedMotionPreference();
+      this.applyReducedMotionPreference(true);
     });
     this.refresh();
   }
@@ -128,12 +134,34 @@ export class ExplorationChrome {
     }
 
     this.applyReducedMotionPreference();
+    this.suppressLegacyChromeIfCompositionChanged(locationTitle);
+  }
 
-    for (const object of this.scene.children.list) {
-      if (!(object instanceof Phaser.GameObjects.Text) || object === this.titleText) {
+  public destroy(): void {
+    this.unsubscribeAccessibility?.();
+    this.unsubscribeAccessibility = null;
+    for (const object of this.objects) {
+      object.destroy();
+    }
+    this.objects.length = 0;
+  }
+
+  private suppressLegacyChromeIfCompositionChanged(locationTitle: string): void {
+    const now = this.scene.time.now;
+    if (this.legacyTextObjects.length === 0 || now - this.lastLegacyDiscoveryAt >= 1_500) {
+      this.lastLegacyDiscoveryAt = now;
+      this.legacyTextObjects.length = 0;
+      for (const object of this.scene.children.list) {
+        if (object instanceof Phaser.GameObjects.Text && object !== this.titleText) {
+          this.legacyTextObjects.push(object);
+        }
+      }
+    }
+
+    for (const object of this.legacyTextObjects) {
+      if (!object.active) {
         continue;
       }
-
       const text = object.text.trim();
       const isLegacyTitle =
         text === locationTitle && object.scrollFactorX === 0 && object.depth >= 100;
@@ -146,33 +174,43 @@ export class ExplorationChrome {
     }
   }
 
-  public destroy(): void {
-    this.unsubscribeAccessibility?.();
-    this.unsubscribeAccessibility = null;
-    for (const object of this.objects) {
-      object.destroy();
+  private applyReducedMotionPreference(forceRescan = false): void {
+    const reducedMotion = this.accessibility.load().reducedMotion;
+    if (!reducedMotion && !forceRescan) {
+      return;
     }
-    this.objects.length = 0;
-  }
 
-  private applyReducedMotionPreference(): void {
-    const timeScale = this.accessibility.load().reducedMotion ? 0 : 1;
-    for (const object of this.scene.children.list) {
-      if (
-        !object.name.startsWith('environment-production:') &&
-        !object.name.startsWith('core-npc:')
-      ) {
+    const now = this.scene.time.now;
+    if (
+      forceRescan ||
+      this.reducedMotionTargets.length === 0 ||
+      now - this.lastReducedMotionDiscoveryAt >= REDUCED_MOTION_DISCOVERY_INTERVAL_MS
+    ) {
+      this.lastReducedMotionDiscoveryAt = now;
+      this.reducedMotionTargets.length = 0;
+
+      for (const object of this.scene.children.list) {
+        if (
+          !object.name.startsWith('environment-production:') &&
+          !object.name.startsWith('core-npc:')
+        ) {
+          continue;
+        }
+
+        this.reducedMotionTargets.push(object);
+        if (object instanceof Phaser.GameObjects.Container) {
+          this.reducedMotionTargets.push(...object.list);
+        }
+      }
+    }
+
+    const timeScale = reducedMotion ? 0 : 1;
+    for (const target of this.reducedMotionTargets) {
+      if (!target.active) {
         continue;
       }
-
-      const targets: Phaser.GameObjects.GameObject[] = [object];
-      if (object instanceof Phaser.GameObjects.Container) {
-        targets.push(...object.list);
-      }
-      for (const target of targets) {
-        for (const tween of this.scene.tweens.getTweensOf(target)) {
-          tween.timeScale = timeScale;
-        }
+      for (const tween of this.scene.tweens.getTweensOf(target)) {
+        tween.timeScale = timeScale;
       }
     }
   }

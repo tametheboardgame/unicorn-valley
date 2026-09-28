@@ -14,6 +14,8 @@ The post-R2 human play pass identified a cross-cutting remediation block that mu
 
 R3 is a bounded insert and does **not** renumber H3.11.5-H3.11.10. After R3 is accepted, work resumes at **H3.11.5 Rosehip Cottage**.
 
+**R3.4 history correction (28 September 2026):** PR #203, merged as `34286d9`, was titled as an R3.3 performance investigation because of a numbering collision. Its approved hotspot work is actually the main R3.4 performance implementation. Do not repeat that audit. The remaining R3.4 closeout is limited to elapsed-time movement response, the remaining presentation-scan cleanup, and explicit phone/tablet walk/Gallop/performance regression evidence.
+
 ## 2026-09-26 R6.5-WP19H3.11.4 Story House complete
 
 H3.11.4 A-F is **complete and human-approved**. The accepted Story House baseline now includes a polished walkable library with Quill, content-driven long-form story packages, a responsive DOM reader, durable independent reading progress/preferences, demand-loaded illustrations, paged picture-book support, scalable metadata/search/filter discovery, compact catalogue surfaces and direct tap/swipe page turns.
