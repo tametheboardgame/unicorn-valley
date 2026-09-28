@@ -200,7 +200,6 @@ async function seedUnintroducedPip(page: Page): Promise<void> {
   });
 }
 test.describe('R6-WP6.2 core NPC production art', () => {
-
   test('Pip stays absent before the authored arrival trigger and appears only after introduction begins', async ({
     page,
   }) => {
