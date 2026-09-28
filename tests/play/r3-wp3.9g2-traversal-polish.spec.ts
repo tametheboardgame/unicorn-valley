@@ -123,6 +123,17 @@ for (const [alias, sceneKey, minimumDetails] of [
     const scene = snapshot.scenes.find((candidate) => candidate.key === sceneKey);
     expect(scene).toBeTruthy();
 
+    if (sceneKey === 'MoonflowerGladeScene') {
+      // R6.5-WP19H3.11-R3.5 intentionally removed the legacy decorative Glade gateway/polish
+      // objects so the route into Sunbeam reads as an open landscape entrance.
+      const retiredTraversalDetails =
+        scene?.objects.filter(
+          (object) => object.name === 'world-traversal-polish-detail' && object.visible,
+        ) ?? [];
+      expect(retiredTraversalDetails).toHaveLength(0);
+      return;
+    }
+
     if (sceneKey === 'SunbeamVillageScene') {
       const names = new Set(
         scene?.objects.filter(({ visible }) => visible).map(({ name }) => name),

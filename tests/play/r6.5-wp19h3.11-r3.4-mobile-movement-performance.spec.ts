@@ -280,6 +280,41 @@ async function measureMovement(
   await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints });
 
   try {
+    // Under loaded CI runners the synthetic touch can be queued for several frames before the
+    // game consumes it. Synchronise the timed sample to observed movement rather than measuring
+    // runner/input latency as if it were player movement performance.
+    await page.waitForFunction(
+      ({ sceneKey, objectName, startX, startY }) => {
+        const api = (
+          window as typeof window & {
+            __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
+          }
+        ).__UNICORN_VALLEY_DIAGNOSTICS__;
+        const player = api
+          ?.snapshot()
+          .scenes.find((scene) => scene.key === sceneKey)
+          ?.objects.find((object) => object.name === objectName);
+        return player ? Math.hypot(player.x - startX, player.y - startY) >= 8 : false;
+      },
+      {
+        sceneKey: SCENE_KEY,
+        objectName: PLAYER_NAME,
+        startX: before.x,
+        startY: before.y,
+      },
+      { timeout: 3_000 },
+    );
+
+    const activeStart = await playerPosition(page);
+    await page.evaluate(() => {
+      const api = (
+        window as typeof window & {
+          __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
+        }
+      ).__UNICORN_VALLEY_DIAGNOSTICS__;
+      api?.resetPerformance();
+    });
+
     await page.waitForTimeout(HOLD_MS);
     const after = await playerPosition(page);
     const performance = await page.evaluate(() => {
@@ -293,7 +328,10 @@ async function measureMovement(
       }
       return api.performance();
     });
-    return { distance: Math.hypot(after.x - before.x, after.y - before.y), performance };
+    return {
+      distance: Math.hypot(after.x - activeStart.x, after.y - activeStart.y),
+      performance,
+    };
   } finally {
     await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
   }

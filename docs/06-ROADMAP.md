@@ -1,5 +1,22 @@
 # Unicorn Valley - Development Roadmap
 
+## 2026-09-28 R6.5-WP19H3.11-R4 generated asset pipeline started
+
+R3.1-R3.5 are complete. R4 is now the active mandatory prerequisite before H3.11.5 Rosehip Cottage.
+
+The target asset path is **ChatGPT image generation → Unicorn Valley / Generated Asset Staging in Google Drive → GitHub Actions → generated WebP on a development branch → Cloudflare preview**.
+
+The R4 development branch now contains:
+
+- a dedicated Drive staging folder and repository-side staging-folder policy;
+- a reusable Drive image materialiser with parent-folder, MIME, source-size, output-size and destination-root validation;
+- deterministic WebP resize/compression;
+- a reusable GitHub Actions workflow that commits generated assets only to an existing development branch, never directly to `main`;
+- a small JSON manifest contract with revision-driven replacement support;
+- a disposable Cloudflare smoke page for the two-pass acceptance test.
+
+The R4 acceptance proof is complete: GitHub OIDC/WIF authentication succeeded, a staged generated image was materialised and deployed, the same Drive file ID was replaced in place, the replacement was materialised and deployed, and the disposable smoke material was cleaned up. Permanent pipeline/runbook documentation is committed on the R4 branch.
+
 ## 2026-09-27 R6.5-WP19H3.11-R3 inserted before Rosehip Cottage
 
 H3.11-R2 Wobbly Cake is **complete and human-approved** and PR #183 merged it to `main` on 27 September 2026 as `abe3808b76031c67a74811b17c4b6528b0b331df`.
@@ -12,7 +29,7 @@ The post-R2 human play pass identified a cross-cutting remediation block that mu
 4. **H3.11-R3.4 - Mobile performance and movement consistency** — measure and remove avoidable high-frequency scene work, make movement response robust under lower frame rates, and validate walk/Gallop consistency on smaller-device profiles.
 5. **H3.11-R3.5 - Glade/Village visual tightening** — remove the Moonflower Glade→Sunbeam decorative arch, connect Sunbeam paths to shop doors, and anchor high-street bunting roof-corner to roof-corner.
 
-R3 is a bounded insert and does **not** renumber H3.11.5-H3.11.10. After R3 is accepted, work resumes at **H3.11.5 Rosehip Cottage**.
+R3 is a bounded insert and does **not** renumber H3.11.5-H3.11.10. R3.1-R3.5 are now complete and human-approved. Before work resumes at **H3.11.5 Rosehip Cottage**, the mandatory **H3.11-R4 Generated asset staging and GitHub materialisation pipeline** acceptance gate must be completed.
 
 **R3.4 history correction (28 September 2026):** PR #203, merged as `34286d9`, was titled as an R3.3 performance investigation because of a numbering collision. Its approved hotspot work is actually the main R3.4 performance implementation. Do not repeat that audit. The remaining R3.4 closeout is limited to elapsed-time movement response, the remaining presentation-scan cleanup, and explicit phone/tablet walk/Gallop/performance regression evidence.
 
