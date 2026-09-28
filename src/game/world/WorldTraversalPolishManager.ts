@@ -197,12 +197,10 @@ function addGateway(scene: Phaser.Scene, gateway: GatewayDefinition): void {
 }
 
 function decorateGlade(scene: Phaser.Scene): void {
-  // Moonflower Glade paths are owned by ExplorationPathPolishManager. Keep this manager
-  // responsible only for the existing east gateway and traversal behaviour so there is one
-  // visible path source of truth for the Glade.
-  // H1 owns the Glade's destination wording on the physical wooden direction sign.
-  // Deliberately omit a generic gateway label here so the retired floating sign cannot return.
-  addGateway(scene, { x: 2680, y: 900, direction: 'east' });
+  void scene;
+  // R3.5 deliberately leaves the east route visually open. Traversal remains owned by this
+  // manager, while the approved physical Sunbeam direction sign remains owned by Glade final
+  // presentation. Do not reintroduce a decorative gateway frame here.
 }
 
 function decorateMeadow(scene: Phaser.Scene): void {
