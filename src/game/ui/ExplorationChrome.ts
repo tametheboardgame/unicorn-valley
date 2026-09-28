@@ -55,9 +55,10 @@ export class ExplorationChrome {
   private readonly accessibility = getBrowserAccessibilitySettingsStore();
   private readonly objects: Phaser.GameObjects.GameObject[] = [];
   private readonly titleText: Phaser.GameObjects.Text | null;
+  private readonly legacyTextObjects: Phaser.GameObjects.Text[] = [];
   private readonly reducedMotionTargets: Phaser.GameObjects.GameObject[] = [];
-  private legacyScanObjectCount = -1;
-  private reducedMotionScanObjectCount = -1;
+  private lastLegacyDiscoveryAt = Number.NEGATIVE_INFINITY;
+  private lastReducedMotionDiscoveryAt = Number.NEGATIVE_INFINITY;
   private unsubscribeAccessibility: (() => void) | null = null;
 
   public constructor(
@@ -144,17 +145,24 @@ export class ExplorationChrome {
   }
 
   private suppressLegacyChromeIfCompositionChanged(locationTitle: string): void {
-    const objectCount = this.scene.children.list.length;
-    if (objectCount === this.legacyScanObjectCount) {
-      return;
+    const now = this.scene.time.now;
+    if (
+      this.legacyTextObjects.length === 0 ||
+      now - this.lastLegacyDiscoveryAt >= 1_500
+    ) {
+      this.lastLegacyDiscoveryAt = now;
+      this.legacyTextObjects.length = 0;
+      for (const object of this.scene.children.list) {
+        if (object instanceof Phaser.GameObjects.Text && object !== this.titleText) {
+          this.legacyTextObjects.push(object);
+        }
+      }
     }
-    this.legacyScanObjectCount = objectCount;
 
-    for (const object of this.scene.children.list) {
-      if (!(object instanceof Phaser.GameObjects.Text) || object === this.titleText) {
+    for (const object of this.legacyTextObjects) {
+      if (!object.active) {
         continue;
       }
-
       const text = object.text.trim();
       const isLegacyTitle =
         text === locationTitle && object.scrollFactorX === 0 && object.depth >= 100;
@@ -168,9 +176,18 @@ export class ExplorationChrome {
   }
 
   private applyReducedMotionPreference(forceRescan = false): void {
-    const objectCount = this.scene.children.list.length;
-    if (forceRescan || objectCount !== this.reducedMotionScanObjectCount) {
-      this.reducedMotionScanObjectCount = objectCount;
+    const reducedMotion = this.accessibility.load().reducedMotion;
+    if (!reducedMotion && !forceRescan) {
+      return;
+    }
+
+    const now = this.scene.time.now;
+    if (
+      forceRescan ||
+      this.reducedMotionTargets.length === 0 ||
+      now - this.lastReducedMotionDiscoveryAt >= 1_500
+    ) {
+      this.lastReducedMotionDiscoveryAt = now;
       this.reducedMotionTargets.length = 0;
 
       for (const object of this.scene.children.list) {
@@ -188,7 +205,7 @@ export class ExplorationChrome {
       }
     }
 
-    const timeScale = this.accessibility.load().reducedMotion ? 0 : 1;
+    const timeScale = reducedMotion ? 0 : 1;
     for (const target of this.reducedMotionTargets) {
       if (!target.active) {
         continue;
