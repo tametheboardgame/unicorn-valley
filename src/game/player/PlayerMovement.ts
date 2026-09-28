@@ -12,10 +12,7 @@ export const DEFAULT_PLAYER_SPEED = 300;
 export const MOVEMENT_RESPONSE_REFERENCE_FRAME_MS = 1000 / 60;
 const MAX_MOVEMENT_RESPONSE_DELTA_MS = 100;
 
-export function frameRateAdjustedMovementResponse(
-  baseResponse: number,
-  deltaMs: number,
-): number {
+export function frameRateAdjustedMovementResponse(baseResponse: number, deltaMs: number): number {
   const response = Math.max(0, Math.min(1, baseResponse));
   if (response === 0 || response === 1) {
     return response;
