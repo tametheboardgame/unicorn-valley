@@ -88,7 +88,8 @@ const PRESENTATION: Readonly<Record<VillageInteriorId, InteriorPresentationDefin
   },
   'rosehip-cottage': {
     title: 'Rosehip Cottage',
-    subtitle: 'A cosy little home filled with pressed flowers, tea things and notes from the garden.',
+    subtitle:
+      'A cosy little home filled with pressed flowers, tea things and notes from the garden.',
     icon: '🌹',
     wallColour: 0xffeee9,
     floorColour: 0xd7b58f,
@@ -332,7 +333,9 @@ export class VillageInteriorScene extends Phaser.Scene {
     }
     dresser.setDepth(worldDepthForY(535, 0.18));
 
-    const journalDesk = this.add.graphics().setName('village-interior:rosehip-cottage:garden-journal');
+    const journalDesk = this.add
+      .graphics()
+      .setName('village-interior:rosehip-cottage:garden-journal');
     journalDesk.fillStyle(0xa77a5e, 1);
     journalDesk.fillRoundedRect(165, 625, 185, 94, 14);
     journalDesk.fillStyle(0xf8e7c9, 1);
@@ -374,7 +377,13 @@ export class VillageInteriorScene extends Phaser.Scene {
     plant.fillStyle(0xb8775f, 1);
     plant.fillRoundedRect(115, 880, 105, 92, 18);
     plant.fillStyle(0x6f9a68, 1);
-    for (const [dx, dy] of [[0,-70],[-32,-52],[34,-48],[-18,-92],[24,-88]] as const) {
+    for (const [dx, dy] of [
+      [0, -70],
+      [-32, -52],
+      [34, -48],
+      [-18, -92],
+      [24, -88],
+    ] as const) {
       plant.fillEllipse(168 + dx, 905 + dy, 58, 30);
     }
     plant.fillStyle(0xe58c9b, 1);
