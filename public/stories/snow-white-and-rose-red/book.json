@@ -1,11 +1,9 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "id": "snow-white-and-rose-red",
   "title": "Snow-White and Rose-Red",
   "description": "Two sisters who share everything welcome a gentle bear into their winter home, then discover that their new friend is hiding a magical secret.",
   "catalogueBlurb": "Two kind sisters, a friendly bear and a secret hidden in the forest.",
-  "author": "Brothers Grimm, retold by Quill",
-  "readingMode": "flowing",
   "cover": {
     "path": "covers/cover.webp",
     "alt": "Otto Ubbelohde's 1909 illustration for Snow-White and Rose-Red."
@@ -24,105 +22,236 @@
   "publication": {
     "status": "published"
   },
-  "chapters": [
-    {
-      "id": "the-two-rose-trees",
-      "title": "The Two Rose Trees",
-      "path": "chapters/01.md"
-    },
-    {
-      "id": "the-winter-visitor",
-      "title": "The Winter Visitor",
-      "path": "chapters/02.md",
-      "illustrations": [
-        {
-          "id": "ubbelohde-bear-at-cottage",
-          "blockId": "a-knock-at-the-door",
-          "path": "illustrations/bear-at-cottage.webp",
-          "alt": "Otto Ubbelohde's illustration of the sisters meeting the bear.",
-          "placement": "full-width",
-          "width": 640,
-          "height": 345,
-          "caption": "Illustration by Otto Ubbelohde, 1909."
-        }
-      ]
-    },
-    {
-      "id": "the-dwarf-in-trouble",
-      "title": "The Dwarf in Trouble",
-      "path": "chapters/03.md",
-      "illustrations": [
-        {
-          "id": "ubbelohde-dwarf",
-          "blockId": "the-caught-beard",
-          "path": "illustrations/dwarf.webp",
-          "alt": "Otto Ubbelohde's illustration of Snow-White and Rose-Red finding the dwarf in trouble.",
-          "placement": "full-width",
-          "width": 518,
-          "height": 400,
-          "caption": "Illustration by Otto Ubbelohde, 1909."
-        }
-      ]
-    },
-    {
-      "id": "the-forest-secret",
-      "title": "The Forest Secret",
-      "path": "chapters/04.md",
-      "illustrations": [
-        {
-          "id": "ubbelohde-forest",
-          "blockId": "again-and-again",
-          "path": "illustrations/forest.webp",
-          "alt": "Otto Ubbelohde's illustration from Snow-White and Rose-Red.",
-          "placement": "inline",
-          "width": 325,
-          "height": 400,
-          "caption": "Illustration by Otto Ubbelohde, 1909."
-        }
-      ]
-    },
-    {
-      "id": "the-bears-secret",
-      "title": "The Bear's Secret",
-      "path": "chapters/05.md",
-      "illustrations": [
-        {
-          "id": "ubbelohde-ending",
-          "blockId": "the-spell-breaks",
-          "path": "illustrations/ending.webp",
-          "alt": "Otto Ubbelohde's illustration for the ending of Snow-White and Rose-Red.",
-          "placement": "full-width",
-          "width": 418,
-          "height": 400,
-          "caption": "Illustration by Otto Ubbelohde, 1909."
-        }
-      ]
-    }
-  ],
   "discovery": {
     "format": "Chapter Book",
     "genres": ["Fantasy", "Classics"],
     "audiences": ["Read Together", "Independent Reader"],
     "length": "Longer Read"
   },
-  "rights": {
-    "text": {
-      "status": "original",
-      "source": "Original Story House retelling based on the Brothers Grimm public-domain tale and Margaret Hunt's 1884 translation",
-      "sourceUrl": "https://en.wikisource.org/wiki/Grimm%27s_Household_Tales%2C_Volume_2/Snow-White_and_Rose-Red",
-      "notes": "The underlying Grimm tale and Margaret Hunt's 1884 English translation are public domain. This wording is an original child-friendly Unicorn Valley retelling."
+  "defaultEditionId": "story-house",
+  "editions": [
+    {
+      "id": "story-house",
+      "label": "Story House Edition",
+      "author": "Brothers Grimm, retold by Quill",
+      "readingMode": "flowing",
+      "rights": {
+        "text": {
+          "status": "original",
+          "source": "Original Story House retelling based on the Brothers Grimm public-domain tale and Margaret Hunt's 1884 translation",
+          "sourceUrl": "https://en.wikisource.org/wiki/Grimm%27s_Household_Tales%2C_Volume_2/Snow-White_and_Rose-Red",
+          "notes": "The underlying Grimm tale and Margaret Hunt's 1884 English translation are public domain. This wording is an original child-friendly Unicorn Valley retelling."
+        },
+        "illustrations": {
+          "status": "public-domain",
+          "source": "Otto Ubbelohde illustrations for Snow-White and Rose-Red, 1909",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/Category:Snow_White_and_Rose_Red",
+          "notes": "The selected Ubbelohde source files are identified as public domain on Wikimedia Commons. Ubbelohde died in 1922."
+        },
+        "edition": {
+          "status": "original",
+          "source": "Unicorn Valley Story House edition"
+        },
+        "originalPublicationYear": 1827,
+        "curatorNotes": "Split into five short reader sections. The original tale's harsher ending is softened for the target reader while preserving the central story and magical reveal."
+      },
+      "chapters": [
+        {
+          "id": "the-two-rose-trees",
+          "title": "The Two Rose Trees",
+          "path": "chapters/01.md"
+        },
+        {
+          "id": "the-winter-visitor",
+          "title": "The Winter Visitor",
+          "path": "chapters/02.md",
+          "illustrations": [
+            {
+              "id": "ubbelohde-bear-at-cottage",
+              "blockId": "a-knock-at-the-door",
+              "path": "illustrations/bear-at-cottage.webp",
+              "alt": "Otto Ubbelohde's illustration of the sisters meeting the bear.",
+              "placement": "full-width",
+              "width": 640,
+              "height": 345,
+              "caption": "Illustration by Otto Ubbelohde, 1909."
+            }
+          ]
+        },
+        {
+          "id": "the-dwarf-in-trouble",
+          "title": "The Dwarf in Trouble",
+          "path": "chapters/03.md",
+          "illustrations": [
+            {
+              "id": "ubbelohde-dwarf",
+              "blockId": "the-caught-beard",
+              "path": "illustrations/dwarf.webp",
+              "alt": "Otto Ubbelohde's illustration of Snow-White and Rose-Red finding the dwarf in trouble.",
+              "placement": "full-width",
+              "width": 518,
+              "height": 400,
+              "caption": "Illustration by Otto Ubbelohde, 1909."
+            }
+          ]
+        },
+        {
+          "id": "the-forest-secret",
+          "title": "The Forest Secret",
+          "path": "chapters/04.md",
+          "illustrations": [
+            {
+              "id": "ubbelohde-forest",
+              "blockId": "again-and-again",
+              "path": "illustrations/forest.webp",
+              "alt": "Otto Ubbelohde's illustration from Snow-White and Rose-Red.",
+              "placement": "inline",
+              "width": 325,
+              "height": 400,
+              "caption": "Illustration by Otto Ubbelohde, 1909."
+            }
+          ]
+        },
+        {
+          "id": "the-bears-secret",
+          "title": "The Bear's Secret",
+          "path": "chapters/05.md",
+          "illustrations": [
+            {
+              "id": "ubbelohde-ending",
+              "blockId": "the-spell-breaks",
+              "path": "illustrations/ending.webp",
+              "alt": "Otto Ubbelohde's illustration for the ending of Snow-White and Rose-Red.",
+              "placement": "full-width",
+              "width": 418,
+              "height": 400,
+              "caption": "Illustration by Otto Ubbelohde, 1909."
+            }
+          ]
+        }
+      ]
     },
-    "illustrations": {
-      "status": "public-domain",
-      "source": "Otto Ubbelohde illustrations for Snow-White and Rose-Red, 1909",
-      "sourceUrl": "https://commons.wikimedia.org/wiki/Category:Snow_White_and_Rose_Red",
-      "notes": "The selected Ubbelohde source files are identified as public domain on Wikimedia Commons. Ubbelohde died in 1922."
-    },
-    "edition": {
-      "status": "original",
-      "source": "Unicorn Valley Story House edition"
-    },
-    "originalPublicationYear": 1827,
-    "curatorNotes": "Split into five short reader sections. The original tale's harsher ending is softened for the target reader while preserving the central story and magical reveal."
-  }
+    {
+      "id": "full-classic",
+      "label": "Full Classic Text",
+      "author": "Brothers Grimm, English text after Edgar Taylor and Marian Edwardes",
+      "readingMode": "paged-prose",
+      "rights": {
+        "text": {
+          "status": "public-domain",
+          "source": "Grimms' Fairy Tales, Project Gutenberg eBook #2591",
+          "sourceUrl": "https://www.gutenberg.org/ebooks/2591",
+          "notes": "The Project Gutenberg preparer's note states that the English text is based on translations from the Grimms' Kinder und Hausmärchen by Edgar Taylor and Marian Edwardes. The complete Snow-White and Rose-Red wording is retained without abridgement or modernisation; Project Gutenberg front matter, contributor notes and licence boilerplate are excluded."
+        },
+        "illustrations": {
+          "status": "public-domain",
+          "source": "Otto Ubbelohde illustrations for Snow-White and Rose-Red, 1909",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/Category:Snow_White_and_Rose_Red",
+          "notes": "The four previously verified Otto Ubbelohde Story House illustrations are reused beside matching passages in the complete classic text."
+        },
+        "edition": {
+          "status": "public-domain",
+          "source": "Project Gutenberg eBook #2591",
+          "notes": "Story House pagination changes presentation only; the source wording remains complete."
+        },
+        "originalPublicationYear": 1827,
+        "curatorNotes": "Complete public-domain English text reflowed into 9 reader pages at paragraph boundaries, with four historical illustrations anchored to matching scenes."
+      },
+      "chapters": [
+        {
+          "id": "page-01",
+          "title": "Snow-White and Rose-Red",
+          "path": "editions/full-classic/pages/page-01.md"
+        },
+        {
+          "id": "page-02",
+          "title": "Snow-White and Rose-Red (continued)",
+          "path": "editions/full-classic/pages/page-02.md"
+        },
+        {
+          "id": "page-03",
+          "title": "Snow-White and Rose-Red (continued)",
+          "path": "editions/full-classic/pages/page-03.md",
+          "illustrations": [
+            {
+              "id": "full-ubbelohde-bear-at-cottage",
+              "path": "illustrations/bear-at-cottage.webp",
+              "alt": "Otto Ubbelohde's illustration of the sisters meeting the bear.",
+              "placement": "full-width",
+              "width": 640,
+              "height": 345,
+              "caption": "Illustration by Otto Ubbelohde, 1909.",
+              "blockId": "p03-b01"
+            }
+          ]
+        },
+        {
+          "id": "page-04",
+          "title": "Snow-White and Rose-Red (continued)",
+          "path": "editions/full-classic/pages/page-04.md"
+        },
+        {
+          "id": "page-05",
+          "title": "Snow-White and Rose-Red (continued)",
+          "path": "editions/full-classic/pages/page-05.md"
+        },
+        {
+          "id": "page-06",
+          "title": "Snow-White and Rose-Red (continued)",
+          "path": "editions/full-classic/pages/page-06.md",
+          "illustrations": [
+            {
+              "id": "full-ubbelohde-dwarf",
+              "path": "illustrations/dwarf.webp",
+              "alt": "Otto Ubbelohde's illustration of Snow-White and Rose-Red finding the dwarf in trouble.",
+              "placement": "full-width",
+              "width": 518,
+              "height": 400,
+              "caption": "Illustration by Otto Ubbelohde, 1909.",
+              "blockId": "p06-b01"
+            }
+          ]
+        },
+        {
+          "id": "page-07",
+          "title": "Snow-White and Rose-Red (continued)",
+          "path": "editions/full-classic/pages/page-07.md"
+        },
+        {
+          "id": "page-08",
+          "title": "Snow-White and Rose-Red (continued)",
+          "path": "editions/full-classic/pages/page-08.md",
+          "illustrations": [
+            {
+              "id": "full-ubbelohde-forest",
+              "path": "illustrations/forest.webp",
+              "alt": "Otto Ubbelohde's illustration from Snow-White and Rose-Red.",
+              "placement": "inline",
+              "width": 325,
+              "height": 400,
+              "caption": "Illustration by Otto Ubbelohde, 1909.",
+              "blockId": "p08-b02"
+            }
+          ]
+        },
+        {
+          "id": "page-09",
+          "title": "Snow-White and Rose-Red (continued)",
+          "path": "editions/full-classic/pages/page-09.md",
+          "illustrations": [
+            {
+              "id": "full-ubbelohde-ending",
+              "path": "illustrations/ending.webp",
+              "alt": "Otto Ubbelohde's illustration for the ending of Snow-White and Rose-Red.",
+              "placement": "full-width",
+              "width": 418,
+              "height": 400,
+              "caption": "Illustration by Otto Ubbelohde, 1909.",
+              "blockId": "p09-b01"
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }
