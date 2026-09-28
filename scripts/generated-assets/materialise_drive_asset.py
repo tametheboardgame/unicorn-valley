@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import fnmatch
 import io
 import json
 from pathlib import Path
@@ -29,16 +30,23 @@ def require_mapping(value: Any, label: str) -> dict[str, Any]:
     return value
 
 
-def resolve_destination(destination: str, allowed_roots: list[str]) -> Path:
+def resolve_destination(
+    destination: str,
+    allowed_roots: list[str],
+    allowed_patterns: list[str],
+) -> Path:
     candidate = Path(destination)
     if candidate.is_absolute() or ".." in candidate.parts:
         raise ValueError("Destination must be a repository-relative path without '..'.")
 
     normalised = candidate.as_posix()
-    if not any(normalised.startswith(root) for root in allowed_roots):
+    root_allowed = any(normalised.startswith(root) for root in allowed_roots)
+    pattern_allowed = any(fnmatch.fnmatchcase(normalised, pattern) for pattern in allowed_patterns)
+    if not root_allowed and not pattern_allowed:
+        allowed = [*allowed_roots, *allowed_patterns]
         raise ValueError(
-            f"Destination {normalised!r} is outside approved generated-asset roots: "
-            + ", ".join(allowed_roots)
+            f"Destination {normalised!r} is outside approved generated-asset destinations: "
+            + ", ".join(allowed)
         )
     if candidate.suffix.lower() != ".webp":
         raise ValueError("Generated assets must materialise as .webp files.")
@@ -177,6 +185,7 @@ def main() -> None:
     destination = resolve_destination(
         destination_value,
         [str(value) for value in config["allowedDestinationRoots"]],
+        [str(value) for value in config.get("allowedDestinationPatterns", [])],
     )
 
     transform = require_mapping(manifest.get("transform", {}), "transform")
