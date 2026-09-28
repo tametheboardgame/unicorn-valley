@@ -4,7 +4,7 @@ import {
   isPointBlocked,
   isPointInsideWalkableBounds,
 } from './MapTraversal';
-import { SUNBEAM_VILLAGE_LAYOUT } from './SunbeamVillageLayout';
+import { resolveSunbeamShopRoofAnchor, SUNBEAM_VILLAGE_LAYOUT } from './SunbeamVillageLayout';
 import { SUNBEAM_VILLAGE_MAP } from './SunbeamVillageMap';
 
 const PLAYER_CLEARANCE = 42;
@@ -176,10 +176,15 @@ describe('Sunbeam Village map', () => {
     expect(mainApproaches[1].at(-1)).toEqual(
       SUNBEAM_VILLAGE_LAYOUT.entrances.rainbowMeadow.position,
     );
-    expect(shopBranches.map((branch) => branch.at(-1))).toEqual([
+    expect(shopBranches.map((branch) => branch.at(-2))).toEqual([
       SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.approach,
       SUNBEAM_VILLAGE_LAYOUT.buildings.accessoryShop.approach,
       SUNBEAM_VILLAGE_LAYOUT.buildings.library.approach,
+    ]);
+    expect(shopBranches.map((branch) => branch.at(-1))).toEqual([
+      SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.doorstep,
+      SUNBEAM_VILLAGE_LAYOUT.buildings.accessoryShop.doorstep,
+      SUNBEAM_VILLAGE_LAYOUT.buildings.library.doorstep,
     ]);
     expect(willowBranch.at(-1)).toEqual(SUNBEAM_VILLAGE_LAYOUT.willowGarden.approach);
     expect(willowBranch).toHaveLength(7);
@@ -197,6 +202,35 @@ describe('Sunbeam Village map', () => {
     expect(residentialSideRoads[0]).toContainEqual(rosehip.approach);
     expect(residentialSideRoads[0]).toContainEqual(bluebell.approach);
     expect(residentialSideRoads[1]).toContainEqual(sunpetal.approach);
+  });
+
+  it('anchors high-street bunting to canonical shop roof corners', () => {
+    const [bakeryToThread, threadToStory] = SUNBEAM_VILLAGE_LAYOUT.highStreetBunting;
+
+    expect(
+      resolveSunbeamShopRoofAnchor(bakeryToThread.from.building, bakeryToThread.from.anchor),
+    ).toEqual({
+      x: 945,
+      y: 395,
+    });
+    expect(
+      resolveSunbeamShopRoofAnchor(bakeryToThread.to.building, bakeryToThread.to.anchor),
+    ).toEqual({
+      x: 1224,
+      y: 298,
+    });
+    expect(
+      resolveSunbeamShopRoofAnchor(threadToStory.from.building, threadToStory.from.anchor),
+    ).toEqual({
+      x: 1674,
+      y: 298,
+    });
+    expect(
+      resolveSunbeamShopRoofAnchor(threadToStory.to.building, threadToStory.to.anchor),
+    ).toEqual({
+      x: 2008,
+      y: 380,
+    });
   });
 
   it('blends the Twinkle & Thread branch through a plaza-owned north apron', () => {

@@ -206,7 +206,6 @@ export class MoonflowerGladeScene extends Phaser.Scene {
     renderHomeMeadow(this);
     this.createHollowTree();
     this.createMoonflowerField();
-    this.createEntranceStructures();
     this.createBoundaryFoliage();
     this.createFireflies();
     this.createForegroundLayeringTest();
@@ -342,19 +341,6 @@ export class MoonflowerGladeScene extends Phaser.Scene {
     // The reviewed far-right blue bloom is drawn as one ordered blossom so its centre can never
     // sort beneath a petal. The overlapping lower-right pink bloom is intentionally absent.
     this.addOrderedMoonflower(2520, 1245, 1, sky);
-  }
-
-  private createEntranceStructures(): void {
-    for (const entrance of MOONFLOWER_GLADE_MAP.entrances) {
-      const archWidth = entrance.direction === 'east' ? 150 : 190;
-      const archHeight = 170;
-      const x = entrance.position.x;
-      const y = entrance.position.y;
-
-      this.add.rectangle(x - archWidth / 2, y, 26, archHeight, 0xb69a78, 0.95).setDepth(8);
-      this.add.rectangle(x + archWidth / 2, y, 26, archHeight, 0xb69a78, 0.95).setDepth(8);
-      this.add.ellipse(x, y - archHeight / 2, archWidth + 28, 64, 0xc9b08c, 0.95).setDepth(8);
-    }
   }
 
   private createBoundaryFoliage(): void {

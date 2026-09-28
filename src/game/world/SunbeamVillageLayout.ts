@@ -67,16 +67,19 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
         { x: 700, y: 965 },
         { x: 700, y: 850 },
         { x: 700, y: 760 },
+        { x: 700, y: 690 },
       ],
       [
         { x: 1450, y: 850 },
         { x: 1450, y: 775 },
         { x: 1450, y: 700 },
+        { x: 1468, y: 611 },
       ],
       [
         { x: 2260, y: 970 },
         { x: 2260, y: 885 },
         { x: 2260, y: 800 },
+        { x: 2260, y: 744 },
       ],
     ],
     willowBranch: [
@@ -163,6 +166,11 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
       width: 420,
       height: 300,
       approach: { x: 700, y: 760 },
+      doorstep: { x: 700, y: 690 },
+      roofAnchors: {
+        leftEave: { x: -245, y: -125 },
+        rightEave: { x: 245, y: -125 },
+      },
     },
     accessoryShop: {
       x: 1450,
@@ -170,6 +178,11 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
       width: 420,
       height: 320,
       approach: { x: 1450, y: 700 },
+      doorstep: { x: 1468, y: 611 },
+      roofAnchors: {
+        leftEave: { x: -226, y: -132 },
+        rightEave: { x: 224, y: -132 },
+      },
     },
     library: {
       x: 2260,
@@ -177,8 +190,25 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
       width: 460,
       height: 330,
       approach: { x: 2260, y: 800 },
+      doorstep: { x: 2260, y: 744 },
+      roofAnchors: {
+        leftEave: { x: -252, y: -160 },
+        rightEave: { x: 252, y: -160 },
+      },
     },
   },
+  highStreetBunting: [
+    {
+      from: { building: 'bakery', anchor: 'rightEave' },
+      to: { building: 'accessoryShop', anchor: 'leftEave' },
+      flagCount: 6,
+    },
+    {
+      from: { building: 'accessoryShop', anchor: 'rightEave' },
+      to: { building: 'library', anchor: 'leftEave' },
+      flagCount: 7,
+    },
+  ],
   residences: [
     {
       id: 'rosehip-cottage',
@@ -361,3 +391,18 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
     },
   },
 } as const;
+
+export type SunbeamShopBuildingId = keyof typeof SUNBEAM_VILLAGE_LAYOUT.buildings;
+export type SunbeamRoofAnchorId = 'leftEave' | 'rightEave';
+
+export function resolveSunbeamShopRoofAnchor(
+  buildingId: SunbeamShopBuildingId,
+  anchorId: SunbeamRoofAnchorId,
+): { x: number; y: number } {
+  const building = SUNBEAM_VILLAGE_LAYOUT.buildings[buildingId];
+  const anchor = building.roofAnchors[anchorId];
+  return {
+    x: building.x + anchor.x,
+    y: building.y + anchor.y,
+  };
+}
