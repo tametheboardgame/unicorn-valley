@@ -90,6 +90,11 @@ export function openExplorationModal(
       ...data,
       returnScene: source.scene.key,
     });
+    // A modal may have been registered earlier in the session than a later-loaded interior.
+    // Phaser preserves scene-manager ordering across stops/restarts, so merely launching that
+    // older modal can leave it rendering underneath the opaque source scene. Always promote the
+    // launched modal before pausing its source so Bag/Map/Book/Settings ownership is visible.
+    source.scene.bringToTop(modalSceneKey);
     // Phaser can queue launch activation until the next scene step. Pause the caller
     // immediately after a valid registered launch instead of requiring isActive() here.
     source.scene.pause();
