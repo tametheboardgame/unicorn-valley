@@ -1,5 +1,28 @@
 # Unicorn Valley - Development Roadmap
 
+## 2026-09-28 R6.5-WP19SH1 Story House illustrated classics parallel stream planned
+
+A separate Story House content stream is now planned alongside the main H3.11.5+ world/interior
+work. It starts once R6.5-WP19H3.11-R4 is accepted and uses the permanent generated-asset pipeline
+to reillustrate selected existing classics with ChatGPT-generated artwork.
+
+The stream is deliberately parallel-safe when confined to Story House content, generated-asset
+manifests and Story House documentation. The initial sequence is:
+
+1. **SH1.1 - Foundation and current-content audit**
+2. **SH1.2 - The Lion and the Mouse generated-art pilot**
+3. **SH1.3 - Quick-read classics batch**
+4. **SH1.4 - Mid-length fairy-tale batch**
+5. **SH1.5 - Long-form classic retellings**
+6. **SH1.6 - Dual-edition generated reillustration for Alice/Peter Rabbit/Jemima**
+7. **SH1.7 - Classics programme consolidation**
+
+Historic/public-domain illustration sets remain preserved. Generated assets live separately under
+`public/stories/<story-id>/illustrations/generated/`.
+
+Authoritative roadmap:
+`docs/work-packages/R6.5-WP19SH1-STORY-HOUSE-ILLUSTRATED-CLASSICS.md`.
+
 ## 2026-09-28 R6.5-WP19H3.11-R4 generated asset pipeline started
 
 R3.1-R3.5 are complete. R4 is now the active mandatory prerequisite before H3.11.5 Rosehip Cottage.

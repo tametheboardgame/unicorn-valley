@@ -170,6 +170,22 @@ Purpose delivered: replace the title lock-up with the approved generated Unicorn
 
 H0.5 cleared the final technical and visual gate for H1.
 
+### R6.5-WP19SH1 - Story House Illustrated Classics Programme
+
+State: **planned parallel content stream; starts after R6.5-WP19H3.11-R4 is accepted and may then run concurrently with H3.11.5+ world/interior work**.
+
+Path: `docs/work-packages/R6.5-WP19SH1-STORY-HOUSE-ILLUSTRATED-CLASSICS.md`
+
+SH1 is a separate Story House content programme for reillustrating selected existing classics with
+ChatGPT-generated artwork using the permanent Drive → Workload Identity Federation → GitHub Actions
+materialisation pipeline. It is intentionally parallel-safe with the main world/interior stream
+when work remains confined to Story House content, generated-asset manifests and Story House
+documentation.
+
+The initial sequence is: generated-classics foundation/audit → The Lion and the Mouse pilot →
+quick-read classics → mid-length fairy tales → long-form retellings → later dual-edition
+reillustration for Alice/Peter Rabbit/Jemima while preserving their historic source-art sets.
+
 ### R6.5-WP19H1+ - Open-Ended Area-by-Area Final Polish Programme
 
 State: **active; H1 = Moonflower Glade complete, H2 = Moonflower Cottage complete, H3 = Sunbeam Village active; H3.11-R3.1-R3.5 are complete and human-approved, and H3.11-R4 has passed its two-pass generated-asset acceptance proof and is awaiting normal PR qualification/merge before H3.11.5 Rosehip Cottage begins**.
