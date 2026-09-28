@@ -211,9 +211,9 @@ const ROSEHIP_COTTAGE: VillageInteriorDefinition = {
   roomShell: ROOM_SHELL,
   anchors: sharedAnchors(
     anchor('counter', 'Tea dresser', { x: 1115, y: 500 }, { x: 1040, y: 610 }),
-    anchor('npc-work', 'Rosehip reading chair', { x: 390, y: 760 }, { x: 500, y: 790 }),
+    anchor('npc-work', 'Rosehip reading chair', { x: 535, y: 805 }, { x: 690, y: 805 }),
     anchor('primary-feature', 'Garden journal', { x: 270, y: 535 }, { x: 390, y: 585 }),
-    anchor('secondary-feature', 'Tea table', { x: 1030, y: 760 }, { x: 900, y: 805 }),
+    anchor('secondary-feature', 'Tea table', { x: 1030, y: 760 }, { x: 860, y: 805 }),
   ),
   colliders: [
     ...ROOM_COLLIDERS,
