@@ -392,7 +392,6 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
   },
 } as const;
 
-
 export type SunbeamShopBuildingId = keyof typeof SUNBEAM_VILLAGE_LAYOUT.buildings;
 export type SunbeamRoofAnchorId = 'leftEave' | 'rightEave';
 
