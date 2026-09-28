@@ -1,0 +1,8 @@
+<!-- block:p07-b01 -->
+Peter sat down to rest; he was out of breath and trembling with fright, and he had not the least idea which way to go. Also he was very damp with sitting in that can.
+
+<!-- block:p07-b02 -->
+After a time he began to wander about, going lippity--lippity--not very fast, and looking all round.
+
+<!-- block:p07-b03 -->
+He found a door in a wall; but it was locked, and there was no room for a fat little rabbit to squeeze underneath.

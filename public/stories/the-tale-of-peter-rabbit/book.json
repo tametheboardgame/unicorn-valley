@@ -136,9 +136,9 @@
         },
         "illustrations": {
           "status": "public-domain",
-          "source": "Original 1902 illustrations by Beatrix Potter",
-          "sourceUrl": "https://commons.wikimedia.org/wiki/Category:The_Tale_of_Peter_Rabbit",
-          "notes": "The selected original Potter illustration files are identified as public domain on Wikimedia Commons."
+          "source": "Original 1902 illustrations by Beatrix Potter, Project Gutenberg eBook #14838",
+          "sourceUrl": "https://www.gutenberg.org/files/14838/14838-h/14838-h.htm",
+          "notes": "All 26 narrative illustrations appearing between the opening story text and THE END in the Project Gutenberg HTML edition are included in source order. Story House pagination changes presentation only."
         },
         "edition": {
           "status": "public-domain",
@@ -146,7 +146,7 @@
           "notes": "Story House pagination is presentation only; the original wording remains unabridged."
         },
         "originalPublicationYear": 1902,
-        "curatorNotes": "Complete original text split into 6 reader pages at paragraph boundaries, with original Potter illustrations reused at matching scenes."
+        "curatorNotes": "Complete original text reflowed into 10 reader pages at paragraph boundaries, with all 26 narrative illustrations from the Project Gutenberg 1902 edition restored at their matching passage anchors."
       },
       "chapters": [
         {
@@ -155,10 +155,30 @@
           "path": "editions/full-classic/pages/page-01.md",
           "illustrations": [
             {
-              "id": "full-potter-rabbit-family",
-              "blockId": "p01-b01",
-              "path": "illustrations/rabbit-family.webp",
-              "alt": "Beatrix Potter's illustration of Peter Rabbit with his family.",
+              "id": "full-potter-original-01",
+              "blockId": "p01-b02",
+              "path": "illustrations/full-classic/original-01.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Peter Rabbit.",
+              "placement": "full-width",
+              "width": 487,
+              "height": 575,
+              "caption": "Illustration by Beatrix Potter, 1902."
+            },
+            {
+              "id": "full-potter-original-02",
+              "blockId": "p01-b03",
+              "path": "illustrations/full-classic/original-02.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Peter Rabbit.",
+              "placement": "full-width",
+              "width": 469,
+              "height": 533,
+              "caption": "Illustration by Beatrix Potter, 1902."
+            },
+            {
+              "id": "full-potter-original-03",
+              "blockId": "p01-b04",
+              "path": "illustrations/full-classic/original-03.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Peter Rabbit.",
               "placement": "full-width",
               "width": 469,
               "height": 511,
@@ -172,13 +192,33 @@
           "path": "editions/full-classic/pages/page-02.md",
           "illustrations": [
             {
-              "id": "full-potter-garden",
+              "id": "full-potter-original-04",
               "blockId": "p02-b01",
-              "path": "illustrations/garden.webp",
-              "alt": "An original Beatrix Potter illustration from The Tale of Peter Rabbit.",
+              "path": "illustrations/full-classic/original-04.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Peter Rabbit.",
               "placement": "full-width",
-              "width": 431,
-              "height": 528,
+              "width": 457,
+              "height": 566,
+              "caption": "Illustration by Beatrix Potter, 1902."
+            },
+            {
+              "id": "full-potter-original-05",
+              "blockId": "p02-b02",
+              "path": "illustrations/full-classic/original-05.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Peter Rabbit.",
+              "placement": "full-width",
+              "width": 487,
+              "height": 595,
+              "caption": "Illustration by Beatrix Potter, 1902."
+            },
+            {
+              "id": "full-potter-original-06",
+              "blockId": "p02-b03",
+              "path": "illustrations/full-classic/original-06.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Peter Rabbit.",
+              "placement": "full-width",
+              "width": 440,
+              "height": 475,
               "caption": "Illustration by Beatrix Potter, 1902."
             }
           ]
@@ -186,12 +226,76 @@
         {
           "id": "page-03",
           "title": "The Tale of Peter Rabbit (continued)",
-          "path": "editions/full-classic/pages/page-03.md"
+          "path": "editions/full-classic/pages/page-03.md",
+          "illustrations": [
+            {
+              "id": "full-potter-original-07",
+              "blockId": "p03-b01",
+              "path": "illustrations/full-classic/original-07.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Peter Rabbit.",
+              "placement": "full-width",
+              "width": 476,
+              "height": 557,
+              "caption": "Illustration by Beatrix Potter, 1902."
+            },
+            {
+              "id": "full-potter-original-08",
+              "blockId": "p03-b02",
+              "path": "illustrations/full-classic/original-08.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Peter Rabbit.",
+              "placement": "full-width",
+              "width": 431,
+              "height": 528,
+              "caption": "Illustration by Beatrix Potter, 1902."
+            },
+            {
+              "id": "full-potter-original-09",
+              "blockId": "p03-b03",
+              "path": "illustrations/full-classic/original-09.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Peter Rabbit.",
+              "placement": "full-width",
+              "width": 400,
+              "height": 384,
+              "caption": "Illustration by Beatrix Potter, 1902."
+            }
+          ]
         },
         {
           "id": "page-04",
           "title": "The Tale of Peter Rabbit (continued)",
-          "path": "editions/full-classic/pages/page-04.md"
+          "path": "editions/full-classic/pages/page-04.md",
+          "illustrations": [
+            {
+              "id": "full-potter-original-10",
+              "blockId": "p04-b01",
+              "path": "illustrations/full-classic/original-10.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Peter Rabbit.",
+              "placement": "full-width",
+              "width": 475,
+              "height": 453,
+              "caption": "Illustration by Beatrix Potter, 1902."
+            },
+            {
+              "id": "full-potter-original-11",
+              "blockId": "p04-b02",
+              "path": "illustrations/full-classic/original-11.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Peter Rabbit.",
+              "placement": "full-width",
+              "width": 470,
+              "height": 568,
+              "caption": "Illustration by Beatrix Potter, 1902."
+            },
+            {
+              "id": "full-potter-original-12",
+              "blockId": "p04-b04",
+              "path": "illustrations/full-classic/original-12.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Peter Rabbit.",
+              "placement": "full-width",
+              "width": 426,
+              "height": 419,
+              "caption": "Illustration by Beatrix Potter, 1902."
+            }
+          ]
         },
         {
           "id": "page-05",
@@ -199,13 +303,33 @@
           "path": "editions/full-classic/pages/page-05.md",
           "illustrations": [
             {
-              "id": "full-potter-escape",
-              "blockId": "p05-b03",
-              "path": "illustrations/escape.webp",
-              "alt": "An original Beatrix Potter illustration from Peter Rabbit's escape.",
+              "id": "full-potter-original-13",
+              "blockId": "p05-b01",
+              "path": "illustrations/full-classic/original-13.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Peter Rabbit.",
               "placement": "full-width",
-              "width": 408,
-              "height": 530,
+              "width": 437,
+              "height": 512,
+              "caption": "Illustration by Beatrix Potter, 1902."
+            },
+            {
+              "id": "full-potter-original-14",
+              "blockId": "p05-b02",
+              "path": "illustrations/full-classic/original-14.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Peter Rabbit.",
+              "placement": "full-width",
+              "width": 474,
+              "height": 493,
+              "caption": "Illustration by Beatrix Potter, 1902."
+            },
+            {
+              "id": "full-potter-original-15",
+              "blockId": "p05-b03",
+              "path": "illustrations/full-classic/original-15.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Peter Rabbit.",
+              "placement": "full-width",
+              "width": 420,
+              "height": 433,
               "caption": "Illustration by Beatrix Potter, 1902."
             }
           ]
@@ -216,13 +340,141 @@
           "path": "editions/full-classic/pages/page-06.md",
           "illustrations": [
             {
-              "id": "full-potter-home",
+              "id": "full-potter-original-16",
+              "blockId": "p06-b01",
+              "path": "illustrations/full-classic/original-16.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Peter Rabbit.",
+              "placement": "full-width",
+              "width": 416,
+              "height": 545,
+              "caption": "Illustration by Beatrix Potter, 1902."
+            },
+            {
+              "id": "full-potter-original-17",
               "blockId": "p06-b03",
-              "path": "illustrations/home.webp",
-              "alt": "Beatrix Potter's illustration of Mrs Rabbit and the rabbit family.",
+              "path": "illustrations/full-classic/original-17.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Peter Rabbit.",
+              "placement": "full-width",
+              "width": 469,
+              "height": 530,
+              "caption": "Illustration by Beatrix Potter, 1902."
+            },
+            {
+              "id": "full-potter-original-18",
+              "blockId": "p06-b04",
+              "path": "illustrations/full-classic/original-18.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Peter Rabbit.",
+              "placement": "full-width",
+              "width": 407,
+              "height": 503,
+              "caption": "Illustration by Beatrix Potter, 1902."
+            }
+          ]
+        },
+        {
+          "id": "page-07",
+          "title": "The Tale of Peter Rabbit (continued)",
+          "path": "editions/full-classic/pages/page-07.md",
+          "illustrations": [
+            {
+              "id": "full-potter-original-19",
+              "blockId": "p07-b02",
+              "path": "illustrations/full-classic/original-19.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Peter Rabbit.",
+              "placement": "full-width",
+              "width": 409,
+              "height": 537,
+              "caption": "Illustration by Beatrix Potter, 1902."
+            }
+          ]
+        },
+        {
+          "id": "page-08",
+          "title": "The Tale of Peter Rabbit (continued)",
+          "path": "editions/full-classic/pages/page-08.md",
+          "illustrations": [
+            {
+              "id": "full-potter-original-20",
+              "blockId": "p08-b01",
+              "path": "illustrations/full-classic/original-20.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Peter Rabbit.",
+              "placement": "full-width",
+              "width": 461,
+              "height": 554,
+              "caption": "Illustration by Beatrix Potter, 1902."
+            },
+            {
+              "id": "full-potter-original-21",
+              "blockId": "p08-b02",
+              "path": "illustrations/full-classic/original-21.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Peter Rabbit.",
+              "placement": "full-width",
+              "width": 451,
+              "height": 556,
+              "caption": "Illustration by Beatrix Potter, 1902."
+            }
+          ]
+        },
+        {
+          "id": "page-09",
+          "title": "The Tale of Peter Rabbit (continued)",
+          "path": "editions/full-classic/pages/page-09.md",
+          "illustrations": [
+            {
+              "id": "full-potter-original-22",
+              "blockId": "p09-b01",
+              "path": "illustrations/full-classic/original-22.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Peter Rabbit.",
+              "placement": "full-width",
+              "width": 449,
+              "height": 533,
+              "caption": "Illustration by Beatrix Potter, 1902."
+            },
+            {
+              "id": "full-potter-original-23",
+              "blockId": "p09-b03",
+              "path": "illustrations/full-classic/original-23.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Peter Rabbit.",
+              "placement": "full-width",
+              "width": 408,
+              "height": 530,
+              "caption": "Illustration by Beatrix Potter, 1902."
+            }
+          ]
+        },
+        {
+          "id": "page-10",
+          "title": "The Tale of Peter Rabbit (continued)",
+          "path": "editions/full-classic/pages/page-10.md",
+          "illustrations": [
+            {
+              "id": "full-potter-original-24",
+              "blockId": "p10-b02",
+              "path": "illustrations/full-classic/original-24.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Peter Rabbit.",
+              "placement": "full-width",
+              "width": 440,
+              "height": 510,
+              "caption": "Illustration by Beatrix Potter, 1902."
+            },
+            {
+              "id": "full-potter-original-25",
+              "blockId": "p10-b03",
+              "path": "illustrations/full-classic/original-25.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Peter Rabbit.",
               "placement": "full-width",
               "width": 446,
               "height": 505,
+              "caption": "Illustration by Beatrix Potter, 1902."
+            },
+            {
+              "id": "full-potter-original-26",
+              "blockId": "p10-b06",
+              "path": "illustrations/full-classic/original-26.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Peter Rabbit.",
+              "placement": "full-width",
+              "width": 469,
+              "height": 535,
               "caption": "Illustration by Beatrix Potter, 1902."
             }
           ]
