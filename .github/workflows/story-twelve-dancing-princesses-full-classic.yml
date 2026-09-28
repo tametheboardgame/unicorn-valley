@@ -67,13 +67,18 @@ jobs:
 
           raw = fetch(TEXT_URL).decode("utf-8-sig", errors="replace").replace("\r\n", "\n")
 
-          start_match = re.search(
-              rf"(?m)^\s*{re.escape(START_HEADING)}\s*$",
-              raw,
+          start_matches = list(
+              re.finditer(
+                  rf"(?m)^\s*{re.escape(START_HEADING)}\s*$",
+                  raw,
+              )
           )
-          if not start_match:
+          if not start_matches:
               raise RuntimeError("Could not find Twelve Dancing Princesses heading in Gutenberg #2591.")
 
+          # Gutenberg #2591 lists story titles in its table of contents before
+          # repeating the title at the actual story. Use the final title match.
+          start_match = start_matches[-1]
           remainder = raw[start_match.end():]
           end_match = re.search(
               rf"(?m)^\s*{re.escape(END_HEADING)}\s*$",
