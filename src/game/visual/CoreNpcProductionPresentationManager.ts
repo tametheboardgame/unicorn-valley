@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { PIP_POSITION } from '../intro/PipIntro';
+import { isPipIntroduced, PIP_POSITION } from '../intro/PipIntro';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
 import { SUPPORTING_RESIDENT_ART_LAYOUT } from '../population/SupportingResidentArt';
 import { getBrowserSaveService } from '../save/browserSaveService';
@@ -177,7 +177,11 @@ export class CoreNpcProductionPresentationManager {
 
   private refreshPipWorld(): void {
     const scene = sceneIfActive(this.game, 'MoonflowerGladeScene');
-    if (!scene || scene.children.getByName('core-npc:pip:world')) {
+    if (
+      !scene ||
+      !isPipIntroduced(getBrowserSaveService().load()) ||
+      scene.children.getByName('core-npc:pip:world')
+    ) {
       return;
     }
     const pip = createCoreNpcSprite(scene, 'pip', PIP_POSITION.x, PIP_POSITION.y + 8, 'world')
