@@ -1,0 +1,8 @@
+<!-- block:p06-b01 -->
+The children tried very hard, but they could not pull the beard out, it was caught too fast. ‘I will run and fetch someone,’ said Rose-red. ‘You senseless goose!’ snarled the dwarf; ‘why should you fetch someone? You are already two too many for me; can you not think of something better?’ ‘Don’t be impatient,’ said Snow-white, ‘I will help you,’ and she pulled her scissors out of her pocket, and cut off the end of the beard.
+
+<!-- block:p06-b02 -->
+As soon as the dwarf felt himself free he laid hold of a bag which lay amongst the roots of the tree, and which was full of gold, and lifted it up, grumbling to himself: ‘Uncouth people, to cut off a piece of my fine beard. Bad luck to you!’ and then he swung the bag upon his back, and went off without even once looking at the children.
+
+<!-- block:p06-b03 -->
+Some time afterwards Snow-white and Rose-red went to catch a dish of fish. As they came near the brook they saw something like a large grasshopper jumping towards the water, as if it were going to leap in. They ran to it and found it was the dwarf. ‘Where are you going?’ said Rose-red; ‘you surely don’t want to go into the water?’ ‘I am not such a fool!’ cried the dwarf; ‘don’t you see that the accursed fish wants to pull me in?’ The little man had been sitting there fishing, and unluckily the wind had tangled up his beard with the fishing-line; a moment later a big fish made a bite and the feeble creature had not strength to pull it out; the fish kept the upper hand and pulled the dwarf towards him. He held on to all the reeds and rushes, but it was of little good, for he was forced to follow the movements of the fish, and was in urgent danger of being dragged into the water.
