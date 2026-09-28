@@ -19,6 +19,7 @@ on:
 
 permissions:
   contents: write
+  id-token: write
 
 concurrency:
   group: generated-asset-materialisation-${{ github.ref }}
@@ -49,6 +50,14 @@ jobs:
         with:
           ref: ${{ steps.target.outputs.branch }}
           fetch-depth: 2
+
+      - id: google-auth
+        name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v3
+        with:
+          create_credentials_file: true
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_ASSET_SERVICE_ACCOUNT }}
 
       - uses: actions/setup-python@v6
         with:
@@ -86,8 +95,6 @@ jobs:
           cat "$output"
 
       - name: Materialise staged images
-        env:
-          GDRIVE_GENERATED_ASSET_SERVICE_ACCOUNT_JSON: ${{ secrets.GDRIVE_GENERATED_ASSET_SERVICE_ACCOUNT_JSON }}
         shell: bash
         run: |
           set -euo pipefail
