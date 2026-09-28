@@ -151,7 +151,6 @@ async function seedRevealedStarwell(page: Page): Promise<void> {
   });
 }
 
-
 async function seedUnintroducedPip(page: Page): Promise<void> {
   await page.addInitScript(() => {
     const timestamp = new Date().toISOString();
@@ -200,7 +199,6 @@ async function seedUnintroducedPip(page: Page): Promise<void> {
     window.localStorage.setItem('unicorn-valley.save.schema.2', serialisedSave);
   });
 }
-
 test.describe('R6-WP6.2 core NPC production art', () => {
 
   test('Pip stays absent before the authored arrival trigger and appears only after introduction begins', async ({
