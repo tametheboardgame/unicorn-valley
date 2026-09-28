@@ -1,11 +1,9 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "id": "the-elves-and-the-shoemaker",
   "title": "The Elves and the Shoemaker",
   "description": "A kind shoemaker receives mysterious help at night, then finds a way to thank the tiny visitors who changed his fortunes.",
   "catalogueBlurb": "A grateful shoemaker discovers who has been helping him each night.",
-  "author": "Brothers Grimm, retold by Quill",
-  "readingMode": "flowing",
   "cover": {
     "path": "covers/cover.webp",
     "alt": "Historic illustration of the elves helping the shoemaker."
@@ -15,59 +13,158 @@
   "publication": {
     "status": "published"
   },
-  "chapters": [
-    {
-      "id": "midnight-helpers",
-      "title": "The Elves and the Shoemaker",
-      "path": "chapters/01.md",
-      "illustrations": [
-        {
-          "id": "ubbelohde-elves",
-          "blockId": "mysterious-help",
-          "path": "illustrations/ubbelohde-elves.webp",
-          "alt": "Otto Ubbelohde's 1909 illustration of the elves at the shoemaker's workbench.",
-          "placement": "full-width",
-          "width": 420,
-          "height": 400,
-          "caption": "Illustration by Otto Ubbelohde, 1909."
-        },
-        {
-          "id": "cruikshank-elves",
-          "blockId": "thank-you-gifts",
-          "path": "illustrations/cruikshank-elves.webp",
-          "alt": "George Cruikshank's historic illustration for The Elves and the Shoemaker.",
-          "placement": "full-width",
-          "width": 700,
-          "height": 831,
-          "caption": "Illustration by George Cruikshank, 1876 edition."
-        }
-      ]
-    }
-  ],
   "discovery": {
     "format": "Picture Book",
     "genres": ["Fantasy", "Classics"],
     "audiences": ["Read Together", "Early Reader", "Independent Reader"],
     "length": "Quick Read"
   },
-  "rights": {
-    "text": {
-      "status": "original",
-      "source": "Original Story House retelling based on the Brothers Grimm public-domain tale",
-      "sourceUrl": "https://en.wikisource.org/wiki/Grimm%27s_Household_Tales%2C_Volume_1/The_Elves",
-      "notes": "The underlying Grimm tale is public domain; this wording is an original Unicorn Valley retelling."
+  "defaultEditionId": "story-house",
+  "editions": [
+    {
+      "id": "story-house",
+      "label": "Story House Edition",
+      "author": "Brothers Grimm, retold by Quill",
+      "readingMode": "flowing",
+      "rights": {
+        "text": {
+          "status": "original",
+          "source": "Original Story House retelling based on the Brothers Grimm public-domain tale",
+          "sourceUrl": "https://en.wikisource.org/wiki/Grimm%27s_Household_Tales%2C_Volume_1/The_Elves",
+          "notes": "The underlying Grimm tale is public domain; this wording is an original Unicorn Valley retelling."
+        },
+        "illustrations": {
+          "status": "public-domain",
+          "source": "Otto Ubbelohde (1909) and George Cruikshank (1876) historical illustrations",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/Category:The_Elves_and_the_Shoemaker",
+          "notes": "Both selected source files are marked public domain on Wikimedia Commons."
+        },
+        "edition": {
+          "status": "original",
+          "source": "Unicorn Valley Story House edition"
+        },
+        "originalPublicationYear": 1812,
+        "curatorNotes": "Age-appropriate Story House retelling with verified public-domain historical illustrations."
+      },
+      "chapters": [
+        {
+          "id": "midnight-helpers",
+          "title": "The Elves and the Shoemaker",
+          "path": "chapters/01.md",
+          "illustrations": [
+            {
+              "id": "ubbelohde-elves",
+              "blockId": "mysterious-help",
+              "path": "illustrations/ubbelohde-elves.webp",
+              "alt": "Otto Ubbelohde's 1909 illustration of the elves at the shoemaker's workbench.",
+              "placement": "full-width",
+              "width": 420,
+              "height": 400,
+              "caption": "Illustration by Otto Ubbelohde, 1909."
+            },
+            {
+              "id": "cruikshank-elves",
+              "blockId": "thank-you-gifts",
+              "path": "illustrations/cruikshank-elves.webp",
+              "alt": "George Cruikshank's historic illustration for The Elves and the Shoemaker.",
+              "placement": "full-width",
+              "width": 700,
+              "height": 831,
+              "caption": "Illustration by George Cruikshank, 1876 edition."
+            }
+          ]
+        }
+      ]
     },
-    "illustrations": {
-      "status": "public-domain",
-      "source": "Otto Ubbelohde (1909) and George Cruikshank (1876) historical illustrations",
-      "sourceUrl": "https://commons.wikimedia.org/wiki/Category:The_Elves_and_the_Shoemaker",
-      "notes": "Both selected source files are marked public domain on Wikimedia Commons."
-    },
-    "edition": {
-      "status": "original",
-      "source": "Unicorn Valley Story House edition"
-    },
-    "originalPublicationYear": 1812,
-    "curatorNotes": "Age-appropriate Story House retelling with verified public-domain historical illustrations."
-  }
+    {
+      "id": "full-classic",
+      "label": "Full Classic Text",
+      "author": "Brothers Grimm, translated by Lucy Crane",
+      "readingMode": "paged-prose",
+      "rights": {
+        "text": {
+          "status": "public-domain",
+          "source": "Lucy Crane's 1886 English translation of Household Stories, transcribed in Project Gutenberg eBook #19068",
+          "sourceUrl": "https://www.gutenberg.org/ebooks/19068",
+          "notes": "Uses Part I of 'The Elves', the shoemaker story only. The complete Lucy Crane wording is retained without abridgement or modernisation; Project Gutenberg front matter, the unrelated Parts II and III, and licence boilerplate are excluded."
+        },
+        "illustrations": {
+          "status": "public-domain",
+          "source": "Historical illustrations by Walter Crane (1886), Otto Ubbelohde (1909) and George Cruikshank",
+          "sourceUrl": "https://www.gutenberg.org/cache/epub/19068/pg19068-images.html",
+          "notes": "The Walter Crane headpiece from the Lucy Crane source edition is included, together with the two previously verified historical Story House illustrations, placed beside their matching passages."
+        },
+        "edition": {
+          "status": "public-domain",
+          "source": "Lucy Crane translation first published by Macmillan in 1886",
+          "notes": "Story House pagination changes presentation only; the historical translation wording remains complete."
+        },
+        "originalPublicationYear": 1812,
+        "curatorNotes": "Complete Lucy Crane shoemaker story reflowed into 5 reader pages at paragraph boundaries, with three historical illustrations placed at matching story moments."
+      },
+      "chapters": [
+        {
+          "id": "page-01",
+          "title": "The Elves and the Shoemaker",
+          "path": "editions/full-classic/pages/page-01.md",
+          "illustrations": [
+            {
+              "id": "full-crane-headpiece",
+              "blockId": "p01-b01",
+              "path": "illustrations/full-classic/walter-crane-headpiece.webp",
+              "alt": "Walter Crane's illustrated title headpiece for The Elves.",
+              "placement": "full-width",
+              "width": 640,
+              "height": 145,
+              "caption": "Illustration by Walter Crane, 1886."
+            }
+          ]
+        },
+        {
+          "id": "page-02",
+          "title": "The Elves and the Shoemaker (continued)",
+          "path": "editions/full-classic/pages/page-02.md"
+        },
+        {
+          "id": "page-03",
+          "title": "The Elves and the Shoemaker (continued)",
+          "path": "editions/full-classic/pages/page-03.md",
+          "illustrations": [
+            {
+              "id": "full-ubbelohde-elves",
+              "blockId": "p03-b03",
+              "path": "illustrations/ubbelohde-elves.webp",
+              "alt": "Otto Ubbelohde's 1909 illustration of the elves at the shoemaker's workbench.",
+              "placement": "full-width",
+              "width": 420,
+              "height": 400,
+              "caption": "Illustration by Otto Ubbelohde, 1909."
+            }
+          ]
+        },
+        {
+          "id": "page-04",
+          "title": "The Elves and the Shoemaker (continued)",
+          "path": "editions/full-classic/pages/page-04.md",
+          "illustrations": [
+            {
+              "id": "full-cruikshank-elves",
+              "blockId": "p04-b01",
+              "path": "illustrations/cruikshank-elves.webp",
+              "alt": "George Cruikshank's historic illustration for The Elves and the Shoemaker.",
+              "placement": "full-width",
+              "width": 700,
+              "height": 831,
+              "caption": "Illustration by George Cruikshank, 1876 edition."
+            }
+          ]
+        },
+        {
+          "id": "page-05",
+          "title": "The Elves and the Shoemaker (continued)",
+          "path": "editions/full-classic/pages/page-05.md"
+        }
+      ]
+    }
+  ]
 }

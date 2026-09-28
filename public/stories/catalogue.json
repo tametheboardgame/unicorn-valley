@@ -232,11 +232,15 @@
       },
       "chapterCount": 1,
       "manifestPath": "/stories/the-elves-and-the-shoemaker/book.json",
-      "defaultEditionId": "default",
+      "defaultEditionId": "story-house",
       "editions": [
         {
-          "id": "default",
-          "label": "Standard Edition"
+          "id": "story-house",
+          "label": "Story House Edition"
+        },
+        {
+          "id": "full-classic",
+          "label": "Full Classic Text"
         }
       ]
     },
@@ -674,11 +678,15 @@
       },
       "chapterCount": 5,
       "manifestPath": "/stories/the-twelve-dancing-princesses/book.json",
-      "defaultEditionId": "default",
+      "defaultEditionId": "story-house",
       "editions": [
         {
-          "id": "default",
-          "label": "Standard Edition"
+          "id": "story-house",
+          "label": "Story House Edition"
+        },
+        {
+          "id": "full-classic",
+          "label": "Full Classic Text"
         }
       ]
     },

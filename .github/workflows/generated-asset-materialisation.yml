@@ -1,0 +1,133 @@
+name: Materialise Generated Asset from Drive
+
+on:
+  workflow_dispatch:
+    inputs:
+      manifest_path:
+        description: Repository-relative generated asset manifest path
+        required: true
+        type: string
+      target_branch:
+        description: Existing development branch to update
+        required: true
+        type: string
+  push:
+    branches:
+      - agent/r6.5-wp19h3.11-r4-generated-asset-pipeline
+    paths:
+      - generated-assets/manifests/*.json
+
+permissions:
+  contents: write
+  id-token: write
+
+concurrency:
+  group: generated-asset-materialisation-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  materialise:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resolve target branch
+        id: target
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            branch="${{ inputs.target_branch }}"
+          else
+            branch="${{ github.ref_name }}"
+          fi
+          if [[ -z "$branch" || "$branch" == "main" ]]; then
+            echo "::error::Generated assets must materialise onto an existing development branch, never directly onto main."
+            exit 1
+          fi
+          echo "branch=$branch" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ steps.target.outputs.branch }}
+          fetch-depth: 2
+
+      - id: google-auth
+        name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v3
+        with:
+          create_credentials_file: true
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_ASSET_SERVICE_ACCOUNT }}
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+
+      - name: Install image and Drive tooling
+        run: python -m pip install --disable-pip-version-check pillow google-api-python-client google-auth
+
+      - name: Resolve manifests
+        id: manifests
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$RUNNER_TEMP/generated-asset-manifests.txt"
+          : > "$output"
+
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            manifest="${{ inputs.manifest_path }}"
+            if [[ ! "$manifest" =~ ^generated-assets/manifests/[A-Za-z0-9._-]+\.json$ ]]; then
+              echo "::error::manifest_path must be a JSON file directly under generated-assets/manifests/"
+              exit 1
+            fi
+            printf '%s\n' "$manifest" >> "$output"
+          else
+            git diff --name-only HEAD^ HEAD -- 'generated-assets/manifests/*.json'               | grep -E '^generated-assets/manifests/[A-Za-z0-9._-]+\.json$'               >> "$output" || true
+          fi
+
+          if [[ ! -s "$output" ]]; then
+            echo "::error::No generated-asset manifest was selected."
+            exit 1
+          fi
+
+          echo "path=$output" >> "$GITHUB_OUTPUT"
+          echo "Selected manifests:"
+          cat "$output"
+
+      - name: Materialise staged images
+        shell: bash
+        run: |
+          set -euo pipefail
+          while IFS= read -r manifest; do
+            python scripts/generated-assets/materialise_drive_asset.py --manifest "$manifest"
+          done < "${{ steps.manifests.outputs.path }}"
+
+      - name: Verify generated WebP files
+        shell: python
+        run: |
+          from pathlib import Path
+          from PIL import Image
+
+          root = Path("public/assets/generated")
+          outputs = list(root.rglob("*.webp"))
+          if not outputs:
+              raise SystemExit("No generated WebP output exists after materialisation.")
+
+          for path in outputs:
+              with Image.open(path) as image:
+                  image.verify()
+              print(f"verified {path} ({path.stat().st_size} bytes)")
+
+      - name: Commit materialised assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/assets/generated
+          if git diff --cached --quiet; then
+            echo "Materialised bytes are unchanged; nothing to commit."
+            exit 0
+          fi
+          git commit -m "Assets: materialise generated image from Drive"
+          git push origin "HEAD:${{ steps.target.outputs.branch }}"
