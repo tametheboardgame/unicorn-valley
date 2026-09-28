@@ -136,9 +136,9 @@
         },
         "illustrations": {
           "status": "public-domain",
-          "source": "Original 1908 illustrations by Beatrix Potter",
-          "sourceUrl": "https://commons.wikimedia.org/wiki/Category:The_Tale_of_Jemima_Puddle-Duck",
-          "notes": "The selected original Potter illustration files are identified as public domain on Wikimedia Commons."
+          "source": "Original 1908 illustrations by Beatrix Potter, Project Gutenberg eBook #14814",
+          "sourceUrl": "https://www.gutenberg.org/files/14814/14814-h/14814-h.htm",
+          "notes": "All 25 narrative illustrations appearing after the opening story text in the Project Gutenberg HTML edition are included in source order. Front-matter emblem/title artwork is excluded."
         },
         "edition": {
           "status": "public-domain",
@@ -146,7 +146,7 @@
           "notes": "Story House pagination is presentation only; the original wording remains unabridged."
         },
         "originalPublicationYear": 1908,
-        "curatorNotes": "Complete original text split into 6 reader pages at paragraph boundaries. The original, harsher ending is preserved in Full Classic Text."
+        "curatorNotes": "Complete original text split into 6 reader pages at paragraph boundaries, with all 25 narrative illustrations from the Project Gutenberg 1908 edition restored at their matching passage anchors. The original, harsher ending is preserved in Full Classic Text."
       },
       "chapters": [
         {
@@ -155,13 +155,63 @@
           "path": "editions/full-classic/pages/page-01.md",
           "illustrations": [
             {
-              "id": "full-potter-jemima",
-              "blockId": "p01-b01",
-              "path": "illustrations/jemima.webp",
-              "alt": "Beatrix Potter's original illustration of Jemima Puddle-Duck.",
+              "id": "full-potter-original-01",
+              "blockId": "p01-b02",
+              "path": "illustrations/full-classic/original-01.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Jemima Puddle-Duck.",
               "placement": "full-width",
-              "width": 1012,
-              "height": 1200,
+              "width": 347,
+              "height": 400,
+              "caption": "Illustration by Beatrix Potter, 1908."
+            },
+            {
+              "id": "full-potter-original-02",
+              "blockId": "p01-b04",
+              "path": "illustrations/full-classic/original-02.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Jemima Puddle-Duck.",
+              "placement": "full-width",
+              "width": 334,
+              "height": 400,
+              "caption": "Illustration by Beatrix Potter, 1908."
+            },
+            {
+              "id": "full-potter-original-03",
+              "blockId": "p01-b06",
+              "path": "illustrations/full-classic/original-03.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Jemima Puddle-Duck.",
+              "placement": "full-width",
+              "width": 400,
+              "height": 360,
+              "caption": "Illustration by Beatrix Potter, 1908."
+            },
+            {
+              "id": "full-potter-original-04",
+              "blockId": "p01-b08",
+              "path": "illustrations/full-classic/original-04.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Jemima Puddle-Duck.",
+              "placement": "full-width",
+              "width": 400,
+              "height": 346,
+              "caption": "Illustration by Beatrix Potter, 1908."
+            },
+            {
+              "id": "full-potter-original-05",
+              "blockId": "p01-b10",
+              "path": "illustrations/full-classic/original-05.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Jemima Puddle-Duck.",
+              "placement": "full-width",
+              "width": 322,
+              "height": 400,
+              "caption": "Illustration by Beatrix Potter, 1908."
+            },
+            {
+              "id": "full-potter-original-06",
+              "blockId": "p01-b11",
+              "path": "illustrations/full-classic/original-06.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Jemima Puddle-Duck.",
+              "placement": "full-width",
+              "width": 327,
+              "height": 400,
               "caption": "Illustration by Beatrix Potter, 1908."
             }
           ]
@@ -172,12 +222,42 @@
           "path": "editions/full-classic/pages/page-02.md",
           "illustrations": [
             {
-              "id": "full-potter-fox",
-              "blockId": "p02-b03",
-              "path": "illustrations/gentleman.webp",
-              "alt": "An original Beatrix Potter illustration from The Tale of Jemima Puddle-Duck.",
+              "id": "full-potter-original-07",
+              "blockId": "p02-b01",
+              "path": "illustrations/full-classic/original-07.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Jemima Puddle-Duck.",
               "placement": "full-width",
-              "width": 347,
+              "width": 317,
+              "height": 400,
+              "caption": "Illustration by Beatrix Potter, 1908."
+            },
+            {
+              "id": "full-potter-original-08",
+              "blockId": "p02-b05",
+              "path": "illustrations/full-classic/original-08.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Jemima Puddle-Duck.",
+              "placement": "full-width",
+              "width": 400,
+              "height": 373,
+              "caption": "Illustration by Beatrix Potter, 1908."
+            },
+            {
+              "id": "full-potter-original-09",
+              "blockId": "p02-b08",
+              "path": "illustrations/full-classic/original-09.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Jemima Puddle-Duck.",
+              "placement": "full-width",
+              "width": 304,
+              "height": 400,
+              "caption": "Illustration by Beatrix Potter, 1908."
+            },
+            {
+              "id": "full-potter-original-10",
+              "blockId": "p02-b11",
+              "path": "illustrations/full-classic/original-10.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Jemima Puddle-Duck.",
+              "placement": "full-width",
+              "width": 332,
               "height": 400,
               "caption": "Illustration by Beatrix Potter, 1908."
             }
@@ -186,7 +266,39 @@
         {
           "id": "page-03",
           "title": "The Tale of Jemima Puddle-Duck (continued)",
-          "path": "editions/full-classic/pages/page-03.md"
+          "path": "editions/full-classic/pages/page-03.md",
+          "illustrations": [
+            {
+              "id": "full-potter-original-11",
+              "blockId": "p03-b03",
+              "path": "illustrations/full-classic/original-11.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Jemima Puddle-Duck.",
+              "placement": "full-width",
+              "width": 328,
+              "height": 400,
+              "caption": "Illustration by Beatrix Potter, 1908."
+            },
+            {
+              "id": "full-potter-original-12",
+              "blockId": "p03-b05",
+              "path": "illustrations/full-classic/original-12.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Jemima Puddle-Duck.",
+              "placement": "full-width",
+              "width": 311,
+              "height": 400,
+              "caption": "Illustration by Beatrix Potter, 1908."
+            },
+            {
+              "id": "full-potter-original-13",
+              "blockId": "p03-b07",
+              "path": "illustrations/full-classic/original-13.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Jemima Puddle-Duck.",
+              "placement": "full-width",
+              "width": 400,
+              "height": 357,
+              "caption": "Illustration by Beatrix Potter, 1908."
+            }
+          ]
         },
         {
           "id": "page-04",
@@ -194,13 +306,33 @@
           "path": "editions/full-classic/pages/page-04.md",
           "illustrations": [
             {
-              "id": "full-potter-woodland",
-              "blockId": "p04-b03",
-              "path": "illustrations/woodland.webp",
-              "alt": "An original Beatrix Potter illustration from Jemima's woodland nesting adventure.",
+              "id": "full-potter-original-14",
+              "blockId": "p04-b02",
+              "path": "illustrations/full-classic/original-14.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Jemima Puddle-Duck.",
               "placement": "full-width",
-              "width": 904,
-              "height": 844,
+              "width": 400,
+              "height": 360,
+              "caption": "Illustration by Beatrix Potter, 1908."
+            },
+            {
+              "id": "full-potter-original-15",
+              "blockId": "p04-b04",
+              "path": "illustrations/full-classic/original-15.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Jemima Puddle-Duck.",
+              "placement": "full-width",
+              "width": 400,
+              "height": 369,
+              "caption": "Illustration by Beatrix Potter, 1908."
+            },
+            {
+              "id": "full-potter-original-16",
+              "blockId": "p04-b06",
+              "path": "illustrations/full-classic/original-16.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Jemima Puddle-Duck.",
+              "placement": "full-width",
+              "width": 400,
+              "height": 380,
               "caption": "Illustration by Beatrix Potter, 1908."
             }
           ]
@@ -208,7 +340,49 @@
         {
           "id": "page-05",
           "title": "The Tale of Jemima Puddle-Duck (continued)",
-          "path": "editions/full-classic/pages/page-05.md"
+          "path": "editions/full-classic/pages/page-05.md",
+          "illustrations": [
+            {
+              "id": "full-potter-original-17",
+              "blockId": "p05-b02",
+              "path": "illustrations/full-classic/original-17.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Jemima Puddle-Duck.",
+              "placement": "full-width",
+              "width": 400,
+              "height": 380,
+              "caption": "Illustration by Beatrix Potter, 1908."
+            },
+            {
+              "id": "full-potter-original-18",
+              "blockId": "p05-b06",
+              "path": "illustrations/full-classic/original-18.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Jemima Puddle-Duck.",
+              "placement": "full-width",
+              "width": 351,
+              "height": 400,
+              "caption": "Illustration by Beatrix Potter, 1908."
+            },
+            {
+              "id": "full-potter-original-19",
+              "blockId": "p05-b08",
+              "path": "illustrations/full-classic/original-19.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Jemima Puddle-Duck.",
+              "placement": "full-width",
+              "width": 400,
+              "height": 344,
+              "caption": "Illustration by Beatrix Potter, 1908."
+            },
+            {
+              "id": "full-potter-original-20",
+              "blockId": "p05-b10",
+              "path": "illustrations/full-classic/original-20.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Jemima Puddle-Duck.",
+              "placement": "full-width",
+              "width": 400,
+              "height": 368,
+              "caption": "Illustration by Beatrix Potter, 1908."
+            }
+          ]
         },
         {
           "id": "page-06",
@@ -216,13 +390,53 @@
           "path": "editions/full-classic/pages/page-06.md",
           "illustrations": [
             {
-              "id": "full-potter-rescue",
-              "blockId": "p06-b08",
-              "path": "illustrations/rescue.webp",
-              "alt": "An original Beatrix Potter illustration from the end of The Tale of Jemima Puddle-Duck.",
+              "id": "full-potter-original-21",
+              "blockId": "p06-b03",
+              "path": "illustrations/full-classic/original-21.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Jemima Puddle-Duck.",
               "placement": "full-width",
               "width": 400,
-              "height": 380,
+              "height": 396,
+              "caption": "Illustration by Beatrix Potter, 1908."
+            },
+            {
+              "id": "full-potter-original-22",
+              "blockId": "p06-b05",
+              "path": "illustrations/full-classic/original-22.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Jemima Puddle-Duck.",
+              "placement": "full-width",
+              "width": 400,
+              "height": 349,
+              "caption": "Illustration by Beatrix Potter, 1908."
+            },
+            {
+              "id": "full-potter-original-23",
+              "blockId": "p06-b08",
+              "path": "illustrations/full-classic/original-23.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Jemima Puddle-Duck.",
+              "placement": "full-width",
+              "width": 329,
+              "height": 400,
+              "caption": "Illustration by Beatrix Potter, 1908."
+            },
+            {
+              "id": "full-potter-original-24",
+              "blockId": "p06-b10",
+              "path": "illustrations/full-classic/original-24.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Jemima Puddle-Duck.",
+              "placement": "full-width",
+              "width": 342,
+              "height": 400,
+              "caption": "Illustration by Beatrix Potter, 1908."
+            },
+            {
+              "id": "full-potter-original-25",
+              "blockId": "p06-b11",
+              "path": "illustrations/full-classic/original-25.webp",
+              "alt": "Original Beatrix Potter illustration from The Tale of Jemima Puddle-Duck.",
+              "placement": "full-width",
+              "width": 309,
+              "height": 400,
               "caption": "Illustration by Beatrix Potter, 1908."
             }
           ]
