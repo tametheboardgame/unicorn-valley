@@ -6,11 +6,10 @@ from __future__ import annotations
 import argparse
 import io
 import json
-import os
 from pathlib import Path
 from typing import Any
 
-from google.oauth2 import service_account
+import google.auth
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
 from PIL import Image
@@ -50,12 +49,8 @@ def resolve_destination(destination: str, allowed_roots: list[str]) -> Path:
     return absolute
 
 
-def drive_service(credentials_json: str):
-    credentials_info = json.loads(credentials_json)
-    credentials = service_account.Credentials.from_service_account_info(
-        credentials_info,
-        scopes=[DRIVE_READONLY_SCOPE],
-    )
+def drive_service():
+    credentials, _ = google.auth.default(scopes=[DRIVE_READONLY_SCOPE])
     return build("drive", "v3", credentials=credentials, cache_discovery=False)
 
 
@@ -186,13 +181,7 @@ def main() -> None:
 
     transform = require_mapping(manifest.get("transform", {}), "transform")
 
-    credentials_json = os.environ.get("GDRIVE_GENERATED_ASSET_SERVICE_ACCOUNT_JSON", "").strip()
-    if not credentials_json:
-        raise RuntimeError(
-            "GDRIVE_GENERATED_ASSET_SERVICE_ACCOUNT_JSON is not configured."
-        )
-
-    service = drive_service(credentials_json)
+    service = drive_service()
     metadata, payload = download_drive_file(service, file_id)
     validate_source(metadata, payload, config, manifest)
     width, height, output_size = transform_image(
