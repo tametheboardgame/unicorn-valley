@@ -15,7 +15,7 @@ The R4 development branch now contains:
 - a small JSON manifest contract with revision-driven replacement support;
 - a disposable Cloudflare smoke page for the two-pass acceptance test.
 
-Remaining acceptance work requires the narrowly scoped Google machine identity and GitHub Actions credential secret, followed by one generated-image materialisation and one replacement of the same Drive file ID.
+Remaining acceptance work requires GitHub OIDC Workload Identity Federation for the existing service account, followed by one generated-image materialisation and one replacement of the same Drive file ID.
 
 ## 2026-09-27 R6.5-WP19H3.11-R3 inserted before Rosehip Cottage
 
