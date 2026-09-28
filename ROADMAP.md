@@ -211,6 +211,8 @@ Inserted on 27 September 2026 from the post-R2 human play pass. R3 is a bounded 
 
 R3.1 and R3.2 are shared-system fixes and must be implemented at canonical owners rather than as Sunbeam-only patches. R3.4 is a measured optimisation pass, not a blanket reduction in effects or arbitrary speed change. Each R3.x checkpoint remains independently reviewable before moving to the next.
 
+**R3.4 implementation history (28 September 2026):** merged PR #203 (`34286d9`) performed the main runtime hotspot investigation and optimisation under an accidental duplicate R3.3 label. Its static-occlusion, exploration-HUD, resident-collision, interaction-registry and ambient-target publication work is the primary R3.4 performance implementation and must not be repeated. R3.4 remains active only for the bounded closeout that makes movement response elapsed-time based, removes the remaining recurring presentation discovery scans from the small-device hot path, and adds explicit phone/tablet walk/Gallop/frame-pressure regression evidence.
+
 ### R6.5-WP19H1 - Moonflower Glade Final Polish
 
 State: **Stages 1-3 complete / scope and plan approved 2026-09-14 / Stage 4 action not started**.
