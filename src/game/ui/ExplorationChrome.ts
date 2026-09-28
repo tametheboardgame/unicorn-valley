@@ -146,10 +146,7 @@ export class ExplorationChrome {
 
   private suppressLegacyChromeIfCompositionChanged(locationTitle: string): void {
     const now = this.scene.time.now;
-    if (
-      this.legacyTextObjects.length === 0 ||
-      now - this.lastLegacyDiscoveryAt >= 1_500
-    ) {
+    if (this.legacyTextObjects.length === 0 || now - this.lastLegacyDiscoveryAt >= 1_500) {
       this.lastLegacyDiscoveryAt = now;
       this.legacyTextObjects.length = 0;
       for (const object of this.scene.children.list) {
