@@ -1,0 +1,5 @@
+<!-- block:p05-b01 -->
+Then they came to another grove of trees, where all the leaves were of gold; and afterwards to a third, where the leaves were all glittering diamonds. And the soldier broke a branch from each; and every time there was a loud noise, which made the youngest sister tremble with fear; but the eldest still said, it was only the princes, who were crying for joy. So they went on till they came to a great lake; and at the side of the lake there lay twelve little boats with twelve handsome princes in them, who seemed to be waiting there for the princesses.
+
+<!-- block:p05-b02 -->
+One of the princesses went into each boat, and the soldier stepped into the same boat with the youngest. As they were rowing over the lake, the prince who was in the boat with the youngest princess and the soldier said, ‘I do not know why it is, but though I am rowing with all my might we do not get on so fast as usual, and I am quite tired: the boat seems very heavy today.’ ‘It is only the heat of the weather,’ said the princess: ‘I feel it very warm too.’

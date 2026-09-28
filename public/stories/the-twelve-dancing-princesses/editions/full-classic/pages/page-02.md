@@ -1,0 +1,5 @@
+<!-- block:p02-b01 -->
+Now it chanced that an old soldier, who had been wounded in battle and could fight no longer, passed through the country where this king reigned: and as he was travelling through a wood, he met an old woman, who asked him where he was going. ‘I hardly know where I am going, or what I had better do,’ said the soldier; ‘but I think I should like very well to find out where it is that the princesses dance, and then in time I might be a king.’ ‘Well,’ said the old dame, ‘that is no very hard task: only take care not to drink any of the wine which one of the princesses will bring to you in the evening; and as soon as she leaves you pretend to be fast asleep.’
+
+<!-- block:p02-b02 -->
+Then she gave him a cloak, and said, ‘As soon as you put that on you will become invisible, and you will then be able to follow the princesses wherever they go.’ When the soldier heard all this good counsel, he determined to try his luck: so he went to the king, and said he was willing to undertake the task.
