@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_PLAYER_SPEED, resolvePlayerMovement } from './PlayerMovement';
+import {
+  DEFAULT_PLAYER_SPEED,
+  frameRateAdjustedMovementResponse,
+  MOVEMENT_RESPONSE_REFERENCE_FRAME_MS,
+  resolvePlayerMovement,
+} from './PlayerMovement';
 
 describe('resolvePlayerMovement', () => {
   it('moves at the configured speed on a cardinal axis', () => {
@@ -46,5 +51,35 @@ describe('resolvePlayerMovement', () => {
     const command = resolvePlayerMovement(4, 0);
 
     expect(command.velocityX).toBe(DEFAULT_PLAYER_SPEED);
+  });
+});
+
+
+describe('frameRateAdjustedMovementResponse', () => {
+  it('preserves the authored response at the 60 FPS reference frame', () => {
+    expect(frameRateAdjustedMovementResponse(0.34, MOVEMENT_RESPONSE_REFERENCE_FRAME_MS)).toBeCloseTo(
+      0.34,
+      8,
+    );
+    expect(frameRateAdjustedMovementResponse(0.56, MOVEMENT_RESPONSE_REFERENCE_FRAME_MS)).toBeCloseTo(
+      0.56,
+      8,
+    );
+  });
+
+  it('matches two 60 FPS response steps when one frame takes twice as long', () => {
+    const baseResponse = 0.34;
+    const twoReferenceSteps = 1 - (1 - baseResponse) ** 2;
+
+    expect(
+      frameRateAdjustedMovementResponse(baseResponse, MOVEMENT_RESPONSE_REFERENCE_FRAME_MS * 2),
+    ).toBeCloseTo(twoReferenceSteps, 8);
+  });
+
+  it('bounds pathological frame stalls instead of snapping movement instantly', () => {
+    const response = frameRateAdjustedMovementResponse(0.34, 5_000);
+
+    expect(response).toBeGreaterThan(0.34);
+    expect(response).toBeLessThan(1);
   });
 });
