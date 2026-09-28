@@ -1,0 +1,5 @@
+<!-- block:p04-b01 -->
+The next morning the shoemaker's wife said to her husband, "Those little men have made us rich, and we ought to show ourselves grateful. With all their running about, and having nothing to cover them, they must be very cold. I'll tell you what; I will make little shirts, coats, waistcoats, and breeches for them, and knit each of them a pair of stockings, and you shall make each of them a pair of shoes."
+
+<!-- block:p04-b02 -->
+The husband consented willingly, and at night, when everything was finished, they laid the gifts together on the table, instead of the cut-out work, and placed themselves so that they could observe how the little men would behave. When midnight came, they rushed in, ready to set to work, but when they found, instead of the pieces of prepared leather, the neat little garments put ready for them, they stood a moment in surprise, and then they testified the greatest delight. With the greatest swiftness they took up the pretty garments and slipped them on, singing,
