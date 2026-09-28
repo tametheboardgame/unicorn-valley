@@ -135,7 +135,7 @@ export class WorldInteractionCoordinator {
     this.pendingKeyboardInteraction = false;
 
     for (const scene of this.game.scene.getScenes(true)) {
-      const targets = getSceneInteractionRegistry(scene).getTargets();
+      const targets = getSceneInteractionRegistry(scene).getTargetSnapshot();
       if (targets.length === 0) {
         continue;
       }
@@ -235,7 +235,7 @@ export class WorldInteractionCoordinator {
         return false;
       }
 
-      const registryTargets = getSceneInteractionRegistry(state.scene).getTargets();
+      const registryTargets = getSceneInteractionRegistry(state.scene).getTargetSnapshot();
       const revalidated = selectAutomaticInteractionTarget(player, registryTargets);
       if (!revalidated || revalidated.id !== automatic.id) {
         state.automaticTargetId = null;
@@ -253,7 +253,7 @@ export class WorldInteractionCoordinator {
       return false;
     }
 
-    const registryTargets = getSceneInteractionRegistry(state.scene).getTargets();
+    const registryTargets = getSceneInteractionRegistry(state.scene).getTargetSnapshot();
     const revalidated = selectInteractionTarget(player, registryTargets, {
       preferredTargetId: selected.id,
       retainedTargetId: selected.id,
@@ -305,7 +305,7 @@ export class WorldInteractionCoordinator {
 
           const currentPlayer = findPlayer(state.scene);
           const currentTarget = getSceneInteractionRegistry(state.scene)
-            .getTargets()
+            .getTargetSnapshot()
             .find((candidate) => candidate.id === target.id);
           if (!currentPlayer || !currentTarget || !isInteractionTargetAvailable(currentTarget)) {
             return;
@@ -333,7 +333,7 @@ export class WorldInteractionCoordinator {
               }
               const arrivedPlayer = findPlayer(state.scene);
               const arrivedTarget = getSceneInteractionRegistry(state.scene)
-                .getTargets()
+                .getTargetSnapshot()
                 .find((candidate) => candidate.id === target.id);
               if (
                 arrivedPlayer &&

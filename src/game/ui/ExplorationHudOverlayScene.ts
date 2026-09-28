@@ -90,6 +90,9 @@ export class ExplorationHudOverlayScene extends Phaser.Scene {
   private shimmerLabel: Phaser.GameObjects.Text | null = null;
   private syncTimer: Phaser.Time.TimerEvent | null = null;
   private currentWorld: Phaser.Scene | null = null;
+  private suppressedSourceWorld: Phaser.Scene | null = null;
+  private suppressedSourceLocation: Phaser.GameObjects.Text | null = null;
+  private suppressedSourceShimmer: Phaser.GameObjects.Text | null = null;
   private hudVisible = true;
 
   public constructor() {
@@ -315,12 +318,22 @@ export class ExplorationHudOverlayScene extends Phaser.Scene {
       return;
     }
 
-    this.suppressSourceTopHud(world);
     const sourceLocation = textObject(world, 'exploration-location-title');
     const sourceShimmer = textObject(world, 'exploration-shell-shimmer-label');
     if (!sourceLocation || !sourceShimmer) {
       this.setHudVisible(false);
       return;
+    }
+
+    if (
+      this.suppressedSourceWorld !== world ||
+      this.suppressedSourceLocation !== sourceLocation ||
+      this.suppressedSourceShimmer !== sourceShimmer
+    ) {
+      this.suppressSourceTopHud(world);
+      this.suppressedSourceWorld = world;
+      this.suppressedSourceLocation = sourceLocation;
+      this.suppressedSourceShimmer = sourceShimmer;
     }
 
     this.currentWorld = world;

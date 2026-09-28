@@ -3,9 +3,12 @@ import { PIP_POSITION } from '../intro/PipIntro';
 import { MOONFLOWER_GLADE_MAP } from './MoonflowerGladeMap';
 import { SUNBEAM_VILLAGE_MAP } from './SunbeamVillageMap';
 import { isWorldDepthSortable, worldDepthForY } from './WorldDepth';
+import { WORLD_PLAYER_NAME } from './WorldTraversalPolishManager';
 
 interface SceneState {
   overlays: Phaser.GameObjects.GameObject[];
+  knownStaticDepthObjects: WeakSet<Phaser.GameObjects.GameObject>;
+  staticDepthObjectCount: number;
 }
 
 type PositionedDepthObject = Phaser.GameObjects.GameObject & {
@@ -100,15 +103,6 @@ const GLADE_GROUND_DETAILS = [
   [2380, 1450, 0.88],
 ] as const;
 
-function isPlayerSprite(
-  gameObject: Phaser.GameObjects.GameObject,
-): gameObject is Phaser.Physics.Arcade.Sprite {
-  return (
-    gameObject instanceof Phaser.Physics.Arcade.Sprite &&
-    gameObject.texture.key.startsWith('player-unicorn-')
-  );
-}
-
 function isPositionedDepthObject(
   gameObject: Phaser.GameObjects.GameObject,
 ): gameObject is PositionedDepthObject {
@@ -134,12 +128,11 @@ export class WorldOcclusionManager {
         continue;
       }
 
-      this.ensureScene(scene);
-      this.applySceneDepths(scene);
-
-      const player = scene.children.list.find(isPlayerSprite);
-      if (player) {
-        player.setDepth(worldDepthForY(player.y, 0.5));
+      const state = this.ensureScene(scene);
+      const staticDepthsDirty = this.refreshDynamicDepthsAndTrackStaticObjects(scene, state);
+      if (staticDepthsDirty) {
+        this.applySceneDepths(scene);
+        this.refreshPlayerDepth(scene);
       }
     }
   }
@@ -150,7 +143,11 @@ export class WorldOcclusionManager {
       return existing;
     }
 
-    const state: SceneState = { overlays: [] };
+    const state: SceneState = {
+      overlays: [],
+      knownStaticDepthObjects: new WeakSet<Phaser.GameObjects.GameObject>(),
+      staticDepthObjectCount: 0,
+    };
     if (scene.scene.key === 'MoonflowerGladeScene') {
       state.overlays.push(...this.createGladeEnvironmentOverlays(scene));
     }
@@ -165,6 +162,63 @@ export class WorldOcclusionManager {
 
     this.states.set(scene, state);
     return state;
+  }
+
+  /**
+   * Static scenery used to be reclassified through every occlusion box on every rendered frame.
+   * Sunbeam Village alone has enough boxes that this meant repeated full display-list scans even
+   * when nothing in the composition had changed.
+   *
+   * Keep the player and short-lived movement effects live, but only rerun the expensive static
+   * classification when a world-sortable object is added or removed. Moving ambient residents own
+   * their Y-depth in AmbientPopulationWorldManager, so they do not depend on the static pass.
+   */
+  private refreshDynamicDepthsAndTrackStaticObjects(
+    scene: Phaser.Scene,
+    state: SceneState,
+  ): boolean {
+    let staticDepthObjectCount = 0;
+    let foundUnknownStaticObject = false;
+
+    for (const object of scene.children.list) {
+      if (!isPositionedDepthObject(object)) {
+        continue;
+      }
+
+      if (object.name === WORLD_PLAYER_NAME) {
+        object.setDepth(worldDepthForY(object.y, 0.5));
+        continue;
+      }
+
+      if (
+        scene.scene.key === 'SunbeamVillageScene' &&
+        object.name === PLAYER_MOVEMENT_DETAIL_NAME
+      ) {
+        object.setDepth(worldDepthForY(object.y, 0.15));
+        continue;
+      }
+
+      if (!isWorldDepthSortable(object.depth)) {
+        continue;
+      }
+
+      staticDepthObjectCount += 1;
+      if (!state.knownStaticDepthObjects.has(object)) {
+        state.knownStaticDepthObjects.add(object);
+        foundUnknownStaticObject = true;
+      }
+    }
+
+    const countChanged = staticDepthObjectCount !== state.staticDepthObjectCount;
+    state.staticDepthObjectCount = staticDepthObjectCount;
+    return foundUnknownStaticObject || countChanged;
+  }
+
+  private refreshPlayerDepth(scene: Phaser.Scene): void {
+    const player = scene.children.getByName(WORLD_PLAYER_NAME);
+    if (player && isPositionedDepthObject(player)) {
+      player.setDepth(worldDepthForY(player.y, 0.5));
+    }
   }
 
   private applySceneDepths(scene: Phaser.Scene): void {
@@ -269,12 +323,6 @@ export class WorldOcclusionManager {
   }
 
   private applyVillageDepths(scene: Phaser.Scene): void {
-    for (const object of scene.children.list) {
-      if (isPositionedDepthObject(object) && object.name === PLAYER_MOVEMENT_DETAIL_NAME) {
-        object.setDepth(worldDepthForY(object.y, 0.15));
-      }
-    }
-
     const buildings = [
       { x: 900, y: 470, width: 450, height: 320 },
       { x: 1500, y: 430, width: 430, height: 320 },
