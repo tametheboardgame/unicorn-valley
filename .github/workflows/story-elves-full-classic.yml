@@ -1,0 +1,330 @@
+name: Materialise Elves Full Classic Text
+
+on:
+  push:
+    branches:
+      - agent/story-house-elves-full-classic
+
+permissions:
+  contents: write
+
+jobs:
+  materialise:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: agent/story-house-elves-full-classic
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22.23.2
+          package-manager-cache: false
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+
+      - name: Install image tooling
+        run: python -m pip install --disable-pip-version-check pillow
+
+      - name: Materialise Lucy Crane full classic edition
+        shell: python
+        run: |
+          import json
+          import re
+          import shutil
+          import urllib.request
+          from io import BytesIO
+          from pathlib import Path
+
+          from PIL import Image
+
+          STORY_DIR = Path("public/stories/the-elves-and-the-shoemaker")
+          MANIFEST_PATH = STORY_DIR / "book.json"
+          PAGES_DIR = STORY_DIR / "editions/full-classic/pages"
+          ASSET_DIR = STORY_DIR / "illustrations/full-classic"
+
+          TEXT_URL = "https://www.gutenberg.org/cache/epub/19068/pg19068.txt"
+          BOOK_URL = "https://www.gutenberg.org/ebooks/19068"
+          HTML_URL = "https://www.gutenberg.org/cache/epub/19068/pg19068-images.html"
+          HEADPIECE_URL = "https://www.gutenberg.org/cache/epub/19068/images/illus-190-title.jpg"
+
+          START = "There was once a shoemaker, who, through no fault of his own"
+          END = "(II.)"
+
+          def fetch(url: str) -> bytes:
+              req = urllib.request.Request(
+                  url,
+                  headers={"User-Agent": "Unicorn-Valley-Story-House/1.0"},
+              )
+              with urllib.request.urlopen(req, timeout=45) as response:
+                  return response.read()
+
+          def word_count(value: str) -> int:
+              return len(re.findall(r"[A-Za-z0-9]+(?:['’.-][A-Za-z0-9]+)*", value))
+
+          def normalise_paragraph(value: str) -> str:
+              lines = [line.strip() for line in value.splitlines()]
+              lines = [
+                  line
+                  for line in lines
+                  if line
+                  and not re.fullmatch(r"\[?\s*Illustration.*?\]?", line, flags=re.I)
+                  and not re.fullmatch(r"\d+", line)
+              ]
+              return " ".join(lines).strip()
+
+          manifest = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
+          if manifest.get("schemaVersion") != 1:
+              raise RuntimeError("Expected the existing Elves Story House package to be schema v1.")
+
+          raw = fetch(TEXT_URL).decode("utf-8-sig", errors="replace").replace("\r\n", "\n")
+          start = raw.find(START)
+          if start < 0:
+              raise RuntimeError("Could not find the shoemaker story start in Gutenberg #19068.")
+
+          end = raw.find("\n" + END, start)
+          if end < 0:
+              raise RuntimeError("Could not find Part II marker after the shoemaker story.")
+
+          story = raw[start:end].strip()
+          paragraphs = [
+              normalise_paragraph(block)
+              for block in re.split(r"\n\s*\n", story)
+          ]
+          paragraphs = [p for p in paragraphs if p]
+
+          total_words = sum(word_count(p) for p in paragraphs)
+          if not 400 <= total_words <= 750:
+              raise RuntimeError(f"Unexpected shoemaker story word count: {total_words}")
+
+          # Keep paragraph boundaries intact and aim for short illustrated reader pages.
+          pages = []
+          current = []
+          current_words = 0
+          for paragraph in paragraphs:
+              count = word_count(paragraph)
+              if current and current_words >= 95 and current_words + count > 155:
+                  pages.append(current)
+                  current = []
+                  current_words = 0
+              current.append(paragraph)
+              current_words += count
+          if current:
+              pages.append(current)
+
+          if len(pages) > 1:
+              last_words = sum(word_count(p) for p in pages[-1])
+              previous_words = sum(word_count(p) for p in pages[-2])
+              if last_words < 65 and previous_words + last_words <= 180:
+                  pages[-2].extend(pages[-1])
+                  pages.pop()
+
+          if not 3 <= len(pages) <= 6:
+              raise RuntimeError(f"Expected 3-6 reader pages, found {len(pages)}")
+
+          if PAGES_DIR.exists():
+              shutil.rmtree(PAGES_DIR)
+          PAGES_DIR.mkdir(parents=True)
+
+          chapter_manifests = []
+          all_blocks = []
+          for page_index, page_paragraphs in enumerate(pages, start=1):
+              page_id = f"page-{page_index:02d}"
+              output = []
+              page_blocks = []
+              for block_index, paragraph in enumerate(page_paragraphs, start=1):
+                  block_id = f"p{page_index:02d}-b{block_index:02d}"
+                  output.extend([f"<!-- block:{block_id} -->", paragraph, ""])
+                  page_blocks.append({"id": block_id, "text": paragraph})
+                  all_blocks.append({"page": page_index, "id": block_id, "text": paragraph})
+
+              (PAGES_DIR / f"{page_id}.md").write_text(
+                  "\n".join(output).rstrip() + "\n",
+                  encoding="utf-8",
+              )
+              chapter_manifests.append(
+                  {
+                      "id": page_id,
+                      "title": "The Elves and the Shoemaker"
+                      if page_index == 1
+                      else "The Elves and the Shoemaker (continued)",
+                      "path": f"editions/full-classic/pages/{page_id}.md",
+                  }
+              )
+
+          def block_for(needle: str):
+              needle_lower = needle.lower()
+              for block in all_blocks:
+                  if needle_lower in block["text"].lower():
+                      return block
+              raise RuntimeError(f"Could not locate illustration anchor: {needle}")
+
+          def chapter_for_page(page_number: int):
+              return chapter_manifests[page_number - 1]
+
+          if ASSET_DIR.exists():
+              shutil.rmtree(ASSET_DIR)
+          ASSET_DIR.mkdir(parents=True)
+
+          headpiece_bytes = fetch(HEADPIECE_URL)
+          headpiece = Image.open(BytesIO(headpiece_bytes)).convert("RGB")
+          headpiece_path = ASSET_DIR / "walter-crane-headpiece.webp"
+          headpiece.save(headpiece_path, "WEBP", quality=90, method=6)
+
+          first_block = all_blocks[0]
+          midnight_block = block_for("As soon as it was midnight")
+          gifts_block = block_for("The next morning the shoemaker's wife")
+
+          illustrations = [
+              (
+                  first_block,
+                  {
+                      "id": "full-crane-headpiece",
+                      "blockId": first_block["id"],
+                      "path": "illustrations/full-classic/walter-crane-headpiece.webp",
+                      "alt": "Walter Crane's illustrated title headpiece for The Elves.",
+                      "placement": "full-width",
+                      "width": headpiece.width,
+                      "height": headpiece.height,
+                      "caption": "Illustration by Walter Crane, 1886.",
+                  },
+              ),
+              (
+                  midnight_block,
+                  {
+                      "id": "full-ubbelohde-elves",
+                      "blockId": midnight_block["id"],
+                      "path": "illustrations/ubbelohde-elves.webp",
+                      "alt": "Otto Ubbelohde's 1909 illustration of the elves at the shoemaker's workbench.",
+                      "placement": "full-width",
+                      "width": 420,
+                      "height": 400,
+                      "caption": "Illustration by Otto Ubbelohde, 1909.",
+                  },
+              ),
+              (
+                  gifts_block,
+                  {
+                      "id": "full-cruikshank-elves",
+                      "blockId": gifts_block["id"],
+                      "path": "illustrations/cruikshank-elves.webp",
+                      "alt": "George Cruikshank's historic illustration for The Elves and the Shoemaker.",
+                      "placement": "full-width",
+                      "width": 700,
+                      "height": 831,
+                      "caption": "Illustration by George Cruikshank, 1876 edition.",
+                  },
+              ),
+          ]
+
+          for block, illustration in illustrations:
+              chapter = chapter_for_page(block["page"])
+              chapter.setdefault("illustrations", []).append(illustration)
+
+          story_house = {
+              "id": "story-house",
+              "label": "Story House Edition",
+              "author": manifest["author"],
+              "readingMode": manifest["readingMode"],
+              "rights": manifest["rights"],
+              "chapters": manifest["chapters"],
+          }
+
+          full_classic = {
+              "id": "full-classic",
+              "label": "Full Classic Text",
+              "author": "Brothers Grimm, translated by Lucy Crane",
+              "readingMode": "paged-prose",
+              "rights": {
+                  "text": {
+                      "status": "public-domain",
+                      "source": "Lucy Crane's 1886 English translation of Household Stories, transcribed in Project Gutenberg eBook #19068",
+                      "sourceUrl": BOOK_URL,
+                      "notes": (
+                          "Uses Part I of 'The Elves', the shoemaker story only. "
+                          "The complete Lucy Crane wording is retained without abridgement or modernisation; "
+                          "Project Gutenberg front matter, the unrelated Parts II and III, and licence boilerplate are excluded."
+                      ),
+                  },
+                  "illustrations": {
+                      "status": "public-domain",
+                      "source": "Historical illustrations by Walter Crane (1886), Otto Ubbelohde (1909) and George Cruikshank",
+                      "sourceUrl": HTML_URL,
+                      "notes": (
+                          "The Walter Crane headpiece from the Lucy Crane source edition is included, "
+                          "together with the two previously verified historical Story House illustrations, "
+                          "placed beside their matching passages."
+                      ),
+                  },
+                  "edition": {
+                      "status": "public-domain",
+                      "source": "Lucy Crane translation first published by Macmillan in 1886",
+                      "notes": "Story House pagination changes presentation only; the historical translation wording remains complete.",
+                  },
+                  "originalPublicationYear": 1812,
+                  "curatorNotes": (
+                      f"Complete Lucy Crane shoemaker story reflowed into {len(chapter_manifests)} reader pages "
+                      "at paragraph boundaries, with three historical illustrations placed at matching story moments."
+                  ),
+              },
+              "chapters": chapter_manifests,
+          }
+
+          upgraded = {
+              "schemaVersion": 2,
+              "id": manifest["id"],
+              "title": manifest["title"],
+              "description": manifest["description"],
+              "catalogueBlurb": manifest.get("catalogueBlurb"),
+              "cover": manifest.get("cover"),
+              "series": manifest.get("series"),
+              "tags": manifest["tags"],
+              "publication": manifest["publication"],
+              "discovery": manifest["discovery"],
+              "defaultEditionId": "story-house",
+              "editions": [story_house, full_classic],
+          }
+
+          MANIFEST_PATH.write_text(
+              json.dumps(upgraded, ensure_ascii=False, indent=2) + "\n",
+              encoding="utf-8",
+          )
+
+          print(f"Full classic words: {total_words}")
+          print(f"Reader pages: {len(chapter_manifests)}")
+          for index, page in enumerate(pages, start=1):
+              print(f"page-{index:02d}: {sum(word_count(p) for p in page)} words")
+          print(f"Headpiece dimensions: {headpiece.width}x{headpiece.height}")
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Format manifest
+        run: npx biome format --write public/stories/the-elves-and-the-shoemaker/book.json
+
+      - name: Regenerate Story House catalogue
+        run: npm run story:catalogue
+
+      - name: Run focused Story House tests
+        run: npx vitest run src/game/storyLibrary/StoryLibraryService.test.ts src/game/storyLibrary/StoryReadingService.test.ts
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Commit materialised edition
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            public/stories/the-elves-and-the-shoemaker \
+            public/stories/catalogue.json
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "Story House: add Elves Full Classic Text"
+          git push origin HEAD:agent/story-house-elves-full-classic
