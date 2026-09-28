@@ -51,8 +51,9 @@ jobs:
           HTML_URL = "https://www.gutenberg.org/cache/epub/19068/pg19068-images.html"
           HEADPIECE_URL = "https://www.gutenberg.org/cache/epub/19068/images/illus-190-title.jpg"
 
-          START = "There was once a shoemaker, who, through no fault of his own"
-          END = "(II.)"
+          HEADING = "THE ELVES"
+          PART_ONE = "(I.)"
+          PART_TWO = "(II.)"
 
           def fetch(url: str) -> bytes:
               req = urllib.request.Request(
@@ -81,11 +82,19 @@ jobs:
               raise RuntimeError("Expected the existing Elves Story House package to be schema v1.")
 
           raw = fetch(TEXT_URL).decode("utf-8-sig", errors="replace").replace("\r\n", "\n")
-          start = raw.find(START)
-          if start < 0:
-              raise RuntimeError("Could not find the shoemaker story start in Gutenberg #19068.")
+          heading = raw.upper().find(HEADING)
+          if heading < 0:
+              raise RuntimeError("Could not find THE ELVES heading in Gutenberg #19068.")
 
-          end = raw.find("\n" + END, start)
+          part_one = raw.find(PART_ONE, heading)
+          if part_one < 0:
+              raise RuntimeError("Could not find Part I marker in THE ELVES.")
+
+          start = raw.find("\n", part_one)
+          if start < 0:
+              raise RuntimeError("Could not find the start of Part I text.")
+
+          end = raw.find(PART_TWO, start)
           if end < 0:
               raise RuntimeError("Could not find Part II marker after the shoemaker story.")
 
