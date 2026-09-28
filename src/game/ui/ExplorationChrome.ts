@@ -38,6 +38,8 @@ function resolveLocationTitle(scene: Phaser.Scene): string | null {
   return 'Sunbeam Village';
 }
 
+const REDUCED_MOTION_DISCOVERY_INTERVAL_MS = 300;
+
 const LEGACY_STATUS_PREFIXES = [
   'Pip is nearby.',
   'Your Moonflower Sparkle is safely remembered.',
@@ -182,7 +184,7 @@ export class ExplorationChrome {
     if (
       forceRescan ||
       this.reducedMotionTargets.length === 0 ||
-      now - this.lastReducedMotionDiscoveryAt >= 1_500
+      now - this.lastReducedMotionDiscoveryAt >= REDUCED_MOTION_DISCOVERY_INTERVAL_MS
     ) {
       this.lastReducedMotionDiscoveryAt = now;
       this.reducedMotionTargets.length = 0;
