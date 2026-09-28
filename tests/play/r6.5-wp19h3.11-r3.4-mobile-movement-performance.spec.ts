@@ -202,8 +202,7 @@ async function browserPointForCanvasObject(page: Page, objectName: string): Prom
   const object = snapshot.scenes
     .find((scene) => scene.key === SCENE_KEY)
     ?.objects.find(
-      (candidate) =>
-        candidate.name === objectName && candidate.visible && candidate.interactive,
+      (candidate) => candidate.name === objectName && candidate.visible && candidate.interactive,
     );
   if (!object) {
     throw new Error(`Visible interactive control ${objectName} is unavailable.`);
@@ -307,7 +306,10 @@ test('R3.4 phone/tablet walking and Gallop stay consistent under slower frame ti
   const projectName = test.info().project.name;
   const supportedProject =
     projectName === 'chromium-tablet-touch' || projectName === 'chromium-mobile-touch';
-  test.skip(!supportedProject, 'R3.4 movement evidence runs on Chromium tablet and phone profiles.');
+  test.skip(
+    !supportedProject,
+    'R3.4 movement evidence runs on Chromium tablet and phone profiles.',
+  );
 
   await seedIntroducedPip(page);
   const cdp = await page.context().newCDPSession(page);
