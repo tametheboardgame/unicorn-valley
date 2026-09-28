@@ -1,23 +1,23 @@
 <!-- block:p03-b01 -->
-"But as to a nest--there is no difficulty: I have a sackful of feathers in my wood-shed. No, my dear madam, you will be in nobody's way. You may sit there as long as you like," said the bushy long-tailed gentleman.
+She flew beautifully when she had got a good start.
 
 <!-- block:p03-b02 -->
-He led the way to a very retired, dismal-looking house amongst the fox-gloves.
+She skimmed along over the tree-tops until she saw an open place in the middle of the wood, where the trees and brushwood had been cleared.
 
 <!-- block:p03-b03 -->
-It was built of faggots and turf, and there were two broken pails, one on top of another, by way of a chimney.
+Jemima alighted rather heavily, and began to waddle about in search of a convenient dry nesting-place. She rather fancied a tree-stump amongst some tall fox-gloves.
 
 <!-- block:p03-b04 -->
-"This is my summer residence; you would not find my earth--my winter house--so convenient," said the hospitable gentleman.
+But--seated upon the stump, she was startled to find an elegantly dressed gentleman reading a newspaper.
 
 <!-- block:p03-b05 -->
-There was a tumble-down shed at the back of the house, made of old soap-boxes. The gentleman opened the door, and showed Jemima in.
+He had black prick ears and sandy coloured whiskers.
 
 <!-- block:p03-b06 -->
-The shed was almost quite full of feathers--it was almost suffocating; but it was comfortable and very soft.
+"Quack?" said Jemima Puddle-duck, with her head and her bonnet on one side--"Quack?"
 
 <!-- block:p03-b07 -->
-Jemima Puddle-duck was rather surprised to find such a vast quantity of feathers. But it was very comfortable; and she made a nest without any trouble at all.
+The gentleman raised his eyes above his newspaper and looked curiously at Jemima--
 
 <!-- block:p03-b08 -->
-When she came out, the sandy whiskered gentleman was sitting on a log reading the newspaper--at least he had it spread out, but he was looking over the top of it.
+"Madam, have you lost your way?" said he. He had a long bushy tail which he was sitting upon, as the stump was somewhat damp.
