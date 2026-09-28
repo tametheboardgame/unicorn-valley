@@ -234,7 +234,12 @@ export const VILLAGE_INTERIOR_MAPS = {
 } as const satisfies Readonly<Record<VillageInteriorId, VillageInteriorDefinition>>;
 
 export function isVillageInteriorId(value: unknown): value is VillageInteriorId {
-  return value === 'bakery' || value === 'accessory-shop' || value === 'library' || value === 'rosehip-cottage';
+  return (
+    value === 'bakery' ||
+    value === 'accessory-shop' ||
+    value === 'library' ||
+    value === 'rosehip-cottage'
+  );
 }
 
 export function getVillageInteriorMap(interiorId: VillageInteriorId): VillageInteriorDefinition {
