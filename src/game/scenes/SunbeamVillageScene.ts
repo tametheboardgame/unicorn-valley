@@ -1344,7 +1344,9 @@ export class SunbeamVillageScene extends Phaser.Scene {
 
     for (const bed of flowerBeds) {
       const objects: Phaser.GameObjects.GameObject[] = [
-        this.add.ellipse(0, 4, bed.width, bed.height, 0xc99d70, 1).setStrokeStyle(4, 0x8f6a4e, 0.92),
+        this.add
+          .ellipse(0, 4, bed.width, bed.height, 0xc99d70, 1)
+          .setStrokeStyle(4, 0x8f6a4e, 0.92),
         this.add.ellipse(0, 1, bed.width - 14, bed.height - 14, 0x78543e, 1),
       ];
 
