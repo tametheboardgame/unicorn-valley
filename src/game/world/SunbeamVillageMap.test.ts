@@ -444,6 +444,15 @@ describe('Sunbeam Village map', () => {
         id: `collision:landscaping:flower-bed:${bed.id}`,
         ...bed.collision,
       });
+
+      const visualTop = bed.y + 4 - bed.height / 2;
+      const visualBottom = bed.y + 4 + bed.height / 2;
+      const collisionTop = bed.collision.y - bed.collision.height / 2;
+      const collisionBottom = bed.collision.y + bed.collision.height / 2;
+
+      expect(bed.collision.width).toBeGreaterThanOrEqual(bed.width);
+      expect(collisionTop).toBeLessThanOrEqual(visualTop - 50);
+      expect(collisionBottom).toBeGreaterThanOrEqual(visualBottom);
     }
 
     expect(
