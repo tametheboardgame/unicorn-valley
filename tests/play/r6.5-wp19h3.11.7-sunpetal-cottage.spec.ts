@@ -31,7 +31,9 @@ async function snapshot(page: Page): Promise<Snapshot> {
   });
 }
 
-test('H3.11.7 Sunpetal Cottage is a distinct walkable gardening-and-sunroom home', async ({ page }) => {
+test('H3.11.7 Sunpetal Cottage is a distinct walkable gardening-and-sunroom home', async ({
+  page,
+}) => {
   await page.goto('/?diagnostics=1');
   await page.waitForFunction(() =>
     Boolean(
@@ -95,7 +97,8 @@ test('H3.11.7 Sunpetal Cottage is a distinct walkable gardening-and-sunroom home
       );
       return current?.objects.some(
         ({ name }) =>
-          name === 'interaction-direct-zone:interaction:village-interior:sunpetal-cottage:potting-bench',
+          name ===
+          'interaction-direct-zone:interaction:village-interior:sunpetal-cottage:potting-bench',
       );
     })
     .toBe(true);

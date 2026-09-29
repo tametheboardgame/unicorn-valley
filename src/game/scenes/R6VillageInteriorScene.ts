@@ -551,7 +551,6 @@ export class VillageInteriorScene extends Phaser.Scene {
       .setDepth(6);
   }
 
-
   private createSunpetalCottageSet(): void {
     // Sunpetal's home is a warm, practical little sunroom built around growing things.
     // The furniture hugs alternating corners and leaves a broad central sun rug, keeping the
@@ -572,9 +571,7 @@ export class VillageInteriorScene extends Phaser.Scene {
     }
     sunRug.setDepth(3.25);
 
-    const seedShelf = this.add
-      .graphics()
-      .setName('village-interior:sunpetal-cottage:seed-shelf');
+    const seedShelf = this.add.graphics().setName('village-interior:sunpetal-cottage:seed-shelf');
     seedShelf.fillStyle(0x9a6b45, 1);
     seedShelf.fillRoundedRect(1040, 410, 250, 150, 16);
     seedShelf.fillStyle(0xffefc8, 1);
@@ -1961,7 +1958,6 @@ export class VillageInteriorScene extends Phaser.Scene {
       },
     ];
   }
-
 
   private createSunpetalCottageInteractions(): InteractionTarget[] {
     const seedShelf = getVillageInteriorAnchor('sunpetal-cottage', 'counter');
