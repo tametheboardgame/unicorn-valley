@@ -210,7 +210,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     }
 
     for (let index = 0; index < 8; index += 1) {
-      this.boardContainer.add(
+      this.boardContainer.add([
         this.add
           .text(
             BOARD_LEFT - 18,
@@ -237,7 +237,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
             },
           )
           .setOrigin(0.5),
-      );
+      ]);
     }
 
     this.updateStatus();
