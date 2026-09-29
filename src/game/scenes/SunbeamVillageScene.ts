@@ -329,12 +329,8 @@ export class SunbeamVillageScene extends Phaser.Scene {
         const chair = this.add
           .container(seat.x, seat.y, [
             this.add.ellipse(0, 26, 92, 48, 0x6d5d4f, 0.16),
-            this.add
-              .rectangle(0, 0, 58, 46, 0xbd7b57, 1)
-              .setStrokeStyle(3, 0x7d513e, 0.94),
-            this.add
-              .rectangle(0, -29, 66, 16, 0xca8d64, 1)
-              .setStrokeStyle(3, 0x7d513e, 0.94),
+            this.add.rectangle(0, 0, 58, 46, 0xbd7b57, 1).setStrokeStyle(3, 0x7d513e, 0.94),
+            this.add.rectangle(0, -29, 66, 16, 0xca8d64, 1).setStrokeStyle(3, 0x7d513e, 0.94),
             this.add.rectangle(-23, 27, 10, 34, 0x7d513e, 1),
             this.add.rectangle(23, 27, 10, 34, 0x7d513e, 1),
             this.add.circle(-26, 2, 5, 0xe2a77b, 0.9),
@@ -349,12 +345,8 @@ export class SunbeamVillageScene extends Phaser.Scene {
       this.add
         .container(seat.x, seat.y, [
           this.add.ellipse(0, 42, 190, 54, 0x6d5d4f, 0.16),
-          this.add
-            .rectangle(0, -4, seat.width, 28, 0xb97855, 1)
-            .setStrokeStyle(3, 0x80503e, 0.9),
-          this.add
-            .rectangle(0, 24, seat.width, 18, 0xc58a62, 1)
-            .setStrokeStyle(3, 0x80503e, 0.9),
+          this.add.rectangle(0, -4, seat.width, 28, 0xb97855, 1).setStrokeStyle(3, 0x80503e, 0.9),
+          this.add.rectangle(0, 24, seat.width, 18, 0xc58a62, 1).setStrokeStyle(3, 0x80503e, 0.9),
           this.add.rectangle(-58, 38, 12, 42, 0x80503e, 1),
           this.add.rectangle(58, 38, 12, 42, 0x80503e, 1),
         ])
@@ -403,19 +395,14 @@ export class SunbeamVillageScene extends Phaser.Scene {
       ] as const) {
         tableObjects.push(
           this.add
-            .text(
-              (col - 3.5) * squareWidth,
-              boardY + (row - 3.5) * squareHeight - 1,
-              glyph,
-              {
-                color: colour,
-                fontFamily: 'Georgia, serif',
-                fontSize: '11px',
-                fontStyle: 'bold',
-                stroke,
-                strokeThickness: 1,
-              },
-            )
+            .text((col - 3.5) * squareWidth, boardY + (row - 3.5) * squareHeight - 1, glyph, {
+              color: colour,
+              fontFamily: 'Georgia, serif',
+              fontSize: '11px',
+              fontStyle: 'bold',
+              stroke,
+              strokeThickness: 1,
+            })
             .setOrigin(0.5),
         );
       }
