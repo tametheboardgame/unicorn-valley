@@ -35,7 +35,8 @@
     "story:catalogue:check": "node scripts/generateStoryCatalogue.mjs --check"
   },
   "dependencies": {
-    "phaser": "4.2.1"
+    "phaser": "4.2.1",
+    "chess.js": "1.4.0"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.6",
