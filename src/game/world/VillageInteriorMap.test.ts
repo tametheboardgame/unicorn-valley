@@ -12,6 +12,7 @@ const INTERIOR_IDS: readonly VillageInteriorId[] = [
   'accessory-shop',
   'library',
   'rosehip-cottage',
+  'bluebell-cottage',
 ];
 const REQUIRED_ANCHORS: readonly VillageInteriorAnchorId[] = [
   'entry',
@@ -44,7 +45,14 @@ describe('VillageInteriorMap', () => {
       expect(Object.keys(map.anchors).sort()).toEqual([...REQUIRED_ANCHORS].sort());
       expect(
         map.colliders.some(({ id }) =>
-          ['counter', 'story-table', 'rosehip-bed', 'rosehip-tea-table'].includes(id),
+          [
+            'counter',
+            'story-table',
+            'rosehip-bed',
+            'rosehip-tea-table',
+            'bluebell-bell-cabinet',
+            'bluebell-chime-table',
+          ].includes(id),
         ),
       ).toBe(true);
     }

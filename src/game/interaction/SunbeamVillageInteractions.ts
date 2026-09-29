@@ -17,6 +17,7 @@ import {
 } from '../world/RainbowMeadowMap';
 import { setSunbeamVillagePlayerSpawn, SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
 import { SUNBEAM_VILLAGE_LAYOUT } from '../world/SunbeamVillageLayout';
+import type { VillageInteriorId } from '../world/VillageInteriorMap';
 import type { InteractionTarget } from './InteractionTarget';
 import { getSceneInteractionRegistry } from './SceneInteractionRegistry';
 
@@ -56,7 +57,7 @@ function residenceApproach(id: string): { x: number; y: number } {
 
 function enterInterior(
   scene: Phaser.Scene,
-  interiorId: 'bakery' | 'accessory-shop' | 'library' | 'rosehip-cottage',
+  interiorId: VillageInteriorId,
   returnPosition: { x: number; y: number },
 ): void {
   setSunbeamVillagePlayerSpawn(returnPosition);
@@ -189,15 +190,14 @@ export function createSunbeamVillageInteractions(scene: Phaser.Scene): Interacti
     {
       id: 'interaction:village-residence-bluebell',
       label: 'Bluebell Cottage',
-      actionLabel: 'Knock',
-      actionKind: 'interact',
+      actionLabel: 'Enter',
+      actionKind: 'enter',
       position: residenceApproach('bluebell-cottage'),
       interactionRadius: 135,
       result: {
-        type: 'message',
-        title: 'Bluebell Cottage',
-        message:
-          'Warm light glows behind the curtains. A little note asks visitors to wait for an invitation before coming in.',
+        type: 'callback',
+        activate: () =>
+          enterInterior(scene, 'bluebell-cottage', residenceApproach('bluebell-cottage')),
       },
     },
     {

@@ -95,6 +95,14 @@ const PRESENTATION: Readonly<Record<VillageInteriorId, InteriorPresentationDefin
     floorColour: 0xd7b58f,
     accentColour: 0xb76f78,
   },
+  'bluebell-cottage': {
+    title: 'Bluebell Cottage',
+    subtitle: 'A neat blue home full of sky notes, tiny bells and half-finished wind chimes.',
+    icon: '🔔',
+    wallColour: 0xe8f2f7,
+    floorColour: 0xaabfd0,
+    accentColour: 0x6f87aa,
+  },
   library: {
     title: 'Story House',
     subtitle: 'Maps, clue cards and little stories from places you have really found.',
@@ -238,6 +246,8 @@ export class VillageInteriorScene extends Phaser.Scene {
       this.createStoryHouseSet();
     } else if (this.interiorId === 'rosehip-cottage') {
       this.createRosehipCottageSet();
+    } else if (this.interiorId === 'bluebell-cottage') {
+      this.createBluebellCottageSet();
     } else {
       this.createThreadSet();
     }
@@ -394,6 +404,134 @@ export class VillageInteriorScene extends Phaser.Scene {
     this.add
       .text(760, 345, 'ROSEHIP COTTAGE', {
         color: '#80545b',
+        fontFamily: UI_FONT,
+        fontSize: '18px',
+        fontStyle: 'bold',
+        letterSpacing: 2,
+      })
+      .setOrigin(0.5)
+      .setDepth(6);
+  }
+
+  private createBluebellCottageSet(): void {
+    // Bluebell's home is intentionally more ordered and airy than Rosehip's:
+    // a long runner and central making table form the room's spine, with a daybed to the east
+    // and sky/bell projects gathered along the west and north edges.
+    const runner = this.add.graphics().setName('village-interior:bluebell-cottage:blue-runner');
+    runner.fillStyle(0x7898bd, 0.38);
+    runner.fillRoundedRect(600, 710, 340, 170, 72);
+    runner.lineStyle(5, 0xdcebf4, 0.72);
+    runner.strokeRoundedRect(600, 710, 340, 170, 72);
+    runner.lineStyle(3, 0x5f7899, 0.52);
+    runner.lineBetween(650, 742, 890, 742);
+    runner.lineBetween(650, 847, 890, 847);
+    runner.setDepth(3.25);
+
+    const bellCabinet = this.add
+      .graphics()
+      .setName('village-interior:bluebell-cottage:bell-cabinet');
+    bellCabinet.fillStyle(0x667b94, 1);
+    bellCabinet.fillRoundedRect(170, 400, 230, 150, 14);
+    bellCabinet.fillStyle(0xe7edf0, 1);
+    bellCabinet.fillRoundedRect(190, 420, 190, 104, 10);
+    bellCabinet.lineStyle(4, 0x8ba4bd, 0.78);
+    bellCabinet.lineBetween(253, 424, 253, 520);
+    bellCabinet.lineBetween(317, 424, 317, 520);
+    for (const [x, colour] of [
+      [221, 0xa5c9df],
+      [285, 0xd9c979],
+      [349, 0xb6a5d8],
+    ] as const) {
+      bellCabinet.fillStyle(colour, 1);
+      bellCabinet.fillCircle(x, 468, 17);
+      bellCabinet.fillStyle(0x5c6f86, 1);
+      bellCabinet.fillRoundedRect(x - 3, 440, 6, 20, 3);
+    }
+    bellCabinet.setDepth(worldDepthForY(550, 0.16));
+
+    const daybed = this.add.graphics().setName('village-interior:bluebell-cottage:daybed');
+    daybed.fillStyle(0x667b94, 1);
+    daybed.fillRoundedRect(1040, 400, 280, 180, 24);
+    daybed.fillStyle(0xf5f1e6, 1);
+    daybed.fillRoundedRect(1055, 415, 250, 148, 20);
+    daybed.fillStyle(0x9ab6d3, 1);
+    daybed.fillRoundedRect(1060, 500, 240, 63, 18);
+    daybed.fillStyle(0xd8e5ef, 1);
+    daybed.fillRoundedRect(1072, 430, 92, 54, 18);
+    daybed.fillStyle(0xb8a6d2, 1);
+    daybed.fillRoundedRect(1174, 430, 104, 54, 18);
+    daybed.setDepth(worldDepthForY(580, 0.16));
+
+    const skyDesk = this.add.graphics().setName('village-interior:bluebell-cottage:sky-desk');
+    skyDesk.fillStyle(0x6f8297, 1);
+    skyDesk.fillRoundedRect(195, 635, 230, 110, 14);
+    skyDesk.fillStyle(0xf4f0df, 1);
+    skyDesk.fillRoundedRect(215, 610, 190, 72, 9);
+    skyDesk.lineStyle(3, 0x7996b4, 0.78);
+    skyDesk.lineBetween(310, 615, 310, 677);
+    skyDesk.fillStyle(0x7395b8, 1);
+    skyDesk.fillCircle(253, 635, 8);
+    skyDesk.fillCircle(278, 652, 6);
+    skyDesk.fillStyle(0xd5bf72, 1);
+    skyDesk.fillCircle(350, 634, 7);
+    skyDesk.fillCircle(372, 650, 5);
+    skyDesk.setDepth(worldDepthForY(745, 0.18));
+
+    const chimeTable = this.add.graphics().setName('village-interior:bluebell-cottage:chime-table');
+    chimeTable.fillStyle(0x71849c, 1);
+    chimeTable.fillRoundedRect(620, 565, 300, 130, 20);
+    chimeTable.fillStyle(0xd9e8ef, 1);
+    chimeTable.fillRoundedRect(640, 580, 260, 92, 16);
+    chimeTable.lineStyle(4, 0x63809e, 0.75);
+    chimeTable.lineBetween(680, 607, 860, 607);
+    for (const [x, length, colour] of [
+      [692, 38, 0xa6c8dc],
+      [742, 50, 0xd7c777],
+      [792, 32, 0xb6a3d4],
+      [842, 44, 0x88b3ca],
+    ] as const) {
+      chimeTable.fillStyle(colour, 1);
+      chimeTable.fillRoundedRect(x - 6, 612, 12, length, 6);
+      chimeTable.fillCircle(x, 612 + length + 7, 6);
+    }
+    chimeTable.setDepth(worldDepthForY(695, 0.2));
+
+    const windowBench = this.add
+      .graphics()
+      .setName('village-interior:bluebell-cottage:window-bench');
+    windowBench.fillStyle(0x647990, 1);
+    windowBench.fillRoundedRect(1070, 735, 230, 120, 24);
+    windowBench.fillStyle(0xb8cfe0, 1);
+    windowBench.fillRoundedRect(1085, 748, 200, 72, 20);
+    windowBench.fillStyle(0xf0e8d7, 1);
+    windowBench.fillRoundedRect(1102, 760, 72, 46, 16);
+    windowBench.fillStyle(0xc5b4dc, 1);
+    windowBench.fillRoundedRect(1183, 760, 82, 46, 16);
+    windowBench.setDepth(worldDepthForY(855, 0.24));
+
+    const foregroundChimes = this.add
+      .graphics()
+      .setName('village-interior:bluebell-cottage:foreground-chimes');
+    foregroundChimes.lineStyle(8, 0x60758e, 1);
+    foregroundChimes.lineBetween(1255, 820, 1255, 955);
+    foregroundChimes.lineBetween(1208, 842, 1302, 842);
+    foregroundChimes.lineStyle(3, 0x718ca8, 0.9);
+    for (const [x, bottom, colour] of [
+      [1218, 908, 0x9fc5dc],
+      [1243, 930, 0xd7c978],
+      [1268, 900, 0xb7a6d7],
+      [1293, 920, 0x8eb7cc],
+    ] as const) {
+      foregroundChimes.lineBetween(x, 844, x, bottom - 18);
+      foregroundChimes.fillStyle(colour, 1);
+      foregroundChimes.fillRoundedRect(x - 7, bottom - 18, 14, 28, 6);
+      foregroundChimes.fillCircle(x, bottom + 15, 6);
+    }
+    foregroundChimes.setDepth(worldDepthForY(965, 0.55));
+
+    this.add
+      .text(760, 345, 'BLUEBELL COTTAGE', {
+        color: '#536b86',
         fontFamily: UI_FONT,
         fontSize: '18px',
         fontStyle: 'bold',
@@ -1396,6 +1534,8 @@ export class VillageInteriorScene extends Phaser.Scene {
       targets.push(...this.createStoryHouseInteractions());
     } else if (this.interiorId === 'rosehip-cottage') {
       targets.push(...this.createRosehipCottageInteractions());
+    } else if (this.interiorId === 'bluebell-cottage') {
+      targets.push(...this.createBluebellCottageInteractions());
     } else {
       targets.push(...this.createThreadInteractions());
     }
@@ -1604,6 +1744,65 @@ export class VillageInteriorScene extends Phaser.Scene {
             this.showFeedback(
               'A soft blanket, a half-finished story and a basket of mending make this the sort of chair that is rarely empty for long.',
               { x: 625, y: 820 },
+            ),
+        },
+      },
+    ];
+  }
+
+  private createBluebellCottageInteractions(): InteractionTarget[] {
+    const bellCabinet = getVillageInteriorAnchor('bluebell-cottage', 'counter');
+    const skyDesk = getVillageInteriorAnchor('bluebell-cottage', 'primary-feature');
+    const chimeTable = getVillageInteriorAnchor('bluebell-cottage', 'secondary-feature');
+    return [
+      {
+        id: 'interaction:village-interior:bluebell-cottage:bells',
+        label: 'Listening bells',
+        actionLabel: 'Listen',
+        actionKind: 'inspect',
+        position: bellCabinet.approach,
+        interactionRadius: 145,
+        priority: 23,
+        result: {
+          type: 'callback',
+          activate: () =>
+            this.showFeedback(
+              'Bluebell has arranged three tiny bells beneath handwritten labels: “rain”, “breeze” and “starlight”. Each one rings with a slightly different little voice.',
+              bellCabinet.approach,
+            ),
+        },
+      },
+      {
+        id: 'interaction:village-interior:bluebell-cottage:sky-desk',
+        label: 'Sky chart desk',
+        actionLabel: 'Read',
+        actionKind: 'inspect',
+        position: skyDesk.approach,
+        interactionRadius: 145,
+        priority: 24,
+        result: {
+          type: 'callback',
+          activate: () =>
+            this.showFeedback(
+              'The pages are full of cloud shapes, moon phases and tiny star maps. Bluebell has circled the attic window with a note: “best view after sunset”.',
+              skyDesk.approach,
+            ),
+        },
+      },
+      {
+        id: 'interaction:village-interior:bluebell-cottage:chime-table',
+        label: 'Wind-chime worktable',
+        actionLabel: 'Inspect',
+        actionKind: 'inspect',
+        position: chimeTable.approach,
+        interactionRadius: 150,
+        priority: 22,
+        result: {
+          type: 'callback',
+          activate: () =>
+            this.showFeedback(
+              'A half-finished wind chime waits beside ribbon, beads and a folded note: “Gone to find the right breeze. Back soon.”',
+              chimeTable.approach,
             ),
         },
       },
