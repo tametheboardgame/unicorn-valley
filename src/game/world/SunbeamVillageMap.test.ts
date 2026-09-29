@@ -513,9 +513,7 @@ describe('Sunbeam Village map', () => {
     ]);
     for (const residence of residences) {
       expect(residence.doorstep.y).toBeLessThan(residence.approach.y);
-      expect(residence.doorstep.y).toBeGreaterThan(
-        residence.y + residence.height / 2,
-      );
+      expect(residence.doorstep.y).toBeGreaterThan(residence.y + residence.height / 2);
     }
 
     const bluebellRightEdge = bluebell.x + bluebell.width / 2;
