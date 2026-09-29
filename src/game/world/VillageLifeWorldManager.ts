@@ -85,13 +85,16 @@ const VILLAGE_POINTS: readonly VillageLifePoint[] = [
       }
 
       objects.push(
-        scene.add.triangle(0, -54, -7, 29, 8, 29, 2, -1, 0x715039, 1).setOrigin(0.5, 1),
+        scene.add.triangle(0, -41, 0, -30, -7, 14, 7, 14, 0x715039, 1),
         scene.add
-          .rectangle(16, -15, 34, 4, 0x624735, 0.28)
-          .setRotation(0.18)
-          .setOrigin(0.1, 0.5),
+          .rectangle(4, -23, 33, 4, 0x624735, 0.24)
+          .setRotation(0.16)
+          .setOrigin(0, 0.5),
         scene.add
-          .text(0, -47, 'N', {
+          .circle(0, -24, 4, 0x6a4933, 1)
+          .setStrokeStyle(1, 0xe1c88c, 0.85),
+        scene.add
+          .text(0, -49, 'N', {
             color: '#6f5239',
             fontFamily: 'Georgia, serif',
             fontSize: '10px',
