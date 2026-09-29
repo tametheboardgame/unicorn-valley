@@ -229,7 +229,12 @@ export class SunbeamVillageScene extends Phaser.Scene {
 
     const twinkleConnection = SUNBEAM_VILLAGE_LAYOUT.pathNetwork.shopBranches[1][0];
     createMarker(twinkleConnection.x - 68, centre.y - height / 2 + 27, 0.72, 'twinkle-marker:left');
-    createMarker(twinkleConnection.x + 68, centre.y - height / 2 + 27, 0.72, 'twinkle-marker:right');
+    createMarker(
+      twinkleConnection.x + 68,
+      centre.y - height / 2 + 27,
+      0.72,
+      'twinkle-marker:right',
+    );
   }
 
   private createPathNetwork(): void {
