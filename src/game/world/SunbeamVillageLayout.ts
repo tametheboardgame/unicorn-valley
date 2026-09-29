@@ -410,7 +410,7 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
         y: 705,
         width: 180,
         height: 72,
-        collision: { x: 1035, y: 679, width: 180, height: 132 },
+        collision: { x: 1035, y: 698, width: 180, height: 94 },
         palette: [0xf39ab5, 0xf1d16e, 0xc5a0e5],
       },
       {
@@ -419,7 +419,7 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
         y: 735,
         width: 196,
         height: 76,
-        collision: { x: 1885, y: 709, width: 196, height: 136 },
+        collision: { x: 1885, y: 728, width: 196, height: 98 },
         palette: [0xf5a7bc, 0xe5c45e, 0xaeb5ed],
       },
       {
@@ -428,7 +428,7 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
         y: 1195,
         width: 188,
         height: 78,
-        collision: { x: 480, y: 1169, width: 188, height: 138 },
+        collision: { x: 480, y: 1188, width: 188, height: 100 },
         palette: [0xef9eb9, 0xf2cf67, 0xb89ddd],
       },
       {
@@ -437,7 +437,7 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
         y: 800,
         width: 198,
         height: 80,
-        collision: { x: 2690, y: 774, width: 198, height: 140 },
+        collision: { x: 2690, y: 793, width: 198, height: 102 },
         palette: [0xf2a0b6, 0xeacb66, 0xa8b7e8],
       },
     ],
