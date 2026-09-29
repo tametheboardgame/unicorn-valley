@@ -1,0 +1,449 @@
+name: Materialise Wonderful Wizard of Oz Full Classic Text
+
+on:
+  push:
+    branches:
+      - agent/story-house-wizard-oz-full-classic
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  materialise:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: agent/story-house-wizard-oz-full-classic
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22.23.2
+          package-manager-cache: false
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+
+      - name: Materialise full classic edition
+        shell: python
+        run: |
+          import json
+          import re
+          import shutil
+          import urllib.request
+          from pathlib import Path
+
+          STORY_DIR = Path("public/stories/the-wonderful-wizard-of-oz")
+          MANIFEST_PATH = STORY_DIR / "book.json"
+          PAGES_DIR = STORY_DIR / "editions/full-classic/pages"
+
+          TEXT_URL = "https://www.gutenberg.org/cache/epub/55/pg55.txt"
+          BOOK_URL = "https://www.gutenberg.org/ebooks/55"
+
+          def fetch(url: str) -> bytes:
+              req = urllib.request.Request(
+                  url,
+                  headers={"User-Agent": "Unicorn-Valley-Story-House/1.0"},
+              )
+              with urllib.request.urlopen(req, timeout=45) as response:
+                  return response.read()
+
+          def word_count(value: str) -> int:
+              return len(re.findall(r"[A-Za-z0-9]+(?:['’.-][A-Za-z0-9]+)*", value))
+
+          def normalise_paragraph(value: str) -> str:
+              lines = [line.strip() for line in value.splitlines()]
+              return " ".join(line for line in lines if line).strip()
+
+          def clean_source(value: str) -> str:
+              value = value.replace("\r\n", "\n")
+              value = re.sub(
+                  r"(?is)\[Illustration(?:\s*:[^\]]*)?\]",
+                  "",
+                  value,
+              )
+              value = re.sub(r"(?m)^\s*[*\-_ ]{3,}\s*$", "", value)
+              return value
+
+          def paragraphs_from(value: str):
+              blocks = [
+                  normalise_paragraph(block)
+                  for block in re.split(r"\n\s*\n", value)
+              ]
+              return [
+                  block
+                  for block in blocks
+                  if block and not re.fullmatch(r"[*\-_ ]{3,}", block)
+              ]
+
+          def paginate(paragraphs):
+              pages = []
+              current = []
+              current_words = 0
+
+              for paragraph in paragraphs:
+                  count = word_count(paragraph)
+                  if current and current_words >= 280 and current_words + count > 460:
+                      pages.append(current)
+                      current = []
+                      current_words = 0
+                  current.append(paragraph)
+                  current_words += count
+
+              if current:
+                  pages.append(current)
+
+              if len(pages) > 1:
+                  last_words = sum(word_count(p) for p in pages[-1])
+                  previous_words = sum(word_count(p) for p in pages[-2])
+                  if last_words < 170 and previous_words + last_words <= 520:
+                      pages[-2].extend(pages[-1])
+                      pages.pop()
+
+              return pages
+
+          manifest = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
+          if manifest.get("schemaVersion") != 1:
+              raise RuntimeError("Expected existing Wonderful Wizard of Oz package to be schema v1.")
+
+          raw = clean_source(
+              fetch(TEXT_URL).decode("utf-8-sig", errors="replace")
+          )
+
+          intro_matches = list(
+              re.finditer(r"(?m)^\s*Introduction\s*$", raw)
+          )
+          if len(intro_matches) < 2:
+              raise RuntimeError("Could not distinguish contents Introduction from the book Introduction.")
+
+          body = raw[intro_matches[-1].end():]
+
+          end_match = re.search(
+              r"(?m)^\s*\*\*\* END OF THE PROJECT GUTENBERG EBOOK.*$",
+              body,
+          )
+          if not end_match:
+              raise RuntimeError("Could not find Project Gutenberg end marker.")
+          body = body[:end_match.start()].strip()
+
+          chapter_matches = list(
+              re.finditer(r"(?m)^\s*Chapter\s+([IVXLCDM]+)\s*$", body)
+          )
+          if len(chapter_matches) != 24:
+              raise RuntimeError(f"Expected 24 chapters, found {len(chapter_matches)}")
+
+          introduction_region = body[:chapter_matches[0].start()].strip()
+          introduction_region = re.sub(
+              r"(?m)^\s*The Wonderful Wizard of Oz\s*$",
+              "",
+              introduction_region,
+          ).strip()
+
+          sections = [
+              {
+                  "id": "introduction",
+                  "label": "Introduction",
+                  "paragraphs": paragraphs_from(introduction_region),
+              }
+          ]
+
+          for index, match in enumerate(chapter_matches):
+              section_end = (
+                  chapter_matches[index + 1].start()
+                  if index + 1 < len(chapter_matches)
+                  else len(body)
+              )
+              region = body[match.end():section_end].strip()
+              lines = region.splitlines()
+
+              title_index = next(
+                  (i for i, line in enumerate(lines) if line.strip()),
+                  None,
+              )
+              if title_index is None:
+                  raise RuntimeError(f"Chapter {match.group(1)} has no title.")
+
+              title = lines[title_index].strip()
+              chapter_text = "\n".join(lines[title_index + 1:]).strip()
+              chapter_paragraphs = paragraphs_from(chapter_text)
+
+              if not chapter_paragraphs:
+                  raise RuntimeError(f"Chapter {match.group(1)} has no prose.")
+
+              sections.append(
+                  {
+                      "id": f"chapter-{index + 1:02d}",
+                      "label": f"Chapter {match.group(1)} — {title}",
+                      "paragraphs": chapter_paragraphs,
+                  }
+              )
+
+          total_words = sum(
+              word_count(paragraph)
+              for section in sections
+              for paragraph in section["paragraphs"]
+          )
+          if not 35000 <= total_words <= 50000:
+              raise RuntimeError(f"Unexpected Wizard of Oz word count: {total_words}")
+
+          if PAGES_DIR.exists():
+              shutil.rmtree(PAGES_DIR)
+          PAGES_DIR.mkdir(parents=True)
+
+          chapter_manifests = []
+          all_blocks = []
+          page_number = 0
+
+          for section in sections:
+              section_pages = paginate(section["paragraphs"])
+              if not section_pages:
+                  raise RuntimeError(f"No pages generated for {section['label']}")
+
+              for section_page_index, page_paragraphs in enumerate(section_pages, start=1):
+                  page_number += 1
+                  page_id = f"page-{page_number:03d}"
+                  output = []
+
+                  for block_index, paragraph in enumerate(page_paragraphs, start=1):
+                      block_id = f"p{page_number:03d}-b{block_index:02d}"
+                      output.extend([f"<!-- block:{block_id} -->", paragraph, ""])
+                      all_blocks.append(
+                          {
+                              "page": page_number,
+                              "id": block_id,
+                              "text": paragraph,
+                          }
+                      )
+
+                  (PAGES_DIR / f"{page_id}.md").write_text(
+                      "\n".join(output).rstrip() + "\n",
+                      encoding="utf-8",
+                  )
+
+                  page_title = (
+                      section["label"]
+                      if section_page_index == 1
+                      else f"{section['label']} (continued)"
+                  )
+                  chapter_manifests.append(
+                      {
+                          "id": page_id,
+                          "title": page_title,
+                          "path": f"editions/full-classic/pages/{page_id}.md",
+                      }
+                  )
+
+          if not 80 <= len(chapter_manifests) <= 150:
+              raise RuntimeError(
+                  f"Expected 80-150 reader pages, found {len(chapter_manifests)}"
+              )
+
+          def block_for(needle: str):
+              needle_lower = needle.lower()
+              for block in all_blocks:
+                  if needle_lower in block["text"].lower():
+                      return block
+              raise RuntimeError(f"Could not locate illustration anchor: {needle}")
+
+          def chapter_for_page(page_number: int):
+              return chapter_manifests[page_number - 1]
+
+          anchors = [
+              (
+                  block_for("she saw a Scarecrow, placed high on a pole"),
+                  {
+                      "id": "full-denslow-scarecrow",
+                      "path": "illustrations/scarecrow.webp",
+                      "alt": "W. W. Denslow's illustration of Dorothy with the Scarecrow.",
+                      "placement": "full-width",
+                      "width": 483,
+                      "height": 640,
+                      "caption": "Illustration by W. W. Denslow, 1900.",
+                  },
+              ),
+              (
+                  block_for("was a man made entirely of tin"),
+                  {
+                      "id": "full-denslow-tin-woodman",
+                      "path": "illustrations/tin-woodman.webp",
+                      "alt": "W. W. Denslow's illustration of the Tin Woodman.",
+                      "placement": "full-width",
+                      "width": 1283,
+                      "height": 2937,
+                      "caption": "Illustration by W. W. Denslow, 1900.",
+                  },
+              ),
+              (
+                  block_for("a great Lion bounded into the road"),
+                  {
+                      "id": "full-denslow-lion",
+                      "path": "illustrations/lion.webp",
+                      "alt": "W. W. Denslow's illustration of Dorothy meeting the Cowardly Lion.",
+                      "placement": "full-width",
+                      "width": 2018,
+                      "height": 2534,
+                      "caption": "Illustration by W. W. Denslow, 1900.",
+                  },
+              ),
+              (
+                  block_for("The streets were lined with beautiful houses all built of green marble"),
+                  {
+                      "id": "full-denslow-emerald-city",
+                      "path": "illustrations/emerald-city.webp",
+                      "alt": "W. W. Denslow's illustration of the Emerald City.",
+                      "placement": "full-width",
+                      "width": 534,
+                      "height": 332,
+                      "caption": "Illustration by W. W. Denslow, 1900.",
+                  },
+              ),
+              (
+                  block_for("the Wicked Witch of the West had but one eye"),
+                  {
+                      "id": "full-denslow-wicked-witch",
+                      "path": "illustrations/wicked-witch.webp",
+                      "alt": "W. W. Denslow's illustration of the Wicked Witch of the West.",
+                      "placement": "full-width",
+                      "width": 298,
+                      "height": 358,
+                      "caption": "Illustration by W. W. Denslow, 1900.",
+                  },
+              ),
+              (
+                  block_for("the Witch Glinda sat upon a throne of rubies"),
+                  {
+                      "id": "full-denslow-glinda",
+                      "path": "illustrations/glinda.webp",
+                      "alt": "W. W. Denslow's illustration of Glinda the Good Witch.",
+                      "placement": "full-width",
+                      "width": 561,
+                      "height": 804,
+                      "caption": "Illustration by W. W. Denslow, 1900.",
+                  },
+              ),
+          ]
+
+          for block, illustration in anchors:
+              illustration["blockId"] = block["id"]
+              chapter_for_page(block["page"]).setdefault(
+                  "illustrations", []
+              ).append(illustration)
+
+          story_house = {
+              "id": "story-house",
+              "label": "Story House Edition",
+              "author": manifest["author"],
+              "readingMode": manifest["readingMode"],
+              "rights": manifest["rights"],
+              "chapters": manifest["chapters"],
+          }
+
+          full_classic = {
+              "id": "full-classic",
+              "label": "Full Classic Text",
+              "author": "L. Frank Baum",
+              "readingMode": "paged-prose",
+              "rights": {
+                  "text": {
+                      "status": "public-domain",
+                      "source": "The Wonderful Wizard of Oz, Project Gutenberg eBook #55",
+                      "sourceUrl": BOOK_URL,
+                      "notes": (
+                          "The complete public-domain 1900 novel is retained, including Baum's Introduction, "
+                          "without abridgement or modernisation. Project Gutenberg boilerplate and source-only "
+                          "illustration markers are excluded."
+                      ),
+                  },
+                  "illustrations": {
+                      "status": "public-domain",
+                      "source": manifest["rights"]["illustrations"]["source"],
+                      "sourceUrl": manifest["rights"]["illustrations"]["sourceUrl"],
+                      "notes": (
+                          "The six previously verified W. W. Denslow illustrations are reused beside "
+                          "matching passages in the complete classic text."
+                      ),
+                  },
+                  "edition": {
+                      "status": "public-domain",
+                      "source": "Project Gutenberg eBook #55",
+                      "notes": (
+                          "Story House pagination changes presentation only; the source wording and all "
+                          "24 chapters remain complete."
+                      ),
+                  },
+                  "originalPublicationYear": manifest["rights"]["originalPublicationYear"],
+                  "curatorNotes": (
+                      f"Baum's Introduction and all 24 chapters reflowed into "
+                      f"{len(chapter_manifests)} reader pages at paragraph boundaries, "
+                      "with six historical Denslow illustrations anchored to matching scenes."
+                  ),
+              },
+              "chapters": chapter_manifests,
+          }
+
+          upgraded = {
+              "schemaVersion": 2,
+              "id": manifest["id"],
+              "title": manifest["title"],
+              "description": manifest["description"],
+              "catalogueBlurb": manifest.get("catalogueBlurb"),
+              "cover": manifest.get("cover"),
+              "series": manifest.get("series"),
+              "tags": manifest["tags"],
+              "publication": manifest["publication"],
+              "discovery": manifest["discovery"],
+              "defaultEditionId": "story-house",
+              "editions": [story_house, full_classic],
+          }
+
+          MANIFEST_PATH.write_text(
+              json.dumps(upgraded, ensure_ascii=False, indent=2) + "\n",
+              encoding="utf-8",
+          )
+
+          print(f"Full classic words: {total_words}")
+          print(f"Reader pages: {len(chapter_manifests)}")
+          print("Sections: Introduction + 24 chapters")
+          print("Illustrations anchored: 6")
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Format manifest
+        run: npx biome format --write public/stories/the-wonderful-wizard-of-oz/book.json
+
+      - name: Regenerate Story House catalogue
+        run: npm run story:catalogue
+
+      - name: Reject Gutenberg production artefacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -RniE '\[Illustration|\*\*\* START|\*\*\* END' public/stories/the-wonderful-wizard-of-oz/editions/full-classic/pages; then
+            echo "Gutenberg production artefact found in generated reader pages."
+            exit 1
+          fi
+
+      - name: Run focused Story House tests
+        run: npx vitest run src/game/storyLibrary/StoryLibraryService.test.ts src/game/storyLibrary/StoryReadingService.test.ts
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Commit materialised edition
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            public/stories/the-wonderful-wizard-of-oz \
+            public/stories/catalogue.json
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "Story House: add Wonderful Wizard of Oz Full Classic Text"
+          git push origin HEAD:agent/story-house-wizard-oz-full-classic
