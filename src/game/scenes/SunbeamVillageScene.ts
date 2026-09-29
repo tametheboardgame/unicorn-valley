@@ -126,6 +126,7 @@ export class SunbeamVillageScene extends Phaser.Scene {
     this.createPlaza();
     this.createPathNetwork();
     this.createVillageBoundaryFence();
+    this.createVillageLandscaping();
 
     this.createBakeryExterior();
     this.createAccessoryShopExterior();
@@ -136,7 +137,6 @@ export class SunbeamVillageScene extends Phaser.Scene {
     this.createResidentialExpansion();
     this.createUnicornPlayground();
     this.createEntrances();
-    this.createFlowers();
 
     // Sunbeam's production detail is now composed by the scene itself instead of being injected
     // later by the global environment manager. This keeps one lifecycle authority for H3 work.
@@ -1290,21 +1290,83 @@ export class SunbeamVillageScene extends Phaser.Scene {
     createGate('rainbow-meadow', east.x - 5, east.y, 'RAINBOW MEADOW', 'east');
   }
 
-  private createFlowers(): void {
-    // Keep the H3.2 movement corridors and shop approaches clear. These are edge accents only;
-    // H3.8 will own the final authored flower-box and village-prop composition.
-    const flowerPositions = [
-      [420, 1160],
-      [890, 1120],
-      [2450, 1045],
-      [2780, 1280],
-      [950, 1660],
-      [1900, 1760],
+  private createVillageLandscaping(): void {
+    const { highStreet, flowerBeds } = SUNBEAM_VILLAGE_LAYOUT.landscaping;
+
+    for (const tree of highStreet.trees) {
+      const objects: Phaser.GameObjects.GameObject[] = [
+        this.add.ellipse(0, 48, tree.canopyWidth * 0.82, 34, 0x58734d, 0.18),
+        this.add.rectangle(0, 28, 22, 78, 0x8a6546, 1).setStrokeStyle(3, 0x654a36, 0.9),
+        this.add.circle(-tree.canopyWidth * 0.24, -22, tree.canopyHeight * 0.31, tree.leafA, 1),
+        this.add.circle(tree.canopyWidth * 0.23, -18, tree.canopyHeight * 0.34, tree.leafA, 1),
+        this.add.circle(0, -42, tree.canopyHeight * 0.39, tree.leafB, 1),
+        this.add.circle(-18, -6, tree.canopyHeight * 0.3, tree.leafB, 0.96),
+      ];
+
+      this.add
+        .container(tree.x, tree.y, objects)
+        .setName(`sunbeam-landscaping:tree:${tree.id}`)
+        .setDepth(worldDepthForY(tree.y + 56, -0.7));
+    }
+
+    for (const shrub of highStreet.shrubs) {
+      this.add
+        .container(shrub.x, shrub.y, [
+          this.add.ellipse(0, 12, shrub.width, shrub.height, shrub.leafA, 1),
+          this.add.ellipse(
+            -shrub.width * 0.2,
+            1,
+            shrub.width * 0.52,
+            shrub.height * 0.72,
+            shrub.leafB,
+            0.98,
+          ),
+          this.add.ellipse(
+            shrub.width * 0.22,
+            -2,
+            shrub.width * 0.48,
+            shrub.height * 0.68,
+            shrub.leafB,
+            0.94,
+          ),
+        ])
+        .setName(`sunbeam-landscaping:shrub:${shrub.id}`)
+        .setDepth(worldDepthForY(shrub.y + 18, -0.45));
+    }
+
+    const flowerOffsets = [
+      [-0.34, 0.08],
+      [-0.16, -0.13],
+      [0.02, 0.1],
+      [0.2, -0.12],
+      [0.36, 0.07],
     ] as const;
-    for (const [x, y] of flowerPositions) {
-      this.add.circle(x, y, 18, 0xffa6c8, 0.95).setDepth(4);
-      this.add.circle(x + 18, y + 5, 12, 0xffe47f, 0.95).setDepth(4);
-      this.add.circle(x - 15, y + 7, 11, 0xc8a7e8, 0.95).setDepth(4);
+
+    for (const bed of flowerBeds) {
+      const objects: Phaser.GameObjects.GameObject[] = [
+        this.add.ellipse(0, 4, bed.width, bed.height, 0xc99d70, 1).setStrokeStyle(4, 0x8f6a4e, 0.92),
+        this.add.ellipse(0, 1, bed.width - 14, bed.height - 14, 0x78543e, 1),
+      ];
+
+      for (const [index, [xRatio, yRatio]] of flowerOffsets.entries()) {
+        const x = xRatio * bed.width;
+        const y = yRatio * bed.height;
+        const colour = bed.palette[index % bed.palette.length];
+
+        objects.push(
+          this.add.rectangle(x, y + 7, 4, 18, 0x5f9155, 1),
+          this.add.circle(x - 6, y, 6, colour, 1),
+          this.add.circle(x + 6, y, 6, colour, 1),
+          this.add.circle(x, y - 6, 6, colour, 1),
+          this.add.circle(x, y + 6, 6, colour, 1),
+          this.add.circle(x, y, 4, 0xffe9a6, 1),
+        );
+      }
+
+      this.add
+        .container(bed.x, bed.y, objects)
+        .setName(`sunbeam-landscaping:flower-bed:${bed.id}`)
+        .setDepth(worldDepthForY(bed.y + bed.height / 2, -0.5));
     }
   }
 
