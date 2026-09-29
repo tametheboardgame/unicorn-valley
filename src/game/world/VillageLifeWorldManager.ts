@@ -6,6 +6,7 @@ import {
   TANSY_NOTICE_MAP_CORNER_DISCOVERY_ID,
   TANSY_SUNDIAL_MAP_CORNER_DISCOVERY_ID,
 } from '../../content/r6VillageContent';
+import { ChessPlazaActivityScene } from '../activities/ChessPlazaActivityScene';
 import { getBrowserAtmosphericTimeService } from '../atmosphere/AtmosphericTimeService';
 import { DiscoveryService } from '../discovery/DiscoveryService';
 import type { InteractionActionKind, InteractionTarget } from '../interaction/InteractionTarget';
@@ -144,6 +145,7 @@ export class VillageLifeWorldManager {
   private readonly discoveryService = new DiscoveryService(this.saveService);
   private readonly timeService = getBrowserAtmosphericTimeService(this.saveService);
   private state: VillageLifeState | null = null;
+  private chessLaunchPending = false;
 
   public constructor(private readonly game: Phaser.Game) {
     this.game.events.on(Phaser.Core.Events.POST_STEP, this.update, this);
@@ -195,7 +197,40 @@ export class VillageLifeWorldManager {
         activate: () => this.activate(state, definition),
       },
     }));
+    const { table } = SUNBEAM_VILLAGE_LAYOUT.chessPlaza;
+    targets.push({
+      id: 'interaction:activity:sunbeam-chess',
+      label: 'Sunbeam chess table',
+      actionLabel: 'Play chess',
+      actionKind: 'start',
+      position: { ...table.interaction },
+      interactionRadius: table.interactionRadius,
+      priority: 24,
+      visible: () => state.scene.scene.isActive(),
+      result: {
+        type: 'callback',
+        activate: () => this.launchChess(state.scene),
+      },
+    });
+
     getSceneInteractionRegistry(state.scene).replaceOwnerTargets(REGISTRY_OWNER, targets);
+  }
+
+  private launchChess(scene: Phaser.Scene): void {
+    if (this.chessLaunchPending) {
+      return;
+    }
+
+    this.chessLaunchPending = true;
+    try {
+      if (!this.game.scene.keys.ChessPlazaActivityScene) {
+        this.game.scene.add('ChessPlazaActivityScene', ChessPlazaActivityScene);
+      }
+      scene.scene.launch('ChessPlazaActivityScene', { returnScene: 'SunbeamVillageScene' });
+      scene.scene.pause();
+    } finally {
+      this.chessLaunchPending = false;
+    }
   }
 
   private activate(state: VillageLifeState, definition: VillageLifePoint): void {
