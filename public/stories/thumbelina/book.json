@@ -1,11 +1,9 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "id": "thumbelina",
   "title": "Thumbelina",
   "description": "A tiny girl born inside a flower is swept far from home and must find her own way through rivers, forests, winter tunnels and finally a warm land of flowers.",
   "catalogueBlurb": "A tiny girl crosses a huge world to find a place where she belongs.",
-  "author": "Hans Christian Andersen, retold by Quill",
-  "readingMode": "flowing",
   "cover": {
     "path": "covers/cover.webp",
     "alt": "Historic Vilhelm Pedersen illustration of Thumbelina."
@@ -24,110 +22,261 @@
   "publication": {
     "status": "published"
   },
-  "chapters": [
-    {
-      "id": "the-girl-in-the-flower",
-      "title": "The Girl in the Flower",
-      "path": "chapters/01.md",
-      "illustrations": [
-        {
-          "id": "pedersen-thumbelina",
-          "blockId": "the-flower-opens",
-          "path": "illustrations/pedersen-thumbelina.webp",
-          "alt": "Vilhelm Pedersen's historic illustration of Thumbelina.",
-          "placement": "full-width",
-          "width": 500,
-          "height": 634,
-          "caption": "Illustration by Vilhelm Pedersen."
-        }
-      ]
-    },
-    {
-      "id": "the-river-escape",
-      "title": "The River Escape",
-      "path": "chapters/02.md",
-      "illustrations": [
-        {
-          "id": "boyle-water-lily",
-          "blockId": "alone-on-the-river",
-          "path": "illustrations/water-lily.webp",
-          "alt": "Eleanor Vere Boyle's 1872 illustration of Thumbelina on a leaf in the stream.",
-          "placement": "full-width",
-          "width": 1056,
-          "height": 1382,
-          "caption": "Illustration by Eleanor Vere Boyle, 1872."
-        }
-      ]
-    },
-    {
-      "id": "the-beetle-and-the-seasons",
-      "title": "The Beetle and the Seasons",
-      "path": "chapters/03.md",
-      "illustrations": [
-        {
-          "id": "bertall-beetle",
-          "blockId": "the-beetle",
-          "path": "illustrations/beetle.webp",
-          "alt": "Bertall's historic illustration from Thumbelina showing the beetle episode.",
-          "placement": "inline",
-          "width": 648,
-          "height": 648,
-          "caption": "Historic illustration by Bertall."
-        }
-      ]
-    },
-    {
-      "id": "the-field-mouse-and-the-mole",
-      "title": "The Field Mouse and the Mole",
-      "path": "chapters/04.md"
-    },
-    {
-      "id": "the-swallow",
-      "title": "The Swallow",
-      "path": "chapters/05.md"
-    },
-    {
-      "id": "south-with-the-swallow",
-      "title": "South with the Swallow",
-      "path": "chapters/06.md",
-      "illustrations": [
-        {
-          "id": "boyle-flight-south",
-          "blockId": "the-warm-country",
-          "path": "illustrations/flight-south.webp",
-          "alt": "Eleanor Vere Boyle's 1872 illustration of Thumbelina travelling south on the swallow.",
-          "placement": "full-width",
-          "width": 900,
-          "height": 1131,
-          "caption": "Illustration by Eleanor Vere Boyle, 1872."
-        }
-      ]
-    }
-  ],
   "discovery": {
     "format": "Chapter Book",
     "genres": ["Fantasy", "Classics", "Adventure"],
     "audiences": ["Read Together", "Independent Reader"],
     "length": "Longer Read"
   },
-  "rights": {
-    "text": {
-      "status": "original",
-      "source": "Original Story House retelling based on Hans Christian Andersen's 1835 tale Tommelise (Thumbelina)",
-      "sourceUrl": "https://en.wikisource.org/wiki/Thumbelina",
-      "notes": "Hans Christian Andersen's underlying 1835 story is public domain. This wording is an original child-friendly Unicorn Valley retelling."
+  "defaultEditionId": "story-house",
+  "editions": [
+    {
+      "id": "story-house",
+      "label": "Story House Edition",
+      "author": "Hans Christian Andersen, retold by Quill",
+      "readingMode": "flowing",
+      "rights": {
+        "text": {
+          "status": "original",
+          "source": "Original Story House retelling based on Hans Christian Andersen's 1835 tale Tommelise (Thumbelina)",
+          "sourceUrl": "https://en.wikisource.org/wiki/Thumbelina",
+          "notes": "Hans Christian Andersen's underlying 1835 story is public domain. This wording is an original child-friendly Unicorn Valley retelling."
+        },
+        "illustrations": {
+          "status": "public-domain",
+          "source": "Historical Thumbelina illustrations by Vilhelm Pedersen, Eleanor Vere Boyle and Bertall",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/Category:Thumbelina",
+          "notes": "The selected historical source files are identified as public domain on Wikimedia Commons."
+        },
+        "edition": {
+          "status": "original",
+          "source": "Unicorn Valley Story House edition"
+        },
+        "originalPublicationYear": 1835,
+        "curatorNotes": "Split into six short reader sections so the longer journey has clear scene breaks and reliable resume points."
+      },
+      "chapters": [
+        {
+          "id": "the-girl-in-the-flower",
+          "title": "The Girl in the Flower",
+          "path": "chapters/01.md",
+          "illustrations": [
+            {
+              "id": "pedersen-thumbelina",
+              "blockId": "the-flower-opens",
+              "path": "illustrations/pedersen-thumbelina.webp",
+              "alt": "Vilhelm Pedersen's historic illustration of Thumbelina.",
+              "placement": "full-width",
+              "width": 500,
+              "height": 634,
+              "caption": "Illustration by Vilhelm Pedersen."
+            }
+          ]
+        },
+        {
+          "id": "the-river-escape",
+          "title": "The River Escape",
+          "path": "chapters/02.md",
+          "illustrations": [
+            {
+              "id": "boyle-water-lily",
+              "blockId": "alone-on-the-river",
+              "path": "illustrations/water-lily.webp",
+              "alt": "Eleanor Vere Boyle's 1872 illustration of Thumbelina on a leaf in the stream.",
+              "placement": "full-width",
+              "width": 1056,
+              "height": 1382,
+              "caption": "Illustration by Eleanor Vere Boyle, 1872."
+            }
+          ]
+        },
+        {
+          "id": "the-beetle-and-the-seasons",
+          "title": "The Beetle and the Seasons",
+          "path": "chapters/03.md",
+          "illustrations": [
+            {
+              "id": "bertall-beetle",
+              "blockId": "the-beetle",
+              "path": "illustrations/beetle.webp",
+              "alt": "Bertall's historic illustration from Thumbelina showing the beetle episode.",
+              "placement": "inline",
+              "width": 648,
+              "height": 648,
+              "caption": "Historic illustration by Bertall."
+            }
+          ]
+        },
+        {
+          "id": "the-field-mouse-and-the-mole",
+          "title": "The Field Mouse and the Mole",
+          "path": "chapters/04.md"
+        },
+        {
+          "id": "the-swallow",
+          "title": "The Swallow",
+          "path": "chapters/05.md"
+        },
+        {
+          "id": "south-with-the-swallow",
+          "title": "South with the Swallow",
+          "path": "chapters/06.md",
+          "illustrations": [
+            {
+              "id": "boyle-flight-south",
+              "blockId": "the-warm-country",
+              "path": "illustrations/flight-south.webp",
+              "alt": "Eleanor Vere Boyle's 1872 illustration of Thumbelina travelling south on the swallow.",
+              "placement": "full-width",
+              "width": 900,
+              "height": 1131,
+              "caption": "Illustration by Eleanor Vere Boyle, 1872."
+            }
+          ]
+        }
+      ]
     },
-    "illustrations": {
-      "status": "public-domain",
-      "source": "Historical Thumbelina illustrations by Vilhelm Pedersen, Eleanor Vere Boyle and Bertall",
-      "sourceUrl": "https://commons.wikimedia.org/wiki/Category:Thumbelina",
-      "notes": "The selected historical source files are identified as public domain on Wikimedia Commons."
-    },
-    "edition": {
-      "status": "original",
-      "source": "Unicorn Valley Story House edition"
-    },
-    "originalPublicationYear": 1835,
-    "curatorNotes": "Split into six short reader sections so the longer journey has clear scene breaks and reliable resume points."
-  }
+    {
+      "id": "full-classic",
+      "label": "Full Classic Text",
+      "author": "Hans Christian Andersen, from Andrew Lang's The Yellow Fairy Book",
+      "readingMode": "paged-prose",
+      "rights": {
+        "text": {
+          "status": "public-domain",
+          "source": "The Yellow Fairy Book, edited by Andrew Lang; Project Gutenberg eBook #640",
+          "sourceUrl": "https://www.gutenberg.org/ebooks/640",
+          "notes": "The complete Thumbelina text from the public-domain English edition in Andrew Lang's The Yellow Fairy Book is retained without abridgement or modernisation. Project Gutenberg front matter, contents and licence boilerplate are excluded."
+        },
+        "illustrations": {
+          "status": "public-domain",
+          "source": "Historical Thumbelina illustrations by Vilhelm Pedersen, Eleanor Vere Boyle and Bertall",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/Category:Thumbelina",
+          "notes": "The four previously verified historical Story House illustrations are reused beside matching passages in the complete classic text."
+        },
+        "edition": {
+          "status": "public-domain",
+          "source": "Project Gutenberg eBook #640",
+          "notes": "Story House pagination changes presentation only; the source wording remains complete."
+        },
+        "originalPublicationYear": 1835,
+        "curatorNotes": "Complete public-domain English text reflowed into 13 reader pages at paragraph boundaries, with four historical illustrations anchored to matching scenes."
+      },
+      "chapters": [
+        {
+          "id": "page-01",
+          "title": "Thumbelina",
+          "path": "editions/full-classic/pages/page-01.md",
+          "illustrations": [
+            {
+              "id": "full-pedersen-thumbelina",
+              "path": "illustrations/pedersen-thumbelina.webp",
+              "alt": "Vilhelm Pedersen's historic illustration of Thumbelina.",
+              "placement": "full-width",
+              "width": 500,
+              "height": 634,
+              "caption": "Illustration by Vilhelm Pedersen.",
+              "blockId": "p01-b04"
+            }
+          ]
+        },
+        {
+          "id": "page-02",
+          "title": "Thumbelina (continued)",
+          "path": "editions/full-classic/pages/page-02.md",
+          "illustrations": [
+            {
+              "id": "full-boyle-water-lily",
+              "path": "illustrations/water-lily.webp",
+              "alt": "Eleanor Vere Boyle's 1872 illustration of Thumbelina on a leaf in the stream.",
+              "placement": "full-width",
+              "width": 1056,
+              "height": 1382,
+              "caption": "Illustration by Eleanor Vere Boyle, 1872.",
+              "blockId": "p02-b04"
+            }
+          ]
+        },
+        {
+          "id": "page-03",
+          "title": "Thumbelina (continued)",
+          "path": "editions/full-classic/pages/page-03.md"
+        },
+        {
+          "id": "page-04",
+          "title": "Thumbelina (continued)",
+          "path": "editions/full-classic/pages/page-04.md",
+          "illustrations": [
+            {
+              "id": "full-bertall-beetle",
+              "path": "illustrations/beetle.webp",
+              "alt": "Bertall's historic illustration from Thumbelina showing the beetle episode.",
+              "placement": "inline",
+              "width": 648,
+              "height": 648,
+              "caption": "Historic illustration by Bertall.",
+              "blockId": "p04-b02"
+            }
+          ]
+        },
+        {
+          "id": "page-05",
+          "title": "Thumbelina (continued)",
+          "path": "editions/full-classic/pages/page-05.md"
+        },
+        {
+          "id": "page-06",
+          "title": "Thumbelina (continued)",
+          "path": "editions/full-classic/pages/page-06.md"
+        },
+        {
+          "id": "page-07",
+          "title": "Thumbelina (continued)",
+          "path": "editions/full-classic/pages/page-07.md"
+        },
+        {
+          "id": "page-08",
+          "title": "Thumbelina (continued)",
+          "path": "editions/full-classic/pages/page-08.md"
+        },
+        {
+          "id": "page-09",
+          "title": "Thumbelina (continued)",
+          "path": "editions/full-classic/pages/page-09.md"
+        },
+        {
+          "id": "page-10",
+          "title": "Thumbelina (continued)",
+          "path": "editions/full-classic/pages/page-10.md"
+        },
+        {
+          "id": "page-11",
+          "title": "Thumbelina (continued)",
+          "path": "editions/full-classic/pages/page-11.md",
+          "illustrations": [
+            {
+              "id": "full-boyle-flight-south",
+              "path": "illustrations/flight-south.webp",
+              "alt": "Eleanor Vere Boyle's 1872 illustration of Thumbelina travelling south on the swallow.",
+              "placement": "full-width",
+              "width": 900,
+              "height": 1131,
+              "caption": "Illustration by Eleanor Vere Boyle, 1872.",
+              "blockId": "p11-b03"
+            }
+          ]
+        },
+        {
+          "id": "page-12",
+          "title": "Thumbelina (continued)",
+          "path": "editions/full-classic/pages/page-12.md"
+        },
+        {
+          "id": "page-13",
+          "title": "Thumbelina (continued)",
+          "path": "editions/full-classic/pages/page-13.md"
+        }
+      ]
+    }
+  ]
 }

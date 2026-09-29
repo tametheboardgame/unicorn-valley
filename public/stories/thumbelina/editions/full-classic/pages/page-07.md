@@ -1,0 +1,8 @@
+<!-- block:p07-b01 -->
+Thumbelina had to sing to him, so she sang ‘Lady-bird, lady-bird, fly away home!’ and other songs so prettily that the mole fell in love with her; but he did not say anything, he was a very cautious man. A short time before he had dug a long passage through the ground from his own house to that of his neighbour; in this he gave the field-mouse and Thumbelina permission to walk as often as they liked. But he begged them not to be afraid of the dead bird that lay in the passage: it was a real bird with beak and feathers, and must have died a little time ago, and now laid buried just where he had made his tunnel. The mole took a piece of rotten wood in his mouth, for that glows like fire in the dark, and went in front, lighting them through the long dark passage. When they came to the place where the dead bird lay, the mole put his broad nose against the ceiling and pushed a hole through, so that the daylight could shine down. In the middle of the path lay a dead swallow, his pretty wings pressed close to his sides, his claws and head drawn under his feathers; the poor bird had evidently died of cold. Thumbelina was very sorry, for she was very fond of all little birds; they had sung and twittered so beautifully to her all through the summer. But the mole kicked him with his bandy legs and said:
+
+<!-- block:p07-b02 -->
+‘Now he can’t sing any more! It must be very miserable to be a little bird! I’m thankful that none of my little children are; birds always starve in winter.’
+
+<!-- block:p07-b03 -->
+‘Yes, you speak like a sensible man,’ said the field-mouse. ‘What has a bird, in spite of all his singing, in the winter-time? He must starve and freeze, and that must be very pleasant for him, I must say!’
