@@ -263,7 +263,7 @@ jobs:
                   },
               ),
               (
-                  block_for("there they were,—on the top of a church-tower in the dusky twilight"),
+                  block_for("on the top of a church-tower in the dusky twilight"),
                   {
                       "id": "full-millar-tower",
                       "path": "illustrations/tower.webp",
