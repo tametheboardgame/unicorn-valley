@@ -241,10 +241,7 @@ export function applyChessLiteMove(
   board[legal.from.row][legal.from.col] = null;
   board[legal.to.row][legal.to.col] = movingPiece;
 
-  if (
-    movingPiece.type === 'pawn' &&
-    (legal.to.row === 0 || legal.to.row === BOARD_SIZE - 1)
-  ) {
+  if (movingPiece.type === 'pawn' && (legal.to.row === 0 || legal.to.row === BOARD_SIZE - 1)) {
     board[legal.to.row][legal.to.col] = { ...movingPiece, type: 'queen' };
   }
 
@@ -252,12 +249,7 @@ export function applyChessLiteMove(
   return {
     board,
     turn: opponent(state.turn),
-    winner:
-      captured?.type === 'king'
-        ? movingPiece.colour
-        : ply >= MAX_PLY
-          ? 'draw'
-          : null,
+    winner: captured?.type === 'king' ? movingPiece.colour : ply >= MAX_PLY ? 'draw' : null,
     ply,
   };
 }
