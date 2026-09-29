@@ -1,0 +1,433 @@
+name: Materialise Five Children and It Full Classic Text
+
+on:
+  push:
+    branches:
+      - agent/story-house-five-children-it-full-classic
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  materialise:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: agent/story-house-five-children-it-full-classic
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22.23.2
+          package-manager-cache: false
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+
+      - name: Materialise full classic edition
+        shell: python
+        run: |
+          import json
+          import re
+          import shutil
+          import urllib.request
+          from pathlib import Path
+
+          STORY_DIR = Path("public/stories/five-children-and-it")
+          MANIFEST_PATH = STORY_DIR / "book.json"
+          PAGES_DIR = STORY_DIR / "editions/full-classic/pages"
+
+          TEXT_URL = "https://www.gutenberg.org/files/17314/17314-8.txt"
+          BOOK_URL = "https://www.gutenberg.org/ebooks/17314"
+
+          def fetch(url: str) -> bytes:
+              req = urllib.request.Request(
+                  url,
+                  headers={"User-Agent": "Unicorn-Valley-Story-House/1.0"},
+              )
+              with urllib.request.urlopen(req, timeout=45) as response:
+                  return response.read()
+
+          def word_count(value: str) -> int:
+              return len(re.findall(r"[A-Za-z0-9]+(?:['’-][A-Za-z0-9]+)*", value))
+
+          def normalise_paragraph(value: str) -> str:
+              lines = [line.strip() for line in value.splitlines()]
+              return " ".join(line for line in lines if line).strip()
+
+          def clean_source(value: str) -> str:
+              value = value.replace("\r\n", "\n")
+              value = re.sub(r"(?is)\[Illustration(?:\s*:[^\]]*)?\]", "", value)
+              value = re.sub(r"(?is)\[Pg\s+[^\]]+\]", "", value)
+              value = re.sub(r"(?m)^\s*[*\-_ ]{3,}\s*$", "", value)
+              return value
+
+          def paragraphs_from(value: str):
+              return [
+                  paragraph
+                  for paragraph in (
+                      normalise_paragraph(block)
+                      for block in re.split(r"\n\s*\n", value)
+                  )
+                  if paragraph and not re.fullmatch(r"[*\-_ ]{3,}", paragraph)
+              ]
+
+          def paginate(paragraphs):
+              pages = []
+              current = []
+              current_words = 0
+              for paragraph in paragraphs:
+                  count = word_count(paragraph)
+                  if current and current_words >= 280 and current_words + count > 470:
+                      pages.append(current)
+                      current = []
+                      current_words = 0
+                  current.append(paragraph)
+                  current_words += count
+
+              if current:
+                  pages.append(current)
+
+              if len(pages) > 1:
+                  last_words = sum(word_count(p) for p in pages[-1])
+                  previous_words = sum(word_count(p) for p in pages[-2])
+                  if last_words < 160 and previous_words + last_words <= 530:
+                      pages[-2].extend(pages[-1])
+                      pages.pop()
+
+              return pages
+
+          manifest = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
+          if manifest.get("schemaVersion") != 1:
+              raise RuntimeError("Expected existing Five Children and It package to be schema v1.")
+
+          raw_bytes = fetch(TEXT_URL)
+          raw = clean_source(raw_bytes.decode("latin-1", errors="replace"))
+
+          transcriber = re.search(r"(?im)^\s*Transcriber's notes:\s*$", raw)
+          if transcriber:
+              raw = raw[:transcriber.start()]
+
+          end_marker = re.search(
+              r"(?im)^\s*\*\*\* END OF .*FIVE CHILDREN AND IT.*$",
+              raw,
+          )
+          if end_marker:
+              raw = raw[:end_marker.start()]
+
+          chapter_pattern = re.compile(
+              r"(?im)^\s*CHAPTER\s+([IVXLCDM]+)(?:\s+\(AND LAST\))?\s*$"
+          )
+          matches = list(chapter_pattern.finditer(raw))
+          if len(matches) != 11:
+              raise RuntimeError(f"Expected 11 story chapters, found {len(matches)}")
+
+          sections = []
+          for index, match in enumerate(matches):
+              section_end = matches[index + 1].start() if index + 1 < len(matches) else len(raw)
+              region = raw[match.end():section_end].strip()
+              lines = region.splitlines()
+
+              title_index = next((i for i, line in enumerate(lines) if line.strip()), None)
+              if title_index is None:
+                  raise RuntimeError(f"Chapter {match.group(1)} has no title.")
+
+              title = lines[title_index].strip()
+              chapter_text = "\n".join(lines[title_index + 1:]).strip()
+              chapter_paragraphs = paragraphs_from(chapter_text)
+
+              if not chapter_paragraphs:
+                  raise RuntimeError(f"Chapter {match.group(1)} has no prose.")
+
+              sections.append(
+                  {
+                      "id": f"chapter-{index + 1:02d}",
+                      "label": f"Chapter {match.group(1)} — {title.title()}",
+                      "paragraphs": chapter_paragraphs,
+                  }
+              )
+
+          total_words = sum(
+              word_count(paragraph)
+              for section in sections
+              for paragraph in section["paragraphs"]
+          )
+          if not 45000 <= total_words <= 80000:
+              raise RuntimeError(f"Unexpected Five Children and It word count: {total_words}")
+
+          if PAGES_DIR.exists():
+              shutil.rmtree(PAGES_DIR)
+          PAGES_DIR.mkdir(parents=True)
+
+          chapter_manifests = []
+          all_blocks = []
+          page_number = 0
+
+          for section in sections:
+              section_pages = paginate(section["paragraphs"])
+              for section_page_index, page_paragraphs in enumerate(section_pages, start=1):
+                  page_number += 1
+                  page_id = f"page-{page_number:03d}"
+                  output = []
+
+                  for block_index, paragraph in enumerate(page_paragraphs, start=1):
+                      block_id = f"p{page_number:03d}-b{block_index:02d}"
+                      output.extend([f"<!-- block:{block_id} -->", paragraph, ""])
+                      all_blocks.append(
+                          {"page": page_number, "id": block_id, "text": paragraph}
+                      )
+
+                  (PAGES_DIR / f"{page_id}.md").write_text(
+                      "\n".join(output).rstrip() + "\n",
+                      encoding="utf-8",
+                  )
+
+                  page_title = (
+                      section["label"]
+                      if section_page_index == 1
+                      else f"{section['label']} (continued)"
+                  )
+                  chapter_manifests.append(
+                      {
+                          "id": page_id,
+                          "title": page_title,
+                          "path": f"editions/full-classic/pages/{page_id}.md",
+                      }
+                  )
+
+          if not 100 <= len(chapter_manifests) <= 190:
+              raise RuntimeError(
+                  f"Expected 100-190 reader pages, found {len(chapter_manifests)}"
+              )
+
+          def block_for(needle: str):
+              needle_lower = needle.lower()
+              for block in all_blocks:
+                  if needle_lower in block["text"].lower():
+                      return block
+              raise RuntimeError(f"Could not locate illustration anchor: {needle}")
+
+          def chapter_for_page(page_number: int):
+              return chapter_manifests[page_number - 1]
+
+          anchors = [
+              (
+                  block_for("something brown and furry and fat came rolling out into the hole"),
+                  {
+                      "id": "full-millar-psammead",
+                      "path": "illustrations/psammead.webp",
+                      "alt": "H. R. Millar's original illustration of the Psammead.",
+                      "placement": "full-width",
+                      "width": 830,
+                      "height": 968,
+                      "caption": "Illustration by H. R. Millar, 1902.",
+                  },
+              ),
+              (
+                  block_for("the whole of the sand-pit was full, right up to the very top, with new shining gold"),
+                  {
+                      "id": "full-millar-guineas",
+                      "path": "illustrations/golden-guineas.webp",
+                      "alt": "An original H. R. Millar illustration from Five Children and It.",
+                      "placement": "full-width",
+                      "width": 934,
+                      "height": 804,
+                      "caption": "Illustration by H. R. Millar, 1902.",
+                  },
+              ),
+              (
+                  block_for("with one accord they rushed after the carriage and held on behind"),
+                  {
+                      "id": "full-millar-being-wanted",
+                      "path": "illustrations/being-wanted.webp",
+                      "alt": "An original H. R. Millar illustration from Five Children and It.",
+                      "placement": "full-width",
+                      "width": 781,
+                      "height": 858,
+                      "caption": "Illustration by H. R. Millar, 1902.",
+                  },
+              ),
+              (
+                  block_for("they flew over Rochester and then swerved round towards Maidstone"),
+                  {
+                      "id": "full-millar-wings",
+                      "path": "illustrations/wings.webp",
+                      "alt": "An original H. R. Millar illustration from Five Children and It.",
+                      "placement": "full-width",
+                      "width": 880,
+                      "height": 641,
+                      "caption": "Illustration by H. R. Millar, 1902.",
+                  },
+              ),
+              (
+                  block_for("there they were,—on the top of a church-tower in the dusky twilight"),
+                  {
+                      "id": "full-millar-tower",
+                      "path": "illustrations/tower.webp",
+                      "alt": "An original H. R. Millar illustration from Five Children and It.",
+                      "placement": "full-width",
+                      "width": 892,
+                      "height": 773,
+                      "caption": "Illustration by H. R. Millar, 1902.",
+                  },
+              ),
+              (
+                  block_for("The grown-up Lamb (whose names shall now be buried in oblivion) struggled furiously"),
+                  {
+                      "id": "full-millar-grown-up",
+                      "path": "illustrations/grown-up.webp",
+                      "alt": "An original H. R. Millar illustration from Five Children and It.",
+                      "placement": "full-width",
+                      "width": 1000,
+                      "height": 1020,
+                      "caption": "Illustration by H. R. Millar, 1902.",
+                  },
+              ),
+              (
+                  block_for("For bright knives were being brandished all about them"),
+                  {
+                      "id": "full-millar-game",
+                      "path": "illustrations/game-comes-to-life.webp",
+                      "alt": "An original H. R. Millar illustration from Five Children and It.",
+                      "placement": "full-width",
+                      "width": 812,
+                      "height": 1236,
+                      "caption": "Illustration by H. R. Millar, 1902.",
+                  },
+              ),
+              (
+                  block_for("burrowed, and disappeared, scratching fiercely to the last"),
+                  {
+                      "id": "full-millar-last-wish",
+                      "path": "illustrations/last-wish.webp",
+                      "alt": "An original H. R. Millar illustration from Five Children and It.",
+                      "placement": "full-width",
+                      "width": 836,
+                      "height": 1424,
+                      "caption": "Illustration by H. R. Millar, 1902.",
+                  },
+              ),
+          ]
+
+          for block, illustration in anchors:
+              illustration["blockId"] = block["id"]
+              chapter_for_page(block["page"]).setdefault("illustrations", []).append(illustration)
+
+          story_house = {
+              "id": "story-house",
+              "label": "Story House Edition",
+              "author": manifest["author"],
+              "readingMode": manifest["readingMode"],
+              "rights": manifest["rights"],
+              "chapters": manifest["chapters"],
+          }
+
+          full_classic = {
+              "id": "full-classic",
+              "label": "Full Classic Text",
+              "author": "E. Nesbit",
+              "readingMode": "paged-prose",
+              "rights": {
+                  "text": {
+                      "status": "public-domain",
+                      "source": "Five Children and It, Project Gutenberg eBook #17314",
+                      "sourceUrl": BOOK_URL,
+                      "notes": (
+                          "The complete public-domain novel text is retained without abridgement or "
+                          "modernisation. Project Gutenberg boilerplate, page markers, illustration captions "
+                          "and transcriber's notes are excluded. The historical text contains dated racial "
+                          "and imperial stereotypes that the Story House Edition deliberately rewrites."
+                      ),
+                  },
+                  "illustrations": {
+                      "status": "public-domain",
+                      "source": manifest["rights"]["illustrations"]["source"],
+                      "sourceUrl": manifest["rights"]["illustrations"]["sourceUrl"],
+                      "notes": (
+                          "Eight previously verified H. R. Millar illustrations are reused beside matching "
+                          "passages in the complete classic text."
+                      ),
+                  },
+                  "edition": {
+                      "status": "public-domain",
+                      "source": "Project Gutenberg eBook #17314",
+                      "notes": (
+                          "Story House pagination changes presentation only; all 11 chapters and the original "
+                          "wording remain complete."
+                      ),
+                  },
+                  "originalPublicationYear": manifest["rights"]["originalPublicationYear"],
+                  "curatorNotes": (
+                      f"All 11 chapters reflowed into {len(chapter_manifests)} reader pages at paragraph "
+                      "boundaries, with eight historical H. R. Millar illustrations anchored to matching scenes."
+                  ),
+              },
+              "chapters": chapter_manifests,
+          }
+
+          upgraded = {
+              "schemaVersion": 2,
+              "id": manifest["id"],
+              "title": manifest["title"],
+              "description": manifest["description"],
+              "catalogueBlurb": manifest.get("catalogueBlurb"),
+              "cover": manifest.get("cover"),
+              "series": manifest.get("series"),
+              "tags": manifest["tags"],
+              "publication": manifest["publication"],
+              "discovery": manifest["discovery"],
+              "defaultEditionId": "story-house",
+              "editions": [story_house, full_classic],
+          }
+
+          MANIFEST_PATH.write_text(
+              json.dumps(upgraded, ensure_ascii=False, indent=2) + "\n",
+              encoding="utf-8",
+          )
+
+          print(f"Full classic words: {total_words}")
+          print(f"Reader pages: {len(chapter_manifests)}")
+          print("Chapters: 11")
+          print("Illustrations anchored: 8")
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Format manifest
+        run: npx biome format --write public/stories/five-children-and-it/book.json
+
+      - name: Regenerate Story House catalogue
+        run: npm run story:catalogue
+
+      - name: Reject source production artefacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -RniE '\[Illustration|\[Pg |Transcriber.s notes|\*\*\* START|\*\*\* END' public/stories/five-children-and-it/editions/full-classic/pages; then
+            echo "Source production artefact found in generated reader pages."
+            exit 1
+          fi
+
+      - name: Run focused Story House tests
+        run: npx vitest run src/game/storyLibrary/StoryLibraryService.test.ts src/game/storyLibrary/StoryReadingService.test.ts
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Commit materialised edition
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            public/stories/five-children-and-it \
+            public/stories/catalogue.json
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "Story House: add Five Children and It Full Classic Text"
+          git push origin HEAD:agent/story-house-five-children-it-full-classic
