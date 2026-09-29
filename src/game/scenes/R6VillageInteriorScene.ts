@@ -86,6 +86,15 @@ const PRESENTATION: Readonly<Record<VillageInteriorId, InteriorPresentationDefin
     floorColour: 0xc894bd,
     accentColour: 0xc56fb6,
   },
+  'rosehip-cottage': {
+    title: 'Rosehip Cottage',
+    subtitle:
+      'A cosy little home filled with pressed flowers, tea things and notes from the garden.',
+    icon: '🌹',
+    wallColour: 0xffeee9,
+    floorColour: 0xd7b58f,
+    accentColour: 0xb76f78,
+  },
   library: {
     title: 'Story House',
     subtitle: 'Maps, clue cards and little stories from places you have really found.',
@@ -227,6 +236,8 @@ export class VillageInteriorScene extends Phaser.Scene {
       this.createBakerySet();
     } else if (this.interiorId === 'library') {
       this.createStoryHouseSet();
+    } else if (this.interiorId === 'rosehip-cottage') {
+      this.createRosehipCottageSet();
     } else {
       this.createThreadSet();
     }
@@ -269,6 +280,127 @@ export class VillageInteriorScene extends Phaser.Scene {
       6,
       3,
     );
+  }
+
+  private createRosehipCottageSet(): void {
+    // Rosehip is deliberately a small lived-in home rather than another shop-shaped room:
+    // sleeping nook to the north-west, writing/garden corner to the west, and tea/hosting space east.
+    const rug = this.add.graphics().setName('village-interior:rosehip-cottage:rose-rug');
+    rug.fillStyle(0xc97b86, 0.42);
+    rug.fillEllipse(760, 735, 500, 300);
+    rug.lineStyle(5, 0xffe0d8, 0.72);
+    rug.strokeEllipse(760, 735, 500, 300);
+    rug.lineStyle(3, 0xa85f6c, 0.5);
+    rug.strokeEllipse(760, 735, 430, 240);
+    rug.setDepth(3.25);
+
+    const bed = this.add.graphics().setName('village-interior:rosehip-cottage:bed');
+    bed.fillStyle(0x8f6a58, 1);
+    bed.fillRoundedRect(205, 385, 370, 200, 26);
+    bed.fillStyle(0xfff5e8, 1);
+    bed.fillRoundedRect(220, 397, 340, 176, 22);
+    bed.fillStyle(0xe8a4ad, 1);
+    bed.fillRoundedRect(220, 492, 340, 81, 18);
+    bed.fillStyle(0xf8d7c7, 1);
+    bed.fillRoundedRect(242, 416, 128, 64, 20);
+    bed.fillRoundedRect(390, 416, 128, 64, 20);
+    bed.lineStyle(3, 0xb86d79, 0.65);
+    for (let x = 250; x <= 520; x += 54) {
+      bed.lineBetween(x, 512, x + 30, 550);
+    }
+    bed.setDepth(worldDepthForY(570, 0.15));
+
+    const bedside = this.add.graphics().setName('village-interior:rosehip-cottage:bedside');
+    bedside.fillStyle(0xa77a5e, 1);
+    bedside.fillRoundedRect(575, 430, 82, 92, 12);
+    bedside.fillStyle(0xf5cf82, 1);
+    bedside.fillCircle(616, 420, 24);
+    bedside.fillStyle(0x7b5b47, 1);
+    bedside.fillRoundedRect(611, 438, 10, 36, 5);
+    bedside.setDepth(worldDepthForY(520, 0.2));
+
+    const dresser = this.add.graphics().setName('village-interior:rosehip-cottage:tea-dresser');
+    dresser.fillStyle(0x9c725c, 1);
+    dresser.fillRoundedRect(985, 410, 270, 128, 16);
+    dresser.fillStyle(0xc99a79, 1);
+    dresser.fillRoundedRect(1002, 428, 236, 38, 8);
+    dresser.fillRoundedRect(1002, 477, 236, 38, 8);
+    dresser.fillStyle(0xfff0d8, 1);
+    for (const x of [1035, 1100, 1165]) {
+      dresser.fillCircle(x, 394, 20);
+      dresser.lineStyle(3, 0xb86d79, 0.7);
+      dresser.strokeCircle(x, 394, 20);
+    }
+    dresser.setDepth(worldDepthForY(535, 0.18));
+
+    const journalDesk = this.add
+      .graphics()
+      .setName('village-interior:rosehip-cottage:garden-journal');
+    journalDesk.fillStyle(0xa77a5e, 1);
+    journalDesk.fillRoundedRect(165, 625, 185, 94, 14);
+    journalDesk.fillStyle(0xf8e7c9, 1);
+    journalDesk.fillRoundedRect(195, 603, 126, 62, 8);
+    journalDesk.lineStyle(3, 0xc48775, 0.8);
+    journalDesk.lineBetween(258, 607, 258, 661);
+    journalDesk.fillStyle(0x769b69, 1);
+    journalDesk.fillEllipse(225, 620, 20, 10);
+    journalDesk.fillEllipse(288, 638, 18, 9);
+    journalDesk.setDepth(worldDepthForY(715, 0.18));
+
+    const tea = this.add.graphics().setName('village-interior:rosehip-cottage:tea-table');
+    tea.fillStyle(0xb68565, 1);
+    tea.fillEllipse(1030, 755, 220, 145);
+    tea.fillStyle(0xfff3dc, 1);
+    tea.fillEllipse(1030, 738, 186, 112);
+    tea.lineStyle(4, 0xd49a91, 0.7);
+    tea.strokeEllipse(1030, 738, 186, 112);
+    tea.fillStyle(0xd98991, 1);
+    tea.fillCircle(990, 720, 17);
+    tea.fillCircle(1070, 720, 17);
+    tea.fillStyle(0xf1c46e, 1);
+    tea.fillRoundedRect(1014, 744, 34, 28, 10);
+    tea.fillStyle(0x7aa56e, 1);
+    tea.fillEllipse(1030, 739, 24, 11);
+    tea.setDepth(worldDepthForY(820, 0.22));
+
+    const chair = this.add.graphics().setName('village-interior:rosehip-cottage:reading-chair');
+    chair.fillStyle(0x9d6b74, 1);
+    chair.fillRoundedRect(475, 740, 130, 135, 28);
+    chair.fillStyle(0xe9b4b6, 1);
+    chair.fillRoundedRect(490, 755, 100, 88, 24);
+    chair.fillStyle(0xf8d8c9, 1);
+    chair.fillRoundedRect(503, 780, 74, 45, 18);
+    chair.setDepth(worldDepthForY(875, 0.24));
+
+    // Foreground plant gives the lower-left edge depth and proves player/prop layering.
+    const plant = this.add.graphics().setName('village-interior:rosehip-cottage:foreground-plant');
+    plant.fillStyle(0xb8775f, 1);
+    plant.fillRoundedRect(115, 880, 105, 92, 18);
+    plant.fillStyle(0x6f9a68, 1);
+    for (const [dx, dy] of [
+      [0, -70],
+      [-32, -52],
+      [34, -48],
+      [-18, -92],
+      [24, -88],
+    ] as const) {
+      plant.fillEllipse(168 + dx, 905 + dy, 58, 30);
+    }
+    plant.fillStyle(0xe58c9b, 1);
+    plant.fillCircle(168, 805, 12);
+    plant.fillCircle(135, 833, 10);
+    plant.setDepth(worldDepthForY(970, 0.55));
+
+    this.add
+      .text(760, 345, 'ROSEHIP COTTAGE', {
+        color: '#80545b',
+        fontFamily: UI_FONT,
+        fontSize: '18px',
+        fontStyle: 'bold',
+        letterSpacing: 2,
+      })
+      .setOrigin(0.5)
+      .setDepth(6);
   }
 
   private createBakerySet(): void {
@@ -1262,6 +1394,8 @@ export class VillageInteriorScene extends Phaser.Scene {
       targets.push(...this.createBakeryInteractions());
     } else if (this.interiorId === 'library') {
       targets.push(...this.createStoryHouseInteractions());
+    } else if (this.interiorId === 'rosehip-cottage') {
+      targets.push(...this.createRosehipCottageInteractions());
     } else {
       targets.push(...this.createThreadInteractions());
     }
@@ -1416,6 +1550,64 @@ export class VillageInteriorScene extends Phaser.Scene {
       });
     }
     return targets;
+  }
+
+  private createRosehipCottageInteractions(): InteractionTarget[] {
+    const journal = getVillageInteriorAnchor('rosehip-cottage', 'primary-feature');
+    const teaTable = getVillageInteriorAnchor('rosehip-cottage', 'secondary-feature');
+    return [
+      {
+        id: 'interaction:village-interior:rosehip-cottage:journal',
+        label: 'Garden journal',
+        actionLabel: 'Read',
+        actionKind: 'inspect',
+        position: journal.approach,
+        interactionRadius: 145,
+        priority: 24,
+        result: {
+          type: 'callback',
+          activate: () =>
+            this.showFeedback(
+              'Rosehip has pressed tiny petals between the pages and written notes beside them: “best after rain”, “bees love this one”, and “do not let Bean water this again”.',
+              journal.approach,
+            ),
+        },
+      },
+      {
+        id: 'interaction:village-interior:rosehip-cottage:tea-table',
+        label: 'Tea table',
+        actionLabel: 'Inspect',
+        actionKind: 'inspect',
+        position: teaTable.approach,
+        interactionRadius: 150,
+        priority: 22,
+        result: {
+          type: 'callback',
+          activate: () =>
+            this.showFeedback(
+              'Two cups are set out beside a little pot of rosehip tea. One place has a folded note: “Back after my valley walk. Help yourself to a biscuit.”',
+              teaTable.approach,
+            ),
+        },
+      },
+      {
+        id: 'interaction:village-interior:rosehip-cottage:reading-chair',
+        label: 'Rosehip’s reading chair',
+        actionLabel: 'Inspect',
+        actionKind: 'inspect',
+        position: { x: 625, y: 820 },
+        interactionRadius: 135,
+        priority: 18,
+        result: {
+          type: 'callback',
+          activate: () =>
+            this.showFeedback(
+              'A soft blanket, a half-finished story and a basket of mending make this the sort of chair that is rarely empty for long.',
+              { x: 625, y: 820 },
+            ),
+        },
+      },
+    ];
   }
 
   private createThreadInteractions(): InteractionTarget[] {

@@ -7,7 +7,12 @@ import {
   type VillageInteriorId,
 } from './VillageInteriorMap';
 
-const INTERIOR_IDS: readonly VillageInteriorId[] = ['bakery', 'accessory-shop', 'library'];
+const INTERIOR_IDS: readonly VillageInteriorId[] = [
+  'bakery',
+  'accessory-shop',
+  'library',
+  'rosehip-cottage',
+];
 const REQUIRED_ANCHORS: readonly VillageInteriorAnchorId[] = [
   'entry',
   'exit',
@@ -37,7 +42,11 @@ describe('VillageInteriorMap', () => {
     for (const interiorId of INTERIOR_IDS) {
       const map = VILLAGE_INTERIOR_MAPS[interiorId];
       expect(Object.keys(map.anchors).sort()).toEqual([...REQUIRED_ANCHORS].sort());
-      expect(map.colliders.some(({ id }) => id === 'counter' || id === 'story-table')).toBe(true);
+      expect(
+        map.colliders.some(({ id }) =>
+          ['counter', 'story-table', 'rosehip-bed', 'rosehip-tea-table'].includes(id),
+        ),
+      ).toBe(true);
     }
   });
 

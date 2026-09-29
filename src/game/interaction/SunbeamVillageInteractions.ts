@@ -56,7 +56,7 @@ function residenceApproach(id: string): { x: number; y: number } {
 
 function enterInterior(
   scene: Phaser.Scene,
-  interiorId: 'bakery' | 'accessory-shop' | 'library',
+  interiorId: 'bakery' | 'accessory-shop' | 'library' | 'rosehip-cottage',
   returnPosition: { x: number; y: number },
 ): void {
   setSunbeamVillagePlayerSpawn(returnPosition);
@@ -176,14 +176,14 @@ export function createSunbeamVillageInteractions(scene: Phaser.Scene): Interacti
     {
       id: 'interaction:village-residence-rosehip',
       label: 'Rosehip Cottage',
-      actionLabel: 'Knock',
-      actionKind: 'interact',
+      actionLabel: 'Enter',
+      actionKind: 'enter',
       position: residenceApproach('rosehip-cottage'),
       interactionRadius: 135,
       result: {
-        type: 'message',
-        title: 'Rosehip Cottage',
-        message: "A handwritten card by the door says, 'Out in the valley. Tea another day!'",
+        type: 'callback',
+        activate: () =>
+          enterInterior(scene, 'rosehip-cottage', residenceApproach('rosehip-cottage')),
       },
     },
     {
