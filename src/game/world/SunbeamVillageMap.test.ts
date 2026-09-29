@@ -98,9 +98,10 @@ describe('Sunbeam Village map', () => {
       'collision:landscaping:flower-bed:east-green',
       'collision:village-life:sundial',
       'collision:chess-plaza:table',
-      'collision:chess-plaza:bench:west',
-      'collision:chess-plaza:bench:east',
-      'collision:chess-plaza:bench:south',
+      'collision:chess-plaza:sign',
+      'collision:chess-plaza:seat:west-chair',
+      'collision:chess-plaza:seat:east-chair',
+      'collision:chess-plaza:seat:south-bench',
       'collision:willow-garden:west',
       'collision:willow-garden:south',
       'collision:willow-garden:east-lower',
@@ -348,17 +349,23 @@ describe('Sunbeam Village map', () => {
     expect(villageLife.sundial.y).toBeLessThan(1320);
   });
 
-  it('turns the old bench lawn into a grouped chess-plaza seating pocket', () => {
+  it('turns the old bench lawn into a chess plaza with facing chairs and a lawn sign', () => {
     const { chessPlaza, villageLife } = SUNBEAM_VILLAGE_LAYOUT;
+    const southBench = chessPlaza.seating.find(({ id }) => id === 'south-bench');
 
-    expect(chessPlaza.benches).toHaveLength(3);
+    expect(chessPlaza.seating).toHaveLength(3);
+    expect(chessPlaza.seating.map(({ kind }) => kind)).toEqual(['chair', 'chair', 'bench']);
+    expect(chessPlaza.seating.map(({ facing }) => facing)).toEqual(['east', 'west', 'north']);
+    expect(southBench).toBeDefined();
     expect(villageLife.bench).toMatchObject({
-      x: chessPlaza.benches[0].x,
-      y: chessPlaza.benches[0].y,
-      collision: chessPlaza.benches[0].collision,
+      x: southBench?.x,
+      y: southBench?.y,
+      collision: southBench?.collision,
     });
     expect(chessPlaza.table.x).toBe(chessPlaza.centre.x);
     expect(chessPlaza.table.y).toBe(chessPlaza.centre.y);
+    expect(chessPlaza.sign.x).toBeLessThan(chessPlaza.centre.x - chessPlaza.width / 2);
+    expect(chessPlaza.sign.y).toBeLessThan(chessPlaza.centre.y - chessPlaza.height / 2 + 10);
 
     for (const residence of SUNBEAM_VILLAGE_LAYOUT.residences) {
       expect(
@@ -508,20 +515,27 @@ describe('Sunbeam Village map', () => {
       id: 'collision:chess-plaza:table',
       ...chessPlaza.table.collision,
     });
-    for (const bench of chessPlaza.benches) {
+    expect(
+      SUNBEAM_VILLAGE_MAP.colliders.find(({ id }) => id === 'collision:chess-plaza:sign'),
+    ).toEqual({
+      id: 'collision:chess-plaza:sign',
+      ...chessPlaza.sign.collision,
+    });
+    for (const seat of chessPlaza.seating) {
       expect(
         SUNBEAM_VILLAGE_MAP.colliders.find(
-          ({ id }) => id === `collision:chess-plaza:bench:${bench.id}`,
+          ({ id }) => id === `collision:chess-plaza:seat:${seat.id}`,
         ),
       ).toEqual({
-        id: `collision:chess-plaza:bench:${bench.id}`,
-        ...bench.collision,
+        id: `collision:chess-plaza:seat:${seat.id}`,
+        ...seat.collision,
       });
     }
+    const southBench = chessPlaza.seating.find(({ id }) => id === 'south-bench');
     expect(villageLife.bench).toMatchObject({
-      x: chessPlaza.benches[0].x,
-      y: chessPlaza.benches[0].y,
-      collision: chessPlaza.benches[0].collision,
+      x: southBench?.x,
+      y: southBench?.y,
+      collision: southBench?.collision,
     });
   });
 
