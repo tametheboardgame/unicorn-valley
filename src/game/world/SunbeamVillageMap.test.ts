@@ -451,7 +451,8 @@ describe('Sunbeam Village map', () => {
       const collisionBottom = bed.collision.y + bed.collision.height / 2;
 
       expect(bed.collision.width).toBeGreaterThanOrEqual(bed.width);
-      expect(collisionTop).toBeLessThanOrEqual(visualTop - 50);
+      expect(collisionTop).toBeLessThanOrEqual(visualTop - 20);
+      expect(collisionTop).toBeGreaterThanOrEqual(visualTop - 24);
       expect(collisionBottom).toBeGreaterThanOrEqual(visualBottom);
     }
 
