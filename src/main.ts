@@ -105,10 +105,6 @@ void import('./game/activities/RepeatableActivityEntryWorldManager').then(
   },
 );
 
-void import('./game/activities/ChessPlazaWorldManager').then(({ getChessPlazaWorldManager }) => {
-  getChessPlazaWorldManager(game);
-});
-
 void Promise.all([
   import('./game/scenes/R6VillageInteriorScene'),
   import('./game/scenes/HollowTreeNookScene'),
