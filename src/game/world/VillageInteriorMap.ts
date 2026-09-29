@@ -1,6 +1,11 @@
 import type { CollisionRectangle, MapPoint, TraversalMapDefinition } from './MapTraversal';
 
-export type VillageInteriorId = 'bakery' | 'accessory-shop' | 'library' | 'rosehip-cottage';
+export type VillageInteriorId =
+  | 'bakery'
+  | 'accessory-shop'
+  | 'library'
+  | 'rosehip-cottage'
+  | 'bluebell-cottage';
 
 export type VillageInteriorAnchorId =
   | 'entry'
@@ -226,11 +231,36 @@ const ROSEHIP_COTTAGE: VillageInteriorDefinition = {
   ],
 };
 
+const BLUEBELL_COTTAGE: VillageInteriorDefinition = {
+  id: 'bluebell-cottage',
+  title: 'Bluebell Cottage',
+  width: MAP_WIDTH,
+  height: MAP_HEIGHT,
+  margin: MAP_MARGIN,
+  playerSpawn: PLAYER_SPAWN,
+  roomShell: ROOM_SHELL,
+  anchors: sharedAnchors(
+    anchor('counter', 'Listening bell cabinet', { x: 285, y: 485 }, { x: 470, y: 575 }),
+    anchor('npc-work', 'Bluebell window bench', { x: 1185, y: 790 }, { x: 1010, y: 825 }),
+    anchor('primary-feature', 'Sky chart desk', { x: 310, y: 690 }, { x: 480, y: 720 }),
+    anchor('secondary-feature', 'Wind-chime worktable', { x: 770, y: 630 }, { x: 770, y: 790 }),
+  ),
+  colliders: [
+    ...ROOM_COLLIDERS,
+    { id: 'bluebell-bell-cabinet', x: 285, y: 485, width: 230, height: 150 },
+    { id: 'bluebell-daybed', x: 1180, y: 490, width: 280, height: 180 },
+    { id: 'bluebell-sky-desk', x: 310, y: 690, width: 230, height: 110 },
+    { id: 'bluebell-chime-table', x: 770, y: 630, width: 300, height: 145 },
+    { id: 'bluebell-window-bench', x: 1185, y: 790, width: 230, height: 120 },
+  ],
+};
+
 export const VILLAGE_INTERIOR_MAPS = {
   bakery: BAKERY,
   'accessory-shop': ACCESSORY_SHOP,
   library: LIBRARY,
   'rosehip-cottage': ROSEHIP_COTTAGE,
+  'bluebell-cottage': BLUEBELL_COTTAGE,
 } as const satisfies Readonly<Record<VillageInteriorId, VillageInteriorDefinition>>;
 
 export function isVillageInteriorId(value: unknown): value is VillageInteriorId {
@@ -238,7 +268,8 @@ export function isVillageInteriorId(value: unknown): value is VillageInteriorId 
     value === 'bakery' ||
     value === 'accessory-shop' ||
     value === 'library' ||
-    value === 'rosehip-cottage'
+    value === 'rosehip-cottage' ||
+    value === 'bluebell-cottage'
   );
 }
 
