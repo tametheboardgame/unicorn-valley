@@ -82,6 +82,17 @@ describe('Sunbeam Village map', () => {
       'collision:playground:shrub:north-centre',
       'collision:playground:shrub:north-east-centre',
       'collision:playground:shrub:north-east',
+      'collision:landscaping:tree:bakery-thread',
+      'collision:landscaping:tree:thread-story',
+      'collision:landscaping:shrub:bakery-thread-left',
+      'collision:landscaping:shrub:bakery-thread-right',
+      'collision:landscaping:shrub:thread-story-left',
+      'collision:landscaping:shrub:thread-story-right',
+      'collision:landscaping:flower-bed:bakery-green',
+      'collision:landscaping:flower-bed:story-green',
+      'collision:landscaping:flower-bed:west-green',
+      'collision:landscaping:flower-bed:east-green',
+      'collision:village-life:sundial',
       'collision:village-life:bench',
       'collision:willow-garden:west',
       'collision:willow-garden:south',
@@ -292,6 +303,28 @@ describe('Sunbeam Village map', () => {
     ];
     expect(new Set(landscapingIds).size).toBe(landscapingIds.length);
 
+    const eastGreen = landscaping.flowerBeds.find(({ id }) => id === 'east-green');
+    const sunpetal = SUNBEAM_VILLAGE_LAYOUT.residences.find(({ id }) => id === 'sunpetal-cottage');
+    expect(eastGreen).toBeDefined();
+    expect(sunpetal).toBeDefined();
+    if (eastGreen && sunpetal) {
+      const bedLeft = eastGreen.x - eastGreen.width / 2;
+      const bedRight = eastGreen.x + eastGreen.width / 2;
+      const bedTop = eastGreen.y - eastGreen.height / 2;
+      const bedBottom = eastGreen.y + eastGreen.height / 2;
+      const houseLeft = sunpetal.x - sunpetal.width / 2;
+      const houseRight = sunpetal.x + sunpetal.width / 2;
+      const houseTop = sunpetal.y - sunpetal.height / 2;
+      const houseBottom = sunpetal.y + sunpetal.height / 2;
+      const overlaps =
+        bedLeft < houseRight &&
+        bedRight > houseLeft &&
+        bedTop < houseBottom &&
+        bedBottom > houseTop;
+
+      expect(overlaps).toBe(false);
+    }
+
     expect(villageLife.sundial.x).toBeGreaterThan(1830);
     expect(villageLife.sundial.y).toBeLessThan(1320);
   });
@@ -375,6 +408,50 @@ describe('Sunbeam Village map', () => {
     expect(
       SUNBEAM_VILLAGE_MAP.colliders.find(({ id }) => id === 'collision:willow-garden:south'),
     ).toMatchObject({ height: 66 });
+  });
+
+  it('gives every H3.11.8B landscaping prop physical collision', () => {
+    const { landscaping, villageLife } = SUNBEAM_VILLAGE_LAYOUT;
+
+    for (const tree of landscaping.highStreet.trees) {
+      expect(
+        SUNBEAM_VILLAGE_MAP.colliders.find(
+          ({ id }) => id === `collision:landscaping:tree:${tree.id}`,
+        ),
+      ).toEqual({
+        id: `collision:landscaping:tree:${tree.id}`,
+        ...tree.collision,
+      });
+    }
+
+    for (const shrub of landscaping.highStreet.shrubs) {
+      expect(
+        SUNBEAM_VILLAGE_MAP.colliders.find(
+          ({ id }) => id === `collision:landscaping:shrub:${shrub.id}`,
+        ),
+      ).toEqual({
+        id: `collision:landscaping:shrub:${shrub.id}`,
+        ...shrub.collision,
+      });
+    }
+
+    for (const bed of landscaping.flowerBeds) {
+      expect(
+        SUNBEAM_VILLAGE_MAP.colliders.find(
+          ({ id }) => id === `collision:landscaping:flower-bed:${bed.id}`,
+        ),
+      ).toEqual({
+        id: `collision:landscaping:flower-bed:${bed.id}`,
+        ...bed.collision,
+      });
+    }
+
+    expect(
+      SUNBEAM_VILLAGE_MAP.colliders.find(({ id }) => id === 'collision:village-life:sundial'),
+    ).toEqual({
+      id: 'collision:village-life:sundial',
+      ...villageLife.sundial.collision,
+    });
   });
 
   it('gives the playground hedge and village bench physical collision', () => {
