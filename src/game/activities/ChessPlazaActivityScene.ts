@@ -106,7 +106,13 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
 
     const boardFrame = this.add.graphics();
     boardFrame.fillStyle(0x6c4b3b, 1);
-    boardFrame.fillRoundedRect(BOARD_LEFT - 18, BOARD_TOP - 18, BOARD_SIZE + 36, BOARD_SIZE + 36, 18);
+    boardFrame.fillRoundedRect(
+      BOARD_LEFT - 18,
+      BOARD_TOP - 18,
+      BOARD_SIZE + 36,
+      BOARD_SIZE + 36,
+      18,
+    );
     boardFrame.lineStyle(4, 0x49362f, 1);
     boardFrame.strokeRoundedRect(
       BOARD_LEFT - 18,
@@ -233,13 +239,14 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
         const hintFrom = this.hintMove?.from === square;
         const hintTo = this.hintMove?.to === square;
         const baseColour = (row + col) % 2 === 0 ? 0xf4deb0 : 0x94705a;
-        const squareColour = selected || hintFrom
-          ? 0xf2ce6d
-          : hintTo
-            ? 0x8fc89a
-            : legalDestination
-              ? 0xb7d9aa
-              : baseColour;
+        const squareColour =
+          selected || hintFrom
+            ? 0xf2ce6d
+            : hintTo
+              ? 0x8fc89a
+              : legalDestination
+                ? 0xb7d9aa
+                : baseColour;
 
         const tile = this.add
           .rectangle(x, y, SQUARE_SIZE - 1, SQUARE_SIZE - 1, squareColour, 1)
