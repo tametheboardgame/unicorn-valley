@@ -169,7 +169,7 @@ export class SunbeamVillageScene extends Phaser.Scene {
   }
 
   private createPlaza(): void {
-    const { centre, width, height, northShopApron } = SUNBEAM_VILLAGE_LAYOUT.plaza;
+    const { centre, width, height } = SUNBEAM_VILLAGE_LAYOUT.plaza;
     const graphics = this.add
       .graphics()
       .setName('sunbeam-composition:plaza')
@@ -180,31 +180,6 @@ export class SunbeamVillageScene extends Phaser.Scene {
     graphics.fillStyle(0xecd8aa, 0.76);
     graphics.fillEllipse(centre.x - 105, centre.y + 18, width * 0.64, height * 0.72);
     graphics.fillEllipse(centre.x + 118, centre.y - 14, width * 0.58, height * 0.68);
-
-    // Blend the Twinkle & Thread branch into the plaza with a rounded cobbled throat.
-    // The old triangular apron read as a wedge pasted onto the square.
-    graphics.fillStyle(0xd9bf87, 0.98);
-    graphics.fillEllipse(
-      northShopApron.x,
-      northShopApron.y + 18,
-      northShopApron.width,
-      northShopApron.height,
-    );
-    graphics.fillStyle(0xf2e3bd, 0.96);
-    graphics.fillEllipse(
-      northShopApron.x,
-      northShopApron.y + 8,
-      northShopApron.width - 56,
-      northShopApron.height - 34,
-    );
-    graphics.fillStyle(0xd2b980, 0.58);
-    for (const [offsetX, offsetY, stoneWidth] of [
-      [-44, 24, 38],
-      [4, 38, 44],
-      [46, 20, 36],
-    ] as const) {
-      graphics.fillEllipse(northShopApron.x + offsetX, northShopApron.y + offsetY, stoneWidth, 20);
-    }
 
     graphics.lineStyle(18, 0xf2e3be, 0.88);
     graphics.strokeEllipse(centre.x, centre.y, 360, 270);
@@ -223,12 +198,7 @@ export class SunbeamVillageScene extends Phaser.Scene {
       graphics.fillEllipse(x, y, stoneWidth, stoneHeight);
     }
 
-    for (const [x, y] of [
-      [centre.x - 255, centre.y - 118],
-      [centre.x - 255, centre.y + 118],
-      [centre.x + 255, centre.y - 118],
-      [centre.x + 255, centre.y + 118],
-    ] as const) {
+    const createMarker = (x: number, y: number, scale = 1, name = 'plaza-marker'): void => {
       const marker = this.add
         .container(x, y, [
           this.add.ellipse(0, 18, 48, 22, 0x806b58, 0.18),
@@ -243,10 +213,23 @@ export class SunbeamVillageScene extends Phaser.Scene {
             })
             .setOrigin(0.5),
         ])
-        .setName('sunbeam-composition:plaza-marker')
+        .setName(`sunbeam-composition:${name}`)
         .setDepth(SUNBEAM_VILLAGE_LAYERS.plaza + 0.1);
-      marker.setAlpha(0.94);
+      marker.setScale(scale).setAlpha(0.94);
+    };
+
+    for (const [x, y] of [
+      [centre.x - 255, centre.y - 118],
+      [centre.x - 255, centre.y + 118],
+      [centre.x + 255, centre.y - 118],
+      [centre.x + 255, centre.y + 118],
+    ] as const) {
+      createMarker(x, y);
     }
+
+    const twinkleConnection = SUNBEAM_VILLAGE_LAYOUT.pathNetwork.shopBranches[1][0];
+    createMarker(twinkleConnection.x - 68, centre.y - height / 2 + 27, 0.72, 'twinkle-marker:left');
+    createMarker(twinkleConnection.x + 68, centre.y - height / 2 + 27, 0.72, 'twinkle-marker:right');
   }
 
   private createPathNetwork(): void {
