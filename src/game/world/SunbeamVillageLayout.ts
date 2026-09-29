@@ -458,7 +458,7 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
       width: 118,
       height: 86,
       collision: { x: 1180, y: 1548, width: 136, height: 102 },
-      interaction: { x: 1180, y: 1630 },
+      interaction: { x: 1180, y: 1415 },
       interactionRadius: 142,
     },
     benches: [
