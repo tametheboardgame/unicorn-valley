@@ -348,20 +348,22 @@ describe('Sunbeam Village map', () => {
     expect(villageLife.sundial.y).toBeLessThan(1320);
   });
 
-  it('places the village bench in a quiet south-west lawn pocket away from residential circulation', () => {
-    const { bench } = SUNBEAM_VILLAGE_LAYOUT.villageLife;
-    const { centre, height } = SUNBEAM_VILLAGE_LAYOUT.plaza;
+  it('turns the old bench lawn into a grouped chess-plaza seating pocket', () => {
+    const { chessPlaza, villageLife } = SUNBEAM_VILLAGE_LAYOUT;
 
-    expect(bench.x).toBeLessThan(centre.x);
-    expect(bench.y).toBeGreaterThan(centre.y + height / 2);
-    expect(
-      Math.hypot(
-        bench.x - SUNBEAM_VILLAGE_LAYOUT.fountain.x,
-        bench.y - SUNBEAM_VILLAGE_LAYOUT.fountain.y,
-      ),
-    ).toBeGreaterThan(300);
+    expect(chessPlaza.benches).toHaveLength(3);
+    expect(villageLife.bench).toMatchObject({
+      x: chessPlaza.benches[0].x,
+      y: chessPlaza.benches[0].y,
+      collision: chessPlaza.benches[0].collision,
+    });
+    expect(chessPlaza.table.x).toBe(chessPlaza.centre.x);
+    expect(chessPlaza.table.y).toBe(chessPlaza.centre.y);
+
     for (const residence of SUNBEAM_VILLAGE_LAYOUT.residences) {
-      expect(Math.hypot(bench.x - residence.x, bench.y - residence.y)).toBeGreaterThan(400);
+      expect(
+        Math.hypot(chessPlaza.centre.x - residence.x, chessPlaza.centre.y - residence.y),
+      ).toBeGreaterThan(380);
     }
   });
 
