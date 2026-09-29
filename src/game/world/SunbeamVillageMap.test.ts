@@ -268,6 +268,34 @@ describe('Sunbeam Village map', () => {
     ).toBeGreaterThan(90);
   });
 
+  it('authors H3.11.8B landscaping in deliberate village pockets', () => {
+    const { landscaping, buildings, villageLife } = SUNBEAM_VILLAGE_LAYOUT;
+    const [bakeryThreadTree, threadStoryTree] = landscaping.highStreet.trees;
+
+    expect(landscaping.highStreet.trees).toHaveLength(2);
+    expect(landscaping.highStreet.shrubs).toHaveLength(4);
+    expect(landscaping.flowerBeds).toHaveLength(4);
+
+    expect(bakeryThreadTree.x).toBeGreaterThan(buildings.bakery.x + buildings.bakery.width / 2);
+    expect(bakeryThreadTree.x).toBeLessThan(
+      buildings.accessoryShop.x - buildings.accessoryShop.width / 2,
+    );
+    expect(threadStoryTree.x).toBeGreaterThan(
+      buildings.accessoryShop.x + buildings.accessoryShop.width / 2,
+    );
+    expect(threadStoryTree.x).toBeLessThan(buildings.library.x - buildings.library.width / 2);
+
+    const landscapingIds = [
+      ...landscaping.highStreet.trees.map(({ id }) => `tree:${id}`),
+      ...landscaping.highStreet.shrubs.map(({ id }) => `shrub:${id}`),
+      ...landscaping.flowerBeds.map(({ id }) => `flower-bed:${id}`),
+    ];
+    expect(new Set(landscapingIds).size).toBe(landscapingIds.length);
+
+    expect(villageLife.sundial.x).toBeGreaterThan(1830);
+    expect(villageLife.sundial.y).toBeLessThan(1320);
+  });
+
   it('places the village bench in a quiet south-west lawn pocket away from residential circulation', () => {
     const { bench } = SUNBEAM_VILLAGE_LAYOUT.villageLife;
     const { centre, height } = SUNBEAM_VILLAGE_LAYOUT.plaza;
