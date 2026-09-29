@@ -1,0 +1,11 @@
+<!-- block:p11-b01 -->
+‘Farewell, bright sun!’ she cried, stretching out her arms towards it, and taking another step outside the house; for now the corn had been reaped, and only the dry stubble was left standing. ‘Farewell, farewell!’ she said, and put her arms round a little red flower that grew there. ‘Give my love to the dear swallow when you see him!’
+
+<!-- block:p11-b02 -->
+‘Tweet, tweet!’ sounded in her ear all at once. She looked up. There was the swallow flying past! As soon as he saw Thumbelina, he was very glad. She told him how unwilling she was to marry the ugly mole, as then she had to live underground where the sun never shone, and she could not help bursting into tears.
+
+<!-- block:p11-b03 -->
+‘The cold winter is coming now,’ said the swallow. ‘I must fly away to warmer lands: will you come with me? You can sit on my back, and we will fly far away from the ugly mole and his dark house, over the mountains, to the warm countries where the sun shines more brightly than here, where it is always summer, and there are always beautiful flowers. Do come with me, dear little Thumbelina, who saved my life when I lay frozen in the dark tunnel!’
+
+<!-- block:p11-b04 -->
+‘Yes, I will go with you,’ said Thumbelina, and got on the swallow’s back, with her feet on one of his outstretched wings. Up he flew into the air, over woods and seas, over the great mountains where the snow is always lying. And if she was cold she crept under his warm feathers, only keeping her little head out to admire all the beautiful things in the world beneath. At last they came to warm lands; there the sun was brighter, the sky seemed twice as high, and in the hedges hung the finest green and purple grapes; in the woods grew oranges and lemons: the air was scented with myrtle and mint, and on the roads were pretty little children running about and playing with great gorgeous butterflies. But the swallow flew on farther, and it became more and more beautiful. Under the most splendid green trees besides a blue lake stood a glittering white-marble castle. Vines hung about the high pillars; there were many swallows’ nests, and in one of these lived the swallow who was carrying Thumbelina.
