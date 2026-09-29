@@ -1,0 +1,8 @@
+<!-- block:p061-b01 -->
+The reason the Lion did not have to do as the Witch wished was that every night, while the woman was asleep, Dorothy carried him food from the cupboard. After he had eaten he would lie down on his bed of straw, and Dorothy would lie beside him and put her head on his soft, shaggy mane, while they talked of their troubles and tried to plan some way to escape. But they could find no way to get out of the castle, for it was constantly guarded by the yellow Winkies, who were the slaves of the Wicked Witch and too afraid of her not to do as she told them.
+
+<!-- block:p061-b02 -->
+The girl had to work hard during the day, and often the Witch threatened to beat her with the same old umbrella she always carried in her hand. But, in truth, she did not dare to strike Dorothy, because of the mark upon her forehead. The child did not know this, and was full of fear for herself and Toto. Once the Witch struck Toto a blow with her umbrella and the brave little dog flew at her and bit her leg in return. The Witch did not bleed where she was bitten, for she was so wicked that the blood in her had dried up many years before.
+
+<!-- block:p061-b03 -->
+Dorothy’s life became very sad as she grew to understand that it would be harder than ever to get back to Kansas and Aunt Em again. Sometimes she would cry bitterly for hours, with Toto sitting at her feet and looking into her face, whining dismally to show how sorry he was for his little mistress. Toto did not really care whether he was in Kansas or the Land of Oz so long as Dorothy was with him; but he knew the little girl was unhappy, and that made him unhappy too.

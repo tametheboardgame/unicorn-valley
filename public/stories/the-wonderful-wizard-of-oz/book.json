@@ -1,11 +1,9 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "id": "the-wonderful-wizard-of-oz",
   "title": "The Wonderful Wizard of Oz",
   "description": "A cyclone carries Dorothy and Toto from Kansas to the magical Land of Oz, where they follow the yellow brick road with three unlikely friends in search of courage, wisdom, heart and a way home.",
   "catalogueBlurb": "Follow Dorothy and Toto along the yellow brick road to the Emerald City.",
-  "author": "L. Frank Baum, retold by Quill",
-  "readingMode": "flowing",
   "cover": {
     "path": "covers/cover.webp",
     "alt": "W. W. Denslow's original 1900 cover for The Wonderful Wizard of Oz."
@@ -15,154 +13,769 @@
   "publication": {
     "status": "published"
   },
-  "chapters": [
-    {
-      "id": "the-cyclone",
-      "title": "The Cyclone",
-      "path": "chapters/01.md"
-    },
-    {
-      "id": "the-yellow-brick-road",
-      "title": "The Yellow Brick Road",
-      "path": "chapters/02.md",
-      "illustrations": [
-        {
-          "id": "denslow-scarecrow",
-          "blockId": "meeting-the-scarecrow",
-          "path": "illustrations/scarecrow.webp",
-          "alt": "W. W. Denslow's illustration of Dorothy with the Scarecrow.",
-          "placement": "full-width",
-          "width": 483,
-          "height": 640,
-          "caption": "Illustration by W. W. Denslow, 1900."
-        }
-      ]
-    },
-    {
-      "id": "the-tin-woodman",
-      "title": "The Tin Woodman",
-      "path": "chapters/03.md",
-      "illustrations": [
-        {
-          "id": "denslow-tin-woodman",
-          "blockId": "a-man-made-of-tin",
-          "path": "illustrations/tin-woodman.webp",
-          "alt": "W. W. Denslow's illustration of the Tin Woodman.",
-          "placement": "full-width",
-          "width": 1283,
-          "height": 2937,
-          "caption": "Illustration by W. W. Denslow, 1900."
-        }
-      ]
-    },
-    {
-      "id": "the-cowardly-lion",
-      "title": "The Cowardly Lion",
-      "path": "chapters/04.md",
-      "illustrations": [
-        {
-          "id": "denslow-lion",
-          "blockId": "the-lion-roars",
-          "path": "illustrations/lion.webp",
-          "alt": "W. W. Denslow's illustration of Dorothy meeting the Cowardly Lion.",
-          "placement": "full-width",
-          "width": 2018,
-          "height": 2534,
-          "caption": "Illustration by W. W. Denslow, 1900."
-        }
-      ]
-    },
-    {
-      "id": "the-emerald-city",
-      "title": "The Emerald City",
-      "path": "chapters/05.md",
-      "illustrations": [
-        {
-          "id": "denslow-emerald-city",
-          "blockId": "green-everywhere",
-          "path": "illustrations/emerald-city.webp",
-          "alt": "W. W. Denslow's illustration of the Emerald City.",
-          "placement": "full-width",
-          "width": 534,
-          "height": 332,
-          "caption": "Illustration by W. W. Denslow, 1900."
-        }
-      ]
-    },
-    {
-      "id": "the-wicked-witch",
-      "title": "The Wicked Witch of the West",
-      "path": "chapters/06.md",
-      "illustrations": [
-        {
-          "id": "denslow-wicked-witch",
-          "blockId": "the-witch-watches",
-          "path": "illustrations/wicked-witch.webp",
-          "alt": "W. W. Denslow's illustration of the Wicked Witch of the West.",
-          "placement": "full-width",
-          "width": 298,
-          "height": 358,
-          "caption": "Illustration by W. W. Denslow, 1900."
-        }
-      ]
-    },
-    {
-      "id": "the-wizard-revealed",
-      "title": "The Wizard Revealed",
-      "path": "chapters/07.md"
-    },
-    {
-      "id": "gifts-from-oz",
-      "title": "Gifts from Oz",
-      "path": "chapters/08.md"
-    },
-    {
-      "id": "south-to-glinda",
-      "title": "South to Glinda",
-      "path": "chapters/09.md",
-      "illustrations": [
-        {
-          "id": "denslow-glinda",
-          "blockId": "glinda-the-good",
-          "path": "illustrations/glinda.webp",
-          "alt": "W. W. Denslow's illustration of Glinda the Good Witch.",
-          "placement": "full-width",
-          "width": 561,
-          "height": 804,
-          "caption": "Illustration by W. W. Denslow, 1900."
-        }
-      ]
-    },
-    {
-      "id": "home-to-kansas",
-      "title": "Home to Kansas",
-      "path": "chapters/10.md"
-    }
-  ],
   "discovery": {
     "format": "Chapter Book",
     "genres": ["Fantasy", "Adventure", "Classics"],
     "audiences": ["Read Together", "Independent Reader"],
     "length": "Longer Read"
   },
-  "rights": {
-    "text": {
-      "status": "original",
-      "source": "Original Story House retelling based on L. Frank Baum's public-domain 1900 novel",
-      "sourceUrl": "https://en.wikisource.org/wiki/The_Wonderful_Wizard_of_Oz",
-      "notes": "The underlying 1900 novel is public domain. This wording is an original child-friendly Unicorn Valley retelling."
+  "defaultEditionId": "story-house",
+  "editions": [
+    {
+      "id": "story-house",
+      "label": "Story House Edition",
+      "author": "L. Frank Baum, retold by Quill",
+      "readingMode": "flowing",
+      "rights": {
+        "text": {
+          "status": "original",
+          "source": "Original Story House retelling based on L. Frank Baum's public-domain 1900 novel",
+          "sourceUrl": "https://en.wikisource.org/wiki/The_Wonderful_Wizard_of_Oz",
+          "notes": "The underlying 1900 novel is public domain. This wording is an original child-friendly Unicorn Valley retelling."
+        },
+        "illustrations": {
+          "status": "public-domain",
+          "source": "Original 1900 illustrations by W. W. Denslow",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/Category:Illustrations_of_The_Wonderful_Wizard_of_Oz_by_William_Wallace_Denslow",
+          "notes": "The selected Denslow source files are identified as public domain on Wikimedia Commons."
+        },
+        "edition": {
+          "status": "original",
+          "source": "Unicorn Valley Story House edition"
+        },
+        "originalPublicationYear": 1900,
+        "curatorNotes": "Condensed into ten reader sections preserving the full journey and central characters while softening some of the original novel's more graphic violence."
+      },
+      "chapters": [
+        {
+          "id": "the-cyclone",
+          "title": "The Cyclone",
+          "path": "chapters/01.md"
+        },
+        {
+          "id": "the-yellow-brick-road",
+          "title": "The Yellow Brick Road",
+          "path": "chapters/02.md",
+          "illustrations": [
+            {
+              "id": "denslow-scarecrow",
+              "blockId": "meeting-the-scarecrow",
+              "path": "illustrations/scarecrow.webp",
+              "alt": "W. W. Denslow's illustration of Dorothy with the Scarecrow.",
+              "placement": "full-width",
+              "width": 483,
+              "height": 640,
+              "caption": "Illustration by W. W. Denslow, 1900."
+            }
+          ]
+        },
+        {
+          "id": "the-tin-woodman",
+          "title": "The Tin Woodman",
+          "path": "chapters/03.md",
+          "illustrations": [
+            {
+              "id": "denslow-tin-woodman",
+              "blockId": "a-man-made-of-tin",
+              "path": "illustrations/tin-woodman.webp",
+              "alt": "W. W. Denslow's illustration of the Tin Woodman.",
+              "placement": "full-width",
+              "width": 1283,
+              "height": 2937,
+              "caption": "Illustration by W. W. Denslow, 1900."
+            }
+          ]
+        },
+        {
+          "id": "the-cowardly-lion",
+          "title": "The Cowardly Lion",
+          "path": "chapters/04.md",
+          "illustrations": [
+            {
+              "id": "denslow-lion",
+              "blockId": "the-lion-roars",
+              "path": "illustrations/lion.webp",
+              "alt": "W. W. Denslow's illustration of Dorothy meeting the Cowardly Lion.",
+              "placement": "full-width",
+              "width": 2018,
+              "height": 2534,
+              "caption": "Illustration by W. W. Denslow, 1900."
+            }
+          ]
+        },
+        {
+          "id": "the-emerald-city",
+          "title": "The Emerald City",
+          "path": "chapters/05.md",
+          "illustrations": [
+            {
+              "id": "denslow-emerald-city",
+              "blockId": "green-everywhere",
+              "path": "illustrations/emerald-city.webp",
+              "alt": "W. W. Denslow's illustration of the Emerald City.",
+              "placement": "full-width",
+              "width": 534,
+              "height": 332,
+              "caption": "Illustration by W. W. Denslow, 1900."
+            }
+          ]
+        },
+        {
+          "id": "the-wicked-witch",
+          "title": "The Wicked Witch of the West",
+          "path": "chapters/06.md",
+          "illustrations": [
+            {
+              "id": "denslow-wicked-witch",
+              "blockId": "the-witch-watches",
+              "path": "illustrations/wicked-witch.webp",
+              "alt": "W. W. Denslow's illustration of the Wicked Witch of the West.",
+              "placement": "full-width",
+              "width": 298,
+              "height": 358,
+              "caption": "Illustration by W. W. Denslow, 1900."
+            }
+          ]
+        },
+        {
+          "id": "the-wizard-revealed",
+          "title": "The Wizard Revealed",
+          "path": "chapters/07.md"
+        },
+        {
+          "id": "gifts-from-oz",
+          "title": "Gifts from Oz",
+          "path": "chapters/08.md"
+        },
+        {
+          "id": "south-to-glinda",
+          "title": "South to Glinda",
+          "path": "chapters/09.md",
+          "illustrations": [
+            {
+              "id": "denslow-glinda",
+              "blockId": "glinda-the-good",
+              "path": "illustrations/glinda.webp",
+              "alt": "W. W. Denslow's illustration of Glinda the Good Witch.",
+              "placement": "full-width",
+              "width": 561,
+              "height": 804,
+              "caption": "Illustration by W. W. Denslow, 1900."
+            }
+          ]
+        },
+        {
+          "id": "home-to-kansas",
+          "title": "Home to Kansas",
+          "path": "chapters/10.md"
+        }
+      ]
     },
-    "illustrations": {
-      "status": "public-domain",
-      "source": "Original 1900 illustrations by W. W. Denslow",
-      "sourceUrl": "https://commons.wikimedia.org/wiki/Category:Illustrations_of_The_Wonderful_Wizard_of_Oz_by_William_Wallace_Denslow",
-      "notes": "The selected Denslow source files are identified as public domain on Wikimedia Commons."
-    },
-    "edition": {
-      "status": "original",
-      "source": "Unicorn Valley Story House edition"
-    },
-    "originalPublicationYear": 1900,
-    "curatorNotes": "Condensed into ten reader sections preserving the full journey and central characters while softening some of the original novel's more graphic violence."
-  }
+    {
+      "id": "full-classic",
+      "label": "Full Classic Text",
+      "author": "L. Frank Baum",
+      "readingMode": "paged-prose",
+      "rights": {
+        "text": {
+          "status": "public-domain",
+          "source": "The Wonderful Wizard of Oz, Project Gutenberg eBook #55",
+          "sourceUrl": "https://www.gutenberg.org/ebooks/55",
+          "notes": "The complete public-domain 1900 novel is retained, including Baum's Introduction, without abridgement or modernisation. Project Gutenberg boilerplate and source-only illustration markers are excluded."
+        },
+        "illustrations": {
+          "status": "public-domain",
+          "source": "Original 1900 illustrations by W. W. Denslow",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/Category:Illustrations_of_The_Wonderful_Wizard_of_Oz_by_William_Wallace_Denslow",
+          "notes": "The six previously verified W. W. Denslow illustrations are reused beside matching passages in the complete classic text."
+        },
+        "edition": {
+          "status": "public-domain",
+          "source": "Project Gutenberg eBook #55",
+          "notes": "Story House pagination changes presentation only; the source wording and all 24 chapters remain complete."
+        },
+        "originalPublicationYear": 1900,
+        "curatorNotes": "Baum's Introduction and all 24 chapters reflowed into 101 reader pages at paragraph boundaries, with six historical Denslow illustrations anchored to matching scenes."
+      },
+      "chapters": [
+        {
+          "id": "page-001",
+          "title": "Introduction",
+          "path": "editions/full-classic/pages/page-001.md"
+        },
+        {
+          "id": "page-002",
+          "title": "Chapter I — The Cyclone",
+          "path": "editions/full-classic/pages/page-002.md"
+        },
+        {
+          "id": "page-003",
+          "title": "Chapter I — The Cyclone (continued)",
+          "path": "editions/full-classic/pages/page-003.md"
+        },
+        {
+          "id": "page-004",
+          "title": "Chapter I — The Cyclone (continued)",
+          "path": "editions/full-classic/pages/page-004.md"
+        },
+        {
+          "id": "page-005",
+          "title": "Chapter II — The Council with the Munchkins",
+          "path": "editions/full-classic/pages/page-005.md"
+        },
+        {
+          "id": "page-006",
+          "title": "Chapter II — The Council with the Munchkins (continued)",
+          "path": "editions/full-classic/pages/page-006.md"
+        },
+        {
+          "id": "page-007",
+          "title": "Chapter II — The Council with the Munchkins (continued)",
+          "path": "editions/full-classic/pages/page-007.md"
+        },
+        {
+          "id": "page-008",
+          "title": "Chapter II — The Council with the Munchkins (continued)",
+          "path": "editions/full-classic/pages/page-008.md"
+        },
+        {
+          "id": "page-009",
+          "title": "Chapter II — The Council with the Munchkins (continued)",
+          "path": "editions/full-classic/pages/page-009.md"
+        },
+        {
+          "id": "page-010",
+          "title": "Chapter III — How Dorothy Saved the Scarecrow",
+          "path": "editions/full-classic/pages/page-010.md"
+        },
+        {
+          "id": "page-011",
+          "title": "Chapter III — How Dorothy Saved the Scarecrow (continued)",
+          "path": "editions/full-classic/pages/page-011.md"
+        },
+        {
+          "id": "page-012",
+          "title": "Chapter III — How Dorothy Saved the Scarecrow (continued)",
+          "path": "editions/full-classic/pages/page-012.md",
+          "illustrations": [
+            {
+              "id": "full-denslow-scarecrow",
+              "path": "illustrations/scarecrow.webp",
+              "alt": "W. W. Denslow's illustration of Dorothy with the Scarecrow.",
+              "placement": "full-width",
+              "width": 483,
+              "height": 640,
+              "caption": "Illustration by W. W. Denslow, 1900.",
+              "blockId": "p012-b08"
+            }
+          ]
+        },
+        {
+          "id": "page-013",
+          "title": "Chapter III — How Dorothy Saved the Scarecrow (continued)",
+          "path": "editions/full-classic/pages/page-013.md"
+        },
+        {
+          "id": "page-014",
+          "title": "Chapter III — How Dorothy Saved the Scarecrow (continued)",
+          "path": "editions/full-classic/pages/page-014.md"
+        },
+        {
+          "id": "page-015",
+          "title": "Chapter IV — The Road Through the Forest",
+          "path": "editions/full-classic/pages/page-015.md"
+        },
+        {
+          "id": "page-016",
+          "title": "Chapter IV — The Road Through the Forest (continued)",
+          "path": "editions/full-classic/pages/page-016.md"
+        },
+        {
+          "id": "page-017",
+          "title": "Chapter IV — The Road Through the Forest (continued)",
+          "path": "editions/full-classic/pages/page-017.md"
+        },
+        {
+          "id": "page-018",
+          "title": "Chapter IV — The Road Through the Forest (continued)",
+          "path": "editions/full-classic/pages/page-018.md"
+        },
+        {
+          "id": "page-019",
+          "title": "Chapter V — The Rescue of the Tin Woodman",
+          "path": "editions/full-classic/pages/page-019.md",
+          "illustrations": [
+            {
+              "id": "full-denslow-tin-woodman",
+              "path": "illustrations/tin-woodman.webp",
+              "alt": "W. W. Denslow's illustration of the Tin Woodman.",
+              "placement": "full-width",
+              "width": 1283,
+              "height": 2937,
+              "caption": "Illustration by W. W. Denslow, 1900.",
+              "blockId": "p019-b11"
+            }
+          ]
+        },
+        {
+          "id": "page-020",
+          "title": "Chapter V — The Rescue of the Tin Woodman (continued)",
+          "path": "editions/full-classic/pages/page-020.md"
+        },
+        {
+          "id": "page-021",
+          "title": "Chapter V — The Rescue of the Tin Woodman (continued)",
+          "path": "editions/full-classic/pages/page-021.md"
+        },
+        {
+          "id": "page-022",
+          "title": "Chapter V — The Rescue of the Tin Woodman (continued)",
+          "path": "editions/full-classic/pages/page-022.md"
+        },
+        {
+          "id": "page-023",
+          "title": "Chapter V — The Rescue of the Tin Woodman (continued)",
+          "path": "editions/full-classic/pages/page-023.md"
+        },
+        {
+          "id": "page-024",
+          "title": "Chapter VI — The Cowardly Lion",
+          "path": "editions/full-classic/pages/page-024.md",
+          "illustrations": [
+            {
+              "id": "full-denslow-lion",
+              "path": "illustrations/lion.webp",
+              "alt": "W. W. Denslow's illustration of Dorothy meeting the Cowardly Lion.",
+              "placement": "full-width",
+              "width": 2018,
+              "height": 2534,
+              "caption": "Illustration by W. W. Denslow, 1900.",
+              "blockId": "p024-b07"
+            }
+          ]
+        },
+        {
+          "id": "page-025",
+          "title": "Chapter VI — The Cowardly Lion (continued)",
+          "path": "editions/full-classic/pages/page-025.md"
+        },
+        {
+          "id": "page-026",
+          "title": "Chapter VI — The Cowardly Lion (continued)",
+          "path": "editions/full-classic/pages/page-026.md"
+        },
+        {
+          "id": "page-027",
+          "title": "Chapter VI — The Cowardly Lion (continued)",
+          "path": "editions/full-classic/pages/page-027.md"
+        },
+        {
+          "id": "page-028",
+          "title": "Chapter VII — The Journey to the Great Oz",
+          "path": "editions/full-classic/pages/page-028.md"
+        },
+        {
+          "id": "page-029",
+          "title": "Chapter VII — The Journey to the Great Oz (continued)",
+          "path": "editions/full-classic/pages/page-029.md"
+        },
+        {
+          "id": "page-030",
+          "title": "Chapter VII — The Journey to the Great Oz (continued)",
+          "path": "editions/full-classic/pages/page-030.md"
+        },
+        {
+          "id": "page-031",
+          "title": "Chapter VII — The Journey to the Great Oz (continued)",
+          "path": "editions/full-classic/pages/page-031.md"
+        },
+        {
+          "id": "page-032",
+          "title": "Chapter VIII — The Deadly Poppy Field",
+          "path": "editions/full-classic/pages/page-032.md"
+        },
+        {
+          "id": "page-033",
+          "title": "Chapter VIII — The Deadly Poppy Field (continued)",
+          "path": "editions/full-classic/pages/page-033.md"
+        },
+        {
+          "id": "page-034",
+          "title": "Chapter VIII — The Deadly Poppy Field (continued)",
+          "path": "editions/full-classic/pages/page-034.md"
+        },
+        {
+          "id": "page-035",
+          "title": "Chapter VIII — The Deadly Poppy Field (continued)",
+          "path": "editions/full-classic/pages/page-035.md"
+        },
+        {
+          "id": "page-036",
+          "title": "Chapter VIII — The Deadly Poppy Field (continued)",
+          "path": "editions/full-classic/pages/page-036.md"
+        },
+        {
+          "id": "page-037",
+          "title": "Chapter IX — The Queen of the Field Mice",
+          "path": "editions/full-classic/pages/page-037.md"
+        },
+        {
+          "id": "page-038",
+          "title": "Chapter IX — The Queen of the Field Mice (continued)",
+          "path": "editions/full-classic/pages/page-038.md"
+        },
+        {
+          "id": "page-039",
+          "title": "Chapter IX — The Queen of the Field Mice (continued)",
+          "path": "editions/full-classic/pages/page-039.md"
+        },
+        {
+          "id": "page-040",
+          "title": "Chapter IX — The Queen of the Field Mice (continued)",
+          "path": "editions/full-classic/pages/page-040.md"
+        },
+        {
+          "id": "page-041",
+          "title": "Chapter X — The Guardian of the Gate",
+          "path": "editions/full-classic/pages/page-041.md"
+        },
+        {
+          "id": "page-042",
+          "title": "Chapter X — The Guardian of the Gate (continued)",
+          "path": "editions/full-classic/pages/page-042.md"
+        },
+        {
+          "id": "page-043",
+          "title": "Chapter X — The Guardian of the Gate (continued)",
+          "path": "editions/full-classic/pages/page-043.md"
+        },
+        {
+          "id": "page-044",
+          "title": "Chapter X — The Guardian of the Gate (continued)",
+          "path": "editions/full-classic/pages/page-044.md"
+        },
+        {
+          "id": "page-045",
+          "title": "Chapter X — The Guardian of the Gate (continued)",
+          "path": "editions/full-classic/pages/page-045.md"
+        },
+        {
+          "id": "page-046",
+          "title": "Chapter XI — The Wonderful City of Oz",
+          "path": "editions/full-classic/pages/page-046.md",
+          "illustrations": [
+            {
+              "id": "full-denslow-emerald-city",
+              "path": "illustrations/emerald-city.webp",
+              "alt": "W. W. Denslow's illustration of the Emerald City.",
+              "placement": "full-width",
+              "width": 534,
+              "height": 332,
+              "caption": "Illustration by W. W. Denslow, 1900.",
+              "blockId": "p046-b01"
+            }
+          ]
+        },
+        {
+          "id": "page-047",
+          "title": "Chapter XI — The Wonderful City of Oz (continued)",
+          "path": "editions/full-classic/pages/page-047.md"
+        },
+        {
+          "id": "page-048",
+          "title": "Chapter XI — The Wonderful City of Oz (continued)",
+          "path": "editions/full-classic/pages/page-048.md"
+        },
+        {
+          "id": "page-049",
+          "title": "Chapter XI — The Wonderful City of Oz (continued)",
+          "path": "editions/full-classic/pages/page-049.md"
+        },
+        {
+          "id": "page-050",
+          "title": "Chapter XI — The Wonderful City of Oz (continued)",
+          "path": "editions/full-classic/pages/page-050.md"
+        },
+        {
+          "id": "page-051",
+          "title": "Chapter XI — The Wonderful City of Oz (continued)",
+          "path": "editions/full-classic/pages/page-051.md"
+        },
+        {
+          "id": "page-052",
+          "title": "Chapter XI — The Wonderful City of Oz (continued)",
+          "path": "editions/full-classic/pages/page-052.md"
+        },
+        {
+          "id": "page-053",
+          "title": "Chapter XI — The Wonderful City of Oz (continued)",
+          "path": "editions/full-classic/pages/page-053.md"
+        },
+        {
+          "id": "page-054",
+          "title": "Chapter XI — The Wonderful City of Oz (continued)",
+          "path": "editions/full-classic/pages/page-054.md"
+        },
+        {
+          "id": "page-055",
+          "title": "Chapter XII — The Search for the Wicked Witch",
+          "path": "editions/full-classic/pages/page-055.md",
+          "illustrations": [
+            {
+              "id": "full-denslow-wicked-witch",
+              "path": "illustrations/wicked-witch.webp",
+              "alt": "W. W. Denslow's illustration of the Wicked Witch of the West.",
+              "placement": "full-width",
+              "width": 298,
+              "height": 358,
+              "caption": "Illustration by W. W. Denslow, 1900.",
+              "blockId": "p055-b11"
+            }
+          ]
+        },
+        {
+          "id": "page-056",
+          "title": "Chapter XII — The Search for the Wicked Witch (continued)",
+          "path": "editions/full-classic/pages/page-056.md"
+        },
+        {
+          "id": "page-057",
+          "title": "Chapter XII — The Search for the Wicked Witch (continued)",
+          "path": "editions/full-classic/pages/page-057.md"
+        },
+        {
+          "id": "page-058",
+          "title": "Chapter XII — The Search for the Wicked Witch (continued)",
+          "path": "editions/full-classic/pages/page-058.md"
+        },
+        {
+          "id": "page-059",
+          "title": "Chapter XII — The Search for the Wicked Witch (continued)",
+          "path": "editions/full-classic/pages/page-059.md"
+        },
+        {
+          "id": "page-060",
+          "title": "Chapter XII — The Search for the Wicked Witch (continued)",
+          "path": "editions/full-classic/pages/page-060.md"
+        },
+        {
+          "id": "page-061",
+          "title": "Chapter XII — The Search for the Wicked Witch (continued)",
+          "path": "editions/full-classic/pages/page-061.md"
+        },
+        {
+          "id": "page-062",
+          "title": "Chapter XII — The Search for the Wicked Witch (continued)",
+          "path": "editions/full-classic/pages/page-062.md"
+        },
+        {
+          "id": "page-063",
+          "title": "Chapter XII — The Search for the Wicked Witch (continued)",
+          "path": "editions/full-classic/pages/page-063.md"
+        },
+        {
+          "id": "page-064",
+          "title": "Chapter XIII — The Rescue",
+          "path": "editions/full-classic/pages/page-064.md"
+        },
+        {
+          "id": "page-065",
+          "title": "Chapter XIII — The Rescue (continued)",
+          "path": "editions/full-classic/pages/page-065.md"
+        },
+        {
+          "id": "page-066",
+          "title": "Chapter XIII — The Rescue (continued)",
+          "path": "editions/full-classic/pages/page-066.md"
+        },
+        {
+          "id": "page-067",
+          "title": "Chapter XIV — The Winged Monkeys",
+          "path": "editions/full-classic/pages/page-067.md"
+        },
+        {
+          "id": "page-068",
+          "title": "Chapter XIV — The Winged Monkeys (continued)",
+          "path": "editions/full-classic/pages/page-068.md"
+        },
+        {
+          "id": "page-069",
+          "title": "Chapter XIV — The Winged Monkeys (continued)",
+          "path": "editions/full-classic/pages/page-069.md"
+        },
+        {
+          "id": "page-070",
+          "title": "Chapter XIV — The Winged Monkeys (continued)",
+          "path": "editions/full-classic/pages/page-070.md"
+        },
+        {
+          "id": "page-071",
+          "title": "Chapter XIV — The Winged Monkeys (continued)",
+          "path": "editions/full-classic/pages/page-071.md"
+        },
+        {
+          "id": "page-072",
+          "title": "Chapter XV — The Discovery of Oz, the Terrible",
+          "path": "editions/full-classic/pages/page-072.md"
+        },
+        {
+          "id": "page-073",
+          "title": "Chapter XV — The Discovery of Oz, the Terrible (continued)",
+          "path": "editions/full-classic/pages/page-073.md"
+        },
+        {
+          "id": "page-074",
+          "title": "Chapter XV — The Discovery of Oz, the Terrible (continued)",
+          "path": "editions/full-classic/pages/page-074.md"
+        },
+        {
+          "id": "page-075",
+          "title": "Chapter XV — The Discovery of Oz, the Terrible (continued)",
+          "path": "editions/full-classic/pages/page-075.md"
+        },
+        {
+          "id": "page-076",
+          "title": "Chapter XV — The Discovery of Oz, the Terrible (continued)",
+          "path": "editions/full-classic/pages/page-076.md"
+        },
+        {
+          "id": "page-077",
+          "title": "Chapter XV — The Discovery of Oz, the Terrible (continued)",
+          "path": "editions/full-classic/pages/page-077.md"
+        },
+        {
+          "id": "page-078",
+          "title": "Chapter XV — The Discovery of Oz, the Terrible (continued)",
+          "path": "editions/full-classic/pages/page-078.md"
+        },
+        {
+          "id": "page-079",
+          "title": "Chapter XVI — The Magic Art of the Great Humbug",
+          "path": "editions/full-classic/pages/page-079.md"
+        },
+        {
+          "id": "page-080",
+          "title": "Chapter XVI — The Magic Art of the Great Humbug (continued)",
+          "path": "editions/full-classic/pages/page-080.md"
+        },
+        {
+          "id": "page-081",
+          "title": "Chapter XVII — How the Balloon Was Launched",
+          "path": "editions/full-classic/pages/page-081.md"
+        },
+        {
+          "id": "page-082",
+          "title": "Chapter XVII — How the Balloon Was Launched (continued)",
+          "path": "editions/full-classic/pages/page-082.md"
+        },
+        {
+          "id": "page-083",
+          "title": "Chapter XVII — How the Balloon Was Launched (continued)",
+          "path": "editions/full-classic/pages/page-083.md"
+        },
+        {
+          "id": "page-084",
+          "title": "Chapter XVIII — Away to the South",
+          "path": "editions/full-classic/pages/page-084.md"
+        },
+        {
+          "id": "page-085",
+          "title": "Chapter XVIII — Away to the South (continued)",
+          "path": "editions/full-classic/pages/page-085.md"
+        },
+        {
+          "id": "page-086",
+          "title": "Chapter XVIII — Away to the South (continued)",
+          "path": "editions/full-classic/pages/page-086.md"
+        },
+        {
+          "id": "page-087",
+          "title": "Chapter XIX — Attacked by the Fighting Trees",
+          "path": "editions/full-classic/pages/page-087.md"
+        },
+        {
+          "id": "page-088",
+          "title": "Chapter XIX — Attacked by the Fighting Trees (continued)",
+          "path": "editions/full-classic/pages/page-088.md"
+        },
+        {
+          "id": "page-089",
+          "title": "Chapter XIX — Attacked by the Fighting Trees (continued)",
+          "path": "editions/full-classic/pages/page-089.md"
+        },
+        {
+          "id": "page-090",
+          "title": "Chapter XX — The Dainty China Country",
+          "path": "editions/full-classic/pages/page-090.md"
+        },
+        {
+          "id": "page-091",
+          "title": "Chapter XX — The Dainty China Country (continued)",
+          "path": "editions/full-classic/pages/page-091.md"
+        },
+        {
+          "id": "page-092",
+          "title": "Chapter XX — The Dainty China Country (continued)",
+          "path": "editions/full-classic/pages/page-092.md"
+        },
+        {
+          "id": "page-093",
+          "title": "Chapter XX — The Dainty China Country (continued)",
+          "path": "editions/full-classic/pages/page-093.md"
+        },
+        {
+          "id": "page-094",
+          "title": "Chapter XXI — The Lion Becomes the King of Beasts",
+          "path": "editions/full-classic/pages/page-094.md"
+        },
+        {
+          "id": "page-095",
+          "title": "Chapter XXI — The Lion Becomes the King of Beasts (continued)",
+          "path": "editions/full-classic/pages/page-095.md"
+        },
+        {
+          "id": "page-096",
+          "title": "Chapter XXII — The Country of the Quadlings",
+          "path": "editions/full-classic/pages/page-096.md"
+        },
+        {
+          "id": "page-097",
+          "title": "Chapter XXII — The Country of the Quadlings (continued)",
+          "path": "editions/full-classic/pages/page-097.md"
+        },
+        {
+          "id": "page-098",
+          "title": "Chapter XXIII — Glinda The Good Witch Grants Dorothy’s Wish",
+          "path": "editions/full-classic/pages/page-098.md",
+          "illustrations": [
+            {
+              "id": "full-denslow-glinda",
+              "path": "illustrations/glinda.webp",
+              "alt": "W. W. Denslow's illustration of Glinda the Good Witch.",
+              "placement": "full-width",
+              "width": 561,
+              "height": 804,
+              "caption": "Illustration by W. W. Denslow, 1900.",
+              "blockId": "p098-b02"
+            }
+          ]
+        },
+        {
+          "id": "page-099",
+          "title": "Chapter XXIII — Glinda The Good Witch Grants Dorothy’s Wish (continued)",
+          "path": "editions/full-classic/pages/page-099.md"
+        },
+        {
+          "id": "page-100",
+          "title": "Chapter XXIII — Glinda The Good Witch Grants Dorothy’s Wish (continued)",
+          "path": "editions/full-classic/pages/page-100.md"
+        },
+        {
+          "id": "page-101",
+          "title": "Chapter XXIV — Home Again",
+          "path": "editions/full-classic/pages/page-101.md"
+        }
+      ]
+    }
+  ]
 }
