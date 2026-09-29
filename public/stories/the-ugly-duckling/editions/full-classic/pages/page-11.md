@@ -8,16 +8,7 @@ It matters not to have been born in a duck-yard, if one has been hatched from a 
 The good creature felt himself really elevated by all the troubles and adversities he had experienced. He could now rightly estimate his own happiness, and the larger swans swam round him, and stroked him with their beaks.
 
 <!-- block:p11-b04 -->
-Some little children were running about in the garden;
-
-<!-- block:p11-b05 -->
-[Illustration: AND EVERY ONE SAID, ‘THE NEW ONE IS THE BEST’]
-
-<!-- block:p11-b06 -->
-they threw grain and bread into the water, and the youngest exclaimed, ‘There is a new one!’--the others also cried out, ‘Yes, there is a new swan come!’ and they clapped their hands, and danced around. They ran to their father and mother, bread and cake were thrown into the water, and every one said, ‘The new one is the best, so young, and so beautiful!’ and the old swans bowed before him. The young swan felt quite ashamed, and hid his head under his wings; he scarcely knew what to do, he was all too happy, but still not proud, for a good heart is never proud.
+Some little children were running about in the garden; they threw grain and bread into the water, and the youngest exclaimed, ‘There is a new one!’--the others also cried out, ‘Yes, there is a new swan come!’ and they clapped their hands, and danced around. They ran to their father and mother, bread and cake were thrown into the water, and every one said, ‘The new one is the best, so young, and so beautiful!’ and the old swans bowed before him. The young swan felt quite ashamed, and hid his head under his wings; he scarcely knew what to do, he was all too happy, but still not proud, for a good heart is never proud.
 
 <!-- block:p11-b07 -->
 He remembered how he had been persecuted and derided, and he now heard every one say he was the most beautiful of all beautiful birds. The syringas bent down their branches towards him low into the water, and the sun shone so warmly and brightly--he shook his feathers, stretched his slender neck, and in the joy of his heart said, ‘How little did I dream of so much happiness when I was the ugly, despised duckling!’
-
-<!-- block:p11-b08 -->
-[Illustration]
