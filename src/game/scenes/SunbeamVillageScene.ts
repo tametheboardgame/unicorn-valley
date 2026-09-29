@@ -169,7 +169,7 @@ export class SunbeamVillageScene extends Phaser.Scene {
   }
 
   private createPlaza(): void {
-    const { centre, width, height, northShopApron } = SUNBEAM_VILLAGE_LAYOUT.plaza;
+    const { centre, width, height } = SUNBEAM_VILLAGE_LAYOUT.plaza;
     const graphics = this.add
       .graphics()
       .setName('sunbeam-composition:plaza')
@@ -180,57 +180,6 @@ export class SunbeamVillageScene extends Phaser.Scene {
     graphics.fillStyle(0xecd8aa, 0.76);
     graphics.fillEllipse(centre.x - 105, centre.y + 18, width * 0.64, height * 0.72);
     graphics.fillEllipse(centre.x + 118, centre.y - 14, width * 0.58, height * 0.68);
-
-    const apronTop = northShopApron.y - northShopApron.height / 2;
-    const apronBottom = northShopApron.y + northShopApron.height / 2;
-    const outerTopHalf = 40;
-    const outerBottomHalf = northShopApron.width / 2;
-    graphics.fillStyle(0xd9bf87, 0.98);
-    graphics.fillTriangle(
-      northShopApron.x - outerTopHalf,
-      apronTop,
-      northShopApron.x + outerTopHalf,
-      apronTop,
-      northShopApron.x + outerBottomHalf,
-      apronBottom,
-    );
-    graphics.fillTriangle(
-      northShopApron.x - outerTopHalf,
-      apronTop,
-      northShopApron.x + outerBottomHalf,
-      apronBottom,
-      northShopApron.x - outerBottomHalf,
-      apronBottom,
-    );
-
-    const innerTop = apronTop + 4;
-    const innerBottom = northShopApron.y + 34;
-    graphics.fillStyle(0xf2e3bd, 0.96);
-    graphics.fillTriangle(
-      northShopApron.x - 28,
-      innerTop,
-      northShopApron.x + 28,
-      innerTop,
-      northShopApron.x + 62,
-      innerBottom,
-    );
-    graphics.fillTriangle(
-      northShopApron.x - 28,
-      innerTop,
-      northShopApron.x + 62,
-      innerBottom,
-      northShopApron.x - 62,
-      innerBottom,
-    );
-
-    graphics.fillStyle(0xd2b980, 0.58);
-    for (const [offsetX, offsetY, stoneWidth] of [
-      [-52, 48, 42],
-      [0, 62, 48],
-      [54, 46, 40],
-    ] as const) {
-      graphics.fillEllipse(northShopApron.x + offsetX, northShopApron.y + offsetY, stoneWidth, 22);
-    }
 
     graphics.lineStyle(18, 0xf2e3be, 0.88);
     graphics.strokeEllipse(centre.x, centre.y, 360, 270);
@@ -249,12 +198,7 @@ export class SunbeamVillageScene extends Phaser.Scene {
       graphics.fillEllipse(x, y, stoneWidth, stoneHeight);
     }
 
-    for (const [x, y] of [
-      [centre.x - 255, centre.y - 118],
-      [centre.x - 255, centre.y + 118],
-      [centre.x + 255, centre.y - 118],
-      [centre.x + 255, centre.y + 118],
-    ] as const) {
+    const createMarker = (x: number, y: number, scale = 1, name = 'plaza-marker'): void => {
       const marker = this.add
         .container(x, y, [
           this.add.ellipse(0, 18, 48, 22, 0x806b58, 0.18),
@@ -269,10 +213,28 @@ export class SunbeamVillageScene extends Phaser.Scene {
             })
             .setOrigin(0.5),
         ])
-        .setName('sunbeam-composition:plaza-marker')
+        .setName(`sunbeam-composition:${name}`)
         .setDepth(SUNBEAM_VILLAGE_LAYERS.plaza + 0.1);
-      marker.setAlpha(0.94);
+      marker.setScale(scale).setAlpha(0.94);
+    };
+
+    for (const [x, y] of [
+      [centre.x - 255, centre.y - 118],
+      [centre.x - 255, centre.y + 118],
+      [centre.x + 255, centre.y - 118],
+      [centre.x + 255, centre.y + 118],
+    ] as const) {
+      createMarker(x, y);
     }
+
+    const twinkleConnection = SUNBEAM_VILLAGE_LAYOUT.pathNetwork.shopBranches[1][0];
+    createMarker(twinkleConnection.x - 68, centre.y - height / 2 + 27, 0.72, 'twinkle-marker:left');
+    createMarker(
+      twinkleConnection.x + 68,
+      centre.y - height / 2 + 27,
+      0.72,
+      'twinkle-marker:right',
+    );
   }
 
   private createPathNetwork(): void {
@@ -280,14 +242,21 @@ export class SunbeamVillageScene extends Phaser.Scene {
       .graphics()
       .setName('sunbeam-composition:path-network')
       .setDepth(SUNBEAM_VILLAGE_LAYERS.path);
-    const { mainApproaches, shopBranches, willowBranch, southernRoad, residentialSideRoads } =
-      SUNBEAM_VILLAGE_LAYOUT.pathNetwork;
+    const {
+      mainApproaches,
+      shopBranches,
+      willowBranch,
+      southernRoad,
+      residentialSideRoads,
+      residentialBranches,
+    } = SUNBEAM_VILLAGE_LAYOUT.pathNetwork;
     const routes = [
       ...mainApproaches.map((points) => ({ points, outerWidth: 126, innerWidth: 94 })),
       ...shopBranches.map((points) => ({ points, outerWidth: 76, innerWidth: 54 })),
       { points: willowBranch, outerWidth: 76, innerWidth: 54 },
       { points: southernRoad, outerWidth: 84, innerWidth: 60 },
       ...residentialSideRoads.map((points) => ({ points, outerWidth: 68, innerWidth: 48 })),
+      ...residentialBranches.map((points) => ({ points, outerWidth: 62, innerWidth: 44 })),
     ] as const;
 
     const drawStroke = (
@@ -1233,17 +1202,12 @@ export class SunbeamVillageScene extends Phaser.Scene {
       );
     }
 
-    for (const [x, y, width, height, leafA, leafB] of [
-      [-150, -190, 88, 46, 0x6fa66f, 0x8cc27b],
-      [-70, -202, 96, 50, 0x5f9a68, 0x86bc76],
-      [20, -195, 90, 48, 0x72aa70, 0x98ca81],
-      [106, -202, 98, 52, 0x639c67, 0x88bd74],
-      [174, -184, 76, 42, 0x79ad73, 0x9aca82],
-    ] as const) {
+    for (const shrub of playground.shrubs) {
+      const { x, y, width, height, leafA, leafB } = shrub;
       playObjects.push(
         this.add
           .ellipse(x, y, width, height, leafA, 1)
-          .setName('sunbeam-playground:shrub')
+          .setName(`sunbeam-playground:shrub:${shrub.id}`)
           .setStrokeStyle(3, 0x527b57, 0.6),
         this.add.ellipse(x - width * 0.2, y - 10, width * 0.56, height * 0.72, leafB, 0.94),
         this.add.ellipse(x + width * 0.2, y - 8, width * 0.52, height * 0.68, leafB, 0.88),

@@ -77,6 +77,12 @@ describe('Sunbeam Village map', () => {
       'collision:playground:seesaw',
       'collision:playground:slide',
       'collision:playground:climbingFrame',
+      'collision:playground:shrub:north-west',
+      'collision:playground:shrub:north-west-centre',
+      'collision:playground:shrub:north-centre',
+      'collision:playground:shrub:north-east-centre',
+      'collision:playground:shrub:north-east',
+      'collision:village-life:bench',
       'collision:willow-garden:west',
       'collision:willow-garden:south',
       'collision:willow-garden:east-lower',
@@ -172,10 +178,14 @@ describe('Sunbeam Village map', () => {
     const { mainApproaches, shopBranches, willowBranch, southernRoad, residentialSideRoads } =
       SUNBEAM_VILLAGE_LAYOUT.pathNetwork;
 
-    expect(mainApproaches[0][0]).toEqual(SUNBEAM_VILLAGE_LAYOUT.entrances.moonflowerGlade.position);
-    expect(mainApproaches[1].at(-1)).toEqual(
+    expect(mainApproaches[0]).toContainEqual(
+      SUNBEAM_VILLAGE_LAYOUT.entrances.moonflowerGlade.position,
+    );
+    expect(mainApproaches[0][0].x).toBeLessThan(0);
+    expect(mainApproaches[1]).toContainEqual(
       SUNBEAM_VILLAGE_LAYOUT.entrances.rainbowMeadow.position,
     );
+    expect(mainApproaches[1].at(-1)?.x).toBeGreaterThan(SUNBEAM_VILLAGE_LAYOUT.map.width);
     expect(shopBranches.map((branch) => branch.at(-2))).toEqual([
       SUNBEAM_VILLAGE_LAYOUT.buildings.bakery.approach,
       SUNBEAM_VILLAGE_LAYOUT.buildings.accessoryShop.approach,
@@ -233,19 +243,15 @@ describe('Sunbeam Village map', () => {
     });
   });
 
-  it('blends the Twinkle & Thread branch through a plaza-owned north apron', () => {
-    const { northShopApron, centre, height } = SUNBEAM_VILLAGE_LAYOUT.plaza;
+  it('runs the Twinkle & Thread branch directly beneath the north edge of the plaza', () => {
+    const { centre, height } = SUNBEAM_VILLAGE_LAYOUT.plaza;
     const accessoryBranch = SUNBEAM_VILLAGE_LAYOUT.pathNetwork.shopBranches[1];
     const branchPlazaEnd = accessoryBranch[0];
-    const apronTop = northShopApron.y - northShopApron.height / 2;
-    const apronBottom = northShopApron.y + northShopApron.height / 2;
     const plazaTop = centre.y - height / 2;
 
-    expect(northShopApron.x).toBe(SUNBEAM_VILLAGE_LAYOUT.buildings.accessoryShop.x);
-    expect(branchPlazaEnd.x).toBe(northShopApron.x);
-    expect(branchPlazaEnd.y).toBeGreaterThanOrEqual(apronTop);
-    expect(branchPlazaEnd.y).toBeLessThanOrEqual(apronBottom);
-    expect(apronBottom).toBeGreaterThan(plazaTop);
+    expect(branchPlazaEnd.x).toBe(SUNBEAM_VILLAGE_LAYOUT.buildings.accessoryShop.x);
+    expect(branchPlazaEnd.y).toBeGreaterThan(plazaTop + 30);
+    expect(accessoryBranch[1].y).toBeLessThan(plazaTop);
   });
 
   it('keeps H3.8 village-life pockets outside the fountain circulation ring', () => {
@@ -338,6 +344,34 @@ describe('Sunbeam Village map', () => {
     expect(
       SUNBEAM_VILLAGE_MAP.colliders.find(({ id }) => id === 'collision:willow-garden:north-left'),
     ).toMatchObject({ height: 66 });
+    expect(
+      SUNBEAM_VILLAGE_MAP.colliders.find(({ id }) => id === 'collision:willow-garden:south'),
+    ).toMatchObject({ height: 66 });
+  });
+
+  it('gives the playground hedge and village bench physical collision', () => {
+    const { playground, villageLife } = SUNBEAM_VILLAGE_LAYOUT;
+
+    for (const shrub of playground.shrubs) {
+      expect(
+        SUNBEAM_VILLAGE_MAP.colliders.find(
+          ({ id }) => id === `collision:playground:shrub:${shrub.id}`,
+        ),
+      ).toEqual({
+        id: `collision:playground:shrub:${shrub.id}`,
+        x: playground.x + shrub.x,
+        y: playground.y + shrub.y,
+        width: shrub.width,
+        height: shrub.height,
+      });
+    }
+
+    expect(
+      SUNBEAM_VILLAGE_MAP.colliders.find(({ id }) => id === 'collision:village-life:bench'),
+    ).toEqual({
+      id: 'collision:village-life:bench',
+      ...villageLife.bench.collision,
+    });
   });
 
   it('gives Willow garden sign visual-clearance collision', () => {
@@ -467,6 +501,20 @@ describe('Sunbeam Village map', () => {
     expect(sunpetalSpur).toHaveLength(3);
     expect(sunpetalSpur.every(({ y }) => y === sunpetal.approach.y)).toBe(true);
     expect(SUNBEAM_VILLAGE_LAYOUT.pathNetwork.southernRoad).toContainEqual(sunpetalSpur[0]);
+
+    expect(SUNBEAM_VILLAGE_LAYOUT.pathNetwork.residentialBranches).toEqual([
+      [rosehip.approach, { x: 1610, y: 1605 }, rosehip.doorstep, { x: 1594, y: 1530 }],
+      [bluebell.approach, { x: 2070, y: 1645 }, bluebell.doorstep, { x: 2093, y: 1545 }],
+      [sunpetal.approach, { x: 2548, y: 1378 }, sunpetal.doorstep, { x: 2508, y: 1285 }],
+    ]);
+    for (const [index, residence] of residences.entries()) {
+      expect(residence.doorstep.y).toBeLessThan(residence.approach.y);
+      expect(residence.doorstep.y).toBeGreaterThan(residence.y + residence.height / 2);
+
+      const branch = SUNBEAM_VILLAGE_LAYOUT.pathNetwork.residentialBranches[index];
+      expect(branch.at(-2)).toEqual(residence.doorstep);
+      expect(branch.at(-1)?.y).toBeLessThan(residence.y + residence.height / 2);
+    }
 
     const bluebellRightEdge = bluebell.x + bluebell.width / 2;
     const bluebellBend = SUNBEAM_VILLAGE_LAYOUT.pathNetwork.southernRoad.filter(
