@@ -1,11 +1,9 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "id": "five-children-and-it",
   "title": "Five Children and It",
   "description": "Five siblings discover a grumpy ancient sand-fairy that grants one wish each day, and rapidly learn that getting exactly what you ask for can be much more troublesome than getting nothing at all.",
   "catalogueBlurb": "Five children, one sand-fairy and a new disastrous wish every day.",
-  "author": "E. Nesbit, retold by Quill",
-  "readingMode": "flowing",
   "cover": {
     "path": "covers/cover.webp",
     "alt": "The historic first-edition cover of Five Children and It."
@@ -23,183 +21,942 @@
   "publication": {
     "status": "published"
   },
-  "chapters": [
-    {
-      "id": "beautiful-as-the-day",
-      "title": "Beautiful as the Day",
-      "path": "chapters/01.md",
-      "illustrations": [
-        {
-          "id": "millar-psammead",
-          "blockId": "the-thing-in-the-sand",
-          "path": "illustrations/psammead.webp",
-          "alt": "H. R. Millar's original illustration of the Psammead.",
-          "placement": "full-width",
-          "width": 830,
-          "height": 968,
-          "caption": "Illustration by H. R. Millar, 1902."
-        }
-      ]
-    },
-    {
-      "id": "golden-guineas",
-      "title": "Golden Guineas",
-      "path": "chapters/02.md",
-      "illustrations": [
-        {
-          "id": "millar-guineas",
-          "blockId": "a-mountain-of-money",
-          "path": "illustrations/golden-guineas.webp",
-          "alt": "An original H. R. Millar illustration from Five Children and It.",
-          "placement": "full-width",
-          "width": 934,
-          "height": 804,
-          "caption": "Illustration by H. R. Millar, 1902."
-        }
-      ]
-    },
-    {
-      "id": "being-wanted",
-      "title": "Being Wanted",
-      "path": "chapters/03.md",
-      "illustrations": [
-        {
-          "id": "millar-being-wanted",
-          "blockId": "everybody-wants-the-lamb",
-          "path": "illustrations/being-wanted.webp",
-          "alt": "An original H. R. Millar illustration from Five Children and It.",
-          "placement": "full-width",
-          "width": 781,
-          "height": 858,
-          "caption": "Illustration by H. R. Millar, 1902."
-        }
-      ]
-    },
-    {
-      "id": "wings",
-      "title": "Wings",
-      "path": "chapters/04.md",
-      "illustrations": [
-        {
-          "id": "millar-wings",
-          "blockId": "into-the-sky",
-          "path": "illustrations/wings.webp",
-          "alt": "An original H. R. Millar illustration from Five Children and It.",
-          "placement": "full-width",
-          "width": 880,
-          "height": 641,
-          "caption": "Illustration by H. R. Millar, 1902."
-        }
-      ]
-    },
-    {
-      "id": "no-wings",
-      "title": "No Wings",
-      "path": "chapters/05.md",
-      "illustrations": [
-        {
-          "id": "millar-tower",
-          "blockId": "sunset-on-the-tower",
-          "path": "illustrations/tower.webp",
-          "alt": "An original H. R. Millar illustration from Five Children and It.",
-          "placement": "full-width",
-          "width": 892,
-          "height": 773,
-          "caption": "Illustration by H. R. Millar, 1902."
-        }
-      ]
-    },
-    {
-      "id": "a-castle-and-no-dinner",
-      "title": "A Castle and No Dinner",
-      "path": "chapters/06.md"
-    },
-    {
-      "id": "a-siege-and-bed",
-      "title": "A Siege and Bed",
-      "path": "chapters/07.md"
-    },
-    {
-      "id": "bigger-than-the-bakers-boy",
-      "title": "Bigger Than the Baker's Boy",
-      "path": "chapters/08.md"
-    },
-    {
-      "id": "grown-up",
-      "title": "Grown Up",
-      "path": "chapters/09.md",
-      "illustrations": [
-        {
-          "id": "millar-grown-up",
-          "blockId": "the-lamb-grows-up",
-          "path": "illustrations/grown-up.webp",
-          "alt": "An original H. R. Millar illustration from Five Children and It.",
-          "placement": "full-width",
-          "width": 1000,
-          "height": 1020,
-          "caption": "Illustration by H. R. Millar, 1902."
-        }
-      ]
-    },
-    {
-      "id": "the-game-comes-to-life",
-      "title": "The Game Comes to Life",
-      "path": "chapters/10.md",
-      "illustrations": [
-        {
-          "id": "millar-game",
-          "blockId": "not-a-game-anymore",
-          "path": "illustrations/game-comes-to-life.webp",
-          "alt": "An original H. R. Millar illustration from Five Children and It.",
-          "placement": "full-width",
-          "width": 812,
-          "height": 1236,
-          "caption": "Illustration by H. R. Millar, 1902."
-        }
-      ]
-    },
-    {
-      "id": "the-last-wish",
-      "title": "The Last Wish",
-      "path": "chapters/11.md",
-      "illustrations": [
-        {
-          "id": "millar-last-wish",
-          "blockId": "one-last-favour",
-          "path": "illustrations/last-wish.webp",
-          "alt": "An original H. R. Millar illustration from Five Children and It.",
-          "placement": "full-width",
-          "width": 836,
-          "height": 1424,
-          "caption": "Illustration by H. R. Millar, 1902."
-        }
-      ]
-    }
-  ],
   "discovery": {
     "format": "Chapter Book",
     "genres": ["Fantasy", "Adventure", "Classics"],
     "audiences": ["Read Together", "Independent Reader"],
     "length": "Longer Read"
   },
-  "rights": {
-    "text": {
-      "status": "original",
-      "source": "Original Story House retelling based on E. Nesbit's public-domain 1902 novel",
-      "sourceUrl": "https://www.gutenberg.org/ebooks/17314",
-      "notes": "The underlying 1902 novel is public domain in the UK and United States. This wording is an original child-friendly Unicorn Valley retelling. Dated racial and imperial stereotypes in the original have been rewritten rather than reproduced."
+  "defaultEditionId": "story-house",
+  "editions": [
+    {
+      "id": "story-house",
+      "label": "Story House Edition",
+      "author": "E. Nesbit, retold by Quill",
+      "readingMode": "flowing",
+      "rights": {
+        "text": {
+          "status": "original",
+          "source": "Original Story House retelling based on E. Nesbit's public-domain 1902 novel",
+          "sourceUrl": "https://www.gutenberg.org/ebooks/17314",
+          "notes": "The underlying 1902 novel is public domain in the UK and United States. This wording is an original child-friendly Unicorn Valley retelling. Dated racial and imperial stereotypes in the original have been rewritten rather than reproduced."
+        },
+        "illustrations": {
+          "status": "public-domain",
+          "source": "Original 1902 illustrations by H. R. Millar",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/Category:Five_Children_and_It",
+          "notes": "The selected H. R. Millar source files are identified as public domain on Wikimedia Commons."
+        },
+        "edition": {
+          "status": "original",
+          "source": "Unicorn Valley Story House edition"
+        },
+        "originalPublicationYear": 1902,
+        "curatorNotes": "Eleven reader sections follow the original sequence of wishes. The chapter built around outdated racial stereotypes has been recast as a general adventure-game wish while preserving the careless-wish plot function."
+      },
+      "chapters": [
+        {
+          "id": "beautiful-as-the-day",
+          "title": "Beautiful as the Day",
+          "path": "chapters/01.md",
+          "illustrations": [
+            {
+              "id": "millar-psammead",
+              "blockId": "the-thing-in-the-sand",
+              "path": "illustrations/psammead.webp",
+              "alt": "H. R. Millar's original illustration of the Psammead.",
+              "placement": "full-width",
+              "width": 830,
+              "height": 968,
+              "caption": "Illustration by H. R. Millar, 1902."
+            }
+          ]
+        },
+        {
+          "id": "golden-guineas",
+          "title": "Golden Guineas",
+          "path": "chapters/02.md",
+          "illustrations": [
+            {
+              "id": "millar-guineas",
+              "blockId": "a-mountain-of-money",
+              "path": "illustrations/golden-guineas.webp",
+              "alt": "An original H. R. Millar illustration from Five Children and It.",
+              "placement": "full-width",
+              "width": 934,
+              "height": 804,
+              "caption": "Illustration by H. R. Millar, 1902."
+            }
+          ]
+        },
+        {
+          "id": "being-wanted",
+          "title": "Being Wanted",
+          "path": "chapters/03.md",
+          "illustrations": [
+            {
+              "id": "millar-being-wanted",
+              "blockId": "everybody-wants-the-lamb",
+              "path": "illustrations/being-wanted.webp",
+              "alt": "An original H. R. Millar illustration from Five Children and It.",
+              "placement": "full-width",
+              "width": 781,
+              "height": 858,
+              "caption": "Illustration by H. R. Millar, 1902."
+            }
+          ]
+        },
+        {
+          "id": "wings",
+          "title": "Wings",
+          "path": "chapters/04.md",
+          "illustrations": [
+            {
+              "id": "millar-wings",
+              "blockId": "into-the-sky",
+              "path": "illustrations/wings.webp",
+              "alt": "An original H. R. Millar illustration from Five Children and It.",
+              "placement": "full-width",
+              "width": 880,
+              "height": 641,
+              "caption": "Illustration by H. R. Millar, 1902."
+            }
+          ]
+        },
+        {
+          "id": "no-wings",
+          "title": "No Wings",
+          "path": "chapters/05.md",
+          "illustrations": [
+            {
+              "id": "millar-tower",
+              "blockId": "sunset-on-the-tower",
+              "path": "illustrations/tower.webp",
+              "alt": "An original H. R. Millar illustration from Five Children and It.",
+              "placement": "full-width",
+              "width": 892,
+              "height": 773,
+              "caption": "Illustration by H. R. Millar, 1902."
+            }
+          ]
+        },
+        {
+          "id": "a-castle-and-no-dinner",
+          "title": "A Castle and No Dinner",
+          "path": "chapters/06.md"
+        },
+        {
+          "id": "a-siege-and-bed",
+          "title": "A Siege and Bed",
+          "path": "chapters/07.md"
+        },
+        {
+          "id": "bigger-than-the-bakers-boy",
+          "title": "Bigger Than the Baker's Boy",
+          "path": "chapters/08.md"
+        },
+        {
+          "id": "grown-up",
+          "title": "Grown Up",
+          "path": "chapters/09.md",
+          "illustrations": [
+            {
+              "id": "millar-grown-up",
+              "blockId": "the-lamb-grows-up",
+              "path": "illustrations/grown-up.webp",
+              "alt": "An original H. R. Millar illustration from Five Children and It.",
+              "placement": "full-width",
+              "width": 1000,
+              "height": 1020,
+              "caption": "Illustration by H. R. Millar, 1902."
+            }
+          ]
+        },
+        {
+          "id": "the-game-comes-to-life",
+          "title": "The Game Comes to Life",
+          "path": "chapters/10.md",
+          "illustrations": [
+            {
+              "id": "millar-game",
+              "blockId": "not-a-game-anymore",
+              "path": "illustrations/game-comes-to-life.webp",
+              "alt": "An original H. R. Millar illustration from Five Children and It.",
+              "placement": "full-width",
+              "width": 812,
+              "height": 1236,
+              "caption": "Illustration by H. R. Millar, 1902."
+            }
+          ]
+        },
+        {
+          "id": "the-last-wish",
+          "title": "The Last Wish",
+          "path": "chapters/11.md",
+          "illustrations": [
+            {
+              "id": "millar-last-wish",
+              "blockId": "one-last-favour",
+              "path": "illustrations/last-wish.webp",
+              "alt": "An original H. R. Millar illustration from Five Children and It.",
+              "placement": "full-width",
+              "width": 836,
+              "height": 1424,
+              "caption": "Illustration by H. R. Millar, 1902."
+            }
+          ]
+        }
+      ]
     },
-    "illustrations": {
-      "status": "public-domain",
-      "source": "Original 1902 illustrations by H. R. Millar",
-      "sourceUrl": "https://commons.wikimedia.org/wiki/Category:Five_Children_and_It",
-      "notes": "The selected H. R. Millar source files are identified as public domain on Wikimedia Commons."
-    },
-    "edition": {
-      "status": "original",
-      "source": "Unicorn Valley Story House edition"
-    },
-    "originalPublicationYear": 1902,
-    "curatorNotes": "Eleven reader sections follow the original sequence of wishes. The chapter built around outdated racial stereotypes has been recast as a general adventure-game wish while preserving the careless-wish plot function."
-  }
+    {
+      "id": "full-classic",
+      "label": "Full Classic Text",
+      "author": "E. Nesbit",
+      "readingMode": "paged-prose",
+      "rights": {
+        "text": {
+          "status": "public-domain",
+          "source": "Five Children and It, Project Gutenberg eBook #17314",
+          "sourceUrl": "https://www.gutenberg.org/ebooks/17314",
+          "notes": "The complete public-domain novel text is retained without abridgement or modernisation. Project Gutenberg boilerplate, page markers, illustration captions and transcriber's notes are excluded. The historical text contains dated racial and imperial stereotypes that the Story House Edition deliberately rewrites."
+        },
+        "illustrations": {
+          "status": "public-domain",
+          "source": "Original 1902 illustrations by H. R. Millar",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/Category:Five_Children_and_It",
+          "notes": "Eight previously verified H. R. Millar illustrations are reused beside matching passages in the complete classic text."
+        },
+        "edition": {
+          "status": "public-domain",
+          "source": "Project Gutenberg eBook #17314",
+          "notes": "Story House pagination changes presentation only; all 11 chapters and the original wording remain complete."
+        },
+        "originalPublicationYear": 1902,
+        "curatorNotes": "All 11 chapters reflowed into 125 reader pages at paragraph boundaries, with eight historical H. R. Millar illustrations anchored to matching scenes."
+      },
+      "chapters": [
+        {
+          "id": "page-001",
+          "title": "Chapter I — Beautiful As The Day",
+          "path": "editions/full-classic/pages/page-001.md"
+        },
+        {
+          "id": "page-002",
+          "title": "Chapter I — Beautiful As The Day (continued)",
+          "path": "editions/full-classic/pages/page-002.md"
+        },
+        {
+          "id": "page-003",
+          "title": "Chapter I — Beautiful As The Day (continued)",
+          "path": "editions/full-classic/pages/page-003.md"
+        },
+        {
+          "id": "page-004",
+          "title": "Chapter I — Beautiful As The Day (continued)",
+          "path": "editions/full-classic/pages/page-004.md"
+        },
+        {
+          "id": "page-005",
+          "title": "Chapter I — Beautiful As The Day (continued)",
+          "path": "editions/full-classic/pages/page-005.md"
+        },
+        {
+          "id": "page-006",
+          "title": "Chapter I — Beautiful As The Day (continued)",
+          "path": "editions/full-classic/pages/page-006.md",
+          "illustrations": [
+            {
+              "id": "full-millar-psammead",
+              "path": "illustrations/psammead.webp",
+              "alt": "H. R. Millar's original illustration of the Psammead.",
+              "placement": "full-width",
+              "width": 830,
+              "height": 968,
+              "caption": "Illustration by H. R. Millar, 1902.",
+              "blockId": "oh-well-if-that-s-your-wish-the-113df7b"
+            }
+          ]
+        },
+        {
+          "id": "page-007",
+          "title": "Chapter I — Beautiful As The Day (continued)",
+          "path": "editions/full-classic/pages/page-007.md"
+        },
+        {
+          "id": "page-008",
+          "title": "Chapter I — Beautiful As The Day (continued)",
+          "path": "editions/full-classic/pages/page-008.md"
+        },
+        {
+          "id": "page-009",
+          "title": "Chapter I — Beautiful As The Day (continued)",
+          "path": "editions/full-classic/pages/page-009.md"
+        },
+        {
+          "id": "page-010",
+          "title": "Chapter I — Beautiful As The Day (continued)",
+          "path": "editions/full-classic/pages/page-010.md"
+        },
+        {
+          "id": "page-011",
+          "title": "Chapter I — Beautiful As The Day (continued)",
+          "path": "editions/full-classic/pages/page-011.md"
+        },
+        {
+          "id": "page-012",
+          "title": "Chapter I — Beautiful As The Day (continued)",
+          "path": "editions/full-classic/pages/page-012.md"
+        },
+        {
+          "id": "page-013",
+          "title": "Chapter I — Beautiful As The Day (continued)",
+          "path": "editions/full-classic/pages/page-013.md"
+        },
+        {
+          "id": "page-014",
+          "title": "Chapter I — Beautiful As The Day (continued)",
+          "path": "editions/full-classic/pages/page-014.md"
+        },
+        {
+          "id": "page-015",
+          "title": "Chapter II — Golden Guineas",
+          "path": "editions/full-classic/pages/page-015.md"
+        },
+        {
+          "id": "page-016",
+          "title": "Chapter II — Golden Guineas (continued)",
+          "path": "editions/full-classic/pages/page-016.md"
+        },
+        {
+          "id": "page-017",
+          "title": "Chapter II — Golden Guineas (continued)",
+          "path": "editions/full-classic/pages/page-017.md"
+        },
+        {
+          "id": "page-018",
+          "title": "Chapter II — Golden Guineas (continued)",
+          "path": "editions/full-classic/pages/page-018.md"
+        },
+        {
+          "id": "page-019",
+          "title": "Chapter II — Golden Guineas (continued)",
+          "path": "editions/full-classic/pages/page-019.md",
+          "illustrations": [
+            {
+              "id": "full-millar-guineas",
+              "path": "illustrations/golden-guineas.webp",
+              "alt": "An original H. R. Millar illustration from Five Children and It.",
+              "placement": "full-width",
+              "width": 934,
+              "height": 804,
+              "caption": "Illustration by H. R. Millar, 1902.",
+              "blockId": "on-the-road-they-turned-and-looked-back-f66a990"
+            }
+          ]
+        },
+        {
+          "id": "page-020",
+          "title": "Chapter II — Golden Guineas (continued)",
+          "path": "editions/full-classic/pages/page-020.md"
+        },
+        {
+          "id": "page-021",
+          "title": "Chapter II — Golden Guineas (continued)",
+          "path": "editions/full-classic/pages/page-021.md"
+        },
+        {
+          "id": "page-022",
+          "title": "Chapter II — Golden Guineas (continued)",
+          "path": "editions/full-classic/pages/page-022.md"
+        },
+        {
+          "id": "page-023",
+          "title": "Chapter II — Golden Guineas (continued)",
+          "path": "editions/full-classic/pages/page-023.md"
+        },
+        {
+          "id": "page-024",
+          "title": "Chapter II — Golden Guineas (continued)",
+          "path": "editions/full-classic/pages/page-024.md"
+        },
+        {
+          "id": "page-025",
+          "title": "Chapter II — Golden Guineas (continued)",
+          "path": "editions/full-classic/pages/page-025.md"
+        },
+        {
+          "id": "page-026",
+          "title": "Chapter II — Golden Guineas (continued)",
+          "path": "editions/full-classic/pages/page-026.md"
+        },
+        {
+          "id": "page-027",
+          "title": "Chapter II — Golden Guineas (continued)",
+          "path": "editions/full-classic/pages/page-027.md"
+        },
+        {
+          "id": "page-028",
+          "title": "Chapter II — Golden Guineas (continued)",
+          "path": "editions/full-classic/pages/page-028.md"
+        },
+        {
+          "id": "page-029",
+          "title": "Chapter III — Being Wanted",
+          "path": "editions/full-classic/pages/page-029.md"
+        },
+        {
+          "id": "page-030",
+          "title": "Chapter III — Being Wanted (continued)",
+          "path": "editions/full-classic/pages/page-030.md"
+        },
+        {
+          "id": "page-031",
+          "title": "Chapter III — Being Wanted (continued)",
+          "path": "editions/full-classic/pages/page-031.md"
+        },
+        {
+          "id": "page-032",
+          "title": "Chapter III — Being Wanted (continued)",
+          "path": "editions/full-classic/pages/page-032.md"
+        },
+        {
+          "id": "page-033",
+          "title": "Chapter III — Being Wanted (continued)",
+          "path": "editions/full-classic/pages/page-033.md"
+        },
+        {
+          "id": "page-034",
+          "title": "Chapter III — Being Wanted (continued)",
+          "path": "editions/full-classic/pages/page-034.md"
+        },
+        {
+          "id": "page-035",
+          "title": "Chapter III — Being Wanted (continued)",
+          "path": "editions/full-classic/pages/page-035.md"
+        },
+        {
+          "id": "page-036",
+          "title": "Chapter III — Being Wanted (continued)",
+          "path": "editions/full-classic/pages/page-036.md",
+          "illustrations": [
+            {
+              "id": "full-millar-being-wanted",
+              "path": "illustrations/being-wanted.webp",
+              "alt": "An original H. R. Millar illustration from Five Children and It.",
+              "placement": "full-width",
+              "width": 781,
+              "height": 858,
+              "caption": "Illustration by H. R. Millar, 1902.",
+              "blockId": "the-four-children-looked-at-each-other-and-9e96529"
+            }
+          ]
+        },
+        {
+          "id": "page-037",
+          "title": "Chapter III — Being Wanted (continued)",
+          "path": "editions/full-classic/pages/page-037.md"
+        },
+        {
+          "id": "page-038",
+          "title": "Chapter III — Being Wanted (continued)",
+          "path": "editions/full-classic/pages/page-038.md"
+        },
+        {
+          "id": "page-039",
+          "title": "Chapter III — Being Wanted (continued)",
+          "path": "editions/full-classic/pages/page-039.md"
+        },
+        {
+          "id": "page-040",
+          "title": "Chapter III — Being Wanted (continued)",
+          "path": "editions/full-classic/pages/page-040.md"
+        },
+        {
+          "id": "page-041",
+          "title": "Chapter III — Being Wanted (continued)",
+          "path": "editions/full-classic/pages/page-041.md"
+        },
+        {
+          "id": "page-042",
+          "title": "Chapter III — Being Wanted (continued)",
+          "path": "editions/full-classic/pages/page-042.md"
+        },
+        {
+          "id": "page-043",
+          "title": "Chapter III — Being Wanted (continued)",
+          "path": "editions/full-classic/pages/page-043.md"
+        },
+        {
+          "id": "page-044",
+          "title": "Chapter IV — Wings",
+          "path": "editions/full-classic/pages/page-044.md"
+        },
+        {
+          "id": "page-045",
+          "title": "Chapter IV — Wings (continued)",
+          "path": "editions/full-classic/pages/page-045.md"
+        },
+        {
+          "id": "page-046",
+          "title": "Chapter IV — Wings (continued)",
+          "path": "editions/full-classic/pages/page-046.md"
+        },
+        {
+          "id": "page-047",
+          "title": "Chapter IV — Wings (continued)",
+          "path": "editions/full-classic/pages/page-047.md"
+        },
+        {
+          "id": "page-048",
+          "title": "Chapter IV — Wings (continued)",
+          "path": "editions/full-classic/pages/page-048.md"
+        },
+        {
+          "id": "page-049",
+          "title": "Chapter IV — Wings (continued)",
+          "path": "editions/full-classic/pages/page-049.md"
+        },
+        {
+          "id": "page-050",
+          "title": "Chapter IV — Wings (continued)",
+          "path": "editions/full-classic/pages/page-050.md"
+        },
+        {
+          "id": "page-051",
+          "title": "Chapter IV — Wings (continued)",
+          "path": "editions/full-classic/pages/page-051.md",
+          "illustrations": [
+            {
+              "id": "full-millar-wings",
+              "path": "illustrations/wings.webp",
+              "alt": "An original H. R. Millar illustration from Five Children and It.",
+              "placement": "full-width",
+              "width": 880,
+              "height": 641,
+              "caption": "Illustration by H. R. Millar, 1902.",
+              "blockId": "all-the-words-in-the-english-dictionary-and-d20bb2d"
+            }
+          ]
+        },
+        {
+          "id": "page-052",
+          "title": "Chapter IV — Wings (continued)",
+          "path": "editions/full-classic/pages/page-052.md"
+        },
+        {
+          "id": "page-053",
+          "title": "Chapter IV — Wings (continued)",
+          "path": "editions/full-classic/pages/page-053.md"
+        },
+        {
+          "id": "page-054",
+          "title": "Chapter IV — Wings (continued)",
+          "path": "editions/full-classic/pages/page-054.md"
+        },
+        {
+          "id": "page-055",
+          "title": "Chapter IV — Wings (continued)",
+          "path": "editions/full-classic/pages/page-055.md"
+        },
+        {
+          "id": "page-056",
+          "title": "Chapter IV — Wings (continued)",
+          "path": "editions/full-classic/pages/page-056.md"
+        },
+        {
+          "id": "page-057",
+          "title": "Chapter IV — Wings (continued)",
+          "path": "editions/full-classic/pages/page-057.md",
+          "illustrations": [
+            {
+              "id": "full-millar-tower",
+              "path": "illustrations/tower.webp",
+              "alt": "An original H. R. Millar illustration from Five Children and It.",
+              "placement": "full-width",
+              "width": 892,
+              "height": 773,
+              "caption": "Illustration by H. R. Millar, 1902.",
+              "blockId": "one-by-one-they-left-off-talking-and-5a65e97"
+            }
+          ]
+        },
+        {
+          "id": "page-058",
+          "title": "Chapter V — No Wings",
+          "path": "editions/full-classic/pages/page-058.md"
+        },
+        {
+          "id": "page-059",
+          "title": "Chapter V — No Wings (continued)",
+          "path": "editions/full-classic/pages/page-059.md"
+        },
+        {
+          "id": "page-060",
+          "title": "Chapter V — No Wings (continued)",
+          "path": "editions/full-classic/pages/page-060.md"
+        },
+        {
+          "id": "page-061",
+          "title": "Chapter V — No Wings (continued)",
+          "path": "editions/full-classic/pages/page-061.md"
+        },
+        {
+          "id": "page-062",
+          "title": "Chapter V — No Wings (continued)",
+          "path": "editions/full-classic/pages/page-062.md"
+        },
+        {
+          "id": "page-063",
+          "title": "Chapter V — No Wings (continued)",
+          "path": "editions/full-classic/pages/page-063.md"
+        },
+        {
+          "id": "page-064",
+          "title": "Chapter V — No Wings (continued)",
+          "path": "editions/full-classic/pages/page-064.md"
+        },
+        {
+          "id": "page-065",
+          "title": "Chapter VI — A Castle And No Dinner",
+          "path": "editions/full-classic/pages/page-065.md"
+        },
+        {
+          "id": "page-066",
+          "title": "Chapter VI — A Castle And No Dinner (continued)",
+          "path": "editions/full-classic/pages/page-066.md"
+        },
+        {
+          "id": "page-067",
+          "title": "Chapter VI — A Castle And No Dinner (continued)",
+          "path": "editions/full-classic/pages/page-067.md"
+        },
+        {
+          "id": "page-068",
+          "title": "Chapter VI — A Castle And No Dinner (continued)",
+          "path": "editions/full-classic/pages/page-068.md"
+        },
+        {
+          "id": "page-069",
+          "title": "Chapter VI — A Castle And No Dinner (continued)",
+          "path": "editions/full-classic/pages/page-069.md"
+        },
+        {
+          "id": "page-070",
+          "title": "Chapter VI — A Castle And No Dinner (continued)",
+          "path": "editions/full-classic/pages/page-070.md"
+        },
+        {
+          "id": "page-071",
+          "title": "Chapter VI — A Castle And No Dinner (continued)",
+          "path": "editions/full-classic/pages/page-071.md"
+        },
+        {
+          "id": "page-072",
+          "title": "Chapter VI — A Castle And No Dinner (continued)",
+          "path": "editions/full-classic/pages/page-072.md"
+        },
+        {
+          "id": "page-073",
+          "title": "Chapter VI — A Castle And No Dinner (continued)",
+          "path": "editions/full-classic/pages/page-073.md"
+        },
+        {
+          "id": "page-074",
+          "title": "Chapter VI — A Castle And No Dinner (continued)",
+          "path": "editions/full-classic/pages/page-074.md"
+        },
+        {
+          "id": "page-075",
+          "title": "Chapter VII — A Siege And Bed",
+          "path": "editions/full-classic/pages/page-075.md"
+        },
+        {
+          "id": "page-076",
+          "title": "Chapter VII — A Siege And Bed (continued)",
+          "path": "editions/full-classic/pages/page-076.md"
+        },
+        {
+          "id": "page-077",
+          "title": "Chapter VII — A Siege And Bed (continued)",
+          "path": "editions/full-classic/pages/page-077.md"
+        },
+        {
+          "id": "page-078",
+          "title": "Chapter VII — A Siege And Bed (continued)",
+          "path": "editions/full-classic/pages/page-078.md"
+        },
+        {
+          "id": "page-079",
+          "title": "Chapter VII — A Siege And Bed (continued)",
+          "path": "editions/full-classic/pages/page-079.md"
+        },
+        {
+          "id": "page-080",
+          "title": "Chapter VII — A Siege And Bed (continued)",
+          "path": "editions/full-classic/pages/page-080.md"
+        },
+        {
+          "id": "page-081",
+          "title": "Chapter VII — A Siege And Bed (continued)",
+          "path": "editions/full-classic/pages/page-081.md"
+        },
+        {
+          "id": "page-082",
+          "title": "Chapter VII — A Siege And Bed (continued)",
+          "path": "editions/full-classic/pages/page-082.md"
+        },
+        {
+          "id": "page-083",
+          "title": "Chapter VIII — Bigger Than The Baker'S Boy",
+          "path": "editions/full-classic/pages/page-083.md"
+        },
+        {
+          "id": "page-084",
+          "title": "Chapter VIII — Bigger Than The Baker'S Boy (continued)",
+          "path": "editions/full-classic/pages/page-084.md"
+        },
+        {
+          "id": "page-085",
+          "title": "Chapter VIII — Bigger Than The Baker'S Boy (continued)",
+          "path": "editions/full-classic/pages/page-085.md"
+        },
+        {
+          "id": "page-086",
+          "title": "Chapter VIII — Bigger Than The Baker'S Boy (continued)",
+          "path": "editions/full-classic/pages/page-086.md"
+        },
+        {
+          "id": "page-087",
+          "title": "Chapter VIII — Bigger Than The Baker'S Boy (continued)",
+          "path": "editions/full-classic/pages/page-087.md"
+        },
+        {
+          "id": "page-088",
+          "title": "Chapter VIII — Bigger Than The Baker'S Boy (continued)",
+          "path": "editions/full-classic/pages/page-088.md"
+        },
+        {
+          "id": "page-089",
+          "title": "Chapter VIII — Bigger Than The Baker'S Boy (continued)",
+          "path": "editions/full-classic/pages/page-089.md"
+        },
+        {
+          "id": "page-090",
+          "title": "Chapter VIII — Bigger Than The Baker'S Boy (continued)",
+          "path": "editions/full-classic/pages/page-090.md"
+        },
+        {
+          "id": "page-091",
+          "title": "Chapter VIII — Bigger Than The Baker'S Boy (continued)",
+          "path": "editions/full-classic/pages/page-091.md"
+        },
+        {
+          "id": "page-092",
+          "title": "Chapter VIII — Bigger Than The Baker'S Boy (continued)",
+          "path": "editions/full-classic/pages/page-092.md"
+        },
+        {
+          "id": "page-093",
+          "title": "Chapter VIII — Bigger Than The Baker'S Boy (continued)",
+          "path": "editions/full-classic/pages/page-093.md"
+        },
+        {
+          "id": "page-094",
+          "title": "Chapter VIII — Bigger Than The Baker'S Boy (continued)",
+          "path": "editions/full-classic/pages/page-094.md"
+        },
+        {
+          "id": "page-095",
+          "title": "Chapter VIII — Bigger Than The Baker'S Boy (continued)",
+          "path": "editions/full-classic/pages/page-095.md"
+        },
+        {
+          "id": "page-096",
+          "title": "Chapter VIII — Bigger Than The Baker'S Boy (continued)",
+          "path": "editions/full-classic/pages/page-096.md"
+        },
+        {
+          "id": "page-097",
+          "title": "Chapter IX — Grown Up",
+          "path": "editions/full-classic/pages/page-097.md"
+        },
+        {
+          "id": "page-098",
+          "title": "Chapter IX — Grown Up (continued)",
+          "path": "editions/full-classic/pages/page-098.md"
+        },
+        {
+          "id": "page-099",
+          "title": "Chapter IX — Grown Up (continued)",
+          "path": "editions/full-classic/pages/page-099.md"
+        },
+        {
+          "id": "page-100",
+          "title": "Chapter IX — Grown Up (continued)",
+          "path": "editions/full-classic/pages/page-100.md"
+        },
+        {
+          "id": "page-101",
+          "title": "Chapter IX — Grown Up (continued)",
+          "path": "editions/full-classic/pages/page-101.md"
+        },
+        {
+          "id": "page-102",
+          "title": "Chapter IX — Grown Up (continued)",
+          "path": "editions/full-classic/pages/page-102.md"
+        },
+        {
+          "id": "page-103",
+          "title": "Chapter IX — Grown Up (continued)",
+          "path": "editions/full-classic/pages/page-103.md"
+        },
+        {
+          "id": "page-104",
+          "title": "Chapter IX — Grown Up (continued)",
+          "path": "editions/full-classic/pages/page-104.md"
+        },
+        {
+          "id": "page-105",
+          "title": "Chapter IX — Grown Up (continued)",
+          "path": "editions/full-classic/pages/page-105.md"
+        },
+        {
+          "id": "page-106",
+          "title": "Chapter IX — Grown Up (continued)",
+          "path": "editions/full-classic/pages/page-106.md",
+          "illustrations": [
+            {
+              "id": "full-millar-grown-up",
+              "path": "illustrations/grown-up.webp",
+              "alt": "An original H. R. Millar illustration from Five Children and It.",
+              "placement": "full-width",
+              "width": 1000,
+              "height": 1020,
+              "caption": "Illustration by H. R. Millar, 1902.",
+              "blockId": "the-grown-up-lamb-whose-names-shall-now-bd8c130"
+            }
+          ]
+        },
+        {
+          "id": "page-107",
+          "title": "Chapter X — Scalps",
+          "path": "editions/full-classic/pages/page-107.md"
+        },
+        {
+          "id": "page-108",
+          "title": "Chapter X — Scalps (continued)",
+          "path": "editions/full-classic/pages/page-108.md"
+        },
+        {
+          "id": "page-109",
+          "title": "Chapter X — Scalps (continued)",
+          "path": "editions/full-classic/pages/page-109.md"
+        },
+        {
+          "id": "page-110",
+          "title": "Chapter X — Scalps (continued)",
+          "path": "editions/full-classic/pages/page-110.md"
+        },
+        {
+          "id": "page-111",
+          "title": "Chapter X — Scalps (continued)",
+          "path": "editions/full-classic/pages/page-111.md"
+        },
+        {
+          "id": "page-112",
+          "title": "Chapter X — Scalps (continued)",
+          "path": "editions/full-classic/pages/page-112.md"
+        },
+        {
+          "id": "page-113",
+          "title": "Chapter X — Scalps (continued)",
+          "path": "editions/full-classic/pages/page-113.md"
+        },
+        {
+          "id": "page-114",
+          "title": "Chapter X — Scalps (continued)",
+          "path": "editions/full-classic/pages/page-114.md"
+        },
+        {
+          "id": "page-115",
+          "title": "Chapter X — Scalps (continued)",
+          "path": "editions/full-classic/pages/page-115.md",
+          "illustrations": [
+            {
+              "id": "full-millar-game",
+              "path": "illustrations/game-comes-to-life.webp",
+              "alt": "An original H. R. Millar illustration from Five Children and It.",
+              "placement": "full-width",
+              "width": 812,
+              "height": 1236,
+              "caption": "Illustration by H. R. Millar, 1902.",
+              "blockId": "the-children-drew-a-deep-breath-of-relief-0b78048"
+            }
+          ]
+        },
+        {
+          "id": "page-116",
+          "title": "Chapter X — Scalps (continued)",
+          "path": "editions/full-classic/pages/page-116.md"
+        },
+        {
+          "id": "page-117",
+          "title": "Chapter XI — The Last Wish",
+          "path": "editions/full-classic/pages/page-117.md"
+        },
+        {
+          "id": "page-118",
+          "title": "Chapter XI — The Last Wish (continued)",
+          "path": "editions/full-classic/pages/page-118.md"
+        },
+        {
+          "id": "page-119",
+          "title": "Chapter XI — The Last Wish (continued)",
+          "path": "editions/full-classic/pages/page-119.md"
+        },
+        {
+          "id": "page-120",
+          "title": "Chapter XI — The Last Wish (continued)",
+          "path": "editions/full-classic/pages/page-120.md"
+        },
+        {
+          "id": "page-121",
+          "title": "Chapter XI — The Last Wish (continued)",
+          "path": "editions/full-classic/pages/page-121.md"
+        },
+        {
+          "id": "page-122",
+          "title": "Chapter XI — The Last Wish (continued)",
+          "path": "editions/full-classic/pages/page-122.md"
+        },
+        {
+          "id": "page-123",
+          "title": "Chapter XI — The Last Wish (continued)",
+          "path": "editions/full-classic/pages/page-123.md"
+        },
+        {
+          "id": "page-124",
+          "title": "Chapter XI — The Last Wish (continued)",
+          "path": "editions/full-classic/pages/page-124.md"
+        },
+        {
+          "id": "page-125",
+          "title": "Chapter XI — The Last Wish (continued)",
+          "path": "editions/full-classic/pages/page-125.md",
+          "illustrations": [
+            {
+              "id": "full-millar-last-wish",
+              "path": "illustrations/last-wish.webp",
+              "alt": "An original H. R. Millar illustration from Five Children and It.",
+              "placement": "full-width",
+              "width": 836,
+              "height": 1424,
+              "caption": "Illustration by H. R. Millar, 1902.",
+              "blockId": "then-for-the-last-time-in-this-story-2b0ed35"
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

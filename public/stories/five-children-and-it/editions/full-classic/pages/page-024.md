@@ -1,0 +1,56 @@
+<!-- block:off-you-go-he-said-brief-and-stern-12df2ae -->
+"Off you go," he said, brief and stern like the man in the song.
+
+<!-- block:but-the-change-said-anthea-who-had-a-51abc22 -->
+"But the change?" said Anthea, who had a saving mind.
+
+<!-- block:change-said-the-man-i-ll-change-you-04d7609 -->
+"Change!" said the man, "I'll change you! Hout you goes; and you may think yourselves lucky I don't send for the police to find out where you got it!"
+
+<!-- block:in-the-gardens-of-the-castle-the-millionaires-0fb0c3e -->
+In the Gardens of the Castle the millionaires finished the buns, and though the curranty softness of these were delicious, and acted like a charm in raising the spirits of the party, yet even the stoutest heart quailed at the thought of venturing to sound Mr. Billy Peasemarsh at the Saracen's Head on the subject of a horse and carriage. The boys would have given up the idea, but Jane was always a hopeful child, and Anthea generally an obstinate one, and their earnestness prevailed.
+
+<!-- block:the-whole-party-by-this-time-indescribably-dirty-af82f62 -->
+The whole party, by this time indescribably dirty, therefore betook itself to the Saracen's Head. The yard-method of attack having been successful at The Chequers, was tried again here. Mr. Peasemarsh was in the yard, and Robert opened the business in these terms--
+
+<!-- block:they-tell-me-you-have-a-lot-of-dadec8b -->
+"They tell me you have a lot of horses and carriages to sell." It had been agreed that Robert should be spokesman, because in books it is always gentlemen who buy horses, and not ladies, and Cyril had had his go at the Blue Boar.
+
+<!-- block:they-tell-you-true-young-man-said-mr-09dbf15 -->
+"They tell you true, young man," said Mr. Peasemarsh. He was a long lean man, with very blue eyes and a tight mouth and narrow lips.
+
+<!-- block:we-should-like-to-buy-some-please-said-ea6ea9a -->
+"We should like to buy some, please," said Robert politely.
+
+<!-- block:i-daresay-you-would-be39ed4 -->
+"I daresay you would."
+
+<!-- block:will-you-show-us-a-few-please-to-379150e -->
+"Will you show us a few, please? To choose from."
+
+<!-- block:who-are-you-a-kiddin-of-inquired-mr-39d0ff8 -->
+"Who are you a-kiddin of?" inquired Mr. Billy Peasemarsh. "Was you sent here of a message?"
+
+<!-- block:i-tell-you-said-robert-we-want-to-ec30872 -->
+"I tell you," said Robert, "we want to buy some horses and carriages, and a man told us you were straight and civil spoken, but I shouldn't wonder if he was mistaken"--
+
+<!-- block:upon-my-sacred-said-mr-peasemarsh-shall-i-078cf74 -->
+"Upon my sacred!" said Mr. Peasemarsh. "Shall I trot the whole stable out for your Honor's worship to see? Or shall I send round to the Bishop's to see if he's a nag or two to dispose of?"
+
+<!-- block:please-do-said-robert-if-it-s-not-1e90df8 -->
+"Please do," said Robert, "if it's not too much trouble. It would be very kind of you."
+
+<!-- block:mr-peasemarsh-put-his-hands-in-his-pockets-be47f15 -->
+Mr. Peasemarsh put his hands in his pockets and laughed, and they did not like the way he did it. Then he shouted "Willum!"
+
+<!-- block:a-stooping-ostler-appeared-in-a-stable-door-113806d -->
+A stooping ostler appeared in a stable door.
+
+<!-- block:here-willum-come-and-look-at-this-ere-d18ce04 -->
+"Here, Willum, come and look at this 'ere young dook! Wants to buy the whole stud, lock, stock, and bar'l. And ain't got tuppence in his pocket to bless hisself with, I'll go bail!"
+
+<!-- block:willum-s-eyes-followed-his-master-s-pointing-825a291 -->
+Willum's eyes followed his master's pointing thumb with contemptuous interest.
+
+<!-- block:do-e-for-sure-he-said-78b9d91 -->
+"Do 'e, for sure?" he said.

@@ -96,7 +96,7 @@ describe('R6.5 H3.10 playground life', () => {
     ]);
   });
 
-  it('adds collision only to the three solid playground equipment pieces', () => {
+  it('keeps playground equipment and the five finishing shrubs collidable', () => {
     const playgroundColliders = SUNBEAM_VILLAGE_MAP.colliders.filter((collider) =>
       collider.id.startsWith('collision:playground:'),
     );
@@ -104,6 +104,11 @@ describe('R6.5 H3.10 playground life', () => {
     expect(playgroundColliders.map(({ id }) => id).sort()).toEqual([
       'collision:playground:climbingFrame',
       'collision:playground:seesaw',
+      'collision:playground:shrub:north-centre',
+      'collision:playground:shrub:north-east',
+      'collision:playground:shrub:north-east-centre',
+      'collision:playground:shrub:north-west',
+      'collision:playground:shrub:north-west-centre',
       'collision:playground:slide',
     ]);
   });
