@@ -46,6 +46,7 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
   pathNetwork: {
     mainApproaches: [
       [
+        { x: -140, y: 950 },
         { x: 120, y: 950 },
         { x: 420, y: 950 },
         { x: 760, y: 970 },
@@ -60,6 +61,7 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
         { x: 2260, y: 970 },
         { x: 2640, y: 950 },
         { x: 2880, y: 950 },
+        { x: 3140, y: 950 },
       ],
     ],
     shopBranches: [
@@ -118,6 +120,23 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
         { x: 2315, y: 1400 },
         { x: 2440, y: 1400 },
         { x: 2580, y: 1400 },
+      ],
+    ],
+    residentialBranches: [
+      [
+        { x: 1630, y: 1630 },
+        { x: 1610, y: 1605 },
+        { x: 1594, y: 1585 },
+      ],
+      [
+        { x: 2045, y: 1680 },
+        { x: 2070, y: 1645 },
+        { x: 2093, y: 1610 },
+      ],
+      [
+        { x: 2580, y: 1400 },
+        { x: 2548, y: 1378 },
+        { x: 2508, y: 1350 },
       ],
     ],
   },
@@ -217,6 +236,7 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
       width: 330,
       height: 230,
       approach: { x: 1630, y: 1630 },
+      doorstep: { x: 1594, y: 1585 },
       facing: 'south',
     },
     {
@@ -226,6 +246,7 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
       width: 280,
       height: 240,
       approach: { x: 2045, y: 1680 },
+      doorstep: { x: 2093, y: 1610 },
       facing: 'south',
     },
     {
@@ -235,6 +256,7 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
       width: 350,
       height: 220,
       approach: { x: 2580, y: 1400 },
+      doorstep: { x: 2508, y: 1350 },
       facing: 'south',
     },
   ],
@@ -248,6 +270,13 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
       { id: 'milo', x: 2635, y: 1770, facing: 'left', roamX: -46, roamY: -32 },
       { id: 'lulu', x: 2765, y: 1605, facing: 'left', roamX: -56, roamY: 34 },
       { id: 'bean', x: 2800, y: 1775, facing: 'left', roamX: -38, roamY: -48 },
+    ],
+    shrubs: [
+      { id: 'north-west', x: -150, y: -190, width: 88, height: 46, leafA: 0x6fa66f, leafB: 0x8cc27b },
+      { id: 'north-west-centre', x: -70, y: -202, width: 96, height: 50, leafA: 0x5f9a68, leafB: 0x86bc76 },
+      { id: 'north-centre', x: 20, y: -195, width: 90, height: 48, leafA: 0x72aa70, leafB: 0x98ca81 },
+      { id: 'north-east-centre', x: 106, y: -202, width: 98, height: 52, leafA: 0x639c67, leafB: 0x88bd74 },
+      { id: 'north-east', x: 174, y: -184, width: 76, height: 42, leafA: 0x79ad73, leafB: 0x9aca82 },
     ],
     equipment: {
       seesaw: {
@@ -292,7 +321,14 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
     ],
     fenceSegments: [
       { id: 'west', x: -270, y: 0, width: 18, height: 300 },
-      { id: 'south', x: 0, y: 151, width: 540, height: 18 },
+      {
+        id: 'south',
+        x: 0,
+        y: 151,
+        width: 540,
+        height: 18,
+        collision: { x: 0, y: 151, width: 540, height: 66 },
+      },
       { id: 'east-lower', x: 270, y: 78, width: 18, height: 150 },
       {
         id: 'north-left',
@@ -376,7 +412,11 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
     // H3.8 keeps interactive village-life detail in authored pockets around the circulation ring.
     noticeBoard: { x: 1110, y: 1200 },
     sundial: { x: 1830, y: 1320 },
-    bench: { x: 1180, y: 1560 },
+    bench: {
+      x: 1180,
+      y: 1560,
+      collision: { x: 1180, y: 1568, width: 174, height: 70 },
+    },
     threadWindow: { x: 1345, y: 700 },
     fountainSplash: { x: 1660, y: 1120 },
   },
