@@ -136,6 +136,12 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
         { x: 2508, y: 1285 },
       ],
     ],
+    chessPlazaBranch: [
+      { x: 1280, y: 1210 },
+      { x: 1250, y: 1305 },
+      { x: 1210, y: 1370 },
+      { x: 1180, y: 1410 },
+    ],
   },
   districts: [
     {
@@ -442,6 +448,46 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
       },
     ],
   },
+  chessPlaza: {
+    centre: { x: 1180, y: 1535 },
+    width: 460,
+    height: 280,
+    table: {
+      x: 1180,
+      y: 1535,
+      width: 118,
+      height: 86,
+      collision: { x: 1180, y: 1548, width: 136, height: 102 },
+      interaction: { x: 1180, y: 1630 },
+      interactionRadius: 142,
+    },
+    benches: [
+      {
+        id: 'west',
+        x: 1008,
+        y: 1545,
+        width: 150,
+        height: 70,
+        collision: { x: 1008, y: 1554, width: 174, height: 74 },
+      },
+      {
+        id: 'east',
+        x: 1352,
+        y: 1545,
+        width: 150,
+        height: 70,
+        collision: { x: 1352, y: 1554, width: 174, height: 74 },
+      },
+      {
+        id: 'south',
+        x: 1180,
+        y: 1655,
+        width: 150,
+        height: 70,
+        collision: { x: 1180, y: 1664, width: 174, height: 74 },
+      },
+    ],
+  },
   fountain: {
     x: 1500,
     y: 1060,
@@ -560,9 +606,9 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
       collision: { x: 1890, y: 1294, width: 136, height: 92 },
     },
     bench: {
-      x: 1180,
-      y: 1560,
-      collision: { x: 1180, y: 1568, width: 174, height: 70 },
+      x: 1008,
+      y: 1545,
+      collision: { x: 1008, y: 1554, width: 174, height: 74 },
     },
     threadWindow: { x: 1345, y: 700 },
     fountainSplash: { x: 1660, y: 1120 },
