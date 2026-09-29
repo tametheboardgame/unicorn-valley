@@ -95,7 +95,8 @@ jobs:
               current = []
               current_words = 0
               for paragraph in paragraphs:
-                  count = word_count(paragraph)
+                  value = paragraph["text"] if isinstance(paragraph, dict) else paragraph
+                  count = word_count(value)
                   if current and current_words >= 290 and current_words + count > 470:
                       pages.append(current)
                       current = []
@@ -107,8 +108,12 @@ jobs:
                   pages.append(current)
 
               if len(pages) > 1:
-                  last_words = sum(word_count(p) for p in pages[-1])
-                  previous_words = sum(word_count(p) for p in pages[-2])
+                  last_words = sum(
+                      word_count(p["text"] if isinstance(p, dict) else p) for p in pages[-1]
+                  )
+                  previous_words = sum(
+                      word_count(p["text"] if isinstance(p, dict) else p) for p in pages[-2]
+                  )
                   if last_words < 160 and previous_words + last_words <= 540:
                       pages[-2].extend(pages[-1])
                       pages.pop()
