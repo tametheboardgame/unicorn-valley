@@ -523,9 +523,9 @@ describe('Sunbeam Village map', () => {
     });
   });
 
-  it('keeps the chess table interaction reachable below its collider', () => {
+  it('keeps the chess table interaction reachable from the path-facing side', () => {
     const { table } = SUNBEAM_VILLAGE_LAYOUT.chessPlaza;
-    expect(table.interaction.y).toBeGreaterThan(table.collision.y + table.collision.height / 2);
+    expect(table.interaction.y).toBeLessThan(table.collision.y - table.collision.height / 2);
     expect(
       isPointBlocked(table.interaction, SUNBEAM_VILLAGE_MAP.colliders, PLAYER_CLEARANCE),
     ).toBe(false);
