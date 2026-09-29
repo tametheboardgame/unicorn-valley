@@ -52,7 +52,9 @@ test('H3.11.6 Bluebell Cottage is a distinct walkable sky-and-chime home', async
     });
   });
 
-  await expect.poll(async () => (await snapshot(page)).activeScenes).toEqual(['VillageInteriorScene']);
+  await expect
+    .poll(async () => (await snapshot(page)).activeScenes)
+    .toEqual(['VillageInteriorScene']);
 
   const interior = (await snapshot(page)).scenes.find(({ key }) => key === 'VillageInteriorScene');
   if (!interior) throw new Error('Missing VillageInteriorScene');
@@ -109,5 +111,7 @@ test('H3.11.6 Bluebell Cottage is a distinct walkable sky-and-chime home', async
     );
   });
   await page.keyboard.press('Enter');
-  await expect.poll(async () => (await snapshot(page)).activeScenes).toEqual(['SunbeamVillageScene']);
+  await expect
+    .poll(async () => (await snapshot(page)).activeScenes)
+    .toEqual(['SunbeamVillageScene']);
 });
