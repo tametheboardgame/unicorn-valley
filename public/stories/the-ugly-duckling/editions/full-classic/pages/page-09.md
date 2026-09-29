@@ -1,0 +1,14 @@
+<!-- block:p09-b01 -->
+One evening, just as the sun was setting with unusual brilliancy, a flock of large beautiful birds rose from out of the brushwood; the duckling had never seen anything so beautiful before; their plumage was of a dazzling white, and they had long, slender necks. They were swans; they uttered a singular cry, spread out their long, splendid wings, and flew away from these cold regions to warmer countries, across the open sea. They flew so high, so very high! and the little ugly duckling’s feelings were so strange; he turned round and round in the water like a mill-wheel, strained his neck to look after them, and sent forth such a loud and strange cry, that it almost frightened himself.--Ah! he could not forget them, those noble
+
+<!-- block:p09-b02 -->
+[Illustration: AND THE CAT SAID, ‘CAN YOU PURR?’]
+
+<!-- block:p09-b03 -->
+birds! those happy birds! When he could see them no longer, he plunged to the bottom of the water, and when he rose again was almost beside himself. The duckling knew not what the birds were called, knew not whither they were flying, yet he loved them as he had never before loved anything; he envied them not, it would never have occurred to him to wish such beauty for himself; he would have been quite contented if the duck in the duck-yard had but endured his company--the poor ugly animal!
+
+<!-- block:p09-b04 -->
+And the winter was so cold, so cold! The duckling was obliged to swim round and round in the water, to keep it from freezing; but every night the opening in which he swam became smaller and smaller; it froze so that the crust of ice crackled; the duckling was obliged to make good use of his legs to prevent the water from freezing entirely; at last, wearied out, he lay stiff and cold in the ice.
+
+<!-- block:p09-b05 -->
+Early in the morning there passed by a peasant, who saw him, broke the ice in pieces with his wooden shoe, and brought him home to his wife.
