@@ -103,6 +103,14 @@ const PRESENTATION: Readonly<Record<VillageInteriorId, InteriorPresentationDefin
     floorColour: 0xaabfd0,
     accentColour: 0x6f87aa,
   },
+  'sunpetal-cottage': {
+    title: 'Sunpetal Cottage',
+    subtitle: 'A sunny little home of seed packets, herb pots and muddy garden boots.',
+    icon: '🌻',
+    wallColour: 0xfff1c9,
+    floorColour: 0xd9b56f,
+    accentColour: 0xd58f4d,
+  },
   library: {
     title: 'Story House',
     subtitle: 'Maps, clue cards and little stories from places you have really found.',
@@ -248,6 +256,8 @@ export class VillageInteriorScene extends Phaser.Scene {
       this.createRosehipCottageSet();
     } else if (this.interiorId === 'bluebell-cottage') {
       this.createBluebellCottageSet();
+    } else if (this.interiorId === 'sunpetal-cottage') {
+      this.createSunpetalCottageSet();
     } else {
       this.createThreadSet();
     }
@@ -532,6 +542,147 @@ export class VillageInteriorScene extends Phaser.Scene {
     this.add
       .text(760, 345, 'BLUEBELL COTTAGE', {
         color: '#536b86',
+        fontFamily: UI_FONT,
+        fontSize: '18px',
+        fontStyle: 'bold',
+        letterSpacing: 2,
+      })
+      .setOrigin(0.5)
+      .setDepth(6);
+  }
+
+
+  private createSunpetalCottageSet(): void {
+    // Sunpetal's home is a warm, practical little sunroom built around growing things.
+    // The furniture hugs alternating corners and leaves a broad central sun rug, keeping the
+    // composition distinct from Rosehip's cosy bedroom and Bluebell's ordered worktable spine.
+    const sunRug = this.add.graphics().setName('village-interior:sunpetal-cottage:sun-rug');
+    sunRug.fillStyle(0xf2c75f, 0.48);
+    sunRug.fillCircle(790, 755, 185);
+    sunRug.lineStyle(6, 0xffe8a3, 0.78);
+    sunRug.strokeCircle(790, 755, 185);
+    sunRug.lineStyle(3, 0xd99349, 0.5);
+    for (let angle = 0; angle < Math.PI * 2; angle += Math.PI / 8) {
+      sunRug.lineBetween(
+        790 + Math.cos(angle) * 72,
+        755 + Math.sin(angle) * 72,
+        790 + Math.cos(angle) * 158,
+        755 + Math.sin(angle) * 158,
+      );
+    }
+    sunRug.setDepth(3.25);
+
+    const seedShelf = this.add
+      .graphics()
+      .setName('village-interior:sunpetal-cottage:seed-shelf');
+    seedShelf.fillStyle(0x9a6b45, 1);
+    seedShelf.fillRoundedRect(1040, 410, 250, 150, 16);
+    seedShelf.fillStyle(0xffefc8, 1);
+    seedShelf.fillRoundedRect(1058, 428, 214, 108, 10);
+    seedShelf.lineStyle(4, 0xbf8752, 0.8);
+    seedShelf.lineBetween(1128, 432, 1128, 532);
+    seedShelf.lineBetween(1200, 432, 1200, 532);
+    for (const [x, colour] of [
+      [1092, 0xe4a45d],
+      [1164, 0xeacb68],
+      [1236, 0x8fb36f],
+    ] as const) {
+      seedShelf.fillStyle(colour, 1);
+      seedShelf.fillRoundedRect(x - 19, 463, 38, 50, 6);
+      seedShelf.lineStyle(2, 0x8b674b, 0.62);
+      seedShelf.lineBetween(x - 12, 478, x + 12, 478);
+    }
+    seedShelf.setDepth(worldDepthForY(560, 0.16));
+
+    const sunTable = this.add.graphics().setName('village-interior:sunpetal-cottage:sun-table');
+    sunTable.fillStyle(0xb8794f, 1);
+    sunTable.fillEllipse(620, 560, 250, 150);
+    sunTable.fillStyle(0xffe9af, 1);
+    sunTable.fillEllipse(620, 548, 220, 122);
+    sunTable.lineStyle(4, 0xd3914c, 0.72);
+    sunTable.strokeEllipse(620, 548, 220, 122);
+    sunTable.fillStyle(0x8eb875, 1);
+    sunTable.fillCircle(575, 535, 17);
+    sunTable.fillCircle(598, 520, 15);
+    sunTable.fillStyle(0xf4b85d, 1);
+    sunTable.fillCircle(655, 538, 11);
+    sunTable.fillCircle(680, 555, 9);
+    sunTable.setDepth(worldDepthForY(635, 0.18));
+
+    const pottingBench = this.add
+      .graphics()
+      .setName('village-interior:sunpetal-cottage:potting-bench');
+    pottingBench.fillStyle(0x966843, 1);
+    pottingBench.fillRoundedRect(1030, 640, 270, 120, 14);
+    pottingBench.fillStyle(0xc58b55, 1);
+    pottingBench.fillRoundedRect(1048, 655, 234, 82, 10);
+    for (const [x, colour] of [
+      [1085, 0x95b96e],
+      [1150, 0xe3a053],
+      [1218, 0x79a165],
+    ] as const) {
+      pottingBench.fillStyle(0x8d5d3d, 1);
+      pottingBench.fillRoundedRect(x - 18, 690, 36, 30, 8);
+      pottingBench.fillStyle(colour, 1);
+      pottingBench.fillCircle(x - 8, 680, 13);
+      pottingBench.fillCircle(x + 7, 676, 14);
+    }
+    pottingBench.fillStyle(0xd9bb79, 1);
+    pottingBench.fillRoundedRect(1248, 668, 18, 58, 7);
+    pottingBench.setDepth(worldDepthForY(760, 0.2));
+
+    const breakfastNook = this.add
+      .graphics()
+      .setName('village-interior:sunpetal-cottage:breakfast-nook');
+    breakfastNook.fillStyle(0x9b6d49, 1);
+    breakfastNook.fillRoundedRect(170, 690, 250, 160, 26);
+    breakfastNook.fillStyle(0xf2cf7f, 1);
+    breakfastNook.fillRoundedRect(188, 706, 214, 56, 20);
+    breakfastNook.fillStyle(0xfff3cf, 1);
+    breakfastNook.fillEllipse(294, 796, 128, 78);
+    breakfastNook.lineStyle(3, 0xc8874d, 0.76);
+    breakfastNook.strokeEllipse(294, 796, 128, 78);
+    breakfastNook.fillStyle(0xd66f4d, 1);
+    breakfastNook.fillCircle(270, 786, 11);
+    breakfastNook.fillStyle(0xf2c86a, 1);
+    breakfastNook.fillRoundedRect(305, 777, 44, 25, 8);
+    breakfastNook.setDepth(worldDepthForY(850, 0.22));
+
+    const bootBench = this.add.graphics().setName('village-interior:sunpetal-cottage:boot-bench');
+    bootBench.fillStyle(0x8f6446, 1);
+    bootBench.fillRoundedRect(1110, 805, 220, 100, 18);
+    bootBench.fillStyle(0xe5b66c, 1);
+    bootBench.fillRoundedRect(1126, 818, 188, 34, 13);
+    bootBench.fillStyle(0x7e543b, 1);
+    bootBench.fillRoundedRect(1152, 860, 42, 37, 12);
+    bootBench.fillRoundedRect(1210, 860, 42, 37, 12);
+    bootBench.fillStyle(0xd8b65d, 1);
+    bootBench.fillRoundedRect(1274, 850, 18, 44, 7);
+    bootBench.setDepth(worldDepthForY(905, 0.28));
+
+    const foregroundHerbs = this.add
+      .graphics()
+      .setName('village-interior:sunpetal-cottage:foreground-herbs');
+    foregroundHerbs.lineStyle(8, 0x8b6548, 1);
+    foregroundHerbs.lineBetween(220, 845, 220, 965);
+    foregroundHerbs.lineBetween(150, 870, 290, 870);
+    for (const [x, colour] of [
+      [172, 0x7ba465],
+      [205, 0x9aaf63],
+      [238, 0x70985f],
+      [271, 0xa6b96d],
+    ] as const) {
+      foregroundHerbs.lineStyle(3, 0x8c684b, 0.82);
+      foregroundHerbs.lineBetween(x, 872, x, 910);
+      foregroundHerbs.fillStyle(colour, 1);
+      foregroundHerbs.fillEllipse(x - 8, 914, 16, 30);
+      foregroundHerbs.fillEllipse(x + 8, 918, 16, 30);
+    }
+    foregroundHerbs.setDepth(worldDepthForY(975, 0.55));
+
+    this.add
+      .text(760, 345, 'SUNPETAL COTTAGE', {
+        color: '#8a5d3f',
         fontFamily: UI_FONT,
         fontSize: '18px',
         fontStyle: 'bold',
@@ -1536,6 +1687,8 @@ export class VillageInteriorScene extends Phaser.Scene {
       targets.push(...this.createRosehipCottageInteractions());
     } else if (this.interiorId === 'bluebell-cottage') {
       targets.push(...this.createBluebellCottageInteractions());
+    } else if (this.interiorId === 'sunpetal-cottage') {
+      targets.push(...this.createSunpetalCottageInteractions());
     } else {
       targets.push(...this.createThreadInteractions());
     }
@@ -1803,6 +1956,66 @@ export class VillageInteriorScene extends Phaser.Scene {
             this.showFeedback(
               'A half-finished wind chime waits beside ribbon, beads and a folded note: “Gone to find the right breeze. Back soon.”',
               chimeTable.approach,
+            ),
+        },
+      },
+    ];
+  }
+
+
+  private createSunpetalCottageInteractions(): InteractionTarget[] {
+    const seedShelf = getVillageInteriorAnchor('sunpetal-cottage', 'counter');
+    const pottingBench = getVillageInteriorAnchor('sunpetal-cottage', 'primary-feature');
+    const breakfastNook = getVillageInteriorAnchor('sunpetal-cottage', 'npc-work');
+    return [
+      {
+        id: 'interaction:village-interior:sunpetal-cottage:seed-shelf',
+        label: 'Seed shelf',
+        actionLabel: 'Inspect',
+        actionKind: 'inspect',
+        position: seedShelf.approach,
+        interactionRadius: 145,
+        priority: 23,
+        result: {
+          type: 'callback',
+          activate: () =>
+            this.showFeedback(
+              'Every packet is sorted by colour and sunshine. One little bundle is labelled “for the playground edge” with a smiling flower drawn underneath.',
+              seedShelf.approach,
+            ),
+        },
+      },
+      {
+        id: 'interaction:village-interior:sunpetal-cottage:potting-bench',
+        label: 'Potting bench',
+        actionLabel: 'Inspect',
+        actionKind: 'inspect',
+        position: pottingBench.approach,
+        interactionRadius: 150,
+        priority: 24,
+        result: {
+          type: 'callback',
+          activate: () =>
+            this.showFeedback(
+              'Fresh soil, three tiny seedlings and an empty hook where the watering can belongs. A note says: “Watering the village beds. Back before tea.”',
+              pottingBench.approach,
+            ),
+        },
+      },
+      {
+        id: 'interaction:village-interior:sunpetal-cottage:breakfast-nook',
+        label: 'Breakfast nook',
+        actionLabel: 'Inspect',
+        actionKind: 'inspect',
+        position: breakfastNook.approach,
+        interactionRadius: 145,
+        priority: 20,
+        result: {
+          type: 'callback',
+          activate: () =>
+            this.showFeedback(
+              'A jammy toast crust, a warm mug and a gardening book left open at “Flowers that love morning sun” make the room feel only just vacated.',
+              breakfastNook.approach,
             ),
         },
       },

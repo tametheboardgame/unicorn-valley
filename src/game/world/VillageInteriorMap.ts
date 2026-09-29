@@ -5,7 +5,8 @@ export type VillageInteriorId =
   | 'accessory-shop'
   | 'library'
   | 'rosehip-cottage'
-  | 'bluebell-cottage';
+  | 'bluebell-cottage'
+  | 'sunpetal-cottage';
 
 export type VillageInteriorAnchorId =
   | 'entry'
@@ -255,12 +256,37 @@ const BLUEBELL_COTTAGE: VillageInteriorDefinition = {
   ],
 };
 
+const SUNPETAL_COTTAGE: VillageInteriorDefinition = {
+  id: 'sunpetal-cottage',
+  title: 'Sunpetal Cottage',
+  width: MAP_WIDTH,
+  height: MAP_HEIGHT,
+  margin: MAP_MARGIN,
+  playerSpawn: PLAYER_SPAWN,
+  roomShell: ROOM_SHELL,
+  anchors: sharedAnchors(
+    anchor('counter', 'Seed shelf', { x: 1165, y: 485 }, { x: 1000, y: 590 }),
+    anchor('npc-work', 'Breakfast nook', { x: 295, y: 770 }, { x: 470, y: 815 }),
+    anchor('primary-feature', 'Potting bench', { x: 1165, y: 700 }, { x: 985, y: 735 }),
+    anchor('secondary-feature', 'Sunny table', { x: 620, y: 560 }, { x: 620, y: 710 }),
+  ),
+  colliders: [
+    ...ROOM_COLLIDERS,
+    { id: 'sunpetal-seed-shelf', x: 1165, y: 485, width: 250, height: 150 },
+    { id: 'sunpetal-breakfast-nook', x: 295, y: 770, width: 250, height: 160 },
+    { id: 'sunpetal-potting-bench', x: 1165, y: 700, width: 270, height: 120 },
+    { id: 'sunpetal-sun-table', x: 620, y: 560, width: 250, height: 150 },
+    { id: 'sunpetal-boot-bench', x: 1220, y: 855, width: 220, height: 100 },
+  ],
+};
+
 export const VILLAGE_INTERIOR_MAPS = {
   bakery: BAKERY,
   'accessory-shop': ACCESSORY_SHOP,
   library: LIBRARY,
   'rosehip-cottage': ROSEHIP_COTTAGE,
   'bluebell-cottage': BLUEBELL_COTTAGE,
+  'sunpetal-cottage': SUNPETAL_COTTAGE,
 } as const satisfies Readonly<Record<VillageInteriorId, VillageInteriorDefinition>>;
 
 export function isVillageInteriorId(value: unknown): value is VillageInteriorId {
@@ -269,7 +295,8 @@ export function isVillageInteriorId(value: unknown): value is VillageInteriorId 
     value === 'accessory-shop' ||
     value === 'library' ||
     value === 'rosehip-cottage' ||
-    value === 'bluebell-cottage'
+    value === 'bluebell-cottage' ||
+    value === 'sunpetal-cottage'
   );
 }
 
