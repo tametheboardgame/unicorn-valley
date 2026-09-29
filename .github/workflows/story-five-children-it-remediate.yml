@@ -1,0 +1,145 @@
+name: Remediate Five Children and It Full Classic Text
+
+on:
+  push:
+    branches:
+      - agent/story-house-five-children-it-full-classic
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  remediate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: agent/story-house-five-children-it-full-classic
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22.23.2
+          package-manager-cache: false
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+
+      - name: Convert emphasis and semanticise resume anchors
+        shell: python
+        run: |
+          import hashlib
+          import json
+          import re
+          from pathlib import Path
+
+          STORY_DIR = Path("public/stories/five-children-and-it")
+          PAGES_DIR = STORY_DIR / "editions/full-classic/pages"
+          MANIFEST_PATH = STORY_DIR / "book.json"
+
+          def supported_emphasis(text: str) -> str:
+              return re.sub(r"(?<!\w)_([^_\n]+?)_(?!\w)", r"*\1*", text)
+
+          def semantic_id(text: str) -> str:
+              plain = re.sub(r"[*_\x60~]", "", text)
+              words = re.findall(r"[A-Za-z0-9]+", plain.lower())
+              stem = "-".join(words[:8]) or "paragraph"
+              stem = stem[:72].strip("-")
+              digest = hashlib.sha1(plain.encode("utf-8")).hexdigest()[:7]
+              return f"{stem}-{digest}"
+
+          old_to_new = {}
+          seen = set()
+
+          for path in sorted(PAGES_DIR.glob("page-*.md")):
+              content = supported_emphasis(path.read_text(encoding="utf-8"))
+              marker_re = re.compile(r"<!-- block:([^>]+) -->\n")
+              matches = list(marker_re.finditer(content))
+              rebuilt = []
+              cursor = 0
+
+              for index, match in enumerate(matches):
+                  rebuilt.append(content[cursor:match.start()])
+                  body_start = match.end()
+                  body_end = matches[index + 1].start() if index + 1 < len(matches) else len(content)
+                  body = content[body_start:body_end]
+                  first_para = re.split(r"\n\s*\n", body.strip(), maxsplit=1)[0].strip()
+                  new_id = semantic_id(first_para)
+
+                  if new_id in seen and old_to_new.get(match.group(1)) != new_id:
+                      digest = hashlib.sha256(first_para.encode("utf-8")).hexdigest()[:12]
+                      new_id = f"{new_id.rsplit('-', 1)[0]}-{digest}"
+                  seen.add(new_id)
+                  old_to_new[match.group(1)] = new_id
+                  rebuilt.append(f"<!-- block:{new_id} -->\n")
+                  cursor = body_start
+
+              rebuilt.append(content[cursor:])
+              path.write_text("".join(rebuilt), encoding="utf-8")
+
+          manifest = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
+          full = next(e for e in manifest["editions"] if e["id"] == "full-classic")
+          changed_illustrations = 0
+
+          for chapter in full["chapters"]:
+              for illustration in chapter.get("illustrations", []):
+                  old = illustration["blockId"]
+                  if old not in old_to_new:
+                      raise RuntimeError(f"Illustration blockId not found during semantic remap: {old}")
+                  illustration["blockId"] = old_to_new[old]
+                  changed_illustrations += 1
+
+          if changed_illustrations != 8:
+              raise RuntimeError(f"Expected 8 illustration anchors, remapped {changed_illustrations}")
+
+          MANIFEST_PATH.write_text(
+              json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
+              encoding="utf-8",
+          )
+
+          bad_ids = []
+          bad_emphasis = []
+          for path in sorted(PAGES_DIR.glob("page-*.md")):
+              text = path.read_text(encoding="utf-8")
+              if re.search(r"<!-- block:p\d+-b\d+ -->", text):
+                  bad_ids.append(str(path))
+              if re.search(r"(?<!\w)_([^_\n]+?)_(?!\w)", text):
+                  bad_emphasis.append(str(path))
+
+          if bad_ids:
+              raise RuntimeError("Positional block IDs remain: " + ", ".join(bad_ids[:5]))
+          if bad_emphasis:
+              raise RuntimeError("Unsupported underscore emphasis remains: " + ", ".join(bad_emphasis[:5]))
+
+          print(f"Semantic block anchors remapped: {len(old_to_new)}")
+          print("Illustration anchors remapped: 8")
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Format manifest
+        run: npx biome format --write public/stories/five-children-and-it/book.json
+
+      - name: Regenerate Story House catalogue
+        run: npm run story:catalogue
+
+      - name: Run focused Story House tests
+        run: npx vitest run src/game/storyLibrary/StoryLibraryService.test.ts src/game/storyLibrary/StoryReadingService.test.ts
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Commit remediation
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/stories/five-children-and-it public/stories/catalogue.json
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "Fix Five Children classic reader formatting and anchors"
+          git push origin HEAD:agent/story-house-five-children-it-full-classic
