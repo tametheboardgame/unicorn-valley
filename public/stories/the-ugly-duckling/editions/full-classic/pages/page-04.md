@@ -10,5 +10,3 @@ And accordingly they made themselves at home.
 <!-- block:p04-b04 -->
 But the poor little duckling, who had come last out of its egg-shell, and who was so ugly, was bitten, pecked, and teased by both ducks and hens. ‘It is so large,’ said they all. And the turkey-cock, who had come into the world with spurs on, and therefore fancied he was an emperor, puffed himself up like a ship in full sail, and marched up to the duckling quite red with passion. The poor little thing scarcely knew what to do; he was quite distressed, because he was so ugly, and because he was the jest of the poultry-yard.
 
-<!-- block:p04-b05 -->
-[Illustration: HE CAME TO A WIDE MOOR]
