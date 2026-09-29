@@ -51,6 +51,10 @@ describe('Sunbeam Village map', () => {
         id: 'future:south-gate',
         position: SUNBEAM_VILLAGE_LAYOUT.boundaryFence.lockedSouthGate.approach,
       },
+      {
+        id: 'activity:sunbeam-chess',
+        position: SUNBEAM_VILLAGE_LAYOUT.chessPlaza.table.interaction,
+      },
     ];
 
     expect(findUnreachableTargets(SUNBEAM_VILLAGE_MAP, targets)).toEqual([]);
@@ -93,7 +97,10 @@ describe('Sunbeam Village map', () => {
       'collision:landscaping:flower-bed:west-green',
       'collision:landscaping:flower-bed:east-green',
       'collision:village-life:sundial',
-      'collision:village-life:bench',
+      'collision:chess-plaza:table',
+      'collision:chess-plaza:bench:west',
+      'collision:chess-plaza:bench:east',
+      'collision:chess-plaza:bench:south',
       'collision:willow-garden:west',
       'collision:willow-garden:south',
       'collision:willow-garden:east-lower',
@@ -186,8 +193,14 @@ describe('Sunbeam Village map', () => {
   });
 
   it('keeps the H3.3 path network tied to canonical destinations', () => {
-    const { mainApproaches, shopBranches, willowBranch, southernRoad, residentialSideRoads } =
-      SUNBEAM_VILLAGE_LAYOUT.pathNetwork;
+    const {
+      mainApproaches,
+      shopBranches,
+      willowBranch,
+      southernRoad,
+      residentialSideRoads,
+      chessPlazaBranch,
+    } = SUNBEAM_VILLAGE_LAYOUT.pathNetwork;
 
     expect(mainApproaches[0]).toContainEqual(
       SUNBEAM_VILLAGE_LAYOUT.entrances.moonflowerGlade.position,
@@ -223,6 +236,12 @@ describe('Sunbeam Village map', () => {
     expect(residentialSideRoads[0]).toContainEqual(rosehip.approach);
     expect(residentialSideRoads[0]).toContainEqual(bluebell.approach);
     expect(residentialSideRoads[1]).toContainEqual(sunpetal.approach);
+
+    const chessPlazaTop = SUNBEAM_VILLAGE_LAYOUT.chessPlaza.centre.y -
+      SUNBEAM_VILLAGE_LAYOUT.chessPlaza.height / 2;
+    expect(chessPlazaBranch.at(-1)?.x).toBe(SUNBEAM_VILLAGE_LAYOUT.chessPlaza.centre.x);
+    expect(chessPlazaBranch.at(-1)?.y).toBeGreaterThanOrEqual(chessPlazaTop - 10);
+    expect(chessPlazaBranch[0].y).toBeLessThan(SUNBEAM_VILLAGE_LAYOUT.chessPlaza.centre.y);
   });
 
   it('anchors high-street bunting to canonical shop roof corners', () => {
@@ -464,8 +483,8 @@ describe('Sunbeam Village map', () => {
     });
   });
 
-  it('gives the playground hedge and village bench physical collision', () => {
-    const { playground, villageLife } = SUNBEAM_VILLAGE_LAYOUT;
+  it('gives the playground hedge and chess plaza physical collision', () => {
+    const { playground, chessPlaza, villageLife } = SUNBEAM_VILLAGE_LAYOUT;
 
     for (const shrub of playground.shrubs) {
       expect(
@@ -482,11 +501,34 @@ describe('Sunbeam Village map', () => {
     }
 
     expect(
-      SUNBEAM_VILLAGE_MAP.colliders.find(({ id }) => id === 'collision:village-life:bench'),
+      SUNBEAM_VILLAGE_MAP.colliders.find(({ id }) => id === 'collision:chess-plaza:table'),
     ).toEqual({
-      id: 'collision:village-life:bench',
-      ...villageLife.bench.collision,
+      id: 'collision:chess-plaza:table',
+      ...chessPlaza.table.collision,
     });
+    for (const bench of chessPlaza.benches) {
+      expect(
+        SUNBEAM_VILLAGE_MAP.colliders.find(
+          ({ id }) => id === `collision:chess-plaza:bench:${bench.id}`,
+        ),
+      ).toEqual({
+        id: `collision:chess-plaza:bench:${bench.id}`,
+        ...bench.collision,
+      });
+    }
+    expect(villageLife.bench).toMatchObject({
+      x: chessPlaza.benches[0].x,
+      y: chessPlaza.benches[0].y,
+      collision: chessPlaza.benches[0].collision,
+    });
+  });
+
+  it('keeps the chess table interaction reachable below its collider', () => {
+    const { table } = SUNBEAM_VILLAGE_LAYOUT.chessPlaza;
+    expect(table.interaction.y).toBeGreaterThan(table.collision.y + table.collision.height / 2);
+    expect(
+      isPointBlocked(table.interaction, SUNBEAM_VILLAGE_MAP.colliders, PLAYER_CLEARANCE),
+    ).toBe(false);
   });
 
   it('gives Willow garden sign visual-clearance collision', () => {
