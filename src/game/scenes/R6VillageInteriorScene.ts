@@ -413,7 +413,6 @@ export class VillageInteriorScene extends Phaser.Scene {
       .setDepth(6);
   }
 
-
   private createBluebellCottageSet(): void {
     // Bluebell's home is intentionally more ordered and airy than Rosehip's:
     // a long runner and central making table form the room's spine, with a daybed to the east
@@ -478,9 +477,7 @@ export class VillageInteriorScene extends Phaser.Scene {
     skyDesk.fillCircle(372, 650, 5);
     skyDesk.setDepth(worldDepthForY(745, 0.18));
 
-    const chimeTable = this.add
-      .graphics()
-      .setName('village-interior:bluebell-cottage:chime-table');
+    const chimeTable = this.add.graphics().setName('village-interior:bluebell-cottage:chime-table');
     chimeTable.fillStyle(0x71849c, 1);
     chimeTable.fillRoundedRect(620, 565, 300, 130, 20);
     chimeTable.fillStyle(0xd9e8ef, 1);
@@ -1752,7 +1749,6 @@ export class VillageInteriorScene extends Phaser.Scene {
       },
     ];
   }
-
 
   private createBluebellCottageInteractions(): InteractionTarget[] {
     const bellCabinet = getVillageInteriorAnchor('bluebell-cottage', 'counter');
