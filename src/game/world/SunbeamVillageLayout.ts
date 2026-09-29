@@ -36,12 +36,6 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
     width: 610,
     height: 430,
     fountainClearance: 170,
-    northShopApron: {
-      x: 1450,
-      y: 865,
-      width: 190,
-      height: 130,
-    },
   },
   pathNetwork: {
     mainApproaches: [
@@ -72,7 +66,7 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
         { x: 700, y: 690 },
       ],
       [
-        { x: 1450, y: 850 },
+        { x: 1450, y: 900 },
         { x: 1450, y: 775 },
         { x: 1450, y: 700 },
         { x: 1468, y: 611 },
@@ -127,16 +121,19 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
         { x: 1630, y: 1630 },
         { x: 1610, y: 1605 },
         { x: 1594, y: 1585 },
+        { x: 1594, y: 1530 },
       ],
       [
         { x: 2045, y: 1680 },
         { x: 2070, y: 1645 },
         { x: 2093, y: 1610 },
+        { x: 2093, y: 1545 },
       ],
       [
         { x: 2580, y: 1400 },
         { x: 2548, y: 1378 },
         { x: 2508, y: 1350 },
+        { x: 2508, y: 1285 },
       ],
     ],
   },
