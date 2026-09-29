@@ -57,6 +57,6 @@ describe('Sunbeam Village interaction ownership', () => {
     expect(byId.get('interaction:village-south-gate')?.actionKind).toBe('inspect');
     expect(byId.get('interaction:village-residence-rosehip')?.actionKind).toBe('enter');
     expect(byId.get('interaction:village-residence-bluebell')?.actionKind).toBe('enter');
-    expect(byId.get('interaction:village-residence-sunpetal')?.actionKind).toBe('interact');
+    expect(byId.get('interaction:village-residence-sunpetal')?.actionKind).toBe('enter');
   });
 });

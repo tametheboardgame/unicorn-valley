@@ -203,15 +203,14 @@ export function createSunbeamVillageInteractions(scene: Phaser.Scene): Interacti
     {
       id: 'interaction:village-residence-sunpetal',
       label: 'Sunpetal Cottage',
-      actionLabel: 'Knock',
-      actionKind: 'interact',
+      actionLabel: 'Enter',
+      actionKind: 'enter',
       position: residenceApproach('sunpetal-cottage'),
       interactionRadius: 135,
       result: {
-        type: 'message',
-        title: 'Sunpetal Cottage',
-        message:
-          "Tiny boots and a watering can rest by the step. This is someone's home, not a shop.",
+        type: 'callback',
+        activate: () =>
+          enterInterior(scene, 'sunpetal-cottage', residenceApproach('sunpetal-cottage')),
       },
     },
     {

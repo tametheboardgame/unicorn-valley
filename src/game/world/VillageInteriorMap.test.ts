@@ -13,6 +13,7 @@ const INTERIOR_IDS: readonly VillageInteriorId[] = [
   'library',
   'rosehip-cottage',
   'bluebell-cottage',
+  'sunpetal-cottage',
 ];
 const REQUIRED_ANCHORS: readonly VillageInteriorAnchorId[] = [
   'entry',
@@ -52,6 +53,7 @@ describe('VillageInteriorMap', () => {
             'rosehip-tea-table',
             'bluebell-bell-cabinet',
             'bluebell-chime-table',
+            'sunpetal-potting-bench',
           ].includes(id),
         ),
       ).toBe(true);
