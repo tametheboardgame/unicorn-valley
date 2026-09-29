@@ -109,15 +109,9 @@ const VILLAGE_POINTS: readonly VillageLifePoint[] = [
     x: SUNBEAM_VILLAGE_LAYOUT.villageLife.bench.x,
     y: SUNBEAM_VILLAGE_LAYOUT.villageLife.bench.y,
     radius: 118,
-    createProp: (scene) => [
-      scene.add.ellipse(0, 48, 192, 64, 0x709d62, 0.18),
-      scene.add.rectangle(0, 8, 150, 28, 0xb97855, 1).setStrokeStyle(3, 0x80503e, 0.9),
-      scene.add.rectangle(0, -22, 150, 18, 0xc58a62, 1).setStrokeStyle(3, 0x80503e, 0.9),
-      scene.add.rectangle(-58, 34, 12, 48, 0x80503e, 1),
-      scene.add.rectangle(58, 34, 12, 48, 0x80503e, 1),
-      scene.add.circle(-88, 42, 8, 0x91c77b, 0.88),
-      scene.add.circle(88, 42, 8, 0x91c77b, 0.88),
-    ],
+    // H3.11.8C renders the grouped seating as part of the authored chess plaza.
+    // Village Life keeps ownership of the familiar Sit interaction only.
+    createProp: () => [],
   },
   {
     id: 'thread-window',
