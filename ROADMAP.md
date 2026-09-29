@@ -188,7 +188,7 @@ reillustration for Alice/Peter Rabbit/Jemima while preserving their historic sou
 
 ### R6.5-WP19H1+ - Open-Ended Area-by-Area Final Polish Programme
 
-State: **active; H1 = Moonflower Glade complete, H2 = Moonflower Cottage complete, H3 = Sunbeam Village active; H3.11-R3.1-R3.5 are complete and human-approved, and H3.11-R4 has passed its two-pass generated-asset acceptance proof and is awaiting normal PR qualification/merge before H3.11.5 Rosehip Cottage begins**.
+State: **active; H1 = Moonflower Glade complete, H2 = Moonflower Cottage complete, H3 = Sunbeam Village active; H3.11.5 Rosehip, H3.11.6 Bluebell and H3.11.7 Sunpetal are human-approved. H3.11.8 is now the active exterior detail/finishing pass and begins with David-led requirements gathering. Candyland is deferred to a dedicated late H1+ theme-park package after the other area passes and before WP19I.**
 
 The earlier fixed `H1-H13` area inventory is superseded by this section. There is **no predetermined upper H number**. The programme continues for as many independently useful area, subarea or interior passes as David chooses before integrated qualification. Interiors may receive their own H number when they warrant an independent review rather than being forced into a parent-area package.
 
@@ -206,7 +206,7 @@ Operating rules for H1+:
 - **H numbers are assigned sequentially only when David chooses the next review area.** Do not pre-assign future H numbers to locations.
 - **R6.5-WP19H1 - Moonflower Glade is complete and human-approved.**
 - **R6.5-WP19H2 - Moonflower Cottage & Home Customisation is complete, fully qualified and deployed to production.**
-- **Current package: R6.5-WP19H3 - Sunbeam Village Final Polish.** H3.1-H3.10, H3.11.1-H3.11.4, H3.11-R1 and H3.11-R2 have reached their documented acceptance points. H3.11.4 Story House A-F is complete and human-approved; PR #181 merged it to main as `52069b8e36311e14276c2115f3515dfa52f2adb0`. H3.11-R2 Wobbly Cake is also complete and human-approved; PR #183 merged it to main on 27 September 2026 as `abe3808b76031c67a74811b17c4b6528b0b331df`. **H3.11-R3 - Pre-Rosehip stability, controls and polish** is complete across its five bounded checkpoints: **R3.1 interaction-aware click navigation and dialogue movement lock; R3.2 exploration surface lifecycle hardening; R3.3 Pip startup and music resume continuity; R3.4 mobile performance and movement consistency; R3.5 Glade/Village visual tightening.** PR #209 merged the final R3.5 visual checkpoint to `main` on 28 September 2026. The active next prerequisite is **H3.11-R4 - Generated asset staging and GitHub materialisation pipeline**. R4 must prove a reliable generated-image path from ChatGPT to a dedicated Google Drive staging area and from Drive into the repo through GitHub Actions before **H3.11.5 Rosehip Cottage** begins. R1/R2/R3/R4 deliberately do not renumber H3.11.5-H3.11.10. H3.12 remains planned for wider cross-region recurring-character presence coherence. Final hardening/consolidation remains unnumbered until substantive Sunbeam review is explicitly complete.
+- **Current package: R6.5-WP19H3 - Sunbeam Village Final Polish.** H3.1-H3.10 and H3.11.1-H3.11.7, including the inserted R1-R4 remediation/engineering work, have reached their documented acceptance points. **H3.11.8 - Sunbeam Village exterior detail and finishing pass** is active and starts with a fresh David-led requirements-gathering pass before assistant analysis, planning or implementation. H3.11.9 interior population/local life, H3.11.10 final local cohesion and H3.12 wider presence coherence remain next. Candyland is no longer part of H3.11 and is reserved as a dedicated late H1+ multi-block theme-park package immediately before WP19I.
 - Future H numbers remain deliberately unassigned until David selects each next review area.
 - There is **no H13 cap**. Continue H numbering until David decides the playable world, meaningful subareas and relevant interiors have received the required final passes.
 - An area is a review lens, not an excuse to duplicate shared code. Any broadly applicable improvement discovered during an H package should be made at the correct shared owner and then validated against affected areas.
@@ -305,7 +305,7 @@ H2 rebuilt Moonflower Cottage as a finished home and customisation space, includ
 
 ### R6.5-WP19H3 - Sunbeam Village Final Polish
 
-State: **H3.1-H3.10 accepted / H3.11.1-H3.11.4 accepted / H3.11-R1 accepted / H3.11-R2 Wobbly Cake next / H3.11.5-H3.11.10 planned after R2 / H3.12 wider presence-coherence planned**.
+State: **H3.1-H3.11.7 accepted / H3.11.8 Sunbeam exterior requirements gathering active / H3.11.9-H3.11.10 planned / H3.12 wider presence-coherence planned / Candyland deferred to a late H1+ package before WP19I**.
 
 Path: `docs/work-packages/R6.5-WP19H3-SUNBEAM-VILLAGE.md`
 
@@ -350,20 +350,28 @@ The concrete first-pass findings include the 1,220 × 690 semi-transparent recta
     - **H3.11.5 - Rosehip Cottage interior:** distinct walkable home with its own floor plan, furniture, resident logic and lightweight environmental storytelling.
     - **H3.11.6 - Bluebell Cottage interior:** separate residential identity, layout, props, interactions and coherent resident presence rather than a recoloured copy.
     - **H3.11.7 - Sunpetal Cottage interior:** third distinct walkable home with its own arrangement, personal detail and local interaction flavour.
-    - **H3.11.8 - Candyland / southern interior-content treatment:** preserve Candyland as `OPENING SOON`; do not open the theme park, but make any accessible southern/pre-opening space intentional and diegetic.
+    - **H3.11.8 - Sunbeam Village exterior detail and finishing pass:** begin with David-led requirements gathering; after the full list is captured and analysed, add detail, fill weak/sparse spaces and iron out remaining exterior presentation issues without unrequested structural redesign. Preserve the Candyland gate as `OPENING SOON`.
     - **H3.11.9 - Interior population and local-life pass:** remove remaining outside/inside NPC cloning, assign believable work/home/leisure positions and keep visuals plus Talk targets under the same occupancy decision.
     - **H3.11.10 - Interior content, interaction and final cohesion pass:** remove remaining development wording/placeholders, confirm repeat-use value and environmental storytelling, standardise entry/exit behaviour and run integrated exterior → interior → interaction → exterior validation.
 12. **H3.12 - Character presence and cross-region coherence:** retain as the wider story-location pass beyond local interior occupancy. Extend authoritative presence handling where stories genuinely move recurring characters; resolve Marigold's Picnic Hill state and Tansy's scheduled world/interior presence; keep visuals and Talk targets under the same authority; and add cross-scene duplicate-presence regression coverage.
 
-**Feedback-block-2 contract:** H3.9 and H3.10 are complete and human-approved. H3.11 is the approved interior umbrella and is delivered sequentially as H3.11.1-H3.11.10 with human review between substantial locations; H3.11.1-H3.11.3 are human-approved and H3.11.4 Story House is active as the lettered A-F library/reader programme above. H3.11.5-H3.11.10 retain their existing meanings and numbers. H3.12 remains planned for wider cross-region presence coherence. David's ongoing play pass may amend these slices or add H3.13+ for genuinely separate findings. The accepted H3.1-H3.10 behaviour and visual composition are preservation requirements.
+**Feedback-block-2 contract:** H3.9 and H3.10 are complete and human-approved. H3.11 is the approved village/interior maturity umbrella and is delivered sequentially as H3.11.1-H3.11.10 with human review between substantial checkpoints. H3.11.5-H3.11.7 are approved; H3.11.8 is the exterior detail/finishing pass and starts with requirements gathering; H3.11.9-H3.11.10 then return to population and final local cohesion. H3.12 remains planned for wider cross-region presence coherence. David's ongoing play pass may amend these slices or add H3.13+ for genuinely separate findings. The accepted H3.1-H3.10 behaviour and visual composition are preservation requirements except where H3.11.8 explicitly authorises bounded detail refinement.
 
 **Numbering contract:** the final consolidation, responsive regression, hardening, documentation and integrated H3 qualification slice remains deliberately unnumbered. It receives the next unused H3 number only after David explicitly confirms that substantive Sunbeam Village work is complete.
+
+### Deferred final H1+ package - Candyland Theme Park Expansion
+
+State: **deferred until every other selected area-polish package is complete; mandatory before WP19I**.
+
+Candyland is intentionally no longer part of Sunbeam H3.11.8. It is expected to be a substantial, multi-block theme-park build rather than a small southern-content treatment. Its final sequential H-number will be assigned only when the preceding area passes are complete, preserving the open-ended H1+ numbering contract.
+
+The future Candyland programme must include a proper in-world quest/progression path that unlocks park access. Until that package begins, preserve the approved Sunbeam `OPENING SOON` gate and do not expose the finished park by default.
 
 ### R6.5-WP19I - Integrated Qualification
 
 State: **approved, but blocked until David has completed and accepted the full open-ended H1+ area-polish programme**.
 
-WP19I remains the whole-game technical qualification package. It must run only after the audio work, H0/H0.5 architecture and title gates, and every H-number area final-pass package David chooses have been accepted, so qualification measures the actual intended R6.5 release candidate rather than a pre-polish build.
+WP19I remains the whole-game technical qualification package. It must run only after the audio work, H0/H0.5 architecture and title gates, every normal H-number area final-pass package David chooses, and the final deferred Candyland Theme Park Expansion package have been accepted, so qualification measures the actual intended R6.5 release candidate rather than a pre-polish build.
 
 ### Known open defect outside WP18K
 
@@ -379,7 +387,7 @@ Run another substantially unguided daughter playthrough on the Galaxy Tab S8 aft
 
 ### Dependency chain
 
-`WP17 evidence -> WP18A-G complete -> WP18I/J approved -> WP19A accepted -> WP18K complete -> WP19B complete -> WP19C complete -> WP19D complete -> WP19E -> WP19F -> WP19G -> WP19H complete -> WP19H0 A-K complete -> WP19H0.5 complete -> WP19H1+ sequential user-selected area final passes -> WP19I qualification -> WP18H human replay -> WP17 explicit readiness decision -> R7`
+`WP17 evidence -> WP18A-G complete -> WP18I/J approved -> WP19A accepted -> WP18K complete -> WP19B complete -> WP19C complete -> WP19D complete -> WP19E -> WP19F -> WP19G -> WP19H complete -> WP19H0 A-K complete -> WP19H0.5 complete -> WP19H1+ sequential user-selected area final passes -> final Candyland Theme Park Expansion H-package -> WP19I qualification -> WP18H human replay -> WP17 explicit readiness decision -> R7`
 
 ## R6.6 - Optional Android Packaging
 
