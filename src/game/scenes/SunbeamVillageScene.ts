@@ -717,7 +717,7 @@ export class SunbeamVillageScene extends Phaser.Scene {
     const graphics = this.add
       .graphics()
       .setName('sunbeam-composition:bunting')
-      .setDepth(SUNBEAM_VILLAGE_LAYERS.structureDetail + 0.35);
+      .setDepth(worldDepthForY(900, 4));
     const colours = [0xf39bb5, 0xf3c96f, 0x86c9dd, 0x9dcc7d, 0xc9a2df];
 
     const drawSpan = (
