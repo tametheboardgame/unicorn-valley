@@ -480,11 +480,15 @@
       },
       "chapterCount": 3,
       "manifestPath": "/stories/the-princess-and-the-pea/book.json",
-      "defaultEditionId": "default",
+      "defaultEditionId": "story-house",
       "editions": [
         {
-          "id": "default",
-          "label": "Standard Edition"
+          "id": "story-house",
+          "label": "Story House Edition"
+        },
+        {
+          "id": "full-classic",
+          "label": "Full Classic Text"
         }
       ]
     },
