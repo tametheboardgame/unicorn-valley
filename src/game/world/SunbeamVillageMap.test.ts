@@ -237,8 +237,8 @@ describe('Sunbeam Village map', () => {
     expect(residentialSideRoads[0]).toContainEqual(bluebell.approach);
     expect(residentialSideRoads[1]).toContainEqual(sunpetal.approach);
 
-    const chessPlazaTop = SUNBEAM_VILLAGE_LAYOUT.chessPlaza.centre.y -
-      SUNBEAM_VILLAGE_LAYOUT.chessPlaza.height / 2;
+    const chessPlazaTop =
+      SUNBEAM_VILLAGE_LAYOUT.chessPlaza.centre.y - SUNBEAM_VILLAGE_LAYOUT.chessPlaza.height / 2;
     expect(chessPlazaBranch.at(-1)?.x).toBe(SUNBEAM_VILLAGE_LAYOUT.chessPlaza.centre.x);
     expect(chessPlazaBranch.at(-1)?.y).toBeGreaterThanOrEqual(chessPlazaTop - 10);
     expect(chessPlazaBranch[0].y).toBeLessThan(SUNBEAM_VILLAGE_LAYOUT.chessPlaza.centre.y);
@@ -528,9 +528,9 @@ describe('Sunbeam Village map', () => {
   it('keeps the chess table interaction reachable from the path-facing side', () => {
     const { table } = SUNBEAM_VILLAGE_LAYOUT.chessPlaza;
     expect(table.interaction.y).toBeLessThan(table.collision.y - table.collision.height / 2);
-    expect(
-      isPointBlocked(table.interaction, SUNBEAM_VILLAGE_MAP.colliders, PLAYER_CLEARANCE),
-    ).toBe(false);
+    expect(isPointBlocked(table.interaction, SUNBEAM_VILLAGE_MAP.colliders, PLAYER_CLEARANCE)).toBe(
+      false,
+    );
   });
 
   it('gives Willow garden sign visual-clearance collision', () => {
