@@ -96,17 +96,12 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     this.add
-      .text(
-        850,
-        136,
-        'Friendly village rules',
-        {
-          color: UI_COLOURS.ink,
-          fontFamily: UI_FONT,
-          fontSize: '24px',
-          fontStyle: 'bold',
-        },
-      )
+      .text(850, 136, 'Friendly village rules', {
+        color: UI_COLOURS.ink,
+        fontFamily: UI_FONT,
+        fontSize: '24px',
+        fontStyle: 'bold',
+      })
       .setOrigin(0.5);
 
     this.add
@@ -312,11 +307,15 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       return;
     }
     if (this.state.winner === 'black') {
-      this.statusText.setText('The village player captured your crown.\nPress Restart for another game.');
+      this.statusText.setText(
+        'The village player captured your crown.\nPress Restart for another game.',
+      );
       return;
     }
     if (this.state.winner === 'draw') {
-      this.statusText.setText('That was a long game — friendly draw.\nPress Restart to play again.');
+      this.statusText.setText(
+        'That was a long game — friendly draw.\nPress Restart to play again.',
+      );
       return;
     }
     if (this.opponentPending || this.state.turn === 'black') {
