@@ -737,11 +737,15 @@
       },
       "chapterCount": 6,
       "manifestPath": "/stories/the-ugly-duckling/book.json",
-      "defaultEditionId": "default",
+      "defaultEditionId": "story-house",
       "editions": [
         {
-          "id": "default",
-          "label": "Standard Edition"
+          "id": "story-house",
+          "label": "Story House Edition"
+        },
+        {
+          "id": "full-classic",
+          "label": "Full Classic Text"
         }
       ]
     },
