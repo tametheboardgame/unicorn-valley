@@ -1,0 +1,499 @@
+name: Materialise Princess and the Goblin Full Classic Text
+
+on:
+  push:
+    branches:
+      - agent/story-house-princess-goblin-full-classic
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  materialise:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: agent/story-house-princess-goblin-full-classic
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22.23.2
+          package-manager-cache: false
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+
+      - name: Materialise full classic edition
+        shell: python
+        run: |
+          import hashlib
+          import json
+          import re
+          import shutil
+          import urllib.request
+          from pathlib import Path
+
+          STORY_DIR = Path("public/stories/the-princess-and-the-goblin")
+          MANIFEST_PATH = STORY_DIR / "book.json"
+          PAGES_DIR = STORY_DIR / "editions/full-classic/pages"
+
+          TEXT_URLS = [
+              "https://www.gutenberg.org/cache/epub/34339/pg34339.txt",
+              "https://www.gutenberg.org/files/34339/34339-8.txt",
+          ]
+          BOOK_URL = "https://www.gutenberg.org/ebooks/34339"
+
+          def fetch_first(urls):
+              errors = []
+              for url in urls:
+                  try:
+                      req = urllib.request.Request(
+                          url,
+                          headers={"User-Agent": "Unicorn-Valley-Story-House/1.0"},
+                      )
+                      with urllib.request.urlopen(req, timeout=45) as response:
+                          return response.read(), url
+                  except Exception as exc:
+                      errors.append(f"{url}: {exc}")
+              raise RuntimeError("Could not fetch source text: " + " | ".join(errors))
+
+          def word_count(value: str) -> int:
+              return len(re.findall(r"[A-Za-z0-9]+(?:['’-][A-Za-z0-9]+)*", value))
+
+          def clean_inline_emphasis(value: str) -> str:
+              return re.sub(r"(?<!\w)_([^_\n]+?)_(?!\w)", r"*\1*", value)
+
+          def normalise_paragraph(value: str) -> str:
+              lines = [line.strip() for line in value.splitlines()]
+              joined = " ".join(line for line in lines if line).strip()
+              return clean_inline_emphasis(joined)
+
+          def clean_source(value: str) -> str:
+              value = value.replace("\r\n", "\n")
+              value = re.sub(r"(?is)\[Illustration(?:\s*:[^\]]*)?\]", "", value)
+              value = re.sub(r"(?is)\[Pg\s*[^\]]*\]", "", value)
+              value = re.sub(r"(?m)^\s*\[\d+\]\s*$", "", value)
+              value = re.sub(r"(?m)^\s*[*\-_ ]{3,}\s*$", "", value)
+              return value
+
+          def paragraphs_from(value: str):
+              return [
+                  paragraph
+                  for paragraph in (
+                      normalise_paragraph(block)
+                      for block in re.split(r"\n\s*\n", value)
+                  )
+                  if paragraph and not re.fullmatch(r"[*\-_ ]{3,}", paragraph)
+              ]
+
+          def paginate(paragraphs):
+              pages = []
+              current = []
+              current_words = 0
+              for paragraph in paragraphs:
+                  count = word_count(paragraph)
+                  if current and current_words >= 290 and current_words + count > 470:
+                      pages.append(current)
+                      current = []
+                      current_words = 0
+                  current.append(paragraph)
+                  current_words += count
+
+              if current:
+                  pages.append(current)
+
+              if len(pages) > 1:
+                  last_words = sum(word_count(p) for p in pages[-1])
+                  previous_words = sum(word_count(p) for p in pages[-2])
+                  if last_words < 160 and previous_words + last_words <= 540:
+                      pages[-2].extend(pages[-1])
+                      pages.pop()
+
+              return pages
+
+          def slug_words(value: str, limit=7):
+              words = re.findall(r"[A-Za-z0-9]+", value.lower())
+              return "-".join(words[:limit])[:72].strip("-") or "paragraph"
+
+          def semantic_block_ids(chapter_key: str, paragraphs):
+              plain = [re.sub(r"[*_\x60~]", "", p) for p in paragraphs]
+              counts = {}
+              for p in plain:
+                  counts[p] = counts.get(p, 0) + 1
+
+              result = []
+              seen = set()
+              for index, paragraph in enumerate(plain):
+                  basis = paragraph
+                  if counts[paragraph] > 1:
+                      previous = plain[index - 1] if index else ""
+                      following = plain[index + 1] if index + 1 < len(plain) else ""
+                      basis = previous + "\0" + paragraph + "\0" + following
+                  digest = hashlib.sha1(basis.encode("utf-8")).hexdigest()[:8]
+                  block_id = f"{chapter_key}-{slug_words(paragraph)}-{digest}"
+                  if block_id in seen:
+                      raise RuntimeError(f"Semantic block collision in {chapter_key}: {block_id}")
+                  seen.add(block_id)
+                  result.append(block_id)
+              return result
+
+          manifest = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
+          if manifest.get("schemaVersion") != 1:
+              raise RuntimeError("Expected existing Princess and the Goblin package to be schema v1.")
+
+          raw_bytes, source_url = fetch_first(TEXT_URLS)
+          try:
+              raw = raw_bytes.decode("utf-8-sig")
+          except UnicodeDecodeError:
+              raw = raw_bytes.decode("latin-1")
+
+          start_match = re.search(
+              r"(?im)^\s*\*\*\* START OF THE PROJECT GUTENBERG EBOOK THE PRINCESS AND THE GOBLIN \*\*\*\s*$",
+              raw,
+          )
+          if start_match:
+              raw = raw[start_match.end():]
+
+          end_match = re.search(
+              r"(?im)^\s*\*\*\* END OF THE PROJECT GUTENBERG EBOOK THE PRINCESS AND THE GOBLIN \*\*\*\s*$",
+              raw,
+          )
+          if end_match:
+              raw = raw[:end_match.start()]
+
+          raw = clean_source(raw)
+
+          chapter_pattern = re.compile(r"(?im)^\s*CHAPTER\s+([IVXLCDM]+)\s*$")
+          matches = list(chapter_pattern.finditer(raw))
+          if len(matches) != 32:
+              raise RuntimeError(f"Expected 32 story chapters, found {len(matches)}")
+
+          sections = []
+          for index, match in enumerate(matches):
+              section_end = matches[index + 1].start() if index + 1 < len(matches) else len(raw)
+              region = raw[match.end():section_end].strip()
+              lines = region.splitlines()
+              title_index = next((i for i, line in enumerate(lines) if line.strip()), None)
+              if title_index is None:
+                  raise RuntimeError(f"Chapter {match.group(1)} has no title.")
+
+              title = normalise_paragraph(lines[title_index]).title()
+              chapter_text = "\n".join(lines[title_index + 1:]).strip()
+              chapter_paragraphs = paragraphs_from(chapter_text)
+              if not chapter_paragraphs:
+                  raise RuntimeError(f"Chapter {match.group(1)} has no prose.")
+
+              sections.append(
+                  {
+                      "number": index + 1,
+                      "roman": match.group(1),
+                      "title": title,
+                      "paragraphs": chapter_paragraphs,
+                  }
+              )
+
+          total_words = sum(
+              word_count(paragraph)
+              for section in sections
+              for paragraph in section["paragraphs"]
+          )
+          if not 45000 <= total_words <= 75000:
+              raise RuntimeError(f"Unexpected Princess and the Goblin word count: {total_words}")
+
+          if PAGES_DIR.exists():
+              shutil.rmtree(PAGES_DIR)
+          PAGES_DIR.mkdir(parents=True)
+
+          reader_entries = []
+          all_blocks = []
+
+          for section in sections:
+              chapter_key = f"ch{section['number']:02d}"
+              block_ids = semantic_block_ids(chapter_key, section["paragraphs"])
+              paragraph_records = [
+                  {"text": paragraph, "blockId": block_id}
+                  for paragraph, block_id in zip(section["paragraphs"], block_ids)
+              ]
+              section_pages = paginate(paragraph_records)
+
+              for page_index, page_paragraphs in enumerate(section_pages, start=1):
+                  first = page_paragraphs[0]
+                  page_hash = hashlib.sha1(first["text"].encode("utf-8")).hexdigest()[:7]
+                  page_id = f"{chapter_key}-{slug_words(first['text'], 4)}-{page_hash}"
+                  output = []
+                  for record in page_paragraphs:
+                      output.extend(
+                          [
+                              f"<!-- block:{record['blockId']} -->",
+                              record["text"],
+                              "",
+                          ]
+                      )
+                      all_blocks.append(
+                          {
+                              "entryId": page_id,
+                              "id": record["blockId"],
+                              "text": record["text"],
+                          }
+                      )
+
+                  (PAGES_DIR / f"{page_id}.md").write_text(
+                      "\n".join(output).rstrip() + "\n",
+                      encoding="utf-8",
+                  )
+
+                  title = (
+                      f"Chapter {section['roman']} — {section['title']}"
+                      if page_index == 1
+                      else f"Chapter {section['roman']} — {section['title']} (continued)"
+                  )
+                  reader_entries.append(
+                      {
+                          "id": page_id,
+                          "title": title,
+                          "path": f"editions/full-classic/pages/{page_id}.md",
+                      }
+                  )
+
+          if not 95 <= len(reader_entries) <= 190:
+              raise RuntimeError(
+                  f"Expected 95-190 reader pages, found {len(reader_entries)}"
+              )
+
+          def block_for(needle: str):
+              needle_lower = needle.lower()
+              for block in all_blocks:
+                  if needle_lower in block["text"].lower():
+                      return block
+              raise RuntimeError(f"Could not locate illustration anchor: {needle}")
+
+          def entry_for(entry_id: str):
+              return next(entry for entry in reader_entries if entry["id"] == entry_id)
+
+          anchors = [
+              (
+                  block_for("She ran for some distance, turned several times, and then began to be afraid"),
+                  {
+                      "id": "full-smith-lost-in-the-house",
+                      "path": "illustrations/lost-in-the-house.webp",
+                      "alt": "Jessie Willcox Smith's illustration of Princess Irene lost in the old house.",
+                      "placement": "full-width",
+                      "width": 936,
+                      "height": 1375,
+                      "caption": "Illustration by Jessie Willcox Smith, 1920.",
+                  },
+              ),
+              (
+                  block_for("She clapped her hands with delight, and up rose such a flapping of wings"),
+                  {
+                      "id": "full-smith-pigeons",
+                      "path": "illustrations/pigeons.webp",
+                      "alt": "Jessie Willcox Smith's illustration of Irene and the white pigeons.",
+                      "placement": "full-width",
+                      "width": 933,
+                      "height": 1378,
+                      "caption": "Illustration by Jessie Willcox Smith, 1920.",
+                  },
+              ),
+              (
+                  block_for("You mustn't kiss me to-night"),
+                  {
+                      "id": "full-smith-curdie-torch",
+                      "path": "illustrations/curdie-torch.webp",
+                      "alt": "Jessie Willcox Smith's illustration of Curdie.",
+                      "placement": "full-width",
+                      "width": 936,
+                      "height": 1383,
+                      "caption": "Illustration by Jessie Willcox Smith, 1920.",
+                  },
+              ),
+              (
+                  block_for("In an instant she was on the saddle"),
+                  {
+                      "id": "full-smith-king",
+                      "path": "illustrations/king-papa.webp",
+                      "alt": "Jessie Willcox Smith's illustration of Princess Irene greeting her father the King.",
+                      "placement": "full-width",
+                      "width": 926,
+                      "height": 1381,
+                      "caption": "Illustration by Jessie Willcox Smith, 1920.",
+                  },
+              ),
+              (
+                  block_for("she still held out her arms"),
+                  {
+                      "id": "full-smith-grandmother",
+                      "path": "illustrations/grandmother.webp",
+                      "alt": "Jessie Willcox Smith's illustration of Irene with her mysterious great-great-grandmother.",
+                      "placement": "full-width",
+                      "width": 936,
+                      "height": 1378,
+                      "caption": "Illustration by Jessie Willcox Smith, 1920.",
+                  },
+              ),
+              (
+                  block_for("The goblins fell back a little when he began"),
+                  {
+                      "id": "full-smith-goblins",
+                      "path": "illustrations/goblins.webp",
+                      "alt": "Jessie Willcox Smith's illustration of goblins beneath the mountain.",
+                      "placement": "full-width",
+                      "width": 930,
+                      "height": 1386,
+                      "caption": "Illustration by Jessie Willcox Smith, 1920.",
+                  },
+              ),
+              (
+                  block_for("Curdie went on after her, flashing his torch about"),
+                  {
+                      "id": "full-smith-curdie-follows",
+                      "path": "illustrations/curdie-follows.webp",
+                      "alt": "Jessie Willcox Smith's illustration of Curdie following Irene underground.",
+                      "placement": "full-width",
+                      "width": 936,
+                      "height": 1379,
+                      "caption": "Illustration by Jessie Willcox Smith, 1920.",
+                  },
+              ),
+              (
+                  block_for("There sat his mother by the fire, and in her arms lay the princess fast asleep"),
+                  {
+                      "id": "full-smith-safe-at-home",
+                      "path": "illustrations/safe-at-home.webp",
+                      "alt": "Jessie Willcox Smith's illustration of Princess Irene safe with Curdie's mother.",
+                      "placement": "full-width",
+                      "width": 936,
+                      "height": 1382,
+                      "caption": "Illustration by Jessie Willcox Smith, 1920.",
+                  },
+              ),
+          ]
+
+          for block, illustration in anchors:
+              illustration["blockId"] = block["id"]
+              entry_for(block["entryId"]).setdefault("illustrations", []).append(illustration)
+
+          story_house = {
+              "id": "story-house",
+              "label": "Story House Edition",
+              "author": manifest["author"],
+              "readingMode": manifest["readingMode"],
+              "rights": manifest["rights"],
+              "chapters": manifest["chapters"],
+          }
+
+          full_classic = {
+              "id": "full-classic",
+              "label": "Full Classic Text",
+              "author": "George MacDonald",
+              "readingMode": "paged-prose",
+              "rights": {
+                  "text": {
+                      "status": "public-domain",
+                      "source": "The Princess and the Goblin, Project Gutenberg eBook #34339",
+                      "sourceUrl": BOOK_URL,
+                      "notes": (
+                          "The complete public-domain novel text is retained without abridgement or "
+                          "modernisation. Project Gutenberg boilerplate, page markers, source illustration "
+                          "markers and production separators are excluded."
+                      ),
+                  },
+                  "illustrations": {
+                      "status": "public-domain",
+                      "source": manifest["rights"]["illustrations"]["source"],
+                      "sourceUrl": manifest["rights"]["illustrations"]["sourceUrl"],
+                      "notes": (
+                          "All eight previously verified Jessie Willcox Smith plates are reused beside "
+                          "their matching passages from the 1920 illustrated edition."
+                      ),
+                  },
+                  "edition": {
+                      "status": "public-domain",
+                      "source": "Project Gutenberg eBook #34339 (1920 David McKay illustrated edition)",
+                      "notes": (
+                          "Story House pagination changes presentation only; all 32 chapters and the original "
+                          "wording remain complete."
+                      ),
+                  },
+                  "originalPublicationYear": manifest["rights"]["originalPublicationYear"],
+                  "curatorNotes": (
+                      f"All 32 chapters reflowed into {len(reader_entries)} reader pages at paragraph "
+                      "boundaries, using semantic resume anchors and all eight historical Jessie Willcox Smith plates."
+                  ),
+              },
+              "chapters": reader_entries,
+          }
+
+          upgraded = {
+              "schemaVersion": 2,
+              "id": manifest["id"],
+              "title": manifest["title"],
+              "description": manifest["description"],
+              "catalogueBlurb": manifest.get("catalogueBlurb"),
+              "cover": manifest.get("cover"),
+              "series": manifest.get("series"),
+              "tags": manifest["tags"],
+              "publication": manifest["publication"],
+              "discovery": manifest["discovery"],
+              "defaultEditionId": "story-house",
+              "editions": [story_house, full_classic],
+          }
+
+          MANIFEST_PATH.write_text(
+              json.dumps(upgraded, ensure_ascii=False, indent=2) + "\n",
+              encoding="utf-8",
+          )
+
+          print(f"Source: {source_url}")
+          print(f"Full classic words: {total_words}")
+          print(f"Reader pages: {len(reader_entries)}")
+          print("Chapters: 32")
+          print("Illustrations anchored: 8")
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Format manifest
+        run: npx biome format --write public/stories/the-princess-and-the-goblin/book.json
+
+      - name: Regenerate Story House catalogue
+        run: npm run story:catalogue
+
+      - name: Reject source production artefacts and unstable anchors
+        shell: bash
+        run: |
+          set -euo pipefail
+          target="public/stories/the-princess-and-the-goblin/editions/full-classic/pages"
+          if grep -RniE '\[Illustration|\[Pg |\*\*\* START|\*\*\* END|<!-- block:p[0-9]+-b[0-9]+ -->' "$target"; then
+            echo "Source production artefact or positional block ID found in generated reader pages."
+            exit 1
+          fi
+          if grep -RniE '(^|[^[:alnum:]])_[^_[:space:]][^_]*_([^[:alnum:]]|$)' "$target"; then
+            echo "Unsupported Gutenberg underscore emphasis remains."
+            exit 1
+          fi
+
+      - name: Run focused Story House tests
+        run: npx vitest run src/game/storyLibrary/StoryLibraryService.test.ts src/game/storyLibrary/StoryReadingService.test.ts
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Commit materialised edition
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            public/stories/the-princess-and-the-goblin \
+            public/stories/catalogue.json
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "Story House: add Princess and the Goblin Full Classic Text"
+          git push origin HEAD:agent/story-house-princess-goblin-full-classic
