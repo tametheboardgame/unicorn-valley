@@ -175,7 +175,7 @@ jobs:
 
           anchors = [
               (
-                  block_for("there sat a little tiny girl"),
+                  block_for("sat a little girl, quite tiny"),
                   {
                       "id": "full-pedersen-thumbelina",
                       "path": "illustrations/pedersen-thumbelina.webp",
