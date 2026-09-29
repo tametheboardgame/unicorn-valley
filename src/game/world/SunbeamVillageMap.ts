@@ -166,6 +166,22 @@ export const SUNBEAM_VILLAGE_MAP = {
       width: shrub.width,
       height: shrub.height,
     })),
+    ...SUNBEAM_VILLAGE_LAYOUT.landscaping.highStreet.trees.map((tree) => ({
+      id: `collision:landscaping:tree:${tree.id}`,
+      ...tree.collision,
+    })),
+    ...SUNBEAM_VILLAGE_LAYOUT.landscaping.highStreet.shrubs.map((shrub) => ({
+      id: `collision:landscaping:shrub:${shrub.id}`,
+      ...shrub.collision,
+    })),
+    ...SUNBEAM_VILLAGE_LAYOUT.landscaping.flowerBeds.map((bed) => ({
+      id: `collision:landscaping:flower-bed:${bed.id}`,
+      ...bed.collision,
+    })),
+    {
+      id: 'collision:village-life:sundial',
+      ...SUNBEAM_VILLAGE_LAYOUT.villageLife.sundial.collision,
+    },
     {
       id: 'collision:village-life:bench',
       ...SUNBEAM_VILLAGE_LAYOUT.villageLife.bench.collision,

@@ -67,19 +67,39 @@ const VILLAGE_POINTS: readonly VillageLifePoint[] = [
     x: SUNBEAM_VILLAGE_LAYOUT.villageLife.sundial.x,
     y: SUNBEAM_VILLAGE_LAYOUT.villageLife.sundial.y,
     radius: 118,
-    createProp: (scene) => [
-      scene.add.ellipse(0, 34, 148, 76, 0xd9c58f, 0.34).setStrokeStyle(3, 0xb69b67, 0.42),
-      scene.add.rectangle(0, 18, 36, 54, 0xc7a76a, 1).setStrokeStyle(3, 0x8d7048, 0.88),
-      scene.add.ellipse(0, -8, 108, 48, 0xe0b15e, 1).setStrokeStyle(4, 0xb17d43, 0.9),
-      scene.add.triangle(0, -42, 0, 48, 18, 0, 36, 48, 0x8d6845, 1).setOrigin(0.5, 1),
-      scene.add
-        .text(0, -7, '☀', {
-          color: '#fff0aa',
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '20px',
-        })
-        .setOrigin(0.5),
-    ],
+    createProp: (scene) => {
+      const objects: Phaser.GameObjects.GameObject[] = [
+        scene.add.ellipse(0, 48, 154, 62, 0x6f654f, 0.2),
+        scene.add.ellipse(0, 31, 126, 58, 0xbca77f, 1).setStrokeStyle(4, 0x8b7659, 0.92),
+        scene.add.rectangle(0, 8, 42, 58, 0xc7b28a, 1).setStrokeStyle(3, 0x8c775a, 0.94),
+        scene.add.ellipse(0, -22, 116, 58, 0xd9c79b, 1).setStrokeStyle(5, 0x927c5b, 0.96),
+        scene.add.ellipse(0, -24, 92, 43, 0xcaa55a, 1).setStrokeStyle(3, 0x8f6c3c, 0.92),
+      ];
+
+      for (let index = 0; index < 12; index += 1) {
+        const angle = (Math.PI * 2 * index) / 12;
+        const tick = scene.add
+          .rectangle(Math.cos(angle) * 37, -24 + Math.sin(angle) * 16, 3, 10, 0x7c5b38, 0.9)
+          .setRotation(angle + Math.PI / 2);
+        objects.push(tick);
+      }
+
+      objects.push(
+        scene.add.triangle(0, -41, 0, -30, -7, 14, 7, 14, 0x715039, 1),
+        scene.add.rectangle(4, -23, 33, 4, 0x624735, 0.24).setRotation(0.16).setOrigin(0, 0.5),
+        scene.add.circle(0, -24, 4, 0x6a4933, 1).setStrokeStyle(1, 0xe1c88c, 0.85),
+        scene.add
+          .text(0, -49, 'N', {
+            color: '#6f5239',
+            fontFamily: 'Georgia, serif',
+            fontSize: '10px',
+            fontStyle: 'bold',
+          })
+          .setOrigin(0.5),
+      );
+
+      return objects;
+    },
   },
   {
     id: 'bench',
