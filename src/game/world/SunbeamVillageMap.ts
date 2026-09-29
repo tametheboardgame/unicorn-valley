@@ -183,9 +183,13 @@ export const SUNBEAM_VILLAGE_MAP = {
       ...SUNBEAM_VILLAGE_LAYOUT.villageLife.sundial.collision,
     },
     {
-      id: 'collision:village-life:bench',
-      ...SUNBEAM_VILLAGE_LAYOUT.villageLife.bench.collision,
+      id: 'collision:chess-plaza:table',
+      ...SUNBEAM_VILLAGE_LAYOUT.chessPlaza.table.collision,
     },
+    ...SUNBEAM_VILLAGE_LAYOUT.chessPlaza.benches.map((bench) => ({
+      id: `collision:chess-plaza:bench:${bench.id}`,
+      ...bench.collision,
+    })),
     ...SUNBEAM_VILLAGE_LAYOUT.willowGarden.fenceSegments.map((segment) => {
       const collision = 'collision' in segment ? segment.collision : segment;
       return {
