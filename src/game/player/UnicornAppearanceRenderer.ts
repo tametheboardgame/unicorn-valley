@@ -101,6 +101,12 @@ const POSES: Readonly<Record<UnicornProductionPose, PoseMetrics>> = {
 };
 
 export const UNICORN_WORLD_TAIL_SAFE_INSET = 10;
+export const UNICORN_GLASSES_LAYOUT = {
+  leftLensX: 66,
+  rightLensX: 88,
+  lensY: -37,
+  radius: 11,
+} as const;
 
 function clampChannel(value: number): number {
   return Math.max(0, Math.min(255, Math.round(value)));
@@ -666,13 +672,38 @@ function drawAccessory(
     graphics.lineStyle(2 * scale, 0xffd3df, 0.85);
     graphics.lineBetween(x + 56 * scale, y + 29 * scale, x + 64 * scale, y + 33 * scale);
   } else if (appearance.accessory === 'glasses') {
+    // The face is drawn in three-quarter profile with the visible eye around (+86, -37).
+    // Keep both lenses on that eye-line instead of the older neck-height attachment point.
     graphics.lineStyle(4 * scale, 0x8d63b2, 1);
-    graphics.strokeCircle(x + 43 * scale, y - 19 * scale, 11 * scale);
-    graphics.strokeCircle(x + 68 * scale, y - 19 * scale, 11 * scale);
-    graphics.lineBetween(x + 54 * scale, y - 19 * scale, x + 57 * scale, y - 19 * scale);
+    graphics.strokeCircle(
+      x + UNICORN_GLASSES_LAYOUT.leftLensX * scale,
+      y + UNICORN_GLASSES_LAYOUT.lensY * scale,
+      UNICORN_GLASSES_LAYOUT.radius * scale,
+    );
+    graphics.strokeCircle(
+      x + UNICORN_GLASSES_LAYOUT.rightLensX * scale,
+      y + UNICORN_GLASSES_LAYOUT.lensY * scale,
+      UNICORN_GLASSES_LAYOUT.radius * scale,
+    );
+    graphics.lineBetween(
+      x + (UNICORN_GLASSES_LAYOUT.leftLensX + UNICORN_GLASSES_LAYOUT.radius) * scale,
+      y + UNICORN_GLASSES_LAYOUT.lensY * scale,
+      x + (UNICORN_GLASSES_LAYOUT.rightLensX - UNICORN_GLASSES_LAYOUT.radius) * scale,
+      y + UNICORN_GLASSES_LAYOUT.lensY * scale,
+    );
     graphics.fillStyle(0xffe27c, 0.9);
-    drawStar(graphics, x + 43 * scale, y - 19 * scale, 5 * scale);
-    drawStar(graphics, x + 68 * scale, y - 19 * scale, 5 * scale);
+    drawStar(
+      graphics,
+      x + UNICORN_GLASSES_LAYOUT.leftLensX * scale,
+      y + UNICORN_GLASSES_LAYOUT.lensY * scale,
+      5 * scale,
+    );
+    drawStar(
+      graphics,
+      x + UNICORN_GLASSES_LAYOUT.rightLensX * scale,
+      y + UNICORN_GLASSES_LAYOUT.lensY * scale,
+      5 * scale,
+    );
   }
 }
 
@@ -750,7 +781,7 @@ export function unicornComponentBounds(
     ribbon: { x: -17, y: 20, width: 30, height: 33 },
     scarf: { x: -20, y: 18, width: 36, height: 43 },
     // Both stroked lenses extend beyond the bridge and star centres.
-    glasses: { x: -20, y: -12, width: 51, height: 26 },
+    glasses: { x: 3, y: -30, width: 48, height: 26 },
   };
   return bounds[appearance.accessory] ?? bounds.none;
 }

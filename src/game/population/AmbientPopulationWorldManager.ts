@@ -225,7 +225,9 @@ export class AmbientPopulationWorldManager {
     const wanted = new Map<SupportingResidentId, ResolvedResidentLocation>();
     const occupancy = getVillageInteriorOccupancyService();
     for (const resident of R6_SUPPORTING_RESIDENTS) {
-      if (!occupancy.isResidentAllowedInScene(resident.id, state.scene.scene.key)) {
+      if (
+        !occupancy.isResidentAllowedInScene(resident.id, state.scene.scene.key, context.timeState)
+      ) {
         continue;
       }
       const location = resolveResidentLocation(
