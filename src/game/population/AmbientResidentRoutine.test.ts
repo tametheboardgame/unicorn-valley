@@ -104,7 +104,7 @@ describe('ambient resident routine contract', () => {
     ).toBe('resident-anchor:juniper:willow-garden');
   });
 
-  it('proves contextual relocation for Tansy across day and evening', () => {
+  it('keeps Tansy mutually exclusive between daytime Sunbeam and evening Meadow', () => {
     expect(
       resolveResidentLocation(
         'resident:tansy',
@@ -114,6 +114,15 @@ describe('ambient resident routine contract', () => {
         morning,
       )?.id,
     ).toBe('resident-placement:tansy:village-day');
+    expect(
+      resolveResidentLocation(
+        'resident:tansy',
+        'RainbowMeadowScene',
+        R6_AMBIENT_RESIDENT_PLACEMENTS,
+        R6_AMBIENT_RESIDENT_STORY_ANCHORS,
+        morning,
+      ),
+    ).toBeNull();
     expect(
       resolveResidentLocation(
         'resident:tansy',
