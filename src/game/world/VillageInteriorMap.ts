@@ -200,7 +200,9 @@ const LIBRARY: VillageInteriorDefinition = {
     { id: 'bookcase-mid-west', x: 595, y: 425, width: 310, height: 130 },
     { id: 'secret-passage-bookcase', x: 905, y: 425, width: 310, height: 130 },
     { id: 'bookcase-east', x: 1215, y: 425, width: 310, height: 130 },
-    { id: 'counter', x: 660, y: 590, width: 300, height: 100 },
+    // Extend the desk blocker slightly towards the player so the full visible unicorn
+    // silhouette cannot overlap the desk even though its compact physics body has already stopped.
+    { id: 'counter', x: 660, y: 600, width: 300, height: 124 },
     { id: 'clue-cabinet', x: 205, y: 705, width: 130, height: 220 },
     { id: 'story-table', x: 1110, y: 715, width: 330, height: 125 },
     { id: 'reading-chair', x: 390, y: 835, width: 165, height: 130 },
