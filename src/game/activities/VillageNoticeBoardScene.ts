@@ -223,7 +223,9 @@ export class VillageNoticeBoardScene extends Phaser.Scene {
       .setInteractive(hitArea, Phaser.Geom.Rectangle.Contains)
       .on('pointerdown', () => this.selectNotice(notice.id));
 
-    const pin = this.add.circle(0, -height / 2 + 12, 8, tone.pin, 1).setStrokeStyle(2, 0x754c3c, 0.45);
+    const pin = this.add
+      .circle(0, -height / 2 + 12, 8, tone.pin, 1)
+      .setStrokeStyle(2, 0x754c3c, 0.45);
     const icon = this.add
       .text(-112, -37, notice.icon, {
         fontFamily: 'system-ui, sans-serif',
@@ -258,7 +260,9 @@ export class VillageNoticeBoardScene extends Phaser.Scene {
       .setOrigin(0, 0.5);
 
     for (const item of [icon, eyebrow, title, summary]) {
-      item.setInteractive({ useHandCursor: true }).on('pointerdown', () => this.selectNotice(notice.id));
+      item
+        .setInteractive({ useHandCursor: true })
+        .on('pointerdown', () => this.selectNotice(notice.id));
     }
     if (paper.input) {
       paper.input.cursor = 'pointer';
