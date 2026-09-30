@@ -75,9 +75,9 @@ test('H4.2 composes distinct Meadow districts and clears future activity space',
   }
 
   for (const [name, x, y] of [
-    ['meadow-depth:flower-circle', 500, 650],
-    ['meadow-depth:butterfly-parade', 780, 800],
-    ['meadow-depth:petal-patch', 1030, 650],
+    ['meadow-depth:flower-circle', 550, 600],
+    ['meadow-depth:butterfly-parade', 780, 850],
+    ['meadow-depth:petal-patch', 1070, 760],
   ] as const) {
     const feature = objects.find((candidate) => candidate.name === name);
     expect(feature).toBeDefined();
