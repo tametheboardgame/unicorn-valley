@@ -55,7 +55,7 @@ function destroyNamedObject(scene: Phaser.Scene, name: string): void {
   object.destroy();
 }
 
-function syncNovaInteractionTarget(area: CoreNpcPresenceArea): void {
+function syncNovaInteractionTarget(area: NovaPresenceArea): void {
   if (!novaRaceMarker || !NOVA_RACE_POSITION) {
     return;
   }
