@@ -60,17 +60,18 @@ describe('VillageInteriorMap', () => {
     }
   });
 
-  it('keeps the Story House desk solid without creating a remote invisible wall', () => {
+  it('separates Quill from the Story House desk without adding an invisible floor wall', () => {
     const library = getVillageInteriorMap('library');
     const desk = library.colliders.find(({ id }) => id === 'counter');
 
-    expect(desk).toMatchObject({ x: 660, y: 608, width: 300, height: 140 });
+    expect(desk).toMatchObject({ x: 660, y: 596, width: 300, height: 112 });
     expect(library.colliders.some(({ id }) => id === 'counter-front-clearance')).toBe(false);
-    // With the player's 44px physics body, the centre-line stop is around y=700: close enough
-    // to read as standing at the desk, but early enough to keep the visible unicorn out of it.
-    expect(isPointBlocked({ x: 660, y: 692 }, library.colliders, 22)).toBe(true);
-    expect(library.anchors.counter.approach).toEqual({ x: 660, y: 715 });
+    expect(library.anchors.counter.approach).toEqual({ x: 660, y: 700 });
+    expect(library.anchors['npc-work'].position).toEqual({ x: 700, y: 745 });
+    expect(library.anchors['npc-work'].approach).toEqual({ x: 700, y: 835 });
     expect(isPointBlocked(library.anchors.counter.approach, library.colliders, 22)).toBe(false);
+    expect(isPointBlocked(library.anchors['npc-work'].position, library.colliders, 22)).toBe(false);
+    expect(isPointBlocked(library.anchors['npc-work'].approach, library.colliders, 22)).toBe(false);
   });
 
   it('keeps all interaction approaches reachable from the common player spawn', () => {
