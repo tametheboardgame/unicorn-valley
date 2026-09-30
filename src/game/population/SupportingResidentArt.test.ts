@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { UNICORN_GLASSES_LAYOUT } from '../player/UnicornAppearanceRenderer';
 import {
   resolveSupportingResidentDisplaySize,
   SUPPORTING_RESIDENT_ART_LAYOUT,
@@ -24,6 +25,16 @@ describe('SupportingResidentArt layout', () => {
       textureRatio,
       2,
     );
+  });
+
+  it('keeps glasses centred on the visible face eye-line', () => {
+    const visibleEye = { x: 86, y: -37 };
+
+    expect(UNICORN_GLASSES_LAYOUT.lensY).toBe(visibleEye.y);
+    expect(
+      Math.abs(UNICORN_GLASSES_LAYOUT.rightLensX - visibleEye.x),
+    ).toBeLessThanOrEqual(3);
+    expect(UNICORN_GLASSES_LAYOUT.leftLensX).toBeLessThan(visibleEye.x);
   });
 
   it('preserves the authored adult display size and scales children from that baseline', () => {
