@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import type { DiscoveryId } from '../../content/contentTypes';
+import { MARIGOLD_CHARACTER_ID } from '../../content/r4PicnicEvent';
 import { GAME_WIDTH } from '../config/gameConstants';
 import { DiscoveryService } from '../discovery/DiscoveryService';
 import { InputController } from '../input/InputController';
@@ -14,7 +15,11 @@ import { createUnicornAppearanceTexture } from '../player/UnicornAppearanceRende
 import { DEFAULT_PLAYER_SPEED, resolvePlayerMovement } from '../player/PlayerMovement';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { saveLocationCheckpoint } from '../save/saveLocationCheckpoint';
-import { createMarigoldPicnicPresentation } from '../story/MarigoldPicnicPresentation';
+import {
+  createMarigoldPicnicPresentation,
+  MARIGOLD_PICNIC_POSITION,
+} from '../story/MarigoldPicnicPresentation';
+import { startMarigoldConversation } from '../story/WorldStoryConversations';
 import { InteractionPrompt } from '../ui/InteractionPrompt';
 import { RAINBOW_MEADOW_LOCATION_ID, RAINBOW_MEADOW_MAP } from '../world/RainbowMeadowMap';
 import {
@@ -22,6 +27,7 @@ import {
   SUNBEAM_VILLAGE_LOCATION_ID,
   SUNBEAM_VILLAGE_MAP,
 } from '../world/SunbeamVillageMap';
+import { CoreNpcPresenceService } from '../world/CoreNpcPresenceService';
 import { worldDepthForY } from '../world/WorldDepth';
 
 const COLLISION_TEXTURE_KEY = 'rainbow-meadow-collision-pixel';
@@ -56,55 +62,70 @@ function npcPosition(id: string): { x: number; y: number } {
   return marker.position;
 }
 
-const MEADOW_INTERACTIONS = [
-  {
-    id: 'interaction:meadow-village-gate',
-    label: 'Sunbeam Village',
-    actionLabel: 'Go to village',
-    position: entranceApproach('sunbeam-village'),
-    interactionRadius: 170,
-    priority: 20,
-    result: {
-      type: 'scene-transition',
-      sceneKey: 'SunbeamVillageScene',
+function createMeadowInteractions(scene: Phaser.Scene): readonly InteractionTarget[] {
+  const presenceService = new CoreNpcPresenceService(getBrowserSaveService());
+
+  return [
+    {
+      id: 'interaction:meadow-village-gate',
+      label: 'Sunbeam Village',
+      actionLabel: 'Go to village',
+      position: entranceApproach('sunbeam-village'),
+      interactionRadius: 170,
+      priority: 20,
+      result: {
+        type: 'scene-transition',
+        sceneKey: 'SunbeamVillageScene',
+      },
     },
-  },
-  {
-    id: 'interaction:meadow-nova',
-    label: 'Nova',
-    actionLabel: 'Talk',
-    position: npcPosition('nova'),
-    interactionRadius: 155,
-    priority: 30,
-    result: { type: 'message', title: 'Nova', message: 'Talk with Nova.' },
-  },
-  {
-    id: 'interaction:meadow-ribbon-board',
-    label: 'Ribbon Board',
-    actionLabel: 'Look',
-    position: hubApproach('ribbon-board'),
-    interactionRadius: 160,
-    priority: 20,
-    result: {
-      type: 'message',
-      title: 'Rainbow Run Ribbon Board',
-      message:
-        'The polished board has hooks for Rainbow Run ribbons. Nova keeps the race names painted neatly beside them.',
+    {
+      id: 'interaction:meadow-nova',
+      label: 'Nova',
+      actionLabel: 'Talk',
+      position: npcPosition('nova'),
+      interactionRadius: 155,
+      priority: 30,
+      result: { type: 'message', title: 'Nova', message: 'Talk with Nova.' },
     },
-  },
-  {
-    id: 'interaction:meadow-race-entrance',
-    label: 'Rainbow Run',
-    actionLabel: 'Enter Rainbow Run',
-    position: hubApproach('rainbow-run-entrance'),
-    interactionRadius: 175,
-    priority: 25,
-    result: {
-      type: 'scene-transition',
-      sceneKey: 'RainbowRunEntryScene',
+    {
+      id: 'interaction:meadow-marigold-picnic',
+      label: 'Marigold',
+      actionLabel: 'Talk',
+      actionKind: 'talk',
+      position: MARIGOLD_PICNIC_POSITION,
+      interactionRadius: 155,
+      priority: 30,
+      visible: () => presenceService.resolve(MARIGOLD_CHARACTER_ID)?.area === 'picnic-hill',
+      result: { type: 'callback', activate: () => startMarigoldConversation(scene) },
     },
-  },
-] satisfies readonly InteractionTarget[];
+    {
+      id: 'interaction:meadow-ribbon-board',
+      label: 'Ribbon Board',
+      actionLabel: 'Look',
+      position: hubApproach('ribbon-board'),
+      interactionRadius: 160,
+      priority: 20,
+      result: {
+        type: 'message',
+        title: 'Rainbow Run Ribbon Board',
+        message:
+          'The polished board has hooks for Rainbow Run ribbons. Nova keeps the race names painted neatly beside them.',
+      },
+    },
+    {
+      id: 'interaction:meadow-race-entrance',
+      label: 'Rainbow Run',
+      actionLabel: 'Enter Rainbow Run',
+      position: hubApproach('rainbow-run-entrance'),
+      interactionRadius: 175,
+      priority: 25,
+      result: {
+        type: 'scene-transition',
+        sceneKey: 'RainbowRunEntryScene',
+      },
+    },
+  ] satisfies readonly InteractionTarget[];
+}
 
 export class RainbowMeadowScene extends Phaser.Scene {
   private inputController: InputController | null = null;
@@ -114,6 +135,7 @@ export class RainbowMeadowScene extends Phaser.Scene {
   private collisionGroup: Phaser.Physics.Arcade.StaticGroup | null = null;
   private interactionPrompt: InteractionPrompt | null = null;
   private activeInteraction: InteractionTarget | null = null;
+  private meadowInteractions: readonly InteractionTarget[] = [];
   private feedbackText: Phaser.GameObjects.Text | null = null;
   private feedbackTimer: Phaser.Time.TimerEvent | null = null;
   private discoveryService: DiscoveryService | null = null;
@@ -124,6 +146,7 @@ export class RainbowMeadowScene extends Phaser.Scene {
   }
 
   public create(): void {
+    this.meadowInteractions = createMeadowInteractions(this);
     this.createEnvironment();
     this.ensureCollisionTexture();
 
@@ -201,6 +224,7 @@ export class RainbowMeadowScene extends Phaser.Scene {
       this.player = null;
       this.collisionGroup = null;
       this.activeInteraction = null;
+      this.meadowInteractions = [];
       this.feedbackText = null;
     });
   }
@@ -231,7 +255,7 @@ export class RainbowMeadowScene extends Phaser.Scene {
 
     this.activeInteraction = selectInteractionTarget(
       { x: this.player.sprite.x, y: this.player.sprite.y },
-      MEADOW_INTERACTIONS,
+      this.meadowInteractions,
     );
     this.interactionPrompt?.setTarget(this.activeInteraction);
 
@@ -256,6 +280,11 @@ export class RainbowMeadowScene extends Phaser.Scene {
         saveLocationCheckpoint(getBrowserSaveService(), SUNBEAM_VILLAGE_LOCATION_ID);
       }
       this.scene.start(target.result.sceneKey, target.result.payload);
+      return;
+    }
+
+    if (target.result.type === 'callback') {
+      target.result.activate();
       return;
     }
 
