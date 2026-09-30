@@ -62,7 +62,13 @@ describe('SunbeamNoticeBoardModel', () => {
       mapCornerFoundNow: true,
     });
     const copy = notices
-      .flatMap(({ eyebrow, title, summary, body, footer }) => [eyebrow, title, summary, body, footer])
+      .flatMap(({ eyebrow, title, summary, body, footer }) => [
+        eyebrow,
+        title,
+        summary,
+        body,
+        footer,
+      ])
       .join(' ')
       .toLowerCase();
 
