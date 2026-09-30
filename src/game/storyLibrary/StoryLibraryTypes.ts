@@ -30,6 +30,18 @@ export interface StoryChapterManifest {
   illustrations?: readonly StoryIllustrationReference[];
 }
 
+export interface StoryIllustrationSetChapter {
+  chapterId: string;
+  illustrations: readonly StoryIllustrationReference[];
+}
+
+export interface StoryIllustrationSetManifest {
+  id: string;
+  label: string;
+  rights: StoryRightsReference | null;
+  chapters: readonly StoryIllustrationSetChapter[];
+}
+
 export interface StoryDiscoveryMetadata {
   format: string;
   genres: readonly string[];
@@ -70,6 +82,8 @@ export interface StoryEditionManifest extends StoryEditionSummary {
   readingMode: StoryReadingMode;
   rights: StoryRightsMetadata;
   chapters: readonly StoryChapterManifest[];
+  defaultIllustrationSetId: string | null;
+  illustrationSets: readonly StoryIllustrationSetManifest[];
 }
 
 export interface StoryLibraryManifest {
