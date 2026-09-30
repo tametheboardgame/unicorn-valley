@@ -146,6 +146,7 @@ export class VillageInteriorScene extends Phaser.Scene {
   private occupant: Phaser.GameObjects.Container | null = null;
   private occupantResidentId: SupportingResidentId | null = null;
   private readonly timeService = getBrowserAtmosphericTimeService(getBrowserSaveService());
+  private timeUnsubscribe: (() => void) | null = null;
   private overlay: Phaser.GameObjects.Container | null = null;
   private readonly purchaseGuard = new ShopPurchaseTapGuard();
   private storyCardCursor = 0;
@@ -189,6 +190,8 @@ export class VillageInteriorScene extends Phaser.Scene {
     this.runtime.create();
     this.renderInteriorOccupant();
     this.registerInteractions();
+    this.timeUnsubscribe?.();
+    this.timeUnsubscribe = this.timeService.subscribe(() => this.refreshInteriorOccupancy());
     this.input.keyboard?.on('keydown-ESC', this.handleEscape, this);
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.shutdownInterior());
@@ -1672,6 +1675,22 @@ export class VillageInteriorScene extends Phaser.Scene {
     this.occupantResidentId = assignment.residentId;
   }
 
+  private refreshInteriorOccupancy(): void {
+    if (
+      this.interiorId !== 'rosehip-cottage' &&
+      this.interiorId !== 'bluebell-cottage' &&
+      this.interiorId !== 'sunpetal-cottage'
+    ) {
+      return;
+    }
+
+    this.occupant?.destroy(true);
+    this.occupant = null;
+    this.occupantResidentId = null;
+    this.renderInteriorOccupant();
+    this.registerInteractions();
+  }
+
   private registerInteractions(): void {
     const map = getVillageInteriorMap(this.interiorId);
     const targets: InteractionTarget[] = [
@@ -2092,7 +2111,7 @@ export class VillageInteriorScene extends Phaser.Scene {
     const worker = getVillageInteriorAnchor('accessory-shop', 'npc-work');
     const display = getVillageInteriorAnchor('accessory-shop', 'primary-feature');
     const mirror = getVillageInteriorAnchor('accessory-shop', 'secondary-feature');
-    return [
+    const targets: InteractionTarget[] = [
       {
         id: 'interaction:village-interior:accessory-shop:counter',
         label: 'Style desk',
@@ -2102,21 +2121,6 @@ export class VillageInteriorScene extends Phaser.Scene {
         interactionRadius: 155,
         priority: 28,
         result: { type: 'callback', activate: () => this.openThreadShop('accessories') },
-      },
-      {
-        id: 'interaction:village-interior:accessory-shop:shopkeeper',
-        label: 'Velvet',
-        actionLabel: 'Talk',
-        actionKind: 'talk',
-        position: worker.position,
-        interactionRadius: 190,
-        priority: 35,
-        directArea: {
-          width: 180,
-          height: 190,
-          name: 'interaction-direct-zone:interaction:village-interior:accessory-shop:shopkeeper',
-        },
-        result: { type: 'callback', activate: () => this.openThreadShopkeeperConversation() },
       },
       {
         id: 'interaction:village-interior:accessory-shop:wall-rack',
@@ -2159,6 +2163,26 @@ export class VillageInteriorScene extends Phaser.Scene {
         result: { type: 'callback', activate: () => this.openThreadWardrobe() },
       },
     ];
+
+    if (this.occupant) {
+      targets.push({
+        id: 'interaction:village-interior:accessory-shop:shopkeeper',
+        label: 'Velvet',
+        actionLabel: 'Talk',
+        actionKind: 'talk',
+        position: worker.position,
+        interactionRadius: 190,
+        priority: 35,
+        directArea: {
+          width: 180,
+          height: 190,
+          name: 'interaction-direct-zone:interaction:village-interior:accessory-shop:shopkeeper',
+        },
+        result: { type: 'callback', activate: () => this.openThreadShopkeeperConversation() },
+      });
+    }
+
+    return targets;
   }
 
   private openBakeryCounter(section: BakerySectionId = this.bakerySection): void {
@@ -3176,6 +3200,8 @@ export class VillageInteriorScene extends Phaser.Scene {
 
   private shutdownInterior(): void {
     this.input.keyboard?.off('keydown-ESC', this.handleEscape, this);
+    this.timeUnsubscribe?.();
+    this.timeUnsubscribe = null;
     this.closeStoryLibrary();
     this.closeOverlay();
     getSceneInteractionRegistry(this).clearOwner(INTERIOR_INTERACTION_OWNER);
