@@ -6,6 +6,7 @@ import {
 } from '../save/saveLocationCheckpoint';
 import { MOONFLOWER_GLADE_MAP, setMoonflowerGladePlayerSpawn } from './MoonflowerGladeMap';
 import {
+  RAINBOW_MEADOW_LAYOUT,
   RAINBOW_MEADOW_LOCATION_ID,
   RAINBOW_MEADOW_MAP,
   setRainbowMeadowPlayerSpawn,
@@ -85,21 +86,8 @@ function hideLegacyGatewayObjects(scene: Phaser.Scene): void {
       const isLegacyLabel =
         object.text === 'Sunbeam Village → Rainbow Meadow' ||
         object.text === '← Moonflower Glade' ||
-        object.text === 'Rainbow Meadow →' ||
-        object.text === '← Sunbeam Village';
+        object.text === 'Rainbow Meadow →';
       if (key !== 'SunbeamVillageScene' && isLegacyLabel) {
-        object.setVisible(false);
-      }
-      continue;
-    }
-
-    if (key === 'RainbowMeadowScene' && object instanceof Phaser.GameObjects.Rectangle) {
-      const gateRectangle =
-        Math.abs(object.x - 125) < 3 &&
-        Math.abs(object.y - 1050) < 3 &&
-        Math.abs(object.displayWidth - 110) < 3 &&
-        Math.abs(object.displayHeight - 370) < 3;
-      if (gateRectangle) {
         object.setVisible(false);
       }
       continue;
@@ -204,46 +192,14 @@ function decorateGlade(scene: Phaser.Scene): void {
 }
 
 function decorateMeadow(scene: Phaser.Scene): void {
-  drawPathNetwork(scene, [
-    {
-      points: [
-        { x: 100, y: 1050 },
-        { x: 760, y: 1050 },
-        { x: 1330, y: 1110 },
-        { x: 1900, y: 1040 },
-        { x: 2350, y: 1050 },
-        { x: 3190, y: 1040 },
-      ],
-      outerWidth: 148,
-      innerWidth: 108,
-    },
-    {
-      points: [
-        { x: 1110, y: 1065 },
-        { x: 1190, y: 610 },
-      ],
-      outerWidth: 76,
-      innerWidth: 58,
-    },
-    {
-      points: [
-        { x: 1800, y: 1050 },
-        { x: 1850, y: 1610 },
-      ],
-      outerWidth: 76,
-      innerWidth: 58,
-    },
-    {
-      points: [
-        { x: 2500, y: 1060 },
-        { x: 2510, y: 1260 },
-      ],
-      outerWidth: 76,
-      innerWidth: 58,
-    },
-  ]);
-
-  addGateway(scene, { x: 120, y: 1050, label: 'Sunbeam Village', direction: 'west' });
+  drawPathNetwork(scene, RAINBOW_MEADOW_LAYOUT.structuralPaths);
+  const gateway = RAINBOW_MEADOW_LAYOUT.sunbeamGateway;
+  addGateway(scene, {
+    x: gateway.position.x,
+    y: gateway.position.y,
+    label: gateway.label,
+    direction: gateway.direction,
+  });
 }
 
 function decorateScene(scene: Phaser.Scene): void {

@@ -433,51 +433,11 @@ export class RainbowMeadowScene extends Phaser.Scene {
     this.add.circle(1880, 1510, 620, 0x8ed585, 0.35).setDepth(1);
     this.add.circle(2790, 940, 650, 0xc7ec9e, 0.42).setDepth(1);
 
-    this.createPaths();
     this.createPond();
     this.createGroves();
     this.createRaceHub();
-    this.createNova();
     createMarigoldPicnicPresentation(this, getBrowserSaveService().load());
-    this.createEntranceMarker();
     this.createMeadowFlowers();
-  }
-
-  private createPaths(): void {
-    const path = this.add.graphics().setDepth(2);
-    path.lineStyle(138, 0xe7cf99, 0.95);
-    path.beginPath();
-    path.moveTo(100, 1050);
-    path.lineTo(760, 1050);
-    path.lineTo(1330, 1110);
-    path.lineTo(1900, 1040);
-    path.lineTo(2350, 1050);
-    path.lineTo(3190, 1040);
-    path.strokePath();
-
-    path.lineStyle(90, 0xf5e6bc, 0.92);
-    path.beginPath();
-    path.moveTo(100, 1050);
-    path.lineTo(760, 1050);
-    path.lineTo(1330, 1110);
-    path.lineTo(1900, 1040);
-    path.lineTo(2350, 1050);
-    path.lineTo(3190, 1040);
-    path.strokePath();
-
-    path.lineStyle(58, 0xf3e3b6, 0.82);
-    path.beginPath();
-    path.moveTo(1110, 1065);
-    path.lineTo(1190, 610);
-    path.strokePath();
-    path.beginPath();
-    path.moveTo(1800, 1050);
-    path.lineTo(1850, 1610);
-    path.strokePath();
-    path.beginPath();
-    path.moveTo(2500, 1060);
-    path.lineTo(2510, 1260);
-    path.strokePath();
   }
 
   private createPond(): void {
@@ -657,63 +617,6 @@ export class RainbowMeadowScene extends Phaser.Scene {
         .triangle(x + 4, y - 145, 0, 0, 76, 20, 0, 40, colours[(x + y) % colours.length], 1)
         .setDepth(depth + 0.1);
     }
-  }
-
-  private createNova(): void {
-    const marker = RAINBOW_MEADOW_MAP.npcMarkers.find((item) => item.id === 'nova');
-    if (!marker) {
-      return;
-    }
-
-    const { x, y } = marker.position;
-    const body = this.add.ellipse(0, 0, 92, 62, 0xe7c3ff, 1);
-    const head = this.add.circle(34, -34, 31, 0xf1d7ff, 1);
-    const mane = this.add.ellipse(2, -30, 34, 80, 0x7fc8e7, 0.95).setAngle(22);
-    const horn = this.add.triangle(49, -74, 0, 30, 8, 0, 16, 30, 0xffdc75, 1).setAngle(20);
-    const eye = this.add.circle(44, -38, 4, 0x5b4068, 1);
-    const legs = [-28, 23].flatMap((offsetX) => [
-      this.add.rectangle(offsetX, 38, 11, 54, 0xd8afea, 1).setAngle(4),
-      this.add.rectangle(offsetX + 18, 36, 11, 52, 0xd8afea, 1).setAngle(-4),
-    ]);
-    const tail = this.add.ellipse(-57, -7, 25, 72, 0xf29fc5, 0.96).setAngle(-35);
-    const nova = this.add
-      .container(x, y, [tail, ...legs, body, mane, head, horn, eye])
-      .setDepth(worldDepthForY(y + 48, 0.2));
-
-    this.add
-      .text(x, y + 72, 'Nova', {
-        color: '#5e4669',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '18px',
-        fontStyle: 'bold',
-        backgroundColor: '#fff8dfdd',
-        padding: { x: 8, y: 4 },
-      })
-      .setOrigin(0.5)
-      .setDepth(worldDepthForY(y + 82, 0.3));
-
-    this.tweens.add({
-      targets: nova,
-      y: y - 5,
-      duration: 1050,
-      yoyo: true,
-      repeat: -1,
-      ease: 'Sine.InOut',
-    });
-  }
-
-  private createEntranceMarker(): void {
-    this.add.rectangle(125, 1050, 110, 370, 0x6ba76c, 0.92).setDepth(worldDepthForY(1215));
-    this.add
-      .text(210, 890, '← Sunbeam Village', {
-        color: '#59485f',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '20px',
-        fontStyle: 'bold',
-        backgroundColor: '#fff7dedd',
-        padding: { x: 10, y: 6 },
-      })
-      .setDepth(worldDepthForY(900, 0.2));
   }
 
   private createMeadowFlowers(): void {

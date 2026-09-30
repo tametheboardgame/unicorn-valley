@@ -258,7 +258,11 @@ test('Marigold and Nova dialogue keep accepted sizing and Meet Nova works when N
   await positionPlayer(page, 'SunbeamVillageScene', MARIGOLD_APPROACH.x, MARIGOLD_APPROACH.y);
   await waitForTalkTarget(page, 'SunbeamVillageScene', 'Marigold');
 
-  await startScene(page, 'RainbowMeadowScene');
+  // Re-enter through a genuine Meadow boot so the committed picnic presence is resolved
+  // through the same lifecycle a player uses when leaving Sunbeam Village.
+  await page.goto('/?scene=meadow&diagnostics=1');
+  await waitForDiagnostics(page);
+  await waitForScene(page, 'RainbowMeadowScene');
   await waitForVisibleObject(page, 'RainbowMeadowScene', 'core-npc:nova:picnic');
   await waitForVisibleObject(page, 'RainbowMeadowScene', 'core-npc:marigold:picnic');
 
@@ -327,7 +331,9 @@ test('Marigold and Nova dialogue keep accepted sizing and Meet Nova works when N
   await waitForHiddenObject(page, 'RainbowMeadowScene', 'dialogue-production-panel');
   await waitForTalkTarget(page, 'RainbowMeadowScene', 'Nova');
 
-  await startScene(page, 'SunbeamVillageScene');
+  await page.goto('/?scene=village&diagnostics=1');
+  await waitForDiagnostics(page);
+  await waitForScene(page, 'SunbeamVillageScene');
   await waitForHiddenObject(page, 'SunbeamVillageScene', 'core-npc:marigold:world');
   await positionPlayer(page, 'SunbeamVillageScene', MARIGOLD_APPROACH.x, MARIGOLD_APPROACH.y);
   await page.waitForTimeout(250);

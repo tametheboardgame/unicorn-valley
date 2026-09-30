@@ -74,35 +74,6 @@ function syncNovaInteractionTarget(area: NovaPresenceArea): void {
   mutablePosition.y = target.y;
 }
 
-function hideNovaPlaceholder(scene: Phaser.Scene, hideRaceLabel: boolean): void {
-  if (!NOVA_RACE_POSITION) {
-    return;
-  }
-
-  for (const object of scene.children.list) {
-    if (
-      object instanceof Phaser.GameObjects.Container &&
-      object.name !== 'core-npc:nova:world' &&
-      Math.abs(object.x - NOVA_RACE_POSITION.x) <= 1 &&
-      Math.abs(object.y - NOVA_RACE_POSITION.y) <= 8 &&
-      object.list.length >= 8
-    ) {
-      object.setVisible(false);
-      continue;
-    }
-
-    if (
-      hideRaceLabel &&
-      object instanceof Phaser.GameObjects.Text &&
-      object.text === 'Nova' &&
-      Math.abs(object.x - NOVA_RACE_POSITION.x) <= 4 &&
-      Math.abs(object.y - (NOVA_RACE_POSITION.y + 72)) <= 10
-    ) {
-      object.setVisible(false);
-    }
-  }
-}
-
 function hidePicnicNovaPlaceholder(scene: Phaser.Scene): void {
   for (const object of scene.children.list) {
     if (!hasWorldPosition(object)) {
@@ -273,12 +244,6 @@ export class CoreNpcProductionPresentationManager {
       return;
     }
 
-    const tighteningNova = scene.children.getByName('nova-canonical-world');
-    if (tighteningNova instanceof Phaser.GameObjects.Sprite) {
-      tighteningNova.setVisible(false);
-    }
-
-    hideNovaPlaceholder(scene, this.novaArea !== 'rainbow-run-hub');
     hidePicnicNovaPlaceholder(scene);
 
     if (this.novaArea === 'moonflower-cottage') {

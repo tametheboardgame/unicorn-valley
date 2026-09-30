@@ -12,8 +12,6 @@ import { WORLD_PLAYER_NAME } from './WorldTraversalPolishManager';
 
 const CLEANUP_PREFIX = 'r6-wp6.18g';
 const FINAL_FIX_PREFIX = 'r6-wp6.18ij';
-const LEGACY_MEADOW_PATH_NAME = 'r6-region-gateway-art:meadow-crystal-brook:path';
-const LEGACY_MEADOW_DIVIDER_NAME = 'r6-region-gateway-art:meadow-crystal-brook:divider';
 const LEGACY_BROOK_WOODS_PATH_NAME = 'r6-region-gateway-art:brook-woods:path';
 const LEGACY_CRYSTAL_CASCADE_PATH_NAME = 'r6-region-gateway-art:crystal-cascade:path';
 const BROOK_WOODS_PATH_NAME = `${FINAL_FIX_PREFIX}:brook-woods:path`;
@@ -95,17 +93,7 @@ function drawCorrectedMeadowPath(scene: Phaser.Scene): void {
   );
 }
 
-function cleanMeadowCrystalBrookPath(scene: Phaser.Scene): void {
-  const legacyPath = scene.children.getByName(LEGACY_MEADOW_PATH_NAME);
-  if (legacyPath instanceof Phaser.GameObjects.Graphics) {
-    legacyPath.setVisible(false);
-  }
-
-  const legacyDivider = scene.children.getByName(LEGACY_MEADOW_DIVIDER_NAME);
-  if (legacyDivider instanceof Phaser.GameObjects.Container) {
-    legacyDivider.setVisible(false);
-  }
-
+function ensureMeadowCrystalBrookPath(scene: Phaser.Scene): void {
   drawCorrectedMeadowPath(scene);
 }
 
@@ -289,7 +277,7 @@ export class R6FinalPlaythroughCleanupManager {
       if (scene.scene.key === 'SunbeamVillageScene') {
         cleanPebblePresentation(scene);
       } else if (scene.scene.key === 'RainbowMeadowScene') {
-        cleanMeadowCrystalBrookPath(scene);
+        ensureMeadowCrystalBrookPath(scene);
       } else if (scene.scene.key === 'CrystalBrookScene') {
         cleanBrookGatewayPaths(scene);
         ensureCrystalCascadeTapTarget(scene);
