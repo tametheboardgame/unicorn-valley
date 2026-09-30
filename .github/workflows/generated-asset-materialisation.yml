@@ -141,6 +141,8 @@ jobs:
 
       - name: Commit materialised assets
         shell: python
+        env:
+          TARGET_BRANCH: ${{ steps.target.outputs.branch }}
         run: |
           import subprocess
           from pathlib import Path
