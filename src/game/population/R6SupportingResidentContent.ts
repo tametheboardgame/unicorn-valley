@@ -180,7 +180,7 @@ export const R6_SUPPORTING_RESIDENTS = [
       tailColour: 'lilac',
       hornStyle: 'moon',
       marking: 'star',
-      accessory: 'glasses',
+      accessory: 'none',
     },
     talk: {
       lines: [
