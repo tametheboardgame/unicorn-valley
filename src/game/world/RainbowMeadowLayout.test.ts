@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { RAINBOW_MEADOW_LAYOUT } from './RainbowMeadowLayout';
-import { RAINBOW_MEADOW_MAP } from './RainbowMeadowMap';
+import { RAINBOW_MEADOW_LAYOUT, RAINBOW_MEADOW_MAP } from './RainbowMeadowMap';
 
 describe('Rainbow Meadow canonical layout', () => {
   it('projects structural map coordinates from one area-owned layout', () => {
