@@ -371,7 +371,6 @@ describe('migrateSaveRecord', () => {
       seventhMigration: true,
       eighthMigration: true,
       ninthMigration: true,
-      tenthMigration: true,
     });
     const toVersionEight: SaveMigration = (save) => ({
       ...save,
@@ -412,6 +411,7 @@ describe('migrateSaveRecord', () => {
       seventhMigration: true,
       eighthMigration: true,
       ninthMigration: true,
+      tenthMigration: true,
     });
   });
 
