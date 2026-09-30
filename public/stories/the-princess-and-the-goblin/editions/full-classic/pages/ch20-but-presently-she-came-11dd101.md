@@ -1,0 +1,8 @@
+<!-- block:ch20-but-presently-she-came-to-a-huge-11dd101e -->
+But presently she came to a huge heap of stones, piled in a slope against the wall of the cavern. On these she climbed, and soon recovered the level of the thread--only however to find, the next moment, that it vanished through the heap of stones, and left her standing on it, with her face to the solid rock. For one terrible moment, she felt as if her grandmother had forsaken her. The thread which the spiders had spun far over the seas, which her grandmother had sat in the moonlight and spun again for her, which she had tempered in the rose-fire, and tied to her opal ring, had left her--had gone where she could no longer follow it--had brought her into a horrible cavern, and there left her! She was forsaken indeed!
+
+<!-- block:ch20-when-shall-i-wake-she-said-to-3491a0a1 -->
+"When *shall* I wake?" she said to herself in an agony, but the same moment knew that it was no dream. She threw herself upon the heap, and began to cry. It was well she did not know what creatures, one of them with stone shoes on her feet, were lying in the next cave. But neither did she know who was on the other side of the slab.
+
+<!-- block:ch20-at-length-the-thought-struck-her-that-6e4fd81a -->
+At length the thought struck her, that at least she could follow the thread backward, and thus get out of the mountain, and home. She rose at once, and found the thread. But the instant she tried to feel it backward, it vanished from her touch. Forward, it led her hand up to the heap of stones--backward, it seemed nowhere. Neither could she see it as before in the light of the fire. She burst into a wailing cry, and again threw herself down on the stones.

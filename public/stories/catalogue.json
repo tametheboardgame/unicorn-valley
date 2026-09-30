@@ -436,11 +436,15 @@
       },
       "chapterCount": 12,
       "manifestPath": "/stories/the-princess-and-the-goblin/book.json",
-      "defaultEditionId": "default",
+      "defaultEditionId": "story-house",
       "editions": [
         {
-          "id": "default",
-          "label": "Standard Edition"
+          "id": "story-house",
+          "label": "Story House Edition"
+        },
+        {
+          "id": "full-classic",
+          "label": "Full Classic Text"
         }
       ]
     },

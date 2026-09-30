@@ -1,0 +1,14 @@
+<!-- block:ch09-this-very-evening-i-have-had-to-48e0aa56 -->
+"This very evening I have had to remove my household effects; therefore the sooner we are ready to carry out the plan, for the execution of which his Majesty has been making such magnificent preparations, the better. I may just add, that within the last few days I have perceived a small outbreak in my dining-room, which combined with observations upon the course of the river escaping where the evil men enter, has convinced me that close to the spot must lie a deep gulf in its channel. This discovery will, I trust, add considerably to the otherwise immense forces at his Majesty's disposal."
+
+<!-- block:ch09-he-ceased-and-the-king-graciously-acknowledged-02e7576a -->
+He ceased, and the king graciously acknowledged his speech with a bend of his head; whereupon Glump, after a bow to his Majesty, slid down amongst the rest of the undistinguished multitude. Then the Chancellor rose and resumed.
+
+<!-- block:ch09-the-information-which-the-worthy-glump-has-24cfc0fb -->
+"The information which the worthy Glump has given us," he said, "might have been of considerable import at the present moment, but for that other design already referred to, which naturally takes precedence. His Majesty, unwilling to proceed to extremities, and well aware that such measures sooner or later result in violent reactions, has excogitated a more fundamental and comprehensive measure, of which I need say no more. Should his Majesty be successful--as who dares to doubt?--then a peace, all to the advantage of the goblin kingdom, will be established for a generation at least, rendered absolutely secure by the pledge which his royal Highness the prince will have and hold for the good behavior of his relatives. Should his Majesty fail--which who shall dare even to imagine in his most secret thoughts?--then will be the time for carrying out with rigor the design to which Glump referred, and for which our preparations are even now all but completed. The failure of the former will render the latter imperative."
+
+<!-- block:ch09-curdie-perceiving-that-the-assembly-was-drawing-3f2aa80a -->
+Curdie perceiving that the assembly was drawing to a close, and that there was little chance of either plan being more fully discovered, now thought it prudent to make his escape before the goblins began to disperse, and slipped quietly away.
+
+<!-- block:ch09-there-was-not-much-danger-of-meeting-0a2715ef -->
+There was not much danger of meeting any goblins, for all the men at least were left behind him in the palace; but there was considerable danger of his taking a wrong turning, for he had now no light, and had therefore to depend upon his memory and his hands. After he had left behind him the glow that issued from the door of Glump's new abode, he was utterly without guide, so far as his eyes were concerned.
