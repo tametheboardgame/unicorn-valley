@@ -187,7 +187,7 @@ const LIBRARY: VillageInteriorDefinition = {
   playerSpawn: PLAYER_SPAWN,
   roomShell: ROOM_SHELL,
   anchors: sharedAnchors(
-    anchor('counter', 'Storykeeper desk', { x: 660, y: 565 }, { x: 660, y: 700 }),
+    anchor('counter', 'Storykeeper desk', { x: 660, y: 565 }, { x: 660, y: 735 }),
     anchor('npc-work', 'Quill storykeeper position', { x: 660, y: 665 }, { x: 660, y: 785 }),
     anchor('primary-feature', 'Story corner table', { x: 1110, y: 705 }, { x: 960, y: 805 }),
     anchor('secondary-feature', 'Valley clue cabinet', { x: 205, y: 705 }, { x: 360, y: 705 }),
@@ -200,9 +200,11 @@ const LIBRARY: VillageInteriorDefinition = {
     { id: 'bookcase-mid-west', x: 595, y: 425, width: 310, height: 130 },
     { id: 'secret-passage-bookcase', x: 905, y: 425, width: 310, height: 130 },
     { id: 'bookcase-east', x: 1215, y: 425, width: 310, height: 130 },
-    // Extend the desk blocker slightly towards the player so the full visible unicorn
-    // silhouette cannot overlap the desk even though its compact physics body has already stopped.
     { id: 'counter', x: 660, y: 600, width: 300, height: 124 },
+    // The player sprite is substantially taller than its compact Arcade body. This shallow
+    // front bumper stops the body early enough that the visible unicorn remains in front of
+    // the desk instead of visually entering it before collision resolution becomes apparent.
+    { id: 'counter-front-clearance', x: 660, y: 676, width: 300, height: 48 },
     { id: 'clue-cabinet', x: 205, y: 705, width: 130, height: 220 },
     { id: 'story-table', x: 1110, y: 715, width: 330, height: 125 },
     { id: 'reading-chair', x: 390, y: 835, width: 165, height: 130 },
