@@ -7,7 +7,7 @@ export interface VillageInteriorResidentAssignment {
   interiorId: VillageInteriorId;
   workAnchorId: 'npc-work';
   role: 'bakery-worker' | 'shopkeeper' | 'story-keeper' | 'resident-home';
-  supportedRoleAccessories: readonly ('chef-hat' | 'apron' | 'satchel')[];
+  supportedRoleAccessories: readonly ('chef-hat' | 'apron' | 'satchel' | 'monocle')[];
   activeWhen?: {
     timeStates: readonly AtmosphericTimeState[];
   };
@@ -33,7 +33,7 @@ export const VILLAGE_INTERIOR_RESIDENT_ASSIGNMENTS = [
     interiorId: 'library',
     workAnchorId: 'npc-work',
     role: 'story-keeper',
-    supportedRoleAccessories: [],
+    supportedRoleAccessories: ['monocle'],
   },
   {
     residentId: 'resident:rosehip',
