@@ -482,7 +482,6 @@ test('H3.11.3 gives Twinkle & Thread a dedicated walkable boutique and shopkeepe
     .toBe(2);
 });
 
-
 test('SH1.2A switches independent illustration sets and remembers the choice', async ({ page }) => {
   await page.route('**/stories/the-hare-and-the-tortoise/book.json', async (route) => {
     const response = await route.fetch();
