@@ -7,6 +7,7 @@ import { InputController } from '../input/InputController';
 import { KeyboardInputAdapter } from '../input/KeyboardInputAdapter';
 import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 import { shouldShowTouchMovementPad, TouchMovementPad } from '../input/TouchMovementPad';
+import { isInteractionModalActive } from '../interaction/InteractionModalState';
 import type { InteractionTarget } from '../interaction/InteractionTarget';
 import { selectInteractionTarget } from '../interaction/InteractionTargeting';
 import { PlayerEntity } from '../player/PlayerEntity';
@@ -238,6 +239,17 @@ export class RainbowMeadowScene extends Phaser.Scene {
 
     if (this.inputController.justPressed('BACK')) {
       this.scene.start('TitleScene');
+      return;
+    }
+
+    if (isInteractionModalActive(this)) {
+      this.player.applyMovement(
+        resolvePlayerMovement(0, 0, DEFAULT_PLAYER_SPEED, this.player.getFacing()),
+      );
+      this.player.updatePresentation(time);
+      this.player.sprite.setDepth(worldDepthForY(this.player.sprite.y, 0.5));
+      this.activeInteraction = null;
+      this.interactionPrompt?.setTarget(null);
       return;
     }
 
