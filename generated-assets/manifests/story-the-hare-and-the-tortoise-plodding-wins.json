@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "10YMC5Z16EhnqTLQnDuf4WsuMnakll8q7"
+  },
+  "expectedSourceName": "hare-tortoise-finish-draft-v01.png",
+  "destination": "public/stories/the-hare-and-the-tortoise/illustrations/generated/plodding-wins.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1000,
+    "quality": 88
+  },
+  "revision": 1
+}
