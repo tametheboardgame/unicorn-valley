@@ -481,3 +481,112 @@ test('H3.11.3 gives Twinkle & Thread a dedicated walkable boutique and shopkeepe
     })
     .toBe(2);
 });
+
+
+test('SH1.2A switches independent illustration sets and remembers the choice', async ({ page }) => {
+  await page.route('**/stories/the-hare-and-the-tortoise/book.json', async (route) => {
+    const response = await route.fetch();
+    const manifest = (await response.json()) as {
+      chapters: Array<{
+        id: string;
+        illustrations?: Array<Record<string, unknown>>;
+      }>;
+      rights: {
+        illustrations: Record<string, unknown>;
+      };
+      defaultIllustrationSetId?: string;
+      illustrationSets?: unknown[];
+    };
+    const chapter = manifest.chapters[0];
+    const classicIllustrations = chapter?.illustrations ?? [];
+    if (!chapter || classicIllustrations.length < 2) {
+      throw new Error('Missing Hare and Tortoise illustration fixture');
+    }
+
+    delete chapter.illustrations;
+    manifest.defaultIllustrationSetId = 'classic';
+    manifest.illustrationSets = [
+      {
+        id: 'classic',
+        label: 'Classic Illustrations',
+        rights: manifest.rights.illustrations,
+        chapters: [
+          {
+            chapterId: chapter.id,
+            illustrations: classicIllustrations,
+          },
+        ],
+      },
+      {
+        id: 'modern',
+        label: 'Modern Illustrations',
+        rights: {
+          status: 'original',
+          source: 'SH1.2A browser-test fixture',
+        },
+        chapters: [
+          {
+            chapterId: chapter.id,
+            illustrations: classicIllustrations.map((illustration, index) => ({
+              ...illustration,
+              id: `modern-${String(illustration.id)}`,
+              path: index === 0 ? 'illustrations/finish.webp' : 'illustrations/start.webp',
+              caption: 'Modern illustration test fixture.',
+            })),
+          },
+        ],
+      },
+    ];
+
+    await route.fulfill({ response, json: manifest });
+  });
+
+  await page.goto('/?diagnostics=1');
+  await startInterior(page, 'library');
+  await page.evaluate(() => {
+    (
+      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__?.setArcadeSpritePosition(
+      'VillageInteriorScene',
+      'world-player-unicorn',
+      960,
+      805,
+    );
+  });
+  await page.keyboard.press('Enter');
+  await expect(page.locator('.story-reader-overlay')).toBeVisible();
+
+  await page.locator('.story-library-book[data-story-id="the-hare-and-the-tortoise"]').click();
+
+  const illustrationSwitch = page.getByRole('navigation', { name: 'Illustrations' });
+  await expect(illustrationSwitch).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Classic Illustrations' })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
+  await expect(page.locator('.story-reader-illustration img').first()).toHaveAttribute(
+    'src',
+    /illustrations\/start\.webp$/,
+  );
+
+  await page.getByRole('button', { name: 'Modern Illustrations' }).click();
+  await expect(page.locator('.story-reader-paper')).toHaveAttribute(
+    'data-story-illustration-set-id',
+    'modern',
+  );
+  await expect(page.locator('.story-reader-illustration img').first()).toHaveAttribute(
+    'src',
+    /illustrations\/finish\.webp$/,
+  );
+
+  await page.getByRole('button', { name: 'Library' }).click();
+  await page.locator('.story-library-book[data-story-id="the-hare-and-the-tortoise"]').click();
+  await expect(page.getByRole('button', { name: 'Modern Illustrations' })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
+
+  await page.getByRole('button', { name: 'Library' }).click();
+  await page.locator('.story-library-book[data-story-id="the-duck-bread-baker"]').click();
+  await expect(page.getByRole('navigation', { name: 'Illustrations' })).toHaveCount(0);
+});
