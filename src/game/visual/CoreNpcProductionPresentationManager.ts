@@ -1,12 +1,15 @@
 import Phaser from 'phaser';
+import { MARIGOLD_CHARACTER_ID } from '../../content/r4PicnicEvent';
 import { isPipIntroduced, PIP_POSITION } from '../intro/PipIntro';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
 import { SUPPORTING_RESIDENT_ART_LAYOUT } from '../population/SupportingResidentArt';
 import { getBrowserSaveService } from '../save/browserSaveService';
+import { MARIGOLD_PICNIC_POSITION } from '../story/MarigoldPicnicPresentation';
 import {
   CoreNpcPresenceService,
   NOVA_CHARACTER_ID,
-  type CoreNpcPresenceArea,
+  type MarigoldPresenceArea,
+  type NovaPresenceArea,
 } from '../world/CoreNpcPresenceService';
 import { RAINBOW_MEADOW_MAP } from '../world/RainbowMeadowMap';
 import { SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
@@ -151,7 +154,8 @@ function hideLumiPlaceholder(scene: Phaser.Scene): void {
 export class CoreNpcProductionPresentationManager {
   private readonly presenceService = new CoreNpcPresenceService(getBrowserSaveService());
   private readonly presenceRefresh = new RefreshThrottle(NOVA_PRESENCE_REFRESH_MS);
-  private novaArea: CoreNpcPresenceArea = 'rainbow-run-hub';
+  private novaArea: NovaPresenceArea = 'rainbow-run-hub';
+  private marigoldArea: MarigoldPresenceArea = 'sunbeam-village';
 
   public constructor(private readonly game: Phaser.Game) {
     this.game.events.on(Phaser.Core.Events.POST_STEP, this.update, this);
@@ -166,12 +170,22 @@ export class CoreNpcProductionPresentationManager {
     }
     this.refreshPipWorld();
     this.refreshVillageWorld();
+    this.refreshMarigoldWorld();
     this.refreshNovaWorld();
     this.refreshLumiWorld();
   }
 
   private refreshPresenceAuthority(): void {
-    this.novaArea = this.presenceService.resolve(NOVA_CHARACTER_ID)?.area ?? 'rainbow-run-hub';
+    const novaPresence = this.presenceService.resolve(NOVA_CHARACTER_ID);
+    this.novaArea =
+      novaPresence?.area === 'picnic-hill' || novaPresence?.area === 'moonflower-cottage'
+        ? novaPresence.area
+        : 'rainbow-run-hub';
+
+    const marigoldPresence = this.presenceService.resolve(MARIGOLD_CHARACTER_ID);
+    this.marigoldArea =
+      marigoldPresence?.area === 'picnic-hill' ? 'picnic-hill' : 'sunbeam-village';
+
     syncNovaInteractionTarget(this.novaArea);
   }
 
@@ -197,7 +211,11 @@ export class CoreNpcProductionPresentationManager {
     }
 
     this.ensureVillageNpc(scene, 'willow', 4);
-    this.ensureVillageNpc(scene, 'marigold', 4);
+    if (this.marigoldArea === 'sunbeam-village') {
+      this.ensureVillageNpc(scene, 'marigold', 4);
+    } else {
+      destroyNamedObject(scene, 'core-npc:marigold:world');
+    }
     this.ensureVillageNpc(scene, 'pebble', 5);
   }
 
@@ -221,6 +239,31 @@ export class CoreNpcProductionPresentationManager {
       );
     // Static village core residents deliberately share the exact art geometry used by moving
     // supporting residents. They remain fixed in place and receive no idle bob/tween.
+  }
+
+  private refreshMarigoldWorld(): void {
+    const scene = sceneIfActive(this.game, 'RainbowMeadowScene');
+    if (!scene) {
+      return;
+    }
+
+    if (this.marigoldArea !== 'picnic-hill') {
+      destroyNamedObject(scene, 'core-npc:marigold:picnic');
+      return;
+    }
+
+    if (scene.children.getByName('core-npc:marigold:picnic')) {
+      return;
+    }
+
+    createVillageCoreResidentSprite(scene, 'marigold', 'core-npc:marigold:picnic')
+      .setPosition(MARIGOLD_PICNIC_POSITION.x, MARIGOLD_PICNIC_POSITION.y)
+      .setDepth(
+        worldDepthForY(
+          MARIGOLD_PICNIC_POSITION.y + SUPPORTING_RESIDENT_ART_LAYOUT.displayHeight * 0.44,
+          0.32,
+        ),
+      );
   }
 
   private refreshNovaWorld(): void {
