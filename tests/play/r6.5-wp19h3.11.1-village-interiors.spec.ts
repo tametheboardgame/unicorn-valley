@@ -183,8 +183,12 @@ test('H3.11.4 gives Story House a dedicated storykeeper and physical reading roo
     throw new Error('Missing VillageInteriorScene');
   }
   const names = new Set(interior.objects.map(({ name }) => name));
+  const storyDeskCollider = interior.objects.find(
+    ({ name }) => name === 'village-interior-collider:library:counter',
+  );
 
   expect(names.has('village-interior-resident:resident:quill')).toBe(true);
+  expect(storyDeskCollider).toMatchObject({ bodyWidth: 300, bodyHeight: 124 });
   expect(names.has('village-interior-resident:resident:tansy')).toBe(false);
   expect(names.has('village-interior-resident:resident:maple')).toBe(false);
   expect(names.has('village-interior:library:story-rug')).toBe(true);
@@ -201,6 +205,29 @@ test('H3.11.4 gives Story House a dedicated storykeeper and physical reading roo
     interior.objects.filter(({ name }) => name === 'village-interior:library:reading-cushion')
       .length,
   ).toBe(4);
+
+  // Regression for H3.11.10: the desk centre must stop the player visibly in front of Quill.
+  await page.evaluate(() => {
+    (
+      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__?.setArcadeSpritePosition(
+      'VillageInteriorScene',
+      'world-player-unicorn',
+      660,
+      735,
+    );
+  });
+  await page.keyboard.down('ArrowUp');
+  await page.waitForTimeout(420);
+  await page.keyboard.up('ArrowUp');
+  await expect
+    .poll(async () => {
+      const current = (await snapshot(page)).scenes.find(
+        ({ key }) => key === 'VillageInteriorScene',
+      );
+      return current?.objects.find(({ name }) => name === 'world-player-unicorn')?.y ?? 0;
+    })
+    .toBeGreaterThanOrEqual(682);
 
   await page.evaluate(() => {
     (
