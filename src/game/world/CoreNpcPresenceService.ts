@@ -1,18 +1,25 @@
 import type { CharacterId } from '../../content/contentTypes';
-import type { SaveService } from '../save/SaveService';
-import type { SaveGame } from '../save/saveSchema';
+import { MARIGOLD_CHARACTER_ID } from '../../content/r4PicnicEvent';
 import { buildCottageHomeView } from '../home/CottageHomeView';
 import { FriendVisitService } from '../home/FriendVisitService';
+import type { SaveService } from '../save/SaveService';
+import type { SaveGame } from '../save/saveSchema';
 import { isMarigoldPicnicReady } from '../story/MarigoldPicnicStory';
 
 export const NOVA_CHARACTER_ID = 'character:nova' as const;
 
-export type CoreNpcPresenceActivity = 'race-hosting' | 'picnic' | 'cottage-visit';
-export type CoreNpcPresenceArea = 'rainbow-run-hub' | 'picnic-hill' | 'moonflower-cottage';
+export type NovaPresenceArea = 'rainbow-run-hub' | 'picnic-hill' | 'moonflower-cottage';
+export type MarigoldPresenceArea = 'sunbeam-village' | 'picnic-hill';
+export type CoreNpcPresenceArea = NovaPresenceArea | MarigoldPresenceArea;
+export type CoreNpcPresenceActivity =
+  | 'race-hosting'
+  | 'picnic'
+  | 'cottage-visit'
+  | 'village-resident';
 export type CoreNpcPresenceRepresentation = 'canonical-unicorn';
 
 export interface CoreNpcPresence {
-  characterId: typeof NOVA_CHARACTER_ID;
+  characterId: typeof NOVA_CHARACTER_ID | typeof MARIGOLD_CHARACTER_ID;
   area: CoreNpcPresenceArea;
   activity: CoreNpcPresenceActivity;
   representation: CoreNpcPresenceRepresentation;
@@ -43,6 +50,22 @@ const NOVA_COTTAGE_PRESENCE: CoreNpcPresence = {
   availableForConcurrentActivity: false,
 };
 
+const MARIGOLD_VILLAGE_PRESENCE: CoreNpcPresence = {
+  characterId: MARIGOLD_CHARACTER_ID,
+  area: 'sunbeam-village',
+  activity: 'village-resident',
+  representation: 'canonical-unicorn',
+  availableForConcurrentActivity: false,
+};
+
+const MARIGOLD_PICNIC_PRESENCE: CoreNpcPresence = {
+  characterId: MARIGOLD_CHARACTER_ID,
+  area: 'picnic-hill',
+  activity: 'picnic',
+  representation: 'canonical-unicorn',
+  availableForConcurrentActivity: false,
+};
+
 export function resolveNovaPresence(
   save: SaveGame,
   currentCottageVisitorCharacterId: CharacterId | null,
@@ -58,23 +81,33 @@ export function resolveNovaPresence(
   return NOVA_RACE_HUB_PRESENCE;
 }
 
+export function resolveMarigoldPresence(save: SaveGame): CoreNpcPresence {
+  return isMarigoldPicnicReady(save) ? MARIGOLD_PICNIC_PRESENCE : MARIGOLD_VILLAGE_PRESENCE;
+}
+
 /**
  * Authoritative recurring-character presence resolver.
  *
- * WP18F deliberately starts with Nova, whose race-host/picnic/cottage roles currently overlap.
- * New recurring characters can be added here when they have the same multi-system need rather
- * than building a full ambient life simulation for every NPC.
+ * Only characters with genuinely competing scene/story owners belong here. Nova established the
+ * pattern for race/picnic/cottage conflicts; Marigold joins it because the picnic story explicitly
+ * moves her from Sunbeam Village to Picnic Hill. Ambient residents such as Tansy keep their
+ * existing routine authority when that system already owns every physical placement.
  */
 export class CoreNpcPresenceService {
   public constructor(private readonly saveService: SaveService) {}
 
   public resolve(characterId: CharacterId): CoreNpcPresence | null {
+    const storedSave = this.saveService.load();
+    const save = storedSave ?? this.saveService.createNewGame();
+
+    if (characterId === MARIGOLD_CHARACTER_ID) {
+      return resolveMarigoldPresence(save);
+    }
+
     if (characterId !== NOVA_CHARACTER_ID) {
       return null;
     }
 
-    const storedSave = this.saveService.load();
-    const save = storedSave ?? this.saveService.createNewGame();
     const currentCottageVisitorCharacterId = storedSave
       ? (new FriendVisitService(this.saveService).resolveNextVisit(buildCottageHomeView(save))
           ?.definition.characterId ?? null)
