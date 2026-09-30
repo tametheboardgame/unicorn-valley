@@ -443,9 +443,7 @@ describe('Sunbeam Village map', () => {
     const { noticeBoard } = SUNBEAM_VILLAGE_LAYOUT.villageLife;
 
     expect(
-      SUNBEAM_VILLAGE_MAP.colliders.find(
-        ({ id }) => id === 'collision:village-life:notice-board',
-      ),
+      SUNBEAM_VILLAGE_MAP.colliders.find(({ id }) => id === 'collision:village-life:notice-board'),
     ).toEqual({
       id: 'collision:village-life:notice-board',
       ...noticeBoard.collision,
