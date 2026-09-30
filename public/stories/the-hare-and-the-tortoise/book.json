@@ -23,29 +23,7 @@
     {
       "id": "the-race",
       "title": "The Hare and the Tortoise",
-      "path": "chapters/01.md",
-      "illustrations": [
-        {
-          "id": "hare-and-tortoise-start",
-          "blockId": "the-challenge",
-          "path": "illustrations/start.webp",
-          "alt": "Richard Heighway's 1894 line illustration of the hare and tortoise at the start of their race.",
-          "placement": "inline",
-          "width": 166,
-          "height": 200,
-          "caption": "Illustration by Richard Heighway, 1894."
-        },
-        {
-          "id": "tortoise-finish",
-          "blockId": "plodding-wins",
-          "path": "illustrations/finish.webp",
-          "alt": "Richard Heighway's 1894 line illustration of the tortoise reaching the finish.",
-          "placement": "full-width",
-          "width": 387,
-          "height": 229,
-          "caption": "Illustration by Richard Heighway, 1894."
-        }
-      ]
+      "path": "chapters/01.md"
     }
   ],
   "discovery": {
@@ -73,6 +51,92 @@
       "sourceUrl": "https://www.gutenberg.org/ebooks/28"
     },
     "originalPublicationYear": 1894,
-    "curatorNotes": "Story House edition preserves the Jacobs text and Heighway illustrations while using the existing responsive Story Library reader."
-  }
+    "curatorNotes": "Story House preserves the Joseph Jacobs text and Richard Heighway artwork as the Classic Illustrations set. R6.5-WP19SH1.3.1 adds a separate Modern Illustrations set without replacing the historic source files."
+  },
+  "defaultIllustrationSetId": "modern",
+  "illustrationSets": [
+    {
+      "id": "classic",
+      "label": "Classic Illustrations",
+      "rights": {
+        "status": "public-domain",
+        "source": "Richard Heighway illustrations from the 1894 Jacobs edition",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/Category:The_Fables_of_%C3%86sop_(Jacobs,_Heighway)/The_Hare_and_the_Tortoise",
+        "notes": "Source files are marked public domain on Wikimedia Commons. Heighway died in 1917."
+      },
+      "chapters": [
+        {
+          "chapterId": "the-race",
+          "illustrations": [
+            {
+              "id": "hare-and-tortoise-start",
+              "blockId": "the-challenge",
+              "path": "illustrations/start.webp",
+              "alt": "Richard Heighway's 1894 line illustration of the hare and tortoise at the start of their race.",
+              "placement": "inline",
+              "width": 166,
+              "height": 200,
+              "caption": "Illustration by Richard Heighway, 1894."
+            },
+            {
+              "id": "tortoise-finish",
+              "blockId": "plodding-wins",
+              "path": "illustrations/finish.webp",
+              "alt": "Richard Heighway's 1894 line illustration of the tortoise reaching the finish.",
+              "placement": "full-width",
+              "width": 387,
+              "height": 229,
+              "caption": "Illustration by Richard Heighway, 1894."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "modern",
+      "label": "Modern Illustrations",
+      "rights": {
+        "status": "original",
+        "source": "ChatGPT-generated artwork created for the Unicorn Valley Story House modern illustration set",
+        "notes": "Final SH1.3.1 modern illustration set approved 30 Sep 2026 and materialised through the approved Google Drive → WIF → GitHub Actions pipeline."
+      },
+      "chapters": [
+        {
+          "chapterId": "the-race",
+          "illustrations": [
+            {
+              "id": "modern-hare-tortoise-challenge",
+              "blockId": "the-challenge",
+              "path": "illustrations/generated/challenge.webp",
+              "alt": "A confident brown hare gestures as a calm tortoise accepts his race challenge on a sunny wildflower meadow path.",
+              "placement": "full-width",
+              "width": 1333,
+              "height": 1000,
+              "caption": "Modern Story House illustration."
+            },
+            {
+              "id": "modern-hare-tortoise-race",
+              "blockId": "the-race",
+              "path": "illustrations/generated/race-nap.webp",
+              "alt": "The determined tortoise steadily overtakes the hare while the hare sleeps peacefully beneath a leafy tree beside the race path.",
+              "placement": "full-width",
+              "width": 1333,
+              "height": 1000,
+              "caption": "Modern Story House illustration."
+            },
+            {
+              "id": "modern-hare-tortoise-finish",
+              "blockId": "plodding-wins",
+              "path": "illustrations/generated/plodding-wins.webp",
+              "alt": "The tortoise crosses the red finish ribbon first while the startled hare races up behind on the sunny meadow course.",
+              "placement": "full-width",
+              "width": 1333,
+              "height": 1000,
+              "caption": "Modern Story House illustration."
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }
