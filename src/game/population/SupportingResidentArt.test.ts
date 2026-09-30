@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { UNICORN_GLASSES_LAYOUT } from '../player/UnicornAppearanceRenderer';
 import {
   resolveSupportingResidentDisplaySize,
   SUPPORTING_RESIDENT_ART_LAYOUT,
   SUPPORTING_RESIDENT_DISPLAY_WIDTH,
+  SUPPORTING_RESIDENT_MONOCLE_LAYOUT,
 } from './SupportingResidentArt';
 
 describe('SupportingResidentArt layout', () => {
@@ -27,12 +27,12 @@ describe('SupportingResidentArt layout', () => {
     );
   });
 
-  it('keeps glasses centred on the visible face eye-line', () => {
-    const visibleEye = { x: 86, y: -37 };
+  it('keeps Quill’s monocle centred on the one visible face eye', () => {
+    const visibleEye = { x: 87, y: -37 };
 
-    expect(UNICORN_GLASSES_LAYOUT.lensY).toBe(visibleEye.y);
-    expect(Math.abs(UNICORN_GLASSES_LAYOUT.rightLensX - visibleEye.x)).toBeLessThanOrEqual(3);
-    expect(UNICORN_GLASSES_LAYOUT.leftLensX).toBeLessThan(visibleEye.x);
+    expect(SUPPORTING_RESIDENT_MONOCLE_LAYOUT.lensX).toBe(visibleEye.x);
+    expect(SUPPORTING_RESIDENT_MONOCLE_LAYOUT.lensY).toBe(visibleEye.y);
+    expect(SUPPORTING_RESIDENT_MONOCLE_LAYOUT.radius).toBeGreaterThanOrEqual(10);
   });
 
   it('preserves the authored adult display size and scales children from that baseline', () => {
