@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
+import { RAINBOW_MEADOW_LAYOUT } from './RainbowMeadowLayout';
 import { worldDepthForY } from './WorldDepth';
 
 const ANCHOR_NAME = 'r6-region-gateway-art-anchor';
@@ -231,34 +232,15 @@ function createCascadeRaceGate(scene: Phaser.Scene, x: number, y: number): void 
 }
 
 function decorateMeadow(scene: Phaser.Scene): void {
-  drawRoundedPath(
+  const { transitionPosition } = RAINBOW_MEADOW_LAYOUT.crystalBrookRoute;
+  createCaveMouth(
     scene,
     'meadow-crystal-brook',
-    [
-      { x: 2240, y: 1090 },
-      { x: 2390, y: 1320 },
-      { x: 2580, y: 1510 },
-      { x: 2800, y: 1660 },
-      { x: 3030, y: 1750 },
-    ],
-    112,
-    84,
-    0xa98d68,
-    0xe6cfa1,
+    transitionPosition.x,
+    transitionPosition.y,
+    'Crystal Brook',
+    0x89dce6,
   );
-  createCaveMouth(scene, 'meadow-crystal-brook', 3030, 1750, 'Crystal Brook', 0x89dce6);
-
-  const divider = name(scene.add.container(0, 0).setDepth(15.8), 'meadow-crystal-brook:divider');
-  for (const [x, y, scale] of [
-    [2380, 1640, 1],
-    [2510, 1710, 0.85],
-    [2670, 1770, 0.92],
-  ] as const) {
-    divider.add([
-      scene.add.ellipse(x, y, 108 * scale, 76 * scale, 0x5c9c68, 0.94),
-      scene.add.ellipse(x + 38 * scale, y - 26 * scale, 82 * scale, 64 * scale, 0x79b66f, 0.9),
-    ]);
-  }
 }
 
 function decorateBrook(scene: Phaser.Scene): void {
