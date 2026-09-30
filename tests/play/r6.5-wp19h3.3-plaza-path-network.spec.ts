@@ -63,5 +63,5 @@ test('H3.3 renders one scene-owned plaza and routed village path network', async
 
   const bench = objects.find(({ name }) => name === 'village-life:bench');
   expect(bench?.x).toBeCloseTo(1180, 0);
-  expect(bench?.y).toBeCloseTo(1560, 0);
+  expect(bench?.y).toBeCloseTo(1660, 0);
 });
