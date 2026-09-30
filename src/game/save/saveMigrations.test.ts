@@ -286,8 +286,51 @@ describe('migrateSaveRecord', () => {
       preferences: {
         fontSize: 20,
         lineHeight: 1.7,
+        illustrationSetByStoryEditionKey: {},
       },
       byStoryId: {},
+    });
+  });
+
+  it('adds illustration preferences to schema-v9 saves without losing reading progress', () => {
+    const current = createR4LongRunningSaveFixture();
+    const historical = {
+      ...current,
+      schemaVersion: 9,
+      storyReading: {
+        preferences: {
+          fontSize: 24,
+          lineHeight: 1.8,
+        },
+        byStoryId: {
+          'the-lion-and-the-mouse': {
+            chapterId: 'the-promise',
+            blockId: 'lion-net',
+            blockProgress: 0.4,
+            chapterPercentComplete: 55,
+            percentComplete: 55,
+            completed: false,
+            lastReadAt: '2026-09-30T09:00:00.000Z',
+          },
+        },
+      },
+    };
+
+    const migrated = migrateSaveRecord(historical);
+    expect(migrated && isSaveGame(migrated)).toBe(true);
+    if (!migrated || !isSaveGame(migrated)) {
+      throw new Error('Expected the schema-v9 fixture to migrate to a valid current save.');
+    }
+
+    expect(migrated.storyReading.preferences).toEqual({
+      fontSize: 24,
+      lineHeight: 1.8,
+      illustrationSetByStoryEditionKey: {},
+    });
+    expect(migrated.storyReading.byStoryId['the-lion-and-the-mouse']).toMatchObject({
+      chapterId: 'the-promise',
+      blockId: 'lion-net',
+      percentComplete: 55,
     });
   });
 
@@ -328,6 +371,7 @@ describe('migrateSaveRecord', () => {
       seventhMigration: true,
       eighthMigration: true,
       ninthMigration: true,
+      tenthMigration: true,
     });
     const toVersionEight: SaveMigration = (save) => ({
       ...save,
@@ -339,6 +383,11 @@ describe('migrateSaveRecord', () => {
       schemaVersion: 9,
       ninthMigration: true,
     });
+    const toVersionTen: SaveMigration = (save) => ({
+      ...save,
+      schemaVersion: 10,
+      tenthMigration: true,
+    });
     const migrations = new Map([
       [0, toVersionOne],
       [1, toVersionTwo],
@@ -349,6 +398,7 @@ describe('migrateSaveRecord', () => {
       [6, toVersionSeven],
       [7, toVersionEight],
       [8, toVersionNine],
+      [9, toVersionTen],
     ]);
 
     expect(migrateSaveRecord({ schemaVersion: 0 }, migrations)).toEqual({
