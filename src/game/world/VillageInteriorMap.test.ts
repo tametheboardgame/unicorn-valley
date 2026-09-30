@@ -60,6 +60,17 @@ describe('VillageInteriorMap', () => {
     }
   });
 
+  it('keeps the Story House desk visually solid from Quill’s front approach', () => {
+    const library = getVillageInteriorMap('library');
+    const desk = library.colliders.find(({ id }) => id === 'counter');
+
+    expect(desk).toMatchObject({ x: 660, y: 600, width: 300, height: 124 });
+    // The player physics body is 44px tall. This centre point used to let the much taller
+    // visible unicorn overlap the front of the desk enough to read as walking through it.
+    expect(isPointBlocked({ x: 660, y: 680 }, library.colliders, 22)).toBe(true);
+    expect(isPointBlocked(library.anchors.counter.approach, library.colliders, 22)).toBe(false);
+  });
+
   it('keeps all interaction approaches reachable from the common player spawn', () => {
     for (const interiorId of INTERIOR_IDS) {
       const map = getVillageInteriorMap(interiorId);
