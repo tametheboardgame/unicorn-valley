@@ -93,7 +93,6 @@ function hideLegacyGatewayObjects(scene: Phaser.Scene): void {
       continue;
     }
 
-
     if (
       key === 'MoonflowerGladeScene' &&
       (object instanceof Phaser.GameObjects.Rectangle ||
