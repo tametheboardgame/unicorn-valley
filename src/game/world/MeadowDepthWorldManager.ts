@@ -14,6 +14,7 @@ import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegi
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { MeadowWindmillStoryService } from '../story/MeadowWindmillStoryService';
+import { RAINBOW_MEADOW_LAYOUT } from './RainbowMeadowMap';
 import { worldDepthForY } from './WorldDepth';
 
 interface Point {
@@ -51,7 +52,7 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     label: 'Breeze’s wind ribbon',
     actionLabel: 'Look',
     actionKind: 'inspect',
-    position: { x: 1130, y: 465 },
+    position: RAINBOW_MEADOW_LAYOUT.natureFeatures.windmill.storyPosition,
     radius: 130,
     icon: '🎐',
   },
@@ -60,7 +61,7 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     label: 'Windmill bell',
     actionLabel: 'Ring',
     actionKind: 'interact',
-    position: { x: 1280, y: 435 },
+    position: RAINBOW_MEADOW_LAYOUT.natureFeatures.windmill.bellPosition,
     radius: 135,
     icon: '🔔',
   },
@@ -69,7 +70,7 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     label: 'Windmill Lookout',
     actionLabel: 'Go up',
     actionKind: 'enter',
-    position: { x: 1395, y: 425 },
+    position: RAINBOW_MEADOW_LAYOUT.natureFeatures.windmill.lookoutPosition,
     radius: 145,
     icon: '🌬️',
   },
@@ -78,7 +79,7 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     label: 'Rainbow Pond',
     actionLabel: 'Splash / watch',
     actionKind: 'interact',
-    position: { x: 1570, y: 710 },
+    position: RAINBOW_MEADOW_LAYOUT.natureFeatures.pond.interactionPosition,
     radius: 130,
     icon: '🐸',
   },
@@ -96,7 +97,7 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     label: 'Bouncy flower patch',
     actionLabel: 'Brush past',
     actionKind: 'interact',
-    position: { x: 920, y: 1240 },
+    position: RAINBOW_MEADOW_LAYOUT.natureFeatures.petalPatch,
     radius: 135,
     icon: '🌸',
   },
@@ -105,7 +106,7 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     label: 'Quiet flower circle',
     actionLabel: 'Look closely',
     actionKind: 'inspect',
-    position: { x: 650, y: 1360 },
+    position: RAINBOW_MEADOW_LAYOUT.natureFeatures.flowerCircle,
     radius: 150,
     icon: '🌼',
   },
@@ -114,7 +115,7 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     label: 'Meadow butterflies',
     actionLabel: 'Follow',
     actionKind: 'interact',
-    position: { x: 790, y: 1320 },
+    position: RAINBOW_MEADOW_LAYOUT.natureFeatures.butterflyParade,
     radius: 145,
     icon: '🦋',
   },
@@ -448,18 +449,20 @@ export class MeadowDepthWorldManager {
     objects: Phaser.GameObjects.GameObject[],
     open: boolean,
   ): void {
+    const windmill = RAINBOW_MEADOW_LAYOUT.natureFeatures.windmill;
+    const { x, y } = windmill.position;
     const tower = scene.add
-      .rectangle(1280, 275, 130, 250, 0xe7d09a, 1)
+      .rectangle(x, y, 130, 250, 0xe7d09a, 1)
       .setStrokeStyle(7, 0x9a7455, 0.95)
       .setDepth(7);
-    const roof = scene.add.triangle(1280, 115, 0, 80, 78, 0, 156, 80, 0xbb7d68, 1).setDepth(8);
-    const hub = scene.add.circle(1280, 205, 21, 0xf2c85f, 1).setDepth(10);
+    const roof = scene.add.triangle(x, y - 160, 0, 80, 78, 0, 156, 80, 0xbb7d68, 1).setDepth(8);
+    const hub = scene.add.circle(x, y - 70, 21, 0xf2c85f, 1).setDepth(10);
     objects.push(tower, roof, hub);
 
     for (const angle of [0, 45, 90, 135]) {
       objects.push(
         scene.add
-          .rectangle(1280, 205, 10, 178, 0xfff0c9, 1)
+          .rectangle(x, y - 70, 10, 178, 0xfff0c9, 1)
           .setAngle(angle)
           .setStrokeStyle(2, 0xb68c61, 0.75)
           .setDepth(9),
@@ -467,7 +470,7 @@ export class MeadowDepthWorldManager {
     }
 
     const label = scene.add
-      .text(1280, 84, 'WINDMILL LOOKOUT', {
+      .text(x, y - 191, 'WINDMILL LOOKOUT', {
         color: '#60506f',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '16px',
@@ -484,8 +487,11 @@ export class MeadowDepthWorldManager {
       const steps = scene.add.graphics().setDepth(6).setName('meadow-depth:windmill-open-path');
       steps.lineStyle(58, 0xf4e2b8, 0.95);
       steps.beginPath();
-      steps.moveTo(1280, 440);
-      steps.lineTo(1395, 425);
+      steps.moveTo(
+        RAINBOW_MEADOW_LAYOUT.hubFeatures.windmillLookout.approach.x,
+        RAINBOW_MEADOW_LAYOUT.hubFeatures.windmillLookout.approach.y,
+      );
+      steps.lineTo(windmill.lookoutPosition.x, windmill.lookoutPosition.y);
       steps.strokePath();
       objects.push(steps);
     }
@@ -514,14 +520,20 @@ export class MeadowDepthWorldManager {
     objects: Phaser.GameObjects.GameObject[],
     revealed: boolean,
   ): void {
+    const centre = RAINBOW_MEADOW_LAYOUT.natureFeatures.flowerCircle;
     for (let index = 0; index < 10; index += 1) {
       const angle = (Math.PI * 2 * index) / 10;
       const flower = scene.add
-        .text(650 + Math.cos(angle) * 95, 1360 + Math.sin(angle) * 58, revealed ? '🌼' : '·', {
+        .text(
+          centre.x + Math.cos(angle) * 95,
+          centre.y + Math.sin(angle) * 58,
+          revealed ? '🌼' : '·',
+          {
           color: '#fff4ac',
           fontFamily: 'system-ui, sans-serif',
-          fontSize: revealed ? '20px' : '18px',
-        })
+            fontSize: revealed ? '20px' : '18px',
+          },
+        )
         .setOrigin(0.5)
         .setAlpha(revealed ? 0.88 : 0.28)
         .setDepth(6);
