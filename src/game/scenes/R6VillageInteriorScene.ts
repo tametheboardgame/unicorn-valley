@@ -12,6 +12,7 @@ import {
   BAKERY_SECTIONS,
   type BakerySectionId,
 } from '../../content/r6VillageContent';
+import { getBrowserAtmosphericTimeService } from '../atmosphere/AtmosphericTimeService';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { DiscoveryService } from '../discovery/DiscoveryService';
 import { StoryHouseService } from '../discovery/StoryHouseService';
@@ -143,6 +144,8 @@ export class VillageInteriorScene extends Phaser.Scene {
   private runtime: WalkableInteriorRuntime | null = null;
   private balanceText: Phaser.GameObjects.Text | null = null;
   private occupant: Phaser.GameObjects.Container | null = null;
+  private occupantResidentId: SupportingResidentId | null = null;
+  private readonly timeService = getBrowserAtmosphericTimeService(getBrowserSaveService());
   private overlay: Phaser.GameObjects.Container | null = null;
   private readonly purchaseGuard = new ShopPurchaseTapGuard();
   private storyCardCursor = 0;
@@ -1640,9 +1643,16 @@ export class VillageInteriorScene extends Phaser.Scene {
   }
 
   private renderInteriorOccupant(): void {
+    this.occupant = null;
+    this.occupantResidentId = null;
+
     const occupancy = getVillageInteriorOccupancyService();
-    const assignment = occupancy.getInteriorAssignment(this.interiorId);
-    if (!assignment || !occupancy.isResidentAllowedInScene(assignment.residentId, this.scene.key)) {
+    const timeState = this.timeService.getState();
+    const assignment = occupancy.getInteriorAssignment(this.interiorId, timeState);
+    if (
+      !assignment ||
+      !occupancy.isResidentAllowedInScene(assignment.residentId, this.scene.key, timeState)
+    ) {
       return;
     }
 
@@ -1659,6 +1669,7 @@ export class VillageInteriorScene extends Phaser.Scene {
     });
     presentation.container.setData('occupancy-role', assignment.role);
     this.occupant = presentation.container;
+    this.occupantResidentId = assignment.residentId;
   }
 
   private registerInteractions(): void {
@@ -1845,7 +1856,7 @@ export class VillageInteriorScene extends Phaser.Scene {
   private createRosehipCottageInteractions(): InteractionTarget[] {
     const journal = getVillageInteriorAnchor('rosehip-cottage', 'primary-feature');
     const teaTable = getVillageInteriorAnchor('rosehip-cottage', 'secondary-feature');
-    return [
+    const targets: InteractionTarget[] = [
       {
         id: 'interaction:village-interior:rosehip-cottage:journal',
         label: 'Garden journal',
@@ -1875,7 +1886,9 @@ export class VillageInteriorScene extends Phaser.Scene {
           type: 'callback',
           activate: () =>
             this.showFeedback(
-              'Two cups are set out beside a little pot of rosehip tea. One place has a folded note: “Back after my valley walk. Help yourself to a biscuit.”',
+              this.occupant
+                ? 'Two cups are set out beside a little pot of rosehip tea. Rosehip has already poured one and nudges the biscuit plate towards you.'
+                : 'Two cups are set out beside a little pot of rosehip tea. One place has a folded note: “Back after my valley walk. Help yourself to a biscuit.”',
               teaTable.approach,
             ),
         },
@@ -1898,13 +1911,15 @@ export class VillageInteriorScene extends Phaser.Scene {
         },
       },
     ];
+    targets.push(...this.createCottageResidentInteraction('rosehip-cottage'));
+    return targets;
   }
 
   private createBluebellCottageInteractions(): InteractionTarget[] {
     const bellCabinet = getVillageInteriorAnchor('bluebell-cottage', 'counter');
     const skyDesk = getVillageInteriorAnchor('bluebell-cottage', 'primary-feature');
     const chimeTable = getVillageInteriorAnchor('bluebell-cottage', 'secondary-feature');
-    return [
+    const targets: InteractionTarget[] = [
       {
         id: 'interaction:village-interior:bluebell-cottage:bells',
         label: 'Listening bells',
@@ -1951,19 +1966,23 @@ export class VillageInteriorScene extends Phaser.Scene {
           type: 'callback',
           activate: () =>
             this.showFeedback(
-              'A half-finished wind chime waits beside ribbon, beads and a folded note: “Gone to find the right breeze. Back soon.”',
+              this.occupant
+                ? 'The half-finished wind chime is back on the worktable. Bluebell has added one new ribbon after testing it in the evening breeze.'
+                : 'A half-finished wind chime waits beside ribbon, beads and a folded note: “Gone to find the right breeze. Back soon.”',
               chimeTable.approach,
             ),
         },
       },
     ];
+    targets.push(...this.createCottageResidentInteraction('bluebell-cottage'));
+    return targets;
   }
 
   private createSunpetalCottageInteractions(): InteractionTarget[] {
     const seedShelf = getVillageInteriorAnchor('sunpetal-cottage', 'counter');
     const pottingBench = getVillageInteriorAnchor('sunpetal-cottage', 'primary-feature');
     const breakfastNook = getVillageInteriorAnchor('sunpetal-cottage', 'npc-work');
-    return [
+    const targets: InteractionTarget[] = [
       {
         id: 'interaction:village-interior:sunpetal-cottage:seed-shelf',
         label: 'Seed shelf',
@@ -1993,7 +2012,9 @@ export class VillageInteriorScene extends Phaser.Scene {
           type: 'callback',
           activate: () =>
             this.showFeedback(
-              'Fresh soil, three tiny seedlings and an empty hook where the watering can belongs. A note says: “Watering the village beds. Back before tea.”',
+              this.occupant
+                ? 'Fresh soil, three tiny seedlings and a damp watering can have all made it back to the potting bench. Sunpetal seems pleased with the day’s work.'
+                : 'Fresh soil, three tiny seedlings and an empty hook where the watering can belongs. A note says: “Watering the village beds. Back before tea.”',
               pottingBench.approach,
             ),
         },
@@ -2010,12 +2031,60 @@ export class VillageInteriorScene extends Phaser.Scene {
           type: 'callback',
           activate: () =>
             this.showFeedback(
-              'A jammy toast crust, a warm mug and a gardening book left open at “Flowers that love morning sun” make the room feel only just vacated.',
+              this.occupant
+                ? 'A fresh mug sits beside the gardening book. Sunpetal has reopened it at “Flowers that love morning sun” after getting home.'
+                : 'A jammy toast crust, a warm mug and a gardening book left open at “Flowers that love morning sun” make the room feel only just vacated.',
               breakfastNook.approach,
             ),
         },
       },
     ];
+    targets.push(...this.createCottageResidentInteraction('sunpetal-cottage'));
+    return targets;
+  }
+
+  private createCottageResidentInteraction(interiorId: VillageInteriorId): InteractionTarget[] {
+    if (!this.occupant || !this.occupantResidentId) {
+      return [];
+    }
+
+    const assignment = getVillageInteriorOccupancyService().getInteriorAssignment(
+      interiorId,
+      this.timeService.getState(),
+    );
+    if (!assignment || assignment.residentId !== this.occupantResidentId) {
+      return [];
+    }
+
+    const resident = supportingResident(assignment.residentId);
+    const home = getVillageInteriorAnchor(interiorId, 'npc-work');
+    return [
+      {
+        id: `interaction:village-interior:${interiorId}:resident`,
+        label: resident.name,
+        actionLabel: 'Talk',
+        actionKind: 'talk',
+        position: home.position,
+        interactionRadius: 180,
+        priority: 35,
+        directArea: {
+          width: 175,
+          height: 180,
+          name: `interaction-direct-zone:interaction:village-interior:${interiorId}:resident`,
+        },
+        result: {
+          type: 'callback',
+          activate: () => this.openCottageResidentConversation(resident.id),
+        },
+      },
+    ];
+  }
+
+  private openCottageResidentConversation(residentId: SupportingResidentId): void {
+    const resident = supportingResident(residentId);
+    const preferredLineIndex = this.timeService.getState() === 'night' ? 1 : 0;
+    const message = resident.talk.lines[preferredLineIndex] ?? resident.talk.lines[0] ?? 'Hello!';
+    getWorldConversationPresenter().startShort(this, resident.id, resident.name, message);
   }
 
   private createThreadInteractions(): InteractionTarget[] {
@@ -3114,6 +3183,7 @@ export class VillageInteriorScene extends Phaser.Scene {
     this.runtime?.destroy();
     this.runtime = null;
     this.occupant = null;
+    this.occupantResidentId = null;
     this.balanceText = null;
     this.purchaseGuard.reset();
   }
