@@ -48,7 +48,7 @@ const VILLAGE_POINTS: readonly VillageLifePoint[] = [
     actionKind: 'inspect',
     x: SUNBEAM_VILLAGE_LAYOUT.villageLife.noticeBoard.x,
     y: SUNBEAM_VILLAGE_LAYOUT.villageLife.noticeBoard.y,
-    radius: 122,
+    radius: SUNBEAM_VILLAGE_LAYOUT.villageLife.noticeBoard.interactionRadius,
     createProp: (scene) => [
       scene.add.ellipse(0, 46, 174, 72, 0x7eb66d, 0.26),
       scene.add.rectangle(-42, 50, 12, 86, 0x795641, 1),
@@ -69,7 +69,7 @@ const VILLAGE_POINTS: readonly VillageLifePoint[] = [
     actionKind: 'inspect',
     x: SUNBEAM_VILLAGE_LAYOUT.villageLife.sundial.x,
     y: SUNBEAM_VILLAGE_LAYOUT.villageLife.sundial.y,
-    radius: 118,
+    radius: SUNBEAM_VILLAGE_LAYOUT.villageLife.sundial.interactionRadius,
     createProp: (scene) => {
       const objects: Phaser.GameObjects.GameObject[] = [
         scene.add.ellipse(0, 48, 154, 62, 0x6f654f, 0.2),
@@ -111,7 +111,7 @@ const VILLAGE_POINTS: readonly VillageLifePoint[] = [
     actionKind: 'interact',
     x: SUNBEAM_VILLAGE_LAYOUT.villageLife.bench.x,
     y: SUNBEAM_VILLAGE_LAYOUT.villageLife.bench.y,
-    radius: 118,
+    radius: SUNBEAM_VILLAGE_LAYOUT.villageLife.bench.interactionRadius,
     // H3.11.8C renders the grouped seating as part of the authored chess plaza.
     // Village Life keeps ownership of the familiar Sit interaction only.
     createProp: () => [],
@@ -123,7 +123,7 @@ const VILLAGE_POINTS: readonly VillageLifePoint[] = [
     actionKind: 'inspect',
     x: SUNBEAM_VILLAGE_LAYOUT.villageLife.threadWindow.x,
     y: SUNBEAM_VILLAGE_LAYOUT.villageLife.threadWindow.y,
-    radius: 116,
+    radius: SUNBEAM_VILLAGE_LAYOUT.villageLife.threadWindow.interactionRadius,
     // The display itself is now a child of the Twinkle & Thread facade. Village Life owns only
     // the nearby inspect target so it cannot drift away from the authored shop frontage again.
     createProp: () => [],
