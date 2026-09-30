@@ -260,7 +260,9 @@ export class VillageNoticeBoardScene extends Phaser.Scene {
     for (const item of [icon, eyebrow, title, summary]) {
       item.setInteractive({ useHandCursor: true }).on('pointerdown', () => this.selectNotice(notice.id));
     }
-    paper.input?.cursor = 'pointer';
+    if (paper.input) {
+      paper.input.cursor = 'pointer';
+    }
 
     card.add([paper, pin, icon, eyebrow, title, summary]);
     card.setRotation(indexedTilt(notice.id));
