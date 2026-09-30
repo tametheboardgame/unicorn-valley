@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
-import { UI_COLOURS, UI_FONT, createUiShadow } from '../ui/uiTheme';
+import { UI_COLOURS, UI_FONT } from '../ui/uiTheme';
 import type { SunbeamNotice, SunbeamNoticeTone } from './SunbeamNoticeBoardModel';
 
 interface VillageNoticeBoardSceneData {
@@ -66,7 +66,6 @@ export class VillageNoticeBoardScene extends Phaser.Scene {
 
   private createBoardShell(): void {
     this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x5f735d, 1);
-    createUiShadow(this, GAME_WIDTH / 2, GAME_HEIGHT / 2 + 10, 1200, 650, 1, 0.3);
 
     const shell = this.add.graphics();
     shell.fillStyle(0x754f3b, 1);
@@ -80,9 +79,9 @@ export class VillageNoticeBoardScene extends Phaser.Scene {
     shell.strokeRoundedRect(58, 48, 704, 614, 18);
 
     shell.fillStyle(0xb9855f, 1);
-    shell.fillRoundedRect(77, 108, 666, 532, 12);
+    shell.fillRoundedRect(77, 122, 666, 518, 12);
     shell.lineStyle(3, 0x926243, 0.88);
-    shell.strokeRoundedRect(77, 108, 666, 532, 12);
+    shell.strokeRoundedRect(77, 122, 666, 518, 12);
 
     for (const [x, y, radius] of [
       [109, 139, 4],
@@ -97,7 +96,7 @@ export class VillageNoticeBoardScene extends Phaser.Scene {
     }
 
     this.add
-      .text(410, 76, 'SUNBEAM VILLAGE  ·  NOTICE BOARD', {
+      .text(410, 70, 'SUNBEAM VILLAGE  ·  NOTICE BOARD', {
         color: '#fff2cf',
         fontFamily: UI_FONT,
         fontSize: '25px',
