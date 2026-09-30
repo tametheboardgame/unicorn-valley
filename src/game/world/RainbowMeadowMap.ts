@@ -114,9 +114,9 @@ export const RAINBOW_MEADOW_LAYOUT = {
         { x: 1680, y: 570 },
       ],
     },
-    flowerCircle: { x: 500, y: 650 },
-    butterflyParade: { x: 780, y: 800 },
-    petalPatch: { x: 1030, y: 650 },
+    flowerCircle: { x: 550, y: 600 },
+    butterflyParade: { x: 780, y: 850 },
+    petalPatch: { x: 1070, y: 760 },
   },
   discoveryPositions: {
     prismBloom: { x: 1260, y: 790 },
