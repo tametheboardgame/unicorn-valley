@@ -89,6 +89,27 @@ describe('Rainbow Meadow canonical layout', () => {
     ).toBe(true);
   });
 
+  it('keeps relocated nature interaction hotspots spatially distinct', () => {
+    const hotspots = [
+      { position: RAINBOW_MEADOW_LAYOUT.natureFeatures.flowerCircle, radius: 150 },
+      { position: RAINBOW_MEADOW_LAYOUT.natureFeatures.butterflyParade, radius: 145 },
+      { position: RAINBOW_MEADOW_LAYOUT.natureFeatures.petalPatch, radius: 135 },
+    ];
+
+    for (let index = 0; index < hotspots.length; index += 1) {
+      for (let otherIndex = index + 1; otherIndex < hotspots.length; otherIndex += 1) {
+        const current = hotspots[index];
+        const other = hotspots[otherIndex];
+        expect(
+          Math.hypot(
+            current.position.x - other.position.x,
+            current.position.y - other.position.y,
+          ),
+        ).toBeGreaterThan(current.radius + other.radius);
+      }
+    }
+  });
+
   it('owns one current structural path network for traversal presentation', () => {
     expect(RAINBOW_MEADOW_LAYOUT.structuralPaths.map(({ id }) => id)).toEqual([
       'main-route',
