@@ -329,7 +329,7 @@ jobs:
                   },
               ),
               (
-                  block_for("she still held out her arms"),
+                  block_for("But, grandmother, you're so beautiful and grand with your crown on"),
                   {
                       "id": "full-smith-grandmother",
                       "path": "illustrations/grandmother.webp",
