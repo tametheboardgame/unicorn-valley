@@ -3,6 +3,7 @@ import {
   resolveSupportingResidentDisplaySize,
   SUPPORTING_RESIDENT_ART_LAYOUT,
   SUPPORTING_RESIDENT_DISPLAY_WIDTH,
+  SUPPORTING_RESIDENT_MONOCLE_LAYOUT,
 } from './SupportingResidentArt';
 
 describe('SupportingResidentArt layout', () => {
@@ -24,6 +25,14 @@ describe('SupportingResidentArt layout', () => {
       textureRatio,
       2,
     );
+  });
+
+  it('keeps Quill’s monocle centred on the one visible face eye', () => {
+    const visibleEye = { x: 87, y: -37 };
+
+    expect(SUPPORTING_RESIDENT_MONOCLE_LAYOUT.lensX).toBe(visibleEye.x);
+    expect(SUPPORTING_RESIDENT_MONOCLE_LAYOUT.lensY).toBe(visibleEye.y);
+    expect(SUPPORTING_RESIDENT_MONOCLE_LAYOUT.radius).toBeGreaterThanOrEqual(10);
   });
 
   it('preserves the authored adult display size and scales children from that baseline', () => {

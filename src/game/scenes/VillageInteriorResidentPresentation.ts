@@ -6,7 +6,7 @@ import {
 } from '../population/SupportingResidentArt';
 import { worldDepthForY } from '../world/WorldDepth';
 
-export type VillageInteriorRoleAccessory = 'chef-hat' | 'apron' | 'satchel';
+export type VillageInteriorRoleAccessory = 'chef-hat' | 'apron' | 'satchel' | 'monocle';
 
 export interface VillageInteriorResidentPresentationOptions {
   x: number;
@@ -32,9 +32,14 @@ export function createVillageInteriorResidentPresentation(
   const accessories = options.accessories ?? [];
   const usesIntegratedBakerVisual =
     accessories.includes('chef-hat') && accessories.includes('apron');
+  const integratedRole = usesIntegratedBakerVisual
+    ? 'baker'
+    : accessories.includes('monocle')
+      ? 'monocle'
+      : null;
   const sprite = (
-    usesIntegratedBakerVisual
-      ? createSupportingResidentRoleSprite(scene, resident, 'baker')
+    integratedRole
+      ? createSupportingResidentRoleSprite(scene, resident, integratedRole)
       : createSupportingResidentSprite(scene, resident)
   ).setPosition(0, 0);
   const size = options.displaySize ?? { width: 152, height: 128 };
@@ -42,7 +47,7 @@ export function createVillageInteriorResidentPresentation(
 
   const objects: Phaser.GameObjects.GameObject[] = [sprite];
   for (const accessory of accessories) {
-    if (accessory === 'chef-hat' || accessory === 'apron') {
+    if (accessory === 'chef-hat' || accessory === 'apron' || accessory === 'monocle') {
       continue;
     }
     objects.push(...createRoleAccessory(scene, accessory));

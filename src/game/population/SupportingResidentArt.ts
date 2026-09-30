@@ -24,6 +24,14 @@ export const SUPPORTING_RESIDENT_DISPLAY_WIDTH = Math.round(
     SUPPORTING_RESIDENT_ART_LAYOUT.displayHeight,
 );
 
+export const SUPPORTING_RESIDENT_MONOCLE_LAYOUT = {
+  lensX: 87,
+  lensY: -37,
+  radius: 12,
+  chainEndX: 106,
+  chainEndY: 10,
+} as const;
+
 export function resolveSupportingResidentDisplaySize(presentationScale = 1): {
   width: number;
   height: number;
@@ -71,7 +79,7 @@ export function ensureResidentAppearanceTexture(
   return key;
 }
 
-export type SupportingResidentRoleVisual = 'baker';
+export type SupportingResidentRoleVisual = 'baker' | 'monocle';
 
 function drawBakerRoleVisual(
   graphics: Phaser.GameObjects.Graphics,
@@ -105,6 +113,28 @@ function drawBakerRoleVisual(
   }
 }
 
+function drawMonocleRoleVisual(
+  graphics: Phaser.GameObjects.Graphics,
+  x: number,
+  y: number,
+  scale: number,
+): void {
+  // Supporting unicorns use a three-quarter profile, so only the near eye is actually visible.
+  // A single monocle reads cleanly at gameplay scale where two-lens glasses cannot.
+  const { lensX, lensY, radius, chainEndX, chainEndY } = SUPPORTING_RESIDENT_MONOCLE_LAYOUT;
+  graphics.lineStyle(3 * scale, 0xb8873f, 1);
+  graphics.strokeCircle(x + lensX * scale, y + lensY * scale, radius * scale);
+  graphics.lineStyle(2 * scale, 0xb8873f, 0.95);
+  graphics.lineBetween(
+    x + (lensX + radius * 0.72) * scale,
+    y + (lensY + radius * 0.68) * scale,
+    x + chainEndX * scale,
+    y + chainEndY * scale,
+  );
+  graphics.fillStyle(0xe8c96b, 0.95);
+  graphics.fillCircle(x + chainEndX * scale, y + chainEndY * scale, 2.5 * scale);
+}
+
 function getSupportingResidentRoleTextureKey(
   resident: SupportingResidentDefinition,
   pose: UnicornProductionPose,
@@ -135,6 +165,13 @@ export function ensureSupportingResidentRoleTexture(
   );
   if (role === 'baker') {
     drawBakerRoleVisual(
+      graphics,
+      SUPPORTING_RESIDENT_ART_LAYOUT.drawX,
+      SUPPORTING_RESIDENT_ART_LAYOUT.drawY,
+      SUPPORTING_RESIDENT_ART_LAYOUT.drawScale,
+    );
+  } else if (role === 'monocle') {
+    drawMonocleRoleVisual(
       graphics,
       SUPPORTING_RESIDENT_ART_LAYOUT.drawX,
       SUPPORTING_RESIDENT_ART_LAYOUT.drawY,
