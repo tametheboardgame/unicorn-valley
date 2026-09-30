@@ -189,6 +189,10 @@ test('H3.11.4 gives Story House a dedicated storykeeper and physical reading roo
 
   expect(names.has('village-interior-resident:resident:quill')).toBe(true);
   expect(storyDeskCollider).toMatchObject({ bodyWidth: 300, bodyHeight: 124 });
+  const storyDeskFrontClearance = interior.objects.find(
+    ({ name }) => name === 'village-interior-collider:library:counter-front-clearance',
+  );
+  expect(storyDeskFrontClearance).toMatchObject({ bodyWidth: 300, bodyHeight: 48 });
   expect(names.has('village-interior-resident:resident:tansy')).toBe(false);
   expect(names.has('village-interior-resident:resident:maple')).toBe(false);
   expect(names.has('village-interior:library:story-rug')).toBe(true);
@@ -227,7 +231,7 @@ test('H3.11.4 gives Story House a dedicated storykeeper and physical reading roo
       );
       return current?.objects.find(({ name }) => name === 'world-player-unicorn')?.y ?? 0;
     })
-    .toBeGreaterThanOrEqual(682);
+    .toBeGreaterThanOrEqual(718);
 
   await page.evaluate(() => {
     (
