@@ -512,5 +512,4 @@ describe('Story Library service', () => {
       'illustrations/generated/opening.webp',
     );
   });
-
 });
