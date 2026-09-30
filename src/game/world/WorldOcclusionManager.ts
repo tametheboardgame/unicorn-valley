@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { PIP_POSITION } from '../intro/PipIntro';
 import { MOONFLOWER_GLADE_MAP } from './MoonflowerGladeMap';
+import { SUNBEAM_VILLAGE_LAYOUT } from './SunbeamVillageLayout';
 import { SUNBEAM_VILLAGE_MAP } from './SunbeamVillageMap';
 import { isWorldDepthSortable, worldDepthForY } from './WorldDepth';
 import { WORLD_PLAYER_NAME } from './WorldTraversalPolishManager';
@@ -26,6 +27,17 @@ const SUPPORTED_SCENES = new Set([
 
 const COTTAGE_EXTERIOR_PREFIX = 'cottage-exterior:';
 const PLAYER_MOVEMENT_DETAIL_NAME = 'world-movement-detail';
+
+export const SUNBEAM_RESIDENCE_OCCLUSION_REGIONS = SUNBEAM_VILLAGE_LAYOUT.residences.map(
+  (residence) => ({
+    id: residence.id,
+    minX: residence.x - residence.width / 2 - 42,
+    minY: residence.y - residence.height / 2 - 135,
+    maxX: residence.x + residence.width / 2 + 42,
+    maxY: residence.y + residence.height / 2 + 52,
+    anchorY: residence.y + residence.height / 2,
+  }),
+);
 
 const GLADE_BOUNDARY_TREE_POINTS = [
   [170, 220],
@@ -341,6 +353,17 @@ export class WorldOcclusionManager {
     }
 
     this.setDepthInBox(scene, 1360, 910, 1640, 1190, worldDepthForY(1160));
+
+    for (const residence of SUNBEAM_RESIDENCE_OCCLUSION_REGIONS) {
+      this.setDepthInBox(
+        scene,
+        residence.minX,
+        residence.minY,
+        residence.maxX,
+        residence.maxY,
+        worldDepthForY(residence.anchorY),
+      );
+    }
 
     for (const marker of SUNBEAM_VILLAGE_MAP.npcMarkers) {
       this.setDepthInBox(
