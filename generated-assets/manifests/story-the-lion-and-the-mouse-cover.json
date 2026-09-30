@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "1umwQ0MyRpQEtE2_Dv-bV8yALJMNfde8K"
+  },
+  "expectedSourceName": "lion-mouse-cover-v01.png",
+  "destination": "public/stories/the-lion-and-the-mouse/illustrations/generated/cover-generated.webp",
+  "transform": {
+    "maxWidth": 1200,
+    "maxHeight": 1800,
+    "quality": 88
+  },
+  "revision": 1
+}

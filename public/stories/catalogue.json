@@ -359,14 +359,15 @@
       "catalogueBlurb": "A tiny mouse proves that even the smallest friend can make a big difference.",
       "author": "Aesop, retold by Quill",
       "readingMode": "flowing",
-      "coverPath": null,
-      "coverAlt": null,
+      "coverPath": "/stories/the-lion-and-the-mouse/illustrations/generated/cover-generated.webp",
+      "coverAlt": "A warm storybook painting of a golden-maned lion meeting a tiny grey-brown mouse beneath an acacia tree.",
       "series": null,
       "tags": [
         "classic-retelling",
         "animals",
         "kindness",
-        "friendship"
+        "friendship",
+        "illustrated"
       ],
       "discovery": {
         "format": "Short Story",
@@ -382,7 +383,7 @@
       },
       "rightsSummary": {
         "text": "original",
-        "illustrations": null,
+        "illustrations": "original",
         "edition": "original",
         "originalPublicationYear": null
       },

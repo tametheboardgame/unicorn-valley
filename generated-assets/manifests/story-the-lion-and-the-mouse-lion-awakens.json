@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "1fZEjP2PNVW8-RPZsaC10vgEW_wl2jrYR"
+  },
+  "expectedSourceName": "lion-mouse-lion-awakens-v01.png",
+  "destination": "public/stories/the-lion-and-the-mouse/illustrations/generated/lion-awakens.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1200,
+    "quality": 88
+  },
+  "revision": 1
+}
