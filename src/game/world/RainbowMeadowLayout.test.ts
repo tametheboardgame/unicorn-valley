@@ -108,6 +108,23 @@ describe('Rainbow Meadow canonical layout', () => {
         ).toBeGreaterThan(current.radius + other.radius);
       }
     }
+
+    const established = [
+      { position: RAINBOW_MEADOW_LAYOUT.natureFeatures.windmill.storyPosition, radius: 130 },
+      { position: RAINBOW_MEADOW_LAYOUT.natureFeatures.windmill.bellPosition, radius: 135 },
+      { position: RAINBOW_MEADOW_LAYOUT.natureFeatures.windmill.lookoutPosition, radius: 145 },
+      { position: RAINBOW_MEADOW_LAYOUT.natureFeatures.pond.interactionPosition, radius: 130 },
+    ];
+    for (const hotspot of hotspots) {
+      for (const anchor of established) {
+        expect(
+          Math.hypot(
+            hotspot.position.x - anchor.position.x,
+            hotspot.position.y - anchor.position.y,
+          ),
+        ).toBeGreaterThan(hotspot.radius + anchor.radius);
+      }
+    }
   });
 
   it('owns one current structural path network for traversal presentation', () => {
