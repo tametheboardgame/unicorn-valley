@@ -8,13 +8,8 @@ import {
 } from './SunbeamChessRules';
 
 describe('SunbeamChessRules', () => {
-  it('only returns legal moves for the village opponent', () => {
-    const chess = new Chess();
-    chess.move('e4');
-    chess.move('e5');
-    chess.move('Nf3');
-    chess.move('Nc6');
-    chess.move('Bb5+');
+  it('only returns legal moves for the village opponent while in check', () => {
+    const chess = new Chess('4k3/8/8/8/8/8/8/4R1K1 b - - 0 1');
 
     const legal = chess.moves({ verbose: true });
     const chosen = chooseVillageChessMove(chess);
@@ -44,10 +39,7 @@ describe('SunbeamChessRules', () => {
   });
 
   it('explains check as a forced-response situation', () => {
-    const chess = new Chess();
-    for (const move of ['e4', 'e5', 'Nf3', 'Nc6', 'Bb5+']) {
-      chess.move(move);
-    }
+    const chess = new Chess('4k3/8/8/8/8/8/8/4R1K1 b - - 0 1');
 
     expect(chess.isCheck()).toBe(true);
     expect(describeChessPosition(chess)).toContain('must');
