@@ -47,6 +47,32 @@ describe('VillageInteriorOccupancyService', () => {
     expect(service.isResidentAllowedInScene('resident:tansy', 'VillageInteriorScene')).toBe(false);
   });
 
+
+  it('brings cottage residents home at sunset and night without making daytime homes static NPC rooms', () => {
+    const service = new VillageInteriorOccupancyService();
+
+    for (const [interiorId, residentId] of [
+      ['rosehip-cottage', 'resident:rosehip'],
+      ['bluebell-cottage', 'resident:bluebell'],
+      ['sunpetal-cottage', 'resident:sunpetal'],
+    ] as const) {
+      service.enter(interiorId);
+
+      expect(service.getInteriorAssignment(interiorId, 'morning')).toBeNull();
+      expect(service.getInteriorAssignment(interiorId, 'afternoon')).toBeNull();
+      expect(service.getInteriorAssignment(interiorId, 'sunset')).toMatchObject({ residentId });
+      expect(service.getInteriorAssignment(interiorId, 'night')).toMatchObject({ residentId });
+      expect(service.isResidentAllowedInScene(residentId, 'VillageInteriorScene', 'afternoon')).toBe(
+        false,
+      );
+      expect(service.isResidentAllowedInScene(residentId, 'VillageInteriorScene', 'night')).toBe(
+        true,
+      );
+
+      service.leave(interiorId);
+    }
+  });
+
   it('releases the active interior cleanly on exit', () => {
     const service = new VillageInteriorOccupancyService();
     service.enter('bakery');
