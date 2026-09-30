@@ -49,12 +49,8 @@ describe('Rainbow Meadow canonical layout', () => {
       return;
     }
 
-    expect(sports.centre.x + sports.radiusX).toBeLessThan(
-      picnic.centre.x - picnic.radiusX,
-    );
-    expect(race.centre.y + race.radiusY).toBeLessThan(
-      crystal.centre.y - crystal.radiusY,
-    );
+    expect(sports.centre.x + sports.radiusX).toBeLessThan(picnic.centre.x - picnic.radiusX);
+    expect(race.centre.y + race.radiusY).toBeLessThan(crystal.centre.y - crystal.radiusY);
   });
 
   it('keeps the future sports lawn and Crystal Brook corridor free of tree clutter', () => {
@@ -68,9 +64,9 @@ describe('Rainbow Meadow canonical layout', () => {
       return;
     }
 
-    expect(
-      RAINBOW_MEADOW_LAYOUT.scenery.trees.some((tree) => isInsideDistrict(tree, sports)),
-    ).toBe(false);
+    expect(RAINBOW_MEADOW_LAYOUT.scenery.trees.some((tree) => isInsideDistrict(tree, sports))).toBe(
+      false,
+    );
     expect(
       RAINBOW_MEADOW_LAYOUT.scenery.trees.some((tree) => isInsideDistrict(tree, crystal)),
     ).toBe(false);
@@ -84,7 +80,9 @@ describe('Rainbow Meadow canonical layout', () => {
     }
 
     expect(isInsideDistrict(RAINBOW_MEADOW_LAYOUT.natureFeatures.flowerCircle, nature)).toBe(true);
-    expect(isInsideDistrict(RAINBOW_MEADOW_LAYOUT.natureFeatures.butterflyParade, nature)).toBe(true);
+    expect(isInsideDistrict(RAINBOW_MEADOW_LAYOUT.natureFeatures.butterflyParade, nature)).toBe(
+      true,
+    );
     expect(isInsideDistrict(RAINBOW_MEADOW_LAYOUT.natureFeatures.petalPatch, nature)).toBe(true);
     expect(
       isInsideDistrict(RAINBOW_MEADOW_LAYOUT.discoveryPositions.sunshowerFeather, nature),
