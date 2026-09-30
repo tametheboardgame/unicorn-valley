@@ -61,7 +61,6 @@ function decorateMeadow(scene: Phaser.Scene): void {
         .setDepth(worldDepthForY(1430, 0.26)),
     );
   }
-
 }
 
 function applyCanonicalNovaToRace(scene: Phaser.Scene): void {
