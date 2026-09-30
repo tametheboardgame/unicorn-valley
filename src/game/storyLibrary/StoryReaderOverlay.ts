@@ -744,7 +744,9 @@ export class StoryReaderOverlay {
       ? edition.illustrationSets.find((candidate) => candidate.id === preferredId)
       : undefined;
     this.activeIllustrationSetId =
-      preferred?.id ?? this.illustrationSetFor(edition, edition.defaultIllustrationSetId)?.id ?? null;
+      preferred?.id ??
+      this.illustrationSetFor(edition, edition.defaultIllustrationSetId)?.id ??
+      null;
   }
 
   private illustrationsForChapter(
@@ -952,8 +954,7 @@ export class StoryReaderOverlay {
     let illustrationSwitch: HTMLElement | null = null;
     if (edition.illustrationSets.length > 1) {
       illustrationSwitch = document.createElement('nav');
-      illustrationSwitch.className =
-        'story-reader-edition-switch story-reader-illustration-switch';
+      illustrationSwitch.className = 'story-reader-edition-switch story-reader-illustration-switch';
       illustrationSwitch.setAttribute('aria-label', 'Illustrations');
       const illustrationLabel = document.createElement('span');
       illustrationLabel.className = 'story-reader-edition-label';
