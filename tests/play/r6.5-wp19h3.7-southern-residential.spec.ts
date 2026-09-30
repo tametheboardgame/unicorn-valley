@@ -128,8 +128,10 @@ test('H3.7 composes a main residential road with frontage side roads', async ({ 
     objects.some(({ name, visible }) => name === 'sunbeam-playground:climbing-frame' && visible),
   ).toBe(true);
   expect(
-    objects.filter(({ name, visible }) => name === 'sunbeam-playground:shrub' && visible).length,
-  ).toBeGreaterThanOrEqual(5);
+    objects.filter(
+      ({ name, visible }) => name.startsWith('sunbeam-playground:shrub:') && visible,
+    ).length,
+  ).toBe(5);
   expect(
     objects.some(
       ({ name, visible }) =>
