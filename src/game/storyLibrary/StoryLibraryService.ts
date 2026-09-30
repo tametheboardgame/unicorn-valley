@@ -304,6 +304,7 @@ function parseChapter(value: unknown, storyId: string): StoryChapterManifest {
 function parseIllustrationSets(
   source: Record<string, unknown>,
   storyId: string,
+  editionId: string,
   chapters: readonly StoryChapterManifest[],
   editionRights: StoryRightsMetadata,
 ): Pick<StoryEditionManifest, 'defaultIllustrationSetId' | 'illustrationSets'> {
@@ -394,9 +395,13 @@ function parseIllustrationSets(
     };
   });
 
+  const preferredDefaultId =
+    editionId === 'full-classic'
+      ? illustrationSets.find(({ id }) => id === 'classic')?.id
+      : illustrationSets.find(({ id }) => id === 'modern')?.id;
   const defaultIllustrationSetId =
     source.defaultIllustrationSetId === undefined
-      ? illustrationSets[0]?.id ?? null
+      ? preferredDefaultId ?? illustrationSets[0]?.id ?? null
       : requireSafeId(source.defaultIllustrationSetId, 'default illustration set id');
   if (
     defaultIllustrationSetId !== null &&
@@ -426,7 +431,7 @@ function parseEdition(value: unknown, storyId: string): StoryEditionManifest {
     readingMode: parseReadingMode(edition.readingMode),
     rights,
     chapters,
-    ...parseIllustrationSets(edition, storyId, chapters, rights),
+    ...parseIllustrationSets(edition, storyId, id, chapters, rights),
   };
 }
 
@@ -477,7 +482,7 @@ function parseManifest(value: unknown): StoryLibraryManifest {
       readingMode: parseReadingMode(source.readingMode),
       rights,
       chapters,
-      ...parseIllustrationSets(source, id, chapters, rights),
+      ...parseIllustrationSets(source, id, 'default', chapters, rights),
     };
     editions = [edition];
     defaultEditionId = edition.id;
