@@ -6,11 +6,11 @@ import {
 } from '../save/saveLocationCheckpoint';
 import { MOONFLOWER_GLADE_MAP, setMoonflowerGladePlayerSpawn } from './MoonflowerGladeMap';
 import {
+  RAINBOW_MEADOW_LAYOUT,
   RAINBOW_MEADOW_LOCATION_ID,
   RAINBOW_MEADOW_MAP,
   setRainbowMeadowPlayerSpawn,
 } from './RainbowMeadowMap';
-import { RAINBOW_MEADOW_LAYOUT } from './RainbowMeadowLayout';
 import {
   setSunbeamVillagePlayerSpawn,
   SUNBEAM_VILLAGE_LOCATION_ID,
