@@ -361,7 +361,9 @@ function parseIllustrationSets(
     const mappedChapterIds = new Set<string>();
     const mappedChapters = set.chapters.map((chapterValue) => {
       if (!chapterValue || typeof chapterValue !== 'object') {
-        throw new Error(`Story Library illustration-set chapter mapping is invalid for ${storyId}.`);
+        throw new Error(
+          `Story Library illustration-set chapter mapping is invalid for ${storyId}.`,
+        );
       }
       const mapping = chapterValue as Record<string, unknown>;
       const chapterId = requireSafeId(mapping.chapterId, 'illustration-set chapter id');
@@ -401,7 +403,7 @@ function parseIllustrationSets(
       : illustrationSets.find(({ id }) => id === 'modern')?.id;
   const defaultIllustrationSetId =
     source.defaultIllustrationSetId === undefined
-      ? preferredDefaultId ?? illustrationSets[0]?.id ?? null
+      ? (preferredDefaultId ?? illustrationSets[0]?.id ?? null)
       : requireSafeId(source.defaultIllustrationSetId, 'default illustration set id');
   if (
     defaultIllustrationSetId !== null &&
