@@ -101,10 +101,7 @@ describe('Rainbow Meadow canonical layout', () => {
         const current = hotspots[index];
         const other = hotspots[otherIndex];
         expect(
-          Math.hypot(
-            current.position.x - other.position.x,
-            current.position.y - other.position.y,
-          ),
+          Math.hypot(current.position.x - other.position.x, current.position.y - other.position.y),
         ).toBeGreaterThan(current.radius + other.radius);
       }
     }
