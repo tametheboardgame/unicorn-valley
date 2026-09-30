@@ -226,11 +226,7 @@ export class AmbientPopulationWorldManager {
     const occupancy = getVillageInteriorOccupancyService();
     for (const resident of R6_SUPPORTING_RESIDENTS) {
       if (
-        !occupancy.isResidentAllowedInScene(
-          resident.id,
-          state.scene.scene.key,
-          context.timeState,
-        )
+        !occupancy.isResidentAllowedInScene(resident.id, state.scene.scene.key, context.timeState)
       ) {
         continue;
       }
