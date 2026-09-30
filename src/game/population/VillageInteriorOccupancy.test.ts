@@ -41,6 +41,7 @@ describe('VillageInteriorOccupancyService', () => {
       residentId: 'resident:quill',
       role: 'story-keeper',
     });
+    expect(service.getInteriorAssignment('library')?.supportedRoleAccessories).toEqual(['monocle']);
     expect(service.isResidentAllowedInScene('resident:quill', 'VillageInteriorScene')).toBe(true);
     expect(service.isResidentAllowedInScene('resident:quill', 'SunbeamVillageScene')).toBe(false);
     expect(service.isResidentAllowedInScene('resident:tansy', 'SunbeamVillageScene')).toBe(true);
