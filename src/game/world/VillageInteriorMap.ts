@@ -188,7 +188,7 @@ const LIBRARY: VillageInteriorDefinition = {
   roomShell: ROOM_SHELL,
   anchors: sharedAnchors(
     anchor('counter', 'Storykeeper desk', { x: 660, y: 565 }, { x: 660, y: 700 }),
-    anchor('npc-work', 'Quill storykeeper position', { x: 660, y: 665 }, { x: 660, y: 785 }),
+    anchor('npc-work', 'Quill storykeeper position', { x: 700, y: 745 }, { x: 700, y: 835 }),
     anchor('primary-feature', 'Story corner table', { x: 1110, y: 705 }, { x: 960, y: 805 }),
     anchor('secondary-feature', 'Valley clue cabinet', { x: 205, y: 705 }, { x: 360, y: 705 }),
   ),
@@ -200,7 +200,10 @@ const LIBRARY: VillageInteriorDefinition = {
     { id: 'bookcase-mid-west', x: 595, y: 425, width: 310, height: 130 },
     { id: 'secret-passage-bookcase', x: 905, y: 425, width: 310, height: 130 },
     { id: 'bookcase-east', x: 1215, y: 425, width: 310, height: 130 },
-    { id: 'counter', x: 660, y: 590, width: 300, height: 100 },
+    // Keep the physical blocker close to the actual drawn desk footprint. Quill now stands
+    // forward in the open room rather than sharing the desk edge, so the furniture no longer
+    // needs exaggerated invisible clearance to separate player and storykeeper.
+    { id: 'counter', x: 660, y: 596, width: 300, height: 112 },
     { id: 'clue-cabinet', x: 205, y: 705, width: 130, height: 220 },
     { id: 'story-table', x: 1110, y: 715, width: 330, height: 125 },
     { id: 'reading-chair', x: 390, y: 835, width: 165, height: 130 },

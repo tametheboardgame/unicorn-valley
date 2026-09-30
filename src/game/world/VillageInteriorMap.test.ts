@@ -60,6 +60,20 @@ describe('VillageInteriorMap', () => {
     }
   });
 
+  it('separates Quill from the Story House desk without adding an invisible floor wall', () => {
+    const library = getVillageInteriorMap('library');
+    const desk = library.colliders.find(({ id }) => id === 'counter');
+
+    expect(desk).toMatchObject({ x: 660, y: 596, width: 300, height: 112 });
+    expect(library.colliders.some(({ id }) => id === 'counter-front-clearance')).toBe(false);
+    expect(library.anchors.counter.approach).toEqual({ x: 660, y: 700 });
+    expect(library.anchors['npc-work'].position).toEqual({ x: 700, y: 745 });
+    expect(library.anchors['npc-work'].approach).toEqual({ x: 700, y: 835 });
+    expect(isPointBlocked(library.anchors.counter.approach, library.colliders, 22)).toBe(false);
+    expect(isPointBlocked(library.anchors['npc-work'].position, library.colliders, 22)).toBe(false);
+    expect(isPointBlocked(library.anchors['npc-work'].approach, library.colliders, 22)).toBe(false);
+  });
+
   it('keeps all interaction approaches reachable from the common player spawn', () => {
     for (const interiorId of INTERIOR_IDS) {
       const map = getVillageInteriorMap(interiorId);
