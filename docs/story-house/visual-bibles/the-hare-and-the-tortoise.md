@@ -88,3 +88,11 @@ Generated assets will materialise to:
 
 Source images must travel through the approved Google Drive → WIF → GitHub Actions materialisation
 pipeline. Historic Heighway assets remain unchanged.
+
+## Selector-test staging note
+
+The first materialised Modern Illustrations set is a temporary generated draft used to validate
+SH1.2A's real Classic/Modern selector in the production reader. It is **not** the final SH1.3.1
+visual-approval set. Before SH1.3.1 itself is merged, replace any draft image that does not meet the
+scene brief above by updating the same Drive file and bumping its manifest revision. This keeps the
+reader/schema test independent from final art-direction approval.
