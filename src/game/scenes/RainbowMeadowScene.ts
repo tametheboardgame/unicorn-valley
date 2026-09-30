@@ -465,14 +465,7 @@ export class RainbowMeadowScene extends Phaser.Scene {
       .setName('rainbow-meadow:nature:pond')
       .setDepth(3);
     this.add
-      .ellipse(
-        pond.position.x,
-        pond.position.y,
-        pond.width - 90,
-        pond.height - 75,
-        0x9ce6ea,
-        0.74,
-      )
+      .ellipse(pond.position.x, pond.position.y, pond.width - 90, pond.height - 75, 0x9ce6ea, 0.74)
       .setDepth(4);
     for (const { x, y } of pond.lilyPads) {
       this.add.ellipse(x, y, 48, 24, 0x6fa76c, 0.95).setDepth(5);
