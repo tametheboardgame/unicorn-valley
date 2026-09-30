@@ -194,7 +194,13 @@ function decorateGlade(scene: Phaser.Scene): void {
 
 function decorateMeadow(scene: Phaser.Scene): void {
   drawPathNetwork(scene, RAINBOW_MEADOW_LAYOUT.structuralPaths);
-  addGateway(scene, RAINBOW_MEADOW_LAYOUT.sunbeamGateway);
+  const gateway = RAINBOW_MEADOW_LAYOUT.sunbeamGateway;
+  addGateway(scene, {
+    x: gateway.position.x,
+    y: gateway.position.y,
+    label: gateway.label,
+    direction: gateway.direction,
+  });
 }
 
 function decorateScene(scene: Phaser.Scene): void {
