@@ -101,6 +101,12 @@ const POSES: Readonly<Record<UnicornProductionPose, PoseMetrics>> = {
 };
 
 export const UNICORN_WORLD_TAIL_SAFE_INSET = 10;
+export const UNICORN_GLASSES_LAYOUT = {
+  leftLensX: 66,
+  rightLensX: 88,
+  lensY: -37,
+  radius: 11,
+} as const;
 
 function clampChannel(value: number): number {
   return Math.max(0, Math.min(255, Math.round(value)));
@@ -669,12 +675,35 @@ function drawAccessory(
     // The face is drawn in three-quarter profile with the visible eye around (+86, -37).
     // Keep both lenses on that eye-line instead of the older neck-height attachment point.
     graphics.lineStyle(4 * scale, 0x8d63b2, 1);
-    graphics.strokeCircle(x + 66 * scale, y - 37 * scale, 11 * scale);
-    graphics.strokeCircle(x + 88 * scale, y - 37 * scale, 11 * scale);
-    graphics.lineBetween(x + 77 * scale, y - 37 * scale, x + 78 * scale, y - 37 * scale);
+    graphics.strokeCircle(
+      x + UNICORN_GLASSES_LAYOUT.leftLensX * scale,
+      y + UNICORN_GLASSES_LAYOUT.lensY * scale,
+      UNICORN_GLASSES_LAYOUT.radius * scale,
+    );
+    graphics.strokeCircle(
+      x + UNICORN_GLASSES_LAYOUT.rightLensX * scale,
+      y + UNICORN_GLASSES_LAYOUT.lensY * scale,
+      UNICORN_GLASSES_LAYOUT.radius * scale,
+    );
+    graphics.lineBetween(
+      x + (UNICORN_GLASSES_LAYOUT.leftLensX + UNICORN_GLASSES_LAYOUT.radius) * scale,
+      y + UNICORN_GLASSES_LAYOUT.lensY * scale,
+      x + (UNICORN_GLASSES_LAYOUT.rightLensX - UNICORN_GLASSES_LAYOUT.radius) * scale,
+      y + UNICORN_GLASSES_LAYOUT.lensY * scale,
+    );
     graphics.fillStyle(0xffe27c, 0.9);
-    drawStar(graphics, x + 66 * scale, y - 37 * scale, 5 * scale);
-    drawStar(graphics, x + 88 * scale, y - 37 * scale, 5 * scale);
+    drawStar(
+      graphics,
+      x + UNICORN_GLASSES_LAYOUT.leftLensX * scale,
+      y + UNICORN_GLASSES_LAYOUT.lensY * scale,
+      5 * scale,
+    );
+    drawStar(
+      graphics,
+      x + UNICORN_GLASSES_LAYOUT.rightLensX * scale,
+      y + UNICORN_GLASSES_LAYOUT.lensY * scale,
+      5 * scale,
+    );
   }
 }
 
