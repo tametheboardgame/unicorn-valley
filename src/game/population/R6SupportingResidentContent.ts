@@ -200,7 +200,7 @@ export const R6_SUPPORTING_RESIDENTS = [
       maneStyle: 'soft',
       maneColour: 'rose',
       tailStyle: 'curl',
-      tailColour: 'mint',
+      tailColour: 'aqua',
       hornStyle: 'classic',
       marking: 'freckles',
       accessory: 'flower',
