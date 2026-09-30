@@ -303,6 +303,50 @@ describe('Story Library service', () => {
                   path: 'editions/full-classic/chapters/01.md',
                 },
               ],
+              illustrationSets: [
+                {
+                  id: 'modern',
+                  label: 'Modern Illustrations',
+                  rights: { status: 'original', source: 'Modern Story House art' },
+                  chapters: [
+                    {
+                      chapterId: 'chapter-01',
+                      illustrations: [
+                        {
+                          id: 'modern-rabbit',
+                          blockId: 'white-rabbit',
+                          path: 'illustrations/generated/rabbit.webp',
+                          alt: 'Modern White Rabbit illustration.',
+                          placement: 'full-width',
+                          width: 600,
+                          height: 400,
+                        },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  id: 'classic',
+                  label: 'Classic Illustrations',
+                  rights: { status: 'public-domain', source: 'John Tenniel' },
+                  chapters: [
+                    {
+                      chapterId: 'chapter-01',
+                      illustrations: [
+                        {
+                          id: 'classic-rabbit',
+                          blockId: 'white-rabbit',
+                          path: 'illustrations/classic/rabbit.webp',
+                          alt: 'Historic White Rabbit illustration.',
+                          placement: 'full-width',
+                          width: 600,
+                          height: 400,
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
             },
           ],
         }),
@@ -328,6 +372,7 @@ describe('Story Library service', () => {
 
     const chapter = await service.loadChapter('alice', 'chapter-01', 'full-classic');
     expect(manifest.editions[1]?.readingMode).toBe('paged-prose');
+    expect(manifest.editions[1]?.defaultIllustrationSetId).toBe('classic');
     expect(chapter.editionId).toBe('full-classic');
     expect(chapter.title).toBe('Down the Rabbit-Hole');
     expect(chapter.blocks[0]?.id).toBe('white-rabbit');
@@ -400,7 +445,6 @@ describe('Story Library service', () => {
               path: 'chapters/01.md',
             },
           ],
-          defaultIllustrationSetId: 'modern',
           illustrationSets: [
             {
               id: 'classic',
