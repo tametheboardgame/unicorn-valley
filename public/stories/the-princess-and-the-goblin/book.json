@@ -1,11 +1,9 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "id": "the-princess-and-the-goblin",
   "title": "The Princess and the Goblin",
   "description": "Princess Irene discovers a mysterious great-great-grandmother in a hidden tower while the miner boy Curdie uncovers a goblin plot beneath the mountain.",
   "catalogueBlurb": "A hidden tower, a silver thread and goblins beneath the mountain.",
-  "author": "George MacDonald, retold by Quill",
-  "readingMode": "flowing",
   "cover": {
     "path": "covers/cover.webp",
     "alt": "Jessie Willcox Smith's illustrated cover for The Princess and the Goblin."
@@ -23,188 +21,957 @@
   "publication": {
     "status": "published"
   },
-  "chapters": [
-    {
-      "id": "princess-irene",
-      "title": "Princess Irene",
-      "path": "chapters/01.md",
-      "illustrations": [
-        {
-          "id": "smith-lost-in-the-house",
-          "blockId": "lost-in-the-passages",
-          "path": "illustrations/lost-in-the-house.webp",
-          "alt": "Jessie Willcox Smith's illustration of Princess Irene lost in the old house.",
-          "placement": "full-width",
-          "width": 936,
-          "height": 1375,
-          "caption": "Illustration by Jessie Willcox Smith, 1920."
-        }
-      ]
-    },
-    {
-      "id": "the-old-lady-upstairs",
-      "title": "The Old Lady Upstairs",
-      "path": "chapters/02.md",
-      "illustrations": [
-        {
-          "id": "smith-pigeons",
-          "blockId": "the-pigeons",
-          "path": "illustrations/pigeons.webp",
-          "alt": "Jessie Willcox Smith's illustration of Irene and the white pigeons.",
-          "placement": "full-width",
-          "width": 933,
-          "height": 1378,
-          "caption": "Illustration by Jessie Willcox Smith, 1920."
-        }
-      ]
-    },
-    {
-      "id": "curdie-the-miner",
-      "title": "Curdie the Miner",
-      "path": "chapters/03.md"
-    },
-    {
-      "id": "beneath-the-mountain",
-      "title": "Beneath the Mountain",
-      "path": "chapters/04.md",
-      "illustrations": [
-        {
-          "id": "smith-goblins",
-          "blockId": "goblins-in-the-dark",
-          "path": "illustrations/goblins.webp",
-          "alt": "Jessie Willcox Smith's illustration of goblins beneath the mountain.",
-          "placement": "full-width",
-          "width": 930,
-          "height": 1386,
-          "caption": "Illustration by Jessie Willcox Smith, 1920."
-        }
-      ]
-    },
-    {
-      "id": "king-papa",
-      "title": "King-Papa",
-      "path": "chapters/05.md",
-      "illustrations": [
-        {
-          "id": "smith-king",
-          "blockId": "the-kings-arrival",
-          "path": "illustrations/king-papa.webp",
-          "alt": "Jessie Willcox Smith's illustration of Princess Irene greeting her father the King.",
-          "placement": "full-width",
-          "width": 926,
-          "height": 1381,
-          "caption": "Illustration by Jessie Willcox Smith, 1920."
-        }
-      ]
-    },
-    {
-      "id": "the-silver-thread",
-      "title": "The Silver Thread",
-      "path": "chapters/06.md",
-      "illustrations": [
-        {
-          "id": "smith-grandmother",
-          "blockId": "the-thread",
-          "path": "illustrations/grandmother.webp",
-          "alt": "Jessie Willcox Smith's illustration of Irene with her mysterious great-great-grandmother.",
-          "placement": "full-width",
-          "width": 936,
-          "height": 1378,
-          "caption": "Illustration by Jessie Willcox Smith, 1920."
-        }
-      ]
-    },
-    {
-      "id": "curdies-clue",
-      "title": "Curdie's Clue",
-      "path": "chapters/07.md",
-      "illustrations": [
-        {
-          "id": "smith-curdie-torch",
-          "blockId": "following-the-goblins",
-          "path": "illustrations/curdie-torch.webp",
-          "alt": "Jessie Willcox Smith's illustration of Curdie exploring the goblin tunnels.",
-          "placement": "full-width",
-          "width": 936,
-          "height": 1383,
-          "caption": "Illustration by Jessie Willcox Smith, 1920."
-        }
-      ]
-    },
-    {
-      "id": "the-goblin-plan",
-      "title": "The Goblin Plan",
-      "path": "chapters/08.md"
-    },
-    {
-      "id": "irenes-clue",
-      "title": "Irene's Clue",
-      "path": "chapters/09.md"
-    },
-    {
-      "id": "the-rescue",
-      "title": "The Rescue",
-      "path": "chapters/10.md",
-      "illustrations": [
-        {
-          "id": "smith-curdie-follows",
-          "blockId": "curdie-follows-irene",
-          "path": "illustrations/curdie-follows.webp",
-          "alt": "Jessie Willcox Smith's illustration of Curdie following Irene underground.",
-          "placement": "full-width",
-          "width": 936,
-          "height": 1379,
-          "caption": "Illustration by Jessie Willcox Smith, 1920."
-        }
-      ]
-    },
-    {
-      "id": "the-goblins-attack",
-      "title": "The Goblins Attack",
-      "path": "chapters/11.md",
-      "illustrations": [
-        {
-          "id": "smith-safe-at-home",
-          "blockId": "curdies-guide",
-          "path": "illustrations/safe-at-home.webp",
-          "alt": "Jessie Willcox Smith's illustration of Princess Irene safe with Curdie's mother.",
-          "placement": "full-width",
-          "width": 936,
-          "height": 1382,
-          "caption": "Illustration by Jessie Willcox Smith, 1920."
-        }
-      ]
-    },
-    {
-      "id": "water-under-the-mountain",
-      "title": "Water Under the Mountain",
-      "path": "chapters/12.md"
-    }
-  ],
   "discovery": {
     "format": "Chapter Book",
     "genres": ["Fantasy", "Adventure", "Classics"],
     "audiences": ["Read Together", "Independent Reader"],
     "length": "Longer Read"
   },
-  "rights": {
-    "text": {
-      "status": "original",
-      "source": "Original Story House retelling based on George MacDonald's public-domain 1872 novel",
-      "sourceUrl": "https://www.gutenberg.org/ebooks/708",
-      "notes": "The underlying 1872 novel is public domain. This wording is an original child-friendly Unicorn Valley retelling."
+  "defaultEditionId": "story-house",
+  "editions": [
+    {
+      "id": "story-house",
+      "label": "Story House Edition",
+      "author": "George MacDonald, retold by Quill",
+      "readingMode": "flowing",
+      "rights": {
+        "text": {
+          "status": "original",
+          "source": "Original Story House retelling based on George MacDonald's public-domain 1872 novel",
+          "sourceUrl": "https://www.gutenberg.org/ebooks/708",
+          "notes": "The underlying 1872 novel is public domain. This wording is an original child-friendly Unicorn Valley retelling."
+        },
+        "illustrations": {
+          "status": "public-domain",
+          "source": "Jessie Willcox Smith illustrations from the 1920 David McKay edition",
+          "sourceUrl": "https://www.gutenberg.org/ebooks/34339",
+          "notes": "The illustrated 1920 edition is available through Project Gutenberg. Jessie Willcox Smith died in 1935, so her artwork is also out of copyright in the UK."
+        },
+        "edition": {
+          "status": "original",
+          "source": "Unicorn Valley Story House edition"
+        },
+        "originalPublicationYear": 1872,
+        "curatorNotes": "Twelve reader sections preserve Irene, Curdie, the mysterious grandmother, the silver thread, the goblin plot and the flooding of the underground kingdom while making the Victorian prose more accessible."
+      },
+      "chapters": [
+        {
+          "id": "princess-irene",
+          "title": "Princess Irene",
+          "path": "chapters/01.md",
+          "illustrations": [
+            {
+              "id": "smith-lost-in-the-house",
+              "blockId": "lost-in-the-passages",
+              "path": "illustrations/lost-in-the-house.webp",
+              "alt": "Jessie Willcox Smith's illustration of Princess Irene lost in the old house.",
+              "placement": "full-width",
+              "width": 936,
+              "height": 1375,
+              "caption": "Illustration by Jessie Willcox Smith, 1920."
+            }
+          ]
+        },
+        {
+          "id": "the-old-lady-upstairs",
+          "title": "The Old Lady Upstairs",
+          "path": "chapters/02.md",
+          "illustrations": [
+            {
+              "id": "smith-pigeons",
+              "blockId": "the-pigeons",
+              "path": "illustrations/pigeons.webp",
+              "alt": "Jessie Willcox Smith's illustration of Irene and the white pigeons.",
+              "placement": "full-width",
+              "width": 933,
+              "height": 1378,
+              "caption": "Illustration by Jessie Willcox Smith, 1920."
+            }
+          ]
+        },
+        {
+          "id": "curdie-the-miner",
+          "title": "Curdie the Miner",
+          "path": "chapters/03.md"
+        },
+        {
+          "id": "beneath-the-mountain",
+          "title": "Beneath the Mountain",
+          "path": "chapters/04.md",
+          "illustrations": [
+            {
+              "id": "smith-goblins",
+              "blockId": "goblins-in-the-dark",
+              "path": "illustrations/goblins.webp",
+              "alt": "Jessie Willcox Smith's illustration of goblins beneath the mountain.",
+              "placement": "full-width",
+              "width": 930,
+              "height": 1386,
+              "caption": "Illustration by Jessie Willcox Smith, 1920."
+            }
+          ]
+        },
+        {
+          "id": "king-papa",
+          "title": "King-Papa",
+          "path": "chapters/05.md",
+          "illustrations": [
+            {
+              "id": "smith-king",
+              "blockId": "the-kings-arrival",
+              "path": "illustrations/king-papa.webp",
+              "alt": "Jessie Willcox Smith's illustration of Princess Irene greeting her father the King.",
+              "placement": "full-width",
+              "width": 926,
+              "height": 1381,
+              "caption": "Illustration by Jessie Willcox Smith, 1920."
+            }
+          ]
+        },
+        {
+          "id": "the-silver-thread",
+          "title": "The Silver Thread",
+          "path": "chapters/06.md",
+          "illustrations": [
+            {
+              "id": "smith-grandmother",
+              "blockId": "the-thread",
+              "path": "illustrations/grandmother.webp",
+              "alt": "Jessie Willcox Smith's illustration of Irene with her mysterious great-great-grandmother.",
+              "placement": "full-width",
+              "width": 936,
+              "height": 1378,
+              "caption": "Illustration by Jessie Willcox Smith, 1920."
+            }
+          ]
+        },
+        {
+          "id": "curdies-clue",
+          "title": "Curdie's Clue",
+          "path": "chapters/07.md",
+          "illustrations": [
+            {
+              "id": "smith-curdie-torch",
+              "blockId": "following-the-goblins",
+              "path": "illustrations/curdie-torch.webp",
+              "alt": "Jessie Willcox Smith's illustration of Curdie exploring the goblin tunnels.",
+              "placement": "full-width",
+              "width": 936,
+              "height": 1383,
+              "caption": "Illustration by Jessie Willcox Smith, 1920."
+            }
+          ]
+        },
+        {
+          "id": "the-goblin-plan",
+          "title": "The Goblin Plan",
+          "path": "chapters/08.md"
+        },
+        {
+          "id": "irenes-clue",
+          "title": "Irene's Clue",
+          "path": "chapters/09.md"
+        },
+        {
+          "id": "the-rescue",
+          "title": "The Rescue",
+          "path": "chapters/10.md",
+          "illustrations": [
+            {
+              "id": "smith-curdie-follows",
+              "blockId": "curdie-follows-irene",
+              "path": "illustrations/curdie-follows.webp",
+              "alt": "Jessie Willcox Smith's illustration of Curdie following Irene underground.",
+              "placement": "full-width",
+              "width": 936,
+              "height": 1379,
+              "caption": "Illustration by Jessie Willcox Smith, 1920."
+            }
+          ]
+        },
+        {
+          "id": "the-goblins-attack",
+          "title": "The Goblins Attack",
+          "path": "chapters/11.md",
+          "illustrations": [
+            {
+              "id": "smith-safe-at-home",
+              "blockId": "curdies-guide",
+              "path": "illustrations/safe-at-home.webp",
+              "alt": "Jessie Willcox Smith's illustration of Princess Irene safe with Curdie's mother.",
+              "placement": "full-width",
+              "width": 936,
+              "height": 1382,
+              "caption": "Illustration by Jessie Willcox Smith, 1920."
+            }
+          ]
+        },
+        {
+          "id": "water-under-the-mountain",
+          "title": "Water Under the Mountain",
+          "path": "chapters/12.md"
+        }
+      ]
     },
-    "illustrations": {
-      "status": "public-domain",
-      "source": "Jessie Willcox Smith illustrations from the 1920 David McKay edition",
-      "sourceUrl": "https://www.gutenberg.org/ebooks/34339",
-      "notes": "The illustrated 1920 edition is available through Project Gutenberg. Jessie Willcox Smith died in 1935, so her artwork is also out of copyright in the UK."
-    },
-    "edition": {
-      "status": "original",
-      "source": "Unicorn Valley Story House edition"
-    },
-    "originalPublicationYear": 1872,
-    "curatorNotes": "Twelve reader sections preserve Irene, Curdie, the mysterious grandmother, the silver thread, the goblin plot and the flooding of the underground kingdom while making the Victorian prose more accessible."
-  }
+    {
+      "id": "full-classic",
+      "label": "Full Classic Text",
+      "author": "George MacDonald",
+      "readingMode": "paged-prose",
+      "rights": {
+        "text": {
+          "status": "public-domain",
+          "source": "The Princess and the Goblin, Project Gutenberg eBook #34339",
+          "sourceUrl": "https://www.gutenberg.org/ebooks/34339",
+          "notes": "The complete public-domain novel text is retained without abridgement or modernisation. Project Gutenberg boilerplate, page markers, source illustration markers and production separators are excluded."
+        },
+        "illustrations": {
+          "status": "public-domain",
+          "source": "Jessie Willcox Smith illustrations from the 1920 David McKay edition",
+          "sourceUrl": "https://www.gutenberg.org/ebooks/34339",
+          "notes": "All eight previously verified Jessie Willcox Smith plates are reused beside their matching passages from the 1920 illustrated edition."
+        },
+        "edition": {
+          "status": "public-domain",
+          "source": "Project Gutenberg eBook #34339 (1920 David McKay illustrated edition)",
+          "notes": "Story House pagination changes presentation only; all 32 chapters and the original wording remain complete."
+        },
+        "originalPublicationYear": 1872,
+        "curatorNotes": "All 32 chapters reflowed into 127 reader pages at paragraph boundaries, using semantic resume anchors and all eight historical Jessie Willcox Smith plates."
+      },
+      "chapters": [
+        {
+          "id": "ch01-there-was-once-a-04d0d27",
+          "title": "Chapter I — Why The Princess Has A Story About Her",
+          "path": "editions/full-classic/pages/ch01-there-was-once-a-04d0d27.md"
+        },
+        {
+          "id": "ch01-these-mountains-were-full-9d6ffff",
+          "title": "Chapter I — Why The Princess Has A Story About Her (continued)",
+          "path": "editions/full-classic/pages/ch01-these-mountains-were-full-9d6ffff.md"
+        },
+        {
+          "id": "ch02-i-have-said-the-9353233",
+          "title": "Chapter II — The Princess Loses Herself",
+          "path": "editions/full-classic/pages/ch02-i-have-said-the-9353233.md"
+        },
+        {
+          "id": "ch02-up-and-up-she-7a895e1",
+          "title": "Chapter II — The Princess Loses Herself (continued)",
+          "path": "editions/full-classic/pages/ch02-up-and-up-she-7a895e1.md",
+          "illustrations": [
+            {
+              "id": "full-smith-lost-in-the-house",
+              "path": "illustrations/lost-in-the-house.webp",
+              "alt": "Jessie Willcox Smith's illustration of Princess Irene lost in the old house.",
+              "placement": "full-width",
+              "width": 936,
+              "height": 1375,
+              "caption": "Illustration by Jessie Willcox Smith, 1920.",
+              "blockId": "ch02-she-ran-for-some-distance-turned-several-c3232799"
+            }
+          ]
+        },
+        {
+          "id": "ch03-when-she-came-to-ce0bc6c",
+          "title": "Chapter III — The Princess And--We Shall See Who",
+          "path": "editions/full-classic/pages/ch03-when-she-came-to-ce0bc6c.md"
+        },
+        {
+          "id": "ch03-perhaps-you-will-wonder-6be662c",
+          "title": "Chapter III — The Princess And--We Shall See Who (continued)",
+          "path": "editions/full-classic/pages/ch03-perhaps-you-will-wonder-6be662c.md"
+        },
+        {
+          "id": "ch03-when-she-carried-away-01ebcc9",
+          "title": "Chapter III — The Princess And--We Shall See Who (continued)",
+          "path": "editions/full-classic/pages/ch03-when-she-carried-away-01ebcc9.md"
+        },
+        {
+          "id": "ch03-i-don-t-sleep-20089c3",
+          "title": "Chapter III — The Princess And--We Shall See Who (continued)",
+          "path": "editions/full-classic/pages/ch03-i-don-t-sleep-20089c3.md",
+          "illustrations": [
+            {
+              "id": "full-smith-pigeons",
+              "path": "illustrations/pigeons.webp",
+              "alt": "Jessie Willcox Smith's illustration of Irene and the white pigeons.",
+              "placement": "full-width",
+              "width": 933,
+              "height": 1378,
+              "caption": "Illustration by Jessie Willcox Smith, 1920.",
+              "blockId": "ch03-again-she-stopped-her-spinning-she-rose-bae82697"
+            }
+          ]
+        },
+        {
+          "id": "ch03-the-lady-took-hold-60ab30a",
+          "title": "Chapter III — The Princess And--We Shall See Who (continued)",
+          "path": "editions/full-classic/pages/ch03-the-lady-took-hold-60ab30a.md"
+        },
+        {
+          "id": "ch04-why-where-can-you-fb03a14",
+          "title": "Chapter IV — What The Nurse Thought Of It",
+          "path": "editions/full-classic/pages/ch04-why-where-can-you-fb03a14.md"
+        },
+        {
+          "id": "ch04-no-i-didn-t-6fa1a84",
+          "title": "Chapter IV — What The Nurse Thought Of It (continued)",
+          "path": "editions/full-classic/pages/ch04-no-i-didn-t-6fa1a84.md"
+        },
+        {
+          "id": "ch04-as-my-beautiful-grandmother-a69bd15",
+          "title": "Chapter IV — What The Nurse Thought Of It (continued)",
+          "path": "editions/full-classic/pages/ch04-as-my-beautiful-grandmother-a69bd15.md"
+        },
+        {
+          "id": "ch05-when-she-woke-the-59ad858",
+          "title": "Chapter V — The Princess Lets Well Alone",
+          "path": "editions/full-classic/pages/ch05-when-she-woke-the-59ad858.md"
+        },
+        {
+          "id": "ch05-this-day-s-adventure-1f5723f",
+          "title": "Chapter V — The Princess Lets Well Alone (continued)",
+          "path": "editions/full-classic/pages/ch05-this-day-s-adventure-1f5723f.md"
+        },
+        {
+          "id": "ch06-the-next-day-the-dab891a",
+          "title": "Chapter VI — The Little Miner",
+          "path": "editions/full-classic/pages/ch06-the-next-day-the-dab891a.md"
+        },
+        {
+          "id": "ch06-what-s-all-the-9a487af",
+          "title": "Chapter VI — The Little Miner (continued)",
+          "path": "editions/full-classic/pages/ch06-what-s-all-the-9a487af.md"
+        },
+        {
+          "id": "ch06-we-ve-taken-the-8eb2b95",
+          "title": "Chapter VI — The Little Miner (continued)",
+          "path": "editions/full-classic/pages/ch06-we-ve-taken-the-8eb2b95.md"
+        },
+        {
+          "id": "ch06-the-boy-was-dressed-95c6f96",
+          "title": "Chapter VI — The Little Miner (continued)",
+          "path": "editions/full-classic/pages/ch06-the-boy-was-dressed-95c6f96.md"
+        },
+        {
+          "id": "ch06-impertinence-murmured-the-nurse-1037c9e",
+          "title": "Chapter VI — The Little Miner (continued)",
+          "path": "editions/full-classic/pages/ch06-impertinence-murmured-the-nurse-1037c9e.md"
+        },
+        {
+          "id": "ch06-he-expected-the-nurse-a94595d",
+          "title": "Chapter VI — The Little Miner (continued)",
+          "path": "editions/full-classic/pages/ch06-he-expected-the-nurse-a94595d.md"
+        },
+        {
+          "id": "ch06-nothing-more-happened-they-d91f3a5",
+          "title": "Chapter VI — The Little Miner (continued)",
+          "path": "editions/full-classic/pages/ch06-nothing-more-happened-they-d91f3a5.md",
+          "illustrations": [
+            {
+              "id": "full-smith-curdie-torch",
+              "path": "illustrations/curdie-torch.webp",
+              "alt": "Jessie Willcox Smith's illustration of Curdie.",
+              "placement": "full-width",
+              "width": 936,
+              "height": 1383,
+              "caption": "Illustration by Jessie Willcox Smith, 1920.",
+              "blockId": "ch06-never-mind-princess-irene-he-said-you-dfabcfd6"
+            }
+          ]
+        },
+        {
+          "id": "ch07-curdie-went-home-whistling-0900b71",
+          "title": "Chapter VII — The Mines",
+          "path": "editions/full-classic/pages/ch07-curdie-went-home-whistling-0900b71.md"
+        },
+        {
+          "id": "ch07-the-work-was-hard-0a56349",
+          "title": "Chapter VII — The Mines (continued)",
+          "path": "editions/full-classic/pages/ch07-the-work-was-hard-0a56349.md"
+        },
+        {
+          "id": "ch07-for-curdie-had-determined-f0ab124",
+          "title": "Chapter VII — The Mines (continued)",
+          "path": "editions/full-classic/pages/ch07-for-curdie-had-determined-f0ab124.md"
+        },
+        {
+          "id": "ch08-for-some-time-curdie-ed46238",
+          "title": "Chapter VIII — The Goblins",
+          "path": "editions/full-classic/pages/ch08-for-some-time-curdie-ed46238.md"
+        },
+        {
+          "id": "ch08-but-why-don-t-54b5113",
+          "title": "Chapter VIII — The Goblins (continued)",
+          "path": "editions/full-classic/pages/ch08-but-why-don-t-54b5113.md"
+        },
+        {
+          "id": "ch08-a-horrid-scream-followed-19baa5c",
+          "title": "Chapter VIII — The Goblins (continued)",
+          "path": "editions/full-classic/pages/ch08-a-horrid-scream-followed-19baa5c.md"
+        },
+        {
+          "id": "ch08-he-now-knew-at-9a32cb9",
+          "title": "Chapter VIII — The Goblins (continued)",
+          "path": "editions/full-classic/pages/ch08-he-now-knew-at-9a32cb9.md"
+        },
+        {
+          "id": "ch08-although-he-knew-all-a314df5",
+          "title": "Chapter VIII — The Goblins (continued)",
+          "path": "editions/full-classic/pages/ch08-although-he-knew-all-a314df5.md"
+        },
+        {
+          "id": "ch08-curdie-suppressed-his-laughter-0465203",
+          "title": "Chapter VIII — The Goblins (continued)",
+          "path": "editions/full-classic/pages/ch08-curdie-suppressed-his-laughter-0465203.md"
+        },
+        {
+          "id": "ch09-a-sound-of-many-6f6a0ff",
+          "title": "Chapter IX — The Hall Of The Goblin Palace",
+          "path": "editions/full-classic/pages/ch09-a-sound-of-many-6f6a0ff.md"
+        },
+        {
+          "id": "ch09-it-was-a-strange-eb88ec3",
+          "title": "Chapter IX — The Hall Of The Goblin Palace (continued)",
+          "path": "editions/full-classic/pages/ch09-it-was-a-strange-eb88ec3.md"
+        },
+        {
+          "id": "ch09-at-the-other-end-c8e1159",
+          "title": "Chapter IX — The Hall Of The Goblin Palace (continued)",
+          "path": "editions/full-classic/pages/ch09-at-the-other-end-c8e1159.md"
+        },
+        {
+          "id": "ch09-this-very-evening-i-48e0aa5",
+          "title": "Chapter IX — The Hall Of The Goblin Palace (continued)",
+          "path": "editions/full-classic/pages/ch09-this-very-evening-i-48e0aa5.md"
+        },
+        {
+          "id": "ch09-he-was-most-anxious-11153b9",
+          "title": "Chapter IX — The Hall Of The Goblin Palace (continued)",
+          "path": "editions/full-classic/pages/ch09-he-was-most-anxious-11153b9.md"
+        },
+        {
+          "id": "ch09-he-was-pretty-sure-572b14a",
+          "title": "Chapter IX — The Hall Of The Goblin Palace (continued)",
+          "path": "editions/full-classic/pages/ch09-he-was-pretty-sure-572b14a.md"
+        },
+        {
+          "id": "ch10-the-weather-continued-fine-9188ecc",
+          "title": "Chapter X — The Princess'S King-Papa",
+          "path": "editions/full-classic/pages/ch10-the-weather-continued-fine-9188ecc.md"
+        },
+        {
+          "id": "ch10-by-this-time-the-80564e6",
+          "title": "Chapter X — The Princess'S King-Papa (continued)",
+          "path": "editions/full-classic/pages/ch10-by-this-time-the-80564e6.md",
+          "illustrations": [
+            {
+              "id": "full-smith-king",
+              "path": "illustrations/king-papa.webp",
+              "alt": "Jessie Willcox Smith's illustration of Princess Irene greeting her father the King.",
+              "placement": "full-width",
+              "width": 926,
+              "height": 1381,
+              "caption": "Illustration by Jessie Willcox Smith, 1920.",
+              "blockId": "ch10-by-this-time-the-people-of-the-80564e6f"
+            }
+          ]
+        },
+        {
+          "id": "ch10-then-it-must-be-6cd343e",
+          "title": "Chapter X — The Princess'S King-Papa (continued)",
+          "path": "editions/full-classic/pages/ch10-then-it-must-be-6cd343e.md"
+        },
+        {
+          "id": "ch10-i-cannot-tell-you-a84a428",
+          "title": "Chapter X — The Princess'S King-Papa (continued)",
+          "path": "editions/full-classic/pages/ch10-i-cannot-tell-you-a84a428.md"
+        },
+        {
+          "id": "ch11-nothing-more-happened-worth-d9c983f",
+          "title": "Chapter XI — The Old Lady'S Bedroom",
+          "path": "editions/full-classic/pages/ch11-nothing-more-happened-worth-d9c983f.md"
+        },
+        {
+          "id": "ch11-the-moon-was-shining-1339fc3",
+          "title": "Chapter XI — The Old Lady'S Bedroom (continued)",
+          "path": "editions/full-classic/pages/ch11-the-moon-was-shining-1339fc3.md"
+        },
+        {
+          "id": "ch11-when-she-reached-the-9c82e1a",
+          "title": "Chapter XI — The Old Lady'S Bedroom (continued)",
+          "path": "editions/full-classic/pages/ch11-when-she-reached-the-9c82e1a.md"
+        },
+        {
+          "id": "ch11-it-was-indeed-very-1571a5a",
+          "title": "Chapter XI — The Old Lady'S Bedroom (continued)",
+          "path": "editions/full-classic/pages/ch11-it-was-indeed-very-1571a5a.md"
+        },
+        {
+          "id": "ch11-irene-held-her-hand-3f087f9",
+          "title": "Chapter XI — The Old Lady'S Bedroom (continued)",
+          "path": "editions/full-classic/pages/ch11-irene-held-her-hand-3f087f9.md"
+        },
+        {
+          "id": "ch11-then-she-got-a-aa0dd9c",
+          "title": "Chapter XI — The Old Lady'S Bedroom (continued)",
+          "path": "editions/full-classic/pages/ch11-then-she-got-a-aa0dd9c.md"
+        },
+        {
+          "id": "ch11-in-a-moment-more-d6ba225",
+          "title": "Chapter XI — The Old Lady'S Bedroom (continued)",
+          "path": "editions/full-classic/pages/ch11-in-a-moment-more-d6ba225.md"
+        },
+        {
+          "id": "ch12-curdie-spent-many-nights-e02e736",
+          "title": "Chapter XII — A Short Chapter About Curdie",
+          "path": "editions/full-classic/pages/ch12-curdie-spent-many-nights-e02e736.md"
+        },
+        {
+          "id": "ch12-i-can-t-think-b8e3ebb",
+          "title": "Chapter XII — A Short Chapter About Curdie (continued)",
+          "path": "editions/full-classic/pages/ch12-i-can-t-think-b8e3ebb.md"
+        },
+        {
+          "id": "ch13-about-this-time-the-4c4d605",
+          "title": "Chapter XIII — The Cobs' Creatures",
+          "path": "editions/full-classic/pages/ch13-about-this-time-the-4c4d605.md"
+        },
+        {
+          "id": "ch13-my-readers-will-suspect-fc3dfd8",
+          "title": "Chapter XIII — The Cobs' Creatures (continued)",
+          "path": "editions/full-classic/pages/ch13-my-readers-will-suspect-fc3dfd8.md"
+        },
+        {
+          "id": "ch13-the-goblins-as-curdie-d79df9e",
+          "title": "Chapter XIII — The Cobs' Creatures (continued)",
+          "path": "editions/full-classic/pages/ch13-the-goblins-as-curdie-d79df9e.md"
+        },
+        {
+          "id": "ch14-during-the-whole-of-dd18f5f",
+          "title": "Chapter XIV — That Night Week",
+          "path": "editions/full-classic/pages/ch14-during-the-whole-of-dd18f5f.md"
+        },
+        {
+          "id": "ch14-it-is-plain-enough-14d0f7e",
+          "title": "Chapter XIV — That Night Week (continued)",
+          "path": "editions/full-classic/pages/ch14-it-is-plain-enough-14d0f7e.md"
+        },
+        {
+          "id": "ch14-her-heart-grew-strong-a44ed5d",
+          "title": "Chapter XIV — That Night Week (continued)",
+          "path": "editions/full-classic/pages/ch14-her-heart-grew-strong-a44ed5d.md"
+        },
+        {
+          "id": "ch15-come-in-irene-said-7e4cf24",
+          "title": "Chapter XV — Woven And Then Spun",
+          "path": "editions/full-classic/pages/ch15-come-in-irene-said-7e4cf24.md"
+        },
+        {
+          "id": "ch15-then-irene-looked-again-cbb5069",
+          "title": "Chapter XV — Woven And Then Spun (continued)",
+          "path": "editions/full-classic/pages/ch15-then-irene-looked-again-cbb5069.md",
+          "illustrations": [
+            {
+              "id": "full-smith-grandmother",
+              "path": "illustrations/grandmother.webp",
+              "alt": "Jessie Willcox Smith's illustration of Irene with her mysterious great-great-grandmother.",
+              "placement": "full-width",
+              "width": 936,
+              "height": 1378,
+              "caption": "Illustration by Jessie Willcox Smith, 1920.",
+              "blockId": "ch15-but-grandmother-you-re-so-beautiful-and-5a81c204"
+            }
+          ]
+        },
+        {
+          "id": "ch15-you-darling-do-you-9ec64ab",
+          "title": "Chapter XV — Woven And Then Spun (continued)",
+          "path": "editions/full-classic/pages/ch15-you-darling-do-you-9ec64ab.md"
+        },
+        {
+          "id": "ch15-when-i-please-i-00db40d",
+          "title": "Chapter XV — Woven And Then Spun (continued)",
+          "path": "editions/full-classic/pages/ch15-when-i-please-i-00db40d.md"
+        },
+        {
+          "id": "ch15-that-i-will-now-f77e416",
+          "title": "Chapter XV — Woven And Then Spun (continued)",
+          "path": "editions/full-classic/pages/ch15-that-i-will-now-f77e416.md"
+        },
+        {
+          "id": "ch15-no-the-thread-is-8d6fea5",
+          "title": "Chapter XV — Woven And Then Spun (continued)",
+          "path": "editions/full-classic/pages/ch15-no-the-thread-is-8d6fea5.md"
+        },
+        {
+          "id": "ch15-no-child-answered-her-f751fbe",
+          "title": "Chapter XV — Woven And Then Spun (continued)",
+          "path": "editions/full-classic/pages/ch15-no-child-answered-her-f751fbe.md"
+        },
+        {
+          "id": "ch16-the-same-moment-her-c7b47fc",
+          "title": "Chapter XVI — The Ring",
+          "path": "editions/full-classic/pages/ch16-the-same-moment-her-c7b47fc.md"
+        },
+        {
+          "id": "ch16-without-another-word-she-fa1a8e5",
+          "title": "Chapter XVI — The Ring (continued)",
+          "path": "editions/full-classic/pages/ch16-without-another-word-she-fa1a8e5.md"
+        },
+        {
+          "id": "ch17-the-spring-so-dear-5d6a979",
+          "title": "Chapter XVII — Spring-Time",
+          "path": "editions/full-classic/pages/ch17-the-spring-so-dear-5d6a979.md"
+        },
+        {
+          "id": "ch17-the-king-was-much-6496c19",
+          "title": "Chapter XVII — Spring-Time (continued)",
+          "path": "editions/full-classic/pages/ch17-the-king-was-much-6496c19.md"
+        },
+        {
+          "id": "ch17-there-were-goats-too-18aa911",
+          "title": "Chapter XVII — Spring-Time (continued)",
+          "path": "editions/full-classic/pages/ch17-there-were-goats-too-18aa911.md"
+        },
+        {
+          "id": "ch18-curdie-was-as-watchful-e8a02dd",
+          "title": "Chapter XVIII — Curdie'S Clue",
+          "path": "editions/full-classic/pages/ch18-curdie-was-as-watchful-e8a02dd.md"
+        },
+        {
+          "id": "ch18-below-sat-a-little-9613e89",
+          "title": "Chapter XVIII — Curdie'S Clue (continued)",
+          "path": "editions/full-classic/pages/ch18-below-sat-a-little-9613e89.md"
+        },
+        {
+          "id": "ch18-ha-ha-ha-shouted-d43efe3",
+          "title": "Chapter XVIII — Curdie'S Clue (continued)",
+          "path": "editions/full-classic/pages/ch18-ha-ha-ha-shouted-d43efe3.md"
+        },
+        {
+          "id": "ch18-i-came-upon-it-85bccd8",
+          "title": "Chapter XVIII — Curdie'S Clue (continued)",
+          "path": "editions/full-classic/pages/ch18-i-came-upon-it-85bccd8.md"
+        },
+        {
+          "id": "ch18-the-goblins-fell-back-4157574",
+          "title": "Chapter XVIII — Curdie'S Clue (continued)",
+          "path": "editions/full-classic/pages/ch18-the-goblins-fell-back-4157574.md",
+          "illustrations": [
+            {
+              "id": "full-smith-goblins",
+              "path": "illustrations/goblins.webp",
+              "alt": "Jessie Willcox Smith's illustration of goblins beneath the mountain.",
+              "placement": "full-width",
+              "width": 930,
+              "height": 1386,
+              "caption": "Illustration by Jessie Willcox Smith, 1920.",
+              "blockId": "ch18-the-goblins-fell-back-a-little-when-965f106f"
+            }
+          ]
+        },
+        {
+          "id": "ch18-when-he-came-to-a717c95",
+          "title": "Chapter XVIII — Curdie'S Clue (continued)",
+          "path": "editions/full-classic/pages/ch18-when-he-came-to-a717c95.md"
+        },
+        {
+          "id": "ch19-he-must-have-slept-a62f16b",
+          "title": "Chapter XIX — Goblin Counsels",
+          "path": "editions/full-classic/pages/ch19-he-must-have-slept-a62f16b.md"
+        },
+        {
+          "id": "ch19-that-would-be-to-5c054bd",
+          "title": "Chapter XIX — Goblin Counsels (continued)",
+          "path": "editions/full-classic/pages/ch19-that-would-be-to-5c054bd.md"
+        },
+        {
+          "id": "ch19-where-tis-all-a-0f9a062",
+          "title": "Chapter XIX — Goblin Counsels (continued)",
+          "path": "editions/full-classic/pages/ch19-where-tis-all-a-0f9a062.md"
+        },
+        {
+          "id": "ch19-they-had-left-the-7d08867",
+          "title": "Chapter XIX — Goblin Counsels (continued)",
+          "path": "editions/full-classic/pages/ch19-they-had-left-the-7d08867.md"
+        },
+        {
+          "id": "ch20-that-same-morning-early-7c47f77",
+          "title": "Chapter XX — Irene'S Clue",
+          "path": "editions/full-classic/pages/ch20-that-same-morning-early-7c47f77.md"
+        },
+        {
+          "id": "ch20-it-was-a-clear-d8a38ae",
+          "title": "Chapter XX — Irene'S Clue (continued)",
+          "path": "editions/full-classic/pages/ch20-it-was-a-clear-d8a38ae.md"
+        },
+        {
+          "id": "ch20-she-did-not-hesitate-98f077f",
+          "title": "Chapter XX — Irene'S Clue (continued)",
+          "path": "editions/full-classic/pages/ch20-she-did-not-hesitate-98f077f.md"
+        },
+        {
+          "id": "ch20-but-presently-she-came-11dd101",
+          "title": "Chapter XX — Irene'S Clue (continued)",
+          "path": "editions/full-classic/pages/ch20-but-presently-she-came-11dd101.md"
+        },
+        {
+          "id": "ch21-as-the-princess-lay-e9c4845",
+          "title": "Chapter XXI — The Escape",
+          "path": "editions/full-classic/pages/ch21-as-the-princess-lay-e9c4845.md"
+        },
+        {
+          "id": "ch21-yes-but-they-know-09ba067",
+          "title": "Chapter XXI — The Escape (continued)",
+          "path": "editions/full-classic/pages/ch21-yes-but-they-know-09ba067.md"
+        },
+        {
+          "id": "ch21-curdie-gave-a-great-6942690",
+          "title": "Chapter XXI — The Escape (continued)",
+          "path": "editions/full-classic/pages/ch21-curdie-gave-a-great-6942690.md"
+        },
+        {
+          "id": "ch21-and-when-he-turned-124bc38",
+          "title": "Chapter XXI — The Escape (continued)",
+          "path": "editions/full-classic/pages/ch21-and-when-he-turned-124bc38.md",
+          "illustrations": [
+            {
+              "id": "full-smith-curdie-follows",
+              "path": "illustrations/curdie-follows.webp",
+              "alt": "Jessie Willcox Smith's illustration of Curdie following Irene underground.",
+              "placement": "full-width",
+              "width": 936,
+              "height": 1379,
+              "caption": "Illustration by Jessie Willcox Smith, 1920.",
+              "blockId": "ch21-reasoning-thus-he-followed-her-a-few-cfda504d"
+            }
+          ]
+        },
+        {
+          "id": "ch21-irene-shuddered-when-she-94a469a",
+          "title": "Chapter XXI — The Escape (continued)",
+          "path": "editions/full-classic/pages/ch21-irene-shuddered-when-she-94a469a.md"
+        },
+        {
+          "id": "ch21-but-what-do-you-ee48c40",
+          "title": "Chapter XXI — The Escape (continued)",
+          "path": "editions/full-classic/pages/ch21-but-what-do-you-ee48c40.md"
+        },
+        {
+          "id": "ch21-we-soon-shall-be-94c3461",
+          "title": "Chapter XXI — The Escape (continued)",
+          "path": "editions/full-classic/pages/ch21-we-soon-shall-be-94c3461.md"
+        },
+        {
+          "id": "ch21-i-don-t-see-c370a15",
+          "title": "Chapter XXI — The Escape (continued)",
+          "path": "editions/full-classic/pages/ch21-i-don-t-see-c370a15.md"
+        },
+        {
+          "id": "ch22-up-the-stair-then-9a586c0",
+          "title": "Chapter XXII — The Old Lady And Curdie",
+          "path": "editions/full-classic/pages/ch22-up-the-stair-then-9a586c0.md"
+        },
+        {
+          "id": "ch22-then-what-do-you-de73ce0",
+          "title": "Chapter XXII — The Old Lady And Curdie (continued)",
+          "path": "editions/full-classic/pages/ch22-then-what-do-you-de73ce0.md"
+        },
+        {
+          "id": "ch22-he-said-this-as-4009712",
+          "title": "Chapter XXII — The Old Lady And Curdie (continued)",
+          "path": "editions/full-classic/pages/ch22-he-said-this-as-4009712.md"
+        },
+        {
+          "id": "ch22-and-she-held-up-84c55cb",
+          "title": "Chapter XXII — The Old Lady And Curdie (continued)",
+          "path": "editions/full-classic/pages/ch22-and-she-held-up-84c55cb.md"
+        },
+        {
+          "id": "ch22-when-she-stood-up-fa6d0ff",
+          "title": "Chapter XXII — The Old Lady And Curdie (continued)",
+          "path": "editions/full-classic/pages/ch22-when-she-stood-up-fa6d0ff.md"
+        },
+        {
+          "id": "ch23-curdie-went-up-the-2e4d23e",
+          "title": "Chapter XXIII — Curdie And His Mother",
+          "path": "editions/full-classic/pages/ch23-curdie-went-up-the-2e4d23e.md"
+        },
+        {
+          "id": "ch23-it-s-no-explanation-4e946c0",
+          "title": "Chapter XXIII — Curdie And His Mother (continued)",
+          "path": "editions/full-classic/pages/ch23-it-s-no-explanation-4e946c0.md"
+        },
+        {
+          "id": "ch23-that-s-why-i-765a694",
+          "title": "Chapter XXIII — Curdie And His Mother (continued)",
+          "path": "editions/full-classic/pages/ch23-that-s-why-i-765a694.md"
+        },
+        {
+          "id": "ch23-they-had-some-of-b67b08c",
+          "title": "Chapter XXIII — Curdie And His Mother (continued)",
+          "path": "editions/full-classic/pages/ch23-they-had-some-of-b67b08c.md"
+        },
+        {
+          "id": "ch23-i-don-t-see-7de9d2f",
+          "title": "Chapter XXIII — Curdie And His Mother (continued)",
+          "path": "editions/full-classic/pages/ch23-i-don-t-see-7de9d2f.md"
+        },
+        {
+          "id": "ch23-i-m-no-more-b5a2ad4",
+          "title": "Chapter XXIII — Curdie And His Mother (continued)",
+          "path": "editions/full-classic/pages/ch23-i-m-no-more-b5a2ad4.md"
+        },
+        {
+          "id": "ch23-and-they-are-bad-3528692",
+          "title": "Chapter XXIII — Curdie And His Mother (continued)",
+          "path": "editions/full-classic/pages/ch23-and-they-are-bad-3528692.md"
+        },
+        {
+          "id": "ch24-when-the-princess-awoke-5bb6b1b",
+          "title": "Chapter XXIV — Irene Behaves Like A Princess",
+          "path": "editions/full-classic/pages/ch24-when-the-princess-awoke-5bb6b1b.md"
+        },
+        {
+          "id": "ch24-i-am-sure-princess-de9f60e",
+          "title": "Chapter XXIV — Irene Behaves Like A Princess (continued)",
+          "path": "editions/full-classic/pages/ch24-i-am-sure-princess-de9f60e.md"
+        },
+        {
+          "id": "ch25-everything-was-for-some-881418f",
+          "title": "Chapter XXV — Curdie Comes To Grief",
+          "path": "editions/full-classic/pages/ch25-everything-was-for-some-881418f.md"
+        },
+        {
+          "id": "ch25-here-i-should-like-ce81be1",
+          "title": "Chapter XXV — Curdie Comes To Grief (continued)",
+          "path": "editions/full-classic/pages/ch25-here-i-should-like-ce81be1.md"
+        },
+        {
+          "id": "ch25-at-length-early-one-5ff8e9b",
+          "title": "Chapter XXV — Curdie Comes To Grief (continued)",
+          "path": "editions/full-classic/pages/ch25-at-length-early-one-5ff8e9b.md"
+        },
+        {
+          "id": "ch25-they-carried-him-into-90302e2",
+          "title": "Chapter XXV — Curdie Comes To Grief (continued)",
+          "path": "editions/full-classic/pages/ch25-they-carried-him-into-90302e2.md"
+        },
+        {
+          "id": "ch26-that-same-night-several-3701db2",
+          "title": "Chapter XXVI — The Goblin Miners",
+          "path": "editions/full-classic/pages/ch26-that-same-night-several-3701db2.md"
+        },
+        {
+          "id": "ch26-no-sooner-did-they-0604c63",
+          "title": "Chapter XXVI — The Goblin Miners (continued)",
+          "path": "editions/full-classic/pages/ch26-no-sooner-did-they-0604c63.md"
+        },
+        {
+          "id": "ch27-when-curdie-fell-asleep-d72c255",
+          "title": "Chapter XXVII — The Goblins In The King'S House",
+          "path": "editions/full-classic/pages/ch27-when-curdie-fell-asleep-d72c255.md"
+        },
+        {
+          "id": "ch27-and-with-every-rhyme-f2ed3e8",
+          "title": "Chapter XXVII — The Goblins In The King'S House (continued)",
+          "path": "editions/full-classic/pages/ch27-and-with-every-rhyme-f2ed3e8.md"
+        },
+        {
+          "id": "ch27-and-now-curdie-approached-bb6e0ff",
+          "title": "Chapter XXVII — The Goblins In The King'S House (continued)",
+          "path": "editions/full-classic/pages/ch27-and-now-curdie-approached-bb6e0ff.md"
+        },
+        {
+          "id": "ch27-while-the-queen-and-1b965ff",
+          "title": "Chapter XXVII — The Goblins In The King'S House (continued)",
+          "path": "editions/full-classic/pages/ch27-while-the-queen-and-1b965ff.md"
+        },
+        {
+          "id": "ch27-the-rest-meantime-finding-455dce4",
+          "title": "Chapter XXVII — The Goblins In The King'S House (continued)",
+          "path": "editions/full-classic/pages/ch27-the-rest-meantime-finding-455dce4.md"
+        },
+        {
+          "id": "ch28-just-as-the-consolation-40e1d4c",
+          "title": "Chapter XXVIII — Curdie'S Guide",
+          "path": "editions/full-classic/pages/ch28-just-as-the-consolation-40e1d4c.md",
+          "illustrations": [
+            {
+              "id": "full-smith-safe-at-home",
+              "path": "illustrations/safe-at-home.webp",
+              "alt": "Jessie Willcox Smith's illustration of Princess Irene safe with Curdie's mother.",
+              "placement": "full-width",
+              "width": 936,
+              "height": 1382,
+              "caption": "Illustration by Jessie Willcox Smith, 1920.",
+              "blockId": "ch28-the-door-was-on-the-latch-and-2296565b"
+            }
+          ]
+        },
+        {
+          "id": "ch28-yes-i-have-02660bc",
+          "title": "Chapter XXVIII — Curdie'S Guide (continued)",
+          "path": "editions/full-classic/pages/ch28-yes-i-have-02660bc.md"
+        },
+        {
+          "id": "ch28-i-thought-so-curdie-7065c8f",
+          "title": "Chapter XXVIII — Curdie'S Guide (continued)",
+          "path": "editions/full-classic/pages/ch28-i-thought-so-curdie-7065c8f.md"
+        },
+        {
+          "id": "ch29-he-had-all-at-d780ba8",
+          "title": "Chapter XXIX — Mason-Work",
+          "path": "editions/full-classic/pages/ch29-he-had-all-at-d780ba8.md"
+        },
+        {
+          "id": "ch29-the-moment-his-hand-bb98e8a",
+          "title": "Chapter XXIX — Mason-Work (continued)",
+          "path": "editions/full-classic/pages/ch29-the-moment-his-hand-bb98e8a.md"
+        },
+        {
+          "id": "ch30-the-next-morning-the-2e72d29",
+          "title": "Chapter XXX — The King And The Kiss",
+          "path": "editions/full-classic/pages/ch30-the-next-morning-the-2e72d29.md"
+        },
+        {
+          "id": "ch30-papa-papa-the-princess-76956a9",
+          "title": "Chapter XXX — The King And The Kiss (continued)",
+          "path": "editions/full-classic/pages/ch30-papa-papa-the-princess-76956a9.md"
+        },
+        {
+          "id": "ch31-the-king-s-harper-f9b85ad",
+          "title": "Chapter XXXI — The Subterranean Waters",
+          "path": "editions/full-classic/pages/ch31-the-king-s-harper-f9b85ad.md"
+        },
+        {
+          "id": "ch31-curdie-had-left-the-110e2ce",
+          "title": "Chapter XXXI — The Subterranean Waters (continued)",
+          "path": "editions/full-classic/pages/ch31-curdie-had-left-the-110e2ce.md"
+        },
+        {
+          "id": "ch31-oh-he-cried-in-41795b9",
+          "title": "Chapter XXXI — The Subterranean Waters (continued)",
+          "path": "editions/full-classic/pages/ch31-oh-he-cried-in-41795b9.md"
+        },
+        {
+          "id": "ch31-as-soon-as-we-e4b6cbb",
+          "title": "Chapter XXXI — The Subterranean Waters (continued)",
+          "path": "editions/full-classic/pages/ch31-as-soon-as-we-e4b6cbb.md"
+        },
+        {
+          "id": "ch32-all-the-rest-went-f854def",
+          "title": "Chapter XXXII — The Last Chapter",
+          "path": "editions/full-classic/pages/ch32-all-the-rest-went-f854def.md"
+        },
+        {
+          "id": "ch32-not-more-unfinished-than-7cdd2c0",
+          "title": "Chapter XXXII — The Last Chapter (continued)",
+          "path": "editions/full-classic/pages/ch32-not-more-unfinished-than-7cdd2c0.md"
+        }
+      ]
+    }
+  ]
 }
