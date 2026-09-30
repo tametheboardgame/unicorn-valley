@@ -2,6 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 
 const PLAYER_NAME = 'world-player-unicorn';
 const MARIGOLD_APPROACH = { x: 1700, y: 1240 } as const;
+const MARIGOLD_PICNIC_POSITION = { x: 1780, y: 1550 } as const;
 const RACE_ENTRANCE_APPROACH = { x: 2970, y: 1040 } as const;
 
 interface DiagnosticObject {
@@ -198,6 +199,7 @@ test('Marigold and Nova dialogue keep accepted sizing and Meet Nova works when N
   await waitForDiagnostics(page);
 
   await startScene(page, 'SunbeamVillageScene');
+  await waitForVisibleObject(page, 'SunbeamVillageScene', 'core-npc:marigold:world');
   await positionPlayer(page, 'SunbeamVillageScene', MARIGOLD_APPROACH.x, MARIGOLD_APPROACH.y);
   await waitForTalkTarget(page, 'SunbeamVillageScene', 'Marigold');
   await page.keyboard.press('KeyE');
@@ -249,9 +251,29 @@ test('Marigold and Nova dialogue keep accepted sizing and Meet Nova works when N
   village = await sceneSnapshot(page, 'SunbeamVillageScene');
   expect(visiblePanelY(village)).toBe(ordinaryLinePanelY);
   await page.keyboard.press('KeyE');
+  await waitForHiddenObject(page, 'SunbeamVillageScene', 'core-npc:marigold:world');
 
   await startScene(page, 'RainbowMeadowScene');
   await waitForVisibleObject(page, 'RainbowMeadowScene', 'core-npc:nova:picnic');
+  await waitForVisibleObject(page, 'RainbowMeadowScene', 'core-npc:marigold:picnic');
+
+  await positionPlayer(
+    page,
+    'RainbowMeadowScene',
+    MARIGOLD_PICNIC_POSITION.x,
+    MARIGOLD_PICNIC_POSITION.y,
+  );
+  await waitForTalkTarget(page, 'RainbowMeadowScene', 'Marigold');
+  await page.keyboard.press('KeyE');
+  await waitForVisibleObject(page, 'RainbowMeadowScene', 'dialogue-production-panel');
+  let picnicMeadow = await sceneSnapshot(page, 'RainbowMeadowScene');
+  expect(
+    picnicMeadow.objects.find(
+      (object) => object.name === 'dialogue-production-speaker-name' && object.visible,
+    )?.text,
+  ).toBe('Marigold');
+  await page.keyboard.press('KeyE');
+  await waitForHiddenObject(page, 'RainbowMeadowScene', 'dialogue-production-panel');
   const meadowBeforeRace = await sceneSnapshot(page, 'RainbowMeadowScene');
   const picnicNova = meadowBeforeRace.objects.find(
     (object) => object.name === 'core-npc:nova:picnic' && object.visible,
@@ -299,4 +321,15 @@ test('Marigold and Nova dialogue keep accepted sizing and Meet Nova works when N
   await page.keyboard.press('Escape');
   await waitForHiddenObject(page, 'RainbowMeadowScene', 'dialogue-production-panel');
   await waitForTalkTarget(page, 'RainbowMeadowScene', 'Nova');
+
+  await startScene(page, 'SunbeamVillageScene');
+  await waitForHiddenObject(page, 'SunbeamVillageScene', 'core-npc:marigold:world');
+  await positionPlayer(page, 'SunbeamVillageScene', MARIGOLD_APPROACH.x, MARIGOLD_APPROACH.y);
+  await page.waitForTimeout(250);
+  const returnedVillage = await sceneSnapshot(page, 'SunbeamVillageScene');
+  expect(
+    returnedVillage.objects.some(
+      (object) => object.visible && object.text?.includes('Marigold') === true,
+    ),
+  ).toBe(false);
 });
