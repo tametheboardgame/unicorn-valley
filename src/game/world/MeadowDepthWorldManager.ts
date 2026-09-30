@@ -529,8 +529,8 @@ export class MeadowDepthWorldManager {
           centre.y + Math.sin(angle) * 58,
           revealed ? '🌼' : '·',
           {
-          color: '#fff4ac',
-          fontFamily: 'system-ui, sans-serif',
+            color: '#fff4ac',
+            fontFamily: 'system-ui, sans-serif',
             fontSize: revealed ? '20px' : '18px',
           },
         )
