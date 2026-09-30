@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { RAINBOW_MEADOW_LAYOUT } from '../world/RainbowMeadowMap';
 import { worldDepthForY } from '../world/WorldDepth';
 import { ensureNovaIdentityTexture, NOVA_RACE_TINT } from './NovaIdentity';
 
@@ -13,20 +14,21 @@ function markDetail<T extends Phaser.GameObjects.GameObject>(object: T): T {
 }
 
 function decorateMeadow(scene: Phaser.Scene): void {
+  const pond = RAINBOW_MEADOW_LAYOUT.natureFeatures.pond;
   for (const [width, height, alpha] of [
     [330, 88, 0.24],
     [225, 62, 0.2],
   ] as const) {
     markDetail(
       scene.add
-        .ellipse(1570, 610, width, height, 0xe6ffff, alpha)
+        .ellipse(pond.position.x, pond.position.y, width, height, 0xe6ffff, alpha)
         .setStrokeStyle(4, 0xffffff, alpha + 0.08)
         .setDepth(5.1),
     );
   }
   for (const [x, y] of [
-    [1325, 645],
-    [1805, 590],
+    [pond.position.x - 245, pond.position.y + 35],
+    [pond.position.x + 235, pond.position.y - 20],
   ] as const) {
     for (const offset of [-14, 0, 14]) {
       markDetail(
