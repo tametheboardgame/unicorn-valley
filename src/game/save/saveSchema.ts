@@ -1,4 +1,4 @@
-export const CURRENT_SAVE_SCHEMA_VERSION = 10;
+export const CURRENT_SAVE_SCHEMA_VERSION = 9;
 export const SAVE_STORAGE_KEY = 'unicorn-valley.save';
 export const DEFAULT_START_LOCATION_ID = 'moonflower-cottage';
 export const NEW_GAME_START_LOCATION_ID = 'location:moonflower-glade';
@@ -95,7 +95,7 @@ export interface ShopState {
 export interface ReaderPreferencesState {
   fontSize: number;
   lineHeight: number;
-  illustrationSetByStoryEditionKey: Record<string, string>;
+  illustrationSetByStoryEditionKey?: Record<string, string>;
 }
 
 export interface StoryReadingProgress {

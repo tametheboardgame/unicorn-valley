@@ -49,7 +49,7 @@ export class StoryReadingService {
     const preferences = save?.storyReading.preferences ?? DEFAULT_PREFERENCES;
     return {
       ...preferences,
-      illustrationSetByStoryEditionKey: { ...preferences.illustrationSetByStoryEditionKey },
+      illustrationSetByStoryEditionKey: { ...(preferences.illustrationSetByStoryEditionKey ?? {}) },
     };
   }
 
@@ -60,7 +60,7 @@ export class StoryReadingService {
   ): string | null {
     const save = this.saveService.load();
     return (
-      save?.storyReading.preferences.illustrationSetByStoryEditionKey[
+      save?.storyReading.preferences.illustrationSetByStoryEditionKey?.[
         progressKey(storyId, editionId, defaultEditionId)
       ] ?? null
     );
@@ -119,7 +119,7 @@ export class StoryReadingService {
         2,
       ),
       illustrationSetByStoryEditionKey: {
-        ...save.storyReading.preferences.illustrationSetByStoryEditionKey,
+        ...(save.storyReading.preferences.illustrationSetByStoryEditionKey ?? {}),
       },
     };
 
@@ -148,7 +148,7 @@ export class StoryReadingService {
         preferences: {
           ...save.storyReading.preferences,
           illustrationSetByStoryEditionKey: {
-            ...save.storyReading.preferences.illustrationSetByStoryEditionKey,
+            ...(save.storyReading.preferences.illustrationSetByStoryEditionKey ?? {}),
             [key]: illustrationSetId,
           },
         },
