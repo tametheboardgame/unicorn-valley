@@ -85,6 +85,98 @@ The reader shows an edition selector only when a manifest contains more than one
 
 Opening a multi-edition book resumes the most recently read edition. Switching editions saves the current position first, then resumes the selected edition at its own saved position. The catalogue continues to contain one card per title rather than duplicating books by edition.
 
+## Independent illustration sets
+
+When one text edition has more than one legitimate art treatment, keep the prose/chapter structure
+single and define illustration sets on that edition. Do not duplicate the edition merely to switch
+art.
+
+Existing `chapter.illustrations` remains valid and is normalised as one implicit illustration set,
+so existing books need no migration.
+
+For a schema-v1 single-edition book, illustration sets may be declared at the book level:
+
+```json
+{
+  "schemaVersion": 1,
+  "id": "the-hare-and-the-tortoise",
+  "chapters": [
+    {
+      "id": "the-race",
+      "title": "The Hare and the Tortoise",
+      "path": "chapters/01.md"
+    }
+  ],
+  "illustrationSets": [
+    {
+      "id": "classic",
+      "label": "Classic Illustrations",
+      "rights": {
+        "status": "public-domain",
+        "source": "Richard Heighway illustrations, 1894"
+      },
+      "chapters": [
+        {
+          "chapterId": "the-race",
+          "illustrations": [
+            {
+              "id": "classic-start",
+              "blockId": "the-challenge",
+              "path": "illustrations/start.webp",
+              "alt": "Historic illustration of the hare and tortoise.",
+              "placement": "inline",
+              "width": 166,
+              "height": 200
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "modern",
+      "label": "Modern Illustrations",
+      "rights": {
+        "status": "original",
+        "source": "Generated for Unicorn Valley Story House"
+      },
+      "chapters": [
+        {
+          "chapterId": "the-race",
+          "illustrations": [
+            {
+              "id": "modern-start",
+              "blockId": "the-challenge",
+              "path": "illustrations/generated/start.webp",
+              "alt": "Modern Story House illustration of the race beginning.",
+              "placement": "full-width",
+              "width": 1200,
+              "height": 800
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+For schema-v2 books, put `illustrationSets` on each edition because Story House and Full Classic
+text can have different chapter/block IDs. The same underlying image file may be referenced by both
+editions when appropriate; only the block mapping needs to differ.
+
+Defaults are deliberately conventional:
+
+- a `full-classic` edition prefers an available `classic` set;
+- every other edition prefers an available `modern` set;
+- otherwise the first set is used;
+- `defaultIllustrationSetId` may override the convention explicitly.
+
+The reader shows the Illustrations selector only when the active edition has at least two sets.
+The player's choice is remembered independently per story edition. Every explicit set carries its
+own rights/provenance metadata so generated art never inherits historic/public-domain provenance.
+
+Do not mix legacy `chapter.illustrations` with explicit `illustrationSets` inside the same edition.
+
 ## Reader-mode choice
 
 Use the existing flowing reader for prose-first work. Use `paged-picture-book` only when page-by-page illustration/text pairing is part of the authored reading experience. Both modes keep stable semantic IDs and canonical reading progress; neither should require bespoke reader code for an individual title.
