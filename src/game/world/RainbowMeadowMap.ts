@@ -1,5 +1,6 @@
 import type { DiscoveryId } from '../../content/contentTypes';
 import type { CollisionRectangle, MapPoint } from './MapTraversal';
+import { RAINBOW_MEADOW_LAYOUT } from './RainbowMeadowLayout';
 import { setWorldArrivalFacing } from './WorldArrivalState';
 
 export const RAINBOW_MEADOW_LOCATION_ID = 'location:rainbow-meadow';
@@ -33,13 +34,13 @@ export interface MeadowDiscoverySpot {
   collectionRadius: number;
 }
 
-const DEFAULT_PLAYER_SPAWN = { x: 330, y: 1050 } as const;
+const DEFAULT_PLAYER_SPAWN = RAINBOW_MEADOW_LAYOUT.sunbeamGateway.approach;
 const playerSpawn: MapPoint = { ...DEFAULT_PLAYER_SPAWN };
 
 export function setRainbowMeadowPlayerSpawn(point: MapPoint): void {
   playerSpawn.x = point.x;
   playerSpawn.y = point.y;
-  if (point.x === 330 && point.y === 1050) {
+  if (point.x === DEFAULT_PLAYER_SPAWN.x && point.y === DEFAULT_PLAYER_SPAWN.y) {
     setWorldArrivalFacing('RainbowMeadowScene', 'right');
   }
 }
@@ -50,50 +51,22 @@ export function resetRainbowMeadowPlayerSpawn(): void {
 }
 
 export const RAINBOW_MEADOW_MAP = {
-  width: 3400,
-  height: 2100,
-  margin: 90,
+  width: RAINBOW_MEADOW_LAYOUT.bounds.width,
+  height: RAINBOW_MEADOW_LAYOUT.bounds.height,
+  margin: RAINBOW_MEADOW_LAYOUT.bounds.margin,
   playerSpawn,
-  raceHub: {
-    x: 2670,
-    y: 1080,
-    width: 1180,
-    height: 1120,
-  },
-  entrances: [
-    {
-      id: 'sunbeam-village',
-      label: 'Sunbeam Village',
-      position: { x: 120, y: 1050 },
-      approach: { x: 330, y: 1050 },
-      direction: 'west',
-    },
-  ] satisfies readonly MeadowEntrance[],
+  raceHub: RAINBOW_MEADOW_LAYOUT.raceHub,
+  entrances: [RAINBOW_MEADOW_LAYOUT.sunbeamGateway] satisfies readonly MeadowEntrance[],
   hubFeatures: [
-    {
-      id: 'rainbow-run-entrance',
-      label: 'Rainbow Run',
-      position: { x: 3190, y: 1040 },
-      approach: { x: 2970, y: 1040 },
-    },
-    {
-      id: 'ribbon-board',
-      label: 'Ribbon Board',
-      position: { x: 2510, y: 1430 },
-      approach: { x: 2510, y: 1590 },
-    },
-    {
-      id: 'windmill-lookout',
-      label: 'Windmill Lookout',
-      position: { x: 1280, y: 270 },
-      approach: { x: 1280, y: 440 },
-    },
+    RAINBOW_MEADOW_LAYOUT.hubFeatures.rainbowRunEntrance,
+    RAINBOW_MEADOW_LAYOUT.hubFeatures.ribbonBoard,
+    RAINBOW_MEADOW_LAYOUT.hubFeatures.windmillLookout,
   ] satisfies readonly MeadowHubFeature[],
   npcMarkers: [
     {
       id: 'nova',
       label: 'Nova',
-      position: { x: 2470, y: 930 },
+      position: RAINBOW_MEADOW_LAYOUT.coreNpcPositions.novaRaceHub,
     },
   ] satisfies readonly MeadowNpcMarker[],
   discoverySpots: [
