@@ -6,6 +6,7 @@ import {
   TANSY_NOTICE_MAP_CORNER_DISCOVERY_ID,
   TANSY_SUNDIAL_MAP_CORNER_DISCOVERY_ID,
 } from '../../content/r6VillageContent';
+import { ChessPlazaActivityScene } from '../activities/ChessPlazaActivityScene';
 import { getBrowserAtmosphericTimeService } from '../atmosphere/AtmosphericTimeService';
 import { DiscoveryService } from '../discovery/DiscoveryService';
 import type { InteractionActionKind, InteractionTarget } from '../interaction/InteractionTarget';
@@ -109,15 +110,9 @@ const VILLAGE_POINTS: readonly VillageLifePoint[] = [
     x: SUNBEAM_VILLAGE_LAYOUT.villageLife.bench.x,
     y: SUNBEAM_VILLAGE_LAYOUT.villageLife.bench.y,
     radius: 118,
-    createProp: (scene) => [
-      scene.add.ellipse(0, 48, 192, 64, 0x709d62, 0.18),
-      scene.add.rectangle(0, 8, 150, 28, 0xb97855, 1).setStrokeStyle(3, 0x80503e, 0.9),
-      scene.add.rectangle(0, -22, 150, 18, 0xc58a62, 1).setStrokeStyle(3, 0x80503e, 0.9),
-      scene.add.rectangle(-58, 34, 12, 48, 0x80503e, 1),
-      scene.add.rectangle(58, 34, 12, 48, 0x80503e, 1),
-      scene.add.circle(-88, 42, 8, 0x91c77b, 0.88),
-      scene.add.circle(88, 42, 8, 0x91c77b, 0.88),
-    ],
+    // H3.11.8C renders the grouped seating as part of the authored chess plaza.
+    // Village Life keeps ownership of the familiar Sit interaction only.
+    createProp: () => [],
   },
   {
     id: 'thread-window',
@@ -150,6 +145,7 @@ export class VillageLifeWorldManager {
   private readonly discoveryService = new DiscoveryService(this.saveService);
   private readonly timeService = getBrowserAtmosphericTimeService(this.saveService);
   private state: VillageLifeState | null = null;
+  private chessLaunchPending = false;
 
   public constructor(private readonly game: Phaser.Game) {
     this.game.events.on(Phaser.Core.Events.POST_STEP, this.update, this);
@@ -201,7 +197,40 @@ export class VillageLifeWorldManager {
         activate: () => this.activate(state, definition),
       },
     }));
+    const { table } = SUNBEAM_VILLAGE_LAYOUT.chessPlaza;
+    targets.push({
+      id: 'interaction:activity:sunbeam-chess',
+      label: 'Sunbeam chess table',
+      actionLabel: 'Play chess',
+      actionKind: 'start',
+      position: { ...table.interaction },
+      interactionRadius: table.interactionRadius,
+      priority: 24,
+      visible: () => state.scene.scene.isActive(),
+      result: {
+        type: 'callback',
+        activate: () => this.launchChess(state.scene),
+      },
+    });
+
     getSceneInteractionRegistry(state.scene).replaceOwnerTargets(REGISTRY_OWNER, targets);
+  }
+
+  private launchChess(scene: Phaser.Scene): void {
+    if (this.chessLaunchPending) {
+      return;
+    }
+
+    this.chessLaunchPending = true;
+    try {
+      if (!this.game.scene.keys.ChessPlazaActivityScene) {
+        this.game.scene.add('ChessPlazaActivityScene', ChessPlazaActivityScene);
+      }
+      scene.scene.launch('ChessPlazaActivityScene', { returnScene: 'SunbeamVillageScene' });
+      scene.scene.pause();
+    } finally {
+      this.chessLaunchPending = false;
+    }
   }
 
   private activate(state: VillageLifeState, definition: VillageLifePoint): void {

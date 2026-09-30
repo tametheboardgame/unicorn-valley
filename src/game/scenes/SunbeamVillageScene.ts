@@ -125,6 +125,7 @@ export class SunbeamVillageScene extends Phaser.Scene {
     this.createDistrictGrounding();
     this.createPlaza();
     this.createPathNetwork();
+    this.createChessPlaza();
     this.createVillageBoundaryFence();
     this.createVillageLandscaping();
 
@@ -249,6 +250,7 @@ export class SunbeamVillageScene extends Phaser.Scene {
       southernRoad,
       residentialSideRoads,
       residentialBranches,
+      chessPlazaBranch,
     } = SUNBEAM_VILLAGE_LAYOUT.pathNetwork;
     const routes = [
       ...mainApproaches.map((points) => ({ points, outerWidth: 126, innerWidth: 94 })),
@@ -257,6 +259,7 @@ export class SunbeamVillageScene extends Phaser.Scene {
       { points: southernRoad, outerWidth: 84, innerWidth: 60 },
       ...residentialSideRoads.map((points) => ({ points, outerWidth: 68, innerWidth: 48 })),
       ...residentialBranches.map((points) => ({ points, outerWidth: 62, innerWidth: 44 })),
+      { points: chessPlazaBranch, outerWidth: 72, innerWidth: 52 },
     ] as const;
 
     const drawStroke = (
@@ -293,6 +296,145 @@ export class SunbeamVillageScene extends Phaser.Scene {
     for (const route of routes) {
       drawStroke(route.points, route.innerWidth, 0xf4e4ba, 1);
     }
+  }
+
+  private createChessPlaza(): void {
+    const { centre, width, height, table, sign, seating } = SUNBEAM_VILLAGE_LAYOUT.chessPlaza;
+    const ground = this.add
+      .graphics()
+      .setName('sunbeam-composition:chess-plaza:ground')
+      .setDepth(SUNBEAM_VILLAGE_LAYERS.plaza + 0.02);
+
+    ground.fillStyle(0xd7bd8b, 0.98);
+    ground.fillEllipse(centre.x, centre.y, width, height);
+    ground.fillStyle(0xead5aa, 0.96);
+    ground.fillEllipse(centre.x, centre.y - 4, width - 32, height - 30);
+    ground.lineStyle(8, 0xb99b6c, 0.82);
+    ground.strokeEllipse(centre.x, centre.y, width - 14, height - 14);
+
+    for (const [offsetX, offsetY] of [
+      [-178, -62],
+      [176, -58],
+      [-190, 58],
+      [184, 66],
+      [-62, 116],
+      [72, 114],
+    ] as const) {
+      ground.fillStyle(0xc4a574, 0.48);
+      ground.fillEllipse(centre.x + offsetX, centre.y + offsetY, 38, 20);
+    }
+
+    for (const seat of seating) {
+      if (seat.kind === 'chair') {
+        const chair = this.add
+          .container(seat.x, seat.y, [
+            this.add.ellipse(0, 26, 92, 48, 0x6d5d4f, 0.16),
+            this.add.rectangle(0, 0, 58, 46, 0xbd7b57, 1).setStrokeStyle(3, 0x7d513e, 0.94),
+            this.add.rectangle(0, -29, 66, 16, 0xca8d64, 1).setStrokeStyle(3, 0x7d513e, 0.94),
+            this.add.rectangle(-23, 27, 10, 34, 0x7d513e, 1),
+            this.add.rectangle(23, 27, 10, 34, 0x7d513e, 1),
+            this.add.circle(-26, 2, 5, 0xe2a77b, 0.9),
+            this.add.circle(26, 2, 5, 0xe2a77b, 0.9),
+          ])
+          .setName(`sunbeam-composition:chess-plaza:seat:${seat.id}`)
+          .setDepth(worldDepthForY(seat.y + 34, 0.15));
+        chair.setRotation(seat.facing === 'east' ? -Math.PI / 2 : Math.PI / 2);
+        continue;
+      }
+
+      this.add
+        .container(seat.x, seat.y, [
+          this.add.ellipse(0, 42, 190, 54, 0x6d5d4f, 0.16),
+          this.add.rectangle(0, -4, seat.width, 28, 0xb97855, 1).setStrokeStyle(3, 0x80503e, 0.9),
+          this.add.rectangle(0, 24, seat.width, 18, 0xc58a62, 1).setStrokeStyle(3, 0x80503e, 0.9),
+          this.add.rectangle(-58, 38, 12, 42, 0x80503e, 1),
+          this.add.rectangle(58, 38, 12, 42, 0x80503e, 1),
+        ])
+        .setName(`sunbeam-composition:chess-plaza:seat:${seat.id}`)
+        .setDepth(worldDepthForY(seat.y + 36, 0.15));
+    }
+
+    const tableObjects: Phaser.GameObjects.GameObject[] = [
+      this.add.ellipse(0, 46, 168, 62, 0x625348, 0.2),
+      this.add.rectangle(-44, 28, 14, 62, 0x79543d, 1),
+      this.add.rectangle(44, 28, 14, 62, 0x79543d, 1),
+      this.add
+        .rectangle(0, -6, table.width, table.height, 0x9b6a4b, 1)
+        .setStrokeStyle(4, 0x6f4b39, 0.96),
+      this.add.rectangle(0, -11, 112, 80, 0xf0d8aa, 1).setStrokeStyle(3, 0x6d5140, 0.96),
+    ];
+
+    const boardWidth = 104;
+    const boardHeight = 72;
+    const squareWidth = boardWidth / 8;
+    const squareHeight = boardHeight / 8;
+    const boardY = -11;
+    for (let row = 0; row < 8; row += 1) {
+      for (let col = 0; col < 8; col += 1) {
+        tableObjects.push(
+          this.add.rectangle(
+            (col - 3.5) * squareWidth,
+            boardY + (row - 3.5) * squareHeight,
+            squareWidth,
+            squareHeight,
+            (row + col) % 2 === 0 ? 0xffedc9 : 0x80604d,
+            1,
+          ),
+        );
+      }
+    }
+
+    const whiteBack = ['♖', '♘', '♗', '♕', '♔', '♗', '♘', '♖'] as const;
+    const blackBack = ['♜', '♞', '♝', '♛', '♚', '♝', '♞', '♜'] as const;
+    for (let row = 0; row < 8; row += 1) {
+      for (const [col, glyph, colour, stroke] of [
+        [0, whiteBack[row], '#fff8df', '#6a5144'],
+        [1, '♙', '#fff8df', '#6a5144'],
+        [6, '♟', '#493a35', '#f2dfb5'],
+        [7, blackBack[row], '#493a35', '#f2dfb5'],
+      ] as const) {
+        tableObjects.push(
+          this.add
+            .text((col - 3.5) * squareWidth, boardY + (row - 3.5) * squareHeight - 1, glyph, {
+              color: colour,
+              fontFamily: 'Georgia, serif',
+              fontSize: '11px',
+              fontStyle: 'bold',
+              stroke,
+              strokeThickness: 1,
+            })
+            .setOrigin(0.5),
+        );
+      }
+    }
+
+    this.add
+      .container(table.x, table.y, tableObjects)
+      .setName('sunbeam-composition:chess-plaza:table')
+      .setDepth(worldDepthForY(table.y + 46, 0.25));
+
+    const signBoard = this.add.graphics();
+    signBoard.fillStyle(0xfff0c7, 1);
+    signBoard.fillRoundedRect(-sign.width / 2, -34, sign.width, 58, 12);
+    signBoard.lineStyle(5, 0x80583f, 0.96);
+    signBoard.strokeRoundedRect(-sign.width / 2, -34, sign.width, 58, 12);
+
+    this.add
+      .container(sign.x, sign.y, [
+        this.add.rectangle(-58, 30, 12, 64, 0x80583f, 1),
+        this.add.rectangle(58, 30, 12, 64, 0x80583f, 1),
+        signBoard,
+        this.add
+          .text(0, -6, '♟  SUNBEAM CHESS', {
+            color: '#674b3f',
+            fontFamily: 'Georgia, serif',
+            fontSize: '15px',
+            fontStyle: 'bold',
+          })
+          .setOrigin(0.5),
+      ])
+      .setName('sunbeam-composition:chess-plaza:sign')
+      .setDepth(worldDepthForY(sign.y + 54, 0.2));
   }
 
   private createVillageBoundaryFence(): void {

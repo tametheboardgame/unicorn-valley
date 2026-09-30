@@ -51,6 +51,10 @@ describe('Sunbeam Village map', () => {
         id: 'future:south-gate',
         position: SUNBEAM_VILLAGE_LAYOUT.boundaryFence.lockedSouthGate.approach,
       },
+      {
+        id: 'activity:sunbeam-chess',
+        position: SUNBEAM_VILLAGE_LAYOUT.chessPlaza.table.interaction,
+      },
     ];
 
     expect(findUnreachableTargets(SUNBEAM_VILLAGE_MAP, targets)).toEqual([]);
@@ -93,7 +97,11 @@ describe('Sunbeam Village map', () => {
       'collision:landscaping:flower-bed:west-green',
       'collision:landscaping:flower-bed:east-green',
       'collision:village-life:sundial',
-      'collision:village-life:bench',
+      'collision:chess-plaza:table',
+      'collision:chess-plaza:sign',
+      'collision:chess-plaza:seat:west-chair',
+      'collision:chess-plaza:seat:east-chair',
+      'collision:chess-plaza:seat:south-bench',
       'collision:willow-garden:west',
       'collision:willow-garden:south',
       'collision:willow-garden:east-lower',
@@ -186,8 +194,14 @@ describe('Sunbeam Village map', () => {
   });
 
   it('keeps the H3.3 path network tied to canonical destinations', () => {
-    const { mainApproaches, shopBranches, willowBranch, southernRoad, residentialSideRoads } =
-      SUNBEAM_VILLAGE_LAYOUT.pathNetwork;
+    const {
+      mainApproaches,
+      shopBranches,
+      willowBranch,
+      southernRoad,
+      residentialSideRoads,
+      chessPlazaBranch,
+    } = SUNBEAM_VILLAGE_LAYOUT.pathNetwork;
 
     expect(mainApproaches[0]).toContainEqual(
       SUNBEAM_VILLAGE_LAYOUT.entrances.moonflowerGlade.position,
@@ -223,6 +237,12 @@ describe('Sunbeam Village map', () => {
     expect(residentialSideRoads[0]).toContainEqual(rosehip.approach);
     expect(residentialSideRoads[0]).toContainEqual(bluebell.approach);
     expect(residentialSideRoads[1]).toContainEqual(sunpetal.approach);
+
+    const chessPlazaTop =
+      SUNBEAM_VILLAGE_LAYOUT.chessPlaza.centre.y - SUNBEAM_VILLAGE_LAYOUT.chessPlaza.height / 2;
+    expect(chessPlazaBranch.at(-1)?.x).toBe(SUNBEAM_VILLAGE_LAYOUT.chessPlaza.centre.x);
+    expect(chessPlazaBranch.at(-1)?.y).toBeGreaterThanOrEqual(chessPlazaTop - 10);
+    expect(chessPlazaBranch[0].y).toBeLessThan(SUNBEAM_VILLAGE_LAYOUT.chessPlaza.centre.y);
   });
 
   it('anchors high-street bunting to canonical shop roof corners', () => {
@@ -329,20 +349,28 @@ describe('Sunbeam Village map', () => {
     expect(villageLife.sundial.y).toBeLessThan(1320);
   });
 
-  it('places the village bench in a quiet south-west lawn pocket away from residential circulation', () => {
-    const { bench } = SUNBEAM_VILLAGE_LAYOUT.villageLife;
-    const { centre, height } = SUNBEAM_VILLAGE_LAYOUT.plaza;
+  it('turns the old bench lawn into a chess plaza with facing chairs and a lawn sign', () => {
+    const { chessPlaza, villageLife } = SUNBEAM_VILLAGE_LAYOUT;
+    const southBench = chessPlaza.seating.find(({ id }) => id === 'south-bench');
 
-    expect(bench.x).toBeLessThan(centre.x);
-    expect(bench.y).toBeGreaterThan(centre.y + height / 2);
-    expect(
-      Math.hypot(
-        bench.x - SUNBEAM_VILLAGE_LAYOUT.fountain.x,
-        bench.y - SUNBEAM_VILLAGE_LAYOUT.fountain.y,
-      ),
-    ).toBeGreaterThan(300);
+    expect(chessPlaza.seating).toHaveLength(3);
+    expect(chessPlaza.seating.map(({ kind }) => kind)).toEqual(['chair', 'chair', 'bench']);
+    expect(chessPlaza.seating.map(({ facing }) => facing)).toEqual(['east', 'west', 'north']);
+    expect(southBench).toBeDefined();
+    expect(villageLife.bench).toMatchObject({
+      x: southBench?.x,
+      y: southBench?.y,
+      collision: southBench?.collision,
+    });
+    expect(chessPlaza.table.x).toBe(chessPlaza.centre.x);
+    expect(chessPlaza.table.y).toBe(chessPlaza.centre.y);
+    expect(chessPlaza.sign.x).toBeLessThan(chessPlaza.centre.x - chessPlaza.width / 2);
+    expect(chessPlaza.sign.y).toBeLessThan(chessPlaza.centre.y - chessPlaza.height / 2 + 10);
+
     for (const residence of SUNBEAM_VILLAGE_LAYOUT.residences) {
-      expect(Math.hypot(bench.x - residence.x, bench.y - residence.y)).toBeGreaterThan(400);
+      expect(
+        Math.hypot(chessPlaza.centre.x - residence.x, chessPlaza.centre.y - residence.y),
+      ).toBeGreaterThan(380);
     }
   });
 
@@ -464,8 +492,8 @@ describe('Sunbeam Village map', () => {
     });
   });
 
-  it('gives the playground hedge and village bench physical collision', () => {
-    const { playground, villageLife } = SUNBEAM_VILLAGE_LAYOUT;
+  it('gives the playground hedge and chess plaza physical collision', () => {
+    const { playground, chessPlaza, villageLife } = SUNBEAM_VILLAGE_LAYOUT;
 
     for (const shrub of playground.shrubs) {
       expect(
@@ -482,11 +510,41 @@ describe('Sunbeam Village map', () => {
     }
 
     expect(
-      SUNBEAM_VILLAGE_MAP.colliders.find(({ id }) => id === 'collision:village-life:bench'),
+      SUNBEAM_VILLAGE_MAP.colliders.find(({ id }) => id === 'collision:chess-plaza:table'),
     ).toEqual({
-      id: 'collision:village-life:bench',
-      ...villageLife.bench.collision,
+      id: 'collision:chess-plaza:table',
+      ...chessPlaza.table.collision,
     });
+    expect(
+      SUNBEAM_VILLAGE_MAP.colliders.find(({ id }) => id === 'collision:chess-plaza:sign'),
+    ).toEqual({
+      id: 'collision:chess-plaza:sign',
+      ...chessPlaza.sign.collision,
+    });
+    for (const seat of chessPlaza.seating) {
+      expect(
+        SUNBEAM_VILLAGE_MAP.colliders.find(
+          ({ id }) => id === `collision:chess-plaza:seat:${seat.id}`,
+        ),
+      ).toEqual({
+        id: `collision:chess-plaza:seat:${seat.id}`,
+        ...seat.collision,
+      });
+    }
+    const southBench = chessPlaza.seating.find(({ id }) => id === 'south-bench');
+    expect(villageLife.bench).toMatchObject({
+      x: southBench?.x,
+      y: southBench?.y,
+      collision: southBench?.collision,
+    });
+  });
+
+  it('keeps the chess table interaction reachable from the path-facing side', () => {
+    const { table } = SUNBEAM_VILLAGE_LAYOUT.chessPlaza;
+    expect(table.interaction.y).toBeLessThan(table.collision.y - table.collision.height / 2);
+    expect(isPointBlocked(table.interaction, SUNBEAM_VILLAGE_MAP.colliders, PLAYER_CLEARANCE)).toBe(
+      false,
+    );
   });
 
   it('gives Willow garden sign visual-clearance collision', () => {
