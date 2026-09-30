@@ -22,6 +22,7 @@ export interface StoryEditionProgress {
 const DEFAULT_PREFERENCES: ReaderPreferencesState = {
   fontSize: 20,
   lineHeight: 1.7,
+  illustrationSetByStoryEditionKey: {},
 };
 
 const EDITION_KEY_SEPARATOR = '::edition::';
@@ -45,7 +46,24 @@ export class StoryReadingService {
 
   public getPreferences(): ReaderPreferencesState {
     const save = this.saveService.load();
-    return save ? { ...save.storyReading.preferences } : { ...DEFAULT_PREFERENCES };
+    const preferences = save?.storyReading.preferences ?? DEFAULT_PREFERENCES;
+    return {
+      ...preferences,
+      illustrationSetByStoryEditionKey: { ...(preferences.illustrationSetByStoryEditionKey ?? {}) },
+    };
+  }
+
+  public getIllustrationSetPreference(
+    storyId: string,
+    editionId?: string,
+    defaultEditionId?: string,
+  ): string | null {
+    const save = this.saveService.load();
+    return (
+      save?.storyReading.preferences.illustrationSetByStoryEditionKey?.[
+        progressKey(storyId, editionId, defaultEditionId)
+      ] ?? null
+    );
   }
 
   public getProgress(
@@ -100,6 +118,9 @@ export class StoryReadingService {
         1.4,
         2,
       ),
+      illustrationSetByStoryEditionKey: {
+        ...(save.storyReading.preferences.illustrationSetByStoryEditionKey ?? {}),
+      },
     };
 
     const result = this.saveService.saveWithResult({
@@ -107,6 +128,30 @@ export class StoryReadingService {
       storyReading: {
         ...save.storyReading,
         preferences: nextPreferences,
+      },
+    });
+    return result.status === 'saved';
+  }
+
+  public updateIllustrationSetPreference(
+    storyId: string,
+    editionId: string,
+    defaultEditionId: string,
+    illustrationSetId: string,
+  ): boolean {
+    const save = this.saveService.load() ?? this.saveService.createNewGame();
+    const key = progressKey(storyId, editionId, defaultEditionId);
+    const result = this.saveService.saveWithResult({
+      ...save,
+      storyReading: {
+        ...save.storyReading,
+        preferences: {
+          ...save.storyReading.preferences,
+          illustrationSetByStoryEditionKey: {
+            ...(save.storyReading.preferences.illustrationSetByStoryEditionKey ?? {}),
+            [key]: illustrationSetId,
+          },
+        },
       },
     });
     return result.status === 'saved';

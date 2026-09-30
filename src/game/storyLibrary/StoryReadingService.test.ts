@@ -51,7 +51,11 @@ describe('StoryReadingService', () => {
     ).toBe(true);
 
     const restored = new StoryReadingService(new SaveService(repository));
-    expect(restored.getPreferences()).toEqual({ fontSize: 24, lineHeight: 1.8 });
+    expect(restored.getPreferences()).toEqual({
+      fontSize: 24,
+      lineHeight: 1.8,
+      illustrationSetByStoryEditionKey: {},
+    });
     expect(restored.getProgress('first-book')).toMatchObject({
       chapterId: 'chapter-02',
       blockId: 'hidden-door',
@@ -152,5 +156,25 @@ describe('StoryReadingService', () => {
         lastReadAt: '2026-09-27T17:05:00.000Z',
       },
     });
+  });
+  it('remembers illustration-set choices independently for each text edition', () => {
+    const repository = new MemorySaveRepository();
+    const reading = new StoryReadingService(new SaveService(repository));
+
+    expect(
+      reading.updateIllustrationSetPreference('alice', 'story-house', 'story-house', 'modern'),
+    ).toBe(true);
+    expect(
+      reading.updateIllustrationSetPreference('alice', 'full-classic', 'story-house', 'classic'),
+    ).toBe(true);
+
+    const restored = new StoryReadingService(new SaveService(repository));
+    expect(restored.getIllustrationSetPreference('alice', 'story-house', 'story-house')).toBe(
+      'modern',
+    );
+    expect(restored.getIllustrationSetPreference('alice', 'full-classic', 'story-house')).toBe(
+      'classic',
+    );
+    expect(restored.getProgress('alice', 'story-house', 'story-house')).toBeNull();
   });
 });

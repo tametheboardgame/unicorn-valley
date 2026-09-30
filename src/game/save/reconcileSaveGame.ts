@@ -89,6 +89,9 @@ export function reconcileSaveGame(save: SaveGame): SaveGame {
           1.4,
           Math.min(2, Math.round(save.storyReading.preferences.lineHeight * 10) / 10),
         ),
+        illustrationSetByStoryEditionKey: {
+          ...(save.storyReading.preferences.illustrationSetByStoryEditionKey ?? {}),
+        },
       },
       byStoryId: Object.fromEntries(
         Object.entries(save.storyReading.byStoryId).map(([storyId, progress]) => [

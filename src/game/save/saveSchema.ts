@@ -95,6 +95,7 @@ export interface ShopState {
 export interface ReaderPreferencesState {
   fontSize: number;
   lineHeight: number;
+  illustrationSetByStoryEditionKey?: Record<string, string>;
 }
 
 export interface StoryReadingProgress {

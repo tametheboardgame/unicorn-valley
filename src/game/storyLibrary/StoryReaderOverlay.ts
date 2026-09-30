@@ -19,6 +19,7 @@ import type {
   StoryContentBlock,
   StoryEditionManifest,
   StoryIllustrationReference,
+  StoryIllustrationSetManifest,
   StoryLibraryManifest,
 } from './StoryLibraryTypes';
 
@@ -172,6 +173,7 @@ export class StoryReaderOverlay {
   private root: HTMLDivElement | null = null;
   private manifest: StoryLibraryManifest | null = null;
   private activeEditionId: string | null = null;
+  private activeIllustrationSetId: string | null = null;
   private requestVersion = 0;
   private fontSize = DEFAULT_FONT_SIZE;
   private lineHeight = DEFAULT_LINE_HEIGHT;
@@ -245,6 +247,7 @@ export class StoryReaderOverlay {
     const request = ++this.requestVersion;
     this.manifest = null;
     this.activeEditionId = null;
+    this.activeIllustrationSetId = null;
     root.replaceChildren(this.createLoading('Opening the Story House shelves…'));
 
     try {
@@ -714,6 +717,49 @@ export class StoryReaderOverlay {
     return edition;
   }
 
+  private illustrationSetFor(
+    edition: StoryEditionManifest,
+    illustrationSetId: string | null = this.activeIllustrationSetId,
+  ): StoryIllustrationSetManifest | null {
+    return (
+      edition.illustrationSets.find((candidate) => candidate.id === illustrationSetId) ??
+      edition.illustrationSets.find(
+        (candidate) => candidate.id === edition.defaultIllustrationSetId,
+      ) ??
+      edition.illustrationSets[0] ??
+      null
+    );
+  }
+
+  private selectIllustrationSetFor(
+    manifest: StoryLibraryManifest,
+    edition: StoryEditionManifest,
+  ): void {
+    const preferredId = this.reading.getIllustrationSetPreference(
+      manifest.id,
+      edition.id,
+      manifest.defaultEditionId,
+    );
+    const preferred = preferredId
+      ? edition.illustrationSets.find((candidate) => candidate.id === preferredId)
+      : undefined;
+    this.activeIllustrationSetId =
+      preferred?.id ??
+      this.illustrationSetFor(edition, edition.defaultIllustrationSetId)?.id ??
+      null;
+  }
+
+  private illustrationsForChapter(
+    edition: StoryEditionManifest,
+    chapterId: string,
+  ): readonly StoryIllustrationReference[] {
+    const illustrationSet = this.illustrationSetFor(edition);
+    return (
+      illustrationSet?.chapters.find((chapter) => chapter.chapterId === chapterId)?.illustrations ??
+      []
+    );
+  }
+
   private async openStory(storyId: string): Promise<void> {
     const root = this.root;
     if (!root) return;
@@ -732,6 +778,7 @@ export class StoryReaderOverlay {
       );
       const edition = this.editionFor(manifest, latest?.editionId ?? manifest.defaultEditionId);
       this.activeEditionId = edition.id;
+      this.selectIllustrationSetFor(manifest, edition);
       const progress =
         latest?.editionId === edition.id
           ? latest.progress
@@ -769,6 +816,7 @@ export class StoryReaderOverlay {
     const edition = this.editionFor(manifest, editionId);
     this.persistCurrentPosition();
     this.activeEditionId = edition.id;
+    this.selectIllustrationSetFor(manifest, edition);
 
     const progress = this.reading.getProgress(manifest.id, edition.id, manifest.defaultEditionId);
     const savedChapterIndex =
@@ -785,6 +833,29 @@ export class StoryReaderOverlay {
             )
           : 0;
 
+    await this.showChapter(chapterIndex, progress && !progress.completed ? progress : null);
+  }
+
+  private async switchIllustrationSet(illustrationSetId: string): Promise<void> {
+    const manifest = this.manifest;
+    if (!manifest || illustrationSetId === this.activeIllustrationSetId) return;
+
+    const edition = this.editionFor(manifest);
+    if (!edition.illustrationSets.some((candidate) => candidate.id === illustrationSetId)) {
+      return;
+    }
+
+    const chapterIndex = this.currentChapter?.index ?? 0;
+    this.persistCurrentPosition();
+    this.activeIllustrationSetId = illustrationSetId;
+    this.reading.updateIllustrationSetPreference(
+      manifest.id,
+      edition.id,
+      manifest.defaultEditionId,
+      illustrationSetId,
+    );
+
+    const progress = this.reading.getProgress(manifest.id, edition.id, manifest.defaultEditionId);
     await this.showChapter(chapterIndex, progress && !progress.completed ? progress : null);
   }
 
@@ -829,6 +900,9 @@ export class StoryReaderOverlay {
     shell.className = 'story-reader-shell';
     if (manifest.editions.length > 1) {
       shell.classList.add('has-multiple-editions');
+    }
+    if (edition.illustrationSets.length > 1) {
+      shell.classList.add('has-multiple-illustration-sets');
     }
     const isPictureBook = edition.readingMode === 'paged-picture-book';
     const isPagedEdition = edition.readingMode !== 'flowing';
@@ -877,6 +951,31 @@ export class StoryReaderOverlay {
       }
     }
 
+    let illustrationSwitch: HTMLElement | null = null;
+    if (edition.illustrationSets.length > 1) {
+      illustrationSwitch = document.createElement('nav');
+      illustrationSwitch.className = 'story-reader-edition-switch story-reader-illustration-switch';
+      illustrationSwitch.setAttribute('aria-label', 'Illustrations');
+      const illustrationLabel = document.createElement('span');
+      illustrationLabel.className = 'story-reader-edition-label';
+      illustrationLabel.textContent = 'Illustrations';
+      illustrationSwitch.append(illustrationLabel);
+
+      for (const candidate of edition.illustrationSets) {
+        const illustrationButton = button(
+          candidate.label,
+          'story-reader-edition-button story-reader-illustration-button',
+          () => {
+            void this.switchIllustrationSet(candidate.id);
+          },
+        );
+        const active = candidate.id === this.activeIllustrationSetId;
+        illustrationButton.classList.toggle('is-active', active);
+        illustrationButton.setAttribute('aria-pressed', String(active));
+        illustrationSwitch.append(illustrationButton);
+      }
+    }
+
     const toolbar = document.createElement('nav');
     toolbar.className = 'story-reader-toolbar';
     toolbar.setAttribute('aria-label', 'Reading controls');
@@ -903,13 +1002,16 @@ export class StoryReaderOverlay {
       : 'story-reader-paper';
     paper.dataset.storyId = manifest.id;
     paper.dataset.storyEditionId = edition.id;
+    if (this.activeIllustrationSetId) {
+      paper.dataset.storyIllustrationSetId = this.activeIllustrationSetId;
+    }
     paper.dataset.chapterId = chapter.chapterId;
     paper.addEventListener('dragstart', (event) => event.preventDefault());
 
-    const chapterManifest = edition.chapters[index];
+    const chapterIllustrations = this.illustrationsForChapter(edition, chapter.chapterId);
 
     if (isPictureBook) {
-      for (const illustration of chapterManifest?.illustrations ?? []) {
+      for (const illustration of chapterIllustrations) {
         paper.append(renderStoryIllustration(manifest.id, illustration));
       }
       const pageCopy = document.createElement('div');
@@ -935,7 +1037,7 @@ export class StoryReaderOverlay {
 
       for (const block of chapter.blocks) {
         paper.append(renderMarkdownBlock(block));
-        for (const illustration of chapterManifest?.illustrations ?? []) {
+        for (const illustration of chapterIllustrations) {
           if (illustration.blockId === block.id) {
             paper.append(renderStoryIllustration(manifest.id, illustration));
           }
@@ -1102,6 +1204,7 @@ export class StoryReaderOverlay {
     scroller.append(paper);
     shell.append(topbar);
     if (editionSwitch) shell.append(editionSwitch);
+    if (illustrationSwitch) shell.append(illustrationSwitch);
     shell.append(toolbar, scroller, turnFeedback);
     root.replaceChildren(shell);
     this.currentChapter = { manifest, edition, chapter, index, scroller };

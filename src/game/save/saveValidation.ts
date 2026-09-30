@@ -174,7 +174,12 @@ function isStoryReadingState(value: unknown): boolean {
     typeof value.preferences.fontSize === 'number' &&
     Number.isFinite(value.preferences.fontSize) &&
     typeof value.preferences.lineHeight === 'number' &&
-    Number.isFinite(value.preferences.lineHeight);
+    Number.isFinite(value.preferences.lineHeight) &&
+    (value.preferences.illustrationSetByStoryEditionKey === undefined ||
+      isRecordOf(
+        value.preferences.illustrationSetByStoryEditionKey,
+        (entry) => typeof entry === 'string',
+      ));
   if (!preferencesValid) {
     return false;
   }

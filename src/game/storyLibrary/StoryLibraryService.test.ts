@@ -150,6 +150,27 @@ describe('Story Library service', () => {
       width: 480,
       height: 480,
     });
+    expect(manifest.editions[0]?.defaultIllustrationSetId).toBe('default');
+    expect(manifest.editions[0]?.illustrationSets).toHaveLength(1);
+    expect(manifest.editions[0]?.illustrationSets[0]).toMatchObject({
+      id: 'default',
+      label: 'Illustrations',
+      rights: {
+        status: 'original',
+        source: 'Unicorn Valley development content',
+      },
+      chapters: [
+        {
+          chapterId: 'chapter-01',
+          illustrations: [
+            {
+              id: 'shelf-picture',
+              path: 'illustrations/shelf.webp',
+            },
+          ],
+        },
+      ],
+    });
     expect(requested).toEqual([
       '/stories/catalogue.json',
       '/stories/story-house-sampler/book.json',
@@ -282,6 +303,50 @@ describe('Story Library service', () => {
                   path: 'editions/full-classic/chapters/01.md',
                 },
               ],
+              illustrationSets: [
+                {
+                  id: 'modern',
+                  label: 'Modern Illustrations',
+                  rights: { status: 'original', source: 'Modern Story House art' },
+                  chapters: [
+                    {
+                      chapterId: 'chapter-01',
+                      illustrations: [
+                        {
+                          id: 'modern-rabbit',
+                          blockId: 'white-rabbit',
+                          path: 'illustrations/generated/rabbit.webp',
+                          alt: 'Modern White Rabbit illustration.',
+                          placement: 'full-width',
+                          width: 600,
+                          height: 400,
+                        },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  id: 'classic',
+                  label: 'Classic Illustrations',
+                  rights: { status: 'public-domain', source: 'John Tenniel' },
+                  chapters: [
+                    {
+                      chapterId: 'chapter-01',
+                      illustrations: [
+                        {
+                          id: 'classic-rabbit',
+                          blockId: 'white-rabbit',
+                          path: 'illustrations/classic/rabbit.webp',
+                          alt: 'Historic White Rabbit illustration.',
+                          placement: 'full-width',
+                          width: 600,
+                          height: 400,
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
             },
           ],
         }),
@@ -307,8 +372,144 @@ describe('Story Library service', () => {
 
     const chapter = await service.loadChapter('alice', 'chapter-01', 'full-classic');
     expect(manifest.editions[1]?.readingMode).toBe('paged-prose');
+    expect(manifest.editions[1]?.defaultIllustrationSetId).toBe('classic');
     expect(chapter.editionId).toBe('full-classic');
     expect(chapter.title).toBe('Down the Rabbit-Hole');
     expect(chapter.blocks[0]?.id).toBe('white-rabbit');
+  });
+  it('normalises independent classic and modern illustration sets without duplicating chapter prose', async () => {
+    const bodies = new Map<string, ReturnType<typeof response>>([
+      [
+        '/stories/catalogue.json',
+        response({
+          schemaVersion: 1,
+          stories: [
+            {
+              id: 'fable',
+              title: 'A Fable',
+              description: 'One text with two art choices.',
+              catalogueBlurb: 'Choose classic or modern pictures.',
+              author: 'Aesop, retold by Quill',
+              readingMode: 'flowing',
+              coverPath: null,
+              coverAlt: null,
+              series: null,
+              tags: ['classic-retelling'],
+              discovery: {
+                format: 'Short Story',
+                genres: ['Classics'],
+                audiences: ['Read Together'],
+                length: 'Quick Read',
+              },
+              rightsSummary: {
+                text: 'original',
+                illustrations: 'original',
+                edition: 'original',
+                originalPublicationYear: null,
+              },
+              chapterCount: 1,
+              manifestPath: '/stories/fable/book.json',
+            },
+          ],
+        }),
+      ],
+      [
+        '/stories/fable/book.json',
+        response({
+          schemaVersion: 1,
+          id: 'fable',
+          title: 'A Fable',
+          description: 'One text with two art choices.',
+          author: 'Aesop, retold by Quill',
+          readingMode: 'flowing',
+          cover: null,
+          series: null,
+          tags: ['classic-retelling'],
+          discovery: {
+            format: 'Short Story',
+            genres: ['Classics'],
+            audiences: ['Read Together'],
+            length: 'Quick Read',
+          },
+          rights: {
+            text: { status: 'original', source: 'Story House retelling' },
+            illustrations: { status: 'original', source: 'Default Story House art' },
+            edition: { status: 'original', source: 'Story House edition' },
+            originalPublicationYear: null,
+          },
+          publication: { status: 'published' },
+          chapters: [
+            {
+              id: 'the-story',
+              title: 'The Story',
+              path: 'chapters/01.md',
+            },
+          ],
+          illustrationSets: [
+            {
+              id: 'classic',
+              label: 'Classic Illustrations',
+              rights: { status: 'public-domain', source: 'Historic source edition' },
+              chapters: [
+                {
+                  chapterId: 'the-story',
+                  illustrations: [
+                    {
+                      id: 'classic-opening',
+                      blockId: 'opening',
+                      path: 'illustrations/classic/opening.webp',
+                      alt: 'Historic illustration.',
+                      placement: 'full-width',
+                      width: 600,
+                      height: 400,
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              id: 'modern',
+              label: 'Modern Illustrations',
+              rights: { status: 'original', source: 'Unicorn Valley generated art' },
+              chapters: [
+                {
+                  chapterId: 'the-story',
+                  illustrations: [
+                    {
+                      id: 'modern-opening',
+                      blockId: 'opening',
+                      path: 'illustrations/generated/opening.webp',
+                      alt: 'Modern Story House illustration.',
+                      placement: 'full-width',
+                      width: 600,
+                      height: 400,
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        }),
+      ],
+    ]);
+
+    const service = new StoryLibraryService(async (path) => bodies.get(path) ?? response('', 404));
+    const manifest = await service.loadManifest('fable');
+    const edition = manifest.editions[0];
+
+    expect(edition?.chapters).toHaveLength(1);
+    expect(edition?.chapters[0]?.illustrations).toBeUndefined();
+    expect(edition?.defaultIllustrationSetId).toBe('modern');
+    expect(edition?.illustrationSets.map(({ id, label }) => ({ id, label }))).toEqual([
+      { id: 'classic', label: 'Classic Illustrations' },
+      { id: 'modern', label: 'Modern Illustrations' },
+    ]);
+    expect(edition?.illustrationSets[0]?.rights).toEqual({
+      status: 'public-domain',
+      source: 'Historic source edition',
+    });
+    expect(edition?.illustrationSets[1]?.chapters[0]?.illustrations[0]?.path).toBe(
+      'illustrations/generated/opening.webp',
+    );
   });
 });

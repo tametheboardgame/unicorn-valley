@@ -286,6 +286,7 @@ describe('migrateSaveRecord', () => {
       preferences: {
         fontSize: 20,
         lineHeight: 1.7,
+        illustrationSetByStoryEditionKey: {},
       },
       byStoryId: {},
     });
