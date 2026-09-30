@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { PICNIC_READY_FLAG, PICNIC_SUNSHINE_FLAG } from '../../content/r4PicnicEvent';
+import {
+  MARIGOLD_CHARACTER_ID,
+  PICNIC_READY_FLAG,
+  PICNIC_SUNSHINE_FLAG,
+} from '../../content/r4PicnicEvent';
 import { NOVA_FIRST_RACE_QUEST_ID, SUNRISE_SPRINT_UNLOCKED_FLAG } from '../../content/r3Quests';
 import { MAPLE_CAKE_QUEST_ID } from '../../content/r6VillageContent';
 import { buildCottageHomeView } from '../home/CottageHomeView';
@@ -117,6 +121,28 @@ describe('CoreNpcPresenceService', () => {
     expect(new CoreNpcPresenceService(saveService).resolve(NOVA_CHARACTER_ID)?.area).toBe(
       'picnic-hill',
     );
+  });
+
+  it('keeps Marigold in Sunbeam until the picnic is actually ready', () => {
+    const { saveService } = createSavedGame();
+
+    expect(new CoreNpcPresenceService(saveService).resolve(MARIGOLD_CHARACTER_ID)).toMatchObject({
+      characterId: MARIGOLD_CHARACTER_ID,
+      area: 'sunbeam-village',
+      activity: 'village-resident',
+    });
+  });
+
+  it('moves Marigold to Picnic Hill when her authored picnic becomes ready', () => {
+    const { saveService } = createSavedGame();
+    makePicnicReady(saveService);
+
+    expect(new CoreNpcPresenceService(saveService).resolve(MARIGOLD_CHARACTER_ID)).toMatchObject({
+      characterId: MARIGOLD_CHARACTER_ID,
+      area: 'picnic-hill',
+      activity: 'picnic',
+      availableForConcurrentActivity: false,
+    });
   });
 
   it('gives Nova cottage-visit priority over simultaneous picnic readiness', () => {

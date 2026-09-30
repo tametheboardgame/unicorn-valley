@@ -162,6 +162,9 @@ export function createSunbeamVillageInteractions(scene: Phaser.Scene): Interacti
       position: npcPosition('marigold'),
       interactionRadius: 150,
       priority: 30,
+      // Match the Talk target to the physical scene-session presence. If the picnic
+      // becomes ready during this conversation, Marigold remains available until Sunbeam closes.
+      visible: () => scene.children.getByName('core-npc:marigold:world') !== null,
       result: { type: 'callback', activate: () => startMarigoldConversation(scene) },
     },
     {

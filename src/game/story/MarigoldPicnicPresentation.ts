@@ -2,6 +2,8 @@ import Phaser from 'phaser';
 import type { SaveGame } from '../save/saveSchema';
 import { getPicnicTheme, isMarigoldPicnicReady } from './MarigoldPicnicStory';
 
+export const MARIGOLD_PICNIC_POSITION = { x: 1780, y: 1550 } as const;
+
 interface PicnicPalette {
   blanket: number;
   blanketAccent: number;
