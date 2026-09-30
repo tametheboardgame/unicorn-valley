@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "16C2ADRQA_rGUIgLDwz7cYa8k2zyIN61J"
+  },
+  "expectedSourceName": "town-country-peaceful-ending-v01.png",
+  "destination": "public/stories/the-town-mouse-and-the-country-mouse/illustrations/generated/peaceful-ending.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1000,
+    "quality": 88
+  },
+  "revision": 1
+}
