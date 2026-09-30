@@ -63,11 +63,14 @@ describe('VillageInteriorMap', () => {
   it('keeps the Story House desk visually solid from Quill’s front approach', () => {
     const library = getVillageInteriorMap('library');
     const desk = library.colliders.find(({ id }) => id === 'counter');
+    const frontClearance = library.colliders.find(({ id }) => id === 'counter-front-clearance');
 
     expect(desk).toMatchObject({ x: 660, y: 600, width: 300, height: 124 });
-    // The player physics body is 44px tall. This centre point used to let the much taller
-    // visible unicorn overlap the front of the desk enough to read as walking through it.
-    expect(isPointBlocked({ x: 660, y: 680 }, library.colliders, 22)).toBe(true);
+    expect(frontClearance).toMatchObject({ x: 660, y: 676, width: 300, height: 48 });
+    // With the player's 44px physics body, this bumper produces a centre-line stop around
+    // y=722, leaving the taller visible unicorn cleanly in front of the desk.
+    expect(isPointBlocked({ x: 660, y: 700 }, library.colliders, 22)).toBe(true);
+    expect(library.anchors.counter.approach).toEqual({ x: 660, y: 735 });
     expect(isPointBlocked(library.anchors.counter.approach, library.colliders, 22)).toBe(false);
   });
 
