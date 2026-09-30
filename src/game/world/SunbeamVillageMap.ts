@@ -179,6 +179,10 @@ export const SUNBEAM_VILLAGE_MAP = {
       ...bed.collision,
     })),
     {
+      id: 'collision:village-life:notice-board',
+      ...SUNBEAM_VILLAGE_LAYOUT.villageLife.noticeBoard.collision,
+    },
+    {
       id: 'collision:village-life:sundial',
       ...SUNBEAM_VILLAGE_LAYOUT.villageLife.sundial.collision,
     },
