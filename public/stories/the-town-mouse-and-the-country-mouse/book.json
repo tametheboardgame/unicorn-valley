@@ -15,15 +15,7 @@
     "title": "Aesop's Fables",
     "order": 2
   },
-  "tags": [
-    "classic",
-    "aesop",
-    "animals",
-    "mice",
-    "contentment",
-    "public-domain",
-    "illustrated"
-  ],
+  "tags": ["classic", "aesop", "animals", "mice", "contentment", "public-domain", "illustrated"],
   "publication": {
     "status": "published"
   },
@@ -36,15 +28,8 @@
   ],
   "discovery": {
     "format": "Picture Book",
-    "genres": [
-      "Animals",
-      "Classics"
-    ],
-    "audiences": [
-      "Read Together",
-      "Early Reader",
-      "Independent Reader"
-    ],
+    "genres": ["Animals", "Classics"],
+    "audiences": ["Read Together", "Early Reader", "Independent Reader"],
     "length": "Quick Read"
   },
   "rights": {
