@@ -150,7 +150,7 @@ describe('Story Library service', () => {
       width: 480,
       height: 480,
     });
-    expect(manifest.defaultIllustrationSetId).toBe('default');
+    expect(manifest.editions[0]?.defaultIllustrationSetId).toBe('default');
     expect(manifest.editions[0]?.illustrationSets).toHaveLength(1);
     expect(manifest.editions[0]?.illustrationSets[0]).toMatchObject({
       id: 'default',
