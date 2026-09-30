@@ -1,3 +1,4 @@
+import type { AtmosphericTimeState } from '../atmosphere/AtmosphericTimeService';
 import type { SupportingResidentId } from './AmbientPopulationTypes';
 import type { VillageInteriorId } from '../world/VillageInteriorMap';
 
@@ -5,8 +6,11 @@ export interface VillageInteriorResidentAssignment {
   residentId: SupportingResidentId;
   interiorId: VillageInteriorId;
   workAnchorId: 'npc-work';
-  role: 'bakery-worker' | 'shopkeeper' | 'story-keeper';
-  supportedRoleAccessories: readonly ('chef-hat' | 'apron' | 'satchel')[];
+  role: 'bakery-worker' | 'shopkeeper' | 'story-keeper' | 'resident-home';
+  supportedRoleAccessories: readonly ('chef-hat' | 'apron' | 'satchel' | 'monocle')[];
+  activeWhen?: {
+    timeStates: readonly AtmosphericTimeState[];
+  };
 }
 
 export const VILLAGE_INTERIOR_RESIDENT_ASSIGNMENTS = [
@@ -29,9 +33,43 @@ export const VILLAGE_INTERIOR_RESIDENT_ASSIGNMENTS = [
     interiorId: 'library',
     workAnchorId: 'npc-work',
     role: 'story-keeper',
+    supportedRoleAccessories: ['monocle'],
+  },
+  {
+    residentId: 'resident:rosehip',
+    interiorId: 'rosehip-cottage',
+    workAnchorId: 'npc-work',
+    role: 'resident-home',
     supportedRoleAccessories: [],
+    activeWhen: { timeStates: ['sunset', 'night'] },
+  },
+  {
+    residentId: 'resident:bluebell',
+    interiorId: 'bluebell-cottage',
+    workAnchorId: 'npc-work',
+    role: 'resident-home',
+    supportedRoleAccessories: [],
+    activeWhen: { timeStates: ['sunset', 'night'] },
+  },
+  {
+    residentId: 'resident:sunpetal',
+    interiorId: 'sunpetal-cottage',
+    workAnchorId: 'npc-work',
+    role: 'resident-home',
+    supportedRoleAccessories: [],
+    activeWhen: { timeStates: ['sunset', 'night'] },
   },
 ] as const satisfies readonly VillageInteriorResidentAssignment[];
+
+function assignmentIsActive(
+  assignment: VillageInteriorResidentAssignment,
+  timeState?: AtmosphericTimeState,
+): boolean {
+  if (!assignment.activeWhen) {
+    return true;
+  }
+  return timeState !== undefined && assignment.activeWhen.timeStates.includes(timeState);
+}
 
 export class VillageInteriorOccupancyService {
   private activeInteriorId: VillageInteriorId | null = null;
@@ -52,15 +90,20 @@ export class VillageInteriorOccupancyService {
 
   public getInteriorAssignment(
     interiorId: VillageInteriorId,
+    timeState?: AtmosphericTimeState,
   ): VillageInteriorResidentAssignment | null {
-    return (
+    const assignment =
       VILLAGE_INTERIOR_RESIDENT_ASSIGNMENTS.find(
-        (assignment) => assignment.interiorId === interiorId,
-      ) ?? null
-    );
+        (candidate) => candidate.interiorId === interiorId,
+      ) ?? null;
+    return assignment && assignmentIsActive(assignment, timeState) ? assignment : null;
   }
 
-  public isResidentAllowedInScene(residentId: SupportingResidentId, sceneKey: string): boolean {
+  public isResidentAllowedInScene(
+    residentId: SupportingResidentId,
+    sceneKey: string,
+    timeState?: AtmosphericTimeState,
+  ): boolean {
     const assignment = VILLAGE_INTERIOR_RESIDENT_ASSIGNMENTS.find(
       (candidate) => candidate.residentId === residentId,
     );
@@ -69,10 +112,11 @@ export class VillageInteriorOccupancyService {
     }
 
     const assignedInteriorActive = assignment.interiorId === this.activeInteriorId;
+    const assignmentActive = assignmentIsActive(assignment, timeState);
     if (sceneKey === 'VillageInteriorScene') {
-      return assignedInteriorActive;
+      return assignedInteriorActive && assignmentActive;
     }
-    return !assignedInteriorActive;
+    return !assignedInteriorActive || !assignmentActive;
   }
 }
 

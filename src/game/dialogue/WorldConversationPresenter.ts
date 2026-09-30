@@ -284,7 +284,9 @@ export class WorldConversationPresenter {
           const sprite = (
             resident.id === 'resident:cinnamon'
               ? createSupportingResidentRoleSprite(active.scene, resident, 'baker')
-              : createSupportingResidentSprite(active.scene, resident)
+              : resident.id === 'resident:quill'
+                ? createSupportingResidentRoleSprite(active.scene, resident, 'monocle')
+                : createSupportingResidentSprite(active.scene, resident)
           )
             .setName(`dialogue-production-portrait-${resident.id}`)
             // Supporting-resident textures deliberately include generous transparent tail/head

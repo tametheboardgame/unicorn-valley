@@ -61,6 +61,23 @@ describe('R6.5 functional resident placements', () => {
   });
 });
 
+describe('R6.5 H3.11.9 cottage local life', () => {
+  it('defines the three cottage owners without creating contradictory exterior clones', () => {
+    for (const id of ['rosehip', 'bluebell', 'sunpetal'] as const) {
+      const residentId = `resident:${id}`;
+      expect(R6_SUPPORTING_RESIDENTS.find((resident) => resident.id === residentId)).toMatchObject({
+        id: residentId,
+      });
+      expect(
+        R6_AMBIENT_RESIDENT_PLACEMENTS.some(
+          (placement) =>
+            placement.residentId === residentId && placement.sceneKey === 'SunbeamVillageScene',
+        ),
+      ).toBe(false);
+    }
+  });
+});
+
 describe('R6.5 H3.10 playground life', () => {
   it('promotes all four playground children into the shared resident runtime at child scale', () => {
     for (const id of ['poppy', 'milo', 'lulu', 'bean'] as const) {
