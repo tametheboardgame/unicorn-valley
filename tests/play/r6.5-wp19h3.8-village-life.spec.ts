@@ -82,8 +82,8 @@ test('H3.8 recomposes village-life detail and grounds static core residents', as
 
   for (const expected of [
     { name: 'village-life:notice-board', x: 1110, y: 1200 },
-    { name: 'village-life:sundial', x: 1830, y: 1320 },
-    { name: 'village-life:bench', x: 1180, y: 1560 },
+    { name: 'village-life:sundial', x: 1890, y: 1270 },
+    { name: 'village-life:bench', x: 1180, y: 1660 },
   ] as const) {
     const prop = objects.find(({ name }) => name === expected.name);
     expect(prop?.visible).toBe(true);
@@ -95,9 +95,9 @@ test('H3.8 recomposes village-life detail and grounds static core residents', as
   expect(objects.some(({ text, visible }) => visible && text === '💧')).toBe(false);
 
   for (const expected of [
-    { name: 'core-npc:willow:world', x: 535, y: 1349 },
-    { name: 'core-npc:marigold:world', x: 1700, y: 1244 },
-    { name: 'core-npc:pebble:world', x: 2220, y: 1205 },
+    { name: 'core-npc:willow:world', x: 535, y: 1345 },
+    { name: 'core-npc:marigold:world', x: 1700, y: 1240 },
+    { name: 'core-npc:pebble:world', x: 2220, y: 1200 },
   ] as const) {
     const npc = objects.find(({ name }) => name === expected.name);
     expect(npc?.visible).toBe(true);
