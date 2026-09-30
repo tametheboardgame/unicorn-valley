@@ -1,10 +1,10 @@
 import Phaser from 'phaser';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
-import { RAINBOW_MEADOW_LAYOUT } from './RainbowMeadowLayout';
 import { worldDepthForY } from './WorldDepth';
 
 const ANCHOR_NAME = 'r6-region-gateway-art-anchor';
 const DETAIL_PREFIX = 'r6-region-gateway-art';
+const MEADOW_CRYSTAL_BROOK_CAVE_POSITION = { x: 3030, y: 1750 } as const;
 
 interface Point {
   x: number;
@@ -232,7 +232,7 @@ function createCascadeRaceGate(scene: Phaser.Scene, x: number, y: number): void 
 }
 
 function decorateMeadow(scene: Phaser.Scene): void {
-  const { transitionPosition } = RAINBOW_MEADOW_LAYOUT.crystalBrookRoute;
+  const transitionPosition = MEADOW_CRYSTAL_BROOK_CAVE_POSITION;
   createCaveMouth(
     scene,
     'meadow-crystal-brook',
