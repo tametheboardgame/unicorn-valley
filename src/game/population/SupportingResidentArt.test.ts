@@ -31,9 +31,7 @@ describe('SupportingResidentArt layout', () => {
     const visibleEye = { x: 86, y: -37 };
 
     expect(UNICORN_GLASSES_LAYOUT.lensY).toBe(visibleEye.y);
-    expect(
-      Math.abs(UNICORN_GLASSES_LAYOUT.rightLensX - visibleEye.x),
-    ).toBeLessThanOrEqual(3);
+    expect(Math.abs(UNICORN_GLASSES_LAYOUT.rightLensX - visibleEye.x)).toBeLessThanOrEqual(3);
     expect(UNICORN_GLASSES_LAYOUT.leftLensX).toBeLessThan(visibleEye.x);
   });
 
