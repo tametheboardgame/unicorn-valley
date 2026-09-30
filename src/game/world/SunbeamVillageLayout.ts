@@ -612,11 +612,7 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
   },
   villageLife: {
     // H3.8 keeps interactive village-life detail in authored pockets around the circulation ring.
-    noticeBoard: {
-      x: 1110,
-      y: 1200,
-      collision: { x: 1110, y: 1222, width: 150, height: 146 },
-    },
+    noticeBoard: { x: 1110, y: 1200 },
     sundial: {
       x: 1890,
       y: 1270,

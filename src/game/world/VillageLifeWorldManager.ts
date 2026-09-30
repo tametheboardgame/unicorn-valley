@@ -7,8 +7,6 @@ import {
   TANSY_SUNDIAL_MAP_CORNER_DISCOVERY_ID,
 } from '../../content/r6VillageContent';
 import { ChessPlazaActivityScene } from '../activities/ChessPlazaActivityScene';
-import { buildSunbeamNoticeBoard } from '../activities/SunbeamNoticeBoardModel';
-import { VillageNoticeBoardScene } from '../activities/VillageNoticeBoardScene';
 import { getBrowserAtmosphericTimeService } from '../atmosphere/AtmosphericTimeService';
 import { DiscoveryService } from '../discovery/DiscoveryService';
 import type { InteractionActionKind, InteractionTarget } from '../interaction/InteractionTarget';
@@ -148,7 +146,6 @@ export class VillageLifeWorldManager {
   private readonly timeService = getBrowserAtmosphericTimeService(this.saveService);
   private state: VillageLifeState | null = null;
   private chessLaunchPending = false;
-  private noticeBoardLaunchPending = false;
 
   public constructor(private readonly game: Phaser.Game) {
     this.game.events.on(Phaser.Core.Events.POST_STEP, this.update, this);
@@ -236,34 +233,6 @@ export class VillageLifeWorldManager {
     }
   }
 
-  private launchNoticeBoard(
-    scene: Phaser.Scene,
-    options: { fountainRepaired: boolean; mapCornerFoundNow: boolean },
-  ): void {
-    if (this.noticeBoardLaunchPending) {
-      return;
-    }
-
-    this.noticeBoardLaunchPending = true;
-    try {
-      if (!this.game.scene.keys.VillageNoticeBoardScene) {
-        this.game.scene.add('VillageNoticeBoardScene', VillageNoticeBoardScene);
-      }
-      scene.scene.launch('VillageNoticeBoardScene', {
-        returnScene: 'SunbeamVillageScene',
-        notices: buildSunbeamNoticeBoard({
-          timeState: this.timeService.getState(),
-          fountainRepaired: options.fountainRepaired,
-          mapCornerFoundNow: options.mapCornerFoundNow,
-        }),
-        initialNoticeId: options.mapCornerFoundNow ? 'map-corner' : undefined,
-      });
-      scene.scene.pause();
-    } finally {
-      this.noticeBoardLaunchPending = false;
-    }
-  }
-
   private activate(state: VillageLifeState, definition: VillageLifePoint): void {
     const save = this.saveService.load() ?? this.saveService.createNewGame();
     const hunting = save.world.flags[TANSY_MAP_HUNT_ACTIVE_FLAG] === true;
@@ -272,14 +241,29 @@ export class VillageLifeWorldManager {
     const sundialFound = this.discoveryService.hasDiscovery(TANSY_SUNDIAL_MAP_CORNER_DISCOVERY_ID);
 
     if (definition.id === 'notice-board') {
-      const mapCornerFoundNow = hunting && !noticeFound;
-      if (mapCornerFoundNow) {
+      if (hunting && !noticeFound) {
         this.discoveryService.unlockDiscovery(TANSY_NOTICE_MAP_CORNER_DISCOVERY_ID);
+        this.showFeedback(
+          state,
+          definition,
+          '🗺️ Map corner found! It was tucked behind a notice about a missing purple mitten.',
+        );
+        return;
       }
-      this.launchNoticeBoard(state.scene, {
-        fountainRepaired: save.world.flags[PEBBLE_FOUNTAIN_REPAIRED_FLAG] === true,
-        mapCornerFoundNow,
-      });
+      const repaired = save.world.flags[PEBBLE_FOUNTAIN_REPAIRED_FLAG] === true;
+      const timeState = this.timeService.getState();
+      const contextualNotice =
+        timeState === 'night'
+          ? 'Lantern reminder: please keep the east path clear after moonrise.'
+          : timeState === 'sunset'
+            ? 'Sunset picnic blankets are available beside the Bakery while supplies last.'
+            : timeState === 'morning'
+              ? 'Morning notice: fresh buns, garden watering and Rainbow Run practice today.'
+              : 'Afternoon notice: playground games and a Story House reading circle are underway.';
+      const fountainNotice = repaired
+        ? 'Pebble reports that the Sunbeam Fountain is happily chiming again.'
+        : 'Pebble is still collecting odd little parts for the quiet Sunbeam Fountain.';
+      this.showFeedback(state, definition, `📌 ${contextualNotice} ${fountainNotice}`);
       return;
     }
 
