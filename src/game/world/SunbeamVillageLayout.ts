@@ -615,19 +615,22 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
     noticeBoard: {
       x: 1110,
       y: 1200,
+      interactionRadius: 122,
       collision: { x: 1110, y: 1222, width: 150, height: 146 },
     },
     sundial: {
       x: 1890,
       y: 1270,
+      interactionRadius: 118,
       collision: { x: 1890, y: 1294, width: 136, height: 92 },
     },
     bench: {
       x: 1180,
       y: 1660,
+      interactionRadius: 118,
       collision: { x: 1180, y: 1669, width: 174, height: 74 },
     },
-    threadWindow: { x: 1345, y: 700 },
+    threadWindow: { x: 1345, y: 700, interactionRadius: 116 },
     fountainSplash: { x: 1660, y: 1120 },
   },
   entrances: {
