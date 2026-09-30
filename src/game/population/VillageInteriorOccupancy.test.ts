@@ -47,7 +47,6 @@ describe('VillageInteriorOccupancyService', () => {
     expect(service.isResidentAllowedInScene('resident:tansy', 'VillageInteriorScene')).toBe(false);
   });
 
-
   it('brings cottage residents home at sunset and night without making daytime homes static NPC rooms', () => {
     const service = new VillageInteriorOccupancyService();
 
@@ -62,9 +61,9 @@ describe('VillageInteriorOccupancyService', () => {
       expect(service.getInteriorAssignment(interiorId, 'afternoon')).toBeNull();
       expect(service.getInteriorAssignment(interiorId, 'sunset')).toMatchObject({ residentId });
       expect(service.getInteriorAssignment(interiorId, 'night')).toMatchObject({ residentId });
-      expect(service.isResidentAllowedInScene(residentId, 'VillageInteriorScene', 'afternoon')).toBe(
-        false,
-      );
+      expect(
+        service.isResidentAllowedInScene(residentId, 'VillageInteriorScene', 'afternoon'),
+      ).toBe(false);
       expect(service.isResidentAllowedInScene(residentId, 'VillageInteriorScene', 'night')).toBe(
         true,
       );
