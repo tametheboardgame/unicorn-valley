@@ -6,6 +6,8 @@ import type {
   StoryContentBlock,
   StoryEditionManifest,
   StoryEditionSummary,
+  StoryIllustrationReference,
+  StoryIllustrationSetManifest,
   StoryLibraryManifest,
   StoryReadingMode,
   StoryRightsMetadata,
@@ -265,6 +267,27 @@ function parseCatalogue(value: unknown): StoryCatalogue {
   return { schemaVersion: 1, stories };
 }
 
+function parseIllustration(value: unknown, storyId: string): StoryIllustrationReference {
+  if (!value || typeof value !== 'object') {
+    throw new Error(`Story Library illustration metadata is invalid for ${storyId}.`);
+  }
+  const illustration = value as Record<string, unknown>;
+  const placement = illustration.placement;
+  if (placement !== 'inline' && placement !== 'full-width') {
+    throw new Error('Story Library illustration placement is invalid.');
+  }
+  return {
+    id: requireSafeId(illustration.id, 'illustration id'),
+    blockId: requireSafeId(illustration.blockId, 'illustration block id'),
+    path: requireImagePath(illustration.path, 'illustration path'),
+    alt: requireString(illustration.alt, 'illustration alt text'),
+    placement,
+    width: requirePositiveInteger(illustration.width, 'illustration width'),
+    height: requirePositiveInteger(illustration.height, 'illustration height'),
+    ...(typeof illustration.caption === 'string' ? { caption: illustration.caption } : {}),
+  };
+}
+
 function parseChapter(value: unknown, storyId: string): StoryChapterManifest {
   if (!value || typeof value !== 'object') throw new Error('Story Library chapter is invalid.');
   const chapter = value as Record<string, unknown>;
@@ -273,28 +296,116 @@ function parseChapter(value: unknown, storyId: string): StoryChapterManifest {
     title: requireString(chapter.title, 'chapter title'),
     path: requireRelativePath(chapter.path, 'chapter path', '.md'),
     illustrations: Array.isArray(chapter.illustrations)
-      ? chapter.illustrations.map((item) => {
-          if (!item || typeof item !== 'object') {
-            throw new Error(`Story Library illustration metadata is invalid for ${storyId}.`);
-          }
-          const illustration = item as Record<string, unknown>;
-          const placement = illustration.placement;
-          if (placement !== 'inline' && placement !== 'full-width') {
-            throw new Error('Story Library illustration placement is invalid.');
-          }
-          return {
-            id: requireSafeId(illustration.id, 'illustration id'),
-            blockId: requireSafeId(illustration.blockId, 'illustration block id'),
-            path: requireImagePath(illustration.path, 'illustration path'),
-            alt: requireString(illustration.alt, 'illustration alt text'),
-            placement,
-            width: requirePositiveInteger(illustration.width, 'illustration width'),
-            height: requirePositiveInteger(illustration.height, 'illustration height'),
-            ...(typeof illustration.caption === 'string' ? { caption: illustration.caption } : {}),
-          };
-        })
+      ? chapter.illustrations.map((item) => parseIllustration(item, storyId))
       : undefined,
   };
+}
+
+function parseIllustrationSets(
+  source: Record<string, unknown>,
+  storyId: string,
+  chapters: readonly StoryChapterManifest[],
+  editionRights: StoryRightsMetadata,
+): Pick<StoryEditionManifest, 'defaultIllustrationSetId' | 'illustrationSets'> {
+  if (source.illustrationSets === undefined) {
+    const legacyChapters = chapters
+      .filter((chapter) => (chapter.illustrations?.length ?? 0) > 0)
+      .map((chapter) => ({
+        chapterId: chapter.id,
+        illustrations: chapter.illustrations ?? [],
+      }));
+
+    if (legacyChapters.length === 0) {
+      return { defaultIllustrationSetId: null, illustrationSets: [] };
+    }
+
+    return {
+      defaultIllustrationSetId: 'default',
+      illustrationSets: [
+        {
+          id: 'default',
+          label: 'Illustrations',
+          rights: editionRights.illustrations ?? null,
+          chapters: legacyChapters,
+        },
+      ],
+    };
+  }
+
+  if (!Array.isArray(source.illustrationSets) || source.illustrationSets.length === 0) {
+    throw new Error(`Story Library illustration sets are invalid for ${storyId}.`);
+  }
+  if (chapters.some((chapter) => (chapter.illustrations?.length ?? 0) > 0)) {
+    throw new Error(
+      `Story Library edition for ${storyId} cannot mix chapter illustrations with illustrationSets.`,
+    );
+  }
+
+  const chapterIds = new Set(chapters.map(({ id }) => id));
+  const setIds = new Set<string>();
+  const illustrationSets: StoryIllustrationSetManifest[] = source.illustrationSets.map((value) => {
+    if (!value || typeof value !== 'object') {
+      throw new Error(`Story Library illustration set metadata is invalid for ${storyId}.`);
+    }
+    const set = value as Record<string, unknown>;
+    const id = requireSafeId(set.id, 'illustration set id');
+    if (setIds.has(id)) {
+      throw new Error(`Story Library manifest has duplicate illustration set id "${id}".`);
+    }
+    setIds.add(id);
+
+    if (!Array.isArray(set.chapters) || set.chapters.length === 0) {
+      throw new Error(`Story Library illustration set "${id}" needs chapter mappings.`);
+    }
+    const mappedChapterIds = new Set<string>();
+    const mappedChapters = set.chapters.map((chapterValue) => {
+      if (!chapterValue || typeof chapterValue !== 'object') {
+        throw new Error(`Story Library illustration-set chapter mapping is invalid for ${storyId}.`);
+      }
+      const mapping = chapterValue as Record<string, unknown>;
+      const chapterId = requireSafeId(mapping.chapterId, 'illustration-set chapter id');
+      if (!chapterIds.has(chapterId)) {
+        throw new Error(
+          `Story Library illustration set "${id}" references unknown chapter "${chapterId}".`,
+        );
+      }
+      if (mappedChapterIds.has(chapterId)) {
+        throw new Error(
+          `Story Library illustration set "${id}" maps chapter "${chapterId}" more than once.`,
+        );
+      }
+      mappedChapterIds.add(chapterId);
+      if (!Array.isArray(mapping.illustrations) || mapping.illustrations.length === 0) {
+        throw new Error(
+          `Story Library illustration set "${id}" chapter "${chapterId}" needs illustrations.`,
+        );
+      }
+      return {
+        chapterId,
+        illustrations: mapping.illustrations.map((item) => parseIllustration(item, storyId)),
+      };
+    });
+
+    return {
+      id,
+      label: requireString(set.label, 'illustration set label'),
+      rights: parseRightsReference(set.rights, `illustration set "${id}"`),
+      chapters: mappedChapters,
+    };
+  });
+
+  const defaultIllustrationSetId =
+    source.defaultIllustrationSetId === undefined
+      ? illustrationSets[0]?.id ?? null
+      : requireSafeId(source.defaultIllustrationSetId, 'default illustration set id');
+  if (
+    defaultIllustrationSetId !== null &&
+    !illustrationSets.some(({ id }) => id === defaultIllustrationSetId)
+  ) {
+    throw new Error('Story Library manifest default illustration set is missing.');
+  }
+
+  return { defaultIllustrationSetId, illustrationSets };
 }
 
 function parseEdition(value: unknown, storyId: string): StoryEditionManifest {
@@ -306,13 +417,16 @@ function parseEdition(value: unknown, storyId: string): StoryEditionManifest {
     throw new Error(`Story Library edition for ${storyId} needs at least one chapter.`);
   }
   const id = requireSafeId(edition.id, 'edition id');
+  const rights = parseRights(edition.rights);
+  const chapters = edition.chapters.map((chapter) => parseChapter(chapter, storyId));
   return {
     id,
     label: requireString(edition.label, 'edition label'),
     author: requireString(edition.author, 'edition author'),
     readingMode: parseReadingMode(edition.readingMode),
-    rights: parseRights(edition.rights),
-    chapters: edition.chapters.map((chapter) => parseChapter(chapter, storyId)),
+    rights,
+    chapters,
+    ...parseIllustrationSets(edition, storyId, chapters, rights),
   };
 }
 
@@ -354,13 +468,16 @@ function parseManifest(value: unknown): StoryLibraryManifest {
     if (!Array.isArray(source.chapters) || source.chapters.length === 0) {
       throw new Error('Story Library manifest needs at least one chapter.');
     }
+    const rights = parseRights(source.rights);
+    const chapters = source.chapters.map((chapter) => parseChapter(chapter, id));
     const edition: StoryEditionManifest = {
       id: 'default',
       label: 'Standard Edition',
       author: requireString(source.author, 'story author'),
       readingMode: parseReadingMode(source.readingMode),
-      rights: parseRights(source.rights),
-      chapters: source.chapters.map((chapter) => parseChapter(chapter, id)),
+      rights,
+      chapters,
+      ...parseIllustrationSets(source, id, chapters, rights),
     };
     editions = [edition];
     defaultEditionId = edition.id;
