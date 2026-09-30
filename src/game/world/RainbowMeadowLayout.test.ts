@@ -23,7 +23,9 @@ describe('Rainbow Meadow canonical layout', () => {
       'picnic-spur',
       'rainbow-run-hub-spur',
     ]);
-    expect(RAINBOW_MEADOW_LAYOUT.structuralPaths.every(({ points }) => points.length >= 2)).toBe(true);
+    expect(RAINBOW_MEADOW_LAYOUT.structuralPaths.every(({ points }) => points.length >= 2)).toBe(
+      true,
+    );
   });
 
   it('preserves the accepted Crystal Brook route position until H4.4 relocates it', () => {
@@ -32,6 +34,8 @@ describe('Rainbow Meadow canonical layout', () => {
       y: 1750,
     });
     const path = RAINBOW_MEADOW_LAYOUT.crystalBrookRoute.pathPoints;
-    expect(path[path.length - 1]).toEqual(RAINBOW_MEADOW_LAYOUT.crystalBrookRoute.transitionPosition);
+    expect(path[path.length - 1]).toEqual(
+      RAINBOW_MEADOW_LAYOUT.crystalBrookRoute.transitionPosition,
+    );
   });
 });
