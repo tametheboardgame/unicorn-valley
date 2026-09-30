@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { RAINBOW_MEADOW_LAYOUT } from '../world/RainbowMeadowMap';
 import { SUNBEAM_VILLAGE_LAYERS, SUNBEAM_VILLAGE_LAYOUT } from '../world/SunbeamVillageLayout';
 import { worldDepthForY } from '../world/WorldDepth';
 
@@ -304,13 +305,9 @@ export function createSunbeamVillageProductionPresentation(scene: Phaser.Scene):
 
 function createRainbowMeadowProduction(scene: Phaser.Scene): void {
   const environment = 'rainbow-meadow';
-  const background = nameObject(scene.add.graphics().setDepth(1.55), environment, 'background');
-  background.fillStyle(0xd9f0a9, 0.26);
-  background.fillEllipse(780, 490, 1400, 780);
-  background.fillStyle(0xb4e8c4, 0.2);
-  background.fillEllipse(2060, 1550, 1500, 730);
-  background.fillStyle(0xffefab, 0.2);
-  background.fillEllipse(2840, 640, 1060, 680);
+  // H4.2 makes the scene-owned district geometry authoritative. Keep this named layer for
+  // presentation lifecycle compatibility, but do not paint a second competing Meadow layout.
+  nameObject(scene.add.graphics().setDepth(1.55), environment, 'background');
 
   const signature = nameObject(scene.add.container(0, 0), environment, 'signature');
   const ribbonColours = [0xef8eaa, 0xf3bd65, 0x80c8df, 0x91cd80, 0xcaa0df];
@@ -323,40 +320,22 @@ function createRainbowMeadowProduction(scene: Phaser.Scene): void {
   }
   signature.setDepth(8.2);
 
-  for (const [x, y, scale] of [
-    [540, 780, 0.72],
-    [690, 750, 0.62],
-    [850, 800, 0.68],
-  ] as const) {
-    const archColours = [0xef8eaa, 0xf3bd65, 0x80c8df];
-    archColours.forEach((colour, index) => {
-      signature.add(
-        scene.add
-          .ellipse(x, y, (150 - index * 18) * scale, (76 - index * 10) * scale)
-          .setStrokeStyle(7 * scale, colour, 0.34)
-          .setFillStyle(0xffffff, 0),
-      );
-    });
-  }
-
-  for (const [x, y, colour] of [
-    [510, 1360, 0xef93b8],
-    [650, 1410, 0xf2c469],
-    [800, 1365, 0x8acbda],
-    [980, 1400, 0xc49ee0],
-    [3060, 1425, 0xc49ee0],
-    [3180, 1480, 0xf1a2bb],
-  ] as const) {
+  for (const { x, y, colour } of RAINBOW_MEADOW_LAYOUT.scenery.productionFlowerClusters) {
     const stem = scene.add.rectangle(x, y, 7, 64, 0x609867, 0.86);
     const bloom = scene.add.circle(x, y - 38, 18, colour, 0.9);
     const centre = scene.add.circle(x, y - 38, 7, 0xfff1a8, 0.95);
     signature.add([stem, bloom, centre]);
   }
-  addStorybookFlower(scene, signature, 1120, 760, 0.78, [0xf0a2bf, 0xc4a7e5]);
-  addStorybookFlower(scene, signature, 1190, 1360, 0.82, [0x88cddd, 0xf4c56d]);
-
-  createLeafCluster(scene, environment, 330, 1810, [0x4f9362, 0x72ae70, 0x735b43]);
-  createLeafCluster(scene, environment, 3200, 1790, [0x4b8c5f, 0x80b96f, 0x735b43], true);
+  for (const cluster of RAINBOW_MEADOW_LAYOUT.scenery.productionLeafClusters) {
+    createLeafCluster(
+      scene,
+      environment,
+      cluster.x,
+      cluster.y,
+      [0x4f9362, 0x72ae70, 0x735b43],
+      cluster.mirrored,
+    );
+  }
 
   addAmbientMotes(
     scene,
