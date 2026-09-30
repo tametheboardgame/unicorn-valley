@@ -1,11 +1,6 @@
 import Phaser from 'phaser';
-import { RAINBOW_MEADOW_MAP } from '../world/RainbowMeadowMap';
 import { worldDepthForY } from '../world/WorldDepth';
-import {
-  createNovaIdentitySprite,
-  ensureNovaIdentityTexture,
-  NOVA_RACE_TINT,
-} from './NovaIdentity';
+import { ensureNovaIdentityTexture, NOVA_RACE_TINT } from './NovaIdentity';
 
 export const VISUAL_TIGHTENING_DETAIL_NAME = 'visual-tightening-detail';
 const VISUAL_TIGHTENING_ANCHOR_NAME = 'visual-tightening-anchor';
@@ -15,36 +10,6 @@ const SUPPORTED_SCENES = new Set(['RainbowMeadowScene', 'NovaTutorialRaceScene',
 function markDetail<T extends Phaser.GameObjects.GameObject>(object: T): T {
   object.setName(VISUAL_TIGHTENING_DETAIL_NAME);
   return object;
-}
-
-function replaceMeadowNova(scene: Phaser.Scene): void {
-  const marker = RAINBOW_MEADOW_MAP.npcMarkers.find((item) => item.id === 'nova');
-  if (!marker) {
-    return;
-  }
-
-  const oldNova = scene.children.list.find(
-    (object): object is Phaser.GameObjects.Container =>
-      object instanceof Phaser.GameObjects.Container &&
-      Math.abs(object.x - marker.position.x) < 2 &&
-      Math.abs(object.y - marker.position.y) < 12 &&
-      object.list.length >= 7,
-  );
-  oldNova?.setVisible(false);
-
-  const nova = createNovaIdentitySprite(scene, marker.position.x, marker.position.y)
-    .setDisplaySize(120, 96)
-    .setDepth(worldDepthForY(marker.position.y + 48, 0.24));
-  markDetail(nova);
-  nova.setName('nova-canonical-world');
-  scene.tweens.add({
-    targets: nova,
-    y: marker.position.y - 5,
-    duration: 1050,
-    yoyo: true,
-    repeat: -1,
-    ease: 'Sine.InOut',
-  });
 }
 
 function decorateMeadow(scene: Phaser.Scene): void {
@@ -97,7 +62,6 @@ function decorateMeadow(scene: Phaser.Scene): void {
     );
   }
 
-  replaceMeadowNova(scene);
 }
 
 function applyCanonicalNovaToRace(scene: Phaser.Scene): void {
