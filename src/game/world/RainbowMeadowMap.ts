@@ -46,6 +46,8 @@ export const RAINBOW_MEADOW_LAYOUT = {
     height: 2100,
     margin: 90,
   },
+  // H4.2 owns these broad composition zones. Later slices may refine local presentation,
+  // but they should preserve the reserved movement/activity space established here.
   districts: [
     {
       id: 'sunbeam-arrival',
