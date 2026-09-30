@@ -213,9 +213,10 @@ export class CoreNpcProductionPresentationManager {
     this.ensureVillageNpc(scene, 'willow', 4);
     if (this.marigoldArea === 'sunbeam-village') {
       this.ensureVillageNpc(scene, 'marigold', 4);
-    } else {
-      destroyNamedObject(scene, 'core-npc:marigold:world');
     }
+    // Presence changes are committed immediately, but an NPC already visible in the current
+    // scene keeps that scene-session lease until the player leaves. On the next Sunbeam load
+    // the picnic authority prevents Marigold being recreated.
     this.ensureVillageNpc(scene, 'pebble', 5);
   }
 
