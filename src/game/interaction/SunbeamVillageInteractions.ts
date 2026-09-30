@@ -1,4 +1,5 @@
 import type Phaser from 'phaser';
+import { MARIGOLD_CHARACTER_ID } from '../../content/r4PicnicEvent';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import {
   MOONFLOWER_GLADE_LOCATION_ID,
@@ -17,6 +18,7 @@ import {
 } from '../world/RainbowMeadowMap';
 import { setSunbeamVillagePlayerSpawn, SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
 import { SUNBEAM_VILLAGE_LAYOUT } from '../world/SunbeamVillageLayout';
+import { CoreNpcPresenceService } from '../world/CoreNpcPresenceService';
 import type { VillageInteriorId } from '../world/VillageInteriorMap';
 import type { InteractionTarget } from './InteractionTarget';
 import { getSceneInteractionRegistry } from './SceneInteractionRegistry';
@@ -94,6 +96,8 @@ function leaveVillage(
 }
 
 export function createSunbeamVillageInteractions(scene: Phaser.Scene): InteractionTarget[] {
+  const presenceService = new CoreNpcPresenceService(getBrowserSaveService());
+
   return [
     {
       id: 'interaction:village-bakery',
@@ -162,6 +166,8 @@ export function createSunbeamVillageInteractions(scene: Phaser.Scene): Interacti
       position: npcPosition('marigold'),
       interactionRadius: 150,
       priority: 30,
+      visible: () =>
+        presenceService.resolve(MARIGOLD_CHARACTER_ID)?.area === 'sunbeam-village',
       result: { type: 'callback', activate: () => startMarigoldConversation(scene) },
     },
     {
