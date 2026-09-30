@@ -22,7 +22,11 @@ import {
 } from '../story/MarigoldPicnicPresentation';
 import { startMarigoldConversation } from '../story/WorldStoryConversations';
 import { InteractionPrompt } from '../ui/InteractionPrompt';
-import { RAINBOW_MEADOW_LOCATION_ID, RAINBOW_MEADOW_MAP } from '../world/RainbowMeadowMap';
+import {
+  RAINBOW_MEADOW_LAYOUT,
+  RAINBOW_MEADOW_LOCATION_ID,
+  RAINBOW_MEADOW_MAP,
+} from '../world/RainbowMeadowMap';
 import {
   setSunbeamVillagePlayerSpawn,
   SUNBEAM_VILLAGE_LOCATION_ID,
@@ -428,10 +432,24 @@ export class RainbowMeadowScene extends Phaser.Scene {
 
   private createEnvironment(): void {
     const map = RAINBOW_MEADOW_MAP;
-    this.add.rectangle(map.width / 2, map.height / 2, map.width, map.height, 0x9fdf8e).setDepth(0);
-    this.add.circle(930, 720, 560, 0xb9eaa2, 0.55).setDepth(1);
-    this.add.circle(1880, 1510, 620, 0x8ed585, 0.35).setDepth(1);
-    this.add.circle(2790, 940, 650, 0xc7ec9e, 0.42).setDepth(1);
+    this.add
+      .rectangle(map.width / 2, map.height / 2, map.width, map.height, 0x9fdf8e)
+      .setName('rainbow-meadow:ground')
+      .setDepth(0);
+
+    for (const district of RAINBOW_MEADOW_LAYOUT.districts) {
+      this.add
+        .ellipse(
+          district.centre.x,
+          district.centre.y,
+          district.radiusX * 2,
+          district.radiusY * 2,
+          district.groundColour,
+          district.groundAlpha,
+        )
+        .setName(`rainbow-meadow:district:${district.id}`)
+        .setDepth(1);
+    }
 
     this.createPond();
     this.createGroves();
@@ -441,38 +459,34 @@ export class RainbowMeadowScene extends Phaser.Scene {
   }
 
   private createPond(): void {
-    this.add.ellipse(1570, 610, 500, 300, 0x67c8df, 0.96).setDepth(3);
-    this.add.ellipse(1570, 610, 410, 225, 0x9ce6ea, 0.74).setDepth(4);
-    for (const [x, y] of [
-      [1430, 560],
-      [1540, 660],
-      [1680, 570],
-    ] as const) {
+    const pond = RAINBOW_MEADOW_LAYOUT.natureFeatures.pond;
+    this.add
+      .ellipse(pond.position.x, pond.position.y, pond.width, pond.height, 0x67c8df, 0.96)
+      .setName('rainbow-meadow:nature:pond')
+      .setDepth(3);
+    this.add
+      .ellipse(
+        pond.position.x,
+        pond.position.y,
+        pond.width - 90,
+        pond.height - 75,
+        0x9ce6ea,
+        0.74,
+      )
+      .setDepth(4);
+    for (const { x, y } of pond.lilyPads) {
       this.add.ellipse(x, y, 48, 24, 0x6fa76c, 0.95).setDepth(5);
       this.add.circle(x + 7, y - 3, 8, 0xffd5ef, 0.95).setDepth(6);
     }
   }
 
   private createGroves(): void {
-    const trees = [
-      [610, 420, 1.05],
-      [735, 360, 1.15],
-      [840, 455, 1],
-      [880, 1640, 1.05],
-      [1010, 1580, 1.15],
-      [1135, 1690, 1],
-      [275, 350, 0.95],
-      [450, 1760, 1.05],
-      [2060, 330, 1],
-      [2180, 1780, 1.1],
-    ] as const;
-
-    for (const [x, y, scale] of trees) {
-      this.createMeadowTree(x, y, scale);
+    for (const tree of RAINBOW_MEADOW_LAYOUT.scenery.trees) {
+      this.createMeadowTree(tree.id, tree.x, tree.y, tree.scale);
     }
   }
 
-  private createMeadowTree(x: number, y: number, scale: number): void {
+  private createMeadowTree(id: string, x: number, y: number, scale: number): void {
     const trunk = this.add.rectangle(0, -48, 34, 96, 0x896349, 1);
     const left = this.add.circle(-38, -116, 68, 0x5e9d64, 1);
     const right = this.add.circle(42, -110, 76, 0x68aa68, 1);
@@ -480,6 +494,7 @@ export class RainbowMeadowScene extends Phaser.Scene {
     const blossom = this.add.circle(48, -150, 14, 0xffc7df, 0.78);
     this.add
       .container(x, y, [trunk, left, right, top, blossom])
+      .setName(`rainbow-meadow:tree:${id}`)
       .setScale(scale)
       .setDepth(worldDepthForY(y, 0.25));
   }
@@ -620,25 +635,16 @@ export class RainbowMeadowScene extends Phaser.Scene {
   }
 
   private createMeadowFlowers(): void {
-    const positions = [
-      [520, 790],
-      [650, 1290],
-      [910, 840],
-      [1320, 1390],
-      [1700, 1240],
-      [1980, 760],
-      [2140, 1510],
-      [2930, 1550],
-      [3010, 610],
-    ] as const;
     const colours = [0xf7a4c6, 0xffdf7e, 0xb8a1e4, 0x88cbe0];
-    for (let index = 0; index < positions.length; index += 1) {
-      const [x, y] = positions[index];
+    RAINBOW_MEADOW_LAYOUT.scenery.flowerClusters.forEach(({ x, y }, index) => {
       const depth = worldDepthForY(y, -0.2);
-      this.add.circle(x, y, 13, colours[index % colours.length], 0.95).setDepth(depth);
+      this.add
+        .circle(x, y, 13, colours[index % colours.length], 0.95)
+        .setName(`rainbow-meadow:flower-cluster:${index}`)
+        .setDepth(depth);
       this.add.circle(x + 13, y + 4, 9, colours[(index + 1) % colours.length], 0.9).setDepth(depth);
       this.add.circle(x - 11, y + 6, 8, 0xffefad, 0.92).setDepth(depth);
-    }
+    });
   }
 
   private createCollisionMap(): Phaser.Physics.Arcade.StaticGroup {
