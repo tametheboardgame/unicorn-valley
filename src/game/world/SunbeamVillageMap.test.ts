@@ -128,6 +128,35 @@ describe('Sunbeam Village map', () => {
     );
   });
 
+  it('keeps physical village-life interactions usable from outside collision clearance', () => {
+    const physicalPoints = [
+      SUNBEAM_VILLAGE_LAYOUT.villageLife.noticeBoard,
+      SUNBEAM_VILLAGE_LAYOUT.villageLife.sundial,
+      SUNBEAM_VILLAGE_LAYOUT.villageLife.bench,
+    ];
+
+    for (const point of physicalPoints) {
+      const halfWidth = point.collision.width / 2 + PLAYER_CLEARANCE;
+      const halfHeight = point.collision.height / 2 + PLAYER_CLEARANCE;
+      const horizontalEscape = halfWidth - Math.abs(point.x - point.collision.x);
+      const verticalEscape = halfHeight - Math.abs(point.y - point.collision.y);
+      const nearestWalkableEdge = Math.min(horizontalEscape, verticalEscape);
+
+      expect(point.interactionRadius).toBeGreaterThan(nearestWalkableEdge);
+    }
+  });
+
+  it('keeps the Twinkle & Thread window interaction on walkable ground', () => {
+    const { threadWindow } = SUNBEAM_VILLAGE_LAYOUT.villageLife;
+
+    expect(isPointInsideWalkableBounds(SUNBEAM_VILLAGE_MAP, threadWindow, PLAYER_CLEARANCE)).toBe(
+      true,
+    );
+    expect(isPointBlocked(threadWindow, SUNBEAM_VILLAGE_MAP.colliders, PLAYER_CLEARANCE)).toBe(
+      false,
+    );
+  });
+
   it('keeps Marigold clear of the fountain make-a-wish interaction', () => {
     const marigold = SUNBEAM_VILLAGE_LAYOUT.npcPositions.marigold;
     const fountain = SUNBEAM_VILLAGE_LAYOUT.fountain;
