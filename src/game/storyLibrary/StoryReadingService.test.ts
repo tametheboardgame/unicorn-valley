@@ -177,5 +177,4 @@ describe('StoryReadingService', () => {
     );
     expect(restored.getProgress('alice', 'story-house', 'story-house')).toBeNull();
   });
-
 });
