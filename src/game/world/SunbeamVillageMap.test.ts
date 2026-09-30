@@ -96,6 +96,7 @@ describe('Sunbeam Village map', () => {
       'collision:landscaping:flower-bed:story-green',
       'collision:landscaping:flower-bed:west-green',
       'collision:landscaping:flower-bed:east-green',
+      'collision:village-life:notice-board',
       'collision:village-life:sundial',
       'collision:chess-plaza:table',
       'collision:chess-plaza:sign',
@@ -436,6 +437,19 @@ describe('Sunbeam Village map', () => {
     expect(
       SUNBEAM_VILLAGE_MAP.colliders.find(({ id }) => id === 'collision:willow-garden:south'),
     ).toMatchObject({ height: 66 });
+  });
+
+  it('gives the village notice board physical collision', () => {
+    const { noticeBoard } = SUNBEAM_VILLAGE_LAYOUT.villageLife;
+
+    expect(
+      SUNBEAM_VILLAGE_MAP.colliders.find(
+        ({ id }) => id === 'collision:village-life:notice-board',
+      ),
+    ).toEqual({
+      id: 'collision:village-life:notice-board',
+      ...noticeBoard.collision,
+    });
   });
 
   it('gives every H3.11.8B landscaping prop physical collision', () => {
