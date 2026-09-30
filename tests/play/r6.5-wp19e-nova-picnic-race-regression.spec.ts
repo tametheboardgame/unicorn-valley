@@ -251,7 +251,12 @@ test('Marigold and Nova dialogue keep accepted sizing and Meet Nova works when N
   village = await sceneSnapshot(page, 'SunbeamVillageScene');
   expect(visiblePanelY(village)).toBe(ordinaryLinePanelY);
   await page.keyboard.press('KeyE');
-  await waitForHiddenObject(page, 'SunbeamVillageScene', 'core-npc:marigold:world');
+
+  // Choosing the picnic commits Marigold's next location, but she finishes the current
+  // Sunbeam visit instead of popping out of existence in front of the player.
+  await waitForVisibleObject(page, 'SunbeamVillageScene', 'core-npc:marigold:world');
+  await positionPlayer(page, 'SunbeamVillageScene', MARIGOLD_APPROACH.x, MARIGOLD_APPROACH.y);
+  await waitForTalkTarget(page, 'SunbeamVillageScene', 'Marigold');
 
   await startScene(page, 'RainbowMeadowScene');
   await waitForVisibleObject(page, 'RainbowMeadowScene', 'core-npc:nova:picnic');
