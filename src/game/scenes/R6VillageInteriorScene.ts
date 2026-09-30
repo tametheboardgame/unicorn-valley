@@ -1809,7 +1809,8 @@ export class VillageInteriorScene extends Phaser.Scene {
         label: 'Cinnamon',
         actionLabel: 'Talk',
         actionKind: 'talk',
-        position: worker.approach,
+        position: worker.position,
+        approachPosition: worker.approach,
         interactionRadius: 160,
         priority: 35,
         result: { type: 'callback', activate: () => this.openBakeryBakerConversation() },
@@ -1859,6 +1860,7 @@ export class VillageInteriorScene extends Phaser.Scene {
         actionLabel: 'Talk',
         actionKind: 'talk',
         position: worker.position,
+        approachPosition: worker.approach,
         interactionRadius: 190,
         priority: 35,
         directArea: {
@@ -2084,7 +2086,8 @@ export class VillageInteriorScene extends Phaser.Scene {
         actionLabel: 'Talk',
         actionKind: 'talk',
         position: home.position,
-        interactionRadius: 180,
+        approachPosition: home.approach,
+        interactionRadius: 190,
         priority: 35,
         directArea: {
           width: 175,
@@ -2171,6 +2174,7 @@ export class VillageInteriorScene extends Phaser.Scene {
         actionLabel: 'Talk',
         actionKind: 'talk',
         position: worker.position,
+        approachPosition: worker.approach,
         interactionRadius: 190,
         priority: 35,
         directArea: {
