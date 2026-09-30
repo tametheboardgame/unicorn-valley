@@ -188,7 +188,7 @@ export class VillageNoticeBoardScene extends Phaser.Scene {
     this.noteContainer = this.add.container(0, 0);
 
     const columns = [246, 574] as const;
-    const rows = [190, 356, 522] as const;
+    const rows = [200, 366, 532] as const;
 
     this.notices.slice(0, 6).forEach((notice, index) => {
       const x = columns[index % 2];
