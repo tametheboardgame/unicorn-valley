@@ -36,7 +36,9 @@ async function meadowObjects(page: Page): Promise<DiagnosticObject[]> {
   return meadow.objects;
 }
 
-test('H4.2 composes distinct Meadow districts and clears future activity space', async ({ page }) => {
+test('H4.2 composes distinct Meadow districts and clears future activity space', async ({
+  page,
+}) => {
   await page.goto('/?scene=meadow&diagnostics=1');
 
   await page.waitForFunction(() => {
@@ -47,7 +49,9 @@ test('H4.2 composes distinct Meadow districts and clears future activity space',
     return Boolean(
       meadow?.objects.some(({ name }) => name === 'rainbow-meadow:district:rainbow-disc-lawn') &&
         meadow.objects.some(({ name }) => name === 'rainbow-meadow:district:picnic-hill-reserve') &&
-        meadow.objects.some(({ name }) => name === 'rainbow-meadow:district:crystal-brook-corridor') &&
+        meadow.objects.some(
+          ({ name }) => name === 'rainbow-meadow:district:crystal-brook-corridor',
+        ) &&
         meadow.objects.some(({ name }) => name === 'meadow-depth:flower-circle'),
     );
   });
