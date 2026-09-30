@@ -89,10 +89,16 @@ Generated assets will materialise to:
 Source images must travel through the approved Google Drive → WIF → GitHub Actions materialisation
 pipeline. Historic Heighway assets remain unchanged.
 
-## Selector-test staging note
+## Final approved modern set
 
-The first materialised Modern Illustrations set is a temporary generated draft used to validate
-SH1.2A's real Classic/Modern selector in the production reader. It is **not** the final SH1.3.1
-visual-approval set. Before SH1.3.1 itself is merged, replace any draft image that does not meet the
-scene brief above by updating the same Drive file and bumping its manifest revision. This keeps the
-reader/schema test independent from final art-direction approval.
+The final SH1.3.1 Modern Illustrations set was approved on 30 September 2026 and replaces the
+temporary selector-test artwork in place through the same Google Drive source IDs.
+
+Final scene mapping:
+
+1. `the-challenge` — Hare confidently issues the challenge while Tortoise calmly accepts.
+2. `the-race` — Hare naps beneath the tree while Tortoise overtakes him on the race path.
+3. `plodding-wins` — Tortoise crosses the finish ribbon first as Hare arrives too late.
+
+The three final images use the same Hare, Tortoise, meadow palette and painterly treatment so the
+Modern Illustrations option reads as one coherent picture-book set.

@@ -15,7 +15,14 @@
     "title": "Aesop's Fables",
     "order": 1
   },
-  "tags": ["classic", "aesop", "animals", "perseverance", "public-domain", "illustrated"],
+  "tags": [
+    "classic",
+    "aesop",
+    "animals",
+    "perseverance",
+    "public-domain",
+    "illustrated"
+  ],
   "publication": {
     "status": "published"
   },
@@ -28,8 +35,15 @@
   ],
   "discovery": {
     "format": "Picture Book",
-    "genres": ["Animals", "Classics"],
-    "audiences": ["Read Together", "Early Reader", "Independent Reader"],
+    "genres": [
+      "Animals",
+      "Classics"
+    ],
+    "audiences": [
+      "Read Together",
+      "Early Reader",
+      "Independent Reader"
+    ],
     "length": "Quick Read"
   },
   "rights": {
@@ -98,7 +112,7 @@
       "rights": {
         "status": "original",
         "source": "ChatGPT-generated artwork created for the Unicorn Valley Story House modern illustration set",
-        "notes": "Generated for R6.5-WP19SH1.3.1 and materialised through the approved Google Drive → WIF → GitHub Actions pipeline."
+        "notes": "Final SH1.3.1 modern illustration set approved 30 Sep 2026 and materialised through the approved Google Drive → WIF → GitHub Actions pipeline."
       },
       "chapters": [
         {
@@ -108,30 +122,30 @@
               "id": "modern-hare-tortoise-challenge",
               "blockId": "the-challenge",
               "path": "illustrations/generated/challenge.webp",
-              "alt": "A warm modern storybook illustration of a confident brown hare beside a calm tortoise on a sunny meadow path.",
+              "alt": "A confident brown hare gestures as a calm tortoise accepts his race challenge on a sunny wildflower meadow path.",
               "placement": "full-width",
-              "width": 696,
-              "height": 648,
+              "width": 1333,
+              "height": 1000,
               "caption": "Modern Story House illustration."
             },
             {
               "id": "modern-hare-tortoise-race",
               "blockId": "the-race",
               "path": "illustrations/generated/race-nap.webp",
-              "alt": "A colourful modern storybook illustration of the hare and tortoise moving along a flower-lined race path.",
+              "alt": "The determined tortoise steadily overtakes the hare while the hare sleeps peacefully beneath a leafy tree beside the race path.",
               "placement": "full-width",
-              "width": 1272,
-              "height": 592,
+              "width": 1333,
+              "height": 1000,
               "caption": "Modern Story House illustration."
             },
             {
               "id": "modern-hare-tortoise-finish",
               "blockId": "plodding-wins",
               "path": "illustrations/generated/plodding-wins.webp",
-              "alt": "A cheerful modern storybook illustration of the tortoise and hare approaching the finish of their meadow race.",
+              "alt": "The tortoise crosses the red finish ribbon first while the startled hare races up behind on the sunny meadow course.",
               "placement": "full-width",
-              "width": 1272,
-              "height": 592,
+              "width": 1333,
+              "height": 1000,
               "caption": "Modern Story House illustration."
             }
           ]
