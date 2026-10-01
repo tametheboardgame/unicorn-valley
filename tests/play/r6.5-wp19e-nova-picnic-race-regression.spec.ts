@@ -278,7 +278,7 @@ test('Marigold and Nova dialogue keep accepted sizing and Meet Nova works when N
   await waitForTalkTarget(page, 'RainbowMeadowScene', 'Marigold');
   await page.keyboard.press('KeyE');
   await waitForVisibleObject(page, 'RainbowMeadowScene', 'dialogue-production-panel');
-  let picnicMeadow = await sceneSnapshot(page, 'RainbowMeadowScene');
+  const picnicMeadow = await sceneSnapshot(page, 'RainbowMeadowScene');
   expect(
     picnicMeadow.objects.find(
       (object) => object.name === 'dialogue-production-speaker-name' && object.visible,
