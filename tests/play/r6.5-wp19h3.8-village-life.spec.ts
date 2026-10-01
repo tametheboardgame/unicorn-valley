@@ -82,8 +82,8 @@ test('H3.8 recomposes village-life detail and grounds static core residents', as
 
   for (const expected of [
     { name: 'village-life:notice-board', x: 1110, y: 1200 },
-    { name: 'village-life:sundial', x: 1830, y: 1320 },
-    { name: 'village-life:bench', x: 1180, y: 1560 },
+    { name: 'village-life:sundial', x: 1890, y: 1270 },
+    { name: 'village-life:bench', x: 1180, y: 1660 },
   ] as const) {
     const prop = objects.find(({ name }) => name === expected.name);
     expect(prop?.visible).toBe(true);
