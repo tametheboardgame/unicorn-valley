@@ -1,16 +1,8 @@
 import Phaser from 'phaser';
 import { getBrowserSaveService } from '../save/browserSaveService';
-import {
-  MOONFLOWER_GLADE_LOCATION_ID,
-  saveLocationCheckpoint,
-} from '../save/saveLocationCheckpoint';
-import { MOONFLOWER_GLADE_MAP, setMoonflowerGladePlayerSpawn } from './MoonflowerGladeMap';
-import {
-  RAINBOW_MEADOW_LAYOUT,
-  RAINBOW_MEADOW_LOCATION_ID,
-  RAINBOW_MEADOW_MAP,
-  setRainbowMeadowPlayerSpawn,
-} from './RainbowMeadowMap';
+import { saveLocationCheckpoint } from '../save/saveLocationCheckpoint';
+import { MOONFLOWER_GLADE_MAP } from './MoonflowerGladeMap';
+import { RAINBOW_MEADOW_LAYOUT, RAINBOW_MEADOW_MAP } from './RainbowMeadowMap';
 import {
   setSunbeamVillagePlayerSpawn,
   SUNBEAM_VILLAGE_LOCATION_ID,
@@ -68,7 +60,7 @@ function drawRoundedStroke(
 }
 
 function drawPathNetwork(scene: Phaser.Scene, strokes: readonly PathStroke[]): void {
-  const graphics = markDetail(scene.add.graphics().setDepth(2.45));
+  const graphics = scene.add.graphics().setName('rainbow-meadow:path-network').setDepth(2.45);
 
   for (const stroke of strokes) {
     drawRoundedStroke(graphics, stroke.points, stroke.outerWidth, 0xd7c18f);

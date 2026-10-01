@@ -54,8 +54,7 @@ test('H4.1 leaves one Meadow path owner and one production Nova', async ({ page 
     const meadow = api?.snapshot().scenes.find(({ key }) => key === 'RainbowMeadowScene');
     return Boolean(
       meadow?.objects.some(({ name }) => name === 'core-npc:nova:world') &&
-        meadow.objects.some(({ name }) => name === 'world-traversal-polish-detail') &&
-        meadow.objects.some(({ name }) => name === 'r6-wp6.18g:meadow-crystal-brook:path'),
+        meadow.objects.some(({ name }) => name === 'rainbow-meadow:path-network'),
     );
   });
 
@@ -83,7 +82,7 @@ test('H4.1 leaves one Meadow path owner and one production Nova', async ({ page 
     ),
   ).toBe(false);
   expect(meadow.objects.some(({ name }) => name === 'r6-wp6.18g:meadow-crystal-brook:path')).toBe(
-    true,
+    false,
   );
 
   const oldWestGate = meadow.objects.find(
