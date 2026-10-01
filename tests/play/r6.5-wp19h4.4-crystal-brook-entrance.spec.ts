@@ -129,7 +129,7 @@ test('H4.4 makes Crystal Brook a rocky descending canonical Meadow threshold', a
   await positionPlayer(page, 'RainbowMeadowScene', MEADOW_GATE.x, MEADOW_GATE.y);
   await waitForScene(page, 'CrystalBrookScene');
 
-  let brook = await sceneSnapshot(page, 'CrystalBrookScene');
+  const brook = await sceneSnapshot(page, 'CrystalBrookScene');
   let player = brook.objects.find(({ name }) => name === PLAYER_NAME);
   expect(player?.x).toBeCloseTo(BROOK_ARRIVAL.x, 0);
   expect(player?.y).toBeCloseTo(BROOK_ARRIVAL.y, 0);
