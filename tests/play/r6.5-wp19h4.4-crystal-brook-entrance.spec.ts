@@ -13,6 +13,8 @@ interface DiagnosticObject {
   visible: boolean;
   x: number;
   y: number;
+  displayWidth: number;
+  displayHeight: number;
 }
 
 interface DiagnosticScene {
@@ -115,6 +117,24 @@ test('H4.4 makes Crystal Brook a rocky descending canonical Meadow threshold', a
         name.startsWith('r6-region-gateway-art:meadow-crystal-brook:descent-crystal:') && visible,
     ).length,
   ).toBeGreaterThanOrEqual(4);
+
+  expect(
+    meadow.objects.filter(({ name }) =>
+      name.startsWith('collision:crystal-brook-descent-rock:'),
+    ),
+  ).toHaveLength(8);
+
+  expect(
+    meadow.objects.some(
+      ({ type, x, y, displayWidth, displayHeight, visible }) =>
+        type === 'Rectangle' &&
+        visible &&
+        Math.abs(x - 2670) < 2 &&
+        Math.abs(y - 1080) < 2 &&
+        Math.abs(displayWidth - 1180) < 2 &&
+        Math.abs(displayHeight - 1120) < 2,
+    ),
+  ).toBe(false);
 
   expect(
     meadow.objects.some(
