@@ -247,8 +247,25 @@ describe('Rainbow Meadow canonical layout', () => {
   it('makes the Crystal Brook approach progressively rockier toward the threshold', () => {
     const descent = RAINBOW_MEADOW_LAYOUT.crystalBrookDescent;
     expect(descent.terraces).toHaveLength(3);
-    expect(descent.rocks.length).toBeGreaterThanOrEqual(8);
+    expect(descent.rocks).toHaveLength(8);
     expect(descent.crystals.length).toBeGreaterThanOrEqual(4);
     expect(descent.terraces[0]?.alpha ?? 0).toBeLessThan(descent.terraces[2]?.alpha ?? 0);
+  });
+
+  it('gives every Crystal Brook descent boulder a matching collision body', () => {
+    const rockColliders = RAINBOW_MEADOW_MAP.colliders.filter(({ id }) =>
+      id.startsWith('collision:crystal-brook-descent-rock:'),
+    );
+    expect(rockColliders).toHaveLength(RAINBOW_MEADOW_LAYOUT.crystalBrookDescent.rocks.length);
+
+    RAINBOW_MEADOW_LAYOUT.crystalBrookDescent.rocks.forEach((rock, index) => {
+      expect(rockColliders[index]).toEqual({
+        id: `collision:crystal-brook-descent-rock:${index}`,
+        x: rock.x,
+        y: rock.y,
+        width: rock.collisionWidth,
+        height: rock.collisionHeight,
+      });
+    });
   });
 });
