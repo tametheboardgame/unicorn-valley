@@ -643,7 +643,11 @@ export class RainbowMeadowScene extends Phaser.Scene {
         collider.y,
         COLLISION_TEXTURE_KEY,
       ) as Phaser.Physics.Arcade.Image;
-      blocker.setDisplaySize(collider.width, collider.height).setVisible(false).refreshBody();
+      blocker
+        .setName(collider.id)
+        .setDisplaySize(collider.width, collider.height)
+        .setVisible(false)
+        .refreshBody();
     }
 
     return collisionGroup;
