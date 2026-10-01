@@ -17,7 +17,10 @@ describe('Rainbow Meadow canonical layout', () => {
       height: RAINBOW_MEADOW_MAP.height,
       margin: RAINBOW_MEADOW_MAP.margin,
     }).toEqual(RAINBOW_MEADOW_LAYOUT.bounds);
-    expect(RAINBOW_MEADOW_MAP.entrances).toEqual([RAINBOW_MEADOW_LAYOUT.sunbeamGateway]);
+    expect(RAINBOW_MEADOW_MAP.entrances).toEqual([
+      RAINBOW_MEADOW_LAYOUT.sunbeamGateway,
+      RAINBOW_MEADOW_LAYOUT.crystalBrookGateway,
+    ]);
     expect(RAINBOW_MEADOW_MAP.raceHub).toBe(RAINBOW_MEADOW_LAYOUT.raceHub);
     expect(RAINBOW_MEADOW_MAP.npcMarkers[0]?.position).toBe(
       RAINBOW_MEADOW_LAYOUT.coreNpcPositions.novaRaceHub,
@@ -204,7 +207,7 @@ describe('Rainbow Meadow canonical layout', () => {
     ).toBe(false);
   });
 
-  it('absorbs the current Crystal Brook approach into the canonical path owner', () => {
+  it('runs the Crystal Brook spur through its canonical threshold and beyond the map edge', () => {
     const crystal = RAINBOW_MEADOW_LAYOUT.structuralPaths.find(
       ({ id }) => id === 'crystal-brook-spur',
     );
@@ -213,19 +216,39 @@ describe('Rainbow Meadow canonical layout', () => {
       return;
     }
 
-    expect(crystal.points[crystal.points.length - 1]).toEqual(
-      RAINBOW_MEADOW_LAYOUT.crystalBrookRoute.transitionPosition,
+    expect(
+      crystal.points.some(
+        ({ x, y }) =>
+          x === RAINBOW_MEADOW_LAYOUT.crystalBrookGateway.position.x &&
+          y === RAINBOW_MEADOW_LAYOUT.crystalBrookGateway.position.y,
+      ),
+    ).toBe(true);
+    expect(crystal.points[crystal.points.length - 1]?.x).toBeGreaterThan(
+      RAINBOW_MEADOW_LAYOUT.bounds.width,
     );
   });
 
-  it('preserves the accepted Crystal Brook route position until H4.4 relocates it', () => {
-    expect(RAINBOW_MEADOW_LAYOUT.crystalBrookRoute.transitionPosition).toEqual({
-      x: 3030,
-      y: 1750,
+  it('owns the Crystal Brook transition and return approach in canonical Meadow layout data', () => {
+    expect(RAINBOW_MEADOW_LAYOUT.crystalBrookGateway).toEqual({
+      id: 'crystal-brook',
+      label: 'Crystal Brook',
+      position: { x: 3290, y: 1900 },
+      approach: { x: 3060, y: 1820 },
+      direction: 'east',
     });
-    const path = RAINBOW_MEADOW_LAYOUT.crystalBrookRoute.pathPoints;
-    expect(path[path.length - 1]).toEqual(
-      RAINBOW_MEADOW_LAYOUT.crystalBrookRoute.transitionPosition,
+    expect(RAINBOW_MEADOW_LAYOUT.crystalBrookGateway.position.x).toBeGreaterThan(
+      RAINBOW_MEADOW_LAYOUT.bounds.width - 150,
     );
+    expect(RAINBOW_MEADOW_LAYOUT.crystalBrookGateway.position.y).toBeGreaterThan(
+      RAINBOW_MEADOW_LAYOUT.bounds.height - 300,
+    );
+  });
+
+  it('makes the Crystal Brook approach progressively rockier toward the threshold', () => {
+    const descent = RAINBOW_MEADOW_LAYOUT.crystalBrookDescent;
+    expect(descent.terraces).toHaveLength(3);
+    expect(descent.rocks.length).toBeGreaterThanOrEqual(8);
+    expect(descent.crystals.length).toBeGreaterThanOrEqual(4);
+    expect(descent.terraces[0]?.alpha ?? 0).toBeLessThan(descent.terraces[2]?.alpha ?? 0);
   });
 });
