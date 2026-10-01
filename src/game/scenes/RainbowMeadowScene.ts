@@ -493,12 +493,6 @@ export class RainbowMeadowScene extends Phaser.Scene {
   }
 
   private createRaceHub(): void {
-    const hub = RAINBOW_MEADOW_MAP.raceHub;
-    this.add
-      .rectangle(hub.x, hub.y, hub.width, hub.height, 0xf4dda2, 0.38)
-      .setStrokeStyle(9, 0xe6ba74, 0.55)
-      .setDepth(3);
-
     this.createHubTent();
     this.createRibbonBoard();
     this.createRaceEntrance();
