@@ -14,6 +14,11 @@ export default defineConfig({
               test: /node_modules[\\/]phaser/,
               priority: 20,
             },
+            {
+              name: 'game-core-shared',
+              test: /src[\\/]game[\\/](?:config[\\/]gameConstants|world[\\/](?:WorldArrivalState|RainbowMeadowMap))\.ts$/,
+              priority: 10,
+            },
           ],
         },
       },

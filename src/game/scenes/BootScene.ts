@@ -19,7 +19,6 @@ import { getEnvironmentProductionPresentationManager } from '../visual/Environme
 import { getVisualTighteningManager } from '../visual/VisualTighteningManager';
 import { getR5RegionGatewayManager } from '../world/R5RegionGatewayManager';
 import { getR65StarlightBeachGatewayManager } from '../world/R65StarlightBeachGatewayManager';
-import { getWorldCharacterPresentationManager } from '../world/WorldCharacterPresentationManager';
 import { getWorldOcclusionManager } from '../world/WorldOcclusionManager';
 import { getWorldTraversalPolishManager } from '../world/WorldTraversalPolishManager';
 import { ensureStarlightBeachScene } from './StarlightBeachSceneRegistration';
@@ -66,7 +65,6 @@ export class BootScene extends Phaser.Scene {
     getMagicalWeatherWorldManager(this.sys.game);
     getClickToMoveManager(this.sys.game);
     getWorldOcclusionManager(this.sys.game);
-    getWorldCharacterPresentationManager(this.sys.game);
     getVisualTighteningManager(this.sys.game);
     getWorldTraversalPolishManager(this.sys.game);
     getEnvironmentProductionPresentationManager(this.sys.game);

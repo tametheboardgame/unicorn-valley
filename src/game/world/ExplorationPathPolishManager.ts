@@ -89,35 +89,6 @@ const PATHS: Readonly<Partial<Record<string, readonly Stroke[]>>> = {
       depth: 2.43,
     },
   ],
-  RainbowMeadowScene: [
-    {
-      points: EXPLORATION_MAIN_ROUTES.RainbowMeadowScene,
-      width: 108,
-      colour: 0xf0dfb2,
-      alpha: 0.98,
-      depth: 2.43,
-    },
-    {
-      points: [
-        { x: 1110, y: 1065 },
-        { x: 1190, y: 610 },
-      ],
-      width: 58,
-      colour: 0xf0dfb2,
-      alpha: 0.94,
-      depth: 2.43,
-    },
-    {
-      points: [
-        { x: 1800, y: 1050 },
-        { x: 1850, y: 1610 },
-      ],
-      width: 58,
-      colour: 0xf0dfb2,
-      alpha: 0.94,
-      depth: 2.43,
-    },
-  ],
   CrystalBrookScene: [
     {
       points: EXPLORATION_MAIN_ROUTES.CrystalBrookScene,

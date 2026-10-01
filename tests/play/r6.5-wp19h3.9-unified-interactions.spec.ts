@@ -26,7 +26,7 @@ async function expectReaction(page: Page, expected: RegExp): Promise<void> {
     .toMatch(expected);
 }
 
-test('H3.9 activates cottage and Candyland targets through shared world interaction feedback', async ({
+test('H3.9 activates cottage entrances and Candyland inspection through shared targets', async ({
   page,
 }) => {
   await page.goto('/?scene=village&diagnostics=1');
@@ -36,8 +36,11 @@ test('H3.9 activates cottage and Candyland targets through shared world interact
   await setArcadeSpritePosition(page, 'SunbeamVillageScene', PLAYER_NAME, 1630, 1630);
   await page.waitForTimeout(120);
   await pressInteraction(page);
-  await expectReaction(page, /Rosehip Cottage/);
+  await waitForScene(page, 'VillageInteriorScene');
 
+  await page.goto('/?scene=village&diagnostics=1');
+  await waitForDiagnostics(page);
+  await waitForScene(page, 'SunbeamVillageScene');
   await setArcadeSpritePosition(page, 'SunbeamVillageScene', PLAYER_NAME, 2340, 1785);
   await page.waitForTimeout(120);
   await pressInteraction(page);

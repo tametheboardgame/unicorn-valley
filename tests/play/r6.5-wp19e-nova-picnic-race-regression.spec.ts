@@ -156,7 +156,7 @@ async function waitForHiddenObject(page: Page, sceneKey: string, name: string): 
     .toBe(false);
 }
 
-async function waitForTalkTarget(page: Page, sceneKey: string, _label: string): Promise<void> {
+async function waitForTalkTarget(page: Page, sceneKey: string, label: string): Promise<void> {
   await expect
     .poll(async () => {
       const scene = await sceneSnapshot(page, sceneKey);
@@ -169,7 +169,10 @@ async function waitForTalkTarget(page: Page, sceneKey: string, _label: string): 
       const targetHintVisible = scene.objects.some(
         (object) => object.name === 'exploration-tablet-hint-panel' && object.visible,
       );
-      return promptVisible && promptLabelVisible && targetHintVisible;
+      const targetHint = scene.objects.find(
+        (object) => object.name === 'exploration-tablet-hint' && object.visible,
+      )?.text;
+      return promptVisible && promptLabelVisible && targetHintVisible && targetHint === label;
     })
     .toBe(true);
 }
@@ -258,7 +261,11 @@ test('Marigold and Nova dialogue keep accepted sizing and Meet Nova works when N
   await positionPlayer(page, 'SunbeamVillageScene', MARIGOLD_APPROACH.x, MARIGOLD_APPROACH.y);
   await waitForTalkTarget(page, 'SunbeamVillageScene', 'Marigold');
 
-  await startScene(page, 'RainbowMeadowScene');
+  // Re-enter through a genuine Meadow boot so the committed picnic presence is resolved
+  // through the same lifecycle a player uses when leaving Sunbeam Village.
+  await page.goto('/?scene=meadow&diagnostics=1');
+  await waitForDiagnostics(page);
+  await waitForScene(page, 'RainbowMeadowScene');
   await waitForVisibleObject(page, 'RainbowMeadowScene', 'core-npc:nova:picnic');
   await waitForVisibleObject(page, 'RainbowMeadowScene', 'core-npc:marigold:picnic');
 
@@ -327,7 +334,9 @@ test('Marigold and Nova dialogue keep accepted sizing and Meet Nova works when N
   await waitForHiddenObject(page, 'RainbowMeadowScene', 'dialogue-production-panel');
   await waitForTalkTarget(page, 'RainbowMeadowScene', 'Nova');
 
-  await startScene(page, 'SunbeamVillageScene');
+  await page.goto('/?scene=village&diagnostics=1');
+  await waitForDiagnostics(page);
+  await waitForScene(page, 'SunbeamVillageScene');
   await waitForHiddenObject(page, 'SunbeamVillageScene', 'core-npc:marigold:world');
   await positionPlayer(page, 'SunbeamVillageScene', MARIGOLD_APPROACH.x, MARIGOLD_APPROACH.y);
   await page.waitForTimeout(250);

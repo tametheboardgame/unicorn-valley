@@ -21,7 +21,7 @@ export const CORRECTED_MEADOW_CRYSTAL_BROOK_PATH_POINTS: readonly R6CleanupPoint
   { x: 2490, y: 1840 },
   { x: 2760, y: 1870 },
   { x: 3030, y: 1750 },
-] as const;
+];
 
 export const LEGACY_GATEWAY_LABEL_TARGETS: readonly LegacyGatewayLabelTarget[] = [
   {
