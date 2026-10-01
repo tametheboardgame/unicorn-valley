@@ -1,10 +1,10 @@
 import Phaser from 'phaser';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
+import { RAINBOW_MEADOW_LAYOUT } from './RainbowMeadowMap';
 import { worldDepthForY } from './WorldDepth';
 
 const ANCHOR_NAME = 'r6-region-gateway-art-anchor';
 const DETAIL_PREFIX = 'r6-region-gateway-art';
-const MEADOW_CRYSTAL_BROOK_CAVE_POSITION = { x: 3030, y: 1750 } as const;
 
 interface Point {
   x: number;
@@ -231,14 +231,96 @@ function createCascadeRaceGate(scene: Phaser.Scene, x: number, y: number): void 
   );
 }
 
+function createMeadowCrystalBrookDescent(scene: Phaser.Scene): void {
+  const descent = RAINBOW_MEADOW_LAYOUT.crystalBrookDescent;
+
+  for (const [index, terrace] of descent.terraces.entries()) {
+    name(
+      scene.add
+        .ellipse(
+          terrace.x + 16,
+          terrace.y + 18,
+          terrace.width,
+          terrace.height,
+          0x40565a,
+          terrace.alpha * 0.42,
+        )
+        .setDepth(2.18 + index * 0.01),
+      `meadow-crystal-brook:descent-shadow:${index}`,
+    );
+    name(
+      scene.add
+        .ellipse(
+          terrace.x,
+          terrace.y,
+          terrace.width,
+          terrace.height,
+          terrace.colour,
+          terrace.alpha,
+        )
+        .setStrokeStyle(3, 0x70817b, 0.18 + index * 0.06)
+        .setDepth(2.2 + index * 0.01),
+      `meadow-crystal-brook:descent-terrace:${index}`,
+    );
+  }
+
+  const ledges = name(
+    scene.add.graphics().setDepth(2.47),
+    'meadow-crystal-brook:descent-ledges',
+  );
+  for (const [index, ledge] of descent.ledges.entries()) {
+    const halfWidth = ledge.width / 2;
+    ledges.lineStyle(9, 0x586c6b, 0.2 + index * 0.06);
+    ledges.beginPath();
+    ledges.moveTo(ledge.x - halfWidth, ledge.y - 8);
+    ledges.lineTo(ledge.x + halfWidth, ledge.y + 8);
+    ledges.strokePath();
+    ledges.lineStyle(4, 0xc5d1c3, 0.18);
+    ledges.beginPath();
+    ledges.moveTo(ledge.x - halfWidth + 12, ledge.y - 14);
+    ledges.lineTo(ledge.x + halfWidth - 12, ledge.y);
+    ledges.strokePath();
+  }
+
+  for (const [index, rock] of descent.rocks.entries()) {
+    name(
+      addRock(
+        scene,
+        rock.x,
+        rock.y,
+        rock.width,
+        rock.height,
+        worldDepthForY(rock.y, 0.42),
+        rock.colour,
+      ),
+      `meadow-crystal-brook:descent-rock:${index}`,
+    );
+  }
+
+  for (const [index, crystal] of descent.crystals.entries()) {
+    name(
+      addCrystal(
+        scene,
+        crystal.x,
+        crystal.y,
+        crystal.scale,
+        worldDepthForY(crystal.y, 0.5),
+        0x8ce4eb,
+      ),
+      `meadow-crystal-brook:descent-crystal:${index}`,
+    );
+  }
+}
+
 function decorateMeadow(scene: Phaser.Scene): void {
-  const transitionPosition = MEADOW_CRYSTAL_BROOK_CAVE_POSITION;
+  const gateway = RAINBOW_MEADOW_LAYOUT.crystalBrookGateway;
+  createMeadowCrystalBrookDescent(scene);
   createCaveMouth(
     scene,
     'meadow-crystal-brook',
-    transitionPosition.x,
-    transitionPosition.y,
-    'Crystal Brook',
+    gateway.position.x,
+    gateway.position.y,
+    gateway.label,
     0x89dce6,
   );
 }
