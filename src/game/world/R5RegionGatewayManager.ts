@@ -14,7 +14,11 @@ import {
   CRYSTAL_BROOK_MAP,
   setCrystalBrookPlayerSpawn,
 } from './CrystalBrookMap';
-import { RAINBOW_MEADOW_LOCATION_ID, setRainbowMeadowPlayerSpawn } from './RainbowMeadowMap';
+import {
+  RAINBOW_MEADOW_LOCATION_ID,
+  RAINBOW_MEADOW_MAP,
+  setRainbowMeadowPlayerSpawn,
+} from './RainbowMeadowMap';
 import { INTERACTIVE_GATEWAY_RADIUS, shouldActivateWalkThroughGateway } from './RegionGatewayRules';
 import {
   setWhisperingWoodsPlayerSpawn,
@@ -36,6 +40,7 @@ interface RegionGatewayDefinition {
   accent: number;
   icon: string;
   raceCourseId?: string;
+  presentation?: 'standard' | 'functional-only';
 }
 
 interface GatewayState {
@@ -57,9 +62,28 @@ interface CrystalRacePresentationState {
   shortcutNoteShown: boolean;
 }
 
-const MEADOW_GATE_POSITION = { x: 3030, y: 1750 } as const;
-const MEADOW_RETURN_POSITION = { x: 2870, y: 1700 } as const;
-const BROOK_ENTRANCE = CRYSTAL_BROOK_MAP.entrances[0];
+function requireEntrance<T extends { id: string }>(
+  entrances: readonly T[],
+  id: string,
+  owner: string,
+): T {
+  const entrance = entrances.find((candidate) => candidate.id === id);
+  if (!entrance) {
+    throw new Error(`${owner} is missing required entrance: ${id}`);
+  }
+  return entrance;
+}
+
+const MEADOW_CRYSTAL_BROOK_ENTRANCE = requireEntrance(
+  RAINBOW_MEADOW_MAP.entrances,
+  'crystal-brook',
+  'Rainbow Meadow',
+);
+const BROOK_ENTRANCE = requireEntrance(
+  CRYSTAL_BROOK_MAP.entrances,
+  'rainbow-meadow',
+  'Crystal Brook',
+);
 const BROOK_WOODS_GATE_POSITION = { x: 3260, y: 990 } as const;
 const BROOK_WOODS_RETURN_POSITION = { x: 3070, y: 1010 } as const;
 const CRYSTAL_CASCADE_GATE_POSITION = { x: 2860, y: 850 } as const;
@@ -73,13 +97,14 @@ const R5_REGION_GATEWAYS: readonly RegionGatewayDefinition[] = [
     id: 'gateway:meadow-crystal-brook',
     sceneKey: 'RainbowMeadowScene',
     label: 'Crystal Brook',
-    position: MEADOW_GATE_POSITION,
+    position: MEADOW_CRYSTAL_BROOK_ENTRANCE.position,
     destinationSceneKey: 'CrystalBrookScene',
     destinationLocationId: CRYSTAL_BROOK_LOCATION_ID,
     destinationSpawn: BROOK_ENTRANCE.approach,
     destinationFacing: 'right',
     accent: 0x74cbd3,
     icon: '💎',
+    presentation: 'functional-only',
   },
   {
     id: 'gateway:crystal-brook-meadow',
@@ -88,10 +113,11 @@ const R5_REGION_GATEWAYS: readonly RegionGatewayDefinition[] = [
     position: BROOK_ENTRANCE.position,
     destinationSceneKey: 'RainbowMeadowScene',
     destinationLocationId: RAINBOW_MEADOW_LOCATION_ID,
-    destinationSpawn: MEADOW_RETURN_POSITION,
+    destinationSpawn: MEADOW_CRYSTAL_BROOK_ENTRANCE.approach,
     destinationFacing: 'left',
     accent: 0xe5b6df,
     icon: '🌈',
+    presentation: 'functional-only',
   },
   {
     id: 'gateway:crystal-brook-whispering-woods',
@@ -208,6 +234,23 @@ export class R5RegionGatewayManager {
     }
 
     this.clearState(definition.id);
+
+    if (definition.presentation === 'functional-only') {
+      const container = scene.add
+        .container(definition.position.x, definition.position.y)
+        .setName(`r5-region-gateway:functional:${definition.id}`)
+        .setVisible(false);
+      const state: GatewayState = {
+        scene,
+        definition,
+        container,
+        lockClue: null,
+        insideWalkThrough: false,
+      };
+      this.states.set(definition.id, state);
+      return state;
+    }
+
     const glow = scene.add.circle(0, 0, 82, definition.accent, 0.15);
     const arch = scene.add
       .rectangle(0, 0, 110, 190, 0xfff5dc, 0.9)
