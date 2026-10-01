@@ -150,8 +150,9 @@ describe('Rainbow Meadow canonical layout', () => {
     expect(main.points[main.points.length - 1]?.x).toBeGreaterThan(
       RAINBOW_MEADOW_LAYOUT.bounds.width,
     );
-    expect(main.points.some((point) => point.x === RAINBOW_MEADOW_LAYOUT.sunbeamGateway.position.x))
-      .toBe(true);
+    expect(
+      main.points.some((point) => point.x === RAINBOW_MEADOW_LAYOUT.sunbeamGateway.position.x),
+    ).toBe(true);
     expect(
       main.points.some(
         (point) => point.x === RAINBOW_MEADOW_LAYOUT.hubFeatures.rainbowRunEntrance.position.x,
