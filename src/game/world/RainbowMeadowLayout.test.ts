@@ -177,6 +177,33 @@ describe('Rainbow Meadow canonical layout', () => {
     ).toBe(true);
   });
 
+  it('routes the Crystal Brook spur clear of the ribbon board', () => {
+    const crystal = RAINBOW_MEADOW_LAYOUT.structuralPaths.find(
+      ({ id }) => id === 'crystal-brook-spur',
+    );
+    expect(crystal).toBeDefined();
+    if (!crystal) {
+      return;
+    }
+
+    const board = RAINBOW_MEADOW_LAYOUT.hubFeatures.ribbonBoard.position;
+    const expandedBoard = {
+      left: board.x - 206,
+      right: board.x + 206,
+      top: board.y - 99,
+      bottom: board.y + 99,
+    };
+    expect(
+      crystal.points.some(
+        ({ x, y }) =>
+          x >= expandedBoard.left &&
+          x <= expandedBoard.right &&
+          y >= expandedBoard.top &&
+          y <= expandedBoard.bottom,
+      ),
+    ).toBe(false);
+  });
+
   it('absorbs the current Crystal Brook approach into the canonical path owner', () => {
     const crystal = RAINBOW_MEADOW_LAYOUT.structuralPaths.find(
       ({ id }) => id === 'crystal-brook-spur',
