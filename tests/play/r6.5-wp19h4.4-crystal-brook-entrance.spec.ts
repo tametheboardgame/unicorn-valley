@@ -72,7 +72,7 @@ async function positionPlayer(page: Page, sceneKey: string, x: number, y: number
       if (!api) {
         throw new Error('Browser diagnostics are unavailable.');
       }
-      api.setArcadeSpritePosition(key, PLAYER_NAME, targetX, targetY);
+      api.setArcadeSpritePosition(key, 'world-player-unicorn', targetX, targetY);
     },
     { key: sceneKey, targetX: x, targetY: y },
   );
