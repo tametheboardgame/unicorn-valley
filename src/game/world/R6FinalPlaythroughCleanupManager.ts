@@ -1,8 +1,6 @@
 import Phaser from 'phaser';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
 import {
-  CORRECTED_MEADOW_CRYSTAL_BROOK_PATH_POINTS,
-  CORRECTED_MEADOW_PATH_NAME,
   LEGACY_GATEWAY_LABEL_TARGETS,
   type LegacyGatewayLabelTarget,
 } from './R6FinalPlaythroughCleanup';
@@ -76,25 +74,6 @@ function drawPath(
 
   draw(outerWidth, outerColour, outerAlpha);
   draw(innerWidth, innerColour, innerAlpha);
-}
-
-function drawCorrectedMeadowPath(scene: Phaser.Scene): void {
-  drawPath(
-    scene,
-    CORRECTED_MEADOW_PATH_NAME,
-    CORRECTED_MEADOW_CRYSTAL_BROOK_PATH_POINTS,
-    2.05,
-    138,
-    90,
-    0xe7cf99,
-    0xf5e6bc,
-    0.95,
-    0.92,
-  );
-}
-
-function ensureMeadowCrystalBrookPath(scene: Phaser.Scene): void {
-  drawCorrectedMeadowPath(scene);
 }
 
 function cleanBrookGatewayPaths(scene: Phaser.Scene): void {
@@ -276,8 +255,6 @@ export class R6FinalPlaythroughCleanupManager {
     for (const scene of this.game.scene.getScenes(true)) {
       if (scene.scene.key === 'SunbeamVillageScene') {
         cleanPebblePresentation(scene);
-      } else if (scene.scene.key === 'RainbowMeadowScene') {
-        ensureMeadowCrystalBrookPath(scene);
       } else if (scene.scene.key === 'CrystalBrookScene') {
         cleanBrookGatewayPaths(scene);
         ensureCrystalCascadeTapTarget(scene);

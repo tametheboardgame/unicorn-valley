@@ -128,11 +128,93 @@ describe('Rainbow Meadow canonical layout', () => {
     expect(RAINBOW_MEADOW_LAYOUT.structuralPaths.map(({ id }) => id)).toEqual([
       'main-route',
       'windmill-spur',
+      'nature-spur',
       'picnic-spur',
+      'rainbow-disc-spur',
       'rainbow-run-hub-spur',
+      'crystal-brook-spur',
     ]);
     expect(RAINBOW_MEADOW_LAYOUT.structuralPaths.every(({ points }) => points.length >= 2)).toBe(
       true,
+    );
+  });
+
+  it('runs the main world road beyond both Meadow boundaries', () => {
+    const main = RAINBOW_MEADOW_LAYOUT.structuralPaths.find(({ id }) => id === 'main-route');
+    expect(main).toBeDefined();
+    if (!main) {
+      return;
+    }
+
+    expect(main.points[0]?.x).toBeLessThan(0);
+    expect(main.points[main.points.length - 1]?.x).toBeGreaterThan(
+      RAINBOW_MEADOW_LAYOUT.bounds.width,
+    );
+    expect(
+      main.points.some((point) => point.x === RAINBOW_MEADOW_LAYOUT.sunbeamGateway.position.x),
+    ).toBe(true);
+    expect(
+      main.points.some(
+        (point) => point.x === RAINBOW_MEADOW_LAYOUT.hubFeatures.rainbowRunEntrance.position.x,
+      ),
+    ).toBe(true);
+  });
+
+  it('keeps every local spur narrower than the main road', () => {
+    const main = RAINBOW_MEADOW_LAYOUT.structuralPaths.find(({ id }) => id === 'main-route');
+    expect(main).toBeDefined();
+    if (!main) {
+      return;
+    }
+
+    expect(
+      RAINBOW_MEADOW_LAYOUT.structuralPaths
+        .filter(({ id }) => id !== 'main-route')
+        .every(
+          ({ outerWidth, innerWidth }) =>
+            outerWidth < main.outerWidth && innerWidth < main.innerWidth,
+        ),
+    ).toBe(true);
+  });
+
+  it('routes the Crystal Brook spur clear of the ribbon board', () => {
+    const crystal = RAINBOW_MEADOW_LAYOUT.structuralPaths.find(
+      ({ id }) => id === 'crystal-brook-spur',
+    );
+    expect(crystal).toBeDefined();
+    if (!crystal) {
+      return;
+    }
+
+    const board = RAINBOW_MEADOW_LAYOUT.hubFeatures.ribbonBoard.position;
+    const expandedBoard = {
+      left: board.x - 206,
+      right: board.x + 206,
+      top: board.y - 99,
+      bottom: board.y + 99,
+    };
+    expect(
+      crystal.points.some(
+        ({ x, y }) =>
+          x >= expandedBoard.left &&
+          x <= expandedBoard.right &&
+          y >= expandedBoard.top &&
+          y <= expandedBoard.bottom,
+      ),
+    ).toBe(false);
+  });
+
+  it('absorbs the current Crystal Brook approach into the canonical path owner', () => {
+    const crystal = RAINBOW_MEADOW_LAYOUT.structuralPaths.find(
+      ({ id }) => id === 'crystal-brook-spur',
+    );
+    expect(crystal).toBeDefined();
+    if (!crystal) {
+      return;
+    }
+
+    expect(crystal.points[crystal.points.length - 1]).toEqual(
+      RAINBOW_MEADOW_LAYOUT.crystalBrookRoute.transitionPosition,
     );
   });
 
