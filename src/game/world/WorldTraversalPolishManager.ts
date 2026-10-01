@@ -1,16 +1,8 @@
 import Phaser from 'phaser';
 import { getBrowserSaveService } from '../save/browserSaveService';
-import {
-  MOONFLOWER_GLADE_LOCATION_ID,
-  saveLocationCheckpoint,
-} from '../save/saveLocationCheckpoint';
-import { MOONFLOWER_GLADE_MAP, setMoonflowerGladePlayerSpawn } from './MoonflowerGladeMap';
-import {
-  RAINBOW_MEADOW_LAYOUT,
-  RAINBOW_MEADOW_LOCATION_ID,
-  RAINBOW_MEADOW_MAP,
-  setRainbowMeadowPlayerSpawn,
-} from './RainbowMeadowMap';
+import { saveLocationCheckpoint } from '../save/saveLocationCheckpoint';
+import { MOONFLOWER_GLADE_MAP } from './MoonflowerGladeMap';
+import { RAINBOW_MEADOW_LAYOUT, RAINBOW_MEADOW_MAP } from './RainbowMeadowMap';
 import {
   setSunbeamVillagePlayerSpawn,
   SUNBEAM_VILLAGE_LOCATION_ID,
