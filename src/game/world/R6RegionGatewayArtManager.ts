@@ -250,24 +250,14 @@ function createMeadowCrystalBrookDescent(scene: Phaser.Scene): void {
     );
     name(
       scene.add
-        .ellipse(
-          terrace.x,
-          terrace.y,
-          terrace.width,
-          terrace.height,
-          terrace.colour,
-          terrace.alpha,
-        )
+        .ellipse(terrace.x, terrace.y, terrace.width, terrace.height, terrace.colour, terrace.alpha)
         .setStrokeStyle(3, 0x70817b, 0.18 + index * 0.06)
         .setDepth(2.2 + index * 0.01),
       `meadow-crystal-brook:descent-terrace:${index}`,
     );
   }
 
-  const ledges = name(
-    scene.add.graphics().setDepth(2.47),
-    'meadow-crystal-brook:descent-ledges',
-  );
+  const ledges = name(scene.add.graphics().setDepth(2.47), 'meadow-crystal-brook:descent-ledges');
   for (const [index, ledge] of descent.ledges.entries()) {
     const halfWidth = ledge.width / 2;
     ledges.lineStyle(9, 0x586c6b, 0.2 + index * 0.06);
