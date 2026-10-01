@@ -124,8 +124,8 @@
                   "path": "illustrations/generated/mysterious-shoes.webp",
                   "alt": "The shoemaker and his wife discover a beautifully finished pair of shoes waiting on the workbench in the warm morning light.",
                   "placement": "full-width",
-                  "width": 1536,
-                  "height": 1024,
+                  "width": 764,
+                  "height": 506,
                   "caption": "Modern Story House illustration."
                 },
                 {
@@ -134,8 +134,8 @@
                   "path": "illustrations/generated/midnight-secret.webp",
                   "alt": "Two tiny elves work rapidly at the shoemaker's bench at midnight while the shoemaker and his wife secretly watch from behind a curtain.",
                   "placement": "full-width",
-                  "width": 1536,
-                  "height": 1024,
+                  "width": 764,
+                  "height": 506,
                   "caption": "Modern Story House illustration."
                 },
                 {
@@ -145,7 +145,7 @@
                   "alt": "The two delighted elves dance in their new tiny clothes and polished shoes while the shoemaker and his wife watch from hiding.",
                   "placement": "full-width",
                   "width": 1536,
-                  "height": 1024,
+                  "height": 506,
                   "caption": "Modern Story House illustration."
                 }
               ]
