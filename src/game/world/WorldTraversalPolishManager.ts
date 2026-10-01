@@ -68,7 +68,10 @@ function drawRoundedStroke(
 }
 
 function drawPathNetwork(scene: Phaser.Scene, strokes: readonly PathStroke[]): void {
-  const graphics = markDetail(scene.add.graphics().setDepth(2.45));
+  const graphics = scene.add
+    .graphics()
+    .setName('rainbow-meadow:path-network')
+    .setDepth(2.45);
 
   for (const stroke of strokes) {
     drawRoundedStroke(graphics, stroke.points, stroke.outerWidth, 0xd7c18f);
