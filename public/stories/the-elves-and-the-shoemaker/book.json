@@ -9,14 +9,28 @@
     "alt": "Historic illustration of the elves helping the shoemaker."
   },
   "series": null,
-  "tags": ["classic-retelling", "fairy-tale", "elves", "kindness", "gratitude", "illustrated"],
+  "tags": [
+    "classic-retelling",
+    "fairy-tale",
+    "elves",
+    "kindness",
+    "gratitude",
+    "illustrated"
+  ],
   "publication": {
     "status": "published"
   },
   "discovery": {
     "format": "Picture Book",
-    "genres": ["Fantasy", "Classics"],
-    "audiences": ["Read Together", "Early Reader", "Independent Reader"],
+    "genres": [
+      "Fantasy",
+      "Classics"
+    ],
+    "audiences": [
+      "Read Together",
+      "Early Reader",
+      "Independent Reader"
+    ],
     "length": "Quick Read"
   },
   "defaultEditionId": "story-house",
@@ -44,33 +58,97 @@
           "source": "Unicorn Valley Story House edition"
         },
         "originalPublicationYear": 1812,
-        "curatorNotes": "Age-appropriate Story House retelling with verified public-domain historical illustrations."
+        "curatorNotes": "Age-appropriate Story House retelling with verified public-domain historical illustrations preserved as the Classic Illustrations set. R6.5-WP19SH1.3.3 adds a separate generated Modern Illustrations set without changing the Full Classic Text edition."
       },
       "chapters": [
         {
           "id": "midnight-helpers",
           "title": "The Elves and the Shoemaker",
-          "path": "chapters/01.md",
-          "illustrations": [
+          "path": "chapters/01.md"
+        }
+      ],
+      "defaultIllustrationSetId": "modern",
+      "illustrationSets": [
+        {
+          "id": "classic",
+          "label": "Classic Illustrations",
+          "rights": {
+            "status": "public-domain",
+            "source": "Otto Ubbelohde (1909) and George Cruikshank (1876) historical illustrations",
+            "sourceUrl": "https://commons.wikimedia.org/wiki/Category:The_Elves_and_the_Shoemaker",
+            "notes": "Both selected source files are marked public domain on Wikimedia Commons."
+          },
+          "chapters": [
             {
-              "id": "ubbelohde-elves",
-              "blockId": "mysterious-help",
-              "path": "illustrations/ubbelohde-elves.webp",
-              "alt": "Otto Ubbelohde's 1909 illustration of the elves at the shoemaker's workbench.",
-              "placement": "full-width",
-              "width": 420,
-              "height": 400,
-              "caption": "Illustration by Otto Ubbelohde, 1909."
-            },
+              "chapterId": "midnight-helpers",
+              "illustrations": [
+                {
+                  "id": "ubbelohde-elves",
+                  "blockId": "mysterious-help",
+                  "path": "illustrations/ubbelohde-elves.webp",
+                  "alt": "Otto Ubbelohde's 1909 illustration of the elves at the shoemaker's workbench.",
+                  "placement": "full-width",
+                  "width": 420,
+                  "height": 400,
+                  "caption": "Illustration by Otto Ubbelohde, 1909."
+                },
+                {
+                  "id": "cruikshank-elves",
+                  "blockId": "thank-you-gifts",
+                  "path": "illustrations/cruikshank-elves.webp",
+                  "alt": "George Cruikshank's historic illustration for The Elves and the Shoemaker.",
+                  "placement": "full-width",
+                  "width": 700,
+                  "height": 831,
+                  "caption": "Illustration by George Cruikshank, 1876 edition."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "modern",
+          "label": "Modern Illustrations",
+          "rights": {
+            "status": "original",
+            "source": "ChatGPT-generated artwork created for the Unicorn Valley Story House modern illustration set",
+            "notes": "Generated for R6.5-WP19SH1.3.3 and materialised through the approved Google Drive → WIF → GitHub Actions pipeline."
+          },
+          "chapters": [
             {
-              "id": "cruikshank-elves",
-              "blockId": "thank-you-gifts",
-              "path": "illustrations/cruikshank-elves.webp",
-              "alt": "George Cruikshank's historic illustration for The Elves and the Shoemaker.",
-              "placement": "full-width",
-              "width": 700,
-              "height": 831,
-              "caption": "Illustration by George Cruikshank, 1876 edition."
+              "chapterId": "midnight-helpers",
+              "illustrations": [
+                {
+                  "id": "modern-mysterious-shoes",
+                  "blockId": "mysterious-help",
+                  "path": "illustrations/generated/mysterious-shoes.webp",
+                  "alt": "The shoemaker and his wife discover a beautifully finished pair of shoes waiting on the workbench in the warm morning light.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-midnight-secret",
+                  "blockId": "midnight-secret",
+                  "path": "illustrations/generated/midnight-secret.webp",
+                  "alt": "Two tiny elves work rapidly at the shoemaker's bench at midnight while the shoemaker and his wife secretly watch from behind a curtain.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-thank-you-gifts",
+                  "blockId": "thank-you-gifts",
+                  "path": "illustrations/generated/thank-you-gifts.webp",
+                  "alt": "The two delighted elves dance in their new tiny clothes and polished shoes while the shoemaker and his wife watch from hiding.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
             }
           ]
         }
