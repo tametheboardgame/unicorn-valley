@@ -173,6 +173,7 @@ export const RAINBOW_MEADOW_LAYOUT = {
     approach: { x: 3060, y: 1820 },
     direction: 'east',
   },
+  // H4.4 keeps the rocky descent close to the route while leaving a clear walkable centre line.
   crystalBrookDescent: {
     terraces: [
       { x: 2430, y: 1620, width: 430, height: 190, colour: 0x9eaf8c, alpha: 0.18 },
