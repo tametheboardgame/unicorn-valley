@@ -36,9 +36,8 @@ async function waitForDiagnostics(page: Page): Promise<void> {
 
 async function snapshot(page: Page): Promise<DiagnosticSnapshot> {
   return page.evaluate(() => {
-    const api = (
-      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi }
-    ).__UNICORN_VALLEY_DIAGNOSTICS__;
+    const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
+      .__UNICORN_VALLEY_DIAGNOSTICS__;
     if (!api) {
       throw new Error('Browser diagnostics are unavailable.');
     }
@@ -56,9 +55,8 @@ async function sceneSnapshot(page: Page, sceneKey: string): Promise<DiagnosticSc
 
 async function waitForScene(page: Page, sceneKey: string): Promise<void> {
   await page.waitForFunction((expected) => {
-    const api = (
-      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi }
-    ).__UNICORN_VALLEY_DIAGNOSTICS__;
+    const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
+      .__UNICORN_VALLEY_DIAGNOSTICS__;
     return api?.snapshot().activeScenes.includes(expected) === true;
   }, sceneKey);
 }
@@ -66,9 +64,8 @@ async function waitForScene(page: Page, sceneKey: string): Promise<void> {
 async function positionPlayer(page: Page, sceneKey: string, x: number, y: number): Promise<void> {
   await page.evaluate(
     ({ key, targetX, targetY }) => {
-      const api = (
-        window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi }
-      ).__UNICORN_VALLEY_DIAGNOSTICS__;
+      const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
+        .__UNICORN_VALLEY_DIAGNOSTICS__;
       if (!api) {
         throw new Error('Browser diagnostics are unavailable.');
       }
@@ -84,9 +81,8 @@ test('H4.4 makes Crystal Brook a rocky descending canonical Meadow threshold', a
   await waitForScene(page, 'RainbowMeadowScene');
 
   await page.waitForFunction(() => {
-    const api = (
-      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi }
-    ).__UNICORN_VALLEY_DIAGNOSTICS__;
+    const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
+      .__UNICORN_VALLEY_DIAGNOSTICS__;
     const meadow = api?.snapshot().scenes.find(({ key }) => key === 'RainbowMeadowScene');
     return meadow?.objects.some(
       ({ name, visible }) =>
@@ -102,18 +98,21 @@ test('H4.4 makes Crystal Brook a rocky descending canonical Meadow threshold', a
   expect(cave?.y).toBeCloseTo(MEADOW_GATE.y, 0);
 
   expect(
-    meadow.objects.filter(({ name, visible }) =>
-      name.startsWith('r6-region-gateway-art:meadow-crystal-brook:descent-terrace:') && visible,
+    meadow.objects.filter(
+      ({ name, visible }) =>
+        name.startsWith('r6-region-gateway-art:meadow-crystal-brook:descent-terrace:') && visible,
     ),
   ).toHaveLength(3);
   expect(
-    meadow.objects.filter(({ name, visible }) =>
-      name.startsWith('r6-region-gateway-art:meadow-crystal-brook:descent-rock:') && visible,
+    meadow.objects.filter(
+      ({ name, visible }) =>
+        name.startsWith('r6-region-gateway-art:meadow-crystal-brook:descent-rock:') && visible,
     ).length,
   ).toBeGreaterThanOrEqual(8);
   expect(
-    meadow.objects.filter(({ name, visible }) =>
-      name.startsWith('r6-region-gateway-art:meadow-crystal-brook:descent-crystal:') && visible,
+    meadow.objects.filter(
+      ({ name, visible }) =>
+        name.startsWith('r6-region-gateway-art:meadow-crystal-brook:descent-crystal:') && visible,
     ).length,
   ).toBeGreaterThanOrEqual(4);
 
