@@ -102,13 +102,20 @@ The same small workshop should remain recognisable throughout:
 
 ## Illustration-set contract
 
-For the **Story House Edition** only:
+For the **Story House Edition**:
 
 - existing Ubbelohde / Cruikshank files become the `classic` illustration set;
 - generated files become the `modern` illustration set;
 - default illustration set: `modern`;
-- historic files and provenance remain untouched;
-- the Full Classic Text edition keeps its existing historic illustration mapping unchanged.
+- historic files and provenance remain untouched.
+
+For the **Full Classic Text** edition:
+
+- the existing Walter Crane / Ubbelohde / Cruikshank mapping becomes the `classic` illustration set;
+- the same three generated files are reused as the `modern` illustration set;
+- the generated files are mapped to `p01-b01`, `p03-b03` and `p05-b02` so they sit beside the matching Lucy Crane passages;
+- default illustration set: `classic`;
+- text edition and illustration set remain independent, allowing Full Classic Text + Modern Illustrations without duplicating prose or image files.
 
 ## Human gate
 
