@@ -9,14 +9,28 @@
     "alt": "Historic illustration of the elves helping the shoemaker."
   },
   "series": null,
-  "tags": ["classic-retelling", "fairy-tale", "elves", "kindness", "gratitude", "illustrated"],
+  "tags": [
+    "classic-retelling",
+    "fairy-tale",
+    "elves",
+    "kindness",
+    "gratitude",
+    "illustrated"
+  ],
   "publication": {
     "status": "published"
   },
   "discovery": {
     "format": "Picture Book",
-    "genres": ["Fantasy", "Classics"],
-    "audiences": ["Read Together", "Early Reader", "Independent Reader"],
+    "genres": [
+      "Fantasy",
+      "Classics"
+    ],
+    "audiences": [
+      "Read Together",
+      "Early Reader",
+      "Independent Reader"
+    ],
     "length": "Quick Read"
   },
   "defaultEditionId": "story-house",
@@ -164,25 +178,13 @@
           "notes": "Story House pagination changes presentation only; the historical translation wording remains complete."
         },
         "originalPublicationYear": 1812,
-        "curatorNotes": "Complete Lucy Crane shoemaker story reflowed into 5 reader pages at paragraph boundaries, with three historical illustrations placed at matching story moments."
+        "curatorNotes": "Complete Lucy Crane shoemaker story reflowed into 5 reader pages at paragraph boundaries. The historic artwork is preserved as Classic Illustrations, while the approved SH1.3.3 generated artwork can be selected independently as Modern Illustrations against matching classic-text passages."
       },
       "chapters": [
         {
           "id": "page-01",
           "title": "The Elves and the Shoemaker",
-          "path": "editions/full-classic/pages/page-01.md",
-          "illustrations": [
-            {
-              "id": "full-crane-headpiece",
-              "blockId": "p01-b01",
-              "path": "illustrations/full-classic/walter-crane-headpiece.webp",
-              "alt": "Walter Crane's illustrated title headpiece for The Elves.",
-              "placement": "full-width",
-              "width": 640,
-              "height": 145,
-              "caption": "Illustration by Walter Crane, 1886."
-            }
-          ]
+          "path": "editions/full-classic/pages/page-01.md"
         },
         {
           "id": "page-02",
@@ -192,41 +194,133 @@
         {
           "id": "page-03",
           "title": "The Elves and the Shoemaker (continued)",
-          "path": "editions/full-classic/pages/page-03.md",
-          "illustrations": [
-            {
-              "id": "full-ubbelohde-elves",
-              "blockId": "p03-b03",
-              "path": "illustrations/ubbelohde-elves.webp",
-              "alt": "Otto Ubbelohde's 1909 illustration of the elves at the shoemaker's workbench.",
-              "placement": "full-width",
-              "width": 420,
-              "height": 400,
-              "caption": "Illustration by Otto Ubbelohde, 1909."
-            }
-          ]
+          "path": "editions/full-classic/pages/page-03.md"
         },
         {
           "id": "page-04",
           "title": "The Elves and the Shoemaker (continued)",
-          "path": "editions/full-classic/pages/page-04.md",
-          "illustrations": [
-            {
-              "id": "full-cruikshank-elves",
-              "blockId": "p04-b01",
-              "path": "illustrations/cruikshank-elves.webp",
-              "alt": "George Cruikshank's historic illustration for The Elves and the Shoemaker.",
-              "placement": "full-width",
-              "width": 700,
-              "height": 831,
-              "caption": "Illustration by George Cruikshank, 1876 edition."
-            }
-          ]
+          "path": "editions/full-classic/pages/page-04.md"
         },
         {
           "id": "page-05",
           "title": "The Elves and the Shoemaker (continued)",
           "path": "editions/full-classic/pages/page-05.md"
+        }
+      ],
+      "defaultIllustrationSetId": "classic",
+      "illustrationSets": [
+        {
+          "id": "classic",
+          "label": "Classic Illustrations",
+          "rights": {
+            "status": "public-domain",
+            "source": "Historical illustrations by Walter Crane (1886), Otto Ubbelohde (1909) and George Cruikshank",
+            "sourceUrl": "https://www.gutenberg.org/cache/epub/19068/pg19068-images.html",
+            "notes": "The Walter Crane headpiece from the Lucy Crane source edition is included, together with the two previously verified historical Story House illustrations, placed beside their matching passages."
+          },
+          "chapters": [
+            {
+              "chapterId": "page-01",
+              "illustrations": [
+                {
+                  "id": "full-crane-headpiece",
+                  "blockId": "p01-b01",
+                  "path": "illustrations/full-classic/walter-crane-headpiece.webp",
+                  "alt": "Walter Crane's illustrated title headpiece for The Elves.",
+                  "placement": "full-width",
+                  "width": 640,
+                  "height": 145,
+                  "caption": "Illustration by Walter Crane, 1886."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-03",
+              "illustrations": [
+                {
+                  "id": "full-ubbelohde-elves",
+                  "blockId": "p03-b03",
+                  "path": "illustrations/ubbelohde-elves.webp",
+                  "alt": "Otto Ubbelohde's 1909 illustration of the elves at the shoemaker's workbench.",
+                  "placement": "full-width",
+                  "width": 420,
+                  "height": 400,
+                  "caption": "Illustration by Otto Ubbelohde, 1909."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-04",
+              "illustrations": [
+                {
+                  "id": "full-cruikshank-elves",
+                  "blockId": "p04-b01",
+                  "path": "illustrations/cruikshank-elves.webp",
+                  "alt": "George Cruikshank's historic illustration for The Elves and the Shoemaker.",
+                  "placement": "full-width",
+                  "width": 700,
+                  "height": 831,
+                  "caption": "Illustration by George Cruikshank, 1876 edition."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "modern",
+          "label": "Modern Illustrations",
+          "rights": {
+            "status": "original",
+            "source": "ChatGPT-generated artwork created for the Unicorn Valley Story House modern illustration set",
+            "notes": "The same R6.5-WP19SH1.3.3 generated artwork is reused against matching Full Classic Text passages; only the semantic page/block mapping differs."
+          },
+          "chapters": [
+            {
+              "chapterId": "page-01",
+              "illustrations": [
+                {
+                  "id": "full-modern-mysterious-shoes",
+                  "blockId": "p01-b01",
+                  "path": "illustrations/generated/mysterious-shoes.webp",
+                  "alt": "The shoemaker and his wife discover a beautifully finished pair of shoes waiting on the workbench in the warm morning light.",
+                  "placement": "full-width",
+                  "width": 764,
+                  "height": 506,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-03",
+              "illustrations": [
+                {
+                  "id": "full-modern-midnight-secret",
+                  "blockId": "p03-b03",
+                  "path": "illustrations/generated/midnight-secret.webp",
+                  "alt": "Two tiny elves work rapidly at the shoemaker's bench at midnight while the shoemaker and his wife secretly watch from hiding.",
+                  "placement": "full-width",
+                  "width": 764,
+                  "height": 506,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-05",
+              "illustrations": [
+                {
+                  "id": "full-modern-thank-you-gifts",
+                  "blockId": "p05-b02",
+                  "path": "illustrations/generated/thank-you-gifts.webp",
+                  "alt": "The two delighted elves dance in their new tiny clothes and polished shoes while the shoemaker and his wife watch with joy.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 506,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            }
+          ]
         }
       ]
     }
