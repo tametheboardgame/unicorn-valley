@@ -9,7 +9,7 @@ export interface MeadowEntrance {
   label: string;
   position: MapPoint;
   approach: MapPoint;
-  direction: 'west';
+  direction: 'west' | 'east';
 }
 
 export interface MeadowHubFeature {
@@ -166,6 +166,41 @@ export const RAINBOW_MEADOW_LAYOUT = {
     approach: { x: 330, y: 1050 },
     direction: 'west',
   },
+  crystalBrookGateway: {
+    id: 'crystal-brook',
+    label: 'Crystal Brook',
+    position: { x: 3290, y: 1900 },
+    approach: { x: 3060, y: 1820 },
+    direction: 'east',
+  },
+  crystalBrookDescent: {
+    terraces: [
+      { x: 2430, y: 1620, width: 430, height: 190, colour: 0x9eaf8c, alpha: 0.18 },
+      { x: 2740, y: 1740, width: 500, height: 220, colour: 0x89998d, alpha: 0.25 },
+      { x: 3070, y: 1850, width: 560, height: 250, colour: 0x70827d, alpha: 0.34 },
+    ],
+    rocks: [
+      { x: 2420, y: 1515, width: 94, height: 58, colour: 0x7e8984 },
+      { x: 2550, y: 1855, width: 86, height: 52, colour: 0x778580 },
+      { x: 2710, y: 1645, width: 112, height: 66, colour: 0x71807d },
+      { x: 2860, y: 1925, width: 104, height: 60, colour: 0x687a78 },
+      { x: 3020, y: 1715, width: 128, height: 76, colour: 0x617472 },
+      { x: 3160, y: 1980, width: 118, height: 66, colour: 0x5d706f },
+      { x: 3260, y: 1770, width: 154, height: 92, colour: 0x596c6d },
+      { x: 3290, y: 1990, width: 150, height: 82, colour: 0x53676a },
+    ],
+    crystals: [
+      { x: 2860, y: 1685, scale: 0.55 },
+      { x: 3095, y: 1760, scale: 0.72 },
+      { x: 3210, y: 1840, scale: 0.9 },
+      { x: 3270, y: 1955, scale: 0.66 },
+    ],
+    ledges: [
+      { x: 2660, y: 1715, width: 170 },
+      { x: 2910, y: 1800, width: 150 },
+      { x: 3140, y: 1875, width: 126 },
+    ],
+  },
   raceHub: {
     x: 2670,
     y: 1080,
@@ -271,32 +306,19 @@ export const RAINBOW_MEADOW_LAYOUT = {
       id: 'crystal-brook-spur',
       points: [
         { x: 2050, y: 1045 },
-        { x: 2100, y: 1260 },
-        { x: 2160, y: 1480 },
-        { x: 2300, y: 1640 },
-        { x: 2490, y: 1780 },
-        { x: 2760, y: 1840 },
-        { x: 3030, y: 1750 },
+        { x: 2110, y: 1270 },
+        { x: 2200, y: 1470 },
+        { x: 2350, y: 1620 },
+        { x: 2540, y: 1730 },
+        { x: 2790, y: 1790 },
+        { x: 3060, y: 1820 },
+        { x: 3290, y: 1900 },
+        { x: 3500, y: 1940 },
       ],
       outerWidth: 92,
       innerWidth: 64,
     },
   ] satisfies readonly RainbowMeadowPathStroke[],
-  // H4.4 owns canonicalising the functional Crystal Brook transition.
-  // H4.1 retains these coordinates only as planning data for the later rebuild.
-  crystalBrookRoute: {
-    transitionPosition: { x: 3030, y: 1750 },
-    pathPoints: [
-      { x: 1900, y: 1040 },
-      { x: 1970, y: 1220 },
-      { x: 2050, y: 1420 },
-      { x: 2170, y: 1580 },
-      { x: 2320, y: 1720 },
-      { x: 2490, y: 1840 },
-      { x: 2760, y: 1870 },
-      { x: 3030, y: 1750 },
-    ] satisfies readonly MapPoint[],
-  },
 } as const;
 
 const DEFAULT_PLAYER_SPAWN = RAINBOW_MEADOW_LAYOUT.sunbeamGateway.approach;
@@ -321,7 +343,10 @@ export const RAINBOW_MEADOW_MAP = {
   margin: RAINBOW_MEADOW_LAYOUT.bounds.margin,
   playerSpawn,
   raceHub: RAINBOW_MEADOW_LAYOUT.raceHub,
-  entrances: [RAINBOW_MEADOW_LAYOUT.sunbeamGateway] satisfies readonly MeadowEntrance[],
+  entrances: [
+    RAINBOW_MEADOW_LAYOUT.sunbeamGateway,
+    RAINBOW_MEADOW_LAYOUT.crystalBrookGateway,
+  ] satisfies readonly MeadowEntrance[],
   hubFeatures: [
     RAINBOW_MEADOW_LAYOUT.hubFeatures.rainbowRunEntrance,
     RAINBOW_MEADOW_LAYOUT.hubFeatures.ribbonBoard,
@@ -373,6 +398,8 @@ export const RAINBOW_MEADOW_MAP = {
     { id: 'collision:ribbon-board', x: 2510, y: 1430, width: 300, height: 85 },
     { id: 'collision:race-post-north', x: 3190, y: 900, width: 70, height: 180 },
     { id: 'collision:race-post-south', x: 3190, y: 1180, width: 70, height: 180 },
+    { id: 'collision:crystal-brook-threshold-upper', x: 3260, y: 1770, width: 154, height: 92 },
+    { id: 'collision:crystal-brook-threshold-lower', x: 3290, y: 1990, width: 150, height: 82 },
   ] satisfies readonly CollisionRectangle[],
 } as const;
 
