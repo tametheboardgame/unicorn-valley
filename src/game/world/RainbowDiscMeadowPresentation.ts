@@ -130,8 +130,17 @@ export function createRainbowDiscMeadowPresentation(scene: Phaser.Scene): void {
     .setOrigin(0.5)
     .setDepth(signDepth + 0.05);
 
+  const movementOffsets = [
+    { x: 34, y: 16 },
+    { x: 72, y: -34 },
+    { x: 58, y: 46 },
+    { x: -76, y: -38 },
+    { x: -58, y: 42 },
+  ] as const;
+
   const sprites = layout.players.map((player, index) => {
-    const appearance = RAINBOW_DISC_PLAYER_APPEARANCES[index] ?? RAINBOW_DISC_PLAYER_APPEARANCES[0];
+    const appearance =
+      RAINBOW_DISC_PLAYER_APPEARANCES[index] ?? RAINBOW_DISC_PLAYER_APPEARANCES[0];
     const sprite = createResidentAppearanceSprite(
       scene,
       `rainbow-disc-player:${player.id}:idle`,
@@ -141,23 +150,27 @@ export function createRainbowDiscMeadowPresentation(scene: Phaser.Scene): void {
       .setPosition(player.x, player.y)
       .setDepth(worldDepthForY(player.y + 48, 0.18));
 
+    const movement = movementOffsets[index] ?? movementOffsets[0];
     scene.tweens.add({
       targets: sprite,
-      y: player.y - (index % 2 === 0 ? 4 : 6),
-      duration: 1100 + index * 130,
+      x: player.x + movement.x,
+      y: player.y + movement.y,
+      duration: 1800 + index * 220,
       yoyo: true,
       repeat: -1,
+      delay: index * 160,
       ease: 'Sine.InOut',
+      onYoyo: () => sprite.setFlipX(movement.x > 0),
+      onRepeat: () => sprite.setFlipX(movement.x < 0),
+      onUpdate: () => sprite.setDepth(worldDepthForY(sprite.y + 48, 0.18)),
     });
     return sprite;
   });
 
-  const captain = sprites[0];
   scene.add
     .ellipse(layout.captain.x, layout.captain.y + 52, 116, 26, 0x587f5d, 0.16)
     .setName('rainbow-disc:captain-shadow')
     .setDepth(worldDepthForY(layout.captain.y + 55, -0.18));
-  captain?.setScale(1.04);
 
   const disc = scene.add
     .ellipse(layout.discRoute[0].x, layout.discRoute[0].y, 34, 12, 0xfff3bd, 1)
