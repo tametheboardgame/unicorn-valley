@@ -342,3 +342,38 @@
     transition: none;
   }
 }
+
+
+@media (pointer: coarse) and (max-width: 900px) and (orientation: landscape) and (max-height: 480px) {
+  .title-portrait-card {
+    padding: 9px 12px;
+  }
+
+  .title-portrait-heading {
+    font-size: 18px;
+  }
+
+  .title-portrait-subtitle {
+    margin: 3px 0 5px;
+    font-size: 12px;
+    line-height: 1.1;
+  }
+
+  .title-portrait-actions {
+    gap: 4px;
+  }
+
+  .title-portrait-button {
+    min-height: 48px;
+    padding: 5px 10px;
+    font-size: 15px;
+  }
+
+  .title-portrait-status {
+    min-height: 28px;
+    margin-top: 5px;
+    padding: 4px 8px;
+    font-size: 11px;
+    line-height: 1.15;
+  }
+}
