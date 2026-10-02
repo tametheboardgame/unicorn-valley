@@ -23,39 +23,7 @@
     {
       "id": "the-two-mice",
       "title": "The Town Mouse and the Country Mouse",
-      "path": "chapters/01.md",
-      "illustrations": [
-        {
-          "id": "country-visit",
-          "blockId": "country-welcome",
-          "path": "illustrations/country.webp",
-          "alt": "Richard Heighway's illustration of the country mouse welcoming the town mouse.",
-          "placement": "inline",
-          "width": 435,
-          "height": 600,
-          "caption": "Illustration by Richard Heighway."
-        },
-        {
-          "id": "town-feast",
-          "blockId": "town-feast",
-          "path": "illustrations/feast.webp",
-          "alt": "Richard Heighway's illustration of the mice at the town feast.",
-          "placement": "full-width",
-          "width": 800,
-          "height": 173,
-          "caption": "Illustration by Richard Heighway."
-        },
-        {
-          "id": "danger-at-dinner",
-          "blockId": "danger-at-dinner",
-          "path": "illustrations/danger.webp",
-          "alt": "Richard Heighway's illustration of the mice fleeing danger in the town house.",
-          "placement": "full-width",
-          "width": 800,
-          "height": 186,
-          "caption": "Illustration by Richard Heighway."
-        }
-      ]
+      "path": "chapters/01.md"
     }
   ],
   "discovery": {
@@ -83,6 +51,102 @@
       "sourceUrl": "https://www.gutenberg.org/ebooks/28"
     },
     "originalPublicationYear": 1894,
-    "curatorNotes": "Story House edition preserves the Jacobs text and Heighway illustrations while using the existing responsive Story Library reader."
-  }
+    "curatorNotes": "Story House preserves the Joseph Jacobs text and Richard Heighway artwork as the Classic Illustrations set. R6.5-WP19SH1.3.2 adds a separate Modern Illustrations set without replacing the historic source files."
+  },
+  "defaultIllustrationSetId": "modern",
+  "illustrationSets": [
+    {
+      "id": "classic",
+      "label": "Classic Illustrations",
+      "rights": {
+        "status": "public-domain",
+        "source": "Richard Heighway illustrations from The Fables of Aesop",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/Category:The_Fables_of_%C3%86sop_(Jacobs,_Heighway)/The_Town_Mouse_and_the_Country_Mouse",
+        "notes": "Wikimedia Commons marks these Heighway illustrations public domain. Heighway died in 1917."
+      },
+      "chapters": [
+        {
+          "chapterId": "the-two-mice",
+          "illustrations": [
+            {
+              "id": "country-visit",
+              "blockId": "country-welcome",
+              "path": "illustrations/country.webp",
+              "alt": "Richard Heighway's illustration of the country mouse welcoming the town mouse.",
+              "placement": "inline",
+              "width": 435,
+              "height": 600,
+              "caption": "Illustration by Richard Heighway."
+            },
+            {
+              "id": "town-feast",
+              "blockId": "town-feast",
+              "path": "illustrations/feast.webp",
+              "alt": "Richard Heighway's illustration of the mice at the town feast.",
+              "placement": "full-width",
+              "width": 800,
+              "height": 173,
+              "caption": "Illustration by Richard Heighway."
+            },
+            {
+              "id": "danger-at-dinner",
+              "blockId": "danger-at-dinner",
+              "path": "illustrations/danger.webp",
+              "alt": "Richard Heighway's illustration of the mice fleeing danger in the town house.",
+              "placement": "full-width",
+              "width": 800,
+              "height": 186,
+              "caption": "Illustration by Richard Heighway."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "modern",
+      "label": "Modern Illustrations",
+      "rights": {
+        "status": "original",
+        "source": "ChatGPT-generated artwork created for the Unicorn Valley Story House modern illustration set",
+        "notes": "Generated for R6.5-WP19SH1.3.2 and materialised through the approved Google Drive → WIF → GitHub Actions pipeline."
+      },
+      "chapters": [
+        {
+          "chapterId": "the-two-mice",
+          "illustrations": [
+            {
+              "id": "modern-country-welcome",
+              "blockId": "country-welcome",
+              "path": "illustrations/generated/country-welcome.webp",
+              "alt": "Country Mouse warmly welcomes the slimmer grey-brown Town Mouse to a simple supper in a rustic country home.",
+              "placement": "full-width",
+              "width": 1536,
+              "height": 338,
+              "caption": "Modern Story House illustration."
+            },
+            {
+              "id": "modern-town-feast-danger",
+              "blockId": "town-feast",
+              "path": "illustrations/generated/town-feast-danger.webp",
+              "alt": "The two mice are startled during a lavish feast in a grand town dining room as danger appears at the doorway.",
+              "placement": "full-width",
+              "width": 1536,
+              "height": 345,
+              "caption": "Modern Story House illustration."
+            },
+            {
+              "id": "modern-peaceful-ending",
+              "blockId": "danger-at-dinner",
+              "path": "illustrations/generated/peaceful-ending.webp",
+              "alt": "The two mice share a modest meal in the peaceful countryside at sunset, reflecting the story's preference for safety over luxury.",
+              "placement": "full-width",
+              "width": 1536,
+              "height": 333,
+              "caption": "Modern Story House illustration."
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }
