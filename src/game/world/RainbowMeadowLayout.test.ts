@@ -275,6 +275,27 @@ describe('Rainbow Meadow canonical layout', () => {
     });
   });
 
+  it('keeps relocated Rainbow Run interaction anchors separated', () => {
+    const targets = [
+      { position: RAINBOW_MEADOW_LAYOUT.raceHubPresentation.runPoster, radius: 145 },
+      { position: RAINBOW_MEADOW_LAYOUT.hubFeatures.ribbonBoard.approach, radius: 150 },
+      { position: RAINBOW_MEADOW_LAYOUT.raceHubPresentation.cupBoard.approach, radius: 150 },
+    ];
+
+    for (let index = 0; index < targets.length; index += 1) {
+      for (let otherIndex = index + 1; otherIndex < targets.length; otherIndex += 1) {
+        const current = targets[index];
+        const other = targets[otherIndex];
+        expect(
+          Math.hypot(
+            current.position.x - other.position.x,
+            current.position.y - other.position.y,
+          ),
+        ).toBeGreaterThan(current.radius + other.radius);
+      }
+    }
+  });
+
   it('keeps relocated Rainbow Run clear of tree and flower scenery', () => {
     const race = RAINBOW_MEADOW_LAYOUT.districts.find(({ id }) => id === 'rainbow-run');
     expect(race).toBeDefined();
