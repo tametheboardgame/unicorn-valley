@@ -229,30 +229,37 @@ export class WindmillLookoutScene extends Phaser.Scene {
     }
     hub.setDepth(3);
 
-    this.add
-      .text(330, 305, '♫', {
-        color: '#fff6ce',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '38px',
-      })
-      .setOrigin(0.5)
-      .setName('windmill-lookout:chimes');
+    const chimes = this.add
+      .graphics()
+      .setName('windmill-lookout:chimes')
+      .setDepth(5);
+    chimes.lineStyle(3, 0x8a664d, 0.92);
+    chimes.lineBetween(298, 265, 362, 265);
+    for (const [x, length] of [
+      [308, 58],
+      [330, 76],
+      [352, 50],
+    ] as const) {
+      chimes.lineBetween(x, 265, x, 282);
+      chimes.fillStyle(0xe5c36e, 0.98);
+      chimes.fillRoundedRect(x - 5, 282, 10, length, 5);
+      chimes.fillStyle(0x765442, 0.92);
+      chimes.fillCircle(x, 286 + length, 4);
+    }
+
     const glint = this.add
-      .text(935, 286, '✦', {
-        color: '#fff7a4',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '48px',
-        fontStyle: 'bold',
-      })
-      .setOrigin(0.5)
+      .rectangle(935, 286, 20, 20, 0xfff3a0, 0.82)
+      .setAngle(45)
+      .setStrokeStyle(3, 0xffffff, 0.7)
       .setName('windmill-lookout:sky-glint');
     this.tweens.add({
       targets: glint,
-      alpha: { from: 0.3, to: 1 },
-      scale: { from: 0.85, to: 1.15 },
-      duration: 850,
+      alpha: { from: 0.42, to: 0.88 },
+      scale: { from: 0.82, to: 1.08 },
+      duration: 1050,
       yoyo: true,
       repeat: -1,
+      ease: 'Sine.InOut',
     });
 
     this.add
@@ -260,7 +267,7 @@ export class WindmillLookoutScene extends Phaser.Scene {
       .setStrokeStyle(5, 0xffe7a2, 0.75)
       .setName('windmill-lookout:exit');
     this.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT - 79, '🌿 Rainbow Meadow', {
+      .text(GAME_WIDTH / 2, GAME_HEIGHT - 79, 'Rainbow Meadow', {
         color: '#fff8df',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '17px',
@@ -268,7 +275,7 @@ export class WindmillLookoutScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
     this.add
-      .text(GAME_WIDTH / 2, 55, '🌬️ Windmill Lookout', {
+      .text(GAME_WIDTH / 2, 55, 'Windmill Lookout', {
         color: '#554b71',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '30px',
