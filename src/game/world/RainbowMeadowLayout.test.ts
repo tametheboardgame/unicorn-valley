@@ -154,6 +154,15 @@ describe('Rainbow Meadow canonical layout', () => {
       expect(isInsideDistrict(point, picnicDistrict)).toBe(true);
     }
 
+    const isOnPhysicalHill = (point: { x: number; y: number }) => {
+      const dx = (point.x - picnic.centre.x) / (picnic.hill.width / 2);
+      const dy = (point.y - picnic.centre.y) / (picnic.hill.height / 2);
+      return dx * dx + dy * dy <= 1;
+    };
+    expect(picnic.mapleWaypoints.every(isOnPhysicalHill)).toBe(true);
+    expect(isOnPhysicalHill(picnic.marigold)).toBe(true);
+    expect(isOnPhysicalHill(picnic.nova)).toBe(true);
+
     expect(
       Math.hypot(picnic.marigold.x - picnic.nova.x, picnic.marigold.y - picnic.nova.y),
     ).toBeGreaterThan(300);
