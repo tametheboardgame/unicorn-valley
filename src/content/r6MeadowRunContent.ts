@@ -40,7 +40,7 @@ export const R6_MEADOW_RUN_DISCOVERIES = [
     id: WINDMILL_LOOKOUT_DISCOVERY_ID,
     name: 'Windmill Lookout',
     description:
-      'A real little lookout tucked beside the Meadow windmill, high enough to see the race flags and flower paths at once.',
+      'A real little lookout tucked beside the Meadow windmill, high enough to see Rainbow Pond, the north path and flower trails at once.',
     icon: '🌬️',
     undiscoveredHint: 'The windmill may have a way up if its bell is answered.',
   },
