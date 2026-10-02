@@ -343,7 +343,6 @@
   }
 }
 
-
 @media (pointer: coarse) and (max-width: 900px) and (orientation: landscape) and (max-height: 480px) {
   .title-portrait-card {
     padding: 9px 12px;
