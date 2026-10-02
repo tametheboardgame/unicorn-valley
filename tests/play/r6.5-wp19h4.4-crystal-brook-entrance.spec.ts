@@ -1,8 +1,8 @@
 import { expect, test, type Page } from '@playwright/test';
 
 const PLAYER_NAME = 'world-player-unicorn';
-const MEADOW_GATE = { x: 3300, y: 1580 } as const;
-const MEADOW_RETURN = { x: 3130, y: 1645 } as const;
+const MEADOW_GATE = { x: 3300, y: 1035 } as const;
+const MEADOW_RETURN = { x: 3160, y: 1125 } as const;
 const BROOK_GATE = { x: 120, y: 1090 } as const;
 const BROOK_ARRIVAL = { x: 340, y: 1090 } as const;
 
@@ -143,10 +143,21 @@ test('H4.4 makes Crystal Brook a waterfall, pool and stepping-stone Meadow thres
   expect(
     meadow.objects.some(({ name }) => name.endsWith('meadow-crystal-brook:cave-mouth')),
   ).toBe(false);
+  expect(
+    meadow.objects.some(
+      ({ name, x, y, visible }) =>
+        name === 'visual-tightening-detail' &&
+        visible &&
+        x >= 2380 &&
+        x <= 2640 &&
+        y >= 1340 &&
+        y <= 1440,
+    ),
+  ).toBe(false);
 
   const cupBoard = meadow.objects.find(({ name }) => name === 'meadow-depth:rainbow-cup-board');
-  expect(cupBoard?.x).toBeCloseTo(2890, 0);
-  expect(cupBoard?.y).toBeCloseTo(650, 0);
+  expect(cupBoard?.x).toBeCloseTo(2860, 0);
+  expect(cupBoard?.y).toBeCloseTo(500, 0);
 
   await positionPlayer(page, 'RainbowMeadowScene', MEADOW_GATE.x, MEADOW_GATE.y);
   await waitForScene(page, 'CrystalBrookScene');
