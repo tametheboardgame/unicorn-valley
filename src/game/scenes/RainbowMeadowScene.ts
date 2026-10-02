@@ -470,39 +470,49 @@ export class RainbowMeadowScene extends Phaser.Scene {
     }
 
     const { x, y } = feature.position;
-    const northPost = this.add
-      .rectangle(x - 100, y, 38, 190, 0x745143, 1)
-      .setStrokeStyle(4, 0x5d4038, 1)
-      .setDepth(worldDepthForY(y + 105, 0.2));
-    const southPost = this.add
-      .rectangle(x + 100, y, 38, 190, 0x745143, 1)
-      .setStrokeStyle(4, 0x5d4038, 1)
-      .setDepth(worldDepthForY(y + 105, 0.2));
+    const signX = x + 138;
+    const signY = y + 48;
+    const postDepth = worldDepthForY(signY + 92, 0.18);
 
     this.add
-      .rectangle(x, y - 92, 260, 66, 0xffefba, 1)
-      .setName('rainbow-meadow:rainbow-run-hub-sign')
-      .setStrokeStyle(5, 0xa77da9, 1)
-      .setDepth(Math.max(northPost.depth, southPost.depth) + 0.2);
+      .rectangle(signX, signY + 72, 18, 150, 0x765442, 1)
+      .setName('rainbow-meadow:rainbow-run-wayfinding-post')
+      .setStrokeStyle(3, 0x5f4538, 0.88)
+      .setDepth(postDepth);
+
     this.add
-      .text(x, y - 92, 'RAINBOW RUN\nRACE HUB', {
-        color: '#654d70',
+      .rectangle(signX, signY, 210, 72, 0xf2dfad, 1)
+      .setName('rainbow-meadow:rainbow-run-hub-sign')
+      .setStrokeStyle(5, 0x765442, 1)
+      .setDepth(postDepth + 0.08);
+
+    this.add
+      .text(signX, signY, 'RAINBOW RUN\nRace Hub  ↑', {
+        color: '#604f63',
         fontFamily: 'system-ui, sans-serif',
-        fontSize: '18px',
+        fontSize: '16px',
         fontStyle: 'bold',
         align: 'center',
-        lineSpacing: 2,
+        lineSpacing: 1,
       })
+      .setName('rainbow-meadow:rainbow-run-wayfinding-text')
       .setOrigin(0.5)
-      .setDepth(Math.max(northPost.depth, southPost.depth) + 0.3);
+      .setDepth(postDepth + 0.12);
 
-    const pennants = this.add.graphics().setDepth(Math.max(northPost.depth, southPost.depth) + 0.1);
-    const colours = [0xf18dad, 0xf5c968, 0x7cc6d8, 0xa6d77a, 0xc69be0];
-    colours.forEach((colour, index) => {
-      pennants.fillStyle(colour, 0.98);
-      const px = x - 104 + index * 52;
-      pennants.fillTriangle(px, y - 140, px + 32, y - 140, px + 16, y - 110);
-    });
+    const verge = this.add
+      .graphics()
+      .setName('rainbow-meadow:rainbow-run-wayfinding-verge')
+      .setDepth(postDepth - 0.04);
+    for (const [offsetX, colour] of [
+      [-32, 0xf3a2c0],
+      [0, 0xffdd7e],
+      [28, 0x91cde0],
+    ] as const) {
+      verge.fillStyle(0x62955f, 0.76);
+      verge.fillRect(signX + offsetX - 2, signY + 130, 4, 24);
+      verge.fillStyle(colour, 0.92);
+      verge.fillCircle(signX + offsetX, signY + 123, 7);
+    }
   }
 
   private createMeadowFlowers(): void {

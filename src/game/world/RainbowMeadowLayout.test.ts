@@ -33,27 +33,27 @@ describe('Rainbow Meadow canonical layout', () => {
       'north-nature',
       'rainbow-disc-lawn',
       'picnic-hill-reserve',
-      'rainbow-run',
+      'north-east-meadow',
       'crystal-brook-corridor',
     ]);
 
     const sports = RAINBOW_MEADOW_LAYOUT.districts.find(({ id }) => id === 'rainbow-disc-lawn');
     const picnic = RAINBOW_MEADOW_LAYOUT.districts.find(({ id }) => id === 'picnic-hill-reserve');
-    const race = RAINBOW_MEADOW_LAYOUT.districts.find(({ id }) => id === 'rainbow-run');
+    const northEast = RAINBOW_MEADOW_LAYOUT.districts.find(({ id }) => id === 'north-east-meadow');
     const crystal = RAINBOW_MEADOW_LAYOUT.districts.find(
       ({ id }) => id === 'crystal-brook-corridor',
     );
 
     expect(sports).toBeDefined();
     expect(picnic).toBeDefined();
-    expect(race).toBeDefined();
+    expect(northEast).toBeDefined();
     expect(crystal).toBeDefined();
-    if (!sports || !picnic || !race || !crystal) {
+    if (!sports || !picnic || !northEast || !crystal) {
       return;
     }
 
     expect(sports.centre.x + sports.radiusX).toBeLessThan(picnic.centre.x - picnic.radiusX);
-    expect(race.centre.y + race.radiusY).toBeLessThan(crystal.centre.y - crystal.radiusY);
+    expect(northEast.centre.y + northEast.radiusY).toBeLessThan(crystal.centre.y - crystal.radiusY);
   });
 
   it('keeps the future sports lawn and Crystal Brook corridor free of tree clutter', () => {
@@ -204,8 +204,12 @@ describe('Rainbow Meadow canonical layout', () => {
     ).toBe(true);
     expect(race.points[0]).toEqual(main.points[main.points.length - 1]);
     expect(crystal.points[0]).toEqual(main.points[main.points.length - 1]);
-    expect(race.points[race.points.length - 1]?.y).toBeLessThan(
-      RAINBOW_MEADOW_LAYOUT.bounds.margin + 50,
+    expect(race.points[race.points.length - 1]?.y).toBeLessThan(0);
+    expect(race.points).toContainEqual(
+      RAINBOW_MEADOW_LAYOUT.hubFeatures.rainbowRunEntrance.position,
+    );
+    expect(race.points).toContainEqual(
+      RAINBOW_MEADOW_LAYOUT.hubFeatures.rainbowRunEntrance.approach,
     );
     expect(crystal.points[crystal.points.length - 1]).toEqual(
       RAINBOW_MEADOW_LAYOUT.crystalBrookGatewayArea.dryLanding,
@@ -344,18 +348,22 @@ describe('Rainbow Meadow canonical layout', () => {
     ).toBeLessThan(150);
   });
 
-  it('keeps the Meadow-side Race Hub gateway clear of tree and flower scenery', () => {
-    const race = RAINBOW_MEADOW_LAYOUT.districts.find(({ id }) => id === 'rainbow-run');
-    expect(race).toBeDefined();
-    if (!race) {
-      return;
-    }
-
-    expect(RAINBOW_MEADOW_LAYOUT.scenery.trees.some((tree) => isInsideDistrict(tree, race))).toBe(
-      false,
+  it('reintegrates the former Race Hub footprint into Meadow while keeping entry non-blocking', () => {
+    const northEast = RAINBOW_MEADOW_LAYOUT.districts.find(({ id }) => id === 'north-east-meadow');
+    expect(northEast).toBeDefined();
+    expect(RAINBOW_MEADOW_LAYOUT.scenery.trees.map(({ id }) => id)).toEqual(
+      expect.arrayContaining(['race-reclaim-west', 'race-reclaim-east']),
     );
+
+    expect(RAINBOW_MEADOW_LAYOUT.hubFeatures.rainbowRunEntrance).toEqual({
+      id: 'rainbow-run-entrance',
+      label: 'Rainbow Run Race Hub',
+      position: { x: 2950, y: 90 },
+      approach: { x: 2950, y: 300 },
+    });
+
     expect(
-      RAINBOW_MEADOW_LAYOUT.scenery.flowerClusters.some((flower) => isInsideDistrict(flower, race)),
+      RAINBOW_MEADOW_MAP.colliders.some(({ id }) => id.startsWith('collision:race-hub-gateway-')),
     ).toBe(false);
   });
 });

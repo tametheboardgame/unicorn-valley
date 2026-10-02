@@ -6,32 +6,35 @@ Last updated: 2026-10-02
 
 `R6.5-WP19H4 - Rainbow Meadow Final Polish` remains active.
 
-The current bounded slice is **H4.6 - Nova final character redesign and presentation unification** on branch `r6-5-wp19h4-6-nova-redesign`.
+The current implementation slice is **H4.7 - Rainbow Meadow race-extraction cleanup and entrance integration** on branch `r6-5-wp19h4-7-race-extraction-cleanup`.
+
+H4.7 is temporarily stacked on the exact approved H4.6 head while H4.6 finishes its full-browser qualification.
 
 Accepted context:
 
-- H4.1-H4.4 are complete and merged.
-- H4.5 rebuilt Picnic Hill as one canonical south-central destination, moved Marigold/Nova/Maple with the whole picnic system, and fixed blanket depth so characters render above ground picnic art.
-- David explicitly approved H4.5 on 2 October 2026 and PR #248 merged to `main` as squash commit `a361f90639befad8cc36f26463b56d5cd3088cd7`.
-- Crystal Brook's final accepted traversal remains fully walkable water with collision only on physical rocks.
+- H4.1-H4.5 are complete and merged.
+- H4.6 gives Nova one authoritative modern presentation across Picnic Hill, Rainbow Run Race Hub, dialogue, cottage visits and race scenes.
+- David explicitly approved the H4.6 Nova appearance on 2 October 2026.
+- H4.6 PR #250 is ready for merge once its exact-head production browser qualification is clean. Core static, build/performance and unit gates are already green; one unrelated mobile movement timing run failed under the cross-browser load and is being treated as a qualification rerun rather than a Nova gameplay change.
+- Crystal Brook's accepted traversal remains fully walkable water with collision only on physical rocks.
 
-H4.6 currently owns:
+H4.7 currently owns:
 
-- one authoritative modern Nova appearance using the shared current unicorn renderer;
-- bright pink body, blue/violet racing hair, gold/star accents and sporty identity;
-- the same Nova source for Rainbow Run Race Hub, Picnic Hill, dialogue portraits, cottage friend visits and race presentation;
-- deprecation of the old independent `NovaIdentity` generator;
-- removal of runtime hiding/label logic whose purpose was to mask older Nova generations;
-- preservation of `CoreNpcPresenceService`, first-race progression and race mechanics;
-- deployed visual review before merge.
+- reclaiming the former Meadow race footprint as ordinary north-east countryside;
+- moving the Rainbow Run Race Hub threshold to the north map edge;
+- extending the authored Race Hub path beyond the map boundary;
+- replacing the event-style pennant arch with a small wooden wayfinding sign;
+- removing Meadow-side Race Hub post collision;
+- preserving both explicit and walk-through Race Hub transitions through the canonical hub feature;
+- proving the new gateway remains reachable across desktop, tablet and phone viewports.
 
-This remains an **Amber human visual gate**. Do not merge H4.6 or begin H4.7 until David approves the deployed Nova result.
+H4.7 remains an **Amber human visual gate**. Do not merge H4.7 or begin H4.8 until David approves the deployed Meadow-side cleanup.
 
 ## Next work
 
-After H4.6 is visually approved and merged, continue to **H4.7 - Rainbow Meadow race-extraction cleanup and entrance integration**.
+After H4.7 is visually approved and merged, continue to **H4.8 - Nature micro-areas and interaction-affordance cleanup**.
 
-The dedicated **Rainbow Run Race Hub full maturity pass** remains a post-H4 follow-on and must not expand H4.6/H4.7 scope.
+The dedicated Rainbow Run Race Hub full maturity pass remains a post-H4 follow-on and must not expand H4.7 scope.
 
 ## Operating reminders
 
