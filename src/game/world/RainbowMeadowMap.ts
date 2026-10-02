@@ -332,8 +332,8 @@ export const RAINBOW_MEADOW_LAYOUT = {
       { x: 3210, y: 950, width: 140, height: 90 },
       { x: 2860, y: 1320, width: 250, height: 180 },
       { x: 3040, y: 1285, width: 230, height: 210 },
-      { x: 3210, y: 1250, width: 180, height: 260 },
-      { x: 3275, y: 1180, width: 70, height: 220 },
+      { x: 3210, y: 1300, width: 180, height: 200 },
+      { x: 3275, y: 1250, width: 70, height: 140 },
     ],
   },
   hubFeatures: {
