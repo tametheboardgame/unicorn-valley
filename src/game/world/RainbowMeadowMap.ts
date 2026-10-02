@@ -318,6 +318,7 @@ export const RAINBOW_MEADOW_LAYOUT = {
       deepWidth: 58,
       points: [
         { x: 3060, y: 1495 },
+        { x: 3060, y: 1560 },
         { x: 3115, y: 1650 },
         { x: 3035, y: 1775 },
         { x: 3090, y: 1900 },
@@ -443,15 +444,31 @@ function pointInsidePolygon(point: MapPoint, polygon: readonly MapPoint[]): bool
 }
 
 export const CRYSTAL_BROOK_STEPPING_CORRIDOR = {
-  // Exact passable quadrilateral reconstructed from the human-marked crossing boundaries.
-  // Deep water outside this polygon is blocked; everything inside it remains traversable.
-  polygon: [
-    { x: 2670, y: 1169 },
-    { x: 3370, y: 966 },
-    { x: 3370, y: 1093 },
-    { x: 2670, y: 1278 },
-  ],
+  // One invisible rotated rectangle laid over the full stepping-stone chain.
+  // Its long edges are the deep-water collision boundary.
+  start: { x: 2655, y: 1239 },
+  end: { x: 3375, y: 1010 },
+  width: 96,
 } as const;
+
+export function isPointInsideCrystalBrookSteppingCorridor(point: MapPoint): boolean {
+  const { start, end, width } = CRYSTAL_BROOK_STEPPING_CORRIDOR;
+  const dx = end.x - start.x;
+  const dy = end.y - start.y;
+  const length = Math.hypot(dx, dy);
+  if (length === 0) {
+    return false;
+  }
+
+  const unitX = dx / length;
+  const unitY = dy / length;
+  const offsetX = point.x - start.x;
+  const offsetY = point.y - start.y;
+  const along = offsetX * unitX + offsetY * unitY;
+  const across = offsetX * -unitY + offsetY * unitX;
+
+  return along >= 0 && along <= length && Math.abs(across) <= width / 2;
+}
 
 export function isCrystalBrookDeepWaterBlocked(point: MapPoint): boolean {
   const deepZone = RAINBOW_MEADOW_LAYOUT.crystalBrookGatewayArea.pool.deepZone;
@@ -459,7 +476,7 @@ export function isCrystalBrookDeepWaterBlocked(point: MapPoint): boolean {
     return false;
   }
 
-  return !pointInsidePolygon(point, CRYSTAL_BROOK_STEPPING_CORRIDOR.polygon);
+  return !isPointInsideCrystalBrookSteppingCorridor(point);
 }
 
 const DEFAULT_PLAYER_SPAWN = RAINBOW_MEADOW_LAYOUT.sunbeamGateway.approach;
