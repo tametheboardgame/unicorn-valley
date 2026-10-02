@@ -48,6 +48,7 @@ import {
 } from '../racing/RaceRun';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { saveLocationCheckpoint } from '../save/saveLocationCheckpoint';
+import { consumeRaceReturnScene } from '../racing/RaceReturnContext';
 import { RAINBOW_RUN_HUB_LOCATION_ID } from '../world/RainbowRunHubMap';
 
 const PLAYER_TEXTURE_KEY = 'player-unicorn-race';
@@ -1142,7 +1143,10 @@ export class RaceScene extends Phaser.Scene {
   }
 
   private exitRace(): void {
-    saveLocationCheckpoint(getBrowserSaveService(), RAINBOW_RUN_HUB_LOCATION_ID);
-    this.scene.start('RainbowRunEntryScene');
+    const returnScene = consumeRaceReturnScene(this.sys.game, 'RainbowRunEntryScene');
+    if (returnScene === 'RainbowRunEntryScene') {
+      saveLocationCheckpoint(getBrowserSaveService(), RAINBOW_RUN_HUB_LOCATION_ID);
+    }
+    this.scene.start(returnScene);
   }
 }
