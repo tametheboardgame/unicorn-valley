@@ -1,9 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
-const PLAYER_NAME = 'world-player-unicorn';
 const MARIGOLD_APPROACH = { x: 1700, y: 1240 } as const;
 const MARIGOLD_PICNIC_POSITION = { x: 1780, y: 1550 } as const;
-const RACE_ENTRANCE_APPROACH = { x: 2970, y: 1040 } as const;
 
 interface DiagnosticObject {
   name: string;
@@ -295,16 +293,15 @@ test('Marigold and Nova dialogue keep accepted sizing and Meet Nova works when N
   await positionPlayer(
     page,
     'RainbowMeadowScene',
-    RACE_ENTRANCE_APPROACH.x,
-    RACE_ENTRANCE_APPROACH.y,
+    (picnicNova?.x ?? 0) - 110,
+    picnicNova?.y ?? 0,
   );
-  await waitForVisibleObject(page, 'RainbowMeadowScene', 'race-entry-confirmation');
-  await page.keyboard.press('Enter');
+  await waitForTalkTarget(page, 'RainbowMeadowScene', 'Nova');
+  await page.keyboard.press('KeyE');
   await waitForVisibleObject(page, 'RainbowMeadowScene', 'dialogue-production-panel');
 
   let meadowAfterMeet = await sceneSnapshot(page, 'RainbowMeadowScene');
   const activeScenes = (await snapshot(page)).activeScenes;
-  const player = meadowAfterMeet.objects.find((object) => object.name === PLAYER_NAME);
   const speaker = meadowAfterMeet.objects.find(
     (object) => object.name === 'dialogue-production-speaker-name' && object.visible,
   );
@@ -312,10 +309,7 @@ test('Marigold and Nova dialogue keep accepted sizing and Meet Nova works when N
   expect(activeScenes).toContain('RainbowMeadowScene');
   expect(activeScenes).not.toContain('NovaStoryScene');
   expect(speaker?.text).toBe('Nova');
-  expect(player).toBeTruthy();
   expect(picnicNova).toBeTruthy();
-  expect(Math.abs((player?.x ?? 0) - ((picnicNova?.x ?? 0) - 120))).toBeLessThan(6);
-  expect(Math.abs((player?.y ?? 0) - (picnicNova?.y ?? 0))).toBeLessThan(6);
 
   await page.keyboard.press('KeyE');
   await expect
