@@ -65,6 +65,7 @@ describe('Rainbow Meadow map', () => {
 
     for (const point of [
       { x: 3000, y: 1250 },
+      { x: 3070, y: 1200 },
       { x: 3150, y: 1210 },
       { x: 3020, y: 1340 },
       { x: 3220, y: 1270 },
