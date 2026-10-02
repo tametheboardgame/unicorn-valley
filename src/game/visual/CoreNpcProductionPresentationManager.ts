@@ -184,7 +184,6 @@ export class CoreNpcProductionPresentationManager {
       return;
     }
 
-
     if (this.novaArea === 'moonflower-cottage') {
       destroyNamedObject(scene, 'core-npc:nova:world');
       destroyNamedObject(scene, 'core-npc:nova:picnic');
