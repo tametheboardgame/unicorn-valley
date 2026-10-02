@@ -4,7 +4,11 @@ import {
   isPointBlocked,
   isPointInsideWalkableBounds,
 } from './MapTraversal';
-import { RAINBOW_MEADOW_LAYOUT, RAINBOW_MEADOW_MAP } from './RainbowMeadowMap';
+import {
+  isCrystalBrookDeepWaterBlocked,
+  RAINBOW_MEADOW_LAYOUT,
+  RAINBOW_MEADOW_MAP,
+} from './RainbowMeadowMap';
 
 const PLAYER_CLEARANCE = 42;
 
@@ -43,7 +47,7 @@ describe('Rainbow Meadow map', () => {
     expect(findUnreachableTargets(RAINBOW_MEADOW_MAP, targets)).toEqual([]);
   });
 
-  it('keeps the deep-water collision clear only along the stepping-stone corridor', () => {
+  it('keeps deep water blocked outside the straight stepping-stone corridor', () => {
     const area = RAINBOW_MEADOW_LAYOUT.crystalBrookGatewayArea;
     const corridorPoints = [
       ...area.steppingStones.map(({ x, y }) => ({ x, y })),
@@ -51,16 +55,13 @@ describe('Rainbow Meadow map', () => {
         const next = area.steppingStones[index + 1];
         return { x: (stone.x + next.x) / 2, y: (stone.y + next.y) / 2 };
       }),
+      { x: 3100, y: 1100 },
+      { x: 3280, y: 1048 },
     ];
 
     for (const point of corridorPoints) {
-      expect(isPointBlocked(point, RAINBOW_MEADOW_MAP.colliders, PLAYER_CLEARANCE)).toBe(false);
+      expect(isCrystalBrookDeepWaterBlocked(point)).toBe(false);
     }
-
-    const deepWaterColliders = RAINBOW_MEADOW_MAP.colliders.filter(({ id }) =>
-      id.startsWith('collision:crystal-brook-deep-water:'),
-    );
-    expect(deepWaterColliders.length).toBeGreaterThan(50);
 
     for (const point of [
       { x: 3000, y: 1200 },
@@ -68,9 +69,16 @@ describe('Rainbow Meadow map', () => {
       { x: 3020, y: 1340 },
       { x: 3220, y: 1270 },
       { x: 2870, y: 1320 },
+      { x: 2860, y: 1080 },
     ]) {
-      expect(isPointBlocked(point, deepWaterColliders, 34)).toBe(true);
+      expect(isCrystalBrookDeepWaterBlocked(point)).toBe(true);
     }
+
+    expect(
+      RAINBOW_MEADOW_MAP.colliders.some(({ id }) =>
+        id.startsWith('collision:crystal-brook-deep-water:'),
+      ),
+    ).toBe(false);
   });
 
   it('keeps interaction and discovery IDs unique', () => {
