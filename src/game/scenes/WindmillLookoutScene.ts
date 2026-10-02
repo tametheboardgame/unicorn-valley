@@ -183,7 +183,7 @@ export class WindmillLookoutScene extends Phaser.Scene {
     }
     if (id === 'interaction:windmill-view') {
       this.showFeedback(
-        'From here you can see Rainbow Pond, the picnic hill, the race flags and a surprising number of tiny flower paths all at once. 🌈',
+        'From here you can see Rainbow Pond, Picnic Hill, the north path to Rainbow Run and a surprising number of tiny flower trails all at once. 🌈',
       );
       return;
     }
