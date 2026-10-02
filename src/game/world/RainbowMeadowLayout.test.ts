@@ -127,6 +127,48 @@ describe('Rainbow Meadow canonical layout', () => {
     }
   });
 
+  it('keeps H4.8 nature interaction approaches outside physical collision', () => {
+    const pondCollider = RAINBOW_MEADOW_MAP.colliders.find(
+      ({ id }) => id === 'collision:rainbow-pond',
+    );
+    const windmillCollider = RAINBOW_MEADOW_MAP.colliders.find(
+      ({ id }) => id === 'collision:windmill-lookout-base',
+    );
+    expect(pondCollider).toBeDefined();
+    expect(windmillCollider).toBeDefined();
+    if (!pondCollider || !windmillCollider) {
+      return;
+    }
+
+    const pondBottom = pondCollider.y + pondCollider.height / 2;
+    expect(RAINBOW_MEADOW_LAYOUT.natureFeatures.pond.interactionPosition.y - pondBottom).toBeGreaterThanOrEqual(
+      60,
+    );
+
+    const windmillBottom = windmillCollider.y + windmillCollider.height / 2;
+    const windmillRight = windmillCollider.x + windmillCollider.width / 2;
+    expect(
+      RAINBOW_MEADOW_LAYOUT.natureFeatures.windmill.bellPosition.y - windmillBottom,
+    ).toBeGreaterThanOrEqual(50);
+    expect(
+      RAINBOW_MEADOW_LAYOUT.natureFeatures.windmill.lookoutPosition.x - windmillRight,
+    ).toBeGreaterThanOrEqual(60);
+    expect(
+      RAINBOW_MEADOW_LAYOUT.hubFeatures.windmillLookout.approach.y - windmillBottom,
+    ).toBeGreaterThanOrEqual(70);
+
+    const pondPath = RAINBOW_MEADOW_LAYOUT.structuralPaths.find(({ id }) => id === 'nature-spur');
+    const windmillPath = RAINBOW_MEADOW_LAYOUT.structuralPaths.find(
+      ({ id }) => id === 'windmill-spur',
+    );
+    expect(pondPath?.points[pondPath.points.length - 1]).toEqual(
+      RAINBOW_MEADOW_LAYOUT.natureFeatures.pond.interactionPosition,
+    );
+    expect(windmillPath?.points[windmillPath.points.length - 1]).toEqual(
+      RAINBOW_MEADOW_LAYOUT.hubFeatures.windmillLookout.approach,
+    );
+  });
+
   it('owns Picnic Hill as one canonical south-central composition', () => {
     const picnicDistrict = RAINBOW_MEADOW_LAYOUT.districts.find(
       ({ id }) => id === 'picnic-hill-reserve',
