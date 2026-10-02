@@ -133,7 +133,13 @@ test('H4.4C makes Crystal Brook a blocked deep basin with a four-strand reactive
   ).toHaveLength(7);
   expect(
     meadow.objects.filter(({ name }) => name.startsWith('collision:crystal-brook-deep-water:')),
-  ).toHaveLength(7);
+  ).toHaveLength(9);
+
+  const brookSign = meadow.objects.find(
+    ({ name }) => name === 'r6-region-gateway-art:meadow-crystal-brook:sign',
+  );
+  expect(brookSign?.x).toBeCloseTo(2445, 0);
+  expect(brookSign?.y).toBeCloseTo(1245, 0);
 
   expect(meadow.objects.some(({ name }) => name.endsWith('meadow-crystal-brook:cave-mouth'))).toBe(
     false,
