@@ -7,7 +7,7 @@ import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
 import { shouldShowTouchMovementPad, TouchMovementPad } from '../input/TouchMovementPad';
 import { isInteractionModalActive } from '../interaction/InteractionModalState';
 import type { InteractionTarget } from '../interaction/InteractionTarget';
-import { selectInteractionTarget } from '../interaction/InteractionTargeting';
+import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { PlayerEntity } from '../player/PlayerEntity';
 import { parseUnicornAppearance } from '../player/UnicornAppearance';
 import { createUnicornAppearanceTexture } from '../player/UnicornAppearanceRenderer';
@@ -18,7 +18,6 @@ import { getBrowserSaveService } from '../save/browserSaveService';
 import { saveLocationCheckpoint } from '../save/saveLocationCheckpoint';
 import { getNovaFirstRacePhase } from '../story/NovaFirstRaceStory';
 import { startNovaConversation } from '../story/WorldStoryConversations';
-import { InteractionPrompt } from '../ui/InteractionPrompt';
 import { createCoreNpcSprite } from '../visual/CoreNpcProductionArt';
 import { CoreNpcPresenceService, NOVA_CHARACTER_ID } from '../world/CoreNpcPresenceService';
 import {
@@ -62,11 +61,8 @@ export class RainbowRunEntryScene extends Phaser.Scene {
   private touchMovementPad: TouchMovementPad | null = null;
   private player: PlayerEntity | null = null;
   private collisionGroup: Phaser.Physics.Arcade.StaticGroup | null = null;
-  private interactionPrompt: InteractionPrompt | null = null;
-  private activeInteraction: InteractionTarget | null = null;
   private feedbackText: Phaser.GameObjects.Text | null = null;
   private feedbackTimer: Phaser.Time.TimerEvent | null = null;
-  private interactions: readonly InteractionTarget[] = [];
 
   public constructor() {
     super('RainbowRunEntryScene');
@@ -109,8 +105,10 @@ export class RainbowRunEntryScene extends Phaser.Scene {
     ) {
       this.touchMovementPad = new TouchMovementPad(this, this.pointerInput);
     }
-    this.interactionPrompt = new InteractionPrompt(this, this.pointerInput);
-    this.interactions = this.createInteractions();
+    getSceneInteractionRegistry(this).replaceOwnerTargets(
+      'rainbow-run-hub',
+      this.createInteractions(),
+    );
 
     this.cameras.main.setBackgroundColor('#a7df90');
     this.cameras.main.setBounds(0, 0, RAINBOW_RUN_HUB_MAP.width, RAINBOW_RUN_HUB_MAP.height);
@@ -128,8 +126,7 @@ export class RainbowRunEntryScene extends Phaser.Scene {
       this.inputController = null;
       this.pointerInput = null;
       this.player = null;
-      this.interactionPrompt?.destroy();
-      this.interactionPrompt = null;
+      getSceneInteractionRegistry(this).clearOwner('rainbow-run-hub');
     });
   }
 
@@ -145,8 +142,6 @@ export class RainbowRunEntryScene extends Phaser.Scene {
         resolvePlayerMovement(0, 0, DEFAULT_PLAYER_SPEED, this.player.getFacing()),
       );
       this.player.updatePresentation(time);
-      this.activeInteraction = null;
-      this.interactionPrompt?.setTarget(null);
       return;
     }
 
@@ -160,15 +155,6 @@ export class RainbowRunEntryScene extends Phaser.Scene {
     this.player.updatePresentation(time);
     this.player.sprite.setDepth(worldDepthForY(this.player.sprite.y, 0.5));
 
-    this.activeInteraction = selectInteractionTarget(
-      { x: this.player.sprite.x, y: this.player.sprite.y },
-      this.interactions,
-    );
-    this.interactionPrompt?.setTarget(this.activeInteraction);
-
-    if (this.inputController.justPressed('INTERACT') && this.activeInteraction) {
-      this.activateInteraction(this.activeInteraction);
-    }
     if (this.inputController.justPressed('BACK')) {
       this.exitToMeadow();
     }
@@ -235,12 +221,6 @@ export class RainbowRunEntryScene extends Phaser.Scene {
         result: { type: 'callback', activate: () => this.startRace() },
       },
     ] satisfies readonly InteractionTarget[];
-  }
-
-  private activateInteraction(target: InteractionTarget): void {
-    if (target.result.type === 'callback') {
-      target.result.activate();
-    }
   }
 
   private startRace(): void {
