@@ -142,25 +142,33 @@ describe('Rainbow Meadow canonical layout', () => {
     );
   });
 
-  it('runs the main world road beyond both Meadow boundaries', () => {
+  it('runs the west world road off-map and hands the east side to authored destination spurs', () => {
     const main = RAINBOW_MEADOW_LAYOUT.structuralPaths.find(({ id }) => id === 'main-route');
+    const race = RAINBOW_MEADOW_LAYOUT.structuralPaths.find(
+      ({ id }) => id === 'rainbow-run-hub-spur',
+    );
+    const crystal = RAINBOW_MEADOW_LAYOUT.structuralPaths.find(
+      ({ id }) => id === 'crystal-brook-spur',
+    );
     expect(main).toBeDefined();
-    if (!main) {
+    expect(race).toBeDefined();
+    expect(crystal).toBeDefined();
+    if (!main || !race || !crystal) {
       return;
     }
 
     expect(main.points[0]?.x).toBeLessThan(0);
-    expect(main.points[main.points.length - 1]?.x).toBeGreaterThan(
-      RAINBOW_MEADOW_LAYOUT.bounds.width,
-    );
     expect(
       main.points.some((point) => point.x === RAINBOW_MEADOW_LAYOUT.sunbeamGateway.position.x),
     ).toBe(true);
-    expect(
-      main.points.some(
-        (point) => point.x === RAINBOW_MEADOW_LAYOUT.hubFeatures.rainbowRunEntrance.position.x,
-      ),
-    ).toBe(true);
+    expect(race.points[0]).toEqual(main.points[main.points.length - 1]);
+    expect(crystal.points[0]).toEqual(main.points[main.points.length - 1]);
+    expect(race.points[race.points.length - 1]?.y).toBeLessThan(
+      RAINBOW_MEADOW_LAYOUT.bounds.margin + 50,
+    );
+    expect(crystal.points[crystal.points.length - 1]).toEqual(
+      RAINBOW_MEADOW_LAYOUT.crystalBrookGatewayArea.leftBank,
+    );
   });
 
   it('keeps every local spur narrower than the main road', () => {
@@ -231,8 +239,8 @@ describe('Rainbow Meadow canonical layout', () => {
     expect(RAINBOW_MEADOW_LAYOUT.crystalBrookGateway).toEqual({
       id: 'crystal-brook',
       label: 'Crystal Brook',
-      position: { x: 3300, y: 1580 },
-      approach: { x: 3130, y: 1645 },
+      position: { x: 3300, y: 1035 },
+      approach: { x: 3160, y: 1125 },
       direction: 'east',
     });
     expect(RAINBOW_MEADOW_LAYOUT.crystalBrookGateway.position.x).toBeGreaterThan(
