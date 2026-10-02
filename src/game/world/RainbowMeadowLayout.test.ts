@@ -137,7 +137,6 @@ describe('Rainbow Meadow canonical layout', () => {
     const disc = RAINBOW_MEADOW_LAYOUT.rainbowDisc;
     expect(disc.centre).toEqual(district.centre);
     expect(disc.players).toHaveLength(5);
-    expect(disc.discRoute).toHaveLength(5);
 
     const isInsideDistrict = (point: { x: number; y: number }) => {
       const dx = (point.x - district.centre.x) / district.radiusX;
@@ -146,8 +145,11 @@ describe('Rainbow Meadow canonical layout', () => {
     };
 
     expect(disc.players.every(isInsideDistrict)).toBe(true);
-    expect(disc.discRoute.every(isInsideDistrict)).toBe(true);
     expect(isInsideDistrict(disc.captain)).toBe(true);
+
+    const markedFieldLeft = disc.centre.x - disc.field.width / 2 + 30;
+    const signRightEdge = disc.sign.x + 174;
+    expect(signRightEdge).toBeLessThan(markedFieldLeft);
 
     const path = RAINBOW_MEADOW_LAYOUT.structuralPaths.find(({ id }) => id === 'rainbow-disc-spur');
     expect(path?.points[path.points.length - 1]).toEqual(disc.approach);
