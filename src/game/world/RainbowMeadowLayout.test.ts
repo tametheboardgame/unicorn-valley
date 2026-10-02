@@ -154,9 +154,9 @@ describe('Rainbow Meadow canonical layout', () => {
       expect(isInsideDistrict(point, picnicDistrict)).toBe(true);
     }
 
-    expect(Math.hypot(picnic.marigold.x - picnic.nova.x, picnic.marigold.y - picnic.nova.y)).toBeGreaterThan(
-      300,
-    );
+    expect(
+      Math.hypot(picnic.marigold.x - picnic.nova.x, picnic.marigold.y - picnic.nova.y),
+    ).toBeGreaterThan(300);
   });
 
   it('owns one current structural path network for traversal presentation', () => {
