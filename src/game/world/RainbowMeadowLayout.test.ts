@@ -213,7 +213,7 @@ describe('Rainbow Meadow canonical layout', () => {
       id: 'crystal-brook',
       label: 'Crystal Brook',
       position: { x: 3300, y: 1035 },
-      approach: { x: 3180, y: 1080 },
+      approach: { x: 3150, y: 1100 },
       direction: 'east',
     });
     expect(RAINBOW_MEADOW_LAYOUT.crystalBrookGateway.position.x).toBeGreaterThan(
