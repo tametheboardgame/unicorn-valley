@@ -68,7 +68,7 @@ export const SCENE_MANIFEST = [
   startup('CrystalBrookScene', 'exploration'),
   startup('WhisperingWoodsScene', 'exploration'),
   startup('FireflyLanternScene', 'activity'),
-  startup('RainbowRunEntryScene', 'race'),
+  startup('RainbowRunEntryScene', 'exploration'),
   startup('NovaTutorialRaceScene', 'race'),
   startup('RaceScene', 'race'),
   startup('PipEggHatchScene', 'story'),
