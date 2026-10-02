@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { RAINBOW_MEADOW_LAYOUT } from '../world/RainbowMeadowMap';
 import { worldDepthForY } from '../world/WorldDepth';
-import { ensureNovaIdentityTexture, NOVA_RACE_TINT } from './NovaIdentity';
+import { ensureNovaPresentationTexture, NOVA_RACE_TINT } from './NovaPresentation';
 
 export const VISUAL_TIGHTENING_DETAIL_NAME = 'visual-tightening-detail';
 const VISUAL_TIGHTENING_ANCHOR_NAME = 'visual-tightening-anchor';
@@ -42,7 +42,7 @@ function decorateMeadow(scene: Phaser.Scene): void {
 }
 
 function applyCanonicalNovaToRace(scene: Phaser.Scene): void {
-  ensureNovaIdentityTexture(scene);
+  ensureNovaPresentationTexture(scene, 'gallop-a');
   const nova = scene.children.list.find(
     (object) =>
       object instanceof Phaser.GameObjects.Sprite && object.tintTopLeft === NOVA_RACE_TINT,
@@ -54,11 +54,11 @@ function applyCanonicalNovaToRace(scene: Phaser.Scene): void {
   const displayWidth = nova.displayWidth;
   const displayHeight = nova.displayHeight;
   nova
-    .setTexture(ensureNovaIdentityTexture(scene))
+    .setTexture(ensureNovaPresentationTexture(scene, 'gallop-a'))
     .setDisplaySize(displayWidth, displayHeight)
     .clearTint()
     .setAlpha(1)
-    .setName('nova-canonical-racer');
+    .setName('nova-modern-racer');
 }
 
 function decorateRace(scene: Phaser.Scene): void {

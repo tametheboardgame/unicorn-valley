@@ -3,14 +3,14 @@
   "template_initialised": true,
   "project_id": "unicorn-valley",
   "display_name": "Unicorn Valley",
-  "phase": "R6.5 - Rainbow Meadow H4.5 Picnic Hill rebuild",
+  "phase": "R6.5 - Rainbow Meadow H4.6 Nova redesign",
   "current_work_package": "R6.5-WP19H4",
   "current_work_package_path": "docs/work-packages/R6.5-WP19H4-RAINBOW-MEADOW.md",
   "status": "in_progress",
   "autonomy_state": "amber",
   "agent_state": "active",
-  "branch": "r6-5-wp19h4-5-picnic-hill-rebuild",
-  "latest_commit": "32d63e0f1c9c5dfd531aa0f023d472ce014b9531",
+  "branch": "r6-5-wp19h4-6-nova-redesign",
+  "latest_commit": "ca731440cfa9d9b63013391ca3c3ba72727e7533",
   "ci_state": "unknown",
   "technical_validation_state": "pending",
   "human_acceptance_state": "pending",
@@ -21,6 +21,6 @@
   "night_shift_state": "not_configured",
   "chat_disposition": "keep",
   "delivery_mode": "pr_required",
-  "last_activity_at": "2026-10-02T15:20:00+01:00",
-  "updated_at": "2026-10-02T15:20:00+01:00"
+  "last_activity_at": "2026-10-02T15:48:00+01:00",
+  "updated_at": "2026-10-02T15:48:00+01:00"
 }

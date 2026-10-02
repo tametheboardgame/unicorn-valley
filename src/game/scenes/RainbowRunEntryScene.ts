@@ -18,7 +18,7 @@ import { getBrowserSaveService } from '../save/browserSaveService';
 import { saveLocationCheckpoint } from '../save/saveLocationCheckpoint';
 import { getNovaFirstRacePhase } from '../story/NovaFirstRaceStory';
 import { startNovaConversation } from '../story/WorldStoryConversations';
-import { createCoreNpcSprite } from '../visual/CoreNpcProductionArt';
+import { createNovaPresentationSprite } from '../visual/NovaPresentation';
 import { CoreNpcPresenceService, NOVA_CHARACTER_ID } from '../world/CoreNpcPresenceService';
 import {
   RAINBOW_MEADOW_LOCATION_ID,
@@ -472,28 +472,9 @@ export class RainbowRunEntryScene extends Phaser.Scene {
     ) {
       return;
     }
-    const nova = createCoreNpcSprite(
-      this,
-      'nova',
-      RAINBOW_RUN_HUB_LAYOUT.nova.x,
-      RAINBOW_RUN_HUB_LAYOUT.nova.y + 4,
-      'world',
-    )
-      .setName('core-npc:nova:race-hub')
-      .setDisplaySize(112, 92)
-      .setDepth(worldDepthForY(RAINBOW_RUN_HUB_LAYOUT.nova.y + 50, 0.32));
-    this.add
-      .text(RAINBOW_RUN_HUB_LAYOUT.nova.x, RAINBOW_RUN_HUB_LAYOUT.nova.y + 76, 'Nova', {
-        color: '#5e4669',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '16px',
-        fontStyle: 'bold',
-        backgroundColor: '#fff8dfdd',
-        padding: { x: 7, y: 3 },
-      })
-      .setName('core-npc:nova:race-hub-label')
-      .setOrigin(0.5)
-      .setDepth(nova.depth + 0.02);
+    createNovaPresentationSprite(this, 'core-npc:nova:race-hub')
+      .setPosition(RAINBOW_RUN_HUB_LAYOUT.nova.x, RAINBOW_RUN_HUB_LAYOUT.nova.y + 4)
+      .setDepth(worldDepthForY(RAINBOW_RUN_HUB_LAYOUT.nova.y + 56, 0.32));
   }
 
   private createCollisionMap(): Phaser.Physics.Arcade.StaticGroup {

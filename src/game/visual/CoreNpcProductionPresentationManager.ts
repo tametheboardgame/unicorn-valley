@@ -14,6 +14,7 @@ import {
 import { SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
 import { worldDepthForY } from '../world/WorldDepth';
 import { addCoreNpcIdleTween, createCoreNpcSprite } from './CoreNpcProductionArt';
+import { createNovaPresentationSprite } from './NovaPresentation';
 import {
   createVillageCoreResidentSprite,
   type VillageCoreResidentId,
@@ -21,21 +22,9 @@ import {
 
 const LUMI_WORLD_POSITION = { x: 2980, y: 1530 } as const;
 const NOVA_PRESENCE_REFRESH_MS = 500;
-interface PositionedGameObject {
-  x: number;
-  y: number;
-}
-
 function sceneIfActive(game: Phaser.Game, key: string): Phaser.Scene | null {
   const scene = game.scene.getScene(key);
   return scene?.scene.isActive() ? scene : null;
-}
-
-function hasWorldPosition(
-  object: Phaser.GameObjects.GameObject,
-): object is Phaser.GameObjects.GameObject & PositionedGameObject {
-  const positioned = object as Phaser.GameObjects.GameObject & Partial<PositionedGameObject>;
-  return typeof positioned.x === 'number' && typeof positioned.y === 'number';
 }
 
 function destroyNamedObject(scene: Phaser.Scene, name: string): void {
@@ -45,30 +34,6 @@ function destroyNamedObject(scene: Phaser.Scene, name: string): void {
   }
   scene.tweens.killTweensOf(object);
   object.destroy();
-}
-
-function hidePicnicNovaPlaceholder(scene: Phaser.Scene): void {
-  for (const object of scene.children.list) {
-    if (!hasWorldPosition(object)) {
-      continue;
-    }
-    const nearPicnicNova =
-      Math.abs(object.x - RAINBOW_MEADOW_LAYOUT.picnicHill.nova.x) <= 55 &&
-      Math.abs(object.y - RAINBOW_MEADOW_LAYOUT.picnicHill.nova.y) <= 70;
-    if (!nearPicnicNova) {
-      continue;
-    }
-
-    const prototypeCircle =
-      object instanceof Phaser.GameObjects.Arc &&
-      object.displayWidth <= 90 &&
-      object.displayHeight <= 90;
-    const prototypeText =
-      object instanceof Phaser.GameObjects.Text && (object.text === '⭐' || object.text === 'Nova');
-    if (prototypeCircle || prototypeText) {
-      object.setVisible(false);
-    }
-  }
 }
 
 function hideLumiPlaceholder(scene: Phaser.Scene): void {
@@ -219,12 +184,9 @@ export class CoreNpcProductionPresentationManager {
       return;
     }
 
-    hidePicnicNovaPlaceholder(scene);
-
     if (this.novaArea === 'moonflower-cottage') {
       destroyNamedObject(scene, 'core-npc:nova:world');
       destroyNamedObject(scene, 'core-npc:nova:picnic');
-      destroyNamedObject(scene, 'core-npc:nova:picnic-label');
       return;
     }
 
@@ -235,44 +197,21 @@ export class CoreNpcProductionPresentationManager {
     }
 
     destroyNamedObject(scene, 'core-npc:nova:picnic');
-    destroyNamedObject(scene, 'core-npc:nova:picnic-label');
     destroyNamedObject(scene, 'core-npc:nova:world');
   }
 
   private ensurePicnicNova(scene: Phaser.Scene): void {
-    if (!scene.children.getByName('core-npc:nova:picnic')) {
-      const nova = createCoreNpcSprite(
-        scene,
-        'nova',
-        RAINBOW_MEADOW_LAYOUT.picnicHill.nova.x,
-        RAINBOW_MEADOW_LAYOUT.picnicHill.nova.y + 4,
-        'world',
-      )
-        .setName('core-npc:nova:picnic')
-        .setDisplaySize(112, 92)
-        .setDepth(worldDepthForY(RAINBOW_MEADOW_LAYOUT.picnicHill.nova.y + 50, 0.32));
-      addCoreNpcIdleTween(scene, nova, 'nova', 5);
+    if (scene.children.getByName('core-npc:nova:picnic')) {
+      return;
     }
 
-    if (!scene.children.getByName('core-npc:nova:picnic-label')) {
-      scene.add
-        .text(
-          RAINBOW_MEADOW_LAYOUT.picnicHill.nova.x,
-          RAINBOW_MEADOW_LAYOUT.picnicHill.nova.y + 72,
-          'Nova',
-          {
-            color: '#5e4669',
-            fontFamily: 'system-ui, sans-serif',
-            fontSize: '16px',
-            fontStyle: 'bold',
-            backgroundColor: '#fff8dfdd',
-            padding: { x: 7, y: 3 },
-          },
-        )
-        .setName('core-npc:nova:picnic-label')
-        .setOrigin(0.5)
-        .setDepth(worldDepthForY(RAINBOW_MEADOW_LAYOUT.picnicHill.nova.y + 82, 0.34));
-    }
+    const nova = createNovaPresentationSprite(scene, 'core-npc:nova:picnic')
+      .setPosition(
+        RAINBOW_MEADOW_LAYOUT.picnicHill.nova.x,
+        RAINBOW_MEADOW_LAYOUT.picnicHill.nova.y + 4,
+      )
+      .setDepth(worldDepthForY(RAINBOW_MEADOW_LAYOUT.picnicHill.nova.y + 56, 0.32));
+    addCoreNpcIdleTween(scene, nova, 'nova', 5);
   }
 
   private refreshLumiWorld(): void {

@@ -198,16 +198,23 @@ export class CottageFriendVisitManager {
     generation: number,
     visitorDepth: number,
   ): Promise<void> {
-    const { addCoreNpcIdleTween, createCoreNpcSprite } = await import(
-      '../visual/CoreNpcProductionArt'
-    );
+    const [{ addCoreNpcIdleTween, createCoreNpcSprite }, novaPresentation] = await Promise.all([
+      import('../visual/CoreNpcProductionArt'),
+      import('../visual/NovaPresentation'),
+    ]);
     if (generation !== this.visitorGeneration || !this.visit) {
       return;
     }
 
-    const sprite = createCoreNpcSprite(this.scene, coreNpcId, x, y + 7, 'world')
-      .setDisplaySize(coreNpcId === 'pip' ? 96 : 112, coreNpcId === 'pip' ? 78 : 92)
-      .setDepth(visitorDepth);
+    const sprite =
+      coreNpcId === 'nova'
+        ? novaPresentation
+            .createNovaPresentationSprite(this.scene, 'cottage-friend-visit:nova')
+            .setPosition(x, y + 7)
+            .setDepth(visitorDepth)
+        : createCoreNpcSprite(this.scene, coreNpcId, x, y + 7, 'world')
+            .setDisplaySize(coreNpcId === 'pip' ? 96 : 112, coreNpcId === 'pip' ? 78 : 92)
+            .setDepth(visitorDepth);
     if (!isReducedMotionEnabled()) {
       addCoreNpcIdleTween(this.scene, sprite, coreNpcId, 4);
     }

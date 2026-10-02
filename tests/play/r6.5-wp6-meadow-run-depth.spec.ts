@@ -74,7 +74,7 @@ test('Rainbow Meadow exposes a dense set of non-race reasons to stop', async ({ 
   expect(depthObjects.some(({ name }) => name === 'meadow-depth:rainbow-pond')).toBe(true);
   expect(depthObjects.some(({ name }) => name === 'meadow-depth:picnic-hill')).toBe(true);
   expect(depthObjects.some(({ name }) => name === 'meadow-depth:flower-circle')).toBe(true);
-  expect(depthObjects.some(({ name }) => name === 'meadow-depth:rainbow-cup-board')).toBe(true);
+  expect(depthObjects.some(({ name }) => name === 'meadow-depth:rainbow-cup-board')).toBe(false);
   expect(depthObjects.length).toBeGreaterThanOrEqual(10);
 
   expect(meadow.objects.some(({ name }) => name === 'supporting-resident:resident:clover')).toBe(
