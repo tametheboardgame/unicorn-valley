@@ -9,20 +9,23 @@
     "alt": "Otto Ubbelohde's 1909 illustration for Snow-White and Rose-Red."
   },
   "series": null,
-  "tags": ["classic-retelling", "fairy-tale", "sisters", "bear", "forest", "kindness", "magic", "illustrated"],
+  "tags": [
+    "classic-retelling",
+    "fairy-tale",
+    "sisters",
+    "bear",
+    "forest",
+    "kindness",
+    "magic",
+    "illustrated"
+  ],
   "publication": {
     "status": "published"
   },
   "discovery": {
     "format": "Chapter Book",
-    "genres": [
-      "Fantasy",
-      "Classics"
-    ],
-    "audiences": [
-      "Read Together",
-      "Independent Reader"
-    ],
+    "genres": ["Fantasy", "Classics"],
+    "audiences": ["Read Together", "Independent Reader"],
     "length": "Longer Read"
   },
   "defaultEditionId": "story-house",
