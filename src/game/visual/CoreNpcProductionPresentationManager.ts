@@ -11,7 +11,6 @@ import {
   type MarigoldPresenceArea,
   type NovaPresenceArea,
 } from '../world/CoreNpcPresenceService';
-import { RAINBOW_MEADOW_MAP } from '../world/RainbowMeadowMap';
 import { SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
 import { worldDepthForY } from '../world/WorldDepth';
 import { addCoreNpcIdleTween, createCoreNpcSprite } from './CoreNpcProductionArt';
@@ -24,11 +23,6 @@ const LUMI_WORLD_POSITION = { x: 2980, y: 1530 } as const;
 const NOVA_PICNIC_POSITION = { x: 2045, y: 1400 } as const;
 const NOVA_PRESENCE_REFRESH_MS = 500;
 const NOVA_OFFSTAGE_INTERACTION_POSITION = { x: -10000, y: -10000 } as const;
-const novaRaceMarker = RAINBOW_MEADOW_MAP.npcMarkers.find((candidate) => candidate.id === 'nova');
-const NOVA_RACE_POSITION = novaRaceMarker
-  ? { x: novaRaceMarker.position.x, y: novaRaceMarker.position.y }
-  : null;
-
 interface PositionedGameObject {
   x: number;
   y: number;
@@ -53,25 +47,6 @@ function destroyNamedObject(scene: Phaser.Scene, name: string): void {
   }
   scene.tweens.killTweensOf(object);
   object.destroy();
-}
-
-function syncNovaInteractionTarget(area: NovaPresenceArea): void {
-  if (!novaRaceMarker || !NOVA_RACE_POSITION) {
-    return;
-  }
-
-  // RainbowMeadowScene and CoreSceneInteractionBridge both retain this marker-position
-  // object by reference. Keep the shared Talk target with Nova's authoritative presence
-  // instead of leaving an invisible race-hub interaction behind when she moves.
-  const mutablePosition = novaRaceMarker.position as { x: number; y: number };
-  const target =
-    area === 'rainbow-run-hub'
-      ? NOVA_RACE_POSITION
-      : area === 'picnic-hill'
-        ? NOVA_PICNIC_POSITION
-        : NOVA_OFFSTAGE_INTERACTION_POSITION;
-  mutablePosition.x = target.x;
-  mutablePosition.y = target.y;
 }
 
 function hidePicnicNovaPlaceholder(scene: Phaser.Scene): void {
@@ -157,7 +132,6 @@ export class CoreNpcProductionPresentationManager {
     this.marigoldArea =
       marigoldPresence?.area === 'picnic-hill' ? 'picnic-hill' : 'sunbeam-village';
 
-    syncNovaInteractionTarget(this.novaArea);
   }
 
   private refreshPipWorld(): void {
@@ -261,23 +235,7 @@ export class CoreNpcProductionPresentationManager {
 
     destroyNamedObject(scene, 'core-npc:nova:picnic');
     destroyNamedObject(scene, 'core-npc:nova:picnic-label');
-    this.ensureRaceHubNova(scene);
-  }
-
-  private ensureRaceHubNova(scene: Phaser.Scene): void {
-    if (scene.children.getByName('core-npc:nova:world') || !NOVA_RACE_POSITION) {
-      return;
-    }
-    const nova = createCoreNpcSprite(
-      scene,
-      'nova',
-      NOVA_RACE_POSITION.x,
-      NOVA_RACE_POSITION.y + 4,
-      'world',
-    )
-      .setDisplaySize(112, 92)
-      .setDepth(worldDepthForY(NOVA_RACE_POSITION.y + 50, 0.32));
-    addCoreNpcIdleTween(scene, nova, 'nova', 5);
+    destroyNamedObject(scene, 'core-npc:nova:world');
   }
 
   private ensurePicnicNova(scene: Phaser.Scene): void {
