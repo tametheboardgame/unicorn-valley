@@ -71,8 +71,14 @@ function addFacetedRock(
   const variants = [
     [-0.5, 0.05, -0.38, -0.34, -0.08, -0.5, 0.3, -0.36, 0.5, -0.02, 0.34, 0.38, 0, 0.5, -0.4, 0.34],
     [-0.5, -0.02, -0.28, -0.46, 0.08, -0.5, 0.46, -0.24, 0.5, 0.12, 0.18, 0.48, -0.2, 0.42],
-    [-0.48, 0.12, -0.44, -0.26, -0.12, -0.5, 0.26, -0.44, 0.5, -0.08, 0.42, 0.34, 0.08, 0.5, -0.34, 0.4],
-    [-0.5, 0.08, -0.34, -0.4, 0.02, -0.5, 0.4, -0.34, 0.5, 0.08, 0.26, 0.46, -0.14, 0.5, -0.46, 0.28],
+    [
+      -0.48, 0.12, -0.44, -0.26, -0.12, -0.5, 0.26, -0.44, 0.5, -0.08, 0.42, 0.34, 0.08, 0.5, -0.34,
+      0.4,
+    ],
+    [
+      -0.5, 0.08, -0.34, -0.4, 0.02, -0.5, 0.4, -0.34, 0.5, 0.08, 0.26, 0.46, -0.14, 0.5, -0.46,
+      0.28,
+    ],
   ] as const;
   const shape = variants[variant % variants.length];
   const points: number[] = [];
@@ -114,7 +120,11 @@ function addFacetedRock(
 
 function pointInPolygon(point: Point, polygon: readonly Point[]): boolean {
   let inside = false;
-  for (let current = 0, previous = polygon.length - 1; current < polygon.length; previous = current++) {
+  for (
+    let current = 0, previous = polygon.length - 1;
+    current < polygon.length;
+    previous = current++
+  ) {
     const a = polygon[current];
     const b = polygon[previous];
     const intersects =
@@ -328,21 +338,21 @@ function createMeadowCrystalBrookGateway(scene: Phaser.Scene): void {
   const offsetPoints = (points: readonly Point[], xOffset: number, yOffset: number): Point[] =>
     points.map((point) => ({ x: point.x + xOffset, y: point.y + yOffset }));
 
-  const poolShadow = name(
-    scene.add.graphics().setDepth(2.38),
-    'meadow-crystal-brook:pool-shadow',
-  );
+  const poolShadow = name(scene.add.graphics().setDepth(2.38), 'meadow-crystal-brook:pool-shadow');
   poolShadow.fillStyle(0x355f63, 0.2);
   poolShadow.fillPoints(offsetPoints(pool.shoreline, 14, 18), true);
 
-  const shallowWater = name(
-    scene.add.graphics().setDepth(2.52),
-    'meadow-crystal-brook:pool',
-  );
+  const shallowWater = name(scene.add.graphics().setDepth(2.52), 'meadow-crystal-brook:pool');
   shallowWater.fillStyle(0x78cbd0, 0.82);
-  shallowWater.fillPoints(pool.shoreline.map((point) => ({ ...point })), true);
+  shallowWater.fillPoints(
+    pool.shoreline.map((point) => ({ ...point })),
+    true,
+  );
   shallowWater.lineStyle(9, 0x5f9894, 0.5);
-  shallowWater.strokePoints(pool.shoreline.map((point) => ({ ...point })), true);
+  shallowWater.strokePoints(
+    pool.shoreline.map((point) => ({ ...point })),
+    true,
+  );
 
   const shallowHighlight = name(
     scene.add.graphics().setDepth(2.54),
@@ -357,33 +367,21 @@ function createMeadowCrystalBrookGateway(scene: Phaser.Scene): void {
     true,
   );
 
-  const deepWater = name(
-    scene.add.graphics().setDepth(2.55),
-    'meadow-crystal-brook:deep-water',
-  );
+  const deepWater = name(scene.add.graphics().setDepth(2.55), 'meadow-crystal-brook:deep-water');
   deepWater.fillStyle(0x3f97a6, 0.72);
-  deepWater.fillPoints(pool.deepZone.map((point) => ({ ...point })), true);
+  deepWater.fillPoints(
+    pool.deepZone.map((point) => ({ ...point })),
+    true,
+  );
   deepWater.lineStyle(4, 0x2e7788, 0.3);
-  deepWater.strokePoints(pool.deepZone.map((point) => ({ ...point })), true);
+  deepWater.strokePoints(
+    pool.deepZone.map((point) => ({ ...point })),
+    true,
+  );
 
-  const stream = name(
-    scene.add.graphics().setDepth(2.5),
-    'meadow-crystal-brook:outlet-stream',
-  );
-  drawRoundedStrokeInto(
-    stream,
-    outletStream.points,
-    outletStream.outerWidth,
-    0x579aa1,
-    0.58,
-  );
-  drawRoundedStrokeInto(
-    stream,
-    outletStream.points,
-    outletStream.innerWidth,
-    0x7ed0d2,
-    0.9,
-  );
+  const stream = name(scene.add.graphics().setDepth(2.5), 'meadow-crystal-brook:outlet-stream');
+  drawRoundedStrokeInto(stream, outletStream.points, outletStream.outerWidth, 0x579aa1, 0.58);
+  drawRoundedStrokeInto(stream, outletStream.points, outletStream.innerWidth, 0x7ed0d2, 0.9);
   stream.lineStyle(5, 0xd9ffff, 0.24);
   stream.beginPath();
   stream.moveTo(outletStream.points[0].x - 8, outletStream.points[0].y);
@@ -569,15 +567,20 @@ function createMeadowCrystalBrookGateway(scene: Phaser.Scene): void {
   makeCurtain('right', waterfall.x + waterfall.closedCurtainOffset, 20);
 
   name(
-    scene.add
-      .container(waterfall.x, waterfall.y)
-      .setDepth(waterfallDepth - 0.01),
+    scene.add.container(waterfall.x, waterfall.y).setDepth(waterfallDepth - 0.01),
     'meadow-crystal-brook:waterfall',
   );
 
   name(
     scene.add
-      .ellipse(waterfall.x, waterfall.y - waterfall.height / 2 - 4, waterfall.width, 48, 0x9ee5e9, 0.38)
+      .ellipse(
+        waterfall.x,
+        waterfall.y - waterfall.height / 2 - 4,
+        waterfall.width,
+        48,
+        0x9ee5e9,
+        0.38,
+      )
       .setDepth(waterfallDepth + 0.01),
     'meadow-crystal-brook:waterfall-lip',
   );
@@ -688,22 +691,16 @@ function updateMeadowCrystalBrookEffects(scene: Phaser.Scene): void {
       targets: curtain,
       x:
         waterfall.x +
-        side *
-          (shouldOpen ? waterfall.openCurtainOffset : waterfall.closedCurtainOffset),
+        side * (shouldOpen ? waterfall.openCurtainOffset : waterfall.closedCurtainOffset),
       alpha: shouldOpen ? 0.72 : 1,
       duration: shouldOpen ? 320 : 420,
       ease: 'Sine.InOut',
     });
   }
 
-  const ripple = scene.children.getByName(
-    `${DETAIL_PREFIX}:meadow-crystal-brook:wading-ripple`,
-  );
+  const ripple = scene.children.getByName(`${DETAIL_PREFIX}:meadow-crystal-brook:wading-ripple`);
   if (ripple instanceof Phaser.GameObjects.Ellipse) {
-    const inWater = pointInPolygon(
-      { x: player.x, y: player.y + 18 },
-      area.pool.shoreline,
-    );
+    const inWater = pointInPolygon({ x: player.x, y: player.y + 18 }, area.pool.shoreline);
     ripple
       .setVisible(inWater)
       .setPosition(player.x, player.y + 30)
