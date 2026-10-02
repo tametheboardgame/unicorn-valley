@@ -20,10 +20,7 @@ import { getNovaFirstRacePhase } from '../story/NovaFirstRaceStory';
 import { startNovaConversation } from '../story/WorldStoryConversations';
 import { InteractionPrompt } from '../ui/InteractionPrompt';
 import { createCoreNpcSprite } from '../visual/CoreNpcProductionArt';
-import {
-  CoreNpcPresenceService,
-  NOVA_CHARACTER_ID,
-} from '../world/CoreNpcPresenceService';
+import { CoreNpcPresenceService, NOVA_CHARACTER_ID } from '../world/CoreNpcPresenceService';
 import {
   RAINBOW_MEADOW_LOCATION_ID,
   RAINBOW_MEADOW_MAP,
@@ -55,9 +52,7 @@ function raceRecordMessage(): string {
   if (ribbons === 0 && !sunrise?.bestTimeMs) {
     return 'The ribbon hooks are waiting for your first finish. Every completed run leaves something here.';
   }
-  const best = sunrise?.bestTimeMs
-    ? `${(sunrise.bestTimeMs / 1000).toFixed(1)}s`
-    : 'not timed yet';
+  const best = sunrise?.bestTimeMs ? `${(sunrise.bestTimeMs / 1000).toFixed(1)}s` : 'not timed yet';
   return `${ribbons} ribbon${ribbons === 1 ? '' : 's'} recorded. Sunrise Sprint best: ${best}. 🎀`;
 }
 
@@ -346,7 +341,10 @@ export class RainbowRunEntryScene extends Phaser.Scene {
     const { x, y } = RAINBOW_RUN_HUB_LAYOUT.meadowExit.position;
     this.add.rectangle(x - 110, y, 24, 180, 0x765244, 1).setDepth(8);
     this.add.rectangle(x + 110, y, 24, 180, 0x765244, 1).setDepth(8);
-    this.add.rectangle(x, y - 85, 250, 58, 0xffedbc, 1).setStrokeStyle(5, 0x9d78a7, 1).setDepth(9);
+    this.add
+      .rectangle(x, y - 85, 250, 58, 0xffedbc, 1)
+      .setStrokeStyle(5, 0x9d78a7, 1)
+      .setDepth(9);
     this.add
       .text(x, y - 85, 'RAINBOW MEADOW', {
         color: '#654d70',
@@ -360,7 +358,10 @@ export class RainbowRunEntryScene extends Phaser.Scene {
 
   private createTent(): void {
     const { x, y } = RAINBOW_RUN_HUB_LAYOUT.tent;
-    const tent = this.add.graphics().setName('rainbow-run-hub:tent').setDepth(worldDepthForY(y + 130));
+    const tent = this.add
+      .graphics()
+      .setName('rainbow-run-hub:tent')
+      .setDepth(worldDepthForY(y + 130));
     tent.fillStyle(0xfff1cb, 1);
     tent.fillRoundedRect(x - 215, y - 20, 430, 150, 22);
     tent.fillStyle(0xc79bdd, 1);
