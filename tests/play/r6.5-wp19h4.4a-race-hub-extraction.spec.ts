@@ -67,7 +67,11 @@ test('H4.4A moves all Rainbow Run infrastructure into a standalone hub', async (
     const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
       .__UNICORN_VALLEY_DIAGNOSTICS__;
     const hub = api?.snapshot().scenes.find(({ key }) => key === 'RainbowRunEntryScene');
-    return hub?.objects.some(({ name }) => name === 'rainbow-run-hub:race-gate');
+    return (
+      hub?.objects.some(({ name }) => name === 'rainbow-run-hub:race-gate') &&
+      hub.objects.some(({ name }) => name === 'r6.5-wp12-race-entry:petal-parade') &&
+      hub.objects.some(({ name }) => name === 'r6.5-wp12-race-entry:rainbow-cup')
+    );
   });
 
   const objects = await sceneObjects(page, 'RainbowRunEntryScene');
@@ -79,6 +83,8 @@ test('H4.4A moves all Rainbow Run infrastructure into a standalone hub', async (
     'rainbow-run-hub:course-poster',
     'rainbow-run-hub:race-gate',
     'core-npc:nova:race-hub',
+    'r6.5-wp12-race-entry:petal-parade',
+    'r6.5-wp12-race-entry:rainbow-cup',
   ]) {
     expect(objects.some((object) => object.name === name && object.visible)).toBe(true);
   }
