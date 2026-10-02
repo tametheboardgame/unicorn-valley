@@ -58,12 +58,9 @@ describe('Rainbow Meadow map', () => {
     }
 
     for (const blocker of area.deepWaterBlockers) {
-      expect(
-        isPointBlocked(
-          { x: blocker.x, y: blocker.y },
-          RAINBOW_MEADOW_MAP.colliders,
-        ),
-      ).toBe(true);
+      expect(isPointBlocked({ x: blocker.x, y: blocker.y }, RAINBOW_MEADOW_MAP.colliders)).toBe(
+        true,
+      );
     }
   });
 
