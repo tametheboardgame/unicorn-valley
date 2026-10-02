@@ -39,7 +39,6 @@ function decorateMeadow(scene: Phaser.Scene): void {
       );
     }
   }
-
 }
 
 function applyCanonicalNovaToRace(scene: Phaser.Scene): void {
