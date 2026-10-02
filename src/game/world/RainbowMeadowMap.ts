@@ -178,8 +178,8 @@ export const RAINBOW_MEADOW_LAYOUT = {
         { x: 3340, y: 1305 },
         { x: 3240, y: 1400 },
         { x: 3140, y: 1450 },
-        { x: 3090, y: 1495 },
-        { x: 3030, y: 1495 },
+        { x: 3123, y: 1495 },
+        { x: 2997, y: 1495 },
         { x: 2960, y: 1450 },
         { x: 2805, y: 1385 },
         { x: 2700, y: 1300 },
@@ -194,8 +194,8 @@ export const RAINBOW_MEADOW_LAYOUT = {
         { x: 3300, y: 1230 },
         { x: 3230, y: 1330 },
         { x: 3140, y: 1395 },
-        { x: 3070, y: 1480 },
-        { x: 3015, y: 1450 },
+        { x: 3090, y: 1495 },
+        { x: 3030, y: 1495 },
         { x: 2965, y: 1385 },
         { x: 2860, y: 1315 },
         { x: 2800, y: 1240 },
@@ -317,8 +317,7 @@ export const RAINBOW_MEADOW_LAYOUT = {
       innerWidth: 88,
       deepWidth: 58,
       points: [
-        { x: 3060, y: 1340 },
-        { x: 3060, y: 1505 },
+        { x: 3060, y: 1495 },
         { x: 3115, y: 1650 },
         { x: 3035, y: 1775 },
         { x: 3090, y: 1900 },
@@ -443,30 +442,15 @@ function pointInsidePolygon(point: MapPoint, polygon: readonly MapPoint[]): bool
   return inside;
 }
 
-function distanceToSegment(point: MapPoint, start: MapPoint, end: MapPoint): number {
-  const dx = end.x - start.x;
-  const dy = end.y - start.y;
-  const lengthSquared = dx * dx + dy * dy;
-  if (lengthSquared === 0) {
-    return Math.hypot(point.x - start.x, point.y - start.y);
-  }
-
-  const projection = Math.max(
-    0,
-    Math.min(1, ((point.x - start.x) * dx + (point.y - start.y) * dy) / lengthSquared),
-  );
-  const nearestX = start.x + projection * dx;
-  const nearestY = start.y + projection * dy;
-  return Math.hypot(point.x - nearestX, point.y - nearestY);
-}
-
 export const CRYSTAL_BROOK_STEPPING_CORRIDOR = {
-  // Straight passable band through the stepping-stone crossing, extended onto both banks.
-  // The 68px half-width follows the human-marked upper/lower boundaries rather than
-  // treating the much narrower stone-centre line as the movement corridor.
-  start: { x: 2670, y: 1240 },
-  end: { x: 3370, y: 1048 },
-  halfWidth: 68,
+  // Exact passable quadrilateral reconstructed from the human-marked crossing boundaries.
+  // Deep water outside this polygon is blocked; everything inside it remains traversable.
+  polygon: [
+    { x: 2670, y: 1169 },
+    { x: 3370, y: 966 },
+    { x: 3370, y: 1093 },
+    { x: 2670, y: 1278 },
+  ],
 } as const;
 
 export function isCrystalBrookDeepWaterBlocked(point: MapPoint): boolean {
@@ -475,13 +459,7 @@ export function isCrystalBrookDeepWaterBlocked(point: MapPoint): boolean {
     return false;
   }
 
-  return (
-    distanceToSegment(
-      point,
-      CRYSTAL_BROOK_STEPPING_CORRIDOR.start,
-      CRYSTAL_BROOK_STEPPING_CORRIDOR.end,
-    ) > CRYSTAL_BROOK_STEPPING_CORRIDOR.halfWidth
-  );
+  return !pointInsidePolygon(point, CRYSTAL_BROOK_STEPPING_CORRIDOR.polygon);
 }
 
 const DEFAULT_PLAYER_SPAWN = RAINBOW_MEADOW_LAYOUT.sunbeamGateway.approach;
