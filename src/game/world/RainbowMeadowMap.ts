@@ -442,7 +442,6 @@ export const RAINBOW_MEADOW_LAYOUT = {
   ] satisfies readonly RainbowMeadowPathStroke[],
 } as const;
 
-
 function pointInsidePolygon(point: MapPoint, polygon: readonly MapPoint[]): boolean {
   let inside = false;
   for (let index = 0, previous = polygon.length - 1; index < polygon.length; previous = index++) {
