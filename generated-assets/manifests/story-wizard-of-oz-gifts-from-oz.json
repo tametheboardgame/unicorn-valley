@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "1bC1Vli23H1YFFKMcFZeNIQT16A3Dp8CP"
+  },
+  "expectedSourceName": "wizard-of-oz-gifts-from-oz-v01.png",
+  "destination": "public/stories/the-wonderful-wizard-of-oz/illustrations/generated/gifts-from-oz.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1000,
+    "quality": 88
+  },
+  "revision": 1
+}

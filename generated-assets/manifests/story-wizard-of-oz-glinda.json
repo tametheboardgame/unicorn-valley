@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "1L7YQ_IAX2VR7QxVA9GfCdcvba1HuyCLa"
+  },
+  "expectedSourceName": "wizard-of-oz-glinda-v01.png",
+  "destination": "public/stories/the-wonderful-wizard-of-oz/illustrations/generated/glinda.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1000,
+    "quality": 88
+  },
+  "revision": 1
+}

@@ -9,7 +9,15 @@
     "alt": "W. W. Denslow's original 1900 cover for The Wonderful Wizard of Oz."
   },
   "series": null,
-  "tags": ["classic-retelling", "fantasy", "adventure", "oz", "friendship", "magic", "illustrated"],
+  "tags": [
+    "classic-retelling",
+    "fantasy",
+    "adventure",
+    "oz",
+    "friendship",
+    "magic",
+    "illustrated"
+  ],
   "publication": {
     "status": "published"
   },
@@ -44,7 +52,7 @@
           "source": "Unicorn Valley Story House edition"
         },
         "originalPublicationYear": 1900,
-        "curatorNotes": "Condensed into ten reader sections preserving the full journey and central characters while softening some of the original novel's more graphic violence."
+        "curatorNotes": "Condensed into ten reader sections preserving the full journey and central characters while softening some of the original novel's more graphic violence. Existing W. W. Denslow artwork is preserved as Classic Illustrations; R6.5-WP19SH1.5.1 adds a separate 13-image generated Modern Illustrations set."
       },
       "chapters": [
         {
@@ -55,87 +63,27 @@
         {
           "id": "the-yellow-brick-road",
           "title": "The Yellow Brick Road",
-          "path": "chapters/02.md",
-          "illustrations": [
-            {
-              "id": "denslow-scarecrow",
-              "blockId": "meeting-the-scarecrow",
-              "path": "illustrations/scarecrow.webp",
-              "alt": "W. W. Denslow's illustration of Dorothy with the Scarecrow.",
-              "placement": "full-width",
-              "width": 483,
-              "height": 640,
-              "caption": "Illustration by W. W. Denslow, 1900."
-            }
-          ]
+          "path": "chapters/02.md"
         },
         {
           "id": "the-tin-woodman",
           "title": "The Tin Woodman",
-          "path": "chapters/03.md",
-          "illustrations": [
-            {
-              "id": "denslow-tin-woodman",
-              "blockId": "a-man-made-of-tin",
-              "path": "illustrations/tin-woodman.webp",
-              "alt": "W. W. Denslow's illustration of the Tin Woodman.",
-              "placement": "full-width",
-              "width": 1283,
-              "height": 2937,
-              "caption": "Illustration by W. W. Denslow, 1900."
-            }
-          ]
+          "path": "chapters/03.md"
         },
         {
           "id": "the-cowardly-lion",
           "title": "The Cowardly Lion",
-          "path": "chapters/04.md",
-          "illustrations": [
-            {
-              "id": "denslow-lion",
-              "blockId": "the-lion-roars",
-              "path": "illustrations/lion.webp",
-              "alt": "W. W. Denslow's illustration of Dorothy meeting the Cowardly Lion.",
-              "placement": "full-width",
-              "width": 2018,
-              "height": 2534,
-              "caption": "Illustration by W. W. Denslow, 1900."
-            }
-          ]
+          "path": "chapters/04.md"
         },
         {
           "id": "the-emerald-city",
           "title": "The Emerald City",
-          "path": "chapters/05.md",
-          "illustrations": [
-            {
-              "id": "denslow-emerald-city",
-              "blockId": "green-everywhere",
-              "path": "illustrations/emerald-city.webp",
-              "alt": "W. W. Denslow's illustration of the Emerald City.",
-              "placement": "full-width",
-              "width": 534,
-              "height": 332,
-              "caption": "Illustration by W. W. Denslow, 1900."
-            }
-          ]
+          "path": "chapters/05.md"
         },
         {
           "id": "the-wicked-witch",
           "title": "The Wicked Witch of the West",
-          "path": "chapters/06.md",
-          "illustrations": [
-            {
-              "id": "denslow-wicked-witch",
-              "blockId": "the-witch-watches",
-              "path": "illustrations/wicked-witch.webp",
-              "alt": "W. W. Denslow's illustration of the Wicked Witch of the West.",
-              "placement": "full-width",
-              "width": 298,
-              "height": 358,
-              "caption": "Illustration by W. W. Denslow, 1900."
-            }
-          ]
+          "path": "chapters/06.md"
         },
         {
           "id": "the-wizard-revealed",
@@ -150,24 +98,308 @@
         {
           "id": "south-to-glinda",
           "title": "South to Glinda",
-          "path": "chapters/09.md",
-          "illustrations": [
-            {
-              "id": "denslow-glinda",
-              "blockId": "glinda-the-good",
-              "path": "illustrations/glinda.webp",
-              "alt": "W. W. Denslow's illustration of Glinda the Good Witch.",
-              "placement": "full-width",
-              "width": 561,
-              "height": 804,
-              "caption": "Illustration by W. W. Denslow, 1900."
-            }
-          ]
+          "path": "chapters/09.md"
         },
         {
           "id": "home-to-kansas",
           "title": "Home to Kansas",
           "path": "chapters/10.md"
+        }
+      ],
+      "defaultIllustrationSetId": "modern",
+      "illustrationSets": [
+        {
+          "id": "classic",
+          "label": "Classic Illustrations",
+          "rights": {
+            "status": "public-domain",
+            "source": "Original 1900 illustrations by W. W. Denslow",
+            "sourceUrl": "https://commons.wikimedia.org/wiki/Category:Illustrations_of_The_Wonderful_Wizard_of_Oz_by_William_Wallace_Denslow",
+            "notes": "The selected Denslow source files are identified as public domain on Wikimedia Commons."
+          },
+          "chapters": [
+            {
+              "chapterId": "the-yellow-brick-road",
+              "illustrations": [
+                {
+                  "id": "denslow-scarecrow",
+                  "blockId": "meeting-the-scarecrow",
+                  "path": "illustrations/scarecrow.webp",
+                  "alt": "W. W. Denslow's illustration of Dorothy with the Scarecrow.",
+                  "placement": "full-width",
+                  "width": 483,
+                  "height": 640,
+                  "caption": "Illustration by W. W. Denslow, 1900."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-tin-woodman",
+              "illustrations": [
+                {
+                  "id": "denslow-tin-woodman",
+                  "blockId": "a-man-made-of-tin",
+                  "path": "illustrations/tin-woodman.webp",
+                  "alt": "W. W. Denslow's illustration of the Tin Woodman.",
+                  "placement": "full-width",
+                  "width": 1283,
+                  "height": 2937,
+                  "caption": "Illustration by W. W. Denslow, 1900."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-cowardly-lion",
+              "illustrations": [
+                {
+                  "id": "denslow-lion",
+                  "blockId": "the-lion-roars",
+                  "path": "illustrations/lion.webp",
+                  "alt": "W. W. Denslow's illustration of Dorothy meeting the Cowardly Lion.",
+                  "placement": "full-width",
+                  "width": 2018,
+                  "height": 2534,
+                  "caption": "Illustration by W. W. Denslow, 1900."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-emerald-city",
+              "illustrations": [
+                {
+                  "id": "denslow-emerald-city",
+                  "blockId": "green-everywhere",
+                  "path": "illustrations/emerald-city.webp",
+                  "alt": "W. W. Denslow's illustration of the Emerald City.",
+                  "placement": "full-width",
+                  "width": 534,
+                  "height": 332,
+                  "caption": "Illustration by W. W. Denslow, 1900."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-wicked-witch",
+              "illustrations": [
+                {
+                  "id": "denslow-wicked-witch",
+                  "blockId": "the-witch-watches",
+                  "path": "illustrations/wicked-witch.webp",
+                  "alt": "W. W. Denslow's illustration of the Wicked Witch of the West.",
+                  "placement": "full-width",
+                  "width": 298,
+                  "height": 358,
+                  "caption": "Illustration by W. W. Denslow, 1900."
+                }
+              ]
+            },
+            {
+              "chapterId": "south-to-glinda",
+              "illustrations": [
+                {
+                  "id": "denslow-glinda",
+                  "blockId": "glinda-the-good",
+                  "path": "illustrations/glinda.webp",
+                  "alt": "W. W. Denslow's illustration of Glinda the Good Witch.",
+                  "placement": "full-width",
+                  "width": 561,
+                  "height": 804,
+                  "caption": "Illustration by W. W. Denslow, 1900."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "modern",
+          "label": "Modern Illustrations",
+          "rights": {
+            "status": "original",
+            "source": "ChatGPT-generated artwork created for the Unicorn Valley Story House modern illustration set",
+            "notes": "Generated for R6.5-WP19SH1.5.1 and materialised through the approved Google Drive → WIF → GitHub Actions pipeline."
+          },
+          "chapters": [
+            {
+              "chapterId": "the-cyclone",
+              "illustrations": [
+                {
+                  "id": "modern-kansas-tornado",
+                  "blockId": "kansas",
+                  "path": "illustrations/generated/kansas-tornado.webp",
+                  "alt": "Dorothy holds Toto outside the Kansas farmhouse as a huge cyclone approaches across the prairie.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-dorothy-arrives",
+                  "blockId": "munchkin-country",
+                  "path": "illustrations/generated/dorothy-arrives.webp",
+                  "alt": "Dorothy and Toto look across colourful Munchkin Country and the beginning of the yellow brick road.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-yellow-brick-road",
+              "illustrations": [
+                {
+                  "id": "modern-meeting-scarecrow",
+                  "blockId": "meeting-the-scarecrow",
+                  "path": "illustrations/generated/meeting-scarecrow.webp",
+                  "alt": "Dorothy and Toto meet the friendly Scarecrow beside a cornfield on the yellow brick road.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-tin-woodman",
+              "illustrations": [
+                {
+                  "id": "modern-tin-woodman",
+                  "blockId": "a-man-made-of-tin",
+                  "path": "illustrations/generated/tin-woodman.webp",
+                  "alt": "Dorothy, Toto and the Scarecrow meet the Tin Woodman and continue together along the yellow brick road.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-cowardly-lion",
+              "illustrations": [
+                {
+                  "id": "modern-cowardly-lion",
+                  "blockId": "the-lion-roars",
+                  "path": "illustrations/generated/cowardly-lion.webp",
+                  "alt": "Dorothy, Toto, Scarecrow and Tin Woodman welcome the Cowardly Lion to the travelling group.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-emerald-city",
+              "illustrations": [
+                {
+                  "id": "modern-emerald-city",
+                  "blockId": "green-gates",
+                  "path": "illustrations/generated/emerald-city.webp",
+                  "alt": "The complete travelling party enters the Emerald City wearing the Guardian's locked green spectacles.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-giant-wizard-face",
+                  "blockId": "first-audience-with-oz",
+                  "path": "illustrations/generated/giant-wizard-face.webp",
+                  "alt": "Dorothy and her companions face the enormous mechanical-looking Head of Oz in the emerald throne room.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-wicked-witch",
+              "illustrations": [
+                {
+                  "id": "modern-witch-watches",
+                  "blockId": "the-witch-watches",
+                  "path": "illustrations/generated/witch-watches.webp",
+                  "alt": "The Wicked Witch secretly watches Dorothy and her companions travelling west away from the distant Emerald City.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-wizard-revealed",
+              "illustrations": [
+                {
+                  "id": "modern-wizard-revealed",
+                  "blockId": "back-before-the-wizard",
+                  "path": "illustrations/generated/wizard-revealed.webp",
+                  "alt": "Dorothy and her friends pull back the curtain and discover the ordinary old man operating the machinery behind Oz.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "gifts-from-oz",
+              "illustrations": [
+                {
+                  "id": "modern-gifts-from-oz",
+                  "blockId": "the-lions-courage",
+                  "path": "illustrations/generated/gifts-from-oz.webp",
+                  "alt": "Oz gives the Lion the green courage drink while the Scarecrow, Tin Woodman, Dorothy and Toto look on.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "south-to-glinda",
+              "illustrations": [
+                {
+                  "id": "modern-lion-king",
+                  "blockId": "lion-king",
+                  "path": "illustrations/generated/lion-king.webp",
+                  "alt": "The upright Cowardly Lion is welcomed and acclaimed by the animals of the forest.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-glinda",
+                  "blockId": "glinda-the-good",
+                  "path": "illustrations/generated/glinda.webp",
+                  "alt": "Dorothy and her companions meet red-haired Glinda in her pale stone audience hall.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "home-to-kansas",
+              "illustrations": [
+                {
+                  "id": "modern-home-to-kansas",
+                  "blockId": "home",
+                  "path": "illustrations/generated/home-to-kansas.webp",
+                  "alt": "Dorothy, now in stocking-feet after losing the silver shoes, runs into Aunt Em's arms with Toto beside her.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            }
+          ]
         }
       ]
     },
@@ -195,7 +427,7 @@
           "notes": "Story House pagination changes presentation only; the source wording and all 24 chapters remain complete."
         },
         "originalPublicationYear": 1900,
-        "curatorNotes": "Baum's Introduction and all 24 chapters reflowed into 101 reader pages at paragraph boundaries, with six historical Denslow illustrations anchored to matching scenes."
+        "curatorNotes": "Baum's Introduction and all 24 chapters reflowed into 101 reader pages at paragraph boundaries. Existing W. W. Denslow artwork remains the Classic Illustrations set; the R6.5-WP19SH1.5.1 13-image generated set can be selected independently as Modern Illustrations."
       },
       "chapters": [
         {
@@ -256,19 +488,7 @@
         {
           "id": "page-012",
           "title": "Chapter III — How Dorothy Saved the Scarecrow (continued)",
-          "path": "editions/full-classic/pages/page-012.md",
-          "illustrations": [
-            {
-              "id": "full-denslow-scarecrow",
-              "path": "illustrations/scarecrow.webp",
-              "alt": "W. W. Denslow's illustration of Dorothy with the Scarecrow.",
-              "placement": "full-width",
-              "width": 483,
-              "height": 640,
-              "caption": "Illustration by W. W. Denslow, 1900.",
-              "blockId": "p012-b08"
-            }
-          ]
+          "path": "editions/full-classic/pages/page-012.md"
         },
         {
           "id": "page-013",
@@ -303,19 +523,7 @@
         {
           "id": "page-019",
           "title": "Chapter V — The Rescue of the Tin Woodman",
-          "path": "editions/full-classic/pages/page-019.md",
-          "illustrations": [
-            {
-              "id": "full-denslow-tin-woodman",
-              "path": "illustrations/tin-woodman.webp",
-              "alt": "W. W. Denslow's illustration of the Tin Woodman.",
-              "placement": "full-width",
-              "width": 1283,
-              "height": 2937,
-              "caption": "Illustration by W. W. Denslow, 1900.",
-              "blockId": "p019-b11"
-            }
-          ]
+          "path": "editions/full-classic/pages/page-019.md"
         },
         {
           "id": "page-020",
@@ -340,19 +548,7 @@
         {
           "id": "page-024",
           "title": "Chapter VI — The Cowardly Lion",
-          "path": "editions/full-classic/pages/page-024.md",
-          "illustrations": [
-            {
-              "id": "full-denslow-lion",
-              "path": "illustrations/lion.webp",
-              "alt": "W. W. Denslow's illustration of Dorothy meeting the Cowardly Lion.",
-              "placement": "full-width",
-              "width": 2018,
-              "height": 2534,
-              "caption": "Illustration by W. W. Denslow, 1900.",
-              "blockId": "p024-b07"
-            }
-          ]
+          "path": "editions/full-classic/pages/page-024.md"
         },
         {
           "id": "page-025",
@@ -462,19 +658,7 @@
         {
           "id": "page-046",
           "title": "Chapter XI — The Wonderful City of Oz",
-          "path": "editions/full-classic/pages/page-046.md",
-          "illustrations": [
-            {
-              "id": "full-denslow-emerald-city",
-              "path": "illustrations/emerald-city.webp",
-              "alt": "W. W. Denslow's illustration of the Emerald City.",
-              "placement": "full-width",
-              "width": 534,
-              "height": 332,
-              "caption": "Illustration by W. W. Denslow, 1900.",
-              "blockId": "p046-b01"
-            }
-          ]
+          "path": "editions/full-classic/pages/page-046.md"
         },
         {
           "id": "page-047",
@@ -519,19 +703,7 @@
         {
           "id": "page-055",
           "title": "Chapter XII — The Search for the Wicked Witch",
-          "path": "editions/full-classic/pages/page-055.md",
-          "illustrations": [
-            {
-              "id": "full-denslow-wicked-witch",
-              "path": "illustrations/wicked-witch.webp",
-              "alt": "W. W. Denslow's illustration of the Wicked Witch of the West.",
-              "placement": "full-width",
-              "width": 298,
-              "height": 358,
-              "caption": "Illustration by W. W. Denslow, 1900.",
-              "blockId": "p055-b11"
-            }
-          ]
+          "path": "editions/full-classic/pages/page-055.md"
         },
         {
           "id": "page-056",
@@ -746,19 +918,7 @@
         {
           "id": "page-098",
           "title": "Chapter XXIII — Glinda The Good Witch Grants Dorothy’s Wish",
-          "path": "editions/full-classic/pages/page-098.md",
-          "illustrations": [
-            {
-              "id": "full-denslow-glinda",
-              "path": "illustrations/glinda.webp",
-              "alt": "W. W. Denslow's illustration of Glinda the Good Witch.",
-              "placement": "full-width",
-              "width": 561,
-              "height": 804,
-              "caption": "Illustration by W. W. Denslow, 1900.",
-              "blockId": "p098-b02"
-            }
-          ]
+          "path": "editions/full-classic/pages/page-098.md"
         },
         {
           "id": "page-099",
@@ -774,6 +934,317 @@
           "id": "page-101",
           "title": "Chapter XXIV — Home Again",
           "path": "editions/full-classic/pages/page-101.md"
+        }
+      ],
+      "defaultIllustrationSetId": "classic",
+      "illustrationSets": [
+        {
+          "id": "classic",
+          "label": "Classic Illustrations",
+          "rights": {
+            "status": "public-domain",
+            "source": "Original 1900 illustrations by W. W. Denslow",
+            "sourceUrl": "https://commons.wikimedia.org/wiki/Category:Illustrations_of_The_Wonderful_Wizard_of_Oz_by_William_Wallace_Denslow",
+            "notes": "The six previously verified W. W. Denslow illustrations are reused beside matching passages in the complete classic text."
+          },
+          "chapters": [
+            {
+              "chapterId": "page-012",
+              "illustrations": [
+                {
+                  "id": "full-denslow-scarecrow",
+                  "path": "illustrations/scarecrow.webp",
+                  "alt": "W. W. Denslow's illustration of Dorothy with the Scarecrow.",
+                  "placement": "full-width",
+                  "width": 483,
+                  "height": 640,
+                  "caption": "Illustration by W. W. Denslow, 1900.",
+                  "blockId": "p012-b08"
+                }
+              ]
+            },
+            {
+              "chapterId": "page-019",
+              "illustrations": [
+                {
+                  "id": "full-denslow-tin-woodman",
+                  "path": "illustrations/tin-woodman.webp",
+                  "alt": "W. W. Denslow's illustration of the Tin Woodman.",
+                  "placement": "full-width",
+                  "width": 1283,
+                  "height": 2937,
+                  "caption": "Illustration by W. W. Denslow, 1900.",
+                  "blockId": "p019-b11"
+                }
+              ]
+            },
+            {
+              "chapterId": "page-024",
+              "illustrations": [
+                {
+                  "id": "full-denslow-lion",
+                  "path": "illustrations/lion.webp",
+                  "alt": "W. W. Denslow's illustration of Dorothy meeting the Cowardly Lion.",
+                  "placement": "full-width",
+                  "width": 2018,
+                  "height": 2534,
+                  "caption": "Illustration by W. W. Denslow, 1900.",
+                  "blockId": "p024-b07"
+                }
+              ]
+            },
+            {
+              "chapterId": "page-046",
+              "illustrations": [
+                {
+                  "id": "full-denslow-emerald-city",
+                  "path": "illustrations/emerald-city.webp",
+                  "alt": "W. W. Denslow's illustration of the Emerald City.",
+                  "placement": "full-width",
+                  "width": 534,
+                  "height": 332,
+                  "caption": "Illustration by W. W. Denslow, 1900.",
+                  "blockId": "p046-b01"
+                }
+              ]
+            },
+            {
+              "chapterId": "page-055",
+              "illustrations": [
+                {
+                  "id": "full-denslow-wicked-witch",
+                  "path": "illustrations/wicked-witch.webp",
+                  "alt": "W. W. Denslow's illustration of the Wicked Witch of the West.",
+                  "placement": "full-width",
+                  "width": 298,
+                  "height": 358,
+                  "caption": "Illustration by W. W. Denslow, 1900.",
+                  "blockId": "p055-b11"
+                }
+              ]
+            },
+            {
+              "chapterId": "page-098",
+              "illustrations": [
+                {
+                  "id": "full-denslow-glinda",
+                  "path": "illustrations/glinda.webp",
+                  "alt": "W. W. Denslow's illustration of Glinda the Good Witch.",
+                  "placement": "full-width",
+                  "width": 561,
+                  "height": 804,
+                  "caption": "Illustration by W. W. Denslow, 1900.",
+                  "blockId": "p098-b02"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "modern",
+          "label": "Modern Illustrations",
+          "rights": {
+            "status": "original",
+            "source": "ChatGPT-generated artwork created for the Unicorn Valley Story House modern illustration set",
+            "notes": "The same R6.5-WP19SH1.5.1 generated artwork is reused against matching Full Classic Text passages; only semantic page/block mapping differs."
+          },
+          "chapters": [
+            {
+              "chapterId": "page-003",
+              "illustrations": [
+                {
+                  "id": "full-modern-kansas-tornado",
+                  "blockId": "p003-b05",
+                  "path": "illustrations/generated/kansas-tornado.webp",
+                  "alt": "Dorothy and Toto watch as the Kansas cyclone approaches the farmhouse.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-005",
+              "illustrations": [
+                {
+                  "id": "full-modern-dorothy-arrives",
+                  "blockId": "p005-b04",
+                  "path": "illustrations/generated/dorothy-arrives.webp",
+                  "alt": "Dorothy and Toto discover the colourful country of the Munchkins after the farmhouse lands in Oz.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-012",
+              "illustrations": [
+                {
+                  "id": "full-modern-meeting-scarecrow",
+                  "blockId": "p012-b08",
+                  "path": "illustrations/generated/meeting-scarecrow.webp",
+                  "alt": "Dorothy and Toto meet the Scarecrow beside the yellow brick road.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-019",
+              "illustrations": [
+                {
+                  "id": "full-modern-tin-woodman",
+                  "blockId": "p019-b11",
+                  "path": "illustrations/generated/tin-woodman.webp",
+                  "alt": "Dorothy, Toto and the Scarecrow meet the Tin Woodman in the forest.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-024",
+              "illustrations": [
+                {
+                  "id": "full-modern-cowardly-lion",
+                  "blockId": "p024-b07",
+                  "path": "illustrations/generated/cowardly-lion.webp",
+                  "alt": "The Cowardly Lion joins Dorothy, Toto, the Scarecrow and the Tin Woodman.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-045",
+              "illustrations": [
+                {
+                  "id": "full-modern-emerald-city",
+                  "blockId": "p045-b02",
+                  "path": "illustrations/generated/emerald-city.webp",
+                  "alt": "The Guardian fits the complete travelling party with locked green spectacles before they enter the Emerald City.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-049",
+              "illustrations": [
+                {
+                  "id": "full-modern-giant-wizard-face",
+                  "blockId": "p049-b03",
+                  "path": "illustrations/generated/giant-wizard-face.webp",
+                  "alt": "Dorothy confronts the enormous Head presented by Oz in the emerald throne room.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-055",
+              "illustrations": [
+                {
+                  "id": "full-modern-witch-watches",
+                  "blockId": "p055-b11",
+                  "path": "illustrations/generated/witch-watches.webp",
+                  "alt": "The one-eyed Wicked Witch watches Dorothy and her companions from afar after they travel west from the Emerald City.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-074",
+              "illustrations": [
+                {
+                  "id": "full-modern-wizard-revealed",
+                  "blockId": "p074-b01",
+                  "path": "illustrations/generated/wizard-revealed.webp",
+                  "alt": "The fallen screen reveals the ordinary old man behind the machinery of Oz.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-080",
+              "illustrations": [
+                {
+                  "id": "full-modern-gifts-from-oz",
+                  "blockId": "p080-b14",
+                  "path": "illustrations/generated/gifts-from-oz.webp",
+                  "alt": "Oz offers the Cowardly Lion the green drink he calls courage.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-095",
+              "illustrations": [
+                {
+                  "id": "full-modern-lion-king",
+                  "blockId": "p095-b14",
+                  "path": "illustrations/generated/lion-king.webp",
+                  "alt": "The animals of the forest acclaim the Cowardly Lion as their king.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-098",
+              "illustrations": [
+                {
+                  "id": "full-modern-glinda",
+                  "blockId": "p098-b02",
+                  "path": "illustrations/generated/glinda.webp",
+                  "alt": "Dorothy and her companions are received by Glinda the Good in her audience hall.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-101",
+              "illustrations": [
+                {
+                  "id": "full-modern-home-to-kansas",
+                  "blockId": "p101-b02",
+                  "path": "illustrations/generated/home-to-kansas.webp",
+                  "alt": "Dorothy returns to Kansas in her stocking-feet and runs into Aunt Em's arms while Toto follows.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            }
+          ]
         }
       ]
     }

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "19oUPeD1y9UEO96KuxOI3ccH47o4Sh34Y"
+  },
+  "expectedSourceName": "wizard-of-oz-witch-watches-v01.png",
+  "destination": "public/stories/the-wonderful-wizard-of-oz/illustrations/generated/witch-watches.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1000,
+    "quality": 88
+  },
+  "revision": 1
+}
