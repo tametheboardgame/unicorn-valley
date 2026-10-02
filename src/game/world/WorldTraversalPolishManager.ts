@@ -3,6 +3,7 @@ import { getBrowserSaveService } from '../save/browserSaveService';
 import { saveLocationCheckpoint } from '../save/saveLocationCheckpoint';
 import { MOONFLOWER_GLADE_MAP } from './MoonflowerGladeMap';
 import { RAINBOW_MEADOW_LAYOUT, RAINBOW_MEADOW_MAP } from './RainbowMeadowMap';
+import { RAINBOW_RUN_HUB_LOCATION_ID } from './RainbowRunHubMap';
 import {
   setSunbeamVillagePlayerSpawn,
   SUNBEAM_VILLAGE_LOCATION_ID,
@@ -247,6 +248,11 @@ function transitionFromMeadow(scene: Phaser.Scene): void {
   scene.scene.start('SunbeamVillageScene');
 }
 
+function transitionFromMeadowToRaceHub(scene: Phaser.Scene): void {
+  saveLocationCheckpoint(getBrowserSaveService(), RAINBOW_RUN_HUB_LOCATION_ID);
+  scene.scene.start('RainbowRunEntryScene');
+}
+
 export class WorldTraversalPolishManager {
   private readonly transitionLocks = new Map<string, boolean>();
 
@@ -289,13 +295,27 @@ export class WorldTraversalPolishManager {
           transitionFromGlade(scene);
         }
       } else if (key === 'RainbowMeadowScene') {
-        const entrance = RAINBOW_MEADOW_MAP.entrances.find(
+        const sunbeamEntrance = RAINBOW_MEADOW_MAP.entrances.find(
           (candidate) => candidate.id === 'sunbeam-village',
         );
-        insideGateway = entrance ? isInsideGateway(player, entrance.position) : false;
+        const raceHubEntrance = RAINBOW_MEADOW_MAP.hubFeatures.find(
+          (candidate) => candidate.id === 'rainbow-run-entrance',
+        );
+        const insideSunbeam = sunbeamEntrance
+          ? isInsideGateway(player, sunbeamEntrance.position)
+          : false;
+        const insideRaceHub = raceHubEntrance
+          ? isInsideGateway(player, raceHubEntrance.position)
+          : false;
+        insideGateway = insideSunbeam || insideRaceHub;
+
         if (insideGateway && !this.transitionLocks.get(key)) {
           this.transitionLocks.set(key, true);
-          transitionFromMeadow(scene);
+          if (insideRaceHub) {
+            transitionFromMeadowToRaceHub(scene);
+          } else {
+            transitionFromMeadow(scene);
+          }
         }
       }
 
