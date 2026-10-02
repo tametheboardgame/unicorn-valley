@@ -310,14 +310,6 @@ function createRainbowMeadowProduction(scene: Phaser.Scene): void {
   nameObject(scene.add.graphics().setDepth(1.55), environment, 'background');
 
   const signature = nameObject(scene.add.container(0, 0), environment, 'signature');
-  const ribbonColours = [0xef8eaa, 0xf3bd65, 0x80c8df, 0x91cd80, 0xcaa0df];
-  for (let index = 0; index < ribbonColours.length; index += 1) {
-    const arc = scene.add
-      .ellipse(2660, 515, 520 - index * 34, 250 - index * 18)
-      .setStrokeStyle(10, ribbonColours[index], 0.34)
-      .setFillStyle(0xffffff, 0);
-    signature.add(arc);
-  }
   signature.setDepth(8.2);
 
   for (const { x, y, colour } of RAINBOW_MEADOW_LAYOUT.scenery.productionFlowerClusters) {

@@ -26,10 +26,10 @@ export const EXPLORATION_MAIN_ROUTES: Readonly<Record<string, readonly Explorati
   RainbowMeadowScene: [
     { x: 100, y: 1050 },
     { x: 760, y: 1050 },
-    { x: 1330, y: 1110 },
+    { x: 1180, y: 1085 },
+    { x: 1500, y: 1100 },
     { x: 1900, y: 1040 },
-    { x: 2350, y: 1050 },
-    { x: 3190, y: 1040 },
+    { x: 2250, y: 1050 },
   ],
   CrystalBrookScene: [
     { x: 100, y: 1090 },

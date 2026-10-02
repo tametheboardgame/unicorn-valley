@@ -117,22 +117,20 @@ async function sceneSnapshot(page: Page, sceneKey: string): Promise<DiagnosticSc
 test('WP12 exposes coherent regional race and Cup entry points', async ({ page }) => {
   await waitForDiagnostics(page);
 
-  await startScene(page, 'RainbowMeadowScene');
+  await startScene(page, 'RainbowRunEntryScene');
   await page.waitForFunction(() => {
     const diagnostics = (
       window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi }
     ).__UNICORN_VALLEY_DIAGNOSTICS__;
-    const meadow = diagnostics?.snapshot().scenes.find(({ key }) => key === 'RainbowMeadowScene');
+    const hub = diagnostics?.snapshot().scenes.find(({ key }) => key === 'RainbowRunEntryScene');
     return (
-      meadow?.objects.some(({ name }) => name === 'r6.5-wp12-race-entry:petal-parade') &&
-      meadow.objects.some(({ name }) => name === 'r6.5-wp12-race-entry:rainbow-cup')
+      hub?.objects.some(({ name }) => name === 'r6.5-wp12-race-entry:petal-parade') &&
+      hub.objects.some(({ name }) => name === 'r6.5-wp12-race-entry:rainbow-cup')
     );
   });
-  const meadow = await sceneSnapshot(page, 'RainbowMeadowScene');
-  expect(meadow.objects.some(({ name }) => name === 'r6.5-wp12-race-entry:petal-parade')).toBe(
-    true,
-  );
-  expect(meadow.objects.some(({ name }) => name === 'r6.5-wp12-race-entry:rainbow-cup')).toBe(true);
+  const hub = await sceneSnapshot(page, 'RainbowRunEntryScene');
+  expect(hub.objects.some(({ name }) => name === 'r6.5-wp12-race-entry:petal-parade')).toBe(true);
+  expect(hub.objects.some(({ name }) => name === 'r6.5-wp12-race-entry:rainbow-cup')).toBe(true);
 
   await startScene(page, 'WhisperingWoodsScene');
   await page.waitForFunction(() => {

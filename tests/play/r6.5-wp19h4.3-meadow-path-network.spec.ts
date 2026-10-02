@@ -19,7 +19,7 @@ interface BrowserDiagnosticsApi {
   snapshot(): { scenes: DiagnosticScene[] };
 }
 
-test('H4.3 renders one canonical Meadow road network that crosses the world edges', async ({
+test('H4.3/H4.4 retain one canonical Meadow road network through the recomposed junction', async ({
   page,
 }) => {
   await page.goto('/?scene=meadow&diagnostics=1');
@@ -52,7 +52,8 @@ test('H4.3 renders one canonical Meadow road network that crosses the world edge
 
   const network = pathNetworks[0];
   expect(network?.type).toBe('Graphics');
-  expect(network?.displayWidth ?? 0).toBeGreaterThan(3400);
+  expect(network?.displayWidth ?? 0).toBeGreaterThan(3000);
+  expect(network?.displayHeight ?? 0).toBeGreaterThan(900);
 
   expect(objects.some(({ name }) => name === 'exploration-path-polish')).toBe(false);
   expect(objects.some(({ name }) => name === 'r6-wp6.18g:meadow-crystal-brook:path')).toBe(false);

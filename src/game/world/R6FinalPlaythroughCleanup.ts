@@ -12,18 +12,6 @@ export interface LegacyGatewayLabelTarget {
 
 export const LEGACY_GATEWAY_LABEL_TARGETS: readonly LegacyGatewayLabelTarget[] = [
   {
-    id: 'meadow-crystal-brook',
-    sceneKey: 'RainbowMeadowScene',
-    label: 'Crystal Brook',
-    position: { x: 3030, y: 1750 },
-  },
-  {
-    id: 'crystal-brook-meadow',
-    sceneKey: 'CrystalBrookScene',
-    label: 'Rainbow Meadow',
-    position: { x: 120, y: 1090 },
-  },
-  {
     id: 'crystal-brook-whispering-woods',
     sceneKey: 'CrystalBrookScene',
     label: 'Whispering Woods',

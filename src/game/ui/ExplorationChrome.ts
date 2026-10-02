@@ -18,6 +18,7 @@ const LOCATION_TITLES: Readonly<Record<string, string>> = {
   HollowTreeNookScene: 'Hollow Tree Nook',
   SunbeamVillageScene: 'Sunbeam Village',
   RainbowMeadowScene: 'Rainbow Meadow',
+  RainbowRunEntryScene: 'Rainbow Run Race Hub',
   WindmillLookoutScene: 'Windmill Lookout',
   CrystalBrookScene: 'Crystal Brook',
   CrystalGrottoScene: 'Crystal Grotto',

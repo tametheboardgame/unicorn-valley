@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { COTTAGE_INTERIOR_LOCATION_ID } from '../world/CottageInteriorMap';
 import { CRYSTAL_BROOK_LOCATION_ID } from '../world/CrystalBrookMap';
 import { RAINBOW_MEADOW_LOCATION_ID } from '../world/RainbowMeadowMap';
+import { RAINBOW_RUN_HUB_LOCATION_ID } from '../world/RainbowRunHubMap';
 import { STARLIGHT_BEACH_LOCATION_ID } from '../world/StarlightBeachMap';
 import { SUNBEAM_VILLAGE_LOCATION_ID } from '../world/SunbeamVillageMap';
 import { WHISPERING_WOODS_LOCATION_ID } from '../world/WhisperingWoodsMap';
@@ -17,6 +18,7 @@ describe('continue-location contract', () => {
     [MOONFLOWER_GLADE_LOCATION_ID, 'MoonflowerGladeScene'],
     [SUNBEAM_VILLAGE_LOCATION_ID, 'SunbeamVillageScene'],
     [RAINBOW_MEADOW_LOCATION_ID, 'RainbowMeadowScene'],
+    [RAINBOW_RUN_HUB_LOCATION_ID, 'RainbowRunEntryScene'],
     [CRYSTAL_BROOK_LOCATION_ID, 'CrystalBrookScene'],
     [WHISPERING_WOODS_LOCATION_ID, 'WhisperingWoodsScene'],
     [STARLIGHT_BEACH_LOCATION_ID, 'StarlightBeachScene'],
@@ -33,6 +35,7 @@ describe('continue-location contract', () => {
         MOONFLOWER_GLADE_LOCATION_ID,
         SUNBEAM_VILLAGE_LOCATION_ID,
         RAINBOW_MEADOW_LOCATION_ID,
+        RAINBOW_RUN_HUB_LOCATION_ID,
         CRYSTAL_BROOK_LOCATION_ID,
         WHISPERING_WOODS_LOCATION_ID,
         STARLIGHT_BEACH_LOCATION_ID,

@@ -122,6 +122,12 @@ The default development loop is **small change -> cheap relevant checks -> previ
 - After a substantive slice is human-approved and **before merge to `main` / production**, dispatch one authoritative full CI run against the exact approved head. That final gate runs the complete required unit/build/performance, Chromium and cross-browser qualification. Merge only after it is green.
 - A full run on `main` after merge is confirmation, not a substitute for the pre-merge exact-head qualification.
 
+### Git/tool reconnect rule
+
+- If GitHub/Git access fails, disconnects or appears unavailable during active repository work, immediately attempt a fresh connection/status read before reporting a blocker or asking the user what to do.
+- Retry/reconnect autonomously when safe. Only surface the access problem after a genuine reconnect attempt fails, permissions/credentials require user action, or the remote service is demonstrably unavailable.
+- Do not substitute speculative planning for requested repository work merely because the first Git/tool call failed.
+
 ### CI status, failure remediation and chat hand-off
 
 - Never sit in repeated CI/deployment polling loops. On a user status query such as `?`, “now?” or “where are we at?”, perform one fresh status check.

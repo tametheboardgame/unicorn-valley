@@ -1,18 +1,10 @@
 import Phaser from 'phaser';
-import { NOVA_FIRST_RACE_QUEST_ID } from '../../content/r3Quests';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
-import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { saveLocationCheckpoint } from '../save/saveLocationCheckpoint';
-import { getNovaFirstRacePhase, type NovaFirstRacePhase } from '../story/NovaFirstRaceStory';
-import { startNovaConversation } from '../story/WorldStoryConversations';
-import {
-  RAINBOW_MEADOW_LOCATION_ID,
-  RAINBOW_MEADOW_MAP,
-  setRainbowMeadowPlayerSpawn,
-} from '../world/RainbowMeadowMap';
-import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
-import { worldDepthForY } from '../world/WorldDepth';
+import type { NovaFirstRacePhase } from '../story/NovaFirstRaceStory';
+import { RAINBOW_RUN_HUB_LOCATION_ID } from '../world/RainbowRunHubMap';
+import { consumeRaceReturnScene } from './RaceReturnContext';
 import type { RaceRunState } from './RaceRun';
 
 export const RACE_ENTRY_CONFIRMATION_NAME = 'race-entry-confirmation';
@@ -23,18 +15,6 @@ export const RACE_FINISH_EXIT_ZONE_NAME = 'race-finish-exit-zone';
 interface RaceSceneRuntime extends Phaser.Scene {
   runState: RaceRunState;
   finishPanel?: Phaser.GameObjects.Container | null;
-}
-
-interface MeadowState {
-  wasInside: boolean;
-  modal: Phaser.GameObjects.Container | null;
-  yesZone: Phaser.GameObjects.Zone | null;
-  noZone: Phaser.GameObjects.Zone | null;
-  sign: Phaser.GameObjects.Container | null;
-  yesKey: Phaser.Input.Keyboard.Key | null;
-  noKey: Phaser.Input.Keyboard.Key | null;
-  enterKey: Phaser.Input.Keyboard.Key | null;
-  escapeKey: Phaser.Input.Keyboard.Key | null;
 }
 
 interface FinishState {
@@ -78,7 +58,7 @@ export function resolveRaceEntryPrompt(phase: NovaFirstRacePhase): RaceEntryProm
       title: 'Go back to Nova?',
       detail: 'Nova is waiting to hear how your first run went.',
       yesLabel: 'Yes, find Nova',
-      targetScene: 'RainbowMeadowScene',
+      targetScene: 'RainbowRunEntryScene',
     };
   }
 
@@ -86,7 +66,7 @@ export function resolveRaceEntryPrompt(phase: NovaFirstRacePhase): RaceEntryProm
     title: 'Meet Nova before racing?',
     detail: 'Nova will show you how Rainbow Run works.',
     yesLabel: 'Yes, meet Nova',
-    targetScene: 'RainbowMeadowScene',
+    targetScene: 'RainbowRunEntryScene',
   };
 }
 
@@ -98,8 +78,13 @@ function justDown(key: Phaser.Input.Keyboard.Key | null): boolean {
   return key ? Phaser.Input.Keyboard.JustDown(key) : false;
 }
 
+/**
+ * Fallback interaction zones for the race finish panel.
+ *
+ * Rainbow Run entry/quest ownership moved to RainbowRunEntryScene in H4.4A. This manager no
+ * longer watches Rainbow Meadow or creates race-entry presentation there.
+ */
 export class RacePlaytestRecoveryManager {
-  private readonly meadowStates = new WeakMap<Phaser.Scene, MeadowState>();
   private readonly finishStates = new WeakMap<Phaser.Scene, FinishState>();
 
   public constructor(private readonly game: Phaser.Game) {
@@ -108,273 +93,10 @@ export class RacePlaytestRecoveryManager {
 
   private update(): void {
     for (const scene of this.game.scene.getScenes(true)) {
-      if (scene.scene.key === 'RainbowMeadowScene') {
-        this.updateMeadow(scene);
-      } else if (scene.scene.key === 'RaceScene') {
+      if (scene.scene.key === 'RaceScene') {
         this.updateRaceFinish(scene);
       }
     }
-  }
-
-  private updateMeadow(scene: Phaser.Scene): void {
-    const state = this.ensureMeadowState(scene);
-    const player = scene.children.getByName(WORLD_PLAYER_NAME) as Phaser.GameObjects.Sprite | null;
-    const entrance = RAINBOW_MEADOW_MAP.hubFeatures.find(
-      (feature) => feature.id === 'rainbow-run-entrance',
-    );
-    if (!player || !entrance) {
-      return;
-    }
-
-    if (state.modal) {
-      if (justDown(state.yesKey) || justDown(state.enterKey)) {
-        this.confirmRaceEntry(scene, state);
-      } else if (justDown(state.noKey) || justDown(state.escapeKey)) {
-        this.closeRaceEntry(scene, state);
-      }
-      return;
-    }
-
-    const distance = Phaser.Math.Distance.Between(
-      player.x,
-      player.y,
-      entrance.approach.x,
-      entrance.approach.y,
-    );
-    const inside = distance <= 175;
-
-    if (inside && !state.wasInside) {
-      state.wasInside = true;
-      this.openRaceEntry(scene, state);
-      return;
-    }
-
-    if (!inside && distance >= 220) {
-      state.wasInside = false;
-    }
-  }
-
-  private ensureMeadowState(scene: Phaser.Scene): MeadowState {
-    const existing = this.meadowStates.get(scene);
-    if (existing) {
-      return existing;
-    }
-
-    const keyboard = scene.input.keyboard;
-    const state: MeadowState = {
-      wasInside: false,
-      modal: null,
-      yesZone: null,
-      noZone: null,
-      sign: this.createSharedRaceStartSign(scene),
-      yesKey: keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.Y) ?? null,
-      noKey: keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.N) ?? null,
-      enterKey: keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER) ?? null,
-      escapeKey: keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.ESC) ?? null,
-    };
-    this.meadowStates.set(scene, state);
-
-    scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-      state.sign?.destroy(true);
-      this.destroyRaceEntry(state);
-      this.meadowStates.delete(scene);
-    });
-
-    return state;
-  }
-
-  private createSharedRaceStartSign(scene: Phaser.Scene): Phaser.GameObjects.Container | null {
-    const entrance = RAINBOW_MEADOW_MAP.hubFeatures.find(
-      (feature) => feature.id === 'rainbow-run-entrance',
-    );
-    if (!entrance) {
-      return null;
-    }
-
-    const x = entrance.approach.x - 30;
-    const y = entrance.approach.y - 150;
-    const shadow = scene.add.rectangle(5, 7, 290, 96, 0x493958, 0.18);
-    const panel = scene.add
-      .rectangle(0, 0, 290, 96, 0xfff8e8, 0.96)
-      .setStrokeStyle(5, 0xc989c3, 0.98);
-    const heading = scene.add
-      .text(0, -22, 'RACES START HERE', {
-        color: '#654d70',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '18px',
-        fontStyle: 'bold',
-      })
-      .setOrigin(0.5);
-    const detail = scene.add
-      .text(0, 17, "Nova's First Run  •  Sunrise Sprint", {
-        color: '#765b7e',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '14px',
-        fontStyle: 'bold',
-      })
-      .setOrigin(0.5);
-
-    return scene.add
-      .container(x, y, [shadow, panel, heading, detail])
-      .setName(RACE_ENTRY_SIGN_NAME)
-      .setDepth(worldDepthForY(entrance.approach.y, 0.45));
-  }
-
-  private openRaceEntry(scene: Phaser.Scene, state: MeadowState): void {
-    if (state.modal) {
-      return;
-    }
-
-    const progress = getBrowserQuestEngine().getProgress(NOVA_FIRST_RACE_QUEST_ID);
-    const copy = resolveRaceEntryPrompt(getNovaFirstRacePhase(progress));
-
-    scene.physics.world.pause();
-
-    const shade = scene.add.rectangle(
-      GAME_WIDTH / 2,
-      GAME_HEIGHT / 2,
-      GAME_WIDTH,
-      GAME_HEIGHT,
-      0x392f44,
-      0.36,
-    );
-    const shadow = scene.add.rectangle(
-      GAME_WIDTH / 2 + 8,
-      GAME_HEIGHT / 2 + 10,
-      660,
-      310,
-      0x493958,
-      0.28,
-    );
-    const panel = scene.add
-      .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, 650, 300, 0xfff8e8, 0.995)
-      .setStrokeStyle(6, 0xb689b8, 1);
-    const title = scene.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 78, copy.title, {
-        color: '#60486d',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '32px',
-        fontStyle: 'bold',
-        align: 'center',
-      })
-      .setOrigin(0.5);
-    const detail = scene.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 24, copy.detail, {
-        color: '#735b80',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '18px',
-        align: 'center',
-        wordWrap: { width: 560 },
-      })
-      .setOrigin(0.5);
-    const yesButton = scene.add
-      .rectangle(GAME_WIDTH / 2 - 145, GAME_HEIGHT / 2 + 76, 240, 72, 0xffefb7, 1)
-      .setStrokeStyle(4, 0xd49acb, 1);
-    const yesText = scene.add
-      .text(GAME_WIDTH / 2 - 145, GAME_HEIGHT / 2 + 76, copy.yesLabel, {
-        color: '#60486d',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '20px',
-        fontStyle: 'bold',
-      })
-      .setOrigin(0.5);
-    const noButton = scene.add
-      .rectangle(GAME_WIDTH / 2 + 145, GAME_HEIGHT / 2 + 76, 220, 72, 0xf1e2fb, 1)
-      .setStrokeStyle(4, 0xb895c8, 1);
-    const noText = scene.add
-      .text(GAME_WIDTH / 2 + 145, GAME_HEIGHT / 2 + 76, 'Not now', {
-        color: '#60486d',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '20px',
-        fontStyle: 'bold',
-      })
-      .setOrigin(0.5);
-    const hint = scene.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 127, 'Y / Enter = yes   •   N / Esc = no', {
-        color: '#8a748f',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '13px',
-      })
-      .setOrigin(0.5);
-
-    state.modal = scene.add
-      .container(0, 0, [
-        shade,
-        shadow,
-        panel,
-        title,
-        detail,
-        yesButton,
-        yesText,
-        noButton,
-        noText,
-        hint,
-      ])
-      .setName(RACE_ENTRY_CONFIRMATION_NAME)
-      .setScrollFactor(0)
-      .setDepth(230);
-
-    state.yesZone = scene.add
-      .zone(GAME_WIDTH / 2 - 145, GAME_HEIGHT / 2 + 76, 250, 84)
-      .setName(`${RACE_ENTRY_CONFIRMATION_NAME}-yes`)
-      .setScrollFactor(0)
-      .setDepth(240)
-      .setInteractive({ useHandCursor: true });
-    state.noZone = scene.add
-      .zone(GAME_WIDTH / 2 + 145, GAME_HEIGHT / 2 + 76, 230, 84)
-      .setName(`${RACE_ENTRY_CONFIRMATION_NAME}-no`)
-      .setScrollFactor(0)
-      .setDepth(240)
-      .setInteractive({ useHandCursor: true });
-
-    state.yesZone.on('pointerdown', () => this.confirmRaceEntry(scene, state));
-    state.noZone.on('pointerdown', () => this.closeRaceEntry(scene, state));
-  }
-
-  private confirmRaceEntry(scene: Phaser.Scene, state: MeadowState): void {
-    const progress = getBrowserQuestEngine().getProgress(NOVA_FIRST_RACE_QUEST_ID);
-    const copy = resolveRaceEntryPrompt(getNovaFirstRacePhase(progress));
-    this.destroyRaceEntry(state);
-    scene.physics.world.resume();
-
-    if (copy.targetScene === scene.scene.key && scene.scene.key === 'RainbowMeadowScene') {
-      this.meetNovaInActiveMeadow(scene, state);
-      return;
-    }
-
-    scene.scene.start(copy.targetScene, copy.payload);
-  }
-
-  private meetNovaInActiveMeadow(scene: Phaser.Scene, state: MeadowState): void {
-    const player = scene.children.getByName(WORLD_PLAYER_NAME) as Phaser.GameObjects.Sprite | null;
-    const nova =
-      (scene.children.getByName('core-npc:nova:picnic') as Phaser.GameObjects.Sprite | null) ??
-      (scene.children.getByName('core-npc:nova:world') as Phaser.GameObjects.Sprite | null);
-
-    state.wasInside = false;
-    if (!player || !nova) {
-      return;
-    }
-
-    player.setPosition(nova.x - 120, nova.y);
-    const arcadeBody = player.body as Phaser.Physics.Arcade.Body | null;
-    arcadeBody?.setVelocity(0, 0);
-    scene.cameras.main.centerOn(player.x, player.y);
-    startNovaConversation(scene);
-  }
-
-  private closeRaceEntry(scene: Phaser.Scene, state: MeadowState): void {
-    this.destroyRaceEntry(state);
-    scene.physics.world.resume();
-  }
-
-  private destroyRaceEntry(state: MeadowState): void {
-    state.yesZone?.destroy();
-    state.noZone?.destroy();
-    state.modal?.destroy(true);
-    state.yesZone = null;
-    state.noZone = null;
-    state.modal = null;
   }
 
   private updateRaceFinish(scene: Phaser.Scene): void {
@@ -447,17 +169,11 @@ export class RacePlaytestRecoveryManager {
   }
 
   private exitRace(scene: Phaser.Scene): void {
-    const raceEntrance = RAINBOW_MEADOW_MAP.hubFeatures.find(
-      (feature) => feature.id === 'rainbow-run-entrance',
-    );
-    if (raceEntrance) {
-      setRainbowMeadowPlayerSpawn({
-        x: raceEntrance.approach.x - 260,
-        y: raceEntrance.approach.y,
-      });
+    const returnScene = consumeRaceReturnScene(this.game, 'RainbowRunEntryScene');
+    if (returnScene === 'RainbowRunEntryScene') {
+      saveLocationCheckpoint(getBrowserSaveService(), RAINBOW_RUN_HUB_LOCATION_ID);
     }
-    saveLocationCheckpoint(getBrowserSaveService(), RAINBOW_MEADOW_LOCATION_ID);
-    scene.scene.start('RainbowMeadowScene');
+    scene.scene.start(returnScene);
   }
 }
 

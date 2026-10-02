@@ -14,11 +14,7 @@ import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegi
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { saveLocationCheckpoint } from '../save/saveLocationCheckpoint';
 import type { SaveGame } from '../save/saveSchema';
-import {
-  RAINBOW_MEADOW_LOCATION_ID,
-  RAINBOW_MEADOW_MAP,
-  setRainbowMeadowPlayerSpawn,
-} from '../world/RainbowMeadowMap';
+import { RAINBOW_RUN_HUB_LAYOUT, RAINBOW_RUN_HUB_LOCATION_ID } from '../world/RainbowRunHubMap';
 import {
   setStarlightBeachPlayerSpawn,
   STARLIGHT_BEACH_LOCATION_ID,
@@ -30,6 +26,7 @@ import {
 import { setWorldArrivalFacing } from '../world/WorldArrivalState';
 import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
 import { getActiveRaceCourse, selectRaceCourse } from './RaceCourse';
+import { setRaceReturnScene, type RaceReturnSceneKey } from './RaceReturnContext';
 import {
   createR65RacePresentation,
   getR65RaceThemeIcon,
@@ -38,7 +35,7 @@ import {
 import { createRainbowCupOverlay } from './R65RainbowCupOverlay';
 import type { RaceRunState } from './RaceRun';
 
-type WorldSceneKey = 'RainbowMeadowScene' | 'WhisperingWoodsScene' | 'StarlightBeachScene';
+type WorldSceneKey = RaceReturnSceneKey;
 type RaceLaunchMode = 'direct' | 'cup';
 
 interface Point {
@@ -81,7 +78,7 @@ interface RaceSceneRuntime extends Phaser.Scene {
 }
 
 const WORLD_SCENE_KEYS: readonly WorldSceneKey[] = [
-  'RainbowMeadowScene',
+  'RainbowRunEntryScene',
   'WhisperingWoodsScene',
   'StarlightBeachScene',
 ];
@@ -89,21 +86,21 @@ const WORLD_SCENE_KEYS: readonly WorldSceneKey[] = [
 const ENTRIES: readonly RaceEntryDefinition[] = [
   {
     id: 'petal-parade',
-    sceneKey: 'RainbowMeadowScene',
+    sceneKey: 'RainbowRunEntryScene',
     label: 'Petal Parade',
     actionLabel: 'Race',
     icon: '🌸',
-    position: { x: 3000, y: 780 },
+    position: RAINBOW_RUN_HUB_LAYOUT.expandedRaceEntries.petalParade,
     radius: 165,
     courseId: PETAL_PARADE_RACE_ID,
   },
   {
     id: 'rainbow-cup',
-    sceneKey: 'RainbowMeadowScene',
+    sceneKey: 'RainbowRunEntryScene',
     label: 'Rainbow Cup',
     actionLabel: 'View events',
     icon: '🏆',
-    position: { x: 3060, y: 1480 },
+    position: RAINBOW_RUN_HUB_LAYOUT.expandedRaceEntries.rainbowCup,
     radius: 170,
     cup: true,
   },
@@ -172,7 +169,7 @@ export class R65RaceExpansionWorldManager {
   private raceFinishNote: Phaser.GameObjects.Text | null = null;
   private cupOverlay: Phaser.GameObjects.Container | null = null;
   private cupOverlayScene: Phaser.Scene | null = null;
-  private reopenCupAfterRace = false;
+  private reopenCupSceneKey: WorldSceneKey | null = null;
 
   public constructor(private readonly game: Phaser.Game) {
     this.game.events.on(Phaser.Core.Events.POST_STEP, this.update, this);
@@ -194,13 +191,14 @@ export class R65RaceExpansionWorldManager {
       this.updateWorldState(this.ensureWorldState(scene, sceneKey));
     }
 
-    if (!this.reopenCupAfterRace) {
+    if (!this.reopenCupSceneKey) {
       return;
     }
-    const meadow = this.game.scene.getScene('RainbowMeadowScene');
-    if (meadow?.scene.isActive()) {
-      this.reopenCupAfterRace = false;
-      this.openCupOverlay(meadow);
+    const returnSceneKey = this.reopenCupSceneKey;
+    const returnScene = this.game.scene.getScene(returnSceneKey);
+    if (returnScene?.scene.isActive()) {
+      this.reopenCupSceneKey = null;
+      this.openCupOverlay(returnScene, returnSceneKey);
     }
   }
 
@@ -339,7 +337,7 @@ export class R65RaceExpansionWorldManager {
 
   private tryActivateEntry(state: WorldSceneState, definition: RaceEntryDefinition): void {
     if (definition.cup) {
-      this.openCupOverlay(state.scene);
+      this.openCupOverlay(state.scene, definition.sceneKey);
       return;
     }
     if (!definition.courseId) {
@@ -362,20 +360,25 @@ export class R65RaceExpansionWorldManager {
   ): void {
     this.closeCupOverlay();
     this.launchContext = { mode, originSceneKey };
-    this.reopenCupAfterRace = false;
+    this.reopenCupSceneKey = null;
 
-    if (originSceneKey === 'RainbowMeadowScene') {
-      saveLocationCheckpoint(this.saveService, RAINBOW_MEADOW_LOCATION_ID);
+    if (originSceneKey === 'RainbowRunEntryScene') {
+      saveLocationCheckpoint(this.saveService, RAINBOW_RUN_HUB_LOCATION_ID);
     } else if (originSceneKey === 'WhisperingWoodsScene') {
+      setWhisperingWoodsPlayerSpawn({ x: 1500, y: 720 });
+      setWorldArrivalFacing('WhisperingWoodsScene', 'left');
       saveLocationCheckpoint(this.saveService, WHISPERING_WOODS_LOCATION_ID);
     } else {
+      setStarlightBeachPlayerSpawn({ x: 2740, y: 900 });
+      setWorldArrivalFacing('StarlightBeachScene', 'left');
       saveLocationCheckpoint(this.saveService, STARLIGHT_BEACH_LOCATION_ID);
     }
+    setRaceReturnScene(this.game, originSceneKey);
     selectRaceCourse(courseId);
     scene.scene.start('RaceScene');
   }
 
-  private openCupOverlay(scene: Phaser.Scene): void {
+  private openCupOverlay(scene: Phaser.Scene, originSceneKey: WorldSceneKey): void {
     if (this.cupOverlay?.active) {
       return;
     }
@@ -386,7 +389,7 @@ export class R65RaceExpansionWorldManager {
     this.cupOverlay = createRainbowCupOverlay(
       scene,
       save,
-      (courseId) => this.startRace(scene, courseId, 'cup', 'RainbowMeadowScene'),
+      (courseId) => this.startRace(scene, courseId, 'cup', originSceneKey),
       () => {
         this.cupOverlay = null;
         if (this.cupOverlayScene) {
@@ -425,22 +428,22 @@ export class R65RaceExpansionWorldManager {
     if (!this.raceWasActive) {
       return;
     }
-    const meadow = this.game.scene.getScene('RainbowMeadowScene');
-    if (!meadow?.scene.isActive()) {
+
+    const context = this.launchContext;
+    if (!context) {
+      this.raceWasActive = false;
+      return;
+    }
+    const originScene = this.game.scene.getScene(context.originSceneKey);
+    if (!originScene?.scene.isActive()) {
       return;
     }
 
     this.raceWasActive = false;
-    const context = this.launchContext;
     this.launchContext = null;
-    if (!context) {
-      return;
-    }
     if (context.mode === 'cup') {
-      this.reopenCupAfterRace = true;
-      return;
+      this.reopenCupSceneKey = context.originSceneKey;
     }
-    this.returnDirectRace(meadow, context.originSceneKey);
   }
 
   private ensureRacePresentation(scene: Phaser.Scene, courseId: string): void {
@@ -477,31 +480,6 @@ export class R65RaceExpansionWorldManager {
       .setDepth(230);
   }
 
-  private returnDirectRace(meadow: Phaser.Scene, originSceneKey: WorldSceneKey): void {
-    if (originSceneKey === 'WhisperingWoodsScene') {
-      setWhisperingWoodsPlayerSpawn({ x: 1500, y: 720 });
-      setWorldArrivalFacing('WhisperingWoodsScene', 'left');
-      saveLocationCheckpoint(this.saveService, WHISPERING_WOODS_LOCATION_ID);
-      meadow.scene.start('WhisperingWoodsScene');
-      return;
-    }
-    if (originSceneKey === 'StarlightBeachScene') {
-      setStarlightBeachPlayerSpawn({ x: 2740, y: 900 });
-      setWorldArrivalFacing('StarlightBeachScene', 'left');
-      saveLocationCheckpoint(this.saveService, STARLIGHT_BEACH_LOCATION_ID);
-      meadow.scene.start('StarlightBeachScene');
-      return;
-    }
-
-    const raceEntrance = RAINBOW_MEADOW_MAP.hubFeatures.find(
-      (feature) => feature.id === 'rainbow-run-entrance',
-    );
-    if (raceEntrance) {
-      setRainbowMeadowPlayerSpawn(raceEntrance.approach);
-    }
-    saveLocationCheckpoint(this.saveService, RAINBOW_MEADOW_LOCATION_ID);
-  }
-
   private clearRacePresentation(): void {
     this.raceTheme?.destroy(true);
     this.raceTheme = null;
@@ -532,7 +510,7 @@ export class R65RaceExpansionWorldManager {
     }
     state.feedback.destroy();
     this.worldStates.delete(sceneKey);
-    if (sceneKey === 'RainbowMeadowScene') {
+    if (this.cupOverlayScene === state.scene) {
       this.closeCupOverlay();
     }
   }
@@ -544,6 +522,7 @@ export class R65RaceExpansionWorldManager {
     this.closeCupOverlay();
     this.clearRacePresentation();
     this.launchContext = null;
+    this.reopenCupSceneKey = null;
   }
 }
 

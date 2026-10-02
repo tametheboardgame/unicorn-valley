@@ -3,10 +3,10 @@ import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { saveLocationCheckpoint } from '../save/saveLocationCheckpoint';
 import {
-  RAINBOW_MEADOW_LOCATION_ID,
-  RAINBOW_MEADOW_MAP,
-  setRainbowMeadowPlayerSpawn,
-} from '../world/RainbowMeadowMap';
+  RAINBOW_RUN_HUB_LAYOUT,
+  RAINBOW_RUN_HUB_LOCATION_ID,
+  setRainbowRunHubPlayerSpawn,
+} from '../world/RainbowRunHubMap';
 import { resolveRaceRunning, updateRaceKeyboardArmed } from './RaceManualControl';
 import type { RaceRunState } from './RaceRun';
 
@@ -198,16 +198,12 @@ export class RacePlayerControlManager {
   }
 
   private returnToNova(scene: Phaser.Scene): void {
-    const nova = RAINBOW_MEADOW_MAP.npcMarkers.find((marker) => marker.id === 'nova');
-    if (nova) {
-      setRainbowMeadowPlayerSpawn({
-        x: nova.position.x - 185,
-        y: nova.position.y + 35,
-      });
-    }
-
-    saveLocationCheckpoint(getBrowserSaveService(), RAINBOW_MEADOW_LOCATION_ID);
-    scene.scene.start('RainbowMeadowScene');
+    setRainbowRunHubPlayerSpawn({
+      x: RAINBOW_RUN_HUB_LAYOUT.nova.x - 185,
+      y: RAINBOW_RUN_HUB_LAYOUT.nova.y + 35,
+    });
+    saveLocationCheckpoint(getBrowserSaveService(), RAINBOW_RUN_HUB_LOCATION_ID);
+    scene.scene.start('RainbowRunEntryScene');
   }
 }
 

@@ -9,7 +9,7 @@ export interface MeadowEntrance {
   label: string;
   position: MapPoint;
   approach: MapPoint;
-  direction: 'west';
+  direction: 'west' | 'east';
 }
 
 export interface MeadowHubFeature {
@@ -17,12 +17,6 @@ export interface MeadowHubFeature {
   label: string;
   position: MapPoint;
   approach: MapPoint;
-}
-
-export interface MeadowNpcMarker {
-  id: string;
-  label: string;
-  position: MapPoint;
 }
 
 export interface MeadowDiscoverySpot {
@@ -59,8 +53,8 @@ export const RAINBOW_MEADOW_LAYOUT = {
     },
     {
       id: 'north-nature',
-      centre: { x: 1450, y: 580 },
-      radiusX: 960,
+      centre: { x: 1420, y: 580 },
+      radiusX: 900,
       radiusY: 460,
       groundColour: 0xc5eda8,
       groundAlpha: 0.34,
@@ -83,19 +77,19 @@ export const RAINBOW_MEADOW_LAYOUT = {
     },
     {
       id: 'rainbow-run',
-      centre: { x: 2700, y: 1010 },
-      radiusX: 610,
-      radiusY: 520,
+      centre: { x: 2950, y: 290 },
+      radiusX: 330,
+      radiusY: 210,
       groundColour: 0xd5eca2,
-      groundAlpha: 0.28,
+      groundAlpha: 0.12,
     },
     {
       id: 'crystal-brook-corridor',
-      centre: { x: 2980, y: 1780 },
-      radiusX: 350,
-      radiusY: 220,
+      centre: { x: 3020, y: 1170 },
+      radiusX: 450,
+      radiusY: 360,
       groundColour: 0xa8ddb7,
-      groundAlpha: 0.25,
+      groundAlpha: 0.18,
     },
   ],
   natureFeatures: {
@@ -129,9 +123,8 @@ export const RAINBOW_MEADOW_LAYOUT = {
       { id: 'north-west-a', x: 250, y: 430, scale: 0.95 },
       { id: 'north-west-b', x: 480, y: 300, scale: 1.05 },
       { id: 'north-west-c', x: 720, y: 390, scale: 1 },
-      { id: 'north-east-a', x: 2050, y: 320, scale: 1 },
-      { id: 'north-east-b', x: 2250, y: 430, scale: 1.05 },
-      { id: 'far-east', x: 3000, y: 330, scale: 0.95 },
+      { id: 'north-east-a', x: 1840, y: 320, scale: 1 },
+      { id: 'north-east-b', x: 1950, y: 420, scale: 1.05 },
       { id: 'sports-west-frame', x: 120, y: 1900, scale: 1.05 },
       { id: 'sports-east-frame', x: 1260, y: 1980, scale: 1 },
     ],
@@ -142,22 +135,15 @@ export const RAINBOW_MEADOW_LAYOUT = {
       { x: 1160, y: 850 },
       { x: 1360, y: 850 },
       { x: 1900, y: 800 },
-      { x: 2240, y: 740 },
-      { x: 3040, y: 650 },
-      { x: 3220, y: 800 },
+      { x: 2050, y: 760 },
     ],
     productionFlowerClusters: [
       { x: 390, y: 510, colour: 0xef93b8 },
       { x: 690, y: 470, colour: 0xf2c469 },
       { x: 930, y: 530, colour: 0x8acbda },
       { x: 1160, y: 860, colour: 0xc49ee0 },
-      { x: 3050, y: 690, colour: 0xc49ee0 },
-      { x: 3210, y: 760, colour: 0xf1a2bb },
     ],
-    productionLeafClusters: [
-      { x: 120, y: 1540, mirrored: false },
-      { x: 3260, y: 420, mirrored: true },
-    ],
+    productionLeafClusters: [{ x: 120, y: 1540, mirrored: false }],
   },
   sunbeamGateway: {
     id: 'sunbeam-village',
@@ -166,24 +152,187 @@ export const RAINBOW_MEADOW_LAYOUT = {
     approach: { x: 330, y: 1050 },
     direction: 'west',
   },
-  raceHub: {
-    x: 2670,
-    y: 1080,
-    width: 1180,
-    height: 1120,
+  crystalBrookGateway: {
+    id: 'crystal-brook',
+    label: 'Crystal Brook',
+    position: { x: 3300, y: 1035 },
+    approach: { x: 3150, y: 1100 },
+    direction: 'east',
+  },
+  // H4.4C: shallow wading rim, blocked deep water, stone crossing, continuous outflow and reactive falls.
+  crystalBrookGatewayArea: {
+    dryLanding: { x: 2680, y: 1210 },
+    sign: { x: 2445, y: 1245 },
+    leftBank: { x: 2670, y: 1210 },
+    pool: {
+      centre: { x: 3030, y: 1190 },
+      shoreline: [
+        { x: 2655, y: 1190 },
+        { x: 2690, y: 1060 },
+        { x: 2800, y: 970 },
+        { x: 2940, y: 925 },
+        { x: 3090, y: 940 },
+        { x: 3225, y: 985 },
+        { x: 3330, y: 1070 },
+        { x: 3370, y: 1185 },
+        { x: 3340, y: 1305 },
+        { x: 3240, y: 1400 },
+        { x: 3140, y: 1450 },
+        { x: 3123, y: 1495 },
+        { x: 2997, y: 1495 },
+        { x: 2960, y: 1450 },
+        { x: 2805, y: 1385 },
+        { x: 2700, y: 1300 },
+      ],
+      deepZone: [
+        { x: 2790, y: 1150 },
+        { x: 2840, y: 1050 },
+        { x: 2950, y: 995 },
+        { x: 3070, y: 1000 },
+        { x: 3190, y: 1040 },
+        { x: 3280, y: 1120 },
+        { x: 3300, y: 1230 },
+        { x: 3230, y: 1330 },
+        { x: 3140, y: 1395 },
+        { x: 3090, y: 1495 },
+        { x: 3030, y: 1495 },
+        { x: 2965, y: 1385 },
+        { x: 2860, y: 1315 },
+        { x: 2800, y: 1240 },
+      ],
+    },
+    waterfall: {
+      x: 3340,
+      y: 1010,
+      width: 146,
+      height: 320,
+      openRadius: 255,
+      curtains: [
+        { id: 'outer-left', side: -1, closedOffset: 50, openOffset: 118, width: 44 },
+        { id: 'inner-left', side: -1, closedOffset: 16, openOffset: 70, width: 46 },
+        { id: 'inner-right', side: 1, closedOffset: 16, openOffset: 70, width: 46 },
+        { id: 'outer-right', side: 1, closedOffset: 50, openOffset: 118, width: 44 },
+      ],
+    },
+    steppingStones: [
+      { x: 2745, y: 1210, width: 112, height: 66, angle: -7 },
+      { x: 2855, y: 1185, width: 120, height: 68, angle: 5 },
+      { x: 2965, y: 1150, width: 116, height: 64, angle: -4 },
+      { x: 3070, y: 1120, width: 112, height: 62, angle: 5 },
+      { x: 3170, y: 1085, width: 104, height: 58, angle: -5 },
+      { x: 3250, y: 1050, width: 96, height: 54, angle: 4 },
+    ],
+    rocks: [
+      {
+        x: 2750,
+        y: 985,
+        width: 188,
+        height: 70,
+        collisionWidth: 134,
+        collisionHeight: 46,
+        colour: 0x70807d,
+        kind: 'slab',
+        angle: -8,
+      },
+      {
+        x: 2965,
+        y: 860,
+        width: 92,
+        height: 168,
+        collisionWidth: 64,
+        collisionHeight: 108,
+        colour: 0x627673,
+        kind: 'spire',
+        angle: 5,
+      },
+      {
+        x: 3070,
+        y: 900,
+        width: 112,
+        height: 102,
+        collisionWidth: 76,
+        collisionHeight: 68,
+        colour: 0x75837d,
+        kind: 'round',
+        angle: -3,
+      },
+      {
+        x: 3290,
+        y: 1270,
+        width: 150,
+        height: 112,
+        collisionWidth: 40,
+        collisionHeight: 68,
+        colour: 0x586d6d,
+        kind: 'wedge',
+        angle: 8,
+      },
+      {
+        x: 3250,
+        y: 1460,
+        width: 188,
+        height: 112,
+        collisionWidth: 120,
+        collisionHeight: 68,
+        colour: 0x5f7271,
+        kind: 'cluster',
+        angle: -4,
+      },
+      {
+        x: 2980,
+        y: 1510,
+        width: 196,
+        height: 76,
+        collisionWidth: 140,
+        collisionHeight: 48,
+        colour: 0x637573,
+        kind: 'slab',
+        angle: 4,
+      },
+      {
+        x: 2760,
+        y: 1420,
+        width: 158,
+        height: 112,
+        collisionWidth: 108,
+        collisionHeight: 66,
+        colour: 0x687976,
+        kind: 'lopsided',
+        angle: -10,
+      },
+    ],
+    crystals: [
+      { x: 2870, y: 990, scale: 0.56 },
+      { x: 3140, y: 1410, scale: 0.68 },
+      { x: 3265, y: 930, scale: 0.82 },
+      { x: 3310, y: 1330, scale: 0.64 },
+    ],
+    mist: [
+      { x: 3275, y: 1080, width: 180, height: 52 },
+      { x: 3340, y: 1130, width: 230, height: 68 },
+      { x: 3220, y: 1165, width: 170, height: 48 },
+    ],
+    outletStream: {
+      outerWidth: 126,
+      innerWidth: 88,
+      deepWidth: 58,
+      points: [
+        { x: 3060, y: 1495 },
+        { x: 3060, y: 1560 },
+        { x: 3115, y: 1650 },
+        { x: 3035, y: 1775 },
+        { x: 3090, y: 1900 },
+        { x: 3015, y: 2035 },
+        { x: 2980, y: 2190 },
+      ],
+    },
   },
   hubFeatures: {
     rainbowRunEntrance: {
       id: 'rainbow-run-entrance',
-      label: 'Rainbow Run',
-      position: { x: 3190, y: 1040 },
-      approach: { x: 2970, y: 1040 },
-    },
-    ribbonBoard: {
-      id: 'ribbon-board',
-      label: 'Ribbon Board',
-      position: { x: 2510, y: 1430 },
-      approach: { x: 2510, y: 1590 },
+      label: 'Rainbow Run Race Hub',
+      position: { x: 2950, y: 190 },
+      approach: { x: 2950, y: 390 },
     },
     windmillLookout: {
       id: 'windmill-lookout',
@@ -191,9 +340,6 @@ export const RAINBOW_MEADOW_LAYOUT = {
       position: { x: 1280, y: 275 },
       approach: { x: 1280, y: 440 },
     },
-  },
-  coreNpcPositions: {
-    novaRaceHub: { x: 2470, y: 930 },
   },
   structuralPaths: [
     {
@@ -206,10 +352,7 @@ export const RAINBOW_MEADOW_LAYOUT = {
         { x: 1180, y: 1085 },
         { x: 1500, y: 1100 },
         { x: 1900, y: 1040 },
-        { x: 2350, y: 1050 },
-        { x: 2800, y: 1040 },
-        { x: 3190, y: 1040 },
-        { x: 3560, y: 1040 },
+        { x: 2250, y: 1050 },
       ],
       outerWidth: 150,
       innerWidth: 108,
@@ -261,42 +404,28 @@ export const RAINBOW_MEADOW_LAYOUT = {
     {
       id: 'rainbow-run-hub-spur',
       points: [
-        { x: 2500, y: 1060 },
-        { x: 2510, y: 1260 },
+        { x: 2250, y: 1050 },
+        { x: 2330, y: 870 },
+        { x: 2460, y: 700 },
+        { x: 2670, y: 540 },
+        { x: 2950, y: 390 },
+        { x: 2950, y: 120 },
       ],
-      outerWidth: 76,
+      outerWidth: 78,
       innerWidth: 58,
     },
     {
       id: 'crystal-brook-spur',
       points: [
-        { x: 2050, y: 1045 },
-        { x: 2100, y: 1260 },
-        { x: 2160, y: 1480 },
-        { x: 2300, y: 1640 },
-        { x: 2490, y: 1780 },
-        { x: 2760, y: 1840 },
-        { x: 3030, y: 1750 },
+        { x: 2250, y: 1050 },
+        { x: 2410, y: 1100 },
+        { x: 2540, y: 1165 },
+        { x: 2680, y: 1210 },
       ],
-      outerWidth: 92,
-      innerWidth: 64,
+      outerWidth: 110,
+      innerWidth: 78,
     },
   ] satisfies readonly RainbowMeadowPathStroke[],
-  // H4.4 owns canonicalising the functional Crystal Brook transition.
-  // H4.1 retains these coordinates only as planning data for the later rebuild.
-  crystalBrookRoute: {
-    transitionPosition: { x: 3030, y: 1750 },
-    pathPoints: [
-      { x: 1900, y: 1040 },
-      { x: 1970, y: 1220 },
-      { x: 2050, y: 1420 },
-      { x: 2170, y: 1580 },
-      { x: 2320, y: 1720 },
-      { x: 2490, y: 1840 },
-      { x: 2760, y: 1870 },
-      { x: 3030, y: 1750 },
-    ] satisfies readonly MapPoint[],
-  },
 } as const;
 
 const DEFAULT_PLAYER_SPAWN = RAINBOW_MEADOW_LAYOUT.sunbeamGateway.approach;
@@ -320,20 +449,14 @@ export const RAINBOW_MEADOW_MAP = {
   height: RAINBOW_MEADOW_LAYOUT.bounds.height,
   margin: RAINBOW_MEADOW_LAYOUT.bounds.margin,
   playerSpawn,
-  raceHub: RAINBOW_MEADOW_LAYOUT.raceHub,
-  entrances: [RAINBOW_MEADOW_LAYOUT.sunbeamGateway] satisfies readonly MeadowEntrance[],
+  entrances: [
+    RAINBOW_MEADOW_LAYOUT.sunbeamGateway,
+    RAINBOW_MEADOW_LAYOUT.crystalBrookGateway,
+  ] satisfies readonly MeadowEntrance[],
   hubFeatures: [
     RAINBOW_MEADOW_LAYOUT.hubFeatures.rainbowRunEntrance,
-    RAINBOW_MEADOW_LAYOUT.hubFeatures.ribbonBoard,
     RAINBOW_MEADOW_LAYOUT.hubFeatures.windmillLookout,
   ] satisfies readonly MeadowHubFeature[],
-  npcMarkers: [
-    {
-      id: 'nova',
-      label: 'Nova',
-      position: RAINBOW_MEADOW_LAYOUT.coreNpcPositions.novaRaceHub,
-    },
-  ] satisfies readonly MeadowNpcMarker[],
   discoverySpots: [
     {
       id: 'prism-bloom',
@@ -359,8 +482,7 @@ export const RAINBOW_MEADOW_MAP = {
       height: RAINBOW_MEADOW_LAYOUT.natureFeatures.pond.height,
     },
     { id: 'collision:north-west-grove', x: 490, y: 360, width: 620, height: 260 },
-    { id: 'collision:north-east-grove', x: 2160, y: 360, width: 430, height: 240 },
-    { id: 'collision:far-east-tree', x: 3000, y: 330, width: 170, height: 190 },
+    { id: 'collision:north-east-grove', x: 1900, y: 365, width: 310, height: 220 },
     { id: 'collision:sports-east-frame', x: 1260, y: 1980, width: 170, height: 100 },
     {
       id: 'collision:windmill-lookout-base',
@@ -369,10 +491,27 @@ export const RAINBOW_MEADOW_MAP = {
       width: 190,
       height: 255,
     },
-    { id: 'collision:hub-tent', x: 2600, y: 520, width: 430, height: 260 },
-    { id: 'collision:ribbon-board', x: 2510, y: 1430, width: 300, height: 85 },
-    { id: 'collision:race-post-north', x: 3190, y: 900, width: 70, height: 180 },
-    { id: 'collision:race-post-south', x: 3190, y: 1180, width: 70, height: 180 },
+    {
+      id: 'collision:race-hub-gateway-west-post',
+      x: RAINBOW_MEADOW_LAYOUT.hubFeatures.rainbowRunEntrance.position.x - 100,
+      y: RAINBOW_MEADOW_LAYOUT.hubFeatures.rainbowRunEntrance.position.y,
+      width: 38,
+      height: 190,
+    },
+    {
+      id: 'collision:race-hub-gateway-east-post',
+      x: RAINBOW_MEADOW_LAYOUT.hubFeatures.rainbowRunEntrance.position.x + 100,
+      y: RAINBOW_MEADOW_LAYOUT.hubFeatures.rainbowRunEntrance.position.y,
+      width: 38,
+      height: 190,
+    },
+    ...RAINBOW_MEADOW_LAYOUT.crystalBrookGatewayArea.rocks.map((rock, index) => ({
+      id: `collision:crystal-brook-gateway-rock:${index}`,
+      x: rock.x,
+      y: rock.y,
+      width: rock.collisionWidth,
+      height: rock.collisionHeight,
+    })),
   ] satisfies readonly CollisionRectangle[],
 } as const;
 

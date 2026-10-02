@@ -1,8 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
 
-const RAINBOW_MEADOW_NOVA_X = 2470;
-const RAINBOW_MEADOW_NOVA_Y = 930;
-
 interface DiagnosticObject {
   type: string;
   name: string;
@@ -44,7 +41,7 @@ async function meadowSnapshot(page: Page): Promise<DiagnosticScene> {
   return meadow;
 }
 
-test('H4.1 leaves one Meadow path owner and one production Nova', async ({ page }) => {
+test('H4.1/H4.4A leave one Meadow path owner with race-host Nova extracted', async ({ page }) => {
   await page.goto('/?scene=meadow&diagnostics=1');
 
   await page.waitForFunction(() => {
@@ -53,24 +50,16 @@ test('H4.1 leaves one Meadow path owner and one production Nova', async ({ page 
     ).__UNICORN_VALLEY_DIAGNOSTICS__;
     const meadow = api?.snapshot().scenes.find(({ key }) => key === 'RainbowMeadowScene');
     return Boolean(
-      meadow?.objects.some(({ name }) => name === 'core-npc:nova:world') &&
-        meadow.objects.some(({ name }) => name === 'rainbow-meadow:path-network'),
+      meadow?.objects.some(({ name }) => name === 'rainbow-meadow:path-network') &&
+        meadow.objects.some(({ name }) => name === 'rainbow-meadow:rainbow-run-hub-sign'),
     );
   });
 
   const meadow = await meadowSnapshot(page);
 
-  expect(meadow.objects.some(({ name }) => name === 'core-npc:nova:world')).toBe(true);
+  expect(meadow.objects.some(({ name }) => name === 'core-npc:nova:world')).toBe(false);
   expect(meadow.objects.some(({ name }) => name === 'nova-canonical-world')).toBe(false);
-
-  const legacyNovaContainers = meadow.objects.filter(
-    ({ type, name, x, y }) =>
-      type === 'Container' &&
-      name !== 'core-npc:nova:world' &&
-      Math.abs(x - RAINBOW_MEADOW_NOVA_X) <= 2 &&
-      Math.abs(y - RAINBOW_MEADOW_NOVA_Y) <= 12,
-  );
-  expect(legacyNovaContainers).toEqual([]);
+  expect(meadow.objects.some(({ name }) => name === 'core-npc:nova:race-hub')).toBe(false);
 
   expect(meadow.objects.some(({ name }) => name === 'exploration-path-polish')).toBe(false);
   expect(

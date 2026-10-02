@@ -6,6 +6,7 @@ export const EXPLORATION_SHELL_SCENES = new Set([
   'SunbeamVillageScene',
   'VillageInteriorScene',
   'RainbowMeadowScene',
+  'RainbowRunEntryScene',
   'WindmillLookoutScene',
   'CrystalBrookScene',
   'CrystalGrottoScene',

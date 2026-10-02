@@ -49,11 +49,7 @@ import {
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { saveLocationCheckpoint } from '../save/saveLocationCheckpoint';
 import { recordNovaFirstRaceResult } from '../story/NovaFirstRaceStory';
-import {
-  RAINBOW_MEADOW_LOCATION_ID,
-  RAINBOW_MEADOW_MAP,
-  setRainbowMeadowPlayerSpawn,
-} from '../world/RainbowMeadowMap';
+import { RAINBOW_RUN_HUB_LOCATION_ID } from '../world/RainbowRunHubMap';
 
 const COURSE = NOVA_TUTORIAL_RAINBOW_RUN_COURSE;
 const PLAYER_TEXTURE_KEY = 'player-unicorn-nova-first-run';
@@ -757,7 +753,7 @@ export class NovaTutorialRaceScene extends Phaser.Scene {
 
   private createExitButton(): void {
     const button = this.add
-      .text(22, 22, '← Meadow', {
+      .text(22, 22, '← Race Hub', {
         color: '#5c4668',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '18px',
@@ -910,13 +906,7 @@ export class NovaTutorialRaceScene extends Phaser.Scene {
   }
 
   private exitToMeadow(): void {
-    const raceEntrance = RAINBOW_MEADOW_MAP.hubFeatures.find(
-      (feature) => feature.id === 'rainbow-run-entrance',
-    );
-    if (raceEntrance) {
-      setRainbowMeadowPlayerSpawn(raceEntrance.approach);
-    }
-    saveLocationCheckpoint(getBrowserSaveService(), RAINBOW_MEADOW_LOCATION_ID);
-    this.scene.start('RainbowMeadowScene');
+    saveLocationCheckpoint(getBrowserSaveService(), RAINBOW_RUN_HUB_LOCATION_ID);
+    this.scene.start('RainbowRunEntryScene');
   }
 }

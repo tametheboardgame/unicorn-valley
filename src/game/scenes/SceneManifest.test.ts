@@ -41,6 +41,13 @@ describe('SCENE_MANIFEST', () => {
     }
   });
 
+  it('classifies the Rainbow Run Race Hub as exploration rather than a race scene', () => {
+    expect(SCENE_MANIFEST.find((entry) => entry.key === 'RainbowRunEntryScene')).toMatchObject({
+      category: 'exploration',
+      loadBoundary: 'startup',
+    });
+  });
+
   it('keeps the cottage decoration editor behind the feature boundary', () => {
     const cottageDecorate = SCENE_MANIFEST.find((entry) => entry.key === 'CottageDecorateScene');
     expect(cottageDecorate).toMatchObject({

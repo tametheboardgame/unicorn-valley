@@ -49,10 +49,11 @@ import {
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { saveLocationCheckpoint } from '../save/saveLocationCheckpoint';
 import {
-  RAINBOW_MEADOW_LOCATION_ID,
-  RAINBOW_MEADOW_MAP,
-  setRainbowMeadowPlayerSpawn,
-} from '../world/RainbowMeadowMap';
+  consumeRaceReturnScene,
+  peekRaceReturnScene,
+  raceReturnLabel,
+} from '../racing/RaceReturnContext';
+import { RAINBOW_RUN_HUB_LOCATION_ID } from '../world/RainbowRunHubMap';
 
 const PLAYER_TEXTURE_KEY = 'player-unicorn-race';
 const COURSE = PRACTICE_RAINBOW_RUN_COURSE;
@@ -863,8 +864,9 @@ export class RaceScene extends Phaser.Scene {
   }
 
   private createExitButton(): void {
+    const destination = raceReturnLabel(peekRaceReturnScene(this.sys.game));
     const button = this.add
-      .text(22, 22, '← Meadow', {
+      .text(22, 22, `← ${destination}`, {
         color: '#5c4668',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '18px',
@@ -1074,8 +1076,9 @@ export class RaceScene extends Phaser.Scene {
       .rectangle(GAME_WIDTH / 2 + 145, GAME_HEIGHT / 2 + 195, 230, 70, 0xf1e2fb, 1)
       .setStrokeStyle(4, 0xb895c8, 1)
       .setAlpha(0);
+    const destination = raceReturnLabel(peekRaceReturnScene(this.sys.game));
     const exitText = this.add
-      .text(GAME_WIDTH / 2 + 145, GAME_HEIGHT / 2 + 195, 'Back to Meadow', {
+      .text(GAME_WIDTH / 2 + 145, GAME_HEIGHT / 2 + 195, `Back to ${destination}`, {
         color: '#60486d',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '20px',
@@ -1146,13 +1149,10 @@ export class RaceScene extends Phaser.Scene {
   }
 
   private exitRace(): void {
-    const raceEntrance = RAINBOW_MEADOW_MAP.hubFeatures.find(
-      (feature) => feature.id === 'rainbow-run-entrance',
-    );
-    if (raceEntrance) {
-      setRainbowMeadowPlayerSpawn(raceEntrance.approach);
+    const returnScene = consumeRaceReturnScene(this.sys.game, 'RainbowRunEntryScene');
+    if (returnScene === 'RainbowRunEntryScene') {
+      saveLocationCheckpoint(getBrowserSaveService(), RAINBOW_RUN_HUB_LOCATION_ID);
     }
-    saveLocationCheckpoint(getBrowserSaveService(), RAINBOW_MEADOW_LOCATION_ID);
-    this.scene.start('RainbowMeadowScene');
+    this.scene.start(returnScene);
   }
 }

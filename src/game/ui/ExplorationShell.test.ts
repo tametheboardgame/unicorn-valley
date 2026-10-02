@@ -15,6 +15,7 @@ describe('exploration shell coverage', () => {
         'HollowTreeNookScene',
         'SunbeamVillageScene',
         'RainbowMeadowScene',
+        'RainbowRunEntryScene',
         'WindmillLookoutScene',
         'CrystalBrookScene',
         'CrystalGrottoScene',
@@ -25,6 +26,7 @@ describe('exploration shell coverage', () => {
   });
 
   it('does not attach exploration chrome to races or story scenes', () => {
+    expect(supportsExplorationShell('RainbowRunEntryScene')).toBe(true);
     expect(supportsExplorationShell('RaceScene')).toBe(false);
     expect(supportsExplorationShell('FireflyLanternScene')).toBe(false);
     expect(supportsExplorationShell('LumiStoryScene')).toBe(false);

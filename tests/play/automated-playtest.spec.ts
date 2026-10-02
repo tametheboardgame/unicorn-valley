@@ -493,7 +493,7 @@ test.describe
         const snapshot = await getSnapshot(page);
         const race = snapshot.scenes.find(({ key }) => key === 'NovaTutorialRaceScene');
         if (!race) {
-          if (snapshot.activeScenes.includes('RainbowMeadowScene') && furthestProgress >= 3200) {
+          if (snapshot.activeScenes.includes('RainbowRunEntryScene') && furthestProgress >= 3200) {
             finished = true;
             exitedAfterFinish = true;
             break;
@@ -526,10 +526,13 @@ test.describe
         const snapshot = await getSnapshot(page);
         await logicalClick(page, snapshot.width / 2, snapshot.height / 2 + 137);
       }
-      await waitForScene(page, 'RainbowMeadowScene');
-      const postRaceFindings = await captureScenario(page, 'nova-post-race', 'RainbowMeadowScene', {
-        requirePlayer: true,
-      });
+      await waitForScene(page, 'RainbowRunEntryScene');
+      const postRaceFindings = await captureScenario(
+        page,
+        'nova-post-race',
+        'RainbowRunEntryScene',
+        { requirePlayer: true },
+      );
       expect(postRaceFindings.filter((finding) => finding.severity === 'error')).toEqual([]);
       expect((await getSnapshot(page)).activeScenes).not.toContain('NovaStoryScene');
 
