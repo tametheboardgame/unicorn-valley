@@ -21,10 +21,10 @@ describe('Rainbow Meadow canonical layout', () => {
       RAINBOW_MEADOW_LAYOUT.sunbeamGateway,
       RAINBOW_MEADOW_LAYOUT.crystalBrookGateway,
     ]);
-    expect(RAINBOW_MEADOW_MAP.raceHub).toBe(RAINBOW_MEADOW_LAYOUT.raceHub);
-    expect(RAINBOW_MEADOW_MAP.npcMarkers[0]?.position).toBe(
-      RAINBOW_MEADOW_LAYOUT.coreNpcPositions.novaRaceHub,
-    );
+    expect(RAINBOW_MEADOW_MAP.hubFeatures.map(({ id }) => id)).toEqual([
+      'rainbow-run-entrance',
+      'windmill-lookout',
+    ]);
   });
 
   it('reserves distinct activity districts before local detail work', () => {
@@ -188,33 +188,6 @@ describe('Rainbow Meadow canonical layout', () => {
     ).toBe(true);
   });
 
-  it('routes the Crystal Brook spur clear of the ribbon board', () => {
-    const crystal = RAINBOW_MEADOW_LAYOUT.structuralPaths.find(
-      ({ id }) => id === 'crystal-brook-spur',
-    );
-    expect(crystal).toBeDefined();
-    if (!crystal) {
-      return;
-    }
-
-    const board = RAINBOW_MEADOW_LAYOUT.hubFeatures.ribbonBoard.position;
-    const expandedBoard = {
-      left: board.x - 206,
-      right: board.x + 206,
-      top: board.y - 99,
-      bottom: board.y + 99,
-    };
-    expect(
-      crystal.points.some(
-        ({ x, y }) =>
-          x >= expandedBoard.left &&
-          x <= expandedBoard.right &&
-          y >= expandedBoard.top &&
-          y <= expandedBoard.bottom,
-      ),
-    ).toBe(false);
-  });
-
   it('hands the Crystal Brook route from road to bank, stones and waterfall threshold', () => {
     const crystal = RAINBOW_MEADOW_LAYOUT.structuralPaths.find(
       ({ id }) => id === 'crystal-brook-spur',
@@ -283,28 +256,7 @@ describe('Rainbow Meadow canonical layout', () => {
     });
   });
 
-  it('keeps relocated Rainbow Run interaction anchors separated', () => {
-    const targets = [
-      { position: RAINBOW_MEADOW_LAYOUT.raceHubPresentation.runPoster, radius: 145 },
-      { position: RAINBOW_MEADOW_LAYOUT.hubFeatures.ribbonBoard.approach, radius: 150 },
-      { position: RAINBOW_MEADOW_LAYOUT.raceHubPresentation.cupBoard.approach, radius: 150 },
-    ];
-
-    for (let index = 0; index < targets.length; index += 1) {
-      for (let otherIndex = index + 1; otherIndex < targets.length; otherIndex += 1) {
-        const current = targets[index];
-        const other = targets[otherIndex];
-        expect(
-          Math.hypot(
-            current.position.x - other.position.x,
-            current.position.y - other.position.y,
-          ),
-        ).toBeGreaterThan(current.radius + other.radius);
-      }
-    }
-  });
-
-  it('keeps relocated Rainbow Run clear of tree and flower scenery', () => {
+  it('keeps the Meadow-side Race Hub gateway clear of tree and flower scenery', () => {
     const race = RAINBOW_MEADOW_LAYOUT.districts.find(({ id }) => id === 'rainbow-run');
     expect(race).toBeDefined();
     if (!race) {
