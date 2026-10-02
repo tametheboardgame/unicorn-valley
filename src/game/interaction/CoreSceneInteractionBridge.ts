@@ -1,7 +1,6 @@
 import Phaser from 'phaser';
 import { createPipInteraction } from '../intro/PipIntro';
 import { RainbowMeadowScene } from '../scenes/RainbowMeadowScene';
-import { startNovaConversation } from '../story/WorldStoryConversations';
 import { RAINBOW_MEADOW_MAP } from '../world/RainbowMeadowMap';
 import { setSunbeamVillagePlayerSpawn, SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
 import type { InteractionActionKind, InteractionTarget } from './InteractionTarget';
@@ -91,55 +90,33 @@ function meadowTargets(scene: Phaser.Scene): InteractionTarget[] {
 
   const entrance = (id: string) => requiredPoint(RAINBOW_MEADOW_MAP.entrances, id, true);
   const feature = (id: string) => requiredPoint(RAINBOW_MEADOW_MAP.hubFeatures, id, true);
-  const npc = (id: string) => requiredPoint(RAINBOW_MEADOW_MAP.npcMarkers, id, false);
+  const villageTarget: InteractionTarget = {
+    id: 'interaction:meadow-village-gate',
+    label: 'Sunbeam Village',
+    actionLabel: 'Go to village',
+    position: entrance('sunbeam-village'),
+    interactionRadius: 170,
+    priority: 20,
+    result: { type: 'scene-transition', sceneKey: 'SunbeamVillageScene' },
+  };
 
-  const definitions: Array<[InteractionTarget, InteractionActionKind]> = [
-    [
-      {
-        id: 'interaction:meadow-village-gate',
-        label: 'Sunbeam Village',
-        actionLabel: 'Go to village',
-        position: entrance('sunbeam-village'),
-        interactionRadius: 170,
-        priority: 20,
-        result: { type: 'scene-transition', sceneKey: 'SunbeamVillageScene' },
+  return [
+    callbackTarget(villageTarget, 'enter', () => meadowActivate?.call(scene, villageTarget)),
+    {
+      id: 'interaction:meadow-race-entrance',
+      label: 'Rainbow Run Race Hub',
+      actionLabel: 'Enter Race Hub',
+      actionKind: 'enter',
+      activationMode: 'explicit',
+      position: feature('rainbow-run-entrance'),
+      interactionRadius: 175,
+      priority: 25,
+      result: {
+        type: 'callback',
+        activate: () => scene.scene.start('RainbowRunEntryScene'),
       },
-      'enter',
-    ],
-    [
-      {
-        id: 'interaction:meadow-nova',
-        label: 'Nova',
-        actionLabel: 'Talk',
-        position: npc('nova'),
-        interactionRadius: 155,
-        priority: 30,
-        result: { type: 'callback', activate: () => startNovaConversation(scene) },
-      },
-      'talk',
-    ],
-    [
-      {
-        id: 'interaction:meadow-ribbon-board',
-        label: 'Ribbon Board',
-        actionLabel: 'Look',
-        position: feature('ribbon-board'),
-        interactionRadius: 160,
-        priority: 20,
-        result: {
-          type: 'message',
-          title: 'Rainbow Run Ribbon Board',
-          message:
-            'The polished board has hooks for Rainbow Run ribbons. Nova keeps the race names painted neatly beside them.',
-        },
-      },
-      'inspect',
-    ],
+    },
   ];
-
-  return definitions.map(([target, actionKind]) =>
-    callbackTarget(target, actionKind, () => meadowActivate?.call(scene, target)),
-  );
 }
 
 function moonflowerTargets(scene: CoreSceneRuntime): InteractionTarget[] {
