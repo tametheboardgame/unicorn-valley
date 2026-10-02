@@ -59,8 +59,8 @@ export const RAINBOW_MEADOW_LAYOUT = {
     },
     {
       id: 'north-nature',
-      centre: { x: 1450, y: 580 },
-      radiusX: 960,
+      centre: { x: 1420, y: 580 },
+      radiusX: 850,
       radiusY: 460,
       groundColour: 0xc5eda8,
       groundAlpha: 0.34,
