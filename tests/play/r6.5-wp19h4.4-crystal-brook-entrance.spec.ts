@@ -2,7 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 
 const PLAYER_NAME = 'world-player-unicorn';
 const MEADOW_GATE = { x: 3300, y: 1035 } as const;
-const MEADOW_RETURN = { x: 3180, y: 1080 } as const;
+const MEADOW_RETURN = { x: 3150, y: 1100 } as const;
 const BROOK_GATE = { x: 120, y: 1090 } as const;
 const BROOK_ARRIVAL = { x: 340, y: 1090 } as const;
 
