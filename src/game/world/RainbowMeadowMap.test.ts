@@ -6,6 +6,7 @@ import {
 } from './MapTraversal';
 import {
   isCrystalBrookDeepWaterBlocked,
+  isPointInsideCrystalBrookSteppingCorridor,
   RAINBOW_MEADOW_LAYOUT,
   RAINBOW_MEADOW_MAP,
 } from './RainbowMeadowMap';
@@ -60,7 +61,16 @@ describe('Rainbow Meadow map', () => {
     ];
 
     for (const point of corridorPoints) {
+      expect(isPointInsideCrystalBrookSteppingCorridor(point)).toBe(true);
       expect(isCrystalBrookDeepWaterBlocked(point)).toBe(false);
+    }
+
+    for (const point of [
+      { x: 3000, y: 1205 },
+      { x: 3070, y: 1185 },
+      { x: 3150, y: 1165 },
+    ]) {
+      expect(isPointInsideCrystalBrookSteppingCorridor(point)).toBe(false);
     }
 
     for (const point of [
