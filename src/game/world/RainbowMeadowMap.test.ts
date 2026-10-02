@@ -4,7 +4,7 @@ import {
   isPointBlocked,
   isPointInsideWalkableBounds,
 } from './MapTraversal';
-import { RAINBOW_MEADOW_MAP } from './RainbowMeadowMap';
+import { RAINBOW_MEADOW_LAYOUT, RAINBOW_MEADOW_MAP } from './RainbowMeadowMap';
 
 const PLAYER_CLEARANCE = 42;
 
@@ -41,6 +41,30 @@ describe('Rainbow Meadow map', () => {
     ];
 
     expect(findUnreachableTargets(RAINBOW_MEADOW_MAP, targets)).toEqual([]);
+  });
+
+  it('keeps the deep-water collision clear only along the stepping-stone corridor', () => {
+    const area = RAINBOW_MEADOW_LAYOUT.crystalBrookGatewayArea;
+    const corridorPoints = [
+      ...area.steppingStones.map(({ x, y }) => ({ x, y })),
+      ...area.steppingStones.slice(0, -1).map((stone, index) => {
+        const next = area.steppingStones[index + 1];
+        return { x: (stone.x + next.x) / 2, y: (stone.y + next.y) / 2 };
+      }),
+    ];
+
+    for (const point of corridorPoints) {
+      expect(isPointBlocked(point, RAINBOW_MEADOW_MAP.colliders, PLAYER_CLEARANCE)).toBe(false);
+    }
+
+    for (const blocker of area.deepWaterBlockers) {
+      expect(
+        isPointBlocked(
+          { x: blocker.x, y: blocker.y },
+          RAINBOW_MEADOW_MAP.colliders,
+        ),
+      ).toBe(true);
+    }
   });
 
   it('keeps interaction and discovery IDs unique', () => {
