@@ -28,7 +28,6 @@ interface MeadowInteractionDefinition {
   actionKind: InteractionActionKind;
   position: Point;
   radius: number;
-  icon: string;
 }
 
 interface MeadowInteractionRuntime {
@@ -53,7 +52,6 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     actionKind: 'inspect',
     position: RAINBOW_MEADOW_LAYOUT.natureFeatures.windmill.storyPosition,
     radius: 130,
-    icon: '🎐',
   },
   {
     id: 'windmill-bell',
@@ -62,7 +60,6 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     actionKind: 'interact',
     position: RAINBOW_MEADOW_LAYOUT.natureFeatures.windmill.bellPosition,
     radius: 135,
-    icon: '🔔',
   },
   {
     id: 'windmill-lookout',
@@ -71,7 +68,6 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     actionKind: 'enter',
     position: RAINBOW_MEADOW_LAYOUT.natureFeatures.windmill.lookoutPosition,
     radius: 145,
-    icon: '🌬️',
   },
   {
     id: 'rainbow-pond',
@@ -80,7 +76,6 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     actionKind: 'interact',
     position: RAINBOW_MEADOW_LAYOUT.natureFeatures.pond.interactionPosition,
     radius: 130,
-    icon: '🐸',
   },
   {
     id: 'picnic-hill',
@@ -89,7 +84,6 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     actionKind: 'interact',
     position: RAINBOW_MEADOW_LAYOUT.picnicHill.interactionPosition,
     radius: 150,
-    icon: '🧺',
   },
   {
     id: 'petal-patch',
@@ -98,7 +92,6 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     actionKind: 'interact',
     position: RAINBOW_MEADOW_LAYOUT.natureFeatures.petalPatch,
     radius: 135,
-    icon: '🌸',
   },
   {
     id: 'flower-circle',
@@ -107,7 +100,6 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     actionKind: 'inspect',
     position: RAINBOW_MEADOW_LAYOUT.natureFeatures.flowerCircle,
     radius: 150,
-    icon: '🌼',
   },
   {
     id: 'butterfly-parade',
@@ -116,7 +108,6 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     actionKind: 'interact',
     position: RAINBOW_MEADOW_LAYOUT.natureFeatures.butterflyParade,
     radius: 145,
-    icon: '🦋',
   },
 ];
 
@@ -190,27 +181,12 @@ export class MeadowDepthWorldManager {
     state: MeadowDepthState,
     definition: MeadowInteractionDefinition,
   ): MeadowInteractionRuntime {
-    const glow = state.scene.add.circle(0, 0, 25, 0xffef9c, 0.06).setStrokeStyle(2, 0xffffff, 0.15);
-    const icon = state.scene.add
-      .text(0, 0, definition.icon, {
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '24px',
-      })
-      .setOrigin(0.5)
-      .setAlpha(0.75);
+    // Keep interaction ownership independent from presentation. H4.8 deliberately removes
+    // permanent hotspot icons/glows; the shared contextual prompt appears only on approach.
     const container = state.scene.add
-      .container(definition.position.x, definition.position.y, [glow, icon])
+      .container(definition.position.x, definition.position.y)
       .setName(`meadow-depth:${definition.id}`)
-      .setDepth(worldDepthForY(definition.position.y + 15, 0.35));
-
-    state.scene.tweens.add({
-      targets: [glow, icon],
-      alpha: { from: 0.38, to: 0.86 },
-      duration: 1050,
-      yoyo: true,
-      repeat: -1,
-      ease: 'Sine.InOut',
-    });
+      .setVisible(false);
     return { definition, container };
   }
 
@@ -376,6 +352,8 @@ export class MeadowDepthWorldManager {
       objects,
       save.world.flags[MEADOW_FLOWER_CIRCLE_REVEALED_FLAG] === true,
     );
+    this.addPetalPatchVisual(state.scene, objects);
+    this.addButterflyParadeVisual(state.scene, objects);
     state.persistent = state.scene.add
       .container(0, 0, objects)
       .setName('meadow-depth:persistent-state')
@@ -407,19 +385,58 @@ export class MeadowDepthWorldManager {
       );
     }
 
-    const label = scene.add
-      .text(x, y - 191, 'WINDMILL LOOKOUT', {
-        color: '#60506f',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '16px',
-        fontStyle: 'bold',
-        backgroundColor: '#fff8e0df',
-        padding: { x: 9, y: 5 },
-      })
-      .setOrigin(0.5)
+    const signBoard = scene.add
+      .rectangle(x, y + 74, 112, 42, 0xe7c98f, 1)
+      .setStrokeStyle(4, 0x765442, 0.96)
       .setDepth(11)
       .setName('meadow-depth:windmill-landmark');
-    objects.push(label);
+    const signText = scene.add
+      .text(x, y + 74, 'LOOKOUT', {
+        color: '#604f63',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '13px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5)
+      .setDepth(12)
+      .setName('meadow-depth:windmill-lookout-sign-text');
+    objects.push(signBoard, signText);
+
+    const bellPosition = windmill.bellPosition;
+    const bellFrame = scene.add
+      .rectangle(bellPosition.x, bellPosition.y - 22, 54, 10, 0x765442, 0.95)
+      .setDepth(worldDepthForY(bellPosition.y, 0.08));
+    const bell = scene.add
+      .ellipse(bellPosition.x, bellPosition.y, 34, 28, 0xd9a83e, 1)
+      .setStrokeStyle(3, 0x8f6a2d, 0.95)
+      .setDepth(worldDepthForY(bellPosition.y, 0.1))
+      .setName('meadow-depth:windmill-bell-physical');
+    const clapper = scene.add
+      .circle(bellPosition.x, bellPosition.y + 15, 5, 0x765442, 1)
+      .setDepth(worldDepthForY(bellPosition.y, 0.11));
+    objects.push(bellFrame, bell, clapper);
+
+    const ribbonPosition = windmill.storyPosition;
+    const ribbonPost = scene.add
+      .rectangle(ribbonPosition.x, ribbonPosition.y + 5, 8, 82, 0x816049, 0.94)
+      .setDepth(worldDepthForY(ribbonPosition.y, 0.04));
+    objects.push(ribbonPost);
+    for (const [index, colour] of [0x78bddd, 0xf2c56c, 0xc69be0].entries()) {
+      const ribbon = scene.add
+        .rectangle(
+          ribbonPosition.x + 20 + index * 8,
+          ribbonPosition.y - 25 + index * 13,
+          46,
+          8,
+          colour,
+          0.92,
+        )
+        .setOrigin(0, 0.5)
+        .setAngle(index === 1 ? 7 : -5)
+        .setDepth(worldDepthForY(ribbonPosition.y, 0.07))
+        .setName(index === 0 ? 'meadow-depth:wind-ribbon-physical' : '');
+      objects.push(ribbon);
+    }
 
     if (open) {
       const steps = scene.add.graphics().setDepth(6).setName('meadow-depth:windmill-open-path');
@@ -441,41 +458,95 @@ export class MeadowDepthWorldManager {
     revealed: boolean,
   ): void {
     const centre = RAINBOW_MEADOW_LAYOUT.natureFeatures.flowerCircle;
+    const colours = [0xffd978, 0xf2a3c2, 0x92cfe1, 0xc7a6e2, 0xffefad];
     for (let index = 0; index < 10; index += 1) {
       const angle = (Math.PI * 2 * index) / 10;
-      const flower = scene.add
-        .text(
-          centre.x + Math.cos(angle) * 95,
-          centre.y + Math.sin(angle) * 58,
-          revealed ? '🌼' : '·',
-          {
-            color: '#fff4ac',
-            fontFamily: 'system-ui, sans-serif',
-            fontSize: revealed ? '20px' : '18px',
-          },
-        )
-        .setOrigin(0.5)
-        .setAlpha(revealed ? 0.88 : 0.28)
-        .setDepth(6);
-      objects.push(flower);
+      const flowerX = centre.x + Math.cos(angle) * 95;
+      const flowerY = centre.y + Math.sin(angle) * 58;
+      const alpha = revealed ? 0.94 : 0.34;
+      const depth = worldDepthForY(flowerY, -0.25);
+      const petalColour = colours[index % colours.length];
+      for (const [offsetX, offsetY] of [
+        [-7, 0],
+        [7, 0],
+        [0, -7],
+        [0, 7],
+      ] as const) {
+        const petal = scene.add
+          .ellipse(flowerX + offsetX, flowerY + offsetY, 11, 8, petalColour, alpha)
+          .setDepth(depth)
+          .setName(index === 0 && offsetX === -7 ? 'meadow-depth:flower-circle-physical' : '');
+        objects.push(petal);
+      }
+      objects.push(scene.add.circle(flowerX, flowerY, 4, 0xf1b84b, alpha).setDepth(depth + 0.01));
+    }
+  }
+
+  private addPetalPatchVisual(
+    scene: Phaser.Scene,
+    objects: Phaser.GameObjects.GameObject[],
+  ): void {
+    const centre = RAINBOW_MEADOW_LAYOUT.natureFeatures.petalPatch;
+    const colours = [0xf09fbe, 0xffcf73, 0xb8a1df, 0x8bcbd9];
+    for (let index = 0; index < 12; index += 1) {
+      const column = index % 4;
+      const row = Math.floor(index / 4);
+      const flowerX = centre.x - 78 + column * 52 + (row % 2) * 12;
+      const flowerY = centre.y - 42 + row * 42;
+      const colour = colours[index % colours.length];
+      const depth = worldDepthForY(flowerY, -0.18);
+      objects.push(
+        scene.add
+          .ellipse(flowerX - 7, flowerY, 16, 10, colour, 0.88)
+          .setDepth(depth)
+          .setName(index === 0 ? 'meadow-depth:petal-patch-physical' : ''),
+        scene.add.ellipse(flowerX + 7, flowerY, 16, 10, colour, 0.88).setDepth(depth),
+        scene.add.ellipse(flowerX, flowerY - 7, 10, 16, colour, 0.88).setDepth(depth),
+        scene.add.circle(flowerX, flowerY, 4, 0xffe58c, 0.96).setDepth(depth + 0.01),
+      );
+    }
+  }
+
+  private addButterflyParadeVisual(
+    scene: Phaser.Scene,
+    objects: Phaser.GameObjects.GameObject[],
+  ): void {
+    const centre = RAINBOW_MEADOW_LAYOUT.natureFeatures.butterflyParade;
+    const colours = [0xf09fc0, 0x8bcfe0, 0xf0c760, 0xb79bdd];
+    for (let index = 0; index < 5; index += 1) {
+      const butterflyX = centre.x - 80 + index * 40;
+      const butterflyY = centre.y + Math.sin(index * 1.4) * 28;
+      const depth = worldDepthForY(butterflyY, 0.06);
+      const colour = colours[index % colours.length];
+      const leftWing = scene.add
+        .ellipse(butterflyX - 6, butterflyY, 12, 18, colour, 0.9)
+        .setAngle(-24)
+        .setDepth(depth)
+        .setName(index === 0 ? 'meadow-depth:butterfly-parade-physical' : '');
+      const rightWing = scene.add
+        .ellipse(butterflyX + 6, butterflyY, 12, 18, colour, 0.9)
+        .setAngle(24)
+        .setDepth(depth);
+      const body = scene.add
+        .rectangle(butterflyX, butterflyY + 1, 3, 14, 0x675466, 0.9)
+        .setDepth(depth + 0.01);
+      objects.push(leftWing, rightWing, body);
     }
   }
 
   private playPetalBurst(scene: Phaser.Scene, position: Point): void {
-    for (let index = 0; index < 6; index += 1) {
+    const colours = [0xf2a3c2, 0xffd978, 0x92cfe1, 0xc7a6e2];
+    for (let index = 0; index < 8; index += 1) {
       const petal = scene.add
-        .text(position.x, position.y, index % 2 === 0 ? '🌸' : '✦', {
-          color: '#fff2ae',
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '17px',
-        })
-        .setOrigin(0.5)
+        .ellipse(position.x, position.y, 16, 9, colours[index % colours.length], 0.95)
+        .setAngle(index * 37)
         .setDepth(20);
-      const angle = (Math.PI * 2 * index) / 6;
+      const angle = (Math.PI * 2 * index) / 8;
       scene.tweens.add({
         targets: petal,
         x: position.x + Math.cos(angle) * 85,
         y: position.y + Math.sin(angle) * 55 - 20,
+        angle: petal.angle + 120,
         alpha: 0,
         duration: 700,
         onComplete: () => petal.destroy(),
