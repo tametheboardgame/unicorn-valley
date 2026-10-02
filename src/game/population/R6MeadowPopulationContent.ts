@@ -81,7 +81,7 @@ export const R6_MEADOW_RESIDENT_TALK_VARIANTS: Partial<
       },
       lines: [
         'The windmill bell likes three clear notes. Listen between the gusts.',
-        'Once the lookout opens, look back towards the flowers rather than the race flags.',
+        'Once the lookout opens, look back towards the flowers rather than the north path.',
       ],
     },
   ],
