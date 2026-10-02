@@ -88,7 +88,9 @@ export function createMarigoldPicnicPresentation(scene: Phaser.Scene, save: Save
   const picnic = RAINBOW_MEADOW_LAYOUT.picnicHill;
   const blanket = picnic.blanket;
   const palette = PICNIC_PALETTES[theme];
-  const blanketDepth = worldDepthForY(blanket.y, -0.08);
+  // Blanket and flat picnic pieces are ground art, not Y-sortable scenery. Keeping them below
+  // WORLD_SORTABLE_DEPTH_FLOOR prevents the player/NPC sprites disappearing behind the blanket.
+  const blanketDepth = 2.3;
 
   scene.add
     .ellipse(blanket.x + 7, blanket.y + 18, blanket.width + 28, blanket.height + 35, 0x5f775e, 0.18)
@@ -145,11 +147,11 @@ export function createMarigoldPicnicPresentation(scene: Phaser.Scene, save: Save
     .ellipse(blanket.x - 145, blanket.y + 15, 90, 58, 0xb77b43, 0.98)
     .setName('rainbow-meadow:picnic-hill:basket')
     .setStrokeStyle(4, 0x81542f, 0.9)
-    .setDepth(blanketDepth + 0.08);
+    .setDepth(worldDepthForY(blanket.y + 28, 0.02));
   scene.add
     .arc(blanket.x - 145, blanket.y - 12, 38, 196, 344, false, 0x000000, 0)
     .setStrokeStyle(5, 0x81542f, 0.9)
-    .setDepth(blanketDepth + 0.09);
+    .setDepth(worldDepthForY(blanket.y + 18, 0.03));
 
   scene.add
     .text(blanket.x - 28, blanket.y + 36, '🥐  🍓  🧁', {
@@ -158,12 +160,12 @@ export function createMarigoldPicnicPresentation(scene: Phaser.Scene, save: Save
     })
     .setName('rainbow-meadow:picnic-hill:food')
     .setOrigin(0.5)
-    .setDepth(blanketDepth + 0.1);
+    .setDepth(blanketDepth + 0.03);
 
   scene.add
     .ellipse(blanket.x + 150, blanket.y - 40, 82, 52, palette.flowers, 0.34)
     .setStrokeStyle(3, palette.blanketAccent, 0.8)
-    .setDepth(blanketDepth + 0.06);
+    .setDepth(blanketDepth + 0.025);
   scene.add
     .text(blanket.x + 150, blanket.y - 47, '🌼', {
       fontFamily: 'system-ui, sans-serif',
@@ -171,7 +173,7 @@ export function createMarigoldPicnicPresentation(scene: Phaser.Scene, save: Save
     })
     .setName('rainbow-meadow:picnic-hill:flower-jar')
     .setOrigin(0.5)
-    .setDepth(blanketDepth + 0.11);
+    .setDepth(blanketDepth + 0.045);
 
   scene.add
     .text(blanket.x + 135, blanket.y + 48, '🧭', {
