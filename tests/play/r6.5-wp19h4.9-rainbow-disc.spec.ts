@@ -133,11 +133,20 @@ test('H4.9 Rainbow Disc lawn is alive before interaction and returns cleanly aft
       ({ name, effectiveVisible }) => name === 'rainbow-disc:lawn' && effectiveVisible,
     ),
   ).toBe(true);
-  expect(
-    meadow.objects.some(
-      ({ name, effectiveVisible }) => name === 'rainbow-disc:sign' && effectiveVisible,
-    ),
-  ).toBe(true);
+  const sign = meadow.objects.find(
+    ({ name, effectiveVisible }) => name === 'rainbow-disc:sign' && effectiveVisible,
+  );
+  expect(sign).toBeDefined();
+  expect((sign?.x ?? 999) + (sign?.displayWidth ?? 0) / 2).toBeLessThan(300);
+
+  for (let index = 0; index < 4; index += 1) {
+    const post = meadow.objects.find(({ name }) => name === `rainbow-disc:pennant-post:${index}`);
+    const pennant = meadow.objects.find(({ name }) => name === `rainbow-disc:pennant:${index}`);
+    expect(post).toBeDefined();
+    expect(pennant).toBeDefined();
+    expect(pennant?.x).toBeCloseTo(post?.x ?? 0, 0);
+    expect(pennant?.y).toBeCloseTo((post?.y ?? 0) - 35, 0);
+  }
 
   await setMeadowPlayerPosition(page, 505, 1475);
   await expect
