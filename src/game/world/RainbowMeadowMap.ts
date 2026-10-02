@@ -193,7 +193,7 @@ export const RAINBOW_MEADOW_LAYOUT = {
     approach: { x: 3150, y: 1100 },
     direction: 'east',
   },
-  // H4.4C: shallow wading rim, blocked deep water, stone crossing, continuous outflow and reactive falls.
+  // H4.4 final: fully walkable basin, visual stone crossing, continuous outflow and reactive falls.
   crystalBrookGatewayArea: {
     dryLanding: { x: 2680, y: 1210 },
     sign: { x: 2445, y: 1245 },
