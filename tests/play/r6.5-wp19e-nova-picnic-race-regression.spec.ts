@@ -284,6 +284,9 @@ test('Marigold and Nova dialogue keep accepted sizing and Meet Nova works when N
   expect(
     composedPicnic.objects.some((object) => object.name === 'meadow-depth:picnic-hill-landmark'),
   ).toBe(false);
+  expect(
+    composedPicnic.objects.some((object) => object.name === 'core-npc:nova:picnic-label'),
+  ).toBe(false);
 
   await positionPlayer(
     page,
@@ -312,6 +315,7 @@ test('Marigold and Nova dialogue keep accepted sizing and Meet Nova works when N
   await waitForTalkTarget(page, 'RainbowMeadowScene', 'Nova');
   await page.keyboard.press('KeyE');
   await waitForVisibleObject(page, 'RainbowMeadowScene', 'dialogue-production-panel');
+  await waitForVisibleObject(page, 'RainbowMeadowScene', 'dialogue-production-portrait-nova');
 
   let meadowAfterMeet = await sceneSnapshot(page, 'RainbowMeadowScene');
   const activeScenes = (await snapshot(page)).activeScenes;
