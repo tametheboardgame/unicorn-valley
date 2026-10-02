@@ -149,9 +149,7 @@ describe('Rainbow Meadow canonical layout', () => {
     expect(disc.discRoute.every(isInsideDistrict)).toBe(true);
     expect(isInsideDistrict(disc.captain)).toBe(true);
 
-    const path = RAINBOW_MEADOW_LAYOUT.structuralPaths.find(
-      ({ id }) => id === 'rainbow-disc-spur',
-    );
+    const path = RAINBOW_MEADOW_LAYOUT.structuralPaths.find(({ id }) => id === 'rainbow-disc-spur');
     expect(path?.points[path.points.length - 1]).toEqual(disc.approach);
   });
 
