@@ -98,17 +98,11 @@ export function createRainbowDiscMeadowPresentation(scene: Phaser.Scene): void {
     const direction = index % 2 === 0 ? 1 : -1;
     const pennantGraphics = scene.add
       .graphics()
+      .setPosition(pennant.x, pennant.y - 35)
       .setName(`rainbow-disc:pennant:${index}`)
       .setDepth(depth + 0.01);
     pennantGraphics.fillStyle(index % 2 === 0 ? 0xf09fbe : 0x83c9df, 0.94);
-    pennantGraphics.fillTriangle(
-      pennant.x,
-      pennant.y - 35,
-      pennant.x + direction * 34,
-      pennant.y - 27,
-      pennant.x,
-      pennant.y - 17,
-    );
+    pennantGraphics.fillTriangle(0, 0, direction * 34, 8, 0, 18);
   });
 
   const signDepth = worldDepthForY(layout.sign.y + 68, -0.04);
