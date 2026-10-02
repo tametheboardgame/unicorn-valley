@@ -422,10 +422,6 @@ function drawRoundedStrokeInto(
     graphics.lineTo(point.x, point.y);
   }
   graphics.strokePath();
-  graphics.fillStyle(colour, alpha);
-  for (const point of points) {
-    graphics.fillCircle(point.x, point.y, width / 2);
-  }
 }
 
 function createMeadowCrystalBrookGateway(scene: Phaser.Scene): void {
