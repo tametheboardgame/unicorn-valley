@@ -167,11 +167,6 @@ export function createRainbowDiscMeadowPresentation(scene: Phaser.Scene): void {
     return sprite;
   });
 
-  scene.add
-    .ellipse(layout.captain.x, layout.captain.y + 52, 116, 26, 0x587f5d, 0.16)
-    .setName('rainbow-disc:captain-shadow')
-    .setDepth(worldDepthForY(layout.captain.y + 55, -0.18));
-
   const disc = scene.add
     .ellipse(layout.discRoute[0].x, layout.discRoute[0].y, 34, 12, 0xfff3bd, 1)
     .setStrokeStyle(3, 0xb88858, 0.9)
