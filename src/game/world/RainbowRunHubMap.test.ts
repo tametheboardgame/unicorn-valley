@@ -38,9 +38,34 @@ describe('Rainbow Run Race Hub map', () => {
 
   it('owns the expanded Meadow race entries inside the Hub', () => {
     expect(RAINBOW_RUN_HUB_LAYOUT.expandedRaceEntries).toEqual({
-      petalParade: { x: 1370, y: 980 },
-      rainbowCup: { x: 1380, y: 610 },
+      petalParade: { x: 1340, y: 900 },
+      rainbowCup: { x: 1150, y: 570 },
     });
+  });
+
+  it('keeps all Hub interaction targets out of each other’s activation radius', () => {
+    const targets = [
+      { position: RAINBOW_RUN_HUB_LAYOUT.meadowExit.approach, radius: 165 },
+      { position: RAINBOW_RUN_HUB_LAYOUT.nova, radius: 155 },
+      { position: RAINBOW_RUN_HUB_LAYOUT.ribbonBoard.approach, radius: 150 },
+      { position: RAINBOW_RUN_HUB_LAYOUT.expandedRaceEntries.rainbowCup, radius: 170 },
+      { position: RAINBOW_RUN_HUB_LAYOUT.coursePoster.approach, radius: 145 },
+      { position: RAINBOW_RUN_HUB_LAYOUT.expandedRaceEntries.petalParade, radius: 165 },
+      { position: RAINBOW_RUN_HUB_LAYOUT.raceGate.approach, radius: 175 },
+    ];
+
+    for (let index = 0; index < targets.length; index += 1) {
+      for (let otherIndex = index + 1; otherIndex < targets.length; otherIndex += 1) {
+        const current = targets[index];
+        const other = targets[otherIndex];
+        expect(
+          Math.hypot(
+            current.position.x - other.position.x,
+            current.position.y - other.position.y,
+          ),
+        ).toBeGreaterThanOrEqual(current.radius + other.radius);
+      }
+    }
   });
 
   it('owns collision for the substantial hub props', () => {
