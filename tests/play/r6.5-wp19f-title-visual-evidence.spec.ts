@@ -137,7 +137,7 @@ test.describe('R6.5-WP19F phone portrait generated title visual evidence', () =>
     await expect(page.locator('[data-title-action="title-menu-new-game"]')).toBeVisible();
     await expect(page.locator('[data-title-action="title-menu-settings"]')).toBeVisible();
     await expect(controls.locator('.title-portrait-status')).toHaveText(
-      'First, make a unicorn that feels like yours.',
+      'Start an adventure, or open Story House and read straight away.',
     );
     await expect(page.locator('canvas')).toHaveCSS('pointer-events', 'none');
 
