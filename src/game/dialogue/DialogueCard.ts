@@ -522,10 +522,7 @@ export class DialogueCard {
         this.portraitSprite?.destroy();
         if (coreNpcId === 'nova') {
           this.portraitSprite = novaPresentation
-            .createNovaPresentationSprite(
-              this.panel.scene,
-              'dialogue-production-portrait-nova',
-            )
+            .createNovaPresentationSprite(this.panel.scene, 'dialogue-production-portrait-nova')
             .setScrollFactor(0)
             .setDepth(129);
         } else if (villageResidentArt.isVillageCoreResidentId(coreNpcId)) {
