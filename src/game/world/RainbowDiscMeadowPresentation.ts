@@ -4,7 +4,7 @@ import { createResidentAppearanceSprite } from '../population/SupportingResident
 import { worldDepthForY } from './WorldDepth';
 import { RAINBOW_MEADOW_LAYOUT } from './RainbowMeadowMap';
 
-const RAINBOW_DISC_PLAYER_APPEARANCES: readonly UnicornAppearance[] = [
+export const RAINBOW_DISC_PLAYER_APPEARANCES: readonly UnicornAppearance[] = [
   {
     bodyColour: 'cream',
     eyeColour: 'violet',
