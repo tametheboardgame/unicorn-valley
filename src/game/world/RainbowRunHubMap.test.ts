@@ -9,6 +9,12 @@ describe('Rainbow Run Race Hub map', () => {
     expect(RAINBOW_RUN_HUB_LAYOUT.meadowExit.position.y).toBeGreaterThan(
       RAINBOW_RUN_HUB_LAYOUT.meadowExit.approach.y,
     );
+    expect(RAINBOW_RUN_HUB_LAYOUT.meadowExit.walkThroughPosition.y).toBeGreaterThan(
+      RAINBOW_RUN_HUB_LAYOUT.meadowExit.approach.y,
+    );
+    expect(RAINBOW_RUN_HUB_LAYOUT.meadowExit.walkThroughPosition.y).toBeLessThan(
+      RAINBOW_RUN_HUB_LAYOUT.bounds.height - RAINBOW_RUN_HUB_LAYOUT.bounds.margin,
+    );
     expect(RAINBOW_RUN_HUB_LAYOUT.raceGate.position.x).toBeGreaterThan(
       RAINBOW_RUN_HUB_LAYOUT.cupBoard.position.x,
     );
