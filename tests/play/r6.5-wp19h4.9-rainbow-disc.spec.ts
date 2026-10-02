@@ -113,9 +113,7 @@ test('H4.9 Rainbow Disc lawn is alive before interaction and returns cleanly aft
   expect(Math.max(...widths) - Math.min(...widths)).toBeLessThanOrEqual(1);
   expect(Math.max(...heights) - Math.min(...heights)).toBeLessThanOrEqual(1);
 
-  const initialPositions = new Map(
-    fieldPlayers.map(({ name, x, y }) => [name, { x, y }] as const),
-  );
+  const initialPositions = new Map(fieldPlayers.map(({ name, x, y }) => [name, { x, y }] as const));
   await page.waitForTimeout(1200);
   const movingMeadow = await snapshotScene(page, 'RainbowMeadowScene');
   const movedPlayers = movingMeadow.objects
