@@ -498,8 +498,9 @@ export class RainbowMeadowScene extends Phaser.Scene {
     this.createRaceEntrance();
     this.createHubFlags();
 
+    const racePresentation = RAINBOW_MEADOW_LAYOUT.raceHubPresentation;
     this.add
-      .text(2670, 690, 'RAINBOW RUN', {
+      .text(racePresentation.title.x, racePresentation.title.y, 'RAINBOW RUN', {
         color: '#6b4777',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '34px',
@@ -508,20 +509,20 @@ export class RainbowMeadowScene extends Phaser.Scene {
         padding: { x: 18, y: 9 },
       })
       .setOrigin(0.5)
-      .setDepth(worldDepthForY(720, 0.4));
+      .setDepth(worldDepthForY(racePresentation.title.y + 30, 0.4));
   }
 
   private createHubTent(): void {
-    const baseY = 650;
-    const tent = this.add.graphics().setDepth(worldDepthForY(baseY));
+    const { x, y } = RAINBOW_MEADOW_LAYOUT.raceHubPresentation.tent;
+    const tent = this.add.graphics().setDepth(worldDepthForY(y + 130));
     tent.fillStyle(0xfff1cb, 1);
-    tent.fillRoundedRect(2385, 500, 430, 150, 22);
+    tent.fillRoundedRect(x - 215, y - 20, 430, 150, 22);
     tent.fillStyle(0xc79bdd, 1);
-    tent.fillTriangle(2370, 515, 2600, 330, 2830, 515);
+    tent.fillTriangle(x - 230, y - 5, x, y - 190, x + 230, y - 5);
     tent.fillStyle(0xf2a0b7, 0.96);
-    tent.fillTriangle(2485, 500, 2600, 350, 2715, 500);
+    tent.fillTriangle(x - 115, y - 20, x, y - 170, x + 115, y - 20);
     tent.fillStyle(0x8a684c, 1);
-    tent.fillRect(2575, 555, 50, 95);
+    tent.fillRect(x - 25, y + 35, 50, 95);
   }
 
   private createRibbonBoard(): void {
@@ -606,13 +607,7 @@ export class RainbowMeadowScene extends Phaser.Scene {
 
   private createHubFlags(): void {
     const colours = [0xf18dad, 0xf5c968, 0x7cc6d8, 0xa6d77a, 0xc69be0];
-    const positions = [
-      [2230, 790],
-      [2260, 1330],
-      [2810, 790],
-      [2860, 1440],
-    ] as const;
-    for (const [x, y] of positions) {
+    for (const { x, y } of RAINBOW_MEADOW_LAYOUT.raceHubPresentation.flags) {
       const depth = worldDepthForY(y, 0.2);
       this.add.rectangle(x, y - 75, 7, 150, 0x83614c, 1).setDepth(depth);
       this.add
