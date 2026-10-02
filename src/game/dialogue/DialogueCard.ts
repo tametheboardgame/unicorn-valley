@@ -502,9 +502,10 @@ export class DialogueCard {
 
     void Promise.all([
       import('../visual/CoreNpcProductionArt'),
+      import('../visual/NovaPresentation'),
       import('../visual/VillageCoreResidentArt'),
     ])
-      .then(([{ CORE_NPC_VISUALS, createCoreNpcSprite }, villageResidentArt]) => {
+      .then(([{ CORE_NPC_VISUALS, createCoreNpcSprite }, novaPresentation, villageResidentArt]) => {
         if (
           requestId !== this.portraitRequestId ||
           this.requestedPortraitSpeakerId !== speakerId ||
@@ -519,7 +520,15 @@ export class DialogueCard {
         this.portrait.setFillStyle(spec.frame, 1).setStrokeStyle(6, UI_COLOURS.white, 0.96);
         this.portraitLetter.setVisible(false);
         this.portraitSprite?.destroy();
-        if (villageResidentArt.isVillageCoreResidentId(coreNpcId)) {
+        if (coreNpcId === 'nova') {
+          this.portraitSprite = novaPresentation
+            .createNovaPresentationSprite(
+              this.panel.scene,
+              'dialogue-production-portrait-nova',
+            )
+            .setScrollFactor(0)
+            .setDepth(129);
+        } else if (villageResidentArt.isVillageCoreResidentId(coreNpcId)) {
           const artLayout = villageResidentArt.VILLAGE_CORE_RESIDENT_ART_LAYOUT;
           this.portraitSprite = villageResidentArt
             .createVillageCoreResidentSprite(
@@ -555,12 +564,15 @@ export class DialogueCard {
     const layoutSpec = this.layout === 'compact' ? COMPACT_LAYOUT : EXPANDED_LAYOUT;
     const resolvedId = coreNpcId ?? resolveCoreNpcId(this.portraitSpeakerId ?? '');
     const isPip = resolvedId === 'pip';
-    const isVillageResident =
-      resolvedId === 'willow' || resolvedId === 'marigold' || resolvedId === 'pebble';
+    const usesSharedResidentRenderer =
+      resolvedId === 'nova' ||
+      resolvedId === 'willow' ||
+      resolvedId === 'marigold' ||
+      resolvedId === 'pebble';
     const compact = this.layout === 'compact';
     this.portraitSprite.setPosition(layoutSpec.portrait.x, layoutSpec.portrait.y);
 
-    if (isVillageResident) {
+    if (usesSharedResidentRenderer) {
       const maxWidth = layoutSpec.portrait.frameSize * 0.92;
       const maxHeight = layoutSpec.portrait.frameSize * 0.82;
       const scale = Math.min(
