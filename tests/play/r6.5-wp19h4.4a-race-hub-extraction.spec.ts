@@ -45,12 +45,7 @@ async function sceneObjects(page: Page, sceneKey: string): Promise<DiagnosticObj
   }, sceneKey);
 }
 
-async function positionPlayer(
-  page: Page,
-  sceneKey: string,
-  x: number,
-  y: number,
-): Promise<void> {
+async function positionPlayer(page: Page, sceneKey: string, x: number, y: number): Promise<void> {
   await page.evaluate(
     ({ key, targetX, targetY }) => {
       const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
@@ -89,7 +84,9 @@ test('H4.4A moves all Rainbow Run infrastructure into a standalone hub', async (
   }
 });
 
-test('H4.4A enters the Race Hub from Meadow and returns to the gateway approach', async ({ page }) => {
+test('H4.4A enters the Race Hub from Meadow and returns to the gateway approach', async ({
+  page,
+}) => {
   await page.goto('/?scene=meadow&diagnostics=1');
   await waitForScene(page, 'RainbowMeadowScene');
 
