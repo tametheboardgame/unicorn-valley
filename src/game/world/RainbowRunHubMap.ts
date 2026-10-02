@@ -53,6 +53,19 @@ export const RAINBOW_RUN_HUB_LAYOUT = {
   ] satisfies readonly MapPoint[],
 } as const;
 
+const DEFAULT_PLAYER_SPAWN: MapPoint = { ...RAINBOW_RUN_HUB_LAYOUT.playerSpawn };
+const playerSpawn: MapPoint = { ...DEFAULT_PLAYER_SPAWN };
+
+export function setRainbowRunHubPlayerSpawn(point: MapPoint): void {
+  playerSpawn.x = point.x;
+  playerSpawn.y = point.y;
+}
+
+export function resetRainbowRunHubPlayerSpawn(): void {
+  playerSpawn.x = DEFAULT_PLAYER_SPAWN.x;
+  playerSpawn.y = DEFAULT_PLAYER_SPAWN.y;
+}
+
 const colliders: CollisionRectangle[] = [
   {
     id: 'collision:race-hub-tent',
@@ -95,6 +108,6 @@ export const RAINBOW_RUN_HUB_MAP: TraversalMapDefinition = {
   width: RAINBOW_RUN_HUB_LAYOUT.bounds.width,
   height: RAINBOW_RUN_HUB_LAYOUT.bounds.height,
   margin: RAINBOW_RUN_HUB_LAYOUT.bounds.margin,
-  playerSpawn: RAINBOW_RUN_HUB_LAYOUT.playerSpawn,
+  playerSpawn,
   colliders,
 };
