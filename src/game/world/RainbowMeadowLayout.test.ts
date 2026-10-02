@@ -207,7 +207,7 @@ describe('Rainbow Meadow canonical layout', () => {
     ).toBe(false);
   });
 
-  it('runs the Crystal Brook spur through its canonical threshold and beyond the map edge', () => {
+  it('hands the Crystal Brook route from road to bank, stones and waterfall threshold', () => {
     const crystal = RAINBOW_MEADOW_LAYOUT.structuralPaths.find(
       ({ id }) => id === 'crystal-brook-spur',
     );
@@ -216,56 +216,79 @@ describe('Rainbow Meadow canonical layout', () => {
       return;
     }
 
-    expect(
-      crystal.points.some(
-        ({ x, y }) =>
-          x === RAINBOW_MEADOW_LAYOUT.crystalBrookGateway.position.x &&
-          y === RAINBOW_MEADOW_LAYOUT.crystalBrookGateway.position.y,
-      ),
-    ).toBe(true);
-    expect(crystal.points[crystal.points.length - 1]?.x).toBeGreaterThan(
-      RAINBOW_MEADOW_LAYOUT.bounds.width,
+    expect(crystal.points[crystal.points.length - 1]).toEqual(
+      RAINBOW_MEADOW_LAYOUT.crystalBrookGatewayArea.leftBank,
     );
+    expect(RAINBOW_MEADOW_LAYOUT.crystalBrookGatewayArea.steppingStones).toHaveLength(5);
+    const finalStone =
+      RAINBOW_MEADOW_LAYOUT.crystalBrookGatewayArea.steppingStones[
+        RAINBOW_MEADOW_LAYOUT.crystalBrookGatewayArea.steppingStones.length - 1
+      ];
+    expect(finalStone?.x ?? 0).toBeLessThan(RAINBOW_MEADOW_LAYOUT.crystalBrookGateway.position.x);
   });
 
-  it('owns the Crystal Brook transition and return approach in canonical Meadow layout data', () => {
+  it('owns the waterfall transition and safe return stone in canonical Meadow layout data', () => {
     expect(RAINBOW_MEADOW_LAYOUT.crystalBrookGateway).toEqual({
       id: 'crystal-brook',
       label: 'Crystal Brook',
-      position: { x: 3290, y: 1900 },
-      approach: { x: 3060, y: 1820 },
+      position: { x: 3300, y: 1580 },
+      approach: { x: 3130, y: 1645 },
       direction: 'east',
     });
     expect(RAINBOW_MEADOW_LAYOUT.crystalBrookGateway.position.x).toBeGreaterThan(
       RAINBOW_MEADOW_LAYOUT.bounds.width - 150,
     );
-    expect(RAINBOW_MEADOW_LAYOUT.crystalBrookGateway.position.y).toBeGreaterThan(
-      RAINBOW_MEADOW_LAYOUT.bounds.height - 300,
-    );
+    expect(
+      Math.hypot(
+        RAINBOW_MEADOW_LAYOUT.crystalBrookGateway.position.x -
+          RAINBOW_MEADOW_LAYOUT.crystalBrookGateway.approach.x,
+        RAINBOW_MEADOW_LAYOUT.crystalBrookGateway.position.y -
+          RAINBOW_MEADOW_LAYOUT.crystalBrookGateway.approach.y,
+      ),
+    ).toBeGreaterThan(130);
   });
 
-  it('makes the Crystal Brook approach progressively rockier toward the threshold', () => {
-    const descent = RAINBOW_MEADOW_LAYOUT.crystalBrookDescent;
-    expect(descent.terraces).toHaveLength(3);
-    expect(descent.rocks).toHaveLength(8);
-    expect(descent.crystals.length).toBeGreaterThanOrEqual(4);
-    expect(descent.terraces[0]?.alpha ?? 0).toBeLessThan(descent.terraces[2]?.alpha ?? 0);
+  it('defines a water-led Crystal Brook hero area instead of the rejected cave descent', () => {
+    const area = RAINBOW_MEADOW_LAYOUT.crystalBrookGatewayArea;
+    expect(area.pool.width).toBeGreaterThan(600);
+    expect(area.waterfall.height).toBeGreaterThan(300);
+    expect(area.steppingStones).toHaveLength(5);
+    expect(area.rocks).toHaveLength(6);
+    expect(area.crystals.length).toBeGreaterThanOrEqual(4);
+    expect(area.mist.length).toBeGreaterThanOrEqual(3);
   });
 
-  it('gives every Crystal Brook descent boulder a matching collision body', () => {
+  it('gives every Crystal Brook basin rock a matching collision body', () => {
     const rockColliders = RAINBOW_MEADOW_MAP.colliders.filter(({ id }) =>
-      id.startsWith('collision:crystal-brook-descent-rock:'),
+      id.startsWith('collision:crystal-brook-gateway-rock:'),
     );
-    expect(rockColliders).toHaveLength(RAINBOW_MEADOW_LAYOUT.crystalBrookDescent.rocks.length);
+    expect(rockColliders).toHaveLength(RAINBOW_MEADOW_LAYOUT.crystalBrookGatewayArea.rocks.length);
 
-    RAINBOW_MEADOW_LAYOUT.crystalBrookDescent.rocks.forEach((rock, index) => {
+    RAINBOW_MEADOW_LAYOUT.crystalBrookGatewayArea.rocks.forEach((rock, index) => {
       expect(rockColliders[index]).toEqual({
-        id: `collision:crystal-brook-descent-rock:${index}`,
+        id: `collision:crystal-brook-gateway-rock:${index}`,
         x: rock.x,
         y: rock.y,
         width: rock.collisionWidth,
         height: rock.collisionHeight,
       });
     });
+  });
+
+  it('keeps relocated Rainbow Run clear of tree and flower scenery', () => {
+    const race = RAINBOW_MEADOW_LAYOUT.districts.find(({ id }) => id === 'rainbow-run');
+    expect(race).toBeDefined();
+    if (!race) {
+      return;
+    }
+
+    expect(RAINBOW_MEADOW_LAYOUT.scenery.trees.some((tree) => isInsideDistrict(tree, race))).toBe(
+      false,
+    );
+    expect(
+      RAINBOW_MEADOW_LAYOUT.scenery.flowerClusters.some((flower) =>
+        isInsideDistrict(flower, race),
+      ),
+    ).toBe(false);
   });
 });
