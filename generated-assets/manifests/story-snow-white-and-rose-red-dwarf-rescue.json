@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "163xvcJp45MtB_o5DohEhX7UB_aFbkwQO"
+  },
+  "expectedSourceName": "snow-white-rose-red-dwarf-rescue-v01.png",
+  "destination": "public/stories/snow-white-and-rose-red/illustrations/generated/dwarf-rescue.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1000,
+    "quality": 88
+  },
+  "revision": 1
+}
