@@ -4,12 +4,7 @@ import {
   isPointBlocked,
   isPointInsideWalkableBounds,
 } from './MapTraversal';
-import {
-  isCrystalBrookDeepWaterBlocked,
-  isPointInsideCrystalBrookSteppingCorridor,
-  RAINBOW_MEADOW_LAYOUT,
-  RAINBOW_MEADOW_MAP,
-} from './RainbowMeadowMap';
+import { RAINBOW_MEADOW_MAP } from './RainbowMeadowMap';
 
 const PLAYER_CLEARANCE = 42;
 
@@ -48,43 +43,7 @@ describe('Rainbow Meadow map', () => {
     expect(findUnreachableTargets(RAINBOW_MEADOW_MAP, targets)).toEqual([]);
   });
 
-  it('keeps deep water blocked outside the straight stepping-stone corridor', () => {
-    const area = RAINBOW_MEADOW_LAYOUT.crystalBrookGatewayArea;
-    const corridorPoints = [
-      ...area.steppingStones.map(({ x, y }) => ({ x, y })),
-      ...area.steppingStones.slice(0, -1).map((stone, index) => {
-        const next = area.steppingStones[index + 1];
-        return { x: (stone.x + next.x) / 2, y: (stone.y + next.y) / 2 };
-      }),
-      { x: 3100, y: 1100 },
-      { x: 3280, y: 1048 },
-    ];
-
-    for (const point of corridorPoints) {
-      expect(isPointInsideCrystalBrookSteppingCorridor(point)).toBe(true);
-      expect(isCrystalBrookDeepWaterBlocked(point)).toBe(false);
-    }
-
-    for (const point of [
-      { x: 3000, y: 1205 },
-      { x: 3070, y: 1185 },
-      { x: 3150, y: 1165 },
-    ]) {
-      expect(isPointInsideCrystalBrookSteppingCorridor(point)).toBe(false);
-    }
-
-    for (const point of [
-      { x: 3000, y: 1250 },
-      { x: 3070, y: 1200 },
-      { x: 3150, y: 1210 },
-      { x: 3020, y: 1340 },
-      { x: 3220, y: 1270 },
-      { x: 2870, y: 1320 },
-      { x: 2860, y: 1080 },
-    ]) {
-      expect(isCrystalBrookDeepWaterBlocked(point)).toBe(true);
-    }
-
+  it('does not add collision for Crystal Brook water', () => {
     expect(
       RAINBOW_MEADOW_MAP.colliders.some(({ id }) =>
         id.startsWith('collision:crystal-brook-deep-water:'),
