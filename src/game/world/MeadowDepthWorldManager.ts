@@ -452,9 +452,7 @@ export class MeadowDepthWorldManager {
       blade.setRotation(angle);
       sails.add(blade);
     }
-    const sailHub = scene.add
-      .circle(0, 0, 20, 0xe6b64c, 1)
-      .setStrokeStyle(4, 0x8f6a2d, 0.95);
+    const sailHub = scene.add.circle(0, 0, 20, 0xe6b64c, 1).setStrokeStyle(4, 0x8f6a2d, 0.95);
     sails.add(sailHub);
     scene.tweens.add({
       targets: sails,
@@ -469,9 +467,7 @@ export class MeadowDepthWorldManager {
       .rectangle(x + 72, y + 44, 74, 9, 0x765442, 1)
       .setOrigin(0, 0.5)
       .setDepth(11);
-    const signHanger = scene.add
-      .rectangle(x + 130, y + 57, 5, 34, 0x765442, 1)
-      .setDepth(11);
+    const signHanger = scene.add.rectangle(x + 130, y + 57, 5, 34, 0x765442, 1).setDepth(11);
     const signBoard = scene.add
       .rectangle(x + 130, y + 84, 94, 36, 0xe7c78d, 1)
       .setStrokeStyle(4, 0x765442, 0.98)
@@ -490,11 +486,14 @@ export class MeadowDepthWorldManager {
     objects.push(signArm, signHanger, signBoard, signText);
 
     const bellPosition = windmill.bellPosition;
-    const bellBracket = scene.add
-      .graphics()
-      .setDepth(worldDepthForY(bellPosition.y, 0.05));
+    const bellBracket = scene.add.graphics().setDepth(worldDepthForY(bellPosition.y, 0.05));
     bellBracket.lineStyle(7, 0x765442, 1);
-    bellBracket.lineBetween(bellPosition.x + 8, bellPosition.y - 50, bellPosition.x + 58, bellPosition.y - 50);
+    bellBracket.lineBetween(
+      bellPosition.x + 8,
+      bellPosition.y - 50,
+      bellPosition.x + 58,
+      bellPosition.y - 50,
+    );
     bellBracket.lineBetween(
       bellPosition.x + 49,
       bellPosition.y - 50,
@@ -517,11 +516,31 @@ export class MeadowDepthWorldManager {
       .setDepth(worldDepthForY(ribbonPosition.y, -0.08))
       .setName('meadow-depth:wind-ribbon-fence');
     fence.lineStyle(9, 0x806047, 0.96);
-    fence.lineBetween(ribbonPosition.x - 54, ribbonPosition.y + 28, ribbonPosition.x - 54, ribbonPosition.y - 40);
-    fence.lineBetween(ribbonPosition.x + 42, ribbonPosition.y + 28, ribbonPosition.x + 42, ribbonPosition.y - 40);
+    fence.lineBetween(
+      ribbonPosition.x - 54,
+      ribbonPosition.y + 28,
+      ribbonPosition.x - 54,
+      ribbonPosition.y - 40,
+    );
+    fence.lineBetween(
+      ribbonPosition.x + 42,
+      ribbonPosition.y + 28,
+      ribbonPosition.x + 42,
+      ribbonPosition.y - 40,
+    );
     fence.lineStyle(7, 0xa17a58, 0.92);
-    fence.lineBetween(ribbonPosition.x - 54, ribbonPosition.y - 12, ribbonPosition.x + 42, ribbonPosition.y - 12);
-    fence.lineBetween(ribbonPosition.x - 54, ribbonPosition.y + 12, ribbonPosition.x + 42, ribbonPosition.y + 12);
+    fence.lineBetween(
+      ribbonPosition.x - 54,
+      ribbonPosition.y - 12,
+      ribbonPosition.x + 42,
+      ribbonPosition.y - 12,
+    );
+    fence.lineBetween(
+      ribbonPosition.x - 54,
+      ribbonPosition.y + 12,
+      ribbonPosition.x + 42,
+      ribbonPosition.y + 12,
+    );
     objects.push(fence);
 
     for (const [index, colour] of [0x78bddd, 0xf2c56c, 0xc69be0].entries()) {
