@@ -36,6 +36,13 @@ describe('Rainbow Run Race Hub map', () => {
     }
   });
 
+  it('owns the expanded Meadow race entries inside the Hub', () => {
+    expect(RAINBOW_RUN_HUB_LAYOUT.expandedRaceEntries).toEqual({
+      petalParade: { x: 1370, y: 980 },
+      rainbowCup: { x: 1380, y: 610 },
+    });
+  });
+
   it('owns collision for the substantial hub props', () => {
     expect(RAINBOW_RUN_HUB_MAP.colliders.map(({ id }) => id)).toEqual([
       'collision:race-hub-tent',
