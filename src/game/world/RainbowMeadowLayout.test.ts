@@ -243,10 +243,18 @@ describe('Rainbow Meadow canonical layout', () => {
     );
   });
 
-  it('parts the waterfall around the hidden recess rather than presenting a solid wall', () => {
+  it('parts four overlapping waterfall strands around the hidden recess', () => {
     const waterfall = RAINBOW_MEADOW_LAYOUT.crystalBrookGatewayArea.waterfall;
     expect(waterfall.openRadius).toBeGreaterThan(200);
-    expect(waterfall.openCurtainOffset).toBeGreaterThan(waterfall.closedCurtainOffset * 2);
+    expect(waterfall.curtains.map(({ id }) => id)).toEqual([
+      'outer-left',
+      'inner-left',
+      'inner-right',
+      'outer-right',
+    ]);
+    expect(
+      waterfall.curtains.every(({ openOffset, closedOffset }) => openOffset > closedOffset),
+    ).toBe(true);
   });
 
   it('gives every Crystal Brook basin rock a matching collision body', () => {
@@ -281,10 +289,11 @@ describe('Rainbow Meadow canonical layout', () => {
     }
 
     const leftmostShoreX = Math.min(...area.pool.shoreline.map(({ x }) => x));
-    expect(area.dryLanding.x).toBeLessThan(leftmostShoreX);
+    expect(area.dryLanding.x).toBeGreaterThan(leftmostShoreX);
+    expect(area.dryLanding.x).toBeLessThan(area.steppingStones[0].x);
   });
 
-  it('maps every deep-water blocker into Meadow collision while leaving the shallow rim unblocked', () => {
+  it('maps dense deep-water blockers into Meadow collision while preserving the stone corridor', () => {
     const area = RAINBOW_MEADOW_LAYOUT.crystalBrookGatewayArea;
     const deepColliders = RAINBOW_MEADOW_MAP.colliders.filter(({ id }) =>
       id.startsWith('collision:crystal-brook-deep-water:'),
@@ -303,6 +312,37 @@ describe('Rainbow Meadow canonical layout', () => {
         Math.abs(area.dryLanding.y - y) <= height / 2,
     );
     expect(landingIsBlocked).toBe(false);
+
+    for (const sample of [
+      { x: 2950, y: 1010 },
+      { x: 2870, y: 1320 },
+      { x: 3050, y: 1300 },
+      { x: 3240, y: 1250 },
+    ]) {
+      expect(
+        deepColliders.some(
+          ({ x, y, width, height }) =>
+            Math.abs(sample.x - x) <= width / 2 && Math.abs(sample.y - y) <= height / 2,
+        ),
+      ).toBe(true);
+    }
+  });
+
+  it('uses materially different Crystal Brook boulder silhouettes', () => {
+    const kinds = new Set(RAINBOW_MEADOW_LAYOUT.crystalBrookGatewayArea.rocks.map(({ kind }) => kind));
+    expect(kinds).toEqual(new Set(['slab', 'spire', 'round', 'wedge', 'cluster', 'lopsided']));
+    const spire = RAINBOW_MEADOW_LAYOUT.crystalBrookGatewayArea.rocks.find(
+      ({ kind }) => kind === 'spire',
+    );
+    const round = RAINBOW_MEADOW_LAYOUT.crystalBrookGatewayArea.rocks.find(
+      ({ kind }) => kind === 'round',
+    );
+    expect(spire).toBeDefined();
+    expect(round).toBeDefined();
+    expect((spire?.height ?? 0) / (spire?.width ?? 1)).toBeGreaterThan(1.5);
+    expect(Math.hypot((spire?.x ?? 0) - (round?.x ?? 0), (spire?.y ?? 0) - (round?.y ?? 0))).toBeLessThan(
+      150,
+    );
   });
 
   it('keeps the Meadow-side Race Hub gateway clear of tree and flower scenery', () => {
