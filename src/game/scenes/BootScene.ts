@@ -32,6 +32,7 @@ const DIAGNOSTIC_SCENES: Record<string, string> = {
   cottage: 'CottageInteriorScene',
   village: 'SunbeamVillageScene',
   meadow: 'RainbowMeadowScene',
+  'race-hub': 'RainbowRunEntryScene',
   brook: 'CrystalBrookScene',
   woods: 'WhisperingWoodsScene',
   beach: 'StarlightBeachScene',
