@@ -326,20 +326,6 @@ export const RAINBOW_MEADOW_LAYOUT = {
         { x: 2980, y: 2190 },
       ],
     },
-    // Axis-aligned blockers tile the deep basin above/below the stepping-stone route.
-    // Their inner edges trace the six-stone diagonal closely enough for the player's
-    // collision body to move stone-to-stone without opening a generic cross-pool lane.
-    deepWaterBlockers: [
-      { x: 2840, y: 1060, width: 100, height: 70 },
-      { x: 2840, y: 1340, width: 100, height: 160 },
-      { x: 2940, y: 1040, width: 100, height: 80 },
-      { x: 2940, y: 1320, width: 100, height: 170 },
-      { x: 3040, y: 1005, width: 100, height: 60 },
-      { x: 3040, y: 1325, width: 100, height: 200 },
-      { x: 3140, y: 985, width: 100, height: 50 },
-      { x: 3140, y: 1290, width: 100, height: 220 },
-      { x: 3240, y: 1270, width: 100, height: 230 },
-    ],
   },
   hubFeatures: {
     rainbowRunEntrance: {
@@ -464,6 +450,7 @@ function distanceToSegment(point: MapPoint, start: MapPoint, end: MapPoint): num
   if (lengthSquared === 0) {
     return Math.hypot(point.x - start.x, point.y - start.y);
   }
+
   const projection = Math.max(
     0,
     Math.min(1, ((point.x - start.x) * dx + (point.y - start.y) * dy) / lengthSquared),
@@ -473,45 +460,28 @@ function distanceToSegment(point: MapPoint, start: MapPoint, end: MapPoint): num
   return Math.hypot(point.x - nearestX, point.y - nearestY);
 }
 
-function buildCrystalBrookDeepWaterCollision(): readonly Omit<CollisionRectangle, 'id'>[] {
-  const area = RAINBOW_MEADOW_LAYOUT.crystalBrookGatewayArea;
-  const polygon = area.pool.deepZone;
-  const route = area.steppingStones;
-  const tileSize = 46;
-  const tileStep = 38;
-  const corridorRadius = 72;
-  const minX = Math.min(...polygon.map(({ x }) => x));
-  const maxX = Math.max(...polygon.map(({ x }) => x));
-  const minY = Math.min(...polygon.map(({ y }) => y));
-  const maxY = Math.max(...polygon.map(({ y }) => y));
-  const blockers: Omit<CollisionRectangle, 'id'>[] = [];
+export const CRYSTAL_BROOK_STEPPING_CORRIDOR = {
+  // Best-fit straight line through the six stepping stones, extended onto both banks.
+  // 44px reaches just beyond the outer stone edges while keeping adjacent deep water blocked.
+  start: { x: 2710, y: 1227 },
+  end: { x: 3310, y: 1039 },
+  halfWidth: 44,
+} as const;
 
-  for (let y = minY; y <= maxY; y += tileStep) {
-    for (let x = minX; x <= maxX; x += tileStep) {
-      const point = { x, y };
-      if (!pointInsidePolygon(point, polygon)) {
-        continue;
-      }
-
-      let routeDistance = Number.POSITIVE_INFINITY;
-      for (let index = 0; index < route.length - 1; index += 1) {
-        routeDistance = Math.min(
-          routeDistance,
-          distanceToSegment(point, route[index], route[index + 1]),
-        );
-      }
-      if (routeDistance <= corridorRadius) {
-        continue;
-      }
-
-      blockers.push({ x, y, width: tileSize, height: tileSize });
-    }
+export function isCrystalBrookDeepWaterBlocked(point: MapPoint): boolean {
+  const deepZone = RAINBOW_MEADOW_LAYOUT.crystalBrookGatewayArea.pool.deepZone;
+  if (!pointInsidePolygon(point, deepZone)) {
+    return false;
   }
 
-  return blockers;
+  return (
+    distanceToSegment(
+      point,
+      CRYSTAL_BROOK_STEPPING_CORRIDOR.start,
+      CRYSTAL_BROOK_STEPPING_CORRIDOR.end,
+    ) > CRYSTAL_BROOK_STEPPING_CORRIDOR.halfWidth
+  );
 }
-
-const CRYSTAL_BROOK_DEEP_WATER_COLLIDERS = buildCrystalBrookDeepWaterCollision();
 
 const DEFAULT_PLAYER_SPAWN = RAINBOW_MEADOW_LAYOUT.sunbeamGateway.approach;
 const playerSpawn: MapPoint = { ...DEFAULT_PLAYER_SPAWN };
@@ -596,10 +566,6 @@ export const RAINBOW_MEADOW_MAP = {
       y: rock.y,
       width: rock.collisionWidth,
       height: rock.collisionHeight,
-    })),
-    ...CRYSTAL_BROOK_DEEP_WATER_COLLIDERS.map((blocker, index) => ({
-      id: `collision:crystal-brook-deep-water:${index}`,
-      ...blocker,
     })),
   ] satisfies readonly CollisionRectangle[],
 } as const;
