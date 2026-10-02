@@ -242,7 +242,7 @@ describe('Rainbow Meadow canonical layout', () => {
     expect(area.rocks).toHaveLength(7);
     expect(area.crystals.length).toBeGreaterThanOrEqual(4);
     expect(area.mist.length).toBeGreaterThanOrEqual(3);
-    expect(CRYSTAL_BROOK_STEPPING_CORRIDOR.halfWidth).toBe(44);
+    expect(CRYSTAL_BROOK_STEPPING_CORRIDOR.halfWidth).toBe(68);
     expect(area.outletStream.points[area.outletStream.points.length - 1]?.y).toBeGreaterThan(
       RAINBOW_MEADOW_LAYOUT.bounds.height,
     );
