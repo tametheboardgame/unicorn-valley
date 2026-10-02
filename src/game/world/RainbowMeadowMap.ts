@@ -19,12 +19,6 @@ export interface MeadowHubFeature {
   approach: MapPoint;
 }
 
-export interface MeadowNpcMarker {
-  id: string;
-  label: string;
-  position: MapPoint;
-}
-
 export interface MeadowDiscoverySpot {
   id: string;
   discoveryId: DiscoveryId;
@@ -83,11 +77,11 @@ export const RAINBOW_MEADOW_LAYOUT = {
     },
     {
       id: 'rainbow-run',
-      centre: { x: 2700, y: 390 },
-      radiusX: 700,
-      radiusY: 300,
+      centre: { x: 2950, y: 290 },
+      radiusX: 330,
+      radiusY: 210,
       groundColour: 0xd5eca2,
-      groundAlpha: 0.16,
+      groundAlpha: 0.12,
     },
     {
       id: 'crystal-brook-corridor',
@@ -245,28 +239,6 @@ export const RAINBOW_MEADOW_LAYOUT = {
       { x: 3210, y: 1165, width: 170, height: 48 },
     ],
   },
-  raceHub: {
-    x: 2700,
-    y: 390,
-    width: 1320,
-    height: 520,
-  },
-  raceHubPresentation: {
-    tent: { x: 2320, y: 310 },
-    title: { x: 2700, y: 115 },
-    cupBoard: {
-      position: { x: 2860, y: 500 },
-      approach: { x: 2860, y: 680 },
-    },
-    runPoster: { x: 3160, y: 465 },
-    ribbonEvidence: { x: 2470, y: 520 },
-    flags: [
-      { x: 2150, y: 320 },
-      { x: 2210, y: 610 },
-      { x: 3100, y: 320 },
-      { x: 3150, y: 610 },
-    ],
-  },
   hubFeatures: {
     rainbowRunEntrance: {
       id: 'rainbow-run-entrance',
@@ -274,21 +246,12 @@ export const RAINBOW_MEADOW_LAYOUT = {
       position: { x: 2950, y: 190 },
       approach: { x: 2950, y: 390 },
     },
-    ribbonBoard: {
-      id: 'ribbon-board',
-      label: 'Ribbon Board',
-      position: { x: 2520, y: 500 },
-      approach: { x: 2520, y: 680 },
-    },
     windmillLookout: {
       id: 'windmill-lookout',
       label: 'Windmill Lookout',
       position: { x: 1280, y: 275 },
       approach: { x: 1280, y: 440 },
     },
-  },
-  coreNpcPositions: {
-    novaRaceHub: { x: 2200, y: 525 },
   },
   structuralPaths: [
     {
@@ -398,23 +361,14 @@ export const RAINBOW_MEADOW_MAP = {
   height: RAINBOW_MEADOW_LAYOUT.bounds.height,
   margin: RAINBOW_MEADOW_LAYOUT.bounds.margin,
   playerSpawn,
-  raceHub: RAINBOW_MEADOW_LAYOUT.raceHub,
   entrances: [
     RAINBOW_MEADOW_LAYOUT.sunbeamGateway,
     RAINBOW_MEADOW_LAYOUT.crystalBrookGateway,
   ] satisfies readonly MeadowEntrance[],
   hubFeatures: [
     RAINBOW_MEADOW_LAYOUT.hubFeatures.rainbowRunEntrance,
-    RAINBOW_MEADOW_LAYOUT.hubFeatures.ribbonBoard,
     RAINBOW_MEADOW_LAYOUT.hubFeatures.windmillLookout,
   ] satisfies readonly MeadowHubFeature[],
-  npcMarkers: [
-    {
-      id: 'nova',
-      label: 'Nova',
-      position: RAINBOW_MEADOW_LAYOUT.coreNpcPositions.novaRaceHub,
-    },
-  ] satisfies readonly MeadowNpcMarker[],
   discoverySpots: [
     {
       id: 'prism-bloom',
@@ -448,20 +402,6 @@ export const RAINBOW_MEADOW_MAP = {
       y: RAINBOW_MEADOW_LAYOUT.natureFeatures.windmill.position.y,
       width: 190,
       height: 255,
-    },
-    {
-      id: 'collision:hub-tent',
-      x: RAINBOW_MEADOW_LAYOUT.raceHubPresentation.tent.x,
-      y: RAINBOW_MEADOW_LAYOUT.raceHubPresentation.tent.y,
-      width: 430,
-      height: 260,
-    },
-    {
-      id: 'collision:ribbon-board',
-      x: RAINBOW_MEADOW_LAYOUT.hubFeatures.ribbonBoard.position.x,
-      y: RAINBOW_MEADOW_LAYOUT.hubFeatures.ribbonBoard.position.y,
-      width: 300,
-      height: 85,
     },
     {
       id: 'collision:race-post-north',
