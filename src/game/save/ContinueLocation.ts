@@ -1,6 +1,7 @@
 import { COTTAGE_INTERIOR_LOCATION_ID } from '../world/CottageInteriorMap';
 import { CRYSTAL_BROOK_LOCATION_ID } from '../world/CrystalBrookMap';
 import { RAINBOW_MEADOW_LOCATION_ID } from '../world/RainbowMeadowMap';
+import { RAINBOW_RUN_HUB_LOCATION_ID } from '../world/RainbowRunHubMap';
 import { SUNBEAM_VILLAGE_LOCATION_ID } from '../world/SunbeamVillageMap';
 import { WHISPERING_WOODS_LOCATION_ID } from '../world/WhisperingWoodsMap';
 import { DEFAULT_START_LOCATION_ID, NEW_GAME_START_LOCATION_ID } from './saveSchema';
@@ -67,6 +68,15 @@ const DESTINATIONS = new Map<string, ContinueDestination>([
       locationId: RAINBOW_MEADOW_LOCATION_ID,
       sceneKey: 'RainbowMeadowScene',
       status: 'Your unicorn is waiting in Rainbow Meadow.',
+      lazyScene: false,
+    },
+  ],
+  [
+    RAINBOW_RUN_HUB_LOCATION_ID,
+    {
+      locationId: RAINBOW_RUN_HUB_LOCATION_ID,
+      sceneKey: 'RainbowRunEntryScene',
+      status: 'Your unicorn is waiting at Rainbow Run Race Hub.',
       lazyScene: false,
     },
   ],
