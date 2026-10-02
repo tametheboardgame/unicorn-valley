@@ -145,8 +145,8 @@ test('H4.4 makes Crystal Brook a waterfall, pool and stepping-stone Meadow thres
   ).toBe(false);
 
   const cupBoard = meadow.objects.find(({ name }) => name === 'meadow-depth:rainbow-cup-board');
-  expect(cupBoard?.x).toBeCloseTo(2860, 0);
-  expect(cupBoard?.y).toBeCloseTo(755, 0);
+  expect(cupBoard?.x).toBeCloseTo(2890, 0);
+  expect(cupBoard?.y).toBeCloseTo(650, 0);
 
   await positionPlayer(page, 'RainbowMeadowScene', MEADOW_GATE.x, MEADOW_GATE.y);
   await waitForScene(page, 'CrystalBrookScene');
