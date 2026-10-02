@@ -267,9 +267,7 @@ describe('Rainbow Meadow canonical layout', () => {
       false,
     );
     expect(
-      RAINBOW_MEADOW_LAYOUT.scenery.flowerClusters.some((flower) =>
-        isInsideDistrict(flower, race),
-      ),
+      RAINBOW_MEADOW_LAYOUT.scenery.flowerClusters.some((flower) => isInsideDistrict(flower, race)),
     ).toBe(false);
   });
 });
