@@ -134,9 +134,9 @@ export const RAINBOW_MEADOW_LAYOUT = {
     mapleStorySpot: { x: 1885, y: 1575 },
     noFinishLineLandmark: { x: 1980, y: 1585 },
     mapleWaypoints: [
-      { id: 'maple-picnic-a', x: 1600, y: 1840, pauseMs: 2600 },
-      { id: 'maple-picnic-b', x: 1740, y: 1880, pauseMs: 3200 },
-      { id: 'maple-picnic-c', x: 1890, y: 1815, pauseMs: 2300 },
+      { id: 'maple-picnic-a', x: 1585, y: 1785, pauseMs: 2600 },
+      { id: 'maple-picnic-b', x: 1735, y: 1815, pauseMs: 3200 },
+      { id: 'maple-picnic-c', x: 1900, y: 1775, pauseMs: 2300 },
     ],
     flowerPatches: [
       { x: 1435, y: 1625, colour: 0xf2b5ce },
