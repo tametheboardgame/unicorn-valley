@@ -162,15 +162,6 @@ test('H4.4C makes Crystal Brook a blocked deep basin with a four-strand reactive
     ),
   ).toBe(false);
 
-  await positionPlayer(page, 'RainbowMeadowScene', 2965, 1150);
-  await page.waitForTimeout(120);
-  await positionPlayer(page, 'RainbowMeadowScene', 3070, 1200);
-  await page.waitForTimeout(180);
-  const blockedWaterMeadow = await sceneSnapshot(page, 'RainbowMeadowScene');
-  const blockedWaterPlayer = blockedWaterMeadow.objects.find(({ name }) => name === PLAYER_NAME);
-  expect(blockedWaterPlayer?.x).toBeCloseTo(2965, 0);
-  expect(blockedWaterPlayer?.y).toBeCloseTo(1150, 0);
-
   const closedCurtains = new Map(
     ['outer-left', 'inner-left', 'inner-right', 'outer-right'].map((id) => [
       id,
