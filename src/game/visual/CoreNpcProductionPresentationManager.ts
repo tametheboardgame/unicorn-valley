@@ -22,7 +22,6 @@ import {
 const LUMI_WORLD_POSITION = { x: 2980, y: 1530 } as const;
 const NOVA_PICNIC_POSITION = { x: 2045, y: 1400 } as const;
 const NOVA_PRESENCE_REFRESH_MS = 500;
-const NOVA_OFFSTAGE_INTERACTION_POSITION = { x: -10000, y: -10000 } as const;
 interface PositionedGameObject {
   x: number;
   y: number;
