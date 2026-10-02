@@ -428,57 +428,6 @@ export const RAINBOW_MEADOW_LAYOUT = {
   ] satisfies readonly RainbowMeadowPathStroke[],
 } as const;
 
-function pointInsidePolygon(point: MapPoint, polygon: readonly MapPoint[]): boolean {
-  let inside = false;
-  for (let index = 0, previous = polygon.length - 1; index < polygon.length; previous = index++) {
-    const a = polygon[index];
-    const b = polygon[previous];
-    const crosses =
-      a.y > point.y !== b.y > point.y &&
-      point.x < ((b.x - a.x) * (point.y - a.y)) / (b.y - a.y) + a.x;
-    if (crosses) {
-      inside = !inside;
-    }
-  }
-  return inside;
-}
-
-export const CRYSTAL_BROOK_STEPPING_CORRIDOR = {
-  // One invisible rotated rectangle laid over the full stepping-stone chain.
-  // Its long edges are the deep-water collision boundary.
-  start: { x: 2655, y: 1239 },
-  end: { x: 3375, y: 1010 },
-  width: 96,
-} as const;
-
-export function isPointInsideCrystalBrookSteppingCorridor(point: MapPoint): boolean {
-  const { start, end, width } = CRYSTAL_BROOK_STEPPING_CORRIDOR;
-  const dx = end.x - start.x;
-  const dy = end.y - start.y;
-  const length = Math.hypot(dx, dy);
-  if (length === 0) {
-    return false;
-  }
-
-  const unitX = dx / length;
-  const unitY = dy / length;
-  const offsetX = point.x - start.x;
-  const offsetY = point.y - start.y;
-  const along = offsetX * unitX + offsetY * unitY;
-  const across = offsetX * -unitY + offsetY * unitX;
-
-  return along >= 0 && along <= length && Math.abs(across) <= width / 2;
-}
-
-export function isCrystalBrookDeepWaterBlocked(point: MapPoint): boolean {
-  const deepZone = RAINBOW_MEADOW_LAYOUT.crystalBrookGatewayArea.pool.deepZone;
-  if (!pointInsidePolygon(point, deepZone)) {
-    return false;
-  }
-
-  return !isPointInsideCrystalBrookSteppingCorridor(point);
-}
-
 const DEFAULT_PLAYER_SPAWN = RAINBOW_MEADOW_LAYOUT.sunbeamGateway.approach;
 const playerSpawn: MapPoint = { ...DEFAULT_PLAYER_SPAWN };
 
