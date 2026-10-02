@@ -131,7 +131,6 @@ export class CoreNpcProductionPresentationManager {
     const marigoldPresence = this.presenceService.resolve(MARIGOLD_CHARACTER_ID);
     this.marigoldArea =
       marigoldPresence?.area === 'picnic-hill' ? 'picnic-hill' : 'sunbeam-village';
-
   }
 
   private refreshPipWorld(): void {
