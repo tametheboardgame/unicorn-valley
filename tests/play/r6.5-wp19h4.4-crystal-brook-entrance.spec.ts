@@ -157,16 +157,10 @@ test('H4.4C makes Crystal Brook a blocked deep basin with a four-strand reactive
   ).toBe(false);
 
   const closedCurtains = new Map(
-    [
-      'outer-left',
-      'inner-left',
-      'inner-right',
-      'outer-right',
-    ].map((id) => [
+    ['outer-left', 'inner-left', 'inner-right', 'outer-right'].map((id) => [
       id,
       meadow.objects.find(
-        ({ name }) =>
-          name === `r6-region-gateway-art:meadow-crystal-brook:waterfall-curtain-${id}`,
+        ({ name }) => name === `r6-region-gateway-art:meadow-crystal-brook:waterfall-curtain-${id}`,
       ),
     ]),
   );
@@ -180,8 +174,7 @@ test('H4.4C makes Crystal Brook a blocked deep basin with a four-strand reactive
   const openedMeadow = await sceneSnapshot(page, 'RainbowMeadowScene');
   for (const [id, closed] of closedCurtains.entries()) {
     const opened = openedMeadow.objects.find(
-      ({ name }) =>
-        name === `r6-region-gateway-art:meadow-crystal-brook:waterfall-curtain-${id}`,
+      ({ name }) => name === `r6-region-gateway-art:meadow-crystal-brook:waterfall-curtain-${id}`,
     );
     expect(opened).toBeDefined();
     if (id.includes('left')) {
