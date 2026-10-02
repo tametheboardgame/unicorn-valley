@@ -50,12 +50,7 @@ async function setMeadowPlayerPosition(page: Page, x: number, y: number): Promis
       const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
         .__UNICORN_VALLEY_DIAGNOSTICS__;
       if (!api) throw new Error('Browser diagnostics unavailable.');
-      api.setArcadeSpritePosition(
-        'RainbowMeadowScene',
-        'world-player-unicorn',
-        targetX,
-        targetY,
-      );
+      api.setArcadeSpritePosition('RainbowMeadowScene', 'world-player-unicorn', targetX, targetY);
     },
     { targetX: x, targetY: y },
   );
@@ -75,8 +70,7 @@ async function dragDiscToReceiver(page: Page): Promise<void> {
     ({ name, effectiveVisible }) => name === 'rainbow-disc-activity:disc' && effectiveVisible,
   );
   const receiver = scene.objects.find(
-    ({ name, effectiveVisible }) =>
-      name === 'rainbow-disc-activity:receiver:1' && effectiveVisible,
+    ({ name, effectiveVisible }) => name === 'rainbow-disc-activity:receiver:1' && effectiveVisible,
   );
   if (!disc || !receiver) {
     throw new Error('Rainbow Disc throw objects are unavailable.');
@@ -140,12 +134,9 @@ test('H4.9 Rainbow Disc lawn is alive before interaction and returns cleanly aft
   await expect
     .poll(async () =>
       page.evaluate(() => {
-        const api = (
-          window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi }
-        ).__UNICORN_VALLEY_DIAGNOSTICS__;
-        return api
-          ?.snapshot()
-          .health.scenes.find(({ key }) => key === 'RainbowMeadowScene')
+        const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
+          .__UNICORN_VALLEY_DIAGNOSTICS__;
+        return api?.snapshot().health.scenes.find(({ key }) => key === 'RainbowMeadowScene')
           ?.lifecycleState;
       }),
     )
@@ -172,8 +163,7 @@ test('H4.9 Rainbow Disc lawn is alive before interaction and returns cleanly aft
     .poll(async () => {
       const activity = await snapshotScene(page, 'RainbowDiscActivityScene');
       return activity.objects.some(
-        ({ name, effectiveVisible }) =>
-          name === 'rainbow-disc-activity:result' && effectiveVisible,
+        ({ name, effectiveVisible }) => name === 'rainbow-disc-activity:result' && effectiveVisible,
       );
     })
     .toBe(true);
