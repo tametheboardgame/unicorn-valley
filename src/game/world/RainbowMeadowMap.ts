@@ -156,7 +156,7 @@ export const RAINBOW_MEADOW_LAYOUT = {
     id: 'crystal-brook',
     label: 'Crystal Brook',
     position: { x: 3300, y: 1035 },
-    approach: { x: 3180, y: 1080 },
+    approach: { x: 3150, y: 1100 },
     direction: 'east',
   },
   // H4.4B: a natural basin with a wadeable rim, blocked deep water, stone crossing and real outflow.
@@ -245,7 +245,7 @@ export const RAINBOW_MEADOW_LAYOUT = {
         variant: 2,
       },
       {
-        x: 3360,
+        x: 3335,
         y: 1230,
         width: 168,
         height: 112,
