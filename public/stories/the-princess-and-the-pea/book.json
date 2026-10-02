@@ -44,57 +44,137 @@
           "source": "Unicorn Valley Story House edition"
         },
         "originalPublicationYear": 1835,
-        "curatorNotes": "A short classic split into three natural reader sections rather than artificially lengthened."
+        "curatorNotes": "A short classic split into three natural reader sections. Historical Bayes / Dulac / Ford artwork is preserved as Classic Illustrations; R6.5-WP19SH1.3.4 adds a separate generated Modern Illustrations set."
       },
       "chapters": [
         {
           "id": "a-storm-at-the-palace",
           "title": "A Storm at the Palace",
-          "path": "chapters/01.md",
-          "illustrations": [
-            {
-              "id": "bayes-doorstep",
-              "blockId": "the-door-opens",
-              "path": "illustrations/doorstep.webp",
-              "alt": "Alfred Walter Bayes' historic illustration for The Princess and the Pea.",
-              "placement": "full-width",
-              "width": 585,
-              "height": 578,
-              "caption": "Illustration by Alfred Walter Bayes, 1895."
-            }
-          ]
+          "path": "chapters/01.md"
         },
         {
           "id": "twenty-mattresses",
           "title": "Twenty Mattresses",
-          "path": "chapters/02.md",
-          "illustrations": [
-            {
-              "id": "dulac-mattresses",
-              "blockId": "the-tallest-bed",
-              "path": "illustrations/mattresses.webp",
-              "alt": "Edmund Dulac's illustration of the princess high upon the mattresses.",
-              "placement": "full-width",
-              "width": 1760,
-              "height": 2332,
-              "caption": "Illustration by Edmund Dulac."
-            }
-          ]
+          "path": "chapters/02.md"
         },
         {
           "id": "the-tiny-pea",
           "title": "The Tiny Pea",
-          "path": "chapters/03.md",
-          "illustrations": [
+          "path": "chapters/03.md"
+        }
+      ],
+      "defaultIllustrationSetId": "modern",
+      "illustrationSets": [
+        {
+          "id": "classic",
+          "label": "Classic Illustrations",
+          "rights": {
+            "status": "public-domain",
+            "source": "Historical illustrations by Alfred Walter Bayes, Edmund Dulac and H. J. Ford",
+            "sourceUrl": "https://commons.wikimedia.org/wiki/Category:The_Princess_and_the_Pea_in_art",
+            "notes": "The selected historical source files are identified as public domain on Wikimedia Commons."
+          },
+          "chapters": [
             {
-              "id": "ford-true-princess",
-              "blockId": "morning-answer",
-              "path": "illustrations/true-princess.webp",
-              "alt": "A. J. Ford's historic illustration for The Princess and the Pea.",
-              "placement": "inline",
-              "width": 267,
-              "height": 500,
-              "caption": "Historic illustration by H. J. Ford."
+              "chapterId": "a-storm-at-the-palace",
+              "illustrations": [
+                {
+                  "id": "bayes-doorstep",
+                  "blockId": "the-door-opens",
+                  "path": "illustrations/doorstep.webp",
+                  "alt": "Alfred Walter Bayes' historic illustration for The Princess and the Pea.",
+                  "placement": "full-width",
+                  "width": 585,
+                  "height": 578,
+                  "caption": "Illustration by Alfred Walter Bayes, 1895."
+                }
+              ]
+            },
+            {
+              "chapterId": "twenty-mattresses",
+              "illustrations": [
+                {
+                  "id": "dulac-mattresses",
+                  "blockId": "the-tallest-bed",
+                  "path": "illustrations/mattresses.webp",
+                  "alt": "Edmund Dulac's illustration of the princess high upon the mattresses.",
+                  "placement": "full-width",
+                  "width": 1760,
+                  "height": 2332,
+                  "caption": "Illustration by Edmund Dulac."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-tiny-pea",
+              "illustrations": [
+                {
+                  "id": "ford-true-princess",
+                  "blockId": "morning-answer",
+                  "path": "illustrations/true-princess.webp",
+                  "alt": "A. J. Ford's historic illustration for The Princess and the Pea.",
+                  "placement": "inline",
+                  "width": 267,
+                  "height": 500,
+                  "caption": "Historic illustration by H. J. Ford."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "modern",
+          "label": "Modern Illustrations",
+          "rights": {
+            "status": "original",
+            "source": "ChatGPT-generated artwork created for the Unicorn Valley Story House modern illustration set",
+            "notes": "Generated for R6.5-WP19SH1.3.4 and materialised through the approved Google Drive → WIF → GitHub Actions pipeline."
+          },
+          "chapters": [
+            {
+              "chapterId": "a-storm-at-the-palace",
+              "illustrations": [
+                {
+                  "id": "modern-storm-doorstep",
+                  "blockId": "the-door-opens",
+                  "path": "illustrations/generated/storm-doorstep.webp",
+                  "alt": "A rain-soaked princess stands at the glowing palace doorway during a fierce storm while the queen studies her curiously and the prince looks on.",
+                  "placement": "full-width",
+                  "width": 768,
+                  "height": 512,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "twenty-mattresses",
+              "illustrations": [
+                {
+                  "id": "modern-mattress-tower",
+                  "blockId": "the-tallest-bed",
+                  "path": "illustrations/generated/mattress-tower.webp",
+                  "alt": "The queen secretly places the tiny pea beneath an absurdly tall tower of mattresses and feather beds in the palace guest room.",
+                  "placement": "full-width",
+                  "width": 768,
+                  "height": 512,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-tiny-pea",
+              "illustrations": [
+                {
+                  "id": "modern-morning-answer",
+                  "blockId": "morning-answer",
+                  "path": "illustrations/generated/morning-answer.webp",
+                  "alt": "At breakfast the exhausted princess explains that something hard kept her awake while the queen reacts with delighted recognition and the prince looks amused.",
+                  "placement": "full-width",
+                  "width": 768,
+                  "height": 512,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
             }
           ]
         }
@@ -124,57 +204,129 @@
           "notes": "Story House pagination changes presentation only; the source wording remains complete."
         },
         "originalPublicationYear": 1835,
-        "curatorNotes": "Complete public-domain English text reflowed into three reader pages at paragraph boundaries, with all three historical illustrations anchored to matching scenes."
+        "curatorNotes": "Complete public-domain English text reflowed into three reader pages. Historical Bayes / Dulac / Ford artwork remains the Classic Illustrations set; the SH1.3.4 generated set can be selected independently as Modern Illustrations against matching classic passages."
       },
       "chapters": [
         {
           "id": "page-01",
           "title": "The Princess and the Pea",
-          "path": "editions/full-classic/pages/page-01.md",
-          "illustrations": [
-            {
-              "id": "full-bayes-doorstep",
-              "path": "illustrations/doorstep.webp",
-              "alt": "Alfred Walter Bayes' historic illustration for The Princess and the Pea.",
-              "placement": "full-width",
-              "width": 585,
-              "height": 578,
-              "caption": "Illustration by Alfred Walter Bayes, 1895.",
-              "blockId": "p01-b03"
-            }
-          ]
+          "path": "editions/full-classic/pages/page-01.md"
         },
         {
           "id": "page-02",
           "title": "The Princess and the Pea (continued)",
-          "path": "editions/full-classic/pages/page-02.md",
-          "illustrations": [
-            {
-              "id": "full-dulac-mattresses",
-              "path": "illustrations/mattresses.webp",
-              "alt": "Edmund Dulac's illustration of the princess high upon the mattresses.",
-              "placement": "full-width",
-              "width": 1760,
-              "height": 2332,
-              "caption": "Illustration by Edmund Dulac.",
-              "blockId": "p02-b01"
-            },
-            {
-              "id": "full-ford-true-princess",
-              "path": "illustrations/true-princess.webp",
-              "alt": "H. J. Ford's historic illustration for The Princess and the Pea.",
-              "placement": "inline",
-              "width": 267,
-              "height": 500,
-              "caption": "Historic illustration by H. J. Ford.",
-              "blockId": "p02-b03"
-            }
-          ]
+          "path": "editions/full-classic/pages/page-02.md"
         },
         {
           "id": "page-03",
           "title": "The Princess and the Pea (continued)",
           "path": "editions/full-classic/pages/page-03.md"
+        }
+      ],
+      "defaultIllustrationSetId": "classic",
+      "illustrationSets": [
+        {
+          "id": "classic",
+          "label": "Classic Illustrations",
+          "rights": {
+            "status": "public-domain",
+            "source": "Historical illustrations by Alfred Walter Bayes, Edmund Dulac and H. J. Ford",
+            "sourceUrl": "https://commons.wikimedia.org/wiki/Category:The_Princess_and_the_Pea_in_art",
+            "notes": "The three previously verified historical Story House illustrations are reused beside matching passages in the complete classic text."
+          },
+          "chapters": [
+            {
+              "chapterId": "page-01",
+              "illustrations": [
+                {
+                  "id": "full-bayes-doorstep",
+                  "path": "illustrations/doorstep.webp",
+                  "alt": "Alfred Walter Bayes' historic illustration for The Princess and the Pea.",
+                  "placement": "full-width",
+                  "width": 585,
+                  "height": 578,
+                  "caption": "Illustration by Alfred Walter Bayes, 1895.",
+                  "blockId": "p01-b03"
+                }
+              ]
+            },
+            {
+              "chapterId": "page-02",
+              "illustrations": [
+                {
+                  "id": "full-dulac-mattresses",
+                  "path": "illustrations/mattresses.webp",
+                  "alt": "Edmund Dulac's illustration of the princess high upon the mattresses.",
+                  "placement": "full-width",
+                  "width": 1760,
+                  "height": 2332,
+                  "caption": "Illustration by Edmund Dulac.",
+                  "blockId": "p02-b01"
+                },
+                {
+                  "id": "full-ford-true-princess",
+                  "path": "illustrations/true-princess.webp",
+                  "alt": "H. J. Ford's historic illustration for The Princess and the Pea.",
+                  "placement": "inline",
+                  "width": 267,
+                  "height": 500,
+                  "caption": "Historic illustration by H. J. Ford.",
+                  "blockId": "p02-b03"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "modern",
+          "label": "Modern Illustrations",
+          "rights": {
+            "status": "original",
+            "source": "ChatGPT-generated artwork created for the Unicorn Valley Story House modern illustration set",
+            "notes": "The same R6.5-WP19SH1.3.4 generated artwork is reused against matching Full Classic Text passages; only the semantic page/block mapping differs."
+          },
+          "chapters": [
+            {
+              "chapterId": "page-01",
+              "illustrations": [
+                {
+                  "id": "full-modern-storm-doorstep",
+                  "blockId": "p01-b03",
+                  "path": "illustrations/generated/storm-doorstep.webp",
+                  "alt": "A rain-soaked princess stands at the glowing palace doorway during a fierce storm while the royal family receives her.",
+                  "placement": "full-width",
+                  "width": 768,
+                  "height": 512,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-02",
+              "illustrations": [
+                {
+                  "id": "full-modern-mattress-tower",
+                  "blockId": "p02-b01",
+                  "path": "illustrations/generated/mattress-tower.webp",
+                  "alt": "The queen hides the peas beneath an absurdly tall tower of mattresses and feather beds in the palace guest room.",
+                  "placement": "full-width",
+                  "width": 768,
+                  "height": 512,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "full-modern-morning-answer",
+                  "blockId": "p02-b03",
+                  "path": "illustrations/generated/morning-answer.webp",
+                  "alt": "The exhausted princess explains that something hard kept her awake while the queen realises her strange test has worked.",
+                  "placement": "full-width",
+                  "width": 768,
+                  "height": 512,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            }
+          ]
         }
       ]
     }
