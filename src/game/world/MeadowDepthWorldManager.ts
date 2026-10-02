@@ -51,7 +51,7 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     actionLabel: 'Look',
     actionKind: 'inspect',
     position: RAINBOW_MEADOW_LAYOUT.natureFeatures.windmill.storyPosition,
-    radius: 130,
+    radius: 112,
   },
   {
     id: 'windmill-bell',
@@ -59,7 +59,7 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     actionLabel: 'Ring',
     actionKind: 'interact',
     position: RAINBOW_MEADOW_LAYOUT.natureFeatures.windmill.bellPosition,
-    radius: 135,
+    radius: 112,
   },
   {
     id: 'windmill-lookout',
@@ -67,7 +67,7 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     actionLabel: 'Go up',
     actionKind: 'enter',
     position: RAINBOW_MEADOW_LAYOUT.natureFeatures.windmill.lookoutPosition,
-    radius: 145,
+    radius: 125,
   },
   {
     id: 'rainbow-pond',
