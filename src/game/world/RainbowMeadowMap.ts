@@ -501,12 +501,10 @@ export const RAINBOW_MEADOW_MAP = {
       width: rock.collisionWidth,
       height: rock.collisionHeight,
     })),
-    ...RAINBOW_MEADOW_LAYOUT.crystalBrookGatewayArea.deepWaterBlockers.map(
-      (blocker, index) => ({
-        id: `collision:crystal-brook-deep-water:${index}`,
-        ...blocker,
-      }),
-    ),
+    ...RAINBOW_MEADOW_LAYOUT.crystalBrookGatewayArea.deepWaterBlockers.map((blocker, index) => ({
+      id: `collision:crystal-brook-deep-water:${index}`,
+      ...blocker,
+    })),
   ] satisfies readonly CollisionRectangle[],
 } as const;
 
