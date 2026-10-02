@@ -4,7 +4,7 @@ import { isPipIntroduced, PIP_POSITION } from '../intro/PipIntro';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
 import { SUPPORTING_RESIDENT_ART_LAYOUT } from '../population/SupportingResidentArt';
 import { getBrowserSaveService } from '../save/browserSaveService';
-import { MARIGOLD_PICNIC_POSITION } from '../story/MarigoldPicnicPresentation';
+import { RAINBOW_MEADOW_LAYOUT } from '../world/RainbowMeadowMap';
 import {
   CoreNpcPresenceService,
   NOVA_CHARACTER_ID,
@@ -20,7 +20,6 @@ import {
 } from './VillageCoreResidentArt';
 
 const LUMI_WORLD_POSITION = { x: 2980, y: 1530 } as const;
-const NOVA_PICNIC_POSITION = { x: 2045, y: 1400 } as const;
 const NOVA_PRESENCE_REFRESH_MS = 500;
 interface PositionedGameObject {
   x: number;
@@ -54,8 +53,8 @@ function hidePicnicNovaPlaceholder(scene: Phaser.Scene): void {
       continue;
     }
     const nearPicnicNova =
-      Math.abs(object.x - NOVA_PICNIC_POSITION.x) <= 55 &&
-      Math.abs(object.y - NOVA_PICNIC_POSITION.y) <= 70;
+      Math.abs(object.x - RAINBOW_MEADOW_LAYOUT.picnicHill.nova.x) <= 55 &&
+      Math.abs(object.y - RAINBOW_MEADOW_LAYOUT.picnicHill.nova.y) <= 70;
     if (!nearPicnicNova) {
       continue;
     }
@@ -201,10 +200,10 @@ export class CoreNpcProductionPresentationManager {
     }
 
     createVillageCoreResidentSprite(scene, 'marigold', 'core-npc:marigold:picnic')
-      .setPosition(MARIGOLD_PICNIC_POSITION.x, MARIGOLD_PICNIC_POSITION.y)
+      .setPosition(RAINBOW_MEADOW_LAYOUT.picnicHill.marigold.x, RAINBOW_MEADOW_LAYOUT.picnicHill.marigold.y)
       .setDepth(
         worldDepthForY(
-          MARIGOLD_PICNIC_POSITION.y + SUPPORTING_RESIDENT_ART_LAYOUT.displayHeight * 0.44,
+          RAINBOW_MEADOW_LAYOUT.picnicHill.marigold.y + SUPPORTING_RESIDENT_ART_LAYOUT.displayHeight * 0.44,
           0.32,
         ),
       );
@@ -241,19 +240,19 @@ export class CoreNpcProductionPresentationManager {
       const nova = createCoreNpcSprite(
         scene,
         'nova',
-        NOVA_PICNIC_POSITION.x,
-        NOVA_PICNIC_POSITION.y + 4,
+        RAINBOW_MEADOW_LAYOUT.picnicHill.nova.x,
+        RAINBOW_MEADOW_LAYOUT.picnicHill.nova.y + 4,
         'world',
       )
         .setName('core-npc:nova:picnic')
         .setDisplaySize(112, 92)
-        .setDepth(worldDepthForY(NOVA_PICNIC_POSITION.y + 50, 0.32));
+        .setDepth(worldDepthForY(RAINBOW_MEADOW_LAYOUT.picnicHill.nova.y + 50, 0.32));
       addCoreNpcIdleTween(scene, nova, 'nova', 5);
     }
 
     if (!scene.children.getByName('core-npc:nova:picnic-label')) {
       scene.add
-        .text(NOVA_PICNIC_POSITION.x, NOVA_PICNIC_POSITION.y + 72, 'Nova', {
+        .text(RAINBOW_MEADOW_LAYOUT.picnicHill.nova.x, RAINBOW_MEADOW_LAYOUT.picnicHill.nova.y + 72, 'Nova', {
           color: '#5e4669',
           fontFamily: 'system-ui, sans-serif',
           fontSize: '16px',
@@ -263,7 +262,7 @@ export class CoreNpcProductionPresentationManager {
         })
         .setName('core-npc:nova:picnic-label')
         .setOrigin(0.5)
-        .setDepth(worldDepthForY(NOVA_PICNIC_POSITION.y + 82, 0.34));
+        .setDepth(worldDepthForY(RAINBOW_MEADOW_LAYOUT.picnicHill.nova.y + 82, 0.34));
     }
   }
 
