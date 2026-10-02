@@ -23,8 +23,15 @@
   },
   "discovery": {
     "format": "Chapter Book",
-    "genres": ["Fantasy", "Classics", "Mystery"],
-    "audiences": ["Read Together", "Independent Reader"],
+    "genres": [
+      "Fantasy",
+      "Classics",
+      "Mystery"
+    ],
+    "audiences": [
+      "Read Together",
+      "Independent Reader"
+    ],
     "length": "Longer Read"
   },
   "defaultEditionId": "story-house",
@@ -52,7 +59,7 @@
           "source": "Unicorn Valley Story House edition"
         },
         "originalPublicationYear": 1815,
-        "curatorNotes": "Split into five short reader sections so a longer fairy tale has natural page breaks and reliable resume points."
+        "curatorNotes": "Split into five short reader sections so a longer fairy tale has natural page breaks and reliable resume points. Existing Arthur Rackham artwork is preserved as Classic Illustrations; R6.5-WP19SH1.4.2 adds a separate generated Modern Illustrations set."
       },
       "chapters": [
         {
@@ -68,41 +75,148 @@
         {
           "id": "beneath-the-palace",
           "title": "Beneath the Palace",
-          "path": "chapters/03.md",
-          "illustrations": [
-            {
-              "id": "rackham-secret-path",
-              "blockId": "the-silver-wood",
-              "path": "illustrations/secret-path.webp",
-              "alt": "Arthur Rackham's illustration of the secret journey beneath the palace.",
-              "placement": "full-width",
-              "width": 1500,
-              "height": 1023,
-              "caption": "Illustration by Arthur Rackham, 1909."
-            }
-          ]
+          "path": "chapters/03.md"
         },
         {
           "id": "the-midnight-ballroom",
           "title": "The Midnight Ballroom",
-          "path": "chapters/04.md",
-          "illustrations": [
-            {
-              "id": "rackham-midnight-castle",
-              "blockId": "across-the-lake",
-              "path": "illustrations/midnight-castle.webp",
-              "alt": "Arthur Rackham's illustration of the brightly lit castle beyond the underground lake.",
-              "placement": "full-width",
-              "width": 1827,
-              "height": 2563,
-              "caption": "Illustration by Arthur Rackham, 1909."
-            }
-          ]
+          "path": "chapters/04.md"
         },
         {
           "id": "the-secret-revealed",
           "title": "The Secret Revealed",
           "path": "chapters/05.md"
+        }
+      ],
+      "defaultIllustrationSetId": "modern",
+      "illustrationSets": [
+        {
+          "id": "classic",
+          "label": "Classic Illustrations",
+          "rights": {
+            "status": "public-domain",
+            "source": "Arthur Rackham illustrations for the 1909 English edition",
+            "sourceUrl": "https://commons.wikimedia.org/wiki/Category:Hansel_%26_Grethel_%26_Other_Tales_(Rackham,_1920)/The_Twelve_Dancing_Princesses",
+            "notes": "The selected Rackham source files are identified as public domain on Wikimedia Commons. Rackham died in 1939."
+          },
+          "chapters": [
+            {
+              "chapterId": "beneath-the-palace",
+              "illustrations": [
+                {
+                  "id": "rackham-secret-path",
+                  "blockId": "the-silver-wood",
+                  "path": "illustrations/secret-path.webp",
+                  "alt": "Arthur Rackham's illustration of the secret journey beneath the palace.",
+                  "placement": "full-width",
+                  "width": 1500,
+                  "height": 1023,
+                  "caption": "Illustration by Arthur Rackham, 1909."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-midnight-ballroom",
+              "illustrations": [
+                {
+                  "id": "rackham-midnight-castle",
+                  "blockId": "across-the-lake",
+                  "path": "illustrations/midnight-castle.webp",
+                  "alt": "Arthur Rackham's illustration of the brightly lit castle beyond the underground lake.",
+                  "placement": "full-width",
+                  "width": 1827,
+                  "height": 2563,
+                  "caption": "Illustration by Arthur Rackham, 1909."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "modern",
+          "label": "Modern Illustrations",
+          "rights": {
+            "status": "original",
+            "source": "ChatGPT-generated artwork created for the Unicorn Valley Story House modern illustration set",
+            "notes": "Generated for R6.5-WP19SH1.4.2 and materialised through the approved Google Drive → WIF → GitHub Actions pipeline."
+          },
+          "chapters": [
+            {
+              "chapterId": "the-worn-out-shoes",
+              "illustrations": [
+                {
+                  "id": "modern-worn-out-shoes",
+                  "blockId": "morning-mystery",
+                  "path": "illustrations/generated/worn-out-shoes.webp",
+                  "alt": "The twelve princess sisters gather around twelve pairs of worn-through dancing shoes while their puzzled father looks on from the bright palace doorway.",
+                  "placement": "full-width",
+                  "width": 768,
+                  "height": 512,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-curious-traveller",
+              "illustrations": [
+                {
+                  "id": "modern-hidden-bed-stair",
+                  "blockId": "the-sleeping-drink",
+                  "path": "illustrations/generated/hidden-bed-stair.webp",
+                  "alt": "The eldest princess reveals a hidden stone staircase beneath her bed while her eleven sisters gather in their jewel-toned ball gowns.",
+                  "placement": "full-width",
+                  "width": 768,
+                  "height": 512,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "beneath-the-palace",
+              "illustrations": [
+                {
+                  "id": "modern-silver-wood",
+                  "blockId": "the-silver-wood",
+                  "path": "illustrations/generated/silver-wood.webp",
+                  "alt": "The twelve princesses pass through a luminous underground forest of silver leaves while the youngest sister looks nervously behind them.",
+                  "placement": "full-width",
+                  "width": 768,
+                  "height": 512,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-midnight-ballroom",
+              "illustrations": [
+                {
+                  "id": "modern-midnight-ballroom",
+                  "blockId": "the-dance",
+                  "path": "illustrations/generated/midnight-ballroom.webp",
+                  "alt": "The twelve princess sisters whirl across the glowing underground ballroom in their familiar jewel-toned gowns beneath warm lantern light.",
+                  "placement": "full-width",
+                  "width": 768,
+                  "height": 512,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-secret-revealed",
+              "illustrations": [
+                {
+                  "id": "modern-the-proof",
+                  "blockId": "the-evidence",
+                  "path": "illustrations/generated/the-proof.webp",
+                  "alt": "A silver branch, golden branch, diamond-bright branch and golden cup lie before the king and twelve princesses as their midnight secret is revealed.",
+                  "placement": "full-width",
+                  "width": 768,
+                  "height": 512,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            }
+          ]
         }
       ]
     },
@@ -130,7 +244,7 @@
           "notes": "Story House pagination changes presentation only; the source wording remains complete."
         },
         "originalPublicationYear": 1815,
-        "curatorNotes": "Complete public-domain English text reflowed into 7 reader pages at paragraph boundaries, with the existing Rackham illustrations anchored to matching scenes."
+        "curatorNotes": "Complete public-domain English text reflowed into 7 reader pages at paragraph boundaries. Existing Arthur Rackham artwork remains the Classic Illustrations set; the R6.5-WP19SH1.4.2 generated set can be selected independently as Modern Illustrations against matching classic passages."
       },
       "chapters": [
         {
@@ -151,19 +265,7 @@
         {
           "id": "page-04",
           "title": "The Twelve Dancing Princesses (continued)",
-          "path": "editions/full-classic/pages/page-04.md",
-          "illustrations": [
-            {
-              "id": "full-rackham-secret-path",
-              "blockId": "p04-b01",
-              "path": "illustrations/secret-path.webp",
-              "alt": "Arthur Rackham's illustration of the secret journey beneath the palace.",
-              "placement": "full-width",
-              "width": 1500,
-              "height": 1023,
-              "caption": "Illustration by Arthur Rackham, 1909."
-            }
-          ]
+          "path": "editions/full-classic/pages/page-04.md"
         },
         {
           "id": "page-05",
@@ -173,24 +275,138 @@
         {
           "id": "page-06",
           "title": "The Twelve Dancing Princesses (continued)",
-          "path": "editions/full-classic/pages/page-06.md",
-          "illustrations": [
-            {
-              "id": "full-rackham-midnight-castle",
-              "blockId": "p06-b01",
-              "path": "illustrations/midnight-castle.webp",
-              "alt": "Arthur Rackham's illustration of the brightly lit castle beyond the underground lake.",
-              "placement": "full-width",
-              "width": 1827,
-              "height": 2563,
-              "caption": "Illustration by Arthur Rackham, 1909."
-            }
-          ]
+          "path": "editions/full-classic/pages/page-06.md"
         },
         {
           "id": "page-07",
           "title": "The Twelve Dancing Princesses (continued)",
           "path": "editions/full-classic/pages/page-07.md"
+        }
+      ],
+      "defaultIllustrationSetId": "classic",
+      "illustrationSets": [
+        {
+          "id": "classic",
+          "label": "Classic Illustrations",
+          "rights": {
+            "status": "public-domain",
+            "source": "Arthur Rackham illustrations for the 1909 English edition",
+            "sourceUrl": "https://commons.wikimedia.org/wiki/Category:Hansel_%26_Grethel_%26_Other_Tales_(Rackham,_1920)/The_Twelve_Dancing_Princesses",
+            "notes": "The two previously verified Rackham Story House illustrations are reused beside their matching passages in the complete classic text."
+          },
+          "chapters": [
+            {
+              "chapterId": "page-04",
+              "illustrations": [
+                {
+                  "id": "full-rackham-secret-path",
+                  "blockId": "p04-b01",
+                  "path": "illustrations/secret-path.webp",
+                  "alt": "Arthur Rackham's illustration of the secret journey beneath the palace.",
+                  "placement": "full-width",
+                  "width": 1500,
+                  "height": 1023,
+                  "caption": "Illustration by Arthur Rackham, 1909."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-06",
+              "illustrations": [
+                {
+                  "id": "full-rackham-midnight-castle",
+                  "blockId": "p06-b01",
+                  "path": "illustrations/midnight-castle.webp",
+                  "alt": "Arthur Rackham's illustration of the brightly lit castle beyond the underground lake.",
+                  "placement": "full-width",
+                  "width": 1827,
+                  "height": 2563,
+                  "caption": "Illustration by Arthur Rackham, 1909."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "modern",
+          "label": "Modern Illustrations",
+          "rights": {
+            "status": "original",
+            "source": "ChatGPT-generated artwork created for the Unicorn Valley Story House modern illustration set",
+            "notes": "The same R6.5-WP19SH1.4.2 generated artwork is reused against matching Full Classic Text passages; only the semantic page/block mapping differs."
+          },
+          "chapters": [
+            {
+              "chapterId": "page-01",
+              "illustrations": [
+                {
+                  "id": "full-modern-worn-out-shoes",
+                  "blockId": "p01-b01",
+                  "path": "illustrations/generated/worn-out-shoes.webp",
+                  "alt": "The twelve princess sisters gather around twelve pairs of worn-through dancing shoes while their puzzled father looks on.",
+                  "placement": "full-width",
+                  "width": 768,
+                  "height": 512,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-04",
+              "illustrations": [
+                {
+                  "id": "full-modern-hidden-bed-stair",
+                  "blockId": "p04-b01",
+                  "path": "illustrations/generated/hidden-bed-stair.webp",
+                  "alt": "The eldest princess reveals the hidden staircase beneath her bed while her eleven sisters prepare to descend.",
+                  "placement": "full-width",
+                  "width": 768,
+                  "height": 512,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "full-modern-silver-wood",
+                  "blockId": "p04-b01",
+                  "path": "illustrations/generated/silver-wood.webp",
+                  "alt": "The twelve princesses pass through the first luminous underground grove where the leaves shine like silver.",
+                  "placement": "full-width",
+                  "width": 768,
+                  "height": 512,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-06",
+              "illustrations": [
+                {
+                  "id": "full-modern-midnight-ballroom",
+                  "blockId": "p06-b01",
+                  "path": "illustrations/generated/midnight-ballroom.webp",
+                  "alt": "The twelve princess sisters dance through the night in the illuminated underground castle.",
+                  "placement": "full-width",
+                  "width": 768,
+                  "height": 512,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-07",
+              "illustrations": [
+                {
+                  "id": "full-modern-the-proof",
+                  "blockId": "p07-b02",
+                  "path": "illustrations/generated/the-proof.webp",
+                  "alt": "Three magical branches and a golden cup prove where the twelve princesses have been dancing each night.",
+                  "placement": "full-width",
+                  "width": 768,
+                  "height": 512,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            }
+          ]
         }
       ]
     }

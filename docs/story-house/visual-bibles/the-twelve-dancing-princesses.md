@@ -131,7 +131,7 @@ Full Classic block: `p01-b01`
 ### 2. The hidden bed
 
 Story House block: `the-sleeping-drink`  
-Full Classic block: `p03-b01`
+Full Classic block: `p04-b01`
 
 - late at night in the same bedchamber;
 - exactly twelve sisters are dressed for the ball in their fixed jewel-tone gowns;
