@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "12hRrzYeqPEpNO6-QttR1bP3C_Tet-EEJ"
+  },
+  "expectedSourceName": "elves-shoemaker-thank-you-gifts-v01.png",
+  "destination": "public/stories/the-elves-and-the-shoemaker/illustrations/generated/thank-you-gifts.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1000,
+    "quality": 88
+  },
+  "revision": 1
+}
