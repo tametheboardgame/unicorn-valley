@@ -118,6 +118,40 @@ export const RAINBOW_MEADOW_LAYOUT = {
     prismBloom: { x: 1260, y: 790 },
     sunshowerFeather: { x: 2050, y: 760 },
   },
+  picnicHill: {
+    centre: { x: 1740, y: 1660 },
+    approach: { x: 1740, y: 1510 },
+    interactionPosition: { x: 1740, y: 1570 },
+    hill: { width: 760, height: 360 },
+    blanket: { x: 1740, y: 1685, width: 440, height: 210, angle: -4 },
+    bunting: {
+      leftPost: { x: 1515, y: 1545 },
+      rightPost: { x: 1965, y: 1545 },
+      lineY: 1500,
+    },
+    marigold: { x: 1540, y: 1740 },
+    nova: { x: 1940, y: 1710 },
+    mapleStorySpot: { x: 1885, y: 1575 },
+    noFinishLineLandmark: { x: 1980, y: 1585 },
+    mapleWaypoints: [
+      { id: 'maple-picnic-a', x: 1600, y: 1840, pauseMs: 2600 },
+      { id: 'maple-picnic-b', x: 1740, y: 1880, pauseMs: 3200 },
+      { id: 'maple-picnic-c', x: 1890, y: 1815, pauseMs: 2300 },
+    ],
+    flowerPatches: [
+      { x: 1435, y: 1625, colour: 0xf2b5ce },
+      { x: 1495, y: 1845, colour: 0xffdf87 },
+      { x: 2020, y: 1640, colour: 0xa9d8ea },
+      { x: 1985, y: 1860, colour: 0xc8a8e5 },
+      { x: 1700, y: 1935, colour: 0xf2b5ce },
+    ],
+    grassTufts: [
+      { x: 1455, y: 1735 },
+      { x: 1510, y: 1920 },
+      { x: 2040, y: 1730 },
+      { x: 1960, y: 1940 },
+    ],
+  },
   scenery: {
     trees: [
       { id: 'north-west-a', x: 250, y: 430, scale: 0.95 },
