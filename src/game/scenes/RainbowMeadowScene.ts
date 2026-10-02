@@ -351,18 +351,10 @@ export class RainbowMeadowScene extends Phaser.Scene {
   }
 
   private createSunshowerFeather(x: number, y: number): Phaser.GameObjects.Container {
-    const shaft = this.add
-      .rectangle(0, 0, 4, 58, 0x8f7658, 0.96)
-      .setAngle(-18);
-    const vaneLeft = this.add
-      .ellipse(-8, -5, 18, 52, 0xf6d67d, 0.94)
-      .setAngle(-29);
-    const vaneRight = this.add
-      .ellipse(8, -7, 18, 48, 0xffecaa, 0.96)
-      .setAngle(-7);
-    const tip = this.add
-      .triangle(17, -31, 0, 13, 16, 0, 12, 20, 0xffefb2, 0.98)
-      .setAngle(-18);
+    const shaft = this.add.rectangle(0, 0, 4, 58, 0x8f7658, 0.96).setAngle(-18);
+    const vaneLeft = this.add.ellipse(-8, -5, 18, 52, 0xf6d67d, 0.94).setAngle(-29);
+    const vaneRight = this.add.ellipse(8, -7, 18, 48, 0xffecaa, 0.96).setAngle(-7);
+    const tip = this.add.triangle(17, -31, 0, 13, 16, 0, 12, 20, 0xffefb2, 0.98).setAngle(-18);
     const container = this.add
       .container(x, y, [vaneLeft, vaneRight, shaft, tip])
       .setName('rainbow-meadow:discovery:sunshower-feather')
@@ -420,7 +412,14 @@ export class RainbowMeadowScene extends Phaser.Scene {
   private createPond(): void {
     const pond = RAINBOW_MEADOW_LAYOUT.natureFeatures.pond;
     this.add
-      .ellipse(pond.position.x, pond.position.y + 8, pond.width + 34, pond.height + 24, 0x6aa874, 0.28)
+      .ellipse(
+        pond.position.x,
+        pond.position.y + 8,
+        pond.width + 34,
+        pond.height + 24,
+        0x6aa874,
+        0.28,
+      )
       .setName('rainbow-meadow:nature:pond-bank')
       .setDepth(2.9);
     this.add
