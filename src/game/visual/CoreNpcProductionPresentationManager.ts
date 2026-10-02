@@ -200,10 +200,14 @@ export class CoreNpcProductionPresentationManager {
     }
 
     createVillageCoreResidentSprite(scene, 'marigold', 'core-npc:marigold:picnic')
-      .setPosition(RAINBOW_MEADOW_LAYOUT.picnicHill.marigold.x, RAINBOW_MEADOW_LAYOUT.picnicHill.marigold.y)
+      .setPosition(
+        RAINBOW_MEADOW_LAYOUT.picnicHill.marigold.x,
+        RAINBOW_MEADOW_LAYOUT.picnicHill.marigold.y,
+      )
       .setDepth(
         worldDepthForY(
-          RAINBOW_MEADOW_LAYOUT.picnicHill.marigold.y + SUPPORTING_RESIDENT_ART_LAYOUT.displayHeight * 0.44,
+          RAINBOW_MEADOW_LAYOUT.picnicHill.marigold.y +
+            SUPPORTING_RESIDENT_ART_LAYOUT.displayHeight * 0.44,
           0.32,
         ),
       );
@@ -252,14 +256,19 @@ export class CoreNpcProductionPresentationManager {
 
     if (!scene.children.getByName('core-npc:nova:picnic-label')) {
       scene.add
-        .text(RAINBOW_MEADOW_LAYOUT.picnicHill.nova.x, RAINBOW_MEADOW_LAYOUT.picnicHill.nova.y + 72, 'Nova', {
-          color: '#5e4669',
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '16px',
-          fontStyle: 'bold',
-          backgroundColor: '#fff8dfdd',
-          padding: { x: 7, y: 3 },
-        })
+        .text(
+          RAINBOW_MEADOW_LAYOUT.picnicHill.nova.x,
+          RAINBOW_MEADOW_LAYOUT.picnicHill.nova.y + 72,
+          'Nova',
+          {
+            color: '#5e4669',
+            fontFamily: 'system-ui, sans-serif',
+            fontSize: '16px',
+            fontStyle: 'bold',
+            backgroundColor: '#fff8dfdd',
+            padding: { x: 7, y: 3 },
+          },
+        )
         .setName('core-npc:nova:picnic-label')
         .setOrigin(0.5)
         .setDepth(worldDepthForY(RAINBOW_MEADOW_LAYOUT.picnicHill.nova.y + 82, 0.34));
