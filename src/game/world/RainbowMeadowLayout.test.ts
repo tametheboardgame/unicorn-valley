@@ -141,9 +141,9 @@ describe('Rainbow Meadow canonical layout', () => {
     }
 
     const pondBottom = pondCollider.y + pondCollider.height / 2;
-    expect(RAINBOW_MEADOW_LAYOUT.natureFeatures.pond.interactionPosition.y - pondBottom).toBeGreaterThanOrEqual(
-      60,
-    );
+    expect(
+      RAINBOW_MEADOW_LAYOUT.natureFeatures.pond.interactionPosition.y - pondBottom,
+    ).toBeGreaterThanOrEqual(60);
 
     const windmillBottom = windmillCollider.y + windmillCollider.height / 2;
     const windmillRight = windmillCollider.x + windmillCollider.width / 2;
