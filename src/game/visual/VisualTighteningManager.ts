@@ -40,29 +40,6 @@ function decorateMeadow(scene: Phaser.Scene): void {
     }
   }
 
-  for (let x = 2415, index = 0; x <= 2785; x += 46, index += 1) {
-    markDetail(
-      scene.add
-        .circle(x, 505, 17, index % 2 === 0 ? 0xf2a0b7 : 0xc79bdd, 0.98)
-        .setDepth(worldDepthForY(650, 0.15)),
-    );
-  }
-  markDetail(
-    scene.add.rectangle(2600, 530, 360, 9, 0xffffff, 0.32).setDepth(worldDepthForY(650, 0.2)),
-  );
-
-  const ribbonXs = [2410, 2460, 2510, 2560, 2610];
-  const ribbonColours = [0xf18dad, 0xf5c968, 0x7cc6d8, 0xa6d77a, 0xc69be0];
-  for (let index = 0; index < ribbonXs.length; index += 1) {
-    const x = ribbonXs[index];
-    const colour = ribbonColours[index];
-    markDetail(scene.add.circle(x, 1372, 12, colour, 0.96).setDepth(worldDepthForY(1430, 0.25)));
-    markDetail(
-      scene.add
-        .triangle(x, 1408, 0, 0, 22, 0, 11, 38, colour, 0.92)
-        .setDepth(worldDepthForY(1430, 0.26)),
-    );
-  }
 }
 
 function applyCanonicalNovaToRace(scene: Phaser.Scene): void {
