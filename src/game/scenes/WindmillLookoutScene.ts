@@ -229,10 +229,7 @@ export class WindmillLookoutScene extends Phaser.Scene {
     }
     hub.setDepth(3);
 
-    const chimes = this.add
-      .graphics()
-      .setName('windmill-lookout:chimes')
-      .setDepth(5);
+    const chimes = this.add.graphics().setName('windmill-lookout:chimes').setDepth(5);
     chimes.lineStyle(3, 0x8a664d, 0.92);
     chimes.lineBetween(298, 265, 362, 265);
     for (const [x, length] of [
