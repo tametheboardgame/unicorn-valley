@@ -2,6 +2,7 @@ import type { CollisionRectangle, MapPoint, TraversalMapDefinition } from './Map
 
 export const RAINBOW_RUN_HUB_LOCATION_ID = 'location:rainbow-run-hub';
 
+// H4.4A owns the first-pass physical hub; the post-H4 maturity package refines this footprint.
 export const RAINBOW_RUN_HUB_LAYOUT = {
   bounds: {
     width: 2200,
