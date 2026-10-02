@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "1SbqbjlyEiYuAo9nrzQXokEmFS7dwK_nL"
+  },
+  "expectedSourceName": "thumbelina-choosing-the-sky-v01.png",
+  "destination": "public/stories/thumbelina/illustrations/generated/choosing-the-sky.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1000,
+    "quality": 88
+  },
+  "revision": 1
+}

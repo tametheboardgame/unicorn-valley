@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "1w6WnY3MRhwZPBdDCAlI7PF_tgbDxV5yS"
+  },
+  "expectedSourceName": "thumbelina-swallow-tunnel-v01.png",
+  "destination": "public/stories/thumbelina/illustrations/generated/swallow-tunnel.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1000,
+    "quality": 88
+  },
+  "revision": 1
+}
