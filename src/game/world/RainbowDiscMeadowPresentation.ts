@@ -94,20 +94,21 @@ export function createRainbowDiscMeadowPresentation(scene: Phaser.Scene): void {
       .rectangle(pennant.x, pennant.y, 7, 70, 0x7e6049, 0.94)
       .setName(`rainbow-disc:pennant-post:${index}`)
       .setDepth(depth);
-    scene.add
-      .triangle(
-        pennant.x + (index % 2 === 0 ? 17 : -17),
-        pennant.y - 28,
-        0,
-        0,
-        index % 2 === 0 ? 35 : -35,
-        8,
-        0,
-        20,
-        index % 2 === 0 ? 0xf09fbe : 0x83c9df,
-        0.94,
-      )
+
+    const direction = index % 2 === 0 ? 1 : -1;
+    const pennantGraphics = scene.add
+      .graphics()
+      .setName(`rainbow-disc:pennant:${index}`)
       .setDepth(depth + 0.01);
+    pennantGraphics.fillStyle(index % 2 === 0 ? 0xf09fbe : 0x83c9df, 0.94);
+    pennantGraphics.fillTriangle(
+      pennant.x,
+      pennant.y - 35,
+      pennant.x + direction * 34,
+      pennant.y - 27,
+      pennant.x,
+      pennant.y - 17,
+    );
   });
 
   const signDepth = worldDepthForY(layout.sign.y + 68, -0.04);
@@ -167,28 +168,50 @@ export function createRainbowDiscMeadowPresentation(scene: Phaser.Scene): void {
     return sprite;
   });
 
+  const firstPlayer = sprites[0];
   const disc = scene.add
-    .ellipse(layout.discRoute[0].x, layout.discRoute[0].y, 34, 12, 0xfff3bd, 1)
+    .ellipse(firstPlayer?.x ?? x, (firstPlayer?.y ?? y) - 38, 34, 12, 0xfff3bd, 1)
     .setStrokeStyle(3, 0xb88858, 0.9)
     .setName('rainbow-disc:ambient-disc')
-    .setDepth(worldDepthForY(layout.discRoute[0].y, 0.42));
+    .setDepth(worldDepthForY((firstPlayer?.y ?? y) - 38, 0.42));
 
-  let routeIndex = 0;
+  let throwerIndex = 0;
   const animatePass = (): void => {
-    if (!scene.sys.isActive()) {
+    if (!scene.sys.isActive() || sprites.length < 2) {
       return;
     }
-    routeIndex = (routeIndex + 1) % layout.discRoute.length;
-    const target = layout.discRoute[routeIndex];
+
+    const thrower = sprites[throwerIndex];
+    const receiverIndex = (throwerIndex + 1) % sprites.length;
+    const receiver = sprites[receiverIndex];
+    if (!thrower || !receiver) {
+      return;
+    }
+
+    const flight = { progress: 0 };
+    disc.setPosition(thrower.x, thrower.y - 38);
+
     scene.tweens.add({
-      targets: disc,
-      x: target.x,
-      y: target.y,
-      angle: disc.angle + 230,
+      targets: flight,
+      progress: 1,
       duration: 820,
       ease: 'Sine.InOut',
-      onUpdate: () => disc.setDepth(worldDepthForY(disc.y, 0.42)),
+      onUpdate: () => {
+        const progress = flight.progress;
+        const startX = thrower.x;
+        const startY = thrower.y - 38;
+        const endX = receiver.x;
+        const endY = receiver.y - 38;
+        disc.setPosition(
+          Phaser.Math.Linear(startX, endX, progress),
+          Phaser.Math.Linear(startY, endY, progress) - Math.sin(Math.PI * progress) * 44,
+        );
+        disc.setAngle(disc.angle + 8);
+        disc.setDepth(worldDepthForY(disc.y, 0.42));
+      },
       onComplete: () => {
+        disc.setPosition(receiver.x, receiver.y - 38);
+        throwerIndex = receiverIndex;
         scene.time.delayedCall(380, animatePass);
       },
     });
