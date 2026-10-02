@@ -228,7 +228,11 @@ test.describe('R6.5-WP19H0.5 home screen polish', () => {
       expect(cardBounds?.width ?? 999).toBeLessThanOrEqual(490);
       expect((cardBounds?.y ?? 0) + (cardBounds?.height ?? 0)).toBeLessThanOrEqual(1024);
 
-      for (const action of ['title-menu-new-game', 'title-menu-story-house', 'title-menu-settings']) {
+      for (const action of [
+        'title-menu-new-game',
+        'title-menu-story-house',
+        'title-menu-settings',
+      ]) {
         const button = page.locator(`[data-title-action="${action}"]`);
         const bounds = await button.boundingBox();
         expect(bounds).not.toBeNull();
