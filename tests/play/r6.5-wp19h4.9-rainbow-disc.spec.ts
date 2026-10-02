@@ -9,6 +9,8 @@ interface DiagnosticObject {
   interactive: boolean;
   x: number;
   y: number;
+  displayWidth: number;
+  displayHeight: number;
 }
 
 interface DiagnosticScene {
@@ -101,11 +103,31 @@ test('H4.9 Rainbow Disc lawn is alive before interaction and returns cleanly aft
   });
 
   const meadow = await snapshotScene(page, 'RainbowMeadowScene');
-  expect(
-    meadow.objects.filter(
+  const fieldPlayers = meadow.objects.filter(
+    ({ name, effectiveVisible }) => name.startsWith('rainbow-disc:player:') && effectiveVisible,
+  );
+  expect(fieldPlayers).toHaveLength(5);
+
+  const widths = fieldPlayers.map(({ displayWidth }) => displayWidth);
+  const heights = fieldPlayers.map(({ displayHeight }) => displayHeight);
+  expect(Math.max(...widths) - Math.min(...widths)).toBeLessThanOrEqual(1);
+  expect(Math.max(...heights) - Math.min(...heights)).toBeLessThanOrEqual(1);
+
+  const initialPositions = new Map(
+    fieldPlayers.map(({ name, x, y }) => [name, { x, y }] as const),
+  );
+  await page.waitForTimeout(1200);
+  const movingMeadow = await snapshotScene(page, 'RainbowMeadowScene');
+  const movedPlayers = movingMeadow.objects
+    .filter(
       ({ name, effectiveVisible }) => name.startsWith('rainbow-disc:player:') && effectiveVisible,
-    ),
-  ).toHaveLength(5);
+    )
+    .filter(({ name, x, y }) => {
+      const initial = initialPositions.get(name);
+      if (!initial) return false;
+      return Math.hypot(x - initial.x, y - initial.y) >= 10;
+    });
+  expect(movedPlayers.length).toBeGreaterThanOrEqual(3);
   expect(
     meadow.objects.some(
       ({ name, effectiveVisible }) => name === 'rainbow-disc:lawn' && effectiveVisible,
