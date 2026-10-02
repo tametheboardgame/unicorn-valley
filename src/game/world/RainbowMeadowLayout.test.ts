@@ -266,6 +266,24 @@ describe('Rainbow Meadow canonical layout', () => {
     });
   });
 
+  it('keeps the dry landing and every stepping-stone centre outside deep-water collision', () => {
+    const area = RAINBOW_MEADOW_LAYOUT.crystalBrookGatewayArea;
+    const blocked = (point: { x: number; y: number }): boolean =>
+      area.deepWaterBlockers.some(
+        ({ x, y, width, height }) =>
+          Math.abs(point.x - x) <= width / 2 && Math.abs(point.y - y) <= height / 2,
+      );
+
+    expect(blocked(area.dryLanding)).toBe(false);
+    expect(blocked(area.leftBank)).toBe(false);
+    for (const stone of area.steppingStones) {
+      expect(blocked(stone)).toBe(false);
+    }
+
+    const leftmostShoreX = Math.min(...area.pool.shoreline.map(({ x }) => x));
+    expect(area.dryLanding.x).toBeLessThan(leftmostShoreX);
+  });
+
   it('maps every deep-water blocker into Meadow collision while leaving the shallow rim unblocked', () => {
     const area = RAINBOW_MEADOW_LAYOUT.crystalBrookGatewayArea;
     const deepColliders = RAINBOW_MEADOW_MAP.colliders.filter(({ id }) =>
