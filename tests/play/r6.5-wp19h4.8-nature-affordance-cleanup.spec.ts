@@ -110,7 +110,7 @@ test('H4.8 nature features use physical affordances instead of permanent hotspot
     ),
   ).toBe(false);
 
-  await setPlayerPosition(page, 1570, 790);
+  await setPlayerPosition(page, 1570, 850);
   await expect
     .poll(async () => {
       const current = await snapshotScene(page, 'RainbowMeadowScene');
