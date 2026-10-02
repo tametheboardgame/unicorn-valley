@@ -87,7 +87,7 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     label: 'Picnic Hill',
     actionLabel: 'Sit and look',
     actionKind: 'interact',
-    position: { x: 1760, y: 1490 },
+    position: RAINBOW_MEADOW_LAYOUT.picnicHill.interactionPosition,
     radius: 150,
     icon: '🧺',
   },
@@ -256,7 +256,7 @@ export class MeadowDepthWorldManager {
       case 'picnic-hill':
         this.showFeedback(
           state,
-          'The hill is just high enough for a good view and just flat enough for a picnic. The Rainbow Run flags wiggle in the distance. 🧺',
+          'The little rise opens into a sheltered picnic meadow, with flowers around the edge and a clear view across Rainbow Meadow. 🧺',
         );
         return;
       case 'petal-patch':
@@ -371,7 +371,6 @@ export class MeadowDepthWorldManager {
     state.persistent?.destroy(true);
     const objects: Phaser.GameObjects.GameObject[] = [];
     this.addWindmillVisual(state.scene, objects, this.story.isLookoutOpen());
-    this.addPicnicHillVisual(state.scene, objects);
     this.addFlowerCircleVisual(
       state.scene,
       objects,
@@ -434,24 +433,6 @@ export class MeadowDepthWorldManager {
       steps.strokePath();
       objects.push(steps);
     }
-  }
-
-  private addPicnicHillVisual(scene: Phaser.Scene, objects: Phaser.GameObjects.GameObject[]): void {
-    objects.push(
-      scene.add.ellipse(1760, 1465, 520, 170, 0xb4e69a, 0.5).setDepth(2),
-      scene.add
-        .text(1760, 1510, 'PICNIC HILL', {
-          color: '#5c6753',
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '15px',
-          fontStyle: 'bold',
-          backgroundColor: '#fff9dfd6',
-          padding: { x: 9, y: 4 },
-        })
-        .setOrigin(0.5)
-        .setDepth(8)
-        .setName('meadow-depth:picnic-hill-landmark'),
-    );
   }
 
   private addFlowerCircleVisual(
