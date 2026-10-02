@@ -1,7 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
 
-const WORLD_TRIGGER_TIMEOUT_MS = 30_000;
-
 interface DiagnosticObjectSnapshot {
   name: string;
   text: string | null;
