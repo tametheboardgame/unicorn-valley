@@ -130,7 +130,7 @@ export const RAINBOW_MEADOW_LAYOUT = {
       { id: 'north-west-b', x: 480, y: 300, scale: 1.05 },
       { id: 'north-west-c', x: 720, y: 390, scale: 1 },
       { id: 'north-east-a', x: 1840, y: 320, scale: 1 },
-      { id: 'north-east-b', x: 2040, y: 420, scale: 1.05 },
+      { id: 'north-east-b', x: 1950, y: 420, scale: 1.05 },
       { id: 'sports-west-frame', x: 120, y: 1900, scale: 1.05 },
       { id: 'sports-east-frame', x: 1260, y: 1980, scale: 1 },
     ],
@@ -169,7 +169,7 @@ export const RAINBOW_MEADOW_LAYOUT = {
   crystalBrookGatewayArea: {
     leftBank: { x: 2690, y: 1220 },
     pool: { x: 3035, y: 1175, width: 710, height: 420 },
-    waterfall: { x: 3340, y: 980, width: 150, height: 300 },
+    waterfall: { x: 3340, y: 980, width: 150, height: 320 },
     steppingStones: [
       { x: 2770, y: 1220, width: 112, height: 62, angle: -4 },
       { x: 2880, y: 1195, width: 118, height: 64, angle: 5 },
@@ -440,8 +440,7 @@ export const RAINBOW_MEADOW_MAP = {
       height: RAINBOW_MEADOW_LAYOUT.natureFeatures.pond.height,
     },
     { id: 'collision:north-west-grove', x: 490, y: 360, width: 620, height: 260 },
-    { id: 'collision:north-east-grove', x: 1990, y: 365, width: 390, height: 230 },
-    { id: 'collision:far-east-tree', x: 3280, y: 360, width: 170, height: 190 },
+    { id: 'collision:north-east-grove', x: 1900, y: 365, width: 310, height: 220 },
     { id: 'collision:sports-east-frame', x: 1260, y: 1980, width: 170, height: 100 },
     {
       id: 'collision:windmill-lookout-base',
