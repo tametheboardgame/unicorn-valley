@@ -249,7 +249,9 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
 
     RECEIVER_Y.forEach((receiverY, index) => {
       const appearance =
-        RAINBOW_DISC_PLAYER_APPEARANCES[(index + this.possession + 1) % RAINBOW_DISC_PLAYER_APPEARANCES.length];
+        RAINBOW_DISC_PLAYER_APPEARANCES[
+          (index + this.possession + 1) % RAINBOW_DISC_PLAYER_APPEARANCES.length
+        ];
       const receiver = createResidentAppearanceSprite(
         this,
         `rainbow-disc-activity:receiver:${this.possession}:${index}`,
@@ -269,10 +271,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       this.playLayer?.add([ring, receiver]);
     });
 
-    this.aimGraphics = this.add
-      .graphics()
-      .setName('rainbow-disc-activity:aim-line')
-      .setDepth(25);
+    this.aimGraphics = this.add.graphics().setName('rainbow-disc-activity:aim-line').setDepth(25);
     this.playLayer.add(this.aimGraphics);
 
     this.disc = this.add
@@ -308,11 +307,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       const angle = (Math.PI * 2 * index) / 12;
       const colour = [0xf19fbd, 0xffdc7d, 0x86cae0, 0xb9a0df][index % 4];
       burst.fillStyle(colour, 0.94);
-      burst.fillCircle(
-        GAME_WIDTH / 2 + Math.cos(angle) * 105,
-        345 + Math.sin(angle) * 75,
-        7,
-      );
+      burst.fillCircle(GAME_WIDTH / 2 + Math.cos(angle) * 105, 345 + Math.sin(angle) * 75, 7);
     }
 
     const title = this.add
@@ -340,7 +335,15 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     this.playLayer?.add([burst, title, summary]);
-    this.createButton(510, 460, 250, 'Play again', () => this.restartRun(), 'replay', this.playLayer);
+    this.createButton(
+      510,
+      460,
+      250,
+      'Play again',
+      () => this.restartRun(),
+      'replay',
+      this.playLayer,
+    );
     this.createButton(
       790,
       460,
