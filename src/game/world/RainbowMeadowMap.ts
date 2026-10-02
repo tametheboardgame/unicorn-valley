@@ -162,7 +162,7 @@ export const RAINBOW_MEADOW_LAYOUT = {
   // H4.4C: shallow wading rim, blocked deep water, stone crossing, continuous outflow and reactive falls.
   crystalBrookGatewayArea: {
     dryLanding: { x: 2680, y: 1210 },
-    sign: { x: 2520, y: 1325 },
+    sign: { x: 2445, y: 1245 },
     leftBank: { x: 2670, y: 1210 },
     pool: {
       centre: { x: 3030, y: 1190 },
@@ -317,8 +317,8 @@ export const RAINBOW_MEADOW_LAYOUT = {
       innerWidth: 88,
       deepWidth: 58,
       points: [
-        { x: 3060, y: 1450 },
-        { x: 3050, y: 1530 },
+        { x: 3070, y: 1410 },
+        { x: 3060, y: 1505 },
         { x: 3115, y: 1650 },
         { x: 3035, y: 1775 },
         { x: 3090, y: 1900 },
@@ -326,14 +326,19 @@ export const RAINBOW_MEADOW_LAYOUT = {
         { x: 2980, y: 2190 },
       ],
     },
+    // Axis-aligned blockers tile the deep basin above/below the stepping-stone route.
+    // Their inner edges trace the six-stone diagonal closely enough for the player's
+    // collision body to move stone-to-stone without opening a generic cross-pool lane.
     deepWaterBlockers: [
-      { x: 2820, y: 1030, width: 180, height: 80 },
-      { x: 2820, y: 1360, width: 180, height: 140 },
-      { x: 3000, y: 980, width: 180, height: 80 },
-      { x: 3000, y: 1320, width: 180, height: 160 },
-      { x: 3160, y: 930, width: 180, height: 70 },
-      { x: 3160, y: 1270, width: 180, height: 180 },
-      { x: 3280, y: 1220, width: 60, height: 140 },
+      { x: 2840, y: 1060, width: 100, height: 70 },
+      { x: 2840, y: 1340, width: 100, height: 160 },
+      { x: 2940, y: 1040, width: 100, height: 80 },
+      { x: 2940, y: 1320, width: 100, height: 170 },
+      { x: 3040, y: 1005, width: 100, height: 60 },
+      { x: 3040, y: 1325, width: 100, height: 200 },
+      { x: 3140, y: 985, width: 100, height: 50 },
+      { x: 3140, y: 1290, width: 100, height: 220 },
+      { x: 3240, y: 1270, width: 100, height: 230 },
     ],
   },
   hubFeatures: {
