@@ -143,16 +143,12 @@ export const RAINBOW_MEADOW_LAYOUT = {
       { x: 1360, y: 850 },
       { x: 1900, y: 800 },
       { x: 2050, y: 760 },
-      { x: 3180, y: 500 },
-      { x: 3290, y: 720 },
     ],
     productionFlowerClusters: [
       { x: 390, y: 510, colour: 0xef93b8 },
       { x: 690, y: 470, colour: 0xf2c469 },
       { x: 930, y: 530, colour: 0x8acbda },
       { x: 1160, y: 860, colour: 0xc49ee0 },
-      { x: 3150, y: 490, colour: 0xc49ee0 },
-      { x: 3300, y: 700, colour: 0xf1a2bb },
     ],
     productionLeafClusters: [
       { x: 120, y: 1540, mirrored: false },
@@ -262,10 +258,10 @@ export const RAINBOW_MEADOW_LAYOUT = {
     tent: { x: 2480, y: 500 },
     title: { x: 2670, y: 285 },
     cupBoard: {
-      position: { x: 2820, y: 610 },
-      approach: { x: 2820, y: 780 },
+      position: { x: 2890, y: 650 },
+      approach: { x: 2890, y: 820 },
     },
-    runPoster: { x: 3000, y: 470 },
+    runPoster: { x: 3050, y: 450 },
     ribbonEvidence: { x: 2495, y: 705 },
     flags: [
       { x: 2250, y: 555 },
