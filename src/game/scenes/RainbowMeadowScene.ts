@@ -262,9 +262,10 @@ export class RainbowMeadowScene extends Phaser.Scene {
     }
 
     const sprite = this.player.sprite;
-    const current = { x: sprite.x, y: sprite.y };
-    if (!isCrystalBrookDeepWaterBlocked(current)) {
-      this.crystalBrookLastWalkablePosition = current;
+    const body = sprite.body as Phaser.Physics.Arcade.Body;
+    const groundPoint = { x: body.center.x, y: body.bottom };
+    if (!isCrystalBrookDeepWaterBlocked(groundPoint)) {
+      this.crystalBrookLastWalkablePosition = { x: sprite.x, y: sprite.y };
       return;
     }
 
@@ -274,7 +275,6 @@ export class RainbowMeadowScene extends Phaser.Scene {
     }
 
     sprite.setPosition(fallback.x, fallback.y);
-    const body = sprite.body as Phaser.Physics.Arcade.Body;
     body.reset(fallback.x, fallback.y);
     sprite.setVelocity(0, 0);
   }
