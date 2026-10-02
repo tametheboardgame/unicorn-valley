@@ -310,6 +310,10 @@ function createCascadeRaceGate(scene: Phaser.Scene, x: number, y: number): void 
   );
 }
 
+function toVector2Points(points: readonly Point[]): Phaser.Math.Vector2[] {
+  return points.map(({ x, y }) => new Phaser.Math.Vector2(x, y));
+}
+
 function drawRoundedStrokeInto(
   graphics: Phaser.GameObjects.Graphics,
   points: readonly Point[],
@@ -340,19 +344,13 @@ function createMeadowCrystalBrookGateway(scene: Phaser.Scene): void {
 
   const poolShadow = name(scene.add.graphics().setDepth(2.38), 'meadow-crystal-brook:pool-shadow');
   poolShadow.fillStyle(0x355f63, 0.2);
-  poolShadow.fillPoints(offsetPoints(pool.shoreline, 14, 18), true);
+  poolShadow.fillPoints(toVector2Points(offsetPoints(pool.shoreline, 14, 18)), true);
 
   const shallowWater = name(scene.add.graphics().setDepth(2.52), 'meadow-crystal-brook:pool');
   shallowWater.fillStyle(0x78cbd0, 0.82);
-  shallowWater.fillPoints(
-    pool.shoreline.map((point) => ({ ...point })),
-    true,
-  );
+  shallowWater.fillPoints(toVector2Points(pool.shoreline), true);
   shallowWater.lineStyle(9, 0x5f9894, 0.5);
-  shallowWater.strokePoints(
-    pool.shoreline.map((point) => ({ ...point })),
-    true,
-  );
+  shallowWater.strokePoints(toVector2Points(pool.shoreline), true);
 
   const shallowHighlight = name(
     scene.add.graphics().setDepth(2.54),
@@ -360,24 +358,20 @@ function createMeadowCrystalBrookGateway(scene: Phaser.Scene): void {
   );
   shallowHighlight.lineStyle(7, 0xc8f5ec, 0.24);
   shallowHighlight.strokePoints(
-    pool.shoreline.map((point) => ({
-      x: pool.centre.x + (point.x - pool.centre.x) * 0.91,
-      y: pool.centre.y + (point.y - pool.centre.y) * 0.88,
-    })),
+    toVector2Points(
+      pool.shoreline.map((point) => ({
+        x: pool.centre.x + (point.x - pool.centre.x) * 0.91,
+        y: pool.centre.y + (point.y - pool.centre.y) * 0.88,
+      })),
+    ),
     true,
   );
 
   const deepWater = name(scene.add.graphics().setDepth(2.55), 'meadow-crystal-brook:deep-water');
   deepWater.fillStyle(0x3f97a6, 0.72);
-  deepWater.fillPoints(
-    pool.deepZone.map((point) => ({ ...point })),
-    true,
-  );
+  deepWater.fillPoints(toVector2Points(pool.deepZone), true);
   deepWater.lineStyle(4, 0x2e7788, 0.3);
-  deepWater.strokePoints(
-    pool.deepZone.map((point) => ({ ...point })),
-    true,
-  );
+  deepWater.strokePoints(toVector2Points(pool.deepZone), true);
 
   const stream = name(scene.add.graphics().setDepth(2.5), 'meadow-crystal-brook:outlet-stream');
   drawRoundedStrokeInto(stream, outletStream.points, outletStream.outerWidth, 0x579aa1, 0.58);
