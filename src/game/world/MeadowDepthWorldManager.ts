@@ -1,5 +1,4 @@
 import Phaser from 'phaser';
-import { SUNRISE_SPRINT_RACE_ID } from '../../content/r3RaceIds';
 import {
   BREEZE_WINDMILL_QUEST_ID,
   MEADOW_FLOWER_CIRCLE_DISCOVERY_ID,
@@ -118,33 +117,6 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     position: RAINBOW_MEADOW_LAYOUT.natureFeatures.butterflyParade,
     radius: 145,
     icon: '🦋',
-  },
-  {
-    id: 'run-poster',
-    label: 'Rainbow Run course poster',
-    actionLabel: 'Look',
-    actionKind: 'inspect',
-    position: RAINBOW_MEADOW_LAYOUT.raceHubPresentation.runPoster,
-    radius: 145,
-    icon: '🏁',
-  },
-  {
-    id: 'ribbon-record',
-    label: 'Ribbon Board',
-    actionLabel: 'Check record',
-    actionKind: 'inspect',
-    position: RAINBOW_MEADOW_LAYOUT.hubFeatures.ribbonBoard.approach,
-    radius: 150,
-    icon: '🎀',
-  },
-  {
-    id: 'cup-board',
-    label: 'Rainbow Cup board',
-    actionLabel: 'Peek',
-    actionKind: 'inspect',
-    position: RAINBOW_MEADOW_LAYOUT.raceHubPresentation.cupBoard.approach,
-    radius: 150,
-    icon: '🏆',
   },
 ];
 
@@ -300,21 +272,6 @@ export class MeadowDepthWorldManager {
       case 'butterfly-parade':
         this.activateButterflies(state);
         return;
-      case 'run-poster':
-        this.showFeedback(
-          state,
-          'The poster shows Sunrise Sprint with space underneath for more course cards. A gold strip reads: “Rainbow Cup events gather here.” 🏁',
-        );
-        return;
-      case 'ribbon-record':
-        this.showFeedback(state, this.raceRecordMessage());
-        return;
-      case 'cup-board':
-        this.showFeedback(
-          state,
-          'The Rainbow Cup board has five bright course spaces and a friendly note: “Every finish counts. Best times are just for fun.” More events will arrive here as the valley grows. 🏆',
-        );
-        return;
     }
   }
 
@@ -399,29 +356,12 @@ export class MeadowDepthWorldManager {
     );
   }
 
-  private raceRecordMessage(): string {
-    const save = this.saveService.load();
-    const records = Object.values(save?.activities.racesById ?? {});
-    const ribbons = records.reduce((total, record) => total + record.ribbonIds.length, 0);
-    const sunrise = save?.activities.racesById[SUNRISE_SPRINT_RACE_ID];
-    if (ribbons === 0 && !sunrise?.bestTimeMs) {
-      return 'The polished board has empty ribbon hooks waiting for your first finishes. Every completed run will leave something here.';
-    }
-    const best = sunrise?.bestTimeMs
-      ? `${(sunrise.bestTimeMs / 1000).toFixed(1)}s`
-      : 'not timed yet';
-    return `Your racing corner is growing: ${ribbons} ribbon${ribbons === 1 ? '' : 's'} recorded across the valley. Sunrise Sprint best: ${best}. 🎀`;
-  }
-
   private syncPersistent(state: MeadowDepthState, force = false): void {
     const save = this.saveService.load() ?? this.saveService.createNewGame();
-    const raceRecords = Object.values(save.activities.racesById);
-    const ribbonCount = raceRecords.reduce((total, record) => total + record.ribbonIds.length, 0);
     const signature = [
       save.world.flags[WINDMILL_LOOKOUT_OPEN_FLAG] === true ? 'lookout' : '',
       save.world.flags[MEADOW_FLOWER_CIRCLE_REVEALED_FLAG] === true ? 'circle' : '',
       this.story.isStoryComplete() ? 'windmill-complete' : '',
-      ribbonCount,
     ].join('|');
     if (!force && signature === state.signature) {
       return;
@@ -437,7 +377,6 @@ export class MeadowDepthWorldManager {
       objects,
       save.world.flags[MEADOW_FLOWER_CIRCLE_REVEALED_FLAG] === true,
     );
-    this.addRaceHubEvidence(state.scene, objects, ribbonCount);
     state.persistent = state.scene.add
       .container(0, 0, objects)
       .setName('meadow-depth:persistent-state')
@@ -539,57 +478,6 @@ export class MeadowDepthWorldManager {
         .setDepth(6);
       objects.push(flower);
     }
-  }
-
-  private addRaceHubEvidence(
-    scene: Phaser.Scene,
-    objects: Phaser.GameObjects.GameObject[],
-    ribbonCount: number,
-  ): void {
-    const visibleRibbons = Math.min(6, ribbonCount);
-    const ribbonAnchor = RAINBOW_MEADOW_LAYOUT.raceHubPresentation.ribbonEvidence;
-    for (let index = 0; index < visibleRibbons; index += 1) {
-      objects.push(
-        scene.add
-          .text(
-            ribbonAnchor.x + (index % 3) * 62,
-            ribbonAnchor.y + Math.floor(index / 3) * 42,
-            index % 2 === 0 ? '🎀' : '🏅',
-            {
-              fontFamily: 'system-ui, sans-serif',
-              fontSize: '24px',
-            },
-          )
-          .setOrigin(0.5)
-          .setDepth(12),
-      );
-    }
-
-    const cup = RAINBOW_MEADOW_LAYOUT.raceHubPresentation.cupBoard.position;
-    const cupBoard = scene.add
-      .rectangle(cup.x, cup.y, 320, 150, 0x8a684c, 0.96)
-      .setStrokeStyle(7, 0xf1ce77, 0.9)
-      .setDepth(9)
-      .setName('meadow-depth:rainbow-cup-board');
-    const cupTitle = scene.add
-      .text(cup.x, cup.y - 40, '🏆 RAINBOW CUP', {
-        color: '#fff3ba',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '19px',
-        fontStyle: 'bold',
-      })
-      .setOrigin(0.5)
-      .setDepth(10);
-    const slots = scene.add
-      .text(cup.x, cup.y + 15, '●  ○  ○  ○  ○', {
-        color: ribbonCount > 0 ? '#fff0a8' : '#d8c79d',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '21px',
-        fontStyle: 'bold',
-      })
-      .setOrigin(0.5)
-      .setDepth(10);
-    objects.push(cupBoard, cupTitle, slots);
   }
 
   private playPetalBurst(scene: Phaser.Scene, position: Point): void {
