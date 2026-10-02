@@ -31,6 +31,10 @@ export const RAINBOW_RUN_HUB_LAYOUT = {
     position: { x: 1870, y: 860 },
     approach: { x: 1660, y: 860 },
   },
+  expandedRaceEntries: {
+    petalParade: { x: 1370, y: 980 },
+    rainbowCup: { x: 1380, y: 610 },
+  },
   flags: [
     { x: 300, y: 620 },
     { x: 390, y: 980 },
