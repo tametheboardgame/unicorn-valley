@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { SUNRISE_SPRINT_RACE_ID } from '../../content/r3RaceIds';
+import { NOVA_FIRST_RACE_QUEST_ID } from '../../content/r3Quests';
 import { InputController } from '../input/InputController';
 import { KeyboardInputAdapter } from '../input/KeyboardInputAdapter';
 import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
@@ -264,7 +265,7 @@ export class RainbowRunEntryScene extends Phaser.Scene {
   }
 
   private startRace(): void {
-    const progress = getBrowserQuestEngine().getProgress('quest:nova-first-race');
+    const progress = getBrowserQuestEngine().getProgress(NOVA_FIRST_RACE_QUEST_ID);
     const phase = getNovaFirstRacePhase(progress);
 
     if (phase === 'ready-to-race') {
