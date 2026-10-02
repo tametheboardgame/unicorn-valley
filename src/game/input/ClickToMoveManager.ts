@@ -8,6 +8,7 @@ import type { MapPoint, TraversalMapDefinition } from '../world/MapTraversal';
 import { MOONFLOWER_GLADE_MAP } from '../world/MoonflowerGladeMap';
 import { CRYSTAL_GROTTO_MAP, FIREFLY_GROVE_MAP } from '../world/MicroLocationTraversalMaps';
 import { RAINBOW_MEADOW_MAP } from '../world/RainbowMeadowMap';
+import { RAINBOW_RUN_HUB_MAP } from '../world/RainbowRunHubMap';
 import { STARLIGHT_BEACH_MAP } from '../world/StarlightBeachMap';
 import { SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
 import {
@@ -79,6 +80,7 @@ const NAVIGATION_MAPS: Readonly<Record<string, TraversalMapDefinition>> = {
   MoonflowerGladeScene: MOONFLOWER_GLADE_MAP,
   SunbeamVillageScene: SUNBEAM_VILLAGE_MAP,
   RainbowMeadowScene: RAINBOW_MEADOW_MAP,
+  RainbowRunEntryScene: RAINBOW_RUN_HUB_MAP,
   CrystalBrookScene: CRYSTAL_BROOK_MAP,
   WhisperingWoodsScene: WHISPERING_WOODS_MAP,
   StarlightBeachScene: STARLIGHT_BEACH_MAP,
