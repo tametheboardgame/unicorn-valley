@@ -441,6 +441,10 @@ export class TitleScene extends Phaser.Scene {
   }
 
   private activateSelectedMenuItem(): void {
+    if (this.storyReader || this.starting) {
+      return;
+    }
+
     const selected = this.menuButtons[this.selectedMenuIndex];
     if (selected?.enabled) {
       selected.activate();
