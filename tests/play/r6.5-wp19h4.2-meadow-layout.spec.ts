@@ -59,11 +59,11 @@ test('H4.2 composes distinct Meadow districts and clears future activity space',
   const objects = await meadowObjects(page);
   const expectedDistricts = [
     ['sunbeam-arrival', 430, 1050],
-    ['north-nature', 1450, 580],
+    ['north-nature', 1420, 580],
     ['rainbow-disc-lawn', 700, 1640],
     ['picnic-hill-reserve', 1740, 1660],
-    ['rainbow-run', 2700, 1010],
-    ['crystal-brook-corridor', 2980, 1780],
+    ['rainbow-run', 2700, 390],
+    ['crystal-brook-corridor', 3020, 1170],
   ] as const;
 
   for (const [id, x, y] of expectedDistricts) {
@@ -86,12 +86,12 @@ test('H4.2 composes distinct Meadow districts and clears future activity space',
   }
 
   const trees = objects.filter(({ name }) => name.startsWith('rainbow-meadow:tree:'));
-  expect(trees).toHaveLength(8);
+  expect(trees).toHaveLength(7);
   expect(
     trees.some(
       ({ x, y }) =>
         ((x - 700) / 500) ** 2 + ((y - 1640) / 300) ** 2 <= 1 ||
-        ((x - 2980) / 350) ** 2 + ((y - 1780) / 220) ** 2 <= 1,
+        ((x - 3020) / 450) ** 2 + ((y - 1170) / 360) ** 2 <= 1,
     ),
   ).toBe(false);
 });
