@@ -140,9 +140,9 @@ test('H4.4 makes Crystal Brook a waterfall, pool and stepping-stone Meadow thres
     ),
   ).toBe(false);
 
-  expect(
-    meadow.objects.some(({ name }) => name.endsWith('meadow-crystal-brook:cave-mouth')),
-  ).toBe(false);
+  expect(meadow.objects.some(({ name }) => name.endsWith('meadow-crystal-brook:cave-mouth'))).toBe(
+    false,
+  );
   expect(
     meadow.objects.some(
       ({ name, x, y, visible }) =>
@@ -156,7 +156,9 @@ test('H4.4 makes Crystal Brook a waterfall, pool and stepping-stone Meadow thres
   ).toBe(false);
 
   expect(
-    meadow.objects.some(({ name, visible }) => name === 'rainbow-meadow:rainbow-run-hub-sign' && visible),
+    meadow.objects.some(
+      ({ name, visible }) => name === 'rainbow-meadow:rainbow-run-hub-sign' && visible,
+    ),
   ).toBe(true);
   expect(meadow.objects.some(({ name }) => name === 'meadow-depth:rainbow-cup-board')).toBe(false);
   expect(meadow.objects.some(({ name }) => name === 'core-npc:nova:world')).toBe(false);
