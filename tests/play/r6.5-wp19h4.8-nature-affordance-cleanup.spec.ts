@@ -27,9 +27,8 @@ async function waitForDiagnostics(page: Page): Promise<void> {
 
 async function snapshotScene(page: Page, sceneKey: string): Promise<DiagnosticScene> {
   return page.evaluate((key) => {
-    const api = (
-      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi }
-    ).__UNICORN_VALLEY_DIAGNOSTICS__;
+    const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
+      .__UNICORN_VALLEY_DIAGNOSTICS__;
     const scene = api?.snapshot().scenes.find((candidate) => candidate.key === key);
     if (!scene) {
       throw new Error(`Missing diagnostics for ${key}.`);
@@ -41,9 +40,8 @@ async function snapshotScene(page: Page, sceneKey: string): Promise<DiagnosticSc
 async function setPlayerPosition(page: Page, x: number, y: number): Promise<void> {
   await page.evaluate(
     ({ targetX, targetY }) => {
-      const api = (
-        window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi }
-      ).__UNICORN_VALLEY_DIAGNOSTICS__;
+      const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
+        .__UNICORN_VALLEY_DIAGNOSTICS__;
       if (!api) throw new Error('Browser diagnostics are unavailable.');
       api.setArcadeSpritePosition('RainbowMeadowScene', 'world-player-unicorn', targetX, targetY);
     },
@@ -149,7 +147,8 @@ test('H4.8 Windmill Lookout uses physical chimes and glint cues', async ({ page 
   expect(
     lookout.objects.some(
       ({ text, effectiveVisible }) =>
-        effectiveVisible && ['♫', '✦', '🌬️ Windmill Lookout', '🌿 Rainbow Meadow'].includes(text ?? ''),
+        effectiveVisible &&
+        ['♫', '✦', '🌬️ Windmill Lookout', '🌿 Rainbow Meadow'].includes(text ?? ''),
     ),
   ).toBe(false);
 });
