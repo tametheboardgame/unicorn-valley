@@ -72,54 +72,29 @@ function sceneSnapshot(
   return scene;
 }
 
-test('walking to the Rainbow Run start opens a confirmation instead of requiring E', async ({
-  page,
-}) => {
+test('Rainbow Meadow now enters the standalone Rainbow Run Race Hub', async ({ page }) => {
   test.setTimeout(45_000);
   await page.goto('/?scene=meadow&diagnostics=1');
   await waitForScene(page, 'RainbowMeadowScene');
 
-  let snapshot = await getSnapshot(page);
-  let meadow = sceneSnapshot(snapshot, 'RainbowMeadowScene');
-  expect(meadow.objects.some((object) => object.name === 'race-entry-shared-start-sign')).toBe(
-    true,
-  );
-
-  await page.keyboard.down('ArrowRight');
-  try {
-    await page.waitForFunction(
-      () => {
-        const diagnosticWindow = window as typeof window & {
-          __UNICORN_VALLEY_DIAGNOSTICS__?: { snapshot(): BrowserDiagnosticSnapshot };
+  await page.evaluate(() => {
+    const diagnostics = (
+      window as typeof window & {
+        __UNICORN_VALLEY_DIAGNOSTICS__?: {
+          setArcadeSpritePosition(sceneKey: string, objectName: string, x: number, y: number): void;
         };
-        const meadowScene = diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__
-          ?.snapshot()
-          .scenes.find((scene) => scene.key === 'RainbowMeadowScene');
-        return meadowScene?.objects.some((object) => object.name === 'race-entry-confirmation');
-      },
-      undefined,
-      { timeout: WORLD_TRIGGER_TIMEOUT_MS },
-    );
-  } finally {
-    await page.keyboard.up('ArrowRight');
-  }
+      }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__;
+    diagnostics?.setArcadeSpritePosition('RainbowMeadowScene', 'world-player-unicorn', 2950, 390);
+  });
+  await page.waitForTimeout(120);
+  await page.keyboard.press('KeyE');
+  await waitForScene(page, 'RainbowRunEntryScene');
 
-  snapshot = await getSnapshot(page);
-  meadow = sceneSnapshot(snapshot, 'RainbowMeadowScene');
-  expect(meadow.objects.some((object) => object.name === 'race-entry-confirmation')).toBe(true);
-  expect(
-    meadow.objects.some(
-      (object) => object.name === 'race-entry-confirmation-yes' && object.interactive,
-    ),
-  ).toBe(true);
-  expect(
-    meadow.objects.some(
-      (object) => object.name === 'race-entry-confirmation-no' && object.interactive,
-    ),
-  ).toBe(true);
-  expect(
-    meadow.objects.some((object) => object.visible && object.text?.includes('Enter Rainbow Run')),
-  ).toBe(false);
+  const snapshot = await getSnapshot(page);
+  const hub = sceneSnapshot(snapshot, 'RainbowRunEntryScene');
+  expect(hub.objects.some((object) => object.name === 'rainbow-run-hub:race-gate')).toBe(true);
+  expect(snapshot.activeScenes).not.toContain('RainbowMeadowScene');
 });
 
 test('Sunrise Sprint finish controls remain clickable after the result panel appears', async ({
@@ -182,10 +157,9 @@ test('Sunrise Sprint finish controls remain clickable after the result panel app
   const finished = await getSnapshot(page);
   await logicalClick(page, finished.width / 2 + 145, finished.height / 2 + 190);
 
-  await waitForScene(page, 'RainbowMeadowScene');
+  await waitForScene(page, 'RainbowRunEntryScene');
 
   const returned = await getSnapshot(page);
-  expect(returned.activeScenes).toContain('RainbowMeadowScene');
-  const meadow = sceneSnapshot(returned, 'RainbowMeadowScene');
-  expect(meadow.objects.some((object) => object.name === 'race-entry-confirmation')).toBe(false);
+  expect(returned.activeScenes).toContain('RainbowRunEntryScene');
+  expect(returned.activeScenes).not.toContain('RainbowMeadowScene');
 });
