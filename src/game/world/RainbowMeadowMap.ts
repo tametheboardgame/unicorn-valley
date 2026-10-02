@@ -152,6 +152,33 @@ export const RAINBOW_MEADOW_LAYOUT = {
       { x: 1960, y: 1940 },
     ],
   },
+  rainbowDisc: {
+    centre: { x: 700, y: 1650 },
+    approach: { x: 700, y: 1400 },
+    field: { width: 860, height: 390 },
+    captain: { x: 505, y: 1510 },
+    sign: { x: 315, y: 1475 },
+    players: [
+      { id: 'captain', x: 505, y: 1510 },
+      { id: 'player-a', x: 425, y: 1705 },
+      { id: 'player-b', x: 625, y: 1600 },
+      { id: 'player-c', x: 805, y: 1765 },
+      { id: 'player-d', x: 980, y: 1580 },
+    ],
+    discRoute: [
+      { x: 445, y: 1665 },
+      { x: 625, y: 1560 },
+      { x: 805, y: 1725 },
+      { x: 960, y: 1540 },
+      { x: 505, y: 1470 },
+    ],
+    pennants: [
+      { x: 285, y: 1500 },
+      { x: 1115, y: 1500 },
+      { x: 285, y: 1810 },
+      { x: 1115, y: 1810 },
+    ],
+  },
   scenery: {
     trees: [
       { id: 'north-west-a', x: 250, y: 430, scale: 0.95 },
