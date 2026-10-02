@@ -4,6 +4,7 @@ import {
   MEADOW_FLOWER_CIRCLE_REVEALED_FLAG,
 } from '../../content/r6MeadowRunContent';
 import { PICNIC_READY_FLAG } from '../../content/r4PicnicEvent';
+import { RAINBOW_MEADOW_LAYOUT } from '../world/RainbowMeadowMap';
 import type {
   ResidentPlacementDefinition,
   ResidentTalkVariant,
@@ -36,11 +37,7 @@ export const R6_MEADOW_RESIDENT_PLACEMENTS = [
     interactionRadius: 124,
     priority: 18,
     activeWhen: { worldFlags: [{ id: PICNIC_READY_FLAG, value: true }] },
-    waypoints: [
-      { id: 'maple-picnic-a', x: 1430, y: 1320, pauseMs: 2600 },
-      { id: 'maple-picnic-b', x: 1510, y: 1380, pauseMs: 3200 },
-      { id: 'maple-picnic-c', x: 1590, y: 1340, pauseMs: 2300 },
-    ],
+    waypoints: RAINBOW_MEADOW_LAYOUT.picnicHill.mapleWaypoints,
   },
   {
     id: 'resident-placement:juniper:meadow-butterflies',
