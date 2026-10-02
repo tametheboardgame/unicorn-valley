@@ -262,10 +262,10 @@ export const RAINBOW_MEADOW_LAYOUT = {
     tent: { x: 2480, y: 500 },
     title: { x: 2670, y: 285 },
     cupBoard: {
-      position: { x: 2860, y: 755 },
-      approach: { x: 2860, y: 905 },
+      position: { x: 2820, y: 610 },
+      approach: { x: 2820, y: 780 },
     },
-    runPoster: { x: 2960, y: 820 },
+    runPoster: { x: 3000, y: 470 },
     ribbonEvidence: { x: 2495, y: 705 },
     flags: [
       { x: 2250, y: 555 },
@@ -284,8 +284,8 @@ export const RAINBOW_MEADOW_LAYOUT = {
     ribbonBoard: {
       id: 'ribbon-board',
       label: 'Ribbon Board',
-      position: { x: 2580, y: 760 },
-      approach: { x: 2580, y: 925 },
+      position: { x: 2550, y: 760 },
+      approach: { x: 2550, y: 930 },
     },
     windmillLookout: {
       id: 'windmill-lookout',
@@ -295,7 +295,7 @@ export const RAINBOW_MEADOW_LAYOUT = {
     },
   },
   coreNpcPositions: {
-    novaRaceHub: { x: 2390, y: 825 },
+    novaRaceHub: { x: 2300, y: 720 },
   },
   structuralPaths: [
     {
