@@ -326,30 +326,23 @@ export class RainbowMeadowScene extends Phaser.Scene {
   }
 
   private createPrismBloom(x: number, y: number): Phaser.GameObjects.Container {
-    const glow = this.add.circle(0, 0, 42, 0xfff5ad, 0.22);
-    const stem = this.add.rectangle(0, 16, 5, 34, 0x5e9f64, 1);
+    const stem = this.add.rectangle(0, 17, 5, 38, 0x5e9f64, 1);
+    const leafLeft = this.add.ellipse(-9, 18, 18, 10, 0x75b06f, 0.96).setAngle(-28);
+    const leafRight = this.add.ellipse(10, 25, 18, 10, 0x75b06f, 0.96).setAngle(28);
     const colours = [0xf18dad, 0xf5c968, 0x7cc6d8, 0xa6d77a, 0xc69be0];
     const petals = colours.map((colour, index) => {
       const angle = (Math.PI * 2 * index) / colours.length - Math.PI / 2;
       return this.add.ellipse(Math.cos(angle) * 18, Math.sin(angle) * 18 - 7, 22, 34, colour, 0.98);
     });
     const centre = this.add.circle(0, -7, 10, 0xfff4b2, 1);
-    const sparkle = this.add
-      .text(0, -48, '✦', {
-        color: '#fffbe0',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '24px',
-        fontStyle: 'bold',
-      })
-      .setOrigin(0.5);
     const container = this.add
-      .container(x, y, [glow, stem, ...petals, centre, sparkle])
+      .container(x, y, [stem, leafLeft, leafRight, ...petals, centre])
+      .setName('rainbow-meadow:discovery:prism-bloom')
       .setDepth(worldDepthForY(y, 0.35));
     this.tweens.add({
       targets: container,
-      scale: 1.1,
-      angle: 3,
-      duration: 820,
+      angle: { from: -1.5, to: 1.5 },
+      duration: 1100,
       yoyo: true,
       repeat: -1,
       ease: 'Sine.InOut',
@@ -358,30 +351,19 @@ export class RainbowMeadowScene extends Phaser.Scene {
   }
 
   private createSunshowerFeather(x: number, y: number): Phaser.GameObjects.Container {
-    const glow = this.add.circle(0, 0, 42, 0xffef9f, 0.2);
-    const feather = this.add
-      .text(0, -4, '🪶', {
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '46px',
-      })
-      .setOrigin(0.5)
-      .setAngle(-20);
-    const sparkle = this.add
-      .text(23, -34, '✦', {
-        color: '#fff8c7',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '20px',
-        fontStyle: 'bold',
-      })
-      .setOrigin(0.5);
+    const shaft = this.add.rectangle(0, 0, 4, 58, 0x8f7658, 0.96).setAngle(-18);
+    const vaneLeft = this.add.ellipse(-8, -5, 18, 52, 0xf6d67d, 0.94).setAngle(-29);
+    const vaneRight = this.add.ellipse(8, -7, 18, 48, 0xffecaa, 0.96).setAngle(-7);
+    const tip = this.add.triangle(17, -31, 0, 13, 16, 0, 12, 20, 0xffefb2, 0.98).setAngle(-18);
     const container = this.add
-      .container(x, y, [glow, feather, sparkle])
+      .container(x, y, [vaneLeft, vaneRight, shaft, tip])
+      .setName('rainbow-meadow:discovery:sunshower-feather')
       .setDepth(worldDepthForY(y, 0.35));
     this.tweens.add({
       targets: container,
-      y: y - 9,
-      angle: 5,
-      duration: 980,
+      y: y - 7,
+      angle: { from: -3, to: 3 },
+      duration: 1200,
       yoyo: true,
       repeat: -1,
       ease: 'Sine.InOut',
@@ -430,15 +412,57 @@ export class RainbowMeadowScene extends Phaser.Scene {
   private createPond(): void {
     const pond = RAINBOW_MEADOW_LAYOUT.natureFeatures.pond;
     this.add
+      .ellipse(
+        pond.position.x,
+        pond.position.y + 8,
+        pond.width + 34,
+        pond.height + 24,
+        0x6aa874,
+        0.28,
+      )
+      .setName('rainbow-meadow:nature:pond-bank')
+      .setDepth(2.9);
+    this.add
       .ellipse(pond.position.x, pond.position.y, pond.width, pond.height, 0x67c8df, 0.96)
       .setName('rainbow-meadow:nature:pond')
       .setDepth(3);
     this.add
-      .ellipse(pond.position.x, pond.position.y, pond.width - 90, pond.height - 75, 0x9ce6ea, 0.74)
+      .ellipse(
+        pond.position.x - 28,
+        pond.position.y - 20,
+        pond.width - 105,
+        pond.height - 92,
+        0xb9eef0,
+        0.36,
+      )
+      .setName('rainbow-meadow:nature:pond-reflection')
       .setDepth(4);
     for (const { x, y } of pond.lilyPads) {
       this.add.ellipse(x, y, 48, 24, 0x6fa76c, 0.95).setDepth(5);
       this.add.circle(x + 7, y - 3, 8, 0xffd5ef, 0.95).setDepth(6);
+    }
+
+    const reedBaseX = pond.position.x - pond.width / 2 + 34;
+    const reedBaseY = pond.position.y + pond.height / 2 - 10;
+    const reeds = this.add
+      .graphics()
+      .setName('rainbow-meadow:nature:pond-reeds')
+      .setDepth(worldDepthForY(reedBaseY, 0.02));
+    reeds.lineStyle(5, 0x5b9362, 0.9);
+    for (const [offsetX, height] of [
+      [0, 54],
+      [16, 72],
+      [34, 48],
+      [52, 66],
+    ] as const) {
+      reeds.lineBetween(
+        reedBaseX + offsetX,
+        reedBaseY,
+        reedBaseX + offsetX + 4,
+        reedBaseY - height,
+      );
+      reeds.fillStyle(0x8d6c45, 0.94);
+      reeds.fillEllipse(reedBaseX + offsetX + 4, reedBaseY - height - 7, 9, 20);
     }
   }
 

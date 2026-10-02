@@ -110,9 +110,9 @@ describe('Rainbow Meadow canonical layout', () => {
     }
 
     const established = [
-      { position: RAINBOW_MEADOW_LAYOUT.natureFeatures.windmill.storyPosition, radius: 130 },
-      { position: RAINBOW_MEADOW_LAYOUT.natureFeatures.windmill.bellPosition, radius: 135 },
-      { position: RAINBOW_MEADOW_LAYOUT.natureFeatures.windmill.lookoutPosition, radius: 145 },
+      { position: RAINBOW_MEADOW_LAYOUT.natureFeatures.windmill.storyPosition, radius: 112 },
+      { position: RAINBOW_MEADOW_LAYOUT.natureFeatures.windmill.bellPosition, radius: 112 },
+      { position: RAINBOW_MEADOW_LAYOUT.natureFeatures.windmill.lookoutPosition, radius: 125 },
       { position: RAINBOW_MEADOW_LAYOUT.natureFeatures.pond.interactionPosition, radius: 130 },
     ];
     for (const hotspot of hotspots) {
@@ -125,6 +125,48 @@ describe('Rainbow Meadow canonical layout', () => {
         ).toBeGreaterThan(hotspot.radius + anchor.radius);
       }
     }
+  });
+
+  it('keeps H4.8 nature interaction approaches outside physical collision', () => {
+    const pondCollider = RAINBOW_MEADOW_MAP.colliders.find(
+      ({ id }) => id === 'collision:rainbow-pond',
+    );
+    const windmillCollider = RAINBOW_MEADOW_MAP.colliders.find(
+      ({ id }) => id === 'collision:windmill-lookout-base',
+    );
+    expect(pondCollider).toBeDefined();
+    expect(windmillCollider).toBeDefined();
+    if (!pondCollider || !windmillCollider) {
+      return;
+    }
+
+    const pondBottom = pondCollider.y + pondCollider.height / 2;
+    expect(
+      RAINBOW_MEADOW_LAYOUT.natureFeatures.pond.interactionPosition.y - pondBottom,
+    ).toBeGreaterThanOrEqual(60);
+
+    const windmillBottom = windmillCollider.y + windmillCollider.height / 2;
+    const windmillLeft = windmillCollider.x - windmillCollider.width / 2;
+    expect(
+      windmillLeft - RAINBOW_MEADOW_LAYOUT.natureFeatures.windmill.bellPosition.x,
+    ).toBeGreaterThanOrEqual(50);
+    expect(
+      RAINBOW_MEADOW_LAYOUT.natureFeatures.windmill.lookoutPosition.y - windmillBottom,
+    ).toBeGreaterThanOrEqual(40);
+    expect(
+      RAINBOW_MEADOW_LAYOUT.hubFeatures.windmillLookout.approach.y - windmillBottom,
+    ).toBeGreaterThanOrEqual(90);
+
+    const pondPath = RAINBOW_MEADOW_LAYOUT.structuralPaths.find(({ id }) => id === 'nature-spur');
+    const windmillPath = RAINBOW_MEADOW_LAYOUT.structuralPaths.find(
+      ({ id }) => id === 'windmill-spur',
+    );
+    expect(pondPath?.points[pondPath.points.length - 1]).toEqual(
+      RAINBOW_MEADOW_LAYOUT.natureFeatures.pond.interactionPosition,
+    );
+    expect(windmillPath?.points[windmillPath.points.length - 1]).toEqual(
+      RAINBOW_MEADOW_LAYOUT.hubFeatures.windmillLookout.approach,
+    );
   });
 
   it('owns Picnic Hill as one canonical south-central composition', () => {

@@ -28,7 +28,6 @@ interface MeadowInteractionDefinition {
   actionKind: InteractionActionKind;
   position: Point;
   radius: number;
-  icon: string;
 }
 
 interface MeadowInteractionRuntime {
@@ -52,8 +51,7 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     actionLabel: 'Look',
     actionKind: 'inspect',
     position: RAINBOW_MEADOW_LAYOUT.natureFeatures.windmill.storyPosition,
-    radius: 130,
-    icon: '🎐',
+    radius: 112,
   },
   {
     id: 'windmill-bell',
@@ -61,8 +59,7 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     actionLabel: 'Ring',
     actionKind: 'interact',
     position: RAINBOW_MEADOW_LAYOUT.natureFeatures.windmill.bellPosition,
-    radius: 135,
-    icon: '🔔',
+    radius: 112,
   },
   {
     id: 'windmill-lookout',
@@ -70,8 +67,7 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     actionLabel: 'Go up',
     actionKind: 'enter',
     position: RAINBOW_MEADOW_LAYOUT.natureFeatures.windmill.lookoutPosition,
-    radius: 145,
-    icon: '🌬️',
+    radius: 125,
   },
   {
     id: 'rainbow-pond',
@@ -80,7 +76,6 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     actionKind: 'interact',
     position: RAINBOW_MEADOW_LAYOUT.natureFeatures.pond.interactionPosition,
     radius: 130,
-    icon: '🐸',
   },
   {
     id: 'picnic-hill',
@@ -89,7 +84,6 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     actionKind: 'interact',
     position: RAINBOW_MEADOW_LAYOUT.picnicHill.interactionPosition,
     radius: 150,
-    icon: '🧺',
   },
   {
     id: 'petal-patch',
@@ -98,7 +92,6 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     actionKind: 'interact',
     position: RAINBOW_MEADOW_LAYOUT.natureFeatures.petalPatch,
     radius: 135,
-    icon: '🌸',
   },
   {
     id: 'flower-circle',
@@ -107,7 +100,6 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     actionKind: 'inspect',
     position: RAINBOW_MEADOW_LAYOUT.natureFeatures.flowerCircle,
     radius: 150,
-    icon: '🌼',
   },
   {
     id: 'butterfly-parade',
@@ -116,7 +108,6 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     actionKind: 'interact',
     position: RAINBOW_MEADOW_LAYOUT.natureFeatures.butterflyParade,
     radius: 145,
-    icon: '🦋',
   },
 ];
 
@@ -190,27 +181,12 @@ export class MeadowDepthWorldManager {
     state: MeadowDepthState,
     definition: MeadowInteractionDefinition,
   ): MeadowInteractionRuntime {
-    const glow = state.scene.add.circle(0, 0, 25, 0xffef9c, 0.06).setStrokeStyle(2, 0xffffff, 0.15);
-    const icon = state.scene.add
-      .text(0, 0, definition.icon, {
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '24px',
-      })
-      .setOrigin(0.5)
-      .setAlpha(0.75);
+    // Keep interaction ownership independent from presentation. H4.8 deliberately removes
+    // permanent hotspot icons/glows; the shared contextual prompt appears only on approach.
     const container = state.scene.add
-      .container(definition.position.x, definition.position.y, [glow, icon])
+      .container(definition.position.x, definition.position.y)
       .setName(`meadow-depth:${definition.id}`)
-      .setDepth(worldDepthForY(definition.position.y + 15, 0.35));
-
-    state.scene.tweens.add({
-      targets: [glow, icon],
-      alpha: { from: 0.38, to: 0.86 },
-      duration: 1050,
-      yoyo: true,
-      repeat: -1,
-      ease: 'Sine.InOut',
-    });
+      .setVisible(false);
     return { definition, container };
   }
 
@@ -376,6 +352,8 @@ export class MeadowDepthWorldManager {
       objects,
       save.world.flags[MEADOW_FLOWER_CIRCLE_REVEALED_FLAG] === true,
     );
+    this.addPetalPatchVisual(state.scene, objects);
+    this.addButterflyParadeVisual(state.scene, objects);
     state.persistent = state.scene.add
       .container(0, 0, objects)
       .setName('meadow-depth:persistent-state')
@@ -389,49 +367,241 @@ export class MeadowDepthWorldManager {
   ): void {
     const windmill = RAINBOW_MEADOW_LAYOUT.natureFeatures.windmill;
     const { x, y } = windmill.position;
-    const tower = scene.add
-      .rectangle(x, y, 130, 250, 0xe7d09a, 1)
-      .setStrokeStyle(7, 0x9a7455, 0.95)
-      .setDepth(7);
-    const roof = scene.add.triangle(x, y - 160, 0, 80, 78, 0, 156, 80, 0xbb7d68, 1).setDepth(8);
-    const hub = scene.add.circle(x, y - 70, 21, 0xf2c85f, 1).setDepth(10);
-    objects.push(tower, roof, hub);
 
-    for (const angle of [0, 45, 90, 135]) {
-      objects.push(
-        scene.add
-          .rectangle(x, y - 70, 10, 178, 0xfff0c9, 1)
-          .setAngle(angle)
-          .setStrokeStyle(2, 0xb68c61, 0.75)
-          .setDepth(9),
-      );
+    const shadow = scene.add
+      .ellipse(x, y + 136, 250, 68, 0x587f5d, 0.2)
+      .setDepth(worldDepthForY(y + 140, -0.45))
+      .setName('meadow-depth:windmill-ground-shadow');
+    objects.push(shadow);
+
+    const tower = scene.add
+      .graphics()
+      .setPosition(x, y)
+      .setDepth(7)
+      .setName('meadow-depth:windmill-landmark');
+    tower.fillStyle(0xf1dca8, 1);
+    tower.lineStyle(6, 0x8d684e, 0.96);
+    tower.beginPath();
+    tower.moveTo(-82, 126);
+    tower.lineTo(82, 126);
+    tower.lineTo(56, -82);
+    tower.lineTo(-56, -82);
+    tower.closePath();
+    tower.fillPath();
+    tower.strokePath();
+
+    tower.fillStyle(0xe6c984, 0.82);
+    tower.fillRoundedRect(-76, 100, 152, 32, 12);
+    tower.lineStyle(3, 0xb68a59, 0.7);
+    tower.strokeRoundedRect(-76, 100, 152, 32, 12);
+
+    tower.fillStyle(0xbe7b63, 1);
+    tower.lineStyle(5, 0x815844, 0.95);
+    tower.beginPath();
+    tower.moveTo(-73, -80);
+    tower.lineTo(73, -80);
+    tower.lineTo(48, -132);
+    tower.lineTo(-48, -132);
+    tower.closePath();
+    tower.fillPath();
+    tower.strokePath();
+
+    tower.lineStyle(3, 0xe4aa86, 0.72);
+    for (const roofY of [-120, -108, -96]) {
+      tower.lineBetween(-52, roofY, 52, roofY);
     }
 
-    const label = scene.add
-      .text(x, y - 191, 'WINDMILL LOOKOUT', {
-        color: '#60506f',
+    tower.fillStyle(0x8fd0da, 1);
+    tower.lineStyle(5, 0x765442, 0.94);
+    tower.fillCircle(0, -27, 23);
+    tower.strokeCircle(0, -27, 23);
+    tower.lineStyle(3, 0xffffff, 0.5);
+    tower.lineBetween(-16, -27, 16, -27);
+    tower.lineBetween(0, -43, 0, -11);
+
+    tower.fillStyle(0x8b6247, 1);
+    tower.lineStyle(5, 0x684735, 0.96);
+    tower.fillRoundedRect(-31, 45, 62, 82, 24);
+    tower.strokeRoundedRect(-31, 45, 62, 82, 24);
+    tower.fillStyle(0xf0bf58, 1);
+    tower.fillCircle(16, 87, 5);
+    tower.fillStyle(0x6f4c39, 0.8);
+    tower.fillRoundedRect(-21, 58, 42, 14, 6);
+    objects.push(tower);
+
+    const sails = scene.add
+      .container(x, y - 58)
+      .setDepth(10)
+      .setName('meadow-depth:windmill-sails');
+    for (const angle of [0, Math.PI / 2, Math.PI, (Math.PI * 3) / 2]) {
+      const blade = scene.add.graphics();
+      blade.fillStyle(0xffefc9, 1);
+      blade.lineStyle(3, 0x9b7656, 0.9);
+      blade.beginPath();
+      blade.moveTo(-7, -10);
+      blade.lineTo(8, -10);
+      blade.lineTo(18, -115);
+      blade.lineTo(-18, -115);
+      blade.closePath();
+      blade.fillPath();
+      blade.strokePath();
+      blade.lineStyle(2, 0xc39a6c, 0.7);
+      for (const slatY of [-42, -67, -92]) {
+        blade.lineBetween(-13, slatY, 13, slatY);
+      }
+      blade.setRotation(angle);
+      sails.add(blade);
+    }
+    const sailHub = scene.add.circle(0, 0, 20, 0xe6b64c, 1).setStrokeStyle(4, 0x8f6a2d, 0.95);
+    sails.add(sailHub);
+    scene.tweens.add({
+      targets: sails,
+      rotation: Math.PI * 2,
+      duration: 26000,
+      repeat: -1,
+      ease: 'Linear',
+    });
+    objects.push(sails);
+
+    const signArm = scene.add
+      .rectangle(x + 72, y + 44, 74, 9, 0x765442, 1)
+      .setOrigin(0, 0.5)
+      .setDepth(11);
+    const signHanger = scene.add.rectangle(x + 130, y + 57, 5, 34, 0x765442, 1).setDepth(11);
+    const signBoard = scene.add
+      .rectangle(x + 130, y + 84, 94, 36, 0xe7c78d, 1)
+      .setStrokeStyle(4, 0x765442, 0.98)
+      .setDepth(11)
+      .setName('meadow-depth:windmill-lookout-sign');
+    const signText = scene.add
+      .text(x + 130, y + 84, 'LOOKOUT', {
+        color: '#5e4669',
         fontFamily: 'system-ui, sans-serif',
-        fontSize: '16px',
+        fontSize: '12px',
         fontStyle: 'bold',
-        backgroundColor: '#fff8e0df',
-        padding: { x: 9, y: 5 },
       })
       .setOrigin(0.5)
-      .setDepth(11)
-      .setName('meadow-depth:windmill-landmark');
-    objects.push(label);
+      .setDepth(12)
+      .setName('meadow-depth:windmill-lookout-sign-text');
+    objects.push(signArm, signHanger, signBoard, signText);
+
+    const bellPosition = windmill.bellPosition;
+    const bellBracket = scene.add.graphics().setDepth(worldDepthForY(bellPosition.y, 0.05));
+    bellBracket.lineStyle(7, 0x765442, 1);
+    bellBracket.lineBetween(
+      bellPosition.x + 8,
+      bellPosition.y - 50,
+      bellPosition.x + 58,
+      bellPosition.y - 50,
+    );
+    bellBracket.lineBetween(
+      bellPosition.x + 49,
+      bellPosition.y - 50,
+      bellPosition.x + 49,
+      bellPosition.y - 20,
+    );
+    const bell = scene.add
+      .ellipse(bellPosition.x + 49, bellPosition.y - 5, 30, 26, 0xdbab47, 1)
+      .setStrokeStyle(3, 0x8f6a2d, 0.98)
+      .setDepth(worldDepthForY(bellPosition.y, 0.08))
+      .setName('meadow-depth:windmill-bell-physical');
+    const clapper = scene.add
+      .circle(bellPosition.x + 49, bellPosition.y + 10, 4, 0x765442, 1)
+      .setDepth(worldDepthForY(bellPosition.y, 0.09));
+    objects.push(bellBracket, bell, clapper);
+
+    const ribbonPosition = windmill.storyPosition;
+    const fence = scene.add
+      .graphics()
+      .setDepth(worldDepthForY(ribbonPosition.y, -0.08))
+      .setName('meadow-depth:wind-ribbon-fence');
+    fence.lineStyle(9, 0x806047, 0.96);
+    fence.lineBetween(
+      ribbonPosition.x - 54,
+      ribbonPosition.y + 28,
+      ribbonPosition.x - 54,
+      ribbonPosition.y - 40,
+    );
+    fence.lineBetween(
+      ribbonPosition.x + 42,
+      ribbonPosition.y + 28,
+      ribbonPosition.x + 42,
+      ribbonPosition.y - 40,
+    );
+    fence.lineStyle(7, 0xa17a58, 0.92);
+    fence.lineBetween(
+      ribbonPosition.x - 54,
+      ribbonPosition.y - 12,
+      ribbonPosition.x + 42,
+      ribbonPosition.y - 12,
+    );
+    fence.lineBetween(
+      ribbonPosition.x - 54,
+      ribbonPosition.y + 12,
+      ribbonPosition.x + 42,
+      ribbonPosition.y + 12,
+    );
+    objects.push(fence);
+
+    for (const [index, colour] of [0x78bddd, 0xf2c56c, 0xc69be0].entries()) {
+      const ribbon = scene.add
+        .rectangle(
+          ribbonPosition.x - 8 + index * 5,
+          ribbonPosition.y - 28 + index * 11,
+          52,
+          8,
+          colour,
+          0.94,
+        )
+        .setOrigin(0, 0.5)
+        .setAngle(index === 1 ? 7 : -6)
+        .setDepth(worldDepthForY(ribbonPosition.y, 0.02))
+        .setName(index === 0 ? 'meadow-depth:wind-ribbon-physical' : '');
+      objects.push(ribbon);
+    }
+
+    const baseDetails = scene.add
+      .graphics()
+      .setDepth(worldDepthForY(y + 145, -0.1))
+      .setName('meadow-depth:windmill-base-details');
+    for (const [stoneX, stoneY, stoneWidth] of [
+      [x - 78, y + 138, 34],
+      [x - 30, y + 150, 42],
+      [x + 24, y + 146, 30],
+      [x + 70, y + 136, 38],
+    ] as const) {
+      baseDetails.fillStyle(0xb9ad91, 0.92);
+      baseDetails.fillEllipse(stoneX, stoneY, stoneWidth, 18);
+    }
+    for (const [flowerX, flowerY, colour] of [
+      [x - 104, y + 122, 0xf2a3c2],
+      [x - 88, y + 130, 0xffd978],
+      [x + 92, y + 124, 0x8fcfe0],
+      [x + 108, y + 132, 0xc7a6e2],
+    ] as const) {
+      baseDetails.fillStyle(0x689961, 0.8);
+      baseDetails.fillRect(flowerX - 2, flowerY + 4, 4, 18);
+      baseDetails.fillStyle(colour, 0.95);
+      baseDetails.fillCircle(flowerX, flowerY, 7);
+      baseDetails.fillStyle(0xffe991, 1);
+      baseDetails.fillCircle(flowerX, flowerY, 3);
+    }
+    objects.push(baseDetails);
 
     if (open) {
-      const steps = scene.add.graphics().setDepth(6).setName('meadow-depth:windmill-open-path');
-      steps.lineStyle(58, 0xf4e2b8, 0.95);
-      steps.beginPath();
-      steps.moveTo(
-        RAINBOW_MEADOW_LAYOUT.hubFeatures.windmillLookout.approach.x,
-        RAINBOW_MEADOW_LAYOUT.hubFeatures.windmillLookout.approach.y,
-      );
-      steps.lineTo(windmill.lookoutPosition.x, windmill.lookoutPosition.y);
-      steps.strokePath();
-      objects.push(steps);
+      const approach = RAINBOW_MEADOW_LAYOUT.hubFeatures.windmillLookout.approach;
+      const doorTarget = windmill.lookoutPosition;
+      for (let index = 0; index < 4; index += 1) {
+        const progress = (index + 1) / 5;
+        const stepX = Phaser.Math.Linear(approach.x, doorTarget.x, progress);
+        const stepY = Phaser.Math.Linear(approach.y, doorTarget.y, progress);
+        const step = scene.add
+          .ellipse(stepX, stepY, 48 - index * 3, 24 - index * 2, 0xd7c493, 0.9)
+          .setStrokeStyle(2, 0xb29a6e, 0.55)
+          .setDepth(worldDepthForY(stepY, -0.28))
+          .setName(index === 0 ? 'meadow-depth:windmill-open-path' : '');
+        objects.push(step);
+      }
     }
   }
 
@@ -441,41 +611,92 @@ export class MeadowDepthWorldManager {
     revealed: boolean,
   ): void {
     const centre = RAINBOW_MEADOW_LAYOUT.natureFeatures.flowerCircle;
+    const colours = [0xffd978, 0xf2a3c2, 0x92cfe1, 0xc7a6e2, 0xffefad];
     for (let index = 0; index < 10; index += 1) {
       const angle = (Math.PI * 2 * index) / 10;
-      const flower = scene.add
-        .text(
-          centre.x + Math.cos(angle) * 95,
-          centre.y + Math.sin(angle) * 58,
-          revealed ? '🌼' : '·',
-          {
-            color: '#fff4ac',
-            fontFamily: 'system-ui, sans-serif',
-            fontSize: revealed ? '20px' : '18px',
-          },
-        )
-        .setOrigin(0.5)
-        .setAlpha(revealed ? 0.88 : 0.28)
-        .setDepth(6);
-      objects.push(flower);
+      const flowerX = centre.x + Math.cos(angle) * 95;
+      const flowerY = centre.y + Math.sin(angle) * 58;
+      const alpha = revealed ? 0.94 : 0.34;
+      const depth = worldDepthForY(flowerY, -0.25);
+      const petalColour = colours[index % colours.length];
+      for (const [offsetX, offsetY] of [
+        [-7, 0],
+        [7, 0],
+        [0, -7],
+        [0, 7],
+      ] as const) {
+        const petal = scene.add
+          .ellipse(flowerX + offsetX, flowerY + offsetY, 11, 8, petalColour, alpha)
+          .setDepth(depth)
+          .setName(index === 0 && offsetX === -7 ? 'meadow-depth:flower-circle-physical' : '');
+        objects.push(petal);
+      }
+      objects.push(scene.add.circle(flowerX, flowerY, 4, 0xf1b84b, alpha).setDepth(depth + 0.01));
+    }
+  }
+
+  private addPetalPatchVisual(scene: Phaser.Scene, objects: Phaser.GameObjects.GameObject[]): void {
+    const centre = RAINBOW_MEADOW_LAYOUT.natureFeatures.petalPatch;
+    const colours = [0xf09fbe, 0xffcf73, 0xb8a1df, 0x8bcbd9];
+    for (let index = 0; index < 12; index += 1) {
+      const column = index % 4;
+      const row = Math.floor(index / 4);
+      const flowerX = centre.x - 78 + column * 52 + (row % 2) * 12;
+      const flowerY = centre.y - 42 + row * 42;
+      const colour = colours[index % colours.length];
+      const depth = worldDepthForY(flowerY, -0.18);
+      objects.push(
+        scene.add
+          .ellipse(flowerX - 7, flowerY, 16, 10, colour, 0.88)
+          .setDepth(depth)
+          .setName(index === 0 ? 'meadow-depth:petal-patch-physical' : ''),
+        scene.add.ellipse(flowerX + 7, flowerY, 16, 10, colour, 0.88).setDepth(depth),
+        scene.add.ellipse(flowerX, flowerY - 7, 10, 16, colour, 0.88).setDepth(depth),
+        scene.add.circle(flowerX, flowerY, 4, 0xffe58c, 0.96).setDepth(depth + 0.01),
+      );
+    }
+  }
+
+  private addButterflyParadeVisual(
+    scene: Phaser.Scene,
+    objects: Phaser.GameObjects.GameObject[],
+  ): void {
+    const centre = RAINBOW_MEADOW_LAYOUT.natureFeatures.butterflyParade;
+    const colours = [0xf09fc0, 0x8bcfe0, 0xf0c760, 0xb79bdd];
+    for (let index = 0; index < 5; index += 1) {
+      const butterflyX = centre.x - 80 + index * 40;
+      const butterflyY = centre.y + Math.sin(index * 1.4) * 28;
+      const depth = worldDepthForY(butterflyY, 0.06);
+      const colour = colours[index % colours.length];
+      const leftWing = scene.add
+        .ellipse(butterflyX - 6, butterflyY, 12, 18, colour, 0.9)
+        .setAngle(-24)
+        .setDepth(depth)
+        .setName(index === 0 ? 'meadow-depth:butterfly-parade-physical' : '');
+      const rightWing = scene.add
+        .ellipse(butterflyX + 6, butterflyY, 12, 18, colour, 0.9)
+        .setAngle(24)
+        .setDepth(depth);
+      const body = scene.add
+        .rectangle(butterflyX, butterflyY + 1, 3, 14, 0x675466, 0.9)
+        .setDepth(depth + 0.01);
+      objects.push(leftWing, rightWing, body);
     }
   }
 
   private playPetalBurst(scene: Phaser.Scene, position: Point): void {
-    for (let index = 0; index < 6; index += 1) {
+    const colours = [0xf2a3c2, 0xffd978, 0x92cfe1, 0xc7a6e2];
+    for (let index = 0; index < 8; index += 1) {
       const petal = scene.add
-        .text(position.x, position.y, index % 2 === 0 ? '🌸' : '✦', {
-          color: '#fff2ae',
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '17px',
-        })
-        .setOrigin(0.5)
+        .ellipse(position.x, position.y, 16, 9, colours[index % colours.length], 0.95)
+        .setAngle(index * 37)
         .setDepth(20);
-      const angle = (Math.PI * 2 * index) / 6;
+      const angle = (Math.PI * 2 * index) / 8;
       scene.tweens.add({
         targets: petal,
         x: position.x + Math.cos(angle) * 85,
         y: position.y + Math.sin(angle) * 55 - 20,
+        angle: petal.angle + 120,
         alpha: 0,
         duration: 700,
         onComplete: () => petal.destroy(),

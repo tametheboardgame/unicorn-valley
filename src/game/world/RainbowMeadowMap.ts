@@ -94,16 +94,16 @@ export const RAINBOW_MEADOW_LAYOUT = {
   ],
   natureFeatures: {
     windmill: {
-      position: { x: 1280, y: 275 },
-      storyPosition: { x: 1130, y: 465 },
-      bellPosition: { x: 1280, y: 435 },
-      lookoutPosition: { x: 1395, y: 425 },
+      position: { x: 1190, y: 300 },
+      storyPosition: { x: 930, y: 530 },
+      bellPosition: { x: 1045, y: 405 },
+      lookoutPosition: { x: 1190, y: 470 },
     },
     pond: {
       position: { x: 1570, y: 610 },
       width: 500,
       height: 300,
-      interactionPosition: { x: 1570, y: 710 },
+      interactionPosition: { x: 1570, y: 830 },
       lilyPads: [
         { x: 1430, y: 560 },
         { x: 1540, y: 660 },
@@ -375,8 +375,8 @@ export const RAINBOW_MEADOW_LAYOUT = {
     windmillLookout: {
       id: 'windmill-lookout',
       label: 'Windmill Lookout',
-      position: { x: 1280, y: 275 },
-      approach: { x: 1280, y: 440 },
+      position: { x: 1190, y: 300 },
+      approach: { x: 1190, y: 525 },
     },
   },
   structuralPaths: [
@@ -399,9 +399,9 @@ export const RAINBOW_MEADOW_LAYOUT = {
       id: 'windmill-spur',
       points: [
         { x: 1120, y: 1080 },
-        { x: 1160, y: 850 },
-        { x: 1215, y: 610 },
-        { x: 1280, y: 440 },
+        { x: 1140, y: 850 },
+        { x: 1160, y: 650 },
+        { x: 1190, y: 525 },
       ],
       outerWidth: 76,
       innerWidth: 56,
@@ -411,8 +411,8 @@ export const RAINBOW_MEADOW_LAYOUT = {
       points: [
         { x: 1450, y: 1095 },
         { x: 1495, y: 920 },
-        { x: 1540, y: 790 },
-        { x: 1570, y: 710 },
+        { x: 1540, y: 850 },
+        { x: 1570, y: 830 },
       ],
       outerWidth: 70,
       innerWidth: 50,
@@ -528,8 +528,8 @@ export const RAINBOW_MEADOW_MAP = {
       id: 'collision:windmill-lookout-base',
       x: RAINBOW_MEADOW_LAYOUT.natureFeatures.windmill.position.x,
       y: RAINBOW_MEADOW_LAYOUT.natureFeatures.windmill.position.y,
-      width: 190,
-      height: 255,
+      width: 170,
+      height: 250,
     },
     ...RAINBOW_MEADOW_LAYOUT.crystalBrookGatewayArea.rocks.map((rock, index) => ({
       id: `collision:crystal-brook-gateway-rock:${index}`,
