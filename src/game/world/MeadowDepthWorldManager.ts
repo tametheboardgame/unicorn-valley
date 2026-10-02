@@ -124,7 +124,7 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     label: 'Rainbow Run course poster',
     actionLabel: 'Look',
     actionKind: 'inspect',
-    position: { x: 2860, y: 825 },
+    position: RAINBOW_MEADOW_LAYOUT.raceHubPresentation.runPoster,
     radius: 145,
     icon: '🏁',
   },
@@ -133,7 +133,7 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     label: 'Ribbon Board',
     actionLabel: 'Check record',
     actionKind: 'inspect',
-    position: { x: 2510, y: 1260 },
+    position: RAINBOW_MEADOW_LAYOUT.hubFeatures.ribbonBoard.approach,
     radius: 150,
     icon: '🎀',
   },
@@ -142,7 +142,7 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     label: 'Rainbow Cup board',
     actionLabel: 'Peek',
     actionKind: 'inspect',
-    position: { x: 2840, y: 1465 },
+    position: RAINBOW_MEADOW_LAYOUT.raceHubPresentation.cupBoard.approach,
     radius: 150,
     icon: '🏆',
   },
@@ -547,12 +547,13 @@ export class MeadowDepthWorldManager {
     ribbonCount: number,
   ): void {
     const visibleRibbons = Math.min(6, ribbonCount);
+    const ribbonAnchor = RAINBOW_MEADOW_LAYOUT.raceHubPresentation.ribbonEvidence;
     for (let index = 0; index < visibleRibbons; index += 1) {
       objects.push(
         scene.add
           .text(
-            2445 + (index % 3) * 62,
-            1375 + Math.floor(index / 3) * 42,
+            ribbonAnchor.x + (index % 3) * 62,
+            ribbonAnchor.y + Math.floor(index / 3) * 42,
             index % 2 === 0 ? '🎀' : '🏅',
             {
               fontFamily: 'system-ui, sans-serif',
@@ -564,13 +565,14 @@ export class MeadowDepthWorldManager {
       );
     }
 
+    const cup = RAINBOW_MEADOW_LAYOUT.raceHubPresentation.cupBoard.position;
     const cupBoard = scene.add
-      .rectangle(2840, 1565, 320, 150, 0x8a684c, 0.96)
+      .rectangle(cup.x, cup.y, 320, 150, 0x8a684c, 0.96)
       .setStrokeStyle(7, 0xf1ce77, 0.9)
       .setDepth(9)
       .setName('meadow-depth:rainbow-cup-board');
     const cupTitle = scene.add
-      .text(2840, 1525, '🏆 RAINBOW CUP', {
+      .text(cup.x, cup.y - 40, '🏆 RAINBOW CUP', {
         color: '#fff3ba',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '19px',
@@ -579,7 +581,7 @@ export class MeadowDepthWorldManager {
       .setOrigin(0.5)
       .setDepth(10);
     const slots = scene.add
-      .text(2840, 1580, '●  ○  ○  ○  ○', {
+      .text(cup.x, cup.y + 15, '●  ○  ○  ○  ○', {
         color: ribbonCount > 0 ? '#fff0a8' : '#d8c79d',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '21px',
