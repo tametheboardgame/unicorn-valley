@@ -131,7 +131,14 @@ export function createMarigoldPicnicPresentation(scene: Phaser.Scene, save: Save
   for (let index = 0; index < 8; index += 1) {
     const px = leftPost.x + 28 + index * 56;
     bunting.fillStyle(palette.bunting[index % palette.bunting.length], 0.96);
-    bunting.fillTriangle(px - 15, picnic.bunting.lineY + 1, px + 15, picnic.bunting.lineY + 1, px, picnic.bunting.lineY + 32);
+    bunting.fillTriangle(
+      px - 15,
+      picnic.bunting.lineY + 1,
+      px + 15,
+      picnic.bunting.lineY + 1,
+      px,
+      picnic.bunting.lineY + 32,
+    );
   }
 
   scene.add
