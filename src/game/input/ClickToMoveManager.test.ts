@@ -6,6 +6,7 @@ describe('click-navigation scene classification', () => {
     expect(CLICK_NAVIGATION_SCENE_CLASSIFICATION.supported).toEqual(
       expect.arrayContaining([
         'MoonflowerGladeScene',
+        'RainbowRunEntryScene',
         'CottageInteriorScene',
         'VillageInteriorScene',
         'CrystalGrottoScene',
