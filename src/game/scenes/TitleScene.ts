@@ -36,6 +36,11 @@ interface MenuButton {
   activate: () => void;
 }
 
+interface StoryReaderHandle {
+  mount(): void;
+  destroy(): void;
+}
+
 export class TitleScene extends Phaser.Scene {
   private readonly audio = getVerticalSliceAudio();
   private inputController: InputController | null = null;
@@ -51,6 +56,8 @@ export class TitleScene extends Phaser.Scene {
   private unsupportedSaveVersion = false;
   private storageUnavailable = false;
   private resetArmed = false;
+  private storyReader: StoryReaderHandle | null = null;
+  private storyReaderRequest = 0;
   private continueScene = 'MoonflowerGladeScene';
   private continueStatus = 'Your unicorn is waiting in Moonflower Glade.';
 
@@ -97,6 +104,10 @@ export class TitleScene extends Phaser.Scene {
       this.inputController?.destroy();
       this.inputController = null;
       this.pointerInput = null;
+      this.storyReaderRequest += 1;
+      const reader = this.storyReader;
+      this.storyReader = null;
+      reader?.destroy();
       this.primaryButton = null;
       this.newGameMenuButton = null;
       this.statusText = null;
@@ -239,6 +250,11 @@ export class TitleScene extends Phaser.Scene {
       }
       nextY += MENU_BUTTON_STEP;
 
+      this.createMenuButton(nextY, 'Story House', 'story-house', UI_COLOURS.lavender, () => {
+        this.openStoryHouse();
+      });
+      nextY += MENU_BUTTON_STEP;
+
       if (this.hasCreatedUnicorn) {
         this.createMenuButton(nextY, 'My Unicorn', 'my-unicorn', UI_COLOURS.blush, () => {
           this.audio.playSfx('ui');
@@ -252,13 +268,7 @@ export class TitleScene extends Phaser.Scene {
       void this.settingsPanel?.openSettings();
     });
 
-    const status = this.storageUnavailable
-      ? 'Your adventure is still safe. Check this browser, then try again.'
-      : this.unsupportedSaveVersion
-        ? 'Your save is safe. Refresh to load the newer game version.'
-        : this.hasCreatedUnicorn
-          ? this.continueStatus
-          : 'First, make a unicorn that feels like yours.';
+    const status = this.defaultStatus();
     const statusY = panelTop + 222 + (actionCount - 1) * MENU_BUTTON_STEP;
     const statusSurface = this.add
       .graphics()
@@ -290,10 +300,22 @@ export class TitleScene extends Phaser.Scene {
   }
 
   private getMenuActionCount(): number {
-    if (this.storageUnavailable || this.unsupportedSaveVersion || !this.hasCreatedUnicorn) {
+    if (this.storageUnavailable || this.unsupportedSaveVersion) {
       return 2;
     }
-    return 4;
+    return this.hasCreatedUnicorn ? 5 : 3;
+  }
+
+  private defaultStatus(): string {
+    if (this.storageUnavailable) {
+      return 'Your adventure is still safe. Check this browser, then try again.';
+    }
+    if (this.unsupportedSaveVersion) {
+      return 'Your save is safe. Refresh to load the newer game version.';
+    }
+    return this.hasCreatedUnicorn
+      ? this.continueStatus
+      : 'Start an adventure, or open Story House and read straight away.';
   }
 
   private createMenuButton(
@@ -419,6 +441,10 @@ export class TitleScene extends Phaser.Scene {
   }
 
   private activateSelectedMenuItem(): void {
+    if (this.storyReader || this.starting) {
+      return;
+    }
+
     const selected = this.menuButtons[this.selectedMenuIndex];
     if (selected?.enabled) {
       selected.activate();
@@ -513,6 +539,51 @@ export class TitleScene extends Phaser.Scene {
 
     this.setStarting('Welcome back…');
     this.time.delayedCall(120, () => this.scene.start(this.continueScene));
+  }
+
+  private openStoryHouse(): void {
+    if (
+      this.starting ||
+      this.storyReader ||
+      this.storageUnavailable ||
+      this.unsupportedSaveVersion
+    ) {
+      return;
+    }
+
+    const request = ++this.storyReaderRequest;
+    this.statusText?.setText('Opening Story House…');
+    this.setMenuEnabled(false);
+
+    void import('../storyLibrary/StoryReaderOverlay')
+      .then(({ StoryReaderOverlay }) => {
+        if (request !== this.storyReaderRequest || !this.sys.isActive()) {
+          return;
+        }
+
+        let reader: StoryReaderHandle;
+        reader = new StoryReaderOverlay({
+          onClose: () => {
+            if (this.storyReader === reader) {
+              this.storyReader = null;
+            }
+            if (this.sys.isActive() && !this.starting) {
+              this.setMenuEnabled(true);
+              this.statusText?.setText(this.defaultStatus());
+            }
+          },
+        });
+        this.storyReader = reader;
+        reader.mount();
+      })
+      .catch(() => {
+        if (request !== this.storyReaderRequest || !this.sys.isActive()) {
+          return;
+        }
+        this.storyReader = null;
+        this.setMenuEnabled(true);
+        this.statusText?.setText('Story House could not open just now. Please try again.');
+      });
   }
 
   private refreshForNewerSave(): void {

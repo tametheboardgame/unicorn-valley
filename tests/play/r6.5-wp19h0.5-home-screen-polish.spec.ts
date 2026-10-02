@@ -121,11 +121,14 @@ test.describe('R6.5-WP19H0.5 home screen polish', () => {
     const current = await snapshot(page);
     expect(titleObject(current, 'title-menu-panel')).toBeDefined();
     expect(titleObject(current, 'title-menu-new-game')?.interactive).toBe(true);
+    expect(titleObject(current, 'title-menu-story-house')?.interactive).toBe(true);
     expect(titleObject(current, 'title-menu-settings')?.interactive).toBe(true);
     expect(
-      actionSpan(current, ['title-menu-new-game', 'title-menu-settings']),
-    ).toBeGreaterThanOrEqual(70);
-    expect(actionSpan(current, ['title-menu-new-game', 'title-menu-settings'])).toBeLessThan(100);
+      actionSpan(current, ['title-menu-new-game', 'title-menu-story-house', 'title-menu-settings']),
+    ).toBeGreaterThanOrEqual(140);
+    expect(
+      actionSpan(current, ['title-menu-new-game', 'title-menu-story-house', 'title-menu-settings']),
+    ).toBeLessThan(160);
     expect(titleObject(current, 'title-menu-continue')).toBeUndefined();
     expect(titleObject(current, 'title-menu-my-unicorn')).toBeUndefined();
     expect(titleObject(current, 'title-settings-panel')).toBeUndefined();
@@ -153,11 +156,12 @@ test.describe('R6.5-WP19H0.5 home screen polish', () => {
     const actionNames = [
       'title-menu-continue',
       'title-menu-new-game',
+      'title-menu-story-house',
       'title-menu-my-unicorn',
       'title-menu-settings',
     ] as const;
-    expect(actionSpan(current, actionNames)).toBeGreaterThanOrEqual(210);
-    expect(actionSpan(current, actionNames)).toBeLessThan(230);
+    expect(actionSpan(current, actionNames)).toBeGreaterThanOrEqual(280);
+    expect(actionSpan(current, actionNames)).toBeLessThan(300);
     for (const name of actionNames) {
       expect(titleObject(current, name)?.interactive, `${name} interactive`).toBe(true);
     }
@@ -170,6 +174,34 @@ test.describe('R6.5-WP19H0.5 home screen polish', () => {
       path: test.info().outputPath('wp19h0.5-home-desktop-returning.png'),
       fullPage: true,
     });
+  });
+
+  test('fresh player can open Story House directly and close back to the title menu', async ({
+    page,
+  }) => {
+    await page.addInitScript(() => window.localStorage.clear());
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await openTitle(page);
+
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
+    const reader = page.locator('.story-reader-overlay');
+    await expect(reader).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Story House Library' })).toBeVisible();
+
+    const current = await snapshot(page);
+    expect(current.activeScenes).toContain('TitleScene');
+    expect(current.activeScenes).not.toContain('MoonflowerGladeScene');
+    expect(current.activeScenes).not.toContain('SunbeamVillageScene');
+    expect(current.activeScenes).not.toContain('VillageInteriorScene');
+
+    await page.getByRole('button', { name: 'Close Story House Library' }).click();
+    await expect(reader).toHaveCount(0);
+
+    const restored = await snapshot(page);
+    expect(titleObject(restored, 'title-menu-story-house')?.interactive).toBe(true);
+    expect(restored.activeScenes).toContain('TitleScene');
   });
 
   test.describe('touch portrait', () => {
@@ -196,7 +228,11 @@ test.describe('R6.5-WP19H0.5 home screen polish', () => {
       expect(cardBounds?.width ?? 999).toBeLessThanOrEqual(490);
       expect((cardBounds?.y ?? 0) + (cardBounds?.height ?? 0)).toBeLessThanOrEqual(1024);
 
-      for (const action of ['title-menu-new-game', 'title-menu-settings']) {
+      for (const action of [
+        'title-menu-new-game',
+        'title-menu-story-house',
+        'title-menu-settings',
+      ]) {
         const button = page.locator(`[data-title-action="${action}"]`);
         const bounds = await button.boundingBox();
         expect(bounds).not.toBeNull();
@@ -234,6 +270,7 @@ test.describe('R6.5-WP19H0.5 home screen polish', () => {
       for (const action of [
         'title-menu-continue',
         'title-menu-new-game',
+        'title-menu-story-house',
         'title-menu-my-unicorn',
         'title-menu-settings',
       ]) {
