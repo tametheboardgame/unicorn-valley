@@ -14,10 +14,7 @@ import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegi
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { saveLocationCheckpoint } from '../save/saveLocationCheckpoint';
 import type { SaveGame } from '../save/saveSchema';
-import {
-  RAINBOW_RUN_HUB_LAYOUT,
-  RAINBOW_RUN_HUB_LOCATION_ID,
-} from '../world/RainbowRunHubMap';
+import { RAINBOW_RUN_HUB_LAYOUT, RAINBOW_RUN_HUB_LOCATION_ID } from '../world/RainbowRunHubMap';
 import {
   setStarlightBeachPlayerSpawn,
   STARLIGHT_BEACH_LOCATION_ID,
@@ -29,10 +26,7 @@ import {
 import { setWorldArrivalFacing } from '../world/WorldArrivalState';
 import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
 import { getActiveRaceCourse, selectRaceCourse } from './RaceCourse';
-import {
-  setRaceReturnScene,
-  type RaceReturnSceneKey,
-} from './RaceReturnContext';
+import { setRaceReturnScene, type RaceReturnSceneKey } from './RaceReturnContext';
 import {
   createR65RacePresentation,
   getR65RaceThemeIcon,
