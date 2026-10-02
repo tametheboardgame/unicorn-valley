@@ -461,11 +461,12 @@ function distanceToSegment(point: MapPoint, start: MapPoint, end: MapPoint): num
 }
 
 export const CRYSTAL_BROOK_STEPPING_CORRIDOR = {
-  // Best-fit straight line through the six stepping stones, extended onto both banks.
-  // 44px reaches just beyond the outer stone edges while keeping adjacent deep water blocked.
-  start: { x: 2710, y: 1227 },
-  end: { x: 3310, y: 1039 },
-  halfWidth: 44,
+  // Straight passable band through the stepping-stone crossing, extended onto both banks.
+  // The 68px half-width follows the human-marked upper/lower boundaries rather than
+  // treating the much narrower stone-centre line as the movement corridor.
+  start: { x: 2670, y: 1240 },
+  end: { x: 3370, y: 1048 },
+  halfWidth: 68,
 } as const;
 
 export function isCrystalBrookDeepWaterBlocked(point: MapPoint): boolean {
