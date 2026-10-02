@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "12daFA_AMV0aCVIgaVAEgr6fcveIj9_RR"
+  },
+  "expectedSourceName": "thumbelina-flower-country-v01.png",
+  "destination": "public/stories/thumbelina/illustrations/generated/flower-country.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1000,
+    "quality": 88
+  },
+  "revision": 1
+}

@@ -53,59 +53,23 @@
           "source": "Unicorn Valley Story House edition"
         },
         "originalPublicationYear": 1835,
-        "curatorNotes": "Split into six short reader sections so the longer journey has clear scene breaks and reliable resume points."
+        "curatorNotes": "Split into six short reader sections so the longer journey has clear scene breaks and reliable resume points. Existing historical artwork is preserved as Classic Illustrations; R6.5-WP19SH1.4.4 adds a separate generated Modern Illustrations set focused on Thumbelina's scale continuity across changing environments."
       },
       "chapters": [
         {
           "id": "the-girl-in-the-flower",
           "title": "The Girl in the Flower",
-          "path": "chapters/01.md",
-          "illustrations": [
-            {
-              "id": "pedersen-thumbelina",
-              "blockId": "the-flower-opens",
-              "path": "illustrations/pedersen-thumbelina.webp",
-              "alt": "Vilhelm Pedersen's historic illustration of Thumbelina.",
-              "placement": "full-width",
-              "width": 500,
-              "height": 634,
-              "caption": "Illustration by Vilhelm Pedersen."
-            }
-          ]
+          "path": "chapters/01.md"
         },
         {
           "id": "the-river-escape",
           "title": "The River Escape",
-          "path": "chapters/02.md",
-          "illustrations": [
-            {
-              "id": "boyle-water-lily",
-              "blockId": "alone-on-the-river",
-              "path": "illustrations/water-lily.webp",
-              "alt": "Eleanor Vere Boyle's 1872 illustration of Thumbelina on a leaf in the stream.",
-              "placement": "full-width",
-              "width": 1056,
-              "height": 1382,
-              "caption": "Illustration by Eleanor Vere Boyle, 1872."
-            }
-          ]
+          "path": "chapters/02.md"
         },
         {
           "id": "the-beetle-and-the-seasons",
           "title": "The Beetle and the Seasons",
-          "path": "chapters/03.md",
-          "illustrations": [
-            {
-              "id": "bertall-beetle",
-              "blockId": "the-beetle",
-              "path": "illustrations/beetle.webp",
-              "alt": "Bertall's historic illustration from Thumbelina showing the beetle episode.",
-              "placement": "inline",
-              "width": 648,
-              "height": 648,
-              "caption": "Historic illustration by Bertall."
-            }
-          ]
+          "path": "chapters/03.md"
         },
         {
           "id": "the-field-mouse-and-the-mole",
@@ -120,17 +84,181 @@
         {
           "id": "south-with-the-swallow",
           "title": "South with the Swallow",
-          "path": "chapters/06.md",
-          "illustrations": [
+          "path": "chapters/06.md"
+        }
+      ],
+      "defaultIllustrationSetId": "modern",
+      "illustrationSets": [
+        {
+          "id": "classic",
+          "label": "Classic Illustrations",
+          "rights": {
+            "status": "public-domain",
+            "source": "Historical Thumbelina illustrations by Vilhelm Pedersen, Eleanor Vere Boyle and Bertall",
+            "sourceUrl": "https://commons.wikimedia.org/wiki/Category:Thumbelina",
+            "notes": "The selected historical source files are identified as public domain on Wikimedia Commons."
+          },
+          "chapters": [
             {
-              "id": "boyle-flight-south",
-              "blockId": "the-warm-country",
-              "path": "illustrations/flight-south.webp",
-              "alt": "Eleanor Vere Boyle's 1872 illustration of Thumbelina travelling south on the swallow.",
-              "placement": "full-width",
-              "width": 900,
-              "height": 1131,
-              "caption": "Illustration by Eleanor Vere Boyle, 1872."
+              "chapterId": "the-girl-in-the-flower",
+              "illustrations": [
+                {
+                  "id": "pedersen-thumbelina",
+                  "blockId": "the-flower-opens",
+                  "path": "illustrations/pedersen-thumbelina.webp",
+                  "alt": "Vilhelm Pedersen's historic illustration of Thumbelina.",
+                  "placement": "full-width",
+                  "width": 500,
+                  "height": 634,
+                  "caption": "Illustration by Vilhelm Pedersen."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-river-escape",
+              "illustrations": [
+                {
+                  "id": "boyle-water-lily",
+                  "blockId": "alone-on-the-river",
+                  "path": "illustrations/water-lily.webp",
+                  "alt": "Eleanor Vere Boyle's 1872 illustration of Thumbelina on a leaf in the stream.",
+                  "placement": "full-width",
+                  "width": 1056,
+                  "height": 1382,
+                  "caption": "Illustration by Eleanor Vere Boyle, 1872."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-beetle-and-the-seasons",
+              "illustrations": [
+                {
+                  "id": "bertall-beetle",
+                  "blockId": "the-beetle",
+                  "path": "illustrations/beetle.webp",
+                  "alt": "Bertall's historic illustration from Thumbelina showing the beetle episode.",
+                  "placement": "inline",
+                  "width": 648,
+                  "height": 648,
+                  "caption": "Historic illustration by Bertall."
+                }
+              ]
+            },
+            {
+              "chapterId": "south-with-the-swallow",
+              "illustrations": [
+                {
+                  "id": "boyle-flight-south",
+                  "blockId": "the-warm-country",
+                  "path": "illustrations/flight-south.webp",
+                  "alt": "Eleanor Vere Boyle's 1872 illustration of Thumbelina travelling south on the swallow.",
+                  "placement": "full-width",
+                  "width": 900,
+                  "height": 1131,
+                  "caption": "Illustration by Eleanor Vere Boyle, 1872."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "modern",
+          "label": "Modern Illustrations",
+          "rights": {
+            "status": "original",
+            "source": "ChatGPT-generated artwork created for the Unicorn Valley Story House modern illustration set",
+            "notes": "Generated for R6.5-WP19SH1.4.4 and materialised through the approved Google Drive → WIF → GitHub Actions pipeline."
+          },
+          "chapters": [
+            {
+              "chapterId": "the-girl-in-the-flower",
+              "illustrations": [
+                {
+                  "id": "modern-girl-in-the-flower",
+                  "blockId": "the-flower-opens",
+                  "path": "illustrations/generated/girl-in-the-flower.webp",
+                  "alt": "Tiny Thumbelina sits inside a huge pink flower on a sunny windowsill beside her walnut-shell bed.",
+                  "placement": "full-width",
+                  "width": 1333,
+                  "height": 1000,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-river-escape",
+              "illustrations": [
+                {
+                  "id": "modern-river-escape",
+                  "blockId": "alone-on-the-river",
+                  "path": "illustrations/generated/river-escape.webp",
+                  "alt": "Thumbelina rides a giant green leaf down a sparkling stream while small fish swim beside her and a butterfly flutters overhead.",
+                  "placement": "full-width",
+                  "width": 1333,
+                  "height": 1000,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-beetle-and-the-seasons",
+              "illustrations": [
+                {
+                  "id": "modern-winter-shelter",
+                  "blockId": "winter-arrives",
+                  "path": "illustrations/generated/winter-shelter.webp",
+                  "alt": "Tiny Thumbelina reaches a warmly lit field-mouse doorway among enormous snow-covered corn stalks.",
+                  "placement": "full-width",
+                  "width": 1333,
+                  "height": 1000,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-field-mouse-and-the-mole",
+              "illustrations": [
+                {
+                  "id": "modern-swallow-tunnel",
+                  "blockId": "the-cold-bird",
+                  "path": "illustrations/generated/swallow-tunnel.webp",
+                  "alt": "Thumbelina tends an enormous weak swallow in an earthen tunnel, arranging moss and leaves around the bird.",
+                  "placement": "full-width",
+                  "width": 1333,
+                  "height": 1000,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-swallow",
+              "illustrations": [
+                {
+                  "id": "modern-choosing-the-sky",
+                  "blockId": "goodbye-to-the-sun",
+                  "path": "illustrations/generated/choosing-the-sky.webp",
+                  "alt": "Thumbelina stands beside the returned swallow in an autumn field beneath a huge glowing sky, ready to leave with him.",
+                  "placement": "full-width",
+                  "width": 1333,
+                  "height": 1000,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "south-with-the-swallow",
+              "illustrations": [
+                {
+                  "id": "modern-flower-country",
+                  "blockId": "the-flower-people",
+                  "path": "illustrations/generated/flower-country.webp",
+                  "alt": "Thumbelina is welcomed by tiny flower people among enormous blossoms and pale marble ruins while her swallow friend watches nearby.",
+                  "placement": "full-width",
+                  "width": 1333,
+                  "height": 1000,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
             }
           ]
         }
@@ -160,42 +288,18 @@
           "notes": "Story House pagination changes presentation only; the source wording remains complete."
         },
         "originalPublicationYear": 1835,
-        "curatorNotes": "Complete public-domain English text reflowed into 13 reader pages at paragraph boundaries, with four historical illustrations anchored to matching scenes."
+        "curatorNotes": "Complete public-domain English text reflowed into 13 reader pages at paragraph boundaries. Existing historical artwork remains the Classic Illustrations set; the R6.5-WP19SH1.4.4 generated set can be selected independently as Modern Illustrations against matching classic passages."
       },
       "chapters": [
         {
           "id": "page-01",
           "title": "Thumbelina",
-          "path": "editions/full-classic/pages/page-01.md",
-          "illustrations": [
-            {
-              "id": "full-pedersen-thumbelina",
-              "path": "illustrations/pedersen-thumbelina.webp",
-              "alt": "Vilhelm Pedersen's historic illustration of Thumbelina.",
-              "placement": "full-width",
-              "width": 500,
-              "height": 634,
-              "caption": "Illustration by Vilhelm Pedersen.",
-              "blockId": "p01-b04"
-            }
-          ]
+          "path": "editions/full-classic/pages/page-01.md"
         },
         {
           "id": "page-02",
           "title": "Thumbelina (continued)",
-          "path": "editions/full-classic/pages/page-02.md",
-          "illustrations": [
-            {
-              "id": "full-boyle-water-lily",
-              "path": "illustrations/water-lily.webp",
-              "alt": "Eleanor Vere Boyle's 1872 illustration of Thumbelina on a leaf in the stream.",
-              "placement": "full-width",
-              "width": 1056,
-              "height": 1382,
-              "caption": "Illustration by Eleanor Vere Boyle, 1872.",
-              "blockId": "p02-b04"
-            }
-          ]
+          "path": "editions/full-classic/pages/page-02.md"
         },
         {
           "id": "page-03",
@@ -205,19 +309,7 @@
         {
           "id": "page-04",
           "title": "Thumbelina (continued)",
-          "path": "editions/full-classic/pages/page-04.md",
-          "illustrations": [
-            {
-              "id": "full-bertall-beetle",
-              "path": "illustrations/beetle.webp",
-              "alt": "Bertall's historic illustration from Thumbelina showing the beetle episode.",
-              "placement": "inline",
-              "width": 648,
-              "height": 648,
-              "caption": "Historic illustration by Bertall.",
-              "blockId": "p04-b02"
-            }
-          ]
+          "path": "editions/full-classic/pages/page-04.md"
         },
         {
           "id": "page-05",
@@ -252,19 +344,7 @@
         {
           "id": "page-11",
           "title": "Thumbelina (continued)",
-          "path": "editions/full-classic/pages/page-11.md",
-          "illustrations": [
-            {
-              "id": "full-boyle-flight-south",
-              "path": "illustrations/flight-south.webp",
-              "alt": "Eleanor Vere Boyle's 1872 illustration of Thumbelina travelling south on the swallow.",
-              "placement": "full-width",
-              "width": 900,
-              "height": 1131,
-              "caption": "Illustration by Eleanor Vere Boyle, 1872.",
-              "blockId": "p11-b03"
-            }
-          ]
+          "path": "editions/full-classic/pages/page-11.md"
         },
         {
           "id": "page-12",
@@ -275,6 +355,182 @@
           "id": "page-13",
           "title": "Thumbelina (continued)",
           "path": "editions/full-classic/pages/page-13.md"
+        }
+      ],
+      "defaultIllustrationSetId": "classic",
+      "illustrationSets": [
+        {
+          "id": "classic",
+          "label": "Classic Illustrations",
+          "rights": {
+            "status": "public-domain",
+            "source": "Historical Thumbelina illustrations by Vilhelm Pedersen, Eleanor Vere Boyle and Bertall",
+            "sourceUrl": "https://commons.wikimedia.org/wiki/Category:Thumbelina",
+            "notes": "The four previously verified historical Story House illustrations are reused beside matching passages in the complete classic text."
+          },
+          "chapters": [
+            {
+              "chapterId": "page-01",
+              "illustrations": [
+                {
+                  "id": "full-pedersen-thumbelina",
+                  "path": "illustrations/pedersen-thumbelina.webp",
+                  "alt": "Vilhelm Pedersen's historic illustration of Thumbelina.",
+                  "placement": "full-width",
+                  "width": 500,
+                  "height": 634,
+                  "caption": "Illustration by Vilhelm Pedersen.",
+                  "blockId": "p01-b04"
+                }
+              ]
+            },
+            {
+              "chapterId": "page-02",
+              "illustrations": [
+                {
+                  "id": "full-boyle-water-lily",
+                  "path": "illustrations/water-lily.webp",
+                  "alt": "Eleanor Vere Boyle's 1872 illustration of Thumbelina on a leaf in the stream.",
+                  "placement": "full-width",
+                  "width": 1056,
+                  "height": 1382,
+                  "caption": "Illustration by Eleanor Vere Boyle, 1872.",
+                  "blockId": "p02-b04"
+                }
+              ]
+            },
+            {
+              "chapterId": "page-04",
+              "illustrations": [
+                {
+                  "id": "full-bertall-beetle",
+                  "path": "illustrations/beetle.webp",
+                  "alt": "Bertall's historic illustration from Thumbelina showing the beetle episode.",
+                  "placement": "inline",
+                  "width": 648,
+                  "height": 648,
+                  "caption": "Historic illustration by Bertall.",
+                  "blockId": "p04-b02"
+                }
+              ]
+            },
+            {
+              "chapterId": "page-11",
+              "illustrations": [
+                {
+                  "id": "full-boyle-flight-south",
+                  "path": "illustrations/flight-south.webp",
+                  "alt": "Eleanor Vere Boyle's 1872 illustration of Thumbelina travelling south on the swallow.",
+                  "placement": "full-width",
+                  "width": 900,
+                  "height": 1131,
+                  "caption": "Illustration by Eleanor Vere Boyle, 1872.",
+                  "blockId": "p11-b03"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "modern",
+          "label": "Modern Illustrations",
+          "rights": {
+            "status": "original",
+            "source": "ChatGPT-generated artwork created for the Unicorn Valley Story House modern illustration set",
+            "notes": "The same R6.5-WP19SH1.4.4 generated artwork is reused against matching Full Classic Text passages; only the semantic page/block mapping differs."
+          },
+          "chapters": [
+            {
+              "chapterId": "page-01",
+              "illustrations": [
+                {
+                  "id": "full-modern-girl-in-the-flower",
+                  "blockId": "p01-b04",
+                  "path": "illustrations/generated/girl-in-the-flower.webp",
+                  "alt": "Tiny Thumbelina sits inside a huge pink flower beside her walnut-shell cradle on the windowsill.",
+                  "placement": "full-width",
+                  "width": 1333,
+                  "height": 1000,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-03",
+              "illustrations": [
+                {
+                  "id": "full-modern-river-escape",
+                  "blockId": "p03-b02",
+                  "path": "illustrations/generated/river-escape.webp",
+                  "alt": "Thumbelina escapes down the stream on a broad green leaf after the fish free its stalk.",
+                  "placement": "full-width",
+                  "width": 1333,
+                  "height": 1000,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-06",
+              "illustrations": [
+                {
+                  "id": "full-modern-winter-shelter",
+                  "blockId": "p06-b01",
+                  "path": "illustrations/generated/winter-shelter.webp",
+                  "alt": "Thumbelina finds the field-mouse's warm doorway among giant frozen corn stalks and snow.",
+                  "placement": "full-width",
+                  "width": 1333,
+                  "height": 1000,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-08",
+              "illustrations": [
+                {
+                  "id": "full-modern-swallow-tunnel",
+                  "blockId": "p08-b03",
+                  "path": "illustrations/generated/swallow-tunnel.webp",
+                  "alt": "Thumbelina discovers that the enormous swallow in the dark tunnel is still alive and tends him gently.",
+                  "placement": "full-width",
+                  "width": 1333,
+                  "height": 1000,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-11",
+              "illustrations": [
+                {
+                  "id": "full-modern-choosing-the-sky",
+                  "blockId": "p11-b03",
+                  "path": "illustrations/generated/choosing-the-sky.webp",
+                  "alt": "The swallow returns beneath the autumn sky and invites tiny Thumbelina to travel south with him.",
+                  "placement": "full-width",
+                  "width": 1333,
+                  "height": 1000,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-12",
+              "illustrations": [
+                {
+                  "id": "full-modern-flower-country",
+                  "blockId": "p12-b03",
+                  "path": "illustrations/generated/flower-country.webp",
+                  "alt": "Thumbelina arrives among flower-sized people and giant blossoms beside pale marble ruins in the warm country.",
+                  "placement": "full-width",
+                  "width": 1333,
+                  "height": 1000,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            }
+          ]
         }
       ]
     }
