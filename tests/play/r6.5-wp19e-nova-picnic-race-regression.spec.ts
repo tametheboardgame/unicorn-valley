@@ -290,12 +290,7 @@ test('Marigold and Nova dialogue keep accepted sizing and Meet Nova works when N
   );
   expect(picnicNova).toBeTruthy();
 
-  await positionPlayer(
-    page,
-    'RainbowMeadowScene',
-    (picnicNova?.x ?? 0) - 110,
-    picnicNova?.y ?? 0,
-  );
+  await positionPlayer(page, 'RainbowMeadowScene', (picnicNova?.x ?? 0) - 110, picnicNova?.y ?? 0);
   await waitForTalkTarget(page, 'RainbowMeadowScene', 'Nova');
   await page.keyboard.press('KeyE');
   await waitForVisibleObject(page, 'RainbowMeadowScene', 'dialogue-production-panel');
