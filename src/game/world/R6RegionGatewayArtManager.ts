@@ -499,13 +499,7 @@ function createMeadowCrystalBrookGateway(scene: Phaser.Scene): void {
     scene.add.graphics().setDepth(2.53),
     'meadow-crystal-brook:deep-outlet-channel',
   );
-  drawRoundedStrokeInto(
-    deepChannel,
-    outletStream.points,
-    outletStream.deepWidth,
-    0x3f97a6,
-    0.82,
-  );
+  drawRoundedStrokeInto(deepChannel, outletStream.points, outletStream.deepWidth, 0x3f97a6, 0.82);
 
   const waterGlints = name(
     scene.add.graphics().setDepth(2.61),
