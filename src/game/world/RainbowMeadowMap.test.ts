@@ -57,10 +57,19 @@ describe('Rainbow Meadow map', () => {
       expect(isPointBlocked(point, RAINBOW_MEADOW_MAP.colliders, PLAYER_CLEARANCE)).toBe(false);
     }
 
-    for (const blocker of area.deepWaterBlockers) {
-      expect(isPointBlocked({ x: blocker.x, y: blocker.y }, RAINBOW_MEADOW_MAP.colliders)).toBe(
-        true,
-      );
+    const deepWaterColliders = RAINBOW_MEADOW_MAP.colliders.filter(({ id }) =>
+      id.startsWith('collision:crystal-brook-deep-water:'),
+    );
+    expect(deepWaterColliders.length).toBeGreaterThan(50);
+
+    for (const point of [
+      { x: 3000, y: 1200 },
+      { x: 3150, y: 1190 },
+      { x: 3020, y: 1340 },
+      { x: 3220, y: 1270 },
+      { x: 2870, y: 1320 },
+    ]) {
+      expect(isPointBlocked(point, deepWaterColliders, 34)).toBe(true);
     }
   });
 
