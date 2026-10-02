@@ -53,7 +53,7 @@
           "source": "Unicorn Valley Story House edition"
         },
         "originalPublicationYear": 1827,
-        "curatorNotes": "Split into five short reader sections. The original tale's harsher ending is softened for the target reader while preserving the central story and magical reveal."
+        "curatorNotes": "Split into five short reader sections. The original tale's harsher ending is softened for the target reader while preserving the central story and magical reveal. Existing Otto Ubbelohde artwork is preserved as Classic Illustrations; R6.5-WP19SH1.4.1 adds a separate generated Modern Illustrations set."
       },
       "chapters": [
         {
@@ -64,68 +64,166 @@
         {
           "id": "the-winter-visitor",
           "title": "The Winter Visitor",
-          "path": "chapters/02.md",
-          "illustrations": [
-            {
-              "id": "ubbelohde-bear-at-cottage",
-              "blockId": "a-knock-at-the-door",
-              "path": "illustrations/bear-at-cottage.webp",
-              "alt": "Otto Ubbelohde's illustration of the sisters meeting the bear.",
-              "placement": "full-width",
-              "width": 640,
-              "height": 345,
-              "caption": "Illustration by Otto Ubbelohde, 1909."
-            }
-          ]
+          "path": "chapters/02.md"
         },
         {
           "id": "the-dwarf-in-trouble",
           "title": "The Dwarf in Trouble",
-          "path": "chapters/03.md",
-          "illustrations": [
-            {
-              "id": "ubbelohde-dwarf",
-              "blockId": "the-caught-beard",
-              "path": "illustrations/dwarf.webp",
-              "alt": "Otto Ubbelohde's illustration of Snow-White and Rose-Red finding the dwarf in trouble.",
-              "placement": "full-width",
-              "width": 518,
-              "height": 400,
-              "caption": "Illustration by Otto Ubbelohde, 1909."
-            }
-          ]
+          "path": "chapters/03.md"
         },
         {
           "id": "the-forest-secret",
           "title": "The Forest Secret",
-          "path": "chapters/04.md",
-          "illustrations": [
-            {
-              "id": "ubbelohde-forest",
-              "blockId": "again-and-again",
-              "path": "illustrations/forest.webp",
-              "alt": "Otto Ubbelohde's illustration from Snow-White and Rose-Red.",
-              "placement": "inline",
-              "width": 325,
-              "height": 400,
-              "caption": "Illustration by Otto Ubbelohde, 1909."
-            }
-          ]
+          "path": "chapters/04.md"
         },
         {
           "id": "the-bears-secret",
           "title": "The Bear's Secret",
-          "path": "chapters/05.md",
-          "illustrations": [
+          "path": "chapters/05.md"
+        }
+      ],
+      "defaultIllustrationSetId": "modern",
+      "illustrationSets": [
+        {
+          "id": "classic",
+          "label": "Classic Illustrations",
+          "rights": {
+            "status": "public-domain",
+            "source": "Otto Ubbelohde illustrations for Snow-White and Rose-Red, 1909",
+            "sourceUrl": "https://commons.wikimedia.org/wiki/Category:Snow_White_and_Rose_Red",
+            "notes": "The selected Ubbelohde source files are identified as public domain on Wikimedia Commons. Ubbelohde died in 1922."
+          },
+          "chapters": [
             {
-              "id": "ubbelohde-ending",
-              "blockId": "the-spell-breaks",
-              "path": "illustrations/ending.webp",
-              "alt": "Otto Ubbelohde's illustration for the ending of Snow-White and Rose-Red.",
-              "placement": "full-width",
-              "width": 418,
-              "height": 400,
-              "caption": "Illustration by Otto Ubbelohde, 1909."
+              "chapterId": "the-winter-visitor",
+              "illustrations": [
+                {
+                  "id": "ubbelohde-bear-at-cottage",
+                  "blockId": "a-knock-at-the-door",
+                  "path": "illustrations/bear-at-cottage.webp",
+                  "alt": "Otto Ubbelohde's illustration of the sisters meeting the bear.",
+                  "placement": "full-width",
+                  "width": 640,
+                  "height": 345,
+                  "caption": "Illustration by Otto Ubbelohde, 1909."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-dwarf-in-trouble",
+              "illustrations": [
+                {
+                  "id": "ubbelohde-dwarf",
+                  "blockId": "the-caught-beard",
+                  "path": "illustrations/dwarf.webp",
+                  "alt": "Otto Ubbelohde's illustration of Snow-White and Rose-Red finding the dwarf in trouble.",
+                  "placement": "full-width",
+                  "width": 518,
+                  "height": 400,
+                  "caption": "Illustration by Otto Ubbelohde, 1909."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-forest-secret",
+              "illustrations": [
+                {
+                  "id": "ubbelohde-forest",
+                  "blockId": "again-and-again",
+                  "path": "illustrations/forest.webp",
+                  "alt": "Otto Ubbelohde's illustration from Snow-White and Rose-Red.",
+                  "placement": "inline",
+                  "width": 325,
+                  "height": 400,
+                  "caption": "Illustration by Otto Ubbelohde, 1909."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-bears-secret",
+              "illustrations": [
+                {
+                  "id": "ubbelohde-ending",
+                  "blockId": "the-spell-breaks",
+                  "path": "illustrations/ending.webp",
+                  "alt": "Otto Ubbelohde's illustration for the ending of Snow-White and Rose-Red.",
+                  "placement": "full-width",
+                  "width": 418,
+                  "height": 400,
+                  "caption": "Illustration by Otto Ubbelohde, 1909."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "modern",
+          "label": "Modern Illustrations",
+          "rights": {
+            "status": "original",
+            "source": "ChatGPT-generated artwork created for the Unicorn Valley Story House modern illustration set",
+            "notes": "Generated for R6.5-WP19SH1.4.1 and materialised through the approved Google Drive → WIF → GitHub Actions pipeline."
+          },
+          "chapters": [
+            {
+              "chapterId": "the-winter-visitor",
+              "illustrations": [
+                {
+                  "id": "modern-bear-at-cottage",
+                  "blockId": "a-knock-at-the-door",
+                  "path": "illustrations/generated/bear-at-cottage.webp",
+                  "alt": "Rose-Red opens the snowy cottage door to a huge but gentle black bear while Snow-White and their mother look on from the warm hearth.",
+                  "placement": "full-width",
+                  "width": 760,
+                  "height": 504,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-dwarf-in-trouble",
+              "illustrations": [
+                {
+                  "id": "modern-dwarf-rescue",
+                  "blockId": "the-caught-beard",
+                  "path": "illustrations/generated/dwarf-rescue.webp",
+                  "alt": "Snow-White carefully cuts the end of the trapped dwarf's long white beard from a split log while Rose-Red helps nearby.",
+                  "placement": "full-width",
+                  "width": 760,
+                  "height": 504,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-forest-secret",
+              "illustrations": [
+                {
+                  "id": "modern-treasure-clearing",
+                  "blockId": "following-the-trail",
+                  "path": "illustrations/generated/treasure-clearing.webp",
+                  "alt": "Snow-White and Rose-Red watch a dwarf spread stolen jewels across a rocky forest clearing as their familiar black bear steps from the trees.",
+                  "placement": "full-width",
+                  "width": 760,
+                  "height": 504,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-bears-secret",
+              "illustrations": [
+                {
+                  "id": "modern-spell-breaks",
+                  "blockId": "the-spell-breaks",
+                  "path": "illustrations/generated/spell-breaks.webp",
+                  "alt": "Golden light lifts away the bear's dark coat to reveal a young prince while Snow-White and Rose-Red stare in astonishment.",
+                  "placement": "full-width",
+                  "width": 760,
+                  "height": 504,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
             }
           ]
         }
@@ -155,7 +253,7 @@
           "notes": "Story House pagination changes presentation only; the source wording remains complete."
         },
         "originalPublicationYear": 1827,
-        "curatorNotes": "Complete public-domain English text reflowed into 9 reader pages at paragraph boundaries, with four historical illustrations anchored to matching scenes."
+        "curatorNotes": "Complete public-domain English text reflowed into 9 reader pages at paragraph boundaries. Existing Otto Ubbelohde artwork remains the Classic Illustrations set; the SH1.4.1 generated art can be selected independently as Modern Illustrations against matching passages."
       },
       "chapters": [
         {
@@ -171,19 +269,7 @@
         {
           "id": "page-03",
           "title": "Snow-White and Rose-Red (continued)",
-          "path": "editions/full-classic/pages/page-03.md",
-          "illustrations": [
-            {
-              "id": "full-ubbelohde-bear-at-cottage",
-              "path": "illustrations/bear-at-cottage.webp",
-              "alt": "Otto Ubbelohde's illustration of the sisters meeting the bear.",
-              "placement": "full-width",
-              "width": 640,
-              "height": 345,
-              "caption": "Illustration by Otto Ubbelohde, 1909.",
-              "blockId": "p03-b01"
-            }
-          ]
+          "path": "editions/full-classic/pages/page-03.md"
         },
         {
           "id": "page-04",
@@ -198,19 +284,7 @@
         {
           "id": "page-06",
           "title": "Snow-White and Rose-Red (continued)",
-          "path": "editions/full-classic/pages/page-06.md",
-          "illustrations": [
-            {
-              "id": "full-ubbelohde-dwarf",
-              "path": "illustrations/dwarf.webp",
-              "alt": "Otto Ubbelohde's illustration of Snow-White and Rose-Red finding the dwarf in trouble.",
-              "placement": "full-width",
-              "width": 518,
-              "height": 400,
-              "caption": "Illustration by Otto Ubbelohde, 1909.",
-              "blockId": "p06-b01"
-            }
-          ]
+          "path": "editions/full-classic/pages/page-06.md"
         },
         {
           "id": "page-07",
@@ -220,34 +294,156 @@
         {
           "id": "page-08",
           "title": "Snow-White and Rose-Red (continued)",
-          "path": "editions/full-classic/pages/page-08.md",
-          "illustrations": [
-            {
-              "id": "full-ubbelohde-forest",
-              "path": "illustrations/forest.webp",
-              "alt": "Otto Ubbelohde's illustration from Snow-White and Rose-Red.",
-              "placement": "inline",
-              "width": 325,
-              "height": 400,
-              "caption": "Illustration by Otto Ubbelohde, 1909.",
-              "blockId": "p08-b02"
-            }
-          ]
+          "path": "editions/full-classic/pages/page-08.md"
         },
         {
           "id": "page-09",
           "title": "Snow-White and Rose-Red (continued)",
-          "path": "editions/full-classic/pages/page-09.md",
-          "illustrations": [
+          "path": "editions/full-classic/pages/page-09.md"
+        }
+      ],
+      "defaultIllustrationSetId": "classic",
+      "illustrationSets": [
+        {
+          "id": "classic",
+          "label": "Classic Illustrations",
+          "rights": {
+            "status": "public-domain",
+            "source": "Otto Ubbelohde illustrations for Snow-White and Rose-Red, 1909",
+            "sourceUrl": "https://commons.wikimedia.org/wiki/Category:Snow_White_and_Rose_Red",
+            "notes": "The four previously verified Otto Ubbelohde Story House illustrations are reused beside matching passages in the complete classic text."
+          },
+          "chapters": [
             {
-              "id": "full-ubbelohde-ending",
-              "path": "illustrations/ending.webp",
-              "alt": "Otto Ubbelohde's illustration for the ending of Snow-White and Rose-Red.",
-              "placement": "full-width",
-              "width": 418,
-              "height": 400,
-              "caption": "Illustration by Otto Ubbelohde, 1909.",
-              "blockId": "p09-b01"
+              "chapterId": "page-03",
+              "illustrations": [
+                {
+                  "id": "full-ubbelohde-bear-at-cottage",
+                  "path": "illustrations/bear-at-cottage.webp",
+                  "alt": "Otto Ubbelohde's illustration of the sisters meeting the bear.",
+                  "placement": "full-width",
+                  "width": 640,
+                  "height": 345,
+                  "caption": "Illustration by Otto Ubbelohde, 1909.",
+                  "blockId": "p03-b01"
+                }
+              ]
+            },
+            {
+              "chapterId": "page-06",
+              "illustrations": [
+                {
+                  "id": "full-ubbelohde-dwarf",
+                  "path": "illustrations/dwarf.webp",
+                  "alt": "Otto Ubbelohde's illustration of Snow-White and Rose-Red finding the dwarf in trouble.",
+                  "placement": "full-width",
+                  "width": 518,
+                  "height": 400,
+                  "caption": "Illustration by Otto Ubbelohde, 1909.",
+                  "blockId": "p06-b01"
+                }
+              ]
+            },
+            {
+              "chapterId": "page-08",
+              "illustrations": [
+                {
+                  "id": "full-ubbelohde-forest",
+                  "path": "illustrations/forest.webp",
+                  "alt": "Otto Ubbelohde's illustration from Snow-White and Rose-Red.",
+                  "placement": "inline",
+                  "width": 325,
+                  "height": 400,
+                  "caption": "Illustration by Otto Ubbelohde, 1909.",
+                  "blockId": "p08-b02"
+                }
+              ]
+            },
+            {
+              "chapterId": "page-09",
+              "illustrations": [
+                {
+                  "id": "full-ubbelohde-ending",
+                  "path": "illustrations/ending.webp",
+                  "alt": "Otto Ubbelohde's illustration for the ending of Snow-White and Rose-Red.",
+                  "placement": "full-width",
+                  "width": 418,
+                  "height": 400,
+                  "caption": "Illustration by Otto Ubbelohde, 1909.",
+                  "blockId": "p09-b01"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "modern",
+          "label": "Modern Illustrations",
+          "rights": {
+            "status": "original",
+            "source": "ChatGPT-generated artwork created for the Unicorn Valley Story House modern illustration set",
+            "notes": "The same R6.5-WP19SH1.4.1 generated artwork is reused against matching Full Classic Text passages; only the semantic page/block mapping differs."
+          },
+          "chapters": [
+            {
+              "chapterId": "page-03",
+              "illustrations": [
+                {
+                  "id": "full-modern-bear-at-cottage",
+                  "blockId": "p03-b01",
+                  "path": "illustrations/generated/bear-at-cottage.webp",
+                  "alt": "Rose-Red opens the snowy cottage door to a huge but gentle black bear while Snow-White and their mother look on from inside.",
+                  "placement": "full-width",
+                  "width": 760,
+                  "height": 504,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-06",
+              "illustrations": [
+                {
+                  "id": "full-modern-dwarf-rescue",
+                  "blockId": "p06-b01",
+                  "path": "illustrations/generated/dwarf-rescue.webp",
+                  "alt": "Snow-White carefully cuts the trapped dwarf's long white beard from the split log while Rose-Red helps nearby.",
+                  "placement": "full-width",
+                  "width": 760,
+                  "height": 504,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-08",
+              "illustrations": [
+                {
+                  "id": "full-modern-treasure-clearing",
+                  "blockId": "p08-b02",
+                  "path": "illustrations/generated/treasure-clearing.webp",
+                  "alt": "The dwarf's jewels glitter across a rocky clearing as Snow-White and Rose-Red see the familiar black bear approach from the forest.",
+                  "placement": "full-width",
+                  "width": 760,
+                  "height": 504,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-09",
+              "illustrations": [
+                {
+                  "id": "full-modern-spell-breaks",
+                  "blockId": "p09-b01",
+                  "path": "illustrations/generated/spell-breaks.webp",
+                  "alt": "The black bearskin falls away to reveal the bewitched prince while Snow-White and Rose-Red recognise their old friend.",
+                  "placement": "full-width",
+                  "width": 760,
+                  "height": 504,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
             }
           ]
         }

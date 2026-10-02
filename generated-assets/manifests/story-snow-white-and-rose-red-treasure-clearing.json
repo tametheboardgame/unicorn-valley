@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "1DC_M0MkmPTNmhr46HOnj-fk-S_hSFlyB"
+  },
+  "expectedSourceName": "snow-white-rose-red-treasure-clearing-v01.png",
+  "destination": "public/stories/snow-white-and-rose-red/illustrations/generated/treasure-clearing.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1000,
+    "quality": 88
+  },
+  "revision": 1
+}
