@@ -25,6 +25,7 @@ import {
   ExistingValleyQuestPackService,
   type ExistingValleyStoryResult,
 } from '../story/ExistingValleyQuestPackService';
+import { RAINBOW_MEADOW_LAYOUT } from './RainbowMeadowMap';
 import { SUNBEAM_VILLAGE_LAYOUT } from './SunbeamVillageLayout';
 import { worldDepthForY } from './WorldDepth';
 
@@ -200,7 +201,7 @@ export class ExistingValleyQuestPackWorldManager {
           actionLabel: 'Climb slowly',
           actionKind: 'interact',
           icon: '🚩',
-          position: { x: 1990, y: 1580 },
+          position: RAINBOW_MEADOW_LAYOUT.picnicHill.noFinishLineLandmark,
           radius: 108,
           activate: () => this.story.visitNoFinishLandmark('picnic'),
         });
@@ -246,7 +247,7 @@ export class ExistingValleyQuestPackWorldManager {
         actionLabel: 'Test the spot',
         actionKind: 'inspect',
         icon: '🧺',
-        position: { x: 2070, y: 1460 },
+        position: RAINBOW_MEADOW_LAYOUT.picnicHill.mapleStorySpot,
         radius: 110,
         activate: () => this.story.tryMaplePicnicSpot(),
       });
@@ -440,7 +441,7 @@ export class ExistingValleyQuestPackWorldManager {
     ) {
       for (const point of [
         { x: 1770, y: 770 },
-        { x: 1990, y: 1580 },
+        RAINBOW_MEADOW_LAYOUT.picnicHill.noFinishLineLandmark,
         { x: 1580, y: 565 },
       ]) {
         objects.push(
@@ -458,7 +459,12 @@ export class ExistingValleyQuestPackWorldManager {
     ) {
       objects.push(
         scene.add
-          .text(2070, 1460, '🧺', { fontFamily: 'system-ui, sans-serif', fontSize: '18px' })
+          .text(
+            RAINBOW_MEADOW_LAYOUT.picnicHill.mapleStorySpot.x,
+            RAINBOW_MEADOW_LAYOUT.picnicHill.mapleStorySpot.y,
+            '🧺',
+            { fontFamily: 'system-ui, sans-serif', fontSize: '18px' },
+          )
           .setOrigin(0.5)
           .setAlpha(0.64)
           .setDepth(8),
