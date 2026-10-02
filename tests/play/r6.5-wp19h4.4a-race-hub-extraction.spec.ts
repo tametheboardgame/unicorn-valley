@@ -90,20 +90,14 @@ test('H4.4A moves all Rainbow Run infrastructure into a standalone hub', async (
   }
 });
 
-test('H4.4A enters the Race Hub from Meadow and returns to the gateway approach', async ({
-  page,
-}) => {
+test('H4.4A walks through the Meadow/Hub gateway in both directions', async ({ page }) => {
   await page.goto('/?scene=meadow&diagnostics=1');
   await waitForScene(page, 'RainbowMeadowScene');
 
-  await positionPlayer(page, 'RainbowMeadowScene', 2950, 390);
-  await page.waitForTimeout(120);
-  await page.keyboard.press('e');
+  await positionPlayer(page, 'RainbowMeadowScene', 2950, 190);
   await waitForScene(page, 'RainbowRunEntryScene');
 
-  await positionPlayer(page, 'RainbowRunEntryScene', 1100, 1180);
-  await page.waitForTimeout(120);
-  await page.keyboard.press('e');
+  await positionPlayer(page, 'RainbowRunEntryScene', 1100, 1240);
   await waitForScene(page, 'RainbowMeadowScene');
 
   const meadow = await sceneObjects(page, 'RainbowMeadowScene');
