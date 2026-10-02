@@ -271,10 +271,7 @@ function createMeadowCrystalBrookGateway(scene: Phaser.Scene): void {
     'meadow-crystal-brook:left-bank-stone',
   );
 
-  const waterGlints = name(
-    scene.add.graphics().setDepth(2.2),
-    'meadow-crystal-brook:water-glints',
-  );
+  const waterGlints = name(scene.add.graphics().setDepth(2.2), 'meadow-crystal-brook:water-glints');
   waterGlints.lineStyle(5, 0xeaffff, 0.35);
   for (const [x, y, width] of [
     [pool.x - 220, pool.y - 80, 92],
@@ -306,14 +303,7 @@ function createMeadowCrystalBrookGateway(scene: Phaser.Scene): void {
     );
     name(
       scene.add
-        .ellipse(
-          stone.x - 8,
-          stone.y - 7,
-          stone.width * 0.58,
-          stone.height * 0.34,
-          0xc4d0c6,
-          0.42,
-        )
+        .ellipse(stone.x - 8, stone.y - 7, stone.width * 0.58, stone.height * 0.34, 0xc4d0c6, 0.42)
         .setAngle(stone.angle)
         .setDepth(3.06 + index * 0.01),
       `meadow-crystal-brook:stepping-stone-highlight:${index}`,
