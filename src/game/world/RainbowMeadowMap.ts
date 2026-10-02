@@ -94,10 +94,10 @@ export const RAINBOW_MEADOW_LAYOUT = {
   ],
   natureFeatures: {
     windmill: {
-      position: { x: 1280, y: 275 },
-      storyPosition: { x: 1130, y: 465 },
-      bellPosition: { x: 1280, y: 460 },
-      lookoutPosition: { x: 1440, y: 455 },
+      position: { x: 1190, y: 300 },
+      storyPosition: { x: 930, y: 530 },
+      bellPosition: { x: 1045, y: 405 },
+      lookoutPosition: { x: 1190, y: 470 },
     },
     pond: {
       position: { x: 1570, y: 610 },
@@ -375,8 +375,8 @@ export const RAINBOW_MEADOW_LAYOUT = {
     windmillLookout: {
       id: 'windmill-lookout',
       label: 'Windmill Lookout',
-      position: { x: 1280, y: 275 },
-      approach: { x: 1280, y: 480 },
+      position: { x: 1190, y: 300 },
+      approach: { x: 1190, y: 525 },
     },
   },
   structuralPaths: [
@@ -399,9 +399,9 @@ export const RAINBOW_MEADOW_LAYOUT = {
       id: 'windmill-spur',
       points: [
         { x: 1120, y: 1080 },
-        { x: 1160, y: 850 },
-        { x: 1215, y: 610 },
-        { x: 1280, y: 480 },
+        { x: 1140, y: 850 },
+        { x: 1160, y: 650 },
+        { x: 1190, y: 525 },
       ],
       outerWidth: 76,
       innerWidth: 56,
@@ -528,8 +528,8 @@ export const RAINBOW_MEADOW_MAP = {
       id: 'collision:windmill-lookout-base',
       x: RAINBOW_MEADOW_LAYOUT.natureFeatures.windmill.position.x,
       y: RAINBOW_MEADOW_LAYOUT.natureFeatures.windmill.position.y,
-      width: 190,
-      height: 255,
+      width: 170,
+      height: 250,
     },
     ...RAINBOW_MEADOW_LAYOUT.crystalBrookGatewayArea.rocks.map((rock, index) => ({
       id: `collision:crystal-brook-gateway-rock:${index}`,
