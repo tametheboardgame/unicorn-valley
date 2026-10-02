@@ -1,4 +1,5 @@
 import type Phaser from 'phaser';
+import { createNovaPresentationSprite } from './NovaPresentation';
 
 export const CORE_NPC_IDS = ['nova', 'willow', 'pip', 'pebble', 'lumi', 'marigold'] as const;
 
@@ -595,6 +596,12 @@ export function createCoreNpcSprite(
   presentation: CoreNpcPresentation,
   expression: CoreNpcExpression = presentation === 'portrait' ? 'happy' : 'neutral',
 ): Phaser.GameObjects.Sprite {
+  if (id === 'nova') {
+    return createNovaPresentationSprite(scene, `core-npc:nova:${presentation}`)
+      .setPosition(x, y)
+      .setName(`core-npc:nova:${presentation}`);
+  }
+
   return scene.add
     .sprite(x, y, ensureCoreNpcTexture(scene, id, expression))
     .setName(`core-npc:${id}:${presentation}`)
