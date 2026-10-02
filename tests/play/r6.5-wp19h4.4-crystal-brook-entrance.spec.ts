@@ -155,9 +155,11 @@ test('H4.4 makes Crystal Brook a waterfall, pool and stepping-stone Meadow thres
     ),
   ).toBe(false);
 
-  const cupBoard = meadow.objects.find(({ name }) => name === 'meadow-depth:rainbow-cup-board');
-  expect(cupBoard?.x).toBeCloseTo(2860, 0);
-  expect(cupBoard?.y).toBeCloseTo(500, 0);
+  expect(
+    meadow.objects.some(({ name, visible }) => name === 'rainbow-meadow:rainbow-run-hub-sign' && visible),
+  ).toBe(true);
+  expect(meadow.objects.some(({ name }) => name === 'meadow-depth:rainbow-cup-board')).toBe(false);
+  expect(meadow.objects.some(({ name }) => name === 'core-npc:nova:world')).toBe(false);
 
   await positionPlayer(page, 'RainbowMeadowScene', MEADOW_GATE.x, MEADOW_GATE.y);
   await waitForScene(page, 'CrystalBrookScene');
