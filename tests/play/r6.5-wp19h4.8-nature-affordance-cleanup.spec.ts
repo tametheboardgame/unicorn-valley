@@ -69,8 +69,12 @@ test('H4.8 nature features use physical affordances instead of permanent hotspot
   const meadow = await snapshotScene(page, 'RainbowMeadowScene');
   for (const name of [
     'meadow-depth:windmill-landmark',
+    'meadow-depth:windmill-sails',
+    'meadow-depth:windmill-lookout-sign',
     'meadow-depth:windmill-bell-physical',
+    'meadow-depth:wind-ribbon-fence',
     'meadow-depth:wind-ribbon-physical',
+    'meadow-depth:windmill-base-details',
     'meadow-depth:flower-circle-physical',
     'meadow-depth:petal-patch-physical',
     'meadow-depth:butterfly-parade-physical',
