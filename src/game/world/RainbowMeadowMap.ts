@@ -317,7 +317,7 @@ export const RAINBOW_MEADOW_LAYOUT = {
       innerWidth: 88,
       deepWidth: 58,
       points: [
-        { x: 3070, y: 1410 },
+        { x: 3060, y: 1340 },
         { x: 3060, y: 1505 },
         { x: 3115, y: 1650 },
         { x: 3035, y: 1775 },
