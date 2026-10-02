@@ -125,7 +125,6 @@ test('Crystal Brook replaces sharp stream joins with one rounded stream treatmen
   expect(Math.max(...largeBackdropCircles.map((object) => object.alpha))).toBeLessThanOrEqual(0.16);
 });
 
-
 test('Nova tutorial race uses the unified modern Nova presentation', async ({ page }) => {
   await page.goto('/?diagnostics=1');
   await waitForDiagnostics(page);
@@ -133,7 +132,9 @@ test('Nova tutorial race uses the unified modern Nova presentation', async ({ pa
   await waitForObject(page, 'NovaTutorialRaceScene', 'nova-modern-racer');
 
   const objects = await getSceneObjects(page, 'NovaTutorialRaceScene');
-  expect(objects.some((object) => object.name === 'nova-modern-racer' && object.visible)).toBe(true);
+  expect(objects.some((object) => object.name === 'nova-modern-racer' && object.visible)).toBe(
+    true,
+  );
   expect(objects.some((object) => object.name === 'nova-canonical-racer' && object.visible)).toBe(
     false,
   );
