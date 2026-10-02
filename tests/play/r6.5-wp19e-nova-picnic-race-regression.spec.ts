@@ -1,7 +1,8 @@
 import { expect, test, type Page } from '@playwright/test';
 
 const MARIGOLD_APPROACH = { x: 1700, y: 1240 } as const;
-const MARIGOLD_PICNIC_POSITION = { x: 1780, y: 1550 } as const;
+const MARIGOLD_PICNIC_POSITION = { x: 1540, y: 1740 } as const;
+const NOVA_PICNIC_POSITION = { x: 1940, y: 1714 } as const;
 
 interface DiagnosticObject {
   name: string;
@@ -266,6 +267,23 @@ test('Marigold and Nova dialogue keep accepted sizing and Meet Nova works when N
   await waitForScene(page, 'RainbowMeadowScene');
   await waitForVisibleObject(page, 'RainbowMeadowScene', 'core-npc:nova:picnic');
   await waitForVisibleObject(page, 'RainbowMeadowScene', 'core-npc:marigold:picnic');
+  await waitForVisibleObject(page, 'RainbowMeadowScene', 'rainbow-meadow:picnic-hill:ground');
+  await waitForVisibleObject(page, 'RainbowMeadowScene', 'rainbow-meadow:picnic-hill:blanket');
+
+  const composedPicnic = await sceneSnapshot(page, 'RainbowMeadowScene');
+  const composedMarigold = composedPicnic.objects.find(
+    (object) => object.name === 'core-npc:marigold:picnic' && object.visible,
+  );
+  const composedNova = composedPicnic.objects.find(
+    (object) => object.name === 'core-npc:nova:picnic' && object.visible,
+  );
+  expect(composedMarigold?.x).toBeCloseTo(MARIGOLD_PICNIC_POSITION.x, 0);
+  expect(composedMarigold?.y).toBeCloseTo(MARIGOLD_PICNIC_POSITION.y, 0);
+  expect(composedNova?.x).toBeCloseTo(NOVA_PICNIC_POSITION.x, 0);
+  expect(composedNova?.y).toBeCloseTo(NOVA_PICNIC_POSITION.y, 0);
+  expect(
+    composedPicnic.objects.some((object) => object.name === 'meadow-depth:picnic-hill-landmark'),
+  ).toBe(false);
 
   await positionPlayer(
     page,

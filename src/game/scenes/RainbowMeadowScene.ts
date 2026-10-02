@@ -18,7 +18,7 @@ import { getBrowserSaveService } from '../save/browserSaveService';
 import { saveLocationCheckpoint } from '../save/saveLocationCheckpoint';
 import {
   createMarigoldPicnicPresentation,
-  MARIGOLD_PICNIC_POSITION,
+  createPicnicHillLandscape,
 } from '../story/MarigoldPicnicPresentation';
 import { startMarigoldConversation } from '../story/WorldStoryConversations';
 import { InteractionPrompt } from '../ui/InteractionPrompt';
@@ -79,7 +79,7 @@ function createMeadowInteractions(scene: Phaser.Scene): readonly InteractionTarg
       label: 'Marigold',
       actionLabel: 'Talk',
       actionKind: 'talk',
-      position: MARIGOLD_PICNIC_POSITION,
+      position: RAINBOW_MEADOW_LAYOUT.picnicHill.marigold,
       interactionRadius: 155,
       priority: 30,
       visible: () => presenceService.resolve(MARIGOLD_CHARACTER_ID)?.area === 'picnic-hill',
@@ -422,6 +422,7 @@ export class RainbowMeadowScene extends Phaser.Scene {
     this.createPond();
     this.createGroves();
     this.createRainbowRunHubGateway();
+    createPicnicHillLandscape(this);
     createMarigoldPicnicPresentation(this, getBrowserSaveService().load());
     this.createMeadowFlowers();
   }
