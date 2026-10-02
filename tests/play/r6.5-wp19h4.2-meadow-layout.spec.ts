@@ -62,7 +62,7 @@ test('H4.2 composes distinct Meadow districts and clears future activity space',
     ['north-nature', 1420, 580],
     ['rainbow-disc-lawn', 700, 1640],
     ['picnic-hill-reserve', 1740, 1660],
-    ['rainbow-run', 2700, 390],
+    ['rainbow-run', 2950, 290],
     ['crystal-brook-corridor', 3020, 1170],
   ] as const;
 
