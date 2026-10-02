@@ -44,6 +44,7 @@ const MAIN_ACTIONS: readonly ActionDefinition[] = [
     className: 'title-portrait-primary',
   },
   { objectName: 'title-menu-new-game', labelName: 'title-menu-new-game-label' },
+  { objectName: 'title-menu-story-house', labelName: 'title-menu-story-house-label' },
   {
     objectName: 'title-menu-my-unicorn',
     labelName: 'title-menu-my-unicorn-label',
