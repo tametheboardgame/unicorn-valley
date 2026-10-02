@@ -12,6 +12,7 @@ export const RAINBOW_RUN_HUB_LAYOUT = {
   meadowExit: {
     position: { x: 1100, y: 1320 },
     approach: { x: 1100, y: 1180 },
+    walkThroughPosition: { x: 1100, y: 1240 },
   },
   playerSpawn: { x: 1100, y: 980 },
   nova: { x: 430, y: 800 },
