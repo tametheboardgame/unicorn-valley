@@ -367,88 +367,222 @@ export class MeadowDepthWorldManager {
   ): void {
     const windmill = RAINBOW_MEADOW_LAYOUT.natureFeatures.windmill;
     const { x, y } = windmill.position;
-    const tower = scene.add
-      .rectangle(x, y, 130, 250, 0xe7d09a, 1)
-      .setStrokeStyle(7, 0x9a7455, 0.95)
-      .setDepth(7);
-    const roof = scene.add.triangle(x, y - 160, 0, 80, 78, 0, 156, 80, 0xbb7d68, 1).setDepth(8);
-    const hub = scene.add.circle(x, y - 70, 21, 0xf2c85f, 1).setDepth(10);
-    objects.push(tower, roof, hub);
 
-    for (const angle of [0, 45, 90, 135]) {
-      objects.push(
-        scene.add
-          .rectangle(x, y - 70, 10, 178, 0xfff0c9, 1)
-          .setAngle(angle)
-          .setStrokeStyle(2, 0xb68c61, 0.75)
-          .setDepth(9),
-      );
+    const shadow = scene.add
+      .ellipse(x, y + 136, 250, 68, 0x587f5d, 0.2)
+      .setDepth(worldDepthForY(y + 140, -0.45))
+      .setName('meadow-depth:windmill-ground-shadow');
+    objects.push(shadow);
+
+    const tower = scene.add
+      .graphics()
+      .setPosition(x, y)
+      .setDepth(7)
+      .setName('meadow-depth:windmill-landmark');
+    tower.fillStyle(0xf1dca8, 1);
+    tower.lineStyle(6, 0x8d684e, 0.96);
+    tower.beginPath();
+    tower.moveTo(-82, 126);
+    tower.lineTo(82, 126);
+    tower.lineTo(56, -82);
+    tower.lineTo(-56, -82);
+    tower.closePath();
+    tower.fillPath();
+    tower.strokePath();
+
+    tower.fillStyle(0xe6c984, 0.82);
+    tower.fillRoundedRect(-76, 100, 152, 32, 12);
+    tower.lineStyle(3, 0xb68a59, 0.7);
+    tower.strokeRoundedRect(-76, 100, 152, 32, 12);
+
+    tower.fillStyle(0xbe7b63, 1);
+    tower.lineStyle(5, 0x815844, 0.95);
+    tower.beginPath();
+    tower.moveTo(-73, -80);
+    tower.lineTo(73, -80);
+    tower.lineTo(48, -132);
+    tower.lineTo(-48, -132);
+    tower.closePath();
+    tower.fillPath();
+    tower.strokePath();
+
+    tower.lineStyle(3, 0xe4aa86, 0.72);
+    for (const roofY of [-120, -108, -96]) {
+      tower.lineBetween(-52, roofY, 52, roofY);
     }
 
+    tower.fillStyle(0x8fd0da, 1);
+    tower.lineStyle(5, 0x765442, 0.94);
+    tower.fillCircle(0, -27, 23);
+    tower.strokeCircle(0, -27, 23);
+    tower.lineStyle(3, 0xffffff, 0.5);
+    tower.lineBetween(-16, -27, 16, -27);
+    tower.lineBetween(0, -43, 0, -11);
+
+    tower.fillStyle(0x8b6247, 1);
+    tower.lineStyle(5, 0x684735, 0.96);
+    tower.fillRoundedRect(-31, 45, 62, 82, 24);
+    tower.strokeRoundedRect(-31, 45, 62, 82, 24);
+    tower.fillStyle(0xf0bf58, 1);
+    tower.fillCircle(16, 87, 5);
+    tower.fillStyle(0x6f4c39, 0.8);
+    tower.fillRoundedRect(-21, 58, 42, 14, 6);
+    objects.push(tower);
+
+    const sails = scene.add
+      .container(x, y - 58)
+      .setDepth(10)
+      .setName('meadow-depth:windmill-sails');
+    for (const angle of [0, Math.PI / 2, Math.PI, (Math.PI * 3) / 2]) {
+      const blade = scene.add.graphics();
+      blade.fillStyle(0xffefc9, 1);
+      blade.lineStyle(3, 0x9b7656, 0.9);
+      blade.beginPath();
+      blade.moveTo(-7, -10);
+      blade.lineTo(8, -10);
+      blade.lineTo(18, -115);
+      blade.lineTo(-18, -115);
+      blade.closePath();
+      blade.fillPath();
+      blade.strokePath();
+      blade.lineStyle(2, 0xc39a6c, 0.7);
+      for (const slatY of [-42, -67, -92]) {
+        blade.lineBetween(-13, slatY, 13, slatY);
+      }
+      blade.setRotation(angle);
+      sails.add(blade);
+    }
+    const sailHub = scene.add
+      .circle(0, 0, 20, 0xe6b64c, 1)
+      .setStrokeStyle(4, 0x8f6a2d, 0.95);
+    sails.add(sailHub);
+    scene.tweens.add({
+      targets: sails,
+      rotation: Math.PI * 2,
+      duration: 26000,
+      repeat: -1,
+      ease: 'Linear',
+    });
+    objects.push(sails);
+
+    const signArm = scene.add
+      .rectangle(x + 72, y + 44, 74, 9, 0x765442, 1)
+      .setOrigin(0, 0.5)
+      .setDepth(11);
+    const signHanger = scene.add
+      .rectangle(x + 130, y + 57, 5, 34, 0x765442, 1)
+      .setDepth(11);
     const signBoard = scene.add
-      .rectangle(x, y + 74, 112, 42, 0xe7c98f, 1)
-      .setStrokeStyle(4, 0x765442, 0.96)
+      .rectangle(x + 130, y + 84, 94, 36, 0xe7c78d, 1)
+      .setStrokeStyle(4, 0x765442, 0.98)
       .setDepth(11)
-      .setName('meadow-depth:windmill-landmark');
+      .setName('meadow-depth:windmill-lookout-sign');
     const signText = scene.add
-      .text(x, y + 74, 'LOOKOUT', {
-        color: '#604f63',
+      .text(x + 130, y + 84, 'LOOKOUT', {
+        color: '#5e4669',
         fontFamily: 'system-ui, sans-serif',
-        fontSize: '13px',
+        fontSize: '12px',
         fontStyle: 'bold',
       })
       .setOrigin(0.5)
       .setDepth(12)
       .setName('meadow-depth:windmill-lookout-sign-text');
-    objects.push(signBoard, signText);
+    objects.push(signArm, signHanger, signBoard, signText);
 
     const bellPosition = windmill.bellPosition;
-    const bellFrame = scene.add
-      .rectangle(bellPosition.x, bellPosition.y - 22, 54, 10, 0x765442, 0.95)
-      .setDepth(worldDepthForY(bellPosition.y, 0.08));
+    const bellBracket = scene.add
+      .graphics()
+      .setDepth(worldDepthForY(bellPosition.y, 0.05));
+    bellBracket.lineStyle(7, 0x765442, 1);
+    bellBracket.lineBetween(bellPosition.x + 8, bellPosition.y - 50, bellPosition.x + 58, bellPosition.y - 50);
+    bellBracket.lineBetween(
+      bellPosition.x + 49,
+      bellPosition.y - 50,
+      bellPosition.x + 49,
+      bellPosition.y - 20,
+    );
     const bell = scene.add
-      .ellipse(bellPosition.x, bellPosition.y, 34, 28, 0xd9a83e, 1)
-      .setStrokeStyle(3, 0x8f6a2d, 0.95)
-      .setDepth(worldDepthForY(bellPosition.y, 0.1))
+      .ellipse(bellPosition.x + 49, bellPosition.y - 5, 30, 26, 0xdbab47, 1)
+      .setStrokeStyle(3, 0x8f6a2d, 0.98)
+      .setDepth(worldDepthForY(bellPosition.y, 0.08))
       .setName('meadow-depth:windmill-bell-physical');
     const clapper = scene.add
-      .circle(bellPosition.x, bellPosition.y + 15, 5, 0x765442, 1)
-      .setDepth(worldDepthForY(bellPosition.y, 0.11));
-    objects.push(bellFrame, bell, clapper);
+      .circle(bellPosition.x + 49, bellPosition.y + 10, 4, 0x765442, 1)
+      .setDepth(worldDepthForY(bellPosition.y, 0.09));
+    objects.push(bellBracket, bell, clapper);
 
     const ribbonPosition = windmill.storyPosition;
-    const ribbonPost = scene.add
-      .rectangle(ribbonPosition.x, ribbonPosition.y + 5, 8, 82, 0x816049, 0.94)
-      .setDepth(worldDepthForY(ribbonPosition.y, 0.04));
-    objects.push(ribbonPost);
+    const fence = scene.add
+      .graphics()
+      .setDepth(worldDepthForY(ribbonPosition.y, -0.08))
+      .setName('meadow-depth:wind-ribbon-fence');
+    fence.lineStyle(9, 0x806047, 0.96);
+    fence.lineBetween(ribbonPosition.x - 54, ribbonPosition.y + 28, ribbonPosition.x - 54, ribbonPosition.y - 40);
+    fence.lineBetween(ribbonPosition.x + 42, ribbonPosition.y + 28, ribbonPosition.x + 42, ribbonPosition.y - 40);
+    fence.lineStyle(7, 0xa17a58, 0.92);
+    fence.lineBetween(ribbonPosition.x - 54, ribbonPosition.y - 12, ribbonPosition.x + 42, ribbonPosition.y - 12);
+    fence.lineBetween(ribbonPosition.x - 54, ribbonPosition.y + 12, ribbonPosition.x + 42, ribbonPosition.y + 12);
+    objects.push(fence);
+
     for (const [index, colour] of [0x78bddd, 0xf2c56c, 0xc69be0].entries()) {
       const ribbon = scene.add
         .rectangle(
-          ribbonPosition.x + 20 + index * 8,
-          ribbonPosition.y - 25 + index * 13,
-          46,
+          ribbonPosition.x - 8 + index * 5,
+          ribbonPosition.y - 28 + index * 11,
+          52,
           8,
           colour,
-          0.92,
+          0.94,
         )
         .setOrigin(0, 0.5)
-        .setAngle(index === 1 ? 7 : -5)
-        .setDepth(worldDepthForY(ribbonPosition.y, 0.07))
+        .setAngle(index === 1 ? 7 : -6)
+        .setDepth(worldDepthForY(ribbonPosition.y, 0.02))
         .setName(index === 0 ? 'meadow-depth:wind-ribbon-physical' : '');
       objects.push(ribbon);
     }
 
+    const baseDetails = scene.add
+      .graphics()
+      .setDepth(worldDepthForY(y + 145, -0.1))
+      .setName('meadow-depth:windmill-base-details');
+    for (const [stoneX, stoneY, stoneWidth] of [
+      [x - 78, y + 138, 34],
+      [x - 30, y + 150, 42],
+      [x + 24, y + 146, 30],
+      [x + 70, y + 136, 38],
+    ] as const) {
+      baseDetails.fillStyle(0xb9ad91, 0.92);
+      baseDetails.fillEllipse(stoneX, stoneY, stoneWidth, 18);
+    }
+    for (const [flowerX, flowerY, colour] of [
+      [x - 104, y + 122, 0xf2a3c2],
+      [x - 88, y + 130, 0xffd978],
+      [x + 92, y + 124, 0x8fcfe0],
+      [x + 108, y + 132, 0xc7a6e2],
+    ] as const) {
+      baseDetails.fillStyle(0x689961, 0.8);
+      baseDetails.fillRect(flowerX - 2, flowerY + 4, 4, 18);
+      baseDetails.fillStyle(colour, 0.95);
+      baseDetails.fillCircle(flowerX, flowerY, 7);
+      baseDetails.fillStyle(0xffe991, 1);
+      baseDetails.fillCircle(flowerX, flowerY, 3);
+    }
+    objects.push(baseDetails);
+
     if (open) {
-      const steps = scene.add.graphics().setDepth(6).setName('meadow-depth:windmill-open-path');
-      steps.lineStyle(58, 0xf4e2b8, 0.95);
-      steps.beginPath();
-      steps.moveTo(
-        RAINBOW_MEADOW_LAYOUT.hubFeatures.windmillLookout.approach.x,
-        RAINBOW_MEADOW_LAYOUT.hubFeatures.windmillLookout.approach.y,
-      );
-      steps.lineTo(windmill.lookoutPosition.x, windmill.lookoutPosition.y);
-      steps.strokePath();
-      objects.push(steps);
+      const approach = RAINBOW_MEADOW_LAYOUT.hubFeatures.windmillLookout.approach;
+      const doorTarget = windmill.lookoutPosition;
+      for (let index = 0; index < 4; index += 1) {
+        const progress = (index + 1) / 5;
+        const stepX = Phaser.Math.Linear(approach.x, doorTarget.x, progress);
+        const stepY = Phaser.Math.Linear(approach.y, doorTarget.y, progress);
+        const step = scene.add
+          .ellipse(stepX, stepY, 48 - index * 3, 24 - index * 2, 0xd7c493, 0.9)
+          .setStrokeStyle(2, 0xb29a6e, 0.55)
+          .setDepth(worldDepthForY(stepY, -0.28))
+          .setName(index === 0 ? 'meadow-depth:windmill-open-path' : '');
+        objects.push(step);
+      }
     }
   }
 
