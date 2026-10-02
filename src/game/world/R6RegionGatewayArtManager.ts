@@ -423,8 +423,12 @@ function buildRibbonPolygon(points: readonly Point[], width: number): Phaser.Mat
     const normalY = dx / length;
     const point = points[index];
 
-    left.push(new Phaser.Math.Vector2(point.x + normalX * halfWidth, point.y + normalY * halfWidth));
-    right.push(new Phaser.Math.Vector2(point.x - normalX * halfWidth, point.y - normalY * halfWidth));
+    left.push(
+      new Phaser.Math.Vector2(point.x + normalX * halfWidth, point.y + normalY * halfWidth),
+    );
+    right.push(
+      new Phaser.Math.Vector2(point.x - normalX * halfWidth, point.y - normalY * halfWidth),
+    );
   }
 
   return [...left, ...right.reverse()];
