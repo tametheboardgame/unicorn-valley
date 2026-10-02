@@ -242,7 +242,7 @@ export const RAINBOW_MEADOW_LAYOUT = {
   hubFeatures: {
     rainbowRunEntrance: {
       id: 'rainbow-run-entrance',
-      label: 'Rainbow Run',
+      label: 'Rainbow Run Race Hub',
       position: { x: 2950, y: 190 },
       approach: { x: 2950, y: 390 },
     },
@@ -404,18 +404,18 @@ export const RAINBOW_MEADOW_MAP = {
       height: 255,
     },
     {
-      id: 'collision:race-post-north',
-      x: RAINBOW_MEADOW_LAYOUT.hubFeatures.rainbowRunEntrance.position.x,
-      y: RAINBOW_MEADOW_LAYOUT.hubFeatures.rainbowRunEntrance.position.y - 140,
-      width: 70,
-      height: 180,
+      id: 'collision:race-hub-gateway-west-post',
+      x: RAINBOW_MEADOW_LAYOUT.hubFeatures.rainbowRunEntrance.position.x - 100,
+      y: RAINBOW_MEADOW_LAYOUT.hubFeatures.rainbowRunEntrance.position.y,
+      width: 38,
+      height: 190,
     },
     {
-      id: 'collision:race-post-south',
-      x: RAINBOW_MEADOW_LAYOUT.hubFeatures.rainbowRunEntrance.position.x,
-      y: RAINBOW_MEADOW_LAYOUT.hubFeatures.rainbowRunEntrance.position.y + 140,
-      width: 70,
-      height: 180,
+      id: 'collision:race-hub-gateway-east-post',
+      x: RAINBOW_MEADOW_LAYOUT.hubFeatures.rainbowRunEntrance.position.x + 100,
+      y: RAINBOW_MEADOW_LAYOUT.hubFeatures.rainbowRunEntrance.position.y,
+      width: 38,
+      height: 190,
     },
     ...RAINBOW_MEADOW_LAYOUT.crystalBrookGatewayArea.rocks.map((rock, index) => ({
       id: `collision:crystal-brook-gateway-rock:${index}`,
