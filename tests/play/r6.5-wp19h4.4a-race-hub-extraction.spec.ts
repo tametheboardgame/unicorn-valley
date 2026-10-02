@@ -25,18 +25,6 @@ interface DiagnosticsApi {
   setArcadeSpritePosition(sceneKey: string, objectName: string, x: number, y: number): void;
 }
 
-async function diagnostics(page: Page): Promise<DiagnosticsApi> {
-  await page.waitForFunction(() => '__UNICORN_VALLEY_DIAGNOSTICS__' in window);
-  return page.evaluateHandle(() => {
-    const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
-      .__UNICORN_VALLEY_DIAGNOSTICS__;
-    if (!api) {
-      throw new Error('Browser diagnostics are unavailable.');
-    }
-    return api;
-  }) as unknown as Promise<DiagnosticsApi>;
-}
-
 async function waitForScene(page: Page, sceneKey: string): Promise<void> {
   await page.waitForFunction((expected) => {
     const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
@@ -70,7 +58,7 @@ async function positionPlayer(
       if (!api) {
         throw new Error('Browser diagnostics are unavailable.');
       }
-      api.setArcadeSpritePosition(key, PLAYER_NAME, targetX, targetY);
+      api.setArcadeSpritePosition(key, 'world-player-unicorn', targetX, targetY);
     },
     { key: sceneKey, targetX: x, targetY: y },
   );
