@@ -127,6 +127,34 @@ describe('Rainbow Meadow canonical layout', () => {
     }
   });
 
+  it('owns Rainbow Disc as one canonical south-west activity lawn', () => {
+    const district = RAINBOW_MEADOW_LAYOUT.districts.find(({ id }) => id === 'rainbow-disc-lawn');
+    expect(district).toBeDefined();
+    if (!district) {
+      return;
+    }
+
+    const disc = RAINBOW_MEADOW_LAYOUT.rainbowDisc;
+    expect(disc.centre).toEqual(district.centre);
+    expect(disc.players).toHaveLength(5);
+    expect(disc.discRoute).toHaveLength(5);
+
+    const isInsideDistrict = (point: { x: number; y: number }) => {
+      const dx = (point.x - district.centre.x) / district.radiusX;
+      const dy = (point.y - district.centre.y) / district.radiusY;
+      return dx * dx + dy * dy <= 1;
+    };
+
+    expect(disc.players.every(isInsideDistrict)).toBe(true);
+    expect(disc.discRoute.every(isInsideDistrict)).toBe(true);
+    expect(isInsideDistrict(disc.captain)).toBe(true);
+
+    const path = RAINBOW_MEADOW_LAYOUT.structuralPaths.find(
+      ({ id }) => id === 'rainbow-disc-spur',
+    );
+    expect(path?.points[path.points.length - 1]).toEqual(disc.approach);
+  });
+
   it('keeps H4.8 nature interaction approaches outside physical collision', () => {
     const pondCollider = RAINBOW_MEADOW_MAP.colliders.find(
       ({ id }) => id === 'collision:rainbow-pond',
