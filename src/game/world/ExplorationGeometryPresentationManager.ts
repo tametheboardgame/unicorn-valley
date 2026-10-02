@@ -48,14 +48,6 @@ const BRANCH_CUES: Readonly<Partial<Record<string, readonly BranchCueDefinition[
       y: 1015,
     },
   ],
-  RainbowMeadowScene: [
-    {
-      id: 'rainbow-run',
-      text: '🏁 Rainbow Run →',
-      x: 2390,
-      y: 900,
-    },
-  ],
   CrystalBrookScene: [
     {
       id: 'prism-grotto',
