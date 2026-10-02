@@ -16,7 +16,7 @@ export default defineConfig({
             },
             {
               name: 'game-core-shared',
-              test: /src[\\/]game[\\/](?:config[\\/]gameConstants|world[\\/](?:WorldArrivalState|RainbowMeadowMap))\.ts$/,
+              test: /src[\\/]game[\\/](?:config[\\/]gameConstants|visual[\\/]NovaPresentation|world[\\/](?:WorldArrivalState|RainbowMeadowMap))\.ts$/,
               priority: 10,
             },
           ],
