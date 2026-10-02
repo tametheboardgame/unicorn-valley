@@ -58,15 +58,6 @@ function hubApproach(id: string): { x: number; y: number } {
   return feature.approach;
 }
 
-function npcPosition(id: string): { x: number; y: number } {
-  const marker = RAINBOW_MEADOW_MAP.npcMarkers.find((candidate) => candidate.id === id);
-  if (!marker) {
-    throw new Error(`Rainbow Meadow interaction references missing NPC marker: ${id}`);
-  }
-
-  return marker.position;
-}
-
 function createMeadowInteractions(scene: Phaser.Scene): readonly InteractionTarget[] {
   const presenceService = new CoreNpcPresenceService(getBrowserSaveService());
 
@@ -84,15 +75,6 @@ function createMeadowInteractions(scene: Phaser.Scene): readonly InteractionTarg
       },
     },
     {
-      id: 'interaction:meadow-nova',
-      label: 'Nova',
-      actionLabel: 'Talk',
-      position: npcPosition('nova'),
-      interactionRadius: 155,
-      priority: 30,
-      result: { type: 'message', title: 'Nova', message: 'Talk with Nova.' },
-    },
-    {
       id: 'interaction:meadow-marigold-picnic',
       label: 'Marigold',
       actionLabel: 'Talk',
@@ -104,23 +86,9 @@ function createMeadowInteractions(scene: Phaser.Scene): readonly InteractionTarg
       result: { type: 'callback', activate: () => startMarigoldConversation(scene) },
     },
     {
-      id: 'interaction:meadow-ribbon-board',
-      label: 'Ribbon Board',
-      actionLabel: 'Look',
-      position: hubApproach('ribbon-board'),
-      interactionRadius: 160,
-      priority: 20,
-      result: {
-        type: 'message',
-        title: 'Rainbow Run Ribbon Board',
-        message:
-          'The polished board has hooks for Rainbow Run ribbons. Nova keeps the race names painted neatly beside them.',
-      },
-    },
-    {
       id: 'interaction:meadow-race-entrance',
-      label: 'Rainbow Run',
-      actionLabel: 'Enter Rainbow Run',
+      label: 'Rainbow Run Race Hub',
+      actionLabel: 'Enter Race Hub',
       position: hubApproach('rainbow-run-entrance'),
       interactionRadius: 175,
       priority: 25,
@@ -453,7 +421,7 @@ export class RainbowMeadowScene extends Phaser.Scene {
 
     this.createPond();
     this.createGroves();
-    this.createRaceHub();
+    this.createRainbowRunHubGateway();
     createMarigoldPicnicPresentation(this, getBrowserSaveService().load());
     this.createMeadowFlowers();
   }
@@ -492,71 +460,7 @@ export class RainbowMeadowScene extends Phaser.Scene {
       .setDepth(worldDepthForY(y, 0.25));
   }
 
-  private createRaceHub(): void {
-    this.createHubTent();
-    this.createRibbonBoard();
-    this.createRaceEntrance();
-    this.createHubFlags();
-
-    const racePresentation = RAINBOW_MEADOW_LAYOUT.raceHubPresentation;
-    this.add
-      .text(racePresentation.title.x, racePresentation.title.y, 'RAINBOW RUN', {
-        color: '#6b4777',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '34px',
-        fontStyle: 'bold',
-        backgroundColor: '#fff7dfe8',
-        padding: { x: 18, y: 9 },
-      })
-      .setOrigin(0.5)
-      .setDepth(worldDepthForY(racePresentation.title.y + 30, 0.4));
-  }
-
-  private createHubTent(): void {
-    const { x, y } = RAINBOW_MEADOW_LAYOUT.raceHubPresentation.tent;
-    const tent = this.add.graphics().setDepth(worldDepthForY(y + 130));
-    tent.fillStyle(0xfff1cb, 1);
-    tent.fillRoundedRect(x - 215, y - 20, 430, 150, 22);
-    tent.fillStyle(0xc79bdd, 1);
-    tent.fillTriangle(x - 230, y - 5, x, y - 190, x + 230, y - 5);
-    tent.fillStyle(0xf2a0b7, 0.96);
-    tent.fillTriangle(x - 115, y - 20, x, y - 170, x + 115, y - 20);
-    tent.fillStyle(0x8a684c, 1);
-    tent.fillRect(x - 25, y + 35, 50, 95);
-  }
-
-  private createRibbonBoard(): void {
-    const feature = RAINBOW_MEADOW_MAP.hubFeatures.find((item) => item.id === 'ribbon-board');
-    if (!feature) {
-      return;
-    }
-
-    const { x, y } = feature.position;
-    const board = this.add
-      .rectangle(x, y - 70, 300, 170, 0x8e674d, 1)
-      .setStrokeStyle(8, 0x6f4d3d, 1);
-    board.setDepth(worldDepthForY(y, 0.15));
-    this.add.rectangle(x - 108, y + 30, 18, 130, 0x72513f, 1).setDepth(worldDepthForY(y, 0.1));
-    this.add.rectangle(x + 108, y + 30, 18, 130, 0x72513f, 1).setDepth(worldDepthForY(y, 0.1));
-    this.add
-      .text(x, y - 116, 'RIBBONS', {
-        color: '#fff1be',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '22px',
-        fontStyle: 'bold',
-      })
-      .setOrigin(0.5)
-      .setDepth(worldDepthForY(y, 0.2));
-
-    const hookColours = [0xf18dad, 0xf5c968, 0x7cc6d8, 0xa6d77a, 0xc69be0];
-    for (let index = 0; index < hookColours.length; index += 1) {
-      const hookX = x - 100 + index * 50;
-      this.add.circle(hookX, y - 58, 7, hookColours[index], 0.75).setDepth(worldDepthForY(y, 0.2));
-      this.add.rectangle(hookX, y - 24, 3, 46, 0xd8bc8a, 0.6).setDepth(worldDepthForY(y, 0.18));
-    }
-  }
-
-  private createRaceEntrance(): void {
+  private createRainbowRunHubGateway(): void {
     const feature = RAINBOW_MEADOW_MAP.hubFeatures.find(
       (item) => item.id === 'rainbow-run-entrance',
     );
@@ -566,54 +470,38 @@ export class RainbowMeadowScene extends Phaser.Scene {
 
     const { x, y } = feature.position;
     const northPost = this.add
-      .rectangle(x, y - 140, 52, 180, 0x7f5a49, 1)
-      .setStrokeStyle(5, 0x654437, 1)
-      .setDepth(worldDepthForY(y - 50, 0.2));
+      .rectangle(x - 100, y, 38, 190, 0x745143, 1)
+      .setStrokeStyle(4, 0x5d4038, 1)
+      .setDepth(worldDepthForY(y + 105, 0.2));
     const southPost = this.add
-      .rectangle(x, y + 140, 52, 180, 0x7f5a49, 1)
-      .setStrokeStyle(5, 0x654437, 1)
-      .setDepth(worldDepthForY(y + 230, 0.2));
-
-    const rainbow = this.add.graphics().setDepth(worldDepthForY(y + 15, 0.1));
-    const colours = [0xf08aa3, 0xf4b66d, 0xf4db75, 0x81c77b, 0x79b9df, 0xb392da];
-    for (let index = 0; index < colours.length; index += 1) {
-      rainbow.lineStyle(12, colours[index], 0.96);
-      rainbow.beginPath();
-      rainbow.arc(x - 10, y, 128 - index * 12, -Math.PI / 2, Math.PI / 2, false);
-      rainbow.strokePath();
-    }
-
-    const northFlag = this.add
-      .triangle(x - 6, y - 235, 0, 0, 85, 22, 0, 44, 0xf18dad, 1)
-      .setDepth(northPost.depth + 0.2);
-    const southFlag = this.add
-      .triangle(x - 6, y + 45, 0, 0, 85, 22, 0, 44, 0x7cc6d8, 1)
-      .setDepth(southPost.depth + 0.2);
-    northFlag.setAngle(0);
-    southFlag.setAngle(0);
+      .rectangle(x + 100, y, 38, 190, 0x745143, 1)
+      .setStrokeStyle(4, 0x5d4038, 1)
+      .setDepth(worldDepthForY(y + 105, 0.2));
 
     this.add
-      .text(x - 122, y, 'START', {
-        color: '#66476f',
+      .rectangle(x, y - 92, 260, 66, 0xffefba, 1)
+      .setName('rainbow-meadow:rainbow-run-hub-sign')
+      .setStrokeStyle(5, 0xa77da9, 1)
+      .setDepth(Math.max(northPost.depth, southPost.depth) + 0.2);
+    this.add
+      .text(x, y - 92, 'RAINBOW RUN\nRACE HUB', {
+        color: '#654d70',
         fontFamily: 'system-ui, sans-serif',
-        fontSize: '20px',
+        fontSize: '18px',
         fontStyle: 'bold',
-        backgroundColor: '#fff7dfe8',
-        padding: { x: 10, y: 5 },
+        align: 'center',
+        lineSpacing: 2,
       })
       .setOrigin(0.5)
-      .setDepth(worldDepthForY(y, 0.25));
-  }
+      .setDepth(Math.max(northPost.depth, southPost.depth) + 0.3);
 
-  private createHubFlags(): void {
+    const pennants = this.add.graphics().setDepth(Math.max(northPost.depth, southPost.depth) + 0.1);
     const colours = [0xf18dad, 0xf5c968, 0x7cc6d8, 0xa6d77a, 0xc69be0];
-    for (const { x, y } of RAINBOW_MEADOW_LAYOUT.raceHubPresentation.flags) {
-      const depth = worldDepthForY(y, 0.2);
-      this.add.rectangle(x, y - 75, 7, 150, 0x83614c, 1).setDepth(depth);
-      this.add
-        .triangle(x + 4, y - 145, 0, 0, 76, 20, 0, 40, colours[(x + y) % colours.length], 1)
-        .setDepth(depth + 0.1);
-    }
+    colours.forEach((colour, index) => {
+      pennants.fillStyle(colour, 0.98);
+      const px = x - 104 + index * 52;
+      pennants.fillTriangle(px, y - 140, px + 32, y - 140, px + 16, y - 110);
+    });
   }
 
   private createMeadowFlowers(): void {
