@@ -48,7 +48,11 @@ import {
 } from '../racing/RaceRun';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { saveLocationCheckpoint } from '../save/saveLocationCheckpoint';
-import { consumeRaceReturnScene } from '../racing/RaceReturnContext';
+import {
+  consumeRaceReturnScene,
+  peekRaceReturnScene,
+  raceReturnLabel,
+} from '../racing/RaceReturnContext';
 import { RAINBOW_RUN_HUB_LOCATION_ID } from '../world/RainbowRunHubMap';
 
 const PLAYER_TEXTURE_KEY = 'player-unicorn-race';
@@ -860,8 +864,9 @@ export class RaceScene extends Phaser.Scene {
   }
 
   private createExitButton(): void {
+    const destination = raceReturnLabel(peekRaceReturnScene(this.sys.game));
     const button = this.add
-      .text(22, 22, '← Race Hub', {
+      .text(22, 22, `← ${destination}`, {
         color: '#5c4668',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '18px',
@@ -1071,8 +1076,9 @@ export class RaceScene extends Phaser.Scene {
       .rectangle(GAME_WIDTH / 2 + 145, GAME_HEIGHT / 2 + 195, 230, 70, 0xf1e2fb, 1)
       .setStrokeStyle(4, 0xb895c8, 1)
       .setAlpha(0);
+    const destination = raceReturnLabel(peekRaceReturnScene(this.sys.game));
     const exitText = this.add
-      .text(GAME_WIDTH / 2 + 145, GAME_HEIGHT / 2 + 195, 'Back to Race Hub', {
+      .text(GAME_WIDTH / 2 + 145, GAME_HEIGHT / 2 + 195, `Back to ${destination}`, {
         color: '#60486d',
         fontFamily: 'system-ui, sans-serif',
         fontSize: '20px',
