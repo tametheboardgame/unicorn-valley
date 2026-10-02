@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "1Y-PRpTSJtBHl9YgNnYlTwMWmVl2E8uHM"
+  },
+  "expectedSourceName": "twelve-dancing-princesses-hidden-bed-stair-v01.png",
+  "destination": "public/stories/the-twelve-dancing-princesses/illustrations/generated/hidden-bed-stair.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1000,
+    "quality": 88
+  },
+  "revision": 1
+}
