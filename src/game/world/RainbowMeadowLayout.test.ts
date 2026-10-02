@@ -300,9 +300,7 @@ describe('Rainbow Meadow canonical layout', () => {
     );
     expect(deepColliders).toHaveLength(0);
 
-    expect(CRYSTAL_BROOK_STEPPING_CORRIDOR.start.x).toBeLessThan(
-      area.steppingStones[0].x,
-    );
+    expect(CRYSTAL_BROOK_STEPPING_CORRIDOR.start.x).toBeLessThan(area.steppingStones[0].x);
     expect(CRYSTAL_BROOK_STEPPING_CORRIDOR.end.x).toBeGreaterThan(
       area.steppingStones[area.steppingStones.length - 1].x,
     );
