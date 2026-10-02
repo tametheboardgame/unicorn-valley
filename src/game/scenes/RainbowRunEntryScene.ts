@@ -209,22 +209,6 @@ export class RainbowRunEntryScene extends Phaser.Scene {
         result: { type: 'callback', activate: () => this.showFeedback(raceRecordMessage()) },
       },
       {
-        id: 'interaction:race-hub-cup',
-        label: 'Rainbow Cup',
-        actionLabel: 'Look',
-        actionKind: 'inspect',
-        position: RAINBOW_RUN_HUB_LAYOUT.cupBoard.approach,
-        interactionRadius: 150,
-        priority: 20,
-        result: {
-          type: 'callback',
-          activate: () =>
-            this.showFeedback(
-              'Five course spaces wait on the Rainbow Cup board. Every finish counts; best times are just for fun. 🏆',
-            ),
-        },
-      },
-      {
         id: 'interaction:race-hub-poster',
         label: 'Course board',
         actionLabel: 'Look',
