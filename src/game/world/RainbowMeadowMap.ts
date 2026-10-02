@@ -442,6 +442,78 @@ export const RAINBOW_MEADOW_LAYOUT = {
   ] satisfies readonly RainbowMeadowPathStroke[],
 } as const;
 
+
+function pointInsidePolygon(point: MapPoint, polygon: readonly MapPoint[]): boolean {
+  let inside = false;
+  for (let index = 0, previous = polygon.length - 1; index < polygon.length; previous = index++) {
+    const a = polygon[index];
+    const b = polygon[previous];
+    const crosses =
+      a.y > point.y !== b.y > point.y &&
+      point.x < ((b.x - a.x) * (point.y - a.y)) / (b.y - a.y) + a.x;
+    if (crosses) {
+      inside = !inside;
+    }
+  }
+  return inside;
+}
+
+function distanceToSegment(point: MapPoint, start: MapPoint, end: MapPoint): number {
+  const dx = end.x - start.x;
+  const dy = end.y - start.y;
+  const lengthSquared = dx * dx + dy * dy;
+  if (lengthSquared === 0) {
+    return Math.hypot(point.x - start.x, point.y - start.y);
+  }
+  const projection = Math.max(
+    0,
+    Math.min(1, ((point.x - start.x) * dx + (point.y - start.y) * dy) / lengthSquared),
+  );
+  const nearestX = start.x + projection * dx;
+  const nearestY = start.y + projection * dy;
+  return Math.hypot(point.x - nearestX, point.y - nearestY);
+}
+
+function buildCrystalBrookDeepWaterCollision(): readonly Omit<CollisionRectangle, 'id'>[] {
+  const area = RAINBOW_MEADOW_LAYOUT.crystalBrookGatewayArea;
+  const polygon = area.pool.deepZone;
+  const route = area.steppingStones;
+  const tileSize = 46;
+  const tileStep = 38;
+  const corridorRadius = 72;
+  const minX = Math.min(...polygon.map(({ x }) => x));
+  const maxX = Math.max(...polygon.map(({ x }) => x));
+  const minY = Math.min(...polygon.map(({ y }) => y));
+  const maxY = Math.max(...polygon.map(({ y }) => y));
+  const blockers: Omit<CollisionRectangle, 'id'>[] = [];
+
+  for (let y = minY; y <= maxY; y += tileStep) {
+    for (let x = minX; x <= maxX; x += tileStep) {
+      const point = { x, y };
+      if (!pointInsidePolygon(point, polygon)) {
+        continue;
+      }
+
+      let routeDistance = Number.POSITIVE_INFINITY;
+      for (let index = 0; index < route.length - 1; index += 1) {
+        routeDistance = Math.min(
+          routeDistance,
+          distanceToSegment(point, route[index], route[index + 1]),
+        );
+      }
+      if (routeDistance <= corridorRadius) {
+        continue;
+      }
+
+      blockers.push({ x, y, width: tileSize, height: tileSize });
+    }
+  }
+
+  return blockers;
+}
+
+const CRYSTAL_BROOK_DEEP_WATER_COLLIDERS = buildCrystalBrookDeepWaterCollision();
+
 const DEFAULT_PLAYER_SPAWN = RAINBOW_MEADOW_LAYOUT.sunbeamGateway.approach;
 const playerSpawn: MapPoint = { ...DEFAULT_PLAYER_SPAWN };
 
@@ -526,7 +598,7 @@ export const RAINBOW_MEADOW_MAP = {
       width: rock.collisionWidth,
       height: rock.collisionHeight,
     })),
-    ...RAINBOW_MEADOW_LAYOUT.crystalBrookGatewayArea.deepWaterBlockers.map((blocker, index) => ({
+    ...CRYSTAL_BROOK_DEEP_WATER_COLLIDERS.map((blocker, index) => ({
       id: `collision:crystal-brook-deep-water:${index}`,
       ...blocker,
     })),
