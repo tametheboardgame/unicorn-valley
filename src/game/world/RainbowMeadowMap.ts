@@ -169,6 +169,7 @@ export const RAINBOW_MEADOW_LAYOUT = {
     approach: { x: 3130, y: 1645 },
     direction: 'east',
   },
+  // H4.4 hero composition: the Meadow road ends at the bank; water, stones and waterfall own the threshold.
   crystalBrookGatewayArea: {
     leftBank: { x: 2735, y: 1745 },
     pool: { x: 3040, y: 1735, width: 690, height: 390 },
