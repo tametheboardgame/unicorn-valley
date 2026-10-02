@@ -23,6 +23,7 @@ import {
 import { startMarigoldConversation } from '../story/WorldStoryConversations';
 import { InteractionPrompt } from '../ui/InteractionPrompt';
 import {
+  isCrystalBrookDeepWaterBlocked,
   RAINBOW_MEADOW_LAYOUT,
   RAINBOW_MEADOW_LOCATION_ID,
   RAINBOW_MEADOW_MAP,
@@ -113,6 +114,7 @@ export class RainbowMeadowScene extends Phaser.Scene {
   private feedbackTimer: Phaser.Time.TimerEvent | null = null;
   private discoveryService: DiscoveryService | null = null;
   private readonly discoveryPickups = new Map<DiscoveryId, Phaser.GameObjects.Container>();
+  private crystalBrookLastWalkablePosition: { x: number; y: number } | null = null;
 
   public constructor() {
     super('RainbowMeadowScene');
@@ -152,6 +154,10 @@ export class RainbowMeadowScene extends Phaser.Scene {
     this.player.sprite.setDisplaySize(112, 92);
     this.player.sprite.setDepth(worldDepthForY(this.player.sprite.y, 0.5));
     this.physics.add.collider(this.player.sprite, this.collisionGroup);
+    this.crystalBrookLastWalkablePosition = {
+      x: this.player.sprite.x,
+      y: this.player.sprite.y,
+    };
 
     this.pointerInput = new PointerTouchInputAdapter();
     this.inputController = new InputController([new KeyboardInputAdapter(this), this.pointerInput]);
@@ -196,6 +202,7 @@ export class RainbowMeadowScene extends Phaser.Scene {
       this.player?.destroy();
       this.player = null;
       this.collisionGroup = null;
+      this.crystalBrookLastWalkablePosition = null;
       this.activeInteraction = null;
       this.meadowInteractions = [];
       this.feedbackText = null;
@@ -208,6 +215,7 @@ export class RainbowMeadowScene extends Phaser.Scene {
     }
 
     this.inputController.update();
+    this.enforceCrystalBrookDeepWaterBoundary();
 
     if (this.inputController.justPressed('BACK')) {
       this.scene.start('TitleScene');
@@ -246,6 +254,29 @@ export class RainbowMeadowScene extends Phaser.Scene {
     if (this.inputController.justPressed('INTERACT') && this.activeInteraction) {
       this.activateInteraction(this.activeInteraction);
     }
+  }
+
+  private enforceCrystalBrookDeepWaterBoundary(): void {
+    if (!this.player) {
+      return;
+    }
+
+    const sprite = this.player.sprite;
+    const current = { x: sprite.x, y: sprite.y };
+    if (!isCrystalBrookDeepWaterBlocked(current)) {
+      this.crystalBrookLastWalkablePosition = current;
+      return;
+    }
+
+    const fallback = this.crystalBrookLastWalkablePosition;
+    if (!fallback) {
+      return;
+    }
+
+    sprite.setPosition(fallback.x, fallback.y);
+    const body = sprite.body as Phaser.Physics.Arcade.Body;
+    body.reset(fallback.x, fallback.y);
+    sprite.setVelocity(0, 0);
   }
 
   private activateInteraction(target: InteractionTarget): void {
