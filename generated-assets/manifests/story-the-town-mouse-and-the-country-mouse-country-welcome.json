@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "1shEy_F4HW5J1T2m25G_RnWqqkummNm40"
+  },
+  "expectedSourceName": "town-country-country-welcome-v01.png",
+  "destination": "public/stories/the-town-mouse-and-the-country-mouse/illustrations/generated/country-welcome.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1000,
+    "quality": 88
+  },
+  "revision": 3
+}
