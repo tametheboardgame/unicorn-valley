@@ -1,11 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  CRYSTAL_BROOK_STEPPING_CORRIDOR,
-  isCrystalBrookDeepWaterBlocked,
-  isPointInsideCrystalBrookSteppingCorridor,
-  RAINBOW_MEADOW_LAYOUT,
-  RAINBOW_MEADOW_MAP,
-} from './RainbowMeadowMap';
+import { RAINBOW_MEADOW_LAYOUT, RAINBOW_MEADOW_MAP } from './RainbowMeadowMap';
 
 function isInsideDistrict(
   point: { x: number; y: number },
@@ -243,11 +237,6 @@ describe('Rainbow Meadow canonical layout', () => {
     expect(area.rocks).toHaveLength(7);
     expect(area.crystals.length).toBeGreaterThanOrEqual(4);
     expect(area.mist.length).toBeGreaterThanOrEqual(3);
-    expect(CRYSTAL_BROOK_STEPPING_CORRIDOR).toEqual({
-      start: { x: 2655, y: 1239 },
-      end: { x: 3375, y: 1010 },
-      width: 96,
-    });
     expect(area.outletStream.points[area.outletStream.points.length - 1]?.y).toBeGreaterThan(
       RAINBOW_MEADOW_LAYOUT.bounds.height,
     );
@@ -284,48 +273,15 @@ describe('Rainbow Meadow canonical layout', () => {
     });
   });
 
-  it('keeps the dry landing and every stepping-stone centre outside deep-water collision', () => {
-    const area = RAINBOW_MEADOW_LAYOUT.crystalBrookGatewayArea;
-
-    expect(isCrystalBrookDeepWaterBlocked(area.dryLanding)).toBe(false);
-    expect(isCrystalBrookDeepWaterBlocked(area.leftBank)).toBe(false);
-    for (const stone of area.steppingStones) {
-      expect(isPointInsideCrystalBrookSteppingCorridor(stone)).toBe(true);
-      expect(isCrystalBrookDeepWaterBlocked(stone)).toBe(false);
-    }
-
-    const leftmostShoreX = Math.min(...area.pool.shoreline.map(({ x }) => x));
-    expect(area.dryLanding.x).toBeGreaterThan(leftmostShoreX);
-    expect(area.dryLanding.x).toBeLessThan(area.steppingStones[0].x);
-  });
-
-  it('uses one invisible rotated rectangle over the stepping stones instead of static blockers', () => {
-    const area = RAINBOW_MEADOW_LAYOUT.crystalBrookGatewayArea;
-    const deepColliders = RAINBOW_MEADOW_MAP.colliders.filter(({ id }) =>
-      id.startsWith('collision:crystal-brook-deep-water:'),
+  it('keeps Crystal Brook water free of dedicated collision bodies', () => {
+    const waterColliders = RAINBOW_MEADOW_MAP.colliders.filter(({ id }) =>
+      id.includes('crystal-brook-deep-water'),
     );
-    expect(deepColliders).toHaveLength(0);
+    expect(waterColliders).toHaveLength(0);
 
-    for (const stone of area.steppingStones) {
-      expect(isCrystalBrookDeepWaterBlocked(stone)).toBe(false);
-    }
-
-    for (const sample of [
-      { x: 3000, y: 1250 },
-      { x: 3070, y: 1200 },
-      { x: 2870, y: 1320 },
-      { x: 3050, y: 1300 },
-      { x: 3240, y: 1250 },
-    ]) {
-      expect(isCrystalBrookDeepWaterBlocked(sample)).toBe(true);
-    }
-
+    const area = RAINBOW_MEADOW_LAYOUT.crystalBrookGatewayArea;
     expect(area.outletStream.points[0]).toEqual({ x: 3060, y: 1495 });
     expect(area.outletStream.points[1]).toEqual({ x: 3060, y: 1560 });
-    expect(area.pool.shoreline).toContainEqual({ x: 3123, y: 1495 });
-    expect(area.pool.shoreline).toContainEqual({ x: 2997, y: 1495 });
-    expect(area.pool.deepZone).toContainEqual({ x: 3090, y: 1495 });
-    expect(area.pool.deepZone).toContainEqual({ x: 3030, y: 1495 });
   });
 
   it('uses materially different Crystal Brook boulder silhouettes', () => {
