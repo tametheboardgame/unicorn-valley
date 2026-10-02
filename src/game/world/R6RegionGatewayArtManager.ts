@@ -408,20 +408,37 @@ function toVector2Points(points: readonly Point[]): Phaser.Math.Vector2[] {
   return points.map(({ x, y }) => new Phaser.Math.Vector2(x, y));
 }
 
-function drawRoundedStrokeInto(
+function buildRibbonPolygon(points: readonly Point[], width: number): Phaser.Math.Vector2[] {
+  const halfWidth = width / 2;
+  const left: Phaser.Math.Vector2[] = [];
+  const right: Phaser.Math.Vector2[] = [];
+
+  for (let index = 0; index < points.length; index += 1) {
+    const previous = points[Math.max(0, index - 1)];
+    const next = points[Math.min(points.length - 1, index + 1)];
+    const dx = next.x - previous.x;
+    const dy = next.y - previous.y;
+    const length = Math.hypot(dx, dy) || 1;
+    const normalX = -dy / length;
+    const normalY = dx / length;
+    const point = points[index];
+
+    left.push(new Phaser.Math.Vector2(point.x + normalX * halfWidth, point.y + normalY * halfWidth));
+    right.push(new Phaser.Math.Vector2(point.x - normalX * halfWidth, point.y - normalY * halfWidth));
+  }
+
+  return [...left, ...right.reverse()];
+}
+
+function fillRibbon(
   graphics: Phaser.GameObjects.Graphics,
   points: readonly Point[],
   width: number,
   colour: number,
   alpha: number,
 ): void {
-  graphics.lineStyle(width, colour, alpha);
-  graphics.beginPath();
-  graphics.moveTo(points[0].x, points[0].y);
-  for (const point of points.slice(1)) {
-    graphics.lineTo(point.x, point.y);
-  }
-  graphics.strokePath();
+  graphics.fillStyle(colour, alpha);
+  graphics.fillPoints(buildRibbonPolygon(points, width), true);
 }
 
 function createMeadowCrystalBrookGateway(scene: Phaser.Scene): void {
@@ -481,21 +498,14 @@ function createMeadowCrystalBrookGateway(scene: Phaser.Scene): void {
   deepWater.fillPoints(toVector2Points(pool.deepZone), true);
 
   const stream = name(scene.add.graphics().setDepth(2.5), 'meadow-crystal-brook:outlet-stream');
-  drawRoundedStrokeInto(stream, outletStream.points, outletStream.outerWidth, 0x579aa1, 0.58);
-  drawRoundedStrokeInto(stream, outletStream.points, outletStream.innerWidth, 0x7ed0d2, 0.9);
-  stream.lineStyle(5, 0xd9ffff, 0.24);
-  stream.beginPath();
-  stream.moveTo(outletStream.points[0].x - 8, outletStream.points[0].y);
-  for (const point of outletStream.points.slice(1)) {
-    stream.lineTo(point.x - 8, point.y);
-  }
-  stream.strokePath();
+  fillRibbon(stream, outletStream.points, outletStream.outerWidth, 0x579aa1, 0.58);
+  fillRibbon(stream, outletStream.points, outletStream.innerWidth, 0x7ed0d2, 0.9);
 
   const deepChannel = name(
     scene.add.graphics().setDepth(2.53),
     'meadow-crystal-brook:deep-outlet-channel',
   );
-  drawRoundedStrokeInto(deepChannel, outletStream.points, outletStream.deepWidth, 0x3f97a6, 0.82);
+  fillRibbon(deepChannel, outletStream.points, outletStream.deepWidth, 0x3f97a6, 0.82);
 
   const waterGlints = name(
     scene.add.graphics().setDepth(2.61),
