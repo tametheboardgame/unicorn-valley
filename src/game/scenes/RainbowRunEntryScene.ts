@@ -153,6 +153,15 @@ export class RainbowRunEntryScene extends Phaser.Scene {
     this.player.updatePresentation(time);
     this.player.sprite.setDepth(worldDepthForY(this.player.sprite.y, 0.5));
 
+    const meadowExit = RAINBOW_RUN_HUB_LAYOUT.meadowExit.walkThroughPosition;
+    if (
+      Math.abs(this.player.sprite.x - meadowExit.x) <= 105 &&
+      this.player.sprite.y >= meadowExit.y
+    ) {
+      this.exitToMeadow();
+      return;
+    }
+
     if (this.inputController.justPressed('BACK')) {
       this.exitToMeadow();
     }
