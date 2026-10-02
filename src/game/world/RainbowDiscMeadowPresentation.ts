@@ -134,8 +134,7 @@ export function createRainbowDiscMeadowPresentation(scene: Phaser.Scene): void {
   ] as const;
 
   const sprites = layout.players.map((player, index) => {
-    const appearance =
-      RAINBOW_DISC_PLAYER_APPEARANCES[index] ?? RAINBOW_DISC_PLAYER_APPEARANCES[0];
+    const appearance = RAINBOW_DISC_PLAYER_APPEARANCES[index] ?? RAINBOW_DISC_PLAYER_APPEARANCES[0];
     const sprite = createResidentAppearanceSprite(
       scene,
       `rainbow-disc-player:${player.id}:idle`,
