@@ -428,7 +428,14 @@ export class RainbowMeadowScene extends Phaser.Scene {
       .setName('rainbow-meadow:nature:pond')
       .setDepth(3);
     this.add
-      .ellipse(pond.position.x - 28, pond.position.y - 20, pond.width - 105, pond.height - 92, 0xb9eef0, 0.36)
+      .ellipse(
+        pond.position.x - 28,
+        pond.position.y - 20,
+        pond.width - 105,
+        pond.height - 92,
+        0xb9eef0,
+        0.36,
+      )
       .setName('rainbow-meadow:nature:pond-reflection')
       .setDepth(4);
     for (const { x, y } of pond.lilyPads) {
@@ -449,7 +456,12 @@ export class RainbowMeadowScene extends Phaser.Scene {
       [34, 48],
       [52, 66],
     ] as const) {
-      reeds.lineBetween(reedBaseX + offsetX, reedBaseY, reedBaseX + offsetX + 4, reedBaseY - height);
+      reeds.lineBetween(
+        reedBaseX + offsetX,
+        reedBaseY,
+        reedBaseX + offsetX + 4,
+        reedBaseY - height,
+      );
       reeds.fillStyle(0x8d6c45, 0.94);
       reeds.fillEllipse(reedBaseX + offsetX + 4, reedBaseY - height - 7, 9, 20);
     }
