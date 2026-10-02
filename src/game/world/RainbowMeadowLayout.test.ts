@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { RAINBOW_MEADOW_LAYOUT, RAINBOW_MEADOW_MAP } from './RainbowMeadowMap';
+import {
+  CRYSTAL_BROOK_STEPPING_CORRIDOR,
+  isCrystalBrookDeepWaterBlocked,
+  RAINBOW_MEADOW_LAYOUT,
+  RAINBOW_MEADOW_MAP,
+} from './RainbowMeadowMap';
 
 function isInsideDistrict(
   point: { x: number; y: number },
@@ -237,7 +242,7 @@ describe('Rainbow Meadow canonical layout', () => {
     expect(area.rocks).toHaveLength(7);
     expect(area.crystals.length).toBeGreaterThanOrEqual(4);
     expect(area.mist.length).toBeGreaterThanOrEqual(3);
-    expect(area.deepWaterBlockers.length).toBeGreaterThanOrEqual(4);
+    expect(CRYSTAL_BROOK_STEPPING_CORRIDOR.halfWidth).toBe(44);
     expect(area.outletStream.points[area.outletStream.points.length - 1]?.y).toBeGreaterThan(
       RAINBOW_MEADOW_LAYOUT.bounds.height,
     );
@@ -276,16 +281,11 @@ describe('Rainbow Meadow canonical layout', () => {
 
   it('keeps the dry landing and every stepping-stone centre outside deep-water collision', () => {
     const area = RAINBOW_MEADOW_LAYOUT.crystalBrookGatewayArea;
-    const blocked = (point: { x: number; y: number }): boolean =>
-      area.deepWaterBlockers.some(
-        ({ x, y, width, height }) =>
-          Math.abs(point.x - x) <= width / 2 && Math.abs(point.y - y) <= height / 2,
-      );
 
-    expect(blocked(area.dryLanding)).toBe(false);
-    expect(blocked(area.leftBank)).toBe(false);
+    expect(isCrystalBrookDeepWaterBlocked(area.dryLanding)).toBe(false);
+    expect(isCrystalBrookDeepWaterBlocked(area.leftBank)).toBe(false);
     for (const stone of area.steppingStones) {
-      expect(blocked(stone)).toBe(false);
+      expect(isCrystalBrookDeepWaterBlocked(stone)).toBe(false);
     }
 
     const leftmostShoreX = Math.min(...area.pool.shoreline.map(({ x }) => x));
@@ -293,38 +293,27 @@ describe('Rainbow Meadow canonical layout', () => {
     expect(area.dryLanding.x).toBeLessThan(area.steppingStones[0].x);
   });
 
-  it('maps dense deep-water blockers into Meadow collision while preserving the stone corridor', () => {
+  it('uses one straight stone corridor instead of static deep-water blocker rectangles', () => {
     const area = RAINBOW_MEADOW_LAYOUT.crystalBrookGatewayArea;
     const deepColliders = RAINBOW_MEADOW_MAP.colliders.filter(({ id }) =>
       id.startsWith('collision:crystal-brook-deep-water:'),
     );
-    expect(deepColliders).toHaveLength(area.deepWaterBlockers.length);
-    area.deepWaterBlockers.forEach((blocker, index) => {
-      expect(deepColliders[index]).toEqual({
-        id: `collision:crystal-brook-deep-water:${index}`,
-        ...blocker,
-      });
-    });
+    expect(deepColliders).toHaveLength(0);
 
-    const landingIsBlocked = deepColliders.some(
-      ({ x, y, width, height }) =>
-        Math.abs(area.dryLanding.x - x) <= width / 2 &&
-        Math.abs(area.dryLanding.y - y) <= height / 2,
+    expect(CRYSTAL_BROOK_STEPPING_CORRIDOR.start.x).toBeLessThan(
+      area.steppingStones[0].x,
     );
-    expect(landingIsBlocked).toBe(false);
+    expect(CRYSTAL_BROOK_STEPPING_CORRIDOR.end.x).toBeGreaterThan(
+      area.steppingStones[area.steppingStones.length - 1].x,
+    );
 
     for (const sample of [
-      { x: 2950, y: 1010 },
+      { x: 3000, y: 1200 },
       { x: 2870, y: 1320 },
       { x: 3050, y: 1300 },
       { x: 3240, y: 1250 },
     ]) {
-      expect(
-        deepColliders.some(
-          ({ x, y, width, height }) =>
-            Math.abs(sample.x - x) <= width / 2 && Math.abs(sample.y - y) <= height / 2,
-        ),
-      ).toBe(true);
+      expect(isCrystalBrookDeepWaterBlocked(sample)).toBe(true);
     }
   });
 
