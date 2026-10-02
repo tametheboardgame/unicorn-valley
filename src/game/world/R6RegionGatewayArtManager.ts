@@ -130,11 +130,21 @@ function addNaturalRock(
   angle = 0,
 ): Phaser.GameObjects.Container {
   const shapes: Record<string, readonly number[]> = {
-    slab: [-0.55, 0.08, -0.46, -0.28, -0.16, -0.42, 0.28, -0.36, 0.55, -0.04, 0.42, 0.3, 0.05, 0.42, -0.38, 0.32],
+    slab: [
+      -0.55, 0.08, -0.46, -0.28, -0.16, -0.42, 0.28, -0.36, 0.55, -0.04, 0.42, 0.3, 0.05, 0.42,
+      -0.38, 0.32,
+    ],
     spire: [-0.3, 0.5, -0.44, 0.08, -0.22, -0.54, 0.08, -0.64, 0.36, -0.18, 0.3, 0.34, 0.02, 0.54],
-    round: [-0.5, 0.08, -0.42, -0.28, -0.16, -0.46, 0.2, -0.44, 0.46, -0.2, 0.5, 0.14, 0.28, 0.42, -0.08, 0.5, -0.4, 0.32],
-    wedge: [-0.54, 0.28, -0.42, -0.18, -0.08, -0.54, 0.5, -0.26, 0.42, 0.3, 0.08, 0.48, -0.32, 0.42],
-    lopsided: [-0.56, 0.2, -0.5, -0.24, -0.18, -0.5, 0.42, -0.3, 0.54, 0.18, 0.18, 0.48, -0.22, 0.42],
+    round: [
+      -0.5, 0.08, -0.42, -0.28, -0.16, -0.46, 0.2, -0.44, 0.46, -0.2, 0.5, 0.14, 0.28, 0.42, -0.08,
+      0.5, -0.4, 0.32,
+    ],
+    wedge: [
+      -0.54, 0.28, -0.42, -0.18, -0.08, -0.54, 0.5, -0.26, 0.42, 0.3, 0.08, 0.48, -0.32, 0.42,
+    ],
+    lopsided: [
+      -0.56, 0.2, -0.5, -0.24, -0.18, -0.5, 0.42, -0.3, 0.54, 0.18, 0.18, 0.48, -0.22, 0.42,
+    ],
   };
 
   const makePoints = (shape: readonly number[], w: number, h: number): number[] => {
@@ -150,16 +160,26 @@ function addNaturalRock(
   if (kind === 'cluster') {
     const clusterParts = [
       { x: -width * 0.24, y: height * 0.08, w: width * 0.58, h: height * 0.68, colour },
-      { x: width * 0.12, y: -height * 0.12, w: width * 0.54, h: height * 0.76, colour: colour + 0x050505 },
-      { x: width * 0.32, y: height * 0.14, w: width * 0.38, h: height * 0.5, colour: colour - 0x030303 },
+      {
+        x: width * 0.12,
+        y: -height * 0.12,
+        w: width * 0.54,
+        h: height * 0.76,
+        colour: colour + 0x050505,
+      },
+      {
+        x: width * 0.32,
+        y: height * 0.14,
+        w: width * 0.38,
+        h: height * 0.5,
+        colour: colour - 0x030303,
+      },
     ];
     for (const [index, part] of clusterParts.entries()) {
       const points = makePoints(shapes[index === 1 ? 'round' : 'lopsided'], part.w, part.h);
       container.add([
         scene.add.polygon(part.x + 5, part.y + 7, points, 0x34484a, 0.24),
-        scene.add
-          .polygon(part.x, part.y, points, part.colour, 1)
-          .setStrokeStyle(4, 0x465a5c, 0.9),
+        scene.add.polygon(part.x, part.y, points, part.colour, 1).setStrokeStyle(4, 0x465a5c, 0.9),
       ]);
     }
   } else {
@@ -663,11 +683,9 @@ function createMeadowCrystalBrookGateway(scene: Phaser.Scene): void {
 
     const curtain = name(
       scene.add
-        .container(
-          waterfall.x + curtainConfig.side * curtainConfig.closedOffset,
-          waterfall.y,
-          [graphics],
-        )
+        .container(waterfall.x + curtainConfig.side * curtainConfig.closedOffset, waterfall.y, [
+          graphics,
+        ])
         .setDepth(waterfallDepth + index * 0.002),
       `meadow-crystal-brook:waterfall-curtain-${curtainConfig.id}`,
     );
@@ -755,10 +773,7 @@ function createMeadowCrystalBrookGateway(scene: Phaser.Scene): void {
     .setDepth(worldDepthForY(area.sign.y, 0.35));
   sign.add([
     scene.add.rectangle(0, 34, 14, 84, 0x765143, 1).setStrokeStyle(3, 0x5a4037, 0.9),
-    scene.add
-      .rectangle(0, -8, 218, 62, 0xa9754f, 1)
-      .setStrokeStyle(5, 0x684737, 0.95)
-      .setAngle(-2),
+    scene.add.rectangle(0, -8, 218, 62, 0xa9754f, 1).setStrokeStyle(5, 0x684737, 0.95).setAngle(-2),
     scene.add
       .text(0, -8, 'CRYSTAL BROOK  →', {
         color: '#fff1c5',
@@ -808,8 +823,7 @@ function updateMeadowCrystalBrookEffects(scene: Phaser.Scene): void {
       targets: curtain,
       x:
         waterfall.x +
-        curtainConfig.side *
-          (shouldOpen ? curtainConfig.openOffset : curtainConfig.closedOffset),
+        curtainConfig.side * (shouldOpen ? curtainConfig.openOffset : curtainConfig.closedOffset),
       alpha: shouldOpen ? 0.74 : 1,
       duration: shouldOpen ? 320 : 420,
       ease: 'Sine.InOut',
