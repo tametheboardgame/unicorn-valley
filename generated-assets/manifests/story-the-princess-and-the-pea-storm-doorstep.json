@@ -4,12 +4,12 @@
     "provider": "google-drive",
     "fileId": "1x5Vycy1l-4CHNxeHtvCeowqikUFVuww6"
   },
-  "expectedSourceName": "princess-pea-storm-doorstep-v01.png",
+  "expectedSourceName": "princess-pea-storm-doorstep-v02.png",
   "destination": "public/stories/the-princess-and-the-pea/illustrations/generated/storm-doorstep.webp",
   "transform": {
     "maxWidth": 1600,
     "maxHeight": 1000,
     "quality": 88
   },
-  "revision": 1
+  "revision": 2
 }

@@ -4,12 +4,12 @@
     "provider": "google-drive",
     "fileId": "1YUUEBq7If49vf354WAXx-6IBU8FQVeHh"
   },
-  "expectedSourceName": "princess-pea-mattress-tower-v01.png",
+  "expectedSourceName": "princess-pea-mattress-tower-v02.png",
   "destination": "public/stories/the-princess-and-the-pea/illustrations/generated/mattress-tower.webp",
   "transform": {
     "maxWidth": 1600,
     "maxHeight": 1000,
     "quality": 88
   },
-  "revision": 1
+  "revision": 2
 }
