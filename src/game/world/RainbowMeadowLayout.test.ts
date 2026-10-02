@@ -242,7 +242,12 @@ describe('Rainbow Meadow canonical layout', () => {
     expect(area.rocks).toHaveLength(7);
     expect(area.crystals.length).toBeGreaterThanOrEqual(4);
     expect(area.mist.length).toBeGreaterThanOrEqual(3);
-    expect(CRYSTAL_BROOK_STEPPING_CORRIDOR.halfWidth).toBe(68);
+    expect(CRYSTAL_BROOK_STEPPING_CORRIDOR.polygon).toEqual([
+      { x: 2670, y: 1169 },
+      { x: 3370, y: 966 },
+      { x: 3370, y: 1093 },
+      { x: 2670, y: 1278 },
+    ]);
     expect(area.outletStream.points[area.outletStream.points.length - 1]?.y).toBeGreaterThan(
       RAINBOW_MEADOW_LAYOUT.bounds.height,
     );
@@ -293,26 +298,30 @@ describe('Rainbow Meadow canonical layout', () => {
     expect(area.dryLanding.x).toBeLessThan(area.steppingStones[0].x);
   });
 
-  it('uses one straight stone corridor instead of static deep-water blocker rectangles', () => {
+  it('uses the marked four-corner crossing band instead of static deep-water blockers', () => {
     const area = RAINBOW_MEADOW_LAYOUT.crystalBrookGatewayArea;
     const deepColliders = RAINBOW_MEADOW_MAP.colliders.filter(({ id }) =>
       id.startsWith('collision:crystal-brook-deep-water:'),
     );
     expect(deepColliders).toHaveLength(0);
 
-    expect(CRYSTAL_BROOK_STEPPING_CORRIDOR.start.x).toBeLessThan(area.steppingStones[0].x);
-    expect(CRYSTAL_BROOK_STEPPING_CORRIDOR.end.x).toBeGreaterThan(
-      area.steppingStones[area.steppingStones.length - 1].x,
-    );
+    for (const stone of area.steppingStones) {
+      expect(isCrystalBrookDeepWaterBlocked(stone)).toBe(false);
+    }
 
     for (const sample of [
-      { x: 3000, y: 1200 },
+      { x: 3000, y: 1250 },
+      { x: 3070, y: 1200 },
       { x: 2870, y: 1320 },
       { x: 3050, y: 1300 },
       { x: 3240, y: 1250 },
     ]) {
       expect(isCrystalBrookDeepWaterBlocked(sample)).toBe(true);
     }
+
+    expect(area.outletStream.points[0]).toEqual({ x: 3060, y: 1495 });
+    expect(area.pool.deepZone).toContainEqual({ x: 3090, y: 1495 });
+    expect(area.pool.deepZone).toContainEqual({ x: 3030, y: 1495 });
   });
 
   it('uses materially different Crystal Brook boulder silhouettes', () => {
