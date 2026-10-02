@@ -482,10 +482,7 @@ export class MeadowDepthWorldManager {
     }
   }
 
-  private addPetalPatchVisual(
-    scene: Phaser.Scene,
-    objects: Phaser.GameObjects.GameObject[],
-  ): void {
+  private addPetalPatchVisual(scene: Phaser.Scene, objects: Phaser.GameObjects.GameObject[]): void {
     const centre = RAINBOW_MEADOW_LAYOUT.natureFeatures.petalPatch;
     const colours = [0xf09fbe, 0xffcf73, 0xb8a1df, 0x8bcbd9];
     for (let index = 0; index < 12; index += 1) {
