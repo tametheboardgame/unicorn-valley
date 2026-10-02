@@ -59,10 +59,7 @@ describe('Rainbow Run Race Hub map', () => {
         const current = targets[index];
         const other = targets[otherIndex];
         expect(
-          Math.hypot(
-            current.position.x - other.position.x,
-            current.position.y - other.position.y,
-          ),
+          Math.hypot(current.position.x - other.position.x, current.position.y - other.position.y),
         ).toBeGreaterThanOrEqual(current.radius + other.radius);
       }
     }
