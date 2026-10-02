@@ -57,9 +57,8 @@ test('H4.8 nature features use physical affordances instead of permanent hotspot
   await waitForDiagnostics(page);
 
   await page.waitForFunction(() => {
-    const api = (
-      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi }
-    ).__UNICORN_VALLEY_DIAGNOSTICS__;
+    const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
+      .__UNICORN_VALLEY_DIAGNOSTICS__;
     const meadow = api?.snapshot().scenes.find(({ key }) => key === 'RainbowMeadowScene');
     return meadow?.objects.some(
       ({ name, effectiveVisible }) =>
@@ -125,17 +124,15 @@ test('H4.8 Windmill Lookout uses physical chimes and glint cues', async ({ page 
   await waitForDiagnostics(page);
 
   await page.evaluate(async () => {
-    const api = (
-      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi }
-    ).__UNICORN_VALLEY_DIAGNOSTICS__;
+    const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
+      .__UNICORN_VALLEY_DIAGNOSTICS__;
     if (!api) throw new Error('Browser diagnostics are unavailable.');
     await api.startScene('WindmillLookoutScene');
   });
 
   await page.waitForFunction(() => {
-    const api = (
-      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi }
-    ).__UNICORN_VALLEY_DIAGNOSTICS__;
+    const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
+      .__UNICORN_VALLEY_DIAGNOSTICS__;
     return api?.snapshot().activeScenes.includes('WindmillLookoutScene') === true;
   });
 
