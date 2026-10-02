@@ -329,7 +329,9 @@ describe('Rainbow Meadow canonical layout', () => {
   });
 
   it('uses materially different Crystal Brook boulder silhouettes', () => {
-    const kinds = new Set(RAINBOW_MEADOW_LAYOUT.crystalBrookGatewayArea.rocks.map(({ kind }) => kind));
+    const kinds = new Set(
+      RAINBOW_MEADOW_LAYOUT.crystalBrookGatewayArea.rocks.map(({ kind }) => kind),
+    );
     expect(kinds).toEqual(new Set(['slab', 'spire', 'round', 'wedge', 'cluster', 'lopsided']));
     const spire = RAINBOW_MEADOW_LAYOUT.crystalBrookGatewayArea.rocks.find(
       ({ kind }) => kind === 'spire',
@@ -340,9 +342,9 @@ describe('Rainbow Meadow canonical layout', () => {
     expect(spire).toBeDefined();
     expect(round).toBeDefined();
     expect((spire?.height ?? 0) / (spire?.width ?? 1)).toBeGreaterThan(1.5);
-    expect(Math.hypot((spire?.x ?? 0) - (round?.x ?? 0), (spire?.y ?? 0) - (round?.y ?? 0))).toBeLessThan(
-      150,
-    );
+    expect(
+      Math.hypot((spire?.x ?? 0) - (round?.x ?? 0), (spire?.y ?? 0) - (round?.y ?? 0)),
+    ).toBeLessThan(150);
   });
 
   it('keeps the Meadow-side Race Hub gateway clear of tree and flower scenery', () => {
