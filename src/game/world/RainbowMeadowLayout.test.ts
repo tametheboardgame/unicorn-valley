@@ -127,6 +127,38 @@ describe('Rainbow Meadow canonical layout', () => {
     }
   });
 
+  it('owns Picnic Hill as one canonical south-central composition', () => {
+    const picnicDistrict = RAINBOW_MEADOW_LAYOUT.districts.find(
+      ({ id }) => id === 'picnic-hill-reserve',
+    );
+    expect(picnicDistrict).toBeDefined();
+    if (!picnicDistrict) {
+      return;
+    }
+
+    const picnic = RAINBOW_MEADOW_LAYOUT.picnicHill;
+    expect(picnic.centre).toEqual(picnicDistrict.centre);
+
+    const picnicPath = RAINBOW_MEADOW_LAYOUT.structuralPaths.find(({ id }) => id === 'picnic-spur');
+    expect(picnicPath?.points[picnicPath.points.length - 1]).toEqual(picnic.approach);
+
+    for (const point of [
+      picnic.interactionPosition,
+      picnic.blanket,
+      picnic.marigold,
+      picnic.nova,
+      picnic.mapleStorySpot,
+      picnic.noFinishLineLandmark,
+      ...picnic.mapleWaypoints,
+    ]) {
+      expect(isInsideDistrict(point, picnicDistrict)).toBe(true);
+    }
+
+    expect(Math.hypot(picnic.marigold.x - picnic.nova.x, picnic.marigold.y - picnic.nova.y)).toBeGreaterThan(
+      300,
+    );
+  });
+
   it('owns one current structural path network for traversal presentation', () => {
     expect(RAINBOW_MEADOW_LAYOUT.structuralPaths.map(({ id }) => id)).toEqual([
       'main-route',
