@@ -29,6 +29,7 @@ import {
   RAINBOW_RUN_HUB_LAYOUT,
   RAINBOW_RUN_HUB_LOCATION_ID,
   RAINBOW_RUN_HUB_MAP,
+  resetRainbowRunHubPlayerSpawn,
 } from '../world/RainbowRunHubMap';
 import { worldDepthForY } from '../world/WorldDepth';
 
@@ -85,12 +86,9 @@ export class RainbowRunEntryScene extends Phaser.Scene {
     );
 
     this.collisionGroup = this.createCollisionMap();
-    this.player = new PlayerEntity(
-      this,
-      RAINBOW_RUN_HUB_MAP.playerSpawn.x,
-      RAINBOW_RUN_HUB_MAP.playerSpawn.y,
-      PLAYER_TEXTURE_KEY,
-    );
+    const spawn = { ...RAINBOW_RUN_HUB_MAP.playerSpawn };
+    resetRainbowRunHubPlayerSpawn();
+    this.player = new PlayerEntity(this, spawn.x, spawn.y, PLAYER_TEXTURE_KEY);
     this.player.sprite.setDisplaySize(112, 92);
     this.player.sprite.setDepth(worldDepthForY(this.player.sprite.y, 0.5));
     this.physics.add.collider(this.player.sprite, this.collisionGroup);
