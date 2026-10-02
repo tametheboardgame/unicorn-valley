@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "1B9pVMUJ4qd13BEOzEd_MM2O1g2Hzc-MT"
+  },
+  "expectedSourceName": "princess-pea-morning-answer-v01.png",
+  "destination": "public/stories/the-princess-and-the-pea/illustrations/generated/morning-answer.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1000,
+    "quality": 88
+  },
+  "revision": 1
+}

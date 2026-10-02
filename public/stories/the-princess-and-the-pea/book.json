@@ -140,8 +140,8 @@
                   "path": "illustrations/generated/storm-doorstep.webp",
                   "alt": "A rain-soaked princess stands at the glowing palace doorway during a fierce storm while the queen studies her curiously and the prince looks on.",
                   "placement": "full-width",
-                  "width": 1536,
-                  "height": 1024,
+                  "width": 768,
+                  "height": 512,
                   "caption": "Modern Story House illustration."
                 }
               ]
@@ -155,8 +155,8 @@
                   "path": "illustrations/generated/mattress-tower.webp",
                   "alt": "The queen secretly places the tiny pea beneath an absurdly tall tower of mattresses and feather beds in the palace guest room.",
                   "placement": "full-width",
-                  "width": 1536,
-                  "height": 1024,
+                  "width": 768,
+                  "height": 512,
                   "caption": "Modern Story House illustration."
                 }
               ]
@@ -171,7 +171,7 @@
                   "alt": "At breakfast the exhausted princess explains that something hard kept her awake while the queen reacts with delighted recognition and the prince looks amused.",
                   "placement": "full-width",
                   "width": 1536,
-                  "height": 1024,
+                  "height": 512,
                   "caption": "Modern Story House illustration."
                 }
               ]
@@ -295,8 +295,8 @@
                   "path": "illustrations/generated/storm-doorstep.webp",
                   "alt": "A rain-soaked princess stands at the glowing palace doorway during a fierce storm while the royal family receives her.",
                   "placement": "full-width",
-                  "width": 1536,
-                  "height": 1024,
+                  "width": 768,
+                  "height": 512,
                   "caption": "Modern Story House illustration."
                 }
               ]
@@ -310,8 +310,8 @@
                   "path": "illustrations/generated/mattress-tower.webp",
                   "alt": "The queen hides the peas beneath an absurdly tall tower of mattresses and feather beds in the palace guest room.",
                   "placement": "full-width",
-                  "width": 1536,
-                  "height": 1024,
+                  "width": 768,
+                  "height": 512,
                   "caption": "Modern Story House illustration."
                 },
                 {
@@ -321,7 +321,7 @@
                   "alt": "The exhausted princess explains that something hard kept her awake while the queen realises her strange test has worked.",
                   "placement": "full-width",
                   "width": 1536,
-                  "height": 1024,
+                  "height": 512,
                   "caption": "Modern Story House illustration."
                 }
               ]
