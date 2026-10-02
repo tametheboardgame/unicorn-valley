@@ -77,7 +77,7 @@ async function positionPlayer(page: Page, sceneKey: string, x: number, y: number
   );
 }
 
-test('H4.4B makes Crystal Brook an irregular wadeable basin with a reactive waterfall', async ({
+test('H4.4C makes Crystal Brook a blocked deep basin with a four-strand reactive waterfall', async ({
   page,
 }) => {
   await page.goto('/?scene=meadow&diagnostics=1');
@@ -101,7 +101,9 @@ test('H4.4B makes Crystal Brook an irregular wadeable basin with a reactive wate
     'r6-region-gateway-art:meadow-crystal-brook:shallow-water',
     'r6-region-gateway-art:meadow-crystal-brook:deep-water',
     'r6-region-gateway-art:meadow-crystal-brook:outlet-stream',
+    'r6-region-gateway-art:meadow-crystal-brook:deep-outlet-channel',
     'r6-region-gateway-art:meadow-crystal-brook:hidden-recess',
+    'r6-region-gateway-art:meadow-crystal-brook:sign',
     'r6-region-gateway-art:meadow-crystal-brook:waterfall',
   ]) {
     expect(meadow.objects.some((object) => object.name === name && object.visible)).toBe(true);
@@ -131,7 +133,7 @@ test('H4.4B makes Crystal Brook an irregular wadeable basin with a reactive wate
   ).toHaveLength(7);
   expect(
     meadow.objects.filter(({ name }) => name.startsWith('collision:crystal-brook-deep-water:')),
-  ).toHaveLength(4);
+  ).toHaveLength(7);
 
   expect(meadow.objects.some(({ name }) => name.endsWith('meadow-crystal-brook:cave-mouth'))).toBe(
     false,
@@ -143,28 +145,51 @@ test('H4.4B makes Crystal Brook an irregular wadeable basin with a reactive wate
   ).toBe(true);
   expect(meadow.objects.some(({ name }) => name === 'meadow-depth:rainbow-cup-board')).toBe(false);
   expect(meadow.objects.some(({ name }) => name === 'core-npc:nova:world')).toBe(false);
+  expect(
+    meadow.objects.some(
+      ({ name }) => name === 'r6-region-gateway-art:meadow-crystal-brook:dry-landing',
+    ),
+  ).toBe(false);
+  expect(
+    meadow.objects.some(
+      ({ name }) => name === 'r6-region-gateway-art:meadow-crystal-brook:bank-sign',
+    ),
+  ).toBe(false);
 
-  const closedLeft = meadow.objects.find(
-    ({ name }) => name === 'r6-region-gateway-art:meadow-crystal-brook:waterfall-curtain-left',
+  const closedCurtains = new Map(
+    [
+      'outer-left',
+      'inner-left',
+      'inner-right',
+      'outer-right',
+    ].map((id) => [
+      id,
+      meadow.objects.find(
+        ({ name }) =>
+          name === `r6-region-gateway-art:meadow-crystal-brook:waterfall-curtain-${id}`,
+      ),
+    ]),
   );
-  const closedRight = meadow.objects.find(
-    ({ name }) => name === 'r6-region-gateway-art:meadow-crystal-brook:waterfall-curtain-right',
-  );
-  expect(closedLeft).toBeDefined();
-  expect(closedRight).toBeDefined();
+  for (const curtain of closedCurtains.values()) {
+    expect(curtain).toBeDefined();
+  }
 
   await positionPlayer(page, 'RainbowMeadowScene', 3100, 1100);
   await page.waitForTimeout(650);
 
   const openedMeadow = await sceneSnapshot(page, 'RainbowMeadowScene');
-  const openedLeft = openedMeadow.objects.find(
-    ({ name }) => name === 'r6-region-gateway-art:meadow-crystal-brook:waterfall-curtain-left',
-  );
-  const openedRight = openedMeadow.objects.find(
-    ({ name }) => name === 'r6-region-gateway-art:meadow-crystal-brook:waterfall-curtain-right',
-  );
-  expect(openedLeft?.x ?? 9999).toBeLessThan((closedLeft?.x ?? 0) - 35);
-  expect(openedRight?.x ?? 0).toBeGreaterThan((closedRight?.x ?? 9999) + 35);
+  for (const [id, closed] of closedCurtains.entries()) {
+    const opened = openedMeadow.objects.find(
+      ({ name }) =>
+        name === `r6-region-gateway-art:meadow-crystal-brook:waterfall-curtain-${id}`,
+    );
+    expect(opened).toBeDefined();
+    if (id.includes('left')) {
+      expect(opened?.x ?? 9999).toBeLessThan((closed?.x ?? 0) - 35);
+    } else {
+      expect(opened?.x ?? 0).toBeGreaterThan((closed?.x ?? 9999) + 35);
+    }
+  }
 
   await positionPlayer(page, 'RainbowMeadowScene', MEADOW_GATE.x, MEADOW_GATE.y);
   await waitForScene(page, 'CrystalBrookScene');
