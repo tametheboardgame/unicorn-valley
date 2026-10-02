@@ -12,7 +12,7 @@ becomes **Modern Illustrations**.
 
 This title is the SH1 transformation test. The central quality bar is that the same young bird
 remains recognisable across changing age, body proportions, seasons and emotional state, culminating
-in a young swan who feels like the natural continuation of the grey duckling rather than a replacement
+in a young swan who feels like the natural continuation of the grey juvenile rather than a replacement
 character.
 
 ## Visual direction
@@ -21,212 +21,144 @@ character.
 - soft gouache / watercolour texture with natural countryside detail;
 - expressive but fundamentally bird-like animals, not clothed or heavily anthropomorphised;
 - emotional readability through posture, eye line and composition rather than cartoon exaggeration;
-- strong seasonal progression: lush summer, muted autumn, blue-white winter, luminous spring;
-- avoid making the grey duckling grotesque, dirty or frightening;
+- strong seasonal progression from warm farmyard light through winter blue-grey to luminous spring;
+- avoid making the grey bird grotesque, dirty or frightening;
 - no baked-in typography, captions, logos, borders or UI;
-- original compositions only, not recreations of historical Pedersen scenes.
+- original compositions, not recreations of the historical Pedersen pictures.
 
 ## Main character continuity
 
-### Grey duckling — summer / early journey
+### Grey juvenile
 
-- newly hatched to young juvenile water bird;
 - larger and leggier than the yellow ducklings around him;
-- soft charcoal-grey / silver-grey down with a slightly lighter chest;
-- longish dark grey bill;
+- soft charcoal-grey / silver-grey plumage;
+- dark grey bill;
 - dark expressive eyes;
-- slightly oversized webbed feet;
+- slightly oversized webbed feet early in the story;
 - awkward proportions, but healthy and sympathetic;
-- one subtle darker feather mark above the left eye can act as a recurring identity cue.
+- retain the same broad face, bill shape and eye expression through the seasonal sequence.
 
-### Grey duckling — autumn
+### Developing bird
 
-- recognisably the same bird;
-- taller body and noticeably longer neck;
-- juvenile down beginning to give way to smoother grey feathers;
-- same charcoal/silver palette and left-eye identity mark;
-- wing feathers visibly developing;
-- still not yet recognisable to himself as a swan.
+- neck length, body size and wing development increase gradually;
+- grey plumage becomes smoother and slightly paler;
+- do not turn the bird white before the spring reveal;
+- winter proportions should already hint at the swan he is becoming.
 
-### Grey bird — winter
+### Young swan
 
-- same face, bill and left-eye identity mark;
-- longer neck and more mature swan-like proportions now emerging;
-- grey plumage may be paler and smoother;
-- physically tired and cold, but not emaciated or disturbing;
-- keep the transformation gradual rather than suddenly turning him white.
-
-### Young swan — spring
-
-- same eyes, face structure and subtle left-eye identity cue translated into mature plumage;
-- elegant young swan with white feathers;
-- slender curved neck;
-- dark-to-warm grey bill appropriate to a young storybook swan rather than an adult-orange caricature;
-- body proportions clearly evolved from the previous grey-bird scenes;
-- emotional shift is confidence and relief, not vanity.
-
-## Supporting animal continuity
-
-### Mother duck
-
-- warm brown mallard-like mother duck;
-- soft cream throat/chest markings;
-- calm, practical expression;
-- caring without being idealised.
-
-### Yellow ducklings
-
-- small golden-yellow siblings;
-- similar scale to one another;
-- visibly smaller and rounder than the grey duckling.
-
-### Farmyard birds
-
-- naturalistic ducks, hens and one large turkey;
-- expressive posture is enough; avoid human clothes/accessories.
-
-### Swans
-
-- elegant white birds with long necks;
-- older swans should look slightly larger and more assured than the transformed young swan.
+- the same facial identity translated into mature white plumage;
+- slender curved neck and developed wings;
+- calm, slightly tentative posture at first;
+- final emotional shift is confidence and belonging, not vanity.
 
 ## Environment continuity
 
 ### Farmyard
 
-- old countryside farm with pale stone / warm timber;
-- pond or trough, rough fence, straw and green summer vegetation;
-- warm sun and busy animal life.
+- rustic countryside farm with warm timber, straw, rough fencing and water nearby;
+- mother duck and yellow siblings establish the protagonist's difference in scale and colour.
 
-### Marsh
+### Open country and water
 
-- tall reeds, shallow water and distant fields;
-- muted green/brown palette;
-- hunting danger can be suggested through atmosphere rather than graphic violence.
-
-### Old woman's cottage
-
-- crooked rural cottage;
-- warm interior with low beams, rough plaster, hearth light;
-- cat and hen live naturally in the room;
-- safety feels real but slightly cramped.
-
-### Autumn water
-
-- amber and russet leaves;
-- wide open sky;
-- swans overhead should feel distant and aspirational.
+- the world broadens as he leaves the yard;
+- reeds, fields, low water and changing trees carry the seasonal progression.
 
 ### Winter
 
-- blue-grey frozen pond;
-- snow, brittle reeds and bare branches;
-- visual stillness and cold are more important than peril.
+- blue-grey water, snow, bare branches and brittle reeds;
+- visual stillness and cold are more important than explicit peril.
 
 ### Spring lake
 
-- fresh green trees, white blossom, clear reflective water;
-- warm sunlight;
-- the final image should echo water/reflection motifs from earlier scenes but feel open and spacious.
+- fresh green trees, flowers and clear reflective water;
+- warm light and open space contrast with the cramped farmyard;
+- the final two images should feel like the same place and the same newly transformed bird.
 
 ## Modern illustration set
 
-### 1. Different from the beginning
+### 1. Farmyard outsider
 
 Story House block: `into-the-yard`  
 Full Classic block: `p04-b04`
 
-- farmyard in warm summer light;
-- grey duckling stands among his smaller yellow siblings and other birds;
-- he is larger, greyer and leggier but still appealing;
-- a puffed-up turkey and a few ducks make his social isolation readable without showing cruelty
-  graphically;
+- warm farmyard scene with the grey juvenile among smaller yellow ducklings;
 - mother duck remains nearby;
-- emotional read: he is visibly different and does not understand why that matters to the others;
+- his different scale and colouring are obvious without making him unattractive;
+- emotional read: uncertain, gentle and visibly out of place;
 - destination:
   `public/stories/the-ugly-duckling/illustrations/generated/farmyard-outsider.webp`.
 
-### 2. The marsh and the dog
+### 2. Leaving the farmyard
 
-Story House block: `the-marsh`  
-Full Classic block: `p06-b01`
+Story House block: `beyond-the-hedge`  
+Full Classic block: `p05-b01`
 
-- grey duckling crouches low among tall reeds;
-- a large hunting dog has just pushed through the marsh and pauses close to him;
-- dog should feel imposing but not monstrous;
-- no wounded birds, blood or visible shooting;
-- duckling's small scale against reeds and dog emphasises vulnerability;
-- emotional read: fear, then the strange relief of being passed by;
+- the same grey bird walks away from the farmyard;
+- other birds remain grouped behind near the gate;
+- wider country opens ahead of him;
+- emotional read: lonely but determined;
 - destination:
-  `public/stories/the-ugly-duckling/illustrations/generated/marsh-dog.webp`.
+  `public/stories/the-ugly-duckling/illustrations/generated/leaving-farmyard.webp`.
 
-### 3. The little house
-
-Story House block: `the-old-womans-house`  
-Full Classic block: `p07-b01`
-
-- warm crooked cottage interior;
-- same grey duckling, now slightly older;
-- old woman, proud hen and confident cat establish the odd household;
-- duckling sits near a low doorway or window where a glimpse of water outside can be seen;
-- emotional read: sheltered and safe, but clearly not at home;
-- destination:
-  `public/stories/the-ugly-duckling/illustrations/generated/little-house.webp`.
-
-### 4. The white birds
+### 3. The first swans
 
 Story House block: `the-first-swans`  
 Full Classic block: `p09-b01`
 
-- autumn evening over open water;
-- the older grey juvenile looks upward from the lake/reeds;
-- a small flock of magnificent white swans flies across a glowing sunset sky;
-- his neck and wings are noticeably more developed than in the first three images;
-- no implication yet that he knows what he is;
-- emotional read: awe, longing and recognition he cannot explain;
+- the older grey juvenile looks up from cold water or snowy reeds;
+- a flock of white swans crosses a glowing sky overhead;
+- his neck and wings are noticeably more developed than at the farm;
+- emotional read: awe and longing he cannot yet explain;
 - destination:
   `public/stories/the-ugly-duckling/illustrations/generated/first-swans.webp`.
 
-### 5. Winter ice
+### 4. Winter ice
 
 Story House block: `first-snow`  
 Full Classic block: `p09-b04`
 
-- deep winter at the frozen pond;
-- same now-taller grey juvenile keeps a small circle of water open as ice closes around him;
-- feathers are paler and sleeker, proportions more swan-like, but he is still grey;
-- snow-covered reeds and bare trees;
-- keep the bird alive and alert, tired rather than visually distressed;
-- emotional read: endurance and the long final stretch before spring;
+- the same older grey juvenile stands at the edge of freezing water;
+- snow-covered reeds and distant winter buildings frame the scene;
+- his proportions are more swan-like, but the plumage remains grey;
+- emotional read: endurance rather than graphic distress;
 - destination:
   `public/stories/the-ugly-duckling/illustrations/generated/winter-ice.webp`.
 
-### 6. His reflection
+### 5. Spring meeting
 
 Story House block: `his-reflection`  
 Full Classic block: `p11-b01`
 
-- bright spring lake with fresh greenery and blossom;
-- transformed young white swan bends toward his reflection;
-- reflection clearly matches him and is central to the composition;
-- two or three older swans approach calmly nearby;
-- preserve the same eyes / facial identity and subtle left-eye cue from the grey-bird stages;
-- emotional read: astonishment, relief and belonging;
+- the transformed young white swan is now on a bright spring lake;
+- another swan approaches calmly across the water;
+- preserve recognisable facial and posture continuity from the grey-bird stages;
+- emotional read: astonishment, caution and first acceptance;
 - destination:
-  `public/stories/the-ugly-duckling/illustrations/generated/spring-reflection.webp`.
+  `public/stories/the-ugly-duckling/illustrations/generated/spring-meeting.webp`.
+
+### 6. A new season
+
+Story House block: `a-new-season`  
+Full Classic block: `p11-b04`
+
+- the young swan swims among several other swans;
+- warm evening light, flowers and open water complete the visual arc;
+- the protagonist remains identifiable within the group;
+- emotional read: calm belonging after the long journey;
+- destination:
+  `public/stories/the-ugly-duckling/illustrations/generated/spring-belonging.webp`.
 
 ## Transformation continuity rules
 
 This title should be judged as a sequence, not as six independent bird pictures.
 
-- Maintain the same eye shape, bill profile and subtle left-eye mark through every stage.
-- Increase neck length, body size and wing development gradually across images 1–5.
-- Do not make the duckling white before the final spring image.
-- The final swan should still feel like the same bird when images 5 and 6 are viewed side by side.
-- Avoid changing species cues arbitrarily between scenes.
-- The emotional arc should progress from confusion → fear → restlessness → longing → endurance →
-  recognition.
-- Background/supporting animals may vary, but the protagonist must not.
+- Keep the protagonist's eye expression, bill profile and broad facial proportions recognisable.
+- Increase neck length, body size and wing development gradually through the grey-bird stages.
+- Do not make the protagonist white before the spring images.
+- The spring swan should still feel like the same bird when winter and spring are viewed side by side.
+- The emotional arc should progress from uncertainty → departure → longing → endurance → recognition →
+  belonging.
 
 ## Independent text / illustration contract
 

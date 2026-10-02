@@ -52,25 +52,13 @@
           "source": "Unicorn Valley Story House edition"
         },
         "originalPublicationYear": 1843,
-        "curatorNotes": "Split into six short reader sections following the story's natural seasonal and location changes."
+        "curatorNotes": "Split into six short reader sections following the story's natural seasonal and location changes. Existing Vilhelm Pedersen artwork is preserved as Classic Illustrations; R6.5-WP19SH1.4.3 adds a separate generated Modern Illustrations set focused on the protagonist's transformation across the seasons."
       },
       "chapters": [
         {
           "id": "the-last-egg",
           "title": "The Last Egg",
-          "path": "chapters/01.md",
-          "illustrations": [
-            {
-              "id": "pedersen-duckyard",
-              "blockId": "into-the-yard",
-              "path": "illustrations/duckyard.webp",
-              "alt": "Vilhelm Pedersen's illustration of the young duckling among the other birds.",
-              "placement": "full-width",
-              "width": 790,
-              "height": 534,
-              "caption": "Illustration by Vilhelm Pedersen."
-            }
-          ]
+          "path": "chapters/01.md"
         },
         {
           "id": "away-from-the-farm",
@@ -80,19 +68,7 @@
         {
           "id": "the-little-house",
           "title": "The Little House",
-          "path": "chapters/03.md",
-          "illustrations": [
-            {
-              "id": "pedersen-little-house",
-              "blockId": "the-old-womans-house",
-              "path": "illustrations/little-house.webp",
-              "alt": "Vilhelm Pedersen's illustration of the duckling at the old woman's house.",
-              "placement": "full-width",
-              "width": 1262,
-              "height": 1600,
-              "caption": "Illustration by Vilhelm Pedersen."
-            }
-          ]
+          "path": "chapters/03.md"
         },
         {
           "id": "winter",
@@ -107,17 +83,161 @@
         {
           "id": "spring-on-the-lake",
           "title": "Spring on the Lake",
-          "path": "chapters/06.md",
-          "illustrations": [
+          "path": "chapters/06.md"
+        }
+      ],
+      "defaultIllustrationSetId": "modern",
+      "illustrationSets": [
+        {
+          "id": "classic",
+          "label": "Classic Illustrations",
+          "rights": {
+            "status": "public-domain",
+            "source": "Historical The Ugly Duckling illustrations by Vilhelm Pedersen",
+            "sourceUrl": "https://commons.wikimedia.org/wiki/Category:The_Ugly_Duckling",
+            "notes": "The selected Vilhelm Pedersen source files are identified as public domain on Wikimedia Commons. Pedersen died in 1859."
+          },
+          "chapters": [
             {
-              "id": "pedersen-swans",
-              "blockId": "his-reflection",
-              "path": "illustrations/swans.webp",
-              "alt": "Vilhelm Pedersen's illustration of the young swan among the other swans.",
-              "placement": "full-width",
-              "width": 677,
-              "height": 439,
-              "caption": "Illustration by Vilhelm Pedersen."
+              "chapterId": "the-last-egg",
+              "illustrations": [
+                {
+                  "id": "pedersen-duckyard",
+                  "blockId": "into-the-yard",
+                  "path": "illustrations/duckyard.webp",
+                  "alt": "Vilhelm Pedersen's illustration of the young duckling among the other birds.",
+                  "placement": "full-width",
+                  "width": 790,
+                  "height": 534,
+                  "caption": "Illustration by Vilhelm Pedersen."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-little-house",
+              "illustrations": [
+                {
+                  "id": "pedersen-little-house",
+                  "blockId": "the-old-womans-house",
+                  "path": "illustrations/little-house.webp",
+                  "alt": "Vilhelm Pedersen's illustration of the duckling at the old woman's house.",
+                  "placement": "full-width",
+                  "width": 1262,
+                  "height": 1600,
+                  "caption": "Illustration by Vilhelm Pedersen."
+                }
+              ]
+            },
+            {
+              "chapterId": "spring-on-the-lake",
+              "illustrations": [
+                {
+                  "id": "pedersen-swans",
+                  "blockId": "his-reflection",
+                  "path": "illustrations/swans.webp",
+                  "alt": "Vilhelm Pedersen's illustration of the young swan among the other swans.",
+                  "placement": "full-width",
+                  "width": 677,
+                  "height": 439,
+                  "caption": "Illustration by Vilhelm Pedersen."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "modern",
+          "label": "Modern Illustrations",
+          "rights": {
+            "status": "original",
+            "source": "ChatGPT-generated artwork created for the Unicorn Valley Story House modern illustration set",
+            "notes": "Generated for R6.5-WP19SH1.4.3 and materialised through the approved Google Drive → WIF → GitHub Actions pipeline."
+          },
+          "chapters": [
+            {
+              "chapterId": "the-last-egg",
+              "illustrations": [
+                {
+                  "id": "modern-farmyard-outsider",
+                  "blockId": "into-the-yard",
+                  "path": "illustrations/generated/farmyard-outsider.webp",
+                  "alt": "A larger grey cygnet stands uncertainly among smaller yellow ducklings in the warm farmyard while their mother watches nearby.",
+                  "placement": "full-width",
+                  "width": 1500,
+                  "height": 1000,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "away-from-the-farm",
+              "illustrations": [
+                {
+                  "id": "modern-leaving-farmyard",
+                  "blockId": "beyond-the-hedge",
+                  "path": "illustrations/generated/leaving-farmyard.webp",
+                  "alt": "The grey young bird walks away from the busy farmyard as the other birds remain behind near the gate.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 682,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-white-birds",
+              "illustrations": [
+                {
+                  "id": "modern-first-swans",
+                  "blockId": "the-first-swans",
+                  "path": "illustrations/generated/first-swans.webp",
+                  "alt": "The older grey juvenile watches a flock of magnificent white swans flying across a glowing winter sunset.",
+                  "placement": "full-width",
+                  "width": 904,
+                  "height": 1000,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "winter",
+              "illustrations": [
+                {
+                  "id": "modern-winter-ice",
+                  "blockId": "first-snow",
+                  "path": "illustrations/generated/winter-ice.webp",
+                  "alt": "The same grey juvenile stands beside a freezing pond among snow-covered reeds as winter closes in.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 606,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "spring-on-the-lake",
+              "illustrations": [
+                {
+                  "id": "modern-spring-meeting",
+                  "blockId": "his-reflection",
+                  "path": "illustrations/generated/spring-meeting.webp",
+                  "alt": "Now a young white swan, the former grey bird looks across the bright spring water towards another welcoming swan.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 606,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-spring-belonging",
+                  "blockId": "a-new-season",
+                  "path": "illustrations/generated/spring-belonging.webp",
+                  "alt": "The young swan swims peacefully with a small group of white swans across a flower-lined lake in warm evening light.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 369,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
             }
           ]
         }
@@ -147,7 +267,7 @@
           "notes": "Story House pagination changes presentation only; the source wording remains complete."
         },
         "originalPublicationYear": 1843,
-        "curatorNotes": "Complete public-domain English text reflowed into 11 reader pages at paragraph boundaries, with three historical illustrations anchored to matching scenes."
+        "curatorNotes": "Complete public-domain English text reflowed into 11 reader pages at paragraph boundaries. Existing Vilhelm Pedersen artwork remains the Classic Illustrations set; the R6.5-WP19SH1.4.3 generated set can be selected independently as Modern Illustrations against matching classic passages."
       },
       "chapters": [
         {
@@ -168,19 +288,7 @@
         {
           "id": "page-04",
           "title": "The Ugly Duckling (continued)",
-          "path": "editions/full-classic/pages/page-04.md",
-          "illustrations": [
-            {
-              "id": "full-pedersen-duckyard",
-              "path": "illustrations/duckyard.webp",
-              "alt": "Vilhelm Pedersen's illustration of the young duckling among the other birds.",
-              "placement": "full-width",
-              "width": 790,
-              "height": 534,
-              "caption": "Illustration by Vilhelm Pedersen.",
-              "blockId": "p04-b04"
-            }
-          ]
+          "path": "editions/full-classic/pages/page-04.md"
         },
         {
           "id": "page-05",
@@ -195,19 +303,7 @@
         {
           "id": "page-07",
           "title": "The Ugly Duckling (continued)",
-          "path": "editions/full-classic/pages/page-07.md",
-          "illustrations": [
-            {
-              "id": "full-pedersen-little-house",
-              "path": "illustrations/little-house.webp",
-              "alt": "Vilhelm Pedersen's illustration of the duckling at the old woman's house.",
-              "placement": "full-width",
-              "width": 1262,
-              "height": 1600,
-              "caption": "Illustration by Vilhelm Pedersen.",
-              "blockId": "p07-b01"
-            }
-          ]
+          "path": "editions/full-classic/pages/page-07.md"
         },
         {
           "id": "page-08",
@@ -227,17 +323,156 @@
         {
           "id": "page-11",
           "title": "The Ugly Duckling (continued)",
-          "path": "editions/full-classic/pages/page-11.md",
-          "illustrations": [
+          "path": "editions/full-classic/pages/page-11.md"
+        }
+      ],
+      "defaultIllustrationSetId": "classic",
+      "illustrationSets": [
+        {
+          "id": "classic",
+          "label": "Classic Illustrations",
+          "rights": {
+            "status": "public-domain",
+            "source": "Historical The Ugly Duckling illustrations by Vilhelm Pedersen",
+            "sourceUrl": "https://commons.wikimedia.org/wiki/Category:The_Ugly_Duckling",
+            "notes": "The three previously verified Vilhelm Pedersen illustrations are reused beside matching passages in the complete classic text."
+          },
+          "chapters": [
             {
-              "id": "full-pedersen-swans",
-              "path": "illustrations/swans.webp",
-              "alt": "Vilhelm Pedersen's illustration of the young swan among the other swans.",
-              "placement": "full-width",
-              "width": 677,
-              "height": 439,
-              "caption": "Illustration by Vilhelm Pedersen.",
-              "blockId": "p11-b01"
+              "chapterId": "page-04",
+              "illustrations": [
+                {
+                  "id": "full-pedersen-duckyard",
+                  "path": "illustrations/duckyard.webp",
+                  "alt": "Vilhelm Pedersen's illustration of the young duckling among the other birds.",
+                  "placement": "full-width",
+                  "width": 790,
+                  "height": 534,
+                  "caption": "Illustration by Vilhelm Pedersen.",
+                  "blockId": "p04-b04"
+                }
+              ]
+            },
+            {
+              "chapterId": "page-07",
+              "illustrations": [
+                {
+                  "id": "full-pedersen-little-house",
+                  "path": "illustrations/little-house.webp",
+                  "alt": "Vilhelm Pedersen's illustration of the duckling at the old woman's house.",
+                  "placement": "full-width",
+                  "width": 1262,
+                  "height": 1600,
+                  "caption": "Illustration by Vilhelm Pedersen.",
+                  "blockId": "p07-b01"
+                }
+              ]
+            },
+            {
+              "chapterId": "page-11",
+              "illustrations": [
+                {
+                  "id": "full-pedersen-swans",
+                  "path": "illustrations/swans.webp",
+                  "alt": "Vilhelm Pedersen's illustration of the young swan among the other swans.",
+                  "placement": "full-width",
+                  "width": 677,
+                  "height": 439,
+                  "caption": "Illustration by Vilhelm Pedersen.",
+                  "blockId": "p11-b01"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "modern",
+          "label": "Modern Illustrations",
+          "rights": {
+            "status": "original",
+            "source": "ChatGPT-generated artwork created for the Unicorn Valley Story House modern illustration set",
+            "notes": "The same R6.5-WP19SH1.4.3 generated artwork is reused against matching Full Classic Text passages; only the semantic page/block mapping differs."
+          },
+          "chapters": [
+            {
+              "chapterId": "page-04",
+              "illustrations": [
+                {
+                  "id": "full-modern-farmyard-outsider",
+                  "blockId": "p04-b04",
+                  "path": "illustrations/generated/farmyard-outsider.webp",
+                  "alt": "A larger grey cygnet stands uncertainly among the farmyard birds while the other young ducks stay close to their mother.",
+                  "placement": "full-width",
+                  "width": 1500,
+                  "height": 1000,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-05",
+              "illustrations": [
+                {
+                  "id": "full-modern-leaving-farmyard",
+                  "blockId": "p05-b01",
+                  "path": "illustrations/generated/leaving-farmyard.webp",
+                  "alt": "The grey young bird leaves the farmyard behind and heads out alone into the wider world.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 682,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-09",
+              "illustrations": [
+                {
+                  "id": "full-modern-first-swans",
+                  "blockId": "p09-b01",
+                  "path": "illustrations/generated/first-swans.webp",
+                  "alt": "The older grey juvenile watches dazzling white swans fly overhead across the cold evening sky.",
+                  "placement": "full-width",
+                  "width": 904,
+                  "height": 1000,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "full-modern-winter-ice",
+                  "blockId": "p09-b04",
+                  "path": "illustrations/generated/winter-ice.webp",
+                  "alt": "The grey juvenile endures deep winter beside the freezing water and snow-covered reeds.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 606,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-11",
+              "illustrations": [
+                {
+                  "id": "full-modern-spring-meeting",
+                  "blockId": "p11-b01",
+                  "path": "illustrations/generated/spring-meeting.webp",
+                  "alt": "The transformed young swan meets the other white swans on the bright spring lake.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 606,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "full-modern-spring-belonging",
+                  "blockId": "p11-b04",
+                  "path": "illustrations/generated/spring-belonging.webp",
+                  "alt": "The young swan swims among the other swans in warm spring light, finally at home.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 369,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
             }
           ]
         }

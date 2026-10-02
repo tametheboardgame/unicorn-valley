@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "1IfvNNmTBAUbhp8debaE9gFTxKecfsgzP"
+  },
+  "expectedSourceName": "ugly-duckling-spring-belonging-v01.png",
+  "destination": "public/stories/the-ugly-duckling/illustrations/generated/spring-belonging.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1000,
+    "quality": 88
+  },
+  "revision": 1
+}
