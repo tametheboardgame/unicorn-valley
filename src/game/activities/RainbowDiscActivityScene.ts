@@ -1,9 +1,6 @@
 import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
-import {
-  DEFAULT_UNICORN_APPEARANCE,
-  parseUnicornAppearance,
-} from '../player/UnicornAppearance';
+import { DEFAULT_UNICORN_APPEARANCE, parseUnicornAppearance } from '../player/UnicornAppearance';
 import { createUnicornAppearanceTexture } from '../player/UnicornAppearanceRenderer';
 import { createResidentAppearanceSprite } from '../population/SupportingResidentArt';
 import { getBrowserSaveService } from '../save/browserSaveService';
