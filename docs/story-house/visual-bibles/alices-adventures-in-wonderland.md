@@ -163,14 +163,28 @@ Locked design:
 - stable face, fur pattern and scale across appearances.
 
 ### Queen of Hearts
-- strong theatrical Hearts-royalty silhouette;
-- fixed crown, dress construction and palette;
-- commanding and volatile without horror styling.
+
+**Approved 3 October 2026.**
+
+Locked design:
+- commanding adult ruler with strong theatrical silhouette;
+- black hair in a high sculpted updo;
+- red / black / cream / gold gown with restrained heart motifs;
+- small crown and heart sceptre;
+- expressive, volatile and imposing without horror styling;
+- face, hair, crown, gown construction and palette remain stable across garden, croquet and court scenes.
 
 ### King of Hearts
-- related Hearts-court visual language;
-- clearly distinct from and less imposing than the Queen;
-- fixed crown/costume.
+
+**Approved 3 October 2026.**
+
+Locked design:
+- older, smaller and visually softer than the Queen;
+- white hair and beard;
+- red / cream / gold court costume and crown;
+- related Hearts visual language without matching the Queen's silhouette;
+- genial, slightly bewildered expression range;
+- fixed crown, beard and costume across later appearances.
 
 ### Gryphon
 - one fixed hybrid anatomy;
@@ -244,9 +258,13 @@ Locked design:
 - enough spatial consistency to support multiple tea-party scenes.
 
 ### Royal rose garden / croquet ground
-- playing-card architecture/motifs used with restraint;
+
+**Rose garden / palace exterior approved 3 October 2026; croquet-ground composition still pending.**
+- lush rose garden with clipped topiary;
+- cream stone architecture with red roofs/banners and black/red/cream/gold accents;
+- heart motifs used selectively and architecturally, not across every surface;
 - white/red rose contrast;
-- croquet field large enough for flamingos, hedgehogs and card-soldier hoops;
+- croquet field must be large enough for flamingos, hedgehogs and card-soldier hoops;
 - same environment must support the Cheshire floating-head scene.
 
 ### Mock Turtle coast
@@ -284,6 +302,8 @@ Human approval is required in this order before bulk chapter art:
 **Completed:** March Hare approved and locked.
 
 **Completed:** Dormouse approved and locked.
+
+**Completed:** Queen of Hearts, King of Hearts, card soldiers and Hearts rose-garden/palace exterior approved and locked.
 
 1. Alice character anchor sheet.
 2. White Rabbit + early Wonderland hall/riverbank anchors.
