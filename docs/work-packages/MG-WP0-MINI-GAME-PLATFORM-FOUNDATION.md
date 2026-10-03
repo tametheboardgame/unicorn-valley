@@ -1,7 +1,7 @@
 ---
 id: MG-WP0
 title: Mini-Game Platform Foundation
-status: proposed
+status: active
 autonomy: amber
 depends_on: []
 parallel_safe: true
@@ -154,7 +154,7 @@ Stop for David's review after:
 - tests demonstrate the two-context contract;
 - no existing gameplay has been intentionally redesigned.
 
-MG-WP1 does not begin until this architecture gate is approved and MG-WP0 is merged.
+MG-WP1 does not begin until MG-WP0 is human-approved and merged.
 
 ## Completion evidence
 
@@ -166,5 +166,5 @@ Record:
 - sandbox policy;
 - migration status of each existing game;
 - validation/CI results;
-- any intentional legacy adapters left for MG-WP2;
+- any intentional legacy adapters left for MG-WP1;
 - exact next action.
