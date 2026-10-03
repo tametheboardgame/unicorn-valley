@@ -36,6 +36,7 @@ import {
 import { CoreNpcPresenceService } from '../world/CoreNpcPresenceService';
 import { createRainbowDiscMeadowPresentation } from '../world/RainbowDiscMeadowPresentation';
 import { createRainbowMeadowBoundaryPresentation } from '../world/RainbowMeadowBoundaryPresentation';
+import { resolveRainbowMeadowWalkThroughDestination } from '../world/RainbowMeadowTraversal';
 import { createRainbowMeadowTraversalPresentation } from '../world/RainbowMeadowTraversalPresentation';
 import { RAINBOW_RUN_HUB_LOCATION_ID } from '../world/RainbowRunHubMap';
 import { worldDepthForY } from '../world/WorldDepth';
@@ -316,23 +317,21 @@ export class RainbowMeadowScene extends Phaser.Scene {
       return false;
     }
 
-    const { x, y } = this.player.sprite;
-    const inside = (point: { x: number; y: number }): boolean =>
-      Math.abs(x - point.x) <= 90 && Math.abs(y - point.y) <= 105;
+    const destination = resolveRainbowMeadowWalkThroughDestination({
+      x: this.player.sprite.x,
+      y: this.player.sprite.y,
+    });
+    if (!destination) {
+      return false;
+    }
 
-    if (inside(RAINBOW_MEADOW_LAYOUT.hubFeatures.rainbowRunEntrance.position)) {
-      this.boundaryTransitionStarted = true;
+    this.boundaryTransitionStarted = true;
+    if (destination === 'rainbow-run-hub') {
       this.transitionToRaceHub();
-      return true;
-    }
-
-    if (inside(RAINBOW_MEADOW_LAYOUT.sunbeamGateway.position)) {
-      this.boundaryTransitionStarted = true;
+    } else {
       this.transitionToSunbeamVillage();
-      return true;
     }
-
-    return false;
+    return true;
   }
 
   private transitionToSunbeamVillage(): void {
