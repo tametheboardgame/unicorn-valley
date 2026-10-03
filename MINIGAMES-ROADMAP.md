@@ -1,8 +1,24 @@
+---
+id: MG
+title: Mini-Game Development Programme
+status: approved
+autonomy: amber
+depends_on: []
+parallel_safe: true
+human_gate: architecture
+---
+
 # Unicorn Valley Mini-Game Development Roadmap
 
 Programme ID: **MG**
 
 Status: **approved direction / independent programme**
+
+## Current stage
+
+**MG-WP0 is complete and merged. MG-WP1 - Existing game migration to one launch contract is the next platform package.**
+
+The H6.0 Crystal Brook audit confirmed the shared catalogue/session/launcher/outcome foundation is now present on `main`, while MG-WP1-WP4 readiness is still required before Crystalarium or Crystal Checkers can begin at H6.9/H6.10.
 
 This roadmap is intentionally independent of the main release roadmap. It is not an R6.5, WP19 or area-polish sub-stream. Mini-game platform work and mini-game improvement work may proceed in parallel with world, Story House and other content programmes when dependencies genuinely permit.
 
@@ -74,6 +90,17 @@ The initial catalogue contains these game families:
 | Coral Beachcombing | `CoralBeachcombingActivityScene` | standard beachcombing run |
 
 The migration must preserve accepted world behaviour. Moving a game under the platform is not authority to redesign its rules, rewards, visuals or quest integration.
+
+## Planned portfolio additions from approved world roadmaps
+
+The following world-first mini-games were approved as part of the R6.5-WP19H6 Crystal Brook roadmap on 3 October 2026. They are **planned**, not yet part of the migrated/current catalogue:
+
+| Planned mini-game | Originating world package | Platform declaration | Direction |
+| --- | --- | --- | --- |
+| Crystalarium | R6.5-WP19H6.9 | `new - crystalarium - world-first` | Crystal merge game using Resonance Patterns to restore magical formations; no customer/energy-timer fiction |
+| Crystal Checkers | R6.5-WP19H6.10 | `new - crystal-checkers - world-first` | Standard checkers/draughts on a physical crystal-rock board, shared between Crystal Brook and Just Games |
+
+H6 contains an explicit readiness gate before either game is implemented. If MG-WP0-WP4 have not established the shared catalogue/launcher/session/sandbox/authoring contracts, H6 must pause at that gate rather than introducing bespoke Crystal Brook activity architecture.
 
 ## Platform sequence
 
