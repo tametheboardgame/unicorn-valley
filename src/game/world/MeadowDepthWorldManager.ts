@@ -12,6 +12,7 @@ import type { InteractionActionKind, InteractionTarget } from '../interaction/In
 import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
+import { launchPondLeapActivity } from '../scenes/PondLeapActivityRegistration';
 import { MeadowWindmillStoryService } from '../story/MeadowWindmillStoryService';
 import { RAINBOW_MEADOW_LAYOUT } from './RainbowMeadowMap';
 import { worldDepthForY } from './WorldDepth';
@@ -72,8 +73,8 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
   {
     id: 'rainbow-pond',
     label: 'Rainbow Pond',
-    actionLabel: 'Splash / watch',
-    actionKind: 'interact',
+    actionLabel: 'Play Lily Pad Leap',
+    actionKind: 'start',
     position: RAINBOW_MEADOW_LAYOUT.natureFeatures.pond.interactionPosition,
     radius: 130,
   },
@@ -274,22 +275,14 @@ export class MeadowDepthWorldManager {
   private activatePond(state: MeadowDepthState): void {
     const specialWeather = this.weather.getState() !== 'clear';
     const sunset = this.time.getState() === 'sunset';
-    if (specialWeather || sunset) {
-      const fresh = this.story.discoverRainbowReflection();
-      this.showFeedback(
-        state,
-        fresh
-          ? 'The ripples line up into a complete little rainbow reflection. It hangs there for one breath, even though the sky above looks completely different. 🌈'
-          : 'The pond remembers its rainbow trick. A frog plops through the colours and scrambles them again. 🐸',
-      );
+    const discoveredReflection =
+      specialWeather || sunset ? this.story.discoverRainbowReflection() : false;
+
+    if (discoveredReflection) {
       state.scene.cameras.main.flash(85, 205, 244, 255, false);
-      return;
     }
 
-    this.showFeedback(
-      state,
-      'Plip! A frog disappears under a lily pad and sends three perfect rings across the water. The pond looks especially reflective in different weather. 🐸',
-    );
+    void launchPondLeapActivity(state.scene, { discoveredReflection });
   }
 
   private activateFlowerCircle(state: MeadowDepthState): void {
@@ -544,19 +537,17 @@ export class MeadowDepthWorldManager {
     objects.push(fence);
 
     for (const [index, colour] of [0x78bddd, 0xf2c56c, 0xc69be0].entries()) {
+      const knotX = ribbonPosition.x - 28 + index * 30;
+      const knotY = ribbonPosition.y - 14;
       const ribbon = scene.add
-        .rectangle(
-          ribbonPosition.x - 8 + index * 5,
-          ribbonPosition.y - 28 + index * 11,
-          52,
-          8,
-          colour,
-          0.94,
-        )
-        .setOrigin(0, 0.5)
-        .setAngle(index === 1 ? 7 : -6)
+        .graphics()
         .setDepth(worldDepthForY(ribbonPosition.y, 0.02))
         .setName(index === 0 ? 'meadow-depth:wind-ribbon-physical' : '');
+
+      ribbon.fillStyle(colour, 0.94);
+      ribbon.fillCircle(knotX, knotY, 6);
+      ribbon.fillTriangle(knotX - 3, knotY + 3, knotX - 11, knotY + 22, knotX, knotY + 15);
+      ribbon.fillTriangle(knotX + 3, knotY + 3, knotX + 11, knotY + 22, knotX, knotY + 15);
       objects.push(ribbon);
     }
 
