@@ -603,7 +603,8 @@ export class TitleScene extends Phaser.Scene {
     }
 
     this.setStarting('Opening Just Games…');
-    void ensureSceneRegistered(this.game, 'JustGamesScene').then(() => {
+    void ensureSceneRegistered(this.game, 'JustGamesScene')
+      .then(() => {
         if (this.sys.isActive()) {
           this.scene.start('JustGamesScene');
         }
