@@ -1,7 +1,7 @@
 ---
 id: MG-WP3
 title: Just Games Home and Catalogue Experience
-status: in_progress
+status: complete
 autonomy: amber
 depends_on: [MG-WP2]
 parallel_safe: false
@@ -37,8 +37,24 @@ MG-WP3 began on 2026-10-03 after MG-WP2 was explicitly approved and merged.
 - world placement/quest rules remain world-owned;
 - adding a future catalogue entry should not require bespoke Just Games wiring unless the game has an explicit selector UX.
 
+## Completion
+
+MG-WP3 was human-approved on 2026-10-03 after testing the exact Cloudflare preview.
+
+Completed scope includes:
+
+- title/home entry for Just Games;
+- catalogue-driven game and variant rendering;
+- sandbox launch/return through the shared mini-game platform;
+- launch/return coverage across all seven current game families;
+- session-aware Back to Games wording;
+- sticky click selection with hover-only feedback;
+- scalable two-column, paged variant grid for games with many modes;
+- browser regression coverage for sticky selection and non-overlapping race-mode layout;
+- manifest/scene-key decoupling to avoid the original lazy-load cycle.
+
+The final approval was given after the MG-WP3C interface pass. Subsequent commits before merge were formatting/closeout-only and did not change the approved interaction design.
+
 ## Human gate
 
-MG-WP3 is Amber.
-
-Do not merge until every catalogue-visible game can launch, retry and return safely from Just Games on the exact approved preview and David approves the catalogue experience.
+MG-WP3 human gate: **approved 2026-10-03**.
