@@ -13,7 +13,7 @@ export const WORLD_TRAVERSAL_POLISH_DETAIL_NAME = 'world-traversal-polish-detail
 export const WORLD_PLAYER_NAME = 'world-player-unicorn';
 const WORLD_TRAVERSAL_POLISH_ANCHOR_NAME = 'world-traversal-polish-anchor';
 
-const WORLD_TRAVERSAL_POLISH_SUPPORTED_SCENES = new Set(
+const WORLD_TRAVERSAL_POLISH_SUPPORTED_SCENES = new Set<string>(
   WORLD_TRAVERSAL_POLISH_SUPPORTED_SCENE_KEYS,
 );
 
