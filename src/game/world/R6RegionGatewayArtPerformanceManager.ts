@@ -3,7 +3,6 @@ import { RefreshThrottle } from '../performance/RefreshThrottle';
 
 const TARGET_CONTAINERS = [
   'r6-region-gateway-art:crystal-brook:production-upgrade',
-  'r6-region-gateway-art:crystal-brook:cascade-upgrade',
   'r6-region-gateway-art:whispering-woods:production-upgrade',
 ] as const;
 

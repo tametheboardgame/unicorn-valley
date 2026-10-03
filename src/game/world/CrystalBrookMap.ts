@@ -44,6 +44,12 @@ export interface CrystalBrookActivityPocket {
   radiusY: number;
 }
 
+export interface CrystalBrookWatercoursePoint extends MapPoint {
+  outerWidth: number;
+  innerWidth: number;
+  deepWidth: number;
+}
+
 const DEFAULT_PLAYER_SPAWN = { x: 360, y: 1090 } as const;
 
 export const CRYSTAL_BROOK_MEADOW_THRESHOLD = {
@@ -75,6 +81,24 @@ export const CRYSTAL_BROOK_MAIN_ROUTE = [
   { x: 2600, y: 1190 },
   { x: 3230, y: 990 },
 ] as const;
+
+// H6.2 presentation route only: keeps the walking path visibly alongside the Brook
+// without changing the canonical traversal/gateway route above. H6.5 owns any later
+// structural path redesign.
+export const CRYSTAL_BROOK_PATH_PRESENTATION_ROUTE = [
+  { x: 100, y: 1090 },
+  { x: 340, y: 1090 },
+  { x: 620, y: 1160 },
+  { x: 900, y: 1220 },
+  { x: 1200, y: 1280 },
+  { x: 1510, y: 1320 },
+  { x: 1800, y: 1260 },
+  { x: 2050, y: 1220 },
+  { x: 2320, y: 1260 },
+  { x: 2600, y: 1360 },
+  { x: 2900, y: 1240 },
+  { x: 3230, y: 990 },
+] as const satisfies readonly MapPoint[];
 export const CRYSTAL_BROOK_WOODS_ROUTE = [
   { x: 2580, y: 1200 },
   { x: 2810, y: 1110 },
@@ -97,19 +121,71 @@ export const CRYSTAL_BROOK_GROTTO_ROUTE = [
 
 export const CRYSTAL_BROOK_UPPER_POOL = { x: 1370, y: 540 } as const;
 export const CRYSTAL_BROOK_LOWER_POOL = { x: 2780, y: 1320 } as const;
-export const CRYSTAL_BROOK_LEGACY_CASCADE = { x: 3150, y: 650 } as const;
+export const CRYSTAL_BROOK_UPSTREAM_CASCADE = { x: 3150, y: 650 } as const;
+export const CRYSTAL_BROOK_MEADOW_WATER_EXIT = { x: 120, y: 920 } as const;
+
+export const CRYSTAL_BROOK_WATERCOURSE = [
+  { x: 3420, y: 390, outerWidth: 142, innerWidth: 102, deepWidth: 38 },
+  { x: 3290, y: 500, outerWidth: 162, innerWidth: 116, deepWidth: 42 },
+  { x: 3150, y: 650, outerWidth: 190, innerWidth: 136, deepWidth: 48 },
+  { x: 3030, y: 830, outerWidth: 178, innerWidth: 128, deepWidth: 46 },
+  { x: 2910, y: 1050, outerWidth: 172, innerWidth: 124, deepWidth: 44 },
+  { x: 2780, y: 1320, outerWidth: 350, innerWidth: 252, deepWidth: 100 },
+  { x: 2550, y: 1290, outerWidth: 200, innerWidth: 144, deepWidth: 54 },
+  { x: 2320, y: 1210, outerWidth: 180, innerWidth: 130, deepWidth: 48 },
+  { x: 2070, y: 1150, outerWidth: 168, innerWidth: 122, deepWidth: 44 },
+  { x: 1840, y: 1070, outerWidth: 162, innerWidth: 118, deepWidth: 42 },
+  { x: 1600, y: 900, outerWidth: 182, innerWidth: 132, deepWidth: 48 },
+  { x: 1370, y: 540, outerWidth: 390, innerWidth: 284, deepWidth: 120 },
+  { x: 1190, y: 760, outerWidth: 205, innerWidth: 148, deepWidth: 54 },
+  { x: 1030, y: 990, outerWidth: 170, innerWidth: 122, deepWidth: 44 },
+  { x: 760, y: 1040, outerWidth: 150, innerWidth: 108, deepWidth: 38 },
+  { x: 520, y: 1010, outerWidth: 142, innerWidth: 102, deepWidth: 36 },
+  { x: 300, y: 960, outerWidth: 140, innerWidth: 100, deepWidth: 36 },
+  {
+    x: CRYSTAL_BROOK_MEADOW_WATER_EXIT.x,
+    y: CRYSTAL_BROOK_MEADOW_WATER_EXIT.y,
+    outerWidth: 142,
+    innerWidth: 102,
+    deepWidth: 36,
+  },
+  { x: -110, y: 900, outerWidth: 142, innerWidth: 102, deepWidth: 36 },
+] as const satisfies readonly CrystalBrookWatercoursePoint[];
+
+export const CRYSTAL_BROOK_REFLECTION_INLET = {
+  points: [
+    { x: 2320, y: 1210 },
+    { x: 2280, y: 1390 },
+    { x: 2190, y: 1530 },
+    { x: 2150, y: 1650 },
+  ] as const satisfies readonly MapPoint[],
+  outerWidth: 126,
+  innerWidth: 88,
+  deepWidth: 34,
+} as const;
+
+export const CRYSTAL_BROOK_WATER_GLINTS = [
+  { x: 3190, y: 615, width: 74, angle: -28 },
+  { x: 2830, y: 1270, width: 108, angle: -8 },
+  { x: 2360, y: 1195, width: 82, angle: 9 },
+  { x: 1810, y: 1020, width: 76, angle: 18 },
+  { x: 1380, y: 590, width: 118, angle: -5 },
+  { x: 990, y: 975, width: 72, angle: -12 },
+  { x: 470, y: 995, width: 82, angle: -10 },
+  { x: 2180, y: 1575, width: 68, angle: -22 },
+] as const;
 
 export const CRYSTAL_BROOK_RIPPLE_OVERLOOK = { x: 1720, y: 830 } as const;
 export const CRYSTAL_BROOK_ECHO_CLUE = { x: 2800, y: 1400 } as const;
-export const CRYSTAL_BROOK_WATERFALL_MIST = { x: 2470, y: 670 } as const;
-export const CRYSTAL_BROOK_WATERFALL_PRESENTATION = { x: 2470, y: 520 } as const;
+export const CRYSTAL_BROOK_WATERFALL_MIST = { x: 3150, y: 735 } as const;
+export const CRYSTAL_BROOK_WATERFALL_PRESENTATION = { x: 3150, y: 600 } as const;
 export const CRYSTAL_BROOK_REFLECTION_POOL = { x: 2150, y: 1650 } as const;
-export const CRYSTAL_BROOK_STEPPING_CHIME = { x: 2320, y: 1370 } as const;
-export const CRYSTAL_BROOK_SHALLOW_RIPPLE = { x: 1900, y: 1260 } as const;
-export const CRYSTAL_BROOK_SINGING_CRYSTALS = { x: 2380, y: 720 } as const;
-export const CRYSTAL_BROOK_SHELL_SPARKLE = { x: 1880, y: 800 } as const;
+export const CRYSTAL_BROOK_STEPPING_CHIME = { x: 2320, y: 1225 } as const;
+export const CRYSTAL_BROOK_SHALLOW_RIPPLE = { x: 1900, y: 1110 } as const;
+export const CRYSTAL_BROOK_SINGING_CRYSTALS = { x: 2440, y: 1110 } as const;
+export const CRYSTAL_BROOK_SHELL_SPARKLE = { x: 1760, y: 980 } as const;
 export const CRYSTAL_BROOK_PEBBLE_STACK = { x: 1160, y: 1290 } as const;
-export const CRYSTAL_BROOK_CASCADE_MEMORY = { x: 2540, y: 1060 } as const;
+export const CRYSTAL_BROOK_CASCADE_MEMORY = { x: 2660, y: 1160 } as const;
 
 export const CRYSTAL_BROOK_SHALLOW_STREAM_HINT = { x: 1640, y: 960 } as const;
 export const CRYSTAL_BROOK_GROTTO_CUE = { x: 2490, y: 1450 } as const;
@@ -182,7 +258,11 @@ export const CRYSTAL_BROOK_LAYOUT = {
   water: {
     upperPool: CRYSTAL_BROOK_UPPER_POOL,
     lowerPool: CRYSTAL_BROOK_LOWER_POOL,
-    legacyCascade: CRYSTAL_BROOK_LEGACY_CASCADE,
+    upstreamCascade: CRYSTAL_BROOK_UPSTREAM_CASCADE,
+    meadowWaterExit: CRYSTAL_BROOK_MEADOW_WATER_EXIT,
+    watercourse: CRYSTAL_BROOK_WATERCOURSE,
+    reflectionInlet: CRYSTAL_BROOK_REFLECTION_INLET,
+    reflectionPool: CRYSTAL_BROOK_REFLECTION_POOL,
   },
   landmarks: {
     rippleOverlook: CRYSTAL_BROOK_RIPPLE_OVERLOOK,
@@ -222,15 +302,8 @@ export const CRYSTAL_BROOK_MAP = {
   playerSpawn,
   entrances: [CRYSTAL_BROOK_MEADOW_THRESHOLD] satisfies readonly CrystalBrookEntrance[],
   shallowStream: {
-    width: 150,
-    points: [
-      { x: 1060, y: 960 },
-      { x: 1290, y: 1050 },
-      { x: 1580, y: 1120 },
-      { x: 1940, y: 1110 },
-      { x: 2250, y: 1230 },
-      { x: 2460, y: 1300 },
-    ] satisfies readonly MapPoint[],
+    width: 190,
+    points: CRYSTAL_BROOK_WATERCOURSE,
   },
   steppingStones: [
     { x: 1010, y: 1010 },
@@ -301,15 +374,15 @@ export const CRYSTAL_BROOK_MAP = {
     },
   ] satisfies readonly CrystalBrookSecretRoute[],
   colliders: [
-    { id: 'collision:brook-upper-pool', x: 1370, y: 540, width: 430, height: 180 },
-    { id: 'collision:brook-lower-pool', x: 2780, y: 1320, width: 390, height: 160 },
+    { id: 'collision:brook-upper-deep-water', x: 1370, y: 540, width: 230, height: 82 },
+    { id: 'collision:brook-lower-deep-water', x: 2780, y: 1320, width: 220, height: 86 },
     { id: 'collision:cliff-west', x: 520, y: 410, width: 320, height: 150 },
     { id: 'collision:cliff-north-west', x: 880, y: 350, width: 260, height: 135 },
     { id: 'collision:cliff-north-east', x: 2350, y: 310, width: 300, height: 150 },
     { id: 'collision:cliff-east', x: 3190, y: 520, width: 300, height: 170 },
     { id: 'collision:north-crystal-bank', x: 2470, y: 505, width: 230, height: 125 },
     { id: 'collision:south-reed-bank', x: 1890, y: 1770, width: 230, height: 115 },
-    { id: 'collision:crystal-cascade', x: 3150, y: 665, width: 130, height: 235 },
+    { id: 'collision:brook-upstream-cascade', x: 3150, y: 650, width: 118, height: 220 },
   ] satisfies readonly CollisionRectangle[],
 } as const;
 

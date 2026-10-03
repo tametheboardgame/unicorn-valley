@@ -54,9 +54,6 @@ function alignBrook(scene: Phaser.Scene): void {
   findNamedContainer(scene, 'r6-region-gateway-art:crystal-brook:production-upgrade')?.setDepth(
     worldDepthForY(520, 0.22),
   );
-  findNamedContainer(scene, 'r6-region-gateway-art:crystal-brook:cascade-upgrade')?.setDepth(
-    worldDepthForY(790, 0.22),
-  );
 }
 
 function alignWoods(scene: Phaser.Scene): void {
