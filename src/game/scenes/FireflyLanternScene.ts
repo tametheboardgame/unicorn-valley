@@ -286,7 +286,7 @@ export class FireflyLanternScene extends Phaser.Scene {
     this.instructionText?.setText(
       'Choose a lantern game. You can always come back and try another.',
     );
-    this.statusText?.setText('Press 1, 2 or 3 • Esc returns to the Woods');
+    this.statusText?.setText(`Press 1, 2 or 3 • Esc returns to ${this.backDestinationLabel()}`);
 
     const panel = this.add
       .rectangle(GAME_WIDTH / 2, 370, 850, 390, 0xefffee, 0.97)
@@ -332,7 +332,7 @@ export class FireflyLanternScene extends Phaser.Scene {
     this.instructionText?.setText(
       'Normal is always eight golden lights. Choose how quickly they flutter.',
     );
-    this.statusText?.setText('Press 1, 2 or 3 • Esc returns to the Woods');
+    this.statusText?.setText(`Press 1, 2 or 3 • Esc returns to ${this.backDestinationLabel()}`);
 
     const panel = this.add
       .rectangle(GAME_WIDTH / 2, 370, 850, 390, 0xefffee, 0.97)
@@ -732,8 +732,12 @@ export class FireflyLanternScene extends Phaser.Scene {
     );
   }
 
+  private backDestinationLabel(): string {
+    return this.miniGameSession?.source === 'just-games' ? 'Games' : 'the Woods';
+  }
+
   private backButtonLabel(): string {
-    return this.miniGameSession?.source === 'just-games' ? 'Back to Games' : 'Back to the Woods';
+    return `Back to ${this.backDestinationLabel()}`;
   }
 
   private leaveActivity(): void {
