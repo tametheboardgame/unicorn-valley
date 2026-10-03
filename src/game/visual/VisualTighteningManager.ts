@@ -1,10 +1,11 @@
 import Phaser from 'phaser';
+import { VISUAL_TIGHTENING_SUPPORTED_SCENE_KEYS } from '../world/RegionPresentationOwnership';
 import { ensureNovaPresentationTexture, NOVA_RACE_TINT } from './NovaPresentation';
 
 export const VISUAL_TIGHTENING_DETAIL_NAME = 'visual-tightening-detail';
 const VISUAL_TIGHTENING_ANCHOR_NAME = 'visual-tightening-anchor';
 
-export const VISUAL_TIGHTENING_SUPPORTED_SCENES = new Set(['NovaTutorialRaceScene', 'RaceScene']);
+const VISUAL_TIGHTENING_SUPPORTED_SCENES = new Set(VISUAL_TIGHTENING_SUPPORTED_SCENE_KEYS);
 
 function markDetail<T extends Phaser.GameObjects.GameObject>(object: T): T {
   object.setName(VISUAL_TIGHTENING_DETAIL_NAME);
