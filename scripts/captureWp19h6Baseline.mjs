@@ -45,8 +45,8 @@ try {
 
     await page.goto(`${baseUrl}/?scene=brook&diagnostics=1`);
     await page.waitForFunction(() => Boolean(window.__UNICORN_VALLEY_DIAGNOSTICS__));
-    await page.waitForFunction(
-      () => window.__UNICORN_VALLEY_DIAGNOSTICS__.snapshot().activeScenes.includes('CrystalBrookScene'),
+    await page.waitForFunction(() =>
+      window.__UNICORN_VALLEY_DIAGNOSTICS__.snapshot().activeScenes.includes('CrystalBrookScene'),
     );
     await page.waitForTimeout(1_400);
     await page.evaluate(() => window.__UNICORN_VALLEY_DIAGNOSTICS__.resetPerformance());
@@ -75,17 +75,29 @@ try {
       const scene = snapshot.scenes.find(({ key }) => key === 'CrystalBrookScene');
       const namedObjects = (scene?.objects ?? [])
         .filter(({ name }) => Boolean(name))
-        .map(({ name, type, x, y, displayWidth, displayHeight, depth, visible, effectiveVisible }) => ({
-          name,
-          type,
-          x,
-          y,
-          displayWidth,
-          displayHeight,
-          depth,
-          visible,
-          effectiveVisible,
-        }));
+        .map(
+          ({
+            name,
+            type,
+            x,
+            y,
+            displayWidth,
+            displayHeight,
+            depth,
+            visible,
+            effectiveVisible,
+          }) => ({
+            name,
+            type,
+            x,
+            y,
+            displayWidth,
+            displayHeight,
+            depth,
+            visible,
+            effectiveVisible,
+          }),
+        );
 
       displayEvidence.anchors[anchorName] = {
         player: anchor,
