@@ -57,7 +57,6 @@ export function drawRainbowTarget(
   });
 }
 
-
 export function resolveRainbowDiscHornCatchPoint(
   sprite: Phaser.GameObjects.Sprite,
   appearance: UnicornAppearance,
