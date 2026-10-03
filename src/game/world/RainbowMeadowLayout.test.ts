@@ -506,9 +506,7 @@ describe('H4.10 Meadow boundary readability', () => {
     expect(RAINBOW_MEADOW_LAYOUT.hubFeatures.rainbowRunEntrance.position.x).toBeGreaterThan(
       west.x2,
     );
-    expect(RAINBOW_MEADOW_LAYOUT.hubFeatures.rainbowRunEntrance.position.x).toBeLessThan(
-      east.x1,
-    );
+    expect(RAINBOW_MEADOW_LAYOUT.hubFeatures.rainbowRunEntrance.position.x).toBeLessThan(east.x1);
   });
 });
 
