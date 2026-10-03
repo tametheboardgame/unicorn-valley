@@ -238,7 +238,6 @@ test('H4.9 Rainbow Disc lawn is alive before interaction and returns cleanly aft
   await waitForActiveScene(page, 'RainbowMeadowScene');
 });
 
-
 test('H4.9B practice range launches a five-throw target challenge', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.addInitScript(() => window.localStorage.clear());
@@ -274,8 +273,7 @@ test('H4.9B practice range launches a five-throw target challenge', async ({ pag
     .poll(async () => {
       const activity = await snapshotScene(page, 'RainbowDiscActivityScene');
       return activity.objects.some(
-        ({ text, effectiveVisible }) =>
-          effectiveVisible && text === 'Rainbow Disc Practice',
+        ({ text, effectiveVisible }) => effectiveVisible && text === 'Rainbow Disc Practice',
       );
     })
     .toBe(true);
@@ -314,8 +312,7 @@ test('H4.9B practice range launches a five-throw target challenge', async ({ pag
     .poll(async () => {
       const activity = await snapshotScene(page, 'RainbowDiscActivityScene');
       return activity.objects.some(
-        ({ text, effectiveVisible }) =>
-          effectiveVisible && text === 'PRACTICE COMPLETE!',
+        ({ text, effectiveVisible }) => effectiveVisible && text === 'PRACTICE COMPLETE!',
       );
     })
     .toBe(true);
