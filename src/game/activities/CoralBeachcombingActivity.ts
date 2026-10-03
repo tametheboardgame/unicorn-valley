@@ -30,6 +30,18 @@ export function getNextBeachcombingTrail(saveService: SaveService): Beachcombing
   return undiscovered?.trail ?? 'crab-tracks';
 }
 
+export function getNextSandboxBeachcombingTrail(
+  currentTrail?: BeachcombingTrail,
+): BeachcombingTrail {
+  const trails = BEACHCOMBING_OUTCOMES.map(({ trail }) => trail);
+  if (!currentTrail) {
+    return trails[0] ?? 'crab-tracks';
+  }
+  const currentIndex = trails.indexOf(currentTrail);
+  const nextIndex = currentIndex < 0 ? 0 : (currentIndex + 1) % trails.length;
+  return trails[nextIndex] ?? 'crab-tracks';
+}
+
 export function recordCoralBeachcombingTrail(
   saveService: SaveService,
   trail: BeachcombingTrail,
