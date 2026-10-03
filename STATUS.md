@@ -1,41 +1,68 @@
 # Project Status
 
-Last updated: 2026-10-02
+Last updated: 2026-10-03
 
 ## Current work
 
-`R6.5-WP19H4 - Rainbow Meadow Final Polish` remains active.
+The independent **MG - Mini-Game Development Programme** is active.
 
-The current bounded slice is **H4.9 - Rainbow Disc recreation lawn and mini-game** on branch `r6-5-wp19h4-9-rainbow-disc`.
+Current bounded package: **MG-WP0 - Mini-Game Platform Foundation**
 
-Accepted context:
+Branch: `agent/mg-wp0-mini-game-platform-foundation`
 
-- H4.1-H4.7 are complete and merged.
-- H4.8 removed permanent nature hotspot clutter, rebuilt the Windmill pocket after the first visual pass was rejected, and preserved nature-story/discovery interactions with collision-safe approaches.
-- David explicitly approved the rebuilt H4.8 Windmill on 2 October 2026 and PR #252 merged to `main` as squash commit `1d59e87fc55a4e98d72cabb802ed717b25723fc2`.
+Draft PR: **#262**
 
-H4.9 currently owns:
+MG was approved as a genuinely independent programme rather than an R6.5/WP19 sub-stream. PR #260 merged the programme roadmap and repo-wide integration rules to `main` as `54cf69022815d8523be78a079bae56405fd3e414`.
 
-- one canonical south-west Rainbow Disc recreation lawn;
-- five distinct modern unicorn players and visible ambient disc passing before interaction;
-- light field/end-zone markings and Meadow-style pennants rather than stadium presentation;
-- a contextual captain interaction labelled **Join the game**;
-- an on-demand `RainbowDiscActivityScene` that pauses and returns to Rainbow Meadow cleanly;
-- a short three-catch scoring chain with touch drag/aim/release;
-- keyboard receiver selection with Up/Down or W/S and Space/Enter throw timing;
-- quick turnover/reset on missed throws;
-- immediate replay or return after scoring;
-- no economy loop, save-schema expansion or persistent reward.
+### MG-WP0 checkpoint
 
-This remains an **Amber human visual/playtest gate**. Do not merge H4.9 or begin H4.10 until David approves the deployed lawn and mini-game.
+Implemented on the current branch:
+
+- one typed catalogue for the seven current mini-game families;
+- normalised `world` / `just-games` session context;
+- default world-versus-sandbox side-effect policy;
+- one manifest-backed generic mini-game launcher/return boundary;
+- canonical `SceneManifest` entries for Chess and Pond Leap;
+- mini-game-specific verification ownership;
+- catalogue/session/sandbox unit contracts;
+- a durable audit of every current game's launch, return and persistence ownership.
+
+No existing world caller has been migrated to the new launcher yet. Existing gameplay behaviour therefore remains intentionally unchanged in MG-WP0.
+
+Implementation evidence corrected the safe platform dependency order to:
+
+**MG-WP0 foundation -> MG-WP1 existing-game migration -> MG-WP2 sandbox/persistence isolation -> MG-WP3 Just Games UI -> MG-WP4 future-game authoring guardrails.**
+
+This prevents the Just Games launcher from exposing activities that still write directly to adventure progression before their sandbox boundary exists.
+
+## Validation state
+
+Current branch-head CI is running.
+
+The first MG-WP0 CI attempt failed only the formatter gate and was immediately corrected.
+
+At MG-WP0 branch creation, current `main` already had unrelated full-CI failures from concurrent/recent work, including Story House save-migration expectation drift, older Rainbow Meadow/Rainbow Disc unit issues and a first-playable performance graph approximately 2 KiB over budget. These are baseline issues rather than MG-WP0 behaviour changes unless later evidence shows otherwise.
+
+## Human gate
+
+MG-WP0 is Amber because it establishes cross-cutting architecture.
+
+Do not merge MG-WP0 or begin MG-WP1 until:
+
+- the platform implementation is technically coherent;
+- package-required validation has run as far as the current baseline permits;
+- any MG-caused failures are fixed;
+- David explicitly approves the MG-WP0 architecture implementation.
 
 ## Next work
 
-After H4.9 is visually/playtest approved and merged, continue to **H4.10 - Meadow life, density and substantive finishing pass**.
+After MG-WP0 is approved and merged, begin **MG-WP1 - Existing game migration to one launch contract**.
+
+World/area, Story House and other programmes remain independent where dependencies and branch conflicts permit.
 
 ## Operating reminders
 
-- Use the fast-development CI contract in `AGENTS.md`: cheap relevant checks during iteration, full exact-head qualification before merge.
-- On a failed current-work CI run, inspect and remediate immediately when deterministic.
-- If Git/GitHub access fails, attempt a fresh reconnect/status read before reporting an access blocker.
-- Do not merge Amber visual work without explicit human approval.
+- Use the fast-development CI contract in `AGENTS.md`.
+- On a failed current-work CI run, inspect and remediate deterministic in-scope failures immediately.
+- If Git/GitHub access fails, reconnect before reporting a blocker.
+- Do not duplicate a mini-game implementation to avoid migration or branch conflicts.

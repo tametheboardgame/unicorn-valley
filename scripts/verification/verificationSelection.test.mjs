@@ -33,6 +33,16 @@ test('overlapping settings audio source selects both product contracts without d
   assert.equal(new Set(plan.browserTests).size, plan.browserTests.length);
 });
 
+test('mini-game platform changes select mini-game unit and browser ownership', () => {
+  const plan = buildVerificationSelection(['src/game/minigames/MiniGameSession.ts']);
+  assert.equal(plan.changeClass, 'bounded-feature');
+  assert.deepEqual(plan.owners, ['mini-games']);
+  assert.equal(plan.unitMode, 'selected');
+  assert.ok(plan.unitFilters.includes('src/game/minigames'));
+  assert.deepEqual(plan.browserGroups, ['mini-games']);
+  assert.ok(plan.browserTests.includes('tests/play/r6.5-wp14-repeatable-activities.spec.ts'));
+});
+
 test('direct Playwright changes select the changed contract rather than a hard-coded WP bucket', () => {
   const file = 'tests/play/r6.5-wp19g-mp3-audio-foundation.spec.ts';
   const plan = buildVerificationSelection([file]);

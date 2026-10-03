@@ -1,6 +1,6 @@
 # Mini-Game Platform Architecture
 
-Status: **proposed architecture under the accepted MG programme direction**
+Status: **approved architecture / MG-WP0 implementation active**
 
 Programme: **MG - Mini-Game Development**
 
@@ -359,7 +359,7 @@ Current implementation is inconsistent:
 - Firefly Lantern and race scenes are startup/eager paths despite being bounded activities;
 - several games own different return conventions.
 
-MG-WP0/MG-WP2 must converge this.
+MG-WP0/MG-WP1 must converge this.
 
 Rules after migration:
 

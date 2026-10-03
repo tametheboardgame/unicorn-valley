@@ -5,6 +5,7 @@ export const UNIT_GROUPS = Object.freeze({
   'world-navigation': ['src/game/world'],
   'interaction-dialogue': ['src/game/interaction', 'src/game/dialogue', 'src/game/population'],
   racing: ['src/game/racing'],
+  'mini-games': ['src/game/minigames'],
   'activities-economy': [
     'src/game/activities',
     'src/game/economy',
@@ -55,6 +56,10 @@ export const BROWSER_GROUPS = Object.freeze({
   racing: [
     'tests/play/r6-wp6.18e-crystal-cascade-balance.spec.ts',
     'tests/play/r6-wp6.18h-mobile-race-controls.spec.ts',
+    'tests/play/r6.5-wp12-race-expansion.spec.ts',
+  ],
+  'mini-games': [
+    'tests/play/r6.5-wp14-repeatable-activities.spec.ts',
     'tests/play/r6.5-wp12-race-expansion.spec.ts',
   ],
   'activities-economy': [
@@ -147,6 +152,12 @@ export const OWNERSHIP_MAP = Object.freeze([
     sourceGlobs: ['src/game/interaction/**', 'src/game/dialogue/**', 'src/game/population/**'],
     unitGroups: ['interaction-dialogue'],
     browserGroups: ['interaction-dialogue'],
+  },
+  {
+    id: 'mini-games',
+    sourceGlobs: ['src/game/minigames/**'],
+    unitGroups: ['mini-games'],
+    browserGroups: ['mini-games'],
   },
   {
     id: 'racing',
