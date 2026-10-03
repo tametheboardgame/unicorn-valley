@@ -61,6 +61,13 @@ test('H4.10 Meadow renders distinct authored boundary treatments', async ({ page
   expect(
     visibleNames.filter((name) => name.startsWith('rainbow-meadow:nature:frog:')).length,
   ).toBeGreaterThanOrEqual(2);
+  expect(visibleNames).toContain('rainbow-meadow:sunbeam-village-sign');
+  expect(
+    visibleNames.filter((name) => name.startsWith('rainbow-meadow:wildflower-clump:')).length,
+  ).toBeGreaterThanOrEqual(9);
+  expect(
+    visibleNames.some((name) => name.startsWith('rainbow-meadow:flower-cluster:')),
+  ).toBe(false);
 });
 
 test('H4.10 boundary presentation preserves the three visual route openings', async ({ page }) => {
