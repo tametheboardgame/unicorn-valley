@@ -1,44 +1,14 @@
 import Phaser from 'phaser';
-import { RAINBOW_MEADOW_LAYOUT } from '../world/RainbowMeadowMap';
-import { worldDepthForY } from '../world/WorldDepth';
 import { ensureNovaPresentationTexture, NOVA_RACE_TINT } from './NovaPresentation';
 
 export const VISUAL_TIGHTENING_DETAIL_NAME = 'visual-tightening-detail';
 const VISUAL_TIGHTENING_ANCHOR_NAME = 'visual-tightening-anchor';
 
-const SUPPORTED_SCENES = new Set(['RainbowMeadowScene', 'NovaTutorialRaceScene', 'RaceScene']);
+const SUPPORTED_SCENES = new Set(['NovaTutorialRaceScene', 'RaceScene']);
 
 function markDetail<T extends Phaser.GameObjects.GameObject>(object: T): T {
   object.setName(VISUAL_TIGHTENING_DETAIL_NAME);
   return object;
-}
-
-function decorateMeadow(scene: Phaser.Scene): void {
-  const pond = RAINBOW_MEADOW_LAYOUT.natureFeatures.pond;
-  for (const [width, height, alpha] of [
-    [330, 88, 0.24],
-    [225, 62, 0.2],
-  ] as const) {
-    markDetail(
-      scene.add
-        .ellipse(pond.position.x, pond.position.y, width, height, 0xe6ffff, alpha)
-        .setStrokeStyle(4, 0xffffff, alpha + 0.08)
-        .setDepth(5.1),
-    );
-  }
-  for (const [x, y] of [
-    [pond.position.x - 245, pond.position.y + 35],
-    [pond.position.x + 235, pond.position.y - 20],
-  ] as const) {
-    for (const offset of [-14, 0, 14]) {
-      markDetail(
-        scene.add
-          .rectangle(x + offset, y - 18, 5, 46 + Math.abs(offset), 0x568f59, 0.9)
-          .setAngle(offset * 0.38)
-          .setDepth(worldDepthForY(y, -0.2)),
-      );
-    }
-  }
 }
 
 function applyCanonicalNovaToRace(scene: Phaser.Scene): void {
@@ -91,9 +61,6 @@ function decorateRace(scene: Phaser.Scene): void {
 
 function applyVisualTightening(scene: Phaser.Scene): void {
   switch (scene.scene.key) {
-    case 'RainbowMeadowScene':
-      decorateMeadow(scene);
-      break;
     case 'NovaTutorialRaceScene':
     case 'RaceScene':
       decorateRace(scene);
