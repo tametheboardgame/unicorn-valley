@@ -62,6 +62,7 @@ async function expectLiveCanvasMenu(page: Page): Promise<void> {
   });
 
   expect(interactiveNames).toContain('title-menu-new-game');
+  expect(interactiveNames).toContain('title-menu-just-games');
   expect(interactiveNames).toContain('title-menu-settings');
 }
 
@@ -135,9 +136,10 @@ test.describe('R6.5-WP19F phone portrait generated title visual evidence', () =>
     await expect(logo).toHaveAttribute('src', /unicorn-valley-logo\.webp$/);
     await expect(logo).toHaveAttribute('alt', /Unicorn Valley/);
     await expect(page.locator('[data-title-action="title-menu-new-game"]')).toBeVisible();
+    await expect(page.locator('[data-title-action="title-menu-just-games"]')).toBeVisible();
     await expect(page.locator('[data-title-action="title-menu-settings"]')).toBeVisible();
     await expect(controls.locator('.title-portrait-status')).toHaveText(
-      'Start an adventure, or open Story House and read straight away.',
+      'Start an adventure, open Story House, or jump straight into Just Games.',
     );
     await expect(page.locator('canvas')).toHaveCSS('pointer-events', 'none');
 
@@ -151,7 +153,7 @@ test.describe('R6.5-WP19F phone portrait generated title visual evidence', () =>
     const card = controls.locator('.title-portrait-card');
     const cardBounds = await card.boundingBox();
     expect(cardBounds).not.toBeNull();
-    expect(cardBounds?.height ?? 999).toBeLessThan(400);
+    expect(cardBounds?.height ?? 999).toBeLessThan(470);
 
     await page.screenshot({
       path: test.info().outputPath('wp19f-title-phone-portrait.png'),
