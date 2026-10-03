@@ -4,7 +4,10 @@ import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { InputController } from '../input/InputController';
 import { KeyboardInputAdapter } from '../input/KeyboardInputAdapter';
 import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
-import { parseUnicornAppearance } from '../player/UnicornAppearance';
+import {
+  DEFAULT_UNICORN_APPEARANCE,
+  parseUnicornAppearance,
+} from '../player/UnicornAppearance';
 import { createUnicornAppearanceTexture } from '../player/UnicornAppearanceRenderer';
 import {
   createRaceAssistanceControl,
@@ -39,6 +42,7 @@ import {
   RAINBOW_RUN_FINISHER_RIBBON_ID,
   RAINBOW_RUN_PODIUM_ROSETTE_ID,
   applyRaceResultToSave,
+  createPracticeRaceSummary,
   type RaceRewardSummary,
 } from '../racing/RaceResults';
 import {
@@ -136,8 +140,12 @@ export class RaceScene extends Phaser.Scene {
     this.createCourse();
 
     const saveService = getBrowserSaveService();
-    const save = saveService.load() ?? saveService.createNewGame();
-    const appearance = parseUnicornAppearance(save.profile.appearance);
+    const loadedSave = saveService.load();
+    const appearance = this.isSandboxSession()
+      ? loadedSave
+        ? parseUnicornAppearance(loadedSave.profile.appearance)
+        : DEFAULT_UNICORN_APPEARANCE
+      : parseUnicornAppearance((loadedSave ?? saveService.createNewGame()).profile.appearance);
     createUnicornAppearanceTexture(this, PLAYER_TEXTURE_KEY, appearance);
 
     this.playerShadow = this.add
@@ -911,14 +919,19 @@ export class RaceScene extends Phaser.Scene {
   }
 
   private saveRaceResult(): RaceRewardSummary {
-    const saveService = getBrowserSaveService();
-    const save = saveService.load() ?? saveService.createNewGame();
-    const result = applyRaceResultToSave(save, {
+    const input = {
       raceId: COURSE.id,
       finishTimeMs: this.finishTimeMs,
       place: this.playerFinishPlace,
       participantCount: RAINBOW_RUN_NPC_RACERS.length + 1,
-    });
+    };
+    if (this.isSandboxSession()) {
+      return createPracticeRaceSummary(input);
+    }
+
+    const saveService = getBrowserSaveService();
+    const save = saveService.load() ?? saveService.createNewGame();
+    const result = applyRaceResultToSave(save, input);
     saveService.save(result.save);
     return result.summary;
   }
@@ -967,27 +980,32 @@ export class RaceScene extends Phaser.Scene {
     const place =
       this.playerFinishPlace || standings.find((standing) => standing.isPlayer)?.place || 1;
     const reward = this.raceRewardSummary;
-    const bestText = reward
-      ? reward.isPersonalBest
-        ? reward.previousBestTimeMs === null
-          ? `Personal best: ${(reward.bestTimeMs / 1000).toFixed(1)}s ✨`
-          : `New personal best: ${(reward.bestTimeMs / 1000).toFixed(1)}s • was ${(reward.previousBestTimeMs / 1000).toFixed(1)}s ✨`
-        : `Personal best: ${(reward.bestTimeMs / 1000).toFixed(1)}s`
-      : '';
-    const rewardLines = reward
-      ? [
-          `✨ +${reward.participationSparkles} Rainbow Sparkles for finishing`,
-          ...(reward.podiumBonusSparkles > 0
-            ? [`🏆 +${reward.podiumBonusSparkles} Rainbow Sparkles for a podium finish`]
-            : []),
-          ...(reward.newRibbonIds.includes(RAINBOW_RUN_FINISHER_RIBBON_ID)
-            ? ['🎀 New Finisher Ribbon • available to decorate your cottage']
-            : []),
-          ...(reward.newRibbonIds.includes(RAINBOW_RUN_PODIUM_ROSETTE_ID)
-            ? ['🏅 New Podium Rosette • available to decorate your cottage']
-            : []),
-        ]
-      : ['Your race record has been saved.'];
+    const sandbox = this.isSandboxSession();
+    const bestText = sandbox
+      ? `Practice time: ${(this.finishTimeMs / 1000).toFixed(1)}s`
+      : reward
+        ? reward.isPersonalBest
+          ? reward.previousBestTimeMs === null
+            ? `Personal best: ${(reward.bestTimeMs / 1000).toFixed(1)}s ✨`
+            : `New personal best: ${(reward.bestTimeMs / 1000).toFixed(1)}s • was ${(reward.previousBestTimeMs / 1000).toFixed(1)}s ✨`
+          : `Personal best: ${(reward.bestTimeMs / 1000).toFixed(1)}s`
+        : '';
+    const rewardLines = sandbox
+      ? ['Practice only • no race record, ribbons, Sparkles or Rainbow Cup progress were saved.']
+      : reward
+        ? [
+            `✨ +${reward.participationSparkles} Rainbow Sparkles for finishing`,
+            ...(reward.podiumBonusSparkles > 0
+              ? [`🏆 +${reward.podiumBonusSparkles} Rainbow Sparkles for a podium finish`]
+              : []),
+            ...(reward.newRibbonIds.includes(RAINBOW_RUN_FINISHER_RIBBON_ID)
+              ? ['🎀 New Finisher Ribbon • available to decorate your cottage']
+              : []),
+            ...(reward.newRibbonIds.includes(RAINBOW_RUN_PODIUM_ROSETTE_ID)
+              ? ['🏅 New Podium Rosette • available to decorate your cottage']
+              : []),
+          ]
+        : ['Your race record has been saved.'];
 
     const shadow = this.add.rectangle(
       GAME_WIDTH / 2 + 10,
@@ -1163,6 +1181,10 @@ export class RaceScene extends Phaser.Scene {
     this.scene.restart(this.miniGameSession ? miniGameSceneData(this.miniGameSession) : undefined);
   }
 
+  private isSandboxSession(): boolean {
+    return this.miniGameSession?.sideEffectPolicy === 'sandbox';
+  }
+
   private returnDestinationLabel(): string {
     if (this.miniGameSession?.source === 'just-games') {
       return 'Games';
@@ -1178,7 +1200,10 @@ export class RaceScene extends Phaser.Scene {
 
   public exitRace(): void {
     if (this.miniGameSession) {
-      if (this.miniGameSession.returnTarget.sceneKey === 'RainbowRunEntryScene') {
+      if (
+        !this.isSandboxSession() &&
+        this.miniGameSession.returnTarget.sceneKey === 'RainbowRunEntryScene'
+      ) {
         saveLocationCheckpoint(getBrowserSaveService(), RAINBOW_RUN_HUB_LOCATION_ID);
       }
       clearRaceReturnScene(this.sys.game);
