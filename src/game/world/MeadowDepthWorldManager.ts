@@ -275,14 +275,18 @@ export class MeadowDepthWorldManager {
   private activatePond(state: MeadowDepthState): void {
     const specialWeather = this.weather.getState() !== 'clear';
     const sunset = this.time.getState() === 'sunset';
-    const discoveredReflection =
-      specialWeather || sunset ? this.story.discoverRainbowReflection() : false;
+    const showRainbowReflection = specialWeather || sunset;
+    const discoveredReflection = showRainbowReflection
+      ? this.story.discoverRainbowReflection()
+      : false;
 
     if (discoveredReflection) {
       state.scene.cameras.main.flash(85, 205, 244, 255, false);
     }
 
-    void launchPondLeapActivity(state.scene, { discoveredReflection });
+    void launchPondLeapActivity(state.scene, {
+      discoveredReflection: showRainbowReflection,
+    });
   }
 
   private activateFlowerCircle(state: MeadowDepthState): void {
