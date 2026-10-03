@@ -1,7 +1,7 @@
 ---
 id: MG-WP0
 title: Mini-Game Platform Foundation
-status: active
+status: complete
 autonomy: amber
 depends_on: []
 parallel_safe: true
