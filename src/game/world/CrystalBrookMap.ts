@@ -86,14 +86,18 @@ export const CRYSTAL_BROOK_MAIN_ROUTE = [
 // without changing the canonical traversal/gateway route above. H6.5 owns any later
 // structural path redesign.
 export const CRYSTAL_BROOK_PATH_PRESENTATION_ROUTE = [
-  { x: 100, y: 1190 },
-  { x: 480, y: 1210 },
-  { x: 850, y: 1230 },
-  { x: 1180, y: 1300 },
-  { x: 1510, y: 1360 },
-  { x: 2050, y: 1195 },
-  { x: 2600, y: 1305 },
-  { x: 3230, y: 1070 },
+  { x: 100, y: 1090 },
+  { x: 340, y: 1090 },
+  { x: 620, y: 1160 },
+  { x: 900, y: 1220 },
+  { x: 1200, y: 1280 },
+  { x: 1510, y: 1320 },
+  { x: 1800, y: 1260 },
+  { x: 2050, y: 1220 },
+  { x: 2320, y: 1260 },
+  { x: 2600, y: 1360 },
+  { x: 2900, y: 1240 },
+  { x: 3230, y: 990 },
 ] as const satisfies readonly MapPoint[];
 export const CRYSTAL_BROOK_WOODS_ROUTE = [
   { x: 2580, y: 1200 },
@@ -118,6 +122,7 @@ export const CRYSTAL_BROOK_GROTTO_ROUTE = [
 export const CRYSTAL_BROOK_UPPER_POOL = { x: 1370, y: 540 } as const;
 export const CRYSTAL_BROOK_LOWER_POOL = { x: 2780, y: 1320 } as const;
 export const CRYSTAL_BROOK_UPSTREAM_CASCADE = { x: 3150, y: 650 } as const;
+export const CRYSTAL_BROOK_MEADOW_WATER_EXIT = { x: 120, y: 920 } as const;
 
 export const CRYSTAL_BROOK_WATERCOURSE = [
   { x: 3420, y: 390, outerWidth: 142, innerWidth: 102, deepWidth: 38 },
@@ -134,10 +139,17 @@ export const CRYSTAL_BROOK_WATERCOURSE = [
   { x: 1370, y: 540, outerWidth: 390, innerWidth: 284, deepWidth: 120 },
   { x: 1190, y: 760, outerWidth: 205, innerWidth: 148, deepWidth: 54 },
   { x: 1030, y: 990, outerWidth: 170, innerWidth: 122, deepWidth: 44 },
-  { x: 760, y: 1060, outerWidth: 150, innerWidth: 108, deepWidth: 38 },
-  { x: 480, y: 1090, outerWidth: 142, innerWidth: 102, deepWidth: 36 },
-  { x: 120, y: 1090, outerWidth: 146, innerWidth: 104, deepWidth: 36 },
-  { x: -110, y: 1090, outerWidth: 146, innerWidth: 104, deepWidth: 36 },
+  { x: 760, y: 1040, outerWidth: 150, innerWidth: 108, deepWidth: 38 },
+  { x: 520, y: 1010, outerWidth: 142, innerWidth: 102, deepWidth: 36 },
+  { x: 300, y: 960, outerWidth: 140, innerWidth: 100, deepWidth: 36 },
+  {
+    x: CRYSTAL_BROOK_MEADOW_WATER_EXIT.x,
+    y: CRYSTAL_BROOK_MEADOW_WATER_EXIT.y,
+    outerWidth: 142,
+    innerWidth: 102,
+    deepWidth: 36,
+  },
+  { x: -110, y: 900, outerWidth: 142, innerWidth: 102, deepWidth: 36 },
 ] as const satisfies readonly CrystalBrookWatercoursePoint[];
 
 export const CRYSTAL_BROOK_REFLECTION_INLET = {
@@ -159,7 +171,7 @@ export const CRYSTAL_BROOK_WATER_GLINTS = [
   { x: 1810, y: 1020, width: 76, angle: 18 },
   { x: 1380, y: 590, width: 118, angle: -5 },
   { x: 990, y: 975, width: 72, angle: -12 },
-  { x: 470, y: 1080, width: 86, angle: 0 },
+  { x: 470, y: 995, width: 82, angle: -10 },
   { x: 2180, y: 1575, width: 68, angle: -22 },
 ] as const;
 
@@ -247,6 +259,7 @@ export const CRYSTAL_BROOK_LAYOUT = {
     upperPool: CRYSTAL_BROOK_UPPER_POOL,
     lowerPool: CRYSTAL_BROOK_LOWER_POOL,
     upstreamCascade: CRYSTAL_BROOK_UPSTREAM_CASCADE,
+    meadowWaterExit: CRYSTAL_BROOK_MEADOW_WATER_EXIT,
     watercourse: CRYSTAL_BROOK_WATERCOURSE,
     reflectionInlet: CRYSTAL_BROOK_REFLECTION_INLET,
     reflectionPool: CRYSTAL_BROOK_REFLECTION_POOL,
