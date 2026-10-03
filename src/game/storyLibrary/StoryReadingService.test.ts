@@ -54,6 +54,7 @@ describe('StoryReadingService', () => {
     expect(restored.getPreferences()).toEqual({
       fontSize: 24,
       lineHeight: 1.8,
+      coverStyle: 'modern',
       illustrationSetByStoryEditionKey: {},
     });
     expect(restored.getProgress('first-book')).toMatchObject({
@@ -157,6 +158,17 @@ describe('StoryReadingService', () => {
       },
     });
   });
+  it('remembers the global Story House cover style', () => {
+    const repository = new MemorySaveRepository();
+    const reading = new StoryReadingService(new SaveService(repository));
+
+    expect(reading.getPreferences().coverStyle).toBe('modern');
+    expect(reading.updatePreferences({ coverStyle: 'classic' })).toBe(true);
+
+    const restored = new StoryReadingService(new SaveService(repository));
+    expect(restored.getPreferences().coverStyle).toBe('classic');
+  });
+
   it('remembers illustration-set choices independently for each text edition', () => {
     const repository = new MemorySaveRepository();
     const reading = new StoryReadingService(new SaveService(repository));

@@ -300,6 +300,7 @@ export class StoryReaderOverlay {
             : null,
       };
       let activeShelf: StoryLibraryShelfId = this.options.initialShelf ?? 'all';
+      let coverStyle = this.reading.getPreferences().coverStyle ?? 'modern';
 
       const searchWrap = document.createElement('label');
       searchWrap.className = 'story-library-search';
@@ -458,7 +459,22 @@ export class StoryReaderOverlay {
       });
       categoryToggle.setAttribute('aria-controls', shelfTabs.id);
       categoryToggle.setAttribute('aria-expanded', 'false');
-      controlToggles.append(categoryToggle);
+
+      const coverToggle = button('', 'story-library-control-toggle story-library-cover-toggle', () => {
+        coverStyle = coverStyle === 'modern' ? 'classic' : 'modern';
+        this.reading.updatePreferences({ coverStyle });
+        updateCoverToggle();
+        renderShelf();
+      });
+      coverToggle.setAttribute('aria-label', 'Switch between classic and modern book covers');
+      const updateCoverToggle = (): void => {
+        const modern = coverStyle === 'modern';
+        coverToggle.textContent = modern ? '▣ Covers: Modern' : '▣ Covers: Classic';
+        coverToggle.classList.toggle('is-active', modern);
+        coverToggle.setAttribute('aria-pressed', String(modern));
+      };
+      updateCoverToggle();
+      controlToggles.append(categoryToggle, coverToggle);
       controls.append(shelfTabs);
 
       const statsPanel = document.createElement('section');
@@ -616,12 +632,27 @@ export class StoryReaderOverlay {
 
           const cover = document.createElement('span');
           cover.className = 'story-library-cover';
-          if (story.coverPath) {
+          const preferredCover =
+            story.coverSets.find(({ id }) => id === coverStyle) ??
+            story.coverSets.find(({ id }) => id === 'classic') ??
+            story.coverSets[0] ??
+            null;
+          const selectedCoverPath = preferredCover?.coverPath ?? story.coverPath;
+          const selectedCoverAlt = preferredCover?.coverAlt ?? story.coverAlt ?? '';
+          const selectedCoverStyle = preferredCover?.id ?? 'classic';
+          cover.dataset.coverStyle = selectedCoverStyle;
+          if (selectedCoverPath) {
             const image = document.createElement('img');
-            image.src = story.coverPath;
-            image.alt = story.coverAlt ?? '';
+            image.src = selectedCoverPath;
+            image.alt = selectedCoverAlt;
             image.loading = 'lazy';
             cover.append(image);
+            if (selectedCoverStyle === 'modern') {
+              const coverTitle = document.createElement('span');
+              coverTitle.className = 'story-library-cover-title';
+              coverTitle.textContent = story.title;
+              cover.append(coverTitle);
+            }
           } else {
             const sparkle = document.createElement('span');
             sparkle.className = 'story-library-cover-sparkle';
@@ -930,40 +961,55 @@ export class StoryReaderOverlay {
     const close = button('Close ✕', 'story-reader-close', () => this.destroy());
     topbar.append(back, titleWrap, close);
 
-    let editionSwitch: HTMLElement | null = null;
+    const toolbar = document.createElement('div');
+    toolbar.className = 'story-reader-toolbar';
+    toolbar.setAttribute('role', 'toolbar');
+    toolbar.setAttribute('aria-label', 'Reading controls');
+
     if (manifest.editions.length > 1) {
-      editionSwitch = document.createElement('nav');
-      editionSwitch.className = 'story-reader-edition-switch';
-      editionSwitch.setAttribute('aria-label', 'Book edition');
+      const textSwitch = document.createElement('span');
+      textSwitch.className = 'story-reader-control-group story-reader-text-switch';
       const editionLabel = document.createElement('span');
       editionLabel.className = 'story-reader-edition-label';
-      editionLabel.textContent = 'Edition';
-      editionSwitch.append(editionLabel);
+      editionLabel.textContent = 'Text';
+      textSwitch.append(editionLabel);
 
       for (const candidate of manifest.editions) {
-        const editionButton = button(candidate.label, 'story-reader-edition-button', () => {
+        const displayLabel =
+          candidate.id === 'story-house'
+            ? 'Modern'
+            : candidate.id === 'full-classic'
+              ? 'Classic'
+              : candidate.label;
+        const editionButton = button(displayLabel, 'story-reader-edition-button', () => {
           void this.switchEdition(candidate.id);
         });
         const active = candidate.id === edition.id;
         editionButton.classList.toggle('is-active', active);
         editionButton.setAttribute('aria-pressed', String(active));
-        editionSwitch.append(editionButton);
+        textSwitch.append(editionButton);
       }
+      toolbar.append(textSwitch);
     }
 
-    let illustrationSwitch: HTMLElement | null = null;
     if (edition.illustrationSets.length > 1) {
-      illustrationSwitch = document.createElement('nav');
-      illustrationSwitch.className = 'story-reader-edition-switch story-reader-illustration-switch';
-      illustrationSwitch.setAttribute('aria-label', 'Illustrations');
+      const illustrationSwitch = document.createElement('span');
+      illustrationSwitch.className =
+        'story-reader-control-group story-reader-illustration-switch';
       const illustrationLabel = document.createElement('span');
       illustrationLabel.className = 'story-reader-edition-label';
       illustrationLabel.textContent = 'Illustrations';
       illustrationSwitch.append(illustrationLabel);
 
       for (const candidate of edition.illustrationSets) {
+        const displayLabel =
+          candidate.id === 'modern'
+            ? 'Modern'
+            : candidate.id === 'classic'
+              ? 'Classic'
+              : candidate.label;
         const illustrationButton = button(
-          candidate.label,
+          displayLabel,
           'story-reader-edition-button story-reader-illustration-button',
           () => {
             void this.switchIllustrationSet(candidate.id);
@@ -974,24 +1020,32 @@ export class StoryReaderOverlay {
         illustrationButton.setAttribute('aria-pressed', String(active));
         illustrationSwitch.append(illustrationButton);
       }
+      toolbar.append(illustrationSwitch);
     }
 
-    const toolbar = document.createElement('nav');
-    toolbar.className = 'story-reader-toolbar';
-    toolbar.setAttribute('aria-label', 'Reading controls');
-    const textLabel = document.createElement('span');
-    textLabel.textContent = 'Text';
+    const sizeGroup = document.createElement('span');
+    sizeGroup.className = 'story-reader-control-group';
+    const sizeLabel = document.createElement('span');
+    sizeLabel.className = 'story-reader-edition-label';
+    sizeLabel.textContent = 'Size';
     const smaller = button('A−', 'story-reader-tool', () => this.changeFontSize(-2));
     smaller.setAttribute('aria-label', 'Make text smaller');
     const larger = button('A+', 'story-reader-tool', () => this.changeFontSize(2));
     larger.setAttribute('aria-label', 'Make text larger');
+    sizeGroup.append(sizeLabel, smaller, larger);
+
+    const spacingGroup = document.createElement('span');
+    spacingGroup.className = 'story-reader-control-group';
     const spacingLabel = document.createElement('span');
+    spacingLabel.className = 'story-reader-edition-label';
     spacingLabel.textContent = 'Spacing';
     const tighter = button('−', 'story-reader-tool', () => this.changeLineHeight(-0.1));
     tighter.setAttribute('aria-label', 'Reduce line spacing');
     const looser = button('+', 'story-reader-tool', () => this.changeLineHeight(0.1));
     looser.setAttribute('aria-label', 'Increase line spacing');
-    toolbar.append(textLabel, smaller, larger, spacingLabel, tighter, looser);
+    spacingGroup.append(spacingLabel, tighter, looser);
+
+    toolbar.append(sizeGroup, spacingGroup);
 
     const scroller = document.createElement('main');
     scroller.className = 'story-reader-scroller';
@@ -1202,10 +1256,7 @@ export class StoryReaderOverlay {
     });
 
     scroller.append(paper);
-    shell.append(topbar);
-    if (editionSwitch) shell.append(editionSwitch);
-    if (illustrationSwitch) shell.append(illustrationSwitch);
-    shell.append(toolbar, scroller, turnFeedback);
+    shell.append(topbar, toolbar, scroller, turnFeedback);
     root.replaceChildren(shell);
     this.currentChapter = { manifest, edition, chapter, index, scroller };
     scroller.addEventListener('scroll', this.scheduleProgressSave, { passive: true });

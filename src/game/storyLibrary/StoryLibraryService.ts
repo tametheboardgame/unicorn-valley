@@ -4,6 +4,8 @@ import type {
   StoryChapterContent,
   StoryChapterManifest,
   StoryContentBlock,
+  StoryCoverSetSummary,
+  StoryCoverStyle,
   StoryEditionManifest,
   StoryEditionSummary,
   StoryIllustrationReference,
@@ -203,6 +205,26 @@ function parseSeries(value: unknown): StoryCatalogueEntry['series'] {
   };
 }
 
+function parseCoverStyle(value: unknown): StoryCoverStyle {
+  if (value !== 'classic' && value !== 'modern') {
+    throw new Error('Story Library catalogue cover style must be classic or modern.');
+  }
+  return value;
+}
+
+function parseCatalogueCoverSet(value: unknown): StoryCoverSetSummary {
+  if (!value || typeof value !== 'object') {
+    throw new Error('Story Library catalogue cover set is invalid.');
+  }
+  const coverSet = value as Record<string, unknown>;
+  return {
+    id: parseCoverStyle(coverSet.id),
+    label: requireString(coverSet.label, 'cover set label'),
+    coverPath: requireString(coverSet.coverPath, 'cover set path'),
+    coverAlt: requireString(coverSet.coverAlt, 'cover set alt text'),
+  };
+}
+
 function parseEditionSummary(value: unknown): StoryEditionSummary {
   if (!value || typeof value !== 'object') {
     throw new Error('Story Library catalogue edition summary is invalid.');
@@ -244,6 +266,16 @@ function parseCatalogue(value: unknown): StoryCatalogue {
       throw new Error('Story Library catalogue default edition is missing.');
     }
 
+    const coverPath =
+      entry.coverPath === null ? null : requireString(entry.coverPath, 'cover path');
+    const coverAlt =
+      entry.coverAlt === null ? null : requireString(entry.coverAlt, 'cover alt text');
+    const coverSets = Array.isArray(entry.coverSets)
+      ? entry.coverSets.map(parseCatalogueCoverSet)
+      : coverPath && coverAlt
+        ? [{ id: 'classic' as const, label: 'Classic Covers', coverPath, coverAlt }]
+        : [];
+
     return {
       id: requireSafeId(entry.id, 'story id'),
       title: requireString(entry.title, 'story title'),
@@ -251,8 +283,9 @@ function parseCatalogue(value: unknown): StoryCatalogue {
       catalogueBlurb: requireString(entry.catalogueBlurb, 'story catalogue blurb'),
       author: requireString(entry.author, 'story author'),
       readingMode: parseReadingMode(entry.readingMode),
-      coverPath: entry.coverPath === null ? null : requireString(entry.coverPath, 'cover path'),
-      coverAlt: entry.coverAlt === null ? null : requireString(entry.coverAlt, 'cover alt text'),
+      coverPath,
+      coverAlt,
+      coverSets,
       series: parseSeries(entry.series),
       tags: requireStringArray(entry.tags, 'story tags'),
       discovery: parseDiscovery(entry.discovery),

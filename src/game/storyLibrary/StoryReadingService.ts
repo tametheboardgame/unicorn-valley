@@ -22,6 +22,7 @@ export interface StoryEditionProgress {
 const DEFAULT_PREFERENCES: ReaderPreferencesState = {
   fontSize: 20,
   lineHeight: 1.7,
+  coverStyle: 'modern',
   illustrationSetByStoryEditionKey: {},
 };
 
@@ -49,6 +50,7 @@ export class StoryReadingService {
     const preferences = save?.storyReading.preferences ?? DEFAULT_PREFERENCES;
     return {
       ...preferences,
+      coverStyle: preferences.coverStyle ?? 'modern',
       illustrationSetByStoryEditionKey: { ...(preferences.illustrationSetByStoryEditionKey ?? {}) },
     };
   }
@@ -118,6 +120,8 @@ export class StoryReadingService {
         1.4,
         2,
       ),
+      coverStyle:
+        preferences.coverStyle ?? save.storyReading.preferences.coverStyle ?? 'modern',
       illustrationSetByStoryEditionKey: {
         ...(save.storyReading.preferences.illustrationSetByStoryEditionKey ?? {}),
       },

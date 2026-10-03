@@ -1644,3 +1644,139 @@ canvas {
     padding: 12px;
   }
 }
+
+/* R6.5-WP19SH1.5A: modern cover choice and consolidated reader controls */
+.story-library-book {
+  grid-template-columns: 120px minmax(0, 1fr);
+  grid-template-rows: minmax(160px, auto) auto;
+}
+
+.story-library-cover {
+  width: 120px;
+  height: 160px;
+}
+
+.story-library-book-copy {
+  min-height: 160px;
+}
+
+.story-library-cover[data-cover-style='modern'] img {
+  object-fit: cover;
+  background: #e7eef1;
+}
+
+.story-library-cover-title {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  left: 6px;
+  padding: 5px 6px;
+  border: 1px solid rgb(255 255 255 / 36%);
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgb(39 49 61 / 74%), rgb(39 49 61 / 90%));
+  color: #fffdf7;
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1.08;
+  text-align: center;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 36%);
+}
+
+.story-reader-shell,
+.story-reader-shell.has-multiple-editions,
+.story-reader-shell.has-multiple-illustration-sets,
+.story-reader-shell.has-multiple-editions.has-multiple-illustration-sets {
+  grid-template-rows: auto auto minmax(0, 1fr);
+}
+
+.story-reader-toolbar {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  padding: 7px 12px;
+  overflow-x: auto;
+  border-bottom: 2px solid #e1d7c9;
+  background: #f7efdf;
+  color: #7b6b79;
+  font-size: 11px;
+  font-weight: 900;
+  scrollbar-width: thin;
+  white-space: nowrap;
+}
+
+.story-reader-control-group {
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 6px;
+  align-items: center;
+}
+
+.story-reader-control-group + .story-reader-control-group {
+  padding-left: 12px;
+  border-left: 1px solid #d7cabc;
+}
+
+.story-reader-toolbar .story-reader-edition-label {
+  width: auto;
+  margin: 0 2px 0 0;
+  font-size: 10px;
+  text-align: left;
+}
+
+.story-reader-toolbar .story-reader-edition-button,
+.story-reader-toolbar .story-reader-tool {
+  flex: 0 0 auto;
+  min-width: 38px;
+  min-height: 32px;
+  padding: 4px 9px;
+  font-size: 11px;
+}
+
+.story-reader-toolbar .story-reader-illustration-switch {
+  background: transparent;
+}
+
+@media (max-width: 700px) {
+  .story-library-book {
+    grid-template-columns: 90px minmax(0, 1fr);
+    grid-template-rows: minmax(120px, auto) auto;
+  }
+
+  .story-library-cover {
+    width: 90px;
+    height: 120px;
+  }
+
+  .story-library-book-copy {
+    min-height: 120px;
+  }
+
+  .story-library-cover-title {
+    right: 4px;
+    bottom: 4px;
+    left: 4px;
+    padding: 4px;
+    font-size: 8px;
+  }
+
+  .story-reader-toolbar {
+    justify-content: flex-start;
+    gap: 8px;
+    padding: 6px 7px;
+  }
+
+  .story-reader-control-group + .story-reader-control-group {
+    padding-left: 8px;
+  }
+
+  .story-reader-toolbar .story-reader-edition-button,
+  .story-reader-toolbar .story-reader-tool {
+    min-width: 34px;
+    min-height: 32px;
+    padding-inline: 7px;
+  }
+}
+
