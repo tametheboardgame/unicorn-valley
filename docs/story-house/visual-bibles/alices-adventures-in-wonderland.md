@@ -2,7 +2,7 @@
 
 Work package: **R6.5-WP19SH1.6.1A**
 
-Status: **in progress — anchor approval stage**
+Status: **in progress — Alice anchor approved; White Rabbit / early-world anchors next**
 
 ## Purpose
 
@@ -31,15 +31,18 @@ on prose descriptions alone.
 
 ## Primary continuity lock — Alice
 
-Alice must remain the same child across the complete set.
+**Approved 3 October 2026.** The Alice character sheet is now the continuity authority for all later
+modern illustrations.
 
-Target design:
+Locked design:
 
 - approximately 8–10 years old;
-- fair/blonde hair with one fixed hairstyle;
-- pale blue Victorian-style dress;
-- white pinafore/apron;
-- dark stockings and dark shoes;
+- fair/blonde, long wavy hair;
+- fixed black ribbon/bow worn high on the head;
+- blue eyes and soft rosy complexion;
+- pale blue Victorian-style dress with puff sleeves and white collar;
+- white pinafore/apron with blue-trim detail;
+- dark charcoal stockings and black Mary-Jane shoes;
 - expressive, curious and adventurous rather than permanently surprised;
 - natural child proportions with a readable silhouette;
 - no modern accessories;
@@ -184,6 +187,8 @@ Continuity rules:
 ## Anchor generation order
 
 Human approval is required in this order before bulk chapter art:
+
+**Completed:** Alice character anchor sheet approved and locked.
 
 1. Alice character anchor sheet.
 2. White Rabbit + early Wonderland hall/riverbank anchors.
