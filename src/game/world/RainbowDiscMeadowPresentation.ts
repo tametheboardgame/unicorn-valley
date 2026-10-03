@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import type { UnicornAppearance } from '../player/UnicornAppearance';
 import { createResidentAppearanceSprite } from '../population/SupportingResidentArt';
+import { createRainbowDiscRing, drawRainbowTarget } from './RainbowDiscArt';
 import { worldDepthForY } from './WorldDepth';
 import { RAINBOW_MEADOW_LAYOUT } from './RainbowMeadowMap';
 
@@ -105,25 +106,76 @@ export function createRainbowDiscMeadowPresentation(scene: Phaser.Scene): void {
     pennantGraphics.fillTriangle(0, 0, direction * 34, 8, 0, 18);
   });
 
-  const signDepth = worldDepthForY(layout.sign.y + 68, -0.04);
+  const signDepth = worldDepthForY(layout.sign.y + 72, -0.04);
   scene.add
-    .rectangle(layout.sign.x, layout.sign.y + 48, 12, 96, 0x7d5b44, 1)
+    .rectangle(layout.sign.x, layout.sign.y + 54, 12, 108, 0x7d5b44, 1)
     .setName('rainbow-disc:sign-post')
     .setDepth(signDepth);
   scene.add
-    .rectangle(layout.sign.x + 84, layout.sign.y, 180, 58, 0xf0d69b, 1)
+    .rectangle(layout.sign.x + 84, layout.sign.y, 180, 74, 0xf0d69b, 1)
     .setStrokeStyle(4, 0x7d5b44, 0.96)
     .setName('rainbow-disc:sign')
     .setDepth(signDepth + 0.04);
   scene.add
-    .text(layout.sign.x + 84, layout.sign.y, 'RAINBOW DISC', {
+    .text(layout.sign.x + 84, layout.sign.y, 'RAINBOW DISC\n↓', {
       color: '#5f496d',
       fontFamily: 'system-ui, sans-serif',
       fontSize: '15px',
       fontStyle: 'bold',
+      align: 'center',
+      lineSpacing: 0,
     })
     .setOrigin(0.5)
     .setDepth(signDepth + 0.05);
+
+  const practice = layout.practice;
+  const practiceDepth = worldDepthForY(practice.centre.y + 90, -0.04);
+  scene.add
+    .rectangle(practice.sign.x, practice.sign.y + 42, 10, 84, 0x7d5b44, 1)
+    .setName('rainbow-disc:practice-sign-post')
+    .setDepth(practiceDepth);
+  scene.add
+    .rectangle(practice.sign.x + 78, practice.sign.y, 164, 54, 0xe9d4a1, 1)
+    .setStrokeStyle(4, 0x7d5b44, 0.95)
+    .setName('rainbow-disc:practice-sign')
+    .setDepth(practiceDepth + 0.02);
+  scene.add
+    .text(practice.sign.x + 78, practice.sign.y, 'DISC PRACTICE', {
+      color: '#5f496d',
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '13px',
+      fontStyle: 'bold',
+    })
+    .setOrigin(0.5)
+    .setDepth(practiceDepth + 0.03);
+
+  const practiceGraphics = scene.add
+    .graphics()
+    .setName('rainbow-disc:practice-range')
+    .setDepth(practiceDepth + 0.01);
+  practiceGraphics.lineStyle(5, 0xf4edc4, 0.72);
+  practiceGraphics.lineBetween(
+    practice.throwLine.x,
+    practice.throwLine.y - 105,
+    practice.throwLine.x,
+    practice.throwLine.y + 105,
+  );
+  practice.targets.forEach((target, index) => {
+    practiceGraphics.lineStyle(8, 0x7d5b44, 0.9);
+    practiceGraphics.lineBetween(target.x, target.y + target.radius, target.x, target.y + 78);
+    drawRainbowTarget(practiceGraphics, target.x, target.y, target.radius, 7);
+    practiceGraphics.fillStyle(0xfff1b5, 0.9);
+    practiceGraphics.fillCircle(target.x, target.y, Math.max(6, target.radius * 0.18));
+    scene.add
+      .text(target.x + 50, target.y - 8, index === 0 ? '1' : index === 1 ? '2' : '3', {
+        color: '#6a5577',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '12px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5)
+      .setDepth(practiceDepth + 0.03);
+  });
 
   const movementOffsets = [
     { x: 34, y: 16 },
@@ -161,12 +213,23 @@ export function createRainbowDiscMeadowPresentation(scene: Phaser.Scene): void {
     return sprite;
   });
 
+  const hornPoint = (sprite: Phaser.GameObjects.Sprite): { x: number; y: number } => ({
+    x: sprite.x + (sprite.flipX ? -38 : 38),
+    y: sprite.y - 34,
+  });
+
   const firstPlayer = sprites[0];
-  const disc = scene.add
-    .ellipse(firstPlayer?.x ?? x, (firstPlayer?.y ?? y) - 38, 34, 12, 0xfff3bd, 1)
-    .setStrokeStyle(3, 0xb88858, 0.9)
-    .setName('rainbow-disc:ambient-disc')
-    .setDepth(worldDepthForY((firstPlayer?.y ?? y) - 38, 0.42));
+  const firstHorn = firstPlayer ? hornPoint(firstPlayer) : { x, y };
+  const disc = createRainbowDiscRing(
+    scene,
+    'rainbow-disc:ambient-disc',
+    firstHorn.x,
+    firstHorn.y,
+    18,
+    7,
+  )
+    .setScale(1, 0.58)
+    .setDepth(worldDepthForY(firstHorn.y, 0.42));
 
   let throwerIndex = 0;
   const animatePass = (): void => {
@@ -181,8 +244,21 @@ export function createRainbowDiscMeadowPresentation(scene: Phaser.Scene): void {
       return;
     }
 
+    thrower.setFlipX(receiver.x < thrower.x);
+    receiver.setFlipX(thrower.x < receiver.x);
+
+    const tossDirection = thrower.flipX ? -1 : 1;
+    scene.tweens.add({
+      targets: thrower,
+      angle: tossDirection * 7,
+      duration: 120,
+      yoyo: true,
+      ease: 'Sine.Out',
+    });
+
     const flight = { progress: 0 };
-    disc.setPosition(thrower.x, thrower.y - 38);
+    const throwHorn = hornPoint(thrower);
+    disc.setPosition(throwHorn.x, throwHorn.y);
 
     scene.tweens.add({
       targets: flight,
@@ -191,21 +267,41 @@ export function createRainbowDiscMeadowPresentation(scene: Phaser.Scene): void {
       ease: 'Sine.InOut',
       onUpdate: () => {
         const progress = flight.progress;
-        const startX = thrower.x;
-        const startY = thrower.y - 38;
-        const endX = receiver.x;
-        const endY = receiver.y - 38;
+        const start = hornPoint(thrower);
+        const end = hornPoint(receiver);
         disc.setPosition(
-          Phaser.Math.Linear(startX, endX, progress),
-          Phaser.Math.Linear(startY, endY, progress) - Math.sin(Math.PI * progress) * 44,
+          Phaser.Math.Linear(start.x, end.x, progress),
+          Phaser.Math.Linear(start.y, end.y, progress) - Math.sin(Math.PI * progress) * 44,
         );
-        disc.setAngle(disc.angle + 8);
+        disc.setAngle(disc.angle + 10);
         disc.setDepth(worldDepthForY(disc.y, 0.42));
       },
       onComplete: () => {
-        disc.setPosition(receiver.x, receiver.y - 38);
-        throwerIndex = receiverIndex;
-        scene.time.delayedCall(380, animatePass);
+        const catchDirection = receiver.flipX ? -1 : 1;
+        scene.tweens.add({
+          targets: receiver,
+          angle: catchDirection * 6,
+          duration: 120,
+          yoyo: true,
+          ease: 'Sine.Out',
+        });
+
+        const hold = { progress: 0 };
+        scene.tweens.add({
+          targets: hold,
+          progress: 1,
+          duration: 360,
+          onUpdate: () => {
+            const catchHorn = hornPoint(receiver);
+            disc.setPosition(catchHorn.x, catchHorn.y);
+            disc.setAngle(disc.angle + 3);
+            disc.setDepth(worldDepthForY(disc.y, 0.42));
+          },
+          onComplete: () => {
+            throwerIndex = receiverIndex;
+            scene.time.delayedCall(120, animatePass);
+          },
+        });
       },
     });
   };
