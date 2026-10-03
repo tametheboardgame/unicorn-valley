@@ -12,7 +12,7 @@ export const WORLD_TRAVERSAL_POLISH_DETAIL_NAME = 'world-traversal-polish-detail
 export const WORLD_PLAYER_NAME = 'world-player-unicorn';
 const WORLD_TRAVERSAL_POLISH_ANCHOR_NAME = 'world-traversal-polish-anchor';
 
-const SUPPORTED_SCENES = new Set(['MoonflowerGladeScene']);
+export const WORLD_TRAVERSAL_POLISH_SUPPORTED_SCENES = new Set(['MoonflowerGladeScene']);
 
 interface Point {
   x: number;
@@ -91,7 +91,7 @@ export class WorldTraversalPolishManager {
 
   private update(): void {
     for (const scene of this.game.scene.getScenes(true)) {
-      if (!SUPPORTED_SCENES.has(scene.scene.key)) {
+      if (!WORLD_TRAVERSAL_POLISH_SUPPORTED_SCENES.has(scene.scene.key)) {
         continue;
       }
 
