@@ -292,7 +292,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     this.createTimingMeter();
-    this.createButton(1090, 617, 210, 'Back to Meadow', () => this.leaveActivity(), 'back');
+    this.createButton(1090, 617, 210, this.backLabel(), () => this.leaveActivity(), 'back');
   }
 
   private createTimingMeter(): void {
@@ -703,11 +703,15 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       790,
       460,
       250,
-      'Back to Meadow',
+      this.backLabel(),
       () => this.leaveActivity(),
       'result-back',
       this.playLayer,
     );
+  }
+
+  private backLabel(): string {
+    return this.miniGameSession?.source === 'just-games' ? 'Back to Games' : 'Back to Meadow';
   }
 
   private handlePointerMove(pointer: Phaser.Input.Pointer): void {
