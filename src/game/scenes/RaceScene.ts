@@ -4,10 +4,7 @@ import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { InputController } from '../input/InputController';
 import { KeyboardInputAdapter } from '../input/KeyboardInputAdapter';
 import { PointerTouchInputAdapter } from '../input/PointerTouchInputAdapter';
-import {
-  DEFAULT_UNICORN_APPEARANCE,
-  parseUnicornAppearance,
-} from '../player/UnicornAppearance';
+import { DEFAULT_UNICORN_APPEARANCE, parseUnicornAppearance } from '../player/UnicornAppearance';
 import { createUnicornAppearanceTexture } from '../player/UnicornAppearanceRenderer';
 import {
   createRaceAssistanceControl,
