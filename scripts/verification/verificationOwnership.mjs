@@ -59,6 +59,7 @@ export const BROWSER_GROUPS = Object.freeze({
     'tests/play/r6.5-wp12-race-expansion.spec.ts',
   ],
   'mini-games': [
+    'tests/play/mg-wp3-just-games.spec.ts',
     'tests/play/r6.5-wp14-repeatable-activities.spec.ts',
     'tests/play/r6.5-wp12-race-expansion.spec.ts',
   ],
@@ -155,7 +156,7 @@ export const OWNERSHIP_MAP = Object.freeze([
   },
   {
     id: 'mini-games',
-    sourceGlobs: ['src/game/minigames/**'],
+    sourceGlobs: ['src/game/minigames/**', 'src/game/scenes/JustGamesScene.ts'],
     unitGroups: ['mini-games'],
     browserGroups: ['mini-games'],
   },
