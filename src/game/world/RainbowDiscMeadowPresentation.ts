@@ -1,4 +1,4 @@
-import type Phaser from 'phaser';
+import Phaser from 'phaser';
 import type { UnicornAppearance } from '../player/UnicornAppearance';
 import { createResidentAppearanceSprite } from '../population/SupportingResidentArt';
 import { worldDepthForY } from './WorldDepth';
