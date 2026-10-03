@@ -131,6 +131,21 @@ export function getFireflyLanternBestScore(saveService: SaveService): number {
   return getFireflyLanternProgress(saveService).normalBest;
 }
 
+export function createFireflyLanternPracticeResult(
+  options: RecordFireflyLanternAttemptOptions,
+): FireflyLanternAttemptResult {
+  const score = safeScore(options.score);
+  return {
+    modesUnlocked: true,
+    normalBest: options.mode === 'normal' ? score : 0,
+    multicolourBest: options.mode === 'multicolour' ? score : 0,
+    endlessBest: options.mode === 'endless' ? score : 0,
+    bestScore: score,
+    firstCompletion: false,
+    newMilestones: [],
+  };
+}
+
 export function recordFireflyLanternAttempt(
   saveService: SaveService,
   options: RecordFireflyLanternAttemptOptions,
