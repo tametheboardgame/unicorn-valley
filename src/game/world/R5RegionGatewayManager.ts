@@ -13,6 +13,8 @@ import { saveLocationCheckpoint } from '../save/saveLocationCheckpoint';
 import {
   CRYSTAL_BROOK_LOCATION_ID,
   CRYSTAL_BROOK_MAP,
+  CRYSTAL_BROOK_CRYSTAL_CUP_THRESHOLD,
+  CRYSTAL_BROOK_WOODS_THRESHOLD,
   setCrystalBrookPlayerSpawn,
 } from './CrystalBrookMap';
 import {
@@ -85,10 +87,10 @@ const BROOK_ENTRANCE = requireEntrance(
   'rainbow-meadow',
   'Crystal Brook',
 );
-const BROOK_WOODS_GATE_POSITION = { x: 3260, y: 990 } as const;
-const BROOK_WOODS_RETURN_POSITION = { x: 3070, y: 1010 } as const;
-const CRYSTAL_CASCADE_GATE_POSITION = { x: 2860, y: 850 } as const;
-const CRYSTAL_CASCADE_RETURN_POSITION = { x: 2660, y: 900 } as const;
+const BROOK_WOODS_GATE_POSITION = CRYSTAL_BROOK_WOODS_THRESHOLD.position;
+const BROOK_WOODS_RETURN_POSITION = CRYSTAL_BROOK_WOODS_THRESHOLD.approach;
+const CRYSTAL_CASCADE_GATE_POSITION = CRYSTAL_BROOK_CRYSTAL_CUP_THRESHOLD.position;
+const CRYSTAL_CASCADE_RETURN_POSITION = CRYSTAL_BROOK_CRYSTAL_CUP_THRESHOLD.approach;
 const WOODS_ENTRANCE = WHISPERING_WOODS_MAP.entrances[0];
 const RACE_COURSE_START_X = 260;
 const RACE_GROUND_Y = 575;

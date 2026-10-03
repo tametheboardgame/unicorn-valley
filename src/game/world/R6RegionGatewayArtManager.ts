@@ -1,5 +1,13 @@
 import Phaser from 'phaser';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
+import {
+  CRYSTAL_BROOK_CRYSTAL_CUP_ROUTE,
+  CRYSTAL_BROOK_CRYSTAL_CUP_THRESHOLD,
+  CRYSTAL_BROOK_LEGACY_CASCADE,
+  CRYSTAL_BROOK_MEADOW_THRESHOLD,
+  CRYSTAL_BROOK_WOODS_ROUTE,
+  CRYSTAL_BROOK_WOODS_THRESHOLD,
+} from './CrystalBrookMap';
 import { RAINBOW_MEADOW_LAYOUT } from './RainbowMeadowMap';
 import { worldDepthForY } from './WorldDepth';
 
@@ -862,38 +870,37 @@ function updateMeadowCrystalBrookEffects(scene: Phaser.Scene): void {
 }
 
 function decorateBrook(scene: Phaser.Scene): void {
-  drawRoundedPath(
+  drawRoundedPath(scene, 'brook-woods', CRYSTAL_BROOK_WOODS_ROUTE, 88, 64, 0x8c8069, 0xcdbf96);
+  createWoodlandThreshold(
     scene,
     'brook-woods',
-    [
-      { x: 2580, y: 1200 },
-      { x: 2810, y: 1110 },
-      { x: 3050, y: 1030 },
-      { x: 3260, y: 990 },
-    ],
-    88,
-    64,
-    0x8c8069,
-    0xcdbf96,
+    CRYSTAL_BROOK_WOODS_THRESHOLD.position.x,
+    CRYSTAL_BROOK_WOODS_THRESHOLD.position.y,
+    'Whispering Woods',
   );
-  createWoodlandThreshold(scene, 'brook-woods', 3260, 990, 'Whispering Woods');
 
   drawRoundedPath(
     scene,
     'crystal-cascade',
-    [
-      { x: 2520, y: 1170 },
-      { x: 2620, y: 1050 },
-      { x: 2740, y: 940 },
-      { x: 2860, y: 850 },
-    ],
+    CRYSTAL_BROOK_CRYSTAL_CUP_ROUTE,
     86,
     60,
     0x8aa0a2,
     0xc6e4df,
   );
-  createCascadeRaceGate(scene, 2860, 850);
-  createCaveMouth(scene, 'brook-meadow', 120, 1090, 'Rainbow Meadow', 0xf1c7e6);
+  createCascadeRaceGate(
+    scene,
+    CRYSTAL_BROOK_CRYSTAL_CUP_THRESHOLD.position.x,
+    CRYSTAL_BROOK_CRYSTAL_CUP_THRESHOLD.position.y,
+  );
+  createCaveMouth(
+    scene,
+    'brook-meadow',
+    CRYSTAL_BROOK_MEADOW_THRESHOLD.position.x,
+    CRYSTAL_BROOK_MEADOW_THRESHOLD.position.y,
+    'Rainbow Meadow',
+    0xf1c7e6,
+  );
 
   const cliffs = name(scene.add.container(0, 0).setDepth(7.45), 'crystal-brook:production-upgrade');
   for (const [x, y, width, height] of [
@@ -915,13 +922,14 @@ function decorateBrook(scene: Phaser.Scene): void {
     cliffs.add(addCrystal(scene, x, y, scale, 7.6));
   }
 
+  const cascadePosition = CRYSTAL_BROOK_LEGACY_CASCADE;
   const cascade = name(scene.add.container(0, 0).setDepth(6.2), 'crystal-brook:cascade-upgrade');
   cascade.add([
-    scene.add.ellipse(3150, 560, 310, 170, 0x637c7c, 0.9),
-    scene.add.rectangle(3150, 650, 150, 260, 0x5bc4d4, 0.82),
-    scene.add.rectangle(3150, 650, 62, 260, 0xb9f2ee, 0.48),
-    scene.add.ellipse(3150, 790, 320, 104, 0x85e0e1, 0.64),
-    scene.add.ellipse(3150, 786, 240, 46, 0xe6ffff, 0.46),
+    scene.add.ellipse(cascadePosition.x, cascadePosition.y - 90, 310, 170, 0x637c7c, 0.9),
+    scene.add.rectangle(cascadePosition.x, cascadePosition.y, 150, 260, 0x5bc4d4, 0.82),
+    scene.add.rectangle(cascadePosition.x, cascadePosition.y, 62, 260, 0xb9f2ee, 0.48),
+    scene.add.ellipse(cascadePosition.x, cascadePosition.y + 140, 320, 104, 0x85e0e1, 0.64),
+    scene.add.ellipse(cascadePosition.x, cascadePosition.y + 136, 240, 46, 0xe6ffff, 0.46),
   ]);
 }
 

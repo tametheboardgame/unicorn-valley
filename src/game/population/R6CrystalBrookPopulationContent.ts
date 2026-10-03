@@ -3,6 +3,7 @@ import {
   ECHO_CRYSTAL_SONG_ACTIVE_FLAG,
   ECHO_CRYSTAL_SONG_COMPLETE_FLAG,
 } from '../../content/r6CrystalBrookDepthContent';
+import { CRYSTAL_BROOK_ECHO_WAYPOINTS } from '../world/CrystalBrookMap';
 import type {
   ResidentPlacementDefinition,
   ResidentTalkVariant,
@@ -19,11 +20,7 @@ export const R6_CRYSTAL_BROOK_RESIDENT_PLACEMENTS = [
     speedPxPerSecond: 72,
     interactionRadius: 126,
     priority: 25,
-    waypoints: [
-      { id: 'echo-brook-a', x: 2860, y: 1690, pauseMs: 2200 },
-      { id: 'echo-brook-b', x: 2990, y: 1760, pauseMs: 2800 },
-      { id: 'echo-brook-c', x: 3180, y: 1650, pauseMs: 2100 },
-    ],
+    waypoints: CRYSTAL_BROOK_ECHO_WAYPOINTS,
   },
 ] as const satisfies readonly ResidentPlacementDefinition[];
 

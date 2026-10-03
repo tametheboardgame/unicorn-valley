@@ -1,3 +1,5 @@
+import { CRYSTAL_BROOK_MAIN_ROUTE } from './CrystalBrookMap';
+
 export interface ExplorationPathPoint {
   x: number;
   y: number;
@@ -32,14 +34,7 @@ export const EXPLORATION_MAIN_ROUTES: Readonly<Record<string, readonly Explorati
     { x: 1900, y: 1040 },
     { x: 2250, y: 1050 },
   ],
-  CrystalBrookScene: [
-    { x: 100, y: 1090 },
-    { x: 850, y: 1090 },
-    { x: 1510, y: 1260 },
-    { x: 2050, y: 1080 },
-    { x: 2600, y: 1190 },
-    { x: 3230, y: 990 },
-  ],
+  CrystalBrookScene: CRYSTAL_BROOK_MAIN_ROUTE,
   WhisperingWoodsScene: [
     { x: 100, y: 1090 },
     { x: 720, y: 1090 },
