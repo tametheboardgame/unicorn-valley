@@ -56,7 +56,6 @@ describe('SCENE_MANIFEST', () => {
     });
   });
 
-
   it('keeps Chess and Pond Leap on the canonical on-demand manifest path', () => {
     for (const key of ['ChessPlazaActivityScene', 'PondLeapActivityScene'] as const) {
       expect(SCENE_MANIFEST.find((entry) => entry.key === key)).toMatchObject({
