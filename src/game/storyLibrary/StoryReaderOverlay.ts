@@ -460,12 +460,16 @@ export class StoryReaderOverlay {
       categoryToggle.setAttribute('aria-controls', shelfTabs.id);
       categoryToggle.setAttribute('aria-expanded', 'false');
 
-      const coverToggle = button('', 'story-library-control-toggle story-library-cover-toggle', () => {
-        coverStyle = coverStyle === 'modern' ? 'classic' : 'modern';
-        this.reading.updatePreferences({ coverStyle });
-        updateCoverToggle();
-        renderShelf();
-      });
+      const coverToggle = button(
+        '',
+        'story-library-control-toggle story-library-cover-toggle',
+        () => {
+          coverStyle = coverStyle === 'modern' ? 'classic' : 'modern';
+          this.reading.updatePreferences({ coverStyle });
+          updateCoverToggle();
+          renderShelf();
+        },
+      );
       coverToggle.setAttribute('aria-label', 'Switch between classic and modern book covers');
       const updateCoverToggle = (): void => {
         const modern = coverStyle === 'modern';
@@ -632,10 +636,11 @@ export class StoryReaderOverlay {
 
           const cover = document.createElement('span');
           cover.className = 'story-library-cover';
+          const coverSets = story.coverSets ?? [];
           const preferredCover =
-            story.coverSets.find(({ id }) => id === coverStyle) ??
-            story.coverSets.find(({ id }) => id === 'classic') ??
-            story.coverSets[0] ??
+            coverSets.find(({ id }) => id === coverStyle) ??
+            coverSets.find(({ id }) => id === 'classic') ??
+            coverSets[0] ??
             null;
           const selectedCoverPath = preferredCover?.coverPath ?? story.coverPath;
           const selectedCoverAlt = preferredCover?.coverAlt ?? story.coverAlt ?? '';
@@ -994,8 +999,7 @@ export class StoryReaderOverlay {
 
     if (edition.illustrationSets.length > 1) {
       const illustrationSwitch = document.createElement('span');
-      illustrationSwitch.className =
-        'story-reader-control-group story-reader-illustration-switch';
+      illustrationSwitch.className = 'story-reader-control-group story-reader-illustration-switch';
       const illustrationLabel = document.createElement('span');
       illustrationLabel.className = 'story-reader-edition-label';
       illustrationLabel.textContent = 'Illustrations';

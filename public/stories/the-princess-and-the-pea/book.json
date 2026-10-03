@@ -38,29 +38,14 @@
     }
   ],
   "series": null,
-  "tags": [
-    "classic-retelling",
-    "fairy-tale",
-    "princess",
-    "pea",
-    "palace",
-    "humour",
-    "illustrated"
-  ],
+  "tags": ["classic-retelling", "fairy-tale", "princess", "pea", "palace", "humour", "illustrated"],
   "publication": {
     "status": "published"
   },
   "discovery": {
     "format": "Picture Book",
-    "genres": [
-      "Fantasy",
-      "Classics"
-    ],
-    "audiences": [
-      "Read Together",
-      "Early Reader",
-      "Independent Reader"
-    ],
+    "genres": ["Fantasy", "Classics"],
+    "audiences": ["Read Together", "Early Reader", "Independent Reader"],
     "length": "Quick Read"
   },
   "defaultEditionId": "story-house",

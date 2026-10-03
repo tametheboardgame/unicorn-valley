@@ -120,8 +120,7 @@ export class StoryReadingService {
         1.4,
         2,
       ),
-      coverStyle:
-        preferences.coverStyle ?? save.storyReading.preferences.coverStyle ?? 'modern',
+      coverStyle: preferences.coverStyle ?? save.storyReading.preferences.coverStyle ?? 'modern',
       illustrationSetByStoryEditionKey: {
         ...(save.storyReading.preferences.illustrationSetByStoryEditionKey ?? {}),
       },

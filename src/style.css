@@ -1660,7 +1660,7 @@ canvas {
   min-height: 160px;
 }
 
-.story-library-cover[data-cover-style='modern'] img {
+.story-library-cover[data-cover-style="modern"] img {
   object-fit: cover;
   background: #e7eef1;
 }
@@ -1779,4 +1779,3 @@ canvas {
     padding-inline: 7px;
   }
 }
-

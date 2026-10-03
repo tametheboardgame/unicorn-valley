@@ -38,30 +38,14 @@
     }
   ],
   "series": null,
-  "tags": [
-    "classic-retelling",
-    "fairy-tale",
-    "tiny-hero",
-    "flowers",
-    "swallow",
-    "adventure",
-    "kindness",
-    "illustrated"
-  ],
+  "tags": ["classic-retelling", "fairy-tale", "tiny-hero", "flowers", "swallow", "adventure", "kindness", "illustrated"],
   "publication": {
     "status": "published"
   },
   "discovery": {
     "format": "Chapter Book",
-    "genres": [
-      "Fantasy",
-      "Classics",
-      "Adventure"
-    ],
-    "audiences": [
-      "Read Together",
-      "Independent Reader"
-    ],
+    "genres": ["Fantasy", "Classics", "Adventure"],
+    "audiences": ["Read Together", "Independent Reader"],
     "length": "Longer Read"
   },
   "defaultEditionId": "story-house",

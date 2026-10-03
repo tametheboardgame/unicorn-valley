@@ -349,7 +349,9 @@ async function loadStory(directoryEntry) {
   const coverSets = [];
   if (manifest.coverSets !== undefined) {
     if (!Array.isArray(manifest.coverSets) || manifest.coverSets.length === 0) {
-      throw new Error(`Story catalogue rejected ${manifest.id}: coverSets must be a non-empty array.`);
+      throw new Error(
+        `Story catalogue rejected ${manifest.id}: coverSets must be a non-empty array.`,
+      );
     }
     const coverSetIds = new Set();
     for (const coverSet of manifest.coverSets) {
@@ -373,18 +375,9 @@ async function loadStory(directoryEntry) {
           `Story catalogue rejected ${manifest.id}/${coverSet.id}: cover metadata is required.`,
         );
       }
-      assertSafeImagePath(
-        coverSet.cover.path,
-        `${manifest.id}/${coverSet.id} cover path`,
-      );
-      assertString(
-        coverSet.cover.alt,
-        `${manifest.id}/${coverSet.id} cover alt text`,
-      );
-      assertRightsReference(
-        coverSet.rights,
-        `${manifest.id}/${coverSet.id} cover rights`,
-      );
+      assertSafeImagePath(coverSet.cover.path, `${manifest.id}/${coverSet.id} cover path`);
+      assertString(coverSet.cover.alt, `${manifest.id}/${coverSet.id} cover alt text`);
+      assertRightsReference(coverSet.rights, `${manifest.id}/${coverSet.id} cover rights`);
       await fs.access(path.join(storyDirectory, coverSet.cover.path));
       coverSets.push(coverSet);
     }

@@ -38,29 +38,14 @@
     }
   ],
   "series": null,
-  "tags": [
-    "classic-retelling",
-    "fantasy",
-    "adventure",
-    "oz",
-    "friendship",
-    "magic",
-    "illustrated"
-  ],
+  "tags": ["classic-retelling", "fantasy", "adventure", "oz", "friendship", "magic", "illustrated"],
   "publication": {
     "status": "published"
   },
   "discovery": {
     "format": "Chapter Book",
-    "genres": [
-      "Fantasy",
-      "Adventure",
-      "Classics"
-    ],
-    "audiences": [
-      "Read Together",
-      "Independent Reader"
-    ],
+    "genres": ["Fantasy", "Adventure", "Classics"],
+    "audiences": ["Read Together", "Independent Reader"],
     "length": "Longer Read"
   },
   "defaultEditionId": "story-house",

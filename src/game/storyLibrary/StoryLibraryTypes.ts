@@ -130,7 +130,7 @@ export interface StoryCatalogueEntry {
   readingMode: StoryReadingMode;
   coverPath: string | null;
   coverAlt: string | null;
-  coverSets: readonly StoryCoverSetSummary[];
+  coverSets?: readonly StoryCoverSetSummary[];
   series: StorySeriesReference | null;
   tags: readonly string[];
   discovery: StoryDiscoveryMetadata;
