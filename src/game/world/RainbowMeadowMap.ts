@@ -125,7 +125,7 @@ export const RAINBOW_MEADOW_LAYOUT = {
     },
     flowerCircle: { x: 550, y: 600 },
     butterflyParade: { x: 780, y: 850 },
-    petalPatch: { x: 1070, y: 760 },
+    petalPatch: { x: 900, y: 770 },
   },
   discoveryPositions: {
     prismBloom: { x: 1260, y: 790 },
@@ -170,7 +170,7 @@ export const RAINBOW_MEADOW_LAYOUT = {
     approach: { x: 700, y: 1400 },
     field: { width: 860, height: 390 },
     captain: { x: 505, y: 1510 },
-    sign: { x: 520, y: 1090 },
+    sign: { x: 520, y: 1170 },
     players: [
       { id: 'captain', x: 505, y: 1510 },
       { id: 'player-a', x: 425, y: 1705 },
@@ -324,9 +324,8 @@ export const RAINBOW_MEADOW_LAYOUT = {
     flowerClusters: [
       { x: 360, y: 540 },
       { x: 690, y: 520 },
-      { x: 980, y: 500 },
-      { x: 1160, y: 850 },
-      { x: 1360, y: 850 },
+      { x: 905, y: 610 },
+      { x: 1375, y: 720 },
       { x: 1900, y: 800 },
       { x: 2050, y: 760 },
       { x: 2525, y: 500 },
@@ -345,7 +344,7 @@ export const RAINBOW_MEADOW_LAYOUT = {
     label: 'Sunbeam Village',
     position: { x: 120, y: 1050 },
     approach: { x: 330, y: 1050 },
-    sign: { x: 265, y: 915 },
+    sign: { x: 350, y: 850 },
     direction: 'west',
   },
   crystalBrookGateway: {
