@@ -56,6 +56,17 @@ describe('SCENE_MANIFEST', () => {
     });
   });
 
+
+  it('keeps Chess and Pond Leap on the canonical on-demand manifest path', () => {
+    for (const key of ['ChessPlazaActivityScene', 'PondLeapActivityScene'] as const) {
+      expect(SCENE_MANIFEST.find((entry) => entry.key === key)).toMatchObject({
+        category: 'activity',
+        loadBoundary: 'on-demand',
+        registrationOwner: 'feature',
+      });
+    }
+  });
+
   it('records the R6 village interior as the live owner of the stable scene key', () => {
     const villageInterior = SCENE_MANIFEST.find((entry) => entry.key === 'VillageInteriorScene');
     expect(villageInterior).toMatchObject({
