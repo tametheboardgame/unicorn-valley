@@ -2,7 +2,7 @@
 
 Work package: **R6.5-WP19SH1.6.1A**
 
-Status: **in progress — Alice, White Rabbit/early-world, Caterpillar, Cheshire Cat, Wonderland woodland and Hatter anchors approved; March Hare / Dormouse / tea-party anchors next**
+Status: **in progress — Alice, White Rabbit/early-world, Caterpillar, Cheshire Cat, Wonderland woodland, Hatter and March Hare anchors approved; Dormouse / tea-party anchors next**
 
 ## Purpose
 
@@ -133,9 +133,19 @@ Locked design:
 - tea-party props may include mismatched floral china, teapots, cakes and pocket-watch motifs.
 
 ### March Hare
-- stable fur colouring and anatomy;
-- energetic body language;
-- fixed accessories/clothing if used in the approved anchor.
+
+**Approved 3 October 2026.**
+
+Locked design:
+- lanky upright hare proportions;
+- scruffy warm brown fur;
+- oversized expressive ears with pink inner ear;
+- rust/orange Victorian coat;
+- teal patterned waistcoat and matching oversized bow;
+- checked cropped trousers;
+- mischievous, energetic body language;
+- tea-party props may include floral china and teapots;
+- must remain visually distinct from the White Rabbit through fur colour, build and costume.
 
 ### Dormouse
 - much smaller scale than Hatter/Hare;
@@ -260,6 +270,8 @@ Human approval is required in this order before bulk chapter art:
 **Completed:** Caterpillar, mushroom clearing, Wonderland woodland and corrected Cheshire Cat approved and locked.
 
 **Completed:** corrected adult Hatter approved and locked.
+
+**Completed:** March Hare approved and locked.
 
 1. Alice character anchor sheet.
 2. White Rabbit + early Wonderland hall/riverbank anchors.
