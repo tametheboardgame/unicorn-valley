@@ -81,7 +81,7 @@ Sandbox behaviour:
 - result copy describes practice and does not claim scores are remembered;
 - retry and Choose Game preserve the same sandbox `MiniGameSession`.
 
-A pure `createFireflyLanternPracticeResult` helper produces the result model without persistence and has unit coverage.
+The sandbox branch renders practice results without constructing or persisting an adventure result model.
 
 ## Rainbow Run Racing
 
@@ -103,7 +103,7 @@ Sandbox behaviour:
 - reward copy states that no adventure result was saved;
 - a sandbox return never writes the Rainbow Run world location checkpoint.
 
-A pure `createPracticeRaceSummary` helper is unit-tested to return a reward-free result.
+The sandbox branch returns no persistent `RaceRewardSummary`; the finish panel derives practice-only presentation from the current run.
 
 ## Rainbow Disc
 
@@ -140,12 +140,11 @@ No game-specific MG-WP2 mutation change was required.
 
 MG-WP2 adds/extends objective contracts for:
 
-- world versus sandbox outcome policy;
+- world versus sandbox outcome policy across every adventure-effect category;
 - legacy no-session world compatibility;
 - Coral sandbox trail sequencing without adventure progress;
-- Firefly non-persistent practice result semantics;
-- racing reward-free practice summary;
-- existing world persistence tests remain in place for Firefly, repeatable activities and racing.
+- existing world persistence tests remain in place for Firefly, repeatable activities and racing;
+- the package source audit confirms the sandbox branches bypass the Firefly and racing persistence calls and the simple games have no hidden write path.
 
 Full end-to-end Just Games browser proof belongs to MG-WP3 once the visible launcher exists. MG-WP2's responsibility is to make those future sessions safe before exposing them.
 
