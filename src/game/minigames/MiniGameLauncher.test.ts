@@ -91,6 +91,23 @@ describe('MiniGameLauncher', () => {
     expect(harness.pause).toHaveBeenCalledOnce();
   });
 
+  it('stops callers whose return contract requires a fresh start', async () => {
+    const harness = createScene({
+      callerKey: 'WhisperingWoodsScene',
+      registeredGameKey: 'FireflyLanternScene',
+    });
+
+    const result = await launchMiniGame(harness.scene, {
+      gameId: MINI_GAME_IDS.fireflyLantern,
+      source: 'world',
+      returnTarget: { sceneKey: 'WhisperingWoodsScene', mode: 'start' },
+    });
+
+    expect(result.status).toBe('launched');
+    expect(harness.stop).toHaveBeenCalledOnce();
+    expect(harness.pause).not.toHaveBeenCalled();
+  });
+
   it('does not launch a second copy when the game is already active', async () => {
     const harness = createScene({
       callerKey: 'SunbeamVillageScene',
