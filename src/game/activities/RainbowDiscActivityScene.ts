@@ -4,7 +4,7 @@ import { parseUnicornAppearance } from '../player/UnicornAppearance';
 import { createUnicornAppearanceTexture } from '../player/UnicornAppearanceRenderer';
 import { createResidentAppearanceSprite } from '../population/SupportingResidentArt';
 import { getBrowserSaveService } from '../save/browserSaveService';
-import { UI_COLOURS, UI_FONT, createUiShadow } from '../ui/uiTheme';
+import { UI_COLOURS, UI_FONT } from '../ui/uiTheme';
 import {
   createRainbowDiscRing,
   drawRainbowTarget,
@@ -35,10 +35,15 @@ const PASS_COUNT = 3;
 const PRACTICE_THROW_COUNT = 5;
 const PRACTICE_TARGET_X = 960;
 const PRACTICE_TARGETS = [
-  { y: 250, radius: 78, points: 1 },
-  { y: 370, radius: 58, points: 2 },
-  { y: 490, radius: 42, points: 3 },
+  { y: 250, radius: 78, points: 1, tolerance: 0.27, sweepSpeed: 0.0035, label: 'Easy' },
+  { y: 370, radius: 58, points: 2, tolerance: 0.18, sweepSpeed: 0.0051, label: 'Medium' },
+  { y: 490, radius: 42, points: 3, tolerance: 0.11, sweepSpeed: 0.0072, label: 'Hard' },
 ] as const;
+const OPEN_LANE_BY_PASS = [1, 2, 0] as const;
+const ACTIVITY_THROWER_SIZE = { width: 122, height: 86 } as const;
+const ACTIVITY_RECEIVER_SCALE = 0.72;
+const TIMING_TRACK_LEFT = 462;
+const TIMING_TRACK_WIDTH = 350;
 
 export class RainbowDiscActivityScene extends Phaser.Scene {
   private returnScene = 'RainbowMeadowScene';
@@ -46,6 +51,9 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
   private possession = 0;
   private practiceThrows = 0;
   private practiceScore = 0;
+  private phase: 'attack' | 'defence' = 'attack';
+  private opponentAdvance = 0;
+  private defenceAttackLane = 1;
   private selectedReceiver = 1;
   private dragging = false;
   private actionLocked = false;
@@ -59,6 +67,8 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
   private statusText: Phaser.GameObjects.Text | null = null;
   private progressText: Phaser.GameObjects.Text | null = null;
   private timingMarker: Phaser.GameObjects.Rectangle | null = null;
+  private timingSuccessZone: Phaser.GameObjects.Rectangle | null = null;
+  private timingDifficultyText: Phaser.GameObjects.Text | null = null;
   private receiverRings: Phaser.GameObjects.Arc[] = [];
   private receiverSprites: Phaser.GameObjects.Sprite[] = [];
 
@@ -72,6 +82,9 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     this.possession = 0;
     this.practiceThrows = 0;
     this.practiceScore = 0;
+    this.phase = 'attack';
+    this.opponentAdvance = 0;
+    this.defenceAttackLane = 1;
     this.selectedReceiver = 1;
     this.dragging = false;
     this.actionLocked = false;
@@ -111,6 +124,8 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       this.statusText = null;
       this.progressText = null;
       this.timingMarker = null;
+      this.timingSuccessZone = null;
+      this.timingDifficultyText = null;
       this.receiverRings = [];
       this.receiverSprites = [];
     });
@@ -121,31 +136,31 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       return;
     }
 
-    this.timingPhase += delta * 0.0042;
+    const profile = this.currentTimingProfile();
+    this.timingPhase += delta * profile.sweepSpeed;
     this.timingValue = (Math.sin(this.timingPhase) + 1) / 2;
-    const meterLeft = 462;
-    const meterWidth = 350;
-    this.timingMarker?.setX(meterLeft + this.timingValue * meterWidth);
+    this.timingMarker?.setX(TIMING_TRACK_LEFT + this.timingValue * TIMING_TRACK_WIDTH);
+    this.updateTimingSuccessZone();
   }
 
   private createBackdrop(): void {
-    this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x74b97a, 1);
-    createUiShadow(this, GAME_WIDTH / 2, 373, 1190, 650, 1, 0.24);
+    this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x7fbe81, 1);
 
-    this.add
-      .rectangle(GAME_WIDTH / 2, 373, 1190, 650, 0xf7f2df, 1)
-      .setStrokeStyle(7, 0xc89bd9, 1)
-      .setName('rainbow-disc-activity:panel');
+    const panel = this.add.graphics().setName('rainbow-disc-activity:panel');
+    panel.fillStyle(0xfffbf1, 1);
+    panel.lineStyle(6, 0xc89bd9, 1);
+    panel.fillRoundedRect(48, 34, 1184, 652, 34);
+    panel.strokeRoundedRect(48, 34, 1184, 652, 34);
 
     this.add
       .text(
         GAME_WIDTH / 2,
-        55,
+        66,
         this.mode === 'practice' ? 'Rainbow Disc Practice' : 'Rainbow Disc',
         {
           color: '#5f496d',
           fontFamily: UI_FONT,
-          fontSize: '34px',
+          fontSize: '32px',
           fontStyle: 'bold',
         },
       )
@@ -154,43 +169,49 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     this.add
       .text(
         GAME_WIDTH / 2,
-        92,
+        101,
         this.mode === 'practice'
-          ? 'Five throws. Pick a rainbow target: smaller rings score more. Drag and release, or use ↑/↓ and Space.'
-          : 'Complete three catches to reach the end zone. Drag and release the disc, or use ↑/↓ and Space.',
+          ? 'Five throws. Smaller rainbow targets are worth more — and their timing window is faster and tighter.'
+          : 'Build a three-catch chain. Read the defenders, pick the open lane and protect the disc.',
         {
           color: UI_COLOURS.softInk,
           fontFamily: UI_FONT,
-          fontSize: '15px',
+          fontSize: '14px',
           fontStyle: 'bold',
           align: 'center',
-          wordWrap: { width: 900 },
+          wordWrap: { width: 860 },
         },
       )
       .setOrigin(0.5);
 
-    this.add
-      .rectangle(
-        (FIELD_LEFT + FIELD_RIGHT) / 2,
-        (FIELD_TOP + FIELD_BOTTOM) / 2,
-        FIELD_RIGHT - FIELD_LEFT,
-        FIELD_BOTTOM - FIELD_TOP,
-        0x9fda88,
-        1,
-      )
-      .setStrokeStyle(5, 0xf5edc6, 0.84)
-      .setName('rainbow-disc-activity:field');
+    const field = this.add.graphics().setName('rainbow-disc-activity:field');
+    field.fillStyle(0xa7dc8f, 1);
+    field.lineStyle(4, 0xf5edc6, 0.92);
+    field.fillRoundedRect(
+      FIELD_LEFT,
+      FIELD_TOP,
+      FIELD_RIGHT - FIELD_LEFT,
+      FIELD_BOTTOM - FIELD_TOP,
+      30,
+    );
+    field.strokeRoundedRect(
+      FIELD_LEFT,
+      FIELD_TOP,
+      FIELD_RIGHT - FIELD_LEFT,
+      FIELD_BOTTOM - FIELD_TOP,
+      30,
+    );
 
     const markings = this.add.graphics().setName('rainbow-disc-activity:field-markings');
-    markings.lineStyle(4, 0xf8f0c9, 0.5);
-    markings.lineBetween(315, FIELD_TOP + 20, 315, FIELD_BOTTOM - 20);
-    markings.lineBetween(975, FIELD_TOP + 20, 975, FIELD_BOTTOM - 20);
-    markings.lineStyle(5, 0xf8e8ab, 0.72);
-    markings.lineBetween(1090, FIELD_TOP + 20, 1090, FIELD_BOTTOM - 20);
+    markings.lineStyle(4, 0xf8f0c9, 0.48);
+    markings.lineBetween(315, FIELD_TOP + 22, 315, FIELD_BOTTOM - 22);
+    markings.lineBetween(975, FIELD_TOP + 22, 975, FIELD_BOTTOM - 22);
+    markings.lineStyle(5, 0xf8e8ab, 0.7);
+    markings.lineBetween(1090, FIELD_TOP + 22, 1090, FIELD_BOTTOM - 22);
 
     this.add
-      .text(1140, 150, this.mode === 'practice' ? 'TARGET\nRANGE' : 'END\nZONE', {
-        color: '#6e7759',
+      .text(1140, 154, this.mode === 'practice' ? 'TARGET\nRANGE' : 'END\nZONE', {
+        color: '#66724f',
         fontFamily: UI_FONT,
         fontSize: '12px',
         fontStyle: 'bold',
@@ -198,48 +219,71 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
 
+    const progressCard = this.add.graphics();
+    progressCard.fillStyle(0xf4ead8, 1);
+    progressCard.fillRoundedRect(94, 116, 260, 36, 16);
     this.progressText = this.add
-      .text(126, 110, '', {
+      .text(224, 134, '', {
+        color: '#5f496d',
+        fontFamily: UI_FONT,
+        fontSize: '15px',
+        fontStyle: 'bold',
+        align: 'center',
+      })
+      .setOrigin(0.5);
+
+    const statusCard = this.add.graphics();
+    statusCard.fillStyle(0xf4ead8, 1);
+    statusCard.fillRoundedRect(330, 624, 620, 42, 18);
+    this.statusText = this.add
+      .text(640, 645, '', {
         color: '#5f496d',
         fontFamily: UI_FONT,
         fontSize: '16px',
         fontStyle: 'bold',
-      })
-      .setOrigin(0, 0.5);
-
-    this.statusText = this.add
-      .text(GAME_WIDTH / 2, 641, '', {
-        color: '#5f496d',
-        fontFamily: UI_FONT,
-        fontSize: '18px',
-        fontStyle: 'bold',
         align: 'center',
-        wordWrap: { width: 760 },
+        wordWrap: { width: 580 },
       })
       .setOrigin(0.5);
 
     this.createTimingMeter();
-    this.createButton(1100, 672, 220, 'Back to Meadow', () => this.leaveActivity(), 'back');
+    this.createButton(1090, 645, 210, 'Back to Meadow', () => this.leaveActivity(), 'back');
   }
 
   private createTimingMeter(): void {
     this.add
-      .text(350, 672, 'Keyboard throw timing', {
+      .text(332, 684, 'Throw timing', {
         color: UI_COLOURS.softInk,
         fontFamily: UI_FONT,
-        fontSize: '13px',
+        fontSize: '12px',
         fontStyle: 'bold',
       })
       .setOrigin(1, 0.5);
 
-    this.add
-      .rectangle(637, 672, 370, 22, 0xd8cfc0, 1)
-      .setStrokeStyle(2, 0x9b8977, 0.7)
-      .setName('rainbow-disc-activity:timing-track');
-    this.add.rectangle(637, 672, 155, 16, 0xa6d99a, 0.9);
+    const track = this.add.graphics().setName('rainbow-disc-activity:timing-track');
+    track.fillStyle(0xd8cfc0, 1);
+    track.lineStyle(2, 0x9b8977, 0.65);
+    track.fillRoundedRect(TIMING_TRACK_LEFT, 673, TIMING_TRACK_WIDTH, 22, 11);
+    track.strokeRoundedRect(TIMING_TRACK_LEFT, 673, TIMING_TRACK_WIDTH, 22, 11);
+
+    this.timingSuccessZone = this.add
+      .rectangle(TIMING_TRACK_LEFT, 684, 120, 14, 0x9fd394, 0.95)
+      .setName('rainbow-disc-activity:timing-success-zone');
+
     this.timingMarker = this.add
-      .rectangle(637, 672, 8, 30, 0x6f4d80, 1)
+      .rectangle(TIMING_TRACK_LEFT, 684, 7, 30, 0x6f4d80, 1)
       .setName('rainbow-disc-activity:timing-marker');
+
+    this.timingDifficultyText = this.add
+      .text(832, 684, '', {
+        color: UI_COLOURS.softInk,
+        fontFamily: UI_FONT,
+        fontSize: '12px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0, 0.5);
+
+    this.updateTimingSuccessZone();
   }
 
   private createPlayerTexture(): void {
