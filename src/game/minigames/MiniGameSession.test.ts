@@ -1,10 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { MINI_GAME_IDS } from './MiniGameCatalogue';
-import {
-  createMiniGameSession,
-  miniGameSceneData,
-  readMiniGameSession,
-} from './MiniGameSession';
+import { createMiniGameSession, miniGameSceneData, readMiniGameSession } from './MiniGameSession';
 
 describe('MiniGameSession', () => {
   it('creates world sessions with world side effects', () => {
