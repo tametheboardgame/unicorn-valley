@@ -470,9 +470,20 @@ export class RainbowMeadowScene extends Phaser.Scene {
       )
       .setName('rainbow-meadow:nature:pond-reflection')
       .setDepth(4);
-    for (const { x, y } of pond.lilyPads) {
-      this.add.ellipse(x, y, 48, 24, 0x6fa76c, 0.95).setDepth(5);
-      this.add.circle(x + 7, y - 3, 8, 0xffd5ef, 0.95).setDepth(6);
+    for (const { x, y, scale } of pond.lilyPads) {
+      this.add
+        .ellipse(x, y, 52 * scale, 26 * scale, 0x6fa76c, 0.95)
+        .setStrokeStyle(2, 0x4f8653, 0.55)
+        .setDepth(5);
+      this.add.circle(x + 7 * scale, y - 3 * scale, 8 * scale, 0xffd5ef, 0.95).setDepth(6);
+    }
+
+    for (const frog of pond.frogs) {
+      const from = pond.lilyPads[frog.padIndex];
+      const to = pond.lilyPads[frog.hopToPadIndex];
+      if (from && to) {
+        this.createPondFrog(frog.id, from, to, frog.colour, frog.delayMs);
+      }
     }
 
     const reedBaseX = pond.position.x - pond.width / 2 + 34;
@@ -497,6 +508,61 @@ export class RainbowMeadowScene extends Phaser.Scene {
       reeds.fillStyle(0x8d6c45, 0.94);
       reeds.fillEllipse(reedBaseX + offsetX + 4, reedBaseY - height - 7, 9, 20);
     }
+  }
+
+  private createPondFrog(
+    id: string,
+    from: { x: number; y: number },
+    to: { x: number; y: number },
+    colour: number,
+    delayMs: number,
+  ): void {
+    const body = this.add.ellipse(0, 2, 26, 18, colour, 1).setStrokeStyle(2, 0x4f7f4e, 0.8);
+    const head = this.add.ellipse(0, -8, 24, 18, colour, 1).setStrokeStyle(2, 0x4f7f4e, 0.8);
+    const leftEye = this.add.circle(-7, -17, 4.5, 0xf5f5d9, 1);
+    const rightEye = this.add.circle(7, -17, 4.5, 0xf5f5d9, 1);
+    const leftPupil = this.add.circle(-7, -17, 2, 0x3f4044, 1);
+    const rightPupil = this.add.circle(7, -17, 2, 0x3f4044, 1);
+    const frog = this.add
+      .container(from.x, from.y - 13, [
+        body,
+        head,
+        leftEye,
+        rightEye,
+        leftPupil,
+        rightPupil,
+      ])
+      .setName(`rainbow-meadow:nature:frog:${id}`)
+      .setDepth(worldDepthForY(from.y, 0.18));
+
+    this.time.delayedCall(delayMs, () => {
+      if (!frog.active) {
+        return;
+      }
+
+      const flight = { progress: 0 };
+      this.tweens.add({
+        targets: flight,
+        progress: 1,
+        duration: 950,
+        yoyo: true,
+        repeat: -1,
+        repeatDelay: 1500,
+        ease: 'Sine.InOut',
+        onUpdate: () => {
+          const progress = flight.progress;
+          frog
+            .setPosition(
+              Phaser.Math.Linear(from.x, to.x, progress),
+              Phaser.Math.Linear(from.y - 13, to.y - 13, progress) -
+                Math.sin(Math.PI * progress) * 34,
+            )
+            .setDepth(
+              worldDepthForY(Phaser.Math.Linear(from.y, to.y, progress), 0.18),
+            );
+        },
+      });
+    });
   }
 
   private createGroves(): void {
