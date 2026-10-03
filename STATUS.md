@@ -6,11 +6,11 @@ Last updated: 2026-10-03
 
 The active world-area package is **R6.5-WP19H6 - Crystal Brook Final Area Pass**.
 
-Current bounded checkpoint: **H6.1 - Canonical master layout and ownership migration**
+Completed bounded checkpoint: **H6.1 - Canonical master layout and ownership migration**
 
 Branch: `agent/r6.5-wp19h6.1-canonical-layout`
 
-Draft PR: **#265**
+PR: **#265**
 
 H6.0 is complete, human-approved and merged to `main`.
 
@@ -47,17 +47,13 @@ A fresh CI run is required on the reconciled MG-WP2/H6.1 head.
 
 ## Human gate
 
-H6.1 remains the active bounded checkpoint.
+H6.1 human gate: **approved 2026-10-03**.
 
-Do not begin H6.2 until:
-
-- the reconciled H6.1 head has completed relevant technical validation;
-- H6.1 has been reported;
-- David has reviewed/approved the checkpoint.
+David verified the exact-head Cloudflare preview and confirmed the visually neutral ownership migration introduced no unacceptable regression.
 
 ## Next work
 
-After H6.1 approval, begin **H6.2 - Continuous Brook and Rainbow Meadow hydrology**.
+Next bounded checkpoint: **H6.2 - Continuous Brook and Rainbow Meadow hydrology**. It has not started.
 
 ## Operating reminders
 
