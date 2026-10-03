@@ -674,7 +674,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
   }
 
   private handlePointerUp(pointer: Phaser.Input.Pointer): void {
-    if (!this.dragging || this.actionLocked || !this.disc || this.completed) {
+    if (!this.dragging || this.actionLocked || !this.disc || this.completed || this.phase === 'defence') {
       return;
     }
 
@@ -691,7 +691,8 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     const distance = Phaser.Math.Distance.Between(release.x, release.y, target.x, target.y);
     const catchRadius =
       this.mode === 'practice' ? (PRACTICE_TARGETS[receiverIndex]?.radius ?? 42) : CATCH_RADIUS;
-    this.resolveThrow(target, distance <= catchRadius, release);
+    const accurate = distance <= catchRadius;
+    this.resolveThrow(target, accurate, release, receiverIndex);
   }
 
   private keyboardThrow(): void {
@@ -699,21 +700,30 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       return;
     }
 
+    if (this.phase === 'defence' && this.mode === 'match') {
+      this.resolveDefenceChoice(this.selectedReceiver);
+      return;
+    }
+
     const target = this.receiverPoint(this.selectedReceiver);
-    const practiceTolerance = [0.27, 0.19, 0.13][this.selectedReceiver] ?? 0.19;
-    const success =
-      this.mode === 'practice'
-        ? Math.abs(this.timingValue - 0.55) <= practiceTolerance
-        : this.timingValue >= 0.34 && this.timingValue <= 0.78;
-    const missOffset = this.timingValue < 0.34 ? -150 : 150;
+    const profile = this.currentTimingProfile();
+    const accurate =
+      Math.abs(this.timingValue - 0.55) <= profile.tolerance;
+    const missOffset = this.timingValue < 0.55 ? -150 : 150;
     this.resolveThrow(
       target,
-      success,
-      success ? target : { x: target.x - 20, y: target.y + missOffset },
+      accurate,
+      accurate ? target : { x: target.x - 20, y: target.y + missOffset },
+      this.selectedReceiver,
     );
   }
 
-  private resolveThrow(target: Point, success: boolean, missPoint: Point): void {
+  private resolveThrow(
+    target: Point,
+    accurate: boolean,
+    missPoint: Point,
+    receiverIndex = this.selectedReceiver,
+  ): void {
     if (!this.disc || this.actionLocked) {
       return;
     }
@@ -721,7 +731,14 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     this.actionLocked = true;
     this.dragging = false;
     this.aimGraphics?.clear();
-    const destination = success ? target : missPoint;
+
+    const intercepted =
+      this.mode === 'match' && this.phase === 'attack' && this.isReceiverMarked(receiverIndex);
+    const destination = intercepted
+      ? this.defenderPoint(receiverIndex)
+      : accurate
+        ? target
+        : missPoint;
 
     this.tweens.add({
       targets: this.disc,
@@ -732,11 +749,13 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       ease: 'Sine.Out',
       onComplete: () => {
         if (this.mode === 'practice') {
-          this.handlePracticeAttempt(success);
-        } else if (success) {
+          this.handlePracticeAttempt(accurate);
+        } else if (intercepted) {
+          this.handleTurnover('intercepted');
+        } else if (accurate) {
           this.handleCatch();
         } else {
-          this.handleTurnover();
+          this.handleTurnover('missed');
         }
       },
     });
@@ -787,10 +806,17 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     this.time.delayedCall(360, () => this.renderPossession());
   }
 
-  private handleTurnover(): void {
-    this.statusText?.setText('Almost! Quick turnover — the team resets and tries the chain again.');
+  private handleTurnover(reason: 'intercepted' | 'missed'): void {
+    this.statusText?.setText(
+      reason === 'intercepted'
+        ? 'Intercepted! Possession flips — now stop their attack.'
+        : 'Loose throw! They collect it — switch to defence.',
+    );
     this.cameras.main.shake(110, 0.002);
-    this.possession = 0;
+    this.phase = 'defence';
+    this.opponentAdvance = 0;
+    this.defenceAttackLane = (this.possession + this.selectedReceiver + 1) % RECEIVER_Y.length;
+    this.selectedReceiver = 1;
     this.time.delayedCall(520, () => this.renderPossession());
   }
 
@@ -868,18 +894,127 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
   private refreshReceiverSelection(): void {
     this.receiverRings.forEach((ring, index) => {
       const selected = index === this.selectedReceiver;
-      ring.setFillStyle(0xfff4b8, selected ? 0.22 : 0);
-      ring.setStrokeStyle(4, 0xf4c96b, selected ? 0.9 : 0.18);
+      const practiceTarget = PRACTICE_TARGETS[index];
+      const marked = this.mode === 'match' && this.phase === 'attack' && this.isReceiverMarked(index);
+      const baseStroke =
+        this.phase === 'defence'
+          ? 0x8cb7d7
+          : marked
+            ? 0xd9899f
+            : practiceTarget
+              ? 0xc9b55f
+              : 0xc9b55f;
+      ring.setFillStyle(
+        this.phase === 'defence' ? 0xb9d9ef : marked ? 0xf2b4c2 : 0xfff4b8,
+        selected ? 0.2 : 0.05,
+      );
+      ring.setStrokeStyle(4, selected ? 0xf4c96b : baseStroke, selected ? 0.95 : 0.5);
     });
+    this.updateTimingSuccessZone();
+
+    if (this.mode === 'practice' && this.statusText && !this.completed) {
+      const target = PRACTICE_TARGETS[this.selectedReceiver] ?? PRACTICE_TARGETS[1];
+      this.statusText.setText(
+        `Throw ${this.practiceThrows + 1} of ${PRACTICE_THROW_COUNT}: ${target.label} target — ${target.points} point${target.points === 1 ? '' : 's'}.`,
+      );
+    }
+  }
+
+  private currentTimingProfile(): { tolerance: number; sweepSpeed: number; label: string } {
+    if (this.mode === 'practice') {
+      const target = PRACTICE_TARGETS[this.selectedReceiver] ?? PRACTICE_TARGETS[1];
+      return {
+        tolerance: target.tolerance,
+        sweepSpeed: target.sweepSpeed,
+        label: target.label,
+      };
+    }
+
+    return { tolerance: 0.22, sweepSpeed: 0.0042, label: 'Match' };
+  }
+
+  private updateTimingSuccessZone(): void {
+    if (!this.timingSuccessZone || !this.timingDifficultyText) {
+      return;
+    }
+
+    const profile = this.currentTimingProfile();
+    const centre = 0.55;
+    const start = Phaser.Math.Clamp(centre - profile.tolerance, 0, 1);
+    const end = Phaser.Math.Clamp(centre + profile.tolerance, 0, 1);
+    const width = (end - start) * TIMING_TRACK_WIDTH;
+    const x = TIMING_TRACK_LEFT + ((start + end) / 2) * TIMING_TRACK_WIDTH;
+
+    this.timingSuccessZone.setPosition(x, 684).setDisplaySize(Math.max(18, width), 14);
+    this.timingDifficultyText.setText(
+      this.mode === 'practice' ? `${profile.label} • ${profile.sweepSpeed.toFixed(4)} speed` : 'Match timing',
+    );
+  }
+
+  private isReceiverMarked(index: number): boolean {
+    const openLane = OPEN_LANE_BY_PASS[this.possession] ?? OPEN_LANE_BY_PASS[0];
+    return index !== openLane;
+  }
+
+  private defenderPoint(index: number): Point {
+    const targetX = TARGET_X[this.possession] ?? TARGET_X[0];
+    const receiverY = RECEIVER_Y[index] ?? RECEIVER_Y[1];
+    const throwOrigin = this.throwOrigin();
+    return {
+      x: Phaser.Math.Linear(throwOrigin.x, targetX, 0.7),
+      y: receiverY,
+    };
+  }
+
+  private resolveDefenceChoice(index: number): void {
+    if (this.actionLocked || this.completed || this.phase !== 'defence') {
+      return;
+    }
+
+    this.selectedReceiver = index;
+    this.refreshReceiverSelection();
+    this.actionLocked = true;
+
+    const correct = index === this.defenceAttackLane;
+    if (correct) {
+      this.statusText?.setText('Blocked! You read the lane and win the disc back.');
+      this.cameras.main.flash(100, 215, 244, 193, false);
+      this.phase = 'attack';
+      this.opponentAdvance = 0;
+      this.selectedReceiver = 1;
+      this.time.delayedCall(520, () => this.renderPossession());
+      return;
+    }
+
+    this.opponentAdvance += 1;
+    if (this.opponentAdvance >= 2) {
+      this.statusText?.setText('They break through and score. Your team restarts with the disc.');
+      this.cameras.main.shake(110, 0.002);
+      this.phase = 'attack';
+      this.opponentAdvance = 0;
+      this.possession = 0;
+      this.selectedReceiver = 1;
+      this.time.delayedCall(620, () => this.renderPossession());
+      return;
+    }
+
+    this.statusText?.setText('Wrong lane — they advance. Read the next pass and defend again.');
+    this.defenceAttackLane = (this.defenceAttackLane + 1) % RECEIVER_Y.length;
+    this.selectedReceiver = 1;
+    this.time.delayedCall(520, () => this.renderPossession());
   }
 
   private restartRun(): void {
     this.possession = 0;
     this.practiceThrows = 0;
     this.practiceScore = 0;
+    this.phase = 'attack';
+    this.opponentAdvance = 0;
+    this.defenceAttackLane = 1;
     this.selectedReceiver = 1;
     this.completed = false;
     this.actionLocked = false;
+    this.timingPhase = 0;
     this.renderPossession();
   }
 
