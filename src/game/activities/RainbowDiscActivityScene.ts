@@ -352,7 +352,13 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
 
       const marked = index !== openLane;
       const ring = this.add
-        .circle(targetX, receiverY, 55, marked ? 0xf2b4c2 : 0xfff4b8, index === this.selectedReceiver ? 0.2 : 0.05)
+        .circle(
+          targetX,
+          receiverY,
+          55,
+          marked ? 0xf2b4c2 : 0xfff4b8,
+          index === this.selectedReceiver ? 0.2 : 0.05,
+        )
         .setStrokeStyle(
           4,
           index === this.selectedReceiver ? 0xf4c96b : marked ? 0xd9899f : 0xc9b55f,
@@ -537,17 +543,12 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       this.playLayer?.add(selector);
 
       const points = this.add
-        .text(
-          PRACTICE_TARGET_X + 118,
-          target.y,
-          `${target.points} pt • ${target.label}`,
-          {
-            color: '#5f496d',
-            fontFamily: UI_FONT,
-            fontSize: '13px',
-            fontStyle: 'bold',
-          },
-        )
+        .text(PRACTICE_TARGET_X + 118, target.y, `${target.points} pt • ${target.label}`, {
+          color: '#5f496d',
+          fontFamily: UI_FONT,
+          fontSize: '13px',
+          fontStyle: 'bold',
+        })
         .setOrigin(0.5);
       this.playLayer?.add(points);
     });
@@ -675,7 +676,13 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
   }
 
   private handlePointerUp(pointer: Phaser.Input.Pointer): void {
-    if (!this.dragging || this.actionLocked || !this.disc || this.completed || this.phase === 'defence') {
+    if (
+      !this.dragging ||
+      this.actionLocked ||
+      !this.disc ||
+      this.completed ||
+      this.phase === 'defence'
+    ) {
       return;
     }
 
@@ -708,8 +715,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
 
     const target = this.receiverPoint(this.selectedReceiver);
     const profile = this.currentTimingProfile();
-    const accurate =
-      Math.abs(this.timingValue - 0.55) <= profile.tolerance;
+    const accurate = Math.abs(this.timingValue - 0.55) <= profile.tolerance;
     const missOffset = this.timingValue < 0.55 ? -150 : 150;
     this.resolveThrow(
       target,
@@ -896,7 +902,8 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     this.receiverRings.forEach((ring, index) => {
       const selected = index === this.selectedReceiver;
       const practiceTarget = PRACTICE_TARGETS[index];
-      const marked = this.mode === 'match' && this.phase === 'attack' && this.isReceiverMarked(index);
+      const marked =
+        this.mode === 'match' && this.phase === 'attack' && this.isReceiverMarked(index);
       const baseStroke =
         this.phase === 'defence'
           ? 0x8cb7d7
@@ -948,7 +955,9 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
 
     this.timingSuccessZone.setPosition(x, 684).setDisplaySize(Math.max(18, width), 14);
     this.timingDifficultyText.setText(
-      this.mode === 'practice' ? `${profile.label} • ${profile.sweepSpeed.toFixed(4)} speed` : 'Match timing',
+      this.mode === 'practice'
+        ? `${profile.label} • ${profile.sweepSpeed.toFixed(4)} speed`
+        : 'Match timing',
     );
   }
 
@@ -1028,9 +1037,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     name: string,
     parent: Phaser.GameObjects.Container | null = null,
   ): void {
-    const visual = this.add
-      .graphics()
-      .setName(`rainbow-disc-activity:${name}-visual`);
+    const visual = this.add.graphics().setName(`rainbow-disc-activity:${name}-visual`);
 
     const draw = (fill: number, stroke: number): void => {
       visual.clear();
