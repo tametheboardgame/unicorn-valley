@@ -25,6 +25,12 @@ async function meadowSnapshot(page: Page): Promise<DiagnosticScene> {
       .__UNICORN_VALLEY_DIAGNOSTICS__;
     return api?.snapshot().activeScenes.includes('RainbowMeadowScene') === true;
   });
+  await page.waitForFunction(() => {
+    const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
+      .__UNICORN_VALLEY_DIAGNOSTICS__;
+    const scene = api?.snapshot().scenes.find(({ key }) => key === 'RainbowMeadowScene');
+    return scene?.objects.some(({ name }) => name === 'rainbow-meadow:path-network') === true;
+  });
 
   return page.evaluate(() => {
     const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
