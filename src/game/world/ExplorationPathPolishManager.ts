@@ -14,6 +14,7 @@ interface Stroke {
 }
 
 const MOONFLOWER_WESTERN_GATE_THRESHOLD = [
+  { x: -140, y: 900 },
   { x: 125, y: 900 },
   { x: 315, y: 900 },
 ] as const;
