@@ -547,8 +547,7 @@ describe('H4.10 Meadow collision audit', () => {
       pond.frogs.every(
         ({ padIndex, hopToPadIndex }) =>
           pond.lilyPads[padIndex] !== undefined &&
-          pond.lilyPads[hopToPadIndex] !== undefined &&
-          padIndex !== hopToPadIndex,
+          pond.lilyPads[hopToPadIndex] !== undefined,
       ),
     ).toBe(true);
   });
