@@ -134,7 +134,7 @@ test('new players get a compact front door without irrelevant returning-player a
   expect(visibleText).not.toContain('My Unicorn');
   expect(
     titleActionSpan(snapshot, ['title-menu-new-game', 'title-menu-settings']),
-  ).toBeGreaterThanOrEqual(350);
+  ).toBeGreaterThanOrEqual(210);
   expect(titleActionSpan(snapshot, ['title-menu-new-game', 'title-menu-settings'])).toBeLessThan(
     230,
   );
@@ -170,7 +170,7 @@ test('returning players get the expanded card, one-tap Continue and protected Ne
       'title-menu-my-unicorn',
       'title-menu-settings',
     ]),
-  ).toBeGreaterThanOrEqual(210);
+  ).toBeGreaterThanOrEqual(350);
   expect(
     titleActionSpan(snapshot, [
       'title-menu-continue',
