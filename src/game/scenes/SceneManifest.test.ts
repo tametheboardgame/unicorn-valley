@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { SCENE_KEYS } from './SceneKeys';
 import { SCENE_MANIFEST, getStartupSceneKeys } from './SceneManifest';
 
 const EXPECTED_STARTUP_KEYS = [
@@ -46,6 +47,10 @@ describe('SCENE_MANIFEST', () => {
       category: 'exploration',
       loadBoundary: 'startup',
     });
+  });
+
+  it('keeps the manifest and dependency-free scene-key registry aligned', () => {
+    expect(SCENE_MANIFEST.map((entry) => entry.key).sort()).toEqual([...SCENE_KEYS].sort());
   });
 
   it('keeps Just Games behind the on-demand feature boundary', () => {
