@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "1R-S2PSkegtuhRJCV6E19rF_SsBE3mQT7"
+  },
+  "expectedSourceName": "five-children-and-it-beautiful-strangers-v01.png",
+  "destination": "public/stories/five-children-and-it/illustrations/generated/beautiful-strangers.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1000,
+    "quality": 88
+  },
+  "revision": 1
+}

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "1vHppx1Z6L_HeU0bGKNvn6gZrOBnnwjD3"
+  },
+  "expectedSourceName": "five-children-and-it-golden-guineas-v01.png",
+  "destination": "public/stories/five-children-and-it/illustrations/generated/golden-guineas.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1000,
+    "quality": 88
+  },
+  "revision": 1
+}

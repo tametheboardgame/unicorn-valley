@@ -9,15 +9,7 @@
     "alt": "The historic first-edition cover of Five Children and It."
   },
   "series": null,
-  "tags": [
-    "classic-retelling",
-    "fantasy",
-    "wishes",
-    "siblings",
-    "psammead",
-    "adventure",
-    "illustrated"
-  ],
+  "tags": ["classic-retelling", "fantasy", "wishes", "siblings", "psammead", "adventure", "illustrated"],
   "publication": {
     "status": "published"
   },
@@ -52,93 +44,33 @@
           "source": "Unicorn Valley Story House edition"
         },
         "originalPublicationYear": 1902,
-        "curatorNotes": "Eleven reader sections follow the original sequence of wishes. The chapter built around outdated racial stereotypes has been recast as a general adventure-game wish while preserving the careless-wish plot function."
+        "curatorNotes": "Eleven reader sections follow the original sequence of wishes. The chapter built around outdated racial stereotypes has been recast as a general adventure-game wish while preserving the careless-wish plot function. R6.5-WP19SH1.5.2 adds a separately selectable 13-image generated Modern Illustrations set while preserving H. R. Millar as Classic Illustrations."
       },
       "chapters": [
         {
           "id": "beautiful-as-the-day",
           "title": "Beautiful as the Day",
-          "path": "chapters/01.md",
-          "illustrations": [
-            {
-              "id": "millar-psammead",
-              "blockId": "the-thing-in-the-sand",
-              "path": "illustrations/psammead.webp",
-              "alt": "H. R. Millar's original illustration of the Psammead.",
-              "placement": "full-width",
-              "width": 830,
-              "height": 968,
-              "caption": "Illustration by H. R. Millar, 1902."
-            }
-          ]
+          "path": "chapters/01.md"
         },
         {
           "id": "golden-guineas",
           "title": "Golden Guineas",
-          "path": "chapters/02.md",
-          "illustrations": [
-            {
-              "id": "millar-guineas",
-              "blockId": "a-mountain-of-money",
-              "path": "illustrations/golden-guineas.webp",
-              "alt": "An original H. R. Millar illustration from Five Children and It.",
-              "placement": "full-width",
-              "width": 934,
-              "height": 804,
-              "caption": "Illustration by H. R. Millar, 1902."
-            }
-          ]
+          "path": "chapters/02.md"
         },
         {
           "id": "being-wanted",
           "title": "Being Wanted",
-          "path": "chapters/03.md",
-          "illustrations": [
-            {
-              "id": "millar-being-wanted",
-              "blockId": "everybody-wants-the-lamb",
-              "path": "illustrations/being-wanted.webp",
-              "alt": "An original H. R. Millar illustration from Five Children and It.",
-              "placement": "full-width",
-              "width": 781,
-              "height": 858,
-              "caption": "Illustration by H. R. Millar, 1902."
-            }
-          ]
+          "path": "chapters/03.md"
         },
         {
           "id": "wings",
           "title": "Wings",
-          "path": "chapters/04.md",
-          "illustrations": [
-            {
-              "id": "millar-wings",
-              "blockId": "into-the-sky",
-              "path": "illustrations/wings.webp",
-              "alt": "An original H. R. Millar illustration from Five Children and It.",
-              "placement": "full-width",
-              "width": 880,
-              "height": 641,
-              "caption": "Illustration by H. R. Millar, 1902."
-            }
-          ]
+          "path": "chapters/04.md"
         },
         {
           "id": "no-wings",
           "title": "No Wings",
-          "path": "chapters/05.md",
-          "illustrations": [
-            {
-              "id": "millar-tower",
-              "blockId": "sunset-on-the-tower",
-              "path": "illustrations/tower.webp",
-              "alt": "An original H. R. Millar illustration from Five Children and It.",
-              "placement": "full-width",
-              "width": 892,
-              "height": 773,
-              "caption": "Illustration by H. R. Millar, 1902."
-            }
-          ]
+          "path": "chapters/05.md"
         },
         {
           "id": "a-castle-and-no-dinner",
@@ -158,51 +90,346 @@
         {
           "id": "grown-up",
           "title": "Grown Up",
-          "path": "chapters/09.md",
-          "illustrations": [
-            {
-              "id": "millar-grown-up",
-              "blockId": "the-lamb-grows-up",
-              "path": "illustrations/grown-up.webp",
-              "alt": "An original H. R. Millar illustration from Five Children and It.",
-              "placement": "full-width",
-              "width": 1000,
-              "height": 1020,
-              "caption": "Illustration by H. R. Millar, 1902."
-            }
-          ]
+          "path": "chapters/09.md"
         },
         {
           "id": "the-game-comes-to-life",
           "title": "The Game Comes to Life",
-          "path": "chapters/10.md",
-          "illustrations": [
-            {
-              "id": "millar-game",
-              "blockId": "not-a-game-anymore",
-              "path": "illustrations/game-comes-to-life.webp",
-              "alt": "An original H. R. Millar illustration from Five Children and It.",
-              "placement": "full-width",
-              "width": 812,
-              "height": 1236,
-              "caption": "Illustration by H. R. Millar, 1902."
-            }
-          ]
+          "path": "chapters/10.md"
         },
         {
           "id": "the-last-wish",
           "title": "The Last Wish",
-          "path": "chapters/11.md",
-          "illustrations": [
+          "path": "chapters/11.md"
+        }
+      ],
+      "defaultIllustrationSetId": "modern",
+      "illustrationSets": [
+        {
+          "id": "classic",
+          "label": "Classic Illustrations",
+          "rights": {
+            "status": "public-domain",
+            "source": "Original 1902 illustrations by H. R. Millar",
+            "sourceUrl": "https://commons.wikimedia.org/wiki/Category:Five_Children_and_It",
+            "notes": "The selected H. R. Millar source files are identified as public domain on Wikimedia Commons."
+          },
+          "chapters": [
             {
-              "id": "millar-last-wish",
-              "blockId": "one-last-favour",
-              "path": "illustrations/last-wish.webp",
-              "alt": "An original H. R. Millar illustration from Five Children and It.",
-              "placement": "full-width",
-              "width": 836,
-              "height": 1424,
-              "caption": "Illustration by H. R. Millar, 1902."
+              "chapterId": "beautiful-as-the-day",
+              "illustrations": [
+                {
+                  "id": "millar-psammead",
+                  "blockId": "the-thing-in-the-sand",
+                  "path": "illustrations/psammead.webp",
+                  "alt": "H. R. Millar's original illustration of the Psammead.",
+                  "placement": "full-width",
+                  "width": 830,
+                  "height": 968,
+                  "caption": "Illustration by H. R. Millar, 1902."
+                }
+              ]
+            },
+            {
+              "chapterId": "golden-guineas",
+              "illustrations": [
+                {
+                  "id": "millar-guineas",
+                  "blockId": "a-mountain-of-money",
+                  "path": "illustrations/golden-guineas.webp",
+                  "alt": "An original H. R. Millar illustration from Five Children and It.",
+                  "placement": "full-width",
+                  "width": 934,
+                  "height": 804,
+                  "caption": "Illustration by H. R. Millar, 1902."
+                }
+              ]
+            },
+            {
+              "chapterId": "being-wanted",
+              "illustrations": [
+                {
+                  "id": "millar-being-wanted",
+                  "blockId": "everybody-wants-the-lamb",
+                  "path": "illustrations/being-wanted.webp",
+                  "alt": "An original H. R. Millar illustration from Five Children and It.",
+                  "placement": "full-width",
+                  "width": 781,
+                  "height": 858,
+                  "caption": "Illustration by H. R. Millar, 1902."
+                }
+              ]
+            },
+            {
+              "chapterId": "wings",
+              "illustrations": [
+                {
+                  "id": "millar-wings",
+                  "blockId": "into-the-sky",
+                  "path": "illustrations/wings.webp",
+                  "alt": "An original H. R. Millar illustration from Five Children and It.",
+                  "placement": "full-width",
+                  "width": 880,
+                  "height": 641,
+                  "caption": "Illustration by H. R. Millar, 1902."
+                }
+              ]
+            },
+            {
+              "chapterId": "no-wings",
+              "illustrations": [
+                {
+                  "id": "millar-tower",
+                  "blockId": "sunset-on-the-tower",
+                  "path": "illustrations/tower.webp",
+                  "alt": "An original H. R. Millar illustration from Five Children and It.",
+                  "placement": "full-width",
+                  "width": 892,
+                  "height": 773,
+                  "caption": "Illustration by H. R. Millar, 1902."
+                }
+              ]
+            },
+            {
+              "chapterId": "grown-up",
+              "illustrations": [
+                {
+                  "id": "millar-grown-up",
+                  "blockId": "the-lamb-grows-up",
+                  "path": "illustrations/grown-up.webp",
+                  "alt": "An original H. R. Millar illustration from Five Children and It.",
+                  "placement": "full-width",
+                  "width": 1000,
+                  "height": 1020,
+                  "caption": "Illustration by H. R. Millar, 1902."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-game-comes-to-life",
+              "illustrations": [
+                {
+                  "id": "millar-game",
+                  "blockId": "not-a-game-anymore",
+                  "path": "illustrations/game-comes-to-life.webp",
+                  "alt": "An original H. R. Millar illustration from Five Children and It.",
+                  "placement": "full-width",
+                  "width": 812,
+                  "height": 1236,
+                  "caption": "Illustration by H. R. Millar, 1902."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-last-wish",
+              "illustrations": [
+                {
+                  "id": "millar-last-wish",
+                  "blockId": "one-last-favour",
+                  "path": "illustrations/last-wish.webp",
+                  "alt": "An original H. R. Millar illustration from Five Children and It.",
+                  "placement": "full-width",
+                  "width": 836,
+                  "height": 1424,
+                  "caption": "Illustration by H. R. Millar, 1902."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "modern",
+          "label": "Modern Illustrations",
+          "rights": {
+            "status": "original",
+            "source": "ChatGPT-generated artwork created for the Unicorn Valley Story House modern illustration set",
+            "notes": "Generated for R6.5-WP19SH1.5.2 and materialised through the approved Google Drive → WIF → GitHub Actions pipeline."
+          },
+          "chapters": [
+            {
+              "chapterId": "beautiful-as-the-day",
+              "illustrations": [
+                {
+                  "id": "modern-thing-in-the-sand",
+                  "blockId": "the-thing-in-the-sand",
+                  "path": "illustrations/generated/thing-in-the-sand.webp",
+                  "alt": "Cyril, Anthea, Robert and Jane discover the grumpy, furry Psammead emerging from the gravel-pit sand.",
+                  "placement": "full-width",
+                  "width": 1448,
+                  "height": 1086,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-beautiful-strangers",
+                  "blockId": "first-wish",
+                  "path": "illustrations/generated/beautiful-strangers.webp",
+                  "alt": "The magically beautified children stand at their own front door while Martha refuses to recognise them and the Lamb looks on.",
+                  "placement": "full-width",
+                  "width": 768,
+                  "height": 512,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "golden-guineas",
+              "illustrations": [
+                {
+                  "id": "modern-golden-guineas",
+                  "blockId": "a-mountain-of-money",
+                  "path": "illustrations/generated/golden-guineas.webp",
+                  "alt": "The four older children sit amid an enormous glittering heap of old golden guineas while the Psammead retreats into the sand.",
+                  "placement": "full-width",
+                  "width": 1448,
+                  "height": 1086,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "being-wanted",
+              "illustrations": [
+                {
+                  "id": "modern-everybody-wants-lamb",
+                  "blockId": "everybody-wants-the-lamb",
+                  "path": "illustrations/generated/everybody-wants-lamb.webp",
+                  "alt": "Anthea holds the Lamb protectively while Cyril, Robert and Jane fend off several delighted adults who all want the baby.",
+                  "placement": "full-width",
+                  "width": 768,
+                  "height": 512,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "wings",
+              "illustrations": [
+                {
+                  "id": "modern-into-the-sky",
+                  "blockId": "into-the-sky",
+                  "path": "illustrations/generated/into-the-sky.webp",
+                  "alt": "Cyril, Anthea, Robert and Jane fly over the English countryside on enormous feathered wings.",
+                  "placement": "full-width",
+                  "width": 1448,
+                  "height": 1086,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "no-wings",
+              "illustrations": [
+                {
+                  "id": "modern-sunset-on-tower",
+                  "blockId": "sunset-on-the-tower",
+                  "path": "illustrations/generated/sunset-on-tower.webp",
+                  "alt": "The four wingless children realise they are stranded high on a church tower at sunset beside a locked door.",
+                  "placement": "full-width",
+                  "width": 1448,
+                  "height": 1086,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "a-castle-and-no-dinner",
+              "illustrations": [
+                {
+                  "id": "modern-house-becomes-castle",
+                  "blockId": "a-real-castle",
+                  "path": "illustrations/generated/house-becomes-castle.webp",
+                  "alt": "Robert, still in his green clothes, stares as the White House has become a vast medieval castle surrounded by tents and soldiers.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "a-siege-and-bed",
+              "illustrations": [
+                {
+                  "id": "modern-defend-castle",
+                  "blockId": "defending-the-castle",
+                  "path": "illustrations/generated/defend-castle.webp",
+                  "alt": "The four children improvise a defence from the battlements with water, fruit, bedding and a broom while the besieging force gathers below.",
+                  "placement": "full-width",
+                  "width": 1448,
+                  "height": 1086,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "bigger-than-the-bakers-boy",
+              "illustrations": [
+                {
+                  "id": "modern-very-large-robert",
+                  "blockId": "a-very-large-robert",
+                  "path": "illustrations/generated/very-large-robert.webp",
+                  "alt": "A gigantic Robert in his familiar green clothes towers over Cyril, Anthea and Jane while astonished villagers look on.",
+                  "placement": "full-width",
+                  "width": 1448,
+                  "height": 1086,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "grown-up",
+              "illustrations": [
+                {
+                  "id": "modern-lamb-grows-up",
+                  "blockId": "the-lamb-grows-up",
+                  "path": "illustrations/generated/lamb-grows-up.webp",
+                  "alt": "The suddenly grown Lamb, now a slight blond young man in a grey flannel suit, green tie and small moustache, looks baffled as Martha fusses over him.",
+                  "placement": "full-width",
+                  "width": 1086,
+                  "height": 724,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-game-comes-to-life",
+              "illustrations": [
+                {
+                  "id": "modern-game-comes-to-life",
+                  "blockId": "not-a-game-anymore",
+                  "path": "illustrations/generated/game-comes-to-life.webp",
+                  "alt": "The four children cautiously face a coherent band of confused travellers and warriors who have become real rather than remaining characters in their game.",
+                  "placement": "full-width",
+                  "width": 1086,
+                  "height": 724,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-last-wish",
+              "illustrations": [
+                {
+                  "id": "modern-jewels",
+                  "blockId": "the-jewels-appear",
+                  "path": "illustrations/generated/jewels.webp",
+                  "alt": "Mother admires a newly appeared jewel in her bedroom while more jewellery surrounds her and the four children react with horror.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-last-favour",
+                  "blockId": "one-last-favour",
+                  "path": "illustrations/generated/last-favour.webp",
+                  "alt": "At sunset in the gravel pit, the four children gather quietly around the tired Psammead as it prepares to disappear into the sand.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
             }
           ]
         }
@@ -232,7 +459,7 @@
           "notes": "Story House pagination changes presentation only; all 11 chapters and the original wording remain complete."
         },
         "originalPublicationYear": 1902,
-        "curatorNotes": "All 11 chapters reflowed into 125 reader pages at paragraph boundaries, with eight historical H. R. Millar illustrations anchored to matching scenes."
+        "curatorNotes": "All 11 chapters are reflowed into 125 reader pages at paragraph boundaries. H. R. Millar remains available as Classic Illustrations. Twelve of the generated R6.5-WP19SH1.5.2 images are available as Modern Illustrations; the rewritten Story House-only Chapter 10 image is intentionally not mapped onto the original classic chapter because the source text contains materially different dated racial content."
       },
       "chapters": [
         {
@@ -263,19 +490,7 @@
         {
           "id": "page-006",
           "title": "Chapter I — Beautiful As The Day (continued)",
-          "path": "editions/full-classic/pages/page-006.md",
-          "illustrations": [
-            {
-              "id": "full-millar-psammead",
-              "path": "illustrations/psammead.webp",
-              "alt": "H. R. Millar's original illustration of the Psammead.",
-              "placement": "full-width",
-              "width": 830,
-              "height": 968,
-              "caption": "Illustration by H. R. Millar, 1902.",
-              "blockId": "oh-well-if-that-s-your-wish-the-113df7b"
-            }
-          ]
+          "path": "editions/full-classic/pages/page-006.md"
         },
         {
           "id": "page-007",
@@ -340,19 +555,7 @@
         {
           "id": "page-019",
           "title": "Chapter II — Golden Guineas (continued)",
-          "path": "editions/full-classic/pages/page-019.md",
-          "illustrations": [
-            {
-              "id": "full-millar-guineas",
-              "path": "illustrations/golden-guineas.webp",
-              "alt": "An original H. R. Millar illustration from Five Children and It.",
-              "placement": "full-width",
-              "width": 934,
-              "height": 804,
-              "caption": "Illustration by H. R. Millar, 1902.",
-              "blockId": "on-the-road-they-turned-and-looked-back-f66a990"
-            }
-          ]
+          "path": "editions/full-classic/pages/page-019.md"
         },
         {
           "id": "page-020",
@@ -437,19 +640,7 @@
         {
           "id": "page-036",
           "title": "Chapter III — Being Wanted (continued)",
-          "path": "editions/full-classic/pages/page-036.md",
-          "illustrations": [
-            {
-              "id": "full-millar-being-wanted",
-              "path": "illustrations/being-wanted.webp",
-              "alt": "An original H. R. Millar illustration from Five Children and It.",
-              "placement": "full-width",
-              "width": 781,
-              "height": 858,
-              "caption": "Illustration by H. R. Millar, 1902.",
-              "blockId": "the-four-children-looked-at-each-other-and-9e96529"
-            }
-          ]
+          "path": "editions/full-classic/pages/page-036.md"
         },
         {
           "id": "page-037",
@@ -524,19 +715,7 @@
         {
           "id": "page-051",
           "title": "Chapter IV — Wings (continued)",
-          "path": "editions/full-classic/pages/page-051.md",
-          "illustrations": [
-            {
-              "id": "full-millar-wings",
-              "path": "illustrations/wings.webp",
-              "alt": "An original H. R. Millar illustration from Five Children and It.",
-              "placement": "full-width",
-              "width": 880,
-              "height": 641,
-              "caption": "Illustration by H. R. Millar, 1902.",
-              "blockId": "all-the-words-in-the-english-dictionary-and-d20bb2d"
-            }
-          ]
+          "path": "editions/full-classic/pages/page-051.md"
         },
         {
           "id": "page-052",
@@ -566,19 +745,7 @@
         {
           "id": "page-057",
           "title": "Chapter IV — Wings (continued)",
-          "path": "editions/full-classic/pages/page-057.md",
-          "illustrations": [
-            {
-              "id": "full-millar-tower",
-              "path": "illustrations/tower.webp",
-              "alt": "An original H. R. Millar illustration from Five Children and It.",
-              "placement": "full-width",
-              "width": 892,
-              "height": 773,
-              "caption": "Illustration by H. R. Millar, 1902.",
-              "blockId": "one-by-one-they-left-off-talking-and-5a65e97"
-            }
-          ]
+          "path": "editions/full-classic/pages/page-057.md"
         },
         {
           "id": "page-058",
@@ -823,19 +990,7 @@
         {
           "id": "page-106",
           "title": "Chapter IX — Grown Up (continued)",
-          "path": "editions/full-classic/pages/page-106.md",
-          "illustrations": [
-            {
-              "id": "full-millar-grown-up",
-              "path": "illustrations/grown-up.webp",
-              "alt": "An original H. R. Millar illustration from Five Children and It.",
-              "placement": "full-width",
-              "width": 1000,
-              "height": 1020,
-              "caption": "Illustration by H. R. Millar, 1902.",
-              "blockId": "the-grown-up-lamb-whose-names-shall-now-bd8c130"
-            }
-          ]
+          "path": "editions/full-classic/pages/page-106.md"
         },
         {
           "id": "page-107",
@@ -880,19 +1035,7 @@
         {
           "id": "page-115",
           "title": "Chapter X — Scalps (continued)",
-          "path": "editions/full-classic/pages/page-115.md",
-          "illustrations": [
-            {
-              "id": "full-millar-game",
-              "path": "illustrations/game-comes-to-life.webp",
-              "alt": "An original H. R. Millar illustration from Five Children and It.",
-              "placement": "full-width",
-              "width": 812,
-              "height": 1236,
-              "caption": "Illustration by H. R. Millar, 1902.",
-              "blockId": "the-children-drew-a-deep-breath-of-relief-0b78048"
-            }
-          ]
+          "path": "editions/full-classic/pages/page-115.md"
         },
         {
           "id": "page-116",
@@ -942,17 +1085,331 @@
         {
           "id": "page-125",
           "title": "Chapter XI — The Last Wish (continued)",
-          "path": "editions/full-classic/pages/page-125.md",
-          "illustrations": [
+          "path": "editions/full-classic/pages/page-125.md"
+        }
+      ],
+      "defaultIllustrationSetId": "classic",
+      "illustrationSets": [
+        {
+          "id": "classic",
+          "label": "Classic Illustrations",
+          "rights": {
+            "status": "public-domain",
+            "source": "Original 1902 illustrations by H. R. Millar",
+            "sourceUrl": "https://commons.wikimedia.org/wiki/Category:Five_Children_and_It",
+            "notes": "Eight previously verified H. R. Millar illustrations are reused beside matching passages in the complete classic text."
+          },
+          "chapters": [
             {
-              "id": "full-millar-last-wish",
-              "path": "illustrations/last-wish.webp",
-              "alt": "An original H. R. Millar illustration from Five Children and It.",
-              "placement": "full-width",
-              "width": 836,
-              "height": 1424,
-              "caption": "Illustration by H. R. Millar, 1902.",
-              "blockId": "then-for-the-last-time-in-this-story-2b0ed35"
+              "chapterId": "page-006",
+              "illustrations": [
+                {
+                  "id": "full-millar-psammead",
+                  "path": "illustrations/psammead.webp",
+                  "alt": "H. R. Millar's original illustration of the Psammead.",
+                  "placement": "full-width",
+                  "width": 830,
+                  "height": 968,
+                  "caption": "Illustration by H. R. Millar, 1902.",
+                  "blockId": "oh-well-if-that-s-your-wish-the-113df7b"
+                }
+              ]
+            },
+            {
+              "chapterId": "page-019",
+              "illustrations": [
+                {
+                  "id": "full-millar-guineas",
+                  "path": "illustrations/golden-guineas.webp",
+                  "alt": "An original H. R. Millar illustration from Five Children and It.",
+                  "placement": "full-width",
+                  "width": 934,
+                  "height": 804,
+                  "caption": "Illustration by H. R. Millar, 1902.",
+                  "blockId": "on-the-road-they-turned-and-looked-back-f66a990"
+                }
+              ]
+            },
+            {
+              "chapterId": "page-036",
+              "illustrations": [
+                {
+                  "id": "full-millar-being-wanted",
+                  "path": "illustrations/being-wanted.webp",
+                  "alt": "An original H. R. Millar illustration from Five Children and It.",
+                  "placement": "full-width",
+                  "width": 781,
+                  "height": 858,
+                  "caption": "Illustration by H. R. Millar, 1902.",
+                  "blockId": "the-four-children-looked-at-each-other-and-9e96529"
+                }
+              ]
+            },
+            {
+              "chapterId": "page-051",
+              "illustrations": [
+                {
+                  "id": "full-millar-wings",
+                  "path": "illustrations/wings.webp",
+                  "alt": "An original H. R. Millar illustration from Five Children and It.",
+                  "placement": "full-width",
+                  "width": 880,
+                  "height": 641,
+                  "caption": "Illustration by H. R. Millar, 1902.",
+                  "blockId": "all-the-words-in-the-english-dictionary-and-d20bb2d"
+                }
+              ]
+            },
+            {
+              "chapterId": "page-057",
+              "illustrations": [
+                {
+                  "id": "full-millar-tower",
+                  "path": "illustrations/tower.webp",
+                  "alt": "An original H. R. Millar illustration from Five Children and It.",
+                  "placement": "full-width",
+                  "width": 892,
+                  "height": 773,
+                  "caption": "Illustration by H. R. Millar, 1902.",
+                  "blockId": "one-by-one-they-left-off-talking-and-5a65e97"
+                }
+              ]
+            },
+            {
+              "chapterId": "page-106",
+              "illustrations": [
+                {
+                  "id": "full-millar-grown-up",
+                  "path": "illustrations/grown-up.webp",
+                  "alt": "An original H. R. Millar illustration from Five Children and It.",
+                  "placement": "full-width",
+                  "width": 1000,
+                  "height": 1020,
+                  "caption": "Illustration by H. R. Millar, 1902.",
+                  "blockId": "the-grown-up-lamb-whose-names-shall-now-bd8c130"
+                }
+              ]
+            },
+            {
+              "chapterId": "page-115",
+              "illustrations": [
+                {
+                  "id": "full-millar-game",
+                  "path": "illustrations/game-comes-to-life.webp",
+                  "alt": "An original H. R. Millar illustration from Five Children and It.",
+                  "placement": "full-width",
+                  "width": 812,
+                  "height": 1236,
+                  "caption": "Illustration by H. R. Millar, 1902.",
+                  "blockId": "the-children-drew-a-deep-breath-of-relief-0b78048"
+                }
+              ]
+            },
+            {
+              "chapterId": "page-125",
+              "illustrations": [
+                {
+                  "id": "full-millar-last-wish",
+                  "path": "illustrations/last-wish.webp",
+                  "alt": "An original H. R. Millar illustration from Five Children and It.",
+                  "placement": "full-width",
+                  "width": 836,
+                  "height": 1424,
+                  "caption": "Illustration by H. R. Millar, 1902.",
+                  "blockId": "then-for-the-last-time-in-this-story-2b0ed35"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "modern",
+          "label": "Modern Illustrations",
+          "rights": {
+            "status": "original",
+            "source": "ChatGPT-generated artwork created for the Unicorn Valley Story House modern illustration set",
+            "notes": "Twelve images are reused beside matching Full Classic passages. The Story House-only Game Comes to Life illustration is deliberately excluded from the materially different original Chapter X."
+          },
+          "chapters": [
+            {
+              "chapterId": "page-006",
+              "illustrations": [
+                {
+                  "id": "full-modern-thing-in-the-sand",
+                  "blockId": "oh-well-if-that-s-your-wish-the-113df7b",
+                  "path": "illustrations/generated/thing-in-the-sand.webp",
+                  "alt": "The four older children discover the Psammead emerging from the sand.",
+                  "placement": "full-width",
+                  "width": 1448,
+                  "height": 1086,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-012",
+              "illustrations": [
+                {
+                  "id": "full-modern-beautiful-strangers",
+                  "blockId": "thanks-be-he-s-safe-back-she-said-29e1d10",
+                  "path": "illustrations/generated/beautiful-strangers.webp",
+                  "alt": "Martha recognises the Lamb but not the magically beautified four older children at the White House door.",
+                  "placement": "full-width",
+                  "width": 768,
+                  "height": 512,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-019",
+              "illustrations": [
+                {
+                  "id": "full-modern-golden-guineas",
+                  "blockId": "on-the-road-they-turned-and-looked-back-f66a990",
+                  "path": "illustrations/generated/golden-guineas.webp",
+                  "alt": "The gravel pit is filled with a dazzling mountain of old golden guineas.",
+                  "placement": "full-width",
+                  "width": 1448,
+                  "height": 1086,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-036",
+              "illustrations": [
+                {
+                  "id": "full-modern-everybody-wants-lamb",
+                  "blockId": "the-four-children-looked-at-each-other-and-9e96529",
+                  "path": "illustrations/generated/everybody-wants-lamb.webp",
+                  "alt": "The four older children protect the Lamb as another adult tries to claim him.",
+                  "placement": "full-width",
+                  "width": 768,
+                  "height": 512,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-051",
+              "illustrations": [
+                {
+                  "id": "full-modern-into-the-sky",
+                  "blockId": "all-the-words-in-the-english-dictionary-and-d20bb2d",
+                  "path": "illustrations/generated/into-the-sky.webp",
+                  "alt": "The four children fly over the countryside on enormous feathered wings.",
+                  "placement": "full-width",
+                  "width": 1448,
+                  "height": 1086,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-057",
+              "illustrations": [
+                {
+                  "id": "full-modern-sunset-on-tower",
+                  "blockId": "one-by-one-they-left-off-talking-and-5a65e97",
+                  "path": "illustrations/generated/sunset-on-tower.webp",
+                  "alt": "At sunset the children's wings disappear, leaving them stranded on the church tower.",
+                  "placement": "full-width",
+                  "width": 1448,
+                  "height": 1086,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-067",
+              "illustrations": [
+                {
+                  "id": "full-modern-house-becomes-castle",
+                  "blockId": "robert-was-running-as-fast-as-he-could-d233e30",
+                  "path": "illustrations/generated/house-becomes-castle.webp",
+                  "alt": "Robert discovers that the White House has become a huge besieged castle.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-076",
+              "illustrations": [
+                {
+                  "id": "full-modern-defend-castle",
+                  "blockId": "the-great-thing-after-all-was-that-they-74f7628",
+                  "path": "illustrations/generated/defend-castle.webp",
+                  "alt": "The four children improvise a defence from the castle battlements while the besieging force prepares below.",
+                  "placement": "full-width",
+                  "width": 1448,
+                  "height": 1086,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-089",
+              "illustrations": [
+                {
+                  "id": "full-modern-very-large-robert",
+                  "blockId": "robert-was-indeed-what-a-draper-would-call-7a29acb",
+                  "path": "illustrations/generated/very-large-robert.webp",
+                  "alt": "The magically enlarged Robert towers over his normal-sized siblings and the surrounding village.",
+                  "placement": "full-width",
+                  "width": 1448,
+                  "height": 1086,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-106",
+              "illustrations": [
+                {
+                  "id": "full-modern-lamb-grows-up",
+                  "blockId": "the-grown-up-lamb-whose-names-shall-now-bd8c130",
+                  "path": "illustrations/generated/lamb-grows-up.webp",
+                  "alt": "The grown-up Lamb in grey flannel, green tie and small moustache is treated by Martha as though he were still the toddler.",
+                  "placement": "full-width",
+                  "width": 1086,
+                  "height": 724,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-120",
+              "illustrations": [
+                {
+                  "id": "full-modern-jewels",
+                  "blockId": "mother-came-back-to-her-bedroom-very-much-f336574",
+                  "path": "illustrations/generated/jewels.webp",
+                  "alt": "Mother discovers that more and more valuable jewellery has appeared in her bedroom.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "page-125",
+              "illustrations": [
+                {
+                  "id": "full-modern-last-favour",
+                  "blockId": "then-for-the-last-time-in-this-story-2b0ed35",
+                  "path": "illustrations/generated/last-favour.webp",
+                  "alt": "The tired Psammead grants its final wish and disappears beneath the sand.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
             }
           ]
         }
