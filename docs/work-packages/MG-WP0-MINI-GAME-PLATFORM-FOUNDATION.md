@@ -1,14 +1,19 @@
 ---
 id: MG-WP0
 title: Mini-Game Platform Foundation
-status: active
+status: complete
 autonomy: amber
 depends_on: []
 parallel_safe: true
-human_gate: architecture
+human_gate: satisfied
 ---
 
 # MG-WP0 - Mini-Game Platform Foundation
+
+## Completion state
+
+**Complete, human-approved and merged to `main` at `dc24989ebec4261301dd521da2d8e9a9ac91f17e`. MG-WP1 is the next package.**
+
 
 ## Purpose
 
