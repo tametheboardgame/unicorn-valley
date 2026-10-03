@@ -6,6 +6,20 @@ export const RAINBOW_DISC_COLOURS = [
   0xee6f73, 0xf3a556, 0xf3d465, 0x79bf78, 0x67b9dd, 0x7f82d7, 0xb575cc,
 ] as const;
 
+export function resolveRainbowDiscResidentBodyOrigin(flipX = false): { x: number; y: number } {
+  const bodyOriginX =
+    (SUPPORTING_RESIDENT_ART_LAYOUT.drawX - 6 * SUPPORTING_RESIDENT_ART_LAYOUT.drawScale) /
+    SUPPORTING_RESIDENT_ART_LAYOUT.textureWidth;
+  const bodyOriginY =
+    (SUPPORTING_RESIDENT_ART_LAYOUT.drawY + 7 * SUPPORTING_RESIDENT_ART_LAYOUT.drawScale) /
+    SUPPORTING_RESIDENT_ART_LAYOUT.textureHeight;
+
+  return {
+    x: flipX ? 1 - bodyOriginX : bodyOriginX,
+    y: bodyOriginY,
+  };
+}
+
 export function createRainbowDiscRing(
   scene: Phaser.Scene,
   name: string,
