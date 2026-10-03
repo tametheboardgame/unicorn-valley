@@ -103,6 +103,24 @@ Required evidence includes:
 - no durable standalone high-score system unless separately approved;
 - no world quest/reward rebalance.
 
+## Implementation state
+
+Implementation is complete through **MG-WP2E** and exact-head validation is in progress.
+
+Completed checkpoints:
+
+- MG-WP2A - Wobbly Cake economy/quest/progress isolation;
+- MG-WP2B - Coral Beachcombing notebook/save isolation;
+- MG-WP2C - Firefly Lantern best/milestone/unlock isolation;
+- MG-WP2D - Rainbow Run race/reward/Cup isolation;
+- MG-WP2E - no-write audit for Rainbow Disc, Pond Leap and Chess plus package closeout.
+
+Closeout evidence:
+
+`docs/audits/2026-10-03-MG-WP2-SANDBOX-ISOLATION-CLOSEOUT.md`
+
+The package remains `in_progress` until exact-head technical validation is acceptable and the human gate is approved.
+
 ## Human gate
 
 MG-WP2 is Amber.
