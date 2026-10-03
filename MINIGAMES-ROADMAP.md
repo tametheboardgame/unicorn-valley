@@ -1,8 +1,24 @@
+---
+id: MG
+title: Mini-Game Development Programme
+status: approved
+autonomy: amber
+depends_on: []
+parallel_safe: true
+human_gate: architecture
+---
+
 # Unicorn Valley Mini-Game Development Roadmap
 
 Programme ID: **MG**
 
 Status: **approved direction / independent programme**
+
+## Current stage
+
+**MG-WP0 is complete and merged. MG-WP1 - Existing game migration to one launch contract is the next platform package.**
+
+The H6.0 Crystal Brook audit confirmed the shared catalogue/session/launcher/outcome foundation is now present on `main`, while MG-WP1-WP4 readiness is still required before Crystalarium or Crystal Checkers can begin at H6.9/H6.10.
 
 This roadmap is intentionally independent of the main release roadmap. It is not an R6.5, WP19 or area-polish sub-stream. Mini-game platform work and mini-game improvement work may proceed in parallel with world, Story House and other content programmes when dependencies genuinely permit.
 
