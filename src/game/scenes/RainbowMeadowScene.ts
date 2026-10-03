@@ -102,6 +102,20 @@ function createMeadowInteractions(scene: Phaser.Scene): readonly InteractionTarg
       },
     },
     {
+      id: 'interaction:rainbow-disc-practice',
+      label: 'Rainbow Disc Practice',
+      actionLabel: 'Practice throws',
+      actionKind: 'start',
+      position: RAINBOW_MEADOW_LAYOUT.rainbowDisc.practice.throwLine,
+      approachPosition: RAINBOW_MEADOW_LAYOUT.rainbowDisc.practice.approach,
+      interactionRadius: 150,
+      priority: 27,
+      result: {
+        type: 'callback',
+        activate: () => void launchRainbowDiscActivity(scene, 'practice'),
+      },
+    },
+    {
       id: 'interaction:meadow-race-entrance',
       label: 'Rainbow Run Race Hub',
       actionLabel: 'Enter Race Hub',
