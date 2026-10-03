@@ -2,7 +2,6 @@ import Phaser from 'phaser';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { saveLocationCheckpoint } from '../save/saveLocationCheckpoint';
 import { MOONFLOWER_GLADE_MAP } from './MoonflowerGladeMap';
-import { WORLD_TRAVERSAL_POLISH_SUPPORTED_SCENE_KEYS } from './RegionPresentationOwnership';
 import {
   setSunbeamVillagePlayerSpawn,
   SUNBEAM_VILLAGE_LOCATION_ID,
@@ -13,9 +12,7 @@ export const WORLD_TRAVERSAL_POLISH_DETAIL_NAME = 'world-traversal-polish-detail
 export const WORLD_PLAYER_NAME = 'world-player-unicorn';
 const WORLD_TRAVERSAL_POLISH_ANCHOR_NAME = 'world-traversal-polish-anchor';
 
-const WORLD_TRAVERSAL_POLISH_SUPPORTED_SCENES = new Set<string>(
-  WORLD_TRAVERSAL_POLISH_SUPPORTED_SCENE_KEYS,
-);
+const WORLD_TRAVERSAL_POLISH_SUPPORTED_SCENES = new Set<string>(['MoonflowerGladeScene']);
 
 interface Point {
   x: number;
