@@ -274,11 +274,7 @@ export class JustGamesScene extends Phaser.Scene {
         CARD_WIDTH,
         CARD_HEIGHT,
         {
-          fill: selected
-            ? UI_COLOURS.gold
-            : hovered
-              ? UI_COLOURS.lavender
-              : UI_COLOURS.parchment,
+          fill: selected ? UI_COLOURS.gold : hovered ? UI_COLOURS.lavender : UI_COLOURS.parchment,
           stroke: selected
             ? UI_COLOURS.focus
             : hovered
@@ -368,28 +364,18 @@ export class JustGamesScene extends Phaser.Scene {
       this.detailLayer.add(label);
 
       if (pageCount > 1) {
-        this.createVariantPageButton(
-          DETAIL_X - 205,
-          360,
-          '‹',
-          'just-games-variants-prev',
-          () => this.changeVariantPage(-1),
+        this.createVariantPageButton(DETAIL_X - 205, 360, '‹', 'just-games-variants-prev', () =>
+          this.changeVariantPage(-1),
         );
-        this.createVariantPageButton(
-          DETAIL_X + 205,
-          360,
-          '›',
-          'just-games-variants-next',
-          () => this.changeVariantPage(1),
+        this.createVariantPageButton(DETAIL_X + 205, 360, '›', 'just-games-variants-next', () =>
+          this.changeVariantPage(1),
         );
       }
 
       pageVariants.forEach((variant, pageIndex) => {
         const row = Math.floor(pageIndex / VARIANT_COLUMNS);
         const column = pageIndex % VARIANT_COLUMNS;
-        const xOffset =
-          (VARIANT_BUTTON_WIDTH + VARIANT_COLUMN_GAP) / 2 *
-          (column === 0 ? -1 : 1);
+        const xOffset = ((VARIANT_BUTTON_WIDTH + VARIANT_COLUMN_GAP) / 2) * (column === 0 ? -1 : 1);
         const y = VARIANT_GRID_Y + row * (VARIANT_BUTTON_HEIGHT + VARIANT_ROW_GAP);
         this.createVariantButton(
           DETAIL_X + xOffset,
@@ -547,8 +533,7 @@ export class JustGamesScene extends Phaser.Scene {
     const variants = this.visibleVariants(this.currentDefinition());
     const pageCount = Math.ceil(variants.length / VARIANT_PAGE_SIZE);
     if (pageCount <= 1) return;
-    this.variantPageIndex =
-      (this.variantPageIndex + direction + pageCount) % pageCount;
+    this.variantPageIndex = (this.variantPageIndex + direction + pageCount) % pageCount;
     this.selectedVariantIndex = this.variantPageIndex * VARIANT_PAGE_SIZE;
     this.renderDetails();
   }
