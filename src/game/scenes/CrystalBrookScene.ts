@@ -23,15 +23,78 @@ import { saveLocationCheckpoint } from '../save/saveLocationCheckpoint';
 import {
   CRYSTAL_BROOK_LOCATION_ID,
   CRYSTAL_BROOK_MAP,
-  CRYSTAL_BROOK_LOWER_POOL,
-  CRYSTAL_BROOK_MAIN_ROUTE,
-  CRYSTAL_BROOK_UPPER_POOL,
+  CRYSTAL_BROOK_PATH_PRESENTATION_ROUTE,
+  CRYSTAL_BROOK_REFLECTION_INLET,
+  CRYSTAL_BROOK_REFLECTION_POOL,
+  CRYSTAL_BROOK_UPSTREAM_CASCADE,
+  CRYSTAL_BROOK_WATER_GLINTS,
+  CRYSTAL_BROOK_WATERCOURSE,
+  type CrystalBrookWatercoursePoint,
 } from '../world/CrystalBrookMap';
 import { worldDepthForY } from '../world/WorldDepth';
 
 const COLLISION_TEXTURE_KEY = 'crystal-brook-collision-pixel';
 const PLAYER_TEXTURE_KEY = 'player-unicorn-crystal-brook';
 const BROOK_VISITED_FLAG = 'flag:visited-crystal-brook';
+
+type WaterWidthKey = 'outerWidth' | 'innerWidth' | 'deepWidth';
+
+function buildRibbonPolygon(
+  points: readonly { x: number; y: number }[],
+  halfWidthAt: (index: number) => number,
+): Phaser.Math.Vector2[] {
+  const left: Phaser.Math.Vector2[] = [];
+  const right: Phaser.Math.Vector2[] = [];
+
+  for (let index = 0; index < points.length; index += 1) {
+    const previous = points[Math.max(0, index - 1)];
+    const next = points[Math.min(points.length - 1, index + 1)];
+    const dx = next.x - previous.x;
+    const dy = next.y - previous.y;
+    const length = Math.hypot(dx, dy) || 1;
+    const normalX = -dy / length;
+    const normalY = dx / length;
+    const halfWidth = halfWidthAt(index);
+    const point = points[index];
+
+    left.push(
+      new Phaser.Math.Vector2(point.x + normalX * halfWidth, point.y + normalY * halfWidth),
+    );
+    right.push(
+      new Phaser.Math.Vector2(point.x - normalX * halfWidth, point.y - normalY * halfWidth),
+    );
+  }
+
+  return [...left, ...right.reverse()];
+}
+
+function fillVariableRibbon(
+  graphics: Phaser.GameObjects.Graphics,
+  points: readonly CrystalBrookWatercoursePoint[],
+  widthKey: WaterWidthKey,
+  colour: number,
+  alpha: number,
+): void {
+  graphics.fillStyle(colour, alpha);
+  graphics.fillPoints(
+    buildRibbonPolygon(points, (index) => points[index][widthKey] / 2),
+    true,
+  );
+}
+
+function fillConstantRibbon(
+  graphics: Phaser.GameObjects.Graphics,
+  points: readonly { x: number; y: number }[],
+  width: number,
+  colour: number,
+  alpha: number,
+): void {
+  graphics.fillStyle(colour, alpha);
+  graphics.fillPoints(
+    buildRibbonPolygon(points, () => width / 2),
+    true,
+  );
+}
 
 export class CrystalBrookScene extends Phaser.Scene {
   private readonly audio = getVerticalSliceAudio();
@@ -295,16 +358,18 @@ export class CrystalBrookScene extends Phaser.Scene {
     this.add.circle(1950, 1560, 730, 0x91d1ab, 0.28).setDepth(1);
     this.add.circle(3050, 740, 650, 0xbde7c1, 0.38).setDepth(1);
 
-    const path = this.add.graphics().setDepth(2);
-    const mainRoute = CRYSTAL_BROOK_MAIN_ROUTE;
-    path.lineStyle(128, 0xe8d4a5, 0.9);
+    const path = this.add.graphics().setName('crystal-brook:main-path').setDepth(2.86);
+    const mainRoute = CRYSTAL_BROOK_PATH_PRESENTATION_ROUTE;
+    path.lineStyle(148, 0xc8b586, 0.34);
     path.beginPath();
     path.moveTo(mainRoute[0].x, mainRoute[0].y);
     for (const point of mainRoute.slice(1)) {
       path.lineTo(point.x, point.y);
     }
     path.strokePath();
-    path.lineStyle(72, 0xf4e8c5, 0.92);
+    path.lineStyle(122, 0xe6d3a7, 0.96);
+    path.strokePath();
+    path.lineStyle(72, 0xf6e9c7, 0.98);
     path.strokePath();
 
     this.createWater();
@@ -316,26 +381,116 @@ export class CrystalBrookScene extends Phaser.Scene {
   }
 
   private createWater(): void {
-    const upperPool = CRYSTAL_BROOK_UPPER_POOL;
-    const lowerPool = CRYSTAL_BROOK_LOWER_POOL;
-    this.add.ellipse(upperPool.x, upperPool.y, 500, 260, 0x5bc4d4, 0.9).setDepth(3);
-    this.add.ellipse(upperPool.x, upperPool.y, 390, 180, 0x91e0e3, 0.65).setDepth(4);
-    this.add.ellipse(lowerPool.x, lowerPool.y, 460, 260, 0x58bfd0, 0.9).setDepth(3);
-    this.add.ellipse(lowerPool.x, lowerPool.y, 350, 170, 0x91e1e3, 0.62).setDepth(4);
+    const outerWater = this.add.graphics().setName('crystal-brook:watercourse-outer').setDepth(3);
+    fillVariableRibbon(outerWater, CRYSTAL_BROOK_WATERCOURSE, 'outerWidth', 0x579da4, 0.58);
 
-    const stream = this.add.graphics().setDepth(3);
-    stream.lineStyle(CRYSTAL_BROOK_MAP.shallowStream.width, 0x63c8d5, 0.82);
-    stream.beginPath();
-    stream.moveTo(
-      CRYSTAL_BROOK_MAP.shallowStream.points[0].x,
-      CRYSTAL_BROOK_MAP.shallowStream.points[0].y,
+    const innerWater = this.add
+      .graphics()
+      .setName('crystal-brook:watercourse-inner')
+      .setDepth(3.03);
+    fillVariableRibbon(innerWater, CRYSTAL_BROOK_WATERCOURSE, 'innerWidth', 0x78cbd0, 0.86);
+
+    const deepChannel = this.add
+      .graphics()
+      .setName('crystal-brook:watercourse-deep')
+      .setDepth(3.06);
+    fillVariableRibbon(deepChannel, CRYSTAL_BROOK_WATERCOURSE, 'deepWidth', 0x438f9d, 0.58);
+
+    const reflectionInlet = this.add
+      .graphics()
+      .setName('crystal-brook:reflection-inlet')
+      .setDepth(3.01);
+    fillConstantRibbon(
+      reflectionInlet,
+      CRYSTAL_BROOK_REFLECTION_INLET.points,
+      CRYSTAL_BROOK_REFLECTION_INLET.outerWidth,
+      0x579da4,
+      0.58,
     );
-    for (const point of CRYSTAL_BROOK_MAP.shallowStream.points.slice(1)) {
-      stream.lineTo(point.x, point.y);
+    fillConstantRibbon(
+      reflectionInlet,
+      CRYSTAL_BROOK_REFLECTION_INLET.points,
+      CRYSTAL_BROOK_REFLECTION_INLET.innerWidth,
+      0x78cbd0,
+      0.86,
+    );
+    fillConstantRibbon(
+      reflectionInlet,
+      CRYSTAL_BROOK_REFLECTION_INLET.points,
+      CRYSTAL_BROOK_REFLECTION_INLET.deepWidth,
+      0x438f9d,
+      0.56,
+    );
+
+    this.add
+      .ellipse(
+        CRYSTAL_BROOK_REFLECTION_POOL.x,
+        CRYSTAL_BROOK_REFLECTION_POOL.y,
+        292,
+        138,
+        0x579da4,
+        0.62,
+      )
+      .setName('crystal-brook:reflection-pool-outer')
+      .setDepth(3);
+    this.add
+      .ellipse(
+        CRYSTAL_BROOK_REFLECTION_POOL.x,
+        CRYSTAL_BROOK_REFLECTION_POOL.y,
+        232,
+        102,
+        0x78cbd0,
+        0.86,
+      )
+      .setName('crystal-brook:reflection-pool-inner')
+      .setDepth(3.03);
+    this.add
+      .ellipse(
+        CRYSTAL_BROOK_REFLECTION_POOL.x,
+        CRYSTAL_BROOK_REFLECTION_POOL.y,
+        118,
+        48,
+        0x438f9d,
+        0.56,
+      )
+      .setName('crystal-brook:reflection-pool-deep')
+      .setDepth(3.06);
+
+    const cascade = this.add.graphics().setName('crystal-brook:upstream-cascade').setDepth(3.08);
+    cascade.fillStyle(0x78cbd0, 0.86);
+    cascade.fillPoints(
+      [
+        new Phaser.Math.Vector2(CRYSTAL_BROOK_UPSTREAM_CASCADE.x - 72, 510),
+        new Phaser.Math.Vector2(CRYSTAL_BROOK_UPSTREAM_CASCADE.x + 74, 500),
+        new Phaser.Math.Vector2(CRYSTAL_BROOK_UPSTREAM_CASCADE.x + 58, 730),
+        new Phaser.Math.Vector2(CRYSTAL_BROOK_UPSTREAM_CASCADE.x - 60, 740),
+      ],
+      true,
+    );
+    cascade.fillStyle(0xcdf5f1, 0.42);
+    for (const offset of [-42, -10, 24, 52]) {
+      cascade.fillRoundedRect(
+        CRYSTAL_BROOK_UPSTREAM_CASCADE.x + offset - 7,
+        520 + Math.abs(offset) * 0.18,
+        14,
+        190 - Math.abs(offset) * 0.4,
+        7,
+      );
     }
-    stream.strokePath();
-    stream.lineStyle(54, 0xa8e9e5, 0.55);
-    stream.strokePath();
+    cascade.fillStyle(0xe9ffff, 0.42);
+    cascade.fillEllipse(CRYSTAL_BROOK_UPSTREAM_CASCADE.x, 735, 175, 42);
+
+    const glints = this.add.graphics().setName('crystal-brook:water-glints').setDepth(3.12);
+    glints.lineStyle(5, 0xeaffff, 0.34);
+    for (const glint of CRYSTAL_BROOK_WATER_GLINTS) {
+      const radians = Phaser.Math.DegToRad(glint.angle);
+      const dx = Math.cos(radians) * (glint.width / 2);
+      const dy = Math.sin(radians) * (glint.width / 2);
+      glints.beginPath();
+      glints.moveTo(glint.x - dx, glint.y - dy);
+      glints.lineTo(glint.x + dx, glint.y + dy);
+      glints.strokePath();
+    }
   }
 
   private createSteppingStones(): void {

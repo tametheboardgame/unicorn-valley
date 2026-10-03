@@ -5,6 +5,13 @@ import {
   CRYSTAL_BROOK_DISTRICTS,
   CRYSTAL_BROOK_LAYOUT,
   CRYSTAL_BROOK_MAP,
+  CRYSTAL_BROOK_PATH_PRESENTATION_ROUTE,
+  CRYSTAL_BROOK_REFLECTION_INLET,
+  CRYSTAL_BROOK_REFLECTION_POOL,
+  CRYSTAL_BROOK_UPPER_POOL,
+  CRYSTAL_BROOK_LOWER_POOL,
+  CRYSTAL_BROOK_UPSTREAM_CASCADE,
+  CRYSTAL_BROOK_WATERCOURSE,
 } from './CrystalBrookMap';
 import {
   findUnreachableTargets,
@@ -72,6 +79,54 @@ describe('Crystal Brook map', () => {
     expect(
       new Set(CRYSTAL_BROOK_MAP.collectableSpots.map(({ itemId }) => itemId)).size,
     ).toBeGreaterThanOrEqual(2);
+  });
+
+  it('defines one continuous Brook from the upstream cascade through both basins to Rainbow Meadow', () => {
+    expect(CRYSTAL_BROOK_WATERCOURSE[0].x).toBeGreaterThan(3300);
+    expect(CRYSTAL_BROOK_WATERCOURSE.at(-1)?.x).toBeLessThan(0);
+
+    expect(
+      CRYSTAL_BROOK_WATERCOURSE.some(
+        ({ x, y }) =>
+          x === CRYSTAL_BROOK_UPSTREAM_CASCADE.x && y === CRYSTAL_BROOK_UPSTREAM_CASCADE.y,
+      ),
+    ).toBe(true);
+    expect(
+      CRYSTAL_BROOK_WATERCOURSE.some(
+        ({ x, y }) => x === CRYSTAL_BROOK_UPPER_POOL.x && y === CRYSTAL_BROOK_UPPER_POOL.y,
+      ),
+    ).toBe(true);
+    expect(
+      CRYSTAL_BROOK_WATERCOURSE.some(
+        ({ x, y }) => x === CRYSTAL_BROOK_LOWER_POOL.x && y === CRYSTAL_BROOK_LOWER_POOL.y,
+      ),
+    ).toBe(true);
+    expect(
+      CRYSTAL_BROOK_WATERCOURSE.some(
+        ({ x, y }) =>
+          x === CRYSTAL_BROOK_LAYOUT.thresholds.rainbowMeadow.position.x &&
+          y === CRYSTAL_BROOK_LAYOUT.thresholds.rainbowMeadow.position.y,
+      ),
+    ).toBe(true);
+
+    for (const point of CRYSTAL_BROOK_WATERCOURSE) {
+      expect(point.outerWidth).toBeGreaterThan(point.innerWidth);
+      expect(point.innerWidth).toBeGreaterThan(point.deepWidth);
+      expect(point.deepWidth).toBeGreaterThan(0);
+    }
+
+    expect(CRYSTAL_BROOK_REFLECTION_INLET.points[0]).toEqual({ x: 2320, y: 1210 });
+    expect(CRYSTAL_BROOK_REFLECTION_INLET.points.at(-1)).toEqual(CRYSTAL_BROOK_REFLECTION_POOL);
+  });
+
+  it('keeps the H6.2 presentation path visibly separate from the west Brook corridor', () => {
+    expect(CRYSTAL_BROOK_PATH_PRESENTATION_ROUTE[0].y).toBeGreaterThan(
+      CRYSTAL_BROOK_WATERCOURSE.at(-2)?.y ?? 0,
+    );
+    expect(CRYSTAL_BROOK_PATH_PRESENTATION_ROUTE[2].y).toBeGreaterThan(
+      CRYSTAL_BROOK_WATERCOURSE.at(-4)?.y ?? 0,
+    );
+    expect(CRYSTAL_BROOK_WATERCOURSE.at(-2)?.outerWidth).toBeLessThanOrEqual(150);
   });
 
   it('keeps canonical route endpoints aligned with their structural destinations', () => {

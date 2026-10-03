@@ -3,7 +3,6 @@ import { RefreshThrottle } from '../performance/RefreshThrottle';
 import {
   CRYSTAL_BROOK_CRYSTAL_CUP_ROUTE,
   CRYSTAL_BROOK_CRYSTAL_CUP_THRESHOLD,
-  CRYSTAL_BROOK_LEGACY_CASCADE,
   CRYSTAL_BROOK_MEADOW_THRESHOLD,
   CRYSTAL_BROOK_WOODS_ROUTE,
   CRYSTAL_BROOK_WOODS_THRESHOLD,
@@ -921,16 +920,6 @@ function decorateBrook(scene: Phaser.Scene): void {
   ] as const) {
     cliffs.add(addCrystal(scene, x, y, scale, 7.6));
   }
-
-  const cascadePosition = CRYSTAL_BROOK_LEGACY_CASCADE;
-  const cascade = name(scene.add.container(0, 0).setDepth(6.2), 'crystal-brook:cascade-upgrade');
-  cascade.add([
-    scene.add.ellipse(cascadePosition.x, cascadePosition.y - 90, 310, 170, 0x637c7c, 0.9),
-    scene.add.rectangle(cascadePosition.x, cascadePosition.y, 150, 260, 0x5bc4d4, 0.82),
-    scene.add.rectangle(cascadePosition.x, cascadePosition.y, 62, 260, 0xb9f2ee, 0.48),
-    scene.add.ellipse(cascadePosition.x, cascadePosition.y + 140, 320, 104, 0x85e0e1, 0.64),
-    scene.add.ellipse(cascadePosition.x, cascadePosition.y + 136, 240, 46, 0xe6ffff, 0.46),
-  ]);
 }
 
 function decorateWoods(scene: Phaser.Scene): void {
