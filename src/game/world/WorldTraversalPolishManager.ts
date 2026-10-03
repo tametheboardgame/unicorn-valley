@@ -2,8 +2,6 @@ import Phaser from 'phaser';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { saveLocationCheckpoint } from '../save/saveLocationCheckpoint';
 import { MOONFLOWER_GLADE_MAP } from './MoonflowerGladeMap';
-import { RAINBOW_MEADOW_LAYOUT, RAINBOW_MEADOW_MAP } from './RainbowMeadowMap';
-import { RAINBOW_RUN_HUB_LOCATION_ID } from './RainbowRunHubMap';
 import {
   setSunbeamVillagePlayerSpawn,
   SUNBEAM_VILLAGE_LOCATION_ID,
@@ -14,82 +12,29 @@ export const WORLD_TRAVERSAL_POLISH_DETAIL_NAME = 'world-traversal-polish-detail
 export const WORLD_PLAYER_NAME = 'world-player-unicorn';
 const WORLD_TRAVERSAL_POLISH_ANCHOR_NAME = 'world-traversal-polish-anchor';
 
-const SUPPORTED_SCENES = new Set(['MoonflowerGladeScene', 'RainbowMeadowScene']);
+const SUPPORTED_SCENES = new Set(['MoonflowerGladeScene']);
 
 interface Point {
   x: number;
   y: number;
 }
 
-interface PathStroke {
-  points: readonly Point[];
-  outerWidth: number;
-  innerWidth: number;
-}
-
-interface GatewayDefinition {
-  x: number;
-  y: number;
-  label?: string;
-  direction: 'west' | 'east';
-}
-
-function markDetail<T extends Phaser.GameObjects.GameObject>(object: T): T {
-  object.setName(WORLD_TRAVERSAL_POLISH_DETAIL_NAME);
-  return object;
-}
-
-function drawRoundedStroke(
-  graphics: Phaser.GameObjects.Graphics,
-  points: readonly Point[],
-  width: number,
-  colour: number,
-): void {
-  graphics.lineStyle(width, colour, 1);
-  graphics.beginPath();
-  graphics.moveTo(points[0].x, points[0].y);
-  for (const point of points.slice(1)) {
-    graphics.lineTo(point.x, point.y);
-  }
-  graphics.strokePath();
-
-  graphics.fillStyle(colour, 1);
-  const radius = width / 2;
-  for (const point of points) {
-    graphics.fillCircle(point.x, point.y, radius);
-  }
-}
-
-function drawPathNetwork(scene: Phaser.Scene, strokes: readonly PathStroke[]): void {
-  const graphics = scene.add.graphics().setName('rainbow-meadow:path-network').setDepth(2.45);
-
-  for (const stroke of strokes) {
-    drawRoundedStroke(graphics, stroke.points, stroke.outerWidth, 0xd7c18f);
-  }
-  for (const stroke of strokes) {
-    drawRoundedStroke(graphics, stroke.points, stroke.innerWidth, 0xf0dfb2);
-  }
-}
-
 function hideLegacyGatewayObjects(scene: Phaser.Scene): void {
-  const key = scene.scene.key;
-
   for (const object of scene.children.list) {
     if (object instanceof Phaser.GameObjects.Text) {
-      const isLegacyLabel =
+      if (
         object.text === 'Sunbeam Village → Rainbow Meadow' ||
         object.text === '← Moonflower Glade' ||
-        object.text === 'Rainbow Meadow →';
-      if (key !== 'SunbeamVillageScene' && isLegacyLabel) {
+        object.text === 'Rainbow Meadow →'
+      ) {
         object.setVisible(false);
       }
       continue;
     }
 
     if (
-      key === 'MoonflowerGladeScene' &&
-      (object instanceof Phaser.GameObjects.Rectangle ||
-        object instanceof Phaser.GameObjects.Ellipse)
+      object instanceof Phaser.GameObjects.Rectangle ||
+      object instanceof Phaser.GameObjects.Ellipse
     ) {
       const isOldArchPart =
         object.depth === 8 && Math.abs(object.x - 2680) <= 120 && Math.abs(object.y - 900) <= 110;
@@ -97,112 +42,6 @@ function hideLegacyGatewayObjects(scene: Phaser.Scene): void {
         object.setVisible(false);
       }
     }
-  }
-}
-
-function addFlowerCluster(scene: Phaser.Scene, x: number, y: number, depth: number): void {
-  markDetail(scene.add.circle(x - 12, y, 12, 0xf3a5c4, 1).setDepth(depth));
-  markDetail(scene.add.circle(x + 10, y + 3, 10, 0xc7a2df, 1).setDepth(depth));
-  markDetail(scene.add.circle(x, y - 8, 9, 0xffdf79, 1).setDepth(depth + 0.1));
-}
-
-function addGateway(scene: Phaser.Scene, gateway: GatewayDefinition): void {
-  const { x, y, label, direction } = gateway;
-  const arrow = direction === 'east' ? '→' : '←';
-  const signX = direction === 'east' ? x - 78 : x + 78;
-  const sparkleDirection = direction === 'east' ? 1 : -1;
-
-  // A pair of planted stone posts frames an open route instead of blocking it with a solid bar.
-  for (const yOffset of [-104, 104]) {
-    markDetail(
-      scene.add
-        .rectangle(x, y + yOffset, 42, 72, 0xb79a79, 1)
-        .setStrokeStyle(5, 0x8d725d, 0.95)
-        .setDepth(8.7),
-    );
-    markDetail(scene.add.ellipse(x, y + yOffset - 39, 58, 24, 0xd9c39e, 1).setDepth(8.8));
-    addFlowerCluster(scene, x, y + yOffset - 56, 9);
-
-    const hedgeY = y + yOffset + Math.sign(yOffset) * 76;
-    markDetail(scene.add.ellipse(x, hedgeY, 78, 94, 0x6da66f, 0.96).setDepth(7.8));
-    markDetail(
-      scene.add
-        .ellipse(
-          x + sparkleDirection * 14,
-          hedgeY + Math.sign(yOffset) * 28,
-          58,
-          66,
-          0x82b77a,
-          0.94,
-        )
-        .setDepth(7.9),
-    );
-  }
-
-  // Small threshold stones and sparkles make the direction of travel legible without requiring a button prompt.
-  for (const yOffset of [-44, 0, 44]) {
-    markDetail(scene.add.ellipse(x, y + yOffset, 32, 20, 0xe1cda5, 0.92).setDepth(3.1));
-  }
-  for (let index = 1; index <= 3; index += 1) {
-    const sparkleX = x + sparkleDirection * (30 + index * 28);
-    const sparkleY = y + (index - 2) * 25;
-    const sparkle = markDetail(scene.add.circle(sparkleX, sparkleY, 6 + index, 0xffef9c, 0.42));
-    sparkle.setDepth(9.2);
-    scene.tweens.add({
-      targets: sparkle,
-      alpha: 0.9,
-      scale: 1.35,
-      duration: 650 + index * 120,
-      yoyo: true,
-      repeat: -1,
-      ease: 'Sine.InOut',
-    });
-  }
-
-  if (label) {
-    const sign = markDetail(
-      scene.add
-        .text(signX, y - 154, `${arrow} ${label}`, {
-          color: '#5b465d',
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '17px',
-          fontStyle: 'bold',
-          backgroundColor: '#fff4d9f2',
-          padding: { x: 12, y: 7 },
-        })
-        .setOrigin(direction === 'east' ? 1 : 0, 0.5)
-        .setDepth(10.2),
-    );
-    sign.setStroke('#ffffff', 1);
-  }
-}
-
-function decorateGlade(scene: Phaser.Scene): void {
-  void scene;
-  // R3.5 deliberately leaves the east route visually open. Traversal remains owned by this
-  // manager, while the approved physical Sunbeam direction sign remains owned by Glade final
-  // presentation. Do not reintroduce a decorative gateway frame here.
-}
-
-function decorateMeadow(scene: Phaser.Scene): void {
-  drawPathNetwork(scene, RAINBOW_MEADOW_LAYOUT.structuralPaths);
-  const gateway = RAINBOW_MEADOW_LAYOUT.sunbeamGateway;
-  addGateway(scene, {
-    x: gateway.position.x,
-    y: gateway.position.y,
-    direction: gateway.direction,
-  });
-}
-
-function decorateScene(scene: Phaser.Scene): void {
-  hideLegacyGatewayObjects(scene);
-  switch (scene.scene.key) {
-    case 'MoonflowerGladeScene':
-      decorateGlade(scene);
-      break;
-    case 'RainbowMeadowScene':
-      decorateMeadow(scene);
-      break;
   }
 }
 
@@ -236,22 +75,13 @@ function transitionFromGlade(scene: Phaser.Scene): void {
   scene.scene.start('SunbeamVillageScene');
 }
 
-function transitionFromMeadow(scene: Phaser.Scene): void {
-  const meadowEntrance = SUNBEAM_VILLAGE_MAP.entrances.find(
-    (entrance) => entrance.id === 'rainbow-meadow',
-  );
-  if (meadowEntrance) {
-    setSunbeamVillagePlayerSpawn(meadowEntrance.approach);
-  }
-  saveLocationCheckpoint(getBrowserSaveService(), SUNBEAM_VILLAGE_LOCATION_ID);
-  scene.scene.start('SunbeamVillageScene');
-}
-
-function transitionFromMeadowToRaceHub(scene: Phaser.Scene): void {
-  saveLocationCheckpoint(getBrowserSaveService(), RAINBOW_RUN_HUB_LOCATION_ID);
-  scene.scene.start('RainbowRunEntryScene');
-}
-
+/**
+ * Legacy traversal compatibility retained only for Moonflower Glade.
+ *
+ * Rainbow Meadow completed its ownership migration in R6.5-WP19H4.11: its paths,
+ * gateway presentation and walk-through transitions are scene-owned and must not
+ * be reintroduced here.
+ */
 export class WorldTraversalPolishManager {
   private readonly transitionLocks = new Map<string, boolean>();
 
@@ -273,7 +103,7 @@ export class WorldTraversalPolishManager {
           .zone(-64, -64, 2, 2)
           .setName(WORLD_TRAVERSAL_POLISH_ANCHOR_NAME)
           .setVisible(false);
-        decorateScene(scene);
+        hideLegacyGatewayObjects(scene);
       }
 
       const player = findPlayer(scene);
@@ -281,45 +111,17 @@ export class WorldTraversalPolishManager {
         continue;
       }
 
-      const key = scene.scene.key;
-      let insideGateway = false;
-
-      if (key === 'MoonflowerGladeScene') {
-        const entrance = MOONFLOWER_GLADE_MAP.entrances.find(
-          (candidate) => candidate.id === 'sunbeam-village',
-        );
-        insideGateway = entrance ? isInsideGateway(player, entrance.position) : false;
-        if (insideGateway && !this.transitionLocks.get(key)) {
-          this.transitionLocks.set(key, true);
-          transitionFromGlade(scene);
-        }
-      } else if (key === 'RainbowMeadowScene') {
-        const sunbeamEntrance = RAINBOW_MEADOW_MAP.entrances.find(
-          (candidate) => candidate.id === 'sunbeam-village',
-        );
-        const raceHubEntrance = RAINBOW_MEADOW_MAP.hubFeatures.find(
-          (candidate) => candidate.id === 'rainbow-run-entrance',
-        );
-        const insideSunbeam = sunbeamEntrance
-          ? isInsideGateway(player, sunbeamEntrance.position)
-          : false;
-        const insideRaceHub = raceHubEntrance
-          ? isInsideGateway(player, raceHubEntrance.position)
-          : false;
-        insideGateway = insideSunbeam || insideRaceHub;
-
-        if (insideGateway && !this.transitionLocks.get(key)) {
-          this.transitionLocks.set(key, true);
-          if (insideRaceHub) {
-            transitionFromMeadowToRaceHub(scene);
-          } else {
-            transitionFromMeadow(scene);
-          }
-        }
+      const entrance = MOONFLOWER_GLADE_MAP.entrances.find(
+        (candidate) => candidate.id === 'sunbeam-village',
+      );
+      const insideGateway = entrance ? isInsideGateway(player, entrance.position) : false;
+      if (insideGateway && !this.transitionLocks.get(scene.scene.key)) {
+        this.transitionLocks.set(scene.scene.key, true);
+        transitionFromGlade(scene);
       }
 
       if (!insideGateway) {
-        this.transitionLocks.set(key, false);
+        this.transitionLocks.set(scene.scene.key, false);
       }
     }
   }
