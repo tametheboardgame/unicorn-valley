@@ -47,11 +47,10 @@ Exact-head MG-WP2 validation is running.
 
 Objective contracts now cover:
 
-- world/sandbox/legacy outcome policy;
+- world/sandbox/legacy outcome policy across every adventure-effect category;
 - Coral sandbox trail sequencing;
-- Firefly non-persistent practice results;
-- reward-free practice race summaries;
-- existing world persistence contracts remain in place.
+- existing world persistence contracts remain in place;
+- the closeout source audit confirms Firefly/racing sandbox branches bypass persistence and the simple games have no hidden write path.
 
 The repository performance budget remains a known baseline concern; MG-WP2 must not introduce an additional regression.
 
