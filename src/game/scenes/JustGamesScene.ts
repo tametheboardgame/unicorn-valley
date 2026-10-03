@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
+import { launchMiniGame } from '../minigames/MiniGameLauncher';
 import {
   getJustGamesDefinitions,
   type MiniGameDefinition,
@@ -537,7 +538,6 @@ export class JustGamesScene extends Phaser.Scene {
     this.renderDetails();
 
     try {
-      const { launchMiniGame } = await import('../minigames/MiniGameLauncher');
       const result = await launchMiniGame(this, {
         gameId: definition.id,
         source: 'just-games',
