@@ -1,4 +1,6 @@
 import Phaser from 'phaser';
+import type { UnicornAppearance } from '../player/UnicornAppearance';
+import { SUPPORTING_RESIDENT_ART_LAYOUT } from '../population/SupportingResidentArt';
 
 export const RAINBOW_DISC_COLOURS = [
   0xee6f73, 0xf3a556, 0xf3d465, 0x79bf78, 0x67b9dd, 0x7f82d7, 0xb575cc,
@@ -53,4 +55,37 @@ export function drawRainbowTarget(
     graphics.arc(x, y, radius, start, end, false);
     graphics.strokePath();
   });
+}
+
+
+export function resolveRainbowDiscHornCatchPoint(
+  sprite: Phaser.GameObjects.Sprite,
+  appearance: UnicornAppearance,
+): { x: number; y: number } {
+  const tipOffset =
+    appearance.hornStyle === 'star'
+      ? -82
+      : appearance.hornStyle === 'short'
+        ? -75
+        : appearance.hornStyle === 'crystal' || appearance.hornStyle === 'moon'
+          ? -85
+          : -88;
+  const textureX =
+    SUPPORTING_RESIDENT_ART_LAYOUT.drawX + 78 * SUPPORTING_RESIDENT_ART_LAYOUT.drawScale;
+  const textureY =
+    SUPPORTING_RESIDENT_ART_LAYOUT.drawY +
+    (tipOffset + 10) * SUPPORTING_RESIDENT_ART_LAYOUT.drawScale;
+  const originTextureX = SUPPORTING_RESIDENT_ART_LAYOUT.textureWidth * sprite.originX;
+  const originTextureY = SUPPORTING_RESIDENT_ART_LAYOUT.textureHeight * sprite.originY;
+  const localX =
+    (textureX - originTextureX) *
+    (sprite.displayWidth / SUPPORTING_RESIDENT_ART_LAYOUT.textureWidth);
+  const localY =
+    (textureY - originTextureY) *
+    (sprite.displayHeight / SUPPORTING_RESIDENT_ART_LAYOUT.textureHeight);
+
+  return {
+    x: sprite.x + (sprite.flipX ? -localX : localX),
+    y: sprite.y + localY,
+  };
 }
