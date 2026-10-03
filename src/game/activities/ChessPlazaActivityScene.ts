@@ -221,7 +221,11 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
 
     this.createRoundedButton(710, 638, 168, '💡 Hint', () => this.showHint());
     this.createRoundedButton(900, 638, 168, '↻ Restart', () => this.restartGame());
-    this.createRoundedButton(1090, 638, 188, '← Back to Village', () => this.leaveActivity());
+    this.createRoundedButton(1090, 638, 188, this.backLabel(), () => this.leaveActivity());
+  }
+
+  private backLabel(): string {
+    return this.miniGameSession?.source === 'just-games' ? '← Back to Games' : '← Back to Village';
   }
 
   private renderBoard(): void {
