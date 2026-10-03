@@ -254,6 +254,7 @@ export function ensureSceneRegistered(game: Phaser.Game, key: SceneKey): Promise
       if (!game.scene.keys[key]) {
         game.scene.add(key, SceneConstructor);
       }
+      registrations?.delete(key);
     })
     .catch((error: unknown) => {
       registrations?.delete(key);
