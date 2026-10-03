@@ -20,7 +20,10 @@ describe('MiniGameCatalogue', () => {
   });
 
   it('fails loudly when a future game duplicates a stable id', () => {
-    const duplicate = [MINI_GAME_CATALOGUE[0], MINI_GAME_CATALOGUE[0]] as readonly MiniGameDefinition[];
+    const duplicate = [
+      MINI_GAME_CATALOGUE[0],
+      MINI_GAME_CATALOGUE[0],
+    ] as readonly MiniGameDefinition[];
     expect(getMiniGameCatalogueIssues(duplicate)).toEqual(
       expect.arrayContaining([expect.objectContaining({ code: 'duplicate-id' })]),
     );
