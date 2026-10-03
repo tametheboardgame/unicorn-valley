@@ -5,6 +5,7 @@ import {
   CRYSTAL_BROOK_DISTRICTS,
   CRYSTAL_BROOK_LAYOUT,
   CRYSTAL_BROOK_MAP,
+  CRYSTAL_BROOK_MEADOW_WATER_EXIT,
   CRYSTAL_BROOK_PATH_PRESENTATION_ROUTE,
   CRYSTAL_BROOK_REFLECTION_INLET,
   CRYSTAL_BROOK_REFLECTION_POOL,
@@ -103,11 +104,15 @@ describe('Crystal Brook map', () => {
     ).toBe(true);
     expect(
       CRYSTAL_BROOK_WATERCOURSE.some(
-        ({ x, y }) =>
-          x === CRYSTAL_BROOK_LAYOUT.thresholds.rainbowMeadow.position.x &&
-          y === CRYSTAL_BROOK_LAYOUT.thresholds.rainbowMeadow.position.y,
+        ({ x, y }) => x === CRYSTAL_BROOK_MEADOW_WATER_EXIT.x && y === CRYSTAL_BROOK_MEADOW_WATER_EXIT.y,
       ),
     ).toBe(true);
+    expect(CRYSTAL_BROOK_MEADOW_WATER_EXIT.x).toBe(
+      CRYSTAL_BROOK_LAYOUT.thresholds.rainbowMeadow.position.x,
+    );
+    expect(CRYSTAL_BROOK_MEADOW_WATER_EXIT.y).toBeLessThan(
+      CRYSTAL_BROOK_LAYOUT.thresholds.rainbowMeadow.position.y - 100,
+    );
 
     for (const point of CRYSTAL_BROOK_WATERCOURSE) {
       expect(point.outerWidth).toBeGreaterThan(point.innerWidth);
@@ -119,12 +124,15 @@ describe('Crystal Brook map', () => {
     expect(CRYSTAL_BROOK_REFLECTION_INLET.points.at(-1)).toEqual(CRYSTAL_BROOK_REFLECTION_POOL);
   });
 
-  it('keeps the H6.2 presentation path visibly separate from the west Brook corridor', () => {
-    expect(CRYSTAL_BROOK_PATH_PRESENTATION_ROUTE[0].y).toBeGreaterThan(
-      CRYSTAL_BROOK_WATERCOURSE.at(-2)?.y ?? 0,
+  it('keeps the path on the cave approach while the Brook exits above it', () => {
+    expect(CRYSTAL_BROOK_PATH_PRESENTATION_ROUTE[0]).toEqual(
+      CRYSTAL_BROOK_LAYOUT.thresholds.rainbowMeadow.position,
     );
-    expect(CRYSTAL_BROOK_PATH_PRESENTATION_ROUTE[2].y).toBeGreaterThan(
-      CRYSTAL_BROOK_WATERCOURSE.at(-4)?.y ?? 0,
+    expect(CRYSTAL_BROOK_PATH_PRESENTATION_ROUTE[1]).toEqual(
+      CRYSTAL_BROOK_LAYOUT.thresholds.rainbowMeadow.approach,
+    );
+    expect(CRYSTAL_BROOK_MEADOW_WATER_EXIT.y).toBeLessThan(
+      CRYSTAL_BROOK_PATH_PRESENTATION_ROUTE[0].y,
     );
     expect(CRYSTAL_BROOK_WATERCOURSE.at(-2)?.outerWidth).toBeLessThanOrEqual(150);
   });
