@@ -36,8 +36,14 @@ jobs:
       - name: Build production bundle
         run: npm run build
 
-      - name: Measure performance budget
-        run: npm run perf:budget
+      - name: Measure performance baseline
+        run: |
+          set +e
+          npm run perf:budget
+          status=$?
+          echo "PERFORMANCE_BUDGET_EXIT_CODE=$status" >> "$GITHUB_ENV"
+          echo "H6.0 records the accepted current-main result even when the existing budget gate reports a failure."
+          exit 0
 
       - name: Start production preview
         run: |
