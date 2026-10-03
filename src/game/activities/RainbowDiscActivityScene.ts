@@ -108,7 +108,8 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
 
   public create(data: RainbowDiscActivitySceneData = {}): void {
     this.miniGameSession = readMiniGameSession(data);
-    this.returnScene = this.miniGameSession?.returnTarget.sceneKey ?? data.returnScene ?? 'RainbowMeadowScene';
+    this.returnScene =
+      this.miniGameSession?.returnTarget.sceneKey ?? data.returnScene ?? 'RainbowMeadowScene';
     this.mode =
       this.miniGameSession?.variantId === 'practice'
         ? 'practice'
