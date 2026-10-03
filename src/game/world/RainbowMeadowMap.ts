@@ -157,7 +157,7 @@ export const RAINBOW_MEADOW_LAYOUT = {
     approach: { x: 700, y: 1400 },
     field: { width: 860, height: 390 },
     captain: { x: 505, y: 1510 },
-    sign: { x: 560, y: 1110 },
+    sign: { x: 520, y: 1020 },
     players: [
       { id: 'captain', x: 505, y: 1510 },
       { id: 'player-a', x: 425, y: 1705 },
@@ -174,7 +174,7 @@ export const RAINBOW_MEADOW_LAYOUT = {
     practice: {
       centre: { x: 1230, y: 1650 },
       approach: { x: 1160, y: 1510 },
-      sign: { x: 1125, y: 1415 },
+      sign: { x: 1230, y: 1400 },
       throwLine: { x: 1160, y: 1650 },
       targets: [
         { id: 'easy', x: 1280, y: 1535, radius: 42 },
