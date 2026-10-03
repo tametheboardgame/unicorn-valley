@@ -40,7 +40,7 @@ interface MeadowDepthState {
   scene: Phaser.Scene;
   interactions: MeadowInteractionRuntime[];
   feedback: Phaser.GameObjects.Text;
-  persistent: Phaser.GameObjects.Container | null;
+  persistent: Phaser.GameObjects.GameObject[];
   signature: string;
 }
 
@@ -166,7 +166,7 @@ export class MeadowDepthWorldManager {
         .setScrollFactor(0)
         .setDepth(188)
         .setVisible(false),
-      persistent: null,
+      persistent: [],
       signature: '',
     };
     state.interactions = FIXED_INTERACTIONS.map((definition) =>
@@ -341,7 +341,9 @@ export class MeadowDepthWorldManager {
     }
 
     state.signature = signature;
-    state.persistent?.destroy(true);
+    for (const object of state.persistent) {
+      object.destroy();
+    }
     const objects: Phaser.GameObjects.GameObject[] = [];
     this.addWindmillVisual(state.scene, objects, this.story.isLookoutOpen());
     this.addFlowerCircleVisual(
@@ -351,10 +353,7 @@ export class MeadowDepthWorldManager {
     );
     this.addPetalPatchVisual(state.scene, objects);
     this.addButterflyParadeVisual(state.scene, objects);
-    state.persistent = state.scene.add
-      .container(0, 0, objects)
-      .setName('meadow-depth:persistent-state')
-      .setDepth(14);
+    state.persistent = objects;
   }
 
   private addWindmillVisual(
@@ -374,7 +373,7 @@ export class MeadowDepthWorldManager {
     const tower = scene.add
       .graphics()
       .setPosition(x, y)
-      .setDepth(7)
+      .setDepth(worldDepthForY(y + 126, 0.12))
       .setName('meadow-depth:windmill-landmark');
     tower.fillStyle(0xf1dca8, 1);
     tower.lineStyle(6, 0x8d684e, 0.96);
@@ -428,7 +427,7 @@ export class MeadowDepthWorldManager {
 
     const sails = scene.add
       .container(x, y - 58)
-      .setDepth(10)
+      .setDepth(worldDepthForY(y + 122, 0.52))
       .setName('meadow-depth:windmill-sails');
     for (const angle of [0, Math.PI / 2, Math.PI, (Math.PI * 3) / 2]) {
       const blade = scene.add.graphics();
@@ -460,15 +459,18 @@ export class MeadowDepthWorldManager {
     });
     objects.push(sails);
 
+    const signDepth = worldDepthForY(y + 104, 0.46);
     const signArm = scene.add
       .rectangle(x + 72, y + 44, 74, 9, 0x765442, 1)
       .setOrigin(0, 0.5)
-      .setDepth(11);
-    const signHanger = scene.add.rectangle(x + 130, y + 57, 5, 34, 0x765442, 1).setDepth(11);
+      .setDepth(signDepth);
+    const signHanger = scene.add
+      .rectangle(x + 130, y + 57, 5, 34, 0x765442, 1)
+      .setDepth(signDepth);
     const signBoard = scene.add
       .rectangle(x + 130, y + 84, 94, 36, 0xe7c78d, 1)
       .setStrokeStyle(4, 0x765442, 0.98)
-      .setDepth(11)
+      .setDepth(signDepth + 0.02)
       .setName('meadow-depth:windmill-lookout-sign');
     const signText = scene.add
       .text(x + 130, y + 84, 'LOOKOUT', {
@@ -478,7 +480,7 @@ export class MeadowDepthWorldManager {
         fontStyle: 'bold',
       })
       .setOrigin(0.5)
-      .setDepth(12)
+      .setDepth(signDepth + 0.04)
       .setName('meadow-depth:windmill-lookout-sign-text');
     objects.push(signArm, signHanger, signBoard, signText);
 
@@ -717,7 +719,9 @@ export class MeadowDepthWorldManager {
     for (const runtime of this.state.interactions) {
       runtime.container.destroy(true);
     }
-    this.state.persistent?.destroy(true);
+    for (const object of this.state.persistent) {
+      object.destroy();
+    }
     this.state.feedback.destroy();
     this.state = null;
   }
