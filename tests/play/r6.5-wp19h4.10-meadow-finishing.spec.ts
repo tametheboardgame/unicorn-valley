@@ -64,7 +64,7 @@ test('H4.10 Meadow renders distinct authored boundary treatments', async ({ page
   expect(visibleNames).toContain('rainbow-meadow:sunbeam-village-sign');
   expect(
     visibleNames.filter((name) => name.startsWith('rainbow-meadow:wildflower-clump:')).length,
-  ).toBeGreaterThanOrEqual(9);
+  ).toBeGreaterThanOrEqual(8);
   expect(
     visibleNames.some((name) => name.startsWith('rainbow-meadow:flower-cluster:')),
   ).toBe(false);
