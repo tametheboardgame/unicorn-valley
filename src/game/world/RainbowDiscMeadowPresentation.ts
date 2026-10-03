@@ -199,23 +199,43 @@ export function createRainbowDiscMeadowPresentation(scene: Phaser.Scene): void {
   practiceGraphics.lineStyle(5, 0xf4edc4, 0.72);
   practiceGraphics.lineBetween(
     practice.throwLine.x,
-    practice.throwLine.y - 105,
+    practice.throwLine.y - 78,
     practice.throwLine.x,
-    practice.throwLine.y + 105,
+    practice.throwLine.y + 78,
   );
+  practiceGraphics.lineStyle(3, 0xf4edc4, 0.48);
+  practiceGraphics.lineBetween(
+    practice.throwLine.x,
+    practice.targetBaseY,
+    practice.targets[practice.targets.length - 1].x + 48,
+    practice.targetBaseY,
+  );
+
   practice.targets.forEach((target, index) => {
     practiceGraphics.lineStyle(8, 0x7d5b44, 0.9);
-    practiceGraphics.lineBetween(target.x, target.y + target.radius, target.x, target.y + 78);
+    practiceGraphics.lineBetween(
+      target.x,
+      target.y + target.radius,
+      target.x,
+      practice.targetBaseY,
+    );
     drawRainbowTarget(practiceGraphics, target.x, target.y, target.radius, 7);
     practiceGraphics.fillStyle(0xfff1b5, 0.9);
     practiceGraphics.fillCircle(target.x, target.y, Math.max(6, target.radius * 0.18));
+
     scene.add
-      .text(target.x + 50, target.y - 8, index === 0 ? '1' : index === 1 ? '2' : '3', {
-        color: '#6a5577',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '12px',
-        fontStyle: 'bold',
-      })
+      .text(
+        target.x,
+        practice.targetBaseY + 22,
+        index === 0 ? '1 • EASY' : index === 1 ? '2 • MED' : '3 • HARD',
+        {
+          color: '#6a5577',
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '11px',
+          fontStyle: 'bold',
+          align: 'center',
+        },
+      )
       .setOrigin(0.5)
       .setDepth(practiceDepth + 0.03);
   });
