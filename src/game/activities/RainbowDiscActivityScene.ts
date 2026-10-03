@@ -281,7 +281,8 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
         fontSize: '12px',
         fontStyle: 'bold',
       })
-      .setOrigin(0, 0.5);
+      .setOrigin(0, 0.5)
+      .setName('rainbow-disc-activity:timing-difficulty');
 
     this.updateTimingSuccessZone();
   }
