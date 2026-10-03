@@ -24,7 +24,7 @@ function fakeSprite(flipX = false): Phaser.GameObjects.Sprite {
     displayHeight: 109,
     originX: 0.5,
     originY: 0.78,
-  } as Phaser.GameObjects.Sprite;
+  } as unknown as Phaser.GameObjects.Sprite;
 }
 
 describe('RainbowDiscArt horn catch geometry', () => {
