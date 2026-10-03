@@ -1,7 +1,8 @@
 import Phaser from 'phaser';
 import { createPipInteraction } from '../intro/PipIntro';
+import { launchRainbowDiscActivity } from '../scenes/RainbowDiscActivityRegistration';
 import { RainbowMeadowScene } from '../scenes/RainbowMeadowScene';
-import { RAINBOW_MEADOW_MAP } from '../world/RainbowMeadowMap';
+import { RAINBOW_MEADOW_LAYOUT, RAINBOW_MEADOW_MAP } from '../world/RainbowMeadowMap';
 import { setSunbeamVillagePlayerSpawn, SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
 import type { InteractionActionKind, InteractionTarget } from './InteractionTarget';
 import { MOONFLOWER_GLADE_INTERACTIONS } from './MoonflowerGladeInteractions';
@@ -102,6 +103,36 @@ function meadowTargets(scene: Phaser.Scene): InteractionTarget[] {
 
   return [
     callbackTarget(villageTarget, 'enter', () => meadowActivate?.call(scene, villageTarget)),
+    {
+      id: 'interaction:rainbow-disc',
+      label: 'Rainbow Disc',
+      actionLabel: 'Join the game',
+      actionKind: 'start',
+      activationMode: 'explicit',
+      position: RAINBOW_MEADOW_LAYOUT.rainbowDisc.approach,
+      approachPosition: RAINBOW_MEADOW_LAYOUT.rainbowDisc.approach,
+      interactionRadius: 230,
+      priority: 28,
+      result: {
+        type: 'callback',
+        activate: () => void launchRainbowDiscActivity(scene, 'match'),
+      },
+    },
+    {
+      id: 'interaction:rainbow-disc-practice',
+      label: 'Rainbow Disc Practice',
+      actionLabel: 'Practice throws',
+      actionKind: 'start',
+      activationMode: 'explicit',
+      position: RAINBOW_MEADOW_LAYOUT.rainbowDisc.practice.approach,
+      approachPosition: RAINBOW_MEADOW_LAYOUT.rainbowDisc.practice.approach,
+      interactionRadius: 210,
+      priority: 27,
+      result: {
+        type: 'callback',
+        activate: () => void launchRainbowDiscActivity(scene, 'practice'),
+      },
+    },
     {
       id: 'interaction:meadow-race-entrance',
       label: 'Rainbow Run Race Hub',
