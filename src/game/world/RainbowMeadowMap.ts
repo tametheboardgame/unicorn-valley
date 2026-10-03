@@ -170,7 +170,7 @@ export const RAINBOW_MEADOW_LAYOUT = {
     approach: { x: 700, y: 1400 },
     field: { width: 860, height: 390 },
     captain: { x: 505, y: 1510 },
-    sign: { x: 520, y: 1020 },
+    sign: { x: 520, y: 1090 },
     players: [
       { id: 'captain', x: 505, y: 1510 },
       { id: 'player-a', x: 425, y: 1705 },
@@ -345,6 +345,7 @@ export const RAINBOW_MEADOW_LAYOUT = {
     label: 'Sunbeam Village',
     position: { x: 120, y: 1050 },
     approach: { x: 330, y: 1050 },
+    sign: { x: 265, y: 915 },
     direction: 'west',
   },
   crystalBrookGateway: {
