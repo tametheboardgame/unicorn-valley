@@ -4,6 +4,7 @@ export const RACE_RETURN_SCENE_REGISTRY_KEY = 'race-return-scene';
 
 export type RaceReturnSceneKey =
   | 'RainbowRunEntryScene'
+  | 'CrystalBrookScene'
   | 'WhisperingWoodsScene'
   | 'StarlightBeachScene';
 
@@ -15,6 +16,7 @@ export function isRaceReturnSceneKey(value: unknown): value is RaceReturnSceneKe
   return (
     value === 'WhisperingWoodsScene' ||
     value === 'StarlightBeachScene' ||
+    value === 'CrystalBrookScene' ||
     value === 'RainbowRunEntryScene'
   );
 }
@@ -49,6 +51,9 @@ export function raceReturnLabel(sceneKey: RaceReturnSceneKey): string {
   }
   if (sceneKey === 'StarlightBeachScene') {
     return 'Starlight Beach';
+  }
+  if (sceneKey === 'CrystalBrookScene') {
+    return 'Crystal Brook';
   }
   return 'Race Hub';
 }
