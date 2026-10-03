@@ -219,7 +219,7 @@ test('H4.9 Rainbow Disc lawn is alive before interaction and returns cleanly aft
           const activity = await snapshotScene(page, 'RainbowDiscActivityScene');
           return activity.objects.some(
             ({ text, effectiveVisible }) =>
-              effectiveVisible && text?.includes(`Catch chain: ${expectedFilled}`) === true,
+              effectiveVisible && text?.includes(`Your chain: ${expectedFilled}`) === true,
           );
         })
         .toBe(true);
@@ -247,7 +247,7 @@ test('H4.9B practice range launches a five-throw target challenge', async ({ pag
   await waitForDiagnostics(page);
   await waitForActiveScene(page, 'RainbowMeadowScene');
 
-  await setMeadowPlayerPosition(page, 1160, 1510);
+  await setMeadowPlayerPosition(page, 1080, 1400);
   await expect
     .poll(async () => {
       const current = await snapshotScene(page, 'RainbowMeadowScene');
@@ -287,6 +287,18 @@ test('H4.9B practice range launches a five-throw target challenge', async ({ pag
         name === 'rainbow-disc-activity:practice-targets' && effectiveVisible,
     ),
   ).toBe(true);
+
+  const practiceRings = [0, 1, 2].map((index) =>
+    activityStart.objects.find(
+      ({ name, effectiveVisible }) =>
+        name === `rainbow-disc-activity:receiver-ring:${index}` && effectiveVisible,
+    ),
+  );
+  expect(practiceRings.every(Boolean)).toBe(true);
+  expect(new Set(practiceRings.map((ring) => Math.round(ring?.y ?? -1))).size).toBe(1);
+  expect(practiceRings.map((ring) => ring?.x ?? 0)).toEqual(
+    [...practiceRings.map((ring) => ring?.x ?? 0)].sort((a, b) => a - b),
+  );
   expect(
     activityStart.objects.find(
       ({ name, effectiveVisible }) => name === 'rainbow-disc-activity:disc' && effectiveVisible,
@@ -302,7 +314,7 @@ test('H4.9B practice range launches a five-throw target challenge', async ({ pag
 
     await page.mouse.move(disc.x, disc.y);
     await page.mouse.down();
-    await page.mouse.move(960, 370, { steps: 8 });
+    await page.mouse.move(850, 325, { steps: 8 });
     await page.mouse.up();
 
     if (throwIndex < 4) {
@@ -347,12 +359,40 @@ test('H4.9D defended lanes can turn over possession and trigger a defence phase'
   await waitForActiveScene(page, 'RainbowDiscActivityScene');
 
   const attack = await snapshotScene(page, 'RainbowDiscActivityScene');
-  expect(
-    attack.objects.filter(
+  const attackDefenders = attack.objects.filter(
+    ({ name, effectiveVisible }) =>
+      name.startsWith('rainbow-disc-activity:defender:') && effectiveVisible,
+  );
+  expect(attackDefenders.length).toBeGreaterThanOrEqual(2);
+
+  for (let index = 0; index < 3; index += 1) {
+    const receiver = attack.objects.find(
       ({ name, effectiveVisible }) =>
-        name.startsWith('rainbow-disc-activity:defender:') && effectiveVisible,
-    ).length,
-  ).toBeGreaterThanOrEqual(2);
+        name === `rainbow-disc-activity:receiver:${index}` && effectiveVisible,
+    );
+    const ring = attack.objects.find(
+      ({ name, effectiveVisible }) =>
+        name === `rainbow-disc-activity:receiver-ring:${index}` && effectiveVisible,
+    );
+    expect(receiver).toBeDefined();
+    expect(ring).toBeDefined();
+    expect(receiver?.x).toBeCloseTo(ring?.x ?? 0, 0);
+    expect(receiver?.y).toBeCloseTo(ring?.y ?? 0, 0);
+  }
+
+  for (const index of [0, 2]) {
+    const receiver = attack.objects.find(
+      ({ name, effectiveVisible }) =>
+        name === `rainbow-disc-activity:receiver:${index}` && effectiveVisible,
+    );
+    const defender = attack.objects.find(
+      ({ name, effectiveVisible }) =>
+        name === `rainbow-disc-activity:defender:${index}` && effectiveVisible,
+    );
+    expect(receiver).toBeDefined();
+    expect(defender).toBeDefined();
+    expect(Math.abs((receiver?.x ?? 0) - (defender?.x ?? 0))).toBeGreaterThanOrEqual(130);
+  }
 
   await dragDiscToReceiver(page, 0);
 
@@ -396,7 +436,7 @@ test('H4.9D practice difficulty tightens the green window and increases sweep sp
   await waitForDiagnostics(page);
   await waitForActiveScene(page, 'RainbowMeadowScene');
 
-  await setMeadowPlayerPosition(page, 1160, 1510);
+  await setMeadowPlayerPosition(page, 1080, 1400);
   await expect
     .poll(async () => {
       const meadow = await snapshotScene(page, 'RainbowMeadowScene');
