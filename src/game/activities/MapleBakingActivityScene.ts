@@ -1442,7 +1442,13 @@ export class MapleBakingActivityScene extends Phaser.Scene {
         id: 'result',
         actions:
           this.mode === 'repeatable'
-            ? [{ id: 'back', label: this.resultExitLabel(), onPress: () => this.leaveActivity(false) }]
+            ? [
+                {
+                  id: 'back',
+                  label: this.resultExitLabel(),
+                  onPress: () => this.leaveActivity(false),
+                },
+              ]
             : [{ id: 'back', label: '✓ Show Maple', onPress: () => this.leaveActivity(false) }],
       },
     ]);
