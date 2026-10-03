@@ -2,6 +2,8 @@ import Phaser from 'phaser';
 import { getFireflyLanternProgress } from './FireflyLanternActivity';
 import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { getBrowserSaveService } from '../save/browserSaveService';
+import { MINI_GAME_IDS } from '../minigames/MiniGameCatalogue';
+import { launchMiniGame } from '../minigames/MiniGameLauncher';
 import { rememberWorldReturnState } from '../world/WorldArrivalState';
 import { setWhisperingWoodsPlayerSpawn } from '../world/WhisperingWoodsMap';
 import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
@@ -170,7 +172,19 @@ export class FireflyLanternWorldManager {
     if (player) {
       rememberWorldReturnState('WhisperingWoodsScene', player, setWhisperingWoodsPlayerSpawn);
     }
-    scene.scene.start('FireflyLanternScene');
+    void launchMiniGame(scene, {
+      gameId: MINI_GAME_IDS.fireflyLantern,
+      source: 'world',
+      returnTarget: { sceneKey: 'WhisperingWoodsScene', mode: 'start' },
+      worldContext: {
+        locationId: 'whispering-woods',
+        interactionId: 'interaction:firefly-lantern',
+      },
+    }).then(({ status }) => {
+      if (status === 'launched') {
+        scene.scene.stop();
+      }
+    });
   }
 
   private clearState(): void {
