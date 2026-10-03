@@ -175,6 +175,9 @@ function isStoryReadingState(value: unknown): boolean {
     Number.isFinite(value.preferences.fontSize) &&
     typeof value.preferences.lineHeight === 'number' &&
     Number.isFinite(value.preferences.lineHeight) &&
+    (value.preferences.coverStyle === undefined ||
+      value.preferences.coverStyle === 'classic' ||
+      value.preferences.coverStyle === 'modern') &&
     (value.preferences.illustrationSetByStoryEditionKey === undefined ||
       isRecordOf(
         value.preferences.illustrationSetByStoryEditionKey,

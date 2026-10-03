@@ -2,6 +2,7 @@ export type StoryPublicationStatus = 'draft' | 'published' | 'hidden';
 export type StoryReadingMode = 'flowing' | 'paged-picture-book' | 'paged-prose';
 export type StoryIllustrationPlacement = 'inline' | 'full-width';
 export type StoryRightsStatus = 'original' | 'public-domain' | 'licensed' | 'unknown';
+export type StoryCoverStyle = 'classic' | 'modern';
 
 export interface StoryAssetReference {
   path: string;
@@ -77,6 +78,13 @@ export interface StoryEditionSummary {
   label: string;
 }
 
+export interface StoryCoverSetSummary {
+  id: StoryCoverStyle;
+  label: string;
+  coverPath: string;
+  coverAlt: string;
+}
+
 export interface StoryEditionManifest extends StoryEditionSummary {
   author: string;
   readingMode: StoryReadingMode;
@@ -122,6 +130,7 @@ export interface StoryCatalogueEntry {
   readingMode: StoryReadingMode;
   coverPath: string | null;
   coverAlt: string | null;
+  coverSets?: readonly StoryCoverSetSummary[];
   series: StorySeriesReference | null;
   tags: readonly string[];
   discovery: StoryDiscoveryMetadata;

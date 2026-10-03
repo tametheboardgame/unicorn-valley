@@ -10,6 +10,35 @@
     "path": "covers/cover.webp",
     "alt": "Richard Heighway's 1894 illustration for The Hare and the Tortoise."
   },
+  "coverSets": [
+    {
+      "id": "classic",
+      "label": "Classic Covers",
+      "cover": {
+        "path": "covers/cover.webp",
+        "alt": "Richard Heighway's 1894 illustration for The Hare and the Tortoise."
+      },
+      "rights": {
+        "status": "public-domain",
+        "source": "Richard Heighway illustrations from the 1894 Jacobs edition",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/Category:The_Fables_of_%C3%86sop_(Jacobs,_Heighway)/The_Hare_and_the_Tortoise",
+        "notes": "Source files are marked public domain on Wikimedia Commons. Heighway died in 1917."
+      }
+    },
+    {
+      "id": "modern",
+      "label": "Modern Covers",
+      "cover": {
+        "path": "illustrations/generated/challenge.webp",
+        "alt": "Modern Story House cover art showing the Hare challenging the Tortoise on the meadow race course."
+      },
+      "rights": {
+        "status": "original",
+        "source": "ChatGPT-generated artwork created for the Unicorn Valley Story House modern illustration set",
+        "notes": "Final SH1.3.1 modern illustration set approved 30 Sep 2026 and materialised through the approved Google Drive → WIF → GitHub Actions pipeline."
+      }
+    }
+  ],
   "series": {
     "id": "aesops-fables",
     "title": "Aesop's Fables",

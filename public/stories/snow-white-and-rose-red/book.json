@@ -8,6 +8,35 @@
     "path": "covers/cover.webp",
     "alt": "Otto Ubbelohde's 1909 illustration for Snow-White and Rose-Red."
   },
+  "coverSets": [
+    {
+      "id": "classic",
+      "label": "Classic Covers",
+      "cover": {
+        "path": "covers/cover.webp",
+        "alt": "Otto Ubbelohde's 1909 illustration for Snow-White and Rose-Red."
+      },
+      "rights": {
+        "status": "public-domain",
+        "source": "Otto Ubbelohde illustrations for Snow-White and Rose-Red, 1909",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/Category:Snow_White_and_Rose_Red",
+        "notes": "The selected Ubbelohde source files are identified as public domain on Wikimedia Commons. Ubbelohde died in 1922."
+      }
+    },
+    {
+      "id": "modern",
+      "label": "Modern Covers",
+      "cover": {
+        "path": "illustrations/generated/bear-at-cottage.webp",
+        "alt": "Modern Story House cover art for Snow-White and Rose-Red."
+      },
+      "rights": {
+        "status": "original",
+        "source": "ChatGPT-generated artwork created for the Unicorn Valley Story House modern illustration set",
+        "notes": "Generated for R6.5-WP19SH1.4.1 and materialised through the approved Google Drive → WIF → GitHub Actions pipeline."
+      }
+    }
+  ],
   "series": null,
   "tags": [
     "classic-retelling",

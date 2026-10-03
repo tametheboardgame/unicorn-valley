@@ -84,6 +84,7 @@ export function createDefaultSave(timestamp: string = new Date().toISOString()):
       preferences: {
         fontSize: 20,
         lineHeight: 1.7,
+        coverStyle: 'modern',
         illustrationSetByStoryEditionKey: {},
       },
       byStoryId: {},

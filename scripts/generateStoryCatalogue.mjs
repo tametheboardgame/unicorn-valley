@@ -346,6 +346,50 @@ async function loadStory(directoryEntry) {
     await fs.access(path.join(storyDirectory, manifest.cover.path));
   }
 
+  const coverSets = [];
+  if (manifest.coverSets !== undefined) {
+    if (!Array.isArray(manifest.coverSets) || manifest.coverSets.length === 0) {
+      throw new Error(
+        `Story catalogue rejected ${manifest.id}: coverSets must be a non-empty array.`,
+      );
+    }
+    const coverSetIds = new Set();
+    for (const coverSet of manifest.coverSets) {
+      if (!coverSet || typeof coverSet !== 'object') {
+        throw new Error(`Story catalogue rejected ${manifest.id}: cover set must be an object.`);
+      }
+      if (coverSet.id !== 'classic' && coverSet.id !== 'modern') {
+        throw new Error(
+          `Story catalogue rejected ${manifest.id}: cover set id must be classic or modern.`,
+        );
+      }
+      if (coverSetIds.has(coverSet.id)) {
+        throw new Error(
+          `Story catalogue rejected ${manifest.id}: duplicate cover set id "${coverSet.id}".`,
+        );
+      }
+      coverSetIds.add(coverSet.id);
+      assertString(coverSet.label, `${manifest.id}/${coverSet.id} cover set label`);
+      if (!coverSet.cover || typeof coverSet.cover !== 'object') {
+        throw new Error(
+          `Story catalogue rejected ${manifest.id}/${coverSet.id}: cover metadata is required.`,
+        );
+      }
+      assertSafeImagePath(coverSet.cover.path, `${manifest.id}/${coverSet.id} cover path`);
+      assertString(coverSet.cover.alt, `${manifest.id}/${coverSet.id} cover alt text`);
+      assertRightsReference(coverSet.rights, `${manifest.id}/${coverSet.id} cover rights`);
+      await fs.access(path.join(storyDirectory, coverSet.cover.path));
+      coverSets.push(coverSet);
+    }
+  } else if (manifest.cover) {
+    coverSets.push({
+      id: 'classic',
+      label: 'Classic Covers',
+      cover: manifest.cover,
+      rights: null,
+    });
+  }
+
   if (manifest.series !== undefined && manifest.series !== null) {
     assertString(manifest.series.id, `${manifest.id} series id`);
     assertString(manifest.series.title, `${manifest.id} series title`);
@@ -401,10 +445,10 @@ async function loadStory(directoryEntry) {
     );
   }
 
-  return { manifest, editions, defaultEdition };
+  return { manifest, editions, defaultEdition, coverSets };
 }
 
-function catalogueEntry({ manifest, editions, defaultEdition }) {
+function catalogueEntry({ manifest, editions, defaultEdition, coverSets }) {
   return {
     id: manifest.id,
     title: manifest.title,
@@ -414,6 +458,12 @@ function catalogueEntry({ manifest, editions, defaultEdition }) {
     readingMode: defaultEdition.readingMode,
     coverPath: manifest.cover ? `/stories/${manifest.id}/${manifest.cover.path}` : null,
     coverAlt: manifest.cover?.alt ?? null,
+    coverSets: coverSets.map(({ id, label, cover }) => ({
+      id,
+      label,
+      coverPath: `/stories/${manifest.id}/${cover.path}`,
+      coverAlt: cover.alt,
+    })),
     series: manifest.series ?? null,
     tags: manifest.tags,
     discovery: manifest.discovery,

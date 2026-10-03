@@ -89,6 +89,7 @@ export function reconcileSaveGame(save: SaveGame): SaveGame {
           1.4,
           Math.min(2, Math.round(save.storyReading.preferences.lineHeight * 10) / 10),
         ),
+        coverStyle: save.storyReading.preferences.coverStyle === 'classic' ? 'classic' : 'modern',
         illustrationSetByStoryEditionKey: {
           ...(save.storyReading.preferences.illustrationSetByStoryEditionKey ?? {}),
         },

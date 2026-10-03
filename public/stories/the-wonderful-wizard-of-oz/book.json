@@ -8,6 +8,35 @@
     "path": "covers/cover.webp",
     "alt": "W. W. Denslow's original 1900 cover for The Wonderful Wizard of Oz."
   },
+  "coverSets": [
+    {
+      "id": "classic",
+      "label": "Classic Covers",
+      "cover": {
+        "path": "covers/cover.webp",
+        "alt": "W. W. Denslow's original 1900 cover for The Wonderful Wizard of Oz."
+      },
+      "rights": {
+        "status": "public-domain",
+        "source": "Original 1900 illustrations by W. W. Denslow",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/Category:Illustrations_of_The_Wonderful_Wizard_of_Oz_by_William_Wallace_Denslow",
+        "notes": "The selected Denslow source files are identified as public domain on Wikimedia Commons."
+      }
+    },
+    {
+      "id": "modern",
+      "label": "Modern Covers",
+      "cover": {
+        "path": "illustrations/generated/emerald-city.webp",
+        "alt": "Modern Story House cover art for The Wonderful Wizard of Oz."
+      },
+      "rights": {
+        "status": "original",
+        "source": "ChatGPT-generated artwork created for the Unicorn Valley Story House modern illustration set",
+        "notes": "Generated for R6.5-WP19SH1.5.1 and materialised through the approved Google Drive → WIF → GitHub Actions pipeline."
+      }
+    }
+  ],
   "series": null,
   "tags": ["classic-retelling", "fantasy", "adventure", "oz", "friendship", "magic", "illustrated"],
   "publication": {

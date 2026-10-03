@@ -95,6 +95,7 @@ export interface ShopState {
 export interface ReaderPreferencesState {
   fontSize: number;
   lineHeight: number;
+  coverStyle?: 'classic' | 'modern';
   illustrationSetByStoryEditionKey?: Record<string, string>;
 }
 

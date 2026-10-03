@@ -8,6 +8,35 @@
     "path": "covers/cover.webp",
     "alt": "Edmund Dulac's illustration for The Princess and the Pea."
   },
+  "coverSets": [
+    {
+      "id": "classic",
+      "label": "Classic Covers",
+      "cover": {
+        "path": "covers/cover.webp",
+        "alt": "Edmund Dulac's illustration for The Princess and the Pea."
+      },
+      "rights": {
+        "status": "public-domain",
+        "source": "Historical illustrations by Alfred Walter Bayes, Edmund Dulac and H. J. Ford",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/Category:The_Princess_and_the_Pea_in_art",
+        "notes": "The selected historical source files are identified as public domain on Wikimedia Commons."
+      }
+    },
+    {
+      "id": "modern",
+      "label": "Modern Covers",
+      "cover": {
+        "path": "illustrations/generated/mattress-tower.webp",
+        "alt": "Modern Story House cover art for The Princess and the Pea."
+      },
+      "rights": {
+        "status": "original",
+        "source": "ChatGPT-generated artwork created for the Unicorn Valley Story House modern illustration set",
+        "notes": "Generated for R6.5-WP19SH1.3.4 and materialised through the approved Google Drive → WIF → GitHub Actions pipeline."
+      }
+    }
+  ],
   "series": null,
   "tags": ["classic-retelling", "fairy-tale", "princess", "pea", "palace", "humour", "illustrated"],
   "publication": {

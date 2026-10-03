@@ -10,6 +10,35 @@
     "path": "covers/cover.webp",
     "alt": "Richard Heighway's illustration for The Town Mouse and the Country Mouse."
   },
+  "coverSets": [
+    {
+      "id": "classic",
+      "label": "Classic Covers",
+      "cover": {
+        "path": "covers/cover.webp",
+        "alt": "Richard Heighway's illustration for The Town Mouse and the Country Mouse."
+      },
+      "rights": {
+        "status": "public-domain",
+        "source": "Richard Heighway illustrations from The Fables of Aesop",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/Category:The_Fables_of_%C3%86sop_(Jacobs,_Heighway)/The_Town_Mouse_and_the_Country_Mouse",
+        "notes": "Wikimedia Commons marks these Heighway illustrations public domain. Heighway died in 1917."
+      }
+    },
+    {
+      "id": "modern",
+      "label": "Modern Covers",
+      "cover": {
+        "path": "illustrations/generated/peaceful-ending.webp",
+        "alt": "Modern Story House cover art showing the Town Mouse and Country Mouse sharing a peaceful country meal."
+      },
+      "rights": {
+        "status": "original",
+        "source": "ChatGPT-generated artwork created for the Unicorn Valley Story House modern illustration set",
+        "notes": "Generated for R6.5-WP19SH1.3.2 and materialised through the approved Google Drive → WIF → GitHub Actions pipeline."
+      }
+    }
+  ],
   "series": {
     "id": "aesops-fables",
     "title": "Aesop's Fables",
