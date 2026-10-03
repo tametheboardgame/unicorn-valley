@@ -56,15 +56,17 @@ The repository performance budget remains a known baseline concern; MG-WP2 must 
 
 ## Human gate
 
-MG-WP2 is Amber.
+MG-WP2 human gate: **approved for merge 2026-10-03**.
 
-Before merge, the human regression pass should confirm the normal world versions still behave as before:
+David explicitly authorised merge and progression to MG-WP3.
 
-- Wobbly Cake world charge/refund/payout and Maple quest flow;
-- Coral world notebook progression;
-- Firefly world bests/milestones/unlocks;
-- race world records/rewards/returns;
-- Rainbow Disc world appearance.
+Exact-head evidence at approval:
+
+- Tier 0 static/architecture: passed;
+- Tier 1 unit contracts: passed;
+- targeted browser smoke: still running;
+- production build/static smoke: passed;
+- performance budget: red at 562.1 KiB first-playable gzip and 113 JS chunks versus current main at 561.8 KiB and 113 chunks. The +0.3 KiB startup delta was accepted for merge.
 
 The visible end-to-end sandbox/Just Games human test belongs to MG-WP3 because the Just Games launcher does not exist yet.
 
