@@ -9,27 +9,27 @@ function createHedge(
   const horizontal = hedge.width >= hedge.height;
   const length = horizontal ? hedge.width : hedge.height;
   const count = Math.max(3, Math.ceil(length / 58));
-  const graphics = scene.add
-    .graphics()
-    .setPosition(hedge.x, hedge.y)
-    .setName(`rainbow-meadow:boundary:hedge:${hedge.id}`)
-    .setDepth(worldDepthForY(hedge.y + hedge.height / 2, 0.2));
 
   for (let index = 0; index < count; index += 1) {
     const progress = count <= 1 ? 0.5 : index / (count - 1);
     const primaryOffset = (progress - 0.5) * Math.max(0, length - 48);
     const wobble = index % 2 === 0 ? -7 : 7;
-    const localX = horizontal ? primaryOffset : wobble;
-    const localY = horizontal ? wobble : primaryOffset;
+    const worldX = hedge.x + (horizontal ? primaryOffset : wobble);
+    const worldY = hedge.y + (horizontal ? wobble : primaryOffset);
+    const bush = scene.add
+      .graphics()
+      .setPosition(worldX, worldY)
+      .setName(`rainbow-meadow:boundary:hedge:${hedge.id}:bush:${index}`)
+      .setDepth(worldDepthForY(worldY, 0.12));
 
-    graphics.fillStyle(index % 3 === 0 ? 0x5f9860 : 0x6eaa69, 1);
-    graphics.fillEllipse(localX, localY, 72, 58);
-    graphics.fillStyle(0x86ba73, 0.78);
-    graphics.fillEllipse(localX - 8, localY - 8, 44, 30);
+    bush.fillStyle(index % 3 === 0 ? 0x5f9860 : 0x6eaa69, 1);
+    bush.fillEllipse(0, 0, 72, 58);
+    bush.fillStyle(0x86ba73, 0.78);
+    bush.fillEllipse(-8, -8, 44, 30);
 
     if (index % 3 === 1) {
-      graphics.fillStyle(index % 2 === 0 ? 0xffd47e : 0xf2a4c3, 0.9);
-      graphics.fillCircle(localX + 14, localY - 17, 5);
+      bush.fillStyle(index % 2 === 0 ? 0xffd47e : 0xf2a4c3, 0.9);
+      bush.fillCircle(14, -17, 5);
     }
   }
 }
