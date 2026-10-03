@@ -379,7 +379,8 @@ export class R65RaceExpansionWorldManager {
       returnScene: originSceneKey,
       worldContext: {
         locationId: originSceneKey,
-        interactionId: mode === 'cup' ? 'interaction:race-entry:rainbow-cup' : 'interaction:race-entry',
+        interactionId:
+          mode === 'cup' ? 'interaction:race-entry:rainbow-cup' : 'interaction:race-entry',
         questContext: mode,
       },
     });
