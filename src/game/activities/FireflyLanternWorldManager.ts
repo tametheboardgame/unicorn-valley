@@ -180,10 +180,6 @@ export class FireflyLanternWorldManager {
         locationId: 'whispering-woods',
         interactionId: 'interaction:firefly-lantern',
       },
-    }).then(({ status }) => {
-      if (status === 'launched') {
-        scene.scene.stop();
-      }
     });
   }
 
