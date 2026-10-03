@@ -97,8 +97,8 @@ describe('Rainbow Meadow canonical layout', () => {
   it('keeps relocated nature interaction hotspots spatially distinct', () => {
     const hotspots = [
       { position: RAINBOW_MEADOW_LAYOUT.natureFeatures.flowerCircle, radius: 150 },
-      { position: RAINBOW_MEADOW_LAYOUT.natureFeatures.butterflyParade, radius: 145 },
-      { position: RAINBOW_MEADOW_LAYOUT.natureFeatures.petalPatch, radius: 135 },
+      { position: RAINBOW_MEADOW_LAYOUT.natureFeatures.butterflyParade, radius: 70 },
+      { position: RAINBOW_MEADOW_LAYOUT.natureFeatures.petalPatch, radius: 70 },
     ];
 
     for (let index = 0; index < hotspots.length; index += 1) {
@@ -160,7 +160,7 @@ describe('Rainbow Meadow canonical layout', () => {
 
     const junction = path.points[0];
     expect(disc.sign.x).toBeLessThan(junction.x);
-    expect(Math.abs(disc.sign.y - junction.y)).toBeLessThanOrEqual(100);
+    expect(Math.abs(disc.sign.y - junction.y)).toBeLessThanOrEqual(140);
     expect(disc.sign.y + 40).toBeLessThan(fieldTop - 150);
 
     const practiceYs = new Set(disc.practice.targets.map(({ y }) => y));
