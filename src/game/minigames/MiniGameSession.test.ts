@@ -56,4 +56,31 @@ describe('MiniGameSession', () => {
   it('returns null for data without a valid mini-game session', () => {
     expect(readMiniGameSession({ miniGameSession: { source: 'world' } })).toBeNull();
   });
+
+  it('rejects persisted session data with an unknown mini-game id', () => {
+    expect(
+      readMiniGameSession({
+        miniGameSession: {
+          gameId: 'unknown-game',
+          source: 'world',
+          sideEffectPolicy: 'world',
+          returnTarget: { sceneKey: 'RainbowMeadowScene', mode: 'resume' },
+        },
+      }),
+    ).toBeNull();
+  });
+
+  it('rejects session data whose side-effect policy disagrees with its launch source', () => {
+    expect(
+      readMiniGameSession({
+        miniGameSession: {
+          gameId: MINI_GAME_IDS.sunbeamChess,
+          source: 'just-games',
+          sideEffectPolicy: 'world',
+          returnTarget: { sceneKey: 'TitleScene', mode: 'start' },
+        },
+      }),
+    ).toBeNull();
+  });
+
 });
