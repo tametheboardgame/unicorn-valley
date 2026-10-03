@@ -2,7 +2,10 @@ import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { parseUnicornAppearance } from '../player/UnicornAppearance';
 import { createUnicornAppearanceTexture } from '../player/UnicornAppearanceRenderer';
-import { createResidentAppearanceSprite } from '../population/SupportingResidentArt';
+import {
+  createResidentAppearanceSprite,
+  SUPPORTING_RESIDENT_ART_LAYOUT,
+} from '../population/SupportingResidentArt';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { UI_COLOURS, UI_FONT } from '../ui/uiTheme';
 import {
@@ -36,7 +39,7 @@ const PRACTICE_THROW_COUNT = 5;
 const PRACTICE_TARGET_BASE_Y = 470;
 const PRACTICE_TARGETS = [
   {
-    x: 650,
+    x: 700,
     y: 325,
     radius: 78,
     points: 1,
@@ -45,7 +48,7 @@ const PRACTICE_TARGETS = [
     label: 'Easy',
   },
   {
-    x: 850,
+    x: 890,
     y: 325,
     radius: 58,
     points: 2,
@@ -54,7 +57,7 @@ const PRACTICE_TARGETS = [
     label: 'Medium',
   },
   {
-    x: 1050,
+    x: 1080,
     y: 325,
     radius: 42,
     points: 3,
@@ -65,7 +68,13 @@ const PRACTICE_TARGETS = [
 ] as const;
 const OPEN_LANE_BY_PASS = [1, 2, 0] as const;
 const ACTIVITY_THROWER_SIZE = { width: 122, height: 86 } as const;
-const ACTIVITY_RECEIVER_SCALE = 0.72;
+const ACTIVITY_RESIDENT_SCALE = 0.62;
+const ACTIVITY_RESIDENT_BODY_ORIGIN_X =
+  (SUPPORTING_RESIDENT_ART_LAYOUT.drawX - 6 * SUPPORTING_RESIDENT_ART_LAYOUT.drawScale) /
+  SUPPORTING_RESIDENT_ART_LAYOUT.textureWidth;
+const ACTIVITY_RESIDENT_BODY_ORIGIN_Y =
+  (SUPPORTING_RESIDENT_ART_LAYOUT.drawY + 7 * SUPPORTING_RESIDENT_ART_LAYOUT.drawScale) /
+  SUPPORTING_RESIDENT_ART_LAYOUT.textureHeight;
 const TIMING_TRACK_LEFT = 462;
 const TIMING_TRACK_WIDTH = 350;
 
@@ -123,10 +132,14 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
 
     this.input.on('pointermove', this.handlePointerMove, this);
     this.input.on('pointerup', this.handlePointerUp, this);
-    this.input.keyboard?.on('keydown-UP', this.selectPreviousReceiver, this);
-    this.input.keyboard?.on('keydown-DOWN', this.selectNextReceiver, this);
-    this.input.keyboard?.on('keydown-W', this.selectPreviousReceiver, this);
-    this.input.keyboard?.on('keydown-S', this.selectNextReceiver, this);
+    this.input.keyboard?.on('keydown-UP', this.selectPreviousMatchLane, this);
+    this.input.keyboard?.on('keydown-DOWN', this.selectNextMatchLane, this);
+    this.input.keyboard?.on('keydown-W', this.selectPreviousMatchLane, this);
+    this.input.keyboard?.on('keydown-S', this.selectNextMatchLane, this);
+    this.input.keyboard?.on('keydown-LEFT', this.selectPreviousPracticeTarget, this);
+    this.input.keyboard?.on('keydown-RIGHT', this.selectNextPracticeTarget, this);
+    this.input.keyboard?.on('keydown-A', this.selectPreviousPracticeTarget, this);
+    this.input.keyboard?.on('keydown-D', this.selectNextPracticeTarget, this);
     this.input.keyboard?.on('keydown-SPACE', this.keyboardThrow, this);
     this.input.keyboard?.on('keydown-ENTER', this.keyboardThrow, this);
     this.input.keyboard?.on('keydown-ESC', this.leaveActivity, this);
@@ -134,10 +147,14 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.input.off('pointermove', this.handlePointerMove, this);
       this.input.off('pointerup', this.handlePointerUp, this);
-      this.input.keyboard?.off('keydown-UP', this.selectPreviousReceiver, this);
-      this.input.keyboard?.off('keydown-DOWN', this.selectNextReceiver, this);
-      this.input.keyboard?.off('keydown-W', this.selectPreviousReceiver, this);
-      this.input.keyboard?.off('keydown-S', this.selectNextReceiver, this);
+      this.input.keyboard?.off('keydown-UP', this.selectPreviousMatchLane, this);
+      this.input.keyboard?.off('keydown-DOWN', this.selectNextMatchLane, this);
+      this.input.keyboard?.off('keydown-W', this.selectPreviousMatchLane, this);
+      this.input.keyboard?.off('keydown-S', this.selectNextMatchLane, this);
+      this.input.keyboard?.off('keydown-LEFT', this.selectPreviousPracticeTarget, this);
+      this.input.keyboard?.off('keydown-RIGHT', this.selectNextPracticeTarget, this);
+      this.input.keyboard?.off('keydown-A', this.selectPreviousPracticeTarget, this);
+      this.input.keyboard?.off('keydown-D', this.selectNextPracticeTarget, this);
       this.input.keyboard?.off('keydown-SPACE', this.keyboardThrow, this);
       this.input.keyboard?.off('keydown-ENTER', this.keyboardThrow, this);
       this.input.keyboard?.off('keydown-ESC', this.leaveActivity, this);
@@ -195,7 +212,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
         GAME_WIDTH / 2,
         101,
         this.mode === 'practice'
-          ? 'Five throws. Smaller rainbow targets are worth more — and their timing window is faster and tighter.'
+          ? 'Five throws. Use ←/→ to choose a target. Smaller rings are worth more, faster and tighter.'
           : 'Build a three-catch chain. Read the defenders, pick the open lane and protect the disc.',
         {
           color: UI_COLOURS.softInk,
@@ -368,8 +385,8 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
         appearance,
       )
         .setPosition(targetX, receiverY)
-        .setOrigin(0.5)
-        .setScale(ACTIVITY_RECEIVER_SCALE)
+        .setOrigin(ACTIVITY_RESIDENT_BODY_ORIGIN_X, ACTIVITY_RESIDENT_BODY_ORIGIN_Y)
+        .setScale(ACTIVITY_RESIDENT_SCALE)
         .setInteractive({ useHandCursor: true });
       receiver.on('pointerdown', () => this.selectReceiver(index));
       this.receiverSprites.push(receiver);
@@ -409,8 +426,8 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
           defenderAppearance,
         )
           .setPosition(defenderX, defenderY)
-          .setOrigin(0.5)
-          .setScale(0.54)
+          .setOrigin(ACTIVITY_RESIDENT_BODY_ORIGIN_X, ACTIVITY_RESIDENT_BODY_ORIGIN_Y)
+          .setScale(ACTIVITY_RESIDENT_SCALE)
           .setFlipX(true);
         this.playLayer?.add([defenderHalo, defender]);
       }
@@ -465,8 +482,8 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       RAINBOW_DISC_PLAYER_APPEARANCES[4],
     )
       .setPosition(opponentThrowerX, 370)
-      .setOrigin(0.5)
-      .setScale(0.65)
+      .setOrigin(ACTIVITY_RESIDENT_BODY_ORIGIN_X, ACTIVITY_RESIDENT_BODY_ORIGIN_Y)
+      .setScale(ACTIVITY_RESIDENT_SCALE)
       .setFlipX(false);
     this.playLayer?.add(opponentThrower);
 
@@ -480,8 +497,8 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
         appearance,
       )
         .setPosition(opponentReceiverX, receiverY)
-        .setOrigin(0.5)
-        .setScale(ACTIVITY_RECEIVER_SCALE)
+        .setOrigin(ACTIVITY_RESIDENT_BODY_ORIGIN_X, ACTIVITY_RESIDENT_BODY_ORIGIN_Y)
+        .setScale(ACTIVITY_RESIDENT_SCALE)
         .setInteractive({ useHandCursor: true });
       attacker.on('pointerdown', () => this.resolveDefenceChoice(index));
 
@@ -902,6 +919,34 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       }
     });
     return nearest;
+  }
+
+  private selectPreviousMatchLane(): void {
+    if (this.mode === 'practice') {
+      return;
+    }
+    this.selectPreviousReceiver();
+  }
+
+  private selectNextMatchLane(): void {
+    if (this.mode === 'practice') {
+      return;
+    }
+    this.selectNextReceiver();
+  }
+
+  private selectPreviousPracticeTarget(): void {
+    if (this.mode !== 'practice') {
+      return;
+    }
+    this.selectPreviousReceiver();
+  }
+
+  private selectNextPracticeTarget(): void {
+    if (this.mode !== 'practice') {
+      return;
+    }
+    this.selectNextReceiver();
   }
 
   private selectPreviousReceiver(): void {
