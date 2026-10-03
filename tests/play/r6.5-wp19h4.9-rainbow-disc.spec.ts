@@ -323,8 +323,9 @@ test('H4.9B practice range launches a five-throw target challenge', async ({ pag
   await waitForActiveScene(page, 'RainbowMeadowScene');
 });
 
-
-test('H4.9D defended lanes can turn over possession and trigger a defence phase', async ({ page }) => {
+test('H4.9D defended lanes can turn over possession and trigger a defence phase', async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.addInitScript(() => window.localStorage.clear());
   await page.goto('/?scene=meadow&diagnostics=1');
@@ -435,7 +436,7 @@ test('H4.9D practice difficulty tightens the green window and increases sweep sp
   )?.text;
   expect(hardZone).toBeDefined();
   expect(hardLabel).toContain('Hard');
-  expect((hardZone?.displayWidth ?? 999)).toBeLessThan(easyZone?.displayWidth ?? 0);
+  expect(hardZone?.displayWidth ?? 999).toBeLessThan(easyZone?.displayWidth ?? 0);
 
   const speedFrom = (value: string | null | undefined): number =>
     Number(value?.match(/([0-9.]+) speed/)?.[1] ?? '0');
