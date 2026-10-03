@@ -175,6 +175,20 @@ export const SCENE_MANIFEST = [
     async () => (await import('../activities/RainbowDiscActivityScene')).RainbowDiscActivityScene,
   ),
   runtime(
+    'ChessPlazaActivityScene',
+    'activity',
+    'on-demand',
+    'feature',
+    async () => (await import('../activities/ChessPlazaActivityScene')).ChessPlazaActivityScene,
+  ),
+  runtime(
+    'PondLeapActivityScene',
+    'activity',
+    'on-demand',
+    'feature',
+    async () => (await import('../activities/PondLeapActivityScene')).PondLeapActivityScene,
+  ),
+  runtime(
     'ExplorationHudOverlayScene',
     'hud',
     'on-demand',
@@ -193,6 +207,12 @@ const SCENE_BY_KEY = new Map<SceneKey, SceneManifestEntry>(
   SCENE_MANIFEST.map((entry) => [entry.key, entry] as const),
 );
 
+const RUNTIME_REGISTRATIONS = new WeakMap<Phaser.Game, Map<SceneKey, Promise<void>>>();
+
+export function isSceneKey(value: string): value is SceneKey {
+  return SCENE_BY_KEY.has(value as SceneKey);
+}
+
 export function getSceneManifestEntry(key: SceneKey): SceneManifestEntry {
   const entry = SCENE_BY_KEY.get(key);
   if (!entry) {
@@ -205,4 +225,41 @@ export function getStartupSceneKeys(): StartupSceneKey[] {
   return SCENE_MANIFEST.flatMap((entry) =>
     entry.loadBoundary === 'startup' ? [entry.key as StartupSceneKey] : [],
   );
+}
+
+export function ensureSceneRegistered(game: Phaser.Game, key: SceneKey): Promise<void> {
+  if (game.scene.keys[key]) {
+    return Promise.resolve();
+  }
+
+  const entry = getSceneManifestEntry(key);
+  if (entry.loadBoundary === 'startup') {
+    return Promise.reject(new Error(`Startup scene is not registered: ${key}`));
+  }
+
+  let registrations = RUNTIME_REGISTRATIONS.get(game);
+  if (!registrations) {
+    registrations = new Map<SceneKey, Promise<void>>();
+    RUNTIME_REGISTRATIONS.set(game, registrations);
+  }
+
+  const existing = registrations.get(key);
+  if (existing) {
+    return existing;
+  }
+
+  const registration = entry
+    .load()
+    .then((SceneConstructor) => {
+      if (!game.scene.keys[key]) {
+        game.scene.add(key, SceneConstructor);
+      }
+    })
+    .catch((error: unknown) => {
+      registrations?.delete(key);
+      throw error;
+    });
+
+  registrations.set(key, registration);
+  return registration;
 }
