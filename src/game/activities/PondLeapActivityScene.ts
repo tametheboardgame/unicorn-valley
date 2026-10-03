@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
-import { UI_COLOURS, UI_FONT, createUiShadow } from '../ui/uiTheme';
+import { UI_COLOURS, UI_FONT } from '../ui/uiTheme';
 
 interface PondLeapActivitySceneData {
   returnScene?: string;
@@ -86,8 +86,6 @@ export class PondLeapActivityScene extends Phaser.Scene {
 
   private createBackdrop(): void {
     this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x5d8f76, 1);
-    createUiShadow(this, GAME_WIDTH / 2, GAME_HEIGHT / 2 + 10, 1210, 654, 1, 0.26);
-
     const shell = this.add.graphics();
     shell.fillStyle(0xfff9e9, 1);
     shell.fillRoundedRect(35, 30, 1210, 654, 30);
