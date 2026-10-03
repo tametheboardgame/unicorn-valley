@@ -37,7 +37,6 @@ import { CoreNpcPresenceService } from '../world/CoreNpcPresenceService';
 import { createRainbowDiscMeadowPresentation } from '../world/RainbowDiscMeadowPresentation';
 import { createRainbowMeadowBoundaryPresentation } from '../world/RainbowMeadowBoundaryPresentation';
 import { resolveRainbowMeadowWalkThroughDestination } from '../world/RainbowMeadowTraversal';
-import { createRainbowMeadowTraversalPresentation } from '../world/RainbowMeadowTraversalPresentation';
 import { RAINBOW_RUN_HUB_LOCATION_ID } from '../world/RainbowRunHubMap';
 import { worldDepthForY } from '../world/WorldDepth';
 
@@ -474,7 +473,13 @@ export class RainbowMeadowScene extends Phaser.Scene {
         .setDepth(1);
     }
 
-    createRainbowMeadowTraversalPresentation(this);
+    void import('../world/RainbowMeadowTraversalPresentation').then(
+      ({ createRainbowMeadowTraversalPresentation }) => {
+        if (this.scene.isActive()) {
+          createRainbowMeadowTraversalPresentation(this);
+        }
+      },
+    );
     this.createPond();
     this.createGroves();
     createRainbowMeadowBoundaryPresentation(this);
