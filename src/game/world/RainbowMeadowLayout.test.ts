@@ -513,8 +513,30 @@ describe('H4.10 Meadow boundary readability', () => {
 
 describe('H4.10 Meadow finishing details', () => {
   it('owns physical wayfinding positions for Sunbeam Village and Rainbow Disc', () => {
-    expect(RAINBOW_MEADOW_LAYOUT.sunbeamGateway.sign).toEqual({ x: 265, y: 915 });
-    expect(RAINBOW_MEADOW_LAYOUT.rainbowDisc.sign.y).toBeGreaterThanOrEqual(1080);
+    expect(RAINBOW_MEADOW_LAYOUT.sunbeamGateway.sign).toEqual({ x: 350, y: 850 });
+    expect(RAINBOW_MEADOW_LAYOUT.rainbowDisc.sign.y).toBeGreaterThanOrEqual(1160);
+  });
+
+  it('keeps the Bouncy Flower Patch and decorative clumps clear of the windmill spur', () => {
+    const spur = RAINBOW_MEADOW_LAYOUT.structuralPaths.find(({ id }) => id === 'windmill-spur');
+    expect(spur).toBeDefined();
+    if (!spur) return;
+
+    const clearanceFromSpurPoints = (point: { x: number; y: number }): number =>
+      Math.min(
+        ...spur.points.map((pathPoint) =>
+          Math.hypot(point.x - pathPoint.x, point.y - pathPoint.y),
+        ),
+      );
+
+    expect(clearanceFromSpurPoints(RAINBOW_MEADOW_LAYOUT.natureFeatures.petalPatch)).toBeGreaterThan(
+      150,
+    );
+    expect(
+      RAINBOW_MEADOW_LAYOUT.scenery.flowerClusters.every(
+        (cluster) => clearanceFromSpurPoints(cluster) > 100,
+      ),
+    ).toBe(true);
   });
 
   it('keeps the windmill sails in front of the north hedge and a player at the windmill centre', () => {
