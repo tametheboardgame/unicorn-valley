@@ -647,11 +647,33 @@ export class StoryReaderOverlay {
           const selectedCoverStyle = preferredCover?.id ?? 'classic';
           cover.dataset.coverStyle = selectedCoverStyle;
           if (selectedCoverPath) {
-            const image = document.createElement('img');
-            image.src = selectedCoverPath;
-            image.alt = selectedCoverAlt;
-            image.loading = 'lazy';
-            cover.append(image);
+            const useDualFocusCover =
+              story.id === 'the-town-mouse-and-the-country-mouse' &&
+              selectedCoverStyle === 'modern';
+
+            if (useDualFocusCover) {
+              cover.classList.add('is-dual-focus');
+              const townMouseCrop = document.createElement('img');
+              townMouseCrop.className = 'story-library-cover-focus is-town-mouse';
+              townMouseCrop.src = selectedCoverPath;
+              townMouseCrop.alt = selectedCoverAlt;
+              townMouseCrop.loading = 'lazy';
+
+              const countryMouseCrop = document.createElement('img');
+              countryMouseCrop.className = 'story-library-cover-focus is-country-mouse';
+              countryMouseCrop.src = selectedCoverPath;
+              countryMouseCrop.alt = '';
+              countryMouseCrop.loading = 'lazy';
+
+              cover.append(townMouseCrop, countryMouseCrop);
+            } else {
+              const image = document.createElement('img');
+              image.src = selectedCoverPath;
+              image.alt = selectedCoverAlt;
+              image.loading = 'lazy';
+              cover.append(image);
+            }
+
             if (selectedCoverStyle === 'modern') {
               const coverTitle = document.createElement('span');
               coverTitle.className = 'story-library-cover-title';

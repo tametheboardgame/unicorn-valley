@@ -1665,6 +1665,36 @@ canvas {
   background: #e7eef1;
 }
 
+.story-library-cover.is-dual-focus {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+  background: #d9c8ad;
+}
+
+.story-library-cover.is-dual-focus .story-library-cover-focus {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  object-fit: cover;
+}
+
+.story-library-cover.is-dual-focus .story-library-cover-focus.is-town-mouse {
+  object-position: 34% center;
+}
+
+.story-library-cover.is-dual-focus .story-library-cover-focus.is-country-mouse {
+  object-position: 65% center;
+}
+
+.story-library-cover.is-dual-focus .story-library-cover-focus + .story-library-cover-focus {
+  border-left: 1px solid rgb(255 255 255 / 42%);
+}
+
+.story-library-cover.is-dual-focus .story-library-cover-title {
+  z-index: 2;
+}
+
 .story-library-cover-title {
   position: absolute;
   right: 6px;
