@@ -360,17 +360,21 @@ export class CrystalBrookScene extends Phaser.Scene {
 
     const path = this.add.graphics().setName('crystal-brook:main-path').setDepth(2.86);
     const mainRoute = CRYSTAL_BROOK_PATH_PRESENTATION_ROUTE;
-    path.lineStyle(148, 0xc8b586, 0.34);
-    path.beginPath();
-    path.moveTo(mainRoute[0].x, mainRoute[0].y);
-    for (const point of mainRoute.slice(1)) {
-      path.lineTo(point.x, point.y);
-    }
-    path.strokePath();
-    path.lineStyle(122, 0xe6d3a7, 0.96);
-    path.strokePath();
-    path.lineStyle(72, 0xf6e9c7, 0.98);
-    path.strokePath();
+    const drawPathLayer = (width: number, colour: number, alpha: number): void => {
+      path.lineStyle(width, colour, alpha);
+      path.beginPath();
+      path.moveTo(mainRoute[0].x, mainRoute[0].y);
+      for (const point of mainRoute.slice(1)) {
+        path.lineTo(point.x, point.y);
+      }
+      path.strokePath();
+      path.fillStyle(colour, alpha);
+      for (const point of mainRoute) {
+        path.fillCircle(point.x, point.y, width / 2);
+      }
+    };
+    drawPathLayer(128, 0xd7c18f, 1);
+    drawPathLayer(108, 0xf0dfb2, 1);
 
     this.createWater();
     this.createSteppingStones();
