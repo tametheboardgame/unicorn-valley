@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "1QyxmGJuBRw6JhAhL-8stj2_BxdmAXv0R"
+  },
+  "expectedSourceName": "princess-goblin-old-lady-upstairs-v01.png",
+  "destination": "public/stories/the-princess-and-the-goblin/illustrations/generated/old-lady-upstairs.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1000,
+    "quality": 88
+  },
+  "revision": 1
+}

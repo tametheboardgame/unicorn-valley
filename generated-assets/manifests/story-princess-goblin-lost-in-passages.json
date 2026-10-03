@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "12hGhWTaEH1UwSaanU76Iu-hZ-CL336Mg"
+  },
+  "expectedSourceName": "princess-goblin-lost-in-passages-v01.png",
+  "destination": "public/stories/the-princess-and-the-goblin/illustrations/generated/lost-in-passages.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1000,
+    "quality": 88
+  },
+  "revision": 1
+}

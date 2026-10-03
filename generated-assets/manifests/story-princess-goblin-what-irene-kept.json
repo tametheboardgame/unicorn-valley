@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "1AAeElwGu3uKwAOJDj_AxOjQlL-sxqBMA"
+  },
+  "expectedSourceName": "princess-goblin-what-irene-kept-v01.png",
+  "destination": "public/stories/the-princess-and-the-goblin/illustrations/generated/what-irene-kept.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1000,
+    "quality": 88
+  },
+  "revision": 1
+}

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "1y0kGJabpTT-tjIFyGUM459D7Id_jQ2L8"
+  },
+  "expectedSourceName": "princess-goblin-king-papa-v01.png",
+  "destination": "public/stories/the-princess-and-the-goblin/illustrations/generated/king-papa.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1000,
+    "quality": 88
+  },
+  "revision": 1
+}

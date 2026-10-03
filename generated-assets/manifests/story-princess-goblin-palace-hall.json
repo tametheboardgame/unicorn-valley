@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "1rtrlTNpnZQfrEs2W8lvtKrhPVnO0lWZn"
+  },
+  "expectedSourceName": "princess-goblin-palace-hall-v01.png",
+  "destination": "public/stories/the-princess-and-the-goblin/illustrations/generated/goblin-palace.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1000,
+    "quality": 88
+  },
+  "revision": 1
+}
