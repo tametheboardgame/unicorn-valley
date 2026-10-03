@@ -440,10 +440,10 @@ export const SUNBEAM_VILLAGE_LAYOUT = {
       {
         id: 'east-green',
         x: 2690,
-        y: 800,
+        y: 690,
         width: 198,
         height: 80,
-        collision: { x: 2690, y: 793, width: 198, height: 102 },
+        collision: { x: 2690, y: 683, width: 198, height: 102 },
         palette: [0xf2a0b6, 0xeacb66, 0xa8b7e8],
       },
     ],
