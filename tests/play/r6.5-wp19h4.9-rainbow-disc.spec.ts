@@ -218,7 +218,6 @@ test('H4.9 Rainbow Disc lawn is alive before interaction and returns cleanly aft
 });
 
 
-
 test('H4.9B practice range launches a five-throw target challenge', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.addInitScript(() => window.localStorage.clear());
