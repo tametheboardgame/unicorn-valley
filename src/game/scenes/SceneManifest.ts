@@ -1,23 +1,26 @@
 import type Phaser from 'phaser';
 import type { SceneCategory, SceneLoadBoundary } from './SceneCompositionContract';
+import type { SceneKey } from './SceneKeys';
+export { isSceneKey } from './SceneKeys';
+export type { SceneKey } from './SceneKeys';
 
 export type SceneConstructor = new () => Phaser.Scene;
 export type SceneRegistrationOwner = 'game-config' | 'bootstrap' | 'feature';
 
-interface SceneManifestBase<Key extends string = string> {
+interface SceneManifestBase<Key extends SceneKey = SceneKey> {
   key: Key;
   category: SceneCategory;
   loadBoundary: SceneLoadBoundary;
   registrationOwner: SceneRegistrationOwner;
 }
 
-export interface StartupSceneManifestEntry<Key extends string = string>
+export interface StartupSceneManifestEntry<Key extends SceneKey = SceneKey>
   extends SceneManifestBase<Key> {
   loadBoundary: 'startup';
   registrationOwner: 'game-config';
 }
 
-export interface RuntimeSceneManifestEntry<Key extends string = string>
+export interface RuntimeSceneManifestEntry<Key extends SceneKey = SceneKey>
   extends SceneManifestBase<Key> {
   loadBoundary: 'runtime-eager' | 'on-demand';
   registrationOwner: 'bootstrap' | 'feature';
@@ -26,7 +29,7 @@ export interface RuntimeSceneManifestEntry<Key extends string = string>
 
 export type SceneManifestEntry = StartupSceneManifestEntry | RuntimeSceneManifestEntry;
 
-function startup<const Key extends string>(
+function startup<const Key extends SceneKey>(
   key: Key,
   category: SceneCategory,
 ): StartupSceneManifestEntry<Key> {
@@ -38,7 +41,7 @@ function startup<const Key extends string>(
   };
 }
 
-function runtime<const Key extends string>(
+function runtime<const Key extends SceneKey>(
   key: Key,
   category: SceneCategory,
   loadBoundary: RuntimeSceneManifestEntry['loadBoundary'],
@@ -75,6 +78,13 @@ export const SCENE_MANIFEST = [
   startup('DoorwayStubScene', 'utility'),
   startup('DialogueTestScene', 'diagnostic'),
   startup('UnicornCreatorScene', 'onboarding'),
+  runtime(
+    'JustGamesScene',
+    'modal',
+    'on-demand',
+    'feature',
+    async () => (await import('./JustGamesScene')).JustGamesScene,
+  ),
   runtime(
     'InventoryScene',
     'modal',
@@ -197,7 +207,6 @@ export const SCENE_MANIFEST = [
   ),
 ] as const satisfies readonly SceneManifestEntry[];
 
-export type SceneKey = (typeof SCENE_MANIFEST)[number]['key'];
 export type StartupSceneKey = Extract<
   (typeof SCENE_MANIFEST)[number],
   { loadBoundary: 'startup' }
@@ -208,10 +217,6 @@ const SCENE_BY_KEY = new Map<SceneKey, SceneManifestEntry>(
 );
 
 const RUNTIME_REGISTRATIONS = new WeakMap<Phaser.Game, Map<SceneKey, Promise<void>>>();
-
-export function isSceneKey(value: string): value is SceneKey {
-  return SCENE_BY_KEY.has(value as SceneKey);
-}
 
 export function getSceneManifestEntry(key: SceneKey): SceneManifestEntry {
   const entry = SCENE_BY_KEY.get(key);

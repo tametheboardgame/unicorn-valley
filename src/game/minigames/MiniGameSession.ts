@@ -1,4 +1,4 @@
-import { isSceneKey, type SceneKey } from '../scenes/SceneManifest';
+import { isSceneKey, type SceneKey } from '../scenes/SceneKeys';
 import {
   getMiniGameDefinition,
   isMiniGameId,

@@ -312,7 +312,7 @@ export class MapleBakingActivityScene extends Phaser.Scene {
       GAME_HEIGHT - 54,
       220,
       48,
-      '← Back to Bakery',
+      this.exitLabel(),
       () => this.leaveActivity(true),
       undefined,
       3,
@@ -1664,7 +1664,7 @@ export class MapleBakingActivityScene extends Phaser.Scene {
   private portraitExitGroup(): { id: string; actions: PortraitModalAction[] } {
     return {
       id: 'exit',
-      actions: [{ id: 'back', label: '← Back to Bakery', onPress: () => this.leaveActivity(true) }],
+      actions: [{ id: 'back', label: this.exitLabel(), onPress: () => this.leaveActivity(true) }],
     };
   }
 
@@ -1727,6 +1727,10 @@ export class MapleBakingActivityScene extends Phaser.Scene {
         }
       }
     }
+  }
+
+  private exitLabel(): string {
+    return this.miniGameSession?.source === 'just-games' ? '← Back to Games' : '← Back to Bakery';
   }
 
   private isSandboxSession(): boolean {

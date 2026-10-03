@@ -1,5 +1,5 @@
 import type Phaser from 'phaser';
-import { ensureSceneRegistered, isSceneKey, type SceneKey } from '../scenes/SceneManifest';
+import { isSceneKey, type SceneKey } from '../scenes/SceneKeys';
 import { getMiniGameDefinition, type MiniGameId } from './MiniGameCatalogue';
 import {
   createMiniGameSession,
@@ -69,6 +69,7 @@ export async function launchMiniGame(
 
   pending.add(request.gameId);
   try {
+    const { ensureSceneRegistered } = await import('../scenes/SceneManifest');
     await ensureSceneRegistered(scene.game, definition.sceneKey);
     if (!scene.scene.isActive()) {
       return { status: 'caller-inactive', session };

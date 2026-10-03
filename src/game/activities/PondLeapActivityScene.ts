@@ -337,7 +337,7 @@ export class PondLeapActivityScene extends Phaser.Scene {
       775,
       550,
       220,
-      'Back to Meadow',
+      this.resultBackLabel(),
       () => this.leaveActivity(),
       'back-to-meadow',
       false,
@@ -442,6 +442,10 @@ export class PondLeapActivityScene extends Phaser.Scene {
     const start = PADS[0] ?? { x: 190, y: 395 };
     this.frog?.setPosition(start.x, start.y - 22);
     this.syncRunPresentation();
+  }
+
+  private resultBackLabel(): string {
+    return this.miniGameSession?.source === 'just-games' ? 'Back to Games' : 'Back to Meadow';
   }
 
   private createRoundedButton(

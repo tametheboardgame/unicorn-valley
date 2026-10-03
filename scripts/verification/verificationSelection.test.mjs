@@ -40,7 +40,15 @@ test('mini-game platform changes select mini-game unit and browser ownership', (
   assert.equal(plan.unitMode, 'selected');
   assert.ok(plan.unitFilters.includes('src/game/minigames'));
   assert.deepEqual(plan.browserGroups, ['mini-games']);
+  assert.ok(plan.browserTests.includes('tests/play/mg-wp3-just-games.spec.ts'));
   assert.ok(plan.browserTests.includes('tests/play/r6.5-wp14-repeatable-activities.spec.ts'));
+});
+
+test('Just Games scene changes select both world-navigation and mini-game contracts', () => {
+  const plan = buildVerificationSelection(['src/game/scenes/JustGamesScene.ts']);
+  assert.deepEqual(plan.owners, ['mini-games', 'world-navigation']);
+  assert.ok(plan.browserGroups.includes('mini-games'));
+  assert.ok(plan.browserTests.includes('tests/play/mg-wp3-just-games.spec.ts'));
 });
 
 test('direct Playwright changes select the changed contract rather than a hard-coded WP bucket', () => {
