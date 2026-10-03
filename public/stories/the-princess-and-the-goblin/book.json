@@ -52,42 +52,18 @@
           "source": "Unicorn Valley Story House edition"
         },
         "originalPublicationYear": 1872,
-        "curatorNotes": "Twelve reader sections preserve Irene, Curdie, the mysterious grandmother, the silver thread, the goblin plot and the flooding of the underground kingdom while making the Victorian prose more accessible."
+        "curatorNotes": "Twelve reader sections preserve Irene, Curdie, the mysterious grandmother, the silver thread, the goblin plot and the flooding of the underground kingdom while making the Victorian prose more accessible. R6.5-WP19SH1.5.3 adds a separately selectable 15-image generated Modern Illustrations set while preserving Jessie Willcox Smith as Classic Illustrations."
       },
       "chapters": [
         {
           "id": "princess-irene",
           "title": "Princess Irene",
-          "path": "chapters/01.md",
-          "illustrations": [
-            {
-              "id": "smith-lost-in-the-house",
-              "blockId": "lost-in-the-passages",
-              "path": "illustrations/lost-in-the-house.webp",
-              "alt": "Jessie Willcox Smith's illustration of Princess Irene lost in the old house.",
-              "placement": "full-width",
-              "width": 936,
-              "height": 1375,
-              "caption": "Illustration by Jessie Willcox Smith, 1920."
-            }
-          ]
+          "path": "chapters/01.md"
         },
         {
           "id": "the-old-lady-upstairs",
           "title": "The Old Lady Upstairs",
-          "path": "chapters/02.md",
-          "illustrations": [
-            {
-              "id": "smith-pigeons",
-              "blockId": "the-pigeons",
-              "path": "illustrations/pigeons.webp",
-              "alt": "Jessie Willcox Smith's illustration of Irene and the white pigeons.",
-              "placement": "full-width",
-              "width": 933,
-              "height": 1378,
-              "caption": "Illustration by Jessie Willcox Smith, 1920."
-            }
-          ]
+          "path": "chapters/02.md"
         },
         {
           "id": "curdie-the-miner",
@@ -97,70 +73,22 @@
         {
           "id": "beneath-the-mountain",
           "title": "Beneath the Mountain",
-          "path": "chapters/04.md",
-          "illustrations": [
-            {
-              "id": "smith-goblins",
-              "blockId": "goblins-in-the-dark",
-              "path": "illustrations/goblins.webp",
-              "alt": "Jessie Willcox Smith's illustration of goblins beneath the mountain.",
-              "placement": "full-width",
-              "width": 930,
-              "height": 1386,
-              "caption": "Illustration by Jessie Willcox Smith, 1920."
-            }
-          ]
+          "path": "chapters/04.md"
         },
         {
           "id": "king-papa",
           "title": "King-Papa",
-          "path": "chapters/05.md",
-          "illustrations": [
-            {
-              "id": "smith-king",
-              "blockId": "the-kings-arrival",
-              "path": "illustrations/king-papa.webp",
-              "alt": "Jessie Willcox Smith's illustration of Princess Irene greeting her father the King.",
-              "placement": "full-width",
-              "width": 926,
-              "height": 1381,
-              "caption": "Illustration by Jessie Willcox Smith, 1920."
-            }
-          ]
+          "path": "chapters/05.md"
         },
         {
           "id": "the-silver-thread",
           "title": "The Silver Thread",
-          "path": "chapters/06.md",
-          "illustrations": [
-            {
-              "id": "smith-grandmother",
-              "blockId": "the-thread",
-              "path": "illustrations/grandmother.webp",
-              "alt": "Jessie Willcox Smith's illustration of Irene with her mysterious great-great-grandmother.",
-              "placement": "full-width",
-              "width": 936,
-              "height": 1378,
-              "caption": "Illustration by Jessie Willcox Smith, 1920."
-            }
-          ]
+          "path": "chapters/06.md"
         },
         {
           "id": "curdies-clue",
           "title": "Curdie's Clue",
-          "path": "chapters/07.md",
-          "illustrations": [
-            {
-              "id": "smith-curdie-torch",
-              "blockId": "following-the-goblins",
-              "path": "illustrations/curdie-torch.webp",
-              "alt": "Jessie Willcox Smith's illustration of Curdie exploring the goblin tunnels.",
-              "placement": "full-width",
-              "width": 936,
-              "height": 1383,
-              "caption": "Illustration by Jessie Willcox Smith, 1920."
-            }
-          ]
+          "path": "chapters/07.md"
         },
         {
           "id": "the-goblin-plan",
@@ -175,41 +103,373 @@
         {
           "id": "the-rescue",
           "title": "The Rescue",
-          "path": "chapters/10.md",
-          "illustrations": [
-            {
-              "id": "smith-curdie-follows",
-              "blockId": "curdie-follows-irene",
-              "path": "illustrations/curdie-follows.webp",
-              "alt": "Jessie Willcox Smith's illustration of Curdie following Irene underground.",
-              "placement": "full-width",
-              "width": 936,
-              "height": 1379,
-              "caption": "Illustration by Jessie Willcox Smith, 1920."
-            }
-          ]
+          "path": "chapters/10.md"
         },
         {
           "id": "the-goblins-attack",
           "title": "The Goblins Attack",
-          "path": "chapters/11.md",
-          "illustrations": [
-            {
-              "id": "smith-safe-at-home",
-              "blockId": "curdies-guide",
-              "path": "illustrations/safe-at-home.webp",
-              "alt": "Jessie Willcox Smith's illustration of Princess Irene safe with Curdie's mother.",
-              "placement": "full-width",
-              "width": 936,
-              "height": 1382,
-              "caption": "Illustration by Jessie Willcox Smith, 1920."
-            }
-          ]
+          "path": "chapters/11.md"
         },
         {
           "id": "water-under-the-mountain",
           "title": "Water Under the Mountain",
           "path": "chapters/12.md"
+        }
+      ],
+      "defaultIllustrationSetId": "modern",
+      "illustrationSets": [
+        {
+          "id": "classic",
+          "label": "Classic Illustrations",
+          "rights": {
+            "status": "public-domain",
+            "source": "Jessie Willcox Smith illustrations from the 1920 David McKay edition",
+            "sourceUrl": "https://www.gutenberg.org/ebooks/34339",
+            "notes": "The illustrated 1920 edition is available through Project Gutenberg. Jessie Willcox Smith died in 1935, so her artwork is also out of copyright in the UK."
+          },
+          "chapters": [
+            {
+              "chapterId": "princess-irene",
+              "illustrations": [
+                {
+                  "id": "smith-lost-in-the-house",
+                  "blockId": "lost-in-the-passages",
+                  "path": "illustrations/lost-in-the-house.webp",
+                  "alt": "Jessie Willcox Smith's illustration of Princess Irene lost in the old house.",
+                  "placement": "full-width",
+                  "width": 936,
+                  "height": 1375,
+                  "caption": "Illustration by Jessie Willcox Smith, 1920."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-old-lady-upstairs",
+              "illustrations": [
+                {
+                  "id": "smith-pigeons",
+                  "blockId": "the-pigeons",
+                  "path": "illustrations/pigeons.webp",
+                  "alt": "Jessie Willcox Smith's illustration of Irene and the white pigeons.",
+                  "placement": "full-width",
+                  "width": 933,
+                  "height": 1378,
+                  "caption": "Illustration by Jessie Willcox Smith, 1920."
+                }
+              ]
+            },
+            {
+              "chapterId": "beneath-the-mountain",
+              "illustrations": [
+                {
+                  "id": "smith-goblins",
+                  "blockId": "goblins-in-the-dark",
+                  "path": "illustrations/goblins.webp",
+                  "alt": "Jessie Willcox Smith's illustration of goblins beneath the mountain.",
+                  "placement": "full-width",
+                  "width": 930,
+                  "height": 1386,
+                  "caption": "Illustration by Jessie Willcox Smith, 1920."
+                }
+              ]
+            },
+            {
+              "chapterId": "king-papa",
+              "illustrations": [
+                {
+                  "id": "smith-king",
+                  "blockId": "the-kings-arrival",
+                  "path": "illustrations/king-papa.webp",
+                  "alt": "Jessie Willcox Smith's illustration of Princess Irene greeting her father the King.",
+                  "placement": "full-width",
+                  "width": 926,
+                  "height": 1381,
+                  "caption": "Illustration by Jessie Willcox Smith, 1920."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-silver-thread",
+              "illustrations": [
+                {
+                  "id": "smith-grandmother",
+                  "blockId": "the-thread",
+                  "path": "illustrations/grandmother.webp",
+                  "alt": "Jessie Willcox Smith's illustration of Irene with her mysterious great-great-grandmother.",
+                  "placement": "full-width",
+                  "width": 936,
+                  "height": 1378,
+                  "caption": "Illustration by Jessie Willcox Smith, 1920."
+                }
+              ]
+            },
+            {
+              "chapterId": "curdies-clue",
+              "illustrations": [
+                {
+                  "id": "smith-curdie-torch",
+                  "blockId": "following-the-goblins",
+                  "path": "illustrations/curdie-torch.webp",
+                  "alt": "Jessie Willcox Smith's illustration of Curdie exploring the goblin tunnels.",
+                  "placement": "full-width",
+                  "width": 936,
+                  "height": 1383,
+                  "caption": "Illustration by Jessie Willcox Smith, 1920."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-rescue",
+              "illustrations": [
+                {
+                  "id": "smith-curdie-follows",
+                  "blockId": "curdie-follows-irene",
+                  "path": "illustrations/curdie-follows.webp",
+                  "alt": "Jessie Willcox Smith's illustration of Curdie following Irene underground.",
+                  "placement": "full-width",
+                  "width": 936,
+                  "height": 1379,
+                  "caption": "Illustration by Jessie Willcox Smith, 1920."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-goblins-attack",
+              "illustrations": [
+                {
+                  "id": "smith-safe-at-home",
+                  "blockId": "curdies-guide",
+                  "path": "illustrations/safe-at-home.webp",
+                  "alt": "Jessie Willcox Smith's illustration of Princess Irene safe with Curdie's mother.",
+                  "placement": "full-width",
+                  "width": 936,
+                  "height": 1382,
+                  "caption": "Illustration by Jessie Willcox Smith, 1920."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "modern",
+          "label": "Modern Illustrations",
+          "rights": {
+            "status": "original",
+            "source": "ChatGPT-generated artwork created for the Unicorn Valley Story House modern illustration set",
+            "notes": "Generated for R6.5-WP19SH1.5.3 and materialised through the approved Google Drive → WIF → GitHub Actions pipeline."
+          },
+          "chapters": [
+            {
+              "chapterId": "princess-irene",
+              "illustrations": [
+                {
+                  "id": "modern-lost-in-passages",
+                  "blockId": "lost-in-the-passages",
+                  "path": "illustrations/generated/lost-in-passages.webp",
+                  "alt": "Princess Irene follows a mysterious warm light through the old upper passages of the mountain house.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-old-lady-upstairs",
+              "illustrations": [
+                {
+                  "id": "modern-old-lady-upstairs",
+                  "blockId": "a-great-great-grandmother",
+                  "path": "illustrations/generated/old-lady-upstairs.webp",
+                  "alt": "Irene discovers her mysterious white-haired great-great-grandmother spinning in the hidden tower room.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "curdie-the-miner",
+              "illustrations": [
+                {
+                  "id": "modern-curdie-sings",
+                  "blockId": "curdies-rhyme",
+                  "path": "illustrations/generated/curdie-sings.webp",
+                  "alt": "Curdie sings a ridiculous miner's rhyme on the mountainside while goblins recoil and Irene and Lootie watch.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "beneath-the-mountain",
+              "illustrations": [
+                {
+                  "id": "modern-goblin-palace",
+                  "blockId": "goblins-in-the-dark",
+                  "path": "illustrations/generated/goblin-palace.webp",
+                  "alt": "Curdie secretly observes the immense mineral-lit palace hall of the goblins and their royal family.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "king-papa",
+              "illustrations": [
+                {
+                  "id": "modern-king-papa",
+                  "blockId": "the-kings-arrival",
+                  "path": "illustrations/generated/king-papa.webp",
+                  "alt": "Irene runs to her father as the King lifts her towards his white horse on his return to the mountain house.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-silver-thread",
+              "illustrations": [
+                {
+                  "id": "modern-silver-thread",
+                  "blockId": "the-thread",
+                  "path": "illustrations/generated/silver-thread.webp",
+                  "alt": "Irene's great-great-grandmother shows her the ring, silver ball and impossibly fine guiding thread beside the spinning wheel.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "curdies-clue",
+              "illustrations": [
+                {
+                  "id": "modern-cobs-creatures",
+                  "blockId": "following-the-goblins",
+                  "path": "illustrations/generated/cobs-creatures.webp",
+                  "alt": "Curdie hides among the glittering rocks while goblins lead bizarre hybrid domestic creatures through the underground passages.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-curdie-captured",
+                  "blockId": "curdie-captured",
+                  "path": "illustrations/generated/curdie-captured.webp",
+                  "alt": "Curdie is surrounded and captured in the goblin royal cavern while the stone-shod Queen confronts him.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-goblin-plan",
+              "illustrations": [
+                {
+                  "id": "modern-thread-leads",
+                  "blockId": "where-the-thread-leads",
+                  "path": "illustrations/generated/thread-leads.webp",
+                  "alt": "Irene follows the barely visible silver thread across the moonlit mountain towards the mine.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "irenes-clue",
+              "illustrations": [
+                {
+                  "id": "modern-behind-rock",
+                  "blockId": "behind-the-rock",
+                  "path": "illustrations/generated/behind-rock.webp",
+                  "alt": "Deep underground, a dirty and exhausted Irene removes stones until she finds the astonished Curdie behind the blocked passage.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-rescue",
+              "illustrations": [
+                {
+                  "id": "modern-trust-thread",
+                  "blockId": "curdie-follows-irene",
+                  "path": "illustrations/generated/trust-thread.webp",
+                  "alt": "Irene leads Curdie past the sleeping Goblin King and stone-shod Queen while following the fine silver thread.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-goblins-attack",
+              "illustrations": [
+                {
+                  "id": "modern-house-attack",
+                  "blockId": "the-attack-begins",
+                  "path": "illustrations/generated/house-attack.webp",
+                  "alt": "Curdie and the household defenders resist goblins pouring into the King's house while Irene's room stands empty.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-curdies-guide",
+                  "blockId": "curdies-guide",
+                  "path": "illustrations/generated/curdies-guide.webp",
+                  "alt": "At dawn Curdie reaches his cottage and finds Princess Irene sleeping safely in his mother's arms by the fire.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "water-under-the-mountain",
+              "illustrations": [
+                {
+                  "id": "modern-flood",
+                  "blockId": "the-water-breaks-through",
+                  "path": "illustrations/generated/flood.webp",
+                  "alt": "Floodwater overwhelms the goblin kingdom as goblins and their strange creatures scramble towards higher passages.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-what-irene-kept",
+                  "blockId": "what-irene-kept",
+                  "path": "illustrations/generated/what-irene-kept.webp",
+                  "alt": "At sunset Irene sits comfortably beside her great-great-grandmother, the spinning wheel and a white pigeon, holding the ring and silver thread.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            }
+          ]
         }
       ]
     },
@@ -237,7 +497,7 @@
           "notes": "Story House pagination changes presentation only; all 32 chapters and the original wording remain complete."
         },
         "originalPublicationYear": 1872,
-        "curatorNotes": "All 32 chapters reflowed into 127 reader pages at paragraph boundaries, using semantic resume anchors and all eight historical Jessie Willcox Smith plates."
+        "curatorNotes": "All 32 chapters reflowed into 127 reader pages at paragraph boundaries, using semantic resume anchors and all eight historical Jessie Willcox Smith plates. Fourteen matching images from the R6.5-WP19SH1.5.3 generated set are available as Modern Illustrations; the quiet Story House-only closing tower scene is intentionally not attached to the Full Classic text because MacDonald's ending does not stage that visit."
       },
       "chapters": [
         {
@@ -258,19 +518,7 @@
         {
           "id": "ch02-up-and-up-she-7a895e1",
           "title": "Chapter II — The Princess Loses Herself (continued)",
-          "path": "editions/full-classic/pages/ch02-up-and-up-she-7a895e1.md",
-          "illustrations": [
-            {
-              "id": "full-smith-lost-in-the-house",
-              "path": "illustrations/lost-in-the-house.webp",
-              "alt": "Jessie Willcox Smith's illustration of Princess Irene lost in the old house.",
-              "placement": "full-width",
-              "width": 936,
-              "height": 1375,
-              "caption": "Illustration by Jessie Willcox Smith, 1920.",
-              "blockId": "ch02-she-ran-for-some-distance-turned-several-c3232799"
-            }
-          ]
+          "path": "editions/full-classic/pages/ch02-up-and-up-she-7a895e1.md"
         },
         {
           "id": "ch03-when-she-came-to-ce0bc6c",
@@ -290,19 +538,7 @@
         {
           "id": "ch03-i-don-t-sleep-20089c3",
           "title": "Chapter III — The Princess And--We Shall See Who (continued)",
-          "path": "editions/full-classic/pages/ch03-i-don-t-sleep-20089c3.md",
-          "illustrations": [
-            {
-              "id": "full-smith-pigeons",
-              "path": "illustrations/pigeons.webp",
-              "alt": "Jessie Willcox Smith's illustration of Irene and the white pigeons.",
-              "placement": "full-width",
-              "width": 933,
-              "height": 1378,
-              "caption": "Illustration by Jessie Willcox Smith, 1920.",
-              "blockId": "ch03-again-she-stopped-her-spinning-she-rose-bae82697"
-            }
-          ]
+          "path": "editions/full-classic/pages/ch03-i-don-t-sleep-20089c3.md"
         },
         {
           "id": "ch03-the-lady-took-hold-60ab30a",
@@ -367,19 +603,7 @@
         {
           "id": "ch06-nothing-more-happened-they-d91f3a5",
           "title": "Chapter VI — The Little Miner (continued)",
-          "path": "editions/full-classic/pages/ch06-nothing-more-happened-they-d91f3a5.md",
-          "illustrations": [
-            {
-              "id": "full-smith-curdie-torch",
-              "path": "illustrations/curdie-torch.webp",
-              "alt": "Jessie Willcox Smith's illustration of Curdie.",
-              "placement": "full-width",
-              "width": 936,
-              "height": 1383,
-              "caption": "Illustration by Jessie Willcox Smith, 1920.",
-              "blockId": "ch06-never-mind-princess-irene-he-said-you-dfabcfd6"
-            }
-          ]
+          "path": "editions/full-classic/pages/ch06-nothing-more-happened-they-d91f3a5.md"
         },
         {
           "id": "ch07-curdie-went-home-whistling-0900b71",
@@ -464,19 +688,7 @@
         {
           "id": "ch10-by-this-time-the-80564e6",
           "title": "Chapter X — The Princess'S King-Papa (continued)",
-          "path": "editions/full-classic/pages/ch10-by-this-time-the-80564e6.md",
-          "illustrations": [
-            {
-              "id": "full-smith-king",
-              "path": "illustrations/king-papa.webp",
-              "alt": "Jessie Willcox Smith's illustration of Princess Irene greeting her father the King.",
-              "placement": "full-width",
-              "width": 926,
-              "height": 1381,
-              "caption": "Illustration by Jessie Willcox Smith, 1920.",
-              "blockId": "ch10-by-this-time-the-people-of-the-80564e6f"
-            }
-          ]
+          "path": "editions/full-classic/pages/ch10-by-this-time-the-80564e6.md"
         },
         {
           "id": "ch10-then-it-must-be-6cd343e",
@@ -571,19 +783,7 @@
         {
           "id": "ch15-then-irene-looked-again-cbb5069",
           "title": "Chapter XV — Woven And Then Spun (continued)",
-          "path": "editions/full-classic/pages/ch15-then-irene-looked-again-cbb5069.md",
-          "illustrations": [
-            {
-              "id": "full-smith-grandmother",
-              "path": "illustrations/grandmother.webp",
-              "alt": "Jessie Willcox Smith's illustration of Irene with her mysterious great-great-grandmother.",
-              "placement": "full-width",
-              "width": 936,
-              "height": 1378,
-              "caption": "Illustration by Jessie Willcox Smith, 1920.",
-              "blockId": "ch15-but-grandmother-you-re-so-beautiful-and-5a81c204"
-            }
-          ]
+          "path": "editions/full-classic/pages/ch15-then-irene-looked-again-cbb5069.md"
         },
         {
           "id": "ch15-you-darling-do-you-9ec64ab",
@@ -658,19 +858,7 @@
         {
           "id": "ch18-the-goblins-fell-back-4157574",
           "title": "Chapter XVIII — Curdie'S Clue (continued)",
-          "path": "editions/full-classic/pages/ch18-the-goblins-fell-back-4157574.md",
-          "illustrations": [
-            {
-              "id": "full-smith-goblins",
-              "path": "illustrations/goblins.webp",
-              "alt": "Jessie Willcox Smith's illustration of goblins beneath the mountain.",
-              "placement": "full-width",
-              "width": 930,
-              "height": 1386,
-              "caption": "Illustration by Jessie Willcox Smith, 1920.",
-              "blockId": "ch18-the-goblins-fell-back-a-little-when-965f106f"
-            }
-          ]
+          "path": "editions/full-classic/pages/ch18-the-goblins-fell-back-4157574.md"
         },
         {
           "id": "ch18-when-he-came-to-a717c95",
@@ -735,19 +923,7 @@
         {
           "id": "ch21-and-when-he-turned-124bc38",
           "title": "Chapter XXI — The Escape (continued)",
-          "path": "editions/full-classic/pages/ch21-and-when-he-turned-124bc38.md",
-          "illustrations": [
-            {
-              "id": "full-smith-curdie-follows",
-              "path": "illustrations/curdie-follows.webp",
-              "alt": "Jessie Willcox Smith's illustration of Curdie following Irene underground.",
-              "placement": "full-width",
-              "width": 936,
-              "height": 1379,
-              "caption": "Illustration by Jessie Willcox Smith, 1920.",
-              "blockId": "ch21-reasoning-thus-he-followed-her-a-few-cfda504d"
-            }
-          ]
+          "path": "editions/full-classic/pages/ch21-and-when-he-turned-124bc38.md"
         },
         {
           "id": "ch21-irene-shuddered-when-she-94a469a",
@@ -897,19 +1073,7 @@
         {
           "id": "ch28-just-as-the-consolation-40e1d4c",
           "title": "Chapter XXVIII — Curdie'S Guide",
-          "path": "editions/full-classic/pages/ch28-just-as-the-consolation-40e1d4c.md",
-          "illustrations": [
-            {
-              "id": "full-smith-safe-at-home",
-              "path": "illustrations/safe-at-home.webp",
-              "alt": "Jessie Willcox Smith's illustration of Princess Irene safe with Curdie's mother.",
-              "placement": "full-width",
-              "width": 936,
-              "height": 1382,
-              "caption": "Illustration by Jessie Willcox Smith, 1920.",
-              "blockId": "ch28-the-door-was-on-the-latch-and-2296565b"
-            }
-          ]
+          "path": "editions/full-classic/pages/ch28-just-as-the-consolation-40e1d4c.md"
         },
         {
           "id": "ch28-yes-i-have-02660bc",
@@ -970,6 +1134,357 @@
           "id": "ch32-not-more-unfinished-than-7cdd2c0",
           "title": "Chapter XXXII — The Last Chapter (continued)",
           "path": "editions/full-classic/pages/ch32-not-more-unfinished-than-7cdd2c0.md"
+        }
+      ],
+      "defaultIllustrationSetId": "classic",
+      "illustrationSets": [
+        {
+          "id": "classic",
+          "label": "Classic Illustrations",
+          "rights": {
+            "status": "public-domain",
+            "source": "Jessie Willcox Smith illustrations from the 1920 David McKay edition",
+            "sourceUrl": "https://www.gutenberg.org/ebooks/34339",
+            "notes": "All eight previously verified Jessie Willcox Smith plates are reused beside their matching passages from the 1920 illustrated edition."
+          },
+          "chapters": [
+            {
+              "chapterId": "ch02-up-and-up-she-7a895e1",
+              "illustrations": [
+                {
+                  "id": "full-smith-lost-in-the-house",
+                  "path": "illustrations/lost-in-the-house.webp",
+                  "alt": "Jessie Willcox Smith's illustration of Princess Irene lost in the old house.",
+                  "placement": "full-width",
+                  "width": 936,
+                  "height": 1375,
+                  "caption": "Illustration by Jessie Willcox Smith, 1920.",
+                  "blockId": "ch02-she-ran-for-some-distance-turned-several-c3232799"
+                }
+              ]
+            },
+            {
+              "chapterId": "ch03-i-don-t-sleep-20089c3",
+              "illustrations": [
+                {
+                  "id": "full-smith-pigeons",
+                  "path": "illustrations/pigeons.webp",
+                  "alt": "Jessie Willcox Smith's illustration of Irene and the white pigeons.",
+                  "placement": "full-width",
+                  "width": 933,
+                  "height": 1378,
+                  "caption": "Illustration by Jessie Willcox Smith, 1920.",
+                  "blockId": "ch03-again-she-stopped-her-spinning-she-rose-bae82697"
+                }
+              ]
+            },
+            {
+              "chapterId": "ch06-nothing-more-happened-they-d91f3a5",
+              "illustrations": [
+                {
+                  "id": "full-smith-curdie-torch",
+                  "path": "illustrations/curdie-torch.webp",
+                  "alt": "Jessie Willcox Smith's illustration of Curdie.",
+                  "placement": "full-width",
+                  "width": 936,
+                  "height": 1383,
+                  "caption": "Illustration by Jessie Willcox Smith, 1920.",
+                  "blockId": "ch06-never-mind-princess-irene-he-said-you-dfabcfd6"
+                }
+              ]
+            },
+            {
+              "chapterId": "ch10-by-this-time-the-80564e6",
+              "illustrations": [
+                {
+                  "id": "full-smith-king",
+                  "path": "illustrations/king-papa.webp",
+                  "alt": "Jessie Willcox Smith's illustration of Princess Irene greeting her father the King.",
+                  "placement": "full-width",
+                  "width": 926,
+                  "height": 1381,
+                  "caption": "Illustration by Jessie Willcox Smith, 1920.",
+                  "blockId": "ch10-by-this-time-the-people-of-the-80564e6f"
+                }
+              ]
+            },
+            {
+              "chapterId": "ch15-then-irene-looked-again-cbb5069",
+              "illustrations": [
+                {
+                  "id": "full-smith-grandmother",
+                  "path": "illustrations/grandmother.webp",
+                  "alt": "Jessie Willcox Smith's illustration of Irene with her mysterious great-great-grandmother.",
+                  "placement": "full-width",
+                  "width": 936,
+                  "height": 1378,
+                  "caption": "Illustration by Jessie Willcox Smith, 1920.",
+                  "blockId": "ch15-but-grandmother-you-re-so-beautiful-and-5a81c204"
+                }
+              ]
+            },
+            {
+              "chapterId": "ch18-the-goblins-fell-back-4157574",
+              "illustrations": [
+                {
+                  "id": "full-smith-goblins",
+                  "path": "illustrations/goblins.webp",
+                  "alt": "Jessie Willcox Smith's illustration of goblins beneath the mountain.",
+                  "placement": "full-width",
+                  "width": 930,
+                  "height": 1386,
+                  "caption": "Illustration by Jessie Willcox Smith, 1920.",
+                  "blockId": "ch18-the-goblins-fell-back-a-little-when-965f106f"
+                }
+              ]
+            },
+            {
+              "chapterId": "ch21-and-when-he-turned-124bc38",
+              "illustrations": [
+                {
+                  "id": "full-smith-curdie-follows",
+                  "path": "illustrations/curdie-follows.webp",
+                  "alt": "Jessie Willcox Smith's illustration of Curdie following Irene underground.",
+                  "placement": "full-width",
+                  "width": 936,
+                  "height": 1379,
+                  "caption": "Illustration by Jessie Willcox Smith, 1920.",
+                  "blockId": "ch21-reasoning-thus-he-followed-her-a-few-cfda504d"
+                }
+              ]
+            },
+            {
+              "chapterId": "ch28-just-as-the-consolation-40e1d4c",
+              "illustrations": [
+                {
+                  "id": "full-smith-safe-at-home",
+                  "path": "illustrations/safe-at-home.webp",
+                  "alt": "Jessie Willcox Smith's illustration of Princess Irene safe with Curdie's mother.",
+                  "placement": "full-width",
+                  "width": 936,
+                  "height": 1382,
+                  "caption": "Illustration by Jessie Willcox Smith, 1920.",
+                  "blockId": "ch28-the-door-was-on-the-latch-and-2296565b"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "modern",
+          "label": "Modern Illustrations",
+          "rights": {
+            "status": "original",
+            "source": "ChatGPT-generated artwork created for the Unicorn Valley Story House modern illustration set",
+            "notes": "Fourteen images are reused beside genuinely matching passages in the unabridged text. The Story House-only closing tower image is deliberately excluded."
+          },
+          "chapters": [
+            {
+              "chapterId": "ch02-up-and-up-she-7a895e1",
+              "illustrations": [
+                {
+                  "id": "full-modern-lost-in-passages",
+                  "blockId": "ch02-she-ran-for-some-distance-turned-several-c3232799",
+                  "path": "illustrations/generated/lost-in-passages.webp",
+                  "alt": "Princess Irene becomes lost among the silent passages and doors of the old house.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "ch03-when-she-came-to-ce0bc6c",
+              "illustrations": [
+                {
+                  "id": "full-modern-old-lady-upstairs",
+                  "blockId": "ch03-when-she-came-to-the-top-she-ce0bc6cf",
+                  "path": "illustrations/generated/old-lady-upstairs.webp",
+                  "alt": "Irene opens the door and discovers the mysterious old lady sitting at her spinning wheel.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "ch06-we-ve-taken-the-8eb2b95",
+              "illustrations": [
+                {
+                  "id": "full-modern-curdie-sings",
+                  "blockId": "ch06-ring-dod-bang-go-the-hammers-clang-d283d9bd",
+                  "path": "illustrations/generated/curdie-sings.webp",
+                  "alt": "Curdie sings his miner's rhyme while escorting Irene and Lootie away from the goblins.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "ch09-it-was-a-strange-eb88ec3",
+              "illustrations": [
+                {
+                  "id": "full-modern-cobs-creatures",
+                  "blockId": "ch09-it-was-a-strange-enough-procession-which-eb88ec3e",
+                  "path": "illustrations/generated/cobs-creatures.webp",
+                  "alt": "Curdie secretly follows the goblins and their bizarre household animals through the underground passages.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "full-modern-goblin-palace",
+                  "blockId": "ch09-he-was-at-the-entrance-of-a-fa542bc9",
+                  "path": "illustrations/generated/goblin-palace.webp",
+                  "alt": "Curdie peers into the immense torch-lit palace hall of the goblins.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "ch10-by-this-time-the-80564e6",
+              "illustrations": [
+                {
+                  "id": "full-modern-king-papa",
+                  "blockId": "ch10-by-this-time-the-people-of-the-80564e6f",
+                  "path": "illustrations/generated/king-papa.webp",
+                  "alt": "Princess Irene greets her father as he arrives on his white horse.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "ch15-no-the-thread-is-8d6fea5",
+              "illustrations": [
+                {
+                  "id": "full-modern-silver-thread",
+                  "blockId": "ch15-no-the-thread-is-too-fine-for-8d6fea53",
+                  "path": "illustrations/generated/silver-thread.webp",
+                  "alt": "Irene learns how to follow the impossibly fine thread connected to her ring.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "ch18-the-goblins-fell-back-4157574",
+              "illustrations": [
+                {
+                  "id": "full-modern-curdie-captured",
+                  "blockId": "ch18-the-goblins-fell-back-a-little-when-965f106f",
+                  "path": "illustrations/generated/curdie-captured.webp",
+                  "alt": "Curdie is overwhelmed by the goblins and their stone-shod Queen in the royal cavern.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "ch20-that-same-morning-early-7c47f77",
+              "illustrations": [
+                {
+                  "id": "full-modern-thread-leads",
+                  "blockId": "ch20-that-same-morning-early-the-princess-woke-7c47f774",
+                  "path": "illustrations/generated/thread-leads.webp",
+                  "alt": "Irene follows her grandmother's thread out of the house and across the mountain.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "ch21-as-the-princess-lay-e9c4845",
+              "illustrations": [
+                {
+                  "id": "full-modern-behind-rock",
+                  "blockId": "ch21-it-s-curdie-she-cried-joyfully-66757c80",
+                  "path": "illustrations/generated/behind-rock.webp",
+                  "alt": "After removing stones from the barrier, Irene realises that Curdie is imprisoned on the other side.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "ch21-and-when-he-turned-124bc38",
+              "illustrations": [
+                {
+                  "id": "full-modern-trust-thread",
+                  "blockId": "ch21-reasoning-thus-he-followed-her-a-few-cfda504d",
+                  "path": "illustrations/generated/trust-thread.webp",
+                  "alt": "Irene leads Curdie past the sleeping Goblin King and Queen while following the thread.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "ch27-when-curdie-fell-asleep-d72c255",
+              "illustrations": [
+                {
+                  "id": "full-modern-house-attack",
+                  "blockId": "ch27-when-he-reached-the-ground-floor-he-931d876b",
+                  "path": "illustrations/generated/house-attack.webp",
+                  "alt": "Curdie reaches the ground floor and finds the King's house swarming with goblins.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "ch28-just-as-the-consolation-40e1d4c",
+              "illustrations": [
+                {
+                  "id": "full-modern-curdies-guide",
+                  "blockId": "ch28-the-door-was-on-the-latch-and-2296565b",
+                  "path": "illustrations/generated/curdies-guide.webp",
+                  "alt": "Curdie follows the invisible thread home and finds Irene sleeping safely in his mother's arms.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "ch31-curdie-had-left-the-110e2ce",
+              "illustrations": [
+                {
+                  "id": "full-modern-flood",
+                  "blockId": "ch31-it-is-your-majesty-said-curdie-and-a31d302b",
+                  "path": "illustrations/generated/flood.webp",
+                  "alt": "The goblins' attempt to release underground water turns their own passages into a catastrophic flood.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            }
+          ]
         }
       ]
     }

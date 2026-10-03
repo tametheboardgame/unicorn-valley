@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "10dWz4GCLVZ_T7lhAGmU6_n8ONT51-OdL"
+  },
+  "expectedSourceName": "princess-goblin-cobs-creatures-v01.png",
+  "destination": "public/stories/the-princess-and-the-goblin/illustrations/generated/cobs-creatures.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1000,
+    "quality": 88
+  },
+  "revision": 1
+}
