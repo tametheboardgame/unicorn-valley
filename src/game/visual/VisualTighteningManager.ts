@@ -4,7 +4,7 @@ import { ensureNovaPresentationTexture, NOVA_RACE_TINT } from './NovaPresentatio
 export const VISUAL_TIGHTENING_DETAIL_NAME = 'visual-tightening-detail';
 const VISUAL_TIGHTENING_ANCHOR_NAME = 'visual-tightening-anchor';
 
-const SUPPORTED_SCENES = new Set(['NovaTutorialRaceScene', 'RaceScene']);
+export const VISUAL_TIGHTENING_SUPPORTED_SCENES = new Set(['NovaTutorialRaceScene', 'RaceScene']);
 
 function markDetail<T extends Phaser.GameObjects.GameObject>(object: T): T {
   object.setName(VISUAL_TIGHTENING_DETAIL_NAME);
@@ -78,7 +78,7 @@ export class VisualTighteningManager {
 
   private update(): void {
     for (const scene of this.game.scene.getScenes(true)) {
-      if (!SUPPORTED_SCENES.has(scene.scene.key)) {
+      if (!VISUAL_TIGHTENING_SUPPORTED_SCENES.has(scene.scene.key)) {
         continue;
       }
 
