@@ -1,21 +1,21 @@
 import { describe, expect, it } from 'vitest';
-import { ENVIRONMENT_PRODUCTION_SCENE_ENVIRONMENTS } from '../visual/EnvironmentProductionPresentationManager';
-import { VISUAL_TIGHTENING_SUPPORTED_SCENES } from '../visual/VisualTighteningManager';
-import { EXPLORATION_GEOMETRY_SUPPORTED_SCENES } from './ExplorationGeometryPresentationManager';
+import {
+  ENVIRONMENT_PRODUCTION_SCENE_ENVIRONMENTS,
+  EXPLORATION_GEOMETRY_SUPPORTED_SCENE_KEYS,
+  VISUAL_TIGHTENING_SUPPORTED_SCENE_KEYS,
+  WORLD_TRAVERSAL_POLISH_SUPPORTED_SCENE_KEYS,
+} from './RegionPresentationOwnership';
 import { resolveRainbowMeadowWalkThroughDestination } from './RainbowMeadowTraversal';
-import { createRainbowMeadowTraversalPresentation } from './RainbowMeadowTraversalPresentation';
-import { WORLD_TRAVERSAL_POLISH_SUPPORTED_SCENES } from './WorldTraversalPolishManager';
 
 describe('H4.11 Rainbow Meadow architecture ownership', () => {
   it('keeps generic compatibility managers free of Meadow composition ownership', () => {
-    expect(WORLD_TRAVERSAL_POLISH_SUPPORTED_SCENES.has('RainbowMeadowScene')).toBe(false);
-    expect(EXPLORATION_GEOMETRY_SUPPORTED_SCENES.has('RainbowMeadowScene')).toBe(false);
-    expect(ENVIRONMENT_PRODUCTION_SCENE_ENVIRONMENTS.RainbowMeadowScene).toBeUndefined();
-    expect(VISUAL_TIGHTENING_SUPPORTED_SCENES.has('RainbowMeadowScene')).toBe(false);
+    expect(WORLD_TRAVERSAL_POLISH_SUPPORTED_SCENE_KEYS).not.toContain('RainbowMeadowScene');
+    expect(EXPLORATION_GEOMETRY_SUPPORTED_SCENE_KEYS).not.toContain('RainbowMeadowScene');
+    expect(ENVIRONMENT_PRODUCTION_SCENE_ENVIRONMENTS).not.toHaveProperty('RainbowMeadowScene');
+    expect(VISUAL_TIGHTENING_SUPPORTED_SCENE_KEYS).not.toContain('RainbowMeadowScene');
   });
 
-  it('keeps traversal presentation and routing explicitly Meadow-owned', () => {
-    expect(createRainbowMeadowTraversalPresentation).toBeTypeOf('function');
+  it('keeps walk-through routing in a Meadow-owned pure contract', () => {
     expect(resolveRainbowMeadowWalkThroughDestination).toBeTypeOf('function');
   });
 });
