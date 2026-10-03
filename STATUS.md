@@ -47,16 +47,21 @@ The performance result must be compared against the exact current `main` baselin
 
 ## Human gate
 
-MG-WP1 remains Amber until:
+MG-WP1 human gate: **approved 2026-10-03**.
 
-- the race recovery review fix is validated on the exact head;
-- the performance comparison confirms no unresolved MG-WP1 regression;
-- a successful Cloudflare preview exists for that exact head;
-- David completes the human gate and approves the package.
+David manually verified the exact-head Cloudflare preview across the migrated game families and approved merge.
+
+Exact-head technical evidence:
+
+- Tier 0 static/architecture: passed;
+- Tier 1 unit contracts: passed;
+- Tier 2 targeted browser smoke: passed;
+- production build/static smoke: passed;
+- performance budget: red at 561.8 KiB first-playable gzip and 113 JS chunks. Current main is also red at 560.0 KiB and 113 chunks. The chunk-count regression introduced during MG-WP1 was removed before approval.
 
 ## Next work
 
-After MG-WP1 approval and merge, begin:
+After MG-WP1 merge, begin:
 
 **MG-WP2 - Sandbox, Rewards and Persistence Isolation**
 
