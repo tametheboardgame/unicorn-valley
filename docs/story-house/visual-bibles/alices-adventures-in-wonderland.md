@@ -2,7 +2,7 @@
 
 Work package: **R6.5-WP19SH1.6.1A**
 
-Status: **in progress — Alice, White Rabbit/early-world, Caterpillar, Cheshire Cat, Wonderland woodland, Hatter and March Hare anchors approved; Dormouse / tea-party anchors next**
+Status: **in progress — Alice, White Rabbit/early-world, Caterpillar, Cheshire Cat, Wonderland woodland, Hatter, March Hare and Dormouse anchors approved; Hearts and Mock Turtle/Gryphon anchors still pending**
 
 ## Purpose
 
@@ -148,9 +148,19 @@ Locked design:
 - must remain visually distinct from the White Rabbit through fur colour, build and costume.
 
 ### Dormouse
+
+**Approved 3 October 2026.**
+
+Locked design:
 - much smaller scale than Hatter/Hare;
+- warm brown fur with cream belly and muzzle;
+- oversized rounded ears with pink inner ear;
+- small pink nose;
+- long thin tail;
+- tiny blue neck detail as a repeatable identifier;
 - sleepy, soft-featured and visually gentle;
-- stable fur and face.
+- teacup and cushion sleeping poses are approved continuity references;
+- stable face, fur pattern and scale across appearances.
 
 ### Queen of Hearts
 - strong theatrical Hearts-royalty silhouette;
@@ -272,6 +282,8 @@ Human approval is required in this order before bulk chapter art:
 **Completed:** corrected adult Hatter approved and locked.
 
 **Completed:** March Hare approved and locked.
+
+**Completed:** Dormouse approved and locked.
 
 1. Alice character anchor sheet.
 2. White Rabbit + early Wonderland hall/riverbank anchors.
