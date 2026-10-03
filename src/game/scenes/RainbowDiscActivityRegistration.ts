@@ -1,5 +1,7 @@
 import type Phaser from 'phaser';
 
+export type RainbowDiscActivityMode = 'match' | 'practice';
+
 let registrationPromise: Promise<void> | null = null;
 let launchPending = false;
 
@@ -22,7 +24,10 @@ export function ensureRainbowDiscActivityScene(game: Phaser.Game): Promise<void>
   return registrationPromise;
 }
 
-export async function launchRainbowDiscActivity(scene: Phaser.Scene): Promise<void> {
+export async function launchRainbowDiscActivity(
+  scene: Phaser.Scene,
+  mode: RainbowDiscActivityMode = 'match',
+): Promise<void> {
   if (launchPending || scene.game.scene.isActive('RainbowDiscActivityScene')) {
     return;
   }
@@ -36,6 +41,7 @@ export async function launchRainbowDiscActivity(scene: Phaser.Scene): Promise<vo
 
     scene.scene.launch('RainbowDiscActivityScene', {
       returnScene: scene.sys.settings.key,
+      mode,
     });
     scene.scene.pause();
   } finally {
