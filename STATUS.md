@@ -29,16 +29,19 @@ Implemented:
 - water interaction anchors realigned to the rebuilt geography;
 - regression coverage for the one-owner hydrology contract.
 
-### H6.2 refinement after visual review
+### H6.2 visual refinement
 
-David’s first visual review found that the continuous Brook had become too dominant and had visually buried the walking path.
+The first visual review found that the continuous Brook had become too dominant and visually buried the walking path. H6.2B narrowed/softened the Brook and restored the path.
 
-The current refinement therefore:
+The second visual review found two remaining composition issues: the Brook still exited through the cave mouth instead of above it, and the H6.2B path treatment did not match the established world-path styling.
 
-- narrows the Brook through the west/Meadow-side and long central run while preserving broader pool sections;
-- softens the contrast and opacity of the outer/inner/deep water bands;
-- restores a clearly visible presentation-only walking path alongside the Brook;
-- keeps the canonical structural/traversal route unchanged, leaving any later route redesign to H6.5;
+H6.2C therefore:
+
+- keeps the reduced Brook widths and softer water bands from H6.2B;
+- separates the player gateway from the water exit: the walking path reaches the Rainbow Meadow cave mouth at the canonical threshold, while the Brook bends above/behind the cave and exits at a higher water-specific anchor;
+- uses the same rounded two-layer path treatment as the established world paths (`0xd7c18f` outer / `0xf0dfb2` inner, 128/108 widths);
+- removes the older generic `ExplorationPathPolishManager` Crystal Brook overlay so only one main Brook path presentation remains;
+- keeps the canonical traversal/gateway route unchanged, leaving any structural route redesign to H6.5;
 - preserves the continuous-water model and all H6.2 progression/collision semantics.
 
 ## Mini-game dependency state
