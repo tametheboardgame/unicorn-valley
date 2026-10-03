@@ -51,11 +51,31 @@ export const MINI_GAME_CATALOGUE = [
     group: 'race',
     order: 10,
     variants: [
-      { id: 'race-course:rainbow-run-sunrise-sprint', title: 'Sunrise Sprint', justGamesVisible: true },
-      { id: 'race-course:rainbow-meadow-petal-parade', title: 'Petal Parade', justGamesVisible: true },
-      { id: 'race-course:crystal-brook-crystal-cascade', title: 'Crystal Cascade', justGamesVisible: true },
-      { id: 'race-course:whispering-woods-mooncap-trail', title: 'Mooncap Trail', justGamesVisible: true },
-      { id: 'race-course:starlight-beach-shoreline-surge', title: 'Shoreline Surge', justGamesVisible: true },
+      {
+        id: 'race-course:rainbow-run-sunrise-sprint',
+        title: 'Sunrise Sprint',
+        justGamesVisible: true,
+      },
+      {
+        id: 'race-course:rainbow-meadow-petal-parade',
+        title: 'Petal Parade',
+        justGamesVisible: true,
+      },
+      {
+        id: 'race-course:crystal-brook-crystal-cascade',
+        title: 'Crystal Cascade',
+        justGamesVisible: true,
+      },
+      {
+        id: 'race-course:whispering-woods-mooncap-trail',
+        title: 'Mooncap Trail',
+        justGamesVisible: true,
+      },
+      {
+        id: 'race-course:starlight-beach-shoreline-surge',
+        title: 'Shoreline Surge',
+        justGamesVisible: true,
+      },
     ],
     justGames: { visible: true, availability: 'always' },
     world: { placement: 'placed' },
