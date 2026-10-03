@@ -3,7 +3,8 @@ import { CRYSTAL_CASCADE_RACE_ID } from '../../content/r5RaceIds';
 import { GAME_WIDTH } from '../config/gameConstants';
 import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import type { PlayerFacing } from '../player/PlayerMovement';
-import { getActiveRaceCourse, resetActiveRaceCourse, selectRaceCourse } from '../racing/RaceCourse';
+import { getActiveRaceCourse, resetActiveRaceCourse } from '../racing/RaceCourse';
+import { launchRainbowRunRace } from '../racing/RaceMiniGameAdapter';
 import { getCrystalCascadeUnlockState } from '../racing/RaceProgression';
 import type { RaceRunState } from '../racing/RaceRun';
 import { getRaceShortcut } from '../racing/RaceShortcut';
@@ -353,8 +354,14 @@ export class R5RegionGatewayManager {
       setCrystalBrookPlayerSpawn(state.definition.destinationSpawn);
       setWorldArrivalFacing('CrystalBrookScene', state.definition.destinationFacing);
       saveLocationCheckpoint(getBrowserSaveService(), CRYSTAL_BROOK_LOCATION_ID);
-      selectRaceCourse(state.definition.raceCourseId);
-      state.scene.scene.start('RaceScene');
+      void launchRainbowRunRace(state.scene, {
+        courseId: state.definition.raceCourseId,
+        returnScene: 'CrystalBrookScene',
+        worldContext: {
+          locationId: 'crystal-brook',
+          interactionId: `interaction:${state.definition.id}`,
+        },
+      });
       return;
     }
 
@@ -433,6 +440,13 @@ export class R5RegionGatewayManager {
 
     this.clearCrystalRacePresentation();
     if (!this.crystalRaceWasActive) {
+      return;
+    }
+
+    const crystalBrookScene = this.game.scene.getScene('CrystalBrookScene');
+    if (crystalBrookScene?.scene.isActive()) {
+      this.crystalRaceWasActive = false;
+      resetActiveRaceCourse();
       return;
     }
 

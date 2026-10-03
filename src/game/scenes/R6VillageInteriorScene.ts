@@ -34,6 +34,8 @@ import { getVillageInteriorOccupancyService } from '../population/VillageInterio
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getQuestStepId } from '../quests/QuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
+import { MINI_GAME_IDS } from '../minigames/MiniGameCatalogue';
+import { launchMiniGame } from '../minigames/MiniGameLauncher';
 import { getWorldConversationPresenter } from '../dialogue/WorldConversationPresenter';
 import { getWorldFeedbackPresenter } from '../ui/WorldFeedbackPresenter';
 import { UI_COLOURS, UI_FONT, applyButtonHover } from '../ui/uiTheme';
@@ -2621,15 +2623,16 @@ export class VillageInteriorScene extends Phaser.Scene {
   }
 
   private async launchMapleBakingActivity(mode: 'quest' | 'repeatable'): Promise<void> {
-    if (!this.game.scene.keys.MapleBakingActivityScene) {
-      const { MapleBakingActivityScene } = await import('../activities/MapleBakingActivityScene');
-      this.game.scene.add('MapleBakingActivityScene', MapleBakingActivityScene);
-    }
-    this.scene.launch('MapleBakingActivityScene', {
-      returnScene: 'VillageInteriorScene',
-      mode,
+    await launchMiniGame(this, {
+      gameId: MINI_GAME_IDS.wobblyCake,
+      source: 'world',
+      worldContext: {
+        locationId: this.interiorId,
+        interactionId: 'interaction:bakery:wobbly-cake',
+        questContext: mode,
+      },
+      sceneData: { mode },
     });
-    this.scene.pause();
   }
 
   private shouldShowBakeryMapCorner(): boolean {

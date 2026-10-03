@@ -1,10 +1,6 @@
 import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
-import { getBrowserSaveService } from '../save/browserSaveService';
-import { saveLocationCheckpoint } from '../save/saveLocationCheckpoint';
 import type { NovaFirstRacePhase } from '../story/NovaFirstRaceStory';
-import { RAINBOW_RUN_HUB_LOCATION_ID } from '../world/RainbowRunHubMap';
-import { consumeRaceReturnScene } from './RaceReturnContext';
 import type { RaceRunState } from './RaceRun';
 
 export const RACE_ENTRY_CONFIRMATION_NAME = 'race-entry-confirmation';
@@ -15,6 +11,8 @@ export const RACE_FINISH_EXIT_ZONE_NAME = 'race-finish-exit-zone';
 interface RaceSceneRuntime extends Phaser.Scene {
   runState: RaceRunState;
   finishPanel?: Phaser.GameObjects.Container | null;
+  restartRace(): void;
+  exitRace(): void;
 }
 
 interface FinishState {
@@ -165,15 +163,11 @@ export class RacePlaytestRecoveryManager {
   }
 
   private restartRace(scene: Phaser.Scene): void {
-    scene.scene.restart();
+    asRaceScene(scene).restartRace();
   }
 
   private exitRace(scene: Phaser.Scene): void {
-    const returnScene = consumeRaceReturnScene(this.game, 'RainbowRunEntryScene');
-    if (returnScene === 'RainbowRunEntryScene') {
-      saveLocationCheckpoint(getBrowserSaveService(), RAINBOW_RUN_HUB_LOCATION_ID);
-    }
-    scene.scene.start(returnScene);
+    asRaceScene(scene).exitRace();
   }
 }
 

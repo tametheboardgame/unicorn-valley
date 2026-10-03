@@ -9,6 +9,8 @@ import { MAPLE_REPEAT_BAKE_COST } from '../../content/r6VillageContent';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { ShimmerEconomyService } from '../economy/ShimmerEconomyService';
 import { getBrowserSaveService } from '../save/browserSaveService';
+import { returnFromMiniGame } from '../minigames/MiniGameLauncher';
+import { readMiniGameSession, type MiniGameSession } from '../minigames/MiniGameSession';
 import { PortraitModalCompanion, type PortraitModalAction } from '../ui/PortraitModalCompanion';
 import { UI_COLOURS, UI_FONT } from '../ui/uiTheme';
 import {
@@ -115,6 +117,7 @@ function choiceLabel<T>(choices: readonly Choice<T>[], value: T | null): string 
 }
 
 export class MapleBakingActivityScene extends Phaser.Scene {
+  private miniGameSession: MiniGameSession | null = null;
   private returnScene = 'VillageInteriorScene';
   private mode: BakingMode = 'repeatable';
   private stage: BakingStage = 'recipe';
@@ -163,7 +166,9 @@ export class MapleBakingActivityScene extends Phaser.Scene {
   }
 
   public create(data: MapleBakingSceneData = {}): void {
-    this.returnScene = data.returnScene ?? 'VillageInteriorScene';
+    this.miniGameSession = readMiniGameSession(data);
+    this.returnScene =
+      this.miniGameSession?.returnTarget.sceneKey ?? data.returnScene ?? 'VillageInteriorScene';
     this.mode = data.mode ?? 'repeatable';
     this.resetRun();
 
@@ -1702,6 +1707,11 @@ export class MapleBakingActivityScene extends Phaser.Scene {
       new ShimmerEconomyService(getBrowserSaveService()).earn(MAPLE_REPEAT_BAKE_COST);
       this.repeatBakeCharged = false;
     }
+    if (this.miniGameSession) {
+      returnFromMiniGame(this, this.miniGameSession);
+      return;
+    }
+
     this.scene.stop();
     if (this.game.scene.isPaused(this.returnScene)) {
       this.game.scene.resume(this.returnScene);

@@ -76,7 +76,11 @@ export async function launchMiniGame(
 
     scene.scene.launch(definition.sceneKey, miniGameSceneData(session, request.sceneData));
     scene.scene.bringToTop(definition.sceneKey);
-    scene.scene.pause();
+    if (session.returnTarget.mode === 'start') {
+      scene.scene.stop();
+    } else {
+      scene.scene.pause();
+    }
 
     return { status: 'launched', session };
   } finally {

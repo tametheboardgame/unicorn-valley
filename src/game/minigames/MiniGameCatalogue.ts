@@ -1,10 +1,3 @@
-import {
-  MOONCAP_TRAIL_RACE_ID,
-  PETAL_PARADE_RACE_ID,
-  SHORELINE_SURGE_RACE_ID,
-} from '../../content/r65RaceExpansion';
-import { SUNRISE_SPRINT_RACE_ID } from '../../content/r3RaceIds';
-import { CRYSTAL_CASCADE_RACE_ID } from '../../content/r5RaceIds';
 import type { SceneKey } from '../scenes/SceneManifest';
 
 export const MINI_GAME_IDS = {
@@ -58,11 +51,31 @@ export const MINI_GAME_CATALOGUE = [
     group: 'race',
     order: 10,
     variants: [
-      { id: SUNRISE_SPRINT_RACE_ID, title: 'Sunrise Sprint', justGamesVisible: true },
-      { id: PETAL_PARADE_RACE_ID, title: 'Petal Parade', justGamesVisible: true },
-      { id: CRYSTAL_CASCADE_RACE_ID, title: 'Crystal Cascade', justGamesVisible: true },
-      { id: MOONCAP_TRAIL_RACE_ID, title: 'Mooncap Trail', justGamesVisible: true },
-      { id: SHORELINE_SURGE_RACE_ID, title: 'Shoreline Surge', justGamesVisible: true },
+      {
+        id: 'race-course:rainbow-run-sunrise-sprint',
+        title: 'Sunrise Sprint',
+        justGamesVisible: true,
+      },
+      {
+        id: 'race-course:rainbow-meadow-petal-parade',
+        title: 'Petal Parade',
+        justGamesVisible: true,
+      },
+      {
+        id: 'race-course:crystal-brook-crystal-cascade',
+        title: 'Crystal Cascade',
+        justGamesVisible: true,
+      },
+      {
+        id: 'race-course:whispering-woods-mooncap-trail',
+        title: 'Mooncap Trail',
+        justGamesVisible: true,
+      },
+      {
+        id: 'race-course:starlight-beach-shoreline-surge',
+        title: 'Shoreline Surge',
+        justGamesVisible: true,
+      },
     ],
     justGames: { visible: true, availability: 'always' },
     world: { placement: 'placed' },

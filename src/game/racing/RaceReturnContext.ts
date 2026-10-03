@@ -4,6 +4,7 @@ export const RACE_RETURN_SCENE_REGISTRY_KEY = 'race-return-scene';
 
 export type RaceReturnSceneKey =
   | 'RainbowRunEntryScene'
+  | 'CrystalBrookScene'
   | 'WhisperingWoodsScene'
   | 'StarlightBeachScene';
 
@@ -11,12 +12,17 @@ export function setRaceReturnScene(game: Phaser.Game, sceneKey: RaceReturnSceneK
   game.registry.set(RACE_RETURN_SCENE_REGISTRY_KEY, sceneKey);
 }
 
-function parseRaceReturnScene(value: unknown): RaceReturnSceneKey | null {
-  return value === 'WhisperingWoodsScene' ||
+export function isRaceReturnSceneKey(value: unknown): value is RaceReturnSceneKey {
+  return (
+    value === 'WhisperingWoodsScene' ||
     value === 'StarlightBeachScene' ||
+    value === 'CrystalBrookScene' ||
     value === 'RainbowRunEntryScene'
-    ? value
-    : null;
+  );
+}
+
+function parseRaceReturnScene(value: unknown): RaceReturnSceneKey | null {
+  return isRaceReturnSceneKey(value) ? value : null;
 }
 
 export function peekRaceReturnScene(
@@ -35,12 +41,19 @@ export function consumeRaceReturnScene(
   return sceneKey;
 }
 
+export function clearRaceReturnScene(game: Phaser.Game): void {
+  game.registry.remove(RACE_RETURN_SCENE_REGISTRY_KEY);
+}
+
 export function raceReturnLabel(sceneKey: RaceReturnSceneKey): string {
   if (sceneKey === 'WhisperingWoodsScene') {
     return 'Whispering Woods';
   }
   if (sceneKey === 'StarlightBeachScene') {
     return 'Starlight Beach';
+  }
+  if (sceneKey === 'CrystalBrookScene') {
+    return 'Crystal Brook';
   }
   return 'Race Hub';
 }

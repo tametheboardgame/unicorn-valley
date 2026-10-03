@@ -5,6 +5,8 @@ import {
 } from '../../content/r65StarlightBeach';
 import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
+import { MINI_GAME_IDS } from '../minigames/MiniGameCatalogue';
+import { launchMiniGame } from '../minigames/MiniGameLauncher';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { UI_FONT } from '../ui/uiTheme';
 import { worldDepthForY } from '../world/WorldDepth';
@@ -19,7 +21,6 @@ const REGISTRY_OWNER = 'repeatable-activity-entry';
 
 export class RepeatableActivityEntryWorldManager {
   private runtime: SceneRuntime | null = null;
-  private launchPending = false;
 
   public constructor(private readonly game: Phaser.Game) {
     this.game.events.on(Phaser.Core.Events.POST_STEP, this.update, this);
@@ -86,21 +87,15 @@ export class RepeatableActivityEntryWorldManager {
     ]);
   }
 
-  private async launchBeachcombing(scene: Phaser.Scene): Promise<void> {
-    if (this.launchPending) {
-      return;
-    }
-    this.launchPending = true;
-    try {
-      if (!this.game.scene.keys.CoralBeachcombingActivityScene) {
-        const { CoralBeachcombingActivityScene } = await import('./CoralBeachcombingActivityScene');
-        this.game.scene.add('CoralBeachcombingActivityScene', CoralBeachcombingActivityScene);
-      }
-      scene.scene.launch('CoralBeachcombingActivityScene', { returnScene: 'StarlightBeachScene' });
-      scene.scene.pause();
-    } finally {
-      this.launchPending = false;
-    }
+  private launchBeachcombing(scene: Phaser.Scene): void {
+    void launchMiniGame(scene, {
+      gameId: MINI_GAME_IDS.coralBeachcombing,
+      source: 'world',
+      worldContext: {
+        locationId: 'starlight-beach',
+        interactionId: 'interaction:activity:coral-beachcombing',
+      },
+    });
   }
 
   private destroyRuntime(): void {

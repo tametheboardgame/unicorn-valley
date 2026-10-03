@@ -2,6 +2,8 @@ import { Chess, type Color, type Move, type PieceSymbol, type Square } from 'che
 import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { UI_COLOURS, UI_FONT } from '../ui/uiTheme';
+import { returnFromMiniGame } from '../minigames/MiniGameLauncher';
+import { readMiniGameSession, type MiniGameSession } from '../minigames/MiniGameSession';
 import {
   chooseTeachingMove,
   chooseVillageChessMove,
@@ -43,6 +45,7 @@ function squareFor(row: number, col: number): Square {
 }
 
 export class ChessPlazaActivityScene extends Phaser.Scene {
+  private miniGameSession: MiniGameSession | null = null;
   private returnScene = 'SunbeamVillageScene';
   private chess = new Chess();
   private selected: Square | null = null;
@@ -58,7 +61,9 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
   }
 
   public create(data: ChessPlazaSceneData = {}): void {
-    this.returnScene = data.returnScene ?? 'SunbeamVillageScene';
+    this.miniGameSession = readMiniGameSession(data);
+    this.returnScene =
+      this.miniGameSession?.returnTarget.sceneKey ?? data.returnScene ?? 'SunbeamVillageScene';
     this.chess = new Chess();
     this.selected = null;
     this.hintMove = null;
@@ -518,6 +523,11 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
   }
 
   private leaveActivity(): void {
+    if (this.miniGameSession) {
+      returnFromMiniGame(this, this.miniGameSession);
+      return;
+    }
+
     this.scene.stop();
     if (this.game.scene.isPaused(this.returnScene)) {
       this.game.scene.resume(this.returnScene);

@@ -6,7 +6,6 @@ import {
   TANSY_NOTICE_MAP_CORNER_DISCOVERY_ID,
   TANSY_SUNDIAL_MAP_CORNER_DISCOVERY_ID,
 } from '../../content/r6VillageContent';
-import { ChessPlazaActivityScene } from '../activities/ChessPlazaActivityScene';
 import { buildSunbeamNoticeBoard } from '../activities/SunbeamNoticeBoardModel';
 import { VillageNoticeBoardScene } from '../activities/VillageNoticeBoardScene';
 import { getBrowserAtmosphericTimeService } from '../atmosphere/AtmosphericTimeService';
@@ -14,6 +13,8 @@ import { DiscoveryService } from '../discovery/DiscoveryService';
 import type { InteractionActionKind, InteractionTarget } from '../interaction/InteractionTarget';
 import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { getBrowserSaveService } from '../save/browserSaveService';
+import { MINI_GAME_IDS } from '../minigames/MiniGameCatalogue';
+import { launchMiniGame } from '../minigames/MiniGameLauncher';
 import { getWorldFeedbackPresenter } from '../ui/WorldFeedbackPresenter';
 import { SUNBEAM_VILLAGE_LAYOUT } from './SunbeamVillageLayout';
 import { worldDepthForY } from './WorldDepth';
@@ -147,7 +148,6 @@ export class VillageLifeWorldManager {
   private readonly discoveryService = new DiscoveryService(this.saveService);
   private readonly timeService = getBrowserAtmosphericTimeService(this.saveService);
   private state: VillageLifeState | null = null;
-  private chessLaunchPending = false;
   private noticeBoardLaunchPending = false;
 
   public constructor(private readonly game: Phaser.Game) {
@@ -220,20 +220,11 @@ export class VillageLifeWorldManager {
   }
 
   private launchChess(scene: Phaser.Scene): void {
-    if (this.chessLaunchPending) {
-      return;
-    }
-
-    this.chessLaunchPending = true;
-    try {
-      if (!this.game.scene.keys.ChessPlazaActivityScene) {
-        this.game.scene.add('ChessPlazaActivityScene', ChessPlazaActivityScene);
-      }
-      scene.scene.launch('ChessPlazaActivityScene', { returnScene: 'SunbeamVillageScene' });
-      scene.scene.pause();
-    } finally {
-      this.chessLaunchPending = false;
-    }
+    void launchMiniGame(scene, {
+      gameId: MINI_GAME_IDS.sunbeamChess,
+      source: 'world',
+      worldContext: { interactionId: 'interaction:village:chess-plaza' },
+    });
   }
 
   private launchNoticeBoard(
