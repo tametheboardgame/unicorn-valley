@@ -52,7 +52,8 @@ export class PondLeapActivityScene extends Phaser.Scene {
 
   public create(data: PondLeapActivitySceneData = {}): void {
     this.miniGameSession = readMiniGameSession(data);
-    this.returnScene = this.miniGameSession?.returnTarget.sceneKey ?? data.returnScene ?? 'RainbowMeadowScene';
+    this.returnScene =
+      this.miniGameSession?.returnTarget.sceneKey ?? data.returnScene ?? 'RainbowMeadowScene';
     this.discoveredReflection = data.discoveredReflection === true;
     this.restartRun();
 
