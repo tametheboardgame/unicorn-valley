@@ -152,6 +152,22 @@ function assertValidResult(input: RaceResultInput): void {
   }
 }
 
+export function createPracticeRaceSummary(input: RaceResultInput): RaceRewardSummary {
+  assertValidResult(input);
+  return {
+    previousBestTimeMs: null,
+    bestTimeMs: input.finishTimeMs,
+    isPersonalBest: false,
+    participationSparkles: 0,
+    podiumBonusSparkles: 0,
+    newRibbonIds: [],
+    newRewardItemIds: [],
+    rainbowCupCompleted: false,
+    rainbowCupCompletedNow: false,
+    rainbowCupRewardItemId: null,
+  };
+}
+
 export function applyRaceResultToSave(save: SaveGame, input: RaceResultInput): AppliedRaceResult {
   assertValidResult(input);
   const rewardProfile = rewardProfileForRace(input.raceId);
