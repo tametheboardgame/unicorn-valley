@@ -1,9 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { MINI_GAME_IDS } from './MiniGameCatalogue';
-import {
-  runMiniGameAdventureEffect,
-  type MiniGameAdventureEffect,
-} from './MiniGameOutcomeGateway';
+import { runMiniGameAdventureEffect, type MiniGameAdventureEffect } from './MiniGameOutcomeGateway';
 import { createMiniGameSession } from './MiniGameSession';
 
 describe('MiniGameOutcomeGateway', () => {
