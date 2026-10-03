@@ -21,6 +21,12 @@ import {
 } from '../activities/FireflyLanternRules';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { getBrowserSaveService } from '../save/browserSaveService';
+import { returnFromMiniGame } from '../minigames/MiniGameLauncher';
+import {
+  miniGameSceneData,
+  readMiniGameSession,
+  type MiniGameSession,
+} from '../minigames/MiniGameSession';
 
 const TARGET_POSITIONS = [
   { x: 250, y: 220 },
@@ -64,6 +70,7 @@ interface FireflyLanternSceneData {
 type FireflySelector = 'mode' | 'difficulty';
 
 export class FireflyLanternScene extends Phaser.Scene {
+  private miniGameSession: MiniGameSession | null = null;
   private mode: FireflyLanternMode = 'normal';
   private difficulty: FireflyNormalDifficulty = 'classic';
   private opportunityIndex = 0;
@@ -92,7 +99,9 @@ export class FireflyLanternScene extends Phaser.Scene {
   }
 
   public create(data: FireflyLanternSceneData = {}): void {
-    this.mode = data.mode ?? 'normal';
+    this.miniGameSession = readMiniGameSession(data);
+    this.mode =
+      data.mode ?? (this.miniGameSession?.variantId as FireflyLanternMode | undefined) ?? 'normal';
     this.difficulty = data.difficulty ?? 'classic';
     this.opportunityIndex = 0;
     this.score = 0;
@@ -137,7 +146,7 @@ export class FireflyLanternScene extends Phaser.Scene {
 
   public update(): void {
     if (this.escapeKey && Phaser.Input.Keyboard.JustDown(this.escapeKey)) {
-      this.returnToWoods();
+      this.leaveActivity();
       return;
     }
 
@@ -154,7 +163,7 @@ export class FireflyLanternScene extends Phaser.Scene {
         this.modeKey &&
         Phaser.Input.Keyboard.JustDown(this.modeKey)
       ) {
-        this.scene.restart();
+        this.restartActivity();
       }
       return;
     }
@@ -650,10 +659,10 @@ export class FireflyLanternScene extends Phaser.Scene {
 
     const buttons: Phaser.GameObjects.Text[] = [
       this.createResultButton(395, 545, 'Try again', () => this.retryAttempt()),
-      this.createResultButton(885, 545, 'Back to the Woods', () => this.returnToWoods()),
+      this.createResultButton(885, 545, this.backButtonLabel(), () => this.leaveActivity()),
     ];
     if (this.modesUnlocked) {
-      buttons.push(this.createResultButton(640, 545, 'Choose game', () => this.scene.restart()));
+      buttons.push(this.createResultButton(640, 545, 'Choose game', () => this.restartActivity()));
     }
 
     this.add
@@ -710,14 +719,29 @@ export class FireflyLanternScene extends Phaser.Scene {
   }
 
   private retryAttempt(): void {
-    this.scene.restart({
+    this.restartActivity({
       mode: this.mode,
       difficulty: this.difficulty,
       startImmediately: true,
-    } satisfies FireflyLanternSceneData);
+    });
   }
 
-  private returnToWoods(): void {
+  private restartActivity(data: FireflyLanternSceneData = {}): void {
+    this.scene.restart(
+      this.miniGameSession ? miniGameSceneData(this.miniGameSession, data) : data,
+    );
+  }
+
+  private backButtonLabel(): string {
+    return this.miniGameSession?.source === 'just-games' ? 'Back to Games' : 'Back to the Woods';
+  }
+
+  private leaveActivity(): void {
+    if (this.miniGameSession) {
+      returnFromMiniGame(this, this.miniGameSession);
+      return;
+    }
+
     this.scene.start('WhisperingWoodsScene');
   }
 }
