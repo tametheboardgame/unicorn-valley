@@ -35,6 +35,7 @@ import {
 } from '../world/SunbeamVillageMap';
 import { CoreNpcPresenceService } from '../world/CoreNpcPresenceService';
 import { createRainbowDiscMeadowPresentation } from '../world/RainbowDiscMeadowPresentation';
+import { createRainbowMeadowBoundaryPresentation } from '../world/RainbowMeadowBoundaryPresentation';
 import { worldDepthForY } from '../world/WorldDepth';
 
 const COLLISION_TEXTURE_KEY = 'rainbow-meadow-collision-pixel';
@@ -433,6 +434,7 @@ export class RainbowMeadowScene extends Phaser.Scene {
 
     this.createPond();
     this.createGroves();
+    createRainbowMeadowBoundaryPresentation(this);
     this.createRainbowRunHubGateway();
     createRainbowDiscMeadowPresentation(this);
     createPicnicHillLandscape(this);
