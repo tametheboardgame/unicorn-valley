@@ -727,7 +727,9 @@ export class FireflyLanternScene extends Phaser.Scene {
   }
 
   private restartActivity(data: FireflyLanternSceneData = {}): void {
-    this.scene.restart(this.miniGameSession ? miniGameSceneData(this.miniGameSession, data) : data);
+    this.scene.restart(
+      this.miniGameSession ? miniGameSceneData(this.miniGameSession, { ...data }) : data,
+    );
   }
 
   private backDestinationLabel(): string {
