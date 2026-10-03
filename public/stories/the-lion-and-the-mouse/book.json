@@ -26,13 +26,7 @@
     }
   ],
   "series": null,
-  "tags": [
-    "classic-retelling",
-    "animals",
-    "kindness",
-    "friendship",
-    "illustrated"
-  ],
+  "tags": ["classic-retelling", "animals", "kindness", "friendship", "illustrated"],
   "discovery": {
     "format": "Short Story",
     "genres": ["Animals", "Classics"],

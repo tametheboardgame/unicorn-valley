@@ -44,14 +44,7 @@
     "title": "Aesop's Fables",
     "order": 1
   },
-  "tags": [
-    "classic",
-    "aesop",
-    "animals",
-    "perseverance",
-    "public-domain",
-    "illustrated"
-  ],
+  "tags": ["classic", "aesop", "animals", "perseverance", "public-domain", "illustrated"],
   "publication": {
     "status": "published"
   },

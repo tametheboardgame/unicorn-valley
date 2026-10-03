@@ -44,15 +44,7 @@
     "title": "Aesop's Fables",
     "order": 2
   },
-  "tags": [
-    "classic",
-    "aesop",
-    "animals",
-    "mice",
-    "contentment",
-    "public-domain",
-    "illustrated"
-  ],
+  "tags": ["classic", "aesop", "animals", "mice", "contentment", "public-domain", "illustrated"],
   "publication": {
     "status": "published"
   },
