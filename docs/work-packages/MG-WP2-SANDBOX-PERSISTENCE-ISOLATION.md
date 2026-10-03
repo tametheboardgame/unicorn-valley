@@ -1,7 +1,7 @@
 ---
 id: MG-WP2
 title: Sandbox, Rewards and Persistence Isolation
-status: in_progress
+status: complete
 autonomy: amber
 depends_on: [MG-WP1]
 parallel_safe: false
@@ -119,7 +119,7 @@ Closeout evidence:
 
 `docs/audits/2026-10-03-MG-WP2-SANDBOX-ISOLATION-CLOSEOUT.md`
 
-The package remains `in_progress` until exact-head technical validation is acceptable and the human gate is approved.
+The package was human-approved for merge on 2026-10-03. Tier 0 and unit contracts passed. Targeted browser smoke was still running at approval time. The repository performance gate remained red at 562.1 KiB first-playable gzip and 113 JavaScript chunks versus current main at 561.8 KiB and 113 chunks; the +0.3 KiB startup delta was recorded and explicitly accepted for merge.
 
 ## Human gate
 
