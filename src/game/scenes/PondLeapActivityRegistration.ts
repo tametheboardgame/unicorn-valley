@@ -45,6 +45,7 @@ export async function launchPondLeapActivity(
       returnScene: scene.sys.settings.key,
       discoveredReflection: options.discoveredReflection === true,
     });
+    scene.scene.bringToTop('PondLeapActivityScene');
     scene.scene.pause();
   } finally {
     launchPending = false;
