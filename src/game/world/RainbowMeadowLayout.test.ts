@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { isPointBlocked } from './MapTraversal';
 import { RAINBOW_MEADOW_LAYOUT, RAINBOW_MEADOW_MAP } from './RainbowMeadowMap';
 
 function isInsideDistrict(
@@ -179,22 +180,21 @@ describe('Rainbow Meadow canonical layout', () => {
   });
 
   it('keeps H4.8 nature interaction approaches outside physical collision', () => {
-    const pondCollider = RAINBOW_MEADOW_MAP.colliders.find(
-      ({ id }) => id === 'collision:rainbow-pond',
-    );
     const windmillCollider = RAINBOW_MEADOW_MAP.colliders.find(
       ({ id }) => id === 'collision:windmill-lookout-base',
     );
-    expect(pondCollider).toBeDefined();
     expect(windmillCollider).toBeDefined();
-    if (!pondCollider || !windmillCollider) {
+    if (!windmillCollider) {
       return;
     }
 
-    const pondBottom = pondCollider.y + pondCollider.height / 2;
     expect(
-      RAINBOW_MEADOW_LAYOUT.natureFeatures.pond.interactionPosition.y - pondBottom,
-    ).toBeGreaterThanOrEqual(60);
+      isPointBlocked(
+        RAINBOW_MEADOW_LAYOUT.natureFeatures.pond.interactionPosition,
+        RAINBOW_MEADOW_MAP.colliders,
+        46,
+      ),
+    ).toBe(false);
 
     const windmillBottom = windmillCollider.y + windmillCollider.height / 2;
     const windmillLeft = windmillCollider.x - windmillCollider.width / 2;
@@ -510,5 +510,68 @@ describe('H4.10 Meadow boundary readability', () => {
     expect(RAINBOW_MEADOW_LAYOUT.hubFeatures.rainbowRunEntrance.position.x).toBeLessThan(
       east.x1,
     );
+  });
+});
+
+
+describe('H4.10 Meadow collision audit', () => {
+  it('uses visible tree-footprint colliders instead of broad invisible grove walls', () => {
+    expect(
+      RAINBOW_MEADOW_MAP.colliders.some(({ id }) =>
+        ['collision:north-west-grove', 'collision:north-east-grove', 'collision:sports-east-frame'].includes(id),
+      ),
+    ).toBe(false);
+
+    const treeColliders = RAINBOW_MEADOW_MAP.colliders.filter(({ id }) =>
+      id.startsWith('collision:meadow-tree:'),
+    );
+    expect(treeColliders).toHaveLength(RAINBOW_MEADOW_LAYOUT.scenery.trees.length);
+
+    RAINBOW_MEADOW_LAYOUT.scenery.trees.forEach((tree) => {
+      expect(treeColliders.find(({ id }) => id === `collision:meadow-tree:${tree.id}`)).toEqual({
+        id: `collision:meadow-tree:${tree.id}`,
+        x: tree.x,
+        y: tree.y - 34 * tree.scale,
+        width: 64 * tree.scale,
+        height: 70 * tree.scale,
+      });
+    });
+  });
+
+  it('profiles Rainbow Pond collision to the visible ellipse instead of its bounding box', () => {
+    const pond = RAINBOW_MEADOW_LAYOUT.natureFeatures.pond;
+    const colliders = RAINBOW_MEADOW_MAP.colliders.filter(({ id }) =>
+      id.startsWith('collision:rainbow-pond:'),
+    );
+
+    expect(colliders).toHaveLength(pond.collisionSlices.length);
+    expect(colliders.some(({ width }) => width >= pond.width)).toBe(false);
+    expect(
+      colliders.every(
+        ({ x, y, width, height }) =>
+          x - width / 2 >= pond.position.x - pond.width / 2 &&
+          x + width / 2 <= pond.position.x + pond.width / 2 &&
+          y - height / 2 >= pond.position.y - pond.height / 2 &&
+          y + height / 2 <= pond.position.y + pond.height / 2,
+      ),
+    ).toBe(true);
+  });
+
+  it('keeps canonical routes and activity approaches clear with player-sized clearance', () => {
+    const clearPoints = [
+      RAINBOW_MEADOW_LAYOUT.sunbeamGateway.approach,
+      RAINBOW_MEADOW_LAYOUT.crystalBrookGateway.approach,
+      RAINBOW_MEADOW_LAYOUT.hubFeatures.rainbowRunEntrance.approach,
+      RAINBOW_MEADOW_LAYOUT.hubFeatures.windmillLookout.approach,
+      RAINBOW_MEADOW_LAYOUT.natureFeatures.pond.interactionPosition,
+      RAINBOW_MEADOW_LAYOUT.picnicHill.approach,
+      RAINBOW_MEADOW_LAYOUT.rainbowDisc.approach,
+      RAINBOW_MEADOW_LAYOUT.rainbowDisc.practice.approach,
+      ...RAINBOW_MEADOW_LAYOUT.structuralPaths.flatMap(({ points }) => points),
+    ];
+
+    expect(
+      clearPoints.filter((point) => isPointBlocked(point, RAINBOW_MEADOW_MAP.colliders, 42)),
+    ).toEqual([]);
   });
 });
