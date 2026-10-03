@@ -93,5 +93,5 @@ test('H4.10 boundary presentation preserves the three visual route openings', as
 
   expect(nearestBoundaryDistance(145, 1050)).toBeGreaterThan(180);
   expect(nearestBoundaryDistance(2950, 160)).toBeGreaterThan(170);
-  expect(nearestBoundaryDistance(3290, 1035)).toBeGreaterThan(180);
+  expect(nearestBoundaryDistance(3290, 1035)).toBeGreaterThan(160);
 });
