@@ -600,10 +600,14 @@ export class RainbowMeadowScene extends Phaser.Scene {
     board.fillRoundedRect(-112, -31, 224, 9, 5);
 
     const roofMark = this.add.graphics();
-    roofMark.fillStyle(0xb77963, 1);
-    roofMark.fillTriangle(-100, 3, -82, -14, -64, 3);
-    roofMark.fillStyle(0xf0d79d, 1);
-    roofMark.fillRect(-94, 3, 24, 18);
+    roofMark.fillStyle(0x8d5963, 1);
+    roofMark.fillTriangle(-101, 3, -82, -15, -63, 3);
+    roofMark.fillStyle(0x8fc9d8, 1);
+    roofMark.fillRect(-94, 3, 24, 19);
+    roofMark.fillStyle(0x624b5d, 1);
+    roofMark.fillRect(-85, 10, 7, 12);
+    roofMark.fillStyle(0xffefb2, 1);
+    roofMark.fillRect(-92, 6, 6, 6);
 
     const label = this.add
       .text(18, -8, 'SUNBEAM VILLAGE', {
