@@ -24,7 +24,7 @@ All roadmaps still obey the repo-wide mini-game contract in `AGENTS.md` and `ACC
 
 Historical mini-game work remains recorded in the roadmap where it actually happened. Existing games are normalised by the MG migration packages rather than rewriting project history.
 
-Initial platform sequence: **MG-WP0 platform foundation -> MG-WP1 Just Games shell -> MG-WP2 existing-game migration -> MG-WP3 sandbox/persistence isolation -> MG-WP4 future-game authoring guardrails**, followed by independent improvement passes for Chess, Rainbow Disc, Pond Leap, Wobbly Cake, Firefly Lantern, Coral Beachcombing and Rainbow Run Racing.
+Initial platform sequence: **MG-WP0 platform foundation -> MG-WP1 existing-game migration -> MG-WP2 sandbox/persistence isolation -> MG-WP3 Just Games shell -> MG-WP4 future-game authoring guardrails**, followed by independent improvement passes for Chess, Rainbow Disc, Pond Leap, Wobbly Cake, Firefly Lantern, Coral Beachcombing and Rainbow Run Racing.
 
 ## Completed releases
 
