@@ -46,8 +46,9 @@ test('H4.10 Meadow renders distinct authored boundary treatments', async ({ page
     .filter(({ effectiveVisible }) => effectiveVisible)
     .map(({ name }) => name);
 
-  expect(visibleNames.filter((name) => name.startsWith('rainbow-meadow:boundary:hedge:')).length)
-    .toBeGreaterThanOrEqual(6);
+  expect(
+    visibleNames.filter((name) => name.startsWith('rainbow-meadow:boundary:hedge:')).length,
+  ).toBeGreaterThanOrEqual(6);
   expect(
     visibleNames.filter((name) => name.startsWith('rainbow-meadow:boundary:race-fence:')).length,
   ).toBe(2);
@@ -66,8 +67,7 @@ test('H4.10 boundary presentation preserves the three visual route openings', as
 
   const meadow = await waitForMeadow(page);
   const boundaries = meadow.objects.filter(
-    ({ name, effectiveVisible }) =>
-      effectiveVisible && name.startsWith('rainbow-meadow:boundary:'),
+    ({ name, effectiveVisible }) => effectiveVisible && name.startsWith('rainbow-meadow:boundary:'),
   );
 
   const nearestBoundaryDistance = (x: number, y: number): number =>
