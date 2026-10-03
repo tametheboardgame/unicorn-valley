@@ -41,6 +41,7 @@ export class PondLeapActivityScene extends Phaser.Scene {
   private progressText: Phaser.GameObjects.Text | null = null;
   private timingMarker: Phaser.GameObjects.Rectangle | null = null;
   private timingZone: Phaser.GameObjects.Rectangle | null = null;
+  private completionLayer: Phaser.GameObjects.Container | null = null;
 
   public constructor() {
     super('PondLeapActivityScene');
@@ -71,6 +72,8 @@ export class PondLeapActivityScene extends Phaser.Scene {
       this.progressText = null;
       this.timingMarker = null;
       this.timingZone = null;
+      this.completionLayer?.destroy(true);
+      this.completionLayer = null;
     });
   }
 
@@ -231,11 +234,8 @@ export class PondLeapActivityScene extends Phaser.Scene {
     );
 
     if (this.completed) {
-      this.statusText?.setText(
-        this.misses === 0
-          ? 'Perfect crossing! Not a single splash. 🐸✨'
-          : `Across the pond! ${this.misses} splash${this.misses === 1 ? '' : 'es'} along the way. 🐸`,
-      );
+      this.statusText?.setText('');
+      this.showCompletionScreen();
       return;
     }
 
@@ -244,6 +244,96 @@ export class PondLeapActivityScene extends Phaser.Scene {
         ? 'A rainbow reflection shimmers between the pads. Time the first leap!'
         : 'Watch the marker and leap when it reaches the green water.',
     );
+  }
+
+  private showCompletionScreen(): void {
+    if (this.completionLayer) {
+      return;
+    }
+
+    const perfect = this.misses === 0;
+    const layer = this.add
+      .container(0, 0)
+      .setName('pond-leap:completion')
+      .setDepth(40);
+
+    const panel = this.add.graphics().setName('pond-leap:completion-panel');
+    panel.fillStyle(0xfff9e9, 1);
+    panel.fillRoundedRect(115, 165, 1050, 455, 32);
+    panel.lineStyle(6, 0xc99cdb, 1);
+    panel.strokeRoundedRect(115, 165, 1050, 455, 32);
+
+    const blocker = this.add
+      .rectangle(640, 392, 1050, 455, 0xffffff, 0.001)
+      .setName('pond-leap:completion-blocker')
+      .setInteractive();
+
+    const celebration = this.add
+      .text(640, 225, perfect ? '✨  PERFECT CROSSING!  ✨' : '🌟  POND CROSSED!  🌟', {
+        color: '#65446f',
+        fontFamily: UI_FONT,
+        fontSize: '30px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5);
+
+    const frog = this.add
+      .text(640, 305, '🐸', {
+        fontFamily: UI_FONT,
+        fontSize: '68px',
+      })
+      .setOrigin(0.5);
+
+    const headline = this.add
+      .text(640, 375, perfect ? 'Not a single splash!' : 'You made it across all five lily pads!', {
+        color: UI_COLOURS.ink,
+        fontFamily: UI_FONT,
+        fontSize: '24px',
+        fontStyle: 'bold',
+        align: 'center',
+      })
+      .setOrigin(0.5);
+
+    const summary = this.add
+      .text(
+        640,
+        420,
+        perfect
+          ? 'Five leaps. Five clean landings. The pond frogs are impressed.'
+          : `${this.misses} splash${this.misses === 1 ? '' : 'es'}, five successful leaps, and one very determined frog.`,
+        {
+          color: UI_COLOURS.softInk,
+          fontFamily: UI_FONT,
+          fontSize: '17px',
+          align: 'center',
+          wordWrap: { width: 760 },
+        },
+      )
+      .setOrigin(0.5);
+
+    const padRow = this.add
+      .text(640, 468, '●   ●   ●   ●   ●', {
+        color: '#6fa76c',
+        fontFamily: UI_FONT,
+        fontSize: '24px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5);
+
+    layer.add([panel, blocker, celebration, frog, headline, summary, padRow]);
+    this.createRoundedButton(505, 550, 220, 'Play Again', () => this.restartRun(), 'play-again', true, layer);
+    this.createRoundedButton(775, 550, 220, 'Back to Meadow', () => this.leaveActivity(), 'back-to-meadow', false, layer);
+
+    this.tweens.add({
+      targets: celebration,
+      scale: { from: 0.94, to: 1.04 },
+      duration: 520,
+      yoyo: true,
+      repeat: 1,
+      ease: 'Sine.InOut',
+    });
+
+    this.completionLayer = layer;
   }
 
   private tryLeap(): void {
@@ -320,6 +410,8 @@ export class PondLeapActivityScene extends Phaser.Scene {
   }
 
   private restartRun(): void {
+    this.completionLayer?.destroy(true);
+    this.completionLayer = null;
     this.hopIndex = 0;
     this.misses = 0;
     this.actionLocked = false;
@@ -340,6 +432,7 @@ export class PondLeapActivityScene extends Phaser.Scene {
     onPress: () => void,
     name: string,
     prominent = false,
+    parent: Phaser.GameObjects.Container | null = null,
   ): void {
     const visual = this.add.graphics().setName(`pond-leap:${name}-visual`);
     const draw = (hovered: boolean): void => {
@@ -373,6 +466,8 @@ export class PondLeapActivityScene extends Phaser.Scene {
       target.on('pointerout', () => draw(false));
       target.on('pointerdown', onPress);
     }
+
+    parent?.add([visual, hit, label]);
   }
 
   private leaveActivity(): void {
