@@ -252,10 +252,7 @@ export class PondLeapActivityScene extends Phaser.Scene {
     }
 
     const perfect = this.misses === 0;
-    const layer = this.add
-      .container(0, 0)
-      .setName('pond-leap:completion')
-      .setDepth(40);
+    const layer = this.add.container(0, 0).setName('pond-leap:completion').setDepth(40);
 
     const panel = this.add.graphics().setName('pond-leap:completion-panel');
     panel.fillStyle(0xfff9e9, 1);
@@ -321,8 +318,26 @@ export class PondLeapActivityScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     layer.add([panel, blocker, celebration, frog, headline, summary, padRow]);
-    this.createRoundedButton(505, 550, 220, 'Play Again', () => this.restartRun(), 'play-again', true, layer);
-    this.createRoundedButton(775, 550, 220, 'Back to Meadow', () => this.leaveActivity(), 'back-to-meadow', false, layer);
+    this.createRoundedButton(
+      505,
+      550,
+      220,
+      'Play Again',
+      () => this.restartRun(),
+      'play-again',
+      true,
+      layer,
+    );
+    this.createRoundedButton(
+      775,
+      550,
+      220,
+      'Back to Meadow',
+      () => this.leaveActivity(),
+      'back-to-meadow',
+      false,
+      layer,
+    );
 
     this.tweens.add({
       targets: celebration,
