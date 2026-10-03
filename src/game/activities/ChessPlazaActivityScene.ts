@@ -62,7 +62,8 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
 
   public create(data: ChessPlazaSceneData = {}): void {
     this.miniGameSession = readMiniGameSession(data);
-    this.returnScene = this.miniGameSession?.returnTarget.sceneKey ?? data.returnScene ?? 'SunbeamVillageScene';
+    this.returnScene =
+      this.miniGameSession?.returnTarget.sceneKey ?? data.returnScene ?? 'SunbeamVillageScene';
     this.chess = new Chess();
     this.selected = null;
     this.hintMove = null;
