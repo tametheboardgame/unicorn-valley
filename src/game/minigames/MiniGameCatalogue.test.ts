@@ -1,10 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { SCENE_MANIFEST } from '../scenes/SceneManifest';
-import {
-  getJustGamesDefinitions,
-  MINI_GAME_CATALOGUE,
-  MINI_GAME_IDS,
-} from './MiniGameCatalogue';
+import { getJustGamesDefinitions, MINI_GAME_CATALOGUE, MINI_GAME_IDS } from './MiniGameCatalogue';
 
 describe('MiniGameCatalogue', () => {
   it('keeps stable mini-game ids unique', () => {
