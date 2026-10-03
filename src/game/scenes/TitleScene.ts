@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { ensureSceneRegistered } from './SceneManifest';
 import { getVerticalSliceAudio } from '../audio/VerticalSliceAudio';
 import { GAME_HEIGHT } from '../config/gameConstants';
 import { InputController } from '../input/InputController';
@@ -602,9 +603,7 @@ export class TitleScene extends Phaser.Scene {
     }
 
     this.setStarting('Opening Just Games…');
-    void import('./SceneManifest')
-      .then(({ ensureSceneRegistered }) => ensureSceneRegistered(this.game, 'JustGamesScene'))
-      .then(() => {
+    void ensureSceneRegistered(this.game, 'JustGamesScene').then(() => {
         if (this.sys.isActive()) {
           this.scene.start('JustGamesScene');
         }
