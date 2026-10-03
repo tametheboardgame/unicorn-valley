@@ -82,11 +82,7 @@ test.describe('MG-WP3 Just Games catalogue', () => {
 
     expect(await selectedTitle()).toBe('Coral Beachcombing');
 
-    await movePointerToNamedObject(
-      page,
-      'JustGamesScene',
-      'just-games-card:rainbow-run-racing',
-    );
+    await movePointerToNamedObject(page, 'JustGamesScene', 'just-games-card:rainbow-run-racing');
 
     expect(await selectedTitle()).toBe('Coral Beachcombing');
   });
@@ -101,9 +97,8 @@ test.describe('MG-WP3 Just Games catalogue', () => {
     const variants =
       snapshot.scenes
         .find((scene) => scene.key === 'JustGamesScene')
-        ?.objects.filter((object) =>
-          object.name.startsWith('just-games-variant:race-course:'),
-        ) ?? [];
+        ?.objects.filter((object) => object.name.startsWith('just-games-variant:race-course:')) ??
+      [];
 
     expect(variants).toHaveLength(5);
     expect(new Set(variants.map((variant) => `${variant.x}:${variant.y}`)).size).toBe(5);
