@@ -149,12 +149,26 @@ describe('Rainbow Meadow canonical layout', () => {
     expect(disc.players.every(isInsideDistrict)).toBe(true);
     expect(isInsideDistrict(disc.captain)).toBe(true);
 
-    const markedFieldLeft = disc.centre.x - disc.field.width / 2 + 30;
-    const signRightEdge = disc.sign.x + 174;
-    expect(signRightEdge).toBeLessThan(markedFieldLeft);
-
+    const markedFieldRight = disc.centre.x + disc.field.width / 2 - 30;
+    const fieldTop = disc.centre.y - disc.field.height / 2;
     const path = RAINBOW_MEADOW_LAYOUT.structuralPaths.find(({ id }) => id === 'rainbow-disc-spur');
-    expect(path?.points[path.points.length - 1]).toEqual(disc.approach);
+    expect(path).toBeDefined();
+    if (!path) {
+      return;
+    }
+
+    const junction = path.points[0];
+    expect(disc.sign.x).toBeLessThan(junction.x);
+    expect(Math.abs(disc.sign.y - junction.y)).toBeLessThanOrEqual(100);
+    expect(disc.sign.y + 40).toBeLessThan(fieldTop - 150);
+
+    expect(disc.practice.throwLine.x).toBeGreaterThan(markedFieldRight + 30);
+    expect(disc.practice.targets.every(({ x }) => x > disc.practice.throwLine.x)).toBe(true);
+    expect(Math.max(...disc.practice.targets.map(({ x, radius }) => x + radius))).toBeLessThan(
+      RAINBOW_MEADOW_LAYOUT.picnicHill.centre.x - RAINBOW_MEADOW_LAYOUT.picnicHill.hill.width / 2,
+    );
+
+    expect(path.points[path.points.length - 1]).toEqual(disc.approach);
   });
 
   it('keeps H4.8 nature interaction approaches outside physical collision', () => {
