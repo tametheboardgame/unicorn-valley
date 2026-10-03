@@ -135,7 +135,23 @@ test('H4.9 Rainbow Disc lawn is alive before interaction and returns cleanly aft
     ({ name, effectiveVisible }) => name === 'rainbow-disc:sign' && effectiveVisible,
   );
   expect(sign).toBeDefined();
-  expect((sign?.x ?? 999) + (sign?.displayWidth ?? 0) / 2).toBeLessThan(300);
+  expect(sign?.y ?? 9999).toBeLessThan(1200);
+  expect((sign?.x ?? 0) + (sign?.displayWidth ?? 0) / 2).toBeLessThan(760);
+
+  const ambientDisc = meadow.objects.find(
+    ({ name, effectiveVisible }) => name === 'rainbow-disc:ambient-disc' && effectiveVisible,
+  );
+  expect(ambientDisc?.type).toBe('Graphics');
+  expect(
+    meadow.objects.some(
+      ({ name, effectiveVisible }) => name === 'rainbow-disc:practice-range' && effectiveVisible,
+    ),
+  ).toBe(true);
+  expect(
+    meadow.objects.some(
+      ({ name, effectiveVisible }) => name === 'rainbow-disc:practice-sign' && effectiveVisible,
+    ),
+  ).toBe(true);
 
   for (let index = 0; index < 4; index += 1) {
     const post = meadow.objects.find(({ name }) => name === `rainbow-disc:pennant-post:${index}`);
@@ -193,6 +209,83 @@ test('H4.9 Rainbow Disc lawn is alive before interaction and returns cleanly aft
       const activity = await snapshotScene(page, 'RainbowDiscActivityScene');
       return activity.objects.some(
         ({ name, effectiveVisible }) => name === 'rainbow-disc-activity:result' && effectiveVisible,
+      );
+    })
+    .toBe(true);
+
+  await page.keyboard.press('Escape');
+  await waitForActiveScene(page, 'RainbowMeadowScene');
+});
+
+
+
+test('H4.9B practice range launches a five-throw target challenge', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.addInitScript(() => window.localStorage.clear());
+  await page.goto('/?scene=meadow&diagnostics=1');
+  await waitForDiagnostics(page);
+  await waitForActiveScene(page, 'RainbowMeadowScene');
+
+  await setMeadowPlayerPosition(page, 1160, 1510);
+  await expect
+    .poll(async () => {
+      const current = await snapshotScene(page, 'RainbowMeadowScene');
+      return current.objects.some(
+        ({ name, effectiveVisible }) =>
+          name === 'exploration-interaction-prompt' && effectiveVisible,
+      );
+    })
+    .toBe(true);
+
+  await page.keyboard.press('E');
+  await waitForActiveScene(page, 'RainbowDiscActivityScene');
+
+  await expect
+    .poll(async () => {
+      const activity = await snapshotScene(page, 'RainbowDiscActivityScene');
+      return activity.objects.some(
+        ({ text, effectiveVisible }) =>
+          effectiveVisible && text === 'Rainbow Disc Practice',
+      );
+    })
+    .toBe(true);
+
+  const activityStart = await snapshotScene(page, 'RainbowDiscActivityScene');
+  expect(
+    activityStart.objects.some(
+      ({ name, effectiveVisible }) =>
+        name === 'rainbow-disc-activity:practice-targets' && effectiveVisible,
+    ),
+  ).toBe(true);
+  expect(
+    activityStart.objects.find(
+      ({ name, effectiveVisible }) => name === 'rainbow-disc-activity:disc' && effectiveVisible,
+    )?.type,
+  ).toBe('Graphics');
+
+  for (let throwIndex = 0; throwIndex < 5; throwIndex += 1) {
+    const activity = await snapshotScene(page, 'RainbowDiscActivityScene');
+    const disc = activity.objects.find(
+      ({ name, effectiveVisible }) => name === 'rainbow-disc-activity:disc' && effectiveVisible,
+    );
+    if (!disc) throw new Error('Practice disc is unavailable.');
+
+    await page.mouse.move(disc.x, disc.y);
+    await page.mouse.down();
+    await page.mouse.move(960, 370, { steps: 8 });
+    await page.mouse.up();
+
+    if (throwIndex < 4) {
+      await page.waitForTimeout(520);
+    }
+  }
+
+  await expect
+    .poll(async () => {
+      const activity = await snapshotScene(page, 'RainbowDiscActivityScene');
+      return activity.objects.some(
+        ({ text, effectiveVisible }) =>
+          effectiveVisible && text === 'PRACTICE COMPLETE!',
       );
     })
     .toBe(true);
