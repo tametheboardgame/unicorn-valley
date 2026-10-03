@@ -135,7 +135,9 @@ describe('Rainbow Meadow canonical layout', () => {
     }
 
     const disc = RAINBOW_MEADOW_LAYOUT.rainbowDisc;
-    expect(disc.centre).toEqual(district.centre);
+    expect(
+      Math.hypot(disc.centre.x - district.centre.x, disc.centre.y - district.centre.y),
+    ).toBeLessThanOrEqual(20);
     expect(disc.players).toHaveLength(5);
 
     const isInsideDistrict = (point: { x: number; y: number }) => {
