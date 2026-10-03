@@ -25,8 +25,9 @@ import {
 } from '../world/WhisperingWoodsMap';
 import { setWorldArrivalFacing } from '../world/WorldArrivalState';
 import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
-import { getActiveRaceCourse, selectRaceCourse } from './RaceCourse';
-import { setRaceReturnScene, type RaceReturnSceneKey } from './RaceReturnContext';
+import { getActiveRaceCourse } from './RaceCourse';
+import { launchRainbowRunRace } from './RaceMiniGameAdapter';
+import type { RaceReturnSceneKey } from './RaceReturnContext';
 import {
   createR65RacePresentation,
   getR65RaceThemeIcon,
@@ -373,9 +374,15 @@ export class R65RaceExpansionWorldManager {
       setWorldArrivalFacing('StarlightBeachScene', 'left');
       saveLocationCheckpoint(this.saveService, STARLIGHT_BEACH_LOCATION_ID);
     }
-    setRaceReturnScene(this.game, originSceneKey);
-    selectRaceCourse(courseId);
-    scene.scene.start('RaceScene');
+    void launchRainbowRunRace(scene, {
+      courseId,
+      returnScene: originSceneKey,
+      worldContext: {
+        locationId: originSceneKey,
+        interactionId: mode === 'cup' ? 'interaction:race-entry:rainbow-cup' : 'interaction:race-entry',
+        questContext: mode,
+      },
+    });
   }
 
   private openCupOverlay(scene: Phaser.Scene, originSceneKey: WorldSceneKey): void {
