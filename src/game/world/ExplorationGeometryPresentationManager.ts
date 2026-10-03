@@ -1,13 +1,12 @@
 import Phaser from 'phaser';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
+import { EXPLORATION_GEOMETRY_SUPPORTED_SCENE_KEYS } from './RegionPresentationOwnership';
 import { worldDepthForY } from './WorldDepth';
 
 const PRESENTATION_ANCHOR_NAME = 'exploration-geometry-presentation-anchor';
-export const EXPLORATION_GEOMETRY_SUPPORTED_SCENES = new Set([
-  'MoonflowerGladeScene',
-  'CrystalBrookScene',
-  'WhisperingWoodsScene',
-]);
+const EXPLORATION_GEOMETRY_SUPPORTED_SCENES = new Set(
+  EXPLORATION_GEOMETRY_SUPPORTED_SCENE_KEYS,
+);
 
 interface HintDefinition {
   startsWith: string;
