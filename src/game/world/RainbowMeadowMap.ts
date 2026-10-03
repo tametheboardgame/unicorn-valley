@@ -191,7 +191,7 @@ export const RAINBOW_MEADOW_LAYOUT = {
       { id: 'north-west', x: 680, y: 145, width: 980, height: 110 },
       { id: 'north-centre', x: 1770, y: 145, width: 920, height: 110 },
       { id: 'south-west', x: 650, y: 2025, width: 1050, height: 100 },
-      { id: 'south-centre', x: 1880, y: 2025, width: 1320, height: 100 },
+      { id: 'south-centre', x: 1960, y: 2025, width: 1120, height: 100 },
     ],
     raceFence: [
       { id: 'race-west', x1: 2240, y1: 160, x2: 2760, y2: 160 },
