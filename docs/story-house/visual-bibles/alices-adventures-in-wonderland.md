@@ -259,13 +259,14 @@ Locked design:
 
 ### Royal rose garden / croquet ground
 
-**Rose garden / palace exterior approved 3 October 2026; croquet-ground composition still pending.**
+**Approved 3 October 2026.**
 - lush rose garden with clipped topiary;
 - cream stone architecture with red roofs/banners and black/red/cream/gold accents;
 - heart motifs used selectively and architecturally, not across every surface;
 - white/red rose contrast;
-- croquet field must be large enough for flamingos, hedgehogs and card-soldier hoops;
-- same environment must support the Cheshire floating-head scene.
+- flamingos function as mallets, hedgehogs as balls and card attendants bend into hoop forms;
+- use the main wide croquet panel as the primary continuity authority;
+- same environment can support the Cheshire floating-head scene.
 
 ### Mock Turtle coast
 - dreamlike coastal edge of Wonderland;
@@ -304,6 +305,8 @@ Human approval is required in this order before bulk chapter art:
 **Completed:** Dormouse approved and locked.
 
 **Completed:** Queen of Hearts, King of Hearts, card soldiers and Hearts rose-garden/palace exterior approved and locked.
+
+**Completed:** Hearts croquet ground and courtroom approved and locked.
 
 1. Alice character anchor sheet.
 2. White Rabbit + early Wonderland hall/riverbank anchors.
