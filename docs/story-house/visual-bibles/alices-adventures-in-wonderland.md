@@ -2,7 +2,7 @@
 
 Work package: **R6.5-WP19SH1.6.1A**
 
-Status: **in progress — Alice, White Rabbit/early-world, Caterpillar, Cheshire Cat and Wonderland woodland anchors approved; tea-party anchors next**
+Status: **in progress — Alice, White Rabbit/early-world, Caterpillar, Cheshire Cat, Wonderland woodland and Hatter anchors approved; March Hare / Dormouse / tea-party anchors next**
 
 ## Purpose
 
@@ -116,9 +116,21 @@ Locked design:
   the locked face/coat design.
 
 ### Hatter
-- eccentric Victorian clothing;
-- one fixed hat, face, hair and costume palette;
-- theatrical, lively expression without resembling a specific later adaptation.
+
+**Approved 3 October 2026.** The corrected adult Hatter sheet supersedes the earlier youthful,
+bright-orange-haired exploratory version.
+
+Locked design:
+- clearly adult, lean build and mature face;
+- chestnut-brown, unruly medium-length hair;
+- distressed tall deep-green hat with the `10/6` card;
+- faded rose/burgundy hat band;
+- deep green long coat with burgundy waistcoat and mustard/cream accents;
+- patterned mustard bow tie;
+- checked cropped trousers;
+- striped stockings and worn brown lace-up boots;
+- theatrical, warm and eccentric expression without resembling a specific later adaptation;
+- tea-party props may include mismatched floral china, teapots, cakes and pocket-watch motifs.
 
 ### March Hare
 - stable fur colouring and anatomy;
@@ -246,6 +258,8 @@ Human approval is required in this order before bulk chapter art:
 **Completed:** White Rabbit, riverbank, rabbit-hole visual language, door hall and initial garden glimpse approved and locked.
 
 **Completed:** Caterpillar, mushroom clearing, Wonderland woodland and corrected Cheshire Cat approved and locked.
+
+**Completed:** corrected adult Hatter approved and locked.
 
 1. Alice character anchor sheet.
 2. White Rabbit + early Wonderland hall/riverbank anchors.
