@@ -124,6 +124,9 @@ test('Crystal Brook owns one continuous filled water system without legacy repla
   expect(
     objects.some((object) => object.name === 'final-graphics-tightening:crystal-brook-stream'),
   ).toBe(false);
+  expect(
+    objects.some((object) => object.name === 'exploration-path-polish' && object.visible),
+  ).toBe(false);
   expect(objects.some((object) => object.name === 'brook-depth:waterfall-mist-landmark')).toBe(
     false,
   );
