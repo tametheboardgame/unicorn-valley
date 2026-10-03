@@ -294,4 +294,4 @@ All current and future roadmaps must obey the shared mini-game contract in `AGEN
 
 `SceneManifest` remains the scene/loading authority; the mini-game catalogue must not become a competing scene registry. Just Games sessions are sandboxed by default and may not mutate normal adventure quest, world, relationship, inventory, Shimmer, collection or unlock progression. Existing historical games remain recorded under the packages that created them and are migrated to the new platform through the MG programme rather than rewriting history.
 
-The initial platform sequence is MG-WP0 foundation, MG-WP1 Just Games shell, MG-WP2 existing-game migration, MG-WP3 sandbox/persistence isolation and MG-WP4 future-game authoring guardrails, followed by independent game improvement packages.
+The initial platform sequence is MG-WP0 foundation, MG-WP1 existing-game migration, MG-WP2 sandbox/persistence isolation, MG-WP3 Just Games shell and MG-WP4 future-game authoring guardrails, followed by independent game improvement packages.
