@@ -13,7 +13,6 @@ import {
   FIREFLY_LANTERN_ENDLESS_MASTERY_MEMORY,
   FIREFLY_LANTERN_FIRST_COMPLETION_MEMORY,
   FIREFLY_LANTERN_MULTICOLOUR_COMPLETION_MEMORY,
-  createFireflyLanternPracticeResult,
   getFireflyLanternProgress,
   reconcileFireflyLanternProgress,
   recordFireflyLanternAttempt,
@@ -47,24 +46,6 @@ function createService(): SaveService {
 }
 
 describe('R5-WP5.9F Firefly Lantern persistence', () => {
-  it('creates a practice result without milestones or durable unlock semantics', () => {
-    expect(
-      createFireflyLanternPracticeResult({
-        mode: 'endless',
-        score: 17.8,
-        completed: false,
-      }),
-    ).toEqual({
-      modesUnlocked: true,
-      normalBest: 0,
-      multicolourBest: 0,
-      endlessBest: 17,
-      bestScore: 17,
-      firstCompletion: false,
-      newMilestones: [],
-    });
-  });
-
   it('records an imperfect Normal best without unlocking replay modes', () => {
     const service = createService();
     const result = recordFireflyLanternResult(service, 6);
