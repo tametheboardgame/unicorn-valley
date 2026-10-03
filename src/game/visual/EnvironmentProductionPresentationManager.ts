@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { ENVIRONMENT_PRODUCTION_SCENE_ENVIRONMENTS } from '../world/RegionPresentationOwnership';
 import { SUNBEAM_VILLAGE_LAYERS, SUNBEAM_VILLAGE_LAYOUT } from '../world/SunbeamVillageLayout';
 import { worldDepthForY } from '../world/WorldDepth';
 
@@ -16,16 +17,6 @@ interface AmbientPoint {
   y: number;
   radius?: number;
 }
-
-export const ENVIRONMENT_PRODUCTION_SCENE_ENVIRONMENTS: Readonly<
-  Record<string, ProductionEnvironmentId>
-> = {
-  MoonflowerGladeScene: 'moonflower-glade',
-  CrystalBrookScene: 'crystal-brook',
-  WhisperingWoodsScene: 'whispering-woods',
-  RaceScene: 'rainbow-run',
-  NovaTutorialRaceScene: 'rainbow-run',
-};
 
 export function environmentProductionName(
   environment: ProductionEnvironmentId,
@@ -473,7 +464,9 @@ export class EnvironmentProductionPresentationManager {
 
   private update(): void {
     for (const scene of this.game.scene.getScenes(true)) {
-      const environment = ENVIRONMENT_PRODUCTION_SCENE_ENVIRONMENTS[scene.scene.key];
+      const environment = ENVIRONMENT_PRODUCTION_SCENE_ENVIRONMENTS[
+        scene.scene.key as keyof typeof ENVIRONMENT_PRODUCTION_SCENE_ENVIRONMENTS
+      ] as ProductionEnvironmentId | undefined;
       if (!environment) {
         continue;
       }
