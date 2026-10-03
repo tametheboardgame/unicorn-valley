@@ -33,10 +33,7 @@ function drawRoundedStroke(
 }
 
 function createStructuralPaths(scene: Phaser.Scene): void {
-  const paths = scene.add
-    .graphics()
-    .setName('rainbow-meadow:path-network')
-    .setDepth(2.45);
+  const paths = scene.add.graphics().setName('rainbow-meadow:path-network').setDepth(2.45);
 
   for (const stroke of RAINBOW_MEADOW_LAYOUT.structuralPaths) {
     drawRoundedStroke(paths, stroke.points, stroke.outerWidth, 0xd7c18f);
@@ -81,14 +78,7 @@ function createSunbeamThreshold(scene: Phaser.Scene): void {
       .setName('rainbow-meadow:sunbeam-threshold:hedge')
       .setDepth(worldDepthForY(hedgeY, -0.12));
     scene.add
-      .ellipse(
-        x - 14,
-        hedgeY + Math.sign(yOffset) * 28,
-        58,
-        66,
-        0x82b77a,
-        0.94,
-      )
+      .ellipse(x - 14, hedgeY + Math.sign(yOffset) * 28, 58, 66, 0x82b77a, 0.94)
       .setName('rainbow-meadow:sunbeam-threshold:hedge-detail')
       .setDepth(worldDepthForY(hedgeY, -0.1));
   }
