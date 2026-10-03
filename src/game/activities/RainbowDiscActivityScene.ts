@@ -315,13 +315,19 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       return;
     }
 
+    if (this.phase === 'defence') {
+      this.renderDefencePhase();
+      return;
+    }
+
     const throwOrigin = this.throwOrigin();
-    const targetX = TARGET_X[this.possession];
+    const targetX = TARGET_X[this.possession] ?? TARGET_X[0];
+    const openLane = OPEN_LANE_BY_PASS[this.possession] ?? OPEN_LANE_BY_PASS[0];
 
     const thrower = this.add
-      .sprite(throwOrigin.x - 40, throwOrigin.y + 46, PLAYER_TEXTURE_KEY)
-      .setDisplaySize(164, 116)
-      .setOrigin(0.5, 0.78)
+      .sprite(throwOrigin.x - 28, throwOrigin.y, PLAYER_TEXTURE_KEY)
+      .setDisplaySize(ACTIVITY_THROWER_SIZE.width, ACTIVITY_THROWER_SIZE.height)
+      .setOrigin(0.5)
       .setName('rainbow-disc-activity:thrower');
     this.playLayer.add(thrower);
 
@@ -337,16 +343,44 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
         appearance,
       )
         .setPosition(targetX, receiverY)
+        .setOrigin(0.5)
+        .setScale(ACTIVITY_RECEIVER_SCALE)
         .setInteractive({ useHandCursor: true });
       receiver.on('pointerdown', () => this.selectReceiver(index));
       this.receiverSprites.push(receiver);
 
+      const marked = index !== openLane;
       const ring = this.add
-        .circle(targetX, receiverY + 6, 66, 0xfff4b8, index === this.selectedReceiver ? 0.22 : 0)
-        .setStrokeStyle(4, 0xf4c96b, index === this.selectedReceiver ? 0.9 : 0.18)
+        .circle(targetX, receiverY, 55, marked ? 0xf2b4c2 : 0xfff4b8, index === this.selectedReceiver ? 0.2 : 0.05)
+        .setStrokeStyle(
+          4,
+          index === this.selectedReceiver ? 0xf4c96b : marked ? 0xd9899f : 0xc9b55f,
+          index === this.selectedReceiver ? 0.94 : 0.48,
+        )
         .setName(`rainbow-disc-activity:receiver-ring:${index}`);
       this.receiverRings.push(ring);
       this.playLayer?.add([ring, receiver]);
+
+      if (marked) {
+        const defenderX = Phaser.Math.Linear(throwOrigin.x, targetX, 0.7);
+        const defenderAppearance =
+          RAINBOW_DISC_PLAYER_APPEARANCES[(index + 3) % RAINBOW_DISC_PLAYER_APPEARANCES.length];
+        const defenderHalo = this.add
+          .circle(defenderX, receiverY, 45, 0xe38da7, 0.14)
+          .setStrokeStyle(3, 0xd37894, 0.78)
+          .setName(`rainbow-disc-activity:defender-halo:${index}`);
+        const defender = createResidentAppearanceSprite(
+          this,
+          `rainbow-disc-activity:defender:${this.possession}:${index}`,
+          `rainbow-disc-activity:defender:${index}`,
+          defenderAppearance,
+        )
+          .setPosition(defenderX, receiverY)
+          .setOrigin(0.5)
+          .setScale(0.6)
+          .setFlipX(true);
+        this.playLayer?.add([defenderHalo, defender]);
+      }
     });
 
     this.aimGraphics = this.add.graphics().setName('rainbow-disc-activity:aim-line').setDepth(25);
@@ -357,8 +391,8 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       'rainbow-disc-activity:disc',
       throwOrigin.x,
       throwOrigin.y,
-      21,
-      8,
+      18,
+      7,
     )
       .setScale(1, 0.62)
       .setDepth(30);
@@ -369,13 +403,91 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     });
     this.playLayer.add(this.disc);
 
-    const passLabel =
+    this.statusText?.setText(
       this.possession === PASS_COUNT - 1
-        ? 'Final pass: make the end-zone catch!'
-        : `Pass ${this.possession + 1} of ${PASS_COUNT}: aim for any teammate.`;
-    this.statusText?.setText(passLabel);
+        ? 'Final pass: find the open lane and reach the end zone.'
+        : `Pass ${this.possession + 1} of ${PASS_COUNT}: two lanes are marked — find the open receiver.`,
+    );
     this.progressText?.setText(
-      `Catch chain: ${'●'.repeat(this.possession)}${'○'.repeat(PASS_COUNT - this.possession)}`,
+      `Your chain: ${'●'.repeat(this.possession)}${'○'.repeat(PASS_COUNT - this.possession)}`,
+    );
+    this.refreshReceiverSelection();
+  }
+
+  private renderDefencePhase(): void {
+    const opponentThrowerX = 390;
+    const opponentReceiverX = 920;
+
+    const yourDefender = this.add
+      .sprite(610, 370, PLAYER_TEXTURE_KEY)
+      .setDisplaySize(ACTIVITY_THROWER_SIZE.width, ACTIVITY_THROWER_SIZE.height)
+      .setOrigin(0.5)
+      .setName('rainbow-disc-activity:defence-player');
+    this.playLayer?.add(yourDefender);
+
+    const opponentThrower = createResidentAppearanceSprite(
+      this,
+      'rainbow-disc-activity:opponent-thrower',
+      'rainbow-disc-activity:opponent-thrower',
+      RAINBOW_DISC_PLAYER_APPEARANCES[4],
+    )
+      .setPosition(opponentThrowerX, 370)
+      .setOrigin(0.5)
+      .setScale(0.65)
+      .setFlipX(false);
+    this.playLayer?.add(opponentThrower);
+
+    RECEIVER_Y.forEach((receiverY, index) => {
+      const appearance =
+        RAINBOW_DISC_PLAYER_APPEARANCES[(index + 2) % RAINBOW_DISC_PLAYER_APPEARANCES.length];
+      const attacker = createResidentAppearanceSprite(
+        this,
+        `rainbow-disc-activity:opponent-receiver:${index}`,
+        `rainbow-disc-activity:opponent-receiver:${index}`,
+        appearance,
+      )
+        .setPosition(opponentReceiverX, receiverY)
+        .setOrigin(0.5)
+        .setScale(ACTIVITY_RECEIVER_SCALE)
+        .setInteractive({ useHandCursor: true });
+      attacker.on('pointerdown', () => this.resolveDefenceChoice(index));
+
+      const ring = this.add
+        .circle(
+          opponentReceiverX,
+          receiverY,
+          55,
+          0xb9d9ef,
+          index === this.selectedReceiver ? 0.2 : 0.05,
+        )
+        .setStrokeStyle(
+          4,
+          index === this.selectedReceiver ? 0x6f95cb : 0x8cb7d7,
+          index === this.selectedReceiver ? 0.95 : 0.5,
+        )
+        .setName(`rainbow-disc-activity:receiver-ring:${index}`);
+      this.receiverRings.push(ring);
+      this.receiverSprites.push(attacker);
+      this.playLayer?.add([ring, attacker]);
+    });
+
+    this.disc = createRainbowDiscRing(
+      this,
+      'rainbow-disc-activity:disc',
+      opponentThrowerX + 35,
+      330,
+      18,
+      7,
+    )
+      .setScale(1, 0.62)
+      .setDepth(30);
+    this.playLayer?.add(this.disc);
+
+    this.statusText?.setText(
+      'DEFEND: choose which lane they will use. Tap a lane, or use ↑/↓ then Space.',
+    );
+    this.progressText?.setText(
+      `Opposition advance: ${'●'.repeat(this.opponentAdvance)}${'○'.repeat(2 - this.opponentAdvance)}`,
     );
     this.refreshReceiverSelection();
   }
@@ -384,9 +496,9 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     const throwOrigin = this.throwOrigin();
 
     const thrower = this.add
-      .sprite(throwOrigin.x - 40, throwOrigin.y + 46, PLAYER_TEXTURE_KEY)
-      .setDisplaySize(164, 116)
-      .setOrigin(0.5, 0.78)
+      .sprite(throwOrigin.x - 28, throwOrigin.y, PLAYER_TEXTURE_KEY)
+      .setDisplaySize(ACTIVITY_THROWER_SIZE.width, ACTIVITY_THROWER_SIZE.height)
+      .setOrigin(0.5)
       .setName('rainbow-disc-activity:thrower');
     this.playLayer?.add(thrower);
 
@@ -424,12 +536,17 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       this.playLayer?.add(selector);
 
       const points = this.add
-        .text(PRACTICE_TARGET_X + 115, target.y, `${target.points} pt`, {
-          color: '#5f496d',
-          fontFamily: UI_FONT,
-          fontSize: '14px',
-          fontStyle: 'bold',
-        })
+        .text(
+          PRACTICE_TARGET_X + 118,
+          target.y,
+          `${target.points} pt • ${target.label}`,
+          {
+            color: '#5f496d',
+            fontFamily: UI_FONT,
+            fontSize: '13px',
+            fontStyle: 'bold',
+          },
+        )
         .setOrigin(0.5);
       this.playLayer?.add(points);
     });
@@ -442,8 +559,8 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       'rainbow-disc-activity:disc',
       throwOrigin.x,
       throwOrigin.y,
-      21,
-      8,
+      18,
+      7,
     )
       .setScale(1, 0.62)
       .setDepth(30);
@@ -454,13 +571,15 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     });
     this.playLayer?.add(this.disc);
 
+    const selected = PRACTICE_TARGETS[this.selectedReceiver] ?? PRACTICE_TARGETS[1];
     this.statusText?.setText(
-      `Throw ${this.practiceThrows + 1} of ${PRACTICE_THROW_COUNT}: hit a rainbow target.`,
+      `Throw ${this.practiceThrows + 1} of ${PRACTICE_THROW_COUNT}: ${selected.label} target — ${selected.points} point${selected.points === 1 ? '' : 's'}.`,
     );
     this.progressText?.setText(
       `Practice: ${this.practiceThrows}/${PRACTICE_THROW_COUNT} • Score: ${this.practiceScore}`,
     );
     this.refreshReceiverSelection();
+    this.updateTimingSuccessZone();
   }
 
   private renderResult(): void {
