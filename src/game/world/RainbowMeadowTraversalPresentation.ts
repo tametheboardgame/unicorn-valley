@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { createRainbowMeadowBoundaryPresentation } from './RainbowMeadowBoundaryPresentation';
 import { RAINBOW_MEADOW_LAYOUT } from './RainbowMeadowMap';
 import { worldDepthForY } from './WorldDepth';
 
@@ -113,4 +114,5 @@ function createSunbeamThreshold(scene: Phaser.Scene): void {
 export function createRainbowMeadowTraversalPresentation(scene: Phaser.Scene): void {
   createStructuralPaths(scene);
   createSunbeamThreshold(scene);
+  createRainbowMeadowBoundaryPresentation(scene);
 }
