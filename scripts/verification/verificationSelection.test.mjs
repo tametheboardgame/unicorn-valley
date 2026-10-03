@@ -33,7 +33,6 @@ test('overlapping settings audio source selects both product contracts without d
   assert.equal(new Set(plan.browserTests).size, plan.browserTests.length);
 });
 
-
 test('mini-game platform changes select mini-game unit and browser ownership', () => {
   const plan = buildVerificationSelection(['src/game/minigames/MiniGameSession.ts']);
   assert.equal(plan.changeClass, 'bounded-feature');
