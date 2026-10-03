@@ -135,8 +135,19 @@ test('H4.9 Rainbow Disc lawn is alive before interaction and returns cleanly aft
     ({ name, effectiveVisible }) => name === 'rainbow-disc:sign' && effectiveVisible,
   );
   expect(sign).toBeDefined();
-  expect(sign?.y ?? 9999).toBeLessThan(1200);
-  expect((sign?.x ?? 0) + (sign?.displayWidth ?? 0) / 2).toBeLessThan(760);
+  expect(sign?.x ?? 9999).toBeLessThan(760);
+  expect(sign?.y ?? 9999).toBeLessThan(1100);
+  for (const name of [
+    'rainbow-disc:sign-leg-left',
+    'rainbow-disc:sign-leg-right',
+    'rainbow-disc:practice-sign-leg-left',
+    'rainbow-disc:practice-sign-leg-right',
+  ]) {
+    expect(
+      meadow.objects.some((object) => object.name === name && object.effectiveVisible),
+      `${name} visible`,
+    ).toBe(true);
+  }
 
   const ambientDisc = meadow.objects.find(
     ({ name, effectiveVisible }) => name === 'rainbow-disc:ambient-disc' && effectiveVisible,
@@ -172,6 +183,16 @@ test('H4.9 Rainbow Disc lawn is alive before interaction and returns cleanly aft
       );
     })
     .toBe(true);
+
+  await expect
+    .poll(async () => {
+      const current = await snapshotScene(page, 'RainbowMeadowScene');
+      return current.objects.find(
+        ({ name, effectiveVisible }) =>
+          name === 'exploration-interaction-prompt-label' && effectiveVisible,
+      )?.text;
+    })
+    .toBe('Join the game');
 
   await page.keyboard.press('E');
   await waitForActiveScene(page, 'RainbowDiscActivityScene');
@@ -235,6 +256,16 @@ test('H4.9B practice range launches a five-throw target challenge', async ({ pag
       );
     })
     .toBe(true);
+
+  await expect
+    .poll(async () => {
+      const current = await snapshotScene(page, 'RainbowMeadowScene');
+      return current.objects.find(
+        ({ name, effectiveVisible }) =>
+          name === 'exploration-interaction-prompt-label' && effectiveVisible,
+      )?.text;
+    })
+    .toBe('Practice throws');
 
   await page.keyboard.press('E');
   await waitForActiveScene(page, 'RainbowDiscActivityScene');
