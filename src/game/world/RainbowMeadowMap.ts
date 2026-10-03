@@ -109,6 +109,13 @@ export const RAINBOW_MEADOW_LAYOUT = {
         { x: 1540, y: 660 },
         { x: 1680, y: 570 },
       ],
+      collisionSlices: [
+        { id: 'top', offsetY: -116, width: 310, height: 34 },
+        { id: 'upper', offsetY: -72, width: 425, height: 58 },
+        { id: 'centre', offsetY: 0, width: 492, height: 92 },
+        { id: 'lower', offsetY: 72, width: 425, height: 58 },
+        { id: 'bottom', offsetY: 116, width: 310, height: 34 },
+      ],
     },
     flowerCircle: { x: 550, y: 600 },
     butterflyParade: { x: 780, y: 850 },
@@ -187,7 +194,7 @@ export const RAINBOW_MEADOW_LAYOUT = {
   boundaries: {
     hedges: [
       { id: 'west-north', x: 145, y: 430, width: 110, height: 560 },
-      { id: 'west-south', x: 145, y: 1660, width: 110, height: 650 },
+      { id: 'west-south', x: 72, y: 1660, width: 110, height: 650 },
       { id: 'north-west', x: 680, y: 145, width: 980, height: 110 },
       { id: 'north-centre', x: 1770, y: 145, width: 920, height: 110 },
       { id: 'south-west', x: 650, y: 2025, width: 1050, height: 100 },
@@ -618,23 +625,30 @@ export const RAINBOW_MEADOW_MAP = {
     },
   ] satisfies readonly MeadowDiscoverySpot[],
   colliders: [
-    {
-      id: 'collision:rainbow-pond',
+    ...RAINBOW_MEADOW_LAYOUT.natureFeatures.pond.collisionSlices.map((slice) => ({
+      id: `collision:rainbow-pond:${slice.id}`,
       x: RAINBOW_MEADOW_LAYOUT.natureFeatures.pond.position.x,
-      y: RAINBOW_MEADOW_LAYOUT.natureFeatures.pond.position.y,
-      width: RAINBOW_MEADOW_LAYOUT.natureFeatures.pond.width,
-      height: RAINBOW_MEADOW_LAYOUT.natureFeatures.pond.height,
-    },
-    { id: 'collision:north-west-grove', x: 490, y: 360, width: 620, height: 260 },
-    { id: 'collision:north-east-grove', x: 1900, y: 365, width: 310, height: 220 },
-    { id: 'collision:sports-east-frame', x: 1260, y: 1980, width: 170, height: 100 },
-    ...RAINBOW_MEADOW_LAYOUT.boundaries.hedges.map((hedge) => ({
-      id: `collision:meadow-boundary:hedge:${hedge.id}`,
-      x: hedge.x,
-      y: hedge.y,
-      width: hedge.width,
-      height: hedge.height,
+      y: RAINBOW_MEADOW_LAYOUT.natureFeatures.pond.position.y + slice.offsetY,
+      width: slice.width,
+      height: slice.height,
     })),
+    ...RAINBOW_MEADOW_LAYOUT.scenery.trees.map((tree) => ({
+      id: `collision:meadow-tree:${tree.id}`,
+      x: tree.x,
+      y: tree.y - 34 * tree.scale,
+      width: 64 * tree.scale,
+      height: 70 * tree.scale,
+    })),
+    ...RAINBOW_MEADOW_LAYOUT.boundaries.hedges.map((hedge) => {
+      const horizontal = hedge.width >= hedge.height;
+      return {
+        id: `collision:meadow-boundary:hedge:${hedge.id}`,
+        x: hedge.x,
+        y: hedge.y,
+        width: horizontal ? hedge.width : 62,
+        height: horizontal ? 62 : hedge.height,
+      };
+    }),
     ...RAINBOW_MEADOW_LAYOUT.boundaries.raceFence.map((segment) => ({
       id: `collision:meadow-boundary:race-fence:${segment.id}`,
       x: (segment.x1 + segment.x2) / 2,
