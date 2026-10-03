@@ -2,6 +2,53 @@
 
 H3.11.4F keeps Story House content-driven. A conforming book should be added as content, not as a reader-code feature.
 
+## Classic and modern covers
+
+The Story House shelf supports an independent global cover-style choice. A title can declare
+`coverSets` alongside the legacy `cover` field:
+
+```json
+"cover": {
+  "path": "covers/cover.webp",
+  "alt": "Historic cover."
+},
+"coverSets": [
+  {
+    "id": "classic",
+    "label": "Classic Covers",
+    "cover": {
+      "path": "covers/cover.webp",
+      "alt": "Historic cover."
+    },
+    "rights": {
+      "status": "public-domain",
+      "source": "Historic source edition"
+    }
+  },
+  {
+    "id": "modern",
+    "label": "Modern Covers",
+    "cover": {
+      "path": "covers/modern.webp",
+      "alt": "Modern Story House cover art."
+    },
+    "rights": {
+      "status": "original",
+      "source": "Unicorn Valley generated artwork"
+    }
+  }
+]
+```
+
+Cover-set ids are currently `classic` and `modern`. Titles without a modern set simply fall back
+to their classic/legacy cover when the library is in Modern Covers mode.
+
+Dedicated modern covers should be **3:4 portrait**, targeting **900 × 1200 px**. Keep important
+characters and focal action centre-safe and do not bake the title into generated artwork; the shelf
+renders the title treatment itself. Existing approved modern reader art may be used as an interim
+cover when its composition survives the 3:4 crop.
+
+
 ## Add a book
 
 1. Create `public/stories/<story-id>/book.json`.

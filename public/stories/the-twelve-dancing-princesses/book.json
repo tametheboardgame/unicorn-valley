@@ -8,6 +8,35 @@
     "path": "covers/cover.webp",
     "alt": "Arthur Rackham's illustration for The Twelve Dancing Princesses."
   },
+  "coverSets": [
+    {
+      "id": "classic",
+      "label": "Classic Covers",
+      "cover": {
+        "path": "covers/cover.webp",
+        "alt": "Arthur Rackham's illustration for The Twelve Dancing Princesses."
+      },
+      "rights": {
+        "status": "public-domain",
+        "source": "Arthur Rackham illustrations for the 1909 English edition",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/Category:Hansel_%26_Grethel_%26_Other_Tales_(Rackham,_1920)/The_Twelve_Dancing_Princesses",
+        "notes": "The selected Rackham source files are identified as public domain on Wikimedia Commons. Rackham died in 1939."
+      }
+    },
+    {
+      "id": "modern",
+      "label": "Modern Covers",
+      "cover": {
+        "path": "illustrations/generated/midnight-ballroom.webp",
+        "alt": "Modern Story House cover art for The Twelve Dancing Princesses."
+      },
+      "rights": {
+        "status": "original",
+        "source": "ChatGPT-generated artwork created for the Unicorn Valley Story House modern illustration set",
+        "notes": "Generated for R6.5-WP19SH1.4.2 and materialised through the approved Google Drive → WIF → GitHub Actions pipeline."
+      }
+    }
+  ],
   "series": null,
   "tags": [
     "classic-retelling",
@@ -23,8 +52,15 @@
   },
   "discovery": {
     "format": "Chapter Book",
-    "genres": ["Fantasy", "Classics", "Mystery"],
-    "audiences": ["Read Together", "Independent Reader"],
+    "genres": [
+      "Fantasy",
+      "Classics",
+      "Mystery"
+    ],
+    "audiences": [
+      "Read Together",
+      "Independent Reader"
+    ],
     "length": "Longer Read"
   },
   "defaultEditionId": "story-house",

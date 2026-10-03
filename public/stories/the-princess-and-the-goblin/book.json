@@ -8,6 +8,35 @@
     "path": "covers/cover.webp",
     "alt": "Jessie Willcox Smith's illustrated cover for The Princess and the Goblin."
   },
+  "coverSets": [
+    {
+      "id": "classic",
+      "label": "Classic Covers",
+      "cover": {
+        "path": "covers/cover.webp",
+        "alt": "Jessie Willcox Smith's illustrated cover for The Princess and the Goblin."
+      },
+      "rights": {
+        "status": "public-domain",
+        "source": "Jessie Willcox Smith illustrations from the 1920 David McKay edition",
+        "sourceUrl": "https://www.gutenberg.org/ebooks/34339",
+        "notes": "The illustrated 1920 edition is available through Project Gutenberg. Jessie Willcox Smith died in 1935, so her artwork is also out of copyright in the UK."
+      }
+    },
+    {
+      "id": "modern",
+      "label": "Modern Covers",
+      "cover": {
+        "path": "illustrations/generated/trust-thread.webp",
+        "alt": "Modern Story House cover art for The Princess and the Goblin."
+      },
+      "rights": {
+        "status": "original",
+        "source": "ChatGPT-generated artwork created for the Unicorn Valley Story House modern illustration set",
+        "notes": "Generated for R6.5-WP19SH1.5.3 and materialised through the approved Google Drive → WIF → GitHub Actions pipeline."
+      }
+    }
+  ],
   "series": null,
   "tags": [
     "classic-retelling",
@@ -23,8 +52,15 @@
   },
   "discovery": {
     "format": "Chapter Book",
-    "genres": ["Fantasy", "Adventure", "Classics"],
-    "audiences": ["Read Together", "Independent Reader"],
+    "genres": [
+      "Fantasy",
+      "Adventure",
+      "Classics"
+    ],
+    "audiences": [
+      "Read Together",
+      "Independent Reader"
+    ],
     "length": "Longer Read"
   },
   "defaultEditionId": "story-house",

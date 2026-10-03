@@ -8,6 +8,35 @@
     "path": "covers/cover.webp",
     "alt": "Vilhelm Pedersen's historic illustration for The Ugly Duckling."
   },
+  "coverSets": [
+    {
+      "id": "classic",
+      "label": "Classic Covers",
+      "cover": {
+        "path": "covers/cover.webp",
+        "alt": "Vilhelm Pedersen's historic illustration for The Ugly Duckling."
+      },
+      "rights": {
+        "status": "public-domain",
+        "source": "Historical The Ugly Duckling illustrations by Vilhelm Pedersen",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/Category:The_Ugly_Duckling",
+        "notes": "The selected Vilhelm Pedersen source files are identified as public domain on Wikimedia Commons. Pedersen died in 1859."
+      }
+    },
+    {
+      "id": "modern",
+      "label": "Modern Covers",
+      "cover": {
+        "path": "illustrations/generated/spring-meeting.webp",
+        "alt": "Modern Story House cover art for The Ugly Duckling."
+      },
+      "rights": {
+        "status": "original",
+        "source": "ChatGPT-generated artwork created for the Unicorn Valley Story House modern illustration set",
+        "notes": "Generated for R6.5-WP19SH1.4.3 and materialised through the approved Google Drive → WIF → GitHub Actions pipeline."
+      }
+    }
+  ],
   "series": null,
   "tags": [
     "classic-retelling",
@@ -23,8 +52,14 @@
   },
   "discovery": {
     "format": "Chapter Book",
-    "genres": ["Fantasy", "Classics"],
-    "audiences": ["Read Together", "Independent Reader"],
+    "genres": [
+      "Fantasy",
+      "Classics"
+    ],
+    "audiences": [
+      "Read Together",
+      "Independent Reader"
+    ],
     "length": "Longer Read"
   },
   "defaultEditionId": "story-house",

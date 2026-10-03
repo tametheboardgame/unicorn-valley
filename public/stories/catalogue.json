@@ -10,6 +10,14 @@
       "readingMode": "flowing",
       "coverPath": "/stories/alices-adventures-in-wonderland/covers/cover.webp",
       "coverAlt": "John Tenniel's historic Alice in Wonderland frontispiece.",
+      "coverSets": [
+        {
+          "id": "classic",
+          "label": "Classic Covers",
+          "coverPath": "/stories/alices-adventures-in-wonderland/covers/cover.webp",
+          "coverAlt": "John Tenniel's historic Alice in Wonderland frontispiece."
+        }
+      ],
       "series": null,
       "tags": [
         "classic-retelling",
@@ -61,6 +69,20 @@
       "readingMode": "flowing",
       "coverPath": "/stories/five-children-and-it/covers/cover.webp",
       "coverAlt": "The historic first-edition cover of Five Children and It.",
+      "coverSets": [
+        {
+          "id": "classic",
+          "label": "Classic Covers",
+          "coverPath": "/stories/five-children-and-it/covers/cover.webp",
+          "coverAlt": "The historic first-edition cover of Five Children and It."
+        },
+        {
+          "id": "modern",
+          "label": "Modern Covers",
+          "coverPath": "/stories/five-children-and-it/illustrations/generated/thing-in-the-sand.webp",
+          "coverAlt": "Modern Story House cover art for Five Children and It."
+        }
+      ],
       "series": null,
       "tags": [
         "classic-retelling",
@@ -113,6 +135,20 @@
       "readingMode": "flowing",
       "coverPath": "/stories/snow-white-and-rose-red/covers/cover.webp",
       "coverAlt": "Otto Ubbelohde's 1909 illustration for Snow-White and Rose-Red.",
+      "coverSets": [
+        {
+          "id": "classic",
+          "label": "Classic Covers",
+          "coverPath": "/stories/snow-white-and-rose-red/covers/cover.webp",
+          "coverAlt": "Otto Ubbelohde's 1909 illustration for Snow-White and Rose-Red."
+        },
+        {
+          "id": "modern",
+          "label": "Modern Covers",
+          "coverPath": "/stories/snow-white-and-rose-red/illustrations/generated/bear-at-cottage.webp",
+          "coverAlt": "Modern Story House cover art for Snow-White and Rose-Red."
+        }
+      ],
       "series": null,
       "tags": [
         "classic-retelling",
@@ -165,6 +201,14 @@
       "readingMode": "paged-picture-book",
       "coverPath": "/stories/the-duck-bread-baker/covers/cover.webp",
       "coverAlt": "The Duck Bread Baker cover, showing a yellow duck surrounded by loaves of bread.",
+      "coverSets": [
+        {
+          "id": "classic",
+          "label": "Classic Covers",
+          "coverPath": "/stories/the-duck-bread-baker/covers/cover.webp",
+          "coverAlt": "The Duck Bread Baker cover, showing a yellow duck surrounded by loaves of bread."
+        }
+      ],
       "series": null,
       "tags": [
         "picture-book",
@@ -210,6 +254,20 @@
       "readingMode": "flowing",
       "coverPath": "/stories/the-elves-and-the-shoemaker/covers/cover.webp",
       "coverAlt": "Historic illustration of the elves helping the shoemaker.",
+      "coverSets": [
+        {
+          "id": "classic",
+          "label": "Classic Covers",
+          "coverPath": "/stories/the-elves-and-the-shoemaker/covers/cover.webp",
+          "coverAlt": "Historic illustration of the elves helping the shoemaker."
+        },
+        {
+          "id": "modern",
+          "label": "Modern Covers",
+          "coverPath": "/stories/the-elves-and-the-shoemaker/illustrations/generated/midnight-secret.webp",
+          "coverAlt": "Modern Story House cover art for The Elves and the Shoemaker."
+        }
+      ],
       "series": null,
       "tags": [
         "classic-retelling",
@@ -261,6 +319,20 @@
       "readingMode": "flowing",
       "coverPath": "/stories/the-hare-and-the-tortoise/covers/cover.webp",
       "coverAlt": "Richard Heighway's 1894 illustration for The Hare and the Tortoise.",
+      "coverSets": [
+        {
+          "id": "classic",
+          "label": "Classic Covers",
+          "coverPath": "/stories/the-hare-and-the-tortoise/covers/cover.webp",
+          "coverAlt": "Richard Heighway's 1894 illustration for The Hare and the Tortoise."
+        },
+        {
+          "id": "modern",
+          "label": "Modern Covers",
+          "coverPath": "/stories/the-hare-and-the-tortoise/illustrations/generated/race-nap.webp",
+          "coverAlt": "Modern Story House cover art for The Hare and the Tortoise."
+        }
+      ],
       "series": {
         "id": "aesops-fables",
         "title": "Aesop's Fables",
@@ -312,6 +384,7 @@
       "readingMode": "flowing",
       "coverPath": null,
       "coverAlt": null,
+      "coverSets": [],
       "series": {
         "id": "quills-valley-tales",
         "title": "Quill's Valley Tales",
@@ -361,6 +434,7 @@
       "readingMode": "flowing",
       "coverPath": null,
       "coverAlt": null,
+      "coverSets": [],
       "series": null,
       "tags": [
         "classic-retelling",
@@ -405,6 +479,20 @@
       "readingMode": "flowing",
       "coverPath": "/stories/the-princess-and-the-goblin/covers/cover.webp",
       "coverAlt": "Jessie Willcox Smith's illustrated cover for The Princess and the Goblin.",
+      "coverSets": [
+        {
+          "id": "classic",
+          "label": "Classic Covers",
+          "coverPath": "/stories/the-princess-and-the-goblin/covers/cover.webp",
+          "coverAlt": "Jessie Willcox Smith's illustrated cover for The Princess and the Goblin."
+        },
+        {
+          "id": "modern",
+          "label": "Modern Covers",
+          "coverPath": "/stories/the-princess-and-the-goblin/illustrations/generated/trust-thread.webp",
+          "coverAlt": "Modern Story House cover art for The Princess and the Goblin."
+        }
+      ],
       "series": null,
       "tags": [
         "classic-retelling",
@@ -457,6 +545,20 @@
       "readingMode": "flowing",
       "coverPath": "/stories/the-princess-and-the-pea/covers/cover.webp",
       "coverAlt": "Edmund Dulac's illustration for The Princess and the Pea.",
+      "coverSets": [
+        {
+          "id": "classic",
+          "label": "Classic Covers",
+          "coverPath": "/stories/the-princess-and-the-pea/covers/cover.webp",
+          "coverAlt": "Edmund Dulac's illustration for The Princess and the Pea."
+        },
+        {
+          "id": "modern",
+          "label": "Modern Covers",
+          "coverPath": "/stories/the-princess-and-the-pea/illustrations/generated/mattress-tower.webp",
+          "coverAlt": "Modern Story House cover art for The Princess and the Pea."
+        }
+      ],
       "series": null,
       "tags": [
         "classic-retelling",
@@ -509,6 +611,14 @@
       "readingMode": "flowing",
       "coverPath": "/stories/the-tale-of-jemima-puddle-duck/covers/cover.webp",
       "coverAlt": "Beatrix Potter's original cover for The Tale of Jemima Puddle-Duck.",
+      "coverSets": [
+        {
+          "id": "classic",
+          "label": "Classic Covers",
+          "coverPath": "/stories/the-tale-of-jemima-puddle-duck/covers/cover.webp",
+          "coverAlt": "Beatrix Potter's original cover for The Tale of Jemima Puddle-Duck."
+        }
+      ],
       "series": null,
       "tags": [
         "classic-retelling",
@@ -561,6 +671,14 @@
       "readingMode": "flowing",
       "coverPath": "/stories/the-tale-of-peter-rabbit/covers/cover.webp",
       "coverAlt": "Beatrix Potter's original 1902 cover illustration for The Tale of Peter Rabbit.",
+      "coverSets": [
+        {
+          "id": "classic",
+          "label": "Classic Covers",
+          "coverPath": "/stories/the-tale-of-peter-rabbit/covers/cover.webp",
+          "coverAlt": "Beatrix Potter's original 1902 cover illustration for The Tale of Peter Rabbit."
+        }
+      ],
       "series": null,
       "tags": [
         "classic-retelling",
@@ -611,6 +729,20 @@
       "readingMode": "flowing",
       "coverPath": "/stories/the-town-mouse-and-the-country-mouse/covers/cover.webp",
       "coverAlt": "Richard Heighway's illustration for The Town Mouse and the Country Mouse.",
+      "coverSets": [
+        {
+          "id": "classic",
+          "label": "Classic Covers",
+          "coverPath": "/stories/the-town-mouse-and-the-country-mouse/covers/cover.webp",
+          "coverAlt": "Richard Heighway's illustration for The Town Mouse and the Country Mouse."
+        },
+        {
+          "id": "modern",
+          "label": "Modern Covers",
+          "coverPath": "/stories/the-town-mouse-and-the-country-mouse/illustrations/generated/country-welcome.webp",
+          "coverAlt": "Modern Story House cover art for The Town Mouse and the Country Mouse."
+        }
+      ],
       "series": {
         "id": "aesops-fables",
         "title": "Aesop's Fables",
@@ -663,6 +795,20 @@
       "readingMode": "flowing",
       "coverPath": "/stories/the-twelve-dancing-princesses/covers/cover.webp",
       "coverAlt": "Arthur Rackham's illustration for The Twelve Dancing Princesses.",
+      "coverSets": [
+        {
+          "id": "classic",
+          "label": "Classic Covers",
+          "coverPath": "/stories/the-twelve-dancing-princesses/covers/cover.webp",
+          "coverAlt": "Arthur Rackham's illustration for The Twelve Dancing Princesses."
+        },
+        {
+          "id": "modern",
+          "label": "Modern Covers",
+          "coverPath": "/stories/the-twelve-dancing-princesses/illustrations/generated/midnight-ballroom.webp",
+          "coverAlt": "Modern Story House cover art for The Twelve Dancing Princesses."
+        }
+      ],
       "series": null,
       "tags": [
         "classic-retelling",
@@ -715,6 +861,20 @@
       "readingMode": "flowing",
       "coverPath": "/stories/the-ugly-duckling/covers/cover.webp",
       "coverAlt": "Vilhelm Pedersen's historic illustration for The Ugly Duckling.",
+      "coverSets": [
+        {
+          "id": "classic",
+          "label": "Classic Covers",
+          "coverPath": "/stories/the-ugly-duckling/covers/cover.webp",
+          "coverAlt": "Vilhelm Pedersen's historic illustration for The Ugly Duckling."
+        },
+        {
+          "id": "modern",
+          "label": "Modern Covers",
+          "coverPath": "/stories/the-ugly-duckling/illustrations/generated/spring-meeting.webp",
+          "coverAlt": "Modern Story House cover art for The Ugly Duckling."
+        }
+      ],
       "series": null,
       "tags": [
         "classic-retelling",
@@ -766,6 +926,20 @@
       "readingMode": "flowing",
       "coverPath": "/stories/the-wonderful-wizard-of-oz/covers/cover.webp",
       "coverAlt": "W. W. Denslow's original 1900 cover for The Wonderful Wizard of Oz.",
+      "coverSets": [
+        {
+          "id": "classic",
+          "label": "Classic Covers",
+          "coverPath": "/stories/the-wonderful-wizard-of-oz/covers/cover.webp",
+          "coverAlt": "W. W. Denslow's original 1900 cover for The Wonderful Wizard of Oz."
+        },
+        {
+          "id": "modern",
+          "label": "Modern Covers",
+          "coverPath": "/stories/the-wonderful-wizard-of-oz/illustrations/generated/emerald-city.webp",
+          "coverAlt": "Modern Story House cover art for The Wonderful Wizard of Oz."
+        }
+      ],
       "series": null,
       "tags": [
         "classic-retelling",
@@ -818,6 +992,20 @@
       "readingMode": "flowing",
       "coverPath": "/stories/thumbelina/covers/cover.webp",
       "coverAlt": "Historic Vilhelm Pedersen illustration of Thumbelina.",
+      "coverSets": [
+        {
+          "id": "classic",
+          "label": "Classic Covers",
+          "coverPath": "/stories/thumbelina/covers/cover.webp",
+          "coverAlt": "Historic Vilhelm Pedersen illustration of Thumbelina."
+        },
+        {
+          "id": "modern",
+          "label": "Modern Covers",
+          "coverPath": "/stories/thumbelina/illustrations/generated/girl-in-the-flower.webp",
+          "coverAlt": "Modern Story House cover art for Thumbelina."
+        }
+      ],
       "series": null,
       "tags": [
         "classic-retelling",

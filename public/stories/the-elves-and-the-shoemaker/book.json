@@ -8,15 +8,58 @@
     "path": "covers/cover.webp",
     "alt": "Historic illustration of the elves helping the shoemaker."
   },
+  "coverSets": [
+    {
+      "id": "classic",
+      "label": "Classic Covers",
+      "cover": {
+        "path": "covers/cover.webp",
+        "alt": "Historic illustration of the elves helping the shoemaker."
+      },
+      "rights": {
+        "status": "public-domain",
+        "source": "Otto Ubbelohde (1909) and George Cruikshank (1876) historical illustrations",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/Category:The_Elves_and_the_Shoemaker",
+        "notes": "Both selected source files are marked public domain on Wikimedia Commons."
+      }
+    },
+    {
+      "id": "modern",
+      "label": "Modern Covers",
+      "cover": {
+        "path": "illustrations/generated/midnight-secret.webp",
+        "alt": "Modern Story House cover art for The Elves and the Shoemaker."
+      },
+      "rights": {
+        "status": "original",
+        "source": "ChatGPT-generated artwork created for the Unicorn Valley Story House modern illustration set",
+        "notes": "Generated for R6.5-WP19SH1.3.3 and materialised through the approved Google Drive → WIF → GitHub Actions pipeline."
+      }
+    }
+  ],
   "series": null,
-  "tags": ["classic-retelling", "fairy-tale", "elves", "kindness", "gratitude", "illustrated"],
+  "tags": [
+    "classic-retelling",
+    "fairy-tale",
+    "elves",
+    "kindness",
+    "gratitude",
+    "illustrated"
+  ],
   "publication": {
     "status": "published"
   },
   "discovery": {
     "format": "Picture Book",
-    "genres": ["Fantasy", "Classics"],
-    "audiences": ["Read Together", "Early Reader", "Independent Reader"],
+    "genres": [
+      "Fantasy",
+      "Classics"
+    ],
+    "audiences": [
+      "Read Together",
+      "Early Reader",
+      "Independent Reader"
+    ],
     "length": "Quick Read"
   },
   "defaultEditionId": "story-house",
