@@ -476,7 +476,7 @@ describe('H4.10 Meadow boundary readability', () => {
   it('owns distinct hedge, Race Hub fence and Crystal Brook rock edge languages', () => {
     expect(RAINBOW_MEADOW_LAYOUT.boundaries.hedges.length).toBeGreaterThanOrEqual(6);
     expect(RAINBOW_MEADOW_LAYOUT.boundaries.raceFence).toHaveLength(2);
-    expect(RAINBOW_MEADOW_LAYOUT.boundaries.crystalRocks.length).toBeGreaterThanOrEqual(5);
+    expect(RAINBOW_MEADOW_LAYOUT.boundaries.crystalRocks.length).toBeGreaterThanOrEqual(9);
     expect(RAINBOW_MEADOW_LAYOUT.boundaries.wildflowerPockets.length).toBeGreaterThanOrEqual(4);
 
     expect(boundaryColliders.filter(({ id }) => id.includes(':hedge:'))).toHaveLength(
@@ -538,6 +538,21 @@ describe('H4.10 Meadow collision audit', () => {
         height: 70 * tree.scale,
       });
     });
+  });
+
+  it('gives Rainbow Pond enough lily pads and frogs to read as an active habitat', () => {
+    const pond = RAINBOW_MEADOW_LAYOUT.natureFeatures.pond;
+
+    expect(pond.lilyPads).toHaveLength(5);
+    expect(pond.frogs).toHaveLength(2);
+    expect(
+      pond.frogs.every(
+        ({ padIndex, hopToPadIndex }) =>
+          pond.lilyPads[padIndex] !== undefined &&
+          pond.lilyPads[hopToPadIndex] !== undefined &&
+          padIndex !== hopToPadIndex,
+      ),
+    ).toBe(true);
   });
 
   it('profiles Rainbow Pond collision to the visible ellipse instead of its bounding box', () => {
