@@ -39,7 +39,6 @@ import {
   RAINBOW_RUN_FINISHER_RIBBON_ID,
   RAINBOW_RUN_PODIUM_ROSETTE_ID,
   applyRaceResultToSave,
-  createPracticeRaceSummary,
   type RaceRewardSummary,
 } from '../racing/RaceResults';
 import {
@@ -915,17 +914,17 @@ export class RaceScene extends Phaser.Scene {
     );
   }
 
-  private saveRaceResult(): RaceRewardSummary {
+  private saveRaceResult(): RaceRewardSummary | null {
+    if (this.isSandboxSession()) {
+      return null;
+    }
+
     const input = {
       raceId: COURSE.id,
       finishTimeMs: this.finishTimeMs,
       place: this.playerFinishPlace,
       participantCount: RAINBOW_RUN_NPC_RACERS.length + 1,
     };
-    if (this.isSandboxSession()) {
-      return createPracticeRaceSummary(input);
-    }
-
     const saveService = getBrowserSaveService();
     const save = saveService.load() ?? saveService.createNewGame();
     const result = applyRaceResultToSave(save, input);
@@ -988,7 +987,7 @@ export class RaceScene extends Phaser.Scene {
           : `Personal best: ${(reward.bestTimeMs / 1000).toFixed(1)}s`
         : '';
     const rewardLines = sandbox
-      ? ['Practice only • no race record, ribbons, Sparkles or Rainbow Cup progress were saved.']
+      ? ['Practice only • adventure race progress unchanged.']
       : reward
         ? [
             `✨ +${reward.participationSparkles} Rainbow Sparkles for finishing`,
