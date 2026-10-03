@@ -13,7 +13,7 @@ import { parseUnicornAppearance } from '../player/UnicornAppearance';
 import { createUnicornAppearanceTexture } from '../player/UnicornAppearanceRenderer';
 import { DEFAULT_PLAYER_SPEED, resolvePlayerMovement } from '../player/PlayerMovement';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
-import { selectRaceCourse } from '../racing/RaceCourse';
+import { launchRainbowRunRace } from '../racing/RaceMiniGameAdapter';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { saveLocationCheckpoint } from '../save/saveLocationCheckpoint';
 import { getNovaFirstRacePhase } from '../story/NovaFirstRaceStory';
@@ -240,8 +240,14 @@ export class RainbowRunEntryScene extends Phaser.Scene {
     }
 
     if (phase === 'complete') {
-      selectRaceCourse(SUNRISE_SPRINT_RACE_ID);
-      this.scene.start('RaceScene');
+      void launchRainbowRunRace(this, {
+        courseId: SUNRISE_SPRINT_RACE_ID,
+        returnScene: 'RainbowRunEntryScene',
+        worldContext: {
+          locationId: 'rainbow-run-hub',
+          interactionId: 'interaction:race-hub-start',
+        },
+      });
       return;
     }
 
