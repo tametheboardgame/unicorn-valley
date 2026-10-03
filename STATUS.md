@@ -10,50 +10,78 @@ Current bounded package: **MG-WP2 - Sandbox, Rewards and Persistence Isolation**
 
 Branch: `agent/mg-wp2-sandbox-persistence-isolation`
 
+PR: **#266**
+
 MG-WP1 is complete, human-approved and merged to `main` as `f5cbbbff043a4106df873c482a07603c6ca91f0c`.
 
-### Current checkpoint - MG-WP2A
+### Current checkpoint - MG-WP2E
 
-The package-level sandbox side-effect matrix is recorded at:
+MG-WP2 implementation is complete across the current catalogue.
 
-`docs/audits/2026-10-03-MG-WP2-SANDBOX-SIDE-EFFECT-MATRIX.md`
+Completed checkpoints:
 
-MG-WP2A owns Wobbly Cake sandbox isolation.
+- MG-WP2A - Wobbly Cake sandbox economy/quest/progress isolation;
+- MG-WP2B - Coral Beachcombing sandbox notebook/save isolation;
+- MG-WP2C - Firefly Lantern sandbox best/milestone/unlock isolation;
+- MG-WP2D - Rainbow Run sandbox result/reward/Cup isolation;
+- MG-WP2E - no-write proof/audit for Rainbow Disc, Pond Leap and Sunbeam Chess.
 
-Implemented so far:
+Package-level evidence:
 
-- legacy no-session starts are explicitly treated as world-compatible by the outcome gateway;
-- sandbox Wobbly Cake does not charge the 1 Shimmer ingredient cost;
-- sandbox completion does not advance Maple's quest;
-- sandbox completion does not write recipe/activity progress;
-- sandbox completion does not grant Shimmer;
-- sandbox exit cannot produce an adventure-economy refund;
-- result/intro copy identifies the run as practice and does not claim adventure rewards were saved;
-- world-session behaviour is intentionally unchanged.
+- `docs/audits/2026-10-03-MG-WP2-SANDBOX-SIDE-EFFECT-MATRIX.md`;
+- `docs/audits/2026-10-03-MG-WP2-SANDBOX-ISOLATION-CLOSEOUT.md`.
 
-## Next work
+Important corrections made during the package:
 
-1. validate and close MG-WP2A;
-2. MG-WP2B - Coral Beachcombing persistence isolation;
-3. MG-WP2C - Firefly Lantern progress/milestone isolation;
-4. MG-WP2D - Rainbow Run result/reward/Cup isolation;
-5. MG-WP2E - prove Rainbow Disc, Pond Leap and Chess are no-write in sandbox and close the package.
+- Coral sandbox no longer creates an adventure save through progress reads;
+- Firefly sandbox bypasses progress reconciliation and persistent attempt recording;
+- racing sandbox does not create a save solely for appearance and produces a reward-free practice result;
+- Rainbow Disc sandbox no longer creates an adventure save solely for appearance;
+- Pond Leap and Chess were confirmed to have no adventure persistence path.
 
-The visible Just Games catalogue remains MG-WP3 and does not begin until MG-WP2 is approved and merged.
+No separate sandbox gameplay implementation was created.
 
 ## Validation state
 
-MG-WP2 exact-head validation is pending.
+Exact-head MG-WP2 validation is running.
 
-The repository performance budget remains a pre-existing red baseline around the current first-playable/chunk thresholds; MG-WP2 must not introduce an additional regression.
+Objective contracts now cover:
+
+- world/sandbox/legacy outcome policy;
+- Coral sandbox trail sequencing;
+- Firefly non-persistent practice results;
+- reward-free practice race summaries;
+- existing world persistence contracts remain in place.
+
+The repository performance budget remains a known baseline concern; MG-WP2 must not introduce an additional regression.
 
 ## Human gate
 
-MG-WP2 is Amber. Do not merge until the side-effect matrix is implemented, world behaviour is preserved, sandbox no-write behaviour is objectively covered, and David approves the package.
+MG-WP2 is Amber.
+
+Before merge, the human regression pass should confirm the normal world versions still behave as before:
+
+- Wobbly Cake world charge/refund/payout and Maple quest flow;
+- Coral world notebook progression;
+- Firefly world bests/milestones/unlocks;
+- race world records/rewards/returns;
+- Rainbow Disc world appearance.
+
+The visible end-to-end sandbox/Just Games human test belongs to MG-WP3 because the Just Games launcher does not exist yet.
+
+## Next work
+
+After MG-WP2 approval and merge:
+
+**MG-WP3 - Just Games Home and Catalogue Experience**
+
+Package:
+
+`docs/work-packages/MG-WP3-JUST-GAMES-HOME-CATALOGUE.md`
 
 ## Operating reminders
 
-- Work in bounded game-specific isolation checkpoints.
-- Fix deterministic current-work failures immediately.
+- Do not start MG-WP3 on top of an unmerged MG-WP2 branch.
+- Fix deterministic current-work CI failures immediately.
 - If Git/GitHub access fails, reconnect before reporting a blocker.
-- Do not create separate sandbox gameplay implementations; use the existing game plus session policy.
+- Keep one canonical gameplay implementation per mini-game.
