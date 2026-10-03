@@ -255,6 +255,11 @@ export class TitleScene extends Phaser.Scene {
       });
       nextY += MENU_BUTTON_STEP;
 
+      this.createMenuButton(nextY, 'Just Games', 'just-games', UI_COLOURS.mint, () => {
+        this.openJustGames();
+      });
+      nextY += MENU_BUTTON_STEP;
+
       if (this.hasCreatedUnicorn) {
         this.createMenuButton(nextY, 'My Unicorn', 'my-unicorn', UI_COLOURS.blush, () => {
           this.audio.playSfx('ui');
@@ -262,6 +267,11 @@ export class TitleScene extends Phaser.Scene {
         });
         nextY += MENU_BUTTON_STEP;
       }
+    } else {
+      this.createMenuButton(nextY, 'Just Games', 'just-games', UI_COLOURS.mint, () => {
+        this.openJustGames();
+      });
+      nextY += MENU_BUTTON_STEP;
     }
 
     this.createMenuButton(nextY, 'Settings', 'settings', UI_COLOURS.mint, () => {
@@ -301,9 +311,9 @@ export class TitleScene extends Phaser.Scene {
 
   private getMenuActionCount(): number {
     if (this.storageUnavailable || this.unsupportedSaveVersion) {
-      return 2;
+      return 3;
     }
-    return this.hasCreatedUnicorn ? 5 : 3;
+    return this.hasCreatedUnicorn ? 6 : 4;
   }
 
   private defaultStatus(): string {
@@ -315,7 +325,7 @@ export class TitleScene extends Phaser.Scene {
     }
     return this.hasCreatedUnicorn
       ? this.continueStatus
-      : 'Start an adventure, or open Story House and read straight away.';
+      : 'Start an adventure, open Story House, or jump straight into Just Games.';
   }
 
   private createMenuButton(
@@ -583,6 +593,29 @@ export class TitleScene extends Phaser.Scene {
         this.storyReader = null;
         this.setMenuEnabled(true);
         this.statusText?.setText('Story House could not open just now. Please try again.');
+      });
+  }
+
+  private openJustGames(): void {
+    if (this.starting || this.storyReader) {
+      return;
+    }
+
+    this.setStarting('Opening Just Games…');
+    void import('./SceneManifest')
+      .then(({ ensureSceneRegistered }) => ensureSceneRegistered(this.game, 'JustGamesScene'))
+      .then(() => {
+        if (this.sys.isActive()) {
+          this.scene.start('JustGamesScene');
+        }
+      })
+      .catch(() => {
+        if (!this.sys.isActive()) {
+          return;
+        }
+        this.starting = false;
+        this.setMenuEnabled(true);
+        this.statusText?.setText('Just Games could not open just now. Please try again.');
       });
   }
 
