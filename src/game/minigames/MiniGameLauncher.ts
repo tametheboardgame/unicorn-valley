@@ -89,7 +89,12 @@ export function returnFromMiniGame(scene: Phaser.Scene, session: MiniGameSession
   scene.scene.stop(currentKey);
 
   const target: SceneKey = session.returnTarget.sceneKey;
-  if (session.returnTarget.mode === 'resume' && scene.game.scene.isPaused(target)) {
+  if (session.returnTarget.mode === 'start') {
+    scene.game.scene.start(target, session.returnTarget.payload);
+    return;
+  }
+
+  if (scene.game.scene.isPaused(target)) {
     scene.game.scene.resume(target);
     return;
   }
