@@ -5,7 +5,7 @@ import { ensureNovaPresentationTexture, NOVA_RACE_TINT } from './NovaPresentatio
 export const VISUAL_TIGHTENING_DETAIL_NAME = 'visual-tightening-detail';
 const VISUAL_TIGHTENING_ANCHOR_NAME = 'visual-tightening-anchor';
 
-const VISUAL_TIGHTENING_SUPPORTED_SCENES = new Set(VISUAL_TIGHTENING_SUPPORTED_SCENE_KEYS);
+const VISUAL_TIGHTENING_SUPPORTED_SCENES = new Set<string>(VISUAL_TIGHTENING_SUPPORTED_SCENE_KEYS);
 
 function markDetail<T extends Phaser.GameObjects.GameObject>(object: T): T {
   object.setName(VISUAL_TIGHTENING_DETAIL_NAME);
