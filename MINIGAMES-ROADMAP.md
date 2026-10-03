@@ -77,7 +77,7 @@ The migration must preserve accepted world behaviour. Moving a game under the pl
 
 ## Platform sequence
 
-The platform is deliberately built before the individual improvement passes.
+The platform is deliberately built before the individual improvement passes. Implementation evidence from MG-WP0 confirmed that migration and sandbox isolation must precede the visible Just Games launcher, so the safe dependency order is **MG-WP0 -> MG-WP1 -> MG-WP2 -> MG-WP3 -> MG-WP4**.
 
 ### MG-WP0 - Mini-game platform foundation
 
@@ -103,7 +103,7 @@ Acceptance:
 
 Detailed package: `docs/work-packages/MG-WP0-MINI-GAME-PLATFORM-FOUNDATION.md`.
 
-### MG-WP1 - Just Games home and catalogue experience
+### MG-WP3 - Just Games home and catalogue experience
 
 Goal: make the platform visible from the home screen.
 
@@ -123,7 +123,7 @@ Acceptance:
 - adding a future catalogue entry does not require editing a second hard-coded Just Games list;
 - Just Games remains a launcher, not an owner of game logic.
 
-### MG-WP2 - Existing game migration to one launch contract
+### MG-WP1 - Existing game migration to one launch contract
 
 Goal: remove the current mixture of direct dynamic registration, bespoke return logic and hard-coded caller assumptions.
 
@@ -151,7 +151,7 @@ Acceptance:
 - world callers resume/return to the correct place;
 - Just Games always returns to the catalogue.
 
-### MG-WP3 - Sandbox, rewards and persistence isolation
+### MG-WP2 - Sandbox, rewards and persistence isolation
 
 Goal: make Just Games safe for repeated testing and child play without corrupting the adventure save.
 
