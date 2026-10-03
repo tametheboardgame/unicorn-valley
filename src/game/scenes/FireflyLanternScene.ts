@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import {
+  createFireflyLanternPracticeResult,
   getFireflyLanternProgress,
   recordFireflyLanternAttempt,
   type FireflyLanternAttemptResult,
@@ -613,7 +614,11 @@ export class FireflyLanternScene extends Phaser.Scene {
       (this.mode === 'normal' && this.score >= FIREFLY_NORMAL_TARGET) ||
       (this.mode === 'multicolour' && this.score >= FIREFLY_NORMAL_TARGET);
     const result = this.isSandboxSession()
-      ? this.createSandboxResult()
+      ? createFireflyLanternPracticeResult({
+          mode: this.mode,
+          score: this.score,
+          completed,
+        })
       : recordFireflyLanternAttempt(getBrowserSaveService(), {
           mode: this.mode,
           score: this.score,
@@ -685,18 +690,6 @@ export class FireflyLanternScene extends Phaser.Scene {
 
   private isSandboxSession(): boolean {
     return this.miniGameSession?.sideEffectPolicy === 'sandbox';
-  }
-
-  private createSandboxResult(): FireflyLanternAttemptResult {
-    return {
-      modesUnlocked: true,
-      normalBest: this.mode === 'normal' ? this.score : 0,
-      multicolourBest: this.mode === 'multicolour' ? this.score : 0,
-      endlessBest: this.mode === 'endless' ? this.score : 0,
-      bestScore: this.score,
-      firstCompletion: false,
-      newMilestones: [],
-    };
   }
 
   private resultHeading(completed: boolean): string {
