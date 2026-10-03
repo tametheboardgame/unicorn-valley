@@ -16,6 +16,7 @@ import { createUnicornAppearanceTexture } from '../player/UnicornAppearanceRende
 import { DEFAULT_PLAYER_SPEED, resolvePlayerMovement } from '../player/PlayerMovement';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { saveLocationCheckpoint } from '../save/saveLocationCheckpoint';
+import { launchRainbowDiscActivity } from './RainbowDiscActivityRegistration';
 import {
   createMarigoldPicnicPresentation,
   createPicnicHillLandscape,
@@ -33,6 +34,7 @@ import {
   SUNBEAM_VILLAGE_MAP,
 } from '../world/SunbeamVillageMap';
 import { CoreNpcPresenceService } from '../world/CoreNpcPresenceService';
+import { createRainbowDiscMeadowPresentation } from '../world/RainbowDiscMeadowPresentation';
 import { worldDepthForY } from '../world/WorldDepth';
 
 const COLLISION_TEXTURE_KEY = 'rainbow-meadow-collision-pixel';
@@ -84,6 +86,34 @@ function createMeadowInteractions(scene: Phaser.Scene): readonly InteractionTarg
       priority: 30,
       visible: () => presenceService.resolve(MARIGOLD_CHARACTER_ID)?.area === 'picnic-hill',
       result: { type: 'callback', activate: () => startMarigoldConversation(scene) },
+    },
+    {
+      id: 'interaction:rainbow-disc',
+      label: 'Rainbow Disc',
+      actionLabel: 'Join the game',
+      actionKind: 'start',
+      position: RAINBOW_MEADOW_LAYOUT.rainbowDisc.approach,
+      approachPosition: RAINBOW_MEADOW_LAYOUT.rainbowDisc.approach,
+      interactionRadius: 230,
+      priority: 28,
+      result: {
+        type: 'callback',
+        activate: () => void launchRainbowDiscActivity(scene),
+      },
+    },
+    {
+      id: 'interaction:rainbow-disc-practice',
+      label: 'Rainbow Disc Practice',
+      actionLabel: 'Practice throws',
+      actionKind: 'start',
+      position: RAINBOW_MEADOW_LAYOUT.rainbowDisc.practice.approach,
+      approachPosition: RAINBOW_MEADOW_LAYOUT.rainbowDisc.practice.approach,
+      interactionRadius: 210,
+      priority: 27,
+      result: {
+        type: 'callback',
+        activate: () => void launchRainbowDiscActivity(scene, 'practice'),
+      },
     },
     {
       id: 'interaction:meadow-race-entrance',
@@ -404,6 +434,7 @@ export class RainbowMeadowScene extends Phaser.Scene {
     this.createPond();
     this.createGroves();
     this.createRainbowRunHubGateway();
+    createRainbowDiscMeadowPresentation(this);
     createPicnicHillLandscape(this);
     createMarigoldPicnicPresentation(this, getBrowserSaveService().load());
     this.createMeadowFlowers();

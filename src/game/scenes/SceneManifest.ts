@@ -168,6 +168,13 @@ export const SCENE_MANIFEST = [
       (await import('../activities/CoralBeachcombingActivityScene')).CoralBeachcombingActivityScene,
   ),
   runtime(
+    'RainbowDiscActivityScene',
+    'activity',
+    'on-demand',
+    'feature',
+    async () => (await import('../activities/RainbowDiscActivityScene')).RainbowDiscActivityScene,
+  ),
+  runtime(
     'ExplorationHudOverlayScene',
     'hud',
     'on-demand',

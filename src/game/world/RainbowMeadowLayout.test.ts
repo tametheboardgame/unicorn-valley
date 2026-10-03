@@ -127,6 +127,57 @@ describe('Rainbow Meadow canonical layout', () => {
     }
   });
 
+  it('owns Rainbow Disc as one canonical south-west activity lawn', () => {
+    const district = RAINBOW_MEADOW_LAYOUT.districts.find(({ id }) => id === 'rainbow-disc-lawn');
+    expect(district).toBeDefined();
+    if (!district) {
+      return;
+    }
+
+    const disc = RAINBOW_MEADOW_LAYOUT.rainbowDisc;
+    expect(
+      Math.hypot(disc.centre.x - district.centre.x, disc.centre.y - district.centre.y),
+    ).toBeLessThanOrEqual(20);
+    expect(disc.players).toHaveLength(5);
+
+    const isInsideDistrict = (point: { x: number; y: number }) => {
+      const dx = (point.x - district.centre.x) / district.radiusX;
+      const dy = (point.y - district.centre.y) / district.radiusY;
+      return dx * dx + dy * dy <= 1;
+    };
+
+    expect(disc.players.every(isInsideDistrict)).toBe(true);
+    expect(isInsideDistrict(disc.captain)).toBe(true);
+
+    const fieldTop = disc.centre.y - disc.field.height / 2;
+    const path = RAINBOW_MEADOW_LAYOUT.structuralPaths.find(({ id }) => id === 'rainbow-disc-spur');
+    expect(path).toBeDefined();
+    if (!path) {
+      return;
+    }
+
+    const junction = path.points[0];
+    expect(disc.sign.x).toBeLessThan(junction.x);
+    expect(Math.abs(disc.sign.y - junction.y)).toBeLessThanOrEqual(100);
+    expect(disc.sign.y + 40).toBeLessThan(fieldTop - 150);
+
+    const practiceYs = new Set(disc.practice.targets.map(({ y }) => y));
+    expect(practiceYs.size).toBe(1);
+    expect(disc.practice.targets.every(({ x }) => x > disc.practice.throwLine.x)).toBe(true);
+    expect(disc.practice.targetBaseY).toBeLessThan(fieldTop - 20);
+    expect(Math.min(...disc.practice.targets.map(({ x, radius }) => x - radius))).toBeGreaterThan(
+      path.points[2].x + 50,
+    );
+    expect(Math.max(...disc.practice.targets.map(({ x, radius }) => x + radius))).toBeLessThan(
+      RAINBOW_MEADOW_LAYOUT.picnicHill.centre.x - RAINBOW_MEADOW_LAYOUT.picnicHill.hill.width / 2,
+    );
+    expect(disc.practice.targets.map(({ x }) => x)).toEqual(
+      [...disc.practice.targets.map(({ x }) => x)].sort((a, b) => a - b),
+    );
+
+    expect(path.points[path.points.length - 1]).toEqual(disc.approach);
+  });
+
   it('keeps H4.8 nature interaction approaches outside physical collision', () => {
     const pondCollider = RAINBOW_MEADOW_MAP.colliders.find(
       ({ id }) => id === 'collision:rainbow-pond',

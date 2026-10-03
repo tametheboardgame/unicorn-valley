@@ -6,33 +6,32 @@ Last updated: 2026-10-02
 
 `R6.5-WP19H4 - Rainbow Meadow Final Polish` remains active.
 
-The current bounded slice is **H4.8 - Nature micro-areas and interaction-affordance cleanup** on branch `r6-5-wp19h4-8-nature-affordance-cleanup`.
+The current bounded slice is **H4.9 - Rainbow Disc recreation lawn and mini-game** on branch `r6-5-wp19h4-9-rainbow-disc`.
 
 Accepted context:
 
-- H4.1-H4.6 are complete and merged.
-- H4.7 removed the remaining Meadow-side race-venue presentation, moved the Rainbow Run threshold to the north edge, ran its path off-map, removed gateway-post collision and reclaimed the old race footprint as ordinary Meadow countryside.
-- David explicitly approved H4.7 on 2 October 2026 and PR #251 merged to `main` as squash commit `9b628a3648bab18e3bf4c0dbb0a087b79704fc03`.
-- Crystal Brook's accepted traversal remains fully walkable water with collision only on physical rocks.
+- H4.1-H4.7 are complete and merged.
+- H4.8 removed permanent nature hotspot clutter, rebuilt the Windmill pocket after the first visual pass was rejected, and preserved nature-story/discovery interactions with collision-safe approaches.
+- David explicitly approved the rebuilt H4.8 Windmill on 2 October 2026 and PR #252 merged to `main` as squash commit `1d59e87fc55a4e98d72cabb802ed717b25723fc2`.
 
-H4.8 currently owns:
+H4.9 currently owns:
 
-- Windmill Lookout / Breeze wind story presentation and interaction affordances;
-- windmill bell and lookout-opening approach;
-- Rainbow Pond physical presentation and contextual interaction;
-- flower-circle discovery presentation;
-- butterfly sequence presentation;
-- bouncy/petal flower patch presentation;
-- Prism Bloom and Sunshower Feather world objects;
-- removal of permanent emoji/glow hotspot markers while preserving the shared contextual prompt;
-- clear collision-safe approach positions around pond and windmill;
-- preservation of existing story/discovery/progression semantics.
+- one canonical south-west Rainbow Disc recreation lawn;
+- five distinct modern unicorn players and visible ambient disc passing before interaction;
+- light field/end-zone markings and Meadow-style pennants rather than stadium presentation;
+- a contextual captain interaction labelled **Join the game**;
+- an on-demand `RainbowDiscActivityScene` that pauses and returns to Rainbow Meadow cleanly;
+- a short three-catch scoring chain with touch drag/aim/release;
+- keyboard receiver selection with Up/Down or W/S and Space/Enter throw timing;
+- quick turnover/reset on missed throws;
+- immediate replay or return after scoring;
+- no economy loop, save-schema expansion or persistent reward.
 
-This remains an **Amber human visual gate**. Do not merge H4.8 or begin H4.9 until David approves the deployed nature-area result.
+This remains an **Amber human visual/playtest gate**. Do not merge H4.9 or begin H4.10 until David approves the deployed lawn and mini-game.
 
 ## Next work
 
-After H4.8 is visually approved and merged, continue to **H4.9 - Rainbow Disc recreation lawn and mini-game**.
+After H4.9 is visually/playtest approved and merged, continue to **H4.10 - Meadow life, density and substantive finishing pass**.
 
 ## Operating reminders
 

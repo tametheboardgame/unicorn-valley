@@ -50,9 +50,9 @@ export const R6_MEADOW_RESIDENT_PLACEMENTS = [
     priority: 17,
     activeWhen: { timeStates: ['morning', 'afternoon'] },
     waypoints: [
-      { id: 'juniper-meadow-a', x: 520, y: 1180, pauseMs: 2500 },
-      { id: 'juniper-meadow-b', x: 610, y: 1120, pauseMs: 3000 },
-      { id: 'juniper-meadow-c', x: 720, y: 1160, pauseMs: 2200 },
+      { id: 'juniper-meadow-a', x: 650, y: 835, pauseMs: 2500 },
+      { id: 'juniper-meadow-b', x: 760, y: 875, pauseMs: 3000 },
+      { id: 'juniper-meadow-c', x: 860, y: 825, pauseMs: 2200 },
     ],
   },
 ] as const satisfies readonly ResidentPlacementDefinition[];
