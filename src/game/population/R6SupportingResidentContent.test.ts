@@ -132,7 +132,6 @@ describe('R6.5 H3.10 playground life', () => {
   });
 });
 
-
 describe('R6.5 H4.10 Rainbow Meadow resident life', () => {
   it('keeps the named Meadow routines in purposeful, collision-clear pockets', () => {
     for (const residentId of [
