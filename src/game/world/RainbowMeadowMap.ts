@@ -173,7 +173,7 @@ export const RAINBOW_MEADOW_LAYOUT = {
     ],
     practice: {
       centre: { x: 1230, y: 1650 },
-      approach: { x: 1160, y: 1470 },
+      approach: { x: 1160, y: 1510 },
       sign: { x: 1125, y: 1415 },
       throwLine: { x: 1160, y: 1650 },
       targets: [
