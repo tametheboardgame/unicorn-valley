@@ -165,9 +165,9 @@ describe('Rainbow Meadow canonical layout', () => {
     expect(practiceYs.size).toBe(1);
     expect(disc.practice.targets.every(({ x }) => x > disc.practice.throwLine.x)).toBe(true);
     expect(disc.practice.targetBaseY).toBeLessThan(fieldTop - 20);
-    expect(
-      Math.min(...disc.practice.targets.map(({ x, radius }) => x - radius)),
-    ).toBeGreaterThan(path.points[2].x + 50);
+    expect(Math.min(...disc.practice.targets.map(({ x, radius }) => x - radius))).toBeGreaterThan(
+      path.points[2].x + 50,
+    );
     expect(Math.max(...disc.practice.targets.map(({ x, radius }) => x + radius))).toBeLessThan(
       RAINBOW_MEADOW_LAYOUT.picnicHill.centre.x - RAINBOW_MEADOW_LAYOUT.picnicHill.hill.width / 2,
     );
