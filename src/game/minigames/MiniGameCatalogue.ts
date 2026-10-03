@@ -171,9 +171,6 @@ export function getJustGamesDefinitions(): MiniGameDefinition[] {
     .sort((left, right) => left.order - right.order);
 }
 
-export function isMiniGameVariant(
-  definition: MiniGameDefinition,
-  variantId: string,
-): boolean {
+export function isMiniGameVariant(definition: MiniGameDefinition, variantId: string): boolean {
   return definition.variants.some((variant) => variant.id === variantId);
 }
