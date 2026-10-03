@@ -1,7 +1,7 @@
 import { Chess, type Color, type Move, type PieceSymbol, type Square } from 'chess.js';
 import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
-import { UI_COLOURS, UI_FONT, createUiShadow } from '../ui/uiTheme';
+import { UI_COLOURS, UI_FONT } from '../ui/uiTheme';
 import {
   chooseTeachingMove,
   chooseVillageChessMove,
@@ -87,8 +87,6 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
 
   private createBackdrop(): void {
     this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x63765f, 1);
-    createUiShadow(this, GAME_WIDTH / 2, GAME_HEIGHT / 2 + 9, 1210, 654, 1, 0.28);
-
     const shell = this.add.graphics();
     shell.fillStyle(0xfff8e8, 1);
     shell.fillRoundedRect(35, 30, 1210, 654, 30);
