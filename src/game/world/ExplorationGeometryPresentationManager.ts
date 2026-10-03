@@ -4,9 +4,7 @@ import { EXPLORATION_GEOMETRY_SUPPORTED_SCENE_KEYS } from './RegionPresentationO
 import { worldDepthForY } from './WorldDepth';
 
 const PRESENTATION_ANCHOR_NAME = 'exploration-geometry-presentation-anchor';
-const EXPLORATION_GEOMETRY_SUPPORTED_SCENES = new Set(
-  EXPLORATION_GEOMETRY_SUPPORTED_SCENE_KEYS,
-);
+const EXPLORATION_GEOMETRY_SUPPORTED_SCENES = new Set(EXPLORATION_GEOMETRY_SUPPORTED_SCENE_KEYS);
 
 interface HintDefinition {
   startsWith: string;
