@@ -1,8 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import {
-  getMiniGameDefinition,
-  MINI_GAME_IDS,
-} from './MiniGameCatalogue';
+import { getMiniGameDefinition, MINI_GAME_IDS } from './MiniGameCatalogue';
 import {
   canApplyAdventureEffect,
   runMiniGameAdventureEffect,
