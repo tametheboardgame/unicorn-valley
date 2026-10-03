@@ -162,14 +162,7 @@ export class PondLeapActivityScene extends Phaser.Scene {
         .ellipse(pad.x, pad.y, 112 * scale, 52 * scale, 0x659b61, 1)
         .setStrokeStyle(3, 0x4f7d50, 0.8)
         .setName(`pond-leap:pad:${index}`);
-      this.add.ellipse(
-        pad.x - 12,
-        pad.y - 7,
-        65 * scale,
-        24 * scale,
-        0x7fb476,
-        0.72,
-      );
+      this.add.ellipse(pad.x - 12, pad.y - 7, 65 * scale, 24 * scale, 0x7fb476, 0.72);
 
       if (index % 2 === 1) {
         this.add
@@ -289,8 +282,7 @@ export class PondLeapActivityScene extends Phaser.Scene {
         const progress = flight.progress;
         this.frog.setPosition(
           Phaser.Math.Linear(from.x, to.x, progress),
-          Phaser.Math.Linear(from.y - 22, to.y - 22, progress) -
-            Math.sin(Math.PI * progress) * 72,
+          Phaser.Math.Linear(from.y - 22, to.y - 22, progress) - Math.sin(Math.PI * progress) * 72,
         );
       },
       onComplete: () => {
