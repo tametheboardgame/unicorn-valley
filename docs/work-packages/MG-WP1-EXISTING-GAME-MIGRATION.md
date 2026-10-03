@@ -1,10 +1,9 @@
 ---
 id: MG-WP1
 title: Existing Game Migration to One Launch Contract
-status: active
+status: in_progress
 autonomy: amber
-depends_on:
-  - MG-WP0
+depends_on: [MG-WP0]
 parallel_safe: false
 human_gate: architecture-and-regression
 ---
@@ -152,6 +151,17 @@ Do not merge until:
 
 ## Current checkpoint
 
-MG-WP1A started 2026-10-03.
+Implementation is complete through **MG-WP1F** and final validation is in progress.
 
-Initial implementation has moved Rainbow Disc, Pond Leap and Sunbeam Chess world entry onto `MiniGameLauncher`, made their activity exits session-driven and retired the duplicate Rainbow Disc/Pond Leap registration helpers.
+Completed migration:
+
+- MG-WP1A - Rainbow Disc, Pond Leap and Sunbeam Chess;
+- MG-WP1B - Wobbly Cake;
+- MG-WP1C - Coral Beachcombing;
+- MG-WP1D - Firefly Lantern;
+- MG-WP1E - all five regular Rainbow Run courses, including the Crystal Cascade gateway and Rainbow Cup launch path;
+- MG-WP1F - branch-level stale registration/launch audit.
+
+Closeout evidence: `docs/audits/2026-10-03-MG-WP1-MIGRATION-CLOSEOUT-AUDIT.md`.
+
+The package remains `in_progress` until exact-head technical validation is acceptable and the human gate is approved.
