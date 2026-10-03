@@ -90,15 +90,6 @@ const PATHS: Readonly<Partial<Record<string, readonly Stroke[]>>> = {
       depth: 2.43,
     },
   ],
-  CrystalBrookScene: [
-    {
-      points: EXPLORATION_MAIN_ROUTES.CrystalBrookScene,
-      width: 72,
-      colour: 0xf4e8c5,
-      alpha: 0.94,
-      depth: 2.44,
-    },
-  ],
   WhisperingWoodsScene: [
     {
       points: EXPLORATION_MAIN_ROUTES.WhisperingWoodsScene,
