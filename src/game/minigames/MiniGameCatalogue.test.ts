@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { REGULAR_RACE_COURSE_IDS } from '../racing/RaceCourse';
 import { SCENE_MANIFEST } from '../scenes/SceneManifest';
 import { getJustGamesDefinitions, MINI_GAME_CATALOGUE, MINI_GAME_IDS } from './MiniGameCatalogue';
 
@@ -32,6 +33,15 @@ describe('MiniGameCatalogue', () => {
       MINI_GAME_IDS.pondLeap,
       MINI_GAME_IDS.coralBeachcombing,
     ]);
+  });
+
+  it('keeps racing catalogue variants aligned with the canonical regular race courses', () => {
+    const racing = MINI_GAME_CATALOGUE.find(
+      (definition) => definition.id === MINI_GAME_IDS.rainbowRunRacing,
+    );
+    expect([...(racing?.variants.map((variant) => variant.id) ?? [])].sort()).toEqual(
+      [...REGULAR_RACE_COURSE_IDS].sort(),
+    );
   });
 
   it("does not treat Nova's story tutorial as a separate racing catalogue variant", () => {
