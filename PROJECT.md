@@ -35,6 +35,8 @@ The approved whole-game remediation sequence and historical decisions remain rec
 
 Current committed scope is defined by the canonical R6.5 release contract at `docs/07V-R6.5-VALLEY-COMPLETENESS-BREADTH.md`, with relevant companion specifications including `docs/07W-R6.5-CONTENT-BLUEPRINT.md` and `docs/07X-R6.5-AUTONOMOUS-UNICORN-LIFE.md`.
 
+Mini-game platform and game-specific improvement work is governed by the independent `MG` programme in `MINIGAMES-ROADMAP.md` and `docs/architecture/MINI-GAME-PLATFORM.md`. Its cross-roadmap integration rules apply whenever any package creates or materially changes a mini-game.
+
 ## Non-goals
 
 - Do not jump into R7 preference-led expansion before the R6.5 human gate.

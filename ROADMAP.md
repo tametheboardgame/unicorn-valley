@@ -10,6 +10,22 @@ The 2026-09-11 area-polish decision superseded the earlier direct WP19H → WP19
 
 This file is the concise project-level navigation layer. Detailed release and human-playtest evidence remains authoritative in `docs/`.
 
+## Independent MG - Mini-Game Development Programme
+
+Status: **approved independent parallel programme**.
+
+Canonical roadmap: `MINIGAMES-ROADMAP.md`
+
+Canonical architecture: `docs/architecture/MINI-GAME-PLATFORM.md`
+
+The MG programme is deliberately **not** numbered under R6.5/WP19 and is not an area-polish sub-stream. It owns the shared mini-game platform, the **Just Games** home-menu catalogue and future game-specific improvement passes.
+
+All roadmaps still obey the repo-wide mini-game contract in `AGENTS.md` and `ACCEPTANCE.md`. From adoption onward, any roadmap that creates a mini-game in the world must register it through the shared platform and expose it in Just Games as part of the same feature. Any game created first through Just Games must be world-ready so later world placement requires only a physical/narrative wrapper, not a gameplay rewrite.
+
+Historical mini-game work remains recorded in the roadmap where it actually happened. Existing games are normalised by the MG migration packages rather than rewriting project history.
+
+Initial platform sequence: **MG-WP0 platform foundation -> MG-WP1 Just Games shell -> MG-WP2 existing-game migration -> MG-WP3 sandbox/persistence isolation -> MG-WP4 future-game authoring guardrails**, followed by independent improvement passes for Chess, Rainbow Disc, Pond Leap, Wobbly Cake, Firefly Lantern, Coral Beachcombing and Rainbow Run Racing.
+
 ## Completed releases
 
 - R0 - Foundation and Pre-production: complete.

@@ -4,7 +4,7 @@
 
 This file is the working agreement for human and agent-led implementation runs. The repository is the source of truth: a fresh development conversation should be able to inspect the active work package, discover the canonical architecture and continue without relying on earlier chat history.
 
-Read `docs/architecture/ENGINEERING-STANDARDS.md` before introducing or materially changing scenes, UI, overlays, navigation, interaction/dialogue, audio or test infrastructure.
+Read `docs/architecture/ENGINEERING-STANDARDS.md` before introducing or materially changing scenes, UI, overlays, navigation, interaction/dialogue, audio or test infrastructure. Mini-game work must also read `MINIGAMES-ROADMAP.md` and `docs/architecture/MINI-GAME-PLATFORM.md`.
 
 ## Supported development baseline
 
@@ -76,6 +76,7 @@ The implemented standards are in `docs/architecture/ENGINEERING-STANDARDS.md`. T
 - `src/game/ui/CanvasDomOverlayBridge.ts`;
 - `src/game/interaction/**` and `src/game/dialogue/**`;
 - `src/content/audioBindings.ts` and `src/game/audio/**`;
+- `src/game/minigames/**` plus `MINIGAMES-ROADMAP.md` and `docs/architecture/MINI-GAME-PLATFORM.md` for mini-game catalogue/session/launch ownership;
 - `scripts/verification/verificationOwnership.mjs`;
 - `scripts/performance/performancePolicy.mjs`.
 

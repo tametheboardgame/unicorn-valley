@@ -185,7 +185,11 @@ Dedicated activity scene with its own physics/input/state flow.
 
 ### MiniGameScene variants
 
-Only introduce specialised scenes as mini-games are actually implemented.
+Mini-games are governed by the independent platform architecture in `docs/architecture/MINI-GAME-PLATFORM.md` and the roadmap in `MINIGAMES-ROADMAP.md`.
+
+A mini-game is implemented once and launched through the shared catalogue/session/launcher contract from either a physical world entry or the **Just Games** home-menu catalogue. `SceneManifest` remains the authoritative scene/loading registry; the mini-game catalogue is metadata and launch capability, not a competing constructor registry.
+
+World-first games must be exposed through Just Games as part of their initial feature work. Just-Games-first games may remain world-unplaced but must already support the same caller-independent return/session contract so later world placement does not require a gameplay rewrite.
 
 ### UIScene
 
