@@ -1,7 +1,7 @@
 ---
 id: MG-WP1
 title: Existing Game Migration to One Launch Contract
-status: in_progress
+status: complete
 autonomy: amber
 depends_on: [MG-WP0]
 parallel_safe: false
@@ -164,4 +164,4 @@ Completed migration:
 
 Closeout evidence: `docs/audits/2026-10-03-MG-WP1-MIGRATION-CLOSEOUT-AUDIT.md`.
 
-The package remains `in_progress` until exact-head technical validation is acceptable and the human gate is approved.
+The package was human-approved on 2026-10-03 after successful manual verification of all migrated game families. Static/architecture, unit and targeted browser validation passed. The repository performance budget remains red: the branch matches current main at 113 JavaScript chunks and measures 561.8 KiB first-playable gzip versus current main at 560.0 KiB.
