@@ -10,6 +10,10 @@ import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { ShimmerEconomyService } from '../economy/ShimmerEconomyService';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { returnFromMiniGame } from '../minigames/MiniGameLauncher';
+import {
+  canApplyAdventureEffect,
+  runMiniGameAdventureEffect,
+} from '../minigames/MiniGameOutcomeGateway';
 import { readMiniGameSession, type MiniGameSession } from '../minigames/MiniGameSession';
 import { PortraitModalCompanion, type PortraitModalAction } from '../ui/PortraitModalCompanion';
 import { UI_COLOURS, UI_FONT } from '../ui/uiTheme';
@@ -172,7 +176,7 @@ export class MapleBakingActivityScene extends Phaser.Scene {
     this.mode = data.mode ?? 'repeatable';
     this.resetRun();
 
-    if (this.mode === 'repeatable') {
+    if (this.mode === 'repeatable' && canApplyAdventureEffect(this.miniGameSession, 'shimmer')) {
       this.repeatBakeCharged = new ShimmerEconomyService(getBrowserSaveService()).spend(
         MAPLE_REPEAT_BAKE_COST,
       );
@@ -290,7 +294,9 @@ export class MapleBakingActivityScene extends Phaser.Scene {
         101,
         this.mode === 'quest'
           ? 'First cake is on Maple. Make it wonderfully wobbly.'
-          : 'Ingredients cost 1 Shimmer. Better cakes earn more back.',
+          : this.isSandboxSession()
+            ? 'Practice bake — no Shimmer is spent and your adventure progress stays unchanged.'
+            : 'Ingredients cost 1 Shimmer. Better cakes earn more back.',
         {
           color: UI_COLOURS.softInk,
           fontFamily: UI_FONT,
@@ -1295,11 +1301,19 @@ export class MapleBakingActivityScene extends Phaser.Scene {
 
     const saveService = getBrowserSaveService();
     if (this.mode === 'quest') {
-      completeMapleQuestCake(saveService, this.theme);
+      runMiniGameAdventureEffect(this.miniGameSession, 'quest', () =>
+        completeMapleQuestCake(saveService, this.theme!),
+      );
     } else {
-      recordMapleBakingCake(saveService, this.theme);
-      this.shimmerPayout = this.judgement.shimmerPayout;
-      new ShimmerEconomyService(saveService).earn(this.shimmerPayout);
+      runMiniGameAdventureEffect(this.miniGameSession, 'activity-progress', () =>
+        recordMapleBakingCake(saveService, this.theme!),
+      );
+      if (canApplyAdventureEffect(this.miniGameSession, 'shimmer')) {
+        this.shimmerPayout = this.judgement.shimmerPayout;
+        new ShimmerEconomyService(saveService).earn(this.shimmerPayout);
+      } else {
+        this.shimmerPayout = 0;
+      }
       this.repeatBakeCharged = false;
     }
 
@@ -1338,15 +1352,20 @@ export class MapleBakingActivityScene extends Phaser.Scene {
 
     const cake = this.drawCakePreview(GAME_WIDTH / 2, 420, true);
     const detailPanel = this.createRoundedPanel(GAME_WIDTH / 2, 560, 690, 96, 0xfffbef, 0xd9b9e8);
+    const sandbox = this.isSandboxSession();
     const progress =
-      this.mode === 'repeatable' ? getMapleBakingProgress(getBrowserSaveService()) : null;
+      this.mode === 'repeatable' && !sandbox
+        ? getMapleBakingProgress(getBrowserSaveService())
+        : null;
     const balance =
-      this.mode === 'repeatable'
+      this.mode === 'repeatable' && !sandbox
         ? new ShimmerEconomyService(getBrowserSaveService()).getBalance()
         : null;
     const economyLine =
       this.mode === 'repeatable'
-        ? `Cinnamon buys it for ${this.shimmerPayout} Shimmer. Ingredients cost 1, so this bake made +${this.shimmerPayout - MAPLE_REPEAT_BAKE_COST}. Balance: ${balance} ✨`
+        ? sandbox
+          ? 'Practice bake complete — no Shimmer was spent or earned, and your recipe notebook is unchanged.'
+          : `Cinnamon buys it for ${this.shimmerPayout} Shimmer. Ingredients cost 1, so this bake made +${this.shimmerPayout - MAPLE_REPEAT_BAKE_COST}. Balance: ${balance} ✨`
         : 'Maple’s first Wobbly Cake is ready. Take it outside and show her.';
     const detail = this.add
       .text(
@@ -1354,7 +1373,9 @@ export class MapleBakingActivityScene extends Phaser.Scene {
         560,
         `${choiceLabel(TOPPINGS, this.topping)} · ${choiceLabel(FINISHES, this.finish)}\n${economyLine}${
           this.mode === 'repeatable'
-            ? `\nRecipe notebook: ${progress?.completedOutcomeCount ?? 0}/${progress?.totalOutcomeCount ?? 0} styles discovered.`
+            ? sandbox
+              ? '\nPractice results are not written to your adventure save.'
+              : `\nRecipe notebook: ${progress?.completedOutcomeCount ?? 0}/${progress?.totalOutcomeCount ?? 0} styles discovered.`
             : ''
         }`,
         {
@@ -1375,7 +1396,7 @@ export class MapleBakingActivityScene extends Phaser.Scene {
         640,
         260,
         48,
-        '✓ Back to Bakery',
+        this.resultExitLabel(),
         () => this.leaveActivity(false),
         this.body,
       );
@@ -1407,7 +1428,12 @@ export class MapleBakingActivityScene extends Phaser.Scene {
     this.portraitCompanion?.setCards([
       {
         id: 'result',
-        title: this.mode === 'quest' ? 'Take it to Maple' : `Bakery pays ${this.shimmerPayout} ✨`,
+        title:
+          this.mode === 'quest'
+            ? 'Take it to Maple'
+            : sandbox
+              ? 'Practice bake'
+              : `Bakery pays ${this.shimmerPayout} ✨`,
         description: economyLine,
       },
     ]);
@@ -1416,7 +1442,7 @@ export class MapleBakingActivityScene extends Phaser.Scene {
         id: 'result',
         actions:
           this.mode === 'repeatable'
-            ? [{ id: 'back', label: '✓ Back to Bakery', onPress: () => this.leaveActivity(false) }]
+            ? [{ id: 'back', label: this.resultExitLabel(), onPress: () => this.leaveActivity(false) }]
             : [{ id: 'back', label: '✓ Show Maple', onPress: () => this.leaveActivity(false) }],
       },
     ]);
@@ -1697,6 +1723,14 @@ export class MapleBakingActivityScene extends Phaser.Scene {
     }
   }
 
+  private isSandboxSession(): boolean {
+    return this.miniGameSession?.sideEffectPolicy === 'sandbox';
+  }
+
+  private resultExitLabel(): string {
+    return this.miniGameSession?.source === 'just-games' ? '✓ Back to Games' : '✓ Back to Bakery';
+  }
+
   private leaveActivity(refundIncomplete: boolean): void {
     if (
       refundIncomplete &&
@@ -1704,7 +1738,9 @@ export class MapleBakingActivityScene extends Phaser.Scene {
       this.repeatBakeCharged &&
       !this.completedRun
     ) {
-      new ShimmerEconomyService(getBrowserSaveService()).earn(MAPLE_REPEAT_BAKE_COST);
+      runMiniGameAdventureEffect(this.miniGameSession, 'shimmer', () =>
+        new ShimmerEconomyService(getBrowserSaveService()).earn(MAPLE_REPEAT_BAKE_COST),
+      );
       this.repeatBakeCharged = false;
     }
     if (this.miniGameSession) {
