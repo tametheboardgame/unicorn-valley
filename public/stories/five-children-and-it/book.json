@@ -9,7 +9,15 @@
     "alt": "The historic first-edition cover of Five Children and It."
   },
   "series": null,
-  "tags": ["classic-retelling", "fantasy", "wishes", "siblings", "psammead", "adventure", "illustrated"],
+  "tags": [
+    "classic-retelling",
+    "fantasy",
+    "wishes",
+    "siblings",
+    "psammead",
+    "adventure",
+    "illustrated"
+  ],
   "publication": {
     "status": "published"
   },
