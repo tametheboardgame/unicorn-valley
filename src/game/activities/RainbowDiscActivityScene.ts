@@ -2,16 +2,14 @@ import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { parseUnicornAppearance } from '../player/UnicornAppearance';
 import { createUnicornAppearanceTexture } from '../player/UnicornAppearanceRenderer';
-import {
-  createResidentAppearanceSprite,
-  SUPPORTING_RESIDENT_ART_LAYOUT,
-} from '../population/SupportingResidentArt';
+import { createResidentAppearanceSprite } from '../population/SupportingResidentArt';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { UI_COLOURS, UI_FONT } from '../ui/uiTheme';
 import {
   createRainbowDiscRing,
   drawRainbowTarget,
   resolveRainbowDiscHornCatchPoint,
+  resolveRainbowDiscResidentBodyOrigin,
 } from '../world/RainbowDiscArt';
 import { RAINBOW_DISC_PLAYER_APPEARANCES } from '../world/RainbowDiscMeadowPresentation';
 
@@ -69,12 +67,8 @@ const PRACTICE_TARGETS = [
 const OPEN_LANE_BY_PASS = [1, 2, 0] as const;
 const ACTIVITY_THROWER_SIZE = { width: 122, height: 86 } as const;
 const ACTIVITY_RESIDENT_SCALE = 0.62;
-const ACTIVITY_RESIDENT_BODY_ORIGIN_X =
-  (SUPPORTING_RESIDENT_ART_LAYOUT.drawX - 6 * SUPPORTING_RESIDENT_ART_LAYOUT.drawScale) /
-  SUPPORTING_RESIDENT_ART_LAYOUT.textureWidth;
-const ACTIVITY_RESIDENT_BODY_ORIGIN_Y =
-  (SUPPORTING_RESIDENT_ART_LAYOUT.drawY + 7 * SUPPORTING_RESIDENT_ART_LAYOUT.drawScale) /
-  SUPPORTING_RESIDENT_ART_LAYOUT.textureHeight;
+const ACTIVITY_RESIDENT_BODY_ORIGIN = resolveRainbowDiscResidentBodyOrigin(false);
+const ACTIVITY_FLIPPED_RESIDENT_BODY_ORIGIN = resolveRainbowDiscResidentBodyOrigin(true);
 const TIMING_TRACK_LEFT = 462;
 const TIMING_TRACK_WIDTH = 350;
 
@@ -385,7 +379,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
         appearance,
       )
         .setPosition(targetX, receiverY)
-        .setOrigin(ACTIVITY_RESIDENT_BODY_ORIGIN_X, ACTIVITY_RESIDENT_BODY_ORIGIN_Y)
+        .setOrigin(ACTIVITY_RESIDENT_BODY_ORIGIN.x, ACTIVITY_RESIDENT_BODY_ORIGIN.y)
         .setScale(ACTIVITY_RESIDENT_SCALE)
         .setInteractive({ useHandCursor: true });
       receiver.on('pointerdown', () => this.selectReceiver(index));
@@ -426,7 +420,10 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
           defenderAppearance,
         )
           .setPosition(defenderX, defenderY)
-          .setOrigin(ACTIVITY_RESIDENT_BODY_ORIGIN_X, ACTIVITY_RESIDENT_BODY_ORIGIN_Y)
+          .setOrigin(
+            ACTIVITY_FLIPPED_RESIDENT_BODY_ORIGIN.x,
+            ACTIVITY_FLIPPED_RESIDENT_BODY_ORIGIN.y,
+          )
           .setScale(ACTIVITY_RESIDENT_SCALE)
           .setFlipX(true);
         this.playLayer?.add([defenderHalo, defender]);
@@ -482,7 +479,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       RAINBOW_DISC_PLAYER_APPEARANCES[4],
     )
       .setPosition(opponentThrowerX, 370)
-      .setOrigin(ACTIVITY_RESIDENT_BODY_ORIGIN_X, ACTIVITY_RESIDENT_BODY_ORIGIN_Y)
+      .setOrigin(ACTIVITY_RESIDENT_BODY_ORIGIN.x, ACTIVITY_RESIDENT_BODY_ORIGIN.y)
       .setScale(ACTIVITY_RESIDENT_SCALE)
       .setFlipX(false);
     this.playLayer?.add(opponentThrower);
@@ -497,7 +494,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
         appearance,
       )
         .setPosition(opponentReceiverX, receiverY)
-        .setOrigin(ACTIVITY_RESIDENT_BODY_ORIGIN_X, ACTIVITY_RESIDENT_BODY_ORIGIN_Y)
+        .setOrigin(ACTIVITY_RESIDENT_BODY_ORIGIN.x, ACTIVITY_RESIDENT_BODY_ORIGIN.y)
         .setScale(ACTIVITY_RESIDENT_SCALE)
         .setInteractive({ useHandCursor: true });
       attacker.on('pointerdown', () => this.resolveDefenceChoice(index));
