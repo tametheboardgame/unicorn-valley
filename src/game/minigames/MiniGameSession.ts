@@ -1,5 +1,10 @@
-import type { SceneKey } from '../scenes/SceneManifest';
-import { getMiniGameDefinition, isMiniGameVariant, type MiniGameId } from './MiniGameCatalogue';
+import { isSceneKey, type SceneKey } from '../scenes/SceneManifest';
+import {
+  getMiniGameDefinition,
+  isMiniGameId,
+  isMiniGameVariant,
+  type MiniGameId,
+} from './MiniGameCatalogue';
 
 export const MINI_GAME_SESSION_DATA_KEY = 'miniGameSession' as const;
 
@@ -75,11 +80,26 @@ export function readMiniGameSession(data: unknown): MiniGameSession | null {
   const session = candidate as Partial<MiniGameSession>;
   if (
     typeof session.gameId !== 'string' ||
+    !isMiniGameId(session.gameId) ||
     (session.source !== 'world' && session.source !== 'just-games') ||
     (session.sideEffectPolicy !== 'world' && session.sideEffectPolicy !== 'sandbox') ||
+    session.sideEffectPolicy !== (session.source === 'world' ? 'world' : 'sandbox') ||
     !session.returnTarget ||
     typeof session.returnTarget.sceneKey !== 'string' ||
+    !isSceneKey(session.returnTarget.sceneKey) ||
     (session.returnTarget.mode !== 'resume' && session.returnTarget.mode !== 'start')
+  ) {
+    return null;
+  }
+
+  const definition = getMiniGameDefinition(session.gameId);
+  if (session.variantId !== undefined && !isMiniGameVariant(definition, session.variantId)) {
+    return null;
+  }
+
+  if (
+    session.worldContext !== undefined &&
+    (typeof session.worldContext !== 'object' || session.worldContext === null)
   ) {
     return null;
   }
