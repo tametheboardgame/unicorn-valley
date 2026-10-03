@@ -1,13 +1,7 @@
 import Phaser from 'phaser';
 
 export const RAINBOW_DISC_COLOURS = [
-  0xee6f73,
-  0xf3a556,
-  0xf3d465,
-  0x79bf78,
-  0x67b9dd,
-  0x7f82d7,
-  0xb575cc,
+  0xee6f73, 0xf3a556, 0xf3d465, 0x79bf78, 0x67b9dd, 0x7f82d7, 0xb575cc,
 ] as const;
 
 export function createRainbowDiscRing(
