@@ -92,9 +92,9 @@ function createMeadowInteractions(scene: Phaser.Scene): readonly InteractionTarg
       label: 'Rainbow Disc',
       actionLabel: 'Join the game',
       actionKind: 'start',
-      position: RAINBOW_MEADOW_LAYOUT.rainbowDisc.captain,
+      position: RAINBOW_MEADOW_LAYOUT.rainbowDisc.approach,
       approachPosition: RAINBOW_MEADOW_LAYOUT.rainbowDisc.approach,
-      interactionRadius: 170,
+      interactionRadius: 230,
       priority: 28,
       result: {
         type: 'callback',
@@ -106,9 +106,9 @@ function createMeadowInteractions(scene: Phaser.Scene): readonly InteractionTarg
       label: 'Rainbow Disc Practice',
       actionLabel: 'Practice throws',
       actionKind: 'start',
-      position: RAINBOW_MEADOW_LAYOUT.rainbowDisc.practice.throwLine,
+      position: RAINBOW_MEADOW_LAYOUT.rainbowDisc.practice.approach,
       approachPosition: RAINBOW_MEADOW_LAYOUT.rainbowDisc.practice.approach,
-      interactionRadius: 150,
+      interactionRadius: 210,
       priority: 27,
       result: {
         type: 'callback',
