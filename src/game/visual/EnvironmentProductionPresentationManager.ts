@@ -17,7 +17,9 @@ interface AmbientPoint {
   radius?: number;
 }
 
-export const ENVIRONMENT_PRODUCTION_SCENE_ENVIRONMENTS: Readonly<Record<string, ProductionEnvironmentId>> = {
+export const ENVIRONMENT_PRODUCTION_SCENE_ENVIRONMENTS: Readonly<
+  Record<string, ProductionEnvironmentId>
+> = {
   MoonflowerGladeScene: 'moonflower-glade',
   CrystalBrookScene: 'crystal-brook',
   WhisperingWoodsScene: 'whispering-woods',
