@@ -52,10 +52,23 @@ If sources materially contradict each other, resolve durable state or surface th
 - native controls over canvas use `CanvasDomOverlayBridge`;
 - interaction/dialogue/feedback reuse their existing subsystem coordinators and presenters;
 - audio uses `src/content/audioBindings.ts` plus `src/game/audio/**`;
+- mini-games use the independent `MG` platform contract in `MINIGAMES-ROADMAP.md` and `docs/architecture/MINI-GAME-PLATFORM.md`;
 - test scope is selected by `scripts/verification/verificationOwnership.mjs` and fails safe to full qualification for unmapped/cross-cutting changes;
 - loading/performance changes preserve `scripts/performance/performancePolicy.mjs` and stale dynamic-import recovery.
 
 Do not create a competing scene registry, UI token set, overlay positioning system, dialogue stack, audio binding mechanism or ad hoc verification rule without an explicit architectural reason recorded in the active work package.
+
+## Mini-game platform contract
+
+This rule applies across **all** roadmaps and work packages, not only the independent Mini-Game roadmap.
+
+- Any bounded playable activity with its own short gameplay loop, start/finish/retry behaviour and repeatable or practice-oriented play must declare a **Mini-game platform impact** of `none`, `changed - <id>` or `new - <id> - world-first|just-games-first`.
+- A new mini-game has one stable ID, one canonical gameplay implementation and one shared launch/session contract. Do not create separate world and Just Games implementations.
+- A world-first mini-game is not complete until it is registered in the canonical mini-game catalogue and exposed through Just Games.
+- A Just-Games-first mini-game may be world-unplaced, but it must already be world-ready: no title-screen-only assumptions, no hard-coded return scene and no Just Games-only gameplay state.
+- Mini-game scene loading remains owned by `SceneManifest`; the mini-game catalogue must not become a competing scene registry.
+- Just Games sessions are sandboxed by default and must not advance quests/world flags, alter relationships, grant/consume inventory or Shimmer, or change normal adventure collections/unlocks unless a separately approved isolated persistence contract explicitly permits it.
+- Existing games are migrated through the independent MG programme; historical world packages do not need to be rewritten to pretend they were originally authored under this contract.
 
 ## Project-specific invariants
 

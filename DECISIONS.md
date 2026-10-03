@@ -283,3 +283,15 @@ Status: Accepted, 2026-09-27.
 David completed the R2/R2A/R2B play review and explicitly accepted the Wobbly Cake mini-game as the current baseline, while noting that a future tightening/improvement pass may revisit it. The accepted implementation includes recipe measuring, touch/mouse traced stirring inside the batter, strict ordered drag-and-drop cake stacking, icing/decorating, a forgiving Wobble Score, the preserved Maple quest contract, and the explicit 1-Shimmer repeat-bake confirmation/economy loop.
 
 This approval releases PR #183 for merge to `main` only after one exact-head full qualification passes the complete static/architecture, unit, build/performance, Chromium and cross-browser gates required by UV-D025. No dependent H3.11.5 work begins before that merge gate is complete. After merge, the next bounded slice is H3.11.5 Rosehip Cottage.
+
+## UV-D027 - Independent mini-game platform and Just Games contract
+
+Status: Accepted, 2026-10-03.
+
+David explicitly separated mini-game development from the main release/area roadmap. The new programme uses the independent `MG` namespace and `MINIGAMES-ROADMAP.md`; it is not an R6.5/WP19 sub-stream.
+
+All current and future roadmaps must obey the shared mini-game contract in `AGENTS.md`, `ACCEPTANCE.md` and `docs/architecture/MINI-GAME-PLATFORM.md`. A mini-game is authored once and uses one catalogue/session/launcher architecture for both physical world entry and the home-menu **Just Games** catalogue. A world-first game must be added to Just Games as part of the same feature. A Just-Games-first game may remain physically unplaced, but must already be world-ready so later placement adds only world presentation/interaction rather than rewriting gameplay.
+
+`SceneManifest` remains the scene/loading authority; the mini-game catalogue must not become a competing scene registry. Just Games sessions are sandboxed by default and may not mutate normal adventure quest, world, relationship, inventory, Shimmer, collection or unlock progression. Existing historical games remain recorded under the packages that created them and are migrated to the new platform through the MG programme rather than rewriting history.
+
+The initial platform sequence is MG-WP0 foundation, MG-WP1 Just Games shell, MG-WP2 existing-game migration, MG-WP3 sandbox/persistence isolation and MG-WP4 future-game authoring guardrails, followed by independent game improvement packages.

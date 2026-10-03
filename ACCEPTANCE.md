@@ -22,6 +22,19 @@ These gates apply across bounded work packages unless an explicitly approved pac
 - Errors and failed actions are recoverable and clearly signalled.
 - Reduced-motion, assistance and other established accessibility behaviour is preserved where relevant.
 
+## Mini-game platform integration
+
+For any package with `Mini-game platform impact: new` or `changed`:
+
+- there is one canonical gameplay implementation shared by world and Just Games entry;
+- the game has a stable catalogue ID and a valid `SceneManifest` scene/load path;
+- world-first games appear through Just Games in the same package;
+- Just-Games-first games use the same world-capable session/return contract even when not yet physically placed;
+- launch, exit and retry return to the correct caller without dead input or leaked overlays;
+- Just Games uses sandbox side effects by default and does not mutate normal adventure progression;
+- relevant world-entry and Just Games launch/return tests pass;
+- touch/keyboard behaviour remains usable for the supported input surfaces.
+
 ## Human/product acceptance
 
 Technical completion and human acceptance are separate states.
