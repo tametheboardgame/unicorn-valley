@@ -71,6 +71,43 @@ test.describe('MG-WP3 Just Games catalogue', () => {
     await waitForScene(page, 'JustGamesScene');
   });
 
+  test('every current catalogue family launches in sandbox and returns to Just Games', async ({
+    page,
+  }) => {
+    test.setTimeout(120_000);
+    await clickNamedObject(page, 'TitleScene', 'title-menu-just-games');
+    await waitForScene(page, 'JustGamesScene');
+
+    const cases = [
+      {
+        gameId: 'rainbow-run-racing',
+        variantId: 'race-course:crystal-brook-crystal-cascade',
+        sceneKey: 'RaceScene',
+      },
+      { gameId: 'rainbow-disc', variantId: 'practice', sceneKey: 'RainbowDiscActivityScene' },
+      { gameId: 'sunbeam-chess', sceneKey: 'ChessPlazaActivityScene' },
+      { gameId: 'wobbly-cake', sceneKey: 'MapleBakingActivityScene' },
+      { gameId: 'firefly-lantern', variantId: 'multicolour', sceneKey: 'FireflyLanternScene' },
+      { gameId: 'pond-leap', sceneKey: 'PondLeapActivityScene' },
+      { gameId: 'coral-beachcombing', sceneKey: 'CoralBeachcombingActivityScene' },
+    ] as const;
+
+    for (const entry of cases) {
+      await clickNamedObject(page, 'JustGamesScene', `just-games-card:${entry.gameId}`);
+      if ('variantId' in entry) {
+        await waitForNamedObject(page, 'JustGamesScene', `just-games-variant:${entry.variantId}`);
+        await clickNamedObject(page, 'JustGamesScene', `just-games-variant:${entry.variantId}`);
+      }
+      await clickNamedObject(page, 'JustGamesScene', 'just-games-play');
+      await waitForScene(page, entry.sceneKey);
+
+      expect(await page.evaluate((key) => window.localStorage.getItem(key), SAVE_KEY)).toBeNull();
+
+      await page.keyboard.press('Escape');
+      await waitForScene(page, 'JustGamesScene');
+    }
+  });
+
   test('Escape from Just Games returns to the title', async ({ page }) => {
     await clickNamedObject(page, 'TitleScene', 'title-menu-just-games');
     await waitForScene(page, 'JustGamesScene');
