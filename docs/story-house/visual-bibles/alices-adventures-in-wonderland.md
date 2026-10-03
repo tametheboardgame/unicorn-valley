@@ -2,7 +2,7 @@
 
 Work package: **R6.5-WP19SH1.6.1A**
 
-Status: **in progress — Alice and White Rabbit / early-world anchors approved; Caterpillar / Cheshire / woodland anchors next**
+Status: **in progress — Alice, White Rabbit/early-world, Caterpillar, Cheshire Cat and Wonderland woodland anchors approved; tea-party anchors next**
 
 ## Purpose
 
@@ -12,6 +12,18 @@ Lock a coherent Story House visual language for the 36-image modern reader set a
 The approved anchor imagery from this phase becomes the visual authority for every later Alice
 generation. Later prompts must reference approved character/location imagery rather than relying
 on prose descriptions alone.
+
+## Persistent approved-anchor archive
+
+The approved visual reference sheets are also preserved outside the conversation in Google Drive:
+
+- document ID: `14d9oEtJgrZOPuPIz2aDm3OaCiiItExvA9UbXc3Pz574`;
+- title: **Unicorn Valley - Alice SH1.6.1A Approved Anchor Archive**;
+- URL: https://docs.google.com/document/d/14d9oEtJgrZOPuPIz2aDm3OaCiiItExvA9UbXc3Pz574/edit
+
+This Drive document is the recovery copy of the actual approved anchor imagery. GitHub remains the
+written source of truth for what is approved and how each anchor must be interpreted. Future
+SH1.6.1A approved anchors should be appended to the same Drive archive and then recorded here.
 
 ## Core illustration language
 
@@ -74,18 +86,34 @@ Locked design:
 The approved Rabbit turnaround and running pose are the continuity authority for later appearances.
 
 ### Caterpillar
-- blue;
-- composed and slightly aloof;
-- visually readable on the mushroom;
+
+**Approved 3 October 2026.**
+
+Locked design:
+- blue segmented body with turquoise/teal face and underside;
+- orange-tipped antennae;
+- heavy-lidded, composed and slightly aloof expression;
+- hookah and ornate pipe apparatus may recur where scene-appropriate;
+- visually readable on the red/orange giant mushroom;
 - strange but not grotesque;
-- one stable face/anatomy across appearances.
+- one stable face, anatomy and segment pattern across appearances.
 
 ### Cheshire Cat
-- one fixed coat colour/pattern;
-- broad distinctive grin;
-- expressive eyes;
+
+**Approved 3 October 2026.** The corrected Cheshire-only sheet supersedes the earlier purple-striped
+exploration.
+
+Locked design:
+- very fluffy, rounded build;
+- smoky charcoal / warm brown-grey coat with subtle natural banding rather than bright purple stripes;
+- pale muzzle;
+- bright golden-yellow eyes with vertical pupils;
+- small warm pink-brown nose;
+- broad distinctive toothy grin;
+- large plume-like tail;
 - recognisable when only partially visible;
-- disappearance changes opacity/body visibility, never the locked design.
+- disappearance may reduce the body to translucent smoke, glowing eyes and grin, but never changes
+  the locked face/coat design.
 
 ### Hatter
 - eccentric Victorian clothing;
@@ -152,18 +180,26 @@ The approved Rabbit turnaround and running pose are the continuity authority for
 - Chapter 7's eventual full garden entry must visibly match this first glimpse.
 
 ### Wonderland woodland
+
+**Approved 3 October 2026.**
 - oversized vegetation and mushrooms appear progressively;
 - organic, colourful and slightly impossible;
-- remains coherent between Rabbit-house, Caterpillar and Cheshire sequences;
-- final woodland palette/composition remains **pending Caterpillar/Cheshire anchor approval**.
+- warm shafts of sunlight may alternate with cooler blue-violet shadowed paths;
+- giant red/orange mushrooms, blue woodland flowers, twisted mature trees and dense leaves form the
+  recurring visual vocabulary;
+- remains coherent between Rabbit-house, Caterpillar and Cheshire sequences.
 
 ### White Rabbit's house
 - charming, tidy Victorian miniature house;
 - identifiable exterior and window/chimney layout for the giant-Alice scene.
 
 ### Caterpillar mushroom clearing
-- giant mushroom is the key landmark;
-- blue Caterpillar has a readable silhouette against the environment.
+
+**Approved 3 October 2026.**
+- giant red/orange mushroom with pale spots is the key landmark;
+- blue Caterpillar has a readable silhouette against the warm mushroom cap;
+- surrounding oversized mushrooms and flowers connect the clearing to the wider Wonderland woodland;
+- warm dappled sunlight and curling hookah smoke provide the scene's atmospheric signature.
 
 ### Duchess house / pepper kitchen
 - cramped, chaotic Victorian kitchen;
@@ -195,7 +231,7 @@ The approved Rabbit turnaround and running pose are the continuity authority for
 
 1. **Ordinary world:** warm greens, creams, natural sky and restrained blue.
 2. **Early Wonderland:** richer teal, moss, gold and glass highlights.
-3. **Woodland / Caterpillar / Cheshire:** saturated botanical greens, blues and purples.
+3. **Woodland / Caterpillar / Cheshire:** saturated botanical greens, mushroom reds/oranges, deep blues and cooler violet-blue shadows; Cheshire itself remains smoky charcoal/brown-grey.
 4. **Tea party:** warm amber, porcelain colour, eccentric mismatched accents.
 5. **Hearts kingdom:** red, cream, black and gold with lush garden greens.
 6. **Mock Turtle coast:** sea greens/blues with dusk-like atmospheric colour.
@@ -208,6 +244,8 @@ Human approval is required in this order before bulk chapter art:
 **Completed:** Alice character anchor sheet approved and locked.
 
 **Completed:** White Rabbit, riverbank, rabbit-hole visual language, door hall and initial garden glimpse approved and locked.
+
+**Completed:** Caterpillar, mushroom clearing, Wonderland woodland and corrected Cheshire Cat approved and locked.
 
 1. Alice character anchor sheet.
 2. White Rabbit + early Wonderland hall/riverbank anchors.
