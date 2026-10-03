@@ -54,10 +54,13 @@ test('H4.10 Meadow renders distinct authored boundary treatments', async ({ page
   ).toBe(2);
   expect(
     visibleNames.filter((name) => name.startsWith('rainbow-meadow:boundary:crystal-rock:')).length,
-  ).toBeGreaterThanOrEqual(5);
+  ).toBeGreaterThanOrEqual(9);
   expect(
     visibleNames.filter((name) => name.startsWith('rainbow-meadow:boundary:wildflowers:')).length,
   ).toBeGreaterThanOrEqual(4);
+  expect(
+    visibleNames.filter((name) => name.startsWith('rainbow-meadow:nature:frog:')).length,
+  ).toBeGreaterThanOrEqual(2);
 });
 
 test('H4.10 boundary presentation preserves the three visual route openings', async ({ page }) => {
