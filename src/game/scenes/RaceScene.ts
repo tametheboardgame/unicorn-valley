@@ -1158,7 +1158,7 @@ export class RaceScene extends Phaser.Scene {
     exit.on('pointerdown', () => this.exitRace());
   }
 
-  private restartRace(): void {
+  public restartRace(): void {
     this.pointerInput?.setButton('RACE_JUMP', false);
     this.scene.restart(this.miniGameSession ? miniGameSceneData(this.miniGameSession) : undefined);
   }
@@ -1176,7 +1176,7 @@ export class RaceScene extends Phaser.Scene {
     return raceReturnLabel(peekRaceReturnScene(this.sys.game));
   }
 
-  private exitRace(): void {
+  public exitRace(): void {
     if (this.miniGameSession) {
       if (this.miniGameSession.returnTarget.sceneKey === 'RainbowRunEntryScene') {
         saveLocationCheckpoint(getBrowserSaveService(), RAINBOW_RUN_HUB_LOCATION_ID);
