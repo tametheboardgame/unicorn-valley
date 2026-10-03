@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { isPointBlocked } from './MapTraversal';
 import { RAINBOW_MEADOW_LAYOUT, RAINBOW_MEADOW_MAP } from './RainbowMeadowMap';
+import { worldDepthForY } from './WorldDepth';
 
 function isInsideDistrict(
   point: { x: number; y: number },
@@ -507,6 +508,27 @@ describe('H4.10 Meadow boundary readability', () => {
       west.x2,
     );
     expect(RAINBOW_MEADOW_LAYOUT.hubFeatures.rainbowRunEntrance.position.x).toBeLessThan(east.x1);
+  });
+});
+
+describe('H4.10 Meadow finishing details', () => {
+  it('owns physical wayfinding positions for Sunbeam Village and Rainbow Disc', () => {
+    expect(RAINBOW_MEADOW_LAYOUT.sunbeamGateway.sign).toEqual({ x: 265, y: 915 });
+    expect(RAINBOW_MEADOW_LAYOUT.rainbowDisc.sign.y).toBeGreaterThanOrEqual(1080);
+  });
+
+  it('keeps the windmill sails in front of the north hedge and a player at the windmill centre', () => {
+    const windmillY = RAINBOW_MEADOW_LAYOUT.natureFeatures.windmill.position.y;
+    const sailDepth = worldDepthForY(windmillY + 122, 0.52);
+    const playerDepth = worldDepthForY(windmillY, 0.5);
+    const northHedgeDepth = Math.max(
+      ...RAINBOW_MEADOW_LAYOUT.boundaries.hedges
+        .filter(({ id }) => id.startsWith('north-'))
+        .map(({ y }) => worldDepthForY(y, 0.12)),
+    );
+
+    expect(sailDepth).toBeGreaterThan(playerDepth);
+    expect(sailDepth).toBeGreaterThan(northHedgeDepth);
   });
 });
 
