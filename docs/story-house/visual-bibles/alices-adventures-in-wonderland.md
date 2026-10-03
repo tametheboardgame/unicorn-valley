@@ -1,0 +1,217 @@
+# Alice's Adventures in Wonderland — modern Story House visual bible
+
+Work package: **R6.5-WP19SH1.6.1A**
+
+Status: **in progress — anchor approval stage**
+
+## Purpose
+
+Lock a coherent Story House visual language for the 36-image modern reader set and dedicated
+3:4 modern cover before chapter production begins.
+
+The approved anchor imagery from this phase becomes the visual authority for every later Alice
+generation. Later prompts must reference approved character/location imagery rather than relying
+on prose descriptions alone.
+
+## Core illustration language
+
+- Rich, painterly modern storybook illustration.
+- Cinematic depth, soft dimensional lighting and strong environmental storytelling.
+- Victorian-inspired costume, architecture, furniture and props.
+- Colourful and inviting with controlled surrealism.
+- Funny, peculiar and dreamlike rather than frightening.
+- No flat cartoon treatment, collage layouts, captions, logos or baked-in title text.
+- Avoid the distinctive visual language of later copyrighted film, television or animation
+  adaptations.
+- Public-domain Carroll/Tenniel-era concepts may inform narrative details, but the modern set must
+  read as its own Story House interpretation.
+- Early Wonderland scenes remain relatively earthy and believable; colour, geometry and theatrical
+  absurdity increase progressively through the story.
+- The Hearts court is the visual peak: elaborate, crowded and absurd without becoming sinister.
+
+## Primary continuity lock — Alice
+
+Alice must remain the same child across the complete set.
+
+Target design:
+
+- approximately 8–10 years old;
+- fair/blonde hair with one fixed hairstyle;
+- pale blue Victorian-style dress;
+- white pinafore/apron;
+- dark stockings and dark shoes;
+- expressive, curious and adventurous rather than permanently surprised;
+- natural child proportions with a readable silhouette;
+- no modern accessories;
+- no recognisable costume or facial design copied from a later screen adaptation.
+
+Continuity rules:
+
+- face shape, eye colour, hairstyle, hair length, dress construction, pinafore details, stockings
+  and shoes remain fixed;
+- size-change scenes alter Alice's scale relative to the environment only;
+- age, facial structure and body proportions do not change with size;
+- approved Alice anchor imagery supersedes written prompt descriptions if the two ever conflict.
+
+## Principal recurring character anchors
+
+### White Rabbit
+- white fur;
+- pink/red eyes;
+- Victorian waistcoat;
+- pocket watch;
+- anxious, hurried posture;
+- expressive but still recognisably rabbit-like rather than human-faced.
+
+### Caterpillar
+- blue;
+- composed and slightly aloof;
+- visually readable on the mushroom;
+- strange but not grotesque;
+- one stable face/anatomy across appearances.
+
+### Cheshire Cat
+- one fixed coat colour/pattern;
+- broad distinctive grin;
+- expressive eyes;
+- recognisable when only partially visible;
+- disappearance changes opacity/body visibility, never the locked design.
+
+### Hatter
+- eccentric Victorian clothing;
+- one fixed hat, face, hair and costume palette;
+- theatrical, lively expression without resembling a specific later adaptation.
+
+### March Hare
+- stable fur colouring and anatomy;
+- energetic body language;
+- fixed accessories/clothing if used in the approved anchor.
+
+### Dormouse
+- much smaller scale than Hatter/Hare;
+- sleepy, soft-featured and visually gentle;
+- stable fur and face.
+
+### Queen of Hearts
+- strong theatrical Hearts-royalty silhouette;
+- fixed crown, dress construction and palette;
+- commanding and volatile without horror styling.
+
+### King of Hearts
+- related Hearts-court visual language;
+- clearly distinct from and less imposing than the Queen;
+- fixed crown/costume.
+
+### Gryphon
+- one fixed hybrid anatomy;
+- stable feather/fur palette and proportions;
+- expressive enough for comedy without becoming cartoon-flat.
+
+### Mock Turtle
+- one fixed creature anatomy;
+- melancholy but sympathetic face;
+- stable palette and proportions.
+
+## Recurring location anchors
+
+### Riverbank / ordinary world
+- warm natural daylight;
+- believable English countryside;
+- restrained palette compared with Wonderland;
+- gentle Victorian-period feel.
+
+### Door hall
+- long, slightly uncanny but elegant hall;
+- repeated doors;
+- glass table and tiny golden key;
+- tiny door gives a clear view towards the beautiful garden;
+- hall geometry remains recognisable when revisited.
+
+### Beautiful garden
+- lush, saturated and inviting;
+- fantastical but still botanical;
+- should visually connect Chapter 1's glimpse to Chapter 7's eventual entry.
+
+### Wonderland woodland
+- oversized vegetation and mushrooms appear progressively;
+- organic, colourful and slightly impossible;
+- remains coherent between Rabbit-house, Caterpillar and Cheshire sequences.
+
+### White Rabbit's house
+- charming, tidy Victorian miniature house;
+- identifiable exterior and window/chimney layout for the giant-Alice scene.
+
+### Caterpillar mushroom clearing
+- giant mushroom is the key landmark;
+- blue Caterpillar has a readable silhouette against the environment.
+
+### Duchess house / pepper kitchen
+- cramped, chaotic Victorian kitchen;
+- pepper haze, cookware and flying crockery;
+- visually distinct from the cleaner Rabbit house.
+
+### Tea-party clearing
+- long outdoor table beneath/near trees;
+- many mismatched cups and teapots;
+- enough spatial consistency to support multiple tea-party scenes.
+
+### Royal rose garden / croquet ground
+- playing-card architecture/motifs used with restraint;
+- white/red rose contrast;
+- croquet field large enough for flamingos, hedgehogs and card-soldier hoops;
+- same environment must support the Cheshire floating-head scene.
+
+### Mock Turtle coast
+- dreamlike coastal edge of Wonderland;
+- room for dance imagery and sea-school visualisation without becoming a separate visual universe.
+
+### Hearts courtroom
+- theatrical royal court with card motifs;
+- recognisably related to Queen/croquet visual language;
+- clear thrones, witness area, jury box and central tart evidence;
+- capable of escalating into the final flying-card storm.
+
+## Palette progression
+
+1. **Ordinary world:** warm greens, creams, natural sky and restrained blue.
+2. **Early Wonderland:** richer teal, moss, gold and glass highlights.
+3. **Woodland / Caterpillar / Cheshire:** saturated botanical greens, blues and purples.
+4. **Tea party:** warm amber, porcelain colour, eccentric mismatched accents.
+5. **Hearts kingdom:** red, cream, black and gold with lush garden greens.
+6. **Mock Turtle coast:** sea greens/blues with dusk-like atmospheric colour.
+7. **Court climax:** strongest red/gold/cream contrast, dense but still readable.
+
+## Anchor generation order
+
+Human approval is required in this order before bulk chapter art:
+
+1. Alice character anchor sheet.
+2. White Rabbit + early Wonderland hall/riverbank anchors.
+3. Caterpillar + Cheshire Cat + woodland anchors.
+4. Hatter + March Hare + Dormouse + tea-party anchor.
+5. Queen + King + Hearts garden/court visual-language anchors.
+6. Gryphon + Mock Turtle + coastal anchor.
+
+A rejected anchor is regenerated before moving forward. Do not allow an unapproved character design
+to propagate into later images.
+
+## Image-generation discipline
+
+- Prefer single-scene illustrations and clean character/reference sheets.
+- Do not place generated text inside anchor images.
+- Keep anatomy, costume and scale references visible enough to reuse reliably.
+- Once approved, reuse the previous approved image itself as a reference wherever tooling permits.
+- If a later image drifts, replace that image; do not quietly redefine the visual bible.
+- Every batch is checked for face, hair, costume, recurring props, anatomy and location continuity.
+- Reader crop/layout is part of approval, not only standalone image quality.
+
+## SH1.6.1A acceptance
+
+This checkpoint is complete when:
+
+- Alice has an approved anchor design;
+- every principal recurring character listed above has an approved design;
+- recurring location/palette rules have enough approved visual reference to guide chapter production;
+- the final written bible reflects the accepted anchors rather than provisional ideas;
+- approved anchor material is committed to the Alice feature branch;
+- SH1.6.1B may begin without inventing a character or location look from scratch.
