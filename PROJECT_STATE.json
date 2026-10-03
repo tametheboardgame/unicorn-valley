@@ -11,16 +11,16 @@
   "agent_state": "active",
   "branch": "agent/mg-wp1-existing-game-migration",
   "latest_commit": "7b34ea5a61972c24ab748ef7e60af0832a1ffcc2",
-  "ci_state": "running",
-  "technical_validation_state": "running",
-  "human_acceptance_state": "pending",
+  "ci_state": "failing",
+  "technical_validation_state": "failing",
+  "human_acceptance_state": "accepted",
   "next_work_package": "MG-WP2",
   "next_work_package_path": "docs/work-packages/MG-WP2-SANDBOX-PERSISTENCE-ISOLATION.md",
   "human_input_required": false,
-  "blocker_reason": "MG-WP1 implementation and stale-path audit are complete; exact-head technical validation is running before the human approval gate.",
+  "blocker_reason": "MG-WP1 human gate is approved. The only remaining red check is the repository performance budget: 561.8 KiB first-playable gzip and 113 JS chunks versus current main at 560.0 KiB and 113 chunks. Merge is authorised; MG-WP2 follows.",
   "night_shift_state": "not_configured",
   "chat_disposition": "keep",
   "delivery_mode": "pr_required",
-  "last_activity_at": "2026-10-03T16:05:00+01:00",
-  "updated_at": "2026-10-03T16:05:00+01:00"
+  "last_activity_at": "2026-10-03T17:13:00+01:00",
+  "updated_at": "2026-10-03T17:13:00+01:00"
 }
