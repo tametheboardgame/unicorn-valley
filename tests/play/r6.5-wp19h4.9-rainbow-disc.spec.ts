@@ -314,7 +314,7 @@ test('H4.9B practice range launches a five-throw target challenge', async ({ pag
 
     await page.mouse.move(disc.x, disc.y);
     await page.mouse.down();
-    await page.mouse.move(850, 325, { steps: 8 });
+    await page.mouse.move(890, 325, { steps: 8 });
     await page.mouse.up();
 
     if (throwIndex < 4) {
@@ -392,6 +392,8 @@ test('H4.9D defended lanes can turn over possession and trigger a defence phase'
     expect(receiver).toBeDefined();
     expect(defender).toBeDefined();
     expect(Math.abs((receiver?.x ?? 0) - (defender?.x ?? 0))).toBeGreaterThanOrEqual(130);
+    expect(defender?.displayWidth).toBeCloseTo(receiver?.displayWidth ?? 0, 0);
+    expect(defender?.displayHeight).toBeCloseTo(receiver?.displayHeight ?? 0, 0);
   }
 
   await dragDiscToReceiver(page, 0);
@@ -450,7 +452,22 @@ test('H4.9D practice difficulty tightens the green window and increases sweep sp
   await page.keyboard.press('E');
   await waitForActiveScene(page, 'RainbowDiscActivityScene');
 
+  const initial = await snapshotScene(page, 'RainbowDiscActivityScene');
+  const initialLabel = initial.objects.find(
+    ({ name, effectiveVisible }) =>
+      name === 'rainbow-disc-activity:timing-difficulty' && effectiveVisible,
+  )?.text;
+  expect(initialLabel).toContain('Medium');
+
   await page.keyboard.press('ArrowUp');
+  const unchanged = await snapshotScene(page, 'RainbowDiscActivityScene');
+  const unchangedLabel = unchanged.objects.find(
+    ({ name, effectiveVisible }) =>
+      name === 'rainbow-disc-activity:timing-difficulty' && effectiveVisible,
+  )?.text;
+  expect(unchangedLabel).toContain('Medium');
+
+  await page.keyboard.press('ArrowLeft');
   const easy = await snapshotScene(page, 'RainbowDiscActivityScene');
   const easyZone = easy.objects.find(
     ({ name, effectiveVisible }) =>
@@ -463,8 +480,8 @@ test('H4.9D practice difficulty tightens the green window and increases sweep sp
   expect(easyZone).toBeDefined();
   expect(easyLabel).toContain('Easy');
 
-  await page.keyboard.press('ArrowDown');
-  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowRight');
+  await page.keyboard.press('ArrowRight');
   const hard = await snapshotScene(page, 'RainbowDiscActivityScene');
   const hardZone = hard.objects.find(
     ({ name, effectiveVisible }) =>
