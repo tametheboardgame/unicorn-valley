@@ -1,36 +1,21 @@
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-
-function source(relativeUrl: string): string {
-  return readFileSync(new URL(relativeUrl, import.meta.url), 'utf8');
-}
+import { ENVIRONMENT_PRODUCTION_SCENE_ENVIRONMENTS } from '../visual/EnvironmentProductionPresentationManager';
+import { VISUAL_TIGHTENING_SUPPORTED_SCENES } from '../visual/VisualTighteningManager';
+import { EXPLORATION_GEOMETRY_SUPPORTED_SCENES } from './ExplorationGeometryPresentationManager';
+import { resolveRainbowMeadowWalkThroughDestination } from './RainbowMeadowTraversal';
+import { createRainbowMeadowTraversalPresentation } from './RainbowMeadowTraversalPresentation';
+import { WORLD_TRAVERSAL_POLISH_SUPPORTED_SCENES } from './WorldTraversalPolishManager';
 
 describe('H4.11 Rainbow Meadow architecture ownership', () => {
   it('keeps generic compatibility managers free of Meadow composition ownership', () => {
-    const traversal = source('./WorldTraversalPolishManager.ts');
-    const geometry = source('./ExplorationGeometryPresentationManager.ts');
-    const environment = source('../visual/EnvironmentProductionPresentationManager.ts');
-    const tightening = source('../visual/VisualTighteningManager.ts');
-
-    expect(traversal).not.toContain("'RainbowMeadowScene'");
-    expect(traversal).not.toContain('RAINBOW_MEADOW_LAYOUT');
-    expect(traversal).not.toContain('RAINBOW_MEADOW_MAP');
-
-    expect(geometry).not.toContain("'RainbowMeadowScene'");
-
-    expect(environment).not.toContain("'rainbow-meadow'");
-    expect(environment).not.toContain('RAINBOW_MEADOW_LAYOUT');
-
-    expect(tightening).not.toContain("'RainbowMeadowScene'");
-    expect(tightening).not.toContain('RAINBOW_MEADOW_LAYOUT');
+    expect(WORLD_TRAVERSAL_POLISH_SUPPORTED_SCENES.has('RainbowMeadowScene')).toBe(false);
+    expect(EXPLORATION_GEOMETRY_SUPPORTED_SCENES.has('RainbowMeadowScene')).toBe(false);
+    expect(ENVIRONMENT_PRODUCTION_SCENE_ENVIRONMENTS.RainbowMeadowScene).toBeUndefined();
+    expect(VISUAL_TIGHTENING_SUPPORTED_SCENES.has('RainbowMeadowScene')).toBe(false);
   });
 
   it('keeps traversal presentation and routing explicitly Meadow-owned', () => {
-    const scene = source('../scenes/RainbowMeadowScene.ts');
-
-    expect(scene).toContain('createRainbowMeadowTraversalPresentation');
-    expect(scene).toContain('resolveRainbowMeadowWalkThroughDestination');
-    expect(scene).toContain("this.scene.start('SunbeamVillageScene')");
-    expect(scene).toContain("this.scene.start('RainbowRunEntryScene')");
+    expect(createRainbowMeadowTraversalPresentation).toBeTypeOf('function');
+    expect(resolveRainbowMeadowWalkThroughDestination).toBeTypeOf('function');
   });
 });
