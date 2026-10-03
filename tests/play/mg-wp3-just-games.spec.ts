@@ -52,7 +52,9 @@ test.describe('MG-WP3 Just Games catalogue', () => {
 
     await page.keyboard.press('Escape');
     await waitForScene(page, 'JustGamesScene');
-    expect((await getDiagnosticSnapshot(page)).activeScenes).not.toContain('ChessPlazaActivityScene');
+    expect((await getDiagnosticSnapshot(page)).activeScenes).not.toContain(
+      'ChessPlazaActivityScene',
+    );
   });
 
   test('launches a selected Rainbow Disc variant and returns to Just Games', async ({ page }) => {
