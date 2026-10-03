@@ -16,6 +16,13 @@ describe('MiniGameOutcomeGateway', () => {
     expect(apply).toHaveBeenCalledOnce();
   });
 
+  it('preserves legacy direct starts as world-effect compatible', () => {
+    const apply = vi.fn();
+
+    expect(runMiniGameAdventureEffect(null, 'activity-progress', apply)).toBe(true);
+    expect(apply).toHaveBeenCalledOnce();
+  });
+
   it('suppresses adventure effects for Just Games sessions', () => {
     const apply = vi.fn();
     const session = createMiniGameSession({
