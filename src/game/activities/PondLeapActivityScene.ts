@@ -1,6 +1,8 @@
 import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { UI_COLOURS, UI_FONT } from '../ui/uiTheme';
+import { returnFromMiniGame } from '../minigames/MiniGameLauncher';
+import { readMiniGameSession, type MiniGameSession } from '../minigames/MiniGameSession';
 
 interface PondLeapActivitySceneData {
   returnScene?: string;
@@ -28,6 +30,7 @@ const TIMING_WIDTH = 570;
 const TIMING_Y = 590;
 
 export class PondLeapActivityScene extends Phaser.Scene {
+  private miniGameSession: MiniGameSession | null = null;
   private returnScene = 'RainbowMeadowScene';
   private discoveredReflection = false;
   private hopIndex = 0;
@@ -48,7 +51,8 @@ export class PondLeapActivityScene extends Phaser.Scene {
   }
 
   public create(data: PondLeapActivitySceneData = {}): void {
-    this.returnScene = data.returnScene ?? 'RainbowMeadowScene';
+    this.miniGameSession = readMiniGameSession(data);
+    this.returnScene = this.miniGameSession?.returnTarget.sceneKey ?? data.returnScene ?? 'RainbowMeadowScene';
     this.discoveredReflection = data.discoveredReflection === true;
     this.restartRun();
 
@@ -486,6 +490,11 @@ export class PondLeapActivityScene extends Phaser.Scene {
   }
 
   private leaveActivity(): void {
+    if (this.miniGameSession) {
+      returnFromMiniGame(this, this.miniGameSession);
+      return;
+    }
+
     this.scene.stop();
     if (this.game.scene.isPaused(this.returnScene)) {
       this.game.scene.resume(this.returnScene);
