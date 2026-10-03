@@ -4,6 +4,8 @@ import { parseUnicornAppearance } from '../player/UnicornAppearance';
 import { createUnicornAppearanceTexture } from '../player/UnicornAppearanceRenderer';
 import { createResidentAppearanceSprite } from '../population/SupportingResidentArt';
 import { getBrowserSaveService } from '../save/browserSaveService';
+import { returnFromMiniGame } from '../minigames/MiniGameLauncher';
+import { readMiniGameSession, type MiniGameSession } from '../minigames/MiniGameSession';
 import { UI_COLOURS, UI_FONT } from '../ui/uiTheme';
 import {
   createRainbowDiscRing,
@@ -73,6 +75,7 @@ const TIMING_TRACK_LEFT = 462;
 const TIMING_TRACK_WIDTH = 350;
 
 export class RainbowDiscActivityScene extends Phaser.Scene {
+  private miniGameSession: MiniGameSession | null = null;
   private returnScene = 'RainbowMeadowScene';
   private mode: 'match' | 'practice' = 'match';
   private possession = 0;
@@ -104,8 +107,14 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
   }
 
   public create(data: RainbowDiscActivitySceneData = {}): void {
-    this.returnScene = data.returnScene ?? 'RainbowMeadowScene';
-    this.mode = data.mode ?? 'match';
+    this.miniGameSession = readMiniGameSession(data);
+    this.returnScene = this.miniGameSession?.returnTarget.sceneKey ?? data.returnScene ?? 'RainbowMeadowScene';
+    this.mode =
+      this.miniGameSession?.variantId === 'practice'
+        ? 'practice'
+        : this.miniGameSession?.variantId === 'match'
+          ? 'match'
+          : (data.mode ?? 'match');
     this.possession = 0;
     this.practiceThrows = 0;
     this.practiceScore = 0;
@@ -1141,6 +1150,11 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
   }
 
   private leaveActivity(): void {
+    if (this.miniGameSession) {
+      returnFromMiniGame(this, this.miniGameSession);
+      return;
+    }
+
     this.scene.stop();
     if (this.game.scene.isPaused(this.returnScene)) {
       this.game.scene.resume(this.returnScene);
