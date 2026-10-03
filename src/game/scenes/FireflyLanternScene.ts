@@ -114,9 +114,14 @@ export class FireflyLanternScene extends Phaser.Scene {
     this.activeSelector = null;
     this.cameras.main.setBackgroundColor('#203b3d');
 
-    const progress = getFireflyLanternProgress(getBrowserSaveService());
-    this.modesUnlocked = progress.modesUnlocked;
-    this.endlessBestAtStart = progress.endlessBest;
+    if (this.isSandboxSession()) {
+      this.modesUnlocked = true;
+      this.endlessBestAtStart = 0;
+    } else {
+      const progress = getFireflyLanternProgress(getBrowserSaveService());
+      this.modesUnlocked = progress.modesUnlocked;
+      this.endlessBestAtStart = progress.endlessBest;
+    }
 
     this.createBackground();
     this.createHud();
@@ -607,11 +612,13 @@ export class FireflyLanternScene extends Phaser.Scene {
     const completed =
       (this.mode === 'normal' && this.score >= FIREFLY_NORMAL_TARGET) ||
       (this.mode === 'multicolour' && this.score >= FIREFLY_NORMAL_TARGET);
-    const result = recordFireflyLanternAttempt(getBrowserSaveService(), {
-      mode: this.mode,
-      score: this.score,
-      completed,
-    });
+    const result = this.isSandboxSession()
+      ? this.createSandboxResult()
+      : recordFireflyLanternAttempt(getBrowserSaveService(), {
+          mode: this.mode,
+          score: this.score,
+          completed,
+        });
     this.modesUnlocked = result.modesUnlocked;
     this.endlessBestAtStart = result.endlessBest;
     this.showResultPanel(result, completed);
@@ -643,9 +650,11 @@ export class FireflyLanternScene extends Phaser.Scene {
       .text(
         GAME_WIDTH / 2,
         438,
-        result.newMilestones.length > 0
-          ? result.newMilestones.map((milestone) => MILESTONE_LABELS[milestone]).join('\n')
-          : 'Your best scores are remembered.',
+        this.isSandboxSession()
+          ? 'Practice only • adventure scores, milestones and unlocks are unchanged.'
+          : result.newMilestones.length > 0
+            ? result.newMilestones.map((milestone) => MILESTONE_LABELS[milestone]).join('\n')
+            : 'Your best scores are remembered.',
         {
           color: '#6a7145',
           fontFamily: 'system-ui, sans-serif',
@@ -674,6 +683,22 @@ export class FireflyLanternScene extends Phaser.Scene {
     );
   }
 
+  private isSandboxSession(): boolean {
+    return this.miniGameSession?.sideEffectPolicy === 'sandbox';
+  }
+
+  private createSandboxResult(): FireflyLanternAttemptResult {
+    return {
+      modesUnlocked: true,
+      normalBest: this.mode === 'normal' ? this.score : 0,
+      multicolourBest: this.mode === 'multicolour' ? this.score : 0,
+      endlessBest: this.mode === 'endless' ? this.score : 0,
+      bestScore: this.score,
+      firstCompletion: false,
+      newMilestones: [],
+    };
+  }
+
   private resultHeading(completed: boolean): string {
     if (this.mode === 'normal') {
       return completed ? 'The lantern is glowing!' : 'A cosy lantern evening';
@@ -686,7 +711,9 @@ export class FireflyLanternScene extends Phaser.Scene {
 
   private resultCopy(result: FireflyLanternAttemptResult, completed: boolean): string {
     if (this.mode === 'normal') {
-      return `You guided ${this.score} of ${FIREFLY_NORMAL_TARGET} lights.\nBest: ${result.normalBest} of ${FIREFLY_NORMAL_TARGET}\n\n${normalCompletionCopy(this.score)}`;
+      return this.isSandboxSession()
+        ? `Practice score: ${this.score} of ${FIREFLY_NORMAL_TARGET} lights.\n\n${normalCompletionCopy(this.score)}`
+        : `You guided ${this.score} of ${FIREFLY_NORMAL_TARGET} lights.\nBest: ${result.normalBest} of ${FIREFLY_NORMAL_TARGET}\n\n${normalCompletionCopy(this.score)}`;
     }
     if (this.mode === 'multicolour') {
       const ending = completed
@@ -694,7 +721,9 @@ export class FireflyLanternScene extends Phaser.Scene {
         : 'Three decoys were caught. The yellow lights will wait for another try.';
       return `Yellow lights: ${this.score} of ${FIREFLY_NORMAL_TARGET}\nMistakes: ${this.mistakes} of ${FIREFLY_MULTICOLOUR_MISTAKE_LIMIT}\n\n${ending}`;
     }
-    return `Glow streak: ${this.score}\nPersonal best: ${result.endlessBest}\n\nOne missed light ends Endless, but your best streak stays safe.`;
+    return this.isSandboxSession()
+      ? `Practice glow streak: ${this.score}\n\nNo personal best is saved from practice.`
+      : `Glow streak: ${this.score}\nPersonal best: ${result.endlessBest}\n\nOne missed light ends Endless, but your best streak stays safe.`;
   }
 
   private createResultButton(
