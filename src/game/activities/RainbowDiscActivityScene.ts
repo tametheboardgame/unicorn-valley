@@ -5,7 +5,11 @@ import { createUnicornAppearanceTexture } from '../player/UnicornAppearanceRende
 import { createResidentAppearanceSprite } from '../population/SupportingResidentArt';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { UI_COLOURS, UI_FONT, createUiShadow } from '../ui/uiTheme';
-import { createRainbowDiscRing, drawRainbowTarget } from '../world/RainbowDiscArt';
+import {
+  createRainbowDiscRing,
+  drawRainbowTarget,
+  resolveRainbowDiscHornCatchPoint,
+} from '../world/RainbowDiscArt';
 import { RAINBOW_DISC_PLAYER_APPEARANCES } from '../world/RainbowDiscMeadowPresentation';
 
 interface RainbowDiscActivitySceneData {
@@ -646,9 +650,19 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       };
     }
 
+    const receiver = this.receiverSprites[index];
+    if (receiver) {
+      const appearanceIndex =
+        (index + this.possession + 1) % RAINBOW_DISC_PLAYER_APPEARANCES.length;
+      return resolveRainbowDiscHornCatchPoint(
+        receiver,
+        RAINBOW_DISC_PLAYER_APPEARANCES[appearanceIndex] ?? RAINBOW_DISC_PLAYER_APPEARANCES[0],
+      );
+    }
+
     return {
-      x: (TARGET_X[this.possession] ?? TARGET_X[0]) + 38,
-      y: (RECEIVER_Y[index] ?? RECEIVER_Y[1]) - 34,
+      x: TARGET_X[this.possession] ?? TARGET_X[0],
+      y: (RECEIVER_Y[index] ?? RECEIVER_Y[1]) - 58,
     };
   }
 
