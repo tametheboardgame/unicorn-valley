@@ -13,14 +13,14 @@
   "latest_commit": "71c623586924d95608476a4e981ab36faccc8864",
   "ci_state": "unknown",
   "technical_validation_state": "pending",
-  "human_acceptance_state": "pending",
+  "human_acceptance_state": "accepted",
   "next_work_package": "MG-WP4",
   "next_work_package_path": "docs/work-packages/MG-WP4-AUTHORING-KIT-GUARDRAILS.md",
   "human_input_required": false,
-  "blocker_reason": "MG-WP3A is implemented: title entry, on-demand Just Games catalogue, catalogue-driven variants, sandbox launch/return and initial browser contract. Exact-head validation is pending.",
+  "blocker_reason": "MG-WP3 is human-approved for merge. Final post-preview changes were formatter/closeout-only. MG-WP4 follows after merge.",
   "night_shift_state": "not_configured",
   "chat_disposition": "keep",
   "delivery_mode": "pr_required",
-  "last_activity_at": "2026-10-03T17:30:00+01:00",
-  "updated_at": "2026-10-03T17:30:00+01:00"
+  "last_activity_at": "2026-10-03T19:15:00+01:00",
+  "updated_at": "2026-10-03T19:15:00+01:00"
 }
