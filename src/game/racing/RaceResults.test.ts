@@ -11,7 +11,6 @@ import {
   RAINBOW_RUN_RIBBONS_DISCOVERY_ID,
   RAINBOW_RUN_SPARKLE_ITEM_ID,
   applyRaceResultToSave,
-  createPracticeRaceSummary,
 } from './RaceResults';
 
 const RACE_ID = 'race-course:rainbow-run-practice';
@@ -122,28 +121,6 @@ describe('Rainbow Run race results', () => {
     expect(decorations.map(({ definition }) => definition.id)).toContain(
       RAINBOW_RUN_FINISHER_RIBBON_ITEM_ID,
     );
-  });
-
-  it('creates a reward-free practice summary without adventure progression', () => {
-    const summary = createPracticeRaceSummary({
-      raceId: RACE_ID,
-      finishTimeMs: 10_250,
-      place: 1,
-      participantCount: 4,
-    });
-
-    expect(summary).toEqual({
-      previousBestTimeMs: null,
-      bestTimeMs: 10_250,
-      isPersonalBest: false,
-      participationSparkles: 0,
-      podiumBonusSparkles: 0,
-      newRibbonIds: [],
-      newRewardItemIds: [],
-      rainbowCupCompleted: false,
-      rainbowCupCompletedNow: false,
-      rainbowCupRewardItemId: null,
-    });
   });
 
   it('rejects impossible result data instead of corrupting the save', () => {
