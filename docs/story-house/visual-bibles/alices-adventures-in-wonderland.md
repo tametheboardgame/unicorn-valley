@@ -2,7 +2,7 @@
 
 Work package: **R6.5-WP19SH1.6.1A**
 
-Status: **in progress — Alice anchor approved; White Rabbit / early-world anchors next**
+Status: **in progress — Alice and White Rabbit / early-world anchors approved; Caterpillar / Cheshire / woodland anchors next**
 
 ## Purpose
 
@@ -59,12 +59,19 @@ Continuity rules:
 ## Principal recurring character anchors
 
 ### White Rabbit
+
+**Approved 3 October 2026.**
+
+Locked design:
 - white fur;
 - pink/red eyes;
-- Victorian waistcoat;
-- pocket watch;
+- red Victorian coat over a warm gold waistcoat;
+- small red bow tie;
+- gold pocket watch and chain;
 - anxious, hurried posture;
 - expressive but still recognisably rabbit-like rather than human-faced.
+
+The approved Rabbit turnaround and running pose are the continuity authority for later appearances.
 
 ### Caterpillar
 - blue;
@@ -118,27 +125,37 @@ Continuity rules:
 ## Recurring location anchors
 
 ### Riverbank / ordinary world
+
+**Approved 3 October 2026.**
 - warm natural daylight;
 - believable English countryside;
 - restrained palette compared with Wonderland;
-- gentle Victorian-period feel.
+- gentle Victorian-period feel;
+- broad river, mature trees, flowers and soft summer light provide the opening visual identity.
 
 ### Door hall
-- long, slightly uncanny but elegant hall;
+
+**Approved 3 October 2026.**
+- long, slightly uncanny but elegant Victorian hall;
+- dark wood, polished floor and warm shafts of light;
 - repeated doors;
 - glass table and tiny golden key;
 - tiny door gives a clear view towards the beautiful garden;
-- hall geometry remains recognisable when revisited.
+- hall geometry and material language remain recognisable when revisited.
 
 ### Beautiful garden
+
+**Initial Chapter 1 glimpse approved 3 October 2026.**
 - lush, saturated and inviting;
 - fantastical but still botanical;
-- should visually connect Chapter 1's glimpse to Chapter 7's eventual entry.
+- warm sun, clipped greenery and vivid flowers;
+- Chapter 7's eventual full garden entry must visibly match this first glimpse.
 
 ### Wonderland woodland
 - oversized vegetation and mushrooms appear progressively;
 - organic, colourful and slightly impossible;
-- remains coherent between Rabbit-house, Caterpillar and Cheshire sequences.
+- remains coherent between Rabbit-house, Caterpillar and Cheshire sequences;
+- final woodland palette/composition remains **pending Caterpillar/Cheshire anchor approval**.
 
 ### White Rabbit's house
 - charming, tidy Victorian miniature house;
@@ -189,6 +206,8 @@ Continuity rules:
 Human approval is required in this order before bulk chapter art:
 
 **Completed:** Alice character anchor sheet approved and locked.
+
+**Completed:** White Rabbit, riverbank, rabbit-hole visual language, door hall and initial garden glimpse approved and locked.
 
 1. Alice character anchor sheet.
 2. White Rabbit + early Wonderland hall/riverbank anchors.
