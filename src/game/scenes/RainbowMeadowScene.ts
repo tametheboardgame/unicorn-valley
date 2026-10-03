@@ -524,14 +524,7 @@ export class RainbowMeadowScene extends Phaser.Scene {
     const leftPupil = this.add.circle(-7, -17, 2, 0x3f4044, 1);
     const rightPupil = this.add.circle(7, -17, 2, 0x3f4044, 1);
     const frog = this.add
-      .container(from.x, from.y - 13, [
-        body,
-        head,
-        leftEye,
-        rightEye,
-        leftPupil,
-        rightPupil,
-      ])
+      .container(from.x, from.y - 13, [body, head, leftEye, rightEye, leftPupil, rightPupil])
       .setName(`rainbow-meadow:nature:frog:${id}`)
       .setDepth(worldDepthForY(from.y, 0.18));
 
@@ -557,9 +550,7 @@ export class RainbowMeadowScene extends Phaser.Scene {
               Phaser.Math.Linear(from.y - 13, to.y - 13, progress) -
                 Math.sin(Math.PI * progress) * 34,
             )
-            .setDepth(
-              worldDepthForY(Phaser.Math.Linear(from.y, to.y, progress), 0.18),
-            );
+            .setDepth(worldDepthForY(Phaser.Math.Linear(from.y, to.y, progress), 0.18));
         },
       });
     });
