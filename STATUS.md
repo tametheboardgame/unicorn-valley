@@ -4,54 +4,41 @@ Last updated: 2026-10-03
 
 ## Current work
 
-The independent **MG - Mini-Game Development Programme** is active.
+The independent **MG - Mini-Game Development Programme** remains active.
 
 Current bounded package: **MG-WP3 - Just Games Home and Catalogue Experience**
 
 Branch: `agent/mg-wp3-just-games-home-catalogue`
 
-MG-WP2 is complete, human-approved and merged to `main` as `66f05c6a5279cafb6df4e938c721759d0744e898`.
+MG-WP3 human gate: **approved 2026-10-03**.
 
-### Current checkpoint - MG-WP3A
+### Completed MG-WP3 scope
 
-The first visible Just Games platform slice is implemented:
+- Just Games is available from the title/home screen, including portrait/touch controls;
+- `JustGamesScene` is an on-demand feature scene;
+- game cards and variants come directly from `MiniGameCatalogue`;
+- all seven current game families launch through `MiniGameLauncher` with `source: 'just-games'`;
+- every game returns through the shared `MiniGameSession` contract;
+- browsing/launching sandbox paths does not require creation of an adventure save;
+- Firefly honours the catalogue-selected mode;
+- world-specific return labels become **Back to Games** when launched from Just Games;
+- the left catalogue uses locked click/keyboard selection with hover-only feedback;
+- the variant selector uses a two-column grid and paginates beyond six modes;
+- Rainbow Run's five courses render as three clean rows without overlap;
+- browser regressions cover sticky selection and non-overlapping race variant geometry;
+- scene-key validation was separated from manifest loading to remove the original lazy-load cycle.
 
-- **Just Games** appears on the title menu;
-- the title entry is available even when adventure storage is unavailable or a newer save blocks adventure loading;
-- portrait/touch title controls expose the same action;
-- `JustGamesScene` is an on-demand `SceneManifest` feature;
-- game cards are generated directly from `MiniGameCatalogue`;
-- the scene shows all seven current catalogue families;
-- variant controls are generated from catalogue variants rather than a second hard-coded game list;
-- Up/Down chooses a game, Left/Right chooses a variant, Enter/Space plays and Escape returns Home;
-- touch/card/variant/Play controls use the shared UI primitives;
-- launches use `MiniGameLauncher` with `source: 'just-games'`;
-- every launch returns to the paused `JustGamesScene` through `MiniGameSession`;
-- no adventure save is required merely to browse the catalogue.
+### Validation state
 
-Browser contract added:
+The approved preview was manually accepted by David.
 
-`tests/play/mg-wp3-just-games.spec.ts`
+The final deterministic Tier 0 failure after that preview was Biome formatting only in the interface/test files. Those exact formatter changes were applied before merge.
 
-It proves:
-
-- the title opens Just Games;
-- all seven catalogue cards are present;
-- entering Just Games with no save does not create one;
-- Sunbeam Chess launches/returns through sandbox without creating a save;
-- Rainbow Disc Practice launches through the selected catalogue variant and returns;
-- Escape returns from Just Games to the title.
-
-Verification ownership now maps `JustGamesScene` and the new browser contract to the mini-games verification group.
+The repository performance budget remains red and continues to require separate architecture work; MG-WP3 does not redefine that budget.
 
 ## Next work
 
-1. validate and close MG-WP3A;
-2. MG-WP3B - launch/return contract across every current catalogue family;
-3. MG-WP3C - responsive/touch/readability polish and result/return copy audit;
-4. MG-WP3D - final human-gate hardening and closeout.
-
-After MG-WP3 approval and merge:
+After MG-WP3 merge:
 
 **MG-WP4 - Future Mini-Game Authoring Kit and Guardrails**
 
@@ -59,6 +46,8 @@ Package:
 
 `docs/work-packages/MG-WP4-AUTHORING-KIT-GUARDRAILS.md`
 
-## Human gate
+## Operating reminders
 
-MG-WP3 is Amber. Do not merge until every catalogue-visible current game launches, retries where applicable and returns safely from the exact Just Games preview, and David approves the catalogue experience.
+- MG-WP4 must start from the merged MG-WP3 `main`.
+- Keep one canonical gameplay implementation per mini-game.
+- New games must declare mini-game platform impact and preserve sandbox isolation.
