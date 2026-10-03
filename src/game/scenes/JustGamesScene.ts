@@ -12,7 +12,6 @@ import { createUiActionHitTarget, drawUiPanel, drawUiPanelShadow } from '../ui/U
 import { UI_COLOURS, UI_FONT } from '../ui/uiTheme';
 
 const LIST_X = 335;
-const LIST_WIDTH = 560;
 const DETAIL_X = 930;
 const DETAIL_WIDTH = 520;
 const PANEL_Y = 390;
