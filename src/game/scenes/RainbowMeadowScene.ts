@@ -751,25 +751,11 @@ export class RainbowMeadowScene extends Phaser.Scene {
             .setAngle(bloomIndex % 2 === 0 ? -8 : 9);
           children.push(bell);
           children.push(
-            this.add.circle(
-              bloom.x,
-              bloom.y - 6 * bloom.scale,
-              3 * bloom.scale,
-              0xf4e6b0,
-              0.92,
-            ),
+            this.add.circle(bloom.x, bloom.y - 6 * bloom.scale, 3 * bloom.scale, 0xf4e6b0, 0.92),
           );
         } else {
           children.push(
-            this.add.star(
-              bloom.x,
-              bloom.y,
-              5,
-              3.5 * bloom.scale,
-              9 * bloom.scale,
-              colour,
-              0.94,
-            ),
+            this.add.star(bloom.x, bloom.y, 5, 3.5 * bloom.scale, 9 * bloom.scale, colour, 0.94),
           );
           children.push(this.add.circle(bloom.x, bloom.y, 2.5 * bloom.scale, 0xffefb5, 0.96));
         }
