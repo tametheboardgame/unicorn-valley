@@ -460,3 +460,55 @@ describe('Rainbow Meadow canonical layout', () => {
     ).toBe(false);
   });
 });
+
+
+describe('H4.10 Meadow boundary readability', () => {
+  const boundaryColliders = RAINBOW_MEADOW_MAP.colliders.filter(({ id }) =>
+    id.startsWith('collision:meadow-boundary:'),
+  );
+
+  const isBoundaryBlocked = (point: { x: number; y: number }, margin = 44): boolean =>
+    boundaryColliders.some(
+      (collider) =>
+        Math.abs(point.x - collider.x) <= collider.width / 2 + margin &&
+        Math.abs(point.y - collider.y) <= collider.height / 2 + margin,
+    );
+
+  it('owns distinct hedge, Race Hub fence and Crystal Brook rock edge languages', () => {
+    expect(RAINBOW_MEADOW_LAYOUT.boundaries.hedges.length).toBeGreaterThanOrEqual(6);
+    expect(RAINBOW_MEADOW_LAYOUT.boundaries.raceFence).toHaveLength(2);
+    expect(RAINBOW_MEADOW_LAYOUT.boundaries.crystalRocks.length).toBeGreaterThanOrEqual(5);
+    expect(RAINBOW_MEADOW_LAYOUT.boundaries.wildflowerPockets.length).toBeGreaterThanOrEqual(4);
+
+    expect(
+      boundaryColliders.filter(({ id }) => id.includes(':hedge:')),
+    ).toHaveLength(RAINBOW_MEADOW_LAYOUT.boundaries.hedges.length);
+    expect(
+      boundaryColliders.filter(({ id }) => id.includes(':race-fence:')),
+    ).toHaveLength(RAINBOW_MEADOW_LAYOUT.boundaries.raceFence.length);
+    expect(
+      boundaryColliders.filter(({ id }) => id.includes(':crystal-rock:')),
+    ).toHaveLength(RAINBOW_MEADOW_LAYOUT.boundaries.crystalRocks.length);
+  });
+
+  it('keeps all three neighbouring-region route openings comfortably clear', () => {
+    expect(isBoundaryBlocked({ x: 145, y: 1050 })).toBe(false);
+    expect(isBoundaryBlocked({ x: 2950, y: 160 })).toBe(false);
+    expect(isBoundaryBlocked({ x: 3290, y: 1035 })).toBe(false);
+  });
+
+  it('leaves a deliberately broad Race Hub gate between the fence runs', () => {
+    const [west, east] = RAINBOW_MEADOW_LAYOUT.boundaries.raceFence;
+    expect(west).toBeDefined();
+    expect(east).toBeDefined();
+    if (!west || !east) return;
+
+    expect(east.x1 - west.x2).toBeGreaterThanOrEqual(300);
+    expect(RAINBOW_MEADOW_LAYOUT.hubFeatures.rainbowRunEntrance.position.x).toBeGreaterThan(
+      west.x2,
+    );
+    expect(RAINBOW_MEADOW_LAYOUT.hubFeatures.rainbowRunEntrance.position.x).toBeLessThan(
+      east.x1,
+    );
+  });
+});
