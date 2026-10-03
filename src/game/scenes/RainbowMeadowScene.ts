@@ -35,7 +35,6 @@ import {
 } from '../world/SunbeamVillageMap';
 import { CoreNpcPresenceService } from '../world/CoreNpcPresenceService';
 import { createRainbowDiscMeadowPresentation } from '../world/RainbowDiscMeadowPresentation';
-import { createRainbowMeadowBoundaryPresentation } from '../world/RainbowMeadowBoundaryPresentation';
 import { resolveRainbowMeadowWalkThroughDestination } from '../world/RainbowMeadowTraversal';
 import { RAINBOW_RUN_HUB_LOCATION_ID } from '../world/RainbowRunHubMap';
 import { worldDepthForY } from '../world/WorldDepth';
@@ -482,7 +481,6 @@ export class RainbowMeadowScene extends Phaser.Scene {
     );
     this.createPond();
     this.createGroves();
-    createRainbowMeadowBoundaryPresentation(this);
     this.createSunbeamVillageSign();
     this.createRainbowRunHubGateway();
     createRainbowDiscMeadowPresentation(this);
