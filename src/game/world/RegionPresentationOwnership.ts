@@ -1,6 +1,4 @@
-export const WORLD_TRAVERSAL_POLISH_SUPPORTED_SCENE_KEYS = [
-  'MoonflowerGladeScene',
-] as const;
+export const WORLD_TRAVERSAL_POLISH_SUPPORTED_SCENE_KEYS = ['MoonflowerGladeScene'] as const;
 
 export const EXPLORATION_GEOMETRY_SUPPORTED_SCENE_KEYS = [
   'MoonflowerGladeScene',
