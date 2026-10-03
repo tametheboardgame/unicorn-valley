@@ -190,7 +190,6 @@ function decorateMeadow(scene: Phaser.Scene): void {
   addGateway(scene, {
     x: gateway.position.x,
     y: gateway.position.y,
-    label: gateway.label,
     direction: gateway.direction,
   });
 }
