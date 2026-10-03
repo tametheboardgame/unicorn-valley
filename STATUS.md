@@ -6,83 +6,59 @@ Last updated: 2026-10-03
 
 The independent **MG - Mini-Game Development Programme** is active.
 
-Current bounded package: **MG-WP2 - Sandbox, Rewards and Persistence Isolation**
+Current bounded package: **MG-WP3 - Just Games Home and Catalogue Experience**
 
-Branch: `agent/mg-wp2-sandbox-persistence-isolation`
+Branch: `agent/mg-wp3-just-games-home-catalogue`
 
-PR: **#266**
+MG-WP2 is complete, human-approved and merged to `main` as `66f05c6a5279cafb6df4e938c721759d0744e898`.
 
-MG-WP1 is complete, human-approved and merged to `main` as `f5cbbbff043a4106df873c482a07603c6ca91f0c`.
+### Current checkpoint - MG-WP3A
 
-### Current checkpoint - MG-WP2E
+The first visible Just Games platform slice is implemented:
 
-MG-WP2 implementation is complete across the current catalogue.
+- **Just Games** appears on the title menu;
+- the title entry is available even when adventure storage is unavailable or a newer save blocks adventure loading;
+- portrait/touch title controls expose the same action;
+- `JustGamesScene` is an on-demand `SceneManifest` feature;
+- game cards are generated directly from `MiniGameCatalogue`;
+- the scene shows all seven current catalogue families;
+- variant controls are generated from catalogue variants rather than a second hard-coded game list;
+- Up/Down chooses a game, Left/Right chooses a variant, Enter/Space plays and Escape returns Home;
+- touch/card/variant/Play controls use the shared UI primitives;
+- launches use `MiniGameLauncher` with `source: 'just-games'`;
+- every launch returns to the paused `JustGamesScene` through `MiniGameSession`;
+- no adventure save is required merely to browse the catalogue.
 
-Completed checkpoints:
+Browser contract added:
 
-- MG-WP2A - Wobbly Cake sandbox economy/quest/progress isolation;
-- MG-WP2B - Coral Beachcombing sandbox notebook/save isolation;
-- MG-WP2C - Firefly Lantern sandbox best/milestone/unlock isolation;
-- MG-WP2D - Rainbow Run sandbox result/reward/Cup isolation;
-- MG-WP2E - no-write proof/audit for Rainbow Disc, Pond Leap and Sunbeam Chess.
+`tests/play/mg-wp3-just-games.spec.ts`
 
-Package-level evidence:
+It proves:
 
-- `docs/audits/2026-10-03-MG-WP2-SANDBOX-SIDE-EFFECT-MATRIX.md`;
-- `docs/audits/2026-10-03-MG-WP2-SANDBOX-ISOLATION-CLOSEOUT.md`.
+- the title opens Just Games;
+- all seven catalogue cards are present;
+- entering Just Games with no save does not create one;
+- Sunbeam Chess launches/returns through sandbox without creating a save;
+- Rainbow Disc Practice launches through the selected catalogue variant and returns;
+- Escape returns from Just Games to the title.
 
-Important corrections made during the package:
-
-- Coral sandbox no longer creates an adventure save through progress reads;
-- Firefly sandbox bypasses progress reconciliation and persistent attempt recording;
-- racing sandbox does not create a save solely for appearance and produces a reward-free practice result;
-- Rainbow Disc sandbox no longer creates an adventure save solely for appearance;
-- Pond Leap and Chess were confirmed to have no adventure persistence path.
-
-No separate sandbox gameplay implementation was created.
-
-## Validation state
-
-Exact-head MG-WP2 validation is running.
-
-Objective contracts now cover:
-
-- world/sandbox/legacy outcome policy across every adventure-effect category;
-- Coral sandbox trail sequencing;
-- existing world persistence contracts remain in place;
-- the closeout source audit confirms Firefly/racing sandbox branches bypass persistence and the simple games have no hidden write path.
-
-The repository performance budget remains a known baseline concern; MG-WP2 must not introduce an additional regression.
-
-## Human gate
-
-MG-WP2 human gate: **approved for merge 2026-10-03**.
-
-David explicitly authorised merge and progression to MG-WP3.
-
-Exact-head evidence at approval:
-
-- Tier 0 static/architecture: passed;
-- Tier 1 unit contracts: passed;
-- targeted browser smoke: still running;
-- production build/static smoke: passed;
-- performance budget: red at 562.1 KiB first-playable gzip and 113 JS chunks versus current main at 561.8 KiB and 113 chunks. The +0.3 KiB startup delta was accepted for merge.
-
-The visible end-to-end sandbox/Just Games human test belongs to MG-WP3 because the Just Games launcher does not exist yet.
+Verification ownership now maps `JustGamesScene` and the new browser contract to the mini-games verification group.
 
 ## Next work
 
-After MG-WP2 approval and merge:
+1. validate and close MG-WP3A;
+2. MG-WP3B - launch/return contract across every current catalogue family;
+3. MG-WP3C - responsive/touch/readability polish and result/return copy audit;
+4. MG-WP3D - final human-gate hardening and closeout.
 
-**MG-WP3 - Just Games Home and Catalogue Experience**
+After MG-WP3 approval and merge:
+
+**MG-WP4 - Future Mini-Game Authoring Kit and Guardrails**
 
 Package:
 
-`docs/work-packages/MG-WP3-JUST-GAMES-HOME-CATALOGUE.md`
+`docs/work-packages/MG-WP4-AUTHORING-KIT-GUARDRAILS.md`
 
-## Operating reminders
+## Human gate
 
-- Do not start MG-WP3 on top of an unmerged MG-WP2 branch.
-- Fix deterministic current-work CI failures immediately.
-- If Git/GitHub access fails, reconnect before reporting a blocker.
-- Keep one canonical gameplay implementation per mini-game.
+MG-WP3 is Amber. Do not merge until every catalogue-visible current game launches, retries where applicable and returns safely from the exact Just Games preview, and David approves the catalogue experience.
