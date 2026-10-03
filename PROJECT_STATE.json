@@ -3,7 +3,7 @@
   "template_initialised": true,
   "project_id": "unicorn-valley",
   "display_name": "Unicorn Valley",
-  "phase": "R6.5 - Rainbow Meadow H4.9D activity polish and gameplay depth",
+  "phase": "R6.5 - Rainbow Meadow H4.9E layout and alignment polish",
   "current_work_package": "R6.5-WP19H4",
   "current_work_package_path": "docs/work-packages/R6.5-WP19H4-RAINBOW-MEADOW.md",
   "status": "in_progress",
@@ -17,10 +17,10 @@
   "next_work_package": "R6.5-WP19H4",
   "next_work_package_path": "docs/work-packages/R6.5-WP19H4-RAINBOW-MEADOW.md",
   "human_input_required": false,
-  "blocker_reason": "H4.9D rounded activity UI, opponent/turnover defence loop and practice difficulty scaling require deployed human playtest.",
+  "blocker_reason": "H4.9E horizontal practice range, match lane spacing and bottom activity UI spacing require deployed human playtest.",
   "night_shift_state": "not_configured",
   "chat_disposition": "keep",
   "delivery_mode": "pr_required",
-  "last_activity_at": "2026-10-03T06:58:00+01:00",
-  "updated_at": "2026-10-03T06:58:00+01:00"
+  "last_activity_at": "2026-10-03T07:16:00+01:00",
+  "updated_at": "2026-10-03T07:16:00+01:00"
 }
