@@ -66,13 +66,14 @@ async function waitForActiveScene(page: Page, sceneKey: string): Promise<void> {
   }, sceneKey);
 }
 
-async function dragDiscToReceiver(page: Page): Promise<void> {
+async function dragDiscToReceiver(page: Page, receiverIndex = 1): Promise<void> {
   const scene = await snapshotScene(page, 'RainbowDiscActivityScene');
   const disc = scene.objects.find(
     ({ name, effectiveVisible }) => name === 'rainbow-disc-activity:disc' && effectiveVisible,
   );
   const receiver = scene.objects.find(
-    ({ name, effectiveVisible }) => name === 'rainbow-disc-activity:receiver:1' && effectiveVisible,
+    ({ name, effectiveVisible }) =>
+      name === `rainbow-disc-activity:receiver:${receiverIndex}` && effectiveVisible,
   );
   if (!disc || !receiver) {
     throw new Error('Rainbow Disc throw objects are unavailable.');
@@ -208,8 +209,9 @@ test('H4.9 Rainbow Disc lawn is alive before interaction and returns cleanly aft
     )
     .toBe('paused');
 
+  const safeLaneByPass = [1, 2, 0] as const;
   for (let pass = 0; pass < 3; pass += 1) {
-    await dragDiscToReceiver(page);
+    await dragDiscToReceiver(page, safeLaneByPass[pass]);
     if (pass < 2) {
       const expectedFilled = '●'.repeat(pass + 1);
       await expect
@@ -316,6 +318,128 @@ test('H4.9B practice range launches a five-throw target challenge', async ({ pag
       );
     })
     .toBe(true);
+
+  await page.keyboard.press('Escape');
+  await waitForActiveScene(page, 'RainbowMeadowScene');
+});
+
+
+test('H4.9D defended lanes can turn over possession and trigger a defence phase', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.addInitScript(() => window.localStorage.clear());
+  await page.goto('/?scene=meadow&diagnostics=1');
+  await waitForDiagnostics(page);
+  await waitForActiveScene(page, 'RainbowMeadowScene');
+
+  await setMeadowPlayerPosition(page, 700, 1400);
+  await expect
+    .poll(async () => {
+      const meadow = await snapshotScene(page, 'RainbowMeadowScene');
+      return meadow.objects.find(
+        ({ name, effectiveVisible }) =>
+          name === 'exploration-interaction-prompt-label' && effectiveVisible,
+      )?.text;
+    })
+    .toBe('Join the game');
+
+  await page.keyboard.press('E');
+  await waitForActiveScene(page, 'RainbowDiscActivityScene');
+
+  const attack = await snapshotScene(page, 'RainbowDiscActivityScene');
+  expect(
+    attack.objects.filter(
+      ({ name, effectiveVisible }) =>
+        name.startsWith('rainbow-disc-activity:defender:') && effectiveVisible,
+    ).length,
+  ).toBeGreaterThanOrEqual(2);
+
+  await dragDiscToReceiver(page, 0);
+
+  await expect
+    .poll(async () => {
+      const activity = await snapshotScene(page, 'RainbowDiscActivityScene');
+      return activity.objects.some(
+        ({ name, effectiveVisible }) =>
+          name === 'rainbow-disc-activity:defence-player' && effectiveVisible,
+      );
+    })
+    .toBe(true);
+
+  const defence = await snapshotScene(page, 'RainbowDiscActivityScene');
+  const laneOne = defence.objects.find(
+    ({ name, effectiveVisible }) =>
+      name === 'rainbow-disc-activity:opponent-receiver:1' && effectiveVisible,
+  );
+  expect(laneOne).toBeDefined();
+  if (!laneOne) throw new Error('Defence lane one is unavailable.');
+
+  await page.mouse.click(laneOne.x, laneOne.y);
+
+  await expect
+    .poll(async () => {
+      const activity = await snapshotScene(page, 'RainbowDiscActivityScene');
+      return activity.objects.some(
+        ({ name, effectiveVisible }) =>
+          name === 'rainbow-disc-activity:thrower' && effectiveVisible,
+      );
+    })
+    .toBe(true);
+});
+
+test('H4.9D practice difficulty tightens the green window and increases sweep speed', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.addInitScript(() => window.localStorage.clear());
+  await page.goto('/?scene=meadow&diagnostics=1');
+  await waitForDiagnostics(page);
+  await waitForActiveScene(page, 'RainbowMeadowScene');
+
+  await setMeadowPlayerPosition(page, 1160, 1510);
+  await expect
+    .poll(async () => {
+      const meadow = await snapshotScene(page, 'RainbowMeadowScene');
+      return meadow.objects.find(
+        ({ name, effectiveVisible }) =>
+          name === 'exploration-interaction-prompt-label' && effectiveVisible,
+      )?.text;
+    })
+    .toBe('Practice throws');
+
+  await page.keyboard.press('E');
+  await waitForActiveScene(page, 'RainbowDiscActivityScene');
+
+  await page.keyboard.press('ArrowUp');
+  const easy = await snapshotScene(page, 'RainbowDiscActivityScene');
+  const easyZone = easy.objects.find(
+    ({ name, effectiveVisible }) =>
+      name === 'rainbow-disc-activity:timing-success-zone' && effectiveVisible,
+  );
+  const easyLabel = easy.objects.find(
+    ({ name, effectiveVisible }) =>
+      name === 'rainbow-disc-activity:timing-difficulty' && effectiveVisible,
+  )?.text;
+  expect(easyZone).toBeDefined();
+  expect(easyLabel).toContain('Easy');
+
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowDown');
+  const hard = await snapshotScene(page, 'RainbowDiscActivityScene');
+  const hardZone = hard.objects.find(
+    ({ name, effectiveVisible }) =>
+      name === 'rainbow-disc-activity:timing-success-zone' && effectiveVisible,
+  );
+  const hardLabel = hard.objects.find(
+    ({ name, effectiveVisible }) =>
+      name === 'rainbow-disc-activity:timing-difficulty' && effectiveVisible,
+  )?.text;
+  expect(hardZone).toBeDefined();
+  expect(hardLabel).toContain('Hard');
+  expect((hardZone?.displayWidth ?? 999)).toBeLessThan(easyZone?.displayWidth ?? 0);
+
+  const speedFrom = (value: string | null | undefined): number =>
+    Number(value?.match(/([0-9.]+) speed/)?.[1] ?? '0');
+  expect(speedFrom(hardLabel)).toBeGreaterThan(speedFrom(easyLabel));
 
   await page.keyboard.press('Escape');
   await waitForActiveScene(page, 'RainbowMeadowScene');
