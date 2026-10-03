@@ -1,0 +1,405 @@
+{
+  "schemaVersion": 3,
+  "budgets": {
+    "entryRawBytes": 532480,
+    "initialGraphGzipBytes": 573440,
+    "largestLazyChunkGzipBytes": 32768,
+    "javascriptChunkCount": 112
+  },
+  "legacyMetrics": {
+    "totalJavaScriptGzipBytes": 665600,
+    "totalJavaScriptRawBytes": 2457600
+  },
+  "entry": {
+    "key": "index.html",
+    "file": "assets/index-C2JO3_OD.js",
+    "rawBytes": 502101,
+    "gzipBytes": 140747
+  },
+  "initialGraph": {
+    "rawBytes": 2113703,
+    "gzipBytes": 573389,
+    "chunkCount": 44
+  },
+  "largestLazyChunk": {
+    "key": "src/game/scenes/R6VillageInteriorScene.ts",
+    "file": "assets/R6VillageInteriorScene-CWhXVHkC.js",
+    "rawBytes": 79875,
+    "gzipBytes": 22738
+  },
+  "totalJavaScript": {
+    "rawBytes": 2813878,
+    "gzipBytes": 810604
+  },
+  "javascriptChunkCount": 113,
+  "duplicateJavaScriptGroups": [],
+  "diagnosticsInInitialGraph": false,
+  "diagnosticsChunk": {
+    "key": "src/game/testing/BrowserDiagnostics.ts",
+    "file": "assets/BrowserDiagnostics-DSj9wtOI.js",
+    "rawBytes": 7633,
+    "gzipBytes": 2941
+  },
+  "initialChunks": [
+    {
+      "key": "_phaser-P1E8uaLi.js",
+      "file": "assets/phaser-P1E8uaLi.js",
+      "rawBytes": 1374829,
+      "gzipBytes": 355968
+    },
+    {
+      "key": "index.html",
+      "file": "assets/index-C2JO3_OD.js",
+      "rawBytes": 502101,
+      "gzipBytes": 140747
+    },
+    {
+      "key": "_registries-CW9b-rVm.js",
+      "file": "assets/registries-CW9b-rVm.js",
+      "rawBytes": 39849,
+      "gzipBytes": 10471
+    },
+    {
+      "key": "_game-core-shared-cd5E731h.js",
+      "file": "assets/game-core-shared-cd5E731h.js",
+      "rawBytes": 30240,
+      "gzipBytes": 10173
+    },
+    {
+      "key": "_r6WhisperingWoodsDepthContent-DnONyrlM.js",
+      "file": "assets/r6WhisperingWoodsDepthContent-DnONyrlM.js",
+      "rawBytes": 21160,
+      "gzipBytes": 6602
+    },
+    {
+      "key": "_browserSaveService-B92T4ch0.js",
+      "file": "assets/browserSaveService-B92T4ch0.js",
+      "rawBytes": 18516,
+      "gzipBytes": 4998
+    },
+    {
+      "key": "_CoreNpcPresenceService-BT1dFCXg.js",
+      "file": "assets/CoreNpcPresenceService-BT1dFCXg.js",
+      "rawBytes": 11105,
+      "gzipBytes": 3650
+    },
+    {
+      "key": "_TouchMovementPad-DqYfslTV.js",
+      "file": "assets/TouchMovementPad-DqYfslTV.js",
+      "rawBytes": 12394,
+      "gzipBytes": 3227
+    },
+    {
+      "key": "_VerticalSliceAudio-CtHNh0Tn.js",
+      "file": "assets/VerticalSliceAudio-CtHNh0Tn.js",
+      "rawBytes": 9864,
+      "gzipBytes": 2925
+    },
+    {
+      "key": "_SunbeamVillageLayout-B1NaaNaL.js",
+      "file": "assets/SunbeamVillageLayout-B1NaaNaL.js",
+      "rawBytes": 8842,
+      "gzipBytes": 2869
+    },
+    {
+      "key": "_r6VillageContent-DIZHATM7.js",
+      "file": "assets/r6VillageContent-DIZHATM7.js",
+      "rawBytes": 6203,
+      "gzipBytes": 2038
+    },
+    {
+      "key": "_r65StarlightBeach-XT0kcnLF.js",
+      "file": "assets/r65StarlightBeach-XT0kcnLF.js",
+      "rawBytes": 5531,
+      "gzipBytes": 1984
+    },
+    {
+      "key": "_r4PebbleStory-BeIj4Oql.js",
+      "file": "assets/r4PebbleStory-BeIj4Oql.js",
+      "rawBytes": 5854,
+      "gzipBytes": 1971
+    },
+    {
+      "key": "_browserQuestEngine-aWcLUANH.js",
+      "file": "assets/browserQuestEngine-aWcLUANH.js",
+      "rawBytes": 5382,
+      "gzipBytes": 1761
+    },
+    {
+      "key": "_CottageInteriorMap-DWPkiXib.js",
+      "file": "assets/CottageInteriorMap-DWPkiXib.js",
+      "rawBytes": 4097,
+      "gzipBytes": 1568
+    },
+    {
+      "key": "_CottageDecorationCatalogue-Cg5jThZO.js",
+      "file": "assets/CottageDecorationCatalogue-Cg5jThZO.js",
+      "rawBytes": 4954,
+      "gzipBytes": 1446
+    },
+    {
+      "key": "_ConceptUi-DbIUKNPM.js",
+      "file": "assets/ConceptUi-DbIUKNPM.js",
+      "rawBytes": 4303,
+      "gzipBytes": 1395
+    },
+    {
+      "key": "_r5LumiWoodsStory-bUsH_21O.js",
+      "file": "assets/r5LumiWoodsStory-bUsH_21O.js",
+      "rawBytes": 3429,
+      "gzipBytes": 1375
+    },
+    {
+      "key": "_r4PicnicEvent-CpYfMiy_.js",
+      "file": "assets/r4PicnicEvent-CpYfMiy_.js",
+      "rawBytes": 4828,
+      "gzipBytes": 1346
+    },
+    {
+      "key": "_SunbeamVillageMap-DqIbhzyC.js",
+      "file": "assets/SunbeamVillageMap-DqIbhzyC.js",
+      "rawBytes": 4238,
+      "gzipBytes": 1235
+    },
+    {
+      "key": "_uiTheme-Bd4q126m.js",
+      "file": "assets/uiTheme-Bd4q126m.js",
+      "rawBytes": 2669,
+      "gzipBytes": 1180
+    },
+    {
+      "key": "_AtmosphericTimeService-DpjoLwgq.js",
+      "file": "assets/AtmosphericTimeService-DpjoLwgq.js",
+      "rawBytes": 2952,
+      "gzipBytes": 1131
+    },
+    {
+      "key": "_r6MeadowRunContent-BWyY9cPx.js",
+      "file": "assets/r6MeadowRunContent-BWyY9cPx.js",
+      "rawBytes": 2674,
+      "gzipBytes": 1130
+    },
+    {
+      "key": "_r65RepeatableActivities-CWMBdWXl.js",
+      "file": "assets/r65RepeatableActivities-CWMBdWXl.js",
+      "rawBytes": 2573,
+      "gzipBytes": 1044
+    },
+    {
+      "key": "_MoonflowerGladeMap-Dgb5f5De.js",
+      "file": "assets/MoonflowerGladeMap-Dgb5f5De.js",
+      "rawBytes": 2913,
+      "gzipBytes": 1027
+    },
+    {
+      "key": "_r65RaceExpansion-Cw3OiJOo.js",
+      "file": "assets/r65RaceExpansion-Cw3OiJOo.js",
+      "rawBytes": 2981,
+      "gzipBytes": 1026
+    },
+    {
+      "key": "_r5WhisperingWoods-IJAm7V4v.js",
+      "file": "assets/r5WhisperingWoods-IJAm7V4v.js",
+      "rawBytes": 1792,
+      "gzipBytes": 922
+    },
+    {
+      "key": "_WorldTraversalPolishManager-DNnic144.js",
+      "file": "assets/WorldTraversalPolishManager-DNnic144.js",
+      "rawBytes": 1744,
+      "gzipBytes": 892
+    },
+    {
+      "key": "_RelationshipService-_4NNTkLh.js",
+      "file": "assets/RelationshipService-_4NNTkLh.js",
+      "rawBytes": 2261,
+      "gzipBytes": 864
+    },
+    {
+      "key": "_InventoryService-DjL9LptK.js",
+      "file": "assets/InventoryService-DjL9LptK.js",
+      "rawBytes": 1720,
+      "gzipBytes": 785
+    },
+    {
+      "key": "_preload-helper-Czpn1I53.js",
+      "file": "assets/preload-helper-Czpn1I53.js",
+      "rawBytes": 1196,
+      "gzipBytes": 675
+    },
+    {
+      "key": "_InteractionTargeting-C9mQQMQk.js",
+      "file": "assets/InteractionTargeting-C9mQQMQk.js",
+      "rawBytes": 1495,
+      "gzipBytes": 621
+    },
+    {
+      "key": "_InteractionModalState-DoTuR0FL.js",
+      "file": "assets/InteractionModalState-DoTuR0FL.js",
+      "rawBytes": 1268,
+      "gzipBytes": 620
+    },
+    {
+      "key": "_CottageSemanticAnchors-ooPEFUCa.js",
+      "file": "assets/CottageSemanticAnchors-ooPEFUCa.js",
+      "rawBytes": 1989,
+      "gzipBytes": 617
+    },
+    {
+      "key": "_ExplorationGallop-DQraKhY2.js",
+      "file": "assets/ExplorationGallop-DQraKhY2.js",
+      "rawBytes": 955,
+      "gzipBytes": 502
+    },
+    {
+      "key": "_AccessibilitySettings-CBRyWhKS.js",
+      "file": "assets/AccessibilitySettings-CBRyWhKS.js",
+      "rawBytes": 1026,
+      "gzipBytes": 473
+    },
+    {
+      "key": "_DiscoveryService-KMsbFDDP.js",
+      "file": "assets/DiscoveryService-KMsbFDDP.js",
+      "rawBytes": 1026,
+      "gzipBytes": 443
+    },
+    {
+      "key": "_UiPrimitives-cQN-8Vfa.js",
+      "file": "assets/UiPrimitives-cQN-8Vfa.js",
+      "rawBytes": 766,
+      "gzipBytes": 421
+    },
+    {
+      "key": "_PointerTouchInputAdapter-Dbqm6GGl.js",
+      "file": "assets/PointerTouchInputAdapter-Dbqm6GGl.js",
+      "rawBytes": 762,
+      "gzipBytes": 376
+    },
+    {
+      "key": "_MarigoldPicnicStory-D1DO8dUU.js",
+      "file": "assets/MarigoldPicnicStory-D1DO8dUU.js",
+      "rawBytes": 493,
+      "gzipBytes": 283
+    },
+    {
+      "key": "_TransientFeedbackCoordinator-CCytbcJm.js",
+      "file": "assets/TransientFeedbackCoordinator-CCytbcJm.js",
+      "rawBytes": 361,
+      "gzipBytes": 261
+    },
+    {
+      "key": "_saveLocationCheckpoint-Bi9JBxwO.js",
+      "file": "assets/saveLocationCheckpoint-Bi9JBxwO.js",
+      "rawBytes": 205,
+      "gzipBytes": 164
+    },
+    {
+      "key": "_WorldDepth-BEKrtwt4.js",
+      "file": "assets/WorldDepth-BEKrtwt4.js",
+      "rawBytes": 98,
+      "gzipBytes": 105
+    },
+    {
+      "key": "_r5RaceIds-D_fDFtlO.js",
+      "file": "assets/r5RaceIds-D_fDFtlO.js",
+      "rawBytes": 65,
+      "gzipBytes": 78
+    }
+  ],
+  "largestLazyChunks": [
+    {
+      "key": "src/game/scenes/R6VillageInteriorScene.ts",
+      "file": "assets/R6VillageInteriorScene-CWhXVHkC.js",
+      "rawBytes": 79875,
+      "gzipBytes": 22738
+    },
+    {
+      "key": "src/game/activities/ChessPlazaActivityScene.ts",
+      "file": "assets/ChessPlazaActivityScene-DBP-BwBA.js",
+      "rawBytes": 46194,
+      "gzipBytes": 15389
+    },
+    {
+      "key": "src/game/storyLibrary/StoryReaderOverlay.ts",
+      "file": "assets/StoryReaderOverlay-B-Xc9A5e.js",
+      "rawBytes": 46243,
+      "gzipBytes": 12173
+    },
+    {
+      "key": "src/game/activities/MapleBakingActivityScene.ts",
+      "file": "assets/MapleBakingActivityScene-B0LzAWNK.js",
+      "rawBytes": 31051,
+      "gzipBytes": 9261
+    },
+    {
+      "key": "src/game/scenes/WonderbookScene.ts",
+      "file": "assets/WonderbookScene-BFodExxd.js",
+      "rawBytes": 24179,
+      "gzipBytes": 8056
+    },
+    {
+      "key": "src/game/scenes/CottageStyleScene.ts",
+      "file": "assets/CottageStyleScene-BZ_B56vK.js",
+      "rawBytes": 27355,
+      "gzipBytes": 7560
+    },
+    {
+      "key": "src/game/scenes/InventoryScene.ts",
+      "file": "assets/InventoryScene-CUvY9PtT.js",
+      "rawBytes": 22551,
+      "gzipBytes": 7388
+    },
+    {
+      "key": "src/game/world/VillageLifeWorldManager.ts",
+      "file": "assets/VillageLifeWorldManager-BJI7L1rr.js",
+      "rawBytes": 17498,
+      "gzipBytes": 6581
+    },
+    {
+      "key": "src/game/population/R6SupportingResidentContent.ts",
+      "file": "assets/R6SupportingResidentContent-AgtD75lb.js",
+      "rawBytes": 21191,
+      "gzipBytes": 6297
+    },
+    {
+      "key": "src/game/ui/ExplorationShellWorldManager.ts",
+      "file": "assets/ExplorationShellWorldManager-D8gCBvfi.js",
+      "rawBytes": 17520,
+      "gzipBytes": 5913
+    },
+    {
+      "key": "src/game/activities/RainbowDiscActivityScene.ts",
+      "file": "assets/RainbowDiscActivityScene-B8BsSjp-.js",
+      "rawBytes": 21170,
+      "gzipBytes": 5830
+    },
+    {
+      "key": "src/game/population/AmbientPopulationWorldManager.ts",
+      "file": "assets/AmbientPopulationWorldManager-BY-8KHzQ.js",
+      "rawBytes": 15004,
+      "gzipBytes": 5713
+    },
+    {
+      "key": "src/game/world/R6RegionGatewayArtManager.ts",
+      "file": "assets/R6RegionGatewayArtManager-DJlxbRj_.js",
+      "rawBytes": 14946,
+      "gzipBytes": 5679
+    },
+    {
+      "key": "src/game/world/MeadowDepthWorldManager.ts",
+      "file": "assets/MeadowDepthWorldManager-DY6QfW-1.js",
+      "rawBytes": 14248,
+      "gzipBytes": 5417
+    },
+    {
+      "key": "src/game/world/ExistingValleyQuestPackWorldManager.ts",
+      "file": "assets/ExistingValleyQuestPackWorldManager-BT1V5xV0.js",
+      "rawBytes": 16500,
+      "gzipBytes": 5382
+    }
+  ],
+  "generatedAt": "2026-10-03T15:38:18.779Z",
+  "failures": [
+    "JavaScript chunk count is 113 (budget 112)"
+  ]
+}
