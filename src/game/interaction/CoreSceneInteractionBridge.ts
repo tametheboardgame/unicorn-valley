@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { createPipInteraction } from '../intro/PipIntro';
+import { launchMiniGame } from '../minigames/MiniGameLauncher';
 import { RainbowMeadowScene } from '../scenes/RainbowMeadowScene';
 import { RAINBOW_MEADOW_LAYOUT, RAINBOW_MEADOW_MAP } from '../world/RainbowMeadowMap';
 import { setSunbeamVillagePlayerSpawn, SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
@@ -115,14 +116,12 @@ function meadowTargets(scene: Phaser.Scene): InteractionTarget[] {
       result: {
         type: 'callback',
         activate: () =>
-          void import('../minigames/MiniGameLauncher').then(({ launchMiniGame }) =>
-            launchMiniGame(scene, {
-              gameId: 'rainbow-disc',
-              source: 'world',
-              variantId: 'match',
-              worldContext: { interactionId: 'interaction:rainbow-disc' },
-            }),
-          ),
+          void launchMiniGame(scene, {
+            gameId: 'rainbow-disc',
+            source: 'world',
+            variantId: 'match',
+            worldContext: { interactionId: 'interaction:rainbow-disc' },
+          }),
       },
     },
     {
@@ -138,14 +137,12 @@ function meadowTargets(scene: Phaser.Scene): InteractionTarget[] {
       result: {
         type: 'callback',
         activate: () =>
-          void import('../minigames/MiniGameLauncher').then(({ launchMiniGame }) =>
-            launchMiniGame(scene, {
-              gameId: 'rainbow-disc',
-              source: 'world',
-              variantId: 'practice',
-              worldContext: { interactionId: 'interaction:rainbow-disc-practice' },
-            }),
-          ),
+          void launchMiniGame(scene, {
+            gameId: 'rainbow-disc',
+            source: 'world',
+            variantId: 'practice',
+            worldContext: { interactionId: 'interaction:rainbow-disc-practice' },
+          }),
       },
     },
     {
