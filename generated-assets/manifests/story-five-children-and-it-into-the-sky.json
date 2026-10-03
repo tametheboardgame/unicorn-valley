@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "1BDWDIdT0TONku9bZxToExFyrHobI4D-X"
+  },
+  "expectedSourceName": "five-children-and-it-into-the-sky-v01.png",
+  "destination": "public/stories/five-children-and-it/illustrations/generated/into-the-sky.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1000,
+    "quality": 88
+  },
+  "revision": 1
+}

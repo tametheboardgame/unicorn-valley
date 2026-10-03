@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "1trSWP7O4X7ZtpXYfD9JvwoZZL-CbMcYV"
+  },
+  "expectedSourceName": "five-children-and-it-house-becomes-castle-v01.png",
+  "destination": "public/stories/five-children-and-it/illustrations/generated/house-becomes-castle.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1000,
+    "quality": 88
+  },
+  "revision": 1
+}

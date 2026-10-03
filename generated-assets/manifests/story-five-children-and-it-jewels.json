@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "1tLkYBZ2vp6V7TH5LBjrkKnfdL1XrgNVP"
+  },
+  "expectedSourceName": "five-children-and-it-jewels-v01.png",
+  "destination": "public/stories/five-children-and-it/illustrations/generated/jewels.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1000,
+    "quality": 88
+  },
+  "revision": 1
+}

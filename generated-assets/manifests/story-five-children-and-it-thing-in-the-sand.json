@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "102SfUx-0yEAUwjPvJc3Wnvoe7rJJ6GDf"
+  },
+  "expectedSourceName": "five-children-and-it-thing-in-the-sand-v01.png",
+  "destination": "public/stories/five-children-and-it/illustrations/generated/thing-in-the-sand.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1000,
+    "quality": 88
+  },
+  "revision": 1
+}

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "1Pgb4QeAK-j1Q3L4gQv_yqylP-wIhgF7P"
+  },
+  "expectedSourceName": "five-children-and-it-very-large-robert-v01.png",
+  "destination": "public/stories/five-children-and-it/illustrations/generated/very-large-robert.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1000,
+    "quality": 88
+  },
+  "revision": 1
+}
