@@ -5,10 +5,12 @@ import { createUnicornAppearanceTexture } from '../player/UnicornAppearanceRende
 import { createResidentAppearanceSprite } from '../population/SupportingResidentArt';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { UI_COLOURS, UI_FONT, createUiShadow } from '../ui/uiTheme';
+import { createRainbowDiscRing, drawRainbowTarget } from '../world/RainbowDiscArt';
 import { RAINBOW_DISC_PLAYER_APPEARANCES } from '../world/RainbowDiscMeadowPresentation';
 
 interface RainbowDiscActivitySceneData {
   returnScene?: string;
+  mode?: 'match' | 'practice';
 }
 
 interface Point {
@@ -26,10 +28,20 @@ const THROW_X = [220, 440, 680] as const;
 const TARGET_X = [535, 775, 1040] as const;
 const CATCH_RADIUS = 118;
 const PASS_COUNT = 3;
+const PRACTICE_THROW_COUNT = 5;
+const PRACTICE_TARGET_X = 960;
+const PRACTICE_TARGETS = [
+  { y: 250, radius: 78, points: 1 },
+  { y: 370, radius: 58, points: 2 },
+  { y: 490, radius: 42, points: 3 },
+] as const;
 
 export class RainbowDiscActivityScene extends Phaser.Scene {
   private returnScene = 'RainbowMeadowScene';
+  private mode: 'match' | 'practice' = 'match';
   private possession = 0;
+  private practiceThrows = 0;
+  private practiceScore = 0;
   private selectedReceiver = 1;
   private dragging = false;
   private actionLocked = false;
@@ -38,12 +50,13 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
   private timingValue = 0.5;
 
   private playLayer: Phaser.GameObjects.Container | null = null;
-  private disc: Phaser.GameObjects.Ellipse | null = null;
+  private disc: Phaser.GameObjects.Graphics | null = null;
   private aimGraphics: Phaser.GameObjects.Graphics | null = null;
   private statusText: Phaser.GameObjects.Text | null = null;
   private progressText: Phaser.GameObjects.Text | null = null;
   private timingMarker: Phaser.GameObjects.Rectangle | null = null;
   private receiverRings: Phaser.GameObjects.Arc[] = [];
+  private receiverSprites: Phaser.GameObjects.Sprite[] = [];
 
   public constructor() {
     super('RainbowDiscActivityScene');
@@ -51,7 +64,10 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
 
   public create(data: RainbowDiscActivitySceneData = {}): void {
     this.returnScene = data.returnScene ?? 'RainbowMeadowScene';
+    this.mode = data.mode ?? 'match';
     this.possession = 0;
+    this.practiceThrows = 0;
+    this.practiceScore = 0;
     this.selectedReceiver = 1;
     this.dragging = false;
     this.actionLocked = false;
@@ -92,6 +108,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       this.progressText = null;
       this.timingMarker = null;
       this.receiverRings = [];
+      this.receiverSprites = [];
     });
   }
 
@@ -117,7 +134,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       .setName('rainbow-disc-activity:panel');
 
     this.add
-      .text(GAME_WIDTH / 2, 55, 'Rainbow Disc', {
+      .text(GAME_WIDTH / 2, 55, this.mode === 'practice' ? 'Rainbow Disc Practice' : 'Rainbow Disc', {
         color: '#5f496d',
         fontFamily: UI_FONT,
         fontSize: '34px',
@@ -129,7 +146,9 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       .text(
         GAME_WIDTH / 2,
         92,
-        'Complete three catches to reach the end zone. Drag and release the disc, or use ↑/↓ and Space.',
+        this.mode === 'practice'
+          ? 'Five throws. Pick a rainbow target: smaller rings score more. Drag and release, or use ↑/↓ and Space.'
+          : 'Complete three catches to reach the end zone. Drag and release the disc, or use ↑/↓ and Space.',
         {
           color: UI_COLOURS.softInk,
           fontFamily: UI_FONT,
@@ -161,7 +180,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     markings.lineBetween(1090, FIELD_TOP + 20, 1090, FIELD_BOTTOM - 20);
 
     this.add
-      .text(1140, 150, 'END\nZONE', {
+      .text(1140, 150, this.mode === 'practice' ? 'TARGET\nRANGE' : 'END\nZONE', {
         color: '#6e7759',
         fontFamily: UI_FONT,
         fontSize: '12px',
@@ -228,12 +247,18 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     this.playLayer?.destroy(true);
     this.playLayer = this.add.container(0, 0).setDepth(10);
     this.receiverRings = [];
+    this.receiverSprites = [];
     this.dragging = false;
     this.actionLocked = false;
     this.selectedReceiver = Phaser.Math.Clamp(this.selectedReceiver, 0, RECEIVER_Y.length - 1);
 
     if (this.completed) {
       this.renderResult();
+      return;
+    }
+
+    if (this.mode === 'practice') {
+      this.renderPracticeRound();
       return;
     }
 
@@ -259,9 +284,9 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
         appearance,
       )
         .setPosition(targetX, receiverY)
-        .setScale(0.9)
         .setInteractive({ useHandCursor: true });
       receiver.on('pointerdown', () => this.selectReceiver(index));
+      this.receiverSprites.push(receiver);
 
       const ring = this.add
         .circle(targetX, receiverY + 6, 66, 0xfff4b8, index === this.selectedReceiver ? 0.22 : 0)
@@ -274,11 +299,15 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     this.aimGraphics = this.add.graphics().setName('rainbow-disc-activity:aim-line').setDepth(25);
     this.playLayer.add(this.aimGraphics);
 
-    this.disc = this.add
-      .ellipse(throwOrigin.x, throwOrigin.y, 42, 14, 0xfff0ad, 1)
-      .setStrokeStyle(3, 0xa9774d, 0.95)
-      .setInteractive({ useHandCursor: true })
-      .setName('rainbow-disc-activity:disc')
+    this.disc = createRainbowDiscRing(
+      this,
+      'rainbow-disc-activity:disc',
+      throwOrigin.x,
+      throwOrigin.y,
+      21,
+      8,
+    )
+      .setScale(1, 0.62)
       .setDepth(30);
     this.disc.on('pointerdown', () => {
       if (!this.actionLocked) {
@@ -298,9 +327,99 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     this.refreshReceiverSelection();
   }
 
+  private renderPracticeRound(): void {
+    const throwOrigin = this.throwOrigin();
+
+    const thrower = this.add
+      .sprite(throwOrigin.x - 40, throwOrigin.y + 46, PLAYER_TEXTURE_KEY)
+      .setDisplaySize(164, 116)
+      .setOrigin(0.5, 0.78)
+      .setName('rainbow-disc-activity:thrower');
+    this.playLayer?.add(thrower);
+
+    const targets = this.add
+      .graphics()
+      .setName('rainbow-disc-activity:practice-targets')
+      .setDepth(16);
+    this.playLayer?.add(targets);
+
+    PRACTICE_TARGETS.forEach((target, index) => {
+      targets.lineStyle(8, 0x7d5b44, 0.9);
+      targets.lineBetween(
+        PRACTICE_TARGET_X,
+        target.y + target.radius,
+        PRACTICE_TARGET_X,
+        target.y + 105,
+      );
+      drawRainbowTarget(targets, PRACTICE_TARGET_X, target.y, target.radius, 9);
+      targets.fillStyle(0xffefae, 0.92);
+      targets.fillCircle(PRACTICE_TARGET_X, target.y, Math.max(7, target.radius * 0.16));
+
+      const selector = this.add
+        .circle(
+          PRACTICE_TARGET_X,
+          target.y,
+          target.radius + 14,
+          0xfff4b8,
+          index === this.selectedReceiver ? 0.12 : 0,
+        )
+        .setStrokeStyle(4, 0xf4c96b, index === this.selectedReceiver ? 0.88 : 0.12)
+        .setInteractive({ useHandCursor: true })
+        .setName(`rainbow-disc-activity:receiver-ring:${index}`);
+      selector.on('pointerdown', () => this.selectReceiver(index));
+      this.receiverRings.push(selector);
+      this.playLayer?.add(selector);
+
+      const points = this.add
+        .text(PRACTICE_TARGET_X + 115, target.y, `${target.points} pt`, {
+          color: '#5f496d',
+          fontFamily: UI_FONT,
+          fontSize: '14px',
+          fontStyle: 'bold',
+        })
+        .setOrigin(0.5);
+      this.playLayer?.add(points);
+    });
+
+    this.aimGraphics = this.add.graphics().setName('rainbow-disc-activity:aim-line').setDepth(25);
+    this.playLayer?.add(this.aimGraphics);
+
+    this.disc = createRainbowDiscRing(
+      this,
+      'rainbow-disc-activity:disc',
+      throwOrigin.x,
+      throwOrigin.y,
+      21,
+      8,
+    )
+      .setScale(1, 0.62)
+      .setDepth(30);
+    this.disc.on('pointerdown', () => {
+      if (!this.actionLocked) {
+        this.dragging = true;
+      }
+    });
+    this.playLayer?.add(this.disc);
+
+    this.statusText?.setText(
+      `Throw ${this.practiceThrows + 1} of ${PRACTICE_THROW_COUNT}: hit a rainbow target.`,
+    );
+    this.progressText?.setText(
+      `Practice: ${this.practiceThrows}/${PRACTICE_THROW_COUNT} • Score: ${this.practiceScore}`,
+    );
+    this.refreshReceiverSelection();
+  }
+
   private renderResult(): void {
-    this.statusText?.setText('Score! Three catches all the way into the end zone.');
-    this.progressText?.setText('Catch chain: ●●●');
+    if (this.mode === 'practice') {
+      this.statusText?.setText('Practice complete!');
+      this.progressText?.setText(
+        `Practice: ${PRACTICE_THROW_COUNT}/${PRACTICE_THROW_COUNT} • Score: ${this.practiceScore}`,
+      );
+    } else {
+      this.statusText?.setText('Score! Three catches all the way into the end zone.');
+      this.progressText?.setText('Catch chain: ●●●');
+    }
 
     const burst = this.add.graphics().setName('rainbow-disc-activity:score-burst');
     for (let index = 0; index < 12; index += 1) {
@@ -311,19 +430,26 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     }
 
     const title = this.add
-      .text(GAME_WIDTH / 2, 300, 'RAINBOW DISC SCORE!', {
+      .text(
+        GAME_WIDTH / 2,
+        300,
+        this.mode === 'practice' ? 'PRACTICE COMPLETE!' : 'RAINBOW DISC SCORE!',
+        {
         color: '#5f496d',
         fontFamily: UI_FONT,
         fontSize: '36px',
         fontStyle: 'bold',
-      })
+        },
+      )
       .setOrigin(0.5)
       .setName('rainbow-disc-activity:result');
     const summary = this.add
       .text(
         GAME_WIDTH / 2,
         365,
-        'Nice passing. The team catches the third throw inside the end zone.',
+        this.mode === 'practice'
+          ? `You scored ${this.practiceScore} points from five throws.`
+          : 'Nice passing. The team catches the third throw inside the end zone.',
         {
           color: UI_COLOURS.softInk,
           fontFamily: UI_FONT,
@@ -339,7 +465,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       510,
       460,
       250,
-      'Play again',
+      this.mode === 'practice' ? 'Practice again' : 'Play again',
       () => this.restartRun(),
       'replay',
       this.playLayer,
@@ -391,7 +517,9 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
 
     const target = this.receiverPoint(receiverIndex);
     const distance = Phaser.Math.Distance.Between(release.x, release.y, target.x, target.y);
-    this.resolveThrow(target, distance <= CATCH_RADIUS, release);
+    const catchRadius =
+      this.mode === 'practice' ? PRACTICE_TARGETS[receiverIndex]?.radius ?? 42 : CATCH_RADIUS;
+    this.resolveThrow(target, distance <= catchRadius, release);
   }
 
   private keyboardThrow(): void {
@@ -400,7 +528,11 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     }
 
     const target = this.receiverPoint(this.selectedReceiver);
-    const success = this.timingValue >= 0.34 && this.timingValue <= 0.78;
+    const practiceTolerance = [0.27, 0.19, 0.13][this.selectedReceiver] ?? 0.19;
+    const success =
+      this.mode === 'practice'
+        ? Math.abs(this.timingValue - 0.55) <= practiceTolerance
+        : this.timingValue >= 0.34 && this.timingValue <= 0.78;
     const missOffset = this.timingValue < 0.34 ? -150 : 150;
     this.resolveThrow(
       target,
@@ -427,7 +559,9 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       duration: 430,
       ease: 'Sine.Out',
       onComplete: () => {
-        if (success) {
+        if (this.mode === 'practice') {
+          this.handlePracticeAttempt(success);
+        } else if (success) {
           this.handleCatch();
         } else {
           this.handleTurnover();
@@ -437,6 +571,18 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
   }
 
   private handleCatch(): void {
+    const receiver = this.receiverSprites[this.selectedReceiver];
+    if (receiver) {
+      const direction = receiver.flipX ? -1 : 1;
+      this.tweens.add({
+        targets: receiver,
+        angle: direction * 7,
+        duration: 120,
+        yoyo: true,
+        ease: 'Sine.Out',
+      });
+    }
+
     this.possession += 1;
     if (this.possession >= PASS_COUNT) {
       this.completed = true;
@@ -449,6 +595,26 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     this.time.delayedCall(420, () => this.renderPossession());
   }
 
+  private handlePracticeAttempt(success: boolean): void {
+    if (success) {
+      this.practiceScore += PRACTICE_TARGETS[this.selectedReceiver]?.points ?? 1;
+      this.statusText?.setText('Hit! Pick another target.');
+      this.cameras.main.flash(90, 255, 239, 164, false);
+    } else {
+      this.statusText?.setText('Missed — next disc.');
+      this.cameras.main.shake(80, 0.0015);
+    }
+
+    this.practiceThrows += 1;
+    if (this.practiceThrows >= PRACTICE_THROW_COUNT) {
+      this.completed = true;
+      this.time.delayedCall(320, () => this.renderPossession());
+      return;
+    }
+
+    this.time.delayedCall(360, () => this.renderPossession());
+  }
+
   private handleTurnover(): void {
     this.statusText?.setText('Almost! Quick turnover — the team resets and tries the chain again.');
     this.cameras.main.shake(110, 0.002);
@@ -457,6 +623,10 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
   }
 
   private throwOrigin(): Point {
+    if (this.mode === 'practice') {
+      return { x: 240, y: 370 };
+    }
+
     return {
       x: THROW_X[this.possession] ?? THROW_X[0],
       y: 370,
@@ -464,9 +634,16 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
   }
 
   private receiverPoint(index: number): Point {
+    if (this.mode === 'practice') {
+      return {
+        x: PRACTICE_TARGET_X,
+        y: PRACTICE_TARGETS[index]?.y ?? PRACTICE_TARGETS[1].y,
+      };
+    }
+
     return {
-      x: TARGET_X[this.possession] ?? TARGET_X[0],
-      y: RECEIVER_Y[index] ?? RECEIVER_Y[1],
+      x: (TARGET_X[this.possession] ?? TARGET_X[0]) + 38,
+      y: (RECEIVER_Y[index] ?? RECEIVER_Y[1]) - 34,
     };
   }
 
@@ -516,6 +693,8 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
 
   private restartRun(): void {
     this.possession = 0;
+    this.practiceThrows = 0;
+    this.practiceScore = 0;
     this.selectedReceiver = 1;
     this.completed = false;
     this.actionLocked = false;
