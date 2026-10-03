@@ -1,7 +1,10 @@
 import type Phaser from 'phaser';
 import { describe, expect, it } from 'vitest';
 import type { UnicornAppearance } from '../player/UnicornAppearance';
-import { resolveRainbowDiscHornCatchPoint } from './RainbowDiscArt';
+import {
+  resolveRainbowDiscHornCatchPoint,
+  resolveRainbowDiscResidentBodyOrigin,
+} from './RainbowDiscArt';
 
 const appearance: UnicornAppearance = {
   bodyColour: 'cream',
@@ -26,6 +29,16 @@ function fakeSprite(flipX = false): Phaser.GameObjects.Sprite {
     originY: 0.78,
   } as unknown as Phaser.GameObjects.Sprite;
 }
+
+describe('RainbowDiscArt resident body anchoring', () => {
+  it('mirrors the body-centre origin when a resident sprite faces left', () => {
+    const normal = resolveRainbowDiscResidentBodyOrigin(false);
+    const flipped = resolveRainbowDiscResidentBodyOrigin(true);
+
+    expect(flipped.x).toBeCloseTo(1 - normal.x, 8);
+    expect(flipped.y).toBeCloseTo(normal.y, 8);
+  });
+});
 
 describe('RainbowDiscArt horn catch geometry', () => {
   it('places the ring high on the horn rather than forward at the muzzle', () => {
