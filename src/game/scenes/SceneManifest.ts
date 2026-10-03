@@ -76,6 +76,13 @@ export const SCENE_MANIFEST = [
   startup('DialogueTestScene', 'diagnostic'),
   startup('UnicornCreatorScene', 'onboarding'),
   runtime(
+    'JustGamesScene',
+    'modal',
+    'on-demand',
+    'feature',
+    async () => (await import('./JustGamesScene')).JustGamesScene,
+  ),
+  runtime(
     'InventoryScene',
     'modal',
     'runtime-eager',
