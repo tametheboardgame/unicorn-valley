@@ -21,6 +21,7 @@ import {
 } from '../racing/RaceCompetition';
 import {
   PRACTICE_RAINBOW_RUN_COURSE,
+  selectRaceCourse,
   type RaceBoostZoneDefinition,
   type RaceCollectableDefinition,
   type RaceObstacleDefinition,
@@ -48,8 +49,16 @@ import {
 } from '../racing/RaceRun';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { saveLocationCheckpoint } from '../save/saveLocationCheckpoint';
+import { returnFromMiniGame } from '../minigames/MiniGameLauncher';
 import {
+  miniGameSceneData,
+  readMiniGameSession,
+  type MiniGameSession,
+} from '../minigames/MiniGameSession';
+import {
+  clearRaceReturnScene,
   consumeRaceReturnScene,
+  isRaceReturnSceneKey,
   peekRaceReturnScene,
   raceReturnLabel,
 } from '../racing/RaceReturnContext';
@@ -70,6 +79,7 @@ interface NpcRacerVisual {
 
 export class RaceScene extends Phaser.Scene {
   private readonly audio = getVerticalSliceAudio();
+  private miniGameSession: MiniGameSession | null = null;
   private inputController: InputController | null = null;
   private pointerInput: PointerTouchInputAdapter | null = null;
   private assistanceControl: RaceAssistanceControl | null = null;
@@ -103,7 +113,12 @@ export class RaceScene extends Phaser.Scene {
     super('RaceScene');
   }
 
-  public create(): void {
+  public create(data: unknown = {}): void {
+    this.miniGameSession = readMiniGameSession(data);
+    if (this.miniGameSession?.variantId) {
+      selectRaceCourse(this.miniGameSession.variantId);
+    }
+
     this.runState = createRaceRunState();
     this.competitionState = createRaceCompetitionState();
     this.elapsedMs = 0;
@@ -864,7 +879,7 @@ export class RaceScene extends Phaser.Scene {
   }
 
   private createExitButton(): void {
-    const destination = raceReturnLabel(peekRaceReturnScene(this.sys.game));
+    const destination = this.returnDestinationLabel();
     const button = this.add
       .text(22, 22, `← ${destination}`, {
         color: '#5c4668',
@@ -1076,7 +1091,7 @@ export class RaceScene extends Phaser.Scene {
       .rectangle(GAME_WIDTH / 2 + 145, GAME_HEIGHT / 2 + 195, 230, 70, 0xf1e2fb, 1)
       .setStrokeStyle(4, 0xb895c8, 1)
       .setAlpha(0);
-    const destination = raceReturnLabel(peekRaceReturnScene(this.sys.game));
+    const destination = this.returnDestinationLabel();
     const exitText = this.add
       .text(GAME_WIDTH / 2 + 145, GAME_HEIGHT / 2 + 195, `Back to ${destination}`, {
         color: '#60486d',
@@ -1145,10 +1160,34 @@ export class RaceScene extends Phaser.Scene {
 
   private restartRace(): void {
     this.pointerInput?.setButton('RACE_JUMP', false);
-    this.scene.restart();
+    this.scene.restart(
+      this.miniGameSession ? miniGameSceneData(this.miniGameSession) : undefined,
+    );
+  }
+
+  private returnDestinationLabel(): string {
+    if (this.miniGameSession?.source === 'just-games') {
+      return 'Games';
+    }
+
+    const target = this.miniGameSession?.returnTarget.sceneKey;
+    if (isRaceReturnSceneKey(target)) {
+      return raceReturnLabel(target);
+    }
+
+    return raceReturnLabel(peekRaceReturnScene(this.sys.game));
   }
 
   private exitRace(): void {
+    if (this.miniGameSession) {
+      if (this.miniGameSession.returnTarget.sceneKey === 'RainbowRunEntryScene') {
+        saveLocationCheckpoint(getBrowserSaveService(), RAINBOW_RUN_HUB_LOCATION_ID);
+      }
+      clearRaceReturnScene(this.sys.game);
+      returnFromMiniGame(this, this.miniGameSession);
+      return;
+    }
+
     const returnScene = consumeRaceReturnScene(this.sys.game, 'RainbowRunEntryScene');
     if (returnScene === 'RainbowRunEntryScene') {
       saveLocationCheckpoint(getBrowserSaveService(), RAINBOW_RUN_HUB_LOCATION_ID);
