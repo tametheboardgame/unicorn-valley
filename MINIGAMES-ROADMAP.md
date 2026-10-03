@@ -75,6 +75,17 @@ The initial catalogue contains these game families:
 
 The migration must preserve accepted world behaviour. Moving a game under the platform is not authority to redesign its rules, rewards, visuals or quest integration.
 
+## Planned portfolio additions from approved world roadmaps
+
+The following world-first mini-games were approved as part of the R6.5-WP19H6 Crystal Brook roadmap on 3 October 2026. They are **planned**, not yet part of the migrated/current catalogue:
+
+| Planned mini-game | Originating world package | Platform declaration | Direction |
+| --- | --- | --- | --- |
+| Crystalarium | R6.5-WP19H6.9 | `new - crystalarium - world-first` | Crystal merge game using Resonance Patterns to restore magical formations; no customer/energy-timer fiction |
+| Crystal Checkers | R6.5-WP19H6.10 | `new - crystal-checkers - world-first` | Standard checkers/draughts on a physical crystal-rock board, shared between Crystal Brook and Just Games |
+
+H6 contains an explicit readiness gate before either game is implemented. If MG-WP0-WP4 have not established the shared catalogue/launcher/session/sandbox/authoring contracts, H6 must pause at that gate rather than introducing bespoke Crystal Brook activity architecture.
+
 ## Platform sequence
 
 The platform is deliberately built before the individual improvement passes. Implementation evidence from MG-WP0 confirmed that migration and sandbox isolation must precede the visible Just Games launcher, so the safe dependency order is **MG-WP0 -> MG-WP1 -> MG-WP2 -> MG-WP3 -> MG-WP4**.
