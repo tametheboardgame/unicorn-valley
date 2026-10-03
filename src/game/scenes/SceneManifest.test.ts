@@ -48,6 +48,14 @@ describe('SCENE_MANIFEST', () => {
     });
   });
 
+  it('keeps Just Games behind the on-demand feature boundary', () => {
+    expect(SCENE_MANIFEST.find((entry) => entry.key === 'JustGamesScene')).toMatchObject({
+      category: 'modal',
+      loadBoundary: 'on-demand',
+      registrationOwner: 'feature',
+    });
+  });
+
   it('keeps the cottage decoration editor behind the feature boundary', () => {
     const cottageDecorate = SCENE_MANIFEST.find((entry) => entry.key === 'CottageDecorateScene');
     expect(cottageDecorate).toMatchObject({
