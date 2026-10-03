@@ -17,7 +17,7 @@ interface AmbientPoint {
   radius?: number;
 }
 
-const SCENE_ENVIRONMENTS: Readonly<Record<string, ProductionEnvironmentId>> = {
+export const ENVIRONMENT_PRODUCTION_SCENE_ENVIRONMENTS: Readonly<Record<string, ProductionEnvironmentId>> = {
   MoonflowerGladeScene: 'moonflower-glade',
   CrystalBrookScene: 'crystal-brook',
   WhisperingWoodsScene: 'whispering-woods',
@@ -471,7 +471,7 @@ export class EnvironmentProductionPresentationManager {
 
   private update(): void {
     for (const scene of this.game.scene.getScenes(true)) {
-      const environment = SCENE_ENVIRONMENTS[scene.scene.key];
+      const environment = ENVIRONMENT_PRODUCTION_SCENE_ENVIRONMENTS[scene.scene.key];
       if (!environment) {
         continue;
       }
