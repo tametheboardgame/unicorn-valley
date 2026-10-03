@@ -6,9 +6,33 @@
   "catalogueBlurb": "A tiny mouse proves that even the smallest friend can make a big difference.",
   "author": "Aesop, retold by Quill",
   "readingMode": "flowing",
-  "cover": null,
+  "cover": {
+    "path": "illustrations/generated/cover-generated.webp",
+    "alt": "A warm storybook painting of a golden-maned lion meeting a tiny grey-brown mouse beneath an acacia tree."
+  },
+  "coverSets": [
+    {
+      "id": "modern",
+      "label": "Modern Covers",
+      "cover": {
+        "path": "illustrations/generated/cover-generated.webp",
+        "alt": "A warm storybook painting of a golden-maned lion meeting a tiny grey-brown mouse beneath an acacia tree."
+      },
+      "rights": {
+        "status": "original",
+        "source": "ChatGPT-generated artwork created for the Unicorn Valley Story House edition",
+        "notes": "Generated specifically for R6.5-WP19SH1.2 and materialised through the approved Google Drive → Workload Identity Federation → GitHub Actions pipeline."
+      }
+    }
+  ],
   "series": null,
-  "tags": ["classic-retelling", "animals", "kindness", "friendship"],
+  "tags": [
+    "classic-retelling",
+    "animals",
+    "kindness",
+    "friendship",
+    "illustrated"
+  ],
   "discovery": {
     "format": "Short Story",
     "genres": ["Animals", "Classics"],
@@ -22,12 +46,17 @@
       "sourceUrl": "https://www.gutenberg.org/ebooks/28",
       "notes": "The underlying fable is public domain; this wording is an original Unicorn Valley retelling."
     },
-    "illustrations": null,
+    "illustrations": {
+      "status": "original",
+      "source": "ChatGPT-generated artwork created for the Unicorn Valley Story House edition",
+      "notes": "Generated specifically for R6.5-WP19SH1.2 and materialised through the approved Google Drive → Workload Identity Federation → GitHub Actions pipeline. Generated artwork is stored separately from historic/public-domain source art."
+    },
     "edition": {
       "status": "original",
       "source": "Unicorn Valley Story House edition"
     },
-    "originalPublicationYear": null
+    "originalPublicationYear": null,
+    "curatorNotes": "SH1.2 generated-art pilot restored from PR #230: one generated cover and three reader illustrations use a consistent Lion/Mouse visual set and stable semantic block anchors."
   },
   "publication": {
     "status": "published"
@@ -36,7 +65,39 @@
     {
       "id": "the-promise",
       "title": "The Promise",
-      "path": "chapters/01.md"
+      "path": "chapters/01.md",
+      "illustrations": [
+        {
+          "id": "generated-lion-awakens",
+          "blockId": "lion-sleeping",
+          "path": "illustrations/generated/lion-awakens.webp",
+          "alt": "A warm painted storybook scene of a tiny mouse beside the paw of a sleeping golden-maned lion beneath an acacia tree.",
+          "placement": "full-width",
+          "width": 450,
+          "height": 469,
+          "caption": "Generated for Unicorn Valley Story House."
+        },
+        {
+          "id": "generated-mouse-frees-lion",
+          "blockId": "lion-net",
+          "path": "illustrations/generated/mouse-frees-lion.webp",
+          "alt": "A painted storybook scene of the lion tangled in a coarse rope net while the tiny mouse works beside the ropes.",
+          "placement": "full-width",
+          "width": 495,
+          "height": 469,
+          "caption": "Generated for Unicorn Valley Story House."
+        },
+        {
+          "id": "generated-friends-afterwards",
+          "blockId": "kindness-returns",
+          "path": "illustrations/generated/friends-afterwards.webp",
+          "alt": "A warm sunset storybook scene of the freed lion lowering his head toward the mouse in friendship.",
+          "placement": "full-width",
+          "width": 959,
+          "height": 421,
+          "caption": "Generated for Unicorn Valley Story House."
+        }
+      ]
     }
   ]
 }

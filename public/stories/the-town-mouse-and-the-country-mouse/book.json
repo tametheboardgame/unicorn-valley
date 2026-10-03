@@ -29,8 +29,8 @@
       "id": "modern",
       "label": "Modern Covers",
       "cover": {
-        "path": "illustrations/generated/country-welcome.webp",
-        "alt": "Modern Story House cover art for The Town Mouse and the Country Mouse."
+        "path": "illustrations/generated/peaceful-ending.webp",
+        "alt": "Modern Story House cover art showing the Town Mouse and Country Mouse sharing a peaceful country meal."
       },
       "rights": {
         "status": "original",
@@ -44,7 +44,15 @@
     "title": "Aesop's Fables",
     "order": 2
   },
-  "tags": ["classic", "aesop", "animals", "mice", "contentment", "public-domain", "illustrated"],
+  "tags": [
+    "classic",
+    "aesop",
+    "animals",
+    "mice",
+    "contentment",
+    "public-domain",
+    "illustrated"
+  ],
   "publication": {
     "status": "published"
   },

@@ -29,8 +29,8 @@
       "id": "modern",
       "label": "Modern Covers",
       "cover": {
-        "path": "illustrations/generated/race-nap.webp",
-        "alt": "Modern Story House cover art for The Hare and the Tortoise."
+        "path": "illustrations/generated/challenge.webp",
+        "alt": "Modern Story House cover art showing the Hare challenging the Tortoise on the meadow race course."
       },
       "rights": {
         "status": "original",
@@ -44,7 +44,14 @@
     "title": "Aesop's Fables",
     "order": 1
   },
-  "tags": ["classic", "aesop", "animals", "perseverance", "public-domain", "illustrated"],
+  "tags": [
+    "classic",
+    "aesop",
+    "animals",
+    "perseverance",
+    "public-domain",
+    "illustrated"
+  ],
   "publication": {
     "status": "published"
   },
