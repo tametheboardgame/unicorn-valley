@@ -149,7 +149,6 @@ describe('Rainbow Meadow canonical layout', () => {
     expect(disc.players.every(isInsideDistrict)).toBe(true);
     expect(isInsideDistrict(disc.captain)).toBe(true);
 
-    const markedFieldRight = disc.centre.x + disc.field.width / 2 - 30;
     const fieldTop = disc.centre.y - disc.field.height / 2;
     const path = RAINBOW_MEADOW_LAYOUT.structuralPaths.find(({ id }) => id === 'rainbow-disc-spur');
     expect(path).toBeDefined();
@@ -162,10 +161,18 @@ describe('Rainbow Meadow canonical layout', () => {
     expect(Math.abs(disc.sign.y - junction.y)).toBeLessThanOrEqual(100);
     expect(disc.sign.y + 40).toBeLessThan(fieldTop - 150);
 
-    expect(disc.practice.throwLine.x).toBeGreaterThan(markedFieldRight + 30);
+    const practiceYs = new Set(disc.practice.targets.map(({ y }) => y));
+    expect(practiceYs.size).toBe(1);
     expect(disc.practice.targets.every(({ x }) => x > disc.practice.throwLine.x)).toBe(true);
+    expect(disc.practice.targetBaseY).toBeLessThan(fieldTop - 20);
+    expect(
+      Math.min(...disc.practice.targets.map(({ x, radius }) => x - radius)),
+    ).toBeGreaterThan(path.points[2].x + 50);
     expect(Math.max(...disc.practice.targets.map(({ x, radius }) => x + radius))).toBeLessThan(
       RAINBOW_MEADOW_LAYOUT.picnicHill.centre.x - RAINBOW_MEADOW_LAYOUT.picnicHill.hill.width / 2,
+    );
+    expect(disc.practice.targets.map(({ x }) => x)).toEqual(
+      [...disc.practice.targets.map(({ x }) => x)].sort((a, b) => a - b),
     );
 
     expect(path.points[path.points.length - 1]).toEqual(disc.approach);
