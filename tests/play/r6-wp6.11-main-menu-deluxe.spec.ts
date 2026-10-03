@@ -128,14 +128,15 @@ test('new players get a compact front door without irrelevant returning-player a
   const visibleText = visibleTitleText(snapshot);
   expect(visibleText).toContain('Welcome to Unicorn Valley');
   expect(visibleText).toContain('New Game');
+  expect(visibleText).toContain('Just Games');
   expect(visibleText).toContain('Settings');
   expect(visibleText).not.toContain('Continue');
   expect(visibleText).not.toContain('My Unicorn');
   expect(
     titleActionSpan(snapshot, ['title-menu-new-game', 'title-menu-settings']),
-  ).toBeGreaterThanOrEqual(70);
+  ).toBeGreaterThanOrEqual(350);
   expect(titleActionSpan(snapshot, ['title-menu-new-game', 'title-menu-settings'])).toBeLessThan(
-    100,
+    230,
   );
 
   await tapTitleText(page, 'New Game');
@@ -159,6 +160,7 @@ test('returning players get the expanded card, one-tap Continue and protected Ne
   expect(visibleText).toContain('Welcome back!');
   expect(visibleText).toContain('Continue');
   expect(visibleText).toContain('New Game');
+  expect(visibleText).toContain('Just Games');
   expect(visibleText).toContain('My Unicorn');
   expect(visibleText).toContain('Settings');
   expect(
@@ -176,7 +178,7 @@ test('returning players get the expanded card, one-tap Continue and protected Ne
       'title-menu-my-unicorn',
       'title-menu-settings',
     ]),
-  ).toBeLessThan(230);
+  ).toBeLessThan(370);
 
   await tapTitleText(page, 'Continue');
   await waitForScene(page, 'CottageInteriorScene');
@@ -229,8 +231,9 @@ test.describe('phone portrait title controls', () => {
     await expect(logo).toHaveAttribute('src', /unicorn-valley-logo\.webp$/);
 
     const newGame = page.locator('[data-title-action="title-menu-new-game"]');
+    const justGames = page.locator('[data-title-action="title-menu-just-games"]');
     const settings = page.locator('[data-title-action="title-menu-settings"]');
-    for (const target of [newGame, settings]) {
+    for (const target of [newGame, justGames, settings]) {
       await expect(target).toBeVisible();
       const bounds = await target.boundingBox();
       expect(bounds).not.toBeNull();
