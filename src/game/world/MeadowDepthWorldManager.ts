@@ -12,7 +12,8 @@ import type { InteractionActionKind, InteractionTarget } from '../interaction/In
 import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
-import { launchPondLeapActivity } from '../scenes/PondLeapActivityRegistration';
+import { MINI_GAME_IDS } from '../minigames/MiniGameCatalogue';
+import { launchMiniGame } from '../minigames/MiniGameLauncher';
 import { MeadowWindmillStoryService } from '../story/MeadowWindmillStoryService';
 import { RAINBOW_MEADOW_LAYOUT } from './RainbowMeadowMap';
 import { worldDepthForY } from './WorldDepth';
@@ -284,8 +285,11 @@ export class MeadowDepthWorldManager {
       state.scene.cameras.main.flash(85, 205, 244, 255, false);
     }
 
-    void launchPondLeapActivity(state.scene, {
-      discoveredReflection: showRainbowReflection,
+    void launchMiniGame(state.scene, {
+      gameId: MINI_GAME_IDS.pondLeap,
+      source: 'world',
+      worldContext: { interactionId: 'interaction:meadow-pond' },
+      sceneData: { discoveredReflection: showRainbowReflection },
     });
   }
 
