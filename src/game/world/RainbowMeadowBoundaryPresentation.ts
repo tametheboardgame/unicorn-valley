@@ -130,10 +130,16 @@ function createWildflowerPocket(
 }
 
 export function createRainbowMeadowBoundaryPresentation(scene: Phaser.Scene): void {
-  RAINBOW_MEADOW_LAYOUT.boundaries.hedges.forEach((hedge) => createHedge(scene, hedge));
-  RAINBOW_MEADOW_LAYOUT.boundaries.raceFence.forEach((segment) => createRaceFence(scene, segment));
-  RAINBOW_MEADOW_LAYOUT.boundaries.crystalRocks.forEach((rock) => createBoundaryRock(scene, rock));
-  RAINBOW_MEADOW_LAYOUT.boundaries.wildflowerPockets.forEach((pocket) =>
-    createWildflowerPocket(scene, pocket),
-  );
+  RAINBOW_MEADOW_LAYOUT.boundaries.hedges.forEach((hedge) => {
+    createHedge(scene, hedge);
+  });
+  RAINBOW_MEADOW_LAYOUT.boundaries.raceFence.forEach((segment) => {
+    createRaceFence(scene, segment);
+  });
+  RAINBOW_MEADOW_LAYOUT.boundaries.crystalRocks.forEach((rock) => {
+    createBoundaryRock(scene, rock);
+  });
+  RAINBOW_MEADOW_LAYOUT.boundaries.wildflowerPockets.forEach((pocket) => {
+    createWildflowerPocket(scene, pocket);
+  });
 }
