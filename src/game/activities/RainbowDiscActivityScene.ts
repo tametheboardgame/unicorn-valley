@@ -134,12 +134,17 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       .setName('rainbow-disc-activity:panel');
 
     this.add
-      .text(GAME_WIDTH / 2, 55, this.mode === 'practice' ? 'Rainbow Disc Practice' : 'Rainbow Disc', {
-        color: '#5f496d',
-        fontFamily: UI_FONT,
-        fontSize: '34px',
-        fontStyle: 'bold',
-      })
+      .text(
+        GAME_WIDTH / 2,
+        55,
+        this.mode === 'practice' ? 'Rainbow Disc Practice' : 'Rainbow Disc',
+        {
+          color: '#5f496d',
+          fontFamily: UI_FONT,
+          fontSize: '34px',
+          fontStyle: 'bold',
+        },
+      )
       .setOrigin(0.5);
 
     this.add
@@ -435,10 +440,10 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
         300,
         this.mode === 'practice' ? 'PRACTICE COMPLETE!' : 'RAINBOW DISC SCORE!',
         {
-        color: '#5f496d',
-        fontFamily: UI_FONT,
-        fontSize: '36px',
-        fontStyle: 'bold',
+          color: '#5f496d',
+          fontFamily: UI_FONT,
+          fontSize: '36px',
+          fontStyle: 'bold',
         },
       )
       .setOrigin(0.5)
@@ -518,7 +523,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     const target = this.receiverPoint(receiverIndex);
     const distance = Phaser.Math.Distance.Between(release.x, release.y, target.x, target.y);
     const catchRadius =
-      this.mode === 'practice' ? PRACTICE_TARGETS[receiverIndex]?.radius ?? 42 : CATCH_RADIUS;
+      this.mode === 'practice' ? (PRACTICE_TARGETS[receiverIndex]?.radius ?? 42) : CATCH_RADIUS;
     this.resolveThrow(target, distance <= catchRadius, release);
   }
 
