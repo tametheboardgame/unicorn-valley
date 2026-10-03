@@ -1027,23 +1027,40 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     name: string,
     parent: Phaser.GameObjects.Container | null = null,
   ): void {
+    const visual = this.add
+      .graphics()
+      .setName(`rainbow-disc-activity:${name}-visual`);
+
+    const draw = (fill: number, stroke: number): void => {
+      visual.clear();
+      visual.fillStyle(fill, 1);
+      visual.lineStyle(3, stroke, 1);
+      visual.fillRoundedRect(x - width / 2, y - 25, width, 50, 18);
+      visual.strokeRoundedRect(x - width / 2, y - 25, width, 50, 18);
+    };
+    draw(UI_COLOURS.mint, 0x6aa996);
+
     const button = this.add
-      .rectangle(x, y, width, 52, UI_COLOURS.mint, 1)
-      .setStrokeStyle(3, 0x6aa996, 1)
+      .rectangle(x, y, width, 50, 0xffffff, 0.001)
       .setInteractive({ useHandCursor: true })
       .setName(`rainbow-disc-activity:${name}`);
     const label = this.add
       .text(x, y, labelText, {
         color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
-        fontSize: '15px',
+        fontSize: '14px',
         fontStyle: 'bold',
       })
       .setOrigin(0.5)
       .setInteractive({ useHandCursor: true });
-    button.on('pointerdown', onPress);
-    label.on('pointerdown', onPress);
-    parent?.add([button, label]);
+
+    for (const target of [button, label]) {
+      target.on('pointerover', () => draw(UI_COLOURS.gold, 0xc29a4c));
+      target.on('pointerout', () => draw(UI_COLOURS.mint, 0x6aa996));
+      target.on('pointerdown', onPress);
+    }
+
+    parent?.add([visual, button, label]);
   }
 
   private leaveActivity(): void {
