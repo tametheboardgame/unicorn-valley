@@ -3,12 +3,15 @@ import type { InteractionTarget } from '../interaction/InteractionTarget';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { CrystalGrottoStoryService, type CrystalNoteId } from '../story/CrystalGrottoStoryService';
-import { setCrystalBrookPlayerSpawn } from '../world/CrystalBrookMap';
+import {
+  CRYSTAL_BROOK_GROTTO_THRESHOLD,
+  setCrystalBrookPlayerSpawn,
+} from '../world/CrystalBrookMap';
 import { CRYSTAL_GROTTO_MAP } from '../world/MicroLocationTraversalMaps';
 import { InteractiveMicroLocationScene } from './InteractiveMicroLocationScene';
 
 const PLAYER_TEXTURE_KEY = 'player-unicorn-crystal-grotto';
-const BROOK_RETURN = { x: 3020, y: 1740 } as const;
+const BROOK_RETURN = CRYSTAL_BROOK_GROTTO_THRESHOLD.returnPosition;
 const NOTE_INTERACTIONS = [
   {
     id: 'interaction:grotto-note-low',

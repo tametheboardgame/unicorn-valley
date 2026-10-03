@@ -12,6 +12,19 @@ import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegi
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { CrystalGrottoStoryService } from '../story/CrystalGrottoStoryService';
+import {
+  CRYSTAL_BROOK_CASCADE_MEMORY,
+  CRYSTAL_BROOK_ECHO_CLUE,
+  CRYSTAL_BROOK_GROTTO_THRESHOLD,
+  CRYSTAL_BROOK_PEBBLE_STACK,
+  CRYSTAL_BROOK_REFLECTION_POOL,
+  CRYSTAL_BROOK_SHALLOW_RIPPLE,
+  CRYSTAL_BROOK_SHELL_SPARKLE,
+  CRYSTAL_BROOK_SINGING_CRYSTALS,
+  CRYSTAL_BROOK_STEPPING_CHIME,
+  CRYSTAL_BROOK_WATERFALL_MIST,
+  CRYSTAL_BROOK_WATERFALL_PRESENTATION,
+} from './CrystalBrookMap';
 import { worldDepthForY } from './WorldDepth';
 
 interface Point {
@@ -49,7 +62,7 @@ const INTERACTIONS: readonly BrookInteractionDefinition[] = [
     label: 'Echo’s crystal clue',
     actionLabel: 'Listen with Echo',
     actionKind: 'talk',
-    position: { x: 2800, y: 1400 },
+    position: CRYSTAL_BROOK_ECHO_CLUE,
     radius: 130,
     icon: '🎵',
   },
@@ -58,7 +71,7 @@ const INTERACTIONS: readonly BrookInteractionDefinition[] = [
     label: 'Crystal Grotto',
     actionLabel: 'Go inside',
     actionKind: 'enter',
-    position: { x: 3130, y: 1850 },
+    position: CRYSTAL_BROOK_GROTTO_THRESHOLD.position,
     radius: 155,
     icon: '💎',
   },
@@ -67,7 +80,7 @@ const INTERACTIONS: readonly BrookInteractionDefinition[] = [
     label: 'Waterfall Mist',
     actionLabel: 'Step into the mist',
     actionKind: 'interact',
-    position: { x: 2470, y: 670 },
+    position: CRYSTAL_BROOK_WATERFALL_MIST,
     radius: 145,
     icon: '🌈',
   },
@@ -76,7 +89,7 @@ const INTERACTIONS: readonly BrookInteractionDefinition[] = [
     label: 'Reflection Pool',
     actionLabel: 'Look into the water',
     actionKind: 'inspect',
-    position: { x: 2150, y: 1650 },
+    position: CRYSTAL_BROOK_REFLECTION_POOL,
     radius: 120,
     icon: '💧',
   },
@@ -85,7 +98,7 @@ const INTERACTIONS: readonly BrookInteractionDefinition[] = [
     label: 'Stepping-Stone Bend',
     actionLabel: 'Try the stones',
     actionKind: 'interact',
-    position: { x: 2320, y: 1370 },
+    position: CRYSTAL_BROOK_STEPPING_CHIME,
     radius: 150,
     icon: '🪨',
   },
@@ -94,7 +107,7 @@ const INTERACTIONS: readonly BrookInteractionDefinition[] = [
     label: 'Shallow Brook',
     actionLabel: 'Splash',
     actionKind: 'interact',
-    position: { x: 1900, y: 1260 },
+    position: CRYSTAL_BROOK_SHALLOW_RIPPLE,
     radius: 145,
     icon: '≈',
   },
@@ -103,7 +116,7 @@ const INTERACTIONS: readonly BrookInteractionDefinition[] = [
     label: 'River crystal cluster',
     actionLabel: 'Tap a crystal',
     actionKind: 'interact',
-    position: { x: 2380, y: 720 },
+    position: CRYSTAL_BROOK_SINGING_CRYSTALS,
     radius: 145,
     icon: '🔷',
   },
@@ -112,7 +125,7 @@ const INTERACTIONS: readonly BrookInteractionDefinition[] = [
     label: 'Shell-sparkle bank',
     actionLabel: 'Search',
     actionKind: 'inspect',
-    position: { x: 1880, y: 800 },
+    position: CRYSTAL_BROOK_SHELL_SPARKLE,
     radius: 145,
     icon: '🐚',
   },
@@ -121,7 +134,7 @@ const INTERACTIONS: readonly BrookInteractionDefinition[] = [
     label: 'Flat pebble pile',
     actionLabel: 'Stack',
     actionKind: 'interact',
-    position: { x: 1160, y: 1290 },
+    position: CRYSTAL_BROOK_PEBBLE_STACK,
     radius: 145,
     icon: '🪨',
   },
@@ -130,7 +143,7 @@ const INTERACTIONS: readonly BrookInteractionDefinition[] = [
     label: 'Crystal Cascade overlook',
     actionLabel: 'Look towards the course',
     actionKind: 'inspect',
-    position: { x: 2540, y: 1060 },
+    position: CRYSTAL_BROOK_CASCADE_MEMORY,
     radius: 150,
     icon: '🏁',
   },
@@ -387,19 +400,20 @@ export class CrystalBrookDepthWorldManager {
     objects: Phaser.GameObjects.GameObject[],
     open: boolean,
   ): void {
+    const grotto = CRYSTAL_BROOK_GROTTO_THRESHOLD.position;
     const rock = scene.add
-      .ellipse(3130, 1810, 310, 230, 0x63848b, 1)
+      .ellipse(grotto.x, grotto.y - 40, 310, 230, 0x63848b, 1)
       .setStrokeStyle(8, 0x45646d, 0.95)
       .setDepth(7);
     const door = scene.add
-      .ellipse(3130, 1845, 150, 170, open ? 0x365d70 : 0x506f76, 1)
+      .ellipse(grotto.x, grotto.y - 5, 150, 170, open ? 0x365d70 : 0x506f76, 1)
       .setDepth(8)
       .setName('brook-depth:crystal-grotto-entrance');
     objects.push(rock, door);
     if (open) {
       objects.push(
         scene.add
-          .text(3130, 1800, '✦  💎  ✦', {
+          .text(grotto.x, grotto.y - 50, '✦  💎  ✦', {
             color: '#d6fbff',
             fontFamily: 'system-ui, sans-serif',
             fontSize: '26px',
@@ -415,13 +429,15 @@ export class CrystalBrookDepthWorldManager {
     scene: Phaser.Scene,
     objects: Phaser.GameObjects.GameObject[],
   ): void {
+    const waterfall = CRYSTAL_BROOK_WATERFALL_PRESENTATION;
+    const mist = CRYSTAL_BROOK_WATERFALL_MIST;
     objects.push(
       scene.add
-        .rectangle(2470, 520, 145, 300, 0x8adfe5, 0.76)
+        .rectangle(waterfall.x, waterfall.y, 145, 300, 0x8adfe5, 0.76)
         .setStrokeStyle(4, 0xd7fbff, 0.5)
         .setDepth(4)
         .setName('brook-depth:waterfall-mist-landmark'),
-      scene.add.ellipse(2470, 670, 260, 110, 0xd7fbff, 0.18).setDepth(5),
+      scene.add.ellipse(mist.x, mist.y, 260, 110, 0xd7fbff, 0.18).setDepth(5),
     );
   }
 
@@ -429,9 +445,10 @@ export class CrystalBrookDepthWorldManager {
     scene: Phaser.Scene,
     objects: Phaser.GameObjects.GameObject[],
   ): void {
+    const reflectionPool = CRYSTAL_BROOK_REFLECTION_POOL;
     objects.push(
       scene.add
-        .ellipse(2150, 1650, 290, 125, 0x73cbd2, 0.8)
+        .ellipse(reflectionPool.x, reflectionPool.y, 290, 125, 0x73cbd2, 0.8)
         .setStrokeStyle(4, 0xc7f4ef, 0.62)
         .setDepth(4)
         .setName('brook-depth:reflection-pool-landmark'),

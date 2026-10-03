@@ -20,7 +20,13 @@ import { createUnicornAppearanceTexture } from '../player/UnicornAppearanceRende
 import { DEFAULT_PLAYER_SPEED, resolvePlayerMovement } from '../player/PlayerMovement';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { saveLocationCheckpoint } from '../save/saveLocationCheckpoint';
-import { CRYSTAL_BROOK_LOCATION_ID, CRYSTAL_BROOK_MAP } from '../world/CrystalBrookMap';
+import {
+  CRYSTAL_BROOK_LOCATION_ID,
+  CRYSTAL_BROOK_MAP,
+  CRYSTAL_BROOK_LOWER_POOL,
+  CRYSTAL_BROOK_MAIN_ROUTE,
+  CRYSTAL_BROOK_UPPER_POOL,
+} from '../world/CrystalBrookMap';
 import { worldDepthForY } from '../world/WorldDepth';
 
 const COLLISION_TEXTURE_KEY = 'crystal-brook-collision-pixel';
@@ -290,14 +296,13 @@ export class CrystalBrookScene extends Phaser.Scene {
     this.add.circle(3050, 740, 650, 0xbde7c1, 0.38).setDepth(1);
 
     const path = this.add.graphics().setDepth(2);
+    const mainRoute = CRYSTAL_BROOK_MAIN_ROUTE;
     path.lineStyle(128, 0xe8d4a5, 0.9);
     path.beginPath();
-    path.moveTo(100, 1090);
-    path.lineTo(850, 1090);
-    path.lineTo(1510, 1260);
-    path.lineTo(2050, 1080);
-    path.lineTo(2600, 1190);
-    path.lineTo(3230, 990);
+    path.moveTo(mainRoute[0].x, mainRoute[0].y);
+    for (const point of mainRoute.slice(1)) {
+      path.lineTo(point.x, point.y);
+    }
     path.strokePath();
     path.lineStyle(72, 0xf4e8c5, 0.92);
     path.strokePath();
@@ -311,20 +316,23 @@ export class CrystalBrookScene extends Phaser.Scene {
   }
 
   private createWater(): void {
-    this.add.ellipse(1370, 540, 500, 260, 0x5bc4d4, 0.9).setDepth(3);
-    this.add.ellipse(1370, 540, 390, 180, 0x91e0e3, 0.65).setDepth(4);
-    this.add.ellipse(2780, 1320, 460, 260, 0x58bfd0, 0.9).setDepth(3);
-    this.add.ellipse(2780, 1320, 350, 170, 0x91e1e3, 0.62).setDepth(4);
+    const upperPool = CRYSTAL_BROOK_UPPER_POOL;
+    const lowerPool = CRYSTAL_BROOK_LOWER_POOL;
+    this.add.ellipse(upperPool.x, upperPool.y, 500, 260, 0x5bc4d4, 0.9).setDepth(3);
+    this.add.ellipse(upperPool.x, upperPool.y, 390, 180, 0x91e0e3, 0.65).setDepth(4);
+    this.add.ellipse(lowerPool.x, lowerPool.y, 460, 260, 0x58bfd0, 0.9).setDepth(3);
+    this.add.ellipse(lowerPool.x, lowerPool.y, 350, 170, 0x91e1e3, 0.62).setDepth(4);
 
     const stream = this.add.graphics().setDepth(3);
-    stream.lineStyle(150, 0x63c8d5, 0.82);
+    stream.lineStyle(CRYSTAL_BROOK_MAP.shallowStream.width, 0x63c8d5, 0.82);
     stream.beginPath();
-    stream.moveTo(1060, 960);
-    stream.lineTo(1290, 1050);
-    stream.lineTo(1580, 1120);
-    stream.lineTo(1940, 1110);
-    stream.lineTo(2250, 1230);
-    stream.lineTo(2460, 1300);
+    stream.moveTo(
+      CRYSTAL_BROOK_MAP.shallowStream.points[0].x,
+      CRYSTAL_BROOK_MAP.shallowStream.points[0].y,
+    );
+    for (const point of CRYSTAL_BROOK_MAP.shallowStream.points.slice(1)) {
+      stream.lineTo(point.x, point.y);
+    }
     stream.strokePath();
     stream.lineStyle(54, 0xa8e9e5, 0.55);
     stream.strokePath();

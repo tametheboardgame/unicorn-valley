@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
+import { CRYSTAL_BROOK_GROTTO_CUE, CRYSTAL_BROOK_SHALLOW_STREAM_HINT } from './CrystalBrookMap';
 import { worldDepthForY } from './WorldDepth';
 
 const PRESENTATION_ANCHOR_NAME = 'exploration-geometry-presentation-anchor';
@@ -27,8 +28,8 @@ const HINTS: Readonly<Partial<Record<string, HintDefinition>>> = {
   CrystalBrookScene: {
     startsWith: 'Follow the water, hop between stones',
     replacement: 'The pale stream is shallow here. Follow it to find little treasures.',
-    x: 1640,
-    y: 960,
+    x: CRYSTAL_BROOK_SHALLOW_STREAM_HINT.x,
+    y: CRYSTAL_BROOK_SHALLOW_STREAM_HINT.y,
   },
   WhisperingWoodsScene: {
     startsWith: 'The little green lights always follow a safe path.',
@@ -51,8 +52,8 @@ const BRANCH_CUES: Readonly<Partial<Record<string, readonly BranchCueDefinition[
     {
       id: 'prism-grotto',
       text: '🌈 Prism Grotto ↘',
-      x: 2490,
-      y: 1450,
+      x: CRYSTAL_BROOK_GROTTO_CUE.x,
+      y: CRYSTAL_BROOK_GROTTO_CUE.y,
     },
   ],
   WhisperingWoodsScene: [
