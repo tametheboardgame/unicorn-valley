@@ -399,7 +399,5 @@
     }
   ],
   "generatedAt": "2026-10-03T15:38:18.779Z",
-  "failures": [
-    "JavaScript chunk count is 113 (budget 112)"
-  ]
+  "failures": ["JavaScript chunk count is 113 (budget 112)"]
 }
