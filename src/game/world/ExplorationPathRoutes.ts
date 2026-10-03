@@ -12,6 +12,7 @@ export const EXPLORATION_MAIN_ROUTES: Readonly<Record<string, readonly Explorati
     { x: 1750, y: 900 },
     { x: 2150, y: 900 },
     { x: 2690, y: 900 },
+    { x: 2940, y: 900 },
   ],
   SunbeamVillageScene: [
     { x: 120, y: 950 },
