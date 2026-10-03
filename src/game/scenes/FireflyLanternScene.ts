@@ -127,7 +127,7 @@ export class FireflyLanternScene extends Phaser.Scene {
     this.createHud();
     this.createKeyboardInput();
 
-    if (data.startImmediately && data.mode) {
+    if ((data.startImmediately && data.mode) || this.miniGameSession?.variantId) {
       this.time.delayedCall(300, () => this.startAttempt(this.mode, data.difficulty ?? 'classic'));
     } else if (this.modesUnlocked) {
       this.showModeSelector();
