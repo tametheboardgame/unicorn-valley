@@ -5,7 +5,6 @@ import { worldDepthForY } from './WorldDepth';
 const PRESENTATION_ANCHOR_NAME = 'exploration-geometry-presentation-anchor';
 const SUPPORTED_SCENES = new Set([
   'MoonflowerGladeScene',
-  'RainbowMeadowScene',
   'CrystalBrookScene',
   'WhisperingWoodsScene',
 ]);
