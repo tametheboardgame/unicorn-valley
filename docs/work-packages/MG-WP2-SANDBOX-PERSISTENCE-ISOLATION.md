@@ -1,7 +1,7 @@
 ---
 id: MG-WP2
 title: Sandbox, Rewards and Persistence Isolation
-status: proposed
+status: in_progress
 autonomy: amber
 depends_on: [MG-WP1]
 parallel_safe: false
@@ -16,7 +16,7 @@ Make the shared mini-game platform safe for future **Just Games** sessions by se
 
 Mini-game platform impact: **changed - all current catalogue families**
 
-MG-WP2 begins only after MG-WP1 is approved and merged.
+MG-WP2 began on 2026-10-03 after MG-WP1 was human-approved and merged.
 
 ## Scope
 
