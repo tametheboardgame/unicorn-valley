@@ -464,9 +464,7 @@ export class MeadowDepthWorldManager {
       .rectangle(x + 72, y + 44, 74, 9, 0x765442, 1)
       .setOrigin(0, 0.5)
       .setDepth(signDepth);
-    const signHanger = scene.add
-      .rectangle(x + 130, y + 57, 5, 34, 0x765442, 1)
-      .setDepth(signDepth);
+    const signHanger = scene.add.rectangle(x + 130, y + 57, 5, 34, 0x765442, 1).setDepth(signDepth);
     const signBoard = scene.add
       .rectangle(x + 130, y + 84, 94, 36, 0xe7c78d, 1)
       .setStrokeStyle(4, 0x765442, 0.98)
