@@ -16,6 +16,7 @@ import { createUnicornAppearanceTexture } from '../player/UnicornAppearanceRende
 import { DEFAULT_PLAYER_SPEED, resolvePlayerMovement } from '../player/PlayerMovement';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { saveLocationCheckpoint } from '../save/saveLocationCheckpoint';
+import { launchMiniGame } from '../minigames/MiniGameLauncher';
 import {
   createMarigoldPicnicPresentation,
   createPicnicHillLandscape,
@@ -100,14 +101,12 @@ function createMeadowInteractions(scene: Phaser.Scene): readonly InteractionTarg
       result: {
         type: 'callback',
         activate: () =>
-          void import('../minigames/MiniGameLauncher').then(({ launchMiniGame }) =>
-            launchMiniGame(scene, {
-              gameId: 'rainbow-disc',
-              source: 'world',
-              variantId: 'match',
-              worldContext: { interactionId: 'interaction:rainbow-disc' },
-            }),
-          ),
+          void launchMiniGame(scene, {
+            gameId: 'rainbow-disc',
+            source: 'world',
+            variantId: 'match',
+            worldContext: { interactionId: 'interaction:rainbow-disc' },
+          }),
       },
     },
     {
@@ -122,14 +121,12 @@ function createMeadowInteractions(scene: Phaser.Scene): readonly InteractionTarg
       result: {
         type: 'callback',
         activate: () =>
-          void import('../minigames/MiniGameLauncher').then(({ launchMiniGame }) =>
-            launchMiniGame(scene, {
-              gameId: 'rainbow-disc',
-              source: 'world',
-              variantId: 'practice',
-              worldContext: { interactionId: 'interaction:rainbow-disc-practice' },
-            }),
-          ),
+          void launchMiniGame(scene, {
+            gameId: 'rainbow-disc',
+            source: 'world',
+            variantId: 'practice',
+            worldContext: { interactionId: 'interaction:rainbow-disc-practice' },
+          }),
       },
     },
     {
