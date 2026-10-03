@@ -461,7 +461,6 @@ describe('Rainbow Meadow canonical layout', () => {
   });
 });
 
-
 describe('H4.10 Meadow boundary readability', () => {
   const boundaryColliders = RAINBOW_MEADOW_MAP.colliders.filter(({ id }) =>
     id.startsWith('collision:meadow-boundary:'),
@@ -480,15 +479,15 @@ describe('H4.10 Meadow boundary readability', () => {
     expect(RAINBOW_MEADOW_LAYOUT.boundaries.crystalRocks.length).toBeGreaterThanOrEqual(5);
     expect(RAINBOW_MEADOW_LAYOUT.boundaries.wildflowerPockets.length).toBeGreaterThanOrEqual(4);
 
-    expect(
-      boundaryColliders.filter(({ id }) => id.includes(':hedge:')),
-    ).toHaveLength(RAINBOW_MEADOW_LAYOUT.boundaries.hedges.length);
-    expect(
-      boundaryColliders.filter(({ id }) => id.includes(':race-fence:')),
-    ).toHaveLength(RAINBOW_MEADOW_LAYOUT.boundaries.raceFence.length);
-    expect(
-      boundaryColliders.filter(({ id }) => id.includes(':crystal-rock:')),
-    ).toHaveLength(RAINBOW_MEADOW_LAYOUT.boundaries.crystalRocks.length);
+    expect(boundaryColliders.filter(({ id }) => id.includes(':hedge:'))).toHaveLength(
+      RAINBOW_MEADOW_LAYOUT.boundaries.hedges.length,
+    );
+    expect(boundaryColliders.filter(({ id }) => id.includes(':race-fence:'))).toHaveLength(
+      RAINBOW_MEADOW_LAYOUT.boundaries.raceFence.length,
+    );
+    expect(boundaryColliders.filter(({ id }) => id.includes(':crystal-rock:'))).toHaveLength(
+      RAINBOW_MEADOW_LAYOUT.boundaries.crystalRocks.length,
+    );
   });
 
   it('keeps all three neighbouring-region route openings comfortably clear', () => {
@@ -513,12 +512,15 @@ describe('H4.10 Meadow boundary readability', () => {
   });
 });
 
-
 describe('H4.10 Meadow collision audit', () => {
   it('uses visible tree-footprint colliders instead of broad invisible grove walls', () => {
     expect(
       RAINBOW_MEADOW_MAP.colliders.some(({ id }) =>
-        ['collision:north-west-grove', 'collision:north-east-grove', 'collision:sports-east-frame'].includes(id),
+        [
+          'collision:north-west-grove',
+          'collision:north-east-grove',
+          'collision:sports-east-frame',
+        ].includes(id),
       ),
     ).toBe(false);
 
