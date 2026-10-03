@@ -38,7 +38,15 @@
     }
   ],
   "series": null,
-  "tags": ["classic-retelling", "fantasy", "princess", "goblins", "magic", "adventure", "illustrated"],
+  "tags": [
+    "classic-retelling",
+    "fantasy",
+    "princess",
+    "goblins",
+    "magic",
+    "adventure",
+    "illustrated"
+  ],
   "publication": {
     "status": "published"
   },

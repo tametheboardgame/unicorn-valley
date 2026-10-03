@@ -38,7 +38,15 @@
     }
   ],
   "series": null,
-  "tags": ["classic-retelling", "fairy-tale", "birds", "swans", "belonging", "seasons", "illustrated"],
+  "tags": [
+    "classic-retelling",
+    "fairy-tale",
+    "birds",
+    "swans",
+    "belonging",
+    "seasons",
+    "illustrated"
+  ],
   "publication": {
     "status": "published"
   },

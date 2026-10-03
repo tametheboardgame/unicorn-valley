@@ -38,7 +38,16 @@
     }
   ],
   "series": null,
-  "tags": ["classic-retelling", "fairy-tale", "tiny-hero", "flowers", "swallow", "adventure", "kindness", "illustrated"],
+  "tags": [
+    "classic-retelling",
+    "fairy-tale",
+    "tiny-hero",
+    "flowers",
+    "swallow",
+    "adventure",
+    "kindness",
+    "illustrated"
+  ],
   "publication": {
     "status": "published"
   },

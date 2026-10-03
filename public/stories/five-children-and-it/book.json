@@ -38,7 +38,15 @@
     }
   ],
   "series": null,
-  "tags": ["classic-retelling", "fantasy", "wishes", "siblings", "psammead", "adventure", "illustrated"],
+  "tags": [
+    "classic-retelling",
+    "fantasy",
+    "wishes",
+    "siblings",
+    "psammead",
+    "adventure",
+    "illustrated"
+  ],
   "publication": {
     "status": "published"
   },

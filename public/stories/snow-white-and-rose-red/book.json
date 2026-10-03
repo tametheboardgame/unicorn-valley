@@ -38,7 +38,16 @@
     }
   ],
   "series": null,
-  "tags": ["classic-retelling", "fairy-tale", "sisters", "bear", "forest", "kindness", "magic", "illustrated"],
+  "tags": [
+    "classic-retelling",
+    "fairy-tale",
+    "sisters",
+    "bear",
+    "forest",
+    "kindness",
+    "magic",
+    "illustrated"
+  ],
   "publication": {
     "status": "published"
   },
