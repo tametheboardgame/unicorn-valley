@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
-import { parseUnicornAppearance } from '../player/UnicornAppearance';
+import { DEFAULT_UNICORN_APPEARANCE, parseUnicornAppearance } from '../player/UnicornAppearance';
 import { createUnicornAppearanceTexture } from '../player/UnicornAppearanceRenderer';
 import { createResidentAppearanceSprite } from '../population/SupportingResidentArt';
 import { getBrowserSaveService } from '../save/browserSaveService';
@@ -334,12 +334,13 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
 
   private createPlayerTexture(): void {
     const saveService = getBrowserSaveService();
-    const save = saveService.load() ?? saveService.createNewGame();
-    createUnicornAppearanceTexture(
-      this,
-      PLAYER_TEXTURE_KEY,
-      parseUnicornAppearance(save.profile.appearance),
-    );
+    const loadedSave = saveService.load();
+    const appearance = loadedSave
+      ? parseUnicornAppearance(loadedSave.profile.appearance)
+      : this.miniGameSession?.sideEffectPolicy === 'sandbox'
+        ? DEFAULT_UNICORN_APPEARANCE
+        : parseUnicornAppearance(saveService.createNewGame().profile.appearance);
+    createUnicornAppearanceTexture(this, PLAYER_TEXTURE_KEY, appearance);
   }
 
   private renderPossession(): void {

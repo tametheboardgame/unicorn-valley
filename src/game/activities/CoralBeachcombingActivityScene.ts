@@ -6,12 +6,14 @@ import {
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { returnFromMiniGame } from '../minigames/MiniGameLauncher';
+import { runMiniGameAdventureEffect } from '../minigames/MiniGameOutcomeGateway';
 import { readMiniGameSession, type MiniGameSession } from '../minigames/MiniGameSession';
 import { PortraitModalCompanion } from '../ui/PortraitModalCompanion';
 import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from '../ui/uiTheme';
 import {
   getCoralBeachcombingProgress,
   getNextBeachcombingTrail,
+  getNextSandboxBeachcombingTrail,
   recordCoralBeachcombingTrail,
 } from './CoralBeachcombingActivity';
 
@@ -97,7 +99,9 @@ export class CoralBeachcombingActivityScene extends Phaser.Scene {
     this.miniGameSession = readMiniGameSession(data);
     this.returnScene =
       this.miniGameSession?.returnTarget.sceneKey ?? data.returnScene ?? 'StarlightBeachScene';
-    this.trail = getNextBeachcombingTrail(getBrowserSaveService());
+    this.trail = this.isSandboxSession()
+      ? getNextSandboxBeachcombingTrail()
+      : getNextBeachcombingTrail(getBrowserSaveService());
     this.observed.clear();
     this.finished = false;
 
@@ -156,7 +160,7 @@ export class CoralBeachcombingActivityScene extends Phaser.Scene {
         },
       )
       .setOrigin(0.5);
-    this.createButton(155, GAME_HEIGHT - 48, 240, '← Back to Beach', () => this.leaveActivity());
+    this.createButton(155, GAME_HEIGHT - 48, 240, this.exitLabel(), () => this.leaveActivity());
   }
 
   private renderRun(): void {
@@ -265,7 +269,7 @@ export class CoralBeachcombingActivityScene extends Phaser.Scene {
       },
       {
         id: 'exit',
-        actions: [{ id: 'back', label: '← Back to Beach', onPress: () => this.leaveActivity() }],
+        actions: [{ id: 'back', label: this.exitLabel(), onPress: () => this.leaveActivity() }],
       },
     ]);
   }
@@ -280,7 +284,9 @@ export class CoralBeachcombingActivityScene extends Phaser.Scene {
     }
     this.observed.add(index);
     if (this.observed.size >= REQUIRED_OBSERVATIONS) {
-      recordCoralBeachcombingTrail(getBrowserSaveService(), this.trail);
+      runMiniGameAdventureEffect(this.miniGameSession, 'collection', () =>
+        recordCoralBeachcombingTrail(getBrowserSaveService(), this.trail),
+      );
       this.finished = true;
       this.cameras.main.flash(110, 195, 237, 231, false);
       this.renderRun();
@@ -294,7 +300,8 @@ export class CoralBeachcombingActivityScene extends Phaser.Scene {
   }
 
   private renderResult(): void {
-    const progress = getCoralBeachcombingProgress(getBrowserSaveService());
+    const sandbox = this.isSandboxSession();
+    const progress = sandbox ? null : getCoralBeachcombingProgress(getBrowserSaveService());
     const outcome = BEACHCOMBING_OUTCOMES.find(({ trail }) => trail === this.trail);
     if (!outcome) {
       return;
@@ -308,13 +315,14 @@ export class CoralBeachcombingActivityScene extends Phaser.Scene {
       })
       .setOrigin(0.5)
       .setName('wp14-beachcombing-result');
-    const summaryText =
-      'Coral adds your careful observations to the notebook. Nothing living was taken from the beach.';
+    const summaryText = sandbox
+      ? 'Practice note complete. Nothing living was taken, and your adventure notebook stays unchanged.'
+      : 'Coral adds your careful observations to the notebook. Nothing living was taken from the beach.';
     const summary = this.add
       .text(
         GAME_WIDTH / 2,
         285,
-        `${summaryText}\n\nNotebook: ${progress.completedOutcomeCount}/${progress.totalOutcomeCount} pages discovered.`,
+        `${summaryText}${sandbox ? '' : `\\n\\nNotebook: ${progress?.completedOutcomeCount ?? 0}/${progress?.totalOutcomeCount ?? 0} pages discovered.`}`,
         {
           color: UI_COLOURS.softInk,
           fontFamily: UI_FONT,
@@ -329,15 +337,20 @@ export class CoralBeachcombingActivityScene extends Phaser.Scene {
       .setOrigin(0.5);
     this.body?.add([title, summary]);
     this.createButton(500, 465, 260, '🔎 Beachcomb again', () => this.restartRun(), this.body);
-    this.createButton(780, 465, 260, '✓ Back to Beach', () => this.leaveActivity(), this.body);
+    this.createButton(780, 465, 260, this.resultExitLabel(), () => this.leaveActivity(), this.body);
 
-    this.portraitCompanion?.setHeader(`${outcome.icon} ${outcome.name}`, 'Notebook page complete.');
+    this.portraitCompanion?.setHeader(
+      `${outcome.icon} ${outcome.name}`,
+      sandbox ? 'Practice note complete.' : 'Notebook page complete.',
+    );
     this.portraitCompanion?.setCards([
       {
         id: 'result',
         title: 'Coral’s note',
         description: summaryText,
-        badge: `Notebook: ${progress.completedOutcomeCount}/${progress.totalOutcomeCount} pages discovered.`,
+        badge: sandbox
+          ? 'Practice only • adventure notebook unchanged'
+          : `Notebook: ${progress?.completedOutcomeCount ?? 0}/${progress?.totalOutcomeCount ?? 0} pages discovered.`,
       },
     ]);
     this.portraitCompanion?.setActionGroups([
@@ -345,17 +358,31 @@ export class CoralBeachcombingActivityScene extends Phaser.Scene {
         id: 'result-actions',
         actions: [
           { id: 'again', label: '🔎 Beachcomb again', onPress: () => this.restartRun() },
-          { id: 'back', label: '✓ Back to Beach', onPress: () => this.leaveActivity() },
+          { id: 'back', label: this.resultExitLabel(), onPress: () => this.leaveActivity() },
         ],
       },
     ]);
   }
 
   private restartRun(): void {
-    this.trail = getNextBeachcombingTrail(getBrowserSaveService());
+    this.trail = this.isSandboxSession()
+      ? getNextSandboxBeachcombingTrail(this.trail)
+      : getNextBeachcombingTrail(getBrowserSaveService());
     this.observed.clear();
     this.finished = false;
     this.renderRun();
+  }
+
+  private isSandboxSession(): boolean {
+    return this.miniGameSession?.sideEffectPolicy === 'sandbox';
+  }
+
+  private exitLabel(): string {
+    return this.miniGameSession?.source === 'just-games' ? '← Back to Games' : '← Back to Beach';
+  }
+
+  private resultExitLabel(): string {
+    return this.miniGameSession?.source === 'just-games' ? '✓ Back to Games' : '✓ Back to Beach';
   }
 
   private createButton(

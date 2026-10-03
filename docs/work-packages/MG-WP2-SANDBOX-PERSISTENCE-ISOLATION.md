@@ -1,7 +1,7 @@
 ---
 id: MG-WP2
 title: Sandbox, Rewards and Persistence Isolation
-status: proposed
+status: complete
 autonomy: amber
 depends_on: [MG-WP1]
 parallel_safe: false
@@ -16,7 +16,7 @@ Make the shared mini-game platform safe for future **Just Games** sessions by se
 
 Mini-game platform impact: **changed - all current catalogue families**
 
-MG-WP2 begins only after MG-WP1 is approved and merged.
+MG-WP2 began on 2026-10-03 after MG-WP1 was human-approved and merged.
 
 ## Scope
 
@@ -102,6 +102,24 @@ Required evidence includes:
 - no game redesign or balance changes;
 - no durable standalone high-score system unless separately approved;
 - no world quest/reward rebalance.
+
+## Implementation state
+
+Implementation is complete through **MG-WP2E** and exact-head validation is in progress.
+
+Completed checkpoints:
+
+- MG-WP2A - Wobbly Cake economy/quest/progress isolation;
+- MG-WP2B - Coral Beachcombing notebook/save isolation;
+- MG-WP2C - Firefly Lantern best/milestone/unlock isolation;
+- MG-WP2D - Rainbow Run race/reward/Cup isolation;
+- MG-WP2E - no-write audit for Rainbow Disc, Pond Leap and Chess plus package closeout.
+
+Closeout evidence:
+
+`docs/audits/2026-10-03-MG-WP2-SANDBOX-ISOLATION-CLOSEOUT.md`
+
+The package was human-approved for merge on 2026-10-03. Tier 0 and unit contracts passed. Targeted browser smoke was still running at approval time. The repository performance gate remained red at 562.1 KiB first-playable gzip and 113 JavaScript chunks versus current main at 561.8 KiB and 113 chunks; the +0.3 KiB startup delta was recorded and explicitly accepted for merge.
 
 ## Human gate
 

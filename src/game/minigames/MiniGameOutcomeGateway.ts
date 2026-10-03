@@ -11,14 +11,14 @@ export type MiniGameAdventureEffect =
   | 'unlock';
 
 export function canApplyAdventureEffect(
-  session: MiniGameSession,
+  session: MiniGameSession | null,
   _effect: MiniGameAdventureEffect,
 ): boolean {
-  return session.sideEffectPolicy === 'world';
+  return session === null || session.sideEffectPolicy === 'world';
 }
 
 export function runMiniGameAdventureEffect(
-  session: MiniGameSession,
+  session: MiniGameSession | null,
   effect: MiniGameAdventureEffect,
   apply: () => void,
 ): boolean {
