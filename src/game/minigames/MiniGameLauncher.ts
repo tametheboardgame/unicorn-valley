@@ -1,9 +1,5 @@
 import type Phaser from 'phaser';
-import {
-  ensureSceneRegistered,
-  isSceneKey,
-  type SceneKey,
-} from '../scenes/SceneManifest';
+import { ensureSceneRegistered, isSceneKey, type SceneKey } from '../scenes/SceneManifest';
 import { getMiniGameDefinition, type MiniGameId } from './MiniGameCatalogue';
 import {
   createMiniGameSession,
@@ -78,10 +74,7 @@ export async function launchMiniGame(
       return { status: 'caller-inactive', session };
     }
 
-    scene.scene.launch(
-      definition.sceneKey,
-      miniGameSceneData(session, request.sceneData),
-    );
+    scene.scene.launch(definition.sceneKey, miniGameSceneData(session, request.sceneData));
     scene.scene.bringToTop(definition.sceneKey);
     scene.scene.pause();
 
@@ -96,10 +89,7 @@ export function returnFromMiniGame(scene: Phaser.Scene, session: MiniGameSession
   scene.scene.stop(currentKey);
 
   const target: SceneKey = session.returnTarget.sceneKey;
-  if (
-    session.returnTarget.mode === 'resume' &&
-    scene.game.scene.isPaused(target)
-  ) {
+  if (session.returnTarget.mode === 'resume' && scene.game.scene.isPaused(target)) {
     scene.game.scene.resume(target);
     return;
   }
