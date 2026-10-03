@@ -13,6 +13,7 @@ import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from '../ui/uiT
 import {
   getCoralBeachcombingProgress,
   getNextBeachcombingTrail,
+  getNextSandboxBeachcombingTrail,
   recordCoralBeachcombingTrail,
 } from './CoralBeachcombingActivity';
 
@@ -79,7 +80,6 @@ const OBSERVATIONS: Readonly<Record<BeachcombingTrail, readonly ObservationSpot[
 };
 
 const REQUIRED_OBSERVATIONS = 4;
-const SANDBOX_TRAILS = BEACHCOMBING_OUTCOMES.map(({ trail }) => trail);
 
 export class CoralBeachcombingActivityScene extends Phaser.Scene {
   private miniGameSession: MiniGameSession | null = null;
@@ -100,7 +100,7 @@ export class CoralBeachcombingActivityScene extends Phaser.Scene {
     this.returnScene =
       this.miniGameSession?.returnTarget.sceneKey ?? data.returnScene ?? 'StarlightBeachScene';
     this.trail = this.isSandboxSession()
-      ? (SANDBOX_TRAILS[0] ?? 'crab-tracks')
+      ? getNextSandboxBeachcombingTrail()
       : getNextBeachcombingTrail(getBrowserSaveService());
     this.observed.clear();
     this.finished = false;
@@ -366,7 +366,7 @@ export class CoralBeachcombingActivityScene extends Phaser.Scene {
 
   private restartRun(): void {
     this.trail = this.isSandboxSession()
-      ? this.nextSandboxTrail()
+      ? getNextSandboxBeachcombingTrail(this.trail)
       : getNextBeachcombingTrail(getBrowserSaveService());
     this.observed.clear();
     this.finished = false;
@@ -383,12 +383,6 @@ export class CoralBeachcombingActivityScene extends Phaser.Scene {
 
   private resultExitLabel(): string {
     return this.miniGameSession?.source === 'just-games' ? '✓ Back to Games' : '✓ Back to Beach';
-  }
-
-  private nextSandboxTrail(): BeachcombingTrail {
-    const currentIndex = SANDBOX_TRAILS.indexOf(this.trail);
-    const nextIndex = currentIndex < 0 ? 0 : (currentIndex + 1) % SANDBOX_TRAILS.length;
-    return SANDBOX_TRAILS[nextIndex] ?? 'crab-tracks';
   }
 
   private createButton(
