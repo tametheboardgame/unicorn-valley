@@ -524,14 +524,12 @@ describe('H4.10 Meadow finishing details', () => {
 
     const clearanceFromSpurPoints = (point: { x: number; y: number }): number =>
       Math.min(
-        ...spur.points.map((pathPoint) =>
-          Math.hypot(point.x - pathPoint.x, point.y - pathPoint.y),
-        ),
+        ...spur.points.map((pathPoint) => Math.hypot(point.x - pathPoint.x, point.y - pathPoint.y)),
       );
 
-    expect(clearanceFromSpurPoints(RAINBOW_MEADOW_LAYOUT.natureFeatures.petalPatch)).toBeGreaterThan(
-      150,
-    );
+    expect(
+      clearanceFromSpurPoints(RAINBOW_MEADOW_LAYOUT.natureFeatures.petalPatch),
+    ).toBeGreaterThan(150);
     expect(
       RAINBOW_MEADOW_LAYOUT.scenery.flowerClusters.every(
         (cluster) => clearanceFromSpurPoints(cluster) > 100,
@@ -590,8 +588,7 @@ describe('H4.10 Meadow collision audit', () => {
     expect(
       pond.frogs.every(
         ({ padIndex, hopToPadIndex }) =>
-          pond.lilyPads[padIndex] !== undefined &&
-          pond.lilyPads[hopToPadIndex] !== undefined,
+          pond.lilyPads[padIndex] !== undefined && pond.lilyPads[hopToPadIndex] !== undefined,
       ),
     ).toBe(true);
   });
