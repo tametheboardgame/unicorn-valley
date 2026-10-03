@@ -3,9 +3,8 @@ import { RefreshThrottle } from '../performance/RefreshThrottle';
 import { worldDepthForY } from './WorldDepth';
 
 const PRESENTATION_ANCHOR_NAME = 'exploration-geometry-presentation-anchor';
-const SUPPORTED_SCENES = new Set([
+const EXPLORATION_GEOMETRY_SUPPORTED_SCENES = new Set<string>([
   'MoonflowerGladeScene',
-  'RainbowMeadowScene',
   'CrystalBrookScene',
   'WhisperingWoodsScene',
 ]);
@@ -130,7 +129,7 @@ export class ExplorationGeometryPresentationManager {
     }
 
     for (const scene of this.game.scene.getScenes(true)) {
-      if (!SUPPORTED_SCENES.has(scene.scene.key)) {
+      if (!EXPLORATION_GEOMETRY_SUPPORTED_SCENES.has(scene.scene.key)) {
         continue;
       }
       if (scene.children.getByName(PRESENTATION_ANCHOR_NAME)) {

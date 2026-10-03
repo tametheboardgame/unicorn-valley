@@ -331,12 +331,6 @@ export const RAINBOW_MEADOW_LAYOUT = {
       { x: 2525, y: 500 },
       { x: 3260, y: 560 },
     ],
-    productionFlowerClusters: [
-      { x: 390, y: 510, colour: 0xef93b8 },
-      { x: 690, y: 470, colour: 0xf2c469 },
-      { x: 930, y: 530, colour: 0x8acbda },
-    ],
-    productionLeafClusters: [{ x: 120, y: 1540, mirrored: false }],
   },
   sunbeamGateway: {
     id: 'sunbeam-village',

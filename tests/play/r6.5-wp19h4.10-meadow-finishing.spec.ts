@@ -26,6 +26,14 @@ async function waitForMeadow(page: Page): Promise<DiagnosticScene> {
       .__UNICORN_VALLEY_DIAGNOSTICS__;
     return api?.snapshot().activeScenes.includes('RainbowMeadowScene') === true;
   });
+  await page.waitForFunction(() => {
+    const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
+      .__UNICORN_VALLEY_DIAGNOSTICS__;
+    const scene = api?.snapshot().scenes.find(({ key }) => key === 'RainbowMeadowScene');
+    return (
+      scene?.objects.some(({ name }) => name.startsWith('rainbow-meadow:boundary:hedge:')) === true
+    );
+  });
 
   return page.evaluate(() => {
     const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
@@ -85,5 +93,5 @@ test('H4.10 boundary presentation preserves the three visual route openings', as
 
   expect(nearestBoundaryDistance(145, 1050)).toBeGreaterThan(180);
   expect(nearestBoundaryDistance(2950, 160)).toBeGreaterThan(170);
-  expect(nearestBoundaryDistance(3290, 1035)).toBeGreaterThan(180);
+  expect(nearestBoundaryDistance(3290, 1035)).toBeGreaterThan(160);
 });

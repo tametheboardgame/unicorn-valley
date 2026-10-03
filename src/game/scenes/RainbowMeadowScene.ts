@@ -35,7 +35,8 @@ import {
 } from '../world/SunbeamVillageMap';
 import { CoreNpcPresenceService } from '../world/CoreNpcPresenceService';
 import { createRainbowDiscMeadowPresentation } from '../world/RainbowDiscMeadowPresentation';
-import { createRainbowMeadowBoundaryPresentation } from '../world/RainbowMeadowBoundaryPresentation';
+import { resolveRainbowMeadowWalkThroughDestination } from '../world/RainbowMeadowTraversal';
+import { RAINBOW_RUN_HUB_LOCATION_ID } from '../world/RainbowRunHubMap';
 import { worldDepthForY } from '../world/WorldDepth';
 
 const COLLISION_TEXTURE_KEY = 'rainbow-meadow-collision-pixel';
@@ -143,6 +144,7 @@ export class RainbowMeadowScene extends Phaser.Scene {
   private feedbackText: Phaser.GameObjects.Text | null = null;
   private feedbackTimer: Phaser.Time.TimerEvent | null = null;
   private discoveryService: DiscoveryService | null = null;
+  private boundaryTransitionStarted = false;
   private readonly discoveryPickups = new Map<DiscoveryId, Phaser.GameObjects.Container>();
 
   public constructor() {
@@ -150,6 +152,7 @@ export class RainbowMeadowScene extends Phaser.Scene {
   }
 
   public create(): void {
+    this.boundaryTransitionStarted = false;
     this.meadowInteractions = createMeadowInteractions(this);
     this.createEnvironment();
     this.ensureCollisionTexture();
@@ -266,6 +269,10 @@ export class RainbowMeadowScene extends Phaser.Scene {
     this.player.updatePresentation(time);
     this.player.sprite.setDepth(worldDepthForY(this.player.sprite.y, 0.5));
 
+    if (this.tryActivateBoundaryTransition()) {
+      return;
+    }
+
     this.tryCollectDiscoveries();
 
     this.activeInteraction = selectInteractionTarget(
@@ -280,19 +287,14 @@ export class RainbowMeadowScene extends Phaser.Scene {
   }
 
   private activateInteraction(target: InteractionTarget): void {
-    if (target.id === 'interaction:meadow-race-entrance') {
-      return;
-    }
-
     if (target.result.type === 'scene-transition') {
       if (target.result.sceneKey === 'SunbeamVillageScene') {
-        const meadowEntrance = SUNBEAM_VILLAGE_MAP.entrances.find(
-          (entrance) => entrance.id === 'rainbow-meadow',
-        );
-        if (meadowEntrance) {
-          setSunbeamVillagePlayerSpawn(meadowEntrance.approach);
-        }
-        saveLocationCheckpoint(getBrowserSaveService(), SUNBEAM_VILLAGE_LOCATION_ID);
+        this.transitionToSunbeamVillage();
+        return;
+      }
+      if (target.result.sceneKey === 'RainbowRunEntryScene') {
+        this.transitionToRaceHub();
+        return;
       }
       this.scene.start(target.result.sceneKey, target.result.payload);
       return;
@@ -306,6 +308,44 @@ export class RainbowMeadowScene extends Phaser.Scene {
     if (target.result.type === 'message') {
       this.showFeedback(`${target.result.title}\n${target.result.message}`);
     }
+  }
+
+  private tryActivateBoundaryTransition(): boolean {
+    if (!this.player || this.boundaryTransitionStarted) {
+      return false;
+    }
+
+    const destination = resolveRainbowMeadowWalkThroughDestination({
+      x: this.player.sprite.x,
+      y: this.player.sprite.y,
+    });
+    if (!destination) {
+      return false;
+    }
+
+    this.boundaryTransitionStarted = true;
+    if (destination === 'rainbow-run-hub') {
+      this.transitionToRaceHub();
+    } else {
+      this.transitionToSunbeamVillage();
+    }
+    return true;
+  }
+
+  private transitionToSunbeamVillage(): void {
+    const meadowEntrance = SUNBEAM_VILLAGE_MAP.entrances.find(
+      (entrance) => entrance.id === 'rainbow-meadow',
+    );
+    if (meadowEntrance) {
+      setSunbeamVillagePlayerSpawn(meadowEntrance.approach);
+    }
+    saveLocationCheckpoint(getBrowserSaveService(), SUNBEAM_VILLAGE_LOCATION_ID);
+    this.scene.start('SunbeamVillageScene');
+  }
+
+  private transitionToRaceHub(): void {
+    saveLocationCheckpoint(getBrowserSaveService(), RAINBOW_RUN_HUB_LOCATION_ID);
+    this.scene.start('RainbowRunEntryScene');
   }
 
   private tryCollectDiscoveries(): void {
@@ -432,9 +472,15 @@ export class RainbowMeadowScene extends Phaser.Scene {
         .setDepth(1);
     }
 
+    void import('../world/RainbowMeadowTraversalPresentation').then(
+      ({ createRainbowMeadowTraversalPresentation }) => {
+        if (this.scene.isActive()) {
+          createRainbowMeadowTraversalPresentation(this);
+        }
+      },
+    );
     this.createPond();
     this.createGroves();
-    createRainbowMeadowBoundaryPresentation(this);
     this.createSunbeamVillageSign();
     this.createRainbowRunHubGateway();
     createRainbowDiscMeadowPresentation(this);

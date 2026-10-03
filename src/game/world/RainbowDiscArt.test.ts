@@ -1,6 +1,8 @@
 import type Phaser from 'phaser';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type { UnicornAppearance } from '../player/UnicornAppearance';
+vi.mock('phaser', () => ({ default: {} }));
+
 import {
   resolveRainbowDiscHornCatchPoint,
   resolveRainbowDiscResidentBodyOrigin,

@@ -92,7 +92,7 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     actionLabel: 'Brush past',
     actionKind: 'interact',
     position: RAINBOW_MEADOW_LAYOUT.natureFeatures.petalPatch,
-    radius: 135,
+    radius: 70,
   },
   {
     id: 'flower-circle',
@@ -108,7 +108,7 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
     actionLabel: 'Follow',
     actionKind: 'interact',
     position: RAINBOW_MEADOW_LAYOUT.natureFeatures.butterflyParade,
-    radius: 145,
+    radius: 70,
   },
 ];
 

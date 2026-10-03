@@ -1,12 +1,10 @@
 import Phaser from 'phaser';
-import { RAINBOW_MEADOW_LAYOUT } from '../world/RainbowMeadowMap';
 import { SUNBEAM_VILLAGE_LAYERS, SUNBEAM_VILLAGE_LAYOUT } from '../world/SunbeamVillageLayout';
 import { worldDepthForY } from '../world/WorldDepth';
 
 export type ProductionEnvironmentId =
   | 'moonflower-glade'
   | 'sunbeam-village'
-  | 'rainbow-meadow'
   | 'crystal-brook'
   | 'whispering-woods'
   | 'rainbow-run';
@@ -21,7 +19,6 @@ interface AmbientPoint {
 
 const SCENE_ENVIRONMENTS: Readonly<Record<string, ProductionEnvironmentId>> = {
   MoonflowerGladeScene: 'moonflower-glade',
-  RainbowMeadowScene: 'rainbow-meadow',
   CrystalBrookScene: 'crystal-brook',
   WhisperingWoodsScene: 'whispering-woods',
   RaceScene: 'rainbow-run',
@@ -303,48 +300,6 @@ export function createSunbeamVillageProductionPresentation(scene: Phaser.Scene):
   createStorybookTree(scene, environment, 185, 1835, 'south-west-tree');
 }
 
-function createRainbowMeadowProduction(scene: Phaser.Scene): void {
-  const environment = 'rainbow-meadow';
-  // H4.2 makes the scene-owned district geometry authoritative. Keep this named layer for
-  // presentation lifecycle compatibility, but do not paint a second competing Meadow layout.
-  nameObject(scene.add.graphics().setDepth(1.55), environment, 'background');
-
-  const signature = nameObject(scene.add.container(0, 0), environment, 'signature');
-  signature.setDepth(8.2);
-
-  for (const { x, y, colour } of RAINBOW_MEADOW_LAYOUT.scenery.productionFlowerClusters) {
-    const stem = scene.add.rectangle(x, y, 7, 64, 0x609867, 0.86);
-    const bloom = scene.add.circle(x, y - 38, 18, colour, 0.9);
-    const centre = scene.add.circle(x, y - 38, 7, 0xfff1a8, 0.95);
-    signature.add([stem, bloom, centre]);
-  }
-  for (const cluster of RAINBOW_MEADOW_LAYOUT.scenery.productionLeafClusters) {
-    createLeafCluster(
-      scene,
-      environment,
-      cluster.x,
-      cluster.y,
-      [0x4f9362, 0x72ae70, 0x735b43],
-      cluster.mirrored,
-    );
-  }
-
-  addAmbientMotes(
-    scene,
-    environment,
-    [
-      { x: 720, y: 720, radius: 4 },
-      { x: 1260, y: 430, radius: 5 },
-      { x: 1960, y: 760, radius: 4 },
-      { x: 2380, y: 1320, radius: 5 },
-      { x: 2940, y: 900, radius: 4 },
-    ],
-    0xfff4bd,
-    17,
-    12,
-  );
-}
-
 function createCrystalBrookProduction(scene: Phaser.Scene): void {
   const environment = 'crystal-brook';
   const background = nameObject(scene.add.graphics().setDepth(1.55), environment, 'background');
@@ -496,9 +451,6 @@ function decorateScene(scene: Phaser.Scene, environment: ProductionEnvironmentId
   switch (environment) {
     case 'moonflower-glade':
       createMoonflowerGladeProduction(scene);
-      break;
-    case 'rainbow-meadow':
-      createRainbowMeadowProduction(scene);
       break;
     case 'crystal-brook':
       createCrystalBrookProduction(scene);
