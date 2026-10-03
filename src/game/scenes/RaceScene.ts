@@ -1160,9 +1160,7 @@ export class RaceScene extends Phaser.Scene {
 
   private restartRace(): void {
     this.pointerInput?.setButton('RACE_JUMP', false);
-    this.scene.restart(
-      this.miniGameSession ? miniGameSceneData(this.miniGameSession) : undefined,
-    );
+    this.scene.restart(this.miniGameSession ? miniGameSceneData(this.miniGameSession) : undefined);
   }
 
   private returnDestinationLabel(): string {
