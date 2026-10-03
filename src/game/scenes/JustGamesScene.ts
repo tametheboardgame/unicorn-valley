@@ -6,7 +6,6 @@ import {
   type MiniGameGroup,
   type MiniGameVariantDefinition,
 } from '../minigames/MiniGameCatalogue';
-import { launchMiniGame } from '../minigames/MiniGameLauncher';
 import { UI_DESIGN_TOKENS } from '../ui/UiDesignSystem';
 import { createUiActionHitTarget, drawUiPanel, drawUiPanelShadow } from '../ui/UiPrimitives';
 import { UI_COLOURS, UI_FONT } from '../ui/uiTheme';
@@ -538,6 +537,7 @@ export class JustGamesScene extends Phaser.Scene {
     this.renderDetails();
 
     try {
+      const { launchMiniGame } = await import('../minigames/MiniGameLauncher');
       const result = await launchMiniGame(this, {
         gameId: definition.id,
         source: 'just-games',
