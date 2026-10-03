@@ -1,10 +1,11 @@
 import Phaser from 'phaser';
 import type { UnicornAppearance } from '../player/UnicornAppearance';
+import { createResidentAppearanceSprite } from '../population/SupportingResidentArt';
 import {
-  createResidentAppearanceSprite,
-  SUPPORTING_RESIDENT_ART_LAYOUT,
-} from '../population/SupportingResidentArt';
-import { createRainbowDiscRing, drawRainbowTarget } from './RainbowDiscArt';
+  createRainbowDiscRing,
+  drawRainbowTarget,
+  resolveRainbowDiscHornCatchPoint,
+} from './RainbowDiscArt';
 import { worldDepthForY } from './WorldDepth';
 import { RAINBOW_MEADOW_LAYOUT } from './RainbowMeadowMap';
 
@@ -127,37 +128,6 @@ function createMeadowRecreationSign(
     })
     .setOrigin(0.5)
     .setDepth(depth + 0.05);
-}
-
-function resolveHornCatchPoint(
-  sprite: Phaser.GameObjects.Sprite,
-  appearance: UnicornAppearance,
-): { x: number; y: number } {
-  const tipOffset =
-    appearance.hornStyle === 'star'
-      ? -82
-      : appearance.hornStyle === 'short'
-        ? -75
-        : appearance.hornStyle === 'crystal' || appearance.hornStyle === 'moon'
-          ? -85
-          : -88;
-  const textureX =
-    SUPPORTING_RESIDENT_ART_LAYOUT.drawX + 78 * SUPPORTING_RESIDENT_ART_LAYOUT.drawScale;
-  const textureY =
-    SUPPORTING_RESIDENT_ART_LAYOUT.drawY + (tipOffset + 10) * SUPPORTING_RESIDENT_ART_LAYOUT.drawScale;
-  const originTextureX = SUPPORTING_RESIDENT_ART_LAYOUT.textureWidth * sprite.originX;
-  const originTextureY = SUPPORTING_RESIDENT_ART_LAYOUT.textureHeight * sprite.originY;
-  const localX =
-    (textureX - originTextureX) *
-    (sprite.displayWidth / SUPPORTING_RESIDENT_ART_LAYOUT.textureWidth);
-  const localY =
-    (textureY - originTextureY) *
-    (sprite.displayHeight / SUPPORTING_RESIDENT_ART_LAYOUT.textureHeight);
-
-  return {
-    x: sprite.x + (sprite.flipX ? -localX : localX),
-    y: sprite.y + localY,
-  };
 }
 
 export function createRainbowDiscMeadowPresentation(scene: Phaser.Scene): void {
@@ -287,7 +257,7 @@ export function createRainbowDiscMeadowPresentation(scene: Phaser.Scene): void {
   });
 
   const hornPoint = (sprite: Phaser.GameObjects.Sprite, index: number): { x: number; y: number } =>
-    resolveHornCatchPoint(
+    resolveRainbowDiscHornCatchPoint(
       sprite,
       RAINBOW_DISC_PLAYER_APPEARANCES[index] ?? RAINBOW_DISC_PLAYER_APPEARANCES[0],
     );
