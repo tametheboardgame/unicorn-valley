@@ -1,7 +1,7 @@
 ---
 id: MG-WP3
 title: Just Games Home and Catalogue Experience
-status: proposed
+status: in_progress
 autonomy: amber
 depends_on: [MG-WP2]
 parallel_safe: false
@@ -16,7 +16,7 @@ Expose the shared mini-game platform through a child-readable **Just Games** ent
 
 Mini-game platform impact: **changed - catalogue access layer**
 
-MG-WP3 begins only after MG-WP2 is approved and merged.
+MG-WP3 began on 2026-10-03 after MG-WP2 was explicitly approved and merged.
 
 ## Scope
 
