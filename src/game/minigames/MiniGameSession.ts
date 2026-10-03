@@ -1,9 +1,5 @@
 import type { SceneKey } from '../scenes/SceneManifest';
-import {
-  getMiniGameDefinition,
-  isMiniGameVariant,
-  type MiniGameId,
-} from './MiniGameCatalogue';
+import { getMiniGameDefinition, isMiniGameVariant, type MiniGameId } from './MiniGameCatalogue';
 
 export const MINI_GAME_SESSION_DATA_KEY = 'miniGameSession' as const;
 
@@ -42,13 +38,8 @@ export interface MiniGameSessionRequest {
 
 export function createMiniGameSession(request: MiniGameSessionRequest): MiniGameSession {
   const definition = getMiniGameDefinition(request.gameId);
-  if (
-    request.variantId !== undefined &&
-    !isMiniGameVariant(definition, request.variantId)
-  ) {
-    throw new Error(
-      `Unknown variant "${request.variantId}" for mini-game "${request.gameId}"`,
-    );
+  if (request.variantId !== undefined && !isMiniGameVariant(definition, request.variantId)) {
+    throw new Error(`Unknown variant "${request.variantId}" for mini-game "${request.gameId}"`);
   }
 
   return {
