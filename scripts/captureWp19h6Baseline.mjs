@@ -108,10 +108,7 @@ try {
   await browser.close();
 }
 
-await writeFile(
-  `${outputDir}/baseline.json`,
-  `${JSON.stringify(evidence, null, 2)}\n`,
-);
+await writeFile(`${outputDir}/baseline.json`, `${JSON.stringify(evidence, null, 2)}\n`);
 await writeFile(
   `${outputDir}/bundle-performance.json`,
   `${JSON.stringify(performanceReport, null, 2)}\n`,
