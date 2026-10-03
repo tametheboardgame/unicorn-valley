@@ -35,6 +35,7 @@ import {
 } from '../world/SunbeamVillageMap';
 import { CoreNpcPresenceService } from '../world/CoreNpcPresenceService';
 import { createRainbowDiscMeadowPresentation } from '../world/RainbowDiscMeadowPresentation';
+import { createRainbowMeadowBoundaryPresentation } from '../world/RainbowMeadowBoundaryPresentation';
 import { worldDepthForY } from '../world/WorldDepth';
 
 const COLLISION_TEXTURE_KEY = 'rainbow-meadow-collision-pixel';
@@ -433,6 +434,8 @@ export class RainbowMeadowScene extends Phaser.Scene {
 
     this.createPond();
     this.createGroves();
+    createRainbowMeadowBoundaryPresentation(this);
+    this.createSunbeamVillageSign();
     this.createRainbowRunHubGateway();
     createRainbowDiscMeadowPresentation(this);
     createPicnicHillLandscape(this);
@@ -468,9 +471,20 @@ export class RainbowMeadowScene extends Phaser.Scene {
       )
       .setName('rainbow-meadow:nature:pond-reflection')
       .setDepth(4);
-    for (const { x, y } of pond.lilyPads) {
-      this.add.ellipse(x, y, 48, 24, 0x6fa76c, 0.95).setDepth(5);
-      this.add.circle(x + 7, y - 3, 8, 0xffd5ef, 0.95).setDepth(6);
+    for (const { x, y, scale } of pond.lilyPads) {
+      this.add
+        .ellipse(x, y, 52 * scale, 26 * scale, 0x6fa76c, 0.95)
+        .setStrokeStyle(2, 0x4f8653, 0.55)
+        .setDepth(5);
+      this.add.circle(x + 7 * scale, y - 3 * scale, 8 * scale, 0xffd5ef, 0.95).setDepth(6);
+    }
+
+    for (const frog of pond.frogs) {
+      const from = pond.lilyPads[frog.padIndex];
+      const to = pond.lilyPads[frog.hopToPadIndex];
+      if (from && to) {
+        this.createPondFrog(frog.id, from, to, frog.colour, frog.delayMs);
+      }
     }
 
     const reedBaseX = pond.position.x - pond.width / 2 + 34;
@@ -497,6 +511,52 @@ export class RainbowMeadowScene extends Phaser.Scene {
     }
   }
 
+  private createPondFrog(
+    id: string,
+    from: { x: number; y: number },
+    to: { x: number; y: number },
+    colour: number,
+    delayMs: number,
+  ): void {
+    const body = this.add.ellipse(0, 2, 26, 18, colour, 1).setStrokeStyle(2, 0x4f7f4e, 0.8);
+    const head = this.add.ellipse(0, -8, 24, 18, colour, 1).setStrokeStyle(2, 0x4f7f4e, 0.8);
+    const leftEye = this.add.circle(-7, -17, 4.5, 0xf5f5d9, 1);
+    const rightEye = this.add.circle(7, -17, 4.5, 0xf5f5d9, 1);
+    const leftPupil = this.add.circle(-7, -17, 2, 0x3f4044, 1);
+    const rightPupil = this.add.circle(7, -17, 2, 0x3f4044, 1);
+    const frog = this.add
+      .container(from.x, from.y - 13, [body, head, leftEye, rightEye, leftPupil, rightPupil])
+      .setName(`rainbow-meadow:nature:frog:${id}`)
+      .setDepth(worldDepthForY(from.y, 0.18));
+
+    this.time.delayedCall(delayMs, () => {
+      if (!frog.active) {
+        return;
+      }
+
+      const flight = { progress: 0 };
+      this.tweens.add({
+        targets: flight,
+        progress: 1,
+        duration: 950,
+        yoyo: true,
+        repeat: -1,
+        repeatDelay: 1500,
+        ease: 'Sine.InOut',
+        onUpdate: () => {
+          const progress = flight.progress;
+          frog
+            .setPosition(
+              Phaser.Math.Linear(from.x, to.x, progress),
+              Phaser.Math.Linear(from.y - 13, to.y - 13, progress) -
+                Math.sin(Math.PI * progress) * 34,
+            )
+            .setDepth(worldDepthForY(Phaser.Math.Linear(from.y, to.y, progress), 0.18));
+        },
+      });
+    });
+  }
+
   private createGroves(): void {
     for (const tree of RAINBOW_MEADOW_LAYOUT.scenery.trees) {
       this.createMeadowTree(tree.id, tree.x, tree.y, tree.scale);
@@ -514,6 +574,61 @@ export class RainbowMeadowScene extends Phaser.Scene {
       .setName(`rainbow-meadow:tree:${id}`)
       .setScale(scale)
       .setDepth(worldDepthForY(y, 0.25));
+  }
+
+  private createSunbeamVillageSign(): void {
+    const { x, y } = RAINBOW_MEADOW_LAYOUT.sunbeamGateway.sign;
+    const depth = worldDepthForY(y + 104, 0.28);
+    const sign = this.add
+      .container(x, y)
+      .setName('rainbow-meadow:sunbeam-village-sign')
+      .setDepth(depth);
+
+    const leftPost = this.add
+      .rectangle(-58, 58, 14, 118, 0x79573f, 1)
+      .setStrokeStyle(2, 0x5c4234, 0.88);
+    const rightPost = this.add
+      .rectangle(58, 58, 14, 118, 0x79573f, 1)
+      .setStrokeStyle(2, 0x5c4234, 0.88);
+
+    const board = this.add.graphics();
+    board.fillStyle(0xeadcaf, 1);
+    board.lineStyle(5, 0x765442, 0.98);
+    board.fillRoundedRect(-126, -42, 252, 86, 18);
+    board.strokeRoundedRect(-126, -42, 252, 86, 18);
+    board.fillStyle(0xd8b9e4, 0.82);
+    board.fillRoundedRect(-112, -31, 224, 9, 5);
+
+    const roofMark = this.add.graphics();
+    roofMark.fillStyle(0x8d5963, 1);
+    roofMark.fillTriangle(-101, 3, -82, -15, -63, 3);
+    roofMark.fillStyle(0x8fc9d8, 1);
+    roofMark.fillRect(-94, 3, 24, 19);
+    roofMark.fillStyle(0x624b5d, 1);
+    roofMark.fillRect(-85, 10, 7, 12);
+    roofMark.fillStyle(0xffefb2, 1);
+    roofMark.fillRect(-92, 6, 6, 6);
+
+    const label = this.add
+      .text(18, -8, 'SUNBEAM VILLAGE', {
+        color: '#5d4968',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '15px',
+        fontStyle: 'bold',
+        align: 'center',
+      })
+      .setOrigin(0.5);
+
+    const direction = this.add
+      .text(18, 18, '←  THIS WAY', {
+        color: '#80657f',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '12px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5);
+
+    sign.add([leftPost, rightPost, board, roofMark, label, direction]);
   }
 
   private createRainbowRunHubGateway(): void {
@@ -571,15 +686,85 @@ export class RainbowMeadowScene extends Phaser.Scene {
   }
 
   private createMeadowFlowers(): void {
-    const colours = [0xf7a4c6, 0xffdf7e, 0xb8a1e4, 0x88cbe0];
-    RAINBOW_MEADOW_LAYOUT.scenery.flowerClusters.forEach(({ x, y }, index) => {
+    const palettes = [
+      [0xd8c4ee, 0x92cfe1, 0xf7f0d0],
+      [0xa9d8ea, 0xe5c7ef, 0xf4d58a],
+      [0xf0d7e8, 0x9bcfbd, 0xc8b4e8],
+    ] as const;
+    const bloomOffsets = [
+      { x: -24, y: 2, scale: 0.86 },
+      { x: -8, y: -12, scale: 1 },
+      { x: 10, y: 4, scale: 0.78 },
+      { x: 26, y: -7, scale: 0.9 },
+      { x: 2, y: -29, scale: 0.68 },
+    ] as const;
+
+    RAINBOW_MEADOW_LAYOUT.scenery.flowerClusters.forEach(({ x, y }, clusterIndex) => {
       const depth = worldDepthForY(y, -0.2);
+      const stems = this.add.graphics();
+      stems.lineStyle(3, 0x5d9563, 0.88);
+      stems.fillStyle(0x75a66e, 0.78);
+
+      bloomOffsets.forEach((bloom, bloomIndex) => {
+        const stemBaseY = 18 + (bloomIndex % 2) * 3;
+        stems.lineBetween(bloom.x, stemBaseY, bloom.x + 2, bloom.y + 4);
+        stems.fillEllipse(bloom.x - 5, bloom.y + 11, 11, 5);
+        stems.fillEllipse(bloom.x + 7, bloom.y + 15, 10, 5);
+      });
+
+      const children: Phaser.GameObjects.GameObject[] = [stems];
+      const palette = palettes[clusterIndex % palettes.length] ?? palettes[0];
+
+      bloomOffsets.forEach((bloom, bloomIndex) => {
+        const colour = palette[(clusterIndex + bloomIndex) % palette.length] ?? palette[0];
+        const kind = (clusterIndex + bloomIndex) % 3;
+
+        if (kind === 0) {
+          const petals = [0, 72, 144, 216, 288].map((angle) =>
+            this.add
+              .ellipse(
+                bloom.x + Math.cos(Phaser.Math.DegToRad(angle)) * 7 * bloom.scale,
+                bloom.y + Math.sin(Phaser.Math.DegToRad(angle)) * 7 * bloom.scale,
+                8 * bloom.scale,
+                14 * bloom.scale,
+                colour,
+                0.94,
+              )
+              .setAngle(angle + 90),
+          );
+          children.push(...petals);
+          children.push(this.add.circle(bloom.x, bloom.y, 3.5 * bloom.scale, 0xf2cf75, 0.98));
+        } else if (kind === 1) {
+          const bell = this.add
+            .triangle(
+              bloom.x,
+              bloom.y,
+              -8 * bloom.scale,
+              -6 * bloom.scale,
+              8 * bloom.scale,
+              -6 * bloom.scale,
+              0,
+              10 * bloom.scale,
+              colour,
+              0.94,
+            )
+            .setAngle(bloomIndex % 2 === 0 ? -8 : 9);
+          children.push(bell);
+          children.push(
+            this.add.circle(bloom.x, bloom.y - 6 * bloom.scale, 3 * bloom.scale, 0xf4e6b0, 0.92),
+          );
+        } else {
+          children.push(
+            this.add.star(bloom.x, bloom.y, 5, 3.5 * bloom.scale, 9 * bloom.scale, colour, 0.94),
+          );
+          children.push(this.add.circle(bloom.x, bloom.y, 2.5 * bloom.scale, 0xffefb5, 0.96));
+        }
+      });
+
       this.add
-        .circle(x, y, 13, colours[index % colours.length], 0.95)
-        .setName(`rainbow-meadow:flower-cluster:${index}`)
+        .container(x, y, children)
+        .setName(`rainbow-meadow:wildflower-clump:${clusterIndex}`)
         .setDepth(depth);
-      this.add.circle(x + 13, y + 4, 9, colours[(index + 1) % colours.length], 0.9).setDepth(depth);
-      this.add.circle(x - 11, y + 6, 8, 0xffefad, 0.92).setDepth(depth);
     });
   }
 

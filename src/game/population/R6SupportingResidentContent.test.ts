@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { isPointBlocked } from '../world/MapTraversal';
 import { SUNBEAM_VILLAGE_LAYOUT } from '../world/SunbeamVillageLayout';
 import { SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
+import { RAINBOW_MEADOW_MAP } from '../world/RainbowMeadowMap';
 import {
   R6_AMBIENT_RESIDENT_PLACEMENTS,
   R6_SMALL_WORLD_INTERACTIONS,
@@ -128,5 +129,35 @@ describe('R6.5 H3.10 playground life', () => {
       'collision:playground:shrub:north-west-centre',
       'collision:playground:slide',
     ]);
+  });
+});
+
+describe('R6.5 H4.10 Rainbow Meadow resident life', () => {
+  it('keeps the named Meadow routines in purposeful, collision-clear pockets', () => {
+    for (const residentId of [
+      'resident:clover',
+      'resident:breeze',
+      'resident:tansy',
+      'resident:maple',
+      'resident:juniper',
+    ] as const) {
+      const placement = requirePlacement(residentId, 'RainbowMeadowScene');
+      expect(placement.waypoints.length).toBeGreaterThanOrEqual(2);
+      expect(
+        placement.waypoints.every(
+          (point) => !isPointBlocked(point, RAINBOW_MEADOW_MAP.colliders, 46),
+        ),
+        `${residentId} Meadow route remains clear`,
+      ).toBe(true);
+    }
+  });
+
+  it('keeps Juniper north of the main path and Clover beside the Race Hub approach', () => {
+    const juniper = requirePlacement('resident:juniper', 'RainbowMeadowScene');
+    expect(juniper.waypoints.every(({ y }) => y < 920)).toBe(true);
+
+    const clover = requirePlacement('resident:clover', 'RainbowMeadowScene');
+    expect(clover.waypoints.every(({ x }) => x > 2350 && x < 2750)).toBe(true);
+    expect(clover.waypoints.every(({ y }) => y < 700)).toBe(true);
   });
 });

@@ -46,6 +46,7 @@ Rules:
 - Add a token only when it represents a reusable design decision, not a one-off coordinate.
 - Preserve the 48 px minimum touch target unless a specifically approved exception is documented and tested.
 - Treat responsive behaviour as part of the component contract, not a later CSS patch.
+- Full-scene activities and sub-screens must use a clean opaque scene/background and contained panels. Do not place a large semi-transparent shadow or dimming layer behind a near-full-screen shell; shadows are reserved for local elevation on controls/cards and must not tint the whole activity surface.
 
 A bespoke UI implementation must explain why the canonical primitive cannot represent the interaction and must still consume shared tokens where applicable.
 

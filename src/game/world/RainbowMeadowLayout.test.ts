@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
+import { isPointBlocked } from './MapTraversal';
 import { RAINBOW_MEADOW_LAYOUT, RAINBOW_MEADOW_MAP } from './RainbowMeadowMap';
+import { worldDepthForY } from './WorldDepth';
 
 function isInsideDistrict(
   point: { x: number; y: number },
@@ -179,22 +181,21 @@ describe('Rainbow Meadow canonical layout', () => {
   });
 
   it('keeps H4.8 nature interaction approaches outside physical collision', () => {
-    const pondCollider = RAINBOW_MEADOW_MAP.colliders.find(
-      ({ id }) => id === 'collision:rainbow-pond',
-    );
     const windmillCollider = RAINBOW_MEADOW_MAP.colliders.find(
       ({ id }) => id === 'collision:windmill-lookout-base',
     );
-    expect(pondCollider).toBeDefined();
     expect(windmillCollider).toBeDefined();
-    if (!pondCollider || !windmillCollider) {
+    if (!windmillCollider) {
       return;
     }
 
-    const pondBottom = pondCollider.y + pondCollider.height / 2;
     expect(
-      RAINBOW_MEADOW_LAYOUT.natureFeatures.pond.interactionPosition.y - pondBottom,
-    ).toBeGreaterThanOrEqual(60);
+      isPointBlocked(
+        RAINBOW_MEADOW_LAYOUT.natureFeatures.pond.interactionPosition,
+        RAINBOW_MEADOW_MAP.colliders,
+        46,
+      ),
+    ).toBe(false);
 
     const windmillBottom = windmillCollider.y + windmillCollider.height / 2;
     const windmillLeft = windmillCollider.x - windmillCollider.width / 2;
@@ -458,5 +459,174 @@ describe('Rainbow Meadow canonical layout', () => {
     expect(
       RAINBOW_MEADOW_MAP.colliders.some(({ id }) => id.startsWith('collision:race-hub-gateway-')),
     ).toBe(false);
+  });
+});
+
+describe('H4.10 Meadow boundary readability', () => {
+  const boundaryColliders = RAINBOW_MEADOW_MAP.colliders.filter(({ id }) =>
+    id.startsWith('collision:meadow-boundary:'),
+  );
+
+  const isBoundaryBlocked = (point: { x: number; y: number }, margin = 44): boolean =>
+    boundaryColliders.some(
+      (collider) =>
+        Math.abs(point.x - collider.x) <= collider.width / 2 + margin &&
+        Math.abs(point.y - collider.y) <= collider.height / 2 + margin,
+    );
+
+  it('owns distinct hedge, Race Hub fence and Crystal Brook rock edge languages', () => {
+    expect(RAINBOW_MEADOW_LAYOUT.boundaries.hedges.length).toBeGreaterThanOrEqual(6);
+    expect(RAINBOW_MEADOW_LAYOUT.boundaries.raceFence).toHaveLength(2);
+    expect(RAINBOW_MEADOW_LAYOUT.boundaries.crystalRocks.length).toBeGreaterThanOrEqual(9);
+    expect(RAINBOW_MEADOW_LAYOUT.boundaries.wildflowerPockets.length).toBeGreaterThanOrEqual(4);
+
+    expect(boundaryColliders.filter(({ id }) => id.includes(':hedge:'))).toHaveLength(
+      RAINBOW_MEADOW_LAYOUT.boundaries.hedges.length,
+    );
+    expect(boundaryColliders.filter(({ id }) => id.includes(':race-fence:'))).toHaveLength(
+      RAINBOW_MEADOW_LAYOUT.boundaries.raceFence.length,
+    );
+    expect(boundaryColliders.filter(({ id }) => id.includes(':crystal-rock:'))).toHaveLength(
+      RAINBOW_MEADOW_LAYOUT.boundaries.crystalRocks.length,
+    );
+  });
+
+  it('keeps all three neighbouring-region route openings comfortably clear', () => {
+    expect(isBoundaryBlocked({ x: 145, y: 1050 })).toBe(false);
+    expect(isBoundaryBlocked({ x: 2950, y: 160 })).toBe(false);
+    expect(isBoundaryBlocked({ x: 3290, y: 1035 })).toBe(false);
+  });
+
+  it('leaves a deliberately broad Race Hub gate between the fence runs', () => {
+    const [west, east] = RAINBOW_MEADOW_LAYOUT.boundaries.raceFence;
+    expect(west).toBeDefined();
+    expect(east).toBeDefined();
+    if (!west || !east) return;
+
+    expect(east.x1 - west.x2).toBeGreaterThanOrEqual(300);
+    expect(RAINBOW_MEADOW_LAYOUT.hubFeatures.rainbowRunEntrance.position.x).toBeGreaterThan(
+      west.x2,
+    );
+    expect(RAINBOW_MEADOW_LAYOUT.hubFeatures.rainbowRunEntrance.position.x).toBeLessThan(east.x1);
+  });
+});
+
+describe('H4.10 Meadow finishing details', () => {
+  it('owns physical wayfinding positions for Sunbeam Village and Rainbow Disc', () => {
+    expect(RAINBOW_MEADOW_LAYOUT.sunbeamGateway.sign).toEqual({ x: 350, y: 850 });
+    expect(RAINBOW_MEADOW_LAYOUT.rainbowDisc.sign.y).toBeGreaterThanOrEqual(1160);
+  });
+
+  it('keeps the Bouncy Flower Patch and decorative clumps clear of the windmill spur', () => {
+    const spur = RAINBOW_MEADOW_LAYOUT.structuralPaths.find(({ id }) => id === 'windmill-spur');
+    expect(spur).toBeDefined();
+    if (!spur) return;
+
+    const clearanceFromSpurPoints = (point: { x: number; y: number }): number =>
+      Math.min(
+        ...spur.points.map((pathPoint) => Math.hypot(point.x - pathPoint.x, point.y - pathPoint.y)),
+      );
+
+    expect(
+      clearanceFromSpurPoints(RAINBOW_MEADOW_LAYOUT.natureFeatures.petalPatch),
+    ).toBeGreaterThan(150);
+    expect(
+      RAINBOW_MEADOW_LAYOUT.scenery.flowerClusters.every(
+        (cluster) => clearanceFromSpurPoints(cluster) > 100,
+      ),
+    ).toBe(true);
+  });
+
+  it('keeps the windmill sails in front of the north hedge and a player at the windmill centre', () => {
+    const windmillY = RAINBOW_MEADOW_LAYOUT.natureFeatures.windmill.position.y;
+    const sailDepth = worldDepthForY(windmillY + 122, 0.52);
+    const playerDepth = worldDepthForY(windmillY, 0.5);
+    const northHedgeDepth = Math.max(
+      ...RAINBOW_MEADOW_LAYOUT.boundaries.hedges
+        .filter(({ id }) => id.startsWith('north-'))
+        .map(({ y }) => worldDepthForY(y, 0.12)),
+    );
+
+    expect(sailDepth).toBeGreaterThan(playerDepth);
+    expect(sailDepth).toBeGreaterThan(northHedgeDepth);
+  });
+});
+
+describe('H4.10 Meadow collision audit', () => {
+  it('uses visible tree-footprint colliders instead of broad invisible grove walls', () => {
+    expect(
+      RAINBOW_MEADOW_MAP.colliders.some(({ id }) =>
+        [
+          'collision:north-west-grove',
+          'collision:north-east-grove',
+          'collision:sports-east-frame',
+        ].includes(id),
+      ),
+    ).toBe(false);
+
+    const treeColliders = RAINBOW_MEADOW_MAP.colliders.filter(({ id }) =>
+      id.startsWith('collision:meadow-tree:'),
+    );
+    expect(treeColliders).toHaveLength(RAINBOW_MEADOW_LAYOUT.scenery.trees.length);
+
+    RAINBOW_MEADOW_LAYOUT.scenery.trees.forEach((tree) => {
+      expect(treeColliders.find(({ id }) => id === `collision:meadow-tree:${tree.id}`)).toEqual({
+        id: `collision:meadow-tree:${tree.id}`,
+        x: tree.x,
+        y: tree.y - 34 * tree.scale,
+        width: 64 * tree.scale,
+        height: 70 * tree.scale,
+      });
+    });
+  });
+
+  it('gives Rainbow Pond enough lily pads and frogs to read as an active habitat', () => {
+    const pond = RAINBOW_MEADOW_LAYOUT.natureFeatures.pond;
+
+    expect(pond.lilyPads).toHaveLength(5);
+    expect(pond.frogs).toHaveLength(2);
+    expect(
+      pond.frogs.every(
+        ({ padIndex, hopToPadIndex }) =>
+          pond.lilyPads[padIndex] !== undefined && pond.lilyPads[hopToPadIndex] !== undefined,
+      ),
+    ).toBe(true);
+  });
+
+  it('profiles Rainbow Pond collision to the visible ellipse instead of its bounding box', () => {
+    const pond = RAINBOW_MEADOW_LAYOUT.natureFeatures.pond;
+    const colliders = RAINBOW_MEADOW_MAP.colliders.filter(({ id }) =>
+      id.startsWith('collision:rainbow-pond:'),
+    );
+
+    expect(colliders).toHaveLength(pond.collisionSlices.length);
+    expect(colliders.some(({ width }) => width >= pond.width)).toBe(false);
+    expect(
+      colliders.every(
+        ({ x, y, width, height }) =>
+          x - width / 2 >= pond.position.x - pond.width / 2 &&
+          x + width / 2 <= pond.position.x + pond.width / 2 &&
+          y - height / 2 >= pond.position.y - pond.height / 2 &&
+          y + height / 2 <= pond.position.y + pond.height / 2,
+      ),
+    ).toBe(true);
+  });
+
+  it('keeps canonical routes and activity approaches clear with player-sized clearance', () => {
+    const clearPoints = [
+      RAINBOW_MEADOW_LAYOUT.sunbeamGateway.approach,
+      RAINBOW_MEADOW_LAYOUT.crystalBrookGateway.approach,
+      RAINBOW_MEADOW_LAYOUT.hubFeatures.rainbowRunEntrance.approach,
+      RAINBOW_MEADOW_LAYOUT.hubFeatures.windmillLookout.approach,
+      RAINBOW_MEADOW_LAYOUT.natureFeatures.pond.interactionPosition,
+      RAINBOW_MEADOW_LAYOUT.picnicHill.approach,
+      RAINBOW_MEADOW_LAYOUT.rainbowDisc.approach,
+      RAINBOW_MEADOW_LAYOUT.rainbowDisc.practice.approach,
+      ...RAINBOW_MEADOW_LAYOUT.structuralPaths.flatMap(({ points }) => points),
+    ];
+
+    expect(
+      clearPoints.filter((point) => isPointBlocked(point, RAINBOW_MEADOW_MAP.colliders, 42)),
+    ).toEqual([]);
   });
 });

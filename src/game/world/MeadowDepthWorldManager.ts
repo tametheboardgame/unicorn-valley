@@ -12,6 +12,7 @@ import type { InteractionActionKind, InteractionTarget } from '../interaction/In
 import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
+import { launchPondLeapActivity } from '../scenes/PondLeapActivityRegistration';
 import { MeadowWindmillStoryService } from '../story/MeadowWindmillStoryService';
 import { RAINBOW_MEADOW_LAYOUT } from './RainbowMeadowMap';
 import { worldDepthForY } from './WorldDepth';
@@ -39,7 +40,7 @@ interface MeadowDepthState {
   scene: Phaser.Scene;
   interactions: MeadowInteractionRuntime[];
   feedback: Phaser.GameObjects.Text;
-  persistent: Phaser.GameObjects.Container | null;
+  persistent: Phaser.GameObjects.GameObject[];
   signature: string;
 }
 
@@ -72,8 +73,8 @@ const FIXED_INTERACTIONS: readonly MeadowInteractionDefinition[] = [
   {
     id: 'rainbow-pond',
     label: 'Rainbow Pond',
-    actionLabel: 'Splash / watch',
-    actionKind: 'interact',
+    actionLabel: 'Play Lily Pad Leap',
+    actionKind: 'start',
     position: RAINBOW_MEADOW_LAYOUT.natureFeatures.pond.interactionPosition,
     radius: 130,
   },
@@ -165,7 +166,7 @@ export class MeadowDepthWorldManager {
         .setScrollFactor(0)
         .setDepth(188)
         .setVisible(false),
-      persistent: null,
+      persistent: [],
       signature: '',
     };
     state.interactions = FIXED_INTERACTIONS.map((definition) =>
@@ -274,22 +275,18 @@ export class MeadowDepthWorldManager {
   private activatePond(state: MeadowDepthState): void {
     const specialWeather = this.weather.getState() !== 'clear';
     const sunset = this.time.getState() === 'sunset';
-    if (specialWeather || sunset) {
-      const fresh = this.story.discoverRainbowReflection();
-      this.showFeedback(
-        state,
-        fresh
-          ? 'The ripples line up into a complete little rainbow reflection. It hangs there for one breath, even though the sky above looks completely different. 🌈'
-          : 'The pond remembers its rainbow trick. A frog plops through the colours and scrambles them again. 🐸',
-      );
+    const showRainbowReflection = specialWeather || sunset;
+    const discoveredReflection = showRainbowReflection
+      ? this.story.discoverRainbowReflection()
+      : false;
+
+    if (discoveredReflection) {
       state.scene.cameras.main.flash(85, 205, 244, 255, false);
-      return;
     }
 
-    this.showFeedback(
-      state,
-      'Plip! A frog disappears under a lily pad and sends three perfect rings across the water. The pond looks especially reflective in different weather. 🐸',
-    );
+    void launchPondLeapActivity(state.scene, {
+      discoveredReflection: showRainbowReflection,
+    });
   }
 
   private activateFlowerCircle(state: MeadowDepthState): void {
@@ -344,7 +341,9 @@ export class MeadowDepthWorldManager {
     }
 
     state.signature = signature;
-    state.persistent?.destroy(true);
+    for (const object of state.persistent) {
+      object.destroy();
+    }
     const objects: Phaser.GameObjects.GameObject[] = [];
     this.addWindmillVisual(state.scene, objects, this.story.isLookoutOpen());
     this.addFlowerCircleVisual(
@@ -354,10 +353,7 @@ export class MeadowDepthWorldManager {
     );
     this.addPetalPatchVisual(state.scene, objects);
     this.addButterflyParadeVisual(state.scene, objects);
-    state.persistent = state.scene.add
-      .container(0, 0, objects)
-      .setName('meadow-depth:persistent-state')
-      .setDepth(14);
+    state.persistent = objects;
   }
 
   private addWindmillVisual(
@@ -377,7 +373,7 @@ export class MeadowDepthWorldManager {
     const tower = scene.add
       .graphics()
       .setPosition(x, y)
-      .setDepth(7)
+      .setDepth(worldDepthForY(y + 126, 0.12))
       .setName('meadow-depth:windmill-landmark');
     tower.fillStyle(0xf1dca8, 1);
     tower.lineStyle(6, 0x8d684e, 0.96);
@@ -431,7 +427,7 @@ export class MeadowDepthWorldManager {
 
     const sails = scene.add
       .container(x, y - 58)
-      .setDepth(10)
+      .setDepth(worldDepthForY(y + 122, 0.52))
       .setName('meadow-depth:windmill-sails');
     for (const angle of [0, Math.PI / 2, Math.PI, (Math.PI * 3) / 2]) {
       const blade = scene.add.graphics();
@@ -463,15 +459,16 @@ export class MeadowDepthWorldManager {
     });
     objects.push(sails);
 
+    const signDepth = worldDepthForY(y + 104, 0.46);
     const signArm = scene.add
       .rectangle(x + 72, y + 44, 74, 9, 0x765442, 1)
       .setOrigin(0, 0.5)
-      .setDepth(11);
-    const signHanger = scene.add.rectangle(x + 130, y + 57, 5, 34, 0x765442, 1).setDepth(11);
+      .setDepth(signDepth);
+    const signHanger = scene.add.rectangle(x + 130, y + 57, 5, 34, 0x765442, 1).setDepth(signDepth);
     const signBoard = scene.add
       .rectangle(x + 130, y + 84, 94, 36, 0xe7c78d, 1)
       .setStrokeStyle(4, 0x765442, 0.98)
-      .setDepth(11)
+      .setDepth(signDepth + 0.02)
       .setName('meadow-depth:windmill-lookout-sign');
     const signText = scene.add
       .text(x + 130, y + 84, 'LOOKOUT', {
@@ -481,7 +478,7 @@ export class MeadowDepthWorldManager {
         fontStyle: 'bold',
       })
       .setOrigin(0.5)
-      .setDepth(12)
+      .setDepth(signDepth + 0.04)
       .setName('meadow-depth:windmill-lookout-sign-text');
     objects.push(signArm, signHanger, signBoard, signText);
 
@@ -544,19 +541,17 @@ export class MeadowDepthWorldManager {
     objects.push(fence);
 
     for (const [index, colour] of [0x78bddd, 0xf2c56c, 0xc69be0].entries()) {
+      const knotX = ribbonPosition.x - 28 + index * 30;
+      const knotY = ribbonPosition.y - 14;
       const ribbon = scene.add
-        .rectangle(
-          ribbonPosition.x - 8 + index * 5,
-          ribbonPosition.y - 28 + index * 11,
-          52,
-          8,
-          colour,
-          0.94,
-        )
-        .setOrigin(0, 0.5)
-        .setAngle(index === 1 ? 7 : -6)
+        .graphics()
         .setDepth(worldDepthForY(ribbonPosition.y, 0.02))
         .setName(index === 0 ? 'meadow-depth:wind-ribbon-physical' : '');
+
+      ribbon.fillStyle(colour, 0.94);
+      ribbon.fillCircle(knotX, knotY, 6);
+      ribbon.fillTriangle(knotX - 3, knotY + 3, knotX - 11, knotY + 22, knotX, knotY + 15);
+      ribbon.fillTriangle(knotX + 3, knotY + 3, knotX + 11, knotY + 22, knotX, knotY + 15);
       objects.push(ribbon);
     }
 
@@ -638,11 +633,20 @@ export class MeadowDepthWorldManager {
   private addPetalPatchVisual(scene: Phaser.Scene, objects: Phaser.GameObjects.GameObject[]): void {
     const centre = RAINBOW_MEADOW_LAYOUT.natureFeatures.petalPatch;
     const colours = [0xf09fbe, 0xffcf73, 0xb8a1df, 0x8bcbd9];
-    for (let index = 0; index < 12; index += 1) {
-      const column = index % 4;
-      const row = Math.floor(index / 4);
-      const flowerX = centre.x - 78 + column * 52 + (row % 2) * 12;
-      const flowerY = centre.y - 42 + row * 42;
+    const offsets = [
+      [-62, -28],
+      [-18, -44],
+      [36, -26],
+      [-78, 18],
+      [-26, 10],
+      [30, 22],
+      [70, 8],
+      [4, 54],
+    ] as const;
+
+    offsets.forEach(([offsetX, offsetY], index) => {
+      const flowerX = centre.x + offsetX;
+      const flowerY = centre.y + offsetY;
       const colour = colours[index % colours.length];
       const depth = worldDepthForY(flowerY, -0.18);
       objects.push(
@@ -654,7 +658,7 @@ export class MeadowDepthWorldManager {
         scene.add.ellipse(flowerX, flowerY - 7, 10, 16, colour, 0.88).setDepth(depth),
         scene.add.circle(flowerX, flowerY, 4, 0xffe58c, 0.96).setDepth(depth + 0.01),
       );
-    }
+    });
   }
 
   private addButterflyParadeVisual(
@@ -722,7 +726,9 @@ export class MeadowDepthWorldManager {
     for (const runtime of this.state.interactions) {
       runtime.container.destroy(true);
     }
-    this.state.persistent?.destroy(true);
+    for (const object of this.state.persistent) {
+      object.destroy();
+    }
     this.state.feedback.destroy();
     this.state = null;
   }

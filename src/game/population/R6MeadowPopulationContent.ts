@@ -22,9 +22,9 @@ export const R6_MEADOW_RESIDENT_PLACEMENTS = [
     interactionRadius: 126,
     priority: 24,
     waypoints: [
-      { id: 'breeze-windmill-a', x: 820, y: 680, pauseMs: 1700 },
-      { id: 'breeze-windmill-b', x: 880, y: 650, pauseMs: 2400 },
-      { id: 'breeze-windmill-c', x: 920, y: 630, pauseMs: 2100 },
+      { id: 'breeze-windmill-a', x: 1000, y: 620, pauseMs: 1700 },
+      { id: 'breeze-windmill-b', x: 1080, y: 570, pauseMs: 2400 },
+      { id: 'breeze-windmill-c', x: 1130, y: 540, pauseMs: 2100 },
     ],
   },
   {

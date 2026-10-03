@@ -495,9 +495,9 @@ export const R6_AMBIENT_RESIDENT_PLACEMENTS = [
     speedPxPerSecond: 112,
     interactionRadius: 126,
     waypoints: [
-      { id: 'clover-meadow-a', x: 2050, y: 990, pauseMs: 650 },
-      { id: 'clover-meadow-b', x: 2190, y: 1080, pauseMs: 550 },
-      { id: 'clover-meadow-c', x: 2330, y: 1160, pauseMs: 850 },
+      { id: 'clover-meadow-a', x: 2440, y: 625, pauseMs: 850 },
+      { id: 'clover-meadow-b', x: 2525, y: 540, pauseMs: 700 },
+      { id: 'clover-meadow-c', x: 2625, y: 455, pauseMs: 1000 },
     ],
   },
   {
@@ -542,8 +542,9 @@ export const R6_AMBIENT_RESIDENT_PLACEMENTS = [
     priority: 20,
     activeWhen: { timeStates: ['sunset', 'night'] },
     waypoints: [
-      { id: 'tansy-meadow-a', x: 2070, y: 1490, pauseMs: 2600 },
-      { id: 'tansy-meadow-b', x: 2200, y: 1540, pauseMs: 3100 },
+      { id: 'tansy-meadow-a', x: 1760, y: 885, pauseMs: 2600 },
+      { id: 'tansy-meadow-b', x: 1900, y: 845, pauseMs: 3100 },
+      { id: 'tansy-meadow-c', x: 2020, y: 900, pauseMs: 2400 },
     ],
   },
   {

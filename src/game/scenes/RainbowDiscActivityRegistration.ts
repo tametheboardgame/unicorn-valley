@@ -43,6 +43,7 @@ export async function launchRainbowDiscActivity(
       returnScene: scene.sys.settings.key,
       mode,
     });
+    scene.scene.bringToTop('RainbowDiscActivityScene');
     scene.scene.pause();
   } finally {
     launchPending = false;
