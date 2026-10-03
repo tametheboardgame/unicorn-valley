@@ -1,6 +1,9 @@
 import Phaser from 'phaser';
 import type { UnicornAppearance } from '../player/UnicornAppearance';
-import { createResidentAppearanceSprite } from '../population/SupportingResidentArt';
+import {
+  createResidentAppearanceSprite,
+  SUPPORTING_RESIDENT_ART_LAYOUT,
+} from '../population/SupportingResidentArt';
 import { createRainbowDiscRing, drawRainbowTarget } from './RainbowDiscArt';
 import { worldDepthForY } from './WorldDepth';
 import { RAINBOW_MEADOW_LAYOUT } from './RainbowMeadowMap';
@@ -63,6 +66,100 @@ export const RAINBOW_DISC_PLAYER_APPEARANCES: readonly UnicornAppearance[] = [
   },
 ] as const;
 
+function createMeadowRecreationSign(
+  scene: Phaser.Scene,
+  options: {
+    name: string;
+    x: number;
+    y: number;
+    width: number;
+    title: string;
+    subtitle: string;
+  },
+): void {
+  const { name, x, y, width, title, subtitle } = options;
+  const boardHeight = 78;
+  const legSpacing = width * 0.3;
+  const depth = worldDepthForY(y + boardHeight / 2 + 92, 0.32);
+
+  for (const [side, legX] of [
+    ['left', x - legSpacing],
+    ['right', x + legSpacing],
+  ] as const) {
+    scene.add
+      .rectangle(legX, y + 76, 13, 112, 0x7b5a43, 1)
+      .setStrokeStyle(2, 0x5f4637, 0.8)
+      .setName(`${name}-leg-${side}`)
+      .setDepth(depth);
+  }
+
+  const board = scene.add
+    .graphics()
+    .setPosition(x, y)
+    .setName(name)
+    .setDepth(depth + 0.03);
+  board.fillStyle(0xe8d8a9, 1);
+  board.lineStyle(5, 0x765442, 0.96);
+  board.fillRoundedRect(-width / 2, -boardHeight / 2, width, boardHeight, 18);
+  board.strokeRoundedRect(-width / 2, -boardHeight / 2, width, boardHeight, 18);
+  board.fillStyle(0xd7b7e4, 0.9);
+  board.fillRoundedRect(-width / 2 + 10, -boardHeight / 2 + 9, width - 20, 9, 5);
+  drawRainbowTarget(board, -width / 2 + 30, 0, 12, 4);
+
+  scene.add
+    .text(x + 14, y - 8, title, {
+      color: '#5b4668',
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '14px',
+      fontStyle: 'bold',
+      align: 'center',
+    })
+    .setOrigin(0.5)
+    .setDepth(depth + 0.05);
+
+  scene.add
+    .text(x + 14, y + 17, subtitle, {
+      color: '#7a607f',
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '12px',
+      fontStyle: 'bold',
+      align: 'center',
+    })
+    .setOrigin(0.5)
+    .setDepth(depth + 0.05);
+}
+
+function resolveHornCatchPoint(
+  sprite: Phaser.GameObjects.Sprite,
+  appearance: UnicornAppearance,
+): { x: number; y: number } {
+  const tipOffset =
+    appearance.hornStyle === 'star'
+      ? -82
+      : appearance.hornStyle === 'short'
+        ? -75
+        : appearance.hornStyle === 'crystal' || appearance.hornStyle === 'moon'
+          ? -85
+          : -88;
+  const textureX =
+    SUPPORTING_RESIDENT_ART_LAYOUT.drawX + 78 * SUPPORTING_RESIDENT_ART_LAYOUT.drawScale;
+  const textureY =
+    SUPPORTING_RESIDENT_ART_LAYOUT.drawY + (tipOffset + 10) * SUPPORTING_RESIDENT_ART_LAYOUT.drawScale;
+  const originTextureX = SUPPORTING_RESIDENT_ART_LAYOUT.textureWidth * sprite.originX;
+  const originTextureY = SUPPORTING_RESIDENT_ART_LAYOUT.textureHeight * sprite.originY;
+  const localX =
+    (textureX - originTextureX) *
+    (sprite.displayWidth / SUPPORTING_RESIDENT_ART_LAYOUT.textureWidth);
+  const localY =
+    (textureY - originTextureY) *
+    (sprite.displayHeight / SUPPORTING_RESIDENT_ART_LAYOUT.textureHeight);
+
+  return {
+    x: sprite.x + (sprite.flipX ? -localX : localX),
+    y: sprite.y + localY,
+  };
+}
+
 export function createRainbowDiscMeadowPresentation(scene: Phaser.Scene): void {
   const layout = RAINBOW_MEADOW_LAYOUT.rainbowDisc;
   const { x, y } = layout.centre;
@@ -106,49 +203,25 @@ export function createRainbowDiscMeadowPresentation(scene: Phaser.Scene): void {
     pennantGraphics.fillTriangle(0, 0, direction * 34, 8, 0, 18);
   });
 
-  const signDepth = worldDepthForY(layout.sign.y + 72, -0.04);
-  scene.add
-    .rectangle(layout.sign.x, layout.sign.y + 54, 12, 108, 0x7d5b44, 1)
-    .setName('rainbow-disc:sign-post')
-    .setDepth(signDepth);
-  scene.add
-    .rectangle(layout.sign.x + 84, layout.sign.y, 180, 74, 0xf0d69b, 1)
-    .setStrokeStyle(4, 0x7d5b44, 0.96)
-    .setName('rainbow-disc:sign')
-    .setDepth(signDepth + 0.04);
-  scene.add
-    .text(layout.sign.x + 84, layout.sign.y, 'RAINBOW DISC\n↓', {
-      color: '#5f496d',
-      fontFamily: 'system-ui, sans-serif',
-      fontSize: '15px',
-      fontStyle: 'bold',
-      align: 'center',
-      lineSpacing: 0,
-    })
-    .setOrigin(0.5)
-    .setDepth(signDepth + 0.05);
+  createMeadowRecreationSign(scene, {
+    name: 'rainbow-disc:sign',
+    x: layout.sign.x,
+    y: layout.sign.y,
+    width: 220,
+    title: 'RAINBOW DISC',
+    subtitle: 'PLAY ↓',
+  });
 
   const practice = layout.practice;
+  createMeadowRecreationSign(scene, {
+    name: 'rainbow-disc:practice-sign',
+    x: practice.sign.x,
+    y: practice.sign.y,
+    width: 200,
+    title: 'DISC PRACTICE',
+    subtitle: 'THROW ↓',
+  });
   const practiceDepth = worldDepthForY(practice.centre.y + 90, -0.04);
-  scene.add
-    .rectangle(practice.sign.x, practice.sign.y + 42, 10, 84, 0x7d5b44, 1)
-    .setName('rainbow-disc:practice-sign-post')
-    .setDepth(practiceDepth);
-  scene.add
-    .rectangle(practice.sign.x + 78, practice.sign.y, 164, 54, 0xe9d4a1, 1)
-    .setStrokeStyle(4, 0x7d5b44, 0.95)
-    .setName('rainbow-disc:practice-sign')
-    .setDepth(practiceDepth + 0.02);
-  scene.add
-    .text(practice.sign.x + 78, practice.sign.y, 'DISC PRACTICE', {
-      color: '#5f496d',
-      fontFamily: 'system-ui, sans-serif',
-      fontSize: '13px',
-      fontStyle: 'bold',
-    })
-    .setOrigin(0.5)
-    .setDepth(practiceDepth + 0.03);
-
   const practiceGraphics = scene.add
     .graphics()
     .setName('rainbow-disc:practice-range')
@@ -213,13 +286,14 @@ export function createRainbowDiscMeadowPresentation(scene: Phaser.Scene): void {
     return sprite;
   });
 
-  const hornPoint = (sprite: Phaser.GameObjects.Sprite): { x: number; y: number } => ({
-    x: sprite.x + (sprite.flipX ? -38 : 38),
-    y: sprite.y - 34,
-  });
+  const hornPoint = (sprite: Phaser.GameObjects.Sprite, index: number): { x: number; y: number } =>
+    resolveHornCatchPoint(
+      sprite,
+      RAINBOW_DISC_PLAYER_APPEARANCES[index] ?? RAINBOW_DISC_PLAYER_APPEARANCES[0],
+    );
 
   const firstPlayer = sprites[0];
-  const firstHorn = firstPlayer ? hornPoint(firstPlayer) : { x, y };
+  const firstHorn = firstPlayer ? hornPoint(firstPlayer, 0) : { x, y };
   const disc = createRainbowDiscRing(
     scene,
     'rainbow-disc:ambient-disc',
@@ -257,7 +331,7 @@ export function createRainbowDiscMeadowPresentation(scene: Phaser.Scene): void {
     });
 
     const flight = { progress: 0 };
-    const throwHorn = hornPoint(thrower);
+    const throwHorn = hornPoint(thrower, throwerIndex);
     disc.setPosition(throwHorn.x, throwHorn.y);
 
     scene.tweens.add({
@@ -267,8 +341,8 @@ export function createRainbowDiscMeadowPresentation(scene: Phaser.Scene): void {
       ease: 'Sine.InOut',
       onUpdate: () => {
         const progress = flight.progress;
-        const start = hornPoint(thrower);
-        const end = hornPoint(receiver);
+        const start = hornPoint(thrower, throwerIndex);
+        const end = hornPoint(receiver, receiverIndex);
         disc.setPosition(
           Phaser.Math.Linear(start.x, end.x, progress),
           Phaser.Math.Linear(start.y, end.y, progress) - Math.sin(Math.PI * progress) * 44,
@@ -292,7 +366,7 @@ export function createRainbowDiscMeadowPresentation(scene: Phaser.Scene): void {
           progress: 1,
           duration: 360,
           onUpdate: () => {
-            const catchHorn = hornPoint(receiver);
+            const catchHorn = hornPoint(receiver, receiverIndex);
             disc.setPosition(catchHorn.x, catchHorn.y);
             disc.setAngle(disc.angle + 3);
             disc.setDepth(worldDepthForY(disc.y, 0.42));
