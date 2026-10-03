@@ -5,6 +5,8 @@ import {
 } from '../../content/r65RepeatableActivities';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { getBrowserSaveService } from '../save/browserSaveService';
+import { returnFromMiniGame } from '../minigames/MiniGameLauncher';
+import { readMiniGameSession, type MiniGameSession } from '../minigames/MiniGameSession';
 import { PortraitModalCompanion } from '../ui/PortraitModalCompanion';
 import { UI_COLOURS, UI_FONT, applyButtonHover, createUiShadow } from '../ui/uiTheme';
 import {
@@ -78,6 +80,7 @@ const OBSERVATIONS: Readonly<Record<BeachcombingTrail, readonly ObservationSpot[
 const REQUIRED_OBSERVATIONS = 4;
 
 export class CoralBeachcombingActivityScene extends Phaser.Scene {
+  private miniGameSession: MiniGameSession | null = null;
   private returnScene = 'StarlightBeachScene';
   private trail: BeachcombingTrail = 'crab-tracks';
   private observed = new Set<number>();
@@ -91,7 +94,9 @@ export class CoralBeachcombingActivityScene extends Phaser.Scene {
   }
 
   public create(data: CoralBeachcombingSceneData = {}): void {
-    this.returnScene = data.returnScene ?? 'StarlightBeachScene';
+    this.miniGameSession = readMiniGameSession(data);
+    this.returnScene =
+      this.miniGameSession?.returnTarget.sceneKey ?? data.returnScene ?? 'StarlightBeachScene';
     this.trail = getNextBeachcombingTrail(getBrowserSaveService());
     this.observed.clear();
     this.finished = false;
@@ -381,6 +386,11 @@ export class CoralBeachcombingActivityScene extends Phaser.Scene {
   }
 
   private leaveActivity(): void {
+    if (this.miniGameSession) {
+      returnFromMiniGame(this, this.miniGameSession);
+      return;
+    }
+
     this.scene.stop();
     if (this.game.scene.isPaused(this.returnScene)) {
       this.game.scene.resume(this.returnScene);
