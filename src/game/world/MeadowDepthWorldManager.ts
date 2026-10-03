@@ -635,11 +635,20 @@ export class MeadowDepthWorldManager {
   private addPetalPatchVisual(scene: Phaser.Scene, objects: Phaser.GameObjects.GameObject[]): void {
     const centre = RAINBOW_MEADOW_LAYOUT.natureFeatures.petalPatch;
     const colours = [0xf09fbe, 0xffcf73, 0xb8a1df, 0x8bcbd9];
-    for (let index = 0; index < 12; index += 1) {
-      const column = index % 4;
-      const row = Math.floor(index / 4);
-      const flowerX = centre.x - 78 + column * 52 + (row % 2) * 12;
-      const flowerY = centre.y - 42 + row * 42;
+    const offsets = [
+      [-62, -28],
+      [-18, -44],
+      [36, -26],
+      [-78, 18],
+      [-26, 10],
+      [30, 22],
+      [70, 8],
+      [4, 54],
+    ] as const;
+
+    offsets.forEach(([offsetX, offsetY], index) => {
+      const flowerX = centre.x + offsetX;
+      const flowerY = centre.y + offsetY;
       const colour = colours[index % colours.length];
       const depth = worldDepthForY(flowerY, -0.18);
       objects.push(
@@ -651,7 +660,7 @@ export class MeadowDepthWorldManager {
         scene.add.ellipse(flowerX, flowerY - 7, 10, 16, colour, 0.88).setDepth(depth),
         scene.add.circle(flowerX, flowerY, 4, 0xffe58c, 0.96).setDepth(depth + 0.01),
       );
-    }
+    });
   }
 
   private addButterflyParadeVisual(
