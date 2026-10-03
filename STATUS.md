@@ -4,85 +4,66 @@ Last updated: 2026-10-03
 
 ## Current work
 
-The independent **MG - Mini-Game Development Programme** is active.
+The active world-area package is **R6.5-WP19H6 - Crystal Brook Final Area Pass**.
 
-Current bounded package: **MG-WP2 - Sandbox, Rewards and Persistence Isolation**
+Current bounded checkpoint: **H6.1 - Canonical master layout and ownership migration**
 
-Branch: `agent/mg-wp2-sandbox-persistence-isolation`
+Branch: `agent/r6.5-wp19h6.1-canonical-layout`
 
-PR: **#266**
+Draft PR: **#265**
 
-MG-WP1 is complete, human-approved and merged to `main` as `f5cbbbff043a4106df873c482a07603c6ca91f0c`.
+H6.0 is complete, human-approved and merged to `main`.
 
-### Current checkpoint - MG-WP2E
+MG-WP1 and MG-WP2 have now completed and merged to `main`; the current mainline is `66f05c6a5279cafb6df4e938c721759d0744e898`. H6.1 is reconciled onto that mainline so Crystal Cascade keeps the shared mini-game/race launch contract and sandbox isolation while Brook positions come from the canonical H6 layout.
 
-MG-WP2 implementation is complete across the current catalogue.
+### H6.1 checkpoint
 
-Completed checkpoints:
+Implemented:
 
-- MG-WP2A - Wobbly Cake sandbox economy/quest/progress isolation;
-- MG-WP2B - Coral Beachcombing sandbox notebook/save isolation;
-- MG-WP2C - Firefly Lantern sandbox best/milestone/unlock isolation;
-- MG-WP2D - Rainbow Run sandbox result/reward/Cup isolation;
-- MG-WP2E - no-write proof/audit for Rainbow Disc, Pond Leap and Sunbeam Chess.
+- one area-owned structural layout for Crystal Brook;
+- canonical Meadow, Woods, future Crystal Cup and Crystal Grotto thresholds/returns;
+- canonical main, Woods, Crystal Cup and Grotto routes;
+- canonical water, Ripple, Echo, depth-interaction, guidance and Grotto-return anchors;
+- reserved Crystalarium and Crystal Checkers activity pockets;
+- scene, gateway, path-cleanup, guidance, population, depth and Grotto-return consumers migrated away from duplicated structural coordinates;
+- focused layout/reachability/route-endpoint tests;
+- no intentional visual movement, progression rewrite or gameplay redesign.
 
-Package-level evidence:
+MG-WP1's shared Rainbow Run launch/session/return behaviour is preserved. H6.6 later changes the physical access topology to the Crystal Cup hub, not the shared mini-game session architecture.
 
-- `docs/audits/2026-10-03-MG-WP2-SANDBOX-SIDE-EFFECT-MATRIX.md`;
-- `docs/audits/2026-10-03-MG-WP2-SANDBOX-ISOLATION-CLOSEOUT.md`.
+## Mini-game dependency state
 
-Important corrections made during the package:
+MG-WP0, MG-WP1 and MG-WP2 are complete and merged.
 
-- Coral sandbox no longer creates an adventure save through progress reads;
-- Firefly sandbox bypasses progress reconciliation and persistent attempt recording;
-- racing sandbox does not create a save solely for appearance and produces a reward-free practice result;
-- Rainbow Disc sandbox no longer creates an adventure save solely for appearance;
-- Pond Leap and Chess were confirmed to have no adventure persistence path.
-
-No separate sandbox gameplay implementation was created.
+H6.8 now waits on **MG-WP3 and MG-WP4** before Crystalarium or Crystal Checkers implementation may begin.
 
 ## Validation state
 
-Exact-head MG-WP2 validation is running.
+Before the MG-WP1 mainline move, H6.1 had passing formatting, lint, architecture, verification-policy, type-check, unit and targeted Chromium contracts.
 
-Objective contracts now cover:
+The H6.1-only initial graph overhead had been reduced from +0.9 KiB to +0.4 KiB relative to the original H6.0 baseline. The latest optimisation flattens runtime Brook constants so unused planning data can tree-shake.
 
-- world/sandbox/legacy outcome policy across every adventure-effect category;
-- Coral sandbox trail sequencing;
-- existing world persistence contracts remain in place;
-- the closeout source audit confirms Firefly/racing sandbox branches bypass persistence and the simple games have no hidden write path.
-
-The repository performance budget remains a known baseline concern; MG-WP2 must not introduce an additional regression.
+A fresh CI run is required on the reconciled MG-WP2/H6.1 head.
 
 ## Human gate
 
-MG-WP2 human gate: **approved for merge 2026-10-03**.
+H6.1 remains the active bounded checkpoint.
 
-David explicitly authorised merge and progression to MG-WP3.
+Do not begin H6.2 until:
 
-Exact-head evidence at approval:
-
-- Tier 0 static/architecture: passed;
-- Tier 1 unit contracts: passed;
-- targeted browser smoke: still running;
-- production build/static smoke: passed;
-- performance budget: red at 562.1 KiB first-playable gzip and 113 JS chunks versus current main at 561.8 KiB and 113 chunks. The +0.3 KiB startup delta was accepted for merge.
-
-The visible end-to-end sandbox/Just Games human test belongs to MG-WP3 because the Just Games launcher does not exist yet.
+- the reconciled H6.1 head has completed relevant technical validation;
+- H6.1 has been reported;
+- David has reviewed/approved the checkpoint.
 
 ## Next work
 
-After MG-WP2 approval and merge:
-
-**MG-WP3 - Just Games Home and Catalogue Experience**
-
-Package:
-
-`docs/work-packages/MG-WP3-JUST-GAMES-HOME-CATALOGUE.md`
+After H6.1 approval, begin **H6.2 - Continuous Brook and Rainbow Meadow hydrology**.
 
 ## Operating reminders
 
-- Do not start MG-WP3 on top of an unmerged MG-WP2 branch.
-- Fix deterministic current-work CI failures immediately.
-- If Git/GitHub access fails, reconnect before reporting a blocker.
-- Keep one canonical gameplay implementation per mini-game.
+- Keep Brook structural coordinates area-owned.
+- Preserve MG-WP1 shared mini-game launch/session ownership.
+- Preserve accepted Ripple/Echo/Grotto progression and Meadow/Woods traversal.
+- Do not create bespoke mini-game launch architecture.
+- If GitHub access fails, reconnect immediately.
+- Do not sit in repeated CI/deployment polling loops.

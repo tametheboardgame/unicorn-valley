@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { CRYSTAL_BROOK_GROTTO_THRESHOLD } from '../world/CrystalBrookMap';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
 import { worldDepthForY } from '../world/WorldDepth';
 
@@ -108,14 +109,15 @@ function enhanceCrystalBrook(scene: Phaser.Scene): void {
   addCrystalCluster(scene, 2510, 760, 0.85, [0x92d6e8, 0xc4f0f4, 0xc19de8]);
   addCrystalCluster(scene, 2980, 1650, 1.02, [0x84c8dc, 0xd4f6ff, 0xc5a2ef]);
 
-  const grottoDepth = worldDepthForY(1940, -0.8);
+  const grotto = CRYSTAL_BROOK_GROTTO_THRESHOLD.position;
+  const grottoDepth = worldDepthForY(grotto.y + 90, -0.8);
   scene.add
-    .ellipse(3190, 1870, 410, 285, 0x647377, 0.98)
+    .ellipse(grotto.x + 60, grotto.y + 20, 410, 285, 0x647377, 0.98)
     .setName(`${ROOT_NAME}:prism-grotto-rock`)
     .setStrokeStyle(13, 0x82999a, 0.86)
     .setDepth(grottoDepth);
   scene.add
-    .ellipse(3190, 1902, 250, 205, 0x273f4a, 1)
+    .ellipse(grotto.x + 60, grotto.y + 52, 250, 205, 0x273f4a, 1)
     .setName(`${ROOT_NAME}:prism-grotto-mouth`)
     .setStrokeStyle(8, 0x9ed4d5, 0.62)
     .setDepth(grottoDepth + 0.08);
@@ -125,10 +127,16 @@ function enhanceCrystalBrook(scene: Phaser.Scene): void {
     [-102, -132, 0.62],
     [95, -128, 0.66],
   ] as const) {
-    addCrystalCluster(scene, 3190 + dx, 1870 + dy, scale, [0x83cfe3, 0xcaf4fa, 0xc0a4ec]);
+    addCrystalCluster(
+      scene,
+      grotto.x + 60 + dx,
+      grotto.y + 20 + dy,
+      scale,
+      [0x83cfe3, 0xcaf4fa, 0xc0a4ec],
+    );
   }
   scene.add
-    .text(3190, 1770, '✦', {
+    .text(grotto.x + 60, grotto.y - 80, '✦', {
       color: '#e8ffff',
       fontFamily: 'system-ui, sans-serif',
       fontSize: '42px',
