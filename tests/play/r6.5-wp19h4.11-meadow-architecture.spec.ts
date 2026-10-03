@@ -47,7 +47,9 @@ test('H4.11 Rainbow Meadow owns its canonical traversal presentation', async ({ 
 
   expect(names.filter((name) => name === 'rainbow-meadow:path-network')).toHaveLength(1);
   expect(names).toContain('rainbow-meadow:sunbeam-village-sign');
-  expect(names.some((name) => name.startsWith('rainbow-meadow:sunbeam-threshold:post:'))).toBe(true);
+  expect(names.some((name) => name.startsWith('rainbow-meadow:sunbeam-threshold:post:'))).toBe(
+    true,
+  );
 });
 
 test('H4.11 leaves no compatibility-era Meadow presentation owners', async ({ page }) => {
