@@ -254,6 +254,16 @@
               "chapterId": "down-the-rabbit-hole",
               "illustrations": [
                 {
+                  "id": "modern-riverbank",
+                  "blockId": "a-sleepy-afternoon",
+                  "path": "illustrations/generated/alice-01-riverbank.webp",
+                  "alt": "Alice sits dreamily beside her sister on a warm English riverbank while her sister reads among summer flowers.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                },
+                {
                   "id": "modern-white-rabbit",
                   "blockId": "a-rabbit-with-a-watch",
                   "path": "illustrations/generated/alice-01-white-rabbit.webp",
