@@ -10,17 +10,17 @@
   "autonomy_state": "amber",
   "agent_state": "active",
   "branch": "agent/r6.5-wp19h6.2-continuous-brook",
-  "latest_commit": "15111f3dedb48f8832370e1ee312870b52a8545f",
+  "latest_commit": "d2c9617e63042a3451acf4f636a3a61e62924bb1",
   "ci_state": "pending",
   "technical_validation_state": "pending",
   "human_acceptance_state": "pending",
   "next_work_package": null,
   "next_work_package_path": null,
   "human_input_required": false,
-  "blocker_reason": "H6.3 is blocked until H6.2C validates and David visually approves the higher Brook water exit and established-style cave approach path.",
+  "blocker_reason": "H6.3 is blocked until H6.2D validates and David visually approves the race-side bridge crossing, clean race spur and natural Reflection Pool feeder.",
   "night_shift_state": "not_configured",
   "chat_disposition": "keep",
   "delivery_mode": "pr_required",
-  "last_activity_at": "2026-10-03T19:59:00+01:00",
-  "updated_at": "2026-10-03T19:59:00+01:00"
+  "last_activity_at": "2026-10-04T07:00:00+01:00",
+  "updated_at": "2026-10-04T07:00:00+01:00"
 }
