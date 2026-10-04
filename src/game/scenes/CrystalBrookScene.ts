@@ -24,7 +24,8 @@ import {
   CRYSTAL_BROOK_LOCATION_ID,
   CRYSTAL_BROOK_MAP,
   CRYSTAL_BROOK_PATH_PRESENTATION_ROUTE,
-  CRYSTAL_BROOK_REFLECTION_INLET,
+  CRYSTAL_BROOK_RACE_BRIDGE,
+  CRYSTAL_BROOK_REFLECTION_FEEDER,
   CRYSTAL_BROOK_REFLECTION_POOL,
   CRYSTAL_BROOK_UPSTREAM_CASCADE,
   CRYSTAL_BROOK_WATER_GLINTS,
@@ -377,6 +378,7 @@ export class CrystalBrookScene extends Phaser.Scene {
     drawPathLayer(108, 0xf0dfb2, 1);
 
     this.createWater();
+    this.createRaceBridge();
     this.createSteppingStones();
     this.createSecretTrail();
     this.createBanks();
@@ -400,30 +402,23 @@ export class CrystalBrookScene extends Phaser.Scene {
       .setDepth(3.06);
     fillVariableRibbon(deepChannel, CRYSTAL_BROOK_WATERCOURSE, 'deepWidth', 0x438f9d, 0.58);
 
-    const reflectionInlet = this.add
+    const reflectionFeeder = this.add
       .graphics()
-      .setName('crystal-brook:reflection-inlet')
+      .setName('crystal-brook:reflection-feeder')
       .setDepth(3.01);
     fillConstantRibbon(
-      reflectionInlet,
-      CRYSTAL_BROOK_REFLECTION_INLET.points,
-      CRYSTAL_BROOK_REFLECTION_INLET.outerWidth,
+      reflectionFeeder,
+      CRYSTAL_BROOK_REFLECTION_FEEDER.points,
+      CRYSTAL_BROOK_REFLECTION_FEEDER.outerWidth,
       0x579da4,
-      0.58,
+      0.42,
     );
     fillConstantRibbon(
-      reflectionInlet,
-      CRYSTAL_BROOK_REFLECTION_INLET.points,
-      CRYSTAL_BROOK_REFLECTION_INLET.innerWidth,
+      reflectionFeeder,
+      CRYSTAL_BROOK_REFLECTION_FEEDER.points,
+      CRYSTAL_BROOK_REFLECTION_FEEDER.innerWidth,
       0x78cbd0,
-      0.86,
-    );
-    fillConstantRibbon(
-      reflectionInlet,
-      CRYSTAL_BROOK_REFLECTION_INLET.points,
-      CRYSTAL_BROOK_REFLECTION_INLET.deepWidth,
-      0x438f9d,
-      0.56,
+      0.72,
     );
 
     this.add
@@ -495,6 +490,51 @@ export class CrystalBrookScene extends Phaser.Scene {
       glints.lineTo(glint.x + dx, glint.y + dy);
       glints.strokePath();
     }
+  }
+
+  private createRaceBridge(): void {
+    const bridge = CRYSTAL_BROOK_RACE_BRIDGE;
+    const container = this.add
+      .container(bridge.centre.x, bridge.centre.y)
+      .setName('crystal-brook:race-bridge')
+      .setAngle(bridge.angle)
+      .setDepth(3.5);
+
+    const shadow = this.add
+      .rectangle(7, 9, bridge.length + 22, bridge.deckWidth + 18, 0x40545a, 0.2)
+      .setOrigin(0.5);
+    const deckBase = this.add
+      .rectangle(0, 0, bridge.length, bridge.deckWidth, 0xb98755, 1)
+      .setStrokeStyle(5, 0x79583c, 0.92);
+    container.add([shadow, deckBase]);
+
+    const plankCount = 9;
+    const plankSpacing = bridge.length / plankCount;
+    for (let index = 0; index < plankCount; index += 1) {
+      const x = -bridge.length / 2 + plankSpacing * (index + 0.5);
+      container.add(
+        this.add
+          .rectangle(x, 0, plankSpacing - 5, bridge.deckWidth - 10, index % 2 === 0 ? 0xd6ad76 : 0xc99c67, 1)
+          .setStrokeStyle(2, 0x8a6847, 0.5),
+      );
+    }
+
+    for (const side of [-1, 1] as const) {
+      const railY = side * (bridge.deckWidth / 2 + 12);
+      container.add(
+        this.add.rectangle(0, railY, bridge.length + 10, 8, 0x79583c, 0.96),
+      );
+      for (const x of [-bridge.length / 2 + 18, 0, bridge.length / 2 - 18]) {
+        container.add(
+          this.add.rectangle(x, railY, 10, 30, 0x8a6847, 1),
+        );
+      }
+    }
+
+    container.add([
+      this.add.circle(-bridge.length / 2 + 22, 0, 5, 0xf2d3a0, 0.6),
+      this.add.circle(bridge.length / 2 - 22, 0, 5, 0xf2d3a0, 0.6),
+    ]);
   }
 
   private createSteppingStones(): void {
