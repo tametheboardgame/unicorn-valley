@@ -451,8 +451,7 @@ export class CrystalBrookScene extends Phaser.Scene {
         2,
         2,
       )
-      .setName('crystal-brook:crystal-cup-spur')
-      .setVisible(false);
+      .setName('crystal-brook:crystal-cup-spur');
 
     this.createWater();
     this.createIceBridges();
