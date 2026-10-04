@@ -1,53 +1,62 @@
 # Project Status
 
-Last updated: 2026-10-03
+Last updated: 2026-10-04
 
 ## Current work
 
 The independent **MG - Mini-Game Development Programme** remains active.
 
-Current bounded package: **MG-WP3 - Just Games Home and Catalogue Experience**
+Current bounded package: **MG-WP4 - Future Mini-Game Authoring Kit and Guardrails (complete; merge pending)**
 
-Branch: `agent/mg-wp3-just-games-home-catalogue`
+Branch: agent/mg-wp4-authoring-kit-guardrails
 
-MG-WP3 human gate: **approved 2026-10-03**.
+MG-WP3 is complete, human-approved and merged to main at 206bc19ecf8d1f92dca851ed1171b8a328f0b25d.
 
-### Completed MG-WP3 scope
+### Completed checkpoints
 
-- Just Games is available from the title/home screen, including portrait/touch controls;
-- `JustGamesScene` is an on-demand feature scene;
-- game cards and variants come directly from `MiniGameCatalogue`;
-- all seven current game families launch through `MiniGameLauncher` with `source: 'just-games'`;
-- every game returns through the shared `MiniGameSession` contract;
-- browsing/launching sandbox paths does not require creation of an adventure save;
-- Firefly honours the catalogue-selected mode;
-- world-specific return labels become **Back to Games** when launched from Just Games;
-- the left catalogue uses locked click/keyboard selection with hover-only feedback;
-- the variant selector uses a two-column grid and paginates beyond six modes;
-- Rainbow Run's five courses render as three clean rows without overlap;
-- browser regressions cover sticky selection and non-overlapping race variant geometry;
-- scene-key validation was separated from manifest loading to remove the original lazy-load cycle.
+**MG-WP4A - Authoring contract and catalogue guardrails**
 
-### Validation state
+Complete. The canonical authoring recipe, catalogue integrity guard and deterministic dual-context fixture are implemented.
 
-The approved preview was manually accepted by David.
+**MG-WP4B - Reusable behavioural verification contracts**
 
-The final deterministic Tier 0 failure after that preview was Biome formatting only in the interface/test files. Those exact formatter changes were applied before merge.
+Complete. Static/architecture checks and the reusable Just Games browser contract pass. The contract now waits for game-specific readiness where required, including Wobbly Cake.
 
-The repository performance budget remains red and continues to require separate architecture work; MG-WP3 does not redefine that budget.
+### Completed checkpoint
+
+**MG-WP4C - Cross-roadmap enforcement and closeout**
+
+Implementation, branch CI validation and Amber human acceptance are complete.
+
+Implemented:
+
+- current/next work packages must declare valid front-matter `mini_game_platform_impact` before the project-state validator accepts them;
+- historical packages remain valid without retrofitting;
+- authoring, engineering, acceptance, testing and platform architecture documentation now describe the implemented MG platform;
+- Sunbeam Chess was reviewed against the authoring recipe and conforms: one stable ID, one gameplay scene, shared launcher/session, world wrapper, Just Games reuse and sandbox contract;
+- no production-runtime code was added by MG-WP4.
+
+### Human gate
+
+David approved the MG-WP4 architecture-and-authoring closeout on 2026-10-04.
+
+## Validation state
+
+MG-WP4B targeted validation is passing.
+
+The repository performance gate remains a separate inherited baseline concern: current main-derived production output exceeds the existing startup/chunk budgets even when the WP4 branch has no production-runtime delta. MG-WP4 does not weaken those thresholds.
+
+MG-WP4C repository-selected CI is passing on the exact branch head. No in-scope technical failures remain.
 
 ## Next work
 
-After MG-WP3 merge:
-
-**MG-WP4 - Future Mini-Game Authoring Kit and Guardrails**
-
-Package:
-
-`docs/work-packages/MG-WP4-AUTHORING-KIT-GUARDRAILS.md`
+Merge PR #269. MG-WP4 then releases the platform readiness gate for future mini-game packages, including the planned Crystal Brook games.
 
 ## Operating reminders
 
-- MG-WP4 must start from the merged MG-WP3 `main`.
-- Keep one canonical gameplay implementation per mini-game.
-- New games must declare mini-game platform impact and preserve sandbox isolation.
+- keep one canonical gameplay implementation per mini-game;
+- every current/next work package must declare `mini_game_platform_impact`;
+- world-first games must gain Just Games exposure in the same package;
+- Just Games is sandboxed by default;
+- if GitHub access fails, reconnect immediately;
+- do not sit in repeated CI/deployment polling loops.

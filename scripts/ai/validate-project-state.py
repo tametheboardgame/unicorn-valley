@@ -65,6 +65,10 @@ ENUMS = {
 }
 
 WP_REQUIRED_KEYS = {"id", "title", "status", "autonomy", "depends_on", "parallel_safe", "human_gate"}
+WP_ACTIVE_REQUIRED_KEYS = {"mini_game_platform_impact"}
+MINI_GAME_PLATFORM_IMPACT = re.compile(
+    r"^(?:none|changed - [a-z0-9][a-z0-9-]*|new - [a-z0-9][a-z0-9-]* - (?:world-first|just-games-first))$"
+)
 WP_STATUSES = {"proposed", "approved", "in_progress", "waiting_human", "blocked", "complete", "cancelled"}
 WP_AUTONOMY = {"green", "amber", "red"}
 TEMPLATE_TOKEN = re.compile(r"\bTEMPLATE_[A-Z0-9_]+\b")
@@ -130,7 +134,14 @@ def parse_front_matter(path: Path) -> dict[str, object]:
     return data
 
 
-def validate_wp(path: Path, expected_id: str | None, errors: list[str]) -> None:
+def validate_wp(
+    path: Path,
+    expected_id: str | None,
+    errors: list[str],
+    *,
+    require_active_contract: bool = False,
+    allow_template: bool = False,
+) -> None:
     try:
         metadata = parse_front_matter(path)
     except (OSError, ValueError) as exc:
@@ -139,6 +150,32 @@ def validate_wp(path: Path, expected_id: str | None, errors: list[str]) -> None:
     missing = WP_REQUIRED_KEYS - metadata.keys()
     if missing:
         error(errors, f"{path.relative_to(ROOT)} missing WP metadata keys: {sorted(missing)}")
+
+    if require_active_contract:
+        active_missing = WP_ACTIVE_REQUIRED_KEYS - metadata.keys()
+        if active_missing:
+            error(
+                errors,
+                f"{path.relative_to(ROOT)} missing active WP metadata keys: {sorted(active_missing)}",
+            )
+        impact = metadata.get("mini_game_platform_impact")
+        template_impact = (
+            allow_template
+            and isinstance(impact, str)
+            and impact.startswith("TEMPLATE_")
+        )
+        if (
+            not template_impact
+            and (
+                not isinstance(impact, str)
+                or MINI_GAME_PLATFORM_IMPACT.fullmatch(impact) is None
+            )
+        ):
+            error(
+                errors,
+                f"{path.relative_to(ROOT)} has invalid mini_game_platform_impact: {impact!r}; "
+                "expected none, changed - <id>, or new - <id> - world-first|just-games-first",
+            )
     if metadata.get("status") not in WP_STATUSES:
         error(errors, f"{path.relative_to(ROOT)} has invalid status: {metadata.get('status')!r}")
     if metadata.get("autonomy") not in WP_AUTONOMY:
@@ -227,7 +264,13 @@ def main() -> int:
             if not candidate.is_file():
                 error(errors, f"{path_key} does not exist: {wp_path}")
             else:
-                validate_wp(candidate, wp_id if isinstance(wp_id, str) else None, errors)
+                validate_wp(
+                    candidate,
+                    wp_id if isinstance(wp_id, str) else None,
+                    errors,
+                    require_active_contract=True,
+                    allow_template=args.template_repository,
+                )
 
     wp_dir = ROOT / "docs" / "work-packages"
     if wp_dir.is_dir():

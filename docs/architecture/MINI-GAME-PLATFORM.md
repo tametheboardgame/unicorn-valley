@@ -1,6 +1,6 @@
 # Mini-Game Platform Architecture
 
-Status: **approved architecture / MG-WP0 implementation active**
+Status: **implemented platform / MG-WP4 authoring-and-guardrail closeout active**
 
 Programme: **MG - Mini-Game Development**
 
@@ -52,7 +52,7 @@ Optional mini-games should normally be on-demand unless there is a measured reas
 
 ### `src/game/minigames/MiniGameCatalogue.ts`
 
-Proposed canonical owner for:
+Canonical owner for:
 
 - stable mini-game family IDs;
 - player-facing title and short catalogue description;
@@ -68,7 +68,7 @@ It must contain metadata and capability declarations only. It must not import or
 
 ### `src/game/minigames/MiniGameLauncher.ts`
 
-Proposed canonical owner for:
+Canonical owner for:
 
 - validating a launch request;
 - ensuring the manifest-backed scene is available through the canonical scene loading path;
@@ -82,7 +82,7 @@ World scenes and Just Games should call this owner rather than performing direct
 
 ### `src/game/minigames/MiniGameSession.ts`
 
-Proposed types/value object for immutable launch context.
+Canonical immutable launch-context contract.
 
 Conceptual shape:
 
@@ -109,11 +109,11 @@ interface MiniGameSession {
 }
 ```
 
-Exact field names may be refined during MG-WP0 implementation, but the semantic boundary is fixed: gameplay reads one normalised session instead of ad hoc `returnScene` fields and caller-specific flags.
+The implemented semantic boundary is fixed: gameplay reads one normalised session instead of ad hoc caller-specific return fields and flags.
 
 ### `src/game/minigames/MiniGameOutcomeGateway.ts`
 
-Proposed canonical owner for context-sensitive durable effects.
+Canonical owner for context-sensitive durable effects.
 
 A game reports outcomes through this boundary when the outcome could affect persistent adventure state.
 
@@ -351,17 +351,9 @@ When launched from Just Games, labels should normally use “Back to Games” ra
 
 ## 11. Loading and registration rules
 
-Current implementation is inconsistent:
+MG-WP0/MG-WP1 converged mini-game loading and launch ownership onto the shared platform. The rules below are now the implemented default, not a future migration target.
 
-- some activity scenes are manifest-backed and on-demand;
-- some world callers still perform direct dynamic import and scene registration;
-- Chess and Pond Leap currently use separate feature-registration approaches;
-- Firefly Lantern and race scenes are startup/eager paths despite being bounded activities;
-- several games own different return conventions.
-
-MG-WP0/MG-WP1 must converge this.
-
-Rules after migration:
+Rules:
 
 1. `SceneManifest` is the only scene-constructor/load authority.
 2. `MiniGameCatalogue` points at a manifest scene key.
@@ -444,9 +436,9 @@ Examples:
 
 ## 14. Verification ownership
 
-MG-WP0 must map the new subsystem in `scripts/verification/verificationOwnership.mjs`.
+The mini-game subsystem is mapped in `scripts/verification/verificationOwnership.mjs`. MG-WP4 adds the reusable `tests/play/mg-wp4-mini-game-launch-return-contract.spec.ts` contract to that owner so future platform changes automatically exercise shared launch/return behaviour.
 
-Expected ownership:
+Current ownership:
 
 - catalogue/types/outcome-policy changes -> mini-game platform unit group plus targeted Just Games browser contract;
 - launcher/lifecycle changes -> all mini-game launch/return targeted contracts and escalation when scene/navigation architecture requires it;
@@ -459,7 +451,7 @@ Do not weaken existing full-qualification rules for final human-approved substan
 
 A new mini-game package should execute in this order:
 
-1. declare `Mini-game platform impact: new - <id> - world-first|just-games-first`;
+1. declare front-matter `mini_game_platform_impact: new - <id> - world-first|just-games-first`;
 2. define the stable game ID and catalogue metadata;
 3. implement/reuse the gameplay scene;
 4. register the scene in `SceneManifest`;
@@ -472,7 +464,7 @@ A new mini-game package should execute in this order:
 11. add verification ownership if the game introduces a new subsystem;
 12. run human visual/playtest acceptance before treating a child-facing game as finished.
 
-## 16. Migration map for current games
+## 16. Migration record for current games
 
 ### Rainbow Disc
 
