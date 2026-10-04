@@ -181,7 +181,7 @@ export const CRYSTAL_BROOK_GROTTO_ROUTE = [
 ] as const;
 
 export const CRYSTAL_BROOK_UPPER_POOL = { x: 1370, y: 540 } as const;
-export const CRYSTAL_BROOK_LOWER_POOL = { x: 2700, y: 1270 } as const;
+export const CRYSTAL_BROOK_LOWER_POOL = { x: 2740, y: 1280 } as const;
 export const CRYSTAL_BROOK_UPSTREAM_CASCADE = { x: 3320, y: 790 } as const;
 export const CRYSTAL_BROOK_MEADOW_WATER_EXIT = { x: 120, y: 920 } as const;
 
@@ -190,12 +190,14 @@ export const CRYSTAL_BROOK_WATERCOURSE = [
   { x: 3460, y: 755, outerWidth: 154, innerWidth: 110, deepWidth: 40 },
   { x: 3320, y: 790, outerWidth: 166, innerWidth: 118, deepWidth: 42 },
   { x: 3200, y: 840, outerWidth: 174, innerWidth: 124, deepWidth: 44 },
-  { x: 3090, y: 905, outerWidth: 170, innerWidth: 122, deepWidth: 44 },
-  { x: 2990, y: 985, outerWidth: 168, innerWidth: 120, deepWidth: 42 },
-  { x: 2890, y: 1080, outerWidth: 174, innerWidth: 124, deepWidth: 44 },
-  { x: 2800, y: 1180, outerWidth: 190, innerWidth: 136, deepWidth: 48 },
-  { x: 2700, y: 1270, outerWidth: 210, innerWidth: 150, deepWidth: 56 },
-  { x: 2570, y: 1315, outerWidth: 198, innerWidth: 142, deepWidth: 52 },
+  { x: 3090, y: 885, outerWidth: 170, innerWidth: 122, deepWidth: 44 },
+  { x: 2990, y: 910, outerWidth: 168, innerWidth: 120, deepWidth: 42 },
+  { x: 2890, y: 940, outerWidth: 170, innerWidth: 122, deepWidth: 42 },
+  { x: 2820, y: 1010, outerWidth: 176, innerWidth: 126, deepWidth: 44 },
+  { x: 2790, y: 1110, outerWidth: 184, innerWidth: 132, deepWidth: 46 },
+  { x: 2810, y: 1210, outerWidth: 194, innerWidth: 140, deepWidth: 50 },
+  { x: 2740, y: 1280, outerWidth: 210, innerWidth: 150, deepWidth: 56 },
+  { x: 2600, y: 1320, outerWidth: 198, innerWidth: 142, deepWidth: 52 },
   { x: 2440, y: 1290, outerWidth: 184, innerWidth: 132, deepWidth: 48 },
   { x: 2320, y: 1215, outerWidth: 178, innerWidth: 128, deepWidth: 46 },
   { x: 2200, y: 1150, outerWidth: 170, innerWidth: 122, deepWidth: 44 },
@@ -240,7 +242,7 @@ export const CRYSTAL_BROOK_REFLECTION_FEEDER = {
 
 export const CRYSTAL_BROOK_WATER_GLINTS = [
   { x: 3360, y: 770, width: 74, angle: -5 },
-  { x: 2890, y: 1080, width: 92, angle: -38 },
+  { x: 2810, y: 1070, width: 86, angle: -82 },
   { x: 2360, y: 1240, width: 78, angle: 22 },
   { x: 1810, y: 1020, width: 76, angle: 18 },
   { x: 1380, y: 590, width: 118, angle: -5 },
@@ -448,7 +450,7 @@ export const CRYSTAL_BROOK_MAP = {
   ] satisfies readonly CrystalBrookSecretRoute[],
   colliders: [
     { id: 'collision:brook-upper-deep-water', x: 1370, y: 540, width: 230, height: 82 },
-    { id: 'collision:brook-lower-deep-water', x: 2700, y: 1270, width: 180, height: 76 },
+    { id: 'collision:brook-lower-deep-water', x: 2740, y: 1280, width: 180, height: 76 },
     { id: 'collision:cliff-west', x: 520, y: 410, width: 320, height: 150 },
     { id: 'collision:cliff-north-west', x: 880, y: 350, width: 260, height: 135 },
     { id: 'collision:cliff-north-east', x: 2350, y: 310, width: 300, height: 150 },
