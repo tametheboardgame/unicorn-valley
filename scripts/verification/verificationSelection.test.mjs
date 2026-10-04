@@ -41,6 +41,9 @@ test('mini-game platform changes select mini-game unit and browser ownership', (
   assert.ok(plan.unitFilters.includes('src/game/minigames'));
   assert.deepEqual(plan.browserGroups, ['mini-games']);
   assert.ok(plan.browserTests.includes('tests/play/mg-wp3-just-games.spec.ts'));
+  assert.ok(
+    plan.browserTests.includes('tests/play/mg-wp4-mini-game-launch-return-contract.spec.ts'),
+  );
   assert.ok(plan.browserTests.includes('tests/play/r6.5-wp14-repeatable-activities.spec.ts'));
 });
 
