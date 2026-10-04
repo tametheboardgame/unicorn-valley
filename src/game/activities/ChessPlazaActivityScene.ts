@@ -127,7 +127,10 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.lessonResetPending = false;
     this.opponentPending = false;
 
-    this.drawAcademyShell('Sunbeam Chess Academy', 'Learn, practise and play real chess at your own pace.');
+    this.drawAcademyShell(
+      'Sunbeam Chess Academy',
+      'Learn, practise and play real chess at your own pace.',
+    );
     this.drawTeacherPortrait(166, 203, 1.05);
 
     this.add
@@ -187,10 +190,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     const available = mode.availability === 'available';
     const draw = (hovered: boolean): void => {
       panel.clear();
-      panel.fillStyle(
-        available ? (hovered ? 0xffedf2 : 0xfffbf1) : 0xeee8dd,
-        available ? 1 : 0.86,
-      );
+      panel.fillStyle(available ? (hovered ? 0xffedf2 : 0xfffbf1) : 0xeee8dd, available ? 1 : 0.86);
       panel.fillRoundedRect(-width / 2, -height / 2, width, height, 22);
       panel.lineStyle(available ? 3 : 2, available ? 0xc99bb2 : 0xc8beb1, 0.95);
       panel.strokeRoundedRect(-width / 2, -height / 2, width, height, 22);
