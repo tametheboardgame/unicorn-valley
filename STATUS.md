@@ -102,6 +102,18 @@ H6.2G therefore:
 - adds progressively denser trees along the east edge and lets the Brook continue off-map through the woodland;
 - retains the north-edge Crystal Cup Raceway gateway and provisional hub topology from H6.2F.
 
+
+### H6.2H path-junction and woodland-edge cleanup
+
+The H6.2G preview was substantially improved but still exposed three small residues: the Crystal Cup spur painted as a separate path layer at its junction, an obsolete Crystal Cascade flag landmark remained in the world, and the east woodland still read as a regular row of trees too far inside the map.
+
+H6.2H therefore:
+
+- introduces one canonical Crystal Cup path junction shared by the main trail and race-hub spur;
+- renders the main route and Crystal Cup spur in a single outer-pass/inner-pass path network so the branch joins cleanly without a darker outer band cutting across the main path;
+- removes the obsolete `cascade-memory` / Crystal Cascade overlook interaction and its chequered flag marker, together with the dead race-progress signature it used;
+- rebuilds the east woodland with denser, staggered and overlapping tree clusters, greater scale/position variation and most tree centres on or beyond the east map edge;
+- leaves only a semantic Woods exit zone: visually the exit is now trail + enclosing woodland, with no portal or extra threshold shape.
 ## Mini-game dependency state
 
 MG-WP0, MG-WP1, MG-WP2, MG-WP3 and **MG-WP4 are complete and merged**.
@@ -116,13 +128,13 @@ A fresh CI run is required on the refined, MG-WP3-reconciled H6.2 head.
 
 ## Human gate
 
-H6.2G remains a substantive visual checkpoint.
+H6.2H remains a substantive visual checkpoint.
 
 Do not begin H6.3 until:
 
 - relevant technical validation is complete as far as the repository baseline permits;
 - an exact-head preview of the refinement is available;
-- David has confirmed the smooth meandering Brook, northward/eastward crystalline bridge sequence, south Grotto and natural tree-lined Woods exit read correctly.
+- David has confirmed the joined east-side path branches, removal of the old race flag marker, and denser irregular off-map woodland edge read correctly.
 
 ## Next work
 
