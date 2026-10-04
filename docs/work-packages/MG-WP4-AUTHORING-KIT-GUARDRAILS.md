@@ -51,7 +51,7 @@ Implementation notes:
 - sandbox/world side-effect assertions are shared through a test-only helper;
 - mini-game verification ownership explicitly includes the reusable browser contract.
 
-### MG-WP4C - Cross-roadmap enforcement and closeout - active
+### MG-WP4C - Cross-roadmap enforcement and closeout - complete
 
 - make the Mini-game platform impact declaration a required work-package authoring check;
 - reconcile architecture/engineering documentation;
@@ -83,3 +83,8 @@ MG-WP4C reviewed the canonical authoring path against the existing `sunbeam-ches
 - **No duplicate implementation:** no Just-Games-specific chess gameplay scene or ruleset exists.
 
 Review result: **conforms to the MG-WP4 authoring recipe**. No Chess product change is required for closeout.
+
+
+## Closeout state
+
+MG-WP4 implementation is complete and the repository-selected branch CI passed on 2026-10-04. The package is now stopped at its Amber architecture-and-authoring human gate. Merge requires David's explicit closeout approval.
