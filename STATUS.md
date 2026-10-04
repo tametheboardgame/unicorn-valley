@@ -51,11 +51,24 @@ The next visual review found that the race-side junction still tangled the Brook
 H6.2D therefore:
 
 - reroutes the presentation path so it approaches the Brook from the south bank and crosses once, approximately perpendicular to the watercourse;
-- adds a dedicated timber bridge at that crossing;
+- adds a dedicated bridge at that crossing;
 - removes the redundant Brook-Woods compatibility redraw because the area-owned main path already serves that route;
-- gives the Crystal Cup/race spur a narrower established-style presentation route starting from the bridge’s north landing;
+- gives the Crystal Cup/race spur a narrower established-style presentation route starting from the far bank;
 - replaces the wide straight Reflection Pool inlet with a narrow curved feeder channel;
 - keeps functional race/Woods/Grotto gateways and traversal coordinates unchanged.
+
+### H6.2E bridge correction
+
+The next visual review showed that H6.2D had over-corrected: the bridge was too vertical, too dominant and materially wrong for Crystal Brook.
+
+H6.2E therefore:
+
+- moves the bridge west so its western landing sits around the player position shown in the review screenshot;
+- rotates it to cross west-to-east with only a slight northward rise;
+- lengthens it enough to span the Brook cleanly without sitting along the river;
+- replaces the timber construction with irregular stone slabs, embedded crystals and low rock edging;
+- removes the three stepping stones directly underneath the new bridge while retaining the separate western stepping-stone crossing;
+- changes only the immediately adjacent path points needed to meet the new bridge, leaving broader race-side path cleanup for the later race-area recompose.
 
 ## Mini-game dependency state
 
@@ -71,7 +84,7 @@ A fresh CI run is required on the refined, MG-WP3-reconciled H6.2 head.
 
 ## Human gate
 
-H6.2D remains a substantive visual checkpoint.
+H6.2E remains a substantive visual checkpoint.
 
 Do not begin H6.3 until:
 
