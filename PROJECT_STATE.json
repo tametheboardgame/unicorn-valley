@@ -11,7 +11,7 @@
   "agent_state": "active",
   "branch": "agent/mg-wp5-sunbeam-chess-academy",
   "latest_commit": "7600489eab2f369620fb4b58f53beb98f3e5c645",
-  "ci_state": "pending",
+  "ci_state": "unknown",
   "technical_validation_state": "pending",
   "human_acceptance_state": "accepted",
   "next_work_package": null,
