@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   CRYSTAL_BROOK_ACTIVITY_POCKETS,
   CRYSTAL_BROOK_BOUNDARY_OPENINGS,
+  CRYSTAL_BROOK_CRYSTAL_CUP_JUNCTION,
   CRYSTAL_BROOK_DISTRICTS,
   CRYSTAL_BROOK_EAST_BRIDGE,
   CRYSTAL_BROOK_ICE_BRIDGES,
@@ -174,6 +175,15 @@ describe('Crystal Brook map', () => {
     expect(CRYSTAL_BROOK_WATERCOURSE[0].x).toBeGreaterThan(CRYSTAL_BROOK_MAP.width);
     expect(CRYSTAL_BROOK_WATERCOURSE[0].y).toBeGreaterThan(650);
     expect(CRYSTAL_BROOK_WATERCOURSE[0].y).toBeLessThan(900);
+  });
+
+  it('shares one authored path junction between the main trail and Crystal Cup spur', () => {
+    expect(CRYSTAL_BROOK_PATH_PRESENTATION_SEGMENTS[1]).toContain(
+      CRYSTAL_BROOK_CRYSTAL_CUP_JUNCTION,
+    );
+    expect(CRYSTAL_BROOK_LAYOUT.routes.crystalCupHub[0]).toEqual(
+      CRYSTAL_BROOK_CRYSTAL_CUP_JUNCTION,
+    );
   });
 
   it('keeps canonical route endpoints aligned with their structural destinations', () => {
