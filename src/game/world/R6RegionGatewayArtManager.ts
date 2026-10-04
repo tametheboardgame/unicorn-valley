@@ -381,75 +381,114 @@ function createBrookEastWoodland(scene: Phaser.Scene): void {
   );
 
   const treePositions = [
-    [3180, 520, 0.72],
-    [3370, 500, 0.94],
-    [3480, 610, 1.05],
-    [3260, 930, 0.82],
-    [3440, 980, 1.08],
-    [3230, 1160, 0.88],
-    [3460, 1190, 1.14],
-    [3220, 1380, 0.94],
-    [3450, 1395, 1.18],
-    [3190, 1740, 0.92],
-    [3420, 1740, 1.18],
-    [3220, 1960, 1.02],
-    [3460, 1980, 1.22],
+    [3345, 430, 0.78],
+    [3470, 455, 1.04],
+    [3610, 500, 0.88],
+    [3710, 590, 1.16],
+    [3380, 720, 0.68],
+    [3505, 735, 1.08],
+    [3655, 790, 0.94],
+    [3750, 900, 1.2],
+    [3420, 990, 0.76],
+    [3540, 1025, 1.14],
+    [3685, 1080, 0.9],
+    [3770, 1190, 1.24],
+    [3385, 1280, 0.72],
+    [3525, 1300, 1.08],
+    [3680, 1365, 0.98],
+    [3315, 1475, 0.74],
+    [3560, 1495, 1.12],
+    [3705, 1550, 0.9],
+    [3330, 1715, 0.86],
+    [3495, 1690, 1.18],
+    [3650, 1770, 0.96],
+    [3750, 1880, 1.2],
+    [3390, 1960, 0.78],
+    [3545, 1990, 1.1],
+    [3695, 2060, 0.92],
   ] as const;
 
   for (const [index, [x, y, scale]] of treePositions.entries()) {
-    const trunkWidth = 38 * scale;
-    const trunkHeight = 176 * scale;
-    const canopyA = index % 2 === 0 ? 0x315f49 : 0x28543f;
-    const canopyB = index % 3 === 0 ? 0x42745a : 0x396b51;
+    const trunkWidth = (index % 3 === 0 ? 34 : 39) * scale;
+    const trunkHeight = (index % 4 === 0 ? 154 : 178) * scale;
+    const canopyA = index % 2 === 0 ? 0x2f5f48 : 0x28543f;
+    const canopyB = index % 3 === 0 ? 0x42745a : 0x37684f;
+    const canopyC = index % 4 === 0 ? 0x4e8261 : 0x46795a;
+    const lean = index % 2 === 0 ? -5 : 4;
+    const spread = 0.9 + (index % 5) * 0.05;
 
     woodland.add([
       scene.add
         .rectangle(x, y, trunkWidth, trunkHeight, 0x544638, 1)
-        .setStrokeStyle(3, 0x3f372f, 0.86),
-      scene.add.ellipse(x - 44 * scale, y - 86 * scale, 142 * scale, 104 * scale, canopyA, 0.98),
-      scene.add.ellipse(x + 38 * scale, y - 102 * scale, 154 * scale, 112 * scale, canopyB, 0.97),
-      scene.add.ellipse(x, y - 142 * scale, 126 * scale, 94 * scale, 0x4a805f, 0.92),
+        .setStrokeStyle(3, 0x3f372f, 0.84)
+        .setAngle(lean),
+      scene.add.ellipse(
+        x - 42 * scale,
+        y - 82 * scale,
+        132 * scale * spread,
+        100 * scale,
+        canopyA,
+        0.98,
+      ),
+      scene.add.ellipse(
+        x + 34 * scale,
+        y - 100 * scale,
+        148 * scale * spread,
+        108 * scale,
+        canopyB,
+        0.97,
+      ),
+      scene.add.ellipse(
+        x + (index % 2 === 0 ? -8 : 12) * scale,
+        y - 136 * scale,
+        122 * scale,
+        92 * scale,
+        canopyC,
+        0.92,
+      ),
     ]);
   }
 
-  for (const [x, y, width] of [
-    [3270, 1515, 120],
-    [3460, 1515, 130],
-    [3290, 1640, 116],
-    [3450, 1645, 126],
+  for (const [x, y, width, height, angle] of [
+    [3370, 1435, 116, 58, -10],
+    [3490, 1450, 132, 64, 8],
+    [3620, 1510, 126, 60, -6],
+    [3410, 1620, 108, 54, 11],
+    [3570, 1650, 138, 66, -8],
+    [3710, 1670, 122, 58, 6],
+    [3440, 1850, 118, 58, -5],
+    [3610, 1890, 130, 62, 9],
   ] as const) {
     woodland.add([
-      scene.add.ellipse(x, y, width, 62, 0x4f8057, 0.84),
-      scene.add.ellipse(x + 34, y - 12, width * 0.7, 50, 0x5d9361, 0.78),
+      scene.add.ellipse(x, y, width, height, 0x4f8057, 0.86).setAngle(angle),
+      scene.add
+        .ellipse(x + 30, y - 10, width * 0.72, height * 0.8, 0x5d9361, 0.78)
+        .setAngle(-angle),
     ]);
   }
 
-  // Small crystal glints keep the east edge in Crystal Brook's visual language
-  // without turning the woodland threshold back into a portal.
   for (const [x, y, scale] of [
-    [3240, 820, 0.52],
-    [3415, 1080, 0.46],
-    [3340, 1820, 0.5],
+    [3370, 820, 0.42],
+    [3540, 1130, 0.5],
+    [3460, 1810, 0.46],
   ] as const) {
     woodland.add(
       scene.add
-        .triangle(x, y, 0, 34 * scale, 13 * scale, 0, 26 * scale, 34 * scale, 0xa9eaf0, 0.78)
-        .setStrokeStyle(2, 0xf0ffff, 0.68),
+        .triangle(x, y, 0, 34 * scale, 13 * scale, 0, 26 * scale, 34 * scale, 0xa9eaf0, 0.72)
+        .setStrokeStyle(2, 0xf0ffff, 0.62),
     );
   }
 
+  // Semantic exit only: the visible language is now just trail + enclosing trees.
   name(
     scene.add
-      .container(
+      .zone(
         CRYSTAL_BROOK_WOODS_THRESHOLD.position.x,
         CRYSTAL_BROOK_WOODS_THRESHOLD.position.y,
-        [
-          scene.add
-            .ellipse(0, 40, 260, 90, 0x315f49, 0.14)
-            .setAngle(-4),
-        ],
+        160,
+        180,
       )
-      .setDepth(worldDepthForY(CRYSTAL_BROOK_WOODS_THRESHOLD.position.y, 0.2)),
+      .setVisible(false),
     'crystal-brook:woods-path-exit',
   );
 }
