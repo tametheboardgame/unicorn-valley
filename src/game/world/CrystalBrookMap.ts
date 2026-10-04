@@ -124,6 +124,8 @@ export const CRYSTAL_BROOK_MAIN_ROUTE = [
   CRYSTAL_BROOK_WOODS_THRESHOLD.position,
 ] as const;
 
+export const CRYSTAL_BROOK_CRYSTAL_CUP_JUNCTION = { x: 2490, y: 1060 } as const;
+
 export const CRYSTAL_BROOK_PATH_PRESENTATION_SEGMENTS = [
   [
     { x: 100, y: 1090 },
@@ -138,7 +140,7 @@ export const CRYSTAL_BROOK_PATH_PRESENTATION_SEGMENTS = [
   ],
   [
     CRYSTAL_BROOK_NORTH_BRIDGE.endLanding,
-    { x: 2490, y: 1060 },
+    CRYSTAL_BROOK_CRYSTAL_CUP_JUNCTION,
     CRYSTAL_BROOK_EAST_BRIDGE.startLanding,
   ],
   [
@@ -161,8 +163,8 @@ export const CRYSTAL_BROOK_WOODS_ROUTE = [
 ] as const;
 
 export const CRYSTAL_BROOK_CRYSTAL_CUP_ROUTE = [
-  CRYSTAL_BROOK_NORTH_BRIDGE.endLanding,
-  { x: 2480, y: 930 },
+  CRYSTAL_BROOK_CRYSTAL_CUP_JUNCTION,
+  { x: 2510, y: 930 },
   { x: 2580, y: 760 },
   { x: 2700, y: 590 },
   { x: 2810, y: 430 },
