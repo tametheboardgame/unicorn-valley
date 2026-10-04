@@ -139,14 +139,22 @@ describe('Crystal Brook map', () => {
     expect(CRYSTAL_BROOK_WATERCOURSE.at(-2)?.outerWidth).toBeLessThanOrEqual(150);
   });
 
-  it('uses one deliberate bridge crossing at the race-side Brook junction', () => {
-    expect(CRYSTAL_BROOK_RACE_BRIDGE.southLanding).toEqual(
+  it('uses one deliberate west-to-east bridge crossing at the race-side Brook junction', () => {
+    expect(CRYSTAL_BROOK_RACE_BRIDGE.westLanding).toEqual(
+      CRYSTAL_BROOK_PATH_PRESENTATION_ROUTE[8],
+    );
+    expect(CRYSTAL_BROOK_RACE_BRIDGE.eastLanding).toEqual(
       CRYSTAL_BROOK_PATH_PRESENTATION_ROUTE[9],
     );
-    expect(CRYSTAL_BROOK_RACE_BRIDGE.northLanding).toEqual(
-      CRYSTAL_BROOK_PATH_PRESENTATION_ROUTE[10],
+    expect(CRYSTAL_BROOK_RACE_BRIDGE.eastLanding.x).toBeGreaterThan(
+      CRYSTAL_BROOK_RACE_BRIDGE.westLanding.x,
     );
-    expect(CRYSTAL_BROOK_RACE_BRIDGE.length).toBeGreaterThan(200);
+    expect(CRYSTAL_BROOK_RACE_BRIDGE.eastLanding.y).toBeLessThan(
+      CRYSTAL_BROOK_RACE_BRIDGE.westLanding.y,
+    );
+    expect(CRYSTAL_BROOK_RACE_BRIDGE.angle).toBeGreaterThan(-25);
+    expect(CRYSTAL_BROOK_RACE_BRIDGE.angle).toBeLessThan(0);
+    expect(CRYSTAL_BROOK_RACE_BRIDGE.length).toBeGreaterThan(300);
     expect(CRYSTAL_BROOK_RACE_BRIDGE.deckWidth).toBeLessThan(110);
   });
 
