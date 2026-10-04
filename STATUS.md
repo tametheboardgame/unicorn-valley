@@ -6,7 +6,7 @@ Last updated: 2026-10-04
 
 The independent **MG - Mini-Game Development Programme** remains active.
 
-Current bounded package: **MG-WP4 - Future Mini-Game Authoring Kit and Guardrails**
+Current bounded package: **MG-WP4 - Future Mini-Game Authoring Kit and Guardrails (complete; merge pending)**
 
 Branch: agent/mg-wp4-authoring-kit-guardrails
 
@@ -22,11 +22,11 @@ Complete. The canonical authoring recipe, catalogue integrity guard and determin
 
 Complete. Static/architecture checks and the reusable Just Games browser contract pass. The contract now waits for game-specific readiness where required, including Wobbly Cake.
 
-### Active checkpoint
+### Completed checkpoint
 
 **MG-WP4C - Cross-roadmap enforcement and closeout**
 
-Implementation and branch CI validation are complete. The package is waiting at the Amber human closeout gate.
+Implementation, branch CI validation and Amber human acceptance are complete.
 
 Implemented:
 
@@ -38,9 +38,7 @@ Implemented:
 
 ### Human gate
 
-MG-WP4 is Amber.
-
-Do not merge until technical closeout state is known and David approves programme closeout.
+David approved the MG-WP4 architecture-and-authoring closeout on 2026-10-04.
 
 ## Validation state
 
@@ -52,7 +50,7 @@ MG-WP4C repository-selected CI is passing on the exact branch head. No in-scope 
 
 ## Next work
 
-Await David's Amber closeout approval. If approved, merge PR #269 and mark MG-WP4 complete.
+Merge PR #269. MG-WP4 then releases the platform readiness gate for future mini-game packages, including the planned Crystal Brook games.
 
 ## Operating reminders
 
