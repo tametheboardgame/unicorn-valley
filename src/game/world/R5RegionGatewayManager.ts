@@ -139,6 +139,7 @@ const R5_REGION_GATEWAYS: readonly RegionGatewayDefinition[] = [
     destinationFacing: 'right',
     accent: 0x7aaa78,
     icon: '🌲',
+    presentation: 'functional-only',
   },
   {
     id: 'gateway:whispering-woods-crystal-brook',
