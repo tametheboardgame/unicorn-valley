@@ -5,9 +5,8 @@ import {
   type LegacyGatewayLabelTarget,
 } from './R6FinalPlaythroughCleanup';
 import {
-  CRYSTAL_BROOK_CRYSTAL_CUP_ROUTE,
+  CRYSTAL_BROOK_CRYSTAL_CUP_PRESENTATION_ROUTE,
   CRYSTAL_BROOK_CRYSTAL_CUP_THRESHOLD,
-  CRYSTAL_BROOK_WOODS_ROUTE,
 } from './CrystalBrookMap';
 import { INTERACTIVE_GATEWAY_RADIUS } from './RegionGatewayRules';
 import { SUNBEAM_VILLAGE_MAP } from './SunbeamVillageMap';
@@ -17,7 +16,6 @@ const CLEANUP_PREFIX = 'r6-wp6.18g';
 const FINAL_FIX_PREFIX = 'r6-wp6.18ij';
 const LEGACY_BROOK_WOODS_PATH_NAME = 'r6-region-gateway-art:brook-woods:path';
 const LEGACY_CRYSTAL_CASCADE_PATH_NAME = 'r6-region-gateway-art:crystal-cascade:path';
-const BROOK_WOODS_PATH_NAME = `${FINAL_FIX_PREFIX}:brook-woods:path`;
 const CRYSTAL_CASCADE_PATH_NAME = `${FINAL_FIX_PREFIX}:crystal-cascade:path`;
 const CRYSTAL_CASCADE_TAP_TARGET_NAME = `${FINAL_FIX_PREFIX}:crystal-cascade-tap-target`;
 const CRYSTAL_CASCADE_GATE_POSITION = CRYSTAL_BROOK_CRYSTAL_CUP_THRESHOLD.position;
@@ -27,8 +25,8 @@ interface PathPoint {
   y: number;
 }
 
-const BROOK_WOODS_PATH_POINTS: readonly PathPoint[] = CRYSTAL_BROOK_WOODS_ROUTE;
-const CRYSTAL_CASCADE_PATH_POINTS: readonly PathPoint[] = CRYSTAL_BROOK_CRYSTAL_CUP_ROUTE;
+const CRYSTAL_CASCADE_PATH_POINTS: readonly PathPoint[] =
+  CRYSTAL_BROOK_CRYSTAL_CUP_PRESENTATION_ROUTE;
 
 function drawPath(
   scene: Phaser.Scene,
@@ -80,27 +78,15 @@ function cleanBrookGatewayPaths(scene: Phaser.Scene): void {
 
   drawPath(
     scene,
-    BROOK_WOODS_PATH_NAME,
-    BROOK_WOODS_PATH_POINTS,
-    2.05,
-    128,
-    72,
-    0xe8d4a5,
-    0xf4e8c5,
-    0.9,
-    0.92,
-  );
-  drawPath(
-    scene,
     CRYSTAL_CASCADE_PATH_NAME,
     CRYSTAL_CASCADE_PATH_POINTS,
-    2.05,
-    128,
-    72,
-    0xe8d4a5,
-    0xf4e8c5,
-    0.9,
-    0.92,
+    2.9,
+    82,
+    64,
+    0xd7c18f,
+    0xf0dfb2,
+    1,
+    1,
   );
 }
 
