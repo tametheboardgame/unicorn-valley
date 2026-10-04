@@ -31,7 +31,9 @@ function objectText(
 }
 
 test.describe('MG-WP5 Sunbeam Chess Academy', () => {
-  test('opens the Academy Home and keeps unfinished modes visibly unavailable', async ({ page }) => {
+  test('opens the Academy Home and keeps unfinished modes visibly unavailable', async ({
+    page,
+  }) => {
     await openChessAcademy(page);
 
     for (const name of [
@@ -56,7 +58,9 @@ test.describe('MG-WP5 Sunbeam Chess Academy', () => {
     expect(coachMatch?.interactive).toBe(false);
   });
 
-  test('completes the first rook movement lesson through real board interaction', async ({ page }) => {
+  test('completes the first rook movement lesson through real board interaction', async ({
+    page,
+  }) => {
     await openChessAcademy(page);
 
     await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:mode:lessons');
@@ -65,11 +69,7 @@ test.describe('MG-WP5 Sunbeam Chess Academy', () => {
       'ChessPlazaActivityScene',
       'sunbeam-chess:lesson-card:rook-rays',
     );
-    await clickNamedObject(
-      page,
-      'ChessPlazaActivityScene',
-      'sunbeam-chess:lesson-card:rook-rays',
-    );
+    await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:lesson-card:rook-rays');
 
     await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:piece:w:r:d4');
     await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:piece:w:r:d4');
