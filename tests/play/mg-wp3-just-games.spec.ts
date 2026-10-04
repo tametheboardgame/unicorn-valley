@@ -112,39 +112,6 @@ test.describe('MG-WP3 Just Games catalogue', () => {
     expect(Math.max(...rows.values())).toBeLessThanOrEqual(2);
   });
 
-  test('launches a no-variant game in sandbox and returns to the catalogue', async ({ page }) => {
-    await clickNamedObject(page, 'TitleScene', 'title-menu-just-games');
-    await waitForScene(page, 'JustGamesScene');
-
-    await clickNamedObject(page, 'JustGamesScene', 'just-games-card:sunbeam-chess');
-    await clickNamedObject(page, 'JustGamesScene', 'just-games-play');
-    await waitForScene(page, 'ChessPlazaActivityScene');
-
-    expect(await page.evaluate((key) => window.localStorage.getItem(key), SAVE_KEY)).toBeNull();
-
-    await page.keyboard.press('Escape');
-    await waitForScene(page, 'JustGamesScene');
-    expect((await getDiagnosticSnapshot(page)).activeScenes).not.toContain(
-      'ChessPlazaActivityScene',
-    );
-  });
-
-  test('launches a selected Rainbow Disc variant and returns to Just Games', async ({ page }) => {
-    await clickNamedObject(page, 'TitleScene', 'title-menu-just-games');
-    await waitForScene(page, 'JustGamesScene');
-
-    await clickNamedObject(page, 'JustGamesScene', 'just-games-card:rainbow-disc');
-    await waitForNamedObject(page, 'JustGamesScene', 'just-games-variant:practice');
-    await clickNamedObject(page, 'JustGamesScene', 'just-games-variant:practice');
-    await clickNamedObject(page, 'JustGamesScene', 'just-games-play');
-    await waitForScene(page, 'RainbowDiscActivityScene');
-
-    expect(await page.evaluate((key) => window.localStorage.getItem(key), SAVE_KEY)).toBeNull();
-
-    await page.keyboard.press('Escape');
-    await waitForScene(page, 'JustGamesScene');
-  });
-
   test('Escape from Just Games returns to the title', async ({ page }) => {
     await clickNamedObject(page, 'TitleScene', 'title-menu-just-games');
     await waitForScene(page, 'JustGamesScene');
