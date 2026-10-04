@@ -1,11 +1,12 @@
 ---
 id: MG-WP4
 title: Future Mini-Game Authoring Kit and Guardrails
-status: active
+status: in_progress
 autonomy: amber
 depends_on: [MG-WP3]
 parallel_safe: false
 human_gate: architecture-and-authoring
+mini_game_platform_impact: changed - platform
 ---
 
 # MG-WP4 - Future Mini-Game Authoring Kit and Guardrails
@@ -14,7 +15,7 @@ human_gate: architecture-and-authoring
 
 Make the shared mini-game path the default and easiest path for every future world or Just-Games-first mini-game.
 
-Mini-game platform impact: **changed - authoring and verification guardrails**
+Mini-game platform impact: **changed - platform** (authoring and verification guardrails)
 
 MG-WP4 began on 2026-10-03 after MG-WP3 was approved and merged to main.
 
@@ -37,7 +38,7 @@ MG-WP4 began on 2026-10-03 after MG-WP3 was approved and merged to main.
 - add a deterministic test-only fixture using one existing canonical game to prove the same definition/session path supports world and Just Games contexts;
 - reconcile package/project status.
 
-### MG-WP4B - Reusable behavioural verification contracts - implementation complete, validation pending
+### MG-WP4B - Reusable behavioural verification contracts - complete
 
 - extract reusable browser launch/return helpers that future games can opt into without copying the full Just Games suite;
 - add reusable sandbox no-adventure-write regression coverage;
@@ -50,7 +51,7 @@ Implementation notes:
 - sandbox/world side-effect assertions are shared through a test-only helper;
 - mini-game verification ownership explicitly includes the reusable browser contract.
 
-### MG-WP4C - Cross-roadmap enforcement and closeout
+### MG-WP4C - Cross-roadmap enforcement and closeout - active
 
 - make the Mini-game platform impact declaration a required work-package authoring check;
 - reconcile architecture/engineering documentation;
@@ -68,3 +69,17 @@ Implementation notes:
 ## Human gate
 
 MG-WP4 is Amber. Do not merge until the authoring workflow and guardrails have been reviewed against at least one representative existing mini-game and David approves the programme closeout.
+
+
+## Representative authoring review - Sunbeam Chess
+
+MG-WP4C reviewed the canonical authoring path against the existing `sunbeam-chess` family.
+
+- **Stable identity:** `MiniGameCatalogue` owns one `sunbeam-chess` ID pointing to `ChessPlazaActivityScene`.
+- **World wrapper:** `VillageLifeWorldManager.launchChess` owns the physical Sunbeam chess-plaza interaction and calls `launchMiniGame` with `source: 'world'` plus the interaction context.
+- **Caller-independent gameplay:** `ChessPlazaActivityScene` reads `MiniGameSession`; its Back label derives from session source and exit routes through `returnFromMiniGame`.
+- **Just Games reuse:** the reusable MG-WP4 browser contract launches the same `ChessPlazaActivityScene` from the catalogue and proves clean return to `JustGamesScene`.
+- **Sandbox boundary:** the deterministic authoring fixture creates world and Just Games sessions for the same chess definition and applies the reusable world/sandbox side-effect contracts.
+- **No duplicate implementation:** no Just-Games-specific chess gameplay scene or ruleset exists.
+
+Review result: **conforms to the MG-WP4 authoring recipe**. No Chess product change is required for closeout.
