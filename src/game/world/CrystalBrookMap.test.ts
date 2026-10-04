@@ -95,9 +95,9 @@ describe('Crystal Brook map', () => {
       CRYSTAL_BROOK_LOWER_POOL,
       CRYSTAL_BROOK_MEADOW_WATER_EXIT,
     ]) {
-      expect(
-        CRYSTAL_BROOK_WATERCOURSE.some(({ x, y }) => x === target.x && y === target.y),
-      ).toBe(true);
+      expect(CRYSTAL_BROOK_WATERCOURSE.some(({ x, y }) => x === target.x && y === target.y)).toBe(
+        true,
+      );
     }
 
     expect(CRYSTAL_BROOK_MEADOW_WATER_EXIT.x).toBe(
