@@ -156,6 +156,7 @@ test('Crystal Brook owns one continuous filled water system without legacy repla
         object.name === 'r6-region-gateway-art:brook-woods:woodland-threshold' && object.visible,
     ),
   ).toBe(false);
+  expect(objects.some((object) => object.name === 'brook-depth:cascade-memory')).toBe(false);
 
   const largeBackdropCircles = objects.filter(
     (object) => object.type === 'Arc' && object.depth === 1 && object.displayWidth > 1200,
