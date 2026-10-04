@@ -104,7 +104,9 @@ test('Crystal Brook owns one continuous filled water system without legacy repla
   await startScene(page, 'CrystalBrookScene');
   await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:main-path');
   await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:watercourse-outer');
-  await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:race-bridge');
+  await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:ice-bridge:central-crossing');
+  await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:ice-bridge:woods-crossing');
+  await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:crystal-cup-spur');
   await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:reflection-feeder');
   await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:reflection-pool-outer');
   await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:upstream-cascade');
@@ -113,12 +115,13 @@ test('Crystal Brook owns one continuous filled water system without legacy repla
   const objects = await getSceneObjects(page, 'CrystalBrookScene');
   for (const name of [
     'crystal-brook:main-path',
-    'crystal-brook:race-bridge',
+    'crystal-brook:ice-bridge:central-crossing',
+    'crystal-brook:ice-bridge:woods-crossing',
+    'crystal-brook:crystal-cup-spur',
     'crystal-brook:reflection-feeder',
     'crystal-brook:watercourse-outer',
     'crystal-brook:watercourse-inner',
     'crystal-brook:watercourse-deep',
-    'crystal-brook:reflection-inlet',
     'crystal-brook:reflection-pool-outer',
     'crystal-brook:upstream-cascade',
   ]) {
@@ -130,6 +133,9 @@ test('Crystal Brook owns one continuous filled water system without legacy repla
   ).toBe(false);
   expect(
     objects.some((object) => object.name === 'exploration-path-polish' && object.visible),
+  ).toBe(false);
+  expect(
+    objects.some((object) => object.name === 'r6-wp6.18ij:crystal-cascade:path' && object.visible),
   ).toBe(false);
   expect(objects.some((object) => object.name === 'brook-depth:waterfall-mist-landmark')).toBe(
     false,
