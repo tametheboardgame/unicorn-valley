@@ -169,16 +169,16 @@ The independent mini-game programme is defined by `MINIGAMES-ROADMAP.md`; the de
 These rules apply to **every** roadmap and work package:
 
 - classify bounded repeatable playable activities as mini-games unless the package documents a genuine architectural reason not to;
-- declare `Mini-game platform impact: none|changed - <id>|new - <id> - world-first|just-games-first` in the owning work package;
+- declare front-matter `mini_game_platform_impact: none|changed - <id>|new - <id> - world-first|just-games-first` in the owning work package; `changed - platform` is the shared-platform value;
 - use one stable mini-game ID and one gameplay implementation for both world and Just Games entry;
 - register the gameplay scene through `SceneManifest`; do not add a second constructor registry inside the mini-game catalogue;
-- launch through the shared mini-game launcher/session boundary once MG-WP0/MG-WP2 provide it, rather than direct caller-owned dynamic imports and scene registration;
+- launch through the implemented shared `MiniGameLauncher` / `MiniGameSession` boundary rather than caller-owned dynamic imports and scene registration;
 - keep physical world coordinates, NPCs, quests and signage outside the game definition; the world wrapper invokes the shared launcher;
 - make return destination/session context data-driven rather than hard-coding one world scene inside the mini-game;
 - make Just Games sandboxed by default so it cannot alter normal quest/world/relationship/inventory/economy/collection progression;
 - preserve existing world rewards/progression through their established domain services when the session source is `world`;
 - world-first games must gain Just Games exposure in the same feature package; Just-Games-first games may be world-unplaced but must already be world-capable without core gameplay changes;
-- add catalogue integrity, Just Games launch/return and representative world-entry tests, plus game-specific rule tests;
+- add catalogue integrity, the reusable MG-WP4 Just Games launch/return contract, representative world-entry coverage and game-specific rule tests; use the shared sandbox regression contract for durable-effect paths;
 - keep optional mini-games on-demand unless measured loading evidence justifies a wider load boundary.
 
 The catalogue is allowed to describe game families, variants and capability metadata. It must not own scene constructors, physical world placement or progression logic.
