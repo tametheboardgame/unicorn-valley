@@ -53,6 +53,14 @@ describe('SCENE_MANIFEST', () => {
     expect(SCENE_MANIFEST.map((entry) => entry.key).sort()).toEqual([...SCENE_KEYS].sort());
   });
 
+  it('keeps the Crystal Cup Raceway hub behind the on-demand exploration boundary', () => {
+    expect(SCENE_MANIFEST.find((entry) => entry.key === 'CrystalCupEntryScene')).toMatchObject({
+      category: 'exploration',
+      loadBoundary: 'on-demand',
+      registrationOwner: 'feature',
+    });
+  });
+
   it('keeps Just Games behind the on-demand feature boundary', () => {
     expect(SCENE_MANIFEST.find((entry) => entry.key === 'JustGamesScene')).toMatchObject({
       category: 'modal',
