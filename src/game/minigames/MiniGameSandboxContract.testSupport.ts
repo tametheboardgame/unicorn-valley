@@ -1,7 +1,4 @@
-import {
-  runMiniGameAdventureEffect,
-  type MiniGameAdventureEffect,
-} from './MiniGameOutcomeGateway';
+import { runMiniGameAdventureEffect, type MiniGameAdventureEffect } from './MiniGameOutcomeGateway';
 import type { MiniGameSession } from './MiniGameSession';
 
 export const MINI_GAME_ADVENTURE_EFFECTS: readonly MiniGameAdventureEffect[] = [
