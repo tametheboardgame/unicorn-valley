@@ -98,6 +98,53 @@ function fillConstantRibbon(
   );
 }
 
+function smoothPoints(
+  points: readonly { x: number; y: number }[],
+  samplesPerSpan = 6,
+): { x: number; y: number }[] {
+  if (points.length < 3) {
+    return points.map(({ x, y }) => ({ x, y }));
+  }
+
+  const xs = points.map(({ x }) => x);
+  const ys = points.map(({ y }) => y);
+  const sampleCount = Math.max(points.length, (points.length - 1) * samplesPerSpan + 1);
+
+  return Array.from({ length: sampleCount }, (_, index) => {
+    const t = index / (sampleCount - 1);
+    return {
+      x: Phaser.Math.Interpolation.CatmullRom(xs, t),
+      y: Phaser.Math.Interpolation.CatmullRom(ys, t),
+    };
+  });
+}
+
+function smoothWatercourse(
+  points: readonly CrystalBrookWatercoursePoint[],
+): CrystalBrookWatercoursePoint[] {
+  if (points.length < 3) {
+    return points.map((point) => ({ ...point }));
+  }
+
+  const xs = points.map(({ x }) => x);
+  const ys = points.map(({ y }) => y);
+  const outerWidths = points.map(({ outerWidth }) => outerWidth);
+  const innerWidths = points.map(({ innerWidth }) => innerWidth);
+  const deepWidths = points.map(({ deepWidth }) => deepWidth);
+  const sampleCount = (points.length - 1) * 5 + 1;
+
+  return Array.from({ length: sampleCount }, (_, index) => {
+    const t = index / (sampleCount - 1);
+    return {
+      x: Phaser.Math.Interpolation.CatmullRom(xs, t),
+      y: Phaser.Math.Interpolation.CatmullRom(ys, t),
+      outerWidth: Math.max(1, Phaser.Math.Interpolation.CatmullRom(outerWidths, t)),
+      innerWidth: Math.max(1, Phaser.Math.Interpolation.CatmullRom(innerWidths, t)),
+      deepWidth: Math.max(1, Phaser.Math.Interpolation.CatmullRom(deepWidths, t)),
+    };
+  });
+}
+
 export class CrystalBrookScene extends Phaser.Scene {
   private readonly audio = getVerticalSliceAudio();
   private inputController: InputController | null = null;
@@ -375,9 +422,10 @@ export class CrystalBrookScene extends Phaser.Scene {
           if (!first) {
             continue;
           }
+          const smoothedSegment = smoothPoints(segment);
           path.beginPath();
-          path.moveTo(first.x, first.y);
-          for (const point of segment.slice(1)) {
+          path.moveTo(smoothedSegment[0].x, smoothedSegment[0].y);
+          for (const point of smoothedSegment.slice(1)) {
             path.lineTo(point.x, point.y);
           }
           path.strokePath();
@@ -408,20 +456,21 @@ export class CrystalBrookScene extends Phaser.Scene {
   }
 
   private createWater(): void {
+    const watercourse = smoothWatercourse(CRYSTAL_BROOK_WATERCOURSE);
     const outerWater = this.add.graphics().setName('crystal-brook:watercourse-outer').setDepth(3);
-    fillVariableRibbon(outerWater, CRYSTAL_BROOK_WATERCOURSE, 'outerWidth', 0x579da4, 0.58);
+    fillVariableRibbon(outerWater, watercourse, 'outerWidth', 0x579da4, 0.58);
 
     const innerWater = this.add
       .graphics()
       .setName('crystal-brook:watercourse-inner')
       .setDepth(3.03);
-    fillVariableRibbon(innerWater, CRYSTAL_BROOK_WATERCOURSE, 'innerWidth', 0x78cbd0, 0.86);
+    fillVariableRibbon(innerWater, watercourse, 'innerWidth', 0x78cbd0, 0.86);
 
     const deepChannel = this.add
       .graphics()
       .setName('crystal-brook:watercourse-deep')
       .setDepth(3.06);
-    fillVariableRibbon(deepChannel, CRYSTAL_BROOK_WATERCOURSE, 'deepWidth', 0x438f9d, 0.58);
+    fillVariableRibbon(deepChannel, watercourse, 'deepWidth', 0x438f9d, 0.58);
 
     const reflectionFeeder = this.add
       .graphics()
@@ -477,28 +526,30 @@ export class CrystalBrookScene extends Phaser.Scene {
       .setDepth(3.06);
 
     const cascade = this.add.graphics().setName('crystal-brook:upstream-cascade').setDepth(3.08);
-    cascade.fillStyle(0x78cbd0, 0.86);
+    const cascadeX = CRYSTAL_BROOK_UPSTREAM_CASCADE.x;
+    const cascadeY = CRYSTAL_BROOK_UPSTREAM_CASCADE.y;
+    cascade.fillStyle(0x78cbd0, 0.72);
     cascade.fillPoints(
       [
-        new Phaser.Math.Vector2(CRYSTAL_BROOK_UPSTREAM_CASCADE.x - 72, 510),
-        new Phaser.Math.Vector2(CRYSTAL_BROOK_UPSTREAM_CASCADE.x + 74, 500),
-        new Phaser.Math.Vector2(CRYSTAL_BROOK_UPSTREAM_CASCADE.x + 58, 730),
-        new Phaser.Math.Vector2(CRYSTAL_BROOK_UPSTREAM_CASCADE.x - 60, 740),
+        new Phaser.Math.Vector2(cascadeX - 62, cascadeY - 86),
+        new Phaser.Math.Vector2(cascadeX + 64, cascadeY - 92),
+        new Phaser.Math.Vector2(cascadeX + 52, cascadeY + 72),
+        new Phaser.Math.Vector2(cascadeX - 50, cascadeY + 80),
       ],
       true,
     );
-    cascade.fillStyle(0xcdf5f1, 0.42);
-    for (const offset of [-42, -10, 24, 52]) {
+    cascade.fillStyle(0xcdf5f1, 0.34);
+    for (const offset of [-34, -8, 20, 44]) {
       cascade.fillRoundedRect(
-        CRYSTAL_BROOK_UPSTREAM_CASCADE.x + offset - 7,
-        520 + Math.abs(offset) * 0.18,
-        14,
-        190 - Math.abs(offset) * 0.4,
-        7,
+        cascadeX + offset - 6,
+        cascadeY - 74 + Math.abs(offset) * 0.14,
+        12,
+        132 - Math.abs(offset) * 0.28,
+        6,
       );
     }
-    cascade.fillStyle(0xe9ffff, 0.42);
-    cascade.fillEllipse(CRYSTAL_BROOK_UPSTREAM_CASCADE.x, 735, 175, 42);
+    cascade.fillStyle(0xe9ffff, 0.34);
+    cascade.fillEllipse(cascadeX, cascadeY + 82, 150, 34);
 
     const glints = this.add.graphics().setName('crystal-brook:water-glints').setDepth(3.12);
     glints.lineStyle(5, 0xeaffff, 0.34);
@@ -521,93 +572,107 @@ export class CrystalBrookScene extends Phaser.Scene {
         .setAngle(bridge.angle)
         .setDepth(3.5);
 
-      container.add(
-        this.add
-          .ellipse(8, 10, bridge.length + 22, bridge.deckWidth + 18, 0x31566a, 0.18)
-          .setOrigin(0.5),
+      const shadow = this.add
+        .ellipse(8, 10, bridge.length + 26, bridge.deckWidth + 22, 0x31566a, 0.16)
+        .setOrigin(0.5);
+      const deck = this.add.graphics();
+      deck.fillStyle(0xa8e7f1, 0.78);
+      deck.fillRoundedRect(
+        -bridge.length / 2,
+        -bridge.deckWidth / 2,
+        bridge.length,
+        bridge.deckWidth,
+        bridge.deckWidth / 2,
+      );
+      deck.lineStyle(4, 0xedffff, 0.9);
+      deck.strokeRoundedRect(
+        -bridge.length / 2,
+        -bridge.deckWidth / 2,
+        bridge.length,
+        bridge.deckWidth,
+        bridge.deckWidth / 2,
+      );
+      deck.fillStyle(0xe8ffff, 0.32);
+      deck.fillRoundedRect(
+        -bridge.length / 2 + 18,
+        -bridge.deckWidth * 0.22,
+        bridge.length - 36,
+        bridge.deckWidth * 0.44,
+        bridge.deckWidth * 0.22,
       );
 
-      const slabCount = Math.max(7, Math.round(bridge.length / 48));
-      const spacing = bridge.length / slabCount;
-      for (let index = 0; index < slabCount; index += 1) {
-        const x = -bridge.length / 2 + spacing * (index + 0.5);
-        const y = index % 2 === 0 ? -2 : 2;
-        const width = spacing + (index % 3 === 0 ? 5 : 1);
-        const height = bridge.deckWidth - (index % 2 === 0 ? 8 : 13);
-        const bodyColour = index % 3 === 0 ? 0xbbeef4 : index % 3 === 1 ? 0x9fdde8 : 0xcceff4;
+      container.add([shadow, deck]);
 
+      const facetCount = 7;
+      const facetSpacing = (bridge.length - 46) / facetCount;
+      for (let index = 0; index < facetCount; index += 1) {
+        const x = -bridge.length / 2 + 23 + facetSpacing * (index + 0.5);
+        const facetWidth = facetSpacing * 0.9;
         container.add(
           this.add
             .polygon(
               x,
-              y,
+              index % 2 === 0 ? -4 : 4,
               [
-                -width * 0.52,
-                height * 0.22,
-                -width * 0.44,
-                -height * 0.32,
-                -width * 0.12,
-                -height * 0.5,
-                width * 0.4,
-                -height * 0.38,
-                width * 0.52,
-                height * 0.14,
-                width * 0.2,
-                height * 0.48,
-                -width * 0.3,
-                height * 0.42,
-              ],
-              bodyColour,
-              0.9,
-            )
-            .setStrokeStyle(3, 0xeaffff, 0.78),
-        );
-
-        container.add(
-          this.add
-            .polygon(
-              x - width * 0.1,
-              y - height * 0.12,
-              [
-                -width * 0.22,
+                -facetWidth / 2,
                 0,
-                -width * 0.08,
-                -height * 0.2,
-                width * 0.22,
-                -height * 0.14,
-                width * 0.06,
-                height * 0.06,
+                -facetWidth * 0.16,
+                -bridge.deckWidth * 0.38,
+                facetWidth / 2,
+                -bridge.deckWidth * 0.14,
+                facetWidth * 0.2,
+                bridge.deckWidth * 0.34,
               ],
-              0xf4ffff,
-              0.3,
+              index % 2 === 0 ? 0xc9f5fa : 0x9fdce9,
+              0.34,
             )
-            .setStrokeStyle(1, 0xffffff, 0.22),
+            .setStrokeStyle(1, 0xf6ffff, 0.24),
         );
       }
 
       for (const side of [-1, 1] as const) {
-        const edgeY = side * (bridge.deckWidth / 2 + 3);
-        for (
-          let x = -bridge.length / 2 + 26, index = 0;
-          x <= bridge.length / 2 - 22;
-          x += 58, index += 1
-        ) {
-          const shardHeight = index % 2 === 0 ? 33 : 24;
+        const railY = side * (bridge.deckWidth / 2 + 11);
+        const rail = this.add.graphics();
+        rail.lineStyle(5, 0xb7edf5, 0.92);
+        rail.beginPath();
+        rail.moveTo(-bridge.length / 2 + 12, railY);
+        rail.lineTo(bridge.length / 2 - 12, railY);
+        rail.strokePath();
+
+        rail.lineStyle(2, 0xeaffff, 0.72);
+        const postXs: number[] = [];
+        for (let x = -bridge.length / 2 + 26; x <= bridge.length / 2 - 20; x += 52) {
+          postXs.push(x);
+        }
+        for (let index = 0; index < postXs.length - 1; index += 1) {
+          const x1 = postXs[index];
+          const x2 = postXs[index + 1];
+          const braceOffset = side * 14;
+          rail.beginPath();
+          rail.moveTo(x1, railY);
+          rail.lineTo((x1 + x2) / 2, railY + braceOffset);
+          rail.lineTo(x2, railY);
+          rail.strokePath();
+        }
+        container.add(rail);
+
+        for (const [index, x] of postXs.entries()) {
+          const crystalHeight = index % 3 === 0 ? 42 : index % 2 === 0 ? 31 : 25;
           container.add(
             this.add
               .triangle(
                 x,
-                edgeY,
+                railY,
                 0,
-                shardHeight,
-                10,
+                crystalHeight,
+                12,
                 0,
-                21,
-                shardHeight,
-                index % 3 === 0 ? 0xa9eaf2 : 0xcbbcf3,
-                0.84,
+                24,
+                crystalHeight,
+                index % 3 === 0 ? 0xa9edf4 : 0xc8bcf0,
+                0.92,
               )
-              .setStrokeStyle(2, 0xf5ffff, 0.72)
+              .setStrokeStyle(2, 0xf7ffff, 0.82)
               .setAngle(side < 0 ? 180 : 0),
           );
         }
@@ -615,7 +680,7 @@ export class CrystalBrookScene extends Phaser.Scene {
 
       container.add(
         this.add
-          .rectangle(0, -bridge.deckWidth * 0.1, bridge.length - 36, 5, 0xffffff, 0.22)
+          .rectangle(0, -bridge.deckWidth * 0.12, bridge.length - 54, 4, 0xffffff, 0.34)
           .setAngle(-1),
       );
     }
