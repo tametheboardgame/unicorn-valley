@@ -145,3 +145,13 @@ Before calling a package technically complete:
 - known limitations are recorded.
 
 Human visual/child-UX acceptance is a separate gate where declared by the package.
+
+
+## Mini-game platform contracts
+
+Mini-game platform changes under `src/game/minigames/**` select the shared mini-game verification owner.
+
+- `tests/play/mg-wp4-mini-game-launch-return-contract.spec.ts` is the reusable Just Games family launch/ready/return contract. New catalogue families extend its declarative case table instead of copying the full browser flow.
+- `src/game/minigames/MiniGameSandboxContract.testSupport.ts` provides the reusable sandbox/world adventure-effect assertions for unit fixtures.
+- Game-specific rules and representative world-entry tests remain required where behaviour changes; the shared contracts do not replace them.
+- Final human-approved substantive heads still require the repository's authoritative exact-head Tier 0-4 qualification before merge.

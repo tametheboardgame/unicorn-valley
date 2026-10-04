@@ -1,26 +1,85 @@
 import { describe, expect, it } from 'vitest';
 import { REGULAR_RACE_COURSE_IDS } from '../racing/RaceCourse';
-import { SCENE_MANIFEST } from '../scenes/SceneManifest';
-import { getJustGamesDefinitions, MINI_GAME_CATALOGUE, MINI_GAME_IDS } from './MiniGameCatalogue';
+import type { SceneKey } from '../scenes/SceneKeys';
+import {
+  getJustGamesDefinitions,
+  MINI_GAME_CATALOGUE,
+  MINI_GAME_IDS,
+  type MiniGameDefinition,
+} from './MiniGameCatalogue';
+import { getMiniGameCatalogueIssues } from './MiniGameCatalogueIntegrity.testSupport';
 
 describe('MiniGameCatalogue', () => {
+  it('keeps the production catalogue free of authoring-contract issues', () => {
+    expect(getMiniGameCatalogueIssues(MINI_GAME_CATALOGUE)).toEqual([]);
+  });
+
   it('keeps stable mini-game ids unique', () => {
     const ids = MINI_GAME_CATALOGUE.map((definition) => definition.id);
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it('maps every mini-game to an existing SceneManifest key', () => {
-    const sceneKeys = new Set(SCENE_MANIFEST.map((entry) => entry.key));
-    for (const definition of MINI_GAME_CATALOGUE) {
-      expect(sceneKeys.has(definition.sceneKey)).toBe(true);
-    }
+  it('fails loudly when a future game duplicates a stable id', () => {
+    const duplicate = [
+      MINI_GAME_CATALOGUE[0],
+      MINI_GAME_CATALOGUE[0],
+    ] as readonly MiniGameDefinition[];
+    expect(getMiniGameCatalogueIssues(duplicate)).toEqual(
+      expect.arrayContaining([expect.objectContaining({ code: 'duplicate-id' })]),
+    );
   });
 
-  it('keeps variant ids unique within each game family', () => {
-    for (const definition of MINI_GAME_CATALOGUE) {
-      const variants = definition.variants.map((variant) => variant.id);
-      expect(new Set(variants).size).toBe(variants.length);
-    }
+  it('fails loudly when a catalogue entry references an invalid scene key', () => {
+    const invalid = {
+      ...MINI_GAME_CATALOGUE[0],
+      sceneKey: 'NotARealScene' as SceneKey,
+    } as MiniGameDefinition;
+
+    expect(getMiniGameCatalogueIssues([invalid])).toEqual(
+      expect.arrayContaining([expect.objectContaining({ code: 'invalid-scene-key' })]),
+    );
+  });
+
+  it('fails loudly when a future world game omits Just Games exposure', () => {
+    const hidden = {
+      ...MINI_GAME_CATALOGUE[2],
+      justGames: { ...MINI_GAME_CATALOGUE[2].justGames, visible: false },
+    } as MiniGameDefinition;
+
+    expect(getMiniGameCatalogueIssues([hidden])).toEqual(
+      expect.arrayContaining([expect.objectContaining({ code: 'missing-just-games-exposure' })]),
+    );
+  });
+
+  it('keeps variant ids unique and requires authored variant labels', () => {
+    const invalid = {
+      ...MINI_GAME_CATALOGUE[1],
+      variants: [
+        { id: 'practice', title: 'Practice', justGamesVisible: true },
+        { id: 'practice', title: '', justGamesVisible: true },
+      ],
+    } as MiniGameDefinition;
+
+    expect(getMiniGameCatalogueIssues([invalid])).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ code: 'duplicate-variant-id' }),
+        expect.objectContaining({ code: 'invalid-variant' }),
+      ]),
+    );
+  });
+
+  it('requires variant-based games to expose at least one selectable Just Games mode', () => {
+    const hiddenVariants = {
+      ...MINI_GAME_CATALOGUE[1],
+      variants: MINI_GAME_CATALOGUE[1].variants.map((variant) => ({
+        ...variant,
+        justGamesVisible: false,
+      })),
+    } as MiniGameDefinition;
+
+    expect(getMiniGameCatalogueIssues([hiddenVariants])).toEqual(
+      expect.arrayContaining([expect.objectContaining({ code: 'missing-visible-variant' })]),
+    );
   });
 
   it('exposes all current game families to the future Just Games catalogue', () => {

@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { MINI_GAME_IDS } from './MiniGameCatalogue';
-import { runMiniGameAdventureEffect, type MiniGameAdventureEffect } from './MiniGameOutcomeGateway';
+import { runMiniGameAdventureEffect } from './MiniGameOutcomeGateway';
+import { assertSandboxAdventureEffectsBlocked } from './MiniGameSandboxContract.testSupport';
 import { createMiniGameSession } from './MiniGameSession';
 
 describe('MiniGameOutcomeGateway', () => {
@@ -29,21 +30,7 @@ describe('MiniGameOutcomeGateway', () => {
       source: 'just-games',
       returnTarget: { sceneKey: 'TitleScene', mode: 'start' },
     });
-    const effects: MiniGameAdventureEffect[] = [
-      'activity-progress',
-      'quest',
-      'world-flag',
-      'relationship',
-      'inventory',
-      'shimmer',
-      'collection',
-      'unlock',
-    ];
 
-    for (const effect of effects) {
-      const apply = vi.fn();
-      expect(runMiniGameAdventureEffect(session, effect, apply)).toBe(false);
-      expect(apply).not.toHaveBeenCalled();
-    }
+    expect(() => assertSandboxAdventureEffectsBlocked(session)).not.toThrow();
   });
 });

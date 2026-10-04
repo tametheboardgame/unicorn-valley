@@ -62,13 +62,13 @@ Do not create a competing scene registry, UI token set, overlay positioning syst
 
 This rule applies across **all** roadmaps and work packages, not only the independent Mini-Game roadmap.
 
-- Any bounded playable activity with its own short gameplay loop, start/finish/retry behaviour and repeatable or practice-oriented play must declare a **Mini-game platform impact** of `none`, `changed - <id>` or `new - <id> - world-first|just-games-first`.
+- Every current/next work package must declare the front-matter field `mini_game_platform_impact` as `none`, `changed - <id>` or `new - <id> - world-first|just-games-first`. Any bounded playable activity with its own short gameplay loop, start/finish/retry behaviour and repeatable or practice-oriented play must use the appropriate non-`none` value. `changed - platform` is reserved for shared platform work.
 - A new mini-game has one stable ID, one canonical gameplay implementation and one shared launch/session contract. Do not create separate world and Just Games implementations.
 - A world-first mini-game is not complete until it is registered in the canonical mini-game catalogue and exposed through Just Games.
 - A Just-Games-first mini-game may be world-unplaced, but it must already be world-ready: no title-screen-only assumptions, no hard-coded return scene and no Just Games-only gameplay state.
 - Mini-game scene loading remains owned by `SceneManifest`; the mini-game catalogue must not become a competing scene registry.
 - Just Games sessions are sandboxed by default and must not advance quests/world flags, alter relationships, grant/consume inventory or Shimmer, or change normal adventure collections/unlocks unless a separately approved isolated persistence contract explicitly permits it.
-- Existing games are migrated through the independent MG programme; historical world packages do not need to be rewritten to pretend they were originally authored under this contract.
+- The project-state validator enforces the declaration before a package can be current/next. Historical work-package files are not retrofitted merely to satisfy the new metadata contract.
 
 ## Project-specific invariants
 
