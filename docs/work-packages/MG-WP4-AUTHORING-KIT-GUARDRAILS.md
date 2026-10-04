@@ -30,18 +30,25 @@ MG-WP4 began on 2026-10-03 after MG-WP3 was approved and merged to main.
 
 ## Bounded checkpoints
 
-### MG-WP4A - Authoring contract and catalogue guardrails
+### MG-WP4A - Authoring contract and catalogue guardrails - complete
 
 - publish the canonical authoring recipe;
 - add fail-loud catalogue validation for IDs, scene keys, Just Games exposure and variants;
 - add a deterministic test-only fixture using one existing canonical game to prove the same definition/session path supports world and Just Games contexts;
 - reconcile package/project status.
 
-### MG-WP4B - Reusable behavioural verification contracts
+### MG-WP4B - Reusable behavioural verification contracts - implementation complete, validation pending
 
 - extract reusable browser launch/return helpers that future games can opt into without copying the full Just Games suite;
 - add reusable sandbox no-adventure-write regression coverage;
 - keep verification ownership deterministic for mini-game platform and Just Games changes.
+
+Implementation notes:
+
+- the previous all-family Just Games loop is now a dedicated declarative browser contract;
+- the MG-WP3 suite remains focused on catalogue/interface behaviour;
+- sandbox/world side-effect assertions are shared through a test-only helper;
+- mini-game verification ownership explicitly includes the reusable browser contract.
 
 ### MG-WP4C - Cross-roadmap enforcement and closeout
 
