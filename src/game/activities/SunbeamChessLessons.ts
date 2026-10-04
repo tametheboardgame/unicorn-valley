@@ -141,9 +141,7 @@ export function validateSunbeamChessLesson(
 
   const piece = chess.get(lesson.pieceSquare);
   if (!piece || piece.color !== 'w' || piece.type !== lesson.piece) {
-    problems.push(
-      `Expected a white ${lesson.pieceName} on ${lesson.pieceSquare.toUpperCase()}.`,
-    );
+    problems.push(`Expected a white ${lesson.pieceName} on ${lesson.pieceSquare.toUpperCase()}.`);
   }
 
   const legalMoves = chess.moves({ square: lesson.pieceSquare, verbose: true });
@@ -153,12 +151,7 @@ export function validateSunbeamChessLesson(
     );
   }
 
-  if (
-    !lesson.hints.notice ||
-    !lesson.hints.question ||
-    !lesson.hints.nudge ||
-    !lesson.hints.show
-  ) {
+  if (!lesson.hints.notice || !lesson.hints.question || !lesson.hints.nudge || !lesson.hints.show) {
     problems.push('Every lesson needs all four layered hints.');
   }
 
