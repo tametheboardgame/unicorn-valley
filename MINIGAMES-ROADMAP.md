@@ -16,9 +16,9 @@ Status: **approved direction / independent programme**
 
 ## Current stage
 
-**MG-WP0 through MG-WP4 are complete. MG-WP4 is human-approved and awaiting merge through PR #269.**
+**MG-WP0 through MG-WP4 are complete and merged. The programme has moved from platform construction into portfolio refinement.**
 
-The shared catalogue/session/launcher/outcome foundation, existing-game migration, sandbox isolation, Just Games catalogue and future-authoring guardrails are complete. Once PR #269 merges, the mini-game platform readiness gate for Crystalarium and Crystal Checkers at H6.9/H6.10 is released.
+The shared catalogue/session/launcher/outcome foundation, existing-game migration, sandbox isolation, Just Games catalogue and future-authoring guardrails are now the accepted baseline. The immediate next package is **MG-WP5 - Sunbeam Chess Academy**, a substantial child-first teaching and play redesign of the existing chess game.
 
 This roadmap is intentionally independent of the main release roadmap. It is not an R6.5, WP19 or area-polish sub-stream. Mini-game platform work and mini-game improvement work may proceed in parallel with world, Story House and other content programmes when dependencies genuinely permit.
 
@@ -26,14 +26,37 @@ The canonical mini-game architecture is `docs/architecture/MINI-GAME-PLATFORM.md
 
 ## Purpose
 
-Create one durable mini-game platform that supports both of these authoring directions without rework:
+Create and maintain a durable portfolio of embedded games that are discovered naturally through Unicorn Valley, playable through **Just Games**, and deep enough to be satisfying games in their own right.
 
-1. a mini-game is first created inside the main world and automatically becomes available through **Just Games**; or
-2. a mini-game is first created through **Just Games** and can later be placed into the main world without rewriting its gameplay implementation.
+The normal product flow is **world-first**:
+
+1. the main world/release roadmap reaches a location, character or story moment where a game belongs;
+2. that world package creates the first coherent playable version and declares it as a new mini-game;
+3. the platform contract gives that same implementation its Just Games entry at first implementation;
+4. the Mini-Game programme can later revisit the existing game as a dedicated product/refinement package, deepening modes, teaching, replayability, presentation and accessibility without creating a second implementation.
+
+The architecture also supports an explicit Just-Games-first game when there is a genuine product reason, but this is not the default content-authoring model.
 
 The same canonical game implementation must serve both entry points.
 
-**Just Games** is therefore not a parallel copy of the games. It is a catalogue and launcher over the same mini-game implementations used by the world.
+**Just Games** is therefore not a parallel copy of the games and is not normally the place where new game ideas originate. It is a catalogue and launcher over games that belong to the wider Unicorn Valley world.
+
+### Product quality target
+
+“Mini-game” describes architectural scope, not ambition. A game can sit inside a larger game while still being a substantial, replayable experience.
+
+Improvement packages should ask:
+
+- does the game have a satisfying core loop rather than a one-off interaction;
+- would meaningful modes, levels, lessons, challenges or variants improve replayability;
+- is there a clear difficulty/progression curve appropriate for a young player;
+- does the game teach itself through play rather than relying on dense instructions;
+- is retry/replay friction low;
+- does touch/stylus/keyboard input feel intentional;
+- does the game have enough personality and feedback to feel like part of Unicorn Valley;
+- can a child enjoy it repeatedly without adventure progression or reward pressure.
+
+**Firefly Lantern** is the current reference point for useful mode/difficulty depth, but other games should adopt only the forms of depth that fit their mechanics.
 
 ## What counts as a mini-game
 
@@ -75,7 +98,7 @@ A world-first mini-game must not wait for a later “Just Games integration” p
 
 A Just-Games-first mini-game may remain **world-unplaced**, but it must already be world-ready: it cannot assume the title screen is its caller, cannot hard-code its return destination, and cannot depend on Just Games-only state.
 
-## Current portfolio to migrate
+## Current implemented portfolio
 
 The initial catalogue contains these game families:
 
@@ -89,18 +112,18 @@ The initial catalogue contains these game families:
 | Pond Leap | `PondLeapActivityScene` | standard timing run |
 | Coral Beachcombing | `CoralBeachcombingActivityScene` | standard beachcombing run |
 
-The migration must preserve accepted world behaviour. Moving a game under the platform is not authority to redesign its rules, rewards, visuals or quest integration.
+The platform migration is complete. Dedicated MG-WP5+ packages now have explicit authority to improve the named game's teaching, modes, rules presentation, accessibility and replay depth within that package's bounds, while preserving its world/story integration contract.
 
-## Planned portfolio additions from approved world roadmaps
+## Main-roadmap-owned future additions - reference only
 
-The following world-first mini-games were approved as part of the R6.5-WP19H6 Crystal Brook roadmap on 3 October 2026. They are **planned**, not yet part of the migrated/current catalogue:
+The following world-first games are already owned by the R6.5-WP19H6 Crystal Brook roadmap. They are recorded here only so the portfolio view remains complete. Their **initial implementation belongs to the main roadmap, not to a new MG package**:
 
 | Planned mini-game | Originating world package | Platform declaration | Direction |
 | --- | --- | --- | --- |
 | Crystalarium | R6.5-WP19H6.9 | `new - crystalarium - world-first` | Crystal merge game using Resonance Patterns to restore magical formations; no customer/energy-timer fiction |
 | Crystal Checkers | R6.5-WP19H6.10 | `new - crystal-checkers - world-first` | Standard checkers/draughts on a physical crystal-rock board, shared between Crystal Brook and Just Games |
 
-H6 contains an explicit readiness gate before either game is implemented. If MG-WP0-WP4 have not established the shared catalogue/launcher/session/sandbox/authoring contracts, H6 must pause at that gate rather than introducing bespoke Crystal Brook activity architecture.
+MG-WP0-WP4 have now satisfied the shared catalogue/launcher/session/sandbox/authoring readiness contract. H6 can create these games through the normal world-first path. After they exist, this programme may later create dedicated refinement packages if human playtesting identifies worthwhile depth work.
 
 ## Platform sequence
 
@@ -240,41 +263,88 @@ Acceptance:
 - a future world roadmap cannot complete a new mini-game while silently omitting Just Games integration;
 - a Just-Games-first game can later receive a world placement without changing its core gameplay code.
 
-## Individual improvement sequence
+## Existing-game refinement sequence
 
-After MG-WP0 through MG-WP4 establish the platform, each existing game receives its own bounded improvement package. These packages are deliberately independent of the world-area roadmap.
+MG-WP0 through MG-WP4 established the platform. The next phase deliberately improves **games that already exist**.
 
-The order may change based on human testing, but the initial sequence is:
+New game creation normally remains in the main world/release roadmap. Once a game exists and is platform-compliant, this programme may deepen it independently.
 
-### MG-WP5 - Sunbeam Chess improvement pass
+**Racing is explicitly excluded from the current refinement sequence.** Rainbow Run Racing, race hubs, Cup progression, course presentation and controls require a dedicated future racing overhaul rather than an ordinary mini-game improvement pass.
 
-Review:
+### MG-WP5 - Sunbeam Chess Academy
 
-- board/readability;
-- touch selection;
-- legal-move feedback;
-- AI/rules behaviour;
-- restart/rematch;
-- child-readable help;
-- visual consistency with the current UI system.
+Goal: turn the existing Sunbeam Chess activity into a friendly, genuinely useful chess-teaching game for a child around the early-primary age range, while retaining fully legal chess underneath it.
 
-World integration remains the Sunbeam chess plaza. Just Games launches the same chess scene.
+This is not an “easy AI” patch. It is a teaching/play system.
 
-### MG-WP6 - Rainbow Disc improvement pass
+Design direction:
 
-Review:
+- introduce a warm Unicorn Valley chess-teacher character who coaches rather than lectures;
+- keep the existing legal-rules engine as the source of truth;
+- add a **Learn** path made from short interactive lessons and piece-specific micro-games;
+- add **Puzzles/Challenges** using constrained positions rather than requiring a full match for every learning objective;
+- add **Coach Play**, where the child can play a real match with optional contextual guidance;
+- add **Friendly Play** for ordinary games without continuous coaching;
+- consider several deliberately child-friendly opponent strengths rather than one punishing “correct” AI;
+- use hints as questions and visual cues first: “What can their bishop see?”, “Is anything attacking that piece?”, “Can you make a check?”;
+- for an obvious beginner blunder in Coach Play, the teacher may gently ask whether the player wants another look, but must always allow the child to choose the move;
+- allow undo/retry freely in lessons and coached learning where it supports experimentation;
+- explain mistakes positively after discovery rather than treating them as failure;
+- celebrate good ideas such as spotting a capture, defending a piece, escaping check or finding mate, not only wins;
+- teach incrementally rather than exposing the whole strategy tree at once;
+- keep text short and use board highlights/animation as the primary teaching language;
+- preserve touch-first play and make stylus input naturally usable.
 
-- Match and Practice;
+Suggested learning progression:
+
+1. board orientation and how pieces move;
+2. capturing and keeping pieces safe;
+3. check and getting out of check;
+4. checkmate versus stalemate;
+5. simple mate patterns;
+6. piece value and “is this piece safe?”;
+7. forks, pins and simple tactical patterns;
+8. opening principles without memorised opening theory;
+9. basic endgames and promotion;
+10. special rules such as castling and en-passant once the core game is comfortable.
+
+Potential modes at the end of the package:
+
+- **Lessons**;
+- **Puzzle Garden**;
+- **Coach Match**;
+- **Friendly Match**;
+- optional **Challenge** positions for mastered topics.
+
+Progress should, if persisted, use an isolated mini-game learning-record namespace and must never become adventure quest/economy/unlock state. World and Just Games entry use the same Chess Academy implementation.
+
+Human acceptance should focus on whether a seven-year-old can learn, experiment and lose without the game becoming frustrating or patronising.
+
+### MG-WP6 - Rainbow Disc expansion
+
+Goal: turn Rainbow Disc from a promising activity into a replayable sport game with several distinct ways to play.
+
+Review and expand:
+
+- Match and Practice foundations;
 - player/defender scale and alignment;
 - aim/timing readability;
 - touch drag/throw feel;
 - practice-target selection;
+- passing/receiving readability;
 - scoring/turnover flow;
-- replay and result presentation.
+- replay and result presentation;
+- progressive challenge levels;
+- target-throw or accuracy challenges;
+- passing drills;
+- short match variants where useful;
+- assistance suitable for younger players without making input feel fake.
 
-World integration remains Rainbow Meadow.
+World integration remains Rainbow Meadow. The same variants/modes appear through Just Games where context permits.
 
-### MG-WP7 - Pond Leap improvement pass
+### MG-WP7 - Pond Leap expansion
+
+Goal: deepen the existing timing game without losing its immediate one-touch readability.
 
 Review:
 
@@ -283,11 +353,16 @@ Review:
 - difficulty curve;
 - frog/course presentation;
 - miss/recovery pacing;
-- replay value.
+- replay value;
+- multiple courses/pattern sets;
+- progressive challenge levels;
+- relaxed/practice and challenge-oriented modes where both add genuine value.
 
-### MG-WP8 - Wobbly Cake improvement pass
+### MG-WP8 - Wobbly Cake expansion
 
-Review the already accepted baking baseline without breaking Maple/picnic progression:
+Goal: deepen the accepted baking loop while preserving Maple/picnic progression and keeping Just Games free of world economy side effects.
+
+Review:
 
 - measuring;
 - stirring trace feel;
@@ -295,9 +370,16 @@ Review the already accepted baking baseline without breaking Maple/picnic progre
 - decorating;
 - Wobble Score;
 - repeat-bake pacing;
+- recipe/challenge variety;
+- progressive recipe difficulty;
+- creative/free-bake possibilities;
 - sandbox mode versus world economy mode.
 
-### MG-WP9 - Firefly Lantern improvement pass
+Do not turn baking into grind, timers or monetisation-style resource pressure.
+
+### MG-WP9 - Firefly Lantern refinement
+
+Firefly Lantern is currently the strongest example of mode/difficulty depth and should be used as a portfolio benchmark, not needlessly rebuilt.
 
 Review:
 
@@ -307,9 +389,12 @@ Review:
 - visual clarity;
 - scoring/result feedback;
 - retry;
-- progression-independent Just Games access.
+- progression-independent Just Games access;
+- whether its current mode structure teaches useful lessons for the other games.
 
-### MG-WP10 - Coral Beachcombing improvement pass
+### MG-WP10 - Coral Beachcombing expansion
+
+Goal: increase replay variation and game-like structure while preserving the relaxed beach-search identity.
 
 Review:
 
@@ -318,25 +403,29 @@ Review:
 - environmental feedback;
 - scoring/collection feel;
 - replay variation;
-- result presentation.
+- result presentation;
+- different search lists/challenge sets;
+- relaxed exploration versus more structured challenge modes;
+- randomisation that improves replayability without making targets unfair or visually obscure.
 
-### MG-WP11 - Rainbow Run Racing improvement pass
+### MG-WP11 - Cross-game depth and mode review
 
-Racing is treated as one mini-game family rather than five unrelated catalogue games.
+Goal: ensure the portfolio has enough replayability without mechanically forcing every game into the same design.
 
-Review:
+For each non-racing current game, explicitly record:
 
-- course selector;
-- five-course presentation;
-- race controls;
-- assistance;
-- result flow;
-- personal best presentation;
-- Rainbow Cup relationship;
-- practice/sandbox behaviour;
-- return flow.
+- core loop;
+- intended session length/shape;
+- current modes/levels;
+- difficulty model;
+- practice/teaching support;
+- replay driver;
+- result/retry loop;
+- whether another mode would improve the game or merely add menu clutter.
 
-Nova's tutorial race remains story-owned and may use the same race runtime without becoming a separate Just Games card.
+Use Firefly Lantern as a useful comparison point.
+
+The outcome may add small bounded modes to individual games, but substantial redesign discovered here must become a named follow-up package rather than being hidden inside a “consistency” pass.
 
 ## Portfolio closeout
 
@@ -349,35 +438,53 @@ Review:
 - consistent Back/Retry/Play Again language;
 - touch target size;
 - keyboard focus/navigation;
+- stylus friendliness where drawing/precision is relevant;
 - activity title/result hierarchy;
 - pause/exit safety;
 - reduced-motion/assistance support where relevant;
 - audio context and settings;
 - small-screen layout;
 - no whole-screen shadow/dimming artefacts behind near-full-screen activity shells;
-- predictable return to world or catalogue.
+- predictable return to world or catalogue;
+- child-readable help that does not become text-heavy.
 
-### MG-WP13 - Mini-game platform hardening and release gate
+### MG-WP13 - Mini-game portfolio hardening and release gate
 
-Goal: prove the platform can carry future games safely.
+Goal: prove the non-racing mini-game portfolio and platform remain healthy after the refinement programme.
 
 Deliverables:
 
 - full catalogue validation;
-- generated/parameterised launch-return coverage for every catalogue entry;
+- generated/parameterised launch-return coverage for every in-scope catalogue entry;
 - world-versus-sandbox side-effect matrix;
 - stale registration/helper retirement;
 - performance/loading review so optional games stay appropriately lazy;
 - final documentation reconciliation;
 - human portfolio playtest.
 
+Racing is reported as **deferred to its dedicated overhaul**, not silently treated as accepted by this gate.
+
 Acceptance:
 
-- every current game family launches from Just Games;
-- every world-placed game still launches from its physical world entry;
+- every in-scope current game family launches from Just Games;
+- every world-placed in-scope game still launches from its physical world entry;
 - there is one canonical implementation per game;
-- a future mini-game has one documented authoring path;
+- refined games have an explicit replay/depth model rather than accidental one-shot behaviour;
+- future mini-games still have one documented authoring path;
 - no roadmap-specific exception is required simply to expose a game in both contexts.
+
+## Future game idea library
+
+The canonical candidate library is maintained in `docs/minigames/MINI-GAME-IDEA-LIBRARY.md`.
+
+Its purpose is **not** to create a queue of games that must be built from Just Games. It is a shelf of proven or promising mechanics that the main world/release roadmap can draw from when a location, character or story beat naturally calls for a game.
+
+When a candidate is selected by a world package:
+
+1. the world package chooses the fiction/location and creates the first coherent version;
+2. it receives a stable MiniGameId and platform integration immediately;
+3. its idea-library entry is marked adopted and points to the owning world package;
+4. later refinement can return to this MG programme.
 
 ## Rules for future roadmap authors
 
@@ -423,8 +530,9 @@ For example, Wobbly Cake and Rainbow Disc were legitimately created as part of S
 
 From adoption of this programme onward:
 
-- world roadmaps own **where and why** a mini-game exists in the world;
-- the Mini-Game roadmap owns the **shared platform and game-specific improvement programme**;
+- the main world/release roadmap normally owns **initial game creation, where it exists and why it belongs there**;
+- the creating world package must deliver a coherent first playable version and platform integration, including Just Games exposure;
+- the Mini-Game roadmap owns the **shared platform and later game-specific improvement/refinement programme**;
 - both use the same runtime implementation;
 - future mini-game creation must satisfy the global platform contract at first implementation.
 
@@ -433,5 +541,5 @@ From adoption of this programme onward:
 - Main world/area work can continue independently where it does not alter a mini-game.
 - Story House remains its own independent programme.
 - Mini-game work must not be used to block unrelated world polish.
-- A world package may place or narratively integrate a game while the Mini-Game programme later improves that game's mechanics.
+- A world package may create/place/narratively integrate a game; the Mini-Game programme may later deepen that existing game's mechanics, modes, teaching and replayability.
 - If both programmes need the same game code concurrently, normal Git/package dependency discipline applies; do not create duplicate implementations to avoid a branch conflict.
