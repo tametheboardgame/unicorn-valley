@@ -181,7 +181,7 @@ export const CRYSTAL_BROOK_GROTTO_ROUTE = [
 ] as const;
 
 export const CRYSTAL_BROOK_UPPER_POOL = { x: 1370, y: 540 } as const;
-export const CRYSTAL_BROOK_LOWER_POOL = { x: 2780, y: 1320 } as const;
+export const CRYSTAL_BROOK_LOWER_POOL = { x: 2700, y: 1270 } as const;
 export const CRYSTAL_BROOK_UPSTREAM_CASCADE = { x: 3320, y: 790 } as const;
 export const CRYSTAL_BROOK_MEADOW_WATER_EXIT = { x: 120, y: 920 } as const;
 
@@ -239,9 +239,9 @@ export const CRYSTAL_BROOK_REFLECTION_FEEDER = {
 } as const;
 
 export const CRYSTAL_BROOK_WATER_GLINTS = [
-  { x: 3190, y: 615, width: 74, angle: -28 },
-  { x: 2830, y: 1270, width: 108, angle: -8 },
-  { x: 2360, y: 1195, width: 82, angle: 9 },
+  { x: 3360, y: 770, width: 74, angle: -5 },
+  { x: 2890, y: 1080, width: 92, angle: -38 },
+  { x: 2360, y: 1240, width: 78, angle: 22 },
   { x: 1810, y: 1020, width: 76, angle: 18 },
   { x: 1380, y: 590, width: 118, angle: -5 },
   { x: 990, y: 975, width: 72, angle: -12 },
@@ -262,7 +262,7 @@ export const CRYSTAL_BROOK_PEBBLE_STACK = { x: 1160, y: 1290 } as const;
 export const CRYSTAL_BROOK_CASCADE_MEMORY = { x: 2660, y: 1160 } as const;
 
 export const CRYSTAL_BROOK_SHALLOW_STREAM_HINT = { x: 1640, y: 960 } as const;
-export const CRYSTAL_BROOK_GROTTO_CUE = { x: 2490, y: 1450 } as const;
+export const CRYSTAL_BROOK_GROTTO_CUE = { x: 2400, y: 1690 } as const;
 export const CRYSTAL_BROOK_ECHO_WAYPOINTS = [
   { id: 'echo-brook-a', x: 2860, y: 1690, pauseMs: 2200 },
   { id: 'echo-brook-b', x: 2990, y: 1760, pauseMs: 2800 },
@@ -272,8 +272,8 @@ export const CRYSTAL_BROOK_ECHO_WAYPOINTS = [
 export const CRYSTAL_BROOK_DISTRICTS = [
   { id: 'meadow-gorge', centre: { x: 430, y: 1090 }, radiusX: 430, radiusY: 390 },
   { id: 'central-brook', centre: { x: 1770, y: 1120 }, radiusX: 980, radiusY: 620 },
-  { id: 'upstream-cascade', centre: { x: 2780, y: 760 }, radiusX: 620, radiusY: 470 },
-  { id: 'grotto-bank', centre: { x: 2860, y: 1710 }, radiusX: 560, radiusY: 370 },
+  { id: 'upstream-cascade', centre: { x: 3180, y: 870 }, radiusX: 500, radiusY: 440 },
+  { id: 'grotto-bank', centre: { x: 2440, y: 1840 }, radiusX: 430, radiusY: 330 },
 ] as const;
 
 export const CRYSTAL_BROOK_BOUNDARY_OPENINGS = [
@@ -448,7 +448,7 @@ export const CRYSTAL_BROOK_MAP = {
   ] satisfies readonly CrystalBrookSecretRoute[],
   colliders: [
     { id: 'collision:brook-upper-deep-water', x: 1370, y: 540, width: 230, height: 82 },
-    { id: 'collision:brook-lower-deep-water', x: 2780, y: 1320, width: 220, height: 86 },
+    { id: 'collision:brook-lower-deep-water', x: 2700, y: 1270, width: 180, height: 76 },
     { id: 'collision:cliff-west', x: 520, y: 410, width: 320, height: 150 },
     { id: 'collision:cliff-north-west', x: 880, y: 350, width: 260, height: 135 },
     { id: 'collision:cliff-north-east', x: 2350, y: 310, width: 300, height: 150 },
