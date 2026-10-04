@@ -8,11 +8,15 @@ The independent **MG - Mini-Game Development Programme** is in its existing-game
 
 Current bounded package: **MG-WP5 - Sunbeam Chess Academy**
 
-Current checkpoint: **MG-WP5A - Discovery and design contract**
+Current checkpoint: **MG-WP5B - Academy shell and teaching foundation**
 
 Branch: `agent/mg-wp5-sunbeam-chess-academy`
 
 MG-WP0 through MG-WP4 are complete and merged. The shared mini-game platform is the accepted baseline.
+
+## Completed: MG-WP5A
+
+The discovery/design contract is complete.
 
 ## MG-WP5A findings
 
@@ -43,13 +47,29 @@ The committed Chess Academy contract defines:
 
 No runtime gameplay code changes in WP5A.
 
+## MG-WP5B implementation
+
+Implemented:
+
+- Academy Home with Lessons / Puzzle Garden / Coach Match / Friendly Match;
+- Puzzle Garden and Coach Match visible but non-interactive until their dedicated slices;
+- visible unicorn chess coach;
+- reusable real-chess lesson runner;
+- Rook Rays, Bishop Trails, Knight Jumps and Pawn Steps;
+- layered lesson hints;
+- positive retry flow for legal-but-not-target lesson moves;
+- existing full chess retained as Friendly Match;
+- starter lesson validation and focused browser coverage.
+
 ## Validation state
 
-WP5A is documentation/design only. Repository contract/static validation is required for this branch checkpoint. No human gameplay preview is required until WP5B introduces visible runtime changes.
+WP5A repository contract/static validation passed. Its remaining CI red was the existing Story House save-migration expectation plus the inherited performance budget.
+
+WP5B runtime validation is pending on the current exact branch head.
 
 ## Next work
 
-Complete WP5A branch validation and package bookkeeping, then begin **MG-WP5B - Academy shell and teaching foundation** as a separate bounded checkpoint.
+Validate WP5B. Fix deterministic in-scope failures immediately. When the runtime is sound, stop for a visual/human checkpoint before starting **MG-WP5C - Puzzle Garden and curriculum expansion**.
 
 ## Operating reminders
 
