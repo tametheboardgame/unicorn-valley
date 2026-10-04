@@ -13,6 +13,7 @@ interface JustGamesLaunchReturnCase {
   gameId: string;
   sceneKey: string;
   variantId?: string;
+  readyObjectName?: string;
 }
 
 const JUST_GAMES_LAUNCH_RETURN_CASES: readonly JustGamesLaunchReturnCase[] = [
@@ -23,7 +24,11 @@ const JUST_GAMES_LAUNCH_RETURN_CASES: readonly JustGamesLaunchReturnCase[] = [
   },
   { gameId: 'rainbow-disc', variantId: 'practice', sceneKey: 'RainbowDiscActivityScene' },
   { gameId: 'sunbeam-chess', sceneKey: 'ChessPlazaActivityScene' },
-  { gameId: 'wobbly-cake', sceneKey: 'MapleBakingActivityScene' },
+  {
+    gameId: 'wobbly-cake',
+    sceneKey: 'MapleBakingActivityScene',
+    readyObjectName: 'h3-r2-baking-stage:recipe',
+  },
   { gameId: 'firefly-lantern', variantId: 'multicolour', sceneKey: 'FireflyLanternScene' },
   { gameId: 'pond-leap', sceneKey: 'PondLeapActivityScene' },
   { gameId: 'coral-beachcombing', sceneKey: 'CoralBeachcombingActivityScene' },
@@ -50,6 +55,9 @@ async function assertJustGamesLaunchReturnContract(
 
   await clickNamedObject(page, 'JustGamesScene', 'just-games-play');
   await waitForScene(page, entry.sceneKey);
+  if (entry.readyObjectName) {
+    await waitForNamedObject(page, entry.sceneKey, entry.readyObjectName);
+  }
 
   expect(await page.evaluate((key) => window.localStorage.getItem(key), SAVE_KEY)).toBeNull();
 
