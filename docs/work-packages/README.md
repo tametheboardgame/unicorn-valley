@@ -15,6 +15,7 @@ autonomy: green
 depends_on: [R6.5-WP2, R6.5-WP3]
 parallel_safe: false
 human_gate: none
+mini_game_platform_impact: none
 ---
 ```
 
@@ -23,6 +24,15 @@ Statuses: `proposed`, `approved`, `in_progress`, `waiting_human`, `blocked`, `co
 Autonomy: `green`, `amber`, `red`.
 
 Common human gates: `none`, `review`, `visual`, `playtest`, `product`, `release`.
+
+Every current or next work package must declare `mini_game_platform_impact` before it can become active. Allowed values are:
+
+- `none`;
+- `changed - <id>`;
+- `new - <id> - world-first`;
+- `new - <id> - just-games-first`.
+
+Use `changed - platform` for changes to the shared mini-game platform itself. Historical packages are not retrofitted, but the project-state validator rejects a current/next package that omits or malforms this declaration.
 
 ## Standard body
 
