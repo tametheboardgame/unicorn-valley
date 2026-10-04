@@ -60,64 +60,66 @@ export const CRYSTAL_BROOK_MEADOW_THRESHOLD = {
   direction: 'west',
 } as const;
 export const CRYSTAL_BROOK_WOODS_THRESHOLD = {
-  position: { x: 3260, y: 1510 },
-  approach: { x: 3090, y: 1460 },
+  position: { x: 3400, y: 1580 },
+  approach: { x: 3200, y: 1500 },
 } as const;
 export const CRYSTAL_BROOK_CRYSTAL_CUP_THRESHOLD = {
   position: { x: 2860, y: 120 },
   approach: { x: 2860, y: 330 },
 } as const;
 export const CRYSTAL_BROOK_GROTTO_THRESHOLD = {
-  position: { x: 3130, y: 1850 },
-  approach: { x: 2980, y: 1780 },
-  returnPosition: { x: 3020, y: 1740 },
+  position: { x: 2440, y: 2070 },
+  approach: { x: 2440, y: 1880 },
+  returnPosition: { x: 2440, y: 1830 },
 } as const;
 
 export interface CrystalBrookBridgeDefinition {
-  id: 'central-crossing' | 'woods-crossing';
+  id: 'north-crossing' | 'east-crossing';
   centre: MapPoint;
   angle: number;
   length: number;
   deckWidth: number;
-  westLanding: MapPoint;
-  eastLanding: MapPoint;
+  startLanding: MapPoint;
+  endLanding: MapPoint;
 }
 
-export const CRYSTAL_BROOK_CENTRAL_BRIDGE = {
-  id: 'central-crossing',
-  centre: { x: 2290, y: 1210 },
-  angle: -16,
-  length: 340,
-  deckWidth: 94,
-  westLanding: { x: 2130, y: 1255 },
-  eastLanding: { x: 2450, y: 1165 },
+export const CRYSTAL_BROOK_NORTH_BRIDGE = {
+  id: 'north-crossing',
+  centre: { x: 2350, y: 1235 },
+  angle: -72,
+  length: 300,
+  deckWidth: 92,
+  startLanding: { x: 2304, y: 1378 },
+  endLanding: { x: 2396, y: 1092 },
 } as const satisfies CrystalBrookBridgeDefinition;
 
-export const CRYSTAL_BROOK_WOODS_BRIDGE = {
-  id: 'woods-crossing',
-  centre: { x: 2800, y: 1385 },
-  angle: 14,
-  length: 390,
-  deckWidth: 94,
-  westLanding: { x: 2610, y: 1338 },
-  eastLanding: { x: 2990, y: 1432 },
+export const CRYSTAL_BROOK_EAST_BRIDGE = {
+  id: 'east-crossing',
+  centre: { x: 2810, y: 1038 },
+  angle: -6,
+  length: 310,
+  deckWidth: 92,
+  startLanding: { x: 2656, y: 1054 },
+  endLanding: { x: 2964, y: 1022 },
 } as const satisfies CrystalBrookBridgeDefinition;
 
 export const CRYSTAL_BROOK_ICE_BRIDGES = [
-  CRYSTAL_BROOK_CENTRAL_BRIDGE,
-  CRYSTAL_BROOK_WOODS_BRIDGE,
+  CRYSTAL_BROOK_NORTH_BRIDGE,
+  CRYSTAL_BROOK_EAST_BRIDGE,
 ] as const satisfies readonly CrystalBrookBridgeDefinition[];
 
 export const CRYSTAL_BROOK_MAIN_ROUTE = [
   { x: 100, y: 1090 },
   { x: 850, y: 1090 },
   { x: 1510, y: 1260 },
-  { x: 2050, y: 1220 },
-  CRYSTAL_BROOK_CENTRAL_BRIDGE.westLanding,
-  CRYSTAL_BROOK_CENTRAL_BRIDGE.eastLanding,
-  { x: 2580, y: 1160 },
-  CRYSTAL_BROOK_WOODS_BRIDGE.westLanding,
-  CRYSTAL_BROOK_WOODS_BRIDGE.eastLanding,
+  { x: 1980, y: 1320 },
+  CRYSTAL_BROOK_NORTH_BRIDGE.startLanding,
+  CRYSTAL_BROOK_NORTH_BRIDGE.endLanding,
+  { x: 2510, y: 1060 },
+  CRYSTAL_BROOK_EAST_BRIDGE.startLanding,
+  CRYSTAL_BROOK_EAST_BRIDGE.endLanding,
+  { x: 3070, y: 1110 },
+  { x: 3125, y: 1270 },
   CRYSTAL_BROOK_WOODS_THRESHOLD.approach,
   CRYSTAL_BROOK_WOODS_THRESHOLD.position,
 ] as const;
@@ -129,36 +131,41 @@ export const CRYSTAL_BROOK_PATH_PRESENTATION_SEGMENTS = [
     { x: 620, y: 1160 },
     { x: 900, y: 1220 },
     { x: 1200, y: 1280 },
-    { x: 1510, y: 1320 },
-    { x: 1800, y: 1260 },
-    { x: 2050, y: 1220 },
-    CRYSTAL_BROOK_CENTRAL_BRIDGE.westLanding,
+    { x: 1510, y: 1340 },
+    { x: 1820, y: 1335 },
+    { x: 2070, y: 1350 },
+    CRYSTAL_BROOK_NORTH_BRIDGE.startLanding,
   ],
   [
-    CRYSTAL_BROOK_CENTRAL_BRIDGE.eastLanding,
-    { x: 2580, y: 1160 },
-    CRYSTAL_BROOK_WOODS_BRIDGE.westLanding,
+    CRYSTAL_BROOK_NORTH_BRIDGE.endLanding,
+    { x: 2490, y: 1060 },
+    CRYSTAL_BROOK_EAST_BRIDGE.startLanding,
   ],
   [
-    CRYSTAL_BROOK_WOODS_BRIDGE.eastLanding,
+    CRYSTAL_BROOK_EAST_BRIDGE.endLanding,
+    { x: 3060, y: 1090 },
+    { x: 3120, y: 1230 },
+    { x: 3150, y: 1370 },
     CRYSTAL_BROOK_WOODS_THRESHOLD.approach,
     CRYSTAL_BROOK_WOODS_THRESHOLD.position,
   ],
 ] as const satisfies readonly (readonly MapPoint[])[];
 
 export const CRYSTAL_BROOK_WOODS_ROUTE = [
-  { x: 2580, y: 1160 },
-  CRYSTAL_BROOK_WOODS_BRIDGE.westLanding,
-  CRYSTAL_BROOK_WOODS_BRIDGE.eastLanding,
+  CRYSTAL_BROOK_EAST_BRIDGE.endLanding,
+  { x: 3060, y: 1090 },
+  { x: 3120, y: 1230 },
+  { x: 3150, y: 1370 },
   CRYSTAL_BROOK_WOODS_THRESHOLD.approach,
   CRYSTAL_BROOK_WOODS_THRESHOLD.position,
 ] as const;
 
 export const CRYSTAL_BROOK_CRYSTAL_CUP_ROUTE = [
-  { x: 2580, y: 1160 },
-  { x: 2660, y: 1000 },
-  { x: 2740, y: 790 },
-  { x: 2810, y: 560 },
+  CRYSTAL_BROOK_NORTH_BRIDGE.endLanding,
+  { x: 2480, y: 930 },
+  { x: 2580, y: 760 },
+  { x: 2700, y: 590 },
+  { x: 2810, y: 430 },
   CRYSTAL_BROOK_CRYSTAL_CUP_THRESHOLD.approach,
   CRYSTAL_BROOK_CRYSTAL_CUP_THRESHOLD.position,
 ] as const;
@@ -166,35 +173,48 @@ export const CRYSTAL_BROOK_CRYSTAL_CUP_ROUTE = [
 export const CRYSTAL_BROOK_CRYSTAL_CUP_PRESENTATION_ROUTE = CRYSTAL_BROOK_CRYSTAL_CUP_ROUTE;
 
 export const CRYSTAL_BROOK_GROTTO_ROUTE = [
-  { x: 2480, y: 1540 },
-  { x: 2630, y: 1630 },
-  { x: 2770, y: 1720 },
-  { x: 2940, y: 1800 },
-  { x: 3130, y: 1850 },
+  { x: 2340, y: 1510 },
+  { x: 2380, y: 1640 },
+  { x: 2420, y: 1770 },
+  CRYSTAL_BROOK_GROTTO_THRESHOLD.approach,
+  CRYSTAL_BROOK_GROTTO_THRESHOLD.position,
 ] as const;
 
 export const CRYSTAL_BROOK_UPPER_POOL = { x: 1370, y: 540 } as const;
 export const CRYSTAL_BROOK_LOWER_POOL = { x: 2780, y: 1320 } as const;
-export const CRYSTAL_BROOK_UPSTREAM_CASCADE = { x: 3150, y: 650 } as const;
+export const CRYSTAL_BROOK_UPSTREAM_CASCADE = { x: 3320, y: 790 } as const;
 export const CRYSTAL_BROOK_MEADOW_WATER_EXIT = { x: 120, y: 920 } as const;
 
 export const CRYSTAL_BROOK_WATERCOURSE = [
-  { x: 3420, y: 390, outerWidth: 142, innerWidth: 102, deepWidth: 38 },
-  { x: 3290, y: 500, outerWidth: 162, innerWidth: 116, deepWidth: 42 },
-  { x: 3150, y: 650, outerWidth: 190, innerWidth: 136, deepWidth: 48 },
-  { x: 3030, y: 830, outerWidth: 178, innerWidth: 128, deepWidth: 46 },
-  { x: 2910, y: 1050, outerWidth: 172, innerWidth: 124, deepWidth: 44 },
-  { x: 2780, y: 1320, outerWidth: 350, innerWidth: 252, deepWidth: 100 },
-  { x: 2550, y: 1290, outerWidth: 200, innerWidth: 144, deepWidth: 54 },
-  { x: 2320, y: 1210, outerWidth: 180, innerWidth: 130, deepWidth: 48 },
-  { x: 2070, y: 1150, outerWidth: 168, innerWidth: 122, deepWidth: 44 },
-  { x: 1840, y: 1070, outerWidth: 162, innerWidth: 118, deepWidth: 42 },
+  { x: 3610, y: 760, outerWidth: 148, innerWidth: 106, deepWidth: 38 },
+  { x: 3460, y: 755, outerWidth: 154, innerWidth: 110, deepWidth: 40 },
+  { x: 3320, y: 790, outerWidth: 166, innerWidth: 118, deepWidth: 42 },
+  { x: 3200, y: 840, outerWidth: 174, innerWidth: 124, deepWidth: 44 },
+  { x: 3090, y: 905, outerWidth: 170, innerWidth: 122, deepWidth: 44 },
+  { x: 2990, y: 985, outerWidth: 168, innerWidth: 120, deepWidth: 42 },
+  { x: 2890, y: 1080, outerWidth: 174, innerWidth: 124, deepWidth: 44 },
+  { x: 2800, y: 1180, outerWidth: 190, innerWidth: 136, deepWidth: 48 },
+  { x: 2700, y: 1270, outerWidth: 210, innerWidth: 150, deepWidth: 56 },
+  { x: 2570, y: 1315, outerWidth: 198, innerWidth: 142, deepWidth: 52 },
+  { x: 2440, y: 1290, outerWidth: 184, innerWidth: 132, deepWidth: 48 },
+  { x: 2320, y: 1215, outerWidth: 178, innerWidth: 128, deepWidth: 46 },
+  { x: 2200, y: 1150, outerWidth: 170, innerWidth: 122, deepWidth: 44 },
+  { x: 2070, y: 1125, outerWidth: 164, innerWidth: 118, deepWidth: 42 },
+  { x: 1940, y: 1095, outerWidth: 160, innerWidth: 116, deepWidth: 42 },
+  { x: 1810, y: 1040, outerWidth: 162, innerWidth: 118, deepWidth: 42 },
+  { x: 1690, y: 950, outerWidth: 172, innerWidth: 124, deepWidth: 46 },
   { x: 1600, y: 900, outerWidth: 182, innerWidth: 132, deepWidth: 48 },
+  { x: 1470, y: 760, outerWidth: 224, innerWidth: 164, deepWidth: 66 },
   { x: 1370, y: 540, outerWidth: 390, innerWidth: 284, deepWidth: 120 },
+  { x: 1260, y: 650, outerWidth: 268, innerWidth: 194, deepWidth: 78 },
   { x: 1190, y: 760, outerWidth: 205, innerWidth: 148, deepWidth: 54 },
+  { x: 1110, y: 880, outerWidth: 182, innerWidth: 132, deepWidth: 46 },
   { x: 1030, y: 990, outerWidth: 170, innerWidth: 122, deepWidth: 44 },
+  { x: 900, y: 1030, outerWidth: 158, innerWidth: 114, deepWidth: 40 },
   { x: 760, y: 1040, outerWidth: 150, innerWidth: 108, deepWidth: 38 },
+  { x: 640, y: 1030, outerWidth: 146, innerWidth: 104, deepWidth: 36 },
   { x: 520, y: 1010, outerWidth: 142, innerWidth: 102, deepWidth: 36 },
+  { x: 410, y: 985, outerWidth: 140, innerWidth: 100, deepWidth: 36 },
   { x: 300, y: 960, outerWidth: 140, innerWidth: 100, deepWidth: 36 },
   {
     x: CRYSTAL_BROOK_MEADOW_WATER_EXIT.x,
@@ -231,8 +251,8 @@ export const CRYSTAL_BROOK_WATER_GLINTS = [
 
 export const CRYSTAL_BROOK_RIPPLE_OVERLOOK = { x: 1720, y: 830 } as const;
 export const CRYSTAL_BROOK_ECHO_CLUE = { x: 2800, y: 1400 } as const;
-export const CRYSTAL_BROOK_WATERFALL_MIST = { x: 3150, y: 735 } as const;
-export const CRYSTAL_BROOK_WATERFALL_PRESENTATION = { x: 3150, y: 600 } as const;
+export const CRYSTAL_BROOK_WATERFALL_MIST = { x: 3320, y: 845 } as const;
+export const CRYSTAL_BROOK_WATERFALL_PRESENTATION = { x: 3320, y: 770 } as const;
 export const CRYSTAL_BROOK_REFLECTION_POOL = { x: 2150, y: 1650 } as const;
 export const CRYSTAL_BROOK_STEPPING_CHIME = { x: 1125, y: 970 } as const;
 export const CRYSTAL_BROOK_SHALLOW_RIPPLE = { x: 1900, y: 1110 } as const;
@@ -435,7 +455,7 @@ export const CRYSTAL_BROOK_MAP = {
     { id: 'collision:cliff-east', x: 3190, y: 520, width: 300, height: 170 },
     { id: 'collision:north-crystal-bank', x: 2470, y: 505, width: 230, height: 125 },
     { id: 'collision:south-reed-bank', x: 1890, y: 1770, width: 230, height: 115 },
-    { id: 'collision:brook-upstream-cascade', x: 3150, y: 650, width: 118, height: 220 },
+    { id: 'collision:brook-upstream-cascade', x: 3320, y: 790, width: 120, height: 170 },
   ] satisfies readonly CollisionRectangle[],
 } as const;
 
