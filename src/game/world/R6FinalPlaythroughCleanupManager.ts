@@ -4,91 +4,9 @@ import {
   LEGACY_GATEWAY_LABEL_TARGETS,
   type LegacyGatewayLabelTarget,
 } from './R6FinalPlaythroughCleanup';
-import {
-  CRYSTAL_BROOK_CRYSTAL_CUP_PRESENTATION_ROUTE,
-  CRYSTAL_BROOK_CRYSTAL_CUP_THRESHOLD,
-} from './CrystalBrookMap';
-import { INTERACTIVE_GATEWAY_RADIUS } from './RegionGatewayRules';
 import { SUNBEAM_VILLAGE_MAP } from './SunbeamVillageMap';
-import { WORLD_PLAYER_NAME } from './WorldTraversalPolishManager';
 
 const CLEANUP_PREFIX = 'r6-wp6.18g';
-const FINAL_FIX_PREFIX = 'r6-wp6.18ij';
-const LEGACY_BROOK_WOODS_PATH_NAME = 'r6-region-gateway-art:brook-woods:path';
-const LEGACY_CRYSTAL_CASCADE_PATH_NAME = 'r6-region-gateway-art:crystal-cascade:path';
-const CRYSTAL_CASCADE_PATH_NAME = `${FINAL_FIX_PREFIX}:crystal-cascade:path`;
-const CRYSTAL_CASCADE_TAP_TARGET_NAME = `${FINAL_FIX_PREFIX}:crystal-cascade-tap-target`;
-const CRYSTAL_CASCADE_GATE_POSITION = CRYSTAL_BROOK_CRYSTAL_CUP_THRESHOLD.position;
-
-interface PathPoint {
-  x: number;
-  y: number;
-}
-
-const CRYSTAL_CASCADE_PATH_POINTS: readonly PathPoint[] =
-  CRYSTAL_BROOK_CRYSTAL_CUP_PRESENTATION_ROUTE;
-
-function drawPath(
-  scene: Phaser.Scene,
-  name: string,
-  points: readonly PathPoint[],
-  depth: number,
-  outerWidth: number,
-  innerWidth: number,
-  outerColour: number,
-  innerColour: number,
-  outerAlpha: number,
-  innerAlpha: number,
-): void {
-  if (scene.children.getByName(name)) {
-    return;
-  }
-
-  const firstPoint = points[0];
-  if (!firstPoint) {
-    return;
-  }
-
-  const path = scene.add.graphics().setName(name).setDepth(depth);
-  const draw = (width: number, colour: number, alpha: number): void => {
-    path.lineStyle(width, colour, alpha);
-    path.beginPath();
-    path.moveTo(firstPoint.x, firstPoint.y);
-    for (const point of points.slice(1)) {
-      path.lineTo(point.x, point.y);
-    }
-    path.strokePath();
-    path.fillStyle(colour, alpha);
-    for (const point of points) {
-      path.fillCircle(point.x, point.y, width / 2);
-    }
-  };
-
-  draw(outerWidth, outerColour, outerAlpha);
-  draw(innerWidth, innerColour, innerAlpha);
-}
-
-function cleanBrookGatewayPaths(scene: Phaser.Scene): void {
-  for (const legacyName of [LEGACY_BROOK_WOODS_PATH_NAME, LEGACY_CRYSTAL_CASCADE_PATH_NAME]) {
-    const legacyPath = scene.children.getByName(legacyName);
-    if (legacyPath instanceof Phaser.GameObjects.Graphics) {
-      legacyPath.setVisible(false);
-    }
-  }
-
-  drawPath(
-    scene,
-    CRYSTAL_CASCADE_PATH_NAME,
-    CRYSTAL_CASCADE_PATH_POINTS,
-    2.9,
-    82,
-    64,
-    0xd7c18f,
-    0xf0dfb2,
-    1,
-    1,
-  );
-}
 
 function cleanPebblePresentation(scene: Phaser.Scene): void {
   const marker = SUNBEAM_VILLAGE_MAP.npcMarkers.find((candidate) => candidate.id === 'pebble');
@@ -123,77 +41,6 @@ function cleanPebblePresentation(scene: Phaser.Scene): void {
       }
     }
   }
-}
-
-function findFunctionalGatewayZone(
-  scene: Phaser.Scene,
-  target: LegacyGatewayLabelTarget,
-): Phaser.GameObjects.Zone | null {
-  for (const object of scene.children.list) {
-    if (!(object instanceof Phaser.GameObjects.Container)) {
-      continue;
-    }
-    if (Math.abs(object.x - target.position.x) > 1 || Math.abs(object.y - target.position.y) > 1) {
-      continue;
-    }
-
-    const hasMatchingLabel = object.list.some(
-      (child) => child instanceof Phaser.GameObjects.Text && child.text === target.label,
-    );
-    if (!hasMatchingLabel) {
-      continue;
-    }
-
-    const zone = object.list.find(
-      (child): child is Phaser.GameObjects.Zone => child instanceof Phaser.GameObjects.Zone,
-    );
-    if (zone) {
-      return zone;
-    }
-  }
-  return null;
-}
-
-function ensureCrystalCascadeTapTarget(scene: Phaser.Scene): void {
-  const existing = scene.children.getByName(CRYSTAL_CASCADE_TAP_TARGET_NAME);
-  const player = scene.children.getByName(WORLD_PLAYER_NAME);
-  if (!(player instanceof Phaser.GameObjects.Sprite)) {
-    existing?.destroy();
-    return;
-  }
-
-  const distance = Phaser.Math.Distance.Between(
-    player.x,
-    player.y,
-    CRYSTAL_CASCADE_GATE_POSITION.x,
-    CRYSTAL_CASCADE_GATE_POSITION.y,
-  );
-  if (distance > INTERACTIVE_GATEWAY_RADIUS) {
-    existing?.destroy();
-    return;
-  }
-
-  if (existing instanceof Phaser.GameObjects.Zone && existing.active) {
-    return;
-  }
-
-  const target = LEGACY_GATEWAY_LABEL_TARGETS.find(
-    (candidate) => candidate.id === 'crystal-brook-crystal-cascade',
-  );
-  if (!target) {
-    return;
-  }
-  const functionalZone = findFunctionalGatewayZone(scene, target);
-  if (!functionalZone) {
-    return;
-  }
-
-  const tapTarget = scene.add
-    .zone(CRYSTAL_CASCADE_GATE_POSITION.x, CRYSTAL_CASCADE_GATE_POSITION.y + 55, 360, 360)
-    .setName(CRYSTAL_CASCADE_TAP_TARGET_NAME)
-    .setDepth(220)
-    .setInteractive({ useHandCursor: true });
-  tapTarget.on('pointerdown', () => functionalZone.emit('pointerdown'));
 }
 
 function cleanLegacyGatewayLabel(scene: Phaser.Scene, target: LegacyGatewayLabelTarget): void {
@@ -235,9 +82,6 @@ export class R6FinalPlaythroughCleanupManager {
     for (const scene of this.game.scene.getScenes(true)) {
       if (scene.scene.key === 'SunbeamVillageScene') {
         cleanPebblePresentation(scene);
-      } else if (scene.scene.key === 'CrystalBrookScene') {
-        cleanBrookGatewayPaths(scene);
-        ensureCrystalCascadeTapTarget(scene);
       }
 
       for (const target of LEGACY_GATEWAY_LABEL_TARGETS) {
