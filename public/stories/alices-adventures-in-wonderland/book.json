@@ -9,14 +9,28 @@
     "alt": "John Tenniel's historic Alice in Wonderland frontispiece."
   },
   "series": null,
-  "tags": ["classic-retelling", "fantasy", "wonderland", "adventure", "nonsense", "illustrated"],
+  "tags": [
+    "classic-retelling",
+    "fantasy",
+    "wonderland",
+    "adventure",
+    "nonsense",
+    "illustrated"
+  ],
   "publication": {
     "status": "published"
   },
   "discovery": {
     "format": "Chapter Book",
-    "genres": ["Fantasy", "Adventure", "Classics"],
-    "audiences": ["Read Together", "Independent Reader"],
+    "genres": [
+      "Fantasy",
+      "Adventure",
+      "Classics"
+    ],
+    "audiences": [
+      "Read Together",
+      "Independent Reader"
+    ],
     "length": "Longer Read"
   },
   "defaultEditionId": "story-house",
@@ -44,42 +58,18 @@
           "source": "Unicorn Valley Story House edition"
         },
         "originalPublicationYear": 1865,
-        "curatorNotes": "Condensed into twelve reader sections matching the original novel's chapter structure, preserving its best-known characters, scenes and nonsense while keeping each section manageable for younger readers."
+        "curatorNotes": "Condensed into twelve reader sections matching the original novel's chapter structure, preserving its best-known characters, scenes and nonsense while keeping each section manageable for younger readers. R6.5-WP19SH1.6.1 adds a separately selectable generated Modern Illustrations set while preserving Tenniel artwork as Classic Illustrations."
       },
       "chapters": [
         {
           "id": "down-the-rabbit-hole",
           "title": "Down the Rabbit-Hole",
-          "path": "chapters/01.md",
-          "illustrations": [
-            {
-              "id": "tenniel-white-rabbit",
-              "blockId": "a-rabbit-with-a-watch",
-              "path": "illustrations/white-rabbit.webp",
-              "alt": "John Tenniel's illustration of the White Rabbit.",
-              "placement": "full-width",
-              "width": 789,
-              "height": 1207,
-              "caption": "Illustration by John Tenniel."
-            }
-          ]
+          "path": "chapters/01.md"
         },
         {
           "id": "the-pool-of-tears",
           "title": "The Pool of Tears",
-          "path": "chapters/02.md",
-          "illustrations": [
-            {
-              "id": "tenniel-pool-of-tears",
-              "blockId": "swimming-in-tears",
-              "path": "illustrations/pool-of-tears.webp",
-              "alt": "John Tenniel's illustration of Alice swimming in the pool of tears.",
-              "placement": "full-width",
-              "width": 655,
-              "height": 432,
-              "caption": "Illustration by John Tenniel."
-            }
-          ]
+          "path": "chapters/02.md"
         },
         {
           "id": "a-caucus-race",
@@ -94,70 +84,22 @@
         {
           "id": "advice-from-a-caterpillar",
           "title": "Advice from a Caterpillar",
-          "path": "chapters/05.md",
-          "illustrations": [
-            {
-              "id": "tenniel-caterpillar",
-              "blockId": "who-are-you",
-              "path": "illustrations/caterpillar.webp",
-              "alt": "John Tenniel's illustration of the Caterpillar on a mushroom.",
-              "placement": "full-width",
-              "width": 1116,
-              "height": 1492,
-              "caption": "Illustration by John Tenniel."
-            }
-          ]
+          "path": "chapters/05.md"
         },
         {
           "id": "pig-and-pepper",
           "title": "Pig and Pepper",
-          "path": "chapters/06.md",
-          "illustrations": [
-            {
-              "id": "tenniel-cheshire-cat",
-              "blockId": "the-cheshire-cat",
-              "path": "illustrations/cheshire-cat.webp",
-              "alt": "John Tenniel's illustration of the Cheshire Cat.",
-              "placement": "full-width",
-              "width": 427,
-              "height": 427,
-              "caption": "Illustration by John Tenniel."
-            }
-          ]
+          "path": "chapters/06.md"
         },
         {
           "id": "a-mad-tea-party",
           "title": "A Mad Tea-Party",
-          "path": "chapters/07.md",
-          "illustrations": [
-            {
-              "id": "tenniel-tea-party",
-              "blockId": "no-room",
-              "path": "illustrations/tea-party.webp",
-              "alt": "John Tenniel's illustration of Alice at the Mad Tea-Party.",
-              "placement": "full-width",
-              "width": 521,
-              "height": 387,
-              "caption": "Illustration by John Tenniel."
-            }
-          ]
+          "path": "chapters/07.md"
         },
         {
           "id": "the-queens-croquet-ground",
           "title": "The Queen's Croquet-Ground",
-          "path": "chapters/08.md",
-          "illustrations": [
-            {
-              "id": "tenniel-queen-croquet",
-              "blockId": "the-queen-arrives",
-              "path": "illustrations/queen-croquet.webp",
-              "alt": "John Tenniel's illustration of Alice meeting the Queen of Hearts.",
-              "placement": "full-width",
-              "width": 983,
-              "height": 1203,
-              "caption": "Illustration by John Tenniel."
-            }
-          ]
+          "path": "chapters/08.md"
         },
         {
           "id": "the-mock-turtles-story",
@@ -172,24 +114,248 @@
         {
           "id": "who-stole-the-tarts",
           "title": "Who Stole the Tarts?",
-          "path": "chapters/11.md",
-          "illustrations": [
-            {
-              "id": "tenniel-court",
-              "blockId": "the-trial",
-              "path": "illustrations/court.webp",
-              "alt": "John Tenniel's illustration of the King and Queen of Hearts at the trial.",
-              "placement": "full-width",
-              "width": 440,
-              "height": 633,
-              "caption": "Illustration by John Tenniel."
-            }
-          ]
+          "path": "chapters/11.md"
         },
         {
           "id": "alices-evidence",
           "title": "Alice's Evidence",
           "path": "chapters/12.md"
+        }
+      ],
+      "defaultIllustrationSetId": "modern",
+      "illustrationSets": [
+        {
+          "id": "classic",
+          "label": "Classic Illustrations",
+          "rights": {
+            "status": "public-domain",
+            "source": "Original Alice's Adventures in Wonderland illustrations by John Tenniel",
+            "sourceUrl": "https://commons.wikimedia.org/wiki/Category:John_Tenniel%27s_illustrations_of_Alice%27s_Adventures_in_Wonderland",
+            "notes": "The selected historic Tenniel files are identified as public domain on Wikimedia Commons."
+          },
+          "chapters": [
+            {
+              "chapterId": "down-the-rabbit-hole",
+              "illustrations": [
+                {
+                  "id": "tenniel-white-rabbit",
+                  "blockId": "a-rabbit-with-a-watch",
+                  "path": "illustrations/white-rabbit.webp",
+                  "alt": "John Tenniel's illustration of the White Rabbit.",
+                  "placement": "full-width",
+                  "width": 789,
+                  "height": 1207,
+                  "caption": "Illustration by John Tenniel."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-pool-of-tears",
+              "illustrations": [
+                {
+                  "id": "tenniel-pool-of-tears",
+                  "blockId": "swimming-in-tears",
+                  "path": "illustrations/pool-of-tears.webp",
+                  "alt": "John Tenniel's illustration of Alice swimming in the pool of tears.",
+                  "placement": "full-width",
+                  "width": 655,
+                  "height": 432,
+                  "caption": "Illustration by John Tenniel."
+                }
+              ]
+            },
+            {
+              "chapterId": "advice-from-a-caterpillar",
+              "illustrations": [
+                {
+                  "id": "tenniel-caterpillar",
+                  "blockId": "who-are-you",
+                  "path": "illustrations/caterpillar.webp",
+                  "alt": "John Tenniel's illustration of the Caterpillar on a mushroom.",
+                  "placement": "full-width",
+                  "width": 1116,
+                  "height": 1492,
+                  "caption": "Illustration by John Tenniel."
+                }
+              ]
+            },
+            {
+              "chapterId": "pig-and-pepper",
+              "illustrations": [
+                {
+                  "id": "tenniel-cheshire-cat",
+                  "blockId": "the-cheshire-cat",
+                  "path": "illustrations/cheshire-cat.webp",
+                  "alt": "John Tenniel's illustration of the Cheshire Cat.",
+                  "placement": "full-width",
+                  "width": 427,
+                  "height": 427,
+                  "caption": "Illustration by John Tenniel."
+                }
+              ]
+            },
+            {
+              "chapterId": "a-mad-tea-party",
+              "illustrations": [
+                {
+                  "id": "tenniel-tea-party",
+                  "blockId": "no-room",
+                  "path": "illustrations/tea-party.webp",
+                  "alt": "John Tenniel's illustration of Alice at the Mad Tea-Party.",
+                  "placement": "full-width",
+                  "width": 521,
+                  "height": 387,
+                  "caption": "Illustration by John Tenniel."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-queens-croquet-ground",
+              "illustrations": [
+                {
+                  "id": "tenniel-queen-croquet",
+                  "blockId": "the-queen-arrives",
+                  "path": "illustrations/queen-croquet.webp",
+                  "alt": "John Tenniel's illustration of Alice meeting the Queen of Hearts.",
+                  "placement": "full-width",
+                  "width": 983,
+                  "height": 1203,
+                  "caption": "Illustration by John Tenniel."
+                }
+              ]
+            },
+            {
+              "chapterId": "who-stole-the-tarts",
+              "illustrations": [
+                {
+                  "id": "tenniel-court",
+                  "blockId": "the-trial",
+                  "path": "illustrations/court.webp",
+                  "alt": "John Tenniel's illustration of the King and Queen of Hearts at the trial.",
+                  "placement": "full-width",
+                  "width": 440,
+                  "height": 633,
+                  "caption": "Illustration by John Tenniel."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "modern",
+          "label": "Modern Illustrations",
+          "rights": {
+            "status": "original",
+            "source": "ChatGPT-generated artwork created for the Unicorn Valley Story House modern illustration set",
+            "notes": "Generated for R6.5-WP19SH1.6.1 and materialised through the approved Google Drive → WIF → GitHub Actions pipeline."
+          },
+          "chapters": [
+            {
+              "chapterId": "down-the-rabbit-hole",
+              "illustrations": [
+                {
+                  "id": "modern-white-rabbit",
+                  "blockId": "a-rabbit-with-a-watch",
+                  "path": "illustrations/generated/alice-01-white-rabbit.webp",
+                  "alt": "The hurried White Rabbit checks his gold pocket watch as Alice springs up to follow him beside the summer river.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-long-fall",
+                  "blockId": "the-long-fall",
+                  "path": "illustrations/generated/alice-01-long-fall.webp",
+                  "alt": "Alice tumbles through the enormous rabbit-hole past floating books, furniture, pictures and household objects.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-tiny-door",
+                  "blockId": "the-tiny-door",
+                  "path": "illustrations/generated/alice-01-tiny-door.webp",
+                  "alt": "Alice kneels in the dark-panelled door hall and peers through the tiny open door towards the bright garden beyond.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-pool-of-tears",
+              "illustrations": [
+                {
+                  "id": "modern-too-small-for-key",
+                  "blockId": "drink-me",
+                  "path": "illustrations/generated/alice-02-too-small-for-key.webp",
+                  "alt": "Tiny Alice reaches helplessly towards the golden key left high on the round glass-topped table.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-giant-tears",
+                  "blockId": "far-too-tall",
+                  "path": "illustrations/generated/alice-02-giant-tears.webp",
+                  "alt": "Giant Alice fills the door hall and cries huge tears that splash onto the tiled floor around her.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-pool-of-tears",
+                  "blockId": "swimming-in-tears",
+                  "path": "illustrations/generated/alice-02-pool-of-tears.webp",
+                  "alt": "Alice and a small Mouse swim through the Pool of Tears as the flooded door hall glows around them.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "a-caucus-race",
+              "illustrations": [
+                {
+                  "id": "modern-caucus-race",
+                  "blockId": "getting-dry",
+                  "path": "illustrations/generated/alice-03-caucus-race.webp",
+                  "alt": "Alice, the blue-grey Dodo and the soaked creatures dash chaotically in different directions around the fantastical shore.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-everybody-wins",
+                  "blockId": "everybody-wins",
+                  "path": "illustrations/generated/alice-03-everybody-wins.webp",
+                  "alt": "Alice hands out colourful sweets while the solemn Dodo presents her thimble as everybody celebrates winning.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-dinah-offends-everyone",
+                  "blockId": "dinah-offends-everyone",
+                  "path": "illustrations/generated/alice-03-dinah-offends-everyone.webp",
+                  "alt": "Alice is left puzzled on the Pool of Tears shore as the Dodo, Mouse and birds hurry away after hearing about Dinah.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            }
+          ]
         }
       ]
     },
