@@ -55,7 +55,7 @@ When classification is genuinely ambiguous, the active work package must make th
 
 ## Non-negotiable cross-roadmap rule
 
-Any roadmap or work package that creates or materially changes a mini-game must declare its **Mini-game platform impact**.
+Every current/next work package must declare `mini_game_platform_impact` in front matter. Any roadmap or package that creates or materially changes a mini-game must use the appropriate `changed`/`new` value rather than `none`.
 
 For a new mini-game, completion requires:
 
@@ -231,7 +231,7 @@ Deliverables:
 - reusable launch/return browser contract;
 - reusable sandbox side-effect regression contract;
 - verification ownership rules for `src/game/minigames/**` and catalogue changes;
-- a work-package checklist requiring `Mini-game platform impact`;
+- a mechanically enforced work-package declaration requiring `mini_game_platform_impact` before a package can become current/next;
 - no-production test fixture or deterministic harness proving a game can be authored once and launched from both contexts.
 
 Acceptance:
@@ -387,7 +387,7 @@ Every future roadmap and bounded work package must apply the following decision:
 
 Declare:
 
-`Mini-game platform impact: none`
+`mini_game_platform_impact: none`
 
 No further action is required.
 
@@ -395,7 +395,7 @@ No further action is required.
 
 Declare:
 
-`Mini-game platform impact: changed - <mini-game-id>`
+`mini_game_platform_impact: changed - <mini-game-id>`
 
 The package must preserve both world and Just Games launch contracts and test both if behaviour or lifecycle changed.
 
@@ -403,7 +403,7 @@ The package must preserve both world and Just Games launch contracts and test bo
 
 Declare:
 
-`Mini-game platform impact: new - <mini-game-id> - world-first`
+`mini_game_platform_impact: new - <mini-game-id> - world-first`
 
 The same package must add the catalogue definition, Just Games exposure and shared launch/session support.
 
@@ -411,7 +411,7 @@ The same package must add the catalogue definition, Just Games exposure and shar
 
 Declare:
 
-`Mini-game platform impact: new - <mini-game-id> - just-games-first`
+`mini_game_platform_impact: new - <mini-game-id> - just-games-first`
 
 The game may be world-unplaced, but must be authored against the same world-capable session/return contract. A later world package should only need to add physical presentation/interaction and call the shared launcher.
 
