@@ -98,7 +98,7 @@ A world-first mini-game must not wait for a later “Just Games integration” p
 
 A Just-Games-first mini-game may remain **world-unplaced**, but it must already be world-ready: it cannot assume the title screen is its caller, cannot hard-code its return destination, and cannot depend on Just Games-only state.
 
-## Current portfolio to migrate
+## Current implemented portfolio
 
 The initial catalogue contains these game families:
 
@@ -112,18 +112,18 @@ The initial catalogue contains these game families:
 | Pond Leap | `PondLeapActivityScene` | standard timing run |
 | Coral Beachcombing | `CoralBeachcombingActivityScene` | standard beachcombing run |
 
-The migration must preserve accepted world behaviour. Moving a game under the platform is not authority to redesign its rules, rewards, visuals or quest integration.
+The platform migration is complete. Dedicated MG-WP5+ packages now have explicit authority to improve the named game's teaching, modes, rules presentation, accessibility and replay depth within that package's bounds, while preserving its world/story integration contract.
 
-## Planned portfolio additions from approved world roadmaps
+## Main-roadmap-owned future additions - reference only
 
-The following world-first mini-games were approved as part of the R6.5-WP19H6 Crystal Brook roadmap on 3 October 2026. They are **planned**, not yet part of the migrated/current catalogue:
+The following world-first games are already owned by the R6.5-WP19H6 Crystal Brook roadmap. They are recorded here only so the portfolio view remains complete. Their **initial implementation belongs to the main roadmap, not to a new MG package**:
 
 | Planned mini-game | Originating world package | Platform declaration | Direction |
 | --- | --- | --- | --- |
 | Crystalarium | R6.5-WP19H6.9 | `new - crystalarium - world-first` | Crystal merge game using Resonance Patterns to restore magical formations; no customer/energy-timer fiction |
 | Crystal Checkers | R6.5-WP19H6.10 | `new - crystal-checkers - world-first` | Standard checkers/draughts on a physical crystal-rock board, shared between Crystal Brook and Just Games |
 
-H6 contains an explicit readiness gate before either game is implemented. If MG-WP0-WP4 have not established the shared catalogue/launcher/session/sandbox/authoring contracts, H6 must pause at that gate rather than introducing bespoke Crystal Brook activity architecture.
+MG-WP0-WP4 have now satisfied the shared catalogue/launcher/session/sandbox/authoring readiness contract. H6 can create these games through the normal world-first path. After they exist, this programme may later create dedicated refinement packages if human playtesting identifies worthwhile depth work.
 
 ## Platform sequence
 
@@ -530,8 +530,9 @@ For example, Wobbly Cake and Rainbow Disc were legitimately created as part of S
 
 From adoption of this programme onward:
 
-- world roadmaps own **where and why** a mini-game exists in the world;
-- the Mini-Game roadmap owns the **shared platform and game-specific improvement programme**;
+- the main world/release roadmap normally owns **initial game creation, where it exists and why it belongs there**;
+- the creating world package must deliver a coherent first playable version and platform integration, including Just Games exposure;
+- the Mini-Game roadmap owns the **shared platform and later game-specific improvement/refinement programme**;
 - both use the same runtime implementation;
 - future mini-game creation must satisfy the global platform contract at first implementation.
 
@@ -540,5 +541,5 @@ From adoption of this programme onward:
 - Main world/area work can continue independently where it does not alter a mini-game.
 - Story House remains its own independent programme.
 - Mini-game work must not be used to block unrelated world polish.
-- A world package may place or narratively integrate a game while the Mini-Game programme later improves that game's mechanics.
+- A world package may create/place/narratively integrate a game; the Mini-Game programme may later deepen that existing game's mechanics, modes, teaching and replayability.
 - If both programmes need the same game code concurrently, normal Git/package dependency discipline applies; do not create duplicate implementations to avoid a branch conflict.
