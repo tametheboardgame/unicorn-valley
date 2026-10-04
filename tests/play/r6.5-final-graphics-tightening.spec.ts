@@ -104,19 +104,21 @@ test('Crystal Brook owns one continuous filled water system without legacy repla
   await startScene(page, 'CrystalBrookScene');
   await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:main-path');
   await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:watercourse-outer');
-  await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:ice-bridge:central-crossing');
-  await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:ice-bridge:woods-crossing');
+  await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:ice-bridge:north-crossing');
+  await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:ice-bridge:east-crossing');
   await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:crystal-cup-spur');
   await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:reflection-feeder');
   await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:reflection-pool-outer');
   await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:upstream-cascade');
+  await waitForObject(page, 'CrystalBrookScene', 'r6-region-gateway-art:crystal-brook:east-woodland');
+  await waitForObject(page, 'CrystalBrookScene', 'r6-region-gateway-art:crystal-brook:woods-path-exit');
   await waitForObject(page, 'CrystalBrookScene', 'final-graphics-tightening:crystal-brook-anchor');
 
   const objects = await getSceneObjects(page, 'CrystalBrookScene');
   for (const name of [
     'crystal-brook:main-path',
-    'crystal-brook:ice-bridge:central-crossing',
-    'crystal-brook:ice-bridge:woods-crossing',
+    'crystal-brook:ice-bridge:north-crossing',
+    'crystal-brook:ice-bridge:east-crossing',
     'crystal-brook:crystal-cup-spur',
     'crystal-brook:reflection-feeder',
     'crystal-brook:watercourse-outer',
@@ -124,6 +126,8 @@ test('Crystal Brook owns one continuous filled water system without legacy repla
     'crystal-brook:watercourse-deep',
     'crystal-brook:reflection-pool-outer',
     'crystal-brook:upstream-cascade',
+    'r6-region-gateway-art:crystal-brook:east-woodland',
+    'r6-region-gateway-art:crystal-brook:woods-path-exit',
   ]) {
     expect(objects.some((object) => object.name === name && object.visible)).toBe(true);
   }
@@ -145,6 +149,12 @@ test('Crystal Brook owns one continuous filled water system without legacy repla
   );
   expect(
     objects.some((object) => object.name === 'r6-region-gateway-art:crystal-brook:cascade-upgrade'),
+  ).toBe(false);
+  expect(
+    objects.some(
+      (object) =>
+        object.name === 'r6-region-gateway-art:brook-woods:woodland-threshold' && object.visible,
+    ),
   ).toBe(false);
 
   const largeBackdropCircles = objects.filter(
