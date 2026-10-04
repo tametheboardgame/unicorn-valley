@@ -94,11 +94,22 @@ export const CRYSTAL_BROOK_PATH_PRESENTATION_ROUTE = [
   { x: 1510, y: 1320 },
   { x: 1800, y: 1260 },
   { x: 2050, y: 1220 },
-  { x: 2320, y: 1260 },
-  { x: 2600, y: 1360 },
-  { x: 2900, y: 1240 },
+  { x: 2240, y: 1320 },
+  { x: 2398, y: 1342 },
+  { x: 2476, y: 1120 },
+  { x: 2620, y: 1080 },
+  { x: 2890, y: 1060 },
   { x: 3230, y: 990 },
 ] as const satisfies readonly MapPoint[];
+
+export const CRYSTAL_BROOK_RACE_BRIDGE = {
+  centre: { x: 2438, y: 1232 },
+  angle: -71,
+  length: 236,
+  deckWidth: 96,
+  southLanding: { x: 2398, y: 1342 },
+  northLanding: { x: 2476, y: 1120 },
+} as const;
 export const CRYSTAL_BROOK_WOODS_ROUTE = [
   { x: 2580, y: 1200 },
   { x: 2810, y: 1110 },
@@ -152,16 +163,16 @@ export const CRYSTAL_BROOK_WATERCOURSE = [
   { x: -110, y: 900, outerWidth: 142, innerWidth: 102, deepWidth: 36 },
 ] as const satisfies readonly CrystalBrookWatercoursePoint[];
 
-export const CRYSTAL_BROOK_REFLECTION_INLET = {
+export const CRYSTAL_BROOK_REFLECTION_FEEDER = {
   points: [
-    { x: 2320, y: 1210 },
-    { x: 2280, y: 1390 },
-    { x: 2190, y: 1530 },
+    { x: 2550, y: 1290 },
+    { x: 2480, y: 1390 },
+    { x: 2370, y: 1485 },
+    { x: 2240, y: 1565 },
     { x: 2150, y: 1650 },
   ] as const satisfies readonly MapPoint[],
-  outerWidth: 126,
-  innerWidth: 88,
-  deepWidth: 34,
+  outerWidth: 58,
+  innerWidth: 34,
 } as const;
 
 export const CRYSTAL_BROOK_WATER_GLINTS = [
@@ -172,7 +183,7 @@ export const CRYSTAL_BROOK_WATER_GLINTS = [
   { x: 1380, y: 590, width: 118, angle: -5 },
   { x: 990, y: 975, width: 72, angle: -12 },
   { x: 470, y: 995, width: 82, angle: -10 },
-  { x: 2180, y: 1575, width: 68, angle: -22 },
+  { x: 2260, y: 1550, width: 46, angle: -26 },
 ] as const;
 
 export const CRYSTAL_BROOK_RIPPLE_OVERLOOK = { x: 1720, y: 830 } as const;
@@ -261,8 +272,9 @@ export const CRYSTAL_BROOK_LAYOUT = {
     upstreamCascade: CRYSTAL_BROOK_UPSTREAM_CASCADE,
     meadowWaterExit: CRYSTAL_BROOK_MEADOW_WATER_EXIT,
     watercourse: CRYSTAL_BROOK_WATERCOURSE,
-    reflectionInlet: CRYSTAL_BROOK_REFLECTION_INLET,
+    reflectionFeeder: CRYSTAL_BROOK_REFLECTION_FEEDER,
     reflectionPool: CRYSTAL_BROOK_REFLECTION_POOL,
+    raceBridge: CRYSTAL_BROOK_RACE_BRIDGE,
   },
   landmarks: {
     rippleOverlook: CRYSTAL_BROOK_RIPPLE_OVERLOOK,
