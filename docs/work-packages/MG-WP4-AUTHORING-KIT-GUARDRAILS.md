@@ -1,7 +1,7 @@
 ---
 id: MG-WP4
 title: Future Mini-Game Authoring Kit and Guardrails
-status: in_progress
+status: complete
 autonomy: amber
 depends_on: [MG-WP3]
 parallel_safe: false
@@ -87,4 +87,4 @@ Review result: **conforms to the MG-WP4 authoring recipe**. No Chess product cha
 
 ## Closeout state
 
-MG-WP4 implementation is complete and the repository-selected branch CI passed on 2026-10-04. The package is now stopped at its Amber architecture-and-authoring human gate. Merge requires David's explicit closeout approval.
+MG-WP4 implementation is complete and the repository-selected branch CI passed on 2026-10-04. David explicitly approved the Amber architecture-and-authoring closeout on 2026-10-04. The package is accepted and ready to merge.
