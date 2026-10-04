@@ -44,6 +44,19 @@ H6.2C therefore:
 - keeps the canonical traversal/gateway route unchanged, leaving any structural route redesign to H6.5;
 - preserves the continuous-water model and all H6.2 progression/collision semantics.
 
+### H6.2D race-side crossing refinement
+
+The next visual review found that the race-side junction still tangled the Brook, the main path and the race spur together, while the Reflection Pool connection read as an unnatural second river.
+
+H6.2D therefore:
+
+- reroutes the presentation path so it approaches the Brook from the south bank and crosses once, approximately perpendicular to the watercourse;
+- adds a dedicated timber bridge at that crossing;
+- removes the redundant Brook-Woods compatibility redraw because the area-owned main path already serves that route;
+- gives the Crystal Cup/race spur a narrower established-style presentation route starting from the bridge’s north landing;
+- replaces the wide straight Reflection Pool inlet with a narrow curved feeder channel;
+- keeps functional race/Woods/Grotto gateways and traversal coordinates unchanged.
+
 ## Mini-game dependency state
 
 MG-WP0, MG-WP1, MG-WP2 and MG-WP3 are complete and merged.
@@ -58,7 +71,7 @@ A fresh CI run is required on the refined, MG-WP3-reconciled H6.2 head.
 
 ## Human gate
 
-H6.2 remains a substantive visual checkpoint.
+H6.2D remains a substantive visual checkpoint.
 
 Do not begin H6.3 until:
 
