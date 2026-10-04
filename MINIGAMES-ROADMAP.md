@@ -16,9 +16,9 @@ Status: **approved direction / independent programme**
 
 ## Current stage
 
-**MG-WP0 through MG-WP3 are complete and merged. MG-WP4 - Future mini-game authoring kit and guardrails is the active platform package.**
+**MG-WP0 through MG-WP4 are complete. MG-WP4 is human-approved and awaiting merge through PR #269.**
 
-The shared catalogue/session/launcher/outcome foundation, existing-game migration, sandbox isolation and Just Games catalogue are now present on main. MG-WP4 remains the final readiness gate before Crystalarium or Crystal Checkers can begin at H6.9/H6.10.
+The shared catalogue/session/launcher/outcome foundation, existing-game migration, sandbox isolation, Just Games catalogue and future-authoring guardrails are complete. Once PR #269 merges, the mini-game platform readiness gate for Crystalarium and Crystal Checkers at H6.9/H6.10 is released.
 
 This roadmap is intentionally independent of the main release roadmap. It is not an R6.5, WP19 or area-polish sub-stream. Mini-game platform work and mini-game improvement work may proceed in parallel with world, Story House and other content programmes when dependencies genuinely permit.
 
