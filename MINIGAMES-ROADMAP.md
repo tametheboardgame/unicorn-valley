@@ -16,9 +16,9 @@ Status: **approved direction / independent programme**
 
 ## Current stage
 
-**MG-WP0 through MG-WP4 are complete and merged. The programme has moved from platform construction into portfolio refinement.**
+**MG-WP0 through MG-WP4 are complete and merged. MG-WP5 - Sunbeam Chess Academy is the active existing-game refinement package; MG-WP5A discovery/design is the current bounded checkpoint.**
 
-The shared catalogue/session/launcher/outcome foundation, existing-game migration, sandbox isolation, Just Games catalogue and future-authoring guardrails are now the accepted baseline. The immediate next package is **MG-WP5 - Sunbeam Chess Academy**, a substantial child-first teaching and play redesign of the existing chess game.
+The shared catalogue/session/launcher/outcome foundation, existing-game migration, sandbox isolation, Just Games catalogue and future-authoring guardrails are the accepted baseline. MG-WP5 now applies that platform to a substantial child-first teaching and play redesign of the existing chess game.
 
 This roadmap is intentionally independent of the main release roadmap. It is not an R6.5, WP19 or area-polish sub-stream. Mini-game platform work and mini-game improvement work may proceed in parallel with world, Story House and other content programmes when dependencies genuinely permit.
 
