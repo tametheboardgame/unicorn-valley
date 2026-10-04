@@ -13,7 +13,7 @@ mini_game_platform_impact: changed - sunbeam-chess
 
 ## Current checkpoint
 
-**MG-WP5A - Discovery and design contract** is complete. **MG-WP5B - Academy shell and teaching foundation** is implemented and awaiting branch validation / visual review.
+**MG-WP5A - Discovery and design contract** is complete. **MG-WP5B - Academy shell and teaching foundation** is implemented and human-approved. Merge remains gated on exact-head CI.
 
 Detailed design contract: `docs/minigames/SUNBEAM-CHESS-ACADEMY-DESIGN.md`.
 
@@ -207,7 +207,7 @@ Human acceptance should answer:
 ## Bounded delivery checkpoints
 
 - **MG-WP5A - Discovery and design contract - complete**: current implementation audit, teaching principles, mode model, curriculum direction and implementation boundaries.
-- **MG-WP5B - Academy shell and teaching foundation - implemented**: Academy Home, teacher presentation foundation, reusable lesson runner and first piece lessons.
+- **MG-WP5B - Academy shell and teaching foundation - complete / human-approved**: Academy Home, teacher presentation foundation, reusable lesson runner and first piece lessons.
 - **MG-WP5C - Puzzle Garden and curriculum expansion**: puzzles, layered hints, check/checkmate and piece-safety teaching.
 - **MG-WP5D - Coach Match**: explainable coaching, another-look/play-anyway flow, undo and layered match hints.
 - **MG-WP5E - Friendly Match and opponent ladder**: child-friendly opponent levels, rematch/result flow and match polish.
@@ -240,3 +240,10 @@ Out of scope for WP5B:
 - Friendly Match difficulty ladder;
 - learner persistence;
 - final teacher identity/portrait polish.
+
+
+## MG-WP5B human acceptance
+
+David approved the WP5B Academy shell and starter lesson experience on 2026-10-04 after testing the Cloudflare branch preview.
+
+This approval covers the visual/product checkpoint for WP5B. Merge still requires the exact accepted branch head to satisfy repository CI policy.
