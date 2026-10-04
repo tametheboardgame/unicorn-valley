@@ -22,9 +22,10 @@ import { getBrowserSaveService } from '../save/browserSaveService';
 import { saveLocationCheckpoint } from '../save/saveLocationCheckpoint';
 import {
   CRYSTAL_BROOK_LOCATION_ID,
+  CRYSTAL_BROOK_CRYSTAL_CUP_PRESENTATION_ROUTE,
+  CRYSTAL_BROOK_ICE_BRIDGES,
   CRYSTAL_BROOK_MAP,
-  CRYSTAL_BROOK_PATH_PRESENTATION_ROUTE,
-  CRYSTAL_BROOK_RACE_BRIDGE,
+  CRYSTAL_BROOK_PATH_PRESENTATION_SEGMENTS,
   CRYSTAL_BROOK_REFLECTION_FEEDER,
   CRYSTAL_BROOK_REFLECTION_POOL,
   CRYSTAL_BROOK_UPSTREAM_CASCADE,
@@ -359,26 +360,46 @@ export class CrystalBrookScene extends Phaser.Scene {
     this.add.circle(1950, 1560, 730, 0x91d1ab, 0.28).setDepth(1);
     this.add.circle(3050, 740, 650, 0xbde7c1, 0.38).setDepth(1);
 
-    const path = this.add.graphics().setName('crystal-brook:main-path').setDepth(2.86);
-    const mainRoute = CRYSTAL_BROOK_PATH_PRESENTATION_ROUTE;
-    const drawPathLayer = (width: number, colour: number, alpha: number): void => {
-      path.lineStyle(width, colour, alpha);
-      path.beginPath();
-      path.moveTo(mainRoute[0].x, mainRoute[0].y);
-      for (const point of mainRoute.slice(1)) {
-        path.lineTo(point.x, point.y);
-      }
-      path.strokePath();
-      path.fillStyle(colour, alpha);
-      for (const point of mainRoute) {
-        path.fillCircle(point.x, point.y, width / 2);
-      }
+    const drawPath = (
+      name: string,
+      segments: readonly (readonly { x: number; y: number }[])[],
+      outerWidth: number,
+      innerWidth: number,
+    ): void => {
+      const path = this.add.graphics().setName(name).setDepth(2.86);
+      const drawLayer = (width: number, colour: number): void => {
+        path.lineStyle(width, colour, 1);
+        path.fillStyle(colour, 1);
+        for (const segment of segments) {
+          const first = segment[0];
+          if (!first) {
+            continue;
+          }
+          path.beginPath();
+          path.moveTo(first.x, first.y);
+          for (const point of segment.slice(1)) {
+            path.lineTo(point.x, point.y);
+          }
+          path.strokePath();
+          for (const point of segment) {
+            path.fillCircle(point.x, point.y, width / 2);
+          }
+        }
+      };
+      drawLayer(outerWidth, 0xd7c18f);
+      drawLayer(innerWidth, 0xf0dfb2);
     };
-    drawPathLayer(128, 0xd7c18f, 1);
-    drawPathLayer(108, 0xf0dfb2, 1);
+
+    drawPath('crystal-brook:main-path', CRYSTAL_BROOK_PATH_PRESENTATION_SEGMENTS, 128, 108);
+    drawPath(
+      'crystal-brook:crystal-cup-spur',
+      [CRYSTAL_BROOK_CRYSTAL_CUP_PRESENTATION_ROUTE],
+      82,
+      64,
+    );
 
     this.createWater();
-    this.createRaceBridge();
+    this.createIceBridges();
     this.createSteppingStones();
     this.createSecretTrail();
     this.createBanks();
@@ -492,112 +513,116 @@ export class CrystalBrookScene extends Phaser.Scene {
     }
   }
 
-  private createRaceBridge(): void {
-    const bridge = CRYSTAL_BROOK_RACE_BRIDGE;
-    const container = this.add
-      .container(bridge.centre.x, bridge.centre.y)
-      .setName('crystal-brook:race-bridge')
-      .setAngle(bridge.angle)
-      .setDepth(3.5);
+  private createIceBridges(): void {
+    for (const bridge of CRYSTAL_BROOK_ICE_BRIDGES) {
+      const container = this.add
+        .container(bridge.centre.x, bridge.centre.y)
+        .setName(`crystal-brook:ice-bridge:${bridge.id}`)
+        .setAngle(bridge.angle)
+        .setDepth(3.5);
 
-    container.add(
-      this.add
-        .ellipse(8, 10, bridge.length + 28, bridge.deckWidth + 24, 0x38515a, 0.2)
-        .setOrigin(0.5),
-    );
+      container.add(
+        this.add
+          .ellipse(8, 10, bridge.length + 22, bridge.deckWidth + 18, 0x31566a, 0.18)
+          .setOrigin(0.5),
+      );
 
-    const slabCount = 7;
-    const slabSpacing = bridge.length / slabCount;
-    const slabColours = [0x778789, 0x819293, 0x708184, 0x899896] as const;
-    for (let index = 0; index < slabCount; index += 1) {
-      const x = -bridge.length / 2 + slabSpacing * (index + 0.5);
-      const y = index % 2 === 0 ? -2 : 3;
-      const width = slabSpacing + (index % 3 === 0 ? 5 : -1);
-      const height = bridge.deckWidth - (index % 2 === 0 ? 8 : 14);
-      const colour = slabColours[index % slabColours.length];
+      const slabCount = Math.max(7, Math.round(bridge.length / 48));
+      const spacing = bridge.length / slabCount;
+      for (let index = 0; index < slabCount; index += 1) {
+        const x = -bridge.length / 2 + spacing * (index + 0.5);
+        const y = index % 2 === 0 ? -2 : 2;
+        const width = spacing + (index % 3 === 0 ? 5 : 1);
+        const height = bridge.deckWidth - (index % 2 === 0 ? 8 : 13);
+        const bodyColour = index % 3 === 0 ? 0xbbeef4 : index % 3 === 1 ? 0x9fdde8 : 0xcceff4;
 
-      const slab = this.add
-        .polygon(
-          x,
-          y,
-          [
-            -width * 0.52,
-            height * 0.3,
-            -width * 0.46,
-            -height * 0.34,
-            -width * 0.12,
-            -height * 0.5,
-            width * 0.44,
-            -height * 0.36,
-            width * 0.52,
-            height * 0.2,
-            width * 0.18,
-            height * 0.48,
-            -width * 0.28,
-            height * 0.44,
-          ],
-          colour,
-          1,
-        )
-        .setStrokeStyle(3, 0x506468, 0.9)
-        .setAngle(index % 2 === 0 ? -1.8 : 1.4);
-      container.add(slab);
-
-      if (index === 1 || index === 4 || index === 6) {
         container.add(
           this.add
-            .triangle(
-              x + width * 0.08,
-              y - height * 0.18,
-              0,
-              24,
-              10,
-              0,
-              21,
-              24,
-              index === 4 ? 0xc7b8f2 : 0x9de7ed,
-              0.94,
-            )
-            .setStrokeStyle(2, 0xecffff, 0.76),
-        );
-      }
-    }
-
-    for (const side of [-1, 1] as const) {
-      const edgeY = side * (bridge.deckWidth / 2 + 4);
-      for (const x of [-bridge.length / 2 + 28, -78, 68, bridge.length / 2 - 28]) {
-        const scale = 0.84 + ((Math.abs(x) / bridge.length) % 0.18);
-        container.add(
-          this.add
-            .ellipse(
+            .polygon(
               x,
-              edgeY + (x % 3) * 2,
-              42 * scale,
-              27 * scale,
-              x > 0 ? 0x687b7e : 0x728487,
-              1,
+              y,
+              [
+                -width * 0.52,
+                height * 0.22,
+                -width * 0.44,
+                -height * 0.32,
+                -width * 0.12,
+                -height * 0.5,
+                width * 0.4,
+                -height * 0.38,
+                width * 0.52,
+                height * 0.14,
+                width * 0.2,
+                height * 0.48,
+                -width * 0.3,
+                height * 0.42,
+              ],
+              bodyColour,
+              0.9,
             )
-            .setStrokeStyle(3, 0x4d6064, 0.86)
-            .setAngle(x % 2 === 0 ? -8 : 7),
+            .setStrokeStyle(3, 0xeaffff, 0.78),
+        );
+
+        container.add(
+          this.add
+            .polygon(
+              x - width * 0.1,
+              y - height * 0.12,
+              [
+                -width * 0.22,
+                0,
+                -width * 0.08,
+                -height * 0.2,
+                width * 0.22,
+                -height * 0.14,
+                width * 0.06,
+                height * 0.06,
+              ],
+              0xf4ffff,
+              0.3,
+            )
+            .setStrokeStyle(1, 0xffffff, 0.22),
         );
       }
-    }
 
-    container.add([
-      this.add
-        .triangle(-bridge.length / 2 + 24, -bridge.deckWidth / 2 - 9, 0, 34, 12, 0, 25, 34, 0xa9edf0, 0.94)
-        .setStrokeStyle(2, 0xf2ffff, 0.82),
-      this.add
-        .triangle(bridge.length / 2 - 34, bridge.deckWidth / 2 + 6, 0, 30, 11, 0, 23, 30, 0xc5b7f2, 0.92)
-        .setStrokeStyle(2, 0xf7f1ff, 0.78),
-    ]);
+      for (const side of [-1, 1] as const) {
+        const edgeY = side * (bridge.deckWidth / 2 + 3);
+        for (
+          let x = -bridge.length / 2 + 26, index = 0;
+          x <= bridge.length / 2 - 22;
+          x += 58, index += 1
+        ) {
+          const shardHeight = index % 2 === 0 ? 33 : 24;
+          container.add(
+            this.add
+              .triangle(
+                x,
+                edgeY,
+                0,
+                shardHeight,
+                10,
+                0,
+                21,
+                shardHeight,
+                index % 3 === 0 ? 0xa9eaf2 : 0xcbbcf3,
+                0.84,
+              )
+              .setStrokeStyle(2, 0xf5ffff, 0.72)
+              .setAngle(side < 0 ? 180 : 0),
+          );
+        }
+      }
+
+      container.add(
+        this.add
+          .rectangle(0, -bridge.deckWidth * 0.1, bridge.length - 36, 5, 0xffffff, 0.22)
+          .setAngle(-1),
+      );
+    }
   }
 
   private createSteppingStones(): void {
     for (const [index, point] of CRYSTAL_BROOK_MAP.steppingStones.entries()) {
-      if (index >= 3) {
-        continue;
-      }
       this.add
         .ellipse(point.x, point.y, 92, 50, index % 2 === 0 ? 0xa8a8a0 : 0xb8b4a7, 1)
         .setStrokeStyle(4, 0x81877d, 0.8)
