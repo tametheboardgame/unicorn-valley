@@ -85,11 +85,28 @@ H6.2F now:
 - returns Crystal Cascade to the Crystal Cup hub first, with the hub owning the return to Crystal Brook;
 - leaves proper Crystal Cup hub design/maturity for H6.6 rather than attempting the final race-hub experience now.
 
+### H6.2G meander, crystal spans and woodland edge
+
+The H6.2F preview still read as too engineered: the Brook retained visible angularity, the bridges were too slab-like, the Grotto competed with the east-side routes, and the Woods entrance still felt like a destination structure rather than a natural continuation.
+
+H6.2G therefore:
+
+- reshapes the eastern Brook into a denser S-shaped meander and samples it through Catmull-Rom interpolation before rendering so the actual water ribbon is smooth rather than merely using more straight segments;
+- smooths the authored path segments as curves while still keeping hard bridge gaps between land sections;
+- keeps the path on the south bank until a **northward** first crossing;
+- carries the path on the north side to a genuine near-vertical Brook bend and crosses it **eastward** on the second bridge;
+- rebuilds both bridges as lighter translucent crystalline spans with faceted ice-like decks, luminous crystal posts and lattice rails, closer to the supplied reference vibe;
+- moves Prism Grotto to the south at approximately x2440 / y2070 with a southbound approach/trail;
+- pushes the Woods exit further east/lower and curves the path down towards it after the second bridge;
+- removes the Brook-side woodland portal presentation and replaces it with a simple path-off-map exit framed by trees;
+- adds progressively denser trees along the east edge and lets the Brook continue off-map through the woodland;
+- retains the north-edge Crystal Cup Raceway gateway and provisional hub topology from H6.2F.
+
 ## Mini-game dependency state
 
-MG-WP0, MG-WP1, MG-WP2 and MG-WP3 are complete and merged.
+MG-WP0, MG-WP1, MG-WP2, MG-WP3 and **MG-WP4 are complete and merged**.
 
-H6.8 now waits only on **MG-WP4** before Crystalarium or Crystal Checkers implementation may begin.
+The H6.8 mini-game platform readiness dependency is therefore satisfied; H6.9/H6.10 still remain sequenced behind the earlier H6 environment/path slices rather than starting during H6.2.
 
 ## Validation state
 
@@ -99,13 +116,13 @@ A fresh CI run is required on the refined, MG-WP3-reconciled H6.2 head.
 
 ## Human gate
 
-H6.2F remains a substantive visual checkpoint.
+H6.2G remains a substantive visual checkpoint.
 
 Do not begin H6.3 until:
 
 - relevant technical validation is complete as far as the repository baseline permits;
 - an exact-head preview of the refinement is available;
-- David has confirmed the two glacial bridges, lower Woods entrance, north-edge Crystal Cup Raceway gateway and cleaned east-side path topology read correctly.
+- David has confirmed the smooth meandering Brook, northward/eastward crystalline bridge sequence, south Grotto and natural tree-lined Woods exit read correctly.
 
 ## Next work
 
@@ -116,6 +133,6 @@ After H6.2 approval, begin **H6.3 - Rainbow Meadow cave/gorge entrance**.
 - Keep Brook hydrology area-owned.
 - Do not reintroduce water through generic compatibility managers.
 - Preserve accepted Ripple/Echo/Grotto progression and Meadow/Woods traversal.
-- Preserve MG-WP1-MG-WP3 shared mini-game/session/catalogue behaviour.
+- Preserve MG-WP1-MG-WP4 shared mini-game/session/catalogue/authoring behaviour.
 - If GitHub access fails, reconnect immediately.
 - Do not sit in repeated CI/deployment polling loops.
