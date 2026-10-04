@@ -13,7 +13,6 @@ import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { CrystalGrottoStoryService } from '../story/CrystalGrottoStoryService';
 import {
-  CRYSTAL_BROOK_CASCADE_MEMORY,
   CRYSTAL_BROOK_ECHO_CLUE,
   CRYSTAL_BROOK_GROTTO_THRESHOLD,
   CRYSTAL_BROOK_PEBBLE_STACK,
@@ -136,15 +135,6 @@ const INTERACTIONS: readonly BrookInteractionDefinition[] = [
     position: CRYSTAL_BROOK_PEBBLE_STACK,
     radius: 145,
     icon: '🪨',
-  },
-  {
-    id: 'cascade-memory',
-    label: 'Crystal Cascade overlook',
-    actionLabel: 'Look towards the course',
-    actionKind: 'inspect',
-    position: CRYSTAL_BROOK_CASCADE_MEMORY,
-    radius: 150,
-    icon: '🏁',
   },
 ];
 
