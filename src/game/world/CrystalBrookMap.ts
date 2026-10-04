@@ -60,12 +60,12 @@ export const CRYSTAL_BROOK_MEADOW_THRESHOLD = {
   direction: 'west',
 } as const;
 export const CRYSTAL_BROOK_WOODS_THRESHOLD = {
-  position: { x: 3260, y: 990 },
-  approach: { x: 3070, y: 1010 },
+  position: { x: 3260, y: 1510 },
+  approach: { x: 3090, y: 1460 },
 } as const;
 export const CRYSTAL_BROOK_CRYSTAL_CUP_THRESHOLD = {
-  position: { x: 2860, y: 850 },
-  approach: { x: 2660, y: 900 },
+  position: { x: 2860, y: 120 },
+  approach: { x: 2860, y: 330 },
 } as const;
 export const CRYSTAL_BROOK_GROTTO_THRESHOLD = {
   position: { x: 3130, y: 1850 },
@@ -73,61 +73,99 @@ export const CRYSTAL_BROOK_GROTTO_THRESHOLD = {
   returnPosition: { x: 3020, y: 1740 },
 } as const;
 
-export const CRYSTAL_BROOK_MAIN_ROUTE = [
-  { x: 100, y: 1090 },
-  { x: 850, y: 1090 },
-  { x: 1510, y: 1260 },
-  { x: 2050, y: 1080 },
-  { x: 2600, y: 1190 },
-  { x: 3230, y: 990 },
-] as const;
+export interface CrystalBrookBridgeDefinition {
+  id: 'central-crossing' | 'woods-crossing';
+  centre: MapPoint;
+  angle: number;
+  length: number;
+  deckWidth: number;
+  westLanding: MapPoint;
+  eastLanding: MapPoint;
+}
 
-export const CRYSTAL_BROOK_RACE_BRIDGE = {
+export const CRYSTAL_BROOK_CENTRAL_BRIDGE = {
+  id: 'central-crossing',
   centre: { x: 2290, y: 1210 },
   angle: -16,
   length: 340,
   deckWidth: 94,
   westLanding: { x: 2130, y: 1255 },
   eastLanding: { x: 2450, y: 1165 },
-} as const;
+} as const satisfies CrystalBrookBridgeDefinition;
 
-// H6.2 presentation route only: keeps the walking path visibly alongside the Brook
-// without changing the canonical traversal/gateway route above. H6.5 owns any later
-// structural path redesign.
-export const CRYSTAL_BROOK_PATH_PRESENTATION_ROUTE = [
+export const CRYSTAL_BROOK_WOODS_BRIDGE = {
+  id: 'woods-crossing',
+  centre: { x: 2800, y: 1385 },
+  angle: 14,
+  length: 390,
+  deckWidth: 94,
+  westLanding: { x: 2610, y: 1338 },
+  eastLanding: { x: 2990, y: 1432 },
+} as const satisfies CrystalBrookBridgeDefinition;
+
+export const CRYSTAL_BROOK_ICE_BRIDGES = [
+  CRYSTAL_BROOK_CENTRAL_BRIDGE,
+  CRYSTAL_BROOK_WOODS_BRIDGE,
+] as const satisfies readonly CrystalBrookBridgeDefinition[];
+
+export const CRYSTAL_BROOK_MAIN_ROUTE = [
   { x: 100, y: 1090 },
-  { x: 340, y: 1090 },
-  { x: 620, y: 1160 },
-  { x: 900, y: 1220 },
-  { x: 1200, y: 1280 },
-  { x: 1510, y: 1320 },
-  { x: 1800, y: 1260 },
+  { x: 850, y: 1090 },
+  { x: 1510, y: 1260 },
   { x: 2050, y: 1220 },
-  CRYSTAL_BROOK_RACE_BRIDGE.westLanding,
-  CRYSTAL_BROOK_RACE_BRIDGE.eastLanding,
-  { x: 2620, y: 1080 },
-  { x: 2890, y: 1060 },
-  { x: 3230, y: 990 },
-] as const satisfies readonly MapPoint[];
-export const CRYSTAL_BROOK_WOODS_ROUTE = [
-  { x: 2580, y: 1200 },
-  { x: 2810, y: 1110 },
-  { x: 3050, y: 1030 },
-  { x: 3260, y: 990 },
-] as const;
-export const CRYSTAL_BROOK_CRYSTAL_CUP_ROUTE = [
-  { x: 2520, y: 1170 },
-  { x: 2620, y: 1050 },
-  { x: 2740, y: 940 },
-  { x: 2860, y: 850 },
+  CRYSTAL_BROOK_CENTRAL_BRIDGE.westLanding,
+  CRYSTAL_BROOK_CENTRAL_BRIDGE.eastLanding,
+  { x: 2580, y: 1160 },
+  CRYSTAL_BROOK_WOODS_BRIDGE.westLanding,
+  CRYSTAL_BROOK_WOODS_BRIDGE.eastLanding,
+  CRYSTAL_BROOK_WOODS_THRESHOLD.approach,
+  CRYSTAL_BROOK_WOODS_THRESHOLD.position,
 ] as const;
 
-export const CRYSTAL_BROOK_CRYSTAL_CUP_PRESENTATION_ROUTE = [
-  CRYSTAL_BROOK_RACE_BRIDGE.eastLanding,
-  { x: 2580, y: 1040 },
-  { x: 2700, y: 940 },
+export const CRYSTAL_BROOK_PATH_PRESENTATION_SEGMENTS = [
+  [
+    { x: 100, y: 1090 },
+    { x: 340, y: 1090 },
+    { x: 620, y: 1160 },
+    { x: 900, y: 1220 },
+    { x: 1200, y: 1280 },
+    { x: 1510, y: 1320 },
+    { x: 1800, y: 1260 },
+    { x: 2050, y: 1220 },
+    CRYSTAL_BROOK_CENTRAL_BRIDGE.westLanding,
+  ],
+  [
+    CRYSTAL_BROOK_CENTRAL_BRIDGE.eastLanding,
+    { x: 2580, y: 1160 },
+    CRYSTAL_BROOK_WOODS_BRIDGE.westLanding,
+  ],
+  [
+    CRYSTAL_BROOK_WOODS_BRIDGE.eastLanding,
+    CRYSTAL_BROOK_WOODS_THRESHOLD.approach,
+    CRYSTAL_BROOK_WOODS_THRESHOLD.position,
+  ],
+] as const satisfies readonly (readonly MapPoint[])[];
+
+export const CRYSTAL_BROOK_WOODS_ROUTE = [
+  { x: 2580, y: 1160 },
+  CRYSTAL_BROOK_WOODS_BRIDGE.westLanding,
+  CRYSTAL_BROOK_WOODS_BRIDGE.eastLanding,
+  CRYSTAL_BROOK_WOODS_THRESHOLD.approach,
+  CRYSTAL_BROOK_WOODS_THRESHOLD.position,
+] as const;
+
+export const CRYSTAL_BROOK_CRYSTAL_CUP_ROUTE = [
+  { x: 2580, y: 1160 },
+  { x: 2660, y: 1000 },
+  { x: 2740, y: 790 },
+  { x: 2810, y: 560 },
+  CRYSTAL_BROOK_CRYSTAL_CUP_THRESHOLD.approach,
   CRYSTAL_BROOK_CRYSTAL_CUP_THRESHOLD.position,
-] as const satisfies readonly MapPoint[];
+] as const;
+
+export const CRYSTAL_BROOK_CRYSTAL_CUP_PRESENTATION_ROUTE =
+  CRYSTAL_BROOK_CRYSTAL_CUP_ROUTE;
+
 export const CRYSTAL_BROOK_GROTTO_ROUTE = [
   { x: 2480, y: 1540 },
   { x: 2630, y: 1630 },
@@ -197,7 +235,7 @@ export const CRYSTAL_BROOK_ECHO_CLUE = { x: 2800, y: 1400 } as const;
 export const CRYSTAL_BROOK_WATERFALL_MIST = { x: 3150, y: 735 } as const;
 export const CRYSTAL_BROOK_WATERFALL_PRESENTATION = { x: 3150, y: 600 } as const;
 export const CRYSTAL_BROOK_REFLECTION_POOL = { x: 2150, y: 1650 } as const;
-export const CRYSTAL_BROOK_STEPPING_CHIME = { x: 2320, y: 1225 } as const;
+export const CRYSTAL_BROOK_STEPPING_CHIME = { x: 1125, y: 970 } as const;
 export const CRYSTAL_BROOK_SHALLOW_RIPPLE = { x: 1900, y: 1110 } as const;
 export const CRYSTAL_BROOK_SINGING_CRYSTALS = { x: 2440, y: 1110 } as const;
 export const CRYSTAL_BROOK_SHELL_SPARKLE = { x: 1760, y: 980 } as const;
@@ -281,7 +319,7 @@ export const CRYSTAL_BROOK_LAYOUT = {
     watercourse: CRYSTAL_BROOK_WATERCOURSE,
     reflectionFeeder: CRYSTAL_BROOK_REFLECTION_FEEDER,
     reflectionPool: CRYSTAL_BROOK_REFLECTION_POOL,
-    raceBridge: CRYSTAL_BROOK_RACE_BRIDGE,
+    bridges: CRYSTAL_BROOK_ICE_BRIDGES,
   },
   landmarks: {
     rippleOverlook: CRYSTAL_BROOK_RIPPLE_OVERLOOK,
@@ -328,9 +366,6 @@ export const CRYSTAL_BROOK_MAP = {
     { x: 1010, y: 1010 },
     { x: 1125, y: 970 },
     { x: 1240, y: 1015 },
-    { x: 2200, y: 1180 },
-    { x: 2315, y: 1225 },
-    { x: 2430, y: 1180 },
   ] satisfies readonly MapPoint[],
   collectableSpots: [
     {
