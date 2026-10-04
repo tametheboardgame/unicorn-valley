@@ -82,6 +82,15 @@ export const CRYSTAL_BROOK_MAIN_ROUTE = [
   { x: 3230, y: 990 },
 ] as const;
 
+export const CRYSTAL_BROOK_RACE_BRIDGE = {
+  centre: { x: 2290, y: 1210 },
+  angle: -16,
+  length: 340,
+  deckWidth: 94,
+  westLanding: { x: 2130, y: 1255 },
+  eastLanding: { x: 2450, y: 1165 },
+} as const;
+
 // H6.2 presentation route only: keeps the walking path visibly alongside the Brook
 // without changing the canonical traversal/gateway route above. H6.5 owns any later
 // structural path redesign.
@@ -94,22 +103,12 @@ export const CRYSTAL_BROOK_PATH_PRESENTATION_ROUTE = [
   { x: 1510, y: 1320 },
   { x: 1800, y: 1260 },
   { x: 2050, y: 1220 },
-  { x: 2240, y: 1320 },
-  { x: 2398, y: 1342 },
-  { x: 2476, y: 1120 },
+  CRYSTAL_BROOK_RACE_BRIDGE.westLanding,
+  CRYSTAL_BROOK_RACE_BRIDGE.eastLanding,
   { x: 2620, y: 1080 },
   { x: 2890, y: 1060 },
   { x: 3230, y: 990 },
 ] as const satisfies readonly MapPoint[];
-
-export const CRYSTAL_BROOK_RACE_BRIDGE = {
-  centre: { x: 2438, y: 1232 },
-  angle: -71,
-  length: 236,
-  deckWidth: 96,
-  southLanding: { x: 2398, y: 1342 },
-  northLanding: { x: 2476, y: 1120 },
-} as const;
 export const CRYSTAL_BROOK_WOODS_ROUTE = [
   { x: 2580, y: 1200 },
   { x: 2810, y: 1110 },
@@ -124,7 +123,7 @@ export const CRYSTAL_BROOK_CRYSTAL_CUP_ROUTE = [
 ] as const;
 
 export const CRYSTAL_BROOK_CRYSTAL_CUP_PRESENTATION_ROUTE = [
-  CRYSTAL_BROOK_RACE_BRIDGE.northLanding,
+  CRYSTAL_BROOK_RACE_BRIDGE.eastLanding,
   { x: 2580, y: 1040 },
   { x: 2700, y: 940 },
   CRYSTAL_BROOK_CRYSTAL_CUP_THRESHOLD.position,
