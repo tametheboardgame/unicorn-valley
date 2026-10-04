@@ -500,45 +500,104 @@ export class CrystalBrookScene extends Phaser.Scene {
       .setAngle(bridge.angle)
       .setDepth(3.5);
 
-    const shadow = this.add
-      .rectangle(7, 9, bridge.length + 22, bridge.deckWidth + 18, 0x40545a, 0.2)
-      .setOrigin(0.5);
-    const deckBase = this.add
-      .rectangle(0, 0, bridge.length, bridge.deckWidth, 0xb98755, 1)
-      .setStrokeStyle(5, 0x79583c, 0.92);
-    container.add([shadow, deckBase]);
+    container.add(
+      this.add
+        .ellipse(8, 10, bridge.length + 28, bridge.deckWidth + 24, 0x38515a, 0.2)
+        .setOrigin(0.5),
+    );
 
-    const plankCount = 9;
-    const plankSpacing = bridge.length / plankCount;
-    for (let index = 0; index < plankCount; index += 1) {
-      const x = -bridge.length / 2 + plankSpacing * (index + 0.5);
-      container.add(
-        this.add
-          .rectangle(x, 0, plankSpacing - 5, bridge.deckWidth - 10, index % 2 === 0 ? 0xd6ad76 : 0xc99c67, 1)
-          .setStrokeStyle(2, 0x8a6847, 0.5),
-      );
+    const slabCount = 7;
+    const slabSpacing = bridge.length / slabCount;
+    const slabColours = [0x778789, 0x819293, 0x708184, 0x899896] as const;
+    for (let index = 0; index < slabCount; index += 1) {
+      const x = -bridge.length / 2 + slabSpacing * (index + 0.5);
+      const y = index % 2 === 0 ? -2 : 3;
+      const width = slabSpacing + (index % 3 === 0 ? 5 : -1);
+      const height = bridge.deckWidth - (index % 2 === 0 ? 8 : 14);
+      const colour = slabColours[index % slabColours.length];
+
+      const slab = this.add
+        .polygon(
+          x,
+          y,
+          [
+            -width * 0.52,
+            height * 0.3,
+            -width * 0.46,
+            -height * 0.34,
+            -width * 0.12,
+            -height * 0.5,
+            width * 0.44,
+            -height * 0.36,
+            width * 0.52,
+            height * 0.2,
+            width * 0.18,
+            height * 0.48,
+            -width * 0.28,
+            height * 0.44,
+          ],
+          colour,
+          1,
+        )
+        .setStrokeStyle(3, 0x506468, 0.9)
+        .setAngle(index % 2 === 0 ? -1.8 : 1.4);
+      container.add(slab);
+
+      if (index === 1 || index === 4 || index === 6) {
+        container.add(
+          this.add
+            .triangle(
+              x + width * 0.08,
+              y - height * 0.18,
+              0,
+              24,
+              10,
+              0,
+              21,
+              24,
+              index === 4 ? 0xc7b8f2 : 0x9de7ed,
+              0.94,
+            )
+            .setStrokeStyle(2, 0xecffff, 0.76),
+        );
+      }
     }
 
     for (const side of [-1, 1] as const) {
-      const railY = side * (bridge.deckWidth / 2 + 12);
-      container.add(
-        this.add.rectangle(0, railY, bridge.length + 10, 8, 0x79583c, 0.96),
-      );
-      for (const x of [-bridge.length / 2 + 18, 0, bridge.length / 2 - 18]) {
+      const edgeY = side * (bridge.deckWidth / 2 + 4);
+      for (const x of [-bridge.length / 2 + 28, -78, 68, bridge.length / 2 - 28]) {
+        const scale = 0.84 + ((Math.abs(x) / bridge.length) % 0.18);
         container.add(
-          this.add.rectangle(x, railY, 10, 30, 0x8a6847, 1),
+          this.add
+            .ellipse(
+              x,
+              edgeY + (x % 3) * 2,
+              42 * scale,
+              27 * scale,
+              x > 0 ? 0x687b7e : 0x728487,
+              1,
+            )
+            .setStrokeStyle(3, 0x4d6064, 0.86)
+            .setAngle(x % 2 === 0 ? -8 : 7),
         );
       }
     }
 
     container.add([
-      this.add.circle(-bridge.length / 2 + 22, 0, 5, 0xf2d3a0, 0.6),
-      this.add.circle(bridge.length / 2 - 22, 0, 5, 0xf2d3a0, 0.6),
+      this.add
+        .triangle(-bridge.length / 2 + 24, -bridge.deckWidth / 2 - 9, 0, 34, 12, 0, 25, 34, 0xa9edf0, 0.94)
+        .setStrokeStyle(2, 0xf2ffff, 0.82),
+      this.add
+        .triangle(bridge.length / 2 - 34, bridge.deckWidth / 2 + 6, 0, 30, 11, 0, 23, 30, 0xc5b7f2, 0.92)
+        .setStrokeStyle(2, 0xf7f1ff, 0.78),
     ]);
   }
 
   private createSteppingStones(): void {
     for (const [index, point] of CRYSTAL_BROOK_MAP.steppingStones.entries()) {
+      if (index >= 3) {
+        continue;
+      }
       this.add
         .ellipse(point.x, point.y, 92, 50, index % 2 === 0 ? 0xa8a8a0 : 0xb8b4a7, 1)
         .setStrokeStyle(4, 0x81877d, 0.8)
