@@ -378,18 +378,10 @@ function createCrystalCupRacewayExit(scene: Phaser.Scene, x: number, y: number):
   const objects: Phaser.GameObjects.GameObject[] = [];
 
   objects.push(
-    scene.add
-      .rectangle(-118, 28, 28, 176, 0x6ca9b3, 0.94)
-      .setStrokeStyle(4, 0xdffcff, 0.76),
-    scene.add
-      .rectangle(118, 28, 28, 176, 0x6ca9b3, 0.94)
-      .setStrokeStyle(4, 0xdffcff, 0.76),
-    scene.add
-      .rectangle(0, 92, 280, 42, 0x8bc9d1, 0.34)
-      .setStrokeStyle(3, 0xdffcff, 0.28),
-    scene.add
-      .rectangle(0, -48, 300, 64, 0xe8fbff, 0.96)
-      .setStrokeStyle(6, 0x8ea7c8, 0.92),
+    scene.add.rectangle(-118, 28, 28, 176, 0x6ca9b3, 0.94).setStrokeStyle(4, 0xdffcff, 0.76),
+    scene.add.rectangle(118, 28, 28, 176, 0x6ca9b3, 0.94).setStrokeStyle(4, 0xdffcff, 0.76),
+    scene.add.rectangle(0, 92, 280, 42, 0x8bc9d1, 0.34).setStrokeStyle(3, 0xdffcff, 0.28),
+    scene.add.rectangle(0, -48, 300, 64, 0xe8fbff, 0.96).setStrokeStyle(6, 0x8ea7c8, 0.92),
     scene.add
       .text(0, -48, 'THE CRYSTAL CUP RACEWAY', {
         color: '#365965',
