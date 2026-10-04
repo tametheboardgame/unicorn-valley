@@ -123,10 +123,7 @@ export class CrystalCupEntryScene extends Phaser.Scene {
     this.player.sprite.setDepth(worldDepthForY(this.player.sprite.y, 0.5));
 
     const exit = CRYSTAL_CUP_HUB_LAYOUT.brookExit.position;
-    if (
-      Math.abs(this.player.sprite.x - exit.x) <= 110 &&
-      this.player.sprite.y >= exit.y - 40
-    ) {
+    if (Math.abs(this.player.sprite.x - exit.x) <= 110 && this.player.sprite.y >= exit.y - 40) {
       this.exitToBrook();
       return;
     }
