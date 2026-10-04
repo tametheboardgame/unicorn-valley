@@ -409,7 +409,8 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
         fontStyle: 'bold',
         wordWrap: { width: 365 },
       })
-      .setOrigin(0, 0);
+      .setOrigin(0, 0)
+      .setName('sunbeam-chess:lesson-status');
 
     const lessonPanel = this.add.graphics();
     lessonPanel.fillStyle(0xfffbf1, 1);
@@ -426,7 +427,8 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
         align: 'center',
         wordWrap: { width: 470 },
       })
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setName('sunbeam-chess:teacher-message');
 
     this.add
       .text(900, 486, 'The glowing star is your goal. Green dots show legal moves.', {
