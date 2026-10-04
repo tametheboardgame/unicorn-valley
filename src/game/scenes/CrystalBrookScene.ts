@@ -407,44 +407,52 @@ export class CrystalBrookScene extends Phaser.Scene {
     this.add.circle(1950, 1560, 730, 0x91d1ab, 0.28).setDepth(1);
     this.add.circle(3050, 740, 650, 0xbde7c1, 0.38).setDepth(1);
 
-    const drawPath = (
-      name: string,
+    const pathNetwork = this.add
+      .graphics()
+      .setName('crystal-brook:main-path')
+      .setDepth(2.86);
+
+    const drawSegments = (
       segments: readonly (readonly { x: number; y: number }[])[],
-      outerWidth: number,
-      innerWidth: number,
+      width: number,
+      colour: number,
     ): void => {
-      const path = this.add.graphics().setName(name).setDepth(2.86);
-      const drawLayer = (width: number, colour: number): void => {
-        path.lineStyle(width, colour, 1);
-        path.fillStyle(colour, 1);
-        for (const segment of segments) {
-          const first = segment[0];
-          if (!first) {
-            continue;
-          }
-          const smoothedSegment = smoothPoints(segment);
-          path.beginPath();
-          path.moveTo(smoothedSegment[0].x, smoothedSegment[0].y);
-          for (const point of smoothedSegment.slice(1)) {
-            path.lineTo(point.x, point.y);
-          }
-          path.strokePath();
-          for (const point of segment) {
-            path.fillCircle(point.x, point.y, width / 2);
-          }
+      pathNetwork.lineStyle(width, colour, 1);
+      pathNetwork.fillStyle(colour, 1);
+      for (const segment of segments) {
+        const first = segment[0];
+        if (!first) {
+          continue;
         }
-      };
-      drawLayer(outerWidth, 0xd7c18f);
-      drawLayer(innerWidth, 0xf0dfb2);
+        const smoothedSegment = smoothPoints(segment);
+        pathNetwork.beginPath();
+        pathNetwork.moveTo(smoothedSegment[0].x, smoothedSegment[0].y);
+        for (const point of smoothedSegment.slice(1)) {
+          pathNetwork.lineTo(point.x, point.y);
+        }
+        pathNetwork.strokePath();
+        for (const point of segment) {
+          pathNetwork.fillCircle(point.x, point.y, width / 2);
+        }
+      }
     };
 
-    drawPath('crystal-brook:main-path', CRYSTAL_BROOK_PATH_PRESENTATION_SEGMENTS, 128, 108);
-    drawPath(
-      'crystal-brook:crystal-cup-spur',
-      [CRYSTAL_BROOK_CRYSTAL_CUP_PRESENTATION_ROUTE],
-      82,
-      64,
-    );
+    // Paint every outer edge first, then every inner surface. This makes the Crystal Cup
+    // branch a genuine joined path rather than laying its darker outer band over the main trail.
+    drawSegments(CRYSTAL_BROOK_PATH_PRESENTATION_SEGMENTS, 128, 0xd7c18f);
+    drawSegments([CRYSTAL_BROOK_CRYSTAL_CUP_PRESENTATION_ROUTE], 82, 0xd7c18f);
+    drawSegments(CRYSTAL_BROOK_PATH_PRESENTATION_SEGMENTS, 108, 0xf0dfb2);
+    drawSegments([CRYSTAL_BROOK_CRYSTAL_CUP_PRESENTATION_ROUTE], 64, 0xf0dfb2);
+
+    this.add
+      .zone(
+        CRYSTAL_BROOK_CRYSTAL_CUP_PRESENTATION_ROUTE[0].x,
+        CRYSTAL_BROOK_CRYSTAL_CUP_PRESENTATION_ROUTE[0].y,
+        2,
+        2,
+      )
+      .setName('crystal-brook:crystal-cup-spur')
+      .setVisible(false);
 
     this.createWater();
     this.createIceBridges();
