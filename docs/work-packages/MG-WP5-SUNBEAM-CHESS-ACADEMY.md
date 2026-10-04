@@ -1,7 +1,7 @@
 ---
 id: MG-WP5
 title: Sunbeam Chess Academy
-status: proposed
+status: in_progress
 autonomy: amber
 depends_on: [MG-WP4]
 parallel_safe: true
@@ -10,6 +10,12 @@ mini_game_platform_impact: changed - sunbeam-chess
 ---
 
 # MG-WP5 - Sunbeam Chess Academy
+
+## Current checkpoint
+
+**MG-WP5A - Discovery and design contract** is active. Runtime gameplay implementation must not begin until this checkpoint is committed and reviewed as the implementation baseline.
+
+Detailed design contract: `docs/minigames/SUNBEAM-CHESS-ACADEMY-DESIGN.md`.
 
 ## Objective
 
@@ -196,3 +202,15 @@ Human acceptance should answer:
 - adult-strength chess-engine optimisation;
 - adventure rewards for chess learning;
 - rebuilding Sunbeam Village itself.
+
+
+## Bounded delivery checkpoints
+
+- **MG-WP5A - Discovery and design contract**: current implementation audit, teaching principles, mode model, curriculum direction and implementation boundaries.
+- **MG-WP5B - Academy shell and teaching foundation**: Academy Home, teacher presentation foundation, reusable lesson runner and first piece lessons.
+- **MG-WP5C - Puzzle Garden and curriculum expansion**: puzzles, layered hints, check/checkmate and piece-safety teaching.
+- **MG-WP5D - Coach Match**: explainable coaching, another-look/play-anyway flow, undo and layered match hints.
+- **MG-WP5E - Friendly Match and opponent ladder**: child-friendly opponent levels, rematch/result flow and match polish.
+- **MG-WP5F - Learning records, responsive polish and human playtest**: isolated learning persistence if worthwhile, final world/Just Games reconciliation and acceptance.
+
+Do not chain these slices into one autonomous implementation window.
