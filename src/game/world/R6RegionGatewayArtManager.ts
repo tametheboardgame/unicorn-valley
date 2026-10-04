@@ -1,10 +1,8 @@
 import Phaser from 'phaser';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
 import {
-  CRYSTAL_BROOK_CRYSTAL_CUP_ROUTE,
   CRYSTAL_BROOK_CRYSTAL_CUP_THRESHOLD,
   CRYSTAL_BROOK_MEADOW_THRESHOLD,
-  CRYSTAL_BROOK_WOODS_ROUTE,
   CRYSTAL_BROOK_WOODS_THRESHOLD,
 } from './CrystalBrookMap';
 import { RAINBOW_MEADOW_LAYOUT } from './RainbowMeadowMap';
@@ -376,38 +374,56 @@ function createWoodlandThreshold(
   );
 }
 
-function createCascadeRaceGate(scene: Phaser.Scene, x: number, y: number): void {
+function createCrystalCupRacewayExit(scene: Phaser.Scene, x: number, y: number): void {
   const objects: Phaser.GameObjects.GameObject[] = [];
+
   objects.push(
-    scene.add.ellipse(0, 62, 250, 60, 0x65d5dc, 0.2),
-    scene.add.rectangle(-82, 0, 32, 210, 0x4d8d99, 1).setStrokeStyle(4, 0xbef3f3, 0.75),
-    scene.add.rectangle(82, 0, 32, 210, 0x4d8d99, 1).setStrokeStyle(4, 0xbef3f3, 0.75),
-    scene.add.rectangle(0, -88, 198, 48, 0xcaf6f3, 1).setStrokeStyle(5, 0x7189c3, 0.9),
     scene.add
-      .text(0, -88, '💎  CRYSTAL CASCADE  🏁', {
+      .rectangle(-118, 28, 28, 176, 0x6ca9b3, 0.94)
+      .setStrokeStyle(4, 0xdffcff, 0.76),
+    scene.add
+      .rectangle(118, 28, 28, 176, 0x6ca9b3, 0.94)
+      .setStrokeStyle(4, 0xdffcff, 0.76),
+    scene.add
+      .rectangle(0, 92, 280, 42, 0x8bc9d1, 0.34)
+      .setStrokeStyle(3, 0xdffcff, 0.28),
+    scene.add
+      .rectangle(0, -48, 300, 64, 0xe8fbff, 0.96)
+      .setStrokeStyle(6, 0x8ea7c8, 0.92),
+    scene.add
+      .text(0, -48, 'THE CRYSTAL CUP RACEWAY', {
         color: '#365965',
         fontFamily: 'system-ui, sans-serif',
-        fontSize: '17px',
+        fontSize: '19px',
         fontStyle: 'bold',
       })
       .setOrigin(0.5),
-    scene.add.ellipse(0, 26, 128, 138, 0x3a7684, 0.32),
+    scene.add
+      .text(0, 112, '↑', {
+        color: '#eaffff',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '34px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5),
   );
-  for (const [dx, dy, scale] of [
-    [-116, -8, 1],
-    [-122, 54, 0.7],
-    [116, -2, 0.9],
-    [126, 58, 0.68],
+
+  for (const [dx, dy, scale, colour] of [
+    [-146, 42, 1, 0xa6e9ef],
+    [-132, 104, 0.72, 0xcbbef1],
+    [145, 38, 0.9, 0xb8edf1],
+    [136, 104, 0.66, 0xd3c8f3],
   ] as const) {
     objects.push(
       scene.add
-        .triangle(dx, dy, 0, 48 * scale, 18 * scale, 0, 36 * scale, 48 * scale, 0xa1e9ef, 0.92)
-        .setStrokeStyle(3, 0xe8ffff, 0.8),
+        .triangle(dx, dy, 0, 52 * scale, 19 * scale, 0, 38 * scale, 52 * scale, colour, 0.9)
+        .setStrokeStyle(3, 0xf4ffff, 0.78),
     );
   }
+
   name(
-    scene.add.container(x, y, objects).setDepth(worldDepthForY(y, 0.8)),
-    'crystal-cascade:race-gate',
+    scene.add.container(x, y, objects).setDepth(worldDepthForY(y + 120, 0.82)),
+    'crystal-cup-raceway:edge-exit',
   );
 }
 
@@ -869,7 +885,6 @@ function updateMeadowCrystalBrookEffects(scene: Phaser.Scene): void {
 }
 
 function decorateBrook(scene: Phaser.Scene): void {
-  drawRoundedPath(scene, 'brook-woods', CRYSTAL_BROOK_WOODS_ROUTE, 88, 64, 0x8c8069, 0xcdbf96);
   createWoodlandThreshold(
     scene,
     'brook-woods',
@@ -878,16 +893,7 @@ function decorateBrook(scene: Phaser.Scene): void {
     'Whispering Woods',
   );
 
-  drawRoundedPath(
-    scene,
-    'crystal-cascade',
-    CRYSTAL_BROOK_CRYSTAL_CUP_ROUTE,
-    86,
-    60,
-    0x8aa0a2,
-    0xc6e4df,
-  );
-  createCascadeRaceGate(
+  createCrystalCupRacewayExit(
     scene,
     CRYSTAL_BROOK_CRYSTAL_CUP_THRESHOLD.position.x,
     CRYSTAL_BROOK_CRYSTAL_CUP_THRESHOLD.position.y,
