@@ -26,7 +26,7 @@ Complete. Static/architecture checks and the reusable Just Games browser contrac
 
 **MG-WP4C - Cross-roadmap enforcement and closeout**
 
-Implementation complete; CI validation and the Amber human closeout gate remain.
+Implementation and branch CI validation are complete. The package is waiting at the Amber human closeout gate.
 
 Implemented:
 
@@ -48,11 +48,11 @@ MG-WP4B targeted validation is passing.
 
 The repository performance gate remains a separate inherited baseline concern: current main-derived production output exceeds the existing startup/chunk budgets even when the WP4 branch has no production-runtime delta. MG-WP4 does not weaken those thresholds.
 
-MG-WP4C changes touch the project validation/authoring contract and therefore require the repository-selected qualification before the Amber closeout gate.
+MG-WP4C repository-selected CI is passing on the exact branch head. No in-scope technical failures remain.
 
 ## Next work
 
-Run/observe the MG-WP4C branch qualification once. Fix deterministic in-scope failures. Then stop at the Amber human gate with the exact technical state and known inherited performance blocker, if still present.
+Await David's Amber closeout approval. If approved, merge PR #269 and mark MG-WP4 complete.
 
 ## Operating reminders
 
