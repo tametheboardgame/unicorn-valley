@@ -418,10 +418,10 @@ function createBrookEastWoodland(scene: Phaser.Scene): void {
     [3290, 1640, 116],
     [3450, 1645, 126],
   ] as const) {
-    woodland.add(
+    woodland.add([
       scene.add.ellipse(x, y, width, 62, 0x4f8057, 0.84),
       scene.add.ellipse(x + 34, y - 12, width * 0.7, 50, 0x5d9361, 0.78),
-    );
+    ]);
   }
 
   // Small crystal glints keep the east edge in Crystal Brook's visual language
