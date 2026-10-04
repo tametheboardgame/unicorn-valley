@@ -122,6 +122,13 @@ export const CRYSTAL_BROOK_CRYSTAL_CUP_ROUTE = [
   { x: 2740, y: 940 },
   { x: 2860, y: 850 },
 ] as const;
+
+export const CRYSTAL_BROOK_CRYSTAL_CUP_PRESENTATION_ROUTE = [
+  CRYSTAL_BROOK_RACE_BRIDGE.northLanding,
+  { x: 2580, y: 1040 },
+  { x: 2700, y: 940 },
+  CRYSTAL_BROOK_CRYSTAL_CUP_THRESHOLD.position,
+] as const satisfies readonly MapPoint[];
 export const CRYSTAL_BROOK_GROTTO_ROUTE = [
   { x: 2480, y: 1540 },
   { x: 2630, y: 1630 },
@@ -264,6 +271,7 @@ export const CRYSTAL_BROOK_LAYOUT = {
     main: CRYSTAL_BROOK_MAIN_ROUTE,
     whisperingWoods: CRYSTAL_BROOK_WOODS_ROUTE,
     crystalCupHub: CRYSTAL_BROOK_CRYSTAL_CUP_ROUTE,
+    crystalCupPresentation: CRYSTAL_BROOK_CRYSTAL_CUP_PRESENTATION_ROUTE,
     crystalGrotto: CRYSTAL_BROOK_GROTTO_ROUTE,
   },
   water: {
