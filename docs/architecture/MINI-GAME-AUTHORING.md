@@ -142,7 +142,12 @@ At minimum, the owning package must cover:
 
 Use repository verification ownership rather than inventing a package-local test policy.
 
-MG-WP4 adds reusable browser and sandbox contracts so future packages can supply game-specific parameters instead of copying whole test suites.
+MG-WP4 provides two reusable contracts:
+
+- add one declarative row to `tests/play/mg-wp4-mini-game-launch-return-contract.spec.ts` so the Just Games caller proves the selected family/variant launches, creates no adventure save and returns cleanly to the catalogue;
+- use `assertSandboxAdventureEffectsBlocked` from `src/game/minigames/MiniGameSandboxContract.testSupport.ts` for any game/session-specific sandbox regression test. Use `assertWorldAdventureEffectsAllowed` when the same fixture must prove accepted world-side writes remain available.
+
+The mini-games verification owner selects the reusable browser contract automatically for changes under `src/game/minigames/**` and for `JustGamesScene`, so future packages should extend the shared contract rather than copy it.
 
 ## 10. World-first checklist
 
