@@ -487,8 +487,7 @@ function createBrookEastWoodland(scene: Phaser.Scene): void {
         CRYSTAL_BROOK_WOODS_THRESHOLD.position.y,
         160,
         180,
-      )
-      .setVisible(false),
+      ),
     'crystal-brook:woods-path-exit',
   );
 }
