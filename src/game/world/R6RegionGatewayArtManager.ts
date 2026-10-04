@@ -374,6 +374,86 @@ function createWoodlandThreshold(
   );
 }
 
+function createBrookEastWoodland(scene: Phaser.Scene): void {
+  const woodland = name(
+    scene.add.container(0, 0).setDepth(6.2),
+    'crystal-brook:east-woodland',
+  );
+
+  const treePositions = [
+    [3180, 520, 0.72],
+    [3370, 500, 0.94],
+    [3480, 610, 1.05],
+    [3260, 930, 0.82],
+    [3440, 980, 1.08],
+    [3230, 1160, 0.88],
+    [3460, 1190, 1.14],
+    [3220, 1380, 0.94],
+    [3450, 1395, 1.18],
+    [3190, 1740, 0.92],
+    [3420, 1740, 1.18],
+    [3220, 1960, 1.02],
+    [3460, 1980, 1.22],
+  ] as const;
+
+  for (const [index, [x, y, scale]] of treePositions.entries()) {
+    const trunkWidth = 38 * scale;
+    const trunkHeight = 176 * scale;
+    const canopyA = index % 2 === 0 ? 0x315f49 : 0x28543f;
+    const canopyB = index % 3 === 0 ? 0x42745a : 0x396b51;
+
+    woodland.add([
+      scene.add
+        .rectangle(x, y, trunkWidth, trunkHeight, 0x544638, 1)
+        .setStrokeStyle(3, 0x3f372f, 0.86),
+      scene.add.ellipse(x - 44 * scale, y - 86 * scale, 142 * scale, 104 * scale, canopyA, 0.98),
+      scene.add.ellipse(x + 38 * scale, y - 102 * scale, 154 * scale, 112 * scale, canopyB, 0.97),
+      scene.add.ellipse(x, y - 142 * scale, 126 * scale, 94 * scale, 0x4a805f, 0.92),
+    ]);
+  }
+
+  for (const [x, y, width] of [
+    [3270, 1515, 120],
+    [3460, 1515, 130],
+    [3290, 1640, 116],
+    [3450, 1645, 126],
+  ] as const) {
+    woodland.add(
+      scene.add.ellipse(x, y, width, 62, 0x4f8057, 0.84),
+      scene.add.ellipse(x + 34, y - 12, width * 0.7, 50, 0x5d9361, 0.78),
+    );
+  }
+
+  // Small crystal glints keep the east edge in Crystal Brook's visual language
+  // without turning the woodland threshold back into a portal.
+  for (const [x, y, scale] of [
+    [3240, 820, 0.52],
+    [3415, 1080, 0.46],
+    [3340, 1820, 0.5],
+  ] as const) {
+    woodland.add(
+      scene.add
+        .triangle(x, y, 0, 34 * scale, 13 * scale, 0, 26 * scale, 34 * scale, 0xa9eaf0, 0.78)
+        .setStrokeStyle(2, 0xf0ffff, 0.68),
+    );
+  }
+
+  name(
+    scene.add
+      .container(
+        CRYSTAL_BROOK_WOODS_THRESHOLD.position.x,
+        CRYSTAL_BROOK_WOODS_THRESHOLD.position.y,
+        [
+          scene.add
+            .ellipse(0, 40, 260, 90, 0x315f49, 0.14)
+            .setAngle(-4),
+        ],
+      )
+      .setDepth(worldDepthForY(CRYSTAL_BROOK_WOODS_THRESHOLD.position.y, 0.2)),
+    'crystal-brook:woods-path-exit',
+  );
+}
+
 function createCrystalCupRacewayExit(scene: Phaser.Scene, x: number, y: number): void {
   const objects: Phaser.GameObjects.GameObject[] = [];
 
@@ -877,13 +957,7 @@ function updateMeadowCrystalBrookEffects(scene: Phaser.Scene): void {
 }
 
 function decorateBrook(scene: Phaser.Scene): void {
-  createWoodlandThreshold(
-    scene,
-    'brook-woods',
-    CRYSTAL_BROOK_WOODS_THRESHOLD.position.x,
-    CRYSTAL_BROOK_WOODS_THRESHOLD.position.y,
-    'Whispering Woods',
-  );
+  createBrookEastWoodland(scene);
 
   createCrystalCupRacewayExit(
     scene,
@@ -904,7 +978,6 @@ function decorateBrook(scene: Phaser.Scene): void {
     [520, 410, 360, 190],
     [880, 350, 300, 170],
     [2350, 310, 340, 190],
-    [3190, 520, 360, 220],
   ] as const) {
     cliffs.add(addRock(scene, x, y, width, height, 7.45, 0x748985));
     cliffs.add(addRock(scene, x, y - height * 0.16, width * 0.76, height * 0.52, 7.46, 0x8aa09a));
@@ -914,7 +987,6 @@ function decorateBrook(scene: Phaser.Scene): void {
     [720, 455, 0.8],
     [2260, 420, 1],
     [2460, 410, 0.78],
-    [3150, 650, 1.05],
   ] as const) {
     cliffs.add(addCrystal(scene, x, y, scale, 7.6));
   }
