@@ -63,12 +63,27 @@ The next visual review showed that H6.2D had over-corrected: the bridge was too 
 
 H6.2E therefore:
 
-- moves the bridge west so its western landing sits around the player position shown in the review screenshot;
-- rotates it to cross west-to-east with only a slight northward rise;
-- lengthens it enough to span the Brook cleanly without sitting along the river;
-- replaces the timber construction with irregular stone slabs, embedded crystals and low rock edging;
-- removes the three stepping stones directly underneath the new bridge while retaining the separate western stepping-stone crossing;
-- changes only the immediately adjacent path points needed to meet the new bridge, leaving broader race-side path cleanup for the later race-area recompose.
+- moved the bridge west so its western landing sat around the player position shown in the review screenshot;
+- rotated it to cross west-to-east with only a slight northward rise;
+- replaced the timber construction with an initial crystal/rock treatment.
+
+### H6.2F east-side topology cleanup
+
+The following visual review showed that the wider race-side topology itself was the remaining problem, so the minimum necessary part of the later Crystal Cup gateway work has been deliberately pulled forward.
+
+H6.2F now:
+
+- replaces the single improvised bridge arrangement with **two glacial-crystal bridge crossings**;
+- splits the main beige path into three land-only segments so it stops at each bridge and resumes on the far bank instead of running underneath the Brook;
+- retains only the separate western stepping-stone crossing;
+- moves the Brook-side Whispering Woods threshold down to the lower east edge and gives it the second bridge approach;
+- moves the Crystal Cup entrance to the north edge and labels it **"The Crystal Cup Raceway"**;
+- gives the Crystal Cup route a clean northbound path spur after the first bridge;
+- removes the old Brook cleanup-manager race-path redraw and tap-forward target;
+- adds an on-demand provisional `CrystalCupEntryScene` / `CrystalCupHubMap` shell;
+- changes Brook → Crystal Cup from direct `RaceScene` launch to Brook → Crystal Cup hub → Crystal Cascade race;
+- returns Crystal Cascade to the Crystal Cup hub first, with the hub owning the return to Crystal Brook;
+- leaves proper Crystal Cup hub design/maturity for H6.6 rather than attempting the final race-hub experience now.
 
 ## Mini-game dependency state
 
@@ -84,13 +99,13 @@ A fresh CI run is required on the refined, MG-WP3-reconciled H6.2 head.
 
 ## Human gate
 
-H6.2E remains a substantive visual checkpoint.
+H6.2F remains a substantive visual checkpoint.
 
 Do not begin H6.3 until:
 
 - relevant technical validation is complete as far as the repository baseline permits;
 - an exact-head preview of the refinement is available;
-- David has confirmed that Brook dominance is reduced and the path reads clearly again.
+- David has confirmed the two glacial bridges, lower Woods entrance, north-edge Crystal Cup Raceway gateway and cleaned east-side path topology read correctly.
 
 ## Next work
 
