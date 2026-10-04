@@ -7,7 +7,8 @@ import {
   CRYSTAL_BROOK_MAP,
   CRYSTAL_BROOK_MEADOW_WATER_EXIT,
   CRYSTAL_BROOK_PATH_PRESENTATION_ROUTE,
-  CRYSTAL_BROOK_REFLECTION_INLET,
+  CRYSTAL_BROOK_RACE_BRIDGE,
+  CRYSTAL_BROOK_REFLECTION_FEEDER,
   CRYSTAL_BROOK_REFLECTION_POOL,
   CRYSTAL_BROOK_UPPER_POOL,
   CRYSTAL_BROOK_LOWER_POOL,
@@ -120,8 +121,9 @@ describe('Crystal Brook map', () => {
       expect(point.deepWidth).toBeGreaterThan(0);
     }
 
-    expect(CRYSTAL_BROOK_REFLECTION_INLET.points[0]).toEqual({ x: 2320, y: 1210 });
-    expect(CRYSTAL_BROOK_REFLECTION_INLET.points.at(-1)).toEqual(CRYSTAL_BROOK_REFLECTION_POOL);
+    expect(CRYSTAL_BROOK_REFLECTION_FEEDER.points[0]).toEqual({ x: 2550, y: 1290 });
+    expect(CRYSTAL_BROOK_REFLECTION_FEEDER.points.at(-1)).toEqual(CRYSTAL_BROOK_REFLECTION_POOL);
+    expect(CRYSTAL_BROOK_REFLECTION_FEEDER.outerWidth).toBeLessThan(70);
   });
 
   it('keeps the path on the cave approach while the Brook exits above it', () => {
@@ -135,6 +137,17 @@ describe('Crystal Brook map', () => {
       CRYSTAL_BROOK_PATH_PRESENTATION_ROUTE[0].y,
     );
     expect(CRYSTAL_BROOK_WATERCOURSE.at(-2)?.outerWidth).toBeLessThanOrEqual(150);
+  });
+
+  it('uses one deliberate bridge crossing at the race-side Brook junction', () => {
+    expect(CRYSTAL_BROOK_RACE_BRIDGE.southLanding).toEqual(
+      CRYSTAL_BROOK_PATH_PRESENTATION_ROUTE[9],
+    );
+    expect(CRYSTAL_BROOK_RACE_BRIDGE.northLanding).toEqual(
+      CRYSTAL_BROOK_PATH_PRESENTATION_ROUTE[10],
+    );
+    expect(CRYSTAL_BROOK_RACE_BRIDGE.length).toBeGreaterThan(200);
+    expect(CRYSTAL_BROOK_RACE_BRIDGE.deckWidth).toBeLessThan(110);
   });
 
   it('keeps canonical route endpoints aligned with their structural destinations', () => {
