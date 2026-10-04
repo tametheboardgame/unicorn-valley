@@ -3,11 +3,11 @@ import { REGULAR_RACE_COURSE_IDS } from '../racing/RaceCourse';
 import type { SceneKey } from '../scenes/SceneKeys';
 import {
   getJustGamesDefinitions,
-  getMiniGameCatalogueIssues,
   MINI_GAME_CATALOGUE,
   MINI_GAME_IDS,
   type MiniGameDefinition,
 } from './MiniGameCatalogue';
+import { getMiniGameCatalogueIssues } from './MiniGameCatalogueIntegrity.testSupport';
 
 describe('MiniGameCatalogue', () => {
   it('keeps the production catalogue free of authoring-contract issues', () => {
