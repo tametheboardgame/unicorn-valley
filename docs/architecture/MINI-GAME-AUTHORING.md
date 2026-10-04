@@ -14,14 +14,16 @@ The core rule is simple: author the gameplay once, register it once, launch it t
 
 ## 1. Classify the work before implementation
 
-Every owning work package must contain exactly one Mini-game platform impact declaration:
+Every current/next work package must contain exactly one front-matter declaration:
 
-- none
-- changed - <mini-game-id>
-- new - <mini-game-id> - world-first
-- new - <mini-game-id> - just-games-first
+- `mini_game_platform_impact: none`
+- `mini_game_platform_impact: changed - <mini-game-id>`
+- `mini_game_platform_impact: new - <mini-game-id> - world-first`
+- `mini_game_platform_impact: new - <mini-game-id> - just-games-first`
 
-Do not begin a new bounded repeatable activity without choosing one of these declarations.
+Shared platform work uses `mini_game_platform_impact: changed - platform`.
+
+The project-state validator rejects a current/next package when the declaration is absent or malformed. Do not begin a new bounded repeatable activity with `none`.
 
 ## 2. Create one stable game identity
 
