@@ -65,11 +65,11 @@ Implemented:
 
 WP5A repository contract/static validation passed. Its remaining CI red was the existing Story House save-migration expectation plus the inherited performance budget.
 
-WP5B runtime validation is pending on the current exact branch head.
+WP5B has human visual acceptance. Exact-head CI remains the only merge gate.
 
 ## Next work
 
-Validate WP5B. Fix deterministic in-scope failures immediately. When the runtime is sound, stop for a visual/human checkpoint before starting **MG-WP5C - Puzzle Garden and curriculum expansion**.
+Merge the human-approved WP5B checkpoint once exact-head CI is acceptable. MG-WP5C development may proceed on its child branch in parallel.
 
 ## Operating reminders
 
