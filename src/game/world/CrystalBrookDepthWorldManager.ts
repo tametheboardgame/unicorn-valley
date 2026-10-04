@@ -1,5 +1,4 @@
 import Phaser from 'phaser';
-import { CRYSTAL_CASCADE_RACE_ID } from '../../content/r5RaceIds';
 import {
   CRYSTAL_GROTTO_OPEN_FLAG,
   ECHO_CRYSTAL_SONG_COMPLETE_FLAG,
@@ -297,9 +296,6 @@ export class CrystalBrookDepthWorldManager {
           'One, two, three… wobble… four! The tiny pebble tower stays up. For now. 🪨',
         );
         return;
-      case 'cascade-memory':
-        this.showFeedback(state, this.cascadeMessage());
-        return;
     }
   }
 
@@ -352,21 +348,11 @@ export class CrystalBrookDepthWorldManager {
     );
   }
 
-  private cascadeMessage(): string {
-    const record = this.saveService.load()?.activities.racesById[CRYSTAL_CASCADE_RACE_ID];
-    if (!record || (!record.bestTimeMs && record.ribbonIds.length === 0)) {
-      return 'The Crystal Cascade flags flicker beyond the water. The course is there whenever you fancy a run, but the Brook has plenty to do without racing.';
-    }
-    const best = record.bestTimeMs ? `${(record.bestTimeMs / 1000).toFixed(1)}s` : 'a finished run';
-    return `The course flags recognise you now: ${best}, ${record.ribbonIds.length} saved ribbon${record.ribbonIds.length === 1 ? '' : 's'}. The Brook itself is still worth exploring. 🎀`;
-  }
-
   private syncPersistent(state: BrookDepthState, force = false): void {
     const save = this.saveService.load() ?? this.saveService.createNewGame();
     const signature = [
       save.world.flags[CRYSTAL_GROTTO_OPEN_FLAG] === true ? 'open' : '',
       save.world.flags[ECHO_CRYSTAL_SONG_COMPLETE_FLAG] === true ? 'song' : '',
-      save.activities.racesById[CRYSTAL_CASCADE_RACE_ID]?.ribbonIds.length ?? 0,
     ].join('|');
     if (!force && signature === state.signature) {
       return;
