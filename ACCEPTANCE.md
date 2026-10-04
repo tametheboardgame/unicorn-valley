@@ -24,7 +24,7 @@ These gates apply across bounded work packages unless an explicitly approved pac
 
 ## Mini-game platform integration
 
-For any package with `Mini-game platform impact: new` or `changed`:
+For any package whose front-matter `mini_game_platform_impact` is `new - ...` or `changed - ...`:
 
 - there is one canonical gameplay implementation shared by world and Just Games entry;
 - the game has a stable catalogue ID and a valid `SceneManifest` scene/load path;
@@ -32,7 +32,7 @@ For any package with `Mini-game platform impact: new` or `changed`:
 - Just-Games-first games use the same world-capable session/return contract even when not yet physically placed;
 - launch, exit and retry return to the correct caller without dead input or leaked overlays;
 - Just Games uses sandbox side effects by default and does not mutate normal adventure progression;
-- relevant world-entry and Just Games launch/return tests pass;
+- relevant world-entry coverage and the reusable MG-WP4 Just Games launch/return contract pass;
 - touch/keyboard behaviour remains usable for the supported input surfaces.
 
 ## Human/product acceptance
