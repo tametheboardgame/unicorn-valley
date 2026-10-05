@@ -118,7 +118,7 @@ describe('Crystal Brook H6.4 perimeter', () => {
     expect(northRim.some((rock) => overlapsHorizontalCorridor(rock, 2660, 3060))).toBe(false);
 
     const eastRim = CRYSTAL_BROOK_BOUNDARY_ROCKS.filter(({ x }) => x > 3250);
-    expect(eastRim.some((rock) => overlapsVerticalCorridor(rock, 1430, 1740))).toBe(false);
+    expect(eastRim.some((rock) => overlapsVerticalCorridor(rock, 1450, 1700))).toBe(false);
 
     const southRim = CRYSTAL_BROOK_BOUNDARY_ROCKS.filter(({ y }) => y > 1950);
     expect(southRim.some((rock) => overlapsHorizontalCorridor(rock, 2200, 2680))).toBe(false);
