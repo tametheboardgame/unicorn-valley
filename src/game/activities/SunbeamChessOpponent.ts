@@ -83,12 +83,10 @@ function moveScore(chess: Chess, move: Move): number {
 }
 
 function rankedMoves(chess: Chess): Move[] {
-  return chess
-    .moves({ verbose: true })
-    .sort((left, right) => {
-      const scoreDifference = moveScore(chess, right) - moveScore(chess, left);
-      return scoreDifference !== 0 ? scoreDifference : left.san.localeCompare(right.san);
-    });
+  return chess.moves({ verbose: true }).sort((left, right) => {
+    const scoreDifference = moveScore(chess, right) - moveScore(chess, left);
+    return scoreDifference !== 0 ? scoreDifference : left.san.localeCompare(right.san);
+  });
 }
 
 function dandelionIndex(moveCount: number): number {
