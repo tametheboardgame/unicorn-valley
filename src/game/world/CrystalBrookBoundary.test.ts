@@ -23,7 +23,6 @@ function expectHorizontalChainClosed(rocks: BoundaryRock[]): void {
     const next = ordered[index + 1];
     const visualGap = next.x - next.width / 2 - (current.x + current.width / 2);
     expect(visualGap).toBeLessThanOrEqual(8);
-
   }
 }
 
@@ -34,7 +33,6 @@ function expectVerticalChainClosed(rocks: BoundaryRock[]): void {
     const next = ordered[index + 1];
     const visualGap = next.y - next.height / 2 - (current.y + current.height / 2);
     expect(visualGap).toBeLessThanOrEqual(8);
-
   }
 }
 
