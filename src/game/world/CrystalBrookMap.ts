@@ -361,7 +361,7 @@ export const CRYSTAL_BROOK_BOUNDARY_ROCKS = [
   { id: 'north-11-lopsided', x: 1870, y: 150, width: 200, height: 128, angle: 4, kind: 'lopsided', colour: 0x627570, crystalColour: 0xc6b8ed, collisionScaleX: 0.93, collisionScaleY: 0.82, collisionOffsetY: 13 },
   { id: 'north-12-round', x: 2050, y: 156, width: 190, height: 116, angle: -4, kind: 'rounded', colour: 0x70817b, collisionScaleX: 0.95, collisionScaleY: 0.84, collisionOffsetY: 11 },
   { id: 'north-13-shelf', x: 2230, y: 150, width: 210, height: 120, angle: 2, kind: 'shelf', colour: 0x5d716e, collisionScaleX: 0.95, collisionScaleY: 0.84, collisionOffsetY: 12 },
-  { id: 'north-14-stack', x: 2450, y: 153, width: 230, height: 132, angle: -3, kind: 'stack', colour: 0x657874, collisionScaleX: 0.94, collisionScaleY: 0.82, collisionOffsetY: 14 },
+  { id: 'north-14-stack', x: 2440, y: 153, width: 230, height: 132, angle: -3, kind: 'stack', colour: 0x657874, collisionScaleX: 0.94, collisionScaleY: 0.82, collisionOffsetY: 14 },
   { id: 'north-15-cup-shoulder', x: 2580, y: 150, width: 150, height: 112, angle: 4, kind: 'slab', colour: 0x697b76, collisionScaleX: 0.94, collisionScaleY: 0.84, collisionOffsetY: 11 },
   { id: 'north-16-cup-shoulder', x: 3170, y: 151, width: 190, height: 118, angle: -3, kind: 'rounded', colour: 0x617470, collisionScaleX: 0.94, collisionScaleY: 0.84, collisionOffsetY: 12 },
   { id: 'north-17-east-shelf', x: 3340, y: 150, width: 200, height: 124, angle: 3, kind: 'shelf', colour: 0x657874, crystalColour: 0xa5e5ea, collisionScaleX: 0.94, collisionScaleY: 0.82, collisionOffsetY: 13 },
