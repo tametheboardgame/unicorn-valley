@@ -364,6 +364,111 @@
                   "caption": "Modern Story House illustration."
                 }
               ]
+            },
+            {
+              "chapterId": "the-rabbits-house",
+              "illustrations": [
+                {
+                  "id": "modern-mary-ann-cottage",
+                  "blockId": "mistaken-for-mary-ann",
+                  "path": "illustrations/generated/alice-04-mary-ann-cottage.webp",
+                  "alt": "The White Rabbit mistakes Alice for Mary Ann outside his flower-covered cottage and urgently sends her inside.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-giant-rabbit-house",
+                  "blockId": "too-big-for-the-house",
+                  "path": "illustrations/generated/alice-04-giant-in-rabbit-house.webp",
+                  "alt": "Giant Alice is wedged inside the White Rabbit's cottage with one arm through a window and one stockinged foot pushed up the chimney while animals gather outside.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-giant-puppy",
+                  "blockId": "back-in-the-wood",
+                  "path": "illustrations/generated/alice-04-giant-puppy.webp",
+                  "alt": "Tiny Alice faces an enormous playful puppy in the flower-filled Wonderland woodland.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "advice-from-a-caterpillar",
+              "illustrations": [
+                {
+                  "id": "modern-caterpillar-who-are-you",
+                  "blockId": "who-are-you",
+                  "path": "illustrations/generated/alice-05-caterpillar-who-are-you.webp",
+                  "alt": "Alice kneels in the mushroom grove beneath a huge blue Caterpillar with a teal underside and orange-tipped antennae.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-long-neck-pigeon",
+                  "blockId": "long-neck-pigeon",
+                  "path": "illustrations/generated/alice-05-long-neck-pigeon.webp",
+                  "alt": "Alice's impossibly long neck rises through the woodland canopy towards an angry Pigeon guarding its nest.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-mushroom-pieces",
+                  "blockId": "mushroom-pieces",
+                  "path": "illustrations/generated/alice-05-mushroom-pieces.webp",
+                  "alt": "Alice compares a piece of mushroom in each hand as she cautiously works out how to return herself to the right size.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "pig-and-pepper",
+              "illustrations": [
+                {
+                  "id": "modern-pepper-kitchen",
+                  "blockId": "the-duchess-house",
+                  "path": "illustrations/generated/alice-06-pepper-kitchen.webp",
+                  "alt": "Alice watches the Duchess, crying baby and furious Cook amid pepper haze, flying crockery and the grinning Cheshire Cat.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-baby-to-pig",
+                  "blockId": "baby-becomes-pig",
+                  "path": "illustrations/generated/alice-06-baby-to-pig.webp",
+                  "alt": "Outside the Duchess's house, Alice stares in astonishment as the baby in her arms becomes a small pig.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-cheshire-vanishing",
+                  "blockId": "the-cheshire-cat",
+                  "path": "illustrations/generated/alice-06-cheshire-vanishing.webp",
+                  "alt": "Alice looks up at the golden-eyed Cheshire Cat as its smoky charcoal body and plume-like tail dissolve into woodland mist.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
             }
           ]
         }

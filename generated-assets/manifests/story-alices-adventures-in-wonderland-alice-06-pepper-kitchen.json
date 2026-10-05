@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "1s53IlzjwXG7_Eb26FOUzg5e0ORDEcyBo"
+  },
+  "expectedSourceName": "alice-06-pepper-kitchen.png",
+  "destination": "public/stories/alices-adventures-in-wonderland/illustrations/generated/alice-06-pepper-kitchen.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1600,
+    "quality": 88
+  },
+  "revision": 1
+}
