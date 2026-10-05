@@ -573,10 +573,7 @@ export class CrystalBrookScene extends Phaser.Scene {
   private createMeadowGorge(): void {
     const gorge = CRYSTAL_BROOK_MEADOW_GORGE;
 
-    const recess = this.add
-      .graphics()
-      .setName('crystal-brook:meadow-gorge:recess')
-      .setDepth(2.72);
+    const recess = this.add.graphics().setName('crystal-brook:meadow-gorge:recess').setDepth(2.72);
     recess.fillStyle(0x263b3e, 0.97);
     recess.fillPoints(
       [
