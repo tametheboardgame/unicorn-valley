@@ -210,8 +210,8 @@ Human acceptance should answer:
 - **MG-WP5B - Academy shell and teaching foundation - complete / human-approved**: Academy Home, teacher presentation foundation, reusable lesson runner and first piece lessons.
 - **MG-WP5C - Puzzle Garden and curriculum expansion - complete / human-approved**: puzzles, layered hints, check/checkmate and piece-safety teaching.
 - **MG-WP5D - Coach Match - complete / human-approved**: explainable coaching, another-look/play-anyway flow, undo and layered match hints.
-- **MG-WP5E - Friendly Match and opponent ladder - active**: child-friendly opponent levels, rematch/result flow and match polish.
-- **MG-WP5F - Learning records, responsive polish and human playtest**: isolated learning persistence if worthwhile, final world/Just Games reconciliation and acceptance.
+- **MG-WP5E - Friendly Match and opponent ladder - complete / merged**: child-friendly opponent levels, rematch/result flow and match polish.
+- **MG-WP5F - Learning records, responsive polish and human playtest - active**: isolated learning persistence, final world/Just Games reconciliation, responsive/accessibility qualification and acceptance.
 
 Do not chain these slices into one autonomous implementation window.
 
@@ -436,3 +436,47 @@ Implemented:
 - browser coverage verifies all three opponent cards are interactive and that selecting Dandelion starts the canonical full chess match with Dandelion carried into the match UI.
 
 This remains a human-gated WP5E checkpoint. Further tuning should react to actual play feel rather than making the easiest opponent arbitrarily worse.
+
+
+## MG-WP5E merge record
+
+MG-WP5E merged to `main` on 2026-10-05 as `1b10399daf67076326238db1b0790812c926f129`.
+
+The merged Friendly Match experience provides Dandelion, Clover and Sunbeam opponent levels, deterministic legal move selection, opponent selection/rematch flow and shared match-history presentation.
+
+## MG-WP5F implementation contract
+
+WP5F is the final Chess Academy qualification checkpoint.
+
+Learning records are implemented as a **separate versioned browser-storage namespace**, `unicorn-valley.learning.sunbeam-chess.v1`, rather than adding chess state to the adventure `SaveGame`.
+
+Permitted persisted data in this namespace:
+
+- completed lesson IDs;
+- completed puzzle IDs;
+- per-puzzle solve counts;
+- last selected Friendly Match opponent.
+
+The learning record must never:
+
+- advance or gate quests;
+- mutate relationships;
+- grant or consume inventory or Shimmer;
+- alter world/story flags;
+- unlock collections or locations;
+- make lessons, puzzles or opponent levels inaccessible.
+
+Storage failure or corrupt learning data must fail soft to an empty/default learning record and must never block Chess Academy play.
+
+Responsive/accessibility qualification for WP5F:
+
+- retain Phaser's canonical 1280×720 logical canvas with `FIT` scaling rather than adding a second layout/scaling system;
+- prove the Academy canvas remains contained in a representative portrait/tablet viewport;
+- retain touch/pointer hit targets and enlarge undersized move-history controls to at least 44 px high;
+- add keyboard-only Academy navigation through numbered choices;
+- add arrow-key board focus plus Enter/Space selection;
+- make keyboard focus and controls visibly discoverable.
+
+Final automated qualification must cover the isolated learning namespace, completion restoration/display, keyboard-only play and portrait/tablet containment.
+
+Final human acceptance remains mandatory. The playtest should judge the complete Academy as a child experience: lesson clarity, Puzzle Garden comprehension, Coach Match helpfulness, Dandelion beatability without absurd play, Friendly Match replay flow, touch/keyboard usability, and whether the child wants to keep playing.
