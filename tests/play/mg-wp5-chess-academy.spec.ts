@@ -142,10 +142,24 @@ test.describe('MG-WP5 Sunbeam Chess Academy', () => {
     await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:mode:coach-match');
     await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:piece:w:p:e2');
     await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:coach-undo');
+    await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:coach-speech-bubble');
+    await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:move-history-up');
+    await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:move-history-down');
+    await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:move-history-range');
 
     await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:piece:w:p:e2');
     await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:square:e4');
     await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:piece:w:p:e4');
+
+    const duringHold = await getDiagnosticSnapshot(page);
+    const playerFeedback = objectText(duringHold, 'sunbeam-chess:coach-message');
+    expect(objectText(duringHold, 'sunbeam-chess:coach-status')).toContain('take a moment');
+    expect(playerFeedback).toBeTruthy();
+    expect(playerFeedback).not.toContain('Village reply');
+
+    await page.waitForTimeout(900);
+    const stillHolding = await getDiagnosticSnapshot(page);
+    expect(objectText(stillHolding, 'sunbeam-chess:coach-status')).toContain('take a moment');
 
     await expect
       .poll(async () => {
@@ -155,6 +169,11 @@ test.describe('MG-WP5 Sunbeam Chess Academy', () => {
       .toContain('Your move');
 
     const afterReply = await getDiagnosticSnapshot(page);
+    const combinedFeedback = objectText(afterReply, 'sunbeam-chess:coach-message');
+    expect(combinedFeedback).toContain(playerFeedback ?? '');
+    expect(combinedFeedback).toContain('Village reply');
+    expect(objectText(afterReply, 'sunbeam-chess:move-history-range')).toContain('1–1 of 1');
+
     const warning = afterReply.scenes
       .find((scene) => scene.key === 'ChessPlazaActivityScene')
       ?.objects.some((object) => object.name === 'sunbeam-chess:coach-warning' && object.visible);
@@ -169,6 +188,9 @@ test.describe('MG-WP5 Sunbeam Chess Academy', () => {
 
     await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:mode:friendly-match');
     await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:piece:w:p:e2');
+    await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:move-history-up');
+    await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:move-history-down');
+    await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:move-history-range');
 
     await page.keyboard.press('Escape');
     await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:teacher');
