@@ -51,6 +51,8 @@ const BOARD_TOP = 128;
 const SQUARE_SIZE = 58;
 const BOARD_SIZE = SQUARE_SIZE * 8;
 const FILES = 'abcdefgh';
+const MOVE_HISTORY_VISIBLE_ROWS = 4;
+const COACH_MOVE_FEEDBACK_HOLD_MS = 2400;
 
 const CHESS_ACADEMY_PALETTE = {
   backdrop: 0x281643,
@@ -118,6 +120,10 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
   private statusText: Phaser.GameObjects.Text | null = null;
   private lessonText: Phaser.GameObjects.Text | null = null;
   private moveLogText: Phaser.GameObjects.Text | null = null;
+  private moveHistoryRangeText: Phaser.GameObjects.Text | null = null;
+  private moveHistoryStart = -1;
+  private coachHoldingFeedback = false;
+  private coachLastPlayerFeedback: string | null = null;
   private homeMessageText: Phaser.GameObjects.Text | null = null;
   private currentLesson: SunbeamChessLessonDefinition | null = null;
   private lessonHintStage = 0;
@@ -168,6 +174,9 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.coachPendingMove = null;
     this.coachHintStage = 0;
     this.coachUndoPlies = 0;
+    this.coachHoldingFeedback = false;
+    this.coachLastPlayerFeedback = null;
+    this.moveHistoryStart = -1;
     this.friendlyResultShown = false;
     this.opponentPending = false;
   }
@@ -181,6 +190,10 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.statusText = null;
     this.lessonText = null;
     this.moveLogText = null;
+    this.moveHistoryRangeText = null;
+    this.moveHistoryStart = -1;
+    this.coachHoldingFeedback = false;
+    this.coachLastPlayerFeedback = null;
     this.homeMessageText = null;
   }
 
@@ -2058,6 +2071,92 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     });
   }
 
+  private getMoveHistoryRows(): string[] {
+    const history = this.chess.history();
+    const rows: string[] = [];
+    for (let index = 0; index < history.length; index += 2) {
+      rows.push(`${index / 2 + 1}.  ${history[index] ?? ''}    ${history[index + 1] ?? ''}`);
+    }
+    return rows;
+  }
+
+  private renderMoveHistory(): void {
+    if (!this.moveLogText) {
+      return;
+    }
+
+    const rows = this.getMoveHistoryRows();
+    if (rows.length === 0) {
+      this.moveLogText.setText('No moves yet.');
+      this.moveHistoryRangeText?.setText('0 moves');
+      return;
+    }
+
+    const maxStart = Math.max(0, rows.length - MOVE_HISTORY_VISIBLE_ROWS);
+    const start =
+      this.moveHistoryStart < 0
+        ? maxStart
+        : Phaser.Math.Clamp(this.moveHistoryStart, 0, maxStart);
+    const end = Math.min(rows.length, start + MOVE_HISTORY_VISIBLE_ROWS);
+
+    this.moveLogText.setText(rows.slice(start, end).join('\n'));
+    this.moveHistoryRangeText?.setText(`${start + 1}–${end} of ${rows.length}`);
+  }
+
+  private scrollMoveHistory(direction: -1 | 1): void {
+    const rows = this.getMoveHistoryRows();
+    if (rows.length <= MOVE_HISTORY_VISIBLE_ROWS) {
+      this.moveHistoryStart = -1;
+      this.renderMoveHistory();
+      return;
+    }
+
+    const maxStart = Math.max(0, rows.length - MOVE_HISTORY_VISIBLE_ROWS);
+    const current =
+      this.moveHistoryStart < 0
+        ? maxStart
+        : Phaser.Math.Clamp(this.moveHistoryStart, 0, maxStart);
+    const next = Phaser.Math.Clamp(current + direction, 0, maxStart);
+    this.moveHistoryStart = next === maxStart ? -1 : next;
+    this.renderMoveHistory();
+  }
+
+  private createMoveHistoryScrollButton(
+    x: number,
+    y: number,
+    label: string,
+    name: string,
+    direction: -1 | 1,
+  ): void {
+    const button = this.add.graphics().setPosition(x, y).setName(name);
+    const draw = (fill: number): void => {
+      button.clear();
+      button.fillStyle(fill, 1);
+      button.fillRoundedRect(-22, -20, 44, 40, 12);
+      button.lineStyle(2, CHESS_ACADEMY_PALETTE.header, 1);
+      button.strokeRoundedRect(-22, -20, 44, 40, 12);
+    };
+    draw(CHESS_ACADEMY_PALETTE.mint);
+
+    button
+      .setInteractive(
+        new Phaser.Geom.Rectangle(-22, -20, 44, 40),
+        Phaser.Geom.Rectangle.Contains,
+      )
+      .on('pointerover', () => draw(CHESS_ACADEMY_PALETTE.mintHover))
+      .on('pointerout', () => draw(CHESS_ACADEMY_PALETTE.mint))
+      .on('pointerdown', () => this.scrollMoveHistory(direction));
+
+    this.add
+      .text(x, y - 1, label, {
+        color: CHESS_ACADEMY_PALETTE.ink,
+        fontFamily: UI_FONT,
+        fontSize: '18px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5);
+  }
+
   private updateCoachMatchStatus(): void {
     if (!this.statusText || !this.moveLogText) {
       return;
@@ -2091,17 +2190,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       this.statusText.setText('Your move · White · Coach is watching');
     }
 
-    const history = this.chess.history();
-    if (history.length === 0) {
-      this.moveLogText.setText('No moves yet.');
-      return;
-    }
-
-    const rows: string[] = [];
-    for (let index = 0; index < history.length; index += 2) {
-      rows.push(`${index / 2 + 1}.  ${history[index] ?? ''}    ${history[index + 1] ?? ''}`);
-    }
-    this.moveLogText.setText(rows.slice(-3).join('\n'));
+    this.renderMoveHistory();
   }
 
   private updateFriendlyCoach(): void {
@@ -2133,17 +2222,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       this.statusText.setText('Your move · White');
     }
 
-    const history = this.chess.history();
-    if (history.length === 0) {
-      this.moveLogText.setText('No moves yet.');
-      return;
-    }
-
-    const rows: string[] = [];
-    for (let index = 0; index < history.length; index += 2) {
-      rows.push(`${index / 2 + 1}.  ${history[index] ?? ''}    ${history[index + 1] ?? ''}`);
-    }
-    this.moveLogText.setText(rows.slice(-3).join('\n'));
+    this.renderMoveHistory();
   }
 
   private pieceName(piece: PieceSymbol): string {
