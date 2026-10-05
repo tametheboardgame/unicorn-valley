@@ -22,9 +22,8 @@ interface DiagnosticsApi {
 
 async function snapshot(page: Page): Promise<DiagnosticSnapshot> {
   return page.evaluate(() => {
-    const api = (
-      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi }
-    ).__UNICORN_VALLEY_DIAGNOSTICS__;
+    const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
+      .__UNICORN_VALLEY_DIAGNOSTICS__;
     if (!api) {
       throw new Error('Browser diagnostics are unavailable.');
     }
