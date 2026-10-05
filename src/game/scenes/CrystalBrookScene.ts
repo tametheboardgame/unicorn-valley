@@ -573,33 +573,86 @@ export class CrystalBrookScene extends Phaser.Scene {
   private createMeadowGorge(): void {
     const gorge = CRYSTAL_BROOK_MEADOW_GORGE;
 
-    this.add
-      .ellipse(
-        gorge.recess.x,
-        gorge.recess.y,
-        gorge.recess.width,
-        gorge.recess.height,
-        0x263b3e,
-        0.96,
-      )
+    const recess = this.add
+      .graphics()
       .setName('crystal-brook:meadow-gorge:recess')
       .setDepth(2.72);
-    this.add
-      .ellipse(
-        gorge.recess.x - 18,
-        gorge.recess.y + 6,
-        gorge.recess.width * 0.64,
-        gorge.recess.height * 0.76,
-        0x172b30,
-        0.96,
-      )
+    recess.fillStyle(0x263b3e, 0.97);
+    recess.fillPoints(
+      [
+        new Phaser.Math.Vector2(-70, gorge.recess.y - 190),
+        new Phaser.Math.Vector2(gorge.recess.x + 70, gorge.recess.y - 210),
+        new Phaser.Math.Vector2(gorge.recess.x + 128, gorge.recess.y - 108),
+        new Phaser.Math.Vector2(gorge.recess.x + 114, gorge.recess.y + 116),
+        new Phaser.Math.Vector2(gorge.recess.x + 48, gorge.recess.y + 220),
+        new Phaser.Math.Vector2(-70, gorge.recess.y + 206),
+      ],
+      true,
+    );
+
+    const recessDepth = this.add
+      .graphics()
       .setName('crystal-brook:meadow-gorge:recess-depth')
       .setDepth(2.74);
+    recessDepth.fillStyle(0x172b30, 0.98);
+    recessDepth.fillPoints(
+      [
+        new Phaser.Math.Vector2(-80, gorge.recess.y - 142),
+        new Phaser.Math.Vector2(gorge.recess.x + 34, gorge.recess.y - 150),
+        new Phaser.Math.Vector2(gorge.recess.x + 76, gorge.recess.y - 74),
+        new Phaser.Math.Vector2(gorge.recess.x + 70, gorge.recess.y + 96),
+        new Phaser.Math.Vector2(gorge.recess.x + 18, gorge.recess.y + 158),
+        new Phaser.Math.Vector2(-80, gorge.recess.y + 150),
+      ],
+      true,
+    );
+
+    const pathFloor = this.add
+      .graphics()
+      .setName('crystal-brook:meadow-gorge:path-floor')
+      .setDepth(2.84);
+    const drawPathFloor = (width: number, colour: number): void => {
+      pathFloor.lineStyle(width, colour, 1);
+      pathFloor.fillStyle(colour, 1);
+      pathFloor.beginPath();
+      pathFloor.moveTo(gorge.pathFloor[0].x, gorge.pathFloor[0].y);
+      for (const point of gorge.pathFloor.slice(1)) {
+        pathFloor.lineTo(point.x, point.y);
+      }
+      pathFloor.strokePath();
+      for (const point of gorge.pathFloor) {
+        pathFloor.fillCircle(point.x, point.y, width / 2);
+      }
+    };
+    drawPathFloor(128, 0xd7c18f);
+    drawPathFloor(108, 0xf0dfb2);
+
+    this.add
+      .ellipse(
+        gorge.waterThroat.centre.x - 18,
+        gorge.waterThroat.centre.y,
+        gorge.waterThroat.width,
+        gorge.waterThroat.height,
+        0x1e4b56,
+        0.68,
+      )
+      .setName('crystal-brook:meadow-gorge:water-throat')
+      .setDepth(3.07);
+
+    const throatFoam = this.add
+      .graphics()
+      .setName('crystal-brook:meadow-gorge:water-foam')
+      .setDepth(3.13);
+    throatFoam.lineStyle(5, 0xeaffff, 0.44);
+    throatFoam.beginPath();
+    throatFoam.moveTo(gorge.waterOpening.x - 68, gorge.waterOpening.y + 4);
+    throatFoam.lineTo(gorge.waterOpening.x + 54, gorge.waterOpening.y - 4);
+    throatFoam.strokePath();
 
     const rocks = this.add
       .container(0, 0)
       .setName('crystal-brook:meadow-gorge:rocks')
-      .setDepth(3.2);
+      .setDepth(3.22);
 
     for (const [index, rock] of gorge.rockFaces.entries()) {
       const halfWidth = rock.width / 2;
@@ -663,6 +716,22 @@ export class CrystalBrookScene extends Phaser.Scene {
           )
           .setStrokeStyle(2, 0xf3ffff, 0.72),
       );
+    }
+
+    for (const [index, mist] of gorge.mist.entries()) {
+      const plume = this.add
+        .ellipse(mist.x, mist.y, mist.width, mist.height, 0xeaffff, 0.18)
+        .setName(`crystal-brook:meadow-gorge:mist:${index}`)
+        .setDepth(3.15);
+      this.tweens.add({
+        targets: plume,
+        alpha: { from: 0.12, to: 0.28 },
+        scaleX: { from: 0.94, to: 1.08 },
+        duration: 1200 + index * 180,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.InOut',
+      });
     }
 
     this.add
