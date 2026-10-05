@@ -40,7 +40,7 @@ export const SUNBEAM_CHESS_ACADEMY_MODE_DEFINITIONS = [
     shortTitle: 'Coach',
     description: 'Play a real game with gentle help when you want it.',
     icon: '🦄',
-    availability: 'coming-soon',
+    availability: 'available',
   },
   {
     id: 'friendly-match',

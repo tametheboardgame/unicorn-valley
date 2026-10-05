@@ -16,7 +16,7 @@ Status: **approved direction / independent programme**
 
 ## Current stage
 
-**MG-WP0 through MG-WP4 are complete and merged. MG-WP5 - Sunbeam Chess Academy is the active existing-game refinement package; MG-WP5C Puzzle Garden, curriculum expansion and its visual-polish gate are the current bounded checkpoint.**
+**MG-WP0 through MG-WP4 are complete and merged. MG-WP5 - Sunbeam Chess Academy is the active existing-game refinement package; MG-WP5C is human-approved and merge-gated, while MG-WP5D Coach Match is the active child checkpoint.**
 
 The shared catalogue/session/launcher/outcome foundation, existing-game migration, sandbox isolation, Just Games catalogue and future-authoring guardrails are the accepted baseline. MG-WP5 now applies that platform to a substantial child-first teaching and play redesign of the existing chess game.
 
@@ -319,6 +319,21 @@ Potential modes at the end of the package:
 Progress should, if persisted, use an isolated mini-game learning-record namespace and must never become adventure quest/economy/unlock state. World and Just Games entry use the same Chess Academy implementation.
 
 Human acceptance should focus on whether a seven-year-old can learn, experiment and lose without the game becoming frustrating or patronising.
+
+#### MG-WP5D Coach Match interaction-polish contract
+
+Human review of the first Coach Match preview requires the teaching panel to behave like a conversation rather than a dashboard.
+
+- the coach's spoken guidance must appear in a speech bubble visually connected to the coach portrait;
+- status and teaching copy must not compete in stacked rectangular panels;
+- after the player makes a move, the coach explanation must remain readable before the village reply begins;
+- Coach Match should hold player-move feedback for roughly two seconds before the automatic reply, rather than replacing it after ~0.5 seconds;
+- the village-move explanation should remain visible until the player next interacts or requests help;
+- match history must be a dedicated reusable component shared by Coach Match and Friendly Match;
+- history must show full-move rows, not only the last three lines with no navigation;
+- history must have explicit touch-friendly up/down controls plus a visible range indicator;
+- the history component should follow the newest moves by default but allow the player to browse earlier moves without losing the current game;
+- Friendly Match receives the same move-history navigation even though it does not use the coach speech bubble.
 
 #### MG-WP5C visual polish implementation brief
 
