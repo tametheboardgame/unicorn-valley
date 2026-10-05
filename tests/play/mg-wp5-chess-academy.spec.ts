@@ -54,7 +54,7 @@ test.describe('MG-WP5 Sunbeam Chess Academy', () => {
       (object) => object.name === 'sunbeam-chess:mode:coach-match',
     );
 
-    expect(puzzleGarden?.interactive).toBe(false);
+    expect(puzzleGarden?.interactive).toBe(true);
     expect(coachMatch?.interactive).toBe(false);
   });
 
@@ -78,6 +78,64 @@ test.describe('MG-WP5 Sunbeam Chess Academy', () => {
     const snapshot = await getDiagnosticSnapshot(page);
     expect(objectText(snapshot, 'sunbeam-chess:lesson-status')).toContain('Lesson complete');
     expect(objectText(snapshot, 'sunbeam-chess:teacher-message')).toContain('straight up');
+
+    await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:completion-card');
+    await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:completion-next');
+    await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:completion-next');
+    await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:piece:w:b:d4');
+  });
+
+  test('cycles directly to the next Puzzle Garden challenge after a solve', async ({ page }) => {
+    await openChessAcademy(page);
+
+    await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:mode:puzzle-garden');
+    await waitForNamedObject(
+      page,
+      'ChessPlazaActivityScene',
+      'sunbeam-chess:puzzle-card:free-rook',
+    );
+    await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:puzzle-card:free-rook');
+
+    await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:piece:w:r:a1');
+    await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:piece:w:r:a1');
+    await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:square:a8');
+
+    await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:completion-card');
+    await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:completion-next');
+    await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:completion-next');
+
+    await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:puzzle-status');
+    const snapshot = await getDiagnosticSnapshot(page);
+    expect(objectText(snapshot, 'sunbeam-chess:puzzle-status')).toContain(
+      'rook move that gives check',
+    );
+  });
+
+  test('solves the mate-in-one Puzzle Garden challenge on the real chess board', async ({
+    page,
+  }) => {
+    await openChessAcademy(page);
+
+    await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:mode:puzzle-garden');
+    await waitForNamedObject(
+      page,
+      'ChessPlazaActivityScene',
+      'sunbeam-chess:puzzle-card:mate-in-one',
+    );
+    await clickNamedObject(
+      page,
+      'ChessPlazaActivityScene',
+      'sunbeam-chess:puzzle-card:mate-in-one',
+    );
+
+    await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:piece:w:q:g6');
+    await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:piece:w:q:g6');
+    await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:square:g7');
+
+    const snapshot = await getDiagnosticSnapshot(page);
+    expect(objectText(snapshot, 'sunbeam-chess:puzzle-status')).toContain('Puzzle solved');
+    expect(objectText(snapshot, 'sunbeam-chess:puzzle-message')).toContain('Checkmate');
+    await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:completion-card');
   });
 
   test('keeps the existing complete chess game available as Friendly Match', async ({ page }) => {
