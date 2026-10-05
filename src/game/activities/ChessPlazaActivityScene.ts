@@ -872,6 +872,9 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.coachPendingMove = null;
     this.coachHintStage = 0;
     this.coachUndoPlies = 0;
+    this.coachHoldingFeedback = false;
+    this.coachLastPlayerFeedback = null;
+    this.moveHistoryStart = -1;
     this.friendlyResultShown = false;
     this.clearCompletionCard();
     this.clearCoachWarning();
@@ -1028,6 +1031,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.chess = new Chess();
     this.selected = null;
     this.hintMove = null;
+    this.moveHistoryStart = -1;
     this.friendlyResultShown = false;
     this.clearCompletionCard();
     this.opponentPending = false;
@@ -1668,13 +1672,23 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.hintMove = null;
     this.coachHintStage = 0;
     this.coachUndoPlies = 1;
-    this.lessonText?.setText(describeTeachingMove(applied));
+    this.coachLastPlayerFeedback = describeTeachingMove(applied);
+    this.coachHoldingFeedback = !this.chess.isGameOver();
+    this.moveHistoryStart = -1;
+    this.lessonText?.setText(this.coachLastPlayerFeedback);
 
     this.opponentPending = !this.chess.isGameOver();
     this.renderBoard();
 
     if (this.opponentPending) {
-      this.time.delayedCall(520, () => this.makeOpponentMove());
+      this.time.delayedCall(COACH_MOVE_FEEDBACK_HOLD_MS, () => {
+        if (this.view !== 'coach-match' || !this.opponentPending || this.chess.turn() !== 'b') {
+          return;
+        }
+        this.coachHoldingFeedback = false;
+        this.renderBoard();
+        this.time.delayedCall(260, () => this.makeOpponentMove());
+      });
     }
   }
 
@@ -1706,6 +1720,9 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
 
     this.coachUndoPlies = 0;
     this.coachHintStage = 0;
+    this.coachHoldingFeedback = false;
+    this.coachLastPlayerFeedback = null;
+    this.moveHistoryStart = -1;
     this.selected = null;
     this.hintMove = null;
     this.lessonText?.setText(
@@ -1827,12 +1844,19 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
         to: chosen.to,
         promotion: chosen.promotion,
       });
-      this.lessonText?.setText(`Village move: ${describeTeachingMove(applied)}`);
+      const villageFeedback = `Village reply: ${describeTeachingMove(applied)}`;
+      if (this.view === 'coach-match' && this.coachLastPlayerFeedback) {
+        this.lessonText?.setText(`${this.coachLastPlayerFeedback}\n\n${villageFeedback}`);
+      } else {
+        this.lessonText?.setText(villageFeedback);
+      }
+      this.moveHistoryStart = -1;
     }
 
     if (this.view === 'coach-match') {
       this.coachUndoPlies = 2;
       this.coachHintStage = 0;
+      this.coachHoldingFeedback = false;
     }
 
     this.opponentPending = false;
@@ -2213,6 +2237,8 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       this.statusText.setText('GAME DRAWN');
       this.lessonText?.setText(describeChessPosition(this.chess));
       this.showMatchResult('draw');
+    } else if (this.coachHoldingFeedback) {
+      this.statusText.setText('Coach note · take a moment to read');
     } else if (this.opponentPending || this.chess.turn() === 'b') {
       this.statusText.setText(
         this.chess.isCheck() ? 'CHECK · Village must respond' : 'Village is thinking…',
@@ -2295,6 +2321,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.selected = null;
     this.hintMove = null;
     this.opponentPending = false;
+    this.moveHistoryStart = -1;
     this.friendlyResultShown = false;
     this.clearCompletionCard();
     this.lessonText?.setText(describeChessPosition(this.chess));
