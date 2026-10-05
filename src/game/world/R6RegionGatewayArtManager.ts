@@ -471,7 +471,45 @@ function createBrookEastWoodland(scene: Phaser.Scene): void {
     );
   }
 
-  // Semantic exit only: the visible language is now just trail + enclosing trees.
+  const woodsSign = scene.add
+    .container(3190, 1450)
+    .setDepth(worldDepthForY(1450, 0.42))
+    .setAngle(-2);
+
+  woodsSign.add([
+    scene.add
+      .polygon(
+        0,
+        0,
+        [-122, -42, -92, -55, 88, -48, 124, -22, 112, 38, 56, 50, -88, 45, -126, 16],
+        0x687b76,
+        1,
+      )
+      .setStrokeStyle(5, 0x405552, 0.96),
+    scene.add
+      .text(2, 3, 'WHISPERING WOODS  →', {
+        color: '#243a38',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '17px',
+        fontStyle: 'bold',
+        align: 'center',
+      })
+      .setOrigin(0.5),
+    scene.add
+      .text(0, 0, 'WHISPERING WOODS  →', {
+        color: '#e4eeea',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '17px',
+        fontStyle: 'bold',
+        align: 'center',
+        stroke: '#405552',
+        strokeThickness: 2,
+      })
+      .setOrigin(0.5),
+  ]);
+  name(woodsSign, 'crystal-brook:whispering-woods-sign');
+
+  // Semantic exit only: the visible language is trail + enclosing trees + stone waymarker.
   name(
     scene.add.zone(
       CRYSTAL_BROOK_WOODS_THRESHOLD.position.x,
