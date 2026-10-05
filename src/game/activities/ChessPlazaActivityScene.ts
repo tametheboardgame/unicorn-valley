@@ -887,16 +887,16 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.drawActivityShell('🦄  Coach Match');
     this.drawBoardFrame();
 
-    const coach = this.add.graphics();
-    coach.fillStyle(CHESS_ACADEMY_PALETTE.mintSoft, 1);
-    coach.fillRoundedRect(600, 116, 600, 458, 24);
-    coach.lineStyle(3, CHESS_ACADEMY_PALETTE.turquoise, 0.95);
-    coach.strokeRoundedRect(600, 116, 600, 458, 24);
+    const coachArea = this.add.graphics();
+    coachArea.fillStyle(CHESS_ACADEMY_PALETTE.mintSoft, 1);
+    coachArea.fillRoundedRect(600, 116, 600, 458, 24);
+    coachArea.lineStyle(3, CHESS_ACADEMY_PALETTE.turquoise, 0.95);
+    coachArea.strokeRoundedRect(600, 116, 600, 458, 24);
 
-    this.drawTeacherPortrait(700, 195, 0.75);
+    this.drawTeacherPortrait(690, 216, 0.72);
 
     this.add
-      .text(780, 148, 'Coach Match', {
+      .text(775, 144, 'Coach Match', {
         color: CHESS_ACADEMY_PALETTE.ink,
         fontFamily: UI_FONT,
         fontSize: '23px',
@@ -904,51 +904,39 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       })
       .setOrigin(0, 0.5);
 
-    const statusPanel = this.add.graphics();
-    statusPanel.fillStyle(CHESS_ACADEMY_PALETTE.goldSoft, 1);
-    statusPanel.fillRoundedRect(638, 178, 524, 82, 18);
+    const speech = this.add.graphics().setName('sunbeam-chess:coach-speech-bubble');
+    speech.fillStyle(CHESS_ACADEMY_PALETTE.panelBright, 1);
+    speech.fillRoundedRect(778, 166, 382, 218, 22);
+    speech.fillTriangle(780, 226, 744, 244, 780, 266);
+    speech.lineStyle(3, CHESS_ACADEMY_PALETTE.turquoise, 0.82);
+    speech.strokeRoundedRect(778, 166, 382, 218, 22);
 
     this.statusText = this.add
-      .text(900, 219, '', {
+      .text(969, 202, '', {
         color: CHESS_ACADEMY_PALETTE.ink,
         fontFamily: UI_FONT,
-        fontSize: '18px',
+        fontSize: '17px',
         fontStyle: 'bold',
         align: 'center',
-        wordWrap: { width: 474 },
+        wordWrap: { width: 330 },
       })
       .setOrigin(0.5)
       .setName('sunbeam-chess:coach-status');
 
-    this.add
-      .text(654, 286, 'COACH NOTES', {
-        color: '#3f8075',
-        fontFamily: UI_FONT,
-        fontSize: '13px',
-        fontStyle: 'bold',
-      })
-      .setOrigin(0, 0.5);
-
-    const notePanel = this.add.graphics();
-    notePanel.fillStyle(CHESS_ACADEMY_PALETTE.panelBright, 1);
-    notePanel.fillRoundedRect(638, 305, 524, 124, 18);
-    notePanel.lineStyle(2, CHESS_ACADEMY_PALETTE.turquoise, 0.65);
-    notePanel.strokeRoundedRect(638, 305, 524, 124, 18);
-
     this.lessonText = this.add
-      .text(900, 367, '', {
+      .text(969, 292, '', {
         color: CHESS_ACADEMY_PALETTE.softInk,
         fontFamily: UI_FONT,
-        fontSize: '16px',
+        fontSize: '15px',
         lineSpacing: 5,
         align: 'center',
-        wordWrap: { width: 474 },
+        wordWrap: { width: 332 },
       })
       .setOrigin(0.5)
       .setName('sunbeam-chess:coach-message');
 
     this.add
-      .text(654, 455, 'MOVES', {
+      .text(654, 408, 'MOVE HISTORY', {
         color: '#6b3f96',
         fontFamily: UI_FONT,
         fontSize: '13px',
@@ -956,19 +944,46 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       })
       .setOrigin(0, 0.5);
 
+    this.moveHistoryRangeText = this.add
+      .text(1098, 408, '0 moves', {
+        color: CHESS_ACADEMY_PALETTE.softInk,
+        fontFamily: UI_FONT,
+        fontSize: '12px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(1, 0.5)
+      .setName('sunbeam-chess:move-history-range');
+
     const historyPanel = this.add.graphics();
     historyPanel.fillStyle(CHESS_ACADEMY_PALETTE.lavenderSoft, 1);
-    historyPanel.fillRoundedRect(638, 474, 524, 72, 16);
+    historyPanel.fillRoundedRect(638, 426, 524, 130, 16);
+    historyPanel.lineStyle(2, CHESS_ACADEMY_PALETTE.lavender, 0.55);
+    historyPanel.strokeRoundedRect(638, 426, 524, 130, 16);
 
     this.moveLogText = this.add
-      .text(660, 489, 'No moves yet.', {
+      .text(660, 443, 'No moves yet.', {
         color: CHESS_ACADEMY_PALETTE.softInk,
         fontFamily: 'Georgia, serif',
-        fontSize: '15px',
-        lineSpacing: 4,
-        wordWrap: { width: 480 },
+        fontSize: '14px',
+        lineSpacing: 5,
+        wordWrap: { width: 420 },
       })
       .setOrigin(0, 0);
+
+    this.createMoveHistoryScrollButton(
+      1126,
+      458,
+      '▲',
+      'sunbeam-chess:move-history-up',
+      -1,
+    );
+    this.createMoveHistoryScrollButton(
+      1126,
+      522,
+      '▼',
+      'sunbeam-chess:move-history-down',
+      1,
+    );
 
     this.add
       .text(900, 588, 'Hints get more specific only when you keep asking.', {
@@ -1025,11 +1040,11 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.drawActivityShell('♟  Friendly Match');
     this.drawBoardFrame();
 
-    const coach = this.add.graphics();
-    coach.fillStyle(CHESS_ACADEMY_PALETTE.lavenderSoft, 1);
-    coach.fillRoundedRect(600, 116, 600, 458, 24);
-    coach.lineStyle(3, CHESS_ACADEMY_PALETTE.lavender, 0.95);
-    coach.strokeRoundedRect(600, 116, 600, 458, 24);
+    const panel = this.add.graphics();
+    panel.fillStyle(CHESS_ACADEMY_PALETTE.lavenderSoft, 1);
+    panel.fillRoundedRect(600, 116, 600, 458, 24);
+    panel.lineStyle(3, CHESS_ACADEMY_PALETTE.lavender, 0.95);
+    panel.strokeRoundedRect(600, 116, 600, 458, 24);
 
     this.add
       .text(900, 148, 'Friendly Chess', {
@@ -1042,13 +1057,13 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
 
     const statusPanel = this.add.graphics();
     statusPanel.fillStyle(CHESS_ACADEMY_PALETTE.goldSoft, 1);
-    statusPanel.fillRoundedRect(638, 178, 524, 86, 18);
+    statusPanel.fillRoundedRect(638, 178, 524, 76, 18);
 
     this.statusText = this.add
-      .text(900, 221, '', {
+      .text(900, 216, '', {
         color: CHESS_ACADEMY_PALETTE.ink,
         fontFamily: UI_FONT,
-        fontSize: '19px',
+        fontSize: '18px',
         fontStyle: 'bold',
         align: 'center',
         wordWrap: { width: 478 },
@@ -1056,7 +1071,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     this.add
-      .text(654, 291, 'WHAT TO NOTICE', {
+      .text(654, 278, 'WHAT TO NOTICE', {
         color: '#6b3f96',
         fontFamily: UI_FONT,
         fontSize: '13px',
@@ -1066,15 +1081,15 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
 
     const lessonPanel = this.add.graphics();
     lessonPanel.fillStyle(CHESS_ACADEMY_PALETTE.panelBright, 1);
-    lessonPanel.fillRoundedRect(638, 310, 524, 112, 18);
+    lessonPanel.fillRoundedRect(638, 296, 524, 104, 18);
     lessonPanel.lineStyle(2, CHESS_ACADEMY_PALETTE.berry, 0.65);
-    lessonPanel.strokeRoundedRect(638, 310, 524, 112, 18);
+    lessonPanel.strokeRoundedRect(638, 296, 524, 104, 18);
 
     this.lessonText = this.add
-      .text(900, 366, '', {
+      .text(900, 348, '', {
         color: CHESS_ACADEMY_PALETTE.softInk,
         fontFamily: UI_FONT,
-        fontSize: '16px',
+        fontSize: '15px',
         lineSpacing: 5,
         align: 'center',
         wordWrap: { width: 478 },
@@ -1082,7 +1097,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     this.add
-      .text(654, 448, 'MOVES', {
+      .text(654, 424, 'MOVE HISTORY', {
         color: '#477d74',
         fontFamily: UI_FONT,
         fontSize: '13px',
@@ -1090,22 +1105,49 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       })
       .setOrigin(0, 0.5);
 
+    this.moveHistoryRangeText = this.add
+      .text(1098, 424, '0 moves', {
+        color: CHESS_ACADEMY_PALETTE.softInk,
+        fontFamily: UI_FONT,
+        fontSize: '12px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(1, 0.5)
+      .setName('sunbeam-chess:move-history-range');
+
     const historyPanel = this.add.graphics();
     historyPanel.fillStyle(CHESS_ACADEMY_PALETTE.mintSoft, 1);
-    historyPanel.fillRoundedRect(638, 467, 524, 78, 16);
+    historyPanel.fillRoundedRect(638, 442, 524, 112, 16);
+    historyPanel.lineStyle(2, CHESS_ACADEMY_PALETTE.turquoise, 0.45);
+    historyPanel.strokeRoundedRect(638, 442, 524, 112, 16);
 
     this.moveLogText = this.add
-      .text(660, 484, 'No moves yet.', {
+      .text(660, 458, 'No moves yet.', {
         color: CHESS_ACADEMY_PALETTE.softInk,
         fontFamily: 'Georgia, serif',
-        fontSize: '15px',
+        fontSize: '14px',
         lineSpacing: 4,
-        wordWrap: { width: 480 },
+        wordWrap: { width: 420 },
       })
       .setOrigin(0, 0);
 
+    this.createMoveHistoryScrollButton(
+      1126,
+      470,
+      '▲',
+      'sunbeam-chess:move-history-up',
+      -1,
+    );
+    this.createMoveHistoryScrollButton(
+      1126,
+      524,
+      '▼',
+      'sunbeam-chess:move-history-down',
+      1,
+    );
+
     this.add
-      .text(900, 594, 'Full legal chess · Friendly opponent tuning arrives later in the Academy.', {
+      .text(900, 588, 'Full legal chess · Friendly opponent tuning arrives later in the Academy.', {
         color: CHESS_ACADEMY_PALETTE.softInk,
         fontFamily: UI_FONT,
         fontSize: '13px',
