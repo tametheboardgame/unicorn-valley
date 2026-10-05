@@ -366,3 +366,18 @@ Implementation contract:
 - display the current visible move range / total count;
 - auto-follow the newest moves after a new move, while explicit scrolling allows browsing earlier moves;
 - preserve all existing Coach Match warning, hint, undo and Play-it-anyway behaviour.
+
+
+## MG-WP5D interaction-polish implementation
+
+Implemented from the Coach Match human-preview feedback:
+
+- rebuilt the Coach Match right column around the production-art coach portrait and a single speech bubble with a visible tail toward the coach;
+- removed the competing stacked status / coach-note rectangles from Coach Match;
+- player-move feedback is held for 2.4 seconds before the automated village reply starts;
+- the subsequent village reply is appended to the player's previous coaching text instead of immediately erasing it;
+- introduced one shared four-row move-history renderer used by both Coach Match and Friendly Match;
+- history now uses aligned White / Village columns, a visible current-range indicator, and touch-friendly up/down buttons;
+- move history follows the newest move by default but manual scrolling can browse earlier full moves;
+- Friendly Match receives the same history navigation and automatically returns to the newest row after new play;
+- browser coverage verifies the speech bubble, readable feedback hold, preserved player + village response, history range, shared scroll controls and Coach Match undo.
