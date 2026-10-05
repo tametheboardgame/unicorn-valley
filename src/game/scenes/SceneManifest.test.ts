@@ -6,8 +6,6 @@ const EXPECTED_STARTUP_KEYS = [
   'BootScene',
   'PreloadScene',
   'TitleScene',
-  'ResizeTestScene',
-  'MovementTestScene',
   'MoonflowerGladeScene',
   'CottageInteriorScene',
   'SunbeamVillageScene',
@@ -20,7 +18,6 @@ const EXPECTED_STARTUP_KEYS = [
   'RaceScene',
   'PipEggHatchScene',
   'DoorwayStubScene',
-  'DialogueTestScene',
   'UnicornCreatorScene',
 ] as const;
 
@@ -39,6 +36,16 @@ describe('SCENE_MANIFEST', () => {
     expect(runtimeEntries.length).toBeGreaterThan(0);
     for (const entry of runtimeEntries) {
       expect('load' in entry && typeof entry.load === 'function').toBe(true);
+    }
+  });
+
+  it('keeps diagnostic-only scenes out of the production startup graph', () => {
+    for (const key of ['ResizeTestScene', 'MovementTestScene', 'DialogueTestScene'] as const) {
+      expect(SCENE_MANIFEST.find((entry) => entry.key === key)).toMatchObject({
+        category: 'diagnostic',
+        loadBoundary: 'on-demand',
+        registrationOwner: 'feature',
+      });
     }
   });
 
