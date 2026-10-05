@@ -113,6 +113,10 @@ test('Rainbow Meadow and Crystal Brook share one gorge transition without arriva
   );
   expect(
     brook?.objects.some((object) => object.name === 'crystal-brook:meadow-gorge:path-floor'),
+  ).toBe(false);
+  expect(brook?.objects.some((object) => object.name === 'crystal-brook:main-path')).toBe(true);
+  expect(
+    brook?.objects.some((object) => object.name === 'crystal-brook:meadow-gorge:path-overhang'),
   ).toBe(true);
   expect(
     brook?.objects.some((object) => object.name === 'crystal-brook:meadow-gorge:water-throat'),
