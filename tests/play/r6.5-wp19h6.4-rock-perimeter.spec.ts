@@ -87,7 +87,6 @@ test('H6.4 renders a varied physical rock perimeter while preserving route openi
   expect(rocks.filter(({ x }) => x > 3300).length).toBeGreaterThanOrEqual(10);
 });
 
-
 test('H6.4 galloping along the rock perimeter does not snag on collision seams', async ({
   page,
 }) => {
