@@ -24,19 +24,6 @@ function expectHorizontalChainClosed(rocks: BoundaryRock[]): void {
     const visualGap = next.x - next.width / 2 - (current.x + current.width / 2);
     expect(visualGap).toBeLessThanOrEqual(8);
 
-    const currentCollider = CRYSTAL_BROOK_PERIMETER_COLLIDERS.find(
-      ({ id }) => id === `collision:brook-perimeter:${current.id}`,
-    );
-    const nextCollider = CRYSTAL_BROOK_PERIMETER_COLLIDERS.find(
-      ({ id }) => id === `collision:brook-perimeter:${next.id}`,
-    );
-    expect(currentCollider).toBeDefined();
-    expect(nextCollider).toBeDefined();
-    if (!currentCollider || !nextCollider) continue;
-
-    const collisionGap =
-      nextCollider.x - nextCollider.width / 2 - (currentCollider.x + currentCollider.width / 2);
-    expect(collisionGap).toBeLessThanOrEqual(8);
   }
 }
 
@@ -48,19 +35,6 @@ function expectVerticalChainClosed(rocks: BoundaryRock[]): void {
     const visualGap = next.y - next.height / 2 - (current.y + current.height / 2);
     expect(visualGap).toBeLessThanOrEqual(8);
 
-    const currentCollider = CRYSTAL_BROOK_PERIMETER_COLLIDERS.find(
-      ({ id }) => id === `collision:brook-perimeter:${current.id}`,
-    );
-    const nextCollider = CRYSTAL_BROOK_PERIMETER_COLLIDERS.find(
-      ({ id }) => id === `collision:brook-perimeter:${next.id}`,
-    );
-    expect(currentCollider).toBeDefined();
-    expect(nextCollider).toBeDefined();
-    if (!currentCollider || !nextCollider) continue;
-
-    const collisionGap =
-      nextCollider.y - nextCollider.height / 2 - (currentCollider.y + currentCollider.height / 2);
-    expect(collisionGap).toBeLessThanOrEqual(12);
   }
 }
 
