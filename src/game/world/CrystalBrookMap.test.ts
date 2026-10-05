@@ -122,13 +122,12 @@ describe('Crystal Brook map', () => {
     expect(CRYSTAL_BROOK_REFLECTION_FEEDER.outerWidth).toBeLessThan(70);
   });
 
-  it('hands the west path cleanly from the gorge floor to the main Brook trail', () => {
+  it('uses one continuous west path renderer through the gorge and into Crystal Brook', () => {
     const westSegment = CRYSTAL_BROOK_PATH_PRESENTATION_SEGMENTS[0];
-    const meadowApproach = CRYSTAL_BROOK_LAYOUT.thresholds.rainbowMeadow.approach;
 
-    expect(CRYSTAL_BROOK_MEADOW_GORGE.pathFloor.at(-1)).toEqual(meadowApproach);
-    expect(westSegment[0]).toEqual(meadowApproach);
-    expect(westSegment).not.toContain(CRYSTAL_BROOK_LAYOUT.thresholds.rainbowMeadow.position);
+    expect(westSegment[0].x).toBeLessThan(0);
+    expect(westSegment[1]).toEqual(CRYSTAL_BROOK_LAYOUT.thresholds.rainbowMeadow.position);
+    expect(westSegment[2]).toEqual(CRYSTAL_BROOK_LAYOUT.thresholds.rainbowMeadow.approach);
     expect(CRYSTAL_BROOK_MEADOW_WATER_EXIT.y).toBeLessThan(
       CRYSTAL_BROOK_MEADOW_GORGE.pathOpening.y,
     );
@@ -147,24 +146,24 @@ describe('Crystal Brook map', () => {
     expect(verticalSeparation).toBeLessThan(220);
   });
 
-  it('extends the gorge path off-map while keeping the water throat above it', () => {
-    expect(CRYSTAL_BROOK_MEADOW_GORGE.pathFloor[0].x).toBeLessThan(0);
-    expect(CRYSTAL_BROOK_MEADOW_GORGE.pathFloor.at(-1)).toEqual(
-      CRYSTAL_BROOK_LAYOUT.thresholds.rainbowMeadow.approach,
-    );
+  it('keeps the water throat above the path and frames the entrance with an overhang', () => {
     expect(CRYSTAL_BROOK_MEADOW_GORGE.waterThroat.centre).toEqual(
       CRYSTAL_BROOK_MEADOW_GORGE.waterOpening,
     );
     expect(CRYSTAL_BROOK_MEADOW_GORGE.waterThroat.centre.y).toBeLessThan(
       CRYSTAL_BROOK_MEADOW_GORGE.pathOpening.y - 140,
     );
+    expect(CRYSTAL_BROOK_MEADOW_GORGE.overhang.y).toBeLessThan(
+      CRYSTAL_BROOK_MEADOW_GORGE.pathOpening.y,
+    );
     expect(CRYSTAL_BROOK_MEADOW_GORGE.rockFaces.some(({ id }) => id === 'inner-divider')).toBe(
       true,
     );
   });
 
-  it('defines a carved Rainbow Meadow waymarker beside the gorge path', () => {
+  it('defines a carved Rainbow Meadow waymarker with a west-pointing arrow', () => {
     expect(CRYSTAL_BROOK_MEADOW_GORGE.sign.label).toBe('RAINBOW MEADOW');
+    expect(CRYSTAL_BROOK_MEADOW_GORGE.sign.arrow).toBe('←');
     expect(CRYSTAL_BROOK_MEADOW_GORGE.sign.x).toBeGreaterThan(
       CRYSTAL_BROOK_LAYOUT.thresholds.rainbowMeadow.position.x,
     );
