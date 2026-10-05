@@ -6,7 +6,7 @@ Last updated: 2026-10-03
 
 The active world-area package is **R6.5-WP19H6 - Crystal Brook Final Area Pass**.
 
-Current bounded checkpoint: **H6.2 - Continuous Brook and Rainbow Meadow hydrology**
+Current bounded checkpoint: **H6.2 - Continuous Brook and Rainbow Meadow hydrology — COMPLETE / HUMAN APPROVED**
 
 Branch: `agent/r6.5-wp19h6.2-continuous-brook`
 
@@ -116,29 +116,25 @@ H6.2H therefore:
 - leaves only a semantic Woods exit zone: visually the exit is now trail + enclosing woodland, with no portal or extra threshold shape.
 ## Mini-game dependency state
 
-MG-WP0, MG-WP1, MG-WP2, MG-WP3 and **MG-WP4 are complete and merged**.
+MG-WP0 through **MG-WP5B are merged to main**. The shared mini-game platform remains the accepted baseline for H6.
 
 The H6.8 mini-game platform readiness dependency is therefore satisfied; H6.9/H6.10 still remain sequenced behind the earlier H6 environment/path slices rather than starting during H6.2.
 
 ## Validation state
 
-The first H6.2 implementation passed formatting, lint, architecture, type-check, targeted browser and production build/static smoke. The repository performance budget remained red at 563.3 KiB / 113 chunks.
+H6.2 received human visual approval on the exact-head preview after H6.2H.
 
-A fresh CI run is required on the refined, MG-WP3-reconciled H6.2 head.
+The final pre-approval CI red was formatting-only in three files; those formatter changes have now been applied. Exact-head repository validation is being rerun before merge.
 
 ## Human gate
 
-H6.2H remains a substantive visual checkpoint.
+**H6.2 is human-approved.**
 
-Do not begin H6.3 until:
-
-- relevant technical validation is complete as far as the repository baseline permits;
-- an exact-head preview of the refinement is available;
-- David has confirmed the joined east-side path branches, removal of the old race flag marker, and denser irregular off-map woodland edge read correctly.
+The accepted H6.2 composition includes the continuous/meandering Brook, crystalline bridge sequence, relocated Grotto, north-edge Crystal Cup Raceway gateway/hub topology, joined east-side path network and naturalised Woods edge.
 
 ## Next work
 
-After H6.2 approval, begin **H6.3 - Rainbow Meadow cave/gorge entrance**.
+After H6.2 is merged, begin **H6.3 - Rainbow Meadow cave/gorge entrance**.
 
 ## Operating reminders
 
