@@ -72,7 +72,7 @@ function fillRockBody(graphics: Phaser.GameObjects.Graphics, rock: CrystalBrookB
 }
 
 function addNaturalHighlight(graphics: Phaser.GameObjects.Graphics, rock: CrystalBrookBoundaryRock): void {
-  graphics.fillStyle(0x9aaba4, 0.2);
+  graphics.fillStyle(0x9aaba4, 0.15);
   if (rock.kind === 'spire') {
     graphics.beginPath();
     graphics.moveTo(-rock.width * 0.1, -rock.height * 0.42);
@@ -120,18 +120,21 @@ function addCrystalAccent(graphics: Phaser.GameObjects.Graphics, rock: CrystalBr
 }
 
 function createBoundaryRock(scene: Phaser.Scene, rock: CrystalBrookBoundaryRock): void {
+  const underEastWoodland = rock.x >= 3310 && rock.y >= 250;
   const graphics = scene.add
     .graphics()
     .setPosition(rock.x, rock.y)
     .setAngle(rock.angle)
     .setName(`crystal-brook:boundary:rock:${rock.kind}:${rock.id}`)
-    .setDepth(worldDepthForY(rock.y + rock.height * 0.42, 0.18));
+    // The existing east woodland container sits at 6.2. Keep its trunks/canopies in front
+    // so these rocks read as a subtle root-line/boulder mix rather than a stone wall.
+    .setDepth(underEastWoodland ? 6.05 : worldDepthForY(rock.y + rock.height * 0.42, 0.18));
 
   fillRockBody(graphics, rock);
   addNaturalHighlight(graphics, rock);
   addCrystalAccent(graphics, rock);
 
-  graphics.lineStyle(4, 0x425653, 0.78);
+  graphics.lineStyle(3, 0x425653, 0.68);
   graphics.beginPath();
   graphics.moveTo(-rock.width * 0.34, rock.height * 0.4);
   graphics.lineTo(rock.width * 0.3, rock.height * 0.42);
