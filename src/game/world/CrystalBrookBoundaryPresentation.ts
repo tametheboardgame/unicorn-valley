@@ -71,7 +71,10 @@ function fillRockBody(graphics: Phaser.GameObjects.Graphics, rock: CrystalBrookB
   }
 }
 
-function addNaturalHighlight(graphics: Phaser.GameObjects.Graphics, rock: CrystalBrookBoundaryRock): void {
+function addNaturalHighlight(
+  graphics: Phaser.GameObjects.Graphics,
+  rock: CrystalBrookBoundaryRock,
+): void {
   graphics.fillStyle(0x9aaba4, 0.15);
   if (rock.kind === 'spire') {
     graphics.beginPath();
@@ -92,7 +95,10 @@ function addNaturalHighlight(graphics: Phaser.GameObjects.Graphics, rock: Crysta
   );
 }
 
-function addCrystalAccent(graphics: Phaser.GameObjects.Graphics, rock: CrystalBrookBoundaryRock): void {
+function addCrystalAccent(
+  graphics: Phaser.GameObjects.Graphics,
+  rock: CrystalBrookBoundaryRock,
+): void {
   if (rock.crystalColour === undefined) {
     return;
   }
