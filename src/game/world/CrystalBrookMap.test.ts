@@ -122,11 +122,16 @@ describe('Crystal Brook map', () => {
     expect(CRYSTAL_BROOK_REFLECTION_FEEDER.outerWidth).toBeLessThan(70);
   });
 
-  it('keeps the west path on the cave approach while the Brook exits above it', () => {
+  it('hands the west path cleanly from the gorge floor to the main Brook trail', () => {
     const westSegment = CRYSTAL_BROOK_PATH_PRESENTATION_SEGMENTS[0];
-    expect(westSegment[0]).toEqual(CRYSTAL_BROOK_LAYOUT.thresholds.rainbowMeadow.position);
-    expect(westSegment[1]).toEqual(CRYSTAL_BROOK_LAYOUT.thresholds.rainbowMeadow.approach);
-    expect(CRYSTAL_BROOK_MEADOW_WATER_EXIT.y).toBeLessThan(westSegment[0].y);
+    const meadowApproach = CRYSTAL_BROOK_LAYOUT.thresholds.rainbowMeadow.approach;
+
+    expect(CRYSTAL_BROOK_MEADOW_GORGE.pathFloor.at(-1)).toEqual(meadowApproach);
+    expect(westSegment[0]).toEqual(meadowApproach);
+    expect(westSegment).not.toContain(CRYSTAL_BROOK_LAYOUT.thresholds.rainbowMeadow.position);
+    expect(CRYSTAL_BROOK_MEADOW_WATER_EXIT.y).toBeLessThan(
+      CRYSTAL_BROOK_MEADOW_GORGE.pathOpening.y,
+    );
     expect(CRYSTAL_BROOK_WATERCOURSE.at(-2)?.outerWidth).toBeLessThanOrEqual(150);
   });
 
@@ -155,6 +160,16 @@ describe('Crystal Brook map', () => {
     );
     expect(CRYSTAL_BROOK_MEADOW_GORGE.rockFaces.some(({ id }) => id === 'inner-divider')).toBe(
       true,
+    );
+  });
+
+  it('defines a carved Rainbow Meadow waymarker beside the gorge path', () => {
+    expect(CRYSTAL_BROOK_MEADOW_GORGE.sign.label).toBe('RAINBOW MEADOW');
+    expect(CRYSTAL_BROOK_MEADOW_GORGE.sign.x).toBeGreaterThan(
+      CRYSTAL_BROOK_LAYOUT.thresholds.rainbowMeadow.position.x,
+    );
+    expect(CRYSTAL_BROOK_MEADOW_GORGE.sign.y).toBeGreaterThan(
+      CRYSTAL_BROOK_LAYOUT.thresholds.rainbowMeadow.position.y,
     );
   });
 
