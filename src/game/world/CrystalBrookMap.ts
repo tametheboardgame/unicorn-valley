@@ -187,6 +187,23 @@ export const CRYSTAL_BROOK_LOWER_POOL = { x: 2740, y: 1280 } as const;
 export const CRYSTAL_BROOK_UPSTREAM_CASCADE = { x: 3320, y: 790 } as const;
 export const CRYSTAL_BROOK_MEADOW_WATER_EXIT = { x: 120, y: 920 } as const;
 
+export const CRYSTAL_BROOK_MEADOW_GORGE = {
+  recess: { x: 86, y: 1008, width: 250, height: 430 },
+  waterOpening: CRYSTAL_BROOK_MEADOW_WATER_EXIT,
+  pathOpening: CRYSTAL_BROOK_MEADOW_THRESHOLD.position,
+  pathApproach: CRYSTAL_BROOK_MEADOW_THRESHOLD.approach,
+  rockFaces: [
+    { id: 'north-cap', x: 112, y: 748, width: 360, height: 220, angle: -7, colour: 0x617570 },
+    { id: 'north-shoulder', x: 220, y: 846, width: 246, height: 142, angle: 6, colour: 0x71847d },
+    { id: 'south-shoulder', x: 190, y: 1220, width: 300, height: 188, angle: -5, colour: 0x697c77 },
+    { id: 'south-cap', x: 86, y: 1390, width: 370, height: 238, angle: 7, colour: 0x5b706e },
+  ],
+  crystals: [
+    { x: 238, y: 795, scale: 0.68, colour: 0xa4e9ed },
+    { x: 255, y: 1260, scale: 0.56, colour: 0xc8baf0 },
+  ],
+} as const;
+
 export const CRYSTAL_BROOK_WATERCOURSE = [
   { x: 3610, y: 760, outerWidth: 148, innerWidth: 106, deepWidth: 38 },
   { x: 3460, y: 755, outerWidth: 154, innerWidth: 110, deepWidth: 40 },
