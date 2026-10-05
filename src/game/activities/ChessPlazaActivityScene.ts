@@ -38,6 +38,15 @@ import {
   getSunbeamChessOpponent,
   type SunbeamChessOpponentLevel,
 } from './SunbeamChessOpponent';
+import {
+  completeSunbeamChessLesson,
+  completeSunbeamChessPuzzle,
+  createDefaultSunbeamChessLearningRecord,
+  loadBrowserSunbeamChessLearningRecord,
+  saveBrowserSunbeamChessLearningRecord,
+  setSunbeamChessPreferredOpponent,
+  type SunbeamChessLearningRecord,
+} from './SunbeamChessLearningRecord';
 
 interface ChessPlazaSceneData {
   returnScene?: string;
@@ -131,6 +140,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
   private moveHistoryStart = -1;
   private coachHoldingFeedback = false;
   private coachLastPlayerFeedback: string | null = null;
+  private learningRecord: SunbeamChessLearningRecord = createDefaultSunbeamChessLearningRecord();
   private friendlyOpponentLevel: SunbeamChessOpponentLevel = 'clover';
   private homeMessageText: Phaser.GameObjects.Text | null = null;
   private currentLesson: SunbeamChessLessonDefinition | null = null;
@@ -152,6 +162,8 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.returnScene =
       this.miniGameSession?.returnTarget.sceneKey ?? data.returnScene ?? 'SunbeamVillageScene';
     this.resetRuntimeState();
+    this.learningRecord = loadBrowserSunbeamChessLearningRecord();
+    this.friendlyOpponentLevel = this.learningRecord.preferredOpponent;
     this.showAcademyHome();
 
     this.input.keyboard?.on('keydown-ESC', this.handleEscape, this);
@@ -248,6 +260,21 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
         },
       )
       .setOrigin(0, 0);
+
+    this.add
+      .text(
+        242,
+        229,
+        `Learning record · ${this.learningRecord.completedLessonIds.length}/${SUNBEAM_CHESS_LESSONS.length} lessons · ${this.learningRecord.completedPuzzleIds.length}/${SUNBEAM_CHESS_PUZZLES.length} puzzles`,
+        {
+          color: '#6b3f96',
+          fontFamily: UI_FONT,
+          fontSize: '14px',
+          fontStyle: 'bold',
+        },
+      )
+      .setOrigin(0, 0.5)
+      .setName('sunbeam-chess:learning-summary');
 
     const positions = [
       { x: 350, y: 338 },
@@ -382,12 +409,18 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       .setOrigin(0, 0.5);
 
     this.add
-      .text(238, 184, 'Nothing is locked. Pick the piece you want to practise.', {
-        color: CHESS_ACADEMY_PALETTE.softInk,
-        fontFamily: UI_FONT,
-        fontSize: '16px',
-      })
-      .setOrigin(0, 0.5);
+      .text(
+        238,
+        184,
+        `Nothing is locked. Pick anything to practise · ${this.learningRecord.completedLessonIds.length}/${SUNBEAM_CHESS_LESSONS.length} complete`,
+        {
+          color: CHESS_ACADEMY_PALETTE.softInk,
+          fontFamily: UI_FONT,
+          fontSize: '16px',
+        },
+      )
+      .setOrigin(0, 0.5)
+      .setName('sunbeam-chess:lesson-progress-summary');
 
     const positions = [
       { x: 350, y: 296 },
@@ -459,6 +492,18 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
         fontStyle: 'bold',
       })
       .setOrigin(0, 0.5);
+
+    if (this.learningRecord.completedLessonIds.includes(lesson.id)) {
+      this.add
+        .text(x + width / 2 - 20, y, '✓ Done', {
+          color: '#477d74',
+          fontFamily: UI_FONT,
+          fontSize: '14px',
+          fontStyle: 'bold',
+        })
+        .setOrigin(1, 0.5)
+        .setName(`sunbeam-chess:lesson-complete:${lesson.id}`);
+    }
   }
 
   private startLesson(id: SunbeamChessLessonId): void {
@@ -582,14 +627,15 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       .text(
         238,
         184,
-        'Every puzzle uses a real legal chess position. Hints grow only when you ask.',
+        `Real legal positions · hints grow only when you ask · ${this.learningRecord.completedPuzzleIds.length}/${SUNBEAM_CHESS_PUZZLES.length} solved`,
         {
           color: CHESS_ACADEMY_PALETTE.softInk,
           fontFamily: UI_FONT,
           fontSize: '16px',
         },
       )
-      .setOrigin(0, 0.5);
+      .setOrigin(0, 0.5)
+      .setName('sunbeam-chess:puzzle-progress-summary');
 
     const positions = [
       { x: 350, y: 338 },
@@ -664,6 +710,19 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
         fontSize: '14px',
       })
       .setOrigin(0, 0.5);
+
+    const solveCount = this.learningRecord.puzzleSolveCounts[puzzle.id] ?? 0;
+    if (solveCount > 0) {
+      this.add
+        .text(x + width / 2 - 20, y - 34, solveCount > 1 ? `✓ ×${solveCount}` : '✓ Solved', {
+          color: '#477d74',
+          fontFamily: UI_FONT,
+          fontSize: '13px',
+          fontStyle: 'bold',
+        })
+        .setOrigin(1, 0.5)
+        .setName(`sunbeam-chess:puzzle-complete:${puzzle.id}`);
+    }
   }
 
   private startPuzzle(id: SunbeamChessPuzzleId): void {
@@ -820,6 +879,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
 
     if (isSolution) {
       this.puzzleComplete = true;
+      this.persistLearningRecord(completeSunbeamChessPuzzle(this.learningRecord, puzzle.id));
       this.statusText?.setText('Puzzle solved ✦');
       this.lessonText?.setText(puzzle.success);
       this.renderBoard();
@@ -1075,6 +1135,16 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       )
       .setOrigin(0, 0);
 
+    this.add
+      .text(242, 220, `Last played · ${getSunbeamChessOpponent(this.learningRecord.preferredOpponent).title}`, {
+        color: '#6b3f96',
+        fontFamily: UI_FONT,
+        fontSize: '14px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0, 0.5)
+      .setName('sunbeam-chess:preferred-opponent');
+
     const yPositions = [296, 418, 540] as const;
     SUNBEAM_CHESS_OPPONENT_DEFINITIONS.forEach((opponent, index) => {
       this.createFriendlyOpponentCard(opponent.id, 640, yPositions[index]);
@@ -1164,6 +1234,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
 
   private startFriendlyMatch(level: SunbeamChessOpponentLevel = this.friendlyOpponentLevel): void {
     this.friendlyOpponentLevel = level;
+    this.persistLearningRecord(setSunbeamChessPreferredOpponent(this.learningRecord, level));
     this.clearView();
     this.view = 'friendly-match';
     this.currentLesson = null;
@@ -1644,6 +1715,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
 
     if (chosen.to === lesson.goalSquare) {
       this.lessonComplete = true;
+      this.persistLearningRecord(completeSunbeamChessLesson(this.learningRecord, lesson.id));
       this.statusText?.setText('Lesson complete ✦');
       this.lessonText?.setText(lesson.success);
       this.renderBoard();
@@ -2527,6 +2599,11 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       q: 'queen',
       k: 'king',
     }[piece];
+  }
+
+  private persistLearningRecord(record: SunbeamChessLearningRecord): void {
+    this.learningRecord = record;
+    saveBrowserSunbeamChessLearningRecord(record);
   }
 
   private restartCurrentActivity(): void {
