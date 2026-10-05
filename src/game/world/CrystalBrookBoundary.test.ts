@@ -159,24 +159,28 @@ describe('Crystal Brook H6.4 perimeter', () => {
     ]);
   });
 
-  it('derives perimeter collision from the visible rock formations', () => {
-    expect(CRYSTAL_BROOK_PERIMETER_COLLIDERS).toHaveLength(CRYSTAL_BROOK_BOUNDARY_ROCKS.length);
+  it('uses a small set of continuous perimeter collision strips instead of one body per rock', () => {
+    expect(CRYSTAL_BROOK_PERIMETER_COLLIDERS).toHaveLength(9);
+    expect(CRYSTAL_BROOK_PERIMETER_COLLIDERS.length).toBeLessThan(
+      CRYSTAL_BROOK_BOUNDARY_ROCKS.length / 4,
+    );
 
-    for (const rock of CRYSTAL_BROOK_BOUNDARY_ROCKS) {
-      const collider = CRYSTAL_BROOK_PERIMETER_COLLIDERS.find(
-        ({ id }) => id === `collision:brook-perimeter:${rock.id}`,
-      );
-      expect(collider).toBeDefined();
-      expect(collider?.x).toBe(rock.x);
-      expect(collider?.y).toBe(rock.y + rock.collisionOffsetY);
-      expect(collider?.width).toBeCloseTo(rock.width * rock.collisionScaleX);
-      expect(collider?.height).toBeCloseTo(rock.height * rock.collisionScaleY);
-    }
+    expect(CRYSTAL_BROOK_PERIMETER_COLLIDERS.map(({ id }) => id)).toEqual([
+      'collision:brook-perimeter:north-west',
+      'collision:brook-perimeter:north-east',
+      'collision:brook-perimeter:west-upper',
+      'collision:brook-perimeter:west-lower',
+      'collision:brook-perimeter:east-upper',
+      'collision:brook-perimeter:east-middle',
+      'collision:brook-perimeter:east-lower',
+      'collision:brook-perimeter:south-west',
+      'collision:brook-perimeter:south-east',
+    ]);
 
     expect(CRYSTAL_BROOK_MAP.colliders.some(({ id }) => id === 'collision:cliff-west')).toBe(false);
     expect(CRYSTAL_BROOK_MAP.colliders.some(({ id }) => id === 'collision:cliff-east')).toBe(false);
     expect(
       CRYSTAL_BROOK_MAP.colliders.filter(({ id }) => id.startsWith('collision:brook-perimeter:')),
-    ).toHaveLength(CRYSTAL_BROOK_BOUNDARY_ROCKS.length);
+    ).toHaveLength(9);
   });
 });
