@@ -345,3 +345,24 @@ Current bounded Coach Match implementation:
 - browser coverage exercises Coach Match availability, a normal opening move, the village reply and full-turn undo.
 
 MG-WP5D remains human-gated before moving to MG-WP5E.
+
+
+## MG-WP5D Coach Match interaction-polish pass
+
+Human review of the initial Coach Match preview identified three issues:
+
+1. the right column reads as stacked UI panels rather than a coach speaking to the player;
+2. the village replies ~520 ms after the player's move, replacing the player's feedback before it can be read;
+3. the three-line move log has no clear navigation and becomes unreadable as a match grows.
+
+Implementation contract:
+
+- rebuild the Coach Match upper-right area around the production-art coach portrait and one speech bubble with a visible tail toward the coach;
+- merge turn/status guidance into the conversational area rather than retaining separate competing note/status boxes;
+- hold the player's coaching response for ~2.2 seconds before triggering the automatic village move;
+- leave the village-move explanation visible until the next player interaction;
+- introduce one shared move-history renderer for Coach Match and Friendly Match;
+- display four full-move rows at a time with touch-friendly up/down controls;
+- display the current visible move range / total count;
+- auto-follow the newest moves after a new move, while explicit scrolling allows browsing earlier moves;
+- preserve all existing Coach Match warning, hint, undo and Play-it-anyway behaviour.
