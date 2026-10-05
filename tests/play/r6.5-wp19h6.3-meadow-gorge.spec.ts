@@ -119,6 +119,11 @@ test('Rainbow Meadow and Crystal Brook share one gorge transition without arriva
   ).toBe(true);
   expect(
     brook?.objects.some(
+      (object) => object.name === 'crystal-brook:meadow-gorge:rainbow-meadow-sign',
+    ),
+  ).toBe(true);
+  expect(
+    brook?.objects.some(
       (object) => object.name === 'r6-region-gateway-art:brook-meadow:cave-mouth',
     ),
   ).toBe(false);
