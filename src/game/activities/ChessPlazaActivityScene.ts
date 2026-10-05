@@ -141,6 +141,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
   private coachHoldingFeedback = false;
   private coachLastPlayerFeedback: string | null = null;
   private learningRecord: SunbeamChessLearningRecord = createDefaultSunbeamChessLearningRecord();
+  private keyboardSquare: Square = 'e2';
   private friendlyOpponentLevel: SunbeamChessOpponentLevel = 'clover';
   private homeMessageText: Phaser.GameObjects.Text | null = null;
   private currentLesson: SunbeamChessLessonDefinition | null = null;
@@ -166,10 +167,12 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.friendlyOpponentLevel = this.learningRecord.preferredOpponent;
     this.showAcademyHome();
 
+    this.input.keyboard?.on('keydown', this.handleKeyboardInput, this);
     this.input.keyboard?.on('keydown-ESC', this.handleEscape, this);
     this.input.keyboard?.on('keydown-R', this.restartCurrentActivity, this);
     this.input.keyboard?.on('keydown-H', this.showHint, this);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.input.keyboard?.off('keydown', this.handleKeyboardInput, this);
       this.input.keyboard?.off('keydown-ESC', this.handleEscape, this);
       this.input.keyboard?.off('keydown-R', this.restartCurrentActivity, this);
       this.input.keyboard?.off('keydown-H', this.showHint, this);
@@ -185,18 +188,22 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.hintMove = null;
     this.currentLesson = null;
     this.lessonHintStage = 0;
+    this.keyboardSquare = lesson.pieceSquare;
     this.lessonComplete = false;
     this.lessonResetPending = false;
     this.currentPuzzle = null;
     this.puzzleHintStage = 0;
+    this.keyboardSquare = puzzle.from;
     this.puzzleComplete = false;
     this.puzzleResetPending = false;
     this.coachPendingMove = null;
     this.coachHintStage = 0;
+    this.keyboardSquare = 'e2';
     this.coachUndoPlies = 0;
     this.coachHoldingFeedback = false;
     this.coachLastPlayerFeedback = null;
     this.moveHistoryStart = -1;
+    this.keyboardSquare = 'e2';
     this.friendlyOpponentLevel = 'clover';
     this.friendlyResultShown = false;
     this.opponentPending = false;
@@ -1242,6 +1249,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.chess = new Chess();
     this.selected = null;
     this.hintMove = null;
+    this.keyboardSquare = 'e2';
     this.moveHistoryStart = -1;
     this.friendlyResultShown = false;
     this.clearCompletionCard();
@@ -1531,6 +1539,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
         const hintFrom = this.hintMove?.from === square;
         const hintTo = this.hintMove?.to === square;
         const isGoal = goalSquare === square;
+        const keyboardFocus = this.keyboardSquare === square;
         const piece = this.chess.get(square);
         const checkedKing =
           this.chess.isCheck() && piece?.type === 'k' && piece.color === this.chess.turn();
@@ -1553,6 +1562,15 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
           .setName(`sunbeam-chess:square:${square}`);
         tile.on('pointerdown', () => this.handleSquarePress(square));
         this.boardContainer.add(tile);
+
+        if (keyboardFocus) {
+          this.boardContainer.add(
+            this.add
+              .rectangle(x, y, SQUARE_SIZE - 7, SQUARE_SIZE - 7, 0xffffff, 0)
+              .setStrokeStyle(4, 0x472868, 1)
+              .setName(`sunbeam-chess:keyboard-focus:${square}`),
+          );
+        }
 
         if (checkedKing) {
           this.boardContainer.add(
@@ -1645,6 +1663,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
   }
 
   private handleSquarePress(square: Square): void {
+    this.keyboardSquare = square;
     if (this.view === 'lesson') {
       this.handleLessonSquarePress(square);
       return;
@@ -2495,14 +2514,14 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     const draw = (fill: number): void => {
       button.clear();
       button.fillStyle(fill, 1);
-      button.fillRoundedRect(-22, -20, 44, 40, 12);
+      button.fillRoundedRect(-24, -22, 48, 44, 12);
       button.lineStyle(2, CHESS_ACADEMY_PALETTE.header, 1);
-      button.strokeRoundedRect(-22, -20, 44, 40, 12);
+      button.strokeRoundedRect(-24, -22, 48, 44, 12);
     };
     draw(CHESS_ACADEMY_PALETTE.mint);
 
     button
-      .setInteractive(new Phaser.Geom.Rectangle(-22, -20, 44, 40), Phaser.Geom.Rectangle.Contains)
+      .setInteractive(new Phaser.Geom.Rectangle(-24, -22, 48, 44), Phaser.Geom.Rectangle.Contains)
       .on('pointerover', () => draw(CHESS_ACADEMY_PALETTE.mintHover))
       .on('pointerout', () => draw(CHESS_ACADEMY_PALETTE.mint))
       .on('pointerdown', () => this.scrollMoveHistory(direction));
@@ -2599,6 +2618,76 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       q: 'queen',
       k: 'king',
     }[piece];
+  }
+
+  private handleKeyboardInput(event: KeyboardEvent): void {
+    const numericIndex = /^[1-9]$/.test(event.key) ? Number(event.key) - 1 : -1;
+
+    if (this.view === 'home' && numericIndex >= 0) {
+      const mode = SUNBEAM_CHESS_ACADEMY_MODE_DEFINITIONS[numericIndex];
+      if (mode?.availability === 'available') {
+        event.preventDefault();
+        this.openAcademyMode(mode.id);
+      }
+      return;
+    }
+
+    if (this.view === 'lesson-list' && numericIndex >= 0) {
+      const lesson = SUNBEAM_CHESS_LESSONS[numericIndex];
+      if (lesson) {
+        event.preventDefault();
+        this.startLesson(lesson.id);
+      }
+      return;
+    }
+
+    if (this.view === 'puzzle-list' && numericIndex >= 0) {
+      const puzzle = SUNBEAM_CHESS_PUZZLES[numericIndex];
+      if (puzzle) {
+        event.preventDefault();
+        this.startPuzzle(puzzle.id);
+      }
+      return;
+    }
+
+    if (this.view === 'friendly-select' && numericIndex >= 0) {
+      const opponent = SUNBEAM_CHESS_OPPONENT_DEFINITIONS[numericIndex];
+      if (opponent) {
+        event.preventDefault();
+        this.startFriendlyMatch(opponent.id);
+      }
+      return;
+    }
+
+    if (!['lesson', 'puzzle', 'coach-match', 'friendly-match'].includes(this.view)) {
+      return;
+    }
+
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      this.handleSquarePress(this.keyboardSquare);
+      return;
+    }
+
+    if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) {
+      return;
+    }
+
+    event.preventDefault();
+    const file = FILES.indexOf(this.keyboardSquare[0]);
+    const rank = Number(this.keyboardSquare[1]);
+    const nextFile = Phaser.Math.Clamp(
+      file + (event.key === 'ArrowLeft' ? -1 : event.key === 'ArrowRight' ? 1 : 0),
+      0,
+      7,
+    );
+    const nextRank = Phaser.Math.Clamp(
+      rank + (event.key === 'ArrowDown' ? -1 : event.key === 'ArrowUp' ? 1 : 0),
+      1,
+      8,
+    );
+    this.keyboardSquare = `${FILES[nextFile]}${nextRank}` as Square;
+    this.renderBoard();
   }
 
   private persistLearningRecord(record: SunbeamChessLearningRecord): void {
