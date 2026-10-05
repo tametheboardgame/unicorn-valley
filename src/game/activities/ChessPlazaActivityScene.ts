@@ -1339,9 +1339,13 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
         const hintFrom = this.hintMove?.from === square;
         const hintTo = this.hintMove?.to === square;
         const isGoal = goalSquare === square;
+        const piece = this.chess.get(square);
+        const checkedKing =
+          this.chess.isCheck() && piece?.type === 'k' && piece.color === this.chess.turn();
         const baseColour = (row + col) % 2 === 0 ? 0xf4deb0 : 0x94705a;
-        const squareColour =
-          selected || hintFrom
+        const squareColour = checkedKing
+          ? 0xe86d7a
+          : selected || hintFrom
             ? 0xf2ce6d
             : hintTo
               ? 0x8fc89a
@@ -1357,6 +1361,15 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
           .setName(`sunbeam-chess:square:${square}`);
         tile.on('pointerdown', () => this.handleSquarePress(square));
         this.boardContainer.add(tile);
+
+        if (checkedKing) {
+          this.boardContainer.add(
+            this.add
+              .rectangle(x, y, SQUARE_SIZE - 7, SQUARE_SIZE - 7, 0xff314f, 0.08)
+              .setStrokeStyle(5, 0xa71932, 1)
+              .setName(`sunbeam-chess:check-warning:${square}`),
+          );
+        }
 
         if (legalDestination && !hintTo) {
           this.boardContainer.add(this.add.circle(x, y, 7, 0x4f8658, 0.72));
@@ -1382,7 +1395,6 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
           );
         }
 
-        const piece = this.chess.get(square);
         if (piece) {
           const glyph = this.add
             .text(x, y - 2, PIECE_GLYPHS[piece.color][piece.type], {
@@ -1390,8 +1402,12 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
               fontFamily: 'Georgia, serif',
               fontSize: '42px',
               fontStyle: 'bold',
-              stroke: piece.color === 'w' ? '#5b4a42' : '#f5e6c7',
-              strokeThickness: 2,
+              stroke: checkedKing
+                ? '#a71932'
+                : piece.color === 'w'
+                  ? '#5b4a42'
+                  : '#f5e6c7',
+              strokeThickness: checkedKing ? 5 : 2,
             })
             .setOrigin(0.5)
             .setInteractive({ useHandCursor: true })
