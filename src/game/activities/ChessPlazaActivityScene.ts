@@ -3,7 +3,8 @@ import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { returnFromMiniGame } from '../minigames/MiniGameLauncher';
 import { readMiniGameSession, type MiniGameSession } from '../minigames/MiniGameSession';
-import { UI_COLOURS, UI_FONT } from '../ui/uiTheme';
+import { UI_FONT } from '../ui/uiTheme';
+import { createCoreNpcSprite } from '../visual/CoreNpcProductionArt';
 import {
   SUNBEAM_CHESS_ACADEMY_MODE_DEFINITIONS,
   type SunbeamChessAcademyMode,
@@ -15,6 +16,12 @@ import {
   type SunbeamChessLessonId,
 } from './SunbeamChessLessons';
 import {
+  SUNBEAM_CHESS_PUZZLES,
+  getSunbeamChessPuzzle,
+  type SunbeamChessPuzzleDefinition,
+  type SunbeamChessPuzzleId,
+} from './SunbeamChessPuzzles';
+import {
   chooseTeachingMove,
   chooseVillageChessMove,
   describeChessPosition,
@@ -25,13 +32,43 @@ interface ChessPlazaSceneData {
   returnScene?: string;
 }
 
-type ChessAcademyView = 'home' | 'lesson-list' | 'lesson' | 'friendly-match';
+type ChessAcademyView =
+  | 'home'
+  | 'lesson-list'
+  | 'lesson'
+  | 'puzzle-list'
+  | 'puzzle'
+  | 'friendly-match';
 
 const BOARD_LEFT = 86;
 const BOARD_TOP = 128;
 const SQUARE_SIZE = 58;
 const BOARD_SIZE = SQUARE_SIZE * 8;
 const FILES = 'abcdefgh';
+
+const CHESS_ACADEMY_PALETTE = {
+  backdrop: 0x281643,
+  shell: 0xf6f0ff,
+  shellBorder: 0xf2c75c,
+  header: 0x5d2f8d,
+  headerAccent: 0x7748aa,
+  ink: '#35204f',
+  softInk: '#66557a',
+  berry: 0xc95d9c,
+  berrySoft: 0xffe8f5,
+  lavender: 0x7d5bc8,
+  lavenderSoft: 0xeee6ff,
+  mint: 0x78d7c4,
+  mintHover: 0x9de7d9,
+  mintSoft: 0xe3faf5,
+  turquoise: 0x3da996,
+  gold: 0xf2c75c,
+  goldSoft: 0xfff3c9,
+  disabled: 0xe5e0ec,
+  disabledBorder: 0xb7acc4,
+  panel: 0xf0e9fb,
+  panelBright: 0xffffff,
+} as const;
 
 const PIECE_GLYPHS: Record<Color, Record<PieceSymbol, string>> = {
   w: { k: '♔', q: '♕', r: '♖', b: '♗', n: '♘', p: '♙' },
@@ -42,17 +79,20 @@ function squareFor(row: number, col: number): Square {
   return `${FILES[col]}${8 - row}` as Square;
 }
 
-function lessonHintText(lesson: SunbeamChessLessonDefinition, stage: number): string {
+function layeredHintText(
+  hints: { notice: string; question: string; nudge: string; show: string },
+  stage: number,
+): string {
   if (stage <= 0) {
-    return lesson.hints.notice;
+    return hints.notice;
   }
   if (stage === 1) {
-    return lesson.hints.question;
+    return hints.question;
   }
   if (stage === 2) {
-    return lesson.hints.nudge;
+    return hints.nudge;
   }
-  return lesson.hints.show;
+  return hints.show;
 }
 
 export class ChessPlazaActivityScene extends Phaser.Scene {
@@ -63,6 +103,8 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
   private selected: Square | null = null;
   private hintMove: Move | null = null;
   private boardContainer: Phaser.GameObjects.Container | null = null;
+  private completionContainer: Phaser.GameObjects.Container | null = null;
+  private friendlyResultShown = false;
   private statusText: Phaser.GameObjects.Text | null = null;
   private lessonText: Phaser.GameObjects.Text | null = null;
   private moveLogText: Phaser.GameObjects.Text | null = null;
@@ -71,6 +113,10 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
   private lessonHintStage = 0;
   private lessonComplete = false;
   private lessonResetPending = false;
+  private currentPuzzle: SunbeamChessPuzzleDefinition | null = null;
+  private puzzleHintStage = 0;
+  private puzzleComplete = false;
+  private puzzleResetPending = false;
   private opponentPending = false;
 
   public constructor() {
@@ -105,12 +151,18 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.lessonHintStage = 0;
     this.lessonComplete = false;
     this.lessonResetPending = false;
+    this.currentPuzzle = null;
+    this.puzzleHintStage = 0;
+    this.puzzleComplete = false;
+    this.puzzleResetPending = false;
+    this.friendlyResultShown = false;
     this.opponentPending = false;
   }
 
   private clearView(): void {
     this.children.removeAll(true);
     this.boardContainer = null;
+    this.completionContainer = null;
     this.statusText = null;
     this.lessonText = null;
     this.moveLogText = null;
@@ -121,21 +173,24 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.clearView();
     this.view = 'home';
     this.currentLesson = null;
+    this.currentPuzzle = null;
     this.selected = null;
     this.hintMove = null;
     this.lessonComplete = false;
     this.lessonResetPending = false;
+    this.puzzleComplete = false;
+    this.puzzleResetPending = false;
     this.opponentPending = false;
 
     this.drawAcademyShell(
       'Sunbeam Chess Academy',
       'Learn, practise and play real chess at your own pace.',
     );
-    this.drawTeacherPortrait(166, 203, 1.05);
+    this.drawTeacherPortrait(154, 181, 0.9);
 
     this.add
-      .text(265, 148, 'Your Sunbeam Chess Coach', {
-        color: '#5d4569',
+      .text(242, 151, 'Your Sunbeam Chess Coach', {
+        color: CHESS_ACADEMY_PALETTE.ink,
         fontFamily: UI_FONT,
         fontSize: '24px',
         fontStyle: 'bold',
@@ -144,32 +199,32 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
 
     this.homeMessageText = this.add
       .text(
-        265,
-        191,
+        242,
+        187,
         'We can learn one little idea, try a puzzle, or play a whole game. You choose.',
         {
-          color: UI_COLOURS.softInk,
+          color: CHESS_ACADEMY_PALETTE.softInk,
           fontFamily: UI_FONT,
           fontSize: '17px',
           lineSpacing: 5,
-          wordWrap: { width: 820 },
+          wordWrap: { width: 850 },
         },
       )
       .setOrigin(0, 0);
 
     const positions = [
-      { x: 350, y: 366 },
-      { x: 870, y: 366 },
-      { x: 350, y: 548 },
-      { x: 870, y: 548 },
+      { x: 350, y: 338 },
+      { x: 870, y: 338 },
+      { x: 350, y: 506 },
+      { x: 870, y: 506 },
     ] as const;
 
     SUNBEAM_CHESS_ACADEMY_MODE_DEFINITIONS.forEach((mode, index) => {
       const position = positions[index];
-      this.createModeCard(position.x, position.y, 446, 150, mode.id);
+      this.createModeCard(position.x, position.y, 446, 132, mode.id);
     });
 
-    this.createRoundedButton(1090, 656, 210, this.exitLabel(), () => this.leaveActivity());
+    this.createRoundedButton(1082, 638, 210, this.exitLabel(), () => this.leaveActivity());
   }
 
   private createModeCard(
@@ -188,12 +243,26 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
 
     const panel = this.add.graphics().setPosition(x, y).setName(`sunbeam-chess:mode:${mode.id}`);
     const available = mode.availability === 'available';
+    const accent =
+      mode.id === 'lessons'
+        ? { fill: CHESS_ACADEMY_PALETTE.berrySoft, border: CHESS_ACADEMY_PALETTE.berry }
+        : mode.id === 'puzzle-garden'
+          ? { fill: CHESS_ACADEMY_PALETTE.mintSoft, border: CHESS_ACADEMY_PALETTE.turquoise }
+          : mode.id === 'friendly-match'
+            ? { fill: CHESS_ACADEMY_PALETTE.lavenderSoft, border: CHESS_ACADEMY_PALETTE.lavender }
+            : {
+                fill: CHESS_ACADEMY_PALETTE.disabled,
+                border: CHESS_ACADEMY_PALETTE.disabledBorder,
+              };
     const draw = (hovered: boolean): void => {
       panel.clear();
-      panel.fillStyle(available ? (hovered ? 0xffedf2 : 0xfffbf1) : 0xeee8dd, available ? 1 : 0.86);
+      const fill = available && hovered ? CHESS_ACADEMY_PALETTE.panelBright : accent.fill;
+      panel.fillStyle(fill, available ? 1 : 0.9);
       panel.fillRoundedRect(-width / 2, -height / 2, width, height, 22);
-      panel.lineStyle(available ? 3 : 2, available ? 0xc99bb2 : 0xc8beb1, 0.95);
+      panel.lineStyle(available ? 3 : 2, accent.border, 1);
       panel.strokeRoundedRect(-width / 2, -height / 2, width, height, 22);
+      panel.fillStyle(accent.border, available ? 0.95 : 0.55);
+      panel.fillRoundedRect(-width / 2 + 10, -height / 2 + 12, 8, height - 24, 4);
     };
     draw(false);
 
@@ -209,8 +278,8 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     }
 
     this.add
-      .text(x - width / 2 + 26, y - 37, `${mode.icon}  ${mode.title}`, {
-        color: available ? UI_COLOURS.ink : '#8d857c',
+      .text(x - width / 2 + 34, y - 27, `${mode.icon}  ${mode.title}`, {
+        color: available ? CHESS_ACADEMY_PALETTE.ink : '#84798f',
         fontFamily: UI_FONT,
         fontSize: '22px',
         fontStyle: 'bold',
@@ -218,19 +287,19 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       .setOrigin(0, 0.5);
 
     this.add
-      .text(x - width / 2 + 26, y + 1, mode.description, {
-        color: available ? UI_COLOURS.softInk : '#9d958c',
+      .text(x - width / 2 + 34, y + 7, mode.description, {
+        color: available ? CHESS_ACADEMY_PALETTE.softInk : '#978da1',
         fontFamily: UI_FONT,
         fontSize: '15px',
         lineSpacing: 4,
-        wordWrap: { width: width - 52 },
+        wordWrap: { width: width - 70 },
       })
       .setOrigin(0, 0);
 
     if (!available) {
       this.add
-        .text(x + width / 2 - 24, y - 48, 'COMING SOON', {
-          color: '#8c7568',
+        .text(x + width / 2 - 24, y - 42, 'COMING SOON', {
+          color: '#786b86',
           fontFamily: UI_FONT,
           fontSize: '11px',
           fontStyle: 'bold',
@@ -244,15 +313,17 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       this.showLessonList();
       return;
     }
+    if (modeId === 'puzzle-garden') {
+      this.showPuzzleList();
+      return;
+    }
     if (modeId === 'friendly-match') {
       this.startFriendlyMatch();
       return;
     }
 
     this.homeMessageText?.setText(
-      modeId === 'puzzle-garden'
-        ? 'The Puzzle Garden is being planted. Lessons and Friendly Match are ready now.'
-        : 'Coach Match is still learning when to help and when to stay quiet. Lessons and Friendly Match are ready now.',
+      'Coach Match is still learning when to help and when to stay quiet. Lessons, Puzzle Garden and Friendly Match are ready now.',
     );
   }
 
@@ -260,11 +331,11 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.clearView();
     this.view = 'lesson-list';
     this.drawAcademyShell('Chess Lessons', 'Tiny challenges. One chess idea at a time.');
-    this.drawTeacherPortrait(166, 190, 0.94);
+    this.drawTeacherPortrait(154, 177, 0.82);
 
     this.add
-      .text(264, 154, 'Start anywhere', {
-        color: '#5d4569',
+      .text(238, 151, 'Start anywhere', {
+        color: CHESS_ACADEMY_PALETTE.ink,
         fontFamily: UI_FONT,
         fontSize: '22px',
         fontStyle: 'bold',
@@ -272,26 +343,30 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       .setOrigin(0, 0.5);
 
     this.add
-      .text(264, 187, 'Nothing is locked. Pick the piece you want to practise.', {
-        color: UI_COLOURS.softInk,
+      .text(238, 184, 'Nothing is locked. Pick the piece you want to practise.', {
+        color: CHESS_ACADEMY_PALETTE.softInk,
         fontFamily: UI_FONT,
         fontSize: '16px',
       })
       .setOrigin(0, 0.5);
 
     const positions = [
-      { x: 350, y: 360 },
-      { x: 870, y: 360 },
-      { x: 350, y: 535 },
-      { x: 870, y: 535 },
+      { x: 350, y: 296 },
+      { x: 870, y: 296 },
+      { x: 350, y: 374 },
+      { x: 870, y: 374 },
+      { x: 350, y: 452 },
+      { x: 870, y: 452 },
+      { x: 350, y: 530 },
+      { x: 870, y: 530 },
     ] as const;
 
     SUNBEAM_CHESS_LESSONS.forEach((lesson, index) => {
       const position = positions[index];
-      this.createLessonCard(position.x, position.y, 446, 138, lesson);
+      this.createLessonCard(position.x, position.y, 446, 70, lesson);
     });
 
-    this.createRoundedButton(1100, 656, 190, '← Academy', () => this.showAcademyHome());
+    this.createRoundedButton(1088, 638, 190, '← Academy', () => this.showAcademyHome());
   }
 
   private createLessonCard(
@@ -307,9 +382,16 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       .setName(`sunbeam-chess:lesson-card:${lesson.id}`);
     const draw = (hovered: boolean): void => {
       panel.clear();
-      panel.fillStyle(hovered ? 0xf0f8e8 : 0xfffbf1, 1);
+      panel.fillStyle(
+        hovered ? CHESS_ACADEMY_PALETTE.panelBright : CHESS_ACADEMY_PALETTE.lavenderSoft,
+        1,
+      );
       panel.fillRoundedRect(-width / 2, -height / 2, width, height, 20);
-      panel.lineStyle(3, hovered ? 0x7dae79 : 0xd6bc91, 0.95);
+      panel.lineStyle(
+        3,
+        hovered ? CHESS_ACADEMY_PALETTE.berry : CHESS_ACADEMY_PALETTE.lavender,
+        0.95,
+      );
       panel.strokeRoundedRect(-width / 2, -height / 2, width, height, 20);
     };
     draw(false);
@@ -323,26 +405,19 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       .on('pointerdown', () => this.startLesson(lesson.id));
 
     this.add
-      .text(x - width / 2 + 24, y - 34, `${lesson.order / 10}.  ${lesson.title}`, {
-        color: UI_COLOURS.ink,
+      .text(x - width / 2 + 22, y - 13, `${lesson.order / 10}.  ${lesson.title}`, {
+        color: CHESS_ACADEMY_PALETTE.ink,
         fontFamily: UI_FONT,
-        fontSize: '21px',
+        fontSize: '18px',
         fontStyle: 'bold',
       })
       .setOrigin(0, 0.5);
     this.add
-      .text(x - width / 2 + 24, y + 4, lesson.subtitle, {
-        color: '#80654f',
-        fontFamily: UI_FONT,
-        fontSize: '15px',
-        fontStyle: 'bold',
-      })
-      .setOrigin(0, 0.5);
-    this.add
-      .text(x - width / 2 + 24, y + 32, lesson.objective, {
-        color: UI_COLOURS.softInk,
+      .text(x - width / 2 + 22, y + 14, lesson.subtitle, {
+        color: '#76568f',
         fontFamily: UI_FONT,
         fontSize: '14px',
+        fontStyle: 'bold',
       })
       .setOrigin(0, 0.5);
   }
@@ -352,12 +427,14 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.clearView();
     this.view = 'lesson';
     this.currentLesson = lesson;
+    this.currentPuzzle = null;
     this.chess = new Chess(lesson.fen);
     this.selected = null;
     this.hintMove = null;
     this.lessonHintStage = 0;
     this.lessonComplete = false;
     this.lessonResetPending = false;
+    this.clearCompletionCard();
     this.opponentPending = false;
 
     this.createLessonBackdrop(lesson);
@@ -366,35 +443,20 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
   }
 
   private createLessonBackdrop(lesson: SunbeamChessLessonDefinition): void {
-    this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x63765f, 1);
-    const shell = this.add.graphics();
-    shell.fillStyle(0xfff8e8, 1);
-    shell.fillRoundedRect(35, 30, 1210, 654, 30);
-    shell.lineStyle(7, 0xcaa66e, 1);
-    shell.strokeRoundedRect(35, 30, 1210, 654, 30);
-
-    this.add
-      .text(GAME_WIDTH / 2, 66, `✦  ${lesson.title}`, {
-        color: '#5d4569',
-        fontFamily: UI_FONT,
-        fontSize: '31px',
-        fontStyle: 'bold',
-      })
-      .setOrigin(0.5);
-
+    this.drawActivityShell(`✦  ${lesson.title}`);
     this.drawBoardFrame();
 
     const coach = this.add.graphics();
-    coach.fillStyle(0xf4ead8, 1);
+    coach.fillStyle(CHESS_ACADEMY_PALETTE.panel, 1);
     coach.fillRoundedRect(600, 116, 600, 458, 24);
-    coach.lineStyle(3, 0xd6bc91, 0.95);
+    coach.lineStyle(3, CHESS_ACADEMY_PALETTE.lavender, 0.95);
     coach.strokeRoundedRect(600, 116, 600, 458, 24);
 
     this.drawTeacherPortrait(700, 202, 0.78);
 
     this.add
       .text(780, 153, 'Your Chess Coach', {
-        color: UI_COLOURS.ink,
+        color: CHESS_ACADEMY_PALETTE.ink,
         fontFamily: UI_FONT,
         fontSize: '21px',
         fontStyle: 'bold',
@@ -403,7 +465,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
 
     this.statusText = this.add
       .text(780, 192, lesson.objective, {
-        color: '#5d4569',
+        color: '#6b3f96',
         fontFamily: UI_FONT,
         fontSize: '18px',
         fontStyle: 'bold',
@@ -413,14 +475,14 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       .setName('sunbeam-chess:lesson-status');
 
     const lessonPanel = this.add.graphics();
-    lessonPanel.fillStyle(0xfffbf1, 1);
+    lessonPanel.fillStyle(CHESS_ACADEMY_PALETTE.panelBright, 1);
     lessonPanel.fillRoundedRect(638, 286, 524, 160, 18);
-    lessonPanel.lineStyle(2, 0xddc9a8, 0.9);
+    lessonPanel.lineStyle(2, CHESS_ACADEMY_PALETTE.berry, 0.65);
     lessonPanel.strokeRoundedRect(638, 286, 524, 160, 18);
 
     this.lessonText = this.add
       .text(900, 366, '', {
-        color: UI_COLOURS.softInk,
+        color: CHESS_ACADEMY_PALETTE.softInk,
         fontFamily: UI_FONT,
         fontSize: '17px',
         lineSpacing: 6,
@@ -432,7 +494,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
 
     this.add
       .text(900, 486, 'The glowing star is your goal. Green dots show legal moves.', {
-        color: '#80654f',
+        color: '#477d74',
         fontFamily: UI_FONT,
         fontSize: '14px',
         align: 'center',
@@ -454,7 +516,318 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.lessonHintStage = 0;
     this.lessonComplete = false;
     this.lessonResetPending = false;
+    this.clearCompletionCard();
+    this.statusText?.setText(this.currentLesson.objective);
     this.lessonText?.setText(this.currentLesson.intro);
+    this.renderBoard();
+  }
+
+  private showPuzzleList(): void {
+    this.clearView();
+    this.view = 'puzzle-list';
+    this.currentLesson = null;
+    this.currentPuzzle = null;
+    this.drawAcademyShell('Puzzle Garden', 'Little positions with one useful idea to discover.');
+    this.drawTeacherPortrait(154, 177, 0.82);
+
+    this.add
+      .text(238, 151, 'Look, think, try', {
+        color: CHESS_ACADEMY_PALETTE.ink,
+        fontFamily: UI_FONT,
+        fontSize: '22px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0, 0.5);
+
+    this.add
+      .text(
+        238,
+        184,
+        'Every puzzle uses a real legal chess position. Hints grow only when you ask.',
+        {
+          color: CHESS_ACADEMY_PALETTE.softInk,
+          fontFamily: UI_FONT,
+          fontSize: '16px',
+        },
+      )
+      .setOrigin(0, 0.5);
+
+    const positions = [
+      { x: 350, y: 338 },
+      { x: 870, y: 338 },
+      { x: 350, y: 498 },
+      { x: 870, y: 498 },
+    ] as const;
+
+    SUNBEAM_CHESS_PUZZLES.forEach((puzzle, index) => {
+      const position = positions[index];
+      this.createPuzzleCard(position.x, position.y, 446, 124, puzzle);
+    });
+
+    this.createRoundedButton(1088, 638, 190, '← Academy', () => this.showAcademyHome());
+  }
+
+  private createPuzzleCard(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    puzzle: SunbeamChessPuzzleDefinition,
+  ): void {
+    const panel = this.add
+      .graphics()
+      .setPosition(x, y)
+      .setName(`sunbeam-chess:puzzle-card:${puzzle.id}`);
+    const draw = (hovered: boolean): void => {
+      panel.clear();
+      panel.fillStyle(
+        hovered ? CHESS_ACADEMY_PALETTE.panelBright : CHESS_ACADEMY_PALETTE.mintSoft,
+        1,
+      );
+      panel.fillRoundedRect(-width / 2, -height / 2, width, height, 20);
+      panel.lineStyle(
+        3,
+        hovered ? CHESS_ACADEMY_PALETTE.berry : CHESS_ACADEMY_PALETTE.turquoise,
+        0.95,
+      );
+      panel.strokeRoundedRect(-width / 2, -height / 2, width, height, 20);
+    };
+    draw(false);
+    panel
+      .setInteractive(
+        new Phaser.Geom.Rectangle(-width / 2, -height / 2, width, height),
+        Phaser.Geom.Rectangle.Contains,
+      )
+      .on('pointerover', () => draw(true))
+      .on('pointerout', () => draw(false))
+      .on('pointerdown', () => this.startPuzzle(puzzle.id));
+
+    this.add
+      .text(x - width / 2 + 24, y - 34, `${puzzle.order / 10}.  ${puzzle.title}`, {
+        color: CHESS_ACADEMY_PALETTE.ink,
+        fontFamily: UI_FONT,
+        fontSize: '21px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0, 0.5);
+    this.add
+      .text(x - width / 2 + 24, y + 4, puzzle.subtitle, {
+        color: '#477d74',
+        fontFamily: UI_FONT,
+        fontSize: '15px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0, 0.5);
+    this.add
+      .text(x - width / 2 + 24, y + 32, puzzle.objective, {
+        color: CHESS_ACADEMY_PALETTE.softInk,
+        fontFamily: UI_FONT,
+        fontSize: '14px',
+      })
+      .setOrigin(0, 0.5);
+  }
+
+  private startPuzzle(id: SunbeamChessPuzzleId): void {
+    const puzzle = getSunbeamChessPuzzle(id);
+    this.clearView();
+    this.view = 'puzzle';
+    this.currentLesson = null;
+    this.currentPuzzle = puzzle;
+    this.chess = new Chess(puzzle.fen);
+    this.selected = null;
+    this.hintMove = null;
+    this.puzzleHintStage = 0;
+    this.puzzleComplete = false;
+    this.puzzleResetPending = false;
+    this.clearCompletionCard();
+    this.opponentPending = false;
+
+    this.createPuzzleBackdrop(puzzle);
+    this.lessonText?.setText(puzzle.intro);
+    this.renderBoard();
+  }
+
+  private createPuzzleBackdrop(puzzle: SunbeamChessPuzzleDefinition): void {
+    this.drawActivityShell(`🌱  ${puzzle.title}`);
+    this.drawBoardFrame();
+
+    const coach = this.add.graphics();
+    coach.fillStyle(CHESS_ACADEMY_PALETTE.mintSoft, 1);
+    coach.fillRoundedRect(600, 116, 600, 458, 24);
+    coach.lineStyle(3, CHESS_ACADEMY_PALETTE.turquoise, 0.95);
+    coach.strokeRoundedRect(600, 116, 600, 458, 24);
+
+    this.drawTeacherPortrait(700, 202, 0.78);
+
+    this.add
+      .text(780, 153, 'Puzzle Garden', {
+        color: CHESS_ACADEMY_PALETTE.ink,
+        fontFamily: UI_FONT,
+        fontSize: '21px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0, 0.5);
+
+    this.statusText = this.add
+      .text(780, 192, puzzle.objective, {
+        color: '#3f8075',
+        fontFamily: UI_FONT,
+        fontSize: '18px',
+        fontStyle: 'bold',
+        wordWrap: { width: 365 },
+      })
+      .setOrigin(0, 0)
+      .setName('sunbeam-chess:puzzle-status');
+
+    const lessonPanel = this.add.graphics();
+    lessonPanel.fillStyle(CHESS_ACADEMY_PALETTE.panelBright, 1);
+    lessonPanel.fillRoundedRect(638, 286, 524, 160, 18);
+    lessonPanel.lineStyle(2, CHESS_ACADEMY_PALETTE.turquoise, 0.65);
+    lessonPanel.strokeRoundedRect(638, 286, 524, 160, 18);
+
+    this.lessonText = this.add
+      .text(900, 366, '', {
+        color: CHESS_ACADEMY_PALETTE.softInk,
+        fontFamily: UI_FONT,
+        fontSize: '17px',
+        lineSpacing: 6,
+        align: 'center',
+        wordWrap: { width: 470 },
+      })
+      .setOrigin(0.5)
+      .setName('sunbeam-chess:puzzle-message');
+
+    this.add
+      .text(900, 486, 'Try any legal move. The coach only reveals the answer if you ask.', {
+        color: '#6b3f96',
+        fontFamily: UI_FONT,
+        fontSize: '14px',
+        align: 'center',
+      })
+      .setOrigin(0.5);
+
+    this.createRoundedButton(710, 638, 160, '💡 Hint', () => this.showHint());
+    this.createRoundedButton(890, 638, 160, '↻ Reset', () => this.resetPuzzle());
+    this.createRoundedButton(1080, 638, 190, '← Puzzles', () => this.showPuzzleList());
+  }
+
+  private resetPuzzle(): void {
+    if (!this.currentPuzzle) {
+      return;
+    }
+    this.chess = new Chess(this.currentPuzzle.fen);
+    this.selected = null;
+    this.hintMove = null;
+    this.puzzleHintStage = 0;
+    this.puzzleComplete = false;
+    this.puzzleResetPending = false;
+    this.clearCompletionCard();
+    this.statusText?.setText(this.currentPuzzle.objective);
+    this.lessonText?.setText(this.currentPuzzle.intro);
+    this.renderBoard();
+  }
+
+  private handlePuzzleSquarePress(square: Square): void {
+    const puzzle = this.currentPuzzle;
+    if (!puzzle || this.puzzleComplete || this.puzzleResetPending) {
+      return;
+    }
+
+    const piece = this.chess.get(square);
+    if (!this.selected) {
+      if (piece?.color === 'w') {
+        this.selected = square;
+        this.hintMove = null;
+        const legalMoves = this.chess.moves({ square, verbose: true });
+        this.lessonText?.setText(
+          legalMoves.length > 0
+            ? `Good. That ${this.pieceName(piece.type)} has ${legalMoves.length} legal move${legalMoves.length === 1 ? '' : 's'}. What helps solve the puzzle?`
+            : 'That piece cannot move in this position. Try another one.',
+        );
+        this.renderBoard();
+      }
+      return;
+    }
+
+    if (piece?.color === 'w') {
+      this.selected = square;
+      this.hintMove = null;
+      this.renderBoard();
+      return;
+    }
+
+    const legalMoves = this.chess.moves({ square: this.selected, verbose: true });
+    const chosen =
+      legalMoves.find((move) => move.to === square && move.promotion === puzzle.promotion) ??
+      legalMoves.find((move) => move.to === square);
+
+    if (!chosen) {
+      this.lessonText?.setText('That is not a legal move here. Try one of the green destinations.');
+      return;
+    }
+
+    const isSolution =
+      chosen.from === puzzle.from &&
+      chosen.to === puzzle.to &&
+      (puzzle.promotion === undefined || chosen.promotion === puzzle.promotion);
+
+    this.chess.move({
+      from: chosen.from,
+      to: chosen.to,
+      promotion: puzzle.promotion ?? chosen.promotion,
+    });
+    this.selected = null;
+    this.hintMove = null;
+
+    if (isSolution) {
+      this.puzzleComplete = true;
+      this.statusText?.setText('Puzzle solved ✦');
+      this.lessonText?.setText(puzzle.success);
+      this.renderBoard();
+      this.showPuzzleCompletion(puzzle);
+      return;
+    }
+
+    this.puzzleResetPending = true;
+    this.lessonText?.setText(
+      'That is a real legal move. Nice try. There is a move that fits this puzzle even better, so let’s restore the position and look again.',
+    );
+    this.renderBoard();
+    this.time.delayedCall(900, () => {
+      if (this.view === 'puzzle' && this.currentPuzzle?.id === puzzle.id) {
+        this.chess = new Chess(puzzle.fen);
+        this.selected = null;
+        this.hintMove = null;
+        this.puzzleResetPending = false;
+        this.renderBoard();
+      }
+    });
+  }
+
+  private showPuzzleHint(): void {
+    const puzzle = this.currentPuzzle;
+    if (!puzzle || this.puzzleComplete || this.puzzleResetPending) {
+      return;
+    }
+
+    const stage = Math.min(this.puzzleHintStage, 3);
+    this.lessonText?.setText(layeredHintText(puzzle.hints, stage));
+
+    if (stage >= 2) {
+      this.selected = puzzle.from;
+    }
+    if (stage >= 3) {
+      this.hintMove =
+        this.chess
+          .moves({ square: puzzle.from, verbose: true })
+          .find(
+            (move) =>
+              move.to === puzzle.to &&
+              (puzzle.promotion === undefined || move.promotion === puzzle.promotion),
+          ) ?? null;
+    }
+
+    this.puzzleHintStage = Math.min(3, stage + 1);
     this.renderBoard();
   }
 
@@ -462,9 +835,12 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.clearView();
     this.view = 'friendly-match';
     this.currentLesson = null;
+    this.currentPuzzle = null;
     this.chess = new Chess();
     this.selected = null;
     this.hintMove = null;
+    this.friendlyResultShown = false;
+    this.clearCompletionCard();
     this.opponentPending = false;
     this.createFriendlyBackdrop();
     this.lessonText?.setText(describeChessPosition(this.chess));
@@ -472,33 +848,18 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
   }
 
   private createFriendlyBackdrop(): void {
-    this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x63765f, 1);
-    const shell = this.add.graphics();
-    shell.fillStyle(0xfff8e8, 1);
-    shell.fillRoundedRect(35, 30, 1210, 654, 30);
-    shell.lineStyle(7, 0xcaa66e, 1);
-    shell.strokeRoundedRect(35, 30, 1210, 654, 30);
-
-    this.add
-      .text(GAME_WIDTH / 2, 66, '♟  Friendly Match', {
-        color: '#5d4569',
-        fontFamily: UI_FONT,
-        fontSize: '32px',
-        fontStyle: 'bold',
-      })
-      .setOrigin(0.5);
-
+    this.drawActivityShell('♟  Friendly Match');
     this.drawBoardFrame();
 
     const coach = this.add.graphics();
-    coach.fillStyle(0xf4ead8, 1);
+    coach.fillStyle(CHESS_ACADEMY_PALETTE.lavenderSoft, 1);
     coach.fillRoundedRect(600, 116, 600, 458, 24);
-    coach.lineStyle(3, 0xd6bc91, 0.95);
+    coach.lineStyle(3, CHESS_ACADEMY_PALETTE.lavender, 0.95);
     coach.strokeRoundedRect(600, 116, 600, 458, 24);
 
     this.add
       .text(900, 148, 'Friendly Chess', {
-        color: UI_COLOURS.ink,
+        color: CHESS_ACADEMY_PALETTE.ink,
         fontFamily: UI_FONT,
         fontSize: '23px',
         fontStyle: 'bold',
@@ -506,12 +867,12 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     const statusPanel = this.add.graphics();
-    statusPanel.fillStyle(0xe4d7c2, 1);
+    statusPanel.fillStyle(CHESS_ACADEMY_PALETTE.goldSoft, 1);
     statusPanel.fillRoundedRect(638, 178, 524, 86, 18);
 
     this.statusText = this.add
       .text(900, 221, '', {
-        color: UI_COLOURS.ink,
+        color: CHESS_ACADEMY_PALETTE.ink,
         fontFamily: UI_FONT,
         fontSize: '19px',
         fontStyle: 'bold',
@@ -522,7 +883,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
 
     this.add
       .text(654, 291, 'WHAT TO NOTICE', {
-        color: '#80654f',
+        color: '#6b3f96',
         fontFamily: UI_FONT,
         fontSize: '13px',
         fontStyle: 'bold',
@@ -530,14 +891,14 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       .setOrigin(0, 0.5);
 
     const lessonPanel = this.add.graphics();
-    lessonPanel.fillStyle(0xfffbf1, 1);
+    lessonPanel.fillStyle(CHESS_ACADEMY_PALETTE.panelBright, 1);
     lessonPanel.fillRoundedRect(638, 310, 524, 112, 18);
-    lessonPanel.lineStyle(2, 0xddc9a8, 0.9);
+    lessonPanel.lineStyle(2, CHESS_ACADEMY_PALETTE.berry, 0.65);
     lessonPanel.strokeRoundedRect(638, 310, 524, 112, 18);
 
     this.lessonText = this.add
       .text(900, 366, '', {
-        color: UI_COLOURS.softInk,
+        color: CHESS_ACADEMY_PALETTE.softInk,
         fontFamily: UI_FONT,
         fontSize: '16px',
         lineSpacing: 5,
@@ -548,7 +909,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
 
     this.add
       .text(654, 448, 'MOVES', {
-        color: '#80654f',
+        color: '#477d74',
         fontFamily: UI_FONT,
         fontSize: '13px',
         fontStyle: 'bold',
@@ -556,12 +917,12 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       .setOrigin(0, 0.5);
 
     const historyPanel = this.add.graphics();
-    historyPanel.fillStyle(0xeee2cf, 1);
+    historyPanel.fillStyle(CHESS_ACADEMY_PALETTE.mintSoft, 1);
     historyPanel.fillRoundedRect(638, 467, 524, 78, 16);
 
     this.moveLogText = this.add
       .text(660, 484, 'No moves yet.', {
-        color: UI_COLOURS.softInk,
+        color: CHESS_ACADEMY_PALETTE.softInk,
         fontFamily: 'Georgia, serif',
         fontSize: '15px',
         lineSpacing: 4,
@@ -571,7 +932,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
 
     this.add
       .text(900, 594, 'Full legal chess · Friendly opponent tuning arrives later in the Academy.', {
-        color: UI_COLOURS.softInk,
+        color: CHESS_ACADEMY_PALETTE.softInk,
         fontFamily: UI_FONT,
         fontSize: '13px',
         align: 'center',
@@ -584,27 +945,74 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.createRoundedButton(1090, 638, 188, '← Academy', () => this.showAcademyHome());
   }
 
-  private drawAcademyShell(title: string, subtitle: string): void {
-    this.cameras.main.setBackgroundColor('#63765f');
-    this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x63765f, 1);
+  private drawActivityShell(title: string): void {
+    this.cameras.main.setBackgroundColor('#281643');
+    this.add.rectangle(
+      GAME_WIDTH / 2,
+      GAME_HEIGHT / 2,
+      GAME_WIDTH,
+      GAME_HEIGHT,
+      CHESS_ACADEMY_PALETTE.backdrop,
+      1,
+    );
+
     const shell = this.add.graphics();
-    shell.fillStyle(0xfff8e8, 1);
-    shell.fillRoundedRect(35, 30, 1210, 654, 30);
-    shell.lineStyle(7, 0xcaa66e, 1);
-    shell.strokeRoundedRect(35, 30, 1210, 654, 30);
+    shell.fillStyle(CHESS_ACADEMY_PALETTE.shell, 1);
+    shell.fillRoundedRect(30, 22, 1220, 674, 32);
+    shell.lineStyle(7, CHESS_ACADEMY_PALETTE.shellBorder, 1);
+    shell.strokeRoundedRect(30, 22, 1220, 674, 32);
+
+    const header = this.add.graphics();
+    header.fillStyle(CHESS_ACADEMY_PALETTE.header, 1);
+    header.fillRoundedRect(50, 42, 1180, 62, 22);
+    header.fillStyle(CHESS_ACADEMY_PALETTE.headerAccent, 0.55);
+    header.fillRoundedRect(50, 82, 1180, 22, 10);
 
     this.add
-      .text(GAME_WIDTH / 2, 66, `♟  ${title}`, {
-        color: '#5d4569',
+      .text(GAME_WIDTH / 2, 70, title, {
+        color: '#fff9ff',
         fontFamily: UI_FONT,
-        fontSize: '32px',
+        fontSize: '31px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5);
+  }
+
+  private drawAcademyShell(title: string, subtitle: string): void {
+    this.cameras.main.setBackgroundColor('#281643');
+    this.add.rectangle(
+      GAME_WIDTH / 2,
+      GAME_HEIGHT / 2,
+      GAME_WIDTH,
+      GAME_HEIGHT,
+      CHESS_ACADEMY_PALETTE.backdrop,
+      1,
+    );
+
+    const shell = this.add.graphics();
+    shell.fillStyle(CHESS_ACADEMY_PALETTE.shell, 1);
+    shell.fillRoundedRect(30, 22, 1220, 674, 32);
+    shell.lineStyle(7, CHESS_ACADEMY_PALETTE.shellBorder, 1);
+    shell.strokeRoundedRect(30, 22, 1220, 674, 32);
+
+    const header = this.add.graphics();
+    header.fillStyle(CHESS_ACADEMY_PALETTE.header, 1);
+    header.fillRoundedRect(50, 42, 1180, 76, 24);
+    header.fillStyle(CHESS_ACADEMY_PALETTE.headerAccent, 0.65);
+    header.fillRoundedRect(50, 90, 1180, 28, 12);
+
+    this.add
+      .text(GAME_WIDTH / 2, 67, `♟  ${title}`, {
+        color: '#fff9ff',
+        fontFamily: UI_FONT,
+        fontSize: '31px',
         fontStyle: 'bold',
       })
       .setOrigin(0.5);
 
     this.add
-      .text(GAME_WIDTH / 2, 101, subtitle, {
-        color: UI_COLOURS.softInk,
+      .text(GAME_WIDTH / 2, 99, subtitle, {
+        color: '#eee2ff',
         fontFamily: UI_FONT,
         fontSize: '15px',
       })
@@ -612,51 +1020,30 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
   }
 
   private drawTeacherPortrait(x: number, y: number, scale: number): void {
-    const portrait = this.add
-      .graphics()
-      .setPosition(x, y)
-      .setScale(scale)
+    const badge = this.add.graphics().setPosition(x, y);
+    badge.fillStyle(CHESS_ACADEMY_PALETTE.header, 1);
+    badge.fillRoundedRect(-62, -54, 124, 108, 24);
+    badge.lineStyle(5, CHESS_ACADEMY_PALETTE.gold, 1);
+    badge.strokeRoundedRect(-62, -54, 124, 108, 24);
+
+    badge.fillStyle(CHESS_ACADEMY_PALETTE.lavender, 0.55);
+    badge.fillCircle(-45, -34, 7);
+    badge.fillStyle(CHESS_ACADEMY_PALETTE.mint, 0.72);
+    badge.fillCircle(46, -36, 6);
+    badge.fillStyle(CHESS_ACADEMY_PALETTE.gold, 0.9);
+    badge.fillCircle(48, 35, 5);
+
+    createCoreNpcSprite(this, 'lumi', x, y + 34, 'portrait', 'happy')
+      .setScale(0.56 * scale)
       .setName('sunbeam-chess:teacher');
 
-    portrait.fillStyle(0xfff4d8, 1);
-    portrait.fillCircle(0, 0, 62);
-    portrait.lineStyle(5, 0xcaa66e, 1);
-    portrait.strokeCircle(0, 0, 62);
-
-    portrait.fillStyle(0xd9b5e8, 1);
-    portrait.fillEllipse(-8, 7, 86, 66);
-    portrait.lineStyle(4, 0x6c4c74, 0.95);
-    portrait.strokeEllipse(-8, 7, 86, 66);
-
-    portrait.fillStyle(0x76548a, 1);
-    portrait.fillCircle(-43, -12, 20);
-    portrait.fillCircle(-39, 8, 18);
-    portrait.fillCircle(-34, 27, 15);
-
-    portrait.fillStyle(0xe9d8f1, 1);
-    portrait.fillTriangle(-30, -37, -20, -69, -8, -34);
-    portrait.lineStyle(3, 0x6c4c74, 0.95);
-    portrait.strokeTriangle(-30, -37, -20, -69, -8, -34);
-
-    portrait.fillStyle(0xffd56f, 1);
-    portrait.fillTriangle(13, -35, 28, -72, 34, -30);
-    portrait.lineStyle(3, 0x8a6b39, 0.9);
-    portrait.strokeTriangle(13, -35, 28, -72, 34, -30);
-
-    portrait.fillStyle(0x4f3c5a, 1);
-    portrait.fillCircle(18, -2, 5);
-    portrait.fillStyle(0xffffff, 0.9);
-    portrait.fillCircle(20, -4, 1.8);
-    portrait.fillStyle(0xf2a7b8, 0.5);
-    portrait.fillCircle(31, 13, 7);
-    portrait.lineStyle(2.5, 0x4f3c5a, 0.9);
-    portrait.lineBetween(18, 20, 28, 24);
-    portrait.lineBetween(28, 24, 37, 18);
-
-    portrait.fillStyle(0x78b8a1, 1);
-    portrait.fillRoundedRect(-16, 35, 46, 11, 5);
-    portrait.fillStyle(0xffe28a, 1);
-    portrait.fillCircle(8, 41, 6);
+    const medal = this.add.graphics().setPosition(x + 38, y + 34);
+    medal.fillStyle(CHESS_ACADEMY_PALETTE.gold, 1);
+    medal.fillCircle(0, 0, 10);
+    medal.lineStyle(2, 0x7b5a24, 0.95);
+    medal.strokeCircle(0, 0, 10);
+    medal.fillStyle(CHESS_ACADEMY_PALETTE.header, 1);
+    medal.fillCircle(0, 0, 4);
   }
 
   private drawBoardFrame(): void {
@@ -802,6 +1189,10 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       this.handleLessonSquarePress(square);
       return;
     }
+    if (this.view === 'puzzle') {
+      this.handlePuzzleSquarePress(square);
+      return;
+    }
     if (this.view === 'friendly-match') {
       this.handleFriendlySquarePress(square);
     }
@@ -863,6 +1254,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       this.statusText?.setText('Lesson complete ✦');
       this.lessonText?.setText(lesson.success);
       this.renderBoard();
+      this.showLessonCompletion(lesson);
       return;
     }
 
@@ -979,6 +1371,10 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       this.showLessonHint();
       return;
     }
+    if (this.view === 'puzzle') {
+      this.showPuzzleHint();
+      return;
+    }
 
     if (
       this.view !== 'friendly-match' ||
@@ -1007,7 +1403,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     }
 
     const stage = Math.min(this.lessonHintStage, 3);
-    this.lessonText?.setText(lessonHintText(lesson, stage));
+    this.lessonText?.setText(layeredHintText(lesson.hints, stage));
 
     if (stage >= 2) {
       this.selected = lesson.pieceSquare;
@@ -1023,6 +1419,220 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.renderBoard();
   }
 
+  private clearCompletionCard(): void {
+    this.completionContainer?.destroy(true);
+    this.completionContainer = null;
+  }
+
+  private getNextLesson(
+    current: SunbeamChessLessonDefinition,
+  ): SunbeamChessLessonDefinition | null {
+    const index = SUNBEAM_CHESS_LESSONS.findIndex((lesson) => lesson.id === current.id);
+    return index >= 0 ? (SUNBEAM_CHESS_LESSONS[index + 1] ?? null) : null;
+  }
+
+  private getNextPuzzle(
+    current: SunbeamChessPuzzleDefinition,
+  ): SunbeamChessPuzzleDefinition | null {
+    const index = SUNBEAM_CHESS_PUZZLES.findIndex((puzzle) => puzzle.id === current.id);
+    return index >= 0 ? (SUNBEAM_CHESS_PUZZLES[index + 1] ?? null) : null;
+  }
+
+  private addCompletionButton(
+    container: Phaser.GameObjects.Container,
+    x: number,
+    y: number,
+    width: number,
+    label: string,
+    name: string,
+    onPress: () => void,
+  ): void {
+    const height = 50;
+    const button = this.add.graphics().setPosition(x, y).setName(name);
+    const draw = (fill: number): void => {
+      button.clear();
+      button.fillStyle(fill, 1);
+      button.fillRoundedRect(-width / 2, -height / 2, width, height, 15);
+      button.lineStyle(3, CHESS_ACADEMY_PALETTE.header, 1);
+      button.strokeRoundedRect(-width / 2, -height / 2, width, height, 15);
+    };
+    draw(CHESS_ACADEMY_PALETTE.mint);
+
+    button
+      .setInteractive(
+        new Phaser.Geom.Rectangle(-width / 2, -height / 2, width, height),
+        Phaser.Geom.Rectangle.Contains,
+      )
+      .on('pointerover', () => draw(CHESS_ACADEMY_PALETTE.mintHover))
+      .on('pointerout', () => draw(CHESS_ACADEMY_PALETTE.mint))
+      .on('pointerdown', onPress);
+
+    const text = this.add
+      .text(x, y, label, {
+        color: CHESS_ACADEMY_PALETTE.ink,
+        fontFamily: UI_FONT,
+        fontSize: '15px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5);
+
+    container.add([button, text]);
+  }
+
+  private showCompletionCard(options: {
+    title: string;
+    message: string;
+    accent: number;
+    nextLabel?: string;
+    onNext?: () => void;
+    backLabel: string;
+    onBack: () => void;
+  }): void {
+    this.clearCompletionCard();
+
+    const container = this.add.container(0, 0).setDepth(45);
+
+    // Keep the completed board/position visible for context, but clearly move the
+    // player into an end-state. The scrim also swallows pointer input so the
+    // board and bottom action row cannot be interacted with behind the modal.
+    const scrim = this.add.graphics().setName('sunbeam-chess:completion-scrim');
+    scrim.fillStyle(CHESS_ACADEMY_PALETTE.backdrop, 0.72);
+    scrim.fillRoundedRect(50, 116, 1180, 558, 26);
+    scrim.setInteractive(
+      new Phaser.Geom.Rectangle(50, 116, 1180, 558),
+      Phaser.Geom.Rectangle.Contains,
+    );
+    scrim.on('pointerdown', () => undefined);
+
+    // Roughly 80% of the activity content area: this deliberately spans both the
+    // board and teaching panel so completion feels like a proper result state
+    // rather than another side-card.
+    const panel = this.add.graphics().setName('sunbeam-chess:completion-card');
+    panel.fillStyle(CHESS_ACADEMY_PALETTE.panelBright, 1);
+    panel.fillRoundedRect(140, 136, 1000, 500, 30);
+    panel.lineStyle(6, options.accent, 1);
+    panel.strokeRoundedRect(140, 136, 1000, 500, 30);
+
+    panel.fillStyle(options.accent, 0.14);
+    panel.fillRoundedRect(170, 170, 940, 108, 22);
+
+    const stars = this.add
+      .text(640, 194, '✦   ✦   ✦', {
+        color: '#b68620',
+        fontFamily: UI_FONT,
+        fontSize: '30px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5);
+
+    const title = this.add
+      .text(640, 242, options.title, {
+        color: CHESS_ACADEMY_PALETTE.ink,
+        fontFamily: UI_FONT,
+        fontSize: '34px',
+        fontStyle: 'bold',
+        align: 'center',
+      })
+      .setOrigin(0.5);
+
+    const message = this.add
+      .text(640, 365, options.message, {
+        color: CHESS_ACADEMY_PALETTE.softInk,
+        fontFamily: UI_FONT,
+        fontSize: '21px',
+        align: 'center',
+        lineSpacing: 7,
+        wordWrap: { width: 760 },
+      })
+      .setOrigin(0.5);
+
+    container.add([scrim, panel, stars, title, message]);
+
+    if (options.nextLabel && options.onNext) {
+      this.addCompletionButton(
+        container,
+        515,
+        548,
+        240,
+        options.nextLabel,
+        'sunbeam-chess:completion-next',
+        options.onNext,
+      );
+      this.addCompletionButton(
+        container,
+        765,
+        548,
+        240,
+        options.backLabel,
+        'sunbeam-chess:completion-back',
+        options.onBack,
+      );
+    } else {
+      this.addCompletionButton(
+        container,
+        640,
+        548,
+        260,
+        options.backLabel,
+        'sunbeam-chess:completion-back',
+        options.onBack,
+      );
+    }
+
+    this.completionContainer = container;
+  }
+
+  private showLessonCompletion(lesson: SunbeamChessLessonDefinition): void {
+    const next = this.getNextLesson(lesson);
+    this.showCompletionCard({
+      title: 'LESSON COMPLETE!',
+      message: lesson.success,
+      accent: CHESS_ACADEMY_PALETTE.berry,
+      nextLabel: next ? 'Next lesson →' : undefined,
+      onNext: next ? () => this.startLesson(next.id) : undefined,
+      backLabel: next ? 'Lesson list' : 'All lessons ✓',
+      onBack: () => this.showLessonList(),
+    });
+  }
+
+  private showPuzzleCompletion(puzzle: SunbeamChessPuzzleDefinition): void {
+    const next = this.getNextPuzzle(puzzle);
+    this.showCompletionCard({
+      title: 'PUZZLE SOLVED!',
+      message: puzzle.success,
+      accent: CHESS_ACADEMY_PALETTE.turquoise,
+      nextLabel: next ? 'Next puzzle →' : undefined,
+      onNext: next ? () => this.startPuzzle(next.id) : undefined,
+      backLabel: next ? 'Puzzle list' : 'Puzzle Garden ✓',
+      onBack: () => this.showPuzzleList(),
+    });
+  }
+
+  private showFriendlyResult(result: 'win' | 'loss' | 'draw'): void {
+    if (this.friendlyResultShown) {
+      return;
+    }
+    this.friendlyResultShown = true;
+
+    const title = result === 'win' ? 'YOU WON! ✦' : result === 'loss' ? 'GOOD GAME!' : 'GAME DRAWN';
+    const message =
+      result === 'win'
+        ? 'Checkmate! You finished the friendly match. Want another game?'
+        : result === 'loss'
+          ? 'The village side found checkmate this time. Every game teaches you something new.'
+          : 'Neither side could force a win. That is a real chess result too.';
+
+    this.showCompletionCard({
+      title,
+      message,
+      accent: result === 'win' ? CHESS_ACADEMY_PALETTE.gold : CHESS_ACADEMY_PALETTE.lavender,
+      nextLabel: '↻ Play again',
+      onNext: () => this.restartFriendlyMatch(),
+      backLabel: '← Academy',
+      onBack: () => this.showAcademyHome(),
+    });
+  }
+
   private updateFriendlyCoach(): void {
     if (!this.statusText || !this.moveLogText) {
       return;
@@ -1032,9 +1642,11 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       const winner = this.chess.turn() === 'w' ? 'Black' : 'White';
       this.statusText.setText(`CHECKMATE · ${winner} wins`);
       this.lessonText?.setText(describeChessPosition(this.chess));
+      this.showFriendlyResult(winner === 'White' ? 'win' : 'loss');
     } else if (this.chess.isGameOver()) {
       this.statusText.setText('GAME DRAWN');
       this.lessonText?.setText(describeChessPosition(this.chess));
+      this.showFriendlyResult('draw');
     } else if (this.opponentPending || this.chess.turn() === 'b') {
       this.statusText.setText(
         this.chess.isCheck() ? 'CHECK · Village must respond' : 'Village is thinking…',
@@ -1077,6 +1689,8 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
   private restartCurrentActivity(): void {
     if (this.view === 'lesson') {
       this.resetLesson();
+    } else if (this.view === 'puzzle') {
+      this.resetPuzzle();
     } else if (this.view === 'friendly-match') {
       this.restartFriendlyMatch();
     }
@@ -1087,6 +1701,8 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.selected = null;
     this.hintMove = null;
     this.opponentPending = false;
+    this.friendlyResultShown = false;
+    this.clearCompletionCard();
     this.lessonText?.setText(describeChessPosition(this.chess));
     this.renderBoard();
   }
@@ -1096,7 +1712,15 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       this.showLessonList();
       return;
     }
-    if (this.view === 'lesson-list' || this.view === 'friendly-match') {
+    if (this.view === 'puzzle') {
+      this.showPuzzleList();
+      return;
+    }
+    if (
+      this.view === 'lesson-list' ||
+      this.view === 'puzzle-list' ||
+      this.view === 'friendly-match'
+    ) {
       this.showAcademyHome();
       return;
     }
@@ -1110,29 +1734,29 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     labelText: string,
     onPress: () => void,
   ): void {
-    const height = 54;
+    const height = 52;
     const button = this.add.graphics().setPosition(x, y);
     const draw = (fill: number): void => {
       button.clear();
       button.fillStyle(fill, 1);
       button.fillRoundedRect(-width / 2, -height / 2, width, height, 15);
-      button.lineStyle(3, 0x6aa996, 1);
+      button.lineStyle(3, CHESS_ACADEMY_PALETTE.header, 1);
       button.strokeRoundedRect(-width / 2, -height / 2, width, height, 15);
     };
-    draw(UI_COLOURS.mint);
+    draw(CHESS_ACADEMY_PALETTE.mint);
 
     button
       .setInteractive(
         new Phaser.Geom.Rectangle(-width / 2, -height / 2, width, height),
         Phaser.Geom.Rectangle.Contains,
       )
-      .on('pointerover', () => draw(UI_COLOURS.blush))
-      .on('pointerout', () => draw(UI_COLOURS.mint))
+      .on('pointerover', () => draw(CHESS_ACADEMY_PALETTE.mintHover))
+      .on('pointerout', () => draw(CHESS_ACADEMY_PALETTE.mint))
       .on('pointerdown', onPress);
 
     this.add
       .text(x, y, labelText, {
-        color: UI_COLOURS.ink,
+        color: CHESS_ACADEMY_PALETTE.ink,
         fontFamily: UI_FONT,
         fontSize: '15px',
         fontStyle: 'bold',

@@ -32,7 +32,7 @@ export const SUNBEAM_CHESS_ACADEMY_MODE_DEFINITIONS = [
     shortTitle: 'Puzzles',
     description: 'Spot clever checks, captures and escapes in little positions.',
     icon: '🌱',
-    availability: 'coming-soon',
+    availability: 'available',
   },
   {
     id: 'coach-match',
