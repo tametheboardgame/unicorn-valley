@@ -1,7 +1,7 @@
 ---
 id: MG-WP5
 title: Sunbeam Chess Academy
-status: proposed
+status: in_progress
 autonomy: amber
 depends_on: [MG-WP4]
 parallel_safe: true
@@ -10,6 +10,12 @@ mini_game_platform_impact: changed - sunbeam-chess
 ---
 
 # MG-WP5 - Sunbeam Chess Academy
+
+## Current checkpoint
+
+**MG-WP5A - Discovery and design contract** is complete. **MG-WP5B - Academy shell and teaching foundation** is implemented and human-approved. Merge remains gated on exact-head CI.
+
+Detailed design contract: `docs/minigames/SUNBEAM-CHESS-ACADEMY-DESIGN.md`.
 
 ## Objective
 
@@ -196,3 +202,48 @@ Human acceptance should answer:
 - adult-strength chess-engine optimisation;
 - adventure rewards for chess learning;
 - rebuilding Sunbeam Village itself.
+
+
+## Bounded delivery checkpoints
+
+- **MG-WP5A - Discovery and design contract - complete**: current implementation audit, teaching principles, mode model, curriculum direction and implementation boundaries.
+- **MG-WP5B - Academy shell and teaching foundation - complete / human-approved**: Academy Home, teacher presentation foundation, reusable lesson runner and first piece lessons.
+- **MG-WP5C - Puzzle Garden and curriculum expansion**: puzzles, layered hints, check/checkmate and piece-safety teaching.
+- **MG-WP5D - Coach Match**: explainable coaching, another-look/play-anyway flow, undo and layered match hints.
+- **MG-WP5E - Friendly Match and opponent ladder**: child-friendly opponent levels, rematch/result flow and match polish.
+- **MG-WP5F - Learning records, responsive polish and human playtest**: isolated learning persistence if worthwhile, final world/Just Games reconciliation and acceptance.
+
+Do not chain these slices into one autonomous implementation window.
+
+
+## MG-WP5B implementation record
+
+Implemented:
+
+- Academy Home is now the default entry for `sunbeam-chess`;
+- the Academy visibly presents Lessons, Puzzle Garden, Coach Match and Friendly Match;
+- Puzzle Garden and Coach Match are deliberately marked unavailable until their own bounded slices;
+- Friendly Match preserves the previous full legal-chess experience rather than removing existing functionality;
+- a visible Sunbeam Chess Coach unicorn presentation is established without yet locking a final name/world biography;
+- Lessons provides a reusable lesson runner over real `chess.js` positions;
+- the first four lessons are Rook Rays, Bishop Trails, Knight Jumps and Pawn Steps;
+- lesson goals are shown directly on the board and legal destinations remain visible;
+- incorrect but legal lesson moves are acknowledged positively, then reset for another attempt;
+- the four-stage hint philosophy is implemented for lessons: Notice -> Question -> Nudge -> Show me;
+- starter lesson definitions are unit-validated as legal and solvable;
+- browser coverage exercises Academy Home, unavailable future modes, a real completed rook lesson and preservation of Friendly Match.
+
+Out of scope for WP5B:
+
+- Puzzle Garden content;
+- Coach Match intervention logic;
+- Friendly Match difficulty ladder;
+- learner persistence;
+- final teacher identity/portrait polish.
+
+
+## MG-WP5B human acceptance
+
+David approved the WP5B Academy shell and starter lesson experience on 2026-10-04 after testing the Cloudflare branch preview.
+
+This approval covers the visual/product checkpoint for WP5B. Merge still requires the exact accepted branch head to satisfy repository CI policy.
