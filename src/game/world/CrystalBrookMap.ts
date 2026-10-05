@@ -1054,13 +1054,21 @@ export const CRYSTAL_BROOK_BOUNDARY_ROCKS = [
   },
 ] as const satisfies readonly CrystalBrookBoundaryRock[];
 
-export const CRYSTAL_BROOK_PERIMETER_COLLIDERS = CRYSTAL_BROOK_BOUNDARY_ROCKS.map((rock) => ({
-  id: `collision:brook-perimeter:${rock.id}`,
-  x: rock.x,
-  y: rock.y + rock.collisionOffsetY,
-  width: rock.width * rock.collisionScaleX,
-  height: rock.height * rock.collisionScaleY,
-})) satisfies readonly CollisionRectangle[];
+// Keep collision continuous and deliberately simple. The visual perimeter is made from many
+// overlapping rocks, but one physics body per rock creates dozens of Arcade seams that can
+// snag a galloping player. These strips sit inside the visible boulder chains and preserve
+// only the four authored route openings plus the upstream water opening.
+export const CRYSTAL_BROOK_PERIMETER_COLLIDERS = [
+  { id: 'collision:brook-perimeter:north-west', x: 1370, y: 162, width: 2550, height: 94 },
+  { id: 'collision:brook-perimeter:north-east', x: 3280, y: 162, width: 390, height: 94 },
+  { id: 'collision:brook-perimeter:west-upper', x: 122, y: 462, width: 116, height: 548 },
+  { id: 'collision:brook-perimeter:west-lower', x: 122, y: 1810, width: 116, height: 660 },
+  { id: 'collision:brook-perimeter:east-upper', x: 3390, y: 452, width: 112, height: 354 },
+  { id: 'collision:brook-perimeter:east-middle', x: 3390, y: 1178, width: 112, height: 470 },
+  { id: 'collision:brook-perimeter:east-lower', x: 3390, y: 1938, width: 112, height: 354 },
+  { id: 'collision:brook-perimeter:south-west', x: 1095, y: 2076, width: 2010, height: 94 },
+  { id: 'collision:brook-perimeter:south-east', x: 3095, y: 2076, width: 810, height: 94 },
+] as const satisfies readonly CollisionRectangle[];
 
 export const CRYSTAL_BROOK_BOUNDARY_OPENINGS = [
   {
