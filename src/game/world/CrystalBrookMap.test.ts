@@ -142,6 +142,22 @@ describe('Crystal Brook map', () => {
     expect(verticalSeparation).toBeLessThan(220);
   });
 
+  it('extends the gorge path off-map while keeping the water throat above it', () => {
+    expect(CRYSTAL_BROOK_MEADOW_GORGE.pathFloor[0].x).toBeLessThan(0);
+    expect(CRYSTAL_BROOK_MEADOW_GORGE.pathFloor.at(-1)).toEqual(
+      CRYSTAL_BROOK_LAYOUT.thresholds.rainbowMeadow.approach,
+    );
+    expect(CRYSTAL_BROOK_MEADOW_GORGE.waterThroat.centre).toEqual(
+      CRYSTAL_BROOK_MEADOW_GORGE.waterOpening,
+    );
+    expect(CRYSTAL_BROOK_MEADOW_GORGE.waterThroat.centre.y).toBeLessThan(
+      CRYSTAL_BROOK_MEADOW_GORGE.pathOpening.y - 140,
+    );
+    expect(
+      CRYSTAL_BROOK_MEADOW_GORGE.rockFaces.some(({ id }) => id === 'inner-divider'),
+    ).toBe(true);
+  });
+
   it('keeps both Meadow-Brook arrival points outside the walk-through trigger radius', () => {
     const brookThreshold = CRYSTAL_BROOK_LAYOUT.thresholds.rainbowMeadow;
     const brookArrivalDistance = Math.hypot(
