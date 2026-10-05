@@ -731,6 +731,51 @@ export class CrystalBrookScene extends Phaser.Scene {
       });
     }
 
+    const sign = gorge.sign;
+    const signContainer = this.add
+      .container(sign.x, sign.y)
+      .setName('crystal-brook:meadow-gorge:rainbow-meadow-sign')
+      .setAngle(sign.angle)
+      .setDepth(worldDepthForY(sign.y, 0.42));
+
+    signContainer.add([
+      this.add
+        .polygon(
+          0,
+          0,
+          [-94, -38, -66, -54, 54, -48, 96, -20, 82, 36, 20, 50, -70, 42, -100, 10],
+          0x71847f,
+          1,
+        )
+        .setStrokeStyle(4, 0x4d625f, 0.94),
+      this.add
+        .polygon(
+          -22,
+          -8,
+          [-62, -18, -46, -32, 38, -30, 58, -10, 44, 18, -34, 22],
+          0x91a7a0,
+          0.36,
+        )
+        .setStrokeStyle(2, 0xc6d9d2, 0.28),
+      this.add
+        .text(0, 2, sign.label, {
+          color: '#29413f',
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '17px',
+          fontStyle: 'bold',
+          align: 'center',
+          stroke: '#b9cbc5',
+          strokeThickness: 1,
+        })
+        .setOrigin(0.5),
+      this.add
+        .triangle(76, -42, 0, 34, 13, 0, 26, 34, 0xa9edf2, 0.9)
+        .setStrokeStyle(2, 0xf2ffff, 0.76),
+      this.add
+        .triangle(88, -26, 0, 24, 9, 0, 18, 24, 0xc9bbef, 0.86)
+        .setStrokeStyle(2, 0xf5f0ff, 0.72),
+    ]);
+
     this.add
       .zone(gorge.waterOpening.x, gorge.waterOpening.y, 2, 2)
       .setName('crystal-brook:meadow-gorge:water-opening');
