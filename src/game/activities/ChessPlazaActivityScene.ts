@@ -32,6 +32,12 @@ import {
   reviewSunbeamChessCoachMove,
   type SunbeamChessCoachConcern,
 } from './SunbeamChessCoach';
+import {
+  SUNBEAM_CHESS_OPPONENT_DEFINITIONS,
+  chooseSunbeamChessOpponentMove,
+  getSunbeamChessOpponent,
+  type SunbeamChessOpponentLevel,
+} from './SunbeamChessOpponent';
 
 interface ChessPlazaSceneData {
   returnScene?: string;
@@ -44,6 +50,7 @@ type ChessAcademyView =
   | 'puzzle-list'
   | 'puzzle'
   | 'coach-match'
+  | 'friendly-select'
   | 'friendly-match';
 
 const BOARD_LEFT = 86;
@@ -124,6 +131,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
   private moveHistoryStart = -1;
   private coachHoldingFeedback = false;
   private coachLastPlayerFeedback: string | null = null;
+  private friendlyOpponentLevel: SunbeamChessOpponentLevel = 'clover';
   private homeMessageText: Phaser.GameObjects.Text | null = null;
   private currentLesson: SunbeamChessLessonDefinition | null = null;
   private lessonHintStage = 0;
@@ -352,7 +360,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       return;
     }
     if (modeId === 'friendly-match') {
-      this.startFriendlyMatch();
+      this.showFriendlyOpponentSelect();
       return;
     }
   }
@@ -1028,7 +1036,137 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     );
   }
 
-  private startFriendlyMatch(): void {
+  private showFriendlyOpponentSelect(): void {
+    this.clearView();
+    this.view = 'friendly-select';
+    this.currentLesson = null;
+    this.currentPuzzle = null;
+    this.selected = null;
+    this.hintMove = null;
+    this.opponentPending = false;
+
+    this.drawAcademyShell(
+      'Friendly Match',
+      'Choose who you would like to play. Every opponent follows the real rules of chess.',
+    );
+
+    this.drawTeacherPortrait(156, 178, 0.82);
+    this.add
+      .text(242, 154, 'Pick a friendly opponent', {
+        color: CHESS_ACADEMY_PALETTE.ink,
+        fontFamily: UI_FONT,
+        fontSize: '24px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0, 0.5);
+
+    this.add
+      .text(
+        242,
+        188,
+        'You can change opponent after a game. Dandelion gives the most room to experiment.',
+        {
+          color: CHESS_ACADEMY_PALETTE.softInk,
+          fontFamily: UI_FONT,
+          fontSize: '16px',
+          wordWrap: { width: 850 },
+        },
+      )
+      .setOrigin(0, 0);
+
+    const yPositions = [308, 438, 568] as const;
+    SUNBEAM_CHESS_OPPONENT_DEFINITIONS.forEach((opponent, index) => {
+      this.createFriendlyOpponentCard(opponent.id, 640, yPositions[index]);
+    });
+
+    this.createRoundedButton(
+      1080,
+      638,
+      190,
+      '← Academy',
+      () => this.showAcademyHome(),
+      'sunbeam-chess:opponent-back',
+    );
+  }
+
+  private createFriendlyOpponentCard(
+    level: SunbeamChessOpponentLevel,
+    x: number,
+    y: number,
+  ): void {
+    const opponent = getSunbeamChessOpponent(level);
+    const width = 860;
+    const height = 104;
+    const panel = this.add.graphics().setPosition(x, y).setName(`sunbeam-chess:opponent:${level}`);
+    const accent =
+      level === 'dandelion'
+        ? CHESS_ACADEMY_PALETTE.gold
+        : level === 'clover'
+          ? CHESS_ACADEMY_PALETTE.turquoise
+          : CHESS_ACADEMY_PALETTE.berry;
+    const fill =
+      level === 'dandelion'
+        ? CHESS_ACADEMY_PALETTE.goldSoft
+        : level === 'clover'
+          ? CHESS_ACADEMY_PALETTE.mintSoft
+          : CHESS_ACADEMY_PALETTE.berrySoft;
+
+    const draw = (hovered: boolean): void => {
+      panel.clear();
+      panel.fillStyle(hovered ? CHESS_ACADEMY_PALETTE.panelBright : fill, 1);
+      panel.fillRoundedRect(-width / 2, -height / 2, width, height, 22);
+      panel.lineStyle(hovered ? 5 : 3, accent, 1);
+      panel.strokeRoundedRect(-width / 2, -height / 2, width, height, 22);
+    };
+    draw(false);
+
+    panel
+      .setInteractive(
+        new Phaser.Geom.Rectangle(-width / 2, -height / 2, width, height),
+        Phaser.Geom.Rectangle.Contains,
+      )
+      .on('pointerover', () => draw(true))
+      .on('pointerout', () => draw(false))
+      .on('pointerdown', () => this.startFriendlyMatch(level));
+
+    this.add
+      .text(x - 382, y, opponent.icon, {
+        fontFamily: UI_FONT,
+        fontSize: '35px',
+      })
+      .setOrigin(0.5);
+
+    this.add
+      .text(x - 330, y - 18, opponent.title, {
+        color: CHESS_ACADEMY_PALETTE.ink,
+        fontFamily: UI_FONT,
+        fontSize: '22px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0, 0.5);
+
+    this.add
+      .text(x - 330, y + 14, opponent.subtitle, {
+        color: CHESS_ACADEMY_PALETTE.softInk,
+        fontFamily: UI_FONT,
+        fontSize: '15px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0, 0.5);
+
+    this.add
+      .text(x - 90, y, opponent.description, {
+        color: CHESS_ACADEMY_PALETTE.softInk,
+        fontFamily: UI_FONT,
+        fontSize: '15px',
+        lineSpacing: 4,
+        wordWrap: { width: 420 },
+      })
+      .setOrigin(0, 0.5);
+  }
+
+  private startFriendlyMatch(level: SunbeamChessOpponentLevel = this.friendlyOpponentLevel): void {
+    this.friendlyOpponentLevel = level;
     this.clearView();
     this.view = 'friendly-match';
     this.currentLesson = null;
@@ -1046,7 +1184,8 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
   }
 
   private createFriendlyBackdrop(): void {
-    this.drawActivityShell('♟  Friendly Match');
+    const opponent = getSunbeamChessOpponent(this.friendlyOpponentLevel);
+    this.drawActivityShell(`♟  Friendly Match · ${opponent.title}`);
     this.drawBoardFrame();
 
     const panel = this.add.graphics();
@@ -1056,7 +1195,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     panel.strokeRoundedRect(600, 116, 600, 458, 24);
 
     this.add
-      .text(900, 148, 'Friendly Chess', {
+      .text(900, 148, `Playing ${opponent.icon} ${opponent.title} · ${opponent.subtitle}`, {
         color: CHESS_ACADEMY_PALETTE.ink,
         fontFamily: UI_FONT,
         fontSize: '23px',
@@ -1170,9 +1309,17 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
 
-    this.createRoundedButton(710, 638, 168, '💡 Hint', () => this.showHint());
-    this.createRoundedButton(900, 638, 168, '↻ Restart', () => this.restartFriendlyMatch());
-    this.createRoundedButton(1090, 638, 188, '← Academy', () => this.showAcademyHome());
+    this.createRoundedButton(670, 638, 130, '💡 Hint', () => this.showHint());
+    this.createRoundedButton(815, 638, 130, '↻ Restart', () => this.restartFriendlyMatch());
+    this.createRoundedButton(
+      960,
+      638,
+      130,
+      'Opponents',
+      () => this.showFriendlyOpponentSelect(),
+      'sunbeam-chess:friendly-opponents',
+    );
+    this.createRoundedButton(1110, 638, 150, '← Academy', () => this.showAcademyHome());
   }
 
   private drawActivityShell(title: string): void {
@@ -1860,7 +2007,10 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       return;
     }
 
-    const chosen = chooseVillageChessMove(this.chess);
+    const chosen =
+      this.view === 'friendly-match'
+        ? chooseSunbeamChessOpponentMove(this.chess, this.friendlyOpponentLevel)
+        : chooseVillageChessMove(this.chess);
     if (chosen) {
       const applied = this.chess.move({
         from: chosen.from,
@@ -2011,6 +2161,8 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     onNext?: () => void;
     backLabel: string;
     onBack: () => void;
+    thirdLabel?: string;
+    onThird?: () => void;
   }): void {
     this.clearCompletionCard();
 
@@ -2072,7 +2224,40 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
 
     container.add([scrim, panel, stars, title, message]);
 
-    if (options.nextLabel && options.onNext) {
+    if (
+      options.nextLabel &&
+      options.onNext &&
+      options.thirdLabel &&
+      options.onThird
+    ) {
+      this.addCompletionButton(
+        container,
+        415,
+        548,
+        200,
+        options.nextLabel,
+        'sunbeam-chess:completion-next',
+        options.onNext,
+      );
+      this.addCompletionButton(
+        container,
+        640,
+        548,
+        200,
+        options.backLabel,
+        'sunbeam-chess:completion-back',
+        options.onBack,
+      );
+      this.addCompletionButton(
+        container,
+        865,
+        548,
+        200,
+        options.thirdLabel,
+        'sunbeam-chess:completion-third',
+        options.onThird,
+      );
+    } else if (options.nextLabel && options.onNext) {
       this.addCompletionButton(
         container,
         515,
@@ -2155,8 +2340,10 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       accent: result === 'win' ? CHESS_ACADEMY_PALETTE.gold : CHESS_ACADEMY_PALETTE.lavender,
       nextLabel: '↻ Play again',
       onNext: () => (isCoachMatch ? this.startCoachMatch() : this.restartFriendlyMatch()),
-      backLabel: '← Academy',
-      onBack: () => this.showAcademyHome(),
+      backLabel: isCoachMatch ? '← Academy' : 'Change opponent',
+      onBack: () => (isCoachMatch ? this.showAcademyHome() : this.showFriendlyOpponentSelect()),
+      thirdLabel: isCoachMatch ? undefined : '← Academy',
+      onThird: isCoachMatch ? undefined : () => this.showAcademyHome(),
     });
   }
 
@@ -2359,6 +2546,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       this.view === 'lesson-list' ||
       this.view === 'puzzle-list' ||
       this.view === 'coach-match' ||
+      this.view === 'friendly-select' ||
       this.view === 'friendly-match'
     ) {
       this.showAcademyHome();
