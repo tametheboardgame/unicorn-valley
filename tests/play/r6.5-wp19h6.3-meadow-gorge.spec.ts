@@ -87,6 +87,14 @@ test('Rainbow Meadow and Crystal Brook share one gorge transition without arriva
   await waitForScene(page, 'TitleScene');
   await startScene(page, 'RainbowMeadowScene');
 
+  const meadow = (await snapshot(page)).scenes.find((scene) => scene.key === 'RainbowMeadowScene');
+  expect(meadow?.objects.some((object) => object.name === 'r6-region-gateway-art:meadow-crystal-brook:pool')).toBe(true);
+  expect(
+    meadow?.objects.some(
+      (object) => object.name === 'r6-region-gateway-art:meadow-crystal-brook:waterfall',
+    ),
+  ).toBe(true);
+
   await setPlayerPosition(page, 'RainbowMeadowScene', 3300, 1035);
   await waitForScene(page, 'CrystalBrookScene');
 
@@ -100,6 +108,12 @@ test('Rainbow Meadow and Crystal Brook share one gorge transition without arriva
   ).toBe(true);
   expect(
     brook?.objects.some((object) => object.name === 'crystal-brook:meadow-gorge:rocks'),
+  ).toBe(true);
+  expect(
+    brook?.objects.some((object) => object.name === 'crystal-brook:meadow-gorge:path-floor'),
+  ).toBe(true);
+  expect(
+    brook?.objects.some((object) => object.name === 'crystal-brook:meadow-gorge:water-throat'),
   ).toBe(true);
   expect(
     brook?.objects.some(
