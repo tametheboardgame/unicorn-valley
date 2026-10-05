@@ -34,6 +34,7 @@ import {
   CRYSTAL_BROOK_WATERCOURSE,
   type CrystalBrookWatercoursePoint,
 } from '../world/CrystalBrookMap';
+import { createCrystalBrookBoundaryPresentation } from '../world/CrystalBrookBoundaryPresentation';
 import { worldDepthForY } from '../world/WorldDepth';
 
 const COLLISION_TEXTURE_KEY = 'crystal-brook-collision-pixel';
@@ -453,6 +454,7 @@ export class CrystalBrookScene extends Phaser.Scene {
 
     this.createWater();
     this.createMeadowGorge();
+    createCrystalBrookBoundaryPresentation(this);
     this.createIceBridges();
     this.createSteppingStones();
     this.createSecretTrail();
