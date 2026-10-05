@@ -188,19 +188,35 @@ export const CRYSTAL_BROOK_UPSTREAM_CASCADE = { x: 3320, y: 790 } as const;
 export const CRYSTAL_BROOK_MEADOW_WATER_EXIT = { x: 120, y: 920 } as const;
 
 export const CRYSTAL_BROOK_MEADOW_GORGE = {
-  recess: { x: 86, y: 1008, width: 250, height: 430 },
+  recess: { x: 82, y: 1008, width: 270, height: 438 },
   waterOpening: CRYSTAL_BROOK_MEADOW_WATER_EXIT,
   pathOpening: CRYSTAL_BROOK_MEADOW_THRESHOLD.position,
   pathApproach: CRYSTAL_BROOK_MEADOW_THRESHOLD.approach,
+  pathFloor: [
+    { x: -90, y: 1090 },
+    { x: 90, y: 1090 },
+    CRYSTAL_BROOK_MEADOW_THRESHOLD.position,
+    CRYSTAL_BROOK_MEADOW_THRESHOLD.approach,
+  ] as const satisfies readonly MapPoint[],
+  waterThroat: {
+    centre: CRYSTAL_BROOK_MEADOW_WATER_EXIT,
+    width: 172,
+    height: 104,
+  },
   rockFaces: [
-    { id: 'north-cap', x: 112, y: 748, width: 360, height: 220, angle: -7, colour: 0x617570 },
-    { id: 'north-shoulder', x: 220, y: 846, width: 246, height: 142, angle: 6, colour: 0x71847d },
-    { id: 'south-shoulder', x: 190, y: 1220, width: 300, height: 188, angle: -5, colour: 0x697c77 },
-    { id: 'south-cap', x: 86, y: 1390, width: 370, height: 238, angle: 7, colour: 0x5b706e },
+    { id: 'north-cap', x: 104, y: 744, width: 378, height: 224, angle: -8, colour: 0x617570 },
+    { id: 'north-shoulder', x: 220, y: 838, width: 254, height: 146, angle: 6, colour: 0x71847d },
+    { id: 'inner-divider', x: 206, y: 1014, width: 210, height: 82, angle: -4, colour: 0x667a75 },
+    { id: 'south-shoulder', x: 192, y: 1214, width: 306, height: 190, angle: -5, colour: 0x697c77 },
+    { id: 'south-cap', x: 80, y: 1390, width: 386, height: 242, angle: 8, colour: 0x5b706e },
   ],
   crystals: [
-    { x: 238, y: 795, scale: 0.68, colour: 0xa4e9ed },
-    { x: 255, y: 1260, scale: 0.56, colour: 0xc8baf0 },
+    { x: 238, y: 790, scale: 0.68, colour: 0xa4e9ed },
+    { x: 250, y: 1260, scale: 0.56, colour: 0xc8baf0 },
+  ],
+  mist: [
+    { x: 120, y: 904, width: 116, height: 30 },
+    { x: 72, y: 930, width: 92, height: 24 },
   ],
 } as const;
 
