@@ -5,6 +5,10 @@ export const SUNBEAM_CHESS_LESSON_IDS = [
   'bishop-trails',
   'knight-jumps',
   'pawn-steps',
+  'capture-carefully',
+  'give-check',
+  'escape-check',
+  'checkmate',
 ] as const;
 
 export type SunbeamChessLessonId = (typeof SUNBEAM_CHESS_LESSON_IDS)[number];
@@ -113,6 +117,86 @@ export const SUNBEAM_CHESS_LESSONS = [
       show: 'Move the pawn from E2 to E4.',
     },
   },
+  {
+    id: 'capture-carefully',
+    order: 50,
+    title: 'Capture Carefully',
+    subtitle: 'Winning a loose piece',
+    piece: 'b',
+    pieceName: 'bishop',
+    fen: '7k/5r2/8/8/2B5/8/8/K7 w - - 0 1',
+    pieceSquare: 'c4',
+    goalSquare: 'f7',
+    objective: 'Capture the loose rook.',
+    intro: 'Capturing removes an opponent piece. First check that your piece can reach it legally.',
+    success: 'Good spotting! Your bishop followed the diagonal and captured the loose rook.',
+    hints: {
+      notice: 'The rook and bishop sit on the same diagonal.',
+      question: 'What piece can your bishop capture from C4?',
+      nudge: 'Trace the diagonal through D5 and E6.',
+      show: 'Move the bishop from C4 to F7.',
+    },
+  },
+  {
+    id: 'give-check',
+    order: 60,
+    title: 'Give Check',
+    subtitle: 'Attack the king',
+    piece: 'r',
+    pieceName: 'rook',
+    fen: '7k/8/8/8/8/8/8/R6K w - - 0 1',
+    pieceSquare: 'a1',
+    goalSquare: 'a8',
+    objective: 'Move the rook so it attacks the king.',
+    intro: 'A king is in check when an opponent piece attacks its square.',
+    success: 'Check! Your rook now attacks the black king across the eighth rank.',
+    hints: {
+      notice: 'The rook attacks along straight rows and files.',
+      question: 'Which rank contains the black king?',
+      nudge: 'Can your rook reach that rank?',
+      show: 'Move the rook from A1 to A8.',
+    },
+  },
+  {
+    id: 'escape-check',
+    order: 70,
+    title: 'Escape Check',
+    subtitle: 'Find a safe king square',
+    piece: 'k',
+    pieceName: 'king',
+    fen: '7k/8/8/8/1b6/8/8/4K3 w - - 0 1',
+    pieceSquare: 'e1',
+    goalSquare: 'f1',
+    objective: 'Move your king out of check.',
+    intro: 'When your king is in check, the next move must make the king safe.',
+    success: 'Safe! Your king stepped away from the bishop’s diagonal.',
+    hints: {
+      notice: 'The bishop attacks E1 along a diagonal.',
+      question: 'Which nearby square is not on that diagonal?',
+      nudge: 'Look one square to the right.',
+      show: 'Move the king from E1 to F1.',
+    },
+  },
+  {
+    id: 'checkmate',
+    order: 80,
+    title: 'Checkmate',
+    subtitle: 'No escape left',
+    piece: 'q',
+    pieceName: 'queen',
+    fen: '7k/5K2/6Q1/8/8/8/8/8 w - - 0 1',
+    pieceSquare: 'g6',
+    goalSquare: 'g7',
+    objective: 'Find the move that checkmates the king.',
+    intro: 'Checkmate means the king is in check and has no legal way to become safe.',
+    success: 'Checkmate! The queen gives check and your king protects her.',
+    hints: {
+      notice: 'Your king already controls the escape squares near the black king.',
+      question: 'Where can the queen give a protected check?',
+      nudge: 'Look one square above the queen.',
+      show: 'Move the queen from G6 to G7.',
+    },
+  },
 ] as const satisfies readonly SunbeamChessLessonDefinition[];
 
 export function getSunbeamChessLesson(id: SunbeamChessLessonId): SunbeamChessLessonDefinition {
@@ -149,6 +233,31 @@ export function validateSunbeamChessLesson(
     problems.push(
       `${lesson.pieceSquare.toUpperCase()} -> ${lesson.goalSquare.toUpperCase()} must be legal.`,
     );
+  }
+
+  const goalMove = legalMoves.find((move) => move.to === lesson.goalSquare);
+  if (goalMove) {
+    const result = new Chess(lesson.fen);
+    result.move({
+      from: goalMove.from,
+      to: goalMove.to,
+      promotion: goalMove.promotion,
+    });
+
+    if (lesson.id === 'give-check' && !result.isCheck()) {
+      problems.push('The give-check lesson goal must produce check.');
+    }
+    if (lesson.id === 'escape-check') {
+      if (!chess.isCheck()) {
+        problems.push('The escape-check lesson must begin in check.');
+      }
+      if (result.isCheck()) {
+        problems.push('The escape-check lesson goal must leave White safe.');
+      }
+    }
+    if (lesson.id === 'checkmate' && !result.isCheckmate()) {
+      problems.push('The checkmate lesson goal must produce checkmate.');
+    }
   }
 
   if (!lesson.hints.notice || !lesson.hints.question || !lesson.hints.nudge || !lesson.hints.show) {
