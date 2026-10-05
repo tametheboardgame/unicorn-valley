@@ -35,9 +35,7 @@ function expectHorizontalChainClosed(rocks: BoundaryRock[]): void {
     if (!currentCollider || !nextCollider) continue;
 
     const collisionGap =
-      nextCollider.x -
-      nextCollider.width / 2 -
-      (currentCollider.x + currentCollider.width / 2);
+      nextCollider.x - nextCollider.width / 2 - (currentCollider.x + currentCollider.width / 2);
     expect(collisionGap).toBeLessThanOrEqual(8);
   }
 }
@@ -61,9 +59,7 @@ function expectVerticalChainClosed(rocks: BoundaryRock[]): void {
     if (!currentCollider || !nextCollider) continue;
 
     const collisionGap =
-      nextCollider.y -
-      nextCollider.height / 2 -
-      (currentCollider.y + currentCollider.height / 2);
+      nextCollider.y - nextCollider.height / 2 - (currentCollider.y + currentCollider.height / 2);
     expect(collisionGap).toBeLessThanOrEqual(12);
   }
 }
@@ -78,15 +74,14 @@ describe('Crystal Brook H6.4 perimeter', () => {
     const kinds = new Set(CRYSTAL_BROOK_BOUNDARY_ROCKS.map(({ kind }) => kind));
     expect(kinds).toEqual(new Set(['rounded', 'slab', 'lopsided', 'spire', 'stack', 'shelf']));
     expect(
-      CRYSTAL_BROOK_BOUNDARY_ROCKS.filter(({ crystalColour }) => crystalColour !== undefined)
-        .length,
+      CRYSTAL_BROOK_BOUNDARY_ROCKS.filter((rock) => 'crystalColour' in rock).length,
     ).toBeGreaterThanOrEqual(5);
     expect(Math.max(...CRYSTAL_BROOK_BOUNDARY_ROCKS.map(({ width }) => width))).toBeLessThanOrEqual(
       230,
     );
-    expect(Math.max(...CRYSTAL_BROOK_BOUNDARY_ROCKS.map(({ height }) => height))).toBeLessThanOrEqual(
-      160,
-    );
+    expect(
+      Math.max(...CRYSTAL_BROOK_BOUNDARY_ROCKS.map(({ height }) => height)),
+    ).toBeLessThanOrEqual(160);
   });
 
   it('closes accidental perimeter gaps while retaining the authored openings', () => {
@@ -110,15 +105,20 @@ describe('Crystal Brook H6.4 perimeter', () => {
       CRYSTAL_BROOK_BOUNDARY_ROCKS.filter(
         ({ id }) =>
           id.startsWith('east-woodland-') &&
-          !['east-woodland-04', 'east-woodland-05', 'east-woodland-06', 'east-woodland-07'].includes(
-            id,
-          ) &&
+          ![
+            'east-woodland-04',
+            'east-woodland-05',
+            'east-woodland-06',
+            'east-woodland-07',
+          ].includes(id) &&
           Number(id.slice('east-woodland-'.length)) <= 3,
       ),
     );
     expectVerticalChainClosed(
       CRYSTAL_BROOK_BOUNDARY_ROCKS.filter(({ id }) =>
-        ['east-woodland-04', 'east-woodland-05', 'east-woodland-06', 'east-woodland-07'].includes(id),
+        ['east-woodland-04', 'east-woodland-05', 'east-woodland-06', 'east-woodland-07'].includes(
+          id,
+        ),
       ),
     );
     expectVerticalChainClosed(
