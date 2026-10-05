@@ -27,6 +27,11 @@ import {
   describeChessPosition,
   describeTeachingMove,
 } from './SunbeamChessRules';
+import {
+  getSunbeamChessCoachHint,
+  reviewSunbeamChessCoachMove,
+  type SunbeamChessCoachConcern,
+} from './SunbeamChessCoach';
 
 interface ChessPlazaSceneData {
   returnScene?: string;
@@ -38,6 +43,7 @@ type ChessAcademyView =
   | 'lesson'
   | 'puzzle-list'
   | 'puzzle'
+  | 'coach-match'
   | 'friendly-match';
 
 const BOARD_LEFT = 86;
@@ -104,6 +110,10 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
   private hintMove: Move | null = null;
   private boardContainer: Phaser.GameObjects.Container | null = null;
   private completionContainer: Phaser.GameObjects.Container | null = null;
+  private coachWarningContainer: Phaser.GameObjects.Container | null = null;
+  private coachPendingMove: Move | null = null;
+  private coachHintStage = 0;
+  private coachUndoPlies = 0;
   private friendlyResultShown = false;
   private statusText: Phaser.GameObjects.Text | null = null;
   private lessonText: Phaser.GameObjects.Text | null = null;
@@ -155,6 +165,9 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.puzzleHintStage = 0;
     this.puzzleComplete = false;
     this.puzzleResetPending = false;
+    this.coachPendingMove = null;
+    this.coachHintStage = 0;
+    this.coachUndoPlies = 0;
     this.friendlyResultShown = false;
     this.opponentPending = false;
   }
@@ -163,6 +176,8 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.children.removeAll(true);
     this.boardContainer = null;
     this.completionContainer = null;
+    this.coachWarningContainer = null;
+    this.coachPendingMove = null;
     this.statusText = null;
     this.lessonText = null;
     this.moveLogText = null;
@@ -248,12 +263,14 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
         ? { fill: CHESS_ACADEMY_PALETTE.berrySoft, border: CHESS_ACADEMY_PALETTE.berry }
         : mode.id === 'puzzle-garden'
           ? { fill: CHESS_ACADEMY_PALETTE.mintSoft, border: CHESS_ACADEMY_PALETTE.turquoise }
-          : mode.id === 'friendly-match'
-            ? { fill: CHESS_ACADEMY_PALETTE.lavenderSoft, border: CHESS_ACADEMY_PALETTE.lavender }
-            : {
-                fill: CHESS_ACADEMY_PALETTE.disabled,
-                border: CHESS_ACADEMY_PALETTE.disabledBorder,
-              };
+          : mode.id === 'coach-match'
+            ? { fill: CHESS_ACADEMY_PALETTE.goldSoft, border: CHESS_ACADEMY_PALETTE.gold }
+            : mode.id === 'friendly-match'
+              ? { fill: CHESS_ACADEMY_PALETTE.lavenderSoft, border: CHESS_ACADEMY_PALETTE.lavender }
+              : {
+                  fill: CHESS_ACADEMY_PALETTE.disabled,
+                  border: CHESS_ACADEMY_PALETTE.disabledBorder,
+                };
     const draw = (hovered: boolean): void => {
       panel.clear();
       const fill = available && hovered ? CHESS_ACADEMY_PALETTE.panelBright : accent.fill;
@@ -317,14 +334,14 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       this.showPuzzleList();
       return;
     }
+    if (modeId === 'coach-match') {
+      this.startCoachMatch();
+      return;
+    }
     if (modeId === 'friendly-match') {
       this.startFriendlyMatch();
       return;
     }
-
-    this.homeMessageText?.setText(
-      'Coach Match is still learning when to help and when to stay quiet. Lessons, Puzzle Garden and Friendly Match are ready now.',
-    );
   }
 
   private showLessonList(): void {
@@ -831,6 +848,150 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.renderBoard();
   }
 
+  private startCoachMatch(): void {
+    this.clearView();
+    this.view = 'coach-match';
+    this.currentLesson = null;
+    this.currentPuzzle = null;
+    this.chess = new Chess();
+    this.selected = null;
+    this.hintMove = null;
+    this.coachPendingMove = null;
+    this.coachHintStage = 0;
+    this.coachUndoPlies = 0;
+    this.friendlyResultShown = false;
+    this.clearCompletionCard();
+    this.clearCoachWarning();
+    this.opponentPending = false;
+    this.createCoachMatchBackdrop();
+    this.lessonText?.setText(
+      'Play your game normally. I will only interrupt for a clear beginner idea worth noticing.',
+    );
+    this.renderBoard();
+  }
+
+  private createCoachMatchBackdrop(): void {
+    this.drawActivityShell('🦄  Coach Match');
+    this.drawBoardFrame();
+
+    const coach = this.add.graphics();
+    coach.fillStyle(CHESS_ACADEMY_PALETTE.mintSoft, 1);
+    coach.fillRoundedRect(600, 116, 600, 458, 24);
+    coach.lineStyle(3, CHESS_ACADEMY_PALETTE.turquoise, 0.95);
+    coach.strokeRoundedRect(600, 116, 600, 458, 24);
+
+    this.drawTeacherPortrait(700, 195, 0.75);
+
+    this.add
+      .text(780, 148, 'Coach Match', {
+        color: CHESS_ACADEMY_PALETTE.ink,
+        fontFamily: UI_FONT,
+        fontSize: '23px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0, 0.5);
+
+    const statusPanel = this.add.graphics();
+    statusPanel.fillStyle(CHESS_ACADEMY_PALETTE.goldSoft, 1);
+    statusPanel.fillRoundedRect(638, 178, 524, 82, 18);
+
+    this.statusText = this.add
+      .text(900, 219, '', {
+        color: CHESS_ACADEMY_PALETTE.ink,
+        fontFamily: UI_FONT,
+        fontSize: '18px',
+        fontStyle: 'bold',
+        align: 'center',
+        wordWrap: { width: 474 },
+      })
+      .setOrigin(0.5)
+      .setName('sunbeam-chess:coach-status');
+
+    this.add
+      .text(654, 286, 'COACH NOTES', {
+        color: '#3f8075',
+        fontFamily: UI_FONT,
+        fontSize: '13px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0, 0.5);
+
+    const notePanel = this.add.graphics();
+    notePanel.fillStyle(CHESS_ACADEMY_PALETTE.panelBright, 1);
+    notePanel.fillRoundedRect(638, 305, 524, 124, 18);
+    notePanel.lineStyle(2, CHESS_ACADEMY_PALETTE.turquoise, 0.65);
+    notePanel.strokeRoundedRect(638, 305, 524, 124, 18);
+
+    this.lessonText = this.add
+      .text(900, 367, '', {
+        color: CHESS_ACADEMY_PALETTE.softInk,
+        fontFamily: UI_FONT,
+        fontSize: '16px',
+        lineSpacing: 5,
+        align: 'center',
+        wordWrap: { width: 474 },
+      })
+      .setOrigin(0.5)
+      .setName('sunbeam-chess:coach-message');
+
+    this.add
+      .text(654, 455, 'MOVES', {
+        color: '#6b3f96',
+        fontFamily: UI_FONT,
+        fontSize: '13px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0, 0.5);
+
+    const historyPanel = this.add.graphics();
+    historyPanel.fillStyle(CHESS_ACADEMY_PALETTE.lavenderSoft, 1);
+    historyPanel.fillRoundedRect(638, 474, 524, 72, 16);
+
+    this.moveLogText = this.add
+      .text(660, 489, 'No moves yet.', {
+        color: CHESS_ACADEMY_PALETTE.softInk,
+        fontFamily: 'Georgia, serif',
+        fontSize: '15px',
+        lineSpacing: 4,
+        wordWrap: { width: 480 },
+      })
+      .setOrigin(0, 0);
+
+    this.add
+      .text(900, 588, 'Hints get more specific only when you keep asking.', {
+        color: CHESS_ACADEMY_PALETTE.softInk,
+        fontFamily: UI_FONT,
+        fontSize: '13px',
+        align: 'center',
+      })
+      .setOrigin(0.5);
+
+    this.createRoundedButton(
+      700,
+      638,
+      160,
+      '💡 Hint',
+      () => this.showHint(),
+      'sunbeam-chess:coach-hint',
+    );
+    this.createRoundedButton(
+      880,
+      638,
+      160,
+      '↶ Undo',
+      () => this.undoCoachMove(),
+      'sunbeam-chess:coach-undo',
+    );
+    this.createRoundedButton(
+      1080,
+      638,
+      190,
+      '← Academy',
+      () => this.showAcademyHome(),
+      'sunbeam-chess:coach-back',
+    );
+  }
+
   private startFriendlyMatch(): void {
     this.clearView();
     this.view = 'friendly-match';
@@ -1179,7 +1340,9 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       ]);
     }
 
-    if (this.view === 'friendly-match') {
+    if (this.view === 'coach-match') {
+      this.updateCoachMatchStatus();
+    } else if (this.view === 'friendly-match') {
       this.updateFriendlyCoach();
     }
   }
@@ -1191,6 +1354,10 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     }
     if (this.view === 'puzzle') {
       this.handlePuzzleSquarePress(square);
+      return;
+    }
+    if (this.view === 'coach-match') {
+      this.handleCoachSquarePress(square);
       return;
     }
     if (this.view === 'friendly-match') {
@@ -1274,6 +1441,252 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     });
   }
 
+  private clearCoachWarning(): void {
+    this.coachWarningContainer?.destroy(true);
+    this.coachWarningContainer = null;
+    this.coachPendingMove = null;
+  }
+
+  private showCoachWarning(concern: SunbeamChessCoachConcern, move: Move): void {
+    this.clearCoachWarning();
+    this.coachPendingMove = move;
+
+    const container = this.add.container(0, 0).setDepth(44);
+    const scrim = this.add.graphics().setName('sunbeam-chess:coach-warning-scrim');
+    scrim.fillStyle(CHESS_ACADEMY_PALETTE.backdrop, 0.48);
+    scrim.fillRoundedRect(50, 116, 1180, 558, 26);
+    scrim.setInteractive(
+      new Phaser.Geom.Rectangle(50, 116, 1180, 558),
+      Phaser.Geom.Rectangle.Contains,
+    );
+
+    const panel = this.add.graphics().setName('sunbeam-chess:coach-warning');
+    panel.fillStyle(CHESS_ACADEMY_PALETTE.panelBright, 1);
+    panel.fillRoundedRect(260, 210, 760, 300, 28);
+    panel.lineStyle(5, CHESS_ACADEMY_PALETTE.gold, 1);
+    panel.strokeRoundedRect(260, 210, 760, 300, 28);
+    panel.fillStyle(CHESS_ACADEMY_PALETTE.gold, 0.16);
+    panel.fillRoundedRect(286, 232, 708, 74, 20);
+
+    const title = this.add
+      .text(640, 269, concern.title, {
+        color: CHESS_ACADEMY_PALETTE.ink,
+        fontFamily: UI_FONT,
+        fontSize: '28px',
+        fontStyle: 'bold',
+        align: 'center',
+      })
+      .setOrigin(0.5);
+
+    const message = this.add
+      .text(640, 351, concern.message, {
+        color: CHESS_ACADEMY_PALETTE.ink,
+        fontFamily: UI_FONT,
+        fontSize: '18px',
+        align: 'center',
+        lineSpacing: 5,
+        wordWrap: { width: 650 },
+      })
+      .setOrigin(0.5);
+
+    const question = this.add
+      .text(640, 405, concern.question, {
+        color: CHESS_ACADEMY_PALETTE.softInk,
+        fontFamily: UI_FONT,
+        fontSize: '16px',
+        align: 'center',
+        wordWrap: { width: 650 },
+      })
+      .setOrigin(0.5);
+
+    container.add([scrim, panel, title, message, question]);
+
+    this.addCompletionButton(
+      container,
+      515,
+      467,
+      238,
+      'Have another look',
+      'sunbeam-chess:coach-look-again',
+      () => {
+        const pending = this.coachPendingMove;
+        this.clearCoachWarning();
+        this.selected = pending?.from ?? null;
+        this.hintMove = null;
+        this.lessonText?.setText(concern.question);
+        this.renderBoard();
+      },
+    );
+
+    this.addCompletionButton(
+      container,
+      765,
+      467,
+      238,
+      'Play it anyway',
+      'sunbeam-chess:coach-play-anyway',
+      () => {
+        const pending = this.coachPendingMove;
+        this.clearCoachWarning();
+        if (pending) {
+          this.applyCoachPlayerMove(pending);
+        }
+      },
+    );
+
+    this.coachWarningContainer = container;
+  }
+
+  private handleCoachSquarePress(square: Square): void {
+    if (
+      this.coachWarningContainer ||
+      this.opponentPending ||
+      this.chess.isGameOver() ||
+      this.chess.turn() !== 'w'
+    ) {
+      return;
+    }
+
+    const piece = this.chess.get(square);
+    if (!this.selected) {
+      if (piece?.color === 'w') {
+        this.selectCoachPiece(square);
+      }
+      return;
+    }
+
+    if (piece?.color === 'w') {
+      this.selectCoachPiece(square);
+      return;
+    }
+
+    const legalMoves = this.chess.moves({ square: this.selected, verbose: true });
+    const chosen =
+      legalMoves.find((move) => move.to === square && move.promotion === 'q') ??
+      legalMoves.find((move) => move.to === square);
+
+    if (!chosen) {
+      this.hintMove = null;
+      this.lessonText?.setText(
+        'That move is not legal here. Green destinations are the moves that keep your king safe.',
+      );
+      this.updateCoachMatchStatus();
+      return;
+    }
+
+    const concern = reviewSunbeamChessCoachMove(this.chess, chosen);
+    if (concern) {
+      this.showCoachWarning(concern, chosen);
+      return;
+    }
+
+    this.applyCoachPlayerMove(chosen);
+  }
+
+  private selectCoachPiece(square: Square): void {
+    const legalMoves = this.chess.moves({ square, verbose: true });
+    this.selected = square;
+    this.hintMove = null;
+
+    if (legalMoves.length === 0) {
+      this.lessonText?.setText(
+        'That piece has no legal moves right now. Try another piece or look at what is happening to your king.',
+      );
+    } else {
+      const piece = this.chess.get(square);
+      this.lessonText?.setText(
+        `That ${piece ? this.pieceName(piece.type) : 'piece'} has ${legalMoves.length} legal move${legalMoves.length === 1 ? '' : 's'}. Take your time.`,
+      );
+    }
+
+    this.renderBoard();
+  }
+
+  private applyCoachPlayerMove(move: Move): void {
+    const applied = this.chess.move({
+      from: move.from,
+      to: move.to,
+      promotion: move.promotion,
+    });
+
+    this.selected = null;
+    this.hintMove = null;
+    this.coachHintStage = 0;
+    this.coachUndoPlies = 1;
+    this.lessonText?.setText(describeTeachingMove(applied));
+
+    this.opponentPending = !this.chess.isGameOver();
+    this.renderBoard();
+
+    if (this.opponentPending) {
+      this.time.delayedCall(520, () => this.makeOpponentMove());
+    }
+  }
+
+  private undoCoachMove(): void {
+    if (this.view !== 'coach-match' || this.opponentPending) {
+      return;
+    }
+
+    if (this.coachWarningContainer) {
+      this.clearCoachWarning();
+      this.lessonText?.setText('No problem. Have another look at the board.');
+      this.renderBoard();
+      return;
+    }
+
+    if (this.coachUndoPlies <= 0) {
+      this.lessonText?.setText('There is nothing to undo yet. Make a move when you are ready.');
+      return;
+    }
+
+    this.clearCompletionCard();
+    this.friendlyResultShown = false;
+
+    for (let index = 0; index < this.coachUndoPlies; index += 1) {
+      if (!this.chess.undo()) {
+        break;
+      }
+    }
+
+    this.coachUndoPlies = 0;
+    this.coachHintStage = 0;
+    this.selected = null;
+    this.hintMove = null;
+    this.lessonText?.setText(
+      'Undone. Try a different idea — there is no penalty for experimenting.',
+    );
+    this.renderBoard();
+  }
+
+  private showCoachHint(): void {
+    if (
+      this.view !== 'coach-match' ||
+      this.coachWarningContainer ||
+      this.opponentPending ||
+      this.chess.isGameOver() ||
+      this.chess.turn() !== 'w'
+    ) {
+      return;
+    }
+
+    const hint = getSunbeamChessCoachHint(this.chess, this.coachHintStage);
+    if (!hint) {
+      return;
+    }
+
+    this.lessonText?.setText(hint.text);
+    this.selected = hint.from ?? null;
+    this.hintMove =
+      hint.from && hint.to
+        ? (this.chess
+            .moves({ square: hint.from, verbose: true })
+            .find((move) => move.to === hint.to) ?? null)
+        : null;
+    this.coachHintStage = Math.min(3, this.coachHintStage + 1);
+    this.renderBoard();
+  }
+
   private handleFriendlySquarePress(square: Square): void {
     if (this.opponentPending || this.chess.isGameOver() || this.chess.turn() !== 'w') {
       return;
@@ -1342,7 +1755,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
   }
 
   private makeOpponentMove(): void {
-    if (this.view !== 'friendly-match') {
+    if (this.view !== 'friendly-match' && this.view !== 'coach-match') {
       this.opponentPending = false;
       return;
     }
@@ -1362,6 +1775,11 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       this.lessonText?.setText(`Village move: ${describeTeachingMove(applied)}`);
     }
 
+    if (this.view === 'coach-match') {
+      this.coachUndoPlies = 2;
+      this.coachHintStage = 0;
+    }
+
     this.opponentPending = false;
     this.renderBoard();
   }
@@ -1373,6 +1791,10 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     }
     if (this.view === 'puzzle') {
       this.showPuzzleHint();
+      return;
+    }
+    if (this.view === 'coach-match') {
+      this.showCoachHint();
       return;
     }
 
@@ -1608,16 +2030,19 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     });
   }
 
-  private showFriendlyResult(result: 'win' | 'loss' | 'draw'): void {
+  private showMatchResult(result: 'win' | 'loss' | 'draw'): void {
     if (this.friendlyResultShown) {
       return;
     }
     this.friendlyResultShown = true;
 
     const title = result === 'win' ? 'YOU WON! ✦' : result === 'loss' ? 'GOOD GAME!' : 'GAME DRAWN';
+    const isCoachMatch = this.view === 'coach-match';
     const message =
       result === 'win'
-        ? 'Checkmate! You finished the friendly match. Want another game?'
+        ? isCoachMatch
+          ? 'Checkmate! You found the finish. Want to try another coached game?'
+          : 'Checkmate! You finished the match. Want another game?'
         : result === 'loss'
           ? 'The village side found checkmate this time. Every game teaches you something new.'
           : 'Neither side could force a win. That is a real chess result too.';
@@ -1627,10 +2052,56 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       message,
       accent: result === 'win' ? CHESS_ACADEMY_PALETTE.gold : CHESS_ACADEMY_PALETTE.lavender,
       nextLabel: '↻ Play again',
-      onNext: () => this.restartFriendlyMatch(),
+      onNext: () => (isCoachMatch ? this.startCoachMatch() : this.restartFriendlyMatch()),
       backLabel: '← Academy',
       onBack: () => this.showAcademyHome(),
     });
+  }
+
+  private updateCoachMatchStatus(): void {
+    if (!this.statusText || !this.moveLogText) {
+      return;
+    }
+
+    if (this.chess.isCheckmate()) {
+      const winner = this.chess.turn() === 'w' ? 'Black' : 'White';
+      this.statusText.setText(`CHECKMATE · ${winner} wins`);
+      this.lessonText?.setText(describeChessPosition(this.chess));
+      this.showMatchResult(winner === 'White' ? 'win' : 'loss');
+    } else if (this.chess.isGameOver()) {
+      this.statusText.setText('GAME DRAWN');
+      this.lessonText?.setText(describeChessPosition(this.chess));
+      this.showMatchResult('draw');
+    } else if (this.opponentPending || this.chess.turn() === 'b') {
+      this.statusText.setText(
+        this.chess.isCheck() ? 'CHECK · Village must respond' : 'Village is thinking…',
+      );
+    } else if (this.chess.isCheck()) {
+      this.statusText.setText('CHECK · Protect your king');
+      if (!this.selected) {
+        this.lessonText?.setText(
+          'Your king is in check. Find a legal move that makes the king safe.',
+        );
+      }
+    } else if (this.coachWarningContainer) {
+      this.statusText.setText('Coach question · Your choice');
+    } else if (this.selected) {
+      this.statusText.setText('Choose a highlighted legal square');
+    } else {
+      this.statusText.setText('Your move · White · Coach is watching');
+    }
+
+    const history = this.chess.history();
+    if (history.length === 0) {
+      this.moveLogText.setText('No moves yet.');
+      return;
+    }
+
+    const rows: string[] = [];
+    for (let index = 0; index < history.length; index += 2) {
+      rows.push(`${index / 2 + 1}.  ${history[index] ?? ''}    ${history[index + 1] ?? ''}`);
+    }
+    this.moveLogText.setText(rows.slice(-3).join('\n'));
   }
 
   private updateFriendlyCoach(): void {
@@ -1642,11 +2113,11 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       const winner = this.chess.turn() === 'w' ? 'Black' : 'White';
       this.statusText.setText(`CHECKMATE · ${winner} wins`);
       this.lessonText?.setText(describeChessPosition(this.chess));
-      this.showFriendlyResult(winner === 'White' ? 'win' : 'loss');
+      this.showMatchResult(winner === 'White' ? 'win' : 'loss');
     } else if (this.chess.isGameOver()) {
       this.statusText.setText('GAME DRAWN');
       this.lessonText?.setText(describeChessPosition(this.chess));
-      this.showFriendlyResult('draw');
+      this.showMatchResult('draw');
     } else if (this.opponentPending || this.chess.turn() === 'b') {
       this.statusText.setText(
         this.chess.isCheck() ? 'CHECK · Village must respond' : 'Village is thinking…',
@@ -1691,6 +2162,8 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       this.resetLesson();
     } else if (this.view === 'puzzle') {
       this.resetPuzzle();
+    } else if (this.view === 'coach-match') {
+      this.startCoachMatch();
     } else if (this.view === 'friendly-match') {
       this.restartFriendlyMatch();
     }
@@ -1719,6 +2192,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     if (
       this.view === 'lesson-list' ||
       this.view === 'puzzle-list' ||
+      this.view === 'coach-match' ||
       this.view === 'friendly-match'
     ) {
       this.showAcademyHome();
@@ -1733,9 +2207,13 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     width: number,
     labelText: string,
     onPress: () => void,
+    name?: string,
   ): void {
     const height = 52;
     const button = this.add.graphics().setPosition(x, y);
+    if (name) {
+      button.setName(name);
+    }
     const draw = (fill: number): void => {
       button.clear();
       button.fillStyle(fill, 1);
