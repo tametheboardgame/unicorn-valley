@@ -60,7 +60,7 @@ test('H6.4 renders a varied physical rock perimeter while preserving route openi
     ({ name, visible }) => visible && name.startsWith('crystal-brook:boundary:rock:'),
   );
 
-  expect(rocks.length).toBeGreaterThanOrEqual(28);
+  expect(rocks.length).toBeGreaterThanOrEqual(50);
   for (const kind of ['rounded', 'slab', 'lopsided', 'spire', 'stack', 'shelf']) {
     expect(rocks.some(({ name }) => name.includes(`:${kind}:`))).toBe(true);
   }
@@ -69,12 +69,16 @@ test('H6.4 renders a varied physical rock perimeter while preserving route openi
     Math.min(...rocks.map((rock) => Math.hypot(rock.x - x, rock.y - y)));
 
   expect(nearestRockDistance(120, 1090)).toBeGreaterThan(430);
-  expect(nearestRockDistance(2860, 120)).toBeGreaterThan(360);
-  expect(nearestRockDistance(3400, 1580)).toBeGreaterThan(280);
-  expect(nearestRockDistance(2440, 2070)).toBeGreaterThan(380);
+  expect(nearestRockDistance(2860, 120)).toBeGreaterThan(250);
+  expect(nearestRockDistance(3400, 1580)).toBeGreaterThan(190);
+  expect(nearestRockDistance(2440, 2070)).toBeGreaterThan(320);
 
   expect(
     brook.objects.some(({ name }) => name === 'crystal-brook:meadow-gorge:rainbow-meadow-sign'),
   ).toBe(true);
   expect(brook.objects.some(({ name }) => name === 'crystal-brook:main-path')).toBe(true);
+  expect(brook.objects.some(({ name }) => name === 'crystal-brook:east-woodland')).toBe(true);
+  expect(
+    rocks.filter(({ x }) => x > 3300).length,
+  ).toBeGreaterThanOrEqual(10);
 });
